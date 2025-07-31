@@ -1,375 +1,209 @@
-Return-Path: <linux-kernel+bounces-752312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16467B173DE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:21:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06D18B173E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39D7E7A7C9E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:19:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74D946260C6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 816F019D084;
-	Thu, 31 Jul 2025 15:20:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 014C91EEA49;
+	Thu, 31 Jul 2025 15:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nPwsnV9/"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VFChm2W/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEEC315A8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:20:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB3B156C69;
+	Thu, 31 Jul 2025 15:22:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753975252; cv=none; b=A4WW97wMr8sHJWt3xiDf7K7sx0i8qil43W9gOiUdZP+kv1WI3usnQEKOh7N1WXdDuUt4Jj1euRaaFO0Pckja0XQYLyQ7oydfE5p2OjKUgWT9Tm/42zqSyn5XLhBghNIbcUnAe/QKpyNF3+LhBx7vMNbDyjbsAKXTVeC8+MIP2d4=
+	t=1753975362; cv=none; b=jr7OFlvZv6gg8J9E8d2ftBLbuJQZZjxubXtxBiYLm8H2F+Ia+KFYdPG+PFjjn1V7RLTIhVdekIyHTFZBd+Azvdx2hczWiN/cGJhl0qFGXc5TDLYpLW25g1kYRmw8ibNK+LF8z6H3wLIJydS5AR0coom5+UBekTv6El2gE9IUN9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753975252; c=relaxed/simple;
-	bh=7Wz6Kpu9/oh0MnexH/dfybYV/U2en80U/afUX74ofNU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kUhw2uOyHNT7VjpdX9SiZ0wkOafxctCA2SalnrgxcOz+O/sgxC/JvgAty3sKg5XTEj44wbsj/yIekzK4nxtvFyDyH4GTH/MLZ5wHbroqWcik2k6L/7svkJHHHXBEKvWnyCi+hJ33JnI1wQDu5H0j7TRJkh7ZjFC5pIxddPbpBkw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nPwsnV9/; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso435281cf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:20:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753975250; x=1754580050; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=WXVgdNzaNf2ppZOAnb0Hf74PiGm255gpHJ61J8Ej/kI=;
-        b=nPwsnV9/rqdCVk8fuzoTEQu31gESUMipEB+bGc3SUmQ0zX4RUIbxWSPolAbEdOQcfy
-         Fo4V0kyhny8jAMC1S+0phQ7TUCj6KhA0jNkDUapFhAnP1tQNaBh/JzWg+zRLX+zxnp3b
-         UHhD6mbdHHLxwTZPN69VDh8ijhVBHLdF1QLH/KjIS3rEdxn0/QOGe7wLBr5BAVNBBiEj
-         9BGCloK66DkQi1jmc3XzdxQfIwpwC/gcWFuzGrJr5NHpPcaTOZGwleaqFj4ODegpU+Kk
-         92ggrUvWpxUhGe3HQE+SeyG3dMLepMwiC3MNTBPEzArNkrMBa9KJI8y97Vp0BM8iyeCs
-         LEdw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753975250; x=1754580050;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=WXVgdNzaNf2ppZOAnb0Hf74PiGm255gpHJ61J8Ej/kI=;
-        b=Zwjmz891FVpAyM/tEHMcQsLhc67kBaiUF2+TQ6dBYI7JLU3AzEKEhN2ZV5+bnfSm5b
-         zj5OsG61POxXzgVOUR5fdu6+FoCI52HdTt/TYwzHsH1+BHTR2c+DvWyUNOkNDBrd5Mf+
-         DshXsgz5Gspe2QqvUTG3Vizd9DHOg+9FwM15TMWWIyx7q971wji655m3Fq6Wx8f3QVz2
-         2Drht5DiW1XRKhj790Ag+YP0UIt8zYuG3sAoXlPTa+MWw7BKN6/RGXGh7syv8+5MDpD2
-         DdT89w8g9DMVX5hlYhWxmpQmUlCfMjelST33fg2ib/Y36/sIAmGRWFDW2Duo/az6F3gr
-         UdfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlFA1zW9ky8kXRxuXmiU5hmDnvY8DLZEocdtQ/spF2SzQmUQrfOboLnSZL+SLdhrh19jm3dF1vDDHvUsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJGrBbKauj00cm6IdZwrmQzXIdrW85N/HDcFJFbh06+Fx8W4bq
-	cBjO70z6J6HWPs5xWhJcbJggehANnygZPEaMnCp+9oP0Sihhi3ySMZsXeIe6xa2yAMQ9TmJUS5C
-	jjlu6CiIHwPK2PHdLO3G8KWD3W76aN9+s81Z5DJm5
-X-Gm-Gg: ASbGncs7pE8yQ8yD+DDE6suqYZOJYiezEbnhMrCbSm6I79ZGLYK0kZtEesTv5xZpL9o
-	55FHm3Mg6TIjx6G1adJTz9haO7dJUk4XxuNNxwjJc5ijwyMxYHyjTNDeBHVrUHhBwh8c/2cJ8j1
-	ng1mgnRA49UJJnDFoNdUO5Zlpxcyh4THp+Z2euJrMeDsZwlbaUstGj7y29EA8OisaQjx2PmpjD3
-	4v7FEhs+Y7aVnvee4VcsabdNWMCJnBDqIdDRQ==
-X-Google-Smtp-Source: AGHT+IFkHJ+uk6AmGEYAUc89bOxa9TpcABZ8Qd0G5R47W//bln6p9f0FhGBSRzH4gNy8qyLWXck/VYShbXNXSXFXwls=
-X-Received: by 2002:a05:622a:13cd:b0:4ab:4088:7d97 with SMTP id
- d75a77b69052e-4aeeff8922bmr4072771cf.24.1753975249031; Thu, 31 Jul 2025
- 08:20:49 -0700 (PDT)
+	s=arc-20240116; t=1753975362; c=relaxed/simple;
+	bh=j/nDPx6NtdeHZCFxN6QFH5H+ylStHpRyfOMRwd6l+QE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Lpq60t5U0JnG+/r89DHdcTwqAh+59C/0ucJ0d+Rk1N0pNYU9AmF8LuIDHj28JsyH0yw6ec5/sT38oyVCk4p+CExcTxjaVu3yIN7/TjVHnINQsVk8XnphHFoMEZV2LBh11/ZRFxgAiPleY8NChIDr98i55oq95YtEkZw7rOqrxqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VFChm2W/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BE07C4CEF6;
+	Thu, 31 Jul 2025 15:22:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753975361;
+	bh=j/nDPx6NtdeHZCFxN6QFH5H+ylStHpRyfOMRwd6l+QE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=VFChm2W/TpB4+88A63dGqX87P/AcalazMWJAVCpJPOPZ1UYkOx4RUDuPCO5MnrR5G
+	 2TemeceDEODO+W0k1dOq9APaYT0kjdAnQ2bo/Wgu0qZVHAxGECMVjK9HHVhqphHdC/
+	 HexDstZdiry59QKiOCGx7360ZPhf1rFb3LZ2s4DMFueQYRv5wYU8H0pEnYeJrW4mtg
+	 iVtUbpOaQqB54wUyQVntmh5FFuRFrMP+l/Qv0PDYI235u9J3XbBz4+XnLTnlR/VR4Z
+	 VSkeH48VtLIdH7gJNKsRAek+ed8DHab5ayeo56mTLVg6nWd4rI+n1KRg48dGWDAwnA
+	 gnrCegh+CbpTQ==
+Message-ID: <67b18009-f607-4200-ba86-2cd7d8812b37@kernel.org>
+Date: Thu, 31 Jul 2025 17:22:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731151919.212829-1-surenb@google.com>
-In-Reply-To: <20250731151919.212829-1-surenb@google.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 31 Jul 2025 08:20:37 -0700
-X-Gm-Features: Ac12FXytLxguJzhGbhRbOxMecFVRBKGK18J2j15debQV7RsZ7FbXW6Xatmguq8w
-Message-ID: <CAJuCfpHghvnWWvF6JN+DHbD8Vv7zPVC0BZcTmW6HcrWrxo=KWw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] mm: limit the scope of vma_start_read()
-To: akpm@linux-foundation.org
-Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
-	vbabka@suse.cz, pfalcato@suse.de, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 2/5] dt-bindings: gpu: img,powervr-rogue: Define power
+ domains per variant
+To: Michal Wilczynski <m.wilczynski@samsung.com>, Guo Ren
+ <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
+ <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>,
+ Philipp Zabel <p.zabel@pengutronix.de>, Frank Binns
+ <frank.binns@imgtec.com>, Matt Coster <matt.coster@imgtec.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt
+ <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>,
+ Marek Szyprowski <m.szyprowski@samsung.com>,
+ Drew Fustini <fustini@kernel.org>
+Cc: linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
+ dri-devel@lists.freedesktop.org
+References: <20250731-apr_14_for_sending-v9-0-c242dc1ffc14@samsung.com>
+ <CGME20250731135019eucas1p1239902cf5a5a8fa40ea35722e6feb965@eucas1p1.samsung.com>
+ <20250731-apr_14_for_sending-v9-2-c242dc1ffc14@samsung.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
+ QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
+ +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
+ ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
+ 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
+ hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
+ tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
+ 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
+ naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
+ hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
+ whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
+ qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
+ RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
+ Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
+ H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
+ dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
+ AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
+ jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
+ zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
+ XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
+In-Reply-To: <20250731-apr_14_for_sending-v9-2-c242dc1ffc14@samsung.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 31, 2025 at 8:19=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> Limit the scope of vma_start_read() as it is used only as a helper for
-> higher-level locking functions implemented inside mmap_lock.c and we are
-> about to introduce more complex RCU rules for this function.
-> The change is pure code refactoring and has no functional changes.
->
-> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-
-Forgot to add Lorenzo's
-
-Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-
-Thanks!
-
+On 31/07/2025 15:50, Michal Wilczynski wrote:
+> Rework the PowerVR Rogue GPU binding to use an explicit, per variant
+> style for defining power domain properties.
+> 
+> The generic `if` block for `img,img-rogue`, is removed. It is replaced
+> with self-contained `if/then` blocks for each existing GPU variant. Each
+> block now explicitly defines power domain properties and requirements
+> for that specific variant, making the rules easier to read and
+> maintain.
+> 
+> This addresses feedback from the maintainer to explicitly list items
+> for each variant [1].
+> 
+> Link: https://lore.kernel.org/all/4d79c8dd-c5fb-442c-ac65-37e7176b0cdd@linaro.org/ [1]
+> 
+> Signed-off-by: Michal Wilczynski <m.wilczynski@samsung.com>
 > ---
->  include/linux/mmap_lock.h | 85 ---------------------------------------
->  mm/mmap_lock.c            | 85 +++++++++++++++++++++++++++++++++++++++
->  2 files changed, 85 insertions(+), 85 deletions(-)
->
-> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-> index 11a078de9150..2c9fffa58714 100644
-> --- a/include/linux/mmap_lock.h
-> +++ b/include/linux/mmap_lock.h
-> @@ -147,91 +147,6 @@ static inline void vma_refcount_put(struct vm_area_s=
-truct *vma)
->         }
->  }
->
-> -/*
-> - * Try to read-lock a vma. The function is allowed to occasionally yield=
- false
-> - * locked result to avoid performance overhead, in which case we fall ba=
-ck to
-> - * using mmap_lock. The function should never yield false unlocked resul=
-t.
-> - * False locked result is possible if mm_lock_seq overflows or if vma ge=
-ts
-> - * reused and attached to a different mm before we lock it.
-> - * Returns the vma on success, NULL on failure to lock and EAGAIN if vma=
- got
-> - * detached.
-> - *
-> - * WARNING! The vma passed to this function cannot be used if the functi=
-on
-> - * fails to lock it because in certain cases RCU lock is dropped and the=
-n
-> - * reacquired. Once RCU lock is dropped the vma can be concurently freed=
-.
-> - */
-> -static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm=
-,
-> -                                                   struct vm_area_struct=
- *vma)
-> -{
-> -       int oldcnt;
+>  .../devicetree/bindings/gpu/img,powervr-rogue.yaml | 36 ++++++++++------------
+>  1 file changed, 17 insertions(+), 19 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> index 4450e2e73b3ccf74d29f0e31e2e6687d7cbe5d65..24ce46ba0b7015fca799f045ee2ccdd258088068 100644
+> --- a/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> +++ b/Documentation/devicetree/bindings/gpu/img,powervr-rogue.yaml
+> @@ -57,10 +57,8 @@ properties:
+>      maxItems: 2
+>  
+>    power-domain-names:
+> -    items:
+> -      - const: a
+> -      - const: b
+
+I don't understand why this is being removed. It makes no sense in
+context of this patch. Next patch also does not explain that.
+
+This should stay.
+
+
+>      minItems: 1
+> +    maxItems: 2
+>  
+>    dma-coherent: true
+>  
+> @@ -77,18 +75,6 @@ required:
+>  additionalProperties: false
+>  
+>  allOf:
+> -  # Constraints added alongside the new compatible strings that would otherwise
+> -  # create an ABI break.
+> -  - if:
+> -      properties:
+> -        compatible:
+> -          contains:
+> -            const: img,img-rogue
+> -    then:
+> -      required:
+> -        - power-domains
+> -        - power-domain-names
 > -
-> -       /*
-> -        * Check before locking. A race might cause false locked result.
-> -        * We can use READ_ONCE() for the mm_lock_seq here, and don't nee=
-d
-> -        * ACQUIRE semantics, because this is just a lockless check whose=
- result
-> -        * we don't rely on for anything - the mm_lock_seq read against w=
-hich we
-> -        * need ordering is below.
-> -        */
-> -       if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock_seq.=
-sequence))
-> -               return NULL;
-> -
-> -       /*
-> -        * If VMA_LOCK_OFFSET is set, __refcount_inc_not_zero_limited_acq=
-uire()
-> -        * will fail because VMA_REF_LIMIT is less than VMA_LOCK_OFFSET.
-> -        * Acquire fence is required here to avoid reordering against lat=
-er
-> -        * vm_lock_seq check and checks inside lock_vma_under_rcu().
-> -        */
-> -       if (unlikely(!__refcount_inc_not_zero_limited_acquire(&vma->vm_re=
-fcnt, &oldcnt,
-> -                                                             VMA_REF_LIM=
-IT))) {
-> -               /* return EAGAIN if vma got detached from under us */
-> -               return oldcnt ? NULL : ERR_PTR(-EAGAIN);
-> -       }
-> -
-> -       rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
-> -
-> -       /*
-> -        * If vma got attached to another mm from under us, that mm is no=
-t
-> -        * stable and can be freed in the narrow window after vma->vm_ref=
-cnt
-> -        * is dropped and before rcuwait_wake_up(mm) is called. Grab it b=
-efore
-> -        * releasing vma->vm_refcnt.
-> -        */
-> -       if (unlikely(vma->vm_mm !=3D mm)) {
-> -               /* Use a copy of vm_mm in case vma is freed after we drop=
- vm_refcnt */
-> -               struct mm_struct *other_mm =3D vma->vm_mm;
-> -
-> -               /*
-> -                * __mmdrop() is a heavy operation and we don't need RCU
-> -                * protection here. Release RCU lock during these operati=
-ons.
-> -                * We reinstate the RCU read lock as the caller expects i=
-t to
-> -                * be held when this function returns even on error.
-> -                */
-> -               rcu_read_unlock();
-> -               mmgrab(other_mm);
-> -               vma_refcount_put(vma);
-> -               mmdrop(other_mm);
-> -               rcu_read_lock();
-> -               return NULL;
-> -       }
-> -
-> -       /*
-> -        * Overflow of vm_lock_seq/mm_lock_seq might produce false locked=
- result.
-> -        * False unlocked result is impossible because we modify and chec=
-k
-> -        * vma->vm_lock_seq under vma->vm_refcnt protection and mm->mm_lo=
-ck_seq
-> -        * modification invalidates all existing locks.
-> -        *
-> -        * We must use ACQUIRE semantics for the mm_lock_seq so that if w=
-e are
-> -        * racing with vma_end_write_all(), we only start reading from th=
-e VMA
-> -        * after it has been unlocked.
-> -        * This pairs with RELEASE semantics in vma_end_write_all().
-> -        */
-> -       if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&mm->mm_lo=
-ck_seq))) {
-> -               vma_refcount_put(vma);
-> -               return NULL;
-> -       }
-> -
-> -       return vma;
-> -}
-> -
->  /*
->   * Use only while holding mmap read lock which guarantees that locking w=
-ill not
->   * fail (nobody can concurrently write-lock the vma). vma_start_read() s=
-hould
-> diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-> index b006cec8e6fe..10826f347a9f 100644
-> --- a/mm/mmap_lock.c
-> +++ b/mm/mmap_lock.c
-> @@ -127,6 +127,91 @@ void vma_mark_detached(struct vm_area_struct *vma)
->         }
->  }
->
-> +/*
-> + * Try to read-lock a vma. The function is allowed to occasionally yield=
- false
-> + * locked result to avoid performance overhead, in which case we fall ba=
-ck to
-> + * using mmap_lock. The function should never yield false unlocked resul=
-t.
-> + * False locked result is possible if mm_lock_seq overflows or if vma ge=
-ts
-> + * reused and attached to a different mm before we lock it.
-> + * Returns the vma on success, NULL on failure to lock and EAGAIN if vma=
- got
-> + * detached.
-> + *
-> + * WARNING! The vma passed to this function cannot be used if the functi=
-on
-> + * fails to lock it because in certain cases RCU lock is dropped and the=
-n
-> + * reacquired. Once RCU lock is dropped the vma can be concurently freed=
-.
-> + */
-> +static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm=
-,
-> +                                                   struct vm_area_struct=
- *vma)
-> +{
-> +       int oldcnt;
-> +
-> +       /*
-> +        * Check before locking. A race might cause false locked result.
-> +        * We can use READ_ONCE() for the mm_lock_seq here, and don't nee=
-d
-> +        * ACQUIRE semantics, because this is just a lockless check whose=
- result
-> +        * we don't rely on for anything - the mm_lock_seq read against w=
-hich we
-> +        * need ordering is below.
-> +        */
-> +       if (READ_ONCE(vma->vm_lock_seq) =3D=3D READ_ONCE(mm->mm_lock_seq.=
-sequence))
-> +               return NULL;
-> +
-> +       /*
-> +        * If VMA_LOCK_OFFSET is set, __refcount_inc_not_zero_limited_acq=
-uire()
-> +        * will fail because VMA_REF_LIMIT is less than VMA_LOCK_OFFSET.
-> +        * Acquire fence is required here to avoid reordering against lat=
-er
-> +        * vm_lock_seq check and checks inside lock_vma_under_rcu().
-> +        */
-> +       if (unlikely(!__refcount_inc_not_zero_limited_acquire(&vma->vm_re=
-fcnt, &oldcnt,
-> +                                                             VMA_REF_LIM=
-IT))) {
-> +               /* return EAGAIN if vma got detached from under us */
-> +               return oldcnt ? NULL : ERR_PTR(-EAGAIN);
-> +       }
-> +
-> +       rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
-> +
-> +       /*
-> +        * If vma got attached to another mm from under us, that mm is no=
-t
-> +        * stable and can be freed in the narrow window after vma->vm_ref=
-cnt
-> +        * is dropped and before rcuwait_wake_up(mm) is called. Grab it b=
-efore
-> +        * releasing vma->vm_refcnt.
-> +        */
-> +       if (unlikely(vma->vm_mm !=3D mm)) {
-> +               /* Use a copy of vm_mm in case vma is freed after we drop=
- vm_refcnt */
-> +               struct mm_struct *other_mm =3D vma->vm_mm;
-> +
-> +               /*
-> +                * __mmdrop() is a heavy operation and we don't need RCU
-> +                * protection here. Release RCU lock during these operati=
-ons.
-> +                * We reinstate the RCU read lock as the caller expects i=
-t to
-> +                * be held when this function returns even on error.
-> +                */
-> +               rcu_read_unlock();
-> +               mmgrab(other_mm);
-> +               vma_refcount_put(vma);
-> +               mmdrop(other_mm);
-> +               rcu_read_lock();
-> +               return NULL;
-> +       }
-> +
-> +       /*
-> +        * Overflow of vm_lock_seq/mm_lock_seq might produce false locked=
- result.
-> +        * False unlocked result is impossible because we modify and chec=
-k
-> +        * vma->vm_lock_seq under vma->vm_refcnt protection and mm->mm_lo=
-ck_seq
-> +        * modification invalidates all existing locks.
-> +        *
-> +        * We must use ACQUIRE semantics for the mm_lock_seq so that if w=
-e are
-> +        * racing with vma_end_write_all(), we only start reading from th=
-e VMA
-> +        * after it has been unlocked.
-> +        * This pairs with RELEASE semantics in vma_end_write_all().
-> +        */
-> +       if (unlikely(vma->vm_lock_seq =3D=3D raw_read_seqcount(&mm->mm_lo=
-ck_seq))) {
-> +               vma_refcount_put(vma);
-> +               return NULL;
-> +       }
-> +
-> +       return vma;
-> +}
-> +
->  /*
->   * Lookup and lock a VMA under RCU protection. Returned VMA is guarantee=
-d to be
->   * stable and not isolated. If the VMA is not found or is being modified=
- the
->
-> base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
-> --
-> 2.50.1.552.g942d659e1b-goog
->
+>    - if:
+>        properties:
+>          compatible:
+> @@ -97,9 +83,14 @@ allOf:
+>      then:
+>        properties:
+>          power-domains:
+> -          maxItems: 1
+> +          items:
+> +            - description: Power domain A
+>          power-domain-names:
+> -          maxItems: 1
+> +          items:
+> +            - const: a
+
+This was correct before.
+
+> +      required:
+> +        - power-domains
+> +        - power-domain-names
+
+This is the only part you actually want to do... and it makes no sense
+in context of this patch only. IOW, this should be moved to the next patch.
+
+
+Best regards,
+Krzysztof
 
