@@ -1,89 +1,151 @@
-Return-Path: <linux-kernel+bounces-751509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751510-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50D70B16A71
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:31:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B2374B16A75
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B46B21AA0BE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:32:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B71303A692F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:34:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0CB51E32C6;
-	Thu, 31 Jul 2025 02:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13CAB1A23B5;
+	Thu, 31 Jul 2025 02:35:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="jpD8b/DV"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LC2sFl31"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDC268F6C;
-	Thu, 31 Jul 2025 02:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7469B8F6C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753929110; cv=none; b=JQHC7wUeaWaA5UP507xf0hfucpRXuvOD3CAZlX/SjEKUD9gUMnx7A5KJs2BpCI+8BeHivfBjiZeqpf2wUsGSp4iJNxR8U4+hk+Q32qgOl/2Y3+/vaFrKg8qSpwBeVMZ4GkZ3cxjHb9no96jgr5yBJb+jwTLlT0YL97rxKM7WtdA=
+	t=1753929306; cv=none; b=j4EdWGg0ZWGLBk5dbpxxhDn8TXIhXfW9+Er+9ofsDBCuCxEeApLshnvouh9cctCwTWUpwO16UMmWGCEeqy7aFpvNTBpCPffF1yzzSPszYqhXr2tfd913m89k+LucxNvlaFBZdVJsNAES0YJNeAQCWr/YNldp1tNgH/k5I7klCTY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753929110; c=relaxed/simple;
-	bh=qC/E2RADJBe2o2pvqCk2KKHQRYH+IEmQwtHFwnr5iwU=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c1YOaDk9uqDqpkferWmN3H5UJN91ZfVsCXfsVESsmxjjt8rYjUSUo4+4iqb/yqO3vnFJqnE9sZP2g/Ds/EPeRGLly/PuixbP2jGJIG5odn0dlFzdEQqoufjfuQSYNXX9Zr5zGkEh79K1FHyX+kGT39cuiKCfQ54KxlJCm5+bP7g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=jpD8b/DV; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1753929106;
-	bh=qC/E2RADJBe2o2pvqCk2KKHQRYH+IEmQwtHFwnr5iwU=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=jpD8b/DVVAgtp1h122tIwK3VBpNmdsv89LZTDZPmo+lBU1vvD7FA7xo8vscY3HnAZ
-	 wPyUojKTq1SkOUCMsVL14wfeezHkuKYrn71CFo9cv0zvNRDkjEHlRIDCcMsPcJOEgN
-	 9+xLwAnXXn83RsRds870LwdRtVD5B6FYTqNeJsRgfsGgHneTO8BiL6PfIWNQq+ULNc
-	 R6mz2k721/+5GkM/yk8Atl9oQ4pfUxOjLr4e5BzMBRY1tmmGF8V9x4ze3FcUc8LpwY
-	 BnN7bD3R2pW4Rim37im6TErL1U4Vue8mzKnvi/Cpm5RijGnpWr88w+gNzxOwT7u/62
-	 KNHsGWSPtOC7w==
-Received: from [192.168.68.112] (unknown [180.150.112.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 6242A69374;
-	Thu, 31 Jul 2025 10:31:45 +0800 (AWST)
-Message-ID: <6f4b31063bb83a8b8c876ac6ebfdf7d1efc50987.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v9 3/3] ARM: dts: aspeed: clemente: add NCSI3 and NCSI4
- pinctrl nodes
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Leo Wang <leo.jt.wang@gmail.com>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Kees Cook
- <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,  "Guilherme G. Piccoli"
- <gpiccoli@igalia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
- Damm <magnus.damm@gmail.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
-	leo.jt.wang@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
-	bruce.jy.hung@fii-foxconn.com
-Date: Thu, 31 Jul 2025 12:01:44 +0930
-In-Reply-To: <20250723-add-support-for-meta-clemente-bmc-v9-3-b76e7de4d6c8@fii-foxconn.com>
-References: 
-	<20250723-add-support-for-meta-clemente-bmc-v9-0-b76e7de4d6c8@fii-foxconn.com>
-	 <20250723-add-support-for-meta-clemente-bmc-v9-3-b76e7de4d6c8@fii-foxconn.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1753929306; c=relaxed/simple;
+	bh=UHqwiB2HFxlaVsf0AnH8LVGWkwp0vtIC3mHZAtUnuAQ=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=oCWDuTGEzhQ+XEyl0JYaIFZeD32/pKvkkSZKoLK7te3M+p5IJdxmAzYqJ3TABBObUDpti4ptDCQEeqUQtip5wePu9UYAmtt5wxatGJmDsjL/6qf7p57hAcAgUohyHfIuhIPMHiHPUm6tpvS5iSMlsN8uPNaLpZEc9Efww5EO7hE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LC2sFl31; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91B73C4CEE7;
+	Thu, 31 Jul 2025 02:35:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753929305;
+	bh=UHqwiB2HFxlaVsf0AnH8LVGWkwp0vtIC3mHZAtUnuAQ=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=LC2sFl310tDMoPB/5IHJmrjNm9jxZ0JJYBlIAqQiiD8E/3Wdj/PReN6zVq5oqGbyt
+	 LVskMebEmxNu1hHyycf+bDPL/vQhk/nNVmmuH+c2W0O9VOVgjeO2EZ4iNYgQ34Foep
+	 Evro3GGlU6VTtrGbg1/Y3vLT0widZcA0iIb9pNDmkxKr0/ehb6FlJxmSJ1DvFY6PTA
+	 XidDL+wDmPuQrataEN77hTaUoHWYq+hdtnkIxFt4BtdZI9p9BX1UIMkNZMNYryqWiZ
+	 IdIKNWvSL5wtINm2QcPAr038CUel2I98ydYQ/Jwn6CPgPds1kqyOdm7fJxeSFUxZsx
+	 m5LCiu8bJZ+DA==
+Message-ID: <68c061ad-cbb7-44e8-a905-c13b9ec81c62@kernel.org>
+Date: Thu, 31 Jul 2025 10:35:02 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Cc: chao@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] f2fs: f2fs supports uncached buffered I/O read
+To: Jens Axboe <axboe@kernel.dk>, hanqi <hanqi@vivo.com>, jaegeuk@kernel.org
+References: <20250725075310.1614614-1-hanqi@vivo.com>
+ <d258ab6d-a97a-4232-bf90-5afedd5cccb2@kernel.org>
+ <e1a1dbfe-165f-4cb3-9d5b-8ac4ba61265e@vivo.com>
+ <087f7937-20b5-4151-8a3f-5b6b2b045b41@kernel.org>
+ <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
+ <1b420389-d46b-48ef-aa49-585d84e2710f@kernel.dk>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1b420389-d46b-48ef-aa49-585d84e2710f@kernel.dk>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-07-23 at 11:42 +0800, Leo Wang wrote:
-> Add pinctrl nodes for NCSI3 and NCSI4 to the AST2600 pinctrl
-> description, enabling support for RMII3 and RMII4 interfaces.
->=20
-> Signed-off-by: Leo Wang <leo.jt.wang@fii-foxconn.com>
-> ---
-> =C2=A0arch/arm/boot/dts/aspeed/aspeed-g6-pinctrl.dtsi | 10 ++++++++++
-> =C2=A01 file changed, 10 insertions(+)
+On 7/30/25 23:20, Jens Axboe wrote:
+> On 7/28/25 2:28 AM, hanqi wrote:
+>> ? 2025/7/28 16:07, Chao Yu ??:
+>>> On 7/28/25 16:03, hanqi wrote:
+>>>> ? 2025/7/28 15:38, Chao Yu ??:
+>>>>
+>>>>> On 7/25/25 15:53, Qi Han wrote:
+>>>>>> Jens has already completed the development of uncached buffered I/O
+>>>>>> in git [1], and in f2fs, uncached buffered I/O read can be enabled
+>>>>>> simply by setting the FOP_DONTCACHE flag in f2fs_file_operations.
+>>>>> IIUC, we may suffer lock issue when we call pwritev(.. ,RWF_DONTCACHE)?
+>>>>> as Jen mentioned in below path, right?
+>>>>>
+>>>>> soft-irq
+>>>>> - folio_end_writeback()
+>>>>>    - filemap_end_dropbehind_write()
+>>>>>     - filemap_end_dropbehind()
+>>>>>      - folio_unmap_invalidate()
+>>>>>       - lock i_lock
+>>>>>
+>>>>> Thanks,
+>>>> That's how I understand it.
+>>> So I guess we need to wait for the support RWF_DONTCACHE on write path, unless
+>>> you can walk around for write path in this patch.
+>>>
+>>> Thanks,
+>>
+>> I think the read and write paths can be submitted separately.
+>> Currently, uncached buffered I/O write requires setting the
+>> FGP_DONTCACHE flag when the filesystem allocates a folio. In
+>> f2fs, this is done in the following path:
+>>
+>> - write_begin
+>>  - f2fs_write_begin
+>>   - __filemap_get_folio
+>>   As I understand it, if we don't set the FGP_DONTCACHE flag here, this
+>> issue shouldn't occur.
+> 
+> It won't cause an issue, but it also won't work in the sense that the
+> intent is that if the file system doesn't support DONTCACHE, it would
+> get errored at submission time. Your approach would just ignore the flag
+> for writes, rather than return -EOPNOTSUPP as would be expected.
 
-This patch should be ordered before the patch adding the devicetree
-that relies on it.
+Jens,
 
-Andrew
+Do you mean like what we have done in kiocb_set_rw_flags()?
+
+	if (flags & RWF_DONTCACHE) {
+		/* file system must support it */
+		if (!(ki->ki_filp->f_op->fop_flags & FOP_DONTCACHE))
+			return -EOPNOTSUPP;
+...
+	}
+
+IIUC, it's better to have this in original patch, let me know if I'm
+missing something.
+
+diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+index 9b8d24097b7a..7f09cad6b6d7 100644
+--- a/fs/f2fs/file.c
++++ b/fs/f2fs/file.c
+@@ -5185,6 +5185,11 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
+ 		goto out;
+ 	}
+
++	if (iocb->ki_flags & IOCB_DONTCACHE) {
++		ret = -EOPNOTSUPP;
++		goto out;
++	}
++
+ 	if (!f2fs_is_compress_backend_ready(inode)) {
+ 		ret = -EOPNOTSUPP;
+ 		goto out;
+-- 
+
+Thanks,
+
+> 
+> You could potentially make it work just on the read side by having the
+> f2fs write submit side check DONTCACHE on the write side and error them
+> out.
+> 
+
 
