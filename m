@@ -1,149 +1,215 @@
-Return-Path: <linux-kernel+bounces-751998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0D9CB17026
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:09:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 854BBB17029
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:10:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 315631703A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:09:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC5201702B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:10:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB61922F74B;
-	Thu, 31 Jul 2025 11:09:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE9EA2BE7A1;
+	Thu, 31 Jul 2025 11:09:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eq7cm8ed"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="QQMkkWIv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2955E2248AC
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:09:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787771A3155;
+	Thu, 31 Jul 2025 11:09:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753960154; cv=none; b=ibvS8H22uON/ogUOUg7vpX7gNah/wDJiVkAIddtIUdkUqaTqMV01QXeNhcNAQGcvlJ44wNDzTQfAyv8bo8G/munp/RTcotpF/D0bcti+9TkmMZxBmSHCfMdFu5lBxYu1ESClGQ1IiMZFmi/EYOrUdgxxNSPOhXWwrqfwrMYZTKw=
+	t=1753960195; cv=none; b=RSEgxS6YYQLaG0+vy4OOMfTFPfTZyEpCcNk6GKF3G/N9y+rPNW9XL3wPh3AavGVY4j2DOp5IEWWAwDbXoDwQpJB2mQv22VdbGcKizSCxk/rNftQ0NPK2Zzlt1mxUZ0kugmZisqMK2+dl9N97ncjYjjiT3P1FqNGUFX+r2ppWANQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753960154; c=relaxed/simple;
-	bh=A1QiLFsWkLOne69flYjxRji6b6Am/6hybG4NGr+X1Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=toI8zfZNx5wXusl4WVQb2Xr5MaUPo2/0p0Yr7coF9xD1f7yFOz1J4jgYUR6VxsoOZ1TmoW7Bs/HHjtKgi2DeCG8CUOOMuFr7xWCbLtF1U6j3qzqsvvfZEE63lbkfkGWGNongY3RkEwcQmXohJflvHErYDc4GcaqixpqtG4gCNO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eq7cm8ed; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57B74C4CEEF;
-	Thu, 31 Jul 2025 11:09:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753960153;
-	bh=A1QiLFsWkLOne69flYjxRji6b6Am/6hybG4NGr+X1Gg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eq7cm8edGkoGi5Z4FYjfHo2kfBz7kdjZ8gZnbMlHsFJZ9GpJ160ANP36pAiPhDGgx
-	 iSBRb9D8F7+YbYqseUEpRsE63h0uqHBH01Uq2J1uPpafcHOZhF4KTe2YNGlJtUzKHL
-	 iB5+szXDjW87D6zwKwO3ejN4+vhRb6yJj+sGXe6+xpj52OdlEzIwBprztPVvRNP9c2
-	 PLPwNZp6qxfLgeMYhH+UA1pDV+wfT2P9utoPe0+jzebjPRub1Yghs+ZdE4iF1UUXCB
-	 amjkeVJfPiPJDx5TmmyaUmFj+PBG+X127oT0+Vmh7jkNVD3e0eJBq5CW7ekvCaZorT
-	 g9j8GQxvmThvA==
-Date: Thu, 31 Jul 2025 12:09:09 +0100
-From: Lee Jones <lee@kernel.org>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH 3/3] mfd: stmpe: Allow building as module
-Message-ID: <20250731110909.GE1049189@google.com>
-References: <20250725071153.338912-1-alexander.stein@ew.tq-group.com>
- <20250725071153.338912-4-alexander.stein@ew.tq-group.com>
+	s=arc-20240116; t=1753960195; c=relaxed/simple;
+	bh=ItVwJXgKGvVXJhCDRk3nmuNL0ZSzurtnjqAX6Z9zRgQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rL/Pu2qQbH4efNGA7cCMYkDDnhoZgi1AZaXCHn/SQe8vloN2ZceQ5q76dQkDxI6xk0McSIrQGwjiiXYRo+qestGCQWIF9th8j7ybjEZuFi2amldKh5hsiKvb0FNJmzWy6D3MS/IhhC/dBETUcQv4B3LzAiIFF6ShSvHeF8iGgI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=QQMkkWIv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V9fPIR024226;
+	Thu, 31 Jul 2025 11:09:49 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	qpacQAEuunvl9EP8TR9EjQRvykSiPqrIg87dN+nnP44=; b=QQMkkWIvg7nAxV/I
+	QNOuHcSFwk8DqlN2nQwlRm1dU6ESzEvngRpxytD/1xPUeuZ4cHG9/+AllZrK1Gsj
+	W5DHP+votsdEUOOMIbRQEYDra5FP0OA8aWkpaP8uVWgZ+NDu7pSti/n17qTycO14
+	3WBNYRRiz4VJPrG5naY82EyrFrr1l0d+ao9wOYnlZSVfRGvQRFsXdVF2MtxgRgAM
+	yjjuN/cqT1owwT6T35qPvQgZ36Ua+y4dX/jXO9Zp2Qt8eZzxXIZR6BmkvS2QEUsc
+	pDM4azS8ln2pwSuIFu9dYeIbTRRQ1Qihy314PozVLByANoOZhAYEW5+ystHziv7v
+	aWZAQw==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484r6qyhn1-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 11:09:49 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56VB9miG029221
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 11:09:48 GMT
+Received: from [10.217.216.168] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 31 Jul
+ 2025 04:09:39 -0700
+Message-ID: <2fcb2378-8a1c-4d54-abca-709ada84b513@quicinc.com>
+Date: Thu, 31 Jul 2025 16:39:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V1] mmc: sdhci-msm: Enable MMC_CAP_AGGRESSIVE_PM for
+ qualcomm controllers
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Adrian Hunter <adrian.hunter@intel.com>,
+        Ulf Hansson
+	<ulf.hansson@linaro.org>, <linux-mmc@vger.kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_cang@quicinc.com>, <quic_nguyenb@quicinc.com>,
+        <quic_rampraka@quicinc.com>, <quic_pragalla@quicinc.com>,
+        <quic_sayalil@quicinc.com>, <quic_nitirawa@quicinc.com>,
+        <quic_bhaskarv@quicinc.com>, <kernel@quicinc.com>
+References: <konkbi4hvd7qc4rhokwrymzqntroy7gijk3ndwv5rluswdrykp@xsafrtrjzmuq>
+ <10c90fee-ce7f-4034-9028-4252f19cb67f@quicinc.com>
+ <CAA8EJpoLLDXFQk-ViuaioKrECzMV0aUrcOj4v+Ufs4oHY53mrw@mail.gmail.com>
+ <064d3eed-c2ea-4b41-85b2-d2a5a922f8c7@quicinc.com>
+ <ehgjdszjr34xppmkrkicb4pnq326nor26tqu2ekop6ew2j3y3h@pm45aiipzuc5>
+ <48c73675-a73f-46f1-81a9-f701a2cf00a5@quicinc.com>
+ <c1ebdaf1-92bb-4f73-bca9-35246d7c10e1@oss.qualcomm.com>
+ <ca83b841-aea0-4233-93fe-02a7b5985af4@quicinc.com>
+ <1a0a5178-fcf0-49b6-8e4c-1393c0f4f229@oss.qualcomm.com>
+ <22848e2e-bd7d-486c-b481-c624d230d327@quicinc.com>
+ <tpervpypkne6lasl3fn3v52xutl3zfuytalo3cveoe4us63rrb@p2w4cvt2jf7a>
+Content-Language: en-US
+From: Sarthak Garg <quic_sartgarg@quicinc.com>
+In-Reply-To: <tpervpypkne6lasl3fn3v52xutl3zfuytalo3cveoe4us63rrb@p2w4cvt2jf7a>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250725071153.338912-4-alexander.stein@ew.tq-group.com>
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA3NiBTYWx0ZWRfX7/D23SaG8FNJ
+ Ucde6TymgwWjO3WF6biqfY9gaBEJXkPBLZQLMLzHD0cId3W3TiLXy/CNMRksHqXa4LwKafGnAkD
+ mLHpVf8OC1pPSQoHgbEDD/Jf6uQIB+bMboeT2x2SStTiKf5vd5neKDKrFrqOqxDLictOl3+/F0F
+ bcGtRxuWOFIub4pNVeRanMVUnQLKx9JEmKRMKcKUGo4QZrNeO61LczxWao+6bKu6+hl9i565ENA
+ vXbaYB/X2NOHY33fjeQwshr2/l2YNC51j/GL76pU4xKbFN+hfpQEOLKBzbCTmcOk2Blm1XSnbym
+ UWGehA+CVBYjUrXS6u3r4CBFsf3QodeproCAqAqcpzwsP5953kgD8mY8Cz/vVyzc4Njk8TAWyS6
+ XBQeA3OD47//d/PwUsrNxTIPjbnxNzcFEIUHijWo3KMFJehBdF4ZG1vO2NbAnbeuR0f3VaN1
+X-Proofpoint-ORIG-GUID: avRKz0rpNOZkenctd36ICMSZgSE2j9vV
+X-Authority-Analysis: v=2.4 cv=ea89f6EH c=1 sm=1 tr=0 ts=688b4efd cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=O83kX4fD3CcbUwYZHKcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: avRKz0rpNOZkenctd36ICMSZgSE2j9vV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_01,2025-07-31_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 priorityscore=1501 impostorscore=0 lowpriorityscore=0 phishscore=0
+ malwarescore=0 suspectscore=0 bulkscore=0 adultscore=0 clxscore=1015
+ spamscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2507310076
 
-On Fri, 25 Jul 2025, Alexander Stein wrote:
 
-> Export the core probe and remove function to be used by modules. Add
-> necessary module information so the driver can be built as a module.
 
-because ...
-
-> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> ---
->  drivers/mfd/Kconfig | 10 +++++-----
->  drivers/mfd/stmpe.c |  6 ++++++
->  2 files changed, 11 insertions(+), 5 deletions(-)
+On 7/24/2025 5:31 PM, Dmitry Baryshkov wrote:
+> On Thu, Jul 24, 2025 at 04:45:38PM +0530, Sarthak Garg wrote:
+>>
+>>
+>> On 5/21/2025 9:11 PM, Dmitry Baryshkov wrote:
+>>> On 21/05/2025 18:36, Sarthak Garg wrote:
+>>>>
+>>>>
+>>>> On 5/21/2025 8:19 PM, Dmitry Baryshkov wrote:
+>>>>> On 21/05/2025 17:35, Sarthak Garg wrote:
+>>>>>>
+>>>>>>
+>>>>>> On 5/21/2025 6:25 PM, Dmitry Baryshkov wrote:
+>>>>>>> On Wed, May 21, 2025 at 12:46:49PM +0530, Sarthak Garg wrote:
+>>>>>>>>
+>>>>>>>>
+>>>>>>>> On 11/15/2024 6:53 PM, Dmitry Baryshkov wrote:
+>>>>>>>>> On Fri, 15 Nov 2024 at 12:23, Sarthak Garg
+>>>>>>>>> <quic_sartgarg@quicinc.com> wrote:
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> On 11/4/2024 4:19 PM, Dmitry Baryshkov wrote:
+>>>>>>>>>>> On Mon, Nov 04, 2024 at 11:37:22AM +0530, Sarthak Garg wrote:
+>>>>>>>>>>>> Enable MMC_CAP_AGGRESSIVE_PM for qualcomm controllers.
+>>>>>>>>>>>> This enables runtime PM for eMMC/SD card.
+>>>>>>>>>>>
+>>>>>>>>>>> Could you please mention, which
+>>>>>>>>>>> platforms were tested with this patch?
+>>>>>>>>>>> Note, upstream kernel supports a lot of
+>>>>>>>>>>> platforms, including MSM8974, I
+>>>>>>>>>>> think the oldest one, which uses SDHCI.
+>>>>>>>>>>>
+>>>>>>>>>>
+>>>>>>>>>> This was tested with qdu1000 platform.
+>>>>>>>>>
+>>>>>>>>> Are you sure that it won't break other platforms?
+>>>>>>>>>
+>>>>>>>>
+>>>>>>>> Thanks for your valuable comment.
+>>>>>>>> I am not sure about the older platforms so to avoid issues on older
+>>>>>>>> platforms we can enable this for all SDCC version 5.0 targets ?
+>>>>>>>
+>>>>>>> No, there are still a lot of platforms. Either explain why this is
+>>>>>>> required for all v5 platforms (and won't break those) or
+>>>>>>> find some other
+>>>>>>> way, e.g. limit the change to QDU1000, explaining why it is _not_
+>>>>>>> applicable to other platforms.
+>>>>>>>
+>>>>>>
+>>>>>> Thanks for your comment.
+>>>>>
+>>>>> No need to.
+>>>>>   >> I agree with your concern but for me also its not possible
+>>>>> to test on
+>>>>>> all the platforms.
+>>>>>
+>>>>> Sure.
+>>>>>>> Lets say if I want to enable this caps for QDU1000 for which it has
+>>>>>> been tested and on any other upcoming target after testing,
+>>>>>> then how can I proceed to enable?
+>>>>>
+>>>>> Let's start from the beginning: why do you want to enable it on QDU1000?
+>>>>>
+>>>>
+>>>> QDU1000 is one latest available target where we have enabled this
+>>>> and tested. This has been enabled to save power.
+>>>
+>>> Isn't it a powered device? How much power is the save? Is it worth it?
+>>>
+>>
+>> Sorry I just did basic sanity on QDU1000 device to confirm its not breaking
+>> any eMMC functionality and we have also tested SD card on SM8550 as well.
+>> For power no's we have stared internal discussions and based on target
+>> available for power profiling with eMMC device we will come back.
 > 
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index 8f11b2df14704..a58c95e5b8072 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -1539,8 +1539,8 @@ config MFD_DB8500_PRCMU
->  	  through a register map.
->  
->  config MFD_STMPE
-> -	bool "STMicroelectronics STMPE"
-> -	depends on I2C=y || SPI_MASTER=y
-> +	tristate "STMicroelectronics STMPE"
-> +	depends on I2C || SPI_MASTER
->  	depends on OF
->  	select MFD_CORE
->  	help
-> @@ -1568,14 +1568,14 @@ menu "STMicroelectronics STMPE Interface Drivers"
->  depends on MFD_STMPE
->  
->  config STMPE_I2C
-> -	bool "STMicroelectronics STMPE I2C Interface"
-> -	depends on I2C=y
-> +	tristate "STMicroelectronics STMPE I2C Interface"
-> +	depends on I2C
->  	default y
->  	help
->  	  This is used to enable I2C interface of STMPE
->  
->  config STMPE_SPI
-> -	bool "STMicroelectronics STMPE SPI Interface"
-> +	tristate "STMicroelectronics STMPE SPI Interface"
->  	depends on SPI_MASTER
->  	help
->  	  This is used to enable SPI interface of STMPE
-> diff --git a/drivers/mfd/stmpe.c b/drivers/mfd/stmpe.c
-> index e1165f63aedae..5faf13fd6cf83 100644
-> --- a/drivers/mfd/stmpe.c
-> +++ b/drivers/mfd/stmpe.c
-> @@ -1482,6 +1482,7 @@ int stmpe_probe(struct stmpe_client_info *ci, enum stmpe_partnum partnum)
->  
->  	return ret;
->  }
-> +EXPORT_SYMBOL_GPL(stmpe_probe);
->  
->  void stmpe_remove(struct stmpe *stmpe)
->  {
-> @@ -1497,6 +1498,7 @@ void stmpe_remove(struct stmpe *stmpe)
->  
->  	mfd_remove_devices(stmpe->dev);
->  }
-> +EXPORT_SYMBOL_GPL(stmpe_remove);
->  
->  static int stmpe_suspend(struct device *dev)
->  {
-> @@ -1520,3 +1522,7 @@ static int stmpe_resume(struct device *dev)
->  
->  EXPORT_GPL_SIMPLE_DEV_PM_OPS(stmpe_dev_pm_ops,
->  			     stmpe_suspend, stmpe_resume);
-> +
-> +MODULE_DESCRIPTION("STMPE MFD Core driver");
-
-Drop the MFD part.
-
-> +MODULE_AUTHOR("Rabin Vincent <rabin.vincent@stericsson.com>");
-> +MODULE_LICENSE("GPL");
-> -- 
-> 2.43.0
+> So, again, _why_ do we want to enable it? If you haven't measured the
+> actual power savings, then it's obviously not a primary reason.
+> 
+> As for the v5 targets only, they start from SDM845. Have you tested it?
+> Does it bring any actual benefits?
 > 
 
--- 
-Lee Jones [李琼斯]
+Sure will capture the power savings on our target with runtime PM and 
+will come back.
+In our downstream code its enabled for all our targets and tested for 
+quite some time.
+
+
+~Regards
+Sarthak
 
