@@ -1,40 +1,40 @@
-Return-Path: <linux-kernel+bounces-752084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752086-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8958CB1711A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C00B1711E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43A1C5868F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:24:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9080718835CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:25:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D152C327E;
-	Thu, 31 Jul 2025 12:23:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B26C02D0C7E;
+	Thu, 31 Jul 2025 12:24:00 +0000 (UTC)
 Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCFDA8F66
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:23:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A598E2C3271
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964638; cv=none; b=E+27aH4YatdWMfhyKOiYEzVIaXAt1u4WUqOuvt+R0Q28gHX9kqnpS+5546hqKy5eIcWReTcKNSO80+BFrhYASXpeY6n+7ESZQC8fhUC7AfpnldlbP1DVKyR4t3eR8mQqpRKlgL6NztS0+5MeMr7vpp5xnS0R3dwiCsHJvfFSO4k=
+	t=1753964640; cv=none; b=IZeGpcLnO43Don/UITXYfgPZHYH8XG2c7Tmr0+RQwrfvqIslQ8/4AqnEmGhsV6/aSfH1LmhOsmP0zv6InY69/DI2A4k9ida6kq+SozojQoV6jdat5R2N5RWgLhORdfd2SqnYAWa9f/K1q9hf3ZzqZJybUJinFAaxXsLERygYgQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964638; c=relaxed/simple;
-	bh=32YBZVpnq5FoHjaGA4Y0J5jJQ8sAi9FM2wJFn8p9BiY=;
+	s=arc-20240116; t=1753964640; c=relaxed/simple;
+	bh=Vzt9Vj1KRivQZywVEZNoWvXi0zeDwDE/e7tEQlILTqo=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ETKo0InL8liuhfsIy7JRUjWa62lYv3PRdqGNN2hktQbHGSp8OetWpWmRqPOAf1NEJpa5hmmRKbu3QlpUvkImnXk6Z0ltH8Il5oYs1HSm4eFUDUL0s4yv1od7Lovc/kvbBG+loADTUgxRrx7zXX7hAhOCYFExjw2FkbEl5mXsQGc=
+	 In-Reply-To:To:Cc; b=XKCEsO+7LvfLXM0u8DOf7XeJGEctsLYhPeMGIohA1155/fzUrs2xpdJus4A+zFtpMIj9FlvylVOP8BYdH5een6CUpmxjO1og8sIYsfxaQXg9+yzbIGhcObFi08hPwnv/T9quiBEV+QcCJCNXxIZrG4EyXMZABLvfnBPAYXZs7GQ=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
 Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 0AE612C41;
-	Thu, 31 Jul 2025 05:23:48 -0700 (PDT)
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E74FB2BC3;
+	Thu, 31 Jul 2025 05:23:49 -0700 (PDT)
 Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 69BCA3F673;
-	Thu, 31 Jul 2025 05:23:54 -0700 (PDT)
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5378B3F77D;
+	Thu, 31 Jul 2025 05:23:56 -0700 (PDT)
 From: Leo Yan <leo.yan@arm.com>
-Date: Thu, 31 Jul 2025 13:23:38 +0100
-Subject: [PATCH v6 02/10] coresight: catu: Support atclk
+Date: Thu, 31 Jul 2025 13:23:39 +0100
+Subject: [PATCH v6 03/10] coresight: etm4x: Support atclk
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -43,7 +43,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-arm_cs_fix_clock_v4-v6-2-1dfe10bb3f6f@arm.com>
+Message-Id: <20250731-arm_cs_fix_clock_v4-v6-3-1dfe10bb3f6f@arm.com>
 References: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
 In-Reply-To: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
 To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
@@ -56,92 +56,105 @@ To: Suzuki K Poulose <suzuki.poulose@arm.com>,
 Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
  linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753964630; l=2806;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753964630; l=3527;
  i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=32YBZVpnq5FoHjaGA4Y0J5jJQ8sAi9FM2wJFn8p9BiY=;
- b=Txoj5ztL+U6zLYwQwYDKI82ZQMH3VC8kBd+sHj4jEsBwt+T5473czgVPrapRih1eCkvRI0X+m
- gasl89v68Y2DOTUeA/YZdgqHRvNeW7ERmSrUO3GrCx9fYD8OJsF6TR+
+ bh=Vzt9Vj1KRivQZywVEZNoWvXi0zeDwDE/e7tEQlILTqo=;
+ b=HtWuY4PrNfzEfoxG22+J4yGsImamJ6nCm6a1cuPejlC42JkmwbT3PoeErubPYZuLW90HOsWAP
+ IQszg25EIZwAoDvvv3aJkrECY54F2183PUxlRyxlCQz7mEChz9EKaYj
 X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
  pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-The atclk is an optional clock for the CoreSight CATU, but the driver
+The atclk is an optional clock for the CoreSight ETMv4, but the driver
 misses to initialize it.
 
-This change enables atclk in probe of the CATU driver, and dynamically
+This change enables atclk in probe of the ETMv4 driver, and dynamically
 control the clock during suspend and resume.
 
-The checks for driver data and clocks in suspend and resume are not
-needed, remove them.  Add error handling in the resume function.
+No need to check the driver data and clock pointer in the runtime
+suspend and resume, so remove checks.  And add error handling in the
+resume function.
 
-Fixes: fcacb5c154ba ("coresight: Introduce support for Coresight Address Translation Unit")
+Add a minor fix to the comment format when adding the atclk field.
+
+Fixes: 2e1cdfe184b5 ("coresight-etm4x: Adding CoreSight ETM4x driver")
 Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
 Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
 Tested-by: James Clark <james.clark@linaro.org>
 Signed-off-by: Leo Yan <leo.yan@arm.com>
 ---
- drivers/hwtracing/coresight/coresight-catu.c | 22 +++++++++++++++++-----
- drivers/hwtracing/coresight/coresight-catu.h |  1 +
- 2 files changed, 18 insertions(+), 5 deletions(-)
+ drivers/hwtracing/coresight/coresight-etm4x-core.c | 20 +++++++++++++++-----
+ drivers/hwtracing/coresight/coresight-etm4x.h      |  4 +++-
+ 2 files changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/hwtracing/coresight/coresight-catu.c b/drivers/hwtracing/coresight/coresight-catu.c
-index 5058432233da1932f1965008fc1b98b560490414..af2a55f0c907c392d092a50612b23c115a1b0f5f 100644
---- a/drivers/hwtracing/coresight/coresight-catu.c
-+++ b/drivers/hwtracing/coresight/coresight-catu.c
-@@ -520,6 +520,10 @@ static int __catu_probe(struct device *dev, struct resource *res)
- 	struct coresight_platform_data *pdata = NULL;
- 	void __iomem *base;
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x-core.c b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+index cbea200489c8f3676d08c6bc6334ecd71d2569ca..36cbf60f24f1e86b466c9c216d33c74393f65504 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x-core.c
++++ b/drivers/hwtracing/coresight/coresight-etm4x-core.c
+@@ -2216,6 +2216,10 @@ static int etm4_probe(struct device *dev)
+ 	if (WARN_ON(!drvdata))
+ 		return -ENOMEM;
  
 +	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
 +	if (IS_ERR(drvdata->atclk))
 +		return PTR_ERR(drvdata->atclk);
 +
- 	catu_desc.name = coresight_alloc_device_name(&catu_devs, dev);
- 	if (!catu_desc.name)
- 		return -ENOMEM;
-@@ -668,18 +672,26 @@ static int catu_runtime_suspend(struct device *dev)
+ 	if (pm_save_enable == PARAM_PM_SAVE_FIRMWARE)
+ 		pm_save_enable = coresight_loses_context_with_cpu(dev) ?
+ 			       PARAM_PM_SAVE_SELF_HOSTED : PARAM_PM_SAVE_NEVER;
+@@ -2464,8 +2468,8 @@ static int etm4_runtime_suspend(struct device *dev)
  {
- 	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev);
  
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
+-	if (drvdata->pclk && !IS_ERR(drvdata->pclk))
 -		clk_disable_unprepare(drvdata->pclk);
 +	clk_disable_unprepare(drvdata->atclk);
 +	clk_disable_unprepare(drvdata->pclk);
-+
+ 
  	return 0;
  }
- 
- static int catu_runtime_resume(struct device *dev)
+@@ -2473,11 +2477,17 @@ static int etm4_runtime_suspend(struct device *dev)
+ static int etm4_runtime_resume(struct device *dev)
  {
- 	struct catu_drvdata *drvdata = dev_get_drvdata(dev);
+ 	struct etmv4_drvdata *drvdata = dev_get_drvdata(dev);
 +	int ret;
- 
--	if (drvdata && !IS_ERR_OR_NULL(drvdata->pclk))
--		clk_prepare_enable(drvdata->pclk);
--	return 0;
++
 +	ret = clk_prepare_enable(drvdata->pclk);
 +	if (ret)
 +		return ret;
-+
+ 
+-	if (drvdata->pclk && !IS_ERR(drvdata->pclk))
+-		clk_prepare_enable(drvdata->pclk);
 +	ret = clk_prepare_enable(drvdata->atclk);
 +	if (ret)
 +		clk_disable_unprepare(drvdata->pclk);
-+
+ 
+-	return 0;
 +	return ret;
  }
  #endif
  
-diff --git a/drivers/hwtracing/coresight/coresight-catu.h b/drivers/hwtracing/coresight/coresight-catu.h
-index 755776cd19c5bb724845ca586ace1e0b29e72556..6e6b7aac206dcae9ff062355e50179637b4d1703 100644
---- a/drivers/hwtracing/coresight/coresight-catu.h
-+++ b/drivers/hwtracing/coresight/coresight-catu.h
-@@ -62,6 +62,7 @@
+diff --git a/drivers/hwtracing/coresight/coresight-etm4x.h b/drivers/hwtracing/coresight/coresight-etm4x.h
+index ac649515054d905fa365203bd35f1d839b03292f..96c14ec26893a489a96c7acfe9ba308e0e890917 100644
+--- a/drivers/hwtracing/coresight/coresight-etm4x.h
++++ b/drivers/hwtracing/coresight/coresight-etm4x.h
+@@ -919,7 +919,8 @@ struct etmv4_save_state {
  
- struct catu_drvdata {
- 	struct clk *pclk;
-+	struct clk *atclk;
- 	void __iomem *base;
- 	struct coresight_device *csdev;
- 	int irq;
+ /**
+  * struct etm4_drvdata - specifics associated to an ETM component
+- * @pclk        APB clock if present, otherwise NULL
++ * @pclk:       APB clock if present, otherwise NULL
++ * @atclk:      Optional clock for the core parts of the ETMv4.
+  * @base:       Memory mapped base address for this component.
+  * @csdev:      Component vitals needed by the framework.
+  * @spinlock:   Only one at a time pls.
+@@ -988,6 +989,7 @@ struct etmv4_save_state {
+  */
+ struct etmv4_drvdata {
+ 	struct clk			*pclk;
++	struct clk			*atclk;
+ 	void __iomem			*base;
+ 	struct coresight_device		*csdev;
+ 	raw_spinlock_t			spinlock;
 
 -- 
 2.34.1
