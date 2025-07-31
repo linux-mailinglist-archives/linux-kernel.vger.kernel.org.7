@@ -1,192 +1,126 @@
-Return-Path: <linux-kernel+bounces-752653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752655-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08F31B178DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:04:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 802B7B178E4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:10:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC4C83A8793
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:04:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 418425A4EF7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:10:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB218265CBE;
-	Thu, 31 Jul 2025 22:04:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23C9826C398;
+	Thu, 31 Jul 2025 22:10:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kLOF8dgc"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="SPKx5P98"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A514A921
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 22:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81CE32690D5;
+	Thu, 31 Jul 2025 22:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753999459; cv=none; b=tHUtdSav9RxjrlnJjl5e3yNmlWphv4nMv5IL2e/XdE5dYbbwo2Cc636EBetcC5gnq0iKo1i1PqPluZOY/+J2Ce890/6FZVCcNxVN1Z7A9aw+tPMb99JQtf7DVx4Y9XkVRGCKZBrcRrK9bua5epsw6rPUiboM6uKv68qmJnRtfpU=
+	t=1753999851; cv=none; b=FFEioqhbVZqbf84NxDBjEu0PA/a4GIfsF8UutIFRLJDtbFf4E3oaerzsVgV0BTc0jYA7FMTF362kM3GUGdIPyUqJj7in+fOD4w5Ron6G054spR3Dgs5AfhuzYUWQdElR0YkrM5BEtcZpWBRo61ZDfbFFoEAhULJ0TfXE8x9THdY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753999459; c=relaxed/simple;
-	bh=T+U1llJWqanj2eP8cHM7nhvCfUiqnhYB4EmMGd2LH1A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hEJyyHOolVVclbryeHQ9SYdfD/BAIz8y0sO9x3sYEa6XXwK42g+FXAZ7XKCDcD3WKUsy0WTZiH0qydi5CqAtXHv0TxoquU4Cw6wRt++gK3GemgQ+RIcRbC4LpmvAJmRQR9M+UDPj7ySILHzLfQuvelq4PDLWhkAuLE6qqwnkAvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kLOF8dgc; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b785a69454so91635f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:04:17 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753999456; x=1754604256; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YuVXeYr7FDtql94sM1ldGgDheznzgmdavsiQoAB2NVw=;
-        b=kLOF8dgcf/fsfzbA0CEhuCN6SjbVWPGj3nudfi860U5y09NoHiUoNFAxPyzIiFvQn7
-         Ihje7HEVuZec93fz/Uzzdu2p/3HXsGvV5xwm1AmUzt4eRK2m+TmWEMzEg82msqW6GRt0
-         +Ekrpdf2b8ulWcFLd3Lq2WWEcu2AaSxnLUq65znoFjsk+aLlb46a7VZs/B5lmnQ5vs2P
-         AkajooRc+mKjEcAzKOOasIlCVBLYh9eesLLXOhpvWOUg/oCC8mkav4G7roPdqAgA13ou
-         d1xh8UGJoIlFrimFRSsQw0Nm18OlsqGHIZzITWIztwMnWvsYn6L4x8Cs15OZEnB4NL+r
-         LysA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753999456; x=1754604256;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YuVXeYr7FDtql94sM1ldGgDheznzgmdavsiQoAB2NVw=;
-        b=mLgmKvdo3hIRmtl6wtnLDk6rnM6R24fH2JM115+Vlf4BxFkZOFPjqb+0qq3Ykja4w0
-         k1hjsCbOzhS5jGLO5Ns6G4AtMkVHcy5//1KJSgeGfTwC0N86QtYxcuXzSxfj4o7+na/Y
-         SacRLEJUn3ZFunNgJXp3lK7u2XbUZYgJ5sK8gpq9xxH5O50SSoTeec0D9u1QddMNIzyJ
-         BNT6xm44KnqWUgCGIS6ESbRSpOTdNJDUWvo+yip7drJAMLefk+2bEE3DqfdnwzOrtIbk
-         dsWxv407IQpZgMHtiEsZxp01cSFL5x8qPrXuIabhKaWMmpXM+yFx81E8Tf/AAVWo+QKW
-         /YXg==
-X-Forwarded-Encrypted: i=1; AJvYcCUdQMZRZcdV0Mfw7JvD5uYpgznSum9SluwOB2IBK2XwIqXiiqkuY1wZtcejkgfNBZRbwR1uhc2mmsU6X/s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyv21DUI+kKoaov1cKxZ8oNRL0OGlf0oZY0YMwDJi672JvVg/Mw
-	6mCKsc1nmUZGf8mASGmXIzSsSM0DNFdO+nzJV2fXi7NJm/bTNT96C+p7
-X-Gm-Gg: ASbGncvGh0WRVXklZ/yvTZOQXEsN11jTLJy+t+nlkygMpWa3aZAj4JRTfUUZMzlt9tH
-	SXTgxG/96j8im3LyGhIrv1DjUyYQYwldepjJ6V2M5CFynijhK25uDdB4eu13q+SKLdc9/Yd1MEB
-	FyickJV08yCPvRWjGyVBIFMX9No/EV3IzXkgo4cjE3r2te1ZLvuO9V+sp//eUOTjP3E6fJx9In2
-	xptLl8Pbzvjf7xpXNsWSiuchWwQ+2QRweuOVBWF5/MJBLeMlsUZMcPdLMNghULAeFrN7GjHM6rR
-	BHlkT1iCJZ4Uj0qGB8peToso39cYaNWkrbhJpulgUbEWNL8w+3s8z0fKhBgAis0JNlWIXQx5YYI
-	bXD0JIzkCCiCmc6l0jpFW0Kus1pPqbmK5iru8xBfNTOJLIf5DjeO54fSoPjsNv8my7fjwutv6Rl
-	dXgyaJhz8=
-X-Google-Smtp-Source: AGHT+IHCw7TRuJh2aGg/Nw+v2xuOt+mi8XWdyGvHc40uQSFW40upZ5IOazoX2RAMaX9h6uizaidJkA==
-X-Received: by 2002:a05:6000:1a86:b0:3b7:8ddc:87a1 with SMTP id ffacd0b85a97d-3b794fc187emr6918829f8f.4.1753999455654;
-        Thu, 31 Jul 2025 15:04:15 -0700 (PDT)
-Received: from Yueyangs-MacBook-Pro.local (vpn-254-003.epfl.ch. [128.179.254.3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4588dd77cbbsm67628505e9.2.2025.07.31.15.04.14
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 15:04:15 -0700 (PDT)
-Date: Thu, 31 Jul 2025 23:04:12 +0100
-From: YUEYANG PAN <pyyjason@gmail.com>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Usama Arif <usamaarif642@gmail.com>, damon@lists.linux.dev,
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] mm/damon: Move has filter to ops-common
-Message-ID: <aIvoXMbW57IL9X1o@Yueyangs-MacBook-Pro.local>
-References: <06734aa15198e542f9defbc1d29fc0731671c3d8.1753895066.git.pyyjason@gmail.com>
- <20250730174506.60001-1-sj@kernel.org>
+	s=arc-20240116; t=1753999851; c=relaxed/simple;
+	bh=cLR/2l8q+/jkqSgO9t5RREAqchO8winRqkNTRw5ruwY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=EkKr4S2/2zMeKnSWy+YM9SlsfgS6Qyf7DI6fa0ghDtTUzYxCy2WuDignZhP7ra/eD8xDiC5wZ87YdvBReUJhEqsWvCjgadGfm0q6hPu37KYNlXEwWanMWjCvDtpQQvOyOnPNH9xuxWFvd1g3xjOMeLaun6LLlH++rx+2Qh8DkZk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=SPKx5P98; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [192.168.7.202] ([71.202.166.45])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56VMA7L52343656
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Thu, 31 Jul 2025 15:10:07 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56VMA7L52343656
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2025072201; t=1753999808;
+	bh=I9Sh1R4JjqKiRHpW0LVlSWjN+6rOTN1DAIE3pzYv09g=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=SPKx5P98F6w/790PtTfL3Ws4YXExyLlZ59vMjyahTRtJMRCc06KVP+NtefOTwRZWE
+	 BC0Xqruy/7Yme0LTNOITDwK5I80tWpo1cBYwLLbEwgPQ4eAm4z4f84tx17T0H/uxeJ
+	 Den7wEOm15gUGU3msFu1bWb/cm0CaPKg7ylAc9VlXVDNQ7owACrNOZHZXfJw+eRvj6
+	 92XIHyguk/A9dAj10Sy28BpGtvc/Aqd+BY6HVDCTLW7UEEUrP57zjK3c4blqgdsSI3
+	 +MkYqOIX4oMYJ8Z3kZ1RIrODyLtNjgMxezfB4B5XjCatdPtyEQkR6IKxtKjCoSFw7F
+	 mR1uqUo+QhteA==
+Message-ID: <9930f714-4ec8-41be-b9ab-44bac38e0bb7@zytor.com>
+Date: Thu, 31 Jul 2025 15:10:07 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730174506.60001-1-sj@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 3/4] KVM: VMX: Handle the immediate form of MSR
+ instructions
+From: Xin Li <xin@zytor.com>
+To: Chao Gao <chao.gao@intel.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
+        seanjc@google.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+References: <20250730174605.1614792-1-xin@zytor.com>
+ <20250730174605.1614792-4-xin@zytor.com> <aItNtifaItfXhXnu@intel.com>
+ <f20842af-2bc1-4002-a6eb-84c33408d0ea@zytor.com>
+Content-Language: en-US
+Autocrypt: addr=xin@zytor.com; keydata=
+ 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
+ l75w1xInsg==
+In-Reply-To: <f20842af-2bc1-4002-a6eb-84c33408d0ea@zytor.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Jul 30, 2025 at 10:45:06AM -0700, SeongJae Park wrote:
-> On Wed, 30 Jul 2025 10:19:55 -0700 Yueyang Pan <pyyjason@gmail.com> wrote:
+On 7/31/2025 9:53 AM, Xin Li wrote:
+>> The CPUID feature bit also indicates support for the two new VM-exit 
+>> reasons.
+>> Therefore, KVM needs to reflect EXIT_REASON_MSR_READ/WRITE_IMM VM- 
+>> exits to
+>> L1 guests in nested cases if KVM claims it supports the new form of MSR
+>> instructions.
 > 
-> > This patch moves damon_pa_scheme_has_filter to ops-common. renaming
-> > to damon_scheme_has_filter.
-> > Doing so allows us to reuse its logic in the vaddr version
-> > of DAMOS_STAT
-> > 
-> > Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
-> > ---
-> >  mm/damon/ops-common.c |  9 +++++++++
-> >  mm/damon/ops-common.h |  2 ++
-> >  mm/damon/paddr.c      | 11 +----------
-> >  3 files changed, 12 insertions(+), 10 deletions(-)
-> > 
-> > diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
-> > index 99321ff5cb92..3ebfa356ca46 100644
-> > --- a/mm/damon/ops-common.c
-> > +++ b/mm/damon/ops-common.c
-> > @@ -412,3 +412,12 @@ unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
-> >  
-> >  	return nr_migrated;
-> >  }
-> > +
-> > +bool damon_scheme_has_filter(struct damos *s)
-> > +{
-> > +	struct damos_filter *f;
-> > +
-> > +	damos_for_each_ops_filter(f, s)
-> > +		return true;
-> > +	return false;
-> > +}
-> 
-> I should have tell this earlier, sorry.  I now think it would be good to have
-> ops-common.c own prefix, since this namee makes me expect the function is on
-> DAMON core layer.  Also, I use normal 'grep' and ctags at the best, and maybe
-> I'm not the only one that that lazy at learning new tools.
-> 
-> Following the weird and none-public naming convention we have on DAMON,
-> damos_ops_ for DAMOS-related functions and damon_ops_ for monitoring-related
-> functions would be the prefix for ops-common.c.
-> 
-> So, what about renaming this to damos_ops_has_filter() if we have a chance to
-> revision this once again?
+> Damn, forgot about nested...
 
-Thanks. I will fix it in the next version.
+The current nested KVM VMX implementation already handles VM exits
+caused by the immediate form of MSR instructions, forwarding them to L1
+as intended by design.
 
-> 
-> > diff --git a/mm/damon/ops-common.h b/mm/damon/ops-common.h
-> > index 61ad54aaf256..8d5c5c7631ac 100644
-> > --- a/mm/damon/ops-common.h
-> > +++ b/mm/damon/ops-common.h
-> > @@ -21,3 +21,5 @@ int damon_hot_score(struct damon_ctx *c, struct damon_region *r,
-> >  
-> >  bool damos_folio_filter_match(struct damos_filter *filter, struct folio *folio);
-> >  unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid);
-> > +
-> > +bool damon_scheme_has_filter(struct damos *s);
-> > diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-> > index 53a55c5114fb..daeceed981a0 100644
-> > --- a/mm/damon/paddr.c
-> > +++ b/mm/damon/paddr.c
-> > @@ -262,22 +262,13 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
-> >  	return applied * PAGE_SIZE;
-> >  }
-> >  
-> > -static bool damon_pa_scheme_has_filter(struct damos *s)
-> > -{
-> > -	struct damos_filter *f;
-> > -
-> > -	damos_for_each_ops_filter(f, s)
-> > -		return true;
-> > -	return false;
-> > -}
-> > -
-> >  static unsigned long damon_pa_stat(struct damon_region *r, struct damos *s,
-> >  		unsigned long *sz_filter_passed)
-> >  {
-> >  	unsigned long addr;
-> >  	struct folio *folio;
-> >  
-> > -	if (!damon_pa_scheme_has_filter(s))
-> > +	if (!damon_scheme_has_filter(s))
-> >  		return 0;
-> >  
-> >  	addr = r->ar.start;
-> > -- 
-> > 2.47.3
-> 
-> Otherwise, all looks good to me.
-> 
-> 
-> Thanks,
-> SJ
+I just need to add MSR bitmap checks to nested_vmx_exit_handled_msr().
 
-Best Wishes
-Pan
+Thanks!
+     Xin
+
 
