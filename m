@@ -1,250 +1,176 @@
-Return-Path: <linux-kernel+bounces-751900-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5338DB16F06
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:51:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E666AB16F09
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4996F3ADDD0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 14CE716D699
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:53:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0FA729CB52;
-	Thu, 31 Jul 2025 09:51:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC072BD5BF;
+	Thu, 31 Jul 2025 09:53:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="b/htALRZ"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fqEBXkP2"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E448BF4FA
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:51:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DE9F4FA;
+	Thu, 31 Jul 2025 09:53:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955488; cv=none; b=Skldxu4w9rbliYdblPnO4sgsoxGzibaG/OQoqdsrk4JNX85zHV08XQ/gYHZos62z5usE7H5N1zebtv3ltf70Vrhd3pufL3QC6lAujh5v90yoFLTuJ0eGPC2OI+G+P5GqrTAGRJ5R6MO5JUu8ByyeTGE8Tx1N4raKTE5nA12i9Vg=
+	t=1753955605; cv=none; b=Y1G77iuWAZLFDvRrTj1WALNVSGrKqvcc4zg75kCOmIZQ1BXI0GbyMbMOyThh1UaG3hScEPyAMxsDwJlpgg91+Aykh8OBqDuAt1xRk5DEnDwgZcf5VA+5iMiTjWXm04/PlPJn4X4lsr5vW/R5z4j2TVoagozbettsFBn6X8Yop2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955488; c=relaxed/simple;
-	bh=eYUeaKiCmL/zOn7Jm80x6klMLR2T92q9Blw1PdGs2nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdkIzCezppfQi9K1OJ0XYUQuQKhnQG49rUFPBoAmxCToWsM0AWQMvZCoWolKhS5l6v574Y9TZV2nDh3iFx6yakm3Bru2AcgxUOalW3DQomimQlMtgw0VWhE6k7VkEWC0uQpj9JZN2GS+j3ZY7ewsYKxWNr+YHrb1D46cqunTml4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=b/htALRZ; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2406fe901fcso8783165ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:51:25 -0700 (PDT)
+	s=arc-20240116; t=1753955605; c=relaxed/simple;
+	bh=/cp/miCCgnrS1CmGH3nRvWasypsDB5K3Zo2E+22xAXQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=RSLLrWK31EFn4l9wVVRyw8m0SYGduaVX9ENE7R5MDN+OB42cPICWPGn+dJcIi9crFhz5m6YuHYo6ZeKzdIOaONHjD8ILR2zarkt/dUu/5TxprMrIjEeLa3KDyFknyQ7e93xjrmI2SXt+H3vajrUV/ue2m8RG83ehSKvsgPwRoU0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fqEBXkP2; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso624245f8f.3;
+        Thu, 31 Jul 2025 02:53:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753955485; x=1754560285; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kKKKnXRg7JsP7e6OYP4fYKsmB1zCRKVCmYDMPFZVSmM=;
-        b=b/htALRZMlGl7kAFFZv12YW2zN+W+jUc4AAp8dy4t0O68Y+MBVYOXukTCUAc7qIBB2
-         56LmK1mPIZZJxYkAwlN4W7iKQxuSNOXmsvMDiBQtQZ5bUaeUK+OSa33CPgVpvs9oB7vB
-         DYzNJVjnWSHND3HwOzp4n3QOIMlUi4mSTpFjQ=
+        d=gmail.com; s=20230601; t=1753955602; x=1754560402; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
+        b=fqEBXkP2isvtdEeavChZAa65xytK5Kf2cXROz+yyKAK+itVx7E/XqtQEKX6qkNqcnz
+         evq4iJJ6wDN6gC4ELzF/JjOR2Tly0D4YH2mLk6AT+3+f4W51Kqe0rvEYxN2drGlYLd8u
+         /LckwggSlJsqXjoZ9if6p81uuPaWXZrWSFTseoTVO4bz4Q3hUGn/4m7bOMxeMcuB3ExQ
+         lzX7DucuuBc3Zn/hRjrjPY6/aghvASACcADkSOipq2PpTxLFFlmHdRubGRQ0U4dJ+ejq
+         c+i183/SxGvy3Y9Ya4xX3HdS3waWWy4okZ72GbLdoBBrJh10Xvj26zZY+lze6oQRTCSI
+         0RAw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753955485; x=1754560285;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=kKKKnXRg7JsP7e6OYP4fYKsmB1zCRKVCmYDMPFZVSmM=;
-        b=Dx0e/6cDd+RBJGm3JuP1rNed/pMFZKN+Z5jmpQ7uuHiZ8aXGy47VmprdU+ZUy/HXFs
-         EQV2AOza581Kq2ksKunQbDUIiD3KN3/M3yLooGWsfKcPJw7CVJOR2a3HwjzV+ATFo60U
-         Im7P/td4mBWAPJv5hk1jlHnyi5SaDJeRiuWdc4TXHDXbUjTaD8MptRrgW+8MOZSFDIKT
-         3gKLyJav8DyjAJRokXUDv0jLCiYWg+mKQKM4limOEQ9ZEtuMClnagp0URYB+wr5npOOH
-         gJDfy7X2muhpJrfsK0fiDA+I5mrYT1J6cI39yypsUIjVn/BTgNU5iHw3QPpHcp63dbYO
-         1KDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCW7SjXbbLKE40BMyn8pExKl/MbR/53KdV0quObQzQuGYcer0DMSaz5Fmql/9xMF9/APS93l0Cbs6pwslHk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzr/bhM9ZSXndycsOsWXyShRkRsKDdNI7kTz5HzZGU+/mi471W2
-	uCmN9xkOjxAUoGNQrSNGZiSYJRw4NX1zgVqlCIN8kg4F2n3wIzv0VII39c/78DkaS7CcytaseLA
-	Eku8=
-X-Gm-Gg: ASbGncsIB216oo+YCkw1nkJidGY6WX4zUswGWI4ptfVJnn4BNS9K9Cfic/FMCvtZ1AW
-	pfuxsjUfTRE+4z4S7i6qZt1DWQUi1MN5UI6rcYKmRak0RT7a+EqETUbhx3/ICEAdSeaEVu00P0p
-	0ZEzBjp/HyFj2Zr/06jPbRdsI1Ra8xcXGWnebd0IrUp46tutd5u0qSQxdo73kEBFriMwFlKKgAA
-	6Glu4icpZo+oDgtzPzMN53aHfhAFkMOuzxPKtFftTVIjesWLCvjSZARa5ltYNn8zQoQNsdiN1sg
-	+LCV45m4UP25H8optTJDxkOK6RgDQiAZ4H+Vi4C30D1YrjPjmpfniZtYzwscB+Bwh8eOJ4WfRDI
-	JPKaP9kYQK2fQZWcsfwYyCFES/TLhcbIe8Hwy
-X-Google-Smtp-Source: AGHT+IFa9U2uuxyoQGvOPEFv6OcRf+BqEtrGBqSTLKMrKEgEVDOVjm8xxg2Pky+0U6FFsXe+u7mNSA==
-X-Received: by 2002:a17:903:240c:b0:240:3ef:e17d with SMTP id d9443c01a7336-24096b3551bmr93714765ad.40.1753955485092;
-        Thu, 31 Jul 2025 02:51:25 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:9455:d03d:1e86:6ce4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef7d96sm13499995ad.18.2025.07.31.02.51.23
+        d=1e100.net; s=20230601; t=1753955602; x=1754560402;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HsMG0i3+AqfjEpu+Gh56Ls+b7M6/eRJtSrOLqrmM+JY=;
+        b=HaYY7Pa6CcWjrufmSYlEM4No/AOVzJESyGzxmNPdUcqjs1R1YHg/h938wNL4q+T14t
+         l+IG+bHD3zv/aE2urdDVyaTIdQeMEis9D5n609tFhJpzrG3reVaxB9kqjLg0Jh40wNoy
+         yGBYQjuucT++3G36D0znf0MkRr7RK7lRVCSnrwMWZLV798izUym9OVB9oprIn9IeTu9T
+         7SQpLOdWPr+/6Kq4mVHjqAaF80+2UtiRRRhV0EfBVE3EJe8R765BC7kMH3L2sC3Jis52
+         LDOlF9U8veuk/WkBmg8qUD9bIWYwLnuihJXJVkgqToE7juOvQM+09BrrY8p/LH+Rr7B3
+         /7Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXBvB23YUYOCIJ+hbxAOveZVUM9OlkhbF34zbE+ZPlIyxGMcE/4b/LWV4l+j+C0xyISmzb7xOTf2jPPYDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoH5qnal7LbLRg3+BYY8UuT/9sWBqbcA7qZyy/1oiphjt9JPcF
+	QwhRR2DckELlQflVKOLg9GXe0/3YWwLJWt5pF63a5TgZ1Rq7wUfyRFvw
+X-Gm-Gg: ASbGncs6xIIeeMh8Q/ubGrChQ4Wt/5VtHQ9NgPk5kDG6Ouze3K0JZqSP2VIeDYnpdEp
+	8zFlgFVWrNdRtnrwkfW3ltR1Wrg35DIXLTqmSH3GaRwjh/Wxx0Hlwl62ihTEkn5co5R3rK5yqiT
+	z3FHMckdVzS4knbmJHLP4tEkFMHC2dQcBsPE6xldFPp8zL+QeKAkgmv2WPoEWskjNMuorIRTmxL
+	mfUYptV67EVwg1yY7uFCGWW4c6NeGMkVgwvl0zMnka2PF/Lt9CI/Iywb+zHjJS6HVGgaQ1nFF8P
+	h44JTSo3G6GKpPqTac/SnEX4rjSUxCdGSn+I8jcgoRN9LuleeKrElOWztjR3d4hAuaRnxnXAhlb
+	jT0Zm9I+lWZfgWeMCLMVAM0VE3oGFgkY=
+X-Google-Smtp-Source: AGHT+IHS+Yna4XLdm1AXyYdne1Nc2qQhOZVR/XY/PwPIfRBT/zicTIWQPLhsl4HER3UQKSwd/WutEw==
+X-Received: by 2002:a05:6000:178f:b0:3b7:8473:31c3 with SMTP id ffacd0b85a97d-3b794fe4fa7mr5105901f8f.9.1753955602212;
+        Thu, 31 Jul 2025 02:53:22 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3bf956sm1918578f8f.24.2025.07.31.02.53.21
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:51:24 -0700 (PDT)
-Date: Thu, 31 Jul 2025 18:51:20 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, 
-	Feng Tang <feng.tang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] panic: remove redundant panic-cpu backtrace
-Message-ID: <af77hin3ywef3kpw6p6mpfdkukxwfrwh5cvyozlgtvq4pefgl7@3eozofs75xfo>
-References: <20250731030314.3818040-1-senozhatsky@chromium.org>
- <84seichm5t.fsf@jogness.linutronix.de>
- <2kwymhiz4fcozfmbmj6ju2qatsbmnrtiidfa4nxrqutgwa6xfy@dbf3caohbbay>
- <84pldghkho.fsf@jogness.linutronix.de>
+        Thu, 31 Jul 2025 02:53:21 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Miquel Raynal <miquel.raynal@bootlin.com>,
+	Richard Weinberger <richard@nod.at>,
+	Vignesh Raghavendra <vigneshr@ti.com>,
+	linux-mtd@lists.infradead.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] mtd: lpddr: Remove space before newline
+Date: Thu, 31 Jul 2025 10:52:47 +0100
+Message-ID: <20250731095247.2165158-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84pldghkho.fsf@jogness.linutronix.de>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On (25/07/31 09:51), John Ogness wrote:
-> > Another way to get backtrace on panic CPU is via BUG(), which routes
-> > through die()->__die_body(), which prints registers, stack trace,
-> > and so on, before it calls into panic().  This might be x86 specific,
-> > though.
-> 
-> So in that case you see 2 stack traces if CONFIG_DEBUG_BUGVERBOSE=y?
+There is an extraneous space before a newline in a handful of printk
+messages. Remove the spaces.
 
-Yes.
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/mtd/lpddr/lpddr_cmds.c  | 10 +++++-----
+ drivers/mtd/lpddr/qinfo_probe.c |  4 ++--
+ 2 files changed, 7 insertions(+), 7 deletions(-)
 
-Triggering BUG() with panic_print=0x40 generates two panic CPU
-backtraces - one from die() trap handler and one from NMI:
+diff --git a/drivers/mtd/lpddr/lpddr_cmds.c b/drivers/mtd/lpddr/lpddr_cmds.c
+index 14e36ae71958..290fd0119e98 100644
+--- a/drivers/mtd/lpddr/lpddr_cmds.c
++++ b/drivers/mtd/lpddr/lpddr_cmds.c
+@@ -142,7 +142,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
+ 		if (dsr & DSR_READY_STATUS)
+ 			break;
+ 		if (!timeo) {
+-			printk(KERN_ERR "%s: Flash timeout error state %d \n",
++			printk(KERN_ERR "%s: Flash timeout error state %d\n",
+ 							map->name, chip_state);
+ 			ret = -ETIME;
+ 			break;
+@@ -186,7 +186,7 @@ static int wait_for_ready(struct map_info *map, struct flchip *chip,
+ 	if (dsr & DSR_ERR) {
+ 		/* Clear DSR*/
+ 		map_write(map, CMD(~(DSR_ERR)), map->pfow_base + PFOW_DSR);
+-		printk(KERN_WARNING"%s: Bad status on wait: 0x%x \n",
++		printk(KERN_WARNING"%s: Bad status on wait: 0x%x\n",
+ 				map->name, dsr);
+ 		print_drs_error(dsr);
+ 		ret = -EIO;
+@@ -321,7 +321,7 @@ static int chip_ready(struct map_info *map, struct flchip *chip, int mode)
+ 			/* Resume and pretend we weren't here.  */
+ 			put_chip(map, chip);
+ 			printk(KERN_ERR "%s: suspend operation failed."
+-					"State may be wrong \n", map->name);
++					"State may be wrong\n", map->name);
+ 			return -EIO;
+ 		}
+ 		chip->erase_suspended = 1;
+@@ -468,7 +468,7 @@ static int do_write_buffer(struct map_info *map, struct flchip *chip,
+ 	chip->state = FL_WRITING;
+ 	ret = wait_for_ready(map, chip, (1<<lpddr->qinfo->ProgBufferTime));
+ 	if (ret)	{
+-		printk(KERN_WARNING"%s Buffer program error: %d at %lx; \n",
++		printk(KERN_WARNING"%s Buffer program error: %d at %lx\n",
+ 			map->name, ret, adr);
+ 		goto out;
+ 	}
+@@ -736,7 +736,7 @@ static int do_xxlock(struct mtd_info *mtd, loff_t adr, uint32_t len, int thunk)
+ 
+ 	ret = wait_for_ready(map, chip, 1);
+ 	if (ret)	{
+-		printk(KERN_ERR "%s: block unlock error status %d \n",
++		printk(KERN_ERR "%s: block unlock error status %d\n",
+ 				map->name, ret);
+ 		goto out;
+ 	}
+diff --git a/drivers/mtd/lpddr/qinfo_probe.c b/drivers/mtd/lpddr/qinfo_probe.c
+index 137ae5f0a19b..42281e460c62 100644
+--- a/drivers/mtd/lpddr/qinfo_probe.c
++++ b/drivers/mtd/lpddr/qinfo_probe.c
+@@ -55,7 +55,7 @@ static long lpddr_get_qinforec_pos(struct map_info *map, char *id_str)
+ 			return minor | (major << bankwidth);
+ 		}
+ 	}
+-	printk(KERN_ERR"%s qinfo id string is wrong! \n", map->name);
++	printk(KERN_ERR"%s qinfo id string is wrong!\n", map->name);
+ 	BUG();
+ 	return -1;
+ }
+@@ -112,7 +112,7 @@ static int lpddr_pfow_present(struct map_info *map, struct lpddr_private *lpddr)
+ 
+ 	return 1;	/* "PFOW" is found */
+ out:
+-	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found \n",
++	printk(KERN_WARNING"%s: PFOW string at 0x%lx is not found\n",
+ 					map->name, map->pfow_base);
+ 	return 0;
+ }
+-- 
+2.50.0
 
-[..]
-<2>[   44.003032] kernel BUG at fs/drop_caches.c:68!
-<4>[   44.003138] Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-<4>[   44.003302] CPU: 2 UID: 0 PID: 3560 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 77a011f1de55cafdc697f1d21852e4a93167feea
-<4>[   44.003624] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
-<4>[   44.003732] Code: ...
-<4>[   44.003954] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
-<4>[   44.004058] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
-<4>[   44.004215] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
-<4>[   44.004369] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
-<4>[   44.004461] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
-<4>[   44.004617] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
-<4>[   44.004773] FS:  000078fd06d9f740(0000) GS:ffff88810b100000(0000) knlGS:0000000000000000
-<4>[   44.004868] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[   44.005022] CR2: 00005a31efb86c60 CR3: 00000001021f8000 CR4: 00000000003506f0
-<4>[   44.005178] Call Trace:
-<4>[   44.005268]  <TASK>
-<4>[   44.005360]  proc_sys_call_handler+0x34a/0x550
-<4>[   44.005467]  vfs_write+0x76a/0xa80
-<4>[   44.005628]  ? proc_sys_read+0x20/0x20
-<4>[   44.005734]  ksys_write+0xb4/0x160
-<4>[   44.005835]  do_syscall_64+0x6a/0xe0
-<4>[   44.006715]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-<4>[   44.006876] RIP: 0033:0x78fd06ec1594
-<4>[   44.006973] Code: ...
-<4>[   44.007195] RSP: 002b:00007ffe87fcd618 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-<4>[   44.007297] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 000078fd06ec1594
-<4>[   44.007451] RDX: 0000000000000002 RSI: 0000573b1ca40130 RDI: 0000000000000001
-<4>[   44.007626] RBP: 00007ffe87fcd640 R08: 0000000000000001 R09: 0000000000000001
-<4>[   44.007731] R10: 000078fd06f55820 R11: 0000000000000202 R12: 0000000000000002
-<4>[   44.007906] R13: 0000573b1ca40130 R14: 000078fd06f945c0 R15: 000078fd06f91f20
-<4>[   44.008093]  </TASK>
-<4>[   44.008192] Modules linked in: [...]
-<0>[   44.017630] gsmi: Log Shutdown Reason 0x03
-<4>[   44.017886] ---[ end trace 0000000000000000 ]---
-<4>[   44.037806] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
-<4>[   44.037926] Code: ...
-<4>[   44.038078] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
-<4>[   44.038143] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
-<4>[   44.038249] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
-<4>[   44.038310] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
-<4>[   44.038416] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
-<4>[   44.038521] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
-<4>[   44.038581] FS:  000078fd06d9f740(0000) GS:ffff88810b100000(0000) knlGS:0000000000000000
-<4>[   44.038688] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-<4>[   44.038803] CR2: 00005a31efb86c60 CR3: 00000001021f8000 CR4: 00000000003506f0
-<0>[   44.038865] Kernel panic - not syncing: Fatal exception
-<4>[   44.038971] NMI backtrace for cpu 2
-<4>[   44.038978] CPU: 2 UID: 0 PID: 3560 Comm: bash Tainted: G      D            6.12.24-kasan-00964-gcf04fce2879f-dirty #1 77a011f1de55cafdc697f1d21852e4a93167feea
-<4>[   44.038988] Tainted: [D]=DIE
-<4>[   44.038996] Call Trace:
-<4>[   44.039001]  <TASK>
-<4>[   44.039005]  nmi_cpu_backtrace+0x14c/0x1a0
-<4>[   44.039016]  ? arch_trigger_cpumask_backtrace+0x20/0x20
-<4>[   44.039026]  nmi_trigger_cpumask_backtrace+0xd8/0x1b0
-<4>[   44.039035]  panic_other_cpus_shutdown+0x2d/0x80
-<4>[   44.039045]  panic+0x199/0x450
-<4>[   44.039055]  oops_end+0xb9/0xc0
-<4>[   44.039062]  do_trap+0x10c/0x330
-<4>[   44.039089]  handle_invalid_op+0x95/0xd0
-<4>[   44.039095]  ? drop_caches_sysctl_handler+0xe5/0xf0
-<4>[   44.039102]  exc_invalid_op+0x3c/0x50
-<4>[   44.039110]  asm_exc_invalid_op+0x16/0x20
-<4>[   44.039118] RIP: 0010:drop_caches_sysctl_handler+0xe5/0xf0
-<4>[   44.039124] Code: ...
-<4>[   44.039129] RSP: 0018:ffff888053cd7cd8 EFLAGS: 00010202
-<4>[   44.039135] RAX: 0000000000000000 RBX: 0000000000000001 RCX: 0000000000000002
-<4>[   44.039139] RDX: 0000000000000000 RSI: dffffc0000000000 RDI: 0000000000000000
-<4>[   44.039143] RBP: ffff888053cd7cf0 R08: ffff888053cd7be8 R09: 0000000000000001
-<4>[   44.039148] R10: ffff888053cd7b00 R11: ffffffff888ce910 R12: ffff888053cd7db8
-<4>[   44.039152] R13: dffffc0000000000 R14: 0000000000000001 R15: 1ffffffff1ad5821
-<4>[   44.039158]  ? proc_dointvec_minmax+0xe0/0xe0
-<4>[   44.039168]  ? drop_caches_sysctl_handler+0x15/0xf0
-<4>[   44.039174]  proc_sys_call_handler+0x34a/0x550
-<4>[   44.039184]  vfs_write+0x76a/0xa80
-<4>[   44.039191]  ? proc_sys_read+0x20/0x20
-<4>[   44.039201]  ksys_write+0xb4/0x160
-<4>[   44.039208]  do_syscall_64+0x6a/0xe0
-<4>[   44.039259]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-<4>[   44.039265] RIP: 0033:0x78fd06ec1594
-<4>[   44.039273] Code: ...
-<4>[   44.039278] RSP: 002b:00007ffe87fcd618 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-<4>[   44.039285] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 000078fd06ec1594
-<4>[   44.039289] RDX: 0000000000000002 RSI: 0000573b1ca40130 RDI: 0000000000000001
-<4>[   44.039294] RBP: 00007ffe87fcd640 R08: 0000000000000001 R09: 0000000000000001
-<4>[   44.039298] R10: 000078fd06f55820 R11: 0000000000000202 R12: 0000000000000002
-<4>[   44.039302] R13: 0000573b1ca40130 R14: 000078fd06f945c0 R15: 000078fd06f91f20
-<4>[   44.039310]  </TASK>
-<6>[   44.039314] Sending NMI from CPU 2 to CPUs 0-1,3:
-[..]
-
-panic() with DEBUG_BUGVERBOSE and panic_print=0x40, two backtraces
-on the panic CPU:
-
-[..]
-<0>[   45.149482] Kernel panic - not syncing: BOOM
-<4>[   45.149792] CPU: 1 UID: 0 PID: 3512 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 221d6609d9c374a289b848042333fd4fa6f5bddd
-<4>[   45.150176] Call Trace:
-<4>[   45.150285]  <TASK>
-<4>[   45.150394]  panic+0x190/0x450
-<4>[   45.150529]  drop_caches_sysctl_handler+0xb4/0xe0
-<4>[   45.150727]  proc_sys_call_handler+0x34a/0x550
-<4>[   45.150858]  vfs_write+0x76a/0xa80
-<4>[   45.150978]  ? proc_sys_read+0x20/0x20
-<4>[   45.151182]  ksys_write+0xb4/0x160
-<4>[   45.151303]  do_syscall_64+0x6a/0xe0
-<4>[   45.154298]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-<4>[   45.154490] RIP: 0033:0x797c7ab90594
-<4>[   45.154608] Code: ...
-<4>[   45.154866] RSP: 002b:00007fff4f3ae9f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-<4>[   45.154998] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000797c7ab90594
-<4>[   45.155183] RDX: 0000000000000002 RSI: 0000577d00a03130 RDI: 0000000000000001
-<4>[   45.155365] RBP: 00007fff4f3aea20 R08: 0000000000000001 R09: 0000000000000001
-<4>[   45.155478] R10: 0000797c7ac24820 R11: 0000000000000202 R12: 0000000000000002
-<4>[   45.155689] R13: 0000577d00a03130 R14: 0000797c7ac635c0 R15: 0000797c7ac60f20
-<4>[   45.155884]  </TASK>
-<4>[   45.155992] NMI backtrace for cpu 1
-<4>[   45.156005] CPU: 1 UID: 0 PID: 3512 Comm: bash Not tainted 6.12.24-kasan-00964-gcf04fce2879f-dirty #1 221d6609d9c374a289b848042333fd4fa6f5bddd
-<4>[   45.156042] Call Trace:
-<4>[   45.156054]  <TASK>
-<4>[   45.156065]  nmi_cpu_backtrace+0x14c/0x1a0
-<4>[   45.156094]  ? arch_trigger_cpumask_backtrace+0x20/0x20
-<4>[   45.156122]  nmi_trigger_cpumask_backtrace+0xd8/0x1b0
-<4>[   45.156149]  panic_other_cpus_shutdown+0x2d/0x80
-<4>[   45.156176]  panic+0x199/0x450
-<4>[   45.156206]  drop_caches_sysctl_handler+0xb4/0xe0
-<4>[   45.156229]  proc_sys_call_handler+0x34a/0x550
-<4>[   45.156259]  vfs_write+0x76a/0xa80
-<4>[   45.156279]  ? proc_sys_read+0x20/0x20
-<4>[   45.156313]  ksys_write+0xb4/0x160
-<4>[   45.156338]  do_syscall_64+0x6a/0xe0
-<4>[   45.156788]  entry_SYSCALL_64_after_hwframe+0x55/0x5d
-<4>[   45.156810] RIP: 0033:0x797c7ab90594
-<4>[   45.156829] Code: ...
-<4>[   45.156846] RSP: 002b:00007fff4f3ae9f8 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-<4>[   45.156869] RAX: ffffffffffffffda RBX: 0000000000000002 RCX: 0000797c7ab90594
-<4>[   45.156884] RDX: 0000000000000002 RSI: 0000577d00a03130 RDI: 0000000000000001
-<4>[   45.156899] RBP: 00007fff4f3aea20 R08: 0000000000000001 R09: 0000000000000001
-<4>[   45.156913] R10: 0000797c7ac24820 R11: 0000000000000202 R12: 0000000000000002
-<4>[   45.156927] R13: 0000577d00a03130 R14: 0000797c7ac635c0 R15: 0000797c7ac60f20
-<4>[   45.156954]  </TASK>
-<6>[   45.156965] Sending NMI from CPU 1 to CPUs 0,2-3:
-[..]
 
