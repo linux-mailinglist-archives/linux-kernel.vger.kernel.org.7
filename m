@@ -1,144 +1,151 @@
-Return-Path: <linux-kernel+bounces-752221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5B09B172AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:01:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 411B6B172B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E886F170956
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:01:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E3A6A18C6D39
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE18A1714C6;
-	Thu, 31 Jul 2025 14:01:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100D02D29DF;
+	Thu, 31 Jul 2025 14:02:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XprNaRik"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pRhDPM/L"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D7A242A87
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68A7777104
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:01:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970460; cv=none; b=q6QGDV2Bp4kjudFK8xJSuDplOueP4rDEONj7Y1FrILF7RV73+Z5AnDcKd23YfLOiY/EzIhcR1vCGRIRgi0q94F6UeM8LI4qycGJl7LMp9be5lTSTYEOYDbXGzYATycF7NUZY6/wImIac8wEZyFTtqZ3Xi5qEeh9IYKGvVTVYK/Q=
+	t=1753970522; cv=none; b=fXS7bWllPsfMOS1VuIH/K9/FmRK9K6cMHrfSHx+NMxqlkJm+FV7hSP0OpOO4bG/vDeZu/vf0/TKqK4WJxW9O2N5bwbiog7yG/NBtmTS59Q7NvemWkz1jCQxPq76xoJUDDACxX8dHwvOgX93wmM0HfvXfKKO/GPLwI7Gmjw5WQSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970460; c=relaxed/simple;
-	bh=p4VeZrFlCqtVa7XoU54rtdRXo3wij4Swtu56Sdv5maI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oKGSdg02oiwX4JpFyyL229xfq9qb82Pmj9sRTUjddJruWcbK4Om89uNKxIxN17x30HDQ12WFbdxoz5/sdXKVqXc1vpCimIa82giiUCC2myapHQh7QpziYQKfXCtua8Q9ywWbNHlUrf765pLLN81rkaK/zH6+DNkkOlpCF3Q7OfQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XprNaRik; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-31ec291f442so140807a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:00:58 -0700 (PDT)
+	s=arc-20240116; t=1753970522; c=relaxed/simple;
+	bh=vtDoBOhDgvfsTUyaaPcWyqShvPac5U3nE2ogLxWYfzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=TTzsi6XMyNUMAbTNRnkGmP2cAWPSj2/UkkwWCBfugATrBkHTDQimxf+T1EK2oFodyJwe17YEWWgzcJjbQQcGCMPy/mLMNucZG61L/1aID5GbWFSBKg24QHeSRQNPK1jgVdnSUmrpBw3+O4gxFAXIArVCldsW3H4t3ge8Sh4yJ9M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pRhDPM/L; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b785a69454so673306f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:01:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753970458; x=1754575258; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8157ZS3tYeHtH6rijRBK7OcIVWChQfvpSllS+EZouUI=;
-        b=XprNaRik6W3tBLrqRa/8G7soIqS9lbuLF/Caaz6esN83jc85FX8tJ4ZcAGrhyoW/ut
-         Inm45ScYkozFG3c6XH1SS4nDXGTCzZ8WMFWu4VV1c691pmyo7mOLRC2XRjof/n6fpJ3W
-         iabF5PZYNcfwy4+dpXYL47W5PFsR4rXnekmzW1tEfdzlO8PoviOXAhsBaw4ZDmpNi6nC
-         SycsgcyhFI2RAqLMCy+a9cIyx3SGuHtVIsA47D+/9ddGBRwUHAcPh326GtsRjKUPPjSf
-         DUSqbZnv8LlTlIOQO8HtCZF8D6NwFcnUyOScaGOUYRscS+IUpK+pIosvwEs9BFy9mvmD
-         AHfA==
+        d=linaro.org; s=google; t=1753970517; x=1754575317; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=GV5s6FOxWw6F5tawQDBpDciMQ1YhmYggnl1ycVHKgck=;
+        b=pRhDPM/LyLj9lwaUCnMMPHCkD9HiKSg/3H07nzENZdp+FzKQDwLhqrcBUAgwyH/tmN
+         /0tZ1kIa7C44SC4qjy2VEu5UkVpCJGUAOOkj+q2tzq37ygFiAh0iNrBESy65lBX9JU4C
+         5QELrxtBtvIP7uWGPiqNglNbrObcwZJpAOAEUCRYqfZp8rwVmlOI5EMpeL10QjsdtGPw
+         C6WGNP+stoypfgErUA9xCf10jgq0YWnGOCEPG0fb2SmvIINF7JG0aCYYM5aiATOcmkXk
+         gDnSM/o6EXTyyE50pa0TRPH3tfusizUdfzBFsQTOwQX5fs4IzZA2U/QhvpjjpHPuWeeW
+         maRA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753970458; x=1754575258;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=8157ZS3tYeHtH6rijRBK7OcIVWChQfvpSllS+EZouUI=;
-        b=n8Q1UkKcQxQGdMFDxM943rDMXNIz3gUJxIeo5pDBr033tIkWkoXjAPRWQ2q9I+JzNp
-         ehRL0le8vDzq/YA1hIuXtnQFTQguv1uhRJabAgDeZcoAheuO0LqgmI11fYDDz22HPS5t
-         +eC/C/rvVvWtUDc0qjKJaknIniliI+I57jI/WmNNRjGGNy/jtOiT3X5rvIAS7yiMVKUy
-         sW5sEFmiQBXMwDeuGLu34BQ0XBLLCBhzKLeYHYzg3mTprcP5MHPfQAeAvnnMKLgUyvHo
-         ZVH3vGJRb+akfFyiuPLWnti+fV4XlFU7rxW/Pq9MYfShbF5CbgJYNrDKaxGBUikSm9Na
-         GW7A==
-X-Forwarded-Encrypted: i=1; AJvYcCVuInKeEw6AeB5DVB7pLtqRN0djdT8C3KwTe17+qeKJptF1dz5rPsmKSxbGeV2KqOBwhZMA+M3yyxb8qoc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywxw5DE98AQRcQt4hvlEA8UQCvupy+VlU+XrNdIcQqmpJH6KjE9
-	ddaQtKEWe+QcZLiQaHTxeqIY3W5/IoPA8hmEse9hcqrb8drYpPhTzgRgl99kYvghRn6T4OY3kFW
-	9KubDnK9WlbeNb4N1lUkg2RhmSSGJmyE=
-X-Gm-Gg: ASbGnct++1awE/fG+2zzJZ131NJgqF/JhrEFtyFtx+QBwbNErEIEjsf2hcR6iyowB6u
-	FGja+upOVnoaNQplMrAKcMiegCtVmXTPtGUo4P3CAMZ7v5gQr5/r2JS96t40368cRekWsXeXnvH
-	gdHVTzSmYyv2wkjSx5cmM6ETeRsbnF+Jsq94xfqkLeMfsuOSliXAdev6AcDw9rHsQi76tBglDJK
-	zkDddvx
-X-Google-Smtp-Source: AGHT+IHmeHWZpcZnnZ3kXgdMZ5YyCy7CsMUcHBLKicsRETzXtCN9pdf52HCE2POOb92QpUFR8CCNPcVZOGClLpCOnww=
-X-Received: by 2002:a17:90b:1d88:b0:312:e9d:4001 with SMTP id
- 98e67ed59e1d1-31f5de88251mr1992896a91.8.1753970458039; Thu, 31 Jul 2025
- 07:00:58 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753970517; x=1754575317;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GV5s6FOxWw6F5tawQDBpDciMQ1YhmYggnl1ycVHKgck=;
+        b=xAbeuMKabWA//nQZ/XkDCD1JIoYs/r45NYbmX9v5eUOj2PrTTdkEdreHbDONaoBjhf
+         kETpUGaoLkDYOaCgOv0e8blW0WLKNLcJKcyq+AGGViDB2S09yDZXeGwJexAwOfsQju5x
+         k91kuI+M3Z6vD3kkymzsqW13UeFgRdIcP9WFOcahUuYxlDeOtKPY27xGnPjk7DESb5G1
+         Tp+lLRPeKSYuDpzw6uGoGXPv7numSclx1dq0JqpGEPNQOH2PzZWwkN3jINzsXTilxjGw
+         HZJqVfVLBr8YIS+lo3LSzVFgHpHLf2cbIWdXrWr8wCNfbaYih85WX8N2rUEBegrT6m3/
+         mLyw==
+X-Forwarded-Encrypted: i=1; AJvYcCWS8Q7kwvgh/xXGm4TjFy+4PWWjvBkVKuv+riDMHV6rPiyO2zs1UmIq4e034VfWBkaMx3Yahvbmpfq92FQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzcEkveIJq1VETkY19CAz+8UwbwMW+1vD2ftP62t6YeuReTioA/
+	1zDXFjTRuGnk1tWRJqGW1lPTmf9Wl5xYywWD5xNGhyb3r5KHPtOrr5UTYbHZCuTooyhM79NONsV
+	LWx9e
+X-Gm-Gg: ASbGnctQSRuEPPxaRy0Om5odW2V9lHdnE4VCTOu0Aifa6D1VwrntJitdHWOkb4XX2nX
+	Se6yYP50zW3B8H9xq5deOTgY4rccqKDufrAzwc+bio10wwwrv2FvMc6UScmdDEhIYRk8zUlcg1L
+	8tVwbRAp71ynOF3aptSAkKckKDhZlfQb761Vp3Y9FPaDy5JuOHVosxB5qalRxINIOsFJyQO8BTV
+	HF2JZV19u3WYgDRTfcsB8Ke3H91ytpJFhhPy3yYLVPbFyMhrBS5LQo0UV63k2b10TMIx8NNQohQ
+	ps0XMIbBy2f0pbDMiohzpOxXAooSNZflqz3IV2T1aNoEIC+VFU6eD9xH3dwK1o7WG7DB/tQWDtk
+	Isu0mmjAMhPfELF3YXQbjlzYi1fRmbqaoBOTN32re25L1cOqLNpgKJw3Mc8I=
+X-Google-Smtp-Source: AGHT+IELpYq0cfUwdhdal+guuoengtu4ASva2Hzj0xykx429WqgpGqubTQ/jYn7p47HzHjuQsPyogw==
+X-Received: by 2002:a05:6000:41d3:b0:3b7:974d:5359 with SMTP id ffacd0b85a97d-3b7974d597dmr5098700f8f.32.1753970516376;
+        Thu, 31 Jul 2025 07:01:56 -0700 (PDT)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee57c18sm28121285e9.28.2025.07.31.07.01.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 07:01:55 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: mbrugger@suse.com,
+	chester62515@gmail.com,
+	ghennadi.procopciuc@oss.nxp.com,
+	shawnguo@kernel.org,
+	s.hauer@pengutronix.de
+Cc: s32@nxp.com,
+	kernel@pengutronix.de,
+	festevam@gmail.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	imx@lists.linux.dev,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/8] Add the STM and the SWT nodes for the s32g2 and s32g3
+Date: Thu, 31 Jul 2025 16:01:33 +0200
+Message-ID: <20250731140146.62960-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
- <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
- <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
- <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
- <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com>
- <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
- <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com>
- <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
- <CAHk-=whOb_ebQQbnXeqb8uXf32WA32nrL3=HQ2y8hBm9hFgVOw@mail.gmail.com>
- <CAHk-=wh+79KkMXsNqyPxeU+c5U2h-n13ko6J_QzwtjyYCKhrSw@mail.gmail.com>
- <CAHk-=wgEGn0azq0n5BfWg4ZStrZYanLCX1a+quug7HKmjimhpw@mail.gmail.com> <CADnq5_NBM1Kso==+N=1xCjF+xiS7Vy4g47uvUN7sSWs8bontZQ@mail.gmail.com>
-In-Reply-To: <CADnq5_NBM1Kso==+N=1xCjF+xiS7Vy4g47uvUN7sSWs8bontZQ@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 31 Jul 2025 10:00:45 -0400
-X-Gm-Features: Ac12FXxuuoZ1YWI8UmgU_FrhbQ3mMkgX2KF3Bcm21SS1tJ08teC8t0_OYzwfXfM
-Message-ID: <CADnq5_MWxd7WHi6=aY2ckHNOvRvT1e_rDPU_0xEma1cbaGa2Yg@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Airlie <airlied@gmail.com>, Dillon Varone <dillon.varone@amd.com>, 
-	Ivan Lipski <ivan.lipski@amd.com>, Daniel Wheeler <daniel.wheeler@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31, 2025 at 9:09=E2=80=AFAM Alex Deucher <alexdeucher@gmail.com=
-> wrote:
->
-> On Thu, Jul 31, 2025 at 3:03=E2=80=AFAM Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Wed, 30 Jul 2025 at 21:58, Linus Torvalds
-> > <torvalds@linux-foundation.org> wrote:
-> > >
-> > > d7b618bc41ee3d44c070212dff93949702ede997 is the first bad commit
-> > >     drm/amd/display: Refactor DSC cap calculations
-> > >
-> > > Let me go see how painful it is to just revert it from top-of-tree.
-> >
-> > So with that reverted (didn't require a lot of fixing, only minor
-> > unrelated context added nearby later), current top-of-tree works for
-> > me again.
-> >
-> > The revert I used for testing attached just so people can see exactly
-> > what I did.
-> >
-> > It's late here, I wasn't getting any more work done today anyway, so
-> > I'll leave it like this for now.
-> >
-> > I can continue to do the merge window with this revert purely local
-> > for a while, so if somebody comes up with a proper fix, I can test
-> > that out.
->
-> I think it may be fixed here:
-> https://patchwork.freedesktop.org/patch/663973/
+The NXP S32 SoC family includes timers and watchdogs that can be
+dedicated to the CPUs present in the system. The documentation refers
+to them as the System Timer Module (STM) and the Software Watchdog
+Timer (SWT).  This design originates from the automotive domain, where
+the SoC can be partitioned, and a group of CPUs may run different
+operating systems or firmware.
 
-That patch is in my fixes branch that I was just about to send to Dave
-and Simona.
+On the S32G2, we found 8 timers and 7 watchdogs. On the S32G3, there
+are 12 timers and 12 watchdogs.  Please note that the 8th timer
+(STM_07) is not described here, as it is coupled with a specific STM
+instance used for timestamping. This makes it somewhat special and
+requires custom handling in the driver. It will be added later.
 
-Alex
+All timers and watchdogs are disabled by default, and are selectively
+enabled depending on the platform configuration, which may include
+different combinations of Cortex-M7 and Cortex-A53 cores.
 
->
-> Alex
->
-> >
-> >             Linus
+This patch series introduces support for the SoC and enables both the
+s32g274a-rdb2 and s32g399a-rdb3 platforms.
+
+Testing was done only on the s32g274a-rdb2, as I do not have access to
+a s32g399a-rdb3 board.
+
+Changelog:
+  v2:
+    - Replace the 'description' word usage by 'node
+    - Reordered the nodes in DT regarding the address ranges
+    - Modified the change description to leave the ambiguity regarding
+      the architected timers
+
+Daniel Lezcano (8):
+  arm64: dts: s32g2: Add the System Timer Module nodes
+  arm64: dts: s32g274-rd2: Enable the STM timers
+  arm64: dts: s32g3: Add the System Timer Module nodes
+  arm64: dts: s32g399a-rdb3: Enable the STM timers
+  arm64: dts: s32g2: Add the Software Timer Watchdog (SWT) nodes
+  arm64: dts: s32g274-rd2: Enable the SWT watchdog
+  arm64: dts: s32g3: Add the Software Timer Watchdog (SWT) nodes
+  arm64: dts: s32g399a-rdb3: Enable the SWT watchdog
+
+ arch/arm64/boot/dts/freescale/s32g2.dtsi      | 119 +++++++++++
+ .../boot/dts/freescale/s32g274a-rdb2.dts      |  20 ++
+ arch/arm64/boot/dts/freescale/s32g3.dtsi      | 195 ++++++++++++++++++
+ .../boot/dts/freescale/s32g399a-rdb3.dts      |  36 ++++
+ 4 files changed, 370 insertions(+)
+
+-- 
+2.43.0
+
 
