@@ -1,70 +1,72 @@
-Return-Path: <linux-kernel+bounces-751857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C0D1B16E50
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:17:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CC71B16E52
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:17:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61BB31C20484
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:17:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 96DAA3B8160
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:17:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B5F029E0EF;
-	Thu, 31 Jul 2025 09:17:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394082BDC0A;
+	Thu, 31 Jul 2025 09:17:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="jHKR3lwB";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="gyfGocUe"
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="YvTRIgOb";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NXzFN34L"
 Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7193E79C0;
-	Thu, 31 Jul 2025 09:17:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03A4827CCE2;
+	Thu, 31 Jul 2025 09:17:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753953435; cv=none; b=SPZEBaomhY0njfof9B9VHCyA78GzWO6xGRgp8xooOxaKm4+0HaHONAW9L9hUH49wnhg0nPfQ+QeNR5EA8kjA5HnhmfzJAezMJo4300oORF50Dta6txMef2ojn2cObQbnSGisxf+2N8edcfl6MKtlJmLXDXLWKs+cyopR6sJCwmQ=
+	t=1753953437; cv=none; b=n9rKjDzZx5h5brT68O7q/i24CXPP0rg3a+ScSLVlps8lCR/F/psLWqyhGEDyCYmFNdQKluzB1Wu8nx3D0lDZ23TW4/4km1+ZX0mrTRLwUeHYR/Q7MZyIkN0PhMPp2CfQ58U8mC/28gmIE1r9fhRoFbv+wGm77+vuSm/0ZOPzAmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753953435; c=relaxed/simple;
-	bh=a3OliG1vrbEaOCXKWiY3rdTSqViJJ0y9oCtiQGwzsX0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Wjnu4+Uxa8Oim4gZdq53SQ/4lkgcjS1yo0Zw7QZHUlGVwj198OXO6jA9/tTH14ZPv+jBkarkhYwm3/66FixcXRtuIR3w3M3X2NjEK/UcbaInuKB9O+V1EZMnaVJ06Dfb/rhSJ6lW5xFh9cYevskmGzuSGNqUCRHBjuIXOt5HJio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=jHKR3lwB; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=gyfGocUe reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+	s=arc-20240116; t=1753953437; c=relaxed/simple;
+	bh=XLy9JforODX1vg94EoQoeuC1fy55ynPGnrmbyWpbvRA=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=M0NaJL7A4Q7Lx013faw3hI0W2giOyOgVzhNsb/t3FitVCYvs/6K/ZyqIcvPEadjSXgJURCQ97yenVqLsKC3VyIoUUlpDyyYS7A+JCZyiKz5x2nuzz5HEk1etfMC0fzs0PEumcubA7egDTHf2K6Av3E3gvEtUvd8heKfPbylfaoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=YvTRIgOb; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NXzFN34L reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
   d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1753953431; x=1785489431;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=kLKtT8JZ6dODcbUKgfZeCB5jr/fQZczVXqQkqrWvrQk=;
-  b=jHKR3lwBanOO0P+/q0qASztXqTddMKl2QCuLI1uLRG7OnzHV+Y/vWXZd
-   u1qGmozMhYSiFyxWR414ELecc+ZTy82WBQGjnrUmk8kaa9LvwUvj6YDd0
-   iqwHyiFWvAKuUoTk+rgGvNr4Fc6k3fMtr6JZLUpc2nLL/0VlOL0YlicW9
-   IJpeae8zUPj8eq+radl8kyDOzstbLpLF0882kJ4u7fEV4fKvZtNO18P+x
-   kveZL9eaM0yaR1Zcfmhh8aOEo6QplAD7P77hOQuoMPcQsqTwKT/qohm1M
-   kolR1bIZ9ZsQLZJmy0cPZZcGb8fOdG2Bb8mREshY5CYqpHw+940b1xDiT
+  t=1753953435; x=1785489435;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=iMVr0ws5CkQAGwUnCKlS4uzwI98zmvZR9krDCNF3JCI=;
+  b=YvTRIgOb80Z43jywsNgN65Sf9eTzFK6nQGpjPeXfHTHO1suGXMem/Z9q
+   2J+FUzE50bD0drt71QmMrxSbfePbnW2HrjFuG2W05d5Gd27QlNqKvmH6N
+   6KRbFGToEKs+oKMkvi8p1msq+ch/f5gdgaGcWV2uBs1ExsG+RkPQ24m5v
+   DHQobOXo5R6Iem1RGEHIAp3cAXWDqVVk9W011B9Ng712mQmV/ETCOvBFA
+   7vfEPbD28Fi5yuSgxF9ylkj5T4o7HWvQNknOVysg5HMArxym7hsI473wR
+   o9tUB7NRr9khGg+KkU6WFYVvcq+jQnszGyksvhZ5HZNpDqlU5oN32bkp7
    A==;
-X-CSE-ConnectionGUID: ij/sogzaRoir3oVu13BriA==
-X-CSE-MsgGUID: CGxTcfeDRdyKGUD0CdhahA==
+X-CSE-ConnectionGUID: KES0HHvgRUi/R//cAtr2VA==
+X-CSE-MsgGUID: Rj7oXHOHRAmM44IczhCTFg==
 X-IronPort-AV: E=Sophos;i="6.16,353,1744063200"; 
-   d="scan'208";a="45516517"
+   d="scan'208";a="45516522"
 Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 31 Jul 2025 11:17:07 +0200
-X-CheckPoint: {688B3493-1E-943DFC15-D71A48EE}
-X-MAIL-CPID: 5A07E1B3BC8A0778C3A5FDBFD2D5B31C_5
-X-Control-Analysis: str=0001.0A002121.688B3439.0079,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 204D516B722;
-	Thu, 31 Jul 2025 11:17:01 +0200 (CEST)
+  by mx1.tq-group.com with ESMTP; 31 Jul 2025 11:17:12 +0200
+X-CheckPoint: {688B3498-1B-4FC15ADB-CD71293B}
+X-MAIL-CPID: 88682096A4402C254D972D6D13907F90_0
+X-Control-Analysis: str=0001.0A00210D.688B344E.0008,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 0573D163C63;
+	Thu, 31 Jul 2025 11:17:07 +0200 (CEST)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1753953423;
+	s=dkim; t=1753953428;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=kLKtT8JZ6dODcbUKgfZeCB5jr/fQZczVXqQkqrWvrQk=;
-	b=gyfGocUebJ0GY86x8QMGn0scMnn3B87qZHtHT5A2901xiNDkgOlpUrFg6eob75W0YRrec5
-	h60M/4bjHMQVNdP0h4W0A2VbObgUwK0fuyfxskTqn5qSC+EhhB5aSOsN2vT931n623uJ6X
-	2r1xfV8WUpBCkDisYCpIdntPwpb9tI3ZTsd+t6NG5toR0N/RyleTf9aO3jhGGFTunKOA4G
-	aRMW6vd4BYf1fHNWbVZiNm+fNuw9UMVEzuij1o3Y75cZWhDq6ld48YxfcYgVZK1tPZloZD
-	FrPxEFa83jdrFvMuxDHCKW/q7ow7NgKq7lb4RHO+HX9RQ0gz8Bgls7lkC8FyWQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iMVr0ws5CkQAGwUnCKlS4uzwI98zmvZR9krDCNF3JCI=;
+	b=NXzFN34LjoFcpC1RkpbQlkGvR+epBpgqgdVT0WrflWTYbGcPhNeWX0Abtbww9wF/gyk/Kg
+	GHpgoTrollxGszJ5AZDVKXU/UbZnlMlbCvKW0YmF/TR3IXRFTBQtxXNeHnp9QZrVI8WR5Q
+	R+7RENT7WDGBLQTGnnoRRvc3jBE6cDTwn32nFD8TXXo1vzJrnsO/ThyOn8W+VdCE8ywDtA
+	LYZkFQgilYrXqEVEckHL5TrwgemyU4VRob2YdfqKVFvF9beHd5Kiqnzp9eTTN1CsCpXxHk
+	EhMEJwGL6f7yss4Y97hH9i6AulCLUT7qB1bJ8aLeM8ZcLGuZLdqCyBvjnzpWHA==
 From: Alexander Stein <alexander.stein@ew.tq-group.com>
 To: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
@@ -80,10 +82,12 @@ Cc: Markus Niebel <Markus.Niebel@ew.tq-group.com>,
 	imx@lists.linux.dev,
 	linux-arm-kernel@lists.infradead.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH 1/2] arm64: dts: imx8mp-tqma8mpql: fix LDO5 power off
-Date: Thu, 31 Jul 2025 11:16:52 +0200
-Message-ID: <20250731091655.2453107-1-alexander.stein@ew.tq-group.com>
+Subject: [PATCH 2/2] arm64: dts: imx8mp-tqma8mpql: remove virtual 3.3V regulator
+Date: Thu, 31 Jul 2025 11:16:53 +0200
+Message-ID: <20250731091655.2453107-2-alexander.stein@ew.tq-group.com>
 X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20250731091655.2453107-1-alexander.stein@ew.tq-group.com>
+References: <20250731091655.2453107-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,165 +99,61 @@ X-Last-TLS-Session-Version: TLSv1.3
 
 From: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 
-Fix SD card removal caused by automatic LDO5 power off after boot:
+BUCK4 rail supplies the 3.3V rail. Use the actual regulator
+instead of a virtual fixed regulator.
 
-LDO5: disabling
-mmc1: card 59b4 removed
-EXT4-fs (mmcblk1p2): shut down requested (2)
-Aborting journal on device mmcblk1p2-8.
-JBD2: I/O error when updating journal superblock for mmcblk1p2-8.
-
-To prevent this, add vqmmc regulator for USDHC, using a GPIO-controlled
-regulator that is supplied by LDO5. Since this is implemented on SoM but
-used on baseboards with SD-card interface, implement the functionality
-on SoM part and optionally enable it on baseboards if needed.
-
-Fixes: 418d1d840e42 ("arm64: dts: freescale: add initial device tree for TQMa8MPQL with i.MX8MP")
 Signed-off-by: Markus Niebel <Markus.Niebel@ew.tq-group.com>
 Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
 ---
- .../imx8mp-tqma8mpql-mba8mp-ras314.dts        | 13 ++++++-----
- .../freescale/imx8mp-tqma8mpql-mba8mpxl.dts   | 13 ++++++-----
- .../boot/dts/freescale/imx8mp-tqma8mpql.dtsi  | 22 +++++++++++++++++++
- 3 files changed, 36 insertions(+), 12 deletions(-)
+ .../boot/dts/freescale/imx8mp-tqma8mpql.dtsi      | 15 +++------------
+ 1 file changed, 3 insertions(+), 12 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-index d7fd9d36f8240..f7346b3d35fe5 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mp-ras314.dts
-@@ -467,6 +467,10 @@ &pwm4 {
- 	status = "okay";
- };
- 
-+&reg_usdhc2_vqmmc {
-+	status = "okay";
-+};
-+
- &sai5 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_sai5>;
-@@ -876,8 +880,7 @@ pinctrl_usdhc2: usdhc2grp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d2>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d2>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d2>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d2>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d2>;
- 	};
- 
- 	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-@@ -886,8 +889,7 @@ pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>;
- 	};
- 
- 	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-@@ -896,8 +898,7 @@ pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>;
- 	};
- 
- 	pinctrl_usdhc2_gpio: usdhc2-gpiogrp {
-diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-index 33cd92e63c5d5..4eedd00d83b9f 100644
---- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-+++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql-mba8mpxl.dts
-@@ -604,6 +604,10 @@ &pwm3 {
- 	status = "okay";
- };
- 
-+&reg_usdhc2_vqmmc {
-+	status = "okay";
-+};
-+
- &sai3 {
- 	pinctrl-names = "default";
- 	pinctrl-0 = <&pinctrl_sai3>;
-@@ -983,8 +987,7 @@ pinctrl_usdhc2: usdhc2grp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d2>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d2>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d2>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d2>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d2>;
- 	};
- 
- 	pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
-@@ -993,8 +996,7 @@ pinctrl_usdhc2_100mhz: usdhc2-100mhzgrp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>;
- 	};
- 
- 	pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
-@@ -1003,8 +1005,7 @@ pinctrl_usdhc2_200mhz: usdhc2-200mhzgrp {
- 			   <MX8MP_IOMUXC_SD2_DATA0__USDHC2_DATA0	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA1__USDHC2_DATA1	0x1d4>,
- 			   <MX8MP_IOMUXC_SD2_DATA2__USDHC2_DATA2	0x1d4>,
--			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>,
--			   <MX8MP_IOMUXC_GPIO1_IO04__USDHC2_VSELECT	0xc0>;
-+			   <MX8MP_IOMUXC_SD2_DATA3__USDHC2_DATA3	0x1d4>;
- 	};
- 
- 	pinctrl_usdhc2_gpio: usdhc2-gpiogrp {
 diff --git a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi
-index fd70b686e7efc..b48d5da147273 100644
+index b48d5da147273..9716f24f7c6ed 100644
 --- a/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi
 +++ b/arch/arm64/boot/dts/freescale/imx8mp-tqma8mpql.dtsi
-@@ -24,6 +24,20 @@ reg_vcc3v3: regulator-vcc3v3 {
- 		regulator-max-microvolt = <3300000>;
- 		regulator-always-on;
+@@ -16,15 +16,6 @@ memory@40000000 {
+ 		reg = <0x0 0x40000000 0 0x80000000>;
  	};
-+
-+	reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
-+		compatible = "regulator-gpio";
-+		pinctrl-names = "default";
-+		pinctrl-0 = <&pinctrl_reg_usdhc2_vqmmc>;
-+		regulator-name = "V_SD2";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <3300000>;
-+		gpios = <&gpio1 4 GPIO_ACTIVE_HIGH>;
-+		states = <1800000 0x1>,
-+			 <3300000 0x0>;
-+		vin-supply = <&ldo5_reg>;
-+		status = "disabled";
-+	};
+ 
+-	/* identical to buck4_reg, but should never change */
+-	reg_vcc3v3: regulator-vcc3v3 {
+-		compatible = "regulator-fixed";
+-		regulator-name = "VCC3V3";
+-		regulator-min-microvolt = <3300000>;
+-		regulator-max-microvolt = <3300000>;
+-		regulator-always-on;
+-	};
+-
+ 	reg_usdhc2_vqmmc: regulator-usdhc2-vqmmc {
+ 		compatible = "regulator-gpio";
+ 		pinctrl-names = "default";
+@@ -187,14 +178,14 @@ at24c02: eeprom@53 {
+ 		read-only;
+ 		reg = <0x53>;
+ 		pagesize = <16>;
+-		vcc-supply = <&reg_vcc3v3>;
++		vcc-supply = <&buck4_reg>;
+ 	};
+ 
+ 	m24c64: eeprom@57 {
+ 		compatible = "atmel,24c64";
+ 		reg = <0x57>;
+ 		pagesize = <32>;
+-		vcc-supply = <&reg_vcc3v3>;
++		vcc-supply = <&buck4_reg>;
+ 	};
  };
  
- &A53_0 {
-@@ -184,6 +198,10 @@ m24c64: eeprom@57 {
- 	};
+@@ -211,7 +202,7 @@ &usdhc3 {
+ 	non-removable;
+ 	no-sd;
+ 	no-sdio;
+-	vmmc-supply = <&reg_vcc3v3>;
++	vmmc-supply = <&buck4_reg>;
+ 	vqmmc-supply = <&buck5_reg>;
+ 	status = "okay";
  };
- 
-+&usdhc2 {
-+	vqmmc-supply = <&reg_usdhc2_vqmmc>;
-+};
-+
- &usdhc3 {
- 	pinctrl-names = "default", "state_100mhz", "state_200mhz";
- 	pinctrl-0 = <&pinctrl_usdhc3>;
-@@ -233,6 +251,10 @@ pinctrl_reg_usdhc2_vmmc: regusdhc2vmmcgrp {
- 		fsl,pins = <MX8MP_IOMUXC_SD2_RESET_B__GPIO2_IO19	0x10>;
- 	};
- 
-+	pinctrl_reg_usdhc2_vqmmc: regusdhc2vqmmcgrp {
-+		fsl,pins = <MX8MP_IOMUXC_GPIO1_IO04__GPIO1_IO04		0xc0>;
-+	};
-+
- 	pinctrl_usdhc3: usdhc3grp {
- 		fsl,pins = <MX8MP_IOMUXC_NAND_WE_B__USDHC3_CLK		0x194>,
- 			   <MX8MP_IOMUXC_NAND_WP_B__USDHC3_CMD		0x1d4>,
 -- 
 2.43.0
 
