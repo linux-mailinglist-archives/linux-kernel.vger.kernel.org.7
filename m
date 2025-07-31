@@ -1,104 +1,96 @@
-Return-Path: <linux-kernel+bounces-752456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B30FB175C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:43:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C370CB175C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:45:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CD7F3BD3DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:43:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AEE016209F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:44:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5350228D8EB;
-	Thu, 31 Jul 2025 17:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFC62797AC;
+	Thu, 31 Jul 2025 17:45:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HW6b4fRA"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="nYKAIJJD"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73D0422FF2E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2BD422FF2E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:45:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753983820; cv=none; b=MptbBes2www8HvMAnol92JZhqkN3UAa+La5NE4+7BApBZsElm9uw/t5wv8kg+kGN9lqEn2BZCZ0oSDZhDg0NoZLKHF9jUemnwMZlXo/tpF7/lbbQzWZqS9lxJiIMjy1EeTGQz4a4QSYsfdg+fxtgmoPq1kg+q/yPV+b3Q4CYMys=
+	t=1753983903; cv=none; b=NIBJzDXdVrNhJnhTtyDQcq1M1PgbLosoH27dnndOBTp29Vc56krJ5EVHB5hV6TjpP+OsHfnWrrLTRZce3SOLWMD4TD4/gSxFIyxqWa0jX98hy7nAI/Wupihmj22He5xJChZZr7ZHGB7xo9rCoZTdiJ464ogz507sWLo7zpNvAV0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753983820; c=relaxed/simple;
-	bh=gF/Lfov/BGotqFyFDG+Y7IiqHn/X1SmvmbjPZQA1YBo=;
+	s=arc-20240116; t=1753983903; c=relaxed/simple;
+	bh=McEipDWDZ0a4efpZE1Lw4KPrrD4u60yjBO1dH6BPMys=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OdNK8ypJUmEYEoH2Q+kkfWcHCNyV6NqA8na/V9MpYiQXXEyc9XP15Ar5orI5DI0o58rjLP4pYZdFY4c6lAaxCCKkMTaxkd/bTBRjmGiVPwJjZ95vDMl67yprlsEsroqBRAP93ZVdM/jFndY58Ka72IBP4YtsrgoFbCsdITxO0q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HW6b4fRA; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VDf9Za002538
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:43:35 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XgQLj33jhp7/creFx0MYZQCfK0nDYyjfst1wTym5RW4=; b=HW6b4fRAnBY7ty2S
-	X4MA4g42Md+jfRahHHBZ88RIglcBUzDoEwehI/32C0VBdPJGVAc0KZh9ZCkEPOd2
-	7BtgraezHj17WtQ6JkJPp887JBa+E+PQonkuOtcpHvHOrZSH7L0+NVs4yMmi8747
-	+lXSGpnnu4MYDR9EL7FsqwS59X+cY69tx+vPJJzX/pzEbXo1U25Rvy6u4eX+guIz
-	54IUGbd20L6ciyDmd7LaMS9hl+1AKwFuS99F7vpYExZl5RB7iyw/Fjdfa2rTQlnO
-	4c2t/e4YTTYE45uRcEoXvnOadEJLVOKk80DQCAQltuVzjtJJRGwNIEJ0vCvZUvO0
-	IWj6ZA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pbm8knp-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:43:35 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab69fff4deso20363731cf.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:43:35 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=lGea4RWWEdmeIC5Gs0Ri5xjcKz/kmmhO7keSlmmziT/yVLi0ptRfdoSM+pI0f4N+CYnSZOZgwsOJICS3UjhtQSJZIay4KuAqhbDveITgEk9wSrMn5/cVqT7hhVwUiN9cFW45pj4R6HKIeQdqwRmWFvY9jQhvjd+d7FSAnd+TzFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=nYKAIJJD; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so4055e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:45:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753983900; x=1754588700; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=+kfkGzJlve/WLoyPW+HY4jJ87yR9ziLhY0paEWgfM94=;
+        b=nYKAIJJDFQYPOW5UVTwn8YXcAtWR7qzeKgK9QlzuME6d7I6VcXyKlWki2Zuk9h3rwB
+         gWpSy9r2p40bY/vOrIRClMl2W5oYBTZec69J42XvVR87IbClUKDsD8Ca0bmldEY1yWe1
+         MwF960W78I2U37jWx8ZCDPb8O7wHjlvAN1+TBBEDFneBxB77kv2imYtpuAMWj9GokQTH
+         be6NELJFscbbOIMc+Ix/+xz2/xBzMJVgOjZckzXN9+Z8FFaUgosH2ncGBtd79mx/AyDj
+         QHN7IW6xABEOkWaSpQ5egwD6K5jZc/8QPcFPyTc+5HWT7sXgrVwj39pG+AbKB7DNSV//
+         q2vQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753983814; x=1754588614;
+        d=1e100.net; s=20230601; t=1753983900; x=1754588700;
         h=in-reply-to:content-transfer-encoding:content-disposition
          :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XgQLj33jhp7/creFx0MYZQCfK0nDYyjfst1wTym5RW4=;
-        b=h0oN3BhsayS+tAh5+BeU8s3x8Jte6Hqlgr3M/oKyWI2GBARYn3DaAu98m9e7LI9cK7
-         GQ0ds2pHWmeu4iqRN1/x7LPNO0kkFijTFc/i4phDziU5BMEotiJDpKDuc7211YCh48W4
-         RJlIQHLEoCy3IM2TWErpqvdPrb6/ktOq4exPZc47fkDndeCfYcqUM8ew4Wb1tBM/VAdJ
-         aIA7Jzh7mdy/W/j4OWLYsUWIl9nBx6W+GROLHoQfEyslHzoi7/0IFNoaJtQOdMHUwi76
-         O5AzUo295WZa1y5PQgBKcIkwnHdjzfPDYkFlLcY7rV62w/o62y4mE/pWzyRm9uUMElps
-         4CnA==
-X-Forwarded-Encrypted: i=1; AJvYcCW8LQvINF6wePvHN6w9kgyvZPww27AgmiFfVi2GDBfz5yyagBkjOZvpNG9k5h9e2PSxy4BM/3iOqzpBkEk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3EN/osJjjlVqbDCwnzWbLseLC0AO7YaLiAr5B/8iE4uRDfpYa
-	BJxaEmGjY0gCSOZf2Yxc8IRu7WxYUgl+Aa0kKwWxbZ3kdmSf3L8GV2nmt2V2Gyri20WjyOfrjPu
-	vBxsdOzbJ7OI7jkaFKnW7URCmq5I01q1Rs/spY2UhqLvfZ8WuAP611L6igd5QC9jEMyI=
-X-Gm-Gg: ASbGnctdRi4NrO+bjliY1NRKsy2DzxcRJ2dOvQ9oqrKpjqNkJaJ8iAs09UJ13O1pP+7
-	FouTfgsTIVZPevypOXvlxdG4ZdTExXtit+mYT+I3cKXoDT3Nsj6Jx/mjYPpIlqJcMNSY07OBMiL
-	bVThUEOfwjI3o8mhdsyppSoJY80v0VGoAfwNvvvxVFa3/zCmuy4RrOXxwH6uo0X3pXlryTBFF26
-	bm/tCV1tn8SEa3vo61/WBzjHDxQc9+VWFpWZ7e6UJg2oKtKciTj9bMFURjXFACgJgUjTfD1ig6X
-	kMe4/E1iappQSN1xHyQdRa897AE53v38cpR34sorggp43yJUt0t/XOoNq/TUDbdPBT2nCZrhJF5
-	0L5vRFZCoL4yuu9VDX1rTCxELvKIdAWnIk4VT2GTy5l5Xocv4tH+L
-X-Received: by 2002:ac8:7dc5:0:b0:4a9:e225:fb6d with SMTP id d75a77b69052e-4aedb99e470mr112576861cf.21.1753983814117;
-        Thu, 31 Jul 2025 10:43:34 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEU41tcMiInT49q2UVBzc1ln2V3fBjU5vwnqygxgxHg5zY8lqlNmM/ASrKrTWFHWA7RYA25DA==
-X-Received: by 2002:ac8:7dc5:0:b0:4a9:e225:fb6d with SMTP id d75a77b69052e-4aedb99e470mr112576371cf.21.1753983813558;
-        Thu, 31 Jul 2025 10:43:33 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88cae541sm317422e87.153.2025.07.31.10.43.32
+        bh=+kfkGzJlve/WLoyPW+HY4jJ87yR9ziLhY0paEWgfM94=;
+        b=p6KYyZ9qE97OycfaD9z6h8Ust4NOVAz2dy5lHVllILCMq43aI41QHzHm3rNPjVSax0
+         TSqYgTsGgsFx2HhIHjmIaANMCyla4ZQJK76STJgoImZVaWr9VE8hJ2TH9jwuy06Jn+xW
+         ZyM5FD3pxR6iwZq02DrcJ4YHL6xlX60A4zPj51Fg0Qr9u15jOK2m85i63jPz87GCWc5W
+         /nYGJ/0nTzDwUY+oLFxaIxy5ykFIGH96XFWfeKMSLN4sR10uY3N7v41SAj8NoPxOvY6j
+         QO1lEBb/0OpgGzYKbLn+0vtXJ2//do+tTqb8m+QUVtPbm1gs7veChs/YHjiVBw8reXNH
+         GJnA==
+X-Gm-Message-State: AOJu0YxZwupm0Jh0XBJHZ+ysVem79G9VkxR9rXDRLb3DVWx86FUBJLWZ
+	Tf4MJ/ZKVoy5dxbAm7YKM4EmwSwfn2vy6FCx6LnO8Os+Qg5Xm7RhSAZBZw3AD6hXqw==
+X-Gm-Gg: ASbGncsVeYxlc4TU2wnf88/uW1vfZSxhq/P9/znd7QFOX8VYqVKM2drCTUZB2y0f/Wd
+	N7sgys89GXCVAOzezvDHWKTOipFdvO4UsL0dtMP9aX0WVG31lujBrfR+T63wnoxuiTIS02zcktr
+	AQCzwKuX2/kUTmqxZCumxfdL5DEBrv75HYmB1Qg8BdsQ0L+6t80eCSQ9RpiExvK0D6xdYHhpWft
+	zkCWxYkrZW3UFrnz9MZ2UG+Iz+yfIr273GPWhvi5d3l5/uWfEKTr4ZVpDGV+D4r2Wqtf/aHD/OV
+	I7pdiYYqsdwEtvat+0LVxsuVPYjmDxOLOlWb+20ioSL4eecVC4Ljj0zmZKoIsNKv/+G4CuolOxg
+	xwyBjdedi7sADW4iWjpgPA+0RUDeGNFUKhMtC2OQKrRAkHaFuuI+V8QKIDatSobKNVnuyJhB/fo
+	Dw
+X-Google-Smtp-Source: AGHT+IG0cqauf8/W+uT6V17ni4XHUoScwT7roD06o9nChNvdBz0aFFnqL9Kizfjs0f2g6AbozeOGQw==
+X-Received: by 2002:a05:600d:1a:b0:455:fd3e:4e12 with SMTP id 5b1f17b1804b1-458a8fc9acfmr19755e9.4.1753983899719;
+        Thu, 31 Jul 2025 10:44:59 -0700 (PDT)
+Received: from google.com (110.121.148.146.bc.googleusercontent.com. [146.148.121.110])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458981d0b06sm76559425e9.5.2025.07.31.10.44.59
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 10:43:32 -0700 (PDT)
-Date: Thu, 31 Jul 2025 20:43:30 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Cc: mani@kernel.org, alim.akhtar@samsung.com, avri.altman@wdc.com,
-        bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org,
-        conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org,
-        James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
-        agross@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and
- rate limiting
-Message-ID: <fl4t5fpyd5o535djn3f5vbq4lqqtwx2dzcphxfdf7s6kxedcsb@yz65chgbcgd3>
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
- <2ihbf52nryduic5vzlqdldzgx2fe4zidt4hzcugurqsuosiawq@qs66zxptpmqf>
- <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
- <CAO9ioeWLLW1UgJfByBAXp9-v81AqmRV9Acs5Eae9k4Gkr1U0MA@mail.gmail.com>
- <728cde88-1601-4c36-976a-3c934a64be35@quicinc.com>
+        Thu, 31 Jul 2025 10:44:59 -0700 (PDT)
+Date: Thu, 31 Jul 2025 17:44:55 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
+Message-ID: <aIurlx5QzEtjpFLd@google.com>
+References: <20250728175316.3706196-1-smostafa@google.com>
+ <20250728175316.3706196-30-smostafa@google.com>
+ <20250730144253.GM26511@ziepe.ca>
+ <aIo1ImP7R7VhRpVE@google.com>
+ <20250730164752.GO26511@ziepe.ca>
+ <aIt67bOzp6XS_yO-@google.com>
+ <20250731165757.GZ26511@ziepe.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -108,188 +100,107 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <728cde88-1601-4c36-976a-3c934a64be35@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=LsaSymdc c=1 sm=1 tr=0 ts=688bab47 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8 a=w8oFfr48thh2NtF-ymIA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDEyMyBTYWx0ZWRfX1jlLV0xNW/W2
- SKMa2dByQ0lsLl3iSuVBni63W94yA0wUJy7YMIXt3gDzb51dVlgtGzedGm2QNuKLEhEc75L68sy
- Bu5RDxBbceE9+avZ8mn3ApCpr8HaKn0/bFUepYeZzoHlNGBMFLSY2zIjgAH23KW3i+IA4C6D7GY
- 3ucRKkuW/gdTotyjlmppEzIvhsBQ3AGE1hrg2x6wB/P5tioTv1U16d8tHn08o8iApwBonCL95p/
- tChhm9f89ROo7nVbqfYpZ1dSQRGk4Cf71/9dOInQKdTro802uoti7X+TBEZdv5SxohOYg5iB6BO
- KrrWuGSy2ES43gwsHNthZCi/Q2bkUQXc7sa8ex2mQjOQLwLNFCsuWZRsoPuFMfvemb1q3PSJNjQ
- /kFUTnfvH8omr7Sbj/ll1JZznQposIUeH/N4TdtkpYjfdt1JuoRjnGfrGQlWvgCb6YJOAGiY
-X-Proofpoint-ORIG-GUID: GqhO0zWoVXrDKML_4DE1oDmS0hNSOMqk
-X-Proofpoint-GUID: GqhO0zWoVXrDKML_4DE1oDmS0hNSOMqk
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_03,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
- impostorscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
- bulkscore=0 mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507310123
+In-Reply-To: <20250731165757.GZ26511@ziepe.ca>
 
-On Thu, Jul 31, 2025 at 09:58:47PM +0530, Ram Kumar Dwivedi wrote:
-> 
-> 
-> On 24-Jul-25 2:11 PM, Dmitry Baryshkov wrote:
-> > On Thu, 24 Jul 2025 at 10:35, Ram Kumar Dwivedi
-> > <quic_rdwivedi@quicinc.com> wrote:
-> >>
-> >>
-> >>
-> >> On 23-Jul-25 12:24 AM, Dmitry Baryshkov wrote:
-> >>> On Tue, Jul 22, 2025 at 09:41:01PM +0530, Ram Kumar Dwivedi wrote:
-> >>>> Add optional device tree properties to limit Tx/Rx gear and rate during UFS
-> >>>> initialization. Parse these properties in ufs_qcom_init() and apply them to
-> >>>> host->host_params to enforce platform-specific constraints.
-> >>>>
-> >>>> Use this mechanism to cap the maximum gear or rate on platforms with
-> >>>> hardware limitations, such as those required by some automotive customers
-> >>>> using SA8155. Preserve the default behavior if the properties are not
-> >>>> specified in the device tree.
-> >>>>
-> >>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-> >>>> ---
-> >>>>  drivers/ufs/host/ufs-qcom.c | 28 ++++++++++++++++++++++------
-> >>>>  1 file changed, 22 insertions(+), 6 deletions(-)
-> >>>>
-> >>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
-> >>>> index 4bbe4de1679b..5e7fd3257aca 100644
-> >>>> --- a/drivers/ufs/host/ufs-qcom.c
-> >>>> +++ b/drivers/ufs/host/ufs-qcom.c
-> >>>> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
-> >>>>       * If the HS-G5 PHY gear is used, update host_params->hs_rate to Rate-A,
-> >>>>       * so that the subsequent power mode change shall stick to Rate-A.
-> >>>>       */
-> >>>> -    if (host->hw_ver.major == 0x5) {
-> >>>> -            if (host->phy_gear == UFS_HS_G5)
-> >>>> -                    host_params->hs_rate = PA_HS_MODE_A;
-> >>>> -            else
-> >>>> -                    host_params->hs_rate = PA_HS_MODE_B;
-> >>>> -    }
-> >>>> +    if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
-> >>>> +            host_params->hs_rate = PA_HS_MODE_A;
-> >>>
-> >>> Why? This doesn't seem related.
-> >>
-> >> Hi Dmitry,
-> >>
-> >> I have refactored the patch to put this part in a separate patch in latest patchset.
-> >>
-> >> Thanks,
-> >> Ram.
-> >>
-> >>>
-> >>>>
-> >>>>      mode = host_params->hs_rate == PA_HS_MODE_B ? PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
-> >>>>
-> >>>> @@ -1096,6 +1092,25 @@ static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
-> >>>>      }
-> >>>>  }
-> >>>>
-> >>>> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
-> >>>> +{
-> >>>> +    struct ufs_host_params *host_params = &host->host_params;
-> >>>> +    struct device_node *np = host->hba->dev->of_node;
-> >>>> +    u32 hs_gear, hs_rate = 0;
-> >>>> +
-> >>>> +    if (!np)
-> >>>> +            return;
-> >>>> +
-> >>>> +    if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
-> >>>
-> >>> These are generic properties, so they need to be handled in a generic
-> >>> code path.
-> >>
-> >> Hi Dmitry,
-> >>
-> >>
-> >> Below is the probe path for the UFS-QCOM platform driver:
-> >>
-> >> ufs_qcom_probe
-> >>   └─ ufshcd_platform_init
-> >>        └─ ufshcd_init
-> >>             └─ ufs_qcom_init
-> >>                  └─ ufs_qcom_set_host_params
-> >>                       └─ ufshcd_init_host_params (initialized with default values)
-> >>                            └─ ufs_qcom_get_hs_gear (overrides gear based on controller capability)
-> >>                                 └─ ufs_qcom_set_phy_gear (further overrides based on controller limitations)
-> >>
-> >>
-> >> The reason I added the logic in ufs-qcom.c is that even if it's placed in ufshcd-platform.c, the values get overridden in ufs-qcom.c.
-> >> If you prefer, I can move the parsing logic API to ufshcd-platform.c but still it needs to be called from ufs-qcom.c.
+On Thu, Jul 31, 2025 at 01:57:57PM -0300, Jason Gunthorpe wrote:
+> On Thu, Jul 31, 2025 at 02:17:17PM +0000, Mostafa Saleh wrote:
+> > On Wed, Jul 30, 2025 at 01:47:52PM -0300, Jason Gunthorpe wrote:
+> > > On Wed, Jul 30, 2025 at 03:07:14PM +0000, Mostafa Saleh wrote:
+> > > > On Wed, Jul 30, 2025 at 11:42:53AM -0300, Jason Gunthorpe wrote:
+> > > > > On Mon, Jul 28, 2025 at 05:53:16PM +0000, Mostafa Saleh wrote:
+> > > > > > Register the SMMUv3 through IOMMU ops, that only support identity
+> > > > > > domains. This allows the driver to know which device are currently used
+> > > > > > to properly enable/disable then.
+> > > > > > 
+> > > > > > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > > > > > ---
+> > > > > >  .../iommu/arm/arm-smmu-v3/arm-smmu-v3-kvm.c   | 92 ++++++++++++++++++-
+> > > > > >  1 file changed, 91 insertions(+), 1 deletion(-)
+> > > > > 
+> > > > > Can you split the new iommu subysstem driver out please? I think I
+> > > > > asked this before.
+> > > > 
+> > > > Sorry, maybe I misunderstood, do you mean split this patch into multiple
+> > > > patches or split all KVM SMMUv3 driver out of this series?
+> > > 
+> > > Yes the latter, the iommu driver introduction is best as its own
+> > > series
 > > 
-> > I was thinking about ufshcd_init() or similar function.
-> Hi Dmitry,
+> > I thought about that but I was worried the maintainers wouldn't like
+> > introducing the infrastructure first in the hypervisor without a user.
+> > I am open to split this, but let’s see what they think.
 > 
-> It appears we can't move the logic to ufshcd.c because the PHY is initialized in ufs-qcom.c, and the gear must be set during that initialization.
-> 
-> Limiting the gear and lane in ufshcd.c won’t be effective, as qcom_init sets the PHY to the maximum supported gear by default. As a result, the PHY would still initialize with the max gear, defeating the purpose of the limits.
-> 
-> To ensure the PHY is initialized with the intended gear, the limits needs to be applied directly in ufs_qcom.c
+> You can merge both series at the same time
 
-The limits are to be applied in ufs_qcom.c, but they can (and should) be
-parsed in the generic code.
+Ok, I can split the last 12 patches which are the SMMUv3 driver, if the
+maintainers are ok with that.
 
 > 
-> Please let me know if you have any concerns.
+> > Makes sense, from the kernel point of view it will be attached to
+> > identity/blocking domains, but the hypervisor api is just enable/disable HVC
+> > as it doesn’t know what is a domain. If terminology is really a problem,
+> > I can make it one hypercall as “set_state” with on/off or identity/blocking
 > 
-> Thanks,
-> Ram.
-> 
-> 
-> > 
-> >>
-> >> Thanks,
-> >> Ram.
-> >>
-> >>
-> >>>
-> >>> Also, the patch with bindings should preceed driver and DT changes.
-> >>
-> >> Hi Dmitry,
-> >>
-> >> I have reordered the patch series to place the DT binding change as the first patch in latest patchset.
-> >>
-> >> Thanks,
-> >> Ram.
-> >>
-> >>
-> >>>
-> >>>> +            host_params->hs_tx_gear = hs_gear;
-> >>>> +            host_params->hs_rx_gear = hs_gear;
-> >>>> +            host->phy_gear = hs_gear;
-> >>>> +    }
-> >>>> +
-> >>>> +    if (!of_property_read_u32(np, "limit-rate", &hs_rate))
-> >>>> +            host_params->hs_rate = hs_rate;
-> >>>> +}
-> >>>> +
-> >>>>  static void ufs_qcom_set_host_params(struct ufs_hba *hba)
-> >>>>  {
-> >>>>      struct ufs_qcom_host *host = ufshcd_get_variant(hba);
-> >>>> @@ -1337,6 +1352,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
-> >>>>      ufs_qcom_advertise_quirks(hba);
-> >>>>      ufs_qcom_set_host_params(hba);
-> >>>>      ufs_qcom_set_phy_gear(host);
-> >>>> +    ufs_qcom_parse_limits(host);
-> >>>>
-> >>>>      err = ufs_qcom_ice_init(host);
-> >>>>      if (err)
-> >>>> --
-> >>>> 2.50.1
-> >>>>
-> >>>
-> >>
-> > 
-> > 
-> 
+> I would call it set_state with states IDENTITY/BLOCKING. That is
+> clear. enable/disable is ambiguous.
 
--- 
-With best wishes
-Dmitry
+Ok, will do that.
+
+> 
+> > TBH, I am not sure what hardware does that. So, another option is to fail
+> > gracefully if RMR exists (which falls back to the current driver) and then
+> > pKVM would run with DMA isolation, which is the status quo.
+> 
+> iGPUs either access the DRAM through the iommu or they use some OS
+> invisible side band channel.
+> 
+> The ones that use the iommu have this quirk.
+
+I see, I think that can be added later, and these devices can keep using the
+current SMMU_V3 driver as it, I can add a check to elide this
+registeration this driver if the platform have this quirk so the other
+driver can probe the SMMUs after.
+
+> 
+> > They are not random, as part of this series the SMMUv3 driver is split
+> > where some of the code goes to “arm-smmu-v3-common.c” which is used by
+> > both drivers, this reduces a lot of duplication.
+> 
+> I find it very confusing.
+> 
+> It made sense to factor some of the code out so that pKVM can have
+> it's own smmv3 HW driver, sure.
+> 
+> But I don't understand why a paravirtualized iommu driver for pKVM has
+> any relation to smmuv3. Shouldn't it just be calling some hypercalls
+> to set IDENTITY/BLOCKING?
+
+Well it’s not really “paravirtualized” as virtio-iommu, this is an SMMUv3
+driver (it uses the same binding a the smmu-v3)
+It re-use the same probe code, fw/hw parsing and so on (inside the kernel),
+also re-use the same structs to make that possible. The only difference is
+that the page tables and STEs are managed by the hypervisor.
+In part-2[1] I add event q parsing, which reuses 90% of the irq/evtq,
+insert/remove_master logic, otherwise we have to duplicate all of that logic.
+
+So, I think it makes sense to re-use as much logic as possible, as both drivers
+are smmu-v3 drivers with one caveat about HW table management
+
+As mentioned in the cover letter, we can also still build nesting on top of
+this driver, and I plan to post an RFC for that, once this one is sorted.
+
+[1] https://android-kvm.googlesource.com/linux/+log/refs/heads/for-upstream/pkvm-smmu-v3-part-2
+
+
+> 
+> > I am not sure if we need get_resv_regions, maybe it's useful for sysfs
+> > "/sys/kernel/iommu_groups/reserved_regions"? I will double check.
+> 
+> It is important to get this info from the FW..
+>
+Yes, I think that should remain.
+
+Thanks,
+Mostafa
+> Jason
 
