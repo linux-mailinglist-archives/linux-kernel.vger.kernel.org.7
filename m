@@ -1,242 +1,109 @@
-Return-Path: <linux-kernel+bounces-752398-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04DA4B17518
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:41:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C78DB1751A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:42:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 377577B3046
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:40:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA3291C25A08
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:42:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BC8623F27B;
-	Thu, 31 Jul 2025 16:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5776823E358;
+	Thu, 31 Jul 2025 16:41:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kEY2Uz3p"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hWxjMaSt"
+Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0CE723BCEB;
-	Thu, 31 Jul 2025 16:41:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6684723BCEB;
+	Thu, 31 Jul 2025 16:41:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980101; cv=none; b=jY/VgGkigumQf6cT5mEiZss2FLNqoknkk89eb/MJ4QSascR8xysWXjkVjQGrS44RzdbkwAmbFqzA1ireuwDyitT78dMX9YLCb5bhIu9OWevEe7XHoMG3TP12VSA2a9oZg/DQn70697osDxl7GVo9zoJ8DxSoLZa43Q9p3iKPjFs=
+	t=1753980116; cv=none; b=oz8kkfOuuvzMphJa9ag2IhhvncETnmqNRRZN8k422XwJkxnsZLtk8htcIhNr4nLYK/Vusq4yJ3hKC78NVQIOCj+m6vD6/h/zYCeNmLUnnLFs34ttl1G1SpBOwvyFY8zpdg53+EQgoBhRiBw5mxeG6fn8ow4Zon3B9LgEl7424nE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980101; c=relaxed/simple;
-	bh=FOn/6rSOFrcvFlub8uI3wyAurRPAFWyHtW66MMdoEnQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AXtpzm9mM/ZDzcLAsB+IfL3XZ9TJ1qsmBH3ohf5leepRGi3sl1ONJ90E4gZMhWZFbLlEzY73hcUPEurxV17e2HDys50MtvKqpeQCM0HjKa/RHuyE9/rSnkxpEuaJxvtQF15nXj8mTb826xgIvevAPjM7zP+Ou8etKXFpFDFiiNo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kEY2Uz3p; arc=none smtp.client-ip=209.85.128.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so10809795e9.3;
-        Thu, 31 Jul 2025 09:41:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753980098; x=1754584898; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Xsu6ObGdZ62l8P/qwUGJQLtAjhbxoXSmlIgJ/7hyZRU=;
-        b=kEY2Uz3pVoapjD4YJJrkPwogcO+4fxuB5IqT+mfSwaOP11pYN4Ba/eFbwtVr+l5QlQ
-         bTYfLt6gHitGsN2UPf6PCXql1uQw6gLwJjrb5DA5WUiEp2CX1KWJwVXKpwTUBAj1e/FA
-         J+nt923sbDoLRdm7V+WWrPrWZCnQwopjQpWOko9BPkGfpVNwo3LINmFdh7PPG7bOHmvR
-         G2VfxdZMrziTypJXMDLWOgt0AoO3rxy9gAOQBzjgZHUv35K5eYCTM/afFTvymjHMzbix
-         EwU/admIy6YCGr/bSsIC00teeEbu5XxNFvBhq2IK0zK50348qCkawWt+Rzhdy7VAUY4g
-         AyEw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753980098; x=1754584898;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Xsu6ObGdZ62l8P/qwUGJQLtAjhbxoXSmlIgJ/7hyZRU=;
-        b=F0ejwvQWVwk+3aBagI4AcUd9UNgP5p5uuiRcNrWphLvUwNs764zLjvUPtT8OpgX3Di
-         0gvFdUC2NSHJX2Yi5OLqKu6h2dArZ/l4HGnuiyyzHXKqdua6qp7WbQ1qtZKtJIu68g8Z
-         H/bUavib3wxeL2PUVGw3N6GANg5aqobDPc5MOHP8BeiJadxVCnpf1bjIkylE3bXU8CLJ
-         uTXVe0RAIA3YzgxjhBpxPzBh26uvxMd44q1a0VXY7ZvbS7+PlprPm6akQzKBnP3nD2bG
-         agKig/jX5KdbTG0fF9tK2u51IhEtQs1R7qhuZLI/m8mmRJEWYQg3mL2tZ4ctDgFJGJ75
-         FftA==
-X-Forwarded-Encrypted: i=1; AJvYcCWJlBBdrnVjLxuVtyo89cQh19w++3NkkLyXIruY+wS2mUPwlBrIJYDL04632uuYvrccx9tyHQVTwbiQUD2F@vger.kernel.org, AJvYcCWgmg7S8gubYy713E066aHIDmSOccS1L4gAhfSjZRHHJLKdrqPw35QTSH8CtTTV3xODLaXdxTYN9XVKSxKEMZx6@vger.kernel.org, AJvYcCWqThGoNqMI7+/cDMwLy3p+iv95TjoXeP7j+SBas5K1dalnvG2uHuaQ/neLL0fbr20JxzrjDJem@vger.kernel.org, AJvYcCX3aNdWMluw+sAX6KGTPu9VxNSboeKPAZeMLf1FaiXbJPTDJo2yPzDn7wF0nckHkPpcPs8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYCsH8rQlst0r3wuzVnCGriCNWkWjdgvusEjWExSw5owiQRbLU
-	p4HAe+f9C0bX181iQB7TVsoW+HYkZ79vYfk2C3aeDNh9TrzFSGAzmx8E4xYR8q3Hy2G2IAL4bB9
-	GQ7twV7JPwFJIKmX35lmjCTQW6GvHuoibcg==
-X-Gm-Gg: ASbGncunMnqRES0/Q7nOx6l1qfzu+waGbJXz6UKffI0WMaFKHZMep/t1w0V3t6OOREk
-	HJzxuFguFSMGZ673d0CoOrSYA1z6z8PbRihYhfDvGvDequ7hyGLBma59OIlfzFxdh29EP5sjzoU
-	Ym/fxKj7PxyCdf8/ajW+hKc+hHj1ABPK215tn5XJCsc9BeeyIQbVnUJPM1uSvz3Wo1dvI50ifSB
-	0KkgXWNEiibkm8mi/iUavs=
-X-Google-Smtp-Source: AGHT+IFM8ZRUhTMMFPoPU9m6U65rQihPR6DTHa7d6s2IreKPbGglE506/v94vJCHwTLm/k801E+rGxEYCdn9O+Ebt44=
-X-Received: by 2002:a05:600c:3145:b0:453:81a:2f3f with SMTP id
- 5b1f17b1804b1-45892bed97emr80555055e9.30.1753980097839; Thu, 31 Jul 2025
- 09:41:37 -0700 (PDT)
+	s=arc-20240116; t=1753980116; c=relaxed/simple;
+	bh=w/BwWoXSSGEoqYGfrP6elklpqv0jLdw5bZ4EtYdBvbY=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=DTpZTtg++qSuctS7lyZMKvHCs9QQm+DctC20ZgrAQCEYkEeRt/9+ddAMliBYrWE84ZtORDLnvGg22Ty8vw48odbqHjKjtJaRZ0b8p2xguWfcFFU9xk3Jmm+AaUP7Ri+CFKESSIcfhtGkVlFAaK4SVGocYijddafzqJTaEvK0/+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hWxjMaSt; arc=none smtp.client-ip=217.70.178.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 284C1442A6;
+	Thu, 31 Jul 2025 16:41:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1753980112;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=kkEwjf1aQ4fiXjUuxQRxFV9YyAmLujK4b3TTjpYJE0k=;
+	b=hWxjMaStZzIp2hNMNa7W3UiSnXwlS7JKXbH2IE+kSdPJCrNuTMwfV26foDFEJteJnV4M7Z
+	2Yy40QUiK5A6MxEhNHMUvc+RyQ/u+85aSkKwMJ55Guj/+QnaBq+FTxeGEmIofl53x5T7KX
+	E1EixdzLMskPsnEBlCFQ342CVcUYCCUH0gqEhw2Gw1yDtDfKXUD0iSKoNiUQ/X3MYVOyyX
+	6LrP10TNlZWdmxQQQiA4JzKePJ8nM+QdnK43w+ecVxcHskPYrQfBTqwzoYBdfw7Mv3xnV8
+	RxYzYPB3PDyam4cnPEP00MNCh95LdqolbfJ5fDlPh5ueWtA/58liioeGj3AJ2w==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+Subject: [PATCH 0/3] dmaengine: ti: k3-udma: Fix/improve the completion
+ helper
+Date: Thu, 31 Jul 2025 18:41:28 +0200
+Message-Id: <20250731-ti-dma-timeout-v1-0-33321d2b7406@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250722150152.1158205-1-matt@readmodwrite.com>
- <CAADnVQ+rLJwKVbhd6LyGxDQwGUfg9EANcA5wOpA3C3pjaLdRQw@mail.gmail.com> <CAENh_SS2R3aQByV_=WRCO=ZHknk_+pV7RhXA4qx5OGMBN1SnOA@mail.gmail.com>
-In-Reply-To: <CAENh_SS2R3aQByV_=WRCO=ZHknk_+pV7RhXA4qx5OGMBN1SnOA@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 31 Jul 2025 09:41:22 -0700
-X-Gm-Features: Ac12FXxYox-ZTydO-9bGxcV7tjEfh_Od76qWoqE9ySEFca9hzhP54c2ZNF2ytCk
-Message-ID: <CAADnVQLnicTicjJhH8gUJK+mpngg5rVoJuQGMiypwtmyC01ZOw@mail.gmail.com>
-Subject: Re: [PATCH bpf-next v3] selftests/bpf: Add LPM trie microbenchmarks
-To: Matt Fleming <matt@readmodwrite.com>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Eduard Zingerman <eddyz87@gmail.com>, Shuah Khan <shuah@kernel.org>, 
-	kernel-team <kernel-team@cloudflare.com>, Jesper Dangaard Brouer <hawk@kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Martin KaFai Lau <martin.lau@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, Network Development <netdev@vger.kernel.org>, 
-	Matt Fleming <mfleming@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIALici2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc2ND3ZJM3ZTcRCCVm5pfWqJrmGxmYmFmkWSalJimBNRUUJSallkBNjA
+ 6trYWAD3LUB5gAAAA
+X-Change-ID: 20250731-ti-dma-timeout-1c64868b5baf
+To: Peter Ujfalusi <peter.ujfalusi@gmail.com>, 
+ Vinod Koul <vkoul@kernel.org>, Grygorii Strashko <grygorii.strashko@ti.com>
+Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
+ Peter Ujfalusi <peter.ujfalusi@ti.com>, dmaengine@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, Miquel Raynal <miquel.raynal@bootlin.com>, 
+ stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutddufedvucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhufffkfggtgfgvfevofesthejredtredtjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeelfeejlefgieehueejteffjefhteelffdtgfduteehhfdtjeeiueeikeegkedvgfenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrdegvddrgeeingdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopeelpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughmrggvnhhgihhnvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehgrhihghhorhhiihdrshhtrhgrshhhkhhosehtihdrtghomhdprhgtphhtthhopehvkhhouhhlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehthhhomhgrshdrphgvthgriiiio
+ hhnihessghoohhtlhhinhdrtghomhdprhgtphhtthhopehsthgrsghlvgesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehpvghtvghrrdhujhhfrghluhhsihesthhirdgtohhmpdhrtghpthhtohepmhhiqhhuvghlrdhrrgihnhgrlhessghoohhtlhhinhdrtghomh
 
-On Tue, Jul 29, 2025 at 6:56=E2=80=AFAM Matt Fleming <matt@readmodwrite.com=
-> wrote:
->
-> On Mon, Jul 28, 2025 at 3:35=E2=80=AFPM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > Please make a full description of what the test does,
-> > since it's not trivial to decipher from the code.
-> > If I'm reading it correctly, first, the user space
-> > makes the LPM completely full and then lookup/update
-> > use random key-s within range.
->
-> Yep, that's correct. I'll provide a more comprehensive description in v4.
->
-> > But delete looks different. It seems the kernel delete
-> > operation can interleave with user space refilling the LPM,
-> > so ...
-> >
-> > >   lookup: throughput    7.423 =C2=B1 0.023 M ops/s (  7.423M ops/prod=
-), latency  134.710 ns/op
-> > >   update: throughput    2.643 =C2=B1 0.015 M ops/s (  2.643M ops/prod=
-), latency  378.310 ns/op
-> > >   delete: throughput    0.712 =C2=B1 0.008 M ops/s (  0.712M ops/prod=
-), latency 1405.152 ns/op
-> >
-> > this comparison doesn't look like apples to apples,
-> > since delete will include user space refill time.
->
-> Yeah, you're right. Though we only measure the delete time from in the
-> BPF prog, delete throughput is essentially blocked while the refill
-> happens and because things are measured with a 1-second timer
-> (bench.c:sigalarm_handler) the refill time gets accounted for anyway.
-> I could try extrapolating the delete time like I've done for the free
-> op, i.e. we calculate how many ops were completed in what fraction of
-> a second.
->
-> > >     free: throughput    0.574 =C2=B1 0.003 K ops/s (  0.574K ops/prod=
-), latency    1.743 ms/op
-> >
-> > Does this measure the free-ing of full LPM ?
->
-> Yes, this measures the total time to free every element in the trie.
->
-> > > +static void __lpm_validate(void)
-> >
-> > why double underscore ?
-> > Just lpm_validate() ?
->
-> The double underscore is used for the common validation parts, but
-> I'll rename this to include "_common()" (along with all other uses of
-> __).
+While working on a BeaglePlay with the UART controller and making it use
+DMA, I figured the DMA controller completion helper was clearly
+misbehaving.
 
-No. It's also wrong.
-Double underscore or _common suffix are both meaningless.
-The helper name should describe what it's for.
+On one side, with slow devices like a UART controller, the helper uses
+an unusual polling delay of 1s.
 
-> > > +       /*
-> > > +        * Ideally we'd have access to the map ID but that's already
-> > > +        * freed before we enter trie_free().
-> > > +        */
-> > > +       BPF_CORE_READ_STR_INTO(&name, map, name);
-> > > +       if (bpf_strncmp(name, BPF_OBJ_NAME_LEN, "trie_free_map"))
-> > > +               return 0;
-> > > +
-> > > +       val =3D bpf_ktime_get_ns();
-> > > +       bpf_map_update_elem(&latency_free_start, &map, &val, BPF_ANY)=
-;
-> >
-> > Looks like there is only one lpm map.
-> > What's the point of that extra map ?
-> > Just have a global var for start time ?
->
-> Sure, I can make this a global variable for the start time instead.
->
-> > bpf_get_prandom_u32() is not free
-> > and modulo operation isn't free either.
-> > The benchmark includes their time.
-> > It's ok to have it, but add a mode where the bench
-> > tests linear lookup/update too with simple key.data++
->
-> Good idea.
->
-> > Since the map suppose to full before we start all keys
-> > should be there, right?
->
-> Yes.
->
-> > Let's add a sanity check that update() succeeds.
->
-> Will do.
->
-> > > +static int delete (__u32 index, bool *need_refill)
-> > > +{
-> > > +       struct trie_key key =3D {
-> > > +               .data =3D deleted_entries,
-> > > +               .prefixlen =3D prefixlen,
-> > > +       };
-> > > +
-> > > +       bpf_map_delete_elem(&trie_map, &key);
-> > > +
-> > > +       /* Do we need to refill the map? */
-> > > +       if (++deleted_entries =3D=3D nr_entries) {
-> > > +               /*
-> > > +                * Atomicity isn't required because DELETE only suppo=
-rts
-> > > +                * one producer running concurrently. What we need is=
- a
-> > > +                * way to track how many entries have been deleted fr=
-om
-> > > +                * the trie between consecutive invocations of the BP=
-F
-> > > +                * prog because a single bpf_loop() call might not
-> > > +                * delete all entries, e.g. when NR_LOOPS < nr_entrie=
-s.
-> > > +                */
-> > > +               deleted_entries =3D 0;
-> > > +               *need_refill =3D true;
-> > > +               return 1;
-> >
-> > This early break is another reason that makes
-> > 'delete' op different from 'lookup/update'.
-> > Pls make all 3 consistent, so they can be compared to each other.
->
-> Hmm.. I'm not quite sure how to do that. lookup/update don't modify
-> the number of entries in the map whereas delete does (update only
-> updates existing entries, it doesn't create new ones). So when the map
-> is empty it needs to be refilled. You're right that somehow the time
-> to refill needs to be removed from the delete throughput/latency
-> numbers but fundamentally these 3 ops are not the same and I don't see
-> how to treat them as such.
+On the other side, the helper can also perform 0us sleeps which means
+the driver does not sleep at all in some situations and keeps the CPU
+busy waiting.
 
-well, random-key update when the map is full is also quite different from
-random-key update when the map is empty.
+Finally, while I was digging into these issues, it felt like the helper
+was a bit too complex and could be simplified, which is what I did in
+patch 3. I initially worked on v6.7.x which did not had the spinlocks, I
+hope I didn't got them wrong.
 
-Instead doing an update from user space do timed ops:
-1 start with empty map, update (aka insert) all keys sequentially
-2 lookup all sequentially
-3 delete all sequentially
-4 update (aka insert) all sequentially
-5 lookup random
-6 update random
-7 delete all random
+I also tested this with v6.17-rc7.
 
-The elapsed time for 1 and 4 should be exactly the same.
-While all others might have differences,
-but all can be compared to each other and reasoned about.
+Signed-off-by: Miquel Raynal <miquel.raynal@bootlin.com>
+---
+Miquel Raynal (3):
+      dmaengine: ti: k3-udma: Reduce completion polling delay
+      dmaengine: ti: k3-udma: Ensure a minimum polling delay
+      dmaengine: ti: k3-udma: Simplify the completion worker
+
+ drivers/dma/ti/k3-udma.c | 85 ++++++++++++++++++++----------------------------
+ 1 file changed, 36 insertions(+), 49 deletions(-)
+---
+base-commit: b59220b9fa2c3da4295d71913146cd64b869fcf9
+change-id: 20250731-ti-dma-timeout-1c64868b5baf
+
+Best regards,
+-- 
+Miquel Raynal <miquel.raynal@bootlin.com>
+
 
