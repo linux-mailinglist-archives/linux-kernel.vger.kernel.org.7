@@ -1,107 +1,144 @@
-Return-Path: <linux-kernel+bounces-752167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71DECB1720A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:28:56 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD1ECB1720B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:29:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF0F31AA88E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:29:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1AF6D7A02F4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:27:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F8F82D12F4;
-	Thu, 31 Jul 2025 13:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 439D62D0C73;
+	Thu, 31 Jul 2025 13:28:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="bQFaVW1u"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="rHju3D5P"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07C832C1597;
-	Thu, 31 Jul 2025 13:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968468; cv=pass; b=roNDtHZ/AHNY9v9i1qXsRG4FQQbgetfqg+zKhWVeSe9bzu2HscUdfGds8UTLP0ArvE9tdQWp/NgyMEQtAZgCCDkeBaDtENezRfUcdSy92Dy+OKUSONyolOaM35flO2ZPN9+5NNZlF5YKNRwnyjFB9AUI1emy2omdTYb3GHmTEmk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968468; c=relaxed/simple;
-	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=DSjqYpcbZpI9BcZl4Bbsz6HvzcOwCstc3Av53Jx4Z7SPysDwXs4xpMcdyfUKrIN4YsjxUN9JXDuxhfuPosWrpoew7aBMhiNHDh70gc/3VVfLVLehmUomqRxgKq2tOGQ+GuI/3K5EwP0DLJGiFQlgkGrGv+N4YXz05/0q3mCE0Ws=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=bQFaVW1u; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753968430; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=Wd157ipHbyNwRd7zSLEBZrjL1NwE7wlcP7m29JHZAl4aMg4StR8Ewkw/JhmY3EjbCNZNTXM4DQXv54EwRb4mHSAJdQXOp9b946vc5Z+TwmfAZjnDqfaiokG8wLtxt09CtEEy3wCY7TuJUy475xOAMr0MA9lAyH7meSZGglcEQ4w=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753968430; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=; 
-	b=c/93OTp41HKxDz/ybAc59tvWucKS6YrIVxmfDdwX8QaU9UxYAyo4Ji6EYjsg5M4l2H312fi/hVX77IDTyZMrhseiy96V2y9yNdUTFkza1BSbHaMUmlWX/UJ6jsoIcdVHtwCp7LVgd/cTkF+Ab9q4vIr3aAjRvF+OTvP+KdH1Ma8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753968430;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=COOo3jiK9lz3rMXgTzpbFodohMhA2czPItwQ82+elrw=;
-	b=bQFaVW1uRX2HVR53bZ84cWiKsIqBWo72ciak7k08lk82m40VDwUpzVYL1XfVLSdE
-	JUYf2Q+Smzow4HogkIHAASadzJPcBckDF0tYa0enXzQcSKhatZxAHMZh789ELm1YIjU
-	RMfLfnh1WJ0PdHjyEypz5p2GbA+yd1z1NcAUUGYE=
-Received: by mx.zohomail.com with SMTPS id 1753968428292555.3333899104606;
-	Thu, 31 Jul 2025 06:27:08 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 1F6881807CE; Thu, 31 Jul 2025 15:27:03 +0200 (CEST)
-Date: Thu, 31 Jul 2025 15:27:03 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Heiko =?utf-8?Q?St=C3=BCbner?= <heiko@sntech.de>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Alexey Charkov <alchark@gmail.com>, Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>, 
-	Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonas Karlman <jonas@kwiboo.se>, kernel@collabora.com, linux-pm@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim
- adjustments
-Message-ID: <iafobb7h4nphjcujm34gig6vwlzfveegwewpayehb4h3tayzgv@bxpdfmhf2hfa>
-References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
- <CABjd4YzJeNf0Qq9qFeMcoYQV5erZGUeOpmJynRW88AeL9dJNhQ@mail.gmail.com>
- <3560770.QJadu78ljV@diego>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B63252C324C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:28:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753968506; cv=none; b=mFAGlzsPORikCEBSq4genDPIqrQW0JMJ52AKUgtQBZxCKZqUVvVT8V6ncgBpga4umvU7wmLgpXR/mFPZf5X1GgtktEoWnksu5URy6K9dSNQ5QzpGvDmqIyZ38nEdpbOjhhqY14MQBxNZZuyjpawBFQByceOJfOs5r4kPrw3RMkQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753968506; c=relaxed/simple;
+	bh=i9Ok6TMVJzIWF/A/OfsfP1hoZ9qTWvQyujzq0OMG6yc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=chUt/HSCnVJ/DEluzni0E1zEk82LApO9CyHaZrWDnrQC2BkuYC3AwoTlJxynVbor1M7AXQhZtpztyaPG9r1gJlGvW5r4hicrqwnpuyDBhesKH5HljXnsYKubDqXw4fRtgwgfRDiMLSGnCS1OvEIlZ96rXGEoR1qQLEGwzOtluV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=rHju3D5P; arc=none smtp.client-ip=209.85.166.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-875acfc133dso15634639f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:28:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1753968504; x=1754573304; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bZXm9ki9DqMqybY0nwzk30YMFU8vNsqP6e+BF0/SCW8=;
+        b=rHju3D5Pb37j/G9lIDCHh+XeufJa9rwOWCrlID2sutADTkYheA7ytCOmm4WDRXqnBf
+         fGb8ijZpzpAI4VUmdNbpE7qR22St5aaJJjd7EyxS2QbdiGxonpdKevDCp45rfJNN7DD7
+         ZCXOPuBjhxiXfAiGkBlbGARF92lrCGILibrCpHqPpGGtV4c9ccVaBFNHzoY8okB0P9vt
+         GS/5EOdew3C8MW9b5HVMpGQEx7D/jreHMOgTXLI9m7Uv7Xs3de7oEMzZqA4XPSKwqWiH
+         ze6/P3RBzODONwBOWOCVJJTp+K/WmuQiKKbC1kWBOvdt+Sw6TIMC0gTvtfNIz3EjRR+b
+         3z5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753968504; x=1754573304;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=bZXm9ki9DqMqybY0nwzk30YMFU8vNsqP6e+BF0/SCW8=;
+        b=hKbKtQcanGUmywcCwrJCdHl4n44JiytL7I0cuuOJzXAP6Dak73tUo3TnP9TBPg+pbL
+         pF3CP1DlTfPp9HSZLsrnTKzTPj4GZbInsulG7C0PGO2VyEXlVAYzJkeABZJv3H7e2nu7
+         L7z6gm/mER8+HOdYmvdCBos9flEwOKwFHn/6o7gQ1f0QxaO8eSY4N95hYL90dFDPrpzP
+         bY5bXuWDbsYJRZtuKMDQSPm5cl2Bt2KQBCoiSWVf5YTOL8nZZpmDAKdwgt02WCMWh4JH
+         NXPcSxbIGpvS+LI2MTJFcLzJc73GHykOhMqTfy57xjBe3G+ew7JBqV+vftnNeMP0A4Zu
+         UOCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV8xDTdsZGKfoDgxqYahciHZncJuszvPF6FkWXUxl1RfVOHYISuhD5xkgk98KeMBmXlXPJ+7UvKAOfTxWw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6Nn3blzT0aAGYy2L3pJR2z9wH7X56R5z9Bfuz7iykbKCrMfo7
+	yduiXTMSxdZ5D1/u5hV8Ia3P6ePorXEmLQFiUdcG9ei6xcGYFq4iu/Bs53NkFJS4p9Q=
+X-Gm-Gg: ASbGncu18C3RfxA6O82XaCNCQhwo0+LTLhVQTqLg85coSoow15SpwqL+UR4kFtqhA92
+	TzdIfPrzMCjnWjrgCk9oKZzD0Od7NnhraqTP4O5eZsVbc/AKuh/MVWiu16TnORkg6HjgFoLbbN1
+	kEpcZobVJpciDyVP5AYANkaDhhPfoUA/FdV2Yd2e2TPCZGBJJR134InwFKjSfYN3I0mW986g6YL
+	AvGX24fkpb5E6rECvjcGknCg6SF/YQmAbuYjPjWNnhUDIWb4J1brXmRUWdHZO+RwYg1evXwzhg8
+	M5gY/+FwdAGfUjhYFCayjQkl1EqRsfdGvDbpxUtan4u3KvrY209ZPfp7p3WKt/sI/qaFB2PdTcZ
+	tRezHBYq0Z1ZyFtvklU1vKTIy2PdRI29eAwyBTiivE2DCT29ueFegMux/uQCi8DiZ035uXZS/
+X-Google-Smtp-Source: AGHT+IHVd8Qk8sqX9PKUb1Vz0+PsKeeTL23Bh9mFH1nZ3uKrxB6affe8zrVEVY8SyiLFctiuAowOkQ==
+X-Received: by 2002:a05:6e02:16cc:b0:3e3:fc32:3178 with SMTP id e9e14a558f8ab-3e3fc323db0mr107094465ab.8.1753968503711;
+        Thu, 31 Jul 2025 06:28:23 -0700 (PDT)
+Received: from [172.22.22.28] (c-73-228-159-35.hsd1.mn.comcast.net. [73.228.159.35])
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e402b34285sm6538805ab.57.2025.07.31.06.28.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 06:28:23 -0700 (PDT)
+Message-ID: <e3cd0e11-e516-4cf6-b8f8-5cf2b5a236a4@riscstar.com>
+Date: Thu, 31 Jul 2025 08:28:21 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <3560770.QJadu78ljV@diego>
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v10 2/8] mfd: simple-mfd-i2c: specify max_register
+To: Lee Jones <lee@kernel.org>
+Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, mat.jonczyk@o2.pl,
+ dlan@gentoo.org, paul.walmsley@sifive.com, palmer@dabbelt.com,
+ aou@eecs.berkeley.edu, alex@ghiti.fr, linux.amoon@gmail.com,
+ troymitchell988@gmail.com, guodong@riscstar.com, linux-rtc@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
+ spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
+References: <20250726131003.3137282-1-elder@riscstar.com>
+ <20250726131003.3137282-3-elder@riscstar.com>
+ <20250731131827.GG1049189@google.com>
+Content-Language: en-US
+From: Alex Elder <elder@riscstar.com>
+In-Reply-To: <20250731131827.GG1049189@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-Hi,
+On 7/31/25 8:18 AM, Lee Jones wrote:
+> On Sat, 26 Jul 2025, Alex Elder wrote:
+> 
+>> All devices supported by simple MFD use the same 8-bit register 8-bit
+>> value regmap configuration.  There is an option available for a device
+>> to specify a custom configuration, but no existing device uses it.
+>>
+>> Rather than requiring a "full" regmap configuration to be provided to
+>> change only the max_register value, Lee Jones suggested allowing
+>> max_register to be specified in the simple_mfd_data structure.  The
+>> 8-bit register 8-bit configuration is still used by default, but
+>> max_register is also applied if it is non-zero.
+>>
+>> If both regmap_config and max_register are provided, the max_register
+>> field in the regmap_config structure is ignored.
+>>
+>> Signed-off-by: Alex Elder <elder@riscstar.com>
+>> Suggested-by: Lee Jones <lee@kernel.org>
+>> ---
+>> v10: - Rename simple_regmap_config() -> simple_regmap_config_get()
+>>       - Introduce simple_regmap_config_put() to free regmap_config
+>>
+>>   drivers/mfd/simple-mfd-i2c.c | 45 ++++++++++++++++++++++++++++++++----
+>>   drivers/mfd/simple-mfd-i2c.h |  5 +---
+>>   2 files changed, 41 insertions(+), 9 deletions(-)
+> 
+> This has gone from an in-function 11 line change to 50 lines and the
+> inclusion of 2 new functions.  As much as I _really_ appreciate the time
+> and effort you have put into this [0], the added complexity being added
+> here doesn't sit right with me.  How would you like to go back to your
+> v4 idea of providing a bespoke regmap_config for for device?
 
-On Thu, Jul 31, 2025 at 10:11:23AM +0200, Heiko St=FCbner wrote:
-> Right now we're in the middle of the merge-window though, so everything
-> I apply now, I'd need to rebase onto -rc1 in slightly more than a week,
-> invalidating all those nice commit hashes that end up in the "applied" =
-mails.
->=20
-> So I'm struggling with myself on every merge window about that.
+I LOVE this suggestion.  I will send v11 shortly and it will
+be very much like v6 (or something like that).
 
-Your are not supposed to merge anything to your for-next branch
-during the merge window anyways. See first sentence of Stephen
-Rothwell's mails [0]:
+> [0] Beers on me for sending you down this path!
 
-> Please do not add any v6.18 material to your linux-next included
-> branches until after v6.17-rc1 has been released.
+I'm looking forward to seeing you again, beer or not.
 
-[0] https://lore.kernel.org/all/20250731133311.1a3e3867@canb.auug.org.au/
+Thanks Lee.
 
-Greetings,
-
--- Sebastian
+					-Alex
 
