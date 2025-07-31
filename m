@@ -1,177 +1,106 @@
-Return-Path: <linux-kernel+bounces-751773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 344FAB16D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:11:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45F36B16D3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8CA316A196
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:11:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E35FC3B0950
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:11:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C954D29994C;
-	Thu, 31 Jul 2025 08:11:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D0CD28D845;
+	Thu, 31 Jul 2025 08:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="nt67wWbO"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CPncY2p3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B9CE18D643;
-	Thu, 31 Jul 2025 08:11:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F01DE55B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:12:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753949509; cv=none; b=PdTOgw7FMNZVjxZk8h1ffH4kd2hd422huvyXRJbs87KZ+SAbGAMrES3TedyOdB6jws/fZzVGWMdnrmJVxAUGgoeIf26lbFAfyQCUD1V5sDCXy7QOd6x7LQEyvI796gD7c6Y9XuxZt7eFu+NRKBia68X8rQ0/oS58l0v2l7LkUX4=
+	t=1753949522; cv=none; b=Mj/+pycRzAZQzjL4tJMUYT+h3mGPvBMUGJLdwFvPjPCyDyo3Rr14GC5NYM0t/cd52LVvH5NuvtfM4EGxXWOCrZZqiJevyPC+5m6Bc+IG2pTaMFwJOb/lyEaI/t4pHb/O4BCju+ko1qhBaXzYh1n+bM6iGLkGVBdxuS6u/xh3P2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753949509; c=relaxed/simple;
-	bh=7HJQ4clK8DvfFO+gD8huL+L2TcsZXthXhffjKMJO2pw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Irz9F6mnknGRlxU6281Wcbbz6bwstr3M92905/Ax8gNEki+Ny4kHCvKuVclDRE7n8RMKvNUL88Yp86e5IBCj/r7Hhb0lPQkGuIFZAFobj6sjhKszqYUIstJlH/mXbVyIKeYX/QfY0n5NQ7mMxPUVrOq6L/VQi/CBt2k6EoezvJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=nt67wWbO; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=SnN4gkK7hnqg+1fHPpMhKULH0EAOxYwzimcsaqGrHpI=; b=nt67wWbOozmrdStei2uDKou0oi
-	JUfbs/YtFvbvyk0xU/vIThKDjzbAlY6JA9O1a+EPymvZSvddO6Mz7yr/HalubI8+LNMRstAnxihEP
-	QRub/dVXS0103625DIbhimZn4sE7hRrW/RYhU1gYaLTP7vdn2zpitPTK4m5KHC8LSZoNNuU4KMRKB
-	Nqrn1vuZpL/WOEthSFsRqK1KIC14a3cNt82X9xxc4kRtFN+Ujb8zodPWsxCcVX6ZnzBlhK5YekXv2
-	4Ja3ws0DG/RitZoSgAWbfT+vtQKM4B5JNzxB+ey8/jqk28U5hf3Ghjfo9VFlNMiUO/gSm2bdTsEDd
-	qEI8bSEw==;
-Received: from i53875bde.versanet.de ([83.135.91.222] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uhONo-0006X8-Jv; Thu, 31 Jul 2025 10:11:24 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Alexey Charkov <alchark@gmail.com>
-Cc: Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>,
- Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support,
- including OTP trim adjustments
-Date: Thu, 31 Jul 2025 10:11:23 +0200
-Message-ID: <3560770.QJadu78ljV@diego>
-In-Reply-To:
- <CABjd4YzJeNf0Qq9qFeMcoYQV5erZGUeOpmJynRW88AeL9dJNhQ@mail.gmail.com>
-References:
- <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
- <CABjd4YzJeNf0Qq9qFeMcoYQV5erZGUeOpmJynRW88AeL9dJNhQ@mail.gmail.com>
+	s=arc-20240116; t=1753949522; c=relaxed/simple;
+	bh=2yNXa2RukZKWE0SmTpjfizPitbDZU+dGG4ELR3ktWIs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r37rqrgnm2vJsytBtZ4DZgwsnvTBevq+MGZDGHzM5bGTqdPWzTYoOML4gCs4cBBdCIhOXgrDVmYJIxDLUspgf4LIO4OBgQPzHe51UCyZoMa2EMFINPztfRlj10fPDqYFqjkIowjirT4rVb/EGbkkp/U2ArPsoz56XcYai2oR6S4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CPncY2p3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F274C4CEEF;
+	Thu, 31 Jul 2025 08:12:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753949522;
+	bh=2yNXa2RukZKWE0SmTpjfizPitbDZU+dGG4ELR3ktWIs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CPncY2p3bWlnWr4mWTlHBKEAAww/U/q6CILyQQS2pEZJu5D9tMpbzjH3VGq5M79L7
+	 yS3wDofJaFsOyBu+upPq+tfubmD9/3gpIM8Lf/gRTnLezRwe8Rwrd5MAAlTTu0Ju5D
+	 Al2M6aZL71lPi2fPKJNs9x0ggPExQivQgggF2GVwxZKSwHzE4zYCndRBNzgHWR/p7z
+	 ucb9WP6SHgH+pOh9j4wwEZ3l5DnGmQzW9B1n9SDmStgz2conKOIu4QcR/dw3aqP+gi
+	 erUJGrQ/aeiXE8XUNIwzjB9nLailXZoYFz7tbjYRja4AXMwhSNQIQpdSrMzTvKbwIG
+	 dtUdkx64ZeBFw==
+Date: Thu, 31 Jul 2025 11:11:56 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Arnd Bergmann <arnd@arndb.de>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] kho: fix kho_test_restore section mismatch warning
+Message-ID: <aIslTMp6RSxY0ZjK@kernel.org>
+References: <20250731080007.2037366-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731080007.2037366-1-arnd@kernel.org>
 
-Hey Alexey,
+Hi Arnd,
 
-Am Donnerstag, 31. Juli 2025, 09:33:32 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Alexey Charkov:
-> On Thu, Jul 17, 2025 at 12:20=E2=80=AFPM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
-> >
-> > On 7/17/25 09:21, Heiko St=C3=BCbner wrote:
-> > > Hi Daniel,
-> > >
-> > > Am Mittwoch, 16. Juli 2025, 22:12:53 Mitteleurop=C3=A4ische Sommerzei=
-t schrieb Daniel Lezcano:
-> > >> On Tue, Jun 10, 2025 at 02:32:36PM +0200, Nicolas Frattaroli wrote:
-> > >>> This series adds support for the RK3576's thermal sensor.
-> > >>>
-> > >>> The sensor has six channels, providing measurements for the package
-> > >>> temperature, the temperature of the big cores, the temperature of t=
-he
-> > >>> little cores, and the GPU, NPU and DDR controller.
-> > >>>
-> > >>> In addition to adding support for the sensor itself, the series also
-> > >>> adds support for reading thermal trim values out of the device tree.
-> > >>> Most of this functionality is not specific to this SoC, but needed =
-to be
-> > >>> implemented to make the sensors a little more accurate in order to
-> > >>> investigate whether the TRM swapped GPU and DDR or downstream swapp=
-ed
-> > >>> GPU and DDR in terms of channel IDs, as downstream disagrees with w=
-hat's
-> > >>> in the TRM, and the difference is so small and hard to pin down with
-> > >>> testing that the constant offset between the two sensors was a litt=
-le
-> > >>> annoying for me to deal with.
-> > >>>
-> > >>> I ended up going with the channel assignment the TRM lists, as I se=
-e the
-> > >>> DDR sensor get a larger deviation from baseline temperatures during=
- memory
-> > >>> stress tests (stress-ng --memrate 8 --memrate-flush) than what the =
-TRM
-> > >>> claims is the GPU sensor but downstream claims is the DDR sensor. I=
-nput
-> > >>> from Rockchip engineers on whether the TRM is right or wrong welcom=
-e.
-> > >>>
-> > >>> The trim functionality is only used by RK3576 at the moment. Code to
-> > >>> handle other SoCs can rely on the shared otp reading and perhaps ev=
-en
-> > >>> the IP revision specific function, but may need its own IP revision
-> > >>> specific functions added as well. Absent trim functionality in other
-> > >>> SoCs should not interfere with the modified common code paths.
-> > >>>
-> > >>> Patch 1 is a cleanup patch for the rockchip thermal driver, where a
-> > >>> function was confusingly named.
-> > >>>
-> > >>> Patch 2 adds the RK3576 compatible to the bindings.
-> > >>>
-> > >>> Patch 3 adds support for this SoC's thermal chip to the driver. It =
-is a
-> > >>> port of the downstream commit adding support for this.
-> > >>>
-> > >>> Patch 4 adds some documentation for imminent additional functionali=
-ty to
-> > >>> the binding, namely the trim value stuff.
-> > >>>
-> > >>> Patch 5 adds support for reading these OTP values in the
-> > >>> rockchip_thermal driver, and makes use of them. The code is mostly =
-new
-> > >>> upstream code written by me, using downstream code as reference.
-> > >>
-> > >> Replaced previously applied version V5 with this V6 patches 1-5
-> > >
-> > > are these commits available somewhere?
-> > >
-> > > Because git.kernel.org reports that
-> > >    https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
-> > > has not seen activity in a while?
-> > >
-> >
-> > I just pushed the bleeding-edge branch
->=20
-> Just wondering if patches 6-7 from this series are on your radar?
-> Driver changes are in -next AFAICT, but not DTS. Can't wait to get the
-> temperature monitoring working on RK3576 without out-of-tree patches
-> ;-)
+On Thu, Jul 31, 2025 at 10:00:00AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> kho_test_restore_data() is not always inlined, and that configuration
+> causes a link warning:
+> 
+> WARNING: modpost: vmlinux: section mismatch in reference: kho_test_restore+0xd2 (section: .text.unlikely) -> kho_test_restore_data.isra.0 (section: .init.text)
+> ERROR: modpost: Section mismatches detected.
+> 
+> Mark it __init as well to be consistent with the rest of the call chain.
 
-they are :-) .
+I've already sent a fix:
 
-Right now we're in the middle of the merge-window though, so everything
-I apply now, I'd need to rebase onto -rc1 in slightly more than a week,
-invalidating all those nice commit hashes that end up in the "applied" mail=
-s.
+https://lore.kernel.org/all/aIiRC8fXiOXKbPM_@kernel.org/
 
-So I'm struggling with myself on every merge window about that.
+and Andrew picked it up.
+ 
+> Fixes: c2d288f7ab13 ("kho: add test for kexec handover")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+> ---
+>  lib/test_kho.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/lib/test_kho.c b/lib/test_kho.c
+> index f5fe39c7c2b1..aeeb693d0251 100644
+> --- a/lib/test_kho.c
+> +++ b/lib/test_kho.c
+> @@ -239,7 +239,7 @@ static int __init kho_test_restore_data(const void *fdt, int node)
+>  	return 0;
+>  }
+>  
+> -static int kho_test_restore(phys_addr_t fdt_phys)
+> +static int __init kho_test_restore(phys_addr_t fdt_phys)
+>  {
+>  	void *fdt = phys_to_virt(fdt_phys);
+>  	const unsigned int *magic;
+> -- 
+> 2.39.5
+> 
 
-
-Heiko
-
-
+-- 
+Sincerely yours,
+Mike.
 
