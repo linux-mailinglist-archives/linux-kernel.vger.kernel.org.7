@@ -1,158 +1,102 @@
-Return-Path: <linux-kernel+bounces-752562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752568-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F353EB1773C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:36:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC81BB1774B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:45:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EAFE586099
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:36:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1DCF0587151
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E922550CF;
-	Thu, 31 Jul 2025 20:36:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302022561C5;
+	Thu, 31 Jul 2025 20:45:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gyIScblm"
-Received: from mail-io1-f44.google.com (mail-io1-f44.google.com [209.85.166.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q2xbbct1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921721DFFC;
-	Thu, 31 Jul 2025 20:36:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 882BF13A258
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753994190; cv=none; b=i///RZqGnGg0SS4iZSRs9df3Y8I2FNOYMKkoMTwhoVhvqca4VRyUtLf6sNLYwATqBERneK5NutKTFWP+wYiJ/8ZTwKFeRkwdHk2eSmTy8Zq1sJ4UwroRv5miEhKAnJmf4Z0h9WpOHL18Sea61QJNE4hqWs/50Adp1Si6N8UzK04=
+	t=1753994700; cv=none; b=EN9xexRHm1rPtUHwynv4ITm3fD53+XLC3/0GzVooXboolTPansGb1DjujnbUW2j2sy9JibUgy2ay7bCsFuaR3llvlQPpNq6oHYoKO42rEm8AyE6dCJcRYfjt/mx9U2apW2SuZV/ufJzZb/VqHRsytF78GhYtlImtqKm7g5hwTOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753994190; c=relaxed/simple;
-	bh=lllDj57kA6USq/JccDX4aEeiMCwv3lG54Maxa0HvAuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EUhTVIsRS+tHjRD427O77ad5b8Z1K/Y3cx0HuZJ1MJScjuTMd1g9vC8XKJNW/Tf9aHptkgVp5wadpNnKKV4m1c6Lkst6a2SVSw1X4dOygqH9zckXOVAnI4TVG/wGHmAKs6WenxfVkxHCmEmSYMywPASGk4wBETz5bHAKnkWHEvA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gyIScblm; arc=none smtp.client-ip=209.85.166.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-io1-f44.google.com with SMTP id ca18e2360f4ac-875acfc133dso32753939f.1;
-        Thu, 31 Jul 2025 13:36:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753994188; x=1754598988; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4Bkzmad0FHY3Ddy5NFcMc3+By4Cx3sAMV/rP5o2AEJQ=;
-        b=gyIScblm84zntIWwzC1zy91ek0yo/50oQ9Thvbqo42aRXoAKhyKJlfueWENJQMHE4u
-         t49kP4Fg4lwSBdA4hDyDK0gg33tX97qfXSU+x9ZVr+llcMg4rtRgkKg2yRYzj8cClJba
-         xL45Dk6QSe4p6bsfd38PmS/Eb3JyNJQixxbD+5odDFWhQ2s9xpugzd057qdiDNRllSxB
-         eHk0ioVjEkAvdGHUEmWPAkGwYsDCex0i3U8YunsoCspk5Q0aDD2xWi90H1tY+bAM8PU3
-         TGPNZms4MJ1U8px2uuztnmd40rc+t71MnZAZMnWuI9OktEz9pR4YZcR8WUzKiW91NZk5
-         2mhA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753994188; x=1754598988;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4Bkzmad0FHY3Ddy5NFcMc3+By4Cx3sAMV/rP5o2AEJQ=;
-        b=RWxdz1PWcnQrepCgqx8tM97dZVDuDy/AffkvB6d87N06PhYHBFvLhLoOTwXKXzUtyQ
-         9h2z3V3HuxnljXc8KfJ6nJ8aZIocTTZUXIdOyHc44oH9Zf6NU1+pt+NqI2Ouw8If+ila
-         52BNWQUT5imjIXIEHzwzOyRUPpDb0Ioz3ov2QuJPYNYg9ZHGMTIe9hiZHGx4f3Yck5I9
-         OAd3f0U3lq5U72l21p7GU48dx2329/dpZRNTSbfBjkB6Y3ZhOmLm+18Pjboe3sc5GvCh
-         w6U8S6PRxzQBvHJtlf//57PRVl+exiwBiUxhB6yGo96M8NQYSDlywDiT4o6HVg5g6VH4
-         g5wg==
-X-Forwarded-Encrypted: i=1; AJvYcCVxA9759zPhKNQe4IxPRQUYF5hJEO/1szimxmkGuRG1ptm8NX1rmaWvfdgeCUiMJidjdQnAWSWRXNgrB2rd@vger.kernel.org, AJvYcCWufJp+DVcuWF04O/tTimaeLO9WjCJ/eAZY9n1hWQn870um5ubcJ9etrH5lC9jHnxOTHLDF2/GMcgnxKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLSjG9cWTpfJ3LmVH8jAgR3QZvimtBNui5QXLX9saZA6lpdAKf
-	Uv77UuYjwCV1vqPS37cozD8+fZSPwpDm/7jqpO739J8pKtZLLhMmqt2W
-X-Gm-Gg: ASbGncs758Os0qoVioJB8XcOF0nZT+uFKpY9JmX1YzXIc0BTfig61iEn8mJhHbx/s/9
-	OK18u0NJLkZSnX2PfGVp+5HNisEX4mtSaANmCX7nf8dAq5sNorv0KjhugRt2U8VEfPxh1UKI7Nu
-	n1mOhL6GNqc7LZpYbhQBqEH/8NLi9jp72fxxzpoqjsaUGSpLgkp7rwegIPgeNFK/ReObIa78uMn
-	rh3hjp2Q8gwtZuBu75WVHcl1gNgIfTM5/Ir6kY4w2lUE6YdM6w501yrx93/Jx44wkkxPFx65dtB
-	4PWx588467wdz+L7F9uubgjj1Q2+X05iuZA2Jr9WFwr5xO1yhbErSaakloGvHyVUWKMit5Bb2X0
-	7CX5oOecQqe713VWSbYhv2VffgVROQWSEFeFdLN0Mea9M7DzXZOW/4fznic9dvkHUD/rdvpvjzy
-	MyC1aKkRdwAxvqhNgO+TUIvzs=
-X-Google-Smtp-Source: AGHT+IHw6r8Lf+6zjHlaPGrM/dmdCKU/6h6oK0JKKrXD5sL3aXoHzVWp5gzJ99Itr+K+yw6WuEQuQQ==
-X-Received: by 2002:a05:6602:60ce:b0:86c:ee8b:c089 with SMTP id ca18e2360f4ac-8815a870752mr15789939f.3.1753994187605;
-        Thu, 31 Jul 2025 13:36:27 -0700 (PDT)
-Received: from localhost.localdomain (syn-035-144-110-073.res.spectrum.com. [35.144.110.73])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-8814dfab231sm70312839f.28.2025.07.31.13.36.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 13:36:27 -0700 (PDT)
-From: Sravan Kumar Gundu <sravankumarlpu@gmail.com>
-To: deller@gmx.de,
-	daniel@ffwll.ch
-Cc: skhan@linuxfoundation.com,
-	linux-fbdev@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-kernel-mentees@lists.linuxfoundation.org,
-	Sravan Kumar Gundu <sravankumarlpu@gmail.com>,
-	syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com
-Subject: [PATCH] fbdev: Fix vmalloc out-of-bounds write in fast_imageblit
-Date: Thu, 31 Jul 2025 15:36:18 -0500
-Message-ID: <20250731203618.25973-1-sravankumarlpu@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1753994700; c=relaxed/simple;
+	bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=sOaeK9a53lQjxtYKUhx8/zp+M59jdhd5qRsAHvPUNT49WnHYIxWH5X/8JJWfScJTk7VdLgPrZNYQiUiuwUKFUV4NTOoQnI+pWXMGDo4UMxfbrASVnOLrSv1j58fnt6fwlkAiQocaUpKNhSl92yokyWsqq9jVUTujI8KObea1kl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q2xbbct1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 08901C4CEEF;
+	Thu, 31 Jul 2025 20:44:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753994700;
+	bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
+	h=From:Subject:Date:To:Cc:From;
+	b=q2xbbct1CyemFNk3e6stq4bft5itNiUSfUeuLmoRmtjiP0oa3ODaxFCkpzczUcptK
+	 kiApCmlF0T8vnLWEFy3y8jX6w/T1U1cPCKSyBlJRqaY6kKpcDqwAXxylpryhI42sq0
+	 f8829kv3Gk5EKtu2qZCPdhks1PgYqnrRe95f0qhAybIkruZC/0ZMtBN6hFYg/dJc5P
+	 ThlSxrPsupjAgW1X52OHaNAac9l2zVSNziDCdjuE3OAOLOERq0HC0HknMAQdMTmagn
+	 3NrUnHWIerdhi7wgvOz3o4RN30fcQsLTdlw3Sd2ixu2laIYQwkcThwfqtwjKp8ceVO
+	 jB97epkbuVHzg==
+From: Mark Brown <broonie@kernel.org>
+Subject: [PATCH 0/2] regmap: Fix lockdep warnings for nested regmap-irqs
+Date: Thu, 31 Jul 2025 21:38:17 +0100
+Message-Id: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIADnUi2gC/x3MQQqAIBBA0avErBtQK6SuEi1CJ5tFVmNEIN09a
+ fkW/2dIJEwJhiqD0M2J91ig6wrcOsdAyL4YjDKdso1GobDNB7KcGCldHAO2qrfKWa0Xb6CEh9D
+ Czz8dp/f9AP9XWoZkAAAA
+X-Change-ID: 20250731-regmap-irq-nesting-40970c711fd2
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, 
+ linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
+X-Mailer: b4 0.15-dev-cff91
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1064; i=broonie@kernel.org;
+ h=from:subject:message-id; bh=7DZFscx/zUQAE+CwN/WvqEagWcG2FAbzwc3W0mBDlNs=;
+ b=owEBbQGS/pANAwAKASTWi3JdVIfQAcsmYgBoi9XIw6PByEh6vhNcQdEzokhF3liVUrW1Q+yGg
+ lyxt2pZSH6JATMEAAEKAB0WIQSt5miqZ1cYtZ/in+ok1otyXVSH0AUCaIvVyAAKCRAk1otyXVSH
+ 0M7LB/9aKDwut+FwzGyBKxgCPlZQKNHj0HD/NEZLC3Xouz/EFZVLQRYpH0TjgALByhnyEJ2NTac
+ amvfl+hapdrS3JuNhmRi0r0w5VSgOm7f0CJmUCIowltQhyKZqb9o07Go2ILFBuCU9TicDCThU7e
+ BrjkifVYg/sDGzgAcZ0P2drlM1ajGVEyr0aw8U5oJbdLKSwt6RuiG6aNPOmnkKvjuncQpQwnRnM
+ XqPa2b5FqLZrPB4MbLhV88T7AocIYnsiIvmQF6JMGvDWNUP4s199h5PvKtBTa61VOkQUTPi0S5N
+ RM2DvZdpHkQSjcfUCO95VqLNCREmD/OWJpBKl6bspLm0dt0Z
+X-Developer-Key: i=broonie@kernel.org; a=openpgp;
+ fpr=3F2568AAC26998F9E813A1C5C3F436CA30F5D8EB
 
-This issue triggers when a userspace program does an ioctl
-FBIOPUT_CON2FBMAP by passing console number and frame buffer number.
-Ideally this maps console to frame buffer and updates the screen if
-console is visible.
+Russell King reported that lockdep warns when it sees nested regmap-irq
+interrupt controllers since it defaults to using a single lock class for
+all mutexes allocated from a single place in the code.  We end up with
+both the parent and child regmap-irq locked simultaneously.  The second
+patch here uses an explicit lockdep key to disambiguate things for
+regmap, the first adds missing mutex cleanup which I noticed while
+writing that patch.
 
-As part of mapping it has to do resize of console according to frame
-buffer info. if this resize fails and returns from vc_do_resize() and
-continues further. At this point console and new frame buffer are mapped
-and sets display vars. Despite failure still it continue to proceed
-updating the screen at later stages where vc_data is related to previous
-frame buffer and frame buffer info and display vars are mapped to new
-frame buffer and eventully leading to out-of-bounds write in
-fast_imageblit(). This bheviour is excepted only when fg_console is
-equal to requested console which is a visible console and updates screen
-with invalid struct references in fbcon_putcs().
+I don't have an affected system so this is written blind, I should
+really write some KUnit tests for regmap-irq but didn't yet.
 
-Reported-and-tested-by: syzbot+c4b7aa0513823e2ea880@syzkaller.appspotmail.com
-Closes: https://syzkaller.appspot.com/bug?extid=c4b7aa0513823e2ea880
-Signed-off-by: Sravan Kumar Gundu <sravankumarlpu@gmail.com>
+Signed-off-by: Mark Brown <broonie@kernel.org>
 ---
- drivers/video/fbdev/core/fbcon.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+Mark Brown (2):
+      regmap: irq: Free the regmap-irq mutex
+      regmap: irq: Avoid lockdep warnings with nested regmap-irq chips
 
-diff --git a/drivers/video/fbdev/core/fbcon.c b/drivers/video/fbdev/core/fbcon.c
-index 3f7333dca508..2540d9046161 100644
---- a/drivers/video/fbdev/core/fbcon.c
-+++ b/drivers/video/fbdev/core/fbcon.c
-@@ -803,7 +803,8 @@ static void con2fb_init_display(struct vc_data *vc, struct fb_info *info,
- 				   fg_vc->vc_rows);
- 	}
- 
--	update_screen(vc_cons[fg_console].d);
-+	if (fg_console != unit)
-+		update_screen(vc_cons[fg_console].d);
- }
- 
- /**
-@@ -1336,6 +1337,7 @@ static void fbcon_set_disp(struct fb_info *info, struct fb_var_screeninfo *var,
- 	struct vc_data *svc;
- 	struct fbcon_ops *ops = info->fbcon_par;
- 	int rows, cols;
-+	unsigned long ret = 0;
- 
- 	p = &fb_display[unit];
- 
-@@ -1386,11 +1388,10 @@ static void fbcon_set_disp(struct fb_info *info, struct fb_var_screeninfo *var,
- 	rows = FBCON_SWAP(ops->rotate, info->var.yres, info->var.xres);
- 	cols /= vc->vc_font.width;
- 	rows /= vc->vc_font.height;
--	vc_resize(vc, cols, rows);
-+	ret = vc_resize(vc, cols, rows);
- 
--	if (con_is_visible(vc)) {
-+	if (con_is_visible(vc) && !ret)
- 		update_screen(vc);
--	}
- }
- 
- static __inline__ void ywrap_up(struct vc_data *vc, int count)
--- 
-2.43.0
+ drivers/base/regmap/regmap-irq.c | 30 +++++++++++++++++++++---------
+ 1 file changed, 21 insertions(+), 9 deletions(-)
+---
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+change-id: 20250731-regmap-irq-nesting-40970c711fd2
+
+Best regards,
+--  
+Mark Brown <broonie@kernel.org>
 
 
