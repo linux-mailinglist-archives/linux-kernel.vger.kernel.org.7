@@ -1,218 +1,187 @@
-Return-Path: <linux-kernel+bounces-752233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC05B172CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:05:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B2E3B172CE
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:05:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B70C58770B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:04:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 607B81884AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:05:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CEC82D29D1;
-	Thu, 31 Jul 2025 14:04:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2AAD2C1594;
+	Thu, 31 Jul 2025 14:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB6TryRb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JqD4yT9V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A0231474DA;
-	Thu, 31 Jul 2025 14:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C581EB39
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:05:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970651; cv=none; b=lY6hdQZwnD5tqIcKwtDi83GShb8FFa828geZe+mIGZtRdk9+Bfqq7uvyWAv66eoXtVynIaCMt5Eerz8BBDlPf8e5skG+KjCEjZV4gS41YhC+zX53SkswdvTo0rj16bAp+zbES+pooS5NaJed7bavF1UA4RzRsjN3O4mYIa1Xyfs=
+	t=1753970710; cv=none; b=Bp61lvK++fweBucM9TJB8boV2oloV9+2Cx6Q2NfZnTJ6Fpe5k/xRrK0kHDNDYwwtsLMkUIaQJo9zW45/C9P/ZxeyLaT/BizAzZDmxJ5xgJFIOI9P0w1WclCyDZb/VyIKcS5wI7iQm8h0IxqmzvZriVVRDnDbqTFiXi1ngThPBB8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970651; c=relaxed/simple;
-	bh=SN9WLKxqUU91wfpdWi+S97+8/wY9bgFqbbVnqRerV6w=;
+	s=arc-20240116; t=1753970710; c=relaxed/simple;
+	bh=Bp6qxWY5Vw4zchfSJZ5G0bLNb5BP1yJxoT6y6V2urbg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F351o1mssIvs7yTsNOdQ+AFXWtJDJKvkEb+yWKCEVWyBOVDYREkGpxB/cKk0t7XDWTAwbhhqScp3WusqfHA3oxrCnz8gK3fBjlOolj+Pr9go0UHK+OY1kVxEenSO3vRMfIMXUYW6VgvvbsTM/Ho4J5N21bDgsk72klVeRtLkUHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB6TryRb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16CCCC4CEEF;
-	Thu, 31 Jul 2025 14:04:05 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=G2E/zQXGyvPy8FaFy8/IwaqJJPCIgOyfyPzgJeuSApx1ZxKFrbhEDfI2h2HBKI/VFhAkyoclQnV7v2WpXUHh+LyPBh6EqBcHf3ne7QgEvMIVY+RreW2xkIJblIxAeqUzuTq6ulM4KrMi7zxtLnTPBjHMdoQTGY375/gTumFtkIQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JqD4yT9V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57CA4C4CEEF;
+	Thu, 31 Jul 2025 14:05:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753970651;
-	bh=SN9WLKxqUU91wfpdWi+S97+8/wY9bgFqbbVnqRerV6w=;
+	s=k20201202; t=1753970709;
+	bh=Bp6qxWY5Vw4zchfSJZ5G0bLNb5BP1yJxoT6y6V2urbg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=vB6TryRbHC2ejIlxVHgCkNZYpBO4+oew+futJCVIWwhQyrXyx8+VsCH+j2P6ACC3j
-	 5inhcCMcU1qbhYm74NGdJPeEdsTUBaboqOrGdmbuuIhnv51KPmDKEtZhfQDO17GyFP
-	 GgX53hrC/Vnz4ClfpPIP3jxi4GUiUpS/4HxH3o3klTYWEoMXzNNjDVlYurrfn5o0Cv
-	 VeS7ZhDyFXnLa4xnqAu7d2vNuft9ooeUOhTgzt74Xh7fDfUaOHKCrX+qvObIX6M89X
-	 t8nEfRvmZXVqbmyHug4pUmNRvcxkhma8jqQ9lzgE8S5Slhee38WXckx84J9kINoreH
-	 NJGD0p7DHvmXw==
-Date: Thu, 31 Jul 2025 15:04:04 +0100
-From: Simon Horman <horms@kernel.org>
-To: Gur Stavi <gur.stavi@huawei.com>
-Cc: andrew+netdev@lunn.ch, christophe.jaillet@wanadoo.fr, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, fuguiming@h-partners.com,
-	gongfan1@huawei.com, guoxin09@huawei.com, helgaas@kernel.org,
-	jdamato@fastly.com, kuba@kernel.org, lee@trager.us,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	luosifu@huawei.com, meny.yossefi@huawei.com, mpe@ellerman.id.au,
-	netdev@vger.kernel.org, pabeni@redhat.com,
-	przemyslaw.kitszel@intel.com, shenchenyang1@hisilicon.com,
-	shijing34@huawei.com, sumang@marvell.com, vadim.fedorenko@linux.dev,
-	wulike1@huawei.com, zhoushuai28@huawei.com,
-	zhuyikai1@h-partners.com
-Subject: Re: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
-Message-ID: <20250731140404.GD8494@horms.kernel.org>
-References: <20250725152709.GE1367887@horms.kernel.org>
- <20250731125839.1137083-1-gur.stavi@huawei.com>
+	b=JqD4yT9Vqrm2eckOx+2A9avYrCot149Z0UsurX7dJM/nhns3mbj+bDeDD4xdstgkG
+	 uZgUPKJ6CT/y9tYR6SwFX1bw3fm981+O0oBbl6VJwXgA9Yuc2jdq7C7ApsPgIPuM9L
+	 HelVI9G9hy/OoUD+wsiuN6LhkRwWIKFb72YUws35jR/83ObEMa78e6FAoNnPC5Yfiu
+	 8tzkxwgWUNW2M768dRfnIPyZ76OtYEbYkiCSTnmicVEK96s5qf4gFzpiwjzuiqJQ+7
+	 iRKxdM7+BTuFmqKeGQenmzDO4IVD8RxeVPrC4OJx4FFMWy/h1/ZN51fTxziJzeUkWQ
+	 9mnv6i3zfzx9w==
+Date: Thu, 31 Jul 2025 16:05:07 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
+Message-ID: <20250731-observant-fervent-heron-dbe833@houat>
+References: <20250730-drm-tidss-field-api-v1-0-a71ae8dd2782@kernel.org>
+ <15f0b568-3d59-4f0c-b390-4e3d3623136a@bootlin.com>
+ <20250731-powerful-termite-of-inspiration-13f36d@houat>
+ <c5e34fed-4dc7-4288-9183-c6c076bb3b85@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="etjucsgdpk7eff7t"
 Content-Disposition: inline
-In-Reply-To: <20250731125839.1137083-1-gur.stavi@huawei.com>
+In-Reply-To: <c5e34fed-4dc7-4288-9183-c6c076bb3b85@bootlin.com>
 
-On Thu, Jul 31, 2025 at 03:58:39PM +0300, Gur Stavi wrote:
-> > On Thu, Jul 24, 2025 at 09:45:51PM +0800, Fan Gong wrote:
-> > > > > +
-> > > > > +/* Data provided to/by cmdq is arranged in structs with little endian fields but
-> > > > > + * every dword (32bits) should be swapped since HW swaps it again when it
-> > > > > + * copies it from/to host memory.
-> > > > > + */
-> > > >
-> > > > This scheme may work on little endian hosts.
-> > > > But if so it seems unlikely to work on big endian hosts.
-> > > >
-> > > > I expect you want be32_to_cpu_array() for data coming from hw,
-> > > > with a source buffer as an array of __be32 while
-> > > > the destination buffer is an array of u32.
-> > > >
-> > > > And cpu_to_be32_array() for data going to the hw,
-> > > > with the types of the source and destination buffers reversed.
-> > > >
-> > > > If those types don't match your data, then we have
-> > > > a framework to have that discussion.
-> > > >
-> > > >
-> > > > That said, it is more usual for drivers to keep structures in the byte
-> > > > order they are received. Stored in structures with members with types, in
-> > > > this case it seems that would be __be32, and accessed using a combination
-> > > > of BIT/GENMASK, FIELD_PREP/FIELD_GET, and cpu_to_be*/be*_to_cpu (in this
-> > > > case cpu_to_be32/be32_to_cpu).
-> > > >
-> > > > An advantage of this approach is that the byte order of
-> > > > data is only changed when needed. Another is that it is clear
-> > > > what the byte order of data is.
-> > >
-> > > There is a simplified example:
-> > >
-> > > Here is a 64 bit little endian that may appear in cmdq:
-> > > __le64 x
-> > > After the swap it will become:
-> > > __be32 x_lo
-> > > __be32 x_hi
-> > > This is NOT __be64.
-> > > __be64 looks like this:
-> > > __be32 x_hi
-> > > __be32 x_lo
-> >
-> > Sure, byte swapping 64 bit entities is different to byte swapping two
-> > consecutive 32 bit entities. I completely agree.
-> >
-> > >
-> > > So the swapped data by HW is neither BE or LE. In this case, we should use
-> > > swab32 to obtain the correct LE data because our driver currently supports LE.
-> > > This is for compensating for bad HW decisions.
-> >
-> > Let us assume that the host is reading data provided by HW.
-> >
-> > If the swab32 approach works on a little endian host
-> > to allow the host to access 32-bit values in host byte order.
-> > Then this is because it outputs a 32-bit little endian values
-> 
-> Values can be any size. 32 bit is arbitrary.
-> .
-> >
-> > But, given the same input, it will not work on a big endian host.
-> > This is because the same little endian output will be produced,
-> > while the host byte order is big endian.
-> >
-> > I think you need something based on be32_to_cpu()/cpu_to_be32().
-> > This will effectively be swab32 on little endian hosts (no change!).
-> > And a no-op on big endian hosts (addressing my point above).
-> >
-> > More specifically, I think you should use be32_to_cpu_array() and
-> > cpu_to_be32_array() instead of swab32_array().
-> >
-> 
-> Lets define a "coherent struct" as a structure made of fields that makes sense
-> to human beings. Every field endianity is defined and fields are arranged in
-> order that "makes sense". Fields can be of any integer size 8,16,32,64 and not
-> necessarily naturally aligned.
-> 
-> swab32_array transforms a coherent struct into "byte jumble". Small fields are
-> reordered and larger (misaligned) fields may be split into 2 (or even 3) parts.
-> swab32_array is reversible so a 2nd call with byte jumble as input will produce
-> the original coherent struct.
-> 
-> hinic3 dma has "swab32_array" built in.
-> On send-to-device it expects a byte jubmle so the DMA engine will transform it
-> into a coherent struct.
-> On receive-from-device it provides a byte jumble so the driver needs
-> to call swab32_array to transform it into a coherent struct.
-> 
-> The hinic3_cmdq_buf_swab32 function will work correctly, producing byte jumble,
-> on little endian and big endian hosts.
-> 
-> The code that runs prior to hinic3_cmdq_buf_swab32 that initializes a coherent
-> struct is endianity sensitive. It needs to initialize fields based on their
-> coherent endianity with or without byte swap. Practically use cpu_to_le or
-> cpu_to_be based on the coherent definition.
-> 
-> Specifically, cmdq "coherent structs" in hinic3 use little endian and since
-> Kconfig currently declares that big endian hosts are not supported then
-> coherent structs are initialized without explicit cpu_to_le macros.
-> 
-> And this is what the comment says:
-> 
-> /* Data provided to/by cmdq is arranged in structs with little endian fields but
->  * every dword (32bits) should be swapped since HW swaps it again when it
->  * copies it from/to host memory.
->  */
-> 
 
-Thanks, I think I am closer to understanding things now.
+--etjucsgdpk7eff7t
+Content-Type: text/plain; protected-headers=v1; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 00/14] drm/tidss: dispc: Convert to FIELD_* API
+MIME-Version: 1.0
 
-Let me try and express things in my own words:
+On Thu, Jul 31, 2025 at 03:49:12PM +0200, Louis Chauvet wrote:
+>=20
+>=20
+> Le 31/07/2025 =E0 15:26, Maxime Ripard a =E9crit=A0:
+> > Hi Louis,
+> >=20
+> > On Thu, Jul 31, 2025 at 03:04:49PM +0200, Louis Chauvet wrote:
+> > > Le 30/07/2025 =E0 10:57, Maxime Ripard a =E9crit=A0:
+> > > > Hi,
+> > > >=20
+> > > > The tidss driver rolls its own API equivalent to the FIELD_* API al=
+ready
+> > > > provided the kernel.
+> > > >=20
+> > > > Since it's an ad-hoc implementation, it also is less convenient and
+> > > > doesn't provide some useful features like being able to share the f=
+ield
+> > > > definitions that will come handy in the future.
+> > > >=20
+> > > > Thus, this series converts the driver to that API and drops its own
+> > > > version.
+> > >=20
+> > > I just saw your series after sending mine [2]. I checked, there is on=
+ly one
+> > > minor conflict that can be easly fixed.
+> > >=20
+> > > But when applied on drm-misc/drm-misc-next, your series raises:
+> > >=20
+> > > In file included from <command-line>:
+> > > drivers/gpu/drm/tidss/tidss_dispc.c: In function 'FLD_MOD':
+> > > ././include/linux/compiler_types.h:568:45: error: call to
+> > > '__compiletime_assert_589' declared with attribute error: FIELD_PREP:=
+ mask
+> > > is not constant
+> > >    568 |         _compiletime_assert(condition, msg, __compiletime_as=
+sert_,
+> > > __COUNTER__)
+> > >        |                                             ^
+> > > ././include/linux/compiler_types.h:549:25: note: in definition of mac=
+ro
+> > > '__compiletime_assert'
+> > >    549 |                         prefix ## suffix();         \
+> > >        |                         ^~~~~~
+> > > ././include/linux/compiler_types.h:568:9: note: in expansion of macro
+> > > '_compiletime_assert'
+> > >    568 |         _compiletime_assert(condition, msg, __compiletime_as=
+sert_,
+> > > __COUNTER__)
+> > >        |         ^~~~~~~~~~~~~~~~~~~
+> > > ./include/linux/build_bug.h:39:37: note: in expansion of macro
+> > > 'compiletime_assert'
+> > >     39 | #define BUILD_BUG_ON_MSG(cond, msg) compiletime_assert(!(con=
+d), msg)
+> > >        |                                     ^~~~~~~~~~~~~~~~~~
+> > > ./include/linux/bitfield.h:65:17: note: in expansion of macro
+> > > 'BUILD_BUG_ON_MSG'
+> > >     65 |                 BUILD_BUG_ON_MSG(!__builtin_constant_p(_mask=
+),
+> > > \
+> > >        |                 ^~~~~~~~~~~~~~~~
+> > > ./include/linux/bitfield.h:115:17: note: in expansion of macro
+> > > '__BF_FIELD_CHECK'
+> > >    115 |                 __BF_FIELD_CHECK(_mask, 0ULL, _val, "FIELD_P=
+REP: ");
+> > > \
+> > >        |                 ^~~~~~~~~~~~~~~~
+> > > drivers/gpu/drm/tidss/tidss_dispc.c:599:33: note: in expansion of mac=
+ro
+> > > 'FIELD_PREP'
+> > >    599 |         return (orig & ~mask) | FIELD_PREP(mask, val);
+> > >        |                                 ^~~~~~~~~~
+> > >=20
+> > >=20
+> > > This seems to be a limitation of FIELD_PREP [1].
+> > > I think the only way to avoid this issue is to use macros and not fun=
+ctions.
+> > >=20
+> > > [1]:https://elixir.bootlin.com/linux/v6.16/source/include/linux/bitfi=
+eld.h#L65-L66
+> > > [2]:https://lore.kernel.org/all/20250730-fix-edge-handling-v1-0-1bdfb=
+3fe7922@bootlin.com/
+> >=20
+> > Weird, it compiles without warning for me here. Which compiler do you u=
+se?
+>=20
+>=20
+> I use this one:
+>=20
+> aarch64-linux-gnu-gcc (GCC) 14.2.1 20240912 (Red Hat Cross 14.2.1-2)
+> Copyright (C) 2024 Free Software Foundation, Inc.
+> This is free software; see the source for copying conditions.  There is NO
+> warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOS=
+E.
 
-1. On the hardware side, things are stored in a way that may be represented
-   as structures with little-endian values. The members of the structures may
-   have different sizes: 8-bit, 16-bit, 32-bit, ...
+I was testing with clang, but I can indeed see it with gcc. I'll fix it. Th=
+anks!
 
-2. The hardware runs the equivalent of swab32_array() over this data
-   when writing it to (or reading it from) the host. So we get a
-   "byte jumble".
+Maxime
 
-3. In this patch, the hinic3_cmdq_buf_swab32 reverses this jumbling
-   by running he equivalent of swab32_array() over this data again.
+--etjucsgdpk7eff7t
+Content-Type: application/pgp-signature; name="signature.asc"
 
-   As 3 exactly reverses 2, what is left are structures exactly as in 1.
+-----BEGIN PGP SIGNATURE-----
 
-If so, I agree this makes sense and I am sorry for missing this before.
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaIt4DAAKCRAnX84Zoj2+
+do57AYDvOXii+U61anW+nFQRa/XAyw4Xqjo5mcgrT8Jt8GGwUHH0NQ9dcQ4huElk
+S7d+HVUBfi3pbfH1SUqIJh2nPXG4WpzJ10gwIilziA4vISMQYTNKFUDKnkan0XhB
+apZsd/59OQ==
+=zAzm
+-----END PGP SIGNATURE-----
 
-And if so, is the intention for the cmdq "coherent structs" in the driver
-to look something like this.
-
-   struct {
-	u8 a;
-	u8 b;
-	__le16 c;
-	__le32 d;
-   };
-
-If so, this seems sensible to me.
-
-But I think it would be best so include some code in this patchset
-that makes use of such structures - sorry if it is there, I couldn't find
-it just now.
-
-And, although there is no intention for the driver to run on big endian
-systems, the __le* fields should be accessed using cpu_to_le*/le*_to_cpu
-helpers.
+--etjucsgdpk7eff7t--
 
