@@ -1,172 +1,146 @@
-Return-Path: <linux-kernel+bounces-752170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 04870B17211
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:29:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 805E8B17213
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:31:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCC0E585D07
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:29:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 238863A4BDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 330672C375A;
-	Thu, 31 Jul 2025 13:29:44 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4715A2C08C1;
+	Thu, 31 Jul 2025 13:31:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XKv2Uv53"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E02BE2BE633;
-	Thu, 31 Jul 2025 13:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F4CD223719;
+	Thu, 31 Jul 2025 13:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753968583; cv=none; b=SkYG1w60V4ib7mDOcPQH66q0aNPqdlej5dMqRq9/FcdUeQhDUsjZL31sxPMICxnANT7E+1V1W1TLNuM1mMmWtAf8PP2xy7KdFnVwEdaN3NpraR3YClL1Q8EvRBkNths2SEq6SofGYaqpEcDYlOUWKgSx4gf1PuutUZV0wQAOL+U=
+	t=1753968705; cv=none; b=ntz+isfRcQcSLb3qEwdKMY3ClEqtXuV6XM4ehzaKPJovFMachD8YYpz32bZLr2+XdQVG7BwmddQsidZ87CNmFO8D0K0qOO1mO+wG/Pw2beMbslgAbnvhJelA5AWrNe2Qz7w3b3bzYESIbu7erMumExs+VaHB+9PgJwXHhP0/W/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753968583; c=relaxed/simple;
-	bh=EWZ6pgYKok987NH2oz9xI9u+YMbPGCsIzCxP5dd9HKI=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=fnYR4Ukul/kU1/3pMIqRg1N38W/3KiT2kXUhvwInkBim1x2Ld9dmA7F1jbUYx/QVaByCluSxyF3lmRBEOSaWQICg8+lR0t73TuNjpTElYLJwK7ACHv6+xv8ihRpht5qcH3xkwK6sE/uO88cN+eqY5H8YZ95VcOUzKyFUy7kLJuI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay08.hostedemail.com (Postfix) with ESMTP id 869231406C8;
-	Thu, 31 Jul 2025 13:29:38 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 6DE2B2000F;
-	Thu, 31 Jul 2025 13:29:35 +0000 (UTC)
-Date: Thu, 31 Jul 2025 09:29:53 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Douglas Raillard <douglas.raillard@arm.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>, Tom
- Zanussi <zanussi@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
- aahringo@redhat.com
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <20250731092953.2d8eea47@gandalf.local.home>
-In-Reply-To: <dc817ce7-9551-4365-bd94-3c102a6acda8@arm.com>
-References: <20250729113335.2e4f087d@batman.local.home>
-	<dc817ce7-9551-4365-bd94-3c102a6acda8@arm.com>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1753968705; c=relaxed/simple;
+	bh=yB/Zam9PU8Vpw3OSJp2b99yh8gus5SsqhuwtZijYvKc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Qv03uuA/CWQT8NZEFsub+yNz5RSrTR+L6SkseXaSab4UUqguhoKR7NOWTbPpPvKuwsGAsEnBtNDukC/imZO3CYVIE9v2KtP/4b4VWLabgFzjX8JDlzo2dBjSZmeekZuFIOUhI4QcadbIdNff7V32bhdWGsmt9z0T8NqAjm0nl7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XKv2Uv53; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4084EC4CEEF;
+	Thu, 31 Jul 2025 13:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753968705;
+	bh=yB/Zam9PU8Vpw3OSJp2b99yh8gus5SsqhuwtZijYvKc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XKv2Uv53OCqReDBRvl/sVyIczEfl8N2nNRTXiyToyT4+p1u2IPtECBzt2eq9NdLs8
+	 ok0ytREWhuKKrv7W7IQCEVgz7qCxPp7SGlcXS17NKVv5M+y24Aj4G8uAO5O63baISB
+	 vhHr/a5Sr4vxlmS5mTzQyT1a9+M80dFxD2cLV127ijRXHcWHUFQcOCGX/HTb/S9K1v
+	 RikPrXXIuU/vNswRlTJ+q+1y9pE3LPEBqVXHgqcmWFySZC71zliRlC/+oVytiEyaiW
+	 Sfu6FCCvJ9MMYWjHl57gZN6tj0Trr8pj2RV2/Yw7F03OS8xlRZ+1SjLCQdHEIIEzlc
+	 curP48FPn8WfQ==
+Date: Thu, 31 Jul 2025 19:01:34 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: "Verma, Devendra" <Devendra.Verma@amd.com>
+Cc: "dmaengine@vger.kernel.org" <dmaengine@vger.kernel.org>, 
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "vkoul@kernel.org" <vkoul@kernel.org>
+Subject: Re: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+Message-ID: <2xlz5noopmv72h7yczpubmqrrbjwkn6wd6ehnu3rcqnpkuzw7s@i45jgrbuctpm>
+References: <20250623061733.1864392-1-devverma@amd.com>
+ <d6rtkyelnfhqya6txe7wr6rup7y6riifwzw6tbajopqa5wty6j@3o32khdidnas>
+ <SA1PR12MB812030AE4BC9A4D211A4C7669527A@SA1PR12MB8120.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6DE2B2000F
-X-Stat-Signature: bw8ibe9b7c4kmub1p7k63nj1y9jnbfk4
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+L8H5s3fdXXyd6+hVzM+9/MXwV9vc+1vc=
-X-HE-Tag: 1753968575-312415
-X-HE-Meta: U2FsdGVkX1/sB+1YBbj7sOeT7/ppwTtWX8fJq/gHqBP+1upiwecpSHNCj+rKik7kiR3DvZ6o7wjwaxBH+W0qcaErSKH2GWFRHUt93RP8s03VfapcEoU3sUzpWLuXxu2NzuWEah3X0v8NQArwY23fJBmVXZHjKNRuKwee9I3Ppc/h/yAD1ZZ7u7zl5kPnZP0UrnD7nUIa/F+maaM1Tzznhashi7FKbnho11NbLc1FYhAFmA5hiJ1pzyxOY1YXLjp6u7sCUexh1CtiPH+/DP3rZBLHdqeAdG714auqmmY514yn/MEEj+l5vCGkPEBOx1MpjP2RFA5+AZlA5YeBg10j3TN7iSCiWca7Neje6Z7mwYtMlexnsrEZ6A7T4iOe7gcz/RfvDyPL+YoojjFSPKLjlPOuc4bf+GFEOknrrUMFbeg+5HexO9M3HEQG0ZGQC3BEh+5yzQbwlYURZXkA52ZFuRljCMqacBiqdmWVf65fFo8=
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <SA1PR12MB812030AE4BC9A4D211A4C7669527A@SA1PR12MB8120.namprd12.prod.outlook.com>
 
-On Thu, 31 Jul 2025 12:44:49 +0100
-Douglas Raillard <douglas.raillard@arm.com> wrote:
-
-> > The delimiter is '.' and the first item is the structure name. Then the
-> > member of the structure to get the offset of. If that member is an
-> > embedded structure, another '.MEMBER' may be added to get the offset of
-> > its members with respect to the original value.
-> > 
-> >    "+kmem_cache.size($arg1)" is equivalent to:
-> > 
-> >    (*(struct kmem_cache *)$arg1).size
-> > 
-> > Anonymous structures are also handled:
-> > 
-> >    # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events  
+On Thu, Jul 31, 2025 at 09:32:12AM GMT, Verma, Devendra wrote:
+> [AMD Official Use Only - AMD Internal Distribution Only]
 > 
-> Not sure how hard that would be but the type of the expression could probably be inferred from
-> BTF as well in some cases. Some cases may be ambiguous (like char* that could be either a buffer
-> to display as hex or a null-terminated ASCII string) but BTF would still allow to restrict
-> to something sensible (e.g. prevent u32 for a char*).
-
-Hmm, should be possible, but would require passing that information back to
-the caller of the BTF lookup function.
-
-
-
-> > diff --git a/kernel/trace/trace_btf.c b/kernel/trace/trace_btf.c
-> > index 5bbdbcbbde3c..b69404451410 100644
-> > --- a/kernel/trace/trace_btf.c
-> > +++ b/kernel/trace/trace_btf.c
-> > @@ -120,3 +120,109 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
-> >   	return member;
-> >   }
-> >   
-> > +#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
-> > +
-> > +static int find_member(const char *ptr, struct btf *btf,
-> > +		       const struct btf_type **type, int level)
-> > +{
-> > +	const struct btf_member *member;
-> > +	const struct btf_type *t = *type;
-> > +	int i;
-> > +
-> > +	/* Max of 3 depth of anonymous structures */
-> > +	if (level > 3)
-> > +		return -1;
-> > +
-> > +	for_each_member(i, t, member) {
-> > +		const char *tname = btf_name_by_offset(btf, member->name_off);
-> > +
-> > +		if (strcmp(ptr, tname) == 0) {
-> > +			*type = btf_type_by_id(btf, member->type);
-> > +			return BITS_ROUNDDOWN_BYTES(member->offset);  
+> Hi Manivannan
 > 
-> member->offset does not only contain the offset, and the offset may not be
-> a multiple of 8:
-> https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/btf.h#L126
+> Please check my response inline.
 > 
->  From the BTF spec (https://docs.kernel.org/bpf/btf.html):
+> Regards,
+> Devendra
 > 
-> If the kind_flag is set, the btf_member.offset contains
-> both member bitfield size and bit offset.
-> The bitfield size and bit offset are calculated as below.:
+> > -----Original Message-----
+> > From: Manivannan Sadhasivam <mani@kernel.org>
+> > Sent: Wednesday, July 23, 2025 19:26
+> > To: Verma, Devendra <Devendra.Verma@amd.com>
+> > Cc: dmaengine@vger.kernel.org; linux-kernel@vger.kernel.org; vkoul@kernel.org
+> > Subject: Re: [RESEND PATCH] dmaengine: dw-edma: Add Simple Mode Support
+> >
+> > Caution: This message originated from an External Source. Use proper caution
+> > when opening attachments, clicking links, or responding.
+> >
+> >
+> > On Mon, Jun 23, 2025 at 11:47:33AM GMT, Devendra K Verma wrote:
+> > > The HDMA IP supports the simple mode (non-linked list).
+> > > In this mode the channel registers are configured to initiate a single
+> > > DMA data transfer. The channel can be configured in simple mode via
+> > > peripheral param of dma_slave_config param.
+> > >
+> > > Signed-off-by: Devendra K Verma <devverma@amd.com>
+> > > ---
+> > >  drivers/dma/dw-edma/dw-edma-core.c    | 10 +++++
+> > >  drivers/dma/dw-edma/dw-edma-core.h    |  2 +
+> > >  drivers/dma/dw-edma/dw-hdma-v0-core.c | 53
+> > ++++++++++++++++++++++++++-
+> > >  include/linux/dma/edma.h              |  8 ++++
+> > >  4 files changed, 72 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/dma/dw-edma/dw-edma-core.c
+> > > b/drivers/dma/dw-edma/dw-edma-core.c
+> > > index c2b88cc99e5d..4dafd6554277 100644
+> > > --- a/drivers/dma/dw-edma/dw-edma-core.c
+> > > +++ b/drivers/dma/dw-edma/dw-edma-core.c
+> > > @@ -235,9 +235,19 @@ static int dw_edma_device_config(struct dma_chan
+> > *dchan,
+> > >                                struct dma_slave_config *config)  {
+> > >       struct dw_edma_chan *chan = dchan2dw_edma_chan(dchan);
+> > > +     struct dw_edma_peripheral_config *pconfig = config->peripheral_config;
+> > > +     unsigned long flags;
+> > > +
+> > > +     if (WARN_ON(config->peripheral_config &&
+> > > +                 config->peripheral_size != sizeof(*pconfig)))
+> > > +             return -EINVAL;
+> > >
+> > > +     spin_lock_irqsave(&chan->vc.lock, flags);
+> > >       memcpy(&chan->config, config, sizeof(*config));
+> > > +
+> > > +     chan->non_ll_en = pconfig ? pconfig->non_ll_en : false;
+> >
+> > Who is allocating 'dw_edma_peripheral_config' and setting 'non_ll_en' flag? We
+> > cannot introduce a flag without anyone using it in upstream.
+> >
+> > - Mani
+> >
 > 
-> #define BTF_MEMBER_BITFIELD_SIZE(val)   ((val) >> 24)
-> #define BTF_MEMBER_BIT_OFFSET(val)      ((val) & 0xffffff)
-
-So basically just need to change that to:
-
-		if (strcmp(ptr, tname) == 0) {
-			int offset = BTF_MEMBER_BIT_OFFSET(member->offset);
-			*type = btf_type_by_id(btf, member->type);
-			return BITS_ROUNDDOWN_BYTES(offset);
-
-?
-
+> The caller of the DMA engine client APIs will be responsible for allocating
+> and setting the non_ll_en flag. This flag helps in setting the channel in to
+> non-Linked-List mode. This functionality is supported by the DMA controller.
+> The peripheral_config is just configuring the peripheral (DMA) in to the modes
+> it supports based on user discretion. As this functionality is used by the
+> clients to differentiate between the modes supported by the controller it
+> may not require the equivalent code in upstream.
 > 
-> > +		}
-> > +
-> > +		/* Handle anonymous structures */
-> > +		if (strlen(tname))
-> > +			continue;
-> > +
-> > +		*type = btf_type_by_id(btf, member->type);
-> > +		if (btf_type_is_struct(*type)) {
-> > +			int offset = find_member(ptr, btf, type, level + 1);
-> > +
-> > +			if (offset < 0)
-> > +				continue;
-> > +
-> > +			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
 
-And here too.
+As I stated above, we *must not* have an unused interface in upstream drivers. I
+understand that fact that your downstream driver is setting this flag and you
+want to keep your driver downstream. But the flag would be unused in upstream
+and that is not acceptable, sorry.
 
--- Steve
+- Mani
 
-> > +		}
-> > +	}
-> > +
-> > +	return -1;
-> > +}
-> > +
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
