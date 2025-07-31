@@ -1,209 +1,250 @@
-Return-Path: <linux-kernel+bounces-752303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 137C8B173C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:08:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2638B173C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:08:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 549B71C25795
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:08:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6011718A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:08:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D7C31D7E37;
-	Thu, 31 Jul 2025 15:08:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364E11D54FA;
+	Thu, 31 Jul 2025 15:08:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="J+zBw3wB"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="u0CH1QBK"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9CF61ADFE4;
-	Thu, 31 Jul 2025 15:08:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 984E21A841A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:08:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974483; cv=none; b=oRrCHp9d97CJIz4NIICw+6ReDBHghZQjiw7gy4wCTfLbecZrNvk3Raly7uq4K5c3dgPkA0ML0HbtbB9ZJvsvorSxJohtf1VfCrpl5g5BJj2m27JiHU82+a2OF+524yGSHLixXnDNOyLnVgvSEcw+3EcEXZZPr/pZY9u45JY2Mps=
+	t=1753974526; cv=none; b=KIzAVYCuCpeereVfav1ZlwCRlbImh+XvZxRoSdIHoDxxgL1jU9oSsHXSSp/R8zf4qgvYoXhs+2AD/Q7FsYP6AFcA67iXDqxW9Oel38O7raeViWllYJiBdn9InU1aHpbT4Q1/94HOk6Vyd1lKr/JyhfBhqrmC2h6AfsRFVNFGe6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974483; c=relaxed/simple;
-	bh=pa9VwKcB+q4yAi7+Bv6abIVQ9PXsM7T2n398NDcEzhw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RGOqE0f1tMVP7GowzN1NEGviiZeSBfp0xrl04C30cAkesRI42+nqnZ4M8dpy/DoYMMzCpIqkMNvZSUQh3JBqagF5r9EiQAlZjVVvvHZGth3Soqq/OA70oUBgt/N2Fo8NUS5tPkBn9+9eBF4dXA8i4KJwSy/AjW/RXoZpzJ4c53A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=J+zBw3wB; arc=none smtp.client-ip=192.198.163.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753974482; x=1785510482;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=pa9VwKcB+q4yAi7+Bv6abIVQ9PXsM7T2n398NDcEzhw=;
-  b=J+zBw3wBJ8/D3sdDDsSDVCZHB9ionY4uh/zoeHOUH4mS8ASgpNjmqesx
-   ASqtJBjDmcjWTsEGQ3mOHMJGTybusvXYA+dPATNspM80LXT4vDmE033qm
-   Vm48uJN0UnLtYwQkD+bzYAhvY3ppLImZzb8bJgi8VZqEWA3CFXwrLQyJs
-   3ceTDagnknsCqJKi1Uk4b4gCUqOqMw1x+G06+Cj3Hn1BB5GXtzdlArgt0
-   7jO1QExRwkftt2+X7V9TeJBfTKmHq8f8SVRpIR44d9N9vnfMf5eAEe5zr
-   iTWTqo4zFgLEFz8XQfPVfPJXUFFl3r9Rj6ZlBsdKn9jIb08D+wCSZgSSB
-   A==;
-X-CSE-ConnectionGUID: obPzVQHPT2OIyYJj9xVIVA==
-X-CSE-MsgGUID: VqypVxDfS8y7tVnvFx2b6g==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56233350"
-X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
-   d="scan'208";a="56233350"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 08:08:01 -0700
-X-CSE-ConnectionGUID: M6otbXP0RIWZisz8EVv6Tg==
-X-CSE-MsgGUID: ycrG9/pUR/WhaLOaEtc/Zw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
-   d="scan'208";a="163642643"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa009.fm.intel.com with ESMTP; 31 Jul 2025 08:07:59 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhUsv-0003rU-0Z;
-	Thu, 31 Jul 2025 15:07:57 +0000
-Date: Thu, 31 Jul 2025 23:07:56 +0800
-From: kernel test robot <lkp@intel.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, a.manzanares@samsung.com,
-	vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	Neeraj Kumar <s.neeraj@samsung.com>
-Subject: Re: [PATCH V2 05/20] nvdimm/region_label: Add region label updation
- routine
-Message-ID: <202507312211.ovRqDhYY-lkp@intel.com>
-References: <20250730121209.303202-6-s.neeraj@samsung.com>
+	s=arc-20240116; t=1753974526; c=relaxed/simple;
+	bh=5Ch2EPDaL3/YaRiCeHOGVQTgZRs5/v0F0jy2C1yq1fI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=KS41Qs6f/Mas9ezjxmzesMVwe8LLQaUgmBlC1/CvsGF+JXhpFW0L5PNkD0Rx8W4UXy6+f4iPfzA62Ogm8i1IssRWs3qazaIxMv7ENBRhRsbhdQHt8FAPceAxjO2FOTgGh92MstMyI3Kg2at1rliCX9B3g36VU8kjD3HxzBExvIg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=u0CH1QBK; arc=none smtp.client-ip=209.85.208.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-5f438523d6fso10645a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:08:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753974523; x=1754579323; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zmMz7Y87iVAn/fXyg5XDVIpHc/uVHLJxWrjG1qWFlkA=;
+        b=u0CH1QBKjfbrrtljROo8rlBWLGT9zMu1N1YJVzxY8Ue62XsVym+33kEyqiLUz7FBC9
+         EL6L7Hbs3M7xGQypER57SUMe5i0jeVpwMIrhYnmnkjaEoPIFTz+GM8kufj2zP32ljhZk
+         nrbjL2Kali9M/geqDbdMNdrPorf4o0uZrWYygvSqrv1Kw75sSrQUI+3yWoeuiX1gVw8n
+         gTOjHOIsYkQsWR0D9yDUEta7M1pz29lLqrg1TBKeP9aFlpnU1oY60mS1ilT2f7yBH0+B
+         dfGSsGfBMUG/urMOgHrXXE9lKmaJhCd+1O1QqvF0orxp5CcLpEryHZ1rvyFw53W0yh00
+         2ddw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753974523; x=1754579323;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zmMz7Y87iVAn/fXyg5XDVIpHc/uVHLJxWrjG1qWFlkA=;
+        b=k20E6adRZPcVRGUwqw1ZCZ23bzC0XwU9y0NyPhcGRJ0hdhmowJEIK6WX/0MqC8LpxN
+         nf+1OS2u1cHVpnfDHihmap0pWF17JlzaIgv/X9wZHb7aOaVzd6v0XlZaqHM5ymV1YU8z
+         fLKvusFE2KVO7tg6/+Yok1Kf1GYZjwU02zh0Xp5b55CQUwh8Cltf4my6cyZhYgguMeYA
+         sTseFViO8ZeHjOsav4IAf/KZw7oZ/0T74Qk7z3MmwmtrKT7khzc5zp1xtaR+oso03cIp
+         x0+D4rkKs+0A5XDqDWXiiwe0u2unvAJTc8yMDR44ojToahWtm9FWa9j/eWl/VL/0lo+j
+         IdwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXB/FnwF+gS4n2YkOtReGT5Dt7+2O0tMt/juUR3RpK1oHRjotJ3eXzO9V36ZMwRCM3dEZ1YwkD348cnW/E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNcnsHed/WQ+z8jFwcG9M0qZq+SxsH/2WOvJW0qPgQThG5Xcwf
+	jzwIlioBgQyBiO/fXtDLGWxhEBG4RMDSyhT1p8aUp+cPgNz1h/quJezLmS8nYEFuJQYE8KpKK+q
+	LgglWnl165oDBNP9xdydLyDZSQXqvnm4kDnX9GqLM
+X-Gm-Gg: ASbGncun4bvMUrCtClgABRnIzHPGEOUoWfjc8BeY7aJVGV2+FFCDYLIwkJwkO/M+g2W
+	dI0C/0qj+M/m+HcYQunzXTZGrdbFrVbqqT6jG8fmuxYzwjz+t5w7HmOx7pu7TNNxFgjhCu0tbJb
+	djN/ulwQF99j2ooTsUT/YM5OGo2AYAmuOvJ/ZNJKhhzqdOAJam/gdFMy/QxyyjoYbMbdCIlKG6M
+	ix+nEPpJz9Aj2j/+71PQyKUJb0GAcVfuG7f5szsLQ==
+X-Google-Smtp-Source: AGHT+IHpZroMnR8gNbnJ6Hl9Azyb+Hb8r/YpRDMj/t8qAd1gcDSdLIfF7iA0Z5SXN0Jk5/1OoME3F4GcnV0AJtVw4OA=
+X-Received: by 2002:a50:d75c:0:b0:607:d206:7657 with SMTP id
+ 4fb4d7f45d1cf-615ab47613amr78190a12.2.1753974522596; Thu, 31 Jul 2025
+ 08:08:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730121209.303202-6-s.neeraj@samsung.com>
+References: <20250730170733.3829267-1-surenb@google.com> <20250731015241.3576-1-hdanton@sina.com>
+ <CA+EESO4mkiedqVMCV3fEnB-xeBMKyct1_WA=YDFVbqSGU4F+6A@mail.gmail.com> <CAJuCfpGzazWVYzc9XXh+xTP9R7cMffiP2P4G5OJTQ0-Ji4xFEQ@mail.gmail.com>
+In-Reply-To: <CAJuCfpGzazWVYzc9XXh+xTP9R7cMffiP2P4G5OJTQ0-Ji4xFEQ@mail.gmail.com>
+From: Lokesh Gidra <lokeshgidra@google.com>
+Date: Thu, 31 Jul 2025 08:08:30 -0700
+X-Gm-Features: Ac12FXxDR_jDXV2_itlIrHvfQvtXRY2GLBRhyzMxKRUo0_JmXQBqs2eQDyu-PXM
+Message-ID: <CA+EESO7axBaw7zWhG=Asuu3d5mR+QMw=cht64xdGdJGi7URhsg@mail.gmail.com>
+Subject: Re: [PATCH 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles a
+ THP hole
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: Hillf Danton <hdanton@sina.com>, akpm@linux-foundation.org, peterx@redhat.com, 
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, 
+	syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Neeraj,
+On Thu, Jul 31, 2025 at 7:24=E2=80=AFAM Suren Baghdasaryan <surenb@google.c=
+om> wrote:
+>
+> On Thu, Jul 31, 2025 at 12:35=E2=80=AFAM Lokesh Gidra <lokeshgidra@google=
+.com> wrote:
+> >
+> > On Wed, Jul 30, 2025 at 6:58=E2=80=AFPM Hillf Danton <hdanton@sina.com>=
+ wrote:
+> > >
+> > > #syz test
+> > >
+> > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+> > > encounters a non-present THP, it fails to properly recognize an unmap=
+ped
+> > > hole and tries to access a non-existent folio, resulting in
+> > > a crash. Add a check to skip non-present THPs.
+> > >
+> > Thanks Suren for promptly addressing this issue.
+> >
+> > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@=
+google.com/
+> > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > Cc: stable@vger.kernel.org
+> > > ---
+> > >  mm/userfaultfd.c | 38 +++++++++++++++++++++++---------------
+> > >  1 file changed, 23 insertions(+), 15 deletions(-)
+> > >
+> > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > index cbed91b09640..60be8080ddd0 100644
+> > > --- a/mm/userfaultfd.c
+> > > +++ b/mm/userfaultfd.c
+> > > @@ -1818,27 +1818,35 @@ ssize_t move_pages(struct userfaultfd_ctx *ct=
+x, unsigned long dst_start,
+> > >
+> > >                 ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
+> > >                 if (ptl) {
+> > > -                       /* Check if we can move the pmd without split=
+ting it. */
+> > > -                       if (move_splits_huge_pmd(dst_addr, src_addr, =
+src_start + len) ||
+> > > -                           !pmd_none(dst_pmdval)) {
+> > > -                               struct folio *folio =3D pmd_folio(*sr=
+c_pmd);
+> > > +                       if (pmd_present(*src_pmd) || is_pmd_migration=
+_entry(*src_pmd)) {
+> > > +                               /* Check if we can move the pmd witho=
+ut splitting it. */
+> > > +                               if (move_splits_huge_pmd(dst_addr, sr=
+c_addr, src_start + len) ||
+> > > +                                   !pmd_none(dst_pmdval)) {
+> > > +                                       if (pmd_present(*src_pmd)) {
+> > > +                                               struct folio *folio =
+=3D pmd_folio(*src_pmd);
+> > > +
+> > > +                                               if (!folio || (!is_hu=
+ge_zero_folio(folio) &&
+> > > +                                                              !PageA=
+nonExclusive(&folio->page))) {
+> > > +                                                       spin_unlock(p=
+tl);
+> > > +                                                       err =3D -EBUS=
+Y;
+> > > +                                                       break;
+> > > +                                               }
+> > > +                                       }
+> > >
+> > > -                               if (!folio || (!is_huge_zero_folio(fo=
+lio) &&
+> > > -                                              !PageAnonExclusive(&fo=
+lio->page))) {
+> > >                                         spin_unlock(ptl);
+> > > -                                       err =3D -EBUSY;
+> > > -                                       break;
+> > > +                                       split_huge_pmd(src_vma, src_p=
+md, src_addr);
+> > > +                                       /* The folio will be split by=
+ move_pages_pte() */
+> > > +                                       continue;
+> > >                                 }
+> > >
+> > > +                               err =3D move_pages_huge_pmd(mm, dst_p=
+md, src_pmd,
+> > > +                                                         dst_pmdval,=
+ dst_vma, src_vma,
+> > > +                                                         dst_addr, s=
+rc_addr);
+> > > +                       } else {
+> > > +                               /* nothing to do to move a hole */
+> > >                                 spin_unlock(ptl);
+> > > -                               split_huge_pmd(src_vma, src_pmd, src_=
+addr);
+> > > -                               /* The folio will be split by move_pa=
+ges_pte() */
+> > > -                               continue;
+> > > +                               err =3D 0;
+> > I think we need to act here depending on whether
+> > UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is set or not.
+>
+> Hmm, yes, I think you are right. I thought we would bail out earlier
+> if !UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES but I think it's possible to get
+> here if the PMD was established earlier but then unmapped.
 
-kernel test robot noticed the following build warnings:
+That makes sense too. My thinking was that the
+!UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES check above is only when !src_pmd,
+which means the src pmd-page itself isn't present. However, the case
+where pmd-page is present, but the pmd entry is not; continuing
+skipping the hole even when user cannot tolerate src-holes would break
+the userspace logic.
+>
+> >
+> >            err =3D (mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES) ? 0 : -ENO=
+ENT;
+> >
+> > Also, IMO, the step_size in this case should be the minimum of
+> > remaining length and HPAGE_PMD_SIZE.
+>
+> Ah, ok. I think it matters only for incrementing "moved" correctly
+> because otherwise the functionality is the same.
+>
+Right. Returning an incorrect "moved" value to userspace can break the
+logic, possibly causing data corruption.
 
-[auto build test WARNING on f11a5f89910a7ae970fbce4fdc02d86a8ba8570f]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Kumar/nvdimm-label-Introduce-NDD_CXL_LABEL-flag-to-set-cxl-label-format/20250730-202209
-base:   f11a5f89910a7ae970fbce4fdc02d86a8ba8570f
-patch link:    https://lore.kernel.org/r/20250730121209.303202-6-s.neeraj%40samsung.com
-patch subject: [PATCH V2 05/20] nvdimm/region_label: Add region label updation routine
-config: x86_64-randconfig-121-20250731 (https://download.01.org/0day-ci/archive/20250731/202507312211.ovRqDhYY-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507312211.ovRqDhYY-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507312211.ovRqDhYY-lkp@intel.com/
-
-sparse warnings: (new ones prefixed by >>)
->> drivers/nvdimm/label.c:1184:25: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] align @@     got restricted __le16 [usertype] @@
-   drivers/nvdimm/label.c:1184:25: sparse:     expected restricted __le32 [usertype] align
-   drivers/nvdimm/label.c:1184:25: sparse:     got restricted __le16 [usertype]
-   drivers/nvdimm/label.c: note: in included file (through drivers/nvdimm/nd-core.h):
-   drivers/nvdimm/nd.h:314:37: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] align @@     got restricted __le16 [usertype] @@
-   drivers/nvdimm/nd.h:314:37: sparse:     expected restricted __le32 [usertype] align
-   drivers/nvdimm/nd.h:314:37: sparse:     got restricted __le16 [usertype]
-
-vim +1184 drivers/nvdimm/label.c
-
-  1139	
-  1140	static int __pmem_region_label_update(struct nd_region *nd_region,
-  1141			struct nd_mapping *nd_mapping, int pos, unsigned long flags)
-  1142	{
-  1143		struct nd_interleave_set *nd_set = nd_region->nd_set;
-  1144		struct nvdimm_drvdata *ndd = to_ndd(nd_mapping);
-  1145		struct nd_lsa_label *nd_label;
-  1146		struct cxl_region_label *rg_label;
-  1147		struct nd_namespace_index *nsindex;
-  1148		struct nd_label_ent *label_ent;
-  1149		unsigned long *free;
-  1150		u32 nslot, slot;
-  1151		size_t offset;
-  1152		int rc;
-  1153		uuid_t tmp;
-  1154	
-  1155		if (!preamble_next(ndd, &nsindex, &free, &nslot))
-  1156			return -ENXIO;
-  1157	
-  1158		/* allocate and write the label to the staging (next) index */
-  1159		slot = nd_label_alloc_slot(ndd);
-  1160		if (slot == UINT_MAX)
-  1161			return -ENXIO;
-  1162		dev_dbg(ndd->dev, "allocated: %d\n", slot);
-  1163	
-  1164		nd_label = to_label(ndd, slot);
-  1165	
-  1166		memset(nd_label, 0, sizeof_namespace_label(ndd));
-  1167		rg_label = &nd_label->rg_label;
-  1168	
-  1169		/* Set Region Label Format identification UUID */
-  1170		uuid_parse(CXL_REGION_UUID, &tmp);
-  1171		export_uuid(nd_label->rg_label.type, &tmp);
-  1172	
-  1173		/* Set Current Region Label UUID */
-  1174		export_uuid(nd_label->rg_label.uuid, &nd_set->uuid);
-  1175	
-  1176		rg_label->flags = __cpu_to_le32(flags);
-  1177		rg_label->nlabel = __cpu_to_le16(nd_region->ndr_mappings);
-  1178		rg_label->position = __cpu_to_le16(pos);
-  1179		rg_label->dpa = __cpu_to_le64(nd_mapping->start);
-  1180		rg_label->rawsize = __cpu_to_le64(nd_mapping->size);
-  1181		rg_label->hpa = __cpu_to_le64(nd_set->res->start);
-  1182		rg_label->slot = __cpu_to_le32(slot);
-  1183		rg_label->ig = __cpu_to_le32(nd_set->interleave_granularity);
-> 1184		rg_label->align = __cpu_to_le16(0);
-  1185	
-  1186		/* Update fletcher64 Checksum */
-  1187		rgl_calculate_checksum(ndd, rg_label);
-  1188	
-  1189		/* update label */
-  1190		offset = nd_label_offset(ndd, nd_label);
-  1191		rc = nvdimm_set_config_data(ndd, offset, nd_label,
-  1192				sizeof_namespace_label(ndd));
-  1193		if (rc < 0) {
-  1194			nd_label_free_slot(ndd, slot);
-  1195			return rc;
-  1196		}
-  1197	
-  1198		/* Garbage collect the previous label */
-  1199		guard(mutex)(&nd_mapping->lock);
-  1200		list_for_each_entry(label_ent, &nd_mapping->labels, list) {
-  1201			if (!label_ent->label)
-  1202				continue;
-  1203			if (rgl_uuid_equal(&label_ent->label->rg_label, &nd_set->uuid))
-  1204				reap_victim(nd_mapping, label_ent);
-  1205		}
-  1206	
-  1207		/* update index */
-  1208		rc = nd_label_write_index(ndd, ndd->ns_next,
-  1209				nd_inc_seq(__le32_to_cpu(nsindex->seq)), 0);
-  1210		if (rc)
-  1211			return rc;
-  1212	
-  1213		list_for_each_entry(label_ent, &nd_mapping->labels, list)
-  1214			if (!label_ent->label) {
-  1215				label_ent->label = nd_label;
-  1216				nd_label = NULL;
-  1217				break;
-  1218			}
-  1219		dev_WARN_ONCE(&nd_region->dev, nd_label,
-  1220				"failed to track label: %d\n",
-  1221				to_slot(ndd, nd_label));
-  1222		if (nd_label)
-  1223			rc = -ENXIO;
-  1224	
-  1225		return rc;
-  1226	}
-  1227	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> > >                         }
+> > > -
+> > > -                       err =3D move_pages_huge_pmd(mm, dst_pmd, src_=
+pmd,
+> > > -                                                 dst_pmdval, dst_vma=
+, src_vma,
+> > > -                                                 dst_addr, src_addr)=
+;
+> > >                         step_size =3D HPAGE_PMD_SIZE;
+> > >                 } else {
+> > >                         if (pmd_none(*src_pmd)) {
+> > I have a related question/doubt: why do we populate the page-table
+> > hierarchy on the src side [1] (and then also at line 1857) when a hole
+> > is found? IMHO, it shouldn't be needed. Depending on whether
+> > UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is set or not, it should either
+> > return -ENOENT, or continue past the hole. Please correct me if I'm
+> > wrong.
+>
+> I thought about that too. I think it's done to simplify the logic.
+> This way we can treat the cases when PMD was never allocated and when
+> PMD was allocated, mapped and then unmapped the same way.
+>
+Makes sense. Thanks for clarifying.
+> >
+> > [1] https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L179=
+7
+> >
+> > >
+> > > base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
+> > > --
+> > > 2.50.1.552.g942d659e1b-goog
 
