@@ -1,153 +1,408 @@
-Return-Path: <linux-kernel+bounces-751637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751640-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4FBDB16BB5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:48:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 13BF3B16BBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0EB5B7B4E78
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E80755826B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA335241685;
-	Thu, 31 Jul 2025 05:47:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b="EB8FyFJS"
-Received: from mg.richtek.com (mg.richtek.com [220.130.44.152])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6C27244683;
-	Thu, 31 Jul 2025 05:47:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.130.44.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383F024169F;
+	Thu, 31 Jul 2025 05:50:17 +0000 (UTC)
+Received: from mail.comtrue-inc.com (220-134-147-48.hinet-ip.hinet.net [220.134.147.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C00F7323D;
+	Thu, 31 Jul 2025 05:50:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.134.147.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753940874; cv=none; b=fMV+XVrs4PKUjSSc8ws+tH5eo5mLM8VJlgbX8qAZdAOIh49zR6vRg5bh4NTHOSTOCWxIPqNw5KlGUbVfZMD6bT3x2ebMysX29jM11C1+9Jaf7/1xlZDsGUJR5AXIfE8G9Sd2N5c6UxJi3kFp23a5stgrS1OH8aG2jt2zQ61WQjk=
+	t=1753941016; cv=none; b=MZDQ4DsT6jFqq+vQLizF+8nGrP758t83SXQegD+FDnN4rROJhiAX4psfgK2UnuDddhi/F+PCys8OlWkJCa8vyWuamDzdOunE+5/pwHND9TMv5DIdAocCHihGRTIapfgY8oJV45kAOXdjEnnqyKWmE/2TyG6dB6nLom0TQjL6aew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753940874; c=relaxed/simple;
-	bh=DkySQ9C6S2kjZcTV+DRFTNGRLwaEe/YY6YKOlioQj/4=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZZu75H6MZMStyZtid+OXA+f/WW0n4vaTfOeqRr0svYpOUAlzkU8TVSx4k6fIwDTz7tz/z6WRg120TQsZLeSICmcSE7SJ5wEtMf+FNTOegIIJ7y4ZkDwwyy1KoJlYrFTSGmzTtX9WGiZ5N01sPwRQGBJDkkrloaGqyewHbJdCd0A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com; spf=pass smtp.mailfrom=richtek.com; dkim=pass (2048-bit key) header.d=richtek.com header.i=@richtek.com header.b=EB8FyFJS; arc=none smtp.client-ip=220.130.44.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=richtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=richtek.com
-X-MailGates: (SIP:2,PASS,NONE)(compute_score:DELIVER,40,3)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=richtek.com;
-	s=richtek; t=1753940868;
-	bh=x6e4i3YoKlDiQe2/JuPqV82fMICTL+9U6m2WYDkZjpo=; l=2264;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=EB8FyFJSiyrobSwbmts0uuiMVftYu5+e7m93o+FkowrZPBR+XUN0vVjA7pkWguxxR
-	 pTe4KRvlbr3la6PkH4jF4NamRuKq+Dhm+JlXzN04t+5bMIj46lVpNiWxnIoPAjoH3n
-	 axfe0RF1OHMgBSMtWdSpQNJSaLYiMdATq2vcqWykyOcMisjlS+7kECgcWvBHyJdipF
-	 j4JedCnQLSn5hsak1tYJX7o/dD979ByRhUehkyyBM/UVa0E5Xlp9GRfN1svcC1NTqN
-	 l2OfGfFkLwrskPDiCi55mUylZrfKnbzcCAYiJp3CSLp8wwKs4POJCuYkFm7c+79DL1
-	 j4K/BfwpuTiJw==
-Received: from 192.168.10.47
-	by mg.richtek.com with MailGates ESMTPS Server V6.0(244590:0:AUTH_RELAY)
-	(envelope-from <cy_huang@richtek.com>)
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256/256); Thu, 31 Jul 2025 13:47:38 +0800 (CST)
-Received: from ex3.rt.l (192.168.10.46) by ex4.rt.l (192.168.10.47) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 31 Jul
- 2025 13:47:38 +0800
-Received: from git-send.richtek.com (192.168.10.154) by ex3.rt.l
- (192.168.10.45) with Microsoft SMTP Server id 15.2.1544.11 via Frontend
- Transport; Thu, 31 Jul 2025 13:47:37 +0800
-From: <cy_huang@richtek.com>
-To: Sebastian Reichel <sre@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>
-CC: Conor Dooley <conor+dt@kernel.org>, ChiYuan Huang <cy_huang@richtek.com>,
-	<devicetree@vger.kernel.org>, <linux-pm@vger.kernel.org>,
+	s=arc-20240116; t=1753941016; c=relaxed/simple;
+	bh=/PGEbJLad/rzApTa99/KJo2Q3FHJ7sKoF0VPaSh5NuI=;
+	h=From:To:Cc:References:In-Reply-To:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type; b=c5pl0vvh6DxaWDpDqHi+HKdPKkNdXdqIc8iVCiJp5v8xhCZnY6jt9jigjmVmRYgwehy4hVJJaA7ajkdCiFm4aRmGtCWiv4XTruU73OTH8mpL+1WrmhoX184ssheY0tQ4rEaz+iDbVTCfncPE3oObzE3OliwhcS/0WfZsn5AeU8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comtrue-inc.com; spf=pass smtp.mailfrom=comtrue-inc.com; arc=none smtp.client-ip=220.134.147.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=comtrue-inc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=comtrue-inc.com
+Received: from T470p (111-240-71-216.dynamic-ip.hinet.net [111.240.71.216])
+	by mail.comtrue-inc.com (Postfix) with ESMTPA id 1DB141816B7;
+	Thu, 31 Jul 2025 13:50:13 +0800 (CST)
+From: <noble.yang@comtrue-inc.com>
+To: "'Takashi Iwai'" <tiwai@suse.de>
+Cc: <tiwai@suse.com>,
+	<perex@perex.cz>,
+	<hulianqin@vivo.com>,
+	<lina+kernel@asahilina.net>,
+	<cyan.vtb@gmail.com>,
+	<dan.carpenter@linaro.org>,
+	<bsevens@google.com>,
+	<linux-sound@vger.kernel.org>,
 	<linux-kernel@vger.kernel.org>
-Subject: [PATCH v2 3/3] Documentation: power: rt9756: Document exported sysfs entries
-Date: Thu, 31 Jul 2025 13:48:18 +0800
-Message-ID: <49a89b9da1f903b0326d3f448849183e62c64dc3.1753940508.git.cy_huang@richtek.com>
-X-Mailer: git-send-email 2.43.5
-In-Reply-To: <cover.1753940508.git.cy_huang@richtek.com>
-References: <cover.1753940508.git.cy_huang@richtek.com>
+References: <001e01dc01d6$cc4c64e0$64e52ea0$@comtrue-inc.com> <875xf8udel.wl-tiwai@suse.de>
+In-Reply-To: <875xf8udel.wl-tiwai@suse.de>
+Subject: RE: [PATCH] ALSA: usb-audio: Add DSD support for Comtrue USB Audio device
+Date: Thu, 31 Jul 2025 13:50:13 +0800
+Message-ID: <002601dc01de$fc127db0$f4377910$@comtrue-inc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/mixed;
+	boundary="----=_NextPart_000_0027_01DC0222.0A371D40"
+X-Mailer: Microsoft Outlook 16.0
+Thread-Index: AQJzuO2RCbJ8U0DTv9IeX9bqTdFdvwHMATWRsw3p8aA=
+Content-Language: zh-tw
 
-From: ChiYuan Huang <cy_huang@richtek.com>
+This is a multipart message in MIME format.
 
-Document the settings exported by rt9756 charger driver through sysfs
-entries:
+------=_NextPart_000_0027_01DC0222.0A371D40
+Content-Type: text/plain;
+	charset="big5"
+Content-Transfer-Encoding: quoted-printable
 
-- watchdog_timer
-- battery_voltage
-- battery_current
-- operation_mode
+Hello Takashi
 
-Signed-off-by: ChiYuan Huang <cy_huang@richtek.com>
----
- .../ABI/testing/sysfs-class-power-rt9756      | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/ABI/testing/sysfs-class-power-rt9756
+Please try download it as below link
+https://reurl.cc/8951Ro
 
-diff --git a/Documentation/ABI/testing/sysfs-class-power-rt9756 b/Documentation/ABI/testing/sysfs-class-power-rt9756
-new file mode 100644
-index 000000000000..2d0f7ef1b855
---- /dev/null
-+++ b/Documentation/ABI/testing/sysfs-class-power-rt9756
-@@ -0,0 +1,52 @@
-+What:		/sys/class/power_supply/rt9756-*/watchdog_timer
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		This entry shows and sets the watchdog timer when rt9756 charger
-+		operates in charging mode. When the timer expires, the device
-+		will disable the charging. To prevent the timer expires, any
-+		host communication can make the timer restarted.
-+
-+		Access: Read, Write
-+
-+		Valid values:
-+		- 500, 1000, 5000, 30000, 40000, 80000, 128000 or 255000 (milliseconds),
-+		- 0: disabled
-+
-+What:		/sys/class/power_supply/rt9756-*/battery_voltage
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		Reports the current BAT voltage.
-+
-+		Access: Read-Only
-+
-+		Valid values: Represented in microvolts
-+
-+What:		/sys/class/power_supply/rt9756-*/battery_current
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		Reports the current BAT current.
-+
-+		Access: Read-Only
-+
-+		Valid values: Represented in microamps
-+
-+What:		/sys/class/power_supply/rt9756-*/operation_mode
-+Date:		Aug 2025
-+KernelVersion:	6.17
-+Contact:	ChiYuan Huang <cy_huang@richtek.com>
-+Description:
-+		This entry shows and set the operation mode when rt9756 charger
-+		operates in charging phase. If 'bypass' mode is used, internal
-+		path will connect vbus directly to vbat. Else, default 'div2'
-+		mode for the switch-cap charging.
-+
-+		Access: Read, Write
-+
-+		Valid values:
-+		- 'bypass' or 'div2'
--- 
-2.34.1
+Thanks
+Noble
+
+-----Original Message-----
+From: Takashi Iwai <tiwai@suse.de>=20
+Sent: Thursday, July 31, 2025 1:40 PM
+To: noble.yang@comtrue-inc.com
+Cc: tiwai@suse.com; perex@perex.cz; hulianqin@vivo.com;
+lina+kernel@asahilina.net; cyan.vtb@gmail.com; dan.carpenter@linaro.org;
+bsevens@google.com; linux-sound@vger.kernel.org;
+linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] ALSA: usb-audio: Add DSD support for Comtrue USB =
+Audio
+device
+
+On Thu, 31 Jul 2025 06:51:37 +0200,
+<noble.yang@comtrue-inc.com> wrote:
+>=20
+>=20
+> The vendor Comtrue Inc. (0x2fc6) produces USB audio chipsets like
+>=20
+> the CT7601 which are capable of Native DSD playback.
+>=20
+> This patch adds QUIRK_FLAG_DSD_RAW for Comtrue (VID 0x2fc6), which=20
+> enables
+>=20
+> native DSD playback (DSD_U32_LE) on their USB Audio device. This has=20
+> been
+>=20
+> verified under Ubuntu 25.04 with JRiver.
+>=20
+> Best Regards !
+
+I see no patch in the mail.  Could you try to send via git-send-email?
+
+
+thanks,
+
+Takashi
+
+>=20
+> =
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+>=20
+> Noble Yang
+>=20
+> Cell : +886-955-347822
+>=20
+> =B1=E1=BF=B2=AA=D1=A5=F7=A6=B3=AD=AD=A4=BD=A5q
+>=20
+> Comtrue Inc.
+>=20
+> www.comtrue-inc.com
+>=20
+> =B7s=A6a=A7} : =
+=B7s=A6=CB=BF=A4=A6=CB=A5_=A5=AB=BF=A4=ACF=A4Q=B5=F310=B8=B92F=A4=A71
+>=20
+> 2F.-1, No. 10, Xianzheng 10th St., Zhubei City, Hsinchu County 302,=20
+> Taiwan
+> (R.O.C.)
+>=20
+> The information included in this email is privileged and confidential=20
+> and just for the exclusive use of the addressee.
+>=20
+> For people other than the addressee the use, disclosure and=20
+> reproduction is strictly prohibited.
+>=20
+> If this message has been received in error, please contact the sender=20
+> and delete all copies.
+>=20
+>=20
+> cat /proc/asound/card*/stream0
+> Comtrue-inc Comtrue-inc UAC2 Device EVM-GB at usb-0000:00:14.0-5, high =
+
+> speed : USB Audio
+>=20
+> Playback:
+>   Status: Stop
+>   Interface 1
+>     Altset 1
+>     Format: S16_LE
+>     Channels: 2
+>     Endpoint: 0x01 (1 OUT) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 16
+>     Channel map: FL FR
+>     Sync Endpoint: 0x81 (1 IN)
+>     Sync EP Interface: 1
+>     Sync EP Altset: 1
+>     Implicit Feedback Mode: No
+>   Interface 1
+>     Altset 2
+>     Format: S24_3LE
+>     Channels: 2
+>     Endpoint: 0x01 (1 OUT) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 24
+>     Channel map: FL FR
+>     Sync Endpoint: 0x81 (1 IN)
+>     Sync EP Interface: 1
+>     Sync EP Altset: 2
+>     Implicit Feedback Mode: No
+>   Interface 1
+>     Altset 3
+>     Format: S32_LE
+>     Channels: 2
+>     Endpoint: 0x01 (1 OUT) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 32
+>     Channel map: FL FR
+>     Sync Endpoint: 0x81 (1 IN)
+>     Sync EP Interface: 1
+>     Sync EP Altset: 3
+>     Implicit Feedback Mode: No
+>   Interface 1
+>     Altset 4
+>     Format: SPECIAL DSD_U32_BE
+>     Channels: 2
+>     Endpoint: 0x01 (1 OUT) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 32
+>     DSD raw: DOP=3D0, bitrev=3D0
+>     Channel map: FL FR
+>     Sync Endpoint: 0x81 (1 IN)
+>     Sync EP Interface: 1
+>     Sync EP Altset: 4
+>     Implicit Feedback Mode: No
+>=20
+> Capture:
+>   Status: Stop
+>   Interface 2
+>     Altset 1
+>     Format: S16_LE
+>     Channels: 2
+>     Endpoint: 0x82 (2 IN) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 16
+>     Channel map: FL FR
+>   Interface 2
+>     Altset 2
+>     Format: S24_3LE
+>     Channels: 2
+>     Endpoint: 0x82 (2 IN) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 24
+>     Channel map: FL FR
+>   Interface 2
+>     Altset 3
+>     Format: S32_LE
+>     Channels: 2
+>     Endpoint: 0x82 (2 IN) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 32
+>     Channel map: FL FR
+>   Interface 2
+>     Altset 4
+>     Format: SPECIAL DSD_U32_BE
+>     Channels: 2
+>     Endpoint: 0x82 (2 IN) (ASYNC)
+>     Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000,
+705600, 768000
+>     Data packet interval: 125 us
+>     Bits: 32
+>     DSD raw: DOP=3D0, bitrev=3D0
+>     Channel map: FL FR
+>=20
+
+------=_NextPart_000_0027_01DC0222.0A371D40
+Content-Type: application/octet-stream;
+	name="0001-ALSA-usb-audio-Add-DSD-support-for-Comtrue-USB-Audio.patch"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+	filename="0001-ALSA-usb-audio-Add-DSD-support-for-Comtrue-USB-Audio.patch"
+
+From 1b9dde1ef9987efcaf5d9bc9a932ac0ec3bbd8c5 Mon Sep 17 00:00:00 2001=0A=
+From: "noble.yang" <noble.yang@comtrue-inc.com>=0A=
+Date: Thu, 31 Jul 2025 12:11:11 +0800=0A=
+Subject: [PATCH] ALSA: usb-audio: Add DSD support for Comtrue USB Audio =
+device=0A=
+=0A=
+Signed-off-by: noble.yang <noble.yang@comtrue-inc.com>=0A=
+---=0A=
+ sound/usb/quirks.c | 2 ++=0A=
+ 1 file changed, 2 insertions(+)=0A=
+=0A=
+diff --git a/sound/usb/quirks.c b/sound/usb/quirks.c=0A=
+index bd24f3a78ea9..cbb66125f839 100644=0A=
+--- a/sound/usb/quirks.c=0A=
++++ b/sound/usb/quirks.c=0A=
+@@ -2408,6 +2408,8 @@ static const struct usb_audio_quirk_flags_table =
+quirk_flags_table[] =3D {=0A=
+ 		   QUIRK_FLAG_DSD_RAW),=0A=
+ 	VENDOR_FLG(0x2d87, /* Cayin device */=0A=
+ 		   QUIRK_FLAG_DSD_RAW),=0A=
++        VENDOR_FLG(0x2fc6, /* Comture-inc devices */=0A=
++		   QUIRK_FLAG_DSD_RAW),	   =0A=
+ 	VENDOR_FLG(0x3336, /* HEM devices */=0A=
+ 		   QUIRK_FLAG_DSD_RAW),=0A=
+ 	VENDOR_FLG(0x3353, /* Khadas devices */=0A=
+-- =0A=
+2.48.1=0A=
+=0A=
+
+------=_NextPart_000_0027_01DC0222.0A371D40
+Content-Type: text/plain;
+	name="cat proc asound card.txt"
+Content-Transfer-Encoding: quoted-printable
+Content-Disposition: attachment;
+	filename="cat proc asound card.txt"
+
+cat /proc/asound/card*/stream0=0A=
+Comtrue-inc Comtrue-inc UAC2 Device EVM-GB at usb-0000:00:14.0-5, high =
+speed : USB Audio=0A=
+=0A=
+Playback:=0A=
+  Status: Stop=0A=
+  Interface 1=0A=
+    Altset 1=0A=
+    Format: S16_LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x01 (1 OUT) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 16=0A=
+    Channel map: FL FR=0A=
+    Sync Endpoint: 0x81 (1 IN)=0A=
+    Sync EP Interface: 1=0A=
+    Sync EP Altset: 1=0A=
+    Implicit Feedback Mode: No=0A=
+  Interface 1=0A=
+    Altset 2=0A=
+    Format: S24_3LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x01 (1 OUT) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 24=0A=
+    Channel map: FL FR=0A=
+    Sync Endpoint: 0x81 (1 IN)=0A=
+    Sync EP Interface: 1=0A=
+    Sync EP Altset: 2=0A=
+    Implicit Feedback Mode: No=0A=
+  Interface 1=0A=
+    Altset 3=0A=
+    Format: S32_LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x01 (1 OUT) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 32=0A=
+    Channel map: FL FR=0A=
+    Sync Endpoint: 0x81 (1 IN)=0A=
+    Sync EP Interface: 1=0A=
+    Sync EP Altset: 3=0A=
+    Implicit Feedback Mode: No=0A=
+  Interface 1=0A=
+    Altset 4=0A=
+    Format: SPECIAL DSD_U32_BE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x01 (1 OUT) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 32=0A=
+    DSD raw: DOP=3D0, bitrev=3D0=0A=
+    Channel map: FL FR=0A=
+    Sync Endpoint: 0x81 (1 IN)=0A=
+    Sync EP Interface: 1=0A=
+    Sync EP Altset: 4=0A=
+    Implicit Feedback Mode: No=0A=
+=0A=
+Capture:=0A=
+  Status: Stop=0A=
+  Interface 2=0A=
+    Altset 1=0A=
+    Format: S16_LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x82 (2 IN) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 16=0A=
+    Channel map: FL FR=0A=
+  Interface 2=0A=
+    Altset 2=0A=
+    Format: S24_3LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x82 (2 IN) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 24=0A=
+    Channel map: FL FR=0A=
+  Interface 2=0A=
+    Altset 3=0A=
+    Format: S32_LE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x82 (2 IN) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 32=0A=
+    Channel map: FL FR=0A=
+  Interface 2=0A=
+    Altset 4=0A=
+    Format: SPECIAL DSD_U32_BE=0A=
+    Channels: 2=0A=
+    Endpoint: 0x82 (2 IN) (ASYNC)=0A=
+    Rates: 44100, 48000, 88200, 96000, 176400, 192000, 352800, 384000, =
+705600, 768000=0A=
+    Data packet interval: 125 us=0A=
+    Bits: 32=0A=
+    DSD raw: DOP=3D0, bitrev=3D0=0A=
+    Channel map: FL FR=0A=
+=0A=
+
+------=_NextPart_000_0027_01DC0222.0A371D40--
 
 
