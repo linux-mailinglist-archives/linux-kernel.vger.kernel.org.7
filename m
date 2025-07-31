@@ -1,260 +1,116 @@
-Return-Path: <linux-kernel+bounces-751498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0E7B16A54
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:14:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2968B16A57
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA8B566F57
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:14:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF44C18C5946
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86641F4180;
-	Thu, 31 Jul 2025 02:14:38 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8892622330F;
+	Thu, 31 Jul 2025 02:17:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lwDUocjQ"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02D1219ED
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B958444C94;
+	Thu, 31 Jul 2025 02:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753928078; cv=none; b=HKJd9cTTOFTgZ/UpIW/UEtuaSaZSL8xFj6FNt0rmsZjiSX+uiCtGRdMafmXEpzxvo4RAZjodcOIcSHj5MB5fHmI6JKqoFH+xbFKVBA9DDGubnHTt4725Ye1oNcPKnKMZjOvZUtLQz2kr0t2t6HHkm26Abfwi9rq8TLh8KaSnT5g=
+	t=1753928270; cv=none; b=ZUzR9ZlYUI+sNSS4kWh+e94fa9A1zjSg4L8BPZf8dn6dWLamF2RL547Y+xztb268M41zTVDegEV0AdKME3OtULQMhvrhws1WBjdQ5p6oD3HZIWmEyxSH6OsAPjm8FG4He6MNYeFTdZAnCD5/5tqikvjt2VK61wbGBXHWGhrYgpo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753928078; c=relaxed/simple;
-	bh=PtdtWbfSwsTFIdvQnjmV9oEGOciY0JSHBJVRlxzGeOw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=anw91LsIuRWD17yZkmA50xCoZFmPK3okDnqjAYimd92kkkWEhzkz5jlJCbDUflO/os9P6NJIvSkx1IavoBuWmmSlGeN2h1HUMxJ/ifiRJYxQX9s12LeYzKNcCpwtIYfaEi9BjTsaaNGdMjWd2RJ6n4A9wxVlXfwyb875Dv4+VV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3f0287933so7011155ab.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:14:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753928076; x=1754532876;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v8LN82KfcOn/0r6hArwrNITctrGhPFAps37niPBX6GA=;
-        b=fv64TizwUU56Gi7LlnmrrpWHhim/1GWsEKbgqO8ajYLCk34AoOU9CvbBsItb4msV7j
-         t3WCNpeGwyC3HkIV5oHRcA29vQJcFxBN29hU6bQPX+zq18JGZYmH5/hQ2qOoq/sfU1IU
-         BCtnMczTUiJolp/J5vVEp8oITs0mkJcLwtb2HOEQEAfzV4ESyFYJIDWRH8RIHDmcT1EV
-         GX/CG5s9DftT/Jx0kwdnKGkSFuCg4mSustsgy2ThpjBYztAlfxZebgh+h4CaDx2/Mz1O
-         C0rJRGheiTPEMB1GW0rUCGkNZLv2KoZ33udtueyPAs4WYhX+4asOG77dD3kfucSKdzM9
-         QmgQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUxI+/sZq/IjevVMTtcKJq3us6pAw+utHrE9Z8h9/uXIebb8KaUEvsyOjA+ADQhei3uCogBk8P4KoAyyE4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylgdAeJmmD0GHHqvfHqpPXkdgbvjgb2B+1NUHjdcOlKReApwF2
-	wGIpfUiJ8Ik6AUu68VicpFiVRIol0JXyEBsko+M/hZFes7c2FuNEqKEomdt2E79Qfxzghelpycu
-	axsuHvPW/xYSk65h7nkPZU5XSEI3azjEjv1PTTzvhoF0ByCnlF6wgaOQVEKY=
-X-Google-Smtp-Source: AGHT+IHfrW2I3iy1zEHBpfBt4MEcIOr/sBXoPNGPZ2JnNw0WXqO2uRZnlQ8KRmGFbMrhmROW1fej4/pTLXAokJGKAHH8c7+l9/5b
+	s=arc-20240116; t=1753928270; c=relaxed/simple;
+	bh=vnsmv7tQNXaWSWWP/6OdzOgjtQ6fSmz6QBABH81KmAM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GT/EE5EZrKAm/6UdqOGwLkpzOv6Lv+gLxNwbEg4JhlEhHGTZSbdrkZSIcksnMPdyeSRYPLT0lTBOaXvhZ4DdiMYEx3apYceAFNqLK0wIL8jBNELKoW1CVjT5PGAfs7AqK7Pt6lIJyP+bPhhbUDIDzwgtCtCEP4L6/3KckbbMlAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lwDUocjQ; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753928267; x=1785464267;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=vnsmv7tQNXaWSWWP/6OdzOgjtQ6fSmz6QBABH81KmAM=;
+  b=lwDUocjQhr1L+mdJJwJpMH0HhdWmSiG9L8+lL1iIzfOoIPYA8NrWVuP6
+   hTl95U8RbxSyCwIdJsoFfmqweEroYUmf4Tz9qSCarzuD+Vbb54iqAHx9N
+   X1gjQ8lLZA0o5OGX3TNItleE44YHh8XRxm9cdl4+oSA2D2VJ5VZC4VU9E
+   qAX94UVorIoityKBKGYBjCjCXrOeXxR46/jxjS7VxxqKpDJzl2cicT2uw
+   +Do5OP5NF8uPTYn/3tNmLEcp3IzGW4MEQQPeJ2/n+qpi1ezuHhAlCS18s
+   8C05A4oIFA91WVKc5Et0f5nS+9b2mhQrHpYzkFMORywbL3yzFsaE2FKtn
+   g==;
+X-CSE-ConnectionGUID: 4TqHoKTeSqiUSicRKak3jg==
+X-CSE-MsgGUID: kmhF/BLlSwqJ8yyDkRTe1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="59887949"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="59887949"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 19:17:47 -0700
+X-CSE-ConnectionGUID: 7AwyyvrUR0uccKqLvoLehA==
+X-CSE-MsgGUID: YiHMoHhUQDGtjlup+hfZNw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="163924185"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by fmviesa010.fm.intel.com with ESMTP; 30 Jul 2025 19:17:43 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhIrV-0003LE-2K;
+	Thu, 31 Jul 2025 02:17:41 +0000
+Date: Thu, 31 Jul 2025 10:17:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
+	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
+	gost.dev@samsung.com
+Cc: Paul Gazzillo <paul@pgazz.com>,
+	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
+	oe-kbuild-all@lists.linux.dev, a.manzanares@samsung.com,
+	vishak.g@samsung.com, neeraj.kernel@gmail.com,
+	Neeraj Kumar <s.neeraj@samsung.com>
+Subject: Re: [PATCH V2 19/20] cxl/pmem_region: Prep patch to accommodate
+ pmem_region attributes
+Message-ID: <202507311017.7ApKmtQc-lkp@intel.com>
+References: <20250730121209.303202-20-s.neeraj@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:9e:b0:3dd:b808:be68 with SMTP id
- e9e14a558f8ab-3e3f62800edmr105194965ab.16.1753928075702; Wed, 30 Jul 2025
- 19:14:35 -0700 (PDT)
-Date: Wed, 30 Jul 2025 19:14:35 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688ad18b.a00a0220.26d0e1.0033.GAE@google.com>
-Subject: [syzbot] [block?] possible deadlock in del_gendisk (2)
-From: syzbot <syzbot+aea0dfef449ccf91636b@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730121209.303202-20-s.neeraj@samsung.com>
 
-Hello,
+Hi Neeraj,
 
-syzbot found the following issue on:
+kernel test robot noticed the following build warnings:
 
-HEAD commit:    302f88ff3584 Merge tag 'for-linus' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=152528a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=27aea6dad68e0c0c
-dashboard link: https://syzkaller.appspot.com/bug?extid=aea0dfef449ccf91636b
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: i386
+[auto build test WARNING on f11a5f89910a7ae970fbce4fdc02d86a8ba8570f]
 
-Unfortunately, I don't have any reproducer for this issue yet.
+url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Kumar/nvdimm-label-Introduce-NDD_CXL_LABEL-flag-to-set-cxl-label-format/20250730-202209
+base:   f11a5f89910a7ae970fbce4fdc02d86a8ba8570f
+patch link:    https://lore.kernel.org/r/20250730121209.303202-20-s.neeraj%40samsung.com
+patch subject: [PATCH V2 19/20] cxl/pmem_region: Prep patch to accommodate pmem_region attributes
+config: x86_64-kismet-CONFIG_LIBNVDIMM-CONFIG_CXL_PMEM_REGION-0-0 (https://download.01.org/0day-ci/archive/20250731/202507311017.7ApKmtQc-lkp@intel.com/config)
+reproduce: (https://download.01.org/0day-ci/archive/20250731/202507311017.7ApKmtQc-lkp@intel.com/reproduce)
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-302f88ff.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/b375ab423051/vmlinux-302f88ff.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/133b9f21ac36/bzImage-302f88ff.xz
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507311017.7ApKmtQc-lkp@intel.com/
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+aea0dfef449ccf91636b@syzkaller.appspotmail.com
+kismet warnings: (new ones prefixed by >>)
+>> kismet: WARNING: unmet direct dependencies detected for LIBNVDIMM when selected by CXL_PMEM_REGION
+   WARNING: unmet direct dependencies detected for LIBNVDIMM
+     Depends on [n]: PHYS_ADDR_T_64BIT [=y] && HAS_IOMEM [=y] && BLK_DEV [=n]
+     Selected by [y]:
+     - CXL_PMEM_REGION [=y] && CXL_BUS [=y] && CXL_REGION [=y]
 
-======================================================
-WARNING: possible circular locking dependency detected
-6.16.0-rc7-syzkaller-00127-g302f88ff3584 #0 Not tainted
-------------------------------------------------------
-syz.7.6877/31320 is trying to acquire lock:
-
-but task is already holding lock:
-ffff8880417fe368 (&set->update_nr_hwq_lock){++++}-{4:4}, at: del_gendisk+0x136/0x1e0 block/genhd.c:822
-
-which lock already depends on the new lock.
-
-
-the existing dependency chain (in reverse order) is:
-
--> #2 (&set->update_nr_hwq_lock){++++}-{4:4}:
-       down_write+0x92/0x200 kernel/locking/rwsem.c:1577
-       blk_mq_update_nr_hw_queues+0x32/0xcb0 block/blk-mq.c:5041
-       nbd_start_device+0x172/0xcd0 drivers/block/nbd.c:1476
-       nbd_start_device_ioctl drivers/block/nbd.c:1527 [inline]
-       __nbd_ioctl drivers/block/nbd.c:1602 [inline]
-       nbd_ioctl+0x219/0xda0 drivers/block/nbd.c:1642
-       compat_blkdev_ioctl+0x2eb/0x7a0 block/ioctl.c:760
-       __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
-       __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
-       __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
-       do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
-       __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
--> #1 (&nbd->config_lock){+.+.}-{4:4}:
-       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
-       refcount_dec_and_mutex_lock+0x51/0xc0 lib/refcount.c:118
-       nbd_config_put+0x31/0x750 drivers/block/nbd.c:1423
-       nbd_release+0xb7/0x190 drivers/block/nbd.c:1735
-       blkdev_put_whole+0xb0/0xf0 block/bdev.c:721
-       bdev_release+0x47e/0x6d0 block/bdev.c:1144
-       blkdev_release+0x15/0x20 block/fops.c:684
-       __fput+0x402/0xb70 fs/file_table.c:465
-       fput_close_sync+0x118/0x260 fs/file_table.c:570
-       __do_sys_close fs/open.c:1589 [inline]
-       __se_sys_close fs/open.c:1574 [inline]
-       __x64_sys_close+0x8b/0x120 fs/open.c:1574
-       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
-       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
-       entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
--> #0 (&disk->open_mutex){+.+.}-{4:4}:
-       check_prev_add kernel/locking/lockdep.c:3168 [inline]
-       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
-       validate_chain kernel/locking/lockdep.c:3911 [inline]
-       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
-       lock_acquire kernel/locking/lockdep.c:5871 [inline]
-       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
-       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
-       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
-       __del_gendisk+0xf5/0xbd0 block/genhd.c:710
-       del_gendisk+0x13e/0x1e0 block/genhd.c:823
-       loop_remove drivers/block/loop.c:2083 [inline]
-       loop_control_remove drivers/block/loop.c:2142 [inline]
-       loop_control_ioctl+0x4f1/0x630 drivers/block/loop.c:2180
-       __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
-       __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
-       __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
-       do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
-       __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
-       do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
-       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-
-other info that might help us debug this:
-
-Chain exists of:
-  &disk->open_mutex --> &nbd->config_lock --> &set->update_nr_hwq_lock
-
- Possible unsafe locking scenario:
-
-       CPU0                    CPU1
-       ----                    ----
-  rlock(&set->update_nr_hwq_lock);
-                               lock(&nbd->config_lock);
-                               lock(&set->update_nr_hwq_lock);
-  lock(&disk->open_mutex);
-
- *** DEADLOCK ***
-
-1 lock held by syz.7.6877/31320:
- #0: ffff8880417fe368 (&set->update_nr_hwq_lock){++++}-{4:4}, at: del_gendisk+0x136/0x1e0 block/genhd.c:822
-
-stack backtrace:
-CPU: 0 UID: 0 PID: 31320 Comm: syz.7.6877 Not tainted 6.16.0-rc7-syzkaller-00127-g302f88ff3584 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
- print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2046
- check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2178
- check_prev_add kernel/locking/lockdep.c:3168 [inline]
- check_prevs_add kernel/locking/lockdep.c:3287 [inline]
- validate_chain kernel/locking/lockdep.c:3911 [inline]
- __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
- lock_acquire kernel/locking/lockdep.c:5871 [inline]
- lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
- __mutex_lock_common kernel/locking/mutex.c:602 [inline]
- __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
- __del_gendisk+0xf5/0xbd0 block/genhd.c:710
- del_gendisk+0x13e/0x1e0 block/genhd.c:823
- loop_remove drivers/block/loop.c:2083 [inline]
- loop_control_remove drivers/block/loop.c:2142 [inline]
- loop_control_ioctl+0x4f1/0x630 drivers/block/loop.c:2180
- __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
- __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
- __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
- do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
- __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
- do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
- entry_SYSENTER_compat_after_hwframe+0x84/0x8e
-RIP: 0023:0xf70be579
-Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
-RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 0000000000004c81
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
-R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
- </TASK>
-----------------
-Code disassembly (best guess), 2 bytes skipped:
-   0:	10 06                	adc    %al,(%rsi)
-   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
-   6:	10 07                	adc    %al,(%rdi)
-   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
-   c:	10 08                	adc    %cl,(%rax)
-   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
-  1e:	00 51 52             	add    %dl,0x52(%rcx)
-  21:	55                   	push   %rbp
-  22:	89 e5                	mov    %esp,%ebp
-  24:	0f 34                	sysenter
-  26:	cd 80                	int    $0x80
-* 28:	5d                   	pop    %rbp <-- trapping instruction
-  29:	5a                   	pop    %rdx
-  2a:	59                   	pop    %rcx
-  2b:	c3                   	ret
-  2c:	90                   	nop
-  2d:	90                   	nop
-  2e:	90                   	nop
-  2f:	90                   	nop
-  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
