@@ -1,64 +1,99 @@
-Return-Path: <linux-kernel+bounces-752242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752243-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4B12B172E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:10:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78979B172E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 12FA6172FE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:10:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7C3C561CA5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B32EE2D239F;
-	Thu, 31 Jul 2025 14:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E6522D2383;
+	Thu, 31 Jul 2025 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PVlzUc49"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b="RvDagKch"
+Received: from server.couthit.com (server.couthit.com [162.240.164.96])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C5A62C327C;
-	Thu, 31 Jul 2025 14:09:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B98921CC5B;
+	Thu, 31 Jul 2025 14:11:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=162.240.164.96
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970997; cv=none; b=R3GJxOTnlUbhVfxECyIOMWN+WYGe3HN/8SrVPNvWiJZ9Tn/r7lvxIQM7dpDdTcAiO6fnakzLRzcLYVAXVibiLY4NOVgAhK/y1aoC55sbcJEz1i7AhDWV6v0NjoaZF+t2PGjDOzcin3aUMdzh3ExiXqS7QwAfB08ppq5GdRP73Gs=
+	t=1753971085; cv=none; b=HErxlDe4aMt+9hgePaqMaz81hPPLzuBr9fR/Re8qjYzSu/g9kd7bb5oLIS2ERwvPRR2g0oJqJAq6WAGOBpypxDqwu19puwcFCdmrLaHRC9LLxBKgrWKR4Ts2t+SC0Ty+R2P+6tiwRl/dINorHXUatRlo3WRCsg7WrTtVrkkPyLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970997; c=relaxed/simple;
-	bh=4ckXLUcQZWuhpX7TQln+X9HK9J5VqakPRCNMdtfv1Gg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NRQd1UyHxSeALwLrxa6iPabkXLMoXfwgi30Zdpis+LQ4i6mwX4+7rfTJINDtf6oFyefEFE52/DZDUNGa7RZL2tJcl8MMi9jLVoPxkAzvat+BPKTJdLgEiZHVNKeskQQONmRWHKw0aFAJLw1ytjYoTZiHr11mVOZWn5yyUxSR7Ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PVlzUc49; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BE5FC4CEEF;
-	Thu, 31 Jul 2025 14:09:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753970996;
-	bh=4ckXLUcQZWuhpX7TQln+X9HK9J5VqakPRCNMdtfv1Gg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=PVlzUc49RRm8vqrxmeXNbKIhB1Sc0+GQq97exspTp8tl0Jg6bxqcyh6nWeU69Iomr
-	 Dd5avAdxDVXDV9Q8Lw0Goamf7acl6QZh7dM0f8jqLDM3FGGBpg5LZcuTGc9hOKbUmM
-	 m25J/KjRWoRmf28O0R7ka7sToUgejXIUBmQG4gV8TS6efQk3X2rJ37is0STzQDhMUS
-	 6lK3Sc1HSmc0GI1eAURGgV/TBcmmUVPZ2Uut6AK7boQMNArDhtv2TQTzgWPD/IFhA5
-	 1uemOiOwths/U8Y0LIkfJYR6F6JBPdtX/G+t3Xy07sgc5gjUQERvectZGhrbPiQVXs
-	 r98Ty/c7Dnwyg==
-Date: Thu, 31 Jul 2025 19:39:43 +0530
-From: Manivannan Sadhasivam <mani@kernel.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Nitin Rawat <quic_nitirawa@quicinc.com>, 
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
-	Avri Altman <avri.altman@wdc.com>, Bart Van Assche <bvanassche@acm.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>, 
-	Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-Subject: Re: [PATCH 0/2] dt-bindings: ufs: qcom: Split SC7280 and similar
- into separate file
-Message-ID: <qemlydifa7u3zwrjnnp7umjsprjrje27ghzghyyoutufeyiimn@g2ejdt72opz3>
-References: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
- <df8b3c85-d572-4cee-863b-35fe6a5ed9ff@quicinc.com>
- <6ebe7084-bb00-4fac-b64d-e08e188f3005@kernel.org>
- <148b46f3-2109-4c15-b7d8-17963b38095a@quicinc.com>
- <1547e339-5be2-4d87-ab35-98a9be0d250e@kernel.org>
+	s=arc-20240116; t=1753971085; c=relaxed/simple;
+	bh=WctS3TBZBfxHFoxgWiuUQ1YaaNSMG3iHX0kksiAuv0I=;
+	h=Date:From:To:Cc:Message-ID:In-Reply-To:References:Subject:
+	 MIME-Version:Content-Type; b=gegnOLX/iT/VVnMsUl7ABZYkDmzfoK1BM0E68mpDBPCI3WuM82GSTt1zSpcce/GVlKmSu9piFzdw2DPXP1SvBZsi8g8OBq83+smqtYLO/DDFr0WrhBjQbQ8exooJQrEJIqIOTw7czgpYmittCS8o4rud42zS9nYy/plEAT+eMoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com; spf=pass smtp.mailfrom=couthit.com; dkim=pass (2048-bit key) header.d=couthit.com header.i=@couthit.com header.b=RvDagKch; arc=none smtp.client-ip=162.240.164.96
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=couthit.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=couthit.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=couthit.com
+	; s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Subject:
+	References:In-Reply-To:Message-ID:Cc:To:From:Date:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=dgpIYA1X3JY/hFPKIDfOS0L7idr7TKT6OBuNKuxgpM0=; b=RvDagKchEHmC4Ohnvrd5X4rHZh
+	ZRwgwTS1WLBLNUGSdhpOKJ6ciErX4Oy4+FsGuJlmMA0otp9j/MJKstfLThqDqcZb3GBuOr3QSke5X
+	DcTq1roXkeaza/POMx0wg5jChjGZj48LDOFEzu7IYBpemkuaaV37N6DnuXu1QZdpBcPflrlv2WhJe
+	vJaRhV0ZqbnqdesZ6/0rnLU+KdlD1t8gIwWBTSUV1F5MfBIGtKNLYTmL5NCHHCYpacyAx1gojB0Ts
+	eGxRd9bviVbDhlUmcGUoDPSN1Z7giUusyeg8t8Jf/upl9g1UF1hjxuIXtE58Q9Jyx0qJJ+q6LTxTU
+	QcH/28sQ==;
+Received: from [122.175.9.182] (port=5734 helo=zimbra.couthit.local)
+	by server.couthit.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.98.1)
+	(envelope-from <parvathi@couthit.com>)
+	id 1uhU05-0000000EGZB-1GGq;
+	Thu, 31 Jul 2025 10:11:17 -0400
+Received: from zimbra.couthit.local (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTPS id 124C81781F30;
+	Thu, 31 Jul 2025 19:41:10 +0530 (IST)
+Received: from localhost (localhost [127.0.0.1])
+	by zimbra.couthit.local (Postfix) with ESMTP id D14491783F55;
+	Thu, 31 Jul 2025 19:41:09 +0530 (IST)
+Received: from zimbra.couthit.local ([127.0.0.1])
+	by localhost (zimbra.couthit.local [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id KDcsVC7gPY0O; Thu, 31 Jul 2025 19:41:09 +0530 (IST)
+Received: from zimbra.couthit.local (zimbra.couthit.local [10.10.10.103])
+	by zimbra.couthit.local (Postfix) with ESMTP id 775C11781F30;
+	Thu, 31 Jul 2025 19:41:09 +0530 (IST)
+Date: Thu, 31 Jul 2025 19:41:09 +0530 (IST)
+From: Parvathi Pudi <parvathi@couthit.com>
+To: ALOK TIWARI <alok.a.tiwari@oracle.com>
+Cc: parvathi <parvathi@couthit.com>, danishanwar <danishanwar@ti.com>, 
+	rogerq <rogerq@kernel.org>, andrew+netdev <andrew+netdev@lunn.ch>, 
+	davem <davem@davemloft.net>, edumazet <edumazet@google.com>, 
+	kuba <kuba@kernel.org>, pabeni <pabeni@redhat.com>, 
+	robh <robh@kernel.org>, krzk+dt <krzk+dt@kernel.org>, 
+	conor+dt <conor+dt@kernel.org>, ssantosh <ssantosh@kernel.org>, 
+	richardcochran <richardcochran@gmail.com>, 
+	s hauer <s.hauer@pengutronix.de>, m-karicheri2 <m-karicheri2@ti.com>, 
+	glaroque <glaroque@baylibre.com>, afd <afd@ti.com>, 
+	saikrishnag <saikrishnag@marvell.com>, m-malladi <m-malladi@ti.com>, 
+	jacob e keller <jacob.e.keller@intel.com>, 
+	kory maincent <kory.maincent@bootlin.com>, 
+	diogo ivo <diogo.ivo@siemens.com>, 
+	javier carrasco cruz <javier.carrasco.cruz@gmail.com>, 
+	horms <horms@kernel.org>, s-anna <s-anna@ti.com>, 
+	basharath <basharath@couthit.com>, 
+	linux-arm-kernel <linux-arm-kernel@lists.infradead.org>, 
+	netdev <netdev@vger.kernel.org>, 
+	devicetree <devicetree@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	Vadim Fedorenko <vadim.fedorenko@linux.dev>, 
+	pratheesh <pratheesh@ti.com>, Prajith Jayarajan <prajith@ti.com>, 
+	Vignesh Raghavendra <vigneshr@ti.com>, praneeth <praneeth@ti.com>, 
+	srk <srk@ti.com>, rogerq <rogerq@ti.com>, 
+	krishna <krishna@couthit.com>, pmohan <pmohan@couthit.com>, 
+	mohan <mohan@couthit.com>
+Message-ID: <1942226614.78018.1753971069296.JavaMail.zimbra@couthit.local>
+In-Reply-To: <743eddd9-1f63-4c6c-8ba3-5007bd897ae1@oracle.com>
+References: <20250724072535.3062604-1-parvathi@couthit.com> <20250724072535.3062604-4-parvathi@couthit.com> <743eddd9-1f63-4c6c-8ba3-5007bd897ae1@oracle.com>
+Subject: Re: [PATCH net-next v12 3/5] net: ti: prueth: Adds PRUETH HW and SW
+ configuration
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,32 +101,94 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <1547e339-5be2-4d87-ab35-98a9be0d250e@kernel.org>
+Content-Transfer-Encoding: 7bit
+X-Mailer: Zimbra 8.8.15_GA_3968 (ZimbraWebClient - GC138 (Linux)/8.8.15_GA_3968)
+Thread-Topic: prueth: Adds PRUETH HW and SW configuration
+Thread-Index: Bgd3ThmGCBL4ZbqhqpbvPS3WfmfZ0A==
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - server.couthit.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - couthit.com
+X-Get-Message-Sender-Via: server.couthit.com: authenticated_id: smtp@couthit.com
+X-Authenticated-Sender: server.couthit.com: smtp@couthit.com
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
 
-On Thu, Jul 31, 2025 at 09:04:48AM GMT, Krzysztof Kozlowski wrote:
-> On 31/07/2025 08:59, Nitin Rawat wrote:
-> >> Hm?
-> >>
-> >>>
-> >>> For reference, only SM8650 and SM8750 currently support MCQ, though more
-> >>> targets may be added later.
-> >>
-> >> Are you sure? Are you claiming that SM8550 hardware does not support MCQ?
-> > 
-> > Offcourse I can say that because I am working on Qualcomm UFS Driver.
+Hi,
+
+>> +/* NRT Buffer descriptor definition
+>> + * Each buffer descriptor points to a max 32 byte block and has 32 bit in size
+>> + * to have atomic operation.
+>> + * PRU can address bytewise into memory.
+>> + * Definition of 32 bit descriptor is as follows
+>> + *
+>> + * Bits		Name			Meaning
+>> + *
+>> =============================================================================
+>> + * 0..7		Index		points to index in buffer queue, max 256 x 32
+>> + *				byte blocks can be addressed
+>> + * 6		LookupSuccess	For switch, FDB lookup was successful (source
+>> + *				MAC address found in FDB).
+>> + *				For RED, NodeTable lookup was successful.
+>> + * 7		Flood		Packet should be flooded (destination MAC
+>> + *				address found in FDB). For switch only.
+>> + * 8..12	Block_length	number of valid bytes in this specific block.
+>> + *				Will be <=32 bytes on last block of packet
+>> + * 13		More		"More" bit indicating that there are more blocks
+>> + * 14		Shadow		indicates that "index" is pointing into shadow
+>> + *				buffer
+>> + * 15		TimeStamp	indicates that this packet has time stamp in
+>> + *				separate buffer - only needed of PTCP runs on
 > 
-> Qualcomm sent many patches which were not related to hardware at all,
-> just based on drivers, so my question is completely valid based on
-> previous experience with Qualcomm.
+> only needed if PTCP runs on host
 > 
 
-SM8550 indeed doesn't support MCQ. Even though it is based on UFSHCD 4.x, it
-doesn't support MCQ due to hardware design. MCQ support only starts from SM8650.
+Sure, We will address this.
 
-- Mani
+>> + *				host
+>> + * 16..17	Port		different meaning for ingress and egress,
+>> + *				Ingress: Port = 0 indicates phy port 1 and
+>> + *				Port = 1 indicates phy port 2.
+>> + *				Egress: 0 sends on phy port 1 and 1 sends on
+>> + *				phy port 2. Port = 2 goes over MAC table
+>> + *				look-up
+>> + * 18..28	Length		11 bit of total packet length which is put into
+>> + *				first BD only so that host access only one BD
+>> + * 29		VlanTag		indicates that packet has Length/Type field of
+>> + *				0x08100 with VLAN tag in following byte
+>> + * 30		Broadcast	indicates that packet goes out on both physical
+>> + *				ports,	there will be two bd but only one buffer
+>> + * 31		Error		indicates there was an error in the packet
+>> + */
+>> +#define PRUETH_BD_START_FLAG_MASK	BIT(0)
+>> +#define PRUETH_BD_START_FLAG_SHIFT	0
+>> +
+>> +#define PRUETH_BD_HSR_FRAME_MASK	BIT(4)
+>> +#define PRUETH_BD_HSR_FRAME_SHIFT	4
+>> +
+>> +#define PRUETH_BD_SUP_HSR_FRAME_MASK	BIT(5)
+>> +#define PRUETH_BD_SUP_HSR_FRAME_SHIFT	5
+>> +
+>> +#define PRUETH_BD_LOOKUP_SUCCESS_MASK	BIT(6)
+>> +#define PRUETH_BD_LOOKUP_SUCCESS_SHIFT	6
+>> +
+>> +#define PRUETH_BD_SW_FLOOD_MASK		BIT(7)
+>> +#define PRUETH_BD_SW_FLOOD_SHIFT	7
+>> +
+>> +#define	PRUETH_BD_SHADOW_MASK		BIT(14)
+>> +#define	PRUETH_BD_SHADOW_SHIFT		14
+>> +
+>> +#define PRUETH_BD_TIMESTAMP_MASK	BIT(15)
+>> +#define PRUETH_BD_TIMESTAMP_SHIT	15
+> 
+> typo PRUETH_BD_TIMESTAMP_SHIT -> PRUETH_BD_TIMESTAMP_SHIFT
+> 
 
--- 
-மணிவண்ணன் சதாசிவம்
+Sure, We will address this.
+
+
+Thanks and Regards,
+Parvathi.
 
