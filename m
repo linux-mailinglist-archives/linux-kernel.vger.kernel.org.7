@@ -1,74 +1,54 @@
-Return-Path: <linux-kernel+bounces-752517-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752518-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A65AB17680
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:16:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0646FB17683
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:19:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E6C087AB254
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:15:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC0A0A83C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:19:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE57D239E96;
-	Thu, 31 Jul 2025 19:16:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B175B23C8C9;
+	Thu, 31 Jul 2025 19:19:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Qy1aXI4n"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XZjy9PaV"
+Received: from out-187.mta1.migadu.com (out-187.mta1.migadu.com [95.215.58.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2DFD635
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 666AAA29
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:19:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753989404; cv=none; b=TCQ+gIS6sM3JwjaWm1iR7tkdJ9AB8gN9W0a+OUcZ2tu2c+o3vR+jirlzv8xsnX/G/P5H1moU8xG/ltIHkjVAO5u0NB34dT3ejgcy6bAmCsVOCs3Bzb3qlPZy79jaJOL9I0UsQJAxNFEJ6XWV8JocttrcR4+cVTN/yIkQtAZ0f8c=
+	t=1753989565; cv=none; b=ShzF3Y+8ivmfOBY8cdKXTy2O7E4kBsk9ORVbPYQBT4qhBC3M6xSotll14mZToJT3lMeJAmtBnjYiEnKEIrAuCbmYPlllTSGB7s7YOUmpSyH32piKiDHkQ2HL3xJ/4ygANFZIm0GAvKQ1ro2Fa7Lbwrrs7wx46oYR1f454OnyCSk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753989404; c=relaxed/simple;
-	bh=JclIlVrchu2b7vC+SRInxLWXEUZ1woNLPFBbrOlTD0c=;
+	s=arc-20240116; t=1753989565; c=relaxed/simple;
+	bh=tTZVv3cfx3QGRrCZEPJ4BXZuZFTPtRGYKHO3SK8AD1w=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oJ/PI+C0/NPDluPqTIWW5SepHrhmWaKruVPVB+Ro9VqYM3YCfKXyxKt0mnLAP0AQD0XN6Rdmv3rxqExo4RnhhRrcgEiWUK8iM1G9iXgthKEB5q81/hv4+AAjB62vVDImopghz0Gt3BHCqhHyuktw+qGp6OeMsP57gvvMbycPXck=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Qy1aXI4n; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753989403; x=1785525403;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=JclIlVrchu2b7vC+SRInxLWXEUZ1woNLPFBbrOlTD0c=;
-  b=Qy1aXI4nQNsAp2aK5VOv1jlnynS0M/nuxgJIIgeRAkrN0AQZEqAjLFPU
-   pR50cTAKHsvWPb5ObcPI2ebjW9q3V+OJP8pqxoEmUjNAFWH5WpuApsFgO
-   DlcSPC4wUlBXhpSpYj75B13HnVipUnvkWGdDpftFCovxvVw8kN5/j76LV
-   VhCi8xDB1DH+Qpd6DbDT/rvAYId71PNwBH0lvOinj1MZ7ZlMsoXonDHBS
-   gSLtgzxWgR2n5M9Neiqhnvr2hOOQgC2HBO32IJWvBKEf5baVv7aw4nFzS
-   qy7XkxeXBfg5lQcsXymsrtS0MbViUYkVEtRBcgzKz23/Uz0ZGaEp8VwMR
-   A==;
-X-CSE-ConnectionGUID: WXoshwFmSVij3wCv7kRYlw==
-X-CSE-MsgGUID: Djfofvl/QMCjP/9EYXvtgw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="55394225"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="55394225"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 12:16:42 -0700
-X-CSE-ConnectionGUID: 63rJmOFOTKie73XG+BCSKA==
-X-CSE-MsgGUID: EE2+SKpdRQ2qj96OioOrZg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="162923656"
-Received: from spandruv-desk2.amr.corp.intel.com (HELO desk) ([10.124.222.83])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 12:16:42 -0700
-Date: Thu, 31 Jul 2025 12:16:36 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] x86/tsx: Get the tsx= command line parameter with
- core_param()
-Message-ID: <20250731191636.7vepzhy44ajftqry@desk>
-References: <20250731083433.3173437-1-ptesarik@suse.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=PIfmWxMrJzXIOunP1E2VGYpADv8n/S15lGFpwpU81L/HF871mWXJY93jFOrE2HS4AAbC/lJqtXk7d95DHQOwmMUvXEMspEIVXkmgNbbvfioAAHTKbP2/F/EsgvEdaeZVn/LtuyTOtVLYzU16G/64BWeLK17ghXZs5756Gfoqylo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XZjy9PaV; arc=none smtp.client-ip=95.215.58.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 31 Jul 2025 15:19:07 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753989551;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Jc8D0RQaHuyAnixC7iaU53d7zEvqsRiInD0e2ojPo0E=;
+	b=XZjy9PaVlUEkp/GMzuDrVq0fpNZwOwPJTbi+mq3rfNY14d5Lb9vCtBTI/SAwBZwUVXLDtE
+	mxGevStEuq+EYUcJ6VoeOCm7L0RGSoujnsRm/BQSUX85Rh/lABNGPxON/xWQr+zN/yxvEb
+	OwH8iRKb1rxKJlNei1K3rhdiXy7PZoo=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: Liao Yuanhong <liaoyuanhong@vivo.com>, linux-bcachefs@vger.kernel.org, 
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcachefs: Simplify kzalloc usage
+Message-ID: <ztnjjzlx3a2cvmxnc3jx2umwlh2faetdy6rzhmuc746vppmuns@lzn33bv2smpz>
+References: <20250731131551.218666-1-liaoyuanhong@vivo.com>
+ <32fbb160-4888-4d57-bd16-62ece192e81c@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,16 +57,20 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250731083433.3173437-1-ptesarik@suse.com>
+In-Reply-To: <32fbb160-4888-4d57-bd16-62ece192e81c@web.de>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Jul 31, 2025 at 10:34:33AM +0200, Petr Tesarik wrote:
-> Use core_param() to get the value of the tsx= command line parameter.
-> Although cmdline_find_option() works fine, the option is reported as
-> unknown and passed to user space. The latter is not a real issue, but
-> the former is confusing and makes people wonder if the tsx= parameter
-> had any effect and double-check for typos unnecessarily.
+On Thu, Jul 31, 2025 at 08:52:44PM +0200, Markus Elfring wrote:
+> > Use the shorter variants will improves further maintainability. 
+> > Convenient for subsequent code updates or refactoring.
 > 
-> Signed-off-by: Petr Tesarik <ptesarik@suse.com>
+> Please improve such a change description.
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n45
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.16#n941
 
-Reviewed-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
+The commit message is reasonable, it communicates the intent.
+
+I haven't decided if I want to apply it; the dereference approach is
+better in principle but it's very far off into the weeds of "things that
+will never, ever cause an actual problem".
 
