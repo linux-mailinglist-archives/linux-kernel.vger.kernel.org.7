@@ -1,128 +1,135 @@
-Return-Path: <linux-kernel+bounces-751652-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751653-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F10AFB16BED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:13:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 569DAB16BF0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07B091AA5F8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7443A1881E21
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:14:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC7C224466F;
-	Thu, 31 Jul 2025 06:13:45 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 600C22C9A;
-	Thu, 31 Jul 2025 06:13:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B54246787;
+	Thu, 31 Jul 2025 06:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KpcaHYF+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C66D72C9A;
+	Thu, 31 Jul 2025 06:13:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753942425; cv=none; b=jnwEG1Eshr2yXDKgkUrTeYhoQYE4kwo4J2Z999YAl6sIkDdIQLSNPpctSkHnQq5seTtNH/YvLWe5HTJEzbYvpaI1Qol83V6OG1uborCjTa5TAXWhZNpqVe+N7uBW2ovKl7Wjsa7CvsTRLhCAW+LzlHu+AriAXO79gOQxhVCOtFQ=
+	t=1753942434; cv=none; b=CfvBgHskAUHAN7dPUpxNlTbFWIOHk6/Gc7xThbBSfawNKkGrtNIDm2waq4h9hvo3Ap4xtHrLGPKgm0fMXSSM03uSFWdgHl3lqkuRUWY1D4DpeqwgJuj5Rfdxmf8mOkmU/J1QW0kpKgPvPQTrTY6ywBu4R+RrVU0ghgvLz9sSV6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753942425; c=relaxed/simple;
-	bh=IsjWducqh9E8FGAln5tPMk1H3bRnG9Ny//2neVCPm48=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F0fldj77Qpi5uaH4NyzKqfMCGdLuZZ438QUqtdY7+18q6bokTIgdjofFQ7YVGSYABKUhARB1tByC3pi5LTC5A1l5f8V3cfcf76oHo6PzxJ8EYAPbiJHXfPjAwohEwrlkcdC+4E7E0SjLGOsrOgfe0N2XP7HK1NRym7KmjTCS2o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-681ff7000002311f-2a-688b0989ff45
-Date: Thu, 31 Jul 2025 15:13:23 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Pavel Begunkov <asml.silence@gmail.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
-	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
-	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
-	akpm@linux-foundation.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
-	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
-	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
-	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
-	almasrymina@google.com, toke@redhat.com, bpf@vger.kernel.org,
-	linux-rdma@vger.kernel.org
-Subject: Re: [PATCH v2] mm, page_pool: introduce a new page type for page
- pool in page type
-Message-ID: <20250731061323.GA10743@system.software.com>
-References: <20250728052742.81294-1-byungchul@sk.com>
- <fc1ed731-33f8-4754-949f-2c7e3ed76c7b@gmail.com>
- <20250729011941.GA74655@system.software.com>
- <18eb9e6c-1d60-4db1-81e1-6bce22425afe@gmail.com>
+	s=arc-20240116; t=1753942434; c=relaxed/simple;
+	bh=HnFr5Rr4lc3XsUAnWFUC3pWDPvfXeIPgwcZcKQ4sbzU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YVM4YJX/pLs2g6a4/nhp/FE7vSLW9hdeNwG6etz6caoHMT94r+7mfqti5yYNlyhdeJHS5sa2tTpOhai/pY2htKmjH+lmqmRmp8wNqOhRTS1DrpWUjUGMn4g66BR5aHMeLlIm2irt8cHSVax9em87vGG2M5QI3+F3hyhehhVwirE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KpcaHYF+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D66BC4CEEF;
+	Thu, 31 Jul 2025 06:13:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753942434;
+	bh=HnFr5Rr4lc3XsUAnWFUC3pWDPvfXeIPgwcZcKQ4sbzU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=KpcaHYF+rBpYXZciXschkR0xF22RqA7ifPDXfnGELHmiQk4YkRl4Vh+wLINpA/dof
+	 g5ZqW/eCrPkMCE1n70Lgc8zO/wEjaA96fU400YMXS+oLbPsyT1nPp1cf+LEpZpqWNQ
+	 S68mr8UovEVNYFsPJWS7lKjFC4MESTgrIN3ZsmUg/39e7UkD9o9x8S8vpgkiGk+vZx
+	 IMreT7ArihBms4JiBqNMGM4+/sV/jfvdQMUBUIMDIy+JkMXYdbZCIBudHRPcBGOVVs
+	 7SF4qXERWiVMCk4fxmKc7gc47wJITkN+o8fldWJg1bwkBzzMo0QgSmPNCUloB03hcA
+	 aZXNuYYVF27eA==
+Message-ID: <28ba8a6d-a180-485d-9bfd-d5ac8783831d@kernel.org>
+Date: Thu, 31 Jul 2025 08:13:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <18eb9e6c-1d60-4db1-81e1-6bce22425afe@gmail.com>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SW0yTZxjH837nVqrvKpuveGFWM0lK5oGY5dlwmxe7eBNjmDFysWXRTr7R
-	xlJYCwwMxOq6KB2nFE+UqkU3QcCUFAeFQdUWOTmDgcC6jYEyMRAVtoJMDtHxacy8++X5/59f
-	notHYrVX+TjJZMmSrRaDWSeoOfXjmAvvFqq+N25x+DF4fPUC1D3Nheq7AR48tU0IZuf/EOF5
-	eyeCmY4uAR6GowguVs2x4OlzcPDEt8DCeOeYCHX+XTB66QEHbceaWRgr7Rag2LHIQvv8lAhH
-	AzUMeBrtItxpKuHhxMKPLDTb74ow0OoRYKT+OQ8PQsUc9Lgvc/D3yQ4WRkt2QKf3LZi79QhB
-	h6+ZgbmiswIMVrQyUN7vFeAvxyiC/vAYByeXjgtQeaQEweLTZdtU2SwPlTdHxB16Gn40zdKr
-	l39jaCTYy9AW958i9fqzaWONnjoj/Sz11xYK1B91iXR4qE2g3WcWOdpy733aEphhaPG3UwL9
-	Z/x3jk4HB4VPV3+m3p4qm005snXzR/vVxp/8azMjYu53E7/wdrTEO5EkEbyNnO5JeYUTt95z
-	IpXE4XeIa+I0r7CA40kkMs8qHIsTyMNfQ6ITqSUWnxLJMV+boOyuxl+QhmtJSkeDgTQUF/FK
-	R4t7EbnWMCi+DN4gPRX3OYVZrCeRZ5OMssvidaT6maSMVfhDMl5XJCj8Jt5Arjd1MYqH4IhE
-	zo1WvTiI4LXkRk2EK0PY/ZrW/ZrW/b/Wi9hapDVZctINJvO2TcY8iyl304GMdD9a/qVLBUuf
-	B1D0zp4QwhLSxWgodhq1vCHHlpceQkRidbEacC+PNKmGvEOyNWOfNdss20JoncTp1mgS575J
-	1eI0Q5Z8UJYzZeurlJFUcXZ0MaX5gyMxQd51fGB3eep4SnJpNL/PKUZV0Y2anN3Vw+G8yZ+d
-	K+7VfvmVK/zv4fvds5XB/A51WX3y+fYER8D1g7c1qTxkwwdWraQNzknzbbvv5hDZGZd/pcJt
-	yrpdWj9L98boDyY+4ZO//uTjxKHMxuy+zIFD6+Njo2+nZRRcj9dxNqNhq5612gz/AeksZTpH
-	AwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SeUiTcRjH+b23o8Gbab0q/TM7wHBZWjxhF0T0I1gHdlFkrnxpyys2NS0C
-	Syubtx3m3MKMUmegrTzRkmneHWjWOq2VYXh0aObUNF8i6r8P3+/38/z1cKRrDu3JaSOjRV2k
-	OlzByCjZlsBE32SXFI2fYzwQTKW3GCgZi4PCd1U0mCwVCEacr1iYrmtCMNzYzEB/w3cE16+N
-	kmB6nETBj9JxEnqbHCyUWFXQc/MTBbXnKklwZLQwkJY0QUKdc4iF01VFBJjuJLDQYG6l4UlF
-	Og0Xx2+QUJnwjoWuGhMDb29N0/DJlkZBq7GYgq+XGknoSV8PTflzYbR9AEFjaSUBo6lmBrpz
-	awi40JnPwIekHgSdDQ4KLk0mM5B3Kh3BxNjMtaHMERryHrxl1y/BDQNfSHy3+AWB7ffaCFxt
-	fMPifGsMvlPkgw32ThJbLecZbP2ezeLXz2oZ3HJlgsLV71fh6qphAqclDjH4W+9LCn+5181s
-	c9srWx0qhmtjRd3StSEyTbnV46idjTvT10EnoEnagDhO4AOEvvaVBuTCUfxCIbsvh5aY4RcL
-	druTlNiNXyL0P7exBiTjSP4yK5wrrWUkdw6/Xyi7Hyht5DwIZWmptLRx5duQcL+sm/1TzBZa
-	cz9SEpO8j2Cf+kxILsl7CYVTnBS78GuE3pJURmJ33luor2gmMpHc+J9t/M82/rPzEWlBbtrI
-	2Ai1NnyFUh+miY/UxikPRUVY0cy73Dw5mVWFRro22RDPIcUsOeYNGldaHauPj7AhgSMVbnIw
-	zkTyUHX8cVEXdUAXEy7qbciLoxTz5Jt3iyGu/GF1tBgmikdF3d+W4Fw8E9CVoIAxcYgfWKf8
-	tStDeSwmRRVszv6pmk/sMJ8I3jBY7t9Chck6zvqy/nv81pyFAlwUeJveWaby7HTmpHxs/2qx
-	7AzOemTeajg4XOAe6u0c72OVKo9frYtSErUFI/X9V+fXROQNTrdRT595J+u3Jxc+XF7Pma37
-	dgcdeX9hwUZ3BaXXqJf5kDq9+jeGdsXvKgMAAA==
-X-CFilter-Loop: Reflected
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 1/2] dt-bindings: media: i2c: Add ov2735 sensor
+To: Hardevsinh Palaniya <hardevsinh.palaniya@siliconsignals.io>,
+ sakari.ailus@linux.intel.com, andriy.shevchenko@linux.intel.com
+Cc: laurent.pinchart@ideasonboard.com, kieran.bingham@ideasonboard.com,
+ Himanshu Bhavani <himanshu.bhavani@siliconsignals.io>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>,
+ Ricardo Ribalda <ribalda@chromium.org>,
+ Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+ Hans de Goede <hansg@kernel.org>, =?UTF-8?Q?Andr=C3=A9_Apitzsch?=
+ <git@apitzsch.eu>, Matthias Fend <matthias.fend@emfend.at>,
+ Tarang Raval <tarang.raval@siliconsignals.io>,
+ Heimir Thor Sverrisson <heimir.sverrisson@gmail.com>,
+ Jingjing Xiong <jingjing.xiong@intel.com>,
+ Dongcheng Yan <dongcheng.yan@intel.com>,
+ Benjamin Mugnier <benjamin.mugnier@foss.st.com>,
+ Sylvain Petinot <sylvain.petinot@foss.st.com>, Arnd Bergmann
+ <arnd@arndb.de>, linux-media@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250731061004.5447-1-hardevsinh.palaniya@siliconsignals.io>
+ <20250731061004.5447-2-hardevsinh.palaniya@siliconsignals.io>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250731061004.5447-2-hardevsinh.palaniya@siliconsignals.io>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Tue, Jul 29, 2025 at 10:22:30AM +0100, Pavel Begunkov wrote:
-> On 7/29/25 02:19, Byungchul Park wrote:
-> > On Mon, Jul 28, 2025 at 07:36:54PM +0100, Pavel Begunkov wrote:
-> > > On 7/28/25 06:27, Byungchul Park wrote:
-> > > > Changes from v1:
-> > > >        1. Rebase on linux-next.
-> > > 
-> > > net-next is closed, looks like until August 11.
-> > 
-> > Worth noting, this is based on linux-next, not net-next :-)
-> 
-> It doesn't matter, you're still sending it to be merged into
-> the net tree. Please read
+On 31/07/2025 08:09, Hardevsinh Palaniya wrote:
+> +        properties:
+> +          data-lanes:
+> +            items:
+> +              - const: 1
+> +              - const: 2
+> +          link-frequencies: true
+Nothing improved. My comments from versions before still apply.
 
-I've never worked aiming at linux-next, so I was wondering if there's
-a process for that.  I've been searching for the process if any, but
-nothing special was found.
-
-I still have no idea how to deal with this case.  However, at least, I'd
-better send the patch once net-next is open.  I will.
-
-	Byungchul
-
-> https://docs.kernel.org/process/maintainer-netdev.html
-> 
-> Especially the "git-trees-and-patch-flow" section.
-> 
-> --
-> Pavel Begunkov
+Best regards,
+Krzysztof
 
