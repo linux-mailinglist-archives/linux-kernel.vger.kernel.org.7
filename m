@@ -1,44 +1,44 @@
-Return-Path: <linux-kernel+bounces-752357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752341-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23838B17494
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:03:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A453BB17455
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:54:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14DBFA8301C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:02:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E2DC176DFC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58FE323C4E7;
-	Thu, 31 Jul 2025 16:02:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B373227E8F;
+	Thu, 31 Jul 2025 15:53:10 +0000 (UTC)
 Received: from srv01.abscue.de (abscue.de [89.58.28.240])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB38E2222CB;
-	Thu, 31 Jul 2025 16:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBFEB1ACED9;
+	Thu, 31 Jul 2025 15:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.28.240
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977778; cv=none; b=ohG4/WyxK/ANee3iGRc88ePUk/S2JT9z1xtQ+o/T3lEBMAJA9tp6m+5fOYCFW+OIbJB0HdSLztZ+pwCleaMp8wCb138jhiekVX8XrYejfq4irYdP8VsQ3k5NuOZH+UN3znIcW4yrSAGHofMSw4Df+bgsTzCm8pw9wFZFXiVrv7A=
+	t=1753977188; cv=none; b=k8ArK04bWOiPQI6AvEyWhiVBWKR0wIabVVAR0jKlESZSagZelluRvpBJM6Tb0z3YcNd0MXePbCaiF4kqgKWHQddp1zRkCxfMmql9QRXQ3jvU0KLGmuMI9s2XLicqNxu/HlGKvhad98/P0AxbUeDgqIbG0o/TGGZPPwlmanGX43o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977778; c=relaxed/simple;
-	bh=vvFSZ89Mn/XWX0tfWxb7bhlASEHgl0/ESlWaVfQ48pI=;
+	s=arc-20240116; t=1753977188; c=relaxed/simple;
+	bh=/hDMFfib2TZPG22mAzqNwRHidGMVAxYzgUZyc2zrlkw=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tMkTmh6irL6Ud23rwGgfwNgrYmKzaCVajcr3oBsxenN2tpC0GdsPqvn8KPLYcaMlVH1cxwyovB62lEO5A3QiDzzwkVPA4Ia1Jq4+sN+GcuLCH9YAJdXSYGU9AZoeZJW8yVyfi82B15II4EWy/kdqF1A+utYfQcpyet33i88oDAw=
+	 In-Reply-To:To:Cc; b=BbMpuM8oQ1aZCKjr2q+WzkG4iWh9fzrhA2HgTX7InMnWXVm6qbfKVCRowF4sMXgMg45QmfWocG/b6HCGh99DgvvwcbSU/iGYLCd46A5CoBw29Z0bKXxko1pc6jWq17/14tCkdIDKDs53v4mUcjlJAdezaiL7JqlJ2OXlVWdRio8=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de; spf=pass smtp.mailfrom=abscue.de; arc=none smtp.client-ip=89.58.28.240
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=abscue.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=abscue.de
 Received: from srv01.abscue.de (localhost [127.0.0.1])
-	by spamfilter.srv.local (Postfix) with ESMTP id E55601C2719;
-	Thu, 31 Jul 2025 17:52:55 +0200 (CEST)
+	by spamfilter.srv.local (Postfix) with ESMTP id 437FA1C2710;
+	Thu, 31 Jul 2025 17:52:56 +0200 (CEST)
 X-Spam-Level: 
 Received: from fluffy-mammal.metal.fwg-cag.de (unknown [IPv6:2001:9e8:cdc9:0:1347:874c:9851:58c6])
-	by srv01.abscue.de (Postfix) with ESMTPSA id DD5991C2712;
-	Thu, 31 Jul 2025 17:52:52 +0200 (CEST)
+	by srv01.abscue.de (Postfix) with ESMTPSA id 9E6131C2713;
+	Thu, 31 Jul 2025 17:52:53 +0200 (CEST)
 From: =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
-Date: Thu, 31 Jul 2025 17:51:17 +0200
-Subject: [PATCH v3 04/16] dt-bindings: display: sprd: allow attaching a DSI
- panel
+Date: Thu, 31 Jul 2025 17:51:18 +0200
+Subject: [PATCH v3 05/16] drm: of: try binding port parent node instead of
+ the port itself
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -47,7 +47,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Message-Id: <20250731-ums9230-drm-v3-4-06d4f57c4b08@abscue.de>
+Message-Id: <20250731-ums9230-drm-v3-5-06d4f57c4b08@abscue.de>
 References: <20250731-ums9230-drm-v3-0-06d4f57c4b08@abscue.de>
 In-Reply-To: <20250731-ums9230-drm-v3-0-06d4f57c4b08@abscue.de>
 To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
@@ -62,71 +62,46 @@ To: David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
  Kevin Tang <kevin3.tang@gmail.com>
 Cc: dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
  linux-kernel@vger.kernel.org, 
- =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>, 
- Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ =?utf-8?q?Otto_Pfl=C3=BCger?= <otto.pflueger@abscue.de>
 X-Mailer: b4 0.14.2
 
-Add a DSI output port and include common DSI controller bindings in the
-bindings for the Unisoc DSI controller.
+The drm_of_component_probe function is intended to bind all devices in
+an OF graph given a set of ports linked using the "ports" property on a
+main device node. This means that it should also bind the components
+providing these ports, not just the components of other ports connected
+to them. In order to do this, it calls drm_of_component_match_add with
+a pointer to each port node after checking that its parent node is a
+device.
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+However, when given a pointer to the port node, the compare_of callback
+does not match it with a device node and thus fails to detect that the
+node belongs to a component. Fix this by passing a pointer to the parent
+node here too.
+
+Currently only the Unisoc platform driver relies on this feature, which
+was previously broken and is fixed by this change. On other platforms,
+the "ports" property points to ports that are not part of a component,
+i.e. the components only have indirect connections to the main node.
+
+Fixes: df785aa87f3a ("drm: Introduce generic probe function for component based masters.")
 Signed-off-by: Otto Pflüger <otto.pflueger@abscue.de>
 ---
- .../display/sprd/sprd,sharkl3-dsi-host.yaml        | 27 ++++++++++++++++------
- 1 file changed, 20 insertions(+), 7 deletions(-)
+ drivers/gpu/drm/drm_of.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
-index 71abbc2de8dbb1b674f151a87490c865b187fdd0..7da68eb026b97932515b470764fa3948104db4e8 100644
---- a/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
-+++ b/Documentation/devicetree/bindings/display/sprd/sprd,sharkl3-dsi-host.yaml
-@@ -46,12 +46,22 @@ properties:
-         const: 0
+diff --git a/drivers/gpu/drm/drm_of.c b/drivers/gpu/drm/drm_of.c
+index d0183dea770308e77f05da364ffe087d53f3be36..b972facc2ec3fe40a4e10b5d7178b5ac8c0158d5 100644
+--- a/drivers/gpu/drm/drm_of.c
++++ b/drivers/gpu/drm/drm_of.c
+@@ -132,7 +132,7 @@ int drm_of_component_probe(struct device *dev,
  
-       port@0:
--        type: object
--        description:
--          A port node with endpoint definitions as defined in
--          Documentation/devicetree/bindings/media/video-interfaces.txt.
--          That port should be the input endpoint, usually coming from
--          the associated DPU.
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        properties:
-+          endpoint:
-+            $ref: /schemas/media/video-interfaces.yaml#
-+            unevaluatedProperties: false
-+            description: The input endpoint, usually connected to the DPU
-+
-+      port@1:
-+        $ref: /schemas/graph.yaml#/$defs/port-base
-+        unevaluatedProperties: false
-+        properties:
-+          endpoint:
-+            $ref: /schemas/media/video-interfaces.yaml#
-+            unevaluatedProperties: false
-+            description: The output endpoint, usually connected to the panel
+ 		if (of_device_is_available(port->parent))
+ 			drm_of_component_match_add(dev, &match, compare_of,
+-						   port);
++						   port->parent);
  
-     required:
-       - "#address-cells"
-@@ -60,6 +70,9 @@ properties:
- 
-     additionalProperties: false
- 
-+allOf:
-+  - $ref: /schemas/display/dsi-controller.yaml#
-+
- required:
-   - compatible
-   - reg
-@@ -68,7 +81,7 @@ required:
-   - clock-names
-   - ports
- 
--additionalProperties: false
-+unevaluatedProperties: false
- 
- examples:
-   - |
+ 		of_node_put(port);
+ 	}
 
 -- 
 2.50.0
