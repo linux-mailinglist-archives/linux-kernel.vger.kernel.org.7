@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-752227-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752228-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28CA9B172BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:03:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71E18B172BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 985B218C7AF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:03:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6FE64623E86
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:02:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F9672D3A7E;
-	Thu, 31 Jul 2025 14:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D72A82D46C6;
+	Thu, 31 Jul 2025 14:02:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="WrA6Jf80"
-Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="f7ObG5WP"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC372D3209
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 531A72D373A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:02:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753970525; cv=none; b=TftliHi4LIVwEcZdGeCMkoCmyF9DdfxtAu0KosRb3IQ7wEZseYLma8EdihtCqfmyjHIZIdXzNGbraGYqJ0HPpCUzRoQjDzMHwOgx6OurFTgiPlrYbcpeoklBvTYfeDSnfueU6sO5LSDQBsr4VyIF3qFEb/mfe4K1kGGac4v0e8I=
+	t=1753970527; cv=none; b=miIMcmVQpcNt9q2uwOMzcAW9igDS3bKk1bEvYRLa7jIRsiKMZ9TaVJAzcYBGbqgMA061TNjPQx+c2hLKS+zdTysl3lBa16mRuBd8YRnm3XKDun/+My+w5RjoQeGpgYTaiH+ZnjMdhW9xiwnPCgy36ZXgGeOPfsMIfqDLdiRQ/kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753970525; c=relaxed/simple;
-	bh=7oA1q4nPReiJ1yN6yWyAlvE+1mr1Nyp3mcVVwjusBc4=;
+	s=arc-20240116; t=1753970527; c=relaxed/simple;
+	bh=yQHSXj9X+9M9Y9py8Z7kopx308qQsUk3NFruZ6iZnh4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SBUbr12xRX0A9PKrhAXpMRQJA76ym62XTOd8Cno5keJHfI+DjOslAWn9+6nEstXzWlOdbCzD8gytqVPmL09meYTNnfxMd5kOAPigWKfLpGH1ubCcabur34m7HJufYq1Uoi6esR+fo9yRZ1Ku3796C3yvn/hr6OHRFLBHdhmihjk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=WrA6Jf80; arc=none smtp.client-ip=209.85.221.45
+	 MIME-Version; b=EqBKXpWCZiS/uzpAh+SjpLCw4wGTEeHuG6auPjYbRG5DPO3T00vj2IPD4Gg7VaqQY54efFIDlU6WkKPruBd/BUffnk0N/vv9UttYEFocJa6nVZcc6X9hPagWe+XLM8lZwZZZyU/XcmTHrNcvL4rsMIzSNl1b64I74DzJysEYV8Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=f7ObG5WP; arc=none smtp.client-ip=209.85.221.43
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b78b2c6ecfso624577f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:02:03 -0700 (PDT)
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so410068f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:02:04 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753970521; x=1754575321; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1753970522; x=1754575322; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=r5FfmuyODRKtH+CNEYfoGxU1JBfNxadHgUzuk0z3tnM=;
-        b=WrA6Jf80/MzW6orSfPXYvJQ/8RDPMOVPSZ5FCoBlgxWo1tmkAW6ImiMPj/1pX1ikA0
-         7RQe9UED8BQwvKKUOi2DQ7GJGs5A6jJQF41Dkzqhthm7Fxv+D+/u8oxVGKYBFqbOMFhj
-         uomE+YyfNvt8VA1dC+KBaDzZc3na4rrzCi4iDRKu7yxOAE64sikjNq8pofjtdxJABeTS
-         23BaUGxEYEMcsOfUwmxO+VJOoK/zMOEaAiM7vGcMgADt2Z12mI1nbb4tnSsbX9baubi0
-         gidXnJ92KRKf2DsxFdbODAao4KJw6GJKCZ75sJecn/D+FIJREy6MyXxQqVA+V7SBcgOI
-         gs1w==
+        bh=BLgS03msUmp+vuGwcZngE+sO5Zm7YcN21p+x25WXrLM=;
+        b=f7ObG5WPZJNKroot9Ugjyl4i7N4J+WoqBg7XnfSawN+UxAQf+Q1KKa8cdPPEbztozS
+         CNoa1L3kAVhDstMD/Nh8riFV/mr6XVUrwVExkDwITktVAhY927aUM01wTF8mDyCQk8NE
+         en3g68xBcv3lrISXBiNenAm9VReJ0wVk4Ot0OrBZkK3v3013cM+23IVA3SSd7LknSGFM
+         +5A6hVGO4FuDxczY5hsGE7upU6R6BAYSDTK5THQDP3FvBd9mgpQGhvitYJ0fA5ocUzAt
+         10jOnSMW46aeBNDS71iDxEsG0hNhJjfpgYVukbte5a0Ye5HjLHbqSf69GtS7W6MQld//
+         URyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753970521; x=1754575321;
+        d=1e100.net; s=20230601; t=1753970523; x=1754575323;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=r5FfmuyODRKtH+CNEYfoGxU1JBfNxadHgUzuk0z3tnM=;
-        b=CHS0zWdUYd1um4a3ByGm+EvVQwGYEswFFlIBUT9q3lJAwL2aZbN7Rq0f5bXyKVdEqE
-         qadpxZZMkQlTYX+Y5QABvllK6GwADowDQ+LAApzEgJ/bqw8tFLOIW1kTx8yMoxghz4pV
-         lpGg0Z9er60iIVnrV2u74bvtWNQYes0RzPNnYKTatUz6wJpcOVfb9n1qtZy2hb/jHFC2
-         /HZd4PSwuqlcUw8WqZ1Quw2mtHhZUqR9EdeKcRzsX9nsilQchnvUGP8ncGpUeENd+Dtp
-         O5XTEqtMvQ5HTz0cld2EHYtEnn/QZHMLYmRzntpyqyqCglvc6kjiqBYwCWiCCXzSc9BA
-         DDrw==
-X-Forwarded-Encrypted: i=1; AJvYcCUBwGC04fwl3bmGnYjWgteoHDPJoEqL52zcrRovxWBczV67x6vf3Jt5wR01TidHCRtd1nocteq1j4phESk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvv0q8x4L9gtFLG6ua2myDAj6k+wJb1SdZdoBtDqTXe+8u9RDV
-	mTDWmxHpp7Rq8ZfOFd5hlrXhIgT3I/vBvApazVNJ5fcUe3MiM7UcSbjLDmgHAgd6Tsc=
-X-Gm-Gg: ASbGncu4FfgjELwLoc063WCTuMr57mpZBnFo7hu91hkyBSEQUUIhHvs/EwCxzBWgP8M
-	g3WzyHPvV2LwTISXu5UHu8Oevw9dMniJ/L0NV0Ner0ERaNvtB4p4i/hMp+ClKm80GWvWg0JMij2
-	wajcd3JPpfopeIfiXN6kZ/q4jU/qjkHsiyhfZKR0oD3PgNN1MjPpHrHAIOVhUaWOdJSMI+6JwtQ
-	R7iNfYuSYC52RmSpLeB7C4H9Ra2hillwWxIDK0il26GWkpFEatB0h89aQWVHIkJW5XfDgWMxZzP
-	hgl57e8RAeySA52/FtJTaypy4POgGg7+d64qnZts5k2UW4DiaDXKsSaMCOpFFXzBZBD8OrYkRAA
-	SotA3wp9KeauKfpPvbpYY7hK5LiWrn3pPsbn8M+xEBbI3CA0o
-X-Google-Smtp-Source: AGHT+IFSB2g77P+JOGuXRChMmlAYoDUnakc0mUqILF6lDO5fOlHpcKD5KjoKBSFMkHDfsG7jcpdOQQ==
-X-Received: by 2002:a05:6000:240e:b0:3a5:1cc5:aa6f with SMTP id ffacd0b85a97d-3b794fe9320mr5813370f8f.34.1753970521109;
-        Thu, 31 Jul 2025 07:02:01 -0700 (PDT)
+        bh=BLgS03msUmp+vuGwcZngE+sO5Zm7YcN21p+x25WXrLM=;
+        b=OreDiZAU64vwGVs9A3RhaYoZrG2wHf6RfcR6oTVN4kN+UAPIFGpmR9TFbyzZFdu5Ek
+         LqFageB8RORXhydCmGquiC1DV2E1JLe7P+TAOjrPVXyul6jFnFxOy0eeRXU6ZD5O3O9w
+         XAiSkHKbTasFk8pvv5RTXj56e2IDeCSyUcMWZmLnvXx4y72jCJB2y1BgVhtTDNHQJ94r
+         Ac1qsayZCw+p+1SGvzzZlnjS4Zh/sgYirNpnuZmOeUexRPqVCGhsvSfeXPZMDs+bbdJo
+         80P6pOUwkVPeLTbBpaU5qP1Gh87rrtf4co6Is37gK6/uj5ZQINrnXdTjUL6I493/RXS1
+         OSTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVIKOtH3nXwB8dJ0Eziwr00kq0go/G8ManJnzQ4oHtShiB/lXJJ9glbPgMvu08FD5JXFSSxUos4lXayS5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5sl1x0NKN1PPi23FyCZx5S1CppdDkeP4+H+RHrt02eSyRAW0l
+	Z/YllXcoePXcnEWIXv8gegF0O+6lc86GCHjbIEh7Pyau7J7dOvgkqhRXGL8zPRCU1/0=
+X-Gm-Gg: ASbGncvRsRfNjULbEnSgTEr8JPrjj5SLc66cE+hL2x3QStWSxrq4Bcdq6srk6nuR8XL
+	5KyFrN0tzQQMrCu4aElrnWOiAhldCDzKhwyIFcqSIluAx3hYr2R9hsmYtQFobeXrkLFlTKKqg/F
+	KxT38iK5WCKLbV2bZ7yC7oEe5ceIGoN3zwdqflNF9YfUzE0sixwC2jFJuo6jaNC6C4o3a5QvmL8
+	+BFXbbpYwis+sKlTKElIqtcW043HpjBz6XjHcbh9vCbgxIOSObZypWDIi5vvlCR/os0/GWeeOQp
+	hgyCEfRLwezN0O/Hpxq6plfKJzxxgm9kbAjg4SMWaT4db9qkM47Je/9YBjXzLl7mkDq918YIcjC
+	TWN37lCOiyCbLAVK1u8Mv9o19ITJ7hOPjw7xtYKKgVS3xUmIm
+X-Google-Smtp-Source: AGHT+IHKeZczvelpwGjx/EOADUEZKpoKSKEfhOoz3VFDbeZbEjT91pFxldnpybLu9UgLDOG6DAcA7w==
+X-Received: by 2002:a05:6000:401f:b0:3b5:e2ca:1c2 with SMTP id ffacd0b85a97d-3b794fe50b7mr6057814f8f.2.1753970522308;
+        Thu, 31 Jul 2025 07:02:02 -0700 (PDT)
 Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee57c18sm28121285e9.28.2025.07.31.07.02.00
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee57c18sm28121285e9.28.2025.07.31.07.02.01
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 07:02:00 -0700 (PDT)
+        Thu, 31 Jul 2025 07:02:01 -0700 (PDT)
 From: Daniel Lezcano <daniel.lezcano@linaro.org>
 To: mbrugger@suse.com,
 	chester62515@gmail.com,
@@ -87,12 +87,10 @@ Cc: s32@nxp.com,
 	linux-arm-kernel@lists.infradead.org,
 	imx@lists.linux.dev,
 	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>,
-	Thomas Fossati <thomas.fossati@linaro.org>
-Subject: [PATCH v2 4/8] arm64: dts: s32g399a-rdb3: Enable the STM timers
-Date: Thu, 31 Jul 2025 16:01:37 +0200
-Message-ID: <20250731140146.62960-5-daniel.lezcano@linaro.org>
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 5/8] arm64: dts: s32g2: Add the Software Timer Watchdog (SWT) nodes
+Date: Thu, 31 Jul 2025 16:01:38 +0200
+Message-ID: <20250731140146.62960-6-daniel.lezcano@linaro.org>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <20250731140146.62960-1-daniel.lezcano@linaro.org>
 References: <20250731140146.62960-1-daniel.lezcano@linaro.org>
@@ -104,67 +102,91 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The platform has 8 CPUs, and the Linux STM timer driver is
-instantiated per CPU.  Enable 8 STM timers that can be used as
-replacements for the ARM architected timers.  The remaining STM timers
-are not useful to the Linux kernel and provide no benefit, so they are
-left disabled.
+Referred in the documentation as the Software Timer Watchdog (SWT),
+the s32g2 has 7 watchdogs. The number of watchdogs is designed to
+allow dedicating one watchdog per Cortex-M7/A53 present on the SoC.
 
-Enable STM0 to STM6 and STM8 on the s32g399a-rdb3 platform.
-
-STM7 is skipped, as it differs slightly from the others and requires
-an additional property to be properly handled by the driver.
+Add the SWT nodes in the device tree.
 
 Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Ghennadi Procopciuc <ghennadi.procopciuc@nxp.com>
-Cc: Thomas Fossati <thomas.fossati@linaro.org>
 ---
- .../boot/dts/freescale/s32g399a-rdb3.dts      | 32 +++++++++++++++++++
- 1 file changed, 32 insertions(+)
+ arch/arm64/boot/dts/freescale/s32g2.dtsi | 56 ++++++++++++++++++++++++
+ 1 file changed, 56 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-index 802f543cae4a..467e0c105c3f 100644
---- a/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-+++ b/arch/arm64/boot/dts/freescale/s32g399a-rdb3.dts
-@@ -40,6 +40,38 @@ &uart1 {
- 	status = "okay";
- };
+diff --git a/arch/arm64/boot/dts/freescale/s32g2.dtsi b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+index 1783edb81350..478899d4dd06 100644
+--- a/arch/arm64/boot/dts/freescale/s32g2.dtsi
++++ b/arch/arm64/boot/dts/freescale/s32g2.dtsi
+@@ -317,6 +317,38 @@ usdhc0-200mhz-grp4 {
+ 			};
+ 		};
  
-+&stm0 {
-+	status = "okay";
-+};
++		swt0: watchdog@40100000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40100000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm1 {
-+	status = "okay";
-+};
++		swt1: watchdog@40104000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40104000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm2 {
-+	status = "okay";
-+};
++		swt2: watchdog@40108000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40108000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm3 {
-+	status = "okay";
-+};
++		swt3: watchdog@4010c000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x4010c000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm4 {
-+	status = "okay";
-+};
+ 		stm0: timer@4011c000 {
+ 			compatible = "nxp,s32g2-stm";
+ 			reg = <0x4011c000 0x3000>;
+@@ -445,6 +477,30 @@ i2c2: i2c@401ec000 {
+ 			status = "disabled";
+ 		};
+ 
++		swt4: watchdog@40200000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40200000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm5 {
-+	status = "okay";
-+};
++		swt5: watchdog@40204000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40204000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm6 {
-+	status = "okay";
-+};
++		swt6: watchdog@40208000 {
++			compatible = "nxp,s32g2-swt";
++			reg = <0x40208000 0x1000>;
++			clocks = <&clks 0x3a>, <&clks 0x3b>, <&clks 0x3b>;
++			clock-names = "counter", "module", "register";
++			status = "disabled";
++		};
 +
-+&stm8 {
-+	status = "okay";
-+};
-+
- &i2c4 {
- 	current-sensor@40 {
- 		compatible = "ti,ina231";
+ 		stm4: timer@4021c000 {
+ 			compatible = "nxp,s32g2-stm";
+ 			reg = <0x4021c000 0x3000>;
 -- 
 2.43.0
 
