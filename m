@@ -1,126 +1,112 @@
-Return-Path: <linux-kernel+bounces-751573-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751574-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7294EB16B05
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:00:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B006B16B07
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:03:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4C6AD3BC97D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:59:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F167620722
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5367424166B;
-	Thu, 31 Jul 2025 04:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E1B1B423D;
+	Thu, 31 Jul 2025 04:03:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="aLmGBqgu"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="NWf01cAU"
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32F6622F770;
-	Thu, 31 Jul 2025 03:59:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63842A921
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 04:03:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753934401; cv=none; b=iWgoUEh2MSP+w/E1IZL/sSkbPmSxqIsEvpzAnzw5fNT1UzdZMyzRw4ok7KbIizk8Lsx4jaCHE8qxNPSFgDJjBXtBa6OXY2ttNxp/yWkf2Fo11CiGkxBmtbnMAIUg5n8enaj9K4RrC4HskWDFsN4XugfU/2JqSq6Ugwn6oh5Hn18=
+	t=1753934590; cv=none; b=mrELlB2lPxVpc9t2MjKej9iSxQ622RidBtDE4Am+qr3oTaN8rp7LrX70m4N9cp2CzK8ihBsSBuI7H0241gJ8KmpoBzs9itIhy64m4q5dR6V7rwec9ABUIX02+VhzsqgnWq05qGvJSWaS56l8wjAz1sglWP/HKTOMxd3VTOf/RNM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753934401; c=relaxed/simple;
-	bh=OcrZsUyHq3wWNpX5cgXufQ+ZLvYsQ6Y63zo9gqCOHL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eq0Fb5D++Y7J04aqj+BSW4izzJo3NaQfMex6w6Dc+N2LA2TMapIvWF/MERvWCIbH4BR9NLJb6iuYGP943Rrnp+k2LWI0qL6LVJS5YCuTrLbcKOra7ah2pILiB8gz9bqGN/XFEAEI0QDLK9xCjwgVS5Qm/X81hC1ukpRsaw4/B30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=aLmGBqgu; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753934399; x=1785470399;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=OcrZsUyHq3wWNpX5cgXufQ+ZLvYsQ6Y63zo9gqCOHL4=;
-  b=aLmGBqguwPgC+ZAPOuB3E0kxCLB0MKUofJJQZksjB+ZtDzGGyfKcDtI/
-   Jk9MeFdP94zXwaEvD7rcW52cbW0HNU5oSmzO7zfRwpoJYrQmjHDx6W2He
-   5wlF/2fYecrqSEvI3T3RfbCY7Fmvomc9M7yseE+YbThJtlUhdN5gOkcni
-   hm4QzSxFIbLAy+yspVqRDoaevy/zjnIsvgIVkNH34OiS8sN26VmZeu3eq
-   Sk8Jw9iOoxdTpjKG/mc8rfjAm+gbOVH6KlBwihq+n5rkqELWqLos/ljUI
-   ygzcGWR0b5y9T9PDLUfI1dpgkWDyb3hQg67no/2XMkYgQ4M5obAi37up+
-   w==;
-X-CSE-ConnectionGUID: QP8b36mARpO8c+l4cfmB3A==
-X-CSE-MsgGUID: +9Fq4xwLTuycK4sPldo3yA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56336418"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="56336418"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 20:59:59 -0700
-X-CSE-ConnectionGUID: gYjm9tjYSkK3pLYlL9EdZg==
-X-CSE-MsgGUID: p6F5ISCGQ2S6IQroCGXimQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="194138761"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 30 Jul 2025 20:59:54 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhKSN-0003Oi-0h;
-	Thu, 31 Jul 2025 03:59:51 +0000
-Date: Thu, 31 Jul 2025 11:59:47 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	sboyd@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
-	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
-	u.kleine-koenig@baylibre.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
-	casey.connolly@linaro.org
-Subject: Re: [PATCH v3 4/7] phy: qualcomm: eusb2-repeater: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <202507311150.5ofvQlKl-lkp@intel.com>
-References: <20250730112645.542179-5-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1753934590; c=relaxed/simple;
+	bh=M/EE5uU5Op+ft0jRHmSbNSQvLl0Fd0KNGVlRPVC0Sys=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Dmvj7doi3uNSJqm5NsQvBQt+ycRCoY0yGhTptd5ng8PkDg/Ps+c+3amlBCh42LEgQ6Rs76C06rqsFjhRWVh83wqxJd447LA5EwMPMNTFf5zh7fbuOBmpj2j5hTWPD85YLC4/JfMIrlhl+Pam6EpuU0THAAeyCeQ0cac2R8EXUww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=NWf01cAU; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-af0dc229478so75257566b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:03:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1753934586; x=1754539386; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=NPKXqdiNRfz9wDSlkjOv4OtDzi/lKSKsZRfJnPqPQXA=;
+        b=NWf01cAUMB9HY9/sO9/cEN1A6ZGp28/EiS8rKPK9J83gz/SuK7sw5Zv3WqX4+s3uaB
+         FayN2CbKW1O2LyeyurdFvzzn6gBQfPcg1d8stJQfQVdopIZeJ6Pux9WKh84NtbWbNUu5
+         d9kqHBuS3GxxY6QSuPT3bxMZRtnNQzq9PQMmo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753934586; x=1754539386;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NPKXqdiNRfz9wDSlkjOv4OtDzi/lKSKsZRfJnPqPQXA=;
+        b=joh8r7l7S22Wds+mewFgYkdKmwgsd/eDI6tiS1dleCzO3xkYfuGKDxyXdcWBdjOHhD
+         5webuQCmxAJTVCAcr1cmYzuPZs8zTxO05VzX7TTVBXfKX52CcshJwBIOwaB57CnjLQqx
+         5eqowghKy8usyJEDf3HW3D0sQQdA/edosi7VCO/eYyBjayVFvanYDrxbzumjDskjXA/m
+         7v2zEvtObFbUPIjveZtrpRghsp/3ORUykVBK7EyCyuE6fH2KIjWstI6JoXpqAMRDRfS8
+         XgXZeVVx+fe3zzyT8gR+L2b2q9iWZ7pF/amjDFnizwLs/5jMNlv6xZt8GaPTcNJE28bb
+         EAIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWHVwGqFn6QF5UZztbbIHaLPBxgw3YOv0K6eQDAJIh/OWrVBKRCYhTtE+qVchxZom13krhizsneMEV6Uvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwvU2ghFn51muDwTuwg9TbpJckx68yPPHvaNpAqO6iXTV7qdmj
+	VslJtBsrlnB+1BWazwShij119rVSXSOmInL22+w/7GmBzglPvc59prRI+ai7bqLpjdlRcHOzZ5s
+	NQEcoNeI=
+X-Gm-Gg: ASbGnctK/Z/X34Ya4aiqpLT2NohJ2ZOgsD9O10tsyfl5QoyjjriQdHHm3wJXXqBQCnd
+	y9G1+2IFkd/5v8WbZDlwPrgiKPc2UfoiGhN+NaPBJusPSBWFId8hC6PvVVW4ab6j8dUb5yQDI0w
+	k2iEg8uZn0k56+jzxhUV5+dHgDMJco5+uVvzdOaWVwOf7vHcUlItawfKeJA5FPtLebzi4t9H2VU
+	pubzJgtNcFNBVt7JtAI4Kk1xLceCAiMrTi9lIgu2nhW+39Q87NlmCwYCnjDqkHOv4eZZZdpXYsJ
+	YSnI8PZqSlpIDYqtHRF159RsJVnna93tzD+bDrz8mLiNNPFadh6hh/U2YmW4XAJL8rb4i3w0N/a
+	4pY4ABcMRhN/YpkChIlzDfKri1SiQ/8Vi/e6dHK60jHHpUbdWkTl42l3M4JLrT+hFR9VwUlUf
+X-Google-Smtp-Source: AGHT+IGn8naHnYGO64eXYf1bVlmewl/S5ZgH+alW5XbHbL9KowRO5nopMHi9xcbmQK2dhgIp1S5ylQ==
+X-Received: by 2002:a17:907:2dab:b0:ae3:c780:b883 with SMTP id a640c23a62f3a-af8fda4d92fmr738316166b.54.1753934586531;
+        Wed, 30 Jul 2025 21:03:06 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766absm42724966b.14.2025.07.30.21.03.05
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 21:03:06 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so445143a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:03:05 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCX6vq3XMGRaU42isE1dmaLIg7GbLgXwDyRH9XdjOjNcIcGXT8RInR8OyQscftznmhdH0yVCQb59HGXmaNQ=@vger.kernel.org
+X-Received: by 2002:a05:6402:358c:b0:615:adc4:1e66 with SMTP id
+ 4fb4d7f45d1cf-615adc425aamr743956a12.25.1753934585514; Wed, 30 Jul 2025
+ 21:03:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730112645.542179-5-angelogioacchino.delregno@collabora.com>
+References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
+ <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com> <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
+In-Reply-To: <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 21:02:49 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
+X-Gm-Features: Ac12FXwzEYQPZO5k4XVAeWdA0YWy0Y0i-TF-7I5eTKnrgbe7iqaulBg1IFiRC2I
+Message-ID: <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.17-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi AngeloGioacchino,
+On Wed, 30 Jul 2025 at 20:40, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> I'm very unhappy with the end result, because it just results in a
+> black screen at boot for me. No signal.
 
-kernel test robot noticed the following build errors:
+It's not something in the merge, and it's not something in my tree - I
+see the same plain "just a black screen" if I try that commit
+711fa2667d8b that is the top of your tree that I pulled.
 
-[auto build test ERROR on next-20250730]
-[cannot apply to jic23-iio/togreg sre-power-supply/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.16 v6.16-rc7 v6.16-rc6 v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+I've started bisecting to at least narrow it down a bit.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/spmi-Implement-spmi_subdevice_alloc_and_add-and-devm-variant/20250730-193217
-base:   next-20250730
-patch link:    https://lore.kernel.org/r/20250730112645.542179-5-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v3 4/7] phy: qualcomm: eusb2-repeater: Migrate to devm_spmi_subdevice_alloc_and_add()
-config: arm64-randconfig-002-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311150.5ofvQlKl-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311150.5ofvQlKl-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507311150.5ofvQlKl-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> aarch64-linux-ld: Unexpected GOT/PLT entries detected!
->> aarch64-linux-ld: Unexpected run-time procedure linkages detected!
-   aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.o: in function `eusb2_repeater_probe':
-   drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:228:(.text+0x5a8): undefined reference to `devm_spmi_subdevice_alloc_and_add'
->> aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:236:(.text+0x61c): undefined reference to `__devm_regmap_init_spmi_ext'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+              Linus
 
