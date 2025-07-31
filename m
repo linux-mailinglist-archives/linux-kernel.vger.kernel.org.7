@@ -1,102 +1,110 @@
-Return-Path: <linux-kernel+bounces-752495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B42AB17645
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:53:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6B86B17647
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:55:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EF054713C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 275391C20C43
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:55:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251632512C3;
-	Thu, 31 Jul 2025 18:53:51 +0000 (UTC)
-Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2472A24EA8D;
+	Thu, 31 Jul 2025 18:55:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="k7owTnz7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AA3154425;
-	Thu, 31 Jul 2025 18:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81C4420CCE3;
+	Thu, 31 Jul 2025 18:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753988030; cv=none; b=GZMmyaxZHUqnq5FE5BrvHR6oe9UDxb0qT6P2iSZSd4Eauq0tSeF29Z2q+hsCXnQmBXQiuGiJYzRw6o0wv41XLrkfpeiv45QCp/f9qj6mddkNjSLymlFvrvDNWagnMMSgUUXpAbzTyPlmEBYAKnluuwj7iwREC5sv8SrBnbpS6OQ=
+	t=1753988104; cv=none; b=PY9x3JUMHMYyHCOH71X+XgEvTk23Yq2ODNZ6sTaPSnlNwi/6uKxAstNvJ7Un3zj19SDDJM5VMyRK2+dFODoRl0lyNIj5EhZqnmaJhMRygwXOrwUlEtMbyKF2mNPrbLVwmQndiK9FSJYXfq0ivE9v+AHvasvcYoCvzydjSfjZZwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753988030; c=relaxed/simple;
-	bh=N+VGUE9lLwGyq8mJrk7de6+X+V8j2YutT7HVuPVvDgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BRJeEWKl1+RBbQ3CePJq3cwYxN0eLN8wtxK1/vUVd4qox4NWc45sKfxy9yZ9ByzOmMMHuoEvYHC6eqPNARFoorBqkuOYhkvTPK9+SIrFiZxzwohpjLFKvOgem6x6Up97EP0iLESGH0pC2q9UanaUINrUE9vQfbTQQP6X3NfUlFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
-Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
-	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
-	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
-	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 666E62C0667B;
-	Thu, 31 Jul 2025 20:53:44 +0200 (CEST)
-Received: by h08.hostsharing.net (Postfix, from userid 100393)
-	id 49DD01AF24; Thu, 31 Jul 2025 20:53:44 +0200 (CEST)
-Date: Thu, 31 Jul 2025 20:53:44 +0200
-From: Lukas Wunner <lukas@wunner.de>
-To: Gerd Bayer <gbayer@linux.ibm.com>
-Cc: 18255117159@163.com, bhelgaas@google.com, helgaas@kernel.org,
-	agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
-	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com,
-	kwilczynski@kernel.org, linux-kernel@vger.kernel.org,
-	linux-s390@vger.kernel.org, linux-next@vger.kernel.org,
-	linux-pci@vger.kernel.org, lpieralisi@kernel.org, mani@kernel.org,
-	robh@kernel.org, schnelle@linux.ibm.com
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-Message-ID: <aIu7uO4NOanxMfAO@wunner.de>
-References: <4e10bea3aa91ee721bb40e9388e8f72f930908fe.camel@linux.ibm.com>
- <20250731173858.1173442-1-gbayer@linux.ibm.com>
+	s=arc-20240116; t=1753988104; c=relaxed/simple;
+	bh=vC0up9mvz0CmJrrIDWMSSAZYXkJKsZyV1kdx/W9KPl0=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=ZCYpoADiQyPbE3+v1GNVGIBspRjE70LDcM226bJhT83UuEZ2fiPGfFe0f8VTLV+NLnhQMUKKqCn5+fx7NOiqHTFhfKpcGa5NmgRt9LCzL5ikB+/qNSsND8Ne3wtVDspBZ731Ti/vxZ2mid3SLUKYeZXjrEN0675MAiFnN5r/8cc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=k7owTnz7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40DC9C4CEEF;
+	Thu, 31 Jul 2025 18:54:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753988104;
+	bh=vC0up9mvz0CmJrrIDWMSSAZYXkJKsZyV1kdx/W9KPl0=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=k7owTnz75QduSHc122BpHqgkZ6NhAz/LIbitVyMTJs/uCDk5a4DsvewuJAgai6fSH
+	 3pOhA6v5OYoiT832vSh0Z6IiTBtsv+fOLtIfXJv+isBCh5nN8DdcLlGSyDea1i4DHo
+	 tOQISqmfqqLormBxCXV7IYtz6Qehd4pX8ADZLAKUT8ibvQpEijPBE4aOQHkMhhSh1O
+	 hF0oK2GMf5vErKcFducOA0QslSKlFYf7xsdRahkH/nXkkvW7o2QHwUQwicV+ajzqzD
+	 ZvXRCULca4u87GlxxoAJUhtbg8X9/CnqVnergAeExj4d+YZj0KnHDcCrZJ7U8ytHR6
+	 971xau/s0ViMw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731173858.1173442-1-gbayer@linux.ibm.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Jul 2025 20:54:58 +0200
+Message-Id: <DBQGW0NIQJRX.MU0QD5GMFJYM@kernel.org>
+Cc: <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/4] rust: drm: remove pin annotations from drm::Device
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Danilo Krummrich" <dakr@kernel.org>, <lorenzo.stoakes@oracle.com>,
+ <vbabka@suse.cz>, <Liam.Howlett@oracle.com>, <urezki@gmail.com>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
+ <gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>
+X-Mailer: aerc 0.20.1
+References: <20250731154919.4132-1-dakr@kernel.org>
+ <20250731154919.4132-4-dakr@kernel.org>
+In-Reply-To: <20250731154919.4132-4-dakr@kernel.org>
 
-On Thu, Jul 31, 2025 at 07:38:58PM +0200, Gerd Bayer wrote:
-> Simple pointer-casts to map byte and word reads from PCI config space
-> into dwords (i.e. u32) produce unintended results on big-endian systems.
-> Add the necessary adjustments under compile-time switch
-> CONFIG_CPU_BIG_ENDIAN.
-> 
-> pci_bus_read_config() was just introduced with
-> https://lore.kernel.org/all/20250716161203.83823-2-18255117159@163.com/
-> 
-> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
+On Thu Jul 31, 2025 at 5:48 PM CEST, Danilo Krummrich wrote:
+> The #[pin_data] and #[pin] annotations are not necessary for
+> drm::Device, since we don't use any pin-init macros, but only
+> __pinned_init() on the impl PinInit<T::Data, Error> argument of
+> drm::Device::new().
+
+But you're still pinning `Device`, right?
+
+> Fixes: 1e4b8896c0f3 ("rust: drm: add device abstraction")
+> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
 > ---
-> Sorry to spill this endianness aware code into drivers/pci, feel free to
-> suggest a cleaner approach. This has fixed the issues seen on s390 systems
+>  rust/kernel/drm/device.rs | 2 --
+>  1 file changed, 2 deletions(-)
+>
+> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+> index d19410deaf6c..d0a9528121f1 100644
+> --- a/rust/kernel/drm/device.rs
+> +++ b/rust/kernel/drm/device.rs
+> @@ -54,10 +54,8 @@ macro_rules! drm_legacy_fields {
+>  ///
+>  /// `self.dev` is a valid instance of a `struct device`.
+>  #[repr(C)]
+> -#[pin_data]
+>  pub struct Device<T: drm::Driver> {
+>      dev: Opaque<bindings::drm_device>,
+> -    #[pin]
+>      data: T::Data,
 
-PCI is little-endian.  On big-endian systems, the endianness conversion
-of Config Space accesses happens transparently in the struct pci_ops
-->read() and ->write() callbacks.  E.g. on s390, zpci_cfg_load() and
-zpci_cfg_store() call le64_to_cpu() and cpu_to_le64(), respectively.
+Looking at this code again, I also noticed that it was wrong before this
+patch: `Device<T>` implemented `Unpin` if `T::Data` did which is most
+likely wrong (or is `drm_device` not address sensitive?).
 
-We do not want to mess with endianness in the PCI core, so this isn't
-a proper fix IMO.
+So good to see that fixed, thanks!
 
-A viable approach might be to turn pci_bus_read_config() into a macro
-in include/linux/pci.h which calls the byte/word/dword variant based
-on sizeof(*val) or something like that.
+---
+Cheers,
+Benno
 
-But at this point, with the merge window already open, it's probably
-better to drop the pci/capability-search topic branch from the pull
-request and retry in the next cycle.
+>  }
+> =20
 
-> Since this is still sitting in the a pull-request for upstream,
-> I'm not sure if this warrants a Fixes: tag.
-
-In cases like this, do include a Fixes tag but no stable designation.
-
-Thanks,
-
-Lukas
 
