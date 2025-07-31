@@ -1,309 +1,145 @@
-Return-Path: <linux-kernel+bounces-752279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752278-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92005B1737D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:54:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57763B17379
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BD6517D841
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:54:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43FB9A83064
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:53:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13251A76D4;
-	Thu, 31 Jul 2025 14:53:51 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [160.30.148.34])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27C101C245C;
+	Thu, 31 Jul 2025 14:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kpi8aEeN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D591ACED9;
-	Thu, 31 Jul 2025 14:53:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=160.30.148.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 720D115573F;
+	Thu, 31 Jul 2025 14:53:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753973631; cv=none; b=sk4rMK8IvQRZnpeI6Jh+uhmUDbvEkJNkPhQRcyb/b8sMAqSqnR+ygGpf4wPOxGGs2x7r+BF4ZHNSdaVXXMoRGAeGrID+pYgurT2qyxWyXdudVunyppz26V24gg0L0GhSUiF4K5MUmg4TixYKdOfqhRvMTmjnudvaEiKWBDRKM/A=
+	t=1753973627; cv=none; b=MVNsoyPJvYgpNV1Ko1zXaib9K9NaXixyeV0B5lJx1RpCqeBsjCrtxR298esJtsPw+viPgnTi8vvUbygxOhn600Mo/3YEFzTo2IEItk/c44YfLDSKtxWliu7fInU2VRB0EUeRMko4xZcyU8gD8A69WOSZh5qf9w/dZVNCFpExx4w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753973631; c=relaxed/simple;
-	bh=3sXELTEm7qK2XP/5dvwiNq6rQnHkyVy7gY7QF4iSR64=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=a+Z1y7F4oz6wahPx3s6asaeHZz/F8e49lSqShGoaj1XOJ3ozKSOv2b/PeD3wTNPRjrIhrafh6APYHfMqkAkpVoKTgLH1q2gwasHVClf4BkAcV7+QDQ959mBOwEAKrdbQ1FpmKpmdbiJxt7Yh8pIZYjHg+cQwML4xmN0nrAw19iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=160.30.148.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4btBss1vg1z6FyBr;
-	Thu, 31 Jul 2025 22:53:37 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 56VErORP043467;
-	Thu, 31 Jul 2025 22:53:24 +0800 (+08)
-	(envelope-from fan.yu9@zte.com.cn)
-Received: from mapi (xaxapp01[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Thu, 31 Jul 2025 22:53:26 +0800 (CST)
-Date: Thu, 31 Jul 2025 22:53:26 +0800 (CST)
-X-Zmail-TransId: 2af9688b8366fffffffffc6-7c266
-X-Mailer: Zmail v1.0
-Message-ID: <20250731225326549CttJ7g9NfjTlaqBwl015T@zte.com.cn>
+	s=arc-20240116; t=1753973627; c=relaxed/simple;
+	bh=BH+xJfVd8P1OMzhEptvJZEuLhWDdvxoqPKB2+LX+Isk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aCHszQG1d4mYM9lWaNfbJT03++Idqj7Jq5MY1w0CPQ3C6H8ZDhfAkX7utHXSij3Wi1OjbeJqekb59kfMrsiAsfr7M0jdAXrSV70K/1IH5cl4oYEC1SR1mJvNFXUYvUXMWOgmoVqHzXPzFDUsEuRgpwN2r+/ArAazQ3xLwQpxNaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kpi8aEeN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65142C4CEEF;
+	Thu, 31 Jul 2025 14:53:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753973627;
+	bh=BH+xJfVd8P1OMzhEptvJZEuLhWDdvxoqPKB2+LX+Isk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=kpi8aEeNbTv1oce/RogYtbW0tseYmoCFpjWum9y3PPI/WiazyTJlUEdEbRfT1ShZQ
+	 SPz1is62J06pv+Nn7H/ssASOgakKv3HwQ/32Lvn1bLbzU/LMA//ro9gohKcI14x9M3
+	 /+43v7sHtijaXZ3eSWKplfuVDl8A0ZKPLmsAT3TKYciN+L+4K44unMRqH71gZeGXDu
+	 upO58ItRggZZeNv0FUQyHS9y4MbDpRjtHocUvtZIYq+8NcLwS9ECTab7jUyoMAeMLe
+	 Ywj4pRU1lO651/DIOLa3gF9qYCYjfbwO5zeb2UsqhJj/AkS3yxplaNqGWCIVZaSsXi
+	 +CY/QHZxaikaw==
+Message-ID: <a8eb1574-39f2-4b71-b6be-bb28b43eb6f8@kernel.org>
+Date: Thu, 31 Jul 2025 16:53:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <fan.yu9@zte.com.cn>
-To: <akpm@linux-foundation.org>, <wang.yaxin@zte.com.cn>, <corbet@lwn.net>
-Cc: <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <fan.yu9@zte.com.cn>, <wang.yaxin@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <yang.yang29@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIIGxpbnV4LW5leHRdIHRvb2xzL2dldGRlbGF5czogYWRkIGJhY2t3YXJkIGNvbXBhdGliaWxpdHkgZm9yIHRhc2tzdGF0cyB2ZXJzaW9u?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 56VErORP043467
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: fan.yu9@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.133 unknown Thu, 31 Jul 2025 22:53:37 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 688B8371.000/4btBss1vg1z6FyBr
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/2] dt-bindings: ufs: qcom: Split SC7280 and similar into
+ separate file
+To: Manivannan Sadhasivam <mani@kernel.org>
+Cc: Nitin Rawat <quic_nitirawa@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Andy Gross <agross@kernel.org>, linux-arm-msm@vger.kernel.org,
+ linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
+ <df8b3c85-d572-4cee-863b-35fe6a5ed9ff@quicinc.com>
+ <6ebe7084-bb00-4fac-b64d-e08e188f3005@kernel.org>
+ <148b46f3-2109-4c15-b7d8-17963b38095a@quicinc.com>
+ <1547e339-5be2-4d87-ab35-98a9be0d250e@kernel.org>
+ <qemlydifa7u3zwrjnnp7umjsprjrje27ghzghyyoutufeyiimn@g2ejdt72opz3>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <qemlydifa7u3zwrjnnp7umjsprjrje27ghzghyyoutufeyiimn@g2ejdt72opz3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Fan Yu <fan.yu9@zte.com.cn>
+On 31/07/2025 16:09, Manivannan Sadhasivam wrote:
+> On Thu, Jul 31, 2025 at 09:04:48AM GMT, Krzysztof Kozlowski wrote:
+>> On 31/07/2025 08:59, Nitin Rawat wrote:
+>>>> Hm?
+>>>>
+>>>>>
+>>>>> For reference, only SM8650 and SM8750 currently support MCQ, though more
+>>>>> targets may be added later.
+>>>>
+>>>> Are you sure? Are you claiming that SM8550 hardware does not support MCQ?
+>>>
+>>> Offcourse I can say that because I am working on Qualcomm UFS Driver.
+>>
+>> Qualcomm sent many patches which were not related to hardware at all,
+>> just based on drivers, so my question is completely valid based on
+>> previous experience with Qualcomm.
+>>
+> 
+> SM8550 indeed doesn't support MCQ. Even though it is based on UFSHCD 4.x, it
+> doesn't support MCQ due to hardware design. MCQ support only starts from SM8650.
 
-Add version checks to print_delayacct() to handle differences in
-struct taskstats across kernel versions. Field availability depends
-on taskstats version (t->version), corresponding to TASKSTATS_VERSION
-in kernel headers (see include/uapi/linux/taskstats.h).
+Yeah, I checked later in datasheets and programming guide. That's why I
+sent v2 and marked it in Patchwork as changes-requested.
 
-Version feature mapping:
-- version >= 11  - supports COMPACT statistics
-- version >= 13  - supports WPCOPY statistics
-- version >= 14  - supports IRQ statistics
-- version >= 16  - supports *_max and *_min delay statistics
-
-This ensures the tool works correctly with both older and newer kernel
-versions by conditionally printing fields based on the reported version.
-
-eg.1
-bash# grep -r "#define TASKSTATS_VERSION" /usr/include/linux/taskstats.h
-"#define TASKSTATS_VERSION       10"
-bash# ./getdelays -d -p 1
-CPU                 count     real total  virtual total    delay total  delay average
-                     7481     3786181709     3807098291       36393725          0.005ms
-IO                  count    delay total  delay average
-                      369     1116046035          3.025ms
-SWAP                count    delay total  delay average
-                        0              0          0.000ms
-RECLAIM             count    delay total  delay average
-                        0              0          0.000ms
-THRASHING           count    delay total  delay average
-                        0              0          0.000ms
-
-eg.2
-bash# grep -r "#define TASKSTATS_VERSION" /usr/include/linux/taskstats.h
-"#define TASKSTATS_VERSION       14"
-bash# ./getdelays -d -p 1
-CPU                 count     real total  virtual total    delay total  delay average
-                    68862   163474790046   174584722267    19962496806          0.290ms
-IO                  count    delay total  delay average
-                        0              0          0.000ms
-SWAP                count    delay total  delay average
-                        0              0          0.000ms
-RECLAIM             count    delay total  delay average
-                        0              0          0.000ms
-THRASHING           count    delay total  delay average
-                        0              0          0.000ms
-COMPACT             count    delay total  delay average
-                        0              0          0.000ms
-WPCOPY              count    delay total  delay average
-                        0              0          0.000ms
-IRQ                 count    delay total  delay average
-                        0              0          0.000ms
-
-Signed-off-by: Fan Yu <fan.yu9@zte.com.cn>
----
- tools/accounting/getdelays.c | 167 +++++++++++++++++++++--------------
- 1 file changed, 100 insertions(+), 67 deletions(-)
-
-diff --git a/tools/accounting/getdelays.c b/tools/accounting/getdelays.c
-index 3feac0482fe9..21cb3c3d1331 100644
---- a/tools/accounting/getdelays.c
-+++ b/tools/accounting/getdelays.c
-@@ -194,75 +194,108 @@ static int get_family_id(int sd)
- #define average_ms(t, c) (t / 1000000ULL / (c ? c : 1))
- #define delay_ms(t) (t / 1000000ULL)
-
-+/*
-+ * Version compatibility note:
-+ * Field availability depends on taskstats version (t->version),
-+ * corresponding to TASKSTATS_VERSION in kernel headers
-+ * see include/uapi/linux/taskstats.h
-+ *
-+ * Version feature mapping:
-+ * version >= 11  - supports COMPACT statistics
-+ * version >= 13  - supports WPCOPY statistics
-+ * version >= 14  - supports IRQ statistics
-+ * version >= 16  - supports *_max and *_min delay statistics
-+ *
-+ * Always verify version before accessing version-dependent fields
-+ * to maintain backward compatibility.
-+ */
-+#define PRINT_CPU_DELAY(version, t) \
-+	do { \
-+		if (version >= 16) { \
-+			printf("%-10s%15s%15s%15s%15s%15s%15s%15s\n", \
-+				"CPU", "count", "real total", "virtual total", \
-+				"delay total", "delay average", "delay max", "delay min"); \
-+			printf("          %15llu%15llu%15llu%15llu%15.3fms%13.6fms%13.6fms\n", \
-+				(unsigned long long)(t)->cpu_count, \
-+				(unsigned long long)(t)->cpu_run_real_total, \
-+				(unsigned long long)(t)->cpu_run_virtual_total, \
-+				(unsigned long long)(t)->cpu_delay_total, \
-+				average_ms((double)(t)->cpu_delay_total, (t)->cpu_count), \
-+				delay_ms((double)(t)->cpu_delay_max), \
-+				delay_ms((double)(t)->cpu_delay_min)); \
-+		} else { \
-+			printf("%-10s%15s%15s%15s%15s%15s\n", \
-+				"CPU", "count", "real total", "virtual total", \
-+				"delay total", "delay average"); \
-+			printf("          %15llu%15llu%15llu%15llu%15.3fms\n", \
-+				(unsigned long long)(t)->cpu_count, \
-+				(unsigned long long)(t)->cpu_run_real_total, \
-+				(unsigned long long)(t)->cpu_run_virtual_total, \
-+				(unsigned long long)(t)->cpu_delay_total, \
-+				average_ms((double)(t)->cpu_delay_total, (t)->cpu_count)); \
-+		} \
-+	} while (0)
-+#define PRINT_FILED_DELAY(name, version, t, count, total, max, min) \
-+	do { \
-+		if (version >= 16) { \
-+			printf("%-10s%15s%15s%15s%15s%15s\n", \
-+				name, "count", "delay total", "delay average", \
-+				"delay max", "delay min"); \
-+			printf("          %15llu%15llu%15.3fms%13.6fms%13.6fms\n", \
-+				(unsigned long long)(t)->count, \
-+				(unsigned long long)(t)->total, \
-+				average_ms((double)(t)->total, (t)->count), \
-+				delay_ms((double)(t)->max), \
-+				delay_ms((double)(t)->min)); \
-+		} else { \
-+			printf("%-10s%15s%15s%15s\n", \
-+				name, "count", "delay total", "delay average"); \
-+			printf("          %15llu%15llu%15.3fms\n", \
-+				(unsigned long long)(t)->count, \
-+				(unsigned long long)(t)->total, \
-+				average_ms((double)(t)->total, (t)->count)); \
-+		} \
-+	} while (0)
-+
- static void print_delayacct(struct taskstats *t)
- {
--	printf("\n\nCPU   %15s%15s%15s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "IO    %15s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "SWAP  %15s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "RECLAIM  %12s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "THRASHING%12s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "COMPACT  %12s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "WPCOPY   %12s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n"
--	       "IRQ   %15s%15s%15s%15s%15s\n"
--	       "      %15llu%15llu%15.3fms%13.6fms%13.6fms\n",
--	       "count", "real total", "virtual total",
--	       "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->cpu_count,
--	       (unsigned long long)t->cpu_run_real_total,
--	       (unsigned long long)t->cpu_run_virtual_total,
--	       (unsigned long long)t->cpu_delay_total,
--	       average_ms((double)t->cpu_delay_total, t->cpu_count),
--	       delay_ms((double)t->cpu_delay_max),
--	       delay_ms((double)t->cpu_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->blkio_count,
--	       (unsigned long long)t->blkio_delay_total,
--	       average_ms((double)t->blkio_delay_total, t->blkio_count),
--	       delay_ms((double)t->blkio_delay_max),
--	       delay_ms((double)t->blkio_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->swapin_count,
--	       (unsigned long long)t->swapin_delay_total,
--	       average_ms((double)t->swapin_delay_total, t->swapin_count),
--	       delay_ms((double)t->swapin_delay_max),
--	       delay_ms((double)t->swapin_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->freepages_count,
--	       (unsigned long long)t->freepages_delay_total,
--	       average_ms((double)t->freepages_delay_total, t->freepages_count),
--	       delay_ms((double)t->freepages_delay_max),
--	       delay_ms((double)t->freepages_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->thrashing_count,
--	       (unsigned long long)t->thrashing_delay_total,
--	       average_ms((double)t->thrashing_delay_total, t->thrashing_count),
--	       delay_ms((double)t->thrashing_delay_max),
--	       delay_ms((double)t->thrashing_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->compact_count,
--	       (unsigned long long)t->compact_delay_total,
--	       average_ms((double)t->compact_delay_total, t->compact_count),
--	       delay_ms((double)t->compact_delay_max),
--	       delay_ms((double)t->compact_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->wpcopy_count,
--	       (unsigned long long)t->wpcopy_delay_total,
--	       average_ms((double)t->wpcopy_delay_total, t->wpcopy_count),
--	       delay_ms((double)t->wpcopy_delay_max),
--	       delay_ms((double)t->wpcopy_delay_min),
--	       "count", "delay total", "delay average", "delay max", "delay min",
--	       (unsigned long long)t->irq_count,
--	       (unsigned long long)t->irq_delay_total,
--	       average_ms((double)t->irq_delay_total, t->irq_count),
--	       delay_ms((double)t->irq_delay_max),
--	       delay_ms((double)t->irq_delay_min));
-+	printf("\n\n");
-+
-+	PRINT_CPU_DELAY(t->version, t);
-+
-+	PRINT_FILED_DELAY("IO", t->version, t,
-+		blkio_count, blkio_delay_total,
-+		blkio_delay_max, blkio_delay_min);
-+
-+	PRINT_FILED_DELAY("SWAP", t->version, t,
-+		swapin_count, swapin_delay_total,
-+		swapin_delay_max, swapin_delay_min);
-+
-+	PRINT_FILED_DELAY("RECLAIM", t->version, t,
-+		freepages_count, freepages_delay_total,
-+		freepages_delay_max, freepages_delay_min);
-+
-+	PRINT_FILED_DELAY("THRASHING", t->version, t,
-+		thrashing_count, thrashing_delay_total,
-+		thrashing_delay_max, thrashing_delay_min);
-+
-+	if (t->version >= 11) {
-+		PRINT_FILED_DELAY("COMPACT", t->version, t,
-+			compact_count, compact_delay_total,
-+			compact_delay_max, compact_delay_min);
-+	}
-+
-+	if (t->version >= 13) {
-+		PRINT_FILED_DELAY("WPCOPY", t->version, t,
-+			wpcopy_count, wpcopy_delay_total,
-+			wpcopy_delay_max, wpcopy_delay_min);
-+	}
-+
-+	if (t->version >= 14) {
-+		PRINT_FILED_DELAY("IRQ", t->version, t,
-+			irq_count, irq_delay_total,
-+			irq_delay_max, irq_delay_min);
-+	}
- }
-
- static void task_context_switch_counts(struct taskstats *t)
--- 
-2.25.1
+Best regards,
+Krzysztof
 
