@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-752123-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752124-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0C68B1717A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:46:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E89BB1717B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:48:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D16AC5676B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:46:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8DE5E7AC99E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:46:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DCC2C08D4;
-	Thu, 31 Jul 2025 12:46:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W7aDNN6d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C96B0239E89;
+	Thu, 31 Jul 2025 12:48:06 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E658923099F;
-	Thu, 31 Jul 2025 12:46:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3DFF5234
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:48:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753965968; cv=none; b=grOZw71DllufP8mmjBVMNt7Ao8ZM1kXVxfQpoecf3d98fvXj6SJjY6zkHqjxlgsqxdoAkTNGu7YKHFL8uvkn90np8VuGIfBC8A4rAIGNrY8vp32BVE6UHxWA9c5TCSN4zCsIHhDn2pynTDzuwlZtV1MfYAHfzP56/btdNqlrHwc=
+	t=1753966086; cv=none; b=Tfjiwll42Ae+VkhK9ASmmr4TEJyjyQBJZ+3AjA6EmAF6PsKDj9J3uASwAKGmTRYzWMG+kY3vYvMBrTmzh/MpaNXlC32O+A2mYU6WBugRNxknwZNlKoM0n9cDwzqC6D3njXZWhE2T2Udh1F731zzt0e80TQ3Yqy8PPF6C4FuG/G4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753965968; c=relaxed/simple;
-	bh=DA00UZ8mlsGJ9kOXBHUieLy/xRbrOMW6eEkjVUp/rb8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V/aipa6h2MJ/8aiA21UbF6+SiX+gF3Ph4SF055pjmmOxBwRJ9i0VEKDbxxEX3GgV5R6ms0aecnpKGTsSX49rAm3faQv30mjRRSZIQdNkpxwIcnv9UXEPzDIh1AWopr05SEbBH6EnreKFUyTP5q9+FnISLmlX2bYL5qAHAmPOx2g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W7aDNN6d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84DD1C4CEEF;
-	Thu, 31 Jul 2025 12:46:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753965967;
-	bh=DA00UZ8mlsGJ9kOXBHUieLy/xRbrOMW6eEkjVUp/rb8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=W7aDNN6dSO6s1cM2yVn0HbsAfV0aIMR5M7xWN4v7dSYD7KDfr8Ildxz+M5Fhpvo8w
-	 o9VoCD2wmOzRVFh5vEq0phCdoK9L1LCLJ2yYnvrwBmzjkMRCaaeFyaTNMhMdeU0d2D
-	 Pezq+UBK2cmhiAkit9pzG76hT8kLWFZIfSanVxT3O6IMGXKXbrJT2sBo5COGm0Rhus
-	 CXwVVCqGfwedGVp6THWH1NDNrdZw+hJ2u0Wuc3xOJdlC/9P/Cg3+wE319fg4hGAjXT
-	 H8JpaeDMGC4iab2ynlnfEpfnkDwhnubZYdiJpKkTBNpQKuY5RvqXGBtEEBwaJY70m6
-	 0fHShXC2DT7sA==
-Message-ID: <45f0995f-17ac-45a3-8bc0-3b276ee91a9d@kernel.org>
-Date: Thu, 31 Jul 2025 14:46:02 +0200
+	s=arc-20240116; t=1753966086; c=relaxed/simple;
+	bh=dhLXZRPRNG4amiW8YAoI8Q50FpVZtG8GhTi/+KNYzuQ=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cCdhoSLuX4wonhZUej9Jzfk7BQ66EutQsW8U/XlIifVZ3gyLuQ48Q0pdYPk0/d4QLtx76huj3ZxIP9uBMEEbm0BwhWKmE69xWn68kOjivr8UWmadq3fcjWkxEGarKl7rE21a7v5r7oBEDkBypULmjGIf7qyKJPyZNKauB3Uki24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt82g6P8Yz6L534;
+	Thu, 31 Jul 2025 20:46:03 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id CB7421402EA;
+	Thu, 31 Jul 2025 20:48:02 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Jul
+ 2025 14:48:00 +0200
+Date: Thu, 31 Jul 2025 13:47:59 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Yushan Wang <wangyushan12@huawei.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<prime.zeng@hisilicon.com>, <fanghao11@huawei.com>, <linuxarm@huawei.com>,
+	<yangyicong@hisilicon.com>
+Subject: Re: [PATCH 8/8] Documentation: hisi-pmu: Add introduction to
+ HiSilicon V3 PMU
+Message-ID: <20250731134759.00000c74@huawei.com>
+In-Reply-To: <20250729153823.2026154-9-wangyushan12@huawei.com>
+References: <20250729153823.2026154-1-wangyushan12@huawei.com>
+	<20250729153823.2026154-9-wangyushan12@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] checkpatch: validate commit tag ordering
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
- dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, joe@perches.com,
- corbet@lwn.net, apw@canonical.com, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
- <53eb0068-008b-48e6-9b92-d92de2ed4fc9@kernel.org>
- <CAMuHMdU2e+5Hf3v=C=sE=+25f_A=2=Zzw5rxvcT=hb75VC=iFQ@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <CAMuHMdU2e+5Hf3v=C=sE=+25f_A=2=Zzw5rxvcT=hb75VC=iFQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="US-ASCII"
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100009.china.huawei.com (7.191.174.83) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 31/07/2025 13:55, Geert Uytterhoeven wrote:
-> Hi Krzysztof,
+On Tue, 29 Jul 2025 23:38:23 +0800
+Yushan Wang <wangyushan12@huawei.com> wrote:
+
+> Some of HiSilicon V3 PMU hardware is divided into parts to fulfill the
+> job of monitoring specific parts of a device.  Add description on that
+> as well as the newly added ext operand for L3C PMU.
 > 
-> On Fri, 25 Jul 2025 at 10:42, Krzysztof Kozlowski <krzk@kernel.org> wrote:
->> On 24/07/2025 09:20, Hendrik Hamerlinck wrote:
->>> Modified the checkpatch script to ensure that commit tags (e.g.,
->>> Signed-off-by, Reviewed-by, Acked-by, Tested-by, etc.) appear in the
->>> correct order according to kernel conventions [1].
->>
->> These are not the conventions I use for my subsystems and ask others to
->> follow, so imposing TIP rules to all maintainers needs broad consensus,
->> not (yet) checkpatch.
->>
->> What's more, I think above TIP rules are contradicting with existing,
->> widely used and approved toolset - b4. So no, if you want universal
->> tool, please use b4 or whatever b4 defines.
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+There is one fixlet hiding in here that maybe could have been done
+as a precursor.  I doubt anyone cares though!
+
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
+
+> ---
+>  Documentation/admin-guide/perf/hisi-pmu.rst | 43 +++++++++++++++++++--
+>  1 file changed, 39 insertions(+), 4 deletions(-)
 > 
-> B4 does not follow the proper order:
+> diff --git a/Documentation/admin-guide/perf/hisi-pmu.rst b/Documentation/admin-guide/perf/hisi-pmu.rst
+> index 48992a0b8e94..4c7584fe3c1a 100644
+> --- a/Documentation/admin-guide/perf/hisi-pmu.rst
+> +++ b/Documentation/admin-guide/perf/hisi-pmu.rst
+> @@ -12,15 +12,16 @@ The HiSilicon SoC encapsulates multiple CPU and IO dies. Each CPU cluster
+>  called Super CPU cluster (SCCL) and is made up of 6 CCLs. Each SCCL has
+>  two HHAs (0 - 1) and four DDRCs (0 - 3), respectively.
+>  
+> -HiSilicon SoC uncore PMU driver
+> --------------------------------
+> +HiSilicon SoC uncore PMU v1
+> +---------------------------
+>  
+>  Each device PMU has separate registers for event counting, control and
+>  interrupt, and the PMU driver shall register perf PMU drivers like L3C,
+>  HHA and DDRC etc. The available events and configuration options shall
+> -be described in the sysfs, see:
+> +be described in the sysfs, see::
+> +
+> +/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>
+>  
+> -/sys/bus/event_source/devices/hisi_sccl{X}_<l3c{Y}/hha{Y}/ddrc{Y}>.
 
-There is no "proper order" in terms of absolute facts.
+This is fixing existing stuff so maybe should be a separate patch.
 
->   1. Multiple Reviewed-by tags may be added in a different order
->       than given,
+>  The "perf list" command shall list the available events from sysfs.
+>  
+>  Each L3C, HHA and DDRC is registered as a separate PMU with perf. The PMU
 
-Maybe this could be fixed.
-
->   2. When applying my own patches, b4 adds the given tags before
->      instead of after my own SoB.
-
-This is working exactly as expected (intentional), explained few times
-by Konstantin. Some people of course have different opinion and prefer
-different order (I know few subsystems), but majority I think accepted
-Konstantin's explanation.
-
-Best regards,
-Krzysztof
 
