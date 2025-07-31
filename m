@@ -1,124 +1,81 @@
-Return-Path: <linux-kernel+bounces-751835-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751836-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60291B16E11
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:02:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36562B16E13
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:02:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E5C9169609
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2DFC4E00B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:02:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20ED727BF95;
-	Thu, 31 Jul 2025 09:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AF52BD029;
+	Thu, 31 Jul 2025 09:02:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PeigEeDB"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJz5Gbaq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E7B85242907
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:02:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B0329994B;
+	Thu, 31 Jul 2025 09:02:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952552; cv=none; b=ZS/GV5X2lbNmeynRXkIqy/b5LoCwjLqW/Oj9kNolVz8mvBFq6DAI31jX1om2NOAN/HVWi4i3/I+lzC8T2nx505VXPbso1dRWMhYrPaSxP8NcH39BIgRoBOHQqosPpYiqqLQt4tocNAAzPfhGfYIe1pbmPxD7yG9nvwYjmueAKRg=
+	t=1753952555; cv=none; b=BnQepeUfAutK+wNdpJil7C80Eu8RpGA6odMKJcUeuaRjcV9e5vGxGSboEne8d3liA0P7KpF0IBfWwsQ+KeXYnUqa72QbTUcWG973QOmzm0xQqWbUKuwsI0OsnI6D6DriYuJ2990RaXzIXs5W6Kg1tfe9szTPXuh8vdZuISQ1nYE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952552; c=relaxed/simple;
-	bh=uFsQd9tWRsTC53EduxApCoO/j0XKUO4CqqQovD9KN9A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aj7lhICsmvwMem5oJR+q6TVq91ay9LWlkktVLZEWYIsgb3/uvqGt0x5kafLBKkmfPkockcQt6BCvXU1i91f3/oLyjYO2o05B0IXuZJp5XwFltZcE1hWJT0E5oJ4g8yfT1ZARw7sZHJwUtBIpx/24X9w/QDzjWBKnLWDcY/jpATs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PeigEeDB; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753952551; x=1785488551;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=uFsQd9tWRsTC53EduxApCoO/j0XKUO4CqqQovD9KN9A=;
-  b=PeigEeDBPUb0CxjhBQxsYYeAoR1WCdr4SPCUY7l+cMlLa5vGVRcz2Jjf
-   lNjmFz59R1dfFdX3RDdBjqzRtZUgWj4uA6lgY+hAVF8sU0xqRzmCA/Y6y
-   NDVQ6gjaJtmmfz8A5i4vesjjn3CKIagjioEbV1yrKyRyRmoeV/Yc2A5gp
-   bDoxI9MDn3wrGwGEYFBghcSaWAxqU4bRvCOBnLugLfA+MH8aJG1EBewXC
-   S0lQ/LfRKOgKH1Cce7H+Mew5ZOVlhNADB6fIeetnAxHCAgw3UqxoKok8T
-   clZ0GpzzK5NjY/uy5NSBzY7XDci2Q5dD0YSU/m+A7/yxum8EhjKXbVi/m
-   A==;
-X-CSE-ConnectionGUID: T7FwgbzHS+KMAEdG1Vu+iA==
-X-CSE-MsgGUID: EXYcgY2uTf+/sPaznSsNJw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56135985"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="56135985"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 02:02:28 -0700
-X-CSE-ConnectionGUID: DtsfQiyYQXGcnZWzH3LvXQ==
-X-CSE-MsgGUID: H0KL/C3VSd2btc5ZdeoFVw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="163658036"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa008.fm.intel.com with ESMTP; 31 Jul 2025 02:02:23 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhPB7-0003aG-10;
-	Thu, 31 Jul 2025 09:02:21 +0000
-Date: Thu, 31 Jul 2025 17:01:35 +0800
-From: kernel test robot <lkp@intel.com>
-To: Dimitri Sivanich <sivanich@hpe.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Jonathan Corbet <corbet@lwn.net>, Steve Wahl <steve.wahl@hpe.com>,
-	Justin Ernst <justin.ernst@hpe.com>,
-	Kyle Meyer <kyle.meyer@hpe.com>,
-	Russ Anderson <russ.anderson@hpe.com>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: Re: [PATCH] x86/tsc: Disable clocksource watchdog for TSC on recent
- UV
-Message-ID: <202507311627.rt0PViwZ-lkp@intel.com>
-References: <aIqKYdvlKlBlSoQK@hpe.com>
+	s=arc-20240116; t=1753952555; c=relaxed/simple;
+	bh=rBvKooI8uLrGB7LDoTsQ+vWdoAN9j0Kp0TmnAKR2yrg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=jT4yMQj8mIn47uaWxeRhwB5IHdwxmdJCklhV4SUbgxyPeRo+FGlY7CqP3+4gb7Uypp9JsLs7+7f2ShZ1gE2ZW8xvwWgx4VdncCsU8MAoyB8E64wycKlSaaAMkU0MTdfHIiJhdE5k6+9/jxWANjQVxOo7da7Euz7zk46iwhUWz0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJz5Gbaq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D96C4CEF6;
+	Thu, 31 Jul 2025 09:02:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753952554;
+	bh=rBvKooI8uLrGB7LDoTsQ+vWdoAN9j0Kp0TmnAKR2yrg=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=oJz5Gbaqif6ggAEXa1z14AK8O8xIDzFI/Q6AhHv7+HTWhnPm337QNHPSZtQR8tBgQ
+	 smjFrAx9KvO+wuD+S4IsqKgu5KmB00MDtNMJFhLcdkKMA0J2ztHLHklaeRNu4VbvL3
+	 O63F5uFgFfW91gZ5yGZAOyR9KSCGR99XLEl7v6N6X2KUunpkGJLHQbqiCJvIQ0w4Ec
+	 bYc2cuCeslwd6H3KrlD9CULo0ObW28chEPJdESKJaoMJHJGF5mHAVa5XI2ptHg1mR/
+	 KeMG/j8uQ8NMBiL6aDfJisLzN0Vq7CJ83bkTNaEfGKXFkGO3tffdn+71Fb+Fglmwp+
+	 yQnx8ysuhN4GA==
+From: Lee Jones <lee@kernel.org>
+To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
+Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
+ Lee Jones <lee@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
+In-Reply-To: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
+References: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
+Subject: Re: (subset) [PATCH] mfd: adp5585: Drop useless return statement
+Message-Id: <175395255348.1068483.17805196039345490694.b4-ty@kernel.org>
+Date: Thu, 31 Jul 2025 10:02:33 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIqKYdvlKlBlSoQK@hpe.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Hi Dimitri,
+On Thu, 17 Jul 2025 15:51:34 +0100, Nuno Sá wrote:
+> In adp5585_reset_ev_parse(), when parsing the
+> adi,reset-pulse-width-us property, we were returning in case it was
+> found and valid. No point in doing that as we'll be returning anyways
+> after the exiting the property scope. And it could actually lead to bugs
+> if new properties happen to added after this one.
+> 
+> 
+> [...]
 
-kernel test robot noticed the following build errors:
+Applied, thanks!
 
-[auto build test ERROR on tip/x86/core]
-[also build test ERROR on tip/master linus/master v6.16 next-20250731]
-[cannot apply to tip/auto-latest]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+[1/1] mfd: adp5585: Drop useless return statement
+      commit: 649c3af846064d9f721e976295db7bcc7ad2bffe
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Dimitri-Sivanich/x86-tsc-Disable-clocksource-watchdog-for-TSC-on-recent-UV/20250731-053059
-base:   tip/x86/core
-patch link:    https://lore.kernel.org/r/aIqKYdvlKlBlSoQK%40hpe.com
-patch subject: [PATCH] x86/tsc: Disable clocksource watchdog for TSC on recent UV
-config: x86_64-allnoconfig (https://download.01.org/0day-ci/archive/20250731/202507311627.rt0PViwZ-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311627.rt0PViwZ-lkp@intel.com/reproduce)
+--
+Lee Jones [李琼斯]
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507311627.rt0PViwZ-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> ld.lld: error: undefined symbol: __uv_cpu_info
-   >>> referenced by tsc.c
-   >>>               arch/x86/kernel/tsc.o:(check_system_tsc_reliable) in archive vmlinux.a
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
