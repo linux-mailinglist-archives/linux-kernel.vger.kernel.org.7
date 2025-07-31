@@ -1,129 +1,94 @@
-Return-Path: <linux-kernel+bounces-751692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4145FB16C5B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:04:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40FDEB16C57
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:03:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D5318C72DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:04:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F925807B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:03:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CA028DEE0;
-	Thu, 31 Jul 2025 07:03:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06528D8E2;
+	Thu, 31 Jul 2025 07:03:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4M+iR8V"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpWXd4dt"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3523F2C9A;
-	Thu, 31 Jul 2025 07:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9E6241693;
+	Thu, 31 Jul 2025 07:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753945427; cv=none; b=dzI3kzO8vMKbUpKOYIRVi9cOqa7prJwAceFnR+AcY0iC5SXNrXgHMVtVARkGERcPYufK2YI+K15rI/LNjdbXL8+StWvE2FjAoTsAOzNyYXohvAgVjQPtrJU7oV5HJ3PuxW0co4E+nvKNLnJzfGyPBC6XkdzADUw5+rU4tx5n6Oc=
+	t=1753945420; cv=none; b=f+p9ifGt9uC6p0HAggvi6lk15MpiXmiFc1EepKQURnEx8gozugLEcLS90hw9Xk58BMmKh7KSde/f/t3xIViE7AEBCR4uvAnMGAUDh0g0cW7H6QR5BmCnDcXqQlQ86P1YHIFJVFyzakd02IhqwyhjOitwMywM+J6G5NJVegL+X4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753945427; c=relaxed/simple;
-	bh=CXzVxwTdB/SNNsSbQvexNowg0uk3C5YQ17L4jcVD2Nk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fb+0DcROlSQmNd/uyCHWDf8m2ix/Hsdv9VdLaB56b1H/ZoV/TqQ0mgLptyITbLxSWz4s76r76J0uRbl6QRk9EsOkI15iFfqkXI0FF1Htxy33ELs/en0JJX94oBKScf7mjIEH7CuJ7FJxZlrZUHt9lCNCda/i2XsyvurrqK854+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4M+iR8V; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753945426; x=1785481426;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=CXzVxwTdB/SNNsSbQvexNowg0uk3C5YQ17L4jcVD2Nk=;
-  b=N4M+iR8Vqf2UHPyErr8XICAAuRu7FTYRbEBm7gDMELtNHc5KD9H1X73/
-   y9DLpFlNNZDtEgcD71q3XxTVvUdnL2SLQ8QzmEFqJeBy+7exGiM0ezUOT
-   mnwHZfQWNTlQZgXpHToo3KRfRSxFd7Y1kUsy9/HfXNjLLx05nPEZs+nWH
-   /fjVJ0ZsS/3gvY7gsOm3w+Bj7wj3r1gOXOexRG0ousHYl7zHqw/t89S5Z
-   S9ifwIhydcaRdV2Y1/5HdFd58FzHtpexn4JpLaLKaFq+MGJITjIc5xDnS
-   EGVjsqtjFpc5dg3pKfiLUvqyRnxi5gNvkWy24IkOKoI5BalCnYBWJcV56
-   w==;
-X-CSE-ConnectionGUID: pi2cYbplQRyPZB+ml1Al1A==
-X-CSE-MsgGUID: WbJBXhItR2e589MhEL89MQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56223126"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="56223126"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:03:16 -0700
-X-CSE-ConnectionGUID: Or7C1xtbR2Wis/RZOYKRTA==
-X-CSE-MsgGUID: ktuZm740QVqaO3QI7lYWEA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="168462836"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 31 Jul 2025 00:03:11 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhNJl-0003VQ-0e;
-	Thu, 31 Jul 2025 07:03:09 +0000
-Date: Thu, 31 Jul 2025 15:02:23 +0800
-From: kernel test robot <lkp@intel.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	sboyd@kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org, dlechner@baylibre.com,
-	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
-	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
-	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
-	u.kleine-koenig@baylibre.com,
-	angelogioacchino.delregno@collabora.com,
-	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
-	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
-	casey.connolly@linaro.org
-Subject: Re: [PATCH v3 5/7] misc: qcom-coincell: Migrate to
- devm_spmi_subdevice_alloc_and_add()
-Message-ID: <202507311446.eqv2ucNm-lkp@intel.com>
-References: <20250730112645.542179-6-angelogioacchino.delregno@collabora.com>
+	s=arc-20240116; t=1753945420; c=relaxed/simple;
+	bh=FSDKA2EDSEAoBRRr4Iyc/rYXzglYyqJCL5b+rykOgRE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CTISCvHji8V26q8JgaJ5OQAIzre8Eolm/ppuzRS2IiCZw88+HvLRbU0Pwq1wS+xEePJsotxRK1ZhP1OpxWpWYOWfNUahXD/7mBOhfhQTdR7dLOB4ptvLCPucOOSY0kELiCnxTCw3jebLM0wHb37Mv7bwt5mVxjdFrPNtOTFySWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpWXd4dt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54152C4CEEF;
+	Thu, 31 Jul 2025 07:03:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753945416;
+	bh=FSDKA2EDSEAoBRRr4Iyc/rYXzglYyqJCL5b+rykOgRE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=ZpWXd4dtRchl0h/UMjnMDAxKughj5NJy1iSIM0o85Hfl/3w3nNrW5AqM2aKcPL+aY
+	 gHrJWA5b0Mn5dlDR1XM0aHdhvMNlqh16pzE2pnB0eNVt+Q7ZAsQbR3oP1IxKQ8gOWZ
+	 RvGPts1ycv0ksmWu7isb7p32afKu6KceCOiZzMZU8SD3UKm/pW5ha2y33Wu3vuvIcR
+	 Ey9Q/HffxKA/A2oDoxzTXFdw1ZOZVav09p+Zx8T3GqIpL78nnmzbAekYE/QGXhf3VY
+	 qZ9iadXNgsVuO7g+wb2rLChfg0/pGYdk4UwRZrT63Sa45KCXJuts9T8ml9D1olNHti
+	 pHJjBZeboKbrA==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Kan Liang <kan.liang@linux.intel.com>
+Cc: Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: [PATCH] perf record: Cache build-ID of hit DSOs only
+Date: Thu, 31 Jul 2025 00:03:30 -0700
+Message-ID: <20250731070330.57116-1-namhyung@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730112645.542179-6-angelogioacchino.delregno@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-Hi AngeloGioacchino,
+It post-processes samples to find which DSO has samples.  Based on that
+info, it can save used DSOs in the build-ID cache directory.  But for
+some reason, it saves all DSOs without checking the hit mark.  Skipping
+unused DSOs can give some speedup especially with --buildid-mmap being
+default.
 
-kernel test robot noticed the following build errors:
+On my idle machine, `time perf record -a sleep 1` goes down from 3 sec
+to 1.5 sec with this change.
 
-[auto build test ERROR on next-20250730]
-[cannot apply to jic23-iio/togreg sre-power-supply/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.16 v6.16-rc7 v6.16-rc6 v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+---
+ tools/perf/util/build-id.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/spmi-Implement-spmi_subdevice_alloc_and_add-and-devm-variant/20250730-193217
-base:   next-20250730
-patch link:    https://lore.kernel.org/r/20250730112645.542179-6-angelogioacchino.delregno%40collabora.com
-patch subject: [PATCH v3 5/7] misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
-config: arm64-randconfig-002-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311446.eqv2ucNm-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 13.4.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311446.eqv2ucNm-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507311446.eqv2ucNm-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
-   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
-   aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.o: in function `eusb2_repeater_probe':
-   drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:228:(.text+0x5a8): undefined reference to `devm_spmi_subdevice_alloc_and_add'
-   aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:236:(.text+0x61c): undefined reference to `__devm_regmap_init_spmi_ext'
-   aarch64-linux-ld: drivers/misc/qcom-coincell.o: in function `qcom_coincell_probe':
-   drivers/misc/qcom-coincell.c:109:(.text+0x10c): undefined reference to `devm_spmi_subdevice_alloc_and_add'
->> aarch64-linux-ld: drivers/misc/qcom-coincell.c:113:(.text+0x14c): undefined reference to `__devm_regmap_init_spmi_ext'
-
+diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
+index e2b295fe4d2fe552..a7018a3b0437a699 100644
+--- a/tools/perf/util/build-id.c
++++ b/tools/perf/util/build-id.c
+@@ -872,7 +872,7 @@ static int dso__cache_build_id(struct dso *dso, struct machine *machine,
+ 	char *allocated_name = NULL;
+ 	int ret = 0;
+ 
+-	if (!dso__has_build_id(dso))
++	if (!dso__has_build_id(dso) || !dso__hit(dso))
+ 		return 0;
+ 
+ 	if (dso__is_kcore(dso)) {
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.50.1
+
 
