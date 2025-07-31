@@ -1,140 +1,166 @@
-Return-Path: <linux-kernel+bounces-752624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6758EB1782E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:28:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5ABF0B17840
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:36:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22669626751
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:28:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 70A347AC615
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F5D26656D;
-	Thu, 31 Jul 2025 21:27:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76805266591;
+	Thu, 31 Jul 2025 21:36:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRWZiV/t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mke8HT1Y"
+Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9598A23ABB1;
-	Thu, 31 Jul 2025 21:27:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24CC12110E;
+	Thu, 31 Jul 2025 21:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753997276; cv=none; b=XIWGb3n5EsTrcxxJRjsKVuiuOa2dDC12WvOt1c5sgfhlWNZlgqwJ0g4dse9WBfos8JxQgLySwHGSgnQPIj240Jr0Brhf7N729qrALZe6OAsHp/cW0dSecOevy4ORUIih0+7W2m/TySPKLdCBUzowZ4jBybissDuvwM5E1qRkUyQ=
+	t=1753997792; cv=none; b=lANo3bztOZvgaoVAXc34nms1rqWRBo9cWOZTRdaG8w1rMNW//wLLiZwzxV5uEOSClxZoOnB8hQlwZObRJDzXre9pMbhd/9XP8U1QTo9OtHLeaGUlKLNFaB7BTJ9w/pmkFbr6o+L0vUMA2Y6v1rYFOX1LyT6l4iFrWxwGUlZGQRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753997276; c=relaxed/simple;
-	bh=Ohks9ny5wTu0IIUS/H9f6kcUZQkWYlZIorfQk3HF37w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BlHo0S83cywoNGmrmx7z7tFY3PzgEnEtL8YaXq3IKx8hbdCG/dJQcYAS2/eQcsPxlwdUy/Os6OTCZcwSchhz17OFruou2Oe8DhxJBMP21sOqMFkztptxaFhked+NKdRoiUrORFq1nCOvuE+7d+N1YmHUYyXqo++Aps41jNe5WTk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRWZiV/t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D7EC4CEEF;
-	Thu, 31 Jul 2025 21:27:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753997276;
-	bh=Ohks9ny5wTu0IIUS/H9f6kcUZQkWYlZIorfQk3HF37w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=WRWZiV/tWaejbsWdGwz1kmHEiGStvjFDFmBivFqHbggn6zCAm6s8+ypy9OCru/ILx
-	 MO1dCrewOQ+aUh66Wun4azYI2YV1Dcm560wk/9vIYV4AYDyFYpg9v0lJ89NKX8m6TH
-	 YpUg+ZaN1oPwXj5Y559D/pcm5P4Yfy85xqisdJWp7BjSq2XxojK1kYC6MuFUKFnT8L
-	 5ZwBaGf8/wTOxca81+02ewSyDVeD861gF51qgoWUWYph+yYRkucLfsRk16eSx5Bgsl
-	 d7LoAaN3KgFsacTZXOQlmRcpIgdmiPPlEgL+Hl3cYrIo+HvPwmoH+gDroI8PwDS7mr
-	 ZOhOzLVoiC0+A==
-Message-ID: <245ef75d-44d5-4b66-9f28-68182f177fad@kernel.org>
-Date: Thu, 31 Jul 2025 23:27:50 +0200
+	s=arc-20240116; t=1753997792; c=relaxed/simple;
+	bh=jYZaaLLhQJOzhRa9jxsL/R+vLcUjY54sdHto+cPAk0s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lNuuaOMsu9+LcDL8N5lrw1I0MJONI4whytbcECIj25iPZRGMlscj/Fb0icTH51kz7OJLlMMCxu2Zh9cFLyKmN9KRCXKkbWnX4yZegB1NFaGw47GNm0GYcwfWhOPpkQy56EOvi7rjaAUnBLr2msFmDBfVCcveAxuQxUZ45zReIjE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mke8HT1Y; arc=none smtp.client-ip=209.85.167.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-553d771435fso1453444e87.3;
+        Thu, 31 Jul 2025 14:36:30 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753997789; x=1754602589; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FrvaokmJFjtrt8aO0z9fEjiF8NzdgfTwRbQs48SsHeA=;
+        b=Mke8HT1YuL0seKGt88eXqA7Dy4dd/iyNOoJ46U621sAggoZ2ohmbXylsVMieMVAvDw
+         Qq9yX5O4cg5P8TaIMxKzhWfVLCsfVqSvuxHf2ezu6OizTbit4fNUxndSJVKbPyMFHQf+
+         wwWPYqH88k9Mb80e7XQUNPJTxMDcu99wCN3aeb2sPToUftG68NyJL47XCvwXDp+A7+sP
+         WqnLMNVRlOt69wCCNHfzRO0V8d46v35HbhMvwYpPOoWKtVIjMwr2wVCFvUbqCMloCyiF
+         70oBQHPF6Zd3LUFxjyijLaJHK2xkXf7c7+ASxlSk/hUKk0bbq0x2NHYJofjmXKAdB97Q
+         HYCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753997789; x=1754602589;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FrvaokmJFjtrt8aO0z9fEjiF8NzdgfTwRbQs48SsHeA=;
+        b=lvCAUr8ERisALydjca9Y+NF7iB7JA3HnOQp2NjW/jCZSDf4q3B4kvLnSWqrvrzHnxm
+         s79hiwQNIXIe+IWTj01CSLyWnzF4L++N3zpiixXYSQWefypaexnXn6OOsxQQT+HlFKzt
+         JHCc7HedQ2SoTKbMDZOFjPt0iykr4reEYfJ/MeUeLPYbCHz40wf28KHc5Lr2R+opS6N+
+         IArZSJvEsBlTekeV9WUYrMjBCFZfxpBA22QahmUCvz8agNEcXMjXvAIIJxDn24Wgi/cx
+         2nEOoqbapna5vsvAOofNvCgqDU4+fewm9IuM1/QSlt35B7vhgXrz682w/9MQTJFLBRrI
+         W96g==
+X-Forwarded-Encrypted: i=1; AJvYcCVTD2+tRnJU2TbXa3rNH4dEqjvepEf5FPNu6I3zbywg7QDH3SjiYz/karieLPSKtJuQDmdRx+QjGGVJ@vger.kernel.org, AJvYcCW4zRN9nCt3wkg5k/f0dTDheVbiuq5kwj+xstlczbRD/qWlfY597U3oQK7grXy1H1bzRgEHPNXP+SFU6J0A@vger.kernel.org, AJvYcCX5ZUBUsNo53U+MShl/C9nW6cipXFk/8QV8Et9wC66FN4fCsm0Pw3h0NF3+SlTKdjgCemUGA1OAfod8qjA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyiJwFiORLMb4RK7u3J3JwkDLz4FSMOuuUpnKQ/71YbndWvLGOn
+	08QWMhjp1k5YoEMCEKZYQ0tWOoRhVzjQ5qAAXTjDLaRG6TXvQG7B85Pp7DLg6tV/8fK7w6x+Mkz
+	ZawYg9AI1RzLNY7AtHkGqdmbLeo0hARij4uGbxu4=
+X-Gm-Gg: ASbGncvUQEphcyQLug+BDWa3qzqud7DyXEMzc1qbXs0kP3hNeMAXPYDa12ll4D/xoOR
+	M0YVTNRakV2LECX3J7ug19q/YjXjw24paGRIR1s3sZ3eTXGo9GAGWDDtzHro5h7Hxc9QeiUd0rV
+	U180RTMNq016NfqL7pL31osRa7pnepVxK9eTSWZKJHCQNk31ZERgJTppZkQhdEzH4Ax2L+0VdIB
+	Zcl2mw=
+X-Google-Smtp-Source: AGHT+IE4gWHGrDzM+gIuepWweGiJ4ZDUm9b2AlwwsTNYUCehjfNOSMm8AGQeadwx1rgMYmqvFw3rXM+c2FL3U5yCxYM=
+X-Received: by 2002:a05:6512:3f22:b0:55b:8849:425d with SMTP id
+ 2adb3069b0e04-55b884943ddmr1512564e87.38.1753997788977; Thu, 31 Jul 2025
+ 14:36:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird Beta
-Subject: Re: [PATCH net] mptcp: use HMAC-SHA256 library instead of open-coded
- HMAC
-Content-Language: en-GB, fr-BE
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
- Paolo Abeni <pabeni@redhat.com>, Mat Martineau <martineau@kernel.org>,
- Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
- mptcp@lists.linux.dev
-References: <20250731195054.84119-1-ebiggers@kernel.org>
-From: Matthieu Baerts <matttbe@kernel.org>
-Autocrypt: addr=matttbe@kernel.org; keydata=
- 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
- lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
-Organization: NGI0 Core
-In-Reply-To: <20250731195054.84119-1-ebiggers@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250513-tx2nx-role-switch-v1-1-d92ea1870ea5@gmail.com>
+ <CALHNRZ8H66g98ThQKZJAT2UohVNtt6OS=rKd5wtcT1YwBLURqA@mail.gmail.com>
+ <CALHNRZ84+KGwioU=7ZOL=O39cR_VSRJBaV42MsA4fymXNJC6+g@mail.gmail.com> <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
+In-Reply-To: <CALHNRZ9zfjV-ZttJd_ydgEaWk7XB+3YPfKGuYXLBL9qA8Exv0g@mail.gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 31 Jul 2025 16:36:17 -0500
+X-Gm-Features: Ac12FXxq9I_G8y-hwyd40-4DJctpWI_xVFmG2sw5MjV0LHTMkgtYBDm4xwEJz3I
+Message-ID: <CALHNRZ-HTFz38xZFsbpG6C3r_xDQTLNOZWPX21TzNPaLyxf6Xw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: tegra: Remove otg id gpio from Jetson TX2 NX
+To: webgeek1234@gmail.com
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Eric,
+On Mon, Jul 14, 2025 at 12:35=E2=80=AFAM Aaron Kling <webgeek1234@gmail.com=
+> wrote:
+>
+> On Mon, Jun 30, 2025 at 2:27=E2=80=AFPM Aaron Kling <webgeek1234@gmail.co=
+m> wrote:
+> >
+> > On Wed, May 28, 2025 at 12:42=E2=80=AFPM Aaron Kling <webgeek1234@gmail=
+.com> wrote:
+> > >
+> > > On Tue, May 13, 2025 at 4:10=E2=80=AFPM Aaron Kling via B4 Relay
+> > > <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> > > >
+> > > > From: Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > > The p3509 carrier board does not connect the id gpio. Prior to this=
+, the
+> > > > gpio role switch driver could not detect the mode of the otg port.
+> > > >
+> > > > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > > > ---
+> > > >  arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts | 1 =
+-
+> > > >  1 file changed, 1 deletion(-)
+> > > >
+> > > > diff --git a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0=
+001.dts b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > > index 26f71651933d1d8ef32bbd1645cac1820bd2e104..81f204e456409df355b=
+bcb691ef99b0d0c9d504e 100644
+> > > > --- a/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > > +++ b/arch/arm64/boot/dts/nvidia/tegra186-p3509-0000+p3636-0001.dts
+> > > > @@ -669,7 +669,6 @@ connector {
+> > > >                                         vbus-gpios =3D <&gpio
+> > > >                                                       TEGRA186_MAIN=
+_GPIO(L, 4)
+> > > >                                                       GPIO_ACTIVE_L=
+OW>;
+> > > > -                                       id-gpios =3D <&pmic 0 GPIO_=
+ACTIVE_HIGH>;
+> > > >                                 };
+> > > >                         };
+> > > >
+> > > >
+> > > > ---
+> > > > base-commit: 405e6c37c89ef0df2bfc7a988820a3df22dacb1b
+> > > > change-id: 20250513-tx2nx-role-switch-37ec55d25189
+> > > >
+> > > > Best regards,
+> > > > --
+> > > > Aaron Kling <webgeek1234@gmail.com>
+> > > >
+> > > >
+> > >
+> > > Friendly reminder about this patch.
+> >
+> > Re-reminder about this patch.
+>
+> Yet another reminder about this patch. It's been over two months
+> without a response and many other patches have been pulled in the
+> meantime.
 
-On 31/07/2025 21:50, Eric Biggers wrote:
-> Now that there are easy-to-use HMAC-SHA256 library functions, use these
-> in net/mptcp/crypto.c instead of open-coding the HMAC algorithm.
-> 
-> Remove the WARN_ON_ONCE() for messages longer than SHA256_DIGEST_SIZE.
-> The new implementation handles all message lengths correctly.
-> 
-> The mptcp-crypto KUnit test still passes after this change.
+Reminder yet again about this patch. It's now been two and a half
+months without even an acknowledgement from the maintainers.
 
-Thank you for this patch! It is a good idea, and it looks good to me!
+This one is getting annoying. What does it take to get a response from
+the tegra subsystem maintainers? Does time have to be pre-allocated by
+the company to look at patches that aren't from @nvidia.com's? Are
+there certain times during a development cycle? When responses happen,
+it seems like there's a lot of activity. But then everything goes
+silent again for months. I've not seen any pattern to it so far and
+it's becoming extremely frustrating.
 
-Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
-
-One small detail: net-next is currently closed [1], and I don't think
-this patch can be applied in -net. So except if you plan to take it in
-the libcrypto tree for 6.17 -- but that's probably strange -- what I can
-do is to apply it in the MPTCP tree, and send it to net-next later on.
-Is this OK for you?
-
-[1] https://patchwork.hopto.org/net-next.html
-
-Cheers,
-Matt
---
-pw-bot: defer
--- 
-Sponsored by the NGI0 Core fund.
-
+Aaron
 
