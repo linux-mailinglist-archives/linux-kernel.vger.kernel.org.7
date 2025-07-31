@@ -1,151 +1,230 @@
-Return-Path: <linux-kernel+bounces-751822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D44EB16DE6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:47:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10688B16DEB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD22216C4F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:47:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC8B18C503E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:50:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C837156CA;
-	Thu, 31 Jul 2025 08:47:33 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25986221281;
+	Thu, 31 Jul 2025 08:50:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="gazgJRj5"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C773A1E7C19
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:47:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B594C1E7C19
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:50:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753951652; cv=none; b=h35arZWs2dNY+LRg/N4JH3iKC01v3NQndlryaxlKcOcdjWiOoGg/C+d9GKbxo6h0pLf1bTOt7gfM37PhU5tt/qsFtOn8urvJEXJQk5N2i10BTbfrGXYJ+Z5CXFYZa0c0GCDw9N+ZuLN9YkMQNMn9UY0K81gRsPg4owv6YV6j3oM=
+	t=1753951826; cv=none; b=TrfdbdH7YuCYv5Wc6+hN8M7te801Ao3T6jBoDgjzFfJe1rnhAZrnt/YwgeNXyRueMjVo5dE2eiBRSn7zM/8ewXKwHT0laKsKp457HEgoIH04fjhiWJOc+zi8fy9tpLtXJSmjjn4wgvjhj1OjTjAZw1u/9PScyDbPjZrrx+HkhvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753951652; c=relaxed/simple;
-	bh=bOmDtkbd0RHffi0gOqZgUXs/Axzd8xlgdMd6KON8a7Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=p3mU79B7t0MuJoOLfhCkS+GB/cSps6cXjmTqpwKif0syrAUrocF87PsgXSRnzwZ2YQdZtmHRVmPY5lhNjQUDCOY759qU104l7yPVl96WRaTS9sbZiR+UekmuXkaHy8G4ZvE+kXF5Ceqvb+ze0Mz98+3KHPI6lE2RIZN/QwJePAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1uhOwf-0007I2-K4; Thu, 31 Jul 2025 10:47:25 +0200
-Received: from dude04.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::ac])
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1uhOwf-00BBL9-0K;
-	Thu, 31 Jul 2025 10:47:25 +0200
-Received: from localhost ([::1] helo=dude04.red.stw.pengutronix.de)
-	by dude04.red.stw.pengutronix.de with esmtp (Exim 4.96)
-	(envelope-from <m.grzeschik@pengutronix.de>)
-	id 1uhOwf-00ENqd-05;
-	Thu, 31 Jul 2025 10:47:25 +0200
-From: Michael Grzeschik <m.grzeschik@pengutronix.de>
-Date: Thu, 31 Jul 2025 10:47:18 +0200
-Subject: [PATCH] backlight: pwm_bl: apply the initial backlight state with
- sane defaults
+	s=arc-20240116; t=1753951826; c=relaxed/simple;
+	bh=6Lg1eIwjFjvSRaGr6nblSxRpIYC4YoB4n9JiTRn29Ds=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=iSJ1fDXw95E3jPDPrVfccUwiaXWvh0Kwv96EbMBdF2/PzJ8OcAy09qLol4X+sNiZAByGay2y4iKARaCTs+GecuhdUCbk6f2auEm1u152Ra462apc4V1jFv39hfbH27j8ji0i/6zrTM0SSkLEPjQ56+xC7rHEEYmIHVhmRt1fBzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=gazgJRj5; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45622a1829eso706275e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:50:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753951823; x=1754556623; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=YoqT3sYyeE3BcU8PpvXQ31mNiDpWd/PfJiufhJ/dUHg=;
+        b=gazgJRj5kwQtVoo4OHjHqci4WnIh2DNj+FHjxoDW0bETPj+AYc62yiVFZpworCZjOl
+         QbZf1GsZvfKLcAw9GittSieYGiOjXjhMdok83LTnvt8GUIiwn/GtC66XmHDh0v8vx9uT
+         wassDEoETsLkur5ER7H3qVnJXIVrnWtfP6nBLn35AA4Lm+jli5tB/kAta4/wxqblHMiD
+         qkFRkbjAcNJcYCXnkQ+THn/ZKQf7uivhs17TJLuruhc00wIIKtZFq9N13Ma4JjqRirKD
+         Ud3pOOJ02bT1U0gaQgIMpYn65z3Sz3EmuE22J6Zzdd3X5xvBPOisEyZgVG/1F8flh6gC
+         /YSw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753951823; x=1754556623;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=YoqT3sYyeE3BcU8PpvXQ31mNiDpWd/PfJiufhJ/dUHg=;
+        b=oDyF8oFQHCD+ZZrjiKnnLFWfsxJ9t6Y125K7oeMZmiQ+tAyzGkFYjJBJkNP2tXOG32
+         Nwkuz9oDH3M+Nx2ZP9l/ki+TVGzBByp5njE3QYrKnOvafS+ZsNyX/TbZp/JWNdzVBFsW
+         a1UfXUnHGH+tq7Y3PkE0sV4lRAKNFhI3yBbj+6yBgZtYpfp+hsdy+oCxDigzMjqSlZVt
+         WgFGhKn46trxHQRPTPlZB5RdKtmbEmzPBuzNiFo3K7CaNkZcB+0dsnRkNM2htcWfkPYZ
+         8/jZOAtfni6NWSNXkIxPXFQGOCP5PJGKpgq7eoc1YjzhEsZlMqrREhiJfXQ1YyOGLU8s
+         kQAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXKHK3B8RV1oezB/GWGk1OeKdTRF0shsDKEXmQMq0AMpGzr811psdQcELcAj5AMXDJyFpm8jEd2Zs7f/xs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAOy3UalEPEECOpCf+DaT7sJ5TedrIQOI9rUzkcRaXfEO20CPM
+	/1XLry6PGjwaFzJtKbIcuZmM19Bw0eR3DbB5DFG89HsFobmtNLgK8a9wV2EugkyVuzM=
+X-Gm-Gg: ASbGnctW6Lzy9qhdKxh1LnjOvYU/mMO32FwWNp7u9crAtMz0aJ4YWX1O1gvjsVAJNS6
+	HMPyR5hpNS+3z6EKR6G2Tvtn8nArKKfsMTB306C4CSI4puC73c1Zauaf2jOi1QuTHC0WIYouwhU
+	fzWQ3FKQe5UxRU4Da0EyzxdecfmHZa+W8h9uPeCXbICaspl/3mtlmni3wu3EL/zHE/0kO8++iGm
+	3txOLr07WL1gcIH0eg/tLzjM4WV3StmflXysEHHJF5QIayfeHZ59uBAIp9aOzuRYJPQNxuLSk+N
+	V8ZBu5r1h+7wDtyRQNW2jwWJQUWWxcL/OeCeu0y904A3H+152h0euV+mXAY84hALF2MZaMRS3Fx
+	Epstcbi97zWrCjLz1pcT7j88AD0Se4z27oSomlfUPbYK+c3LdbRU26OzU8JtibUXnMW/cc0zR
+X-Google-Smtp-Source: AGHT+IEgSZer8hWY13x0qXXR6I/Sej/NR+Xl7nYUwCW+ECmWFbBpqghq5bAxRYQfADo4HpTVwczsaQ==
+X-Received: by 2002:a05:600c:6304:b0:456:191b:9e8d with SMTP id 5b1f17b1804b1-45892b9d0bdmr51113435e9.11.1753951823050;
+        Thu, 31 Jul 2025 01:50:23 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:5d4b:b132:363:7591? ([2a01:e0a:3d9:2080:5d4b:b132:363:7591])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589952a60fsm54626685e9.23.2025.07.31.01.50.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 01:50:22 -0700 (PDT)
+Message-ID: <aff38b98-23ff-4dcd-afab-2a0d8c8ad599@linaro.org>
+Date: Thu, 31 Jul 2025 10:50:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+From: neil.armstrong@linaro.org
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH V1 0/3] Enable UFS MCQ support for SM8650 and SM8750
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, mani@kernel.org,
+ alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-blpwm-v1-1-0171fd31bff9@pengutronix.de>
-X-B4-Tracking: v=1; b=H4sIAJUti2gC/x2MSQqAMBDAviJztmBd0PoV8dBl1IFapcUFxL87e
- EwIeSBhJEzQZw9EPCnRFhhknoFddJhRkGOGsiiboq2kMH6/VtGoDq12qrK1A26NTihM1MEuXIf
- De5Z7xInufz6M7/sBizVVlWwAAAA=
-To: =?utf-8?q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, 
- Lee Jones <lee@kernel.org>, Daniel Thompson <danielt@kernel.org>, 
- Jingoo Han <jingoohan1@gmail.com>, Helge Deller <deller@gmx.de>
-Cc: Pengutronix <kernel@pengutronix.de>, linux-pwm@vger.kernel.org, 
- dri-devel@lists.freedesktop.org, linux-fbdev@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Michael Grzeschik <m.grzeschik@pengutronix.de>
-X-Mailer: b4 0.12.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2042;
- i=m.grzeschik@pengutronix.de; h=from:subject:message-id;
- bh=bOmDtkbd0RHffi0gOqZgUXs/Axzd8xlgdMd6KON8a7Q=;
- b=owEBbQKS/ZANAwAKAb9pWET5cfSrAcsmYgBoiy2c+7jsNb6oW5if001bv1SF04cbIfTveDwqA
- ZfjiWLs9MGJAjMEAAEKAB0WIQQV2+2Fpbqd6fvv0Gi/aVhE+XH0qwUCaIstnAAKCRC/aVhE+XH0
- q6+LD/9G4mbLXal5Mo9BUyS72SWmZYnXX6CGHACo9HiLFRQbANW9bJZ2oYPp8n4oRljM2RxnkyY
- uQ3mPrdwE9FEkfAi3YyKM0Mob0T7Smci66r1iN0raJeaw8g6i6m7gWf4eRs4Tm0OsNlIxBMHk15
- 9HN3yx8AlShEwY73dSy9CGT8Kc03A+TwvLVep4ykNtkCoH5g9cji9ydU4bzB8Bl/NLGqs/bepmS
- RLxuhkQlgLQCk766Dlwafm11I6aez3Zc1g70WcHu+Fq+Qd2cE8T5HRMivBDLhfmT1yToRZNq/q+
- m1qj0RKXlwva2E9TW/WZve8WVqemfJBPzCkws3tY21mumDA8Iz5NYaoBt/LBCa1epp6ProOjfBl
- WZ0LOXicoP+q8vtx9i4A0Nl/eiLXk/ptox2fV2ldQe5gktJ+d3FaydcbR+PyRUCRh+oAV+c7Ha7
- LWb4rV+l42E8yF3CzqXbVggxZLys0m87b2BgCD1NuYX0xS1Y+YeOWzqVlHwgqNGZy+x38Bexpwe
- p1dsZXM8Vte16ZVjCNqkyjjbfOkwmmVHVJ2Qj+r/4S0HSW5Zzso9sC59dOeuknyNXcJ1L+tzaeq
- Cj3p/KLVrl8lXZjJHtcXI728PonvVXv8Vj2XZy+WrJfF+UtFl0t2sbLT7/BlXyznTp1x/LfryY9
- vITN1nvyJzpWTkA==
-X-Developer-Key: i=m.grzeschik@pengutronix.de; a=openpgp;
- fpr=957BC452CE953D7EA60CF4FC0BE9E3157A1E2C64
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: m.grzeschik@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Currently when calling pwm_apply_might_sleep in the probe routine
-the pwm will be configured with an not fully defined state.
+Hi,
 
-The duty_cycle is not yet set in that moment. There is a final
-backlight_update_status call that will have a properly setup state.
-However this change in the backlight can create a short flicker if the
-backlight was already preinitialised.
+On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
+> This patch series enables Multi-Circular Queue (MCQ) support for the UFS
+> host controller on Qualcomm SM8650 and SM8750 platforms. MCQ is a modern
+> queuing model that improves performance and scalability by allowing
+> multiple hardware queues.
+> 
+> Although MCQ support has been present in the UFS driver for several years,
+> this is the first time it is being enabled via Device Tree for these
+> platforms.
+> 
+> Patch 1 updates the device tree bindings to allow the additional register
+> regions and reg-names required for MCQ operation.
+> 
+> Patches 2 and 3 update the device trees for SM8650 and SM8750 respectively
+> to enable MCQ by adding the necessary register mappings and MSI parent.
+> 
+> Tested on internal hardware for both platforms.
+> 
+> Palash Kambar (1):
+>    arm64: dts: qcom: sm8750: Enable MCQ support for UFS controller
+> 
+> Ram Kumar Dwivedi (2):
+>    dt-bindings: ufs: qcom: Add MCQ support to reg and reg-names
+>    arm64: dts: qcom: sm8650: Enable MCQ support for UFS controller
+> 
+>   .../devicetree/bindings/ufs/qcom,ufs.yaml     | 21 ++++++++++++-------
+>   arch/arm64/boot/dts/qcom/sm8650.dtsi          |  9 +++++++-
+>   arch/arm64/boot/dts/qcom/sm8750.dtsi          | 10 +++++++--
+>   3 files changed, 29 insertions(+), 11 deletions(-)
+> 
 
-We fix the flicker by moving the pwm_apply after the default duty_cycle
-can be calculated.
+I ran some tests on the SM8650-QRD, and it works so please add my:
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
 
-Signed-off-by: Michael Grzeschik <m.grzeschik@pengutronix.de>
----
- drivers/video/backlight/pwm_bl.c | 16 +++++++++-------
- 1 file changed, 9 insertions(+), 7 deletions(-)
+I ran some fio tests, comparing the v6.15, v6.16 (with threaded irqs)
+and next + mcq support, and here's the analysis on the results:
 
-diff --git a/drivers/video/backlight/pwm_bl.c b/drivers/video/backlight/pwm_bl.c
-index 237d3d3f3bb1a..5924e0b9f01e7 100644
---- a/drivers/video/backlight/pwm_bl.c
-+++ b/drivers/video/backlight/pwm_bl.c
-@@ -518,13 +518,6 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 	if (!state.period && (data->pwm_period_ns > 0))
- 		state.period = data->pwm_period_ns;
- 
--	ret = pwm_apply_might_sleep(pb->pwm, &state);
--	if (ret) {
--		dev_err_probe(&pdev->dev, ret,
--			      "failed to apply initial PWM state");
--		goto err_alloc;
--	}
--
- 	memset(&props, 0, sizeof(struct backlight_properties));
- 
- 	if (data->levels) {
-@@ -582,6 +575,15 @@ static int pwm_backlight_probe(struct platform_device *pdev)
- 	pb->lth_brightness = data->lth_brightness * (div_u64(state.period,
- 				pb->scale));
- 
-+	state.duty_cycle = compute_duty_cycle(pb, data->dft_brightness, &state);
-+
-+	ret = pwm_apply_might_sleep(pb->pwm, &state);
-+	if (ret) {
-+		dev_err_probe(&pdev->dev, ret,
-+			      "failed to apply initial PWM state");
-+		goto err_alloc;
-+	}
-+
- 	props.type = BACKLIGHT_RAW;
- 	props.max_brightness = data->max_brightness;
- 	bl = backlight_device_register(dev_name(&pdev->dev), &pdev->dev, pb,
+Significant Performance Gains in Write Operations with Multiple Jobs:
+The "mcq" change shows a substantial improvement in both IOPS and bandwidth for write operations with 8 jobs.
+Moderate Improvement in Single Job Operations (Read and Write):
+For single job operations (read and write), the "mcq" change generally leads to positive, albeit less dramatic, improvements in IOPS and bandwidth.
+Slight Decrease in Read Operations with Multiple Jobs:
+Interestingly, for read operations with 8 jobs, there's a slight decrease in both IOPS and bandwidth with the "mcq" kernel.
 
----
-base-commit: 739a6c93cc755c0daf3a7e57e018a8c61047cd90
-change-id: 20250731-blpwm-598ecad93c4d
+The raw results are:
+Board: sm8650-qrd
 
-Best regards,
--- 
-Michael Grzeschik <m.grzeschik@pengutronix.de>
+read / 1 job
+                v6.15     v6.16  next+mcq
+iops (min)  3,996.00  5,921.60  4,661.20
+iops (max)  4,772.80  6,491.20  5,027.60
+iops (avg)  4,526.25  6,295.31  4,979.81
+cpu % usr       4.62      2.96      5.68
+cpu % sys      21.45     17.88     25.58
+bw (MB/s)      18.54     25.78     20.40
 
+read / 8 job
+                 v6.15      v6.16   next+mcq
+iops (min)  51,867.60  51,575.40  56,818.40
+iops (max)  67,513.60  64,456.40  65,379.60
+iops (avg)  64,314.80  62,136.76  63,016.07
+cpu % usr        3.98       3.72       3.85
+cpu % sys       16.70      17.16      14.87
+bw (MB/s)      263.60     254.40     258.20
+
+write / 1 job
+                v6.15     v6.16  next+mcq
+iops (min)  5,654.80  8,060.00  7,117.20
+iops (max)  6,720.40  8,852.00  7,706.80
+iops (avg)  6,576.91  8,579.81  7,459.97
+cpu % usr       7.48      3.79      6.73
+cpu % sys      41.09     23.27     30.66
+bw (MB/s)      26.96     35.16     30.56
+
+write / 8 job
+                  v6.15       v6.16    next+mcq
+iops (min)   84,687.80   95,043.40  114,054.00
+iops (max)  107,620.80  113,572.00  164,526.00
+iops (avg)   97,910.86  105,927.38  149,071.43
+cpu % usr         5.43        4.38        2.88
+cpu % sys        21.73       20.29       16.09
+bw (MB/s)       400.80      433.80      610.40
+
+The test suite is:
+for rw in read write ; do
+     echo "rw: ${rw}"
+     for jobs in 1 8 ; do
+         echo "jobs: ${jobs}"
+         for it in $(seq 1 5) ; do
+             fio --name=rand${rw} --rw=rand${rw} \
+                 --ioengine=libaio --direct=1 \
+                 --bs=4k --numjobs=${jobs} --size=32m \
+                 --runtime=30 --time_based --end_fsync=1 \
+                 --group_reporting --filename=/dev/disk/by-partlabel/super \
+             | grep -E '(iops|sys=|READ:|WRITE:)'
+             sleep 5
+         done
+     done
+done
+
+Thanks,
+Neil
 
