@@ -1,262 +1,165 @@
-Return-Path: <linux-kernel+bounces-752650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90E93B178C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:01:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7247DB178D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:02:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13C7E7B88C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:00:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33FB55A588B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:02:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8A7C27604E;
-	Thu, 31 Jul 2025 22:00:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D93CC26A1B8;
+	Thu, 31 Jul 2025 22:02:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qNlqP4JK"
-Received: from mail-pl1-f202.google.com (mail-pl1-f202.google.com [209.85.214.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RC9pmL4F"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9E592737F6
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 22:00:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E06DA921;
+	Thu, 31 Jul 2025 22:02:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753999236; cv=none; b=WiWKZCvDnj5LGYXenPNszLzL8D9W74Vpc7CUgWmQM3qp0rWT32r+cT4O6ris8PMyO3IhPnyjlMi5FY8Z0Xeb24YCJyMaDx8ryyQZ95Zzvcs5diW4yUxXFuro20kT493jRcB95g5ioOFIu39DSiBL8CJRH7GA0Rga0V045DD3U9U=
+	t=1753999332; cv=none; b=aDZIK60A42X9tgHU1TAIWdvtJbniJUX6L+tAAaLODm4hJAde/MljV7smoKTxHKilFC5ATyCNIUcccIsV+MKGzIPftS3S9HsfDFg6nH8maomQFXxGCNIIOqMOZtcDyzGAuslvAM3FUKnhrY0hnvOi8FIu1NqsethAtbY/eL1HHGA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753999236; c=relaxed/simple;
-	bh=WiIYR43BkynWQ/NHpDxB552UWAXO4+NMreOccpkPwOQ=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=mjcbfvu8hdM1oKZFc1DeO/Nqd+vEx/UMnOFvY9AdmFVZIz6NfAQ0nIyes6teK5lfL+3Jz4UK+KpsTf7QKJfJHuTn91EVcJTJomY6gRizUZSgz6i3UiyGnM0emCzoSGE09xN4jaaHhmPO+x61jfA8adzxZHzRHmAplwYEzzBZgNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qNlqP4JK; arc=none smtp.client-ip=209.85.214.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pl1-f202.google.com with SMTP id d9443c01a7336-2403e4c82ddso6862635ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:00:34 -0700 (PDT)
+	s=arc-20240116; t=1753999332; c=relaxed/simple;
+	bh=Aeb7LXryARwLKBWxkPeja6oA6N2LlRfpr0knT9VALgY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ZyqTogL0f5oeoOYEqMDrgKy6qQcqyN4+yehDSeqILJ4h4lBN8ptU4/NviQ7gYR2ipIcWj8riD9+i3Jzk/D+V70StyT7a1t1dHbUwg5Eo7foPB091g2xtyGA3TIklQoVq1D3yM8eQP7J578a6D+jluWW63nc/sXrUEY2q+VRBfbs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RC9pmL4F; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-55b7e35a452so1589904e87.2;
+        Thu, 31 Jul 2025 15:02:09 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753999234; x=1754604034; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSpqmXgbYV8j5bsB4IVuVf0tack8DQaHL/QU05OaXgY=;
-        b=qNlqP4JK1flJPLxN7zfmFhWvzp8AVpCq61xcPupiHZcXRheMfD6+FfX/VxhHjV4i4s
-         WskETkR01ngEblt5Ox5cKCNlR9KQxZVdvGi+/LBGtn4ybiFWR5BrqT+oVt9rb4Q63pYz
-         8u84hmO2OGp13c96NuQM2QIHJIQ5LmjR1GNNGSxIwBbXhiDteYyOs6Cy/SMz18YKGGy3
-         8+7qgQmhGhEfUVMSylchyagwCYN0ii7O5liTDQo80UFZuazszG1ThGuJ+ss3ikzha/xd
-         RTMeDsc7bKLbyOgvWFTCu0UVPMX+xnmlW/4yKnYI0UcEuua+zKeZUulymZtlZ3BBMayc
-         DSyQ==
+        d=gmail.com; s=20230601; t=1753999327; x=1754604127; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XwQMVaWAcAPT6hTn2TLzQM81uMg7jcDm6ApBxWtipBU=;
+        b=RC9pmL4FuNomzqqMkMO1hf3QJim+zSqksk37UpNUCKbcwyJ0lrN4i2BNTTjaThARGK
+         jYNNvsGARe5V1t1qPl9tW2uWbEtXlydsCtI7QQVu0Iowr5AOdhuehIeFJejUV1QOcUG+
+         a2LGkTOcvLQXxQFGpwcmN9rz3o1RAAup7vEssgVd8vpr8fK4YsLznZ7/Ple5NRFdobLX
+         sVYlxF+3PLdjuVsKZ052MEz3hy/G2b51dZ6AMTrI66UezD9yeobtcZZkNFFv9mYk83Jt
+         HG7S1d1RV3s9PjoTmm8tCpBHFHhGMikMr/PcQz6pHg+SGj3xHkA57WQer7ghUznOydnL
+         9A3g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753999234; x=1754604034;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vSpqmXgbYV8j5bsB4IVuVf0tack8DQaHL/QU05OaXgY=;
-        b=paHYgND2qMcwS/wTfGCnRnNXO43WzCstS+M0O2/Vjxo+/iTsshKvxF8NHqi8t6ls76
-         54b1BE2rtV1JPU9wVBf7AEDVH3rDToLx2xi7DIwy2In3cJIFYMFleUC3rKhbl4sOeo1d
-         XLsQ7fF5r2X9UzA6SG+rw8oCy0YSCUEwMuqEphTp+pDEcAz/3SmceNcxq6LdKFy5UUBU
-         ydiPy8AsBlEAItgsTy80nzxrEopDBH/Q6/brPB198YUzWOw7XDq4GGBu5VO6rMOz4LkQ
-         Q4KwyNJ+s9xfatwH2XNvae+r6NSxNYtvNQuk95Qe2IgGXOqcFs6zXMDfVE80l1Cp1Juz
-         JmBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXIj/VymLbZjRU8pzxXY7+n5bECoEn1XDJoqyw1iyYK/t9D6F1VR7QQGXJQRtMGyFnChR+OHdzbmijupUk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydb1FnYJdf5PAP20rLuGh9x8GYfpH/4EDWSfogM+oAqYe8jcGi
-	rKjaKBdiMp/M6hSJ6FPc4iHLPL3DMQkUSB1eNJsYu+w22CvAAklUaHIozXJxllekIAaXd8dwEMc
-	eReR9jw==
-X-Google-Smtp-Source: AGHT+IG9WPhm5XE/ZfgGaQtzh+SWoXfTwZ/PnXrEVOaIZ7eiVoVCEnZsOmLu+uDuAMPetyxG7jZDFNEKyv8=
-X-Received: from plai12.prod.google.com ([2002:a17:902:c94c:b0:240:2b97:90f6])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:903:234d:b0:23f:adc0:8cc2
- with SMTP id d9443c01a7336-2422a699c3amr3040655ad.27.1753999233810; Thu, 31
- Jul 2025 15:00:33 -0700 (PDT)
-Date: Thu, 31 Jul 2025 15:00:24 -0700
-In-Reply-To: <20250731220024.702621-1-surenb@google.com>
+        d=1e100.net; s=20230601; t=1753999327; x=1754604127;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=XwQMVaWAcAPT6hTn2TLzQM81uMg7jcDm6ApBxWtipBU=;
+        b=WN8STDpRFaVZtVCqonGmDg584XoxOrP0hMWMhddKySkomWE5GDlxg5O+/4OZLrzrRv
+         ol0cd4esqiW4oGWp29YsRMW4VI1sms3dKtsws+qf7FhKCgU6IyqCck8Y+ddtABVwaDp9
+         jUi0g97c8lfK+ZcUrvBVyig0g9wBGx70fxNHYd/cvnHWjMzmfPmPaHBDVmLAEAbwU8MH
+         hcyYBH2/deSELCtI7QYpoGscR/98zp7XAgsNKUlGIddgqJa3OYEXKbwcl7t3byfeRO2t
+         5hnZhb2o13rz+i0kVJXtBPBYZKxpnqeNHO4TCUQv2bHGAXSKb6GwzWi15heYAk08mNAX
+         bZew==
+X-Forwarded-Encrypted: i=1; AJvYcCUScpnLk9y0Y5UCoIZyPv4yWn7YNr6drIzWLW98Q9mb734XqS0scFdf9305COBlRl9y6Stwybir0a/P@vger.kernel.org, AJvYcCW2xCMma0DKTyI48N3c6JZNtMggEkaDStD4R+e2rxoKbcU25m7RLvVM/7JwEdcaHtKkjcYHWw3MLm4=@vger.kernel.org, AJvYcCWLSarbAOqmtC7wENZY3Osrs70bvzbfycAp6nYnfQbBaxTZ5MSGCAaw108tms1rmQ/7uTUoOesTlZ2pnt4=@vger.kernel.org, AJvYcCXCv3bSMdq/6SZpSpkLdOkzU3J4p6ra3RCNCzXRnDPQvC+BqGy80OtIL0dAyDE+fBtnv+3f6jVYqm4VaCo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx1H/JBmB23jvRCsn7zYiaV7V6XszDJ3vZmHzpZyP+PcBu73nmV
+	BBrrJ1yvOSa718nIJQcLJxWI5k7kg7uKDHw/dacO3IieMp/yeypdoJ8ecM8jQc9CGn+jlxZ7+ox
+	wnvGJ8vz+X4DzRb/y0qx30XUX/KrN9N8=
+X-Gm-Gg: ASbGncvknEHuOM5RiOvyWWoLoJWS8aslyxCITbjoYKGX6GdXgQW+rEBaUqjOZCTVXM2
+	ZIVcYQ3eR1yVWPBm8tQBZYMbw5/iK/bJ3Ph+WhvxJhRHGOBKXV1Y8G8yXtJxoD60cc9DSwYO5d8
+	6BtWmq9nfhJSmDCoC1AvvgH2P5lPj0Exc5nX94TBZNunsMBzxYLgJHKigFFtHBUCOO2mjirOCcW
+	bX73+0=
+X-Google-Smtp-Source: AGHT+IHrhGtVXBMcgioEqs0gfuEwzuQX+rLjTgYNOrBMMYzGNs77k0w/wsXdSir30vhkHoLper+s/O2Yz39317GxU/8=
+X-Received: by 2002:a05:6512:ac9:b0:55b:89e4:fdfd with SMTP id
+ 2adb3069b0e04-55b89e5009bmr1055393e87.14.1753999327262; Thu, 31 Jul 2025
+ 15:02:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250731220024.702621-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250731220024.702621-4-surenb@google.com>
-Subject: [PATCH 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under
- per-vma locks
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
+MIME-Version: 1.0
+References: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
+In-Reply-To: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
+From: Aaron Kling <webgeek1234@gmail.com>
+Date: Thu, 31 Jul 2025 17:01:55 -0500
+X-Gm-Features: Ac12FXxwmer-1j1MzGtCRUP_-g_XXn7WqjPJTHdQH3fvsju2YDlG6pfVQj72Lm0
+Message-ID: <CALHNRZ9tOJccZ5sQjvkoPe4-+VUtWRxAzAOUainGUCs4+_RBCw@mail.gmail.com>
+Subject: Re: [PATCH v7 0/3] PCI: tegra: Allow building as a module
+To: webgeek1234@gmail.com
+Cc: Thomas Gleixner <tglx@linutronix.de>, Lorenzo Pieralisi <lpieralisi@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Thierry Reding <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
+	=?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
+	Manivannan Sadhasivam <mani@kernel.org>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Utilize per-vma locks to stabilize vma after lookup without taking
-mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-contended, we fall back to mmap_lock but take it only momentarily
-to lock the vma and release the mmap_lock. In a very unlikely case
-of vm_refcnt overflow, this fall back path will fail and ioctl is
-done under mmap_lock protection.
-
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls from blocking address space updates.
-
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+On Thu, Jul 31, 2025 at 4:59=E2=80=AFPM Aaron Kling via B4 Relay
+<devnull+webgeek1234.gmail.com@kernel.org> wrote:
+>
+> Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> ---
+> Changes in v7:
+> - Rebased on 6.16
+> - Updated mailing address list
+> - Link to v6: https://lore.kernel.org/r/20250507-pci-tegra-module-v6-0-5f=
+e363eaa302@gmail.com
+>
+> Changes in v6:
+> - Remove unused debugfs cleanup function, as caught by kernel ci
+> - Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-0-82=
+7aaac998ba@gmail.com
+>
+> Changes in v5:
+> - Copy commit message exactly word for word on patch 1, as required by re=
+viewer
+> - Delete remove callback in patch 3, per request
+> - Don't clean up debugfs, per request, which drops patch 4 entirely
+> - Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-08=
+8b552c4b1a@gmail.com
+>
+> Changes in v4:
+> - Updated commit messages for patches 1 and 2, per review
+> - Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-55=
+6a49732d70@gmail.com
+>
+> Changes in v3:
+> - Add patch to drop remove callback, per request
+> - Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c1=
+1a4b912446@gmail.com
+>
+> Changes in v2:
+> - Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+>   building pci-tegra as a module for arm
+> - Drop module exit to prevent module unloading, as requested
+> - Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0=
+a1f831354a@gmail.com
+>
+> ---
+> Aaron Kling (3):
+>       irqdomain: Export irq_domain_free_irqs
+>       cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+>       PCI: tegra: Allow building as a module
+>
+>  drivers/cpuidle/cpuidle-tegra.c    |  1 +
+>  drivers/pci/controller/Kconfig     |  2 +-
+>  drivers/pci/controller/pci-tegra.c | 35 ++++----------------------------=
 ---
- fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 65 insertions(+), 16 deletions(-)
+>  kernel/irq/irqdomain.c             |  1 +
+>  4 files changed, 7 insertions(+), 32 deletions(-)
+> ---
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+> change-id: 20250313-pci-tegra-module-7cbd1c5e70af
+>
+> Best regards,
+> --
+> Aaron Kling <webgeek1234@gmail.com>
+>
+>
 
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 509fa162760a..b504b798e8fe 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_query_data *query)
- {
--	return mmap_read_lock_killable(mm);
-+	query->locked_vma = NULL;
-+	query->mmap_locked = false;
-+
-+	return 0;
- }
- 
--static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+static void query_vma_teardown(struct proc_maps_query_data *query)
- {
--	mmap_read_unlock(mm);
-+	if (query->mmap_locked)
-+		mmap_read_unlock(query->mm);
-+	else
-+		unlock_vma(query);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_query_data *query,
-+						     unsigned long addr)
- {
--	return find_vma(mm, addr);
-+	struct vm_area_struct *vma;
-+	struct vma_iterator vmi;
-+
-+	unlock_vma(query);
-+	rcu_read_lock();
-+	vma_iter_init(&vmi, query->mm, addr);
-+	vma = lock_next_vma(query->mm, &vmi, addr);
-+	rcu_read_unlock();
-+
-+	if (!IS_ERR_OR_NULL(vma)) {
-+		query->locked_vma = vma;
-+	} else if (PTR_ERR(vma) == -EAGAIN) {
-+		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-+		mmap_read_lock(query->mm);
-+		vma = find_vma(query->mm, addr);
-+		query->mmap_locked = true;
-+	}
-+
-+	return vma;
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_query_data *query)
-+{
-+	return mmap_read_lock_killable(query->mm);
-+}
-+
-+static void query_vma_teardown(struct proc_maps_query_data *query)
-+{
-+	mmap_read_unlock(query->mm);
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_query_data *query,
-+						     unsigned long addr)
-+{
-+	return find_vma(query->mm, addr);
-+}
-+
-+#endif  /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_query_data *query,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(query, addr);
-+	if (IS_ERR(vma))
-+		return vma;
-+
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -579,11 +629,11 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- 	return ERR_PTR(-ENOENT);
- }
- 
--static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-+static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
- {
-+	struct proc_maps_query_data query = { .mm = mm };
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
--	struct mm_struct *mm;
- 	const char *name = NULL;
- 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
- 	__u64 usize;
-@@ -610,17 +660,16 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!!karg.build_id_size != !!karg.build_id_addr)
- 		return -EINVAL;
- 
--	mm = priv->query.mm;
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(&query);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(&query, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
-@@ -705,7 +754,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	}
- 
- 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&query);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
-@@ -725,7 +774,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&query);
- 	mmput(mm);
- 	kfree(name_buf);
- 	return err;
-@@ -738,7 +787,7 @@ static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, unsigned l
- 
- 	switch (cmd) {
- 	case PROCMAP_QUERY:
--		return do_procmap_query(priv, (void __user *)arg);
-+		return do_procmap_query(priv->query.mm, (void __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
--- 
-2.50.1.565.gc32cd1483b-goog
+Continuing the conversation from the last revision [0]. Is there any
+path forward for this series?
 
+Aaron
+
+[0] https://lore.kernel.org/all/CALHNRZ84Xj=3D_HqrFWnYHdV-A9YM4yu2FhfYgHy4-=
+sR65tsYbUA@mail.gmail.com/
 
