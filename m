@@ -1,179 +1,249 @@
-Return-Path: <linux-kernel+bounces-751656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E7E5B16BFA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:19:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A1CCBB16BFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:20:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E3FC3B073B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:19:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4AFD18C699E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 928A924110F;
-	Thu, 31 Jul 2025 06:19:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8456251795;
+	Thu, 31 Jul 2025 06:20:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="BqxUPki/"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f20RvpfT";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="zZxff0tW";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="hE3oKsnw";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="qOql1gyA"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 765AF13D52F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:19:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A693E23B61C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:20:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753942776; cv=none; b=TjphDEL1UVwZWvHsBtJLUPS50U4f/Rl2pYSNCmECTiZ11p9mK2Bp96ftuAHgv2G9tohnoGK/g5qnqPuI1UcBR/829AGBCgKcCKV1P7i7pAquxhpN/kI2NmIsC5JR96nDbv0zjVJrJ6y6l2HyqTIBpw/cwtMVcxFqBC76YgtTU9A=
+	t=1753942844; cv=none; b=pHjFdEWt8g0SSM0XqItfpv7WqU8lOxUWRhCaDlwFB3QmxX+FDPdWqr80edohdrYfIBOgBRobMS2q/e5KE7xUTRGLy2zEnHvtD6wsMLXyXUDD1zL1hLnPSF7wRVsfe6iWgdp82DU9VZIkHQWa47lxaXzKv85pJz/D6m+ENnKzZmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753942776; c=relaxed/simple;
-	bh=3dkvtfrBifTY3zq81HjcaLJhCJhuPzCFZ7jdh01rdao=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=LuKvnoqzOCNmJmnQ4NiJEJdAxF5Xm+ZMo+nRl8/YPiVK1wwerIpvfx92aqoSNKhMl69zppXu3mM7GZEiK8a24+SLfszrqDGdzK+EQjmE7rY6+stgcjMJ0IqJWMSFoQDgSQ9VpLjNAV10Tz97A9mUnMdud2umbzefpf+8oHMZN/g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=BqxUPki/; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V40TEb022189;
-	Thu, 31 Jul 2025 06:19:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=ooQjMt1rliXxV+2FS
-	Qqx4BvbFyPyaiCDN0IHCi9iTBQ=; b=BqxUPki/hMoJatr9gXZjqpSVRpYj3m65B
-	zxI6Z+z/e2zOcdc8WPcMg1bX0hR4iV8e9DI9gKyuDdA+oJb4uYsTFikpxO5kmRvB
-	j6QDsnX9JhPDTLGfaWHEgUEJLRMMXa/xr4QDjX/zlRBwFQgSG8bhe4L39ow/r5t3
-	6flC0w/2JrYpghKHCYo7510UU/nw+akcmjnyfXv3O4QFUfh5jNgLX5UDpr+15uXX
-	+gPnXL1SX3SA+X+7HKg9hAoUaRlJXOMuNl3tMAe6JR9qNOh+bOvt8ROAEpm9RaTz
-	h/4RibeVrQxdF6e1CrDDiFa4SJYmUNiQiYKaphuKYjYIbpVcYiB4Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qen0vdy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 06:19:20 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56V6JJss031301;
-	Thu, 31 Jul 2025 06:19:20 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qen0vdw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 06:19:19 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56V44GTt028728;
-	Thu, 31 Jul 2025 06:19:19 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 485c22tunv-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 06:19:18 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56V6JFJV48562440
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Jul 2025 06:19:15 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 0CE4B20040;
-	Thu, 31 Jul 2025 06:19:15 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id A05A02004B;
-	Thu, 31 Jul 2025 06:19:13 +0000 (GMT)
-Received: from li-80eaad4c-2afd-11b2-a85c-af8123d033e3.in.ibm.com (unknown [9.79.196.52])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Jul 2025 06:19:13 +0000 (GMT)
-From: "Nysal Jan K.A." <nysal@linux.ibm.com>
-To: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Nicholas Piggin <npiggin@gmail.com>
-Cc: "Nysal Jan K.A." <nysal@linux.ibm.com>,
-        Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH v2] powerpc/qspinlock: Add spinlock contention tracepoint
-Date: Thu, 31 Jul 2025 11:48:53 +0530
-Message-ID: <20250731061856.1858898-1-nysal@linux.ibm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250725081432.1254986-1-nysal@linux.ibm.com>
-References: <20250725081432.1254986-1-nysal@linux.ibm.com>
+	s=arc-20240116; t=1753942844; c=relaxed/simple;
+	bh=Yjti4CUR7TQcb5sWl1icbveMX40Gc8XA1uEAjDD/Kmk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dZ4ZTwzXWMic7MClelNTghoPLUS/RM0GjAfS4yKOtm5dPLz2V5U+QjMrfqR/+yB1LUi9pR5QdrEIUgkqFsWISm5SCXigeZT9qFBzadRodY6qfq14qBMAyYLTeP0Jan6sMnEvv0KGr01Ex0Z/kPNLuDuSBHnWgwdXz6xxM+DeqBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f20RvpfT; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=zZxff0tW; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=hE3oKsnw; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=qOql1gyA; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id C93E81F814;
+	Thu, 31 Jul 2025 06:20:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753942841; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jrteJ67mSCnc/iU95eMDL1o2TpheWqWopmYroPxQUjE=;
+	b=f20RvpfTmJ+boWtuud2nUb/zsFebP9gKzK4tvN1KniqqNkSATGHTNTPNujqDtvHE1ZCdC8
+	EqDBIJWjR7ViQPyJih3gTmmBErvRnazrgEJFxyDYZsTbqShQnsZSTz7X35JTqrDnyfWxFn
+	SBuhYEIVN9O49/JbUjbBIgIB4DVqGqE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753942841;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jrteJ67mSCnc/iU95eMDL1o2TpheWqWopmYroPxQUjE=;
+	b=zZxff0tWWjAz2mAq59ZJqPgyXldejqaRGf2R9lKkmP/rd37On+XM/yRzCcDeh+8kEKj6DH
+	7JhppwZfZjiEonDw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=hE3oKsnw;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=qOql1gyA
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753942840; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jrteJ67mSCnc/iU95eMDL1o2TpheWqWopmYroPxQUjE=;
+	b=hE3oKsnwe2WDYtaJXEH9X8mBFJ+FZ68jwsJCGMFI9WQETb1N9p/iqThTPmQlrGNZyl2QYg
+	iP3dmu+ErsbS6OPyaGjPUJCLQHfoDqKaEtVVi+MOpYT67SpgYxL2s3bNa8zObaajULYnrZ
+	nn7YzQEZejQA6T+7DjvzYrC+1ORcBjw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753942840;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=jrteJ67mSCnc/iU95eMDL1o2TpheWqWopmYroPxQUjE=;
+	b=qOql1gyASBL9QLbFBQYNCAcL1gyRFgLYzu8LkzwHCzFE0j9g6NBRxZhOs6DmfbjJUxfbov
+	NQ6gfPN9vXE6W8AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 60BC113AA9;
+	Thu, 31 Jul 2025 06:20:40 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id if1GFTgLi2iHWwAAD6G6ig
+	(envelope-from <hare@suse.de>); Thu, 31 Jul 2025 06:20:40 +0000
+Message-ID: <750643e5-9f24-4e4c-8270-e421a03cf463@suse.de>
+Date: Thu, 31 Jul 2025 08:20:39 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] mq-deadline: switch to use elevator lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, dlemoal@kernel.org, jack@suse.cz,
+ tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk, yukuai3@huawei.com
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com
+References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+ <20250730082207.4031744-3-yukuai1@huaweicloud.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250730082207.4031744-3-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: XEiFeDg0seTburUUD-u0matnynAQ6awk
-X-Proofpoint-GUID: wnw1j7A0M4_MRdYENB0M2cj_60UTln6G
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA0MiBTYWx0ZWRfX24Zok5RtbS4C
- Zgubv+Mjerndci9r08tXRpC3qOLgGzDEe9i//pxztBIVncvMirVGqw/PAttXpykhYenOQrvRrzr
- cPGpYbvDM/j7/f2lJj+ywJFxBq7SgeCAqFNNfwo0Ib58CS90Q3djFMDOBEgxdS03I4PcuF0t3Wq
- x5TxW3nitkCIgrF5TkSVFZONjf2g1Z53zOdQXf0JmqNq1akkRsbse50DQ+9BjMOHFLQSMcL5VIL
- 4jnoQW9uE5Cqak5WAy5fklNK0Jcsh4QZu/dakA4io0Ozw10yA9/s7zu4d5zInRwVlcrSQO9BxhA
- p7TMOOE1KAqSixbwBUbhDEN0x+ZTPzjhZeyLsdmapAQaMn7vqZEWQsn0kbt+ahVyzdp3AbMbJs7
- m8yG2NOEtaj4km6NEPGwTph9LUAQeeMXeGkSbC6h3TCzxC7bN0K+uubrq6rLK+kIlfyP+M0U
-X-Authority-Analysis: v=2.4 cv=BJOzrEQG c=1 sm=1 tr=0 ts=688b0ae8 cx=c_pps
- a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
- a=Wb1JkmetP80A:10 a=VnNF1IyMAAAA:8 a=FRJ3dP_dh1OrdgN2pXUA:9
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_01,2025-07-31_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=999 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507310042
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_TLS_ALL(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[13];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:dkim,suse.de:email,huawei.com:email,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: C93E81F814
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
 
-Add a lock contention tracepoint in the queued spinlock slowpath.
-Also add the __lockfunc annotation so that in_lock_functions()
-works as expected.
+On 7/30/25 10:22, Yu Kuai wrote:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Replace the internal spinlock 'dd->lock' with the new spinlock in
+> elevator_queue, there are no functional changes.
+> 
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> ---
+>   block/mq-deadline.c | 58 +++++++++++++++++++++------------------------
+>   1 file changed, 27 insertions(+), 31 deletions(-)
+> 
+> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+> index 9ab6c6256695..2054c023e855 100644
+> --- a/block/mq-deadline.c
+> +++ b/block/mq-deadline.c
+> @@ -101,7 +101,7 @@ struct deadline_data {
+>   	u32 async_depth;
+>   	int prio_aging_expire;
+>   
+> -	spinlock_t lock;
+> +	spinlock_t *lock;
+>   };
+>   
+>   /* Maps an I/O priority class to a deadline scheduler priority. */
+> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q, struct request *req,
+>   	const u8 ioprio_class = dd_rq_ioclass(next);
+>   	const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
+>   
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>   
+>   	dd->per_prio[prio].stats.merged++;
+>   
+> @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum dd_prio prio)
+>   {
+>   	const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
+>   
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>   
+>   	return stats->inserted - atomic_read(&stats->completed);
+>   }
+> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct deadline_data *dd,
+>   	enum dd_prio prio;
+>   	u8 ioprio_class;
+>   
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>   
+>   	if (!list_empty(&per_prio->dispatch)) {
+>   		rq = list_first_entry(&per_prio->dispatch, struct request,
+> @@ -434,7 +434,7 @@ static struct request *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
+>   	enum dd_prio prio;
+>   	int prio_cnt;
+>   
+> -	lockdep_assert_held(&dd->lock);
+> +	lockdep_assert_held(dd->lock);
+>   
+>   	prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd, DD_BE_PRIO) +
+>   		   !!dd_queued(dd, DD_IDLE_PRIO);
+> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>   	struct request *rq;
+>   	enum dd_prio prio;
+>   
+> -	spin_lock(&dd->lock);
+>   	rq = dd_dispatch_prio_aged_requests(dd, now);
+>   	if (rq)
+> -		goto unlock;
+> +		return rq;
+>   
+>   	/*
+>   	 * Next, dispatch requests in priority order. Ignore lower priority
+> @@ -481,9 +480,6 @@ static struct request *dd_dispatch_request(struct blk_mq_hw_ctx *hctx)
+>   			break;
+>   	}
+>   
+> -unlock:
+> -	spin_unlock(&dd->lock);
+> -
+>   	return rq;
+>   }
+>   
+> @@ -538,9 +534,9 @@ static void dd_exit_sched(struct elevator_queue *e)
+>   		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
+>   		WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
+>   
+> -		spin_lock(&dd->lock);
+> +		spin_lock(dd->lock);
+>   		queued = dd_queued(dd, prio);
+> -		spin_unlock(&dd->lock);
+> +		spin_unlock(dd->lock);
+>   
+>   		WARN_ONCE(queued != 0,
+>   			  "statistics for priority %d: i %u m %u d %u c %u\n",
 
-Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
----
- arch/powerpc/lib/qspinlock.c | 19 ++++++++++---------
- 1 file changed, 10 insertions(+), 9 deletions(-)
+Do you still need 'dd->lock'? Can't you just refer to the lock from the
+elevator_queue structure directly?
 
-diff --git a/arch/powerpc/lib/qspinlock.c b/arch/powerpc/lib/qspinlock.c
-index bcc7e4dff8c3..95ab4cdf582e 100644
---- a/arch/powerpc/lib/qspinlock.c
-+++ b/arch/powerpc/lib/qspinlock.c
-@@ -9,6 +9,7 @@
- #include <linux/sched/clock.h>
- #include <asm/qspinlock.h>
- #include <asm/paravirt.h>
-+#include <trace/events/lock.h>
- 
- #define MAX_NODES	4
- 
-@@ -708,26 +709,26 @@ static __always_inline void queued_spin_lock_mcs_queue(struct qspinlock *lock, b
- 	qnodesp->count--;
- }
- 
--void queued_spin_lock_slowpath(struct qspinlock *lock)
-+void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock)
- {
-+	trace_contention_begin(lock, LCB_F_SPIN);
- 	/*
- 	 * This looks funny, but it induces the compiler to inline both
- 	 * sides of the branch rather than share code as when the condition
- 	 * is passed as the paravirt argument to the functions.
- 	 */
- 	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) && is_shared_processor()) {
--		if (try_to_steal_lock(lock, true)) {
-+		if (try_to_steal_lock(lock, true))
- 			spec_barrier();
--			return;
--		}
--		queued_spin_lock_mcs_queue(lock, true);
-+		else
-+			queued_spin_lock_mcs_queue(lock, true);
- 	} else {
--		if (try_to_steal_lock(lock, false)) {
-+		if (try_to_steal_lock(lock, false))
- 			spec_barrier();
--			return;
--		}
--		queued_spin_lock_mcs_queue(lock, false);
-+		else
-+			queued_spin_lock_mcs_queue(lock, false);
- 	}
-+	trace_contention_end(lock, 0);
- }
- EXPORT_SYMBOL(queued_spin_lock_slowpath);
- 
+Cheers,
+
+Hannes
 -- 
-2.47.0
-
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
