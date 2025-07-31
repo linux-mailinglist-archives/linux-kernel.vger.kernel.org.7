@@ -1,172 +1,106 @@
-Return-Path: <linux-kernel+bounces-752616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41565B1780A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:21:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45AE5B1780D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:21:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72C7D7B550B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:19:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C711C1C807A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:22:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197F4271442;
-	Thu, 31 Jul 2025 21:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2DEB1DDA32;
+	Thu, 31 Jul 2025 21:20:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="k2CtJe1n"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lvQGE3Ur"
+Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D71426D4DD
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:20:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB55265626;
+	Thu, 31 Jul 2025 21:20:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753996816; cv=none; b=Q2mRg4hrXi3yFGeJA3F/R4EKsaeEdcPRmnFrtE8+6neC37CycuyGBgmesOSZ2X6tqGqKI0fJQO74j7fk0yJDVs4fgbWtMZOJjjfmQdRmyd+HkgVh98EHB/AFOOqlW344CYpiqYbGvKv+zJcQq6gKu0zHs57imNzEe5t4TkODYno=
+	t=1753996832; cv=none; b=tJvUhAiIaVgccT7Q64qfuAoLz6OqIeUxmo5j2mOxMklcAJ2P3huqviwIOdAmtfhMAi4X3EWx6yDt1EiR1+0QVjTq21amLxa3RcgsUPuijhjk0CYrbRTLQ8p1G4UMNeQvvjaXzqN6Ewt7XUMTRWC9HD3UKAKeYmtbF62DWQ8B5mU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753996816; c=relaxed/simple;
-	bh=JT3CWRDTYG4cChSrXWCLOhvpTNKdhai2Q1ZpaBmS13M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=SP4p7hyExbeeuCVANWaf7xV8J3g9xsaem9rPnt8C+uPC/kmTqhnV84QEubINq+jbKcIJJIYiEqeU/Dwy/3/8lpbsbNADFkaGYi3+SCcJD+2Cs8X3ZgLmUylkKqMbPucD0anaH02RHxDtMTAHg1qg3UgTQxxNxIN6PYdm9chtLIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=k2CtJe1n; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jiaqiyan.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-748d96b974cso1455307b3a.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:20:14 -0700 (PDT)
+	s=arc-20240116; t=1753996832; c=relaxed/simple;
+	bh=ymCaajYIOvdIdSPg8VNqjdX25oNynJ9eq49Th9n64yU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jf9gw9FNiqWyR+cwr0NdclyObukv81why7jHQZ0iAe1ywKhnSGRJ49gwRvfvD4nmaNQG0SUa9aoWjpZNBTMiTWRRH3niS9vFzcRHu8RgiBNMCWAUCuvEA2+VGSg41E8FAPBds5HVVzSWSXWfvoWRMmY9aAXkpcUY4rYK6zQlHE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lvQGE3Ur; arc=none smtp.client-ip=209.85.128.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-7183d264e55so16202407b3.2;
+        Thu, 31 Jul 2025 14:20:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753996814; x=1754601614; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTjiUI3VYu0NKZoAdRBhNFbi9ic5y3o11ghK/xobY4I=;
-        b=k2CtJe1ne7PxgA0vKSdQnBOO85Sm5rq45wiMZTNpPtqw/3LNpnJL5bLe0m3gQ0miz6
-         ErtZhPsLkbHfEoDx2j5MwkS9S/JPlyuu2QZlEPD6UfqpQmuRD++ZGMx7r7DrXjKe/9qF
-         f/sdDIzenxIwSdSBM/nti3d9IMa2XRXDCUt2q71SKc42mMq5AhnqXb7n5qVrQuzXS8vW
-         w3ErPCIL1RjWJMc5sm22q0MDG6t+uz9UWS5fntqy3BANi/DIBcEFAbf+JR0MEd8H+5au
-         udhnusXxhR9LDnNJOgW9tX3QDfivdAA3zF4BeM1nvSN7KHVsisuTf5WTRoMDTYZd5gyh
-         d90Q==
+        d=gmail.com; s=20230601; t=1753996830; x=1754601630; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xr78egQa9CU9pRH3DKxqELY+v2oEDMraNPH15ogCD/g=;
+        b=lvQGE3UrG90SSqc6pAV5bMWB2SyzQdjDAPSYoATZDvnZNUQ/TRM83RB0Ub2BX2In9g
+         yZHHbO6H3Do7uPkrHcMXVP57IOTuBZt2nYZriPE4V+sDOaO4wSmmWg+s9t/3aLh4Lg4+
+         FzYsvWU3SO3FyqKv2sl6864FFXAIvJzPOmwPLPr2iCaF3OwspOzseyh9mGSX0RdmCytN
+         i4w2gHLqNozNFWELfOs8RH8QK9x5Oc+jN/lSGYfy99Y3qCqhFjB9Cga0o9VLwVfZOmC6
+         WM1FlkWkrT2+bIkVs9z7pIn2+2/5UYECmwjDD9Yjcln3rT5PMvVSm0gPyIAixw/t9CRX
+         UXEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753996814; x=1754601614;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wTjiUI3VYu0NKZoAdRBhNFbi9ic5y3o11ghK/xobY4I=;
-        b=NuromjQOJgkMVfi+jyiQu5fX2pVnQAL/GQk8hFaelKBSy+akGo2UQe38UdieEJv8px
-         +poE3oHNhGN7e20bpCmcTWdUb4ntiwRjfF6RHET1kzB027xdya7ev8ui8F6zM31CQlBS
-         ZVdJX09qdownJ7oCZFFYUF7ls+dtppnZrgOlPE4A4pL1JaXYFYnGRmH3lsqlGkhkQ65a
-         CSLg88PVrhU202zEPiVgNTPmaQQc10V13yR2YjaP+e06+g6JboiWxqmQEVlsNag4rqAQ
-         Yt1cvB8d+sX+i41ypNkm2OBRrb40u8cN24u6TjyXRrpPom9o7IT1gr9cR8cOIClEFGv7
-         K8Sw==
-X-Forwarded-Encrypted: i=1; AJvYcCVeGCPHNeFzPfdhf6TEY3wyR8bFUnHZEK0PtH53j5mEklWtYjHvEJknGNyJ49sUCtJJpUD4M/wYtBE8q3g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzunl2RbyAFLzgq7Z+vuRFE2F+5umFZ2Fg7+jEvJd8HdY0zKLcp
-	l7tXLlsYTW7UL6Z9sWlpnqhZJ/xKS619xWce3YidzKiSYJqshrbPohqbF1BwsrnSK1Fetnad25H
-	ZHXHNkTxigv5rlw==
-X-Google-Smtp-Source: AGHT+IFhVSv5g3S5dWH4OHRA2GJ8bC5E6G/7J0FiOp5/CduJgl6OwVsVKsUaRoPixkC/rA/rTNfaZg5FrktJgg==
-X-Received: from pguc17.prod.google.com ([2002:a65:6751:0:b0:b42:2527:fdbe])
- (user=jiaqiyan job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:6a20:939f:b0:233:b51a:8597 with SMTP id adf61e73a8af0-23dc0ea7837mr14728409637.35.1753996813871;
- Thu, 31 Jul 2025 14:20:13 -0700 (PDT)
-Date: Thu, 31 Jul 2025 21:20:04 +0000
-In-Reply-To: <20250731212004.1437336-1-jiaqiyan@google.com>
+        d=1e100.net; s=20230601; t=1753996830; x=1754601630;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xr78egQa9CU9pRH3DKxqELY+v2oEDMraNPH15ogCD/g=;
+        b=eQ0L6uZMEqcYM8VolGgZM51XfDFX00n0p5PxdOUdr76t1d48htMFl0Ws/cwR1lx9IS
+         gteFDJo78odvkhtYQAHF9j/7AOqzVFOLs6SdgkJKAuRK7o9N1dt3s9fVqFujXHfdx9fM
+         HragNAQDiv1JDVVfeaHMQUgvyEKo2/81+Ve4s/s+fTXQm7uGPEYnx75HMJaF/Q2j1Sl8
+         hlPAmVJVzrYEWm7YrPLKklyWqxTe6hEyxpvKRXmxKB43NOTc98QW3WW+IWR1/wlJL5YX
+         nYBPu0L8LhuCml1lqTJZ8k+AphtLMB3Z5DKNt0yg/JJjnx9yFsUfGaN8q2TqdzSCAoZT
+         x08Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU1ezkIRC2n8OVCInkT6ezYusXCUe8ZWrprT3kLcw8FkUxex1voYzMkWf17kB6BxlDjjX0ds0ytCKa4OoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmMq7GpLYWsx2dhEIN+mI7nvjd2/MNAauJ9B7sHDkdNa09nlWG
+	xQbr03y5SA8e+LlDT95ew9xRfoI9+syc0SnsqAM7XQeLjaleVgVdOWgm2it7zjfX2vz9UyBY/GV
+	aLntYHE6DzKaR+RLsZFX2s4t6xV1RPZdZoziX
+X-Gm-Gg: ASbGnctaqFBxSBrTnrZqHoxon+hPZbFhHYet1nabEXUmdpHxra+uY/gAtVPFV8zxPAD
+	9G/U8eDkSPM6loLnXOgLbR8aRpqLbHuKggY3+WtVPBmLsJg/zrCOWDG2mLTVUkaB5zp6Z6pmkuc
+	oQe77J4luvM956aNTM7F1C8TIWhuGVUvx8wNsQjamYbfpZr51wdfJhYEZFOT8qwvXXipRYViJ7v
+	EwzB4Bg4Lz1kf0dohAa
+X-Google-Smtp-Source: AGHT+IF6XvaEEsS5J1qd3aGi/yemIaHhoxMrYLWmTrK7aEhBX42m6rTnFpPky9gjAIlGVOuFKcWxdXacuQgdoYbxXVc=
+X-Received: by 2002:a05:690c:610c:b0:719:d975:d487 with SMTP id
+ 00721157ae682-71a466bf172mr128721827b3.34.1753996829726; Thu, 31 Jul 2025
+ 14:20:29 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250731212004.1437336-1-jiaqiyan@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250731212004.1437336-5-jiaqiyan@google.com>
-Subject: [PATCH v1 4/4] Documentation: kvm: update UAPI for injecting SEA
-From: Jiaqi Yan <jiaqiyan@google.com>
-To: maz@kernel.org, oliver.upton@linux.dev
-Cc: joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, 
-	catalin.marinas@arm.com, will@kernel.org, pbonzini@redhat.com, corbet@lwn.net, 
-	shuah@kernel.org, kvm@vger.kernel.org, kvmarm@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	rananta@google.com, Jiaqi Yan <jiaqiyan@google.com>
+MIME-Version: 1.0
+References: <20250726025541.11331-1-rosenp@gmail.com> <a2dbed0d6d0e529e4ced7e838455345b1ae11a23.camel@sipsolutions.net>
+In-Reply-To: <a2dbed0d6d0e529e4ced7e838455345b1ae11a23.camel@sipsolutions.net>
+From: Rosen Penev <rosenp@gmail.com>
+Date: Thu, 31 Jul 2025 14:20:18 -0700
+X-Gm-Features: Ac12FXxmxN5xqdlUqmtyQBOkBLE8mDt4ER_HtkkrvhECiJi7x7gjxeN-XGwCpsw
+Message-ID: <CAKxU2N-gfnVFej+AwSSjMZHX54rpRTepyC5o9KCm3w3W4xrPMA@mail.gmail.com>
+Subject: Re: [PATCHv2 wireless-next] wifi: ath9k: add OF dependency to AHB
+To: Johannes Berg <johannes@sipsolutions.net>
+Cc: linux-wireless@vger.kernel.org, =?UTF-8?B?VG9rZSBIw7hpbGFuZC1Kw7hyZ2Vuc2Vu?= <toke@toke.dk>, 
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, 
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>, open list <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-- KVM_CAP_ARM_INJECT_EXT_IABT: userspace can inject external
-  instruction abort to guest.
-- ext_abt_has_esr and ext_abt_esr: userspace can supplement ISS
-  fields while injecting SEA, for both data and instruction aborts.
-
-Signed-off-by: Jiaqi Yan <jiaqiyan@google.com>
----
- Documentation/virt/kvm/api.rst | 48 +++++++++++++++++++++++++---------
- 1 file changed, 36 insertions(+), 12 deletions(-)
-
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 53e0179d52949..8190ffb145c37 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -1236,9 +1236,11 @@ directly to the virtual CPU).
- 		__u8 serror_pending;
- 		__u8 serror_has_esr;
- 		__u8 ext_dabt_pending;
-+		__u8 ext_iabt_pending;
- 		/* Align it to 8 bytes */
--		__u8 pad[5];
-+		__u8 pad[4];
- 		__u64 serror_esr;
-+		__u64 ext_abt_esr;
- 	} exception;
- 	__u32 reserved[12];
-   };
-@@ -1292,20 +1294,42 @@ ARM64:
- 
- User space may need to inject several types of events to the guest.
- 
-+Inject SError
-+~~~~~~~~~~~~~
-+
- Set the pending SError exception state for this VCPU. It is not possible to
- 'cancel' an Serror that has been made pending.
- 
--If the guest performed an access to I/O memory which could not be handled by
--userspace, for example because of missing instruction syndrome decode
--information or because there is no device mapped at the accessed IPA, then
--userspace can ask the kernel to inject an external abort using the address
--from the exiting fault on the VCPU. It is a programming error to set
--ext_dabt_pending after an exit which was not either KVM_EXIT_MMIO or
--KVM_EXIT_ARM_NISV. This feature is only available if the system supports
--KVM_CAP_ARM_INJECT_EXT_DABT. This is a helper which provides commonality in
--how userspace reports accesses for the above cases to guests, across different
--userspace implementations. Nevertheless, userspace can still emulate all Arm
--exceptions by manipulating individual registers using the KVM_SET_ONE_REG API.
-+Inject SEA (synchronous external abort)
-+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-+
-+- If the guest performed an access to I/O memory which could not be handled by
-+  userspace, for example because of missing instruction syndrome decode
-+  information or because there is no device mapped at the accessed IPA.
-+
-+- If the guest consumed an uncorrectable memory error on guest owned memory,
-+  and RAS in the Trusted Firmware chooses to notify PE with SEA, KVM has to
-+  handle it when host APEI is unable to claim the SEA. If userspace has enabled
-+  KVM_CAP_ARM_SEA_TO_USER, KVM returns to userspace with KVM_EXIT_ARM_SEA.
-+
-+For the cases above, userspace can ask the kernel to replay either an external
-+data abort (by setting ext_dabt_pending) or an external instruction abort
-+(by setting ext_iabt_pending) into the faulting VCPU. Userspace can provide
-+Instruction Specific Syndrome (ISS) in the ext_abt_esr field to supplement
-+the ESR register value being injected into the faulting VCPU. KVM will use the
-+address from the existing fault on the VCPU. Setting both ext_dabt_pending and
-+ext_iabt_pending at the same time will return -EINVAL. Setting anything not
-+being part of the ISS (bits [24:0] of ext_abt_esr) will return -EINVAL.
-+
-+It is a programming error to set ext_dabt_pending or ext_iabt_pending after an
-+exit which was not KVM_EXIT_MMIO, KVM_EXIT_ARM_NISV or KVM_EXIT_ARM_SEA.
-+Injecting SEA for data and instruction abort is only available if KVM supports
-+KVM_CAP_ARM_INJECT_EXT_DABT and KVM_CAP_ARM_INJECT_EXT_IABT respectively.
-+
-+This is a helper which provides commonality in how userspace reports accesses
-+for the above cases to guests, across different userspace implementations.
-+Nevertheless, userspace can still emulate all Arm exceptions by manipulating
-+individual registers using the KVM_SET_ONE_REG API.
- 
- See KVM_GET_VCPU_EVENTS for the data structure.
- 
--- 
-2.50.1.565.gc32cd1483b-goog
-
+On Thu, Jul 31, 2025 at 1:15=E2=80=AFPM Johannes Berg <johannes@sipsolution=
+s.net> wrote:
+>
+> On Fri, 2025-07-25 at 19:55 -0700, Rosen Penev wrote:
+> > The conversion to OF missed adding a Kconfig dependency.
+> >
+> > Fixes: 2fa490c0d7 ("wifi: ath9k: ahb: replace id_table with of")
+> > Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> > ---
+> >  v2: Resend to satisfy bot as the commit is now present
+>
+> Well, bot points out the fixes tag is wrong :)
+Ugh yeah. Will fix.
+>
+> johannes
 
