@@ -1,117 +1,133 @@
-Return-Path: <linux-kernel+bounces-751903-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751905-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1491B16F0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:58:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D803FB16F17
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BC9D582CD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:58:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C021B4E686A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:00:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414DE2BDC25;
-	Thu, 31 Jul 2025 09:58:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447F029DB80;
+	Thu, 31 Jul 2025 10:01:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jed83p5c"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuu/UYLE"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CFC31CEEB2;
-	Thu, 31 Jul 2025 09:58:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DF32A8C1;
+	Thu, 31 Jul 2025 10:00:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753955916; cv=none; b=XxaQRWD4ejRF/5wFXrLFbk8BR+OJuVz8ld7FSR1BrveP0h/FLo8ivxhijuUMjfolsdVxvnQ/Z2ac5TNOjoyrSs21KOcCQTeaeKlOiAju9F/wCZ+b2bLq9DtWoRSUa5KKPT4CbC5KWo+aUApYNo622+I6sKIpXBZBvC/HLWdpTd8=
+	t=1753956060; cv=none; b=ifEc3IPpoHPxQSjN9UWmn4HVVGFJllbYsfH6602lXfde9J3mD0wICcfqsHv2aInUUWfXBjoOxR2BVLSn5dv75wpA4KveZJ5gL4rt+vtANl6UOybjFr6vgf1fzbu0VCP4gTsou/oy/DKExpzLPbr6XgNJn7wLyZf70m73oZ78dvw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753955916; c=relaxed/simple;
-	bh=lmRS72UJUUKpO815Qg4RXtM84sy3hDuYsXqSE3qhZXE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UtflZfaju/TPpyq8pGF09zCieXIIXtKHTtnDsN5msRJo2kEEF0Xlmqb1M8X8ShXzbjak9b2cQD8EcvZ3Xj0vAu1JA0Ooj+g6Qdc/9bceWvGuZyswhb0dUWLTXhewfW7hs2iY1daR7/mqk2hNoRHYV2YibtwMmHW/mO7+Pc0Yulc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jed83p5c; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 731C9C4CEEF;
-	Thu, 31 Jul 2025 09:58:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753955916;
-	bh=lmRS72UJUUKpO815Qg4RXtM84sy3hDuYsXqSE3qhZXE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=jed83p5cs9gCcaDy+JX4yh5RaGw7PXLXgD19Tn5tPdbvEbf2tCp3WlJkzVuvCB5RV
-	 /I+IHiblEPyK6tPfvn1C3rDT7ot3hlGd7uOrk8LaxoBcCYWZ1l657XxzcoQVMYCbga
-	 eQYXvmQzJy+vabFkqES/55Cfkav1fwsXNumhrT1vryDCmoyt5BlkoQqEhm0dNxnAaD
-	 k+EoLQBQQsB/il1/aDXIidq5QVSFYQUCtIIAKTJf98IAlT8sqDMndnIm9IFBQe9VCD
-	 EjwiQkM5SYLUiwlbKN54dCWPRtNMGMN/V8xBHc/na692DK8fxCvyZTbYsa35S3+Vvd
-	 rKCmadXXVbU4g==
-From: "Jiri Slaby (SUSE)" <jirislaby@kernel.org>
-To: mingo@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	"Jiri Slaby (SUSE)" <jirislaby@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	x86@kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf/x86/intel/uncore: remove dead check
-Date: Thu, 31 Jul 2025 11:58:30 +0200
-Message-ID: <20250731095830.2466139-1-jirislaby@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753956060; c=relaxed/simple;
+	bh=D/Pse1aDeleA703VwEsVnxO77p0exXY+NO8OrcIK420=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TgFnQ0qnQsUIQIqXM4ORwqO2c51zSM/rL7u/XSsxftkywrq3fFCu3YsSm8S7DpcgbEbsWgxw7GvizRNH01BCwb3IsiUpbVdssOoDpcexp6zsJEHZdNXoznkxKMPEPpQbQNyDqujFVFHcPdKw9SNhsfOq5Scvh4yO0y/kOjYnT0Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuu/UYLE; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00283a5so1364065e9.0;
+        Thu, 31 Jul 2025 03:00:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753956057; x=1754560857; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
+        b=kuu/UYLE41zw2nIy6KDobNHLbhC16/grwr75n1AetloyS3aFL6z/3CTn7sRrHfV+74
+         SPFP9AOw5qKeU5oA5eGMrUeaywAIK+pXPx2MtslMNgQ4CV2VlhnU6MoDzmvMQdix4RAG
+         OaauVmHqlXxJBPeOMXmnGit5u+KiqtqNCjGcOoXCdBGZisD74/5Wytm7t7+H9EgZoPMs
+         o1Gg1/e4MySgm6OIA03dPc0i8DEBrz0gqa2oHDCF9CSi+VP9H62I4BYAcb45smqaGLAr
+         4suFL6t61binL+nAelCY0D17e9Y8kpjweFrQo3IgFW4ZucvXDhYJKgmuujNwNTrVtn2F
+         LcvQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753956057; x=1754560857;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
+        b=iRtmzt5yU6qsLP8I9vcCSIK8NF5i5da9atGEt2dzKj+2W10ImTXcSsaRPSrJsaovok
+         mmz4Pe1MAu1yD5GmIamoUZyq+V2nGjfN0ZfioJLFUet8q8kskbA03N5QDtwVrmwv2T8k
+         PneFR2nP8U/mLauxx4qGIAzPGCdwJQu9o7LYqJHj7vbXYJW7oKlM+oNrKt4Av6p9kgqU
+         7oU8Am98KrsBl7imN6w5u9kNjSjso85WiXLl6CeI25i7LrSxCxnYxz0Tg25enat79JKH
+         e6FOVLFyhtVDJ+L1M+Rh+4uaBfKg7/Yea//vKzzQKqcaCyq2Ruigh+KsYagruRKlFu+V
+         z0VA==
+X-Forwarded-Encrypted: i=1; AJvYcCUU4n48MOlurUP9l1663XaD5mBNMyoq6AhwL3+yFfhnrV0O86pI4qNuIkwFYfGMWaE6WnxPCxZqgFKo@vger.kernel.org, AJvYcCUof6NsrvQ94saLF2BXdLVN47yQyNROiVMwrfeXMHhVtxRn7KKysg7erzME14iCT/lk6s9dIdsuglpMpMc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMdXOHghK2gyNK/tGlYDmdJefNKYgL+YcvmlwttSt1I61u1cZJ
+	zaeP8kxURcKaJ7FRm7uNwiouKfQVp1/P9GqsHTc/je+uhxmjbMlfav4Y
+X-Gm-Gg: ASbGncuj1Y8KqrmiA8DDYimCGz0aeJ+k1gU7Ta/v2zGTRVBsZEBK7NkzVBl4Ec/wpvN
+	CU6uVCssK71EpP0cs9RyspfQdkPSlcribl6ZerO8DDdcLhCSXMEWFvRmspGV4596Wm3oJP82Kot
+	FkmxEsdv3lJF+JipXcly3i/VcK+Sdf31y4fDHCu97+cvHt4uEXUCPmqkPTth7BNZsGOXyBRXeli
+	ZVGcV6U1chGPz1gZVBjXvcRa4O9VO7oCvsGkJBTzIx6Bv80DVvZs5wWjwBv1cQszC7H8RA/fLJa
+	kDNQ6Mfs8BtlSG+vsZboIgjc7c0FAe2AmlQwg7p+U1gxZOnKgOApmKYPAnLZ7Pt8PkgPCa8QlgY
+	L060NtO4Ibx1CVwsebNIiG00FOa51GtM=
+X-Google-Smtp-Source: AGHT+IGQ6Kbneqb9SOPvp5dN+lqGJxIqcX3WzO2XlOiE5Tmg6TBNCMzJE6qi21TOp0dkhT/vQt2CmQ==
+X-Received: by 2002:a05:600c:810a:b0:456:1d4e:c14f with SMTP id 5b1f17b1804b1-45892bd0a3cmr53266785e9.28.1753956057113;
+        Thu, 31 Jul 2025 03:00:57 -0700 (PDT)
+Received: from localhost ([87.254.0.133])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589ee57922sm20566725e9.22.2025.07.31.03.00.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 03:00:52 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] PCI: ibmphp: Remove space before newline
+Date: Thu, 31 Jul 2025 11:00:17 +0100
+Message-ID: <20250731100017.2165781-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-pmu cannot be NULL as is taken as a pointer to an array. Remove the
-superfluous NULL check.
+There is an extraneous space before a newline in a handful of
+debug_polling and err messages. Remove the spaces.
 
-Found by Coverity: CID#1497507.
-
-Signed-off-by: Jiri Slaby (SUSE) <jirislaby@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>
-Cc: Ingo Molnar <mingo@redhat.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Mark Rutland <mark.rutland@arm.com>
-Cc: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: "Liang, Kan" <kan.liang@linux.intel.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
-Cc: x86@kernel.org
-Cc: linux-perf-users@vger.kernel.org
----
- arch/x86/events/intel/uncore.c | 2 --
- 1 file changed, 2 deletions(-)
+ drivers/pci/hotplug/ibmphp_hpc.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/arch/x86/events/intel/uncore.c b/arch/x86/events/intel/uncore.c
-index a762f7f5b161..9c08d86ea53a 100644
---- a/arch/x86/events/intel/uncore.c
-+++ b/arch/x86/events/intel/uncore.c
-@@ -1325,8 +1325,6 @@ static void uncore_pci_sub_driver_init(void)
- 				continue;
+diff --git a/drivers/pci/hotplug/ibmphp_hpc.c b/drivers/pci/hotplug/ibmphp_hpc.c
+index a5720d12e573..2324167656a6 100644
+--- a/drivers/pci/hotplug/ibmphp_hpc.c
++++ b/drivers/pci/hotplug/ibmphp_hpc.c
+@@ -124,7 +124,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
+ 	unsigned long ultemp;
+ 	unsigned long data;	// actual data HILO format
  
- 			pmu = &type->pmus[UNCORE_PCI_DEV_IDX(ids->driver_data)];
--			if (!pmu)
--				continue;
+-	debug_polling("%s - Entry WPGBbar[%p] index[%x] \n", __func__, WPGBbar, index);
++	debug_polling("%s - Entry WPGBbar[%p] index[%x]\n", __func__, WPGBbar, index);
  
- 			if (uncore_pci_get_dev_die_info(pci_sub_dev, &die))
- 				continue;
+ 	//--------------------------------------------------------------------
+ 	// READ - step 1
+@@ -147,7 +147,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
+ 		ultemp = ultemp << 8;
+ 		data |= ultemp;
+ 	} else {
+-		err("this controller type is not supported \n");
++		err("this controller type is not supported\n");
+ 		return HPC_ERROR;
+ 	}
+ 
+@@ -258,7 +258,7 @@ static u8 i2c_ctrl_write(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8
+ 		ultemp = ultemp << 8;
+ 		data |= ultemp;
+ 	} else {
+-		err("this controller type is not supported \n");
++		err("this controller type is not supported\n");
+ 		return HPC_ERROR;
+ 	}
+ 
 -- 
-2.50.1
+2.50.0
 
 
