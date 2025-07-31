@@ -1,115 +1,185 @@
-Return-Path: <linux-kernel+bounces-752543-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752542-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70F0FB176F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:10:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0BB8B176EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 57EEB62740B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:10:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D3667A5E68
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:09:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 898322472AC;
-	Thu, 31 Jul 2025 20:10:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 072FD253F38;
+	Thu, 31 Jul 2025 20:10:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FqFjGvTW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qh2OlH6R"
+Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8AE6239E91
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07973239E91
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:10:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753992643; cv=none; b=jawuBaEju4tgiM8h9ydcS/upC/Ho8l/XF1T0HV5W8NCV66WAv1zYgXkyKaq4A37DbtNOFPduWm3BuwmI11usSbDpeVAykcSJzCfwCRtj3diSUOhyJqJJQiOEGbI+19hnLhXIquIF9M/39cHlYuDZktesx/B1wTXLOvWmh37cstc=
+	t=1753992623; cv=none; b=U3LZfcK5/LCpTumNefPPzwl7Twj2Hk9WB61p3TUC8QucXeNnb9LzZvhTvvj66Pqwu55PT9lUdYpG4cjf95G6cfcoMB0+VeFHQWQqnrCEaoLsk+LJLpHF0OXGG8y7X/N6zpoERFNv7cdf9DmyzUW+g09li7e2wSDMEQWNUo6QI0o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753992643; c=relaxed/simple;
-	bh=9U2uUlJsgZQb8PnOGpghq8IKlvSCiqX1yAsveCq9xjQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VJ/M92cwAbdLtZIb2T7lXxu7KxrULd4iKaESEsTwz0YzH2IktNwfT9Q4REkie1If924csxfOGFORKnXBDYQggieWZPR+K2o8AaK6m2p22QaXKQuyeA8p08TpIL6rnOVkC3+P1v2CHdQnEhekyd7C8xjAUPQus2jnoDezelacVnE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FqFjGvTW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32469C4CEEF;
-	Thu, 31 Jul 2025 20:10:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753992642;
-	bh=9U2uUlJsgZQb8PnOGpghq8IKlvSCiqX1yAsveCq9xjQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=FqFjGvTWoOpjS9KvsDirQk907SkyQnBTWfn3nbr+zeVZ7RmjjK+zt51CCLLOarUZR
-	 QdTVu2kVsivyUJw/4Ec/Bv9yU+QPSSy77l9rnv///1HzWpe/bIVZ+DewNCYeP75Yfy
-	 lu6MLpqEpmNuPnVGXO32n0cYmY5lPzTs1sHkda3sbquTFVz6Cao5RjKJIZnzU64QzD
-	 oDcX4vo8Vjxg3Q/R2C3vp5jj08gQi3tbYlGEJ3ZHksTIOsb6endBQ/IjSPrwIPiOHp
-	 gz3nHv7R1XhaXCqCt1clofxPVCkd6R+9iCE0kj6r32n4Ktjwlrb9BsAWgS9HZzC2v1
-	 0PSSWb6D1MHVQ==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: pr-tracker-bot@kernel.org,
-	torvalds@linux-foundation.org
-Cc: airlied@gmail.com,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	simona@ffwll.ch,
-	Miguel Ojeda <ojeda@kernel.org>
-Subject: Re: [git pull] drm for 6.17-rc1
-Date: Thu, 31 Jul 2025 22:09:52 +0200
-Message-ID: <20250731200952.307037-1-ojeda@kernel.org>
-In-Reply-To: <175393147528.2597948.6255690700279027909.pr-tracker-bot@kernel.org>
-References: <175393147528.2597948.6255690700279027909.pr-tracker-bot@kernel.org>
+	s=arc-20240116; t=1753992623; c=relaxed/simple;
+	bh=WxHeXqjT8Zn5BVhJpoljQ0LzCywOZf7PcfAXTNZ+ojE=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=rsEHyYKuOlGM/GQueXiSSlfnSctCHJk3ugqD5Hk3TuG3ycTqVkMHyZZklY5e6PrAhb7Mpnrx9W8/Kd7NzgZmfEP+PuI4wuTvasufFQoSQmcYW2mTQkOglhqzVBQUGerbxd/NmE4/VMXd8r0JbC4fONr8q+DQYfqYBv3if7xmKRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qh2OlH6R; arc=none smtp.client-ip=209.85.215.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--sudarsanm.bounces.google.com
+Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b3928ad6176so1262511a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:10:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753992621; x=1754597421; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=J09bJnyFyHUEqMAMcKAT+RUtJuszd341ngKo2pBlF9A=;
+        b=qh2OlH6RA3WEFLqgdPIpXXXmlZXu9Ggt4zjXuR+U6ICybIavTyQaH1Bgm3p5uuJYca
+         ysmDfqsa0E6YcGFb00ZPrHButkcWsMoKMc9DN124deKuc18ddi/a9Tc3w0IfK4tDK7Q/
+         766YYct1AJ8GU0bqWopxodmSCpD7uczJmrBrLo6Jn7Lnc22SAXPsP5sBmeQTZMl8lUxM
+         6kRa7aw6pzaWiuDdi/R58fbKl93GQKxWGfAIGz/hKkoJI4xRKh1GKUBzzyzuzIpIhpie
+         U5Ucxg2395uK34ymxMDI3MxiqBW2wzgjUfMPJL8k9Pj7P1Nq5+5DU0kli5IDAcoEnBLt
+         yJQA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753992621; x=1754597421;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J09bJnyFyHUEqMAMcKAT+RUtJuszd341ngKo2pBlF9A=;
+        b=LgRTG82CfZt/jfOEDhr0gPu25dfXgRJISkzmC/FppTEj0mZv+Q5lFZSOLhLMRF+jxi
+         04rRDavKWv2vfXEW5Myn+dtr483ewvatcz8LtTckHi4tIX8gxvbJ8yWnGaapb9o3hpSE
+         XNYDQ0o+dqSwuHycMh6HUKFDM/PJhkXuG0ebxlsUdemj4bU7d4hV2Uu3xTIWslf7KOml
+         ruuesTfS+YrFIfWIwsbTzQ4e67CMUfkJSPJi0/pNiSVBAJiAS6IzNLR7t2g+vGEn08Dc
+         zYIJIHYu4fHiP4eYJiO6x6sIohAhfxx4Upn5/gQnwVCDjH+WUfs9FteLMuUxMI75R3uo
+         amgA==
+X-Forwarded-Encrypted: i=1; AJvYcCVhqyI5RnGniTsztCAa573whYzYyWzlrrkF6zRsAAu/9ViQIKwguxbQY4LPch1r6YgMTXxMVsp8FPAiNMI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyBXrayvf9+yQCGDtv3Uc+AxIsaxyJmO1OudqIoNKX07BOiEEHi
+	p4IvA7ibwCBXEEZFEZCWFtzt+2xFl15jO89JdPBC0RfN5PRpWIU3EMXHBp5HlgZWhn3Qgr5x1Yl
+	hPv4BJDsiA7NPqnG0+g==
+X-Google-Smtp-Source: AGHT+IHgx/cYgrYinezSkOTAmAfU/9csyQH9piPDnBU/wf7uG2ssY6nBUVDU1MMbLwCPMAV4sTmBpXU9mwzHGbM=
+X-Received: from pgng29.prod.google.com ([2002:a63:375d:0:b0:b31:d832:f7b0])
+ (user=sudarsanm job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:6300:8095:b0:23d:dcb9:d50d with SMTP id adf61e73a8af0-23ddcb9f6dcmr3837708637.25.1753992621200;
+ Thu, 31 Jul 2025 13:10:21 -0700 (PDT)
+Date: Thu, 31 Jul 2025 13:10:09 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250731201009.888945-1-sudarsanm@google.com>
+Subject: [PATCH] selftests/mm: pass filename as input param to VM_PFNMAP tests
+From: Sudarsan Mahendran <sudarsanm@google.com>
+To: linux-kselftest@vger.kernel.org, David Hildenbrand <david@redhat.com>
+Cc: Shuah Khan <shuah@kernel.org>, Axel Rasmussen <axelrasmussen@google.com>, linux-mm@kvack.org, 
+	Andrew Morton <akpm@linux-foundation.org>, linux-kernel@vger.kernel.org, 
+	trivial@kernel.org, Sudarsan Mahendran <sudarsanm@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025 03:11:15 +0000 pr-tracker-bot@kernel.org wrote:
->
-> The pull request you sent on Wed, 30 Jul 2025 07:05:51 +1000:
->
-> > https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-07-30
->
-> has been merged into torvalds/linux.git:
-> https://git.kernel.org/torvalds/c/260f6f4fda93c8485c8037865c941b42b9cba5d2
+Enable these tests to be run on other pfnmap'ed memory like
+NVIDIA's EGM.
 
-I know you are particularly busy this merge window, but if this diff
-could be applied between merges at some point, it would be nice.
+Add '--' as a separator to pass in file path. This allows
+passing of cmd line arguments to kselftest_harness.
+Use '/dev/mem' as default filename.
 
-I put it below in the form of a patch with similar wording to another
-one you did in case it saves you time.
+Existing test passes:
+	pfnmap
+	TAP version 13
+	1..6
+	# Starting 6 tests from 1 test cases.
+	# PASSED: 6 / 6 tests passed.
+	# Totals: pass:6 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Thanks!
+Pass params to kselftest_harness:
+	pfnmap -r pfnmap:mremap_fixed
+	TAP version 13
+	1..1
+	# Starting 1 tests from 1 test cases.
+	#  RUN           pfnmap.mremap_fixed ...
+	#            OK  pfnmap.mremap_fixed
+	ok 1 pfnmap.mremap_fixed
+	# PASSED: 1 / 1 tests passed.
+	# Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-Cheers,
-Miguel
+Pass random file name as input:
+	pfnmap -- /dev/blah
+	TAP version 13
+	1..6
+	# Starting 6 tests from 1 test cases.
+	#  RUN           pfnmap.madvise_disallowed ...
+	#      SKIP      Cannot open '/dev/blah'
 
-From: Miguel Ojeda <ojeda@kernel.org>
-Date: Thu, 31 Jul 2025 21:41:37 +0200
-Subject: [PATCH] gpu: nova-core: fix up formatting after merge
-
-In the merge 260f6f4fda93 ("Merge tag 'drm-next-2025-07-30' of
-https://gitlab.freedesktop.org/drm/kernel"), the formatting in the
-conflict resolution doesn't match what `make rustfmt` wants to make it.
-
-Fix it up appropriately.
-
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+Signed-off-by: Sudarsan Mahendran <sudarsanm@google.com>
 ---
- drivers/gpu/nova-core/driver.rs | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ tools/testing/selftests/mm/pfnmap.c | 24 ++++++++++++++++++------
+ 1 file changed, 18 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/nova-core/driver.rs b/drivers/gpu/nova-core/driver.rs
-index cb68d0bc1e63..5749bad9c285 100644
---- a/drivers/gpu/nova-core/driver.rs
-+++ b/drivers/gpu/nova-core/driver.rs
-@@ -1,6 +1,6 @@
- // SPDX-License-Identifier: GPL-2.0
+diff --git a/tools/testing/selftests/mm/pfnmap.c b/tools/testing/selftests/mm/pfnmap.c
+index 866ac023baf5..2d4e8b165f91 100644
+--- a/tools/testing/selftests/mm/pfnmap.c
++++ b/tools/testing/selftests/mm/pfnmap.c
+@@ -1,6 +1,7 @@
+ // SPDX-License-Identifier: GPL-2.0-only
+ /*
+- * Basic VM_PFNMAP tests relying on mmap() of '/dev/mem'
++ * Basic VM_PFNMAP tests relying on mmap() of input file provided.
++ * Use '/dev/mem' as default.
+  *
+  * Copyright 2025, Red Hat, Inc.
+  *
+@@ -25,6 +26,7 @@
+ #include "vm_util.h"
+ 
+ static sigjmp_buf sigjmp_buf_env;
++static char *file = "/dev/mem";
+ 
+ static void signal_handler(int sig)
+ {
+@@ -117,19 +119,19 @@ FIXTURE_SETUP(pfnmap)
+ 	if (find_ram_target(&self->phys_addr, self->pagesize))
+ 		SKIP(return, "Cannot find ram target in '/proc/iomem'\n");
+ 
+-	self->dev_mem_fd = open("/dev/mem", O_RDONLY);
++	self->dev_mem_fd = open(file, O_RDONLY);
+ 	if (self->dev_mem_fd < 0)
+-		SKIP(return, "Cannot open '/dev/mem'\n");
++		SKIP(return, "Cannot open '%s'\n", file);
+ 
+ 	self->size1 = self->pagesize * 2;
+ 	self->addr1 = mmap(NULL, self->size1, PROT_READ, MAP_SHARED,
+ 			   self->dev_mem_fd, self->phys_addr);
+ 	if (self->addr1 == MAP_FAILED)
+-		SKIP(return, "Cannot mmap '/dev/mem'\n");
++		SKIP(return, "Cannot mmap '%s'\n", file);
+ 
+ 	/* ... and want to be able to read from them. */
+ 	if (test_read_access(self->addr1, self->size1, self->pagesize))
+-		SKIP(return, "Cannot read-access mmap'ed '/dev/mem'\n");
++		SKIP(return, "Cannot read-access mmap'ed '%s'\n", file);
+ 
+ 	self->size2 = 0;
+ 	self->addr2 = MAP_FAILED;
+@@ -246,4 +248,14 @@ TEST_F(pfnmap, fork)
+ 	ASSERT_EQ(ret, 0);
+ }
+ 
+-TEST_HARNESS_MAIN
++int main(int argc, char **argv)
++{
++	for (int i = 1; i < argc; i++) {
++		if (strcmp(argv[i], "--") == 0) {
++			if (i + 1 < argc && strlen(argv[i + 1]) > 0)
++				file = argv[i + 1];
++			return test_harness_run(i, argv);
++		}
++	}
++	return test_harness_run(argc, argv);
++}
+-- 
+2.50.1.565.gc32cd1483b-goog
 
--use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*, sync::Arc, sizes::SZ_16M};
-+use kernel::{auxiliary, bindings, c_str, device::Core, pci, prelude::*, sizes::SZ_16M, sync::Arc};
-
- use crate::gpu::Gpu;
-
-
-base-commit: 831462ff3ec61fd2e6726b534a351a1a722bf2ab
---
-2.50.1
 
