@@ -1,87 +1,79 @@
-Return-Path: <linux-kernel+bounces-752667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDAD3B17921
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:31:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C26B17929
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:39:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 92D033A9ECA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:31:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 655101C22E46
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE58C27E05B;
-	Thu, 31 Jul 2025 22:31:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 441BC27E7DD;
+	Thu, 31 Jul 2025 22:39:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="l7DURx8l"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LJAByOYq"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B15C91E2858
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 22:31:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F6E627E07E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 22:39:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754001106; cv=none; b=HW/hgBz19GlJRWYpodogvDqTfY6vyzuSbh2LN7dc1KD1a93SCV6l4UaVjopAdB2SlFDUWvf8fBifcYsd+0ZRrIEocxAHTdxj93EMopqlBg4QUSt9YO3aeYkNa5adt1jsbhuXPMNIE+TqFRqa4sgmE4kimiigfuCjUHx1JgzIrz4=
+	t=1754001584; cv=none; b=UCq5uvbYeM9kL6XFNxlcAs0Bl/kvxMFg9vfq2RGtr06UZJvkFmORUV4j99cEW5FSaoM5Szr4qqaxqtDGlVCDLdtppvWUpEUDFasl0+FaivgHwKVGlInxg5DkvxaxIjL8NmANoUaY1PuQWmGli53Zuk0KEzDOkQ6udugfnRZhfoY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754001106; c=relaxed/simple;
-	bh=V88Xz2IVNFWtSxc1E/peEKh9xtpEYQ6L5LEkV/XWJ8M=;
+	s=arc-20240116; t=1754001584; c=relaxed/simple;
+	bh=BJoQKqc8dEBmAiO5Z8FV2c3vOLUzvgwK/3DHeDxEL9s=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A5wVOdMQxF8DFCEILilsmYiF7TKGXfn1eu0MMbhVPF4oyB/BbuRybuUCFYgXzxnkDaYTDIYRi0hiMSjCDOjGXN1GRES67lIqWO7w5S98nJSXspLw/AvhHwoCBGsA3U0tiU0JoOaUIMKjHKEXiYPzSS65HEy/mxsnMV57Jzi4BRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=l7DURx8l; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-240718d5920so685ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:31:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754001104; x=1754605904; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dmz3rRRo1iGk4Bkn+XaZWCGWfP9o/IvKxOlu+wl3FL4=;
-        b=l7DURx8l+1zzSNH/Y0f8fq7l5LvLhkhAWf3P4weHQ1LbOSmv7mu6JJsuCVaUJbh0lq
-         sNCIZulvPfUWPfZ90t7kpnRxIltVZGewoVuzU2E6PYAZ5jkVjbNN238aDiDGjPh/Nj4a
-         jaUV8xAeJ4ui7KRw3w4q1W/1r+y+7LgzrvPvBshPYmsu9CMM2JVQX8A4VmtUBEOIbqxE
-         upLTu+7DXqBiXZHYFFBXBFvF7TjLR/aFVWf3H+uE/+GPyLodJEUOKCbNr9RFaVnvAjdP
-         GfLJh6d6kLC0L1MCNLWTueAAvJXq0j5SxIm+ZIFFBQRdH2/wPVOGR3agw1+ub8T5t2wq
-         KOfg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754001104; x=1754605904;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Dmz3rRRo1iGk4Bkn+XaZWCGWfP9o/IvKxOlu+wl3FL4=;
-        b=d+XOUTLh1WVTq1l39pq44/ZA2azWs7Lvmf0zYzDaQDfxOPf/+09HX948ayzCtSqY+m
-         Egw/IpESk+RnDeWSjNroCsb/4IV6wSBOTk4z8Spph9yexJ5hc2d4k7sywULR7Epz7Xvh
-         uykE4rALlijbRUZAARPlFx9Uwye1q3wrH6AJMC9mW6ZFbOQ5B5iYUU11HrUXHuAFen9z
-         WqZn/vlZQVybwK+E/W5X7Le2Cb4Vt8hvg9bVhJpptAS0Vp56BLgZ/dzjCbXFDiIC9LYO
-         8X2GTuSeNDzgAfuln4YGO98UCnIo0yUL9Ea65ZF/1DxwPrT88lDJcu4zU9dFtIcgIxRp
-         W0qg==
-X-Forwarded-Encrypted: i=1; AJvYcCWzrKqxnfysmzEv2E8gU5L92dDSeiy7LH9jwtcgIXbeuCL17X8Cq6/OsO9uqTTToUgjBBpXGJCKRdswCog=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw11Dndz/nMElk1tQ4ddSph1W/W1RqowTcUo+Y7IobfPzzRH707
-	R5JLq0ILIocy7BeE6utsNaq68g1NrcBMSVunHV74ggv7yvTmoaGpWc7bAT/Wt2cf0A==
-X-Gm-Gg: ASbGncuh6rsUg1d5NM0ctZxrTSkC8RvZtddwPL5hOaYeQ7y+W9NuBIQEWzaapXBHayI
-	mxnM0uSoN+A0MfvecnAo0MGjOrWtLHcFW+GsZl8XmNldYzNEae/bI8w3Z5TFk9ntkTVQwJZzOmL
-	lzIIttJ3TZqDKTLMnKFyE0dF2b29M0DEv+FDxU8DQzK+viNeE67xPjPlTNXNp6aXCx8iFephdo6
-	GbuzWLX92VwghkAQ+58pqi5oOyfYbxMfK7BH+9ew8nHpBdC/R1UGF8/S4YTTn0m4FhNA9WTfHJn
-	HXWcFYhF1jFOqcxjARXqVLPSjBMLHbYT/fFg+7TYHVeIaAs3CWI9aBXiENsUHs0pJwaAkIJjJ4k
-	lUh17O8CRxNk5KlxZfGPGTUUfrdZXwcugpSDsAZTuwoxFX03Q0l71O+I33X2Hua4J1MOb7R/3hw
-	==
-X-Google-Smtp-Source: AGHT+IFWCtKBf+vvEYOI4A4CICLQLDvH4Pfc5QQIQtFJHb1xrK6jUevGcCx+8VyM7qERSU/tHNMpMg==
-X-Received: by 2002:a17:902:c40b:b0:223:ff93:322f with SMTP id d9443c01a7336-24227b2c79dmr1204955ad.2.1754001103709;
-        Thu, 31 Jul 2025 15:31:43 -0700 (PDT)
-Received: from google.com (135.228.125.34.bc.googleusercontent.com. [34.125.228.135])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e897690csm26801135ad.99.2025.07.31.15.31.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 15:31:43 -0700 (PDT)
-Date: Thu, 31 Jul 2025 22:31:37 +0000
-From: Carlos Llamas <cmllamas@google.com>
-To: Jann Horn <jannh@google.com>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>,
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH] eventpoll: Fix semi-unbounded recursion
-Message-ID: <aIvusYlauznxttGc@google.com>
-References: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=B6qGx4OA7fAa4oiJP+MyeDgbDJCdbZYn710dD5vGvUJvyRQV4OJ6b7R8v/49yE0Lip0cx9BOagxKYHHhoPgA3AbTK7R5DtnTHbG0nbGqNh/CcH4PojWIT2Lms40azuuKxy9lSGOTeA5UU1huZZ5MUPWbQMon5nrkee9/3k2pMfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LJAByOYq; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754001583; x=1785537583;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=BJoQKqc8dEBmAiO5Z8FV2c3vOLUzvgwK/3DHeDxEL9s=;
+  b=LJAByOYqb3Bxa/w+fdLFl0IMpOyNLRdRrF+O/cJXu8IPI0ngk71VOzwl
+   6ObqjeM/pM8kPGvCwXNv7nzgp6yyuo0NprOKLV2/eqO4CnWYVn05FaQsX
+   Qn7GNkkNz1/+6i/KxLMlhu6UkZs8MduMPe8Nu5flzOZjv3VeXJJPg/kqh
+   HszoKu1ZoZzFZHaVs48x2RHHtpQzKoOKg2AwZvcWG0KDTKoBrAFkPPL8F
+   oozmTgCih/JFNQoNGE4tizZ/I/wlnUFI01zfak9M23n8s9PycjOCa4XOw
+   jArDbLESb/Z6IWUpKBFZl/gp0fwzhu20OcfwRMiC2CqSTBox4OJ59Hh/u
+   A==;
+X-CSE-ConnectionGUID: qR836oDsRNCpyfhncPS0Dw==
+X-CSE-MsgGUID: msyzhX3dRue00I31blW0BQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="59988067"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="59988067"
+Received: from orviesa009.jf.intel.com ([10.64.159.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 15:39:42 -0700
+X-CSE-ConnectionGUID: lTTSyCyYRXmfpVdt1t6HEw==
+X-CSE-MsgGUID: lHqoQGulSQil2iREuf5zqg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163096466"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa009.jf.intel.com with ESMTP; 31 Jul 2025 15:39:40 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhbw1-0004AC-1l;
+	Thu, 31 Jul 2025 22:39:37 +0000
+Date: Fri, 1 Aug 2025 06:39:18 +0800
+From: kernel test robot <lkp@intel.com>
+To: Seyediman Seyedarab <imandevel@gmail.com>, dwmw2@infradead.org,
+	baolu.lu@linux.intel.com, joro@8bytes.org, will@kernel.org,
+	robin.murphy@arm.com
+Cc: oe-kbuild-all@lists.linux.dev, iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org, skhan@linuxfoundation.org,
+	linux-kernel-mentees@lists.linux.dev,
+	Seyediman Seyedarab <ImanDevel@gmail.com>
+Subject: Re: [PATCH v3] iommu/vt-d: replace snprintf with scnprintf in
+ dmar_latency_snapshot()
+Message-ID: <202508010632.WB0CM5Bz-lkp@intel.com>
+References: <20250730205046.29719-1-ImanDevel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,91 +82,56 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250711-epoll-recursion-fix-v1-1-fb2457c33292@google.com>
+In-Reply-To: <20250730205046.29719-1-ImanDevel@gmail.com>
 
-On Fri, Jul 11, 2025 at 06:33:36PM +0200, Jann Horn wrote:
-> Ensure that epoll instances can never form a graph deeper than
-> EP_MAX_NESTS+1 links.
-> 
-> Currently, ep_loop_check_proc() ensures that the graph is loop-free and
-> does some recursion depth checks, but those recursion depth checks don't
-> limit the depth of the resulting tree for two reasons:
-> 
->  - They don't look upwards in the tree.
->  - If there are multiple downwards paths of different lengths, only one of
->    the paths is actually considered for the depth check since commit
->    28d82dc1c4ed ("epoll: limit paths").
-> 
-> Essentially, the current recursion depth check in ep_loop_check_proc() just
-> serves to prevent it from recursing too deeply while checking for loops.
-> 
-> A more thorough check is done in reverse_path_check() after the new graph
-> edge has already been created; this checks, among other things, that no
-> paths going upwards from any non-epoll file with a length of more than 5
-> edges exist. However, this check does not apply to non-epoll files.
-> 
-> As a result, it is possible to recurse to a depth of at least roughly 500,
-> tested on v6.15. (I am unsure if deeper recursion is possible; and this may
-> have changed with commit 8c44dac8add7 ("eventpoll: Fix priority inversion
-> problem").)
-> 
-> To fix it:
-> 
-> 1. In ep_loop_check_proc(), note the subtree depth of each visited node,
-> and use subtree depths for the total depth calculation even when a subtree
-> has already been visited.
-> 2. Add ep_get_upwards_depth_proc() for similarly determining the maximum
-> depth of an upwards walk.
-> 3. In ep_loop_check(), use these values to limit the total path length
-> between epoll nodes to EP_MAX_NESTS edges.
-> 
-> Fixes: 22bacca48a17 ("epoll: prevent creating circular epoll structures")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Jann Horn <jannh@google.com>
-> ---
+Hi Seyediman,
 
-Hey Jann,
+kernel test robot noticed the following build warnings:
 
-I've bisected an LTP test failure to this commit and I can't find any
-reports of this. The test is epoll_ctl04:
+[auto build test WARNING on linus/master]
+[also build test WARNING on v6.16 next-20250731]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-https://github.com/linux-test-project/ltp/blob/master/testcases/kernel/syscalls/epoll_ctl/epoll_ctl04.c
+url:    https://github.com/intel-lab-lkp/linux/commits/Seyediman-Seyedarab/iommu-vt-d-replace-snprintf-with-scnprintf-in-dmar_latency_snapshot/20250731-045248
+base:   linus/master
+patch link:    https://lore.kernel.org/r/20250730205046.29719-1-ImanDevel%40gmail.com
+patch subject: [PATCH v3] iommu/vt-d: replace snprintf with scnprintf in dmar_latency_snapshot()
+config: i386-allmodconfig (https://download.01.org/0day-ci/archive/20250801/202508010632.WB0CM5Bz-lkp@intel.com/config)
+compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250801/202508010632.WB0CM5Bz-lkp@intel.com/reproduce)
 
-This is what I get:
-  ####################################################################3
-  root@debian:~# ./epoll_ctl04
-  tst_test.c:2004: TINFO: LTP version: 20250530-116-g91e6272fe
-  tst_test.c:2007: TINFO: Tested kernel: 6.16.0-rc1-00017-gf2e467a48287 #28 SMP PREEMPT Thu Jul 31 21:12:22 UTC 2025 aarch64
-  tst_kconfig.c:88: TINFO: Parsing kernel config '/proc/config.gz'
-  tst_test.c:1825: TINFO: Overall timeout per run is 0h 00m 30s
-  epoll_ctl04.c:59: TFAIL: epoll_ctl(..., EPOLL_CTL_ADD, ...) with number of nesting is 5 expected EINVAL: ELOOP (40)
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508010632.WB0CM5Bz-lkp@intel.com/
 
-  Summary:
-  passed   0
-  failed   1
-  broken   0
-  skipped  0
-  warnings 0
-  ####################################################################3
+All warnings (new ones prefixed by >>):
+
+   drivers/iommu/intel/debugfs.c: In function 'latency_show_one':
+>> drivers/iommu/intel/debugfs.c:651:13: warning: unused variable 'ret' [-Wunused-variable]
+     651 |         int ret;
+         |             ^~~
 
 
-I haven't looked much into this but it seems the test expects EINVAL at
-nesting depth 5 and is instead getting ELOOP. Any chance there is an
-off-by-one error in ep_loop_check() as it fails with depth=4 and
-upwards_depth=0, which isn't correct?
+vim +/ret +651 drivers/iommu/intel/debugfs.c
 
----
-diff --git a/fs/eventpoll.c b/fs/eventpoll.c
-index 44648cc09250..811960b2a74c 100644
---- a/fs/eventpoll.c
-+++ b/fs/eventpoll.c
-@@ -2237,7 +2237,7 @@ static int ep_loop_check(struct eventpoll *ep, struct eventpoll *to)
-        upwards_depth = ep_get_upwards_depth_proc(ep, 0);
-        rcu_read_unlock();
+a6d268c619d6765 drivers/iommu/intel-iommu-debugfs.c Sohil Mehta         2018-09-11  647  
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  648  static void latency_show_one(struct seq_file *m, struct intel_iommu *iommu,
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  649  			     struct dmar_drhd_unit *drhd)
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  650  {
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10 @651  	int ret;
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  652  
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  653  	seq_printf(m, "IOMMU: %s Register Base Address: %llx\n",
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  654  		   iommu->name, drhd->reg_base_addr);
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  655  
+a6210a36bda1ca1 drivers/iommu/intel/debugfs.c       Seyediman Seyedarab 2025-07-30  656  	dmar_latency_snapshot(iommu, debug_buf, DEBUG_BUFFER_SIZE);
+a6210a36bda1ca1 drivers/iommu/intel/debugfs.c       Seyediman Seyedarab 2025-07-30  657  	seq_printf(m, "%s\n", debug_buf);
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  658  }
+456bb0b97f00fe8 drivers/iommu/intel/debugfs.c       Lu Baolu            2021-06-10  659  
 
--       return (depth+1+upwards_depth > EP_MAX_NESTS) ? -1 : 0;
-+       return (depth+upwards_depth > EP_MAX_NESTS) ? -1 : 0;
- }
-
- static void clear_tfile_check_list(void)
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
