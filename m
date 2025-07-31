@@ -1,141 +1,156 @@
-Return-Path: <linux-kernel+bounces-751484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751485-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BFBCB16A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:44:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133B1B16A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:44:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6DF3C7A2808
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:42:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD2F1AA26E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:45:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4877413D24D;
-	Thu, 31 Jul 2025 01:43:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E7B15442A;
+	Thu, 31 Jul 2025 01:44:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="TaHfkFfd"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hi9Gd/5k"
+Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 206C67080C
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:43:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D2D7F477;
+	Thu, 31 Jul 2025 01:44:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753926233; cv=none; b=OLQB7lFK1mXHTaSddEm+yj8xH5+zz1g/yubLfNgkXupuaqxAcz5c7AjNb4zD4xryTp4bt/JKOVZh92GVyzk8dTQp1czhy0DfSDY8xhYZek+hspbJBW+8DB1QwfQQPM+9+ZZ4gDM6T5tiNDHU9DDFYyNCCdTlK+T95oKbo+EMwNs=
+	t=1753926279; cv=none; b=Xv6Yon/OM7wMdNkkCYfgBje5ssOJEa+A0+9IRuYjEwugDeV9yvCuIpnoAV2HALWuCU8Y9rIjDAQMiG163K6CDFc1nJvQYgETjtSBm3DWs4bg4aQuzpQTQNMpj4MKFHmuO0oHhmNeSalvmYxjgxt5rZNQ4Vj6SY0PnwIwnfVfACQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753926233; c=relaxed/simple;
-	bh=6c6CPKeVYSm/Nje3nx041XmLjIkTbymaDdjGrlTM10s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YFEJ5fDxuyj+YchVBbnLCzPYVFyYYzLSdVfGwUEqtl7/qJsnqi09ZAqhAnamkx40znd8MxD5FZc+J9ewBWvGa0XhEuF+8aWlMZlBPgooHFqMvWCTYTgsGunkIsSXVE5I5NOgTN+K2dG+5R6la7LTIF6jZNgspYL01QnIRAp5pUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=TaHfkFfd; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V1fNo6024824
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:43:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	iEClsVWkG5VKecjEdwib4zfwZqjUZAXc840AZ1TMsBk=; b=TaHfkFfdLH5flNES
-	4MvvcGUNkZEvj+rrOPljdtEBXVqq3LR/wHSSIFpm2MgoAQv8dXoUiuoMcxL1U+1m
-	QSFnESoBqWbrVxKE6gDBpKVC4K/w2tWbMc2lAX7lY7X6L443ppto2hRAIEHZkwsp
-	aKFvXPmMQFToF3aMvy1euZ1Ec1wfPd1AxUnSlK3ixw3olamWqCcDbwrmLWNKX3Yk
-	qOOSQysmY/TfBzYktQUUPhQivpOoIDR0YwOM8kAsbTVARHPxGQXKGGsc31TculqO
-	wvI4FgvJo0JQcaCsF1ufSe88qPZykUW6JapwIXwl550Y6lwg7KPVciRjeQlC37oF
-	5b+3Mg==
-Received: from mail-pg1-f197.google.com (mail-pg1-f197.google.com [209.85.215.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q8662b6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:43:51 +0000 (GMT)
-Received: by mail-pg1-f197.google.com with SMTP id 41be03b00d2f7-b31bc3128fcso613084a12.0
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 18:43:50 -0700 (PDT)
+	s=arc-20240116; t=1753926279; c=relaxed/simple;
+	bh=PXcFVb3XfNEVPp/Kfyksg9teOS85x7QJyRpu+lxqObY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W3l49SFwEPF0NNyEOpFch+OcTuE7dQ2gyxhLTAIj+DpqII/rs+XMC+0NXBxhNP7kh8sbCCugN807Hj3E44K1ZvCrDJvtG/jyetbokMt7V2QYhyg3Fz81ApjHsnuSfmOWBBguBDyqFNZz37pza+wARdDScN4pn1DfiecVnGwoFQI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hi9Gd/5k; arc=none smtp.client-ip=209.85.167.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-41b9e3c8bd4so268721b6e.0;
+        Wed, 30 Jul 2025 18:44:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753926276; x=1754531076; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=TvqjHObjQC7JX2Ub4wOeZhni34SLZZkthzxU3aytJEM=;
+        b=hi9Gd/5kYy3oeB+itP8ngJmL1MabdSk9GXUX2fhtStoT7FtLvV/QYb2q3gRrmYbjXk
+         if5H4JU58fNH3zdNYWaydjnjERXtxjFOfiiAVvJUagK1jTB4A4MEqzAVAjjAKAuGKd/a
+         ZaC+goz9NiTiX/7bGHWdyQkmFxCKN/ryCAKLW9Cyt7hmyDc8rMAiMAw8umKQTMN6vP+E
+         1TYNFNqd7dngx+yJdABq9Acge2RI0QaBXmVmb2mGQp5Wcm/U9KDYjsE5E5TfxiTc3MHK
+         Gd8tV23N9OBju17aiwvP1nHvspW/HxNzWWTYIdcOOQgvYj1DFbeYJXnC9Ifz6Fr7P15i
+         DXsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753926230; x=1754531030;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=iEClsVWkG5VKecjEdwib4zfwZqjUZAXc840AZ1TMsBk=;
-        b=JvZfSwYtU44sLrodxZW8u6dV9J0gA3k9FouaKOcRmOUleciJ3bOAHZZUEl9HyFZ9e9
-         o7Y92X0a/Tssju5Td8anQ/w0ee77DKksMW5qTVewo8LcOxEr5mX8250IgekXVsXuX5JR
-         9d+4vpNkO9W7+A8MZXnSjNnX44lghIjM4chcp/Z5F3/fRxR/v9W80+xxBNRiBgXyqs/W
-         +9kCGpMGS6YHev61vAgPFkQ5f6BQVJnIUhH4DdG8tuTCrs8EEmKf0wUiRXYxZGV3FEnI
-         GPqny4DXgkr+EqGgEkf8xernz17MeH6GpcPfRL2+d+tEVm+l/vqDWbcwh6htDVH3mZSA
-         ZX9g==
-X-Forwarded-Encrypted: i=1; AJvYcCV2chHq2PF4buK1tBnFNmESNeSizToKmDHZo+jR2WT1hlvxN793jz1y7+twCchnXJl5R8wn9ftC/hFM4dI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzq21GUzuB1jaYyh86qQ3xBcnHGCzywwjkRbl7HDVOZdCspizDI
-	w2MyxGmO3JkdTDxppE7UGUZNJK1faUx7ZB452Lp3gbE3HFTvSJbN+48VhYFI2EzNnTwDtwcuiPI
-	751yddzUaQ5APCLWgdQlc/1Tvfu/j5AluPGybDGcSb/1xjJyyuB0mLdPZIh5JuVm6VBc=
-X-Gm-Gg: ASbGncsf2u7w6JrHXf3SdCxdnLxomCgUTb7zoSQQlvkWxzKXodOu3NcfNDRIwhiHMIz
-	2t6toA/1l/gubHRd7i2SSDJeEZq//RygYKtCB9Q8G3r0E1Fw+xYNsKKVWdyjDsSavAOaCdDnuiZ
-	PuOSMtc3woOelqofvcPZCldALFpgty4kLIxisH8il59FkabzqbnwLtKr99/Y7VPz6jz8tp/iU/7
-	0eA2coy1+8n7m4dNMDTGcD15QR4jdngUr39UMqyGjcIch4vyTPpxtMPx19+LD8gR8jburkoCZxB
-	EoohymVInv594ZEuFxakQFaPjArl8xqeqVzQ+H9v1g9VyGFfMacnkSxC8+xJquFKAnxveGY+vgN
-	QCX4BviP9W1u/s0vdIVDcZZVQJbhL
-X-Received: by 2002:a17:903:2a8d:b0:234:a139:11f0 with SMTP id d9443c01a7336-24096a72a07mr63142655ad.7.1753926230131;
-        Wed, 30 Jul 2025 18:43:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHGeA7dwAAcKBLFo4NeBFBuWGZ33mZa2ufW3SFDYSN5mlhbysww0yxJDxS/Ld+l1CU8IMpouQ==
-X-Received: by 2002:a17:903:2a8d:b0:234:a139:11f0 with SMTP id d9443c01a7336-24096a72a07mr63142455ad.7.1753926229761;
-        Wed, 30 Jul 2025 18:43:49 -0700 (PDT)
-Received: from [10.133.33.141] (tpe-colo-wan-fw-bordernet.qualcomm.com. [103.229.16.4])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8976995sm3442425ad.91.2025.07.30.18.43.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 18:43:49 -0700 (PDT)
-Message-ID: <e0f827e0-1552-4542-ac70-70903227734e@oss.qualcomm.com>
-Date: Thu, 31 Jul 2025 09:43:47 +0800
+        d=1e100.net; s=20230601; t=1753926276; x=1754531076;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=TvqjHObjQC7JX2Ub4wOeZhni34SLZZkthzxU3aytJEM=;
+        b=H8F3KDo7+ZYDSpBgyYzhqUZIow/95QrL/ykbMZpJWj5VjzM1lYdpx6H5+bqvBJ2c2N
+         gLP36r/EijE8LewgtUpHFVHCxKaMAnm68qTi/jds57Nx5c65ZbUgxSQzJFe4chtBus1+
+         1AH5qggOg97EizuSndxiLDuh3v2LJ24uLRd+Xk1Yf1bw0E9Ce2t1dSgPWgW5BZdpGwux
+         eqlqMOkkiCxmChkHEGGcr4VUdbdbE2HbTmYjEzK6XqluGyO/Au4o5A3DSFY2hE9FHU51
+         X0a3vVX1sOUEWEKO/H61lmVFpXqjfA2VHltcc6JYu0KRX42R8gEZI74FjmMTb9fceeGl
+         g5rg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/7pPn0sp1YNTXhbPExolDeKHhK0top5jyO5YlaZRJPtELzGmjLZY5W8tSJJS+vB3SRPc=@vger.kernel.org, AJvYcCWgnRgKvZuR1NmbKfdyMjNuT9bVoZ9A/dC4ZHOJScMjw+gy1C9lE2TYkPGLcsBr5qwM7tpgvG5I1cgfT7zt@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvaM2a5AcKwHbeRbT8PisvXf2zwHCrfc88q1Rh6Ps0yhbIcL2y
+	g+BxBN+fW0W60Y7C9DSVOevbG4RAbVG0vnM+Q+J8goFKDEv/N6deJ+hkYDiSKuCRLcGZxwjyrOq
+	cdyquhOeGuZ7mcOdcOixk2tEj7SmoNYU=
+X-Gm-Gg: ASbGncvd6em4xXOlbem/WCNZ2r3SAFP7tEPBeXiPGJ16l464t6zFum/jkSWEN1ay/OX
+	wegQO241SeB8wxGYvlYgapnGRiemtKbIAj3ouxdDczIuXGUJ3dqK0pi7RrWkgYIqfpdphaejCuV
+	nU9Ir0XKJ2+jtfYewKl6G+1UmxBLXD7t+kitD3LFUmSqhTJ3JdxCHjTmcNziQ9fIaauRQe4JMjV
+	47vTsQ=
+X-Google-Smtp-Source: AGHT+IFqiRnMtLMxFx16WSrBf6XJxsgbu5jgcccCl5t+5itNCUcmqyUoKLelAaghTDww78kjcfJl+bfst0NoWS3TiK8=
+X-Received: by 2002:a05:6808:1521:b0:406:697f:a62f with SMTP id
+ 5614622812f47-4319999e1e4mr3911664b6e.10.1753926275877; Wed, 30 Jul 2025
+ 18:44:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] leds: flash: leds-qcom-flash: update torch current
- clamp setting
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, kernel@oss.qualcomm.com,
-        Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>,
-        linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
- <20250729-fix-torch-clamp-issue-v2-1-9b83816437a3@oss.qualcomm.com>
- <f3c004a9-dba9-48b5-9930-979053d0a32c@oss.qualcomm.com>
-Content-Language: en-US
-From: Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-In-Reply-To: <f3c004a9-dba9-48b5-9930-979053d0a32c@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDAxMCBTYWx0ZWRfX5CL+V4YlYztb
- rtgkmId3+dDykUn2XutW49MxxFGwUVkhWxWKvW2Z9uMuAQzBRCq+W//QXrTvCidP+Luy/R+3BkU
- rFkr4J4xC32gDNmHRajguOuJI/qDMPYt93SLj711xa/Rw97HF9PCXIQXKg4ZWAbjUWHcVEfU+bO
- XkTeGXJ0H6ebuCRc71bxUNJ3vi0OgdT0nSLA+Vn+MuAPtzpN5tN7UFDC0Y+KYmwNq0NL55GHbbF
- Ih9P8Xm1TQu6Xed71K8dNk/Rx0yGOci0jFhxm5xdCFjub5/tcgL27glPlIGJryImsYMCMKwqIrh
- z4y+bdvkbOmd0AFzWZ3DK3JMPLMkqIcbDi+H4oMEEKk/8xe0+qqDkhTlxWPKihPqpchn/UInQD9
- Bp4Hw345IQL6YTzR7mNzh40xAO+uu0wVan4AAVb0DCg61DtPibX9I7RoWgyCwzLcGKJP8OCI
-X-Authority-Analysis: v=2.4 cv=TqLmhCXh c=1 sm=1 tr=0 ts=688aca57 cx=c_pps
- a=rz3CxIlbcmazkYymdCej/Q==:117 a=nuhDOHQX5FNHPW3J6Bj6AA==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=-gdVP2Hq3PRLCh7MhMgA:9
- a=QEXdDO2ut3YA:10 a=zZCYzV9kfG8A:10 a=bFCP_H2QrGi7Okbo017w:22
-X-Proofpoint-ORIG-GUID: 4G6pLYyMaEgWgupsDi5_c1Ogq0fyZdwP
-X-Proofpoint-GUID: 4G6pLYyMaEgWgupsDi5_c1Ogq0fyZdwP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_06,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 mlxlogscore=732 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2507310010
+References: <20250730131257.124153-1-duanchenghao@kylinos.cn> <20250730131257.124153-3-duanchenghao@kylinos.cn>
+In-Reply-To: <20250730131257.124153-3-duanchenghao@kylinos.cn>
+From: Hengqi Chen <hengqi.chen@gmail.com>
+Date: Thu, 31 Jul 2025 09:44:23 +0800
+X-Gm-Features: Ac12FXw2Om8UPwVFQYngJybFlYBDlP0KxfqNZ7udcHhvklhAejZcvU7iATJRcmY
+Message-ID: <CAEyhmHRzvazN06DsrqTO9PiBj7kJpZ3XdcOpxE2khjaKaE5jZQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/5] LoongArch: BPF: Update the code to rename
+ validate_code to validate_ctx
+To: Chenghao Duan <duanchenghao@kylinos.cn>
+Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
+	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
+	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
+	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
+	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
+	vincent.mc.li@gmail.com, geliang@kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Jul 30, 2025 at 9:13=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos=
+.cn> wrote:
+>
+> Rename the existing validate_code() to validate_ctx()
+> Factor out the code validation handling into a new helper validate_code()
+>
+> * validate_code is used to check the validity of code.
+> * validate_ctx is used to check both code validity and table entry
+>   correctness.
+>
+> The new validate_code() will be used in subsequent changes.
+>
 
-On 7/29/2025 7:01 PM, Konrad Dybcio wrote:
->> +	torch_clamp = (current_ua / led->chan_count) / TORCH_IRES_UA;
->> +	if (torch_clamp != 0)
->> +		torch_clamp--;
->> +
->> +	flash_data->torch_clamp = max_t(u8, flash_data->torch_clamp, torch_clamp);
-> Please confirm if I understand correctly, we may have N flash LEDs
-> connected, and this additional safety hardware can only compare any
-> individual LED's current draw against a single maximum value, which
-> we're setting here
-Yes, your understanding is correct!
+I still feel uncomfortable about the subject line.
+Hope Huacai can rephrase it when apply.
+other than that,
+
+Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
+
+> Co-developed-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: George Guo <guodongtai@kylinos.cn>
+> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
+> ---
+>  arch/loongarch/net/bpf_jit.c | 10 +++++++++-
+>  1 file changed, 9 insertions(+), 1 deletion(-)
+>
+> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
+> index fa1500d4a..7032f11d3 100644
+> --- a/arch/loongarch/net/bpf_jit.c
+> +++ b/arch/loongarch/net/bpf_jit.c
+> @@ -1180,6 +1180,14 @@ static int validate_code(struct jit_ctx *ctx)
+>                         return -1;
+>         }
+>
+> +       return 0;
+> +}
+> +
+> +static int validate_ctx(struct jit_ctx *ctx)
+> +{
+> +       if (validate_code(ctx))
+> +               return -1;
+> +
+>         if (WARN_ON_ONCE(ctx->num_exentries !=3D ctx->prog->aux->num_exen=
+tries))
+>                 return -1;
+>
+> @@ -1288,7 +1296,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_pro=
+g *prog)
+>         build_epilogue(&ctx);
+>
+>         /* 3. Extra pass to validate JITed code */
+> -       if (validate_code(&ctx)) {
+> +       if (validate_ctx(&ctx)) {
+>                 bpf_jit_binary_free(header);
+>                 prog =3D orig_prog;
+>                 goto out_offset;
+> --
+> 2.25.1
+>
 
