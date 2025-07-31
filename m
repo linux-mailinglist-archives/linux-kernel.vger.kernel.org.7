@@ -1,79 +1,109 @@
-Return-Path: <linux-kernel+bounces-752730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D275EB17A41
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:48:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D6776B17A46
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16DA1540FE7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0DA18542B66
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:50:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D4B628A1F9;
-	Thu, 31 Jul 2025 23:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 364AD28A3EF;
+	Thu, 31 Jul 2025 23:49:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kEL6Z8kq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="O84RgDPj"
+Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7238C2253FD;
-	Thu, 31 Jul 2025 23:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D52942A9D;
+	Thu, 31 Jul 2025 23:49:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754005713; cv=none; b=j+4k53FfWcTQbKZn/uEfSCfWOJaTxUHcG6p7O7ZypFYu0BLQ3vZEe9WFCx7ofV9YQd5Zsxz5XaLFW0714r3J8klCQJGPEMJiPJP0RQl5+fYgIeowJr1K0BNXNyoRh+J1Qj4W8y/b5nwTLfFX8I2CHfU511SLdjmmUYbggc6caHw=
+	t=1754005795; cv=none; b=QuyY7GfekxFv1tEtchMlLSxlEjt0jkAdmKqL2GwXnkSV00Msx5rJUpgLka8LC/v/48JxEh9RJMZTn6QPkiD3i9WChE4T123yE67/MFVK0jNk02S/te7QkaPmil+KwSpKyzVuiwDc+fvxKJVXC8RwFsf/pB7XKWXhXyzqTyYbLxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754005713; c=relaxed/simple;
-	bh=UMpdvHUkByqtXfhvxb6aduo1S+p5JJ/EGVXT1qX5hF0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sFuMuWbkoX9+dey7RMD46JbXml4zkNmRe00GxypJlA1iuhawr+/Oaoud1j5e4WKWzEDygS9EVHMAqDFnTBG8+USq1g4fr+NZ4lgNwAyvB3xu427XHmDc318fa3KOknQprRhyTYPxo3nikCRdpmgi3zvcBKZSSmVhBvCHe8IpQf4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kEL6Z8kq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B019C4CEEF;
-	Thu, 31 Jul 2025 23:48:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754005713;
-	bh=UMpdvHUkByqtXfhvxb6aduo1S+p5JJ/EGVXT1qX5hF0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=kEL6Z8kqalNYsh/DzoJkQ154EPpBfiWtDPX7+GK6C+PTv2bAdutWnjOoN2ZKvhXBd
-	 N9eG3TVc5ZQhG25/A91obzWdhxIZ/MmhaOQsNoWw8hxvfcoKJgCFh+sIYTLKgsT2rV
-	 fcbgaX+OrvS7jXNCLs6jVKQ3rKBFsjao18IqTJjxJhS1ocXO3tRIVc+jt8F001W7/S
-	 vIbxayaMkuIqRHRPh8+10oPwQPDcNbBKDShhvjqzE4hvHXsctg0sIuli6Yy++YOh75
-	 sXBqnwQQi/+NoZKZyXH4zNkdmN0qyjKXJYljKgGfZitCZRybdXB+suOwb9WDm/RUY8
-	 /KAfzmlQR17Hg==
-Message-ID: <ef95e438-6a4f-418e-8729-0fa81cce8448@kernel.org>
-Date: Fri, 1 Aug 2025 08:48:30 +0900
+	s=arc-20240116; t=1754005795; c=relaxed/simple;
+	bh=OqxiKHN+tPEleTAaQBmsf91+9WcyYiC4N/xVzrNzxR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=S0Kt9zz7ISgvsTCJBthmbDR9m4hUwm8d9X2NA6+E4mzY30kcpx8U52czchaQ81EFyQy3gj7APLh+dZtRVHb6kpq/W1lle82AFV7GY/0QfQEo2+AkCMI9KNXiX0TztmCIjMEv2R8W7BjtBNGlwe+nXEyNeyRIFFBGHvH2GSgJEf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=O84RgDPj; arc=none smtp.client-ip=209.85.210.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-748e378ba4fso2087761b3a.1;
+        Thu, 31 Jul 2025 16:49:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754005793; x=1754610593; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=QLKil7DEsp2ET7S+yrQ8UM326ui6L7I1i5+CZitzHdA=;
+        b=O84RgDPjKt/k+xnooPm5r66I/sXSsHKmp2f1xH+NIx1Hb45Yh0V/1miJXRLCrKxWsf
+         0DGQHPmw94rnqBjAuhG3CgsCBYSGLbPP3t7sUtn3IPA8Mdz8EGQI/aHQRmwokZHPyATk
+         qP/Rry016+tvE5hynYA1CqcPwrH/XM/+8ls2taoERSqi30fSybE7fvn4rGlB+wvA5pWq
+         /9TWm7PpEll53LaTnTuO/hCgWoG+0mjeu6O9RV+ljYQZtt2ZYh4f+buHYjdw8DD6CCFL
+         wp5ieqfe/XS9KgwtQhGiNHcQoAW9whqRK70Gts9ydv/vtG+75s8hwvMr0jJmVd88FQiq
+         +UAA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754005793; x=1754610593;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:sender:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QLKil7DEsp2ET7S+yrQ8UM326ui6L7I1i5+CZitzHdA=;
+        b=gDCZX6SgWTy0B3Q+aJRlGKbDRiT3ctkJBfE7sCn8nWy/T5ySXs2jRf1is7y+QxBMj/
+         ahLN3b4FJBg5AClZib9aRAPUawVvz5/tBe3ZGnymP6L+JvhxYAxjIkrYmYrF9AGvm1yJ
+         Ut5tBJyYep32O+UaQOLKZTH+dAZVG97Tp1TLetl4uHsozktCnuaBJqijMHUuUg1xibe5
+         lXqEqmKns5S/SNYSAXusGi3aT0vXp1xYWDDEga43wJBWzPPydWGmaDXqBfVpFRzk3W0d
+         kmhbczrgSji+QzsdnmMzKIlSnWiA+vdXLawEgYmhcss+ewf6haq0N1OSpc2HKqO8pWtF
+         ztVA==
+X-Forwarded-Encrypted: i=1; AJvYcCUv82qbYHOnVB3EPlkxL9rpiYxEoQgFt25ZQC5wXEyQ9lfBqJlBBitvQ13MtRQCG/2YVw+dBJAfvIiDQk4=@vger.kernel.org, AJvYcCWMdSYxfYnPhCN/NW0VU2MvcLfxf056oGtEDUgHTv6vgE6asC3uClB7mksqZzcRMxpG7xoiZMQALlj3@vger.kernel.org, AJvYcCWhsglBVlSk9bD6O5lQGqMs7jLRbYazkSTLKBIq1AYaO2LnaRdIDoj2FshLJ1d5B/VLsTSJH9F2NpbZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+A0dRyQm8Bx8G5XNCLVcRfbS+OqtlWdhjK/Z0vqylWkW0Jt1I
+	KZn9n2iPyEqZhRnmAUgo0dltcEY0rJNQshMi4b2griKLjisT0q5aR9yf
+X-Gm-Gg: ASbGncsiAmGJhGTZYqzx7EPbalzaL+O4X9fD/2PyQJq9iHn1ZusvmtP+wknMsYlUVvm
+	pCNolmsq5PL832x/dnPn2vApEAhM0jNgq3smFVHGtW15hCELyirV1Fenf0by5eKSP4ygfnqCCd1
+	oRazmcaKHX5gDrUdZ2S8nkAyInJ+eoFrB+EaaJtkU0zMRVHPPQutnEr+/GO/FkhSrOSh2N7iDUU
+	pCUcYy7dQKeszUl7vICtWgEtNgXcAVdcTPeQNYNYEsjj7+U//QvLRK/8DUws8OMGaM21MQTbUgz
+	3tfj/Y5h7eDmihhZHUVkN83p/I8vqfeIy7hk0mxumxPnhMciY3HnthcBSOerPlZy3N4fS6WnF0x
+	u+keEnDz4zrl2rQX2LzIUbhc7mDrbqYxZ2sA=
+X-Google-Smtp-Source: AGHT+IE4d5bsDKmh70zMAfXbqhD3vaZmPJYeoR0cw+nGJM8l4TwiI6e/crFZ3cMteXs8sbBaCLoMtg==
+X-Received: by 2002:a05:6a00:140f:b0:746:31d1:f7d0 with SMTP id d2e1a72fcca58-76ab112a519mr11176837b3a.9.1754005793522;
+        Thu, 31 Jul 2025 16:49:53 -0700 (PDT)
+Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa92sm2626948b3a.45.2025.07.31.16.49.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 16:49:53 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Date: Thu, 31 Jul 2025 16:49:52 -0700
+From: Guenter Roeck <linux@roeck-us.net>
+To: Lakshay Piplani <lakshay.piplani@nxp.com>
+Cc: linux-kernel@vger.kernel.org, jdelvare@suse.com,
+	linux-hwmon@vger.kernel.org, corbet@lwn.net,
+	linux-doc@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, devicetree@vger.kernel.org,
+	vikash.bansal@nxp.com, priyanka.jain@nxp.com,
+	shashank.rebbapragada@nxp.com
+Subject: Re: [PATCH v2 1/2] dt-bindings: hwmon: (lm75) Add binding for NXP
+ P3T1750
+Message-ID: <fb2efd5f-732d-473b-8a0a-38cda680fd41@roeck-us.net>
+References: <20250728041913.3754236-1-lakshay.piplani@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next][V2] ata: pata_pdc2027x: Remove space before newline
- and abbreviations
-To: Colin Ian King <colin.i.king@gmail.com>, Niklas Cassel
- <cassel@kernel.org>, linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250731080203.2119000-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Damien Le Moal <dlemoal@kernel.org>
-Organization: Western Digital Research
-In-Reply-To: <20250731080203.2119000-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728041913.3754236-1-lakshay.piplani@nxp.com>
 
-On 7/31/25 17:02, Colin Ian King wrote:
-> There is a extraneous space before a newline in handful of ata_port_dbg
-> messages. Remove the spaces. Capitalize pio, udma, mdma.
+On Mon, Jul 28, 2025 at 09:49:12AM +0530, Lakshay Piplani wrote:
+> Add "nxp,p3t1750" to the lm75 compatible list.
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> Signed-off-by: Lakshay Piplani <lakshay.piplani@nxp.com>
+> Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Applied this patch and your 2 other patches too. Thanks.
+Applied.
 
-Note: next time, when you have multiple patches that are related, please send a
-patch series with a cover letter.
-
--- 
-Damien Le Moal
-Western Digital Research
+Thanks,
+Guenter
 
