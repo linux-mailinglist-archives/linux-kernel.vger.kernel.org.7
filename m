@@ -1,110 +1,178 @@
-Return-Path: <linux-kernel+bounces-751726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39440B16CCA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:32:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 718AAB16CCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:33:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 155FA5A4E2B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 52C793B3A33
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:33:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED1B129E0F2;
-	Thu, 31 Jul 2025 07:32:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81AF429CB59;
+	Thu, 31 Jul 2025 07:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="CscC6Enr"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z2j0PoK/"
+Received: from mail-qt1-f172.google.com (mail-qt1-f172.google.com [209.85.160.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7BAE29A30A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:32:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53E8C19597F;
+	Thu, 31 Jul 2025 07:33:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753947158; cv=none; b=NeGhV0e36GFKwQH5H2NKHZhlNnNee9C0rKEJA+d+mGOnxpbuhbsFowSLdnhYzuw7FC3XfqNWe9js6U64UG3mXLDVi1li3jg7WsEzyKDC0WxmJx1ucXOLHdU1kD7PLpcbf/jTXxGvfT0EsEAjM/6unu2p+WJWr9S2oDx7b+m+sIs=
+	t=1753947223; cv=none; b=AaDazajyZapEY3Zq5bYG7wtfDnl7tIh8SFrKBSdZT3QSH7nfdZwvDYnAgK5Gum5IY9ktf2fvTimJXj8usdJdT861voc8LaUxjfAWArPct1EAcz/upiTwJ1vJJU5YU1m+dpqVKJavOiqHWpk8I6tK+z+Oj+Ma6AWDyVomCR1LuLU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753947158; c=relaxed/simple;
-	bh=CgsOD23DzKiBx6LmEw7oJmKjycR3obfhzW3YGcNJqdo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ix8fgwG7V4JAWLrM+8O4LrXPTZEaAofJAQVOVaTi8EKWPZpfqtJfhjzjXXT6a2l6WmQpRdQJ4Yj40pmv1q400si5D2qGD1A0zqhx31n6mQWF6ATu478meDbo9OQr4vZ4daoF975wZovWkSphtjKTNJd3PBQ8TrJueDHTQ46xoCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=CscC6Enr; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-31ecdf5faaeso130727a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:32:35 -0700 (PDT)
+	s=arc-20240116; t=1753947223; c=relaxed/simple;
+	bh=8gd1XJu/hU6zK55BIaEKAOX9pr+PQogrt/+iL+WtPlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hj33EBAoDh1a7VzlmmsoZab3E+6GtSJWFStQs9qw/gqwz0pw/slPsuMA5Q9G2E50ykno0n51jSdW2begevgubn3re1jUHCnqDOe0hrAq5H4A1xgSe0kN5ZV9A+8Na91/aDk4KzrPPY/eGLjZVAH68y77krZ2Wexp3pOqSipX1Xg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z2j0PoK/; arc=none smtp.client-ip=209.85.160.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-qt1-f172.google.com with SMTP id d75a77b69052e-4ab3802455eso7911001cf.2;
+        Thu, 31 Jul 2025 00:33:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1753947155; x=1754551955; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=CXP1monuf+LNAX5kAVAGy5kk/VpkYINf3yxaWaUA1II=;
-        b=CscC6EnrO6TmzV2YyiMcXsCx+eovPRc0YoMzou36/230jOFMAXggyoJn7m2q4Fgqy+
-         Gw6Kz/wd5h5M9mHmTE71ZTWWUb4KZm3ms8/JFvOlDQthidd9lMs9n6WaZHFk2AW63IkT
-         9+ZWjHgcFd399mTSkXOaoDR00OY1Y54rU+Q+w=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753947155; x=1754551955;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1753947221; x=1754552021; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=CXP1monuf+LNAX5kAVAGy5kk/VpkYINf3yxaWaUA1II=;
-        b=uYUhc59LbCyrN/fxkLOz9m6reazxU0wD8JDd10P3Jp4z9pMqpWAXH8EoWZopqnz8OP
-         SUeI+idFfvJdkT21qWWph9JdpRub62FvQpwCpGlNmhxlV5FI5ob7Jn0PjYu/EghX8lhb
-         SbZZIXXY1kjYspnv8BoECCl9KKQA9YT9Q1pGHY1Z2y6+cESnBmqnlBlyBb81hnHRxV1N
-         akOXb7+Yc4aFVpZyzSs6YmJf/scT3DwSq434joJL77IUAUa2/WHAU0Xo2QyRi/tlKE/p
-         NdgVlY7e3ONWyVtB/sk0IzpRXC2wxauBIZcgtx/mrKsCeymDfVVpHqaIFviCOdtPIUcA
-         oIJg==
-X-Forwarded-Encrypted: i=1; AJvYcCU+7wnLEq7L1mt7jHP1nDLAqdyPP5mIllbXZQ0DfcDWGS9HEUtKXS18J3FdGDt8KzmhVYava+rmT/UTub8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlfigJHbilTrbFycZvp5tBk9UesSyNEm0L4p6BtE1+/dA0fUd5
-	zB+uAvWrd3pkT7U1QRsObzLFWXcCYKtopdl3Z+lawQxlEgCmsMSXj/p1V0J1jkICtA==
-X-Gm-Gg: ASbGncvWKCxouG7d/nAdS9fMH3yqgZ9a+/6BMWEoo3YJKNkzYPewZ4qis6H7ljwX5Gg
-	MOgT1ZmGAFOfJgRLykG00KKROSDyz3/C7AvZLbbCoCxH9wYpW25WYz+4LcjhGk5rkKXD4md79kr
-	jWDwzTH6rCtPuwTshkJPCuiUFgIxWnn12XUkkFbecO9u+IpdwQtGqAwoFwUoiGv3BIrlbASqVW5
-	fHvSRRLpeHUQVk1q1l8sQc8YKYJYjOlejf17+Pnv9W6o5bAvS4w/7+0M3vw46ff6woaGqA2BcO6
-	tYYmtf6HnLbzpjdDd1zXFIuqTuusZbj9tUa/6Frve585K2fhBn2sHVhBAOsmr79ySeHfzuM4Krq
-	tVCnurdCThK8yamUoCvbyEZR8wg==
-X-Google-Smtp-Source: AGHT+IGTX+C2I+sElpxt7hSBEnLRE3nYbTRmVTi5BanzA7KPH5nv8cR3HyduhhuEJkvYlQcaAAFztA==
-X-Received: by 2002:a17:90b:5285:b0:311:9e59:7aba with SMTP id 98e67ed59e1d1-31f5ddb7e9cmr8315615a91.2.1753947155060;
-        Thu, 31 Jul 2025 00:32:35 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:9455:d03d:1e86:6ce4])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebcfdd7sm1149263a91.16.2025.07.31.00.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 00:32:34 -0700 (PDT)
-Date: Thu, 31 Jul 2025 16:32:30 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: John Ogness <john.ogness@linutronix.de>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>, 
-	Andrew Morton <akpm@linux-foundation.org>, Petr Mladek <pmladek@suse.com>, 
-	Feng Tang <feng.tang@linux.alibaba.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] panic: remove redundant panic-cpu backtrace
-Message-ID: <2kwymhiz4fcozfmbmj6ju2qatsbmnrtiidfa4nxrqutgwa6xfy@dbf3caohbbay>
-References: <20250731030314.3818040-1-senozhatsky@chromium.org>
- <84seichm5t.fsf@jogness.linutronix.de>
+        bh=ZOX9X8brnwUNsz5uO4Te0xlPw30giJyAMqsCiquXPp4=;
+        b=Z2j0PoK/WXwwMNZuFYWGc558gF3SkrqH3VCTJmVDPRJLCUzcHVooJTONi/Dsmjx5LT
+         tnd7c+8DNogXJpZ5wIIIZLDebpawxGqco5S+4qvhNxh9tch/KvXdTXpPsvUTsxw54jCm
+         leh02h3tkCsbgxbANvFH/zKYBflBA/svAdxabB7uXpXwmhiBVCcnbxuIUJsCyZHjfD5K
+         pxwfOkhhKROGOrhQZjVrxDLve/Iknoy07AHRiUng5nkY9Dxd2PtRQw3rEBHreGwZrKlv
+         mPa7VzGpM4bXY7n1H99KsKXtnBQDlECcsWLr8gRLb770EHHGbJNJheFxr6f3TtuBA+wV
+         Np2w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753947221; x=1754552021;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZOX9X8brnwUNsz5uO4Te0xlPw30giJyAMqsCiquXPp4=;
+        b=VSW7hM8wFPfUhFThlXw5t0hYL8XUKrjn20epF69NwKzboNdi2eiWcZWU8GffS0Es7g
+         WUvtQnJT6SrUZ8tZ29g8NMKdXTazBUaaVqhtJ6FBWQAGLop9ltEXvOg+YTFZJBITY2Ry
+         iKr5i4wwr2Lcmt/2QGbbRFrszRY/z+IAHVgQB0Izp6plSoiD44zYGBND7prqpXBTCN+K
+         ncMvAAbeBS9v1H8TsuKxSI4zvDS5LXVmKj9Zel3Ot7OgIa2Z5xNNf/kSZlRXzxzXAvtx
+         EvZqxKz1P03rd9ZUjCEznvN8KqrTUrFJTUJTap4LxcJ6BqX5kOnYEd/kVvN27nuYjsHP
+         DKYA==
+X-Forwarded-Encrypted: i=1; AJvYcCV2Fyo3mrWBePFCmSLeneusqX4vKTy1l1XeHKFkX8Rjn31dLahJJC3kLbONXqiYlb4DZslXeSIHqWE4LJR7@vger.kernel.org, AJvYcCWmG3CnrK3r+ZKXjbSPGsyMO7vNZvJqu+V5HEH8mBr81RLmtrmqfI4rgS0KOWoqeIEUFCl74uk1//s=@vger.kernel.org, AJvYcCX6D7pEOQ7gHxjfpHqEQc/Y0l8ZoE0I3gyS3R90xEONU3CLtOVx3OiYkKGwQswKy9ul8pYWYqfunfse@vger.kernel.org
+X-Gm-Message-State: AOJu0YwQ3W9+2fc8aamDBqQDxMn0FhEAmlspxuLx1sLr/NxKooC1X+eJ
+	LtL6kv+wcpf910fEHPPfmJkP8+82SOUBWH6/PCroGZzuMgeh+cuJL9O7xafMbeFJv0DU9f2mguY
+	nqyQuJACmLP37jwu/Lg0OUlHgJeQ5/FQ=
+X-Gm-Gg: ASbGncs2VGv/DDm/DcA+wfvLleVSWVtkEdtXt5zLHXuU2H2H9ra40URFABMcuEghPzJ
+	lCl9bnlqTDoYpmBo+NoExbfuqXXHpyf9n8IU9S0SZNeMy/FYupYwXb8SGhOQqEF/Zt42oAifbTR
+	kLC5DHEB+y6wxFwDKcOxB9HuxTBFfE3nNVGvFqoiqIsRZTPvK0BHSbMmKuT3LefyEwpfFjo3Nk9
+	MmnMavPl4iz9RP4S9ffl7mFw5BPetmeYRvhcD3Z
+X-Google-Smtp-Source: AGHT+IH1uwkUGAwbjx/9dKqcwJTQI9b2LQO1Th3mXrOlkX6OvkMWjy54q1bCvJ9oudoi0B/QbEA71tvh/WvbZgihO6E=
+X-Received: by 2002:ac8:5913:0:b0:4ae:cc75:4704 with SMTP id
+ d75a77b69052e-4aedbc6b2abmr108326681cf.59.1753947221032; Thu, 31 Jul 2025
+ 00:33:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <84seichm5t.fsf@jogness.linutronix.de>
+References: <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
+ <aHgHxR1_Gzu8Dwbm@mai.linaro.org> <4178173.5fSG56mABF@diego> <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
+In-Reply-To: <14c91ee4-3a09-4ec9-966f-0d563d7c8966@linaro.org>
+From: Alexey Charkov <alchark@gmail.com>
+Date: Thu, 31 Jul 2025 11:33:32 +0400
+X-Gm-Features: Ac12FXyBhKCe01359PD8yUXtXOTB-iOa83dWxetYoDpIa3sijPk9zpEZPKHbrQs
+Message-ID: <CABjd4YzJeNf0Qq9qFeMcoYQV5erZGUeOpmJynRW88AeL9dJNhQ@mail.gmail.com>
+Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support, including OTP trim adjustments
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: =?UTF-8?Q?Heiko_St=C3=BCbner?= <heiko@sntech.de>, 
+	Nicolas Frattaroli <nicolas.frattaroli@collabora.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonas Karlman <jonas@kwiboo.se>, Sebastian Reichel <sebastian.reichel@collabora.com>, kernel@collabora.com, 
+	linux-pm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On (25/07/31 09:15), John Ogness wrote:
-> On 2025-07-31, Sergey Senozhatsky <senozhatsky@chromium.org> wrote:
-> > SYS_INFO_ALL_CPU_BT sends NMI backtrace request to
-> > all CPUs, which dumps an extra backtrace on panic CPU.
-> 
-> Isn't this only true if CONFIG_DEBUG_BUGVERBOSE=y?
+Hi Heiko!
 
-Are you referring to vpanic()->dump_stack()?
+On Thu, Jul 17, 2025 at 12:20=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+> On 7/17/25 09:21, Heiko St=C3=BCbner wrote:
+> > Hi Daniel,
+> >
+> > Am Mittwoch, 16. Juli 2025, 22:12:53 Mitteleurop=C3=A4ische Sommerzeit =
+schrieb Daniel Lezcano:
+> >> On Tue, Jun 10, 2025 at 02:32:36PM +0200, Nicolas Frattaroli wrote:
+> >>> This series adds support for the RK3576's thermal sensor.
+> >>>
+> >>> The sensor has six channels, providing measurements for the package
+> >>> temperature, the temperature of the big cores, the temperature of the
+> >>> little cores, and the GPU, NPU and DDR controller.
+> >>>
+> >>> In addition to adding support for the sensor itself, the series also
+> >>> adds support for reading thermal trim values out of the device tree.
+> >>> Most of this functionality is not specific to this SoC, but needed to=
+ be
+> >>> implemented to make the sensors a little more accurate in order to
+> >>> investigate whether the TRM swapped GPU and DDR or downstream swapped
+> >>> GPU and DDR in terms of channel IDs, as downstream disagrees with wha=
+t's
+> >>> in the TRM, and the difference is so small and hard to pin down with
+> >>> testing that the constant offset between the two sensors was a little
+> >>> annoying for me to deal with.
+> >>>
+> >>> I ended up going with the channel assignment the TRM lists, as I see =
+the
+> >>> DDR sensor get a larger deviation from baseline temperatures during m=
+emory
+> >>> stress tests (stress-ng --memrate 8 --memrate-flush) than what the TR=
+M
+> >>> claims is the GPU sensor but downstream claims is the DDR sensor. Inp=
+ut
+> >>> from Rockchip engineers on whether the TRM is right or wrong welcome.
+> >>>
+> >>> The trim functionality is only used by RK3576 at the moment. Code to
+> >>> handle other SoCs can rely on the shared otp reading and perhaps even
+> >>> the IP revision specific function, but may need its own IP revision
+> >>> specific functions added as well. Absent trim functionality in other
+> >>> SoCs should not interfere with the modified common code paths.
+> >>>
+> >>> Patch 1 is a cleanup patch for the rockchip thermal driver, where a
+> >>> function was confusingly named.
+> >>>
+> >>> Patch 2 adds the RK3576 compatible to the bindings.
+> >>>
+> >>> Patch 3 adds support for this SoC's thermal chip to the driver. It is=
+ a
+> >>> port of the downstream commit adding support for this.
+> >>>
+> >>> Patch 4 adds some documentation for imminent additional functionality=
+ to
+> >>> the binding, namely the trim value stuff.
+> >>>
+> >>> Patch 5 adds support for reading these OTP values in the
+> >>> rockchip_thermal driver, and makes use of them. The code is mostly ne=
+w
+> >>> upstream code written by me, using downstream code as reference.
+> >>
+> >> Replaced previously applied version V5 with this V6 patches 1-5
+> >
+> > are these commits available somewhere?
+> >
+> > Because git.kernel.org reports that
+> >    https://git.kernel.org/pub/scm/linux/kernel/git/thermal/linux.git
+> > has not seen activity in a while?
+> >
+>
+> I just pushed the bleeding-edge branch
 
-Another way to get backtrace on panic CPU is via BUG(), which routes
-through die()->__die_body(), which prints registers, stack trace,
-and so on, before it calls into panic().  This might be x86 specific,
-though.
+Just wondering if patches 6-7 from this series are on your radar?
+Driver changes are in -next AFAICT, but not DTS. Can't wait to get the
+temperature monitoring working on RK3576 without out-of-tree patches
+;-)
 
-> Also, the information is not the same. trigger_all_cpu_backtrace() will
-> also dump the registers. For CONFIG_DEBUG_BUGVERBOSE=y on the panic CPU,
-> only the stack is dumped.
-
-Hmm, it's getting complicated, probably isn't worth it then.
+Thanks a lot,
+Alexey
 
