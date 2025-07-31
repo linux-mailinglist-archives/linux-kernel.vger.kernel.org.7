@@ -1,105 +1,202 @@
-Return-Path: <linux-kernel+bounces-751581-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E238B16B1D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:17:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70596B16B21
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E14C4E60CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:17:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 453381AA35E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E41E23C8CE;
-	Thu, 31 Jul 2025 04:17:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 506B02405F6;
+	Thu, 31 Jul 2025 04:19:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QRVKnrpZ"
-Received: from mail-oa1-f48.google.com (mail-oa1-f48.google.com [209.85.160.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UYCpVP/r"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56692194C86;
-	Thu, 31 Jul 2025 04:17:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CBC03595A;
+	Thu, 31 Jul 2025 04:19:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753935466; cv=none; b=WjTGQTKiF6sgyY1GhU6wJJOuh+1UFN3KLCOgo/3WSMM7fhpBiSGXKEN2NRpeo5mRhsOlkDt+mQSO3RLnx4KTxiixrEKqCP3+/67mhc9OseLXq+9c0msxuSIq81YHShWKknwOZGhcMMB1q124ZOaraCblEgplLhXxK/qFbtH7KW0=
+	t=1753935556; cv=none; b=i9fcnPJsvWpWCymQLt+7cMyclWNHIyU//OrVe/nyjT65uQo7CxBSCV+TA/TEe9HNI2LpvYRH4EH52AM9Qb814Ncsk8qLc7eU77GsRHZFZE7NxLSGtRWz7yCi1VUfk3dmKRluytv022tCuwN2mDe46qCXkkyHlYe/CE8/Az092Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753935466; c=relaxed/simple;
-	bh=pdpEixiSJRKDUk41L0t+kqCsPtoW98MyTj96BdafVtY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N1N4Nm8CP45PrFi8uGw16dlKKlplAjQD90AsItZyeWbNEQnORFNWiUOZGTJMgxqZTA3P3x4nXxwzT2eQ3fl03J/xJIsIT1qr8P03YMHbo9YqBHPs15c68wSzw7ZKqtrRGOPEVIebARjy4gCQOi6CTZoHHv7sVIbexWEOpyiXHUM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QRVKnrpZ; arc=none smtp.client-ip=209.85.160.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f48.google.com with SMTP id 586e51a60fabf-306e88f0b0aso192768fac.3;
-        Wed, 30 Jul 2025 21:17:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753935463; x=1754540263; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=pdpEixiSJRKDUk41L0t+kqCsPtoW98MyTj96BdafVtY=;
-        b=QRVKnrpZ9M3o02NAyN2Vn49jpVRs47JApmVTHVD3snbBAi2KcIgbaBlGq+AfW4kUC6
-         Vb539rj79zhb938ciqUqkxYcTxhaG1M8uhMPNUe5ZycERcoe+MCtchY8kBJZCMGc9TI8
-         78Ldea4VwH1YRExXPBKcHh1o9RWOaYfjH+Gbjs3edXJ1wYkh9EMIicDD5aiM268mK1qq
-         hko7sStLTMMtndtUw6gMzfD7rknzhh9/31LigAam5eDUkx+eZX4nzjMGqpMcgxkiQXhi
-         6OIoLFfjNTb1graadZRPJPriJOP0jNOE6fa39eG/SefynnuQyCHRa86ybgt6c2Bu93UI
-         IoBQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753935463; x=1754540263;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=pdpEixiSJRKDUk41L0t+kqCsPtoW98MyTj96BdafVtY=;
-        b=YwovBN1sPkkz1CkkaxPiSxSxnOCgV2YuAboL7Zl6rr3Bcq6o8VeDDFSVsSjOzqWmoi
-         iwIO/O5W8/T8zq/5OM4DZG2+Z0TOEx+t8bDDZOvaDDlos4lvvtkuaY3rAEo2xA8LoMYQ
-         +bYuCEA6W5YB9bMSONi8OwveWG4c5Ovhc5IuzmuvrQHIryH8UEox2CmR4MM0NatRJaUm
-         FG/s7ks/AlSiudSl1ZOk/15WyI9bcGx39xKbpP9Tq5WhnB/nfgYH8nxNaG2E4Zig1iLk
-         XKL7O8nTQrHe71LW6tmN8VFrZ+YT8dR2ptYdn2c1FHErzpU59h1vpH2mb2rB5QcpPBEm
-         gvLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlKOWEOK0+doFiDaoqjiLTwCz95Sbg8dqYESnH8egin+A1NRm7AX6pzg1HswdpdOHzDPBQgfmNP6LHtus=@vger.kernel.org, AJvYcCVHa7qH4HKsFui6CSZkJrOJXrTQtb00VsGgG1Qc33NbLUI7HX7IJnqyWXiJSmJ/v+19wkYineXn@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoYSBynWpK8YdFfJ+74deX13rUOOP9iBtL/KkaW3eIFCkFRrya
-	Lx7nM6slIBIHLO4mB6XeYv4Z5VfuxQLxfEftxs4iQDesnpvD+x1r3EiehY9nQMJY8jOgltd9A7p
-	wRBxjfD+V8+u0C6tpSQUWtgMnolA2KNk=
-X-Gm-Gg: ASbGncuMbSS4ZfYH0+rw3wvII1elrRdw58FjlYbZTVTEGk5dR2NbpGdcPmAWBETR6eP
-	yLltZVDSHo3F3+s6jPb45S3Pj62IDFWZQ3VTDUVuoy7T3s7HgQd7ITd3t+r2yIkfG5fNEu5IL4X
-	GDkuWtGNueqxfSPMLdoqAMTg8m3cWXz4f77ipnWXunJl9LCGkXecIdJvLIipuyglMdbb0o6rU2e
-	kbz3i56
-X-Google-Smtp-Source: AGHT+IHGHUprxJYjV+kRocPkbQvoewipOuKFbEiAf0UVq1rv+6mWShZRWDaf0BeNggrmLEHVJb90j8/i5Mh8mUQttDI=
-X-Received: by 2002:a05:6870:6b8a:b0:2ef:e245:c65a with SMTP id
- 586e51a60fabf-30785d59ff3mr3598956fac.38.1753935463283; Wed, 30 Jul 2025
- 21:17:43 -0700 (PDT)
+	s=arc-20240116; t=1753935556; c=relaxed/simple;
+	bh=ZobzzWDPHAD9iDOxIRA8aGYpMqwZmAtJ7mpGWwmVqUQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fyyBpene8CAzG5uNe1rlDgywqAzGWltD7yriIYUiQlmhXOv4VK5Z/kl4Cd059rqC5JTD1SIobYqm9YxfN/hCOwslAJB0f0Y3VvJsKNpF/bPK215cH0LJ/D9zEk3vWp11+aHnFZYu2UbfAzu5AsIDEf2iyZfm+ma+A0pZBEymPOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UYCpVP/r; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56UKaon8002269;
+	Thu, 31 Jul 2025 04:19:07 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=24saaRAd20Rcx3NGxaTql+x92yY5ct
+	ngtm1W4oKLSFk=; b=UYCpVP/rPwRFYLUF22vCcyJeAZ2MzkkRMZjdbU8rBtHbJ3
+	gp2mafmQvxKVvhhv6AeomLj3tVi8tmHUk50SQsp/zB/IV345DDiO6cUop+B27VF7
+	LBbxoUoBcyfD479merkaldgPcK+ld+0J+lpt2kviOo8dXcjOmz68/amGqpjkTuPL
+	vSsfU/BQLyhZTo7lZmTPLazWVX+Gd6cFci7SkutyfObDEjOrZZBqAhJ+6n+fFcGS
+	BhM9kka4T+ynW++tStTRbTIL0C5X2Eic9kHBYDGF2TJebYpG0Odw2WulG8mUW+Yv
+	4SEkig666L9+JGyqTf1nfxe9cNYNLu5R2hCXsW3w==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6hxgjd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 04:19:07 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56V48Eh9007887;
+	Thu, 31 Jul 2025 04:19:06 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6hxgj8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 04:19:06 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56V2TJx3017282;
+	Thu, 31 Jul 2025 04:19:05 GMT
+Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859r0autp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 04:19:05 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56V4J32820316596
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Jul 2025 04:19:03 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 6E4A420043;
+	Thu, 31 Jul 2025 04:19:03 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 61AA120040;
+	Thu, 31 Jul 2025 04:19:01 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.109.219.158])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 31 Jul 2025 04:19:01 +0000 (GMT)
+Date: Thu, 31 Jul 2025 09:48:39 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: John Garry <john.g.garry@oracle.com>, Zorro Lang <zlang@redhat.com>,
+        fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aIrun9794W0eZA8d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <aIDozETJ8aLparYV@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <9b9ed959-bda5-4a92-90c7-a621ffe58240@oracle.com>
+ <aIMjrunlU04jI2lF@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <0af205d9-6093-4931-abe9-f236acae8d44@oracle.com>
+ <aIccCgrCuQ4Wf1OH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <2ae4bb04-fbf7-4a53-b498-ea6361cdab3e@oracle.com>
+ <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
+ <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20250729144526.GB2672049@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730042617.5620-1-suchitkarunakaran@gmail.com>
- <30f01900-e79f-4947-b0b4-c4ba29d18084@intel.com> <CAO9wTFhZjWsK27e28Gv2-QqMozns47EacOQfXtTdMfLjR98MTw@mail.gmail.com>
- <834f393e-8af9-4fc0-9ff4-23e7803e7eb6@intel.com> <CAO9wTFi6QZoZk2+TM--SeJLUsrYZXLeWkrfh1URXvRB=yWtwig@mail.gmail.com>
- <7590fe81-e771-42b3-b9fd-31ad3b7860bd@intel.com>
-In-Reply-To: <7590fe81-e771-42b3-b9fd-31ad3b7860bd@intel.com>
-From: Suchit Karunakaran <suchitkarunakaran@gmail.com>
-Date: Thu, 31 Jul 2025 09:47:32 +0530
-X-Gm-Features: Ac12FXyT5v0dosvfmbsWOpS-j32vb71T9uRc3bfohW4BVHNq5uRKPNPQ98InyBg
-Message-ID: <CAO9wTFgEeNBO9dkEyZe43fwg9NyZunzYtLNFCznom1-pqEXqVw@mail.gmail.com>
-Subject: Re: [PATCH v3] x86/cpu/intel: Fix the constant_tsc model check for
- Pentium 4s
-To: Sohil Mehta <sohil.mehta@intel.com>
-Cc: tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, hpa@zytor.com, darwi@linutronix.de, 
-	peterz@infradead.org, ravi.bangoria@amd.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729144526.GB2672049@frogsfrogsfrogs>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: 4PWYWbVGZxeDrCpgxLYz3gJ80VRDsaat
+X-Authority-Analysis: v=2.4 cv=Mbtsu4/f c=1 sm=1 tr=0 ts=688aeebb cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=Wb1JkmetP80A:10 a=qJOP-70rnzrkdBoURO8A:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-ORIG-GUID: G6s53CesWX-etCc6c8gPHuLjdTYWa7Rk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDAyNyBTYWx0ZWRfX0//iNkX16i25
+ jT8xMwUzbl7tYYABaBpm2mQseSYmrkRRz2h65bs0GxvJRkW4v94Xi5Q/zJihuC2oZ29ru3pR1lx
+ YYzAfAcQ0PP4sU149hctWPx8coik6JQ/dvBTxeoRFzY/fIK8t69rtM+npvrWQCOqp/o7U9MQ2av
+ SCs1d4uuJJFmKfqQ/x7w9ePBohoBH7RPk+5fz4B4mA1bIqxb5ipTlwj+alaUo/QMsrsSv9nDpwt
+ 8CluOvumim6GueFJSUtLsya1+6pp+ycUN9IcYSKjgxTR+Eg6RF2lCyXupf2lNvw18BDC201OyNA
+ ogbwDgmAogDwFKXIRpR2WgPF0/kld6CxNYAd7CWvZQsAJ/PaZMBVISmX5aYw2SHvg6mzm1d2Swl
+ Nhg8gSQqfPW81CCF/jaJaeCFRluo2OZ7pfDWHctwY9hlpGeUy1YcytcszcxY2swj5t/wJoXs
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_01,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
+ spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
+ lowpriorityscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507310027
 
-On Thu, 31 Jul 2025 at 00:59, Sohil Mehta <sohil.mehta@intel.com> wrote:
->
-> On 7/30/2025 9:27 AM, Suchit Karunakaran wrote:
-> >
-> > Alright. I will send v4 after the merge window closes. Thanks!
->
-> Sending the patch sooner is fine, if you want. I meant it is likely to
-> be picked up after the merge window has closed.
+On Tue, Jul 29, 2025 at 07:45:26AM -0700, Darrick J. Wong wrote:
+> On Tue, Jul 29, 2025 at 11:41:39AM +0530, Ojaswin Mujoo wrote:
+> > On Mon, Jul 28, 2025 at 03:00:40PM +0100, John Garry wrote:
+> > > On 28/07/2025 14:35, Ojaswin Mujoo wrote:
+> > > > > We guarantee that the write is committed all-or-nothing, but do rely on
+> > > > > userspace not issuing racing atomic writes or racing regular writes.
+> > > > > 
+> > > > > I can easily change this, as I mentioned, but I am not convinced that it is
+> > > > > a must.
+> > > > Purely from a design point of view, I feel we are breaking atomicity and
+> > > > hence we should serialize or just stop userspace from doing this (which
+> > > > is a bit extreme).
+> > > 
+> > > If you check the man page description of RWF_ATOMIC, it does not mention
+> > > serialization. The user should conclude that usual direct IO rules apply,
+> > > i.e. userspace is responsible for serializing.
+> > 
+> > My mental model of serialization in context of atomic writes is that if
+> > user does 64k atomic write A followed by a parallel overlapping 64kb
+> > atomic write B then the user might see complete A or complete B (we
+> > don't guarantee) but not a mix of A and B.
+> 
+> Heh, here comes that feature naming confusing again.  This is my
+> definition:
+> 
+> RWF_ATOMIC means the system won't introduce new tearing when persisting
+> file writes.  The application is allowed to introduce tearing by writing
+> to overlapping ranges at the same time.  The system does not isolate
+> overlapping reads from writes.
+> 
+> --D
 
-Yup got it.
+Hey Darrick, John,
+
+So seems like my expectations of RWF_ATOMIC were a bit misplaced. I
+understand now that we don't really guarantee much when there are
+overlapping parallel writes going on. Even 2 overlapping RWF_ATOMIC
+writes can get torn. Seems like there are some edge cases where this
+might happen with hardware atomic writes as well.
+
+In that sense, if this fio test is doing overlapped atomic io and
+expecting them to be untorn, I don't think that's the correct way to
+test it since that is beyond what RWF_ATOMIC guarantees. 
+
+I'll try to check if we can modify the tests to write on non-overlapping
+ranges in a file.
+
+Thanks and sorry for the confusion :)
+Ojaswin
+
+> 
+> > > 
+> > > > 
+> > > > I know userspace should ideally not do overwriting atomic writes but if
+> > > > it is something we are allowing (which we do) then it is
+> > > > kernel's responsibility to ensure atomicity. Sure we can penalize them
+> > > > by serializing the writes but not by tearing it.
+> > > > 
+> > > > With that reasoning, I don't think the test should accomodate for this
+> > > > particular scenario.
+> > > 
+> > > I can send a patch to the community for xfs (to provide serialization), like
+> > > I showed earlier, to get opinion.
+> > 
+> > Thanks, that would be great.
+> > 
+> > Regards,
+> > John
+> > > 
+> > > Thanks,
+> > > John
+> > > 
+> > 
 
