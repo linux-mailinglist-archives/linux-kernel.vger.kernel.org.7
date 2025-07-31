@@ -1,121 +1,126 @@
-Return-Path: <linux-kernel+bounces-752055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C99DB170DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:05:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95CA7B170DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:05:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D382E7B0C4E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:03:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3B2B4E784B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:05:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B61DE1990D8;
-	Thu, 31 Jul 2025 12:05:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D375204866;
+	Thu, 31 Jul 2025 12:05:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="aXVIbMzX"
-Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MTqovntg"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2127F2E3716
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE4535973;
+	Thu, 31 Jul 2025 12:05:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753963513; cv=none; b=fbYSlIl+KLZknq/y/Gj00Kq39I7nMbbf31oMfn05HVxdQdW62Upw8yXy24k7v3UrUhkMIOxMSeYpVvIvhwAuhHltEOilbQ7G8W2CWhsjY7Z6WqsSCXA+L7V3ualkRjJ7AeZ+FlfWLfcVvRR+llVxyZ20aX/6uvAjPsNgTzWef1Q=
+	t=1753963529; cv=none; b=VqGwXJWeMMV411uqfZwKRZsWoAbxZXgugstYV2MNDvfmRlr9uyNZmTdc6jhzMTjuPfeyAH5LANhrIQqazkKBneUjYbXTigatD3ZrZoxNP1jV2YMsXtwocuNTTdfEdkaFrwhcy9EJiI24vZeLMhftmonLxvKeieLsC2beaAYxRSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753963513; c=relaxed/simple;
-	bh=GBpzead1bfNf0i+JXavVnNWK7fvaerPJsDGtacyOrb0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=ORYWAyAFVMr+t1NE0YtfunXazOHbx0nwRyS0tRarRH9NFzLn4zXOXdCloARR75puZ3FrhOjKadE1BvvITTQirUiDj4ez2P5i16yKuoJiGQ8UpG0Oi/zunmRA8rDJ9Ulq13Tai9LIDyxRZkS+o2EgMIM2VxSmFoPt0bQ8yGkgKL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=aXVIbMzX; arc=none smtp.client-ip=209.85.214.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-23fc5aedaf0so2235855ad.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:05:10 -0700 (PDT)
+	s=arc-20240116; t=1753963529; c=relaxed/simple;
+	bh=Tlcxky9hZoM6omPxcRMh25qPf7uWgJgh4PW3vNxecHo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qsh+Vqq93dFd7ZxHzujqmxAqnUKj6s+/JRdYoan/bIAfYfTHZhfmXKdkxdiJGHEOmMv9FxqK6SeqVS9tvDKKW93LTmCJULvLodndaPv1Q1pYfA8W7vGl7GpiFpWVNjlwZCBW1r+SC7A94fhsIxKtoXw1spdJ9OPypi1bxw0Gt/s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MTqovntg; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4563cfac2d2so7899325e9.3;
+        Thu, 31 Jul 2025 05:05:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1753963510; x=1754568310; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=x8TpDbs7JcYVXpS/2LXWVtJRwBGtp9mOCA3zbGvW+so=;
-        b=aXVIbMzXeBDXlRlPAAQQJxS8RZEzbJGQyvCeqtIR3G+C9eENLbb9CrB86oc+2CxHzW
-         EwCl2XIsh+2L8B2HhCOH+2ZGdBQY1YQWkMGaG1AJKgiJR7DCWMimilYLzepvnyekyfR3
-         ++KVbv1GZ4KdRfHj7qmDWW8QlHixhRcteh4I5p0Ixl2HEISMhNwhisBub9X8NYuPb6Gd
-         Bb9ZpWLbgq6DbP0oHcOVVAOmWKU8W6RiEO7xU1r/8cueYOENixdt+IqkKiGW5yQ9FIIV
-         ufgp+zYot6EYb0P4/9R4b0fw25e+sAxwasHYAmk+0rm7fAmhNUWmRcDklCAaIHhvsGI1
-         wcpQ==
+        d=gmail.com; s=20230601; t=1753963526; x=1754568326; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=T8gbmgjIvdyGIa3L+Xsuq4w/naaz7U+XZEKF0r+vZX0=;
+        b=MTqovntgYsm0gnD8GlPR82xEMez7blEis3ulX5akhnRLygl77kFa1z225Te7DH6faj
+         Dx+nJTPomKjRUFj2wI7ewSR55CnVEN0kH7ISgxot+04ohM11D4SR4PPWQLS+X/fFgetV
+         Ij7fpjTbEtgB0NcvizGeHUccd+yY5oVbexCY1dTpHmSRCjvVuMzOWEZZ0BxBD2xYyNi5
+         b0NmJ0nega+HeYY1LEjXCr7C1CRLV3UDx5IZ782r1oFGEot8EnkJO/SwgXWxcMFvtLHo
+         fgyMCG06pBdnx2dyvV0Omo8ckbwO9NNNSRaeKfG3hsgji0pZx5IS/do/Y11qqI6HUhwd
+         7ANQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753963510; x=1754568310;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=x8TpDbs7JcYVXpS/2LXWVtJRwBGtp9mOCA3zbGvW+so=;
-        b=PUPng5pUrIzwa1fC1+lyAOL7bQPb2BJeIUBrm+ey6gl0GLjUvSJpo8nzjbGj9PfSwY
-         0QSufk/XEmtdKM0myIQFYvpSDio63s/bVex+PeLuQqLPZrxva0t1j5Qz2PFh8ZTcIy4u
-         /4Mj1AxFbb2MXPxmgc/OASnfzAvL/OCNvaPfdzkQDVxUNJspkr4kx0iqANcmyEL0fa2f
-         1FEAcjMTGTndC3J0LIXHD4CYmifZBnCAihwo+4DdNYF99/IxEKc/YiUpFJxrJwLDGfip
-         JjKnBZU6dPvY3N+7r1cwIhKHwVjpMOTvKXmHBN9N1JWY43JC/NdWjPiIdkZkN0xhWcfo
-         yjaw==
-X-Forwarded-Encrypted: i=1; AJvYcCXwh/Zwa5QcliIMvaIqOLRmSrjj/dYZESVM1OmbL5GZ/emVbd8uGnmv9al/wGHMsmnvPVhAvkiJunVtY44=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz9w0I6HtUdYC3lTzcf2vToeeS64DpX+ZNPlhkDAPg7aWjnU8qa
-	0HZ7He2H79bpnA9369Y8DXao+SxrWUFT3SMWCFKxmwca5wUs9Ge4jskbO1OTCoO1See/Z2pSOwC
-	kKRM=
-X-Gm-Gg: ASbGncuSrPuKplDXZ78vL2Zfu+wzPSqeTZpV9pgg5aP4ZwIMbmApryRpvGhakvC4SZU
-	m1p6q/PoZd2C8TAZCMCb+G2ggdcjdAf0clpn49P+9s1DHMSrZXMzRfUaz0DPztBm/fzODC1PVUW
-	Ki3iL/e3m4CyXArHe71uKMaEYxBKJhom5dMebF8UmHpwV9rxYTwvGJQJrvldxtMu1IfSZZAEzs0
-	KGWoZJGZ7fGSNkqUZr4V2mPnYs8izWL4PMe2g7v29IDA9Cf++fo9ST21ZxNLIDPiP+leNZgua8y
-	7Q6gRVxxnuI4Icx1p/Ftg4FDBj9D/xtDFaBweYeeNVo0iumGrP6QNEACSivZf2uJNW9ehFlxh8C
-	0liMdgNWVXFMDXJ7b4aDG/SOJJw6YwALnHnw710Hd5pPmuYTEuuIfew==
-X-Google-Smtp-Source: AGHT+IGVv5ZLod0tR/OqzurBPLv0cZ4NipkVasS9KzlFuPb8C2B1hpgjIcpBhC0IovXMQWR4Fg2aog==
-X-Received: by 2002:a17:902:f543:b0:240:72bb:db0b with SMTP id d9443c01a7336-24096ab5937mr115848855ad.21.1753963509970;
-        Thu, 31 Jul 2025 05:05:09 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89a3acfsm16476695ad.146.2025.07.31.05.05.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 05:05:09 -0700 (PDT)
-Date: Thu, 31 Jul 2025 20:04:54 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: John Stultz <jstultz@google.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Stephen Boyd <sboyd@kernel.org>, linux-kernel@vger.kernel.org
-Subject: [PATCH] clocksource: Use correct limit for wd-cs-wd read back delay
- in printing
-Message-ID: <20250731120454.GA309@bytedance>
+        d=1e100.net; s=20230601; t=1753963526; x=1754568326;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=T8gbmgjIvdyGIa3L+Xsuq4w/naaz7U+XZEKF0r+vZX0=;
+        b=ZR0sXzSxqYJV6nXH7R3tPJgwV4FMMXsr588JJ0V0HBaK+Un+PaFISmYhoyZKor1B9m
+         oWIbKE5vqLpM7hIvmX9IJijoHBvjkMCybv13FSbJBb+q7PpEnblNzSbU+AvYW9Lup/ML
+         k2W2uP/oXS8G20M69EEVpKFYl5gT4mo/DqRZgip1Ip8BDp0ZSZBF/lQLiSRZRlQ/wzXd
+         rDknVEbqfQDywSpL578RDlzsVsBhjZgZw3DyjNvECZSTB7nF2DBeDyiy8KHyMxePA0vR
+         EtlEqmYfoziFmW2f0KjSIxXJ470ucCWaEieqM74Jg2gDsCwE7/5J3eBTOGXXFPD3aDP/
+         I2Kw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtpLwMZFRiw8/MzRT3BEvEqaqNlR4ruPUQKvcShqxwo05qASYjXFdWbmXAFPtOrd2yRlw9wOUpSm3MR1U=@vger.kernel.org, AJvYcCXPGh0S3s7rtSoIy4sRTTU3rgGrCoS4Ny4cBi+aYRubwU6xzafft5xuhQfambn1Jm+wEsRGvZZ3@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJZKywDJM+iTuyaflZG+uDgj2ni0ZqtHm2onuiQbSk3EHaw/Fp
+	z4TDWFLbuxkDH9xK3Vu/i/iZ5cNMw1uQnmb70nAa9aoZVFBSyWxouTwv
+X-Gm-Gg: ASbGnctbXeppsXK9D/Ds/LH1gqVE9hbqarnBAiYU1MVVSuIV7H68wlMm/wOWoFAP25U
+	KdsjBfq8m2+bK/hQr10wySsBQOzO6Th+5+XhpkuxzIv1bq7FMK8iSZiXYLUCcEVpVZGNK1OLo5b
+	mRBzQhrhttYHSe+HIpF8dFNZphNfUQRcqOFgmKESlTIzjMzeRs4xPcp4oc4AOIxlqD8VcR6JeGk
+	SlT3x1HKhu3VdGl2js2PVuPxXPPKmDOoiHxQpMTvH9yWZDPw9nk0j241HJXoXtmLm4/ZD0lYWDt
+	3EfwkD1I+D3Rht9KByUX0gvY4jml4dBeSuiAN49GgjK1T+zFJ9CxbWijgwqgnuxq7K6GKSo=
+X-Google-Smtp-Source: AGHT+IFhMpnHRH9eV5Pi6xTcQsRyN4runwq7GNioMgmn5bIBUHRY+j7a2wTlL02WN7A7Ai6+KUjZmg==
+X-Received: by 2002:a05:600c:638f:b0:453:59c2:e4f8 with SMTP id 5b1f17b1804b1-4589eeb25e2mr23577565e9.1.1753963526241;
+        Thu, 31 Jul 2025 05:05:26 -0700 (PDT)
+Received: from debian ([45.84.137.103])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee4f0easm24892585e9.16.2025.07.31.05.05.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 05:05:25 -0700 (PDT)
+Message-ID: <d1f9e74d-0a69-095d-f5e8-f28f13d44e1b@gmail.com>
+Date: Thu, 31 Jul 2025 14:05:06 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Subject: Re: [PATCH net-next v4 0/4] net: add local address bind support to
+ vxlan and geneve
+To: Ido Schimmel <idosch@nvidia.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+ pabeni@redhat.com, horms@kernel.org, dsahern@kernel.org,
+ razor@blackwall.org, petrm@nvidia.com, menglong8.dong@gmail.com,
+ daniel@iogearbox.net, martin.lau@kernel.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250717115412.11424-1-richardbgobert@gmail.com>
+ <aHz2Y6Be3G4_P7ZM@shredder>
+From: Richard Gobert <richardbgobert@gmail.com>
+In-Reply-To: <aHz2Y6Be3G4_P7ZM@shredder>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-With commit 4ac1dd3245b9("clocksource: Set cs_watchdog_read() checks
-based on .uncertainty_margin"), the limit for wd-cs-wd read back delay
-is changed from the static WATCHDOG_MAX_SKEW to dynamic ones based on
-watchdog and cs' uncertainty_margin, but WATCHDOG_MAX_SKEW is still used
-when dumping information.
+Ido Schimmel wrote:
+> On Thu, Jul 17, 2025 at 01:54:08PM +0200, Richard Gobert wrote:
+>> This series adds local address bind support to both vxlan
+>> and geneve sockets.
+> 
+> A few comments:
+> 
+> 1. Binding the VXLAN socket to the local address does break
+> functionality. Run the VXLAN selftests in tools/testing/selftests/net/
+> and you will see failures. IOW, you cannot change the default behavior.
+Missed the failing tests. Will be fixed in the next revision.
 
-Fix this by using the actual limit: md(2 * watchdog->uncertainty_margin)
-+ cs->unvertainty_margin.
+> You might not need the first patch if the new behavior is opt-in rather
+> than opt-out.
+This patch allows the localbind option to be set while the outgoing
+interface is down. IMO, it is desirable.
 
-Signed-off-by: Aaron Lu <ziqianlu@bytedance.com>
----
- kernel/time/clocksource.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> 2. Please add a selftest for the new functionality. See the existing
+> VXLAN selftests for reference. There is no need to wait for the iproute2
+> patch to be accepted. You can have a check to skip the test if iproute2
+> does not have the required functionality.
+Do you think adding a new test that verifies that the localbind option
+works would be sufficient?
 
-diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
-index e400fe150f9d7..ae0fcd5af41c2 100644
---- a/kernel/time/clocksource.c
-+++ b/kernel/time/clocksource.c
-@@ -290,7 +290,7 @@ static enum wd_read_status cs_watchdog_read(struct clocksource *cs, u64 *csnow,
- 	}
- 
- 	pr_warn("timekeeping watchdog on CPU%d: wd-%s-wd excessive read-back delay of %lldns vs. limit of %ldns, wd-wd read-back delay only %lldns, attempt %d, marking %s unstable\n",
--		smp_processor_id(), cs->name, wd_delay, WATCHDOG_MAX_SKEW, wd_seq_delay, nretries, cs->name);
-+		smp_processor_id(), cs->name, wd_delay, md + cs->uncertainty_margin, wd_seq_delay, nretries, cs->name);
- 	return WD_READ_UNSTABLE;
- 
- skip_test:
--- 
-2.39.5
-
+> 
+> 3. The cover letter should explain the motivation for these patches.
+> Currently it only explains what the patches do.
+Noted. Will write a better cover letter once all other issues are resolved.
 
