@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-751738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26DC2B16CE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:49:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 155ABB16CE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:51:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0568C3AAED0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:49:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5874A1AA242E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:51:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD0B129CB56;
-	Thu, 31 Jul 2025 07:49:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A57529CB52;
+	Thu, 31 Jul 2025 07:50:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nmZbqEVx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m4Tw0mMp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C867D230BEF;
-	Thu, 31 Jul 2025 07:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED1DEE55B;
+	Thu, 31 Jul 2025 07:50:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948179; cv=none; b=eIuOUF9sfqh+fAuwpxbAckEBIcH8XAMLyDS+BaKCl3LOkVnV6KoHWehyAnBYYjKqv5qMNS92iJ0rwfUAbVjfiuEtO/VUs+GtE1JMcriRjV8uDlPXeDLm358ff7ruOt+W3qDdM3IkihtYfyzFqxIwRaSX7H+q97upj6Vdv3O9b7o=
+	t=1753948252; cv=none; b=P6kvrETMWFDjYfAl/P6I4dFlX9bJ7fTsDsVD9w+1s4ClSwfJqXCVtFyIKwvtze97/IwDID43gNGvd/2J3pau73HJGmD8WtuOHOWg4LPhbxU6kxtvqh3X6uN3M1cETDqlI8JtY5GqtvE9ao/WxleKV4mzxJQX8Gk3lV+LcEOgOfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948179; c=relaxed/simple;
-	bh=Gs1MIGdx+aL/FvTa33b5/hEqyQZgikPYWC/APuQ9dlg=;
+	s=arc-20240116; t=1753948252; c=relaxed/simple;
+	bh=ZKHM5hOwTJGpfFzOiTM0aPCuHi35bh1u0E6HYU23tdI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CzS2fOLw+3rXNiQkecvYSJ/h3gkcT1V878PshiRBQQWDTs/CvWulQPGygfAbDyBchunRPH13PqJ72dolSSAxxpFKSTWnxRrZ2gI2omvBHZVPeL1NlNV4aa556NUr2pLQ76md0+NUrUy+C7cr0AzMH49XkjMSy72Jbvx7de8nc6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nmZbqEVx; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753948178; x=1785484178;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=Gs1MIGdx+aL/FvTa33b5/hEqyQZgikPYWC/APuQ9dlg=;
-  b=nmZbqEVx1N6R7tT8hKoZ/o9AIxq3SeQRTKWHivQ7pFIVdwkO6NTX92jV
-   drF5+QP98U0aX8YGTchTRbcC53zIGirHBlojtcsdFvFyqeoXraKHQQ7tF
-   e71ZlKzCTr+YzfPjxYeCMuuqhHaW6JzZAZfwYbTjHkQv5k8jl3NULXYz1
-   G6RbQwml8h7qKMVdoxO+0OlFLcsaxoMABFlR6SW7LH9uBTKsC9VeDmpsC
-   dmC2DzXmXeGLdZUkROtF+H6uCdwRueOn/4PHa9vrcormabEjz0FSGoHTF
-   PNTHDFNtN3xymuQF6KF3ZroaGJWGu93FGIgn2j9ZBhwvwWXZ67excUr26
-   Q==;
-X-CSE-ConnectionGUID: GbY/VSI4Rp2jX+WsHbHoHw==
-X-CSE-MsgGUID: QjqMY99GRK210g8Ox+R3Ng==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56340251"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="56340251"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:49:37 -0700
-X-CSE-ConnectionGUID: 73cEAW53RymL+KeNij9jPQ==
-X-CSE-MsgGUID: my5o4r9WSBaok3whtlcfJQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="163541810"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.247.1]) ([10.124.247.1])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:49:33 -0700
-Message-ID: <44f17b93-cf3c-43e9-b921-5f904c13db69@intel.com>
-Date: Thu, 31 Jul 2025 15:49:29 +0800
+	 In-Reply-To:Content-Type; b=UKHBumC0FeWDAiwTb80KJdwAgEZQpfX+qzbRfNnDFhCecMsTb+Ms+SDyehBft5zPOcFJ5aTOmfuurZtAh28FcDw68II5H1qmbOQnfghdwvWomRDWphJh45Cv/fUWjVLUSS83Es8MFVWOSp7uh6GpmDxX6b/0tYRJc5fbrs2Wz7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m4Tw0mMp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4737AC4CEEF;
+	Thu, 31 Jul 2025 07:50:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753948251;
+	bh=ZKHM5hOwTJGpfFzOiTM0aPCuHi35bh1u0E6HYU23tdI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=m4Tw0mMpUYAyGn6drvs1U9hJB3TAxSu76hNpo+SpvRgreZbuN5xw/B6dlerAuaGmk
+	 rSDcYQiiqBQ05exNFWZAIbeGBfLegyLwgoFVb+Z/9iyBIY9l4Qs9P2pVuoHv3cIU79
+	 aPatplPiNOsKb1ESHZhNmAJpGnZtTRAv/FiyceWotfFXv0tnAtnSoEgUfSpYCh3daV
+	 O1+bowyT941Y8U9eab0hWIpBTA1/fhIwn4wXDpr6vgDWdfAfOFG0OhL2mrirHWgorg
+	 +2+FBHwvJwKnc4e5Q9MIibH+pyW70BV198l+QmY2uYcyX9Fvcfqeuym1vPuxXiIYK4
+	 rDAqVuxExL9Eg==
+Message-ID: <6011eb0d-e57e-4220-a9f1-c09fc4c6799e@kernel.org>
+Date: Thu, 31 Jul 2025 09:50:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,71 +49,113 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v17 23/24] KVM: selftests: guest_memfd mmap() test when
- mmap is supported
-To: Sean Christopherson <seanjc@google.com>
-Cc: Paolo Bonzini <pbonzini@redhat.com>, Marc Zyngier <maz@kernel.org>,
- Oliver Upton <oliver.upton@linux.dev>, kvm@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
- linux-kernel@vger.kernel.org, Ira Weiny <ira.weiny@intel.com>,
- Gavin Shan <gshan@redhat.com>, Shivank Garg <shivankg@amd.com>,
- Vlastimil Babka <vbabka@suse.cz>, David Hildenbrand <david@redhat.com>,
- Fuad Tabba <tabba@google.com>, Ackerley Tng <ackerleytng@google.com>,
- Tao Chan <chentao@kylinos.cn>, James Houghton <jthoughton@google.com>
-References: <20250729225455.670324-1-seanjc@google.com>
- <20250729225455.670324-24-seanjc@google.com>
- <856487d0-8e1a-4e64-a8e6-13977fd31fed@intel.com>
- <aIoWosN3UiPe2qQK@google.com>
+Subject: Re: [PATCH v2 19/20] dt: bindings: fsl,vf610-pit: Add compatible for
+ s32g2 and s32g3
+To: Daniel Lezcano <daniel.lezcano@linaro.org>, Rob Herring <robh@kernel.org>
+Cc: tglx@linutronix.de, S32@nxp.com, linux-kernel@vger.kernel.org,
+ ghennadi.procopciuc@oss.nxp.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>
+References: <20250730082725.183133-1-daniel.lezcano@linaro.org>
+ <20250730082725.183133-20-daniel.lezcano@linaro.org>
+ <20250730233547.GA1887794-robh@kernel.org>
+ <858e9dd6-b3a7-4ff7-aaa1-02a140b93de8@linaro.org>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <aIoWosN3UiPe2qQK@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <858e9dd6-b3a7-4ff7-aaa1-02a140b93de8@linaro.org>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/30/2025 8:57 PM, Sean Christopherson wrote:
-> On Wed, Jul 30, 2025, Xiaoyao Li wrote:
->> On 7/30/2025 6:54 AM, Sean Christopherson wrote:
->>
->> ...
->>
->>> +int main(int argc, char *argv[])
->>> +{
->>> +	unsigned long vm_types, vm_type;
->>> +
->>> +	TEST_REQUIRE(kvm_has_cap(KVM_CAP_GUEST_MEMFD));
->>> +
->>> +	/*
->>> +	 * Not all architectures support KVM_CAP_VM_TYPES. However, those that
->>> +	 * support guest_memfd have that support for the default VM type.
->>> +	 */
->>> +	vm_types = kvm_check_cap(KVM_CAP_VM_TYPES);
->>> +	if (!vm_types)
->>> +		vm_types = VM_TYPE_DEFAULT;
->>> +
->>> +	for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
->>> +		test_guest_memfd(vm_type);
->>
->> For ARCHes that don't support KVM_CAP_VM_TYPES, e.g., ARM, vm_types is 0
->> (VM_TYPE_DEFAULT). the for_each_set_bit() loop will not execute any
->> iteration at all.
+On 31/07/2025 09:41, Daniel Lezcano wrote:
 > 
-> Doh, indeed.
+> Hi Rob,
 > 
-> diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-> index b86bf89a71e0..b3ca6737f304 100644
-> --- a/tools/testing/selftests/kvm/guest_memfd_test.c
-> +++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-> @@ -372,7 +372,7 @@ int main(int argc, char *argv[])
->           */
->          vm_types = kvm_check_cap(KVM_CAP_VM_TYPES);
->          if (!vm_types)
-> -               vm_types = VM_TYPE_DEFAULT;
-> +               vm_types = BIT(VM_TYPE_DEFAULT);
->   
->          for_each_set_bit(vm_type, &vm_types, BITS_PER_TYPE(vm_types))
->                  test_guest_memfd(vm_type);
+> On 31/07/2025 01:36, Rob Herring wrote:
+>> On Wed, Jul 30, 2025 at 10:27:21AM +0200, Daniel Lezcano wrote:
+>>> The Vybrid Family is a NXP (formerly Freescale) platform having a
+>>> Programmable Interrupt Timer (PIT). This timer is an IP found also on
+>>> the NXP Automotive platform S32G2 and S32G3.
+>>>
+>>> Add the compatible for those platforms to describe the timer.
+>>>
+>>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>>> ---
+>>>   .../devicetree/bindings/timer/fsl,vf610-pit.yaml          | 8 ++++++--
+>>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml b/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>>> index bee2c35bd0e2..2aac63a58bfd 100644
+>>> --- a/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>>> +++ b/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>>> @@ -15,8 +15,12 @@ description:
+>>>   
+>>>   properties:
+>>>     compatible:
+>>> -    enum:
+>>> -      - fsl,vf610-pit
+>>> +    oneOf:
+>>> +      - const: fsl,vf610-pit
+>>> +      - const: nxp,s32g2-pit
+>>
+>> These 2 can be a single enum. Otherwise,
+> 
+> Do you mean this ?
+> 
+>     enum:
+>       - fsl,vf610-pit
+>       - nxp,s32g2-pit
+> 
+Yes.
+And also please correct the subject prefix to match subsystem, git log
+--oneline or:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
-With the above fix,
 
-Reviewed-by: Xiaoyao Li <xiaoyao.li@intel.com>
+
+Best regards,
+Krzysztof
 
