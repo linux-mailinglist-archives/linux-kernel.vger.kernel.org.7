@@ -1,115 +1,84 @@
-Return-Path: <linux-kernel+bounces-752190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B32FB17244
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:46:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDE23B17246
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:47:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B1F17B239D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:45:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67EA51AA51CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:47:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A003A2C159A;
-	Thu, 31 Jul 2025 13:46:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ABBF2C15A6;
+	Thu, 31 Jul 2025 13:46:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="s2aPDoKS"
-Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Aw8cwRHv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83F3422338;
-	Thu, 31 Jul 2025 13:46:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 041D4146D6A;
+	Thu, 31 Jul 2025 13:46:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969586; cv=none; b=C6DX64EWtQIVBSFTEW4AtKewveLHIOOZFgB1kpa1WnPEXpeXjSrnH3MndmlflZgxYdxfPpcoSy89kPNLAWOvhjHIpD3bhmjq41wv32sDJvUl9rk2tV5IU/6JSaRA+6N5Z70XtxwEK1uO/gfjMlO9Yv31CilFKy9AqR4VufeuE9U=
+	t=1753969617; cv=none; b=XZht8CFza02gbKhfkos8d7PpzhQ4jLdjNLfUhsNmEQoIdaRLwAzjXziM/mLtFCD/QOG+hwHh4zeVqagxyB0P7pklEccpKEnOcdNLopQqSOzu8lG2IO4YdR3vaNE1e72IXIhvyAZloxRrit3zqzX4j4QKvpiTjzCn4NYFeCoWBUY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969586; c=relaxed/simple;
-	bh=EdfR3+ghXfvid8Ak9BFhtOhrGJNHg3UqEP+sC26bPJo=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t1F4as/Hax3Th1V97a/7OWiaRFCRTtd13vbWhn7fbRAcX1K7R5oNff0D7ASyCrAZ9/8unZ2oJ6fiQk8KuoS7FlGnp5ytBFG3xo/k05RGdhFqNU8JqU/5xB22e0ayWSV0OviRqLDhAoSRkV02fklseuE74K6jHEBnr2hqbUMvyPo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=s2aPDoKS; arc=none smtp.client-ip=185.11.138.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Type:Content-Transfer-Encoding:MIME-Version:
-	References:In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Reply-To;
-	bh=EdfR3+ghXfvid8Ak9BFhtOhrGJNHg3UqEP+sC26bPJo=; b=s2aPDoKSHYE2kKRj6gIVVD1GOV
-	fcyxAWhVigRK5nmd4r39qvJYfsh15mYv+up49sLyMVgmgm7fdKeXj6Tz8jcov+sqW47LaViq+O/08
-	FiCKhEKVmsqLmQ0JaxVWMq4ng6kFiYqGXXUx75iOnj6mx4t/NmSeMMj9FH9AsQb12ZZ55EQQgHLnP
-	IE0IpOIQkNRTLTp0NQKMuk5DBt+odJ9HJ8FN9vLyk29Z/24LDNtQ4lKOt9lEoGZmmEAHFhbSTLMVC
-	b4OYu5XIloViojkcFakmlrrMcioISbGwOtsjg2jyrZ+B2nvw7ptg8weOVx0KeeA2p+xD6aM6MZPfu
-	Oz+uHF3w==;
-Received: from i53875bde.versanet.de ([83.135.91.222] helo=diego.localnet)
-	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.94.2)
-	(envelope-from <heiko@sntech.de>)
-	id 1uhTbQ-0008Cv-68; Thu, 31 Jul 2025 15:45:48 +0200
-From: Heiko =?UTF-8?B?U3TDvGJuZXI=?= <heiko@sntech.de>
-To: Sebastian Reichel <sebastian.reichel@collabora.com>
-Cc: Daniel Lezcano <daniel.lezcano@linaro.org>,
- Alexey Charkov <alchark@gmail.com>,
- Nicolas Frattaroli <nicolas.frattaroli@collabora.com>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- Jonas Karlman <jonas@kwiboo.se>, kernel@collabora.com,
- linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org,
- linux-kernel@vger.kernel.org, Ye Zhang <ye.zhang@rock-chips.com>
-Subject: Re: [PATCH v6 0/7] RK3576 thermal sensor support,
- including OTP trim adjustments
-Date: Thu, 31 Jul 2025 15:45:47 +0200
-Message-ID: <2664626.Lt9SDvczpP@diego>
-In-Reply-To: <iafobb7h4nphjcujm34gig6vwlzfveegwewpayehb4h3tayzgv@bxpdfmhf2hfa>
-References:
- <20250610-rk3576-tsadc-upstream-v6-0-b6e9efbf1015@collabora.com>
- <3560770.QJadu78ljV@diego>
- <iafobb7h4nphjcujm34gig6vwlzfveegwewpayehb4h3tayzgv@bxpdfmhf2hfa>
+	s=arc-20240116; t=1753969617; c=relaxed/simple;
+	bh=FQGdA/kgua3Ezrs2J/gUZOld6oQPDapLrvIw7K0op/A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=gmd69RFx5jK+p/3uyYO770KWFpFCmS1DeKFrk1Lv+LR9BWTMYZaVkHQhkWGp8ChVNzxONJAaiDlIkDS6x808ah2496Lg+2x1ARFKA5oPp3bT3a9snoJISHlDort8UJppX1hmdSkZyyX7SoA6ybUjPvmGgsHaB/SHhqqi6x+FgAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Aw8cwRHv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6012CC4CEEF;
+	Thu, 31 Jul 2025 13:46:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753969616;
+	bh=FQGdA/kgua3Ezrs2J/gUZOld6oQPDapLrvIw7K0op/A=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=Aw8cwRHvczijxPQAilBvNR/DNf91I5VwbNcMH3kcEvhD+I1OouAldcMXxjty17WTZ
+	 4hThzY8JLtsm7Z429cWPsAbQiXtn1Ultlq2o18muLo3CpRYJTyUMl90R6AhN86he4I
+	 HD3ioKnWqpR+xp7hOiqh/wbQgJnhpejRJ8i9BnZ1vdyAbvGgcWlvIM1WI1jsunKsNA
+	 UK4r7rlOAUPX6Ttf6pyLLDa/bth6M2j+78XcNxOfrON+SDrkwjieEeL3nSAofFa2vE
+	 yYSZE5rMOKVDree90N+9Rz2Xepl9FvvKeUu4st8woEaFfzVyn8GSfJXBymjmW4aYeh
+	 xlb1I88usRgRA==
+From: Lee Jones <lee@kernel.org>
+To: lee@kernel.org, Heiko Stuebner <heiko@sntech.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250730173423.1878599-1-heiko@sntech.de>
+References: <20250730173423.1878599-1-heiko@sntech.de>
+Subject: Re: [PATCH 0/2] qnap-mcu: add ts233 support
+Message-Id: <175396961510.1212211.4176671261815163862.b4-ty@kernel.org>
+Date: Thu, 31 Jul 2025 14:46:55 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-Am Donnerstag, 31. Juli 2025, 15:27:03 Mitteleurop=C3=A4ische Sommerzeit sc=
-hrieb Sebastian Reichel:
-> Hi,
->=20
-> On Thu, Jul 31, 2025 at 10:11:23AM +0200, Heiko St=C3=BCbner wrote:
-> > Right now we're in the middle of the merge-window though, so everything
-> > I apply now, I'd need to rebase onto -rc1 in slightly more than a week,
-> > invalidating all those nice commit hashes that end up in the "applied" =
-mails.
-> >=20
-> > So I'm struggling with myself on every merge window about that.
->=20
-> Your are not supposed to merge anything to your for-next branch
-> during the merge window anyways. See first sentence of Stephen
-> Rothwell's mails [0]:
->
-> > Please do not add any v6.18 material to your linux-next included
-> > branches until after v6.17-rc1 has been released.
+On Wed, 30 Jul 2025 19:34:21 +0200, Heiko Stuebner wrote:
+> For a better return on all the investigating I did into that MCU,
+> I got myself a 2nd device - the 2-bay TS233 this time.
+> 
+> Add the necessary driver-data and compatible for it to the MCU.
+> 
+> Heiko Stuebner (2):
+>   dt-bindings: mfd: qnap,ts433-mcu: add qnap,ts233-mcu compatible
+>   mfd: qnap-mcu: add driver data for ts233 variant
+> 
+> [...]
 
-The general idea is just merging but without updating the -next branch,
-then after -rc1 rebase + do new -next.
+Applied, thanks!
 
-But as you pointed out, this is all cumbersome and doesn't shave off much
-from the amount of patches waiting, so as most of the time, I'll just wait
-for -rc1 to start clean :-)
+[1/2] dt-bindings: mfd: qnap,ts433-mcu: add qnap,ts233-mcu compatible
+      commit: 38dc76168a92a1e8fb28a901607ac24c4778141c
+[2/2] mfd: qnap-mcu: add driver data for ts233 variant
+      commit: 5f1edbae853329b8a6e637fed0f7202727aec545
 
-
->=20
-> [0] https://lore.kernel.org/all/20250731133311.1a3e3867@canb.auug.org.au/
->=20
-> Greetings,
->=20
-> -- Sebastian
->=20
-
-
-
+--
+Lee Jones [李琼斯]
 
 
