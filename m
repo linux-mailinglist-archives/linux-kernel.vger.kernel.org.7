@@ -1,116 +1,142 @@
-Return-Path: <linux-kernel+bounces-751891-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751892-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F379B16ED2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:42:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AB3AB16EE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:43:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6B25B7A384B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:40:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 746FF3AB20A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:42:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D90522BD019;
-	Thu, 31 Jul 2025 09:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VCYwW3NY"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8CC881E;
-	Thu, 31 Jul 2025 09:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F51A2BD5A3;
+	Thu, 31 Jul 2025 09:43:05 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C82CD28A718;
+	Thu, 31 Jul 2025 09:43:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753954915; cv=none; b=keKrEF5Gfppa46nkT/9JUIruj8sad3qDA2ijEIUtXBz7FXscpv8vuGz7LFTkAXyf9ThJJISJ5NYK7R0yoJ/LFFnTbR+VumB4whmdvD6oW8d+R69u+Eag5BOvEiA9kQu6PYImiGe4BJClIPVSYkEAqBUkoMbkCuG9sC3nWDRFNbk=
+	t=1753954985; cv=none; b=noUfzWB1a30rzPhnQb6I4gWcxL3/rtoLh5OkyyGbbeFRx9qUdbCFpDUo8a5GwmQYlEJ6lm8OjQoaI0kIN/uT9TcooXrsG+dmpW0eLE2OpPCCy/gEnO1WwKGc8ok4xWyMi0gOkM52iHCYzwk0eqWNN4/f+VgsHA0S32oKdVZcoTE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753954915; c=relaxed/simple;
-	bh=i2/nMy7FKYTyjoOb6CSTRUZssDpBCdS9RZdlFSAXfls=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaoUQqPIelGT0gr986mOdR1pM9kMYzrSRmJOMnX9aPq6R2e5egztnvTJpKTEoY5fo9R4J8anx2zjOW9nnpNvwCe2P0Ah61vS20oYO3t1HU6TeqX5MrFczYSnUaiNxFE44csUUe3ZSwvd/9m/Tv9ViJSY8uGuP1WAp3GWGDDIAdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VCYwW3NY; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00339c8so1773665e9.3;
-        Thu, 31 Jul 2025 02:41:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753954912; x=1754559712; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
-        b=VCYwW3NYAZ0/cVfSaJh8PsHFc51hr5mYu5Eylzm0aem2n0obygz8fH+OF7lUR4XjTu
-         30SkYFa5p+xouMnrVg+beAOtvvTKwO2R0rEJjBOAqOJWlNDn83PcuboYz4KYX2t8ARB8
-         90ztcVSU8BbMUqBn027yU16fwsUNidwmMmc1xo3XdgRtu8ZkYk24kzTx4/y9JABjmecQ
-         k8mINmGnbl5AE4HUSjG/PEPjgOE3blpmNv04UgcGyJcHgc98vZwCQxPu59p8cuIBXbmo
-         GYydzZuaCHZ1/rrYrPt6u0kqngOTW2u+P4KP7SxsQHexc9Z1INDkug2LAbKOxu4BLgdW
-         SH2g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753954912; x=1754559712;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ylc4ZxnLD2CbRkm680HNmR2pGWeedE4Tq4BAYLGyBVc=;
-        b=MkjujIR2uis19Sl8+RWoLyZ4gEEIm0ARKcTQIH59y50ef2Yf8OzaRzxwPiMOmAdahv
-         DhzzcfiUO5/JMBDNovcSPQhFdvwaWe/t9qsRhl691FlCcbLMxkH+8rlH18aqUvNfdO3H
-         APhknwrkmzACtIOzYj6zxaMqtXbMELy54StX6iFpQ071DC7fXwD6oJyD3bU8HTM/xZTy
-         jylkQCyckOm7DIj8MeVUYijuX6j2RXNj3oYyvkObRxd9RtfFdRc4z/mDkU+TX1wsFBRX
-         +0pIL265/Zsfp90YoEzroWKNwStVbZ5c5zMgt+SgCv8PZxU+pPc13EGmsi4D13fouyS+
-         fCdw==
-X-Forwarded-Encrypted: i=1; AJvYcCUETHwXudgQnU/Lbt2t8EaDrTNaa9Mq4aEAT1WYIOpiVo1hWvQw1lccKFl7EEoEe2c6s6MRUe4j4d14@vger.kernel.org, AJvYcCV6YCAC1nI5YJoTv9VXQxwW6i1/BK9/5paKPDNCJ02uvhaFtXigJosoVhdipXkwv9xt6xLmCrtJg5PIdnY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyIVuKpGZiDI846C6/ghCBjdBxYhbJaTE6OfqQldfK+8EsUbR9
-	PMIe/3hws5QEsjzbzUcuBDLLiSi7HOd9oPtDw67ZIUbMaUth+AmML36V
-X-Gm-Gg: ASbGncuZaCMdte218h1dFkovkuLnK8rhLB1xgpJC+3fHKl5Fu0Ksd7c/OF8f7Eh1Jqg
-	+X1IAVcBZVDZqFl69IdK+hxsUM+IQbXJSRs3wExhjXzWgHz3CjqZ2xeZsFYe45Tw2MnMt4m5MHx
-	33FfXpolHlMi0RM3vvIo/GlWWOGtrLcgULMckCks+DS40WloTL47GYtinJZdDx4CuGHbNqhcBcZ
-	WHZVoatTzu4Z24FCcQj08eNZKIL2V0buD5y7JU07AZZ4ebF/lDxCGv9Gagw9jYtsLQ4lWXa+tiO
-	G5XFnLUtmniiAX7rTNWAL1afwIDfHtKjwQlo4SJWe8RlBPmM5RA+RbARw20FumgvXaJYLTNbOF7
-	OA/sNP7828sUdrRE+Icy9
-X-Google-Smtp-Source: AGHT+IGje8yg8iNAPGrk4uFHpWmJ4AyuhPlf+5JK0IMwP0mZvBIu+DXEedc841mCBEGmi3Fx/5xZWg==
-X-Received: by 2002:a05:600c:5185:b0:456:1846:6566 with SMTP id 5b1f17b1804b1-45892bee39cmr54428715e9.29.1753954911810;
-        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458953787a8sm58153325e9.14.2025.07.31.02.41.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:41:51 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-mmc@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] mmc: davinci: Remove space before newline
-Date: Thu, 31 Jul 2025 10:41:16 +0100
-Message-ID: <20250731094116.2163061-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753954985; c=relaxed/simple;
+	bh=QJkSrAUetbvWvmT8qBYv6oDH48hw7mqICMLX+im+dFM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pNN8taDdFYRkkg4zfRQutAurHFZ2lXW1vyqgNwmdgYFu+8KNXEOJx+r+bKBPfGX11p0N1upxRu40k505jaIUDw+lYLX2ivPLRWq1o7/3dSrkNJFSq47Z5Pilt7eWGVfu4WzhcLRnX+Jj7wp+ZAwipZR5d6vVio+NX+InNmFFflk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id D03EE1D13;
+	Thu, 31 Jul 2025 02:42:53 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1D0BC3F66E;
+	Thu, 31 Jul 2025 02:42:58 -0700 (PDT)
+Date: Thu, 31 Jul 2025 11:42:37 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Jie Zhan <zhanjie9@hisilicon.com>
+Cc: Bowen Yu <yubowen8@huawei.com>, rafael@kernel.org,
+	viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, lihuisong@huawei.com,
+	zhenglifeng1@huawei.com
+Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in
+ cppc_scale_freq_workfn()
+Message-ID: <aIs6d4ebRKkbz0az@arm.com>
+References: <20250730032312.167062-1-yubowen8@huawei.com>
+ <20250730032312.167062-3-yubowen8@huawei.com>
+ <aIsnA4miO8fCJTgs@arm.com>
+ <d9aefa22-9566-9db0-a95f-ab50465977f8@hisilicon.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d9aefa22-9566-9db0-a95f-ab50465977f8@hisilicon.com>
 
-There is a extraneous space before a newline in a dev_err message.
-Remove the space.
+On Thu, Jul 31, 2025 at 04:52:05PM +0800, Jie Zhan wrote:
+> 
+> 
+> On 31/07/2025 16:19, Beata Michalska wrote:
+> > Hi Bowen, Jie
+> > On Wed, Jul 30, 2025 at 11:23:12AM +0800, Bowen Yu wrote:
+> >> From: Jie Zhan <zhanjie9@hisilicon.com>
+> >>
+> >> Perf counters could be 0 if the cpu is in a low-power idle state. Just try
+> >> it again next time and update the frequency scale when the cpu is active
+> >> and perf counters successfully return.
+> >>
+> >> Also, remove the FIE source on an actual failure.
+> >>
+> >> Signed-off-by: Jie Zhan <zhanjie9@hisilicon.com>
+> >> ---
+> >>  drivers/cpufreq/cppc_cpufreq.c | 13 ++++++++++++-
+> >>  1 file changed, 12 insertions(+), 1 deletion(-)
+> >>
+> >> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> >> index 904006027df2..e95844d3d366 100644
+> >> --- a/drivers/cpufreq/cppc_cpufreq.c
+> >> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> >> @@ -78,12 +78,23 @@ static void cppc_scale_freq_workfn(struct kthread_work *work)
+> >>  	struct cppc_cpudata *cpu_data;
+> >>  	unsigned long local_freq_scale;
+> >>  	u64 perf;
+> >> +	int ret;
+> >>  
+> >>  	cppc_fi = container_of(work, struct cppc_freq_invariance, work);
+> >>  	cpu_data = cppc_fi->cpu_data;
+> >>  
+> >> -	if (cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs)) {
+> >> +	ret = cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs);
+> >> +	/*
+> >> +	 * Perf counters could be 0 if the cpu is in a low-power idle state.
+> >> +	 * Just try it again next time.
+> >> +	 */
+> >> +	if (ret == -EFAULT)
+> >> +		return;
+> > Which counters are we actually talking about here ?
+> 
+> Delivered performance counter and reference performance counter.
+> They are actually AMU CPU_CYCLES and CNT_CYCLES event counters.
+That does track then.
+> 
+> >> +
+> >> +	if (ret) {
+> >>  		pr_warn("%s: failed to read perf counters\n", __func__);
+> >> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_CPPC,
+> >> +						 cpu_data->shared_cpu_map);
+> >>  		return;
+> >>  	}
+> > And the real error here would be ... ?
+> > That makes me wonder why this has been registered as the source of the freq
+> > scale in the first place if we are to hit some serious issue. Would you be able
+> > to give an example of any?
+> If it gets here, that would be -ENODEV or -EIO from cppc_get_perf_ctrs(),
+> which could possibly come from data corruption (no CPC descriptor) or a PCC
+> failure.
+> 
+> I can't easily fake an error here, but the above -EFAULT path could
+> happen when it luckily passes the FIE init.
+> 
+The change seems reasonable. Though I am wondering if some other errors might be
+rather transient as well ? Like -EIO ?
+Note, I'm not an expert here.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/mmc/host/davinci_mmc.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/mmc/host/davinci_mmc.c b/drivers/mmc/host/davinci_mmc.c
-index c691f1b60395..2a3c8058b0fb 100644
---- a/drivers/mmc/host/davinci_mmc.c
-+++ b/drivers/mmc/host/davinci_mmc.c
-@@ -588,7 +588,7 @@ static void mmc_davinci_request(struct mmc_host *mmc, struct mmc_request *req)
- 		cpu_relax();
- 	}
- 	if (mmcst1 & MMCST1_BUSY) {
--		dev_err(mmc_dev(host->mmc), "still BUSY? bad ... \n");
-+		dev_err(mmc_dev(host->mmc), "still BUSY? bad ...\n");
- 		req->cmd->error = -ETIMEDOUT;
- 		mmc_request_done(mmc, req);
- 		return;
--- 
-2.50.0
-
+BR
+Beata
+> Jie
+> > 
+> > ---
+> > BR
+> > Beata
+> >>  
+> >> -- 
+> >> 2.33.0
+> >>
+> >>
+> > 
 
