@@ -1,153 +1,158 @@
-Return-Path: <linux-kernel+bounces-752550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EC22B17707
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:18:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B90FBB1770C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8A8F171826
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:18:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA7B3174363
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:19:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 070972441AF;
-	Thu, 31 Jul 2025 20:18:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 471012459F6;
+	Thu, 31 Jul 2025 20:19:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NbEBB58l"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="p5AT7MjZ"
+Received: from out-178.mta0.migadu.com (out-178.mta0.migadu.com [91.218.175.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62CEA134CF;
-	Thu, 31 Jul 2025 20:18:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62B74205E25
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 20:19:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753993124; cv=none; b=G67+E8ZHQH6IwB2UeILFIfeu+ClHTh0y/AXtOcwLHT6tH6/Jkpe76TEeuXALyVgH8wTI6iNPledFVUWEjhPG8OKlIc7vr9pqpCYyqbQK8ZpU6CzfrIdDWZSDV1TuiFb3NCtIgeXJ10mUbnWgUvHGKekaA1/sVBCsg911U+XPqjo=
+	t=1753993158; cv=none; b=RBDAL/S6YIwkQ2JKqPSYvTZMtITMTO62Omjc123jHkPnm2AWiWywP8GXZUqC3Od+2hcjUvkRmefEeVMMtvo1f+r+a7ibhQJil/Q6KKeO/xowVrvha2x9S3VX8TdSzX35Uu+DgEVsVC9PVnivf9NlVn5KIpsjAaJFQO/sHpEiY9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753993124; c=relaxed/simple;
-	bh=wRM/PA6cJ2JEMESFHLAWKFrlHYJBYwYV2kTWQyU87lc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hGLnAYM/f3kNt/hfmQ9I3R2M4hQ4cgOo6LdPGKp8H03kpMhp9bANH/8a6tOCvhD/V7fUG6TALo8gNr9FtdEiQH3EvmoQqbvr62T8pjd3UXoTxn+mQAV1R3KXZcvvCSDPwM418AzodsMngg8nvkZDxYJv89zKTTOz2Dt+0WcW6ts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NbEBB58l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C60BC4CEEF;
-	Thu, 31 Jul 2025 20:18:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753993123;
-	bh=wRM/PA6cJ2JEMESFHLAWKFrlHYJBYwYV2kTWQyU87lc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NbEBB58lngVa/0Az1+8+ZmTxAn61RHCjU/CSl5rE7+t7u4Mk2Aayg06G8hGxIJUSU
-	 3jx+qyBMPqmyCYBgNs+C2kLCGsgASoUa49XeBSydXaUIn2COC5HylO/OVwcabDNi/C
-	 iAkSHuERXC6g4GDSbtOBb2ujKa+jr6Ynobue9K7LLq3PL7Uyi7mj98/bDnih6nZGg2
-	 BZlE9DmZA2Yfs44N9TpLwUxyV3Ma83/5xtVi8lmzTCuOOKierW8AKRM4SzxrQIIeTi
-	 9QlhcpD0XaEspNz1yPY8iKXdd0MLCEa/t/AYlPHW0IrxUSl78Ka80L4dr/EAyBbz7J
-	 MWRnxXN7xE1RQ==
-Date: Thu, 31 Jul 2025 21:18:39 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kyle Hendry <kylehendrydev@gmail.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	noltari@gmail.com, jonas.gorski@gmail.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 2/2] net: dsa: b53: mmap: Implement bcm63268
- gphy power control
-Message-ID: <20250731201839.GG8494@horms.kernel.org>
-References: <20250730020338.15569-1-kylehendrydev@gmail.com>
- <20250730020338.15569-3-kylehendrydev@gmail.com>
+	s=arc-20240116; t=1753993158; c=relaxed/simple;
+	bh=M1wGUFoGwSBNtl0EAEpuSRNInuY6DP6zBL/VTRBSBpQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AFH9VYFe5xJrgLAcgcyhYuyx8hkChdeuahW0y2ZA6l6+ma3g88MK6VD1w3L/y6im417o1ywgr1mWK2GnJ7i5K9RafaoF8uiK512HjQajhPtMbfRS19e11sswS/hyDyzfUEeqmDsYUYEHhuEEqaJG4i3iyfLeIilZMZs01DBST+s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=p5AT7MjZ; arc=none smtp.client-ip=91.218.175.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <7865d95f-a92e-405d-bc71-f1e1382ad24c@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753993154;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=LZp1m8pcMkSudYnC+ixvkpaNmPsQEuz7a5hSG6WIj4Y=;
+	b=p5AT7MjZpi4n7M6TTNe6f81+NgZcuNti4Lxsm9adW1IRO8UHbjJ8JZSkPknqViynlUGGfZ
+	0vOrNQBFw3MRdtBo7/UzNesZMmkblbh29vWvGelKtH2sR4SFuKna/TIvZ585/iVAQWP5Mm
+	77JcXKsvDfSihOgPWO3iWjJ+kG4bSJE=
+Date: Thu, 31 Jul 2025 16:19:12 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730020338.15569-3-kylehendrydev@gmail.com>
+Subject: Re: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+To: Ping-Ke Shih <pkshih@realtek.com>,
+ "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ Bitterblue Smith <rtl8821cerfe2@gmail.com>
+References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
+ <20250729204437.164320-1-sean.anderson@linux.dev>
+ <c034d5cc40784bfa859f918806c567de@realtek.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Sean Anderson <sean.anderson@linux.dev>
+In-Reply-To: <c034d5cc40784bfa859f918806c567de@realtek.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, Jul 29, 2025 at 07:03:36PM -0700, Kyle Hendry wrote:
-> Add check for gphy in enable/disable phy calls and set power bits
-> in gphy control register.
+On 7/29/25 20:36, Ping-Ke Shih wrote:
+> Sean Anderson <sean.anderson@linux.dev> wrote:
+>> There are more unsupported functions than just LOWRT_RTY. Improve on
+>> commit 3b66519b023b ("wifi: rtw89: phy: add dummy c2h handler to avoid
+>> warning message") by printing a message just once when we first
+>> encounter an unsupported class. 
 > 
-> Signed-off-by: Kyle Hendry <kylehendrydev@gmail.com>
-
-Hi Kyle,
-
-Thanks for your patches.
-
-Unfortunately net-next is currently closed. So I'd like to ask for you to
-post this patchset when it reopens. You should include Florian's tags when
-doing so.
-
-## Form letter - net-next-closed
-
-The merge window for v6.17 has begun and therefore net-next is closed
-for new drivers, features, code refactoring and optimizations. We are
-currently accepting bug fixes only.
-
-Please repost when net-next reopens after 11th August.
-
-RFC patches sent for review only are obviously welcome at any time.
-
-See: https://www.kernel.org/doc/html/next/process/maintainer-netdev.html#development-cycle
-
-> ---
->  drivers/net/dsa/b53/b53_mmap.c | 33 +++++++++++++++++++++++++++++----
->  1 file changed, 29 insertions(+), 4 deletions(-)
+> Once I encounter an unsupported class/func, I'll check firmware team if the
+> C2H events can be ignored. If so, I add a dummy function to avoid the message.
+> If not, I should add code to handle the event. 
 > 
-> diff --git a/drivers/net/dsa/b53/b53_mmap.c b/drivers/net/dsa/b53/b53_mmap.c
-> index 87e1338765c2..f4a59d8fbdd6 100644
-> --- a/drivers/net/dsa/b53/b53_mmap.c
-> +++ b/drivers/net/dsa/b53/b53_mmap.c
-> @@ -29,6 +29,10 @@
->  #include "b53_priv.h"
->  
->  #define BCM63XX_EPHY_REG 0x3C
-> +#define BCM63268_GPHY_REG 0x54
-> +
-> +#define GPHY_CTRL_LOW_PWR	BIT(3)
-> +#define GPHY_CTRL_IDDQ_BIAS	BIT(0)
->  
->  struct b53_phy_info {
->  	u32 gphy_port_mask;
-> @@ -292,13 +296,30 @@ static int bcm63xx_ephy_set(struct b53_device *dev, int port, bool enable)
->  	return regmap_update_bits(gpio_ctrl, BCM63XX_EPHY_REG, mask, val);
->  }
->  
-> +static int bcm63268_gphy_set(struct b53_device *dev, bool enable)
-> +{
-> +	struct b53_mmap_priv *priv = dev->priv;
-> +	struct regmap *gpio_ctrl = priv->gpio_ctrl;
-> +	u32 mask = GPHY_CTRL_IDDQ_BIAS | GPHY_CTRL_LOW_PWR;
-> +	u32 val = 0;
+> Do you want to see the message even though it only appears once?
 
-I'm also wondering if you could update this to follow the
-reverse xmas tree - longest line to shortest - for local variable
-declarations. I realise that isn't followed particularly well
-in this file. But it is preferred for Networking code.
+I mean, maybe it should just be a debug? Are these messages useful for anyone
+other than the developers?
 
-I think in this case that could be as follows (completely untested!):
+Maybe we should just print only the very first unsupported message at info level
+and print the rest at debug.
 
-	u32 mask = GPHY_CTRL_IDDQ_BIAS | GPHY_CTRL_LOW_PWR;
-	struct b53_mmap_priv *priv = dev->priv;
-	struct regmap *gpio_ctrl;
-	u32 val = 0;
+--Sean
 
-	gpio_ctrl = priv->gpio_ctrl;
+>> Do the same for each unsupported func of
+>> the supported classes. This prevents messages like
+>> 
+>> rtw89_8922ae 0000:81:00.0: PHY c2h class 2 not support
+>> 
+>> from filling up dmesg.
+>> 
+>> Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+>> ---
+>> 
+>> Changes in v2:
+>> - Also suppress unsupported func messages
+>> 
+>>  drivers/net/wireless/realtek/rtw89/phy.c | 18 +++++++++++++++---
+>>  1 file changed, 15 insertions(+), 3 deletions(-)
+>> 
+>> diff --git a/drivers/net/wireless/realtek/rtw89/phy.c b/drivers/net/wireless/realtek/rtw89/phy.c
+>> index f4eee642e5ce..9484d80eea9b 100644
+>> --- a/drivers/net/wireless/realtek/rtw89/phy.c
+>> +++ b/drivers/net/wireless/realtek/rtw89/phy.c
+>> @@ -3535,17 +3535,25 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwdev, struct sk_buff *skb,
+>>  {
+>>         void (*handler)(struct rtw89_dev *rtwdev,
+>>                         struct sk_buff *c2h, u32 len) = NULL;
+>> +       static DECLARE_BITMAP(printed_ra, U8_MAX);
+>> +       static DECLARE_BITMAP(printed_rfk_log, U8_MAX);
+>> +       static DECLARE_BITMAP(printed_rfk_report, U8_MAX);
+>> +       static DECLARE_BITMAP(printed_class, U8_MAX);
+>> +       unsigned long *printed;
+>> 
+>>         switch (class) {
+>>         case RTW89_PHY_C2H_CLASS_RA:
+>> +               printed = printed_ra;
+>>                 if (func < RTW89_PHY_C2H_FUNC_RA_MAX)
+>>                         handler = rtw89_phy_c2h_ra_handler[func];
+>>                 break;
+>>         case RTW89_PHY_C2H_RFK_LOG:
+>> +               printed = printed_rfk_log;
+>>                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_log_handler))
+>>                         handler = rtw89_phy_c2h_rfk_log_handler[func];
+>>                 break;
+>>         case RTW89_PHY_C2H_RFK_REPORT:
+>> +               printed = printed_rfk_report;
+>>                 if (func < ARRAY_SIZE(rtw89_phy_c2h_rfk_report_handler))
+>>                         handler = rtw89_phy_c2h_rfk_report_handler[func];
+>>                 break;
+>> @@ -3554,12 +3562,16 @@ void rtw89_phy_c2h_handle(struct rtw89_dev *rtwdev, struct sk_buff *skb,
+>>                         return;
+>>                 fallthrough;
+>>         default:
+>> -               rtw89_info(rtwdev, "PHY c2h class %d not support\n", class);
+>> +               if (!test_and_set_bit(class, printed_class))
+>> +                       rtw89_info(rtwdev, "PHY c2h class %d not supported\n",
+>> +                                  class);
+>>                 return;
+>>         }
+>>         if (!handler) {
+>> -               rtw89_info(rtwdev, "PHY c2h class %d func %d not support\n", class,
+>> -                          func);
+>> +               if (!test_and_set_bit(func, printed))
+>> +                       rtw89_info(rtwdev,
+>> +                                  "PHY c2h class %d func %d not supported\n",
+>> +                                  class, func);
+>>                 return;
+>>         }
+>>         handler(rtwdev, skb, len);
+>> --
+>> 2.35.1.1320.gc452695387.dirty
+> 
 
-Edward Cree's tool can be of assistance here.
-https://github.com/ecree-solarflare/xmastree
-
-> +
-> +	if (!enable)
-> +		val = mask;
-> +
-> +	return regmap_update_bits(gpio_ctrl, BCM63268_GPHY_REG, mask, val);
-> +}
-> +
-
-...
-
--- 
-pw-bot: defer
 
