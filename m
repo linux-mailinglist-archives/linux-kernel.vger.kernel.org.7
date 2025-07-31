@@ -1,143 +1,145 @@
-Return-Path: <linux-kernel+bounces-752440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45857B17597
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:30:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B877B17598
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:30:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE3DA830DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:29:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13BA7546789
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:30:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D828FABC;
-	Thu, 31 Jul 2025 17:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 351332741D5;
+	Thu, 31 Jul 2025 17:29:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGAtKN7S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f5C96pq+"
+Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2273FBE6C;
-	Thu, 31 Jul 2025 17:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D61DBE6C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:29:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753982991; cv=none; b=mGE8nskJWJjkdsQ/N1EmI8w176R+RXWXXTnzRZO06njI+wyBMyfdlYuKfwm2PEOXSGvqGw9Db55swOCuX+3CO7oaKbuYhWKnZIOGv8vIJTCPf/sbvU9+KNeNKFraIpDPCqvQUNQfWoUjtOHS2AsX+D9Ffd5FJzqdxyU5LSpvQdw=
+	t=1753982997; cv=none; b=Sj09ilNXH+xxwz4E9JB3rPe2pTs+MuFAthePIp2TdMvYVKC6Bv3VnUWCzhtamc2lHqfXZI5FiM6v47w1YItIbmy5zLoworapXpaI4keMrwKj8LNjdpu+PPsoojr8ObJTllUVQn9SolM8yXV9Q3TPlN1FobdB+vnrqWNadnyLhL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753982991; c=relaxed/simple;
-	bh=e5jgqySpdEc4DwpBdabTILVgcW1l93r2WSzWO8xi3Us=;
+	s=arc-20240116; t=1753982997; c=relaxed/simple;
+	bh=z6YdCAATkLXfNaxHpsEJfYTsZdJOBEnA3qR4xvdCH5Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HMKb5TAurW+PdkPkQjiaAQZU0hsYaKa88Z5rNQJy666spqKWnJbEtOCCNf/iTPVR/BDMkHq+QU8z1M5QqAM39ez4BAAY0zisk5pjTyp9mj80z0q0aJ1gNSjMQ28Ah7K7ixupIPXq8KEN7dFuOWIo6ykT4gSQflyK47R1zV0QZ8A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGAtKN7S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67736C4CEEF;
-	Thu, 31 Jul 2025 17:29:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753982990;
-	bh=e5jgqySpdEc4DwpBdabTILVgcW1l93r2WSzWO8xi3Us=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JGAtKN7S7xTbKzvf38ip2eImWsn6Nv0qA7JAHFPWckwXwdgWGGYBoGwzxDZrG5Aqx
-	 hfEFXcIZB/RlE59doUj9pZ8moEM0TqUEDnTh8p/N704V8pNUIgQxczxPaACnQYCNnO
-	 8AXNO1cUYRFTsM+3FSASljIxgubgcSGGXurg6/orL3JM4eqror9OZbsV3z/YojyeQZ
-	 SovK2Zk0WFGjmB5/b2u1OEfJG/SZfomitGW10f1NYEqErkbABiakadcz4SaZN4JdgC
-	 caFg2gQw6KGgktkBztYXc3J5bRpz6ZDieZ0RAt3oAX+WZAYDOtLpvW/ZhpmwuXzUw8
-	 QNIa9Dd01K+9g==
-Date: Thu, 31 Jul 2025 10:29:48 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH] perf record: Cache build-ID of hit DSOs only
-Message-ID: <aIuoDHBGeoFYF2fh@google.com>
-References: <20250731070330.57116-1-namhyung@kernel.org>
- <aIt9bTQhAo8G3oqH@x1>
+	 Content-Type:Content-Disposition:In-Reply-To; b=KhK8eD73rkbnFfVqERfQxfchcwkRNx/2gGQpIlL3sEzWXme8+fAa0vmZDm3AsNQ0DWnOMsqKRWM2nzhSXLVNDvoMY4r5O7TjXGosjVdaCu66G5jnnnRtwN2uVvl9OtQw67STS6Nl1lWaCgmn7omHspWVQ+oGX0k63tiqJmxRSoU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f5C96pq+; arc=none smtp.client-ip=209.85.210.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7426c44e014so1279087b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:29:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753982995; x=1754587795; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uFB1KZ2lsUeHNufD6xWB23cW2C4DYwY3reFze5Zou7o=;
+        b=f5C96pq+gIheO2VpyX9ZH8YCfpKosbFpKh1yqf5HZ/mKI+pjaxkMqoud/HIKEvj9tV
+         vrncMdcPnxyF44cXEkySj/uzKagwxLQPWsEW3mJIW81p3vX1zzHfnj0JLNMhy7H44aJs
+         7AjIId9Q4B7Trszjsjb9psax010FsjhU9ZjqTou19It5I10PsdqXDUNyxey8e7SMa/K4
+         yZ1aCRmcK+hy5DXY8CYkwz0wPsBawESNJgi6ozqf52hnDjR26nuL/vyPkpOghN5+KcEa
+         ivA5hOTYrBn1A+njzU43gznTyUAJS49mObeIhSlyCK0tjSbdF8iZUYNFwKzymTfOMRIL
+         xjRQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753982995; x=1754587795;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uFB1KZ2lsUeHNufD6xWB23cW2C4DYwY3reFze5Zou7o=;
+        b=KWzVKd1jf9PNXNRYKCkHr7R+dncU7whFMh7HCCq2yWFm+CIGyIp69eB0m22Dji62GK
+         tharmfUAAXMKGJhgsNDlmJNfkSWpcHUV2I+4ocfDKmpvzMaRSeUWitsyt2kBv5LB/ch8
+         wC2BLZl6uqFdXrL3wrusmVLe9GheRBAAfzSjUf6z26DkmuhL/7wpIIJ5zQdct+XqRn6N
+         Ag6PYWpgSmQX+EdbTokcROhOzb/bvMk8LqY36H/esgYbXZLuaQfqkNdSGuLi88BrtZmg
+         4D3XukHc8G63SWiaL8a9E8gKT2j+FRRo22roDo3L7aldq9lahrCrzYg4hmRQG23Umjdp
+         ypVg==
+X-Forwarded-Encrypted: i=1; AJvYcCWQHlAIWabSyUnyebLGWd5/8Gk+sSwLUWFwndwsqBu9cwcHu6XdHLNhHoMexNV+rdZ5p+TehSCFuKQgkdE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw+/8OJMDCfENvYFzHsJN6xTUcUDlnaqipQ1vGuuW9+gtsBqS6B
+	9lOWiziYjCBBN3ZscxtOZoT2+BTmH0TiZf4U1C23oDOAuwJygnjxqNYqMtXs3g==
+X-Gm-Gg: ASbGncsa2Wp6Y6fevcO5gKwJbdMfAjdkp1VU1HHFun/y+uEWRik4zrrVJnZM3BOxUJO
+	0nhtuufwm7Ea8qinh9pFz+MvBgo93J03C5B2N2NDDus+oPR4FPdRWfCUr+MyXZr8iZkAUcyTBYH
+	jm1S0iqjXKVmf95CG3hDR0HiEIOXLsq+lFe5bPx/0gY5up/KmrbZxWDufHsFv6pE8Cts08tgeES
+	bjLdTCcMyzONX9rqSYWqE0eP8BzjxF2/VHKbuJbpu/0/c0CJSL+xx5YoTunvIwMFtpGcGNJTAvZ
+	OXg7brLx7u+AlAKR3ZfGulKJyVtX0i3MIQm6m9mVN3XwXHgc5/bn7eEdiuebbJE+pn38tbx/uBx
+	1TdvWb/JwRvX99cJT5JGT4tlWGLOgzp8=
+X-Google-Smtp-Source: AGHT+IFUlWIwvzgTtCNc3AFKsHu9fjk/Qz1kk+2FMUpFckYpU27uESuIj6tbG7ODJikhMeuIT5oUHw==
+X-Received: by 2002:a05:6a00:1989:b0:76b:92ac:27cc with SMTP id d2e1a72fcca58-76b92ac2fd6mr8386461b3a.0.1753982995345;
+        Thu, 31 Jul 2025 10:29:55 -0700 (PDT)
+Received: from ast-mac ([2620:10d:c090:500::6:d4f1])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfe37e5sm2118703b3a.116.2025.07.31.10.29.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 10:29:54 -0700 (PDT)
+Date: Thu, 31 Jul 2025 10:29:49 -0700
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+	LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Arnd Bergmann <arnd@arndb.de>, Nam Cao <namcao@linutronix.de>, 
+	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>, Yury Norov <yury.norov@gmail.com>
+Subject: Re: [GIT PULL] tracing: Updates for v6.17
+Message-ID: <6z7h63sg3ljhy2k2ymnysm7hhcmtb76follkdy2y2iu54npxqj@wppxbg2qok2p>
+References: <20250731101717.6c340b66@gandalf.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIt9bTQhAo8G3oqH@x1>
+In-Reply-To: <20250731101717.6c340b66@gandalf.local.home>
 
-Hi Arnaldo,
+On Thu, Jul 31, 2025 at 10:17:17AM -0400, Steven Rostedt wrote:
+> 
+>   When tracefs is accessed from /sys/kernel/debug/tracing, the following
+>   printk is triggerd:
+> 
+>    pr_warn("NOTICE: Automounting of tracing to debugfs is deprecated and will be removed in 2030\n");
+> 
+>   This gives users another 5 years to fix their scripts.
 
-On Thu, Jul 31, 2025 at 11:27:57AM -0300, Arnaldo Carvalho de Melo wrote:
-> On Thu, Jul 31, 2025 at 12:03:30AM -0700, Namhyung Kim wrote:
-> > It post-processes samples to find which DSO has samples.  Based on that
-> > info, it can save used DSOs in the build-ID cache directory.  But for
-> > some reason, it saves all DSOs without checking the hit mark.  Skipping
-> > unused DSOs can give some speedup especially with --buildid-mmap being
-> > default.
->  
-> > On my idle machine, `time perf record -a sleep 1` goes down from 3 sec
-> > to 1.5 sec with this change.
-> 
-> Good stuff, and this is in line with the original intent, don't cache
-> uninteresting things.
-> 
-> But now I have do some digging, as this should've been the case since
-> the start, why would we go to the trouble of traversing perf.data,
-> processing all samples, yadda, yadda to then not look at it when caching
-> files?
-> 
-> The whole process of reading the build ids at the end is done here:
-> 
-> bool dsos__read_build_ids(struct dsos *dsos, bool with_hits)
-> {
->         struct dsos__read_build_ids_cb_args args = {
->                 .with_hits = with_hits,
->                 .have_build_id = false,
->         };
-> 
->         dsos__for_each_dso(dsos, dsos__read_build_ids_cb, &args);
->         return args.have_build_id;
-> }
-> 
-> And that dsos__read_build_ids_cb thing specifically looks at:
-> 
-> static int dsos__read_build_ids_cb(struct dso *dso, void *data)
-> {
->         struct dsos__read_build_ids_cb_args *args = data;
->         struct nscookie nsc;
->         struct build_id bid = { .size = 0, };
->                                 
->         if (args->with_hits && !dso__hit(dso) && !dso__is_vdso(dso))
->                 return 0;
-> <SNIP>
-> 
-> So it will not try to read the build id if that DSO has no samples.
-> 
-> But, that was written before PERF_RECORD_MMAP* came with a build-id, so
-> it _will_ have a build-id and thus checking if it has hits is needed.
-> 
-> In the past DSOs without hits wouldn't have a build-id because
-> dsos__read_build_ids_cb() would not read that build-id from the ELF
-> file.
+Not objecting to PR, but I don't get the point of the warn.
 
-Yep, I think that's the reason.
+In libbpf we have this logic:
+#define DEBUGFS "/sys/kernel/debug/tracing"
+#define TRACEFS "/sys/kernel/tracing"
 
-> 
-> Ok, now that makes sense:
-> 
-> Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+static bool use_debugfs(void)
+{
+        static int has_debugfs = -1;
 
-Thanks!
+        if (has_debugfs < 0)
+                has_debugfs = faccessat(AT_FDCWD, DEBUGFS, F_OK, AT_EACCESS) == 0;
 
-> 
-> This could have a Fixes attached to it, one that doesn't fixes something
-> that is not working, but speeds up processing by overcoming an oversight
-> when adding build-ids to MMAP records, so I think a:
-> 
-> Fixes: e29386c8f7d71fa5 ("perf record: Add --buildid-mmap option to enable PERF_RECORD_MMAP2's build id")
-> 
-> Is worth.
+        return has_debugfs == 1;
+}
 
-Sure, will add.
+static const char *tracefs_path(void)
+{
+        return use_debugfs() ? DEBUGFS : TRACEFS;
+}
 
-Thanks,
-Namhyung
+So it will trigger the warn just because libbpf tries to find tracefs
+in debugfs first ?
+We can switch the order, no big deal.
+What about other tools ?
+
+bpftrace has similar logic:
+#define DEBUGFS_TRACEFS "/sys/kernel/debug/tracing"
+#define TRACEFS "/sys/kernel/tracing"
+
+std::string path()
+{
+  static bool use_debugfs = access(DEBUGFS_TRACEFS, F_OK) == 0;
+  return use_debugfs ? DEBUGFS_TRACEFS : TRACEFS;
+}
+
+In 5 years all these tools can switch the order, no problem,
+but I don't get the point. Most, it not all tools, have similar tracefs
+detection logic. Just remove automount right now without warn,
+since the warn is only noise and churn to tools to swap the order
+of detection ?
 
