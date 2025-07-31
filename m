@@ -1,54 +1,57 @@
-Return-Path: <linux-kernel+bounces-751621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C36FFB16B8D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:34:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 714DDB16B90
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:34:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8171665A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:34:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A43FE7A818D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A5D1FAC54;
-	Thu, 31 Jul 2025 05:34:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9F9242D79;
+	Thu, 31 Jul 2025 05:34:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXN9TUYZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rV64E5tl"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D6323D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2AA8241C8C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:34:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753940053; cv=none; b=OezVdWG9xNWOmDS4Sr+At9MuBwuvHvyvCBKPFVcKbKsUH0d/r/JndTCX/++13BIPc5bUy7KQPn8rCoq6yW1gsQTcYtOc6+Vogn+3sOB6a+/okUe3q7NCtYL8e2Wd42jhfS4re24Z7025bupgBtbFNlk0jO6EubcBVXoS6HEONco=
+	t=1753940055; cv=none; b=TYNkg40UIKEXZHAN4Ek+2rc+6EUMFHb+c2EDJ1JQHRf3XF5ugCl7df+x7I7krO6GCwDBRHZ31NNuNd9Mi9DwUc99jEABQAd2PTfDuCxjVBVxkl4TJo0s/q6UYgmFhF3E+jcQjOL1qoQt4dOShFAgFuiO/7xtBjWhfGVcsKG05H4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753940053; c=relaxed/simple;
-	bh=8z0/TBMD8fWuIra7ndYVRz3me/9CIVnmVPKQkLavtJM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQdOyhbF82pufHcvYzXXGFzbvJOKfvoNdJ5Yv862rh0lPOU1W5J2iB3tmzAUKCbfv1KdtzBHY6lAaNHGFe+eC0L1OMoVqevITU+CoY5hW5kIjXhgASHyw2qsaVeojQdgBIfMtfr42ay2N2t7YtfZVKMFc3W0TDw9c6Ci4q5LALE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXN9TUYZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE0E9C4CEEF;
-	Thu, 31 Jul 2025 05:34:10 +0000 (UTC)
+	s=arc-20240116; t=1753940055; c=relaxed/simple;
+	bh=70nlEbBpf/kwmKcOZVIITRr5X3u+Y97vLaywevfKKTg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Ic8oKYkeC3+9lSNhZBTzDpHcSJ8T8rKgJv8A5culbF4/ooZG+663t06A1KTrSfaFk/peYdl1nhWRgTlwoTN4IxyqJbXD+AEF6Na+P/Z3/rbGgyM/ZT5hulJJhXVHVkjjOWWeT9nW7rdcO68qHZFWXZi82y3ajapCkp86sG6inpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rV64E5tl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25B6FC4CEF6;
+	Thu, 31 Jul 2025 05:34:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753940052;
-	bh=8z0/TBMD8fWuIra7ndYVRz3me/9CIVnmVPKQkLavtJM=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rXN9TUYZiDZyvM25EnRczrjD2kVSUBwl2yIwtm4spxoyRjzRRO7fjIAWB8Ks/HBiu
-	 MQUIgOabigE7VDZa0NQd9gFI7Lvm2UeS9Cvb95gzKY+bf32efIwjwt1a+UnO8oTQsm
-	 51VfjE2zKdMZ0v2hVIxaOnxemIqMnaEYgm36Ptkjq1nOehnn2fy8TCuBg7/YHykUYG
-	 H4OMf0HJy1qv7OIOR5qwgtyJyUukBon0pXjTGqcXvWZW4LnbhIiIqSK3WIx2u/32+7
-	 BYHluDbbhXKcHVAS9aR04ENDBI6kzq1vV66mAoUToHbGEBGJhM2cp84jIjRuP3wy8g
-	 L394YL/T4FRFw==
+	s=k20201202; t=1753940054;
+	bh=70nlEbBpf/kwmKcOZVIITRr5X3u+Y97vLaywevfKKTg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=rV64E5tlXseB7DEcdMXGkg5+3uZ29ChDiKGj3zXkwN7RmVQoyNFN+QWFT50XbuQXl
+	 /ayM8s+z8xFnZc0sGGRjWJehB+d8Xy1w4KVf63jHVk6uaBcdaX287RM0/J5RvZZgIO
+	 DNbCyFrtT94QkHKEtPb4oumTW3k/n6Af8yFmC+h8wSmbLSoqqO4h3BupNO5yAOi2Sb
+	 PwfyWmxUu6KSkFb3xFp0rkTj0CNkC/T0u4v9cp6hF6vWV+Nv0cRvQ+fXVioSDCZVF4
+	 NV/9Dzai8CdzSrFqf0fq59+tz2NZ3aApDOU3xCvAOp2IEVp7jBI0mWGKK4e5XONahe
+	 xndcaOPB4YDlw==
 From: Chao Yu <chao@kernel.org>
 To: jaegeuk@kernel.org
 Cc: linux-f2fs-devel@lists.sourceforge.net,
 	linux-kernel@vger.kernel.org,
 	Chao Yu <chao@kernel.org>,
 	Jan Prusakowski <jprusakowski@google.com>
-Subject: [PATCH 1/2] f2fs: dump more information when checkpoint was blocked for long time
-Date: Thu, 31 Jul 2025 13:34:04 +0800
-Message-ID: <20250731053405.1127197-1-chao@kernel.org>
+Subject: [PATCH 2/2] f2fs: add time stats of checkpoint for debug
+Date: Thu, 31 Jul 2025 13:34:05 +0800
+Message-ID: <20250731053405.1127197-2-chao@kernel.org>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
+In-Reply-To: <20250731053405.1127197-1-chao@kernel.org>
+References: <20250731053405.1127197-1-chao@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -57,96 +60,190 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-generic/299 w/ mode=lfs will cause long time latency of checkpoint,
-let's dump more information once we hit case.
-
-CP merge:
-  - Queued :    0
-  - Issued :    1
-  - Total :    1
-  - Cur time : 9765(ms)
-  - Peak time : 9765(ms)
-
-F2FS-fs (vdc): blocked on checkpoint for 9765 ms
-CPU: 11 UID: 0 PID: 237 Comm: kworker/u128:29 Tainted: G           O        6.16.0-rc3+ #409 PREEMPT(voluntary)
-Tainted: [O]=OOT_MODULE
-Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-Workqueue: writeback wb_workfn (flush-253:32)
-Call Trace:
- <TASK>
- dump_stack_lvl+0x6e/0xa0
- f2fs_issue_checkpoint+0x268/0x280
- f2fs_write_node_pages+0x6a/0x2c0
- do_writepages+0xd0/0x170
- __writeback_single_inode+0x56/0x4c0
- writeback_sb_inodes+0x22a/0x550
- __writeback_inodes_wb+0x4c/0xf0
- wb_writeback+0x300/0x400
- wb_workfn+0x3de/0x500
- process_one_work+0x230/0x5c0
- worker_thread+0x1da/0x3d0
- kthread+0x10d/0x250
- ret_from_fork+0x164/0x190
- ret_from_fork_asm+0x1a/0x30
+checkpoint was blocked for 18643 ms
+Step 0: 0 ms
+Step 1: 38 ms
+Step 2: 63 ms
+Step 3: 4 ms
+Step 4: 0 ms
+Step 5: 0 ms
+Step 6: 9 ms
+Step 7: 0 ms
+Step 8: 18277 ms
+Step 9: 249 ms
 
 Cc: Jan Prusakowski <jprusakowski@google.com>
 Signed-off-by: Chao Yu <chao@kernel.org>
 ---
- fs/f2fs/checkpoint.c | 7 +++++++
- fs/f2fs/f2fs.h       | 8 +++++++-
- 2 files changed, 14 insertions(+), 1 deletion(-)
+ fs/f2fs/checkpoint.c | 46 ++++++++++++++++++++++++++++++++++++++++++++
+ fs/f2fs/f2fs.h       | 22 +++++++++++++++++++++
+ 2 files changed, 68 insertions(+)
 
 diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
-index db3831f7f2f5..02806e2edce4 100644
+index 02806e2edce4..bbe07e3a6c75 100644
 --- a/fs/f2fs/checkpoint.c
 +++ b/fs/f2fs/checkpoint.c
-@@ -1778,6 +1778,7 @@ static void __checkpoint_and_complete_reqs(struct f2fs_sb_info *sbi)
- 	llist_for_each_entry_safe(req, next, dispatch_list, llnode) {
- 		diff = (u64)ktime_ms_delta(ktime_get(), req->queue_time);
- 		req->ret = ret;
-+		req->delta_time = diff;
- 		complete(&req->wait);
- 
- 		sum_diff += diff;
-@@ -1873,6 +1874,12 @@ int f2fs_issue_checkpoint(struct f2fs_sb_info *sbi)
- 	else
- 		flush_remained_ckpt_reqs(sbi, &req);
- 
-+	if (unlikely(req.delta_time >= CP_LONG_LATENCY_THRESHOLD)) {
-+		f2fs_warn_ratelimited(sbi,
-+			"blocked on checkpoint for %u ms", cprc->peak_time);
-+		dump_stack();
-+	}
-+
- 	return req.ret;
+@@ -1442,6 +1442,34 @@ u64 f2fs_get_sectors_written(struct f2fs_sb_info *sbi)
+ 	return get_sectors_written(sbi->sb->s_bdev);
  }
  
++static inline void stat_cp_time(struct cp_control *cpc, enum cp_time type)
++{
++	cpc->stats.times[type] = ktime_get();
++}
++
++static inline void check_cp_time(struct f2fs_sb_info *sbi, struct cp_control *cpc)
++{
++	unsigned long long sb_diff, cur_diff;
++	enum cp_time ct;
++
++	sb_diff = (u64)ktime_ms_delta(sbi->cp_stats.times[CP_TIME_END],
++					sbi->cp_stats.times[CP_TIME_START]);
++	cur_diff = (u64)ktime_ms_delta(cpc->stats.times[CP_TIME_END],
++					cpc->stats.times[CP_TIME_START]);
++
++	if (cur_diff > sb_diff) {
++		sbi->cp_stats = cpc->stats;
++		if (cur_diff < CP_LONG_LATENCY_THRESHOLD)
++			return;
++
++		f2fs_warn(sbi, "checkpoint was blocked for %llu ms", cur_diff);
++		for (ct = CP_TIME_START; ct < CP_TIME_MAX - 1; ct++)
++			f2fs_warn(sbi, "Step#%d: %llu ms", ct,
++				(u64)ktime_ms_delta(cpc->stats.times[ct + 1],
++						cpc->stats.times[ct]));
++	}
++}
++
+ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ {
+ 	struct f2fs_checkpoint *ckpt = F2FS_CKPT(sbi);
+@@ -1459,6 +1487,8 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	/* Flush all the NAT/SIT pages */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
+ 
++	stat_cp_time(cpc, CP_TIME_SYNC_META);
++
+ 	/* start to update checkpoint, cp ver is already updated previously */
+ 	ckpt->elapsed_time = cpu_to_le64(get_mtime(sbi, true));
+ 	ckpt->free_segment_count = cpu_to_le32(free_segments(sbi));
+@@ -1555,20 +1585,26 @@ static int do_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	/* Here, we have one bio having CP pack except cp pack 2 page */
+ 	f2fs_sync_meta_pages(sbi, META, LONG_MAX, FS_CP_META_IO);
++	stat_cp_time(cpc, CP_TIME_SYNC_CP_META);
++
+ 	/* Wait for all dirty meta pages to be submitted for IO */
+ 	f2fs_wait_on_all_pages(sbi, F2FS_DIRTY_META);
++	stat_cp_time(cpc, CP_TIME_WAIT_DIRTY_META);
+ 
+ 	/* wait for previous submitted meta pages writeback */
+ 	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
++	stat_cp_time(cpc, CP_TIME_WAIT_CP_DATA);
+ 
+ 	/* flush all device cache */
+ 	err = f2fs_flush_device_cache(sbi);
+ 	if (err)
+ 		return err;
++	stat_cp_time(cpc, CP_TIME_FLUSH_DEVICE);
+ 
+ 	/* barrier and flush checkpoint cp pack 2 page if it can */
+ 	commit_checkpoint(sbi, ckpt, start_blk);
+ 	f2fs_wait_on_all_pages(sbi, F2FS_WB_CP_DATA);
++	stat_cp_time(cpc, CP_TIME_WAIT_LAST_CP);
+ 
+ 	/*
+ 	 * invalidate intermediate page cache borrowed from meta inode which are
+@@ -1613,6 +1649,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	unsigned long long ckpt_ver;
+ 	int err = 0;
+ 
++	stat_cp_time(cpc, CP_TIME_START);
++
+ 	if (f2fs_readonly(sbi->sb) || f2fs_hw_is_readonly(sbi))
+ 		return -EROFS;
+ 
+@@ -1624,6 +1662,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (cpc->reason != CP_RESIZE)
+ 		f2fs_down_write(&sbi->cp_global_sem);
+ 
++	stat_cp_time(cpc, CP_TIME_LOCK);
++
+ 	if (!is_sbi_flag_set(sbi, SBI_IS_DIRTY) &&
+ 		((cpc->reason & CP_FASTBOOT) || (cpc->reason & CP_SYNC) ||
+ 		((cpc->reason & CP_DISCARD) && !sbi->discard_blks)))
+@@ -1639,6 +1679,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	if (err)
+ 		goto out;
+ 
++	stat_cp_time(cpc, CP_TIME_OP_LOCK);
++
+ 	trace_f2fs_write_checkpoint(sbi->sb, cpc->reason, "finish block_ops");
+ 
+ 	f2fs_flush_merged_writes(sbi);
+@@ -1678,6 +1720,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 
+ 	f2fs_flush_sit_entries(sbi, cpc);
+ 
++	stat_cp_time(cpc, CP_TIME_FLUSH_META);
++
+ 	/* save inmem log status */
+ 	f2fs_save_inmem_curseg(sbi);
+ 
+@@ -1695,6 +1739,8 @@ int f2fs_write_checkpoint(struct f2fs_sb_info *sbi, struct cp_control *cpc)
+ 	stat_inc_cp_count(sbi);
+ stop:
+ 	unblock_operations(sbi);
++	stat_cp_time(cpc, CP_TIME_END);
++	check_cp_time(sbi, cpc);
+ 
+ 	if (cpc->reason & CP_RECOVERY)
+ 		f2fs_notice(sbi, "checkpoint: version = %llx", ckpt_ver);
 diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
-index b9058518b54e..c036af1a885a 100644
+index c036af1a885a..691af2a6c159 100644
 --- a/fs/f2fs/f2fs.h
 +++ b/fs/f2fs/f2fs.h
-@@ -334,7 +334,10 @@ struct ckpt_req {
- 	struct completion wait;		/* completion for checkpoint done */
- 	struct llist_node llnode;	/* llist_node to be linked in wait queue */
- 	int ret;			/* return code of checkpoint */
--	ktime_t queue_time;		/* request queued time */
-+	union {
-+		ktime_t queue_time;	/* request queued time */
-+		ktime_t delta_time;	/* time in queue */
-+	};
- };
+@@ -269,11 +269,32 @@ enum {
+ #define DEF_DISABLE_QUICK_INTERVAL	1	/* 1 secs */
+ #define DEF_UMOUNT_DISCARD_TIMEOUT	5	/* 5 secs */
  
- struct ckpt_req_control {
-@@ -350,6 +353,9 @@ struct ckpt_req_control {
- 	unsigned int peak_time;		/* peak wait time in msec until now */
- };
- 
-+/* a time threshold that checkpoint was blocked for, unit: ms */
-+#define CP_LONG_LATENCY_THRESHOLD	5000
++enum cp_time {
++	CP_TIME_START,		/* begin */
++	CP_TIME_LOCK,		/* after cp_global_sem */
++	CP_TIME_OP_LOCK,	/* after block_operation */
++	CP_TIME_FLUSH_META,	/* after flush sit/nat */
++	CP_TIME_SYNC_META,	/* after sync_meta_pages */
++	CP_TIME_SYNC_CP_META,	/* after sync cp meta pages */
++	CP_TIME_WAIT_DIRTY_META,/* after wait on dirty meta */
++	CP_TIME_WAIT_CP_DATA,	/* after wait on cp data */
++	CP_TIME_FLUSH_DEVICE,	/* after flush device cache */
++	CP_TIME_WAIT_LAST_CP,	/* after wait on last cp pack */
++	CP_TIME_END,		/* after unblock_operation */
++	CP_TIME_MAX,
++};
 +
- /* for the bitmap indicate blocks to be discarded */
- struct discard_entry {
- 	struct list_head list;	/* list head */
++/* time cost stats of checkpoint */
++struct cp_stats {
++	ktime_t times[CP_TIME_MAX];
++};
++
+ struct cp_control {
+ 	int reason;
+ 	__u64 trim_start;
+ 	__u64 trim_end;
+ 	__u64 trim_minlen;
++	struct cp_stats stats;
+ };
+ 
+ /*
+@@ -1650,6 +1671,7 @@ struct f2fs_sb_info {
+ 	unsigned long last_time[MAX_TIME];	/* to store time in jiffies */
+ 	long interval_time[MAX_TIME];		/* to store thresholds */
+ 	struct ckpt_req_control cprc_info;	/* for checkpoint request control */
++	struct cp_stats cp_stats;		/* for time stat of checkpoint */
+ 
+ 	struct inode_management im[MAX_INO_ENTRY];	/* manage inode cache */
+ 
 -- 
 2.49.0
 
