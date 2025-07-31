@@ -1,149 +1,91 @@
-Return-Path: <linux-kernel+bounces-751751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D6F9EB16D05
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:00:25 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B26DFB16D06
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:00:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC27C1AA7219
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:00:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9D7551AA7510
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDAED29E101;
-	Thu, 31 Jul 2025 08:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2C8E202C2A;
+	Thu, 31 Jul 2025 08:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oAUtDke7"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="b6tOIERH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CC129DB9B;
-	Thu, 31 Jul 2025 08:00:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44D3E194A59
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:00:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948802; cv=none; b=ZZS6vcthUxyXpHOfc6hIOfPcgnVR7GgCkLJmiII2Rj1Dtwtt0XsEdMaDaaPZvRhEzG+XAvTb3G/WuN9TBR6UwXPiS56euJXcitesruhXEBtReG8o9PtAbI4jzeB6Zm/uk4a9f32i4cu8T/G6VP7nPaeJO5XKYKIhfYwMC9dv8R8=
+	t=1753948811; cv=none; b=fFjtXdgu/r697dDCvJIzSM6n0SA/yVSj+xbt0oD7q8tlQsa+T1Q1iIz6zrv099+IulX9JZAHQImfwjdoPDjnn+Euv3VhbFv0q0zp7pBjO8a7PdNxOYBFtHAhI6vGNdnDoYXyMgoy5nV8VBN4ThntRusM+d2VI6eU7Ou7fM3lh1s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948802; c=relaxed/simple;
-	bh=G3VPbg8FPJGVzdEGzREC8clwgNRzGtUEk5FGgYrZMeQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=TNGtGML6sjwPfbEvXUe5HmjbZKBZvyXOMhKPH/ZQybBfasrI2nmvBi1RCZcG9lCTScuHpIbVRxcyYpvuhf9sOoaWjWRZxYnWyU7CCHc8U8ZpcuFhsHCkxcg6bRbNt5X03LwfmNxTBYVKGCmJqOK+0nVNIzv6HFi6ELLDdssagAQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oAUtDke7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 29728C4CEEF;
-	Thu, 31 Jul 2025 08:00:02 +0000 (UTC)
+	s=arc-20240116; t=1753948811; c=relaxed/simple;
+	bh=4xDbxTT63MttPxZ1aQxDx6XS4uLn1H4yK96PfunOJ28=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=kmHdS8+cFILQXo5XX1GmBABFUkstgZ73MULDExCWtVRLeGV9xymBg41jDbGLMxY4JPGbMuBhq6hF9M2roVCBzdW1A6w0rsPhx7KXh/hfk+IXizykOS/fotjpwiDpfcf0QdrUtVxRGETVEsfwSR77SKJbq7+2Ulj6nUDCtO1h6DA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=b6tOIERH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3783C4CEF5;
+	Thu, 31 Jul 2025 08:00:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753948802;
-	bh=G3VPbg8FPJGVzdEGzREC8clwgNRzGtUEk5FGgYrZMeQ=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=oAUtDke7Qor+Zn8v5/ySJO6Hpi//p2dlVkeqkx5Y52L9JNB6TseqOKSbLPuxdqLtY
-	 nPToMQa53G0xMCGUSXdntVsYKDlJEBEqTzn4fnjXjpvRCTJTApGfRZ3DuXeqXsZebd
-	 mrJ1K1sM/eN4rqHq7F4jUjcQ4kZrsS2/N4/1H3KtRwt/0zeCyFfR4gl5vxRzG68nsj
-	 0mlcvGGClCj9X2/NrnOMZYeobpipdAGwTgZ3kEq2KlWpir406k+gtvQpFaU+PKzMJd
-	 wXhVq74pbwBNmPld5saK0K5ZC/zFonRh7OdcZf2BEsHPVTJwgW11DPzo2hev9GGBQS
-	 Bd+BXJWWp924Q==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 1C0D4C87FCC;
-	Thu, 31 Jul 2025 08:00:02 +0000 (UTC)
-From: Yang Li via B4 Relay <devnull+yang.li.amlogic.com@kernel.org>
-Date: Thu, 31 Jul 2025 15:59:48 +0800
-Subject: [PATCH v3] Bluetooth: iso: fix socket matching ambiguity between
- BIS and CIS
+	s=k20201202; t=1753948810;
+	bh=4xDbxTT63MttPxZ1aQxDx6XS4uLn1H4yK96PfunOJ28=;
+	h=From:To:Cc:Subject:Date:From;
+	b=b6tOIERHfXKH6FfNngK9vFA09b76y2fTpTS8r02Rny4lXuj6PmhrvtfaoeoqsUldd
+	 UOi0Fl9toxsKno3lwGoXG9V/rEPUywWv71RGp6Ii1ms77lIDgf2R3gvFku0aub4T8j
+	 a2lAzMgdwm0gwtch31w5udyErp7y5YA98qGf3KqI7If7AbQcM/T7ATk0QgluxrvGQH
+	 t6aTDKcnFJWF+UfaPn/7OHUDKOJt79hBByBXs1HV4aEKE9mEzgHz288gO978+kI0Rl
+	 KB+Io0hDApGCZF9DzylI4nr6daM0WLPT2gnL5jGaAleaeGjE2kMlZXv04JdJ85TOjg
+	 yxNz62Sxzyw7A==
+From: Arnd Bergmann <arnd@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Mike Rapoport (Microsoft)" <rppt@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] kho: fix kho_test_restore section mismatch warning
+Date: Thu, 31 Jul 2025 10:00:00 +0200
+Message-Id: <20250731080007.2037366-1-arnd@kernel.org>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAHMii2gC/0XMywrCMBCF4Vcps3YkV2Jd+R4ikibTdsA2kpRSK
- H13oxsXZ/Etzr9DocxU4NrskGnlwmmu0KcGwujngZBjNSihrHBaYsflGb5LtHFZ0EnnjVHRBqO
- gvt6Zet5+xfujus9pwmXM5P8dK1rkknBVKDF6q7soL0G2+uanVxo4nEOa4Dg+siMdaZ4AAAA=
-To: Marcel Holtmann <marcel@holtmann.org>, 
- Johan Hedberg <johan.hedberg@gmail.com>, 
- Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Yang Li <yang.li@amlogic.com>
-X-Mailer: b4 0.13-dev-f0463
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753948799; l=2024;
- i=yang.li@amlogic.com; s=20240418; h=from:subject:message-id;
- bh=+Emn1CseXuQvh2qlK9A1nweKtqNCFRhwr83xHhi4y1I=;
- b=YjKHMd0TaKuzpNAD7T0TbF4kgTx5P7oXIlhOZ6UqkTzFLqUilmcEyvVlUHgc9kBxisD+wBqGe
- 881mMK2N52RDLiB3litZzn+2cUo3+SEEakmVlJtyBFvHdMlWWWbkDwp
-X-Developer-Key: i=yang.li@amlogic.com; a=ed25519;
- pk=86OaNWMr3XECW9HGNhkJ4HdR2eYA5SEAegQ3td2UCCs=
-X-Endpoint-Received: by B4 Relay for yang.li@amlogic.com/20240418 with
- auth_id=180
-X-Original-From: Yang Li <yang.li@amlogic.com>
-Reply-To: yang.li@amlogic.com
+Content-Transfer-Encoding: 8bit
 
-From: Yang Li <yang.li@amlogic.com>
+From: Arnd Bergmann <arnd@arndb.de>
 
-When both BIS and CIS links exist, their sockets are in
-the BT_LISTEN state.
-dump sock:
-  sk 000000001977ef51 state 6
-  src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
-  sk 0000000031d28700 state 7
-  src 10:a5:62:31:05:cf dst00:00:00:00:00:00
-  sk 00000000613af00e state 4   # listen sock of bis
-  src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
-  sk 000000001710468c state 9
-  src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
-  sk 000000005d97dfde state 4   #listen sock of cis
-  src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
+kho_test_restore_data() is not always inlined, and that configuration
+causes a link warning:
 
-To locate the CIS socket correctly, check both the BT_LISTEN
-state and whether dst addr is BDADDR_ANY.
+WARNING: modpost: vmlinux: section mismatch in reference: kho_test_restore+0xd2 (section: .text.unlikely) -> kho_test_restore_data.isra.0 (section: .init.text)
+ERROR: modpost: Section mismatches detected.
 
-Link: https://github.com/bluez/bluez/issues/1224
+Mark it __init as well to be consistent with the rest of the call chain.
 
-Signed-off-by: Yang Li <yang.li@amlogic.com>
+Fixes: c2d288f7ab13 ("kho: add test for kexec handover")
+Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 ---
- net/bluetooth/iso.c | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ lib/test_kho.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-index eaffd25570e3..9a4dea03af8c 100644
---- a/net/bluetooth/iso.c
-+++ b/net/bluetooth/iso.c
-@@ -1919,6 +1919,11 @@ static bool iso_match_pa_sync_flag(struct sock *sk, void *data)
- 	return test_bit(BT_SK_PA_SYNC, &iso_pi(sk)->flags);
+diff --git a/lib/test_kho.c b/lib/test_kho.c
+index f5fe39c7c2b1..aeeb693d0251 100644
+--- a/lib/test_kho.c
++++ b/lib/test_kho.c
+@@ -239,7 +239,7 @@ static int __init kho_test_restore_data(const void *fdt, int node)
+ 	return 0;
  }
  
-+static bool iso_match_dst(struct sock *sk, void *data)
-+{
-+	return !bacmp(&iso_pi(sk)->dst, (bdaddr_t *)data);
-+}
-+
- static void iso_conn_ready(struct iso_conn *conn)
+-static int kho_test_restore(phys_addr_t fdt_phys)
++static int __init kho_test_restore(phys_addr_t fdt_phys)
  {
- 	struct sock *parent = NULL;
-@@ -1981,7 +1986,7 @@ static void iso_conn_ready(struct iso_conn *conn)
- 
- 		if (!parent)
- 			parent = iso_get_sock(&hcon->src, BDADDR_ANY,
--					      BT_LISTEN, NULL, NULL);
-+					      BT_LISTEN, iso_match_dst, BDADDR_ANY);
- 
- 		if (!parent)
- 			return;
-@@ -2220,7 +2225,7 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
- 		}
- 	} else {
- 		sk = iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
--				  BT_LISTEN, NULL, NULL);
-+				  BT_LISTEN, iso_match_dst, BDADDR_ANY);
- 	}
- 
- done:
-
----
-base-commit: 9c533991fe15be60ad9f9a7629c25dbc5b09788d
-change-id: 20250731-bis_cis_coexist-717a442d5c42
-
-Best regards,
+ 	void *fdt = phys_to_virt(fdt_phys);
+ 	const unsigned int *magic;
 -- 
-Yang Li <yang.li@amlogic.com>
-
+2.39.5
 
 
