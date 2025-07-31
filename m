@@ -1,53 +1,54 @@
-Return-Path: <linux-kernel+bounces-752329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752334-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 330C3B17422
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:49:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57B86B1742D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:51:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D773AF1B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:49:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 953031C23E56
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:51:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6481EEA47;
-	Thu, 31 Jul 2025 15:49:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EQ9RhTUE"
-Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD1B31E7C32;
+	Thu, 31 Jul 2025 15:51:02 +0000 (UTC)
+Received: from Chamillionaire.breakpoint.cc (Chamillionaire.breakpoint.cc [91.216.245.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFBD141987
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:49:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E483117A2E6;
+	Thu, 31 Jul 2025 15:51:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.216.245.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753976973; cv=none; b=gGoz4t/bCTbvWBlSBFo4llzhdasoISvGrFZheaHQSnqHiPYKhjIQGqPcHtqNkqBP0xqRiWkZUlV5gje0t+Q+5WG4E5Mx8Ck7JMCl3NLQQijd+/S2bGG+f7WPrQL/GCn+bw5s74Ysxd9L4zPvmM1m3aXfSkXfYq1gF5lERw/4HnY=
+	t=1753977062; cv=none; b=jVlNjfHwxX7TYB0KJmE32euJMzoyJ6bVjGrLxZftZL0OMNHiTqe1obBUlXWvxRdg/wSNuKmBSpdDJ5jN4KVtOTklFsbB8aXoC0wSHxo8VNeLLJ0NUekE8s1dA+pQlFKnxSku+exMK+bpsUoNnOMJMOcuV/ht/NGk4PMGTHBPhYc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753976973; c=relaxed/simple;
-	bh=ty2HCoqYjlov1COEQq5EkrPwmHuATgl+GyX7EzEJfW4=;
+	s=arc-20240116; t=1753977062; c=relaxed/simple;
+	bh=gpuLRVZkZgF93ImwxDdLK+qmOrIIYkJ+AogxJ7Hs1Jc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uYi/SsfphqAYqfkhY19zt9SNe7EwEaQpc5i9srT+LPyOQ0EETGVZKArmU09GA33K6arYX9FZY6H2UeU7h293jy3cxJmDd+S0430bMxUk7cQCeF5Pi09PpcAXyXi/aiANyTptekliOm9CTcAxeW0KaTPwFFHy0CdlzTDT6iQfr5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EQ9RhTUE; arc=none smtp.client-ip=95.215.58.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 31 Jul 2025 11:49:14 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753976959;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ty2HCoqYjlov1COEQq5EkrPwmHuATgl+GyX7EzEJfW4=;
-	b=EQ9RhTUExy+IvZf/bcHVwlpZcpugDpXvIrR2tAc0Gr4vh2GjG3eVQKAteyJ66eJFrrn4Zb
-	jLJl3ZaYT6JYc5CsOZvktxCTXqVh2MlnrXRbWg6I6pmnkway7yarjvl6rp+s1hinM2b/E4
-	5oklP1Qi4TZcqyEzmdGVl/EDNKREcwM=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Kent Overstreet <kent.overstreet@linux.dev>
-To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
-Cc: colyli@kernel.org, linux-bcache@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
-Message-ID: <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
-References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=cuy1c9iIXzZKe0dlDtfOn9Rx8lHjc5OYfgMyW78/35Om12cXig6Q1e4DAjMnoMU1+a/08+rIgZZMESrvyhlF/2j8A1onteUGiRj5FVcvaha+qb0BfgdScxtoTnZ5I+cHeQnV+79wvK3S02Bun90KQTUevnyiGwkDtotn1uuJgBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de; spf=pass smtp.mailfrom=strlen.de; arc=none smtp.client-ip=91.216.245.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=strlen.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=strlen.de
+Received: by Chamillionaire.breakpoint.cc (Postfix, from userid 1003)
+	id 04C53602B2; Thu, 31 Jul 2025 17:50:58 +0200 (CEST)
+Date: Thu, 31 Jul 2025 17:50:59 +0200
+From: Florian Westphal <fw@strlen.de>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>,
+	Jozsef Kadlecsik <kadlec@netfilter.org>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Ido Schimmel <idosch@nvidia.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	David Ahern <dsahern@kernel.org>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@kernel.org>,
+	Breno Leitao <leitao@debian.org>, netfilter-devel@vger.kernel.org,
+	coreteam@netfilter.org, bridge@lists.linux.dev,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: add back NETFILTER_XTABLES dependencies
+Message-ID: <aIuQ4-f267nn4G3P@strlen.de>
+References: <20250730214538.466973-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,37 +57,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20250730214538.466973-1-arnd@kernel.org>
 
-On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
-> There is a potential data consistency risk in bcache's writeback mode:when
-> the application calls fsync, bcache returns success after completing the
-> log write, persisting the cache disk data, and persisting the HDD internal
-> cache. However, at this point, the actual application data may still be in
-> a dirty state and remain stuck in the cache disk. when these data are
-> subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
-> there is no forced refresh mechanism to ensure physical placement on the
-> disk, and there may be no power-off protection measures, which poses a risk
-> of data loss. This mechanism may cause the application to misjudge that the
-> data has been persisted, which is different from the actual storage state,
-> and also violates the semantic agreement that fsync should ensure data
-> persistence.
+Arnd Bergmann <arnd@kernel.org> wrote:
+> 
+> Some Kconfig symbols were changed to depend on the 'bool' symbol
+> NETFILTER_XTABLES_LEGACY, which means they can now be set to built-in
+> when the xtables code itself is in a loadable module:
+> 
+> x86_64-linux-ld: vmlinux.o: in function `arpt_unregister_table_pre_exit':
+> (.text+0x1831987): undefined reference to `xt_find_table'
+> x86_64-linux-ld: vmlinux.o: in function `get_info.constprop.0':
+> arp_tables.c:(.text+0x1831aab): undefined reference to `xt_request_find_table_lock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x1831bea): undefined reference to `xt_table_unlock'
+> x86_64-linux-ld: vmlinux.o: in function `do_arpt_get_ctl':
+> arp_tables.c:(.text+0x183205d): undefined reference to `xt_find_table_lock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x18320c1): undefined reference to `xt_table_unlock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x183219a): undefined reference to `xt_recseq'
+> 
+> Change these to depend on both NETFILTER_XTABLES and
+> NETFILTER_XTABLES_LEGACY.
 
-So, the way you start out describing the patch, it sounds like you're
-addressing some sort of bug in REQ_OP_FLUSH handling, but it looks like
-what you're actually doing is adding a mode where flushes also flush
-bcache?
+Thanks Arnd.  I thought we could just replace NETFILTER_XTABLES depends
+with NETFILTER_XTABLES_LEGACY, but I missed the difference between
+tristate and bool.
 
-This doesn't sound like a bugfix, this sounds like a completely new
-mode - we'd need an explanation of the use case you're aiming for.
+Acked-by: Florian Westphal <fw@strlen.de>
 
-The model for bcache has always been that since the cache is persistent,
-when you're in writeback mode there are no fsync/REQ_OP_FLUSH
-considerations for dirty data; once we've properly persisted (and
-flushed) that data we're good.
-
-If you want a mode where you can run in writeback mode, but obey flushes
-so that it's still safe to lose or yank the cache device - is that what
-you're after?
 
