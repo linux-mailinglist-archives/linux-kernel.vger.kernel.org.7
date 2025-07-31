@@ -1,93 +1,105 @@
-Return-Path: <linux-kernel+bounces-751469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61A5B169E5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:10:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA9DB169E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:11:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5780918C770F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:10:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9833616E87A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:11:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4987176AC5;
-	Thu, 31 Jul 2025 01:10:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30654136352;
+	Thu, 31 Jul 2025 01:11:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="L2jq+Pmk"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="XO+hygm7"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 185E65579E;
-	Thu, 31 Jul 2025 01:10:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 628F9E56A;
+	Thu, 31 Jul 2025 01:10:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753924204; cv=none; b=NefDY7kjdwvFd21fI/umNL/8htG0/JNfvJZ79f1gUuvkI68CEUoTosCR/8/M2WWiOUwVJF2K3tNfXuCjXjAzmTOO1/2Z36S8H+gxlaIxqLuL7RtsfEFauzWelKOz2k/AuW8KlRkW1OHTWoXOt5oyf/zhyp4ssfqbwBkTRiMaUUs=
+	t=1753924259; cv=none; b=qK3UTSnB0yDD+migYCSiRVy8asLo2JG+NQ9cT/Bwt1FCRMF0T2QdYeuNDNkXj6eUknlNa0s/u8vyP1vkaMwEU6rUwzmQwI+YFw9qGkM3Yy8d9cpu5LXNyzu4ZbfTF1GpplG8dFbAY/Ngxgf26BYCRA4O5c/DvcWpZxVR4U2Geuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753924204; c=relaxed/simple;
-	bh=ee+At6EtvGcpCpHALYPC/vwBjyqphz/XXMzRRpJlmzs=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=jni0/udraVKcwbaIh28tpSyeLTHC8avqLPSMfukGKoh8r2w5cXx0BjS1K2UP01k8wjGPfg8WIdLNtePX8WVSAyHydmsFJbY6E1I7XarSstw4tAetP4rZ+0P3Y8vKC3lz1mi5vsPvYC5gawqr4XINFrPnHJuF+aoTuqm12la89G8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=L2jq+Pmk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98199C4CEEB;
-	Thu, 31 Jul 2025 01:10:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753924203;
-	bh=ee+At6EtvGcpCpHALYPC/vwBjyqphz/XXMzRRpJlmzs=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=L2jq+PmkglpgoQLcSQAdnOmacU+b+rJp2BlVTHNBwIblXk+0oq0cyMgI4NkltaAmV
-	 9BTrc/rXmNX8rPf8P2Z1bJJs0cLZuyCzCVKBt7Fsn67IsvGkeeWrkbhiQWrj4zmTRu
-	 mHSQJYtneTEuohKiJ2aKpCsubMyY89bCyJjXkQDYc6F6VDduEMzzU8JBtLHBdB9cqu
-	 e10D1DzhI4Vvd1pn1sZNCNhSP/2gsZkgKmhfb+0PLuse122jQra2cgKoHzEBfbJIIk
-	 UJKUGa4a64tyHEXU+1Kvok9sBRxJksvF0Jt1xr/PmlmBcb9/7AhocF6fY2CdxreGtt
-	 Ao80exKotVegQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADCB0383BF5F;
-	Thu, 31 Jul 2025 01:10:20 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753924259; c=relaxed/simple;
+	bh=lhjtenkVoSEAp46zSgh5YiODgG+y+bhfKQ5QXYbrhTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=UdYHoIiPqnE/YSkzJ87wp7RNxYEcg1vk8a+L29/g0qHHR1Y7HLggk02FotKFA+Kn38WzOYLbkoqIOrsQZDv4bH3vAWjDFSQiDlahi4kcabIdLuPhcMOzDqiCeQ8OU1WKVPs6Bplx3gCsmiVyvU5/yuC2NB98bYiX+5qZ7VAAYrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=XO+hygm7; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1753924033;
+	bh=RByfFOm84gFCuH1C3dTZYF3rk3CT71WUz0pewD04lSU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=XO+hygm7GL7hEfIsv/UeR34pXE+HKdCkQzaJDgXR8QZMeMAgFBnre8c5EGo4Cq1sR
+	 Fa2mxEOoI22Dn/zVW9Jsb462/0eXdG84T1u+/2nRETf48egQO4vUmK/0bHIOLXRPZZ
+	 o1B3nr6uht0Nxq/r/r/ZjxBV5sG/4DVpEcW/FpSu12babmgbK2H3omiRRXolmAtOub
+	 k+finnSiqosj5uNonToRUNU1YyqDMaPwSBEMkZtjk0Gbe7GcvqryOurrf2XyaBf9nx
+	 W2obYR2qpIpqf97ZcpBEyNQtX7Pjai4scc9nEjhH6TDxMmjuLLqQxxj6/+Jm7EMJ4p
+	 gxcVFDIvuHWYg==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bsrXK2228z4x3d;
+	Thu, 31 Jul 2025 11:07:13 +1000 (AEST)
+Date: Thu, 31 Jul 2025 11:10:54 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Florian Fainelli <f.fainelli@gmail.com>, Arnd Bergmann <arnd@arndb.de>
+Cc: ARM <linux-arm-kernel@lists.infradead.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patches in the broadcom tree
+Message-ID: <20250731111054.4081a799@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] kcm: Fix splice support
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175392421918.2566045.61660066535623324.git-patchwork-notify@kernel.org>
-Date: Thu, 31 Jul 2025 01:10:19 +0000
-References: <20250725-kcm-splice-v1-1-9a725ad2ee71@rbox.co>
-In-Reply-To: <20250725-kcm-splice-v1-1-9a725ad2ee71@rbox.co>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
- pabeni@redhat.com, horms@kernel.org, cong.wang@bytedance.com,
- tom@herbertland.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: multipart/signed; boundary="Sig_/0takSCvwvQxRyGogS.dqchZ";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-Hello:
+--Sig_/0takSCvwvQxRyGogS.dqchZ
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Hi all,
 
-On Fri, 25 Jul 2025 12:33:04 +0200 you wrote:
-> Flags passed in for splice() syscall should not end up in
-> skb_recv_datagram(). As SPLICE_F_NONBLOCK == MSG_PEEK, kernel gets
-> confused: skb isn't unlinked from a receive queue, while strp_msg::offset
-> and strp_msg::full_len are updated.
-> 
-> Unbreak the logic a bit more by mapping both O_NONBLOCK and
-> SPLICE_F_NONBLOCK to MSG_DONTWAIT. This way we align with man splice(2) in
-> regard to errno EAGAIN:
-> 
-> [...]
+The following commits are also in the arm-soc-fixes tree as different
+commits (but the same patches):
 
-Here is the summary with links:
-  - [net] kcm: Fix splice support
-    https://git.kernel.org/netdev/net/c/9063de636cee
+  abb787a63fb9 ("clk: rp1: Implement remaining clock tree")
+  36e97205b507 ("dt-bindings: clock: rp1: Add missing MIPI DSI defines")
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+These are commits
 
+  add858eff8c5 ("clk: rp1: Implement remaining clock tree")
+  d516f0002b79 ("dt-bindings: clock: rp1: Add missing MIPI DSI defines")
 
+in the arm-soc-fixes tree.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/0takSCvwvQxRyGogS.dqchZ
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiKwp4ACgkQAVBC80lX
+0GwGTgf/dH7HqrcIeWudOYmXBLwGKtbmZW+NcBHoqVKZSzGaiHBGlmMjZuoLIWfE
+slvoasaDI5tVm6hR93AvMW+b6wMZnMz+0oOmAss2SzQSixMmfDkOMeqyXh3nTdxu
+Y1zifC2bpRSOjgHuwhii/wmHaNdxpBfrJ9V/2pA80Mufiz2ZP0ymkIthnDv1nqqn
+Yh/2fYt0QiWyXCaq/M97DfAkFJWRHkQV4TA9RILdnxu20hsNb+9beeX/4MT5CARB
+aNKeBWiQpKnnCVEkcsKiofE4h/zHfESHYS4ENyQPnOI37GfxUxEXqvd9GUWnaCG1
+Affb5bBkUt2gOMpeWK421F8TmGKKsQ==
+=IPlu
+-----END PGP SIGNATURE-----
+
+--Sig_/0takSCvwvQxRyGogS.dqchZ--
 
