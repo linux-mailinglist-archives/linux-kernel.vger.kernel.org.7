@@ -1,185 +1,82 @@
-Return-Path: <linux-kernel+bounces-752634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B76DB17877
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:53:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66B13B17880
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:54:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D227C1C25F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:53:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F9A17A4E27
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:52:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF7926A1B8;
-	Thu, 31 Jul 2025 21:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DB426C39D;
+	Thu, 31 Jul 2025 21:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Kcy/Y9je"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EdS5MOfQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A39625A620;
-	Thu, 31 Jul 2025 21:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A0020B22;
+	Thu, 31 Jul 2025 21:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753998780; cv=none; b=gDBtUkKvXVZcagInw6NN6z2nfKcAZZRwECz7f3Mol2j7JJHG0YJvVZKHe+Iqr8hMjPRl0tntPgkJuYRRnnEonQXqYOsMhr+PihXaUUE7GqxrhmhsD7Fe1pUu6jyoYTVkWwgISe/Vg1jMmL4R0ZH6C0O7P0ou1szL0GIdOHqqFSE=
+	t=1753998844; cv=none; b=k/mKj1KYL/6BzoVZ32sZxqD6GG4Ki4pQBQMZzr0XSUQQ+2wxoNmkkT8TbpKoihNn+kxFPbHd5Q2D/tsrBP3OM5Ws4qpCn4w3VGw/yQrNfe1nffMOr1ktR8lys19ZH+RMOSaxwvD6hSZ+owfHbMPVJJd0CJCqSGiBhBKWmrohpMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753998780; c=relaxed/simple;
-	bh=vXRT0yl7XFxzR3VfyXSij8tuXcLpumLPbwXPAN3BWtk=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GmtsyDh/M4fXj2nn9EdXKjhJOsDM5JPfW3V0RD3/s3IJ7Xu5Q+XkUU6S2eMI6GVX/YLzlY/DWuBNdQ7ONDcOz004GsCiGP1KgngTMll7gfHc3U4sfjGHZkYwlsUWUI5D/LpGtHQ4rOfKzxEee7nJOhPrcSovgkoHtPBQP3hDQDw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Kcy/Y9je; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so204947466b.3;
-        Thu, 31 Jul 2025 14:52:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753998777; x=1754603577; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pH7sz35AtHRlCnrQDCM7yIzOahLIxp4d2PNik5qtm/A=;
-        b=Kcy/Y9je4Q1/gzimyr7+hdRJN9lIpCg/2YYJ1iCtAqNlWGaJhvG7HDDp4MqhiH00jZ
-         vUtDUMq+5B0C7/lSrQawZi57MwxLxRm1+KQN4GbmRxgcRj4rO9K/s02oUafRKdyufTP1
-         kyNLU20pjWRE7IVUo1aGnKhiXPPMbzl+Rz9AiIZ2/5tH4c8+UqIUHqVi1XeU4JXcCJZ3
-         85kKW32eBGWqJ7EEw6Qm7lOEg1FXFliJrAiKrHbAo2rCYlWXw9S6IzeQr9mIEMjFITcG
-         /p3FNPPMWPlPPp6nKdtiSDFdtfUJhcwj/w+vF1Zgy+5DMFh2YabWqlc9g+DQ+GMCyNzT
-         0VOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753998777; x=1754603577;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pH7sz35AtHRlCnrQDCM7yIzOahLIxp4d2PNik5qtm/A=;
-        b=F8xuJHN2z7BBVgBr9ak109E7iHyvYOrmYQesQWXhzsG1npb3H6mXFIRS738XbtCIp3
-         F9iKiFpAa5WrrqBkufWq6E/uS52vY/sh8RwHQDT1oWalfmvfCYh/2RtTYXFNHXeeucl7
-         55fB9yluvGCNCEBkKswIkeyWh9P+9t0yNhm0BFo4CS0KlSYSrlsRNSamWJdOOrGe9jrL
-         BhXacreyTZY+JYtVg+bX7wgC+U0rCAr4fJFkH0ikT48sWNNJlfPzTMNMwv4AyepiIImM
-         In7YXw8OBYku7J564tetyiWzGwfJWCptP3QaRFkudN/R1ueaH0B66e1ZzsWqHwA5Cyb5
-         j01g==
-X-Forwarded-Encrypted: i=1; AJvYcCVSpNAM5aPpWuSkxmELsIBWCOJoOfXnQFC32/YIhn2tVVSOucxcpL/i4oDO9i3+RFlJrSI=@vger.kernel.org, AJvYcCXJSNDv/kTLxPtDy5Wpjmk1dxdqYSl/W5UqyGD/HhvZ8gWgwDKW9KIp1zN5SWesQHLWXf0AURj05TzL7/7scjJmYsJm@vger.kernel.org
-X-Gm-Message-State: AOJu0YxlF4DKnDiBeprQJLqArdiHiuzKaJ3fo1vI0HMyf5tCUHWA8Qm5
-	On6Yd9BEL5xlHxZpNpGgsoAlIB32A3Z63o16rwHb9xoopOSs9W+zpPc8
-X-Gm-Gg: ASbGncvOQV+PZXtPiUEt/X2H09Tqq6yk3dAstMzbltmIyTYBgvQxluh+FmtNJT91y7w
-	Ds7qw70r4gJV1hngmlFz2WTvucNVknJRNhQ47l7rmORJteleZ/OyH1su2mfzePtiw4c5Kted3Vs
-	r2q3ARv8xfCC4cfd+VyGPDXkvduECkVnfrXEVrTd/hR6l1v82AWKfPYb0KNMXuhM4RhaOCl3EoU
-	AQiIy/g+pS5fbhujn9dK0JsodwTXIQQn46+xFe6Os9eDRAVSfk4iu4OYCfJ+fCs50H7CL31L8fb
-	5oYlu0rv3dmaB5jXEdo3KTu2BostqdZE+I8SkcJhzygIpVWY5qi5A8qTOAoAvdnZx/0ErvgSbC2
-	HrV/C19I5pw==
-X-Google-Smtp-Source: AGHT+IGL82FtrUt1Nixu5effk/DO8t4E+terwhdFNL5pzS7lkcztjIWv5o9YiO3+h9HkpAhB7y45qQ==
-X-Received: by 2002:a17:907:7f8c:b0:ae0:35fb:5c83 with SMTP id a640c23a62f3a-af8fd940ebfmr1002527266b.28.1753998772766;
-        Thu, 31 Jul 2025 14:52:52 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a396fsm182284766b.42.2025.07.31.14.52.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 14:52:52 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Thu, 31 Jul 2025 23:52:45 +0200
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
-	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Takaya Saeki <takayas@google.com>,
-	Douglas Raillard <douglas.raillard@arm.com>,
-	Tom Zanussi <zanussi@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ian Rogers <irogers@google.com>, aahringo@redhat.com
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <aIvlrQEZQ6OTZxAY@krava>
-References: <20250729113335.2e4f087d@batman.local.home>
+	s=arc-20240116; t=1753998844; c=relaxed/simple;
+	bh=Sp+uNTm82GyIUnrFXO0K70bZDmbRQLYY4GLTCRkCJgY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=grlt1tSJFubV29HioYuhno5j4HHhTTKndML5xWT6Y4BsCmBSQGdHrDEUZN090W5mwiHUv5PsEeWL8SerKArQEnsk+rKG7XkcUNkTUEdPu4tHZaZfHxDN70Uo6FA3w+J+kw43ouh4sWzI6p9Shih+WSxNQCYDgkq7YE4ZO28pGuU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EdS5MOfQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C5C9C4CEEF;
+	Thu, 31 Jul 2025 21:54:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753998843;
+	bh=Sp+uNTm82GyIUnrFXO0K70bZDmbRQLYY4GLTCRkCJgY=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EdS5MOfQgaEqzyBxQ9dY+mwjHsJuUGwKHMlERI9Iystt6+5wdJwnZyy2EaTw798LX
+	 e2+Bw6PMkA/C2AX7qN8myfVXJQQAPnAn3UqD7sXfouURgQluQs3rj+S5jEMXuzRWGI
+	 BOVa+lZOw/UNug6Jv/MXZTimlsaZEWn/OVRhhe9Evk4fLXvgbtXShav9A3QwgizK2Z
+	 w29GJ+J/tUi3Ktpaf7xzG1JtbgtzAHFNCAracItweA0XgQTGDKGtoZfEVzMMsisEuj
+	 3JAr7GkOGeolMrIBZrAtvdDXLo4jVGpY847oMN1nV6hEnNWOGXkpa+Zi1PBne92k75
+	 v1lfuXU7LxmTQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: Peter Huewe <peterhuewe@gmx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	linux-integrity@vger.kernel.org
+Cc: Jason Gunthorpe <jgg@ziepe.ca>,
+	James Bottomley <James.Bottomley@HansenPartnership.com>,
+	linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/2] tpm: HMAC fix and cleanup
+Date: Thu, 31 Jul 2025 14:52:53 -0700
+Message-ID: <20250731215255.113897-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729113335.2e4f087d@batman.local.home>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Jul 29, 2025 at 11:33:35AM -0400, Steven Rostedt wrote:
+Patch 1 fixes the HMAC comparison in the tpm driver to be constant-time.
 
-SNIP
+Patch 2 simplifies the HMAC computation in the tpm driver by using the
+library API instead of an open-coded HMAC implementation.  Note that
+this depends on the HMAC library API that was merged for v6.17-rc1.
 
-> +/**
-> + * btf_find_offset - Find an offset of a member for a structure
-> + * @arg: A structure name followed by one or more members
-> + * @offset_p: A pointer to where to store the offset
-> + *
-> + * Will parse @arg with the expected format of: struct.member[[.member]..]
-> + * It is delimited by '.'. The first item must be a structure type.
-> + * The next are its members. If the member is also of a structure type it
-> + * another member may follow ".member".
-> + *
-> + * Note, @arg is modified but will be put back to what it was on return.
-> + *
-> + * Returns: 0 on success and -EINVAL if no '.' is present
-> + *    or -ENXIO if the structure or member is not found.
-> + *    Returns -EINVAL if BTF is not defined.
-> + *  On success, @offset_p will contain the offset of the member specified
-> + *    by @arg.
-> + */
-> +int btf_find_offset(char *arg, long *offset_p)
-> +{
-> +	const struct btf_type *t;
-> +	struct btf *btf;
-> +	long offset = 0;
-> +	char *ptr;
-> +	int ret;
-> +	s32 id;
-> +
-> +	ptr = strchr(arg, '.');
-> +	if (!ptr)
-> +		return -EINVAL;
-> +
-> +	*ptr = '\0';
-> +
-> +	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);
+Eric Biggers (2):
+  tpm: Compare HMAC values in constant time
+  tpm: Use HMAC-SHA256 library instead of open-coded HMAC
 
-hi,
-I think you need to call btf_put(btf) before return
-
-jirka
+ drivers/char/tpm/Kconfig         |   1 +
+ drivers/char/tpm/tpm2-sessions.c | 104 +++++++++----------------------
+ 2 files changed, 31 insertions(+), 74 deletions(-)
 
 
-> +	if (id < 0)
-> +		goto error;
-> +
-> +	/* Get BTF_KIND_FUNC type */
-> +	t = btf_type_by_id(btf, id);
-> +
-> +	/* May allow more than one member, as long as they are structures */
-> +	do {
-> +		if (!t || !btf_type_is_struct(t))
-> +			goto error;
-> +
-> +		*ptr++ = '.';
-> +		arg = ptr;
-> +		ptr = strchr(ptr, '.');
-> +		if (ptr)
-> +			*ptr = '\0';
-> +
-> +		ret = find_member(arg, btf, &t, 0);
-> +		if (ret < 0)
-> +			goto error;
-> +
-> +		offset += ret;
-> +
-> +	} while (ptr);
-> +
-> +	*offset_p = offset;
-> +	return 0;
-> +
-> +error:
-> +	if (ptr)
-> +		*ptr = '.';
-> +	return -ENXIO;
-> +}
+base-commit: d6084bb815c453de27af8071a23163a711586a6c
+-- 
+2.50.1
 
-SNIP
 
