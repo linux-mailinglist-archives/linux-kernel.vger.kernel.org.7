@@ -1,162 +1,151 @@
-Return-Path: <linux-kernel+bounces-752113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752114-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFA73B17162
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:37:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47BE9B17165
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:40:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52A7A808FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:37:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E5D54E6780
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:39:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9FF3241CA3;
-	Thu, 31 Jul 2025 12:37:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F174239E7C;
+	Thu, 31 Jul 2025 12:40:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JXoftS7d"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d7shQWe7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F39322A7EF;
-	Thu, 31 Jul 2025 12:37:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A74B5383;
+	Thu, 31 Jul 2025 12:40:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753965460; cv=none; b=gjINg2WgXxzMYK6t7Z4Ty+5mIoDrz2sC5JiGVqwct+cpNvYSaL9fDyYS0LE4FuwfqcJXOeNZ2gndr0qtPR1L5QQ3BJQUTDRNmoWh1op7xslY6TIboZ4e8bhPxGYwW/3J92aNiUiRHJFabTvbT3cg4GdDfEZeSOzQwai792dBzqI=
+	t=1753965609; cv=none; b=qUu1znJFc4MJiXBpo1VPk+FXyyRLDzx8cM8FobV2rVsCOpJK2Pi9T7ziI3z+VvBdKHMFN/tcBZtWJB7F5UiFe2ecrV7TmeTZrdtoF6zqzYNA4q6DI6++KgUXez2RjzirnrKGJ7oGYBtNAeoLapPSYFc5voWmx42Eb4rIEj0pCNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753965460; c=relaxed/simple;
-	bh=F4N7j7/R3qLxjx+q87bCvU+pu2qGV4lJnYfHs/FMkUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cuGmyncbkkYcxJpKD1JnaXPDlGf7q0dxROZaT4XBFWGVu98VeIP+qX1yXSmqQM2K5quQSEifDT6sl20pe5BrNfTN0TmfPt9fy6vgaitfqJCguDLkQzTHF3Kg/F1v7LgSI5Jn49/01OQfUkpMsZxkv5FZzDStZ9jGQr6W6wx+tPk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JXoftS7d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F192C4CEEF;
-	Thu, 31 Jul 2025 12:37:36 +0000 (UTC)
+	s=arc-20240116; t=1753965609; c=relaxed/simple;
+	bh=S8bVfgUaq9skY6+3fwoKxn/RY6iSToVOQJ0iSM1DTOM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=L54UKHtZkIR/l1RVpKC7Iw7jZvW4aDjfWRw1TXLAVZKB1LsYgRcWc7YvkJVA45oyfDZgoUiOHN/54Fzuarh6RqCbuhri62In01gs0iasjrfYRZ1jfGMvVIHwQ9flcxrERNSKBzvoHqUaHBw7EfhH2IDx22vl6hZmeznTykh+T/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d7shQWe7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EBCC9C4CEEF;
+	Thu, 31 Jul 2025 12:40:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753965459;
-	bh=F4N7j7/R3qLxjx+q87bCvU+pu2qGV4lJnYfHs/FMkUE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JXoftS7d09eZDDde0RkubC0VZ4i2xxqIuOF6q5qj6gKuaj4qQULek3H0nC+TRCw7h
-	 mpmzhVdFQbqqNryB8UMw19P4ZXimeqkuL/x+WWKXSsDQYnaNAFA0xcG+SxQ9SQeDL6
-	 jt9KNxFBXbNn0zJE94zFraiz2qqztJSCsY8XVMHsBqGn+VPrEZXLcW/zCWM2DEwHeD
-	 w/sT+a2v54oKoLYPDDOEsQ4qOhudihIDk/hFVjum3UrRfL/YmbskI7NoPxzgFvHfNN
-	 sSJ4GV1poAd4kYFa7O/NMpLlHkXxr9yrQ73sNlAvnIpi30ge4kQOJrj5ne6yWmG+nj
-	 WuDhERQm2e0JA==
-Date: Thu, 31 Jul 2025 13:37:34 +0100
-From: Simon Horman <horms@kernel.org>
-To: Alexander Lobakin <aleksander.lobakin@intel.com>
-Cc: intel-wired-lan@lists.osuosl.org,
-	Michal Kubiak <michal.kubiak@intel.com>,
-	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	nxne.cnse.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Kees Cook <kees@kernel.org>, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
-Message-ID: <20250731123734.GA8494@horms.kernel.org>
-References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
- <20250730160717.28976-17-aleksander.lobakin@intel.com>
+	s=k20201202; t=1753965609;
+	bh=S8bVfgUaq9skY6+3fwoKxn/RY6iSToVOQJ0iSM1DTOM=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=d7shQWe7G1Grdb30MtQqBC+Ggvo3GWXJIbDEnhn9xL1BlM5h3pGKNcrKjHYh79ecA
+	 NL9cnb+nTFW+037LmxZAoWlTgFeIwSYr4O3jodrf4yHES/9si0KPzE3scfiHi7rIkJ
+	 a0OFHHwWWbObWXtS4v42QcmqDD0J52/ABIak7oSfHgtDtYCOW7a564GQ/2VZmnuuCO
+	 l61/gC3Wbu9MT+x5ue/gNMcZjXmmN7fzpzlTrOr6BYb0zTjJrMBlbgF/4tlwBba9xD
+	 aGL8n75okuNUmo8mHbtdeB2exwAcjuuNAHjy+xl4hNTXW0QPdT0mBLDwu0VPWttjcb
+	 FciuMLMLmePcQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id E061BC87FCA;
+	Thu, 31 Jul 2025 12:40:08 +0000 (UTC)
+From: Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>
+Date: Thu, 31 Jul 2025 20:39:58 +0800
+Subject: [PATCH] clk: Add fault tolerance to of_clk_hw_onecell_get()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730160717.28976-17-aleksander.lobakin@intel.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
+X-B4-Tracking: v=1; b=H4sIAB1ki2gC/x2NQQrDIBQFrxL+uoJJkJRepZSP6PuJVLSoaQshd
+ 690N7OZOaiiBFS6DQcVvEMNOXUZLwO5zaYVKvjuNOnJ6GXWynrPYvfYuOWIYpNDJ87CLj55+3B
+ OcIiRVzQl3l1HWTAba6gnXwUSvv/d/XGeP9e3QhR+AAAA
+To: Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Chuan Liu <chuan.liu@amlogic.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753965607; l=2309;
+ i=chuan.liu@amlogic.com; s=20240902; h=from:subject:message-id;
+ bh=k/ApzTLmVZinx72j2hoSqfkFYHo5DCBt6wQQxOx8J2g=;
+ b=xf705Yot6owGRVQJbr/b5M1+yj9w2q+3qLYSJ/YZz+PAkv/dBXTlVCSlJvwTUlDkjrmhCH3xq
+ V3mhB4EzHMSByuN/kPatFCkLlWjE2hVjazB4QKFWVvZKmaX+/Uic4Cm
+X-Developer-Key: i=chuan.liu@amlogic.com; a=ed25519;
+ pk=fnKDB+81SoWGKW2GJNFkKy/ULvsDmJZRGBE7pR5Xcpo=
+X-Endpoint-Received: by B4 Relay for chuan.liu@amlogic.com/20240902 with
+ auth_id=203
+X-Original-From: Chuan Liu <chuan.liu@amlogic.com>
+Reply-To: chuan.liu@amlogic.com
 
-+ Kees, linux-hardening
+From: Chuan Liu <chuan.liu@amlogic.com>
 
-On Wed, Jul 30, 2025 at 06:07:15PM +0200, Alexander Lobakin wrote:
-> Use libeth XDP infra to support running XDP program on Rx polling.
-> This includes all of the possible verdicts/actions.
-> XDP Tx queues are cleaned only in "lazy" mode when there are less than
-> 1/4 free descriptors left on the ring. libeth helper macros to define
-> driver-specific XDP functions make sure the compiler could uninline
-> them when needed.
-> Use __LIBETH_WORD_ACCESS to parse descriptors more efficiently when
-> applicable. It really gives some good boosts and code size reduction
-> on x86_64.
-> 
-> Co-developed-by: Michal Kubiak <michal.kubiak@intel.com>
-> Signed-off-by: Michal Kubiak <michal.kubiak@intel.com>
-> Signed-off-by: Alexander Lobakin <aleksander.lobakin@intel.com>
+In specific cases, even a clk_provider managing only a single clock may
+reference of_clk_hw_onecell_get() to access its member clocks, as seen
+in implementations like clk-scmi.
 
-Hi Alexander, all,
+For a clk_provider with only one clock, when calling
+of_parse_phandle_with_args(), the phandle_args->args[] members are not
+assigned. In this case, the reference to phandle_args->args[0] in
+of_clk_hw_onecell_get() becomes invalid. If phandle_args->args[0]
+initially contains a non-zero value, this will trigger an error.
 
-Sorry for providing review of __LIBETH_WORD_ACCESS[1] after the fact.
-I had missed it earlier.
+Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
+---
+Error conditions observed:
 
-While I appreciate the desire for improved performance and nicer code
-generation. I think the idea of writing 64 bits of data to the
-address of a 32 bit member of a structure goes against the direction
-of hardening work by Kees and others.
+scmi_clk: protocol@14 {
+	reg = <0x14>;
+	#clock-cells = <0>;
+};
 
-Indeed, it seems to me this is the kind of thing that struct_group()
-aims to avoid.
+phandle1: clock-controller@1 {
+	#clock-cells = <1>;
+}
 
-In this case struct group() doesn't seem like the best option,
-because it would provide a 64-bit buffer that we can memcpy into.
-But it seems altogether better to simply assign u64 value to a u64 member.
+clock-consumer@2 {
+	assigned-clocks = <&phandle1 1>,
+			  <&scmi_clk>;
+	assigned-clock-rates = <xxx>,
+			       <xxx>;
+}
 
-So I'm wondering if an approach along the following lines is appropriate
-(Very lightly compile tested only!).
+Under these conditions, executing of_clk_set_defaults() triggers the
+error: 'of_clk_hw_onecell_get: invalid index 1'.
 
-And yes, there is room for improvement of the wording of the comment
-I included below.
+While the root cause lies in invalid input data to
+of_clk_hw_onecell_get(), checking phandle->args_count for data validity
+improves driver fault tolerance.
+---
+ drivers/clk/clk.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
-index f4880b50e804..a7d3d8e44aa6 100644
---- a/include/net/libeth/xdp.h
-+++ b/include/net/libeth/xdp.h
-@@ -1283,11 +1283,7 @@ static inline void libeth_xdp_prepare_buff(struct libeth_xdp_buff *xdp,
- 	const struct page *page = __netmem_to_page(fqe->netmem);
+diff --git a/drivers/clk/clk.c b/drivers/clk/clk.c
+index 0565c87656cf..4994c551befe 100644
+--- a/drivers/clk/clk.c
++++ b/drivers/clk/clk.c
+@@ -4966,7 +4966,7 @@ EXPORT_SYMBOL_GPL(of_clk_hw_simple_get);
+ struct clk *of_clk_src_onecell_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	struct clk_onecell_data *clk_data = data;
+-	unsigned int idx = clkspec->args[0];
++	unsigned int idx = clkspec->args_count ? clkspec->args[0] : 0;
  
- #ifdef __LIBETH_WORD_ACCESS
--	static_assert(offsetofend(typeof(xdp->base), flags) -
--		      offsetof(typeof(xdp->base), frame_sz) ==
--		      sizeof(u64));
--
--	*(u64 *)&xdp->base.frame_sz = fqe->truesize;
-+	xdp->base.frame_sz_le_qword = fqe->truesize;
- #else
- 	xdp_init_buff(&xdp->base, fqe->truesize, xdp->base.rxq);
- #endif
-diff --git a/include/net/xdp.h b/include/net/xdp.h
-index b40f1f96cb11..b5eedeb82c9b 100644
---- a/include/net/xdp.h
-+++ b/include/net/xdp.h
-@@ -85,8 +85,19 @@ struct xdp_buff {
- 	void *data_hard_start;
- 	struct xdp_rxq_info *rxq;
- 	struct xdp_txq_info *txq;
--	u32 frame_sz; /* frame size to deduce data_hard_end/reserved tailroom*/
--	u32 flags; /* supported values defined in xdp_buff_flags */
-+	union {
-+		/* Allow setting frame_sz and flags as a single u64 on
-+		 * little endian systems. This may may give optimal
-+		 * performance. */
-+		u64 frame_sz_le_qword;
-+		struct {
-+			/* Frame size to deduce data_hard_end/reserved
-+			 * tailroom. */
-+			u32 frame_sz;
-+			/* Supported values defined in xdp_buff_flags. */
-+			u32 flags;
-+		};
-+	};
- };
+ 	if (idx >= clk_data->clk_num) {
+ 		pr_err("%s: invalid clock index %u\n", __func__, idx);
+@@ -4981,7 +4981,7 @@ struct clk_hw *
+ of_clk_hw_onecell_get(struct of_phandle_args *clkspec, void *data)
+ {
+ 	struct clk_hw_onecell_data *hw_data = data;
+-	unsigned int idx = clkspec->args[0];
++	unsigned int idx = clkspec->args_count ? clkspec->args[0] : 0;
  
- static __always_inline bool xdp_buff_has_frags(const struct xdp_buff *xdp)
+ 	if (idx >= hw_data->num) {
+ 		pr_err("%s: invalid index %u\n", __func__, idx);
 
-[1] https://git.kernel.org/torvalds/c/80bae9df2108
+---
+base-commit: 58abdca0eb653c1a2e755ba9ba406ee475d87636
+change-id: 20250730-add_fault_tolerance_to_of_clk_hw_onecell_get-fdc81f7e35a5
+
+Best regards,
+-- 
+Chuan Liu <chuan.liu@amlogic.com>
 
 
-...
 
