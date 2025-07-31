@@ -1,133 +1,238 @@
-Return-Path: <linux-kernel+bounces-751905-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751904-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D803FB16F17
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:01:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AF707B16F15
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:00:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C021B4E686A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:00:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1F218C477A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 447F029DB80;
-	Thu, 31 Jul 2025 10:01:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DC24221561;
+	Thu, 31 Jul 2025 10:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kuu/UYLE"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eLC7+6ij"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DF32A8C1;
-	Thu, 31 Jul 2025 10:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69CC51E51D;
+	Thu, 31 Jul 2025 10:00:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956060; cv=none; b=ifEc3IPpoHPxQSjN9UWmn4HVVGFJllbYsfH6602lXfde9J3mD0wICcfqsHv2aInUUWfXBjoOxR2BVLSn5dv75wpA4KveZJ5gL4rt+vtANl6UOybjFr6vgf1fzbu0VCP4gTsou/oy/DKExpzLPbr6XgNJn7wLyZf70m73oZ78dvw=
+	t=1753956036; cv=none; b=taRFpT2hHwxR38+gNOxxaC6V3cRIyN9IkbPXq/JpfnvvXU8T3lkFKfnp0kXcCGjVRutA3cZbXLAs6xFvlDSd/eRCRzbi/FWEjXg/MPjBGGoMsiYMrFlGqcjBZT0Pud+BXsvNcRR4nFkwkY35+RBQWKTvA34p/e4No6LLFfMVins=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956060; c=relaxed/simple;
-	bh=D/Pse1aDeleA703VwEsVnxO77p0exXY+NO8OrcIK420=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TgFnQ0qnQsUIQIqXM4ORwqO2c51zSM/rL7u/XSsxftkywrq3fFCu3YsSm8S7DpcgbEbsWgxw7GvizRNH01BCwb3IsiUpbVdssOoDpcexp6zsJEHZdNXoznkxKMPEPpQbQNyDqujFVFHcPdKw9SNhsfOq5Scvh4yO0y/kOjYnT0Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kuu/UYLE; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00283a5so1364065e9.0;
-        Thu, 31 Jul 2025 03:00:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753956057; x=1754560857; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
-        b=kuu/UYLE41zw2nIy6KDobNHLbhC16/grwr75n1AetloyS3aFL6z/3CTn7sRrHfV+74
-         SPFP9AOw5qKeU5oA5eGMrUeaywAIK+pXPx2MtslMNgQ4CV2VlhnU6MoDzmvMQdix4RAG
-         OaauVmHqlXxJBPeOMXmnGit5u+KiqtqNCjGcOoXCdBGZisD74/5Wytm7t7+H9EgZoPMs
-         o1Gg1/e4MySgm6OIA03dPc0i8DEBrz0gqa2oHDCF9CSi+VP9H62I4BYAcb45smqaGLAr
-         4suFL6t61binL+nAelCY0D17e9Y8kpjweFrQo3IgFW4ZucvXDhYJKgmuujNwNTrVtn2F
-         LcvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753956057; x=1754560857;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=mW1dNUXjXlTN+wuB0WXe+6YyB6aJsubXCg360VY1fvU=;
-        b=iRtmzt5yU6qsLP8I9vcCSIK8NF5i5da9atGEt2dzKj+2W10ImTXcSsaRPSrJsaovok
-         mmz4Pe1MAu1yD5GmIamoUZyq+V2nGjfN0ZfioJLFUet8q8kskbA03N5QDtwVrmwv2T8k
-         PneFR2nP8U/mLauxx4qGIAzPGCdwJQu9o7LYqJHj7vbXYJW7oKlM+oNrKt4Av6p9kgqU
-         7oU8Am98KrsBl7imN6w5u9kNjSjso85WiXLl6CeI25i7LrSxCxnYxz0Tg25enat79JKH
-         e6FOVLFyhtVDJ+L1M+Rh+4uaBfKg7/Yea//vKzzQKqcaCyq2Ruigh+KsYagruRKlFu+V
-         z0VA==
-X-Forwarded-Encrypted: i=1; AJvYcCUU4n48MOlurUP9l1663XaD5mBNMyoq6AhwL3+yFfhnrV0O86pI4qNuIkwFYfGMWaE6WnxPCxZqgFKo@vger.kernel.org, AJvYcCUof6NsrvQ94saLF2BXdLVN47yQyNROiVMwrfeXMHhVtxRn7KKysg7erzME14iCT/lk6s9dIdsuglpMpMc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMdXOHghK2gyNK/tGlYDmdJefNKYgL+YcvmlwttSt1I61u1cZJ
-	zaeP8kxURcKaJ7FRm7uNwiouKfQVp1/P9GqsHTc/je+uhxmjbMlfav4Y
-X-Gm-Gg: ASbGncuj1Y8KqrmiA8DDYimCGz0aeJ+k1gU7Ta/v2zGTRVBsZEBK7NkzVBl4Ec/wpvN
-	CU6uVCssK71EpP0cs9RyspfQdkPSlcribl6ZerO8DDdcLhCSXMEWFvRmspGV4596Wm3oJP82Kot
-	FkmxEsdv3lJF+JipXcly3i/VcK+Sdf31y4fDHCu97+cvHt4uEXUCPmqkPTth7BNZsGOXyBRXeli
-	ZVGcV6U1chGPz1gZVBjXvcRa4O9VO7oCvsGkJBTzIx6Bv80DVvZs5wWjwBv1cQszC7H8RA/fLJa
-	kDNQ6Mfs8BtlSG+vsZboIgjc7c0FAe2AmlQwg7p+U1gxZOnKgOApmKYPAnLZ7Pt8PkgPCa8QlgY
-	L060NtO4Ibx1CVwsebNIiG00FOa51GtM=
-X-Google-Smtp-Source: AGHT+IGQ6Kbneqb9SOPvp5dN+lqGJxIqcX3WzO2XlOiE5Tmg6TBNCMzJE6qi21TOp0dkhT/vQt2CmQ==
-X-Received: by 2002:a05:600c:810a:b0:456:1d4e:c14f with SMTP id 5b1f17b1804b1-45892bd0a3cmr53266785e9.28.1753956057113;
-        Thu, 31 Jul 2025 03:00:57 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589ee57922sm20566725e9.22.2025.07.31.03.00.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:00:52 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Bjorn Helgaas <bhelgaas@google.com>,
-	linux-pci@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] PCI: ibmphp: Remove space before newline
-Date: Thu, 31 Jul 2025 11:00:17 +0100
-Message-ID: <20250731100017.2165781-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1753956036; c=relaxed/simple;
+	bh=nIIy3EtagONm9o7fIocsy3fvnqj5DKyDI9AvQpz+YsA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rUZE+qaC0IXxPo8Qbo6tWTYbK/GsZymMlWDSToPzIaObboKbRGdBWJS2lLORzN/xJgiXkhvaB2NpsiG+kH6u65VLVwTIXBEFfifb63+EmVQcjxuElsVXyq/Jwj3b5QTDCGlmSFps+IpY4dgutiX1FCtz0KN/EvRdDUnlVuYtHl8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eLC7+6ij; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96C17C4CEEF;
+	Thu, 31 Jul 2025 10:00:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753956036;
+	bh=nIIy3EtagONm9o7fIocsy3fvnqj5DKyDI9AvQpz+YsA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eLC7+6ijyBPGKVEMVLfwY+Uw6w5la+YyHP/0svxYWWgTFagJusQ8YCt5h4K9Qtm0W
+	 fbrDqzIHcEFwXtz/8R1k+qnVGmHJN5o8B7/o2YJiD3ybv9+NhnnPJrBUd2iuVkpUa8
+	 YYYqqfimZw0V4cfMDJIpaQjmGJiF4wX1cAEABFHg8Z8oTrFq9Q54sseSj4nJXfyJHX
+	 EYltQcNTEyRH/UM9T21J0eGc3M9obqQuaUxWHB4BPHCl0GPUHmT76oqYxuQ03M1kEz
+	 qe1lxG2BGYaCC71S+ehz0G2qPrCwVtDYWeuiROsBXwFkBUc87nrnR91ESTs81SFsj6
+	 858ooeFMMIHTQ==
+Date: Thu, 31 Jul 2025 12:00:33 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+To: Andre Przywara <andre.przywara@arm.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, 
+	Aleksandr Shubin <privatesub2@gmail.com>, linux-kernel@vger.kernel.org, 
+	Conor Dooley <conor.dooley@microchip.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, 
+	Jernej Skrabec <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, 
+	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Cheo Fusi <fusibrandon13@gmail.com>, linux-pwm@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-sunxi@lists.linux.dev, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v12 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+Message-ID: <6d2cq657lkwrzntlwwyc5drgkh4vsetkppugrhjedpp7hlvdh5@lqwe34oyuuvb>
+References: <20250427142500.151925-1-privatesub2@gmail.com>
+ <20250427142500.151925-2-privatesub2@gmail.com>
+ <20250512235619.30cff739@minigeek.lan>
+ <20250619094407c4c849f3@mail.local>
+ <20250619131044.20b45d8d@donnerap.manchester.arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="xadqunur2iav4gmf"
+Content-Disposition: inline
+In-Reply-To: <20250619131044.20b45d8d@donnerap.manchester.arm.com>
 
-There is an extraneous space before a newline in a handful of
-debug_polling and err messages. Remove the spaces.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
- drivers/pci/hotplug/ibmphp_hpc.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+--xadqunur2iav4gmf
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v12 1/3] dt-bindings: pwm: Add binding for Allwinner
+ D1/T113-S3/R329 PWM controller
+MIME-Version: 1.0
 
-diff --git a/drivers/pci/hotplug/ibmphp_hpc.c b/drivers/pci/hotplug/ibmphp_hpc.c
-index a5720d12e573..2324167656a6 100644
---- a/drivers/pci/hotplug/ibmphp_hpc.c
-+++ b/drivers/pci/hotplug/ibmphp_hpc.c
-@@ -124,7 +124,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
- 	unsigned long ultemp;
- 	unsigned long data;	// actual data HILO format
- 
--	debug_polling("%s - Entry WPGBbar[%p] index[%x] \n", __func__, WPGBbar, index);
-+	debug_polling("%s - Entry WPGBbar[%p] index[%x]\n", __func__, WPGBbar, index);
- 
- 	//--------------------------------------------------------------------
- 	// READ - step 1
-@@ -147,7 +147,7 @@ static u8 i2c_ctrl_read(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8 i
- 		ultemp = ultemp << 8;
- 		data |= ultemp;
- 	} else {
--		err("this controller type is not supported \n");
-+		err("this controller type is not supported\n");
- 		return HPC_ERROR;
- 	}
- 
-@@ -258,7 +258,7 @@ static u8 i2c_ctrl_write(struct controller *ctlr_ptr, void __iomem *WPGBbar, u8
- 		ultemp = ultemp << 8;
- 		data |= ultemp;
- 	} else {
--		err("this controller type is not supported \n");
-+		err("this controller type is not supported\n");
- 		return HPC_ERROR;
- 	}
- 
--- 
-2.50.0
+Hello Andre,
 
+On Thu, Jun 19, 2025 at 01:10:44PM +0100, Andre Przywara wrote:
+> On Thu, 19 Jun 2025 11:44:07 +0200
+> Alexandre Belloni <alexandre.belloni@bootlin.com> wrote:
+>=20
+> Hi Alexandre,
+>=20
+> > On 12/05/2025 23:56:19+0100, Andre Przywara wrote:
+> > > On Sun, 27 Apr 2025 17:24:53 +0300
+> > > Aleksandr Shubin <privatesub2@gmail.com> wrote:
+> > >=20
+> > > Hi,
+> > >  =20
+> > > > Allwinner's D1, T113-S3 and R329 SoCs have a new pwm
+> > > > controller witch is different from the previous pwm-sun4i.
+> > > >=20
+> > > > The D1 and T113 are identical in terms of peripherals,
+> > > > they differ only in the architecture of the CPU core, and
+> > > > even share the majority of their DT. Because of that,
+> > > > using the same compatible makes sense.
+> > > > The R329 is a different SoC though, and should have
+> > > > a different compatible string added, especially as there
+> > > > is a difference in the number of channels.
+> > > >=20
+> > > > D1 and T113s SoCs have one PWM controller with 8 channels.
+> > > > R329 SoC has two PWM controllers in both power domains, one of
+> > > > them has 9 channels (CPUX one) and the other has 6 (CPUS one).
+> > > >=20
+> > > > Add a device tree binding for them.
+> > > >=20
+> > > > Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> > > > Signed-off-by: Aleksandr Shubin <privatesub2@gmail.com>
+> > > > ---
+> > > >  .../bindings/pwm/allwinner,sun20i-pwm.yaml    | 84 +++++++++++++++=
+++++
+> > > >  1 file changed, 84 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/pwm/allwinner=
+,sun20i-pwm.yaml
+> > > >=20
+> > > > diff --git a/Documentation/devicetree/bindings/pwm/allwinner,sun20i=
+-pwm.yaml b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..4b25e94a8e46
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/pwm/allwinner,sun20i-pwm.ya=
+ml
+> > > > @@ -0,0 +1,84 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/pwm/allwinner,sun20i-pwm.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: Allwinner D1, T113-S3 and R329 PWM
+> > > > +
+> > > > +maintainers:
+> > > > +  - Aleksandr Shubin <privatesub2@gmail.com>
+> > > > +  - Brandon Cheo Fusi <fusibrandon13@gmail.com>
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    oneOf:
+> > > > +      - const: allwinner,sun20i-d1-pwm
+> > > > +      - items:
+> > > > +          - const: allwinner,sun50i-r329-pwm
+> > > > +          - const: allwinner,sun20i-d1-pwm
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  "#pwm-cells":
+> > > > +    const: 3
+> > > > +
+> > > > +  clocks:
+> > > > +    items:
+> > > > +      - description: Bus clock
+> > > > +      - description: 24 MHz oscillator
+> > > > +      - description: APB clock
+> > > > +
+> > > > +  clock-names:
+> > > > +    items:
+> > > > +      - const: bus
+> > > > +      - const: hosc
+> > > > +      - const: apb
+> > > > +
+> > > > +  resets:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  allwinner,npwms:
+> > > > +    $ref: /schemas/types.yaml#/definitions/uint32
+> > > > +    description: The number of PWM channels configured for this in=
+stance
+> > > > +    enum: [6, 8, 9] =20
+> > >=20
+> > > Do we really need to be so restrictive here? The IP has an
+> > > "architectural" limit of 16 channels (due to the MMIO register layout
+> > > and status/control bits usage in some registers), so can't we just le=
+ave
+> > > this value to be anything between 1 and 16 here? If people configure
+> > > this wrongly, it's their fault, I'd say? Without confining this furth=
+er
+> > > based on the respective compatible strings this enum is less useful
+> > > anyway, I think. The Allwinner A523 uses the same IP, and supports all
+> > > 16 channels, the V853 implements 12, that's what I quickly found
+> > > already, and there might be more examples in the future, so I'd rather
+> > > open this up.
+> > >  =20
+> >=20
+> > Do we really need this property? I feel like the number of PWM channels=
+ should be
+> > something the driver could infer from the compatible string as we are g=
+oing to
+> > have one compatible string per SoC anyway.
+>=20
+> Well yes, this would work, but I feel like it creates unnecessary churn to
+> touch the driver every time some new SoC with the same IP pops up, and
+> where just the number of channels is different - see above for a list of
+> SoCs we already know about, and there are more in the pipe. It also means
+> stable kernels would already work.
+
+Having a property that specifies the number of PWM outputs is fine for
+me.
+
+There is some prior art for that: mxs-pwm.yaml has fsl,pwm-number;
+pwm-st.txt has st,pwm-num-chan with that semantic.
+
+Given that this is a fundamental concept of a pwm chip, I'd say giving
+that a generic name without vendor prefix is justified. I suggest to go
+for
+
+	npwms =3D <..>;
+
+which matches ngpios that is specified for gpio chips.
+
+Best regards
+Uwe
+
+--xadqunur2iav4gmf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmiLPr4ACgkQj4D7WH0S
+/k6qWwf/UfJJoL8d1i9SVPk/Syl4ySb6I9d8VOpLaDSJfkSpXLfkxhBEvlXyOXAn
+FzlTMz893YPQTTpTeuEmFMebZhM62aQoFwRTw8NecOLepM3Y/3ia5Q+wS/goyNf3
+NKMXMcqIeyF2BiQc1PvBTInND72IGsRqzuScnGVZtoAgz8IOEgigclMY5cc4mbGX
+CsbLwoTC9F9MXYHQp2j+2VpL3qf89ug6zXdXq+j4YSRYaBj9LuPCFhTN921V6MfP
+18OK7KI7rfJpJUuVPcpnmM0nH7Z9hTXM3kQFdiSwGd6QexuESuw3KBCdfDwuRpoI
+4nSRBPbwtqh1Eq7AwAuqT07vbY/DRQ==
+=JDZ2
+-----END PGP SIGNATURE-----
+
+--xadqunur2iav4gmf--
 
