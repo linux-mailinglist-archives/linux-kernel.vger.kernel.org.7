@@ -1,144 +1,140 @@
-Return-Path: <linux-kernel+bounces-752623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 387CEB1782B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:27:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6758EB1782E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:28:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63CFE54579E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:27:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22669626751
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:28:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C426E265631;
-	Thu, 31 Jul 2025 21:27:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F5D26656D;
+	Thu, 31 Jul 2025 21:27:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="ik2cyJWK"
-Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WRWZiV/t"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 277B823ABB1;
-	Thu, 31 Jul 2025 21:27:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9598A23ABB1;
+	Thu, 31 Jul 2025 21:27:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753997241; cv=none; b=GaJ3IROfqDtgT7KZfjBgGPpeZFZHRq3e7dcSWHFUZZG+ttZ7qqCdqypI/EIobEj+HGzQXOtci91z8voSTsvjzwG1rOeK4zMgzTgdlA2iGoDGBa0y1766ZU64IFvVyK2+EDCCKCtzuMNLUSpo0CyQdfS5/+ciEH4P0TqHnjc8CBk=
+	t=1753997276; cv=none; b=XIWGb3n5EsTrcxxJRjsKVuiuOa2dDC12WvOt1c5sgfhlWNZlgqwJ0g4dse9WBfos8JxQgLySwHGSgnQPIj240Jr0Brhf7N729qrALZe6OAsHp/cW0dSecOevy4ORUIih0+7W2m/TySPKLdCBUzowZ4jBybissDuvwM5E1qRkUyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753997241; c=relaxed/simple;
-	bh=wjDa7WOGxyHO7D5dQF8LxTZo+LlEelFi+YPWHmw+YgM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YoPYuCQlaaC5A5IHwm6pk3Iz80Wn1BYrvNazDf2VLHlLAlI8Y1a98TCEQT8RX6or7gIHABUhsVPLysYOoM0ATLyIC0b0DAnUmIDwPBetQVittF1+1FRkuSlj2/Ug7re//B2Jinny+n1F8xshx43WGgiAgr2vFaXeoEynFvGnv5E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=ik2cyJWK; arc=none smtp.client-ip=159.69.126.157
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
-	s=mail; t=1753997227;
-	bh=wjDa7WOGxyHO7D5dQF8LxTZo+LlEelFi+YPWHmw+YgM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ik2cyJWK4ofmcUVOZKooHAK3Hx+C25v+XJtLc51IX7lfPrqYTCULgZpCSxZOCRZ+Z
-	 4qpZXXY221LjjYd8Myeu0O6KZq89Sy5J8mJcddZ60oIFZyThxRsOTaWB/kJtr07dah
-	 s0kPO0xeFpx9zl9QEHujyrWH709KZOouJ95i10lc=
-Date: Thu, 31 Jul 2025 23:27:07 +0200
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
-To: Mike Rapoport <rppt@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, 
-	Alexander Graf <graf@amazon.com>, Changyuan Lyu <changyuanl@google.com>, 
-	Pasha Tatashin <pasha.tatashin@soleen.com>, Pratyush Yadav <pratyush@kernel.org>, 
-	Shuah Khan <shuah@kernel.org>, kexec@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH] kho: add test for kexec handover
-Message-ID: <c54e6f3f-64b9-408e-9668-e96664f52f27@t-8ch.de>
-References: <20250727083733.2590139-1-rppt@kernel.org>
+	s=arc-20240116; t=1753997276; c=relaxed/simple;
+	bh=Ohks9ny5wTu0IIUS/H9f6kcUZQkWYlZIorfQk3HF37w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=BlHo0S83cywoNGmrmx7z7tFY3PzgEnEtL8YaXq3IKx8hbdCG/dJQcYAS2/eQcsPxlwdUy/Os6OTCZcwSchhz17OFruou2Oe8DhxJBMP21sOqMFkztptxaFhked+NKdRoiUrORFq1nCOvuE+7d+N1YmHUYyXqo++Aps41jNe5WTk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WRWZiV/t; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 83D7EC4CEEF;
+	Thu, 31 Jul 2025 21:27:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753997276;
+	bh=Ohks9ny5wTu0IIUS/H9f6kcUZQkWYlZIorfQk3HF37w=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WRWZiV/tWaejbsWdGwz1kmHEiGStvjFDFmBivFqHbggn6zCAm6s8+ypy9OCru/ILx
+	 MO1dCrewOQ+aUh66Wun4azYI2YV1Dcm560wk/9vIYV4AYDyFYpg9v0lJ89NKX8m6TH
+	 YpUg+ZaN1oPwXj5Y559D/pcm5P4Yfy85xqisdJWp7BjSq2XxojK1kYC6MuFUKFnT8L
+	 5ZwBaGf8/wTOxca81+02ewSyDVeD861gF51qgoWUWYph+yYRkucLfsRk16eSx5Bgsl
+	 d7LoAaN3KgFsacTZXOQlmRcpIgdmiPPlEgL+Hl3cYrIo+HvPwmoH+gDroI8PwDS7mr
+	 ZOhOzLVoiC0+A==
+Message-ID: <245ef75d-44d5-4b66-9f28-68182f177fad@kernel.org>
+Date: Thu, 31 Jul 2025 23:27:50 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250727083733.2590139-1-rppt@kernel.org>
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH net] mptcp: use HMAC-SHA256 library instead of open-coded
+ HMAC
+Content-Language: en-GB, fr-BE
+To: Eric Biggers <ebiggers@kernel.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Paolo Abeni <pabeni@redhat.com>, Mat Martineau <martineau@kernel.org>,
+ Geliang Tang <geliang@kernel.org>, netdev@vger.kernel.org,
+ mptcp@lists.linux.dev
+References: <20250731195054.84119-1-ebiggers@kernel.org>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20250731195054.84119-1-ebiggers@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mike,
+Hi Eric,
 
-On 2025-07-27 11:37:33+0300, Mike Rapoport wrote:
-> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+On 31/07/2025 21:50, Eric Biggers wrote:
+> Now that there are easy-to-use HMAC-SHA256 library functions, use these
+> in net/mptcp/crypto.c instead of open-coding the HMAC algorithm.
 > 
-> Testing kexec handover requires a kernel driver that will generate some
-> data and preserve it with KHO on the first boot and then restore that
-> data and verify it was preserved properly after kexec.
+> Remove the WARN_ON_ONCE() for messages longer than SHA256_DIGEST_SIZE.
+> The new implementation handles all message lengths correctly.
 > 
-> To facilitate such test, along with the kernel driver responsible for
-> data generation, preservation and restoration add a script that runs a
-> kernel in a VM with a minimal /init. The /init enables KHO, loads a
-> kernel image for kexec and runs kexec reboot. After the boot of the
-> kexeced kernel, the driver verifies that the data was properly
-> preserved.
-> 
-> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> The mptcp-crypto KUnit test still passes after this change.
 
-(...)
+Thank you for this patch! It is a good idea, and it looks good to me!
 
-> --- /dev/null
-> +++ b/tools/testing/selftests/kho/init.c
-> @@ -0,0 +1,100 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +#ifndef NOLIBC
+Reviewed-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-This is not necessary anymore, nolibc now provides these headers.
-You can keep it if you want, though.
+One small detail: net-next is currently closed [1], and I don't think
+this patch can be applied in -net. So except if you plan to take it in
+the libcrypto tree for 6.17 -- but that's probably strange -- what I can
+do is to apply it in the MPTCP tree, and send it to net-next later on.
+Is this OK for you?
 
-> +#include <errno.h>
-> +#include <stdio.h>
-> +#include <unistd.h>
-> +#include <fcntl.h>
-> +#include <syscall.h>
+[1] https://patchwork.hopto.org/net-next.html
 
-This should be <sys/syscall.h>.
+Cheers,
+Matt
+--
+pw-bot: defer
+-- 
+Sponsored by the NGI0 Core fund.
 
-> +#include <sys/mount.h>
-> +#include <sys/reboot.h>
-> +#endif
-> +
-
-(...)
-
-> --- /dev/null
-> +++ b/tools/testing/selftests/kho/vmtest.sh
-> @@ -0,0 +1,183 @@
-
-(...)
-
-> +
-> +function mkinitrd() {
-> +	local kernel=$1
-> +
-> +	mkdir -p "$initrd_dir"/{dev,debugfs,proc}
-> +	sudo mknod "$initrd_dir/dev/console" c 5 1
-
-You could generate the initrd with usr/gen_init_cpio or
-usr/gen_initramfs.sh which would remove the need to use sudo.
-Especially as I think the mknod should fail if $TMP is mounted 'nodev'.
-
-> +
-> +	"$CROSS_COMPILE"gcc -s -static -Os -nostdinc -I"$headers_dir/include" \
-> +			-fno-asynchronous-unwind-tables -fno-ident -nostdlib \
-> +			-include "$test_dir/../../../include/nolibc/nolibc.h" \
-
-If you drop the #ifdef NOLIBC, use '-I "$test_dir/../../../include/nolibc/'
-here instead. Or better, $kernel_dir/tools/include/nolibc/.
-
-> +			-o "$initrd_dir/init" "$test_dir/init.c" \
-> +
-> +	cp "$kernel" "$initrd_dir/kernel"
-> +
-> +	pushd "$initrd_dir" &>/dev/null
-> +	find . | cpio -H newc --create > "$initrd" 2>/dev/null
-> +	popd &>/dev/null
-> +}
-
-(...)
-
-
-Thomas
 
