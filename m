@@ -1,134 +1,114 @@
-Return-Path: <linux-kernel+bounces-751781-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751783-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B1AFB16D61
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:20:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6124DB16D65
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:20:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA3AC18C736D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:20:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6A9FF58412A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:20:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6BD32BCF4C;
-	Thu, 31 Jul 2025 08:19:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eem3bXSS"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B10A028D8C9;
-	Thu, 31 Jul 2025 08:19:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 079C221766A;
+	Thu, 31 Jul 2025 08:19:45 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B78E2BD58C;
+	Thu, 31 Jul 2025 08:19:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753949975; cv=none; b=M1nLnwp/bIfpAK534wlBMs1oHpmejeM9tE9citRYqA3Wggg229i9dSU+EMZC4vzjsohazf/L+7YJ6ydCYju3Se8QHGMTOZu6EUKdPhH/+l/3nrGyZr8Xd9PN5xnr4NyR6ojSErd7vG2390CIuwKZLQLcA7E6+IbYWa3um+iZ1N0=
+	t=1753949984; cv=none; b=Wu2Xs7r0PfJSJn+/DfqoZ8paP3WEFAKE7FyLqVjyMQnK0n4JDB4ocNv9v5F8StQZe8d1H3DR/1iw+YYY3G2vIBLpo+O5y7HuS0B9sGkFt6qzsxAXSiTFUJTQNMAHVCQ6St9VmwsR5fVzphFVrwDve7y8y15uz6le+PMvcMlVdK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753949975; c=relaxed/simple;
-	bh=PxsBR5tp27NRMZoMBwZZRy3k4oipyo9hQ2NqIO1xk8I=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=DB7fxc9e69bqxW+biDuU2GTMRo+PZ/A85Z2EjSIlopYoU8W4dfK+9BF7QHGLK+m3Tm6mRs1nq5S8Z0i1B1UxeyIwc3u5qKC0U1xKy3yXxmRzI6BxvT+uiufqkU54ejFrmCYTX8xmXKBL4xg8FbWMCqo+Mk8Xd3Uwiw6RIfu7MFg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eem3bXSS; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45622a1829eso589305e9.1;
-        Thu, 31 Jul 2025 01:19:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753949972; x=1754554772; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gcoomw/1hAL3KvzlKNuykH0cI7TxLyZBhhHk2RTTvDM=;
-        b=Eem3bXSSU1OoawncizhCfO+OQlHBMOX+0qP+9m7LnISsrLs9EGT6sZd1XHsLid6c47
-         5O7IYeij5GIWgNv7Vbn+LqmRGhvB+PFjiqIZKsYVppB/zaEoFoQ8XSd0RtiSykEG86tM
-         Rb9okvX0lVDLPnYiEeOoRxp1EM884D6910COfmNTpq3lEJkPzNpgTrn4HkaYzDG4MFg2
-         cn6zVMZLJpAawNvXcLsu6rGbk34aAVZIcJFlIyNvSu0t2j7R6SV3Hx7VEu/XW8WM8bJR
-         LdnSqb25Ecb69KLBxoVvAK93AdmVt/jznn9F5aX3dNffu3rEkNMJhwRwen7x9z8ZrB9J
-         YNww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753949972; x=1754554772;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=gcoomw/1hAL3KvzlKNuykH0cI7TxLyZBhhHk2RTTvDM=;
-        b=lypmPRFPh1iYMGf8HcNRCTjp5X/M7bHArdorq38C2SmtIgg7in/UcnJInjKSMro18G
-         6D5FL/K217UhgU4o7uvgWsYwZElk0WhgiIQeTEsB+P8MXwWkpR7ho6X7sk28s/E1GMKh
-         MyZTSOHxi/pMugESD8eJN6Q+CVy69OLnxZweogrPj0SWbJtnJN4EDoQE9mf/FY1ij4cd
-         DEAmKVN6G3lcoAUV4sdg1QmrS7v5jL2S1HcLpBm0gKNQ13fLKGq2AgnhgsH+vDL6itVD
-         UEp4OBbN/g8dmUsIg4iLl6VRSa4ggitzUxMJkDTTv3hoUvp3sm2B0TS8TS7BLJSiFZ/u
-         BQsg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4tTi/0dM577E0Ren90gLDVL+/03mfwChnU3+XD4RXKfhQwbnqf1SYCCBq4M1wdahrKvY7vVTIyIPZ5Qf8@vger.kernel.org, AJvYcCVmXrkOIR6u0nEiYuDA1UntQDC8mQ41LmCfebrkUOBHnnNaNS8IM1xj5Vw8PW/4z65xVK4b1LKr6NF8Pzbr@vger.kernel.org
-X-Gm-Message-State: AOJu0YxWQ9Azhb4IZ2DxFoDMe7+N5WdcHuJiO868oB4WQfAkaBjhw0ZZ
-	5DBDuLS2CAcPPzsC+o4MQNxNTZcg0cTxH7rzKflJAtPpSXkuDhVKl2aVt1w9I7g/uAqnCw==
-X-Gm-Gg: ASbGncsFGKksmjhgJCdA4S2IZkntVtRUtwaykwvRwrq8oKpIRSDHnOowuwmTg9GhoJ6
-	ur/+sI8L/fQcPhoZxpOiWTqx0erlagsN745u4fBmKtJP0aL79QidIgJUdmorjMjB95+lKxVaXVh
-	wvqqlFqMCuVetiYtgnNlbxdRSs1WF3Wc5R5T2yccs0BTXN+xVWFiCKbhpXisMeAwzvz0DjrrDYO
-	qSKNgQTHtu/MHQcal5zuwiQwDN96eeN6nrE/VAIZEQ6CYVH4GGxMq3EZh+Kfw3EX9y3B39Y2OLj
-	v1nsyTu5YIw2USurNjKVDIU/qU4jgs2lTROhY5svxr0UX7Wyt/sLIwRLzquuD61xCmYCv8TmwOk
-	T8Z4LvdFcfXFg+5SuY7Za8B1Mhibshn0=
-X-Google-Smtp-Source: AGHT+IHNFINuB2qnm+mYjJQTsDwzlFYJuyZc8VGKOrPRokvjoYXrZDyXCOjo94KVV+XJTnQmPhaYqw==
-X-Received: by 2002:a05:600c:6308:b0:456:1121:3ad8 with SMTP id 5b1f17b1804b1-45892b9cfacmr65956625e9.10.1753949971926;
-        Thu, 31 Jul 2025 01:19:31 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c3b9074sm1516092f8f.17.2025.07.31.01.19.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 01:19:31 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Rob Clark <robin.clark@oss.qualcomm.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	linux-arm-msm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	freedreno@lists.freedesktop.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH 2/2][next] drm/msm: replace minor->dev->dev with dev->dev
-Date: Thu, 31 Jul 2025 09:18:54 +0100
-Message-ID: <20250731081854.2120404-3-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250731081854.2120404-1-colin.i.king@gmail.com>
-References: <20250731081854.2120404-1-colin.i.king@gmail.com>
+	s=arc-20240116; t=1753949984; c=relaxed/simple;
+	bh=oj3P/19FQm3GhzmA7W5xkOFOXCD4j5EfAU62nU5kIRo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JFBHjCWAmhhS5UjQ43uXn4KQWAF/eduMoctX3bFTuvmdkJYvrdTT/H2/hDLn99a6ruftAbV0ieD97tVsSn2RoKHp0TEz7iRMwhbRpogg0xGIAz2VUcpAQPalmN81QR8R4dQm1FhlmXSkeycYgwuebkDSEvYFtbzeB876ijk9XS4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 145231D13;
+	Thu, 31 Jul 2025 01:19:33 -0700 (PDT)
+Received: from arm.com (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 5A4B63F673;
+	Thu, 31 Jul 2025 01:19:38 -0700 (PDT)
+Date: Thu, 31 Jul 2025 10:19:15 +0200
+From: Beata Michalska <beata.michalska@arm.com>
+To: Bowen Yu <yubowen8@huawei.com>
+Cc: rafael@kernel.org, viresh.kumar@linaro.org, linux-pm@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linuxarm@huawei.com,
+	jonathan.cameron@huawei.com, zhanjie9@hisilicon.com,
+	lihuisong@huawei.com, zhenglifeng1@huawei.com
+Subject: Re: [PATCH 2/2] cpufreq: CPPC: Fix error handling in
+ cppc_scale_freq_workfn()
+Message-ID: <aIsnA4miO8fCJTgs@arm.com>
+References: <20250730032312.167062-1-yubowen8@huawei.com>
+ <20250730032312.167062-3-yubowen8@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730032312.167062-3-yubowen8@huawei.com>
 
-The pointer dev has been set to minor->dev, so replace minor->dev->dev
-with dev->dev in the DRM_DEV_ERROR messages.
+Hi Bowen, Jie
+On Wed, Jul 30, 2025 at 11:23:12AM +0800, Bowen Yu wrote:
+> From: Jie Zhan <zhanjie9@hisilicon.com>
+> 
+> Perf counters could be 0 if the cpu is in a low-power idle state. Just try
+> it again next time and update the frequency scale when the cpu is active
+> and perf counters successfully return.
+> 
+> Also, remove the FIE source on an actual failure.
+> 
+> Signed-off-by: Jie Zhan <zhanjie9@hisilicon.com>
+> ---
+>  drivers/cpufreq/cppc_cpufreq.c | 13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> diff --git a/drivers/cpufreq/cppc_cpufreq.c b/drivers/cpufreq/cppc_cpufreq.c
+> index 904006027df2..e95844d3d366 100644
+> --- a/drivers/cpufreq/cppc_cpufreq.c
+> +++ b/drivers/cpufreq/cppc_cpufreq.c
+> @@ -78,12 +78,23 @@ static void cppc_scale_freq_workfn(struct kthread_work *work)
+>  	struct cppc_cpudata *cpu_data;
+>  	unsigned long local_freq_scale;
+>  	u64 perf;
+> +	int ret;
+>  
+>  	cppc_fi = container_of(work, struct cppc_freq_invariance, work);
+>  	cpu_data = cppc_fi->cpu_data;
+>  
+> -	if (cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs)) {
+> +	ret = cppc_get_perf_ctrs(cppc_fi->cpu, &fb_ctrs);
+> +	/*
+> +	 * Perf counters could be 0 if the cpu is in a low-power idle state.
+> +	 * Just try it again next time.
+> +	 */
+> +	if (ret == -EFAULT)
+> +		return;
+Which counters are we actually talking about here ?
+> +
+> +	if (ret) {
+>  		pr_warn("%s: failed to read perf counters\n", __func__);
+> +		topology_clear_scale_freq_source(SCALE_FREQ_SOURCE_CPPC,
+> +						 cpu_data->shared_cpu_map);
+>  		return;
+>  	}
+And the real error here would be ... ?
+That makes me wonder why this has been registered as the source of the freq
+scale in the first place if we are to hit some serious issue. Would you be able
+to give an example of any?
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
 ---
- drivers/gpu/drm/msm/msm_debugfs.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/gpu/drm/msm/msm_debugfs.c b/drivers/gpu/drm/msm/msm_debugfs.c
-index da618720cf8a..97dc70876442 100644
---- a/drivers/gpu/drm/msm/msm_debugfs.c
-+++ b/drivers/gpu/drm/msm/msm_debugfs.c
-@@ -340,13 +340,13 @@ static int late_init_minor(struct drm_minor *minor)
- 
- 	ret = msm_rd_debugfs_init(minor);
- 	if (ret) {
--		DRM_DEV_ERROR(minor->dev->dev, "could not install rd debugfs\n");
-+		DRM_DEV_ERROR(dev->dev, "could not install rd debugfs\n");
- 		return ret;
- 	}
- 
- 	ret = msm_perf_debugfs_init(minor);
- 	if (ret) {
--		DRM_DEV_ERROR(minor->dev->dev, "could not install perf debugfs\n");
-+		DRM_DEV_ERROR(dev->dev, "could not install perf debugfs\n");
- 		return ret;
- 	}
- 
--- 
-2.50.0
-
+BR
+Beata
+>  
+> -- 
+> 2.33.0
+> 
+> 
 
