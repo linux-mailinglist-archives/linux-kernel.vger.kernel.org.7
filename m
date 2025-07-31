@@ -1,331 +1,130 @@
-Return-Path: <linux-kernel+bounces-752281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 105FCB17381
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:55:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8293B17388
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:57:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 142B418998F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:55:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6A335461FA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:57:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 735701B4F08;
-	Thu, 31 Jul 2025 14:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D3B1AF0AF;
+	Thu, 31 Jul 2025 14:57:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RTZXeG+x"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="LfumEIUV"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 187CB15573F
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:54:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C186E15573F;
+	Thu, 31 Jul 2025 14:57:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753973687; cv=none; b=NNk0xwW/0C1acjhR7/7kX2EgOZzIGjrMDXGaBpJdIeH7R1lJE26uBnMa8iml9q/XLlRodgaTLhGgO7SqJsOjn8ychITgTphlAs8uhdb6KCuQmn/EkuHEaF4kSI7Z2vQ6InP7Wo6GBpeYLCmg9dY3CyFBGx4rClWkE2iYT6xAm3k=
+	t=1753973868; cv=none; b=UltxcMUav/zZmiJinjgBUi+bhd/Ufl0Rhh6nS7CRNp70+ALMqMNEEGQLeOdYVYJp9Cui0EUT3cFaJQeKiDvkbB00056d1yCYsmhkv5qGohXGlIL8pwzN9PzuLEB7TjNyYLXnmbZEvqHsbnbWoogc0GAO3AtzRsP6pwLSwn5P9ec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753973687; c=relaxed/simple;
-	bh=UJaDoUN8az5yBcxGprRm1+zJ4BUxFszBTB0G2xgRuvk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pc+ZfjXlfP/94W70zUVuN90pxPDKyJtaWuNjg/6YR9o4rBwHcrdEc4zhYYssrLNwQH3wL93RPGa44XLzue+y7YdidQZNBVuIkt8vSeG9FVskoI7UiCnjBEogiXJ42ZCffsB0hax8kfsGC+5cZF+vvUZlpFxvpN8Y7iR7oV1nA4Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RTZXeG+x; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753973684;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=pcdAMsNdTAq+2YkeVqnBXkNfuDQDM55vEhbjhHl9CYA=;
-	b=RTZXeG+xfinbhit8Sv1Ob6pBuNWRDb5db+uAgQ3zAPz9pd3vqo/eOyCMILUoPk7TDOQT/e
-	Fx89MsiOVSfK4MhhD1IL2PlEzZQR23tpBvYdbAOUaOgC42jjOIixWapptnrqA/0TjUCYhS
-	2gBVTrlJxll8JUKe4uZcLZ8pGPVIRHY=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-417-J2eH-cfTM7u3k6ogeruMaA-1; Thu, 31 Jul 2025 10:54:42 -0400
-X-MC-Unique: J2eH-cfTM7u3k6ogeruMaA-1
-X-Mimecast-MFC-AGG-ID: J2eH-cfTM7u3k6ogeruMaA_1753973681
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3a503f28b09so530445f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:54:42 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753973681; x=1754578481;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=pcdAMsNdTAq+2YkeVqnBXkNfuDQDM55vEhbjhHl9CYA=;
-        b=vciQGakAztwzu5Y4HGQmvk8jfM3GJI70ubAEoXejArem0RNUY8duR1wbCZxwedJi4i
-         A302D0fayoKJKthgB4bpLmlErIdXwTX5T2zCEjCYq6LBdqn3s2IslJWhXZecwDYmnjJi
-         vDcyqQnLgHAHw1N2TNBtwHMc9L9LSNFJDUweZo09dvOizqc94Eiu+ZEcNHVHar8Da/Je
-         3c9McQiC/W8rxIiIZVG9wmBEVIt1nFh26Yv+2X97hZ3wvLmuHY4WuHHBQWgySDykOSiw
-         dvUrICAPi+n/MolLv4LOO2zvQQDzAIpY7F+nH7wHgh7qJ2jHCCEodh5POhmmUYN4V1bL
-         +JEw==
-X-Forwarded-Encrypted: i=1; AJvYcCWZ74Wcg3Zi3d4TqFLGYlO8SKAcDlYmcsVWb2jJOVSzZXxDPNo5UAB8jsX8qgbE6HeR/hBpoI1ZFe4otE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNXFZoHpE82lHLwqdf81X+EwLlZOg/1QhAhacNRbvqxpZgLXOZ
-	1cjzndiuZp1dOGl2WCVlC0YwI/ydzT6sY96K9R8UuiEJqhx5Pskb9Y0ueHLqnkbLtDYk1H06hlm
-	WVJf6kCrLYzeM30hnikhKYgd3mCwSEpt8mWATpRRu9JRKIV4oDIzqNmsjlzFXN0Wjig==
-X-Gm-Gg: ASbGnctzQhGNJ+O+PpI2wlsupkk5gMQqFS+hd9OXVKl+ZESDsVvk2JbdEnSbS1q0vmb
-	Zeg/tPeExuRfw9jaxMleChg9Jv/hoEqJuMdQrqARHAt7nhJpQLe0Qcc60x+FEtAblw6VlUHDfJZ
-	wo2Z/GJz8tc82YI9JnpLXO52v1dvhvstKsQVIzp22a4feDLRHCr3JlyHIL9X9TMgbneERuUuECm
-	frN3wFhclCkPlMFn2njjh8hz1EcTBiy5vcL8lbN/0crTem9eN5S9m9rhv4lz9O7ilsCmXChn9SP
-	EWBXGKcRsKJTzTPfA9YWLymqju7P+ZEwT4HGZEn3I/lBnhW/FKhw1lGAsTUEQoissrPAqkLDKcP
-	LZMBjOb0wj3lFwEd1DDgCp3k3NzzfNgvMx9kjLwvmdlgHJdtBfGCiY26kfQx8IrfyZyE=
-X-Received: by 2002:a05:6000:40db:b0:3b6:d0d:79c1 with SMTP id ffacd0b85a97d-3b79d4511a7mr2179881f8f.10.1753973681077;
-        Thu, 31 Jul 2025 07:54:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGGrPbQGx33zdyJHrEf2Jq33PS0AoKLgTX83/f0Zaxy9JX7aFfl5pg+H/UR1tcX8OOa7Lu1kA==
-X-Received: by 2002:a05:6000:40db:b0:3b6:d0d:79c1 with SMTP id ffacd0b85a97d-3b79d4511a7mr2179833f8f.10.1753973680340;
-        Thu, 31 Jul 2025 07:54:40 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfe56sm72071135e9.20.2025.07.31.07.54.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 07:54:39 -0700 (PDT)
-Message-ID: <747509a6-8493-46c3-99d4-38b53a8a7504@redhat.com>
-Date: Thu, 31 Jul 2025 16:54:38 +0200
+	s=arc-20240116; t=1753973868; c=relaxed/simple;
+	bh=UFFR+hTx3dxFPTSyw62BqAvy6iS2U2OxnwlQbFRHkJw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=P0ei5wnDcNDITru/H0mhQGPHA7d+gKHlvP4mbtzfglNYWU2ypVSJfFGiWkk5aQCON0xmUdkjZUOi9ud2phhmma7lHk4/6ZO/txPs8HMqVQ3AyNSrj7P9u8QrScA+x201KBtlCV24BJdk1qtqLRUzw/6PIuxE8Xk4s9L1LNO5qXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=LfumEIUV; arc=none smtp.client-ip=192.198.163.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753973866; x=1785509866;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=UFFR+hTx3dxFPTSyw62BqAvy6iS2U2OxnwlQbFRHkJw=;
+  b=LfumEIUV333va11DgxtnlPAEoRqEn/CVE2rtlmz8Zf8myerri20pOkD2
+   pBjZzoZwD3x3kdJXFGdaOPNW2W/IvLzmLdbkaDcNT6Xa6bmfdPzsOIUs+
+   Xmds17L4OspQ/X9lvn4lPpRW2JzdYy5ePaTRg+PyvsFoq4QhfHlIkRwuB
+   VnaOl8Simvqps/U6OyBi1JahGdGnrQUL+2RuyYNfwwoeD7RzjCzQYCBQZ
+   ckIiCQ88qtxVxixHoUPGvrSrrpAXkYq4g/SYywaizyqL+LwjoQPsFSHQg
+   JIiAdSBAbaXFPfD56WXedR/PAd4xX0PACnPXc8NujhdAJTPcAFxKLaZG8
+   w==;
+X-CSE-ConnectionGUID: 9XizOVkOSTagIsJhLTpA6g==
+X-CSE-MsgGUID: QWw8RBQdRdOvsO1PhSEsuQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56231695"
+X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
+   d="scan'208";a="56231695"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 07:57:46 -0700
+X-CSE-ConnectionGUID: w17u4r+jSBeL1zfWrabTfg==
+X-CSE-MsgGUID: ldNseBrTRZ2jw4+KoBwwxA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
+   d="scan'208";a="163633289"
+Received: from qiuxu-clx.sh.intel.com ([10.239.53.109])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 07:57:44 -0700
+From: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+To: Tony Luck <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>
+Cc: Qiuxu Zhuo <qiuxu.zhuo@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	Lai Yi <yi1.lai@linux.intel.com>,
+	linux-edac@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] EDAC/Intel: Make memory controller instances into a flexible array
+Date: Thu, 31 Jul 2025 22:55:27 +0800
+Message-ID: <20250731145534.2759334-1-qiuxu.zhuo@intel.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/5] mm/huge_memory: treat MADV_COLLAPSE as an advise
- with PR_THP_DISABLE_EXCEPT_ADVISED
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Usama Arif <usamaarif642@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
- vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
- sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
- kernel-team@meta.com
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-4-usamaarif642@gmail.com>
- <aca74036-f37f-4247-b3b8-112059f53659@lucifer.local>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- xsFNBFXLn5EBEAC+zYvAFJxCBY9Tr1xZgcESmxVNI/0ffzE/ZQOiHJl6mGkmA1R7/uUpiCjJ
- dBrn+lhhOYjjNefFQou6478faXE6o2AhmebqT4KiQoUQFV4R7y1KMEKoSyy8hQaK1umALTdL
- QZLQMzNE74ap+GDK0wnacPQFpcG1AE9RMq3aeErY5tujekBS32jfC/7AnH7I0v1v1TbbK3Gp
- XNeiN4QroO+5qaSr0ID2sz5jtBLRb15RMre27E1ImpaIv2Jw8NJgW0k/D1RyKCwaTsgRdwuK
- Kx/Y91XuSBdz0uOyU/S8kM1+ag0wvsGlpBVxRR/xw/E8M7TEwuCZQArqqTCmkG6HGcXFT0V9
- PXFNNgV5jXMQRwU0O/ztJIQqsE5LsUomE//bLwzj9IVsaQpKDqW6TAPjcdBDPLHvriq7kGjt
- WhVhdl0qEYB8lkBEU7V2Yb+SYhmhpDrti9Fq1EsmhiHSkxJcGREoMK/63r9WLZYI3+4W2rAc
- UucZa4OT27U5ZISjNg3Ev0rxU5UH2/pT4wJCfxwocmqaRr6UYmrtZmND89X0KigoFD/XSeVv
- jwBRNjPAubK9/k5NoRrYqztM9W6sJqrH8+UWZ1Idd/DdmogJh0gNC0+N42Za9yBRURfIdKSb
- B3JfpUqcWwE7vUaYrHG1nw54pLUoPG6sAA7Mehl3nd4pZUALHwARAQABzSREYXZpZCBIaWxk
- ZW5icmFuZCA8ZGF2aWRAcmVkaGF0LmNvbT7CwZgEEwEIAEICGwMGCwkIBwMCBhUIAgkKCwQW
- AgMBAh4BAheAAhkBFiEEG9nKrXNcTDpGDfzKTd4Q9wD/g1oFAmgsLPQFCRvGjuMACgkQTd4Q
- 9wD/g1o0bxAAqYC7gTyGj5rZwvy1VesF6YoQncH0yI79lvXUYOX+Nngko4v4dTlOQvrd/vhb
- 02e9FtpA1CxgwdgIPFKIuXvdSyXAp0xXuIuRPQYbgNriQFkaBlHe9mSf8O09J3SCVa/5ezKM
- OLW/OONSV/Fr2VI1wxAYj3/Rb+U6rpzqIQ3Uh/5Rjmla6pTl7Z9/o1zKlVOX1SxVGSrlXhqt
- kwdbjdj/csSzoAbUF/duDuhyEl11/xStm/lBMzVuf3ZhV5SSgLAflLBo4l6mR5RolpPv5wad
- GpYS/hm7HsmEA0PBAPNb5DvZQ7vNaX23FlgylSXyv72UVsObHsu6pT4sfoxvJ5nJxvzGi69U
- s1uryvlAfS6E+D5ULrV35taTwSpcBAh0/RqRbV0mTc57vvAoXofBDcs3Z30IReFS34QSpjvl
- Hxbe7itHGuuhEVM1qmq2U72ezOQ7MzADbwCtn+yGeISQqeFn9QMAZVAkXsc9Wp0SW/WQKb76
- FkSRalBZcc2vXM0VqhFVzTb6iNqYXqVKyuPKwhBunhTt6XnIfhpRgqveCPNIasSX05VQR6/a
- OBHZX3seTikp7A1z9iZIsdtJxB88dGkpeMj6qJ5RLzUsPUVPodEcz1B5aTEbYK6428H8MeLq
- NFPwmknOlDzQNC6RND8Ez7YEhzqvw7263MojcmmPcLelYbfOwU0EVcufkQEQAOfX3n0g0fZz
- Bgm/S2zF/kxQKCEKP8ID+Vz8sy2GpDvveBq4H2Y34XWsT1zLJdvqPI4af4ZSMxuerWjXbVWb
- T6d4odQIG0fKx4F8NccDqbgHeZRNajXeeJ3R7gAzvWvQNLz4piHrO/B4tf8svmRBL0ZB5P5A
- 2uhdwLU3NZuK22zpNn4is87BPWF8HhY0L5fafgDMOqnf4guJVJPYNPhUFzXUbPqOKOkL8ojk
- CXxkOFHAbjstSK5Ca3fKquY3rdX3DNo+EL7FvAiw1mUtS+5GeYE+RMnDCsVFm/C7kY8c2d0G
- NWkB9pJM5+mnIoFNxy7YBcldYATVeOHoY4LyaUWNnAvFYWp08dHWfZo9WCiJMuTfgtH9tc75
- 7QanMVdPt6fDK8UUXIBLQ2TWr/sQKE9xtFuEmoQGlE1l6bGaDnnMLcYu+Asp3kDT0w4zYGsx
- 5r6XQVRH4+5N6eHZiaeYtFOujp5n+pjBaQK7wUUjDilPQ5QMzIuCL4YjVoylWiBNknvQWBXS
- lQCWmavOT9sttGQXdPCC5ynI+1ymZC1ORZKANLnRAb0NH/UCzcsstw2TAkFnMEbo9Zu9w7Kv
- AxBQXWeXhJI9XQssfrf4Gusdqx8nPEpfOqCtbbwJMATbHyqLt7/oz/5deGuwxgb65pWIzufa
- N7eop7uh+6bezi+rugUI+w6DABEBAAHCwXwEGAEIACYCGwwWIQQb2cqtc1xMOkYN/MpN3hD3
- AP+DWgUCaCwtJQUJG8aPFAAKCRBN3hD3AP+DWlDnD/4k2TW+HyOOOePVm23F5HOhNNd7nNv3
- Vq2cLcW1DteHUdxMO0X+zqrKDHI5hgnE/E2QH9jyV8mB8l/ndElobciaJcbl1cM43vVzPIWn
- 01vW62oxUNtEvzLLxGLPTrnMxWdZgxr7ACCWKUnMGE2E8eca0cT2pnIJoQRz242xqe/nYxBB
- /BAK+dsxHIfcQzl88G83oaO7vb7s/cWMYRKOg+WIgp0MJ8DO2IU5JmUtyJB+V3YzzM4cMic3
- bNn8nHjTWw/9+QQ5vg3TXHZ5XMu9mtfw2La3bHJ6AybL0DvEkdGxk6YHqJVEukciLMWDWqQQ
- RtbBhqcprgUxipNvdn9KwNpGciM+hNtM9kf9gt0fjv79l/FiSw6KbCPX9b636GzgNy0Ev2UV
- m00EtcpRXXMlEpbP4V947ufWVK2Mz7RFUfU4+ETDd1scMQDHzrXItryHLZWhopPI4Z+ps0rB
- CQHfSpl+wG4XbJJu1D8/Ww3FsO42TMFrNr2/cmqwuUZ0a0uxrpkNYrsGjkEu7a+9MheyTzcm
- vyU2knz5/stkTN2LKz5REqOe24oRnypjpAfaoxRYXs+F8wml519InWlwCra49IUSxD1hXPxO
- WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <aca74036-f37f-4247-b3b8-112059f53659@lucifer.local>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31.07.25 16:38, Lorenzo Stoakes wrote:
-> Nits on subject:
-> 
-> - It's >75 chars
+Problem
+=======
+The current array of memory controller instances for Intel server EDAC
+driver is sized using the macro NUM_IMC. Each time EDAC support is added
+for a new CPU, NUM_IMC needs to be updated to ensure it is greater than
+or equal to the number of memory controllers for the new CPU. This approach
+is inconvenient and also results in memory waste for older CPUs with fewer
+memory controllers.
 
-No big deal. If we cna come up with something shorter, good.
+Solution
+========
+Make the array of memory controller instances a flexible array and
+determine its size from configuration data or at runtime.
 
-> - advise is the verb, advice is the noun.
+Patches
+=======
+Patch 1~3: Refactor code to be independent of *NUM*_IMC macros.
+Patch   4: Make the array of memory controller instances a flexible array.
+Patch 5~7: Clean up and remove unused *NUM*_IMC macros.
 
-Yeah.
+Testing
+=======
+Pass basic testing on Cascade Lake, {Sapphire, Granite} Rapids server CPUs.
+- Load and unload the {skx,i10nm_}edac driver.
+- Receive events for memory correctable errors.
+- Decode memory errors.
 
-> 
-> On Thu, Jul 31, 2025 at 01:27:20PM +0100, Usama Arif wrote:
->> From: David Hildenbrand <david@redhat.com>
->>
->> Let's allow for making MADV_COLLAPSE succeed on areas that neither have
->> VM_HUGEPAGE nor VM_NOHUGEPAGE when we have THP disabled
->> unless explicitly advised (PR_THP_DISABLE_EXCEPT_ADVISED).
-> 
-> Hmm, I'm not sure about this.
-> 
-> So far this prctl() has been the only way to override MADV_COLLAPSE
-> behaviour, but now we're allowing for this one case to not.
+This patch series is on top of v6.16.
 
-This is not an override really. prctl() disallowed MADV_COLLAPSE, but in 
-the new mode we don't want that anymore.
+Qiuxu Zhuo (7):
+  EDAC/{skx_common,skx}: Use configuration data, not global macros
+  EDAC/skx_common: Move mc_mapping to be a field inside struct skx_imc
+  EDAC/skx_common: Swap memory controller index mapping
+  EDAC/skx_common: Make skx_dev->imc[] a flexible array
+  EDAC/skx_common: Remove redundant upper bound check for res->imc
+  EDAC/i10nm: Reallocate skx_dev list if preconfigured cnt != runtime cnt
+  EDAC/skx_common: Remove unused *NUM*_IMC macros
 
- > > I suppose the precedent is that MADV_COLLAPSE overrides 'madvise' sysfs
-> behaviour.
- > > I suppose what saves us here is 'advised' can be read to mean either
-> MADV_HUGEPAGE or MADV_COLLAPSE.
- > > And yes, MADV_COLLAPSE is clearly the user requesting this behaviour.
+ drivers/edac/i10nm_base.c | 13 +++++-----
+ drivers/edac/skx_base.c   | 33 +++++++++++++++----------
+ drivers/edac/skx_common.c | 51 +++++++++++++++++++++++++--------------
+ drivers/edac/skx_common.h | 28 +++++++++------------
+ 4 files changed, 72 insertions(+), 53 deletions(-)
 
-Exactly.
 
-> 
-> I think the vagueness here is one that already existed, because one could
-> perfectly one have expected MADV_COLLAPSE to obey sysfs and require
-> MADV_HUGEPAGE to have been applied, but of course this is not the case.
-
-Yes.
-
-> 
-> OK so fine.
-> 
-> BUT.
-> 
-> I think the MADV_COLLAPSE man page will need to be updated to mention this.
-> 
-
-Yes.
-
-> And I REALLY think we should update the THP doc too to mention all these
-> prctl() modes.
-> 
-> I'm not sure we cover that right now _at all_ and obviously we should
-> describe the new flags.
-> 
-> Usama - can you add a patch to this series to do that?
-
-Good point, let's document the interaction with prctl().
-
-> 
->>
->> MADV_COLLAPSE is a clear advise that we want to collapse.
-> 
-> advise -> advice.
-> 
->>
->> Note that we still respect the VM_NOHUGEPAGE flag, just like
->> MADV_COLLAPSE always does. So consequently, MADV_COLLAPSE is now only
->> refused on VM_NOHUGEPAGE with PR_THP_DISABLE_EXCEPT_ADVISED.
-> 
-> You also need to mention the shmem change you've made I think.
-
-Yes.
-
- > >>
->> Co-developed-by: Usama Arif <usamaarif642@gmail.com>
->> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->> Signed-off-by: David Hildenbrand <david@redhat.com>
->> ---
->>   include/linux/huge_mm.h    | 8 +++++++-
->>   include/uapi/linux/prctl.h | 2 +-
->>   mm/huge_memory.c           | 5 +++--
->>   mm/memory.c                | 6 ++++--
->>   mm/shmem.c                 | 2 +-
->>   5 files changed, 16 insertions(+), 7 deletions(-)
->>
->> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
->> index b0ff54eee81c..aeaf93f8ac2e 100644
->> --- a/include/linux/huge_mm.h
->> +++ b/include/linux/huge_mm.h
->> @@ -329,7 +329,7 @@ struct thpsize {
->>    * through madvise or prctl.
->>    */
->>   static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->> -		vm_flags_t vm_flags)
->> +		vm_flags_t vm_flags, bool forced_collapse)
->>   {
->>   	/* Are THPs disabled for this VMA? */
->>   	if (vm_flags & VM_NOHUGEPAGE)
->> @@ -343,6 +343,12 @@ static inline bool vma_thp_disabled(struct vm_area_struct *vma,
->>   	 */
->>   	if (vm_flags & VM_HUGEPAGE)
->>   		return false;
->> +	/*
->> +	 * Forcing a collapse (e.g., madv_collapse), is a clear advise to
-> 
-> advise -> advice.
-> 
->> +	 * use THPs.
->> +	 */
->> +	if (forced_collapse)
->> +		return false;
->>   	return test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, &vma->vm_mm->flags);
->>   }
->>
->> diff --git a/include/uapi/linux/prctl.h b/include/uapi/linux/prctl.h
->> index 9c1d6e49b8a9..ee4165738779 100644
->> --- a/include/uapi/linux/prctl.h
->> +++ b/include/uapi/linux/prctl.h
->> @@ -185,7 +185,7 @@ struct prctl_mm_map {
->>   #define PR_SET_THP_DISABLE	41
->>   /*
->>    * Don't disable THPs when explicitly advised (e.g., MADV_HUGEPAGE /
->> - * VM_HUGEPAGE).
->> + * VM_HUGEPAGE / MADV_COLLAPSE).
-> 
-> This is confusing you're mixing VMA flags with MADV ones... maybe just
-> stick to madvise ones, or add extra context around VM_HUGEPAGE bit?
-
-I don't see anything confusing here, really.
-
-But if it helps you, we can do
-	(e.g., MADV_HUGEPAGE / VM_HUGEPAGE, MADV_COLLAPSE).
-
-(reason VM_HUGEPAGE is spelled out is that there might be code where we 
-set VM_HUGEPAGE implicitly in the kernel)
-
-> 
-> Would need to be fixed up in a prior commit obviously.
-> 
->>    */
->>   # define PR_THP_DISABLE_EXCEPT_ADVISED	(1 << 1)
->>   #define PR_GET_THP_DISABLE	42
->> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
->> index 85252b468f80..ef5ccb0ec5d5 100644
->> --- a/mm/huge_memory.c
->> +++ b/mm/huge_memory.c
->> @@ -104,7 +104,8 @@ unsigned long __thp_vma_allowable_orders(struct vm_area_struct *vma,
->>   {
->>   	const bool smaps = type == TVA_SMAPS;
->>   	const bool in_pf = type == TVA_PAGEFAULT;
->> -	const bool enforce_sysfs = type != TVA_FORCED_COLLAPSE;
->> +	const bool forced_collapse = type == TVA_FORCED_COLLAPSE;
->> +	const bool enforce_sysfs = !forced_collapse;
-> 
-> Can we just get rid of this enforce_sysfs altogether in patch 2/5 and use
-> forced_collapse?
-
-Let's do that as a separate cleanup on top. I want least churn in that 
-patch.
-
-(had the same idea while writing that patch, but I have other things to 
-focus on than cleaning up all this mess)
-
+base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
 -- 
-Cheers,
-
-David / dhildenb
+2.43.0
 
 
