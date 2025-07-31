@@ -1,97 +1,120 @@
-Return-Path: <linux-kernel+bounces-752663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E68B17903
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:15:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09B70B17906
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:17:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E871AA4A14
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:15:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 38B4F7AB181
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 22:15:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E603E26E161;
-	Thu, 31 Jul 2025 22:14:58 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13545275B1D;
+	Thu, 31 Jul 2025 22:17:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="uqLaUiTb"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7761719DF62;
-	Thu, 31 Jul 2025 22:14:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1C02676DF;
+	Thu, 31 Jul 2025 22:17:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754000098; cv=none; b=RcOn4GsXa+TvGvur85RoIog21j7R10XnWmXp6F1bnu/qTZ5F/T8aacG0z6VuD/ch1DwTuTDIK4WbZToozGTj5BCk0Bg2qc1IlyUj0LqB9VJ5keisytmLkNiC7fsXIlRsxug/xsYAlSCDRRbD2IXrtzU7j7d6zExrRb/PgAgd5RY=
+	t=1754000223; cv=none; b=cj5SC4YEd6DgPqHrZuWx7bKH5KK/5rbmKgrmmImx9VVdXhmJ9o0XQSFvsZ1Al08BPc5+oXh4K9Edxt0GFo8058c/ejATamackHA8uS8J5T0F5uvBG1tNVyMVmpdWHWg7j5ZxLVeubmxcotTGGZ4dg2QDu8l3ihNt5cPCOB8ro8g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754000098; c=relaxed/simple;
-	bh=T2iK/JRIu+MAVgGULZdaXCB0yQ+4ElAMiiMnn10eWxg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LzK7tf6LNjjdKcdmEJKIjzZqWibGKLrD/OsDpXVsDGww7Z+8qQR3FZrLSVdfUatRi7p5QJZLV0WUrSn1L5odjXT/yr+Or4eukPUabn9QgOVbOzTOE+CRY+Xg/k/9yGN9IeROUM8qoQ224/MboEMtsNq/4U/30l0ecCtsvjUgzW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf07.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id 7A97B160732;
-	Thu, 31 Jul 2025 22:14:47 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf07.hostedemail.com (Postfix) with ESMTPA id 4923D20030;
-	Thu, 31 Jul 2025 22:14:44 +0000 (UTC)
-Date: Thu, 31 Jul 2025 18:15:03 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jiri Olsa <olsajiri@gmail.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux trace kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>,
- Douglas Raillard <douglas.raillard@arm.com>, Tom Zanussi
- <zanussi@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, Thomas
- Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
- aahringo@redhat.com
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-Message-ID: <20250731181503.2662c1c7@gandalf.local.home>
-In-Reply-To: <aIvlrQEZQ6OTZxAY@krava>
-References: <20250729113335.2e4f087d@batman.local.home>
-	<aIvlrQEZQ6OTZxAY@krava>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754000223; c=relaxed/simple;
+	bh=f83U+T2+PBCeDKLnFO2gjKOrX5TKB2qVEuH5/8weOyc=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=hTyOWhHNkRSiR9Xd6qUPvdm1HteUnMzJmFO3uqNfRCd0t/VzOHGOMJgt9e/WQZOrsVqHMqjl4cVqLf+Q77QJd5PKDcHpouT6KA/ZSoprn0S2IWfabDYPm6e8esrRJMXTf31tordhUgNDoZqOJVFN/ZuEw0E3LqchahmA4Pq/A2I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=uqLaUiTb; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 56VMGesW3587553;
+	Thu, 31 Jul 2025 17:16:40 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754000200;
+	bh=QN3d7kXcBabvZydAeOgZJZMx4cZdK5z524/HEbI4Q8g=;
+	h=From:To:CC:Subject:Date;
+	b=uqLaUiTbtVhjpONUrKFuwQRg/p9GC4n86cnHzlK42NfahIwaOPMJtqDLCuYU4aS+v
+	 e+JWrF/gb0ynqW4AHYcsdizgRi4rFW/2uuufCi+0QSnuMz9Cq9OdEl7S7egVMO+svc
+	 DSBvW5YCfDmdOq5NxCgx61qwKjZOu40KIRSK+x80=
+Received: from DLEE108.ent.ti.com (dlee108.ent.ti.com [157.170.170.38])
+	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 56VMGel9323090
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 31 Jul 2025 17:16:40 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE108.ent.ti.com
+ (157.170.170.38) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 31
+ Jul 2025 17:16:40 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 31 Jul 2025 17:16:40 -0500
+Received: from udba0500997.dhcp.ti.com (udba0500997.dhcp.ti.com [128.247.81.190])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 56VMGefh3290646;
+	Thu, 31 Jul 2025 17:16:40 -0500
+From: Brandon Brnich <b-brnich@ti.com>
+To: <linux-kernel@vger.kernel.org>
+CC: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        Devarsh
+ Thakkar <devarsht@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Darren Etheridge
+	<detheridge@ti.com>,
+        Brandon Brnich <b-brnich@ti.com>
+Subject: [PATCH] arm64: dts: ti: k3-j722s-main: Add E5010 JPEG Encoder
+Date: Thu, 31 Jul 2025 17:16:22 -0500
+Message-ID: <20250731221622.2187892-1-b-brnich@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 4923D20030
-X-Stat-Signature: gk43yptynx94a9irn4b7sfzkab9mopr5
-X-Rspamd-Server: rspamout02
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX18aRYcpEoFQX773FH3fd8FR5oGOdXff/aE=
-X-HE-Tag: 1754000084-43510
-X-HE-Meta: U2FsdGVkX1+VnurXHtEPrwd65fkKV2qDbXnGLvvxC9q8uwHd3+ckcA/wbwH8Ayigco7RS/fW7SCJ8KdwN4f7ffZ6jlpSSbLxbDpS4lJxSXHgGpxHP1L3buQg1ecSBI8+8uQgriXZVWCMITez94pdHuJiEYKwwYmXBxhXqXLPp9+7HYJiBo8if2mItRT4OLg7X2inxEclMHH4ropPVvMNzyimKDqw24zJNI25Z1kqEP2ifZYkmTwEzRiBECDPdsTOk9p0BLquFa4hHlD4XF3QLJ46ncpQIf7D7gD/zUj9MHNk7Tao3k/1mMXZVfkyaEJj4UF3Anrgc/7YoQg75Gb0VgfLOTr0Ly8P
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Thu, 31 Jul 2025 23:52:45 +0200
-Jiri Olsa <olsajiri@gmail.com> wrote:
+This adds the node for E5010 JPEG Encoder. E5010 is a stateful JPEG Encoder
+present in J722s SoC, supporting baseline encoding of semiplanar based
+YUV420 and YUV422 raw video formats to JPEG encoding, with resolutions
+supported from 64x64 to 8kx8k.
 
-> > +int btf_find_offset(char *arg, long *offset_p)
-> > +{
-> > +	const struct btf_type *t;
-> > +	struct btf *btf;
-> > +	long offset = 0;
-> > +	char *ptr;
-> > +	int ret;
-> > +	s32 id;
-> > +
-> > +	ptr = strchr(arg, '.');
-> > +	if (!ptr)
-> > +		return -EINVAL;
-> > +
-> > +	*ptr = '\0';
-> > +
-> > +	id = bpf_find_btf_id(arg, BTF_KIND_STRUCT, &btf);  
-> 
-> hi,
-> I think you need to call btf_put(btf) before return
+Signed-off-by: Brandon Brnich <b-brnich@ti.com>
+---
+ arch/arm64/boot/dts/ti/k3-j722s-main.dtsi | 11 +++++++++++
+ 1 file changed, 11 insertions(+)
 
-I think you're correct ;-)
+diff --git a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+index 5cfa7bf36641..1ada7202d192 100644
+--- a/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
++++ b/arch/arm64/boot/dts/ti/k3-j722s-main.dtsi
+@@ -385,6 +385,17 @@ c7x_1: dsp@7e200000 {
+ 		ti,sci-proc-ids = <0x31 0xff>;
+ 		status = "disabled";
+ 	};
++
++	e5010: e5010@fd20000 {
++		compatible = "img,e5010-jpeg-enc";
++		reg = <0x00 0xfd20000 0x00 0x100>,
++		      <0x00 0xfd20200 0x00 0x200>;
++		reg-names = "core","mmu";
++		clocks = <&k3_clks 201 0>;
++		clock-names = "core_clk";
++		power-domains = <&k3_pds 201 TI_SCI_PD_EXCLUSIVE>;
++		interrupts = <GIC_SPI 98 IRQ_TYPE_LEVEL_HIGH>;
++	};
+ };
+ 
+ &main_bcdma_csi {
+-- 
+2.34.1
 
--- Steve
 
