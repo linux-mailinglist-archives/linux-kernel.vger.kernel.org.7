@@ -1,178 +1,149 @@
-Return-Path: <linux-kernel+bounces-752299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752298-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B360FB173AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:03:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6A72B173A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 791771C249C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:03:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD38516BE83
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38E0D156228;
-	Thu, 31 Jul 2025 15:02:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 867E31ACED9;
+	Thu, 31 Jul 2025 15:02:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="NiX9QtKc";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="lYBpol9o";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mmXKQ5t/";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="XgyjxJvh"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q0ENDWyo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ADEB81E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:02:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B6981E;
+	Thu, 31 Jul 2025 15:02:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753974175; cv=none; b=p1R9+13E9OIdIE7PSBvxCK7CNvlkMxSB/cXP/7XZjDsdT6qIO2PzeyNs8W1JBTru9Qh1utnL2XwKtl1caB0f9KFphPB3La3uo8CtLk9G/kM/RPXo0qOfYlPMfPgynpC2I/mJjv/IyOCKeqcWnLE1KufCXlF1qyRlmBuUSa/CP7Q=
+	t=1753974169; cv=none; b=fM6YX49jRb6gbluM+q7tqMR7lA9q4bEUzb8cEJYBDUyHG3VSldUYH4ak0hG91u5Tp8hdmEdm7QRsvSUfgZM7uht+0Yxawea8CRpime23WSknVT5WtZ+KhAN46AYCjsvjvyMpY3tJ/jA7pIFvJ9bUl6wr3qw6uOOyZZFOiyPGIb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753974175; c=relaxed/simple;
-	bh=u4Pi+O6lI3yHDxb4aitwkcmubgdC5V4iIugleQEtQFw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VXgPM2jWEuwfgM4dBF55YgdJOnm9JrwNNi2qtbKt81sKpxs2V9a0rlH1wQzZVbBLOt3aZlnDkDOb+UkusqmsHtklMZUTRyfNwdC6U8r1UbCp+X5a82LnTaeoBB6j/rpkgPwzTpiykYuICVgtZEzyauGy/8JRqHE0tZqU9pX5HrQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=NiX9QtKc; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=lYBpol9o; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mmXKQ5t/; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=XgyjxJvh; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6F2B41F80C;
-	Thu, 31 Jul 2025 15:02:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753974167; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JhMZ2WGYNcjGe2YN1a1sOTxLRB2mHVM2V8K9nUJHQ04=;
-	b=NiX9QtKcoPsCtfrCOp23lOHvu/cpnJCLWpTrqMKYAmmdcoZyv35I4iMKf7cM1H8wEAKUSI
-	lobQysWv6e3w15g8blEcvhMZoUCzkUYwU8lQe3n3mOfntq3bN4D1nsvvVwypzj9FmlW+8R
-	/8oUmjPiK7LBzN34FzV+68jzX4hV1EE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753974167;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JhMZ2WGYNcjGe2YN1a1sOTxLRB2mHVM2V8K9nUJHQ04=;
-	b=lYBpol9oRbrX2ahWC7W67rbLQG3J2rwxfpMH7Gc3fSQ9gC6OX72e6A8AoCNlflKCwHf5Gc
-	yidAJ0ANdySq4aCg==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b="mmXKQ5t/";
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=XgyjxJvh
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753974162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JhMZ2WGYNcjGe2YN1a1sOTxLRB2mHVM2V8K9nUJHQ04=;
-	b=mmXKQ5t/BEtkFPkXM5vl4iHVOXRW2Qc0H0HPAmQDZZzSLTXSpt1UyH7NARfeNBJyyDpJB4
-	Trxfa5PTJfc89b43DihRhuAGacFMLlqZbEiJL0cK56Rz7uQGL5nHHJZOxeYDbHuu7dYS/3
-	fWMqSQjVUs5BsDX7vaxnOUcj7kCRfzE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753974162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JhMZ2WGYNcjGe2YN1a1sOTxLRB2mHVM2V8K9nUJHQ04=;
-	b=XgyjxJvhNzF8fJHnW9vGVoN3v8XyPtoG0NfdXJCVmtJusTuCtCHm7b8a9GkkH1802symqG
-	rsutd0a0CcAVZnCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 2A42913876;
-	Thu, 31 Jul 2025 15:02:42 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id cFUjCZKFi2ifDAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 31 Jul 2025 15:02:42 +0000
-Date: Thu, 31 Jul 2025 17:02:41 +0200
-Message-ID: <87frecqu7i.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: broonie@kernel.org,
-	perex@perex.cz,
-	tiwai@suse.com,
-	shuah@kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	Jun Zhan <zhanjun@uniontech.com>
-Subject: Re: [PATCH] selftests: ALSA: fix memory leak in utimer test
-In-Reply-To: <DE4D931FCF54F3DB+20250731100222.65748-1-wangyuli@uniontech.com>
-References: <DE4D931FCF54F3DB+20250731100222.65748-1-wangyuli@uniontech.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1753974169; c=relaxed/simple;
+	bh=EeB1JGW9qJD/+KH1z1oHcj4OUxjkMYNEtGLO+iHHIA8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p27y6AG9mYT/Y/wcPHvBb7qtE66PoNz1T2tYSt5I1v/CKKsbiJNE8X9tkAONSGas9pvBsLiUdOao2RyLPAWiMae83hJLPY7GCElCCv25nlC4KdkB44R9q5qMTfiFYbm+kXeCucDSk8tBSWbHHpdiRsQgid3mx++Nd4yD0yVkwPE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q0ENDWyo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 44426C4CEF7;
+	Thu, 31 Jul 2025 15:02:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753974169;
+	bh=EeB1JGW9qJD/+KH1z1oHcj4OUxjkMYNEtGLO+iHHIA8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=q0ENDWyocH2yX1Fwqm/20jdZ1U82DWVXc+8pJ5ztJAgHpNSyySPJpwZ5iLTMfThB0
+	 yXHkoKXzm/VWOWgzGt2WIHi1h06wppRNKwjgj3xTANoyhrAHJ9Im/7eprMYbarTzHv
+	 9LmyVtJSomhGwZ7AyQ7yl7851HM7naKwnrQKP2p1Okb6GeCkfQpLFmBPaSN/ka6irq
+	 2J77pBivCxynEefv6Gb+7ufanbbgyWtpTU09uahfDR7iNZXysC9p4PLDFYS/3FIgjN
+	 1Xjkhw4Q5yL+zhIzsW+/cM3elozakyfVVls5tUhSVttPyKZwJuhfbQnv/lSq2o4m7g
+	 m4iLHeHzX2DiA==
+Message-ID: <b1b884fc-01b8-4488-a4d9-a12e549daa92@kernel.org>
+Date: Thu, 31 Jul 2025 17:02:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 6F2B41F80C
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	TO_DN_SOME(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RSPAMD_URIBL_FAIL(0.00)[uniontech.com:query timed out];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FROM_HAS_DN(0.00)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.de:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.de:dkim,suse.de:mid]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: Add HAMOA-IOT-SOM platform
+To: Yijie Yang <yijie.yang@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250729-hamoa_initial-v3-0-806e092789dc@oss.qualcomm.com>
+ <20250729-hamoa_initial-v3-3-806e092789dc@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250729-hamoa_initial-v3-3-806e092789dc@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, 31 Jul 2025 12:02:22 +0200,
-WangYuli wrote:
+On 29/07/2025 03:31, Yijie Yang wrote:
+> The HAMOA-IOT-SOM is a compact computing module that integrates a System
+> on Chip (SoC) — specifically the x1e80100 — along with essential
+> components optimized for IoT applications. It is designed to be mounted on
+> carrier boards, enabling the development of complete embedded systems.
 > 
-> Free the malloc'd buffer in TEST_F(timer_f, utimer) to prevent
-> memory leak.
+> This change enables and overlays the following components:
+> - Regulators on the SOM
+> - Reserved memory regions
+> - PCIe6a and its PHY
+> - PCIe4 and its PHY
+> - USB0 through USB6 and their PHYs
+> - ADSP, CDSP
+> - WLAN, Bluetooth (M.2 interface)
 > 
-> Reported-by: Jun Zhan <zhanjun@uniontech.com>
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
-
-Thanks, applied now.  I added Fixes tag in my side.
-
-
-Takashi
-
+> Written with contributions from Yingying Tang (added PCIe4 and its PHY to
+> enable WLAN).
+> 
+> Signed-off-by: Yijie Yang <yijie.yang@oss.qualcomm.com>
 > ---
->  tools/testing/selftests/alsa/utimer-test.c | 1 +
->  1 file changed, 1 insertion(+)
+>  arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi | 609 ++++++++++++++++++++++++++++
+>  1 file changed, 609 insertions(+)
 > 
-> diff --git a/tools/testing/selftests/alsa/utimer-test.c b/tools/testing/selftests/alsa/utimer-test.c
-> index 32ee3ce57721..37964f311a33 100644
-> --- a/tools/testing/selftests/alsa/utimer-test.c
-> +++ b/tools/testing/selftests/alsa/utimer-test.c
-> @@ -135,6 +135,7 @@ TEST_F(timer_f, utimer) {
->  	pthread_join(ticking_thread, NULL);
->  	ASSERT_EQ(total_ticks, TICKS_COUNT);
->  	pclose(rfp);
-> +	free(buf);
->  }
->  
->  TEST(wrong_timers_test) {
-> -- 
-> 2.50.1
-> 
+> diff --git a/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..5facc5544c3df05b89b25fbcb5cd331e93040f15
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/hamoa-iot-som.dtsi
+> @@ -0,0 +1,609 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) Qualcomm Technologies, Inc. and/or its subsidiaries.
+
+There is some discussion inside, so maybe you already resolved it. If
+not: please use copyright format as requested by GPL FAQ, so provide
+date of first publication of this patch on mailing lists.
+
+Best regards,
+Krzysztof
 
