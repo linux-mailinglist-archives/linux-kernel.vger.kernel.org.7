@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-751730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751731-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59967B16CD4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:41:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F11C6B16CD5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:42:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 599FE18C6AF1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:42:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C26B018C6B58
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:42:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF57A29E0E3;
-	Thu, 31 Jul 2025 07:41:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3227529DB96;
+	Thu, 31 Jul 2025 07:41:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="FdYZzRwC"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="XWOBup87"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1014182B4;
-	Thu, 31 Jul 2025 07:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD43D182B4
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:41:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753947698; cv=none; b=KW5ciiboaYXKNAK52Z3ClD1CmcfX902HdQeNIxQ4J+nPFtfPcwdbyhHVgXKrnmFEKzYwbH3Tnr6l+tR9FLajtTm5aYDgxNpzpzH62jeABpgOKy0etUh1tE3YzlNuSoJWXrN5KtGrkgUOOfz1BkFNlpv1E0iqTvHniQ3eNEfIfDA=
+	t=1753947711; cv=none; b=ptTC2b7G2M3VH+I/ngdf8Lbdbd6i5KdrNztSxFDTFSMYmKhtTl9A2E5bnT0waE3N3065bU3eykb5XpVpko0H3mmm3FeiaP/3ffLcCFWB2lv8OnCyaEG1JRSU62oFBafK4VUUUuIbo8AYJi158TUCXbTTcTU8SyDnbNHhFnQrxis=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753947698; c=relaxed/simple;
-	bh=rmHklMKdHwm/APWb9JV7WCWtDT1/gnWJKsXeispVorw=;
+	s=arc-20240116; t=1753947711; c=relaxed/simple;
+	bh=FUk+hS8UV3ct/Zmfxgtd4RMf6XdZWYcVB8mHR4pLQno=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f86R6Vna6PxLKIG2IXpqhaKEBFqGtEyRZ2iKExeUNy/FJA45RAO5kNeHBH7HQOitAb8/1b0Pc4Ib9iVZoCpc/ZhrAvlTnk3fbDFVxBpknzCQWFDKESyV9pMKMz0rSExLLr0PfL57Zv3LTwIJlJiMFj+m/WOfvbQqX2LSOHLCbv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=FdYZzRwC; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56ULIWRn015735;
-	Thu, 31 Jul 2025 07:41:34 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=LwJ5kh
-	kD2PgFOpLaXNtrOOu3x0p2dvYHqpprfHEatqk=; b=FdYZzRwCZ7Cq+J3BQD8vh7
-	pX+acg3RawGmIBGLZTAmo14RPuyiaRULYGSfo2ao/k7DbpW67+iY0F+k/K729cSO
-	fCYwWFGyQwAySPqQIQncvh1xnqrcRm/KOENvzhL/J4n6TPOL+1XxBTxwdBahtgn6
-	FgWlvEt/zbe6TNtZrDqtz3c8okaPaGYwZNBE9aoKAif6lbbuwSgEeji1XlZjrkmv
-	T0CqaN9Ow1Yl851R3clU07VSw2FjzdqTxRvO53lP7SFm74RMfnhQEKUD7r7kIhQj
-	7HvQXpV46u6nQISGHaOr94zwa5QCxc7/eIXhtVnTnoLJ2nM4Z74LGre4yc+9U4Pw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr17tk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 07:41:34 +0000 (GMT)
-Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 56V7dpB8026189;
-	Thu, 31 Jul 2025 07:41:33 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr17th-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 07:41:33 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 56V71fZT018304;
-	Thu, 31 Jul 2025 07:41:32 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485abpbfc7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 07:41:32 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 56V7fS5f23069406
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 31 Jul 2025 07:41:28 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 54E6E2004D;
-	Thu, 31 Jul 2025 07:41:28 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 217BB2004B;
-	Thu, 31 Jul 2025 07:41:28 +0000 (GMT)
-Received: from [9.152.212.130] (unknown [9.152.212.130])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 31 Jul 2025 07:41:28 +0000 (GMT)
-Message-ID: <82a66615-801a-40cd-a21c-ec82ff43b5d7@linux.ibm.com>
-Date: Thu, 31 Jul 2025 09:41:27 +0200
+	 In-Reply-To:Content-Type; b=L5QpHW6Ifc55is06hkshyVRrfiXZuQgJW654W1BJe78zGNr8eU2Z9AbWiXfpC7rvcqfRXa2A1wzVyjOHbBWhgW+vB/ZCXGNJKN0PjCyRAvwUi6Jbh2F86rWQoraeAz/OQBpHJbPaZoSnuiokNe1m9tpeRKc/cuvaiPUgfjfP6OY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=XWOBup87; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b78294a233so49516f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:41:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753947708; x=1754552508; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Rg8qJybgcN2QySvV7zBDwm9nfaW7SarG7SeeC2wAVGI=;
+        b=XWOBup87NdeToIdH0PJk9b6pVxx7RXm66HQ1olaNVoaKT0pnxulmW23pKYYd9xBdF5
+         ND2xp9UvHRMSDqqrn4n+StUZczbiNJ4Tw5Dduw78CXIpqlMavkjIKsC/+E7urbUDWzgj
+         IGmjUlrXPtzEe8VM7uH4GM+Dni7dESeLk+8dw9Oyu0F55TW9Aa7gyZ+MJfrfTSmEU0P5
+         tALTxdRwt+1JWdV5wVvX49V+8tGAUXRQgfBl32lzpqvMASWno6Te4TuQQr1ILwNPpoAA
+         3ifDJXzH4WuX2UgqVc4xgkfVpu22BuK0Az9I016RT52n9GblAT+5IrpOF0QL2WyKPclC
+         ExEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753947708; x=1754552508;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Rg8qJybgcN2QySvV7zBDwm9nfaW7SarG7SeeC2wAVGI=;
+        b=no+iARrDoPDelfJpifX/PU4JVR2ogCv1Ulby2aVgbxIkuXmmDh9ILyaPei2teMBMbQ
+         41fs83vqNLu/xdVCaR0zyhhn/tk+PlSJ9LlXCQa4kMPzMMPkAx3ZFvNumPIyz7xIaf7s
+         09/lXYQ1XObQhdtkrw6eUiuCQVT3YdY9maBAmJIwUGWbDYQsYCDVW4hwoIdUBmtE4YSV
+         +Ja9leCQbC9knuAXmZWIOVSu4CaXzysf/bfzjRpzgF2xRf55UhH4+Bgk6AliQRv14d3m
+         MTP7iYTUBEmoLIFvQgNI7u7nS2zTPdea5CMMKk0LRs2p9FHBDUDSYFDzpsbaprWPpNfz
+         MBIw==
+X-Forwarded-Encrypted: i=1; AJvYcCWzjlidzPB2JHc18TgiTmSgn4S8PHQPqEMsk5j1J78vOByb30UHFareSZcTZqQyHW+S2w8sWp4HtjMjgmo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylB2n2suDgv01+YQ4to6UIPbyLVyDyAyf6VuQRPGVRguh823U0
+	woInxGqIFJCn9V/9HNMZOOz0JX65HYB4KO0guPMNT+VlD7lUNiSrC8l1cHAM+rLrt9k=
+X-Gm-Gg: ASbGncsD7gcFUkMOamcgLgiUTlApH/4iD5hBl8oEaCw1BaK65fCX36QS3ydo4M2uH3r
+	A6w3Rq3Du7ZS98J4UjGdjTT9OPEVRXQkrDYf1Tg/OzXTjcrPlJlH8rrA3NAQ9ZfXqjoPITVi2Z6
+	3O5cO1Oqri0Xlg6fs6c53lS96jygVTg1oRs/RP09zsNuRu+VTtmumt09fHBNfMI/k36qN+L1cVK
+	gI88+OglgQ/g8JsOPimUsZn19M085s+c1wAmzXFGMdAJ8UbOIUk6ISbBxTQvM9cupwynHsqKk68
+	eeYR5k9uWtMFoPC51gIk0+5dN9TS+9MvcCLrj1kHTKqHBWWgl3vCL+P3PgT4mST+FBaEOD8mk4w
+	Y+LG8UwX/Iec2CBQy7dup8RJWU2EuorITRqO7iAhsvmM9PBLY5AsC/Jod3g46Tg==
+X-Google-Smtp-Source: AGHT+IF/E5/SuU8iV+jCxBPuKgOukgigRyRn5Br/+JMK7Nzazv6QWnZ9AFSrYVbUlRdayFffY5H5aw==
+X-Received: by 2002:a05:6000:250f:b0:3b4:58ff:ed1 with SMTP id ffacd0b85a97d-3b79503e0a1mr4697527f8f.52.1753947708090;
+        Thu, 31 Jul 2025 00:41:48 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9386sm1439883f8f.18.2025.07.31.00.41.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 00:41:47 -0700 (PDT)
+Message-ID: <858e9dd6-b3a7-4ff7-aaa1-02a140b93de8@linaro.org>
+Date: Thu, 31 Jul 2025 09:41:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,93 +81,80 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH bpf] libbpf: eBPF fails on events with auxiliary data
-To: Jiri Olsa <olsajiri@gmail.com>, Ian Rogers <irogers@google.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        linux-perf-users@vger.kernel.org, acme@kernel.org, namhyung@kernel.org,
-        bpf@vger.kernel.org, agordeev@linux.ibm.com, gor@linux.ibm.com,
-        sumanthk@linux.ibm.com, hca@linux.ibm.com, japo@linux.ibm.com
-References: <20250725093405.3629253-1-tmricht@linux.ibm.com>
- <aIOPa25nzPHEqr0n@krava>
+Subject: Re: [PATCH v2 19/20] dt: bindings: fsl,vf610-pit: Add compatible for
+ s32g2 and s32g3
+To: Rob Herring <robh@kernel.org>
+Cc: tglx@linutronix.de, S32@nxp.com, linux-kernel@vger.kernel.org,
+ ghennadi.procopciuc@oss.nxp.com, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>
+References: <20250730082725.183133-1-daniel.lezcano@linaro.org>
+ <20250730082725.183133-20-daniel.lezcano@linaro.org>
+ <20250730233547.GA1887794-robh@kernel.org>
 Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <aIOPa25nzPHEqr0n@krava>
-Content-Type: text/plain; charset=UTF-8
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20250730233547.GA1887794-robh@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDA0OSBTYWx0ZWRfX4pYwqzUpWYvC
- 3wFg9hKJkh25Ixuv85vs3bzFXkmdloMN8zelvfLtCC/RuXspFGmhwZtfdIWcR3WcU9FekTy9NTS
- d/HLr3ZqfaydDIRBBIBUIh6VwDNbMzqdNLDUG/My6uzENq3wtE4iN9kDu0O+faTfWRPL62Ithk7
- U748MVnLIoeD9GnHQkUvWik2DWfcwUGU+lfS9A+dIhP4wwNXMEH1KrU1jbWmtQfWyrBlXk6TzEV
- E2J3JK19aWYC+74GaqKD2IZPyCox6p9zHzTvm3TKSn4vev2b6WvxofV4Kn2S0pMT/fMPAE6fI07
- 5h/qU9mLgpbDtCLUtWnVMz+3DCHSAb6BlhUO/zIYz7pQpIn0J/KrTAewx7+U3docQmhpNzdtLtB
- jZwuDCRgdS2+lm0GNywhXXlOE4j7dUSHOhl524ySGRBdwyGqSnF7ANZsqDrgtMRbudP1Enj9
-X-Authority-Analysis: v=2.4 cv=Je28rVKV c=1 sm=1 tr=0 ts=688b1e2e cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=RVNz8nRQakF0jqo7AOMA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: mwd1r9qpu6Ul4AoN6c2hLyfT0Wx9z5gX
-X-Proofpoint-ORIG-GUID: YFxsJRDDPRYkMghc81ie9jQW5cKEQGEA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_01,2025-07-31_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=999 clxscore=1015 lowpriorityscore=0 spamscore=0 adultscore=0
- suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
- mlxscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2507310049
 
-On 7/25/25 16:06, Jiri Olsa wrote:
-> On Fri, Jul 25, 2025 at 11:34:05AM +0200, Thomas Richter wrote:
->> On linux-next
->> commit b4c658d4d63d61 ("perf target: Remove uid from target")
->> introduces a regression on s390. In fact the regression exists
->> on all platforms when the event supports auxiliary data gathering.
+
+Hi Rob,
+
+On 31/07/2025 01:36, Rob Herring wrote:
+> On Wed, Jul 30, 2025 at 10:27:21AM +0200, Daniel Lezcano wrote:
+>> The Vybrid Family is a NXP (formerly Freescale) platform having a
+>> Programmable Interrupt Timer (PIT). This timer is an IP found also on
+>> the NXP Automotive platform S32G2 and S32G3.
 >>
->> Command
->>    # ./perf record -u 0 -aB --synth=no -- ./perf test -w thloop
->>    [ perf record: Woken up 1 times to write data ]
->>    [ perf record: Captured and wrote 0.011 MB perf.data ]
->>    # ./perf report --stats | grep SAMPLE
->>    #
-
-....
-
->> -		goto err_out;
->> -	}
+>> Add the compatible for those platforms to describe the timer.
+>>
+>> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+>> ---
+>>   .../devicetree/bindings/timer/fsl,vf610-pit.yaml          | 8 ++++++--
+>>   1 file changed, 6 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml b/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>> index bee2c35bd0e2..2aac63a58bfd 100644
+>> --- a/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>> +++ b/Documentation/devicetree/bindings/timer/fsl,vf610-pit.yaml
+>> @@ -15,8 +15,12 @@ description:
+>>   
+>>   properties:
+>>     compatible:
+>> -    enum:
+>> -      - fsl,vf610-pit
+>> +    oneOf:
+>> +      - const: fsl,vf610-pit
+>> +      - const: nxp,s32g2-pit
 > 
-> I think this might break existing users depending on this
-> 
-> could we instead add some 'enable' flag to bpf_perf_event_opts and perf
-> would use bpf_program__attach_perf_event_opts function instead?
-> 
-> jirka
-> 
+> These 2 can be a single enum. Otherwise,
 
-Hi Jiri, Ilya and Ian,
+Do you mean this ?
 
-Jiri recommended a more flexible approach and I submitted version 2
-https://lore.kernel.org/all/20250728144340.711196-1-tmricht@linux.ibm.com
+    enum:
+      - fsl,vf610-pit
+      - nxp,s32g2-pit
 
-This version now also passed the eBPF ci-test suite.
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
-I am blind on the eBPF topic and do not have enough knowledge to dig deeper into eBPF.
-Please note that this is not an s390 specific issue. It happens on other platforms
-when the event supports auxiliary data gathering, i. e. has_aux() returns true.
+Thanks for the review
 
-I would like to ask someone with more eBPF knowledge for some help to drive this further.
-Thanks a lot.
+>> +      - items:
+>> +          - const: nxp,s32g3-pit
+>> +          - const: nxp,s32g2-pit
+>>   
+>>     reg:
+>>       maxItems: 1
+>> -- 
+>> 2.43.0
+>>
+
+
 -- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
