@@ -1,145 +1,80 @@
-Return-Path: <linux-kernel+bounces-752070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752072-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EDE1B170FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:20:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A51BFB170FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:21:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15A9A3BA38D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:19:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 890DA3B738F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:20:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC5722853E5;
-	Thu, 31 Jul 2025 12:20:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T21xAIUN"
-Received: from mail-yb1-f194.google.com (mail-yb1-f194.google.com [209.85.219.194])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7D8327FD51;
+	Thu, 31 Jul 2025 12:21:00 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1C2721FF4E;
-	Thu, 31 Jul 2025 12:20:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.194
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADB932367A3
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:20:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964403; cv=none; b=Pwyznncd6MeavI9Q7bGKPKHzS0i2NRbvSWmAJc6TQXh0sEtR6hWWJsrou6ubqCsvsmmsGkd6Q3MpnZ18hlsf0IEjDt5g5kpkKUUmRBors0OSiejq0PxNultCv+clntQWJaPWU4RsH5MkV3a4V83NS8Kc4Y1wjYqt2hyynWtoWlQ=
+	t=1753964460; cv=none; b=gcySqzjjcMUYv0OXQ5ZRVlrH8d6M/YSs5FNukSabOGj8QxqR5hiliiML0905UIQ8nhJHnw0fencLtC+Md09IQWMZXz2JAbC+oYSIKUugFrXzABG7XY7MP+o3kbLiq4S9m6jY7PnZxOtMDT9ZmvG9WoYXvxwSvMf/a7ftSeW9MGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964403; c=relaxed/simple;
-	bh=r5dU5y2fVJrNCYluR5ZgBxW0PgLEek1d93tlxQSsntg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TKq2CClABlXJyTTSTFLxoP5GV+iNnFNcgPwRhzZb1RvIPVwYqtGyRokMHeGyIAmI1EN4WCC8rzrIdyne84TZQZjnFvit7OmpuD/klP0zRz6DHDkCJ3GTFw6r9EpJVbEKCkGn+Cipv2avkADlGPowYdaS62RxhDPq8oIhJoeXl+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T21xAIUN; arc=none smtp.client-ip=209.85.219.194
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f194.google.com with SMTP id 3f1490d57ef6-e8da9b7386dso858262276.1;
-        Thu, 31 Jul 2025 05:20:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753964400; x=1754569200; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r5dU5y2fVJrNCYluR5ZgBxW0PgLEek1d93tlxQSsntg=;
-        b=T21xAIUN786o1jj9FmDE5qVmVlVogI+yjTBXVUPqpSJNQDG8863KHMC6DvZHImJ2za
-         vj0D7MUNUI8Oj/oECpI66a+DCcNYvMXc4zjRA3NDdgH5nlifosA+OVYCGr1xDT9CBGW1
-         /tZFC4gsIdXFnBFVfuxJe2ra+ahwe4vs0EXNRMp2b/vnjPSpjff5y2PAJsHk625nWZPB
-         zQAXaAZgWcsP+GuJcWeq3x7CxbAzjJDvMVfjauhlmbN20Wcs088hFssH7ArKZmT2KXU1
-         crNw+EQ62c1smnURsIuLdpKU4C1D78sCaT102rlMi3m+nv+NUfcy59Hh8/zYa2FAoBOV
-         Au9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753964400; x=1754569200;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=r5dU5y2fVJrNCYluR5ZgBxW0PgLEek1d93tlxQSsntg=;
-        b=P/glcNpc/oOStxkKtAqrfPCePBGTA8XBe7c9Mkfr4mHh7Wbh+LMhc9CreJZPeEapJ0
-         yuKjnE2QGTC0+pxXWb+k/pUDcAwTN9BkdpZ/zcnxakDr8nxrDZG4kpmzZyAW/ARDzVX3
-         jS6Q8ieQQmWC6CaHJfOesiYBUcdcbPHB2xgs1qE74wTt+oW0umX3SONGMbbTZ/5QOvCs
-         b1ySUGZFaoz9tXs2fWfLxt5sjCKque5FpaIo1EEdjS18zRe++tG+j2Ey551j5iAircFW
-         a0UJWa1l6brzCEYjcudjHHep4JYT/yAT8l9PVtCkzq02xaNFeoPRBtys6bMpLnOYaZ5S
-         7UgA==
-X-Forwarded-Encrypted: i=1; AJvYcCURYhK1ziXd45UeR2lUzXOAhgnSfZIiR9VQhMy5bMNRFOVCV3oDw23rXuaH0FLLUES116YC2WBf@vger.kernel.org, AJvYcCUlHx8CTbpZwyyMz4J3ycuMVk0Q6wpFi8qfxlumRAaqzQ4iHJbVcMdS90o28Tx7MmpM7YyJUgQiwYRRv6Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywv7SbE5xZBxItPyjK7wTKnamukPtfWh6Bgf4m7i4hK1T0WJVTp
-	ggn46V0wrg2DC3yIkddsy2/N1iZJnqzV1aI3FLW98gGQ6+7TrFt/nNp+iz25cTu6O3JIuguX2CU
-	dd95yRVgGNrw4z1UskT0TGOBl+kQB+j8=
-X-Gm-Gg: ASbGncvXULVYi4+DJ3Im/Iqzy/BZnwUxC0D3O8hBkcqNwDY8KUYTVNm72Bb2U+kbOwd
-	imdPhrhqYW0WwHgU/0jyzXlWoW7W2WKS8tqMFwoG1AxP/mx4j14aUpwUhsSBCJyPcRqC18Q5vnL
-	NTy6O6FvDWYWnUmbvyIQaHSJ/7cWB1NsKpCV/Y3bsP4ggWz6ib+xOWIYjnBptMM/YRyyMuuNvpu
-	c6pdfw=
-X-Google-Smtp-Source: AGHT+IGEdgU1M3wi9PcdX0mmZ1lYvQoPdWNmcYCoBoBu2HMFkSJxOp2Ct3UaNiySZv6edloK1Luqh+WLXIx8KoKKbuM=
-X-Received: by 2002:a25:2b4a:0:b0:e84:3b85:2e0d with SMTP id
- 3f1490d57ef6-e8fd5360ce5mr1454841276.9.1753964400496; Thu, 31 Jul 2025
- 05:20:00 -0700 (PDT)
+	s=arc-20240116; t=1753964460; c=relaxed/simple;
+	bh=+gNtK1rjPrK78GiWKHQpH5ULn/3HvJqJ2CdQ1Jz/MYI=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=VIZXwLCcbTGKpjgM+QNghP2E8BpLTulMU/PFucJlXPuqIO1fIGzgFe7LeLcr0u1qbdatMTY1B+7/2SbyrJTqPeC/+63nbarhuzgl0QPaBHdCx/TNjhtI4Qp6CNdebBMAT6dzIy2DoC16kq7Gdha6cuLig671jvIFkhj9JDpUyAo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4bt7Nn0knXz6HJgn;
+	Thu, 31 Jul 2025 20:16:41 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id C8E0B1402EB;
+	Thu, 31 Jul 2025 20:20:56 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 31 Jul
+ 2025 14:20:56 +0200
+Date: Thu, 31 Jul 2025 13:20:54 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: Yushan Wang <wangyushan12@huawei.com>
+CC: <will@kernel.org>, <mark.rutland@arm.com>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
+	<prime.zeng@hisilicon.com>, <fanghao11@huawei.com>, <linuxarm@huawei.com>,
+	<yangyicong@hisilicon.com>
+Subject: Re: [PATCH 4/8] drivers/perf: hisi: Extract the event filter check
+ of L3C PMU
+Message-ID: <20250731132054.000074e1@huawei.com>
+In-Reply-To: <20250729153823.2026154-5-wangyushan12@huawei.com>
+References: <20250729153823.2026154-1-wangyushan12@huawei.com>
+	<20250729153823.2026154-5-wangyushan12@huawei.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731112219.121778-1-dongml2@chinatelecom.cn> <aItcuFGx1S7ySE3y@shredder>
-In-Reply-To: <aItcuFGx1S7ySE3y@shredder>
-From: Menglong Dong <menglong8.dong@gmail.com>
-Date: Thu, 31 Jul 2025 20:19:49 +0800
-X-Gm-Features: Ac12FXzaZMSpzi1Brb5xPSnswfFUu6mzf6kLD_J-GOE5lN1tiB2f8PT11t83Zss
-Message-ID: <CADxym3YzJPRDPCz5rN7uQC6MNSo+FnGPB5sg2hVv+WOZj18PKg@mail.gmail.com>
-Subject: Re: [PATCH net-next] net: vrf: don't down netif when add slave
-To: Ido Schimmel <idosch@idosch.org>
-Cc: dsahern@kernel.org, andrew+netdev@lunn.ch, davem@davemloft.net, 
-	edumazet@google.com, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Thu, Jul 31, 2025 at 8:08=E2=80=AFPM Ido Schimmel <idosch@idosch.org> wr=
-ote:
->
-> On Thu, Jul 31, 2025 at 07:22:19PM +0800, Menglong Dong wrote:
-> > For now, cycle_netdev() will be called to flush the neighbor cache when
-> > add slave by downing and upping the slave netdev. When the slave has
-> > vlan devices, the data transmission can interrupted.
-> >
-> > Optimize it by notifying the NETDEV_CHANGEADDR instead, which will also
-> > flush the neighbor cache. It's a little ugly, and maybe we can introduc=
-e
-> > a new event to do such flush :/
->
-> Cycling the netdev is not only about neighbors, but also about moving
-> routes to the correct table (see the comment above the function):
->
-> ip link add name dummy1 up type dummy
-> sysctl -wq net.ipv6.conf.dummy1.keep_addr_on_down=3D1
-> ip address add 192.0.2.1/24 dev dummy1
-> ip address add 2001:db8:1::1/64 dev dummy1
-> ip link add name vrf1 up type vrf table 100
-> ip link set dev dummy1 master vrf1
-> ip -4 route show table 100
-> 192.0.2.0/24 dev dummy1 proto kernel scope link src 192.0.2.1
-> local 192.0.2.1 dev dummy1 proto kernel scope host src 192.0.2.1
-> broadcast 192.0.2.255 dev dummy1 proto kernel scope link src 192.0.2.1
-> ip -6 route show table 100
-> local 2001:db8:1::1 dev dummy1 proto kernel metric 0 pref medium
-> 2001:db8:1::/64 dev dummy1 proto kernel metric 256 pref medium
-> local fe80::f877:f7ff:fecb:bfb dev dummy1 proto kernel metric 0 pref medi=
-um
-> fe80::/64 dev dummy1 proto kernel metric 256 pref medium
-> multicast ff00::/8 dev dummy1 proto kernel metric 256 pref medium
->
-> And it doesn't happen with your patch:
->
-> ip link add name dummy1 up type dummy
-> sysctl -wq net.ipv6.conf.dummy1.keep_addr_on_down=3D1
-> ip address add 192.0.2.1/24 dev dummy1
-> ip address add 2001:db8:1::1/64 dev dummy1
-> ip link add name vrf1 up type vrf table 100
-> ip link set dev dummy1 master vrf1
-> ip -4 route show table 100
-> ip -6 route show table 100
+On Tue, 29 Jul 2025 23:38:19 +0800
+Yushan Wang <wangyushan12@huawei.com> wrote:
 
-You are right, something is missing in this patch :/
-
->
-> You can try configuring the VLAN devices with "loose_binding on".
-
-Great! I'll have a try on this param.
-
-Thanks!
-Menglong Dong
+> From: Yicong Yang <yangyicong@hisilicon.com>
+> 
+> L3C PMU has 4 filter options which are sharing perf_event_attr::config1.
+> Driver will check config1 to see whether a certain event has a filter
+> setting. It'll be incorrect if we make use of other bits in config1
+> for non-filter options. So check whether each filter options are set
+> directly in a separate function instead.
+> 
+> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+> Signed-off-by: Yushan Wang <wangyushan12@huawei.com>
+Reviewed-by: Jonathan Cameron <jonathan.cameron@huawei.com>
 
