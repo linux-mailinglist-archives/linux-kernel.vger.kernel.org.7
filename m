@@ -1,106 +1,153 @@
-Return-Path: <linux-kernel+bounces-751620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85A45B16B8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:32:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C36FFB16B8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:34:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2C8016646B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:32:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8171665A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DCA242D63;
-	Thu, 31 Jul 2025 05:32:14 +0000 (UTC)
-Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0DDA94A;
-	Thu, 31 Jul 2025 05:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1A5D1FAC54;
+	Thu, 31 Jul 2025 05:34:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rXN9TUYZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B0D6323D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:34:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753939934; cv=none; b=c5uJ9/EFzUHW/uK0WFCPrEu9iImTd0XEzecJ56NJCxZZrI2KIVZ9/VtfN+BqZIgJVwbuXQAJL4Nu2Vu2ShvoqV0Ph5usXQBUqLSmo5V4ZQkHm3+kN6p+kGyy+j/mgWhRYzurUadzfKYygna+3ytN8HLn5pk+wq4EuC7i94ZP8io=
+	t=1753940053; cv=none; b=OezVdWG9xNWOmDS4Sr+At9MuBwuvHvyvCBKPFVcKbKsUH0d/r/JndTCX/++13BIPc5bUy7KQPn8rCoq6yW1gsQTcYtOc6+Vogn+3sOB6a+/okUe3q7NCtYL8e2Wd42jhfS4re24Z7025bupgBtbFNlk0jO6EubcBVXoS6HEONco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753939934; c=relaxed/simple;
-	bh=S8fE8csNzXTLlrCW1M853t6niS2JJvEuUJQqdUqbuHs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=CzkWCw62ByAzCJ0FsugHqofbAPfQ1qFxrtC0vleEjGd6+CioEC2uc6YVFEmpg7sjsGzdmvz4XVIWEyl5fdyvhQ9PKLfB7WmyW/N8YVHteM6+DiSF/ta9URjcP8fbQ2faCYySntK35+sPWaNCZ8QP7yjcN4ycHlFkRh/B04Lb01c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
-Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
- ajax-webmail-app2 (Coremail) ; Thu, 31 Jul 2025 13:31:49 +0800 (GMT+08:00)
-Date: Thu, 31 Jul 2025 13:31:49 +0800 (GMT+08:00)
-X-CM-HeaderCharset: UTF-8
-From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
-To: "Krzysztof Kozlowski" <krzk@kernel.org>
-Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
-	conor+dt@kernel.org, linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
-	Thinh.Nguyen@synopsys.com, p.zabel@pengutronix.de,
-	ningyu@eswincomputing.com, linmin@eswincomputing.com,
-	yangwei1@eswincomputing.com, pinkesh.vaghela@einfochips.com
-Subject: Re: Re: [PATCH v2 1/2] dt-bindings: usb: Add Eswin EIC7700 USB
- controller
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
- 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
- mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
-In-Reply-To: <51648c0f-dd30-4a07-83c0-533a57c29e63@kernel.org>
-References: <20250730073953.1623-1-zhangsenchuan@eswincomputing.com>
- <20250730074058.2004-1-zhangsenchuan@eswincomputing.com>
- <51648c0f-dd30-4a07-83c0-533a57c29e63@kernel.org>
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=UTF-8
+	s=arc-20240116; t=1753940053; c=relaxed/simple;
+	bh=8z0/TBMD8fWuIra7ndYVRz3me/9CIVnmVPKQkLavtJM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rQdOyhbF82pufHcvYzXXGFzbvJOKfvoNdJ5Yv862rh0lPOU1W5J2iB3tmzAUKCbfv1KdtzBHY6lAaNHGFe+eC0L1OMoVqevITU+CoY5hW5kIjXhgASHyw2qsaVeojQdgBIfMtfr42ay2N2t7YtfZVKMFc3W0TDw9c6Ci4q5LALE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rXN9TUYZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE0E9C4CEEF;
+	Thu, 31 Jul 2025 05:34:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753940052;
+	bh=8z0/TBMD8fWuIra7ndYVRz3me/9CIVnmVPKQkLavtJM=;
+	h=From:To:Cc:Subject:Date:From;
+	b=rXN9TUYZiDZyvM25EnRczrjD2kVSUBwl2yIwtm4spxoyRjzRRO7fjIAWB8Ks/HBiu
+	 MQUIgOabigE7VDZa0NQd9gFI7Lvm2UeS9Cvb95gzKY+bf32efIwjwt1a+UnO8oTQsm
+	 51VfjE2zKdMZ0v2hVIxaOnxemIqMnaEYgm36Ptkjq1nOehnn2fy8TCuBg7/YHykUYG
+	 H4OMf0HJy1qv7OIOR5qwgtyJyUukBon0pXjTGqcXvWZW4LnbhIiIqSK3WIx2u/32+7
+	 BYHluDbbhXKcHVAS9aR04ENDBI6kzq1vV66mAoUToHbGEBGJhM2cp84jIjRuP3wy8g
+	 L394YL/T4FRFw==
+From: Chao Yu <chao@kernel.org>
+To: jaegeuk@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Chao Yu <chao@kernel.org>,
+	Jan Prusakowski <jprusakowski@google.com>
+Subject: [PATCH 1/2] f2fs: dump more information when checkpoint was blocked for long time
+Date: Thu, 31 Jul 2025 13:34:04 +0800
+Message-ID: <20250731053405.1127197-1-chao@kernel.org>
+X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <1f9a715d.3bb7.1985ef71b54.Coremail.zhangsenchuan@eswincomputing.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:TQJkCgDHZpXF_4poaze5AA--.20997W
-X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAQEABmiKS
-	PEVfwAAs3
-X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
-	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
-	daVFxhVjvjDU=
+Content-Transfer-Encoding: 8bit
 
-CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiS3J6eXN6dG9mIEtvemxv
-d3NraSIgPGtyemtAa2VybmVsLm9yZz4KPiDlj5HpgIHml7bpl7Q6MjAyNS0wNy0zMCAxNTo0Njow
-MiAo5pif5pyf5LiJKQo+IOaUtuS7tuS6ujogemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5j
-b20sIGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnLCByb2JoQGtlcm5lbC5vcmcsIGtyemsrZHRA
-a2VybmVsLm9yZywgY29ub3IrZHRAa2VybmVsLm9yZywgbGludXgtdXNiQHZnZXIua2VybmVsLm9y
-ZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
-cmcsIFRoaW5oLk5ndXllbkBzeW5vcHN5cy5jb20sIHAuemFiZWxAcGVuZ3V0cm9uaXguZGUKPiDm
-ioTpgIE6IG5pbmd5dUBlc3dpbmNvbXB1dGluZy5jb20sIGxpbm1pbkBlc3dpbmNvbXB1dGluZy5j
-b20sIHlhbmd3ZWkxQGVzd2luY29tcHV0aW5nLmNvbSwgcGlua2VzaC52YWdoZWxhQGVpbmZvY2hp
-cHMuY29tCj4g5Li76aKYOiBSZTogW1BBVENIIHYyIDEvMl0gZHQtYmluZGluZ3M6IHVzYjogQWRk
-IEVzd2luIEVJQzc3MDAgVVNCIGNvbnRyb2xsZXIKPiAKPiBPbiAzMC8wNy8yMDI1IDA5OjQwLCB6
-aGFuZ3NlbmNodWFuQGVzd2luY29tcHV0aW5nLmNvbSB3cm90ZToKPiA+ICsKPiA+ICtleGFtcGxl
-czoKPiA+ICsgIC0gfAo+ID4gKyAgICBzb2Mgewo+ID4gKyAgICAgICAgI2FkZHJlc3MtY2VsbHMg
-PSA8Mj47Cj4gPiArICAgICAgICAjc2l6ZS1jZWxscyA9IDwyPjsKPiAKPiBUaGlzIHdhc24ndCBo
-ZXJlLiBEcm9wLgo+IAo+ID4gKwo+ID4gKyAgICAgICAgdXNiIHsKPiA+ICsgICAgICAgICAgICBj
-b21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAtZHdjMyI7Cj4gPiArICAgICAgICAgICAgY2xvY2tz
-ID0gPCZmaXhlZF9mYWN0b3JfdV9jbGtfMW1fZGl2MjQ+LAo+ID4gKyAgICAgICAgICAgICAgICAg
-ICAgIDwmZ2F0ZV9jbGtfaHNwX2FjbGs+LAo+ID4gKyAgICAgICAgICAgICAgICAgICAgIDwmZ2F0
-ZV9jbGtfaHNwX2NmZ2Nsaz47Cj4gPiArICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAic3VzcGVu
-ZCIsImFjbGsiLCAiY2ZnIjsKPiA+ICsgICAgICAgICAgICBlc3dpbixoc3Atc3AtY3NyID0gPCZo
-c3Bfc3BfY3NyIDB4ODAwIDB4ODA4IDB4ODNjIDB4ODQwPjsKPiA+ICsgICAgICAgICAgICByZXNl
-dHMgPSA8JnJlc2V0IDg0PjsKPiA+ICsgICAgICAgICAgICByZXNldC1uYW1lcyA9ICJ2YXV4IjsK
-PiA+ICsgICAgICAgICAgICByYW5nZXM7Cj4gCj4gU2FtZSBjb21tZW50OiBmb2xsb3cgRFRTIGNv
-ZGluZyBzdHlsZS4gV2hlcmUgc2hvdWxkIHJhbmdlcyBvciByZWcgYmUgcGxhY2VkPwoKQWNjb3Jk
-aW5nIHRvIHRoZSAiZHRzLWNvZGluZy1zdHlsZS5odG1sIiwgdGhlIG9yZGVyIHNob3VsZCBiZSBs
-aWtlIGJlbG93LCBpcyB0aGlzIGNvcnJlY3Q/Cgpjb21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAt
-ZHdjMyI7CnJhbmdlczsKI2FkZHJlc3MtY2VsbHMgPSA8MT47CiNzaXplLWNlbGxzID0gPDE+OwoK
-PiAKPiA+ICsgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwyPjsKPiA+ICsgICAgICAgICAg
-ICAjc2l6ZS1jZWxscyA9IDwyPjsKPiA+ICsKPiA+ICsgICAgICAgICAgICB1c2JANTA0ODAwMDAg
-ewo+ID4gKyAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNucHMsZHdjMyI7Cj4gPiArICAg
-ICAgICAgICAgICAgIHJlZyA9IDwweDAgMHg1MDQ4MDAwMCAweDAgMHgxMDAwMD47Cj4gCj4gTm90
-aGluZyBpbXByb3ZlZCBhbmQgeW91IGRpZCBub3QgcmVzcG9uZCB0byB0aGUgZmVlZGJhY2suCgpJ
-J20gdmVyeSBzb3JyeSB0aGF0IEkgaGF2ZW4ndCBnaXZlbiB5b3UgYW55IGZlZWRiYWNrIGhlcmUu
-IEknbSBub3QgcXVpdGUgY2xlYXIgYWJvdXQgd2hhdCB5b3UgbWVhbiBieSBmZWVkYmFjay4KSW4g
-djEgcGF0Y2gsIHlvdSBtZW50aW9uZWQgIkZvbGQgdGhlIGNoaWxkIG5vZGUgaW50byB0aGUgcGFy
-ZW50Iu+8jGNvdWxkIHlvdSBwbGVhc2UgdGVsbCBtZSB3aGF0J3MgdGhlIGV4YWN0Cm1lYW5pbmcg
-b2YgdGhpcyBjb21tZW50Pwo+IAo+IAo+IEJlc3QgcmVnYXJkcywKPiBTZW5jaHVhbiBaaGFuZw==
+generic/299 w/ mode=lfs will cause long time latency of checkpoint,
+let's dump more information once we hit case.
+
+CP merge:
+  - Queued :    0
+  - Issued :    1
+  - Total :    1
+  - Cur time : 9765(ms)
+  - Peak time : 9765(ms)
+
+F2FS-fs (vdc): blocked on checkpoint for 9765 ms
+CPU: 11 UID: 0 PID: 237 Comm: kworker/u128:29 Tainted: G           O        6.16.0-rc3+ #409 PREEMPT(voluntary)
+Tainted: [O]=OOT_MODULE
+Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+Workqueue: writeback wb_workfn (flush-253:32)
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x6e/0xa0
+ f2fs_issue_checkpoint+0x268/0x280
+ f2fs_write_node_pages+0x6a/0x2c0
+ do_writepages+0xd0/0x170
+ __writeback_single_inode+0x56/0x4c0
+ writeback_sb_inodes+0x22a/0x550
+ __writeback_inodes_wb+0x4c/0xf0
+ wb_writeback+0x300/0x400
+ wb_workfn+0x3de/0x500
+ process_one_work+0x230/0x5c0
+ worker_thread+0x1da/0x3d0
+ kthread+0x10d/0x250
+ ret_from_fork+0x164/0x190
+ ret_from_fork_asm+0x1a/0x30
+
+Cc: Jan Prusakowski <jprusakowski@google.com>
+Signed-off-by: Chao Yu <chao@kernel.org>
+---
+ fs/f2fs/checkpoint.c | 7 +++++++
+ fs/f2fs/f2fs.h       | 8 +++++++-
+ 2 files changed, 14 insertions(+), 1 deletion(-)
+
+diff --git a/fs/f2fs/checkpoint.c b/fs/f2fs/checkpoint.c
+index db3831f7f2f5..02806e2edce4 100644
+--- a/fs/f2fs/checkpoint.c
++++ b/fs/f2fs/checkpoint.c
+@@ -1778,6 +1778,7 @@ static void __checkpoint_and_complete_reqs(struct f2fs_sb_info *sbi)
+ 	llist_for_each_entry_safe(req, next, dispatch_list, llnode) {
+ 		diff = (u64)ktime_ms_delta(ktime_get(), req->queue_time);
+ 		req->ret = ret;
++		req->delta_time = diff;
+ 		complete(&req->wait);
+ 
+ 		sum_diff += diff;
+@@ -1873,6 +1874,12 @@ int f2fs_issue_checkpoint(struct f2fs_sb_info *sbi)
+ 	else
+ 		flush_remained_ckpt_reqs(sbi, &req);
+ 
++	if (unlikely(req.delta_time >= CP_LONG_LATENCY_THRESHOLD)) {
++		f2fs_warn_ratelimited(sbi,
++			"blocked on checkpoint for %u ms", cprc->peak_time);
++		dump_stack();
++	}
++
+ 	return req.ret;
+ }
+ 
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index b9058518b54e..c036af1a885a 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -334,7 +334,10 @@ struct ckpt_req {
+ 	struct completion wait;		/* completion for checkpoint done */
+ 	struct llist_node llnode;	/* llist_node to be linked in wait queue */
+ 	int ret;			/* return code of checkpoint */
+-	ktime_t queue_time;		/* request queued time */
++	union {
++		ktime_t queue_time;	/* request queued time */
++		ktime_t delta_time;	/* time in queue */
++	};
+ };
+ 
+ struct ckpt_req_control {
+@@ -350,6 +353,9 @@ struct ckpt_req_control {
+ 	unsigned int peak_time;		/* peak wait time in msec until now */
+ };
+ 
++/* a time threshold that checkpoint was blocked for, unit: ms */
++#define CP_LONG_LATENCY_THRESHOLD	5000
++
+ /* for the bitmap indicate blocks to be discarded */
+ struct discard_entry {
+ 	struct list_head list;	/* list head */
+-- 
+2.49.0
 
 
