@@ -1,183 +1,188 @@
-Return-Path: <linux-kernel+bounces-751535-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98CBB16AA6
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:05:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6E45B16AAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:07:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFCE1567891
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:05:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5F3C18C7EB0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:07:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10DBF1F4262;
-	Thu, 31 Jul 2025 03:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08E40238C25;
+	Thu, 31 Jul 2025 03:07:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="IKvxnFy7"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="QpXmZXmm"
+Received: from smtpbgbr2.qq.com (smtpbgbr2.qq.com [54.207.22.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF6C9219ED
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:05:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9584B19F101;
+	Thu, 31 Jul 2025 03:06:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.207.22.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753931140; cv=none; b=ZFKjpXwCMe0RvwW12uJjs2bg51wB4kzHb0DQGBgD7gaynG0FNefI3xcjHgsddffRlPEiWcd1fKND83zc92KsjU1xudaP2/btW7BIa4AmNle2niJYnTeTAtKeop2HdidmMkzh3GE1t8MF4p+2d/3tqNLG/Z1d7nnUC7p+FbUcuDA=
+	t=1753931224; cv=none; b=bxOgaunTxDZGZOnAP6T4UT0tsOqicz6VEdJlQ+XlfQoTT5zZFlw75xI+rzz24GxrzOUcodgogKPoZL92Pn7/wNFstlKjADT7LzqIQocnk2eWIVamxCzt7jIv4b+g9SF9m3dt+gVd3bB9AHU5KLVzlQSA/ciuD4TNJE85FVA8asc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753931140; c=relaxed/simple;
-	bh=8wRvJxKbyOTOj80ZwVzdl39ChzxT4SlYxsyHrRPLzk8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EFYgqxHbzM6WrouQ6mWjewMLPK3BimgQGgcxEB0nojEoVKVE2OUNbPfy4jDRZrt4VUJZWRDGn9RA8zeaKDAFhX0LkSoYAPQJ8GTg91qBWKIo+f/s2NXcX4MQAU3Hg64NbiaCzgsymA9f4IGpiwwtGZEUMQdNeN3eKOOcreBNlnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=IKvxnFy7; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so416562a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:05:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1753931135; x=1754535935; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=HAYf5bawKOAi9UbMFDlw0TMRVyadJUpjLn1RTvakHDI=;
-        b=IKvxnFy7+cTMmzrSW68rpH3nsruIuN3nLILZDt4ADbxJGwZly+YeLToEGtJQbDDUvT
-         Tv9MAqyREYmtyMFxZqdlBftpBd4/TXDnijlHj4N/55mx4ji/wlhPcReDJKQcF4RPL3ch
-         yfE/bsaEg7JLZRO/lYMiK6b3DabSawvEUo68Q=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753931135; x=1754535935;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=HAYf5bawKOAi9UbMFDlw0TMRVyadJUpjLn1RTvakHDI=;
-        b=wKM7NaT2SM5sMt8ztjVB7ZojJ5DQN3rbGmHrwMqoo/R5YWVNbTfSQd0vOebaYpHdPw
-         EmwsVTq6dasoOHZD27eF8uGozGaQHzrdh/bvItmLZahoeme0Z3FLjuElu2BbWmDuVYJF
-         5EyQZzetkzTwF4USv4C7WJE5G158gX+J6s6a98n0nYF05SXHRjKoj/vYkyJlXAXPHwOa
-         wU479XFXvY2ocgc9IrvMikgTnimwGWh6bFgriykwx+59IyT+Ldlz4LnIGg9yBNEb3SNL
-         dqm1gMH7E9jdduCPmq99gkDly5qMFxKIYrMYAtFkgGX0qdBxRy+jwhq3TTz9J83Wz3Kr
-         OUIA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCzSOvuFgRjyc5kry3Hpoa0Y7rF2K9kzILR2tIQ5PJEbuZP+n+1NHBdQ/muJyyeDFMBt0lOWsiN9Du5nw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyHhlZfU0vrkHRKNPIK+DcaokpRf4hC7aDkaxRbb2/NlvU70sHh
-	RdPOqGsSK7pf6NwNOX31hsbaYuWh7sZj+me9Eu3ZbdTSEQYY2IbMUZGC4OEwWufPrFchAXqkhkJ
-	LfFM3zSg=
-X-Gm-Gg: ASbGncvFcBeJynxcxRncTrqd+N8BhWq3A3QXqM5TVC71EIAXREsOKa2hxSy9KaSw/7d
-	/BlQkHYct3soqfuFMi/QefL8B4e6cJ1nWo+6sjv+RxJ+L/g1p065BXgZlkLWNfq05p3uCH4yJJ3
-	1Wb+BXEHlHCTkN9G70U945DKQQwv35xuTGtlyBbApVx7TAkHEaae0PyYbXSMSc0J+GBMuZwPhP1
-	OFIbCuB5WWanPUbTV5Pp4hINKTRg2AOCKRH1TYrqt1HBk+CoKieBgDc6bGMuVwM0u0BBrW8njYN
-	xV5XfSyr9IfTR0Pds9Hh+YVbxivUSbL+7n7ijmNmjcqwRE0BDQrGI88X1lpQWCUFto/Wxsfx1tJ
-	xXyV+RALv6b4VXyllveRyWzYPqhjLgBPsF+ZUG/5CCIXe4JUmD2P5o4qBeTH5xYF2deJbN6Lj
-X-Google-Smtp-Source: AGHT+IGRR+pr0nZLmCdhjMbDWgtxwLfaeMoV/hzSjT08q96OHceCZOA4dGATJHzfinnklYr1KCmdvA==
-X-Received: by 2002:a05:6402:430f:b0:615:a60a:38a7 with SMTP id 4fb4d7f45d1cf-615a60a3bd8mr1425084a12.7.1753931134633;
-        Wed, 30 Jul 2025 20:05:34 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe77cfsm432011a12.42.2025.07.30.20.05.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 30 Jul 2025 20:05:33 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6b7so416544a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 20:05:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUJsI6+UCBHpVn2O30rLmywsZaSu8m3KZMTr6R2pTfbWpH6muujQLMXxP31UWMMvXw6VBwhN/yJV3sp6zE=@vger.kernel.org
-X-Received: by 2002:a05:6402:358c:b0:615:adc4:1e66 with SMTP id
- 4fb4d7f45d1cf-615adc425aamr633902a12.25.1753931132919; Wed, 30 Jul 2025
- 20:05:32 -0700 (PDT)
+	s=arc-20240116; t=1753931224; c=relaxed/simple;
+	bh=14qxhzw+Tj7K+vUArLn/OHHypiZhci1uCf/09CN5zsM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MdtcORH5Pw40H+0gql5v7IO0P2AKqJ/rQM/ZCoMHI6jCOWnUKCaP7lJYE8HwPVZGFMzZ3lePt0tkiSNWBGA9GZPme+x5HuZzAIQ1LcQTOnDPJ9dmb5kD6X9fJbq+/1m1e/ERTZcFGx+CGymQt9Ie4iXHaqz3uBhXdZXoplHHhg8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=QpXmZXmm; arc=none smtp.client-ip=54.207.22.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1753931131;
+	bh=a9ucKx9IvRh9aqxJC8OiAB/VcwuKjCvIpVNT0ZYtewM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:From;
+	b=QpXmZXmmCDVLZHinPic01Im8JazSBzY3ak5N8W40gbW+xjzg0dhmXutYOqyzWCl/h
+	 IufyMgRlbRLIULewgZQaOgboAuYfN2eX54WwLUFVfoIAuis7F5JZp80W6pPRAd6bho
+	 KS14run0ivEpS4U0LAxsj0lvBYJG653wGYHOYmmQ=
+X-QQ-mid: zesmtpsz4t1753931123t57ac76c2
+X-QQ-Originating-IP: UY//SYI0w2+/KZaYFYM7ig1bR3YjCAZjgRVLYqx062I=
+Received: from [198.18.0.1] ( [113.57.152.160])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 31 Jul 2025 11:05:21 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16923455272017176677
+EX-QQ-RecipientCnt: 12
+Message-ID: <8C57A7CCEBFAEA59+b36cfd0d-2cd9-413e-b658-e82938f9d947@uniontech.com>
+Date: Thu, 31 Jul 2025 11:05:21 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
-In-Reply-To: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 30 Jul 2025 20:05:16 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
-X-Gm-Features: Ac12FXyGI4908rAYUaEIQ05Ez7SZKZXC1fcfCug1m7LIGtr9OB56lWZC4UF5C8Q
-Message-ID: <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.17-rc1
-To: Dave Airlie <airlied@gmail.com>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] iio: imu: bmi270: Match ACPI ID found on newer GPD
+ firmware
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Alex Lanzano <lanzano.alex@gmail.com>, Jonathan Cameron
+ <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+ David Lechner <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Yao Zi <ziyao@disroot.org>, WangYuli <wangyuli@uniontech.com>,
+ Jun Zhan <zhanjun@uniontech.com>
+References: <20250730-bmi270-gpd-acpi-v1-1-1ffc85b17266@uniontech.com>
+ <CAHp75Vc2K3AmPhwme3+7cCGwDTA6V+4Ug8f++iFr8gCThCOnQw@mail.gmail.com>
+Content-Language: en-US
+From: Cryolitia PukNgae <liziyao@uniontech.com>
+In-Reply-To: <CAHp75Vc2K3AmPhwme3+7cCGwDTA6V+4Ug8f++iFr8gCThCOnQw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpsz:uniontech.com:qybglogicsvrsz:qybglogicsvrsz3a-0
+X-QQ-XMAILINFO: NSl7+7iyUzmQJWoCXasJofXsPKFT1SG/MjojYKOsM1VsgrXvpdOGlGwa
+	d6EPHPMGuLmeAS1RXaEURvN24+I42jhXStjA1jMyF5x7F6QeZJpc/iK9MGss99Bh/K02GAz
+	zyiwviPW6eZUL+/FPgDvI4EHWpXHdeN50A48tRbu6oBOWkwbu8iEQxjvaMEFw2VnjCBWZc2
+	B6OhRjyp9g/bMACn4jqHYROM8Z4chGB+PZtB+FNRjyZQIz7QSzUez+JsZc9YIoQPQ6O/HxZ
+	MYjvfBkUIu9daKj8ul0KwXwjp6Lck5Hh9O9Wm/kjt3X/wxMsUiUeaU+u9ezypOdcAp9EXP9
+	aRWpjWlGMWKle1GrevDiBiBC9JX365yTyd9HKeLIlA/JztDFRLCZuWKZ+7f3Y0flZxrJ3ID
+	TaZ65mPAzan5PADs4tz1KrFZHGIjdYkYGzA+ohJrEpbNz748HFVBikTz/XqBho6DEB8XWp4
+	FElrAG1NYsoFVShorodiYGGZyPhQ0nsWRltfPk6lcgUfwU4CPXGnVRQ9RGhORm/qmPnd+lD
+	S3nNR0+gPFL4VHouLFmUZVawXDKo6874fyx2LhNKyjrXOC1BRFn4V0d3ZixO2bL2r0vtdmR
+	yHy5kuczdcOBHKIn4sx7IVdvD0ZyIPwK3oxScrdBAaRYiIFHqgKVDzxrjZI9ng4B/sfPuBD
+	Z3TJqWjpybMtZsBikfiIZF8Xl4Dg1e/BJqJx3tTKzKdKsVCygG76aMkIkXz5oO0zxOWGyJA
+	6LqLub5OXT0Mcb3MuK9qCa8XnFJr98wdIbBYAZIBy8ZOwVZ2rP5vgmHTVG0JmdKDCB9vvRY
+	9/HvQMANp7HHzrHiKn2t+Gm76cGAVnUuwtNRCSFGMXxeWyqmIjCe5pzBzlcb+78VdrzFveV
+	WuO3JbQw0A5apks/yPHHTNARgifi8pinL0N5WLgD6JLvUKeySy37uJaOPOCjwLCWQjhO/sr
+	G6n/aak4wNu863goxPH+m7qP/JIyIpFtJG1v9O8qyoUgYK9QNk1/qZRVVBdMMrwHZDTfqLc
+	p9ITOEhre2tuwaCAIwSVva23txv7Nhq7dtju9Qsw==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-,
+Dear Maintainer,
 
-On Tue, 29 Jul 2025 at 14:06, Dave Airlie <airlied@gmail.com> wrote:
->
-> I've done a pass at merging mostly taking from drm-tip:
-> https://github.com/airlied/linux/tree/drm-next-6.17-rc1-merged
+Thank you for your reply. I apologize for the confusion regarding the 
+PNP VID assignment - you are absolutely correct that "BMI0260" is not an 
+official Bosch PNP ID. Let me provide a more detailed context.
 
-Hmm. My resolution is pretty different, but part of it is that your
-test-merge has a different top-of-tree than the tree you actually sent
-me. I think you added commits
+GPD devices originally used BMI160 sensors with the "BMI0160" PNP ID. 
+When they switched to BMI260 sensors in newer hardware, they reused the 
+existing Windows driver which accepts both "BMI0160" and "BMI0260" IDs. 
+Consequently, they kept "BMI0160" in DSDT tables for new BMI260 devices, 
+causing driver mismatches in Linux.
 
-  b213eb34f857 ("drm/tidss: oldi: convert to devm_drm_bridge_alloc() API")
-  66cdf05f8548 ("drm/tidss: encoder: convert to devm_drm_bridge_alloc()")
+Current Situation:
+   1. GPD updated BIOS v0.40+ for newer devices to report "BMI0260" for 
+BMI260 sensors to avoid loading bmi160 driver on Linux. While this isn't 
+Bosch's VID:
+   2. Bosch's official Windows driver uses "BMI0260" as a compatible ID
+   3. The ID "BMI0160" already exists in mainline (drivers/iio/imu/bmi160)
+   4. We're seeing real devices shipping with "BMI0260" in DSDT
 
-to the drm tree after you did your test merge.
+Given the challenges we've faced in communicating with GPD regarding 
+Linux support, it seems unlikely that we can push for another change; 
+they are solely focused on ensuring compatibility with Bosch's official 
+Windows driver. Unfortunately, I do not have the means to contact Bosch 
+and urge them to abandon the use of these non-standard IDs.
 
-That said, ignoring those differences, the other ones I'm pretty sure
-your merge is wrong. For example, you left a duplicate
+Given existing devices use "BMI0260" and Windows drivers validate this 
+ID pattern, I propose temporarily adding it to bmi270_acpi_match as a 
+compatibility measure. This would immediately benefit already existing 
+users.
 
-        err = xe_gt_pagefault_init(gt);
-        if (err)
-                return err;
+I'm happy to provide DSDT excerpts from GPD Win Max 2 2023 devices 
+showing the "BMI0260" declaration if needed.
 
-in xe_gt_init().
+Thank you for your time and guidance.
 
-Also, you didn't undo the dma_buf addition to 'struct
-virtio_gpu_object', that was added by commit 44b6535d8ace
-("drm/virtio: Fix NULL pointer deref in virtgpu_dma_buf_free_obj()"),
-but that commit was a fix for the problems that were reverted by
-0ecfb8ddb953 ("Revert "drm/virtio: Use dma_buf from GEM object
-instance"").
+Best regards,
+Cryolitia PukNgae
 
-In etnaviv_sched.c, you seem to have missed the "Rename
-DRM_GPU_SCHED_STAT_NOMINAL to DRM_GPU_SCHED_STAT_RESET" in commit
-0a5dc1b67ef5.
+在 2025/7/31 04:57, Andy Shevchenko 写道:
+> On Wed, Jul 30, 2025 at 2:56 PM Cryolitia PukNgae via B4 Relay
+> <devnull+liziyao.uniontech.com@kernel.org> wrote:
+>>
+>> From: Cryolitia PukNgae <liziyao@uniontech.com>
+>>
+>> Some GPD devices ship a buggy firmware that describes on-device BMI260
+>> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40,
+>> let's match the correct ID to detect the device. The buggy ID "BMI0160"
+>> is kept as well to maintain compatibility with older firmwares.
+> 
+> No, it's not true. See below why,
+> 
+>> ---
+>> Some GPD devices ship a buggy firmware that describes on-device BMI260
+>> with ACPI ID "BMI0160". Since this is fixed in BIOS update v0.40[1],
+>> let's match the correct ID to detect the device. The buggy ID "BMI0160"
+>> is kept as well to maintain compatibility with older firmwares.
+>>
+>> Link: http://download.softwincn.com/WIN%20Max%202024/Max2-7840-BIOS-V0.41.zip
+>>
+>> [1]. See the update nodes in the archive file above
+> 
+> Yeah... I think you need one more attempt to fix it right.
+> 
+> ...
+> 
+>>   static const struct acpi_device_id bmi270_acpi_match[] = {
+>>          /* GPD Win Mini, Aya Neo AIR Pro, OXP Mini Pro, etc. */
+>>          { "BMI0160",  (kernel_ulong_t)&bmi260_chip_info },
+> 
+> Unbelievable! How is the above supposed to work? Do we have DMI quirks
+> in both drivers (bmi160 and bmi270)?
+> 
+>> +       /* GPD Win Max 2 2023(sincice BIOS v0.40), etc. */
+>> +       { "BMI0260",  (kernel_ulong_t)&bmi260_chip_info },
+> 
+> For the record this is incorrect ACPI ID, nor PNP ID for Bosh, unless
+> I missed that https://www.bensonmedical.com/ is bought by Bosh or part
+> of the groups of the companies.,
+> 
+>>          { }
+>>   };
+> 
+> Can you work with Bosh to resolve this as soon as possible and use a
+> real Bosh ACPI ID (BOSCxxxx) or PNP ID (BSGxxxx)?
+> Also, each ACPI ID adding patch (when it's incorrect) must provide a
+> DSDT excerpt in the commit message to show this. Ideally this also
+> should be confirmed by the vendor of the device (GPD) that the ID is
+> incorrect and a correct one needs to be used.
+> 
 
-And you have missing MEDIA_VERSION / GRAPHICS_VERSION entries in
-xe_wa_oob.rules from commits c96e0df4e9f5f and b1c37a0030b27.
 
-ANYWAY.
-
-My point isn't so much that I think your merge is wrong - it's very
-possible that I have made other mistakes to make up for yours. But my
-point really is that these drm merges are rather messy and
-error-prone.
-
-And yes, I'm pretty good at sorting merges out, and this was by no
-means the messiest merge I've ever seen.
-
-But I do think that the drm people are doing actively wrong things
-with the random cherry-picks back and forth: they cause these
-conflicts, and I *really* think you should look at maybe using stable
-fixes branches instead.
-
-Would that require more care and cleaner trees? Yes. And that's kind
-of the point. You are being messy, and it's affecting the quality of
-the end result.
-
-And maybe I did get the merge perfectly right. And maybe I didn't.
-
-But the fact that you have *so* many conflicts, and that I'm pretty
-damn sure that your example merge was not correct, makes me really go
-"your development model is messy and leads to problems".
-
-Again: I'm not going to guarantee that I got it right. I *think* I did
-- I'm not feeling particularly unhappy with my merge end result. The
-merge was annoying but largely straightforward. And it builds ok for
-me ("ship it, it's perfect!"), although I do see an objtool warning:
-
-    drivers/gpu/drm/msm/msm.o: warning: objtool:
-submit_lock_objects+0x44d: sibling call from callable instruction with
-modified stack frame
-
-that makes me go "Hmm".
-
-But that one looks like gcc doing some very strange things with
-coverage tracing, so I am currently inclined to blame it on odd
-compiler output and objtool rather than the drm tree itself.
-
-But I really wish you had a better model for "backport fixes" than the
-mess you have now.
-
-Because it clearly is causing potential problem spots.
-
-            Linus
 
