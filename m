@@ -1,94 +1,180 @@
-Return-Path: <linux-kernel+bounces-751691-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40FDEB16C57
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:03:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ECF33B16C65
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75F925807B0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:03:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E402C3B2B4A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:07:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC06528D8E2;
-	Thu, 31 Jul 2025 07:03:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6628D8F2;
+	Thu, 31 Jul 2025 07:07:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZpWXd4dt"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beXs+5Zx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F9E6241693;
-	Thu, 31 Jul 2025 07:03:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31714A639;
+	Thu, 31 Jul 2025 07:07:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753945420; cv=none; b=f+p9ifGt9uC6p0HAggvi6lk15MpiXmiFc1EepKQURnEx8gozugLEcLS90hw9Xk58BMmKh7KSde/f/t3xIViE7AEBCR4uvAnMGAUDh0g0cW7H6QR5BmCnDcXqQlQ86P1YHIFJVFyzakd02IhqwyhjOitwMywM+J6G5NJVegL+X4I=
+	t=1753945641; cv=none; b=rOyngChpBoIZOzS7JbgSaPQMrh/9uMjuAiUp1/7Rk6dBvf0GNaDoakv/W9cApmY/PUCwNHz0uUdkH7kQU0kf8hLWewkcmRxrYuhYtsCcB/du0/BSnJG7FJrXBERDc5q3MtIc3Bhg5aeTVUn801dMHMXQS7mdJsoEJcaNTiuBbb8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753945420; c=relaxed/simple;
-	bh=FSDKA2EDSEAoBRRr4Iyc/rYXzglYyqJCL5b+rykOgRE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=CTISCvHji8V26q8JgaJ5OQAIzre8Eolm/ppuzRS2IiCZw88+HvLRbU0Pwq1wS+xEePJsotxRK1ZhP1OpxWpWYOWfNUahXD/7mBOhfhQTdR7dLOB4ptvLCPucOOSY0kELiCnxTCw3jebLM0wHb37Mv7bwt5mVxjdFrPNtOTFySWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZpWXd4dt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 54152C4CEEF;
-	Thu, 31 Jul 2025 07:03:36 +0000 (UTC)
+	s=arc-20240116; t=1753945641; c=relaxed/simple;
+	bh=tqxUukvaqb1S2CbX7Cy4mBHhjpycOAPpc1ryoFSdwFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PN43/mnlbnPEFV8dv/teLNCMAdlS/SHwlH31ae0EMEBzpOvPAGAW1Exxt4oIVK2anjkBRFDgEny1ZMG41unMyqAxW8A4JbcIh2GPDR/cRgw+ZmlpW2QRzHgk3ZyvRI7B4SCxoZzLzgBX0M8lBWpFlHPkaQN4Dm5KGsjdKUAqXSg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beXs+5Zx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0F1C4CEEF;
+	Thu, 31 Jul 2025 07:07:18 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753945416;
-	bh=FSDKA2EDSEAoBRRr4Iyc/rYXzglYyqJCL5b+rykOgRE=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ZpWXd4dtRchl0h/UMjnMDAxKughj5NJy1iSIM0o85Hfl/3w3nNrW5AqM2aKcPL+aY
-	 gHrJWA5b0Mn5dlDR1XM0aHdhvMNlqh16pzE2pnB0eNVt+Q7ZAsQbR3oP1IxKQ8gOWZ
-	 RvGPts1ycv0ksmWu7isb7p32afKu6KceCOiZzMZU8SD3UKm/pW5ha2y33Wu3vuvIcR
-	 Ey9Q/HffxKA/A2oDoxzTXFdw1ZOZVav09p+Zx8T3GqIpL78nnmzbAekYE/QGXhf3VY
-	 qZ9iadXNgsVuO7g+wb2rLChfg0/pGYdk4UwRZrT63Sa45KCXJuts9T8ml9D1olNHti
-	 pHJjBZeboKbrA==
-From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Kan Liang <kan.liang@linux.intel.com>
-Cc: Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org
-Subject: [PATCH] perf record: Cache build-ID of hit DSOs only
-Date: Thu, 31 Jul 2025 00:03:30 -0700
-Message-ID: <20250731070330.57116-1-namhyung@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=k20201202; t=1753945640;
+	bh=tqxUukvaqb1S2CbX7Cy4mBHhjpycOAPpc1ryoFSdwFM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=beXs+5ZxOKYOoaTpVgU1QIQnj5HLCuRGgLW7bO4pejR13/F+wnYq4lksxKOR+Gx6a
+	 A1wwTxIqBGwe6Cq/eIX8oBpnjjjqb/lSCWy+yzlJAuhhO59mihraziMSmTOVIrj6NR
+	 6XkJFmgAXK0q2VXIB0dCYplHypC7oO11FJ8b0m2oriTOcuWb1jHFLDEPSnRO/xQV8k
+	 +HhYGsbssHgiClErfeOIEmbooUksG39+TJCuANwqah6k6s+ZI5WbgFHlx6KVnOhND4
+	 rVRgtSXORVhCo7q5tPci57NX2cguUQ3qZVkSha2BP0kbUlFS+sg7NXlHHcEWDKaqqi
+	 nv6U0+Eg3x7PA==
+Message-ID: <9d918e77-73ef-41ad-87cf-cf87803041b5@kernel.org>
+Date: Thu, 31 Jul 2025 16:04:45 +0900
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] mq-deadline: switch to use elevator lock
+To: Yu Kuai <yukuai1@huaweicloud.com>, Hannes Reinecke <hare@suse.de>,
+ jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
+Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
+ johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
+References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
+ <20250730082207.4031744-3-yukuai1@huaweicloud.com>
+ <750643e5-9f24-4e4c-8270-e421a03cf463@suse.de>
+ <226d1cd7-bd35-4773-8f1c-d03f9c870133@kernel.org>
+ <a3ce55a4-0756-bfe7-3606-296b78672104@huaweicloud.com>
+From: Damien Le Moal <dlemoal@kernel.org>
+Content-Language: en-US
+Organization: Western Digital Research
+In-Reply-To: <a3ce55a4-0756-bfe7-3606-296b78672104@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-It post-processes samples to find which DSO has samples.  Based on that
-info, it can save used DSOs in the build-ID cache directory.  But for
-some reason, it saves all DSOs without checking the hit mark.  Skipping
-unused DSOs can give some speedup especially with --buildid-mmap being
-default.
+On 7/31/25 3:32 PM, Yu Kuai wrote:
+> Hi,
+> 
+> 在 2025/07/31 14:22, Damien Le Moal 写道:
+>> On 7/31/25 3:20 PM, Hannes Reinecke wrote:
+>>> On 7/30/25 10:22, Yu Kuai wrote:
+>>>> From: Yu Kuai <yukuai3@huawei.com>
+>>>>
+>>>> Replace the internal spinlock 'dd->lock' with the new spinlock in
+>>>> elevator_queue, there are no functional changes.
+>>>>
+>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+>>>> ---
+>>>>    block/mq-deadline.c | 58 +++++++++++++++++++++------------------------
+>>>>    1 file changed, 27 insertions(+), 31 deletions(-)
+>>>>
+>>>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
+>>>> index 9ab6c6256695..2054c023e855 100644
+>>>> --- a/block/mq-deadline.c
+>>>> +++ b/block/mq-deadline.c
+>>>> @@ -101,7 +101,7 @@ struct deadline_data {
+>>>>        u32 async_depth;
+>>>>        int prio_aging_expire;
+>>>>    -    spinlock_t lock;
+>>>> +    spinlock_t *lock;
+>>>>    };
+>>>>      /* Maps an I/O priority class to a deadline scheduler priority. */
+>>>> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q,
+>>>> struct request *req,
+>>>>        const u8 ioprio_class = dd_rq_ioclass(next);
+>>>>        const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
+>>>>    -    lockdep_assert_held(&dd->lock);
+>>>> +    lockdep_assert_held(dd->lock);
+>>>>          dd->per_prio[prio].stats.merged++;
+>>>>    @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum
+>>>> dd_prio prio)
+>>>>    {
+>>>>        const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
+>>>>    -    lockdep_assert_held(&dd->lock);
+>>>> +    lockdep_assert_held(dd->lock);
+>>>>          return stats->inserted - atomic_read(&stats->completed);
+>>>>    }
+>>>> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct
+>>>> deadline_data *dd,
+>>>>        enum dd_prio prio;
+>>>>        u8 ioprio_class;
+>>>>    -    lockdep_assert_held(&dd->lock);
+>>>> +    lockdep_assert_held(dd->lock);
+>>>>          if (!list_empty(&per_prio->dispatch)) {
+>>>>            rq = list_first_entry(&per_prio->dispatch, struct request,
+>>>> @@ -434,7 +434,7 @@ static struct request
+>>>> *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
+>>>>        enum dd_prio prio;
+>>>>        int prio_cnt;
+>>>>    -    lockdep_assert_held(&dd->lock);
+>>>> +    lockdep_assert_held(dd->lock);
+>>>>          prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd,
+>>>> DD_BE_PRIO) +
+>>>>               !!dd_queued(dd, DD_IDLE_PRIO);
+>>>> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct
+>>>> blk_mq_hw_ctx *hctx)
+>>>>        struct request *rq;
+>>>>        enum dd_prio prio;
+>>>>    -    spin_lock(&dd->lock);
+>>>>        rq = dd_dispatch_prio_aged_requests(dd, now);
+>>>>        if (rq)
+>>>> -        goto unlock;
+>>>> +        return rq;
+>>>>          /*
+>>>>         * Next, dispatch requests in priority order. Ignore lower priority
+>>>> @@ -481,9 +480,6 @@ static struct request *dd_dispatch_request(struct
+>>>> blk_mq_hw_ctx *hctx)
+>>>>                break;
+>>>>        }
+>>>>    -unlock:
+>>>> -    spin_unlock(&dd->lock);
+>>>> -
+>>>>        return rq;
+>>>>    }
+>>>>    @@ -538,9 +534,9 @@ static void dd_exit_sched(struct elevator_queue *e)
+>>>>            WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
+>>>>            WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
+>>>>    -        spin_lock(&dd->lock);
+>>>> +        spin_lock(dd->lock);
+>>>>            queued = dd_queued(dd, prio);
+>>>> -        spin_unlock(&dd->lock);
+>>>> +        spin_unlock(dd->lock);
+>>>>              WARN_ONCE(queued != 0,
+>>>>                  "statistics for priority %d: i %u m %u d %u c %u\n",
+>>>
+>>> Do you still need 'dd->lock'? Can't you just refer to the lock from the
+>>> elevator_queue structure directly?
+>>
+>> Indeed. Little inline helpers for locking/unlocking q->elevator->lock would be
+>> nice.
+> 
+> How about the first patch to factor out inline helpers like dd_lock()
+> and dd_unlock(), still use dd->lock without any functional changes, and
+> then switch to use q->elevator->lock in the next patch? (same for bfq)
 
-On my idle machine, `time perf record -a sleep 1` goes down from 3 sec
-to 1.5 sec with this change.
+Patch one can introduce elv->lock and the helpers, then patch 2 use the helpers
+to replace dd->lock. Just don't say "no functional change" in the commit
+message and rather explain that things keep working the same way as before, but
+using a different lock. That will address Bart's comment too.
+And same for bfq in patch 3.
 
-Signed-off-by: Namhyung Kim <namhyung@kernel.org>
----
- tools/perf/util/build-id.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/perf/util/build-id.c b/tools/perf/util/build-id.c
-index e2b295fe4d2fe552..a7018a3b0437a699 100644
---- a/tools/perf/util/build-id.c
-+++ b/tools/perf/util/build-id.c
-@@ -872,7 +872,7 @@ static int dso__cache_build_id(struct dso *dso, struct machine *machine,
- 	char *allocated_name = NULL;
- 	int ret = 0;
- 
--	if (!dso__has_build_id(dso))
-+	if (!dso__has_build_id(dso) || !dso__hit(dso))
- 		return 0;
- 
- 	if (dso__is_kcore(dso)) {
 -- 
-2.50.1
-
+Damien Le Moal
+Western Digital Research
 
