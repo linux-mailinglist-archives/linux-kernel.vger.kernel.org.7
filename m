@@ -1,94 +1,76 @@
-Return-Path: <linux-kernel+bounces-751953-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751954-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0BB6B16FD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:49:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CB83FB16FD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F972547784
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:49:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C424C3B28C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:50:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C881E2BD5A3;
-	Thu, 31 Jul 2025 10:49:48 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D0892BDC07;
+	Thu, 31 Jul 2025 10:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pVf7me68"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7624513B284;
-	Thu, 31 Jul 2025 10:49:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83661D63DD;
+	Thu, 31 Jul 2025 10:51:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753958988; cv=none; b=pkG3lRCCYNKqcdV2ZebHgNHoUBccFhFFZrtnXnIxPyXVGb5N6QOUPLAGG6+fOEgIAhXRuWjaWnnooBlG4Sox79MCrQlgst5HMl22MblnbJrOj7Gin0RPHkb7EfOf/vqr0H2SyGajqhjdW3xepB++RNaDZEDr3Z0lxPzOmeIzxTY=
+	t=1753959073; cv=none; b=gst2EYec7Rr68/pSai4a4pWWfLy5UkswNnpZtVr85jk+GL2pr5jpzUUGaUKh/7RCJXZmrdiM9Ecaxl/s6NVL/McmzVBj7RFFMnzLrmtWp1gtSZ1om11ZuDK991BAAvtYBWfccDvrP+Cu5A1jxrVZM5Xtcr46yqywM6H9ySaePwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753958988; c=relaxed/simple;
-	bh=XsWeIZ4nlc46t0dOdEaLqA6y04g6JbRMu9f1BFsIRRE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=YPLHLWMxEZ8YqdqCPbAGsDBx5Yz0KLBXzvUxUqkVsf5rXd3CmtAffgx6NWwGNqvUyjvXFvOaPGTPHzGutvRkuTgXlZuU9VMSq88pol+Tcke/S9rOhZwSmzyPlWw0bRC/j5VRmtjoFqWSjaLKs/lq/8CPbJMv1+aNE96pyHGiQKA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.112])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4bt5Pd6KhCz23jf2;
-	Thu, 31 Jul 2025 18:47:17 +0800 (CST)
-Received: from kwepemf100013.china.huawei.com (unknown [7.202.181.12])
-	by mail.maildlp.com (Postfix) with ESMTPS id 10CB91400D6;
-	Thu, 31 Jul 2025 18:49:41 +0800 (CST)
-Received: from DESKTOP-F6Q6J7K.china.huawei.com (10.174.175.220) by
- kwepemf100013.china.huawei.com (7.202.181.12) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Thu, 31 Jul 2025 18:49:39 +0800
-From: Fan Gong <gongfan1@huawei.com>
-To: <horms@kernel.org>
-CC: <andrew+netdev@lunn.ch>, <christophe.jaillet@wanadoo.fr>,
-	<corbet@lwn.net>, <davem@davemloft.net>, <edumazet@google.com>,
-	<fuguiming@h-partners.com>, <gongfan1@huawei.com>, <guoxin09@huawei.com>,
-	<gur.stavi@huawei.com>, <helgaas@kernel.org>, <jdamato@fastly.com>,
-	<kuba@kernel.org>, <lee@trager.us>, <linux-doc@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <luosifu@huawei.com>,
-	<meny.yossefi@huawei.com>, <mpe@ellerman.id.au>, <netdev@vger.kernel.org>,
-	<pabeni@redhat.com>, <przemyslaw.kitszel@intel.com>,
-	<shenchenyang1@hisilicon.com>, <shijing34@huawei.com>, <sumang@marvell.com>,
-	<vadim.fedorenko@linux.dev>, <wulike1@huawei.com>, <zhoushuai28@huawei.com>,
-	<zhuyikai1@h-partners.com>
-Subject: Re: [PATCH net-next v10 1/8] hinic3: Async Event Queue interfaces
-Date: Thu, 31 Jul 2025 18:49:34 +0800
-Message-ID: <20250731104934.26300-1-gongfan1@huawei.com>
-X-Mailer: git-send-email 2.21.0.windows.1
-In-Reply-To: <20250725152709.GE1367887@horms.kernel.org>
-References: <20250725152709.GE1367887@horms.kernel.org>
+	s=arc-20240116; t=1753959073; c=relaxed/simple;
+	bh=1qKzTJ3IXdiAECE5NC//5P7xw3P5jyCKGm999/A9fJs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=q+LMGRFaGXSWrN3KclJXLCscAAViTJg9h79ah+iAZj81l1Qe+8a/y4o0dmMJJdLEqDgq3J16tSGuCzPSr+QeIMZbVg2EpQqAB1bMiVCcGrbGTyfaubpw7cpUz2L/56ENdbN85HXXwWMpesMjVi6tBV76qos/uwX7d1sdPy4zyy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pVf7me68; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3050CC4CEEF;
+	Thu, 31 Jul 2025 10:51:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753959073;
+	bh=1qKzTJ3IXdiAECE5NC//5P7xw3P5jyCKGm999/A9fJs=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=pVf7me688ba2P0I+laro3P8Ss1PfblDqXLzIA+5vFOVP8X72abnytGUykwGOferLh
+	 g5hW7y50ctO7UUwLsEJOPs0HkfQKWmbPBOIiqtmtNHu4kFCScr+S2lGFsnmHtUfF0B
+	 AMVeAqrxi+3/b5A3k21bMBdnRjBGUaHYjkZUUNkbyJNEXvZhwCw3QUiTQoFwaZjMH5
+	 3W8O9nnw8GIouFrFQ2GdRwfTLaOuiu8pRWH9S11J4n+WdzqdK+Gxko00ViGzo3xa8c
+	 /v8vJcx3vxOZqsV5+QSXXHDWHvkQ4mPVpVKIOtrIbPXULXJh9aweV798QaGsxQ8aTA
+	 CvDRlFOH9QIIA==
+From: Lee Jones <lee@kernel.org>
+To: Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+ linux-leds@vger.kernel.org, Colin Ian King <colin.i.king@gmail.com>
+Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250724112030.142121-1-colin.i.king@gmail.com>
+References: <20250724112030.142121-1-colin.i.king@gmail.com>
+Subject: Re: (subset) [PATCH][next] leds: Kconfig: Fix spelling mistake
+ "limitiation" -> "limitation"
+Message-Id: <175395907193.1126536.15996950782714661180.b4-ty@kernel.org>
+Date: Thu, 31 Jul 2025 11:51:11 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: kwepems100001.china.huawei.com (7.221.188.238) To
- kwepemf100013.china.huawei.com (7.202.181.12)
+X-Mailer: b4 0.15-dev-c81fc
 
-> >
-> > So the swapped data by HW is neither BE or LE. In this case, we should use
-> > swab32 to obtain the correct LE data because our driver currently supports LE.
-> > This is for compensating for bad HW decisions.
->
-> Let us assume that the host is reading data provided by HW.
->
-> If the swab32 approach works on a little endian host
-> to allow the host to access 32-bit values in host byte order.
-> Then this is because it outputs a 32-bit little endian values.
->
-> But, given the same input, it will not work on a big endian host.
-> This is because the same little endian output will be produced,
-> while the host byte order is big endian.
->
-> I think you need something based on be32_to_cpu()/cpu_to_be32().
-> This will effectively be swab32 on little endian hosts (no change!).
-> And a no-op on big endian hosts (addressing my point above).
->
-> More specifically, I think you should use be32_to_cpu_array() and
-> cpu_to_be32_array() instead of swab32_array().
+On Thu, 24 Jul 2025 12:20:30 +0100, Colin Ian King wrote:
+> There is a spelling mistake in the LEDS_BD2606MVV config. Fix it.
+> 
+> 
 
-Thanks. We'll take your suggestion.
+Applied, thanks!
+
+[1/1] leds: Kconfig: Fix spelling mistake "limitiation" -> "limitation"
+      commit: 9f633925235f1798f61091b7300b0ef19f24c8b3
+
+--
+Lee Jones [李琼斯]
+
 
