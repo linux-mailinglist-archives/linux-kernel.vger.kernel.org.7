@@ -1,126 +1,117 @@
-Return-Path: <linux-kernel+bounces-751593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9BA2B16B42
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:36:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1FEB1B16B55
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5381918C6F6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:36:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B2D418C6BD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:45:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88C8223B61C;
-	Thu, 31 Jul 2025 04:36:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457DD242D7E;
+	Thu, 31 Jul 2025 04:44:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S1aNK3pn"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="LySAnhpe"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 636AF2CA6
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 04:36:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 094BC241CA2;
+	Thu, 31 Jul 2025 04:44:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753936586; cv=none; b=IhgfWN9OPbkCje3L6Ri2msIttnhFM94fJ2TiXnG77btq3zdKqu7Ycwbu+DbseOPTyRNpfw1iA4n/+Ou0Mm0CC9ajbzhFY+SMlIoB734vr4EpEV3ORohLO6H6Su2sdm0blCjewgO8XN2qeIwZo3NykuvsFK7nZw0lsuA5egt3gEo=
+	t=1753937097; cv=none; b=Mt6SyYKiocVwENBocpuOZoPhQGHXzdeTjMQyqC/lxCKBQ++O3HHq0tlqokHF4FmgC18cDytfmIupo9IMbpnT543ydhyRenNbrm0teWJRC1UlRTYGsxp20eW+D5Vlp8X3NqK+W7eIDRuEqPCQxjzpmtC2yDvNcJcfEcZ7vUm4dgk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753936586; c=relaxed/simple;
-	bh=21OF6T2HE4ELxQs2mP8X4ESpa3O4vj0vAWBbSYVti5s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=q/v3heaTy/6tx7rrsPPIvoibj59MQMscxJkXdKqm9N0G0/KQIuYnzIl1FK632T+qhLGOqcaUNG7Xp/jBbs9VJuRXU9Lpcis5Mni59nuCAgTkwiqcdcNKMrTZsvwO/FKMIEjThNoa+b8Up4+xnOG5GybkYllowrhA54r6Lt/6ZSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S1aNK3pn; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-af8ffa04463so86284866b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:36:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753936583; x=1754541383; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=21OF6T2HE4ELxQs2mP8X4ESpa3O4vj0vAWBbSYVti5s=;
-        b=S1aNK3pngv2y/JIwJhdgHevoRPfhkeoDDA7LX3D9jgjSPwwAm8tmPbYCEVMfP0iLGW
-         ezAHkDeR1EjBIqxr1oq6s955GfKUww/8Ob90W+tmAmNVFWybv1srLL4ZBSvojcngaPJj
-         2mMWWAW4eFPLy63u2cnDbaOsy3UjVDlEojiGs+8SAzIdydoyWt4PuOqNskpuUFw2GTA7
-         8Vv/09t1jl6rTTTrKAJTCUMqNsoXIUyMUOWVWwXBj2vb/ggQSHzK482qlXoLrGeI/DkE
-         dGStmMUoQS5oUNjSgYJWMqDSyTW/V/51d6RC4KIJaOz4/nzGfgGOVrULRhVJ4xFFGhmU
-         2iWg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753936583; x=1754541383;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=21OF6T2HE4ELxQs2mP8X4ESpa3O4vj0vAWBbSYVti5s=;
-        b=r/UxUTB9fO0AwUW1wlYmNXloiBPO00vaqgZk/UneDQS7l/9xOalSN3BFm48uRUXc8S
-         CB47oDreakdSzdY9J+MoAXOilieMO7R3IoRVxeOoYIhxEdaw6QEZA0B7fMrMgJP6Vxh6
-         adsGuCNhjdMs4m6SCNZF2mrpMBnZoTdi/csP12d2+SPCRT1NOPgcfaigao9RXYQlOehZ
-         Nla86fms5HO/bsuAN+2nfbrtBmuUI18lhtcFNASz3hBUcUGnumjHfC/7zqfVOFLfmAQU
-         b4Zgc+jdvaFSyBVjB6yJVwebwRi7me4QPJvumDcDvtPeWWsnyp4x9TD6MipoMkY45r/X
-         RKfA==
-X-Forwarded-Encrypted: i=1; AJvYcCWf7usXCpByAJUbl3wx0oHFqS6I1ba1O3XuCU+g+FZ56jDWTPKnGT3Uwm3kF+4wuLvBBRhk2SSCxyyUnhs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwckknuLqmsLLWnRwcBiTcS/MaTmITiW1/ZZiUHM5sY1MdDDhjc
-	frpKi7YEVszloxX1vMgzZ53NfYl48/7iKLYQ3c7Bj0ia3Fb8m8Ftu8ipZ8sSSY68a3dbkJsdX8Y
-	Vn3+fOeSYc7lCFDlHWyFR15rJsdFz3+M=
-X-Gm-Gg: ASbGncsL/TNSTPG+oqXGVbE+7qC5ITeqTuoFBhQlP8E5qkj3d0SoSx4DcZI3xg6GQK3
-	xpx9M3dKSil+zsZBRdGFcUtUs9JkjZAMy562phtIBiz/LB1JXBQwkZoY8KwK9NX60/AASQmLnOk
-	MDav3t66bx5T32xPxXSwqw/Zzt05Fd5iX8HY2xA0h34IdPyBToobxjruBjP6NX71bQWEwrLH6sj
-	YDwEw==
-X-Google-Smtp-Source: AGHT+IHt8zXUEbU3uDBO2OBPjItSRqo+K1Uvvu2Z74SY8+04QgQzeq/5DUZSTY0K+0y5LyFUphTzmyk7hHFZdAjXVJ8=
-X-Received: by 2002:a17:906:7945:b0:ade:44f6:e3d6 with SMTP id
- a640c23a62f3a-af8fd9ad9c7mr655825266b.46.1753936582675; Wed, 30 Jul 2025
- 21:36:22 -0700 (PDT)
+	s=arc-20240116; t=1753937097; c=relaxed/simple;
+	bh=oiCFmv/h+Y+1THGKJCqQGLIDfIP9qLP1dbLDajIHc4c=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=BYBiU9MOEnefYSq9xwAcacRDojjAeHz4sBye0f8wN8ySh1o8S2NUgsC27VRls3ecxGgCy199Ibypcg8oYQiJMyd2vyq5AfJ9QaN6oEPxLtoZcVMCdC6+W+61jb7iMAWkxVnYjOjnPlfJ0z5QKfY74YtL/+xJJ0j4TygMQ3DxvRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=LySAnhpe; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56V2fwJI031484;
+	Thu, 31 Jul 2025 04:44:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2025-04-25; bh=Z9kfqpWmBS94BWzzY+pv56iBpWCKsILOGx6b66Y1m5M=; b=
+	LySAnhpeSERpkUA1aq8OVFItddeGsvT/gVUj5Ysd5T0ZHVg6vqBTYOCI7puKvWxQ
+	cBfMF5FgGCLDiJ3e8yq/8lkQwiTofhh40e6KlRyQkK9/c+BmC4yiaBROL84z0dlG
+	7NLaU852vE84rzLfl/O20GFNh0qgk9nuYA+efyoPif/C0AY5X/cc3TSDw9r9plla
+	9EVelquMSWAU1Lmr3Iz9q0kKPU1mHvPCBtwfQ1MEeZQNECNTOuRsOctSL3f2MpOb
+	RvId+F+BXB5hMCXwWoqYOaRgMecuB251bFRF1qwVUzf/1Dq+ILjD4SMiHn0qzlbU
+	EMjrsz/BBT3QViZADXnzLg==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q4yk9n3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Jul 2025 04:44:35 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 56V4PLsN016916;
+	Thu, 31 Jul 2025 04:44:35 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nfjb2u7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Jul 2025 04:44:35 +0000
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 56V4iX41035411;
+	Thu, 31 Jul 2025 04:44:34 GMT
+Received: from ca-mkp2.ca.oracle.com.com (mpeterse-ol9.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.251.135])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTP id 484nfjb2tg-4;
+	Thu, 31 Jul 2025 04:44:34 +0000
+From: "Martin K. Petersen" <martin.petersen@oracle.com>
+To: James.Bottomley@HansenPartnership.com,
+        Yihang Li <liyihang9@h-partners.com>
+Cc: "Martin K . Petersen" <martin.petersen@oracle.com>,
+        linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linuxarm@huawei.com, liuyonglong@huawei.com
+Subject: Re: [PATCH] scsi: MAINTAINERS: Update hisi_sas entry
+Date: Thu, 31 Jul 2025 00:44:22 -0400
+Message-ID: <175375581107.455613.17741974679196185329.b4-ty@oracle.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250702012423.1947238-1-liyihang9@h-partners.com>
+References: <20250702012423.1947238-1-liyihang9@h-partners.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
- <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
- <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
- <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
- <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com>
- <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com> <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com>
-In-Reply-To: <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com>
-From: Dave Airlie <airlied@gmail.com>
-Date: Thu, 31 Jul 2025 14:36:11 +1000
-X-Gm-Features: Ac12FXyggAnv_vUCzftDVLdOsUcon8a2AjoKpSc2jMLh64RtNqK26XHwib2traU
-Message-ID: <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_01,2025-07-30_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=868 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2507310030
+X-Proofpoint-GUID: nHHJAaBOGPxMdxlhvL3cC01Er8J3kM1O
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDAzMCBTYWx0ZWRfX5rEOXFzq7CY6
+ +MVL+y7ag2AMqF9bw7rbtmDhsbN8C6SM6OLv8lBpYKM2AerNXBAI7TZiQyRb68Rn8O4KpqURMKI
+ jCceRes9byaeZGT6oqwDsgd5H8pRisAp4A3v0u/U2rP4RIMu5HWraDjOxanBGRK7wBA1lXFDwio
+ rNda6gqiMzvmnq0WkzvmwAKt6hvjpBO6A07JZfXc3x3o1VcrLOL8C9Tx1Ws8R0vakyI/Yb8JiP4
+ tWgxMuvou6npPu+yGUYy7jKB8/7n2i76D/mj8yOQD5oQCQ5p2r8bukHK4x/S8UUEp1JeOlO9aJ4
+ W+VM8AlpesOVXlagE13UROD7FHV88vIjSIXXFV9a82Hq3LeOYjWRkNiCcflkA0fV0zyM3EDnUlS
+ pNaIU6uJ/0uZ+1SnURRAa+mqINJTY+LBCtRGM3eq2ENqOYowUJvfxDascdZMZNE/1U94EF4/
+X-Authority-Analysis: v=2.4 cv=ZMjXmW7b c=1 sm=1 tr=0 ts=688af4b4 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=VwQbUJbxAAAA:8 a=i0EeH86SAAAA:8
+ a=megPdkAjSJULifGC9oAA:9 a=QEXdDO2ut3YA:10 cc=ntf awl=host:12070
+X-Proofpoint-ORIG-GUID: nHHJAaBOGPxMdxlhvL3cC01Er8J3kM1O
 
-On Thu, 31 Jul 2025 at 14:32, Dave Airlie <airlied@gmail.com> wrote:
->
-> On Thu, 31 Jul 2025 at 14:27, Linus Torvalds
-> <torvalds@linux-foundation.org> wrote:
-> >
-> > On Wed, 30 Jul 2025 at 21:21, Dave Airlie <airlied@gmail.com> wrote:
-> > >
-> > > Okay I don't have an rx580, but I have an rx480 which is pretty close,
-> > > but it is booting fine with your tree at least, DP and HDMI connected,
-> > > so it's not widespread AMD breakage, anything in journalctl/dmesg?
-> >
-> > The machine doesn't come up far enough to mount a filesystem - my
-> > disks are all encrypted, I never even get to the "type your password"
-> > thing.
-> >
-> > So no logs.
-> >
-> > The good news is that it's bisecting without any ambiguity. So nowhere
-> > near as painful as last merge window.
-> >
->
-> You can boot with modprobe.blacklist=amdgpu and then modprobe amdgpu
-> once it boots and see if dmesg
->
-> But hopefully bisect lands somewhere good,
->
-> Just seeing if there's been any NULL ptrs on old GPU reported.
+On Wed, 02 Jul 2025 09:24:23 +0800, Yihang Li wrote:
 
-https://lore.kernel.org/dri-devel/20250717204819.731936-1-mustela@erminea.space/
+> liyihang9@huawei.com no longer works. So update information for hisi_sas.
+> 
+> 
 
-is the only thing I can see that might not be in the merge.
+Applied to 6.17/scsi-queue, thanks!
 
-Dave.
+[1/1] scsi: MAINTAINERS: Update hisi_sas entry
+      https://git.kernel.org/mkp/scsi/c/220e6083e8bd
+
+-- 
+Martin K. Petersen	Oracle Linux Engineering
 
