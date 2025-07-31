@@ -1,144 +1,109 @@
-Return-Path: <linux-kernel+bounces-752534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ED86B176CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:52:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E74B176DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:58:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F3D3AB7DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:51:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87E3D3B1FF6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:58:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3A251799;
-	Thu, 31 Jul 2025 19:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMh8iAjJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEC422550C7;
+	Thu, 31 Jul 2025 19:58:40 +0000 (UTC)
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525FE15533F;
-	Thu, 31 Jul 2025 19:51:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD80223ABB4;
+	Thu, 31 Jul 2025 19:58:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753991510; cv=none; b=MC6mOEZeJgjBw/d8qLPiR4FK6ffr+Bb6KgCmOAPjvrn7OzRjBB4gi5wYBCLPLiWSFOvZCC5//Am+2yPBAgUocxRAi2hLvSlbycXmvy+7HSGpfpYXMwa9shGDmIUUfbJXXYuzIW5+w9/4MnqeN32djeGWo2CF6FPT1tgh1VI+WuI=
+	t=1753991920; cv=none; b=Gl92X94qxWUmTBjvU8gPaqzWgGpuADD/KSg6J7DkzF5/qX2kzWLy3LN82ceIs+H65ti7UVe0ACEN098tZdy90e3syfw9zebwwWAr5m8IcUTIN5tp0zBm9Wk7WCVrefp08ewUb9QPVIqsedtP71oaMsC1pfqo3kGoM4hHoMs9rJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753991510; c=relaxed/simple;
-	bh=1qfpjMOR5vF3iZR9DfglRY8NdvKOMGgslvAE/13smbI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FGOux3QHcW9ysNc/rKn2l2F9c1Pfjq+OZA5s4x6mM5K+pNO3MKKZYO8TijTkHpSRafJaSs9oyKfwDlzxz/uLCaiZszoDZTuJUbsAj5pEHOjkOPnDMtI8iFiQGBVDKAMCJedoPMq716jg5pk44GdVSN3P9vIRIFglh5EqPs6w2jU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMh8iAjJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87110C4CEEF;
-	Thu, 31 Jul 2025 19:51:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753991510;
-	bh=1qfpjMOR5vF3iZR9DfglRY8NdvKOMGgslvAE/13smbI=;
-	h=From:To:Cc:Subject:Date:From;
-	b=fMh8iAjJIY9hpRrLsQi9rcA2U5YxO6+Q3GXsKqXbR5eZ8epkFgScT7KlWdhF5gUNl
-	 wd5tO3+hyOa/b6L3280JZsr0crgiuSUoaDCBYUYCz+zfmUyx8Zvd2LvhUndIIIdvMG
-	 cWSD6zmJetD82vubKyF3wLBVowt2gIDpumaacSZQxUg8ZtndGUVBr7aweB1zf/+NuR
-	 N8RgffbURpsVWynN5YksLekyDkprDgdFXRbd1IcvxvpYfV70IIz3+S0Ex+vp24FP0G
-	 2UYBvXh0JtI0drr4/NHyg8gVDgwgd5EGHm7Pwtit88TnC0Xz2hG1TQTTfj00F62ptK
-	 u6MX2Zmw1DJ+g==
-From: Eric Biggers <ebiggers@kernel.org>
-To: Matthieu Baerts <matttbe@kernel.org>,
-	Mat Martineau <martineau@kernel.org>,
-	Geliang Tang <geliang@kernel.org>,
-	netdev@vger.kernel.org,
-	mptcp@lists.linux.dev
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Paolo Abeni <pabeni@redhat.com>,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH net] mptcp: use HMAC-SHA256 library instead of open-coded HMAC
-Date: Thu, 31 Jul 2025 12:50:54 -0700
-Message-ID: <20250731195054.84119-1-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753991920; c=relaxed/simple;
+	bh=VE3joiXSw99qAb6jVz6lsKUWuKipwIyRAFo8ArBr8qk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TCVuHpGptRsaWeeYP+4OM/8tFr24R/36QWFcqi9sLO94X65ZSrdWGRkjOLMbyl9dprueX55rJ8Sjzd/7bSCoE467bxBTHyoWd+9LYNYGA9guRn383nMoJMzkuyNnqnim4vD6etL0kVd17JtlPex+vwW+V5M7+h8+OhyeCebX930=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-ae3b336e936so29529066b.3;
+        Thu, 31 Jul 2025 12:58:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753991915; x=1754596715;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JOub6JEULz4NRTq/hirUiArEKHDk37KcHlXQ+q2/ZHc=;
+        b=J2h8BPUK2FUW5YvrpFJh53oPvkp2dkZbyie3/A5wdffgrUY9865IfeosOdmnVM6FtV
+         z4l8NX3k/FIcjEZo6x4KOnS4GnE1RwzkWIzqUGB0HTW3CTT9rOfiKcDo8QisAiIp4e9U
+         eJKkc59oonEFrDaQZNFBIQDWkscFtxLAVCalK188B1V5zAMLk8frGJB0dGLQOxiQjZ9J
+         5miKzQdMuW6He/oyanxFwI39nN4ANgeI0l7U1sIqju0BH9ptmC5k80MpL/Sz5F8Dy6UZ
+         HzFzQ65hljHgk1TyTVb+wh/CquOw2QRRcm8u/bYIWuK4eCePpNowQRhb4JyV+HYzlb4q
+         Ru4w==
+X-Forwarded-Encrypted: i=1; AJvYcCVrFztzi62TagY8FEACwosLNbReDY6sCB6EW/JY5qRLUJufmhuVOCm0JlYGWH3FOmO97tdKEheUNlTILVE=@vger.kernel.org, AJvYcCX2Nk0xmrsa6O1ZFH489aeK4SFSOEiMD6c5ErT8IJ1KrwgJTTL2+BgX++qKXXTOeLbzIAkCGTN8@vger.kernel.org, AJvYcCXTUA8Gld0LCDbw2QoNNoxEj3f5xNTnrV3aNF2S8g8lKi6r5r+D4XpS9JE8/DpCXEpouGiPP3WpmFgxdbB58kYZ@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywbyf2vrxXL+FROB2V3Llw3ApMxHytwUv/U2OyWOgFP0LdddDnI
+	qkc1TJfN/vMj8PRTPGWCWOhKJyLIecDrUQXlTOdffwD3vgY/MbvjEJQy
+X-Gm-Gg: ASbGncuTrj0zlSMOw9A2vewaL2UynD0XaHVTbJhbYaIxleyz9W2ATjgrFO4pT+f4c57
+	s+rzsqRsr7QWLM167rfYydi7HYnCpVEBfFUHP22D3kbYkNVeNVPYE6dLvBJkQplx0zUVmZClQZX
+	0ddQP9wq6n8FfSgpTzYxers0MImeleNXJp8UYgSoGCDDP/13qn5+hSt2zKRUZOoe82YzAP90w6R
+	dEHElsxa8jKx4hSaj5FK3ta1IFsz1Wm5AcFi6QMsZaW5hyd5CSNzAh3au7ZVOOXSc+xlaCMqqzd
+	5BsElLmAm0UqXgSKXfeBBCH40nchjQfjFUr/5GjUPGKkQnCZXke7TuT74RLi/guS49gq8jeoIkM
+	UnTUt11j3nxXpmOvgHzFj
+X-Google-Smtp-Source: AGHT+IHi5E7zdxk5Xx1zNsFA7iW/9W+ly6JoYYOQpr1wOvbx3PwGi79d4r5orR4ephm9fAhIPcGSfQ==
+X-Received: by 2002:a17:906:7951:b0:ae0:c355:2140 with SMTP id a640c23a62f3a-af8fd9f7520mr1057608066b.45.1753991914859;
+        Thu, 31 Jul 2025 12:58:34 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0766f9sm163674566b.24.2025.07.31.12.58.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 12:58:34 -0700 (PDT)
+Date: Thu, 31 Jul 2025 12:58:31 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Pablo Neira Ayuso <pablo@netfilter.org>, 
+	Jozsef Kadlecsik <kadlec@netfilter.org>, Nikolay Aleksandrov <razor@blackwall.org>, 
+	Ido Schimmel <idosch@nvidia.com>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, David Ahern <dsahern@kernel.org>, 
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Arnd Bergmann <arnd@arndb.de>, Simon Horman <horms@kernel.org>, 
+	netfilter-devel@vger.kernel.org, coreteam@netfilter.org, bridge@lists.linux.dev, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] netfilter: add back NETFILTER_XTABLES dependencies
+Message-ID: <uadem53d2ymvjweqjdvilrpr2vwsfxu2gbwyaopacyl3x2zmhl@raeakspbvdiw>
+References: <20250730214538.466973-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730214538.466973-1-arnd@kernel.org>
 
-Now that there are easy-to-use HMAC-SHA256 library functions, use these
-in net/mptcp/crypto.c instead of open-coding the HMAC algorithm.
+On Wed, Jul 30, 2025 at 11:45:32PM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Some Kconfig symbols were changed to depend on the 'bool' symbol
+> NETFILTER_XTABLES_LEGACY, which means they can now be set to built-in
+> when the xtables code itself is in a loadable module:
+> 
+> x86_64-linux-ld: vmlinux.o: in function `arpt_unregister_table_pre_exit':
+> (.text+0x1831987): undefined reference to `xt_find_table'
+> x86_64-linux-ld: vmlinux.o: in function `get_info.constprop.0':
+> arp_tables.c:(.text+0x1831aab): undefined reference to `xt_request_find_table_lock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x1831bea): undefined reference to `xt_table_unlock'
+> x86_64-linux-ld: vmlinux.o: in function `do_arpt_get_ctl':
+> arp_tables.c:(.text+0x183205d): undefined reference to `xt_find_table_lock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x18320c1): undefined reference to `xt_table_unlock'
+> x86_64-linux-ld: arp_tables.c:(.text+0x183219a): undefined reference to `xt_recseq'
+> 
+> Change these to depend on both NETFILTER_XTABLES and
+> NETFILTER_XTABLES_LEGACY.
+> 
+> Fixes: 9fce66583f06 ("netfilter: Exclude LEGACY TABLES on PREEMPT_RT.")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
 
-Remove the WARN_ON_ONCE() for messages longer than SHA256_DIGEST_SIZE.
-The new implementation handles all message lengths correctly.
-
-The mptcp-crypto KUnit test still passes after this change.
-
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- net/mptcp/crypto.c | 35 ++---------------------------------
- 1 file changed, 2 insertions(+), 33 deletions(-)
-
-diff --git a/net/mptcp/crypto.c b/net/mptcp/crypto.c
-index b08ba959ac4fd..31948e18d97da 100644
---- a/net/mptcp/crypto.c
-+++ b/net/mptcp/crypto.c
-@@ -20,11 +20,10 @@
-  *       Brandon Heller <brandonh@stanford.edu>
-  */
- 
- #include <linux/kernel.h>
- #include <crypto/sha2.h>
--#include <linux/unaligned.h>
- 
- #include "protocol.h"
- 
- #define SHA256_DIGEST_WORDS (SHA256_DIGEST_SIZE / 4)
- 
-@@ -41,43 +40,13 @@ void mptcp_crypto_key_sha(u64 key, u32 *token, u64 *idsn)
- 		*idsn = be64_to_cpu(*((__be64 *)&mptcp_hashed_key[6]));
- }
- 
- void mptcp_crypto_hmac_sha(u64 key1, u64 key2, u8 *msg, int len, void *hmac)
- {
--	u8 input[SHA256_BLOCK_SIZE + SHA256_DIGEST_SIZE];
--	u8 key1be[8];
--	u8 key2be[8];
--	int i;
-+	__be64 key[2] = { cpu_to_be64(key1), cpu_to_be64(key2) };
- 
--	if (WARN_ON_ONCE(len > SHA256_DIGEST_SIZE))
--		len = SHA256_DIGEST_SIZE;
--
--	put_unaligned_be64(key1, key1be);
--	put_unaligned_be64(key2, key2be);
--
--	/* Generate key xored with ipad */
--	memset(input, 0x36, SHA256_BLOCK_SIZE);
--	for (i = 0; i < 8; i++)
--		input[i] ^= key1be[i];
--	for (i = 0; i < 8; i++)
--		input[i + 8] ^= key2be[i];
--
--	memcpy(&input[SHA256_BLOCK_SIZE], msg, len);
--
--	/* emit sha256(K1 || msg) on the second input block, so we can
--	 * reuse 'input' for the last hashing
--	 */
--	sha256(input, SHA256_BLOCK_SIZE + len, &input[SHA256_BLOCK_SIZE]);
--
--	/* Prepare second part of hmac */
--	memset(input, 0x5C, SHA256_BLOCK_SIZE);
--	for (i = 0; i < 8; i++)
--		input[i] ^= key1be[i];
--	for (i = 0; i < 8; i++)
--		input[i + 8] ^= key2be[i];
--
--	sha256(input, SHA256_BLOCK_SIZE + SHA256_DIGEST_SIZE, hmac);
-+	hmac_sha256_usingrawkey((const u8 *)key, sizeof(key), msg, len, hmac);
- }
- 
- #if IS_MODULE(CONFIG_MPTCP_KUNIT_TEST)
- EXPORT_SYMBOL_GPL(mptcp_crypto_hmac_sha);
- #endif
-
-base-commit: d6084bb815c453de27af8071a23163a711586a6c
--- 
-2.50.1
-
+Tested-by: Breno Leitao <leitao@debian.org>
 
