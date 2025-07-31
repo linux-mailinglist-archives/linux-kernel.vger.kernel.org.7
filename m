@@ -1,337 +1,164 @@
-Return-Path: <linux-kernel+bounces-752088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ADCE7B1711F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 72AD0B1711C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E2BC18C4E0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:25:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F323172771
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7E02D190C;
-	Thu, 31 Jul 2025 12:24:04 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21C472D0C6E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:24:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF472D028F;
+	Thu, 31 Jul 2025 12:23:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="da0AN4f0"
+Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C02B2C15AB;
+	Thu, 31 Jul 2025 12:23:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964643; cv=none; b=XHwrMEPfQmjHiSQlNjka5hRyRuY5Vvcw94drhF37/PbKoLtjZv0ub/is+NKrPsfyw/xlnqVdGq3GEY+aZmo/FIO54nPnfGtdnIlAelTUXZgcZ4Ho9t9WsDJVX7vv1k+wItfrJmXUqCRytL96sRxSyHX54ULNoy2eyg36A8NfeOw=
+	t=1753964639; cv=none; b=jQE4R0LBog9zHZ8pehsn1Sz1MjPx4MlCQ0CdTcbmqOJBL2BqFFkxJeU2KXwT5NtKg6w9C5vyaKJStbQq7rpKR/isLPa/PGrsPWXmqWu/jMInPXQJgx1fZ1BwiUgTvbkoJeVlXdrsAB/BYa7y8iVpBf2qTTXQieaw0HU9wTpVWl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964643; c=relaxed/simple;
-	bh=4mUqqfWFbeqBFqVX7/22IGMArPVRbN3M/cT4VUWhSHQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Xp0N44TOJhTjuRYI5lrXQzTEN5mWakto3HJpn3KtHXECT9zpRq8pSb6WZh84i5ZI/agw+4CrRlUjOdy05B/9CwCOzhGdAc1i3fYaBgAnVT1SRlRtgctzsT/YR/2YQWLPS7DHTT/uePjbYMnVBDVjERmYDkBTE+8NLZuLm66x8Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DCACD1D13;
-	Thu, 31 Jul 2025 05:23:53 -0700 (PDT)
-Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 4596E3F673;
-	Thu, 31 Jul 2025 05:24:00 -0700 (PDT)
-From: Leo Yan <leo.yan@arm.com>
+	s=arc-20240116; t=1753964639; c=relaxed/simple;
+	bh=W2rzemPNZ5LHIh3axfvSwTD/JyOmPeLqDRY4zT2WFX8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HjOB1AnDdAGIFhtxApOtx3AJKJ9B2W9ewm5DuhQHCzwI1A0GSE6+0qYD6Rx9I3JdJejx5sF5SpsPBv9MgzT1S/PPRTDRNgoacCFhiseeNQ0+r9/Fd1QzBRb3ixAyW0w716leuJ3RCkOZa6ce91wnfnTYaUhnIMz3pCFSVHt/uYg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=da0AN4f0; arc=none smtp.client-ip=213.97.179.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=A2cnIcYq8PYCOz0CiDn3JmBVvPWO3oydQ8f10T5DUIQ=; b=da0AN4f0+vcYbAOfpRx3yohuhn
+	Jo+LGA6RRiI522vbFqa1y+1KBpCOF+7JPKUcc7enPLsvidQtVFiVOTADl65uwbkV5baheAGASz54y
+	UPTDJ7ZuSK+09OrnbQ9ZD9srXYZsvq7s/iB27KXeX6Lgi6PxLit2pZwHuFwLRLxKNvOcNCTRt54ai
+	lNlCrWIzmSwFPFUNLF6afDLnqzsutdjtS3Riwl25+wTsskqg/4gPjh5b9dnxrMfNQkPk7C2PaITwj
+	jHtIYa9f3JGZJnxX/V8geV1IP28Z+Z6MSlKvAz9IKMEKv1g44K5CtmLIbtbR/3NTY1z+OmUUu/f8C
+	mHXV0l+g==;
+Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
+	by fanzine2.igalia.com with utf8esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1uhSK3-006d90-Gv; Thu, 31 Jul 2025 14:23:47 +0200
+From: Luis Henriques <luis@igalia.com>
+To: Christian Brauner <brauner@kernel.org>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,  Miklos Szeredi
+ <miklos@szeredi.hu>,  Bernd Schubert <bschubert@ddn.com>,
+  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+In-Reply-To: <20250731-diamant-kringeln-7f16e5e96173@brauner> (Christian
+	Brauner's message of "Thu, 31 Jul 2025 13:33:09 +0200")
+References: <8734afp0ct.fsf@igalia.com>
+	<20250729233854.GV2672029@frogsfrogsfrogs> <87freddbcf.fsf@igalia.com>
+	<20250731-diamant-kringeln-7f16e5e96173@brauner>
 Date: Thu, 31 Jul 2025 13:23:41 +0100
-Subject: [PATCH v6 05/10] coresight: Appropriately disable trace bus clocks
+Message-ID: <877bzo5z1u.fsf@igalia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-arm_cs_fix_clock_v4-v6-5-1dfe10bb3f6f@arm.com>
-References: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
-In-Reply-To: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
-To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
- Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
- Anshuman Khandual <anshuman.khandual@arm.com>, 
- Yeoreum Yun <yeoreum.yun@arm.com>, 
- Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Mark Brown <broonie@kernel.org>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
- linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1753964630; l=9848;
- i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
- bh=4mUqqfWFbeqBFqVX7/22IGMArPVRbN3M/cT4VUWhSHQ=;
- b=umiR4vdmBSz0KQ5qtnPw3k90NJqfNDgoo2OpZv6Ie0FtPJ7ccaKvBIYHwmeaT0qgRu/9loA6u
- EgRaoK6+Ra8Ayg7OfitS6bnj05eAdg4PSbrted4vYHIbwmKptqZcG2g
-X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
- pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Some CoreSight components have trace bus clocks 'atclk' and are enabled
-using clk_prepare_enable().  These clocks are not disabled when modules
-exit.
+On Thu, Jul 31 2025, Christian Brauner wrote:
 
-As atclk is optional, use devm_clk_get_optional_enabled() to manage it.
-The benefit is the driver model layer can automatically disable and
-release clocks.
+> On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+>> Hi Darrick,
+>>=20
+>> On Tue, Jul 29 2025, Darrick J. Wong wrote:
+>>=20
+>> > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+>> >> Hi!
+>> >>=20
+>> >> I know this has been discussed several times in several places, and t=
+he
+>> >> recent(ish) addition of NOTIFY_RESEND is an important step towards be=
+ing
+>> >> able to restart a user-space FUSE server.
+>> >>=20
+>> >> While looking at how to restart a server that uses the libfuse lowlev=
+el
+>> >> API, I've created an RFC pull request [1] to understand whether adding
+>> >> support for this operation would be something acceptable in the proje=
+ct.
+>> >
+>> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+>> > could restart itself.  It's unclear if doing so will actually enable us
+>> > to clear the condition that caused the failure in the first place, but=
+ I
+>> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+>> > aren't totally crazy.
+>>=20
+>> Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse =
+do
+>> the restart itself.  Instead, it simply adds some visibility into the
+>> opaque data structures so that a FUSE server could re-initialise a sessi=
+on
+>> without having to go through a full remount.
+>>=20
+>> But sure, there are other things that could be added to the library as
+>> well.  For example, in my current experiments, the FUSE server needs sta=
+rt
+>> some sort of "file descriptor server" to keep the fd alive for the
+>> restart.  This daemon could be optionally provided in libfuse itself,
+>> which could also be used to store all sorts of blobs needed by the file
+>> system after recovery is done.
+>
+> Fwiw, for most use-cases you really just want to use systemd's file
+> descriptor store to persist the /dev/fuse connection:
+> https://systemd.io/FILE_DESCRIPTOR_STORE/
 
-Check the returned value with IS_ERR() to detect errors but leave the
-NULL pointer case if the clock is not found.  And remove the error
-handling codes which are no longer needed.
+Thank you, Christian.  I guess I should have mentioned systemd's fdstore
+here.  In fact, I knew about it, but in my experiments I decided not to
+use it because it's trivial to keep the fd alive[1] (and also because my
+test environment doesn't run systemd).
 
-Fixes: d1839e687773 ("coresight: etm: retrieve and handle atclk")
-Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
-Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
-Tested-by: James Clark <james.clark@linaro.org>
-Signed-off-by: Leo Yan <leo.yan@arm.com>
----
- drivers/hwtracing/coresight/coresight-etb10.c      | 10 +++---
- drivers/hwtracing/coresight/coresight-etm3x-core.c |  9 ++----
- drivers/hwtracing/coresight/coresight-funnel.c     | 36 +++++++---------------
- drivers/hwtracing/coresight/coresight-replicator.c | 34 ++++++--------------
- drivers/hwtracing/coresight/coresight-stm.c        |  9 ++----
- drivers/hwtracing/coresight/coresight-tpiu.c       | 10 ++----
- 6 files changed, 34 insertions(+), 74 deletions(-)
+But still, any eventual libfuse support could still include the interface
+with fdstore for that.
 
-diff --git a/drivers/hwtracing/coresight/coresight-etb10.c b/drivers/hwtracing/coresight/coresight-etb10.c
-index d5efb085b30d36b51ca591c1b595ef82481f5569..8e81b41eb22264f17606050fa8da277aae05c5cc 100644
---- a/drivers/hwtracing/coresight/coresight-etb10.c
-+++ b/drivers/hwtracing/coresight/coresight-etb10.c
-@@ -730,12 +730,10 @@ static int etb_probe(struct amba_device *adev, const struct amba_id *id)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get(&adev->dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
-+
- 	dev_set_drvdata(dev, drvdata);
- 
- 	/* validity for the resource is already checked by the AMBA core */
-diff --git a/drivers/hwtracing/coresight/coresight-etm3x-core.c b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-index 1c6204e1442211be6f3d7ca34bd2251ba796601b..baba2245b1dfb31f4bf19080e20c33df3a5b854f 100644
---- a/drivers/hwtracing/coresight/coresight-etm3x-core.c
-+++ b/drivers/hwtracing/coresight/coresight-etm3x-core.c
-@@ -832,12 +832,9 @@ static int etm_probe(struct amba_device *adev, const struct amba_id *id)
- 
- 	spin_lock_init(&drvdata->spinlock);
- 
--	drvdata->atclk = devm_clk_get(&adev->dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
- 
- 	drvdata->cpu = coresight_get_cpu(dev);
- 	if (drvdata->cpu < 0)
-diff --git a/drivers/hwtracing/coresight/coresight-funnel.c b/drivers/hwtracing/coresight/coresight-funnel.c
-index 36fc4e991458c112521c4261d73f3e58e9a3f995..b044a4125310ba4f8c88df295ec3684ab266682f 100644
---- a/drivers/hwtracing/coresight/coresight-funnel.c
-+++ b/drivers/hwtracing/coresight/coresight-funnel.c
-@@ -213,7 +213,6 @@ ATTRIBUTE_GROUPS(coresight_funnel);
- 
- static int funnel_probe(struct device *dev, struct resource *res)
- {
--	int ret;
- 	void __iomem *base;
- 	struct coresight_platform_data *pdata = NULL;
- 	struct funnel_drvdata *drvdata;
-@@ -231,12 +230,9 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get(dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
- 
- 	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
- 	if (IS_ERR(drvdata->pclk))
-@@ -248,10 +244,8 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	 */
- 	if (res) {
- 		base = devm_ioremap_resource(dev, res);
--		if (IS_ERR(base)) {
--			ret = PTR_ERR(base);
--			goto out_disable_clk;
--		}
-+		if (IS_ERR(base))
-+			return PTR_ERR(base);
- 		drvdata->base = base;
- 		desc.groups = coresight_funnel_groups;
- 		desc.access = CSDEV_ACCESS_IOMEM(base);
-@@ -261,10 +255,9 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	dev_set_drvdata(dev, drvdata);
- 
- 	pdata = coresight_get_platform_data(dev);
--	if (IS_ERR(pdata)) {
--		ret = PTR_ERR(pdata);
--		goto out_disable_clk;
--	}
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
-+
- 	dev->platform_data = pdata;
- 
- 	raw_spin_lock_init(&drvdata->spinlock);
-@@ -274,17 +267,10 @@ static int funnel_probe(struct device *dev, struct resource *res)
- 	desc.pdata = pdata;
- 	desc.dev = dev;
- 	drvdata->csdev = coresight_register(&desc);
--	if (IS_ERR(drvdata->csdev)) {
--		ret = PTR_ERR(drvdata->csdev);
--		goto out_disable_clk;
--	}
-+	if (IS_ERR(drvdata->csdev))
-+		return PTR_ERR(drvdata->csdev);
- 
--	ret = 0;
--
--out_disable_clk:
--	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
--	return ret;
-+	return 0;
- }
- 
- static int funnel_remove(struct device *dev)
-diff --git a/drivers/hwtracing/coresight/coresight-replicator.c b/drivers/hwtracing/coresight/coresight-replicator.c
-index 6dd24eb10a94b0eb28f4f27afab845227e22b96c..9e8bd36e7a9a2fd061f41c56242ac2b11549daf5 100644
---- a/drivers/hwtracing/coresight/coresight-replicator.c
-+++ b/drivers/hwtracing/coresight/coresight-replicator.c
-@@ -219,7 +219,6 @@ static const struct attribute_group *replicator_groups[] = {
- 
- static int replicator_probe(struct device *dev, struct resource *res)
- {
--	int ret = 0;
- 	struct coresight_platform_data *pdata = NULL;
- 	struct replicator_drvdata *drvdata;
- 	struct coresight_desc desc = { 0 };
-@@ -238,12 +237,9 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get(dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
- 
- 	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
- 	if (IS_ERR(drvdata->pclk))
-@@ -255,10 +251,8 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	 */
- 	if (res) {
- 		base = devm_ioremap_resource(dev, res);
--		if (IS_ERR(base)) {
--			ret = PTR_ERR(base);
--			goto out_disable_clk;
--		}
-+		if (IS_ERR(base))
-+			return PTR_ERR(base);
- 		drvdata->base = base;
- 		desc.groups = replicator_groups;
- 		desc.access = CSDEV_ACCESS_IOMEM(base);
-@@ -272,10 +266,8 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	dev_set_drvdata(dev, drvdata);
- 
- 	pdata = coresight_get_platform_data(dev);
--	if (IS_ERR(pdata)) {
--		ret = PTR_ERR(pdata);
--		goto out_disable_clk;
--	}
-+	if (IS_ERR(pdata))
-+		return PTR_ERR(pdata);
- 	dev->platform_data = pdata;
- 
- 	raw_spin_lock_init(&drvdata->spinlock);
-@@ -286,17 +278,11 @@ static int replicator_probe(struct device *dev, struct resource *res)
- 	desc.dev = dev;
- 
- 	drvdata->csdev = coresight_register(&desc);
--	if (IS_ERR(drvdata->csdev)) {
--		ret = PTR_ERR(drvdata->csdev);
--		goto out_disable_clk;
--	}
-+	if (IS_ERR(drvdata->csdev))
-+		return PTR_ERR(drvdata->csdev);
- 
- 	replicator_reset(drvdata);
--
--out_disable_clk:
--	if (ret && !IS_ERR_OR_NULL(drvdata->atclk))
--		clk_disable_unprepare(drvdata->atclk);
--	return ret;
-+	return 0;
- }
- 
- static int replicator_remove(struct device *dev)
-diff --git a/drivers/hwtracing/coresight/coresight-stm.c b/drivers/hwtracing/coresight/coresight-stm.c
-index f2de16e4d3b4cc0fc3fa06654fc7ddd9dee1e302..275d67b91dfd58002918c3e0ec0be077467c601a 100644
---- a/drivers/hwtracing/coresight/coresight-stm.c
-+++ b/drivers/hwtracing/coresight/coresight-stm.c
-@@ -842,12 +842,9 @@ static int __stm_probe(struct device *dev, struct resource *res)
- 	if (!drvdata)
- 		return -ENOMEM;
- 
--	drvdata->atclk = devm_clk_get(dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
- 
- 	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
- 	if (IS_ERR(drvdata->pclk))
-diff --git a/drivers/hwtracing/coresight/coresight-tpiu.c b/drivers/hwtracing/coresight/coresight-tpiu.c
-index b2559c6fac6d2f02e0038e583cd324d7165c5aee..8d6179c83e5d3194d1f90e10c88fcc1faccf0cd7 100644
---- a/drivers/hwtracing/coresight/coresight-tpiu.c
-+++ b/drivers/hwtracing/coresight/coresight-tpiu.c
-@@ -128,7 +128,6 @@ static const struct coresight_ops tpiu_cs_ops = {
- 
- static int __tpiu_probe(struct device *dev, struct resource *res)
- {
--	int ret;
- 	void __iomem *base;
- 	struct coresight_platform_data *pdata = NULL;
- 	struct tpiu_drvdata *drvdata;
-@@ -144,12 +143,9 @@ static int __tpiu_probe(struct device *dev, struct resource *res)
- 
- 	spin_lock_init(&drvdata->spinlock);
- 
--	drvdata->atclk = devm_clk_get(dev, "atclk"); /* optional */
--	if (!IS_ERR(drvdata->atclk)) {
--		ret = clk_prepare_enable(drvdata->atclk);
--		if (ret)
--			return ret;
--	}
-+	drvdata->atclk = devm_clk_get_optional_enabled(dev, "atclk");
-+	if (IS_ERR(drvdata->atclk))
-+		return PTR_ERR(drvdata->atclk);
- 
- 	drvdata->pclk = coresight_get_enable_apb_pclk(dev);
- 	if (IS_ERR(drvdata->pclk))
+[1] Obviously "it's trivial" for my experiments.  Doing it in a secure way
+    is probably a bit more challenging.
 
--- 
-2.34.1
+Cheers,
+--=20
+Lu=C3=ADs
 
+>
+>>=20
+>> >> The PR doesn't do anything sophisticated, it simply hacks into the op=
+aque
+>> >> libfuse data structures so that a server could set some of the sessio=
+ns'
+>> >> fields.
+>> >>=20
+>> >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+>> >> pass it to libfuse while recovering, after a restart or a crash.  The
+>> >> mentioned NOTIFY_RESEND should be used so that no requests are lost, =
+of
+>> >> course.  And there are probably other data structures that user-space=
+ file
+>> >> systems will have to keep track as well, so that everything can be
+>> >> restored.  (The parameters set in the INIT phase, for example.)
+>> >
+>> > Yeah, I don't know how that would work in practice.  Would the kernel
+>> > send back the old connection flags and whatnot via some sort of
+>> > FUSE_REINIT request, and the fuse server can either decide that it will
+>> > try to recover, or just bail out?
+>>=20
+>> That would be an option.  But my current idea would be that the server
+>> would need to store those somewhere and simply assume they are still OK
+>
+> The fdstore currently allows to associate a name with a file descriptor
+> in the fdstore. That name would allow you to associate the options with
+> the fuse connection. However, I would not rule it out that additional
+> metadata could be attached to file descriptors in the fdstore if that's
+> something that's needed.
 
