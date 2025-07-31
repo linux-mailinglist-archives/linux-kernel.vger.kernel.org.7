@@ -1,211 +1,312 @@
-Return-Path: <linux-kernel+bounces-751729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751732-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C56B1B16CCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:35:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7F8B16CD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F126F7A6B5E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:34:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ED7B33BEBD6
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:42:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1A029CB3E;
-	Thu, 31 Jul 2025 07:35:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 397C0208CA;
+	Thu, 31 Jul 2025 07:42:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="C5Xxl6oK"
-Received: from mail-ed1-f44.google.com (mail-ed1-f44.google.com [209.85.208.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="en2BCzPv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54831286885
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:35:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.44
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753947341; cv=none; b=YMI0jT2Ky+HsAuD8uTAQJrpG7+zhUc5WKF/93rWIHCDh0Ed9ZXdvl7h7psB8hsLEUHtCiKXl84tt6QDEEADvIvr3B+Dqk8nhXN0N5OhtNGJ2yXO0C810PIAVBuYF0OgFlUK+qQMd87pfBS17/vuaAo5EFevteBpMuyGY6IQ6Js0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753947341; c=relaxed/simple;
-	bh=Gdn9yZesKrtDa8CPMUqpXqONfI2istirVLcVIlDyMl8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KfdOJafUzQGrcphg+jHzcCax045BKmxbHWEmp+VWoQr//LX1wFkWWL78BHZ7zUHk9M7/oItYmNSL00kLXS4VzA2uI5pW0umyCf72jgFM95UpZRsBWb8qPUyOpzg3OkCiZChFte44vlryhHG9EFBu8FmKkYbDFKWCcVUfGgpWHwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=C5Xxl6oK; arc=none smtp.client-ip=209.85.208.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ed1-f44.google.com with SMTP id 4fb4d7f45d1cf-61543b05b7cso7826a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:35:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753947337; x=1754552137; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Mr4nI1RZ0aUC8kJED58iFvgqg3PeLMboTB7tYrXF+Rs=;
-        b=C5Xxl6oKxzIDyZSRnEfGxLPMzbZTBgRadVlsto2lz8GL+Mv3F32gADD7K86+FDw8zB
-         h1P/REB29SXqo8h+S+cc9O0GmwPz/yKepZdBdqoQsfSDuJ3+RrvUKQgi0PFUZcwyANdr
-         eRcBXEJE12EA4zML2Vs2fIa4OMr110BQFdtmlFqtR6spTaE7SLmn84J34MU9tSbq8v64
-         970DilFnaw1DeKa8uKxV4fbUjq9bCeshQpq//yQgv6fTM/FLUKZ3YduCCtlAdQbfirsw
-         9pmpIPG3pvOUBuAG1qkHD7JE8ECqgsiisajQfoaEd6zlSKwax4kbqs3NOSf3vBnBeSaI
-         beYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753947337; x=1754552137;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Mr4nI1RZ0aUC8kJED58iFvgqg3PeLMboTB7tYrXF+Rs=;
-        b=vd3/eg5xB3L6KP0sln9j5xb80FmAo/rPz/fVnyF9LRZ+t/XHo8pnyhtYI+6JpcVQm6
-         yjsNiSvvOlL/92AIiTw76Au89LWluNKKVbBENOufaRihWi8Ku5wgtxiDNQF8qJiCDEf2
-         +I6SiYnZixE0l4XHwzS09Whr4A7afhD7fqz2UbJyLroMmFpQLu0i49wW/gAsuNgRh2Rq
-         16AxxnIfGPLRQ9aH6+UmdsxSFc4qCfhupdBL5IobP58YA3iwgJt59t/3TGKIelQzA7Ho
-         bOYDJ7rpUr1XLYMpv3OA5aeaXXZ7cs+jZxTokykDG638DAj/v8+POAkylm/yUMVReXAM
-         gxbg==
-X-Forwarded-Encrypted: i=1; AJvYcCW2bEavvPVB465B9ybRYZqi53r1WaBFnYi887Jf0g3roLUaGl5TNUMtsllrHLIZOeqHwc7bFKGl4I9Ah0w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzOEaKhdkA6/Wcr70h1iuGfGTneYCv1fEgXTIdGRg1sqX0/gPUX
-	gQbGQ2HSPse/lFmJAQEUJeZPBhhO3qATGsuetF7fRG/MxXfALdsheCVxueuW1YN3MKfijhk7vJ7
-	kUElkCWUwmCDcF07/N0F2hDartSdY6DAvX58Mg8t1
-X-Gm-Gg: ASbGncsq3XsgCaY6xW/oKqoEBU/j3+5aWjOqEuLhygQZAtpusRJwBzgz7m4OWn5PVl3
-	Q/DM+8G4nvQ+Eiwbm8OQJB2t+JK6sYWsqvzwKnJH5tHEodDLBKk4HxsWwEy7mfU8btTMMf0v7zW
-	HXEcCP2ZI4aowKUxTkblt8EFekdY7tXN8rc0l/rSCwHj0ZHBgEd58lGh/QW54ZomyfO8Oo35CCy
-	OhTIEXW2ZIU+xtFx8zHG0OiqC5+bcLXzlnFsux9pQ==
-X-Google-Smtp-Source: AGHT+IHtcUhgi8RZY+pP59eZQXFisUqGh+rMLisfzq31p3eUyY8SyT/jd1+e3gmkieggdj/A0+p+GZoIA8lDB3fc2rk=
-X-Received: by 2002:a05:6402:24c6:b0:615:60d2:c013 with SMTP id
- 4fb4d7f45d1cf-615aeafd1c6mr38128a12.3.1753947337300; Thu, 31 Jul 2025
- 00:35:37 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DA2F2BD00E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:42:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753947729; cv=fail; b=GlxcaiEozMd5u6xkNrB/HJns+eCXlrQ+OkUYoc4/jJrbwDKRMt3hycbHyRbWN4KnOZWs6vCFYUjpmMk3TKvqgecTHwg5uTR2BgHWfDtPl/6YIBxXWFt823h0lJpaMiBURQhUTXmZEVH86LqYVrVjFwjOtxjpiipLhUZY1zlHsIE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753947729; c=relaxed/simple;
+	bh=oH78EcjIiw1zIphdpSOxPR9smc5Nah5+mZ3eB45QzL8=;
+	h=Date:From:To:CC:Subject:Message-ID:Content-Type:
+	 Content-Disposition:MIME-Version; b=WD923giJFhVCPmuDCZEbklh+qfFp+uqTi69uyHEGpwCFaBilNBlIuuNgAavPKw/dAzKFRL2tObJIExFppKDK4rPQrdnys5MovXKKXoWG0IZBSvLyzv8aqvypySi/KViSe0S/8910rD9WWI1LOgmsHU8xhKJ3S5nywzKKjoODNFI=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=en2BCzPv; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753947727; x=1785483727;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=oH78EcjIiw1zIphdpSOxPR9smc5Nah5+mZ3eB45QzL8=;
+  b=en2BCzPvh2AM44PZnOr74XqmJr8n98edYPhKMgnLl+VwdjC9E7VWkJ1f
+   p1gddglcNt5G+1233skoaggHbWQUrQ4mjem7W0/tvY/MUyhmPtkVlbJng
+   +D+enu6WGgjyhPhtTDV8lKVLDeZS73u+I0v6tJNObq3eNxHNBhJaJUp2H
+   Ml2Ygfncr8PzSxj7pQrRuoAZ7Yvd7ZPlrNZ69c0f42+sIkZKNBgKT/DBz
+   QM7dU32/RPGaKhZEQX5nfMJnv+im0vumF4xeiXKBhwoJdWkkTb4btxGG8
+   qPgTvCRY/IrMo5l5zFXYdO/mCpecVZa7CZp/oKTiMoK1G5jlCTb9+8epZ
+   w==;
+X-CSE-ConnectionGUID: 5/jcOYvyQjGzWM3ZBM5nXw==
+X-CSE-MsgGUID: QOp4iNPEReOZri/TBsMsWw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56339512"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="56339512"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:42:05 -0700
+X-CSE-ConnectionGUID: PSFw42vQQCG0nXIaXs0Gog==
+X-CSE-MsgGUID: 2l5aFv2pRM2AEDqTqFXF0A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="168590732"
+Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
+  by orviesa005.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:42:05 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 31 Jul 2025 00:42:04 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Thu, 31 Jul 2025 00:42:04 -0700
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (40.107.94.41) by
+ edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Thu, 31 Jul 2025 00:42:04 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KItbX2Vy17vwbiRKDiOQeyNOu25sZ+jLQ/Yww3RHrwk/EGmZRd71zkJzpXiIO6PvArvugE5WkBzl2DTQIW8iPL1mDA0yBteZPpSqvnnZMoEhzrJq4ilsPxbqE0lLSeoBzxB1OYYAqruWu5mGitXLY2rb21/XBzh0S4QzvFLKgelUMpnx7qRnuSSGL3s9hYmoBwoR9KFCLa+VSK1Hbh1AixnYIBbsfqEkKMmtAzXb7WOeaD9MRrtIcBEJY4R6qBG199XTwE9JayS/vrl5MLaeqLjlUGyIlQOZS3CrpO4eNuJQ/FKQkhzivnM6gpK7Po1ec/cWR/WFbZwTIz5BY6SdTA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p1EL4UEeSFoKfv/kjSHPGiv/NJ+yhalv4Qp3KwrESmY=;
+ b=bLk8OUSkYzsf01nOqc+ebYQ9cNhJYVLYxbatlFVvkeXtdfpV2k84nLy23TcCiT5d1FM6kJPW6vR/e9B0cVGXDCDV0LuNDGMWMli3OfpY8SgzeBrk5f7sOeKuDiZSN5NkkQ0AQKtkR+lOXsjbaIZKfdTfpq1vaNND2dDUZP3i9YK+o5/HFQTI7ctOrJ5Dxhp1MS96iM25wdQ/oWfEDEvEXt2vZZ8FfLiIzhsLmjrOZ+hYy9jTA2iAHhrjr1t7+SuMLqVjT6EDTdaf6L99NQsVOqdhK+PZ9NtxJAXE4k1Z2ub3i0xBKn5fMwd3D6hPFNM1VZ6DB/sd02ry8byNC/QErQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
+ by IA1PR11MB7869.namprd11.prod.outlook.com (2603:10b6:208:3f6::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Thu, 31 Jul
+ 2025 07:41:22 +0000
+Received: from LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c]) by LV3PR11MB8603.namprd11.prod.outlook.com
+ ([fe80::4622:29cf:32b:7e5c%3]) with mapi id 15.20.8989.013; Thu, 31 Jul 2025
+ 07:41:22 +0000
+Date: Thu, 31 Jul 2025 15:41:10 +0800
+From: kernel test robot <oliver.sang@intel.com>
+To: Ingo Molnar <mingo@kernel.org>
+CC: <oe-lkp@lists.linux.dev>, <lkp@intel.com>, <linux-kernel@vger.kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Juri Lelli <juri.lelli@redhat.com>, "Linus
+ Torvalds" <torvalds@linux-foundation.org>, Mel Gorman <mgorman@suse.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>, Shrikanth Hegde
+	<sshegde@linux.ibm.com>, Steven Rostedt <rostedt@goodmis.org>, "Valentin
+ Schneider" <vschneid@redhat.com>, Vincent Guittot
+	<vincent.guittot@linaro.org>, <aubrey.li@linux.intel.com>,
+	<yu.c.chen@intel.com>, <oliver.sang@intel.com>
+Subject: [linus:master] [sched/smp]  cac5cefbad:
+ BUG:kernel_NULL_pointer_dereference,address
+Message-ID: <202507311445.69f901a3-lkp@intel.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+X-ClientProxiedBy: SGXP274CA0018.SGPP274.PROD.OUTLOOK.COM (2603:1096:4:b8::30)
+ To LV3PR11MB8603.namprd11.prod.outlook.com (2603:10b6:408:1b6::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730170733.3829267-1-surenb@google.com> <20250731015241.3576-1-hdanton@sina.com>
-In-Reply-To: <20250731015241.3576-1-hdanton@sina.com>
-From: Lokesh Gidra <lokeshgidra@google.com>
-Date: Thu, 31 Jul 2025 00:35:25 -0700
-X-Gm-Features: Ac12FXwJBI4mVpBBqUWfGr9jR9lO9A344ujt5HbmzXkVYW0YulijvoNB_gKKPWo
-Message-ID: <CA+EESO4mkiedqVMCV3fEnB-xeBMKyct1_WA=YDFVbqSGU4F+6A@mail.gmail.com>
-Subject: Re: [PATCH 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles a
- THP hole
-To: Hillf Danton <hdanton@sina.com>
-Cc: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org, peterx@redhat.com, 
-	linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com, 
-	syzbot <syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com>, 
-	stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV3PR11MB8603:EE_|IA1PR11MB7869:EE_
+X-MS-Office365-Filtering-Correlation-Id: 0cc21f54-bafd-4965-7b8f-08ddd005a510
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?lobf52vWt6lyp/pzkt4oEEbFbb024xh9VWC2z8RzDcKAjS+1KUreNxc1hR5y?=
+ =?us-ascii?Q?DDVmDo+soXamup81TySu2QNbXaufYJUl8t6cReVLvejczlZQugTLeZ9P/DQz?=
+ =?us-ascii?Q?5PFgDiCNhvQNN2QUT4EsVwiQeTLFxDzL62CN3HiNwUgb8nDUkiK6VbJ/qdnD?=
+ =?us-ascii?Q?350mOWaWOlV1J5M5il5nguJyYVm7DChod+A2b5QiMRAOv1t99+cvyiqie8md?=
+ =?us-ascii?Q?8NdmITKU6nsgqHgAH1VpIC5EKr/HUvRlaPvA9x7W4pVjgJzS8vJYm7aW2sia?=
+ =?us-ascii?Q?A1GP/6pNBClvq10eRyew6RMd5M/s7W01u7ZBACy0FODdQrLPioFlTePQBSfp?=
+ =?us-ascii?Q?11SUF2mV6sRD/6r7O3Gs5xkXI+8sWFKXNvHyRa01VahKImGbfefYoZqj1csA?=
+ =?us-ascii?Q?HZFM0jQtMU3dwXpkA41jVvVAAwL+GutfgQgZT5LMM8JX3/glcFe0vV70+ix4?=
+ =?us-ascii?Q?kQnebLpnhmGuqu4Yy/JnmkjenE9jfAuwkw95yzoOXO2XwTMZnUS9Ep/bgx8P?=
+ =?us-ascii?Q?ELWn1y8oS8df8gkyXv2shlSBNlwtMwkw5YimEAHOx5NGh6bdA84KOBGQWbB9?=
+ =?us-ascii?Q?h4zu7U6ezlLsqZwH9VyOU4DFaKP9HvbmAvoTgnzw37Dw81vStvekPX1t6aJJ?=
+ =?us-ascii?Q?xEa4mkSZG5u2eOY/eEPYHIZl6P2t3ppt2SKmoCTcJEPu9ppLI1FQhGSJ4OJI?=
+ =?us-ascii?Q?mrlNZzsjNLuUQ4jM+NAgAHOO8h0I2c3y9kGgNkoJW065ohOeNfwylfSxZ40G?=
+ =?us-ascii?Q?zZ03DHqwUiiAGtRawqUnr4VZgpBjAYAwYoxcWexVHli4aGeVcEyjo1axtZGD?=
+ =?us-ascii?Q?n18n2/SbAv49Tgn4ObuDWm7YRemdxBoYysuc0i9RHTzrlwzLq5d4HG2++6x+?=
+ =?us-ascii?Q?AdQvNN5pdmydCrIkCl/1VsPTk2nyHzPpxwj+HESEaf3BuH6KnTnkiQL5bsML?=
+ =?us-ascii?Q?fp/NVKleKQFdhI6NG4a5xx4KKYcuLBS7tOYT9j5jOhjW2xOliBZrKVpvjd7i?=
+ =?us-ascii?Q?7oP/2jWy0wL5i+QccA92mEu7dfROVbW5JWgp0BkiDlIt5dCR8kI8v10VCb+K?=
+ =?us-ascii?Q?DZ8BGv+rwMbiKh0ZgjZiZJ5RXhQTEyFSn4fHedCbePjoYzjXVF8gjrXFz8Jv?=
+ =?us-ascii?Q?4mbSmE3Wm6/DeYqCiL4sfAQ2gj0s8WUwAP4E9xAejcbtO3H9AlQU1Fh3w6Ap?=
+ =?us-ascii?Q?pc/Okw6sNFPsC2MY8yLPb57X/DQi84zlXHX6+J3T8snSEwHUKW2xcRDEsNrT?=
+ =?us-ascii?Q?uGHKyt6jO1LgCdc3t63liq9oVsKC1zBTbImqsyoTPMuteH967/fgjRAeBBlS?=
+ =?us-ascii?Q?Q0CBDKWdpNBi6vlZMb6sHBgt51DerbEed3ZIqA3pQFe3NBMJnqZ8BUVRU9RW?=
+ =?us-ascii?Q?SD1UvHSwQmWYR4XFG6wSoREGollD?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV3PR11MB8603.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?HZjyT5q+EOxTgCe4knZNTkxaotS06Tcsp6OkHl6TTN+YEdY2vHOw+1lffg2S?=
+ =?us-ascii?Q?0fnqcRogBcxgiJV2qwvhbetYvPn9EOvDXnCh5R6/Bs/wh5eciN+mBaQ6cjUC?=
+ =?us-ascii?Q?wUbsDv+Rbp9Tim2C78ECMgBTNYoyVsQ2OkDcewub6HJJSHNbC5sOIJbbc05r?=
+ =?us-ascii?Q?nqVtIP1I8IkLTLN94UxAcYuLvDokjhDmC9Rpew9RA9ur4Y6Gnewbp1VJOCDE?=
+ =?us-ascii?Q?l0+UghQ/0A64NxrqzqCnwFEdLtH4lUlGOjyPCwrwrMDwBo4quVLGM+KntTeV?=
+ =?us-ascii?Q?Se/8FjqMIfXcB55Dbu12x7svetpFSsu9/Faxcl4/MSu6If7DeMiE22CiYWvL?=
+ =?us-ascii?Q?TgW4DEpQsfgC3WdLYAdYiZdsghLh89O2U6WBN1w2g07d1CWtMay3qUKllIGA?=
+ =?us-ascii?Q?rLv4AQIWc05xbeJLud4V4BrTZREw1vKIXj0FcZkA0DkyqG7rRb2/pAXu1gak?=
+ =?us-ascii?Q?l7wEvbR5dg5lEqgyv7fJyzCW3NAUMPl8sYSkuxakhWqiNsFRJ7eDcC53Dc33?=
+ =?us-ascii?Q?v6QPlWgjvnbOapQxYLauHRMr4nPXh7iIKwLrca1qW3wGVAsVysiZ0AMYPCRL?=
+ =?us-ascii?Q?5NzVZ/DtN0bxFz79kbc5ogEXwiXaFzK7Y286/Gt/WaC8LFom0owXCkJ2j3W+?=
+ =?us-ascii?Q?yI2cBLZJsg41eFEt1I8vkO8Gm3auBgT0fshKHXk8v7pDL38bx9FiArcotFUn?=
+ =?us-ascii?Q?ghnNi7V2ZwI4fgKdkCDprAWdFt5DHqKftpk1jQT2WN7IV+f+OutJLelXVVVi?=
+ =?us-ascii?Q?J54AUlaDVX+jMplOtdTRJgkLyBWLb575OA5ugUZXBEKZHJMN2+UaBXlnmXQq?=
+ =?us-ascii?Q?lytwc7gNR+13IskF7WcxqKqNFh+JZ6Ecx1/uHrFbPMclliFoUAnK/D28v++a?=
+ =?us-ascii?Q?iQNXe0PPRUgswU44BLaEwcCmOJdVoKYPraM4jfIvRQlisk6hs+r5y2VnGO19?=
+ =?us-ascii?Q?Dedyz3z+JsHAxg4NsOB/YpZ5+ycGbK/N+jGATvA6bOZ97XAk++rIHsjBCBBg?=
+ =?us-ascii?Q?oMNnF3K25nFEJ7UwCx8rDNMySltoPt/Z4utIH/GBAfIWghihfBkXv9VO8KV2?=
+ =?us-ascii?Q?RDbfFu0f0kdx6umziAExYFEtyIjkYveM7tGo6jA3UDtpNHnIkxPH90YMVvh6?=
+ =?us-ascii?Q?Nk50b8TaD6VmbVzmXKHEbull5wI6+W0jlMXMEXd2nOkd6NzUputJVH8c7gz8?=
+ =?us-ascii?Q?4SW96uqwmowRW4tU7cG5O9afQkhcJhmgW+Zq8osKGDCNWC1O9/bUQxdsBQG/?=
+ =?us-ascii?Q?Qd2P7fHn6JyJClcwJ64VMBtvjoGOaZm6WLHN4i/66PLYdRFnbfDzyHxmBlye?=
+ =?us-ascii?Q?A8iIMaOV3PmVAEJWwsJpkbI4OZtELC/eenWhV2+RqqIyR7i9kbG/PtiSpq2z?=
+ =?us-ascii?Q?jVWpJotI/69niusR5vTCfpTPYlHbgZtbI7sduJf2T7kod/xnzr7BNn6127EM?=
+ =?us-ascii?Q?xAuNQZl7dBVRq6aVWTrIX+qfScoEhNfHDtUzRM88JYEjigEVxm+kUsjqskz0?=
+ =?us-ascii?Q?uMrmmaCO0r5sIHc1eOza3Lpo58rk8Srte5rjMg3/kZDi1QJ81b7n75kZ9BuF?=
+ =?us-ascii?Q?AV9QaqO1DglWbBefrd5r/W55HgHIAnQ6CzTxoG0ibREpgGKOH0OQV/+D+zHw?=
+ =?us-ascii?Q?8A=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 0cc21f54-bafd-4965-7b8f-08ddd005a510
+X-MS-Exchange-CrossTenant-AuthSource: LV3PR11MB8603.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 07:41:22.0309
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: aSG+QqCsmfHpr7SZ3qRjSMptNPbPRpI3o0C0ybi9u33ZCndKdK9e5a7B//TTbt8VB5H2j1Mwg4oatLtEb8Eg2g==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7869
+X-OriginatorOrg: intel.com
 
-On Wed, Jul 30, 2025 at 6:58=E2=80=AFPM Hillf Danton <hdanton@sina.com> wro=
-te:
->
-> #syz test
->
-> When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
-> encounters a non-present THP, it fails to properly recognize an unmapped
-> hole and tries to access a non-existent folio, resulting in
-> a crash. Add a check to skip non-present THPs.
->
-Thanks Suren for promptly addressing this issue.
 
-> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@goog=
-le.com/
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Cc: stable@vger.kernel.org
-> ---
->  mm/userfaultfd.c | 38 +++++++++++++++++++++++---------------
->  1 file changed, 23 insertions(+), 15 deletions(-)
->
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index cbed91b09640..60be8080ddd0 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -1818,27 +1818,35 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, u=
-nsigned long dst_start,
->
->                 ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
->                 if (ptl) {
-> -                       /* Check if we can move the pmd without splitting=
- it. */
-> -                       if (move_splits_huge_pmd(dst_addr, src_addr, src_=
-start + len) ||
-> -                           !pmd_none(dst_pmdval)) {
-> -                               struct folio *folio =3D pmd_folio(*src_pm=
-d);
-> +                       if (pmd_present(*src_pmd) || is_pmd_migration_ent=
-ry(*src_pmd)) {
-> +                               /* Check if we can move the pmd without s=
-plitting it. */
-> +                               if (move_splits_huge_pmd(dst_addr, src_ad=
-dr, src_start + len) ||
-> +                                   !pmd_none(dst_pmdval)) {
-> +                                       if (pmd_present(*src_pmd)) {
-> +                                               struct folio *folio =3D p=
-md_folio(*src_pmd);
-> +
-> +                                               if (!folio || (!is_huge_z=
-ero_folio(folio) &&
-> +                                                              !PageAnonE=
-xclusive(&folio->page))) {
-> +                                                       spin_unlock(ptl);
-> +                                                       err =3D -EBUSY;
-> +                                                       break;
-> +                                               }
-> +                                       }
->
-> -                               if (!folio || (!is_huge_zero_folio(folio)=
- &&
-> -                                              !PageAnonExclusive(&folio-=
->page))) {
->                                         spin_unlock(ptl);
-> -                                       err =3D -EBUSY;
-> -                                       break;
-> +                                       split_huge_pmd(src_vma, src_pmd, =
-src_addr);
-> +                                       /* The folio will be split by mov=
-e_pages_pte() */
-> +                                       continue;
->                                 }
->
-> +                               err =3D move_pages_huge_pmd(mm, dst_pmd, =
-src_pmd,
-> +                                                         dst_pmdval, dst=
-_vma, src_vma,
-> +                                                         dst_addr, src_a=
-ddr);
-> +                       } else {
-> +                               /* nothing to do to move a hole */
->                                 spin_unlock(ptl);
-> -                               split_huge_pmd(src_vma, src_pmd, src_addr=
-);
-> -                               /* The folio will be split by move_pages_=
-pte() */
-> -                               continue;
-> +                               err =3D 0;
-I think we need to act here depending on whether
-UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is set or not.
+hi, Ingo Molnar and all,
 
-           err =3D (mode & UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES) ? 0 : -ENOENT;
+this report is just FYI what we observed in our tests.
 
-Also, IMO, the step_size in this case should be the minimum of
-remaining length and HPAGE_PMD_SIZE.
->                         }
-> -
-> -                       err =3D move_pages_huge_pmd(mm, dst_pmd, src_pmd,
-> -                                                 dst_pmdval, dst_vma, sr=
-c_vma,
-> -                                                 dst_addr, src_addr);
->                         step_size =3D HPAGE_PMD_SIZE;
->                 } else {
->                         if (pmd_none(*src_pmd)) {
-I have a related question/doubt: why do we populate the page-table
-hierarchy on the src side [1] (and then also at line 1857) when a hole
-is found? IMHO, it shouldn't be needed. Depending on whether
-UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES is set or not, it should either
-return -ENOENT, or continue past the hole. Please correct me if I'm
-wrong.
+the randconfig (https://download.01.org/0day-ci/archive/20250731/202507311445.69f901a3-lkp@intel.com/config-6.16.0-rc1-00022-gcac5cefbade9)
+has no CONFIG_SMP
+# CONFIG_SMP is not set
 
-[1] https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L1797
+so cac5cefbad and parent go different pathes in boot tests.
 
->
-> base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
-> --
-> 2.50.1.552.g942d659e1b-goog
+we don't have enough knowledge if the boot failure caused by some changes
+in cac5cefbad itself or just exposed by it. thanks
+
+
+Hello,
+
+kernel test robot noticed "BUG:kernel_NULL_pointer_dereference,address" on:
+
+commit: cac5cefbade90ff0bb0b393d301fa3b5234cf056 ("sched/smp: Make SMP unconditional")
+https://git.kernel.org/cgit/linux/kernel/git/torvalds/linux.git master
+
+in testcase: boot
+
+config: x86_64-randconfig-2005-20250721
+compiler: gcc-12
+test machine: qemu-system-x86_64 -enable-kvm -cpu SandyBridge -smp 2 -m 16G
+
+(please refer to attached dmesg/kmsg for entire log/backtrace)
+
+
++---------------------------------------------+------------+------------+
+|                                             | 5202c25dd1 | cac5cefbad |
++---------------------------------------------+------------+------------+
+| boot_successes                              | 6          | 0          |
+| boot_failures                               | 0          | 6          |
+| BUG:kernel_NULL_pointer_dereference,address | 0          | 6          |
+| Oops                                        | 0          | 6          |
+| Kernel_panic-not_syncing:Fatal_exception    | 0          | 6          |
++---------------------------------------------+------------+------------+
+
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <oliver.sang@intel.com>
+| Closes: https://lore.kernel.org/oe-lkp/202507311445.69f901a3-lkp@intel.com
+
+
+[    3.998720][    T1] BUG: kernel NULL pointer dereference, address: 0000000000000000
+[    3.998877][    T1] #PF: supervisor instruction fetch in kernel mode
+[    3.998877][    T1] #PF: error_code(0x0010) - not-present page
+[    3.998877][    T1] PGD 0 P4D 0
+[    3.998877][    T1] Oops: Oops: 0010 [#1] KASAN
+[    3.998877][    T1] CPU: 0 UID: 0 PID: 1 Comm: swapper/0 Tainted: G                T   6.16.0-rc1-00022-gcac5cefbade9 #1 PREEMPT(full)  c1cc10a5b834db7fda46e0874391a29691b85f16
+[    3.998877][    T1] Tainted: [T]=RANDSTRUCT
+[    3.998877][    T1] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.2-debian-1.16.2-1 04/01/2014
+[    3.998877][    T1] RIP: 0010:0x0
+[ 3.998877][ T1] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+
+Code starting with the faulting instruction
+===========================================
+[    3.998877][    T1] RSP: 0000:ffff888103647a80 EFLAGS: 00010046
+[    3.998877][    T1] RAX: dffffc0000000000 RBX: ffff888104243800 RCX: 0000000000000000
+[    3.998877][    T1] RDX: 1ffffffff0909fd1 RSI: ffff888103647ae0 RDI: ffff888104243800
+[    3.998877][    T1] RBP: ffff888103647ab0 R08: 0000000000000000 R09: 0000000000000000
+[    3.998877][    T1] R10: 0000000000000000 R11: 0000000000000000 R12: ffff888103647ae0
+[    3.998877][    T1] R13: ffff888102a78000 R14: 0000000000000000 R15: ffffffff8484fe20
+[    3.998877][    T1] FS:  0000000000000000(0000) GS:0000000000000000(0000) knlGS:0000000000000000
+[    3.998877][    T1] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[    3.998877][    T1] CR2: ffffffffffffffd6 CR3: 0000000004ac0000 CR4: 00000000000406b0
+[    3.998877][    T1] DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+[    3.998877][    T1] DR3: 0000000000000000 DR6: 00000000fffe07f0 DR7: 0000000000000400
+[    3.998877][    T1] Call Trace:
+[    3.998877][    T1]  <TASK>
+[ 3.998877][ T1] __do_set_cpus_allowed (kernel/sched/core.c:2757) 
+[ 3.998877][ T1] do_set_cpus_allowed (kernel/sched/core.c:2786) 
+[ 3.998877][ T1] ? set_cpus_allowed_common (kernel/sched/core.c:2768) 
+[ 3.998877][ T1] ? do_raw_spin_lock (kernel/locking/spinlock_debug.c:88 kernel/locking/spinlock_debug.c:115) 
+[ 3.998877][ T1] ? _raw_spin_lock_irqsave (kernel/locking/spinlock.c:163) 
+[ 3.998877][ T1] ? kthread_affine_preferred (kernel/kthread.c:888 (discriminator 3)) 
+[ 3.998877][ T1] kthread_affine_preferred (kernel/kthread.c:889 (discriminator 3)) 
+[ 3.998877][ T1] ? kthreadd (kernel/kthread.c:858) 
+[ 3.998877][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
+[ 3.998877][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
+[ 3.998877][ T1] rcu_thread_affine_rnp (kernel/rcu/tree.c:4116) 
+[ 3.998877][ T1] ? rcu_boost (kernel/rcu/tree.c:4116) 
+[ 3.998877][ T1] rcu_spawn_one_boost_kthread (kernel/rcu/tree_plugin.h:1237 (discriminator 31)) 
+[ 3.998877][ T1] ? rcu_thread_affine_rnp (kernel/rcu/tree_plugin.h:1216) 
+[ 3.998877][ T1] rcu_spawn_rnp_kthreads (kernel/rcu/tree.c:4137 kernel/rcu/tree.c:4179) 
+[ 3.998877][ T1] ? rcu_spawn_one_boost_kthread (kernel/rcu/tree.c:4175) 
+[ 3.998877][ T1] ? __sanitizer_cov_trace_pc (kernel/kcov.c:217) 
+[ 3.998877][ T1] ? ftrace_likely_update (arch/x86/include/asm/smap.h:53 kernel/trace/trace_branch.c:223) 
+[ 3.998877][ T1] rcu_spawn_gp_kthread (kernel/rcu/tree.c:4549 (discriminator 31)) 
+[ 3.998877][ T1] ? rcu_spawn_core_kthreads+0x180/0x180 
+[ 3.998877][ T1] do_one_initcall (init/main.c:1274) 
+[ 3.998877][ T1] ? trace_initcall_level (init/main.c:1264) 
+[ 3.998877][ T1] kernel_init_freeable (init/main.c:1378 init/main.c:1572) 
+[ 3.998877][ T1] ? rest_init (init/main.c:1465) 
+[ 3.998877][ T1] kernel_init (init/main.c:1475) 
+[ 3.998877][ T1] ? rest_init (init/main.c:1465) 
+[ 3.998877][ T1] ret_from_fork (arch/x86/kernel/process.c:154) 
+[ 3.998877][ T1] ? rest_init (init/main.c:1465) 
+[ 3.998877][ T1] ret_from_fork_asm (arch/x86/entry/entry_64.S:255) 
+[    3.998877][    T1]  </TASK>
+[    3.998877][    T1] Modules linked in:
+[    3.998877][    T1] CR2: 0000000000000000
+[    3.998877][    T1] ---[ end trace 0000000000000000 ]---
+[    3.998877][    T1] RIP: 0010:0x0
+[ 3.998877][ T1] Code: Unable to access opcode bytes at 0xffffffffffffffd6.
+
+Code starting with the faulting instruction
+===========================================
+
+
+The kernel config and materials to reproduce are available at:
+https://download.01.org/0day-ci/archive/20250731/202507311445.69f901a3-lkp@intel.com
+
+
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
+
 
