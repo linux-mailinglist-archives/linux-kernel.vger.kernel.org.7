@@ -1,126 +1,215 @@
-Return-Path: <linux-kernel+bounces-752149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752148-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 50303B171D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:13:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 33C01B171D0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:13:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A94667B1E7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:11:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09B324E6CC8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:12:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9172C326E;
-	Thu, 31 Jul 2025 13:12:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7AF2C3248;
+	Thu, 31 Jul 2025 13:12:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="fsCh+FCM"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aolaepm/"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B635230BC9;
-	Thu, 31 Jul 2025 13:12:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 255273A8C1;
+	Thu, 31 Jul 2025 13:12:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753967573; cv=none; b=lX/c2IZvUhkk2+TqcwSDJ84CiQLQCrlxzm3EEHKyeWEVBhJtBNVplcUqqF5Ie/iUEasYdcBHM8iIQ6/cl56EouKUwLp9/8thzD/2redf1S/5K7ij6U4Avq4IuBWoW6IIabIa+UEGPom+4YbVB263O0rQ7F2kqfVHP8u0/RnYT6I=
+	t=1753967572; cv=none; b=gqO59FHyaEnCIVdU0iC+Mcq0qM0vXSTnmmg5bRs94I/nS3gKcjdM6LRhpnsk5dI5IuH8UdeQyQhiSIyDv7754eycI8hxk28CZpJJD19DMYZBVuk2FPtAW/MhTnZi7zQswn349aNvIFooO86PyX9RiHNXLVl1J9FUWei6cQ4ZLsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753967573; c=relaxed/simple;
-	bh=jZLdsZQ5WfGV3C4JEATfrhBZZ5kJbzDkacOrP/JQ+O4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AQwHgT6dLHScN9Ma7/WTpgaFlvTQbtTKLlqW3OFRFkhRVvv0F6+UNc5YucNrXCFYDZvf6IM7ayhSVyBrLMVyJhESJ5EA9K3APu02T2/gzzhkaI/qKIR1CxU1uATEAsRO0bbKYTgnH0REqfCILJO9i2aDbXqV2oQ05E9Dz7+fHXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=fsCh+FCM; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753967572; x=1785503572;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=jZLdsZQ5WfGV3C4JEATfrhBZZ5kJbzDkacOrP/JQ+O4=;
-  b=fsCh+FCMV7ChIIcNc4FNeTJHEfWuyK4yOZ/Q9/vIdHBrUUOeY1lpPlwD
-   Au1iPoa58BobYBCGSN5IWTbfRBPe6fjgBPnE13N9oP5O6csvdbBZLIBSu
-   mhQK/0sRG6wufTqP2GPCtM/PuEWEPUeLT5ABrKUMFWcBx2+Y4sy+vNSqt
-   Q4xXofq7neiC8FEY8Zn6/u3shcpClrRwhiqN67BFLVPaLRunsojEW/y/a
-   StPsdMsUk4ThFmaQENrX2iQGNQOvINyHm+jXQ8aFztTKvKdnsGWFI2ecJ
-   J8vIikvl8XP4Cty8neN6ZwulJBMdKSZ8/dTXPyXnDES0q1u3u3qywoqAr
-   w==;
-X-CSE-ConnectionGUID: NwMuP1n6QCWIA5NwcWK3Pw==
-X-CSE-MsgGUID: RHUmvB6WTkOLbCIBnyKTgg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="59937212"
-X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
-   d="scan'208";a="59937212"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 06:12:52 -0700
-X-CSE-ConnectionGUID: evHrPxyvTyeRQx9IDd9DLg==
-X-CSE-MsgGUID: DbrrJ+e0R5mAtm/WdaGwjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,353,1747724400"; 
-   d="scan'208";a="168657129"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 31 Jul 2025 06:12:49 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhT5T-0003mu-1H;
-	Thu, 31 Jul 2025 13:12:47 +0000
-Date: Thu, 31 Jul 2025 21:12:01 +0800
-From: kernel test robot <lkp@intel.com>
-To: Neeraj Kumar <s.neeraj@samsung.com>, linux-cxl@vger.kernel.org,
-	nvdimm@lists.linux.dev, linux-kernel@vger.kernel.org,
-	gost.dev@samsung.com
-Cc: oe-kbuild-all@lists.linux.dev, a.manzanares@samsung.com,
-	vishak.g@samsung.com, neeraj.kernel@gmail.com,
-	Neeraj Kumar <s.neeraj@samsung.com>
-Subject: Re: [PATCH V2 03/20] nvdimm/namespace_label: Add namespace label
- changes as per CXL LSA v2.1
-Message-ID: <202507312016.4ga8UpF5-lkp@intel.com>
-References: <20250730121209.303202-4-s.neeraj@samsung.com>
+	s=arc-20240116; t=1753967572; c=relaxed/simple;
+	bh=2ZmX7sn6WqXiiCv2ozkaiBMaJRWIoJBKVEEHm5DW9eI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fh9IwxsTVTegz2+RflAwRbELS4gvLrWbh3+RjDz2p5+kI0CoUfYKd25YzqpafYoM6kaICwhZXXNNuKarPHIwqt+W8T3/LinMOus8yPqRV3moE6/9rM1rE/JeY3PbLbJSul1LDcgtnCwpzqMwBY/DH4aVJhNZz/sNhVxOMssbtPg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aolaepm/; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b79bddd604so314310f8f.0;
+        Thu, 31 Jul 2025 06:12:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753967569; x=1754572369; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AqqlX6H3NPp9rTTwA7tpGQOcaxAxM3NcsBHKv6NCffQ=;
+        b=aolaepm/SbDWKiGBfHLoyW4O3kH1XGLZ5KuBwRAT/kWeM3X0xlFY9acmaYAqeiurZm
+         aVGa3Zw7PxKOL+Wfhb33MMFSFPTmCcYLCBNiL+7dzNO6xDEroTbHL6ZND0l9rhd1lYzB
+         GK3tyiV9q74NazTIbaWA+wAx5sSeHYsUZyiz9wJChvakgbkW98PuzXneGKHGXPb9PhPL
+         ovdcnr57xbtsFvkOURribFnK+uRWyXQttyWiSv7hYdq5GKMVdx3CVRe9aiO8y+BTz+C/
+         s5eWa2+wLudRmt5Lpf41r6zMAbR90IKlY9TpzbFaT5qBputU7wrNOa9x8ezWdfkCYWKU
+         oPZQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753967569; x=1754572369;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AqqlX6H3NPp9rTTwA7tpGQOcaxAxM3NcsBHKv6NCffQ=;
+        b=moOPRbU59FQ2TQE7GGk9kQcytjmr32dZJnPMoaciYoX4DclV6Xu605VFQpK+wjzF7I
+         5ocEQuy+hlxdj25GoGuioXxrKlmt9MHFld+P9JP3U1S6NurHhdU2V0kJKkHnwwmDKYxI
+         JbBcbaPdp9Zhxr5W1m1gasgOCS1NetuSAMjSM29J5xPIqjThe8TFoWQoy5QUBfgtJ9I8
+         cmY9ygj2f8E2hLdhuxUUegUFK+LpBpo76Iollj+siVLVnpHGBDaS4tqybkNu0Q+wFQmT
+         NTbdULPkWsPfN75Z9ZDZnMGzBw3ogs2k7W/WWjzAImOx9dssWRZv6oxyT+zvuZr0Jm4s
+         PRKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUwOb8zuICL5dR/PN3q8zl2Ws30L8Ka0JyGLaZIv8fwoRnyOpngb1XotuvmRIcuWGAyTiRRPPQuxlE=@vger.kernel.org, AJvYcCVr1iUs8QV/Md+YuUAXjantQFd03r4huinbAptyqUBxNQI5Vgdw9xqHnW/g0L+A9kwkZrsnFWHY1mMcgX+EFg==@vger.kernel.org, AJvYcCX9pr57O5YuItJpEWljgu1V9nBQFAdocLsuLJJ7tYbUvbkvCeQlvBOdlsQlExK4w3HMkilMMtws8p2W7eG9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2CBDtTADZ6TK6a+9L0E8SdxrTO5B+vJdR3eAX0guDc0Asgw2u
+	hW0KFajiXsBX5b1jHqQOxKhqAisYyZIxOoRj+6iydh4aBFO3BmfYOa8H
+X-Gm-Gg: ASbGnctvs2vn0fQBDeErn8In1KYUiDPRfcrDk7srbxZvWp8/XY8ieK09y4ZH++bQTs/
+	MLqaau9ZTOZn/K0rFvIj6OsPcG8gd3Iwvnz9iOMc4mRvJ7moZqxymZtggi6NCsLTQoPtoCYIWp/
+	LCp4+VcOYA5vVWGuENqtceQFzlwMhoK5bwALrkFA/tGhg+cHXoL+bHoDLnozfOo5lpWB1fdiA+H
+	M6Fvth1U9QlqjYAuXrOKODMtG033SjlUJopncfPfJUPoQXUhHrxWJqx3eI4pdqFNCyR+siDRvK+
+	u2sxkaRJaeCJBRHYFH1/D+55py+IpTrbvN5/INmd0sNLeD5cQMFPhQioLR3xftqXXvEPA69bddE
+	o6TUfrTY/UR7ZnTsbjX4VQeg75S6RBFiZDXvEV0kQj64Xk/VDdxsXIgwnWTmeIEVQTjqz3UsU0k
+	PtTGH3KQ==
+X-Google-Smtp-Source: AGHT+IGD13KMKtVRmBQPVTq0wp4e/PMVr1M8WgWSZYRxA7tPP99Spg6G2qe4tDRrHVIXUfkLlzE9cA==
+X-Received: by 2002:a05:6000:188f:b0:3a5:2465:c0c8 with SMTP id ffacd0b85a97d-3b794fbe44emr5778988f8f.7.1753967569066;
+        Thu, 31 Jul 2025 06:12:49 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::4:3f35])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee621adsm27160265e9.30.2025.07.31.06.12.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 06:12:48 -0700 (PDT)
+Message-ID: <c9896875-fb86-4b6c-8091-27c8152ba6d0@gmail.com>
+Date: Thu, 31 Jul 2025 14:12:44 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730121209.303202-4-s.neeraj@samsung.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] prctl: extend PR_SET_THP_DISABLE to optionally
+ exclude VM_HUGEPAGE
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
+ linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, corbet@lwn.net,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
+ baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com, Matthew Wilcox <willy@infradead.org>
+References: <20250731122825.2102184-1-usamaarif642@gmail.com>
+ <20250731122825.2102184-2-usamaarif642@gmail.com>
+ <dda2e42f-7c20-4530-93f9-d3a73bb1368b@lucifer.local>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <dda2e42f-7c20-4530-93f9-d3a73bb1368b@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Neeraj,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on f11a5f89910a7ae970fbce4fdc02d86a8ba8570f]
+On 31/07/2025 13:40, Lorenzo Stoakes wrote:
+> On Thu, Jul 31, 2025 at 01:27:18PM +0100, Usama Arif wrote:
+> [snip]
+>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>> Tested-by: Usama Arif <usamaarif642@gmail.com>
+>> Cc: Jonathan Corbet <corbet@lwn.net>
+>> Cc: Andrew Morton <akpm@linux-foundation.org>
+>> Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+>> Cc: Zi Yan <ziy@nvidia.com>
+>> Cc: Baolin Wang <baolin.wang@linux.alibaba.com>
+>> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+>> Cc: Nico Pache <npache@redhat.com>
+>> Cc: Ryan Roberts <ryan.roberts@arm.com>
+>> Cc: Dev Jain <dev.jain@arm.com>
+>> Cc: Barry Song <baohua@kernel.org>
+>> Cc: Vlastimil Babka <vbabka@suse.cz>
+>> Cc: Mike Rapoport <rppt@kernel.org>
+>> Cc: Suren Baghdasaryan <surenb@google.com>
+>> Cc: Michal Hocko <mhocko@suse.com>
+>> Cc: Usama Arif <usamaarif642@gmail.com>
+>> Cc: SeongJae Park <sj@kernel.org>
+>> Cc: Jann Horn <jannh@google.com>
+>> Cc: Liam R. Howlett <Liam.Howlett@oracle.com>
+>> Cc: Yafang Shao <laoar.shao@gmail.com>
+>> Cc: Matthew Wilcox <willy@infradead.org>
+> 
+> You don't need to include these Cc's, Andrew will add them for you.
+> 
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> 
+> Shouldn't this also be signed off by you? 2/5 and 3/5 has S-o-b for both
+> David and yourself?
+> 
+> This is inconsistent at the very least.
+> 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Neeraj-Kumar/nvdimm-label-Introduce-NDD_CXL_LABEL-flag-to-set-cxl-label-format/20250730-202209
-base:   f11a5f89910a7ae970fbce4fdc02d86a8ba8570f
-patch link:    https://lore.kernel.org/r/20250730121209.303202-4-s.neeraj%40samsung.com
-patch subject: [PATCH V2 03/20] nvdimm/namespace_label: Add namespace label changes as per CXL LSA v2.1
-config: x86_64-randconfig-121-20250731 (https://download.01.org/0day-ci/archive/20250731/202507312016.4ga8UpF5-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507312016.4ga8UpF5-lkp@intel.com/reproduce)
+Signed-off-by: Usama Arif <usamaarif642@gmail.com>
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507312016.4ga8UpF5-lkp@intel.com/
+The Ccs were added by David, and I didn't want to remove them.
 
-sparse warnings: (new ones prefixed by >>)
-   drivers/nvdimm/label.c: note: in included file (through drivers/nvdimm/nd-core.h):
->> drivers/nvdimm/nd.h:314:37: sparse: sparse: incorrect type in assignment (different base types) @@     expected restricted __le32 [usertype] align @@     got restricted __le16 [usertype] @@
-   drivers/nvdimm/nd.h:314:37: sparse:     expected restricted __le32 [usertype] align
-   drivers/nvdimm/nd.h:314:37: sparse:     got restricted __le16 [usertype]
+>>
+>> ---
+>>
+> 
+> Nothing below the --- will be included in the patch, so we can drop the
+> below, it's just noise that people can find easily if needed.
+> 
+>> At first, I thought of "why not simply relax PR_SET_THP_DISABLE", but I
+>> think there might be real use cases where we want to disable any THPs --
+>> in particular also around debugging THP-related problems, and
+>> "never" not meaning ... "never" anymore ever since we add MADV_COLLAPSE.
+>> PR_SET_THP_DISABLE will also block MADV_COLLAPSE, which can be very
+>> helpful for debugging purposes. Of course, I thought of having a
+>> system-wide config option to modify PR_SET_THP_DISABLE behavior, but
+>> I just don't like the semantics.
+> 
+> [snip]
+> 
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+> 
+> This S-o-b is weird, it's in a comment essentially. Let's drop that too
+> please.
 
-vim +314 drivers/nvdimm/nd.h
 
-   308	
-   309	static inline void nsl_set_alignment(struct nvdimm_drvdata *ndd,
-   310					     struct nd_namespace_label *ns_label,
-   311					     u32 align)
-   312	{
-   313		if (ndd->cxl)
- > 314			ns_label->cxl.align = __cpu_to_le16(align);
-   315	}
-   316	
+Everything below --- was added by David I believe to provide further explanation that
+doesn't need to be included in the commit message, and I didn't want to remove it
+or his 2nd sign-off, as its discarded anyways. Its useful info that can just be
+ignored.
 
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>> ---
+>>  Documentation/filesystems/proc.rst |  5 ++-
+>>  fs/proc/array.c                    |  2 +-
+>>  include/linux/huge_mm.h            | 20 +++++++---
+>>  include/linux/mm_types.h           | 13 +++----
+>>  include/uapi/linux/prctl.h         | 10 +++++
+>>  kernel/sys.c                       | 59 ++++++++++++++++++++++++------
+>>  mm/khugepaged.c                    |  2 +-
+>>  7 files changed, 82 insertions(+), 29 deletions(-)
+>>
+> 
+> [snip]
+> 
+>> +static int prctl_get_thp_disable(unsigned long arg2, unsigned long arg3,
+>> +				 unsigned long arg4, unsigned long arg5)
+>> +{
+>> +	unsigned long *mm_flags = &current->mm->flags;
+>> +
+>> +	if (arg2 || arg3 || arg4 || arg5)
+>> +		return -EINVAL;
+>> +
+>> +	/* If disabled, we return "1 | flags", otherwise 0. */
+> 
+> Thanks! LGTM.
+> 
+>> +	if (test_bit(MMF_DISABLE_THP_COMPLETELY, mm_flags))
+>> +		return 1;
+>> +	else if (test_bit(MMF_DISABLE_THP_EXCEPT_ADVISED, mm_flags))
+>> +		return 1 | PR_THP_DISABLE_EXCEPT_ADVISED;
+>> +	return 0;
+>> +}
+>> +
+> 
+> [snip]
+
 
