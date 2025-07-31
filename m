@@ -1,39 +1,46 @@
-Return-Path: <linux-kernel+bounces-752323-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752324-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1792B17410
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:43:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5284B17413
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:43:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9242B584D40
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:43:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16A6E584D83
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:43:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77FB81DF273;
-	Thu, 31 Jul 2025 15:43:01 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8A96D515;
-	Thu, 31 Jul 2025 15:42:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9E71DDA15;
+	Thu, 31 Jul 2025 15:43:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="GVVs9BMK"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41AA2D515;
+	Thu, 31 Jul 2025 15:43:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753976581; cv=none; b=hGPf/Mu2vw+YTakbekoYzBEx5JgegT04vb+tkK8Cyp9K8sEOEmYO74k9QNwC2OO7/9FLDzflAqwDVZzb46QXovROV0vE4pvA3Etr16/+yqHul0laCfwtTFYeKoQYNuPKCUHJ8PSIJ5oXUN8PphWBqPFqore2Pf393ndy1oS5++g=
+	t=1753976620; cv=none; b=ktdBImoD8yRxr9KSGYgYtIIVAdaS7jKjdeZ+LzlK9rbSImgKThQhIxMQsDsuvV92EC+i/72s21uxPnEZXvHom94DtEDWodRcgCdL9JaDZaruQaeBvoLAMShrKQushw0de7KEwDjJxJ0UYvaV84Vf0DjjytqOjDh1G02DW9k9HL8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753976581; c=relaxed/simple;
-	bh=1WWG3Zuv514jM/ZH3hlMOl2lhe3oKQ046ntFyv4CX4Y=;
+	s=arc-20240116; t=1753976620; c=relaxed/simple;
+	bh=pXDN5BVQvE+Lf+U4XpfBddw3aUhzamvB5vMx6LuxteE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DQYU2gq4uKDZTC5ZEK/pLjVuC2ypmZEibG+wuUK0YRAn/YXLJDQUq4LW9Tx1E2m4LZkHe9cT4X5tvEyUQj5TlgEogWD88Fr+bxOqjIsDsNqOl0tFgi0hCkdoth0MWRdrKji8Z9iMGE3Zx9kwiB2GclBEJpbITZb9hMfw6XQoroY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 01A141BF7;
-	Thu, 31 Jul 2025 08:42:50 -0700 (PDT)
-Received: from [192.168.1.127] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C46A23F66E;
-	Thu, 31 Jul 2025 08:42:54 -0700 (PDT)
-Message-ID: <d887e166-0fd8-4b70-b6b7-6d3c0138d87b@arm.com>
-Date: Thu, 31 Jul 2025 16:42:52 +0100
+	 In-Reply-To:Content-Type; b=RgckIvYvEkZ186UC8DW5Evf6EHESev4ypAUO+/MEY2cXst1IvHIFpGhIYXISTuSUxK0+ZPjtwT6eFSXXo+gqBQy/P1yawB5vWr0rEI5M9UuCKt1GpMcE7wxagJvUv2Y17wqo6sCLGr1MeD+D45edvgTP/Yx575enb0QPV5x/grk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=GVVs9BMK; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: from [100.79.64.80] (unknown [4.194.122.162])
+	by linux.microsoft.com (Postfix) with ESMTPSA id 0FF432117669;
+	Thu, 31 Jul 2025 08:43:29 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 0FF432117669
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1753976612;
+	bh=Q5WATQ/rql3wsSDIyfkwGauwnqHAuGg6FZHUhagfDbQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=GVVs9BMKe16JeC7NuOagTIy+oxap9EhwgxZI1d7J0wh1OVF2XP8v9+xYdp4n8DiDc
+	 MhicKJpoFwqTj96B+NeWxvDTGeYkzllsLyW/MrGBjQKeBZVI6EhAS41ubF245puZcY
+	 /QJU7XJBCsaEG2hLq9FfL24+IiRiRzXDd8mxujaQ=
+Message-ID: <4abf15ac-de18-48d4-9420-19d40f26fdd2@linux.microsoft.com>
+Date: Thu, 31 Jul 2025 21:13:27 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,152 +48,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tracing/probes: Allow use of BTF names to dereference
- pointers
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Linux trace kernel <linux-trace-kernel@vger.kernel.org>,
- bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Mark Rutland <mark.rutland@arm.com>, Peter Zijlstra <peterz@infradead.org>,
- Namhyung Kim <namhyung@kernel.org>, Takaya Saeki <takayas@google.com>,
- Tom Zanussi <zanussi@kernel.org>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Ian Rogers <irogers@google.com>,
- aahringo@redhat.com
-References: <20250729113335.2e4f087d@batman.local.home>
- <dc817ce7-9551-4365-bd94-3c102a6acda8@arm.com>
- <20250731092953.2d8eea47@gandalf.local.home>
+Subject: Re: [PATCH 6.12] Drivers: hv: Make the sysfs node size for the ring
+ buffer dynamic
+To: Michael Kelley <mhklinux@outlook.com>,
+ =?UTF-8?Q?Thomas_Wei=C3=9Fschuh?= <linux@weissschuh.net>
+Cc: "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ "K . Y . Srinivasan" <kys@microsoft.com>,
+ Haiyang Zhang <haiyangz@microsoft.com>, Long Li <longli@microsoft.com>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ "linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250723070200.2775-1-namjain@linux.microsoft.com>
+ <SN6PR02MB41579080792040E166B5EB69D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <e1d394bd-93a6-4d8f-b7f9-fc01449df98a@t-8ch.de>
+ <SN6PR02MB415792B00B021D4DB76A6014D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Language: en-US
-From: Douglas Raillard <douglas.raillard@arm.com>
-In-Reply-To: <20250731092953.2d8eea47@gandalf.local.home>
+From: Naman Jain <namjain@linux.microsoft.com>
+In-Reply-To: <SN6PR02MB415792B00B021D4DB76A6014D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 31-07-2025 14:29, Steven Rostedt wrote:
-> On Thu, 31 Jul 2025 12:44:49 +0100
-> Douglas Raillard <douglas.raillard@arm.com> wrote:
-> 
->>> The delimiter is '.' and the first item is the structure name. Then the
->>> member of the structure to get the offset of. If that member is an
->>> embedded structure, another '.MEMBER' may be added to get the offset of
->>> its members with respect to the original value.
+
+
+On 7/30/2025 1:15 AM, Michael Kelley wrote:
+> From: Thomas Weißschuh <linux@weissschuh.net> Sent: Tuesday, July 29, 2025 11:47 AM
+>>
+>> On 2025-07-29 18:39:45+0000, Michael Kelley wrote:
+>>> From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, July 23, 2025 12:02 AM
+>>>>
+>>>> The ring buffer size varies across VMBus channels. The size of sysfs
+>>>> node for the ring buffer is currently hardcoded to 4 MB. Userspace
+>>>> clients either use fstat() or hardcode this size for doing mmap().
+>>>> To address this, make the sysfs node size dynamic to reflect the
+>>>> actual ring buffer size for each channel. This will ensure that
+>>>> fstat() on ring sysfs node always returns the correct size of
+>>>> ring buffer.
+>>>>
+>>>> This is a backport of the upstream commit
+>>>> 65995e97a1ca ("Drivers: hv: Make the sysfs node size for the ring buffer dynamic")
+>>>> with modifications, as the original patch has missing dependencies on
+>>>> kernel v6.12.x. The structure "struct attribute_group" does not have
+>>>> bin_size field in v6.12.x kernel so the logic of configuring size of
+>>>> sysfs node for ring buffer has been moved to
+>>>> vmbus_chan_bin_attr_is_visible().
+>>>>
+>>>> Original change was not a fix, but it needs to be backported to fix size
+>>>> related discrepancy caused by the commit mentioned in Fixes tag.
+>>>>
+>>>> Fixes: bf1299797c3c ("uio_hv_generic: Align ring size to system page")
+>>>> Cc: <stable@vger.kernel.org> # 6.12.x
+>>>> Signed-off-by: Naman Jain <namjain@linux.microsoft.com>
+>>>> ---
+>>>>
+>>>> This change won't apply on older kernels currently due to missing
+>>>> dependencies. I will take care of them after this goes in.
+>>>>
+>>>> I did not retain any Reviewed-by or Tested-by tags, since the code has
+>>>> changed completely, while the functionality remains same.
+>>>> Requesting Michael, Dexuan, Wei to please review again.
+>>>>
+>>>> ---
+>>>>   drivers/hv/vmbus_drv.c | 2 +-
+>>>>   1 file changed, 1 insertion(+), 1 deletion(-)
+>>>>
+>>>> diff --git a/drivers/hv/vmbus_drv.c b/drivers/hv/vmbus_drv.c
+>>>> index 1f519e925f06..616e63fb2f15 100644
+>>>> --- a/drivers/hv/vmbus_drv.c
+>>>> +++ b/drivers/hv/vmbus_drv.c
+>>>> @@ -1810,7 +1810,6 @@ static struct bin_attribute chan_attr_ring_buffer = {
+>>>>   		.name = "ring",
+>>>>   		.mode = 0600,
+>>>>   	},
+>>>> -	.size = 2 * SZ_2M,
+>>>>   	.mmap = hv_mmap_ring_buffer_wrapper,
+>>>>   };
+>>>>   static struct attribute *vmbus_chan_attrs[] = {
+>>>> @@ -1866,6 +1865,7 @@ static umode_t vmbus_chan_bin_attr_is_visible(struct kobject *kobj,
+>>>>   	/* Hide ring attribute if channel's ring_sysfs_visible is set to false */
+>>>>   	if (attr ==  &chan_attr_ring_buffer && !channel->ring_sysfs_visible)
+>>>>   		return 0;
+>>>> +	attr->size = channel->ringbuffer_pagecount << PAGE_SHIFT;
 >>>
->>>     "+kmem_cache.size($arg1)" is equivalent to:
->>>
->>>     (*(struct kmem_cache *)$arg1).size
->>>
->>> Anonymous structures are also handled:
->>>
->>>     # echo 'e:xmit net.net_dev_xmit +net_device.name(+sk_buff.dev($skbaddr)):string' >> dynamic_events
+>>> Suppose a VM has two devices using UIO, such as DPDK network device with
+>>> a 2MiB ring buffer, and an fcopy device with a 16KiB ring buffer. Both devices
+>>> will be referencing the same static instance of chan_attr_ring_buffer, and the
+>>> .size field it contains. The above statement will change that .size field
+>>> between 2MiB and 16KiB as the /sys entries are initially populated, and as
+>>> the visibility is changed if the devices are removed and re-instantiated (which
+>>> is much more likely for fcopy than for netvsc). That changing of the .size
+>>> value will probably work most of the time, but it's racy if two devices with
+>>> different ring buffer sizes get instantiated or re-instantiated at the same time.
 >>
->> Not sure how hard that would be but the type of the expression could probably be inferred from
->> BTF as well in some cases. Some cases may be ambiguous (like char* that could be either a buffer
->> to display as hex or a null-terminated ASCII string) but BTF would still allow to restrict
->> to something sensible (e.g. prevent u32 for a char*).
+>> IIRC it works out in practice. While the global attribute instance is indeed
+>> modified back-and-forth the size from it will be *copied* into kernfs
+>> after each recalculation. So each attribute should get its own correct size.
 > 
-> Hmm, should be possible, but would require passing that information back to
-> the caller of the BTF lookup function.
-> 
-> 
-> 
->>> diff --git a/kernel/trace/trace_btf.c b/kernel/trace/trace_btf.c
->>> index 5bbdbcbbde3c..b69404451410 100644
->>> --- a/kernel/trace/trace_btf.c
->>> +++ b/kernel/trace/trace_btf.c
->>> @@ -120,3 +120,109 @@ const struct btf_member *btf_find_struct_member(struct btf *btf,
->>>    	return member;
->>>    }
->>>    
->>> +#define BITS_ROUNDDOWN_BYTES(bits) ((bits) >> 3)
->>> +
->>> +static int find_member(const char *ptr, struct btf *btf,
->>> +		       const struct btf_type **type, int level)
->>> +{
->>> +	const struct btf_member *member;
->>> +	const struct btf_type *t = *type;
->>> +	int i;
->>> +
->>> +	/* Max of 3 depth of anonymous structures */
->>> +	if (level > 3)
->>> +		return -1;
->>> +
->>> +	for_each_member(i, t, member) {
->>> +		const char *tname = btf_name_by_offset(btf, member->name_off);
->>> +
->>> +		if (strcmp(ptr, tname) == 0) {
->>> +			*type = btf_type_by_id(btf, member->type);
->>> +			return BITS_ROUNDDOWN_BYTES(member->offset);
->>
->> member->offset does not only contain the offset, and the offset may not be
->> a multiple of 8:
->> https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/btf.h#L126
->>
->>   From the BTF spec (https://docs.kernel.org/bpf/btf.html):
->>
->> If the kind_flag is set, the btf_member.offset contains
->> both member bitfield size and bit offset.
->> The bitfield size and bit offset are calculated as below.:
->>
->> #define BTF_MEMBER_BITFIELD_SIZE(val)   ((val) >> 24)
->> #define BTF_MEMBER_BIT_OFFSET(val)      ((val) & 0xffffff)
-> 
-> So basically just need to change that to:
-> 
-> 		if (strcmp(ptr, tname) == 0) {
-> 			int offset = BTF_MEMBER_BIT_OFFSET(member->offset);
-> 			*type = btf_type_by_id(btf, member->type);
-> 			return BITS_ROUNDDOWN_BYTES(offset);
-> 
-> ?
-
-This would work in practice for now, but strictly speaking you should check
-the kind_flag field in btf_type.info (bit 31) of the parent struct/union:
-https://elixir.bootlin.com/linux/v6.16/source/include/uapi/linux/btf.h#L38
-  __btf_member_bit_offset() seems to do exactly that.
-
-
-While writing that, I realized there is another subtlety: BTF encodes int member offsets in 2 different ways:
-1. Either their bit offset is encoded struct btf_member, and the btf_type of the member is an integer type with no leading padding bits.
-2. Or the rounded-down offset is encoded in struct btf_member and the integer type contains some leading padding bits information:
-https://docs.kernel.org/bpf/btf.html#btf-kind-int
-
-The 2nd case is somewhat surprising but BTF_KIND_INT has 3 pieces of information:
-1. The C signedness of the type.
-2. The number of value bits of the type.
-3. The offset of the 1st bit to interpret as being the value. Anything before is leading padding.
-
-That means that the actual bit offset of an int member's value in a parent struct is:
-
-   <offset of the member> + <offset of the type of the member>
-
-You could technically have all members with btf_member.offset == 0 and then encode the actual values offsets in the btf_type of the members.
-
+> The race I see is in fs/sysfs/group.c in the create_files() function. It calls the
+> is_bin_visible() function, which this patch uses to set the .size field of the static
+> attribute. Then creates_files() calls sysfs_add_bin_file_mode_ns(), which reads
+> the .size field and uses it to create the sysfs entry. But if create_files() is called
+> in parallel on two different kobjs of the same type, but with different values
+> for the .size field, the second create_files() could overwrite the static .size
+> field after the first create_files() has set it, but before it has used it. I don't
+> see any global lock that would prevent such, though maybe I'm missing
+> something.
 > 
 >>
->>> +		}
->>> +
->>> +		/* Handle anonymous structures */
->>> +		if (strlen(tname))
->>> +			continue;
->>> +
->>> +		*type = btf_type_by_id(btf, member->type);
->>> +		if (btf_type_is_struct(*type)) {
->>> +			int offset = find_member(ptr, btf, type, level + 1);
->>> +
->>> +			if (offset < 0)
->>> +				continue;
->>> +
->>> +			return offset + BITS_ROUNDDOWN_BYTES(member->offset);
+>>> Unfortunately, I don't see a fix, short of backporting support for the
+>>> .bin_size function, as this is exactly the problem that function solves.
+>>
+>> It should work out in practice. (I introduced the .bin_size function)
 > 
-> And here too.
+> The race I describe is unlikely, particularly if attribute groups are created
+> once and then not disturbed. But note that the Hyper-V fcopy group can
+> get updated in a running VM via update_sysfs_group(), which also calls
+> create_files(). Such an update might marginally increase the potential for
+> the race and for getting the wrong size. Still, I agree it should work out
+> in practice.
 > 
-> -- Steve
+> Michael
 > 
->>> +		}
->>> +	}
->>> +
->>> +	return -1;
->>> +}
->>> +
+>>
+>> Thomas
+
+
+hi Thomas,
+Would it be possible to port your changes on 6.12 kernel, to avoid such
+race conditions? Or if it has a lot of dependencies, or if you have a
+follow-up advice, please let us us know.
+
+Thanks,
+Naman
 
 
