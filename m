@@ -1,212 +1,253 @@
-Return-Path: <linux-kernel+bounces-752715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77D8CB17A17
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:37:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85946B17A1A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:38:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54D01AA62AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:37:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8B8317A8FD7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:36:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3076288CB2;
-	Thu, 31 Jul 2025 23:36:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21F5828934A;
+	Thu, 31 Jul 2025 23:38:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Kg2NDonR"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013047.outbound.protection.outlook.com [40.107.162.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="utqVJN6C"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFE318D643;
-	Thu, 31 Jul 2025 23:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.47
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754005016; cv=fail; b=U3+2AhKwPOqdGsy7CTEY6c+5m3tD7J8qfXgovfCjEAnWw132GmAsY8cjy+XFkUDWlFFPrcuJgUsCdkhuzKho+X/Z/amCYvX+k84ZeFRRiKEuqiQRNCOp9/7XqAFB0p8veQt+bCLdve2Gc7IWlBZQCg/BQyqoiAX9hCY+niMvW+Q=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754005016; c=relaxed/simple;
-	bh=qOQHbw5GG7Dr/ubst9shI5hc+KhgrCm449Y6Mrwo/mc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=j9YXA1k6p1595AEp24hA2upeE8ZRneOA+KiPZ86DlE86sGwxhbolqjTeUv+14QEekFqRjIi5ti7dHRlZuXEyaMqn7DnUl9f1Ynl88BI583yqmkcAGegYmLvDLmK5mACKBfzCzMnlcofMmE/m49dQRXQv8Hzj2bnuhklFh3mcF+U=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Kg2NDonR; arc=fail smtp.client-ip=40.107.162.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=PpnrUsqDFtOrNenh06haNA+5VX3p+FkNVvE9pNlh9XmEUJaDju7mLjUNUF8dCJWXfv0GMlm6D0nsn41qjpYgYTFHP2xUWmYdTR8VCYStg23u8WI7t6XWoITAPR6jGCcct+obTxdLEXjiTzVPyapfKAG3JteB1f4rzeO/XzYVkYULTgQBDKTzfTxPRLiqWr0/W2bV4KW4mR1BxAK0jXv3fckrgWSwvhBQytoOyyowd0kMhHxwYEp+qZVjuahAvtacVPKFeQdY04aUAWFMFPenDlj0fmgrSg7Hl2s2d4WHT0jE9U0NIL23C1OdzTAEDGRTn8kFUsaCCwc32WWDVvrBog==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=z5BdhBe9W1RjfOiX9l0KG+hYHkU4qJjy2RJm80wJTWI=;
- b=SJ4pklHhsXZCnQtYRr0VjWRT8avmK5w9apnLyYNRjvNSBWuFwbOfEfUEEcWDi3k3ISLZAVMvXR5u/R66oPrY1FDiqImKcOY5dA3NCMmfBdkOJUmrTVsHLSpUk/B9J032+o6ehZlbqTixgTSn8RVuVlYZTMCPsd6k7y9He3/7G0w0gVrwWAAbdcs/GwWYEpZDiGaaSrFQU4xvaJWo7RJQ0q+HJxAde6R4/hrVYCNLwljo0DeuZSfvPliRTIaXXZ1AuntJMh5+FWfHnvia70hjVn4gwoe9L/Z7WNNdFeDZyXjDSxTRvgkQZmzXcBVWPcaMmyJXGApIHUCehjiXXWxg5g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=z5BdhBe9W1RjfOiX9l0KG+hYHkU4qJjy2RJm80wJTWI=;
- b=Kg2NDonRyK6jKEYcG7SsbyzEqOusocToCEwVryFyw9HWxGPk8wugNYb2mLk05sa+GD7wb1bf+TSKaJU1idIOPjWuwrrErSoa+AazgQQlZ6D3Njb48Zia1lXuk4c4yJ7QtA0x0EX1n4Ma5NmkZZuXqbuav/9eL74yy6a1LlmQACrlWX40gIpY8dEtqfivwp6Y42r+qW6axjEy3k01amzThYwEEKCrbZM1MJRuovo9QHoreDjsOWt+Y6sc8dZvJE+2l/P3Jtw1wFfMcww/yjerxz+yMFi5r5gSaVbHHGONYD6Rx3JUzHjCa0F2tkxFnYJ6AcceBecbEIU9f0o36xRcHA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by AM0PR04MB7009.eurprd04.prod.outlook.com (2603:10a6:208:19b::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Thu, 31 Jul
- 2025 23:36:50 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
- 23:36:49 +0000
-Date: Thu, 31 Jul 2025 19:36:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] dt-bindings: fsl: fsl,rcpm: Add
- #power-domain-cells
-Message-ID: <aIv+CgkePusUoT6Q@lizhi-Precision-Tower-5810>
-References: <20250731055806.2265628-1-alexander.stein@ew.tq-group.com>
- <20250731-funky-crab-of-defense-7cd658@kuoka>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731-funky-crab-of-defense-7cd658@kuoka>
-X-ClientProxiedBy: PH8PR15CA0002.namprd15.prod.outlook.com
- (2603:10b6:510:2d2::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D507218D643
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 23:38:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754005083; cv=none; b=nzMIvWK6izKrEnuMSUSSw/oaJN10hEGNDV5CHcVCgPnRQ+9A5GJz3uG4ZNSR4UWahUGK04Sj75wDIpkXxXOgB6593rPyUoG738iWpDvVPOIC9AtmSkYDZZAdaQ2sG4ybaPhqPJblN63OWcGTDBnJ068wZHQQEPxeBHJdZZt6V2M=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754005083; c=relaxed/simple;
+	bh=f6qUX6gGho971LALBNjFf8VqlKQhpBsP6YCT1TMXfg0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SIYzGV+lrWVMMDqnVJF6hqFHTOHHJNZzbbbW06eF15MKdISmGM+WZ5P67GMxI5hLTRZQJDIcx9QT6f/Tt6eT+z0GSzGQksgSd2xf8nqLBg4mZoa60/k+vYF2HPYbIFJrgqAKPqlZyLIFV2KJ1nllUCrYwB8LI63XiSU9REVA1DM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=utqVJN6C; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b421b70f986so1326423a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:38:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754005081; x=1754609881; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=CGJHRsg5iCjQoTSgwUklPXzEBYJzmQNlQF6qaBtA8NE=;
+        b=utqVJN6CGmDyw/nRBnDsno2DQ1sossv5Vq675xHC2mo1uV53fwgWLsz2+ODVT1nW8P
+         oVpDE0RSBQicxoMuyZDT68mIJVPlMrlVPhw0tXJK/Gz84qn5eCn5TfVRBWVF8Dc6SX3V
+         yLz797DRNP+kioQMCmMC8GvLjD8ERAztlhu/mDKtue/g8CITjLPetJM37OcMu6r6XIaV
+         V+x8S4Bd2519bU78Dpdr4//08EuMOimB1WAHmWPFcd1SdqKQjxoH+t0TLDpga4xclUq2
+         6c6h5r+PtNFj4yBiucMA+1xx2B/urQtzTp/WpSCt3wN1/kfGjD1tzjZazSf0w63/nGYD
+         ZjCw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754005081; x=1754609881;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=CGJHRsg5iCjQoTSgwUklPXzEBYJzmQNlQF6qaBtA8NE=;
+        b=dE6QeFLraXQaVmAX7xgflUyoNh7E5PeqMo57y0J3OpYR8N7Zz3uv9gn0xdi7YJGCOF
+         dy/KpausU9dHPEt5mS8TIVdFyFPcii+4+kqSAxR5zkx1hqN9yo7Pcs/Y96TqTg1q5bqQ
+         rPHuUlzmFXMU2L3xC1LwICs7SsJlvbWsIm6zZ53m7x3yoA0shzxTDP6CTqv8IN4I9NGQ
+         RENON+renYhvcCs4B0OVuT5qSvsEDtANoDLytswYiAO8/5mIm2nJyK3tG/vKMatEjx8F
+         j+8VmvS6ta+7rjwadORqvyXtOFuvoZ2+AGlii3o0p4bDfKQe/pW1QudhiEfhrnf/ySHe
+         zqdg==
+X-Forwarded-Encrypted: i=1; AJvYcCW5GA9be4Ed/38l7ihwOcUY0bZfGCMita/Md+bWvEw6LCLgvb4jf4eUPC677w7bkT4mwDopUEDsMg6DoL4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvctQB0UZJ8flctN6Yp5ixKmqM6cD6uxvTuq45X9LcQ0VQwQNE
+	f6EgZBUAi29L1sk6LiKCXNip3llBIvWbqwhC9P+qkfFj6nUfDN54zCYUHTNj7NFrPR7CVVYVIRv
+	5C5oX6cbIpy5/S2S8+WRxvJ2rT5Jh92aH9+LYNT2w
+X-Gm-Gg: ASbGnctRkw/+Ho8xuL1Yn+AjA4GDLcBjD1XmT/nVYcWpi/0K8FDezx1JSgp0ucKaA7P
+	PTFCVbPhZPqG/xXzo+3Zq1YYZ6hVnw+dq16SE7E8EL2ic1lFiWyg49cH/Uf51/hxYHzjhmZrmZZ
+	As1lsxJ8AyHezNr7OSYRswjqvucPJ2EPRhw4LQT7qAkobDtH4PXoefFVPF3zWhxwByq53RCU+1a
+	2bxqEqGhX92akZdRyRlBLHeUNIEd3VXdNZr4g==
+X-Google-Smtp-Source: AGHT+IH3+rIwn54Da+ICd4tBOgXwOPHz3yPdEo3e4muMjMz3VkS8jC3tBS6JachPLqAkDX8B7TTY0RFSnjFHVKtvw6Q=
+X-Received: by 2002:a17:90a:d404:b0:31e:3d06:739c with SMTP id
+ 98e67ed59e1d1-31f5de85bbbmr12557172a91.31.1754005080821; Thu, 31 Jul 2025
+ 16:38:00 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB7009:EE_
-X-MS-Office365-Filtering-Correlation-Id: 47629765-aaf7-4fed-315b-08ddd08b1f0c
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|19092799006|366016|1800799024|52116014|7416014|376014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hLDOEoeNgIEsagELzDtd1CGkwYOL3DfWs5SfEEkGF4WPfMfWVA675BJDyuvs?=
- =?us-ascii?Q?roP5eQGDb4sTsMdhWgirOvGS/iqXNwdX3XH/lbfV1VPbkoGCX/f0BS/k7oqr?=
- =?us-ascii?Q?4KhDtyc6Vp51eUWM7/rHb5mFAWNhXV6URwxvzEGQcy6GImgVlCZbMk1sAQxE?=
- =?us-ascii?Q?YVpI1/FS6w5xoCTkd2t2Kw5wRKF8V1zVsehbhSbVX/+umWxd6ywr6b8LaYz5?=
- =?us-ascii?Q?7f+E8XuuH7w2KZqg0QwNsGZrsu0smBply/RdXOgd4dkSjZqREtxAguW+WxbD?=
- =?us-ascii?Q?dRmkNU2YAA3f7Sc7BWrYJzz++F3j0isOtyb67K2XHdYMWHonHBBPkgRInJHA?=
- =?us-ascii?Q?VBxxyTY7lnc69DsncZjtPL3RrYBmtUExeM9yZ9PCXw8Ac11efVDGeZ1sdfnY?=
- =?us-ascii?Q?6t+7MjOSrb5VbaJc7LD0b360zDZwHRSYTK6Y/W8lIaj5mxc4aYc48xETyrD5?=
- =?us-ascii?Q?ewajt3Kqzr+1HMlsx+SUuqKSWMyHXofMhI7XxuFqjbIUnkzwrIrohx593k9u?=
- =?us-ascii?Q?LI5iUnm23n5u6qDExxhZuvcUKONWpn4zSxu6nx/ysT6xxpxWDozLji3M1C3a?=
- =?us-ascii?Q?2jvBNg7w+2tuX1gVWUQ6LusU1xs1NqEM1YKXPs1BqycTBwcD4EcDK0VzIL9R?=
- =?us-ascii?Q?Gjgu43StiN9LNmXsIllRisXvDtpmw0eRbGH3/3viZ+h9BHHwZf1UcxrVGdS5?=
- =?us-ascii?Q?9L/KgY7AVQygfw/9XvKQiXWHsGwxCdJpH1Em3BLbBUoVOezmHCP5QjOqwyIF?=
- =?us-ascii?Q?uRLbVLHTKrfKIYnWxbyuNUv4wpYQ/ZPDVqADK46KT4hZ5hRAq+VqRYoWdIb0?=
- =?us-ascii?Q?jw/Buymekf/cq+tnX/5lYdkk+PssXiINC93ImI52g9hjRmYTJjWKyPvNfDUd?=
- =?us-ascii?Q?gOvt0hSae1tA3ufachyAymS45dw86egsXJ/vMuk/qnmgRpBf98Mz5GRgbkS3?=
- =?us-ascii?Q?yjdJbiidVVlvDf84iUHywydW1a1cQcKb1AIW4HSRzGP5sn/DAx/VoDD8OVTc?=
- =?us-ascii?Q?EdAYBEg8VbadOOT1I4TqBX7a4HjEW+zW9eaKN+LJX6x5Er2Z4K6ZfildZQOM?=
- =?us-ascii?Q?17Ai92hDjFYcMRNeo/nN54A8F7DJCpqQF+x1DFl0GOx/xFScUblDXN/fhbrw?=
- =?us-ascii?Q?Jf6lf4r9voEHe9UP724bwfh0U8D50tBCeU2D5C3msVyCmwDjSbYNqzpzYzF1?=
- =?us-ascii?Q?sk46244SFs/ZCX3iHX8bbghMAFByYaKTERiMiLqSnzG6SFilPwpEmFpV6zRa?=
- =?us-ascii?Q?+oDFAgyj4Hk7CZ3VA8BXicDonzdfPKHFT9HlTbZxtiWFSP3/gorVyXwK9H4+?=
- =?us-ascii?Q?HYQX/iu6Or4My1uGcIJqSKOmW4lfwbDoow+5Epta1nHqOD1HCc5RtOSVDWKs?=
- =?us-ascii?Q?V0aJR10VzxEfdeI0r9z5D50/4sCXtuFp9IJ6JOPt8s8TAkoujZBRik6UNqYn?=
- =?us-ascii?Q?5EWMKQQvoVw=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?yquSXELLHW+s499olu8TTIoBEqFKsquf2cWiv+dyeeMxJqnyyeLQvttCN5JG?=
- =?us-ascii?Q?OmuybaFZGiPt9xm1iRzQNu7660lNwXBPfaDBC8E4p0ZrmRCrjZz+fmdT9MQj?=
- =?us-ascii?Q?UUCa1xUnBGpYaQoEPW30A4sGYtQPcG/2bO6Wg3qzl+0zAlSZlK0w9N0xCcOu?=
- =?us-ascii?Q?7dsfL8uID7ygx9g1/2RF9gxYDQZV+i0S0PSaP08CEVp67BkahklUuMKPogpj?=
- =?us-ascii?Q?F0/qX71DUeenG614peKEaS2e5YpB2yq53ybpbGQjfJ+wFKWl022AVm3zdWrw?=
- =?us-ascii?Q?KClbU5CBRQy0X8x7HHPyde5z4mqBc0AbfH9Cq27kbNiNTvxqoaY/0q2Hice+?=
- =?us-ascii?Q?FdImqKx0x69DiwlLU1CswXX1McLo9cGEuY9CIqEdq194bnNJ1marsIpC5I2H?=
- =?us-ascii?Q?OxuaZdd3BW+NWviDKXTsZGTpsRsheSCR0XGq/5kUqVp3QgcanLEoKFFAsihG?=
- =?us-ascii?Q?KQS9DWSnlm/VVzPC7UiJZGKAWxROX3jeWx91iq+EKdP/IEFSMqUrCXEkIYAO?=
- =?us-ascii?Q?AyiZMQxI709eGl2DpqSBRwJr6nCOm+mQWhqJ8976mIh7iXNwAVa/JUP5KKYJ?=
- =?us-ascii?Q?R09j/Qb2voXr0s8z4ZAGI8jwW/G7vlbc64URtLynGL4Vac8Y2c22WInzScS8?=
- =?us-ascii?Q?Rs5q/XOKrmvuL+vtnUKY2RUKHpzgcbea8USPt1TyrLRBQ4b7mc8hF+Gz0Fma?=
- =?us-ascii?Q?N/8MURW1C0UIZsQ5FtDr9YrzuNhSmI0LbnPgR0bF/724OHALH7SZ1lPo0csZ?=
- =?us-ascii?Q?9PPfpYDjOvUqQC3o4ULqnGOMBTrR6j0t/uQ4u7uEStBi20kOzEzKmQye22ef?=
- =?us-ascii?Q?A3rNQlPxbTh63trKOS5E7bMQuXSbhBu9bYVQfruIvHQTRz7bsbEyGnPwVvb+?=
- =?us-ascii?Q?mLKGCe5Keb7YTHQJVlIkmVHFBwYlMoJT1WzobVH7EoBdTRKuHboW6bbqnB4+?=
- =?us-ascii?Q?JPQydC2tMEdM85Jefyqh5rtej1xLeq3kFX5JAqjU9i9k21uZulXUj5gsSxMW?=
- =?us-ascii?Q?+tsgqG0SX9X30Bdp/bx8EOBZEU4XyTr80gCyaNcnQYVRRn9XX29ZLXWuElRm?=
- =?us-ascii?Q?ZL4codg+0vgGFrvbJQQB0x4XnvDUNfj0OrlslFMBaXB185oYZCV+kxJNuCHn?=
- =?us-ascii?Q?2KdxtpfgvCdo9W152CYEGocJwJbPK3qmot3aBiOsOcARnd3PbC1WGNK/1R0v?=
- =?us-ascii?Q?TXyQ8+fRxUKRoth1hYE/h49pD5gmvvwAYBZv8unGsM4nenyNhwdjl4gEc9gx?=
- =?us-ascii?Q?Hb7ascw3aafZgh3wPviisuHtYsHHMZx2uipkCU+nihkL+4Jq5gMGHpz+NyUb?=
- =?us-ascii?Q?z6y5gm5r1duZHfOlviu3yKzSD24kme2EzgjnJCkKkyWafNKLmPaKCpnmgIY8?=
- =?us-ascii?Q?OTIb7+MH97odb4OcqEONVqGQ84kr6YQViniDqsF2z+v2eImfzyWDLCd3zfCR?=
- =?us-ascii?Q?i9HQUOdO3OV+Pc6FD+xhHtUxXCaq5nAaXd1F0SKDNU/bvjgIj/1OioxDEDwU?=
- =?us-ascii?Q?bYuZ3ogTUZb1ttijB2913MjZtM5utAS0jiW+tk/S1cKEGeUV76ezz/YjkHey?=
- =?us-ascii?Q?Rb6z0dSMw/Xh3cNYqdI=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 47629765-aaf7-4fed-315b-08ddd08b1f0c
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 23:36:49.7916
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: GoUcugL/w1TAAlwl+mul3bNTcaDSe4XefsGTyisaS65mfOY++Psu7V3NNwVq3ndW2KSHQOtMnc0Sp9Ny6htnxg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7009
+References: <20250731-no-abstract-v1-1-a4e6e23521a3@gmail.com>
+In-Reply-To: <20250731-no-abstract-v1-1-a4e6e23521a3@gmail.com>
+From: Kuniyuki Iwashima <kuniyu@google.com>
+Date: Thu, 31 Jul 2025 16:37:49 -0700
+X-Gm-Features: Ac12FXw-uBDMi0rpYeSk4vgpVGnOIW87IPuefoui5ML0xX5hXHN7zoUervKq4fU
+Message-ID: <CAAVpQUCLoYa8YbaPSMHJcFQarz9hMo6-BQ1OJiF+GwcF5bb6hQ@mail.gmail.com>
+Subject: Re: [PATCH RFC net] af_unix: allow disabling connections to abstract sockets
+To: demiobenour@gmail.com
+Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Simon Horman <horms@kernel.org>, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 08:32:57AM +0200, Krzysztof Kozlowski wrote:
-> On Thu, Jul 31, 2025 at 07:58:04AM +0200, Alexander Stein wrote:
-> > dtbs_check for ls1021.dtsi warns about unsupported property:
-> >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
-> >
-> > But if removed the check warns about missing property:
-> >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' is a required property
+On Thu, Jul 31, 2025 at 4:03=E2=80=AFPM Demi Marie Obenour via B4 Relay
+<devnull+demiobenour.gmail.com@kernel.org> wrote:
+>
+> From: Demi Marie Obenour <demiobenour@gmail.com>
+>
+> Abstract sockets have been a security risk in the past.  Since they
+> aren't associated with filesystem paths, they bypass all filesystem
+> access controls.  This means that they can allow file descriptors to be
+> passed out of sandboxes that do not allow connecting to named sockets.
+
+I just thought that what's you need is unshare(CLONE_NEWNET)
+
+and started reading this...
+https://labs.snyk.io/resources/nixos-deep-dive/
+
+and stopped reading here.
+
+---8<---
+Nix builds offer a second, slightly less restrictive type of sandbox
+for use in =E2=80=98Fixed output derivations=E2=80=99. These build types ar=
+e expected
+to retrieve files from the internet (for example, cloning a git repository
+for later building); as such, they are not isolated in a network namespace
+and are instead in the main network namespace ...
+---8<---
+
+The 2nd thought is you just need CLONE_NEWNET and proper
+setup to connect two netns.
+
+
+> On systems using the Nix daemon, this allowed privilege escalation to
+> root, and fixing the bug required Nix to use a complete user-mode
+> network stack.  Furthermore, anyone can bind to any abstract socket
+> path, so anyone connecting to an abstract socket has no idea who they
+> are connecting to.
+>
+> This allows disabling the security hole by preventing all connections to
+> abstract sockets.  For compatibility, it is still possible to bind to
+> abstract socket paths, but such sockets will never receive any
+> connections or datagrams.
+>
+> Signed-off-by: Demi Marie Obenour <demiobenour@gmail.com>
+> ---
+>  net/unix/Kconfig   | 12 ++++++++++++
+>  net/unix/af_unix.c | 18 +++++++++++++-----
+>  2 files changed, 25 insertions(+), 5 deletions(-)
+>
+> diff --git a/net/unix/Kconfig b/net/unix/Kconfig
+> index 6f1783c1659b81c3c3c89cb7634a9ce780144f26..c34f222f21b097ce4a735ce02=
+d8ce11fc71bde19 100644
+> --- a/net/unix/Kconfig
+> +++ b/net/unix/Kconfig
+> @@ -16,6 +16,18 @@ config UNIX
+>
+>           Say Y unless you know what you are doing.
+>
+> +config UNIX_ABSTRACT
+> +       bool "UNIX: abstract sockets"
+> +       depends on UNIX
+> +       default y
+> +       help
+> +         Support for "abstract" sockets (those not bound to a path).
+> +         These have been used in the past, but they can also represent
+> +         a security risk because anyone can bind to any abstract
+> +         socket.  If you disable this option, programs can still bind
+> +         to abstract sockets, but any attempt to connect to one fails
+> +         with -ECONNREFUSED.
+> +
+>  config AF_UNIX_OOB
+>         bool "UNIX: out-of-bound messages"
+>         depends on UNIX
+> diff --git a/net/unix/af_unix.c b/net/unix/af_unix.c
+> index 52b155123985a18632fc12dc986150e38f2fee70..81d55849dac58e4e68c28ed03=
+a9bc978777cfe4f 100644
+> --- a/net/unix/af_unix.c
+> +++ b/net/unix/af_unix.c
+> @@ -332,7 +332,8 @@ static inline void unix_release_addr(struct unix_addr=
+ess *addr)
+>   *             - if started by zero, it is abstract name.
+>   */
+>
+> -static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len)
+> +static int unix_validate_addr(struct sockaddr_un *sunaddr, int addr_len,
+> +                             bool bind)
+>  {
+>         if (addr_len <=3D offsetof(struct sockaddr_un, sun_path) ||
+>             addr_len > sizeof(*sunaddr))
+> @@ -341,6 +342,9 @@ static int unix_validate_addr(struct sockaddr_un *sun=
+addr, int addr_len)
+>         if (sunaddr->sun_family !=3D AF_UNIX)
+>                 return -EINVAL;
+>
+> +       if (!bind && !IS_ENABLED(CONFIG_UNIX_ABSTRACT) && !sunaddr->sun_p=
+ath[0])
+> +               return -ECONNREFUSED; /* pretend nobody is listening */
+> +
+>         return 0;
+>  }
+>
+> @@ -1253,6 +1257,8 @@ static struct sock *unix_find_other(struct net *net=
+,
+>
+>         if (sunaddr->sun_path[0])
+>                 sk =3D unix_find_bsd(sunaddr, addr_len, type, flags);
+> +       else if (!IS_ENABLED(CONFIG_UNIX_ABSTRACT))
+> +               sk =3D ERR_PTR(-EPERM);
+>         else
+>                 sk =3D unix_find_abstract(net, sunaddr, addr_len, type);
+>
+> @@ -1444,7 +1450,7 @@ static int unix_bind(struct socket *sock, struct so=
+ckaddr *uaddr, int addr_len)
+>             sunaddr->sun_family =3D=3D AF_UNIX)
+>                 return unix_autobind(sk);
+>
+> -       err =3D unix_validate_addr(sunaddr, addr_len);
+> +       err =3D unix_validate_addr(sunaddr, addr_len, true);
+>         if (err)
+>                 return err;
+>
+> @@ -1493,7 +1499,7 @@ static int unix_dgram_connect(struct socket *sock, =
+struct sockaddr *addr,
+>                 goto out;
+>
+>         if (addr->sa_family !=3D AF_UNSPEC) {
+> -               err =3D unix_validate_addr(sunaddr, alen);
+> +               err =3D unix_validate_addr(sunaddr, alen, false);
+>                 if (err)
+>                         goto out;
+>
+> @@ -1612,7 +1618,7 @@ static int unix_stream_connect(struct socket *sock,=
+ struct sockaddr *uaddr,
+>         long timeo;
+>         int err;
+>
+> -       err =3D unix_validate_addr(sunaddr, addr_len);
+> +       err =3D unix_validate_addr(sunaddr, addr_len, false);
+>         if (err)
+>                 goto out;
+>
+> @@ -2048,7 +2054,9 @@ static int unix_dgram_sendmsg(struct socket *sock, =
+struct msghdr *msg,
+>         }
+>
+>         if (msg->msg_namelen) {
+> -               err =3D unix_validate_addr(msg->msg_name, msg->msg_namele=
+n);
+> +               err =3D unix_validate_addr(msg->msg_name,
+> +                                        msg->msg_namelen,
+> +                                        false);
+>                 if (err)
+>                         goto out;
 >
 >
-> And if any other warning says something, are you going to do that as
-> well?
->
-> >
-> > Given commit 8bcf67b8d893b ("ARM: dts: ls1021a: add #power-domain-cells
-> > for power-controller node") explicitly added that property, add it
-> > to the expected property list as well.
->
-> No, commit does not explain why! It's one of this NXP commits without
-> explanation, doing random things.
->
-> No, explain why do you think this is a power domain provider - fast
-> look told me that it is NOT.
-
-It is not power controller. rcpm controller enable wakeup source.
-
-In arm64, use below patch to fix warning
-
-commit e39f567e1c38c29629962ab327f0ad1a288dcab2
-Author: Frank Li <Frank.Li@nxp.com>
-Date:   Mon Jul 29 14:59:24 2024 -0400
-
-    arm64: dts: layerscape: rename rcpm as wakeup-control from power-control
-
-    Invoke power-domain.yaml if node name as 'power-control'.
-
-    Rcpm actually are not power domain controller. It just control wakeup
-    capability. So rename it as wakeup-control. Fix below CHECK_DTBS warning.
-
-    power-controller@1ee2140: '#power-domain-cells' is a required property
-            from schema $id: http://devicetree.org/schemas/power/power-domain.yaml#
-
-    Signed-off-by: Frank Li <Frank.Li@nxp.com>
-    Signed-off-by: Shawn Guo <shawnguo@kernel.org>
-
-
-Frank
-
+> ---
+> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+> change-id: 20250731-no-abstract-6672e8ad03e1
 >
 > Best regards,
-> Krzysztof
+> --
+> Demi Marie Obenour <demiobenour@gmail.com>
+>
 >
 
