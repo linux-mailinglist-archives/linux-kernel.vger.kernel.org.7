@@ -1,198 +1,142 @@
-Return-Path: <linux-kernel+bounces-752367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E81EB174B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:07:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F47B17498
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D08E1C27192
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:06:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D75A83239
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:03:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9034228E571;
-	Thu, 31 Jul 2025 16:04:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E211ACED9;
+	Thu, 31 Jul 2025 16:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b="ZsmT9zUa"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="1shAKTp5"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A709225A31;
-	Thu, 31 Jul 2025 16:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977874; cv=pass; b=aR/QaMstSrC0H/UF1443aYUs6fR7Pz6YY3gcz4Ky4WUcAQitptkuecVUotdvrwuMEXmiGSpXEXEn9fXF7UyannYK0wmIvuFqIL51S6lFCmsO8OOZqACYC9gtEkc/5xhl8KNnKPdSxkufUWmJ1xTVGVaT0L5Ua2er/vmeOuVAsRk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977874; c=relaxed/simple;
-	bh=kjyVBPPWZXNPZboO3U/NQv0/5EXCIDDQsIa51EhFW/8=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=oIbvMdBda/Bc2Ept5Z4L0LDxQ4X3//3Xkkm8keqZNB+br0dPSd3J2S5ysFJ1rDm+LWmVDH3/7Ji1Bvv3nGVd3uwl3BO718Kw6bX386BejaPcetFXr3zdxXdE1Nusc3Z263YMxt4FCBybSsC4I9KsyHbC0qcBkNOv3I+IJrToIzg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=usama.anjum@collabora.com header.b=ZsmT9zUa; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1753977814; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C8v46k7DZVPWHrtdnDxx+B1H9e3oTQQKoEUlihOcuoykiizMGZ2DuqpH3we2WhGi7B06TVkV+KxBAn0Bf8Fj+ir6MoKr2VVwLoP0nh4MQoHE+4wSRmwlYaf0FZdGEAkWIks+x82voM8CpPcilzent9OSDf09xaBaOLXtx8D/AaE=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1753977814; h=Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=tFRUod1LETsg74Qkt/8QptMDoryWw/7mPsDdQJpyJMA=; 
-	b=MSsRQc1CLGXH5lgzPf8W7exC2qpS0QWtdYvRRMzl9SAI2NYNP7n03MbgtFNyauldv7AD4ZhneCPEuAmAvo3lzb/I1Ffxzwq0uT+wJ5a8oWEPLS//I6jfg4xDJ8NndXxRJZMWZNjzy1uUcAzKeTW/2BeUuoVk97WBXCZBImcLqk8=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=usama.anjum@collabora.com;
-	dmarc=pass header.from=<usama.anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1753977814;
-	s=zohomail; d=collabora.com; i=usama.anjum@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-Id:Message-Id:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Reply-To;
-	bh=tFRUod1LETsg74Qkt/8QptMDoryWw/7mPsDdQJpyJMA=;
-	b=ZsmT9zUa5eWfbbvDyMVVzPqiFsPJdSkNGak9DUUGi7MDW7luOQuACxcj91V2ZB10
-	mcRtFG1ppOtRtNPjOd2+lfUbSqHSBT6vuXujVItCwKkDrSEy3NuoVgBpcfSL8v/ncVG
-	HfPcQj2c8TIlbrD+kWPj1ezLf3vtU13lfwmTy0hg=
-Received: by mx.zohomail.com with SMTPS id 1753977811994182.64658106567913;
-	Thu, 31 Jul 2025 09:03:31 -0700 (PDT)
-From: Muhammad Usama Anjum <usama.anjum@collabora.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Mike Rapoport <rppt@kernel.org>,
-	Suren Baghdasaryan <surenb@google.com>,
-	Michal Hocko <mhocko@suse.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	John Hubbard <jhubbard@nvidia.com>,
-	Peter Xu <peterx@redhat.com>,
-	Leon Romanovsky <leon@kernel.org>,
-	Zi Yan <ziy@nvidia.com>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Nico Pache <npache@redhat.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Dev Jain <dev.jain@arm.com>,
-	Barry Song <baohua@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-riscv@lists.infradead.org,
-	Shuah Khan <shuah@kernel.org>
-Cc: Muhammad Usama Anjum <usama.anjum@collabora.com>,
-	kernel@collabora.com
-Subject: [PATCH v2 8/8] selftests/mm: Fix unused parameter warnings for different architectures
-Date: Thu, 31 Jul 2025 21:01:32 +0500
-Message-Id: <20250731160132.1795351-9-usama.anjum@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250731160132.1795351-1-usama.anjum@collabora.com>
-References: <20250731160132.1795351-1-usama.anjum@collabora.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFC821B9DB;
+	Thu, 31 Jul 2025 16:03:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753977784; cv=none; b=lygxixKaItuceEqBxawWhPx+a5bh/EpZ5aiin9BWNrOIHeTagVAdbNJ22bboQLSOmZwc+5Xgl5f0wV9PmAlM1z67UMZcIoqBY1KVULB2EcMzuXG62r6TjYIMhHcOd7JouajNClgDxP4nxQSjG5XYObRDdjx/ox67wgoak+rvHls=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753977784; c=relaxed/simple;
+	bh=dGcxc9yB51Zv0XtFk8+LA//+P7TOs76esWrPlEu5FOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YIzAMIjjUrw9iIkyqvyrOf4D784Ww6bKbwI8HizkkY1GCr2aoGma/fIcbwN/bDVgBSEmROlH1R48bfSQB53jnVC1nuQiOaZWg926A2ybldHmjJi5k/c80hbB7lg4zZd1hYdDJfNwNgQBLOLmlVSe8dzrb9RB+IXWCNc3wc30OGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=1shAKTp5; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=rzwC8YvskcqQ/u+h5BGJ/oUgeMImwjxx7We2MbfRan8=; b=1shAKTp5nDng5t9KzxwPlg8e/e
+	/tT6QPmdGJ8Y+DYCYLIYRRP9s7N41NKyAA39AVxibdN+LaEdY6VNiPpS8vrSrYYeqLl2feTLRvmR7
+	pHJaZ+P9tF8TcVMLWg6fwm51SREYSxB6aV+bucpu1MbBHX0QC3AM+g8NEd2kGpyNZoKG4UIAKKyuy
+	PecvD2/TaTRg2Zb+9jiIcG4wB20KBzPNerapra07QeVgGiEhHYrdhti5DB9+GJshqZ4+RS3NeoefC
+	N6CIPIbuDTGAV0Gts+mJC1hofznljGMZdI5j0jVHPRBhbdND4TfN036I7mk67EEv71D9wySMIqLDR
+	GbCFjy5A==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46120)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uhVk4-0005EY-2R;
+	Thu, 31 Jul 2025 17:02:52 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uhVk1-00019c-1p;
+	Thu, 31 Jul 2025 17:02:49 +0100
+Date: Thu, 31 Jul 2025 17:02:49 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <aIuTqZUWJKCOZYOp@shell.armlinux.org.uk>
+References: <aIuEvaSCIQdJWcZx@FUE-ALEWI-WINX>
+ <4acdd002-60f5-49b9-9b4b-9c76e8ce3cda@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ZohoMailClient: External
+In-Reply-To: <4acdd002-60f5-49b9-9b4b-9c76e8ce3cda@lunn.ch>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-There are functions which have unused arguments for different
-architectures. Separate the code for each architecture and move #ifdef
-arch outside these functions.
+On Thu, Jul 31, 2025 at 05:14:28PM +0200, Andrew Lunn wrote:
+> On Thu, Jul 31, 2025 at 04:59:09PM +0200, Alexander Wilhelm wrote:
+> > Hello devs,
+> > 
+> > I'm fairly new to Ethernet PHY drivers and would appreciate your help. I'm
+> > working with the Aquantia AQR115 PHY. The existing driver already supports the
+> > AQR115C, so I reused that code for the AQR115, assuming minimal differences. My
+> > goal is to enable 2.5G link speed. The PHY supports OCSGMII mode, which seems to
+> > be non-standard.
+> > 
+> > * Is it possible to use this mode with the current driver?
+> > * If yes, what would be the correct DTS entry?
+> > * If not, I’d be willing to implement support. Could you suggest a good starting point?
+> 
+> If the media is using 2500BaseT, the host side generally needs to be
+> using 2500BaseX. There is code which mangles OCSGMII into
+> 2500BaseX. You will need that for AQC115.
+> 
+> You also need a MAC driver which says it supports 2500BaseX.  There is
+> signalling between the PHY and the MAC about how the host interface
+> should be configured, either SGMII for <= 1G and 2500BaseX for
+> 2.5G.
 
-Signed-off-by: Muhammad Usama Anjum <usama.anjum@collabora.com>
----
- tools/testing/selftests/mm/mseal_test.c       |  8 +++++--
- .../selftests/mm/pkey_sighandler_tests.c      | 21 ++++++++++++++++---
- 2 files changed, 24 insertions(+), 5 deletions(-)
+Not necessarily - if the PHY is configured for rate adaption, then it
+will stay at 2500Base-X and issue pause frames to the MAC driver to
+pace it appropriately.
 
-diff --git a/tools/testing/selftests/mm/mseal_test.c b/tools/testing/selftests/mm/mseal_test.c
-index 34c042da4de27..af49f72e1f465 100644
---- a/tools/testing/selftests/mm/mseal_test.c
-+++ b/tools/testing/selftests/mm/mseal_test.c
-@@ -131,17 +131,21 @@ static unsigned int __read_pkey_reg(void)
- 	return pkey_reg;
- }
- 
-+#if defined(__i386__) || defined(__x86_64__) /* arch */
- static void __write_pkey_reg(u64 pkey_reg)
- {
--#if defined(__i386__) || defined(__x86_64__) /* arch */
- 	unsigned int eax = pkey_reg;
- 	unsigned int ecx = 0;
- 	unsigned int edx = 0;
- 
- 	asm volatile(".byte 0x0f,0x01,0xef\n\t"
- 			: : "a" (eax), "c" (ecx), "d" (edx));
--#endif
- }
-+#else
-+static void __write_pkey_reg(u64 __unused pkey_reg)
-+{
-+}
-+#endif
- 
- static unsigned long pkey_bit_position(int pkey)
- {
-diff --git a/tools/testing/selftests/mm/pkey_sighandler_tests.c b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-index 638477494ff3a..68f106d0876a7 100644
---- a/tools/testing/selftests/mm/pkey_sighandler_tests.c
-+++ b/tools/testing/selftests/mm/pkey_sighandler_tests.c
-@@ -41,11 +41,12 @@ static siginfo_t siginfo = {0};
-  * syscall will attempt to access the PLT in order to call a library function
-  * which is protected by MPK 0 which we don't have access to.
-  */
-+#ifdef __x86_64__
- static __always_inline
- long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
- {
- 	unsigned long ret;
--#ifdef __x86_64__
-+
- 	register long r10 asm("r10") = a4;
- 	register long r8 asm("r8") = a5;
- 	register long r9 asm("r9") = a6;
-@@ -53,12 +54,26 @@ long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
- 		      : "=a"(ret)
- 		      : "a"(n), "D"(a1), "S"(a2), "d"(a3), "r"(r10), "r"(r8), "r"(r9)
- 		      : "rcx", "r11", "memory");
-+	return ret;
-+}
- #elif defined __i386__
-+static __always_inline
-+long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long __unused a6)
-+{
-+	unsigned long ret;
-+
- 	asm volatile ("int $0x80"
- 		      : "=a"(ret)
- 		      : "a"(n), "b"(a1), "c"(a2), "d"(a3), "S"(a4), "D"(a5)
- 		      : "memory");
-+	return ret;
-+}
- #elif defined __aarch64__
-+static __always_inline
-+long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
-+{
-+	unsigned long ret;
-+
- 	register long x0 asm("x0") = a1;
- 	register long x1 asm("x1") = a2;
- 	register long x2 asm("x2") = a3;
-@@ -71,11 +86,11 @@ long syscall_raw(long n, long a1, long a2, long a3, long a4, long a5, long a6)
- 		      : "r"(x0), "r"(x1), "r"(x2), "r"(x3), "r"(x4), "r"(x5), "r"(x8)
- 		      : "memory");
- 	ret = x0;
-+	return ret;
-+}
- #else
- # error syscall_raw() not implemented
- #endif
--	return ret;
--}
- 
- static inline long clone_raw(unsigned long flags, void *stack,
- 			     int *parent_tid, int *child_tid)
+Given that it _may_ use rate adaption, I would recommend that the MAC
+driver uses phylink to get all the implementation correct for that
+(one then just needs the MAC driver to do exactly what phylink tells
+it to do, no playing any silly games).
+
+> Just watch out for the hardware being broken, e.g:
+> 
+> static int aqr105_get_features(struct phy_device *phydev)
+> {
+>         int ret;
+> 
+>         /* Normal feature discovery */
+>         ret = genphy_c45_pma_read_abilities(phydev);
+>         if (ret)
+>                 return ret;
+> 
+>         /* The AQR105 PHY misses to indicate the 2.5G and 5G modes, so add them
+>          * here
+>          */
+>         linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
+>                          phydev->supported);
+>         linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
+>                          phydev->supported);
+> 
+> The AQR115 might support 2.5G, but does it actually announce it
+> supports 2.5G?
+
+I believe it is capable of advertising 2500BASE-T (otherwise it would
+be pretty silly to set the bit in the supported mask.) However, given
+that this is a firmware driven PHY, it likely depends on the firmware
+build.
+
 -- 
-2.39.5
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
