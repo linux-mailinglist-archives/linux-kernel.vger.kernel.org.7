@@ -1,121 +1,109 @@
-Return-Path: <linux-kernel+bounces-752107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02754B17147
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:31:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE334B1714A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECB5C161FC8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:30:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 00F711889046
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:32:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C71D239E94;
-	Thu, 31 Jul 2025 12:29:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8326225417;
+	Thu, 31 Jul 2025 12:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="GwKg8OzK"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="avfW5821"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 214F922FE10
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 265B5372;
+	Thu, 31 Jul 2025 12:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964992; cv=none; b=PiU/8Tdi56fr5XufAICyrk4YGP6+8Uc53i1BRxxn3d181Pr/GnyrWiM1nA9EVtjcfF6mY1jkq1WKAAKA60LV1V/MF2JqiW6yEsKg+bvtt8oHLub2t4xnGys2k3VnpZVRXH3+/VUOfZbXBPHgxEbQO8SpOXgCLcYDDKjmYxrzhmg=
+	t=1753965098; cv=none; b=Pc5rYBUgbaMk80Qq5inHJkZ/GQbtuIUR6yaE1kiZwJGpZ646jM8DsItKCIaM3JCsjesai6medJLWE5bUWHCesISfOQC8V7fKUerCWbHa3QXujikulwj01Y8ih4hwqlESyjZ1zkCdzTHfe5W3epCgI5uhx/iewNvg2bZU8RR8PVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964992; c=relaxed/simple;
-	bh=stFuxurLK8Z8AnaZ49l9W8w7aFsmtWO77oIxpAGLTIw=;
+	s=arc-20240116; t=1753965098; c=relaxed/simple;
+	bh=URBZSbN2RzdOM2Exc3sMWFjQFAV7ao5+tgqtnWBhAXw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s1H0mJvCNNf0rPO0Mab/qKM4FAWmV8CITdAHGDwFSyQdGOkx+nNiEzcbWVVkZhT/Va7rM5MPArQeUkiXrNGlhzY+LF+lOwGU59/a9f074SWD2himA5Agv2RvX6Xi74tlmRhpu0KMF6l7giE/A2RVjbVINGBkV9G7PmN9yBVsn9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=GwKg8OzK; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-7074bad0523so3304096d6.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:29:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1753964990; x=1754569790; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=r16L0lPAepHRljLoRD2C+qwfP2TiLc2fMDqSQ/mjsSA=;
-        b=GwKg8OzKH1FJJ0EGcYmgcoOpKXaG8y4xKTXo4OsawCfSQP8AmzYIzXZ7vHimU38ijP
-         7R4ddgMEQpAOC9viO4g1BUb9/NFYlV8X9S7FHUmdcCmg3kCQN55JVeGd4frnBeIZM0Gh
-         3pJ7p4KQnBdclbmmXiHGT+jzZtRD/1CMrYNV5EtDvDNVUvsVCRjqxMFG1yFPewdmOBU7
-         ktLAI3orHjdvWetkW1iKqbF/UmimM+epIhWVplhWwmrD/FH8Oh+sTla1gXP2y7wSJ+fI
-         OMkRroDn6+DKArFYAvBW2KACi4+aX2zxNdwmZ/M+ehTsyAwr7IH1F1xoBPehGrzF5h9/
-         GbVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753964990; x=1754569790;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=r16L0lPAepHRljLoRD2C+qwfP2TiLc2fMDqSQ/mjsSA=;
-        b=rOSPlCwkhHzx8tg96AAP3ftMIqky5Wtv1qvW5611XdWSwcmiPFU5x5w7I6kYFdN8bx
-         Jr+JmpZIyNK9S8z97zXwo5FiNcsH+tjtq4XwuXDzEsByEitL0mw2NxQthNl8sPMzipAJ
-         pEWY1VJeantny3UKIa1Z37IGIkKmLdxotBKhxaSFSYD3wgiX/41PYv22vCyX/b5dhrLV
-         skFLXJj29+uyUq/UhUsynhX8A6B7o5rLVP/273ziUozAzZZJeGxxETLJ7/lKbfdyDcrg
-         p8eCpgR15VEjN+ELGph7vjVFfHV+STnwKCMaMbwtt3ncmmQqQMDj0BoDw5ki8MFXYvqg
-         h0Rg==
-X-Forwarded-Encrypted: i=1; AJvYcCXXfT/jWkMCG/e2W3fhWpWCQ/KGA76DxkqDb9tF834dHv4pC3YdtKzRfjCH4LVDjND8EtA8f8u7Mm7Q93k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG//w4TKa499tZpYa170bZIFspAnpNACycUdrGAyIYol+4NK2T
-	E5zxdixHf/npr3i33pOD3CIwMa3/aBveN0EF5Oicung1biN+ZacrAh5eLAAHG2iqiWY=
-X-Gm-Gg: ASbGncubATJd7+hvFoZqhXuHz0kyl9aBC80Uwjhnxbiz/aSK3dTHv6hbHD3YhAv6KaS
-	VHGLuFpGBMaCdgb0HRZP7OiTVCGPRvZmrkZwUMk2GcXZpAU9AHKOjrYMfdWviUVxTdNS6O0upao
-	eNgBYfrpWdPxzM3iNlfrXA6pB8G3TYRbJdus8ZT0tpNHIKUuWQo6E90+ICoR7OOkvz8jgVLTtM/
-	Wjf469ivjPdzzEVj97J1RJYAPoiT3mjC4mHAfLlU3Uh9z1fjga2uzhZ78+C0WfjhHNRX3dCxSqJ
-	0ZJ8XDZQAoGPjp6uRbsG1/zkPMehi1+Fx4ic58cQB0CmsqYgMo9afKHkL4wM9DGKU2H6OfXhucw
-	H56m2FAKQhSh83NisPcN6x1/FHXV8u0LGn+S1nwKca541J13ocSWcv14QYzMI7IAeMN5CLrTuMU
-	Lo1Eg=
-X-Google-Smtp-Source: AGHT+IGFRiq4QY4lDaxJA1kOgdG4s98/jc148KJ+4RcbhXD0Gv7ljg9jqdQ+tgIuoEfTT/tXWxH4vA==
-X-Received: by 2002:a05:6214:248a:b0:6fa:fddf:734b with SMTP id 6a1803df08f44-7076710c664mr94449716d6.24.1753964989913;
-        Thu, 31 Jul 2025 05:29:49 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077c9d98ecsm6607476d6.2.2025.07.31.05.29.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 05:29:49 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uhSPs-00000000obJ-3nd7;
-	Thu, 31 Jul 2025 09:29:48 -0300
-Date: Thu, 31 Jul 2025 09:29:48 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 23/38] coco: guest: arm64: Update arm CCA guest
- driver
-Message-ID: <20250731122948.GU26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-24-aneesh.kumar@kernel.org>
- <20250730152204.00006f79@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YMiTXym5YrO+rvZS7VwfVq/JFeFGgwag08mGvdht6+d9SafP+0h/arsD4J9bm0aCXSEsm4pSi5gcvfMb7E6ou4P6uEQ52nyOewvgdd4HvXDRPa+dgPxmDbBNzhyCPyWdusgYymdCsHUFKU80yFXoResL9H7AxlKdG4GyWYUkJcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=avfW5821; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E36EC4CEEF;
+	Thu, 31 Jul 2025 12:31:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753965097;
+	bh=URBZSbN2RzdOM2Exc3sMWFjQFAV7ao5+tgqtnWBhAXw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=avfW5821/IeJL54S7GPf5gz63Or62vZvwNI6mafxt7CF5iLmKv+RYOjzXeOJ638Y4
+	 F6+ss1ngn6hlDO+2UOEfBrPDc1J7auUM9W0feY0W8Q7iqfQ2HmC54EvSlrbwyKdWSp
+	 09BrHwH01O8BaLh7KVMOiCSU5cIOnZnC/tSHXWpnsEHIxUjUBo4VXFb8VULcfHJYp+
+	 fywRojBq5mSdq+SxFRy6sA4MzD856Z0b9MQBUxPPVJ18/811+9qaOgAwd/G5CCyoet
+	 xO4qoC+OXak79YYQ58YziHNlP8n4YFXKfETJz3dXac9nXhM80fdAgBFFEGy1ztTDv7
+	 YSH3yGIxMMRvw==
+Date: Thu, 31 Jul 2025 13:31:32 +0100
+From: Mark Brown <broonie@kernel.org>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Chanwoo Choi <cw00.choi@samsung.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
+	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Thierry Reding <treding@nvidia.com>
+Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
+Message-ID: <68c210a2-49b2-4fd2-97ad-27af85369d9f@sirena.org.uk>
+References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
+ <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
+ <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="7b2vhtQHdqi+SNWF"
+Content-Disposition: inline
+In-Reply-To: <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
+X-Cookie: Gloffing is a state of mine.
+
+
+--7b2vhtQHdqi+SNWF
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730152204.00006f79@huawei.com>
 
-On Wed, Jul 30, 2025 at 03:22:04PM +0100, Jonathan Cameron wrote:
-> > -static void __exit arm_cca_guest_exit(void)
-> > -{
-> > -	tsm_report_unregister(&arm_cca_tsm_ops);
-> > +	return ret;
-> 
-> 	return devm_add_action_or_reset()
-> 
-> Mind you, Jason probably won't like this ;)
+On Thu, Jul 31, 2025 at 01:18:19PM +0100, Russell King (Oracle) wrote:
 
-devm in a module __exit function? How ?
+> I can't see that anything has changed in the code with regards to the
+> locking, so I think this is a bug that's been present ever since these
+> drivers were introduced, and regmap-irq is deficient in that it causes
+> the same lockdep lock class to be taken recursively when the IRQ wake
+> state changes.
 
-Jason
+> From what I can see, irq wake support for regmap-irq was added in
+> commit a43fd50dc99a5 ("regmap: Implement support for wake IRQs") and
+> this is the only operation that is propagated to the parent
+> interupt(s). Thus, the above splat is unlikely to occur unless one
+> makes use of wake support on a regmap-irq based interrupt whose
+> parent is also regmap-irq based.
+
+Yes, your analysis is right here - it's not come up before because it's
+very rare to chain regmap-irq chips.
+
+--7b2vhtQHdqi+SNWF
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiLYiQACgkQJNaLcl1U
+h9DX/gf/fbirGZ9ZCO8YHFRx0zpgHCqt9zASuRFOOroop47HKixQUglB8vsciuhn
+fpXUqa6dx/8VARRHj8kJfYr1YoWd7JUW4NwpuWkoXQnkaoBM+VEBg5WsVdb9v10R
+SC4DgHf60gBvJqaHCFebocAbSBsxdzTApKvSpYa3Jk+47m7bmOXVYxXg7enEf9m4
+/HqdLuiMNCMk4MxgaY1gvkvw8FyOCR5uWI0qoMf7DFgV0CvOxQZ9PYc/C4Hz7O4k
+dIPGHzN96zwB0vyPwhK1Yd11WvIosz1eZMdWTutmAb55/Eo60ajfa22K959hpl2S
++KbUPfgEqga8iu+yU7DvBAlghkA0Ng==
+=98nN
+-----END PGP SIGNATURE-----
+
+--7b2vhtQHdqi+SNWF--
 
