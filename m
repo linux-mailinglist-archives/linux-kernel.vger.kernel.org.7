@@ -1,192 +1,152 @@
-Return-Path: <linux-kernel+bounces-752525-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1051DB176A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:27:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C20FB1769C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6155E7A8133
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:26:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DD37D1C24F3F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05306256C70;
-	Thu, 31 Jul 2025 19:27:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E660246793;
+	Thu, 31 Jul 2025 19:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qyx10PxM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="S66/5oXI"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5922C2512DE;
-	Thu, 31 Jul 2025 19:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B95C15E5D4;
+	Thu, 31 Jul 2025 19:26:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753990045; cv=none; b=PW9RIHuQ/b2G6+afk6ilD9CWsiJfLXm/2rBmUjp/j6zfxoReRCHriu5TPZDF7O1Y3zqINs2SFJMUqi15HCC/QXnNdS4/tx6DDJIQKeeSPoDqI39Oh9viBjW/gdsFk52Silk0AiFk+bguUMt0jup0jqWJ6pqf7qjBPBKpd9nA/xs=
+	t=1753990018; cv=none; b=M/ZG9kG4WQA5rfcKhJ9aFKB6NsvajkejRyEkauvBf2RAY4/XvUiRSau1vo1EFWTsf3kQI1bZzxjeFgccRUmc+NahYdjJ/P4XMMsZsvK53GVWu1mWdLWzvhWBOUY834tHhvjRef9jQWuqO41RLkAE/drW2w6v1FOblyMt9qu8nDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753990045; c=relaxed/simple;
-	bh=6X6ezduc8UlsWVmDvq11p/5uN+3imLfJvwADkDpblFM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=qjbGnkbteEuUR324rUK2hKTksmp1vDk+p2kXcDeEm8WzgeuLz6dFKjRRb7xhJT4z5SrlnBCso4k16S+AUSWGKwRn8pIwRkwlY3CQU6eq+H+nDHRFomjTYl79Hd57hsSxUk86EjS5GwiFIpVRWFeah913xr6Z+EgIFkw1amIMsxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qyx10PxM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 782B7C4CEF9;
-	Thu, 31 Jul 2025 19:27:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753990044;
-	bh=6X6ezduc8UlsWVmDvq11p/5uN+3imLfJvwADkDpblFM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qyx10PxMdEugOcuSKVOI7TIvduWs0tqUHEdt0Zl4NaGJttvngvGFMhjscb9FHeoOG
-	 0bDM/aR+0ZAa6VMuwBkTp2b7/qp/mEtCr5iJ6X0xbOxBcGyeICEMzovfCaZLoJt+Z9
-	 FIVoblKiRFQS69lAAYDxmrR5pav7sSYI71MjVxbo7y4HlaI8Oq8IcuVCr6KB7793ni
-	 +U0B7d9mgJfBLYeSsR3pqalJvCQbEm5sSBXs99UHijLItAo73Zx+OLH1cJGoopzHds
-	 lEBSs1Oe03DR/oHpZcrSWYeGHDF+C14gW49Gxv4yTW8x31MMYsuzGc2ZRBJKnw78y0
-	 c2SiaI3mVbzog==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-usb@vger.kernel.org,
-	Andreas Noever <andreas.noever@gmail.com>,
-	Michael Jamet <michael.jamet@intel.com>,
-	Mika Westerberg <westeri@kernel.org>,
-	Yehezkel Bernat <YehezkelShB@gmail.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 2/2] thunderbolt: Use HMAC-SHA256 library instead of crypto_shash
-Date: Thu, 31 Jul 2025 12:25:45 -0700
-Message-ID: <20250731192545.29869-3-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250731192545.29869-1-ebiggers@kernel.org>
-References: <20250731192545.29869-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1753990018; c=relaxed/simple;
+	bh=31UY6IyD3cvrHRGfuoivh8kCJIkz87ifJetdfZxruzw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gdSUwAamUrCdYqCIgcoRKZSrJ3oc3qHfGTa0RH4QK0yrsUR8pT02yHTHMuhv1beIQ2rUQzftrHrL36LLkIeoY4ktW0Hl6muYsmYnXbq4FVcdpSlc5XEk1X2CH2E9kPkCeBoWuOL9GI9Dmde0JVMtLn1JKSJyHqzIDrAVs84Ng2k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=S66/5oXI; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1nlI48xArvrBHfTnhzWDv3TSWgsTV0z4LPDzuqofLI8=; b=S66/5oXIArRIKC40/BLF3QmVbo
+	NvCDH27oT6EiixwYM4WBy5LZQOlUCMCEQJPToPSKf53170Bw8xj6li6f4P3UxkhwqlBNJmisogvWQ
+	I+wKf44RYWil8IokSm/+QMN/lMTD4c82h2q+SUV2Fb/txyWdfvsvYRUkL5qCzZNhlFsrAkGg+VATd
+	0xBgLNGwLH4NKuvKX+GMVhhye8iVqzDcOBUnJfsq/buMVxg0fRG7wLxszwC424AnKoGRCtt1BSB8e
+	3Nmp8/8Td2f4z7xnYbCXE52AtOdSnwdDqZhRKye2JZLKcSzZntHt5PyvcEtdZxurKErnB03R6oDzc
+	hy5O0Qyg==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:55192)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uhYvP-0005Qh-0y;
+	Thu, 31 Jul 2025 20:26:47 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uhYvL-0001HL-3B;
+	Thu, 31 Jul 2025 20:26:44 +0100
+Date: Thu, 31 Jul 2025 20:26:43 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Vladimir Oltean <olteanv@gmail.com>
+Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <aIvDcxeBPhHADDik@shell.armlinux.org.uk>
+References: <aIuEvaSCIQdJWcZx@FUE-ALEWI-WINX>
+ <20250731171642.2jxmhvrlb554mejz@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250731171642.2jxmhvrlb554mejz@skbuf>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-Use the hmac_sha256_usingrawkey() library function instead of the
-"hmac(sha256)" crypto_shash.  This is simpler and faster.
+On Thu, Jul 31, 2025 at 08:16:42PM +0300, Vladimir Oltean wrote:
+> Hi Alexander,
+> 
+> On Thu, Jul 31, 2025 at 04:59:09PM +0200, Alexander Wilhelm wrote:
+> > Hello devs,
+> > 
+> > I'm fairly new to Ethernet PHY drivers and would appreciate your help. I'm
+> > working with the Aquantia AQR115 PHY. The existing driver already supports the
+> > AQR115C, so I reused that code for the AQR115, assuming minimal differences. My
+> > goal is to enable 2.5G link speed. The PHY supports OCSGMII mode, which seems to
+> > be non-standard.
+> > 
+> > * Is it possible to use this mode with the current driver?
+> > * If yes, what would be the correct DTS entry?
+> > * If not, I’d be willing to implement support. Could you suggest a good starting point?
+> > 
+> > Any hints or guidance would be greatly appreciated.
+> > 
+> > 
+> > Best regards
+> > Alexander Wilhelm
+> > 
+> 
+> In addition to what Andrew and Russell said:
+> 
+> The Aquantia PHY driver is a bit unlike other PHY drivers, in that it
+> prefers not to change the hardware configuration, and work with the
+> provisioning of the firmware.
 
-As a cleanup, change the input data parameters from "challenge,
-sizeof(hmac)" to "challenge, sizeof(challenge)", so that the size is
-being taken of the correct buffer.  This is not a functional change,
-since it happens that sizeof(hmac) == sizeof(challenge).
+I'll state here that this is a design decision of the PHY driver.
+It is possible to reconfigure the PHY (I have code in the PHY
+driver to do it, so I can test the module on the Armada 388 based
+Clearfog patform.
 
-Replace the selection of CRYPTO and CRYPTO_HASH with CRYPTO_LIB_SHA256
-and CRYPTO_LIB_UTILS.  The latter is needed for crypto_memneq() which
-was previously being pulled in via CRYPTO.
+Essentially, in aqr107_fill_interface_modes() I do this:
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
----
- drivers/thunderbolt/Kconfig  |  4 ++--
- drivers/thunderbolt/domain.c | 44 +++++-------------------------------
- 2 files changed, 8 insertions(+), 40 deletions(-)
++       phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1, MDIO_CTRL1_LPOWER);
++       mdelay(10);
++       phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x31a, 2);
++       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_10M,
++                     VEND1_GLOBAL_CFG_SGMII_AN |
++                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
++       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_100M,
++                     VEND1_GLOBAL_CFG_SGMII_AN |
++                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
++       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_1G,
++                     VEND1_GLOBAL_CFG_SGMII_AN |
++                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
++       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_2_5G,
++                     VEND1_GLOBAL_CFG_SGMII_AN |
++                     VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII);
++       phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1,
++                          MDIO_CTRL1_LPOWER);
 
-diff --git a/drivers/thunderbolt/Kconfig b/drivers/thunderbolt/Kconfig
-index 0abdb69ee9f43..db3b0bef48f4c 100644
---- a/drivers/thunderbolt/Kconfig
-+++ b/drivers/thunderbolt/Kconfig
-@@ -2,12 +2,12 @@
- menuconfig USB4
- 	tristate "Unified support for USB4 and Thunderbolt"
- 	depends on PCI
- 	select APPLE_PROPERTIES if EFI_STUB && X86
- 	select CRC32
--	select CRYPTO
--	select CRYPTO_HASH
-+	select CRYPTO_LIB_SHA256
-+	select CRYPTO_LIB_UTILS
- 	select NVMEM
- 	help
- 	  USB4 and Thunderbolt driver. USB4 is the public specification
- 	  based on the Thunderbolt 3 protocol. This driver is required if
- 	  you want to hotplug Thunderbolt and USB4 compliant devices on
-diff --git a/drivers/thunderbolt/domain.c b/drivers/thunderbolt/domain.c
-index 7e0eb3c07f1c7..5272c255e046d 100644
---- a/drivers/thunderbolt/domain.c
-+++ b/drivers/thunderbolt/domain.c
-@@ -10,11 +10,11 @@
- #include <linux/idr.h>
- #include <linux/module.h>
- #include <linux/pm_runtime.h>
- #include <linux/slab.h>
- #include <linux/random.h>
--#include <crypto/hash.h>
-+#include <crypto/sha2.h>
- #include <crypto/utils.h>
- 
- #include "tb.h"
- 
- static DEFINE_IDA(tb_domain_ida);
-@@ -707,12 +707,10 @@ int tb_domain_challenge_switch_key(struct tb *tb, struct tb_switch *sw)
- {
- 	u8 challenge[TB_SWITCH_KEY_SIZE];
- 	u8 response[TB_SWITCH_KEY_SIZE];
- 	u8 hmac[TB_SWITCH_KEY_SIZE];
- 	struct tb_switch *parent_sw;
--	struct crypto_shash *tfm;
--	struct shash_desc *shash;
- 	int ret;
- 
- 	if (!tb->cm_ops->approve_switch || !tb->cm_ops->challenge_switch_key)
- 		return -EPERM;
- 
-@@ -724,49 +722,19 @@ int tb_domain_challenge_switch_key(struct tb *tb, struct tb_switch *sw)
- 	get_random_bytes(challenge, sizeof(challenge));
- 	ret = tb->cm_ops->challenge_switch_key(tb, sw, challenge, response);
- 	if (ret)
- 		return ret;
- 
--	tfm = crypto_alloc_shash("hmac(sha256)", 0, 0);
--	if (IS_ERR(tfm))
--		return PTR_ERR(tfm);
--
--	ret = crypto_shash_setkey(tfm, sw->key, TB_SWITCH_KEY_SIZE);
--	if (ret)
--		goto err_free_tfm;
--
--	shash = kzalloc(sizeof(*shash) + crypto_shash_descsize(tfm),
--			GFP_KERNEL);
--	if (!shash) {
--		ret = -ENOMEM;
--		goto err_free_tfm;
--	}
--
--	shash->tfm = tfm;
--
--	memset(hmac, 0, sizeof(hmac));
--	ret = crypto_shash_digest(shash, challenge, sizeof(hmac), hmac);
--	if (ret)
--		goto err_free_shash;
-+	static_assert(sizeof(hmac) == SHA256_DIGEST_SIZE);
-+	hmac_sha256_usingrawkey(sw->key, TB_SWITCH_KEY_SIZE,
-+				challenge, sizeof(challenge), hmac);
- 
- 	/* The returned HMAC must match the one we calculated */
--	if (crypto_memneq(response, hmac, sizeof(hmac))) {
--		ret = -EKEYREJECTED;
--		goto err_free_shash;
--	}
--
--	crypto_free_shash(tfm);
--	kfree(shash);
-+	if (crypto_memneq(response, hmac, sizeof(hmac)))
-+		return -EKEYREJECTED;
- 
- 	return tb->cm_ops->approve_switch(tb, sw);
--
--err_free_shash:
--	kfree(shash);
--err_free_tfm:
--	crypto_free_shash(tfm);
--
--	return ret;
- }
- 
- /**
-  * tb_domain_disconnect_pcie_paths() - Disconnect all PCIe paths
-  * @tb: Domain whose PCIe paths to disconnect
+with:
+
+ #define VEND1_GLOBAL_CFG_SERDES_MODE_XFI       0
+ #define VEND1_GLOBAL_CFG_SERDES_MODE_SGMII     3
+ #define VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII   4
++#define VEND1_GLOBAL_CFG_SERDES_MODE_LOW_POWER 5
+ #define VEND1_GLOBAL_CFG_SERDES_MODE_XFI5G     6
++#define VEND1_GLOBAL_CFG_SERDES_MODE_XFI20G    7
++#define VEND1_GLOBAL_CFG_SGMII_AN              BIT(3)
++#define VEND1_GLOBAL_CFG_SERDES_SILENT         BIT(6)
+
+and this works. So... we could actually reconfigure the PHY independent
+of what was programmed into the firmware.
+
 -- 
-2.50.1
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
