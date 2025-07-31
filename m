@@ -1,184 +1,208 @@
-Return-Path: <linux-kernel+bounces-751935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751936-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A52B16F9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:31:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 080C9B16FA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:32:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174D317EF05
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:31:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D2C4F3AA18B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:31:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD9922F74D;
-	Thu, 31 Jul 2025 10:31:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5F4C2264AC;
+	Thu, 31 Jul 2025 10:31:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="0bcLZnU3"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Sr61EaQQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA542264AE
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:31:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D681118B47E;
+	Thu, 31 Jul 2025 10:31:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753957871; cv=none; b=Zl6hOILJJfQejOU7Vj2ppNuWQVF+TxT3ZTr5tCjd/lRexpVD0arI7dbslOKKQEKWSYRPAYU0X2o+qSEpadO40kxB4PmB5rVDhJumV9AgyErLmmWqG/tieCvOzDQ/ttHfDA4EI64Zpxrli881X8XFh/BXWBeMe1SrKIbCOApIu54=
+	t=1753957906; cv=none; b=oYDRp3vvnvE0jTaZj+1sXx/9k9CFYhBProNMoTpn8Pev1VQYtfcmDi5GCO4+gyQgUe3q57+RG8XJ4+fkJrcPs/UJQlvT7qlNvRotL6hQ25twafngxB50tTEV7nBCHxFqwvAP/uAxUmjIK1Ylfuq3SpT0c0Pt0ui2UMXThkHLySo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753957871; c=relaxed/simple;
-	bh=ZUDRaqnU24X+T7uVJpSv5R4hg3CFDsxJ4xG56N/y4Qg=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=QALa5ot+AaMF4hNVBngge0UQxoET6J36LEcPIUzhK+DhZPAHKy1ssXsdYc0KExZY3bTMXzVFKZ8mnDe8k4MHTHDSK7456HN2gZcyT8cb27XwSdrkwkUSwXE4JADa0vc+n91zubNSKGtBYywwhreBbIyD4xHDUf1b56hz2S/pG80=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=0bcLZnU3; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61539e2065dso3014489a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:31:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1753957868; x=1754562668; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=L4guNMFO2mNbUVAujgFMPCeQwDaxzkTETmATTN/1vzk=;
-        b=0bcLZnU3r7oR3VeHpMNKjhZCr4QAam/3A7YxEhGTUYHWnkjIT9JTOfEJBRIpxMjkfW
-         D0mkWCxlYVSS4JfIC8MM6WBrzBZNCzrOS+BecYrKfvzPu2UIyh1pPgzyCIDtEUZvVd/e
-         UpNqjOZVzSl+xdLOEfr1d+sHMajDBmGPC/HIcDA4J/jCWeyWDZKJrUiQuTOGhkjT++T3
-         0mQsudHeb+EY2jZcOdX8MPll9k9iLMz31MI4BP34ObVUgDEaw32dg5foXOEMMqJf/vwP
-         7FtmkuVa8AFUrX5/EydyDNVXWz+fwQYDlIjp0we3zN/WKgYUjBAYKP8Z/nkhb5uf73pV
-         bWHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753957868; x=1754562668;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=L4guNMFO2mNbUVAujgFMPCeQwDaxzkTETmATTN/1vzk=;
-        b=bXOSZxx25Kskhrm+9zNp8D3scq+kPUAvnLVf5jBGODznUT/3xyK7XQ4WbA/1gm+sUH
-         XfdaxSkkxboMsr4LJMVihTMdNOyPIqK4cyd59u38HJdMRxJfTsDbk8sTzWttVfHXVfFw
-         SqW9fHgCzGjNiRywvScOiUHIgzUAzwXd+Uk4IQTbT6hVagKo18J0NIAUdDVl2/5+s1AW
-         mib+3zzL+EValMKyWiNwQFqQW9TRAZyzC6IbssP6OjdmmjaS7mJ/EEDHmb9Jsv4kcyNM
-         xh7YnfyvlqnQzlMIzee/TjUeQ+MuDXPhW/ObzJquGws0a8q9O1h/eyo3oFilTXlGpOSd
-         M0IA==
-X-Forwarded-Encrypted: i=1; AJvYcCW+vTE5CoUjoaQkJlge5L2u8FYyFOJb/C3YGphtI+vTIgCSOkx7guojrF0Cg/qPcmg2n/XKwDHh4mIEd88=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfUk7W2hlsh51TeUkK2qrc/TLlKXGC2922Y29ZQ+W3sSsuhhxg
-	wNPJhdBNXHrSjyPdtsnNRzV0Ft1ojcrU07I7XEuIPvbAbDk13anZafeUqVUdIrGUsEk=
-X-Gm-Gg: ASbGncv9jzfURPxWfyBow8VgfBRwWdia+y46CjdDoUFHrgeE/qiDrzPZvk4EOKEgbHA
-	1nQr9m3IZPbNM/3HftvzZ41C77kCn+yUS4F56nrMg8xb4DdeuNdSJHLeNs+JNXC7+3AXoTjLMkp
-	AZVXj5C4/AoRSdc+c30R/BRWexzxTgOeJVtY+//3lYmTVqFqyrRSM4JsMJYRKDRVEWhU6US1OS7
-	8oDlB989NXHX+iCAI1c0GnBtwfLj4J+CfZe1rOpgbXMm5ZCqVx8fXlL9xwnfwTRJxacvj4oYbTG
-	wdKG1tAA2PUFDQ6HqNrUAiXZKxLjJ65qMc+lCszbGpLJo+bn+yxsurDI7tyOJXl7/5BHmr7qeE6
-	z4gBUx80N3XXM8FHRVnGrFnC4khNZhh2mdJTW4gpswOxL+S1NticYNdX7HYHbyVXL1rc7VwZJ/8
-	yM+g==
-X-Google-Smtp-Source: AGHT+IFmHbj//ifYv0ps4iK3o2MK/SZVcRme2djqmVaHUnfsmz5EX4ncIp+nUgle+xZrZADbwlYiEw==
-X-Received: by 2002:a17:907:2d28:b0:ae9:c8f6:bd3 with SMTP id a640c23a62f3a-af91bc55e14mr166781766b.7.1753957867841;
-        Thu, 31 Jul 2025 03:31:07 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f25739sm916887a12.21.2025.07.31.03.31.07
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 03:31:07 -0700 (PDT)
+	s=arc-20240116; t=1753957906; c=relaxed/simple;
+	bh=7xI6SJc8l9/QF0tfKjYTzIOTaOS8WPagl3vTWmYZeWA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bvr/QcAlsEyekKN4qD81YLiNZSvy6ruw23vPz1A0TiKBvWtxRjNMtGOd1sdjQ/gJe+ceFw7ljk+eYlnRcEia7+zPrZ/Kb0teqVD3m6zbBiSBNcFyDi9gQOy0PvAFn19U3E+lpBS41Gc2fwFg2QT89awaKDbi6YNhkukdb8EmI9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Sr61EaQQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA4FEC4CEEF;
+	Thu, 31 Jul 2025 10:31:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753957905;
+	bh=7xI6SJc8l9/QF0tfKjYTzIOTaOS8WPagl3vTWmYZeWA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Sr61EaQQUfTWnAlFOaOhqudSv8vSNwOB3AO0uRxg2KrfomncIJWsicQ3eznZ8ujBC
+	 Wy9EYW/n+BRFAiCIfY1NzAQgrXaaqe36mnxo10s39ybtrDqHkUf3c6feXBSTNLcbbF
+	 GyAxcZ8QwI3/UOgtyc/pJJfxHhXW/pSzG9wgN+T1K0yATiuQxnxupO6ulrMs2IQR1+
+	 pXaRohdhO6cGaoip+XbzFc4pv/7bBqYB+MU37WPF1T/IsjDJxKfN2XXCQfRJ76jd7T
+	 uYMMfnK1XzjAFhwJ6KQNeD59Uulstz46YvETr6i0sV/NS4Nr0T30uVfHLd5/HQZKDr
+	 jo5+7zo7O9wnQ==
+Date: Thu, 31 Jul 2025 12:31:40 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Aleksa Sarai <cyphar@cyphar.com>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Jonathan Corbet <corbet@lwn.net>, Shuah Khan <shuah@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-api@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH RFC v2 3/4] procfs: add PROCFS_GET_PID_NAMESPACE ioctl
+Message-ID: <20250731-angliederung-mahlt-9e5811969817@brauner>
+References: <20250723-procfs-pidns-api-v2-0-621e7edd8e40@cyphar.com>
+ <20250723-procfs-pidns-api-v2-3-621e7edd8e40@cyphar.com>
+ <20250724-beobachten-verfassen-9a39c0318341@brauner>
+ <2025-07-25.1753409614-vile-track-icky-epidemic-frail-antidote-d7NYuu@cyphar.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Jul 2025 12:31:07 +0200
-Message-Id: <DBQ668L792QL.2OV5Y4G1PDZLR@fairphone.com>
-Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
- <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] net: ipa: add IPA v5.1 and v5.5 to ipa_version_string()
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Alex Elder" <elder@ieee.org>, "Alex Elder" <elder@kernel.org>, "Andrew
- Lunn" <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
- "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
- "Paolo Abeni" <pabeni@redhat.com>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250728-ipa-5-1-5-5-version_string-v1-1-d7a5623d7ece@fairphone.com> <e07f0407-84e1-4efa-868d-5853b7e9ab4e@ieee.org>
-In-Reply-To: <e07f0407-84e1-4efa-868d-5853b7e9ab4e@ieee.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <2025-07-25.1753409614-vile-track-icky-epidemic-frail-antidote-d7NYuu@cyphar.com>
 
-On Mon Jul 28, 2025 at 5:53 PM CEST, Alex Elder wrote:
-> On 7/28/25 3:35 AM, Luca Weiss wrote:
->> Handle the case for v5.1 and v5.5 instead of returning "0.0".
->
-> This makes sense for IPA v5.5.
->
-> I have comments below, but I'll do this up front:
->
-> Reviewed-by: Alex Elder <elder@riscstar.com>
+On Fri, Jul 25, 2025 at 12:24:28PM +1000, Aleksa Sarai wrote:
+> On 2025-07-24, Christian Brauner <brauner@kernel.org> wrote:
+> > On Wed, Jul 23, 2025 at 09:18:53AM +1000, Aleksa Sarai wrote:
+> > > /proc has historically had very opaque semantics about PID namespaces,
+> > > which is a little unfortunate for container runtimes and other programs
+> > > that deal with switching namespaces very often. One common issue is that
+> > > of converting between PIDs in the process's namespace and PIDs in the
+> > > namespace of /proc.
+> > > 
+> > > In principle, it is possible to do this today by opening a pidfd with
+> > > pidfd_open(2) and then looking at /proc/self/fdinfo/$n (which will
+> > > contain a PID value translated to the pid namespace associated with that
+> > > procfs superblock). However, allocating a new file for each PID to be
+> > > converted is less than ideal for programs that may need to scan procfs,
+> > > and it is generally useful for userspace to be able to finally get this
+> > > information from procfs.
+> > > 
+> > > So, add a new API for this in the form of an ioctl(2) you can call on
+> > > the root directory of procfs. The returned file descriptor will have
+> > > O_CLOEXEC set. This acts as a sister feature to the new "pidns" mount
+> > > option, finally allowing userspace full control of the pid namespaces
+> > > associated with procfs instances.
+> > > 
+> > > The permission model for this is a bit looser than that of the "pidns"
+> > > mount option, but this is mainly because /proc/1/ns/pid provides the
+> > > same information, so as long as you have access to that magic-link (or
+> > > something equivalently reasonable such as privileges with CAP_SYS_ADMIN
+> > > or being in an ancestor pid namespace) it makes sense to allow userspace
+> > > to grab a handle. setns(2) will still have their own permission checks,
+> > > so being able to open a pidns handle doesn't really provide too many
+> > > other capabilities.
+> > > 
+> > > Signed-off-by: Aleksa Sarai <cyphar@cyphar.com>
+> > > ---
+> > >  Documentation/filesystems/proc.rst |  4 +++
+> > >  fs/proc/root.c                     | 54 ++++++++++++++++++++++++++++++++++++--
+> > >  include/uapi/linux/fs.h            |  3 +++
+> > >  3 files changed, 59 insertions(+), 2 deletions(-)
+> > > 
+> > > diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+> > > index c520b9f8a3fd..506383273c9d 100644
+> > > --- a/Documentation/filesystems/proc.rst
+> > > +++ b/Documentation/filesystems/proc.rst
+> > > @@ -2398,6 +2398,10 @@ pidns= specifies a pid namespace (either as a string path to something like
+> > >  will be used by the procfs instance when translating pids. By default, procfs
+> > >  will use the calling process's active pid namespace.
+> > >  
+> > > +Processes can check which pid namespace is used by a procfs instance by using
+> > > +the `PROCFS_GET_PID_NAMESPACE` ioctl() on the root directory of the procfs
+> > > +instance.
+> > > +
+> > >  Chapter 5: Filesystem behavior
+> > >  ==============================
+> > >  
+> > > diff --git a/fs/proc/root.c b/fs/proc/root.c
+> > > index 057c8a125c6e..548a57ec2152 100644
+> > > --- a/fs/proc/root.c
+> > > +++ b/fs/proc/root.c
+> > > @@ -23,8 +23,10 @@
+> > >  #include <linux/cred.h>
+> > >  #include <linux/magic.h>
+> > >  #include <linux/slab.h>
+> > > +#include <linux/ptrace.h>
+> > >  
+> > >  #include "internal.h"
+> > > +#include "../internal.h"
+> > >  
+> > >  struct proc_fs_context {
+> > >  	struct pid_namespace	*pid_ns;
+> > > @@ -418,15 +420,63 @@ static int proc_root_readdir(struct file *file, struct dir_context *ctx)
+> > >  	return proc_pid_readdir(file, ctx);
+> > >  }
+> > >  
+> > > +static long int proc_root_ioctl(struct file *filp, unsigned int cmd, unsigned long arg)
+> > > +{
+> > > +	switch (cmd) {
+> > > +#ifdef CONFIG_PID_NS
+> > > +	case PROCFS_GET_PID_NAMESPACE: {
+> > > +		struct pid_namespace *active = task_active_pid_ns(current);
+> > > +		struct pid_namespace *ns = proc_pid_ns(file_inode(filp)->i_sb);
+> > > +		bool can_access_pidns = false;
+> > > +
+> > > +		/*
+> > > +		 * If we are in an ancestors of the pidns, or have join
+> > > +		 * privileges (CAP_SYS_ADMIN), then it makes sense that we
+> > > +		 * would be able to grab a handle to the pidns.
+> > > +		 *
+> > > +		 * Otherwise, if there is a root process, then being able to
+> > > +		 * access /proc/$pid/ns/pid is equivalent to this ioctl and so
+> > > +		 * we should probably match the permission model. For empty
+> > > +		 * namespaces it seems unlikely for there to be a downside to
+> > > +		 * allowing unprivileged users to open a handle to it (setns
+> > > +		 * will fail for unprivileged users anyway).
+> > > +		 */
+> > > +		can_access_pidns = pidns_is_ancestor(ns, active) ||
+> > > +				   ns_capable(ns->user_ns, CAP_SYS_ADMIN);
+> > 
+> > This seems to imply that if @ns is a descendant of @active that the
+> > caller holds privileges over it. Is that actually always true?
+> > 
+> > IOW, why is the check different from the previous pidns= mount option
+> > check. I would've expected:
+> > 
+> > ns_capable(_no_audit)(ns->user_ns) && pidns_is_ancestor(ns, active)
+> > 
+> > and then the ptrace check as a fallback.
+> 
+> That would mirror pidns_install(), and I did think about it. The primary
+> (mostly handwave-y) reasoning I had for making it less strict was that:
+> 
+>  * If you are in an ancestor pidns, then you can already see those
+>    processes in your own /proc. In theory that means that you will be
+>    able to access /proc/$pid/ns/pid for at least some subprocess there
+>    (even if some subprocesses have SUID_DUMP_DISABLE, that flag is
+>    cleared on ).
+> 
+>    Though hypothetically if they are all running as a different user,
+>    this does not apply (and you could create scenarios where a child
+>    pidns is owned by a userns that you do not have privileges over -- if
+>    you deal with setuid binaries). Maybe that risk means we should just
+>    combine them, I'm not sure.
+> 
+>  * If you have CAP_SYS_ADMIN permissions over the pidns, it seems
+>    strange to disallow access even if it is not in an ancestor
+>    namespace. This is distinct to pidns_install(), where you want to
+>    ensure you cannot escape to a parent pid namespace, this is about
+>    getting a handle to do other operations (i.e. NS_GET_{P,TG}ID_*_PIDNS).
+> 
+> Maybe they should be combined to match pidns_install(), but then I would
+> expect the ptrace_may_access() check to apply to all processes in the
+> pidns to make it less restrictive, which is not something you can
+> practically do (and there is a higher chance that pid1 will have
+> SUID_DUMP_DISABLE than some random subprocess, which almost certainly
+> will not be SUID_DUMP_DISABLE).
+> 
+> Fundamentally, I guess I'm still trying to see what the risk is of
+> allowing a process to get a handle to a pidns that they have some kind
+> of privilege over (whether it's CAP_SYS_ADMIN, or by the virtue of being
 
-Thanks!
-
->
->> Also reword the comment below since I don't see any evidence of such a
->> check happening, and - since 5.5 has been missing - can happen.
->
-> You are correct.  Commit dfdd70e24e388 ("net: ipa: kill
-> ipa_version_supported()") removed the test that guaranteed
-> that the version would be good.  So your comment update
-> should have done then.
->
->> Fixes: 3aac8ec1c028 ("net: ipa: add some new IPA versions")
->> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->> ---
->>   drivers/net/ipa/ipa_sysfs.c | 6 +++++-
->>   1 file changed, 5 insertions(+), 1 deletion(-)
->>=20
->> diff --git a/drivers/net/ipa/ipa_sysfs.c b/drivers/net/ipa/ipa_sysfs.c
->> index a59bd215494c9b7cbdd1f000d9f23e100c18ee1e..a53e9e6f6cdf50103e94e496=
-fd06b55636ba02f4 100644
->> --- a/drivers/net/ipa/ipa_sysfs.c
->> +++ b/drivers/net/ipa/ipa_sysfs.c
->> @@ -37,8 +37,12 @@ static const char *ipa_version_string(struct ipa *ipa=
-)
->>   		return "4.11";
->>   	case IPA_VERSION_5_0:
->>   		return "5.0";
->> +	case IPA_VERSION_5_1:
->> +		return "5.1";
->
-> IPA v5.1 is not actually supported yet, and this won't be
-> used until it is.  Only those platforms with compatible
-> strings defined in the ipa_match array in "ipa_main.c" will
-> probe successfully.
->
-> That said...  I guess it's OK to define this at the same time
-> things are added to enum ipa_version.  There are still too
-> many little things like this that need to be updated when a
-> new version is supported.
-
-Yeah, my point in adding this as well was based on the comment there:
-
-/**
- * [...]
- * Defines the version of IPA (and GSI) hardware present on the platform.
- * Please update ipa_version_string() whenever a new version is added.
- */
-enum ipa_version {
-    [...]
-}
-
-I previously only noticed 5.5 being missing, but before sending I double
-checked if anything else was missing and found 5.1. So perhaps if 5.1 is
-not going to be added anytime soon, we could remove the 5.1 definition
-and the rest.
-
->
-> Thanks for the patch.
->
-> 					-Alex
->
->> +	case IPA_VERSION_5_5:
->> +		return "5.5";
->>   	default:
->> -		return "0.0";	/* Won't happen (checked at probe time) */
->> +		return "0.0";	/* Should not happen */
->>   	}
->>   }
->>  =20
->>=20
->> ---
->> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
->> change-id: 20250728-ipa-5-1-5-5-version_string-a557dc8bd91a
->>=20
->> Best regards,
-
+There shouldn't be. For example, you kinda implicitly do that with a
+pidfd, no? Because you can pass the pidfd to setns() instead of a
+namespace fd itself. Maybe that's the argument you're lookin for?
 
