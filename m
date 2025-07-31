@@ -1,101 +1,210 @@
-Return-Path: <linux-kernel+bounces-752111-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 07380B17151
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:34:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 584A1B1715D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:37:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F225FA804B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:33:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35EF74E721F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D23E222A7EF;
-	Thu, 31 Jul 2025 12:34:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CBFD237170;
+	Thu, 31 Jul 2025 12:37:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="4kozBWDA";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xdAvVktV"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DQwjL0KX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FD0C1E4A9
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:34:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DF56208CA;
+	Thu, 31 Jul 2025 12:37:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753965261; cv=none; b=rd2s5LMpiZAT+FXW2tUlZCLXj66PBARmEiwggKigv6aL6xGl0ZwGcB5o7C3wRqNtO76UoXaeE7fSh8YiF6Bsdh7Ql2HFqgB5DtZ1hE37FwPUvuuH5FQKAlWv2FdYgiuffpIN9kX7c+KfTciIPke2MjDHBB06RIBdWATDVNGMUoI=
+	t=1753965440; cv=none; b=HI2YpLDBUJhlqR0X/ukPTlcp973eXax5U+6RcnFcfn6DQn79/rRJ/qEcPW9woL/IBamvUyPkNIpRAZICK45QtJUeMK+cEj0lFRMjgL8tHBDKZngwZqWOvxBGiHRbCHV7keuV8sISEsewMSIS4sDqiQT1nmr4sg5HkyJw50da4fo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753965261; c=relaxed/simple;
-	bh=rSCXRgHcs2dB8mW64lEFFzUSj87HxZJq3hBFWyGj4vo=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=WJVm8X16jmrHgHTlR79F+Xnct9OqChJ1s8xq/cpMxQar+aogo4VQ0lUEsB0AKEB5r5M4kI5glAObgP7IWfSCO5W34XXI16XeZNtd7XraeMWXLP3NPw96yhxGCidmZF4NpIgeEZynUajhP+0WBEDXoyR6MfkCSnrSlXYAxJztFZc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=4kozBWDA; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xdAvVktV; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1753965257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=piJPPQK15+eacRq11wpIMXBC/ANS/3ROU0AjgU8/DEw=;
-	b=4kozBWDACIVhk4AgSuW/LaKzqZqADa6eKZMGovRkMoOf/hzdNjOpwtk8qagoGPrIWVZAG9
-	xissf/I8eiGpk7XaKSz90Ag8avWnR19R5ZV0tUKIih9Uv5pi8r91+7Nym6Qdaeqle85DL/
-	xzxbzFCkWyqVOZSFGS9xveczlMO4v85xXNe2DJR5NbHvSVrLnojhHUzOAhWphaLMtaVBbi
-	Wiwj+t2kt1kO3PXeebnupBSEbO/shcHDWGoYVGr06cvfIgQWpTSq3g/WIUoWLlxmQawxbR
-	SfbXH6Z68mTgyNSnCoztqDKb/kbtz2nB1ISFaEjTf5VypiWKVXhs/1T4BXmpcQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1753965257;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=piJPPQK15+eacRq11wpIMXBC/ANS/3ROU0AjgU8/DEw=;
-	b=xdAvVktV1g1FyNPxMs0xsHnY1ekC79OJ0tsUeBduMM8PqPzOb1qQE+MUlHSyRMdQAHFOn9
-	jgz20NZw3U6fN3DQ==
-To: Oliver Sang <oliver.sang@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, oe-lkp@lists.linux.dev,
- lkp@intel.com, linux-kernel@vger.kernel.org, x86@kernel.org, Sebastian
- Andrzej Siewior <bigeasy@linutronix.de>, linux-mm@kvack.org,
- ltp@lists.linux.it, oliver.sang@intel.com
-Subject: Re: [tip:locking/futex] [futex]  56180dd20c:
- BUG:sleeping_function_called_from_invalid_context_at_kernel/nsproxy.c
-In-Reply-To: <aIrJipeLsGUM92+R@xsang-OptiPlex-9020>
-References: <202507231021.dcf24373-lkp@intel.com> <87a54usty4.ffs@tglx>
- <aINKAQt3qcj2s38N@xsang-OptiPlex-9020> <87seikp94v.ffs@tglx>
- <aIgUUhKWesDpM0BJ@xsang-OptiPlex-9020> <87wm7ro3r7.ffs@tglx>
- <aIrJipeLsGUM92+R@xsang-OptiPlex-9020>
-Date: Thu, 31 Jul 2025 14:34:15 +0200
-Message-ID: <87cy9gilo8.ffs@tglx>
+	s=arc-20240116; t=1753965440; c=relaxed/simple;
+	bh=x1zdbpjE+cQySjmlF0wAM2xxqmg+a54+zYfqjK8Zpzg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=L791vcpYLqBg8vAjD2TnuM7WfdliOAAn5DHi4eV6flg3Y6EJR9tl0QXwj5AefCZFTh7iOrI6jccvZq+XhcWFZcf40IYpiixb9tebrWZYW7jxE5cooGvKhOQCqNK5Eww7EXTrRwcwx77BiGDZVkjrdZpAFIXjR6MPuE7jBWb4aWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DQwjL0KX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B71B6C4CEEF;
+	Thu, 31 Jul 2025 12:37:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753965440;
+	bh=x1zdbpjE+cQySjmlF0wAM2xxqmg+a54+zYfqjK8Zpzg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DQwjL0KXX9GSPLy404TgAv0Qjn5xJ/FZd0z0sd2awLL9rtJ6MpA0rDUw5mOVdzCMq
+	 bMpFB8M36c4znUpKP/k50xNWpODaryzeMbshLCpQjMli2PVEe4qOQWgRuJc8rndyXK
+	 BH1Z6o0w2ur0cNxQf1PwRaeMdZcj1hdTc2/Y9DttZsTtvvaHmzC3atRN5EtcoDkqBf
+	 hfBo67Vr0R3Y0/MbpO0VeNbRNIHvoKW2qw9ht+3NKrG7vkyOnoitqwiCcCc1xmNe5i
+	 IATI8gFqfxsQQyklFYF9OEkCf5DIk7ttJepk8TkGFkOLxuhy3ePvyZX2NGm605ONo3
+	 WhjTJ5Qx1Bk6w==
+Date: Thu, 31 Jul 2025 08:37:17 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: David Hildenbrand <david@redhat.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
+	aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
+ entries
+Message-ID: <aItjffoR7molh3QF@lappy>
+References: <20250630031958.1225651-1-sashal@kernel.org>
+ <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
+ <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com>
+ <aG06QBVeBJgluSqP@lappy>
+ <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com>
 
-Oliver!
-
-On Thu, Jul 31 2025 at 09:40, Oliver Sang wrote:
-> On Tue, Jul 29, 2025 at 09:27:56AM +0200, Thomas Gleixner wrote:
->> > but bot seems not be able to capture other new dmesg stats.
->> 
->> Ah. The tracer does not dump on warnings by default. You need
->> 'panic_on_warn' on the command line as well. Forgot about that earlier.
+On Tue, Jul 08, 2025 at 05:42:16PM +0200, David Hildenbrand wrote:
+>On 08.07.25 17:33, Sasha Levin wrote:
+>>On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
+>>>On 01.07.25 02:57, Andrew Morton wrote:
+>>>>On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>>>>
+>>>>>When handling non-swap entries in move_pages_pte(), the error handling
+>>>>>for entries that are NOT migration entries fails to unmap the page table
+>>>>>entries before jumping to the error handling label.
+>>>>>
+>>>>>This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
+>>>>>triggers a WARNING in kunmap_local_indexed() because the kmap stack is
+>>>>>corrupted.
+>>>>>
+>>>>>Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
+>>>>>   WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>>>>   Call trace:
+>>>>>     kunmap_local_indexed from move_pages+0x964/0x19f4
+>>>>>     move_pages from userfaultfd_ioctl+0x129c/0x2144
+>>>>>     userfaultfd_ioctl from sys_ioctl+0x558/0xd24
+>>>>>
+>>>>>The issue was introduced with the UFFDIO_MOVE feature but became more
+>>>>>frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
+>>>>>PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
+>>>>>path more commonly executed during userfaultfd operations.
+>>>>>
+>>>>>Fix this by ensuring PTEs are properly unmapped in all non-swap entry
+>>>>>paths before jumping to the error handling label, not just for migration
+>>>>>entries.
+>>>>
+>>>>I don't get it.
+>>>>
+>>>>>--- a/mm/userfaultfd.c
+>>>>>+++ b/mm/userfaultfd.c
+>>>>>@@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+>>>>>  		entry = pte_to_swp_entry(orig_src_pte);
+>>>>>  		if (non_swap_entry(entry)) {
+>>>>>+			pte_unmap(src_pte);
+>>>>>+			pte_unmap(dst_pte);
+>>>>>+			src_pte = dst_pte = NULL;
+>>>>>  			if (is_migration_entry(entry)) {
+>>>>>-				pte_unmap(src_pte);
+>>>>>-				pte_unmap(dst_pte);
+>>>>>-				src_pte = dst_pte = NULL;
+>>>>>  				migration_entry_wait(mm, src_pmd, src_addr);
+>>>>>  				err = -EAGAIN;
+>>>>>-			} else
+>>>>>+			} else {
+>>>>>  				err = -EFAULT;
+>>>>>+			}
+>>>>>  			goto out;
+>>>>
+>>>>where we have
+>>>>
+>>>>out:
+>>>>	...
+>>>>	if (dst_pte)
+>>>>		pte_unmap(dst_pte);
+>>>>	if (src_pte)
+>>>>		pte_unmap(src_pte);
+>>>
+>>>AI slop?
+>>
+>>Nah, this one is sadly all me :(
 >
-> attached one dmesg FYI.
+>Haha, sorry :P
 
-Hmm, that trace dump was cut off before it completed by a reset
-(probably your test timeout).
+So as I was getting nowhere with this, I asked AI to help me :)
 
-Either you make the timeout longer or try the following on the kernel
-command line instead of 'ftrace_dump_on_cpu':
+If you're not interested in reading LLM generated code, feel free to
+stop reading now...
 
-       ftrace_dump_on_oops=orig_cpu trace_buf_size=100K
+After it went over the logs, and a few prompts to point it the right
+way, it ended up generating a patch (below) that made sense, and fixed
+the warning that LKFT was being able to trigger.
 
-That reduces the output to the CPU which triggers the problem and with a
-smaller buffer.
+If anyone who's more familiar with the code than me (and the AI) agrees
+with the patch and ways to throw their Reviewed-by, I'll send out the
+patch.
 
+If the below patch is completely bogus then I'm sorry and I'll buy you a
+beer at LPC :)
+
+
+ From 70f7eae079a5203857b96d6c64bb72b0f566d4de Mon Sep 17 00:00:00 2001
+From: Sasha Levin <sashal@kernel.org>
+Date: Wed, 30 Jul 2025 20:41:54 -0400
+Subject: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for
+  CONFIG_HIGHPTE
+
+With CONFIG_HIGHPTE on 32-bit ARM, move_pages_pte() maps PTE pages using
+kmap_local_page(), which requires unmapping in Last-In-First-Out order.
+
+The current code maps dst_pte first, then src_pte, but unmaps them in
+the same order (dst_pte, src_pte), violating the LIFO requirement.
+This causes the warning in kunmap_local_indexed():
+
+   WARNING: CPU: 0 PID: 604 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+   addr != __fix_to_virt(FIX_KMAP_BEGIN + idx)
+
+Fix this by reversing the unmap order to respect LIFO ordering.
+
+This issue follows the same pattern as similar fixes:
+- commit eca6828403b8 ("crypto: skcipher - fix mismatch between mapping and unmapping order")
+- commit 8cf57c6df818 ("nilfs2: eliminate staggered calls to kunmap in nilfs_rename")
+
+Both of which addressed the same fundamental requirement that kmap_local
+operations must follow LIFO ordering.
+
+Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+Co-developed-by: Claude claude-opus-4-20250514
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+  mm/userfaultfd.c | 9 +++++++--
+  1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+index 8253978ee0fb..bf7a57ea71e0 100644
+--- a/mm/userfaultfd.c
++++ b/mm/userfaultfd.c
+@@ -1453,10 +1453,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
+  		folio_unlock(src_folio);
+  		folio_put(src_folio);
+  	}
+-	if (dst_pte)
+-		pte_unmap(dst_pte);
++	/*
++	 * Unmap in reverse order (LIFO) to maintain proper kmap_local
++	 * index ordering when CONFIG_HIGHPTE is enabled. We mapped dst_pte
++	 * first, then src_pte, so we must unmap src_pte first, then dst_pte.
++	 */
+  	if (src_pte)
+  		pte_unmap(src_pte);
++	if (dst_pte)
++		pte_unmap(dst_pte);
+  	mmu_notifier_invalidate_range_end(&range);
+  	if (si)
+  		put_swap_device(si);
+
+
+-- 
 Thanks,
-
-        tglx
+Sasha
 
