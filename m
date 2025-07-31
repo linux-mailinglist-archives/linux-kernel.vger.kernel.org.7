@@ -1,142 +1,212 @@
-Return-Path: <linux-kernel+bounces-752712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752715-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1A54B17A10
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:31:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 77D8CB17A17
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:37:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A20517B78C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:31:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C54D01AA62AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5843B288C81;
-	Thu, 31 Jul 2025 23:31:14 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3076288CB2;
+	Thu, 31 Jul 2025 23:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="Kg2NDonR"
+Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013047.outbound.protection.outlook.com [40.107.162.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4CC8288C13;
-	Thu, 31 Jul 2025 23:31:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754004674; cv=none; b=UMOcp9tM91Bfzbs8aRWz5czirVyZbbU8y2rK6n9i0GEt8maAaBRlGxwjooPcR4buZ7TpiGjp++L4DsfBhYysmxglvX8O5gihsfpwDwz41NdX6YQbS9wCorGXPld9ugCsslikRJZDDFvARobxZeif8PHvopBN1viBXxQGDrUQmQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754004674; c=relaxed/simple;
-	bh=X6ag863tsAMX72vxVmuzaAl3aNsCRnexcpmqmW3S/bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=TgJeAeXmmojF9VvrJN34wteNuVRQzOxWPNfLnel18NoT4DJPsUr0XXLbkwadlVeoTq7Ipo9stMIp2KspnPM8gSIVPuYUFHLxTAAraGTl1y4j4+nHlm0bi1rsxVrpOadGjOGy+hVc1nDLIAMVNIjr0T0Q4YaXr2I/HwVV6f1p2CY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf09.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay04.hostedemail.com (Postfix) with ESMTP id 348081A0B32;
-	Thu, 31 Jul 2025 23:31:09 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf09.hostedemail.com (Postfix) with ESMTPA id 8082B20025;
-	Thu, 31 Jul 2025 23:31:07 +0000 (UTC)
-Date: Thu, 31 Jul 2025 19:31:26 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org, Douglas Raillard
- <douglas.raillard@arm.com>
-Subject: [PATCH] tracing: Have unsigned int function args displayed as
- hexadecimal
-Message-ID: <20250731193126.2eeb21c6@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AFE318D643;
+	Thu, 31 Jul 2025 23:36:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754005016; cv=fail; b=U3+2AhKwPOqdGsy7CTEY6c+5m3tD7J8qfXgovfCjEAnWw132GmAsY8cjy+XFkUDWlFFPrcuJgUsCdkhuzKho+X/Z/amCYvX+k84ZeFRRiKEuqiQRNCOp9/7XqAFB0p8veQt+bCLdve2Gc7IWlBZQCg/BQyqoiAX9hCY+niMvW+Q=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754005016; c=relaxed/simple;
+	bh=qOQHbw5GG7Dr/ubst9shI5hc+KhgrCm449Y6Mrwo/mc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=j9YXA1k6p1595AEp24hA2upeE8ZRneOA+KiPZ86DlE86sGwxhbolqjTeUv+14QEekFqRjIi5ti7dHRlZuXEyaMqn7DnUl9f1Ynl88BI583yqmkcAGegYmLvDLmK5mACKBfzCzMnlcofMmE/m49dQRXQv8Hzj2bnuhklFh3mcF+U=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=Kg2NDonR; arc=fail smtp.client-ip=40.107.162.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PpnrUsqDFtOrNenh06haNA+5VX3p+FkNVvE9pNlh9XmEUJaDju7mLjUNUF8dCJWXfv0GMlm6D0nsn41qjpYgYTFHP2xUWmYdTR8VCYStg23u8WI7t6XWoITAPR6jGCcct+obTxdLEXjiTzVPyapfKAG3JteB1f4rzeO/XzYVkYULTgQBDKTzfTxPRLiqWr0/W2bV4KW4mR1BxAK0jXv3fckrgWSwvhBQytoOyyowd0kMhHxwYEp+qZVjuahAvtacVPKFeQdY04aUAWFMFPenDlj0fmgrSg7Hl2s2d4WHT0jE9U0NIL23C1OdzTAEDGRTn8kFUsaCCwc32WWDVvrBog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=z5BdhBe9W1RjfOiX9l0KG+hYHkU4qJjy2RJm80wJTWI=;
+ b=SJ4pklHhsXZCnQtYRr0VjWRT8avmK5w9apnLyYNRjvNSBWuFwbOfEfUEEcWDi3k3ISLZAVMvXR5u/R66oPrY1FDiqImKcOY5dA3NCMmfBdkOJUmrTVsHLSpUk/B9J032+o6ehZlbqTixgTSn8RVuVlYZTMCPsd6k7y9He3/7G0w0gVrwWAAbdcs/GwWYEpZDiGaaSrFQU4xvaJWo7RJQ0q+HJxAde6R4/hrVYCNLwljo0DeuZSfvPliRTIaXXZ1AuntJMh5+FWfHnvia70hjVn4gwoe9L/Z7WNNdFeDZyXjDSxTRvgkQZmzXcBVWPcaMmyJXGApIHUCehjiXXWxg5g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=z5BdhBe9W1RjfOiX9l0KG+hYHkU4qJjy2RJm80wJTWI=;
+ b=Kg2NDonRyK6jKEYcG7SsbyzEqOusocToCEwVryFyw9HWxGPk8wugNYb2mLk05sa+GD7wb1bf+TSKaJU1idIOPjWuwrrErSoa+AazgQQlZ6D3Njb48Zia1lXuk4c4yJ7QtA0x0EX1n4Ma5NmkZZuXqbuav/9eL74yy6a1LlmQACrlWX40gIpY8dEtqfivwp6Y42r+qW6axjEy3k01amzThYwEEKCrbZM1MJRuovo9QHoreDjsOWt+Y6sc8dZvJE+2l/P3Jtw1wFfMcww/yjerxz+yMFi5r5gSaVbHHGONYD6Rx3JUzHjCa0F2tkxFnYJ6AcceBecbEIU9f0o36xRcHA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AM0PR04MB7009.eurprd04.prod.outlook.com (2603:10a6:208:19b::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Thu, 31 Jul
+ 2025 23:36:50 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
+ 23:36:49 +0000
+Date: Thu, 31 Jul 2025 19:36:42 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linuxppc-dev@lists.ozlabs.org,
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] dt-bindings: fsl: fsl,rcpm: Add
+ #power-domain-cells
+Message-ID: <aIv+CgkePusUoT6Q@lizhi-Precision-Tower-5810>
+References: <20250731055806.2265628-1-alexander.stein@ew.tq-group.com>
+ <20250731-funky-crab-of-defense-7cd658@kuoka>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731-funky-crab-of-defense-7cd658@kuoka>
+X-ClientProxiedBy: PH8PR15CA0002.namprd15.prod.outlook.com
+ (2603:10b6:510:2d2::29) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Stat-Signature: afjqzmu6nzyhwkeonr138bmxsjxupxw3
-X-Rspamd-Server: rspamout08
-X-Rspamd-Queue-Id: 8082B20025
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/YeDc0ItVMUA3mLMe0onyOkUEa2serYZM=
-X-HE-Tag: 1754004667-959313
-X-HE-Meta: U2FsdGVkX1+z+Dq5IE/EHdZLBzL2QtoUEsiLkpqrXCweM9zvEJ9RW3b7LYH5RoEWW4wV8oerCSaWKgX4HFYmGFtJSAtXaCdwOoRibagsLWbukgTeUY623Ue9piuaZkRJmCuuPkduW528/ME/qIOceA/NZ3GDmW+wssgNvwjpS2HDurBz3VG/rVN9ZlbN8nr4rtWZ4lU1nBO1YMXwqjSsMX3FdKpAPa3qEq51DdiBwXP22xpabwLns5Pwc0s4wbRHebj9NTGbuNaocvEvO9ZCUCvns9ZW4z3ZVG4Ow+yXmaofZ7AfuCu4pePE4GsNEPOPaBwOiEvIzdfmAhQTadIhnQluSBHuziRJJVkOx64yARTdh2zmgpO0vX0ShDIqOkHs
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AM0PR04MB7009:EE_
+X-MS-Office365-Filtering-Correlation-Id: 47629765-aaf7-4fed-315b-08ddd08b1f0c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|19092799006|366016|1800799024|52116014|7416014|376014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hLDOEoeNgIEsagELzDtd1CGkwYOL3DfWs5SfEEkGF4WPfMfWVA675BJDyuvs?=
+ =?us-ascii?Q?roP5eQGDb4sTsMdhWgirOvGS/iqXNwdX3XH/lbfV1VPbkoGCX/f0BS/k7oqr?=
+ =?us-ascii?Q?4KhDtyc6Vp51eUWM7/rHb5mFAWNhXV6URwxvzEGQcy6GImgVlCZbMk1sAQxE?=
+ =?us-ascii?Q?YVpI1/FS6w5xoCTkd2t2Kw5wRKF8V1zVsehbhSbVX/+umWxd6ywr6b8LaYz5?=
+ =?us-ascii?Q?7f+E8XuuH7w2KZqg0QwNsGZrsu0smBply/RdXOgd4dkSjZqREtxAguW+WxbD?=
+ =?us-ascii?Q?dRmkNU2YAA3f7Sc7BWrYJzz++F3j0isOtyb67K2XHdYMWHonHBBPkgRInJHA?=
+ =?us-ascii?Q?VBxxyTY7lnc69DsncZjtPL3RrYBmtUExeM9yZ9PCXw8Ac11efVDGeZ1sdfnY?=
+ =?us-ascii?Q?6t+7MjOSrb5VbaJc7LD0b360zDZwHRSYTK6Y/W8lIaj5mxc4aYc48xETyrD5?=
+ =?us-ascii?Q?ewajt3Kqzr+1HMlsx+SUuqKSWMyHXofMhI7XxuFqjbIUnkzwrIrohx593k9u?=
+ =?us-ascii?Q?LI5iUnm23n5u6qDExxhZuvcUKONWpn4zSxu6nx/ysT6xxpxWDozLji3M1C3a?=
+ =?us-ascii?Q?2jvBNg7w+2tuX1gVWUQ6LusU1xs1NqEM1YKXPs1BqycTBwcD4EcDK0VzIL9R?=
+ =?us-ascii?Q?Gjgu43StiN9LNmXsIllRisXvDtpmw0eRbGH3/3viZ+h9BHHwZf1UcxrVGdS5?=
+ =?us-ascii?Q?9L/KgY7AVQygfw/9XvKQiXWHsGwxCdJpH1Em3BLbBUoVOezmHCP5QjOqwyIF?=
+ =?us-ascii?Q?uRLbVLHTKrfKIYnWxbyuNUv4wpYQ/ZPDVqADK46KT4hZ5hRAq+VqRYoWdIb0?=
+ =?us-ascii?Q?jw/Buymekf/cq+tnX/5lYdkk+PssXiINC93ImI52g9hjRmYTJjWKyPvNfDUd?=
+ =?us-ascii?Q?gOvt0hSae1tA3ufachyAymS45dw86egsXJ/vMuk/qnmgRpBf98Mz5GRgbkS3?=
+ =?us-ascii?Q?yjdJbiidVVlvDf84iUHywydW1a1cQcKb1AIW4HSRzGP5sn/DAx/VoDD8OVTc?=
+ =?us-ascii?Q?EdAYBEg8VbadOOT1I4TqBX7a4HjEW+zW9eaKN+LJX6x5Er2Z4K6ZfildZQOM?=
+ =?us-ascii?Q?17Ai92hDjFYcMRNeo/nN54A8F7DJCpqQF+x1DFl0GOx/xFScUblDXN/fhbrw?=
+ =?us-ascii?Q?Jf6lf4r9voEHe9UP724bwfh0U8D50tBCeU2D5C3msVyCmwDjSbYNqzpzYzF1?=
+ =?us-ascii?Q?sk46244SFs/ZCX3iHX8bbghMAFByYaKTERiMiLqSnzG6SFilPwpEmFpV6zRa?=
+ =?us-ascii?Q?+oDFAgyj4Hk7CZ3VA8BXicDonzdfPKHFT9HlTbZxtiWFSP3/gorVyXwK9H4+?=
+ =?us-ascii?Q?HYQX/iu6Or4My1uGcIJqSKOmW4lfwbDoow+5Epta1nHqOD1HCc5RtOSVDWKs?=
+ =?us-ascii?Q?V0aJR10VzxEfdeI0r9z5D50/4sCXtuFp9IJ6JOPt8s8TAkoujZBRik6UNqYn?=
+ =?us-ascii?Q?5EWMKQQvoVw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(366016)(1800799024)(52116014)(7416014)(376014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?yquSXELLHW+s499olu8TTIoBEqFKsquf2cWiv+dyeeMxJqnyyeLQvttCN5JG?=
+ =?us-ascii?Q?OmuybaFZGiPt9xm1iRzQNu7660lNwXBPfaDBC8E4p0ZrmRCrjZz+fmdT9MQj?=
+ =?us-ascii?Q?UUCa1xUnBGpYaQoEPW30A4sGYtQPcG/2bO6Wg3qzl+0zAlSZlK0w9N0xCcOu?=
+ =?us-ascii?Q?7dsfL8uID7ygx9g1/2RF9gxYDQZV+i0S0PSaP08CEVp67BkahklUuMKPogpj?=
+ =?us-ascii?Q?F0/qX71DUeenG614peKEaS2e5YpB2yq53ybpbGQjfJ+wFKWl022AVm3zdWrw?=
+ =?us-ascii?Q?KClbU5CBRQy0X8x7HHPyde5z4mqBc0AbfH9Cq27kbNiNTvxqoaY/0q2Hice+?=
+ =?us-ascii?Q?FdImqKx0x69DiwlLU1CswXX1McLo9cGEuY9CIqEdq194bnNJ1marsIpC5I2H?=
+ =?us-ascii?Q?OxuaZdd3BW+NWviDKXTsZGTpsRsheSCR0XGq/5kUqVp3QgcanLEoKFFAsihG?=
+ =?us-ascii?Q?KQS9DWSnlm/VVzPC7UiJZGKAWxROX3jeWx91iq+EKdP/IEFSMqUrCXEkIYAO?=
+ =?us-ascii?Q?AyiZMQxI709eGl2DpqSBRwJr6nCOm+mQWhqJ8976mIh7iXNwAVa/JUP5KKYJ?=
+ =?us-ascii?Q?R09j/Qb2voXr0s8z4ZAGI8jwW/G7vlbc64URtLynGL4Vac8Y2c22WInzScS8?=
+ =?us-ascii?Q?Rs5q/XOKrmvuL+vtnUKY2RUKHpzgcbea8USPt1TyrLRBQ4b7mc8hF+Gz0Fma?=
+ =?us-ascii?Q?N/8MURW1C0UIZsQ5FtDr9YrzuNhSmI0LbnPgR0bF/724OHALH7SZ1lPo0csZ?=
+ =?us-ascii?Q?9PPfpYDjOvUqQC3o4ULqnGOMBTrR6j0t/uQ4u7uEStBi20kOzEzKmQye22ef?=
+ =?us-ascii?Q?A3rNQlPxbTh63trKOS5E7bMQuXSbhBu9bYVQfruIvHQTRz7bsbEyGnPwVvb+?=
+ =?us-ascii?Q?mLKGCe5Keb7YTHQJVlIkmVHFBwYlMoJT1WzobVH7EoBdTRKuHboW6bbqnB4+?=
+ =?us-ascii?Q?JPQydC2tMEdM85Jefyqh5rtej1xLeq3kFX5JAqjU9i9k21uZulXUj5gsSxMW?=
+ =?us-ascii?Q?+tsgqG0SX9X30Bdp/bx8EOBZEU4XyTr80gCyaNcnQYVRRn9XX29ZLXWuElRm?=
+ =?us-ascii?Q?ZL4codg+0vgGFrvbJQQB0x4XnvDUNfj0OrlslFMBaXB185oYZCV+kxJNuCHn?=
+ =?us-ascii?Q?2KdxtpfgvCdo9W152CYEGocJwJbPK3qmot3aBiOsOcARnd3PbC1WGNK/1R0v?=
+ =?us-ascii?Q?TXyQ8+fRxUKRoth1hYE/h49pD5gmvvwAYBZv8unGsM4nenyNhwdjl4gEc9gx?=
+ =?us-ascii?Q?Hb7ascw3aafZgh3wPviisuHtYsHHMZx2uipkCU+nihkL+4Jq5gMGHpz+NyUb?=
+ =?us-ascii?Q?z6y5gm5r1duZHfOlviu3yKzSD24kme2EzgjnJCkKkyWafNKLmPaKCpnmgIY8?=
+ =?us-ascii?Q?OTIb7+MH97odb4OcqEONVqGQ84kr6YQViniDqsF2z+v2eImfzyWDLCd3zfCR?=
+ =?us-ascii?Q?i9HQUOdO3OV+Pc6FD+xhHtUxXCaq5nAaXd1F0SKDNU/bvjgIj/1OioxDEDwU?=
+ =?us-ascii?Q?bYuZ3ogTUZb1ttijB2913MjZtM5utAS0jiW+tk/S1cKEGeUV76ezz/YjkHey?=
+ =?us-ascii?Q?Rb6z0dSMw/Xh3cNYqdI=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 47629765-aaf7-4fed-315b-08ddd08b1f0c
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 23:36:49.7916
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: GoUcugL/w1TAAlwl+mul3bNTcaDSe4XefsGTyisaS65mfOY++Psu7V3NNwVq3ndW2KSHQOtMnc0Sp9Ny6htnxg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB7009
 
-From: Steven Rostedt <rostedt@goodmis.org>
+On Thu, Jul 31, 2025 at 08:32:57AM +0200, Krzysztof Kozlowski wrote:
+> On Thu, Jul 31, 2025 at 07:58:04AM +0200, Alexander Stein wrote:
+> > dtbs_check for ls1021.dtsi warns about unsupported property:
+> >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' does not match any of the regexes: '^pinctrl-[0-9]+$'
+> >
+> > But if removed the check warns about missing property:
+> >  power-controller@1ee2140 (fsl,ls1021a-rcpm): '#power-domain-cells' is a required property
+>
+>
+> And if any other warning says something, are you going to do that as
+> well?
+>
+> >
+> > Given commit 8bcf67b8d893b ("ARM: dts: ls1021a: add #power-domain-cells
+> > for power-controller node") explicitly added that property, add it
+> > to the expected property list as well.
+>
+> No, commit does not explain why! It's one of this NXP commits without
+> explanation, doing random things.
+>
+> No, explain why do you think this is a power domain provider - fast
+> look told me that it is NOT.
 
-Most function arguments that are passed in as unsigned int or unsigned
-long are better displayed as hexadecimal than normal integer. For example,
-the functions:
+It is not power controller. rcpm controller enable wakeup source.
 
-static void __create_object(unsigned long ptr, size_t size,
-				int min_count, gfp_t gfp, unsigned int objflags);
+In arm64, use below patch to fix warning
 
-static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
-			    size_t len);
+commit e39f567e1c38c29629962ab327f0ad1a288dcab2
+Author: Frank Li <Frank.Li@nxp.com>
+Date:   Mon Jul 29 14:59:24 2024 -0400
 
-void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+    arm64: dts: layerscape: rename rcpm as wakeup-control from power-control
 
-Show up in the trace as:
+    Invoke power-domain.yaml if node name as 'power-control'.
 
-    __create_object(ptr=-131387050520576, size=4096, min_count=1, gfp=3264, objflags=0) <-kmem_cache_alloc_noprof
-    stack_access_ok(state=0xffffc9000233fc98, _addr=-60473102566256, len=8) <-unwind_next_frame
-    __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
+    Rcpm actually are not power domain controller. It just control wakeup
+    capability. So rename it as wakeup-control. Fix below CHECK_DTBS warning.
 
-Instead, by displaying unsigned as hexadecimal, they look more like this:
+    power-controller@1ee2140: '#power-domain-cells' is a required property
+            from schema $id: http://devicetree.org/schemas/power/power-domain.yaml#
 
-    __create_object(ptr=0xffff8881028d2080, size=0x280, min_count=1, gfp=0x82820, objflags=0x0) <-kmem_cache_alloc_node_noprof
-    stack_access_ok(state=0xffffc90000003938, _addr=0xffffc90000003930, len=0x8) <-unwind_next_frame
-    __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
+    Signed-off-by: Frank Li <Frank.Li@nxp.com>
+    Signed-off-by: Shawn Guo <shawnguo@kernel.org>
 
-Which is much easier to understand as most unsigned longs are usually just
-pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
-better as hexadecimal as a lot of flags are passed as unsigned.
 
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_output.c | 17 ++++++++++++++++-
- 1 file changed, 16 insertions(+), 1 deletion(-)
+Frank
 
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 0b3db02030a7..b18393d66a7f 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -690,6 +690,12 @@ int trace_print_lat_context(struct trace_iterator *iter)
- }
- 
- #ifdef CONFIG_FUNCTION_TRACE_ARGS
-+
-+static u32 btf_type_int(const struct btf_type *t)
-+{
-+	return *(u32 *)(t + 1);
-+}
-+
- void print_function_args(struct trace_seq *s, unsigned long *args,
- 			 unsigned long func)
- {
-@@ -701,6 +707,8 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
- 	struct btf *btf;
- 	s32 tid, nr = 0;
- 	int a, p, x;
-+	int int_data;
-+	u16 encode;
- 
- 	trace_seq_printf(s, "(");
- 
-@@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
- 			trace_seq_printf(s, "0x%lx", arg);
- 			break;
- 		case BTF_KIND_INT:
--			trace_seq_printf(s, "%ld", arg);
-+			/* Get the INT encodoing */
-+			int_data = btf_type_int(t);
-+                        encode = BTF_INT_ENCODING(int_data);
-+                        /* Print unsigned ints as hex */
-+                        if (encode & BTF_INT_SIGNED)
-+				trace_seq_printf(s, "%ld", arg);
-+                        else
-+                                trace_seq_printf(s, "0x%lx", arg);
- 			break;
- 		case BTF_KIND_ENUM:
- 			trace_seq_printf(s, "%ld", arg);
--- 
-2.47.2
-
+>
+> Best regards,
+> Krzysztof
+>
 
