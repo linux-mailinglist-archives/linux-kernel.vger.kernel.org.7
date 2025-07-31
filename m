@@ -1,228 +1,125 @@
-Return-Path: <linux-kernel+bounces-751597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17317B16B58
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:48:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46ABBB16B5A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 06:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E3518C6A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:48:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47CF54E530C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:48:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35D4D23B614;
-	Thu, 31 Jul 2025 04:48:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 674AF222590;
+	Thu, 31 Jul 2025 04:49:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pe4pY5LF"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Uc4juRBo"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07541E51D;
-	Thu, 31 Jul 2025 04:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 767AB1E1DEE
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 04:48:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753937310; cv=none; b=EcB0MLXjz55WnfQfVJ+Hra6wkdCu/8g5bAEY/TMHQPhdXpvGy7AQNJDJdovF3sb+HZzQ+vYa+xcq3r5RCw8/773LyXyNNA5MyzDfnrbF8OuTCeTA1dalYP5XtAWtAtuDSm6j/GXDscFB35UVlmWHf3LUA+ccjtwEXHdYQl/wmXE=
+	t=1753937340; cv=none; b=mkFkP6FvPxADn8XigElPcmGpW0uWeV55Sr0ejmrvBI2q4N9YNKn6ANX3dUcnhxPnPJ+UzsTXcmEDYhxYbefHF5VQEPgbNWtr9qY0rTibP2hX7dmZfotUjEsQZoVuhpst8H0pCY+LpRUOOdpoc4VMCwnk1n8Diq2QMi2bLlZnp8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753937310; c=relaxed/simple;
-	bh=421rybQ166C4QO6pZb2rKtZco472OCS4dzXrKWAj3r8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GXgKIMGlexYnf81zbgUf65L4XwD7SCm6ndg/mzgHx4iRS7CIofY2xyVJDbEQCZTMidKLvERTv9eoEA2eGtfnVJG7FccHrJDYHMbOuWVGkjpNWGT4zZV3ar6+0M+1f6lHmU4JAB5skKxKqaP6VIxtEHeUFsGQUKGPpeIn899D29k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pe4pY5LF; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-45896cf24ebso5009045e9.1;
-        Wed, 30 Jul 2025 21:48:28 -0700 (PDT)
+	s=arc-20240116; t=1753937340; c=relaxed/simple;
+	bh=E6b0BGGR/RtUGN8YfAQcFiZryLTFBxGC41R0EFwTd18=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=ue6Rzs6zn4VF4/rMZaSGe4xWPQAu02lOhRwesCQe2dQVYhfXEWWNSC9UHDgvcfD1x2cju6GtfIVd+akqjd6nHVwW1vHPy4Sw0KKhYyS+X/wnk9N3Gwv46DulfqudrkM64OGg96bp9q2tTYfI1kc+iuLsq94eftt6IV69oPM0pjw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Uc4juRBo; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af913d9d2a1so94847366b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:48:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753937307; x=1754542107; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=b+OrFG1RW/4OrT91GMBpoWi+WkQwdsqdJLp/SCREI/0=;
-        b=Pe4pY5LFqvadR50j+qNBmljfkUr5+cxj3GoHe5pqZhzukmWv8XT2jE/uMKQPpK7jQh
-         /x/GTl9dd8kPXlXqGmCNLEfWjukFBWcZKQpFSVbTT6ET2wr6cVX9qys846oVNP7NRwbr
-         sehtLyLsCXiL+Xml8BPG/QXvcr1/1owqwoREF5lC3Pa8b5F5ISrMrMm4apHh9q4W6p3N
-         zPSJVYn70JHzSUHToqCkIaFCch0nDG/MN1c6y1KdL2YYaQKR0kjKIcDDJclC2bIdecQk
-         iWsPrl7AwLc23nzF9zK6ulOJ6DEnSWi7WORNN+CzW7QrfLYGpKFSINQrqSSA/llt0KgJ
-         1OSg==
+        d=linux-foundation.org; s=google; t=1753937336; x=1754542136; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=DINYJ+FM1lqJupdP3vzGFRoexFRJ9IKZ3t9dG0gHVuM=;
+        b=Uc4juRBo1uLI5wFk5+zM/2RlcjL4ci0/O7shN4///JG5UdhuYghlW8GRYJN0sgM88k
+         a8tr1Yl27twHAGVXtCyQyRy9Kr4KxzlRACwNjaMw7GPp7G7jKWWfjdtKnAzb1RSnjp7l
+         I8i/wsb+r9I8XZYkK9PVJb3HsLGA2Xcfn+ZUE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753937307; x=1754542107;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b+OrFG1RW/4OrT91GMBpoWi+WkQwdsqdJLp/SCREI/0=;
-        b=OZdI6tEBJ2c5hCoWU6a1Rfm2T4xd/e375bWrt3Pg8bBRcKazl9dvyM7FrL37dlLy3+
-         AQGbtKH1xPI2PCe4dgWr6gMoHx64nmPkJYuq13nOmNxuStukMkVQE8D+UPDLZ5O6FBzD
-         KOO56gApvd7QjdXnOXQriwCcWKA6YQkztCokA8Dlj1qKKr2BZSEgf9BjkERy17UGe+iA
-         z0BUfXsye+uwT7aKv9mKeyqF8ajjnBmj9Zgyw03UsgEoBEN4JsvsuJcXyPTlhqFH4EGN
-         hSokx4QsXM1lLl4mm3KOkEaI7B4tTf8CQovQst/kYokB81pGeiVaDV4uFKiypaXjFiwS
-         +sxw==
-X-Forwarded-Encrypted: i=1; AJvYcCU4+VoFn0JHrozu0M5WOKIds+1IBdZurCGV3Yi4KaVwDyzp7UGRFFJRW6VFNg757zEpiCX8ugldK0LL@vger.kernel.org, AJvYcCUMIfvB6k5+3COFYarK8S+K06o7fkGkb0MApNs2huJxxRG+fL7422h36RRj7Zn19VWnxSkE5FefCikFP9Nh@vger.kernel.org
-X-Gm-Message-State: AOJu0YxDFR9R5prYuZ3KcK9q9pv03duTKnHvjGGcWa2Grtczw4DGpJOV
-	bSMVLPu8xfdb5x0Ao7DrXf4ZnZGYn2GI5mtA5fZwl3gyPUu5JI1NZqi4
-X-Gm-Gg: ASbGncuZG5YGl7uBj6BYO2YtqdIY0hzKKxNU9FG06iskZVKb1Hf512Y3gHjFfiZvP6O
-	+WF9pcnvm99hahWRtgGfVD+mcB0ZdOJswmkjqbnKyz86+0GZXU5KfKDnzqIqoIeYUKgdrUFkxvc
-	dT8LcSI0ALMjjVAGITX12j/NOTHn+dVH47cBJBRc+btLOMSJGBf2YmAntLmkHsjtJzqvmi+bKgt
-	HlysiotARUrztBsxWEm5oeZRQs0qL7KFK+dv2opeIa/+dbJbbOFCvp88C30ioEmWVXpKfv+FMXd
-	/PXy/PENJySMtV0K4d8aUyRARNooxGVxMKxMazKIJD3t+tHOp/9FHjj5D08Skfjr4VF9HFe5KcS
-	2FiVW0OyJ0jV11+trIA/9PYKJLRlfBlU=
-X-Google-Smtp-Source: AGHT+IFCKD8iIuL/MkTHk1LNw7dIB6eXL268mG1FZ3NC7vk5GOS2xCLYOJP6CKbFGwLGoLV6x8T+EQ==
-X-Received: by 2002:a05:600c:45cc:b0:456:2dc1:a603 with SMTP id 5b1f17b1804b1-4589eeb25cbmr7156195e9.5.1753937306889;
-        Wed, 30 Jul 2025 21:48:26 -0700 (PDT)
-Received: from legfed1 ([2a00:79c0:60f:e800:22ea:3d6a:5919:85f8])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cff16sm49305285e9.19.2025.07.30.21.48.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 30 Jul 2025 21:48:26 -0700 (PDT)
-Date: Thu, 31 Jul 2025 06:48:24 +0200
-From: Dimitri Fedrau <dima.fedrau@gmail.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
- transceiver
-Message-ID: <20250731044824.GA3815@legfed1>
-References: <20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com>
- <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
- <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
+        d=1e100.net; s=20230601; t=1753937336; x=1754542136;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=DINYJ+FM1lqJupdP3vzGFRoexFRJ9IKZ3t9dG0gHVuM=;
+        b=KdHZVOL7Nt8vL52OjwBPpcv+BnFp7VCIHm1ggO7NJw2Kqj0a/dSC+PC3wmA3f/At71
+         uRetjzkRCrhaYMYtkRq+F/jkpB7l+hE9Pj5UXzrEmMgY0n1OWKTHR5hzaLQXxfJExfv4
+         cABDdt7LuwrEGBWPwnG8Y70KN7oJqOeu8PXoxce0PGnVNoSqpPhBi28spnJ5AZpdRFsu
+         n8s1+t9cwUhExCyv2jaG4GErbbDS7lHQEBFOu6OmLPGEtHnkisPoxmgFE6gh/1tThVqO
+         hnv3uVniAltgzvKlpEgEBFtWLFKwXBQIfOh47F+7UUvjaDlk5kmVQ8nEW/gsyww+y3ue
+         d6Pw==
+X-Forwarded-Encrypted: i=1; AJvYcCXZ+uuNxzELJE8MttUvafm1Iw0fU2tf0RP504UZjcwUoyIpzmafjixha0AbZnBDbIwsqrSGBIeeXHERH4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9X4B87Dr1fnfa+QMoyAQpC1KutwPevWrmdSCgBKQxNfnAwFXP
+	vFpyudWdcE7eIYjhKNAGefBQ4RwXWokWu8Oe8ATiBZd4TJnlwIWHRNC0t43PJn1rT+mzzbvfHct
+	lEYZ2Bmo=
+X-Gm-Gg: ASbGncu0Oio25/O0/NLvRCnrc7bW+NA5G8aup0me/CRVxmXC4/+WvtBCuJWiXIGsBb9
+	GMuef04qi4m0lg4WAarqic+wU9VBzzWXuDXb1IZrLkmL6kh2MVox8V6+0lDdjAeAy3rH05UlsTF
+	5HKv/zFGWjCRYMfh9JYceXji4PLThyuDuo2EBH+oGmrQfWKAJXHJaqIVkuYr1pWd7mc8l61xBGe
+	yyRYGkpUCk+HroX68rRX2pJuVRYTEJN8hkFvRReDvPjwy6mFnaouSHDQaHyKG5PablowuUyN9Vc
+	0yjY2Xw+2+xPHYWJj+wpF6XjSQ72DKHmy9/+1cDtLRsROVZcM3/9QNJE9tIEJTxnD5QNjGWFgRb
+	yVjhfIgHULZ50Pjg4SHflqPhl5+ucUIVJKBDagQner1uOq/qiqOoe7UHvFsitG/flunbYvn5p
+X-Google-Smtp-Source: AGHT+IFTPzSFKBHaMnwAfFUaYtEwoxtg1MECFBZpH3JPU0vlC2z8xX1OB5sYBZKK/NIcimWyPuKVpA==
+X-Received: by 2002:a17:907:60c8:b0:aec:6257:c22e with SMTP id a640c23a62f3a-af8fd72904dmr717184466b.14.1753937336550;
+        Wed, 30 Jul 2025 21:48:56 -0700 (PDT)
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com. [209.85.208.48])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a38aasm46325266b.37.2025.07.30.21.48.55
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 30 Jul 2025 21:48:55 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-60789b450ceso873773a12.2
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 21:48:55 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUQoML38ovtIBm9z4SBstdsVMbGr9yX5fxR/Wt1LFkrS205I7lQ4uiJow4iwoQaaxSwVGVQGcTYY+v7Pbc=@vger.kernel.org
+X-Received: by 2002:a05:6402:42c2:b0:615:8f10:2d4c with SMTP id
+ 4fb4d7f45d1cf-6158f1032c5mr4612317a12.4.1753937335353; Wed, 30 Jul 2025
+ 21:48:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
+References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
+ <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
+ <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
+ <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
+ <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com>
+ <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
+ <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com> <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
+In-Reply-To: <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 30 Jul 2025 21:48:39 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whOb_ebQQbnXeqb8uXf32WA32nrL3=HQ2y8hBm9hFgVOw@mail.gmail.com>
+X-Gm-Features: Ac12FXyqfcARQ-zUwGqzZGAbIHJ9CUJpqWHEZ271UfDUtdTjz1kORZjkZIzYe-s
+Message-ID: <CAHk-=whOb_ebQQbnXeqb8uXf32WA32nrL3=HQ2y8hBm9hFgVOw@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.17-rc1
+To: Dave Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Krzysztof,
-
-Am Wed, Jul 30, 2025 at 09:35:12AM +0200 schrieb Krzysztof Kozlowski:
-> On Mon, Jul 28, 2025 at 05:39:29PM +0200, Dimitri Fedrau wrote:
-> > Adding documentation for NXPs TJA1145 CAN transceiver.
-> > 
-> > Signed-off-by: Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > ---
-> >  .../devicetree/bindings/phy/nxp,tja1145-can.yaml   | 79 ++++++++++++++++++++++
-> 
-> Why isn't this in can directory with rest of CAN bindings?
-> 
-The directory contains CAN controller bindings. This is a CAN transceiver
-binding. And the only CAN transceiver binding I could find so far is this:
-https://elixir.bootlin.com/linux/v6.16/source/Documentation/devicetree/bindings/phy/ti,tcan104x-can.yaml
-The driver uses the generic PHY framework as the driver for the tja1145
-does.
-
-> >  1 file changed, 79 insertions(+)
-> > 
-> > diff --git a/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
-> > new file mode 100644
-> > index 0000000000000000000000000000000000000000..10bf2bce1b35788b3284c42e544a56eda6d79947
-> > --- /dev/null
-> > +++ b/Documentation/devicetree/bindings/phy/nxp,tja1145-can.yaml
-> 
-> Filename should match compatible.
-> 
-Ok, will fix this.
-
-> > @@ -0,0 +1,79 @@
-> > +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-> > +%YAML 1.2
-> > +---
-> > +$id: http://devicetree.org/schemas/phy/nxp,tja1145-can.yaml#
-> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > +
-> > +title: TJA1145 CAN transceiver
-> > +
-> > +maintainers:
-> > +  - Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-> > +
-> > +allOf:
-> > +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
-> 
-> Missing ref to transceiver properties. Look at other CAN bindings.
+On Wed, 30 Jul 2025 at 21:36, Dave Airlie <airlied@gmail.com> wrote:
 >
-There is only one transceiver property(max-bitrate) which I don't need
-because the max-bitrate is known for the device. So why should I add it
-to the DT ?
-I'm only aware of CAN controller bindings making use of the transceiver
-property which I think is because the PHYs they are supporting with this
-are very simple which need no or little configuration to operate and the
-max-bitrate property is needed to limit the bitrate.
-
-> > +
-> > +properties:
-> > +  compatible:
-> > +    const: nxp,tja1145
-> > +
-> > +  "#phy-cells":
-> > +    const: 0
-> > +
-> > +  reg:
-> > +    maxItems: 1
-> 
-> reg is the second property, also in "required:" block.
-> 
-Will fix this.
-
-> > +
-> > +  spi-max-frequency:
-> > +    maximum: 4000000
-> > +
-> > +  spi-cpha: true
-> > +
-> > +  spi-cs-setup-delay-ns:
-> > +    minimum: 50
-> > +    default: 50
-> > +
-> > +  spi-cs-hold-delay-ns:
-> > +    minimum: 50
-> > +    default: 50
-> > +
-> > +  spi-cs-inactive-delay-ns:
-> > +    minimum: 250
-> > +    default: 250
-> > +
-> > +  vcc-supply:
-> > +    description:
-> > +      CAN transceiver supply voltage
-> > +
-> > +  vio-supply:
-> > +    description:
-> > +      Supply voltage for I/O level adaptor
-> > +
-> > +  vbat-supply:
-> > +    description:
-> > +      Battery supply voltage
-> > +
-> > +required:
-> > +  - compatible
-> > +  - "#phy-cells"
-> > +  - reg
-> > +
-> > +unevaluatedProperties: false
-> > +
-> > +examples:
-> > +  - |
-> > +    spi {
-> > +        #address-cells = <1>;
-> > +        #size-cells = <0>;
-> > +        canphy@0 {
-> 
-> can-phy if something like this exist. If not, then probably can-transceiver
+> https://lore.kernel.org/dri-devel/20250717204819.731936-1-mustela@erminea.space/
 >
-Will fix this.
+> is the only thing I can see that might not be in the merge.
 
-> > +            compatible = "nxp,tja1145";
-> > +            #phy-cells = <0>;
-> > +            reg = <0>;
-> 
-> Please follow DTS coding style.
->
-Ok.
+Well, it's one of these:
 
-Best regards,
-Dimitri Fedrau
+  3f2b24a1ef35 drm/amd/display: Monitor patch to ignore EDID audio SAB check
+  aef3af22a456 drm/amd/display: Add definitions to support DID Type5 descriptors
+  d7b618bc41ee drm/amd/display: Refactor DSC cap calculations
+
+Let's do a few more boots to see which.
+
+The sad part is that this machine builds a kernel quickly, but then
+takes quite a while to boot, and the failure case requires me to then
+reboot again to get to a working state...
+
+But almost there,
+
+            Linus
 
