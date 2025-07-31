@@ -1,159 +1,125 @@
-Return-Path: <linux-kernel+bounces-752125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9506DB1717F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:49:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB106B17188
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:51:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA1B316FF5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:49:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9BA7CA812A7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:50:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E66E2C08C4;
-	Thu, 31 Jul 2025 12:49:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F08492C08C4;
+	Thu, 31 Jul 2025 12:51:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="BdQBsazb"
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="b7fmbn7N"
 Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 994462376EC
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:49:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFD521E50E;
+	Thu, 31 Jul 2025 12:51:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753966164; cv=none; b=PN7dvKBAGFC/5xS34byYgIlRrJ0v4JSeByP0VAyF8GI/ZNp3L8QDMqVWgpXNyXwLcuKko//ZfosznKZIRUVbBJeBrJwqHJOxxJg4JVS1WUqQtGXscLsKMV1BkO9Gxfxf+JesSrW5FfECOPcSD7k7yKYl9gnZzH2/TxVMmvjLkKE=
+	t=1753966276; cv=none; b=A6uYSZX4mwY11mT1ntsOlXS9NZ38EQwp7RmC4dBCwOTCfMAL0izyulAQGCdZmMbLykUeJ2k2gQt68sto52IzW0psWBvDCNCF6iI8jEl/tMxKJcbXdYmDzL5iDMMdtaFXKimUEYdKIAsxdADjCX3kyW7KGMCszH0Op9Z6JxhCYqo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753966164; c=relaxed/simple;
-	bh=mkVOj2NTyAxnVS5zp9jHmusEh4Rd9O9gQokE52ch1aQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=PJmxyxDw6i2Sm/G0IGhKsxz0b9JahsonOTbvH3yGtXQue58hjXGyqOhfiw+EakUXzw5eccEBUmIGPHnCgoIMtA9+sr927fSd/m0W5rQ3RlYuflhdkKUeBRSiH32ZKOsD7MsDD4p6cWXCNdL6u2fsBp49wHxer0WW1mWjN9pVVA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=BdQBsazb; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4589968e001so5295025e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:49:21 -0700 (PDT)
+	s=arc-20240116; t=1753966276; c=relaxed/simple;
+	bh=ZdzKQk8Cjgf3dwmmkTI777cKzfN7wzkNA2dlg6Ar404=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nD5KNU1hOIrua7SYX0C5m7H1aOR9QY5xhT++UewUJiYTOyHW/s6GR2IChZas8PGGh34fGOVnCn+ISR8LxNS9lBfmeDuZqMvDp6tyTiz0K9cet55ISkEtudn7C+Em/YAn2R7s0wxNJqA7KyyZKsLGJptUGN+vZtaaOWrHuYk5vDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=b7fmbn7N; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45600581226so9287925e9.1;
+        Thu, 31 Jul 2025 05:51:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1753966160; x=1754570960; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=83qJAscvMaL252urhMvFnilSG/WgmVTwHxPwthrKmiE=;
-        b=BdQBsazbEM31OQEtt0K2aIfdbsPKjvXw4D/Zq441xdtPIY+X9sPozVvzW6Vla2xlxB
-         03eDyHHXsa6WJSz6iJmwWECmo0uOCpw7Ff1HWHWoM0k1DTM8i56UQmt1pO8pNkeUCdkc
-         x0GTofAjhxasWyWqSp1uuQ5n55GKRVVV0FdmN5cs+hvs+pVfK5Z6uBFHDHXRJ0+/p73W
-         nAEvzsRRCFZw7azfWUwX3BX8q8Izu+bf0V4Jpqy4R5LkALkkLR3yPemjne2xBb/a7GAs
-         ARVHPSutIfdUeTYDP+BkrrG/evJQk1tEnPRrihQ4Erl9J/7r3QhGgnG6kv/tWN4UgoLh
-         gIXw==
+        d=gmail.com; s=20230601; t=1753966273; x=1754571073; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=sAusd1csE+JqzNXmIGkHQyt3KnqkABSFxq19868TVlE=;
+        b=b7fmbn7N/GFaQ+l804bs0RLzjhkSh/qiakTF58Zker6Lj3SYDhy9VPL1bGbiRyDv7x
+         h0VW7Ck6eAn6oHCoKHN2LVfuXPEGMB1e6fZdnyL2XC6YlTn/R/rl6lE5x9oF69drfA1L
+         3MP4RWVXqk+m8eBO/vi6gkCVkxAEBEeTPtoNZxGvdqdiBta9b8dUx0a1jTaE/RyFy/Vv
+         FliALcekGuMCxZz6LsAL3H1Y8PhE0W8URhmIZMp/t3SuNCoKGQh6q6GWH3bAcmoXH39E
+         BZlKqYkoPUUsVQam6vuyF5IetUmSQBGeVm0qV8VoscCoKeCssTQmbCh0WAho4E13XhCN
+         JgJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753966160; x=1754570960;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1753966273; x=1754571073;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=83qJAscvMaL252urhMvFnilSG/WgmVTwHxPwthrKmiE=;
-        b=w8EJk49LVT4FX0egAZD+gz3zcRF4A57IPW3UrnJ1MEdah/7pw3qKhByLK+NjA5YAPt
-         v070Dgx+oSR/2rnnePDMWuxJPUlc9F09PbaOAEB0tRXdzk+nbIPIK49ebbEKO3huN2pM
-         OGa13HCC2QzAYvtPEgKqQj5LXUO+am6AMwp6Oo5p3B72eY3K5Z3b6l+ZVkiu/G3Q7bwi
-         /V1Erh/I5Ao35Ffsl8xkuv5L2Xitevzxhrsq4kOg8nnxC9Sj1dCZ+DeLyVHpMIeoP8zi
-         CjP/8VwGDmqHl7ahmVcUsreKeCIsJuqjo6I91Scjvupjtye0KWuuRstiUAKwaLDGBach
-         HC0w==
-X-Forwarded-Encrypted: i=1; AJvYcCXy4pAs1ExIm0K1FA+yBqJHznxTF6nNa8l3ssvPqndnkFIQz5pTC9MdBfE853PLQGj/1Sbt72m0NQ4ypto=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz82vaGEzwacSeof8paGBzJKwS3DGfNtEDLfPWwRce0sbO3yN0X
-	8HKBEdusyQ8U6WlrusDbOJw2sSW1rj4/43N4nSh0i47lVdvc7VHDZIySTJ6M/buYl6Y=
-X-Gm-Gg: ASbGncsVlU6oezPu4AyKgF7e7VwLT8wisrwLL+hcql16SyTSealOftcdyjPJuZKTSLP
-	s4xvyB2kg3HBDrArH79yer7gDhimOxdmn2vpp4W2CezumjkKsfgLqAKLAbnvrRmiMz/iTkgJx7q
-	XQxSC4va0oVqOrK1m0obGdK7GddEfgUTajpwGgBXYpOTL2sdbl2O3l25D4DWkkfImKwrerDY8Le
-	5GyPEZUEtfdWPydIDV8ex/TKqXThbOqJ9cQGAdDdeE6Je1go3/Hy6ZuJAL0oqjYXZuFTB9odbO4
-	Q2ngGDWf4Pui6yIF8Nj/z7BbI/2C4D6rzaVCjnUAKu7kMO1PJF9B4D3Ylz1f7UruwsSNpY4sLxa
-	rZC0WGXgtNRkZGnxUHhiaVZKiR+JChtjnvN4w
-X-Google-Smtp-Source: AGHT+IEeICcdaMQqoN/ClD3HLTeMYL8IlY10D3jv6jriHDKAB7/clGIWi4TbgOJ/MIilsJhI71LUHA==
-X-Received: by 2002:a05:600c:8b81:b0:456:eb9:5236 with SMTP id 5b1f17b1804b1-45892ba3686mr75462595e9.15.1753966160507;
-        Thu, 31 Jul 2025 05:49:20 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:bc36:d1e4:f06a:e214])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4589edfcdc3sm26496785e9.12.2025.07.31.05.49.19
+        bh=sAusd1csE+JqzNXmIGkHQyt3KnqkABSFxq19868TVlE=;
+        b=XpfBCD//kMuQuJFouh1yHnX2zWwyXRzRiSp/T9nCDB9u/ii8LRR7WHU9ta8MXHbRAy
+         QtC8nk5KI/wE1FZJgMPy3KyYzzhD+0ofrVO5mfzCz7+O0NnyN43AkS1YVB0fEEXtsf0F
+         8LWjetKvaexfSWq99HVmvyFLB2b8zGF+aV+dB73w00uZTp6BifWBzHaiucefajSNgOIK
+         2jFDBE/AE77UoqPw6B6s292gVksUpls9q6hpsxa8kL/IvdZ3aUPKNvMTjFkjLNaVek5G
+         1Ejy8BT0OilHJcdmSfLvmjumhnhCLM1aIy2yc6ET2YHMl8mTzyk/LP0aqKKYHMzkx7bM
+         2TOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV6gYztK6h7xY7E0tYg8wo4WaaXeC3xsDHj0UhyQ9hpOB4b0Aq9uDUkGua66UaPqTXs2Ns8ZrvD+IODyPjOjGvqmBo=@vger.kernel.org, AJvYcCWDZMHkceogniPSxuYNhoR/V/7psK0Sf8w4OmTKsjA0DiLWyNI58r3uFczHIj5/Eiqz8QYfqRGpL9EGadrj@vger.kernel.org, AJvYcCWVEQPxWrhyy1Zup+KEAzx+JerJxGapY3DlWBJeM0ZcgIUvPU3lVjnO5aNVHK+Qf6s5ke+KFbF5d8L5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYEOckrBFdlh6QGukqkNEYzuYk8IlEp4bbilFevm6mkl85gxz2
+	YYigdHdBkV5x08pmT+QznbTdVjFdv6YwmCTwOwngmzjaoPXwEagwe2X09gUVe5nL9JI=
+X-Gm-Gg: ASbGncsk3PPSuB0zbJaNEiyM+QWqRuHgE5lktUx+nZAvRHMv1+2p/ZetBsbUV1yzv+4
+	Y1PLbMtJVGvBneH2Zz8XtLnaAaCc4hOkbqn9r7kpf6Z5h4daR0Un21OfBWKkmwli6mtjL+52INn
+	e0v9p+BYFupKVj30aTI4uAUuf+W3SXCn1BR2y/+CGFrFnA9JcrwqR5Av96jHb9DNbtDl/PfcEsn
+	2wfWj8gItKp5rmzLjI/gZOkyHllrxzldZdA+L37XeOuwa4LamYdP0gEihhSs+ZovgoIDV2RlVLj
+	2EnO9uk907qth/AYmsbfFZkt5CEdyriFGrAqV8IhS3yaXmrexD5NrbQRu29qHlMWjskd6C++ESH
+	80oZbJjo5cYWf26maTfgIJN1Wg7SrLhhgwqXRW5FfrnOe5Vm7akdCpYlbXnkmgtam9P+PsLD/rg
+	==
+X-Google-Smtp-Source: AGHT+IHcdqw0v9ZH1z1fU73BJc7m7fJ4V11JJS73y3UghDSWJasPPE4d4uv5/+ckuMXOQEwrQZe3+Q==
+X-Received: by 2002:a05:600c:6299:b0:456:1442:854 with SMTP id 5b1f17b1804b1-4589c5e20aemr45592005e9.24.1753966272750;
+        Thu, 31 Jul 2025 05:51:12 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589536acc9sm66977645e9.6.2025.07.31.05.51.12
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 05:49:19 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 31 Jul 2025 14:49:01 +0200
-Subject: [PATCH] Documentation: PCI: endpoint: document BAR assignment
+        Thu, 31 Jul 2025 05:51:12 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting node
+Date: Thu, 31 Jul 2025 13:51:06 +0100
+Message-ID: <20250731125109.147422-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-vntb-doc-v1-1-95a0e0cd28d0@baylibre.com>
-X-B4-Tracking: v=1; b=H4sIADxmi2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc2ND3bK8kiTdlPxk3eSU1MTEpDQzw1QLEyWg8oKi1LTMCrBR0bG1tQD
- x83rpWgAAAA==
-X-Change-ID: 20250731-vntb-doc-cdeaabf61e84
-To: Manivannan Sadhasivam <mani@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, 
- Bjorn Helgaas <bhelgaas@google.com>, Jonathan Corbet <corbet@lwn.net>
-Cc: Frank Li <Frank.li@nxp.com>, linux-pci@vger.kernel.org, 
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bjorn Helgaas <helgaas@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1863; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=mkVOj2NTyAxnVS5zp9jHmusEh4Rd9O9gQokE52ch1aQ=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBoi2ZLWZsA+zFwQXX+0XvAuP8szM4lJiXZoW2NQ
- zWY0y6HNwSJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCaItmSwAKCRDm/A8cN/La
- hZTWD/95gKRIYfDY7sLoWcKrl4/uzvnfPfhoznwDtIsDVj+Nhd6x6YFiS8jRwOZUmM2x8FLBobw
- /xTSk9jI1eShAtn/pWBe/7eTzyNysVBuvZdkLYFiPasHr2gzuIpXuNdJzFZJxt4cqQPlmtAcmEm
- bbeaS15x//hNbGxBQaFM//HAcDLBqQhsVq+RdIJ5IYbvwq6gs5J0U894J0f8zqqbGBDumex3d+K
- ySeztabQKF58mL7Cjdx56edW1uhz3uWX+jBd4D/7VeCNm/Ljfm9evE3k46Ydyt5Grg6KavMXk2a
- gUnIZ9/oNxAkg+VWLetopjqunZqYqGV6xkVxAkzhMoWnKrqXZ/01/Ug2qftZHc1MrI0/pMOhiwC
- YFF68QYeWO0hnpwlrKAb/ZSgMU7pHOcBMm0hTrQ4b2/0Zm/lkAHXZaX/A6b4skPZlSPXVgCvth+
- uE0XJc8Rj4+4kEXYRLZGNREewFKQeudakaZ4Ov9IHgtAHi8ASQDbt5ghQj9wamDGwmOP9ozV02b
- nUCa1/D8vwqn2/W009XDS+M2m+U5oWCl7xRuUfvhoL/0OSRlxx/B3gR7wlWKjOgzFiA76nflxkw
- FTydrfWNRwNbtMHoeYTMrX1n7SuV9ESaiarTFyFlo4mc+fM04O6CeFLSPnGdBNJbSEvPhd7TtK3
- PmFCY6lTg/EbJWQ==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Transfer-Encoding: 8bit
 
-It is now possible to assign BARs while creating a vNTB endpoint function.
-Update the documentation accordingly.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Suggested-by: Bjorn Helgaas <helgaas@kernel.org>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
+Fix typo for deleting node 'channel@0'->'channel0'.
+
+Fixes: 46da632734a5 ("arm64: dts: renesas: rzg2lc-smarc: Enable CANFD channel 1")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
- Documentation/PCI/endpoint/pci-vntb-howto.rst | 9 +++++++--
- 1 file changed, 7 insertions(+), 2 deletions(-)
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/Documentation/PCI/endpoint/pci-vntb-howto.rst b/Documentation/PCI/endpoint/pci-vntb-howto.rst
-index 70d3bc90893f3315a7dff394d57e45c8378e2a54..9a7a2f0a68498e8b4297f24261954558d45c43a9 100644
---- a/Documentation/PCI/endpoint/pci-vntb-howto.rst
-+++ b/Documentation/PCI/endpoint/pci-vntb-howto.rst
-@@ -90,8 +90,9 @@ of the function device and is populated with the following NTB specific
- attributes that can be configured by the user::
- 
- 	# ls functions/pci_epf_vntb/func1/pci_epf_vntb.0/
--	db_count    mw1         mw2         mw3         mw4         num_mws
--	spad_count
-+	ctrl_bar  db_count  mw1_bar  mw2_bar  mw3_bar  mw4_bar	spad_count
-+	db_bar	  mw1	    mw2      mw3      mw4      num_mws	vbus_number
-+	vntb_vid  vntb_pid
- 
- A sample configuration for NTB function is given below::
- 
-@@ -100,6 +101,10 @@ A sample configuration for NTB function is given below::
- 	# echo 1 > functions/pci_epf_vntb/func1/pci_epf_vntb.0/num_mws
- 	# echo 0x100000 > functions/pci_epf_vntb/func1/pci_epf_vntb.0/mw1
- 
-+By default, each construct is assigned a BAR, as needed and in order.
-+Should a specific BAR setup be required by the platform, BAR may be assigned
-+to each construct using the related ``XYZ_bar`` entry.
-+
- A sample configuration for virtual NTB driver for virtual PCI bus::
- 
- 	# echo 0x1957 > functions/pci_epf_vntb/func1/pci_epf_vntb.0/vntb_vid
-
----
-base-commit: e046b1731006b4c6c94bcb4ef1c6692a30014c43
-change-id: 20250731-vntb-doc-cdeaabf61e84
-
-Best regards,
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index 345b779e4f60..382f6271cb29 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -48,7 +48,7 @@ sound_card {
+ #if (SW_SCIF_CAN || SW_RSPI_CAN)
+ &canfd {
+ 	pinctrl-0 = <&can1_pins>;
+-	/delete-node/ channel@0;
++	/delete-node/ channel0;
+ };
+ #else
+ &canfd {
 -- 
-Jerome
+2.43.0
 
 
