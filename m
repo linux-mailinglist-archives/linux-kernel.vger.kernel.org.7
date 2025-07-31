@@ -1,269 +1,184 @@
-Return-Path: <linux-kernel+bounces-751934-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A009B16F9A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:31:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4A52B16F9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BD4C33B6DE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:30:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 174D317EF05
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:31:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C63A20B1F4;
-	Thu, 31 Jul 2025 10:31:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CD9922F74D;
+	Thu, 31 Jul 2025 10:31:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Ck/jwSmS"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="0bcLZnU3"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D28F18B47E;
-	Thu, 31 Jul 2025 10:31:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADA542264AE
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:31:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753957866; cv=none; b=OFv95iFW5PEAoHf/cYEZZq8i06P7MKywOTsCTQcFOcGFhqUfgyFRKB0Jwq9e/TELDq+vfLBXtuO3INfMBHyvyFoJYkRThUBRxD0j+t+aj2mQBoclcPHvhtWugekMqRe3w+xjIEm1pko+iyDBf2neBo2aid2mL5boYWuIVBj+Qi4=
+	t=1753957871; cv=none; b=Zl6hOILJJfQejOU7Vj2ppNuWQVF+TxT3ZTr5tCjd/lRexpVD0arI7dbslOKKQEKWSYRPAYU0X2o+qSEpadO40kxB4PmB5rVDhJumV9AgyErLmmWqG/tieCvOzDQ/ttHfDA4EI64Zpxrli881X8XFh/BXWBeMe1SrKIbCOApIu54=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753957866; c=relaxed/simple;
-	bh=cUDELXoF3mFoB8u3ji+saaQ0kHytC2R18VJBDBNpeoE=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=aas4UwWDr+imY1lx/9rAkPLy1JVZq1v6d3wG5Vl7k/N2FFQnfoL3Dw0OBcfDii5wOmR8Mva9BkUnUC6XErhPTuUHwAR36j03DiKt98jHHzv/D1t6d0GpfMrsB2zZ0zDkeyvegTPQmeHS1GSscpSLjwr6AA3deDPDo1yx8inPaU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Ck/jwSmS; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753957861; x=1785493861;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=cUDELXoF3mFoB8u3ji+saaQ0kHytC2R18VJBDBNpeoE=;
-  b=Ck/jwSmSXnpmHa8aw41Jm2SxdT9rOc4id9m3EX6fQGEieqdWW54GZiGB
-   scZm6/Xy0G9DvgZZr46S7MIGHVeiXSJTdf1Y5q0GnC+auN4U6aIgqhucU
-   hv6bXipqEdFjDQrX0ulba8GM2Hlh1JxYhAzR0cQ4/NZrPsXXsDbOcRBJ9
-   n8yXep1nsWPOc5MEOqGBxGwgVIbPJavLspgT7iPjLgPVcJIy3qd2B8Dje
-   tADoOaemBd+RLMeatXuq7py9N066HJUE/KzhTKypGi2WfUEOpW1wd4h49
-   XzRbvR4pbOfATexD55se0mZGwSIQmoKhKZV6Adp/dBed9zMs876zJ5Cdf
-   Q==;
-X-CSE-ConnectionGUID: ZDqz3cLHT6i7KBUqFwME0Q==
-X-CSE-MsgGUID: uqp98xS8SFCHRuUdNAiyyw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="60098202"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="60098202"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 03:31:00 -0700
-X-CSE-ConnectionGUID: fMAgt8bNR7i8o5nkyRZBDQ==
-X-CSE-MsgGUID: FssnAyh0R32oWsGHQT+/mg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="162501067"
-Received: from mjarzebo-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.108])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 03:30:55 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Pin-Yen Lin <treapking@chromium.org>, Neil Armstrong
- <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David
- Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Jiri Kosina
- <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-input@vger.kernel.org, Douglas
- Anderson <dianders@chromium.org>, dri-devel@lists.freedesktop.org, Chen-Yu
- Tsai <wenst@chromium.org>, Pin-Yen Lin <treapking@google.com>
-Subject: Re: [PATCH 1/2] drm/panel: Allow powering on panel follower after
- panel is enabled
-In-Reply-To: <20250731101344.2761757-1-treapking@google.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250731101344.2761757-1-treapking@google.com>
-Date: Thu, 31 Jul 2025 13:30:52 +0300
-Message-ID: <1519a7c3872a59b7b5f12e99529237035499bc26@intel.com>
+	s=arc-20240116; t=1753957871; c=relaxed/simple;
+	bh=ZUDRaqnU24X+T7uVJpSv5R4hg3CFDsxJ4xG56N/y4Qg=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=QALa5ot+AaMF4hNVBngge0UQxoET6J36LEcPIUzhK+DhZPAHKy1ssXsdYc0KExZY3bTMXzVFKZ8mnDe8k4MHTHDSK7456HN2gZcyT8cb27XwSdrkwkUSwXE4JADa0vc+n91zubNSKGtBYywwhreBbIyD4xHDUf1b56hz2S/pG80=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=0bcLZnU3; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61539e2065dso3014489a12.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:31:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1753957868; x=1754562668; darn=vger.kernel.org;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=L4guNMFO2mNbUVAujgFMPCeQwDaxzkTETmATTN/1vzk=;
+        b=0bcLZnU3r7oR3VeHpMNKjhZCr4QAam/3A7YxEhGTUYHWnkjIT9JTOfEJBRIpxMjkfW
+         D0mkWCxlYVSS4JfIC8MM6WBrzBZNCzrOS+BecYrKfvzPu2UIyh1pPgzyCIDtEUZvVd/e
+         UpNqjOZVzSl+xdLOEfr1d+sHMajDBmGPC/HIcDA4J/jCWeyWDZKJrUiQuTOGhkjT++T3
+         0mQsudHeb+EY2jZcOdX8MPll9k9iLMz31MI4BP34ObVUgDEaw32dg5foXOEMMqJf/vwP
+         7FtmkuVa8AFUrX5/EydyDNVXWz+fwQYDlIjp0we3zN/WKgYUjBAYKP8Z/nkhb5uf73pV
+         bWHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753957868; x=1754562668;
+        h=in-reply-to:references:to:from:subject:cc:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=L4guNMFO2mNbUVAujgFMPCeQwDaxzkTETmATTN/1vzk=;
+        b=bXOSZxx25Kskhrm+9zNp8D3scq+kPUAvnLVf5jBGODznUT/3xyK7XQ4WbA/1gm+sUH
+         XfdaxSkkxboMsr4LJMVihTMdNOyPIqK4cyd59u38HJdMRxJfTsDbk8sTzWttVfHXVfFw
+         SqW9fHgCzGjNiRywvScOiUHIgzUAzwXd+Uk4IQTbT6hVagKo18J0NIAUdDVl2/5+s1AW
+         mib+3zzL+EValMKyWiNwQFqQW9TRAZyzC6IbssP6OjdmmjaS7mJ/EEDHmb9Jsv4kcyNM
+         xh7YnfyvlqnQzlMIzee/TjUeQ+MuDXPhW/ObzJquGws0a8q9O1h/eyo3oFilTXlGpOSd
+         M0IA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+vTE5CoUjoaQkJlge5L2u8FYyFOJb/C3YGphtI+vTIgCSOkx7guojrF0Cg/qPcmg2n/XKwDHh4mIEd88=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwfUk7W2hlsh51TeUkK2qrc/TLlKXGC2922Y29ZQ+W3sSsuhhxg
+	wNPJhdBNXHrSjyPdtsnNRzV0Ft1ojcrU07I7XEuIPvbAbDk13anZafeUqVUdIrGUsEk=
+X-Gm-Gg: ASbGncv9jzfURPxWfyBow8VgfBRwWdia+y46CjdDoUFHrgeE/qiDrzPZvk4EOKEgbHA
+	1nQr9m3IZPbNM/3HftvzZ41C77kCn+yUS4F56nrMg8xb4DdeuNdSJHLeNs+JNXC7+3AXoTjLMkp
+	AZVXj5C4/AoRSdc+c30R/BRWexzxTgOeJVtY+//3lYmTVqFqyrRSM4JsMJYRKDRVEWhU6US1OS7
+	8oDlB989NXHX+iCAI1c0GnBtwfLj4J+CfZe1rOpgbXMm5ZCqVx8fXlL9xwnfwTRJxacvj4oYbTG
+	wdKG1tAA2PUFDQ6HqNrUAiXZKxLjJ65qMc+lCszbGpLJo+bn+yxsurDI7tyOJXl7/5BHmr7qeE6
+	z4gBUx80N3XXM8FHRVnGrFnC4khNZhh2mdJTW4gpswOxL+S1NticYNdX7HYHbyVXL1rc7VwZJ/8
+	yM+g==
+X-Google-Smtp-Source: AGHT+IFmHbj//ifYv0ps4iK3o2MK/SZVcRme2djqmVaHUnfsmz5EX4ncIp+nUgle+xZrZADbwlYiEw==
+X-Received: by 2002:a17:907:2d28:b0:ae9:c8f6:bd3 with SMTP id a640c23a62f3a-af91bc55e14mr166781766b.7.1753957867841;
+        Thu, 31 Jul 2025 03:31:07 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8f25739sm916887a12.21.2025.07.31.03.31.07
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 03:31:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Jul 2025 12:31:07 +0200
+Message-Id: <DBQ668L792QL.2OV5Y4G1PDZLR@fairphone.com>
+Cc: <~postmarketos/upstreaming@lists.sr.ht>, <phone-devel@vger.kernel.org>,
+ <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] net: ipa: add IPA v5.1 and v5.5 to ipa_version_string()
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Alex Elder" <elder@ieee.org>, "Alex Elder" <elder@kernel.org>, "Andrew
+ Lunn" <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>,
+ "Eric Dumazet" <edumazet@google.com>, "Jakub Kicinski" <kuba@kernel.org>,
+ "Paolo Abeni" <pabeni@redhat.com>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250728-ipa-5-1-5-5-version_string-v1-1-d7a5623d7ece@fairphone.com> <e07f0407-84e1-4efa-868d-5853b7e9ab4e@ieee.org>
+In-Reply-To: <e07f0407-84e1-4efa-868d-5853b7e9ab4e@ieee.org>
 
-On Thu, 31 Jul 2025, Pin-Yen Lin <treapking@chromium.org> wrote:
-> Some touch controllers have to be powered on after the panel's backlight
-> is enabled. To support these controllers, introduce after_panel_enabled
-> flag to the panel follower and power on the device after the panel and
-> its backlight are enabled.
-
-I think it's *very* confusing and error prone to call follower hooks at
-different places depending on a flag. The hook names and documentation
-say *when* they get called, and that should not change.
-
-I think the right approach would be to add .panel_enabled and
-.panel_disabling hooks to struct drm_panel_follower_funcs, and have them
-called after panel (and backlight) have been enabled and before panel
-(and backlight) are disabled, respectively.
-
-In i2c-hid-core.c, you'd then have two copies of struct
-drm_panel_follower_funcs, and use one or the other depending on the
-quirk. You can even reuse the functions.
-
-I think overall it'll be be more consistent, more flexible, and probably
-fewer lines of code too.
-
-
-BR,
-Jani.
-
-> Signed-off-by: Pin-Yen Lin <treapking@google.com>
-
-PS. Your Signed-off-by doesn't match the patch author.
-
-> ---
+On Mon Jul 28, 2025 at 5:53 PM CEST, Alex Elder wrote:
+> On 7/28/25 3:35 AM, Luca Weiss wrote:
+>> Handle the case for v5.1 and v5.5 instead of returning "0.0".
 >
->  drivers/gpu/drm/drm_panel.c | 47 +++++++++++++++++++++++++++++++++----
->  include/drm/drm_panel.h     |  8 +++++++
->  2 files changed, 51 insertions(+), 4 deletions(-)
+> This makes sense for IPA v5.5.
 >
-> diff --git a/drivers/gpu/drm/drm_panel.c b/drivers/gpu/drm/drm_panel.c
-> index 650de4da08537..58125f8418f37 100644
-> --- a/drivers/gpu/drm/drm_panel.c
-> +++ b/drivers/gpu/drm/drm_panel.c
-> @@ -133,6 +133,9 @@ void drm_panel_prepare(struct drm_panel *panel)
->  	panel->prepared = true;
->  
->  	list_for_each_entry(follower, &panel->followers, list) {
-> +		if (follower->after_panel_enabled)
-> +			continue;
-> +
->  		ret = follower->funcs->panel_prepared(follower);
->  		if (ret < 0)
->  			dev_info(panel->dev, "%ps failed: %d\n",
-> @@ -178,6 +181,9 @@ void drm_panel_unprepare(struct drm_panel *panel)
->  	mutex_lock(&panel->follower_lock);
->  
->  	list_for_each_entry(follower, &panel->followers, list) {
-> +		if (follower->after_panel_enabled)
-> +			continue;
-> +
->  		ret = follower->funcs->panel_unpreparing(follower);
->  		if (ret < 0)
->  			dev_info(panel->dev, "%ps failed: %d\n",
-> @@ -208,6 +214,7 @@ EXPORT_SYMBOL(drm_panel_unprepare);
->   */
->  void drm_panel_enable(struct drm_panel *panel)
->  {
-> +	struct drm_panel_follower *follower;
->  	int ret;
->  
->  	if (!panel)
-> @@ -218,10 +225,12 @@ void drm_panel_enable(struct drm_panel *panel)
->  		return;
->  	}
->  
-> +	mutex_lock(&panel->follower_lock);
-> +
->  	if (panel->funcs && panel->funcs->enable) {
->  		ret = panel->funcs->enable(panel);
->  		if (ret < 0)
-> -			return;
-> +			goto exit;
->  	}
->  	panel->enabled = true;
->  
-> @@ -229,6 +238,18 @@ void drm_panel_enable(struct drm_panel *panel)
->  	if (ret < 0)
->  		DRM_DEV_INFO(panel->dev, "failed to enable backlight: %d\n",
->  			     ret);
-> +
-> +	list_for_each_entry(follower, &panel->followers, list) {
-> +		if (!follower->after_panel_enabled)
-> +			continue;
-> +
-> +		ret = follower->funcs->panel_prepared(follower);
-> +		if (ret < 0)
-> +			dev_info(panel->dev, "%ps failed: %d\n",
-> +				 follower->funcs->panel_prepared, ret);
-> +	}
-> +exit:
-> +	mutex_unlock(&panel->follower_lock);
->  }
->  EXPORT_SYMBOL(drm_panel_enable);
->  
-> @@ -242,6 +263,7 @@ EXPORT_SYMBOL(drm_panel_enable);
->   */
->  void drm_panel_disable(struct drm_panel *panel)
->  {
-> +	struct drm_panel_follower *follower;
->  	int ret;
->  
->  	if (!panel)
-> @@ -261,6 +283,18 @@ void drm_panel_disable(struct drm_panel *panel)
->  		return;
->  	}
->  
-> +	mutex_lock(&panel->follower_lock);
-> +
-> +	list_for_each_entry(follower, &panel->followers, list) {
-> +		if (!follower->after_panel_enabled)
-> +			continue;
-> +
-> +		ret = follower->funcs->panel_unpreparing(follower);
-> +		if (ret < 0)
-> +			dev_info(panel->dev, "%ps failed: %d\n",
-> +				 follower->funcs->panel_unpreparing, ret);
-> +	}
-> +
->  	ret = backlight_disable(panel->backlight);
->  	if (ret < 0)
->  		DRM_DEV_INFO(panel->dev, "failed to disable backlight: %d\n",
-> @@ -269,9 +303,12 @@ void drm_panel_disable(struct drm_panel *panel)
->  	if (panel->funcs && panel->funcs->disable) {
->  		ret = panel->funcs->disable(panel);
->  		if (ret < 0)
-> -			return;
-> +			goto exit;
->  	}
->  	panel->enabled = false;
-> +
-> +exit:
-> +	mutex_unlock(&panel->follower_lock);
->  }
->  EXPORT_SYMBOL(drm_panel_disable);
->  
-> @@ -537,7 +574,8 @@ int drm_panel_add_follower(struct device *follower_dev,
->  	mutex_lock(&panel->follower_lock);
->  
->  	list_add_tail(&follower->list, &panel->followers);
-> -	if (panel->prepared) {
-> +	if ((panel->prepared && !follower->after_panel_enabled) ||
-> +	    (panel->enabled && follower->after_panel_enabled)) {
->  		ret = follower->funcs->panel_prepared(follower);
->  		if (ret < 0)
->  			dev_info(panel->dev, "%ps failed: %d\n",
-> @@ -566,7 +604,8 @@ void drm_panel_remove_follower(struct drm_panel_follower *follower)
->  
->  	mutex_lock(&panel->follower_lock);
->  
-> -	if (panel->prepared) {
-> +	if ((panel->prepared && !follower->after_panel_enabled) ||
-> +	    (panel->enabled && follower->after_panel_enabled)) {
->  		ret = follower->funcs->panel_unpreparing(follower);
->  		if (ret < 0)
->  			dev_info(panel->dev, "%ps failed: %d\n",
-> diff --git a/include/drm/drm_panel.h b/include/drm/drm_panel.h
-> index 843fb756a2950..aa9b6218702fd 100644
-> --- a/include/drm/drm_panel.h
-> +++ b/include/drm/drm_panel.h
-> @@ -183,6 +183,14 @@ struct drm_panel_follower {
->  	 * The panel we're dependent on; set by drm_panel_add_follower().
->  	 */
->  	struct drm_panel *panel;
-> +
-> +	/**
-> +	 * @after_panel_enabled
-> +	 *
-> +	 * If true then this panel follower should be powered after the panel
-> +	 * and the backlight are enabled, instead of after panel is prepared.
-> +	 */
-> +	bool after_panel_enabled;
->  };
->  
->  /**
+> I have comments below, but I'll do this up front:
+>
+> Reviewed-by: Alex Elder <elder@riscstar.com>
 
--- 
-Jani Nikula, Intel
+Thanks!
+
+>
+>> Also reword the comment below since I don't see any evidence of such a
+>> check happening, and - since 5.5 has been missing - can happen.
+>
+> You are correct.  Commit dfdd70e24e388 ("net: ipa: kill
+> ipa_version_supported()") removed the test that guaranteed
+> that the version would be good.  So your comment update
+> should have done then.
+>
+>> Fixes: 3aac8ec1c028 ("net: ipa: add some new IPA versions")
+>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+>> ---
+>>   drivers/net/ipa/ipa_sysfs.c | 6 +++++-
+>>   1 file changed, 5 insertions(+), 1 deletion(-)
+>>=20
+>> diff --git a/drivers/net/ipa/ipa_sysfs.c b/drivers/net/ipa/ipa_sysfs.c
+>> index a59bd215494c9b7cbdd1f000d9f23e100c18ee1e..a53e9e6f6cdf50103e94e496=
+fd06b55636ba02f4 100644
+>> --- a/drivers/net/ipa/ipa_sysfs.c
+>> +++ b/drivers/net/ipa/ipa_sysfs.c
+>> @@ -37,8 +37,12 @@ static const char *ipa_version_string(struct ipa *ipa=
+)
+>>   		return "4.11";
+>>   	case IPA_VERSION_5_0:
+>>   		return "5.0";
+>> +	case IPA_VERSION_5_1:
+>> +		return "5.1";
+>
+> IPA v5.1 is not actually supported yet, and this won't be
+> used until it is.  Only those platforms with compatible
+> strings defined in the ipa_match array in "ipa_main.c" will
+> probe successfully.
+>
+> That said...  I guess it's OK to define this at the same time
+> things are added to enum ipa_version.  There are still too
+> many little things like this that need to be updated when a
+> new version is supported.
+
+Yeah, my point in adding this as well was based on the comment there:
+
+/**
+ * [...]
+ * Defines the version of IPA (and GSI) hardware present on the platform.
+ * Please update ipa_version_string() whenever a new version is added.
+ */
+enum ipa_version {
+    [...]
+}
+
+I previously only noticed 5.5 being missing, but before sending I double
+checked if anything else was missing and found 5.1. So perhaps if 5.1 is
+not going to be added anytime soon, we could remove the 5.1 definition
+and the rest.
+
+>
+> Thanks for the patch.
+>
+> 					-Alex
+>
+>> +	case IPA_VERSION_5_5:
+>> +		return "5.5";
+>>   	default:
+>> -		return "0.0";	/* Won't happen (checked at probe time) */
+>> +		return "0.0";	/* Should not happen */
+>>   	}
+>>   }
+>>  =20
+>>=20
+>> ---
+>> base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+>> change-id: 20250728-ipa-5-1-5-5-version_string-a557dc8bd91a
+>>=20
+>> Best regards,
+
 
