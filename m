@@ -1,276 +1,124 @@
-Return-Path: <linux-kernel+bounces-752106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AC3DB1713C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:30:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B6E1FB17133
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:29:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78CB63BCDD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:29:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5A273ADD9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:28:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05C072D1303;
-	Thu, 31 Jul 2025 12:28:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B98C2C324A;
+	Thu, 31 Jul 2025 12:28:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mYVt4S29"
-Received: from mail-qk1-f182.google.com (mail-qk1-f182.google.com [209.85.222.182])
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="HNfjI489"
+Received: from mail-qk1-f170.google.com (mail-qk1-f170.google.com [209.85.222.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7015A2C3276;
-	Thu, 31 Jul 2025 12:28:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 696562C1585
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:28:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964920; cv=none; b=nBUucWWf4652CqscDg6Pv2qaCpF4evRbL6zAd0g8Gt0oC7KfsULGUnOiTzBm2v5UMF9qPofQWe3/D0gWZt3q/qprhMHdo2ewoOpV6+K/P2ESsHKaHfzN7/Csm4BQN+BhdaZgG/cFf9AbMZr4GmZntbyuJKvOfTwdGrCmlqovTKg=
+	t=1753964917; cv=none; b=R8lsA0Ms/6HxkbOw4ErPEo7tRiX04ZaByvrE8uX80BBqwMC2omzbEZh2nIjnFUnm26mqW4s7iUqvSUnQsFfZ8WDWlthcJPGaeXGYuc2zq6WK/wMMbwpb5UfTVtcbbVbfN6y38XK0kIP3qHI9xFUQvmtODzK5rvMy9Et0NxojfFY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964920; c=relaxed/simple;
-	bh=Xo2axdleKQKFm0NOSldkhQ8qF+6YtByFGwnagPvP6uA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=OcDhp5gtMcabH+JvsqOPVISGEjQlkR9eskGBXRhzx05yGpkNRq3oJhrL4L3tiDnC1ntyyyWNVbOByIcA89rR/8lls+Y3AQX1ZRHTTffDQlV+i1P2QiSCRWhm/R7/70OE722k5O2DuXNJdHdxp27xlLKEgnMt8thZC59X7vkgYWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mYVt4S29; arc=none smtp.client-ip=209.85.222.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qk1-f182.google.com with SMTP id af79cd13be357-7e6817653d0so55747585a.2;
-        Thu, 31 Jul 2025 05:28:38 -0700 (PDT)
+	s=arc-20240116; t=1753964917; c=relaxed/simple;
+	bh=b7z5hjyg2X+VeoFo1PgyUE9sKzY0a5OOB4fYEBfffec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hHw171guKZyIGC1BlJ/d55o8PHhceyje8gZK90c9yeJMPb6Xeowu2MGy+2KQp0WQilsZkflvRe+1eLWw37s6LzIEY8DQK4fo88elEecBOq4wsGBRZ+8D9PDIf2E3LagJTRhu5IXooA7MMtPbeIqN3I15Ud4vjydKowfNTOuLS3Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=HNfjI489; arc=none smtp.client-ip=209.85.222.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f170.google.com with SMTP id af79cd13be357-7e33d36491dso30316385a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:28:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753964917; x=1754569717; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ayWZPS7L38ZOhjcOnH9WSUS7UcJth2Mxw9Vr7h3Jt6g=;
-        b=mYVt4S29VjTPQMr0r+iPvsPY5huy4h+5oBFoH2F7H1Sx6ynx20MAJZVNeH4ZO0tfBJ
-         Ro6BmVrzC+LMz9rOCvvXGkuGmn1/ENiXhXYGM6xlODFKpnmhuaZA1Wo7b2rWUDxy8ISd
-         TY4bMNdaXeWXw5fujZUfDC8wOs2XVvTH3M/ppKfPpVmaMj5pPpK7+8ZgSxdM6X/cOX3O
-         EBXSBkbPw1uoYQGobWk6mzmxMtbu9wAeJYXsKDlLLm6vI8wpaaI+dDzxeLbjbyuAewb5
-         Wlt+q93ZrhYfefwGU+2YPzrmgLp8RTxLn/mcIe6YzGN5564QFO/iWAY7s1yyC4FCFMf9
-         MQng==
+        d=ziepe.ca; s=google; t=1753964914; x=1754569714; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OW/Iya9h0ABUEfHeAI61tqBJP6UR+IkHJ9+YZwygnb0=;
+        b=HNfjI489w/nmm9v4KPmn2rIBwTUX56yvucBIsp8A+P2kHlMrpYC991fnyl2jPaPE1o
+         YDGlknxsVwbDyt1Q01wRZxWKTsr0ViLyIAmUslu1NJ+orvOX1RU0Cha7ZIsUwJcyX8wh
+         dK3OzA370jwxBE2ayFCWz9PVsw1lC27hld8Cvtgs1jX2sGipWDiwRMNQ0cFZblol9cBD
+         R+kEgul4XexdcpbmDTQu9PE5SI0AWEYqCzNktzkjO4yYFV/BW+wvFc7UY407zpyInf57
+         x3qkfP5Re09HMNKUjrvmYjjwDI+2/55SwlMNalLkpOpOmzHxFw9F0DF2VYdD8KuQwyYm
+         QaMA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753964917; x=1754569717;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ayWZPS7L38ZOhjcOnH9WSUS7UcJth2Mxw9Vr7h3Jt6g=;
-        b=wk6k5skPWayReXzylZxdIujC/Zw0OI6eUlDn0Jhd0xd6vdH6xVDcMMYp7fIjpuK+bV
-         vch0h7m8X++mGtNotMQkzYdhyjsY47HYYTdakEB6sbgV8UZyL4DpPHfUNZ/vsvkC4iCx
-         KJ/E9cAF+Zi1yVfG808GcJX68PSEd5tl0ySLUxve0uplBAG+Gyn3Quy/rdag5M76R4SR
-         6rCsr0Fx1qb1DdwcLdGn1UgSPdYahHgWKGsYr9l1GPZLrJpm18WG9K+lz9qyRsYgA2Fe
-         D4bp9YzBMDFAvLZ01MxegwZUQCzBJqnTOc3tsOLDNnSfqRuyaSngtAKkCXfPkJ3esWmb
-         //Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCUqzwtUUV5zCgVUi9LaVwTJyrwJfGyRu4Pzsez6KYzaS/1HQEvF2B17b60/Dv/kWj+IRpFYwaFfRxA=@vger.kernel.org, AJvYcCWnRaEn6zZcruNeA21yjYkITs3LZtJV/6ihlwFdcC8n9nC5SAmdKciyRTUYdnNwDpb6BeLK6WyCVupE6nI6@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyw4fr7bEjK3SNp2kte1HcTI2agSzNMzt4a/D94hMQnLC6mvD5a
-	L4TN1+i1IhCNF8JtJK0fjAShrHxaJ0VifmDVowApoOVDLU33JVRrwJRq
-X-Gm-Gg: ASbGncstGUYy2r6+i1//7LoHaVFuxu7qsL+OPQW/Z5Svd41vWIukjSEgpBzC0AImpED
-	VZUZP1gK6BP1gJ27ppXzcQiyuxlQ6UkMuQY58NbQrcGWaeGA4ZgU5Bnm96X8tHee+/PEV+5w91Y
-	7lt8U9nF3hPfyQ/lVYSC2NT0iqqNM/kDPmpDX15yBlHj+3ad08MB8U1gLvJj7BQJbGRp6ntczs1
-	c+RjHxBnTi4C1O34IIlLG8W2skWq1T2hxVD5vKx1iMRZBM0kw6WNo8xuT5qoomtMgrSuCMJndLW
-	LyO76Q7yqY1wS4FyQ/ZYx1GgXZbySw0XkHxFiogw7qMTxDlKEY+oekknlk0eFQCdt+2Z4kYzzHb
-	VkNhDxp/x1VksmJ0M5zM=
-X-Google-Smtp-Source: AGHT+IE6BW4SDa30IuP4QhZLFrJkcl9wTyzJR0mdkv6O4rHte+RpwPOH5khsoAqI/rBgCbRpwrMO0w==
-X-Received: by 2002:a05:6214:5010:b0:707:5319:d3cd with SMTP id 6a1803df08f44-70767456d88mr92125636d6.26.1753964917125;
-        Thu, 31 Jul 2025 05:28:37 -0700 (PDT)
-Received: from localhost ([2a03:2880:20ff:7::])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077cea87b7sm6577436d6.87.2025.07.31.05.28.36
+        d=1e100.net; s=20230601; t=1753964914; x=1754569714;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OW/Iya9h0ABUEfHeAI61tqBJP6UR+IkHJ9+YZwygnb0=;
+        b=wgIYDCUJoza8VaOskKOZC8kEc+pQZR2WsFPGVgta+h4i9TApyLnzyAJzMWZZMVdaYp
+         F5TxuYzAvoWqddv0iQYk9/D28pDbrJpto7yz1rmb6+IJp2FqLpOEALTXJweqXVGU4I1s
+         y0CY2nB1JIYEQLFvJ8wBWFOtJPAjBPr0HkhggD8sBnGyu3m5TlBDVvdPm6Jdh1NDx4Jx
+         40SjqkP+bhcI1tc1JEQmL6GkPAr2kLCAbqRjE9GKuSdyNGDqLvOSH0qr3Q+5HLKFdFc7
+         oYz2VxpDmTmTjCh2QiIr7FxK3qpfLbr9nK+GdCFgGmwuQXZoCiWG08Vy9GdxKWir3uOW
+         7QeQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVoQLDXKuS5LlyDRLHe8lyRxr7TFb+2ZwvxJqyzZSkBoxj/7Qz11qQ2owZv//BL+L6Pag5Crb1EiZKejs8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5ZFCl35IVioZ5jcKEmtq+jJaUXNYLM0GChVgFtoOMr8bJ/8Pw
+	LYaQUayXuD84AzVr7+iuxwfKuTA4xLXD+tZ+eBgVsOL/Qx06ZQdIRza4FCyu+zQcEQw=
+X-Gm-Gg: ASbGncu8ZWSXe0Fg/FrFxdHfLGhIhEd/ofAv4FR6jplv1J+BrRs2Jdb1iLUzK03LKuS
+	JRCWJpfabe5+4RWjN9/4LASQvyvLPRiMbTeQH8N5Hmes5T+qVuEv6OCpBRrFgfoj7h+hfjDqZPM
+	uRRDR3xpyNhmJ/N7cUQ4gSi2QrkunAIS+qtNgu6r2prak3gDC31NEstzN+x7rhto4s50DNNnuvX
+	37q4A2pC/KxqlSxsKhqVqDJfC8/qWGAi9CjPUwBglzCYj6ML+HY2tCyRMqf/lmpd4v25QGYMYcf
+	UL2M7U8WD9Ryk/g9awhaA2fKpK5wqX8oksINC3noyK7dRUWIveCafjFFShwM42VWQu4l3metafO
+	D2TFjVy+OKLuvDF9e8YpyuPSe/ds2FYDQPRqgVnFIb6ZYX2xhxn0TL//N5SrXVTdIFzrE
+X-Google-Smtp-Source: AGHT+IGB5rbfhCfpEBxYzQb9tShfBv5DP1x7P0EzX5XLP6rdIVy17VMQfI03BZoFiDbqj4lwUzglhg==
+X-Received: by 2002:a05:620a:571:b0:7e3:5129:db49 with SMTP id af79cd13be357-7e66f3515edmr758031285a.45.1753964914155;
+        Thu, 31 Jul 2025 05:28:34 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f702578sm77242785a.57.2025.07.31.05.28.33
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 05:28:36 -0700 (PDT)
-From: Usama Arif <usamaarif642@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	david@redhat.com,
-	linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org,
-	corbet@lwn.net,
-	rppt@kernel.org,
-	surenb@google.com,
-	mhocko@suse.com,
-	hannes@cmpxchg.org,
-	baohua@kernel.org,
-	shakeel.butt@linux.dev,
-	riel@surriel.com,
-	ziy@nvidia.com,
-	laoar.shao@gmail.com,
-	dev.jain@arm.com,
-	baolin.wang@linux.alibaba.com,
-	npache@redhat.com,
-	lorenzo.stoakes@oracle.com,
-	Liam.Howlett@oracle.com,
-	ryan.roberts@arm.com,
-	vbabka@suse.cz,
-	jannh@google.com,
-	Arnd Bergmann <arnd@arndb.de>,
-	sj@kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	kernel-team@meta.com,
-	Usama Arif <usamaarif642@gmail.com>
-Subject: [PATCH v2 5/5] selftests: prctl: introduce tests for disabling THPs except for madvise
-Date: Thu, 31 Jul 2025 13:27:22 +0100
-Message-ID: <20250731122825.2102184-6-usamaarif642@gmail.com>
-X-Mailer: git-send-email 2.47.3
-In-Reply-To: <20250731122825.2102184-1-usamaarif642@gmail.com>
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
+        Thu, 31 Jul 2025 05:28:33 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uhSOf-00000000oaS-0Yjj;
+	Thu, 31 Jul 2025 09:28:33 -0300
+Date: Thu, 31 Jul 2025 09:28:33 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 14/38] coco: host: arm64: Device communication
+ support
+Message-ID: <20250731122833.GT26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-15-aneesh.kumar@kernel.org>
+ <20250730145248.000043be@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730145248.000043be@huawei.com>
 
-The test will set the global system THP setting to never, madvise
-or always depending on the fixture variant and the 2M setting to
-inherit before it starts (and reset to original at teardown)
+On Wed, Jul 30, 2025 at 02:52:48PM +0100, Jonathan Cameron wrote:
+> > +static int init_dev_communication_buffers(struct cca_host_comm_data *comm_data)
+> > +{
+> > +	int ret = -ENOMEM;
+> > +
+> > +	comm_data->io_params = (struct rmi_dev_comm_data *)get_zeroed_page(GFP_KERNEL);
+> 
+> Hmm. There isn't a DEFINE_FREE() yet for free_page().  Maybe time to add one.
+> If we did then we'd use local variables until all allocations succeed then
+> assign with no_free_ptr()
 
-This tests if the process can:
-- successfully set and get the policy to disable THPs expect for madvise.
-- get hugepages only on MADV_HUGE and MADV_COLLAPSE if the global policy
-  is madvise/always and only with MADV_COLLAPSE if the global policy is
-  never.
-- successfully reset the policy of the process.
-- after reset, only get hugepages with:
-  - MADV_COLLAPSE when policy is set to never.
-  - MADV_HUGE and MADV_COLLAPSE when policy is set to madvise.
-  - always when policy is set to "always".
-- repeat the above tests in a forked process to make sure  the policy is
-  carried across forks.
+Maybe think carefully if you really need a "page".
 
-Signed-off-by: Usama Arif <usamaarif642@gmail.com>
----
- .../testing/selftests/mm/prctl_thp_disable.c  | 117 ++++++++++++++++++
- 1 file changed, 117 insertions(+)
+What would prevent just using kzalloc(PAGE_SIZE)? Under the covers it
+is almost the same thing.
 
-diff --git a/tools/testing/selftests/mm/prctl_thp_disable.c b/tools/testing/selftests/mm/prctl_thp_disable.c
-index 2f54e5e52274..3c34ac7e11f1 100644
---- a/tools/testing/selftests/mm/prctl_thp_disable.c
-+++ b/tools/testing/selftests/mm/prctl_thp_disable.c
-@@ -16,6 +16,10 @@
- #include "thp_settings.h"
- #include "vm_util.h"
- 
-+#ifndef PR_THP_DISABLE_EXCEPT_ADVISED
-+#define PR_THP_DISABLE_EXCEPT_ADVISED (1 << 1)
-+#endif
-+
- static int sz2ord(size_t size, size_t pagesize)
- {
- 	return __builtin_ctzll(size / pagesize);
-@@ -238,4 +242,117 @@ TEST_F(prctl_thp_disable_completely, fork)
- 	ASSERT_EQ(ret, 0);
- }
- 
-+FIXTURE(prctl_thp_disable_except_madvise)
-+{
-+	struct thp_settings settings;
-+	struct test_results results;
-+	size_t pmdsize;
-+};
-+
-+FIXTURE_VARIANT(prctl_thp_disable_except_madvise)
-+{
-+	enum thp_policy thp_global_policy;
-+};
-+
-+FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, never)
-+{
-+	.thp_global_policy = THP_POLICY_NEVER,
-+};
-+
-+FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, madvise)
-+{
-+	.thp_global_policy = THP_POLICY_MADVISE,
-+};
-+
-+FIXTURE_VARIANT_ADD(prctl_thp_disable_except_madvise, always)
-+{
-+	.thp_global_policy = THP_POLICY_ALWAYS,
-+};
-+
-+FIXTURE_SETUP(prctl_thp_disable_except_madvise)
-+{
-+	if (!thp_available())
-+		SKIP(return, "Transparent Hugepages not available\n");
-+
-+	self->pmdsize = read_pmd_pagesize();
-+	if (!self->pmdsize)
-+		SKIP(return, "Unable to read PMD size\n");
-+
-+	thp_save_settings();
-+	thp_read_settings(&self->settings);
-+	switch (variant->thp_global_policy) {
-+	case THP_POLICY_NEVER:
-+		self->settings.thp_enabled = THP_NEVER;
-+		self->results = (struct test_results) {
-+			.prctl_get_thp_disable = 3,
-+			.prctl_applied_collapse_none = 0,
-+			.prctl_applied_collapse_madv_huge = 0,
-+			.prctl_applied_collapse_madv_collapse = 1,
-+			.prctl_removed_collapse_none = 0,
-+			.prctl_removed_collapse_madv_huge = 0,
-+			.prctl_removed_collapse_madv_collapse = 1,
-+		};
-+		break;
-+	case THP_POLICY_MADVISE:
-+		self->settings.thp_enabled = THP_MADVISE;
-+		self->results = (struct test_results) {
-+			.prctl_get_thp_disable = 3,
-+			.prctl_applied_collapse_none = 0,
-+			.prctl_applied_collapse_madv_huge = 1,
-+			.prctl_applied_collapse_madv_collapse = 1,
-+			.prctl_removed_collapse_none = 0,
-+			.prctl_removed_collapse_madv_huge = 1,
-+			.prctl_removed_collapse_madv_collapse = 1,
-+		};
-+		break;
-+	case THP_POLICY_ALWAYS:
-+		self->settings.thp_enabled = THP_ALWAYS;
-+		self->results = (struct test_results) {
-+			.prctl_get_thp_disable = 3,
-+			.prctl_applied_collapse_none = 0,
-+			.prctl_applied_collapse_madv_huge = 1,
-+			.prctl_applied_collapse_madv_collapse = 1,
-+			.prctl_removed_collapse_none = 1,
-+			.prctl_removed_collapse_madv_huge = 1,
-+			.prctl_removed_collapse_madv_collapse = 1,
-+		};
-+		break;
-+	}
-+	self->settings.hugepages[sz2ord(self->pmdsize, getpagesize())].enabled = THP_INHERIT;
-+	thp_write_settings(&self->settings);
-+}
-+
-+FIXTURE_TEARDOWN(prctl_thp_disable_except_madvise)
-+{
-+	thp_restore_settings();
-+}
-+
-+TEST_F(prctl_thp_disable_except_madvise, nofork)
-+{
-+	ASSERT_EQ(prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, NULL, NULL), 0);
-+	prctl_thp_disable_test(_metadata, self->pmdsize, &self->results);
-+}
-+
-+TEST_F(prctl_thp_disable_except_madvise, fork)
-+{
-+	int ret = 0;
-+	pid_t pid;
-+
-+	ASSERT_EQ(prctl(PR_SET_THP_DISABLE, 1, PR_THP_DISABLE_EXCEPT_ADVISED, NULL, NULL), 0);
-+
-+	/* Make sure prctl changes are carried across fork */
-+	pid = fork();
-+	ASSERT_GE(pid, 0);
-+
-+	if (!pid)
-+		prctl_thp_disable_test(_metadata, self->pmdsize, &self->results);
-+
-+	wait(&ret);
-+	if (WIFEXITED(ret))
-+		ret = WEXITSTATUS(ret);
-+	else
-+		ret = -EINVAL;
-+	ASSERT_EQ(ret, 0);
-+}
-+
- TEST_HARNESS_MAIN
--- 
-2.47.3
-
+Jason
 
