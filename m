@@ -1,162 +1,162 @@
-Return-Path: <linux-kernel+bounces-752472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4C9AB175FA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:10:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D429B175FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:11:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB949A8134D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:10:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D55FF18C21F0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:12:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B4728DEE4;
-	Thu, 31 Jul 2025 18:10:37 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7791A296148;
+	Thu, 31 Jul 2025 18:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Jvgsl4Gg"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3BE123E325
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 18:10:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2482123C50B;
+	Thu, 31 Jul 2025 18:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753985437; cv=none; b=oZOY3ZP/+jDMbWCVhRf7CE0HmN3dApmg0ewkxBA0luY+If+DXYb9kBvNjl21IRN8JlL+Xo7oqEJccAQkGB6bJBl5jfyM3ZQllnjBsRHzzuGjLY2t8h06QizDW5ziyZ+OJUzbaTVi8N248oyscu5wm2MCop27T9YXZ9lFcpWarB0=
+	t=1753985510; cv=none; b=YAkUH58lNbXDST25Pcs4gBSedQxB5Bjwy8kkhhn2CeaxsPJ97K7oPRotB6Hvqpav1Lh2u7jWNNVglUW48o9eV0D8h2Vczk/9WKPhCshzv3BNwnu8TjTId53BC4CqPFiXIq8thDLoRKM8Uh2ILnVO7bwu7L3k+oB5sGVbfmQYa9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753985437; c=relaxed/simple;
-	bh=dVkBO3Blw1M7u/7Gq83ObY/d8JaJg/9LtVb3rBuN+lQ=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=ccKm6gvJkbQskVtL4FXS+z3TsDsqmIZYXNrKrKwe52GQUaUvwQz5EbkB60/6JDD6Ob7MTaZ5yuP7QLQ362wAS65BfRVKgdk6neAWphODi2ehsjaOc9w7CM9BsxwIrodeEasR/HptErCgThk9MZCqGDIiJCH7pRtvRaQxJcWr0F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-87b89891d5dso200640039f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:10:35 -0700 (PDT)
+	s=arc-20240116; t=1753985510; c=relaxed/simple;
+	bh=qFiEbubEXZgiOllFsoFduLiUOWMNjPrepMcv9O25f5g=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=NzNZszk/FRO8PCdCv1T+YlfZbODHx13uU2ZyG1UOMp2KrLK61tKRI4iLvqvwDj8C8W+qo4Rj2NTYhcaiohIta34zUK4fQzQEniWHAjTVDDGKOWS+IuoZcPpKrY/9qMJlNOJ37m4xgC69mlbwhONSj/2gq+1PGV2EsjtNHmuxa74=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Jvgsl4Gg; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3a54700a46eso803791f8f.1;
+        Thu, 31 Jul 2025 11:11:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753985507; x=1754590307; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Oz97ueWXiz4b/PbiskTtWUPg9WrFPlFZWDXca6NwBTg=;
+        b=Jvgsl4GgW53OcF4Jko83JWgpLKnMrOCDDe0fGxGDwlAiLYfxIbWUx6AdNs8Qwv6pvP
+         ehIwwXanJWlpZptRt9jcXE61yuw6NekIHPbC9yUwF6bQhdpwhNx0gXCCP7lkMKiJxPGO
+         DlCUAVocJYAl72AdKOlV3XQArJHEg7TVnYkLrx9gIH8Dan5NZ+bhpsnj85Yf2X7AY7NW
+         Y3AzRTBU59j9D2c3AyAx7wWXhAKz4fLCayRQtA5MtyC6D1yh2j21M7/3/HyC/0UTDwPp
+         WEh/QEpbGErdYoc0v+MMI83FdWi/QpW3wY4tuJPNZSSSapPJ5gjFpy7Y6Y2dL1zbqQ0y
+         YmZg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753985435; x=1754590235;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=qmaWcuuZImYl0mDQkAhmt3J0oJceGWUZsbJrDUdOmRI=;
-        b=oXY2gyiw8Qd5WYbGypjuhJltuwuo66rtsfCFdHxqNvSU31PueBL5OetTtq2pe1BpOB
-         u+0Z7Y8FimJvqQd2yfXxR+ni8H/nR0JM+Ck1Zp8g8ng0I+KCgcj3tuNqVQSJXFTUCQ3+
-         RBmGRgEbSLDfWXa4FDzyBqLzQVCkCgx8rsanNJxkRygrSaC46fF5iOQXpV7DrGREzkmN
-         Wp3yc/Zd2Kh1sHvcYaCzHf6eMXhcYIDEOKFCJcW6g7m9YsrJPcQmuUvFCczDV1XkzZCO
-         tr2sbrpODV24vyxzIVW/9qxYBm7NAyCn9XYSPXqprXx+SYxDYXBycMVfVDTYui+oBVDu
-         Dcfw==
-X-Forwarded-Encrypted: i=1; AJvYcCVmRS97cPGujTN+Mnr38EvNIaUxfe6+TJVP7CbIT6ajDDzbj24i9hehH3QymavJ1WTJyCN2WOUaTq9QzTw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzGXbBwVikpG7z+vbQMkdJJtD038ORzKjrubIl53xQa62e5qoRz
-	uLlQxCQdfT+J+0/4hk5Y2hFeluLB3kSVvpHwxJBwgYN1Z3ls7XJGkrl5Z0jtb5BVTGvEbPNr3sY
-	4FQpcYZsAF09PIQinZYxOgPQhaYIZ6yqBZ9x4re9jUrt6uq9ccE1eGqauEws=
-X-Google-Smtp-Source: AGHT+IEXmvUatQyVhy/YGEy7yRAt/lp31If6wd15LX6kOtPlI3I6kPoVqwc/kgGrCMKOzIQ1dJPqHkusCeulkRT2NwX4/w5aKf9u
+        d=1e100.net; s=20230601; t=1753985507; x=1754590307;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Oz97ueWXiz4b/PbiskTtWUPg9WrFPlFZWDXca6NwBTg=;
+        b=UaVmT0dAGtSK/idWEVVZAgRWuSYRvPf25d+OaVJ4gJxsaP53pxcBaJCOPj0jDwe+Q3
+         8t8OIs2EgdMbVu1aX1iSwxaLikxRhdJqCogaA86klzypoGMhiCvPb8jFsiv7yaMmQf7Q
+         NXpRTm36Rx24lR3oil47us2XSdokdfRvzMpZkIzTYZhmpZJq365wzZ3W0EAc5hJTtzIK
+         f0wbn6F/aEVtypxhQPtNRbxVEKLDno0sgraC0MidnxKucXq6s+Rtn2nmccV/7cix+opX
+         CMVr1JUPFTOJNtHYys1ld405wP4L1qZwQbrbf0BXVIUjlrHtzfJnIJhqtAtYSaxk2U+G
+         dWGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX5gX1u80efUmqsvO8nGibKnW2Pp8iWzlUm9c2wHUKVZtt748eSXBbn41T433WhrgRdfsSv2aEfm9R9TOg3@vger.kernel.org, AJvYcCXl65jK5U1ywGTc2ts1EszeWrscIWy/bsAHtP/JIIqSo4WvfoV1m25/jY5l2xyHx1topEnLkcZ1w2d2bkfb@vger.kernel.org
+X-Gm-Message-State: AOJu0YwCBZxBmK+bPP5XnWUC8vzd9KysRtz3v8lrei7YT3xy2ZfUgUi5
+	ZaHcfnljeMrqwNZhZsYLjD+5hgYibw4PUHZof0W7c+oa+dRy615UV8d1VvRmjQ==
+X-Gm-Gg: ASbGncsva75M0sZlx/aHGc7OhYfbGpEWULQMYb+CyTrbByYlcioN6qOej+0jTNsLL/l
+	rLlV5qUb92dPXLnzUwPJ9C6oNw2IgYrx3UDcMY0WkZRqG8ir6UeMHtuXMBAK/Vtcv0S2XdNFO9q
+	oT2e6vLbYEgVkDJMutW1Bmy87XutPJ0pBOdkkVLqP+DPRNK4yXHjHGNNsx+Vxx6lFo3Ql3IRyP8
+	7lVs0bLWxff2VAJx7GeTqu5aRpWEau6DEtyHhJdMIbR+WOWMJS4aqhePNvWAPHfXcEsLjVgvmCZ
+	2DknC6ZnGz/JRCXv+5oL/7zrzT42QXnpvS+Cut3bD9UtBCXL6cEJmE2qc+Mz2aPFgTBOiSuLu5+
+	03yZt0FFEO1XOhbGzWuaXxDnc2X5yjDHqxV/KgNkriIr9Ggcu4JTuAXzuHU6TYw==
+X-Google-Smtp-Source: AGHT+IHoFq9WeGTsU7QeC5ti5nJJNc+86GuqbQF6LqraQvtG4wJK8mlOFJGJbKAc0bzxUwv9mBUXZQ==
+X-Received: by 2002:a05:6000:2dc1:b0:3b6:1948:c763 with SMTP id ffacd0b85a97d-3b794fb707emr6612068f8f.22.1753985507245;
+        Thu, 31 Jul 2025 11:11:47 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c469093sm3230086f8f.51.2025.07.31.11.11.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 11:11:46 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Thu, 31 Jul 2025 20:11:32 +0200
+Subject: [PATCH] spi: spi-qpic-snand: fix calculating of ECC OOB regions'
+ properties
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:8318:b0:87c:31ad:abe2 with SMTP id
- ca18e2360f4ac-881375dac67mr918287139f.5.1753985434824; Thu, 31 Jul 2025
- 11:10:34 -0700 (PDT)
-Date: Thu, 31 Jul 2025 11:10:34 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688bb19a.a00a0220.26d0e1.004d.GAE@google.com>
-Subject: [syzbot] [gfs2?] KASAN: null-ptr-deref Write in gfs2_trans_add_revoke
-From: syzbot <syzbot+f2b9fe431c853e793948@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250731-qpic-snand-oob-ecc-fix-v1-1-29ba1c6f94e5@gmail.com>
+X-B4-Tracking: v=1; b=H4sIANOxi2gC/x2MQQqAIBAAvxJ7bkGNSvpKdLB1q71oKUQQ/j3pO
+ AMzL2ROwhmm5oXEt2SJoYJuG6DDhZ1RfGUwyvRq7DRepxDm4ILHGFdkItzkQes7bxWRHayCGp+
+ Jq/7H81LKB/TQWPVoAAAA
+X-Change-ID: 20250731-qpic-snand-oob-ecc-fix-8d3d80cc8680
+To: Mark Brown <broonie@kernel.org>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-Hello,
+The OOB layout used by the driver has two distinct regions which contains
+hardware specific ECC data, yet the qcom_spi_ooblayout_ecc() function sets
+the same offset and length values for both regions which is clearly wrong.
 
-syzbot found the following issue on:
+Change the code to calculate the correct values for both regions.
 
-HEAD commit:    260f6f4fda93 Merge tag 'drm-next-2025-07-30' of https://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1436e9bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=3e6923811cbcd88f
-dashboard link: https://syzkaller.appspot.com/bug?extid=f2b9fe431c853e793948
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10a93ca2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12089ca2580000
+For reference, the following table shows the computed offset and length
+values for various OOB size/ECC strength configurations:
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-260f6f4f.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/28b1dc006a89/vmlinux-260f6f4f.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dcbc50612705/bzImage-260f6f4f.xz
-mounted in repro #1: https://storage.googleapis.com/syzbot-assets/f2243f65af89/mount_0.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=10089ca2580000)
-mounted in repro #2: https://storage.googleapis.com/syzbot-assets/c6557c77eded/mount_8.gz
-  fsck result: OK (log: https://syzkaller.appspot.com/x/fsck.log?x=169dc834580000)
+                              +-----------------+-----------------+
+                              |before the change| after the change|
+  +-------+----------+--------+--------+--------+--------+--------+
+  |  OOB  |   ECC    | region | region | region | region | region |
+  |  size | strength | index  | offset | length | offset | length |
+  +-------+----------+--------+--------+--------+--------+--------+
+  |  128  |     8    |    0   |   113  |   15   |    0   |   49   |
+  |       |          |    1   |   113  |   15   |   65   |   63   |
+  +-------+----------+--------+--------+--------+--------+--------+
+  |  128  |     4    |    0   |   117  |   11   |    0   |   37   |
+  |       |          |    1   |   117  |   11   |   53   |   75   |
+  +-------+----------+--------+--------+--------+--------+--------+
+  |   64  |     4    |    0   |    53  |   11   |    0   |   37   |
+  |       |          |    1   |    53  |   11   |   53   |   11   |
+  +-------+----------+--------+--------+--------+--------+--------+
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+f2b9fe431c853e793948@syzkaller.appspotmail.com
+Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/spi/spi-qpic-snand.c | 12 ++++++++++--
+ 1 file changed, 10 insertions(+), 2 deletions(-)
 
-gfs2: fsid=syz:syz.0: first mount done, others may mount
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_write include/linux/instrumented.h:82 [inline]
-BUG: KASAN: null-ptr-deref in set_bit include/asm-generic/bitops/instrumented-atomic.h:28 [inline]
-BUG: KASAN: null-ptr-deref in gfs2_trans_add_revoke+0x8c/0xe0 fs/gfs2/trans.c:321
-Write of size 8 at addr 0000000000000018 by task syz.0.17/5566
-
-CPU: 0 UID: 0 PID: 5566 Comm: syz.0.17 Not tainted 6.16.0-syzkaller-08685-g260f6f4fda93 #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- kasan_report+0x118/0x150 mm/kasan/report.c:595
- check_region_inline mm/kasan/generic.c:-1 [inline]
- kasan_check_range+0x2b0/0x2c0 mm/kasan/generic.c:189
- instrument_atomic_write include/linux/instrumented.h:82 [inline]
- set_bit include/asm-generic/bitops/instrumented-atomic.h:28 [inline]
- gfs2_trans_add_revoke+0x8c/0xe0 fs/gfs2/trans.c:321
- gfs2_remove_from_journal+0x43e/0x6d0 fs/gfs2/meta_io.c:366
- gfs2_discard fs/gfs2/aops.c:597 [inline]
- gfs2_invalidate_folio+0x579/0x750 fs/gfs2/aops.c:631
- folio_invalidate mm/truncate.c:140 [inline]
- truncate_cleanup_folio+0x2d5/0x430 mm/truncate.c:160
- truncate_inode_pages_range+0x233/0xda0 mm/truncate.c:379
- do_gfs2_set_flags fs/gfs2/file.c:254 [inline]
- gfs2_fileattr_set+0x80a/0x9b0 fs/gfs2/file.c:311
- vfs_fileattr_set+0x92f/0xb90 fs/file_attr.c:298
- ioctl_setflags+0x17b/0x200 fs/file_attr.c:336
- do_vfs_ioctl+0x8ed/0x1430 fs/ioctl.c:561
- __do_sys_ioctl fs/ioctl.c:596 [inline]
- __se_sys_ioctl+0x82/0x170 fs/ioctl.c:584
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f55c3b8eb69
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffea6c68328 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007f55c3db5fa0 RCX: 00007f55c3b8eb69
-RDX: 0000200000000000 RSI: 0000000040086602 RDI: 0000000000000005
-RBP: 00007f55c3c11df1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 00007f55c3db5fa0 R14: 00007f55c3db5fa0 R15: 0000000000000003
- </TASK>
-==================================================================
-
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index 0cfa0d960fd3c245c2bbf4f5e02d0fc0b13e7696..37ddc48d2c17264499f821d235835c4ff5982873 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -213,8 +213,16 @@ static int qcom_spi_ooblayout_ecc(struct mtd_info *mtd, int section,
+ 	if (section > 1)
+ 		return -ERANGE;
+ 
+-	oobregion->length = qecc->ecc_bytes_hw + qecc->spare_bytes;
+-	oobregion->offset = mtd->oobsize - oobregion->length;
++	if (!section) {
++		oobregion->offset = 0;
++		oobregion->length = qecc->bytes * (qecc->steps - 1) +
++				    qecc->bbm_size;
++	} else {
++		oobregion->offset = qecc->bytes * (qecc->steps - 1) +
++				    qecc->bbm_size +
++				    qecc->steps * 4;
++		oobregion->length = mtd->oobsize - oobregion->offset;
++	}
+ 
+ 	return 0;
+ }
 
 ---
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+base-commit: 926406a85ad895fbe6ee4577cdbc4f55245a0742
+change-id: 20250731-qpic-snand-oob-ecc-fix-8d3d80cc8680
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+Best regards,
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
