@@ -1,205 +1,148 @@
-Return-Path: <linux-kernel+bounces-751743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9025B16CF3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:55:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EEC1EB16CF4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6EA2A5A5FDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89C213AF94E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:56:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A398629DB61;
-	Thu, 31 Jul 2025 07:55:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 339D029DB81;
+	Thu, 31 Jul 2025 07:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="eTzHsBN9"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012055.outbound.protection.outlook.com [52.101.126.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UkGAA0yj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6BA819CD17
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:55:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.55
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948509; cv=fail; b=PFJIHB5YlL2pCJgzBracpfPv5dBBUiuEZNGZuz1l6rCKkMJ/V69bIAKws7VufNT34a8hlaGywZQqANuyzV4nddbUnORfskALp/60HkSbkg7irUmUmqb0lkIby77jMv368gKKS6AySzlrdHGoR73xzNXoH7GH0UAdwv2I5FEJ2ZA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948509; c=relaxed/simple;
-	bh=0lCfwINdmhT8EQBAQq4ppiqNReyzYg/ttYzMvJ6ZTdU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=cmFRKMyNoyEkemm9DTLX6/iEDk4OW4SUiuZEOKe+Hl/NM/NkrQy7xUnrtcYfOAnL8q0iDO6s1OmwP5i6s+mAtK/26cyJcMs0iX3aZbXDlSNms88s7V/wN1HIU0SRgZmlRVkI1im64aRDZjGxl/XkoJgvpF+Hgwy7H+E18m0gA9E=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=eTzHsBN9; arc=fail smtp.client-ip=52.101.126.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=EXJf6me+7k6Vnvm09C5kbR5KEVfBoykvj693sz/h71RLhr79UGNvwg+1Czx1ZG3SrFOU6Eiz1VWgCJWky5ofHZ1o5X2fyI85RavMng0CS6ehvjhzcicBvAKncuz9BEsBmO9QHw3JBa144skSewyYD2cfhnGA+DgckJODOt4D2OYxOy+l/sOuYE9S+ckd+2SqCiyRI5ySL8gEDuZt34rOcirs+FDt7q23v1VvBrp3++77BK4BY5QypUHPY5zvIKWbwcvdW/w+ufp+9MfyPWDVr6n9ySFS/tLbreMfboMts5FW5B4Csi7fwvgD/pz4dV2FCbGFiPU+WtDUqnJJArj/bg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=SwgXK0RvEiV5p5SnEBt02Sfw2K5rfDxEf2dS6Ax3QNA=;
- b=H+nv3gRKkkLtmsSZpb4gFjchJjW7FEiASwo9VCE2gU2mPqUnHOExo632nvuu7B76jRi/ecJqt8QK5EqsSujmQSE/8Amw+6Kg83b6g/XzepONt68BZn8DQ6OTO0MRFbj0TDq/nnHqGbo0eMvneZPhk1cPZc22+eVM8xfDxw2fKxT54yq4bJg3dEg4Pz79U/heIG8BhQ30+UZU1nKMoXrLjRme3tP6xvsukN7C5UZ5Id4xUxqAq/HfYlkxc1TmcuKZT1/LcAPWztYj9HeJ674YMEmms5TeqXH9324xc0MehbGqz8sj6YVgWmk4qWHdNyrbm3yBVAWXFxc27XuMOQNwhA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=SwgXK0RvEiV5p5SnEBt02Sfw2K5rfDxEf2dS6Ax3QNA=;
- b=eTzHsBN99xeoacT/zIrlC4n0z+jBRiDYzzXepvw6YkeuVR4w5z8Kz7NOJAk5KORNkiSjM9PVEmDWLoP7RXm9aHIcSfNSsBnCktDguJuuqzmSup31SYojhxl+uYhBnwXxKGXPWfZbfxydRsDgFIxJbKZa0Lc+k9lucCfvSIbxaFywYZikFMgUKp5pY/vR+gRQ6wgHws81sFe6HhI8oHNGKW90/kHDaBdCBRVA+d11AnuPGfMk/BRHFvxoaFWlVdFvGNzag7IMT1r91jp5TRo10eMqr9OKR896WHbX5WX6kfJy60gbHnzogtcyL+z4tVsjJ6mJJNklzctJpDAtVavfoA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from TYSPR06MB7008.apcprd06.prod.outlook.com (2603:1096:400:469::8)
- by TY0PR06MB6801.apcprd06.prod.outlook.com (2603:1096:405:12::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Thu, 31 Jul
- 2025 07:55:02 +0000
-Received: from TYSPR06MB7008.apcprd06.prod.outlook.com
- ([fe80::41f3:1597:2953:65f2]) by TYSPR06MB7008.apcprd06.prod.outlook.com
- ([fe80::41f3:1597:2953:65f2%4]) with mapi id 15.20.8989.010; Thu, 31 Jul 2025
- 07:55:02 +0000
-From: Xichao Zhao <zhao.xichao@vivo.com>
-To: harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: siqueira@igalia.com,
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D8A41EDA2F;
+	Thu, 31 Jul 2025 07:57:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753948622; cv=none; b=Z270+Vy4wLojGjQ19ucFmlt4juWptX0nS1Aeiv4wVzdCn8iNYzj9YGAxDCA45ki1xVgUxwW1MIrXpd16uk/TFHe9jv5mYqjGIwbc0E1L0jMtJOR02s6xVDKm9QS24x4+QbHHPnAUz4WIr1nMF16VExE26xcnMbnqxDMGCDyBwLM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753948622; c=relaxed/simple;
+	bh=61dcSPYpfvv/XWFpt2pjSx2eN1l00uIV5kw223T8ITM=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fszLJw/APLz1u4htzsJNB6eEtqGALeQ3efjEZ0typRix4I/vcVmiGkAdgvgEeoSj6O4ENRiriOX+GezqKMKyC/eQ1PsC9P8N3aToNPNXu+RVqNcb7uXxJa1V+tg57cBRs+qEMwvk98davYyErnHucGYGz10N7IMxNbXsF1P/wo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UkGAA0yj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6C042C4CEEF;
+	Thu, 31 Jul 2025 07:57:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753948622;
+	bh=61dcSPYpfvv/XWFpt2pjSx2eN1l00uIV5kw223T8ITM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UkGAA0yj/3k/okEA7kxXkDaNLmJ5M9UWEjRsfbaWOr7vtLQUNzzMu0Eu/B7+fnIo/
+	 KLjrBa1BRvI2W56uH8/STvBEi+/IASgDPRKiAVKiIaW7sakZyL80biAxOpCTn4CYYU
+	 O3C6L8IIpbmsKLoJvcJqdXevXEMCwy5PLgxPU5wiK6PkUAdtt85m0mALeHO+TCrki4
+	 RM0bZmtpqMVj7LMFnBcdN4Wv2qaP4hhQ8JosZnkOnLiThkOUTkV2uHSat0trox9HTo
+	 GMlCHV4PkolOUr1n4kJJAnveLs+ks5EWH+5tlHPTELoQNRuXoL18UI/FIv4jVohmGt
+	 oEFmuJcfXLTUQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uhO9r-002qnd-VE;
+	Thu, 31 Jul 2025 08:57:00 +0100
+Date: Thu, 31 Jul 2025 08:56:59 +0100
+Message-ID: <86zfck7pys.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Will Deacon <will@kernel.org>
+Cc: perlarsen@google.com,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Joey Gouly <joey.gouly@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Sudeep Holla <sudeep.holla@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	kvmarm@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
-	amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	Xichao Zhao <zhao.xichao@vivo.com>
-Subject: [PATCH] drm/amd/display: Clean up coding style
-Date: Thu, 31 Jul 2025 15:54:50 +0800
-Message-Id: <20250731075450.626428-1-zhao.xichao@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR02CA0062.apcprd02.prod.outlook.com
- (2603:1096:404:e2::26) To TYSPR06MB7008.apcprd06.prod.outlook.com
- (2603:1096:400:469::8)
+	ahomescu@google.com,
+	armellel@google.com,
+	arve@android.com,
+	ayrton@google.com,
+	qperret@google.com,
+	sebastianene@google.com,
+	qwandor@google.com
+Subject: Re: [PATCH v7 4/5] KVM: arm64: Bump the supported version of FF-A to 1.2
+In-Reply-To: <aHpP7fntDQ7SMPAC@willie-the-truck>
+References: <20250701-virtio-msg-ffa-v7-0-995afc3d385e@google.com>
+	<20250701-virtio-msg-ffa-v7-4-995afc3d385e@google.com>
+	<aHpP7fntDQ7SMPAC@willie-the-truck>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: TYSPR06MB7008:EE_|TY0PR06MB6801:EE_
-X-MS-Office365-Filtering-Correlation-Id: 15d6ae3d-b2d6-4400-3b5c-08ddd0078e04
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?ZjkZ5mkva0nsI5Y/481bqULFHIdyohi3uXWP45hf/eNedh9PUlZkus2Bpfyw?=
- =?us-ascii?Q?qkAAZMkraAqrxO3FyhkZHkNXaxxROLeHIO08A7HthwXNzgki+BEE7RSshtqr?=
- =?us-ascii?Q?1by0ozcwgFuDxK8/XGxD0ZX4fCd5gp8RrQw1S/FGlrjFRbMrcIWZDEGOxx0B?=
- =?us-ascii?Q?YP/2gkvfv/uN8dvToK5yuihz+5neSlI2hPis+KhHNGgc4soHWCV8raJnRPzK?=
- =?us-ascii?Q?jduaaauNCM0PoueDSSoWaB5YFTXqdYgEiEf1rlG6HVswKokl23J7p8zElwPd?=
- =?us-ascii?Q?PsKCO1yzpEQfsQCFFDBVolngYfIJdPQzhWsnuR0DIBzoiwmA3zNudpn4xtEn?=
- =?us-ascii?Q?SnGPskKPcwpP58syjOu3bJGBUxEVcf16vGttuXzxWjXaxQ6Khsd6SSlKwe1G?=
- =?us-ascii?Q?8ycKqApDi/5yIePYTe4Uqvx5tKG+OBE8kzIGW/+YWh7NEaZzkRLLJ7EiFCZB?=
- =?us-ascii?Q?nz+8kDjbfyNJJjlRUaDWUTRKTe/ilmBXHVf+kO9L3TPlNv4swpHA54feEih6?=
- =?us-ascii?Q?HkVWFO4fDClPqaQSkOpErlwZe4pVq5SUuxERIGZhvBf8x5Hsi4XZ/H2IORQF?=
- =?us-ascii?Q?RmdEaG/2uyIqPX2eGaB0zWCjglmoxNz9T4yZCnOY2q/5itRf1NII+e+OB56X?=
- =?us-ascii?Q?3fhJZp8ck/+NaPVrJ0teZBScO0bFbgtM0z+6iGuQr9bPmVR97PqOcWnj1FuD?=
- =?us-ascii?Q?QKMQQO0L7HJM02ExlIkgPoKlhOqEchpUD5jmbCLBrnLXLOCsYa5ZJzsA+kUl?=
- =?us-ascii?Q?ODkZ6N2gohOwI/+tScdIHpLNSSVW3LVxJ0L1y43Z/dOpLvmMtWO4bBG78jbi?=
- =?us-ascii?Q?FMIJgLkofIBytHLiEKg4NDsxfrtBQA9Gn1j8y18B3XAMibuF9RBuQBZUtcvb?=
- =?us-ascii?Q?3etMJeosa9K8u1WV/YCme4XO3Ko4aXT/n/wlE9cx3vrvHuRfrVyax4YaslSX?=
- =?us-ascii?Q?x/yVdZJDy08qJbTCtg1ukhGWb/UQslCQYULA9FOxT6pHpNDZKYcnHlckU2vW?=
- =?us-ascii?Q?tPL2v7Jz8smbbBFBqn1wsdEwgzHOTf7LZYzwPBvWge/1a7YrmDO4ZRGC6O5P?=
- =?us-ascii?Q?UEbb612WgJbILKwCVxVFr5GfqL1lqpy2zqn6CMoJM8xyGGklcm6Le2UU6UXh?=
- =?us-ascii?Q?uJywHFP+O9B3tkaAXAxN5RcuKGyu/Ml+v6yPjLDH9UU7GnM//68ZKQLRnBIT?=
- =?us-ascii?Q?aeL63P1KWh/2ZTUP6teWQoNKqCrJLCXNIQ5dyy5NQ/SpLriyUrGfGboyLgFs?=
- =?us-ascii?Q?XqI9d/x4ipem+0UcU9mc3JZh76m7Hz1rzDvpu8BXrbr0AGGcf6x7m3dmerNi?=
- =?us-ascii?Q?7rgtgRXsWniHqVUbopta0SmhwiWKi7ULvy5gA++VLyVryewfIIwN51XPbCyg?=
- =?us-ascii?Q?uli19hhHqT88o6pp2QXZJN9a2VRqC9DgDfV0lDJVrMCvYwLlkk49NSIXu2Gm?=
- =?us-ascii?Q?go5Te/8aDtgMIK6B+3dkE+izcWxi0bJQ8BVB9zulBJSM+J9BD5mhFA=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TYSPR06MB7008.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?xg2PFo7Q96B9e3kBFXAPmOUmFWwc8WmVkO23AzK36G90uwQT315xU901UH+J?=
- =?us-ascii?Q?ipZnUuSpWakYwq8kIPzWnuQAqdyOiRxFym6w7P3IyQ7urqkVxPOcVcsF3fHz?=
- =?us-ascii?Q?YoQ86NndTNITJtcPezAYaE1Xkd+riSblQ0p+uWBcol33tHpRh9pXfIonxp8B?=
- =?us-ascii?Q?7O0ALCdcbkXcWnps6dJF6SnfELIFPIyS6eOQ3K6AJ7xByqSSFMdFSu246836?=
- =?us-ascii?Q?HEbkpGbY+i5iAAEX8UvwQ+cY5BwMZggUeU+pTQ2mfKnAxsdYcFrsWRA6Z58M?=
- =?us-ascii?Q?yR5ddLYjb00RvbxOZJW4n+CiLEG102dgIOCSCRHA6/+tJ4vVpcfYudYeYHpm?=
- =?us-ascii?Q?ycLerZZstaLor7F5cavbwCUHfNkKWPQjWOaezIN1eGjFJiVsAXCWV9xulhkz?=
- =?us-ascii?Q?0QOIDUgcpp16c+C5CdnZmkItHtEAT1DvXxwmGRTDhpiiTraORb884HmEb1Ap?=
- =?us-ascii?Q?uh9qnj8mQZ8wryzw2NeCFVnpm++73phlVn9ZliE7kyOFf+CXBF7EhsyozDmu?=
- =?us-ascii?Q?gIEUmIF8l+75N0wd+hrXka07WE1EU0RaXORS4ZzpkqnliBiqjyWg1pfIzkDZ?=
- =?us-ascii?Q?VWLgj4XpGrF02Sypdfwi5LrCdi49i+98hEK+NTWGMXL+tAYaIgZeydL1w2rV?=
- =?us-ascii?Q?FrwWe0jgfBFISXFuuukcmSCKnIKueMKfxN0BbyzmOJ0JDhF1Luem8s/ssKFz?=
- =?us-ascii?Q?0tcHATvgp8lNFdrDl6f1NTZdAyWXhVqBv+LmyXI8KestYzNL0bbWdkNqP8E0?=
- =?us-ascii?Q?+bzIJJEq8x+mdBXnDsSBBvLE3y99mmXXAo8jebUkEmghPKojb96pcBKEZeoh?=
- =?us-ascii?Q?rQ62afnaPvN0zLzkRyhsE0rC6x4CwV6V9dwH9j23Dnsf9BigTihupOb3zSsv?=
- =?us-ascii?Q?Lf1mmuhC9eLJo+XDgKIkxhuJayrgBBlRZUsGc0wp/wsJtMNMKy7YVfSlC4Qy?=
- =?us-ascii?Q?D46rGdxcvmmwN5cYsaBr0+ezpEhrK94ahED6G/an7hqA6C+aVmRBYQBAEo9c?=
- =?us-ascii?Q?WP52K8yCmL5sOL0uo5O5SYb+f12BvjUPXmAUUX+oq+rbPMFz0bvQODSLHw2d?=
- =?us-ascii?Q?X0YX3oGLK0gIwRA57cv1cq11MaBEih+tT6RRaoWErmncSm7ANiq481lQrDiw?=
- =?us-ascii?Q?go81FRO/JbzhMepLSqOuCKIOteq7+q9aaOnsIM16trmtK30p29SzU3WIHogP?=
- =?us-ascii?Q?LYpraX3NAwOXLJWhyY4VxlluQgAOTgmh5VS+ntY5BzI0Fy6PWc2Zr+9tj9XM?=
- =?us-ascii?Q?yqNoU0uQ9JdHKz8GTkagP5YYfZ3ND6ZAlQQug1Rzn9IvmnwHe1aJqUKWkLLS?=
- =?us-ascii?Q?G6AvhQxTFboTvvHfTAAYvB/5fOGV80uyTkiHmF+jTv4HUiKp07H3rWgAJsg+?=
- =?us-ascii?Q?BiCP/yPVsPJwaWgDuSpIDw8nB+z8EQ0noD8idY24vZBGs7okNbKIx4U3qfH2?=
- =?us-ascii?Q?8497fUhxYLM76hCYqEeG+jCQjRs0MG+omO9cLaJvvOrtF6iR8d3hFyeXz/Yf?=
- =?us-ascii?Q?7KaX3axMjO8hvumzlYu9stIA5jD+mwYHBUoi39dlM8fglpnEco9pYIrcjHzM?=
- =?us-ascii?Q?gsQdwsi6mhGXir5KkQ1+cQQkSrb/WSK1l4q78Z5x?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 15d6ae3d-b2d6-4400-3b5c-08ddd0078e04
-X-MS-Exchange-CrossTenant-AuthSource: TYSPR06MB7008.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 07:55:02.4702
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: h2/Ft/xdDXcYwIFjhuxJj+92bAuyyGEb90CD4pw12YpKWnbGvrB3gr5d5v0/tNahD1MXyojq3S2qmidOvvPnbw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: TY0PR06MB6801
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: will@kernel.org, perlarsen@google.com, oliver.upton@linux.dev, joey.gouly@arm.com, suzuki.poulose@arm.com, yuzenghui@huawei.com, catalin.marinas@arm.com, sudeep.holla@arm.com, linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev, linux-kernel@vger.kernel.org, ahomescu@google.com, armellel@google.com, arve@android.com, ayrton@google.com, qperret@google.com, sebastianene@google.com, qwandor@google.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-Adjust whitespace around operators to improve code readability
-and comply with kernel coding style guidelines.
+On Fri, 18 Jul 2025 14:45:17 +0100,
+Will Deacon <will@kernel.org> wrote:
+> 
+> On Tue, Jul 01, 2025 at 10:06:37PM +0000, Per Larsen via B4 Relay wrote:
+> > From: Per Larsen <perlarsen@google.com>
+> > 
+> > FF-A version 1.2 introduces the DIRECT_REQ2 ABI. Bump the FF-A version
+> > preferred by the hypervisor as a precursor to implementing the 1.2-only
+> > FFA_MSG_SEND_DIRECT_REQ2 and FFA_MSG_SEND_RESP2 messaging interfaces.
+> > 
+> > We must also use SMCCC 1.2 for 64-bit SMCs if hypervisor negotiated FF-A
+> > 1.2, so ffa_set_retval is updated and a new function to call 64-bit smcs
+> > using SMCCC 1.2 with fallback to SMCCC 1.1 is introduced.
+> > 
+> > Update ffa_call_supported to mark FF-A 1.2 interfaces as unsupported
+> > lest they get forwarded.
+> > 
+> > Co-developed-by: Ayrton Munoz <ayrton@google.com>
+> > Signed-off-by: Ayrton Munoz <ayrton@google.com>
+> > Signed-off-by: Per Larsen <perlarsen@google.com>
+> > ---
+> >  arch/arm64/kvm/hyp/nvhe/ffa.c | 18 ++++++++++++++----
+> >  include/linux/arm_ffa.h       |  1 +
+> >  2 files changed, 15 insertions(+), 4 deletions(-)
+>
 
-These changes are purely stylistic and introduce no
-functional modifications.
+[..]
 
-Signed-off-by: Xichao Zhao <zhao.xichao@vivo.com>
----
- .../amd/display/dc/link/protocols/link_dp_capability.c    | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+Late catching up on this, as we seem to get a version a day, probably
+in the hope that it will keep *something* away,...
 
-diff --git a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-index e0c4416993d9..caddb7dfb133 100644
---- a/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-+++ b/drivers/gpu/drm/amd/display/dc/link/protocols/link_dp_capability.c
-@@ -1525,8 +1525,8 @@ bool read_is_mst_supported(struct dc_link *link)
- 		return false;
- 	}
- 
--	rev.raw  = 0;
--	cap.raw  = 0;
-+	rev.raw = 0;
-+	cap.raw = 0;
- 
- 	st = core_link_read_dpcd(link, DP_DPCD_REV, &rev.raw,
- 			sizeof(rev));
-@@ -2125,13 +2125,13 @@ void detect_edp_sink_caps(struct dc_link *link)
- 						&backlight_adj_cap, sizeof(backlight_adj_cap));
- 
- 	link->dpcd_caps.dynamic_backlight_capable_edp =
--				(backlight_adj_cap & DP_EDP_DYNAMIC_BACKLIGHT_CAP) ? true:false;
-+				(backlight_adj_cap & DP_EDP_DYNAMIC_BACKLIGHT_CAP) ? true : false;
- 
- 	core_link_read_dpcd(link, DP_EDP_GENERAL_CAP_1,
- 						&general_edp_cap, sizeof(general_edp_cap));
- 
- 	link->dpcd_caps.set_power_state_capable_edp =
--				(general_edp_cap & DP_EDP_SET_POWER_CAP) ? true:false;
-+				(general_edp_cap & DP_EDP_SET_POWER_CAP) ? true : false;
- 
- 	set_default_brightness_aux(link);
- 
+> > @@ -734,7 +741,10 @@ static int hyp_ffa_post_init(void)
+> >  	if (res.a0 != FFA_SUCCESS)
+> >  		return -EOPNOTSUPP;
+> >  
+> > -	switch (res.a2) {
+> > +	if ((res.a2 & GENMASK(15, 2)) != 0 || res.a3 != 0)
+> > +		return -EINVAL;
+> 
+> Why are you checking bits a2[15:2] and a3? The spec says they MBZ,
+> so we shouldn't care about enforcing that. In fact, adding the check
+> probably means we'll fail if those bits get allocated in future.
+
+I have the exact opposite approach. If we don't check that they are 0
+for v1.2 and previous versions, we won't be able to tell what they
+mean when they are finally allocated to mean something in version
+1.337.
+
+Until we support such version, MBZ should be enforced, because we
+otherwise don't understand what the "client" is trying to say. And we
+don't understand, we're guaranteed to do the wrong thing.
+
+Thanks,
+
+	M.
+
 -- 
-2.34.1
-
+Without deviation from the norm, progress is not possible.
 
