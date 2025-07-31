@@ -1,47 +1,67 @@
-Return-Path: <linux-kernel+bounces-751519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751520-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28090B16A88
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:49:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D584B16A89
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:51:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9718A7A0F79
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:47:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B54765677B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:51:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F1019309C;
-	Thu, 31 Jul 2025 02:48:52 +0000 (UTC)
-Received: from mail-m49198.qiye.163.com (mail-m49198.qiye.163.com [45.254.49.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 829B819ABDE;
+	Thu, 31 Jul 2025 02:51:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dBlg3Dvc"
+Received: from out-188.mta1.migadu.com (out-188.mta1.migadu.com [95.215.58.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9B68F5E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.254.49.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 592C98F5E
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:51:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753930132; cv=none; b=CGlUm5PACTwojDd1cwonDURrH7sBBYTesXSxbjzaI+/TD9HRszcCiWU+jOX9vDKGhOmLc7VdYXIbQN2VjUorSVN/B5uwYpFmZRCHfWZrU0vl1s6mg+XYtVK7XZPVgwz3/9Yju3E+gHnjquOSEOh+1pqw6Sb+hnRyf1FIALdMvMs=
+	t=1753930290; cv=none; b=V9u8O/CPOjERkEjkW8DgFGpVtOrKLf4fCxsULiqjPl/rUU1EfPUcHS0pv/ooZsmgoazkMdDnealLlZTxz+vP2afCkYLJ2CyrLcqM3YAS1kn+d03m2ARbDWc0WOHApiseACRdP961RfmA82SCdpjIAwtEWlEywikJkndHB7d7Mew=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753930132; c=relaxed/simple;
-	bh=UgPYaQwlWJc9Zen37DK75P/yQXewXknsnjFDmjKxJWM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=EkvOtRqwBr8BL8q0Mm16JamFIM69njXBAXQNkByqgNLf1LzRUoynmf/NfRq4xghDpYIsKjG55XVTMIe/MVkyv0MvT2zxdAOAPR/xhlULHQtkrHc9RN3H/5JFXotmnDB7J4U8dqI/HDE9d/tEltxO0qt5ojDtxv+BfvhYCEsA0Mk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu; spf=pass smtp.mailfrom=ustc.edu; arc=none smtp.client-ip=45.254.49.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ustc.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ustc.edu
-Received: from localhost (unknown [14.22.11.163])
-	by smtp.qiye.163.com (Hmail) with ESMTP id 1dce07079;
-	Thu, 31 Jul 2025 10:48:44 +0800 (GMT+08:00)
-From: Chunsheng Luo <luochunsheng@ustc.edu>
-To: Olivia Mackall <olivia@selenic.com>,
-	Herbert Xu <herbert@gondor.apana.org.au>
-Cc: Alessandro Rubini <rubini@unipv.it>,
-	Andrea Gallo <andrea.gallo@stericsson.com>,
-	Matt Mackall <mpm@selenic.com>,
+	s=arc-20240116; t=1753930290; c=relaxed/simple;
+	bh=xDLkbDwwbWCUE8AL1uiSSnBvGrDGAEXunwx84niv4/w=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JHjLr5s3x45pB/HfHxt+5925g/aK/qtc+4a4vbpaL6R0Q+H4VIvSYkReWX+Q1Ll4xxUc1WGqWa6R7IgCInjPppSGgTFGEdZJCfR0gSxpmryeIUfmquRP0yHtlvfbEy65hOb47Q9vB4/o7B/v8pw2ARgZr8CPb4DwAnkCCrJKD6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dBlg3Dvc; arc=none smtp.client-ip=95.215.58.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753930284;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XBg0b1G1HE6+LGXvHBLHUETYlC3Adb8PV4IOVr0IO+M=;
+	b=dBlg3Dvchlfqxynrgw04DJoeIF5JJy3GTFQOZ77ehxG/7DrmTZo9XjznGGNu720gca9sZW
+	BV4sKxpCAcl7FsD9w++qU2mCXfFJI355Ig+GDZxwsQVWqHRRrga/ziIp5GBE1wUsf564gH
+	LlplbhUs9mHVN0ZMsRaUr4t7UOrsOAw=
+From: Hui Zhu <hui.zhu@linux.dev>
+To: Danilo Krummrich <dakr@kernel.org>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Uladzislau Rezki <urezki@gmail.com>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	bjorn3_gh@protonmail.com,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Chunsheng Luo <luochunsheng@ustc.edu>
-Subject: [PATCH] hw_random: nomadik: add missing dependency on ARM_AMBA
-Date: Thu, 31 Jul 2025 10:48:42 +0800
-Message-ID: <20250731024842.351-1-luochunsheng@ustc.edu>
-X-Mailer: git-send-email 2.43.0
+	akpm@linux-foundation.org,
+	vitaly.wool@konsulko.se
+Cc: Hui Zhu <zhuhui@kylinos.cn>
+Subject: [PATCH v7 0/3] Rust allocator and kvec improvements
+Date: Thu, 31 Jul 2025 10:50:04 +0800
+Message-ID: <cover.1753929369.git.zhuhui@kylinos.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,46 +69,45 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a985e61caae03a2kunm8ed30b26289fe4
-X-HM-MType: 10
-X-HM-Spam-Status: e1kfGhgUHx5ZQUtXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFITzdXWS1ZQUlXWQ8JGhUIEh9ZQVkZGkJKVkweGExJH0xMTh4ZGVYeHw5VEwETFhoSFy
-	QUDg9ZV1kYEgtZQVlKT1VJSVVKSlVKTUhZV1kWGg8SFR0UWUFZS1VLVUtVS1kG
+X-Migadu-Flow: FLOW_OUT
 
-Compiling without CONFIG_ARM_AMBA causes undefined reference errors:
- ld: vmlinux.o: in function `nmk_rng_remove':
- nomadik-rng.c:(.text+0x6f64917): undefined reference to `amba_release_regions'
- ld: vmlinux.o: in function `nmk_rng_probe':
- nomadik-rng.c:(.text+0x6f649ee): undefined reference to `amba_request_regions'
- nomadik-rng.c:(.text+0x6f64aba): undefined reference to `amba_release_regions'
- nomadik-rng.c:(.text+0x6f64ae0): undefined reference to `amba_release_regions'
+From: Hui Zhu <zhuhui@kylinos.cn>
 
-The Nomadik RNG driver uses AMBA bus interfaces (amba_request_regions/amba_release_regions)
-which are only available when CONFIG_ARM_AMBA is enabled. The existing dependency
-on ARCH_NOMADIK implicitly selects ARM_AMBA, but when building with COMPILE_TEST
-on non-ARM platforms, this dependency breaks.
+This series adds tests and docs for Rust kernel components:
+Patch 1 adds KUnit tests for allocator alignment guarantees.
+Patch 2 documents KVec::as_slice with a usage example.
+Patch 3 simplifies KVec test module naming convention.
 
-Fix by explicitly adding dependency on ARM_AMBA to Kconfig, ensuring the driver
-only compiles when AMBA support is available.
+Both patches are co-developed with Geliang Tang. Based on [1].
+Tested on x86_64 using KUnit.
 
-Signed-off-by: Chunsheng Luo <luochunsheng@ustc.edu>
----
- drivers/char/hw_random/Kconfig | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Changelog:
+v7:
+Updated according to the comments of Miguel.
+v6:
+According to the comments of Danilo, updated test for allocator.rs
+and allocator rebase onto [1].
+v5:
+According to the comments of Danilo, change to use generic struct and
+allocator Generics in allocator.rs.
+v4:
+According to the comments of, add the error check for push.
+v3:
+According to the comments of Danilo and Boqun, move KVec test to doc
+example and move VBox to allocator unit tests.
+v2:
+According to the comments of Danilo, updated the commit to samples the
+usage of VBox and KVec.
 
-diff --git a/drivers/char/hw_random/Kconfig b/drivers/char/hw_random/Kconfig
-index c85827843447..09abd1acb99f 100644
---- a/drivers/char/hw_random/Kconfig
-+++ b/drivers/char/hw_random/Kconfig
-@@ -311,7 +311,7 @@ config HW_RANDOM_INGENIC_TRNG
- 
- config HW_RANDOM_NOMADIK
- 	tristate "ST-Ericsson Nomadik Random Number Generator support"
--	depends on ARCH_NOMADIK || COMPILE_TEST
-+	depends on ARM_AMBA && (ARCH_NOMADIK || COMPILE_TEST)
- 	default HW_RANDOM
- 	help
- 	  This driver provides kernel-side support for the Random Number
+Hui Zhu (3):
+  rust: allocator: add KUnit tests for alignment guarantees
+  rust: alloc: kvec: add doc example for as_slice method
+  rust: alloc: kvec: simplify KUnit test module name to "rust_kvec"
+
+ rust/kernel/alloc/allocator.rs | 56 ++++++++++++++++++++++++++++++++++
+ rust/kernel/alloc/kvec.rs      | 12 +++++++-
+ 2 files changed, 67 insertions(+), 1 deletion(-)
+
 -- 
 2.43.0
 
