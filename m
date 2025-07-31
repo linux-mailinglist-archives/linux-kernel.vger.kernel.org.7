@@ -1,116 +1,95 @@
-Return-Path: <linux-kernel+bounces-752188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A733B1723F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:42:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 925ADB17241
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:43:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA496189D51C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:42:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 845A63ABB76
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DD4D2D0292;
-	Thu, 31 Jul 2025 13:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ij8PkJSh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4B872D0C61;
+	Thu, 31 Jul 2025 13:43:07 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B537B16419;
-	Thu, 31 Jul 2025 13:41:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2CA92C3277
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 13:43:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969315; cv=none; b=Xd7mkpldXWzQjxLdcfZQHP3eg+IeoVm5Sxi0bh7EA6unltedgEgZeBYqiwWasMqO6wVkXq8PMPNX4KRTGEIOqgE88vQUA59fHhwSBXtcxWxvs/Xw1lpCQld2N8BGKzMbt+9ZOHWr6OKaidzlOSfxYkzuW/k2SvaM+wrhcwUElRE=
+	t=1753969387; cv=none; b=hZ2aYYhimeqiM6/X/cZx0KiGPiWs9RhOu9zFSADd0GVRJKvUkYDZev/6zRPLuxafO3cidLjmNqQ4Pbmem8UksfMPhOeADMcfMqaqDXtifMKR/Pd3HoLrSo9fh1b9yy9M3heZsHhbBMX4GGyjEz3+WKct3LmO5M2k3dcx+3CRU/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969315; c=relaxed/simple;
-	bh=trI9eEiA5VY8YQDC03bJMw+fv5vHkRIbkQ2JDxq1II0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=V0jvXvD3tKh5Ng7ADOq9unJwrR5obD1LxEvcS5zrb9xpiIzGZYs4VNil2VxmQ/YWUgOTOqwcbNSESuzmHOCE9KYAvXHjoE8kRORVdce9KHIyENOsKNvYFaZNx4B56v4cnVbJ7p0bw2P2i/y3imkWFq9jGf9TraHP44Xl0VUozAo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ij8PkJSh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DC91C4CEEF;
-	Thu, 31 Jul 2025 13:41:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753969315;
-	bh=trI9eEiA5VY8YQDC03bJMw+fv5vHkRIbkQ2JDxq1II0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ij8PkJShew8pu4ZGzkFdAFzoVmlvHFirzjpMKDqKVC1ruFUCkYgsklBDSvJx8UlNV
-	 VzfYdfROTIRh9IoGe6I/K3Cv9LHmsrwvdubM2KBTPFwDNPxbfMlxw3e5wRBDrBkxvc
-	 d4eag+/alBpnnjHKYGC4teXTPtpVmlq4liGjAc4nxSFyswJyKrCN9DiNANNqxYKvqX
-	 SX4yiyee514bkcfPBjYqArFvOhJF9uI5HsZHB+wGzsEpYM2oGCew42tDcc5zXstyS5
-	 OcFeAX7DAWPvAU5szCjEqxo+aoDnEbxFdOu8b0yzxYLaZ6GeHmJ3+APnola/gK6kVq
-	 X/qF5OfxxpAzw==
-Date: Thu, 31 Jul 2025 14:41:48 +0100
-From: Lee Jones <lee@kernel.org>
-To: Alex Elder <elder@riscstar.com>
-Cc: lgirdwood@gmail.com, broonie@kernel.org, alexandre.belloni@bootlin.com,
-	robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
-	mat.jonczyk@o2.pl, dlan@gentoo.org, paul.walmsley@sifive.com,
-	palmer@dabbelt.com, aou@eecs.berkeley.edu, alex@ghiti.fr,
-	linux.amoon@gmail.com, troymitchell988@gmail.com,
-	guodong@riscstar.com, linux-rtc@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v10 2/8] mfd: simple-mfd-i2c: specify max_register
-Message-ID: <20250731134148.GI1049189@google.com>
-References: <20250726131003.3137282-1-elder@riscstar.com>
- <20250726131003.3137282-3-elder@riscstar.com>
- <20250731131827.GG1049189@google.com>
- <e3cd0e11-e516-4cf6-b8f8-5cf2b5a236a4@riscstar.com>
+	s=arc-20240116; t=1753969387; c=relaxed/simple;
+	bh=kx5UBa/rUKpCxax1gh5Ps5wlCy/DVnwNhn9buNehuFE=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=q5BLI9f7BjyBLKX2npRNXS2ldvf0o/zZck8qFzKSa4MzCAEW0NcUD5nhff1RzjTWu0K3I1FGRtbcQmB1g2aCfCLtu7mkur0BanGOQ4KSeiC0Ac4siIE1HvyWrV4ZlqsHWgnPrdK02y9jAt2qkxQrPOYOsGohfwfBup81CLHSXWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c1d1356f3so81752539f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 06:43:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753969385; x=1754574185;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ndZt07l6ODlNg9Eyb1VPeXSebetlFLG+Q/xDsuh5QtU=;
+        b=RMXwGyTz0i3GKaZmUc97dEGCNx2xZBtp9Tf0+7S7lClP7dNNljTOg6/ACwnvBW0M40
+         YLDxott+S8iGjf+cT7FCGdnNLJQnXtvPA/wOUJzBvqHopunbO7Kcy/xzhrJ/tLFak/sH
+         pZJHImsQHBKkukE1xzmZNaYNi4erG9TDolMj1nzQni/HmjjhCTgeaahVX+Z9dgUff+Si
+         D2y2O6ZKuy/6XzdsaQQMM9/2Z3F02bz0qOwejxOeyvKmw/wvvSJtqJlIYZE/gAKRfika
+         hKkSoljSJ6/tWoxsek5R5Nc1N3BAY8L6pIOAbDB/HTBQ2Alc1vkh+t1JWkor3O+MGpWR
+         UJAg==
+X-Forwarded-Encrypted: i=1; AJvYcCWnDIDQvo+qsy352AEhioNsqFTln72AaACFOynhtY+pvcIqIj5E3gNfzSm+D9ogrBYHlxZmSSKLTy24dcU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwLQg2GaHb0t47C4bcpqApKSo/79BvJPAkwXTcD0HAHabElg9Yk
+	Sr4zB32dgRMT6bOsYfNv+lRBVrtpZ9RGL3m87wyJMzWM0FfthwE4vhBMhXayb8SAYLporVaCGlU
+	fuHakXPft0WJ0vsY3CTGuuqeV+pZ0ZAin1Bp7nf3cN8HvgH57y+2+kSbcOk4=
+X-Google-Smtp-Source: AGHT+IG7a22P54eB4UEoXzr0FAh4e0qa0CWa28Cd5Dwml2c1EWeCPmY9UJ+C086GKeXQ53ArF6VNZiT4F/nuHaB62ulyeCkYa1lo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <e3cd0e11-e516-4cf6-b8f8-5cf2b5a236a4@riscstar.com>
+X-Received: by 2002:a05:6602:2b13:b0:86c:cf7e:d85d with SMTP id
+ ca18e2360f4ac-88138c1bed6mr1356042439f.12.1753969385155; Thu, 31 Jul 2025
+ 06:43:05 -0700 (PDT)
+Date: Thu, 31 Jul 2025 06:43:05 -0700
+In-Reply-To: <688ae0bf.050a0220.5d226.0011.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688b72e9.050a0220.5d226.0018.GAE@google.com>
+Subject: Re: [syzbot] [bpf?] WARNING in convert_ctx_accesses
+From: syzbot <syzbot+ccac90e482b2a81d74aa@syzkaller.appspotmail.com>
+To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
+	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
+	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
+	linux-kernel@vger.kernel.org, martin.lau@linux.dev, paul.chaignon@gmail.com, 
+	sdf@fomichev.me, song@kernel.org, syzkaller-bugs@googlegroups.com, 
+	yonghong.song@linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 31 Jul 2025, Alex Elder wrote:
+syzbot has bisected this issue to:
 
-> On 7/31/25 8:18 AM, Lee Jones wrote:
-> > On Sat, 26 Jul 2025, Alex Elder wrote:
-> > 
-> > > All devices supported by simple MFD use the same 8-bit register 8-bit
-> > > value regmap configuration.  There is an option available for a device
-> > > to specify a custom configuration, but no existing device uses it.
-> > > 
-> > > Rather than requiring a "full" regmap configuration to be provided to
-> > > change only the max_register value, Lee Jones suggested allowing
-> > > max_register to be specified in the simple_mfd_data structure.  The
-> > > 8-bit register 8-bit configuration is still used by default, but
-> > > max_register is also applied if it is non-zero.
-> > > 
-> > > If both regmap_config and max_register are provided, the max_register
-> > > field in the regmap_config structure is ignored.
-> > > 
-> > > Signed-off-by: Alex Elder <elder@riscstar.com>
-> > > Suggested-by: Lee Jones <lee@kernel.org>
-> > > ---
-> > > v10: - Rename simple_regmap_config() -> simple_regmap_config_get()
-> > >       - Introduce simple_regmap_config_put() to free regmap_config
-> > > 
-> > >   drivers/mfd/simple-mfd-i2c.c | 45 ++++++++++++++++++++++++++++++++----
-> > >   drivers/mfd/simple-mfd-i2c.h |  5 +---
-> > >   2 files changed, 41 insertions(+), 9 deletions(-)
-> > 
-> > This has gone from an in-function 11 line change to 50 lines and the
-> > inclusion of 2 new functions.  As much as I _really_ appreciate the time
-> > and effort you have put into this [0], the added complexity being added
-> > here doesn't sit right with me.  How would you like to go back to your
-> > v4 idea of providing a bespoke regmap_config for for device?
-> 
-> I LOVE this suggestion.  I will send v11 shortly and it will
-> be very much like v6 (or something like that).
-> 
-> > [0] Beers on me for sending you down this path!
-> 
-> I'm looking forward to seeing you again, beer or not.
+commit 0df1a55afa832f463f9ad68ddc5de92230f1bc8a
+Author: Paul Chaignon <paul.chaignon@gmail.com>
+Date:   Tue Jul 1 18:36:15 2025 +0000
 
-Likewise!  =:-)
+    bpf: Warn on internal verifier errors
 
--- 
-Lee Jones [李琼斯]
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=17d6aca2580000
+start commit:   e8d780dcd957 Merge tag 'slab-for-6.17' of git://git.kernel..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1436aca2580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1036aca2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d32de89be62206c8
+dashboard link: https://syzkaller.appspot.com/bug?extid=ccac90e482b2a81d74aa
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=131049bc580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=11cc2cf0580000
+
+Reported-by: syzbot+ccac90e482b2a81d74aa@syzkaller.appspotmail.com
+Fixes: 0df1a55afa83 ("bpf: Warn on internal verifier errors")
+
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
