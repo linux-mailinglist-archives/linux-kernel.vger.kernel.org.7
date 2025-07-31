@@ -1,165 +1,258 @@
-Return-Path: <linux-kernel+bounces-751915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 130E7B16F45
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:14:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 625DCB16F47
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06CD9624319
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:13:55 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F40447AF7CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 839DD19066D;
-	Thu, 31 Jul 2025 10:14:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2951B2BE02D;
+	Thu, 31 Jul 2025 10:14:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="JEu9pQTl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EW2fLpcS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D70A82BD028
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:14:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E384299928;
+	Thu, 31 Jul 2025 10:14:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956852; cv=none; b=q1vRHEMxKLM9LWChLQcvghuhqr5dvV+6W9o/nG2mBQZj4fuPFrsWKPX9uagLJbkxr2wz3z0raWldQ5tphuXzL+kH2TAzwi34y2emhacbRqCP5NdosgBjl3fQIb+ran6ycE6mJ+Pidis6vrHGdyowTzlsq6b/d09OKY/6ymTVgNs=
+	t=1753956869; cv=none; b=DKuUQ1oEIqfU5wp8zBbjyOXNt+zm4L7BL75HtlNIaLTI4w2fEpI3TaIBdo87DTeTp+Gbwdnm8v1Fyd30cRIsDVsnQB3fruziD8L5JPexN5PeyEK7xQfzcJ5JxqSI9LGR2YQDUy8HjkHZUqQFq2tARJcTKE8z7tsO3JCjVLT0Ajk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956852; c=relaxed/simple;
-	bh=Zzys3oDX6nnVMWahhtIHkbjUttylZL+Pdd1jNHENB2Y=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=vC3XR2Dwk9iM7c7exTDxKs/H1LezdA5zP95kocBsJUUa21vqdFoT326d4mDydSm+Www0r5Tl/0NcNPJCIV3jFB+L5HrQTwUC28nJQYZUDqq8fCOQdJrh0WoXlhRJJpyU4DsXUdXvv6yEJjJ1QB5ntKhmzCeRn5HOCXLxaXumbzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=JEu9pQTl; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753956849;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=8+Updhps2Tis0Qkn63kABOeQ6kuHwuPfHE7bAxmojdA=;
-	b=JEu9pQTlcQ+ZSZurmIsjWrg0Yrfml283GVGFAk/X+/odnSU8LEDYOIduPecK0tCvvBD+01
-	G2avALmNTU35OKScZMMRitlBOpVk0xhPa3YJU/w55WilTkfpoSXlDXCTGzxA8Nag/QZ/Kj
-	v+SpC5/+weF3D2e0nSxr2SNrrQfdUg8=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-551-ENa559R9MbShC1KTHWs1Bw-1; Thu, 31 Jul 2025 06:14:08 -0400
-X-MC-Unique: ENa559R9MbShC1KTHWs1Bw-1
-X-Mimecast-MFC-AGG-ID: ENa559R9MbShC1KTHWs1Bw_1753956847
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7882c0992so455404f8f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:14:08 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753956847; x=1754561647;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8+Updhps2Tis0Qkn63kABOeQ6kuHwuPfHE7bAxmojdA=;
-        b=DKiIimXBlI1qsOuGBHcCBWmWtNkmXlHLMBNMEGHMsmnvutdfOFtqdewqLcuFwGbHle
-         I7dELbdRpkHr5ZRsVd5esUkGiIpMEFpODd0v2HBelCzjmibWoxOQSevwOAq3AfQsBYxL
-         suGimYZtyT38NmzmwFQ07ETFLlNOHWjN5SjLXhyz+cLhEzNpJiTwubmftYfSgPoZFtys
-         RvmhUriw7PZIYHQ9db5ruDleE12s1h2f04la97BxrxjusJcDtJ9uk0ldWY/K9gxIfZSY
-         ChYzmfFJZqk7k6SrMJbaP7rmGY/Ux92ApuyjmJdIWEgWHcjPQ+3+ZsXRoEC4Bq3GZroc
-         rgOw==
-X-Forwarded-Encrypted: i=1; AJvYcCVLl3ypXC8XdHY/udJhs55/3VgHaVdJefdaaYxAOgl2LMlkyNMRG+mvRc0wget/bu0nW7CCxtufDRV1aok=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzdcLs3/WXvuELgzZzUjJSswAIcHveRiShHyMEEFystidJ9nqMC
-	+IhzijFtgkzjnEP5FMhvRYve+0zp1Ngam6E8Iz4noeEKaeRHXJgcPzt/JQkqEEvxjywIi+sbnz5
-	ygXJcy7IijoDI0V8vVb1LGU8/ZluR5SbNxOlm0quzJYPZ6NckEzkuKustqhn9InoUoxSKkCBhcG
-	Za
-X-Gm-Gg: ASbGncst8IzjCzCI31ebDcIM67YFqgNWBK/57Cw2/qbWGxkhqd5j/mSeGm4sX8mCWkN
-	9Ij82p7miJkvY/YetbcjKUDjGodHTZJuLJv6AdlPuJETCtMSl92WjMobelfcGx34q7GI1v5Ibfi
-	faolra9xyRYw7xlMLdi8nq5eRRSIVB/WMt7cEqbQgjVfm6+SPfC/LfqVEGEb38KxI4EiGfu5MD4
-	DiPFMZLhThNv9QN9JePW0gjvn3byjHwJoRu5r0KXDi7GwizvH1rWobbVqjz+i2dnRyfk/r96nWL
-	4RdhTGATFC/S4bvFw10yzcfoLhp31YHBt1AgHcITpBAzy/mdAq2fUcWw7nHDwRe7iA==
-X-Received: by 2002:a05:6000:24c2:b0:3b7:930a:bb0d with SMTP id ffacd0b85a97d-3b794fd5d30mr5137412f8f.20.1753956847003;
-        Thu, 31 Jul 2025 03:14:07 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+UBjxbRY7BvJmpX5xfoZYctE99KGpaavtNC5flkCkpYfIj5dzBaODgml3EnIDnCnFk50qEw==
-X-Received: by 2002:a05:6000:24c2:b0:3b7:930a:bb0d with SMTP id ffacd0b85a97d-3b794fd5d30mr5137381f8f.20.1753956846474;
-        Thu, 31 Jul 2025 03:14:06 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c75sm1925032f8f.41.2025.07.31.03.14.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 03:14:05 -0700 (PDT)
-Message-ID: <88f589e09328b907ff2dd3e58d1fe4fcc09dbb3c.camel@redhat.com>
-Subject: Re: [PATCH 1/5] rv/ltl: Prepare for other monitor types
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 31 Jul 2025 12:14:03 +0200
-In-Reply-To: <20250731092805.EjcyYi0M@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
-	 <0d13c61bc6e0dc82108995c9a1d140bad4082039.1753879295.git.namcao@linutronix.de>
-	 <adeb68b39e8b468da685bbbf3b453f947fe2336d.camel@redhat.com>
-	 <20250731092805.EjcyYi0M@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753956869; c=relaxed/simple;
+	bh=I0BZILQoozjQVpBXvKZeoZ4fl7KSMXkO6kJQgJ7dzfA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lEkDqdtWTLQDKpUr4vZZJFcVXkw0nPIJ5GjOtGgVZe6TbnNN8dYvP8vvEbo07atrQdfJ78BFFqS+o6mZ0d/dOZZYOrG2UuNT88L4Ip6yNlLs0ONRFxUMe6JA974u/ZMXn9tZ4JtdRfUeOnQoZXwdWazQ4hGj2CrFwySbeETNcAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EW2fLpcS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87F40C4CEEF;
+	Thu, 31 Jul 2025 10:14:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753956868;
+	bh=I0BZILQoozjQVpBXvKZeoZ4fl7KSMXkO6kJQgJ7dzfA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=EW2fLpcSa8NLVfMN54PwfLbPEbNPhzouqZEhIZ1Otsw/Cs/7e4wWSoVkgBwIciRe2
+	 hE+Y2oKieUEEDTfAe5renRy1O7MC1m93++DqBzGiIdKsyXbkaRAzZCbZHauDr5a4D5
+	 eSvvTmzYYqHp4IQaw1eLE/oBsZpD/3pStNPHr+q6f5LA5/UYTFu2t7unIqEMrxRb4I
+	 7cUD14IbnwTUVB99iLOazo2TmIWVxIyxI9poTsnE7mijeT47Yhz+YygV1yiXYm7LWm
+	 QzSMmNztHFpE7pOHSaJnJHqvA0LJoMEbgzh89m4Zcr7DlA493Rz/6nFTFuvrjoIKaj
+	 5//JcXfurgKLg==
+Date: Thu, 31 Jul 2025 12:14:26 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Hans Verkuil <hans@jjverkuil.nl>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Hans Verkuil <hverkuil@xs4all.nl>, 
+	Mats Randgaard <matrandg@cisco.com>, Alain Volmat <alain.volmat@foss.st.com>, 
+	Sakari Ailus <sakari.ailus@linux.intel.com>, linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
+Message-ID: <20250731-teal-oryx-of-shopping-ced228@houat>
+References: <20250612-csi-bgr-rgb-v1-0-dc8a309118f8@kernel.org>
+ <20250612-csi-bgr-rgb-v1-3-dc8a309118f8@kernel.org>
+ <CAPY8ntCYG8ufxpMkgBj1ZpSW-H2HObpcbQNg9tj+EXUM4PGkfQ@mail.gmail.com>
+ <e9b61666-6bf0-4ec2-8524-0b6d94f028ef@jjverkuil.nl>
+ <20250618-dancing-rare-skua-eb7ffd@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="k6dm4cewj3qobmxo"
+Content-Disposition: inline
+In-Reply-To: <20250618-dancing-rare-skua-eb7ffd@houat>
 
-On Thu, 2025-07-31 at 11:28 +0200, Nam Cao wrote:
-> On Thu, Jul 31, 2025 at 11:04:44AM +0200, Gabriele Monaco wrote:
-> > I stole your solution to get rid of macros for the DA as well
-> > (might
-> > post it after this merge window or with the next changes) and I'm
-> > currently running with this:
->=20
-> Nice, glad you like it.
->=20
-> For global monitor, you could do
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 typdef struct {} monitor_target;
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0 static monitor_target rv_global_target;
->=20
 
-Well, implicit monitors (cpu and global for DA) don't really have a
-target but I'll probably be using this for other types if necessary or
-in case I'm unifying things. Which might be nice, if it didn't require
-modifying all per-cpu monitors (where CPU is not passed because the
-current one is assumed).
+--k6dm4cewj3qobmxo
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 3/4] media: tc358743: Fix the RGB MBUS format
+MIME-Version: 1.0
 
-> I didn't check clang, but gcc does not emit anything for this. So
-> effectively the compiled code does not have the "target" parameter.
->=20
-> > diff --git a/include/linux/rv.h b/include/linux/rv.h
-> > index 14410a42faef..6a7594080db1 100644
-> > --- a/include/linux/rv.h
-> > +++ b/include/linux/rv.h
-> > @@ -13,6 +13,10 @@
-> > =C2=A0#define MAX_DA_NAME_LEN			32
-> > =C2=A0#define MAX_DA_RETRY_RACING_EVENTS	3
-> > =C2=A0
-> > +#define RV_MON_GLOBAL=C2=A0=C2=A0 0
-> > +#define RV_MON_PER_CPU=C2=A0 1
-> > +#define RV_MON_PER_TASK 2
-> > +
+Hi Hans,
+
+On Wed, Jun 18, 2025 at 04:54:07PM +0200, Maxime Ripard wrote:
+> On Mon, Jun 16, 2025 at 10:02:17AM +0200, Hans Verkuil wrote:
+> > On 12/06/2025 19:01, Dave Stevenson wrote:
+> > > On Thu, 12 Jun 2025 at 13:54, Maxime Ripard <mripard@kernel.org> wrot=
+e:
+> > >>
+> > >> The tc358743 is an HDMI to MIPI-CSI2 bridge. It supports two of the
+> > >> three HDMI 1.4 video formats: RGB 4:4:4 and YCbCr 422.
+> > >>
+> > >> RGB 4:4:4 is converted to the MIPI-CSI2 RGB888 video format, and lis=
+ted
+> > >> in the driver as MEDIA_BUS_FMT_RGB888_1X24.
+> > >>
+> > >> Most CSI2 receiver drivers then map MEDIA_BUS_FMT_RGB888_1X24 to
+> > >> V4L2_PIX_FMT_RGB24.
+> > >>
+> > >> However, V4L2_PIX_FMT_RGB24 is defined as having its color component=
+s in
+> > >> the R, G and B order, from left to right. MIPI-CSI2 however defines =
+the
+> > >> RGB888 format with blue first.
+> > >>
+> > >> This essentially means that the R and B will be swapped compared to =
+what
+> > >> V4L2_PIX_FMT_RGB24 defines.
+> > >>
+> > >> The proper MBUS format would be BGR888, so let's use that.
+> > >=20
+> > > I know where you're coming from, but this driver has been in the tree
+> > > since 2015, so there is a reasonable expectation of users. I've had an
+> > > overlay for it in our kernel tree since 4.14 (July 2018), and I know
+> > > of at least PiKVM [1] as a product based on it. I don't know if Cisco
+> > > are still supporting devices with it in.
 > >=20
-> > The numbers don't really matter and you don't need to implement
-> > all, of
-> > course.
+> > Those are all EOL, so no need to be concerned about that.
+> >=20
+> > But it is the most commonly used HDMI-to-CSI bridge, so breaking uAPI is
+> > a real concern.
 >=20
-> That makes sense, will do.
+> Is it really broken?
 >=20
-> > I'm not sure how are our patches going to coordinate,
+> Discussing it with Laurent and Sakari last week, we couldn't find any
+> example of a userspace where the media format was set in stone and not
+> propagated across the pipeline.
 >=20
-> Let's just post them. The one whose patches are not applied first
-> will have to rebase. It is a trivial rebase anyway.
+> The uAPI however is *definitely* broken with unicam right now.
+>=20
+> > See more in my review comment in the code below.
+> >=20
+> > > Whilst the pixel format may now be considered to be incorrect,
+> > > changing it will break userspace applications that have been using it
+> > > for those 10 years if they're explicitly looking for
+> > > MEDIA_BUS_FMT_RGB888_1X24 or the mapping of it through to
+> > > V4L2_PIX_FMT_RGB24.
+> > > The kernel docs at [2] quote Linus as saying
+> > > "If you break existing user space setups THAT IS A REGRESSION.
+> > > It's not ok to say "but we'll fix the user space setup"
+> > > Really. NOT OK."
+> > >=20
+> > > I'm thinking of GStreamer if the format has been specified explicitly
+> > > - it'll fail to negotiate due to v4l2src saying it can't handle the
+> > > caps.
+> > >=20
+> > > Yes it sucks as a situation, but I'm not sure what the best solution
+> > > is. Potentially accepting both MEDIA_BUS_FMT_RGB888_1X24 and
+> > > MEDIA_BUS_FMT_BGR888_1X24 as valid MBUS codes for RGB, alongside
+> > > MEDIA_BUS_FMT_UYVY8_1X16 for UYVY?
+> > >=20
+> > >   Dave
+> > >=20
+> > > [1] https://pikvm.org/
+> > > [2] https://www.kernel.org/doc/html/latest/process/handling-regressio=
+ns.html#quotes-from-linus-about-regression
+> > >=20
+> > >> Fixes: d32d98642de6 ("[media] Driver for Toshiba TC358743 HDMI to CS=
+I-2 bridge")
+> > >> Signed-off-by: Maxime Ripard <mripard@kernel.org>
+> > >> ---
+> > >>  drivers/media/i2c/tc358743.c | 10 +++++-----
+> > >>  1 file changed, 5 insertions(+), 5 deletions(-)
+> > >>
+> > >> diff --git a/drivers/media/i2c/tc358743.c b/drivers/media/i2c/tc3587=
+43.c
+> > >> index ca0b0b9bda1755313f066ba36ab218873b9ae438..a1c164a7716a10b0cb9f=
+f38f88c0513b45f24771 100644
+> > >> --- a/drivers/media/i2c/tc358743.c
+> > >> +++ b/drivers/media/i2c/tc358743.c
+> > >> @@ -688,11 +688,11 @@ static void tc358743_set_csi_color_space(struc=
+t v4l2_subdev *sd)
+> > >>                 mutex_lock(&state->confctl_mutex);
+> > >>                 i2c_wr16_and_or(sd, CONFCTL, ~MASK_YCBCRFMT,
+> > >>                                 MASK_YCBCRFMT_422_8_BIT);
+> > >>                 mutex_unlock(&state->confctl_mutex);
+> > >>                 break;
+> > >> -       case MEDIA_BUS_FMT_RGB888_1X24:
+> > >> +       case MEDIA_BUS_FMT_BGR888_1X24:
+> > >>                 v4l2_dbg(2, debug, sd, "%s: RGB 888 24-bit\n", __fun=
+c__);
+> > >>                 i2c_wr8_and_or(sd, VOUT_SET2,
+> > >>                                 ~(MASK_SEL422 | MASK_VOUT_422FIL_100=
+) & 0xff,
+> > >>                                 0x00);
+> > >>                 i2c_wr8_and_or(sd, VI_REP, ~MASK_VOUT_COLOR_SEL & 0x=
+ff,
+> > >> @@ -1353,11 +1353,11 @@ static int tc358743_log_status(struct v4l2_s=
+ubdev *sd)
+> > >>                         (i2c_rd16(sd, CSI_STATUS) & MASK_S_HLT) ?
+> > >>                         "yes" : "no");
+> > >>         v4l2_info(sd, "Color space: %s\n",
+> > >>                         state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_UY=
+VY8_1X16 ?
+> > >>                         "YCbCr 422 16-bit" :
+> > >> -                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_RG=
+B888_1X24 ?
+> > >> +                       state->mbus_fmt_code =3D=3D MEDIA_BUS_FMT_BG=
+R888_1X24 ?
+> > >>                         "RGB 888 24-bit" : "Unsupported");
+> > >>
+> > >>         v4l2_info(sd, "-----%s status-----\n", is_hdmi(sd) ? "HDMI" =
+: "DVI-D");
+> > >>         v4l2_info(sd, "HDCP encrypted content: %s\n",
+> > >>                         hdmi_sys_status & MASK_S_HDCP ? "yes" : "no"=
+);
+> > >> @@ -1691,11 +1691,11 @@ static int tc358743_enum_mbus_code(struct v4=
+l2_subdev *sd,
+> > >>                 struct v4l2_subdev_state *sd_state,
+> > >>                 struct v4l2_subdev_mbus_code_enum *code)
+> > >>  {
+> > >>         switch (code->index) {
+> > >>         case 0:
+> > >> -               code->code =3D MEDIA_BUS_FMT_RGB888_1X24;
+> > >> +               code->code =3D MEDIA_BUS_FMT_BGR888_1X24;
+> >=20
+> > So would this change break or fix the formats[] table in:
+> >=20
+> > drivers/media/platform/raspberrypi/rp1-cfe/cfe-fmts.h
+>=20
+> It's pretty much the same table than unicam, and I don't believe it
+> does. For both those drivers the pixels are stored in memory in the CSI
+> wire order, so the proper format to use is BGR24 for CSI, not RGB24.
+>=20
+> > Are there other bridge drivers that misinterpret MEDIA_BUS_FMT_RGB888_1=
+X24
+> > and/or MEDIA_BUS_FMT_RGB888_1X24?
+>=20
+> Yes, it's kind of a mess.
+>=20
+> adv748x, ds90ub960 and tc358743 report RGB888, and ov5640 reports
+> BGR888.
+>=20
+> Then we have alvium CSI2 that supports both, and can swap color
+> components, so that one isn't a concern.
+>=20
+> And finally, we have st-mipid02 which is also affected, but is a
+> receiver so it's easier to solve.
+>=20
+> For RGB565, ov5640, mt9m114 and gc2145 are in that list, but the pixel
+> representation isn't the same than RGB888, so it's not clear to me how
+> they are affected.
+>=20
+> For RGB666, no v4l2 drivers are affected, but a fair bit of KMS drivers
+> that use media bus formats still might.
 
-Sure then, git may be smart enough to see there aren't conflicts.
+Can we make some progress on this, one way or another?
 
-Thanks,
-Gabriele
+Maxime
 
+--k6dm4cewj3qobmxo
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCaItCAQAKCRAnX84Zoj2+
+djwxAX9oiNCwAp5Rv5e4+zQf+6a/zStk7HUhKO7SWqhWWox0c1YGZ0sKUCE5mNku
+F1Tx66MBgNO5drBlwCc8Yp3/KKDvY6zqFhSjdViWU5Arb6RF55ZPd/a6dPJ9Dqep
+YUUjbqICsg==
+=kqak
+-----END PGP SIGNATURE-----
+
+--k6dm4cewj3qobmxo--
 
