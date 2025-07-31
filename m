@@ -1,145 +1,214 @@
-Return-Path: <linux-kernel+bounces-751618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FFA5B16B83
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:30:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22BDAB16B86
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:30:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 719C87A6846
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:28:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7271AA2955
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:31:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F6B23D2A0;
-	Thu, 31 Jul 2025 05:29:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FC323F41A;
+	Thu, 31 Jul 2025 05:30:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="u5j54o4O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vh062AEK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="phv4Ttde";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vh062AEK";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="phv4Ttde"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00D3E13B284;
-	Thu, 31 Jul 2025 05:29:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56C4BA2D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753939770; cv=none; b=aUxYnquMoxNpkP4cxkvSjKcexAlU4ty9oW9Mi9VE6a5vpF4ZjPsryHrfOXUvIqPBOB336K70qGeoULj1fj6AsPsyYNyr3ou5elRlb0gq6DbsfQer7YCwYS28E2njfFfmSuo8AsWRz4qWaRKT6h3VlJGGIJhVhZ0KD5jDCo3X7AA=
+	t=1753939838; cv=none; b=ATtghGW88aKHoxe0SxqASc0rrfxtQRJwHQf2qW3z6RMC3whISo+ZgnhNJ80Q1YEHQ6M8wEUcn5g0bgZEwbtT+pNfPPwfPWt4w5GKnDK5Tq2rQeXNS3rIlD2XlSTNCUoSYyyp8wTio5WnwpGb08ypXIIuHXqKdknX1oOf/x6WYO8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753939770; c=relaxed/simple;
-	bh=/IdXjZYSJoAkISSpqioyA198U7HNB0nE1iTZAs89knY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZMjll+c3uSF0A+Ks3++1PBVZ585VP1PXclokks1d5gn16r4eziOVSwCMfVzYj7dvyHVtKOKc36TrPqGbD0rolQSvrsf0cDhJLMIvVYCxtIAJ2+yeGWwm3OXriukwrLIRyJqeupN0H0822i6u71rWMQDAHWcVkMhkOjH0pgULPQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=u5j54o4O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18A48C4CEEF;
-	Thu, 31 Jul 2025 05:29:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1753939769;
-	bh=/IdXjZYSJoAkISSpqioyA198U7HNB0nE1iTZAs89knY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=u5j54o4Oh/WR/7IVETP/LU3M90jiWwZyCGFdAln4aRJC52pKddXT8MXSX4EDHjPfa
-	 m01YvwVgcqpZv4vc27v9ASX9XIbUHBW6ZbFtkSr4xixlGE6ulvB+pzUb2KTyYXgfQ4
-	 LPOPR5KzA8KIfGBYEDzTXXvklEsa/Vgpv9jQLOfg=
-Date: Thu, 31 Jul 2025 07:29:26 +0200
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Vivek BalachandharTN <vivek.balachandhar@gmail.com>
-Cc: linux-staging@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/20] rtl8723bs: cleanup and style improvements for
- better readability
-Message-ID: <2025073101-playful-easeful-3008@gregkh>
-References: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
+	s=arc-20240116; t=1753939838; c=relaxed/simple;
+	bh=Cu5t6YZcZk5lAf+VgfszA5pX1dHFJSG+P7TJVPUldzg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUW1rZylxYAbuEcveTtF2Qprs9PS6oSIz4M/w6ySkh4tpLchyYr/aPUmJ1ax6SlqB07J4ezxovzFnKyEWTxoCBATgAShdkPXQLC0/WXF9e5JQ93th+vTYC7gL1AIbiRX458iVw5DcgHI9J2dcvH/RR0qigvdxrRsSl1VcXk0+t4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vh062AEK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=phv4Ttde; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vh062AEK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=phv4Ttde; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id B4FB31F893;
+	Thu, 31 Jul 2025 05:30:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753939834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
+	b=vh062AEK12FoWQvMpiCA2uasJ0rP0Ib870SzzVPBCeCeiDFuWMwon935Ez+vDJ6anTmbPU
+	rSuV2Y4GZE8AwkNlBcatD/mMENWOmJvZt8tFVo6gRNs+PUZr7/xf3IkP5nPqwQDB0wNUQ3
+	YMWmkzI7DxfbHviteQ81m/63kkmy/mo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753939834;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
+	b=phv4TtdeYRIvUJ6faEy+gJZl5UB7jR77ouuNvInDj43rDQCx9nsEUtvF5VmfxBW6/35nPs
+	E1T9kmY15CTeWIAA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753939834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
+	b=vh062AEK12FoWQvMpiCA2uasJ0rP0Ib870SzzVPBCeCeiDFuWMwon935Ez+vDJ6anTmbPU
+	rSuV2Y4GZE8AwkNlBcatD/mMENWOmJvZt8tFVo6gRNs+PUZr7/xf3IkP5nPqwQDB0wNUQ3
+	YMWmkzI7DxfbHviteQ81m/63kkmy/mo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753939834;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
+	b=phv4TtdeYRIvUJ6faEy+gJZl5UB7jR77ouuNvInDj43rDQCx9nsEUtvF5VmfxBW6/35nPs
+	E1T9kmY15CTeWIAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 922971378C;
+	Thu, 31 Jul 2025 05:30:34 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 45aBInr/imhmTQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 31 Jul 2025 05:30:34 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: linux-sound@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH] ALSA: hda: Fix arch defconfigs
+Date: Thu, 31 Jul 2025 07:30:30 +0200
+Message-ID: <20250731053031.27121-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250726043218.386738-1-vivek.balachandhar@gmail.com>
+X-Spam-Level: 
+X-Spamd-Result: default: False [-2.80 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_TWO(0.00)[2];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	TO_DN_NONE(0.00)[];
+	RCVD_TLS_ALL(0.00)[]
+X-Spam-Flag: NO
+X-Spam-Score: -2.80
 
-On Sat, Jul 26, 2025 at 04:31:58AM +0000, Vivek BalachandharTN wrote:
-> This patch series includes 20 commits that clean up and improve
-> the style and formatting of the rtl8723bs driver in the staging tree.
-> The changes address spacing issues, indentation, comment formatting,
-> blank lines, and minor code clarity improvements.
-> 
-> No functional changes are introduced. All commits adhere to the Linux kernel
-> coding style guidelines to enhance code readability and maintainability.
-> 
-> The patches have been tested and are ready for review.
-> 
-> Vivek BalachandharTN (20):
->   staging: rtl8723bs: fix spacing around operators
->   staging: rtl8723bs: remove unnecessary blank lines around braces
->   staging: rtl8723bs: add blank line after function declaration
->   staging: rtl8723bs: remove unnecessary space after type cast
->   staging: rtl8723bs: remove space before tabs
->   staging: rtl8723bs: fix overlong lines and clarify lengthy comments
->   staging: rtl8723bs: align asterisk in block comment to fix formatting
->   staging: rtl8723bs: fix logical continuation style by moving to
->     previous line
->   staging: rtl8723bs: fix indentation to align with open parenthesis
->   staging: rtl8723bs: adding asterisks in multi-line block comments
->   staging: rtl8723bs: remove space before semicolon
->   staging: rtl8723bs: fix excessive indentation in nested if statement
->   staging: rtl8723bs: fix unbalanced braces around conditional blocks
->   staging: rtl8723bs: remove unnecessary parentheses around assignment
->   staging: rtl8723bs: remove unnecessary braces for single statement
->     blocks
->   staging: rtl8723bs: add braces to all arms of conditional statement
->   staging: rtl8723bs: add blank line after variable declarations
->   staging: rtl8723bs: fix line ending with '('
->   staging: rtl8723bs: place constant on right side of comparison
->   staging: rtl8723bs: merge nested if conditions for clarity and tab
->     problems
-> 
->  drivers/staging/rtl8723bs/core/rtw_mlme.c | 506 ++++++++++++----------
->  1 file changed, 285 insertions(+), 221 deletions(-)
+The Realtek and HDMI HD-audio codec configs have been slightly updated
+again since the previous change.  Follow the new kconfig changes for
+arch defconfigs that contain CONFIG_SND_HDA_* items.
 
-I understand wanting to get this right, but it's the middle of the merge
-window right now, and you are sending new versions for no obvious
-reason.  AND you are sending multiple versions of them.  Right now your
-submissions look like this:
+Fixes: 1d8dd982c409 ("ALSA: hda/realtek: Enable drivers as default")
+Fixes: 81231ad173d8 ("ALSA: hda/hdmi: Enable drivers as default")
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ arch/arm/configs/multi_v7_defconfig        | 3 ++-
+ arch/arm/configs/tegra_defconfig           | 3 +++
+ arch/loongarch/configs/loongson3_defconfig | 2 ++
+ arch/mips/configs/loongson2k_defconfig     | 1 +
+ arch/mips/configs/loongson3_defconfig      | 3 ++-
+ 5 files changed, 10 insertions(+), 2 deletions(-)
 
-  Jul 26 Vivek Balachand (1.9K) [PATCH 00/20] rtl8723bs: cleanup and style improvements for better readability
-  Jul 26 Vivek Balachand (1.0K) ├─>[PATCH 14/20] staging: rtl8723bs: remove unnecessary parentheses around assignment
-  Jul 28 Vivek Balachand (1.1K) │ └─>[PATCH v1 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 28 Vivek Balachand (1.2K) │   └─>[PATCH v2 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 30 Vivek Balachand (1.3K) │     └─>[PATCH v3 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 31 Vivek Balachand (1.5K) │       ├─>[PATCH v4 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 30 Vivek Balachand (1.5K) │       ├─>[PATCH v4 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 30 Vivek Balachand (1.5K) │       └─>[PATCH 14/20] staging: rtl8723bs: remove unnecessary parentheses in conditional
-  Jul 26 Vivek Balachand (0.9K) ├─>[PATCH 03/20] staging: rtl8723bs: add blank line after function declaration
-  Jul 28 Vivek Balachand (1.1K) │ └─>[PATCH v1 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-  Jul 30 Vivek Balachand (1.2K) │   └─>[PATCH v2 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-  Jul 30 Vivek Balachand (1.3K) │     └─>[PATCH v3 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-  Jul 30 Vivek Balachand (1.3K) │       ├─>[PATCH v4 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-  Jul 30 Vivek Balachand (1.3K) │       └─>[PATCH v4 03/20] staging: rtl8723bs: add blank line between rtw_roaming() and _rtw_roaming()
-  Jul 26 Vivek Balachand (0.9K) ├─>[PATCH 11/20] staging: rtl8723bs: remove space before semicolon
-  Jul 26 Vivek Balachand (2.8K) ├─>[PATCH 10/20] staging: rtl8723bs: adding asterisks in multi-line block comments
-  Jul 26 Vivek Balachand (4.0K) ├─>[PATCH 09/20] staging: rtl8723bs: fix indentation to align with open parenthesis
-  Jul 26 Vivek Balachand (3.7K) ├─>[PATCH 08/20] staging: rtl8723bs: fix logical continuation style by moving to previous line
-  Jul 26 Vivek Balachand (3.7K) ├─>[PATCH 07/20] staging: rtl8723bs: align asterisk in block comment to fix formatting
-  Jul 26 Vivek Balachand ( 28K) ├─>[PATCH 06/20] staging: rtl8723bs: fix overlong lines and clarify lengthy comments
-  Jul 26 Vivek Balachand (1.0K) ├─>[PATCH 20/20] staging: rtl8723bs: merge nested if conditions for clarity and tab problems
-  Jul 26 Vivek Balachand (1.1K) ├─>[PATCH 19/20] staging: rtl8723bs: place constant on right side of comparison
-  Jul 26 Vivek Balachand (0.9K) ├─>[PATCH 18/20] staging: rtl8723bs: fix line ending with '('
-  Jul 26 Vivek Balachand (4.2K) ├─>[PATCH 05/20] staging: rtl8723bs: remove space before tabs
-  Jul 26 Vivek Balachand (0.9K) ├─>[PATCH 17/20] staging: rtl8723bs: add blank line after variable declarations
-  Jul 26 Vivek Balachand (1.5K) ├─>[PATCH 16/20] staging: rtl8723bs: add braces to all arms of conditional statement
-  Jul 26 Vivek Balachand (1.3K) ├─>[PATCH 15/20] staging: rtl8723bs: remove unnecessary braces for single statement blocks
-  Jul 26 Vivek Balachand (1.6K) ├─>[PATCH 04/20] staging: rtl8723bs: remove unnecessary space after type cast
-  Jul 26 Vivek Balachand (1.7K) ├─>[PATCH 13/20] staging: rtl8723bs: fix unbalanced braces around conditional blocks
-  Jul 26 Vivek Balachand (0.9K) ├─>[PATCH 12/20] staging: rtl8723bs: fix excessive indentation in nested if statement
-  Jul 26 Vivek Balachand (7.2K) ├─>[PATCH 02/20] staging: rtl8723bs: remove unnecessary blank lines around braces
-  Jul 26 Vivek Balachand ( 12K) └─>[PATCH 01/20] staging: rtl8723bs: fix spacing around operators
+diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
+index 02ddd7ce9e3e..7fb1f7dc8139 100644
+--- a/arch/arm/configs/multi_v7_defconfig
++++ b/arch/arm/configs/multi_v7_defconfig
+@@ -791,10 +791,11 @@ CONFIG_SND=m
+ CONFIG_SND_HDA_TEGRA=m
+ CONFIG_SND_HDA_INPUT_BEEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+-CONFIG_SND_HDA_CODEC_REALTEK=y
++CONFIG_SND_HDA_CODEC_REALTEK=m
+ CONFIG_SND_HDA_CODEC_REALTEK_LIB=m
+ CONFIG_SND_HDA_CODEC_ALC269=m
+ CONFIG_SND_HDA_CODEC_HDMI=m
++CONFIG_SND_HDA_CODEC_HDMI_GENERIC=m
+ CONFIG_SND_HDA_CODEC_HDMI_TEGRA=m
+ CONFIG_SND_USB_AUDIO=m
+ CONFIG_SND_SOC=m
+diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
+index 3a9bda2bf422..63bd824e84a8 100644
+--- a/arch/arm/configs/tegra_defconfig
++++ b/arch/arm/configs/tegra_defconfig
+@@ -225,7 +225,10 @@ CONFIG_SND_HDA_TEGRA=y
+ CONFIG_SND_HDA_INPUT_BEEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+ CONFIG_SND_HDA_CODEC_REALTEK=y
++CONFIG_SND_HDA_CODEC_ALC269=y
+ CONFIG_SND_HDA_CODEC_HDMI=y
++CONFIG_SND_HDA_CODEC_HDMI_GENERIC=y
++CONFIG_SND_HDA_CODEC_HDMI_TEGRA=y
+ # CONFIG_SND_ARM is not set
+ # CONFIG_SND_SPI is not set
+ # CONFIG_SND_USB is not set
+diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
+index 0d59af6007b7..ac00d815b478 100644
+--- a/arch/loongarch/configs/loongson3_defconfig
++++ b/arch/loongarch/configs/loongson3_defconfig
+@@ -784,8 +784,10 @@ CONFIG_SND_HDA_HWDEP=y
+ CONFIG_SND_HDA_INPUT_BEEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+ CONFIG_SND_HDA_CODEC_REALTEK=y
++CONFIG_SND_HDA_CODEC_ALC269=y
+ CONFIG_SND_HDA_CODEC_SIGMATEL=y
+ CONFIG_SND_HDA_CODEC_HDMI=y
++CONFIG_SND_HDA_CODEC_HDMI_GENERIC=y
+ CONFIG_SND_HDA_CODEC_CONEXANT=y
+ CONFIG_SND_USB_AUDIO=m
+ CONFIG_SND_SOC=m
+diff --git a/arch/mips/configs/loongson2k_defconfig b/arch/mips/configs/loongson2k_defconfig
+index 4b7f914d01d0..b1b370a227dc 100644
+--- a/arch/mips/configs/loongson2k_defconfig
++++ b/arch/mips/configs/loongson2k_defconfig
+@@ -257,6 +257,7 @@ CONFIG_SND_HDA_INTEL=y
+ CONFIG_SND_HDA_HWDEP=y
+ CONFIG_SND_HDA_PATCH_LOADER=y
+ CONFIG_SND_HDA_CODEC_REALTEK=y
++CONFIG_SND_HDA_CODEC_ALC269=y
+ CONFIG_SND_HDA_CODEC_ANALOG=y
+ CONFIG_SND_HDA_CODEC_SIGMATEL=y
+ CONFIG_SND_HDA_CODEC_VIA=y
+diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
+index 5ff0c1554168..b5c18d847908 100644
+--- a/arch/mips/configs/loongson3_defconfig
++++ b/arch/mips/configs/loongson3_defconfig
+@@ -292,11 +292,12 @@ CONFIG_SND_SEQ_DUMMY=m
+ # CONFIG_SND_ISA is not set
+ CONFIG_SND_HDA_INTEL=m
+ CONFIG_SND_HDA_PATCH_LOADER=y
+-CONFIG_SND_HDA_CODEC_REALTEK=y
++CONFIG_SND_HDA_CODEC_REALTEK=m
+ CONFIG_SND_HDA_CODEC_REALTEK_LIB=m
+ CONFIG_SND_HDA_CODEC_ALC269=m
+ CONFIG_SND_HDA_CODEC_SIGMATEL=m
+ CONFIG_SND_HDA_CODEC_HDMI=m
++CONFIG_SND_HDA_CODEC_HDMI_GENERIC=m
+ CONFIG_SND_HDA_CODEC_CONEXANT=m
+ # CONFIG_SND_USB is not set
+ CONFIG_HIDRAW=y
+-- 
+2.50.1
 
-If you were sent a patch series like this, what would you do to attempt to
-review and/or apply them?
-
-Please relax, wait until after the merge window is over, and then resend a new
-series please.
-
-thanks,
-
-greg k-h
 
