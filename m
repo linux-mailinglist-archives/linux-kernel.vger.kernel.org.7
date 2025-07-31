@@ -1,142 +1,100 @@
-Return-Path: <linux-kernel+bounces-752381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87848B174D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:20:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 884D8B174D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:20:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F21C1AA784E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:20:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2CBA77A57F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:18:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4414322FE10;
-	Thu, 31 Jul 2025 16:20:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE7A123C4E6;
+	Thu, 31 Jul 2025 16:20:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ioc1jbhY"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ABonlWAy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C40221F01
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23F63239E8B;
+	Thu, 31 Jul 2025 16:20:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978809; cv=none; b=a4mEzx8IT5rZigFuwHgY7yLk+OHgSny8xdXhGylRdf2KEQsSLjwrL9wlkVdSxX2j06v2MswiOU4zyemwP/yEsR8JJ3YdrrBqSuF6mtYv9WgwGaARi/+CRZE5FbR/MvtwXl5fW5YLiJQu+jJGSyHYyU8UjEM6MbVdAER8rzN1LBc=
+	t=1753978811; cv=none; b=l151gAi97/rom8JWY0S2zdxzQ68VV/2mC7w49g3sOJg4qXO6xFtoKODW6DOgJ6aodGo1fqv8QgbeHpcRIgUKQ1KD2Av64zAF7QcH3gUFr8ZyQoHfO4LYi177uzebvHWh+o6zKqGxb72wEz4BAhDlX7vx1M4OBbwcruf5xHULQjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978809; c=relaxed/simple;
-	bh=1/3dtNGgyd/5kgq7GttR3zh1e8laYzrDwVPgu97IukQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=gOo7QACDRkCQLZCuT8Yz+pXRxm2xfis19OcU1lkkEJjTxCHzo9ERsAcuXAMGQ3OXj6K5fzuls7eKWxVw34MJWHS+Y1sXPb3Lg/nBbfRGhgJudMKSIc4NRVwzqMgGCrWhy3mRA4yWlXN/9W17ENBbHdhKHdClenR0KQU3sN0tmgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ioc1jbhY; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753978808; x=1785514808;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=1/3dtNGgyd/5kgq7GttR3zh1e8laYzrDwVPgu97IukQ=;
-  b=ioc1jbhYK1phmYh7lyeV5vRrrTsCS4LR4ozHJttK2C1EBPxxN3V2GSJz
-   88MJSCboNYiacZ5zi2BLYVKOEAWpOvZFVmpotx0m5KvQT+q1+HpfXfDww
-   3St1ccejpBqolPeVVqQqtoK+igywv/NvENA6Y0ZzC5+FdgVdIOFQAfhBw
-   Bu6VvS+MHGJjMY5oE9XLaiyyHQ8StBPxEdiNonwz7QH8NaoetkR3U6R4l
-   5jJqow8LeIq+7mdDIu2jRHq/jP4ALcTyT/jsxaAFT4iv3INvo4qvEV1eN
-   GBnRkzCwlo7bPvrT8IsNFmPNf88W6Gzt2GASLcLud4AYOzEggAobiyaE5
-   g==;
-X-CSE-ConnectionGUID: 7tBafQ3/Ruubys9djxDj/A==
-X-CSE-MsgGUID: ZS2luRE/T+2Pq/gYlnOPlw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56455658"
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="56455658"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 09:20:08 -0700
-X-CSE-ConnectionGUID: 1rgF5bEqTJiAxtJr0tsZYA==
-X-CSE-MsgGUID: 4hSoEkZORpuO8Lmy6vjeMA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,254,1747724400"; 
-   d="scan'208";a="167791002"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 31 Jul 2025 09:20:06 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhW0h-0003uq-2t;
-	Thu, 31 Jul 2025 16:20:03 +0000
-Date: Fri, 1 Aug 2025 00:20:00 +0800
-From: kernel test robot <lkp@intel.com>
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>
-Subject: drivers/irqchip/irq-gic-v5-iwb.c:265:1-8: WARNING: invalid free of
- devm_ allocated data
-Message-ID: <202508010038.N3r4ZmII-lkp@intel.com>
+	s=arc-20240116; t=1753978811; c=relaxed/simple;
+	bh=dnuBUhyXxx6eEnqiiIdfYQFX9xeUXT9k0YSrzphmgb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a2KUfvXXhg/ebaLPwlHXpLw8DjhYWU59W/2/J0BC2/6Ze1tICB/l+FuylppRUAUlrCORBPr0U/9jrMOu9zHN93XptQGljkTJc8fX25F/n8sqdOAx6IbMz1+Juw1ApnCoG+COaVQziMFj1X9Rcuco4E+INI/Mox0CAsZmTzbl0nM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ABonlWAy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 889AFC4CEF6;
+	Thu, 31 Jul 2025 16:20:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753978810;
+	bh=dnuBUhyXxx6eEnqiiIdfYQFX9xeUXT9k0YSrzphmgb4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ABonlWAyKikiuvW1GW309CBL2bKEkXx3ZijcsD3BrznOm2XbGT8x1OeNtmo1/Obh5
+	 jMge+WpTd/WeCcrs/29+gdopqi4aW5cYNnY8xcqSQOLd797gK/8CKl0myUZllFMqgn
+	 DXAPKnXdC6MEDcwsDmeGK9BmcfWIeFln1t7R8jU0aJBpHHoIgwge5EFrn4dU6zP+pw
+	 BG2d8XJ5/CUML/5NlEUx0gz0Bbx7lzK82tdgrC8agT6SMPR8TE0f2c5Kbcx2d20xtr
+	 fAemzXBlkC1H0A/Y7J6CN/4xjJUlHlUaltQNSxiFN/zsrJHRXkPF2ADf4lDJF+0DlG
+	 g1n5E3poB+J+A==
+Date: Thu, 31 Jul 2025 17:20:06 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Simon Trimmer <simont@opensource.cirrus.com>
+Cc: linux-spi@vger.kernel.org, linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
+Subject: Re: [PATCH] spi: cs42l43: Property entry should be a null-terminated
+ array
+Message-ID: <5f9a040e-c0d9-4dca-902d-74bc043d90c5@sirena.org.uk>
+References: <20250731160109.1547131-1-simont@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="tZlxq1wObBazuEVR"
+Content-Disposition: inline
+In-Reply-To: <20250731160109.1547131-1-simont@opensource.cirrus.com>
+X-Cookie: Gloffing is a state of mine.
+
+
+--tZlxq1wObBazuEVR
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Hi Lorenzo,
+On Thu, Jul 31, 2025 at 04:01:09PM +0000, Simon Trimmer wrote:
+> The software node does not specify a count of property entries, so the
+> array must be null-terminated.
+>=20
+> When unterminated, this can lead to a fault in the downstream cs35l56
+> amplifier driver, because the node parse walks off the end of the
+> array into unknown memory.
 
-First bad commit (maybe != root cause):
+>  	if (spkid >=3D 0) {
+> -		props =3D devm_kmalloc(priv->dev, sizeof(*props), GFP_KERNEL);
+> +		props =3D devm_kcalloc(priv->dev, 2, sizeof(*props), GFP_KERNEL);
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   260f6f4fda93c8485c8037865c941b42b9cba5d2
-commit: 53bb952a625fd3247647c7a28366ce990a579415 arm64: Kconfig: Enable GICv5
-date:   3 weeks ago
-config: arm64-randconfig-r052-20250731 (https://download.01.org/0day-ci/archive/20250801/202508010038.N3r4ZmII-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
+Does kcalloc() zero initialise the data?
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508010038.N3r4ZmII-lkp@intel.com/
+--tZlxq1wObBazuEVR
+Content-Type: application/pgp-signature; name="signature.asc"
 
-cocci warnings: (new ones prefixed by >>)
->> drivers/irqchip/irq-gic-v5-iwb.c:265:1-8: WARNING: invalid free of devm_ allocated data
+-----BEGIN PGP SIGNATURE-----
 
-vim +265 drivers/irqchip/irq-gic-v5-iwb.c
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiLl7YACgkQJNaLcl1U
+h9CtMwf8C1yDA4EJdoRsmJFScmC/QXV48qd7yq937UTarOYQdIIY6FTBVy3ocEcz
+3hkQo4siSPoOzqD++zUuxVYcQq6xFKthDycNsRDJqB4O1Cdk1ZTUbFqcFSPzhpHA
+4XUj4eDeXcQWwWrUgpQxiM+ieHjrEochpzCyRwnUeIoqFFegGdwA80To//nBvskK
+fBavaiBTLyTdhRg97gwHW5vvu5KAU2f24Ca1L0vzvP1/2e5W8d9Z93wSo2sdsarS
+d/JhgmlYyiDXNdmi5Ja9HAgMUHEEkIokM8EcWHrmTMr+oP42b/t7fmIcvp7VLbsG
+KPqnsMkNKsZjGPS2/nzqqvhPipZdcw==
+=BL8d
+-----END PGP SIGNATURE-----
 
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  238  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  239  static int gicv5_iwb_device_probe(struct platform_device *pdev)
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  240  {
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  241  	struct gicv5_iwb_chip_data *iwb_node;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  242  	void __iomem *iwb_base;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  243  	struct resource *res;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  244  	int ret;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  245  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  246  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  247  	if (!res)
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  248  		return -EINVAL;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  249  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  250  	iwb_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  251  	if (!iwb_base) {
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  252  		dev_err(&pdev->dev, "failed to ioremap %pR\n", res);
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  253  		return -ENOMEM;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  254  	}
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  255  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  256  	iwb_node = gicv5_iwb_init_bases(iwb_base, pdev);
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  257  	if (IS_ERR(iwb_node)) {
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  258  		ret = PTR_ERR(iwb_node);
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  259  		goto out_unmap;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  260  	}
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  261  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  262  	return 0;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  263  
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  264  out_unmap:
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03 @265  	iounmap(iwb_base);
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  266  	return ret;
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  267  }
-695949d8b16f11 Lorenzo Pieralisi 2025-07-03  268  
-
-:::::: The code at line 265 was first introduced by commit
-:::::: 695949d8b16f11f2f172d8d0c7ccc1ae09ed6cb7 irqchip/gic-v5: Add GICv5 IWB support
-
-:::::: TO: Lorenzo Pieralisi <lpieralisi@kernel.org>
-:::::: CC: Marc Zyngier <maz@kernel.org>
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--tZlxq1wObBazuEVR--
 
