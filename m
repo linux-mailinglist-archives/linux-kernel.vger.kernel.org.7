@@ -1,144 +1,92 @@
-Return-Path: <linux-kernel+bounces-752333-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33457B17428
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:50:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 330C3B17422
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1AB4B16027C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:50:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 97D773AF1B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:49:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BDF121FF40;
-	Thu, 31 Jul 2025 15:49:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6481EEA47;
+	Thu, 31 Jul 2025 15:49:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N/X/JNrt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="EQ9RhTUE"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8ECFF1F30B2;
-	Thu, 31 Jul 2025 15:49:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFBD141987
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:49:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753976991; cv=none; b=M+tmv5WznujijSz0Cehmycy/olggA0A9Z/Jxzu7tG9B7u2SUByyx1S6AJUDIBBTYzbwUAoZ5zvi7Jkb5xFkKeyW1YNJoqI5oC0JA/r1AAE0jmfFo4/eV0z2KHhgP3JlaUB24k7CbA393aNNO9G3OrLRW4Z/6cY7rYFrfxSbm5h8=
+	t=1753976973; cv=none; b=gGoz4t/bCTbvWBlSBFo4llzhdasoISvGrFZheaHQSnqHiPYKhjIQGqPcHtqNkqBP0xqRiWkZUlV5gje0t+Q+5WG4E5Mx8Ck7JMCl3NLQQijd+/S2bGG+f7WPrQL/GCn+bw5s74Ysxd9L4zPvmM1m3aXfSkXfYq1gF5lERw/4HnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753976991; c=relaxed/simple;
-	bh=TRPn+DgynwTBU4suc4xP+QjfUEO+i9ltjPYhmhrkr2A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=fqhp6QRtSSNiPrKJPgumZJv+gOnp1Vy3tTqWpIoDbRxPo6ZD+HjnxvQ0T8eLghakBGnW4N7gcaxTvglnSNUMW7qXDQkrWyT5VidnduIbAe0hoIkDzR5GkWEAmhpsz4XDXLIIdOucUucflFZhneGlXNat9kqKTnej9EQ5DYP8SUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N/X/JNrt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C20FCC4CEF7;
-	Thu, 31 Jul 2025 15:49:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753976991;
-	bh=TRPn+DgynwTBU4suc4xP+QjfUEO+i9ltjPYhmhrkr2A=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=N/X/JNrtyFakbTS/O9iOKZ67QuJWdk2GrjRdWBqwrDqXwaiu2XP315wrn0r0Z7bBY
-	 UUPrHbbI2WuDp6O0ej47Bxii1HSJW7FKIYKQTuB7tSmfB/SIwnRpAUb3zVam9ibvQ4
-	 mQR02O6FWGqKnPce2tJPaxVy14al1kNBVFaP2f4O6gH8Sheg2zlVb8/p4j64G9Byqx
-	 BocWeAFMemBYxQ99Ju4Sq5UTSJg8deTAkU7kTr3tlEpKrte3IzPFD1XXcDI955jsTm
-	 1l0+ifKC7nsak++M9SE0fkaRB7svvRG8+GXEchuaHrs7ASH7lhektT3SUjeftJQx6G
-	 Q9IUshOilxNaA==
-From: Danilo Krummrich <dakr@kernel.org>
-To: lorenzo.stoakes@oracle.com,
-	vbabka@suse.cz,
-	Liam.Howlett@oracle.com,
-	urezki@gmail.com,
-	ojeda@kernel.org,
-	alex.gaynor@gmail.com,
-	boqun.feng@gmail.com,
-	gary@garyguo.net,
-	bjorn3_gh@protonmail.com,
-	lossin@kernel.org,
-	a.hindborg@kernel.org,
-	aliceryhl@google.com,
-	tmgross@umich.edu,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	simona@ffwll.ch
-Cc: rust-for-linux@vger.kernel.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	Danilo Krummrich <dakr@kernel.org>
-Subject: [PATCH 4/4] rust: drm: don't pass the address of drm::Device to drm_dev_put()
-Date: Thu, 31 Jul 2025 17:48:09 +0200
-Message-ID: <20250731154919.4132-5-dakr@kernel.org>
-X-Mailer: git-send-email 2.50.0
-In-Reply-To: <20250731154919.4132-1-dakr@kernel.org>
-References: <20250731154919.4132-1-dakr@kernel.org>
+	s=arc-20240116; t=1753976973; c=relaxed/simple;
+	bh=ty2HCoqYjlov1COEQq5EkrPwmHuATgl+GyX7EzEJfW4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uYi/SsfphqAYqfkhY19zt9SNe7EwEaQpc5i9srT+LPyOQ0EETGVZKArmU09GA33K6arYX9FZY6H2UeU7h293jy3cxJmDd+S0430bMxUk7cQCeF5Pi09PpcAXyXi/aiANyTptekliOm9CTcAxeW0KaTPwFFHy0CdlzTDT6iQfr5E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=EQ9RhTUE; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 31 Jul 2025 11:49:14 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1753976959;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=ty2HCoqYjlov1COEQq5EkrPwmHuATgl+GyX7EzEJfW4=;
+	b=EQ9RhTUExy+IvZf/bcHVwlpZcpugDpXvIrR2tAc0Gr4vh2GjG3eVQKAteyJ66eJFrrn4Zb
+	jLJl3ZaYT6JYc5CsOZvktxCTXqVh2MlnrXRbWg6I6pmnkway7yarjvl6rp+s1hinM2b/E4
+	5oklP1Qi4TZcqyEzmdGVl/EDNKREcwM=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Zhou Jifeng <zhoujifeng@kylinos.com.cn>
+Cc: colyli@kernel.org, linux-bcache@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+Message-ID: <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+X-Migadu-Flow: FLOW_OUT
 
-In drm_dev_put() call in AlwaysRefCounted::dec_ref() we rely on struct
-drm_device to be the first field in drm::Device, whereas everywhere
-else we correctly obtain the address of the actual struct drm_device.
+On Thu, Jul 31, 2025 at 02:21:40PM +0800, Zhou Jifeng wrote:
+> There is a potential data consistency risk in bcache's writeback mode:when
+> the application calls fsync, bcache returns success after completing the
+> log write, persisting the cache disk data, and persisting the HDD internal
+> cache. However, at this point, the actual application data may still be in
+> a dirty state and remain stuck in the cache disk. when these data are
+> subsequently written back to the HDD asynchronously through REQ_OP_WRITE,
+> there is no forced refresh mechanism to ensure physical placement on the
+> disk, and there may be no power-off protection measures, which poses a risk
+> of data loss. This mechanism may cause the application to misjudge that the
+> data has been persisted, which is different from the actual storage state,
+> and also violates the semantic agreement that fsync should ensure data
+> persistence.
 
-Analogous to the from_drm_device() helper, provide the
-into_drm_device() helper in order to address this.
+So, the way you start out describing the patch, it sounds like you're
+addressing some sort of bug in REQ_OP_FLUSH handling, but it looks like
+what you're actually doing is adding a mode where flushes also flush
+bcache?
 
-Fixes: 1e4b8896c0f3 ("rust: drm: add device abstraction")
-Signed-off-by: Danilo Krummrich <dakr@kernel.org>
----
- rust/kernel/drm/device.rs | 21 ++++++++++++++++++---
- 1 file changed, 18 insertions(+), 3 deletions(-)
+This doesn't sound like a bugfix, this sounds like a completely new
+mode - we'd need an explanation of the use case you're aiming for.
 
-diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-index d0a9528121f1..d29c477e89a8 100644
---- a/rust/kernel/drm/device.rs
-+++ b/rust/kernel/drm/device.rs
-@@ -120,9 +120,13 @@ pub fn new(dev: &device::Device, data: impl PinInit<T::Data, Error>) -> Result<A
-         // - `raw_data` is a valid pointer to uninitialized memory.
-         // - `raw_data` will not move until it is dropped.
-         unsafe { data.__pinned_init(raw_data) }.inspect_err(|_| {
--            // SAFETY: `__drm_dev_alloc()` was successful, hence `raw_drm` must be valid and the
-+            // SAFETY: `raw_drm` is a valid pointer to `Self`, given that `__drm_dev_alloc` was
-+            // successful.
-+            let drm_dev = unsafe { Self::into_drm_device(raw_drm) };
-+
-+            // SAFETY: `__drm_dev_alloc()` was successful, hence `drm_dev` must be valid and the
-             // refcount must be non-zero.
--            unsafe { bindings::drm_dev_put(ptr::addr_of_mut!((*raw_drm.as_ptr()).dev).cast()) };
-+            unsafe { bindings::drm_dev_put(drm_dev) };
-         })?;
- 
-         // SAFETY: The reference count is one, and now we take ownership of that reference as a
-@@ -143,6 +147,14 @@ unsafe fn from_drm_device(ptr: *const bindings::drm_device) -> *mut Self {
-         unsafe { crate::container_of!(Opaque::cast_from(ptr), Self, dev) }.cast_mut()
-     }
- 
-+    /// # Safety
-+    ///
-+    /// `ptr` must be a valid pointer to `Self`.
-+    unsafe fn into_drm_device(ptr: NonNull<Self>) -> *mut bindings::drm_device {
-+        // SAFETY: By the safety requirements of this function, `ptr` is a valid pointer to `Self`.
-+        unsafe { &raw mut (*ptr.as_ptr()).dev }.cast()
-+    }
-+
-     /// Not intended to be called externally, except via declare_drm_ioctls!()
-     ///
-     /// # Safety
-@@ -192,8 +204,11 @@ fn inc_ref(&self) {
-     }
- 
-     unsafe fn dec_ref(obj: NonNull<Self>) {
-+        // SAFETY: `obj` is a valid pointer to `Self`.
-+        let drm_dev = unsafe { Self::into_drm_device(obj) };
-+
-         // SAFETY: The safety requirements guarantee that the refcount is non-zero.
--        unsafe { bindings::drm_dev_put(obj.cast().as_ptr()) };
-+        unsafe { bindings::drm_dev_put(drm_dev) };
-     }
- }
- 
--- 
-2.50.0
+The model for bcache has always been that since the cache is persistent,
+when you're in writeback mode there are no fsync/REQ_OP_FLUSH
+considerations for dirty data; once we've properly persisted (and
+flushed) that data we're good.
 
+If you want a mode where you can run in writeback mode, but obey flushes
+so that it's still safe to lose or yank the cache device - is that what
+you're after?
 
