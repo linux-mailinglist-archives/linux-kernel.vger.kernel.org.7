@@ -1,77 +1,80 @@
-Return-Path: <linux-kernel+bounces-752309-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45956B173D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:19:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A588B173DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:19:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1CCD97A1F67
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:18:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 19CA07A36A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3471DF244;
-	Thu, 31 Jul 2025 15:19:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A4B41E5B90;
+	Thu, 31 Jul 2025 15:19:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="rNyLDZCA"
-Received: from mail-pg1-f201.google.com (mail-pg1-f201.google.com [209.85.215.201])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dAYhqvdW"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B34DB15A8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:19:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD4621DE4D2
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753975165; cv=none; b=hOWWOXg7teUv0AfXt9QHJWHy7pdlmZjC0ItD+olcJc4NA+298M213veDMrU6kTbFUG/E+fbhcjAK8FbB5rfp0EQ7SnuIb4L2Su5jwcdWMtm6HPl6XN6SyDDyDeAlFKwGq1sD0HybKjAJ/VQp22GkZZDePVIm8ja5zWVkzGDMK5U=
+	t=1753975167; cv=none; b=uKjLxmcK1E8GHrcFmJ9zsssu+nBXj4jGnIOs19qHgCVSQ6BZ8L9ySN+KOoD0tmPMITRQ1AQFOHg5dX5AVduN7wm9ro9W9204FFLKgPPqI3ZWt3C7dX6vA0Ol+G69BpLCBTI1R3CDWccSAcJ39q8pu+EOesUULBwQP8b0LTo/1XM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753975165; c=relaxed/simple;
-	bh=tp534Bj1hk2MlNNKZq7vhy/RVqUsZvTPIy+18UCc5/o=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=iwso6EW9htmmCHIJZhrDH9zGvCD35yIUF7Kd+nlpvTHR273TzCCmcYaQ0RZCwYfFJWKp+FyWAy20wRwdIRSMABcwxuHJ/QHEhZCLV2g+j6m8J2Ah7859pNp3G1xqjAhDxlDz+2NoWZ8DAAAQfGedIdQNzx6L4+P5acJ4+/hSdK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=rNyLDZCA; arc=none smtp.client-ip=209.85.215.201
+	s=arc-20240116; t=1753975167; c=relaxed/simple;
+	bh=QPAZ78hFT+nhefwTtIn8MUOVzgEXOS7hUjuUKewsH0s=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=B0rA8QJKBj46eG4Ynv8JTQM3WMERrB3UpckZ7M1gQeeVnwEW0Ikp/0l3ZwvO71iVYukGpozZk/GQVDDD+OpDgqePQzKce4RuGcwiLP1hUi9qT2g+1dOdk2Bfzv4o21N5GV4vOE5KLjOt2X24AFNbCVwMdfjbeXWLdyhlbDvVRyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dAYhqvdW; arc=none smtp.client-ip=209.85.216.73
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pg1-f201.google.com with SMTP id 41be03b00d2f7-b4225ab1829so775841a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:19:23 -0700 (PDT)
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f030b1cb9so1685100a91.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:19:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753975163; x=1754579963; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=rB92jD43gXUv8AEcDtD5VmVQXDaAyFtARma7oKwYEvQ=;
-        b=rNyLDZCAZpzSSuZqKHe/yP+AddV39GO3os9CZkcaeKvw/oEwy5VKYueNQj/z72E6O+
-         TcJpmT8WqQttMwA26HfLTWfis0x86DUuxthKgeQcpCw23zV+ixtl6t/XjHkHEyWpiagX
-         IXbMCUFqA+xF14iKGRdr0aEc6XcwpFtu+D0MD68HoCoP1zm8yuPFMdaS+Via7jydq6VH
-         e2ohTewKKf3wOs1NiErerdH2VD7b8ynh5Avrh7Oxukumv9guexqTuDjFdVHpibU28LUg
-         bq2zPl9FDayIUBWryMtYb5iQzlTbMgCUF3stxYpnjI+mU2GkqRRdL6r77WaeoNBoX/RR
-         2NFA==
+        d=google.com; s=20230601; t=1753975165; x=1754579965; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRIt8AKcHnKINXyvEkxYf94Yh7IhkF311FvqvgzwnyM=;
+        b=dAYhqvdWF7bRqA9zV9mbbJJZFTzh8POlcwsJ4kCvi1WEFyH2BQ/isWwYlnwkoufeXx
+         Qfr2uGhdENbo3dsuyMRmwZanNgkSpGhEjDBtvxKNkQqLbG66ZsTsXRxZ5R7RnVujROQr
+         gbtupOq3relYpyfamfLeSnTCbYUpn4zqPSU/qTYMNKhuErI5k3gB83p6w6wlBGy43Pax
+         ZDqHeiA4Ij1HJgrWTIK8TZh1htn0RNZ+kgal0c6z4DjbQLCsstps5EblAaZJKPRaLeLO
+         G/5EonCL3wzAcVo9QBe3YRGx1efOO+W9TlbCbxJkUEj4tYqcNNU9T8lMXSe569tzNKug
+         4meQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753975163; x=1754579963;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=rB92jD43gXUv8AEcDtD5VmVQXDaAyFtARma7oKwYEvQ=;
-        b=wXCeuS2qj72rHMgQ/rXdaYe17sF0ELomFUg/6GrRYeKcA+VIeWO46FrY46idfdObZn
-         aD4apcJihgj8XWk0Z40/l3kt1+UFUSqsGZbI2bYEDE5jsnmwgpgV+7XjbZkTwKPW44vk
-         Wz2FHn2MNVnGq2Zg6gItkoq0ViDkT0hYfOXJQJzecbH96ZqYBzmOt65nxnjurEim9Wnf
-         /A6C9Nb2y2rGy/671qHT7u1A57cmnClSUGgXj6ucW+0a8RA0YXvIqyhB6H90yIcnMzvK
-         69If1jr+BVHge8PP0iW4MFg2HWro1PdMlDsgw8fKQJsfNEq3/ZViosBX1FrD1B18tXEP
-         byHA==
-X-Forwarded-Encrypted: i=1; AJvYcCV/yV94nlyWZb0UgM4ldpLfvtgGcA/ZE1zBEFCpF55iQTwsiBTOrGbyzD/qGFf8FeKyw0HiBM86nOXhsJ0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFtfUu92jWoyxvHz7KdtFi/EVHV0DbKKVflx2OsZgR09txRfqQ
-	Xv7CsqVsNlsMM8iD/n9YDqDeN/rd/OOkiHA7hq7vT/btOue13jpBuMAeMC16DwR/3NZRwAzC+vH
-	DvGV7DA==
-X-Google-Smtp-Source: AGHT+IFycxqU1nsBtsiPJqQ9SIyZmgKdOXZHM3ZE9nPZBjUAHvqIptVuh4EUlzGZst3nTg88jL8l2xDazsk=
-X-Received: from pjbqx14.prod.google.com ([2002:a17:90b:3e4e:b0:31f:6a10:6ea6])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:6c4:b0:31f:44a:229c
- with SMTP id 98e67ed59e1d1-31f5dde6ae1mr12120454a91.12.1753975162973; Thu, 31
- Jul 2025 08:19:22 -0700 (PDT)
-Date: Thu, 31 Jul 2025 08:19:18 -0700
+        d=1e100.net; s=20230601; t=1753975165; x=1754579965;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tRIt8AKcHnKINXyvEkxYf94Yh7IhkF311FvqvgzwnyM=;
+        b=fFJCxsRJiKKYYRHDQEWfueP0A7bmbRGPXdcpGMxv/9taXA0Lrm5iXT7jctICWpAMtz
+         amK4sA5vPPxG16TTig98lcM8GdHXaDmSXUb36Gese4h175L7bOBm4hRFg5vEgYlolNqJ
+         6rTXb34wjXxNnTXIbC4EJUXAwdqLEkMFwgUnmitwFdpC04AmStiuimW27E+/W4QxP2Dn
+         H7vgG4K5Ev0bjMGJ4DYiHk5yYCFNQ2vyXAqcfkSOKC2oqLo12aBqTKt58ksKTVlwhLTn
+         oteONa9NVIxLRLTKzWdMlZATUKYLgrQCuKnNK03Q7v7NVsJI3x1pr607DgOwHq/vuZRW
+         Tt8g==
+X-Forwarded-Encrypted: i=1; AJvYcCXoxkfWZRcG40BMBGbrHT02p5OzF+LBAtRzIV3z2ZoWX380SG2Trpcx7NdzvxvcHkr9aD7uX+LfSTquF3Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4Gxe2/mp/Fi6U7tlBCsIMYVRL76GFbg3xk9+bJEpD7SGiAhUY
+	G3Iif4Rvn/7M3KsPU2gZ6ukcSIo8/O9AzWGzEqowBmnibRadd9dRecXObcgpUHpxvl0Kk2PDot6
+	V3gHVhg==
+X-Google-Smtp-Source: AGHT+IG+hqz8k3yQGzHNMFz+PXNcZKFUGe9Z5W3kyHUNP/PcUJ2Ofl9W0o8GvY+qmKvXki2uaR6Oh1vSMeI=
+X-Received: from pjk16.prod.google.com ([2002:a17:90b:5590:b0:312:151d:c818])
+ (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:2888:b0:312:959:dc3f
+ with SMTP id 98e67ed59e1d1-31f5dd8ca12mr10609509a91.3.1753975165105; Thu, 31
+ Jul 2025 08:19:25 -0700 (PDT)
+Date: Thu, 31 Jul 2025 08:19:19 -0700
+In-Reply-To: <20250731151919.212829-1-surenb@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20250731151919.212829-1-surenb@google.com>
 X-Mailer: git-send-email 2.50.1.552.g942d659e1b-goog
-Message-ID: <20250731151919.212829-1-surenb@google.com>
-Subject: [PATCH v2 1/2] mm: limit the scope of vma_start_read()
+Message-ID: <20250731151919.212829-2-surenb@google.com>
+Subject: [PATCH v2 2/2] mm: change vma_start_read() to drop RCU lock on failure
 From: Suren Baghdasaryan <surenb@google.com>
 To: akpm@linux-foundation.org
 Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, 
@@ -79,68 +82,74 @@ Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
 	linux-kernel@vger.kernel.org, surenb@google.com
 Content-Type: text/plain; charset="UTF-8"
 
-Limit the scope of vma_start_read() as it is used only as a helper for
-higher-level locking functions implemented inside mmap_lock.c and we are
-about to introduce more complex RCU rules for this function.
-The change is pure code refactoring and has no functional changes.
+vma_start_read() can drop and reacquire RCU lock in certain failure
+cases. It's not apparent that the RCU session started by the caller of
+this function might be interrupted when vma_start_read() fails to lock
+the vma. This might become a source of subtle bugs and to prevent that
+we change the locking rules for vma_start_read() to drop RCU read lock
+upon failure. This way it's more obvious that RCU-protected objects are
+unsafe after vma locking fails.
 
 Suggested-by: Vlastimil Babka <vbabka@suse.cz>
 Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 ---
- include/linux/mmap_lock.h | 85 ---------------------------------------
- mm/mmap_lock.c            | 85 +++++++++++++++++++++++++++++++++++++++
- 2 files changed, 85 insertions(+), 85 deletions(-)
+Changes since v1 [1]:
+- Fixed missing RCU unlock in lock_vma_under_rcu(), per Lorenzo Stoakes
+- Modified comments, per Lorenzo Stoakes
 
-diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-index 11a078de9150..2c9fffa58714 100644
---- a/include/linux/mmap_lock.h
-+++ b/include/linux/mmap_lock.h
-@@ -147,91 +147,6 @@ static inline void vma_refcount_put(struct vm_area_struct *vma)
- 	}
- }
- 
--/*
-- * Try to read-lock a vma. The function is allowed to occasionally yield false
-- * locked result to avoid performance overhead, in which case we fall back to
-- * using mmap_lock. The function should never yield false unlocked result.
-- * False locked result is possible if mm_lock_seq overflows or if vma gets
-- * reused and attached to a different mm before we lock it.
-- * Returns the vma on success, NULL on failure to lock and EAGAIN if vma got
-- * detached.
-- *
+[1] https://lore.kernel.org/all/20250731013405.4066346-2-surenb@google.com/
+
+ mm/mmap_lock.c | 86 +++++++++++++++++++++++++++-----------------------
+ 1 file changed, 47 insertions(+), 39 deletions(-)
+
+diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
+index 10826f347a9f..7ea603f26975 100644
+--- a/mm/mmap_lock.c
++++ b/mm/mmap_lock.c
+@@ -136,15 +136,16 @@ void vma_mark_detached(struct vm_area_struct *vma)
+  * Returns the vma on success, NULL on failure to lock and EAGAIN if vma got
+  * detached.
+  *
 - * WARNING! The vma passed to this function cannot be used if the function
 - * fails to lock it because in certain cases RCU lock is dropped and then
 - * reacquired. Once RCU lock is dropped the vma can be concurently freed.
-- */
--static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
--						    struct vm_area_struct *vma)
--{
--	int oldcnt;
--
--	/*
--	 * Check before locking. A race might cause false locked result.
--	 * We can use READ_ONCE() for the mm_lock_seq here, and don't need
--	 * ACQUIRE semantics, because this is just a lockless check whose result
--	 * we don't rely on for anything - the mm_lock_seq read against which we
--	 * need ordering is below.
--	 */
++ * IMPORTANT: RCU lock must be held upon entering the function, but upon error
++ *            IT IS RELEASED. The caller must handle this correctly.
+  */
+ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+ 						    struct vm_area_struct *vma)
+ {
++	struct mm_struct *other_mm;
+ 	int oldcnt;
+ 
++	RCU_LOCKDEP_WARN(!rcu_read_lock_held(), "no rcu lock held");
+ 	/*
+ 	 * Check before locking. A race might cause false locked result.
+ 	 * We can use READ_ONCE() for the mm_lock_seq here, and don't need
+@@ -152,8 +153,10 @@ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+ 	 * we don't rely on for anything - the mm_lock_seq read against which we
+ 	 * need ordering is below.
+ 	 */
 -	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(mm->mm_lock_seq.sequence))
 -		return NULL;
--
--	/*
--	 * If VMA_LOCK_OFFSET is set, __refcount_inc_not_zero_limited_acquire()
--	 * will fail because VMA_REF_LIMIT is less than VMA_LOCK_OFFSET.
--	 * Acquire fence is required here to avoid reordering against later
--	 * vm_lock_seq check and checks inside lock_vma_under_rcu().
--	 */
--	if (unlikely(!__refcount_inc_not_zero_limited_acquire(&vma->vm_refcnt, &oldcnt,
--							      VMA_REF_LIMIT))) {
--		/* return EAGAIN if vma got detached from under us */
++	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(mm->mm_lock_seq.sequence)) {
++		vma = NULL;
++		goto err;
++	}
+ 
+ 	/*
+ 	 * If VMA_LOCK_OFFSET is set, __refcount_inc_not_zero_limited_acquire()
+@@ -164,34 +167,14 @@ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+ 	if (unlikely(!__refcount_inc_not_zero_limited_acquire(&vma->vm_refcnt, &oldcnt,
+ 							      VMA_REF_LIMIT))) {
+ 		/* return EAGAIN if vma got detached from under us */
 -		return oldcnt ? NULL : ERR_PTR(-EAGAIN);
--	}
--
--	rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
--
++		vma = oldcnt ? NULL : ERR_PTR(-EAGAIN);
++		goto err;
+ 	}
+ 
+ 	rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
+ 
 -	/*
 -	 * If vma got attached to another mm from under us, that mm is not
 -	 * stable and can be freed in the narrow window after vma->vm_refcnt
@@ -164,127 +173,110 @@ index 11a078de9150..2c9fffa58714 100644
 -		rcu_read_lock();
 -		return NULL;
 -	}
--
--	/*
--	 * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
--	 * False unlocked result is impossible because we modify and check
--	 * vma->vm_lock_seq under vma->vm_refcnt protection and mm->mm_lock_seq
--	 * modification invalidates all existing locks.
--	 *
--	 * We must use ACQUIRE semantics for the mm_lock_seq so that if we are
--	 * racing with vma_end_write_all(), we only start reading from the VMA
--	 * after it has been unlocked.
--	 * This pairs with RELEASE semantics in vma_end_write_all().
--	 */
--	if (unlikely(vma->vm_lock_seq == raw_read_seqcount(&mm->mm_lock_seq))) {
--		vma_refcount_put(vma);
--		return NULL;
--	}
--
--	return vma;
--}
--
- /*
-  * Use only while holding mmap read lock which guarantees that locking will not
-  * fail (nobody can concurrently write-lock the vma). vma_start_read() should
-diff --git a/mm/mmap_lock.c b/mm/mmap_lock.c
-index b006cec8e6fe..10826f347a9f 100644
---- a/mm/mmap_lock.c
-+++ b/mm/mmap_lock.c
-@@ -127,6 +127,91 @@ void vma_mark_detached(struct vm_area_struct *vma)
- 	}
- }
++	if (unlikely(vma->vm_mm != mm))
++		goto err_unstable;
  
-+/*
-+ * Try to read-lock a vma. The function is allowed to occasionally yield false
-+ * locked result to avoid performance overhead, in which case we fall back to
-+ * using mmap_lock. The function should never yield false unlocked result.
-+ * False locked result is possible if mm_lock_seq overflows or if vma gets
-+ * reused and attached to a different mm before we lock it.
-+ * Returns the vma on success, NULL on failure to lock and EAGAIN if vma got
-+ * detached.
-+ *
-+ * WARNING! The vma passed to this function cannot be used if the function
-+ * fails to lock it because in certain cases RCU lock is dropped and then
-+ * reacquired. Once RCU lock is dropped the vma can be concurently freed.
-+ */
-+static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
-+						    struct vm_area_struct *vma)
-+{
-+	int oldcnt;
+ 	/*
+ 	 * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
+@@ -206,10 +189,31 @@ static inline struct vm_area_struct *vma_start_read(struct mm_struct *mm,
+ 	 */
+ 	if (unlikely(vma->vm_lock_seq == raw_read_seqcount(&mm->mm_lock_seq))) {
+ 		vma_refcount_put(vma);
+-		return NULL;
++		vma = NULL;
++		goto err;
+ 	}
+ 
+ 	return vma;
++err:
++	rcu_read_unlock();
 +
-+	/*
-+	 * Check before locking. A race might cause false locked result.
-+	 * We can use READ_ONCE() for the mm_lock_seq here, and don't need
-+	 * ACQUIRE semantics, because this is just a lockless check whose result
-+	 * we don't rely on for anything - the mm_lock_seq read against which we
-+	 * need ordering is below.
-+	 */
-+	if (READ_ONCE(vma->vm_lock_seq) == READ_ONCE(mm->mm_lock_seq.sequence))
-+		return NULL;
-+
-+	/*
-+	 * If VMA_LOCK_OFFSET is set, __refcount_inc_not_zero_limited_acquire()
-+	 * will fail because VMA_REF_LIMIT is less than VMA_LOCK_OFFSET.
-+	 * Acquire fence is required here to avoid reordering against later
-+	 * vm_lock_seq check and checks inside lock_vma_under_rcu().
-+	 */
-+	if (unlikely(!__refcount_inc_not_zero_limited_acquire(&vma->vm_refcnt, &oldcnt,
-+							      VMA_REF_LIMIT))) {
-+		/* return EAGAIN if vma got detached from under us */
-+		return oldcnt ? NULL : ERR_PTR(-EAGAIN);
-+	}
-+
-+	rwsem_acquire_read(&vma->vmlock_dep_map, 0, 1, _RET_IP_);
-+
++	return vma;
++err_unstable:
 +	/*
 +	 * If vma got attached to another mm from under us, that mm is not
 +	 * stable and can be freed in the narrow window after vma->vm_refcnt
 +	 * is dropped and before rcuwait_wake_up(mm) is called. Grab it before
 +	 * releasing vma->vm_refcnt.
 +	 */
-+	if (unlikely(vma->vm_mm != mm)) {
-+		/* Use a copy of vm_mm in case vma is freed after we drop vm_refcnt */
-+		struct mm_struct *other_mm = vma->vm_mm;
++	other_mm = vma->vm_mm; /* use a copy as vma can be freed after we drop vm_refcnt */
 +
-+		/*
-+		 * __mmdrop() is a heavy operation and we don't need RCU
-+		 * protection here. Release RCU lock during these operations.
-+		 * We reinstate the RCU read lock as the caller expects it to
-+		 * be held when this function returns even on error.
-+		 */
-+		rcu_read_unlock();
-+		mmgrab(other_mm);
-+		vma_refcount_put(vma);
-+		mmdrop(other_mm);
-+		rcu_read_lock();
-+		return NULL;
-+	}
++	/* __mmdrop() is a heavy operation, do it after dropping RCU lock. */
++	rcu_read_unlock();
++	mmgrab(other_mm);
++	vma_refcount_put(vma);
++	mmdrop(other_mm);
 +
-+	/*
-+	 * Overflow of vm_lock_seq/mm_lock_seq might produce false locked result.
-+	 * False unlocked result is impossible because we modify and check
-+	 * vma->vm_lock_seq under vma->vm_refcnt protection and mm->mm_lock_seq
-+	 * modification invalidates all existing locks.
-+	 *
-+	 * We must use ACQUIRE semantics for the mm_lock_seq so that if we are
-+	 * racing with vma_end_write_all(), we only start reading from the VMA
-+	 * after it has been unlocked.
-+	 * This pairs with RELEASE semantics in vma_end_write_all().
-+	 */
-+	if (unlikely(vma->vm_lock_seq == raw_read_seqcount(&mm->mm_lock_seq))) {
-+		vma_refcount_put(vma);
-+		return NULL;
-+	}
-+
-+	return vma;
-+}
-+
++	return NULL;
+ }
+ 
  /*
-  * Lookup and lock a VMA under RCU protection. Returned VMA is guaranteed to be
-  * stable and not isolated. If the VMA is not found or is being modified the
-
-base-commit: 01da54f10fddf3b01c5a3b80f6b16bbad390c302
+@@ -223,11 +227,13 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	MA_STATE(mas, &mm->mm_mt, address, address);
+ 	struct vm_area_struct *vma;
+ 
+-	rcu_read_lock();
+ retry:
++	rcu_read_lock();
+ 	vma = mas_walk(&mas);
+-	if (!vma)
++	if (!vma) {
++		rcu_read_unlock();
+ 		goto inval;
++	}
+ 
+ 	vma = vma_start_read(mm, vma);
+ 	if (IS_ERR_OR_NULL(vma)) {
+@@ -241,6 +247,9 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 		/* Failed to lock the VMA */
+ 		goto inval;
+ 	}
++
++	rcu_read_unlock();
++
+ 	/*
+ 	 * At this point, we have a stable reference to a VMA: The VMA is
+ 	 * locked and we know it hasn't already been isolated.
+@@ -249,16 +258,14 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm_struct *mm,
+ 	 */
+ 
+ 	/* Check if the vma we locked is the right one. */
+-	if (unlikely(address < vma->vm_start || address >= vma->vm_end))
+-		goto inval_end_read;
++	if (unlikely(address < vma->vm_start || address >= vma->vm_end)) {
++		vma_end_read(vma);
++		goto inval;
++	}
+ 
+-	rcu_read_unlock();
+ 	return vma;
+ 
+-inval_end_read:
+-	vma_end_read(vma);
+ inval:
+-	rcu_read_unlock();
+ 	count_vm_vma_lock_event(VMA_LOCK_ABORT);
+ 	return NULL;
+ }
+@@ -313,6 +320,7 @@ struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
+ 		 */
+ 		if (PTR_ERR(vma) == -EAGAIN) {
+ 			/* reset to search from the last address */
++			rcu_read_lock();
+ 			vma_iter_set(vmi, from_addr);
+ 			goto retry;
+ 		}
+@@ -342,9 +350,9 @@ struct vm_area_struct *lock_next_vma(struct mm_struct *mm,
+ 	return vma;
+ 
+ fallback_unlock:
++	rcu_read_unlock();
+ 	vma_end_read(vma);
+ fallback:
+-	rcu_read_unlock();
+ 	vma = lock_next_vma_under_mmap_lock(mm, vmi, from_addr);
+ 	rcu_read_lock();
+ 	/* Reinitialize the iterator after re-entering rcu read section */
 -- 
 2.50.1.552.g942d659e1b-goog
 
