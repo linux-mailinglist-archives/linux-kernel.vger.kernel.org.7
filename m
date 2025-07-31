@@ -1,182 +1,407 @@
-Return-Path: <linux-kernel+bounces-752377-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B3A1B174C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:16:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F204B174C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:16:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B90D81C24BBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:16:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C3BE9A83856
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:15:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3623238C3F;
-	Thu, 31 Jul 2025 16:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7547523C514;
+	Thu, 31 Jul 2025 16:15:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QtxQWSDa"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fIX38R0R"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 480E917C224;
-	Thu, 31 Jul 2025 16:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A4D71BEF8C
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:15:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978548; cv=none; b=sQ0U5miiWrNPCN8v56Tlygd5IaUI8fGB/qB28SbXiFcsAu5093XaaCQ7VCCPJKpWf/aDyq6Licu7eliZR69i/pJYhwEVHeq3LpwLrAa9D5uXwGwC/hDf3PXoDIAmALy0K/QcHrvaGczU6O7Zq3AyWWijMS2seIaq9r+jSxEjHB0=
+	t=1753978549; cv=none; b=LZhqapuWk20a5QDAsJZfbEvLVeOs2xWbWmtE2EYVhLra5qtoiv258jXLiP0bzM3Y/3k8feNdVFece99JbK6nOMPv/17ecqY6KMqP7s+7O7BfkZenkDnPW+jQUa6LEbCTKqq3QC8gmiOumms3wr9SVxCq7qrpogPBuSc2eh2avPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978548; c=relaxed/simple;
-	bh=bwRgft/Pi/x7nBERkTEYw8jFv/Btln92ULhS/coUC5I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Wy7FMAnsVFbNCc0p9VsNbxRL3FPEBB7TQGcKkL6WVtKTmCZC35EEhkg04Lc8Fxi83psGjzfQwBJFVgBiUl/KumY72shhBFNoA7Ui4+Qx+t8yh53JABQtVMx+4Kkpk5mmopM/nXsJFETOsfF/4+LPOr/WsPU2/vwa2pvoND8cd8w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QtxQWSDa; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-3b783d851e6so1214054f8f.0;
-        Thu, 31 Jul 2025 09:15:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753978544; x=1754583344; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cNuGj941i188n74Ov7/xemI3tg0BtOVcDcI4//xk2Xs=;
-        b=QtxQWSDaF17MY3NuUHdPLCJrhGwae2jRgoDMBWo6EvSPKl7FuvVLPzHNTKvnGzT35L
-         6sykxlhEEQQ8ynUMFvgss+cebxoOwtc8Ac5y4u8ZhFIMlq+0Dmjutz4NMTDfh9BV/SrU
-         MzMTVkCwROK/ao0tA9jQLszFemwP4tDYY2BT7jFzeyUcSiKRjyMKtq+IR2iKYuQMQj+C
-         s7N0TbVK8q/1oLVrgfAFgB90xJIXXu5HJUZi/TDm5pEtYWlcLhVE78ug+fiQNO01M237
-         dbSbR+uNWq3O0aRwpwbFiNzM20kYFMXjaHgndmcxwxNpwjFUb9CskK8WXvhjtwa9AROo
-         yoxw==
+	s=arc-20240116; t=1753978549; c=relaxed/simple;
+	bh=NmK9mpCX/2zw5F1BJI2dwZwnnUGC/SRcSDSLx0fItOM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Ecj86Eomxr5SCE7fgz0jOI/bjKQgMstTLcImWaGegZBnfAkwwPnaYNd8uAU6ajVfKXOac9++8L5bN8niG13hp4zzy8oxWZC7Fpc+zj0+vgS0OcjVmUC7+jClYyNCqFrAjzl/QD905jjsPKzpOITmy75td/J05P9xXJnVaE05DGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fIX38R0R; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753978544;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=hCFMEvUPyBLrGC/oYDfyk4mKEAk9olU5xdsqV7nWMUs=;
+	b=fIX38R0RXB0uzE1/BY/mpKMkh3ktMVMTpaeA6fYZUISb7Lu6xtvCNuHE03wf0S3bjfA3Dk
+	Eqvhpk1Y7uLiwQpVxWBhRBhxd2/EcKqYfMr3n0BKA7oAro19YbGpYJYk0PzLcwTGueAQ7u
+	YGkfbsLLwVTvShyW/qQ+vN6ZFSMXu4o=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-219-bFPj-p3HNPWMycitiXadgg-1; Thu, 31 Jul 2025 12:15:40 -0400
+X-MC-Unique: bFPj-p3HNPWMycitiXadgg-1
+X-Mimecast-MFC-AGG-ID: bFPj-p3HNPWMycitiXadgg_1753978539
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b7851a096fso520397f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:15:39 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753978544; x=1754583344;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=cNuGj941i188n74Ov7/xemI3tg0BtOVcDcI4//xk2Xs=;
-        b=IHER6NVKOyl5BtkZHXiibf752a0luw196PTBo7x1godJp6RrKThIGvlNdM0YhuXAff
-         YjLD4Q40w7NzevodnEbZnoYJKHzZgX2jleIiK1V13F1z6Xg0Fr4t4VcaZEJLutU/Wzk3
-         IuKRfYMZmbjrSUzMMbg/vGVzCSSDp4gsJeZbwwc3EwGtaxPc4SSKus0Rf3JZUwJ375mz
-         dDDTm6JUaxEQm0rzWYIkt/GrLGdkeu+I0XV8Q5VlBIzLFI9HNqO0MPkDu2z5sNkMUH0X
-         /DeFmq0YaEpCi0zy9QPv8SAKWsHWqoGlCHoSPpxRzPHm2ffqhKtqGdyqrfq+gLAW6+VF
-         rIaw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/8LjeIg+pIUKsGCRdvHzX7rTHwxTGDRiG/bLXBZtWWspCfHXxMFBJSNT7U8yB/8nHYRzjtD2igS+5k038@vger.kernel.org, AJvYcCU9NsJdysZO6A6aZP2IoQL4DDBvi7dAOt8+yuksLSccssT3ImCwfmFg2lQm6jWaC5xW0Y6HEvls@vger.kernel.org, AJvYcCWIzzlNBf9K7zAtr+2WY3+D3DuDKPUUUwFvwF34l3n4BsUqxq8mMOITBPFFoC+qOgNMPfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz2Kmj/I/Sf0NR40KvkMq0PqN2uCAqU9/zIcZ8mSMjbl2bcDKiG
-	lJw3TN+eoNQA9FA2OJRXx0k8rMfkat6eVdTybGL0es4jfTIOCt9G9BydgMn47uFsJ/gSRjCWpOi
-	KxXBqRvDtPL0ItTNAkNKlzZ0uuwrTlq0=
-X-Gm-Gg: ASbGncsHcSKz70S7oJ00/rDA3sGv631QgAlGWuj/DX2MGV2wiOw8k9T11c92T5nnWqA
-	K4dcX8AaFI4Y+nZx2fkypjGOEnFbktB45p2UTr/b1hBIuhi5JfThyeFBmOyQv8Ix6E1Y5TZBwQt
-	8DiB4e6LaGqjxcsHiy9N0Z6RwrMKtQc+KP6pMLLJCqJW0Upr6nq8LHZaF/j7texOEahEXWWcaq3
-	cGIAdyu/x37nSnGgsQdAaQ=
-X-Google-Smtp-Source: AGHT+IH8gdCLh2rqCQDg7vR/GMyUKMJQzTDd+xZxIolJVnM0VwJH/SLLoNQAtJcDtj6AKFBMBGfwsru/gQZmmqcq2Rc=
-X-Received: by 2002:a05:6000:200b:b0:3b7:9617:c9d6 with SMTP id
- ffacd0b85a97d-3b79617ccdbmr4582282f8f.45.1753978544146; Thu, 31 Jul 2025
- 09:15:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753978539; x=1754583339;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hCFMEvUPyBLrGC/oYDfyk4mKEAk9olU5xdsqV7nWMUs=;
+        b=gAx9gHdHiC+IloH5Ck9zB7bLbCWL9umEFhzUGjFdjfFJDq6ExsZKX8lNXhYbtrnEKZ
+         RYFGVR0IlZF3NWrhsm1LbBJJ/wOorUH4umIWA77nDkazOk2xwL6xIOhdxUzwY/6cCRrM
+         kY0gwTUzt7ykCiDixlaveEPMwF2U+9F/JDFc5/XSZAn8Adq1d2FmiOAlRs+TUDt986Et
+         MPwj7FyITHifmPZAAeFyjK3kAqaiXReEt4v4q1nZlnSVk9/1GXcZZH+smbaOGw/56kQZ
+         N/bjUKT33YGpgWSxxiLDJ5lPz0SnJCB6gg3BHLWIUUVv0Ai30qiFslDl0+8aAOIdSrHT
+         UKwg==
+X-Forwarded-Encrypted: i=1; AJvYcCXz6qOHWhahS8JH4zk/ZItpSnGgLgL7lsjuZJ3xbNc/FNnVgsBoa5pfC9niqu0hJXdMaKjtz7ypxdfx3kU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxKx/9+gbksmiQYTGHaVpaFYwGuic1y8e82PtBlmY7QRUeFGp+V
+	cMSGAJJKM3NQrkTpgDvmefDl2jF3Uw921OKDX7KF9xazQDo2LkUzKsR5GkLzqW/LX4sskXT19V9
+	1Es6R25YKvA4bjhkg0MeJvbwRQEHGP6KBnS8fgnsw0g4vKnvv19fdlnIPKYHXX3AdjQ==
+X-Gm-Gg: ASbGncsWWPMI5PExY2rF1ntMbTUJvHT/Nuzp8inGZyVsFMpW2EGAczEOvfOsa+2DelF
+	83/ms77ZwQ8ciGFvvAa7jfwJVjedXLY5iKDYRSrlCD9yf4l+FYjoluWBIhMbV3nwm9ig4WiHcYF
+	V8ojmN4TnCoLCJ41PP4Q2OOJyzHAIfnpbPBSM/gYqsm5y/a5yhpQoeZPFdS1zly6y5VhinGPKNT
+	SYPZab7z8Odcptdtdt85f8668eTi2b2Hil3slWMx7QuSEnnzMCR6US1fRQstPNPJS7+bbusr4DQ
+	8BBu1hwx1orEeDYSTv3M4WwmgFr9DESuruepcHSjKrBWglO03wC/zR8p/ys3uK3hxd0PXxhLlNk
+	ewmlIbOCYIq9xMQ9htdcep2ZIWA8OfamAek0OBMElK6sPvNYOoSytLP/VQIfhfbkx0eo=
+X-Received: by 2002:a5d:5f90:0:b0:3a4:fbaf:749e with SMTP id ffacd0b85a97d-3b7950065fdmr6170027f8f.49.1753978538682;
+        Thu, 31 Jul 2025 09:15:38 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGytZULQmZ/hDajIkM/Htt7MthdICmHyxaaQPthRUhPkwjUZgExKSH13cnPbk4HyFbkpq+P8Q==
+X-Received: by 2002:a5d:5f90:0:b0:3a4:fbaf:749e with SMTP id ffacd0b85a97d-3b7950065fdmr6169988f8f.49.1753978538121;
+        Thu, 31 Jul 2025 09:15:38 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f44:3700:be07:9a67:67f7:24e6? (p200300d82f443700be079a6767f724e6.dip0.t-ipconnect.de. [2003:d8:2f44:3700:be07:9a67:67f7:24e6])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6f62sm2778077f8f.73.2025.07.31.09.15.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 09:15:37 -0700 (PDT)
+Message-ID: <09acd558-19b9-4964-823b-502b9044f954@redhat.com>
+Date: Thu, 31 Jul 2025 18:15:35 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
- <20250703121521.1874196-3-dongml2@chinatelecom.cn> <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
- <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev> <3bccb986-bea1-4df0-a4fe-1e668498d5d5@linux.dev>
- <CAADnVQ+Afov4E=9t=3M=zZmO9z4ZqT6imWD5xijDHshTf3J=RA@mail.gmail.com>
- <20250716182414.GI4105545@noisy.programming.kicks-ass.net>
- <CAADnVQ+5sEDKHdsJY5ZsfGDO_1SEhhQWHrt2SMBG5SYyQ+jt7w@mail.gmail.com> <CADxym3Za-zShEUyoVE7OoODKYXc1nghD63q2xv_wtHAyT2-Z-Q@mail.gmail.com>
-In-Reply-To: <CADxym3Za-zShEUyoVE7OoODKYXc1nghD63q2xv_wtHAyT2-Z-Q@mail.gmail.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 31 Jul 2025 09:15:32 -0700
-X-Gm-Features: Ac12FXyPiHGow21qP3zvHf88riIKA6sj8Kry8D13IKq3nkEMMNOVktmjiVoCzRk
-Message-ID: <CAADnVQ+XGYp=ORtA730u7WQKqSGGH6R4=9CtYOPP_uHuJrYAkQ@mail.gmail.com>
-Subject: Re: Inlining migrate_disable/enable. Was: [PATCH bpf-next v2 02/18]
- x86,bpf: add bpf_global_caller for global trampoline
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Menglong Dong <menglong.dong@linux.dev>, 
-	Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
-	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 2/5] mm/huge_memory: convert "tva_flags" to "enum
+ tva_type" for thp_vma_allowable_order*()
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Usama Arif <usamaarif642@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+ linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
+ shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
+ laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
+ npache@redhat.com, Liam.Howlett@oracle.com, ryan.roberts@arm.com,
+ vbabka@suse.cz, jannh@google.com, Arnd Bergmann <arnd@arndb.de>,
+ sj@kernel.org, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+ kernel-team@meta.com
+References: <20250731122825.2102184-1-usamaarif642@gmail.com>
+ <20250731122825.2102184-3-usamaarif642@gmail.com>
+ <c44cb864-3b36-4aa2-8040-60c97bfdc28e@lucifer.local>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <c44cb864-3b36-4aa2-8040-60c97bfdc28e@lucifer.local>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Jul 28, 2025 at 2:20=E2=80=AFAM Menglong Dong <menglong8.dong@gmail=
-.com> wrote:
->
-> On Thu, Jul 17, 2025 at 6:35=E2=80=AFAM Alexei Starovoitov
-> <alexei.starovoitov@gmail.com> wrote:
-> >
-> > On Wed, Jul 16, 2025 at 11:24=E2=80=AFAM Peter Zijlstra <peterz@infrade=
-ad.org> wrote:
-> > >
-> > > On Wed, Jul 16, 2025 at 09:56:11AM -0700, Alexei Starovoitov wrote:
-> > >
-> > > > Maybe Peter has better ideas ?
-> > >
-> > > Is it possible to express runqueues::nr_pinned as an alias?
-> > >
-> > > extern unsigned int __attribute__((alias("runqueues.nr_pinned"))) thi=
-s_nr_pinned;
-> > >
-> > > And use:
-> > >
-> > >         __this_cpu_inc(&this_nr_pinned);
-> > >
-> > >
-> > > This syntax doesn't actually seem to work; but can we construct
-> > > something like that?
-> >
-> > Yeah. Iant is right. It's a string and not a pointer dereference.
-> > It never worked.
-> >
-> > Few options:
-> >
-> > 1.
-> >  struct rq {
-> > +#ifdef CONFIG_SMP
-> > +       unsigned int            nr_pinned;
-> > +#endif
-> >         /* runqueue lock: */
-> >         raw_spinlock_t          __lock;
-> >
-> > @@ -1271,9 +1274,6 @@ struct rq {
-> >         struct cpuidle_state    *idle_state;
-> >  #endif
-> >
-> > -#ifdef CONFIG_SMP
-> > -       unsigned int            nr_pinned;
-> > -#endif
-> >
-> > but ugly...
-> >
-> > 2.
-> > static unsigned int nr_pinned_offset __ro_after_init __used;
-> > RUNTIME_CONST(nr_pinned_offset, nr_pinned_offset)
-> >
-> > overkill for what's needed
-> >
-> > 3.
-> > OFFSET(RQ_nr_pinned, rq, nr_pinned);
-> > then
-> > #include <generated/asm-offsets.h>
-> >
-> > imo the best.
->
-> I had a try. The struct rq is not visible to asm-offsets.c, so we
-> can't define it in arch/xx/kernel/asm-offsets.c. Do you mean
-> to define a similar rq-offsets.c in kernel/sched/ ? It will be more
-> complex than the way 2, and I think the second way 2 is
-> easier :/
+On 31.07.25 16:00, Lorenzo Stoakes wrote:
+> On Thu, Jul 31, 2025 at 01:27:19PM +0100, Usama Arif wrote:
+>> From: David Hildenbrand <david@redhat.com>
+>>
+>> Describing the context through a type is much clearer, and good enough
+>> for our case.
 
-2 maybe easier, but it's an overkill.
-I still think asm-offset is cleaner.
-arch/xx shouldn't be used, of course, since this nr_pinned should
-be generic for all archs.
-We can do something similar to drivers/memory/emif-asm-offsets.c
-and do that within kernel/sched/.
-rq-offsets.c as you said.
-It will generate rq-offsets.h in a build dir that can be #include-d.
+Just for the other patch, I'll let Usama take it from here, just a bunch 
+of comments.
 
-I thought about another alternative (as a derivative of 1):
-split nr_pinned from 'struct rq' into its own per-cpu variable,
-but I don't think that will work, since rq_has_pinned_tasks()
-doesn't always operate on this_rq().
-So the acceptable choices are realistically 1 and 3 and
-rq-offsets.c seems cleaner.
-Pls give it another try.
+> 
+> This is pretty bare bones. What context, what type? Under what
+> circumstances?
+> 
+> This also is missing detail on the key difference here - that actually it
+> turns out we _don't_ need these to be flags, rather we can have _distinct_
+> modes which are clearer.
+> 
+> I'd say something like:
+> 
+> 	when determining which THP orders are eligiible for a VMA mapping,
+> 	we have previously specified tva_flags, however it turns out it is
+> 	really not necessary to treat these as flags.
+> 
+> 	Rather, we distinguish between distinct modes.
+> 
+> 	The only case where we previously combined flags was with
+> 	TVA_ENFORCE_SYSFS, but we can avoid this by observing that this is
+> 	the default, except for MADV_COLLAPSE or an edge cases in
+> 	collapse_pte_mapped_thp() and hugepage_vma_revalidate(), and adding
+> 	a mode specifically for this case - TVA_FORCED_COLLAPSE.
+> 
+> 	... stuff about the different modes...
+> 
+>>
+>> We have:
+>> * smaps handling for showing "THPeligible"
+>> * Pagefault handling
+>> * khugepaged handling
+>> * Forced collapse handling: primarily MADV_COLLAPSE, but one other odd case
+> 
+> Can we actually state what this case is? I mean I guess a handwave in the
+> form of 'an edge case in collapse_pte_mapped_thp()' will do also.
+
+Yeah, something like that. I think we also call it when we previously 
+checked that there is a THP and that we might be allowed to collapse. 
+E.g., collapse_pte_mapped_thp() is also called from khugepaged code 
+where we already checked the allowed order.
+
+> 
+> Hmm actually we do weird stuff with this so maybe just handwave.
+> 
+> Like uprobes calls collapse_pte_mapped_thp()... :/ I'm not sure this 'If we
+> are here, we've succeeded in replacing all the native pages in the page
+> cache with a single hugepage.' comment is even correct.
+
+I think in all these cases we already have a THP and want to force that 
+collapse in the page table.
+
+[...]
+
+>>
+>> Really, we want to ignore sysfs only when we are forcing a collapse
+>> through MADV_COLLAPSE, otherwise we want to enforce.
+> 
+> I'd say 'ignoring this edge case, ...'
+> 
+> I think the clearest thing might be to literally list the before/after
+> like:
+> 
+> * TVA_SMAPS | TVA_ENFORCE_SYSFS -> TVA_SMAPS
+> * TVA_IN_PF | TVA_ENFORCE_SYSFS -> TVA_PAGEFAULT
+> * TVA_ENFORCE_SYSFS             -> TVA_KHUGEPAGED
+> * 0                             -> TVA_FORCED_COLLAPSE
+> 
+
+That makes sense.
+
+>>
+>> With this change, we immediately know if we are in the forced collapse
+>> case, which will be valuable next.
+>>
+>> Signed-off-by: David Hildenbrand <david@redhat.com>
+>> Acked-by: Usama Arif <usamaarif642@gmail.com>
+>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> 
+> Overall this is a great cleanup, some various nits however.
+> 
+>> ---
+>>   fs/proc/task_mmu.c      |  4 ++--
+>>   include/linux/huge_mm.h | 30 ++++++++++++++++++------------
+>>   mm/huge_memory.c        |  8 ++++----
+>>   mm/khugepaged.c         | 18 +++++++++---------
+>>   mm/memory.c             | 14 ++++++--------
+>>   5 files changed, 39 insertions(+), 35 deletions(-)
+>>
+>> diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
+>> index 3d6d8a9f13fc..d440df7b3d59 100644
+>> --- a/fs/proc/task_mmu.c
+>> +++ b/fs/proc/task_mmu.c
+>> @@ -1293,8 +1293,8 @@ static int show_smap(struct seq_file *m, void *v)
+>>   	__show_smap(m, &mss, false);
+>>
+>>   	seq_printf(m, "THPeligible:    %8u\n",
+>> -		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
+>> -			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
+>> +		   !!thp_vma_allowable_orders(vma, vma->vm_flags, TVA_SMAPS,
+>> +					      THP_ORDERS_ALL));
+> 
+> This !! is so gross, wonder if we could have a bool wrapper. But not a big
+> deal.
+> 
+> I also sort of _hate_ the smaps flag anyway, invoking this 'allowable
+> orders' thing just for smaps reporting with maybe some minor delta is just
+> odd.
+> 
+> Something like `bool vma_has_thp_allowed_orders(struct vm_area_struct
+> *vma);` would be nicer.
+> 
+> Anyway thoughts for another time... :)
+
+Yeah, that's not the only nasty bit here ... :)
+
+> 
+>>
+>>   	if (arch_pkeys_enabled())
+>>   		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
+>> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+>> index 71db243a002e..b0ff54eee81c 100644
+>> --- a/include/linux/huge_mm.h
+>> +++ b/include/linux/huge_mm.h
+>> @@ -94,12 +94,15 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
+>>   #define THP_ORDERS_ALL	\
+>>   	(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_SPECIAL | THP_ORDERS_ALL_FILE_DEFAULT)
+>>
+>> -#define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
+> 
+> Dumb question, but what does 'TVA' stand for? :P
+
+Whoever came up with that probably used the function name where this is 
+passed in
+
+thp_vma_allowable_orders()
+
+> 
+>> -#define TVA_IN_PF		(1 << 1)	/* Page fault handler */
+>> -#define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
+>> +enum tva_type {
+>> +	TVA_SMAPS,		/* Exposing "THPeligible:" in smaps. */
+> 
+> How I hate this flag (just an observation...)
+> 
+>> +	TVA_PAGEFAULT,		/* Serving a page fault. */
+>> +	TVA_KHUGEPAGED,		/* Khugepaged collapse. */
+> 
+> This is equivalent to the TVA_ENFORCE_SYSFS case before, sort of a default
+> I guess, but actually quite nice to add the context that it's sourced from
+> khugepaged - I assume this will always be the case when specified?
+> 
+>> +	TVA_FORCED_COLLAPSE,	/* Forced collapse (i.e., MADV_COLLAPSE). */
+> 
+> Would put 'e.g.' here, then that allows 'space' for the edge case...
+
+Makes sense.
+
+> 
+>> +};
+>>
+>> -#define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
+>> -	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
+>> +#define thp_vma_allowable_order(vma, vm_flags, type, order) \
+>> +	(!!thp_vma_allowable_orders(vma, vm_flags, type, BIT(order)))
+> 
+> Nit, but maybe worth keeping tva_ prefix - tva_type - here just so it's
+> clear what type it refers to.
+> 
+> But not end of the world.
+> 
+> Same comment goes for param names below etc.
+
+No strong opinion, but I prefer to drop the prefix when it can be 
+deduced from the type and we are inside of the very function that 
+essentially defines these types (tva prefix is implicit, no other type 
+applies).
+
+These should probably just be inline functions at some point with proper 
+types and doc (separate patch uin the future, of course).
+
+[...]
+
+>> +++ b/mm/khugepaged.c
+>> @@ -474,8 +474,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
+>>   {
+>>   	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
+>>   	    hugepage_pmd_enabled()) {
+>> -		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
+>> -					    PMD_ORDER))
+>> +		if (thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
+>>   			__khugepaged_enter(vma->vm_mm);
+>>   	}
+>>   }
+>> @@ -921,7 +920,8 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
+>>   				   struct collapse_control *cc)
+>>   {
+>>   	struct vm_area_struct *vma;
+>> -	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
+>> +	enum tva_type tva_type = cc->is_khugepaged ? TVA_KHUGEPAGED :
+>> +				 TVA_FORCED_COLLAPSE;
+> 
+> This is great, this is so much clearer.
+> 
+> A nit though, I mean I come back to my 'type' vs 'tva_type' nit above, this
+> is inconsistent, so we should choose one approach and stick with it.
+
+This is outside of the function, so I would prefer to keep it here, but 
+no stong opinion.
+
+> 
+>>
+>>   	if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
+>>   		return SCAN_ANY_PROCESS;
+>> @@ -932,7 +932,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
+>>
+>>   	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
+>>   		return SCAN_ADDRESS_RANGE;
+>> -	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
+>> +	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_type, PMD_ORDER))
+>>   		return SCAN_VMA_CHECK;
+>>   	/*
+>>   	 * Anon VMA expected, the address may be unmapped then
+>> @@ -1532,9 +1532,10 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
+>>   	 * in the page cache with a single hugepage. If a mm were to fault-in
+>>   	 * this memory (mapped by a suitably aligned VMA), we'd get the hugepage
+>>   	 * and map it by a PMD, regardless of sysfs THP settings. As such, let's
+>> -	 * analogously elide sysfs THP settings here.
+>> +	 * analogously elide sysfs THP settings here and pretend we are
+>> +	 * collapsing.
+> 
+> I think saying pretending here is potentially confusing, maybe worth saying
+> 'force collapse'?
+
+Makes sense.
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
