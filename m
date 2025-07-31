@@ -1,55 +1,85 @@
-Return-Path: <linux-kernel+bounces-751434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8A1F9B16998
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:19:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB49CB16999
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B5EB3B6982
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:18:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 236AA1AA2857
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 00:21:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5750D376;
-	Thu, 31 Jul 2025 00:19:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3448D182BC;
+	Thu, 31 Jul 2025 00:21:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qGSSxuxi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GCI25r4C"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B362110E5;
-	Thu, 31 Jul 2025 00:19:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFC283FD1;
+	Thu, 31 Jul 2025 00:20:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753921155; cv=none; b=jAMf4vQIuY4os6f4fvzwO1xwnIpI2Yk9XYQZOiwHscH5yl5c9n3QDcwuapBfMMOmZJpusXxqYlN5oiD10NhsunbkNPprEqhZPLl63MfcJ+0b1/hLaIQIXqsnP0RaQhnPFoNdgK2PcNO9/X1Jp1uHk1r+BzAQEhX9+INJKbm9nvw=
+	t=1753921259; cv=none; b=t984orUVvqjsQIxyl/KZTJ6wSZHxxyfLj19Y+oQHE7jE03ioianI9J2Tnsnl+hVIRoM4tKMSJhh3gdOxqqy3CJiKJNq9V8QaM1yIMB7Tau0EEN9RIbrigTLzd15kIWiC6bAfxg+rhQ5ncKkp0TE1K/Yov0hRvAZiFs2Ml3mxt6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753921155; c=relaxed/simple;
-	bh=gN8wjcfs91bNdmMm2grqpp8HwY8u5Tv+8PzPy21WnWw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I+H1yjlvznVs4VxUIW8MZuXeJQwEUNvyAGj7COn6/33ef7UitVQyCY/7xXmiFBHuLPEdQkmPxPLlrjImiMeC/2K0MI3jPqYQr418wS1DayhV3b4TGqoUhnUjJiJSXeqKEDdWrWaQOifGCb3akmNRXWRmX+yt4vLMaXyOyKhJyVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qGSSxuxi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 18779C4CEE3;
-	Thu, 31 Jul 2025 00:19:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753921155;
-	bh=gN8wjcfs91bNdmMm2grqpp8HwY8u5Tv+8PzPy21WnWw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qGSSxuxiCVtMT4VSFmwr+bMDudIXQ26ymcdf/iS8mD3oZKBrJq7ys41l5f3Gu8NUX
-	 WdJj0psuuTSmlgxj50tKDIY4Fzc+OsbMGLD9c7yDoBPV1yDuWLX+IVPfuK5Fvdj3N+
-	 xA9iOLLn9sP7oYjd53w710s2FpjsyrbXPwNBcMGvXssyxGrXDzQYCkJMzPDrxwYCD/
-	 zuOjTdty3G5vuZDCsPlkSigZYOEFGIBqcbKchYAxpJPdELZmeo7ncBFBXbWggVS2ao
-	 Z2Jqs1WwjTL2dJ1DcXBSyb0HoDP45l9wPcvKT4ieOQkIaQV6pEB5C5GfJuVxd9xoMr
-	 xd8PwSdioHFUA==
-Date: Wed, 30 Jul 2025 19:19:14 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: conor+dt@kernel.org, krzk+dt@kernel.org, devicetree@vger.kernel.org,
-	lee@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: mfd: qnap,ts433-mcu: add qnap,ts233-mcu
- compatible
-Message-ID: <175392115402.1943858.14811377799918112041.robh@kernel.org>
-References: <20250730173423.1878599-1-heiko@sntech.de>
- <20250730173423.1878599-2-heiko@sntech.de>
+	s=arc-20240116; t=1753921259; c=relaxed/simple;
+	bh=mnJe/ZqMCdBskoh+QfkdLeZztDqAB5F2Izapbnzhgi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cI9b30LZ8En+S2UwUwC7tmwWhpoufKjskZkxQWiTeFwLY+rlOT+QEM0S/gVCUX2Te8ehf70wHvcNon+kgxGs+SrI6ylWohBH4TrSnhoPS0P1p4wOI/KZoLVGzIqIM7tNqIakIOYL/iSFfmvDitSsMWInX63uYh1dooByJ5/ZEZI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GCI25r4C; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4563a57f947so6151565e9.1;
+        Wed, 30 Jul 2025 17:20:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753921256; x=1754526056; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=f15356qBvyOPIenpU7vIMNiQt+uU3YGMFE0MyhCHEtE=;
+        b=GCI25r4CdPgGCZI9a3w/KwwlJOWL5RLxOmJTzkSLk28HcgWZpdqJhLZZWj9aaxgui2
+         fjaxXZ82MUXA2jTQp0oFXR4fs9+6h5HTduz4wUktItqyfL9hE/2WzZUVKMo6fajGN18k
+         WMDTLgtdW+WpOwbSRKBe4wGdh1oLg/gEezLZj1oQYdTjzHgfP+pDpEKFy+cvdkGCM13v
+         taxKRhpUuCecu9hprf7841EBdBGLaxEfsJC3Mp/ZwzbIInOiH5LpJoxgJw6383m5xm3D
+         uWwkogrLWGiWQ/VaxqWdKlnEacqU/bp71PuWP9Q3LTUdwa7rVtmFEPJY50wXzm5iHVYk
+         Iizg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753921256; x=1754526056;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=f15356qBvyOPIenpU7vIMNiQt+uU3YGMFE0MyhCHEtE=;
+        b=fDTa7E5iQjnBJ9wy9K8MNrgCbITakQGbzgRg7KFDxIwgqs0s80Ij4Q0t1A6UWJADvl
+         IZyoPjMsoHpjOie5BdybBzYykW/BNeBbqDYNprFaU5+kglP+kLpehcnuTDEyPmehgvUk
+         gQusdO2Kd+zwePvCuVp3MEDd8XCmE0IUjX9tt7dnZMywNpVEH4m+hgbK6sLjpmYBSgSs
+         jStr4F5r9n6sEe48LO4l4EaNoV0EZUpl7aNjNaCtEiTDmbRwhq4NpeYtZKqWlP3gMLNO
+         sWzcLCHJoLW6xF5BNO3HjtCPf9hbki0H6WgXkC0Jhg4gT6m9xdh7IOkOW7x2zHT0+B2a
+         Qt4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVFIHP4tJwz4Ps1VH89lLvoScQ3SPnq0Xaz7wC3uoqu4sPkXq0s0NZcTB5WGOmU4dqXS6J8JnFBCyLZ3WdMEFA=@vger.kernel.org, AJvYcCWlnXvrezi/KzdcRy2H9xPc0Q8hf6SEhFci8fPi1N2pk8T1qwVEtK6dlUt/CWrTH/+N+ZVz/WTtUI42gecF@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCLct1JjZtqazTPcBawnUsUUaqymeq0RtzhH4r/HxFPKtxJtvO
+	lAcQnbm/SHHD4+FT4MYCyVrfXeXqvNQ/uhbO+o5l1hZ2h6e6IKup12G2
+X-Gm-Gg: ASbGncuZ52OvJU64/UD6XdwENAO6JfN9s9nCgdoyX/5JxpbKG3izL/hrv/BlOfXpt/m
+	A+kd8z+xxzODsaN+qw8PHL3+yHP5PJHKp7CNt05lPLcAkXi3ZwSPIitO9m4Aa1kC3ek+RuPd0XP
+	rXmvlzwxWR903RZGeVFDRTCzs8tMLOPO2nctUkMKm6ZYrdS4uQ/UGv9+v8Ogp2+x+p3C38RuydR
+	XVeg/V3I+60rCQeOED08w0SwDabzxnHTHxsUKwPnWMcmjEMxSTGzAXYE82e1J2e7tspZHAopadW
+	bS7+S+0kht97a+7+xv0lKw+gtCiHO1K97tQN8p9LiZu5lCQ+r0cd4BDI6H5JrVeb014rLW1cn3B
+	ADp5val0e4Nc=
+X-Google-Smtp-Source: AGHT+IHVoZ53kZhGknzAzxpKnlAaI0g5YTN2UZAHvLhB699x4MYuMrYDa8HuXYzfzxCCKTCwz8YpbA==
+X-Received: by 2002:a05:6000:310f:b0:3b7:8646:eeb3 with SMTP id ffacd0b85a97d-3b79d4ae197mr70778f8f.15.1753921255916;
+        Wed, 30 Jul 2025 17:20:55 -0700 (PDT)
+Received: from pc ([165.51.119.21])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453ca1sm514549f8f.48.2025.07.30.17.20.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 17:20:54 -0700 (PDT)
+Date: Thu, 31 Jul 2025 01:20:44 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH V2] Bluetooth: bfusb: Fix use-after-free and memory leak in
+ device lifecycle
+Message-ID: <aIq23OWDy87D5qNv@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,21 +88,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730173423.1878599-2-heiko@sntech.de>
 
+The driver stores a reference to the `usb_device` structure (`udev`)
+in its private data (`data->udev`), which can persist beyond the
+immediate context of the `bfusb_probe()` function.
 
-On Wed, 30 Jul 2025 19:34:22 +0200, Heiko Stuebner wrote:
-> The same MCU is used on other devices of the series with a slightly
-> different set of features, like the number of LEDs.
-> 
-> Add a compatible for the MCU used in the TS233 variant.
-> 
-> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
-> ---
->  Documentation/devicetree/bindings/mfd/qnap,ts433-mcu.yaml | 1 +
->  1 file changed, 1 insertion(+)
-> 
+Without proper reference count management, this can lead to two issues:
 
-Acked-by: Rob Herring (Arm) <robh@kernel.org>
+1. A `use-after-free` scenario if `udev` is accessed after its main
+   reference count drops to zero (e.g., if the device is disconnected
+   and the `data` structure is still active).
+2. A `memory leak` if `udev`'s reference count is not properly
+   decremented during driver disconnect, preventing the `usb_device`
+   object from being freed.
+
+To correctly manage the `udev` lifetime, explicitly increment its
+reference count with `usb_get_dev(udev)` when storing it in the
+driver's private data. Correspondingly, decrement the reference count
+with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
+
+This ensures `udev` remains valid while referenced by the driver's
+private data and is properly released when no longer needed.
+
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+Fixes: 9c724357f432d ("[Bluetooth] Code cleanup of the drivers source code")
+Cc: stable@vger.kernel.org
+---
+Changes in v2:
+     -Add tags Fixes and Cc
+
+ drivers/bluetooth/bfusb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 8df310983bf6..f966bd8361b0 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -622,7 +622,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->udev = udev;
++	data->udev = usb_get_dev(udev);
+ 	data->bulk_in_ep    = bulk_in_ep->desc.bEndpointAddress;
+ 	data->bulk_out_ep   = bulk_out_ep->desc.bEndpointAddress;
+ 	data->bulk_pkt_size = le16_to_cpu(bulk_out_ep->desc.wMaxPacketSize);
+@@ -701,6 +701,8 @@ static void bfusb_disconnect(struct usb_interface *intf)
+ 
+ 	usb_set_intfdata(intf, NULL);
+ 
++	usb_put_dev(data->udev);
++
+ 	bfusb_close(hdev);
+ 
+ 	hci_unregister_dev(hdev);
+-- 
+2.43.0
 
 
