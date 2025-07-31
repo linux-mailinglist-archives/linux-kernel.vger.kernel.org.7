@@ -1,122 +1,144 @@
-Return-Path: <linux-kernel+bounces-752533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53A9CB176CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:50:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8ED86B176CD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:52:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1C551AA2B6E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:50:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 17F3D3AB7DC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DF062500DE;
-	Thu, 31 Jul 2025 19:50:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0C3A251799;
+	Thu, 31 Jul 2025 19:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSmPU6wP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fMh8iAjJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82C4315533F;
-	Thu, 31 Jul 2025 19:50:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 525FE15533F;
+	Thu, 31 Jul 2025 19:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753991431; cv=none; b=eXgdgQv9L295Qo25AlT2Ri1y4d3uue2j0QC0wOGTphQzfFH097r0HH/dRDmbAf2dK+21fOY3nb8SpuD/OyyN6XYAfGY5NxQOb52hVri5PuTQZuOPM0bFEvggAe37xrNyLUT3egjf3H2VXgtnslmKhMI16rFB44SasrSzGGAwS4w=
+	t=1753991510; cv=none; b=MC6mOEZeJgjBw/d8qLPiR4FK6ffr+Bb6KgCmOAPjvrn7OzRjBB4gi5wYBCLPLiWSFOvZCC5//Am+2yPBAgUocxRAi2hLvSlbycXmvy+7HSGpfpYXMwa9shGDmIUUfbJXXYuzIW5+w9/4MnqeN32djeGWo2CF6FPT1tgh1VI+WuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753991431; c=relaxed/simple;
-	bh=wHHdwi555LSUCs8fy2BKukjUKmCeQeyBVIJjWXpMqpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mDIbVmbqdlXvelxP9QgDMt2v1waAEMuK0AiPijfqC3EVUunzHp2mB74DIjU5rkpTSEkHCN8yzXGv8fgWzNIEhd2MZ+4sNaQ1mBsdGxrNHGqMtKEJ6tadoktwYpD4+tRwpBdTCyzo6/5g18JuWnCCgGBkWRKcLh+pT5IdwGF0VRs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSmPU6wP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A325C4CEEF;
-	Thu, 31 Jul 2025 19:50:28 +0000 (UTC)
+	s=arc-20240116; t=1753991510; c=relaxed/simple;
+	bh=1qfpjMOR5vF3iZR9DfglRY8NdvKOMGgslvAE/13smbI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=FGOux3QHcW9ysNc/rKn2l2F9c1Pfjq+OZA5s4x6mM5K+pNO3MKKZYO8TijTkHpSRafJaSs9oyKfwDlzxz/uLCaiZszoDZTuJUbsAj5pEHOjkOPnDMtI8iFiQGBVDKAMCJedoPMq716jg5pk44GdVSN3P9vIRIFglh5EqPs6w2jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fMh8iAjJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 87110C4CEEF;
+	Thu, 31 Jul 2025 19:51:49 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753991431;
-	bh=wHHdwi555LSUCs8fy2BKukjUKmCeQeyBVIJjWXpMqpQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eSmPU6wPzGmDNBOjo1p0nZdSMhwexlQKEIUzglJM5VAuWSHFPxf05HE6wUtOOD/Lp
-	 sf+vWnufWeYLi1rN/wUXx2GK4jRLWcmmHcxPv1SevBWuEppLemd0fDLh+7gAXN1vuS
-	 kKxvZ0R7gzQKXhDrSvrHmTeXoekV9BcKIUOjGO9P3jS3RtqbvSvdpkhGJNcBCgqJN5
-	 JGqCVMYhKPrRDzEo/vf5LrP4XF4kurpURDAcwldh6GzIvRyPgVLZ0EtEPNrEPoXnfF
-	 z3HSgfcSk876IiSle/2Ca++ShrG60EfMJo60+2KKt7/idWAVJfTXIxCKQkQap2Ihg/
-	 fk7hSCCMJmiNA==
-Date: Thu, 31 Jul 2025 20:50:25 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
-Message-ID: <db1d1256-8911-4db1-98e2-4f5808cbd712@sirena.org.uk>
-References: <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
- <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
- <68c210a2-49b2-4fd2-97ad-27af85369d9f@sirena.org.uk>
- <aItk4vWPnFk6lYjn@shell.armlinux.org.uk>
- <4f80be02-0bbe-4c10-a3d2-324916ea2ca4@sirena.org.uk>
- <aIuSdnV8sWnUqLOq@shell.armlinux.org.uk>
- <14c68c29-68d8-4119-8f70-616c07397dc4@sirena.org.uk>
- <aIuZt3asLeiYncH1@shell.armlinux.org.uk>
- <b91dd3c5-c24e-43d1-8d06-8ec4d01f2762@sirena.org.uk>
- <aIvCE4x24RigKBKF@shell.armlinux.org.uk>
+	s=k20201202; t=1753991510;
+	bh=1qfpjMOR5vF3iZR9DfglRY8NdvKOMGgslvAE/13smbI=;
+	h=From:To:Cc:Subject:Date:From;
+	b=fMh8iAjJIY9hpRrLsQi9rcA2U5YxO6+Q3GXsKqXbR5eZ8epkFgScT7KlWdhF5gUNl
+	 wd5tO3+hyOa/b6L3280JZsr0crgiuSUoaDCBYUYCz+zfmUyx8Zvd2LvhUndIIIdvMG
+	 cWSD6zmJetD82vubKyF3wLBVowt2gIDpumaacSZQxUg8ZtndGUVBr7aweB1zf/+NuR
+	 N8RgffbURpsVWynN5YksLekyDkprDgdFXRbd1IcvxvpYfV70IIz3+S0Ex+vp24FP0G
+	 2UYBvXh0JtI0drr4/NHyg8gVDgwgd5EGHm7Pwtit88TnC0Xz2hG1TQTTfj00F62ptK
+	 u6MX2Zmw1DJ+g==
+From: Eric Biggers <ebiggers@kernel.org>
+To: Matthieu Baerts <matttbe@kernel.org>,
+	Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	netdev@vger.kernel.org,
+	mptcp@lists.linux.dev
+Cc: linux-crypto@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Paolo Abeni <pabeni@redhat.com>,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH net] mptcp: use HMAC-SHA256 library instead of open-coded HMAC
+Date: Thu, 31 Jul 2025 12:50:54 -0700
+Message-ID: <20250731195054.84119-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="clFkggijA/AbTF/J"
-Content-Disposition: inline
-In-Reply-To: <aIvCE4x24RigKBKF@shell.armlinux.org.uk>
-X-Cookie: Gloffing is a state of mine.
+Content-Transfer-Encoding: 8bit
 
+Now that there are easy-to-use HMAC-SHA256 library functions, use these
+in net/mptcp/crypto.c instead of open-coding the HMAC algorithm.
 
---clFkggijA/AbTF/J
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Remove the WARN_ON_ONCE() for messages longer than SHA256_DIGEST_SIZE.
+The new implementation handles all message lengths correctly.
 
-On Thu, Jul 31, 2025 at 08:20:51PM +0100, Russell King (Oracle) wrote:
-> On Thu, Jul 31, 2025 at 06:03:43PM +0100, Mark Brown wrote:
+The mptcp-crypto KUnit test still passes after this change.
 
-> > I'm pretty sure it's extremely rare, and I'll have to construct a
-> > virtual setup to actually test.  After poking at it some more I think
-> > we're actually going to need an explicit lock_class_key for each
-> > regmap-irq rather than relying on the default lockdep one.  I'll try to
+Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+---
+ net/mptcp/crypto.c | 35 ++---------------------------------
+ 1 file changed, 2 insertions(+), 33 deletions(-)
 
-> I hope we don't have too many regmap-irq's in a system - see the
-> section on "Troubleshooting" in the lockdep documentation. There's
-> a limit on the numbe of classes over the entire kernel.
+diff --git a/net/mptcp/crypto.c b/net/mptcp/crypto.c
+index b08ba959ac4fd..31948e18d97da 100644
+--- a/net/mptcp/crypto.c
++++ b/net/mptcp/crypto.c
+@@ -20,11 +20,10 @@
+  *       Brandon Heller <brandonh@stanford.edu>
+  */
+ 
+ #include <linux/kernel.h>
+ #include <crypto/sha2.h>
+-#include <linux/unaligned.h>
+ 
+ #include "protocol.h"
+ 
+ #define SHA256_DIGEST_WORDS (SHA256_DIGEST_SIZE / 4)
+ 
+@@ -41,43 +40,13 @@ void mptcp_crypto_key_sha(u64 key, u32 *token, u64 *idsn)
+ 		*idsn = be64_to_cpu(*((__be64 *)&mptcp_hashed_key[6]));
+ }
+ 
+ void mptcp_crypto_hmac_sha(u64 key1, u64 key2, u8 *msg, int len, void *hmac)
+ {
+-	u8 input[SHA256_BLOCK_SIZE + SHA256_DIGEST_SIZE];
+-	u8 key1be[8];
+-	u8 key2be[8];
+-	int i;
++	__be64 key[2] = { cpu_to_be64(key1), cpu_to_be64(key2) };
+ 
+-	if (WARN_ON_ONCE(len > SHA256_DIGEST_SIZE))
+-		len = SHA256_DIGEST_SIZE;
+-
+-	put_unaligned_be64(key1, key1be);
+-	put_unaligned_be64(key2, key2be);
+-
+-	/* Generate key xored with ipad */
+-	memset(input, 0x36, SHA256_BLOCK_SIZE);
+-	for (i = 0; i < 8; i++)
+-		input[i] ^= key1be[i];
+-	for (i = 0; i < 8; i++)
+-		input[i + 8] ^= key2be[i];
+-
+-	memcpy(&input[SHA256_BLOCK_SIZE], msg, len);
+-
+-	/* emit sha256(K1 || msg) on the second input block, so we can
+-	 * reuse 'input' for the last hashing
+-	 */
+-	sha256(input, SHA256_BLOCK_SIZE + len, &input[SHA256_BLOCK_SIZE]);
+-
+-	/* Prepare second part of hmac */
+-	memset(input, 0x5C, SHA256_BLOCK_SIZE);
+-	for (i = 0; i < 8; i++)
+-		input[i] ^= key1be[i];
+-	for (i = 0; i < 8; i++)
+-		input[i + 8] ^= key2be[i];
+-
+-	sha256(input, SHA256_BLOCK_SIZE + SHA256_DIGEST_SIZE, hmac);
++	hmac_sha256_usingrawkey((const u8 *)key, sizeof(key), msg, len, hmac);
+ }
+ 
+ #if IS_MODULE(CONFIG_MPTCP_KUNIT_TEST)
+ EXPORT_SYMBOL_GPL(mptcp_crypto_hmac_sha);
+ #endif
 
-Yeah, we shouldn't I'd hope but obviously there could be some use case
-I'm not aware of that results in huge numbers in normal operation.
+base-commit: d6084bb815c453de27af8071a23163a711586a6c
+-- 
+2.50.1
 
-> As I understand from the documentation, lock classes are create-only,
-> there's no way of "freeing" them later, so we better not get into a
-> situation where the number of classes steadily increase while the
-> system is running!
-
-There is a free function, and it does actually seem to do something
-useful these days - looking at the code and changelog the documentation
-is bitrotted there, dynamic keys were added in 2019.
-
---clFkggijA/AbTF/J
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiLyQEACgkQJNaLcl1U
-h9DYJgf9HyXxQp/PKFSpIu/kHjHTHH7AUt1l/TRWCW2xttVFyKwHKfDzYKgUg6wf
-mTWK0yWAxgu+9dMPsd53kznxbv4FoCvAfkvM4tWCiDbLgAT2b1QxqvQ7Q7IpQED4
-Xhp9SdZpCCjbqNvPkUyXV09IJDmAwEYzANhqUYyUkGtszJUt4HaMoZ3ida2rFE3M
-XCrQNMC3yHVeoPqCKD39ifKmqpaAUA8p31XEq7gtJhpvlr+P1OkuGVyBlb+/u7WN
-LmVcYfPYzOp7tzdA6B4FAFQz1kjKFsidbeEEoQkoaDG+hcSPSgrYa7n4bfY2ZB16
-l0y8yPibF3Lyo1dLOrxSQ+ZMas47BQ==
-=rx6w
------END PGP SIGNATURE-----
-
---clFkggijA/AbTF/J--
 
