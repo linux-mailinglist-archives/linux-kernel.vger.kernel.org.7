@@ -1,282 +1,358 @@
-Return-Path: <linux-kernel+bounces-751909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74EA1B16F25
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:04:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0B041B16F23
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:04:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B80591C20084
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:05:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3F223B666F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71C1B2BD019;
-	Thu, 31 Jul 2025 10:04:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A8429DB80;
+	Thu, 31 Jul 2025 10:04:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZSNLBaVv"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="OOySnTN+"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2063.outbound.protection.outlook.com [40.107.100.63])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9C6F224B1E
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 10:04:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753956277; cv=none; b=NvaHe6B6iqlcJF0Jm3Kl7nLB+NxbX1hL1OnsLXUdOIIiBrU/kA5pkGMZGN6PEGR/fU/6xzKI8hs7SQ1I+F6J6dO6KutLq9972EWYxTx9BtegKigUiP/lVpUQph6qZYVX5CPSh6SldKjU/tIzPk63bcnqUmLBWzoREv35dsYALeA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753956277; c=relaxed/simple;
-	bh=6+ao0BB2eP9Lbd+emGj1G640tLXJbZdN7LjBCYC17sI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KrhCKvvhXKX9WJ5Z6V5wny10RODMh1VgpGft6z6tep5Yhl2X9OAmMJBip99iCCDZsLJTs/bLWlA5bPSTiDXAk4x7iDasCzogmWqK3+0smsIP47o44oVBXl2+W9XMfaZ1+8bTtF9hFE4qNhRi8O8xTy66f3ofQ5GlCxFFfDV5ZME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZSNLBaVv; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753956276; x=1785492276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=6+ao0BB2eP9Lbd+emGj1G640tLXJbZdN7LjBCYC17sI=;
-  b=ZSNLBaVvmzsmmPg3xa5V4zxmTIoT6epzT+Ns8Ntsgc/YQHOYcvoylXm6
-   yp4rz9GDeNTMi+T+ojow98448KkYDVKNMe12qQvz0MvI+kF4i2+z+2GEb
-   VPAB7VRPK/PU4LKx1wVN47D09yi3YDRK2O+xt6XwgcqCV6SJa7qkF34bN
-   LutcQRex5+R8ulYDIaMS0v/d+b/S6xxdp7EOWfNWRKCsVm1hURbacm7AR
-   iDGlgt1H3H8GXHJdqKLFKOc8XueridV1IcBPVTLJJDj0CBrCKSAp08DDj
-   3lycIPUuC/DqwMZEg3dxgmZeYCtex3uXiZkElTZVr8dVAYrZa9FxatTJz
-   A==;
-X-CSE-ConnectionGUID: zz5OylNUSaGpefuopnjmzg==
-X-CSE-MsgGUID: hL0kw/KFQE263lZP+dILuA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="60098345"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="60098345"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 03:04:35 -0700
-X-CSE-ConnectionGUID: /YULmVUrS1OPxbNT2GS1mg==
-X-CSE-MsgGUID: b+5Hrj5WR82NXclqcajgyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="167398722"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 31 Jul 2025 03:04:29 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhQ9D-0003ds-23;
-	Thu, 31 Jul 2025 10:04:27 +0000
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08BF82745E;
+	Thu, 31 Jul 2025 10:04:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.63
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753956261; cv=fail; b=epj/M1ZwmSnvOzZ0oAU5ht3gWA/XClBwjiLpHHB4OjiyHAL9TbsE9obp72NyuZVJsiCXSLcNnY9/52s2elVRE5MBHAIeqk2h0JrSI1ITKQugRsFLpFPLzULnamywp5JYC20bUSY488h8zvOYvWKOT6lG+2rRxWCx0jmeLrdGXB4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753956261; c=relaxed/simple;
+	bh=wVeo+yyajxr81Feknr0SI2S8cvNjKvA3JMfiKuH4efM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=o09DRm3MqywuO4D7aj62q1JIbGyc0LXxoQWyTpe0sGInhBKHEMvpQg2EsbzBi9HjAEu2+SsJm4xd7MUWiGpUWl3lHUSqwGMT6xbGZFczfJ7WxJTbx/T4S85YOC7YjRNBxXfc5osMCTRYY2Vof3DwMn2jrt6n3OnOYEr+IR2FGEM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=OOySnTN+; arc=fail smtp.client-ip=40.107.100.63
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ZIc4TwA78X6cwIbEkvjOedVcvmDcMb5dwTA487nSO7Py2bXHvv9Q3IkIp/GQIQhbiZmPZIY/yk13I7w8CjvBel5Ibw1ycx5LIL+1Qf8TMkgwzBfqr9iT7UJatZLiN25ljrvr5G3QdWMy5Lppn/DAHk1jdZgbEmK1IumUstyqJ60ZRCnq8/SXuoknRYFGJ5ApvOXj6W5F4NBoeaIjv0qUxGrM39Ppyd1sFvnviRPWMSZfwYDfaI3Q1nYDizucRqxD5wsJcxmckEXcIqnv/UVpkD24mvKM7Sv27J91OFTERT+zONJ0/txh72WvvkYnWqrtZUbZnK1nx1zf8scnqj5JlA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=9Q0rre0KypxgJ+YcZ6m5V/iQssOH0es6Y4E0pnx8Lu8=;
+ b=Lc8xisF/ZQYNZ29TKp+bJBcPd6sVgs/CQln0qiz6qRjsu2bqMCc1f66uzE5FlAbTAWHywWULCSFwETWs15d8R3H1twEw8edxQpHESMvtZV/5xF6j/fDyM1YsB7Vypl+tkvSncALESI3RnRDEYf3RckiVAihUKK+/aHVX1T813of1Hw6PIZIeFu519FBQ2ihzxstvBrBPvI+1ZOHq7k/b0bqB3bP2mBXkeJ6QmQvD9aco19OAPRhEmFUMV6Uggj/gE90ACM0RD3gMFHjmGuiEWqZkzXWcHYWCQLgoJB5BYSQu9fYGXCl+RFCcxgncbQbpPFr3PTaR7I2iQMwnHiwA8Q==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=9Q0rre0KypxgJ+YcZ6m5V/iQssOH0es6Y4E0pnx8Lu8=;
+ b=OOySnTN+OgdGEjDK0mnz532Oc7P59F07VY/ljWPF1SuruYevxYLzvXJWBgniQR5OZPb7I0xN5d2l2f3ZUrQAhhmH4DsLdINjIcmAben6pUGTNSPitsBkrhRZSRGB8v4LSSWF6NuqLZ5FI/CnPZciiBq7Zlhw80cOxnQXkBsXYzw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com (2603:10b6:510:216::13)
+ by PH7PR12MB5830.namprd12.prod.outlook.com (2603:10b6:510:1d5::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Thu, 31 Jul
+ 2025 10:04:15 +0000
+Received: from PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7]) by PH8PR12MB7446.namprd12.prod.outlook.com
+ ([fe80::e5c1:4cae:6e69:52d7%3]) with mapi id 15.20.8964.026; Thu, 31 Jul 2025
+ 10:04:15 +0000
+Message-ID: <1a9a4beb-97ab-4853-8201-bf08f1a030ab@amd.com>
 Date: Thu, 31 Jul 2025 18:04:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Balbir Singh <balbirs@nvidia.com>, linux-mm@kvack.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	linux-kernel@vger.kernel.org, Balbir Singh <balbirs@nvidia.com>,
-	Karol Herbst <kherbst@redhat.com>, Lyude Paul <lyude@redhat.com>,
-	Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	=?iso-8859-1?B?Suly9G1l?= Glisse <jglisse@redhat.com>,
-	Shuah Khan <skhan@linuxfoundation.org>,
-	David Hildenbrand <david@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	Baolin Wang <baolin.wang@linux.alibaba.com>,
-	Ryan Roberts <ryan.roberts@arm.com>,
-	Matthew Wilcox <willy@infradead.org>, Peter Xu <peterx@redhat.com>,
-	Zi Yan <ziy@nvidia.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
-	Jane Chu <jane.chu@oracle.com>,
-	Alistair Popple <apopple@nvidia.com>,
-	Donet Tom <donettom@linux.ibm.com>,
-	Ralph Campbell <rcampbell@nvidia.com>,
-	Mika =?iso-8859-1?Q?Penttil=E4?= <mpenttil@redhat.com>,
-	Matthew Brost <matthew.brost@intel.com>,
-	Francois Dugast <francois.dugast@intel.com>
-Subject: Re: [v2 07/11] mm/thp: add split during migration support
-Message-ID: <202507311724.mavZerV1-lkp@intel.com>
-References: <20250730092139.3890844-8-balbirs@nvidia.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/8] Add AMD ISP4 driver
+To: Sultan Alsawaf <sultan@kerneltoast.com>
+Cc: mchehab@kernel.org, hverkuil@xs4all.nl,
+ laurent.pinchart+renesas@ideasonboard.com, bryan.odonoghue@linaro.org,
+ sakari.ailus@linux.intel.com, prabhakar.mahadev-lad.rj@bp.renesas.com,
+ linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ pratap.nirujogi@amd.com, benjamin.chan@amd.com, king.li@amd.com,
+ gjorgji.rosikopulos@amd.com, Phil.Jawich@amd.com, Dominic.Antony@amd.com,
+ bin.du@amd.com
+References: <20250618091959.68293-1-Bin.Du@amd.com>
+ <aIEmJXNpNN0QF233@sultan-box> <12fb4d09-6b94-4f54-86b8-8a3ac0949151@amd.com>
+ <aIVXVpg_9XxRXUAH@sultan-box> <b02d0749-6ecb-4e69-818a-6268f894464d@amd.com>
+ <aIh7WB0TGNU15Zm1@sultan-box> <aIh8JPTv9Z5lphRQ@sultan-box>
+ <751e9265-889f-4fbf-acf8-7374311a6b6f@amd.com> <aImvvC9JEgQ2xBki@sultan-box>
+ <a3272335-1813-4706-813e-a79a9cabc659@amd.com> <aIq5EyQ_uuO63dJb@sultan-box>
+Content-Language: en-US
+From: "Du, Bin" <bin.du@amd.com>
+In-Reply-To: <aIq5EyQ_uuO63dJb@sultan-box>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SI1PR02CA0056.apcprd02.prod.outlook.com
+ (2603:1096:4:1f5::7) To PH8PR12MB7446.namprd12.prod.outlook.com
+ (2603:10b6:510:216::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250730092139.3890844-8-balbirs@nvidia.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PH8PR12MB7446:EE_|PH7PR12MB5830:EE_
+X-MS-Office365-Filtering-Correlation-Id: 72a37571-99f3-4deb-2e04-08ddd0199b1f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?RXRkZk5DR0t2ci9GRE1HRkM1bTlBYUE4Skx2TU8xbFJSeGRnR1cvZDMwVTJ2?=
+ =?utf-8?B?VllGUXAydGUzNGQ4TlJ6d0NiZDM1cVNKUWEwVkhrUnNFZGhQVkl6clVoTXhU?=
+ =?utf-8?B?bWJUVGVYTHpSdko2R2Q3K3FjeUlmQ3BTSVNRTVlMQXBwVmZmNitDaGs0SnZp?=
+ =?utf-8?B?SEpIc1ZkZkhmTGdhRU9TaDN2bU95NEVCNlJZOGFaUi9xWUtXTUVBSDVGMFJV?=
+ =?utf-8?B?ZDV1and3OWRSVmgxWmN3OEZjU2VLditJUWNObmlZOTgyWS8zeTAxRlBzQitV?=
+ =?utf-8?B?dThxTVIwTXhBZ3JXR1dSZkJIenBUajFBMElyQnh3N2tNcTMzV1VVcVl2RnlC?=
+ =?utf-8?B?TEt2aU10RVJoWk5QNWEyRFR6aE41SEtEcFphWTJmaXBOeUh6a2lLNjVjMWtG?=
+ =?utf-8?B?SUZjQ1ArdXJRU05Wc3VPZW5WdEJGUTJrcHJsY1ZXWnpWS0ErZkREaitjVS9O?=
+ =?utf-8?B?dDlJNHVYa25Oazc4SUgzdmJuRml0bU1MNVBIWWNrVUltWGVFcVVweTFJQ2JB?=
+ =?utf-8?B?V3VlSkVGb0RKZy8ranVZcjdFUVYvNkVScHlETkdGaVN3RldvZm5qbGpZVHZX?=
+ =?utf-8?B?SXlNcGIvSXM3a08xblFFV3dDbUhvUjUyOVdOVGVLaUJxYTlTcFRGUTF1TEE1?=
+ =?utf-8?B?b0l4NGcwZS9oQjdpWnNibEMrbWF5UHpyemVvTG1VbFNIWU9kNFMwR1Y5UEox?=
+ =?utf-8?B?cGV5Qlc2aHZuWWszeHZTeVUzYytHdEJJR1Y1UEtFOUhzMnQwTGVaLzBKUlhj?=
+ =?utf-8?B?TmtlVkZJcStkWWlyd29uaUtqZm1CZDBPUC9mWjkrYVV5WmdXaTFIaUNLUy9V?=
+ =?utf-8?B?YXBod3BTaTlYQzF1ZHBQSk9QS3dNUXdCaVFRNHJ4RWNBVEozbGNQbHpPdHpq?=
+ =?utf-8?B?V3lTeWxEZS9oWHdqdStOTjZLVUNHenZXVDhMMkhvQUNBaDl2ektVVU1CR2wy?=
+ =?utf-8?B?eElQRFNOdXBBejBEemVEaDFhZTBPa3Rqb1puWnBMU0pta1gwNmI0Mk9Vdnc2?=
+ =?utf-8?B?VFBmNGlteFU4bHRLR2ZsalZtYVVJQzllVmhwS0QvQStsdTFaVjlpNUZVcDhS?=
+ =?utf-8?B?Y1ZIeGF0c0xtRVBWOHRlS0dCWlFBdllLaWZtbllqczdFcVJyM1hreE5nOU14?=
+ =?utf-8?B?cU0zVUh2aDlHZXZBUlpOb1NzT1Y3bFBMNUQ5aVhqUWhxZTFncUd4Z3V1cWRD?=
+ =?utf-8?B?NldSZTgvOEtTc3dCeDlrMTBnYlZrZzk4aktzK0NDTlZ6MkFNQlJPY3pxdEdk?=
+ =?utf-8?B?NUQ5TXdUZ290VDl0Ri9iQTB6OE1IQysyQlZENGhUVWtvRXU1aGwvTk9sYUhD?=
+ =?utf-8?B?QmZ5RWlEU2QxR1IvU0R6cC9Wc21DcFp1SS9YU2pLWjZoNHkrWGNkdFcyVGl0?=
+ =?utf-8?B?clFyK3grRUY0S0NZV1gvbnUyZW5sMEc3dEpUQU9hZXo3dWRTd3VpSXA4RUwx?=
+ =?utf-8?B?MkgyM2krVnpKQzJPeDRKYm1uNjhsM1dpOEdpb2lGS2pNZUNmR3BtVEV2YmhB?=
+ =?utf-8?B?RzJuSVQ0cFJZc24yL3EvVUtYS3NyZjRkSTcwRVdEZEhRYmlDZVlOMkF2RzM0?=
+ =?utf-8?B?VTFaTGFPMWlaTFhSeGZQa0dhM2N3NDBYRXF3aE5EeE9WSndaYlp1aWN6M29N?=
+ =?utf-8?B?S2hEVnJEYXNWdjJ4RkFOVzlJeFhLUUtwb3puaGtWblZOKzByQkt1Ym1COXQz?=
+ =?utf-8?B?NThNZWxySnR6U3FTTmlZV2I3ZWNOeU8vcytVRVRybC8zQzhSK081dlR5c1Zw?=
+ =?utf-8?B?TGJHSVRabC82bUs4Nk1ERkFNRk5FWEhCNmFnd0FCN3RTYTVtcWxsU1VUQ2hJ?=
+ =?utf-8?B?NDJSaEpDcVZaK01iVVJiSGpQMHR3S3FjcExFT3pCVHlkWm5hYjBrMHJNWjhQ?=
+ =?utf-8?B?Z2RUbnlkYkovYWd5RGVmM3NhYnZHVTRGUHczbk1lc0JBRndhYkhYQXhkSmU5?=
+ =?utf-8?Q?DpOLJJG9mEE=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR12MB7446.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?T0I4b0VSTFV6WVJuS3NqYjVCOEJVWW1CUm11NFd3Z0VpM3k3VUIvb1IxRitP?=
+ =?utf-8?B?V2h2Y21vYUY5NDh1dklNVEZEMEplZTdaVGFJZC9mMzFVRDdYQTNOMXo2czd0?=
+ =?utf-8?B?NDNGTzkrZDNmK3JUZTJHTzdsY2RJWkVKSUFpOUpNaldSUjV6TFhIcVhPTC95?=
+ =?utf-8?B?NW1FVDNWV3p5SXo4NEpySVRnMXR2THYwTWVubE1tNVZ5ZG1XZTBpQjJheTl6?=
+ =?utf-8?B?MDRaVWl1bSsvSlEydm0zYjVvcjRFVUNWYVErVUNwZkMyUVk1eThEenQwZnBD?=
+ =?utf-8?B?OXNzbzN4NEpHRmlUci9UY2Ftb0NQblFSTkNDK0gxd255Vmh3Z1lXMUtNNW8x?=
+ =?utf-8?B?WWVqQnp6a0ZSeHk1M2tNaHZOdFVLckM2NHVpRm9RdnFMTEpMN083clk0VExJ?=
+ =?utf-8?B?Z1hjRkp2QzNJc29HSFU2WVVFdlBhWjRhS3ZFYXRNd0pybmRpc0ttRlhHUkVJ?=
+ =?utf-8?B?YmRzcUtpanNCRGxyZmxKbUd1NjVQQUlTdmd3a3pheVZXdzgremczRTFIa2NS?=
+ =?utf-8?B?L01jS1Y1blQ5a2huZ2VCL1dyMEpHL1NFUlZCMzRNclhLd2Vsa2hlNDlFQSt5?=
+ =?utf-8?B?SHc2M1FLWU12dlVMSEdscmgzVlUrNkFnaFlOVkg0d0JZcFJVbitlQWUxSURp?=
+ =?utf-8?B?UFJBc3d6a2tjeVJJY1c0aWdLWWJqeFNYdTgvVGJOd1Z3ODcxUWlQNng1VG9H?=
+ =?utf-8?B?NFFuQkpjZUFCakdiTVJzL2w4RmdRSU52YmtNeVFoTkFtemlRNEJ6QmdwRjNF?=
+ =?utf-8?B?TXc3cGJsdEtDL3YyVkplSjBXcGxobTdnY2RxdG05bzFYVUduMFFTODBBSW55?=
+ =?utf-8?B?K0NncGNLeElWYStySXdIaklxa09sMWpIMEtPbUlCMUZxY1hIRHh0eVRjZm9s?=
+ =?utf-8?B?cXl6cVdaR3VsTkYrQjQ4enA1NE9vbkx6RmYxRHQ4VHNXeFVxUkNraVkvMGpM?=
+ =?utf-8?B?cFhrOVQ0TWtHejduWlovS25lTE02a3FIcDlHYytOdm9zTllGVzAzUnlMNkRk?=
+ =?utf-8?B?QkVvRS9nWHJDbFAxQXZSbjBOZHpwQy9XREVPcFpnWFRwcy8xVVlZNk5seFRj?=
+ =?utf-8?B?RGRYcytyeGRhaWlwWXdhWDZMT0M4Nk5uN0dQbGNWZ1JFUXlGRzEwVXNLSFF3?=
+ =?utf-8?B?S3hlNXZHVjNkZGdmdTFLZmhtM3lwdlNoc3BKUTBJc2pNNDhXcEFWUUQ5K3ow?=
+ =?utf-8?B?eHhVdXNna3dIUnR2Sld1TXJHa2hqK0FnckhDVFdyMWFOenN5WmtKdnNzY1cw?=
+ =?utf-8?B?cFF1WDhlT3B1UGpEeGxOT1h2dEN1b3A0SkxMTXFBazBaSkd1ek1oaEo2OFZi?=
+ =?utf-8?B?WFA3bFpnRXFGbXhzend3WXVuSEM2RE9zTDFDQ2g1TlhrQ0lSNnBMNlg4ZEh1?=
+ =?utf-8?B?dDJBdGU0N3pqdFR4czhVM2RwZXllSlR2MTh2STBFYnhiSTAyYzVyT1B1OVBQ?=
+ =?utf-8?B?eVFPMm5UdUFIdnVVR0RuelF3RlJsMHRYbG5GR240OS9jTTVnTmdLTzFQTmlq?=
+ =?utf-8?B?dEl5M2VNYmZOT2lBMXBocndEOHEvb2xHVmxQUDFNUmRiT3BPMm9qUHRZSVZm?=
+ =?utf-8?B?a0UrcEtnMExJaVZIcXpuWjVaNE1aMkhBR2JidWIzbEtTSGUzS1RwQVppczZ4?=
+ =?utf-8?B?TitpWWMvbEoyV05lU3plSzNNbWZHNDlGTmlwampsT0VJUlhrakN2eVZ2TWpN?=
+ =?utf-8?B?UWRyakliUlFleWo1U091NEk3OWhBcFowZnNlTWcxWlZxbU9lSWpnTXFLb2pW?=
+ =?utf-8?B?UHlOMU8yYUhPbjk0akxZV05iODNXclZ4bFRya0VrR1VxaWpncDBRYTBkVGd2?=
+ =?utf-8?B?Mzg3YmZHQ3hQTG0vSThkV2Y0cWVqZlgxUEFUbWlqYTQ3VGtFQzJXSTR6SFZi?=
+ =?utf-8?B?djJiRVdzbFJNTEkvSFQyRUVXajlXS2VBT0svcW5OR0RBdUVwSWI2QVRmTGNp?=
+ =?utf-8?B?U1dPQzB1dmZmM1QzbUQ4UkM3WFlpZFFwdEVRb2RJRHBjRGMrSzUwbnBuclFx?=
+ =?utf-8?B?ZThpZHJxNXRzMzl4UzhRUEYrZUdQNDNmQmVHT1F6dGdEcUJFTlNaZmxVY0RC?=
+ =?utf-8?B?Y0pnUTlsQ2o3Z2NMSXVUVHp2bGpJSi9JMVdTcnQ5NkFqNktRY0hQSzBOVThu?=
+ =?utf-8?Q?vKPg=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 72a37571-99f3-4deb-2e04-08ddd0199b1f
+X-MS-Exchange-CrossTenant-AuthSource: PH8PR12MB7446.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 10:04:15.5130
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: IE5tuFxtcazcTMsDoe84LzROnFj/rH1RY1/W6QtHijqp2UucCQUldEai0Haam/Oq
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB5830
 
-Hi Balbir,
+Thanks Sultan for your test
 
-kernel test robot noticed the following build errors:
+On 7/31/2025 8:30 AM, Sultan Alsawaf wrote:
+> On Wed, Jul 30, 2025 at 05:53:58PM +0800, Du, Bin wrote:
+>> On 7/30/2025 1:38 PM, Sultan Alsawaf wrote:
+>>> On Tue, Jul 29, 2025 at 06:13:50PM +0800, Du, Bin wrote:
+>>>> On 7/29/2025 3:45 PM, Sultan Alsawaf wrote:
+>>>>> On Tue, Jul 29, 2025 at 12:42:16AM -0700, Sultan Alsawaf wrote:
+>>>>>> On Tue, Jul 29, 2025 at 11:32:23AM +0800, Du, Bin wrote:
+>>>>>>> Thanks Sultan, please see my comments
+>>>>>>>
+>>>>>>> On 7/27/2025 6:31 AM, Sultan Alsawaf wrote:
+>>>>>>>> On Fri, Jul 25, 2025 at 06:22:03PM +0800, Du, Bin wrote:
+>>>>>>>>>> I have the Ryzen AI MAX+ 395 SKU of the HP ZBook Ultra G1a 14.
+>>>>>>>>>>
+>>>>>>>>>> I cannot for the life of me get the webcam working under Linux. The webcam works
+>>>>>>>>>> under Windows so it's not a hardware issue.
+>>>>>>>>>>
+>>>>>>>>>> With this patchset and all of the patches you link here applied to 6.15, I get
+>>>>>>>>>> the following errors:
+>>>>>>>>>>        [   11.970038] amd_isp_i2c_designware amd_isp_i2c_designware: Unknown Synopsys component type: 0xffffffff
+>>>>>>>>>>        [   11.973162] amd_isp_i2c_designware amd_isp_i2c_designware: error -19: i2c_dw_probe failed
+>>>>>>>>>>
+>>>>>>>>>> With the old ispkernel code from February [1] applied on 6.15, the webcam
+>>>>>>>>>> indicator LED lights up but there's no image. I see these messages at boot:
+>>>>>>>>>>        [    9.449005] amd_isp_capture amd_isp_capture.1.auto: amdgpu: AMD ISP v4l2 device registered
+>>>>>>>>>>        [    9.489005] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: The OV05 sensor device is added to the ISP I2C bus
+>>>>>>>>>>        [    9.529012] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+>>>>>>>>>>        [    9.554046] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+>>>>>>>>>>        [    9.554174] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout while trying to abort current transfer
+>>>>>>>>>>        [    9.580022] amd_isp_i2c_designware amd_isp_i2c_designware.2.auto: timeout in disabling adapter
+>>>>>>>>>>
+>>>>>>>>>> And then the kernel crashes due to the same use-after-free issues I pointed out
+>>>>>>>>>> in my other email [2].
+>>>>>>>>>>
+>>>>>>>>>> Any idea what's going on?
+>>>>>>>>>>
+>>>>>>>>>> [1] https://github.com/amd/Linux_ISP_Kernel/commit/c6d42584fbd0aa42cc91ecf16dc5c4f3dfea0bb4
+>>>>>>>>>> [2] https://lore.kernel.org/r/aIEiJL83pOYO8lUJ@sultan-box
+>>>>>>>>> Hi Sultan,
+>>>>>>>>>
+>>>>>>>>> [1] is for kernel 6.8, believe it can't be applied to 6.15. We didn't verify
+>>>>>>>>> on 6.15 but we are really glad to help, would you please provide some info,
+>>>>>>>>> 1. Suppose you are using Ubuntu, right? What's the version?
+>>>>>>>>> 2. 6.15, do you mean https://github.com/torvalds/linux/tree/v6.15 ?
+>>>>>>>>>
+>>>>>>>>> After your confirmation, we'll see what we can do to enable your camera
+>>>>>>>>> quickly and easily
+>>>>>>>>>
+>>>>>>>>> Regards,
+>>>>>>>>> Bin
+>>>>>>>>
+>>>>>>>> Thank you, Bin!
+>>>>>>>>
+>>>>>>>> 1. I'm using Arch Linux with the ISP4-patched libcamera [1].
+>>>>>>>> 2. Yes, here is my kernel source [2].
+>>>>>>>>
+>>>>>>>> I have some more findings:
+>>>>>>>>
+>>>>>>>> Currently, the first blocking issue is that the I2C adapter fails to initialize.
+>>>>>>>> This is because the ISP tile isn't powered on.
+>>>>>>>>
+>>>>>>>> I noticed that in the old version of amd_isp_i2c_designware [3], there were
+>>>>>>>> calls to isp_power_set(), which is available in the old ISP4 sources [4].
+>>>>>>>> Without isp_power_set(), the I2C adapter always fails to initialize for me.
+>>>>>>>>
+>>>>>>>> How is the ISP tile supposed to get powered on in the current ISP4 code?
+>>>>>>>>
+>>>>>>> You are correct, yes, i believe the I2C adapter failure is caused by ISP not
+>>>>>>> being powered up. Currently in latest code, isp_power_set is no longer
+>>>>>>> available, instead, we implemented genPD for ISP in amdgpu
+>>>>>>> https://lore.kernel.org/all/20250618221923.3944751-1-pratap.nirujogi@amd.com/
+>>>>>>> Both amd_isp_i2c and amd_isp_capture are in the power domain and use the
+>>>>>>> standard runtime PM API to do the power control
+>>>>>>
+>>>>>> Thanks for that link, I found it along with another patch on the list to make
+>>>>>> the fwnode work ("drm/amd/amdgpu: Initialize swnode for ISP MFD device").
+>>>>>>
+>>>>>>>> Also, I noticed that the driver init ordering matters between all of the drivers
+>>>>>>>> needed for the ISP4 camera. In particular, amd_isp_i2c_designware and amd_isp4
+>>>>>>>> must be initialized before amd_capture, otherwise amd_capture will fail to find
+>>>>>>>> the fwnode properties for the OV05C10 device attached to the I2C bus.
+>>>>>>>>
+>>>>>>>> But there is no driver init ordering enforced, which also caused some issues for
+>>>>>>>> me until I figured it out. Maybe probe deferral (-EPROBE_DEFER) should be used
+>>>>>>>> to ensure each driver waits for its dependencies to init first?
+>>>>>>>>
+>>>>>>> amd_isp_capture only has dependency on amd_isp4 which is the ACPI platform
+>>>>>>> driver, it is init before amd_isp_catpure.
+>>>>>>> Do you see in your side the amd_capture probe failure caused by failing to
+>>>>>>> read fwnode properties? If that's the case please help to check if amd_isp4
+>>>>>>> is loaded successfully
+>>>>>>
+>>>>>> I got much further now: there aren't any driver initialization errors, but when
+>>>>>> I open the camera, there's no image. The camera LED turns on so it's active.
+>>>>>>
+>>>>>> And then shortly afterwards, amdgpu dies and the entire system freezes.
+>>>>>>
+>>>>>> I've attached my full dmesg, please let me know what you think. Thanks!
+>>>>>
+>>>>> I almost forgot, here is my current kernel tree:
+>>>>> https://github.com/kerneltoast/kernel_x86_laptop/tree/v6.16-sultan-isp4
+>>>>>
+>>>>> Sultan
+>>>>
+>>>> Thanks Sultan, yes, seems much close to the final success. Will have some
+>>>> internal discussion.
+>>>
+>>> I got the webcam working. The same bug happened when I tried Ubuntu's linux-oem
+>>> kernel, which made me think that the issue was firmware.
+>>>
+>>> And indeed, the culprit was a firmware update from February. I bisected
+>>> linux-firmware and found the commit which broke the webcam for me:
+>>>
+>>> 	commit 1cc8c1bfa11251ce8bfcc97d1f15e312f7fe4df0 (HEAD)
+>>> 	Author: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>>> 	Date:   Wed Feb 19 12:16:51 2025 -0500
+>>>
+>>> 	    amdgpu: Update ISP FW for isp v4.1.1
+>>> 	
+>>> 	    From internal git commit:
+>>> 	    5058202443e08a673b6772ea6339efb50853be28
+>>> 	
+>>> 	    Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+>>>
+>>> 	 amdgpu/isp_4_1_1.bin | Bin 4543184 -> 6083536 bytes
+>>> 	 1 file changed, 0 insertions(+), 0 deletions(-)
+>>>
+>>> Downgrading firmware to before that commit fixes the webcam. Any idea why?
+>>>
+>>> Thanks,
+>>> Sultan
+>>
+>> So, can i say the working firmware binary is this one?
+>>
+>> Commit 8f070131
+>> amdgpu: Update ISP FW for isp v4.1.1
+>>
+>>  From internal git commit:
+>> 39b007366cc76ef8c65e3bc6220ccb213f4861fb
+>>
+>> Signed-off-by: Pratap Nirujogi <pratap.nirujogi@amd.com>
+> 
+> Correct.
+> 
+>> There are too many changes between them, so i can't tell exactly which
+>> change caused this. So, from my side
+>> 1. Will try these two firmware to see if we have the same issue.
+>> 2. It has been quite a long time since last release, will see if need to
+>> release a latest one.
+> 
+> Thanks. It was a quick bisect for me, so I'm happy to help test if a bisect
+> between those two internal git commits is needed.
+> 
+Really appreciate your test.
+> In case it makes a difference, I have the laptop with the 2.8K OLED display. I'm
+> aware there is one other display variant on other SKUs, which is a WUXGA IPS.
+> 
+Good to know, I believe it won't make any difference for ISP
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on next-20250731]
-[cannot apply to akpm-mm/mm-nonmm-unstable shuah-kselftest/next shuah-kselftest/fixes linus/master v6.16]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+> Also, with that old firmware, my camera only works with the old isp4 driver from
+> that Linux_ISP_Kernel repo (which is the same isp4 driver used in Ubuntu's
+> linux-oem kernel). Does the new isp4 driver you've submitted here require newer
+> firmware than the old driver located in Linux_ISP_Kernel?
+> 
+> Sultan
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Balbir-Singh/mm-zone_device-support-large-zone-device-private-folios/20250730-172600
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20250730092139.3890844-8-balbirs%40nvidia.com
-patch subject: [v2 07/11] mm/thp: add split during migration support
-config: x86_64-randconfig-071-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311724.mavZerV1-lkp@intel.com/config)
-compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311724.mavZerV1-lkp@intel.com/reproduce)
+We had a try, yes, both of the old FW can't work on the new ISP4 driver, 
+as you know, for the last months, we did lots of driver modifications 
+for upstream and cause it incompatible with old FW.
+Now, under internal discussion to upstream a new FW to support the new 
+ISP driver
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507311724.mavZerV1-lkp@intel.com/
+Regards,
+Bin
 
-All errors (new ones prefixed by >>):
-
->> mm/migrate_device.c:1082:5: error: statement requires expression of scalar type ('void' invalid)
-    1082 |                                 if (migrate_vma_split_pages(migrate, i, addr,
-         |                                 ^   ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-    1083 |                                                                 folio)) {
-         |                                                                 ~~~~~~
-   1 error generated.
-
-
-vim +1082 mm/migrate_device.c
-
-   999	
-  1000	static void __migrate_device_pages(unsigned long *src_pfns,
-  1001					unsigned long *dst_pfns, unsigned long npages,
-  1002					struct migrate_vma *migrate)
-  1003	{
-  1004		struct mmu_notifier_range range;
-  1005		unsigned long i, j;
-  1006		bool notified = false;
-  1007		unsigned long addr;
-  1008	
-  1009		for (i = 0; i < npages; ) {
-  1010			struct page *newpage = migrate_pfn_to_page(dst_pfns[i]);
-  1011			struct page *page = migrate_pfn_to_page(src_pfns[i]);
-  1012			struct address_space *mapping;
-  1013			struct folio *newfolio, *folio;
-  1014			int r, extra_cnt = 0;
-  1015			unsigned long nr = 1;
-  1016	
-  1017			if (!newpage) {
-  1018				src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-  1019				goto next;
-  1020			}
-  1021	
-  1022			if (!page) {
-  1023				unsigned long addr;
-  1024	
-  1025				if (!(src_pfns[i] & MIGRATE_PFN_MIGRATE))
-  1026					goto next;
-  1027	
-  1028				/*
-  1029				 * The only time there is no vma is when called from
-  1030				 * migrate_device_coherent_folio(). However this isn't
-  1031				 * called if the page could not be unmapped.
-  1032				 */
-  1033				VM_BUG_ON(!migrate);
-  1034				addr = migrate->start + i*PAGE_SIZE;
-  1035				if (!notified) {
-  1036					notified = true;
-  1037	
-  1038					mmu_notifier_range_init_owner(&range,
-  1039						MMU_NOTIFY_MIGRATE, 0,
-  1040						migrate->vma->vm_mm, addr, migrate->end,
-  1041						migrate->pgmap_owner);
-  1042					mmu_notifier_invalidate_range_start(&range);
-  1043				}
-  1044	
-  1045				if ((src_pfns[i] & MIGRATE_PFN_COMPOUND) &&
-  1046					(!(dst_pfns[i] & MIGRATE_PFN_COMPOUND))) {
-  1047					nr = HPAGE_PMD_NR;
-  1048					src_pfns[i] &= ~MIGRATE_PFN_COMPOUND;
-  1049				} else {
-  1050					nr = 1;
-  1051				}
-  1052	
-  1053				for (j = 0; j < nr && i + j < npages; j++) {
-  1054					src_pfns[i+j] |= MIGRATE_PFN_MIGRATE;
-  1055					migrate_vma_insert_page(migrate,
-  1056						addr + j * PAGE_SIZE,
-  1057						&dst_pfns[i+j], &src_pfns[i+j]);
-  1058				}
-  1059				goto next;
-  1060			}
-  1061	
-  1062			newfolio = page_folio(newpage);
-  1063			folio = page_folio(page);
-  1064			mapping = folio_mapping(folio);
-  1065	
-  1066			/*
-  1067			 * If THP migration is enabled, check if both src and dst
-  1068			 * can migrate large pages
-  1069			 */
-  1070			if (thp_migration_supported()) {
-  1071				if ((src_pfns[i] & MIGRATE_PFN_MIGRATE) &&
-  1072					(src_pfns[i] & MIGRATE_PFN_COMPOUND) &&
-  1073					!(dst_pfns[i] & MIGRATE_PFN_COMPOUND)) {
-  1074	
-  1075					if (!migrate) {
-  1076						src_pfns[i] &= ~(MIGRATE_PFN_MIGRATE |
-  1077								 MIGRATE_PFN_COMPOUND);
-  1078						goto next;
-  1079					}
-  1080					nr = 1 << folio_order(folio);
-  1081					addr = migrate->start + i * PAGE_SIZE;
-> 1082					if (migrate_vma_split_pages(migrate, i, addr,
-  1083									folio)) {
-  1084						src_pfns[i] &= ~(MIGRATE_PFN_MIGRATE |
-  1085								 MIGRATE_PFN_COMPOUND);
-  1086						goto next;
-  1087					}
-  1088				} else if ((src_pfns[i] & MIGRATE_PFN_MIGRATE) &&
-  1089					(dst_pfns[i] & MIGRATE_PFN_COMPOUND) &&
-  1090					!(src_pfns[i] & MIGRATE_PFN_COMPOUND)) {
-  1091					src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-  1092				}
-  1093			}
-  1094	
-  1095	
-  1096			if (folio_is_device_private(newfolio) ||
-  1097			    folio_is_device_coherent(newfolio)) {
-  1098				if (mapping) {
-  1099					/*
-  1100					 * For now only support anonymous memory migrating to
-  1101					 * device private or coherent memory.
-  1102					 *
-  1103					 * Try to get rid of swap cache if possible.
-  1104					 */
-  1105					if (!folio_test_anon(folio) ||
-  1106					    !folio_free_swap(folio)) {
-  1107						src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-  1108						goto next;
-  1109					}
-  1110				}
-  1111			} else if (folio_is_zone_device(newfolio)) {
-  1112				/*
-  1113				 * Other types of ZONE_DEVICE page are not supported.
-  1114				 */
-  1115				src_pfns[i] &= ~MIGRATE_PFN_MIGRATE;
-  1116				goto next;
-  1117			}
-  1118	
-  1119			BUG_ON(folio_test_writeback(folio));
-  1120	
-  1121			if (migrate && migrate->fault_page == page)
-  1122				extra_cnt++;
-  1123			for (j = 0; j < nr && i + j < npages; j++) {
-  1124				folio = page_folio(migrate_pfn_to_page(src_pfns[i+j]));
-  1125				newfolio = page_folio(migrate_pfn_to_page(dst_pfns[i+j]));
-  1126	
-  1127				r = folio_migrate_mapping(mapping, newfolio, folio, extra_cnt);
-  1128				if (r != MIGRATEPAGE_SUCCESS)
-  1129					src_pfns[i+j] &= ~MIGRATE_PFN_MIGRATE;
-  1130				else
-  1131					folio_migrate_flags(newfolio, folio);
-  1132			}
-  1133	next:
-  1134			i += nr;
-  1135		}
-  1136	
-  1137		if (notified)
-  1138			mmu_notifier_invalidate_range_end(&range);
-  1139	}
-  1140	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
 
