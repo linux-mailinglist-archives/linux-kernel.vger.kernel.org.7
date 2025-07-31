@@ -1,119 +1,165 @@
-Return-Path: <linux-kernel+bounces-752415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752417-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD4E7B1754B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:53:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7208AB1754F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:53:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9FBD58413A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:53:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BA96C18C2B54
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 834D6241662;
-	Thu, 31 Jul 2025 16:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96ED828E607;
+	Thu, 31 Jul 2025 16:53:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="QATD2swK"
-Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="Zs9UvslR"
+Received: from mail-qk1-f179.google.com (mail-qk1-f179.google.com [209.85.222.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B5331FAC48;
-	Thu, 31 Jul 2025 16:52:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E83624DCF8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980782; cv=none; b=Ov8j837JtW8oteW9ix44HH6+WoqFKaS14aDt6ARODjvDVzfelbFUbtMtbGAs4NNl3xiV5wvdAGTg+ltg0+34GyPcsi+0oXUjvHdXIWlcR0J/WP+p0dNKqcH0WM/lrvd7JDpn8DnHmnx7O0jxZX/FHRXz7B46jSZH7/nrc5KOATc=
+	t=1753980785; cv=none; b=N0nJKFNu09LEYFICRNBHVCUT7Zmm2RcF8U6iLflr08SS0XcPwueEhAksbooASBiqhZDK+0qSwj1+MVdLX21+96hATbfMrO+VNE6n2pr32GaX4PK20KXbl4XSvEl/NWoqBTT/XEP1+JtGIhXc4H1+iyOtqX/2t1Z5NJS1duaU4a8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980782; c=relaxed/simple;
-	bh=oM9rSevoQ7JkUN01oUeMRghVmEpm4moYN3as8s68inc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Egfp5HL7wZBC0xk7ISfVPoafQMDPV4qdwA3s9X7xkw+uN2mF+N57oCm9VLdwXd5YJc7HAqMMRYJ6oBerARwXV2V9ivgJiuAFeJZpColOEjVYc3O2H2V+TvSd2EF07TI1EeMiDz5zFxBUuczQrsbSdvomP3El8fVH1W6Lf2mfMsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=QATD2swK; arc=none smtp.client-ip=199.89.3.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 004.mia.mailroute.net (Postfix) with ESMTP id 4btFWb0G0Gzm0pKP;
-	Thu, 31 Jul 2025 16:52:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1753980776; x=1756572777; bh=q+N8OqzcjFRQTlP1J8tBBS2b
-	KX+Af+zJ2IQ7vZkBgiA=; b=QATD2swKrjfG8BEzdtfQA37NHcgBsIBlw0vIMSCu
-	DUKyfra0dNbroIY4I6OgVhyylFQ8NLJUTPLUuoAHFrn/BcjY6h5LHrhtxS4kDXlz
-	GOyi2X6i16XSwItBCbjYq738FO3nwkfx2PaF6HmCOv5x3W3eEBXpwKJ//of2FrWn
-	BlVrznNgurkAwpzuYgY1bTsbLgI7Nixnj4N2bXWHfMZ5CtGbRX2m2MOeu9P1Tqj6
-	bnopXq4Jh1rrL0Hy/7miTLMxLP3o9/VJSjqdCxplzse5TX5dtFWPO//LpZ2KDB2p
-	61UNkVtltjCTN+Q7SUpiZqb7bCM8c3EIuVKakaupNkmlBg==
-X-Virus-Scanned: by MailRoute
-Received: from 004.mia.mailroute.net ([127.0.0.1])
- by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id u58zs7n3NP8I; Thu, 31 Jul 2025 16:52:56 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4btFWM1yGczm0yVJ;
-	Thu, 31 Jul 2025 16:52:45 +0000 (UTC)
-Message-ID: <c516ed73-5947-4b18-a1d9-18a9901e30e3@acm.org>
-Date: Thu, 31 Jul 2025 09:52:44 -0700
+	s=arc-20240116; t=1753980785; c=relaxed/simple;
+	bh=pZ8JW4BupERaCqn+7ehMHUhgMaXIyZtrBvv8TKORWvQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i+twxJi6RN7dH16Wi820uOy3FCyp0SKd8oTRL0dW3efXY03dbcnKFJT5WSiFBHwGUZraZ6J/0hmZZ4/2v77+z/ET+po8dRLUa6T0Xagcldh7SZ9Aq9YEqbGbnEzucAY9H54QkgrEIB+C33wqvfrbhitCJ1WIEkMc/DtnRT7RXSk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=Zs9UvslR; arc=none smtp.client-ip=209.85.222.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f179.google.com with SMTP id af79cd13be357-7dd8773f9d9so92696685a.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:53:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1753980782; x=1754585582; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=ge8sFkdUD5dsmHZi6nhZDTs93Pw2wZ3dkBFapdPEw0U=;
+        b=Zs9UvslRTgz6E55v8B7c2Jadpo09wvghL4NqoXx9WmGhULRAJntAGfFZiCo3SoyNge
+         BbuWQbgthZ59HyrQMZJ5TXr7/zsovLi8hlsIeDy+ERKJrpOydsNIgfnCLBEqggKhGAWc
+         V7F9yzToWc4KjSTgotmjRO+W/lGqOs55jSyk5OLkhJTsVH97PUAaXhTy3jH+iZHiH1Kn
+         liYvCM2TDHmZToa04HFTyLrWTWPhkvhQC1j38+4lgcyL9+Xg1ISCG3nM5SNE8Z+0tHbL
+         +5+Uq2/is0dmDULstCDnfW/Ce9oINBLnEfM2J2FdEbA35xe2rF3CX92GkA41lFHQpOPE
+         If2A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753980782; x=1754585582;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ge8sFkdUD5dsmHZi6nhZDTs93Pw2wZ3dkBFapdPEw0U=;
+        b=abphip9mwMBTBFndLUUTZI1YyekJS/iUMj+lQQS2EGeoqQLKqac0pj2IclWzmSg3lM
+         3KL1t0mpFNmNZiBj3LoMM0/kWhN5JPKSeEwHjZD25FnrIT4aEbtCefa0nyKvvvSlhF/j
+         r8Ch/nznvL1ctY1u+KsvyAocpGzklJWqcOliimn2CAvTC8GxG8/GuF3aNKmuQRdjTP5X
+         VzlJpVGBbQBgWm3wslQGUt+cuVKx9jLhAa+MRXVlfUVoy1zKd/OoirdUWbSyVNopsHlu
+         6WXv44eSM5DY5cb6YODv0gVT8XmWbhjdfNvp2EX4+Oi4My8kenuaNc62tu+HWfYfeXjB
+         2S9Q==
+X-Forwarded-Encrypted: i=1; AJvYcCX124s9bNOnOH15JAfRz018NAFX0setBXeumQu0vM+/52Rtkk4bkUJFk9Ly7F8G58IzVLWNOdZAxxuo8dw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIC061lw4J2i+bvGFdN7hiPpdalDvD0choZTUkxsyWnBvXQalU
+	9llBu8h5IQrWJtOJBsodFO+rSK6wya+VDhxNRlETDSGfo2OY9lXsPTh3C8wP9SxsbKY=
+X-Gm-Gg: ASbGnctTLxYGzwmLE5nMB971olNsZOtQKZDE9gy2esc/GfXviQyk25OtAKuYC+jaZX7
+	Y3O82/FpCATQBVl1ekl6XPHUTWSJfoHu4Ni4hMoaNkt9k0NWvIkqJ/MNJ05H9tcRYDEjidDO3aR
+	UaLah3z6zeumhv0HOnftSROCMrjmIzZHBVv/OU+Y/r7TebvgzurEvEgS5z3KOgUbq1wqkhfXvHt
+	530Wom1caoxwixM0dL9ArWCG38hBBaONkoL5f5cSfMKTLFJP9yt/mNUse162dpq2k4l07QHWbKz
+	rViMdpw8iuUHD7pjkcvxYIBML8jle5ZjPERME2cO+Cyzd4TbQW10iCyJNdMm0NIuRv9JNjFVKzx
+	QU2GYp0NrgVo5flDSy641Mf3TwIdpUsHKJlx4LPR42tXSPPSlraqG/XAVj1KmOH6EVlyOqMjU21
+	y/mPY=
+X-Google-Smtp-Source: AGHT+IFxkpl6QnLP1d2Hal87IlMNzkW4ERQZ01Eb9frEOc1Kw3im7nXPwCw8k1/LtI/6s3msgQWswQ==
+X-Received: by 2002:a05:620a:2808:b0:7e3:4b7c:40a0 with SMTP id af79cd13be357-7e66f3e29c2mr1060489785a.51.1753980782245;
+        Thu, 31 Jul 2025 09:53:02 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f5c5537sm108625985a.35.2025.07.31.09.53.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 09:53:01 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uhWWb-00000000qDo-1Gf4;
+	Thu, 31 Jul 2025 13:53:01 -0300
+Date: Thu, 31 Jul 2025 13:53:01 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Arto Merilainen <amerilainen@nvidia.com>
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>, kvmarm@lists.linux.dev,
+	linux-coco@lists.linux.dev
+Subject: Re: [RFC PATCH v1 34/38] coco: guest: arm64: Validate mmio range
+ found in the interface report
+Message-ID: <20250731165301.GY26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-35-aneesh.kumar@kernel.org>
+ <d57d12ce-78c6-4381-80eb-03e9e94f9903@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] ufs: core: Fix interrupt handling for MCQ Mode in
- ufshcd_intr
-To: Nitin Rawat <quic_nitirawa@quicinc.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, James.Bottomley@HansenPartnership.com,
- huobean@gmail.com, mani@kernel.org, martin.petersen@oracle.com,
- beanhuo@micron.com, peter.wang@mediatek.com, andre.draszik@linaro.org
-Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, Palash Kambar <quic_pkambar@quicinc.com>
-References: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d57d12ce-78c6-4381-80eb-03e9e94f9903@nvidia.com>
 
-On 7/28/25 3:57 PM, Nitin Rawat wrote:
-> diff --git a/drivers/ufs/core/ufshcd.c b/drivers/ufs/core/ufshcd.c
-> index fd8015ed36a4..5413464d63c8 100644
-> --- a/drivers/ufs/core/ufshcd.c
-> +++ b/drivers/ufs/core/ufshcd.c
-> @@ -7145,14 +7145,19 @@ static irqreturn_t ufshcd_threaded_intr(int irq, void *__hba)
->   static irqreturn_t ufshcd_intr(int irq, void *__hba)
->   {
->   	struct ufs_hba *hba = __hba;
-> +	u32 intr_status, enabled_intr_status;
+On Thu, Jul 31, 2025 at 02:39:09PM +0300, Arto Merilainen wrote:
+> On 28.7.2025 16.52, Aneesh Kumar K.V (Arm) wrote:
 > 
->   	/* Move interrupt handling to thread when MCQ & ESI are not enabled */
->   	if (!hba->mcq_enabled || !hba->mcq_esi_enabled)
->   		return IRQ_WAKE_THREAD;
+> > +	for (int i = 0; i < interface_report->mmio_range_count; i++, mmio_range++) {
+> > +
+> > +		/*FIXME!! units in 4K size*/
+> > +		range_id = FIELD_GET(TSM_INTF_REPORT_MMIO_RANGE_ID, mmio_range->range_attributes);
+> > +
+> > +		/* no secure interrupts */
+> > +		if (msix_tbl_bar != -1 && range_id == msix_tbl_bar) {
+> > +			pr_info("Skipping misx table\n");
+> > +			continue;
+> > +		}
+> > +
+> > +		if (msix_pba_bar != -1 && range_id == msix_pba_bar) {
+> > +			pr_info("Skipping misx pba\n");
+> > +			continue;
+> > +		}
+> > +
 > 
-> +	intr_status = ufshcd_readl(hba, REG_INTERRUPT_STATUS);
-> +	enabled_intr_status = intr_status & ufshcd_readl(hba, REG_INTERRUPT_ENABLE);
-> +
-> +	ufshcd_writel(hba, intr_status, REG_INTERRUPT_STATUS);
-> +
->   	/* Directly handle interrupts since MCQ ESI handlers does the hard job */
-> -	return ufshcd_sl_intr(hba, ufshcd_readl(hba, REG_INTERRUPT_STATUS) &
-> -				   ufshcd_readl(hba, REG_INTERRUPT_ENABLE));
-> +	return ufshcd_sl_intr(hba, enabled_intr_status);
->   }
 > 
->   static int ufshcd_clear_tm_cmd(struct ufs_hba *hba, int tag)
+> MSI-X and PBA can be placed to a BAR that has other registers as well. While
+> the PCIe specification recommends BAR-level isolation for MSI-X structures,
+> it is not mandated.
 
-Reviewed-by: Bart Van Assche <bvanassche@acm.org>
+Right, there are not enough BARs in most devices to give MSI its own
+BAR.
 
-Martin, this patch seems to be more popular than my "[PATCH v2] ufs:
-core: Fix interrupt handling". Please consider queuing this patch when
-this is convenient for you.
+>  It is enough to have sufficient isolation within the
+> BAR. Therefore, skipping the MSI-X and PBA BARs altogether may leave
+> registers unintentionally mapped via unprotected IPA when they
+> should have been mapped via protected IPA.
 
-Thanks,
+Right, this sounds bad.
 
-Bart.
+> Instead of skipping the whole BAR, would it make sense to determine
+> where the MSI-X related regions reside, and skip validation only from these
+> regions?
+
+IMHO this is a mess. The virtualization must end up putting a shared
+page(s) covering the MSI space in the middle of the MMIO region.
+
+I think this should be done by fragmenting the layout in the IPA where
+the private MMIO is within the protected IPA space with an unmapped
+hole covering the MSIX registers. The acceptance process should
+validate this.
+
+The MSIX registers would then be located in the shared IPA space.
+
+A normal driver mmaping it's BAR will then crash if it tries to access
+the MSIX registers. This is good, we want to catch these non-secure
+configurations and block them.
+
+The MSI code will have to know to compute the shared IPA alias and use
+that.
+
+Jason
 
