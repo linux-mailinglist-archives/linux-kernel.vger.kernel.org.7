@@ -1,247 +1,151 @@
-Return-Path: <linux-kernel+bounces-751496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3FCFB16A4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:08:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B663B16A50
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:08:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFD915621A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 20E76566767
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:08:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEE1D1A5BA9;
-	Thu, 31 Jul 2025 02:08:13 +0000 (UTC)
-Received: from mx0b-0064b401.pphosted.com (mx0b-0064b401.pphosted.com [205.220.178.238])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B1D51DEFF3;
+	Thu, 31 Jul 2025 02:08:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YExX0o6u"
+Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E85B13AA2A
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:08:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.178.238
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753927693; cv=fail; b=jPSfOyHlHGKOuK+wrEjH6jqAEMOLKOvfodG3vczdp3jx5WDRtUXiMDaY/NU8URyDnLqIG8R/Tnd6H/723RspsfB9hF3D1U+bMnvK9HPbAq6jYnJGqPFNimdOp6kvjaq6g2aoG/vroo/PdpiXY4+k2EjUxdb9LfXQWStuYoEBojs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753927693; c=relaxed/simple;
-	bh=m5viqlUjSLdxSljKnJkjLKfovL4XEAlMx+2PsVo+Dy4=;
-	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=IAGVmIPrGK4+PjYZM5BQCCgvZrh502Sn1E/zfogz5sOJ+k5flHNGe4YU/kQmWr0fY8vkR7o/hu4lSwM1h/43BZI15buj4MpwUTvMspfFQMau6dxxMt7v7WrQKEbxEQYNJqjvWJqHJsDlHiqpKHa7VQh78dGC/IApMSq7MP326ko=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com; spf=pass smtp.mailfrom=windriver.com; arc=fail smtp.client-ip=205.220.178.238
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=windriver.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=windriver.com
-Received: from pps.filterd (m0250811.ppops.net [127.0.0.1])
-	by mx0a-0064b401.pphosted.com (8.18.1.8/8.18.1.8) with ESMTP id 56V1Zexc372332;
-	Thu, 31 Jul 2025 02:07:42 GMT
-Received: from nam10-bn7-obe.outbound.protection.outlook.com (mail-bn7nam10on2074.outbound.protection.outlook.com [40.107.92.74])
-	by mx0a-0064b401.pphosted.com (PPS) with ESMTPS id 484m7xmwxy-1
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NOT);
-	Thu, 31 Jul 2025 02:07:42 +0000 (GMT)
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=X12ZnHCuW9j+YopNEG8iWk8YANGIEhkS0FBQlTKfES4uFUYdFqU5smOuqzmD4H3J1bOtKuux6GfxcS5yymn2Yc1JC+N6WNW/4H/1TKxsw7kgeUWPrQYDY61P23vZBO3B8ctckX63cgS89xzqrHgNzCThjnLQaTC2fCyTRJAvdraRlIZ9w7D7vgBksD08Pkvq7IOTYUiT9oK39zNBwtmd4B31Tb8V9yR0jEkIudc9+RUwTn8EubgeMTfTIRHEHLF33CjZp7z0wVcQ1FHpHM6sBffWzzr1kuRnqCXr4mvApHP5+NT8axAZkpAlND1UjLNF/ptz4a+mvMj9ZgFh1xpoKQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=MwyxFeNpX9mdi3dHcfK87uNuOxtF5aDoFWkS1luH7Pg=;
- b=kBX7i13SNE4+frJ3eIibe+yEzWgBj7jt9EVllCCU2TN/RyRDgm7JxcUHgMFHApXl2bSzhQ/E1ABFq5pKg02KNIwenJrpKJqgKqY36G5k7+IK+Z4NuxJ8Vi9hC7JWWMHHzZznqGfgW2eVULuqmLJJIJS6pYR+mDtMsSuJVL+06D62YqqwwjtOFaM2X6JQyBF+1nsZPm1bF6pNISeyCo2t8PKmbyvdQD6vq9JbKLPL2Z0TAKDX/11eqJXTgqynMWbHNObC4tU8G9w6dnZr7R7Wkp23XIiarujv+uA3SIJgE+p1xIHgUY7VrajOcdJU8MnJAUbWE9zpMf72pD/cDN1s9Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=windriver.com; dmarc=pass action=none
- header.from=windriver.com; dkim=pass header.d=windriver.com; arc=none
-Received: from IA0PR11MB7792.namprd11.prod.outlook.com (2603:10b6:208:409::16)
- by PH3PPF4B53DB4B3.namprd11.prod.outlook.com (2603:10b6:518:1::d1d) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.21; Thu, 31 Jul
- 2025 02:07:38 +0000
-Received: from IA0PR11MB7792.namprd11.prod.outlook.com
- ([fe80::385b:609e:4289:5e04]) by IA0PR11MB7792.namprd11.prod.outlook.com
- ([fe80::385b:609e:4289:5e04%5]) with mapi id 15.20.8989.011; Thu, 31 Jul 2025
- 02:07:38 +0000
-From: quanyang.wang@windriver.com
-To: Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
-        Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
-        Richard Zhu <hongxing.zhu@nxp.com>, Frank Li <Frank.Li@nxp.com>
-Cc: Quanyang Wang <quanyang.wang@windriver.com>, linux-phy@lists.infradead.org,
-        imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] phy: freescale: imx8qm-hsio: Fix a use of uninitialized mutex
-Date: Thu, 31 Jul 2025 10:07:17 +0800
-Message-ID: <20250731020717.2240392-1-quanyang.wang@windriver.com>
-X-Mailer: git-send-email 2.43.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: OS7PR01CA0021.jpnprd01.prod.outlook.com
- (2603:1096:604:24f::8) To IA0PR11MB7792.namprd11.prod.outlook.com
- (2603:10b6:208:409::16)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5021C1DED5D;
+	Thu, 31 Jul 2025 02:08:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1753927698; cv=none; b=uNDJHgLe0XOY9NLvVBD3/J4rk2voL98e5bssiDVepp7rMmta9jnsd05kKWqJmg8lt1QQ5HJkvurqIduXWzB+XHswslC+7wuSvXFwD0VWsbdehHzUMdBAH87Mh23q3krO3NR5tRlGS8o1kk2/2jFOY0oMJ9GeAy64WhQIHIwrrhk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1753927698; c=relaxed/simple;
+	bh=jYjmmUbhAo5Rx12q31rCMDi0MJPFmBegHSkQ5/vkesA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=Z6/fALs3mWdhY1hELT2p0Vc8DOrCeVLOWvXdZ2z8+kkr1Op9Sfz8QCz/9Z6AGO+wmkXEVxD3LK26kDkiu0apxCTD2lGNpkadJmho9l18+Y/z97k9+HUWylvgk+B3uLFYrrOz8T4Z4gCkJHT4eILyY25sjEnK41oFAl8gaxMz+zM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YExX0o6u; arc=none smtp.client-ip=209.85.128.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-45629702e52so1485395e9.2;
+        Wed, 30 Jul 2025 19:08:16 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753927694; x=1754532494; darn=vger.kernel.org;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ttbMdEkxoTUOprk+YRVdSAOn6EZRYe2hYPzeU8X5k20=;
+        b=YExX0o6uGhpDg8P6to+jWGY8mqmJ7GBLtUPzyJALeSlsow5EzSSiSJzSZexO3PkmTh
+         k0ixiFnIHoi2SpzUhqZSb79RJeK7s+AA2r8u7A6kWDdF/WhaQzHRdiqfomzX8xsejoxr
+         65Lkwfpe85bQVuy5s3D1hN/ZJkFTkuIgG6m6t8367RNHJillYizWUuCxN3Gdks3OLnZ9
+         J701P9+BdvePT28h1rklEFHwgbHj3X0NzQs+2bilTgJINFCMwsO+r7shaTU201+OY4/C
+         MdHY3NDxmCAJPNb71YT579HnMGhx0O9RUJzCLywLOvAykh8Bn4vy/Obgy5vm5BJW5hdG
+         F3tA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753927694; x=1754532494;
+        h=content-transfer-encoding:content-disposition:mime-version
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ttbMdEkxoTUOprk+YRVdSAOn6EZRYe2hYPzeU8X5k20=;
+        b=tTuY47GOldmLL9Seive35c8A2otdF5TJTBhXz+EnxAUcMzsLhYjkgXC4QNqrJMIlmN
+         7NqfP0OX6uY/ckfjgtS4TKXUsf15j8JDyoVrGQHWmn95XBHZE9YqYa16XbS2zZAkemoz
+         KflQGwvSzrf+ZVncOGOioP8QslIw+3ciyZrzKYpR7TnJt4cLF0mEaJMH9jdTVAk9uqAI
+         olulsiJCQLsdrXbqRT+u6w5SEfs9VrBNvk8Lp49sOHmlbK5cGE5ud9um59Uw8sk9REgN
+         g1Ph1SEkg0DBJ9OwcsdU0WzjeRQ333G0kFVGOwHIkq+PtT9hxd1kx+dOC9PM7RiyZT8v
+         N4Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCU7jf3igBf826PUqwFBAOtn5NYe6CDh529UdFgpvNl53oQhNnc1WzC63DKUvwSYcWrkt2Z6Xr+cZrmQrlU=@vger.kernel.org, AJvYcCVxOi7UBHXxF/jv0ANJeMkTcdyaP//BU2BMnZfhySc6EYP1CW9//Y/bLxH4LgdtYx9z2kp+paF4@vger.kernel.org
+X-Gm-Message-State: AOJu0YylZSiG/VmUN1e5pcdUFJXDY5OqJ9aedrjDCWqTO0XhAuDlxloq
+	cZrs8WJIJxCsheuR74LvF2b4pFN3g0nswf6JDKBs6isjjxPSMVFXihvQ
+X-Gm-Gg: ASbGncuQAXpJR02jUFqEN39QfZM1VjDrxloMNbdzjQvscnElL5xkNc2xlicBwZj3z74
+	yMDD1YpIiSvcczauYs3uFVueUqRNWvDnswG2x9Gtmyab8n7xmCkZNwIPOudCUDzZu0/MQDyeSlH
+	IccTdoYiATgwTPafYzVSi3iXrHUxDloZNwW49Oimj62GSPdhSJPA8cNMkRVCmZIhl/VeNrnQQjb
+	TzZNRGIvgf0R92GJ6L8kunDaFg2AXwm1IDIM4KC2wLaws/wqIXZV+uQ7BidOCxgtRQejUjaT3om
+	7zmivdColZevG/tHwB5Up34WWM9MdoOOLbq6D8u8jkwWUSWxYpyz6voo5wbQcA9v4TyKpK6OftC
+	dNfVKdw81xu+lozwuMJ1wgg==
+X-Google-Smtp-Source: AGHT+IHsylB7+NHRuBW9mU53rbrnh3rovtARDLzE2S2cbV7OlcCzjAu5Wxz6+1u5fMJj5KOTcLkQ5g==
+X-Received: by 2002:a05:600d:108:20b0:456:26ad:46d2 with SMTP id 5b1f17b1804b1-45893943cefmr25724855e9.6.1753927694491;
+        Wed, 30 Jul 2025 19:08:14 -0700 (PDT)
+Received: from pc ([165.51.119.21])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee4f239sm7657055e9.21.2025.07.30.19.08.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 19:08:14 -0700 (PDT)
+Date: Thu, 31 Jul 2025 03:08:11 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH V2] drm/amdgpu: check return value of xa_store()
+Message-ID: <aIrQC78VWg17Iqhf@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PR11MB7792:EE_|PH3PPF4B53DB4B3:EE_
-X-MS-Office365-Filtering-Correlation-Id: 28f9a20b-9fb1-49bd-8830-08ddcfd70600
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|7416014|1800799024|366016|376014|52116014|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?axQ34HGVy/MGpM+4niDSwHHBqpHQijiMW9rWD0z1qyX1Koh0XT0D27UeAV7z?=
- =?us-ascii?Q?/g5KepgWHykH/QKc7u1QGG/dGCmtHCb8OLF8p93Nbx2BHoWiKoYks7h65pCc?=
- =?us-ascii?Q?gF8JFtJVmYyzqGHH6Wioy9qIsNNOO4k2WUdDCVxgjRaV0hi5H2KVBR7jxvNV?=
- =?us-ascii?Q?m4OkBo2edlXZt1MbVa0AKZ84C4uWstJAaTui+i+Lp5ipaxfMKb05UT3OXbo4?=
- =?us-ascii?Q?62GgYrYqgmSC5difqT2I0H678y+VyxKjt5FIEDuQ3I72xvmUI+jy/f+CwJy3?=
- =?us-ascii?Q?utV2RYRgVqyurQ5cwBw2coUBDvWM8jXqAmYfD3f/4geidjKrimU3xMonxXAb?=
- =?us-ascii?Q?HglBObxkm1P5mlf9O/5vCLvqu7Bh/urCTuN65NVPKSlbrxyVNkEqVRpHam/K?=
- =?us-ascii?Q?Dmz3cn43Tih+jCwVjSP8qIDdHuMMNCFYe7RE+JzVVapLY+Z9Io9krq2LSoM4?=
- =?us-ascii?Q?/VIxQ/zcCPdDIoYsa73r1JFLUElb+AE5Ac4LT27p6ZVixsjojq2IvKw1Fb9b?=
- =?us-ascii?Q?uGkuaL9s6XlX8WlptNziY3o+VqfOOHYsQIoRmcP/XOs8UeTObYDHeqa+ctc+?=
- =?us-ascii?Q?9sHKhdiEQBKuqbFmn2w6RU18qCvngrGKEYaFRPtw+dHIaOHbCa3qkTAcGIZQ?=
- =?us-ascii?Q?vZm74EK/FEVAqCKYor38TuYhn/0XTcGHiY50FSLUsgsIwTdgbSAfxnzFb0Uz?=
- =?us-ascii?Q?SJmhzJ47iDXr7inkXs90tyn8ROJCSrH2kNqOQ1Jv8qaMfXi2O9zbX6duKFt4?=
- =?us-ascii?Q?QGr+xMvEUZpC1SmlIi3I7HJvhDJeWHM90PXoxhKEnIE7Gz6Kiq7iUm1f/QRU?=
- =?us-ascii?Q?lxk7yCsnAHSW5UhMA64OhYLMu/bmG3YuWcSbzZ8Ot6fCFNbjuA+der5DIx6M?=
- =?us-ascii?Q?T8V5/LDSHql04gjlAC27TIylwBtec7YBHdZslm89psFWC/0lPnn5cIUX32/4?=
- =?us-ascii?Q?ls8Hj5agdFFf1agT2vQQF9qowI8DtIWKlE1hy7bh7htdUepVQu0PhwiNhCYY?=
- =?us-ascii?Q?9YTQGTjUjF8oE9JSCNqKZ8IPEKi0r5xqnHJeh9JsS7vrRg6IBx99JrdE8cS4?=
- =?us-ascii?Q?PWKvBFRuuxljXs4rpugvknJZBuv1rx9/2OHYt7Ef+w/vBKbfIgcI+a/+D44y?=
- =?us-ascii?Q?j3MpV1Zfh6hMXOEWJN4CCT94oPS8yh1oHSvxQdzjNHohFoeeAHSPM73BYnWa?=
- =?us-ascii?Q?RWKsd5ElBTvqvrv5y0AtlElqKdzhqMQvXArEV/+Kw5s90766UDRjfbG4ObzV?=
- =?us-ascii?Q?9KzRkOZc3TTl+DOWiRiiedLvITUKItl5NR6koOGznfB3tN1YeazNF7WivAjc?=
- =?us-ascii?Q?cyRuCnG/W3u87YzDjNZm7A98vnaWazrmQ5HVt4mMcBFQwCtbVBOGQ2Dr68VK?=
- =?us-ascii?Q?2icFh5idMtfOUqLV+/+8Lbl+vN2nxtVdhBHHWHNzZN3vA6s/JHyeVSlA8CpR?=
- =?us-ascii?Q?WBANB3DVCfsdwardBNlDIOirX8hXNg2UiRTituiJ1xpMK2v20H2YnosBfkbS?=
- =?us-ascii?Q?BXqKu9ZKxwvT+vk=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PR11MB7792.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(52116014)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?ZfTXrub4hDYzjBdhMWS6JF990SHizHdPfvz30xL0b5RpWmqnAvvLQkMGA71r?=
- =?us-ascii?Q?OkPU6UqHG9k2sM28ZKyXkKrSA9+Sw796XvlQtDtQkpvjqzY+6hPKWa8NHqqM?=
- =?us-ascii?Q?kscpuSHc6sZuIy6PImYjhNS6i5nznBaAQaD5OwYDEvZopchgIzPnzOEtw52W?=
- =?us-ascii?Q?zXJSsWcKotVWe0hAqZYCkzgXGVae9gEm8KYn8LaRX/UogBbOE0m4DdQobGWk?=
- =?us-ascii?Q?SD3hrFIlyY0L1OesuQ8PXj/eqxA1RuqZe6zcxJd9MDo73TOpY/cNDHNE3Z0u?=
- =?us-ascii?Q?2BpGU/mIMyy86JKrtT5r0bb2O1x3KLGYHTfqT7N4vjx0X6VkLeo1WcemHMLK?=
- =?us-ascii?Q?Jn1XTpR2R4y8M3G14UHj1gl1AHBhtO5vTzzTZgMIEIy2QGooAOjWKs0/xYfq?=
- =?us-ascii?Q?qTcj+fL+OKAdgsP/kWQpv6bCAY5crTjHnKq9NO6RMsOtfc32wRy1c3ow1dmW?=
- =?us-ascii?Q?CkfFtaLpp9w6AEQH2Bk+bAndNRUa9ZTiGlfK6Iw95pPX0OdvITVQgnh/6ogx?=
- =?us-ascii?Q?r4T08hM6czZaE3KECS561bgB+sRoUH76QEgBM8tj5mKZnhgsROZoQHjOKoFJ?=
- =?us-ascii?Q?A9665VC3jZnThTD8AgMp6tT63wqOp14IT9LEoXdQ0+DDJClYumF9EQ4SIbwI?=
- =?us-ascii?Q?iNpHmilTnJjogel35ry/hCCPRRidC8vlv/CLD004kKBmvF+L/X1fjcWzjDxx?=
- =?us-ascii?Q?wrbsh/2Te2HGHY0+EicqLGErNhxuZCFkfoXf+7ZgScUYTLmgGxvpfJ+PPZfl?=
- =?us-ascii?Q?QlMKiV2qeGjt1INkPwukt292ZRjrUJUPvoVbQEXiSOVAxVwTbfLLWfvG04AQ?=
- =?us-ascii?Q?qUxRUDMTFuHfdxFbYihLJULs5/RKeFc7DDjZicpFJ9ktjm95BRezf/dLpozX?=
- =?us-ascii?Q?ig93YdKcKX7hDj8ZewNcU2EBcmNQbWN8rDifpr8P8dqwlOz+tWmVeoSZ4sXv?=
- =?us-ascii?Q?w1hUu4ykmD3MxCf5z2GFIx7Gj/4lBxba4WYRRt2sPkJss3FDT0zTsfJVqgUQ?=
- =?us-ascii?Q?vegAQL5+S/Rb1CebsUDJnBJZvFYKoSbc8tdznrojUU+f/lMnfgMj2Podkl5r?=
- =?us-ascii?Q?Pe/tXkzIPklERfXAQySvyZsjbODLb7hwqg2ef87meZq6ocnblee9q5oXlHJi?=
- =?us-ascii?Q?D6VT9qxS6D6eIL2Snom8WlEraqHO9FjwmUEK6NnWqKa7pHAQKKChkgpGD/cE?=
- =?us-ascii?Q?Xs++PIslXtmU/fMmpF/7R3aeTZVLkAMtJsmfxsHq0If7Sa+2iIJ6FlVNsoLN?=
- =?us-ascii?Q?xL/xrtDQ47CtMo5DHcstvEvi3bfgVy8SZLC969I+KfgQXoKGSwozdl8kjINy?=
- =?us-ascii?Q?qbfkig/I17ghvSMXEqBhMkneWKUTujDNYD0nVMTtLQ4BOaoQpVLgWPIITPcn?=
- =?us-ascii?Q?CfxJmPHJwfRMsJab63CxEWj4skkPnej/aTCgeAB6g8Y0s5/4Yd5Cw5tTqCWH?=
- =?us-ascii?Q?IYS4zfXU9QC+4fgLpjumCtWZgBARdhQGalSzCKudKzVnh97o+UNGqfFfaqoh?=
- =?us-ascii?Q?q+PPSu1cO4YvYyrBQ27BxVZmbcfv1dAK8fUG7mKBpLOCSffeMXKcahWitkGm?=
- =?us-ascii?Q?aFZguwx0xhWoUKkxcodo04u+v2IXaup+VGxwQbdz8CqlC2d7XBml2x8w8ewe?=
- =?us-ascii?Q?Ig=3D=3D?=
-X-OriginatorOrg: windriver.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 28f9a20b-9fb1-49bd-8830-08ddcfd70600
-X-MS-Exchange-CrossTenant-AuthSource: IA0PR11MB7792.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 31 Jul 2025 02:07:38.3974
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 8ddb2873-a1ad-4a18-ae4e-4644631433be
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rNjemnBebRma19vj3iZL8a77zPv9vIvXgfucpvaDruS7XKL98xNFodMEnz1lGcWsK5vKATOyW28E7FbkIKKhGsjxM0uyikoffndznHJXrMA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF4B53DB4B3
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDAxMyBTYWx0ZWRfX7YX8Ci6SHlzE
- b28z/cuYCAAha0IdM9xu2OYq730nFEPg5NiKwzxXeJKYHCDr9ghv/aRbTPqPBI+KYFpEw2AiryV
- XBoyTnCLJPVWCyeyvpUQmaAXvlTWol6t6Cdsi2Dnz2wO4BQ7BTBFh6hsmciLaMXfFIITFk0lMAI
- rXJD7Zg2b7VgPjGE5JPN1ycnbJPs+bRi6o9llW422TCui06bHyN184/erqCrJzG70Kk2q7ti0I4
- VX24gx7rRJo87wiJbXH2nM08K+v0PfQPNLmOlhgQhG7lgTIYoyEfvVxYgNkKuRI6hTa92fj8X/1
- Q+edv5ZWXSmKDlFDmrGBNA6ZQuzxVW8gAHmP3CJl8NfX8V1m7Rxk6XDbpT12gueEU5bsnEYEzd6
- FWkCEshc
-X-Proofpoint-ORIG-GUID: YeDjDln-6OjZN398UrmtuY26ohiu3GzU
-X-Proofpoint-GUID: YeDjDln-6OjZN398UrmtuY26ohiu3GzU
-X-Authority-Analysis: v=2.4 cv=Y9v4sgeN c=1 sm=1 tr=0 ts=688acfee cx=c_pps
- a=vlvY2cg+dyLOs7ISR4OrAg==:117 a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19
- a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19 a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19
- a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19 a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19
- a=xqWC_Br6kY4A:10 a=Wb1JkmetP80A:10 a=t7CeM3EgAAAA:8 a=FP8eLWCjxsv26ENVvGsA:9
- a=FdTzh2GWekK77mhwV6Dw:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-30_06,2025-07-30_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 suspectscore=0 adultscore=0 impostorscore=0 bulkscore=0
- phishscore=0 clxscore=1011 malwarescore=0 spamscore=0 classifier=typeunknown
- authscore=0 authtc= authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.22.0-2507210000 definitions=main-2507250208
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-From: Quanyang Wang <quanyang.wang@windriver.com>
+The `xa_store()` function can fail due to memory allocation issues or other
+internal errors. Currently, the return value of `xa_store()` is not
+checked, which can lead to a memory leak if it fails to store `numa_info`.
 
-Using an uninitialized mutex leads to the following warning when
-CONFIG_DEBUG_MUTEXES is enabled.
+This patch checks the return value of `xa_store()`. If an error is
+detected, the allocated `numa_info` is freed, and NULL is returned to
+indicate the failure, preventing a memory leak and ensuring proper error
+handling.
 
- DEBUG_LOCKS_WARN_ON(lock->magic != lock)
- WARNING: CPU: 2 PID: 49 at kernel/locking/mutex.c:577 __mutex_lock+0x690/0x820
- Modules linked in:
- CPU: 2 UID: 0 PID: 49 Comm: kworker/u16:2 Not tainted 6.16.0-04405-g4b290aae788e #23 PREEMPT
- Hardware name: Freescale i.MX8QM MEK (DT)
- Workqueue: events_unbound deferred_probe_work_func
- pstate: 60000005 (nZCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
- pc : __mutex_lock+0x690/0x820
- lr : __mutex_lock+0x690/0x820
- sp : ffff8000830b3900
- x29: ffff8000830b3960 x28: ffff80008223bac0 x27: 0000000000000000
- x26: ffff000802fc4680 x25: ffff000800019a0d x24: 0000000000000000
- x23: ffff8000806f0d6c x22: 0000000000000002 x21: 0000000000000000
- x20: ffff8000830b3930 x19: ffff000802338090 x18: fffffffffffe6138
- x17: 67657220796d6d75 x16: 6420676e69737520 x15: 0000000000000038
- x14: 0000000000000000 x13: ffff8000822636f0 x12: 000000000000044a
- x11: 000000000000016e x10: ffff8000822bd940 x9 : ffff8000822636f0
- x8 : 00000000ffffefff x7 : ffff8000822bb6f0 x6 : 000000000000016e
- x5 : 000000000000016f x4 : 40000000fffff16e x3 : 0000000000000000
- x2 : 0000000000000000 x1 : 0000000000000000 x0 : ffff0008003b8000
- Call trace:
-  __mutex_lock+0x690/0x820 (P)
-  mutex_lock_nested+0x24/0x30
-  imx_hsio_power_on+0x4c/0x764
-  phy_power_on+0x7c/0x12c
-  imx_sata_enable+0x1ec/0x488
-  imx_ahci_probe+0x1a4/0x560
-  platform_probe+0x5c/0x98
-  really_probe+0xac/0x298
-  __driver_probe_device+0x78/0x12c
-  driver_probe_device+0xd8/0x160
-  __device_attach_driver+0xb8/0x138
-  bus_for_each_drv+0x88/0xe8
-  __device_attach+0xa0/0x190
-  device_initial_probe+0x14/0x20
-  bus_probe_device+0xac/0xb0
-  deferred_probe_work_func+0x8c/0xc8
-  process_one_work+0x1e4/0x440
-  worker_thread+0x1b4/0x350
-  kthread+0x138/0x214
-  ret_from_fork+0x10/0x20
-
-Fixes: 82c56b6dd24f ("phy: freescale: imx8qm-hsio: Add i.MX8QM HSIO PHY driver support")
-Signed-off-by: Quanyang Wang <quanyang.wang@windriver.com>
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+Fixes: 1cc823011a23f ("drm/amdgpu: Store additional numa node information")
+Cc: Alex Deucher <alexander.deucher@amd.com>
+Cc: Christian König <christian.koenig@amd.com>
+Cc: David Airlie <airlied@gmail.com>
+Cc: Simona Vetter <simona@ffwll.ch>
+Cc: amd-gfx@lists.freedesktop.org
+Cc: dri-devel@lists.freedesktop.org
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
 ---
- drivers/phy/freescale/phy-fsl-imx8qm-hsio.c | 2 ++
- 1 file changed, 2 insertions(+)
+Changes in v2:
+    - Improve description
+    - Add tags Fixes and Cc
 
-diff --git a/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c b/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
-index 5dca93cd325c8..c97b7ae3f5b63 100644
---- a/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
-+++ b/drivers/phy/freescale/phy-fsl-imx8qm-hsio.c
-@@ -590,6 +590,8 @@ static int imx_hsio_probe(struct platform_device *pdev)
- 		phy_set_drvdata(phy, lane);
+ drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+index f5466c592d94..b4a3e4d3e957 100644
+--- a/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
++++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_acpi.c
+@@ -876,7 +876,7 @@ static inline uint64_t amdgpu_acpi_get_numa_size(int nid)
+ 
+ static struct amdgpu_numa_info *amdgpu_acpi_get_numa_info(uint32_t pxm)
+ {
+-	struct amdgpu_numa_info *numa_info;
++	struct amdgpu_numa_info *numa_info, *old;
+ 	int nid;
+ 
+ 	numa_info = xa_load(&numa_info_xa, pxm);
+@@ -898,7 +898,11 @@ static struct amdgpu_numa_info *amdgpu_acpi_get_numa_info(uint32_t pxm)
+ 		} else {
+ 			numa_info->size = amdgpu_acpi_get_numa_size(nid);
+ 		}
+-		xa_store(&numa_info_xa, numa_info->pxm, numa_info, GFP_KERNEL);
++		old = xa_store(&numa_info_xa, numa_info->pxm, numa_info, GFP_KERNEL);
++		if (xa_is_err(old)) {
++			kfree(numa_info);
++			return NULL;
++		}
  	}
  
-+	mutex_init(&priv->lock);
-+
- 	dev_set_drvdata(dev, priv);
- 	dev_set_drvdata(&pdev->dev, priv);
- 
+ 	return numa_info;
 -- 
 2.43.0
 
