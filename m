@@ -1,107 +1,159 @@
-Return-Path: <linux-kernel+bounces-751695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E44B3B16C62
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:05:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC7E2B16C66
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 66CE07A9256
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:04:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E8AF3B6C25
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:07:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F53528DEE2;
-	Thu, 31 Jul 2025 07:05:23 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9D8828D8E2;
+	Thu, 31 Jul 2025 07:07:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="KNBxcR72";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="BnrtRR9A";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="f5gWOCfV";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="LI1AM2Ir"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5305E28DB46;
-	Thu, 31 Jul 2025 07:05:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A038D23E25B
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753945523; cv=none; b=p+RgKFCZ35oS9BY+rns/qS86TXGP+KrCFXX5HE/owk6jHfTurrfYfb+An1rH73dwd1Hzit95dLjAnq1zkMZpnP1Uht95sy6z/khAs/Y8K2a6pjU1yrwazordyZ164/yueCw0vR95q5dG3YuXACfpeUoQROTwCvNMC8jGOvHPb+M=
+	t=1753945656; cv=none; b=EGFHEYvb8G6cBlSFpZYEoGeT2tQkTBLILSTcJ0TsR6vwq/arZLn1SwGIUeIdcHzR6JFhgj27GXnvNoQ2kHew1NQgUozz9BQw7pGZdhLAXeVMYqBZy9aiefBKvP8e0l3VzhkBi3s64rZ4HmgBN3ul7iq20yh0e37AaabgXOejlRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753945523; c=relaxed/simple;
-	bh=hC+ZYRMClws5PB0cmKfh3SCEf5GnTVWE0dC7wQpM/6c=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=NwCLvYwHEGYlRHFNxWNlE9B5lAY3v+9FOb40XfIMAkT/rfjrqJquFsoE9xA9STxxozeCp0kTMcWQp2fDNilAhE8WdWu0E9QoNNGKgQLQvD7g+jKIqVo3PTpB0Bi8mRdDv4pEHtpBdI+mYGxtKMnVaGzurti6prtsTeBP/qumUJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bt0TT2vt1zYQv52;
-	Thu, 31 Jul 2025 15:05:17 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 17E881A092F;
-	Thu, 31 Jul 2025 15:05:16 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgAXkxOrFYto8udOCA--.37069S3;
-	Thu, 31 Jul 2025 15:05:15 +0800 (CST)
-Subject: Re: [PATCH] block: Fix default IO priority if there is no IO context
-To: Guenter Roeck <linux@roeck-us.net>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- Bart Van Assche <bvanassche@acm.org>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250731044953.1852690-1-linux@roeck-us.net>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <a97c3d4d-4b69-ed64-154b-4329e94a703a@huaweicloud.com>
-Date: Thu, 31 Jul 2025 15:05:15 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753945656; c=relaxed/simple;
+	bh=uNq5YgNWC0JduXOh89NmVinXt2YvLYn3fmm+cayt4Wo=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=b721hVnkujGB1/z8bsifoJ5bv25d2HmD6FKZRgMAHEhfc45Xdd62bTMvCnRv+Xbtg7fsOmzM9mQe8xXGVTozDukDIJdlpJ/gb8FfBTq2GwtnG8hFBdwH3Q9iUYyYbkSHTh/vH0L+CJ8/QKqKOcsdg6aMOTo0GPsHFzBQI010Y1U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=KNBxcR72; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=BnrtRR9A; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=f5gWOCfV; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=LI1AM2Ir; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 0CAE91F7B6;
+	Thu, 31 Jul 2025 07:07:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753945653; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WR8gPKVMmGmjKuJD//CRj8pwhfAE0au4XA9ioUJkw9A=;
+	b=KNBxcR72/9N/pl313LwY5ykJukeyL3vxyvzQxpUW+o2dvqlRNCYd9E0V9HofK5FO4Zvrb0
+	wFyLPvonR2loGBUjpUJ82Miu1mEwwsyv3LU/O9opiHr7L8oev8QRImwI4Ne07UmKGXt98J
+	OkJm8lVpaRTs4b+95wpaFYdkKkSrpgQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753945653;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WR8gPKVMmGmjKuJD//CRj8pwhfAE0au4XA9ioUJkw9A=;
+	b=BnrtRR9AdbvIit/B0EtI7fE04/V8k3n5tQefmlcNK21S2XCSvc3w901FPiLjBxH/BBxa03
+	YY9HASI3lvu1QDAw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753945652; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WR8gPKVMmGmjKuJD//CRj8pwhfAE0au4XA9ioUJkw9A=;
+	b=f5gWOCfV8yLrwTeAPNCzg1grb9Qc6pPQwmCXomDgB/o08BYrjBY7EN/1ALmh5wg3PktoMN
+	Czk3niNqNxYvnpy8ypbnYN7pQ3BT/AxeY7ZksxnY0meP0AChOZuiU4SKQG2mZ86hZySqpu
+	3mwpk8HJsZTh0sjQwYn9MqKpL1AFgwM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753945652;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WR8gPKVMmGmjKuJD//CRj8pwhfAE0au4XA9ioUJkw9A=;
+	b=LI1AM2IrSCagHvMVIVsbMdWAMdvdQ23SwbaZYCIj5xVQ4ocVAlLtnlLJM+g4j7FvL7roe/
+	qxeuc7uIfoHIayDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id D5E9A13876;
+	Thu, 31 Jul 2025 07:07:31 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id GG2iMjMWi2hLagAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 31 Jul 2025 07:07:31 +0000
+Date: Thu, 31 Jul 2025 09:07:31 +0200
+Message-ID: <87wm7osurw.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: Huacai Chen <chenhuacai@kernel.org>
+Cc: Takashi Iwai <tiwai@suse.de>,
+	linux-sound@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	loongarch@lists.linux.dev
+Subject: Re: [PATCH 2/3] LoongArch: Update HD-audio codec configs
+In-Reply-To: <CAAhV-H5p6-oHtbbo_9P8oZJogZTxgeY2cmc0usuefZBmE-4buA@mail.gmail.com>
+References: <20250731064813.1622-1-tiwai@suse.de>
+	<20250731064813.1622-3-tiwai@suse.de>
+	<CAAhV-H5p6-oHtbbo_9P8oZJogZTxgeY2cmc0usuefZBmE-4buA@mail.gmail.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20250731044953.1852690-1-linux@roeck-us.net>
-Content-Type: text/plain; charset=gbk; format=flowed
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAXkxOrFYto8udOCA--.37069S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7Ar1fZw47Jw18KFWfCr15urg_yoW8JFWDpF
-	18Ca4q9r48ZF1Ik3WUWas5uasY93Z3GryUGrZ8WrWru3s5Gw10gr15K3Za9F1Yyr4kWr4f
-	Ww4qk3yfCa45ArJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUvjb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUGVWUXwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxUot
-	CzDUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[linux.dev:email,imap1.dmz-prg2.suse.org:helo,suse.de:email,suse.de:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-ÔÚ 2025/07/31 12:49, Guenter Roeck Ð´µÀ:
-> Upstream commit 53889bcaf536 ("block: make __get_task_ioprio() easier to
-> read") changes the IO priority returned to the caller if no IO context
-> is defined for the task. Prior to this commit, the returned IO priority
-> was determined by task_nice_ioclass() and task_nice_ioprio(). Now it is
-> always IOPRIO_DEFAULT, which translates to IOPRIO_CLASS_NONE with priority
-> 0. However, task_nice_ioclass() returns IOPRIO_CLASS_IDLE, IOPRIO_CLASS_RT,
-> or IOPRIO_CLASS_BE depending on the task scheduling policy, and
-> task_nice_ioprio() returns a value determined by task_nice(). This causes
-> regressions in test code checking the IO priority and class of IO
-> operations on tasks with no IO context.
+On Thu, 31 Jul 2025 09:05:04 +0200,
+Huacai Chen wrote:
 > 
-> Fix the problem by returning the IO priority calculated from
-> task_nice_ioclass() and task_nice_ioprio() if no IO context is defined
-> to match earlier behavior.
+> Hi, Takashi,
 > 
-> Fixes: 53889bcaf536 ("block: make __get_task_ioprio() easier to read")
-> Cc: Jens Axboe <axboe@kernel.dk>
-> Cc: Bart Van Assche <bvanassche@acm.org>
-> Signed-off-by: Guenter Roeck <linux@roeck-us.net>
-> ---
->   include/linux/ioprio.h | 3 ++-
->   1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
+> On Thu, Jul 31, 2025 at 2:49â€¯PM Takashi Iwai <tiwai@suse.de> wrote:
+> >
+> > The HD-audio codec driver configs have been updated again the drivers
+> > got split with different kconfigs.  Add the missing items.
+> >
+> > Fixes: 1d8dd982c409 ("ALSA: hda/realtek: Enable drivers as default")
+> > Fixes: 81231ad173d8 ("ALSA: hda/hdmi: Enable drivers as default")
+> > Cc: loongarch@lists.linux.dev
+> > Signed-off-by: Takashi Iwai <tiwai@suse.de>
+> I prefer to select all Realtek/HDMI codecs (except
+> CONFIG_SND_HDA_CODEC_HDMI_NVIDIA_MCP and
+> CONFIG_SND_HDA_CODEC_HDMI_TEGRA).
 
-Thanks
+OK, I'll refresh later.
 
+
+thanks,
+
+Takashi
 
