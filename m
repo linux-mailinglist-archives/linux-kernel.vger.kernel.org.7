@@ -1,156 +1,122 @@
-Return-Path: <linux-kernel+bounces-751485-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 133B1B16A36
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:44:48 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8D02B16A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:45:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7DD2F1AA26E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:45:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C5337A88BD
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 01:43:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E7B15442A;
-	Thu, 31 Jul 2025 01:44:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BB4189902;
+	Thu, 31 Jul 2025 01:45:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hi9Gd/5k"
-Received: from mail-oi1-f182.google.com (mail-oi1-f182.google.com [209.85.167.182])
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="el3XsFnS"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2D2D7F477;
-	Thu, 31 Jul 2025 01:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 183082D023;
+	Thu, 31 Jul 2025 01:44:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753926279; cv=none; b=Xv6Yon/OM7wMdNkkCYfgBje5ssOJEa+A0+9IRuYjEwugDeV9yvCuIpnoAV2HALWuCU8Y9rIjDAQMiG163K6CDFc1nJvQYgETjtSBm3DWs4bg4aQuzpQTQNMpj4MKFHmuO0oHhmNeSalvmYxjgxt5rZNQ4Vj6SY0PnwIwnfVfACQ=
+	t=1753926301; cv=none; b=QpuQsyG9249Nm+1xoR9wadmAPWmwXUaRLi+h47KWnBIbRTK6PTiz8ruBnQcWWy5mDLuiVTSo2FaZvbEvyRgu3MUbnsWcBLHd+COl6Vb3nhiQFyzAXWH9NBheB2OBBioRnNhlTIXHCaS0GnXFh6ohc4GWiXoSMb7rsJL9ykMy92k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753926279; c=relaxed/simple;
-	bh=PXcFVb3XfNEVPp/Kfyksg9teOS85x7QJyRpu+lxqObY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W3l49SFwEPF0NNyEOpFch+OcTuE7dQ2gyxhLTAIj+DpqII/rs+XMC+0NXBxhNP7kh8sbCCugN807Hj3E44K1ZvCrDJvtG/jyetbokMt7V2QYhyg3Fz81ApjHsnuSfmOWBBguBDyqFNZz37pza+wARdDScN4pn1DfiecVnGwoFQI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hi9Gd/5k; arc=none smtp.client-ip=209.85.167.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oi1-f182.google.com with SMTP id 5614622812f47-41b9e3c8bd4so268721b6e.0;
-        Wed, 30 Jul 2025 18:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753926276; x=1754531076; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TvqjHObjQC7JX2Ub4wOeZhni34SLZZkthzxU3aytJEM=;
-        b=hi9Gd/5kYy3oeB+itP8ngJmL1MabdSk9GXUX2fhtStoT7FtLvV/QYb2q3gRrmYbjXk
-         if5H4JU58fNH3zdNYWaydjnjERXtxjFOfiiAVvJUagK1jTB4A4MEqzAVAjjAKAuGKd/a
-         ZaC+goz9NiTiX/7bGHWdyQkmFxCKN/ryCAKLW9Cyt7hmyDc8rMAiMAw8umKQTMN6vP+E
-         1TYNFNqd7dngx+yJdABq9Acge2RI0QaBXmVmb2mGQp5Wcm/U9KDYjsE5E5TfxiTc3MHK
-         Gd8tV23N9OBju17aiwvP1nHvspW/HxNzWWTYIdcOOQgvYj1DFbeYJXnC9Ifz6Fr7P15i
-         DXsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753926276; x=1754531076;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TvqjHObjQC7JX2Ub4wOeZhni34SLZZkthzxU3aytJEM=;
-        b=H8F3KDo7+ZYDSpBgyYzhqUZIow/95QrL/ykbMZpJWj5VjzM1lYdpx6H5+bqvBJ2c2N
-         gLP36r/EijE8LewgtUpHFVHCxKaMAnm68qTi/jds57Nx5c65ZbUgxSQzJFe4chtBus1+
-         1AH5qggOg97EizuSndxiLDuh3v2LJ24uLRd+Xk1Yf1bw0E9Ce2t1dSgPWgW5BZdpGwux
-         eqlqMOkkiCxmChkHEGGcr4VUdbdbE2HbTmYjEzK6XqluGyO/Au4o5A3DSFY2hE9FHU51
-         X0a3vVX1sOUEWEKO/H61lmVFpXqjfA2VHltcc6JYu0KRX42R8gEZI74FjmMTb9fceeGl
-         g5rg==
-X-Forwarded-Encrypted: i=1; AJvYcCW/7pPn0sp1YNTXhbPExolDeKHhK0top5jyO5YlaZRJPtELzGmjLZY5W8tSJJS+vB3SRPc=@vger.kernel.org, AJvYcCWgnRgKvZuR1NmbKfdyMjNuT9bVoZ9A/dC4ZHOJScMjw+gy1C9lE2TYkPGLcsBr5qwM7tpgvG5I1cgfT7zt@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvaM2a5AcKwHbeRbT8PisvXf2zwHCrfc88q1Rh6Ps0yhbIcL2y
-	g+BxBN+fW0W60Y7C9DSVOevbG4RAbVG0vnM+Q+J8goFKDEv/N6deJ+hkYDiSKuCRLcGZxwjyrOq
-	cdyquhOeGuZ7mcOdcOixk2tEj7SmoNYU=
-X-Gm-Gg: ASbGncvd6em4xXOlbem/WCNZ2r3SAFP7tEPBeXiPGJ16l464t6zFum/jkSWEN1ay/OX
-	wegQO241SeB8wxGYvlYgapnGRiemtKbIAj3ouxdDczIuXGUJ3dqK0pi7RrWkgYIqfpdphaejCuV
-	nU9Ir0XKJ2+jtfYewKl6G+1UmxBLXD7t+kitD3LFUmSqhTJ3JdxCHjTmcNziQ9fIaauRQe4JMjV
-	47vTsQ=
-X-Google-Smtp-Source: AGHT+IFqiRnMtLMxFx16WSrBf6XJxsgbu5jgcccCl5t+5itNCUcmqyUoKLelAaghTDww78kjcfJl+bfst0NoWS3TiK8=
-X-Received: by 2002:a05:6808:1521:b0:406:697f:a62f with SMTP id
- 5614622812f47-4319999e1e4mr3911664b6e.10.1753926275877; Wed, 30 Jul 2025
- 18:44:35 -0700 (PDT)
+	s=arc-20240116; t=1753926301; c=relaxed/simple;
+	bh=8ycMzanKfn/v4u/ZyldJ7ds/EqsMVt4f1HAFoiLHzpA=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=bq4Q9xbb02pe0ftGObaLgQGywzE0lEnMy6W3u9q9kMCMQF0WjzYSs5V8jQ1F3MJ7aRj+J2jxjYtFdNxEkltAy/NkEQgm8wf6weVcUBZdAstwwtXNVaZpfqK33g2ZT5rrD2R1DIetYJ2XHIjSStpM0QYdPST4nKDUxmR1JiBxUKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=el3XsFnS; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 56V1idgS7305146, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1753926279; bh=8g+895L8WsXPGFnFkTfb3gD9nWQbADrUMkgjo2Bh2+4=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=el3XsFnSLp9zdA7iZT8JrB9MKGF57b6MpIqCStKqbQ2yP2HB/hRELqLyG6jm7WSOo
+	 uT4LJOc7AYfyVY+z2VOsgwwNs8ZYvZjwZo1iTjI8na3jJzAgdoyqUZJI6kv30neP2x
+	 2aVgv/O5cEMuvvilH0fZHSJwsyKoZumiQoKdIsGWy2IpX43lVvoSCFKhloXPn9Ejgl
+	 H3BS4LQ9WwD/Jp+RRnjY2ch+wkF50/n6CYPwr6CQV1fNrVYMpIusfpQLquA9P7GMSQ
+	 KnEqqpd5pBbW67AMgmA60aB/+dZXpG/YB4C5JTUs6cUEYZ3oQ4TE1OBasOC9/QndXh
+	 y1YgnoQ3jPprg==
+Received: from mail.realtek.com (rtkexhmbs04.realtek.com.tw[10.21.1.54])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 56V1idgS7305146
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 31 Jul 2025 09:44:39 +0800
+Received: from RTEXMBS06.realtek.com.tw (172.21.6.99) by
+ RTKEXHMBS04.realtek.com.tw (10.21.1.54) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Thu, 31 Jul 2025 09:44:39 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS06.realtek.com.tw (172.21.6.99) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Thu, 31 Jul 2025 09:44:37 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Thu, 31 Jul 2025 09:44:37 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Mande Imran Ahmed <immu.ahmed1905@gmail.com>,
+        "johannes@sipsolutions.net"
+	<johannes@sipsolutions.net>
+CC: "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>,
+        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] net/mac80211: replace scnprintf() with sysfs_emit() for sysfs output
+Thread-Topic: [PATCH] net/mac80211: replace scnprintf() with sysfs_emit() for
+ sysfs output
+Thread-Index: AQHcATh5GvqFiHspD06BS3uK8zvoH7RLdJIA
+Date: Thu, 31 Jul 2025 01:44:37 +0000
+Message-ID: <5b63288d487547f1a4e6df426432ea0b@realtek.com>
+References: <20250730095634.3754-1-immu.ahmed1905@gmail.com>
+In-Reply-To: <20250730095634.3754-1-immu.ahmed1905@gmail.com>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730131257.124153-1-duanchenghao@kylinos.cn> <20250730131257.124153-3-duanchenghao@kylinos.cn>
-In-Reply-To: <20250730131257.124153-3-duanchenghao@kylinos.cn>
-From: Hengqi Chen <hengqi.chen@gmail.com>
-Date: Thu, 31 Jul 2025 09:44:23 +0800
-X-Gm-Features: Ac12FXw2Om8UPwVFQYngJybFlYBDlP0KxfqNZ7udcHhvklhAejZcvU7iATJRcmY
-Message-ID: <CAEyhmHRzvazN06DsrqTO9PiBj7kJpZ3XdcOpxE2khjaKaE5jZQ@mail.gmail.com>
-Subject: Re: [PATCH v5 2/5] LoongArch: BPF: Update the code to rename
- validate_code to validate_ctx
-To: Chenghao Duan <duanchenghao@kylinos.cn>
-Cc: ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org, 
-	yangtiezhu@loongson.cn, chenhuacai@kernel.org, martin.lau@linux.dev, 
-	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev, 
-	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me, 
-	haoluo@google.com, jolsa@kernel.org, kernel@xen0n.name, 
-	linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, bpf@vger.kernel.org, 
-	guodongtai@kylinos.cn, youling.tang@linux.dev, jianghaoran@kylinos.cn, 
-	vincent.mc.li@gmail.com, geliang@kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Wed, Jul 30, 2025 at 9:13=E2=80=AFPM Chenghao Duan <duanchenghao@kylinos=
-.cn> wrote:
->
-> Rename the existing validate_code() to validate_ctx()
-> Factor out the code validation handling into a new helper validate_code()
->
-> * validate_code is used to check the validity of code.
-> * validate_ctx is used to check both code validity and table entry
->   correctness.
->
-> The new validate_code() will be used in subsequent changes.
->
+> --- a/net/mac80211/debugfs.c
+> +++ b/net/mac80211/debugfs.c
 
-I still feel uncomfortable about the subject line.
-Hope Huacai can rephrase it when apply.
-other than that,
+[...]
 
-Reviewed-by: Hengqi Chen <hengqi.chen@gmail.com>
+> @@ -152,16 +152,15 @@ static ssize_t airtime_flags_read(struct file *file=
+,
+>                                   size_t count, loff_t *ppos)
+>  {
+>         struct ieee80211_local *local =3D file->private_data;
+> -       char buf[128] =3D {}, *pos, *end;
+> +       char buf[128] =3D {}, *pos;
 
-> Co-developed-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: George Guo <guodongtai@kylinos.cn>
-> Signed-off-by: Chenghao Duan <duanchenghao@kylinos.cn>
-> ---
->  arch/loongarch/net/bpf_jit.c | 10 +++++++++-
->  1 file changed, 9 insertions(+), 1 deletion(-)
->
-> diff --git a/arch/loongarch/net/bpf_jit.c b/arch/loongarch/net/bpf_jit.c
-> index fa1500d4a..7032f11d3 100644
-> --- a/arch/loongarch/net/bpf_jit.c
-> +++ b/arch/loongarch/net/bpf_jit.c
-> @@ -1180,6 +1180,14 @@ static int validate_code(struct jit_ctx *ctx)
->                         return -1;
->         }
->
-> +       return 0;
-> +}
-> +
-> +static int validate_ctx(struct jit_ctx *ctx)
-> +{
-> +       if (validate_code(ctx))
-> +               return -1;
-> +
->         if (WARN_ON_ONCE(ctx->num_exentries !=3D ctx->prog->aux->num_exen=
-tries))
->                 return -1;
->
-> @@ -1288,7 +1296,7 @@ struct bpf_prog *bpf_int_jit_compile(struct bpf_pro=
-g *prog)
->         build_epilogue(&ctx);
->
->         /* 3. Extra pass to validate JITed code */
-> -       if (validate_code(&ctx)) {
-> +       if (validate_ctx(&ctx)) {
->                 bpf_jit_binary_free(header);
->                 prog =3D orig_prog;
->                 goto out_offset;
-> --
-> 2.25.1
->
+The assumption of buffer size in sysfs_emit() is PAGE_SIZE, but obviously
+here is 128. Also, this is not sysfs.
+
+Maybe, I'd ignore this patch since I have commented this in your patch that
+changes similar stuff in rtw89 driver. Just share some information for
+other reviewers.
+
+>=20
+>         pos =3D buf;
+> -       end =3D pos + sizeof(buf) - 1;
+>=20
+>         if (local->airtime_flags & AIRTIME_USE_TX)
+> -               pos +=3D scnprintf(pos, end - pos, "AIRTIME_TX\t(%lx)\n",
+> +               pos +=3D sysfs_emit(pos, "AIRTIME_TX\t(%lx)\n",
+>                                  AIRTIME_USE_TX);
+>         if (local->airtime_flags & AIRTIME_USE_RX)
+> -               pos +=3D scnprintf(pos, end - pos, "AIRTIME_RX\t(%lx)\n",
+> +               pos +=3D sysfs_emit(pos, "AIRTIME_RX\t(%lx)\n",
+>                                  AIRTIME_USE_RX);
+>=20
+>         return simple_read_from_buffer(user_buf, count, ppos, buf,
+
+
+[...]
+
 
