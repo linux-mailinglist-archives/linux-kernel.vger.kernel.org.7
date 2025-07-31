@@ -1,103 +1,144 @@
-Return-Path: <linux-kernel+bounces-752438-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CAC3FB17594
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:29:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 91B37B17595
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:29:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A395CA80894
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:28:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E380A8227F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:29:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40307264615;
-	Thu, 31 Jul 2025 17:29:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50E12741D5;
+	Thu, 31 Jul 2025 17:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="mgKoT17h"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="on8iDf3/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C17B13D8A4
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:28:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4DCBE6C;
+	Thu, 31 Jul 2025 17:29:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753982940; cv=none; b=QfnyxuFFVsq5Mweg96oguayCrsTrechqeBvh+kIkB23zwZ4TXFlLjL89pTK5rO4n9LrIEru5zVVUVegmd0xLcYp2e9cWZDB1U4MpT3K0xRX7Js+TtMMOiV1g83P/fXKG4+VTRlH4xHUIerdWY05nfrq2lBxWVXNFfxJBL4WOd80=
+	t=1753982988; cv=none; b=bcm2ioMqiHsplYuO8Qswmh36U1HDXHPKZGyo2p+SrmpycB7G4VSnw87CB3/A/DETxne4E/tp+WuaYp/fy+PnSuxEqy2o/k7LyF2l9Rq6568/2sDKghPU4tu6X7TVSSq04Rmg0a8vmc8gFmciGqSvH0h1GQXqgvju28jcotifouY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753982940; c=relaxed/simple;
-	bh=7eoSokCF8arafZEuyCrzN1S2Uwk35HNEsUdMYr5dyDY=;
+	s=arc-20240116; t=1753982988; c=relaxed/simple;
+	bh=bCp1bbrK8Fu87IJT39F/Jh1Gf8thyWSoFtSHr2FPQpo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q96jo1pXm49ZBhSD58xyNexWRPM/6ld2vw9yhR5qKYiUke1I2fJIgayAGGqnLsvniGsboY/RJICW07NDRwoqbIk4WDv+0X3FGp9dVwci+JaVgDkHk/MmzZx0g/UH344P2vMI0M9TcLtEZvR1zDQgtH287mNMHwqVo2VytMCREcY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=mgKoT17h; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
-	bh=Fwx/pYBtKXWSp2eD62l2WVnaBhf3VbvA/LumAEnqK8M=; b=mgKoT17hfHhfqHCfw/GTS1boTc
-	gT1ciF9/Y89OCJXn0ReK4dbkBjHuk1kPwPZiA9VWt+/cNgr8Rqstilp9/26PvA6Rn9yBkVGNsxGyp
-	qaf6SrXSqAfcWIyelsG7OIzTBZLrM9eV0Um6t084UDGxddGUTbcTng1gkie6ip5evKTknaU7eLFMt
-	drfyjNY7lnC2NBw6e6EAljnKg2ql50eaCmK0lFaDHCgVMILYHnWPJZOQN+o16H6JPqwQgY+0rt5PV
-	4bgurdkfHUpr9gUFAYtzqC5zDPfmJ/rxQPAWCb3gF6QiAonRFXRf3b1YRlFYJhE0DkkbqQLAlegJW
-	fFUPuSTw==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uhX5I-00000008AHq-3KCj;
-	Thu, 31 Jul 2025 17:28:52 +0000
-Date: Thu, 31 Jul 2025 18:28:52 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Moon Hee Lee <moonhee.lee.ca@gmail.com>
-Cc: syzbot+d6ccd49ae046542a0641@syzkaller.appspotmail.com,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	hdanton@sina.com
-Subject: Re: [syzbot] [fs?] [wireless?] general protection fault in
- simple_recursive_removal (5)
-Message-ID: <20250731172852.GQ222315@ZenIV>
-References: <20250731171729.46432-2-moonhee.lee.ca@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=nRFOCKUylG4HmQAYo/yKWCdPs+HN17rhkVYcZbCgRKR2aAZN5gsuozRW4/3Z7YwGj5dn4rxSbkR7VqlYI9cPCzWHV5DdAQUhjP8Eo3uCteRD6pwgK+mELJKWyNhm37Kz/4dlh0EO+iruAWpFbXoiAMf4zj0yjC4O0M7rP6Jm5o0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=on8iDf3/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E809C4CEF8;
+	Thu, 31 Jul 2025 17:29:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753982987;
+	bh=bCp1bbrK8Fu87IJT39F/Jh1Gf8thyWSoFtSHr2FPQpo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=on8iDf3/CBpQxgPlpu+/la8YWj+Os4lq7QjW7pm3CCbJm12T6vgTm5UGQCtX+KIac
+	 CTNYjHyIFNS1iZ4ELXM31ZTSsc7sxJiFjhKGLYbPH5CAdWkLiFJMvXtjG907lU1WcN
+	 GwBT1FhCb/3r72qzNbE4rOo1abnrh1Acei16Gp1zpW8rh9bqGmuX1FGaChPd3pbVeJ
+	 YahU6U1G4Vr18SoahAom/7dUe+7ZXsrNZVrqKumVE5n0I41tPKjojqX6J/DNV8lhWP
+	 xG2UVGAZAQj0J31caR9wP7fJeAc30ooEH8p8ynn/JBrUQMQlkbFG405lp41pgvfG2R
+	 MpfRJSW9Jd6Gw==
+Date: Thu, 31 Jul 2025 10:29:46 -0700
+From: "Darrick J. Wong" <djwong@kernel.org>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>,
+	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250731172946.GK2672070@frogsfrogsfrogs>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <87freddbcf.fsf@igalia.com>
+ <20250731-diamant-kringeln-7f16e5e96173@brauner>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250731171729.46432-2-moonhee.lee.ca@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
+In-Reply-To: <20250731-diamant-kringeln-7f16e5e96173@brauner>
 
-On Thu, Jul 31, 2025 at 10:17:29AM -0700, Moon Hee Lee wrote:
-> #syz test git://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next.git main
+On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
+> On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+> > Hi Darrick,
+> > 
+> > On Tue, Jul 29 2025, Darrick J. Wong wrote:
+> > 
+> > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+> > >> Hi!
+> > >> 
+> > >> I know this has been discussed several times in several places, and the
+> > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
+> > >> able to restart a user-space FUSE server.
+> > >> 
+> > >> While looking at how to restart a server that uses the libfuse lowlevel
+> > >> API, I've created an RFC pull request [1] to understand whether adding
+> > >> support for this operation would be something acceptable in the project.
+> > >
+> > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> > > could restart itself.  It's unclear if doing so will actually enable us
+> > > to clear the condition that caused the failure in the first place, but I
+> > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> > > aren't totally crazy.
+> > 
+> > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
+> > the restart itself.  Instead, it simply adds some visibility into the
+> > opaque data structures so that a FUSE server could re-initialise a session
+> > without having to go through a full remount.
+> > 
+> > But sure, there are other things that could be added to the library as
+> > well.  For example, in my current experiments, the FUSE server needs start
+> > some sort of "file descriptor server" to keep the fd alive for the
+> > restart.  This daemon could be optionally provided in libfuse itself,
+> > which could also be used to store all sorts of blobs needed by the file
+> > system after recovery is done.
 > 
-> 
-> Thanks for the review and valuable feedback.
-> 
-> Upon investigation, I found the crash occurs when the netdev's debugfs
-> directory is removed while a station still holds a pointer
-> (sta->debugfs_dir) to a dentry within it. A subsequent call to
-> ieee80211_sta_debugfs_remove() may then dereference a freed dentry,
-> triggering a use-after-free.
-> 
-> To address this, I’m preparing a patch that clears sta->debugfs_dir for
-> all stations associated with the interface before calling
-> debugfs_remove_recursive(). This ensures any later station removal
-> becomes a no-op and avoids referencing a stale pointer.
-> 
-> This reply is intended for syz testing and to provide context for
-> review. A formal patch will follow.
+> Fwiw, for most use-cases you really just want to use systemd's file
+> descriptor store to persist the /dev/fuse connection:
+> https://systemd.io/FILE_DESCRIPTOR_STORE/
 
-> +	/*
-> +	 * Before we delete the netdev’s debugfs tree, clear sta->debugfs_dir
-> +	 * for every station on this interface.  This ensures any later call to
-> +	 * ieee80211_sta_debugfs_remove() sees NULL and avoids touching a dentry
-> +	 * that we are about to free.
-> +	 */
-> +	rcu_read_lock();
-> +	list_for_each_entry_rcu(sta, &sdata->local->sta_list, list) {
-> +		if (sta->sdata == sdata)
-> +			sta->debugfs_dir = NULL;
-> +	}
-> +	rcu_read_unlock();
+Very nice!  This is exactly what I was looking for to handle the initial
+setup, so I'm glad I don't have to go design a protocol around that.
 
-Umm... Is there any exclusion between that an ieee80211_sta_debugfs_remove()?
-This looks fishy...
+> > 
+> > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
+> > >> libfuse data structures so that a server could set some of the sessions'
+> > >> fields.
+> > >> 
+> > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+> > >> pass it to libfuse while recovering, after a restart or a crash.  The
+> > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
+> > >> course.  And there are probably other data structures that user-space file
+> > >> systems will have to keep track as well, so that everything can be
+> > >> restored.  (The parameters set in the INIT phase, for example.)
+> > >
+> > > Yeah, I don't know how that would work in practice.  Would the kernel
+> > > send back the old connection flags and whatnot via some sort of
+> > > FUSE_REINIT request, and the fuse server can either decide that it will
+> > > try to recover, or just bail out?
+> > 
+> > That would be an option.  But my current idea would be that the server
+> > would need to store those somewhere and simply assume they are still OK
+> 
+> The fdstore currently allows to associate a name with a file descriptor
+> in the fdstore. That name would allow you to associate the options with
+> the fuse connection. However, I would not rule it out that additional
+> metadata could be attached to file descriptors in the fdstore if that's
+> something that's needed.
+
+Names are useful, I'd at least want "fusedev", "fsopen", and "device".
+
+If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
+be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
+the store as 'journal_dev'?" Then it just has to wait until the fd shows
+up, and it can continue with the mount process.
+
+Though the "device" argument needn't be a path, so to be fully general
+mountfsd and the fuse server would have to handshake that as well.
+
+--D
 
