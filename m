@@ -1,89 +1,124 @@
-Return-Path: <linux-kernel+bounces-752410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E856FB17536
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:47:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9D0B17538
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 597F718C07CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:47:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B42163BB688
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:46:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8611623C8B3;
-	Thu, 31 Jul 2025 16:46:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F1523D2B0;
+	Thu, 31 Jul 2025 16:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sPXGXw+s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lO1SKe+Y"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D59FDA921;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A852E22F770;
+	Thu, 31 Jul 2025 16:47:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980414; cv=none; b=CBlwggY09J4vi9RgRCrvZbZl8PJvSg/hcFzR8q6fumfStyprrFktY7BIGFOHKC8oDLiYNV4egE+i0RY/nRBihc9tz107WsXiSGfWZUVtXnF34bs7RBmft0gI0v/wd3xRvYLeXiejW7FK2j5Men1GR0+zI/IBEv/g8zseQO+nd6A=
+	t=1753980433; cv=none; b=ZSGzkQdeliGRZbTvk7/8DZPWeIffSECJSQNYV9RNO7SkJbpSlWMFpJQuQUd82y2Fl6PuGcL4wmRR6KsiB8qul1caWzJfrHAuq3uV/Fipbe6baCeybGjZb8vo2yhvVYeQFO6ckrr5eGCJPsZyiGZfEDgaB4NftXb+BtocSTSb1pQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980414; c=relaxed/simple;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
-	h=Content-Type:MIME-Version:In-Reply-To:References:Subject:From:Cc:
-	 To:Date:Message-ID; b=RBS0da45HfdjFgvw6ArMBJtUwDUmQ1k4PgVArU4kelFi7Qv09uvyKvznjhp9T07s0xd/LNmG0al018M23n8DTVpzK49THQC6WI45QBHnPl0/inatEf+ouzOq7TywUHLGpr/TP8YpqiJDudQUBXso6b5PjcWGPUKU/c0Gt87stBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sPXGXw+s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 48DF4C4CEEF;
-	Thu, 31 Jul 2025 16:46:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753980413;
-	bh=nWnE0BuMLT8kWS1iBNxdI5fCsX3JKkXaj3S/LVk43S8=;
-	h=In-Reply-To:References:Subject:From:Cc:To:Date:From;
-	b=sPXGXw+scJs3C7UZI/DA7MkT8ZN7ufgUcQDo6OoT3wd0tG1XIxdEmW42mDTr2FwvB
-	 +g2toyhn+m4aah5rzF3VTaYgwwnfqkAUadACT2JKaGyZoyNkSAengCkwSnWhj089yJ
-	 KRLUQFV8aP3CfE6SS5dlWSxgtaAwf2DyO0uuJvY5Mg9t6FgEUvQEqLETVtBmGG4LVE
-	 FAy5pKc8Lv2IS284454L5lY1pw78sQaMjs1qNnoExK+AbO43poml56YaYA2ZT0WZJ/
-	 0uveNgKYd+S2bTIiBTMYW7opEXNGfiiklXc3bTfggoVvJOq11Kxa0M3sB9m6ZRGo0h
-	 oQmOrF2fr/Qag==
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753980433; c=relaxed/simple;
+	bh=x4EPmaDswDcgZARfsoubDOpse2mC/yXs4z98zCQpGAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WtikCIUD+Wllc4WyuLTxryou1+Ka5aByuluMeLO8mXOjP9t9Qql8Fp9Y0yxmjcqIOzwWPaxggiTx6oZMbjJxz4ElVY9FhfOe0gDPqEOxfexZDCSIRIdIrymgdGUXeefk/ND3F67WJNAZxRz8gim6uQryV8sd4Zw2rormPu+axQ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lO1SKe+Y; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b78d729bb8so941986f8f.0;
+        Thu, 31 Jul 2025 09:47:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753980430; x=1754585230; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V5bR6xZ7biKap3ECfXH+Cp/kOPb3Bhqh+JJnjDss70A=;
+        b=lO1SKe+YZiAz05cOZqLxrYyFU7IjgFU/VuHaeJVD5JPtlUU234lg27jISNjBDSKr3Q
+         V9uXWqfCCXh6JZuyx2GQjrsCiN/Y3j4PvjEdKNPlt1++UVl45Viq69N0H6gr2x9iJnLF
+         8ys8BJQNDDLlkFb9PhbNK8yLHPIvLDy4GoF6LCs7xUj/52ALBqFY9Qtn22k/9nFKI406
+         NpQZI1M1+g8PcPhApwKxePov6BCt7UQrA1HpTESrrKlfBE88GVW7fpjvDB3Od8jGNp3E
+         eSNc9CnTtp33DhmIXaVDbrLzULn5IUZA1JhbmAhahI9jQ6Ty5yIcVUvXs6UfWw4xH8sh
+         KdMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753980430; x=1754585230;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V5bR6xZ7biKap3ECfXH+Cp/kOPb3Bhqh+JJnjDss70A=;
+        b=nl44BpT3+s1CR0aYQG0cBT/nOci06yN+fJI0j78DGm7I+/EyfsrU05lxkExiA+6T72
+         Sb7cambGf5qtAPl5noc47iBHiV/XgUD+PCj/YLdRGoy5EIRg2+z1XOjpVyOACojaLzVE
+         VtHjjVs6YRtDcdxzwGEMof+bQHLaiAqyycT51uHzjhRJ9vT8ODl9Jj3FZeTwqygTuLAq
+         HXikJUfA3hAUakibaGxZ66XK366Ed2Kwp1jnaucC00pji0jqrDqucMbZt4eRU5Q53+2I
+         223hmg4xgNfApAxJ5jpJyTbvHVak57/vsJ2SJXFCM88tI+XWGphntwnXQLVmHKMc/4M4
+         /jsQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV+3W4lEbwY/Zk377VGalZ3kAqxwcmRqHfJ8ucC2922piDwhU3a4B3djkvNvwEBz50amEs=@vger.kernel.org, AJvYcCX69WVOzGo9tyQ7UdYBOC9Xt6VZg+kl7w2+zIIHtl/gafj3OscChapqv0FBpv9t5BlLerjzr1MeC5psgxRa@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP3KEVOfltH1ZztwZtyIrpYQIofhjgOwkzI5KpMr5axJWYzLlU
+	5E7X55bgfUvGc6/gfEL2HlWWGvGeqQhPfCrBFROzJuJQjmBRCDI7o0eEGStGlCVRQ/0xow3/Aox
+	0h+uP7YtalaMgpMFmzwT6TrkyWNA//h4=
+X-Gm-Gg: ASbGnctGrWaJB7R7V6Mf8zeuo82KhxjdefK8Z0vhOQElk1sREfkta89ZeFuh6/z/Web
+	nwVFrFtSw8n08HFhxpVM7mY1Eftsaariw30DTwUaLwiAT/efiAmz0wAOQF28d8Fzt54/p0sW+xF
+	TTlSxl0Bv2q/aYSg0y5DrszUDZgP+oK2HVoptGa/3WM9Fb6VCOrpbAQYn2Kxs7WaXn50abjf5oI
+	HXwg3W4utCQTsP6EzIkCyE=
+X-Google-Smtp-Source: AGHT+IFLYxnEH1e29Nll8XRF/X7eZ+D4F26rZMtv64r1XFwRysgBfQL6GOj6dk/N7A5aGcZsG1QDMg+/hz017OsFcwE=
+X-Received: by 2002:a05:6000:2288:b0:3b7:9dc1:74a5 with SMTP id
+ ffacd0b85a97d-3b79dc176aamr2687256f8f.52.1753980429791; Thu, 31 Jul 2025
+ 09:47:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250730185218.2343700-1-soham.bagchi@utah.edu>
+In-Reply-To: <20250730185218.2343700-1-soham.bagchi@utah.edu>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Thu, 31 Jul 2025 09:46:56 -0700
+X-Gm-Features: Ac12FXwPK7BH6RA_BTpzDOMWzFHKuwcD1DLk-SThUxSeuFlI-ShUSyR7PxHHdAc
+Message-ID: <CAADnVQJqbYN1VGoSqsHMqvMoZgTw1+PPS87zqsKhUtPgSarY1g@mail.gmail.com>
+Subject: Re: [PATCH] bpf: relax acquire for consumer_pos in ringbuf_process_ring()
+To: Soham Bagchi <soham.bagchi@utah.edu>
+Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard <eddyz87@gmail.com>, 
+	Song Liu <song@kernel.org>, Yonghong Song <yonghong.song@linux.dev>, 
+	John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>, 
+	Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, 
+	bpf <bpf@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Soham Bagchi <sohambagchi@outlook.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-In-Reply-To: <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-References: <20250730-s2mpg10-v5-0-cd133963626c@linaro.org> <20250730145100.GA6782@google.com> <1a72e672995ef6cd186f8ff18a91bb8b72d86554.camel@linaro.org>
-Subject: Re: [PATCH v5 0/2] Samsung S2MPG10 PMIC MFD-based drivers
-From: Stephen Boyd <sboyd@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Sylwester Nawrocki <s.nawrocki@samsung.com>, Chanwoo Choi <cw00.choi@samsung.com>, Alim Akhtar <alim.akhtar@samsung.com>, Michael Turquette <mturquette@baylibre.com>, Russell King <linux@armlinux.org.uk>, Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, Alexandre Belloni <alexandre.belloni@bootlin.com>, Peter Griffin <peter.griffin@linaro.org>, Tudor Ambarus <tudor.ambarus@linaro.org>, Will McVicker <willmcvicker@google.com>, kernel-team@android.com, linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org, devicetree@vger.kernel.org, linux-clk@vger.kernel.org, linux-arm-kernel@lists.infradead.org, linux-rtc@vger.kernel.org, Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: =?utf-8?q?Andr=C3=A9?= Draszik <andre.draszik@linaro.org>, Lee Jones <lee@kernel.org>
-Date: Thu, 31 Jul 2025 09:46:51 -0700
-Message-ID: <175398041189.3513.13629420060562627196@lazor>
-User-Agent: alot/0.11
 
-Quoting Andr=C3=A9 Draszik (2025-07-31 03:20:56)
-> On Wed, 2025-07-30 at 15:51 +0100, Lee Jones wrote:
-> > On Wed, 30 Jul 2025, Andr=C3=A9 Draszik wrote:
-> >=20
-> > > Original cover letter further down.
-> > >=20
-> > > This is a resend of two patches from the original series that haven't
-> > > been merged yet. That series was merged except for the attached two
-> > > patches here. Other than rebasing against next-20250729 there are no
-> > > changes to them.
-> > >=20
-> > > Lee, I think Stephen's intention was to get these two merged via the
-> > > MFD tree please.
-> >=20
-> > Although I have no issue with this, it does seem a little odd now that
-> > the set consists of only Clk patches.=C2=A0 Let me know what you / Step=
-hen
-> > decide.
->=20
-> Thanks Lee.
->=20
-> I simply went by Stephen's ACK, which to me implies he wanted it merged
-> via a different tree (mfd). I guess at this stage it doesn't matter anymo=
-re,
-> since all the core changes are in already.
->=20
+On Wed, Jul 30, 2025 at 11:53=E2=80=AFAM Soham Bagchi <soham.bagchi@utah.ed=
+u> wrote:
+>
+> Since r->consumer_pos is modified only by the user thread
+> in the given ringbuf context (and as such, it is thread-local)
+> it does not require a load-acquire.
+>
+> Signed-off-by: Soham Bagchi <soham.bagchi@utah.edu>
+> ---
+>  tools/lib/bpf/ringbuf.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/tools/lib/bpf/ringbuf.c b/tools/lib/bpf/ringbuf.c
+> index 9702b70da44..7753a6570cf 100644
+> --- a/tools/lib/bpf/ringbuf.c
+> +++ b/tools/lib/bpf/ringbuf.c
+> @@ -241,7 +241,7 @@ static int64_t ringbuf_process_ring(struct ring *r, s=
+ize_t n)
+>         bool got_new_data;
+>         void *sample;
+>
+> -       cons_pos =3D smp_load_acquire(r->consumer_pos);
+> +       cons_pos =3D *r->consumer_pos;
 
-I'll pick it up after the merge window closes.
+I don't think it's correct.
+See comment in __bpf_user_ringbuf_sample_release()
+
+--
+pw-bot: cr
 
