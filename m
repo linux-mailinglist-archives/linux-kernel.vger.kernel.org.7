@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-751696-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751693-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECF33B16C65
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:07:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C92D4B16C5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E402C3B2B4A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:07:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36873B0C13
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EA6628D8F2;
-	Thu, 31 Jul 2025 07:07:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E3628D8EF;
+	Thu, 31 Jul 2025 07:04:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="beXs+5Zx"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lkl/qODL"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF31714A639;
-	Thu, 31 Jul 2025 07:07:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0D376AA7;
+	Thu, 31 Jul 2025 07:04:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753945641; cv=none; b=rOyngChpBoIZOzS7JbgSaPQMrh/9uMjuAiUp1/7Rk6dBvf0GNaDoakv/W9cApmY/PUCwNHz0uUdkH7kQU0kf8hLWewkcmRxrYuhYtsCcB/du0/BSnJG7FJrXBERDc5q3MtIc3Bhg5aeTVUn801dMHMXQS7mdJsoEJcaNTiuBbb8=
+	t=1753945495; cv=none; b=YfyAEgSN+Xrarsvskhc4Fz+GQq8YF17aBtjnvgSqhwHOjQdkq6CV6Sm7WPFcI/oT4/Ie52Alixv3erfc587iBzyE8nK+Dm4ozPjs+un5sR92HYoGsiKkAznsCKFm1/W2l5XFXJDVZbSIw1pwhfxd+rUWa+ZQSo/uLvRq3F+QSSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753945641; c=relaxed/simple;
-	bh=tqxUukvaqb1S2CbX7Cy4mBHhjpycOAPpc1ryoFSdwFM=;
+	s=arc-20240116; t=1753945495; c=relaxed/simple;
+	bh=UrxUub0Eo7MRbnCesIdRclOqi9gSbStB8KWsujvEBRc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PN43/mnlbnPEFV8dv/teLNCMAdlS/SHwlH31ae0EMEBzpOvPAGAW1Exxt4oIVK2anjkBRFDgEny1ZMG41unMyqAxW8A4JbcIh2GPDR/cRgw+ZmlpW2QRzHgk3ZyvRI7B4SCxoZzLzgBX0M8lBWpFlHPkaQN4Dm5KGsjdKUAqXSg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=beXs+5Zx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C0F1C4CEEF;
-	Thu, 31 Jul 2025 07:07:18 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=fKxccrERblPS/pf6zqfjQpDTwdqDYRPi4kZdE1DnC3ihEKKOeR6h/as13sdb/JqD6DQbsdnza4B/oGMXBPciRlRQj3LfLZuiIDUimqNTcY43Vj1SNc26dy+E7jwE8QxpPiC8VmwClCbqvnH/K26mx9SPkpWNY/vKwMdumr6gYag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lkl/qODL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72FA3C4CEF6;
+	Thu, 31 Jul 2025 07:04:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753945640;
-	bh=tqxUukvaqb1S2CbX7Cy4mBHhjpycOAPpc1ryoFSdwFM=;
+	s=k20201202; t=1753945494;
+	bh=UrxUub0Eo7MRbnCesIdRclOqi9gSbStB8KWsujvEBRc=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=beXs+5ZxOKYOoaTpVgU1QIQnj5HLCuRGgLW7bO4pejR13/F+wnYq4lksxKOR+Gx6a
-	 A1wwTxIqBGwe6Cq/eIX8oBpnjjjqb/lSCWy+yzlJAuhhO59mihraziMSmTOVIrj6NR
-	 6XkJFmgAXK0q2VXIB0dCYplHypC7oO11FJ8b0m2oriTOcuWb1jHFLDEPSnRO/xQV8k
-	 +HhYGsbssHgiClErfeOIEmbooUksG39+TJCuANwqah6k6s+ZI5WbgFHlx6KVnOhND4
-	 rVRgtSXORVhCo7q5tPci57NX2cguUQ3qZVkSha2BP0kbUlFS+sg7NXlHHcEWDKaqqi
-	 nv6U0+Eg3x7PA==
-Message-ID: <9d918e77-73ef-41ad-87cf-cf87803041b5@kernel.org>
-Date: Thu, 31 Jul 2025 16:04:45 +0900
+	b=lkl/qODLDu4/UTl5oVoJ7vA/ti+abZo9IZEgjnY5mno+QS5M8/fAYsDl7mwaZyQny
+	 YyrjOgxyK/v246ewIIhp6fGIoJUQjtYPYhPPV4jISsgFDavX1wzAGBrvsT8+EG2h91
+	 EI74MECc8kbePntUPUOen3QSr9FqmFXiJf1FpLNKOCaH/ONGYuXpAENacZTvHEs/Lu
+	 U8PBQzNQHKI1P8ZFxAjWfmcSHmoCWkRljwftWs8/8uZZufWNfP2Sol03A9R8Kz2o0h
+	 /7yfH7TsZNXiGHRuZ4rN/CjVnb1gb+8ap8GAn9JTeIzCGCR/pDQS/3c/mp+DYk2tt3
+	 JohWYdHE8Xi2A==
+Message-ID: <1547e339-5be2-4d87-ab35-98a9be0d250e@kernel.org>
+Date: Thu, 31 Jul 2025 09:04:48 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,132 +49,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/5] mq-deadline: switch to use elevator lock
-To: Yu Kuai <yukuai1@huaweicloud.com>, Hannes Reinecke <hare@suse.de>,
- jack@suse.cz, tj@kernel.org, josef@toxicpanda.com, axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
- <20250730082207.4031744-3-yukuai1@huaweicloud.com>
- <750643e5-9f24-4e4c-8270-e421a03cf463@suse.de>
- <226d1cd7-bd35-4773-8f1c-d03f9c870133@kernel.org>
- <a3ce55a4-0756-bfe7-3606-296b78672104@huaweicloud.com>
-From: Damien Le Moal <dlemoal@kernel.org>
+Subject: Re: [PATCH 0/2] dt-bindings: ufs: qcom: Split SC7280 and similar into
+ separate file
+To: Nitin Rawat <quic_nitirawa@quicinc.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>, Avri Altman <avri.altman@wdc.com>,
+ Bart Van Assche <bvanassche@acm.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Manivannan Sadhasivam <mani@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>, Andy Gross <agross@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+References: <20250730-dt-bindings-ufs-qcom-v1-0-4cec9ff202dc@linaro.org>
+ <df8b3c85-d572-4cee-863b-35fe6a5ed9ff@quicinc.com>
+ <6ebe7084-bb00-4fac-b64d-e08e188f3005@kernel.org>
+ <148b46f3-2109-4c15-b7d8-17963b38095a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-Organization: Western Digital Research
-In-Reply-To: <a3ce55a4-0756-bfe7-3606-296b78672104@huaweicloud.com>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <148b46f3-2109-4c15-b7d8-17963b38095a@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 7/31/25 3:32 PM, Yu Kuai wrote:
-> Hi,
-> 
-> 在 2025/07/31 14:22, Damien Le Moal 写道:
->> On 7/31/25 3:20 PM, Hannes Reinecke wrote:
->>> On 7/30/25 10:22, Yu Kuai wrote:
->>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>
->>>> Replace the internal spinlock 'dd->lock' with the new spinlock in
->>>> elevator_queue, there are no functional changes.
->>>>
->>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>> ---
->>>>    block/mq-deadline.c | 58 +++++++++++++++++++++------------------------
->>>>    1 file changed, 27 insertions(+), 31 deletions(-)
->>>>
->>>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
->>>> index 9ab6c6256695..2054c023e855 100644
->>>> --- a/block/mq-deadline.c
->>>> +++ b/block/mq-deadline.c
->>>> @@ -101,7 +101,7 @@ struct deadline_data {
->>>>        u32 async_depth;
->>>>        int prio_aging_expire;
->>>>    -    spinlock_t lock;
->>>> +    spinlock_t *lock;
->>>>    };
->>>>      /* Maps an I/O priority class to a deadline scheduler priority. */
->>>> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q,
->>>> struct request *req,
->>>>        const u8 ioprio_class = dd_rq_ioclass(next);
->>>>        const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
->>>>    -    lockdep_assert_held(&dd->lock);
->>>> +    lockdep_assert_held(dd->lock);
->>>>          dd->per_prio[prio].stats.merged++;
->>>>    @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum
->>>> dd_prio prio)
->>>>    {
->>>>        const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
->>>>    -    lockdep_assert_held(&dd->lock);
->>>> +    lockdep_assert_held(dd->lock);
->>>>          return stats->inserted - atomic_read(&stats->completed);
->>>>    }
->>>> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct
->>>> deadline_data *dd,
->>>>        enum dd_prio prio;
->>>>        u8 ioprio_class;
->>>>    -    lockdep_assert_held(&dd->lock);
->>>> +    lockdep_assert_held(dd->lock);
->>>>          if (!list_empty(&per_prio->dispatch)) {
->>>>            rq = list_first_entry(&per_prio->dispatch, struct request,
->>>> @@ -434,7 +434,7 @@ static struct request
->>>> *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
->>>>        enum dd_prio prio;
->>>>        int prio_cnt;
->>>>    -    lockdep_assert_held(&dd->lock);
->>>> +    lockdep_assert_held(dd->lock);
->>>>          prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd,
->>>> DD_BE_PRIO) +
->>>>               !!dd_queued(dd, DD_IDLE_PRIO);
->>>> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct
->>>> blk_mq_hw_ctx *hctx)
->>>>        struct request *rq;
->>>>        enum dd_prio prio;
->>>>    -    spin_lock(&dd->lock);
->>>>        rq = dd_dispatch_prio_aged_requests(dd, now);
->>>>        if (rq)
->>>> -        goto unlock;
->>>> +        return rq;
->>>>          /*
->>>>         * Next, dispatch requests in priority order. Ignore lower priority
->>>> @@ -481,9 +480,6 @@ static struct request *dd_dispatch_request(struct
->>>> blk_mq_hw_ctx *hctx)
->>>>                break;
->>>>        }
->>>>    -unlock:
->>>> -    spin_unlock(&dd->lock);
->>>> -
->>>>        return rq;
->>>>    }
->>>>    @@ -538,9 +534,9 @@ static void dd_exit_sched(struct elevator_queue *e)
->>>>            WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
->>>>            WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
->>>>    -        spin_lock(&dd->lock);
->>>> +        spin_lock(dd->lock);
->>>>            queued = dd_queued(dd, prio);
->>>> -        spin_unlock(&dd->lock);
->>>> +        spin_unlock(dd->lock);
->>>>              WARN_ONCE(queued != 0,
->>>>                  "statistics for priority %d: i %u m %u d %u c %u\n",
->>>
->>> Do you still need 'dd->lock'? Can't you just refer to the lock from the
->>> elevator_queue structure directly?
+On 31/07/2025 08:59, Nitin Rawat wrote:
+>> Hm?
 >>
->> Indeed. Little inline helpers for locking/unlocking q->elevator->lock would be
->> nice.
+>>>
+>>> For reference, only SM8650 and SM8750 currently support MCQ, though more
+>>> targets may be added later.
+>>
+>> Are you sure? Are you claiming that SM8550 hardware does not support MCQ?
 > 
-> How about the first patch to factor out inline helpers like dd_lock()
-> and dd_unlock(), still use dd->lock without any functional changes, and
-> then switch to use q->elevator->lock in the next patch? (same for bfq)
+> Offcourse I can say that because I am working on Qualcomm UFS Driver.
 
-Patch one can introduce elv->lock and the helpers, then patch 2 use the helpers
-to replace dd->lock. Just don't say "no functional change" in the commit
-message and rather explain that things keep working the same way as before, but
-using a different lock. That will address Bart's comment too.
-And same for bfq in patch 3.
+Qualcomm sent many patches which were not related to hardware at all,
+just based on drivers, so my question is completely valid based on
+previous experience with Qualcomm.
 
-
--- 
-Damien Le Moal
-Western Digital Research
+Best regards,
+Krzysztof
 
