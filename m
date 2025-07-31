@@ -1,121 +1,139 @@
-Return-Path: <linux-kernel+bounces-752369-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E321B174B3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6922AB174B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:09:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764F917A8AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:06:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06F71188A312
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7527E23ABB4;
-	Thu, 31 Jul 2025 16:05:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77BDB21516E;
+	Thu, 31 Jul 2025 16:09:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G6UM2Bzt"
-Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="dZegm/RM"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D36423A9AB
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69E761DED5D
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:09:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977940; cv=none; b=cvjJgS70x5IAcNUWL+8c/EBKgefes33I4/gWSP/52yq1m7pPB+qC098YZosO/+nh/F4qKzDadEsvsTmYINOEdatuEOnpe2HjYXQSMRx8PvvPQmy8AgQCVzCwq2k/QXA7H2AW73QDbHlQtaEoLGASJILJJNoAjUasBx246aa40Qw=
+	t=1753978184; cv=none; b=dmmF4G/VhlVaftwfDCRickZ1rsRPdl8efM4jBT8nPI0BplISrb8LnhiJeLDAMwjlbG+U3xKv11T4f3SOPKCob0dWGnHE6MiGRWGZoj+JAcHc6ad6N5cI6zHxu7TjIIbG0HJEjBMdJmNsRIJ5F6pGM3G+Sk5UQHGxIrMYkzpbKfM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977940; c=relaxed/simple;
-	bh=CnYIEKLx4TAFUxdZTssELh7lELrZ7WzEgh5Jw6CgJNE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=e9qkadDAAXEQWgnipop0Z/KakFJHmRy7w3mEsFEs+cCGenI8psel40v5FqRl7IB3irXPR3nnoYvYnKbUGozJMwu016cxQiIYkIN6wqJBoBdqxXLtdGKVYIlpM9AP29+VZ+Q3Ai+6LXsQhy2hqgkwu4c9Px3vQTSl1/kWL4dtPAY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G6UM2Bzt; arc=none smtp.client-ip=209.85.221.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7834f2e72so735139f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:05:38 -0700 (PDT)
+	s=arc-20240116; t=1753978184; c=relaxed/simple;
+	bh=UUbVgaWG1FBSW2udf9aTCPmOnPAnABB3Ya1UbXyvUfU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jsJn23FJm92MazWPljJ9XJz88EFVPp05ZSNO6fO3KOOhJf/inO9NbvKWC3g8Y2qdWh7oo+jnAcVLXROkESVsVV/29T7T9zld3MGeigUgCTh6vI0537Yu6/j0tD0ZT8Y6JdEBu0wgUv87vlw+E6ICISaMRO5D6JfDrGzeSImDIgk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=dZegm/RM; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31f4e49dca0so664175a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:09:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1753977937; x=1754582737; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=LdhQmFbMkNSed960dmFtejqXjsu13SQnTKg6pcVU8yI=;
-        b=G6UM2Bzt9DT7vB+ewp0JItcA4IgJj3DjfJT0X+V1WJGnxcqgFNgZxL/zkmUAvCgg8e
-         FEbVMcrHGGGZwG7rrVUtsfPSa5xUUPDJqd7YBMBv8fHB115izTXzO1bc6KwjYA3w5kAd
-         pOFVvnZSnXlCnv8MDsd/2jPxhH8HBvYR0KkOmfPXKWxtOCFii6En1FqIryGK2/4lBptJ
-         IblsNZpsT/8dxMGrJnLFl3ZYRrMpOkvVOesf2QPcRdskfCsRyP3ovchI6lJRFfDTAySX
-         slnK2X7EsZeOMfqElJdHWAqR23jMspesgo0/+HekoRpcDdiI5iKe3o2BRhMTpbtSYXuW
-         9r6g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753977937; x=1754582737;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=chromium.org; s=google; t=1753978183; x=1754582983; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=LdhQmFbMkNSed960dmFtejqXjsu13SQnTKg6pcVU8yI=;
-        b=LbiQoTv1FTIX9t+V79j4eQ46ru1H4ZFQqAkY21NdiuEbbrcMB2DijXjkANnwecv9R8
-         k4bB+RmKBcRaByrN+UBhC1KbFVNfOAbC5zYuC5A2onX3YK7gZhKALtQCfoIapJp3y/Gl
-         nebw+yzEyRskhbMbStvtLPkP2CwYuKubaMpmTn2yl4RzCv/OAABUk11uL0BqpnUTNI/M
-         jmpPATnQ2ry6JnvCF7jzK38UWpPgJtAsJpIPSC8dDLO/yWC+kdZauao4+4U3z6pbbsDr
-         1NvBSPvJekQx6Up1w8HBypOFIe6xUu3xcFlxWHvNn6BnN3V2yqWlwvCcoY6i+r4+AZEx
-         96mw==
-X-Forwarded-Encrypted: i=1; AJvYcCVV1Bt+SshxhJ36bSE2R5nCQUynRNIuT3HaOX1D+XfRG9TouUGUMG2wb285JcQL1vbcS6ZTqEuot9ZdV9s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyoa+X3eKqmSaVaBG4UkbSEhrqaiiSsvo4GS0W+tH9xcO7+0ryV
-	3Tg9O3jD/LOHGLJ7gAIZfztTmiwtM2EEWD57zPRBjcDmlTOGTPY6GlO7IYF4S+5bYQE=
-X-Gm-Gg: ASbGncuB/0aOn57dMZmnQlk6XiH5iiQlBUb/8RxhLlI0rNaGD+aV5425qIn0DCSxrqy
-	JKgadWzk4C+WecbQvC8Jv0NYZDmHSq67gc7rk7offlzkbfHoR/BVkXNuNv8zKab2X7N/hljwVOm
-	tM9+gShmxNdSQWN7HFl61RlqC4EwI4n/LhxJZtckztCwm7wJqzpR6mEeEEy/cU2LzZgBVZ1fnMD
-	ZM1+6G1mjbNW5dvPUVbQxmdrEMcEqyiHho0hCHSL+7MGtajg2FkCqJUH69y+6gOI9EQxyFXxVfu
-	dyWeBjKuxiSfz+YjKNB9rKuWU/b63a1YczKyh/0zP23tkSgEEwpHZ0PMUVmXyZsCKgzaEmtIuyh
-	0ChG09K5V4Q2x9sh4lsCgucf45/zgGt9bFWsQfura0qE=
-X-Google-Smtp-Source: AGHT+IHKEgPI16zTrpdtBA345eAj3eoJCpdLSHZI7HH7keABCX5N2v7AOToBccj7RD32n4zicM10sg==
-X-Received: by 2002:a05:6000:4212:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3b794fc182dmr7100030f8f.25.1753977937312;
-        Thu, 31 Jul 2025 09:05:37 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45895377956sm69939275e9.10.2025.07.31.09.05.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 09:05:36 -0700 (PDT)
-Date: Thu, 31 Jul 2025 19:05:32 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: ashirvadm04@gmail.com
-Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
-	sayyad.abid16@gmail.com, linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] staging: rtl8723bs: Replace magic numbers in
- rtl8723b_InitBeaconParameters
-Message-ID: <8c350c13-3e6d-45cf-b9d2-2e8df07b6dd2@suswa.mountain>
-References: <20250729141224.16013-1-ashirvadm04@gmail.com>
+        bh=v8c1vs297OuDQhw1rF/WqVEVYzpa4jaap14+9/4mG/U=;
+        b=dZegm/RMZT4fpOJyAljY872rGRhIhTwh/Q1jO1MjTsBJ3CmLDgR9/53u1eWH+/xACa
+         bkTIi9Ionq3ckaH83QaMcKwzqLKy9+hWckxale2KwDRAlRFiCyU2ifioRHdjVVSMkZKd
+         z5WAX929e2LPu1thpxJ/l5+xarQu0RifzbbDA=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753978183; x=1754582983;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=v8c1vs297OuDQhw1rF/WqVEVYzpa4jaap14+9/4mG/U=;
+        b=P9i+VYFYUuro6DBLPN0iql2r2OLbyDT6TmcQ/YVcPoTwlh1Kco9HpQKiJ8L4fNe8iV
+         /2suXUl/V5lL37onY+zW1IXdjdP+8tezFlSl9IZGFPqUvQWbKeWhZwTtqmqvkXzF+SEo
+         3m1ZonFkr0Isd0OUi5DQ2K+GmRIVigrvEHPlcxIxMP3g62tvfpDaopeCSn6bGzZcVC67
+         vQezLRxZ0mmAMVB37TnuLkqZqCdadBW+Zona+rUBMhA5PRs6RUKeLLggmg4PFB4/KxnN
+         McFW9ST+evUAXcc3K41q87zkwJ1cMBv1mcPpgCiUaMGsjT5WcijOuUVzGKW/0cwlefL3
+         JeSA==
+X-Forwarded-Encrypted: i=1; AJvYcCXtzrVnCqsHw3OwxNaWiLm7eF97ek3PGqRy5bRb9WnkpIESb3vNX7ZWJfuL8t9oABPX/rnn1oBdGl0+KzQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIJm4XKKllKh5hLehSIcXofExipc7vjr2z2Yq4WhEuNnVzbL6V
+	YptOaR9VcIem+fyDKpP6ULR7X/3wD3Oi8DkSK3cEtPBwp7sXDTfKvfXJD4N4tJkbprEq7iyMPgO
+	7b/0f+pMtNHOpm86ujFyZoiq164FcrJNs2rnWu2uP
+X-Gm-Gg: ASbGncsMqRUDRv7/aT+Vg6Eu26zv6PKQ2egwmB6e8PbXmnpdvqxew9tw1Bb3E7hiA6C
+	d60/Wu1E16t+znE3jb2lufM7+1LcGfmbPPvCuyVaLh88O5H3oYFQYCLDQk7Yc5BalLVXo0Kh2gD
+	Ae4M6wQGxqDg+vWn9shIatQgukSxs8bIYyq3RFD3M2SbKabDUsVWH5ihP6FW2f78nh1/5LuU2Pb
+	I1smCjmafvCHosVu8oYLAmtfoPk2r0sUQ==
+X-Google-Smtp-Source: AGHT+IH+w2hB9w50GxzxGlBRwTPS/DAt66aQNsJJcSJh0eSSExp3OpaWYiihvtaGYVhasRRauJvVuomLJpIbicNxMs8=
+X-Received: by 2002:a17:90b:3d07:b0:31f:1a3e:fe31 with SMTP id
+ 98e67ed59e1d1-31f5dde8755mr12579873a91.11.1753978182602; Thu, 31 Jul 2025
+ 09:09:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729141224.16013-1-ashirvadm04@gmail.com>
+References: <20250630141239.3174390-1-akuchynski@chromium.org>
+ <20250630141239.3174390-6-akuchynski@chromium.org> <2025070143-safeness-prewashed-6e9f@gregkh>
+ <CAMMMRMeKyi56Pha-X86BaQwcHGCx-xu5F67HCGZg=Yhxuk==OQ@mail.gmail.com> <CAMMMRMf_qc342=azkU-ceg=f-db2Z9NiONOu1_oRk8tmRL4RGg@mail.gmail.com>
+In-Reply-To: <CAMMMRMf_qc342=azkU-ceg=f-db2Z9NiONOu1_oRk8tmRL4RGg@mail.gmail.com>
+From: Andrei Kuchynski <akuchynski@chromium.org>
+Date: Thu, 31 Jul 2025 18:09:30 +0200
+X-Gm-Features: Ac12FXx94P8Xkhok4AYIXJ8K2qdSo2AVg2OAPp7s8VPn2NpKyCMBWlD2bnynfvo
+Message-ID: <CAMMMRMeYG-bvYSiE7K8AutorvyoiXypHXv_1z62Rvh_JNazd9g@mail.gmail.com>
+Subject: Re: [PATCH v2 05/10] usb: typec: Implement automated mode selection
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>, Benson Leung <bleung@chromium.org>, 
+	Jameson Thies <jthies@google.com>, Tzung-Bi Shih <tzungbi@kernel.org>, linux-usb@vger.kernel.org, 
+	chrome-platform@lists.linux.dev, Guenter Roeck <groeck@chromium.org>, 
+	Dmitry Baryshkov <lumag@kernel.org>, "Christian A. Ehrhardt" <lk@c--e.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 07:42:10PM +0530, ashirvadm04@gmail.com wrote:
-> From: Ashirvad Mohanty <ashirvadm04@gmail.com>
-> 
-> Replace magic numbers 0x6404 and 0x660F in rtl8723b_InitBeaconParameters
-> with macros TBTT_PROHIBIT_TIME_8723B and BCN_AIFS_CFG_8723B, respectively,
-> defined in rtl8723b_hal.h.
+On Thu, Jul 24, 2025 at 10:39=E2=80=AFAM Andrei Kuchynski
+<akuchynski@chromium.org> wrote:
+>
+> Proposed sysfs entries for V3:
+>
+> - portN/portN.M/priority, RW.
+> This attribute assigns a unique priority to each mode. If a user
+> attempts to input a value that is already in use, the existing mode at
+> that priority will have its priority incremented by one to accommodate
+> the new input. Users cannot disable a mode via this entry; disabling
+> is handled by `active` for altmodes and `usb_capability` for USB4 mode
+>
+> - portN/mode_priorities, RO.
+> Provides a prioritized list of all available modes for the port,
+> formatted as a space-separated string (e.g., "USB4 TBT DP").
+>
+> - portN-partner/mode_selection, RW.
+> Write: 1/0 to trigger or cancel mode selection.
+> Read:  Provides a prioritized list of all available modes for the
+> partner. Modes currently in progress are indicated by parentheses
+> (e.g., "USB4 (TBT) DP"). Active modes are enclosed in brackets
+> (e.g., "USB4 [TBT] DP").
+>
+> - portN-partner.M/entry_result, RO.
+> Represents a mode state for this altmode, e.g. "none", "active",
+> "in progress", "cable error", "timeout".
+>
+> - portN/usb4_priority, RW.
+> - portN-partner/usb4_entry_result, RO.
+> USB4 mode, not being part of `typec_altmode_group`, introduces
+> additional attributes with the same meaning as alternate modes
+> attributes.
+>
+> Please let me know if you have any questions, require further
+> clarification on these proposed sysfs entries, or have objections to
+> them.
 
-I don't really think these names add any information.  The number is
-related to TIME but no one really knows how it works.  Someone posted
-a theory about it, but it turned out that was just AI hallucination.
-The spec they quoted was real but the sub section was fake.
+Regarding the sysfs attributes, Heikki, do you have any suggestions or
+disagreements? Please let me know your thoughts.
 
-The 8723B is the name of the driver, but without the "s" for some
-reason.  It's just words but with no meaning.  It's a map to nowhere.
-It's a waste of time.  I would say that there is also an element where
-these names are a bit misleading because the BCN_AIFS_CFG_8723B is
-really specific and the name suggests it's more of a generally config
-button.
+Additionally, for consistency, it would be beneficial to use names
+"DisplayPort" and "Thunderbolt3" since they are already recognized
+within the kernel. Using these full names rather than "DP" and "TBT"
+would be preferable
 
-Just leave it as-is.  I would suggest that you could delete the TODO,
-but it's good practice to just learn to accept that we can't fix
-everything.
-
-regards,
-dan carpenter
-
-
+Thanks,
+Andrei
 
