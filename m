@@ -1,145 +1,258 @@
-Return-Path: <linux-kernel+bounces-752594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FCFDB177A1
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:03:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CBE6CB177A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D7C9F1AA0AEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:03:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC1C1AA518D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:06:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EF45267B90;
-	Thu, 31 Jul 2025 21:02:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30312256C9B;
+	Thu, 31 Jul 2025 21:06:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LCPhpJSj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="e5wJVcIl"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF43C25A2BF;
-	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A61ED21CFF6
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:06:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753995766; cv=none; b=q/Y6TfeWLAH+oCJhoyL7VElWv0KkP1UMn4iZ3P65wsSEe94OsasVqxr65NESgNmvnX5waxd5qosJlpX+7iOUMM1x9ShIKJaX3xDewE4Iwm/rnVfsp0ZN3PEbm5MM1NK1uMyBh/j91SeUVeGQuooaTZ81UHWI51jqEk2QF3pSjKI=
+	t=1753995984; cv=none; b=dSLD7LMnd7pGWBpt9JB2txax+fRVgMfBTMNFzcmV21toPCFjaQV4L28Tt5mv67qAvn0YEqHDjjSjdk+j2crBadWOwh9Y4FH7VrEoie8z05VOif9Tol3kJaQJUxQ94n7KtzGnGMwbnxaAAb9ck09MzBb6dvUkHw2YWnTCeo8CsvY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753995766; c=relaxed/simple;
-	bh=hj9hWNAP1TrLYfyYzpKkJ6R8bTlE27E/f3rPu9CInWU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=NwKmpzyQx35H1AuVr0ImpltmO+KEq32BxPmd/tEOgDUh9ouAWFJbAFxRuHUT43wDmxqdijJEQo1PFDYhOUP2Z70K9uM1dYz9RbXfw2aNVwCxsaxZbFCjdUKeNRN1w4krzNZmE6FTdSpaent12kNIM53NLbko5VGDQZdCBXqjt/w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LCPhpJSj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 70174C4CEFA;
-	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753995765;
-	bh=hj9hWNAP1TrLYfyYzpKkJ6R8bTlE27E/f3rPu9CInWU=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=LCPhpJSjpB7qzegQ51ZkBneMDqTQ/bAlDF0ib6xAVlLWyY5mbj4TLQcUwtySNy33W
-	 duC81rGScGSFzmNA99bWn0/etnuyHdZRKHqOXOLGDTuBLB4uA5cp9q1kHyZxja//A+
-	 ZxFDLndZajKqyKbMdgIrPZjCyOGisdyvKR6OSP3nkRJJ/yPEoaboxEykwnM4Z0010z
-	 SBE25/NIPzR9gupU9Uas3UEc8/jH4VoVZRjmIfFQJ5TSzQiwVnarx93fUkJzz/CLVz
-	 yLuWbaKDYNEAvcBfdrP4imXsOmPmEijdYhf325V7oG13pZyZfq64rt3auBjR648YHF
-	 vm6P16mbsHNpQ==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 61418C87FD3;
-	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
-From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
-Date: Thu, 31 Jul 2025 23:02:44 +0200
-Subject: [PATCH 2/2] arm64: dts: qcom: sdm845-oneplus: Deduplicate shared
- entries
+	s=arc-20240116; t=1753995984; c=relaxed/simple;
+	bh=u97scRes2MGBfyHL/4/UXMUX5BojdNBN6SMyZI+xTbo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=fRyIUk+Yr/QVnTuF9Vsxj/IEuXggRXIuInwh93yE6OEnf62aip8kSZkcYKYwiz4wwc4wyLL8GbeLvf3I9JeqrdhmqBMKzXY1+zUy9ikTKQeYlqNrNCuPaeeD32Sx7eg50wkHss2FdBNb/u2Se+dl19y6kIwqsM+KNpbyuO63lYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=e5wJVcIl; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so15955e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:06:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753995980; x=1754600780; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hgWYvBUZsAdFKPaveOzEc3d+WOgwdbiYYocXO60wkYI=;
+        b=e5wJVcIlnqyEU9iojPSUpGq0yrpbhIkqeu11w5ZiDC0isxzvwV5lf/7WbVTaaJB1mm
+         NWZaUnOuGpD0seumsuC0Y5HXw6jAFx8b5Bj9H1VTxqH0Eh/uqGZGADeAudjVOnBAbFVi
+         FNs3S510j9+1HlJ/81l5pFRszZfI2F2IiRj+uaELgwo5cFd+iMAGpKaftXqy34Fr/gOr
+         yw3JmKsIH4Sy77ThNg+NvqT9+PY4nPTBbhrxF36KKZ/kdtRB1EvnXRMXH3/1It8kcuex
+         gL4tGlbOEYJwEIKBRKGyQrU0FI/tM9TYCSztLyfRyA+NF4g5M2YIlfZtdlGxapqyyB98
+         BGuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753995980; x=1754600780;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hgWYvBUZsAdFKPaveOzEc3d+WOgwdbiYYocXO60wkYI=;
+        b=SaUQ0IXwscJToQ9CZEXR+HqxysNfD6gOnQgi8Wg2TlzZSDLqhdGreBI+it8gLJhWyI
+         5BZ/h9wR+0owprnxNVUlVfWoXuvX4FoIM3GZYCNOvAmVjj18TO0yHx769aikmDioSZhU
+         wZXwxiprPI1Z3CxYnhuHLSz4oddbo099MiE2EVTGEy9LUydEZEbkIqFpmIQZbcTyKt6g
+         ZmsHYVaH69lPGCSolq/+chG43ACVRWfsu9w1ttvj4BRKeN74ydFJE11i1ktVaMuanE9D
+         Fg14vb5nm0dR7D19cmHI7f8q9A6vcXgpDLAYrK6waD0Qwoh1K5gnV7n6rS6BUI8spx8J
+         zBEQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrO4p1c2FA7kCfv047IZeW5QriAeEziAAh+lQQ9T4NFKBXp1rKJb/nrHvJhJHSGFeX+unsoFjG0huyWWQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzw5knbUpGyKNaziY7xc1wTzpMfgm6AFJLIDYrYEHTjdDEBKYo/
+	asZwznYCtED5pcjGasDhW9MeQzevy/NlYylRt93dAeeS/rdwfEdmWzIRJgv7dsrsJHWCo6LuVPA
+	e3jYFzZWPS7/y0k+9U4UfSXnuZBuKP5WfMBuBFSNG
+X-Gm-Gg: ASbGncug8zTQyezzdfwjDKqNxPzFXfLLeqUpY5x+l6lb2UBXOaYudVc+K9svzYAw9Fv
+	yPlmkhJohxplQJvAX68ICn8atydd7W+GmaHFsJ8JyY5gEx9VdVnQfhxST5NNql9wQFUES2GaE8r
+	8JZHOY2utEKV9x0qorJTNDearCGthwDK18Gjy0Xa1/jLf8qVWi7Al/nMFRCzpcViLmsj0KSM9+J
+	0nRQb77RxRODnOgscWDUJPsPBd+/JwvVkjHgw==
+X-Google-Smtp-Source: AGHT+IFm3eKGXrXl/O/AM6upHGvXxmGw78o++n3la/oaRAWXtoLaY8AnkOKammwFhld3+mfKolmNlEirM7qsdbyTR+8=
+X-Received: by 2002:a05:600c:524d:b0:456:e94:466c with SMTP id
+ 5b1f17b1804b1-458aa0ceb0fmr65675e9.3.1753995979762; Thu, 31 Jul 2025 14:06:19
+ -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250731-sdm845-msmid-v1-2-98489ece786e@ixit.cz>
-References: <20250731-sdm845-msmid-v1-0-98489ece786e@ixit.cz>
-In-Reply-To: <20250731-sdm845-msmid-v1-0-98489ece786e@ixit.cz>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2034; i=david@ixit.cz;
- h=from:subject:message-id;
- bh=NRxsP8lcA3q9aPxidLKbwvCT8KoWYD5PD4bDKiX1k74=;
- b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoi9nzluXWVab2ZF96AXlNNtZs5b0Jhd2wXvKAd
- 9MWu505peqJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaIvZ8wAKCRBgAj/E00kg
- coPdD/sEWR/Cbr7jiVyx9KDyE1/WOlKTyNv5c9dPixgDitOIbcmdjJuoxREsBRIfqqihzFvg2lW
- jXoZx3x86ZTM+PMrJiHJ+xA0u1WPiQ4urat2JBnUS9QpRHpnF6b48Ir63S3ux+aF/iFQiVjMCA7
- +lgVux3KjxJdH1JvgUEU/J2zQNYj6UjUf66axJ5hLsVuJznxseZYHgOWRLYldhAD1TGFvWUCaSV
- A/cQ/ehiliUmHpzQYM9wNCnl2IYe9T1FByKD6vdFhksDhagtkarlh6c3N2s9iolhWfPsEf8wa5G
- Ej9umspUjNQu4unWec1Hq0EwY4g0qPDcjsV/9qdAR9F6asDF7GP3KxNXFA9Lgdc2fcLE95d4cUj
- hhDWGjyQ9ztVJZAAL0Q6+JxIizJcBPNhQHuZfEM1SdPOibMW4i58SgrXPBa8vTP4LGorEksG04n
- vZGcgNmryeMO+Kgt6T7Rzo3K0L6pPjMHB4oXtW1CScnGy7GIcJiUFPJvqHgIPMtCQPtlNhgB4JQ
- dfutXZthry8mzHc8HO5fpwcwhCq8XpBeUnaKTCrdllbz62uG9Z7BAf67Teq+mbQKvsNUz52wvgv
- Ww4MpXZGQjP/KvovXJNtKFnzek0mUm2oRZkFvR0F69K4h36fz2iif9n0UBiQE04CfoKWoyx6cTl
- TPL3QTK1Y/QdDrg==
-X-Developer-Key: i=david@ixit.cz; a=openpgp;
- fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
-X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
-X-Original-From: David Heidelberg <david@ixit.cz>
-Reply-To: david@ixit.cz
+References: <20250604050902.3944054-1-jiaqiyan@google.com> <20250604050902.3944054-2-jiaqiyan@google.com>
+ <aHFohmTb9qR_JG1E@linux.dev> <CACw3F509B=AHhpaTcuH9O851rrDdHh1baC8uRYy7bDa7BSMhgg@mail.gmail.com>
+ <aHK-DPufhLy5Dtuk@linux.dev> <CACw3F53TYZ1KFv0Yc-GCyOxn7TF3iYjTNSE8bd3nte=KaCN0UQ@mail.gmail.com>
+ <CACw3F50Q_G75wf2rBm-P-NkyyO72i1NKqR9se99QrgipfD62yg@mail.gmail.com> <aIk88sBA2eIEF7w-@linux.dev>
+In-Reply-To: <aIk88sBA2eIEF7w-@linux.dev>
+From: Jiaqi Yan <jiaqiyan@google.com>
+Date: Thu, 31 Jul 2025 14:06:07 -0700
+X-Gm-Features: Ac12FXzFKc2B2EcyGnO8u_UvWK78u_LF9_nWfSQdCWk4Auknl3BBza84szmbGVs
+Message-ID: <CACw3F504DbPhnN5MyBq4XES-=Te3Z4Xxqfkpifiu1DEgO3tUyg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/6] KVM: arm64: VM exit to userspace to handle SEA
+To: Oliver Upton <oliver.upton@linux.dev>
+Cc: maz@kernel.org, joey.gouly@arm.com, suzuki.poulose@arm.com, 
+	yuzenghui@huawei.com, catalin.marinas@arm.com, will@kernel.org, 
+	pbonzini@redhat.com, corbet@lwn.net, shuah@kernel.org, kvm@vger.kernel.org, 
+	kvmarm@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, duenwen@google.com, rananta@google.com, 
+	jthoughton@google.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: David Heidelberg <david@ixit.cz>
+On Tue, Jul 29, 2025 at 2:28=E2=80=AFPM Oliver Upton <oliver.upton@linux.de=
+v> wrote:
+>
+> On Fri, Jul 25, 2025 at 03:54:10PM -0700, Jiaqi Yan wrote:
+> > On Sat, Jul 19, 2025 at 2:24=E2=80=AFPM Jiaqi Yan <jiaqiyan@google.com>=
+ wrote:
+> > >
+> > > On Sat, Jul 12, 2025 at 12:57=E2=80=AFPM Oliver Upton <oliver.upton@l=
+inux.dev> wrote:
+> > > >
+> > > > On Fri, Jul 11, 2025 at 04:59:11PM -0700, Jiaqi Yan wrote:
+> > > > > >  - Add some detail about FEAT_RAS where we may still exit to us=
+erspace
+> > > > > >    for host-controlled memory, as we cannot differentiate betwe=
+en a
+> > > > > >    stage-1 or stage-2 TTW SEA when taken on the descriptor PA
+> > > > >
+> > > > > Ah, IIUC, you are saying even if the FSC code tells fault is on T=
+TW
+> > > > > (esr_fsc_is_secc_ttw or esr_fsc_is_sea_ttw), it can either be gue=
+st
+> > > > > stage-1's or stage-2's descriptor PA, and we can tell which from
+> > > > > which.
+> > > > >
+> > > > > However, if ESR_ELx_S1PTW is set, we can tell this is a sub-case =
+of
+> > > > > stage-2 descriptor PA, their usage is for stage-1 PTW but they ar=
+e
+> > > > > stage-2 memory.
+> > > > >
+> > > > > Is my current understanding right?
+> > > >
+> > > > Yep, that's exactly what I'm getting at. As you note, stage-2 abort=
+s
+> > > > during a stage-1 walk are sufficiently described, but not much else=
+.
+> > >
+> > > Got it, thanks!
+> > >
+> > > >
+> > > > > > +/*
+> > > > > > + * Returns true if the SEA should be handled locally within KV=
+M if the abort is
+> > > > > > + * caused by a kernel memory allocation (e.g. stage-2 table me=
+mory).
+> > > > > > + */
+> > > > > > +static bool host_owns_sea(struct kvm_vcpu *vcpu, u64 esr)
+> > > > > > +{
+> > > > > > +       /*
+> > > > > > +        * Without FEAT_RAS HCR_EL2.TEA is RES0, meaning any ex=
+ternal abort
+> > > > > > +        * taken from a guest EL to EL2 is due to a host-impose=
+d access (e.g.
+> > > > > > +        * stage-2 PTW).
+> > > > > > +        */
+> > > > > > +       if (!cpus_have_final_cap(ARM64_HAS_RAS_EXTN))
+> > > > > > +               return true;
+> > > > > > +
+> > > > > > +       /* KVM owns the VNCR when the vCPU isn't in a nested co=
+ntext. */
+> > > > > > +       if (is_hyp_ctxt(vcpu) && (esr & ESR_ELx_VNCR))
+> > > > > > +               return true;
+> > > > > > +
+> > > > > > +       /*
+> > > > > > +        * Determining if an external abort during a table walk=
+ happened at
+> > > > > > +        * stage-2 is only possible with S1PTW is set. Otherwis=
+e, since KVM
+> > > > > > +        * sets HCR_EL2.TEA, SEAs due to a stage-1 walk (i.e. a=
+ccessing the PA
+> > > > > > +        * of the stage-1 descriptor) can reach here and are re=
+ported with a
+> > > > > > +        * TTW ESR value.
+> > > > > > +        */
+> > > > > > +       return esr_fsc_is_sea_ttw(esr) && (esr & ESR_ELx_S1PTW)=
+;
+> > > > >
+> > > > > Should we include esr_fsc_is_secc_ttw? like
+> > > > >   (esr_fsc_is_sea_ttw(esr) || esr_fsc_is_secc_ttw(esr)) && (esr &=
+ ESR_ELx_S1PTW)
+> > > >
+> > > > Parity / ECC errors are not permitted if FEAT_RAS is implemented (w=
+hich
+> > > > is tested for up front).
+> > >
+> > > Ah, thanks for pointing this out.
+> > >
+> > > >
+> > > > > > +}
+> > > > > > +
+> > > > > >  int kvm_handle_guest_sea(struct kvm_vcpu *vcpu)
+> > > > > >  {
+> > > > > > +       u64 esr =3D kvm_vcpu_get_esr(vcpu);
+> > > > > > +       struct kvm_run *run =3D vcpu->run;
+> > > > > > +       struct kvm *kvm =3D vcpu->kvm;
+> > > > > > +       u64 esr_mask =3D ESR_ELx_EC_MASK  |
+> > > > > > +                      ESR_ELx_FnV      |
+> > > > > > +                      ESR_ELx_EA       |
+> > > > > > +                      ESR_ELx_CM       |
+> > > > > > +                      ESR_ELx_WNR      |
+> > > > > > +                      ESR_ELx_FSC;
+> > > > >
+> > > > > Do you (and why) exclude ESR_ELx_IL on purpose?
+> > > >
+> > > > Unintended :)
+> > >
+> > > Will add into my patch.
+> > >
+> > > >
+> > > > > BTW, if my previous statement about TTW SEA is correct, then I al=
+so
+> > > > > understand why we need to explicitly exclude ESR_ELx_S1PTW.
+> > > >
+> > > > Right, we shouldn't be exposing genuine stage-2 external aborts to =
+userspace.
+> > > >
+> > > > > > +       u64 ipa;
+> > > > > > +
+> > > > > > +
+> > > > > >         /*
+> > > > > >          * Give APEI the opportunity to claim the abort before =
+handling it
+> > > > > >          * within KVM. apei_claim_sea() expects to be called wi=
+th IRQs
+> > > > > > @@ -1824,7 +1864,32 @@ int kvm_handle_guest_sea(struct kvm_vcpu=
+ *vcpu)
+> > > > > >         if (apei_claim_sea(NULL) =3D=3D 0)
+> > > > >
+> > > > > I assume kvm should still lockdep_assert_irqs_enabled(), right? T=
+hat
+> > > > > is, a WARN_ON_ONCE is still useful in case?
+> > > >
+> > > > Ah, this is diffed against my VNCR prefix which has this context. Y=
+es, I
+> > > > want to preserve the lockdep assertion.
+> > >
+> > > Thanks for sharing the patch! Should I wait for you to send and queue
+> > > to kvmarm/next and rebase my v3 to it? Or should I insert it into my
+> > > v3 patch series with you as the commit author, and Signed-off-by you?
+> >
+> > Friendly ping for this question, my v3 is ready but want to confirm
+> > the best option here.
+> >
+> > Recently we found even the newer ARM64 platforms used by our org has
+> > to rely on KVM to more gracefully handle SEA (lacking support from
+> > APEI), so we would really want to work with upstream to lock down the
+> > proposed approach/UAPI asap.
+>
+> Posted the VNCR fix which I plan on taking in 6.17. Feel free to rebase
+> your work on top of kvmarm-6.17 or -rc1 when it comes out.
 
-Both phones share same values, put them into common dtsi.
+Thanks Oliver! I sent out v3 based on the VNCR fix here on top of the
+current kvmarm/next.
 
-Signed-off-by: David Heidelberg <david@ixit.cz>
----
- arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi   | 3 +++
- arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts | 2 --
- arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts    | 2 --
- 3 files changed, 3 insertions(+), 4 deletions(-)
-
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-index b118d666e535a433f44b66c71b36e55df2ce5c80..da0052ab99e1d7ffb8ef0173b1c97d11b459b212 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi
-@@ -21,6 +21,9 @@
- /delete-node/ &rmtfs_mem;
- 
- / {
-+	chassis-type = "handset";
-+	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
-+
- 	aliases {
- 		serial0 = &uart9;
- 		serial1 = &uart6;
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts b/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-index 474759ab61043005fcabadb5c061bbd2eccb2447..cd5546b69d13d8d7f29373aebab1cfda79666900 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts
-@@ -10,8 +10,6 @@
- / {
- 	model = "OnePlus 6";
- 	compatible = "oneplus,enchilada", "qcom,sdm845";
--	chassis-type = "handset";
--	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
- 	qcom,board-id = <8 0 17819 22>;
- 
- 	battery: battery {
-diff --git a/arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts b/arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts
-index a0affaa246fea5514a00b6c37edb30c6dceb2c59..b4212626b42954e10974ec087db2b42b07979f72 100644
---- a/arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts
-+++ b/arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts
-@@ -10,8 +10,6 @@
- / {
- 	model = "OnePlus 6T";
- 	compatible = "oneplus,fajita", "qcom,sdm845";
--	chassis-type = "handset";
--	qcom,msm-id = <QCOM_ID_SDM845 0x20001>;
- 	qcom,board-id = <8 0 18801 41>;
- 
- 	battery: battery {
-
--- 
-2.50.1
-
-
+>
+> https://lore.kernel.org/kvmarm/20250729182342.3281742-1-oliver.upton@linu=
+x.dev/
+>
+> Thanks,
+> Oliver
 
