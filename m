@@ -1,118 +1,236 @@
-Return-Path: <linux-kernel+bounces-752480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE467B1760C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:16:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CE0AB17613
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:25:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CFF218C3A96
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:17:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 550F1A8257E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893C623312D;
-	Thu, 31 Jul 2025 18:16:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3AAC2C15B8;
+	Thu, 31 Jul 2025 18:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b="MrlUmbxH"
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VdkNIATD"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B6D219ED
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 18:16:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 618661E5B6A
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 18:25:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753985797; cv=none; b=s8q4CdYPrWVSJ00syU5NzYKj0usqCkW2Aw7ntqo2Hi5THlpVk6s/ZVQrkcw3Cdvd49oK6Jpt+iyRzC5PbCgKiMvbcgllqJszYsFqAvwfL/0aR6ShqrslVQ++iBjH2AdrYoUS4O0aOwKTt7Z9UUdB2LwBrmLasRYXDSSVa/JlqMQ=
+	t=1753986338; cv=none; b=RgDLx14V3Qd5C/LB5MOB7UjgoWIcF9opNGlNVz8FtkLhgWIRU9Ww6rRi5Z5WWLqKk3T4Xt+zvxSWj+8F6hT2lCNRPheS5rEFG372Yg6DV5fUYeGIMqVJ0MMxUyaOi4oVPePkYl4rc6F31u84VnYxXLHN103TvS+hiMzPiYkGWXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753985797; c=relaxed/simple;
-	bh=EBQ6Az+qE+LhBl3FX1g/IThTKFf6d6bBQNJQOO+PrKA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JXZxF2s1mAXQ9bSVlsz43ByLgO1+2S7K9Y5Tw2evMAPqSK+o36x65BSe2XFhpV+T6NwL6BgeLqxGWViBHKt08ej+dD5m/9zQgpOey0WvBSMZPymFpaF2sJoE3LNIxcBWWE1hqdhGlIcazpDk+gFs3QHPy1Rd6lKVWRL/Hk1dR9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org; spf=pass smtp.mailfrom=cmpxchg.org; dkim=pass (2048-bit key) header.d=cmpxchg-org.20230601.gappssmtp.com header.i=@cmpxchg-org.20230601.gappssmtp.com header.b=MrlUmbxH; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=cmpxchg.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cmpxchg.org
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4fbfbda957fso270714137.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:16:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cmpxchg-org.20230601.gappssmtp.com; s=20230601; t=1753985792; x=1754590592; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=zNycq62jXW8tjjm44f5hhjhcd4tsXOjyfLo6mreDnWc=;
-        b=MrlUmbxHJcuSp7MUvsj6AakqGpEHuAVFVfUIsweDrzb2vpnzGK2l0+G+kPU1ssWmu0
-         FS8/qItn4Iiyjw7VeWaw62P9ynl7Pz+BgNwRyCQAwbuLUxNHtmLX7Jlush+G9l0DC6hb
-         rm2PgZDx+YbNpn+TJ4BmzjD4USOU7wdnznal3v4986BQi+USjuYS4bnMRFPduTG/ls6W
-         sjfIkixgA6HAwEXYI9JsbfrLKwQWU9q3dn117sKT7MfE319KBp+gq+gqoDtlg1KEdyB7
-         L4449eCYlfTlBJad5l/Wk7xuhr8HWaX7PX7bcI2FUeWtSyt3mdrtRqrftJUzIylstvxi
-         1fxA==
+	s=arc-20240116; t=1753986338; c=relaxed/simple;
+	bh=yY5dXq14/rie7sFP1SaBCx59uDTJ52bxziaHDVcpNgw=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:References:
+	 In-Reply-To:Content-Type; b=XHXoZZNODI5aVp/4H9fr/K/KRbx2/jSmyAELQTCS2txY4l/+/o0avjwJVExEyjI06RsDbvuQ5x72gPPQR3cRbm1OEJFTrsr1tCjHJ5WKRP7aNvWdeKCcRbTz+NV/XiTQoBoGN/NPUfJIFH2KpSke7S4bbkHbE9T8gGLVOslmxhM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VdkNIATD; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753986335;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8YqpW3Q6Os9vELO745LBTOMoU94muV81QvjlghSIE+c=;
+	b=VdkNIATDl8so41jU4vj3IhNDtwVC+EKReNpKI7mKGVSZkkZhsq7LFEquBRh3BnQyYJapXb
+	Gg7fgM2BXQQ3ylTWjBVHDbDv4mib39AoS7CYFDGZV2I80NkcPY/trUmPGuq2jCd/wNwVEH
+	sY8WGObRHuk7YEEjWTwLw7LwTguIof0=
+Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com
+ [209.85.219.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-251-xcFcEJYaPXyhfIGXJg0SAw-1; Thu, 31 Jul 2025 14:25:33 -0400
+X-MC-Unique: xcFcEJYaPXyhfIGXJg0SAw-1
+X-Mimecast-MFC-AGG-ID: xcFcEJYaPXyhfIGXJg0SAw_1753986333
+Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7074bad051fso12540296d6.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:25:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753985792; x=1754590592;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zNycq62jXW8tjjm44f5hhjhcd4tsXOjyfLo6mreDnWc=;
-        b=CmBhtf/UkodbZWHnpWt+OV9KQwtHHElGzF+SuQ3IRgrYV1+VpQBb3OtfyxxJSpEo6d
-         kMD1lVEm25538WOMUUvjvDujVQUXMSSvE50BBak6u3E+MiXAAHSZslgweIDqQ5xRBX82
-         USX2KWSt+7ue1H6QsqzUP/c7YtvF8liNup0wtgEcwtkqSJ+b+lNF6MD4BUPfS5iyn8FH
-         UDW878beMvjPii0b5O9UgTTCrZzlOSVrCq3j3apS1kYeFlWn6LscQ0IY0AfAONgDXiNT
-         0UrE/lqSK2iEZ7ilNhKvCYI4tSK1BDwYRd1gZLmaQLCD6QGoD/F60FPC+6B8yK0yIPk/
-         TcmA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrrw3KyziXzXPfMG88PtnGNBPIY9QwcaiXozxVShNYMt9RCw1J+/EAsmm9p448NhcZWNKd4ZB26eSKmTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxzI9tuwp6NiXC1w8gU7qsycKNKxMtxqtz711HvvouwvIYrySnH
-	fHvj8X4oXJ/9+HpmGXfxI4NdT8iAY8wSqmhYB15fT4dstkNi9YtdqAFAWjV6NSZCUC4=
-X-Gm-Gg: ASbGncsHzJ49QjmAB/PFf/PaeS6tT2KjWH/MGHLP+FBsmxFzF/HCbKRuq+qoWHcfWAc
-	Ipzz5SKosa07W5vVyQv9cfxWDAkRL2HCNYHunotaSmBW4fJ6sGoF6KDGdSBfzsmxG+5H6/ZV/eu
-	IO4f2SvIyVbObN/B9oLoGZ2yZgxA8V1kxWdknGzYZKAznfh4KEAwhCp3de8l2A0odHymnDLoX1t
-	z0IsxTr54CFi7qVlj5yLb6meCKuhcxVzH3XxS+itiTfRkdjxRk/pkMkr+C1Y0OOf8S/Jyj+4tnZ
-	kTLFvD5+42HcifolpvrmiJVWzU/S8N7Wbc0Z+e1sq5xg/OgsLFEhmGcw1rIqd8yin/L9e5tIqPo
-	wSrs+Npgki0AP7dLHxAaHQoSBNGopC26Y
-X-Google-Smtp-Source: AGHT+IGiF90gF2ac/IfeIfowe0tuCQyzVITlmCw/gArMykn5Hp8a2pCzf2lGGHyC9wsGOMaX2cNeJg==
-X-Received: by 2002:a05:6102:3c81:b0:4fb:dd65:b97f with SMTP id ada2fe7eead31-4fbe87dd1aamr6014065137.23.1753985792451;
-        Thu, 31 Jul 2025 11:16:32 -0700 (PDT)
-Received: from localhost ([2603:7000:c01:2716:365a:60ff:fe62:ff29])
-        by smtp.gmail.com with UTF8SMTPSA id 6a1803df08f44-7077cd69b86sm10763916d6.42.2025.07.31.11.16.31
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 11:16:31 -0700 (PDT)
-Date: Thu, 31 Jul 2025 14:16:30 -0400
-From: Johannes Weiner <hannes@cmpxchg.org>
-To: SeongJae Park <sj@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Nhat Pham <nphamcs@gmail.com>, Takero Funaki <flintglass@gmail.com>,
-	Yosry Ahmed <yosry.ahmed@linux.dev>, kernel-team@meta.com,
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [RFC PATCH] mm/zswap: store compression failed page as-is
-Message-ID: <20250731181630.GB1055539@cmpxchg.org>
-References: <20250731152701.GA1055539@cmpxchg.org>
- <20250731170922.15509-1-sj@kernel.org>
+        d=1e100.net; s=20230601; t=1753986333; x=1754591133;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=8YqpW3Q6Os9vELO745LBTOMoU94muV81QvjlghSIE+c=;
+        b=ilScAhi3bi3HptIfDZgRaQsi4NJ7lVx0bl2h4qSBFUpzA/Ql88F1UhPOzIwffZyzq3
+         JQ4EBc0QPeit8/sp4EhHZW/TvzEYMipBHmTxVf3QCPXLX49OLEXuEn82zgINWN+frLCf
+         Lao19xln4WJsrufckxdQv+4xwhckjnWUh7Yw4H7pwuWZEX6Bq745Py2unBoL6FzGrlyl
+         cfTLTiqJm36QxcgpltypODi4Ngaql53vEx5hzPTCMRGIql0xoKycdg1VUogYZ7nRDzTn
+         eyPZaNtUQVRGYcHylXAyJk1A5zTIqo+jm5KT3MLpzc4COmY8u2IyeVnwgkjqd7GigUcy
+         Z+/A==
+X-Forwarded-Encrypted: i=1; AJvYcCUIJOe0kkEoDhp4T1zI0ZC9WsopgcZB+X0EAZv/Md+rYnBNz/bDWLqZvHdEOuqv/Fji5kY1TM/1OhwII0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6rMA+63vkCQMc3jrK5G7JmVYXp8pzlbtObjOXs8rBhJYmTRp5
+	prHPS9F9AkaYJ4zIE7UaAvdvrM9LJ60lFCX3UNanRBK8xiVvaf6V0H20n1LdHYmXFdKv825kVrd
+	0HhE9qgmeklnWkOxYSE0AQL+DC0nVdDNUnLAKREHGG//wYap4OWAhW6HECABJkvS6Hw==
+X-Gm-Gg: ASbGncsFtOHSJnS/U76UKkDKDMzn662em4t0XVRWdtRbLujad/bjus04Sw4FavKquF8
+	g7+FW5WOopKeNjJ2v38YsoFH/uywMEWvsjcxQNLL20f2yqOMesuqtUm+Mn1q6iQaaYg6yHO5I2P
+	4dlOmZBnPZkFwZXEBwyvMi7poRSnvyNfRT2Wr3r9WE5CgiRw6Hfg/MysEv94hAD6AH6NXfBIUnD
+	nErkPxwVthPV1wbZGLb71L2ewbJvUTfgZHc7ZPKDgeqZ7K6F+x7fnKUdfVb3zYJep6lY0MSborJ
+	RsPKwCPseB9YBytiaCkIzrHLvJg/h5WShTG9WrGUHYWL6iss3T8Bfi6foqw5SBpQpQbHJBNXb67
+	u6ckWd9bLmg==
+X-Received: by 2002:a05:6214:20ee:b0:707:5758:c0ae with SMTP id 6a1803df08f44-70767114bd8mr101580716d6.32.1753986332799;
+        Thu, 31 Jul 2025 11:25:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvLW9rB8b3a6Ww2DjBoqq+8Mq9CCnOF+0O0MzSFVA6ZW/ZA/1qEllSVLRzydK5rAJ0SkAcGg==
+X-Received: by 2002:a05:6214:20ee:b0:707:5758:c0ae with SMTP id 6a1803df08f44-70767114bd8mr101580196d6.32.1753986332140;
+        Thu, 31 Jul 2025 11:25:32 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-7077ca1aa40sm10801436d6.24.2025.07.31.11.25.30
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 11:25:31 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <664fc8e7-98f6-410c-976e-2e497e5132f8@redhat.com>
+Date: Thu, 31 Jul 2025 14:25:30 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731170922.15509-1-sj@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 8/8] timers: Exclude isolated cpus from timer migration
+To: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Frederic Weisbecker <frederic@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250730131158.101668-1-gmonaco@redhat.com>
+ <20250730131158.101668-9-gmonaco@redhat.com>
+Content-Language: en-US
+In-Reply-To: <20250730131158.101668-9-gmonaco@redhat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 31, 2025 at 10:09:22AM -0700, SeongJae Park wrote:
-> On Thu, 31 Jul 2025 11:27:01 -0400 Johannes Weiner <hannes@cmpxchg.org> wrote:
-> > So if compression fails, still do zpool_malloc(), but for PAGE_SIZE
-> > and copy over the uncompressed page contents.
-> > 
-> > struct zswap_entry has a hole after bool referenced, so you can add a
-> > flag to mark those uncompressed entries at no extra cost.
-> > 
-> > Then you can detect this case in zswap_decompress() and handle the
-> > uncompressed copy into @folio accordingly.
-> 
-> I think we could still use 'zswap_entry->length == PAGE_SIZE' as the indicator,
-> As long as we ensure that always means the content is incompressed, following
-> Nhat's suggestion[1].
-> 
-> Please let me know if I'm missing something.
+On 7/30/25 9:11 AM, Gabriele Monaco wrote:
+> The timer migration mechanism allows active CPUs to pull timers from
+> idle ones to improve the overall idle time. This is however undesired
+> when CPU intensive workloads run on isolated cores, as the algorithm
+> would move the timers from housekeeping to isolated cores, negatively
+> affecting the isolation.
+>
+> Exclude isolated cores from the timer migration algorithm, extend the
+> concept of unavailable cores, currently used for offline ones, to
+> isolated ones:
+> * A core is unavailable if isolated or offline;
+> * A core is available if non isolated and online;
+>
+> A core is considered unavailable as isolated if it belongs to:
+> * the isolcpus (domain) list
+> * an isolated cpuset
+> Except if it is:
+> * in the nohz_full list (already idle for the hierarchy)
+For the nohz_full list here, do you mean nohz_full housekeeping or 
+non-housekeeping list?
+> * the nohz timekeeper core (must be available to handle global timers)
+>
+> CPUs are added to the hierarchy during late boot, excluding isolated
+> ones, the hierarchy is also adapted when the cpuset isolation changes.
+>
+> Due to how the timer migration algorithm works, any CPU part of the
+> hierarchy can have their global timers pulled by remote CPUs and have to
+> pull remote timers, only skipping pulling remote timers would break the
+> logic.
+> For this reason, prevent isolated CPUs from pulling remote global
+> timers, but also the other way around: any global timer started on an
+> isolated CPU will run there. This does not break the concept of
+> isolation (global timers don't come from outside the CPU) and, if
+> considered inappropriate, can usually be mitigated with other isolation
+> techniques (e.g. IRQ pinning).
+>
+> This effect was noticed on a 128 cores machine running oslat on the
+> isolated cores (1-31,33-63,65-95,97-127). The tool monopolises CPUs,
+> and the CPU with lowest count in a timer migration hierarchy (here 1
+> and 65) appears as always active and continuously pulls global timers,
+> from the housekeeping CPUs. This ends up moving driver work (e.g.
+> delayed work) to isolated CPUs and causes latency spikes:
+>
+> before the change:
+>
+>   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+>   ...
+>    Maximum:     1203 10 3 4 ... 5 (us)
+>
+> after the change:
+>
+>   # oslat -c 1-31,33-63,65-95,97-127 -D 62s
+>   ...
+>    Maximum:      10 4 3 4 3 ... 5 (us)
+>
+> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> ---
+>   include/linux/timer.h         |   9 +++
+>   kernel/cgroup/cpuset.c        |   3 +
+>   kernel/time/timer_migration.c | 100 +++++++++++++++++++++++++++++++++-
+>   3 files changed, 109 insertions(+), 3 deletions(-)
+>
+> diff --git a/include/linux/timer.h b/include/linux/timer.h
+> index 0414d9e6b4fc..62e1cea71125 100644
+> --- a/include/linux/timer.h
+> +++ b/include/linux/timer.h
+> @@ -188,4 +188,13 @@ int timers_dead_cpu(unsigned int cpu);
+>   #define timers_dead_cpu		NULL
+>   #endif
+>   
+> +#if defined(CONFIG_SMP) && defined(CONFIG_NO_HZ_COMMON)
+> +extern int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask);
+> +#else
+> +static inline int tmigr_isolated_exclude_cpumask(struct cpumask *exclude_cpumask)
+> +{
+> +	return 0;
+> +}
+> +#endif
+> +
+>   #endif
+> diff --git a/kernel/cgroup/cpuset.c b/kernel/cgroup/cpuset.c
+> index a946d85ce954..ff5b66abd047 100644
+> --- a/kernel/cgroup/cpuset.c
+> +++ b/kernel/cgroup/cpuset.c
+> @@ -1392,6 +1392,9 @@ static void update_exclusion_cpumasks(bool isolcpus_updated)
+>   
+>   	ret = workqueue_unbound_exclude_cpumask(isolated_cpus);
+>   	WARN_ON_ONCE(ret < 0);
+> +
+> +	ret = tmigr_isolated_exclude_cpumask(isolated_cpus);
+> +	WARN_ON_ONCE(ret < 0);
+>   }
+>   
+>   /**
+> diff --git a/kernel/time/timer_migration.c b/kernel/time/timer_migration.c
+> index 36e7f784ec60..5e66147fce11 100644
+> --- a/kernel/time/timer_migration.c
+> +++ b/kernel/time/timer_migration.c
+> @@ -10,6 +10,7 @@
+>   #include <linux/spinlock.h>
+>   #include <linux/timerqueue.h>
+>   #include <trace/events/ipi.h>
+> +#include <linux/sched/isolation.h>
+>   
+>   #include "timer_migration.h"
+>   #include "tick-internal.h"
+> @@ -436,6 +437,20 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
+>   	return !(tmc->tmgroup && tmc->available);
+>   }
+>   
+> +/*
+> + * Returns true if @cpu should be excluded from the hierarchy as isolated.
+> + * Domain isolated CPUs don't participate in timer migration, nohz_full
+> + * CPUs are still part of the hierarchy but are always considered idle.
+> + * This check is necessary, for instance, to prevent offline isolated CPU from
+> + * being incorrectly marked as available once getting back online.
+> + */
+> +static inline bool tmigr_is_isolated(int cpu)
+> +{
+> +	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
+> +		cpuset_cpu_is_isolated(cpu)) &&
+> +	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
+> +}
 
-Ah, right. So if compression succeeds but the result is still
-PAGE_SIZE you will treat it as failure and store it uncompressed. Then
-PAGE_SIZE always means uncompressed for the readers.
+Does that mean a CPU in the nohz_full non-housekeeping list is always 
+considered not isolated WRT timer migration and hence will be made 
+available for timer migration purpose?
 
-Even better.
+Cheers,
+Longman
+
 
