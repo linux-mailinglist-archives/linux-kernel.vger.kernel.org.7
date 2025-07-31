@@ -1,169 +1,163 @@
-Return-Path: <linux-kernel+bounces-751839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 77236B16E19
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:04:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E1F3B16E1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:06:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 73BA53BB95C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:04:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 60E5A1AA2F34
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:06:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 106A627BF95;
-	Thu, 31 Jul 2025 09:04:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F372328D8E1;
+	Thu, 31 Jul 2025 09:06:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aDKDoJBU"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/4YKdSq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0383244695
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:04:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F5E2242907;
+	Thu, 31 Jul 2025 09:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952692; cv=none; b=jp36rx1zWQbhQVXzGhfib4v2yoLspKlzezabm4oki9HBaLt8yQBecB5as1sMT4j2Me0wrtcoLCqHOQezsQ9SUpJGKwycws7VKz7IFIU3cHmBvNt5OXyg6d8+kLrKUpDXcMY+lo4fJ4bZobMVJ6PtkBrkefjY6YpYwdE7vehF/jE=
+	t=1753952773; cv=none; b=j16kWwWkEV9czH0I2b6CVf4mMsBKVxVwksOxVVdQK2Xba0/ZbVax//u5142wmsh0h85no7YBFIn9GytUvzOrLpYkwX7ugNKJN6GkrKXQS4YRkFdulka6rdrGHJSWYmYy6AGau1V0S0dKyQhMOtBsOavyUe3FrI0tYFmHLvqhrXI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952692; c=relaxed/simple;
-	bh=sSTeRlEvbMeUZ9pKhcKV571jD7j9O7wDXVhkDNETdhg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=BaQzrcFnO383HPLhFEEiXr+lm8XyD0Erk2z8RwWtixzoq9WV04PL8PVQIu14x+aErO1wB0CNEGVLXHQ7RrRa8k4mB7WqRFECquiQ4wQg90GCAE/UjI4SHS6kwmKKfbKJZMIgbfpXh2cuVw4qEGGB9VbH036Qt2tZkYyMAqr+5uQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aDKDoJBU; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753952689;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=lMND2eCV1zriOEfTEYyl8gkAo+zM/ZdiGMIBLba1//A=;
-	b=aDKDoJBU00j9eEcNtRNdK46nQ3gJh6YXk1hcgTo3cHxZMlhYIWB+WzWZG9V2RHFhV073GQ
-	UyxRTdnKh/BfgXr0SaqmOEwJVQIu+6Em2dzmkcKfqNF+vp9HAH68x3PDVgWoHnZhZtI9v/
-	FaTVCYq587wacKApsl+9oWz+vldCPZY=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-646-AwYQa8vKPSmEtC3HKwZ-hA-1; Thu, 31 Jul 2025 05:04:47 -0400
-X-MC-Unique: AwYQa8vKPSmEtC3HKwZ-hA-1
-X-Mimecast-MFC-AGG-ID: AwYQa8vKPSmEtC3HKwZ-hA_1753952687
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45896cf24fbso1398645e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:04:47 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753952686; x=1754557486;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=lMND2eCV1zriOEfTEYyl8gkAo+zM/ZdiGMIBLba1//A=;
-        b=sKgutyTEd902Ab9fFWBlwQMvG3NrgaoJ2f2sKMNwf6zQ6Xvjk1DKbaHv/18ip5291Q
-         Q2vwyKujKwYC0I0Pmd1hDCtw53naEd9VQVoziPT4HevGiLuZo0Ka6yANeG9cEq/3GS9i
-         k7q0cdFPLACgSoPbJa+C/UjTj3RbIkl7XAzQEVOt5CHQKt4acneISAEZz3h4mF39H/a5
-         E1kxtOtV4fNt7iF0JnifofdG+LAvYTL8ek+KE87DZhocqhaOVppT+ZW94aKJY2AoIhft
-         LgDZxbUyzBqsJYaTILgZyRTf8cQvvFQ6lo/mNy5WxV0zGwVC60T8aZBDvY/k1WN9M6wH
-         QMYQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXmAx/pFrvCiskcAIlR/nkrfl9y81iH7RwcyBtmetxD1JSvumQRMjLcI7DWT29y3lw4Rmx2duXCaGvq6Oo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3qJ4Oz7/njz1GD0sKenRM66JiN1f/ps3QU4RDAH52SOFGXxXH
-	k55qJ14Ha/Rx5yhBpVVLFvKXJ8snPoy8ir/CnLpiwIMoTfRMOam02GIr+s5oyFgK1lLoL3HDmkv
-	jqzn4cI/e2nAfTIA8O7Rd2HQemYfGfWcoOPNnSUmcq2zr8d8xSm1dcDscDA9LogG4TQ==
-X-Gm-Gg: ASbGncuj8a60zA1bMdvbGnA+j9sxC6yv40/v9oJE3j11NBOrs9fswtbUevp79FI563R
-	L4nucGcGuk3uPCJ61Bak3c+/dcQnqtgybMldsAsjNKoMQrVl60xEnixun7d5jKPlPANBp8/fAC/
-	KrKoQgkVKB5W/uURT4UFlW7DF9FvMLu8rnWlTvV9Qdv7U2DU6WP1EzB1khrZIIiMNv4Q4VY/b8e
-	3gAzCLiV9hdT/9p7VCSIN41d42ImrZuiROqZBSIeCJW+Keq0tG8GWbOcl++Qfk4EekzvL7EriBa
-	ZgzHlfiDsxe9UiQc845U1eFHphpEMbih7jCAH2XOSyOKQNK9uvd2wg+j/gipIKLydw==
-X-Received: by 2002:a05:600c:3490:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-45894ca4e2bmr49609025e9.17.1753952686574;
-        Thu, 31 Jul 2025 02:04:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFcyvCOcWpMoydPfhIGcE6BmPHyVSaaAWvBnHj4Nb20j+gkWmRYUb+Jbh+3IQ2C1Hevzf9Pjg==
-X-Received: by 2002:a05:600c:3490:b0:456:26a1:a0c1 with SMTP id 5b1f17b1804b1-45894ca4e2bmr49608735e9.17.1753952686145;
-        Thu, 31 Jul 2025 02:04:46 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953f8e02sm55775935e9.32.2025.07.31.02.04.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:04:45 -0700 (PDT)
-Message-ID: <adeb68b39e8b468da685bbbf3b453f947fe2336d.camel@redhat.com>
-Subject: Re: [PATCH 1/5] rv/ltl: Prepare for other monitor types
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 31 Jul 2025 11:04:44 +0200
-In-Reply-To: <0d13c61bc6e0dc82108995c9a1d140bad4082039.1753879295.git.namcao@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
-	 <0d13c61bc6e0dc82108995c9a1d140bad4082039.1753879295.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1753952773; c=relaxed/simple;
+	bh=oSMKei0qcQQgEgMV1zyUo1IrYdKO89Yq7Tm0/TNmFXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=epMzOCtlUW5NlA7kLWrFacYMuOsT6YlmI2NOywFduQ3FXKlvPxVTXC3BLCwD1gFn6cbqtzQjSDcVglFTtO/6RrI+BclqVccUXcrPPlD/P45fURSW1Is7a7Ku0nJLBcMbD46L6oVG/jbrCbEWYErZHuLwuNytic8fYy35L3SBa5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/4YKdSq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FB98C4CEEF;
+	Thu, 31 Jul 2025 09:06:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753952772;
+	bh=oSMKei0qcQQgEgMV1zyUo1IrYdKO89Yq7Tm0/TNmFXg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=f/4YKdSqLENAXDynYM/jt1AeTEaJ1yN5/Y4+ny2jqUH48YHlnTWdpMznnDtMoJMAZ
+	 4U6iuyBEB1GhdqkuklBMFvcUWSc2X5RE4nNW1rvKAPiEl99/Mo4JKvALE1LXTTYY/e
+	 ZNitFaBeqkKxGBu+vvpbaTPYjb0zyrQ2fP2n+zcz7q4bpmw0PNWJvMjJEgumjL2lCH
+	 MA6bE0nn/ezx8pO9+kCNyh16hJKbqMPCZXzxwmbx1Z9FAjRxyDgjbXV9bMNNZMemlm
+	 b5Y1hj2VpJskxwt/ibowYUnzsj62pqZ5dID0HT+SC7sn8DGwsChJf7vEpZkYWH1lHv
+	 WhxI2EoV+tKSQ==
+Message-ID: <aa6ad382-dc2a-4f63-be11-7d331027af66@kernel.org>
+Date: Thu, 31 Jul 2025 11:06:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] memory: samsung: exynos-srom: Fix of_iomap leak in
+ exynos_srom_probe
+To: Zhen Ni <zhen.ni@easystack.cn>, alim.akhtar@samsung.com
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org
+References: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250731083340.1057564-1-zhen.ni@easystack.cn>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
-> rv/ltl_monitor.h is the template file used by all LTL monitors. But
-> only per-task monitor is supported.
->=20
-> No functional change intended.
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
+On 31/07/2025 10:33, Zhen Ni wrote:
+> The current error handling in exynos_srom_probe() has a resource leak
+> in the of_platform_populate() failure path. When this function fails
+> after successful resource allocation, srom->reg_base is not released.
+> 
+> To fix this issue, replace of_iomap() with
+> devm_platform_ioremap_resource(). devm_platform_ioremap_resource()
+> is a specialized function for platform devices.
+
+Don't explain us kernel code. Drop sentence.
+
+> It allows 'srom->reg_base' to be automatically released whether the
+> probe function succeeds or fails.
+
+It's obvious.
+
+> 
+> Besides, use IS_ERR() instead of !srom->reg_base
+
+I don't understand this. You keep explaining the code and this suggests
+you made change here not related to original case. Can you return
+srom->reg_base here? No?
+
+
+> as the return value of devm_platform_ioremap_resource()
+> can either be a pointer to the remapped memory or
+> an ERR_PTR() encoded error code if the operation fails.
+> 
+
+Missing fixes and cc-stable.
+
+> Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
 > ---
-> =C2=A0include/linux/rv.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0 1 +
-> =C2=A0include/rv/ltl_monitor.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 85 +++++++++++------
-> --
-> =C2=A0.../trace/rv/monitors/pagefault/pagefault.h=C2=A0=C2=A0 |=C2=A0 2 +
-> =C2=A0kernel/trace/rv/monitors/sleep/sleep.h=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 2 +
-> =C2=A04 files changed, 55 insertions(+), 35 deletions(-)
->=20
-> diff --git a/include/linux/rv.h b/include/linux/rv.h
-> index 14410a42faef..175438a22641 100644
-> --- a/include/linux/rv.h
-> +++ b/include/linux/rv.h
-> @@ -28,6 +28,7 @@ struct da_monitor {
-> =C2=A0
-> =C2=A0#ifdef CONFIG_RV_LTL_MONITOR
-> =C2=A0
-> +#define LTL_TASK_MONITOR 0
+>  drivers/memory/samsung/exynos-srom.c | 10 ++++------
+>  1 file changed, 4 insertions(+), 6 deletions(-)
+> 
+> diff --git a/drivers/memory/samsung/exynos-srom.c b/drivers/memory/samsung/exynos-srom.c
+> index e73dd330af47..d913fb901973 100644
+> --- a/drivers/memory/samsung/exynos-srom.c
+> +++ b/drivers/memory/samsung/exynos-srom.c
+> @@ -121,20 +121,18 @@ static int exynos_srom_probe(struct platform_device *pdev)
+>  		return -ENOMEM;
+>  
+>  	srom->dev = dev;
+> -	srom->reg_base = of_iomap(np, 0);
+> -	if (!srom->reg_base) {
+> +	srom->reg_base = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(srom->reg_base)) {
+>  		dev_err(&pdev->dev, "iomap of exynos srom controller failed\n");
+> -		return -ENOMEM;
+> +		return PTR_ERR(srom->reg_base);
 
-I stole your solution to get rid of macros for the DA as well (might
-post it after this merge window or with the next changes) and I'm
-currently running with this:
+How did you test it?
 
-diff --git a/include/linux/rv.h b/include/linux/rv.h
-index 14410a42faef..6a7594080db1 100644
---- a/include/linux/rv.h
-+++ b/include/linux/rv.h
-@@ -13,6 +13,10 @@
- #define MAX_DA_NAME_LEN			32
- #define MAX_DA_RETRY_RACING_EVENTS	3
-=20
-+#define RV_MON_GLOBAL   0
-+#define RV_MON_PER_CPU  1
-+#define RV_MON_PER_TASK 2
-+
-
-The numbers don't really matter and you don't need to implement all, of
-course.
-I'm not sure how are our patches going to coordinate, but I think it
-may make sense to share those values for all monitor types.
-
-What do you think?
-
-For the rest this patch looks good to me, nice use of the typedef.
-
-Reviewed-by: Gabriele Monaco <gmonaco@redhat.com>
-
-Thanks,
-Gabriele
-
+Best regards,
+Krzysztof
 
