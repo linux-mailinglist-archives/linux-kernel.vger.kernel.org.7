@@ -1,144 +1,186 @@
-Return-Path: <linux-kernel+bounces-752282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9EAC1B17385
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:56:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27070B17390
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02C9A7B510A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:55:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87F61C24A68
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:59:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A321BEF8C;
-	Thu, 31 Jul 2025 14:56:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1FE1E377F;
+	Thu, 31 Jul 2025 14:58:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gppgaLp1"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="j0BrvQ6o"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51F3618E25;
-	Thu, 31 Jul 2025 14:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 574D51DE4DB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:58:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753973804; cv=none; b=JvjA240aBvSPAHg3l4Qw27kWItBRyByu6wtswIWqMKgmBF3bVRzKGfFBRVxQ7z6nmTv4GZ2AsYyHqA46rFM0KzWA/Af2+80TnR4WsANMEHHn8Jrs59LgQb2eeHUsgyb57yyKTJMvonDaqeUbsSGYn+WvA+rZ5AsPXJPTAbdEasI=
+	t=1753973894; cv=none; b=ioBC8puVnNa+kQulzzshgpFx8+p62ZgsHdx2sGsceHKd9H0Gh1wVIKwIOhFGPaaRtQuYi+MH7I8yIVNyFHn9ptKHHz0oQZ6yyJZ03vQNHX+xAHX6iZMQb4xQm8t2W0PLTR0G6cHZLRRXUHnXQ/sfl5MiwAxLygOvljcGCkxqklM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753973804; c=relaxed/simple;
-	bh=ZKpxZxSNRlHY35S+g3dgBrJhvzpP5avecfPXzYNqnV0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nP/LP1c1nTnyaEqEOtK974kSnDhGh+sN3lKY3Rv0XKKIc4UFqmjqktPYDX/esCIgyX6Asi4rXkCJkR2Nik+3TtYzutp3pbH8GlH0lFbszN7t9ScuSA7Yt3aFhEYHsaB4CTt30aQ+9hUDHPOghdCNdx5IwKHVCPrUGwbubyTsugo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gppgaLp1; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-31f53b3b284so2336728a91.1;
-        Thu, 31 Jul 2025 07:56:43 -0700 (PDT)
+	s=arc-20240116; t=1753973894; c=relaxed/simple;
+	bh=/Nl6OMRMQI+j/D/FeQ0+/Hu9aMwMGkFL0oIoYF1EXds=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=K6XN2i4x7bo43/a0YAngrnUYuaHrWfOsXCjpb9U6kDnfmtTO9eOqghhPcf1+al1qUhz18APC6ec09wBc1+MtR4rk7hEgrjh6AmpYwjOB9u0eJ1D5/PQuLClzI8esfkzrBxttYCKLakcyOaWCc4MosaqAAC8L5Kc05srzMKRMxD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=j0BrvQ6o; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4560add6cd2so7370605e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:58:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753973802; x=1754578602; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=FT7u1JXPLE2qapPN2e8db1o8m0B7NtOsnWruvD5C3H8=;
-        b=gppgaLp12Z8Pt1U5TGGvyTaU0Vt3vHzhBNFM8tKPTCVvHAfOwA9eI0ikzw1Pi9sbN9
-         NTxwWq6C2/DALit3LpfT47fdin0YteAw6w5aZCVS7c4aZn6QCsY/MF52fsNh287Y4MWT
-         R5ERN3V+PAgvMzKOCzCGDb9YLwEz4uo7Y0zHL5kMcQ3+OoYR4yZOrgMgg9PDh0jaVPe9
-         /wlksYNkeiohJf913onLSZ+yAcZG0wJGJQcOY1tsuAlg3u00mFa+AxcerPj9JhlY3yNx
-         3XJ9IDs/Ms4cvzqlrPWQAN/V5H0V+Kgk9zuC9qfjtHLZUCuXcLDaxOaPIJyP5EOYCXaK
-         lNZg==
+        d=linaro.org; s=google; t=1753973890; x=1754578690; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=UYSC+snvuRl9xh5vK5+UophT/Pu3Y9kJHZ4TR6UIQ90=;
+        b=j0BrvQ6oNv6a94FTVMV30TTMab3rysF83DDgLYZDmZ5D/wmDfRasENZ6C14WwGrFrb
+         CbO9jZ9+ULBavR6WZtlgNj7urVRtJewOHCoqP1fTijAWczez2zhs99v4JCajFfEMzNO5
+         rde8yEY5Q1OGpZAg+GeDmhFYVifALyI9TTo9JjmfE6VJ19BJ6wvZKcsyUOyP8F1Fq5VE
+         tUAw32lVr+vuYN9mzgYrL5fn8eF8JSXHR71UHNsJEkjq5yZzKFh4s0KVY+R+QmPnEu24
+         DSlvqfXYAzde4KwN1XBsnjUYW97S3FwuPeQB30x6BKfBjy46IEpU3kG2OgC9oZaBjYmA
+         Z3kA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753973802; x=1754578602;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=FT7u1JXPLE2qapPN2e8db1o8m0B7NtOsnWruvD5C3H8=;
-        b=eqDwBvBSCoirErVlQy59eNMQvg30hf+ge3uSd5paolJ91pDXZyb0DUl80O6rlRNk/L
-         zyQtrILd3nJxT+pM0yUH4WP7zrZB+LzFFsljDwau+OgjzNmsMk4ystV3z/JhAR04eMCR
-         VpfLRvchFCytpo4XKWCwoETTvT6EirizD6nsmAjUbi9Zb54eg63/OMahoD65enrnKu0C
-         XoYR+Qh1vQwjFoqxtrQ91tFQUf3KIUHXS5dU9XE2mQMTjSTtFgeOvNshQylto6DDej0w
-         uXCiNmEKHwng8mV+MiBzgGqaaq9/MmVNEqg9z/MQwRDMCAaZM2PZJQqCJ8xffSCun4Ui
-         8n1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVVrkjnzcxi+yko+EtbnSo9TLdYVlclXsIG7jlb+K3pAIaMqIX/0Kj8Tgl/Lv9MBS+NKidioZC3w6+N@vger.kernel.org, AJvYcCVqlUlu+qOtujCfhm4M9ZfOt1nQh+hsVwYvcTlEnOwgUD4pfXvATHKTKlJP/VXohxWLV6qz8TYRRn/JO0wr@vger.kernel.org, AJvYcCXPtBGLuEWc3Pw7XXIoafhMRxdpe9D3mRh0TXSfWMzK/GE+UpdtuYTXPOTzvKTJXn4tzVe9i/Hmtvd0BC+j@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBcJ6exufen5tv1Uk9tM7c1KsptkSdvQQ6AqRDvDUCaM2DZsqA
-	0Ld2Y67JK/7nUyFUgOHW409mPOe8OL0QFidLTJ0ftU5+S4oatsIMgvos
-X-Gm-Gg: ASbGnctPtHGNzV3Is23sbsSXPs8bCAdCwoIK+zDUU1UCxniofFo9B4kxQ1lQdObtme4
-	kVt4MwHWnhFFyvZu5AlSfrP5z+M7NoavgYNqFtRvmd74CCEK4tkWRdiqEkR+GIWLWw4hL0lbPip
-	YwK+AI/HOQZVKYvu9l+gTXhq6nRR0+y/jpM9J1MiHUdpzcpYHRB7kcWAE/VEiTvQn6reiz2qdcn
-	cwCiR+MJHBAyMig07kuBwohA4kUMJBjDDGsQx6bC+Y/1tiuHRal4wtKQWKbyq+9UhwcpF/rIRGZ
-	z5JZ2UC/mqp2hz1PyXl6xC3QNyppWLTgWLp6sRvIHMD0WAQq7ctW+5ahCQBjj7aHD39iesm+ruq
-	LRLS494+MPm4q8qrD6IlWapAtgsOlkjksPlA=
-X-Google-Smtp-Source: AGHT+IFUmKjDbrxLRXJ1NDdjdx4q7IERNGjCOzdAFK1JFsMNeLaKS5QQhtOFSICBsTTo4HJkHkBf3w==
-X-Received: by 2002:a17:90b:1806:b0:31f:4e9b:7c6a with SMTP id 98e67ed59e1d1-320da6152d1mr3280463a91.15.1753973802299;
-        Thu, 31 Jul 2025 07:56:42 -0700 (PDT)
-Received: from VM-16-24-fedora.. ([43.153.32.141])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebaefb1sm2257252a91.8.2025.07.31.07.56.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 07:56:41 -0700 (PDT)
-From: Jinliang Zheng <alexjlzheng@gmail.com>
-X-Google-Original-From: Jinliang Zheng <alexjlzheng@tencent.com>
-To: hch@infradead.org
-Cc: alexjlzheng@gmail.com,
-	alexjlzheng@tencent.com,
-	brauner@kernel.org,
-	djwong@kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-xfs@vger.kernel.org,
-	willy@infradead.org
-Subject: Re: [PATCH v2] iomap: move prefaulting out of hot write path
-Date: Thu, 31 Jul 2025 22:56:40 +0800
-Message-ID: <20250731145640.651097-1-alexjlzheng@tencent.com>
-X-Mailer: git-send-email 2.49.0
-In-Reply-To: <aIt8BYa6Ti6SRh8C@infradead.org>
-References: <aIt8BYa6Ti6SRh8C@infradead.org>
+        d=1e100.net; s=20230601; t=1753973890; x=1754578690;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=UYSC+snvuRl9xh5vK5+UophT/Pu3Y9kJHZ4TR6UIQ90=;
+        b=VihAeTUwC2kh5XwEACGyVkIhyF0nxptx1h5UTalrckIPkfpB6VBqpsSNU2nwMazFGs
+         x3M+jzHm8Z+0M3sZbRHenwQ4IeigvHNZXATvStsH5IRmolEXLwQ+AbrSjKNv+0mB9hzh
+         dnIeGjBp9rrVH9GBk6jqAFZjxWcbvRZGSSdu/OZslc9vp00SWNipU54Uol55Aki/viuG
+         DSlGqGr07Ro1EKiJel8w0L/p9ji/55A2+n3FRqrKTDrfoRUfUc1KN0QuizgUKLXBrnht
+         +hzXbbUnpI0evOaKaHAURWdoYB9Cxe+j3/cmT5oP1wpKWHIaHql/0EnE3zAeFKF4oXpO
+         GQTw==
+X-Forwarded-Encrypted: i=1; AJvYcCW6JZG8/fKiSa46IxcE66N7kvNtilRsI7S+mShUvt8iLoEecN8JcvZAZDC4V20a+mce7nJ4LVHqMa+M0Nc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwsRjdMcTiGAcx3etbAsABiWcHHVdrInyzgeMrOcIKgnVeuzYxx
+	PX7KIS9bK2JhZKsNw+nIRjIJX4yUCFXAOM1g4H0QidkD47ZmTKa8TvdrD5US5jYgPq3XTtj4lr+
+	lVZ1c
+X-Gm-Gg: ASbGncumlEC6CAjwaJCsAAXJvrm3rzqmNcgV2nIVCc+n6OTddhBEdoT6M0U/KES4xx2
+	2pfuvUHLF7JXe+LjKkaGQb51oPNAGS4KPgTphzgswVVNZlKNKP4AgqilY5tEYHSRrK8lkkVAsPA
+	dy07F4p/GzM3ighbw652NzSnWUDUIJ/UMBIM+IUSa94+IGdhDrb6+5Ou4ioTa0q9195JN4l00OA
+	0ILPApLkRGSCYgtrjHCHCO77JiCnhFS0A1ScG74yAG9nx0R6UMWHbUzTa2eBVVW5RIsVVo3XOuK
+	lWjoYqjwUTlA1S9LB5Ee15eCXC7T/uyIPCARINXROvD3HOi2zFn7jh7bPupI8cM1sZHwq7VuBh+
+	3N2qbN1IPYSenvIHyaTRC2CPR20HR4SDqFXLX0Nk1D3sVD8CPN/LOvamEFbBn+Wu0csCda21Isf
+	ta69FPuVw=
+X-Google-Smtp-Source: AGHT+IF/x1z+XOkIb5kPsEMrjlpAe76OpJMnjZ5nXXOYdZrgYcKT02O7pTqubGbXxoZkZwM+ViAY/Q==
+X-Received: by 2002:a05:600c:a08e:b0:456:189e:223a with SMTP id 5b1f17b1804b1-458a222a97fmr26720225e9.10.1753973890541;
+        Thu, 31 Jul 2025 07:58:10 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:3d9:2080:5d4b:b132:363:7591? ([2a01:e0a:3d9:2080:5d4b:b132:363:7591])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c4b75sm2602564f8f.31.2025.07.31.07.58.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 07:58:10 -0700 (PDT)
+Message-ID: <490f9017-629d-4c19-8c2a-7fd106b4568c@linaro.org>
+Date: Thu, 31 Jul 2025 16:58:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
+Subject: Re: [PATCH] soc: qcom: mdt_loader: Deal with zero e_shentsize
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Val Packett <val@packett.cool>
+References: <20250730-mdt-loader-shentsize-zero-v1-1-04f43186229c@oss.qualcomm.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <20250730-mdt-loader-shentsize-zero-v1-1-04f43186229c@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, 31 Jul 2025 07:21:57 -0700, Christoph Hellwig wrote:
-> On Thu, Jul 32, 2025 at 12:44:09AM +0800, alexjlzheng@gmail.com wrote:
-> > From: Jinliang Zheng <alexjlzheng@tencent.com>
-> > 
-> > Prefaulting the write source buffer incurs an extra userspace access
-> > in the common fast path. Make iomap_write_iter() consistent with
-> > generic_perform_write(): only touch userspace an extra time when
-> > copy_folio_from_iter_atomic() has failed to make progress.
+On 30/07/2025 22:51, Bjorn Andersson wrote:
+> Firmware that doesn't provide section headers leave both e_shentsize and
+> e_shnum 0, which obvious isn't compatible with the newly introduced
+> stricter checks.
 > 
-> This is probably a good thing to have, but I'm curous if you did see
-> it making a different for workloads?
-
-Yes, there is some improvement. However, I tested it only a few times,
-so I can't rule out jitter.
-
-However, from a design pattern perspective, this patch is a good thing
-anyway.
-
+> Make the section-related checks conditional on either of these values
+> being non-zero.
 > 
-> > +		/*
-> > +		 * Faults here on mmap()s can recurse into arbitrary
-> > +		 * filesystem code. Lots of locks are held that can
-> > +		 * deadlock. Use an atomic copy to avoid deadlocking
-> > +		 * in page fault handling.
-> 
-> We can and should use all 80 characters in a line for comments.
+Missing:
+Fixes: 9f35ab0e53cc ("soc: qcom: mdt_loader: Fix error return values in mdt_header_valid()")
 
-I agree. hahaha :)
+Or it won't apply on stable kernels
 
-thanks,
-Jinliang Zheng. :) :)
+> Fixes: 9f9967fed9d0 ("soc: qcom: mdt_loader: Ensure we don't read past the ELF header")
+> Reported-by: Val Packett <val@packett.cool>
+> Closes: https://lore.kernel.org/all/ece307c3-7d65-440f-babd-88cf9705b908@packett.cool/
+> Reported-by: Neil Armstrong <neil.armstrong@linaro.org>
+> Closes: https://lore.kernel.org/all/aec9cd03-6fc2-4dc8-b937-8b7cf7bf4128@linaro.org/
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> ---
+>   drivers/soc/qcom/mdt_loader.c | 12 +++++++-----
+>   1 file changed, 7 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/soc/qcom/mdt_loader.c b/drivers/soc/qcom/mdt_loader.c
+> index 0ca268bdf1f8c579b36a04fd94417be172fc1099..5710ac0c07a8c8a56110e3fc5e30b8610e106449 100644
+> --- a/drivers/soc/qcom/mdt_loader.c
+> +++ b/drivers/soc/qcom/mdt_loader.c
+> @@ -39,12 +39,14 @@ static bool mdt_header_valid(const struct firmware *fw)
+>   	if (phend > fw->size)
+>   		return false;
+>   
+> -	if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+> -		return false;
+> +	if (ehdr->e_shentsize || ehdr->e_shnum) {
+> +		if (ehdr->e_shentsize != sizeof(struct elf32_shdr))
+> +			return false;
+>   
+> -	shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+> -	if (shend > fw->size)
+> -		return false;
+> +		shend = size_add(size_mul(sizeof(struct elf32_shdr), ehdr->e_shnum), ehdr->e_shoff);
+> +		if (shend > fw->size)
+> +			return false;
+> +	}
+>   
+>   	return true;
+>   }
+> 
+> ---
+> base-commit: 79fb37f39b77bbf9a56304e9af843cd93a7a1916
+> change-id: 20250730-mdt-loader-shentsize-zero-8c99653b6343
+> 
+> Best regards,
 
-> 
-> > +			/*
-> > +			 * 'folio' is now unlocked and faults on it can be
-> > +			 * handled. Ensure forward progress by trying to
-> > +			 * fault it in now.
-> > +			 */
-> 
-> Same here.
-> 
-> I really wish we could find a way to share the core write loop between
-> at least iomap and generic_perform_write and maybe also the other copy
-> and pasters.  But that's for another time..
+Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+
+Thanks,
+Neil
 
