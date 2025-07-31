@@ -1,144 +1,143 @@
-Return-Path: <linux-kernel+bounces-752439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91B37B17595
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:29:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 45857B17597
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:30:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E380A8227F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:29:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AE3DA830DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A50E12741D5;
-	Thu, 31 Jul 2025 17:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B70D828FABC;
+	Thu, 31 Jul 2025 17:29:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="on8iDf3/"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JGAtKN7S"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E4DCBE6C;
-	Thu, 31 Jul 2025 17:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2273FBE6C;
+	Thu, 31 Jul 2025 17:29:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753982988; cv=none; b=bcm2ioMqiHsplYuO8Qswmh36U1HDXHPKZGyo2p+SrmpycB7G4VSnw87CB3/A/DETxne4E/tp+WuaYp/fy+PnSuxEqy2o/k7LyF2l9Rq6568/2sDKghPU4tu6X7TVSSq04Rmg0a8vmc8gFmciGqSvH0h1GQXqgvju28jcotifouY=
+	t=1753982991; cv=none; b=mGE8nskJWJjkdsQ/N1EmI8w176R+RXWXXTnzRZO06njI+wyBMyfdlYuKfwm2PEOXSGvqGw9Db55swOCuX+3CO7oaKbuYhWKnZIOGv8vIJTCPf/sbvU9+KNeNKFraIpDPCqvQUNQfWoUjtOHS2AsX+D9Ffd5FJzqdxyU5LSpvQdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753982988; c=relaxed/simple;
-	bh=bCp1bbrK8Fu87IJT39F/Jh1Gf8thyWSoFtSHr2FPQpo=;
+	s=arc-20240116; t=1753982991; c=relaxed/simple;
+	bh=e5jgqySpdEc4DwpBdabTILVgcW1l93r2WSzWO8xi3Us=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nRFOCKUylG4HmQAYo/yKWCdPs+HN17rhkVYcZbCgRKR2aAZN5gsuozRW4/3Z7YwGj5dn4rxSbkR7VqlYI9cPCzWHV5DdAQUhjP8Eo3uCteRD6pwgK+mELJKWyNhm37Kz/4dlh0EO+iruAWpFbXoiAMf4zj0yjC4O0M7rP6Jm5o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=on8iDf3/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E809C4CEF8;
-	Thu, 31 Jul 2025 17:29:47 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=HMKb5TAurW+PdkPkQjiaAQZU0hsYaKa88Z5rNQJy666spqKWnJbEtOCCNf/iTPVR/BDMkHq+QU8z1M5QqAM39ez4BAAY0zisk5pjTyp9mj80z0q0aJ1gNSjMQ28Ah7K7ixupIPXq8KEN7dFuOWIo6ykT4gSQflyK47R1zV0QZ8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JGAtKN7S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67736C4CEEF;
+	Thu, 31 Jul 2025 17:29:50 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753982987;
-	bh=bCp1bbrK8Fu87IJT39F/Jh1Gf8thyWSoFtSHr2FPQpo=;
+	s=k20201202; t=1753982990;
+	bh=e5jgqySpdEc4DwpBdabTILVgcW1l93r2WSzWO8xi3Us=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=on8iDf3/CBpQxgPlpu+/la8YWj+Os4lq7QjW7pm3CCbJm12T6vgTm5UGQCtX+KIac
-	 CTNYjHyIFNS1iZ4ELXM31ZTSsc7sxJiFjhKGLYbPH5CAdWkLiFJMvXtjG907lU1WcN
-	 GwBT1FhCb/3r72qzNbE4rOo1abnrh1Acei16Gp1zpW8rh9bqGmuX1FGaChPd3pbVeJ
-	 YahU6U1G4Vr18SoahAom/7dUe+7ZXsrNZVrqKumVE5n0I41tPKjojqX6J/DNV8lhWP
-	 xG2UVGAZAQj0J31caR9wP7fJeAc30ooEH8p8ynn/JBrUQMQlkbFG405lp41pgvfG2R
-	 MpfRJSW9Jd6Gw==
-Date: Thu, 31 Jul 2025 10:29:46 -0700
-From: "Darrick J. Wong" <djwong@kernel.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>,
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250731172946.GK2672070@frogsfrogsfrogs>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <87freddbcf.fsf@igalia.com>
- <20250731-diamant-kringeln-7f16e5e96173@brauner>
+	b=JGAtKN7S7xTbKzvf38ip2eImWsn6Nv0qA7JAHFPWckwXwdgWGGYBoGwzxDZrG5Aqx
+	 hfEFXcIZB/RlE59doUj9pZ8moEM0TqUEDnTh8p/N704V8pNUIgQxczxPaACnQYCNnO
+	 8AXNO1cUYRFTsM+3FSASljIxgubgcSGGXurg6/orL3JM4eqror9OZbsV3z/YojyeQZ
+	 SovK2Zk0WFGjmB5/b2u1OEfJG/SZfomitGW10f1NYEqErkbABiakadcz4SaZN4JdgC
+	 caFg2gQw6KGgktkBztYXc3J5bRpz6ZDieZ0RAt3oAX+WZAYDOtLpvW/ZhpmwuXzUw8
+	 QNIa9Dd01K+9g==
+Date: Thu, 31 Jul 2025 10:29:48 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+	linux-perf-users@vger.kernel.org
+Subject: Re: [PATCH] perf record: Cache build-ID of hit DSOs only
+Message-ID: <aIuoDHBGeoFYF2fh@google.com>
+References: <20250731070330.57116-1-namhyung@kernel.org>
+ <aIt9bTQhAo8G3oqH@x1>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250731-diamant-kringeln-7f16e5e96173@brauner>
+In-Reply-To: <aIt9bTQhAo8G3oqH@x1>
 
-On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
-> On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
-> > Hi Darrick,
-> > 
-> > On Tue, Jul 29 2025, Darrick J. Wong wrote:
-> > 
-> > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
-> > >> Hi!
-> > >> 
-> > >> I know this has been discussed several times in several places, and the
-> > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
-> > >> able to restart a user-space FUSE server.
-> > >> 
-> > >> While looking at how to restart a server that uses the libfuse lowlevel
-> > >> API, I've created an RFC pull request [1] to understand whether adding
-> > >> support for this operation would be something acceptable in the project.
-> > >
-> > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > > could restart itself.  It's unclear if doing so will actually enable us
-> > > to clear the condition that caused the failure in the first place, but I
-> > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > > aren't totally crazy.
-> > 
-> > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
-> > the restart itself.  Instead, it simply adds some visibility into the
-> > opaque data structures so that a FUSE server could re-initialise a session
-> > without having to go through a full remount.
-> > 
-> > But sure, there are other things that could be added to the library as
-> > well.  For example, in my current experiments, the FUSE server needs start
-> > some sort of "file descriptor server" to keep the fd alive for the
-> > restart.  This daemon could be optionally provided in libfuse itself,
-> > which could also be used to store all sorts of blobs needed by the file
-> > system after recovery is done.
+Hi Arnaldo,
+
+On Thu, Jul 31, 2025 at 11:27:57AM -0300, Arnaldo Carvalho de Melo wrote:
+> On Thu, Jul 31, 2025 at 12:03:30AM -0700, Namhyung Kim wrote:
+> > It post-processes samples to find which DSO has samples.  Based on that
+> > info, it can save used DSOs in the build-ID cache directory.  But for
+> > some reason, it saves all DSOs without checking the hit mark.  Skipping
+> > unused DSOs can give some speedup especially with --buildid-mmap being
+> > default.
+>  
+> > On my idle machine, `time perf record -a sleep 1` goes down from 3 sec
+> > to 1.5 sec with this change.
 > 
-> Fwiw, for most use-cases you really just want to use systemd's file
-> descriptor store to persist the /dev/fuse connection:
-> https://systemd.io/FILE_DESCRIPTOR_STORE/
-
-Very nice!  This is exactly what I was looking for to handle the initial
-setup, so I'm glad I don't have to go design a protocol around that.
-
-> > 
-> > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
-> > >> libfuse data structures so that a server could set some of the sessions'
-> > >> fields.
-> > >> 
-> > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
-> > >> pass it to libfuse while recovering, after a restart or a crash.  The
-> > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
-> > >> course.  And there are probably other data structures that user-space file
-> > >> systems will have to keep track as well, so that everything can be
-> > >> restored.  (The parameters set in the INIT phase, for example.)
-> > >
-> > > Yeah, I don't know how that would work in practice.  Would the kernel
-> > > send back the old connection flags and whatnot via some sort of
-> > > FUSE_REINIT request, and the fuse server can either decide that it will
-> > > try to recover, or just bail out?
-> > 
-> > That would be an option.  But my current idea would be that the server
-> > would need to store those somewhere and simply assume they are still OK
+> Good stuff, and this is in line with the original intent, don't cache
+> uninteresting things.
 > 
-> The fdstore currently allows to associate a name with a file descriptor
-> in the fdstore. That name would allow you to associate the options with
-> the fuse connection. However, I would not rule it out that additional
-> metadata could be attached to file descriptors in the fdstore if that's
-> something that's needed.
+> But now I have do some digging, as this should've been the case since
+> the start, why would we go to the trouble of traversing perf.data,
+> processing all samples, yadda, yadda to then not look at it when caching
+> files?
+> 
+> The whole process of reading the build ids at the end is done here:
+> 
+> bool dsos__read_build_ids(struct dsos *dsos, bool with_hits)
+> {
+>         struct dsos__read_build_ids_cb_args args = {
+>                 .with_hits = with_hits,
+>                 .have_build_id = false,
+>         };
+> 
+>         dsos__for_each_dso(dsos, dsos__read_build_ids_cb, &args);
+>         return args.have_build_id;
+> }
+> 
+> And that dsos__read_build_ids_cb thing specifically looks at:
+> 
+> static int dsos__read_build_ids_cb(struct dso *dso, void *data)
+> {
+>         struct dsos__read_build_ids_cb_args *args = data;
+>         struct nscookie nsc;
+>         struct build_id bid = { .size = 0, };
+>                                 
+>         if (args->with_hits && !dso__hit(dso) && !dso__is_vdso(dso))
+>                 return 0;
+> <SNIP>
+> 
+> So it will not try to read the build id if that DSO has no samples.
+> 
+> But, that was written before PERF_RECORD_MMAP* came with a build-id, so
+> it _will_ have a build-id and thus checking if it has hits is needed.
+> 
+> In the past DSOs without hits wouldn't have a build-id because
+> dsos__read_build_ids_cb() would not read that build-id from the ELF
+> file.
 
-Names are useful, I'd at least want "fusedev", "fsopen", and "device".
+Yep, I think that's the reason.
 
-If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
-be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
-the store as 'journal_dev'?" Then it just has to wait until the fd shows
-up, and it can continue with the mount process.
+> 
+> Ok, now that makes sense:
+> 
+> Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-Though the "device" argument needn't be a path, so to be fully general
-mountfsd and the fuse server would have to handshake that as well.
+Thanks!
 
---D
+> 
+> This could have a Fixes attached to it, one that doesn't fixes something
+> that is not working, but speeds up processing by overcoming an oversight
+> when adding build-ids to MMAP records, so I think a:
+> 
+> Fixes: e29386c8f7d71fa5 ("perf record: Add --buildid-mmap option to enable PERF_RECORD_MMAP2's build id")
+> 
+> Is worth.
+
+Sure, will add.
+
+Thanks,
+Namhyung
 
