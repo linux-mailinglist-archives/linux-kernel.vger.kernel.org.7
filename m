@@ -1,119 +1,190 @@
-Return-Path: <linux-kernel+bounces-752379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56434B174CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:16:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D68B174D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:18:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5EA9DA83AB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:15:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74A01C24C2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:19:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA18F23B610;
-	Thu, 31 Jul 2025 16:16:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B027C21C19D;
+	Thu, 31 Jul 2025 16:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="P3splCKJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OPz1znPA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KGFQE5cs";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="OPz1znPA";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="KGFQE5cs"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262912222D4;
-	Thu, 31 Jul 2025 16:16:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695D217C224
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753978580; cv=none; b=XiZZ5MbAlWg1KdvF2jSRW6gnUHcTZDFotMWvVEVRMX2dRxC1uEbY5/sLweEyak3hfDhQE5xUQEQPRscLHSiiPhVu/PvADNwYEMBs+Mpr7LBCFdbX8TEWf7MqjPIdTI2fCJyMwnkKqnPPo018NtiCTAZxwVo3zFOZUAExP8//REI=
+	t=1753978727; cv=none; b=RskdXXGMlTC2BR5u6sm+RBEX2NwQ+cj86660G/QudF4PmQiQrk2y0iFkQQ77YAaYHKTjSxNXWPTKxon5CwgnSNPVvDgCQThh23ykIHV3S0v68xo3SFJURx8WK4AMkWJdmucpV6Aw3XVYJe846E+J3sSaVannfKQGw4E+e8/fZ+E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753978580; c=relaxed/simple;
-	bh=p3cf8J6rM1P3RGVhPv6cLXHP0636yx/YFTRRf6vxbys=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dz4G06xWwsFYs5vz19OAN4Lu1dVP4xhUG1PXUzJ3jPQ/eGc8dgGyyhQPywyDzOtbS8s9SxjvfF9EA9DQz8DNY6HaswyUfThPXDDpBQP44lOkPDnJjacVFfP8Km75Wb7HBgcOUhi/DXH0kqbCJQCUqod5/ZFKiIMqd9RsH8vTbaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=P3splCKJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9FC63C4CEEF;
-	Thu, 31 Jul 2025 16:16:16 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753978578;
-	bh=p3cf8J6rM1P3RGVhPv6cLXHP0636yx/YFTRRf6vxbys=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=P3splCKJekZSpimcCF4ACgG+B2qwzpMFvRMBvxiN7RcyN5P5uCvuSs/w2QrXgZ8m4
-	 TpsHRSsXk5oBCzH2+S7JFAyR42yO7sv8sK+Eg4XyhdNsb5Ru1/et15ztBbIblOFZ1e
-	 v/DPnp3jljjlMlrwRaD4H9sZChI5ckLYtdkZBvdGUPdY4whB80usg+U2pDDGqUxXCy
-	 OYe0+lNoQNa9uA51E9vnE4TlUsr87Z+l6Xvffdj9XonZ8C86wyo3gBYfR2Lye9MTVc
-	 6wJou9hrW8BJLZXg8x3Nq77v+GgRaY9BGR2qdamAkFsTDsajGz4Tl3V9qvHvUrCu9R
-	 i+8uXoDw093BA==
-Date: Thu, 31 Jul 2025 17:16:13 +0100
-From: Mark Brown <broonie@kernel.org>
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
-Message-ID: <14c68c29-68d8-4119-8f70-616c07397dc4@sirena.org.uk>
-References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
- <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
- <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
- <68c210a2-49b2-4fd2-97ad-27af85369d9f@sirena.org.uk>
- <aItk4vWPnFk6lYjn@shell.armlinux.org.uk>
- <4f80be02-0bbe-4c10-a3d2-324916ea2ca4@sirena.org.uk>
- <aIuSdnV8sWnUqLOq@shell.armlinux.org.uk>
+	s=arc-20240116; t=1753978727; c=relaxed/simple;
+	bh=lHikoxUjcjMrp68bQtQ12G0SPYVvZFsiAt+7SwJG1Dg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=g+gC5BkQZ/spP41436Er39fzJqKGSfuVnDteoX2FYt2dfI0EyxT+7jy1BkpZLACuup9RYBZ9weIGqkXnH5zYOLDY4Ay0bPDM9kOvw7Tmna50209uFOU1l2XNAawz0lJe7y4XigWL3K0Sv6xKYbogFOP5JbYy66asS/0cBa4IRQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OPz1znPA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KGFQE5cs; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=OPz1znPA; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=KGFQE5cs; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 681D521A9F;
+	Thu, 31 Jul 2025 16:18:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753978722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
+	b=OPz1znPAqaFmVsaSyD20MC9V0T7aZH4/FOblMlCKFfhOtSSa+LHAkOs4rf37gRxQu9kmBr
+	yckfRkRoj4YqNrSxu4pRkDB5amsnkExZwDpLSHr52XI/i57wYydo57mqLNq+qL1/iRt+A7
+	PF06HNG5O57A2D/GzDUyf+N6acI8ncE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753978722;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
+	b=KGFQE5csu3chqC7QseNQ9s2mEVsKY77YE43r7UwiVWLf6umotaFCdvYTDqb+IzTzaLY6Y/
+	kMCH4+FbA3kM7GAA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=OPz1znPA;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=KGFQE5cs
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1753978722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
+	b=OPz1znPAqaFmVsaSyD20MC9V0T7aZH4/FOblMlCKFfhOtSSa+LHAkOs4rf37gRxQu9kmBr
+	yckfRkRoj4YqNrSxu4pRkDB5amsnkExZwDpLSHr52XI/i57wYydo57mqLNq+qL1/iRt+A7
+	PF06HNG5O57A2D/GzDUyf+N6acI8ncE=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1753978722;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type;
+	bh=xWJLcUVxV+vWt0myEmYah2yHxPs7UTYwRvpNlyn90EA=;
+	b=KGFQE5csu3chqC7QseNQ9s2mEVsKY77YE43r7UwiVWLf6umotaFCdvYTDqb+IzTzaLY6Y/
+	kMCH4+FbA3kM7GAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5DC7F13A43;
+	Thu, 31 Jul 2025 16:18:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id r9HeFmKXi2h0IwAAD6G6ig
+	(envelope-from <jwiesner@suse.de>); Thu, 31 Jul 2025 16:18:42 +0000
+Received: by incl.suse.cz (Postfix, from userid 1000)
+	id 113DDD43F2; Thu, 31 Jul 2025 18:18:38 +0200 (CEST)
+Date: Thu, 31 Jul 2025 18:18:37 +0200
+From: Jiri Wiesner <jwiesner@suse.de>
+To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Cc: "Paul E. McKenney" <paulmck@kernel.org>,
+	John Stultz <jstultz@google.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Stephen Boyd <sboyd@kernel.org>, Waiman Long <longman@redhat.com>
+Subject: [PATCH] clocksource: Print durations for sync check unconditionally
+Message-ID: <aIuXXfdITXdI0lLp@incl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="/VQROS4r+R15ZpR1"
-Content-Disposition: inline
-In-Reply-To: <aIuSdnV8sWnUqLOq@shell.armlinux.org.uk>
-X-Cookie: Gloffing is a state of mine.
-
-
---/VQROS4r+R15ZpR1
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+X-Spamd-Result: default: False [-4.01 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_COUNT_THREE(0.00)[3];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[6];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_TLS_LAST(0.00)[];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Rspamd-Queue-Id: 681D521A9F
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.01
 
-On Thu, Jul 31, 2025 at 04:57:42PM +0100, Russell King (Oracle) wrote:
-> On Thu, Jul 31, 2025 at 02:18:24PM +0100, Mark Brown wrote:
+A typical set of messages that gets printed as a result of the clocksource
+watchdog finding the TSC unstable usually does not contain messages
+indicating CPUs being ahead of or behind the CPU from which the check is
+carried out. That fact suggests that the TSC does not experience time skew
+between CPUs (if the clocksource.verify_n_cpus parameter is set to a
+negative value) but quantitative information is missing.
 
-> > I *think* mutex_lock_nested() is what we're looking for here, with the
-> > depth information from the irq_desc but I'm also not super familiar with
-> > this stuff.
+The cs_nsec_max value printed by the "CPU %d check durations" message
+actually provides a worst case estimate of the time skew. If all CPUs have
+been checked, the cs_nsec_max value multiplied by 2 is the maximum
+possible time skew between the TSCs of any two CPUs on the system. The
+worst case estimate is derived from two boundary cases:
 
-> I'm not sure about that, because the irq_desc locks don't nest:
+1. No time is consumed to execute instructions between csnow_begin and
+csnow_mid while all the cs_nsec_max time is consumed by the code between
+csnow_mid and csnow_end. In this case, the maximum undetectable time skew
+of a CPU being ahead would be cs_nsec_max.
 
->         raw_spin_lock_init(&desc->lock);
->         lockdep_set_class(&desc->lock, &irq_desc_lock_class);
+2. All the cs_nsec_max time is consumed to execute instructions between
+csnow_begin and csnow_mid while no time is consumed by the code between
+csnow_mid and csnow_end. In this case, the maximum undetectable time skew
+of a CPU being behind would be cs_nsec_max.
 
-> What saves irq_desc lock nesting in this case is that
-> __irq_put_desc_unlock() unlocks desc->lock calling the
-> irq_bus_sync_unlock() method. So, I don't think we have anything at
-> the irq_desc level which deals with lock-nesting.
+The worst case estimate assumes a system experiencing a corner case
+consisting of the two boundary cases.
 
-Yeah, and that's all internals which we're not super encouraged to peer
-at.  There should be something that'll give us a nesting level
-somewhere... =20
+Always print the "CPU %d check durations" message so that the maximum
+possible time skew measured by the TSC sync check can be compared to the
+time skew measured by the clocksource watchdog.
 
-Lockdep's handling of nesting is generally fun.
+Signed-off-by: Jiri Wiesner <jwiesner@suse.de>
+---
+ kernel/time/clocksource.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
 
---/VQROS4r+R15ZpR1
-Content-Type: application/pgp-signature; name="signature.asc"
+diff --git a/kernel/time/clocksource.c b/kernel/time/clocksource.c
+index e400fe150f9d..3eeb18233a6b 100644
+--- a/kernel/time/clocksource.c
++++ b/kernel/time/clocksource.c
+@@ -410,9 +410,8 @@ void clocksource_verify_percpu(struct clocksource *cs)
+ 	if (!cpumask_empty(&cpus_behind))
+ 		pr_warn("        CPUs %*pbl behind CPU %d for clocksource %s.\n",
+ 			cpumask_pr_args(&cpus_behind), testcpu, cs->name);
+-	if (!cpumask_empty(&cpus_ahead) || !cpumask_empty(&cpus_behind))
+-		pr_warn("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
+-			testcpu, cs_nsec_min, cs_nsec_max, cs->name);
++	pr_info("        CPU %d check durations %lldns - %lldns for clocksource %s.\n",
++		testcpu, cs_nsec_min, cs_nsec_max, cs->name);
+ }
+ EXPORT_SYMBOL_GPL(clocksource_verify_percpu);
+ 
+-- 
+2.43.0
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiLls0ACgkQJNaLcl1U
-h9A+SAf7B7jos8DzkR+u2AIRqqoHJKtQ4mIjywbYG/mQPFXjMNGRVYv5ZvZHzKxu
-GXuwMMVkvpw/nSf6ZI5CBbGU1CkJ68PBsx0h3cc1jkuKXbLy3dw42Pvg/UGyVLEz
-wZT9ZsKldfqiHpLFB4dyini5bbMOJ/ru0QuwojjfC3QO5shccp3eKbVynCNULY2R
-3goXYu7yRUK7GJt/BIuftvSVrok0Fb4ugs53WsoLNKTQmYq5bZBZMjzW4At7PQc3
-Jpv2DpgTVNK7SCSP/Ing7K74/ibC3PT2/AIfSK1VCAlaDDzYg3dmrlX2lm9H5fJw
-UmAnrqTWjYYCYA9Qrf+uhIKFZVmIMA==
-=+qIz
------END PGP SIGNATURE-----
-
---/VQROS4r+R15ZpR1--
+-- 
+Jiri Wiesner
+SUSE Labs
 
