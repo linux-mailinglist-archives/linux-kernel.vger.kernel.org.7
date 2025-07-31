@@ -1,144 +1,131 @@
-Return-Path: <linux-kernel+bounces-752504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D5A8B17665
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:04:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E0E42B17669
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:04:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C0C33ACA1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:03:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F12958071C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 548AD24169A;
-	Thu, 31 Jul 2025 19:04:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC3624166F;
+	Thu, 31 Jul 2025 19:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FDtgMzPA"
-Received: from mail-qv1-f47.google.com (mail-qv1-f47.google.com [209.85.219.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJh7BvAF"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C52A23B633
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:04:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FE823ABB1
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:04:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753988650; cv=none; b=OtDYeT4i23/V+hgLC6sxh0wLoERPH1kLm2NqQDO3T0xTcG8/KXp/0kLOYtlctQPF9HLLDCi18fla/nH3i6U42XeT+jStYEWZdF4refo7JQvIWA8LhrJw+c3gHhYDnu1b/bLXpZWB15c5v4Mms8TFzeODQAMoJZb12W0QEWd3hcQ=
+	t=1753988669; cv=none; b=N2goDd/Z3sEe8ufGi9KwbgsJ5eEFoiZW73C1/R4SAB2J7gXVrLB0bU6Wr2mgZckSupVrVAAkMN2BSVAQZqJxAA4tN7uIuSowYguUxjJPcd4jQvl2ga81Vw8uFVXyhBMHenzpTo6728tfLeSHGLAfZ9o++jx841xKHxCTCU/KK7U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753988650; c=relaxed/simple;
-	bh=173rFFhLa/OnlYlgXY0qu0rl5EpYwN3Ri319nR2Dtbk=;
+	s=arc-20240116; t=1753988669; c=relaxed/simple;
+	bh=gJXzkDWaDEoED0mXWlnwlQgnRDnNkaAlLSo4DQeBxzs=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gF4awDMgxa+cecsn4yB2IY2CxomaPSlsgeTG+AvBj7W0NtgWyV7+V3H+/4JFeSdYlR1QZIXDgR4OE9rw6Cq0SpqK+xGP7v/uTzxd6ARASpdj8pFM/ekI8rES8EIuuZXxqpwASE3Tn76za5OOI6A0MK8Pzg3psDuJSi3A+Qd/ECY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FDtgMzPA; arc=none smtp.client-ip=209.85.219.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qv1-f47.google.com with SMTP id 6a1803df08f44-707453b031fso7337316d6.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:04:08 -0700 (PDT)
+	 To:Cc:Content-Type; b=Gu/h+JFn3XcdT3gRxOeaP00RIoUBTbwPdn2OHWn6qZklKgivkIRq5cRlOLpwSuyy06auynIfEfaFJhHspzJXWQwGgRPEew1dy0lWXW5lCJQXbOGdVZNmiTTBNMgUJbSdi03as5Ifmlg0v6yQ/DJbGiNa5OD7GFa38SWOV/h+ZvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJh7BvAF; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-312a806f002so184524a91.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:04:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1753988647; x=1754593447; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1753988668; x=1754593468; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=pj/7Gsrvh9XPHuAkUidAPLI16es4G/O+kKjv0mm7Cl4=;
-        b=FDtgMzPAsLxs9EDUG6P+xNoIXInRefKdMdI+koiGvuZpktcXT71GkLKQ322w9K+rlr
-         iprtvBfGi0znsTC5r5bOrKq7b88RGBSpbovdKQCTH7T+Wj8/qrUSyrEdufUzAKtrwBCE
-         yA7DCH7wXhGQJQpUbMXobUVTNqdhYu+tqA0/lmo3IdEphJ/vsznAGAu0COPZeXxxplM7
-         /S6WpoNRczpuc//EuWpFH72zOIyXU8bWNckuSh9euE2if1v/pXh7yON4BFRLZay51fo9
-         3vItItONkpU6+L1ViR+0oSYUYXf6AAITn/pctO1D8dViAkdJetLHN4ufg5SITZBovE8h
-         UYKw==
+        bh=d9hLQS1Qj2wO2t6Q4M7+LSgEvKKDPESGAJRbvOUbOkk=;
+        b=CJh7BvAFhtpP1HgjOcXfxqdcHaYncBB/ydsZZYw1FCn76aaUSCwXgcB/6mhdjsiRHh
+         jNrvjNDJoT01srNitQYKsDEC/1aoybtHQPGy1mukj2/SHaBwHT9e/YPFhvAW1ksRHrt5
+         x2DzFiucu4LsXb7MdA3xBaj6k9iiDC0F9dQsEqVCojVNeGaRzWx1x0PEaDGhUfLf9Ijf
+         HZIMs0PLvzwSUFY4G846GDdPBPd92LcW9alqCtdB2m8z/IhX49UguWvuuAjk2YAJODjw
+         G71AMjtvY7mgit6CpFLzzbi//+mNE+9/z+iyOtvKs9dY1fzeNRrZvDf3u00HjQ3umhVh
+         EHaQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753988647; x=1754593447;
+        d=1e100.net; s=20230601; t=1753988668; x=1754593468;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=pj/7Gsrvh9XPHuAkUidAPLI16es4G/O+kKjv0mm7Cl4=;
-        b=VIuSgruSLn6knDOibRIIw1OiEsqsC817uEJnRI/uCo7pBcWbqil9P+pQquxuzKvXDx
-         aaLyG9ysQE5p1ySNrDXKxpgyi+28Z8KaDGUdxPI0cryHiFcWsN+zaJUxrxGPWGJRlsD5
-         9Pw64RwZVLMCuSK4ekxnL/F2fpx6/CaABEdrcbmK/3l6uJLlYvJiY0KGL8HoB5g+f4ab
-         pDlRgCux5rK+Os2r1b3GRnFYhYbtkwFE4mXK4FYNmP7QIZ0bLWKjCrEZkT/GXD9wIJx8
-         dystrtm4jQVk2I3vU1pF3wLvQgNDSG2K888TmexM6kT/tfMutzr2r+MiX15Ie9L7P/lZ
-         G+2A==
-X-Forwarded-Encrypted: i=1; AJvYcCWFHGA36eYST387PY7WIKL1VIBX3RU15eoGPUxqGfhbrm8aTJ+P2JUNh834ghnlgOFMovryWP5zoJIOOZc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhlVsKUTQ/GT0Fxn6JKLdr5Rc6UdxbFhrKLyZWfb4CrPlw+wwa
-	VHkAgvoh4WQdxNQPizJ2bquD+CD8JyCO4SnOgvQAtbA/ndMgHLZr4aSWRe1OHEYJpSA+DXKSLbl
-	rKdoQZUAm80jVH1+LTI3Fj/eVkC4ETmFZ2185Oc9T
-X-Gm-Gg: ASbGncvffYOjZCFP2gcxUZf32ai1APDVbHI9Gp6LwrbBYV/GrQ/e6lburh/vr8aegUx
-	gpndzVuzi6DvwmoTNmS30ykzm98zvRXmd+EVx7RPdbT+gWBv1UcUG/ihWP2Er3rbbK6sTgkIP/m
-	r1WrRM6QiX/Xj2mMbx2W9wyUaNRhT8Ka4FfWcV1kF6gFbovpXyobZAqfIq5P/0aIAH72JL2Bmnf
-	J0pO3l//bx2DnKV0FkgFInghZJhz8VXU46zheNVhmmvzx28
-X-Google-Smtp-Source: AGHT+IFKS2GeUVe6FWBJVJU6SOTZLx4X2NE0Kzqy0x5kMMXSkS9rNfTmSV21NQ16rogLb7+sEFXLHVy3p8jipDdFZk0=
-X-Received: by 2002:ad4:5aaf:0:b0:707:62c5:975b with SMTP id
- 6a1803df08f44-70766e312d7mr98014696d6.15.1753988647091; Thu, 31 Jul 2025
- 12:04:07 -0700 (PDT)
+        bh=d9hLQS1Qj2wO2t6Q4M7+LSgEvKKDPESGAJRbvOUbOkk=;
+        b=ngfA5cmSZ0bAHnmPlgBDi4R9ypr1PKclBACtS96Om022YsvFFFuCR8iP10m8sKP4Tz
+         GnwqldHQYMiQphtjCfRevqoiAY7pdAMRW3WuGIKV26nuDzBJxBs4pkRuQzCnoC8JZ3Mo
+         vyAPpVbFk57Vu8Adw2MWMLKV69IJjZ8e3u6DHnfbfxLFbVqoGRaVGGuuNMBmedr4nSPi
+         KbPxARHUQVF9yib/3OTsmnu9wZnDNfNr0KbVMoF5WHcDQ5lWK4maKojgSyWs5oXAiaUb
+         U+SrABqxOwdBJJscw50X5aF7bimra7TH8mykx0Fbe7RALZLMVL3zoGRCu2l5fsObcWEn
+         xWVQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXBiGPI+Rp0c0dV/FQxFXs4iPNhAOBJy0JQgbifY2hdTogq8YiaPTQtsEuFuv+Xyz14fvlg5my60H0veeo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyrXLvyugGqpk2Sjb4L+w/7jl2gIW6MpkHXed/AOJYyItF3NrWC
+	F8yeC0rg4cMRGobTHf4NOzWK2vF6XcsTwgpv2gb5meeO2ZRDNN1kNsqxu/fukATbMoZyaJIlEiR
+	LBQweNsid1AP2/PWDnxmwHSvNMmKbJ3c=
+X-Gm-Gg: ASbGncuBByDDj3wMfnST6y1odUVlxlQaR0EcGanwBuRmNdPT6nIFH0iOAGNKvdHeSNz
+	qtyftMJgsYR7Agy1eIgA0gd0j8MRhenSw3AFi3aMrgUSJ/NLC+Hb9aokv0QInFpbtikXE3yOhYg
+	zk6Zhmd8GHk2LAARbuXtkGw7VIFudG9/h+XNDc8D9lNpGPq/jNdHoiB7VVLxhxZfEfUFYVsSiA7
+	HOob1KV
+X-Google-Smtp-Source: AGHT+IF2bYEl2+BEOAeHiljf3vUKpTyZm8+ers0QVY/s0tVH7OkxrGDLUBtiEkAByU+NxHzaKfQ59C63xqQyq7UvwYc=
+X-Received: by 2002:a17:90b:380a:b0:31f:ea:ca84 with SMTP id
+ 98e67ed59e1d1-31f5dda82d5mr633555a91.2.1753988667626; Thu, 31 Jul 2025
+ 12:04:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250730031624.1911689-1-davidgow@google.com>
-In-Reply-To: <20250730031624.1911689-1-davidgow@google.com>
-From: Rae Moar <rmoar@google.com>
-Date: Thu, 31 Jul 2025 15:03:55 -0400
-X-Gm-Features: Ac12FXyzGTyDZsjXhNlZ9t5Yhlq75GG_emhxAeVKyOddKo_zXsUrHdrlu6KKoE0
-Message-ID: <CA+GJov76O5e31p05W0HNUAaXLfz2DhgAsKHtuWpPMCC=PFf1mg@mail.gmail.com>
-Subject: Re: [PATCH] kunit: tool: Accept --raw_output=full as an alias of 'all'
-To: David Gow <davidgow@google.com>
-Cc: Brendan Higgins <brendan.higgins@linux.dev>, Shuah Khan <skhan@linuxfoundation.org>, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
+References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
+ <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
+ <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
+ <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
+ <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com>
+ <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
+ <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com>
+ <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
+ <CAHk-=whOb_ebQQbnXeqb8uXf32WA32nrL3=HQ2y8hBm9hFgVOw@mail.gmail.com>
+ <CAHk-=wh+79KkMXsNqyPxeU+c5U2h-n13ko6J_QzwtjyYCKhrSw@mail.gmail.com>
+ <CAHk-=wgEGn0azq0n5BfWg4ZStrZYanLCX1a+quug7HKmjimhpw@mail.gmail.com>
+ <CADnq5_NBM1Kso==+N=1xCjF+xiS7Vy4g47uvUN7sSWs8bontZQ@mail.gmail.com> <CAHk-=wiN+0FBwxwj1UiKsfHgW=C_aWy20F6PPt5M_ACnfukehQ@mail.gmail.com>
+In-Reply-To: <CAHk-=wiN+0FBwxwj1UiKsfHgW=C_aWy20F6PPt5M_ACnfukehQ@mail.gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 31 Jul 2025 15:04:16 -0400
+X-Gm-Features: Ac12FXzIgbuFXPjEc5kXfIQBbe_eDpBAwA8exmzuGM7zNQzkl_SPo-Foyl2jwFI
+Message-ID: <CADnq5_MjQbDYZYvSi5D5sVN1oeaLdxRPCQdt99LkMW=FWdcOQQ@mail.gmail.com>
+Subject: Re: [git pull] drm for 6.17-rc1
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Dave Airlie <airlied@gmail.com>, Dillon Varone <dillon.varone@amd.com>, 
+	Ivan Lipski <ivan.lipski@amd.com>, Daniel Wheeler <daniel.wheeler@amd.com>, 
+	Alex Deucher <alexander.deucher@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, 
+	Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
+	LKML <linux-kernel@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Jul 29, 2025 at 11:16=E2=80=AFPM David Gow <davidgow@google.com> wr=
-ote:
+On Thu, Jul 31, 2025 at 2:01=E2=80=AFPM Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
 >
-> I can never remember whether --raw_output takes 'all' or 'full'. No
-> reason we can't support both.
+> On Thu, 31 Jul 2025 at 06:09, Alex Deucher <alexdeucher@gmail.com> wrote:
+> >
+> > I think it may be fixed here:
+> > https://patchwork.freedesktop.org/patch/663973/
 >
-> For the record, 'all' is the recommended, documented option.
+> Yes, this patch fixes the problem for me.
 >
-> Signed-off-by: David Gow <davidgow@google.com>
+> I don't know if it's due to the pointer validation (ie this part):
+>
+> -       if (!dsc)
+> +       if (!dsc || !dsc->ctx || !dsc->ctx->dc ||
+> dsc->ctx->dc->debug.disable_dsc)
+>                 return;
+>
+> or whether it's the divide-by-zero that the commit talks about.
+>
+> Should I just apply this directly, or expect a pull request in the
+> next day or two?
 
-Hello!
+Just typing up the PR now to send to Dave and Simona.
 
-Happy to add the ability to use 'full'. Thanks!
+Thanks,
 
-Reviewed-by: Rae Moar <rmoar@google.com>
-
-> ---
->  tools/testing/kunit/kunit.py | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/tools/testing/kunit/kunit.py b/tools/testing/kunit/kunit.py
-> index 7f9ae55fd6d5..cd99c1956331 100755
-> --- a/tools/testing/kunit/kunit.py
-> +++ b/tools/testing/kunit/kunit.py
-> @@ -228,7 +228,7 @@ def parse_tests(request: KunitParseRequest, metadata:=
- kunit_json.Metadata, input
->                 fake_test.counts.passed =3D 1
->
->                 output: Iterable[str] =3D input_data
-> -               if request.raw_output =3D=3D 'all':
-> +               if request.raw_output =3D=3D 'all' or request.raw_output =
-=3D=3D 'full':
->                         pass
->                 elif request.raw_output =3D=3D 'kunit':
->                         output =3D kunit_parser.extract_tap_lines(output)
-> @@ -425,7 +425,7 @@ def add_parse_opts(parser: argparse.ArgumentParser) -=
-> None:
->         parser.add_argument('--raw_output', help=3D'If set don\'t parse o=
-utput from kernel. '
->                             'By default, filters to just KUnit output. Us=
-e '
->                             '--raw_output=3Dall to show everything',
-> -                            type=3Dstr, nargs=3D'?', const=3D'all', defa=
-ult=3DNone, choices=3D['all', 'kunit'])
-> +                            type=3Dstr, nargs=3D'?', const=3D'all', defa=
-ult=3DNone, choices=3D['all', 'full', 'kunit'])
->         parser.add_argument('--json',
->                             nargs=3D'?',
->                             help=3D'Prints parsed test results as JSON to=
- stdout or a file if '
-> --
-> 2.50.1.552.g942d659e1b-goog
->
+Alex
 
