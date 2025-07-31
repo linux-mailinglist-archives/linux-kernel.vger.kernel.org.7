@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-751689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 171F7B16C53
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:02:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4145FB16C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:04:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81C9818C52A3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:02:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06D5318C72DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B614A286889;
-	Thu, 31 Jul 2025 07:02:19 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59CA028DEE0;
+	Thu, 31 Jul 2025 07:03:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N4M+iR8V"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A08D35971;
-	Thu, 31 Jul 2025 07:02:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3523F2C9A;
+	Thu, 31 Jul 2025 07:03:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753945339; cv=none; b=g2Xx2AOtlMilECdAUgWGS6uRV4621NM8RZEZmH2nodrUI1Q0YkSiLU/uue2fYh94fmjaBJlm2SJT5+r2UFrCx4RSrJZaDXALn+E4hYAfq8SwSImIkrv03BbeLAM4Q4ducUFFXOhBGSdaseMbgNicoXYQs16beYZt38GW0lF/wZk=
+	t=1753945427; cv=none; b=dzI3kzO8vMKbUpKOYIRVi9cOqa7prJwAceFnR+AcY0iC5SXNrXgHMVtVARkGERcPYufK2YI+K15rI/LNjdbXL8+StWvE2FjAoTsAOzNyYXohvAgVjQPtrJU7oV5HJ3PuxW0co4E+nvKNLnJzfGyPBC6XkdzADUw5+rU4tx5n6Oc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753945339; c=relaxed/simple;
-	bh=yxe0l18y3O4qidbKd8FYdmHMrYfSbaqAiyFTErZAIZQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=oAbIEldbqiBdG/LvrcL/p9xCe/ZA62bHgG3igJzqW9HsOtsiKrICDeL8RMEY5MRM2UDrLRvm3URfD493MsMgw9bc3gEXBmBMsN+c00DRj7GrjVdpAXa0uIySDg9YDNLW49PGcddx4REoE7QdC2FbZRaMUI/W/YQ1M6y2V/YjXEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bt0Py13RmzYQv9P;
-	Thu, 31 Jul 2025 15:02:14 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id CE3901A01A5;
-	Thu, 31 Jul 2025 15:02:12 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBn4hLyFIto0alOCA--.62609S3;
-	Thu, 31 Jul 2025 15:02:12 +0800 (CST)
-Subject: Re: [PATCH v2 2/3] md: allow configuring logical_block_size
-To: "Martin K. Petersen" <martin.petersen@oracle.com>,
- linan666@huaweicloud.com
-Cc: song@kernel.org, hare@suse.de, axboe@kernel.dk,
- linux-raid@vger.kernel.org, linux-kernel@vger.kernel.org,
- bvanassche@acm.org, hch@infradead.org, filipe.c.maia@gmail.com,
- yangerkun@huawei.com, yi.zhang@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250719083119.1068811-1-linan666@huaweicloud.com>
- <20250719083119.1068811-3-linan666@huaweicloud.com>
- <yq1zfcleyqv.fsf@ca-mkp.ca.oracle.com>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <177acc30-7f28-547b-225e-167c60434e3f@huaweicloud.com>
-Date: Thu, 31 Jul 2025 15:02:10 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753945427; c=relaxed/simple;
+	bh=CXzVxwTdB/SNNsSbQvexNowg0uk3C5YQ17L4jcVD2Nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Fb+0DcROlSQmNd/uyCHWDf8m2ix/Hsdv9VdLaB56b1H/ZoV/TqQ0mgLptyITbLxSWz4s76r76J0uRbl6QRk9EsOkI15iFfqkXI0FF1Htxy33ELs/en0JJX94oBKScf7mjIEH7CuJ7FJxZlrZUHt9lCNCda/i2XsyvurrqK854+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N4M+iR8V; arc=none smtp.client-ip=198.175.65.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753945426; x=1785481426;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=CXzVxwTdB/SNNsSbQvexNowg0uk3C5YQ17L4jcVD2Nk=;
+  b=N4M+iR8Vqf2UHPyErr8XICAAuRu7FTYRbEBm7gDMELtNHc5KD9H1X73/
+   y9DLpFlNNZDtEgcD71q3XxTVvUdnL2SLQ8QzmEFqJeBy+7exGiM0ezUOT
+   mnwHZfQWNTlQZgXpHToo3KRfRSxFd7Y1kUsy9/HfXNjLLx05nPEZs+nWH
+   /fjVJ0ZsS/3gvY7gsOm3w+Bj7wj3r1gOXOexRG0ousHYl7zHqw/t89S5Z
+   S9ifwIhydcaRdV2Y1/5HdFd58FzHtpexn4JpLaLKaFq+MGJITjIc5xDnS
+   EGVjsqtjFpc5dg3pKfiLUvqyRnxi5gNvkWy24IkOKoI5BalCnYBWJcV56
+   w==;
+X-CSE-ConnectionGUID: pi2cYbplQRyPZB+ml1Al1A==
+X-CSE-MsgGUID: WbJBXhItR2e589MhEL89MQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56223126"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="56223126"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 00:03:16 -0700
+X-CSE-ConnectionGUID: Or7C1xtbR2Wis/RZOYKRTA==
+X-CSE-MsgGUID: ktuZm740QVqaO3QI7lYWEA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="168462836"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by fmviesa004.fm.intel.com with ESMTP; 31 Jul 2025 00:03:11 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhNJl-0003VQ-0e;
+	Thu, 31 Jul 2025 07:03:09 +0000
+Date: Thu, 31 Jul 2025 15:02:23 +0800
+From: kernel test robot <lkp@intel.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	sboyd@kernel.org
+Cc: oe-kbuild-all@lists.linux.dev, jic23@kernel.org, dlechner@baylibre.com,
+	nuno.sa@analog.com, andy@kernel.org, arnd@arndb.de,
+	gregkh@linuxfoundation.org, srini@kernel.org, vkoul@kernel.org,
+	kishon@kernel.org, sre@kernel.org, krzysztof.kozlowski@linaro.org,
+	u.kleine-koenig@baylibre.com,
+	angelogioacchino.delregno@collabora.com,
+	linux-arm-msm@vger.kernel.org, linux-iio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+	linux-pm@vger.kernel.org, kernel@collabora.com, wenst@chromium.org,
+	casey.connolly@linaro.org
+Subject: Re: [PATCH v3 5/7] misc: qcom-coincell: Migrate to
+ devm_spmi_subdevice_alloc_and_add()
+Message-ID: <202507311446.eqv2ucNm-lkp@intel.com>
+References: <20250730112645.542179-6-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <yq1zfcleyqv.fsf@ca-mkp.ca.oracle.com>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBn4hLyFIto0alOCA--.62609S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJr17Kr17KF13WryxGr15Jwb_yoW8Xw13pF
-	W2qF1rtrsrXF40gws7ZF47Wr1rAan5Cay8GFyfGryUZry2kryxZrnrtry5Xayjqrs3Jw4j
-	va98Ar97Gw18W3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250730112645.542179-6-angelogioacchino.delregno@collabora.com>
 
-Hi,
+Hi AngeloGioacchino,
 
-ÔÚ 2025/07/31 13:36, Martin K. Petersen Ð´µÀ:
-> 
->> Simply restricting larger-LBS disks is inflexible. In some scenarios,
->> only disks with 512 LBS are available currently, but later, disks with
->> 4k LBS may be added to the array.
-> 
-> Having to have the foresight to preemptively configure a larger logical
-> block size at creation time also seems somewhat inflexible :)
+kernel test robot noticed the following build errors:
 
-I think the main reason we want to do this is that, for example, if user
-create array with 512 lbs disks, and later they may want be able to add
-new disk with 4k lbs.
-> 
-> In general I am not a big fan of mixing devices with different
-> properties. I have regretted stacking the logical block size on several
-> occasions.
-> 
-> I am also concerned about PI breaking if the logical block size facing
-> upwards does not match the actual logical block size of the component
-> devices below. In theory it should work with the PI interval exponent
-> but it is something that needs to be tested.
-> 
-> What if the MD device's configured logical block size is larger than the
-> physical block size of the underlying devices? Then we'll end up
-> reporting a logical block size larger than the physical block size. Ugh.
+[auto build test ERROR on next-20250730]
+[cannot apply to jic23-iio/togreg sre-power-supply/for-next char-misc/char-misc-testing char-misc/char-misc-next char-misc/char-misc-linus linus/master v6.16 v6.16-rc7 v6.16-rc6 v6.16]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-I think this is not expected, from blk_validate_limits(), if lbs is
-larger than pbs, pbs will be set to lbs, which is called from
-queue_limits_commit_update().
+url:    https://github.com/intel-lab-lkp/linux/commits/AngeloGioacchino-Del-Regno/spmi-Implement-spmi_subdevice_alloc_and_add-and-devm-variant/20250730-193217
+base:   next-20250730
+patch link:    https://lore.kernel.org/r/20250730112645.542179-6-angelogioacchino.delregno%40collabora.com
+patch subject: [PATCH v3 5/7] misc: qcom-coincell: Migrate to devm_spmi_subdevice_alloc_and_add()
+config: arm64-randconfig-002-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311446.eqv2ucNm-lkp@intel.com/config)
+compiler: aarch64-linux-gcc (GCC) 13.4.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311446.eqv2ucNm-lkp@intel.com/reproduce)
 
-> 
-> Oh, and what about atomics?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507311446.eqv2ucNm-lkp@intel.com/
 
-Do you mean atomic writes? I didn't check the code yet, however, I think
-the atomic_writes stacking code should notice if the high level lbs is
-conflict with atomic_writes limits.
+All errors (new ones prefixed by >>):
 
-Thanks,
-Kuai
+   aarch64-linux-ld: Unexpected GOT/PLT entries detected!
+   aarch64-linux-ld: Unexpected run-time procedure linkages detected!
+   aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.o: in function `eusb2_repeater_probe':
+   drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:228:(.text+0x5a8): undefined reference to `devm_spmi_subdevice_alloc_and_add'
+   aarch64-linux-ld: drivers/phy/qualcomm/phy-qcom-eusb2-repeater.c:236:(.text+0x61c): undefined reference to `__devm_regmap_init_spmi_ext'
+   aarch64-linux-ld: drivers/misc/qcom-coincell.o: in function `qcom_coincell_probe':
+   drivers/misc/qcom-coincell.c:109:(.text+0x10c): undefined reference to `devm_spmi_subdevice_alloc_and_add'
+>> aarch64-linux-ld: drivers/misc/qcom-coincell.c:113:(.text+0x14c): undefined reference to `__devm_regmap_init_spmi_ext'
 
-> 
-
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
