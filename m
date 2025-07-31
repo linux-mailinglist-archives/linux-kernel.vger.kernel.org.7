@@ -1,276 +1,124 @@
-Return-Path: <linux-kernel+bounces-751868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18531B16E92
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:25:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C206EB16E95
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:26:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4E8331C20ABF
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 235431671CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:25:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E142BE7A1;
-	Thu, 31 Jul 2025 09:24:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA5EE2BDC01;
+	Thu, 31 Jul 2025 09:25:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ig7PDkl0"
-Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qsOIAFQe";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="NmDuqKb9"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2915F2BE63A;
-	Thu, 31 Jul 2025 09:24:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 866262BDC25
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:25:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753953895; cv=none; b=j/Y3ItID6aBCaCzjrgYw3Z+GeSgPm0g0EzPDAByybyxcKI9k9bH+xH1WjMr162poZwtp2YtPRgo26AMznQy61wzUDNXinycfMRbJZFOl8rP1FVBQFO/nhsEaIEmI0Puf9mxa/UEKmibT/n91++gyHTtACNLaVWq74DGi7deWvJk=
+	t=1753953914; cv=none; b=IW3WnvG+sIBVzOdE8MSN+6dnfhZBqA5sjmcffnb7n+8VYkwwIXqgIB7sZITCCXLimQbFPZ74B7s7tvr1hE8eQ3cPSABUmV8ZsbHQkDkiX79DlZaXSJGBMmViKZfZ2A+ufyx5wakaleW+MPrFGkZzFA1u5UatabA20aIh/bIy9jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753953895; c=relaxed/simple;
-	bh=Y0sVgiMIvCN1tEPgiAVLe8svWdYQEvpuSTM/2lhhTGQ=;
+	s=arc-20240116; t=1753953914; c=relaxed/simple;
+	bh=6vWoo3LfXY4uBTVXRCsX70RIjxKHMrgepXH3a3NlEfY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Fo+EXo0Q1dSUTowz5HYtg+QNwkwxPQxw6fmZ62CjLcuAii4Rpwq6ge2JBW9YrL1m1RHbSNZ541gDvgwdgASSqjGuik8rm2uccgDoGAU1+CkLb7B/o2YQ13RmiyGU3JiPA8J946dGfT8yc7zGge4mZEzWEy7jsaNr5w0rwf5V7hE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ig7PDkl0; arc=none smtp.client-ip=209.85.210.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-74b54cead6cso136443b3a.1;
-        Thu, 31 Jul 2025 02:24:53 -0700 (PDT)
+	 MIME-Version:Content-Type; b=lJ7fgAmaAAXjmcy3AAKV3JXhheCBiGpdPKPtvd0rYmP+Ah95KoCyhZ5+gRUIlpxcbQdU8AUCs6XHLS/D0fM4rZlvR8ep69SzidgOITSY9EcmdDgtI2xxKXhe0SEMzB437Z6OPXSOP+Mm+KkeeQJd+Ruaym8hxQ7oEXuse5e7Z40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=qsOIAFQe; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=NmDuqKb9 reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753953893; x=1754558693; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=I4PDMe7SP8CZO+JhWjjdFtQ1vR89wVuSvH9ObtDEfac=;
-        b=ig7PDkl0M5auHWQoARXS5sH/IQCbiUWi5/T64V94jJnBTJkigBBG0OsRepWZKKvRCi
-         NyK34v0r10REl8ySw28Ho9RRx6Y7hjZ2wEJJxQsSqJqPu+8a766yA2H5niO4lZi+ktoC
-         jDLhyQReHyqIGv/smugXdqDMO+vWNBBVruFGoaOk+WojHhJWxdWCvUKH8S6fmxzeLfjW
-         ySlfFspSbToJKDyABvxL+yE4Xz9yCjriOqgkrIVyCOxwnAKOf2Xzib/mRXD88urP00PA
-         Uoavq4hbAWx0Og8p45hpflqwgE61J5kpBFsR5y2nTlKc8XhzJtXB2SrKHGGHoN79moVL
-         8Iow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753953893; x=1754558693;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=I4PDMe7SP8CZO+JhWjjdFtQ1vR89wVuSvH9ObtDEfac=;
-        b=N3l3dl96YcJ+OD/66H2QalJ6uOJI6D3Hy+K+bfZrmsH3FVgEbjKJgC50ivRBCXEFJ1
-         LFvpLg3LaOJSGStUXKEoKiKNgLKp4U2BoBJyCHDmyZAkBnvM3Hw5b++dVtTiXkULEued
-         5vWi8MPFc2z3HZ6II5dQPTY0qu5M/AHXLuKCmaosRuuPrnrff81UryXIRq6f9+S9sBTv
-         EdtTzg6xfS2X3DZYz9ELdV4Ygiz082MBmO9WV1r6j2Zi6kDs/PUwMMTP1PlTEwQzNegv
-         yJ72wWCYBQc/lG6mE0vk5SOckrJWY2O9jTRWCCKxK5ndsIzgOGuyUTlImE0UnJ4JSEqT
-         vYiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVzopYKldJTvZMv/K1fw8HnY2QeaLY9M7eh8DXkgjtSLLHuBWkje6ndQdtMVLJznx+TSfE=@vger.kernel.org, AJvYcCWza5tktBslYk/3RZVWU5ynyIcwwlwYXu8aUVqWtA2mvGfJKTOhOT2H0OQut7/s6mLJfpdYAw8z8C/GB6odDKdZqMof@vger.kernel.org, AJvYcCXXesEK/3WJp/tkSioMM2zVJaBu6ODvBxu1qHlqYjyCF2VagTMYjylgaetOgZumO3Uk85I/aBB/uUWlEe3m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9ibUpOkgSlH20p6D282RYO0AgNsOxB21LjvdJqCkMC6NqwhPy
-	oUleHqtk10wDoy0vt/JCvp2WV9e6iJCIWTtlSfNLyjP9uemoHwMIZseC
-X-Gm-Gg: ASbGnct1IiNZgh5SY6T/0dapFQDEhyMGkOoKZPu9ePh3z1r7b0JaEqKPtyeg1oUWTJX
-	r/DEfgTDpGuZXfMmJJSfDpdH2KFU7kdkMfb0tbdQ7gobyteODsP5+zJheTMZ4vhGeTTOitqd4Go
-	EKnRhF07qXi0N00cyUg52PPbqoNpCvegJP3bz6zRbgBKGXRxpDRMh0O1P9hfN5f3tY21l5ymqjd
-	7E+m4K2LzTEuAKcfsw4PdCCNevDg6DOZD8lKPHKOAbH9jAAmkXQXFolyvIU+aTG/EDhunwVQuso
-	Kg+F7kYDh27QFr7mBC+yt4LY76MYdvpNE1P7/AncnECh8HNUm5HA52SChLy3sbueKkfvMhZqJRb
-	aqPBNWgvmYWVyhuoTdZg=
-X-Google-Smtp-Source: AGHT+IE3kSfjGpm4vF9P6oGhvDfaGmV6e2g/GrQ5BCL1131NXnerrwWXlBf/hlhOgLJeyGeAWXcjjg==
-X-Received: by 2002:a05:6a20:258a:b0:20a:bde0:beb9 with SMTP id adf61e73a8af0-23dc0ea7f3emr9520807637.1.1753953893229;
-        Thu, 31 Jul 2025 02:24:53 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd1a7sm1108143b3a.73.2025.07.31.02.24.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 02:24:52 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: mhiramat@kernel.org,
-	olsajiri@gmail.com
-Cc: rostedt@goodmis.org,
-	mathieu.desnoyers@efficios.com,
-	hca@linux.ibm.com,
-	revest@chromium.org,
-	linux-kernel@vger.kernel.org,
-	linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org
-Subject: [PATCH bpf-next v3 4/4] selftests/bpf: add benchmark testing for kprobe-multi-all
-Date: Thu, 31 Jul 2025 17:24:27 +0800
-Message-ID: <20250731092433.49367-5-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250731092433.49367-1-dongml2@chinatelecom.cn>
-References: <20250731092433.49367-1-dongml2@chinatelecom.cn>
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1753953911; x=1785489911;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=fjlF0hDL+GcP1LxYuRMqQFAx3cvqnaJ2UPhI2yOXLvw=;
+  b=qsOIAFQeHn1wlTPwP2CmkmxmBAnKn8XySTjPNgpHlSXLshUkL4U7YcOM
+   UmhKYgBnWwD6ZH1pdXg2MXIQ9EbBaHjFLKIiFJ/bLCEUsAgMXjbDJ39Hw
+   jisM7WnonW/fTaGrdO2JD36irYUOJCOHYIj5WjVB/D5P8kHusLskDf8Ec
+   uLaybizYAheYDbuMfVxu15X6V+u14HlIHc2BXUGqi3l/ICA1W77Hh3/W+
+   SqGf82bsQBbrAOobTorh7MyUkteJ/cwz8lqu9rIlB4tpdGN3dQaDD9vlN
+   0cV2ctYpX3wsnaI+aGKzeEi3fyjyAX23EksFf6a8ikcCMrPWBysLXXogf
+   g==;
+X-CSE-ConnectionGUID: fsU95/NzSae495Z9CxCmKg==
+X-CSE-MsgGUID: Ur4qndlhTGO+5Yq4s7Aopw==
+X-IronPort-AV: E=Sophos;i="6.16,353,1744063200"; 
+   d="scan'208";a="45516796"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 31 Jul 2025 11:25:08 +0200
+X-CheckPoint: {688B3674-49-8CC3CD70-C1DBF452}
+X-MAIL-CPID: 7D8464778F9C483E0B2683681F104E7C_1
+X-Control-Analysis: str=0001.0A002112.688B3671.0041,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 228D41656F9;
+	Thu, 31 Jul 2025 11:25:04 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1753953904;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fjlF0hDL+GcP1LxYuRMqQFAx3cvqnaJ2UPhI2yOXLvw=;
+	b=NmDuqKb9KyIlFuhOuYHwBb8uOFn+iNVVUVCo7jopYuAhiI9f95nR0rhTJI8xb3sf8wP3pn
+	SRlQVJkZZEaltXrBj22aBjZbs+W0nUh38iccCX94+7T86y2MXLIlf1YmOArYN1dQZebbzM
+	DNesKAeygVb+o8IAQZGq8zOS9bKBWBBo4/Rq6cS1d0aHs+Xuzn+on6kK+wR5btdZMQaqeZ
+	qoBnq2cAyY15XQRJmQw8lGfRFg2cnAA0ZAjZJ5rkql1NdGLKOqrH/flgb5HRXqKpjVDX4l
+	ourkr3Y89MGFC1C4OX293DGbmiwt6gr8w4JipeLsVc5+97SDeokhD9+LsTJc/A==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
+Date: Thu, 31 Jul 2025 11:25:03 +0200
+Message-ID: <4669830.LvFx2qVVIh@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20250506130940.2621554-1-alexander.stein@ew.tq-group.com>
+References: <20250506130940.2621554-1-alexander.stein@ew.tq-group.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-For now, the benchmark for kprobe-multi is single, which means there is
-only 1 function is hooked during testing. Add the testing
-"kprobe-multi-all", which will hook all the kernel functions during
-the benchmark. And the "kretprobe-multi-all" is added too.
+Hi,
 
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v3:
-- add testcase kretprobe-multi-all
-- attach a empty kprobe-multi/kretprobe-multi prog to all the kernel
-  functions except bpf_get_numa_node_id to make the bench result more
-  accurate
----
- tools/testing/selftests/bpf/bench.c           |  4 ++
- .../selftests/bpf/benchs/bench_trigger.c      | 54 +++++++++++++++++++
- .../selftests/bpf/benchs/run_bench_trigger.sh |  4 +-
- .../selftests/bpf/progs/trigger_bench.c       | 12 +++++
- tools/testing/selftests/bpf/trace_helpers.c   |  3 ++
- 5 files changed, 75 insertions(+), 2 deletions(-)
+Am Dienstag, 6. Mai 2025, 15:09:39 CEST schrieb Alexander Stein:
+> This driver is used on imx93-tqma9352-mba91xxca.dts.
 
-diff --git a/tools/testing/selftests/bpf/bench.c b/tools/testing/selftests/bpf/bench.c
-index ddd73d06a1eb..29dbf937818a 100644
---- a/tools/testing/selftests/bpf/bench.c
-+++ b/tools/testing/selftests/bpf/bench.c
-@@ -510,6 +510,8 @@ extern const struct bench bench_trig_kretprobe;
- extern const struct bench bench_trig_kprobe_multi;
- extern const struct bench bench_trig_kretprobe_multi;
- extern const struct bench bench_trig_fentry;
-+extern const struct bench bench_trig_kprobe_multi_all;
-+extern const struct bench bench_trig_kretprobe_multi_all;
- extern const struct bench bench_trig_fexit;
- extern const struct bench bench_trig_fmodret;
- extern const struct bench bench_trig_tp;
-@@ -578,6 +580,8 @@ static const struct bench *benchs[] = {
- 	&bench_trig_kprobe_multi,
- 	&bench_trig_kretprobe_multi,
- 	&bench_trig_fentry,
-+	&bench_trig_kprobe_multi_all,
-+	&bench_trig_kretprobe_multi_all,
- 	&bench_trig_fexit,
- 	&bench_trig_fmodret,
- 	&bench_trig_tp,
-diff --git a/tools/testing/selftests/bpf/benchs/bench_trigger.c b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-index 82327657846e..c6634a64a7c0 100644
---- a/tools/testing/selftests/bpf/benchs/bench_trigger.c
-+++ b/tools/testing/selftests/bpf/benchs/bench_trigger.c
-@@ -226,6 +226,58 @@ static void trigger_fentry_setup(void)
- 	attach_bpf(ctx.skel->progs.bench_trigger_fentry);
- }
- 
-+static void attach_ksyms_all(struct bpf_program *empty, bool kretprobe)
-+{
-+	LIBBPF_OPTS(bpf_kprobe_multi_opts, opts);
-+	char **syms = NULL;
-+	size_t cnt = 0;
-+
-+	if (bpf_get_ksyms(&syms, &cnt, true)) {
-+		printf("failed to get ksyms\n");
-+		exit(1);
-+	}
-+
-+	printf("found %zu ksyms\n", cnt);
-+	opts.syms = (const char **) syms;
-+	opts.cnt = cnt;
-+	opts.retprobe = kretprobe;
-+	/* attach empty to all the kernel functions except bpf_get_numa_node_id. */
-+	if (!bpf_program__attach_kprobe_multi_opts(empty, NULL, &opts)) {
-+		printf("failed to attach bpf_program__attach_kprobe_multi_opts to all\n");
-+		exit(1);
-+	}
-+}
-+
-+static void trigger_kprobe_multi_all_setup(void)
-+{
-+	struct bpf_program *prog, *empty;
-+
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	attach_ksyms_all(empty, false);
-+	attach_bpf(prog);
-+}
-+
-+static void trigger_kretprobe_multi_all_setup(void)
-+{
-+	struct bpf_program *prog, *empty;
-+
-+	setup_ctx();
-+	empty = ctx.skel->progs.bench_kretprobe_multi_empty;
-+	prog = ctx.skel->progs.bench_trigger_kretprobe_multi;
-+	bpf_program__set_autoload(empty, true);
-+	bpf_program__set_autoload(prog, true);
-+	load_ctx();
-+
-+	attach_ksyms_all(empty, true);
-+	attach_bpf(prog);
-+}
-+
- static void trigger_fexit_setup(void)
- {
- 	setup_ctx();
-@@ -512,6 +564,8 @@ BENCH_TRIG_KERNEL(kretprobe, "kretprobe");
- BENCH_TRIG_KERNEL(kprobe_multi, "kprobe-multi");
- BENCH_TRIG_KERNEL(kretprobe_multi, "kretprobe-multi");
- BENCH_TRIG_KERNEL(fentry, "fentry");
-+BENCH_TRIG_KERNEL(kprobe_multi_all, "kprobe-multi-all");
-+BENCH_TRIG_KERNEL(kretprobe_multi_all, "kretprobe-multi-all");
- BENCH_TRIG_KERNEL(fexit, "fexit");
- BENCH_TRIG_KERNEL(fmodret, "fmodret");
- BENCH_TRIG_KERNEL(tp, "tp");
-diff --git a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-index a690f5a68b6b..f7573708a0c3 100755
---- a/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-+++ b/tools/testing/selftests/bpf/benchs/run_bench_trigger.sh
-@@ -6,8 +6,8 @@ def_tests=( \
- 	usermode-count kernel-count syscall-count \
- 	fentry fexit fmodret \
- 	rawtp tp \
--	kprobe kprobe-multi \
--	kretprobe kretprobe-multi \
-+	kprobe kprobe-multi kprobe-multi-all \
-+	kretprobe kretprobe-multi kretprobe-multi-all \
- )
- 
- tests=("$@")
-diff --git a/tools/testing/selftests/bpf/progs/trigger_bench.c b/tools/testing/selftests/bpf/progs/trigger_bench.c
-index 044a6d78923e..3d5f30c29ae3 100644
---- a/tools/testing/selftests/bpf/progs/trigger_bench.c
-+++ b/tools/testing/selftests/bpf/progs/trigger_bench.c
-@@ -97,6 +97,12 @@ int bench_trigger_kprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kprobe.multi/bpf_get_numa_node_id")
-+int bench_kprobe_multi_empty(void *ctx)
-+{
-+	return 0;
-+}
-+
- SEC("?kretprobe.multi/bpf_get_numa_node_id")
- int bench_trigger_kretprobe_multi(void *ctx)
- {
-@@ -104,6 +110,12 @@ int bench_trigger_kretprobe_multi(void *ctx)
- 	return 0;
- }
- 
-+SEC("?kretprobe.multi/bpf_get_numa_node_id")
-+int bench_kretprobe_multi_empty(void *ctx)
-+{
-+	return 0;
-+}
-+
- SEC("?fentry/bpf_get_numa_node_id")
- int bench_trigger_fentry(void *ctx)
- {
-diff --git a/tools/testing/selftests/bpf/trace_helpers.c b/tools/testing/selftests/bpf/trace_helpers.c
-index 9da9da51b132..78cf1aab09d8 100644
---- a/tools/testing/selftests/bpf/trace_helpers.c
-+++ b/tools/testing/selftests/bpf/trace_helpers.c
-@@ -575,6 +575,9 @@ static bool skip_entry(char *name)
- 	if (!strcmp(name, "__rcu_read_unlock"))
- 		return true;
- 
-+	if (!strcmp(name, "bpf_get_numa_node_id"))
-+		return true;
-+
- 	return false;
- }
- 
--- 
-2.50.1
+Gentle ping. Thanks
+Alexander
+
+> Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+> ---
+>  arch/arm64/configs/defconfig | 1 +
+>  1 file changed, 1 insertion(+)
+>=20
+> diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+> index 8691f0ee44e66..550b2505b5658 100644
+> --- a/arch/arm64/configs/defconfig
+> +++ b/arch/arm64/configs/defconfig
+> @@ -437,6 +437,7 @@ CONFIG_IWLMVM=3Dm
+>  CONFIG_MWIFIEX=3Dm
+>  CONFIG_MWIFIEX_SDIO=3Dm
+>  CONFIG_MWIFIEX_PCIE=3Dm
+> +CONFIG_MWIFIEX_USB=3Dm
+>  CONFIG_MT7921E=3Dm
+>  CONFIG_RSI_91X=3Dm
+>  CONFIG_WL18XX=3Dm
+>=20
+
+
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
+
 
 
