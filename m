@@ -1,132 +1,141 @@
-Return-Path: <linux-kernel+bounces-752530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752531-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3D9B176B4
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:36:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DF77B176B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:38:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E138817FA39
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BA4F5543080
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:38:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08272451C3;
-	Thu, 31 Jul 2025 19:36:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 436AA245019;
+	Thu, 31 Jul 2025 19:38:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wp2SSyCC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QOTgpwaQ"
+Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38F6F23ED63;
-	Thu, 31 Jul 2025 19:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569111632DF
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:38:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753990608; cv=none; b=p/7pETTcFuJe0znSy57XRJLwAUTdBaek9iRcauAgsLNZYAx2ktE7nXMwYzYx35uPu4wQEnZL+TZElkccXleIXP9ut+JkrqlQEYDBA8A6jYhpQl7EY2PZ/Nzf7taQKMpZK4A7bLCm5xzZEeEazTXjyu5PLGosF0ZU7Nq836nzMfs=
+	t=1753990706; cv=none; b=PR0YiA8YcBMzBpbCZyAoOSGXR7tG6Wbhf1Q5dlNf825lawPsR1VvEBpvqCPYrcCi0hnsJyF43m5VXb9gkl4G29qmUMUg3PDp+trnydzn/tcCysHuo5NQ+qbVp6rkgTQ5foJsGtWR1thx6KjgX5A8VTok2nyFEKCdVAOws3rQkh4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753990608; c=relaxed/simple;
-	bh=Wh3NN3AHHeAFEglBM+R48Xyj+T/EYGY/Cd48O7il8fY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZfnWxS+cLTx/hURHNIbTyH98rDBzd+Kr6mrTcS7s8s2WaJA9ENmW7MQYl+PqgwCZAKkRJbzp0Q9iL4PzWBgkxHiQY45EGYHPkcg9BAtB4O0WlMh2JDv05sfSLvxzAME7ceXk+hwhZu+PhEq4lb6rbtCxUdZoWZptQqmAvDtdayg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wp2SSyCC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A95FC4CEEF;
-	Thu, 31 Jul 2025 19:36:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753990607;
-	bh=Wh3NN3AHHeAFEglBM+R48Xyj+T/EYGY/Cd48O7il8fY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wp2SSyCCpyaZkAiHzElHviS55+JLxueogBfIasz9sDHQ/+hb0Tu1N3oBOFbRFNBhO
-	 ZEHSq+zGiVImQPC9tSW4n+zFW6FeRFG2uNHlDB6F/25dxljT8rUK7pNyipuovyIyo4
-	 5OuZY/ayG00wT/VxCtXWMaJBIvlOtS3DJF12v63zGaV7qTfuhawDNGS6RD76pJo3FO
-	 E/W+b19/8VbepkZZlQHELIM/flQnOKfHYoPYUrw/mZG66qcc+zG8WC7mOIk/suk4ch
-	 5NnPNvZ1nwlHPRmHmt8NKuOEI7Tis/y/3yGX4W2yDJPafm2GPRY4xQhUjinv7OQ/oz
-	 JyZa4QORvNiwQ==
-Date: Thu, 31 Jul 2025 21:36:43 +0200
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-To: kernel test robot <lkp@intel.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	Marc Zyngier <maz@kernel.org>
-Subject: Re: drivers/irqchip/irq-gic-v5-iwb.c:265:1-8: WARNING: invalid free
- of devm_ allocated data
-Message-ID: <aIvFy3eGJ5RXj5T4@lpieralisi>
-References: <202508010038.N3r4ZmII-lkp@intel.com>
+	s=arc-20240116; t=1753990706; c=relaxed/simple;
+	bh=YY3fSF5Z7pcaXneL6gC3VBg4tHQlvjDhTNzjCh8/IbY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VyHuFbrn1K+7viGDtfW3HQ3hWZh0XjNYpj/x7J3NICrxwNOX1E9oLCI908RjHZ0OMxjkQ7MeyKHXsIEePMZoqAv6L1fhadTg4tak7HyItVK9bJAO4eGe4+poqWRZ7JMjTFdvy9M4RFgc4KIqIlxnxm95qAAMZ3mlwxPf3J2s7iY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QOTgpwaQ; arc=none smtp.client-ip=209.85.214.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-23ffd0ec2afso1753035ad.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:38:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753990704; x=1754595504; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+nJQHYUhisfV5M90eMTD+0GiV2DAMpDGvtFOZlc232Y=;
+        b=QOTgpwaQpvg6KyOh7w+IUhjj6lQ8eVYNw0JL1ZtSgiK5lzF13XUDdtZJcE1uz9Fs9T
+         2bgUY9Ef6Zwmni2LpN/LtoulYy3Tj+umBUrjxj2WLtavLH443lcTaXscjIMa2c3OSinY
+         HDggRNiBSDl4pbrph4YQo8C1V8uU7xXeyppJxccbMD2uvwvx0YeNjzXuv0xXzhbFpr01
+         KoRzjuolRXUJLMLRI66CRlj0BM/1WyPI/ykM4QnQJFn/4ODlD36ErIp8dKp/Ve5f9O6G
+         k+M3oVaYIEgJXn8awFxeZtSKjQZYqftc+gfEispfB0vNyoNfpxKqnd0zkZYRHBXEbyZm
+         HHtg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753990704; x=1754595504;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=+nJQHYUhisfV5M90eMTD+0GiV2DAMpDGvtFOZlc232Y=;
+        b=q7FDmcXw9VVzGfOSUqt2h3j3rIu8QtLSZlek4n6BlBXKQfqMFxENpePixyXJaLTK47
+         IolNSKJSl8gPk84Q2brhNM/JwfuakGGVWOKv0APYGMh8CzNISB3gEGVIkDZg4CTtoW9v
+         ZBOqqRmleQEqAppPj0bt1lDVFjDQIWsxJFVy39iVgx++GJj7CbbpCHS+L7r09S1p65Dm
+         +N16lYQr9gGwF4LtDghgrDd3LnJxhjIm1nyCB0gk1z84ub45YGLk8ebzu9+yu+n/+XM1
+         qOJEFntsINggFLH2OnXTeJJ1Yu+66ulKt40AMi05BpcFVyh7yiGbsXiO76ZVm0bKLkA/
+         Q+yQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV5+PFE2QY5Rc/nFNuTMl2o5Sv7WLyc5DTh+HRPuD9AHNzDqgkB1xAkP1gBT0b7c17syvfuJ514a+vFLFQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybTULU8Yuxyz0oxl/kvBAgVUk+t3H87+GWnKvUsVPfOWZNWyTA
+	JA775MfDJqSQpVYvtwuu5SFHwKPNdhQHNZ8THRNgCN8kPKVlEEqLauitRkR1lAccuhxjjaHkPmR
+	46uvhsTaEbx8rTIQV00hTi4FRPJNwabs=
+X-Gm-Gg: ASbGncvR/yoaL9FaGpwl8E48EMMdI+trEbuZDs3Sr7UFCcIkCVvhQxHjR2q9M8XYgx5
+	OprPu832tuW9cral4VeSmaIScLAJnSWQaVpP9N10Ebz9GKA6/v2USr2u825/CUH8A6F7d4f/GoL
+	4cGSDqOTcNHKzhQpvjq75JRpAWWhpj668xWOX1m3pzhBjOVXUztz4WlPM7339XE0BEchqm6c4kF
+	KFb01jY
+X-Google-Smtp-Source: AGHT+IHKraBiPAHAtmlxuZVn9jWMYVcl9dhr5+Dedao236F5TgJPt1RO39w04aZoFh8q/WQ0FU/W2AyRP7EdmZD4wuw=
+X-Received: by 2002:a17:902:8a97:b0:234:8f5d:e3a0 with SMTP id
+ d9443c01a7336-24096a45d8cmr40459695ad.2.1753990704517; Thu, 31 Jul 2025
+ 12:38:24 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <202508010038.N3r4ZmII-lkp@intel.com>
+References: <20250731-b4-dont-wake-next-v1-0-e51bdc347fa3@gmail.com> <20250731-b4-dont-wake-next-v1-5-e51bdc347fa3@gmail.com>
+In-Reply-To: <20250731-b4-dont-wake-next-v1-5-e51bdc347fa3@gmail.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Thu, 31 Jul 2025 15:38:13 -0400
+X-Gm-Features: Ac12FXyBjD3ItO0dcnGXh1AljGbawzz44WIJXOmQ_0Y5C-recG2hknJWWCHTF8M
+Message-ID: <CADnq5_PG1Am4OGkfKo9o9cfnvSdzwRFeYudbvw220+P1AHO4xA@mail.gmail.com>
+Subject: Re: [PATCH RFC 5/6] drm/amdgpu: don't wake up the GPU for
+ mmGB_ADDR_CONFIG register read
+To: Philipp Zabel <philipp.zabel@gmail.com>
+Cc: Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	Philipp Zabel <p.zabel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025 at 12:20:00AM +0800, kernel test robot wrote:
-> Hi Lorenzo,
-> 
-> First bad commit (maybe != root cause):
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   260f6f4fda93c8485c8037865c941b42b9cba5d2
-> commit: 53bb952a625fd3247647c7a28366ce990a579415 arm64: Kconfig: Enable GICv5
-> date:   3 weeks ago
-> config: arm64-randconfig-r052-20250731 (https://download.01.org/0day-ci/archive/20250801/202508010038.N3r4ZmII-lkp@intel.com/config)
-> compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Closes: https://lore.kernel.org/oe-kbuild-all/202508010038.N3r4ZmII-lkp@intel.com/
-> 
-> cocci warnings: (new ones prefixed by >>)
-> >> drivers/irqchip/irq-gic-v5-iwb.c:265:1-8: WARNING: invalid free of devm_ allocated data
-> 
-> vim +265 drivers/irqchip/irq-gic-v5-iwb.c
+On Thu, Jul 31, 2025 at 3:33=E2=80=AFAM Philipp Zabel <philipp.zabel@gmail.=
+com> wrote:
+>
+> Don't wake the GPU if libdrm queries the mmGB_ADDR_CONFIG register
+> value during amdgpu_query_gpu_info_init(). Instead, return the already
+> cached value adev->gfx.config.gb_addr_config.
+>
+> Link: https://gitlab.freedesktop.org/drm/amd/-/issues/2295
+> Signed-off-by: Philipp Zabel <philipp.zabel@gmail.com>
+> ---
+>  drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c b/drivers/gpu/drm/am=
+d/amdgpu/amdgpu_kms.c
+> index fe1347a4075c4..ed4d7d72f2065 100644
+> --- a/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+> +++ b/drivers/gpu/drm/amd/amdgpu/amdgpu_kms.c
+> @@ -883,6 +883,16 @@ int amdgpu_info_ioctl(struct drm_device *dev, void *=
+data, struct drm_file *filp)
+>
+>                 alloc_size =3D info->read_mmr_reg.count * sizeof(*regs);
+>
+> +               if (info->read_mmr_reg.dword_offset =3D=3D 0x263e &&
 
-Weird this has not been caught before but it is a trivial
-fix (a leftover from early patch versions where the IWB was
-not probed as a device), will send it tomorrow.
+I think the offset of this register varies across chip families.
+You'll need some way to determine what the offset is for each family.
 
-Thanks,
-Lorenzo
+Alex
 
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  238  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  239  static int gicv5_iwb_device_probe(struct platform_device *pdev)
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  240  {
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  241  	struct gicv5_iwb_chip_data *iwb_node;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  242  	void __iomem *iwb_base;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  243  	struct resource *res;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  244  	int ret;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  245  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  246  	res = platform_get_resource(pdev, IORESOURCE_MEM, 0);
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  247  	if (!res)
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  248  		return -EINVAL;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  249  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  250  	iwb_base = devm_ioremap(&pdev->dev, res->start, resource_size(res));
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  251  	if (!iwb_base) {
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  252  		dev_err(&pdev->dev, "failed to ioremap %pR\n", res);
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  253  		return -ENOMEM;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  254  	}
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  255  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  256  	iwb_node = gicv5_iwb_init_bases(iwb_base, pdev);
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  257  	if (IS_ERR(iwb_node)) {
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  258  		ret = PTR_ERR(iwb_node);
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  259  		goto out_unmap;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  260  	}
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  261  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  262  	return 0;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  263  
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  264  out_unmap:
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03 @265  	iounmap(iwb_base);
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  266  	return ret;
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  267  }
-> 695949d8b16f11 Lorenzo Pieralisi 2025-07-03  268  
-> 
-> :::::: The code at line 265 was first introduced by commit
-> :::::: 695949d8b16f11f2f172d8d0c7ccc1ae09ed6cb7 irqchip/gic-v5: Add GICv5 IWB support
-> 
-> :::::: TO: Lorenzo Pieralisi <lpieralisi@kernel.org>
-> :::::: CC: Marc Zyngier <maz@kernel.org>
-> 
-> -- 
-> 0-DAY CI Kernel Test Service
-> https://github.com/intel/lkp-tests/wiki
+> +                   info->read_mmr_reg.count =3D=3D 1) {
+> +                       /* Return cached value of mmGB_ADDR_CONFIG */
+> +                       regs[0] =3D adev->gfx.config.gb_addr_config;
+> +
+> +                       n =3D copy_to_user(out, regs, min(size, alloc_siz=
+e));
+> +                       kfree(regs);
+> +                       return n ? -EFAULT : 0;
+> +               }
+> +
+>                 ret =3D pm_runtime_get_sync(dev->dev);
+>                 if (ret < 0) {
+>                         pm_runtime_put_autosuspend(dev->dev);
+>
+> --
+> 2.50.1
+>
 
