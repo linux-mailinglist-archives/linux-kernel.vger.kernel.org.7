@@ -1,137 +1,140 @@
-Return-Path: <linux-kernel+bounces-752493-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752494-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C04BB1763F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:52:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E3BCB17640
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:53:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 69BD1546992
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBA77B809E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:51:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39A6B248865;
-	Thu, 31 Jul 2025 18:52:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FA324A055;
+	Thu, 31 Jul 2025 18:53:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="CIZ8K+/8"
-Received: from mout.web.de (mout.web.de [212.227.15.4])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEEFQxqK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4788195B1A;
-	Thu, 31 Jul 2025 18:52:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BBA195B1A;
+	Thu, 31 Jul 2025 18:53:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753987970; cv=none; b=BuD6WQNRUn2Uf8fcOkqlZlJ0dZyRt5fpi5+eioPs5ncdTAgpORD/k/wejtmxIYgtfoGVV/xQecj5pKH9Be4TFt4Qqmsuu96ruWZOOAi+i77YK73Y4nYiyA36K3jBE79gk0lzJTKOJ3uyGvijZl/e8vtyu9lzMapiDLwmP6sJpb0=
+	t=1753987982; cv=none; b=DOdsm0HhkfLfGayloMk/sNruVvKwdnkuDnG54HkMuolWb4peY0Z5e4HHhlZDX7kslu0dug6MiqrvWGqcD93kYhVuUu8DTc8QVOr6Gva2UqRDd8AM+Mo+cYLmDwKmOTW3JJNSyxGk5cfR/k6/nQl6tJJGOQT6rDGt2cFxcjhZvtE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753987970; c=relaxed/simple;
-	bh=XYNRSN8ZAF6ndKtJ+piuSB6Y/ZKeoVVvznszHhDfw5k=;
-	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
-	 In-Reply-To:Content-Type; b=HdPP437FMdOrcf66reN3Y3eUqg2y8G1LcNlJ+Cm5d/R1pJamchST1LSmyV3McvmqJxd9UuaGDsxAxPNdsT3hn0ogs52xcVU2GWfCIolZ4yHJX/CBaQw6URz4Sg3EuLMXTplsn2ZrROsCfoWtpaO65Z2eCOI0LLSPF8z8/72fA4w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=CIZ8K+/8; arc=none smtp.client-ip=212.227.15.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1753987966; x=1754592766; i=markus.elfring@web.de;
-	bh=XYNRSN8ZAF6ndKtJ+piuSB6Y/ZKeoVVvznszHhDfw5k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
-	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=CIZ8K+/8mRauci8seUVmwUksqFDTsabNwg4gWZeRgwoJf+T7MfnVpDJ7T2Bu+lo7
-	 7ymvTTL5kv1/PINe/+y45PQPNI3Wm0Uxgc/n8o2BKSa7j9p6mNFD8Q+FN8bBZR6X1
-	 AXAMI0umAXMCd8w25FyhNrttWyiwNnK49OjkmvV649NjRFqiMPh8pPBsXVcjZhaa3
-	 CaNQYPrXDoGlcNpmiDpQFw+X1N80wa5bgljqF40lSvY3Q2C2GV9/geDaFrm127s61
-	 +KCB8IyKaETUTNG+lB1ULnjdDvRUxPbdfRy6WMXmy0p/bQcxF8cis3wS15DeyXcwW
-	 0FqFQaE54Mcv9hyTaQ==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.29] ([94.31.69.235]) by smtp.web.de (mrweb005
- [213.165.67.108]) with ESMTPSA (Nemesis) id 1Md6xz-1u7OIQ2FYR-00osou; Thu, 31
- Jul 2025 20:52:45 +0200
-Message-ID: <32fbb160-4888-4d57-bd16-62ece192e81c@web.de>
-Date: Thu, 31 Jul 2025 20:52:44 +0200
+	s=arc-20240116; t=1753987982; c=relaxed/simple;
+	bh=3bGvNdloMZXweX7qeoxxVDPdsQDj9y0BrPcnclvVAG8=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
+	 References:In-Reply-To; b=JiFXqudHcAO4S1q9iNzBDkjQdw3E42GSPd+z1Ccn3Vs1SEhCMHj++oR8mvft3euilTkXDlU/OT+30GKqh+iGOACPug/H6bzuWlE9BUdbSVSnYwr9pYac5EJh16mBuaBBdD1vW+tu6L1hsIUgvNmNsUWz/oI81hBD7PH2XOs8O4A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEEFQxqK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4264FC4CEEF;
+	Thu, 31 Jul 2025 18:52:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753987981;
+	bh=3bGvNdloMZXweX7qeoxxVDPdsQDj9y0BrPcnclvVAG8=;
+	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
+	b=rEEFQxqKqRzdgYivXTv1QYmxttZCKOy1jGMwGuUDO26sEzKLbtNFgryw1Z1Jhdw3d
+	 eWjryuvfVnbT6yYNRTmivW15o3bCAvWDsFzfkuG1YQSqZMpVSSXt0x5VGWvB3JJWcK
+	 +rJ2bn8FY2rwfi+BZhPGy1fb8J4xHkPaVybd1zxTpPTMUAO1N33NYcIvD+15duhSwU
+	 PJcL1f6hYv+IBbzH6CcddNf6qbvL5wNtt+KErvnK+iSyKkR72YuWvJncz40BdhVEZR
+	 sMCv861a3w7n7IGyNucIQPhS0zgIbJWJIYazMFRObjTHzHQZA4gjHxbwqZVZpn2p3L
+	 Ga7F3YGkizNgw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-To: Liao Yuanhong <liaoyuanhong@vivo.com>, linux-bcachefs@vger.kernel.org
-Cc: LKML <linux-kernel@vger.kernel.org>,
- Kent Overstreet <kent.overstreet@linux.dev>
-References: <20250731131551.218666-1-liaoyuanhong@vivo.com>
-Subject: Re: [PATCH] bcachefs: Simplify kzalloc usage
-Content-Language: en-GB, de-DE
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <20250731131551.218666-1-liaoyuanhong@vivo.com>
-Content-Type: text/plain; charset=UTF-8
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:NpvGVBd5ZMr+IoJMcg9HTuyM7OwtSr/ipi1k5r3xbq8o5QGCspo
- 3q/lJPha/qGrtlA4ga0wG4NsdDaStzDKuntkmbi+73AvesPx8VltwqQ6++AKcfYV48cXE19
- 6rkcBLGk/5wV6C2kF6xbUDJC1YAedpGl/w+HsYaWAz4xbAenwYxJxFutUgvEol8JDLYuVjR
- b5onKVgiQqJYsezeFHftg==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:y8wHb4tWxTI=;G4OpS2e6AY1x2UL4vTi4VGgAW+l
- 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
- Wg==
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 31 Jul 2025 20:52:56 +0200
+Message-Id: <DBQGUGG933BD.3VRM2CTO2WL3Z@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Peter Zijlstra"
+ <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Will Deacon"
+ <will@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Waiman Long"
+ <longman@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
+ <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
+Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
+Subject: Re: [PATCH 3/3] rust: lock: add a Pin<&mut T> accessor
+From: "Benno Lossin" <lossin@kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com> <20250730-lock-t-when-t-is-pinned-v1-3-1b97d5f28aa2@collabora.com>
+In-Reply-To: <20250730-lock-t-when-t-is-pinned-v1-3-1b97d5f28aa2@collabora.com>
 
-> Use the shorter variants will improves further maintainability.=20
-> Convenient for subsequent code updates or refactoring.
+On Wed Jul 30, 2025 at 7:14 PM CEST, Daniel Almeida wrote:
+> In order for callers to be able to access the inner T safely if T: !Unpin=
+,
+> there needs to be a way to get a Pin<&mut T>. Add this accessor and a
+> corresponding example to tell users how it works.
+>
+> This is not useful on its own for now, because we do not support pin
+> projections yet. This means that the following is not going to compile:
+>
+>     let mut data: MutexGuard<'_, Data> =3D mutex.lock();
+>     let mut data: Pin<&mut Data> =3D data.as_mut();
+>     let foo =3D &mut data.foo;
+>
+> A future patch can enable the behavior above by implementing support for
+> pin projections.
 
-Please improve such a change description.
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/submitting-patches.rst?h=3Dv6.16#n45
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Do=
-cumentation/process/coding-style.rst?h=3Dv6.16#n941
+I am currently working on a patch that adds pin projections to
+`#[pin_data]`. It will most likely land in v6.18.
 
-Regards,
-Markus
+> Link: https://github.com/Rust-for-Linux/linux/issues/1181
+> Suggested-by: Benno Lossin <lossin@kernel.org>
+> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+> ---
+>  rust/kernel/sync/lock.rs | 19 +++++++++++++++++++
+>  1 file changed, 19 insertions(+)
+>
+> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+> index 087bc0391f92a73b9af18ca31461b513bb5a9bcd..27857659a7f1ba4a8b844bb18=
+d009d037e0c5b03 100644
+> --- a/rust/kernel/sync/lock.rs
+> +++ b/rust/kernel/sync/lock.rs
+> @@ -243,6 +243,25 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnO=
+nce() -> U) -> U {
+> =20
+>          cb()
+>      }
+> +
+> +    /// Returns a pinned mutable reference to the protected data.
+> +    ///
+
+I would mention that the guard implements `DerefMut` when `T: Unpin`, so
+in that case it is probably easier to use that instead of calling this
+function.
+
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    ///     # use kernel::sync::{Mutex, MutexGuard};
+> +    ///     # use core::pin::Pin;
+> +    ///     struct Data;
+> +    ///
+> +    ///     fn example(mutex: &Mutex<Data>) {
+> +    ///         let mut data: MutexGuard<'_, Data> =3D mutex.lock();
+> +    ///         let mut data: Pin<&mut Data> =3D data.as_mut();
+> +    ///     }
+
+No need to indent the code in the example.
+
+---
+Cheers,
+Benno
+
+> +    /// ```
+> +    pub fn as_mut(&mut self) -> Pin<&mut T> {
+> +        // SAFETY: `self.lock.data` is structurally pinned.
+> +        unsafe { Pin::new_unchecked(&mut *self.lock.data.get()) }
+> +    }
+>  }
+> =20
+>  impl<T: ?Sized, B: Backend> core::ops::Deref for Guard<'_, T, B> {
+
 
