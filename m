@@ -1,160 +1,87 @@
-Return-Path: <linux-kernel+bounces-751544-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751547-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD55B16ABB
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:16:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 543DEB16AC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:17:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1D64624E6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:15:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8EE4C177371
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 03:17:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 901BC23ABBF;
-	Thu, 31 Jul 2025 03:16:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC0A20E70B;
+	Thu, 31 Jul 2025 03:17:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HILukhn4"
-Received: from out-179.mta1.migadu.com (out-179.mta1.migadu.com [95.215.58.179])
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="QH7nmr4b"
+Received: from smtp153-170.sina.com.cn (smtp153-170.sina.com.cn [61.135.153.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68AC638DD1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:15:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A80821D001
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 03:17:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753931759; cv=none; b=KG3s5u3vERmWV0XJIzFUps+cjyaU0N5gYq/zwefY66LyWGsCrXHFOZ4C1GhlZ4GyOae6RyYWxZdfgioGECDnFV2Bh5nmb8gI7hltl8yBc2PZrrUHqDiOHHqeudRpTTM//WHrSfi8zjpZhtn7iffXKrBaH19xUyQ6FRa5SEuLHxc=
+	t=1753931851; cv=none; b=r0UhT+Rt3YbA8CrXC5Hu2ukWAkIKZplvExe/rK+EzotHGzug+veJnazJO/93uacFxTt5MyeCSuS35GY957Y6QFpViZIKPuR1uJUW4GAhAltn346zyOZhyC6pCJfrq0bXqogbqW3Do6wTKf7J0/PFQluaetq5DxFsaizpJV/EbI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753931759; c=relaxed/simple;
-	bh=awOuokujEi5m77yv1vrNUfPgcMRhB9tlVYeuJFRcGDA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F87haS/HMJI9A7B+g35Wgjn50WirGk0Pdj6HuKZkCGSq1QHM9oLIX8Nog+YALgBrvzPuOuy39dPo4jT5qgAtYzBgjdly2LzmF8lcER5ZZyCZfboj32mmBWN1A66pss2piXCq8+XI/SP5ldmbE0PdRBdFfNOGqu1UJa9vyuZY1yY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HILukhn4; arc=none smtp.client-ip=95.215.58.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e34a1a00-1728-4cf9-ad30-d8a7098b8876@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1753931755;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ImG2uF+KqX4+IORRU5utfheG75ezXrkRmBkV8cPOuuM=;
-	b=HILukhn4ZskTcQNtN2QGMF5MA+AVr98whGjdPHAK6XBBMUvsqLxDywzDpVygCpiMzZ2MhE
-	ObIvCt8QlwDNi9QbudGs5ipsqO+qyQsEGy//HtOLXcmP+TfRAiJGNOwWEmvNx8y8vl8PJZ
-	4oYsa/1uT4wwfwyJd+KCB2Z0f/SZ+SM=
-Date: Thu, 31 Jul 2025 11:15:40 +0800
+	s=arc-20240116; t=1753931851; c=relaxed/simple;
+	bh=JFuj1fXGqMv5dz+JfQKNJGaKx+oKhV2iNXQrnkiy9FY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=hrYVP+G+tR0WeBZ9PwOTXA8SxFadNrZYnI5l7wg8YNaC2l0WLxhI0FghVV/l4ubh53k0sh+R7kCje922S/OzEY5Az/saJfAx1v4DuZAklKZT2PhKLyvtUiASQL3zGJHwozQ/f/le6tR0QBBxY5cud3P2QMOuzOJfQnLGLTN3+sw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=QH7nmr4b; arc=none smtp.client-ip=61.135.153.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1753931842;
+	bh=8eU281h5H38ovMshW3lbjK8xCcHSrZym11Zdp6XKotA=;
+	h=From:Subject:Date:Message-ID;
+	b=QH7nmr4bmbCXtbu6JUWvgqNWS4Xseq4NraDiaTH7YTNBZDn8x0XWDZP6hrz89kl3U
+	 xaA6eFvUeDuP7fTm5Ts1DXHbqlrG45D+mraAQeHP04WTKimfrjlEbRD8IeomFOWF1d
+	 x5/qsuBw4IH1ZBmuTYTv7V3X7/JL3ARYK/TYhWWk=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.34) with ESMTP
+	id 688AE03700003078; Thu, 31 Jul 2025 11:17:13 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 1416266291929
+X-SMAIL-UIID: 0C90038AB855411E96CBEFA08D59811E-20250731-111713-1
+From: Hillf Danton <hdanton@sina.com>
+To: Al Viro <viro@zeniv.linux.org.uk>
+Cc: linux-kernel@vger.kernel.org,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	"Dr. David Alan Gilbert" <linux@treblig.org>
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux kernel
+Date: Thu, 31 Jul 2025 11:17:00 +0800
+Message-ID: <20250731031701.3609-1-hdanton@sina.com>
+In-Reply-To: <20250730175909.GO222315@ZenIV>
+References: <20250727195802.2222764-1-sashal@kernel.org> <7e7f485e-93ad-4bc4-9323-f154ce477c39@lucifer.local> <2025072854-earthen-velcro-8b32@gregkh> <df188552-c2dd-4cb7-9f6a-74e05e677dfc@lucifer.local> <20250730112753.17f5af13@gandalf.local.home> <158707d7-6729-4bb6-bc72-7556d11bfaef@lucifer.local> <20250730121829.0c89228d@gandalf.local.home> <aIpKCXrc-k2Dx43x@lappy> <20250730130531.4855a38b@gandalf.local.home> <aIpah6DTRd99mMqb@lappy>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2] hung_task: Dump blocker task if it is not hung
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
- "Masami Hiramatsu (Google)" <mhiramat@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
- Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>,
- Waiman Long <longman@redhat.com>, Joel Granados <joel.granados@kernel.org>,
- Anna Schumaker <anna.schumaker@oracle.com>, Lance Yang
- <ioworker0@gmail.com>, Kent Overstreet <kent.overstreet@linux.dev>,
- Yongliang Gao <leonylgao@tencent.com>, Steven Rostedt <rostedt@goodmis.org>,
- Tomasz Figa <tfiga@chromium.org>, linux-kernel@vger.kernel.org
-References: <175391351423.688839.11917911323784986774.stgit@devnote2>
- <reyd4bppb5tfon7gtqaelwknvptdeyhrsh5ijbcj77ezini3yq@ivkgxmiqzk3x>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Lance Yang <lance.yang@linux.dev>
-In-Reply-To: <reyd4bppb5tfon7gtqaelwknvptdeyhrsh5ijbcj77ezini3yq@ivkgxmiqzk3x>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-
-
-On 2025/7/31 10:53, Sergey Senozhatsky wrote:
-> On (25/07/31 07:11), Masami Hiramatsu (Google) wrote:
->> From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->>
->> Dump the lock blocker task if it is not hung because if the blocker
->> task is also hung, it should be dumped by the detector. This will
->> de-duplicate the same stackdumps if the blocker task is also blocked
->> by another task (and hung).
->>
->> Suggested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
->> Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
->> Acked-by: Lance Yang <lance.yang@linux.dev>
+On Wed, 30 Jul 2025 18:59:09 +0100 Al Viro wrote:
+> On Wed, Jul 30, 2025 at 01:46:47PM -0400, Sasha Levin wrote:
 > 
-> Tested-by: Sergey Senozhatsky <senozhatsky@chromium.org>
+> > Similarily the argument around not trusting the code is equivalent to
+> > not trusting the person who sent the code in. AI doesn't send patches on
+> > it's own - humans do. This is basically saying "I didn't even look at
+> > your patch because I don't trust you".
 > 
+> One name: Markus Elfring.  Ever tried to reason with that one?  Or Hillf
+> Danton, for that matter.
 > 
-> Wrote a simple 3 tasks circular lock test (same that I had in real
-> life).  The output looks good:
+Frankly I delivered nothing with Signed-off-by to you for couple of
+years even though I can communicate well with syzbot. And with nothing
+to do with "trust you", simply because the patch could make no sense at
+best even if they are from the trust cycle. I am not so tame to get into
+any silver cycle/cage.
 
-Nice work! The log is now much clearer ;)
-
-> 
-> [   90.985431] [    T140] INFO: task T1:525 blocked for more than 30 seconds.
-> [   90.990981] [    T140]       Not tainted 6.16.0-next-20250730-00003-g5865c79d6085-dirty #261
-> [   90.996912] [    T140] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [   91.001617] [    T140] task:T1              state:D stack:0     pid:525   tgid:525   ppid:2      task_flags:0x208040 flags:0x00004000
-> [   91.007564] [    T140] Call Trace:
-> [   91.008767] [    T140]  <TASK>
-> [   91.009872] [    T140]  __schedule+0x137f/0x20c0
-> [   91.011606] [    T140]  schedule+0xdc/0x280
-> [   91.013115] [    T140]  schedule_preempt_disabled+0x10/0x20
-> [   91.015200] [    T140]  __mutex_lock+0x721/0x1590
-> [   91.016817] [    T140]  ? __mutex_lock+0x500/0x1590
-> [   91.018074] [    T140]  mutex_lock+0x81/0x90
-> [   91.019169] [    T140]  t1+0x62/0x70
-> [   91.020061] [    T140]  kthread+0x583/0x6e0
-> [   91.021140] [    T140]  ? drop_caches_sysctl_handler+0x130/0x130
-> [   91.022729] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.023921] [    T140]  ret_from_fork+0xc8/0x160
-> [   91.025091] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.026309] [    T140]  ret_from_fork_asm+0x11/0x20
-> [   91.027577] [    T140]  </TASK>
-> [   91.028326] [    T140] INFO: task T1:525 is blocked on a mutex likely owned by task T2:526.
-> [   91.030404] [    T140] INFO: task T2:526 blocked for more than 30 seconds.
-> [   91.031978] [    T140]       Not tainted 6.16.0-next-20250730-00003-g5865c79d6085-dirty #261
-> [   91.034069] [    T140] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [   91.036215] [    T140] task:T2              state:D stack:0     pid:526   tgid:526   ppid:2      task_flags:0x208040 flags:0x00004000
-> [   91.039233] [    T140] Call Trace:
-> [   91.040084] [    T140]  <TASK>
-> [   91.040810] [    T140]  __schedule+0x137f/0x20c0
-> [   91.041954] [    T140]  schedule+0xdc/0x280
-> [   91.042984] [    T140]  schedule_preempt_disabled+0x10/0x20
-> [   91.044329] [    T140]  __mutex_lock+0x721/0x1590
-> [   91.045464] [    T140]  ? __mutex_lock+0x500/0x1590
-> [   91.046624] [    T140]  mutex_lock+0x81/0x90
-> [   91.047632] [    T140]  t2+0x69/0x70
-> [   91.048473] [    T140]  kthread+0x583/0x6e0
-> [   91.049453] [    T140]  ? drop_pagecache_sb+0x200/0x200
-> [   91.050686] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.051808] [    T140]  ret_from_fork+0xc8/0x160
-> [   91.052886] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.054036] [    T140]  ret_from_fork_asm+0x11/0x20
-> [   91.055205] [    T140]  </TASK>
-> [   91.056011] [    T140] INFO: task T2:526 is blocked on a mutex likely owned by task T3:527.
-> [   91.058014] [    T140] INFO: task T3:527 blocked for more than 30 seconds.
-> [   91.059682] [    T140]       Not tainted 6.16.0-next-20250730-00003-g5865c79d6085-dirty #261
-> [   91.061708] [    T140] "echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-> [   91.063825] [    T140] task:T3              state:D stack:0     pid:527   tgid:527   ppid:2      task_flags:0x208040 flags:0x00004000
-> [   91.066668] [    T140] Call Trace:
-> [   91.067462] [    T140]  <TASK>
-> [   91.068121] [    T140]  __schedule+0x137f/0x20c0
-> [   91.069244] [    T140]  schedule+0xdc/0x280
-> [   91.070264] [    T140]  schedule_preempt_disabled+0x10/0x20
-> [   91.071723] [    T140]  __mutex_lock+0x721/0x1590
-> [   91.072848] [    T140]  ? __mutex_lock+0x500/0x1590
-> [   91.074032] [    T140]  mutex_lock+0x81/0x90
-> [   91.075054] [    T140]  t3+0x23/0x30
-> [   91.075932] [    T140]  kthread+0x583/0x6e0
-> [   91.076953] [    T140]  ? t2+0x70/0x70
-> [   91.077865] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.078974] [    T140]  ret_from_fork+0xc8/0x160
-> [   91.080109] [    T140]  ? kthread_blkcg+0xa0/0xa0
-> [   91.081250] [    T140]  ret_from_fork_asm+0x11/0x20
-> [   91.082530] [    T140]  </TASK>
-> [   91.083248] [    T140] INFO: task T3:527 is blocked on a mutex likely owned by task T1:525.
-
+Hillf Danton
 
