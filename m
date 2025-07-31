@@ -1,144 +1,114 @@
-Return-Path: <linux-kernel+bounces-751931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69BBBB16F7C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:28:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 218B4B16F78
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:27:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1F34E3B3A53
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:27:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 034B53B5C79
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:26:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A884D2BE059;
-	Thu, 31 Jul 2025 10:27:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12CC42BE056;
+	Thu, 31 Jul 2025 10:27:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ATmu3VSX"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZxFU2i/h"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24E1C2BE035;
-	Thu, 31 Jul 2025 10:27:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A3BC238C25;
+	Thu, 31 Jul 2025 10:27:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753957676; cv=none; b=kECOgCY8Ch+2IbTPCcSdZIi3a0+84cBeGOINhB0oliOrtw1KwBBe9sqITI+vwIgJ/ccl7K06gWSPZlqOAYW8e+WWSVdSq21hOoG+hL8khDfpZj4lPCewrk4dO25r1RASnvVo7Wb/nt9ralXfHTCfXqgoxUraPe5cAr+4YYPognY=
+	t=1753957626; cv=none; b=OiYlnp8h0NNTDxrBNg83GIgC/itZtMEbWOVSMweT598RA5ZYVlioKZhcWrCzaWB34b58EYAqFSZAZDHGw6UH2xrMsvEvysn3U6zUjn/tP/GD2LjepTBoRec1VcuIGAgknLUy4DUs5cdmgxrS7hRINHPrO+Z+quqloMLdQcGizWU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753957676; c=relaxed/simple;
-	bh=dnZjKRCbKVsKnQZ0apVq2Lv4BunDXwUPUKqAx1JmXY0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=abKfe8qR7Awvcog/DL1TfR+lKNtovrSdn4E7sOMuxHipkSequyh7w91UtzuySR281L87hqep1T0vtkKVQ/Pp6ACIQY3lndaTt4zXYapZLWn1XutJZ2XKoJ2Nft6W/JxA6z41tlwuOOO3iwThim2gFSnxb2OytrmP0fcTbhWRO2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ATmu3VSX; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1753957672;
-	bh=dnZjKRCbKVsKnQZ0apVq2Lv4BunDXwUPUKqAx1JmXY0=;
+	s=arc-20240116; t=1753957626; c=relaxed/simple;
+	bh=mZpnZcvWp8SSKYuAUSLT1e/jJIWMm3Zlnit/hTH4MhM=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Ww7d8koaIHuKDtTt3icFfLgMUGpgatTyfypSD+WQ4rv8J2F7FTqX3UuNGYEjbKzwTr9AbK/zNQFIOpeUmjm+dt699rINaz6ysMoZ9/hq1A9EMyymaad9MCKO8PBEAJ+y4yErcvPpTGDPd4LOBbHz58UEuq+wBgC1mg7cE+IF6AY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZxFU2i/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16273C4CEEF;
+	Thu, 31 Jul 2025 10:27:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753957625;
+	bh=mZpnZcvWp8SSKYuAUSLT1e/jJIWMm3Zlnit/hTH4MhM=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=ATmu3VSXbzmFgfERV8e6Eu09Yb59Km6Ykr6zjqidJhxo8lYfAjorCqIYjaanz1Xc0
-	 SDTTZwne3FbduuRoAV8Y/xwDpdV6BK5JzzkqzlEW7Ie6hljRkQu6DKHGiCSBo1nkUm
-	 BIWUana48yyrDcO3OgtfYzQOUIGzQZJqmqDVJDHN462wFB1GT1rsPysz/22CzIhtLB
-	 YvgID2t64hFdwfPzDT6p1PyUv4JrsZburd1XaKV3dCjkJS1V8UrZ2Mx26uKLFiVC8q
-	 uHeVH839HFlFeTHR87ZH9CwNcNUu7fQKhOIoWTLOhyOaxCpSdpICjfqJF+T1r8cTQt
-	 cL2PGkX+pmnog==
-Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:e229:d0be:3141:7dd2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: laura.nao)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 82F5617E0A49;
-	Thu, 31 Jul 2025 12:27:47 +0200 (CEST)
-From: Laura Nao <laura.nao@collabora.com>
-To: robh@kernel.org
-Cc: andrew-ct.chen@mediatek.com,
-	angelogioacchino.delregno@collabora.com,
-	arnd@arndb.de,
-	bchihi@baylibre.com,
-	colin.i.king@gmail.com,
-	conor+dt@kernel.org,
-	daniel.lezcano@linaro.org,
-	devicetree@vger.kernel.org,
-	frank-w@public-files.de,
-	kernel@collabora.com,
-	krzk+dt@kernel.org,
-	lala.lin@mediatek.com,
-	laura.nao@collabora.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-mediatek@lists.infradead.org,
-	linux-pm@vger.kernel.org,
-	lukasz.luba@arm.com,
-	matthias.bgg@gmail.com,
-	nfraprado@collabora.com,
-	rafael@kernel.org,
-	rui.zhang@intel.com,
-	srini@kernel.org,
-	u.kleine-koenig@baylibre.com,
-	wenst@chromium.org
-Subject: Re: [PATCH v2 9/9] dt-bindings: nvmem: mediatek: efuse: Add support for MT8196
-Date: Thu, 31 Jul 2025 12:26:50 +0200
-Message-Id: <20250731102650.145641-1-laura.nao@collabora.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250730235451.GA1911689-robh@kernel.org>
-References: <20250730235451.GA1911689-robh@kernel.org>
+	b=ZxFU2i/hESB/rnLltqh5qnswEaKDj9s43s8dhKgTQsqlatGy6dMTJaGIehAuYk+tr
+	 z1/Wd0XYlFmDEnm2ToXyliF6rwWQ+QXwo9NwHDRCuhbflWdNyiBrrBaE4wtPaJBzbk
+	 OyHLYu1JN0QQNyTJ1SL0opbd01PnINgZTO4TTvx9CnqNSz1rsaGmWQTJZQ78Vv7rRi
+	 diNOh4/LbUE5i/hXALXY5rrd5UR2GXQVCwV20fU1m2h9AVO8bbEhtJTaGF/Uhji8ah
+	 Evk8tcTy0mjR9m2huLfkQiTyrKtwXs81NkYuKEYUrNDMLC+qUaCaxKX/KdAuhWKKDA
+	 5WjUhKgE7Xn8w==
+From: Christian Brauner <brauner@kernel.org>
+To: tj@kernel.org,
+	jack@suse.cz,
+	Jiufei Xue <jiufei.xue@samsung.com>
+Cc: Christian Brauner <brauner@kernel.org>,
+	cgroups@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] fs: writeback: fix use-after-free in __mark_inode_dirty()
+Date: Thu, 31 Jul 2025 12:26:55 +0200
+Message-ID: <20250731-manisch-zuerst-0aee81784858@brauner>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <20250728100715.3863241-1-jiufei.xue@samsung.com>
+References: <20250728100715.3863241-1-jiufei.xue@samsung.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1695; i=brauner@kernel.org; h=from:subject:message-id; bh=mZpnZcvWp8SSKYuAUSLT1e/jJIWMm3Zlnit/hTH4MhM=; b=owGbwMvMwCU28Zj0gdSKO4sYT6slMWR0u3wRmHBHTPAPuw+LBYuOYPu+BQwqp/ff3eM6e5/Wp oX94UFyHaUsDGJcDLJiiiwO7Sbhcst5KjYbZWrAzGFlAhnCwMUpABNxfsrI8PKOlG5If1/F0dly hf9PPvHRXSv34vaytVkhbZUlgUXixxgZtgoJlfHuN/WVPrpPKeHO161hV6beUXWojl5op7ayY+p pRgA=
+X-Developer-Key: i=brauner@kernel.org; a=openpgp; fpr=4880B8C9BD0E5106FC070F4F7B3C391EFEA93624
 Content-Transfer-Encoding: 8bit
 
-Hi Rob,
+On Mon, 28 Jul 2025 18:07:15 +0800, Jiufei Xue wrote:
+> An use-after-free issue occurred when __mark_inode_dirty() get the
+> bdi_writeback that was in the progress of switching.
+> 
+> CPU: 1 PID: 562 Comm: systemd-random- Not tainted 6.6.56-gb4403bd46a8e #1
+> ......
+> pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> pc : __mark_inode_dirty+0x124/0x418
+> lr : __mark_inode_dirty+0x118/0x418
+> sp : ffffffc08c9dbbc0
+> ........
+> Call trace:
+>  __mark_inode_dirty+0x124/0x418
+>  generic_update_time+0x4c/0x60
+>  file_modified+0xcc/0xd0
+>  ext4_buffered_write_iter+0x58/0x124
+>  ext4_file_write_iter+0x54/0x704
+>  vfs_write+0x1c0/0x308
+>  ksys_write+0x74/0x10c
+>  __arm64_sys_write+0x1c/0x28
+>  invoke_syscall+0x48/0x114
+>  el0_svc_common.constprop.0+0xc0/0xe0
+>  do_el0_svc+0x1c/0x28
+>  el0_svc+0x40/0xe4
+>  el0t_64_sync_handler+0x120/0x12c
+>  el0t_64_sync+0x194/0x198
+> 
+> [...]
 
-On 7/31/25 01:54, Rob Herring wrote:
-> On Wed, Jul 30, 2025 at 05:21:28PM +0200, Laura Nao wrote:
->> The MT8196 eFuse layout is compatible with MT8186 and shares the same
->> decoding scheme for the gpu-speedbin cell.
->>
->> Signed-off-by: Laura Nao <laura.nao@collabora.com>
->> ---
->>  Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml | 1 +
->>  1 file changed, 1 insertion(+)
->>
->> diff --git a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> index 4dc0d42df3e6..455b96c1e1f4 100644
->> --- a/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> +++ b/Documentation/devicetree/bindings/nvmem/mediatek,efuse.yaml
->> @@ -25,6 +25,7 @@ properties:
->>    compatible:
->>      oneOf:
->>        - items:
->> +          - const: mediatek,mt8196-efuse
->>            - const: mediatek,mt8188-efuse
->>            - const: mediatek,mt8186-efuse
->
-> You just broke mt8188 as it had 2 entries and now has 3. I think 
-> (based on the commit msg) you want to change 8188 entry to an enum with 
-> mediatek,mt8196-efuse and mediatek,mt8188-efuse.
->
+Applied to the vfs.fixes branch of the vfs/vfs.git tree.
+Patches in the vfs.fixes branch should appear in linux-next soon.
 
-You're absolutely right, not sure how I missed that.
-It should be:
+Please report any outstanding bugs that were missed during review in a
+new review to the original patch series allowing us to drop it.
 
-  compatible:
-    oneOf:
-      - items:
-          - enum:
-              - mediatek,mt8196-efuse
-              - mediatek,mt8188-efuse
-          - const: mediatek,mt8186-efuse
-      - const: mediatek,mt8186-efuse
-[...]
+It's encouraged to provide Acked-bys and Reviewed-bys even though the
+patch has now been applied. If possible patch trailers will be updated.
 
-I'll address it in v3.
+Note that commit hashes shown below are subject to change due to rebase,
+trailer updates or similar. If in doubt, please check the listed branch.
 
-Thanks!
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/vfs/vfs.git
+branch: vfs.fixes
 
-Laura
-
->>        - const: mediatek,mt8186-efuse
->> -- 
->> 2.39.5
->>
-
+[1/1] fs: writeback: fix use-after-free in __mark_inode_dirty()
+      https://git.kernel.org/vfs/vfs/c/f8371b50ceaa
 
