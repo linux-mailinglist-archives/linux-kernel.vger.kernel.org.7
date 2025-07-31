@@ -1,207 +1,203 @@
-Return-Path: <linux-kernel+bounces-751705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9C89B16C77
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:14:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19225B16C7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:15:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4837B582EA0
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:14:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF0293B80A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:14:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5388299A84;
-	Thu, 31 Jul 2025 07:14:19 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F49729AAF5;
+	Thu, 31 Jul 2025 07:15:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DwtKbkol"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84F8625F7B4;
-	Thu, 31 Jul 2025 07:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5949029A9C8
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 07:15:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753946059; cv=none; b=b3Rw6f101fVSKt5G1HfAYdy8KSHSQPI7QIcD+Sqr3LBkxTzAjtbTkFHsWHjoMgU8GDxDknStxiNCOB6Cjh+cOoWsO6ZZBJeyjdmmYiZgOs2Rf6hQuTPFQ3MexNsn1NbZEqa06PTx2wV9FNSOFtghpWN5/uwc7zwG3ddEFZc9v4E=
+	t=1753946113; cv=none; b=gaeA01ACSD6/3NUXaWW6CYmgnutO/TBfgENmHgyt4t21WIzMp7JeYf1MC7fZ6GXzyYESiyPimp9suDC/io72p44i1XnoYxrz/5owAReJ9tp7Nzpr63Mbky2R9K9aWDP1s2IE5LNbrakf4o1jU6rkOzDKYdTXq/QYQ3jVTmp8row=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753946059; c=relaxed/simple;
-	bh=r7jURrF6I5tBL8grNAQw88uKKLsBi8rIxDnW6t0DDv0=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=JsUzM/aZ+bW82bfUpouFIQ92RS+UWank9nmchFmNsGWMUedJBtY+v+ElIyaCY3FQ9o7WrZ3ySaQ3fz3j6/E8UTaoeJtBnroCSh3rZ6LOfxNorTdH87yxXPWc7nVACe+hKZ/gr9GHL0lymDb0jX9T9wno+dErxJaoN9QGYNSHe08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bt0gm2NPYzKHMtL;
-	Thu, 31 Jul 2025 15:14:12 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 3F63C1A1478;
-	Thu, 31 Jul 2025 15:14:11 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgDHjxC_F4tooJxPCA--.62453S3;
-	Thu, 31 Jul 2025 15:14:09 +0800 (CST)
-Subject: Re: [PATCH v2 2/5] mq-deadline: switch to use elevator lock
-To: Damien Le Moal <dlemoal@kernel.org>, Yu Kuai <yukuai1@huaweicloud.com>,
- Hannes Reinecke <hare@suse.de>, jack@suse.cz, tj@kernel.org,
- josef@toxicpanda.com, axboe@kernel.dk
-Cc: cgroups@vger.kernel.org, linux-block@vger.kernel.org,
- linux-kernel@vger.kernel.org, yi.zhang@huawei.com, yangerkun@huawei.com,
- johnny.chenyi@huawei.com, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250730082207.4031744-1-yukuai1@huaweicloud.com>
- <20250730082207.4031744-3-yukuai1@huaweicloud.com>
- <750643e5-9f24-4e4c-8270-e421a03cf463@suse.de>
- <226d1cd7-bd35-4773-8f1c-d03f9c870133@kernel.org>
- <a3ce55a4-0756-bfe7-3606-296b78672104@huaweicloud.com>
- <9d918e77-73ef-41ad-87cf-cf87803041b5@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <2ada440d-5121-6c3e-71db-1f8eb63864a7@huaweicloud.com>
-Date: Thu, 31 Jul 2025 15:14:06 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1753946113; c=relaxed/simple;
+	bh=xiXLrUPIxlTwJcraKjLr3lhafzFTzTlsrmUKH6csDrg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=se3vYz6gZVpGZ4Ih7IZgUEidF6/md/67cDJpFiunu7YSQA95cUHO4YZ6GOyreEzbLSffvgMOobjxTENy/cdrCd4M7jRtcz+GwgM6iVeOXb9P5sZkRWvHsO6NQ7EUUjaMEmBYxkm5UKOXSSsV6F5YK+OYPT1BGfz7CxNMY1+lko0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DwtKbkol; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=huaqin.corp-partner.google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaqin.corp-partner.google.com
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-7426c44e014so597492b3a.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 00:15:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753946111; x=1754550911; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ebIwp+3F9+NHey8VVOff1SO0dtsb8JA0khxWTB2N6sU=;
+        b=DwtKbkoldZ+cY7M80Cgij/pSoN63cDVDqJxL3eB31ZDfePi0O3a9TygtusVXSaEfjL
+         bkV9Zsb0iDqszP73B/I+0TcWvigDquNESXBC+tjS3fggXIdRI4HwBUFZGYqtikZvggzB
+         FpjN0+VrCAioS0wSUOaWIbzUwFymp/Rvc/vDhIGDoeDdoMgw/DZRTTG7pZMYc88kgBuv
+         28dH9hbAe9B5IdZslq516WkPZFYQPcAgfMyKfc2XTtLWs2vTAeEqRzZqkEWZXw+9clV5
+         4LQNMSvLKNt5hQiwQ4f75hwA94McE0BzbVb5PCjp+VLt+J5tE1BiwjfyUzcF5PixVeam
+         /qDQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753946111; x=1754550911;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ebIwp+3F9+NHey8VVOff1SO0dtsb8JA0khxWTB2N6sU=;
+        b=tKmKX4izGAo9glW+alvhFGPJIIL//zjtJPKfYJi3ysa3XrQCOBQVqjxMJYESOOvMJQ
+         9kT1zOqJNdOrPAhWI2pkaHbU8n2y0Wewblbf4UqQtt5mzfVt2IEqwEKVYL18n+HFDm/0
+         QCpuS79igdsYbHB7eVLap96YWjbdoJpvQGFBzEN2Z3RykGYWcV5dLnql9psL+O5nrCSH
+         O476zVhZhc5GtdWjHYnlv50cmg+q6INvTvo6I5zmeFQvYmKt7laXQ5NNtZocZaUZ4qRa
+         evxiun6znwjmpKnAdDhSZCsEy3YNqIUN1JA4iv4y+oL1HgrBQ10N2sqlrNbI/aaLR0jX
+         QiwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVoOCDMXvhY9wlsH00aeSDXFYr73GUJUv9FVDsC6URM11YqaolK5J2WRAVxdIlOgtAjPTV9qibANGd/A+Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXX+kj/pJFyySEFGS4iYHJKao9hNBTxaj4D91tVBPn3SnFBqc5
+	/VJOkLS/olgwxznUWqOetU8u9tfX67jmP2iStBQDPQP8w+g12MxKLOvMeENlxONDBBtDo3KTpPW
+	oO43wtqC6Pg1syMdfyHpci1cDZtJPEUUg7lIiNOF5lw==
+X-Gm-Gg: ASbGncv7tynpkbpXXhU6vwmsxWPO1eCOnVeknC6Yvw8XleTK4O0Y2yJQvFZ2yzduh+Q
+	6AbzKvZA4kZt/rJjH+tE0FZiKC/VrkfgTzqeUp7fBaNggmWtefWy9FyqGGd8H3BhfTexMuX1M/B
+	CdqXxBxBnb7Cwdn5PpAQ9nsmInhspES+2oCTVVPT0yTp0lwtk78bpo9rj4WdSzmiYiBfIkkEP+C
+	pztGy83jxon1U5x+4g=
+X-Google-Smtp-Source: AGHT+IFxCb3ARGfnETbTMRgPvvmnockXkwo+EiwvwDtTxMifOrAfoOVw0QE01/bhkomwOXauA6I5K//DbPK1RBEnXLY=
+X-Received: by 2002:a05:6a00:4b0c:b0:740:b394:3ebd with SMTP id
+ d2e1a72fcca58-76ab092312amr9210141b3a.7.1753946111170; Thu, 31 Jul 2025
+ 00:15:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <9d918e77-73ef-41ad-87cf-cf87803041b5@kernel.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgDHjxC_F4tooJxPCA--.62453S3
-X-Coremail-Antispam: 1UD129KBjvJXoW3GrWkuF15Xr18Zw1UWr45Wrg_yoW7CrW7pr
-	4kKFW5JrWrJrn7Xr1qgr4UZry5tw4UJw1DXr1fJay8JFsrtFnIgr4UXr1v9r1DJr4fGrn8
-	JF1UXrZxuF17Jr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
-	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
-	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
-	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
-	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Gr0_Cr1lIxAIcVCF
-	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
-	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUpwZcUUUUU=
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+References: <20250730071629.495840-1-yangcong5@huaqin.corp-partner.google.com> <CAD=FV=XThBbAwQcuR8Po6KfR0LwsfwR0HCr7j0Pk57n5XeQu9g@mail.gmail.com>
+In-Reply-To: <CAD=FV=XThBbAwQcuR8Po6KfR0LwsfwR0HCr7j0Pk57n5XeQu9g@mail.gmail.com>
+From: cong yang <yangcong5@huaqin.corp-partner.google.com>
+Date: Thu, 31 Jul 2025 15:14:59 +0800
+X-Gm-Features: Ac12FXxI0TJh030Bm5HklbALhYKAI_pWpuJqLomZkTDF9e-W0HFnUtTz4czMwQg
+Message-ID: <CAHwB_NJ3yQxf9fTMT_cQv50z8X_NKyQMOJEuqDqY-BfKX8QzXQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/panel-edp: Add several generic edp panels
+To: Doug Anderson <dianders@chromium.org>
+Cc: neil.armstrong@linaro.org, jessica.zhang@oss.qualcomm.com, 
+	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
+	airlied@gmail.com, simona@ffwll.ch, treapking@chromium.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
 Hi,
 
-在 2025/07/31 15:04, Damien Le Moal 写道:
-> On 7/31/25 3:32 PM, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/07/31 14:22, Damien Le Moal 写道:
->>> On 7/31/25 3:20 PM, Hannes Reinecke wrote:
->>>> On 7/30/25 10:22, Yu Kuai wrote:
->>>>> From: Yu Kuai <yukuai3@huawei.com>
->>>>>
->>>>> Replace the internal spinlock 'dd->lock' with the new spinlock in
->>>>> elevator_queue, there are no functional changes.
->>>>>
->>>>> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
->>>>> ---
->>>>>     block/mq-deadline.c | 58 +++++++++++++++++++++------------------------
->>>>>     1 file changed, 27 insertions(+), 31 deletions(-)
->>>>>
->>>>> diff --git a/block/mq-deadline.c b/block/mq-deadline.c
->>>>> index 9ab6c6256695..2054c023e855 100644
->>>>> --- a/block/mq-deadline.c
->>>>> +++ b/block/mq-deadline.c
->>>>> @@ -101,7 +101,7 @@ struct deadline_data {
->>>>>         u32 async_depth;
->>>>>         int prio_aging_expire;
->>>>>     -    spinlock_t lock;
->>>>> +    spinlock_t *lock;
->>>>>     };
->>>>>       /* Maps an I/O priority class to a deadline scheduler priority. */
->>>>> @@ -213,7 +213,7 @@ static void dd_merged_requests(struct request_queue *q,
->>>>> struct request *req,
->>>>>         const u8 ioprio_class = dd_rq_ioclass(next);
->>>>>         const enum dd_prio prio = ioprio_class_to_prio[ioprio_class];
->>>>>     -    lockdep_assert_held(&dd->lock);
->>>>> +    lockdep_assert_held(dd->lock);
->>>>>           dd->per_prio[prio].stats.merged++;
->>>>>     @@ -253,7 +253,7 @@ static u32 dd_queued(struct deadline_data *dd, enum
->>>>> dd_prio prio)
->>>>>     {
->>>>>         const struct io_stats_per_prio *stats = &dd->per_prio[prio].stats;
->>>>>     -    lockdep_assert_held(&dd->lock);
->>>>> +    lockdep_assert_held(dd->lock);
->>>>>           return stats->inserted - atomic_read(&stats->completed);
->>>>>     }
->>>>> @@ -323,7 +323,7 @@ static struct request *__dd_dispatch_request(struct
->>>>> deadline_data *dd,
->>>>>         enum dd_prio prio;
->>>>>         u8 ioprio_class;
->>>>>     -    lockdep_assert_held(&dd->lock);
->>>>> +    lockdep_assert_held(dd->lock);
->>>>>           if (!list_empty(&per_prio->dispatch)) {
->>>>>             rq = list_first_entry(&per_prio->dispatch, struct request,
->>>>> @@ -434,7 +434,7 @@ static struct request
->>>>> *dd_dispatch_prio_aged_requests(struct deadline_data *dd,
->>>>>         enum dd_prio prio;
->>>>>         int prio_cnt;
->>>>>     -    lockdep_assert_held(&dd->lock);
->>>>> +    lockdep_assert_held(dd->lock);
->>>>>           prio_cnt = !!dd_queued(dd, DD_RT_PRIO) + !!dd_queued(dd,
->>>>> DD_BE_PRIO) +
->>>>>                !!dd_queued(dd, DD_IDLE_PRIO);
->>>>> @@ -466,10 +466,9 @@ static struct request *dd_dispatch_request(struct
->>>>> blk_mq_hw_ctx *hctx)
->>>>>         struct request *rq;
->>>>>         enum dd_prio prio;
->>>>>     -    spin_lock(&dd->lock);
->>>>>         rq = dd_dispatch_prio_aged_requests(dd, now);
->>>>>         if (rq)
->>>>> -        goto unlock;
->>>>> +        return rq;
->>>>>           /*
->>>>>          * Next, dispatch requests in priority order. Ignore lower priority
->>>>> @@ -481,9 +480,6 @@ static struct request *dd_dispatch_request(struct
->>>>> blk_mq_hw_ctx *hctx)
->>>>>                 break;
->>>>>         }
->>>>>     -unlock:
->>>>> -    spin_unlock(&dd->lock);
->>>>> -
->>>>>         return rq;
->>>>>     }
->>>>>     @@ -538,9 +534,9 @@ static void dd_exit_sched(struct elevator_queue *e)
->>>>>             WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_READ]));
->>>>>             WARN_ON_ONCE(!list_empty(&per_prio->fifo_list[DD_WRITE]));
->>>>>     -        spin_lock(&dd->lock);
->>>>> +        spin_lock(dd->lock);
->>>>>             queued = dd_queued(dd, prio);
->>>>> -        spin_unlock(&dd->lock);
->>>>> +        spin_unlock(dd->lock);
->>>>>               WARN_ONCE(queued != 0,
->>>>>                   "statistics for priority %d: i %u m %u d %u c %u\n",
->>>>
->>>> Do you still need 'dd->lock'? Can't you just refer to the lock from the
->>>> elevator_queue structure directly?
->>>
->>> Indeed. Little inline helpers for locking/unlocking q->elevator->lock would be
->>> nice.
->>
->> How about the first patch to factor out inline helpers like dd_lock()
->> and dd_unlock(), still use dd->lock without any functional changes, and
->> then switch to use q->elevator->lock in the next patch? (same for bfq)
-> 
-> Patch one can introduce elv->lock and the helpers, then patch 2 use the helpers
-> to replace dd->lock. Just don't say "no functional change" in the commit
-> message and rather explain that things keep working the same way as before, but
-> using a different lock. That will address Bart's comment too.
-> And same for bfq in patch 3.
-> 
-Ok, this is what I did in the first RFC version:
+Doug Anderson <dianders@chromium.org> =E4=BA=8E2025=E5=B9=B47=E6=9C=8831=E6=
+=97=A5=E5=91=A8=E5=9B=9B 01:40=E5=86=99=E9=81=93=EF=BC=9A
+>
+> Hi,
+>
+> On Wed, Jul 30, 2025 at 12:16=E2=80=AFAM Cong Yang
+> <yangcong5@huaqin.corp-partner.google.com> wrote:
+> >
+> > Add a few generic edp panels used by mt8189 chromebooks, most of them u=
+se
+> > the same general timing. For CMN-N116BCA-EAK, the enable timing should =
+be
+> > 200ms. For TMA-TL140VDMS03-01, the enable timing should be 80ms and the
+> > disable timing should be 100ms.
+> >
+> > 1. AUO B122UAN01.0
+> > 2. AUO B116XAK02.0
+> > 3. AUO B140UAN08.5
+> > 4. AUO B140UAX01.2
+> > 5. BOE NV116WHM-N4B
+> > 6. BOE NV116WHM-T01
+> > 7. CMN N122JCA-ENK
+> > 8. CMN N140JCA-ELP
+> > 9. CMN N116BCA-EAK
+> > 10. CSW MNE007QS5-2
+> > 11. SCW MNE007QB2-2
+>
+> nit: CSW, not SCW.
 
-https://lore.kernel.org/all/20250530080355.1138759-3-yukuai1@huaweicloud.com/
+Fix next version, thanks.
 
-I somehow convince myself using dd->lock is better. :(
-Will change this in the next version.
+>
+>
+> > 12. TMA TM140VDXP01-04
+> > 13. TMA TL140VDMS03-01
+> >
+> > Signed-off-by: Cong Yang <yangcong5@huaqin.corp-partner.google.com>
+> > ---
+> >  drivers/gpu/drm/panel/panel-edp.c | 29 +++++++++++++++++++++++++++++
+> >  1 file changed, 29 insertions(+)
+>
+> Please make the subject line a little less generic so we can tell one
+> change for the next. If all changes just say "add more panels" then
+> when cherry-picking and looking at patch subject lines it's hard to
+> tell which patches have been picked and which haven't.
+>
+> In this case you could mention that the panels are used by mt8180
+> Chromebooks, like:
+>
+> drm/panel-edp: Add edp panels used by mt8180 Chromebooks
+>
+> Also: even though it's a bit of a pain, can you please include the
+> EDIDs in your commit message? I know there are 13 panels and that can
+> make a long commit message, but I'd still rather see it here just in
+> case we have to later go back and reference exactly what panel you
+> were working with in case some manufacturer re-uses panel IDs (it's
+> happened in the past).
 
-Thanks,
-Kuai
+Got it, fix next version, thanks.
 
-> 
+>
+>
+> > @@ -1865,6 +1880,7 @@ static const struct panel_delay delay_200_500_e50=
+_d100 =3D {
+> >   * Sort first by vendor, then by product ID.
+> >   */
+> >  static const struct edp_panel_entry edp_panels[] =3D {
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0x04a4, &delay_200_500_e50, "B12=
+2UAN01.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x105c, &delay_200_500_e50, "B11=
+6XTN01.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x1062, &delay_200_500_e50, "B12=
+0XAN01.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x125c, &delay_200_500_e50, "Unk=
+nown"),
+> > @@ -1883,6 +1899,7 @@ static const struct edp_panel_entry edp_panels[] =
+=3D {
+> >         EDP_PANEL_ENTRY2('A', 'U', 'O', 0x405c, &auo_b116xak01.delay, "=
+B116XAK01.0",
+> >                          &auo_b116xa3_mode),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x435c, &delay_200_500_e50, "Unk=
+nown"),
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0x52b0, &delay_200_500_e80_d50, =
+"B116XAK02.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x582d, &delay_200_500_e50, "B13=
+3UAN01.0"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x615c, &delay_200_500_e50, "B11=
+6XAN06.1"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x635c, &delay_200_500_e50, "B11=
+6XAN06.3"),
+> > @@ -1890,10 +1907,12 @@ static const struct edp_panel_entry edp_panels[=
+] =3D {
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x723c, &delay_200_500_e50, "B14=
+0XTN07.2"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x73aa, &delay_200_500_e50, "B11=
+6XTN02.3"),
+> >         EDP_PANEL_ENTRY('A', 'U', 'O', 0x8594, &delay_200_500_e50, "B13=
+3UAN01.0"),
+> > +       EDP_PANEL_ENTRY('A', 'U', 'O', 0x8bba, &delay_200_500_e80_d50, =
+"B140UAN08.5"),
+>
+> All the old AUX panels seem to use just "e50" but all the new ones
+> you're adding use "e80_d50". That looks really suspicious. Are you
+> sure that these new panels need "e80_d50"? Were the old definitions
+> wrong?
 
+I checked all the panel specs again, most of them require "e50", only
+a few require "e80_d50".
+Sorry, I took the maximum value, will fix it in the next version. Thanks.
 
