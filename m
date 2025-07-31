@@ -1,165 +1,164 @@
-Return-Path: <linux-kernel+bounces-751759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC8FDB16D14
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:02:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 24E6BB16D12
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:02:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E78E91AA73C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:03:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4821AA43F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:03:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DB551AD3E5;
-	Thu, 31 Jul 2025 08:02:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D781A0B08;
+	Thu, 31 Jul 2025 08:02:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JWl09WZY"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Co/VlKfg"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C0A18C933;
-	Thu, 31 Jul 2025 08:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B6135971
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:02:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948962; cv=none; b=Yyh0zHfgjLEYnPod3AwGFDoxtHPcWQ5C4L6+gUUhEOCLZ7bX/bT39UEKG85hP40bOHKzxuvIklXcEXnJ6732wrFV/DxE2kBKaCM9rCxI6VBoa5sdpuZsaumVhh3qzmy7S2Z2IcZ+Nj6E9uzmw8fMriM3jmaLkq9HxPuan6hTSnE=
+	t=1753948956; cv=none; b=AsgiyzVfF8xWcST0dqZaEXBEmjU1qdz61+RASRqL4nQTJlyPuZu+SPa2wynp/4k6uYYlEGNyChmhucJFh8QYcS1GU5ptYAV7g6R79In9d9hnyGSBgvYt298AzqX0CjswAfMsMupq5WpI31+uQqzwtDkyIhcqSXxjpTPLSyyNHmw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948962; c=relaxed/simple;
-	bh=PlGHV2FaRjELuf7o65hmJb8XBrnL3PXiqC/Y2oDVAr8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KMTlFNAUYoDd45YpWGtxtt+S/9GNmnN44knPjLfct9tpCiKFflWyXdjkqa8CM+90XpqIk24Dh4/uw0I3TTyZlGTJTqiwp9o3IHA0Yo81UFa+5xH70u+ZSftVrnJu+7LBmhzs2biRbSaGiCPjg9VA2C51EWyyc4YB3MZnR2ZxXN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JWl09WZY; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b77673fd78so68725f8f.0;
-        Thu, 31 Jul 2025 01:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753948959; x=1754553759; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/t3e+x49wtPkWQFIoIWG71R3Sa9zVUVooSjuWeuz04=;
-        b=JWl09WZY+3GS/hLxiQnB40ebIPuyyA4CixF8moWEXqtN7pd/FCn+ImmhwxgT3vz/1S
-         KLcv19scCNxHJL5ot9oMZopN8+OnfEzD08Js5tOcodLQBc9bCZTKCUoGt8L9euvqC9Je
-         JWbvMwVGbnvhM0j1RZ1b0a0Ns2qPvh9bfPYq6i731/DLi4tljx8UWk915p/FbIkozFFI
-         +d4V5fNYnSbzkzszIqnr/Bx13C78gzks//CgRnVumYSImuLO+OS1VratRhTKohFRbwbg
-         74aSJTMsADfo66tJG3Is6P53DapBNSMH9la6/0HG0chra5tFEMlvhCnScG7CA6Ukf+SY
-         9DKQ==
+	s=arc-20240116; t=1753948956; c=relaxed/simple;
+	bh=hjBwaGnLy5CWQpFZyVd4gtLmbuLVWoAb5Z6jFB8161I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=c9oQNSvIA96J6q1NKXlcR8wE84mnftUolwV8MVp8pH3yhVQswG9hr8ifynsVsW67YEF89VfBthYbHvMOulKLLeOpZWfahy5BwhMa77ALQ/YjWFD9+Nw1mxYlWcvReQrsfEMaQI5gMlmNzVTYQEtZrTSQPpXwl+/dmrGlghljxvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Co/VlKfg; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1753948953;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Lgv6U/W/hpoRUHyZFqCrSaXyDup15bzLQFsiG+oYoJU=;
+	b=Co/VlKfg6p76cwx/SnxHn/8Q6tpziHtov84of9L0JNWKxwu7bOIytAX4x5tM1Ie3gsvtHo
+	Oiwor0mRAHwnxD2n8UX4wI8C6MijNUmWhX5EBIi4qRFxGV//Qbsccn0NsEVnucf71hTr0V
+	zvocfV8gmb6BsxwBmdAbeaZrzrqC5Jw=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-321-pEJAAtCZMaeAs9-b-BG1jg-1; Thu, 31 Jul 2025 04:02:23 -0400
+X-MC-Unique: pEJAAtCZMaeAs9-b-BG1jg-1
+X-Mimecast-MFC-AGG-ID: pEJAAtCZMaeAs9-b-BG1jg_1753948942
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b79c28f8ceso334260f8f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:02:23 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753948959; x=1754553759;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=8/t3e+x49wtPkWQFIoIWG71R3Sa9zVUVooSjuWeuz04=;
-        b=GR0MBkUYFUCI8hV58ZW8R9dSggsVbc3DrJxD/BevK13IPkIjDFCggUHICXEoC3lkpD
-         yN5zgO48jdU72ly8lKJwTt2qR/dNv3YWvxLH78Is4R5m2Ery0Gy3ebD7gGpgnGch/qEd
-         NFQD/uuHChQWvugh4bK6Elk0GQScw4ou+ysAFZ5ZnaGOZPorZoxcbZTCdZ52q+hgsUjl
-         aIckB11wJudu1ucJSOBfYnyiUFT9Ju5GqTfHswIyXGDDAHLD105+VNHQdlWcjWyMCn6f
-         MFEPV4B3SNtNP294zOzx8YLm7ivnuRT1vLPc053XbivOcboO4+BYJn6yVL54vXPYmS58
-         IzjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUyRLwWizOzDvRoMh1w09PvU6rSP/usB/Vlu3wq9+oT65ph8+ar/S/6hFoLsNL+0kcTgKDl5X7vkErz3cdR@vger.kernel.org, AJvYcCXB1UIF5Fv5cycG4z5HfxDPbnigiVgeifxZBqDsmI89VdLtsy8sTH5DQthnYa6d9zwp4+4WhuiCl4k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw3XR7zi75MRILRmAimtctQ/r+6nFkzsgAClQgmcWu5s6GI9ktz
-	NtKYJP3tUIqm41Jz0WK2Bq8IcxzjSk3wFYeKkn0krTltkNmFrX3NzEt+Cm0TB9kLQ9Tc+A==
-X-Gm-Gg: ASbGncuzq36LzMNgV29vdndRFdhXkbiUZdxiVT7TZa+SDRBuezXubWs2yph4Y8LkQ0D
-	TyFJMFlnCzJxY2g8ooPkedccg3iESBiu5OvueB5CtKYuPghnmkJGZ7VyR1ZY0If4cA5KpqYbXQW
-	JirvXer2fPAK20bW1iyxvRkGD4JUcryLM8Od9JP1FZaIfuRA5ctglXYPFdq8gWSI2r/GuOwfHyv
-	CM+XV1B9LHuffwob6kXQzqhXHsdVt1grvesqXYH3r2JBG9PJqA2fW/FoL2wp39PN49XiY9kmWiH
-	dGnmfljTR3gBi8J/JyKSPw6Y5v6bBniMj/Pk06RzL/TqUgAyc6egJ15OLq3bDiGIaNeaHqixeyj
-	n/+iQDHQ+x8GFi5QHSyDQ
-X-Google-Smtp-Source: AGHT+IGbGg2iGs3EXQeEyvQHMksthS8sLUBenVO0pV8N/V9V2SA84vP4SZAFTfECw7Qjzs78F/6clg==
-X-Received: by 2002:a05:6000:1788:b0:3b7:9af4:9c75 with SMTP id ffacd0b85a97d-3b79af49ce5mr2004852f8f.30.1753948958834;
-        Thu, 31 Jul 2025 01:02:38 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-45895377708sm53368065e9.8.2025.07.31.01.02.37
+        d=1e100.net; s=20230601; t=1753948942; x=1754553742;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lgv6U/W/hpoRUHyZFqCrSaXyDup15bzLQFsiG+oYoJU=;
+        b=IBH3OyzeGBkWb78Und+X11D7MZh3kH5LiOtbSa1SA9xUfS2rmWwp33RR65onEiDkwf
+         uIlgdCHcvjyjG6yi/KeEMdfS9d6zmJMtlcpo5CMq9YIZzjO4CfXIiOHiy3mFwLqvfpCm
+         d3DyXgPEMDT+rkslHbhjJTfJtRP8F1uNI5wUp3nnMN2P/xMvMYraW/bU5PkVb1qsAVAh
+         GxTvor8g5Bl6IpaFmtKWWYRT0h1jlbv2kSrKjOrYmgrzZrfb+6PZsvGSIRmujWVB44Xp
+         FnZ0uP2m2Z7XrFWhrWoes6GuP7IrAEUzEVrAeLceKawx7z9DmJ/5BWqi20whi7QEAOSr
+         aaGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWctSrtU6gsDDs1aBg63PomLo0sNOuX/tI7+29z9PxrZ4WfwfFiP5eE/Q0+DTim/V5tci5IiMz54OfWNyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwbzPX2bMmH0d+8djVG8m02MYbhgIWkdQjnFRABLnlMLNq5Rr6Y
+	pUyKxnV2Hi3glhK1sTe22zwy/grXtuT8eCihjRElTJsBeIgWS9hoZWC4D+XgvPdz096Tf98VTNc
+	OTEGiJp24EkT4y+a1n2Jl5AgnsFvylRDQVy/XjLrq9B6RyPPVzbfgCj2s98QH/4jz3w==
+X-Gm-Gg: ASbGncv41t6IjI7+65RmpBuazGts7WhRXKch0tAh/NKZtjO1NuB9mVIO31b6BlJ/xx6
+	W/WRr/HleyIbADDYlsKX5+qrCZkzRxV3UuWEpuj9o/UNDw3jAooEx9AIVyEcGqIW7K1JcPDeeUR
+	gGhDiJLoyWK7Xr3a/jPat3gDchG3jwSCH/m0knjeaLRe0j4/fChYyF8aUOohEtYdh9tR9yyzIB+
+	s7KuUL38XdvDw3y2kh1dl7X6L+WBGMgxCI0xdFJIb1lR/WLqCf/Pl/ooeKWLkUJztrJJrRugOk9
+	QaYcz5Oj6VVIX/SihJbDXyBiGeoGzcJzZE2Z7j0fxjxgHKIrm/IL7qSiTdNypZU7dA==
+X-Received: by 2002:a05:6000:4287:b0:3b7:7633:4e71 with SMTP id ffacd0b85a97d-3b794fecc7cmr5082559f8f.13.1753948941972;
+        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH4pG6nXG2ua5v/+0ufLTKW+zE77EAA3F4z8dCGzhgrLwSHi6vxpr0yH0anYvSH+8Di5uZR8g==
+X-Received: by 2002:a05:6000:4287:b0:3b7:7633:4e71 with SMTP id ffacd0b85a97d-3b794fecc7cmr5082530f8f.13.1753948941555;
+        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c80sm1482291f8f.43.2025.07.31.01.02.20
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 01:02:38 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,
-	linux-ide@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next][V2] ata: pata_pdc2027x: Remove space before newline and abbreviations
-Date: Thu, 31 Jul 2025 09:02:03 +0100
-Message-ID: <20250731080203.2119000-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
+Message-ID: <0fb442dc58bd36345b60f4bb8f6be73db74900ac.camel@redhat.com>
+Subject: Re: [PATCH 2/5] rv/ltl: Support per-cpu monitors
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Nam Cao <namcao@linutronix.de>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 31 Jul 2025 10:02:19 +0200
+In-Reply-To: <da946aaf40a8d1a320dc62673013ceceef1c93b3.1753879295.git.namcao@linutronix.de>
+References: <cover.1753879295.git.namcao@linutronix.de>
+	 <da946aaf40a8d1a320dc62673013ceceef1c93b3.1753879295.git.namcao@linutronix.de>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
 
-There is a extraneous space before a newline in handful of ata_port_dbg
-messages. Remove the spaces. Capitalize pio, udma, mdma.
+On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
+> Add support for per-cpu run-time verification linear temporal logic
+> monitors. This is analogous to deterministic automaton per-cpu
+> monitors.
+>=20
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> ---
+>=20
+> diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
+> index 4a6faddac614..f9e5fd044c45 100644
+> --- a/kernel/trace/rv/rv_trace.h
+> +++ b/kernel/trace/rv/rv_trace.h
+> @@ -177,6 +177,53 @@ DECLARE_EVENT_CLASS(error_ltl_monitor_id,
+> =C2=A0#include <monitors/pagefault/pagefault_trace.h>
+> =C2=A0#include <monitors/sleep/sleep_trace.h>
+> =C2=A0// Add new monitors based on CONFIG_LTL_MON_EVENTS_ID here
+> +
+> +#ifdef CONFIG_LTL_MON_EVENTS_IMPLICIT
+> +DECLARE_EVENT_CLASS(event_ltl_monitor,
+> +
+> +	TP_PROTO(unsigned int cpu, char *states, char *atoms, char
+> *next),
+> +
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
----
+You don't really need to follow to the ID/IMPLICIT convention here.
 
-V2: As per Damien Le Moal's suggestion, capitalize pio, udma, mdma.
+These LTL per-cpu monitors are, in fact, not implicit since they do
+have an id (the CPU), implicit makes sense with the current
+implementation of da_get_monitor that uses the current CPU (doesn't
+have to stay that way, but there was no need to change so far).
 
----
+If you don't want to get rid of the task's comm in the tracepoint (and
+unify both with an integer id, like with DA), I'd suggest you use
+different names like CONFIG_LTL_MON_EVENTS_TASK (in fact that doesn't
+just have an ID) and CONFIG_LTL_MON_EVENTS_CPU (or even
+CONFIG_LTL_MON_EVENTS_ID, for this it actually makes sense).
 
- drivers/ata/pata_pdc2027x.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
+I'd prefer it as general as possible to ease new monitor types, but to
+be real picky the LTLs per-task are not ID and the per-cpu are not
+IMPLICIT.
 
-diff --git a/drivers/ata/pata_pdc2027x.c b/drivers/ata/pata_pdc2027x.c
-index d792ce6d97bf..021b38ed794d 100644
---- a/drivers/ata/pata_pdc2027x.c
-+++ b/drivers/ata/pata_pdc2027x.c
-@@ -295,7 +295,7 @@ static void pdc2027x_set_piomode(struct ata_port *ap, struct ata_device *adev)
- 	}
- 
- 	/* Set the PIO timing registers using value table for 133MHz */
--	ata_port_dbg(ap, "Set pio regs... \n");
-+	ata_port_dbg(ap, "Set PIO regs...\n");
- 
- 	ctcr0 = ioread32(dev_mmio(ap, adev, PDC_CTCR0));
- 	ctcr0 &= 0xffff0000;
-@@ -308,7 +308,7 @@ static void pdc2027x_set_piomode(struct ata_port *ap, struct ata_device *adev)
- 	ctcr1 |= (pdc2027x_pio_timing_tbl[pio].value2 << 24);
- 	iowrite32(ctcr1, dev_mmio(ap, adev, PDC_CTCR1));
- 
--	ata_port_dbg(ap, "Set to pio mode[%u] \n", pio);
-+	ata_port_dbg(ap, "Set to PIO mode[%u]\n", pio);
- }
- 
- /**
-@@ -341,7 +341,7 @@ static void pdc2027x_set_dmamode(struct ata_port *ap, struct ata_device *adev)
- 			iowrite32(ctcr1 & ~(1 << 7), dev_mmio(ap, adev, PDC_CTCR1));
- 		}
- 
--		ata_port_dbg(ap, "Set udma regs... \n");
-+		ata_port_dbg(ap, "Set UDMA regs...\n");
- 
- 		ctcr1 = ioread32(dev_mmio(ap, adev, PDC_CTCR1));
- 		ctcr1 &= 0xff000000;
-@@ -350,14 +350,14 @@ static void pdc2027x_set_dmamode(struct ata_port *ap, struct ata_device *adev)
- 			(pdc2027x_udma_timing_tbl[udma_mode].value2 << 16);
- 		iowrite32(ctcr1, dev_mmio(ap, adev, PDC_CTCR1));
- 
--		ata_port_dbg(ap, "Set to udma mode[%u] \n", udma_mode);
-+		ata_port_dbg(ap, "Set to UDMA mode[%u]\n", udma_mode);
- 
- 	} else  if ((dma_mode >= XFER_MW_DMA_0) &&
- 		   (dma_mode <= XFER_MW_DMA_2)) {
- 		/* Set the MDMA timing registers with value table for 133MHz */
- 		unsigned int mdma_mode = dma_mode & 0x07;
- 
--		ata_port_dbg(ap, "Set mdma regs... \n");
-+		ata_port_dbg(ap, "Set MDMA regs...\n");
- 		ctcr0 = ioread32(dev_mmio(ap, adev, PDC_CTCR0));
- 
- 		ctcr0 &= 0x0000ffff;
-@@ -366,7 +366,7 @@ static void pdc2027x_set_dmamode(struct ata_port *ap, struct ata_device *adev)
- 
- 		iowrite32(ctcr0, dev_mmio(ap, adev, PDC_CTCR0));
- 
--		ata_port_dbg(ap, "Set to mdma mode[%u] \n", mdma_mode);
-+		ata_port_dbg(ap, "Set to MDMA mode[%u]\n", mdma_mode);
- 	} else {
- 		ata_port_err(ap, "Unknown dma mode [%u] ignored\n", dma_mode);
- 	}
--- 
-2.50.0
+The id field is what the rv userspace tool uses to differentiate
+monitor types, by the way.
+
+
+> +#endif /* CONFIG_LTL_MON_EVENTS_IMPLICIT */
+> +
+>  #endif /* CONFIG_LTL_MON_EVENTS_ID */
+
+Also, I'm not sure if that was intended, but
+CONFIG_LTL_MON_EVENTS_IMPLICIT gets compiled only with
+CONFIG_LTL_MON_EVENTS_ID.
+
+Thanks,
+Gabriele
 
 
