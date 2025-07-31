@@ -1,88 +1,51 @@
-Return-Path: <linux-kernel+bounces-752591-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45140B1779A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:03:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9CF60B177A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 23:03:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CEFDE189C026
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:03:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C9780541016
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:03:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C99C3264608;
-	Thu, 31 Jul 2025 21:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D8F2266561;
+	Thu, 31 Jul 2025 21:02:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="PqY8nbQH"
-Received: from mail-il1-f180.google.com (mail-il1-f180.google.com [209.85.166.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hUXZMFZx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD3B515A8
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:02:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA260258CD9;
+	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753995761; cv=none; b=mQFpprSGrmplooUxl9szJsUChs6TzpqvyHTcbz2LxJcPmHPm8dyWWGSRUlF0wAxwClzMfQ2CMhgK/47cp+6i2a6h+14b2I6za4t79fxdZ4W48SQ5lzl86R4LJtmInH1MqIAt3lXteOZPX5FIIQl1qOoH1l6TKjUlJebnajfm5F8=
+	t=1753995765; cv=none; b=I0Sz8Q+WXIpuPXRW93cOZ2DECOMCu0K8k4PEfsBRTSjdh1CpG3jl4OUYmIqn4Z17nqLKWSbK4xRwWOsTnTR1TxK3FyMZ0BjAWVpCYzVUvU1A9+p7IxI3NRKsAQ3IQg+oiB6v5lSqxE2pfhINvOLyoeH8rDzOmI66+VvPZLnRZhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753995761; c=relaxed/simple;
-	bh=VvDcIIZYbR5ABGWrRAC8KtwDhSXJ5ShvR7mMB076vxw=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=eYoAWVdYcFGHAGpeca5gUN59d9TrFz7jdkWkoeg3hky+6KqqgKvqbQnmXLcYPpseICljhcM7AONgm00pgwjPFo2k5ob+Mb5QvFD4sAjKpmR3/ieLmnuy2D8kgWHUd80OadpFQKwRHK7aH53O/XQp7g0PjWoN1va5z8NU3l/8YlA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=PqY8nbQH; arc=none smtp.client-ip=209.85.166.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f180.google.com with SMTP id e9e14a558f8ab-3e3d31a9ac7so3900895ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 14:02:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1753995755; x=1754600555; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3XsfntcqQ6csvTwNyJAnEEKzN96J5OJofevbNS9mkqg=;
-        b=PqY8nbQH9d5A9Bk8kW/YOiUWMTnTsKjKT/PG/cQM7oBiSHLCN0rSr87F+nhNugDo5x
-         tKHHT9J4zkFbwELX5X+AYJ6XCIZuodq9zR33gTElKMODPcskWEOB5rH1abX+grf3gV3f
-         yVPGN1p1ijFRYdEGdesUTVkCUBt1dxy8e9Cm2qq8jSzezEv1QGsO75B4BY2NRFatzrsC
-         7FH+RvWOHs9ixNfQs/tgbPDTTUc4wwmCetAckkj+mYaV4fXq0l/atoULPtqCT6uU0nBT
-         l3rgaY/QRioSnILaDKU89I6RJkGGW6fV+fa/J697KSHOlsSCbrKdpUlzP2aesHpdZpBI
-         u4yA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753995755; x=1754600555;
-        h=content-transfer-encoding:mime-version:date:message-id:subject
-         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3XsfntcqQ6csvTwNyJAnEEKzN96J5OJofevbNS9mkqg=;
-        b=bJMJ/Xvav/37hD2qqem4lfKXN/aZB5m1wCPeG06M2kM5hzLS+bc1tFJrs/UF+TWn3d
-         VKqODaOuOTPF48x1p7DDXQAl3r/qs+t7yFZw+3wJzaUDvs4fu9ABP8M4M4CgB84vWl7o
-         zZ82AvtceO0tasVpbhQH+Y4YBaKJMi+ygBZZ0I2xYpRgbt9GQxR23XVDZX+W9FxY5nyP
-         lvUlp2YRmQNh8e6BY4YB0pWZ07QsqYhB6FwRaw5hZpY+9NWHcU8HRaCdNmbpOHLq9MC8
-         8wEPDG4lLEEhoSjRnbOwD0yWDm3EzuBjPf8HYLTo+OTOuA4w2Y+c7/AkwtgQ/DEfXVNl
-         bHfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXtRRDV0r9hLvtYL3Gi9BfSQFuAY9uHoZBQdKbhyCI4FJnauY1LfY7K2lfcb7fVPq+hIwB5jgHliT3Dv90=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzgps+BTjnzUilpmkkBDTGHkta15piECjJT6sWZZ/J31bkDHG7o
-	PNwIvpMaoYXCTju/XFlKmzUka5ogf0AtGohlqth3Z77af2/uS68RTREkFV9aiGnJdT3MBk3Rjkk
-	xolzN
-X-Gm-Gg: ASbGncswAqJHqpxaoNUwXsnDfKCGjhVwBJMFSrQrsScuGZfKONW2+xBkSvueHwbGzLs
-	SwlAGjq2byCGbImFANHCO4ILtbUTSfyHxoSb0AcsQZR29ZQ9Yg6YlG1J3DYIHj8xtZ96hxdptu3
-	d8rBzZwA1+ThC2sQaSMie0GiO6oGhTZkvMDCV04pDE/t+I7QhQL/vTrQboAcAJgDvIn+apZ6SR2
-	lIATC58Sh4neQnRarYupONoP8TAO3IleWX3Y2XSk8xau9tWisclwN4dey+gBEhF5ty90Kv/9KZe
-	H7ecC6p6Mm+k7I7JvseDC36Ujle8sxLewgq+cVw6c0Wl775BO1nP+Cm+6P5dZSI23MZNYqmFQMj
-	nIDltn0UAk7fb
-X-Google-Smtp-Source: AGHT+IGKT0RgUTn9YYs1F89WnC3a/jmyDkGPckfY2oxUk+gEldlRw4qKJY41tJacKy7ZUvj8P6mzKw==
-X-Received: by 2002:a05:6e02:178d:b0:3e3:fd04:5768 with SMTP id e9e14a558f8ab-3e40d65443cmr5688725ab.5.1753995755256;
-        Thu, 31 Jul 2025 14:02:35 -0700 (PDT)
-Received: from [127.0.0.1] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55df201bsm752208173.109.2025.07.31.14.02.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 14:02:34 -0700 (PDT)
-From: Jens Axboe <axboe@kernel.dk>
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250731044953.1852690-1-linux@roeck-us.net>
-References: <20250731044953.1852690-1-linux@roeck-us.net>
-Subject: Re: [PATCH] block: Fix default IO priority if there is no IO
- context
-Message-Id: <175399575406.610680.10505836643407350567.b4-ty@kernel.dk>
-Date: Thu, 31 Jul 2025 15:02:34 -0600
+	s=arc-20240116; t=1753995765; c=relaxed/simple;
+	bh=fbQDmYKLPvl6sslhUGqA6kC7+83TEDi0PeX9KJSShBo=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=l5vHdvhQwWi8+O+vmgc5sRFFGGvJ3Big0E6gerYo9/+khXFv2YQGFV40hV81tjHttWwIP8tA+TJSpGw3F3jPpP25xjRZNetgcVniO+KIfBlTdPWTb0dxIvv0KCK60FvYTZvBcRwGjX3NiNEyMj1XjuVYdZLA9cgUn/qreghGFas=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hUXZMFZx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id 48FAFC4CEEF;
+	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753995765;
+	bh=fbQDmYKLPvl6sslhUGqA6kC7+83TEDi0PeX9KJSShBo=;
+	h=From:Subject:Date:To:Cc:Reply-To:From;
+	b=hUXZMFZxmUYQ0jXdtzTcGD7qXvaAiDSsj9jU17FfR47d4RTOlFjInEn0884D3JLLe
+	 8AiXZbjVJ4GC8YjTSU48GudCD8gaZCivJuQwpdZpSCMec0cl92G+b1LDw7EacGJahU
+	 KY1ou7g/k7xlUgUwAkG9inDxqYGCaR6wnPowDfgbzekAPcD71k5bC1+H9mNCkBoMyv
+	 Cn8YHAVTWyj4j3V4oYfKUfH+Nb/Xk6NsqK5Z5Pt7SMjKDg0W/G/qBN8Q5HCWSpTesX
+	 8JEBRICmp0XSuIuGzxs++mFjJY5nrOlIuWu6SPi9r2Z0UttHuIAGMSLx8BGWqrm0ob
+	 hen6gR0iLAlrQ==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id 35A5AC83F17;
+	Thu, 31 Jul 2025 21:02:45 +0000 (UTC)
+From: David Heidelberg via B4 Relay <devnull+david.ixit.cz@kernel.org>
+Subject: [PATCH 0/2] sdm845: Use definitions and deduplicate
+Date: Thu, 31 Jul 2025 23:02:42 +0200
+Message-Id: <20250731-sdm845-msmid-v1-0-98489ece786e@ixit.cz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,32 +54,62 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.14.3-dev-2ce6c
+X-B4-Tracking: v=1; b=H4sIAPLZi2gC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDI1MDc2ND3eKUXAsTU93c4tzMFF2TJAMLC3NDcyOLlGQloJaCotS0zAqwcdG
+ xtbUACLOyUl4AAAA=
+X-Change-ID: 20250731-sdm845-msmid-4b08871728dc
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, David Heidelberg <david@ixit.cz>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1000; i=david@ixit.cz;
+ h=from:subject:message-id;
+ bh=fbQDmYKLPvl6sslhUGqA6kC7+83TEDi0PeX9KJSShBo=;
+ b=owEBbQKS/ZANAwAIAWACP8TTSSByAcsmYgBoi9nzXl11gx7oYPrvGzQcQ8kKVM8PnZr6gJMqA
+ VEl1iLFoHqJAjMEAAEIAB0WIQTXegnP7twrvVOnBHRgAj/E00kgcgUCaIvZ8wAKCRBgAj/E00kg
+ cibED/9Ib1BhZ+rTZS8HWHGqGuYx1V/SGkJpv71VUqIg5vFMEtSZ9D0YxucCiDP6lm39V4JT7QL
+ LfqA0lcuMM2RnPKPue3w1waTDYY/oiAPLOxyJ5+djGKr5ncD8LUEaEmm2yJ/1iWNvD7Ut1eQaSA
+ X7s5ub+Qe9lQEjkXSNgcurS7skPNiNzvPUBOJwiwwm4dXrpQ5cOJO8stI11X7JvGbtRu3wmS6Em
+ V6gkDj1XO54Tfz4Mwjb2nJzMnfnrj+LZt/2SD9BwG2c4tmiNOBoKuKOnLJJmVKfeOyU6jVPCsfY
+ DTJxDl7rJegKRXuwrc39Uu9dnF0Rxs1tkZCVrWzw4prVRH6D4n+w3TlXkheBDkVoxzyuhg5azjt
+ vAOPjs0Mk/7xqW7Sv+58gdy8Z5hpD1ncH0R0MMdmACRvNNmXV7w/7c1sjLzFM1pz1K9b+BV0K0O
+ bFpsiRRfWuRdXRI70sYvIDjzaKH76mmvr9Bj3MIT29GcwM8AgS46PlA8a2eKw4hBtlMOHrp7kle
+ TeRguR+g8zxM05OUWcA/ypYI/fodCUkkiaRmDFmuHz/J/6HOn2gCmpekxFNdYZxpGpeCubMAh1x
+ +pMcXKxWi04pfzQo7e/J6wBplGCEjfF1XKRbbsycZe8jfM4+M8l4P17jSuA+T3fjXm2jxCzNG16
+ wdT/L9/bXtoR59A==
+X-Developer-Key: i=david@ixit.cz; a=openpgp;
+ fpr=D77A09CFEEDC2BBD53A7047460023FC4D3492072
+X-Endpoint-Received: by B4 Relay for david@ixit.cz/default with auth_id=355
+X-Original-From: David Heidelberg <david@ixit.cz>
+Reply-To: david@ixit.cz
 
+Small cleanup.
 
-On Wed, 30 Jul 2025 21:49:53 -0700, Guenter Roeck wrote:
-> Upstream commit 53889bcaf536 ("block: make __get_task_ioprio() easier to
-> read") changes the IO priority returned to the caller if no IO context
-> is defined for the task. Prior to this commit, the returned IO priority
-> was determined by task_nice_ioclass() and task_nice_ioprio(). Now it is
-> always IOPRIO_DEFAULT, which translates to IOPRIO_CLASS_NONE with priority
-> 0. However, task_nice_ioclass() returns IOPRIO_CLASS_IDLE, IOPRIO_CLASS_RT,
-> or IOPRIO_CLASS_BE depending on the task scheduling policy, and
-> task_nice_ioprio() returns a value determined by task_nice(). This causes
-> regressions in test code checking the IO priority and class of IO
-> operations on tasks with no IO context.
-> 
-> [...]
+Signed-off-by: David Heidelberg <david@ixit.cz>
+---
+David Heidelberg (2):
+      arm64: dts: qcom: sdm845*: Use definition for msm-id
+      arm64: dts: qcom: sdm845-oneplus: Deduplicate shared entries
 
-Applied, thanks!
-
-[1/1] block: Fix default IO priority if there is no IO context
-      commit: e2ba58ccc9099514380c3300cbc0750b5055fc1c
+ arch/arm64/boot/dts/qcom/sdm845-db845c.dts                   | 2 +-
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-common.dtsi          | 3 +++
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-enchilada.dts        | 2 --
+ arch/arm64/boot/dts/qcom/sdm845-oneplus-fajita.dts           | 2 --
+ arch/arm64/boot/dts/qcom/sdm845-shift-axolotl.dts            | 2 +-
+ arch/arm64/boot/dts/qcom/sdm845-sony-xperia-tama.dtsi        | 2 +-
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-beryllium-common.dtsi | 2 +-
+ arch/arm64/boot/dts/qcom/sdm845-xiaomi-polaris.dts           | 2 +-
+ 8 files changed, 8 insertions(+), 9 deletions(-)
+---
+base-commit: 84b92a499e7eca54ba1df6f6c6e01766025943f1
+change-id: 20250731-sdm845-msmid-4b08871728dc
 
 Best regards,
 -- 
-Jens Axboe
-
+David Heidelberg <david@ixit.cz>
 
 
 
