@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-752494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E3BCB17640
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:53:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B42AB17645
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 20:53:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDBA77B809E
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:51:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65EF054713C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FA324A055;
-	Thu, 31 Jul 2025 18:53:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rEEFQxqK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 251632512C3;
+	Thu, 31 Jul 2025 18:53:51 +0000 (UTC)
+Received: from bmailout1.hostsharing.net (bmailout1.hostsharing.net [83.223.95.100])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1BBA195B1A;
-	Thu, 31 Jul 2025 18:53:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63AA3154425;
+	Thu, 31 Jul 2025 18:53:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.223.95.100
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753987982; cv=none; b=DOdsm0HhkfLfGayloMk/sNruVvKwdnkuDnG54HkMuolWb4peY0Z5e4HHhlZDX7kslu0dug6MiqrvWGqcD93kYhVuUu8DTc8QVOr6Gva2UqRDd8AM+Mo+cYLmDwKmOTW3JJNSyxGk5cfR/k6/nQl6tJJGOQT6rDGt2cFxcjhZvtE=
+	t=1753988030; cv=none; b=GZMmyaxZHUqnq5FE5BrvHR6oe9UDxb0qT6P2iSZSd4Eauq0tSeF29Z2q+hsCXnQmBXQiuGiJYzRw6o0wv41XLrkfpeiv45QCp/f9qj6mddkNjSLymlFvrvDNWagnMMSgUUXpAbzTyPlmEBYAKnluuwj7iwREC5sv8SrBnbpS6OQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753987982; c=relaxed/simple;
-	bh=3bGvNdloMZXweX7qeoxxVDPdsQDj9y0BrPcnclvVAG8=;
-	h=Mime-Version:Content-Type:Date:Message-Id:To:Cc:Subject:From:
-	 References:In-Reply-To; b=JiFXqudHcAO4S1q9iNzBDkjQdw3E42GSPd+z1Ccn3Vs1SEhCMHj++oR8mvft3euilTkXDlU/OT+30GKqh+iGOACPug/H6bzuWlE9BUdbSVSnYwr9pYac5EJh16mBuaBBdD1vW+tu6L1hsIUgvNmNsUWz/oI81hBD7PH2XOs8O4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rEEFQxqK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4264FC4CEEF;
-	Thu, 31 Jul 2025 18:52:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753987981;
-	bh=3bGvNdloMZXweX7qeoxxVDPdsQDj9y0BrPcnclvVAG8=;
-	h=Date:To:Cc:Subject:From:References:In-Reply-To:From;
-	b=rEEFQxqKqRzdgYivXTv1QYmxttZCKOy1jGMwGuUDO26sEzKLbtNFgryw1Z1Jhdw3d
-	 eWjryuvfVnbT6yYNRTmivW15o3bCAvWDsFzfkuG1YQSqZMpVSSXt0x5VGWvB3JJWcK
-	 +rJ2bn8FY2rwfi+BZhPGy1fb8J4xHkPaVybd1zxTpPTMUAO1N33NYcIvD+15duhSwU
-	 PJcL1f6hYv+IBbzH6CcddNf6qbvL5wNtt+KErvnK+iSyKkR72YuWvJncz40BdhVEZR
-	 sMCv861a3w7n7IGyNucIQPhS0zgIbJWJIYazMFRObjTHzHQZA4gjHxbwqZVZpn2p3L
-	 Ga7F3YGkizNgw==
+	s=arc-20240116; t=1753988030; c=relaxed/simple;
+	bh=N+VGUE9lLwGyq8mJrk7de6+X+V8j2YutT7HVuPVvDgY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BRJeEWKl1+RBbQ3CePJq3cwYxN0eLN8wtxK1/vUVd4qox4NWc45sKfxy9yZ9ByzOmMMHuoEvYHC6eqPNARFoorBqkuOYhkvTPK9+SIrFiZxzwohpjLFKvOgem6x6Up97EP0iLESGH0pC2q9UanaUINrUE9vQfbTQQP6X3NfUlFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de; spf=none smtp.mailfrom=h08.hostsharing.net; arc=none smtp.client-ip=83.223.95.100
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=wunner.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=h08.hostsharing.net
+Received: from h08.hostsharing.net (h08.hostsharing.net [83.223.95.28])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256
+	 client-signature RSA-PSS (4096 bits) client-digest SHA256)
+	(Client CN "*.hostsharing.net", Issuer "RapidSSL TLS RSA CA G1" (verified OK))
+	by bmailout1.hostsharing.net (Postfix) with ESMTPS id 666E62C0667B;
+	Thu, 31 Jul 2025 20:53:44 +0200 (CEST)
+Received: by h08.hostsharing.net (Postfix, from userid 100393)
+	id 49DD01AF24; Thu, 31 Jul 2025 20:53:44 +0200 (CEST)
+Date: Thu, 31 Jul 2025 20:53:44 +0200
+From: Lukas Wunner <lukas@wunner.de>
+To: Gerd Bayer <gbayer@linux.ibm.com>
+Cc: 18255117159@163.com, bhelgaas@google.com, helgaas@kernel.org,
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com,
+	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com,
+	kwilczynski@kernel.org, linux-kernel@vger.kernel.org,
+	linux-s390@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-pci@vger.kernel.org, lpieralisi@kernel.org, mani@kernel.org,
+	robh@kernel.org, schnelle@linux.ibm.com
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+Message-ID: <aIu7uO4NOanxMfAO@wunner.de>
+References: <4e10bea3aa91ee721bb40e9388e8f72f930908fe.camel@linux.ibm.com>
+ <20250731173858.1173442-1-gbayer@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Thu, 31 Jul 2025 20:52:56 +0200
-Message-Id: <DBQGUGG933BD.3VRM2CTO2WL3Z@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Peter Zijlstra"
- <peterz@infradead.org>, "Ingo Molnar" <mingo@redhat.com>, "Will Deacon"
- <will@kernel.org>, "Boqun Feng" <boqun.feng@gmail.com>, "Waiman Long"
- <longman@redhat.com>, "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor"
- <alex.gaynor@gmail.com>, "Gary Guo" <gary@garyguo.net>,
- =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
- Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
- "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>
-Subject: Re: [PATCH 3/3] rust: lock: add a Pin<&mut T> accessor
-From: "Benno Lossin" <lossin@kernel.org>
-X-Mailer: aerc 0.20.1
-References: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com> <20250730-lock-t-when-t-is-pinned-v1-3-1b97d5f28aa2@collabora.com>
-In-Reply-To: <20250730-lock-t-when-t-is-pinned-v1-3-1b97d5f28aa2@collabora.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731173858.1173442-1-gbayer@linux.ibm.com>
 
-On Wed Jul 30, 2025 at 7:14 PM CEST, Daniel Almeida wrote:
-> In order for callers to be able to access the inner T safely if T: !Unpin=
-,
-> there needs to be a way to get a Pin<&mut T>. Add this accessor and a
-> corresponding example to tell users how it works.
->
-> This is not useful on its own for now, because we do not support pin
-> projections yet. This means that the following is not going to compile:
->
->     let mut data: MutexGuard<'_, Data> =3D mutex.lock();
->     let mut data: Pin<&mut Data> =3D data.as_mut();
->     let foo =3D &mut data.foo;
->
-> A future patch can enable the behavior above by implementing support for
-> pin projections.
-
-I am currently working on a patch that adds pin projections to
-`#[pin_data]`. It will most likely land in v6.18.
-
-> Link: https://github.com/Rust-for-Linux/linux/issues/1181
-> Suggested-by: Benno Lossin <lossin@kernel.org>
-> Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+On Thu, Jul 31, 2025 at 07:38:58PM +0200, Gerd Bayer wrote:
+> Simple pointer-casts to map byte and word reads from PCI config space
+> into dwords (i.e. u32) produce unintended results on big-endian systems.
+> Add the necessary adjustments under compile-time switch
+> CONFIG_CPU_BIG_ENDIAN.
+> 
+> pci_bus_read_config() was just introduced with
+> https://lore.kernel.org/all/20250716161203.83823-2-18255117159@163.com/
+> 
+> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
 > ---
->  rust/kernel/sync/lock.rs | 19 +++++++++++++++++++
->  1 file changed, 19 insertions(+)
->
-> diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
-> index 087bc0391f92a73b9af18ca31461b513bb5a9bcd..27857659a7f1ba4a8b844bb18=
-d009d037e0c5b03 100644
-> --- a/rust/kernel/sync/lock.rs
-> +++ b/rust/kernel/sync/lock.rs
-> @@ -243,6 +243,25 @@ pub(crate) fn do_unlocked<U>(&mut self, cb: impl FnO=
-nce() -> U) -> U {
-> =20
->          cb()
->      }
-> +
-> +    /// Returns a pinned mutable reference to the protected data.
-> +    ///
+> Sorry to spill this endianness aware code into drivers/pci, feel free to
+> suggest a cleaner approach. This has fixed the issues seen on s390 systems
 
-I would mention that the guard implements `DerefMut` when `T: Unpin`, so
-in that case it is probably easier to use that instead of calling this
-function.
+PCI is little-endian.  On big-endian systems, the endianness conversion
+of Config Space accesses happens transparently in the struct pci_ops
+->read() and ->write() callbacks.  E.g. on s390, zpci_cfg_load() and
+zpci_cfg_store() call le64_to_cpu() and cpu_to_le64(), respectively.
 
-> +    /// # Examples
-> +    ///
-> +    /// ```
-> +    ///     # use kernel::sync::{Mutex, MutexGuard};
-> +    ///     # use core::pin::Pin;
-> +    ///     struct Data;
-> +    ///
-> +    ///     fn example(mutex: &Mutex<Data>) {
-> +    ///         let mut data: MutexGuard<'_, Data> =3D mutex.lock();
-> +    ///         let mut data: Pin<&mut Data> =3D data.as_mut();
-> +    ///     }
+We do not want to mess with endianness in the PCI core, so this isn't
+a proper fix IMO.
 
-No need to indent the code in the example.
+A viable approach might be to turn pci_bus_read_config() into a macro
+in include/linux/pci.h which calls the byte/word/dword variant based
+on sizeof(*val) or something like that.
 
----
-Cheers,
-Benno
+But at this point, with the merge window already open, it's probably
+better to drop the pci/capability-search topic branch from the pull
+request and retry in the next cycle.
 
-> +    /// ```
-> +    pub fn as_mut(&mut self) -> Pin<&mut T> {
-> +        // SAFETY: `self.lock.data` is structurally pinned.
-> +        unsafe { Pin::new_unchecked(&mut *self.lock.data.get()) }
-> +    }
->  }
-> =20
->  impl<T: ?Sized, B: Backend> core::ops::Deref for Guard<'_, T, B> {
+> Since this is still sitting in the a pull-request for upstream,
+> I'm not sure if this warrants a Fixes: tag.
 
+In cases like this, do include a Fixes tag but no stable designation.
+
+Thanks,
+
+Lukas
 
