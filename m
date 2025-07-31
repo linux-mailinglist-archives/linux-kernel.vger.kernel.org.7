@@ -1,201 +1,100 @@
-Return-Path: <linux-kernel+bounces-752002-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752004-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B85B1B17031
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:12:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 392F3B17035
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:13:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA5BD581772
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:12:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5FEBA582E39
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF5BA2BE7B5;
-	Thu, 31 Jul 2025 11:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91B312BE7C3;
+	Thu, 31 Jul 2025 11:13:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="THaiFsDq"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Pjqji8MA"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700CE2BE638;
-	Thu, 31 Jul 2025 11:12:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88B5C2BE7AA
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 11:13:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753960362; cv=none; b=M6zAHiZKUkQfZZ9yRBcwwg6pMMo/iPW2cQy+wLDMLZeShmpE9eB45vgTg2wrLWdEqou3vqP9sYVH29V8EgtF8BTvFFRzNUA08pBQNcbsY8PoLUYzhysPIbCkYDlChMF8d3ndEC3JLi5msRdBKGlaU//uWBEpkThzWrWItk+HXEg=
+	t=1753960408; cv=none; b=Klsl8XaXhN6Ia968rtyNDZgshVXxnJrgdNyZ+Ujfg3O8n7B3/OgTrQrwkjI3hgUlgXjb2Co7LZJJcwjxiacTRgE84DkJneyI9YUv3UXEydjspKh861RIaGC47fEp3fw5A8F1LjRg7A65HXkTZXd+EkN+UpHdoXlaA2NAcDj1/rE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753960362; c=relaxed/simple;
-	bh=VdHDVkzkyvAlURKaNUeBWQWHCvk7GbPXWJGCxEX6Jzc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=sSFG3quqIFiMMGZIkiyCVQ5vM3ByS6nPTPojx0omHI1L9EFCxgCzU86u29OGKExJfn16fSI7adSOeyxYeAoJPEk3tO6XEJ1/Qd5+/MerGGiRJZgfnVc5CdlTSwj8HRkLNjkDLxvzeaDUh6bqStsnBKI/PuNXplGG4a7hOvoLtjE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=THaiFsDq; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76b36e6b9ddso623699b3a.1;
-        Thu, 31 Jul 2025 04:12:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753960360; x=1754565160; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=4IwWy97OvGZq36Ea/vv8rtgmVuJu0EXO1lQWwmwlguo=;
-        b=THaiFsDqqOfs40mr5nZH+YUaOvCb5QYTVbrJsBJhu+ye/tul11Jzhu31Sm+NFdWyAp
-         Cbq0l6K4u/MvZiVgUFWybm/skkn3u/Ea4Nfdl69dS0vzgQ5akrdUxFrjO3J0+ceUE7xr
-         LZzbMGdl0z5j4gjolkzlrWvktcvsOowll+br/6LzJp2iUQ7wrTSVVbt5Rm42v0QVbbOh
-         qyv3v2AIUMaqcaqnHF4Z1eXISH1OhIMNJiaXpRIGGqQMa6Q3xI4h7Xs28VZnT4VSzezh
-         3g/WBFHGTj93f7inOO8KSVl2O6MpfM1sGIAsq+cEeIQ6ESuPa2SowliJ1heHxtuGTf1k
-         bHOg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753960360; x=1754565160;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4IwWy97OvGZq36Ea/vv8rtgmVuJu0EXO1lQWwmwlguo=;
-        b=cWlXRqj2KJCmiziT+6p1h9jaNVIoXueqlBw0lCiS629fvmLourer0GqH3Eo028z9wg
-         r/pN8+LgvCBne3MJ57wKJrjVt0QD9ngx+bt49+nCAoHi5REE6aT8wWasgHGuxG/uB8k5
-         hBSdeaG+kVMRALNAYobFqGZulqVe2oHsHG8mOICPqBiThAMkigJ0mgS92nINkZG3e2BK
-         NeoJ+zmI+gCAJ3S43seaHescdKnsygC5DDERruHSlqjb6Jdu+wG9wJBMG0eIMiLJbj9P
-         kDlENxkhEZ6YI53h77vQGWK78Fu+YD1k+M+iZVObtfg/F2GvLMc9VUr09U+fmJRqi/Q6
-         O3Fw==
-X-Forwarded-Encrypted: i=1; AJvYcCVlGEod4/xnVCmK7qFZ6AvCfyJdTs1JKFr/C0Qd32zwwvnf6/oPv0mn9uU5BdvTe3G6RmVzvMeDk4bntBQ=@vger.kernel.org, AJvYcCXu7MgwtRHyXiOSPuvFdKLNOXHtK85Q01gbEk2f/jXwj5Aw/g/QfXPxbwa9J7zHdEewPG+iNeYSlFCjEaeTksE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy26VIJI172dTqttI1KEEMsfVepbEGZS5H0HXgI/ByYeCC+yjNo
-	lTRxSsDPDWj8y5KzLxa+N0fN/ivnqiQGIQ/VzvYptOzrE8GQi75kKQQD
-X-Gm-Gg: ASbGncvJeaW5zB5/vCrfu/s7yCOOzOqYJnk/5Bs1e2+lpD7rBLznxIYUiZQnNVWuwsV
-	6gqrGDj+SclBpftxmEgA2iSluP3fwy7qA5kvS0ukqJuXoGjyz7iiP9jfi7zjjrTpX3s5SIU6yUL
-	hWKwxKtPL3nzZHfeG/zh1pE7EiL2qFnJh0ZmD+H4nTEW20d7sOYrBSBVPojWuY3L0T9fQ5ME/jL
-	jlmw+iamiHg+ORdk0W3t2m6M5h/pgKYtGFqt6pUuchz8GJsX6KBeFx2oHM/IMF5k25OpeN9fXpR
-	D9VgQFlbgj3XKmFQ1PFtATOXa3cVHEoe22B3D3mPRGbvRb8wS+fuI54siapjFWKgO3Hw2FbJge/
-	UVWcjqXxAJa5t6B3BiZ9jbxZ5sXkiakyv+uE=
-X-Google-Smtp-Source: AGHT+IHpa5118bbeNQZJpwNTbeJvJk7dBt/E3hcVWLfRp4iNi1DcMHaGI9lQ6q+fMkIiF3e3eua8FA==
-X-Received: by 2002:a05:6a20:939f:b0:233:b51a:8597 with SMTP id adf61e73a8af0-23dc0ea7837mr11587999637.35.1753960359597;
-        Thu, 31 Jul 2025 04:12:39 -0700 (PDT)
-Received: from fedora ([2405:201:5501:4085:eece:e0ff:6b68:de2e])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8b5basm1327250b3a.41.2025.07.31.04.12.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 04:12:38 -0700 (PDT)
-From: Ritvik Gupta <ritvikfoss@gmail.com>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>
-Cc: skhan@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	rust-for-linux@vger.kernel.org
-Subject: [PATCH v3] rust: kernel: introduce `unsafe_precondition_assert!` macro
-Date: Thu, 31 Jul 2025 16:42:28 +0530
-Message-ID: <20250731111234.28602-1-ritvikfoss@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753960408; c=relaxed/simple;
+	bh=kx4tatmOXZadoNA7n/vqbsqBPVytJHHMhMmrz9Tv+tU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fO9jvz2lKBzTy6Z1uWICghQDRRqIYhxbfUfKqlRXT2e0N1TvDh+G81PuNW35kjj8v6OBi/keqpsZDwDSNjGkM4Zp8eGmgbEb+AcE8el93wR+dHcG/BioObrA8+rsLvlVeBXGL0NGUGj0iZGmT57t7W+TJA8zKn3NHDFB+s3PZuo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Pjqji8MA; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1753960407; x=1785496407;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=kx4tatmOXZadoNA7n/vqbsqBPVytJHHMhMmrz9Tv+tU=;
+  b=Pjqji8MATPcaUUwKXYu91tW3ncsZCCsxo5JQR49KqtwzjifzcpnBAxCV
+   hxTCFTKpUY1yc2tdl3M2XLeZqUKl+f3u6Kf81Zf/Br229//HadRCMFl0P
+   hSOgoWoBb94p0vsCfPxnG1RiyBGZ+64Rc/aH87xd2GKXUVaixuT914atf
+   4UCGmdGXXuX8kv2mzpwtPo2wLC2aJ+bUDR/emhqGST6KjE/S7ROGngo36
+   nDNxEfEqTNRjD0SzFHl58vSm/BS4UOIt6YYfkfhi/panUK8rg499OJ+ZT
+   WRao27DXp+QMCHJG0vCHPo8xO9wUkdXlvztgH8ARHjjy+zKOROOJcPNyV
+   w==;
+X-CSE-ConnectionGUID: mGFrAk6ZTv6YHH35hgyUyg==
+X-CSE-MsgGUID: 9xusVRfGRcKEVCJ1rC+x7Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56425340"
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="56425340"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 04:13:26 -0700
+X-CSE-ConnectionGUID: 0Lmg/DriSiGnbha1pNI4xg==
+X-CSE-MsgGUID: oKmtCER1TD+4HGUEAPm9oA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
+   d="scan'208";a="163682561"
+Received: from igk-lkp-server01.igk.intel.com (HELO b3b7d4258b7c) ([10.91.175.65])
+  by fmviesa008.fm.intel.com with ESMTP; 31 Jul 2025 04:13:24 -0700
+Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhRDu-00011H-0d;
+	Thu, 31 Jul 2025 11:13:22 +0000
+Date: Thu, 31 Jul 2025 13:12:44 +0200
+From: kernel test robot <lkp@intel.com>
+To: David Woodhouse <dwmw@amazon.co.uk>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Ingo Molnar <mingo@kernel.org>
+Subject: vmlinux.o: warning: objtool: set_ftrace_ops_ro+0x13e: relocation to
+ !ENDBR: machine_kexec_prepare+0x4a4
+Message-ID: <202507311329.eIZjdKU0-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Introduce a new `safety` module containing `unsafe_precondition_assert!`
-macro. It is a wrapper around `debug_assert!`, intended for validating
-pre-conditions of unsafe function.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   260f6f4fda93c8485c8037865c941b42b9cba5d2
+commit: 6a750b4c009936f352aaac0366f5f10fcf51e81b x86/kexec: Copy control page into place in machine_kexec_prepare()
+date:   8 months ago
+config: x86_64-buildonly-randconfig-2004-20250731 (https://download.01.org/0day-ci/archive/20250731/202507311329.eIZjdKU0-lkp@intel.com/config)
+compiler: clang version 20.1.8 (https://github.com/llvm/llvm-project 87f0227cb60147a26a1eeb4fb06e3b505e9c7261)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507311329.eIZjdKU0-lkp@intel.com/reproduce)
 
-When `CONFIG_RUST_DEBUG_ASSERTIONS` flag is enabled, this macro performs
-runtime checks to ensure that the preconditions for unsafe function hold.
-Otherwise, the macro is a no-op.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202507311329.eIZjdKU0-lkp@intel.com/
 
-Suggested-by: Miguel Ojeda <ojeda@kernel.org>
-Link: https://github.com/Rust-for-Linux/linux/issues/1162
-Link: https://rust-for-linux.zulipchat.com/#narrow/channel/291566-Library/topic/.60unsafe_precondition_assert.60.20macro/with/528457452
-Signed-off-by: Ritvik Gupta <ritvikfoss@gmail.com>
----
+All warnings (new ones prefixed by >>):
 
-Changes in v3:
- - Change doc example
- - Link to v2: https://lore.kernel.org/all/20250730181420.6979b4f1@eugeo/T/#m9cd35a8fc02a18bd03934c7ecdcffe8667b5fbbd
+>> vmlinux.o: warning: objtool: set_ftrace_ops_ro+0x13e: relocation to !ENDBR: machine_kexec_prepare+0x4a4
 
-Changes in v2:
- - Wrap `debug_assert!` internally instead of using `pr_err!` with `assert!` + `cfg!(debug_assertions)
- - Print “unsafe precondition(s) violated” only on assertion failure (no longer always printed)
- - Use `# Safety` section instead of comment in the example
- - Rename module-level doc
- - Link to v1: https://lore.kernel.org/rust-for-linux/20250716045957.39732-1-ritvikfoss@gmail.com/
-
----
- rust/kernel/lib.rs    |  1 +
- rust/kernel/safety.rs | 47 +++++++++++++++++++++++++++++++++++++++++++
- 2 files changed, 48 insertions(+)
- create mode 100644 rust/kernel/safety.rs
-
-diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-index 11a6461e98da..7aab607dd879 100644
---- a/rust/kernel/lib.rs
-+++ b/rust/kernel/lib.rs
-@@ -104,6 +104,7 @@
- pub mod print;
- pub mod rbtree;
- pub mod revocable;
-+pub mod safety;
- pub mod security;
- pub mod seq_file;
- pub mod sizes;
-diff --git a/rust/kernel/safety.rs b/rust/kernel/safety.rs
-new file mode 100644
-index 000000000000..f591eed6da77
---- /dev/null
-+++ b/rust/kernel/safety.rs
-@@ -0,0 +1,47 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+//! Safety related APIs.
-+
-+/// Checks that preconditions of an unsafe function are followed.
-+///
-+/// The check is enabled at runtime if debug assertions (`CONFIG_RUST_DEBUG_ASSERTIONS`)
-+/// are enabled. Otherwise, this macro is no-op.
-+///
-+/// # Examples
-+///
-+/// ```
-+/// /// # Safety
-+/// ///
-+/// /// - `buf` must be non-null.
-+/// /// - `buf` must be 16-byte aligned.
-+/// /// - `len` must be multiple of [`PAGE_SIZE`].
-+/// unsafe fn foo(buf: *const u8, len: usize) {
-+///     unsafe_precondition_assert!(!buf.is_null(), "buf must not be null");
-+///     unsafe_precondition_assert!((buf as usize) % 16 == 0, "buf must be 16-byte aligned");
-+///     unsafe_precondition_assert!(
-+///         len % PAGE_SIZE == 0,
-+///         "len ({}) must be multiple of PAGE_SIZE ({})",
-+///         len,
-+///         PAGE_SIZE
-+///     );
-+///     // ...
-+/// }
-+/// ```
-+///
-+/// # Panics
-+///
-+/// Panics if the expression is evaluated to `false` at runtime.
-+///
-+#[macro_export]
-+macro_rules! unsafe_precondition_assert {
-+    ($cond:expr $(,)?) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, ::core::stringify!($cond))
-+    };
-+
-+    ($cond:expr, $($arg:tt)+) => {
-+        $crate::unsafe_precondition_assert!(@inner $cond, ::core::format_args!($($arg)+))
-+    };
-+
-+    (@inner $cond:expr, $msg:expr) => {
-+        ::core::debug_assert!($cond, "unsafe precondition(s) violated: {}", $msg) };
-+}
-
-base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
 -- 
-2.50.1
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
