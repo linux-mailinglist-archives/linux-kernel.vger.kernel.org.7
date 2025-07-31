@@ -1,164 +1,122 @@
-Return-Path: <linux-kernel+bounces-752085-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752089-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72AD0B1711C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:25:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5881B17120
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 14:26:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F323172771
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:25:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B26F01C224F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 12:26:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF472D028F;
-	Thu, 31 Jul 2025 12:23:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="da0AN4f0"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C02B2C15AB;
-	Thu, 31 Jul 2025 12:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D7412C158D;
+	Thu, 31 Jul 2025 12:24:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F32822D1301
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:24:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753964639; cv=none; b=jQE4R0LBog9zHZ8pehsn1Sz1MjPx4MlCQ0CdTcbmqOJBL2BqFFkxJeU2KXwT5NtKg6w9C5vyaKJStbQq7rpKR/isLPa/PGrsPWXmqWu/jMInPXQJgx1fZ1BwiUgTvbkoJeVlXdrsAB/BYa7y8iVpBf2qTTXQieaw0HU9wTpVWl0=
+	t=1753964645; cv=none; b=Su4dLxKkOg5dXQPp1mIzH2qkfTNb+Ke6akAQuvc22p0+TNLk7JAGiJIRVdxvWQlUo0Rh7UAaleA0z+QYpyhvq2BlXjZKe5ADEOuwoNJCWQdkXOtkQLq1JkC0tG1C9ImEBtb909wLJ3CnIzlERSXrCEtb4+Mm2vn7lIdv7dwBdGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753964639; c=relaxed/simple;
-	bh=W2rzemPNZ5LHIh3axfvSwTD/JyOmPeLqDRY4zT2WFX8=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=HjOB1AnDdAGIFhtxApOtx3AJKJ9B2W9ewm5DuhQHCzwI1A0GSE6+0qYD6Rx9I3JdJejx5sF5SpsPBv9MgzT1S/PPRTDRNgoacCFhiseeNQ0+r9/Fd1QzBRb3ixAyW0w716leuJ3RCkOZa6ce91wnfnTYaUhnIMz3pCFSVHt/uYg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=da0AN4f0; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=A2cnIcYq8PYCOz0CiDn3JmBVvPWO3oydQ8f10T5DUIQ=; b=da0AN4f0+vcYbAOfpRx3yohuhn
-	Jo+LGA6RRiI522vbFqa1y+1KBpCOF+7JPKUcc7enPLsvidQtVFiVOTADl65uwbkV5baheAGASz54y
-	UPTDJ7ZuSK+09OrnbQ9ZD9srXYZsvq7s/iB27KXeX6Lgi6PxLit2pZwHuFwLRLxKNvOcNCTRt54ai
-	lNlCrWIzmSwFPFUNLF6afDLnqzsutdjtS3Riwl25+wTsskqg/4gPjh5b9dnxrMfNQkPk7C2PaITwj
-	jHtIYa9f3JGZJnxX/V8geV1IP28Z+Z6MSlKvAz9IKMEKv1g44K5CtmLIbtbR/3NTY1z+OmUUu/f8C
-	mHXV0l+g==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uhSK3-006d90-Gv; Thu, 31 Jul 2025 14:23:47 +0200
-From: Luis Henriques <luis@igalia.com>
-To: Christian Brauner <brauner@kernel.org>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,  Miklos Szeredi
- <miklos@szeredi.hu>,  Bernd Schubert <bschubert@ddn.com>,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-In-Reply-To: <20250731-diamant-kringeln-7f16e5e96173@brauner> (Christian
-	Brauner's message of "Thu, 31 Jul 2025 13:33:09 +0200")
-References: <8734afp0ct.fsf@igalia.com>
-	<20250729233854.GV2672029@frogsfrogsfrogs> <87freddbcf.fsf@igalia.com>
-	<20250731-diamant-kringeln-7f16e5e96173@brauner>
-Date: Thu, 31 Jul 2025 13:23:41 +0100
-Message-ID: <877bzo5z1u.fsf@igalia.com>
+	s=arc-20240116; t=1753964645; c=relaxed/simple;
+	bh=38H7dCopCsqbVOeBAjaWZpO84P++J5KiCuiuzTpRiGw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=sOJLWXlkpA/WfHAlQRKsy6rU97XI3xpzhM4Zw29yzgIayeDjrjRV3npFl+AIYqHivLJJLxH036h4o2sQH4baljh3ZdjjlMuylMQj6M58Gtf3RpBhOJii0CujeG2iJNj5lHfDVPSLZDHvUu2U+q8ij8crKj6z/SpOprYKtWkb3EU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3B7B2BC3;
+	Thu, 31 Jul 2025 05:23:55 -0700 (PDT)
+Received: from e132581.arm.com (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2F80A3F673;
+	Thu, 31 Jul 2025 05:24:02 -0700 (PDT)
+From: Leo Yan <leo.yan@arm.com>
+Date: Thu, 31 Jul 2025 13:23:42 +0100
+Subject: [PATCH v6 06/10] coresight: Avoid enable programming clock
+ duplicately
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250731-arm_cs_fix_clock_v4-v6-6-1dfe10bb3f6f@arm.com>
+References: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
+In-Reply-To: <20250731-arm_cs_fix_clock_v4-v6-0-1dfe10bb3f6f@arm.com>
+To: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+ Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>, 
+ Anshuman Khandual <anshuman.khandual@arm.com>, 
+ Yeoreum Yun <yeoreum.yun@arm.com>, 
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ Mark Brown <broonie@kernel.org>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, Leo Yan <leo.yan@arm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1753964630; l=1892;
+ i=leo.yan@arm.com; s=20250604; h=from:subject:message-id;
+ bh=38H7dCopCsqbVOeBAjaWZpO84P++J5KiCuiuzTpRiGw=;
+ b=bMKPPEEZO1nT1ovOhcXzLBiq11G1K/Uwm0SL3OHms6TIHAB9LL89HzjKq/87zz9d3KashoTlR
+ obKtz820yq1B76yPLtrftKqimn52RikaTcjvmjCm+1ZHot6KQL3j0AO
+X-Developer-Key: i=leo.yan@arm.com; a=ed25519;
+ pk=k4BaDbvkCXzBFA7Nw184KHGP5thju8lKqJYIrOWxDhI=
 
-On Thu, Jul 31 2025, Christian Brauner wrote:
+The programming clock is enabled by AMBA bus driver before a dynamic
+probe. As a result, a CoreSight driver may redundantly enable the same
+clock.
 
-> On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
->> Hi Darrick,
->>=20
->> On Tue, Jul 29 2025, Darrick J. Wong wrote:
->>=20
->> > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
->> >> Hi!
->> >>=20
->> >> I know this has been discussed several times in several places, and t=
-he
->> >> recent(ish) addition of NOTIFY_RESEND is an important step towards be=
-ing
->> >> able to restart a user-space FUSE server.
->> >>=20
->> >> While looking at how to restart a server that uses the libfuse lowlev=
-el
->> >> API, I've created an RFC pull request [1] to understand whether adding
->> >> support for this operation would be something acceptable in the proje=
-ct.
->> >
->> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
->> > could restart itself.  It's unclear if doing so will actually enable us
->> > to clear the condition that caused the failure in the first place, but=
- I
->> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
->> > aren't totally crazy.
->>=20
->> Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse =
-do
->> the restart itself.  Instead, it simply adds some visibility into the
->> opaque data structures so that a FUSE server could re-initialise a sessi=
-on
->> without having to go through a full remount.
->>=20
->> But sure, there are other things that could be added to the library as
->> well.  For example, in my current experiments, the FUSE server needs sta=
-rt
->> some sort of "file descriptor server" to keep the fd alive for the
->> restart.  This daemon could be optionally provided in libfuse itself,
->> which could also be used to store all sorts of blobs needed by the file
->> system after recovery is done.
->
-> Fwiw, for most use-cases you really just want to use systemd's file
-> descriptor store to persist the /dev/fuse connection:
-> https://systemd.io/FILE_DESCRIPTOR_STORE/
+To avoid this, add a check for device type and skip enabling the
+programming clock for AMBA devices. The returned NULL pointer will be
+tolerated by the drivers.
 
-Thank you, Christian.  I guess I should have mentioned systemd's fdstore
-here.  In fact, I knew about it, but in my experiments I decided not to
-use it because it's trivial to keep the fd alive[1] (and also because my
-test environment doesn't run systemd).
+Fixes: 73d779a03a76 ("coresight: etm4x: Change etm4_platform_driver driver for MMIO devices")
+Reviewed-by: Anshuman Khandual <anshuman.khandual@arm.com>
+Reviewed-by: Yeoreum Yun <yeoreum.yun@arm.com>
+Tested-by: James Clark <james.clark@linaro.org>
+Signed-off-by: Leo Yan <leo.yan@arm.com>
+---
+ include/linux/coresight.h | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-But still, any eventual libfuse support could still include the interface
-with fdstore for that.
+diff --git a/include/linux/coresight.h b/include/linux/coresight.h
+index 1e652e157841955864a4bce00b2285efcad327aa..bb49080ec8f96bb23cab2efa23eb026646a3c4f4 100644
+--- a/include/linux/coresight.h
++++ b/include/linux/coresight.h
+@@ -481,20 +481,23 @@ static inline bool is_coresight_device(void __iomem *base)
+  * Returns:
+  *
+  * clk   - Clock is found and enabled
+- * NULL  - Clock is controlled by firmware (ACPI device only)
++ * NULL  - Clock is controlled by firmware (ACPI device only) or when managed
++ *	   by the AMBA bus driver instead
+  * ERROR - Clock is found but failed to enable
+  */
+ static inline struct clk *coresight_get_enable_apb_pclk(struct device *dev)
+ {
+-	struct clk *pclk;
++	struct clk *pclk = NULL;
+ 
+ 	/* Firmware controls clocks for an ACPI device. */
+ 	if (has_acpi_companion(dev))
+ 		return NULL;
+ 
+-	pclk = devm_clk_get_optional_enabled(dev, "apb_pclk");
+-	if (!pclk)
+-		pclk = devm_clk_get_optional_enabled(dev, "apb");
++	if (!dev_is_amba(dev)) {
++		pclk = devm_clk_get_optional_enabled(dev, "apb_pclk");
++		if (!pclk)
++			pclk = devm_clk_get_optional_enabled(dev, "apb");
++	}
+ 
+ 	return pclk;
+ }
 
-[1] Obviously "it's trivial" for my experiments.  Doing it in a secure way
-    is probably a bit more challenging.
+-- 
+2.34.1
 
-Cheers,
---=20
-Lu=C3=ADs
-
->
->>=20
->> >> The PR doesn't do anything sophisticated, it simply hacks into the op=
-aque
->> >> libfuse data structures so that a server could set some of the sessio=
-ns'
->> >> fields.
->> >>=20
->> >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
->> >> pass it to libfuse while recovering, after a restart or a crash.  The
->> >> mentioned NOTIFY_RESEND should be used so that no requests are lost, =
-of
->> >> course.  And there are probably other data structures that user-space=
- file
->> >> systems will have to keep track as well, so that everything can be
->> >> restored.  (The parameters set in the INIT phase, for example.)
->> >
->> > Yeah, I don't know how that would work in practice.  Would the kernel
->> > send back the old connection flags and whatnot via some sort of
->> > FUSE_REINIT request, and the fuse server can either decide that it will
->> > try to recover, or just bail out?
->>=20
->> That would be an option.  But my current idea would be that the server
->> would need to store those somewhere and simply assume they are still OK
->
-> The fdstore currently allows to associate a name with a file descriptor
-> in the fdstore. That name would allow you to associate the options with
-> the fuse connection. However, I would not rule it out that additional
-> metadata could be attached to file descriptors in the fdstore if that's
-> something that's needed.
 
