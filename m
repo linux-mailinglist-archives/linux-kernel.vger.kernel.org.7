@@ -1,118 +1,266 @@
-Return-Path: <linux-kernel+bounces-752387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B38F9B174ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:29:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00B34B174F2
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DD0B67ABAD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:27:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 467381C25228
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B3423B63F;
-	Thu, 31 Jul 2025 16:28:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED59E23C515;
+	Thu, 31 Jul 2025 16:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="HK+zaTKR"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Ot1mp1qY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0BFE1DD88F;
-	Thu, 31 Jul 2025 16:28:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 526D123644F;
+	Thu, 31 Jul 2025 16:29:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753979333; cv=none; b=Xu4SZhtW2dibyepR+uqNGLA5Nhfvma3e6yb8VXE74COCHBI+JSXeL472yYfN1OCR9QE1hoqkkuJrj8VXGVxluh5StJFjMGXn5lcRmHEIXSCeakrbepquIRqdZLqDEYc+U6D68RD+8yHsLHKviVN8ivCKM7PIttC9Wigg+KKOIBU=
+	t=1753979374; cv=none; b=ZDZZPKnk6fjhmHSFtJ1dE5UcmuHXr0XL/IryiEL2kW5HCK9efuSQ9EIRBPbFqUD2LxqUEM1+f2Z2XYkgkPQ26WLapgG9c4pgJg6JUF4oCjMNIvLOceuFobQcuiL95Fiqif3KEtuvpSf3H/sAfiwJwmfpgBM5z1hdEJ8B8AkEgSc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753979333; c=relaxed/simple;
-	bh=EZq1onKeGbOCYgztz4cXy6ukiKrLEvoFTODQY8N+SQ4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gTjMD+BSV2DrG5whdk2Cqhb5CoR7WNoCRVam1/jWphp8N4nIyeN8p1kzq3VQfpmByzO19GBE6fCDDuhFb4X3+kUHV21CP01nWxkAxhCiSGrYAxs+IjNkPI7Ygp1TNuYGxPK02eruuYq3RlvQkRMAme8tJ1AcFrNCQHwMkVnpS3s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=HK+zaTKR; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=YWwp4TE/YPh29hTFAA70aDsjbLV0IDUmerqb9zc6zYg=; b=HK+zaTKR3ZRMhUuu8sKrxTzaXg
-	TNwjQ0hByJDkHtLX8JJKeUhFZPssrtEo+crCkgN3Usm7kVT+e/4j24f3fMVWxf3gIj9BOw1VnrBI0
-	UYTASiUFQWgGTWPHSi+GiAPdpTGT3D1gl3tyG24sN2qoD1I68+m5PwlFlSTKtA7RxuYyWTNlCgjQZ
-	5sEcQCgmD4+fRi5G/c3JK7lCMuevi0IcTAqGKVq1mt0ZMJfJm39VlmnD6oR4stteeRkRv3iKIdwG9
-	VH8BYm0+fvuup7HzFTGzF/jD3tm8zNKiHpYQwaCpc2e00pyjwnbvNmansnI4QfRLQ7UHaHC66W/PJ
-	2J2u4mzw==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:39196)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uhW94-0005G5-2G;
-	Thu, 31 Jul 2025 17:28:42 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uhW92-0001Ar-0C;
-	Thu, 31 Jul 2025 17:28:40 +0100
-Date: Thu, 31 Jul 2025 17:28:39 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Mark Brown <broonie@kernel.org>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>,
-	Chanwoo Choi <cw00.choi@samsung.com>,
-	Alexandre Belloni <alexandre.belloni@bootlin.com>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org,
-	linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Thierry Reding <treding@nvidia.com>
-Subject: Re: [BUG] 6.16-rc7: lockdep failure with max77620-gpio/max77686-rtc
-Message-ID: <aIuZt3asLeiYncH1@shell.armlinux.org.uk>
-References: <aIpdVejR3Jkh9Z_I@shell.armlinux.org.uk>
- <97f0e27f-3128-4821-bc09-2acde1ebf81a@kernel.org>
- <aItfC4AjjH-IdBfy@shell.armlinux.org.uk>
- <68c210a2-49b2-4fd2-97ad-27af85369d9f@sirena.org.uk>
- <aItk4vWPnFk6lYjn@shell.armlinux.org.uk>
- <4f80be02-0bbe-4c10-a3d2-324916ea2ca4@sirena.org.uk>
- <aIuSdnV8sWnUqLOq@shell.armlinux.org.uk>
- <14c68c29-68d8-4119-8f70-616c07397dc4@sirena.org.uk>
+	s=arc-20240116; t=1753979374; c=relaxed/simple;
+	bh=vKL5U2DuIlQbjy/hCD5SpVP6L/eRe5/QM71h52CL5cg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=a8DW/lpXYVJkW0kocm+asV7qrfu0oHUOn5bAY0FnHJmBIbX+vAzHULH9ScA9ZaBl4eecQ4Ckq+Z3/vUjJpLZyqAkvZf3a6NuNxisyVC8wCOBb5ods65PDy2IGJcBf7A89ACA6Sx0kw1j4X9bugsjTQpU6agtR1c/fTAcYhkDW08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Ot1mp1qY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VDfBg7002656;
+	Thu, 31 Jul 2025 16:29:19 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	F7fSOC5NGRdm58lTQT+Jp6QnesT9vNuVe0m36cgxa3Y=; b=Ot1mp1qYIi9BNUbS
+	saQ6g4l55UG9JObTjjfDutmy7MIIoewf2n0so+IGYfGtROH+yMdH8nc4ycL6tcF4
+	DtdOCCpU6o5r7hStsLnoy3MGMLvslkZR2fHDSxnw5Xu9v1WU2WDbXvJn1WvtZqjs
+	mgpc2Se71WzC/WlTxc9GmHm/l2g/h775GUrvzOuVZ9CaWZaasqC878+b1CUKrtS5
+	w6eHJmibn7d3+lQ1M1wx8ZBxlE57zphU1ww3OHxeZDU0ViJKVytcnWxIzKQRRsLm
+	udazDMkuTN1X70pZ4veLtVQzL01tfWmUvr76ABCKm/cIlL/LxnHmlnABn1tmURRD
+	A7Uylg==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pbm8b4j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 16:29:18 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 56VGTHmI013822
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 31 Jul 2025 16:29:17 GMT
+Received: from [10.218.4.141] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 31 Jul
+ 2025 09:29:06 -0700
+Message-ID: <728cde88-1601-4c36-976a-3c934a64be35@quicinc.com>
+Date: Thu, 31 Jul 2025 21:58:47 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <14c68c29-68d8-4119-8f70-616c07397dc4@sirena.org.uk>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/3] ufs: ufs-qcom: Add support for DT-based gear and rate
+ limiting
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <mani@kernel.org>, <alim.akhtar@samsung.com>, <avri.altman@wdc.com>,
+        <bvanassche@acm.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <andersson@kernel.org>,
+        <konradybcio@kernel.org>, <James.Bottomley@hansenpartnership.com>,
+        <martin.petersen@oracle.com>, <agross@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <linux-scsi@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-2-quic_rdwivedi@quicinc.com>
+ <2ihbf52nryduic5vzlqdldzgx2fe4zidt4hzcugurqsuosiawq@qs66zxptpmqf>
+ <f61ac7b6-5e63-49cb-b051-a749037e0c8b@quicinc.com>
+ <CAO9ioeWLLW1UgJfByBAXp9-v81AqmRV9Acs5Eae9k4Gkr1U0MA@mail.gmail.com>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <CAO9ioeWLLW1UgJfByBAXp9-v81AqmRV9Acs5Eae9k4Gkr1U0MA@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LsaSymdc c=1 sm=1 tr=0 ts=688b99de cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=Wb1JkmetP80A:10 a=COk6AnOGAAAA:8
+ a=qQr2RFovwkE9AH--SVwA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwNzMxMDExMyBTYWx0ZWRfXy6ub6NIzriiC
+ cHvBF6NJHUsdkDiRQAMqt1aARNkSLVbyJBgcxL2TFx++NcmubagFjly6WM5pqCSE0VNAlGGU/ex
+ dzC79Lh2j26rPFcOnhZ67JGIWA1jlFoIecK26+xKEodZEQn73c51HYmd3NFGLgIO7nayopvqkWj
+ F3hV+ICcPUT05T8ZLuhX6pLqpnuDyMJjV9rNpT2GD2bqYTsEOaHi0xyaeWwogLFIZPpscxMsan4
+ 7DJshW1+P60xRQINHSnmv8n5tAXYs4K7WSUtkOtt7+C3eEsbjLg7Oy4gaH3Lmquy/+FQFZYQsl9
+ +ffWguX9NK0olvjWCghR1eaotJyT9w2Um+v+qnnYCClzd9WfdLjEUtAdcOlDoVdd3/fOYo/SQc6
+ SKBhUCxTdVCRVBqJJU26/7gtu5z/r/ooOEk19zHGL6Rqfl0jo++WjRaZFe9UpwyZnDIZ4YXK
+X-Proofpoint-ORIG-GUID: m6XdNrw0RQVI-QyB-C5IcaKH8HoCfByD
+X-Proofpoint-GUID: m6XdNrw0RQVI-QyB-C5IcaKH8HoCfByD
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_03,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2507310113
 
-On Thu, Jul 31, 2025 at 05:16:13PM +0100, Mark Brown wrote:
-> On Thu, Jul 31, 2025 at 04:57:42PM +0100, Russell King (Oracle) wrote:
-> > On Thu, Jul 31, 2025 at 02:18:24PM +0100, Mark Brown wrote:
-> 
-> > > I *think* mutex_lock_nested() is what we're looking for here, with the
-> > > depth information from the irq_desc but I'm also not super familiar with
-> > > this stuff.
-> 
-> > I'm not sure about that, because the irq_desc locks don't nest:
-> 
-> >         raw_spin_lock_init(&desc->lock);
-> >         lockdep_set_class(&desc->lock, &irq_desc_lock_class);
-> 
-> > What saves irq_desc lock nesting in this case is that
-> > __irq_put_desc_unlock() unlocks desc->lock calling the
-> > irq_bus_sync_unlock() method. So, I don't think we have anything at
-> > the irq_desc level which deals with lock-nesting.
-> 
-> Yeah, and that's all internals which we're not super encouraged to peer
-> at.  There should be something that'll give us a nesting level
-> somewhere...  
-> 
-> Lockdep's handling of nesting is generally fun.
 
-As I said, I'm just going to disable lockdep to shut up the warning and
-not pursue any further time on this. If someone else cares about it
-(which I doubt) they can try to come up with a solution. I suspect
-nested regmap-irq is extremely rare.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+On 24-Jul-25 2:11 PM, Dmitry Baryshkov wrote:
+> On Thu, 24 Jul 2025 at 10:35, Ram Kumar Dwivedi
+> <quic_rdwivedi@quicinc.com> wrote:
+>>
+>>
+>>
+>> On 23-Jul-25 12:24 AM, Dmitry Baryshkov wrote:
+>>> On Tue, Jul 22, 2025 at 09:41:01PM +0530, Ram Kumar Dwivedi wrote:
+>>>> Add optional device tree properties to limit Tx/Rx gear and rate during UFS
+>>>> initialization. Parse these properties in ufs_qcom_init() and apply them to
+>>>> host->host_params to enforce platform-specific constraints.
+>>>>
+>>>> Use this mechanism to cap the maximum gear or rate on platforms with
+>>>> hardware limitations, such as those required by some automotive customers
+>>>> using SA8155. Preserve the default behavior if the properties are not
+>>>> specified in the device tree.
+>>>>
+>>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+>>>> ---
+>>>>  drivers/ufs/host/ufs-qcom.c | 28 ++++++++++++++++++++++------
+>>>>  1 file changed, 22 insertions(+), 6 deletions(-)
+>>>>
+>>>> diff --git a/drivers/ufs/host/ufs-qcom.c b/drivers/ufs/host/ufs-qcom.c
+>>>> index 4bbe4de1679b..5e7fd3257aca 100644
+>>>> --- a/drivers/ufs/host/ufs-qcom.c
+>>>> +++ b/drivers/ufs/host/ufs-qcom.c
+>>>> @@ -494,12 +494,8 @@ static int ufs_qcom_power_up_sequence(struct ufs_hba *hba)
+>>>>       * If the HS-G5 PHY gear is used, update host_params->hs_rate to Rate-A,
+>>>>       * so that the subsequent power mode change shall stick to Rate-A.
+>>>>       */
+>>>> -    if (host->hw_ver.major == 0x5) {
+>>>> -            if (host->phy_gear == UFS_HS_G5)
+>>>> -                    host_params->hs_rate = PA_HS_MODE_A;
+>>>> -            else
+>>>> -                    host_params->hs_rate = PA_HS_MODE_B;
+>>>> -    }
+>>>> +    if (host->hw_ver.major == 0x5 && host->phy_gear == UFS_HS_G5)
+>>>> +            host_params->hs_rate = PA_HS_MODE_A;
+>>>
+>>> Why? This doesn't seem related.
+>>
+>> Hi Dmitry,
+>>
+>> I have refactored the patch to put this part in a separate patch in latest patchset.
+>>
+>> Thanks,
+>> Ram.
+>>
+>>>
+>>>>
+>>>>      mode = host_params->hs_rate == PA_HS_MODE_B ? PHY_MODE_UFS_HS_B : PHY_MODE_UFS_HS_A;
+>>>>
+>>>> @@ -1096,6 +1092,25 @@ static void ufs_qcom_set_phy_gear(struct ufs_qcom_host *host)
+>>>>      }
+>>>>  }
+>>>>
+>>>> +static void ufs_qcom_parse_limits(struct ufs_qcom_host *host)
+>>>> +{
+>>>> +    struct ufs_host_params *host_params = &host->host_params;
+>>>> +    struct device_node *np = host->hba->dev->of_node;
+>>>> +    u32 hs_gear, hs_rate = 0;
+>>>> +
+>>>> +    if (!np)
+>>>> +            return;
+>>>> +
+>>>> +    if (!of_property_read_u32(np, "limit-hs-gear", &hs_gear)) {
+>>>
+>>> These are generic properties, so they need to be handled in a generic
+>>> code path.
+>>
+>> Hi Dmitry,
+>>
+>>
+>> Below is the probe path for the UFS-QCOM platform driver:
+>>
+>> ufs_qcom_probe
+>>   └─ ufshcd_platform_init
+>>        └─ ufshcd_init
+>>             └─ ufs_qcom_init
+>>                  └─ ufs_qcom_set_host_params
+>>                       └─ ufshcd_init_host_params (initialized with default values)
+>>                            └─ ufs_qcom_get_hs_gear (overrides gear based on controller capability)
+>>                                 └─ ufs_qcom_set_phy_gear (further overrides based on controller limitations)
+>>
+>>
+>> The reason I added the logic in ufs-qcom.c is that even if it's placed in ufshcd-platform.c, the values get overridden in ufs-qcom.c.
+>> If you prefer, I can move the parsing logic API to ufshcd-platform.c but still it needs to be called from ufs-qcom.c.
+> 
+> I was thinking about ufshcd_init() or similar function.
+Hi Dmitry,
+
+It appears we can't move the logic to ufshcd.c because the PHY is initialized in ufs-qcom.c, and the gear must be set during that initialization.
+
+Limiting the gear and lane in ufshcd.c won’t be effective, as qcom_init sets the PHY to the maximum supported gear by default. As a result, the PHY would still initialize with the max gear, defeating the purpose of the limits.
+
+To ensure the PHY is initialized with the intended gear, the limits needs to be applied directly in ufs_qcom.c
+
+Please let me know if you have any concerns.
+
+Thanks,
+Ram.
+
+
+> 
+>>
+>> Thanks,
+>> Ram.
+>>
+>>
+>>>
+>>> Also, the patch with bindings should preceed driver and DT changes.
+>>
+>> Hi Dmitry,
+>>
+>> I have reordered the patch series to place the DT binding change as the first patch in latest patchset.
+>>
+>> Thanks,
+>> Ram.
+>>
+>>
+>>>
+>>>> +            host_params->hs_tx_gear = hs_gear;
+>>>> +            host_params->hs_rx_gear = hs_gear;
+>>>> +            host->phy_gear = hs_gear;
+>>>> +    }
+>>>> +
+>>>> +    if (!of_property_read_u32(np, "limit-rate", &hs_rate))
+>>>> +            host_params->hs_rate = hs_rate;
+>>>> +}
+>>>> +
+>>>>  static void ufs_qcom_set_host_params(struct ufs_hba *hba)
+>>>>  {
+>>>>      struct ufs_qcom_host *host = ufshcd_get_variant(hba);
+>>>> @@ -1337,6 +1352,7 @@ static int ufs_qcom_init(struct ufs_hba *hba)
+>>>>      ufs_qcom_advertise_quirks(hba);
+>>>>      ufs_qcom_set_host_params(hba);
+>>>>      ufs_qcom_set_phy_gear(host);
+>>>> +    ufs_qcom_parse_limits(host);
+>>>>
+>>>>      err = ufs_qcom_ice_init(host);
+>>>>      if (err)
+>>>> --
+>>>> 2.50.1
+>>>>
+>>>
+>>
+> 
+> 
+
 
