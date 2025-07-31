@@ -1,153 +1,275 @@
-Return-Path: <linux-kernel+bounces-752187-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 423CBB1723B
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:40:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C469B17235
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:39:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 37B051C22877
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:40:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B7AD3BC30B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A32C62D12E9;
-	Thu, 31 Jul 2025 13:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6356D2D0C9F;
+	Thu, 31 Jul 2025 13:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="QV8qFqae";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PR32dTtF"
-Received: from fout-b3-smtp.messagingengine.com (fout-b3-smtp.messagingengine.com [202.12.124.146])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dnjrmyyp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 910F12D1F5E;
-	Thu, 31 Jul 2025 13:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954A72367AB;
+	Thu, 31 Jul 2025 13:39:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969176; cv=none; b=n3grNvTepA1VAS9P122r4HTts9qg4lTNPC4FvrS/peWnedQfapK/WynQ9vZcbx3bFzzbbm3Xd5C+a4NGDuvRUrVaLVkMYzb9X0yIk3mn4+Gnk5w5cOk1XhLltQZHgwDI6D1WDINEpbiQ/kMkdvVlLESxp5zSh7EEeKL3yjgCLxg=
+	t=1753969157; cv=none; b=XKAAN8MLvcp/TRvKTc+k+XxIHeZyChqm/frZt5rg7ax4vdKsQ9SwpG8u3bmcmfyTfwG3vhaTkqIqzmEiAH7b123mPuelhR6yaKxtipyKVIQJDDzvD7inUaGSmfuJ7K33FKMJorg01SAVnVnr6OJtHK2bUiEX4gnpLtL1X7cdIRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969176; c=relaxed/simple;
-	bh=DHzxW4z7i+CXhdWSmzCXYo6enZhSy7uMlpru0wwZgZw=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=LmpAEyi2ZJPEYYIwOf3C95/qQIXlUCs+VfjzgM78wNbGOuY9JzC3YwRNEkVnlY0jZIr+IXZT4UB1xINF98r38Agc8jIRplDGhJyR37gZvnNrTJCvOtAbr7lE/Izyr6xHHmwRcKIc2iI3+zuYvgmRBEAEqqBHVVpJWda+bwFvBeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=QV8qFqae; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PR32dTtF; arc=none smtp.client-ip=202.12.124.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
-	by mailfout.stl.internal (Postfix) with ESMTP id 62BFE1D00111;
-	Thu, 31 Jul 2025 09:39:33 -0400 (EDT)
-Received: from phl-imap-02 ([10.202.2.81])
-  by phl-compute-05.internal (MEProxy); Thu, 31 Jul 2025 09:39:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1753969173;
-	 x=1754055573; bh=1YF+JczTPXawKb3atPxsO0xvbePgUamnMYYtX/LaCcM=; b=
-	QV8qFqaejLczQjU7HFGOb68T+honsBwSkrB3P65VSOo0MAV5fhXjvOT4gYY44rQW
-	q1A/ucDS1TUbjUtb4/yOoKz29jRJeVSnR0Qif/7Ix0pJsXNlHpvg6i/0DTfn7WaT
-	9aZl/Yz4DRBDJHwcK/44Vo/gXkIuey0E6lJhzZnnIwRRoxkg9nCnl8EkXKDzvMs4
-	2GcqM3lEZiajKbTs9X8yCf1B+tUoxDP9tE0/mqzuZYyO4RcDvXvjojQTTap9aj8l
-	RzyLygFxV1kkiYfGEtWY+ueqx+bbC27bNCS8oTakffUCZGMnUayXIpqYspTRilpF
-	R+P1pLRo707mAQVYDf2TdQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1753969173; x=
-	1754055573; bh=1YF+JczTPXawKb3atPxsO0xvbePgUamnMYYtX/LaCcM=; b=P
-	R32dTtFGt85EPM6UM40Vw4o36Kaws2L6gm5LW1GVK19tMu6VP0BBM+rLaM16Is2h
-	g51kLDQMst5yQSaAVQUmq6BN1LgAHRgbgZD12cnKCV0+yrGcqeKjsuiWXAN20AWF
-	t7tBCX0p6Kn1lbEQxb9hZljAuYhcXzGn9Jv6Qp7m1L/an+7L88AZJmRDJnLdGGK3
-	c/7GmQGPrVozt98oLDH/R/sCaOMNoihWqEVGhn3EERiRUjdlx8bBn9W+DKmcEcdq
-	SEfikhIViGg5BlPtDVVlW8X4hFyYNCr/Z3BJdRu9PY2f0Cr/BZXdsuyyiqNsr63+
-	ECf20+k8lbp5OwpjqMD4g==
-X-ME-Sender: <xms:FHKLaAPuWTnlMrGgIVZETtG3SuQiJ-yELDrr6FZb5eV26vvX-yHKrw>
-    <xme:FHKLaG8l24MW3o3LJT1ZACCyEca7Me1UhkwGKnMtuYtAV_9L1ffcXMywBI2D_TRQe
-    RZszfyOeZArhzAInr8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutddtleehucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
-    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
-    hrnhepfefhheetffduvdfgieeghfejtedvkeetkeejfeekkeelffejteevvdeghffhiefh
-    necuffhomhgrihhnpehkvghrnhgvlhdrohhrghenucevlhhushhtvghrufhiiigvpedtne
-    curfgrrhgrmhepmhgrihhlfhhrohhmpegrrhhnugesrghrnhgusgdruggvpdhnsggprhgt
-    phhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepghhushhtrghvoh
-    grrhhssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdho
-    rhhgpdhrtghpthhtohepmhgrshgrhhhirhhohieskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheprghnuggvrhhsrdhrohigvghllheslhhinhgrrhhordhorhhgpdhrtghpthhtohep
-    sggvnhhjrghmihhnrdgtohhpvghlrghnugeslhhinhgrrhhordhorhhgpdhrtghpthhtoh
-    epuggrnhdrtggrrhhpvghnthgvrheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgr
-    rhgvshhhrdhkrghmsghojhhusehlihhnrghrohdrohhrghdprhgtphhtthhopehlkhhfth
-    dqthhrihgrghgvsehlihhsthhsrdhlihhnrghrohdrohhrghdprhgtphhtthhopehrvghg
-    rhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghv
-X-ME-Proxy: <xmx:FHKLaOQg_mipmuyaN2Y9BLVaTMNOlDfTt-Zl5o3Hih9S0bMIGThEgQ>
-    <xmx:FHKLaJRve1YRZQ2wFN2QBlOyzreRaK4QYSm5UpUk-wfdqhVYbUOs3g>
-    <xmx:FHKLaK5LPBgzOTghixn1PHgopDTMxcwY70_ff4x-q0VfbfbvtZg7wQ>
-    <xmx:FHKLaOWaq-92a7-PQGAyCilY-6s1lmG6Ia6cWGxB1biWRswW9qO7Bg>
-    <xmx:FXKLaHS6aX6R2mWuyYjN4lrDrkI7-pEBgv27AbNV8lo1A2acYzMTRH6l>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id BA950700069; Thu, 31 Jul 2025 09:39:32 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1753969157; c=relaxed/simple;
+	bh=edRNYc4d0aQUpwqpCavkiGv/eXpN4MA3kBq4O1DAsGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ue9O5o/CeuGQj4TgnwK5UbaQ7ORoOJHNoPISEvZt7ewRSv8ryJlbsoPHKaEqzsZN981CaKdhL+XDa/FSHfJLQHzBNu207XEY6Fkocgh+x+Izx7SqhFfO1dOZF1Envp2A81SvyDLXk1PQp3zBSrbmWBp3EFIUY5Wy+5G1ghrXL1M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dnjrmyyp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B18EC4CEEF;
+	Thu, 31 Jul 2025 13:39:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753969157;
+	bh=edRNYc4d0aQUpwqpCavkiGv/eXpN4MA3kBq4O1DAsGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dnjrmyypeLOiHl+nJOBhDuZoIckD4IFMjlWNEfZdt1CkgvYQJqSSuF+3pqLdZsOsv
+	 lw2+UOZtskOZlMYM+bUICP8AfQsuJ5qncxoDF+axegYHGEwzNlIXqOZY39cBdZ3ja+
+	 bnHpMDMn3YXJ5GLI6hPY7Kf1577DYcK2SEftK18/yQbA9EOjciYACgQTk1yJlaSoMJ
+	 z2n3UgWb4Ju5WJOZSnGCNlKJHo/Sxe0yXuUrIjWncByuctQuNg9/ff+wpOyw+PbyC3
+	 5fmGXshFhjlJV8fIk9237f0adgoqUXY9/uIgF6Z8una0bOr/gFj+A01c8NHuGGNTBN
+	 uGWudKTOOyj8w==
+Date: Thu, 31 Jul 2025 14:39:13 +0100
+From: Lee Jones <lee@kernel.org>
+To: Heiko Stuebner <heiko@sntech.de>
+Cc: pavel@kernel.org, linux-leds@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] leds: qnap-mcu: add support for the red and green status
+ leds
+Message-ID: <20250731133913.GH1049189@google.com>
+References: <20250730170507.1869905-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-ThreadId: Tf7077733e96ba33e
-Date: Thu, 31 Jul 2025 15:39:12 +0200
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "open list" <linux-kernel@vger.kernel.org>, linux-hardening@vger.kernel.org,
- lkft-triage@lists.linaro.org,
- "Linux Regressions" <regressions@lists.linux.dev>
-Cc: "Kees Cook" <kees@kernel.org>, "Dan Carpenter" <dan.carpenter@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Benjamin Copeland" <benjamin.copeland@linaro.org>,
- "Gustavo A. R. Silva" <gustavoars@kernel.org>,
- "Masahiro Yamada" <masahiroy@kernel.org>
-Message-Id: <86f6a314-8aa0-46c3-8984-784a07a302c3@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYv-c6D6tJKw9x05+U_VxrpTAQCKADTeYg4jsjaJkX+isw@mail.gmail.com>
-References: 
- <CA+G9fYv-c6D6tJKw9x05+U_VxrpTAQCKADTeYg4jsjaJkX+isw@mail.gmail.com>
-Subject: Re: next-20250730 x86, s390, riscv gcc-8 hardening.config vmlinux symbol
- `.modinfo' required but not present
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250730170507.1869905-1-heiko@sntech.de>
 
-On Thu, Jul 31, 2025, at 15:32, Naresh Kamboju wrote:
-> Regressions while building x86, S390 and riscv64 with hardening.config on the
-> Linux next-20250730 and next-20250731.
->
-> Build pass with gcc-13 with hardening.config fails with gcc-8
->
-> Regression Analysis:
-> - New regression? Yes
-> - Reproducibility? Yes
->
-> First seen on the next-20250730
-> Good: next-20250729
-> Bad: next-20250730
->
-> Build regression: next-20250730 x86 gcc-8 hardening.config vmlinux
-> symbol `.modinfo' required but not present
-> Build regression: next-20250730 S390 gcc-8 hardening.config vmlinux
-> symbol `.modinfo' required but not present
-> Build regression: next-20250730 riscv64 gcc-8 hardening.config vmlinux
-> symbol `__rela_dyn_end' required but not present
->
-> Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+Subject: s/led/LED/
 
-My guess is that this is caused by 94564d1bb059 ("kbuild: keep .modinfo
-section in vmlinux.unstripped")
+> There is one more set of two LEDs on the qnap devices to indicate status.
+> 
+> One LED is green, the other is red and while they occupy the same space
+> on the front panel, they cannot be enabled at the same time.
+> 
+> But they can interact via blink functions, the MCU can flash them
+> alternately, going red -> green -> red -> ... either in 500ms or
+> 1s intervals. They can of course also blink individually.
+> 
+> Add specific led functions for them and register them on probe.
+> 
+> Signed-off-by: Heiko Stuebner <heiko@sntech.de>
+> ---
+>  drivers/leds/leds-qnap-mcu.c | 156 +++++++++++++++++++++++++++++++++++
+>  1 file changed, 156 insertions(+)
+> 
+> diff --git a/drivers/leds/leds-qnap-mcu.c b/drivers/leds/leds-qnap-mcu.c
+> index 4e4709456261..b7747b47c604 100644
+> --- a/drivers/leds/leds-qnap-mcu.c
+> +++ b/drivers/leds/leds-qnap-mcu.c
+> @@ -190,6 +190,157 @@ static int qnap_mcu_register_usb_led(struct device *dev, struct qnap_mcu *mcu)
+>  	return qnap_mcu_usb_led_set(&usb_led->cdev, 0);
+>  }
+>  
+> +enum qnap_mcu_status_led_mode {
+> +	QNAP_MCU_STATUS_LED_OFF = 0,
+> +	QNAP_MCU_STATUS_LED_ON = 1,
+> +	QNAP_MCU_STATUS_LED_BLINK_FAST = 2, /* 500ms / 500ms */
+> +	QNAP_MCU_STATUS_LED_BLINK_SLOW = 3, /* 1s / 1s */
+> +};
+> +
+> +struct qnap_mcu_status;
 
-See also
-https://lore.kernel.org/all/202507310505.tEYm1za7-lkp@intel.com/
-https://lore.kernel.org/all/20250728135753.432695A72-agordeev@linux.ibm.com/
+Forward declarations are a warning flag.
 
-Reverting 94564d1bb059 solved the problem for me on arm64.
+How do all of the other drivers handle this?
 
-      Arnd
+> +struct qnap_mcu_status_led {
+> +	struct qnap_mcu_status *base;
+> +	struct led_classdev cdev;
+> +	u8 mode;
+> +};
+> +
+> +struct qnap_mcu_status {
+> +	struct qnap_mcu *mcu;
+> +	struct qnap_mcu_status_led red;
+> +	struct qnap_mcu_status_led green;
+> +};
+> 
+> +static inline struct qnap_mcu_status_led *
+> +		cdev_to_qnap_mcu_status_led(struct led_classdev *led_cdev)
+
+This is a strange place to break.
+
+> +{
+> +	return container_of(led_cdev, struct qnap_mcu_status_led, cdev);
+> +}
+> +
+> +static u8 qnap_mcu_status_led_encode(struct qnap_mcu_status *status)
+> +{
+> +	if (status->red.mode == QNAP_MCU_STATUS_LED_OFF) {
+> +		switch (status->green.mode) {
+> +		case QNAP_MCU_STATUS_LED_OFF:
+> +			return '9';
+> +		case QNAP_MCU_STATUS_LED_ON:
+> +			return '6';
+> +		case QNAP_MCU_STATUS_LED_BLINK_FAST:
+> +			return '5';
+> +		case QNAP_MCU_STATUS_LED_BLINK_SLOW:
+> +			return 'A';
+> +		}
+> +	} else if (status->green.mode == QNAP_MCU_STATUS_LED_OFF) {
+> +		switch (status->red.mode) {
+> +		case QNAP_MCU_STATUS_LED_OFF:
+> +			return '9';
+> +		case QNAP_MCU_STATUS_LED_ON:
+> +			return '7';
+> +		case QNAP_MCU_STATUS_LED_BLINK_FAST:
+> +			return '4';
+> +		case QNAP_MCU_STATUS_LED_BLINK_SLOW:
+> +			return 'B';
+> +		}
+> +	} else if (status->green.mode == QNAP_MCU_STATUS_LED_BLINK_SLOW &&
+> +		   status->red.mode == QNAP_MCU_STATUS_LED_BLINK_SLOW) {
+> +		return 'C';
+> +	}
+> +
+> +	/*
+> +	 * At this point, both LEDs are on in some fashion, but both
+> +	 * cannot be on at the same time, so just use the fast blink
+> +	 */
+> +	return '8';
+> +}
+> +
+> +static int qnap_mcu_status_led_update(struct qnap_mcu *mcu,
+> +				      struct qnap_mcu_status *status)
+> +{
+> +	u8 cmd[] = { '@', 'C', 0 };
+> +
+> +	cmd[2] = qnap_mcu_status_led_encode(status);
+> +
+> +	return qnap_mcu_exec_with_ack(mcu, cmd, sizeof(cmd));
+> +}
+> +
+> +static int qnap_mcu_status_led_set(struct led_classdev *led_cdev,
+> +				   enum led_brightness brightness)
+> +{
+> +	struct qnap_mcu_status_led *status_led = cdev_to_qnap_mcu_status_led(led_cdev);
+> +
+> +	/* Don't disturb a possible set blink-mode if LED stays on */
+> +	if (brightness != 0 &&
+
+Use up to 100-chars to make these more readable.
+
+> +	    status_led->mode >= QNAP_MCU_STATUS_LED_BLINK_FAST)
+> +		return 0;
+> +
+> +	status_led->mode = brightness ? QNAP_MCU_STATUS_LED_ON :
+> +					QNAP_MCU_STATUS_LED_OFF;
+> +
+> +	return qnap_mcu_status_led_update(status_led->base->mcu,
+> +					  status_led->base);
+> +}
+> +
+> +static int qnap_mcu_status_led_blink_set(struct led_classdev *led_cdev,
+> +					 unsigned long *delay_on,
+> +					 unsigned long *delay_off)
+> +{
+> +	struct qnap_mcu_status_led *status_led = cdev_to_qnap_mcu_status_led(led_cdev);
+> +
+> +	/* LED is off, nothing to do */
+
+I think this is implied by the quality nomenclature.
+
+> +	if (status_led->mode == QNAP_MCU_STATUS_LED_OFF)
+> +		return 0;
+> +
+> +	if (*delay_on <= 500) {
+> +		*delay_on = 500;
+> +		*delay_off = 500;
+> +		status_led->mode = QNAP_MCU_STATUS_LED_BLINK_FAST;
+> +	} else {
+> +		*delay_on = 1000;
+> +		*delay_off = 1000;
+> +		status_led->mode = QNAP_MCU_STATUS_LED_BLINK_SLOW;
+> +	}
+> +
+> +	return qnap_mcu_status_led_update(status_led->base->mcu,
+> +					  status_led->base);
+> +}
+> +
+> +static int qnap_mcu_register_status_leds(struct device *dev, struct qnap_mcu *mcu)
+> +{
+> +	struct qnap_mcu_status *status;
+> +	int ret;
+> +
+> +	status = devm_kzalloc(dev, sizeof(*status), GFP_KERNEL);
+> +	if (!status)
+> +		return -ENOMEM;
+> +
+> +	status->mcu = mcu;
+> +	status->red.base = status;
+> +	status->green.base = status;
+> +
+> +	status->red.mode = QNAP_MCU_STATUS_LED_OFF;
+> +	status->red.cdev.name = "red:status";
+> +	status->red.cdev.brightness_set_blocking = qnap_mcu_status_led_set;
+> +	status->red.cdev.blink_set = qnap_mcu_status_led_blink_set;
+> +	status->red.cdev.brightness = 0;
+> +	status->red.cdev.max_brightness = 1;
+> +
+> +	status->green.mode = QNAP_MCU_STATUS_LED_OFF;
+> +	status->green.cdev.name = "green:status";
+> +	status->green.cdev.brightness_set_blocking = qnap_mcu_status_led_set;
+> +	status->green.cdev.blink_set = qnap_mcu_status_led_blink_set;
+> +	status->green.cdev.brightness = 0;
+> +	status->green.cdev.max_brightness = 1;
+> +
+> +	ret = devm_led_classdev_register(dev, &status->red.cdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	ret = devm_led_classdev_register(dev, &status->green.cdev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	return qnap_mcu_status_led_update(status->mcu, status);
+> +}
+> +
+>  static int qnap_mcu_leds_probe(struct platform_device *pdev)
+>  {
+>  	struct qnap_mcu *mcu = dev_get_drvdata(pdev->dev.parent);
+> @@ -210,6 +361,11 @@ static int qnap_mcu_leds_probe(struct platform_device *pdev)
+>  					"failed to register USB LED\n");
+>  	}
+>  
+> +	ret = qnap_mcu_register_status_leds(&pdev->dev, mcu);
+> +	if (ret)
+> +		return dev_err_probe(&pdev->dev, ret,
+> +				     "failed to register status LED\n");
+> +
+>  	return 0;
+>  }
+>  
+> -- 
+> 2.47.2
+> 
+
+-- 
+Lee Jones [李琼斯]
 
