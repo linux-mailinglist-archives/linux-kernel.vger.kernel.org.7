@@ -1,87 +1,260 @@
-Return-Path: <linux-kernel+bounces-751505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751498-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 952B5B16A64
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:20:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0E0E7B16A54
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0722B18C6820
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:21:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EA8B566F57
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F33923643E;
-	Thu, 31 Jul 2025 02:20:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="ZT1Knmkf"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E86641F4180;
+	Thu, 31 Jul 2025 02:14:38 +0000 (UTC)
+Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45EC6339A1;
-	Thu, 31 Jul 2025 02:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02D1219ED
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753928443; cv=none; b=j4oMKmiCn4h28MI4hBVubdDTfAGLdjCuxjozIG2YBkhK0unJxc3Q7rd5Bwhe2q9xs8wK6DvoUHwghGQIcbUSevNukdkkPYBNXWoTPF/sA01XxjnSCYpRd8xqYSqNRk3W2v7DlsfxiGJye729PgHztG88P9XjfxiM9kAZHYQxLoM=
+	t=1753928078; cv=none; b=HKJd9cTTOFTgZ/UpIW/UEtuaSaZSL8xFj6FNt0rmsZjiSX+uiCtGRdMafmXEpzxvo4RAZjodcOIcSHj5MB5fHmI6JKqoFH+xbFKVBA9DDGubnHTt4725Ye1oNcPKnKMZjOvZUtLQz2kr0t2t6HHkm26Abfwi9rq8TLh8KaSnT5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753928443; c=relaxed/simple;
-	bh=/+TfOEWR0Nli29bN6WrEzJLsG9aHc0r+gNTRjB2A+GM=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=hBnYjelAklUNeZk6bgrVR916e5/KeTK+nDCyxZTHreoE960Oko9M8xcIvTMG1d7mLszY1k1+GwkI/hBLPUhC2ELsJqmTjxausa1LikBxDUI5PB06AIk+fS+M/MY+sOnco/yz3jstwbrGeM/b9Azy99TTwKK7EPcNDgPhEUGBGHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=ZT1Knmkf; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1753927882;
-	bh=/+TfOEWR0Nli29bN6WrEzJLsG9aHc0r+gNTRjB2A+GM=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References;
-	b=ZT1KnmkfhOaJuo/p5h6IVFRznALO76XlJ+P7ddQ5Flf3pmvBxi2pO8e3vOFv6Vkvi
-	 aAeCv8ORPyqaUSuNoJl5JZXACdozJcdnThpGcjeX5Vob97c2cR7gNP+/DhIX2Hm9J/
-	 MucMr7u76yYSOrLlZ1al+FxuhjMQSP3Xez2lv0/84y0cxXffF+icO7Rv+V7SmWzx3T
-	 6IMAX3CjnOpj3oKhk7px0mFuLwD3Qxt4bNymA+mzz1DO/fa4j/mlQwoOluBPvV3mt3
-	 dojq2p5DGHhCRH8mh3w9XT87GBJgtrjWCiW/MzNVNNYeNvzmUe4sUhcK8LXOaXbETJ
-	 ZbJVaPUlNdBSA==
-Received: from [192.168.68.112] (unknown [180.150.112.70])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 7D5B569374;
-	Thu, 31 Jul 2025 10:11:20 +0800 (AWST)
-Message-ID: <2de9da0e95d3e1284a29170c99f7b69baadb9518.camel@codeconstruct.com.au>
-Subject: Re: [PATCH v7 0/2] Adding device tree and binding for NVIDIA
- GB200-UT3.0b
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Rob Herring <robh@kernel.org>, Donald Shannon <donalds@nvidia.com>
-Cc: conor+dt@kernel.org, openbmc@lists.ozlabs.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	krzk+dt@kernel.org, joel@jms.id.au, linux-aspeed@lists.ozlabs.org, 
-	devicetree@vger.kernel.org
-Date: Thu, 31 Jul 2025 11:41:19 +0930
-In-Reply-To: <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
-References: <20250723222350.200094-1-donalds@nvidia.com>
-	 <175341328135.3754696.5873094296930738476.robh@kernel.org>
-	 <CAL_JsqJwgbWa0sPVgdxMchPfa1hR8o-=wRh4UgoK3QfDdW+S+g@mail.gmail.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1753928078; c=relaxed/simple;
+	bh=PtdtWbfSwsTFIdvQnjmV9oEGOciY0JSHBJVRlxzGeOw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=anw91LsIuRWD17yZkmA50xCoZFmPK3okDnqjAYimd92kkkWEhzkz5jlJCbDUflO/os9P6NJIvSkx1IavoBuWmmSlGeN2h1HUMxJ/ifiRJYxQX9s12LeYzKNcCpwtIYfaEi9BjTsaaNGdMjWd2RJ6n4A9wxVlXfwyb875Dv4+VV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3f0287933so7011155ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 30 Jul 2025 19:14:36 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753928076; x=1754532876;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=v8LN82KfcOn/0r6hArwrNITctrGhPFAps37niPBX6GA=;
+        b=fv64TizwUU56Gi7LlnmrrpWHhim/1GWsEKbgqO8ajYLCk34AoOU9CvbBsItb4msV7j
+         t3WCNpeGwyC3HkIV5oHRcA29vQJcFxBN29hU6bQPX+zq18JGZYmH5/hQ2qOoq/sfU1IU
+         BCtnMczTUiJolp/J5vVEp8oITs0mkJcLwtb2HOEQEAfzV4ESyFYJIDWRH8RIHDmcT1EV
+         GX/CG5s9DftT/Jx0kwdnKGkSFuCg4mSustsgy2ThpjBYztAlfxZebgh+h4CaDx2/Mz1O
+         C0rJRGheiTPEMB1GW0rUCGkNZLv2KoZ33udtueyPAs4WYhX+4asOG77dD3kfucSKdzM9
+         QmgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUxI+/sZq/IjevVMTtcKJq3us6pAw+utHrE9Z8h9/uXIebb8KaUEvsyOjA+ADQhei3uCogBk8P4KoAyyE4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YylgdAeJmmD0GHHqvfHqpPXkdgbvjgb2B+1NUHjdcOlKReApwF2
+	wGIpfUiJ8Ik6AUu68VicpFiVRIol0JXyEBsko+M/hZFes7c2FuNEqKEomdt2E79Qfxzghelpycu
+	axsuHvPW/xYSk65h7nkPZU5XSEI3azjEjv1PTTzvhoF0ByCnlF6wgaOQVEKY=
+X-Google-Smtp-Source: AGHT+IHfrW2I3iy1zEHBpfBt4MEcIOr/sBXoPNGPZ2JnNw0WXqO2uRZnlQ8KRmGFbMrhmROW1fej4/pTLXAokJGKAHH8c7+l9/5b
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:9e:b0:3dd:b808:be68 with SMTP id
+ e9e14a558f8ab-3e3f62800edmr105194965ab.16.1753928075702; Wed, 30 Jul 2025
+ 19:14:35 -0700 (PDT)
+Date: Wed, 30 Jul 2025 19:14:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688ad18b.a00a0220.26d0e1.0033.GAE@google.com>
+Subject: [syzbot] [block?] possible deadlock in del_gendisk (2)
+From: syzbot <syzbot+aea0dfef449ccf91636b@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, 2025-07-24 at 22:25 -0500, Rob Herring wrote:
->=20
-> All of the below warnings you are introducing...
->=20
-> And yeah, all the ones above are existing, but I don't see a lot of
-> progress fixing them. It seems no one adding their board cares about
-> the SoC warnings given the lack of progress on aspeed stuff. Maybe new
-> boards need to be rejected without some improvements...
->=20
+Hello,
 
-I had an old branch with a series that reduces the warnings. I'll
-rebase it and tidy it up a bit wrt more recent binding submissions.
-Once it's mostly sensible I'll consider pointing people to it as
-suggestions for fixing existing issues on the path to getting their own
-devicetrees merged.
+syzbot found the following issue on:
 
-Andrew
+HEAD commit:    302f88ff3584 Merge tag 'for-linus' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=152528a2580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=27aea6dad68e0c0c
+dashboard link: https://syzkaller.appspot.com/bug?extid=aea0dfef449ccf91636b
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: i386
+
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-302f88ff.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/b375ab423051/vmlinux-302f88ff.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/133b9f21ac36/bzImage-302f88ff.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+aea0dfef449ccf91636b@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.16.0-rc7-syzkaller-00127-g302f88ff3584 #0 Not tainted
+------------------------------------------------------
+syz.7.6877/31320 is trying to acquire lock:
+
+but task is already holding lock:
+ffff8880417fe368 (&set->update_nr_hwq_lock){++++}-{4:4}, at: del_gendisk+0x136/0x1e0 block/genhd.c:822
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (&set->update_nr_hwq_lock){++++}-{4:4}:
+       down_write+0x92/0x200 kernel/locking/rwsem.c:1577
+       blk_mq_update_nr_hw_queues+0x32/0xcb0 block/blk-mq.c:5041
+       nbd_start_device+0x172/0xcd0 drivers/block/nbd.c:1476
+       nbd_start_device_ioctl drivers/block/nbd.c:1527 [inline]
+       __nbd_ioctl drivers/block/nbd.c:1602 [inline]
+       nbd_ioctl+0x219/0xda0 drivers/block/nbd.c:1642
+       compat_blkdev_ioctl+0x2eb/0x7a0 block/ioctl.c:760
+       __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
+       __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
+       __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
+       do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+       __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+-> #1 (&nbd->config_lock){+.+.}-{4:4}:
+       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+       refcount_dec_and_mutex_lock+0x51/0xc0 lib/refcount.c:118
+       nbd_config_put+0x31/0x750 drivers/block/nbd.c:1423
+       nbd_release+0xb7/0x190 drivers/block/nbd.c:1735
+       blkdev_put_whole+0xb0/0xf0 block/bdev.c:721
+       bdev_release+0x47e/0x6d0 block/bdev.c:1144
+       blkdev_release+0x15/0x20 block/fops.c:684
+       __fput+0x402/0xb70 fs/file_table.c:465
+       fput_close_sync+0x118/0x260 fs/file_table.c:570
+       __do_sys_close fs/open.c:1589 [inline]
+       __se_sys_close fs/open.c:1574 [inline]
+       __x64_sys_close+0x8b/0x120 fs/open.c:1574
+       do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+       do_syscall_64+0xcd/0x490 arch/x86/entry/syscall_64.c:94
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&disk->open_mutex){+.+.}-{4:4}:
+       check_prev_add kernel/locking/lockdep.c:3168 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+       validate_chain kernel/locking/lockdep.c:3911 [inline]
+       __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+       lock_acquire kernel/locking/lockdep.c:5871 [inline]
+       lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+       __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+       __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+       __del_gendisk+0xf5/0xbd0 block/genhd.c:710
+       del_gendisk+0x13e/0x1e0 block/genhd.c:823
+       loop_remove drivers/block/loop.c:2083 [inline]
+       loop_control_remove drivers/block/loop.c:2142 [inline]
+       loop_control_ioctl+0x4f1/0x630 drivers/block/loop.c:2180
+       __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
+       __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
+       __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
+       do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+       __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
+       do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
+       entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+
+other info that might help us debug this:
+
+Chain exists of:
+  &disk->open_mutex --> &nbd->config_lock --> &set->update_nr_hwq_lock
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  rlock(&set->update_nr_hwq_lock);
+                               lock(&nbd->config_lock);
+                               lock(&set->update_nr_hwq_lock);
+  lock(&disk->open_mutex);
+
+ *** DEADLOCK ***
+
+1 lock held by syz.7.6877/31320:
+ #0: ffff8880417fe368 (&set->update_nr_hwq_lock){++++}-{4:4}, at: del_gendisk+0x136/0x1e0 block/genhd.c:822
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 31320 Comm: syz.7.6877 Not tainted 6.16.0-rc7-syzkaller-00127-g302f88ff3584 #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x116/0x1f0 lib/dump_stack.c:120
+ print_circular_bug+0x275/0x350 kernel/locking/lockdep.c:2046
+ check_noncircular+0x14c/0x170 kernel/locking/lockdep.c:2178
+ check_prev_add kernel/locking/lockdep.c:3168 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3287 [inline]
+ validate_chain kernel/locking/lockdep.c:3911 [inline]
+ __lock_acquire+0x126f/0x1c90 kernel/locking/lockdep.c:5240
+ lock_acquire kernel/locking/lockdep.c:5871 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+ __mutex_lock_common kernel/locking/mutex.c:602 [inline]
+ __mutex_lock+0x199/0xb90 kernel/locking/mutex.c:747
+ __del_gendisk+0xf5/0xbd0 block/genhd.c:710
+ del_gendisk+0x13e/0x1e0 block/genhd.c:823
+ loop_remove drivers/block/loop.c:2083 [inline]
+ loop_control_remove drivers/block/loop.c:2142 [inline]
+ loop_control_ioctl+0x4f1/0x630 drivers/block/loop.c:2180
+ __do_compat_sys_ioctl fs/ioctl.c:1005 [inline]
+ __se_compat_sys_ioctl fs/ioctl.c:948 [inline]
+ __ia32_compat_sys_ioctl+0x23f/0x370 fs/ioctl.c:948
+ do_syscall_32_irqs_on arch/x86/entry/syscall_32.c:83 [inline]
+ __do_fast_syscall_32+0x7c/0x3a0 arch/x86/entry/syscall_32.c:306
+ do_fast_syscall_32+0x32/0x80 arch/x86/entry/syscall_32.c:331
+ entry_SYSENTER_compat_after_hwframe+0x84/0x8e
+RIP: 0023:0xf70be579
+Code: b8 01 10 06 03 74 b4 01 10 07 03 74 b0 01 10 08 03 74 d8 01 00 00 00 00 00 00 00 00 00 00 00 00 00 51 52 55 89 e5 0f 34 cd 80 <5d> 5a 59 c3 90 90 90 90 8d b4 26 00 00 00 00 8d b4 26 00 00 00 00
+RAX: ffffffffffffffda RBX: 0000000000000008 RCX: 0000000000004c81
+RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000296 R12: 0000000000000000
+R13: 0000000000000000 R14: 0000000000000000 R15: 0000000000000000
+ </TASK>
+----------------
+Code disassembly (best guess), 2 bytes skipped:
+   0:	10 06                	adc    %al,(%rsi)
+   2:	03 74 b4 01          	add    0x1(%rsp,%rsi,4),%esi
+   6:	10 07                	adc    %al,(%rdi)
+   8:	03 74 b0 01          	add    0x1(%rax,%rsi,4),%esi
+   c:	10 08                	adc    %cl,(%rax)
+   e:	03 74 d8 01          	add    0x1(%rax,%rbx,8),%esi
+  1e:	00 51 52             	add    %dl,0x52(%rcx)
+  21:	55                   	push   %rbp
+  22:	89 e5                	mov    %esp,%ebp
+  24:	0f 34                	sysenter
+  26:	cd 80                	int    $0x80
+* 28:	5d                   	pop    %rbp <-- trapping instruction
+  29:	5a                   	pop    %rdx
+  2a:	59                   	pop    %rcx
+  2b:	c3                   	ret
+  2c:	90                   	nop
+  2d:	90                   	nop
+  2e:	90                   	nop
+  2f:	90                   	nop
+  30:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+  37:	8d b4 26 00 00 00 00 	lea    0x0(%rsi,%riz,1),%esi
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
