@@ -1,128 +1,101 @@
-Return-Path: <linux-kernel+bounces-752419-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A7C6B17556
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:55:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2CA8B17554
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:54:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 730361894585
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:55:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2D79F584A05
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:54:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA242286884;
-	Thu, 31 Jul 2025 16:54:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D78E23FC52;
+	Thu, 31 Jul 2025 16:54:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="nTEEJREF"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nlYAoigh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B8BD241C89;
-	Thu, 31 Jul 2025 16:54:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9AA711C07C3;
+	Thu, 31 Jul 2025 16:54:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753980865; cv=none; b=GavoWq3mBK4QE6fBpvthyPqUA9FNESvBTiBCMLyZ7CL7xHaUAb94oh/65Oszm4JFe+2yHu9ZTX6/iijnn5uCJlmdH6Ywz2m06Vcnq84QELAxhuicASqZtpCS161IQRs8qPH5eOyn/+iEQQNTZH1UGUaYgbg8QeVgo4C2E1ahqA0=
+	t=1753980862; cv=none; b=GrWCG2riOHnI2jb222CpKU9b4pPK1V4Ekifd9JEkzRbrHtBT8Fu5+EuqdwSbo44mfOydwMbbcVVbYK700oQW2vYUwShYYtmgacmI5q5T0UkIJUjBgBoY2UwquW/hjMIQ5LKOHw1hIBhFsUY0pvsQMcxaBlZmbqLVbGG5zYOxaRI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753980865; c=relaxed/simple;
-	bh=NGYe/4bHwxEsCtXRlSZjhwJ1rnKJGVKblpFSRZKfBR8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qte5CqeuEXYadJIv18tm0vryO6CYprhSM7RpCMMO5mACaUJCqfHjRRxR2eEaO/unF+yh140JrFflJ8rF5FlXnAu0KICTIEupJ9ToXDAiajA/OQldEA5bmTxqnc1zzY5n4WFSGQjtFP402dPhWIK726/QeU7Q0xpCortnZY6hzGI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=nTEEJREF; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 56VGrvlx2190036
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 31 Jul 2025 09:53:58 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 56VGrvlx2190036
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1753980839;
-	bh=NHqv9gvDFInVKj8zR5ZINGbGJDd8Q9i7tTunKoh0LqQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=nTEEJREFOYlhBUz4+HJVKwqjdGT1Rbvbv3lVnp6qg8HLbjNdaU/Qf16FXmD8KqPq4
-	 va4VqywHykDr/Ujx401IzjGVOZeB53blQOX4Sc61ZRp+upWUxUdZjiskeKHK5t1jzz
-	 QIETXcc6xipae6k4FW3sx+TiS9JxfuSgVILd9y/apcEK/+N6nTtUDh3hoZovnguId1
-	 TFqJuAsfCEnbczV7YECkD3VKOv0tfSaB5srDmn1tbViWz2NOsh6Tz+jtKGV+ETYoZl
-	 aW6w4rv2IWvytM8VhLvRsnLsvfH5rZzyTjt4nzyvuRQSUcuqdhU86wsXtGIYc8kMfr
-	 qNFLrZHIZsKng==
-Message-ID: <f20842af-2bc1-4002-a6eb-84c33408d0ea@zytor.com>
-Date: Thu, 31 Jul 2025 09:53:57 -0700
+	s=arc-20240116; t=1753980862; c=relaxed/simple;
+	bh=RFT+unNz9YD8n7J2IfXYOln4J96Jv/o5vG/NxjuMD14=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LbqfC5L7V/gvQzN4+WWKd2MIJqobmM6ruqt322z5kRI+JHUWWyIVrgrFjvxMIWtAtvdcNaskfVhhhIdMa4Lf4pairRRgVzlVY/OnescYRxWv+S56qQzheIaYmMgBQLG2Jki+d2fMzYZ0BEgrkADssaUmIjF7Rf25uu/B+ve7fNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nlYAoigh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 07711C4CEEF;
+	Thu, 31 Jul 2025 16:54:22 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753980862;
+	bh=RFT+unNz9YD8n7J2IfXYOln4J96Jv/o5vG/NxjuMD14=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nlYAoighajV+2KB/yai024exQXQhpbPmK7A8oy6k3uj9hM2tawrN4In0RGQ67WvEM
+	 7DhBDXejbr8R32LYDPhsFb0p0hrMJ2S+Uo6jz+Dv3gGGRjb32ADxYI1Cwl4xTbkgSG
+	 Tmge34PHiSY1pkDiIWqH/QtrKO4LDkv33+u2dZAKEE0WAA6GzqkedEhrazBlNN6/vo
+	 dIfSGPCmyLO6uwyFbq5g2vitx72P0CHDAQlJPEnuK+pvsRPxyd4Fe05UNP8NLV0LJJ
+	 fqyIy5fyX42VyalhgbrLrRZj1rqHejWpY4jAgJeTfOZ4S6RoteOK0PWjXjOoNg+nKX
+	 6GslmxrM5XmIA==
+Date: Thu, 31 Jul 2025 09:54:21 -0700
+From: Kees Cook <kees@kernel.org>
+To: Jeff Layton <jlayton@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Simon Horman <horms@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Jani Nikula <jani.nikula@linux.intel.com>,
+	Joonas Lahtinen <joonas.lahtinen@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	Tvrtko Ursulin <tursulin@ursulin.net>,
+	Krzysztof Karas <krzysztof.karas@intel.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Qasim Ijaz <qasdev00@gmail.com>,
+	Nathan Chancellor <nathan@kernel.org>, Andrew Lunn <andrew@lunn.ch>,
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, intel-gfx@lists.freedesktop.org
+Subject: Re: [PATCH v15 6/9] ref_tracker: automatically register a file in
+ debugfs for a ref_tracker_dir
+Message-ID: <202507310952.7255AA30@keescook>
+References: <20250618-reftrack-dbgfs-v15-0-24fc37ead144@kernel.org>
+ <20250618-reftrack-dbgfs-v15-6-24fc37ead144@kernel.org>
+ <202507301603.62E553F93@keescook>
+ <6270c853cdf90172d4794e2b601ebc88590b774f.camel@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 3/4] KVM: VMX: Handle the immediate form of MSR
- instructions
-To: Chao Gao <chao.gao@intel.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
-        seanjc@google.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
-References: <20250730174605.1614792-1-xin@zytor.com>
- <20250730174605.1614792-4-xin@zytor.com> <aItNtifaItfXhXnu@intel.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <aItNtifaItfXhXnu@intel.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <6270c853cdf90172d4794e2b601ebc88590b774f.camel@kernel.org>
 
-On 7/31/2025 4:04 AM, Chao Gao wrote:
-> On Wed, Jul 30, 2025 at 10:46:04AM -0700, Xin Li (Intel) wrote:
->> Handle two newly introduced VM exit reasons associated with the
->> immediate form of MSR instructions.
->>
->> For proper virtualization of the immediate form of MSR instructions,
->> Intel VMX architecture adds the following changes:
+On Thu, Jul 31, 2025 at 06:29:00AM -0400, Jeff Layton wrote:
+> "If you think you can justify it (in comments and commit log) well
+> enough to stand up to Linus’s scrutiny, maybe you can use “%px”, along
+> with making sure you have sensible permissions."
 > 
-> The CPUID feature bit also indicates support for the two new VM-exit reasons.
-> Therefore, KVM needs to reflect EXIT_REASON_MSR_READ/WRITE_IMM VM-exits to
-> L1 guests in nested cases if KVM claims it supports the new form of MSR
-> instructions.
+> Is making it only accessible by root not sensible enough? What are
+> "sensible permissions" in this instance?
 
-Damn, forgot about nested...
+Yes, I should have been more clear (or probably should update the
+document), but root (uid==0) isn't a sufficient permission check, as
+address exposure is supposed to be bounded by capabilities. Putting a
+filename into the tree exposes the address to anything that can get a
+file listing, and DAC access control isn't granular enough.
 
-> 
-> I'm also wondering if the emulator needs to support this new instruction. I
-> suppose it does.
+(Thank you again for the fix patch I saw in the other thread!)
 
-Yes, I thought about it.  However the new instructions use the VEX
-prefix, which KVM doesn't support today.
-
+-- 
+Kees Cook
 
