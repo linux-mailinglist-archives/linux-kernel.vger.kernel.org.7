@@ -1,129 +1,99 @@
-Return-Path: <linux-kernel+bounces-752327-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752328-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43A59B1741A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:46:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 571BEB17420
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 17:49:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34D94A80B7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:46:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 270B81C23E3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:49:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE6B189902;
-	Thu, 31 Jul 2025 15:46:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6681DFE12;
+	Thu, 31 Jul 2025 15:49:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b="a583IQHj"
-Received: from mout-p-102.mailbox.org (mout-p-102.mailbox.org [80.241.56.152])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c+4g5dFa"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD6580B
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 15:46:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.152
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6259317A2E6;
+	Thu, 31 Jul 2025 15:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753976801; cv=none; b=SQ+Oysquwk5rrjAuJrIMIDpMh3tjj4SoWSuEYDdLqNsCjMJ5wGpxRVswMbYykQKRnr34WcxbSChdEQ6vQiQ9tisGxmVjFKOTQyuiqGce28r9bP0+V8zNWCHcK3cY1i8L57j5yUWkgoJxFVLhVgfBCXaDd6aX1dP8cODfG+rXj4M=
+	t=1753976972; cv=none; b=lS2hTbFad3pPaiDh33Vl0z9/6BuY2keJBoFDsmhYi2qHcUZ2rKbJ5UHJfo27up5nM8rOflWRF58270bWU6Ka+VYlLKQgwyUw8gHiaXQYp4wgtfL79s5TfLZoXN6cGR8hZRcgsnvgGsG7gszwIe8kUKLk8Vu29yjhwqkbDmH4YaY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753976801; c=relaxed/simple;
-	bh=wO9VfTEhprydHILB3elGv6+ePAtiiEKjt8NPrsym67A=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=tI2nTNEiezo9MbYi54MPROQtDBsSHcaxDBlXCSJPmIEljXqfiPg+Vkmhd4iVOcI8g/pO4n9BLOxVMJQcQ7fQhlnnevfpBsJXenrKaA9IJUHqqS4pGvRXMZZH1NGN8x4ADMMrQGDh/qGVfdh9Il401iVCUYVQitXc7HdwYY9pfso=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org; spf=pass smtp.mailfrom=mailbox.org; dkim=pass (2048-bit key) header.d=mailbox.org header.i=@mailbox.org header.b=a583IQHj; arc=none smtp.client-ip=80.241.56.152
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mailbox.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mailbox.org
-Received: from smtp202.mailbox.org (smtp202.mailbox.org [10.196.197.202])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-102.mailbox.org (Postfix) with ESMTPS id 4btD2w6vvyz9smJ;
-	Thu, 31 Jul 2025 17:46:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mailbox.org; s=mail20150812;
-	t=1753976793; h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nqSqnIBT+SHJ9AizB7Ds7cjospfQYyj5MAaxXf/CUTI=;
-	b=a583IQHj17TnZm2kYRSRkRL3d85eAIKkjqNmRxTxRUZfFGLRxhF3gvPv6ZdpCbljw/3ypw
-	HkqMV3lZRm0BVyeHLCNgG5LTT1apwLVXu0nHjx+hWEB+QVaAP6uuojfVW39U6We8r087HD
-	tlLclS74neeZagvkY/ltfUlkgwPMzQD/v5J9knfx/exibfkv2UyC3WGZ4ym3m8gj+msJ00
-	PUdEVqHJ+BXs67jCm0iAxw9WLg6oVQaJxyY394LNSxpa/uxWeMt0Djxq9lS3tlMp98oG8F
-	G5UwK5R8fh6Tdj/imwetG3Aatv9DqyUhyp3HhUAedVUbvVlhKLzUMo1b+6GUng==
-Message-ID: <481a2808c235f95726d17803503b2b6dc2746dc3.camel@mailbox.org>
-Subject: Re: [PATCH] drm/nouveau: Remove forgotten TODO
-From: Philipp Stanner <phasta@mailbox.org>
-Reply-To: phasta@kernel.org
-To: Danilo Krummrich <dakr@kernel.org>, Philipp Stanner <phasta@kernel.org>
-Cc: David Airlie <airlied@gmail.com>, Ben Skeggs <bskeggs@nvidia.com>, 
- Simona Vetter <simona@ffwll.ch>, nouveau@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Date: Thu, 31 Jul 2025 17:46:30 +0200
-In-Reply-To: <Z_ZTrZ-dcD5YiSm4@cassiopeiae>
-References: <20250409091413.94102-2-phasta@kernel.org>
-	 <Z_ZTrZ-dcD5YiSm4@cassiopeiae>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1753976972; c=relaxed/simple;
+	bh=EPnS+85CCZB3YSSlWabEu+epgy+Y4fGVAt01JDMlEv0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=L5f4hVMcz7VQGvTgMVfS7RV8BvP/daYbyKnpbukPyRDbLTVhdnTq+Njyvo/m30KQ3AKliWgjpKUc3D6nkHHbtP+L7F5pb7QZxL5OfWzc5+z9BDd7jpbmBoilByEHIK5gGHxo7iBQmOo4alwe9CVdIYX5leADmR/WysyC4lP8pIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c+4g5dFa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FD85C4CEEF;
+	Thu, 31 Jul 2025 15:49:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1753976971;
+	bh=EPnS+85CCZB3YSSlWabEu+epgy+Y4fGVAt01JDMlEv0=;
+	h=From:To:Cc:Subject:Date:From;
+	b=c+4g5dFaReZzRCC9XACkiV5iNmmll02yrMuGGFUYQuPCcV0sS7pZUXpJiXDN6S+CW
+	 cuIxLT/kFWJqKbW1QiL3cTnyqGP76pU4quzXb1UzPiPhfIHo56Au61R3fa58/wKloz
+	 h2FsqjHjQ7oRc/7DUezSMCA9vi37xGkB9d8HglbRAhsi1ygk33gqjeqffUHexMU221
+	 uZIetj/SQCfl5epNmmcGwE+BgU7mwPMYFf/LfmkmImPD3gmhCxFwQUA0KJ6HIMspNi
+	 azHCDjCG5dTOuwLnxFD7m00N4uvmg2iu46SGH3yFBSKIbAGLTeljQqRoX/SfyZHc4B
+	 c0xERPu52GP7A==
+From: Danilo Krummrich <dakr@kernel.org>
+To: lorenzo.stoakes@oracle.com,
+	vbabka@suse.cz,
+	Liam.Howlett@oracle.com,
+	urezki@gmail.com,
+	ojeda@kernel.org,
+	alex.gaynor@gmail.com,
+	boqun.feng@gmail.com,
+	gary@garyguo.net,
+	bjorn3_gh@protonmail.com,
+	lossin@kernel.org,
+	a.hindborg@kernel.org,
+	aliceryhl@google.com,
+	tmgross@umich.edu,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: rust-for-linux@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	Danilo Krummrich <dakr@kernel.org>
+Subject: [PATCH 0/4] Alloc and drm::Device fixes
+Date: Thu, 31 Jul 2025 17:48:05 +0200
+Message-ID: <20250731154919.4132-1-dakr@kernel.org>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MBO-RS-META: p53bo8i5ur8wo1qck16c34ycr5h7kqgw
-X-MBO-RS-ID: b29b12feb864e280c3e
+Content-Transfer-Encoding: 8bit
 
-On Wed, 2025-04-09 at 13:02 +0200, Danilo Krummrich wrote:
-> (+ Ben)
->=20
-> On Wed, Apr 09, 2025 at 11:14:14AM +0200, Philipp Stanner wrote:
-> > commit ebb945a94bba ("drm/nouveau: port all engines to new engine modul=
-e
-> > format") introduced a TODO to nouveau_chan.h, stating that an
-> > unspecified rework would take place in the "near future".
-> >=20
-> > Almost 13 years have passed since this "near future", so it can be
-> > safely assumed that the TODO is not needed anymore. Besides, its conten=
-t
-> > is useless anyways since it does not specify *what* should have been
-> > done.
-> >=20
-> > Remove the TODO.
-> >=20
-> > Signed-off-by: Philipp Stanner <phasta@kernel.org>
-> > ---
-> > =C2=A0drivers/gpu/drm/nouveau/nouveau_chan.h | 1 -
-> > =C2=A01 file changed, 1 deletion(-)
-> >=20
-> > diff --git a/drivers/gpu/drm/nouveau/nouveau_chan.h b/drivers/gpu/drm/n=
-ouveau/nouveau_chan.h
-> > index 016f668c0bc1..3b73ec91c4ff 100644
-> > --- a/drivers/gpu/drm/nouveau/nouveau_chan.h
-> > +++ b/drivers/gpu/drm/nouveau/nouveau_chan.h
-> > @@ -33,7 +33,6 @@ struct nouveau_channel {
-> > =C2=A0		u64 addr;
-> > =C2=A0	} push;
-> > =C2=A0
-> > -	/* TODO: this will be reworked in the near future */
-> > =C2=A0	bool accel_done;
->=20
-> After having a brief look, it seems that it may has actually been reworke=
-d;
-> there is only a single use of accel_done, which is in FIRE_RING(), where =
-it is
-> set to true. But it doesn't seem to be read from anywhere.
->=20
-> So, I think we should remove both, the TODO and the accel_done field.
->=20
-> @Ben: Maybe you remember the history of this.
+This patch series replaces aligned_size() with Kmalloc::aligned_layout(), which
+is subsequently used to obtain a kmalloc() compatible Layout for
+__drm_dev_alloc() in drm::Device::new().
 
-Since we didn't get an answer =E2=80=93 how do we want to continue with tha=
-t,
-Danilo?
+It also contains two additional drm::Device fixes; the commits are based on
+next-20250731.
+
+Danilo Krummrich (4):
+  rust: alloc: replace aligned_size() with Kmalloc::aligned_layout()
+  rust: drm: ensure kmalloc() compatible Layout
+  rust: drm: remove pin annotations from drm::Device
+  rust: drm: don't pass the address of drm::Device to drm_dev_put()
+
+ rust/kernel/alloc/allocator.rs | 30 ++++++++++++++++++------------
+ rust/kernel/drm/device.rs      | 32 +++++++++++++++++++++++++-------
+ 2 files changed, 43 insertions(+), 19 deletions(-)
 
 
-P.
-
-
->=20
-> - Danilo
+base-commit: 84b92a499e7eca54ba1df6f6c6e01766025943f1
+-- 
+2.50.0
 
 
