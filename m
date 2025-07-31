@@ -1,83 +1,92 @@
-Return-Path: <linux-kernel+bounces-752208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78694B17284
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:53:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D641AB17287
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:53:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C77562EE8
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 024E5624DF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:53:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD692D0C8E;
-	Thu, 31 Jul 2025 13:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87D0C2D2387;
+	Thu, 31 Jul 2025 13:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZhC1KhQ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nuKFVyrU"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4AE2BF00B;
-	Thu, 31 Jul 2025 13:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1B312D191F;
+	Thu, 31 Jul 2025 13:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969991; cv=none; b=g7YLMqWb5z7Z6jKvoKOczrkmz0CcijhbAi3xRlfBUTROR8OKdvxYH6rHHWh6YvwOmsX1JloBUI2aRTO6U6etCffujNVV+oDoTnRW1qqGbfwLHOPqyWxB8JhPNBxklFfsGOF+9pgf8DmU/CihH4N5yjfnjnbxeZeS+em/xqJwZ8k=
+	t=1753969996; cv=none; b=on0teBuQCxQ/TJUsO66VC8yGsgxZHKZlP1Ssth2zSmoTgTfxuIsCI7ypO+9mRY3vavHJWw9gTcOF6t2E/VN7jFc+1FZ41h95TfeTxCMDvz+jwSd2oPrU5bI444da4nGTH6Uct7bNj+999fb7GIIOWgplxPE4yoM/rGxsrdu2HIU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969991; c=relaxed/simple;
-	bh=AZrEvd5CkZWyj2crdtUevGjO4dk8FdeJGcOeI+4NkwA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=awzjFUGFhfFPVH1qD7L6ZMTGcXbbb+rlFlom6FsTYMmFXCQ/Hsyij1H4OOvH6Yl4VA7wFbaleFsNMpDXN1lMTFQALmt9ppfOyzCi1SHo+W7OiVvTh4Fg+1bW9TdfFDYCdO3HQ0TzLayPbihO0r467/E4UV6Aedk5Pwwrr+ENnIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZhC1KhQ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90E8C4CEEF;
-	Thu, 31 Jul 2025 13:53:09 +0000 (UTC)
+	s=arc-20240116; t=1753969996; c=relaxed/simple;
+	bh=yXz5mBUZF6Q+N9j0CfMMnnCvdMIaf13rIadj2MRnX6I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DbY3uCVNrYUlewGMInqx3VuVblFc00d8oOzlQqgbLo8yb4amdPzG4xxex77OAfOm2a6DJPA66dhHxOA2FkVfyvEUWuIHMjjTqMwL45qwJdPsuxbQ25r518CtxPtTocAxTYWD9uMt1UnAu4UpCmQcDmpmbuOI2DQUY7ZZ6NJQQ6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nuKFVyrU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3FAF4C4CEEF;
+	Thu, 31 Jul 2025 13:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753969991;
-	bh=AZrEvd5CkZWyj2crdtUevGjO4dk8FdeJGcOeI+4NkwA=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=aZhC1KhQIIxpXpr1iC5fjtrGE6hrEZujJPYV7+3pe5MIgeI9gWwwmOrJFXfIRjca6
-	 vLzA2j6aEGujaOtxB70IQwgNDeyWQ1MxiaYLIx5uHzK78cH76N8oNoUSA3Gub/8W+k
-	 jqOah13m1e9kIdIIixln8+CeGfIPrY8PbFZJa2TOZ2G4S0gjrZbRPc/gHgcW7W+w1u
-	 u2oVdGWLvwS0OnHjnTW8rHKpWIEKznW0FS6QlrXcTGBSuxv4cpY8MjrwGgbJNV72C6
-	 DwD/EiznBVS1EIUIqIcmOIhMyHToE/DEoJw5MdzuL01/qKGT6oUfvwrXZaV73mWA6N
-	 q7QmAzl3bwCWA==
-From: Lee Jones <lee@kernel.org>
-To: kernel@oss.qualcomm.com, Lee Jones <lee@kernel.org>, 
- Pavel Machek <pavel@kernel.org>, 
- Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
- Fenglin Wu <fenglin.wu@oss.qualcomm.com>
-Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
- linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
-References: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
-Subject: Re: [PATCH v2 0/2] leds: flash: leds-qcom-flash: update torch
- current clamp setting
-Message-Id: <175396998963.1216636.9777141623306195589.b4-ty@kernel.org>
-Date: Thu, 31 Jul 2025 14:53:09 +0100
+	s=k20201202; t=1753969995;
+	bh=yXz5mBUZF6Q+N9j0CfMMnnCvdMIaf13rIadj2MRnX6I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nuKFVyrU6RyPSXasWhoG+PZAXbRQvg71zY3Sb4uTSLtkzVcZM0ctCwZO3WwvbrI09
+	 ofP7XRFAPu1cfff9IQtvv+PsZrp7DYf2mrsMz4ChCf7VEdMnancKGYNTWTjE6nTgv4
+	 jkH4N26DgfRG0wbOfGY5i72biU7CN1WqAAjiYVz3VcYFVBazuo0nDfZbuitZk1w+Qa
+	 t1dnTWlsxZqR9BiurwrZeHrk8ddZNmlW4lAIpMUpX2ytaljEbDNC2ctWKdiOTqCGJ7
+	 Uccf4zOgOrnGHzrK+5ybIUOuYGenFyIiknGkpjqzCdoVc7TLn//RW+GppLnn3oeaof
+	 /JXo+hqbBlLwg==
+Date: Thu, 31 Jul 2025 08:53:14 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: =?iso-8859-1?Q?Cl=E9ment?= Le Goffic <clement.legoffic@foss.st.com>
+Cc: Jonathan Corbet <corbet@lwn.net>, devicetree@vger.kernel.org,
+	Mark Rutland <mark.rutland@arm.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	linux-stm32@st-md-mailman.stormreply.com,
+	Julius Werner <jwerner@chromium.org>, linux-clk@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Will Deacon <will@kernel.org>,
+	Le Goffic <legoffic.clement@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	linux-doc@vger.kernel.org, Krzysztof Kozlowski <krzk@kernel.org>,
+	Gabriel Fernandez <gabriel.fernandez@foss.st.com>,
+	Gatien Chevallier <gatien.chevallier@foss.st.com>,
+	Stephen Boyd <sboyd@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	linux-arm-kernel@lists.infradead.org,
+	Philipp Zabel <p.zabel@pengutronix.de>
+Subject: Re: [PATCH v5 09/20] dt-bindings: memory: SDRAM channel: standardise
+ node name
+Message-ID: <175396999408.2138783.9344122999119698215.robh@kernel.org>
+References: <20250728-ddrperfm-upstream-v5-0-03f1be8ad396@foss.st.com>
+ <20250728-ddrperfm-upstream-v5-9-03f1be8ad396@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+In-Reply-To: <20250728-ddrperfm-upstream-v5-9-03f1be8ad396@foss.st.com>
 
-On Tue, 29 Jul 2025 12:51:21 +0800, Fenglin Wu wrote:
-> There is a current clamp register needs to be updated when enabling
-> torch LED, and the register address is different between different
-> PMIC flash LED modules. Add changes to address it.
+
+On Mon, 28 Jul 2025 17:29:40 +0200, ClÈment Le Goffic wrote:
+> Add a pattern for sdram channel node name.
 > 
+> Signed-off-by: ClÈment Le Goffic <clement.legoffic@foss.st.com>
+> ---
+>  .../bindings/memory-controllers/ddr/jedec,sdram-channel.yaml       | 7 +++++--
+>  1 file changed, 5 insertions(+), 2 deletions(-)
 > 
 
-Applied, thanks!
-
-[1/2] leds: flash: leds-qcom-flash: update torch current clamp setting
-      commit: f1b908cc8c7110872064e4a55a88b34938b4054a
-[2/2] leds: flash: leds-qcom-flash: add a separate register map for PMI8998
-      commit: 82f1f0522cad9193a42593b9e9622433efcf5f26
-
---
-Lee Jones [ÊùéÁêºÊñØ]
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
