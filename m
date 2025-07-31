@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-752359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5F47B17498
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:04:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E321B174B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 18:07:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2D75A83239
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:03:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 764F917A8AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 16:06:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7E211ACED9;
-	Thu, 31 Jul 2025 16:03:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7527E23ABB4;
+	Thu, 31 Jul 2025 16:05:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="1shAKTp5"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="G6UM2Bzt"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFFC821B9DB;
-	Thu, 31 Jul 2025 16:03:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D36423A9AB
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 16:05:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753977784; cv=none; b=lygxixKaItuceEqBxawWhPx+a5bh/EpZ5aiin9BWNrOIHeTagVAdbNJ22bboQLSOmZwc+5Xgl5f0wV9PmAlM1z67UMZcIoqBY1KVULB2EcMzuXG62r6TjYIMhHcOd7JouajNClgDxP4nxQSjG5XYObRDdjx/ox67wgoak+rvHls=
+	t=1753977940; cv=none; b=cvjJgS70x5IAcNUWL+8c/EBKgefes33I4/gWSP/52yq1m7pPB+qC098YZosO/+nh/F4qKzDadEsvsTmYINOEdatuEOnpe2HjYXQSMRx8PvvPQmy8AgQCVzCwq2k/QXA7H2AW73QDbHlQtaEoLGASJILJJNoAjUasBx246aa40Qw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753977784; c=relaxed/simple;
-	bh=dGcxc9yB51Zv0XtFk8+LA//+P7TOs76esWrPlEu5FOg=;
+	s=arc-20240116; t=1753977940; c=relaxed/simple;
+	bh=CnYIEKLx4TAFUxdZTssELh7lELrZ7WzEgh5Jw6CgJNE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=YIzAMIjjUrw9iIkyqvyrOf4D784Ww6bKbwI8HizkkY1GCr2aoGma/fIcbwN/bDVgBSEmROlH1R48bfSQB53jnVC1nuQiOaZWg926A2ybldHmjJi5k/c80hbB7lg4zZd1hYdDJfNwNgQBLOLmlVSe8dzrb9RB+IXWCNc3wc30OGY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=1shAKTp5; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
-	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
-	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=rzwC8YvskcqQ/u+h5BGJ/oUgeMImwjxx7We2MbfRan8=; b=1shAKTp5nDng5t9KzxwPlg8e/e
-	/tT6QPmdGJ8Y+DYCYLIYRRP9s7N41NKyAA39AVxibdN+LaEdY6VNiPpS8vrSrYYeqLl2feTLRvmR7
-	pHJaZ+P9tF8TcVMLWg6fwm51SREYSxB6aV+bucpu1MbBHX0QC3AM+g8NEd2kGpyNZoKG4UIAKKyuy
-	PecvD2/TaTRg2Zb+9jiIcG4wB20KBzPNerapra07QeVgGiEhHYrdhti5DB9+GJshqZ4+RS3NeoefC
-	N6CIPIbuDTGAV0Gts+mJC1hofznljGMZdI5j0jVHPRBhbdND4TfN036I7mk67EEv71D9wySMIqLDR
-	GbCFjy5A==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:46120)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uhVk4-0005EY-2R;
-	Thu, 31 Jul 2025 17:02:52 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uhVk1-00019c-1p;
-	Thu, 31 Jul 2025 17:02:49 +0100
-Date: Thu, 31 Jul 2025 17:02:49 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <aIuTqZUWJKCOZYOp@shell.armlinux.org.uk>
-References: <aIuEvaSCIQdJWcZx@FUE-ALEWI-WINX>
- <4acdd002-60f5-49b9-9b4b-9c76e8ce3cda@lunn.ch>
+	 Content-Type:Content-Disposition:In-Reply-To; b=e9qkadDAAXEQWgnipop0Z/KakFJHmRy7w3mEsFEs+cCGenI8psel40v5FqRl7IB3irXPR3nnoYvYnKbUGozJMwu016cxQiIYkIN6wqJBoBdqxXLtdGKVYIlpM9AP29+VZ+Q3Ai+6LXsQhy2hqgkwu4c9Px3vQTSl1/kWL4dtPAY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=G6UM2Bzt; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-3b7834f2e72so735139f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:05:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1753977937; x=1754582737; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=LdhQmFbMkNSed960dmFtejqXjsu13SQnTKg6pcVU8yI=;
+        b=G6UM2Bzt9DT7vB+ewp0JItcA4IgJj3DjfJT0X+V1WJGnxcqgFNgZxL/zkmUAvCgg8e
+         FEbVMcrHGGGZwG7rrVUtsfPSa5xUUPDJqd7YBMBv8fHB115izTXzO1bc6KwjYA3w5kAd
+         pOFVvnZSnXlCnv8MDsd/2jPxhH8HBvYR0KkOmfPXKWxtOCFii6En1FqIryGK2/4lBptJ
+         IblsNZpsT/8dxMGrJnLFl3ZYRrMpOkvVOesf2QPcRdskfCsRyP3ovchI6lJRFfDTAySX
+         slnK2X7EsZeOMfqElJdHWAqR23jMspesgo0/+HekoRpcDdiI5iKe3o2BRhMTpbtSYXuW
+         9r6g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753977937; x=1754582737;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=LdhQmFbMkNSed960dmFtejqXjsu13SQnTKg6pcVU8yI=;
+        b=LbiQoTv1FTIX9t+V79j4eQ46ru1H4ZFQqAkY21NdiuEbbrcMB2DijXjkANnwecv9R8
+         k4bB+RmKBcRaByrN+UBhC1KbFVNfOAbC5zYuC5A2onX3YK7gZhKALtQCfoIapJp3y/Gl
+         nebw+yzEyRskhbMbStvtLPkP2CwYuKubaMpmTn2yl4RzCv/OAABUk11uL0BqpnUTNI/M
+         jmpPATnQ2ry6JnvCF7jzK38UWpPgJtAsJpIPSC8dDLO/yWC+kdZauao4+4U3z6pbbsDr
+         1NvBSPvJekQx6Up1w8HBypOFIe6xUu3xcFlxWHvNn6BnN3V2yqWlwvCcoY6i+r4+AZEx
+         96mw==
+X-Forwarded-Encrypted: i=1; AJvYcCVV1Bt+SshxhJ36bSE2R5nCQUynRNIuT3HaOX1D+XfRG9TouUGUMG2wb285JcQL1vbcS6ZTqEuot9ZdV9s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyoa+X3eKqmSaVaBG4UkbSEhrqaiiSsvo4GS0W+tH9xcO7+0ryV
+	3Tg9O3jD/LOHGLJ7gAIZfztTmiwtM2EEWD57zPRBjcDmlTOGTPY6GlO7IYF4S+5bYQE=
+X-Gm-Gg: ASbGncuB/0aOn57dMZmnQlk6XiH5iiQlBUb/8RxhLlI0rNaGD+aV5425qIn0DCSxrqy
+	JKgadWzk4C+WecbQvC8Jv0NYZDmHSq67gc7rk7offlzkbfHoR/BVkXNuNv8zKab2X7N/hljwVOm
+	tM9+gShmxNdSQWN7HFl61RlqC4EwI4n/LhxJZtckztCwm7wJqzpR6mEeEEy/cU2LzZgBVZ1fnMD
+	ZM1+6G1mjbNW5dvPUVbQxmdrEMcEqyiHho0hCHSL+7MGtajg2FkCqJUH69y+6gOI9EQxyFXxVfu
+	dyWeBjKuxiSfz+YjKNB9rKuWU/b63a1YczKyh/0zP23tkSgEEwpHZ0PMUVmXyZsCKgzaEmtIuyh
+	0ChG09K5V4Q2x9sh4lsCgucf45/zgGt9bFWsQfura0qE=
+X-Google-Smtp-Source: AGHT+IHKEgPI16zTrpdtBA345eAj3eoJCpdLSHZI7HH7keABCX5N2v7AOToBccj7RD32n4zicM10sg==
+X-Received: by 2002:a05:6000:4212:b0:3a3:63d3:369a with SMTP id ffacd0b85a97d-3b794fc182dmr7100030f8f.25.1753977937312;
+        Thu, 31 Jul 2025 09:05:37 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-45895377956sm69939275e9.10.2025.07.31.09.05.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 09:05:36 -0700 (PDT)
+Date: Thu, 31 Jul 2025 19:05:32 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: ashirvadm04@gmail.com
+Cc: gregkh@linuxfoundation.org, philipp.g.hortmann@gmail.com,
+	sayyad.abid16@gmail.com, linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] staging: rtl8723bs: Replace magic numbers in
+ rtl8723b_InitBeaconParameters
+Message-ID: <8c350c13-3e6d-45cf-b9d2-2e8df07b6dd2@suswa.mountain>
+References: <20250729141224.16013-1-ashirvadm04@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <4acdd002-60f5-49b9-9b4b-9c76e8ce3cda@lunn.ch>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+In-Reply-To: <20250729141224.16013-1-ashirvadm04@gmail.com>
 
-On Thu, Jul 31, 2025 at 05:14:28PM +0200, Andrew Lunn wrote:
-> On Thu, Jul 31, 2025 at 04:59:09PM +0200, Alexander Wilhelm wrote:
-> > Hello devs,
-> > 
-> > I'm fairly new to Ethernet PHY drivers and would appreciate your help. I'm
-> > working with the Aquantia AQR115 PHY. The existing driver already supports the
-> > AQR115C, so I reused that code for the AQR115, assuming minimal differences. My
-> > goal is to enable 2.5G link speed. The PHY supports OCSGMII mode, which seems to
-> > be non-standard.
-> > 
-> > * Is it possible to use this mode with the current driver?
-> > * If yes, what would be the correct DTS entry?
-> > * If not, I’d be willing to implement support. Could you suggest a good starting point?
+On Tue, Jul 29, 2025 at 07:42:10PM +0530, ashirvadm04@gmail.com wrote:
+> From: Ashirvad Mohanty <ashirvadm04@gmail.com>
 > 
-> If the media is using 2500BaseT, the host side generally needs to be
-> using 2500BaseX. There is code which mangles OCSGMII into
-> 2500BaseX. You will need that for AQC115.
-> 
-> You also need a MAC driver which says it supports 2500BaseX.  There is
-> signalling between the PHY and the MAC about how the host interface
-> should be configured, either SGMII for <= 1G and 2500BaseX for
-> 2.5G.
+> Replace magic numbers 0x6404 and 0x660F in rtl8723b_InitBeaconParameters
+> with macros TBTT_PROHIBIT_TIME_8723B and BCN_AIFS_CFG_8723B, respectively,
+> defined in rtl8723b_hal.h.
 
-Not necessarily - if the PHY is configured for rate adaption, then it
-will stay at 2500Base-X and issue pause frames to the MAC driver to
-pace it appropriately.
+I don't really think these names add any information.  The number is
+related to TIME but no one really knows how it works.  Someone posted
+a theory about it, but it turned out that was just AI hallucination.
+The spec they quoted was real but the sub section was fake.
 
-Given that it _may_ use rate adaption, I would recommend that the MAC
-driver uses phylink to get all the implementation correct for that
-(one then just needs the MAC driver to do exactly what phylink tells
-it to do, no playing any silly games).
+The 8723B is the name of the driver, but without the "s" for some
+reason.  It's just words but with no meaning.  It's a map to nowhere.
+It's a waste of time.  I would say that there is also an element where
+these names are a bit misleading because the BCN_AIFS_CFG_8723B is
+really specific and the name suggests it's more of a generally config
+button.
 
-> Just watch out for the hardware being broken, e.g:
-> 
-> static int aqr105_get_features(struct phy_device *phydev)
-> {
->         int ret;
-> 
->         /* Normal feature discovery */
->         ret = genphy_c45_pma_read_abilities(phydev);
->         if (ret)
->                 return ret;
-> 
->         /* The AQR105 PHY misses to indicate the 2.5G and 5G modes, so add them
->          * here
->          */
->         linkmode_set_bit(ETHTOOL_LINK_MODE_5000baseT_Full_BIT,
->                          phydev->supported);
->         linkmode_set_bit(ETHTOOL_LINK_MODE_2500baseT_Full_BIT,
->                          phydev->supported);
-> 
-> The AQR115 might support 2.5G, but does it actually announce it
-> supports 2.5G?
+Just leave it as-is.  I would suggest that you could delete the TODO,
+but it's good practice to just learn to accept that we can't fix
+everything.
 
-I believe it is capable of advertising 2500BASE-T (otherwise it would
-be pretty silly to set the bit in the supported mask.) However, given
-that this is a firmware driven PHY, it likely depends on the firmware
-build.
+regards,
+dan carpenter
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+
 
