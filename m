@@ -1,214 +1,106 @@
-Return-Path: <linux-kernel+bounces-751619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22BDAB16B86
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:30:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85A45B16B8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 07:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B7271AA2955
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:31:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2C8016646B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 05:32:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FC323F41A;
-	Thu, 31 Jul 2025 05:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vh062AEK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="phv4Ttde";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="vh062AEK";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="phv4Ttde"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C56C4BA2D
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 05:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5DCA242D63;
+	Thu, 31 Jul 2025 05:32:14 +0000 (UTC)
+Received: from sgoci-sdnproxy-4.icoremail.net (sgoci-sdnproxy-4.icoremail.net [129.150.39.64])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0DDA94A;
+	Thu, 31 Jul 2025 05:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=129.150.39.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753939838; cv=none; b=ATtghGW88aKHoxe0SxqASc0rrfxtQRJwHQf2qW3z6RMC3whISo+ZgnhNJ80Q1YEHQ6M8wEUcn5g0bgZEwbtT+pNfPPwfPWt4w5GKnDK5Tq2rQeXNS3rIlD2XlSTNCUoSYyyp8wTio5WnwpGb08ypXIIuHXqKdknX1oOf/x6WYO8=
+	t=1753939934; cv=none; b=c5uJ9/EFzUHW/uK0WFCPrEu9iImTd0XEzecJ56NJCxZZrI2KIVZ9/VtfN+BqZIgJVwbuXQAJL4Nu2Vu2ShvoqV0Ph5usXQBUqLSmo5V4ZQkHm3+kN6p+kGyy+j/mgWhRYzurUadzfKYygna+3ytN8HLn5pk+wq4EuC7i94ZP8io=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753939838; c=relaxed/simple;
-	bh=Cu5t6YZcZk5lAf+VgfszA5pX1dHFJSG+P7TJVPUldzg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YUW1rZylxYAbuEcveTtF2Qprs9PS6oSIz4M/w6ySkh4tpLchyYr/aPUmJ1ax6SlqB07J4ezxovzFnKyEWTxoCBATgAShdkPXQLC0/WXF9e5JQ93th+vTYC7gL1AIbiRX458iVw5DcgHI9J2dcvH/RR0qigvdxrRsSl1VcXk0+t4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vh062AEK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=phv4Ttde; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=vh062AEK; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=phv4Ttde; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id B4FB31F893;
-	Thu, 31 Jul 2025 05:30:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753939834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
-	b=vh062AEK12FoWQvMpiCA2uasJ0rP0Ib870SzzVPBCeCeiDFuWMwon935Ez+vDJ6anTmbPU
-	rSuV2Y4GZE8AwkNlBcatD/mMENWOmJvZt8tFVo6gRNs+PUZr7/xf3IkP5nPqwQDB0wNUQ3
-	YMWmkzI7DxfbHviteQ81m/63kkmy/mo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753939834;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
-	b=phv4TtdeYRIvUJ6faEy+gJZl5UB7jR77ouuNvInDj43rDQCx9nsEUtvF5VmfxBW6/35nPs
-	E1T9kmY15CTeWIAA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1753939834; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
-	b=vh062AEK12FoWQvMpiCA2uasJ0rP0Ib870SzzVPBCeCeiDFuWMwon935Ez+vDJ6anTmbPU
-	rSuV2Y4GZE8AwkNlBcatD/mMENWOmJvZt8tFVo6gRNs+PUZr7/xf3IkP5nPqwQDB0wNUQ3
-	YMWmkzI7DxfbHviteQ81m/63kkmy/mo=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1753939834;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
-	bh=XXKHNIrDQ0CBoy0GqEZiamPh7M3IIt41WJXt06H2vrc=;
-	b=phv4TtdeYRIvUJ6faEy+gJZl5UB7jR77ouuNvInDj43rDQCx9nsEUtvF5VmfxBW6/35nPs
-	E1T9kmY15CTeWIAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 922971378C;
-	Thu, 31 Jul 2025 05:30:34 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 45aBInr/imhmTQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Thu, 31 Jul 2025 05:30:34 +0000
-From: Takashi Iwai <tiwai@suse.de>
-To: linux-sound@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH] ALSA: hda: Fix arch defconfigs
-Date: Thu, 31 Jul 2025 07:30:30 +0200
-Message-ID: <20250731053031.27121-1-tiwai@suse.de>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1753939934; c=relaxed/simple;
+	bh=S8fE8csNzXTLlrCW1M853t6niS2JJvEuUJQqdUqbuHs=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=CzkWCw62ByAzCJ0FsugHqofbAPfQ1qFxrtC0vleEjGd6+CioEC2uc6YVFEmpg7sjsGzdmvz4XVIWEyl5fdyvhQ9PKLfB7WmyW/N8YVHteM6+DiSF/ta9URjcP8fbQ2faCYySntK35+sPWaNCZ8QP7yjcN4ycHlFkRh/B04Lb01c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com; spf=pass smtp.mailfrom=eswincomputing.com; arc=none smtp.client-ip=129.150.39.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=eswincomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=eswincomputing.com
+Received: from zhangsenchuan$eswincomputing.com ( [10.12.96.83] ) by
+ ajax-webmail-app2 (Coremail) ; Thu, 31 Jul 2025 13:31:49 +0800 (GMT+08:00)
+Date: Thu, 31 Jul 2025 13:31:49 +0800 (GMT+08:00)
+X-CM-HeaderCharset: UTF-8
+From: zhangsenchuan <zhangsenchuan@eswincomputing.com>
+To: "Krzysztof Kozlowski" <krzk@kernel.org>
+Cc: gregkh@linuxfoundation.org, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	Thinh.Nguyen@synopsys.com, p.zabel@pengutronix.de,
+	ningyu@eswincomputing.com, linmin@eswincomputing.com,
+	yangwei1@eswincomputing.com, pinkesh.vaghela@einfochips.com
+Subject: Re: Re: [PATCH v2 1/2] dt-bindings: usb: Add Eswin EIC7700 USB
+ controller
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version 2024.2-cmXT6 build
+ 20241203(6b039d88) Copyright (c) 2002-2025 www.mailtech.cn
+ mispb-72143050-eaf5-4703-89e0-86624513b4ce-eswincomputing.com
+In-Reply-To: <51648c0f-dd30-4a07-83c0-533a57c29e63@kernel.org>
+References: <20250730073953.1623-1-zhangsenchuan@eswincomputing.com>
+ <20250730074058.2004-1-zhangsenchuan@eswincomputing.com>
+ <51648c0f-dd30-4a07-83c0-533a57c29e63@kernel.org>
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-2.80 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_MISSING_CHARSET(0.50)[];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_TWO(0.00)[2];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:mid];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	TO_DN_NONE(0.00)[];
-	RCVD_TLS_ALL(0.00)[]
-X-Spam-Flag: NO
-X-Spam-Score: -2.80
+Message-ID: <1f9a715d.3bb7.1985ef71b54.Coremail.zhangsenchuan@eswincomputing.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:TQJkCgDHZpXF_4poaze5AA--.20997W
+X-CM-SenderInfo: x2kd0wpvhquxxxdqqvxvzl0uprps33xlqjhudrp/1tbiAQEABmiKS
+	PEVfwAAs3
+X-Coremail-Antispam: 1Ur529EdanIXcx71UUUUU7IcSsGvfJ3iIAIbVAYjsxI4VWxJw
+	CS07vEb4IE77IF4wCS07vE1I0E4x80FVAKz4kxMIAIbVAFxVCaYxvI4VCIwcAKzIAtYxBI
+	daVFxhVjvjDU=
 
-The Realtek and HDMI HD-audio codec configs have been slightly updated
-again since the previous change.  Follow the new kconfig changes for
-arch defconfigs that contain CONFIG_SND_HDA_* items.
-
-Fixes: 1d8dd982c409 ("ALSA: hda/realtek: Enable drivers as default")
-Fixes: 81231ad173d8 ("ALSA: hda/hdmi: Enable drivers as default")
-Signed-off-by: Takashi Iwai <tiwai@suse.de>
----
- arch/arm/configs/multi_v7_defconfig        | 3 ++-
- arch/arm/configs/tegra_defconfig           | 3 +++
- arch/loongarch/configs/loongson3_defconfig | 2 ++
- arch/mips/configs/loongson2k_defconfig     | 1 +
- arch/mips/configs/loongson3_defconfig      | 3 ++-
- 5 files changed, 10 insertions(+), 2 deletions(-)
-
-diff --git a/arch/arm/configs/multi_v7_defconfig b/arch/arm/configs/multi_v7_defconfig
-index 02ddd7ce9e3e..7fb1f7dc8139 100644
---- a/arch/arm/configs/multi_v7_defconfig
-+++ b/arch/arm/configs/multi_v7_defconfig
-@@ -791,10 +791,11 @@ CONFIG_SND=m
- CONFIG_SND_HDA_TEGRA=m
- CONFIG_SND_HDA_INPUT_BEEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
--CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_REALTEK=m
- CONFIG_SND_HDA_CODEC_REALTEK_LIB=m
- CONFIG_SND_HDA_CODEC_ALC269=m
- CONFIG_SND_HDA_CODEC_HDMI=m
-+CONFIG_SND_HDA_CODEC_HDMI_GENERIC=m
- CONFIG_SND_HDA_CODEC_HDMI_TEGRA=m
- CONFIG_SND_USB_AUDIO=m
- CONFIG_SND_SOC=m
-diff --git a/arch/arm/configs/tegra_defconfig b/arch/arm/configs/tegra_defconfig
-index 3a9bda2bf422..63bd824e84a8 100644
---- a/arch/arm/configs/tegra_defconfig
-+++ b/arch/arm/configs/tegra_defconfig
-@@ -225,7 +225,10 @@ CONFIG_SND_HDA_TEGRA=y
- CONFIG_SND_HDA_INPUT_BEEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
- CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_ALC269=y
- CONFIG_SND_HDA_CODEC_HDMI=y
-+CONFIG_SND_HDA_CODEC_HDMI_GENERIC=y
-+CONFIG_SND_HDA_CODEC_HDMI_TEGRA=y
- # CONFIG_SND_ARM is not set
- # CONFIG_SND_SPI is not set
- # CONFIG_SND_USB is not set
-diff --git a/arch/loongarch/configs/loongson3_defconfig b/arch/loongarch/configs/loongson3_defconfig
-index 0d59af6007b7..ac00d815b478 100644
---- a/arch/loongarch/configs/loongson3_defconfig
-+++ b/arch/loongarch/configs/loongson3_defconfig
-@@ -784,8 +784,10 @@ CONFIG_SND_HDA_HWDEP=y
- CONFIG_SND_HDA_INPUT_BEEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
- CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_ALC269=y
- CONFIG_SND_HDA_CODEC_SIGMATEL=y
- CONFIG_SND_HDA_CODEC_HDMI=y
-+CONFIG_SND_HDA_CODEC_HDMI_GENERIC=y
- CONFIG_SND_HDA_CODEC_CONEXANT=y
- CONFIG_SND_USB_AUDIO=m
- CONFIG_SND_SOC=m
-diff --git a/arch/mips/configs/loongson2k_defconfig b/arch/mips/configs/loongson2k_defconfig
-index 4b7f914d01d0..b1b370a227dc 100644
---- a/arch/mips/configs/loongson2k_defconfig
-+++ b/arch/mips/configs/loongson2k_defconfig
-@@ -257,6 +257,7 @@ CONFIG_SND_HDA_INTEL=y
- CONFIG_SND_HDA_HWDEP=y
- CONFIG_SND_HDA_PATCH_LOADER=y
- CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_ALC269=y
- CONFIG_SND_HDA_CODEC_ANALOG=y
- CONFIG_SND_HDA_CODEC_SIGMATEL=y
- CONFIG_SND_HDA_CODEC_VIA=y
-diff --git a/arch/mips/configs/loongson3_defconfig b/arch/mips/configs/loongson3_defconfig
-index 5ff0c1554168..b5c18d847908 100644
---- a/arch/mips/configs/loongson3_defconfig
-+++ b/arch/mips/configs/loongson3_defconfig
-@@ -292,11 +292,12 @@ CONFIG_SND_SEQ_DUMMY=m
- # CONFIG_SND_ISA is not set
- CONFIG_SND_HDA_INTEL=m
- CONFIG_SND_HDA_PATCH_LOADER=y
--CONFIG_SND_HDA_CODEC_REALTEK=y
-+CONFIG_SND_HDA_CODEC_REALTEK=m
- CONFIG_SND_HDA_CODEC_REALTEK_LIB=m
- CONFIG_SND_HDA_CODEC_ALC269=m
- CONFIG_SND_HDA_CODEC_SIGMATEL=m
- CONFIG_SND_HDA_CODEC_HDMI=m
-+CONFIG_SND_HDA_CODEC_HDMI_GENERIC=m
- CONFIG_SND_HDA_CODEC_CONEXANT=m
- # CONFIG_SND_USB is not set
- CONFIG_HIDRAW=y
--- 
-2.50.1
+CgoKPiAtLS0tLeWOn+Wni+mCruS7ti0tLS0tCj4g5Y+R5Lu25Lq6OiAiS3J6eXN6dG9mIEtvemxv
+d3NraSIgPGtyemtAa2VybmVsLm9yZz4KPiDlj5HpgIHml7bpl7Q6MjAyNS0wNy0zMCAxNTo0Njow
+MiAo5pif5pyf5LiJKQo+IOaUtuS7tuS6ujogemhhbmdzZW5jaHVhbkBlc3dpbmNvbXB1dGluZy5j
+b20sIGdyZWdraEBsaW51eGZvdW5kYXRpb24ub3JnLCByb2JoQGtlcm5lbC5vcmcsIGtyemsrZHRA
+a2VybmVsLm9yZywgY29ub3IrZHRAa2VybmVsLm9yZywgbGludXgtdXNiQHZnZXIua2VybmVsLm9y
+ZywgbGludXgta2VybmVsQHZnZXIua2VybmVsLm9yZywgZGV2aWNldHJlZUB2Z2VyLmtlcm5lbC5v
+cmcsIFRoaW5oLk5ndXllbkBzeW5vcHN5cy5jb20sIHAuemFiZWxAcGVuZ3V0cm9uaXguZGUKPiDm
+ioTpgIE6IG5pbmd5dUBlc3dpbmNvbXB1dGluZy5jb20sIGxpbm1pbkBlc3dpbmNvbXB1dGluZy5j
+b20sIHlhbmd3ZWkxQGVzd2luY29tcHV0aW5nLmNvbSwgcGlua2VzaC52YWdoZWxhQGVpbmZvY2hp
+cHMuY29tCj4g5Li76aKYOiBSZTogW1BBVENIIHYyIDEvMl0gZHQtYmluZGluZ3M6IHVzYjogQWRk
+IEVzd2luIEVJQzc3MDAgVVNCIGNvbnRyb2xsZXIKPiAKPiBPbiAzMC8wNy8yMDI1IDA5OjQwLCB6
+aGFuZ3NlbmNodWFuQGVzd2luY29tcHV0aW5nLmNvbSB3cm90ZToKPiA+ICsKPiA+ICtleGFtcGxl
+czoKPiA+ICsgIC0gfAo+ID4gKyAgICBzb2Mgewo+ID4gKyAgICAgICAgI2FkZHJlc3MtY2VsbHMg
+PSA8Mj47Cj4gPiArICAgICAgICAjc2l6ZS1jZWxscyA9IDwyPjsKPiAKPiBUaGlzIHdhc24ndCBo
+ZXJlLiBEcm9wLgo+IAo+ID4gKwo+ID4gKyAgICAgICAgdXNiIHsKPiA+ICsgICAgICAgICAgICBj
+b21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAtZHdjMyI7Cj4gPiArICAgICAgICAgICAgY2xvY2tz
+ID0gPCZmaXhlZF9mYWN0b3JfdV9jbGtfMW1fZGl2MjQ+LAo+ID4gKyAgICAgICAgICAgICAgICAg
+ICAgIDwmZ2F0ZV9jbGtfaHNwX2FjbGs+LAo+ID4gKyAgICAgICAgICAgICAgICAgICAgIDwmZ2F0
+ZV9jbGtfaHNwX2NmZ2Nsaz47Cj4gPiArICAgICAgICAgICAgY2xvY2stbmFtZXMgPSAic3VzcGVu
+ZCIsImFjbGsiLCAiY2ZnIjsKPiA+ICsgICAgICAgICAgICBlc3dpbixoc3Atc3AtY3NyID0gPCZo
+c3Bfc3BfY3NyIDB4ODAwIDB4ODA4IDB4ODNjIDB4ODQwPjsKPiA+ICsgICAgICAgICAgICByZXNl
+dHMgPSA8JnJlc2V0IDg0PjsKPiA+ICsgICAgICAgICAgICByZXNldC1uYW1lcyA9ICJ2YXV4IjsK
+PiA+ICsgICAgICAgICAgICByYW5nZXM7Cj4gCj4gU2FtZSBjb21tZW50OiBmb2xsb3cgRFRTIGNv
+ZGluZyBzdHlsZS4gV2hlcmUgc2hvdWxkIHJhbmdlcyBvciByZWcgYmUgcGxhY2VkPwoKQWNjb3Jk
+aW5nIHRvIHRoZSAiZHRzLWNvZGluZy1zdHlsZS5odG1sIiwgdGhlIG9yZGVyIHNob3VsZCBiZSBs
+aWtlIGJlbG93LCBpcyB0aGlzIGNvcnJlY3Q/Cgpjb21wYXRpYmxlID0gImVzd2luLGVpYzc3MDAt
+ZHdjMyI7CnJhbmdlczsKI2FkZHJlc3MtY2VsbHMgPSA8MT47CiNzaXplLWNlbGxzID0gPDE+OwoK
+PiAKPiA+ICsgICAgICAgICAgICAjYWRkcmVzcy1jZWxscyA9IDwyPjsKPiA+ICsgICAgICAgICAg
+ICAjc2l6ZS1jZWxscyA9IDwyPjsKPiA+ICsKPiA+ICsgICAgICAgICAgICB1c2JANTA0ODAwMDAg
+ewo+ID4gKyAgICAgICAgICAgICAgICBjb21wYXRpYmxlID0gInNucHMsZHdjMyI7Cj4gPiArICAg
+ICAgICAgICAgICAgIHJlZyA9IDwweDAgMHg1MDQ4MDAwMCAweDAgMHgxMDAwMD47Cj4gCj4gTm90
+aGluZyBpbXByb3ZlZCBhbmQgeW91IGRpZCBub3QgcmVzcG9uZCB0byB0aGUgZmVlZGJhY2suCgpJ
+J20gdmVyeSBzb3JyeSB0aGF0IEkgaGF2ZW4ndCBnaXZlbiB5b3UgYW55IGZlZWRiYWNrIGhlcmUu
+IEknbSBub3QgcXVpdGUgY2xlYXIgYWJvdXQgd2hhdCB5b3UgbWVhbiBieSBmZWVkYmFjay4KSW4g
+djEgcGF0Y2gsIHlvdSBtZW50aW9uZWQgIkZvbGQgdGhlIGNoaWxkIG5vZGUgaW50byB0aGUgcGFy
+ZW50Iu+8jGNvdWxkIHlvdSBwbGVhc2UgdGVsbCBtZSB3aGF0J3MgdGhlIGV4YWN0Cm1lYW5pbmcg
+b2YgdGhpcyBjb21tZW50Pwo+IAo+IAo+IEJlc3QgcmVnYXJkcywKPiBTZW5jaHVhbiBaaGFuZw==
 
 
