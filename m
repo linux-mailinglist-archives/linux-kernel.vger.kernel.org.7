@@ -1,176 +1,136 @@
-Return-Path: <linux-kernel+bounces-752009-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752010-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28FC7B17048
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DC972B1704C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:22:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C6741AA0A6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:21:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A8CB1C20501
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D692C08BF;
-	Thu, 31 Jul 2025 11:20:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC0DD2C08BA;
+	Thu, 31 Jul 2025 11:22:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Imtu3gCT"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OdYoZ1A/"
+Received: from mail-pg1-f196.google.com (mail-pg1-f196.google.com [209.85.215.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FA03285C91;
-	Thu, 31 Jul 2025 11:20:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D5E92248AC;
+	Thu, 31 Jul 2025 11:22:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753960843; cv=none; b=p7b0oNHA1wdQNq7XTuCSrnrYNopAXQKMDUJER0iztpPPYyEzwxbHzToziBV/fxwqci08DQL16n9Q9zrMkcdeHO233eISOBXkklnqtfC/tc2hWi+wpB/w/OU9+j6CZiTmLmOdpKgmtovDRopxnQDsbjC5zL4Ig685o1W7uhIbDtk=
+	t=1753960948; cv=none; b=Ftm9gmhCl81sGUucJemkdYUPiiLC3ZSBg1hhx0Z0Saen864hudbX1Pbh56dtRGFOf8Gk+qcOZ60B8XpzREIRSeZ9Si5vnvSqY/zqzHeZtm/WKe5EzIpO6piVOQqAVFyrm97G7Is7hmIiXbMAJyU29h//nrGyAbwTTWNPbp+b6YA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753960843; c=relaxed/simple;
-	bh=zNgxjaQ7TBbud4j44x9c2Copx9m2P7UDNyslxhRB+KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rRZk7ZuX459qwog9wgQ1z5T9Ycr4A0G3a+nLplmdQISjMgCS/Znm9DkjzOC6TYOYgyFlal1qGdaiBGTyVLc8qC2LPhgF43rL9SLf87WhAocXVgHjRt/JoTv7sfI6xgRwnmbLTNUu5z9EDbvWukbBepPMBGHNfnrDE1rZeNX9mYA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Imtu3gCT; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1753960948; c=relaxed/simple;
+	bh=WvRtQA9ZxxxbZQRyydbsPd8vCk/ZKz3GnBrOXB+2pn4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ZRkLwZbOEGA8vn/Iq6jCMu0OIW9VAR2BDPT7wtN2jWHrYczrGc2V/Uv/w9Fs5qykzHc0Cf0bi4TVqZjeF+teEFuNKlJ2fP9yrN46hOVOx0dpKSj2h4tkOBxc6ycy/+B3enrqH76+7lLXmnlHIH8VrIdw0UTnCYXmc3JbkLk8eWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OdYoZ1A/; arc=none smtp.client-ip=209.85.215.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4560d176f97so8321395e9.0;
-        Thu, 31 Jul 2025 04:20:41 -0700 (PDT)
+Received: by mail-pg1-f196.google.com with SMTP id 41be03b00d2f7-b31f0ef5f7aso392226a12.3;
+        Thu, 31 Jul 2025 04:22:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753960840; x=1754565640; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=6PgXUv73S1mAGJQxOfImzqpGCJJWM1Hp3ObYIgxXfns=;
-        b=Imtu3gCTKyJYPBwIadRdMHa7S7uC2eNZnOcnyNZ2W5L1mNYRi0y0BW0DfvhWvO8oI1
-         MNjNxbSmWHTjQfHIV7nAJdecyNB2/hHD4blejCS5DzKHl6puaT2lNlTRLpGdzK6APsO1
-         mAVwbgxKeNexE8iu6GIFqnTRXf+KjwtONihUh17Q3F8Mae7GUFJN10GD0UuCxCzG5AqQ
-         t26Xon5s0AOaV6z7OAuxt0E/QB0kUxaqy06+a45m0WoBJ9KCG+p5a5R5AWa3tGPkWhSx
-         9fUOnvFKM/s7y/X4rrfeEdHXySCXhHutbtR8B1S0aORrxZJcq6yOAGoITu194MQPna1x
-         ctmg==
+        d=gmail.com; s=20230601; t=1753960946; x=1754565746; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qx7n4CRHDkkYFnz021yXqLqPPJ6FUayo+PssJIK5SZQ=;
+        b=OdYoZ1A/TQOoLWk0iLzseJWpJh06BaQNoiqNUJDnkG4YsxfEqToaaGelNRyu4BpVPy
+         GXjGPksoNBwJGZqEQ5vnf4jK8pzOCkK4jSPd8fwDH4qiYQl9Q7alR0qQAQacGWITgE9T
+         BEFKxveRtLognBNW+HP3YDMOStJhHxVVLMHESrYOywBnsudPM8Ps2HIZ/kDLT+oh9bzk
+         SXs/Inao7IABsNACiGuryVjOuG073P7HlnHOpxrgubWFBCCH6JN+bpaI8LwcD0f3ebu8
+         MrHs7xkvhYIyzqNVJPVT/9SOLNGIryEj3TQdgzql9AndMxhKlBNSPxiB4miSCgOm7KHg
+         ub0Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753960840; x=1754565640;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6PgXUv73S1mAGJQxOfImzqpGCJJWM1Hp3ObYIgxXfns=;
-        b=G9P5UGHqSi9QaGCcegP3svOzmdwSaTbwIqRFCZgMjaFJppf1tnRJ1z+bibuQ4nHCP/
-         cMHLM0P13NG0lNqpJsn1VvuyT0gQ/BnJvtCqJzq/VYkRy9b7DCG6a0m3RUv/iJ+HgXzH
-         1vNHqTWUie4nPG/8z8of4p11FCeL9+FWNl/YhWOfelFBkJxrLpVOT5n+YpuZoa9Ef8zs
-         USxGRjKWslQeklr0UrP9tbUpRipKLpuZsqgyYge2k1XqUL+Dl70vgD5N2kSRo7XHXCiu
-         YDsMQ6C598p/8bjQztuoAJtUh+9t8MG9cCj5Wmu+CMlYtFwoyM5sOt6P+fYHIMcdBuqg
-         PiaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUUnwc2eF/WnrfiEhXKKa/mH6Ce7iMPLT0eEVg1tP0Pviv/dscT0MvjuPMSUVvaK/I30QkdImSe@vger.kernel.org, AJvYcCUrPjALpChE8uV5OK/CShMATW5QBikj+h2Qs7V2wSJf5jQvdyPEPSvoyZv+86fQQQVkFJuRfnWIENnhpzad@vger.kernel.org, AJvYcCWc289Saa+/PCADQAF9t0bHiEjdXVAWbxOIhozgSPLtJFZujRXsQkdVrA+JjIYFAYhMXRZnpqbalnqIEU1Izeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhEhwLF5xMbavRIVN9woj02RfzbZn6iHwDzWLi3p8Ns4Ecu8Bo
-	zf8yxF1zrYN+o9jO5AbrXRgvME/DsdQzrYSnqGIFTNx91I8n8JEWVuZ7
-X-Gm-Gg: ASbGncv3DtzOOQMH71EI8SwLAdj8eKx8KgBEDgwyD8onCP4NdriNFPWb8oTLwlIKcOn
-	ANRPCH7cv4B1oarL3JnNWkb0NzZwWsvHnLBsAwuE/4yN2o1ptEErB38S/654dwYRlRVfrfJo5YF
-	PRtDpcuotO0zMgBv6CHtFwbu8PWHg0Kc2OGMvRa6gA9v+jf6EEhwXGrBBxz04u3WXiaf4ydpFJg
-	6SGbN6eFTnWRVZO2Tx9Xw4EMX6krr/mNJkqhyvcRsx/Mrup7Idyd44ZywaDj2abJ60RNH+WZwSa
-	xz+H8o4EZMSq5bB7RhBT5ITfkC3Ro2p1goOmcvFok1ROzEgoeXDNHPwZHp8AeiY7jQuvmJt1RqM
-	+KK8vEBQyTBk=
-X-Google-Smtp-Source: AGHT+IEeqx4K9BWXdT4VY6xg8XMPQHp8/WZzEgNP4KjzB6LHms+5O/siDoMF3flNzQ8RkuD2rcanjA==
-X-Received: by 2002:a05:600c:4f47:b0:43c:e70d:44f0 with SMTP id 5b1f17b1804b1-458a4fc790amr11885665e9.19.1753960840007;
-        Thu, 31 Jul 2025 04:20:40 -0700 (PDT)
-Received: from pc ([165.51.119.21])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfeaesm67301915e9.16.2025.07.31.04.20.38
+        d=1e100.net; s=20230601; t=1753960946; x=1754565746;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qx7n4CRHDkkYFnz021yXqLqPPJ6FUayo+PssJIK5SZQ=;
+        b=FcYliAHQjPmpPT745lRrYsKE83XqER8w0TEKtccLYlInlqnftBm/xJFEM0lV0OEp99
+         tEgRyMHAMh2Z7Tv47GWnxkIqdbXBHIuxgqClApvTjVL3KtCdLPm86rdnijbmlE95+Awc
+         y8c4IHDHSknY1HEt5xxTF/U0JhalwDEMfW3OWkUXHcQkQvdoczs+mXXChiW5V7MjOtxE
+         SxMQKP3FJ4I6MjY5groQpd94ijFeLbmBpSNAqGvo8VmSM04FnwNZpjzdMO0RT1FbBZSV
+         ZMwFFCgcA6UjQ+kKSiQOLD9wQ/i04EtbGKATBjmdHVHzO3qJEQ60Q7SYb5YPQhDI8NWW
+         e6JA==
+X-Forwarded-Encrypted: i=1; AJvYcCU5PV+4EqwRKYbNTlgDP2CBNj0RFxUXAxsdAE/uKjKDSWZPGtwybQ0e4QuymeliG68O2oQbFMqw@vger.kernel.org, AJvYcCVSugap1epqnz/P0wuLagUVRPINAsWZP4gHOnLw2JsVlXq1FDJOlFeYMNlIoAGWGzTq7ySk1AS0gmSXXpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzz6gbnKePeYE6K669PPohrW4CRXT9c/2rBLkaQ/NJcKQrNjqRe
+	wQaDSoAF94EDfEHMyHvQQj7JO2uFClwucFANWg3ppM4XvNIXKIpRS4/0Iu6rM4YaDko=
+X-Gm-Gg: ASbGncsdh3ntJnYoBLoraBeOz+RbFvkj406uizf3OHouLxXIyvCa2u7tA1nnCngpC2D
+	2QloEAh5Loj2zQwcpGQkNpVrrIagSw+0/6oXLJ3qsQXY/ed4Bq5/QJNH5LO4Nm5bDRvudSG7XbG
+	tIHkkWmWREUgAOOG3flbwpPmGH3zyUUdMq4Y1Ev2r98CdUxPzDE161UoDuQLhRmBA8gFqUYmAty
+	c/f5m0MIcpQ94xdyufo0tiypHEdUdpxUgZhbSgYMxiN5U63/SHuVrqyPN7so3n01glD9ldG5/Sa
+	9lISlTVuKBY73KYQum4jjxPAk0kem4IV7InF2JB7PpBKh9QsuAFXBCSWUKKyuZt31ZwJoPTnm0j
+	c0+RnzLtdSJxk4iGZwTFmiKaaoV7U4A==
+X-Google-Smtp-Source: AGHT+IFp2FFhWBzPgj/8hThSVgk5ganKeeRgJZ7pPj9KrQVGx+T1Zex7R8wNhKbWHfELviIrxmNYTQ==
+X-Received: by 2002:a17:90b:3951:b0:313:1769:eb49 with SMTP id 98e67ed59e1d1-31f5de2f470mr11218009a91.8.1753960945847;
+        Thu, 31 Jul 2025 04:22:25 -0700 (PDT)
+Received: from 7940hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3208c170d2esm1746723a91.32.2025.07.31.04.22.23
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 04:20:39 -0700 (PDT)
-Date: Thu, 31 Jul 2025 12:20:36 +0100
-From: Salah Triki <salah.triki@gmail.com>
-To: Greg KH <gregkh@linuxfoundation.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>,
-	Marcel Holtmann <marcel@holtmann.org>,
-	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH V3] Bluetooth: bfusb: Fix use-after-free and memory leak
- in device lifecycle
-Message-ID: <aItRhGyTWNCJmXFA@pc>
-References: <aIrSp18mz3GS67a1@pc>
- <2025073101-upon-lilac-9d22@gregkh>
+        Thu, 31 Jul 2025 04:22:25 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: dsahern@kernel.org
+Cc: andrew+netdev@lunn.ch,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net: vrf: don't down netif when add slave
+Date: Thu, 31 Jul 2025 19:22:19 +0800
+Message-ID: <20250731112219.121778-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2025073101-upon-lilac-9d22@gregkh>
+Content-Transfer-Encoding: 8bit
 
-Hello Greg,
+For now, cycle_netdev() will be called to flush the neighbor cache when
+add slave by downing and upping the slave netdev. When the slave has
+vlan devices, the data transmission can interrupted.
 
-Thanks for your feedback.
+Optimize it by notifying the NETDEV_CHANGEADDR instead, which will also
+flush the neighbor cache. It's a little ugly, and maybe we can introduce
+a new event to do such flush :/
 
-On Thu, Jul 31, 2025 at 06:32:35AM +0200, Greg KH wrote:
-> On Thu, Jul 31, 2025 at 03:19:19AM +0100, Salah Triki wrote:
-> > The driver stores a reference to the `usb_device` structure (`udev`)
-> > in its private data (`data->udev`), which can persist beyond the
-> > immediate context of the `bfusb_probe()` function.
-> > 
-> > Without proper reference count management, this can lead to two issues:
-> > 
-> > 1. A `use-after-free` scenario if `udev` is accessed after its main
-> >    reference count drops to zero (e.g., if the device is disconnected
-> >    and the `data` structure is still active).
-> 
-> How can that happen as during the probe/remove cycle, the reference
-> count is always properly incremetned.
-> 
-> > 2. A `memory leak` if `udev`'s reference count is not properly
-> >    decremented during driver disconnect, preventing the `usb_device`
-> >    object from being freed.
-> 
-> There is no leak here at all, sorry.
-> 
+Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+---
+ drivers/net/vrf.c | 8 +++-----
+ 1 file changed, 3 insertions(+), 5 deletions(-)
 
-I understand your concern about the existence of a memory leak or 
-use-after-free scenario in the driver's current context.
+diff --git a/drivers/net/vrf.c b/drivers/net/vrf.c
+index 3ccd649913b5..d90bdf1fe747 100644
+--- a/drivers/net/vrf.c
++++ b/drivers/net/vrf.c
+@@ -1042,17 +1042,15 @@ static int vrf_rtable_create(struct net_device *dev)
+ static void cycle_netdev(struct net_device *dev,
+ 			 struct netlink_ext_ack *extack)
+ {
+-	unsigned int flags = dev->flags;
+ 	int ret;
+ 
+ 	if (!netif_running(dev))
+ 		return;
+ 
+-	ret = dev_change_flags(dev, flags & ~IFF_UP, extack);
+-	if (ret >= 0)
+-		ret = dev_change_flags(dev, flags, extack);
++	ret = call_netdevice_notifiers(NETDEV_CHANGEADDR, dev);
++	ret = notifier_to_errno(ret);
+ 
+-	if (ret < 0) {
++	if (ret) {
+ 		netdev_err(dev,
+ 			   "Failed to cycle device %s; route tables might be wrong!\n",
+ 			   dev->name);
+-- 
+2.50.1
 
-My intention with this patch is to ensure the driver adheres to best
-practices for managing `usb_device` structure references, as outlined in
-the kernel's documentation. The `usb_get_dev()` function is explicitly
-designed for use when a driver stores a reference to a `usb_device`
-structure in its private data, which is the case here with `data->udev`.
-
-As the documentation for `usb_get_dev()` states:
-
-``Each live reference to a device should be refcounted. Drivers for USB
-interfaces should normally record such references in their probe()
-methods, when they bind to an interface, and release them by calling
-usb_put_dev(), in their disconnect() methods.``
-
-By following this recommendation, adding `usb_get_dev(udev)` in
-`bfusb_probe()` and `usb_put_dev(data->udev)` in `bfusb_disconnect()`
-ensures the `udev` structure's lifetime is explicitly managed by the driver
-as long as it's being referenced. This proactively prevents potential
-issues that could arise in future scenarios, even if a specific problem
-hasn't been observed or reported yet.
-
-> > To correctly manage the `udev` lifetime, explicitly increment its
-> > reference count with `usb_get_dev(udev)` when storing it in the
-> > driver's private data. Correspondingly, decrement the reference count
-> > with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
-> > 
-> > This ensures `udev` remains valid while referenced by the driver's
-> > private data and is properly released when no longer needed.
-> 
-> How was this tested?
-> 
-> I'm not saying the change is wrong, just that I don't think it's
-> actually a leak, or fix of anything real.
-> 
-> Or do you have a workload that shows this is needed?  If so, what is the
-> crash reported?
-> 
-
-While I don't have a specific workload that reproduces a current crash or
-memory leak, this patch aims to enhance the driver's robustness by
-aligning its behavior with the established conventions for managing
-`usb_device` object references. It's a preventive measure to ensure the
-driver correctly handles the lifetime of the `usb_device` object it
-references, even in scenarios of unexpected disconnection or re-enumeration
-that might otherwise have unforeseen consequences.
-
-Please let me know if you have any further questions.
-
-Regards,
-
-Salah Triki
 
