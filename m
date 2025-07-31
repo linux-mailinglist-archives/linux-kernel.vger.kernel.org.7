@@ -1,76 +1,86 @@
-Return-Path: <linux-kernel+bounces-751501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97410B16A5A
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:19:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEDB7B16A5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:19:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A4DAB5A4614
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:18:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C679918C68B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:19:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C8812356DA;
-	Thu, 31 Jul 2025 02:18:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B324D23643E;
+	Thu, 31 Jul 2025 02:19:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lMMFJCCj"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6jaJoQR"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4CF1991B2
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 02:18:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 775AA22318;
+	Thu, 31 Jul 2025 02:19:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753928336; cv=none; b=U8da1wooEFovSTxygc6QYMrqbY1LEq4MasS/dYUFwCk2t1ecS+nvEC3p3qRhXN1pwrzCEFO476pzQazTTENCwKtr16ndfyGW7A887BV1JVPBkVweQChDsMQSMJ6EhzPHSJTw1o7UsTz0j3WZBEwMVpI+Gx2qNqgQfFgiPn8HvW4=
+	t=1753928367; cv=none; b=fsu/XdmRa6+kHsx9o2KZRiBRoRjlCJ0RmXU810LC4BuAcwPx9PUNzaGHQuGkF8Crb6xrnbEGqil1ZQTREFaoFnriXR77jGLXzjfSh+QSzWmYdOBMFCvxDJf7f6VBhvLz/wx5uj26CgMWg9ET98Iqib9RVncQZrw0wh6Ickguchg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753928336; c=relaxed/simple;
-	bh=+UImLbvStv6hPU/X7GkycS3GPfpznBHVuxJlvm3HKdY=;
+	s=arc-20240116; t=1753928367; c=relaxed/simple;
+	bh=/EMZUGIb+jSGRcKKS31fRFqZ32wWToO8WQ5zfarulMQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=Yn4wIlSMP+33PiwBCsJLdj/+E9jXWQpq3po1BuMKTlvsEVdQsPstq/WkQ0W/FvvECvm5NRbJhi9hg5Wcgmx7PLn7/irELvTFYO164wo5cBD+NT9oZ+SlpPwr4naQDyeySNM+jDw8uW0mV520Nf03W1map7MNYkTiPf7BG2aTOvI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lMMFJCCj; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1753928334; x=1785464334;
-  h=date:from:to:cc:subject:message-id:mime-version;
-  bh=+UImLbvStv6hPU/X7GkycS3GPfpznBHVuxJlvm3HKdY=;
-  b=lMMFJCCj1dNEOp5v73aJodS3PQ7tOvgVv4eivlGas2/tTNYDrTrUrg4l
-   Ze5FTd//WCYHDQ3Wg1PvE42e47/wV8i79/6d5pEm6GZKkGoZ2GvLcCDO9
-   cLKUgVwK6eLosU3YQjQukDMTbvuceU1kARet5Cj+l/7kvk2koBmd/2r7k
-   +XuZbW+NEvhvLqI2keqqk05Sss1WlBnoQ4ODlIZap5k1KrOjbhX03krj/
-   3jh9b3JvkArCwITeCJ/fVd0Lnc5Lxh0uQFPesnpa98uHpVjMnXsXLdiaQ
-   HCvhgJaQ6CPmUkthtem/1/+dMk5gpCwD8U3m8pv054diVdESuNl5p7wyU
-   g==;
-X-CSE-ConnectionGUID: FTq+HifdQvmRik8NH/Erkg==
-X-CSE-MsgGUID: Rbfm6JseTq2uqtb7DbRvtw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11507"; a="56205563"
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="56205563"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 30 Jul 2025 19:18:54 -0700
-X-CSE-ConnectionGUID: cNKjRPoyT6KhhK2pP6jIvg==
-X-CSE-MsgGUID: jiAYnL4+TlKxm099aqjUqw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.16,353,1744095600"; 
-   d="scan'208";a="162404667"
-Received: from igk-lkp-server01.igk.intel.com (HELO b3b7d4258b7c) ([10.91.175.65])
-  by orviesa010.jf.intel.com with ESMTP; 30 Jul 2025 19:18:52 -0700
-Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uhIsb-0000tL-22;
-	Thu, 31 Jul 2025 02:18:49 +0000
-Date: Thu, 31 Jul 2025 04:18:45 +0200
-From: kernel test robot <lkp@intel.com>
-To: Frank Li <Frank.Li@nxp.com>
-Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
-	"Rob Herring (Arm)" <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Stefan Agner <stefan@agner.ch>
-Subject: arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: dcu@2ce0000
- (fsl,ls1021a-dcu): 'display', 'display@0' do not match any of the regexes:
- '^pinctrl-[0-9]+$'
-Message-ID: <202507310417.jtfECOhR-lkp@intel.com>
+	 Content-Disposition; b=ZeoIrJVFTX6IHRQzIutwztBEuJ6shpKzgSvEeXfIgtK8m2RDDU5+MnmBHDTEBjrQUXQ3inLF170/vlSgVJT+SmutrIb0r4Zdi/xR2q8Hlt6YkxqZGZEMsH2WhlfvedixgvhV/bQ2jyWJlviWBO2Z9ovlLYBJKEhtqqFAs2BcPBU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6jaJoQR; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-4561a4a8bf2so4045895e9.1;
+        Wed, 30 Jul 2025 19:19:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1753928364; x=1754533164; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=b/rG/4GRP2jN1wvu1hAC2b4sTXSJWfazoIpwk4Gm8xA=;
+        b=F6jaJoQR+E8uIGYSNJTAEVBN3Y02LtYrI/QwUUhAC9z1PcRQRBSxBGAQG9c3fle5TA
+         J+1USHXhnLoTw5fhE930OwCJtpGD2hHP66AcI712e53DRlfIo7pfXMZXHqBYX4P3kQRg
+         4yE9oRTy0nfEM6C2ofTy7t6xJ1zchp3a5pckRwoDJR+vo5HSJQo7ZXQLwZgiWaBBlyl+
+         IlVLmUhd7V+CRdfBdAsYCuxuj7w6mA/8p3HI1yf+h4liHq7h9hTfM4SOokjvfrn4+ta4
+         Q8gwUUCa79PcqK4Kg2WE/QwJRQS1drZKjJJBkZ4AtgypugDria1DOPlOKc2iFZ9G0omK
+         7sHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1753928364; x=1754533164;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=b/rG/4GRP2jN1wvu1hAC2b4sTXSJWfazoIpwk4Gm8xA=;
+        b=JkBYlNxUldnC5MQNsxdMkHZW+sBHL6G3o0z2HKHgUMlgR5lcsvuL7XJNZeuLizujF5
+         UcjU3neNZzAEnTOA6qNt0Lj3keW24ww1xGpbj/ZqKpImVy1McjBcUUXQ+Dyvu9eqCkxI
+         WpTxtyR49/qRy34NsA6SoyiJlR+0XbOdGtVZs2QKmN/pBbd3+1kbp9NGEaVN9nPRvNCF
+         h/YFieNHdFpFncewzqEV8ZTSVSXOagSCN7UOEpVc4yxWr8hv91X2DQQ/j07SABggK+rm
+         eE8Ecl3y2hvCScCWw4PYN7PHM+kqE3wyX+QeZZM0J8fi2lJeioTMAzLbWtT5nqRnPJEb
+         ZX3g==
+X-Forwarded-Encrypted: i=1; AJvYcCVya+KhdyO4/tN/62ad1jw1hTnZcECtEfKGTuX7/IHc87R3ptiZLd2zjUe0sZUjhS+ayKJGAtzI@vger.kernel.org, AJvYcCXQz1RltgycgJYlVUdaYsQxXhm70rc2Z5hDcsyVnzU4fPxwxLDLWWE+VKdeo+488BW9YU4IPzJEwyIt9o6A@vger.kernel.org, AJvYcCXkn7e90E0/jXFbUnNAs5im4DVy3HHqu0d+PI8cWzGqsxK0j2Df3yfQQwidNlJrZRWUeGHZMfQJauGpjr+p7Vo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxvMvRGlblT9h8O0NcvXy+bmDnCZsb2N15SdZMVM3Ku1M/nSu61
+	T8LK2D7HOvErAcSvrQ/OWB27h9+nDy3FDqLYToF2ZNJ2fEsd5k7/De/xh91dmFYr
+X-Gm-Gg: ASbGncsuRu7MKhNeX1ASsxgFv3WSOK5DdOWqadNvYVpGkDYEysM81/EzFzw0xyGXFog
+	Lk3Gr3UWjvfXyFyzlbtXSkf0heBm13keiTW5utmNYx8/gHUXA3z4LUuDRazDfGPFwMSpmsZdG/H
+	wSqhAn9MbFbG1CVVYXFTtfeVhPKU7jUbMPAs1TI5uaJL7mmVgr6LJIIgMWV4yvYAW+vbBAPxKYK
+	LbH8AmiVSsMsrWYT9F5qbbfm2hqH7BYK1BEv7SuO6UM3/rQZ3HphSBCCTaqRNrjH7sUiuHdjg8x
+	lnnBidT/8eoH3RzlPJTbkEaxxiSlY0+9LQmQ8+dHkXxpsfSsWOftyt1unf0zW6rTGUNgcA5XzCe
+	NuWhveEKV74Q=
+X-Google-Smtp-Source: AGHT+IFO4MHztFKSK6takGVorJXNttTmeTk7NbkHF16a2QXKUseuUs1uqQ2pxHvICB01OcSO4cpZAQ==
+X-Received: by 2002:a05:600c:3ba1:b0:456:1fd9:c8f0 with SMTP id 5b1f17b1804b1-45892b947c9mr57241695e9.2.1753928363779;
+        Wed, 30 Jul 2025 19:19:23 -0700 (PDT)
+Received: from pc ([165.51.119.21])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48de68sm719878f8f.67.2025.07.30.19.19.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 30 Jul 2025 19:19:22 -0700 (PDT)
+Date: Thu, 31 Jul 2025 03:19:19 +0100
+From: Salah Triki <salah.triki@gmail.com>
+To: Markus Elfring <Markus.Elfring@web.de>,
+	Marcel Holtmann <marcel@holtmann.org>,
+	Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: salah.triki@gmail.com
+Subject: [PATCH V3] Bluetooth: bfusb: Fix use-after-free and memory leak in
+ device lifecycle
+Message-ID: <aIrSp18mz3GS67a1@pc>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,44 +90,66 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 
-tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-head:   e8d780dcd957d80725ad5dd00bab53b856429bc0
-commit: 83e6769f80a1b8e1a97f8d1cecd8631b976fc009 dt-bindings: display: imx: convert fsl,dcu.txt to yaml format
-date:   8 days ago
-config: arm-randconfig-2051-20250730 (https://download.01.org/0day-ci/archive/20250731/202507310417.jtfECOhR-lkp@intel.com/config)
-compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
-dtschema version: 2025.6.2.dev4+g8f79ddd
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250731/202507310417.jtfECOhR-lkp@intel.com/reproduce)
+The driver stores a reference to the `usb_device` structure (`udev`)
+in its private data (`data->udev`), which can persist beyond the
+immediate context of the `bfusb_probe()` function.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202507310417.jtfECOhR-lkp@intel.com/
+Without proper reference count management, this can lead to two issues:
 
-dtcheck warnings: (new ones prefixed by >>)
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
-   	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: watchdog@2ad0000 (fsl,imx21-wdt): Unevaluated properties are not allowed ('clock-names' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b50000 (fsl,vf610-sai): dma-names:1: 'tx' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b60000 (fsl,vf610-sai): dma-names:1: 'tx' was expected
-   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b60000 (fsl,vf610-sai): Unevaluated properties are not allowed ('dma-names' was unexpected)
-   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
->> arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: dcu@2ce0000 (fsl,ls1021a-dcu): 'display', 'display@0' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/display/fsl,ls1021a-dcu.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: display-timings: 'mode0' does not match any of the regexes: '^pinctrl-[0-9]+$', '^timing'
-   	from schema $id: http://devicetree.org/schemas/display/panel/display-timings.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): queue-group@2d10000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): queue-group@2d14000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
-   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): Unevaluated properties are not allowed ('queue-group@2d10000', 'queue-group@2d14000' were unexpected)
-   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
-   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d50000 (fsl,etsec2): queue-group@2d50000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
+1. A `use-after-free` scenario if `udev` is accessed after its main
+   reference count drops to zero (e.g., if the device is disconnected
+   and the `data` structure is still active).
+2. A `memory leak` if `udev`'s reference count is not properly
+   decremented during driver disconnect, preventing the `usb_device`
+   object from being freed.
 
+To correctly manage the `udev` lifetime, explicitly increment its
+reference count with `usb_get_dev(udev)` when storing it in the
+driver's private data. Correspondingly, decrement the reference count
+with `usb_put_dev(data->udev)` in the `bfusb_disconnect()` callback.
+
+This ensures `udev` remains valid while referenced by the driver's
+private data and is properly released when no longer needed.
+
+Signed-off-by: Salah Triki <salah.triki@gmail.com>
+Fixes: 9c724357f432d ("[Bluetooth] Code cleanup of the drivers source code")
+Cc: stable@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>
+Cc: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Cc: linux-bluetooth@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org
+---
+Changes in v3:
+    - Add tag Cc
+
+Changes in v2:
+    - Add tags Fixes and Cc
+ drivers/bluetooth/bfusb.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/bluetooth/bfusb.c b/drivers/bluetooth/bfusb.c
+index 8df310983bf6..f966bd8361b0 100644
+--- a/drivers/bluetooth/bfusb.c
++++ b/drivers/bluetooth/bfusb.c
+@@ -622,7 +622,7 @@ static int bfusb_probe(struct usb_interface *intf, const struct usb_device_id *i
+ 	if (!data)
+ 		return -ENOMEM;
+ 
+-	data->udev = udev;
++	data->udev = usb_get_dev(udev);
+ 	data->bulk_in_ep    = bulk_in_ep->desc.bEndpointAddress;
+ 	data->bulk_out_ep   = bulk_out_ep->desc.bEndpointAddress;
+ 	data->bulk_pkt_size = le16_to_cpu(bulk_out_ep->desc.wMaxPacketSize);
+@@ -701,6 +701,8 @@ static void bfusb_disconnect(struct usb_interface *intf)
+ 
+ 	usb_set_intfdata(intf, NULL);
+ 
++	usb_put_dev(data->udev);
++
+ 	bfusb_close(hdev);
+ 
+ 	hci_unregister_dev(hdev);
 -- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+2.43.0
+
 
