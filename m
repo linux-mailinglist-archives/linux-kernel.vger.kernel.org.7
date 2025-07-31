@@ -1,164 +1,171 @@
-Return-Path: <linux-kernel+bounces-751758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E6BB16D12
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:02:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4BEF5B16D1A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 10:03:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E4821AA43F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:03:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 737BC1773CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 08:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91D781A0B08;
-	Thu, 31 Jul 2025 08:02:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CE31194A59;
+	Thu, 31 Jul 2025 08:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Co/VlKfg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="iXx4+DFb"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75B6135971
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:02:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35A7115AF6
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 08:03:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753948956; cv=none; b=AsgiyzVfF8xWcST0dqZaEXBEmjU1qdz61+RASRqL4nQTJlyPuZu+SPa2wynp/4k6uYYlEGNyChmhucJFh8QYcS1GU5ptYAV7g6R79In9d9hnyGSBgvYt298AzqX0CjswAfMsMupq5WpI31+uQqzwtDkyIhcqSXxjpTPLSyyNHmw=
+	t=1753949005; cv=none; b=qlC8kGrJnR7kHXJnGYS0eaZDhB7UQaq1SuEoiVuUUVceGNej1myH2rQOUImpEemGvC5qNdZ6pCzElNx0v3tJpRrrJGOjxS7ChZOHEioVJeSAgK+aiuYGfhkucKLQBb6qXi1Esvew7hw5hY7aikyQlO0MqtQaQ2t9JD+QdQ3hoBI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753948956; c=relaxed/simple;
-	bh=hjBwaGnLy5CWQpFZyVd4gtLmbuLVWoAb5Z6jFB8161I=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=c9oQNSvIA96J6q1NKXlcR8wE84mnftUolwV8MVp8pH3yhVQswG9hr8ifynsVsW67YEF89VfBthYbHvMOulKLLeOpZWfahy5BwhMa77ALQ/YjWFD9+Nw1mxYlWcvReQrsfEMaQI5gMlmNzVTYQEtZrTSQPpXwl+/dmrGlghljxvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Co/VlKfg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1753948953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Lgv6U/W/hpoRUHyZFqCrSaXyDup15bzLQFsiG+oYoJU=;
-	b=Co/VlKfg6p76cwx/SnxHn/8Q6tpziHtov84of9L0JNWKxwu7bOIytAX4x5tM1Ie3gsvtHo
-	Oiwor0mRAHwnxD2n8UX4wI8C6MijNUmWhX5EBIi4qRFxGV//Qbsccn0NsEVnucf71hTr0V
-	zvocfV8gmb6BsxwBmdAbeaZrzrqC5Jw=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-321-pEJAAtCZMaeAs9-b-BG1jg-1; Thu, 31 Jul 2025 04:02:23 -0400
-X-MC-Unique: pEJAAtCZMaeAs9-b-BG1jg-1
-X-Mimecast-MFC-AGG-ID: pEJAAtCZMaeAs9-b-BG1jg_1753948942
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b79c28f8ceso334260f8f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:02:23 -0700 (PDT)
+	s=arc-20240116; t=1753949005; c=relaxed/simple;
+	bh=3E6DM/Jj6Uge9ThAztNbddyRb4SKq7tcgFhF6Lyj7vs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Tqv+LRE8tosHzwqVngaCqe224UzStexp5Sls0/hp+mL/1E6xnjXA7KhV66LuVGlwDhhs/L4pp0q2NYcRNrxAqe9gDs4zVzPP+O4A6yuK8jv3TFHDhiG9Yyq8J/+u0lBMrD4VbdBexxLkT+6rfBv2O/sRCuLXQuZr4NxteL33Rz0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=iXx4+DFb; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-7075ccb168bso5945386d6.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 01:03:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1753949003; x=1754553803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=E0RizqeeSEQXWVsY0Sxzh6E2pfnIevB3317J+qjJefQ=;
+        b=iXx4+DFbpv0hdNCCCC2oh6Ijx4TsF+18qHxwWvBfcw4I32TjO5eRCoYgodXxvpS0YD
+         Ksj1YecR+ppNVBuDYPPcDcYlEkjznU+fdLQrU5MhmiELRWUsSPskmZB4ANlrtuzof/Ab
+         9jzYZsjL+C+QFRwo1xQhLsYAslvyk01QTLmFeNtlagmp0gSzOHiF3PFBkHDmWE5+K2cG
+         khmFM9v8FF2htWM/kruvwLJ8DqJ6dZ/8s1hySrOEGLMVB8sMdDcFCThpC7BiJbBe0mdZ
+         mutdQ7WffUsDL+zhihSYO5hepE7Tj+Ygkz5+gtefNts9ihef8TkwHOG+GbQk5wxQNUBH
+         K5pA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753948942; x=1754553742;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Lgv6U/W/hpoRUHyZFqCrSaXyDup15bzLQFsiG+oYoJU=;
-        b=IBH3OyzeGBkWb78Und+X11D7MZh3kH5LiOtbSa1SA9xUfS2rmWwp33RR65onEiDkwf
-         uIlgdCHcvjyjG6yi/KeEMdfS9d6zmJMtlcpo5CMq9YIZzjO4CfXIiOHiy3mFwLqvfpCm
-         d3DyXgPEMDT+rkslHbhjJTfJtRP8F1uNI5wUp3nnMN2P/xMvMYraW/bU5PkVb1qsAVAh
-         GxTvor8g5Bl6IpaFmtKWWYRT0h1jlbv2kSrKjOrYmgrzZrfb+6PZsvGSIRmujWVB44Xp
-         FnZ0uP2m2Z7XrFWhrWoes6GuP7IrAEUzEVrAeLceKawx7z9DmJ/5BWqi20whi7QEAOSr
-         aaGw==
-X-Forwarded-Encrypted: i=1; AJvYcCWctSrtU6gsDDs1aBg63PomLo0sNOuX/tI7+29z9PxrZ4WfwfFiP5eE/Q0+DTim/V5tci5IiMz54OfWNyo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbzPX2bMmH0d+8djVG8m02MYbhgIWkdQjnFRABLnlMLNq5Rr6Y
-	pUyKxnV2Hi3glhK1sTe22zwy/grXtuT8eCihjRElTJsBeIgWS9hoZWC4D+XgvPdz096Tf98VTNc
-	OTEGiJp24EkT4y+a1n2Jl5AgnsFvylRDQVy/XjLrq9B6RyPPVzbfgCj2s98QH/4jz3w==
-X-Gm-Gg: ASbGncv41t6IjI7+65RmpBuazGts7WhRXKch0tAh/NKZtjO1NuB9mVIO31b6BlJ/xx6
-	W/WRr/HleyIbADDYlsKX5+qrCZkzRxV3UuWEpuj9o/UNDw3jAooEx9AIVyEcGqIW7K1JcPDeeUR
-	gGhDiJLoyWK7Xr3a/jPat3gDchG3jwSCH/m0knjeaLRe0j4/fChYyF8aUOohEtYdh9tR9yyzIB+
-	s7KuUL38XdvDw3y2kh1dl7X6L+WBGMgxCI0xdFJIb1lR/WLqCf/Pl/ooeKWLkUJztrJJrRugOk9
-	QaYcz5Oj6VVIX/SihJbDXyBiGeoGzcJzZE2Z7j0fxjxgHKIrm/IL7qSiTdNypZU7dA==
-X-Received: by 2002:a05:6000:4287:b0:3b7:7633:4e71 with SMTP id ffacd0b85a97d-3b794fecc7cmr5082559f8f.13.1753948941972;
-        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH4pG6nXG2ua5v/+0ufLTKW+zE77EAA3F4z8dCGzhgrLwSHi6vxpr0yH0anYvSH+8Di5uZR8g==
-X-Received: by 2002:a05:6000:4287:b0:3b7:7633:4e71 with SMTP id ffacd0b85a97d-3b794fecc7cmr5082530f8f.13.1753948941555;
-        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.40])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c80sm1482291f8f.43.2025.07.31.01.02.20
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 01:02:21 -0700 (PDT)
-Message-ID: <0fb442dc58bd36345b60f4bb8f6be73db74900ac.camel@redhat.com>
-Subject: Re: [PATCH 2/5] rv/ltl: Support per-cpu monitors
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Nam Cao <namcao@linutronix.de>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>,  Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 31 Jul 2025 10:02:19 +0200
-In-Reply-To: <da946aaf40a8d1a320dc62673013ceceef1c93b3.1753879295.git.namcao@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
-	 <da946aaf40a8d1a320dc62673013ceceef1c93b3.1753879295.git.namcao@linutronix.de>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        d=1e100.net; s=20230601; t=1753949003; x=1754553803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=E0RizqeeSEQXWVsY0Sxzh6E2pfnIevB3317J+qjJefQ=;
+        b=nzBvOYzDhPX0qWqM7Krq9bL+1ST6FDx8LLfGnEZBQCFv8GSFLXc0Lqu48iEHyVdAEi
+         uvkak/TnZrBNA3vQa/uHzcQD1/Zi6gedlvfhFAS2DTVyBDmUSCoQSKVNOmB+MCTLeUgn
+         rDrR6ScSDTXqHwZtmVGlAn8iXJFAIswznTJoYoeuKFm7i1tOJ2a6pDzeDMGWNeCS81ko
+         Tiu74Qr2OrVYfWCk0YhjE+PkKjxMc7U3dNDzLFoCBiRfVSrjfP/AzFPWueNJVd4vngEO
+         Jgm4mOzJGj2c6qE4YhGND3SqMnN0zjF1gAxU1xvSIWpNOcGTeOqUAWuQQl1vaEbPp8iC
+         01Bg==
+X-Forwarded-Encrypted: i=1; AJvYcCWCMd4DHcc9TXQU+CAxRRk/2UCJ4Roef8PXZpXbUCgcE4udvNt9H8hnvgLRvTnDH8FByKTFW2HwhUem0O4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybDyEyyktDtHakX39z9UU16cDy+GWxZHDBBHU3Jjq3mkiFREqi
+	fti3ygTO+yThR0gJoHk6Euf07DqxcUFhy29UvoPH9a9MxgX5wgE7nfDXmbXeUUwe/Ve0gXlXjld
+	Ljx/8PHQeQoaamdaJVGw+bfNw+MGRsJwqWrPeH5D2ELWWOpNEf9kENdhy
+X-Gm-Gg: ASbGncuFgW87lE3LNfUhGjiDXSP0wTuSG35KW5NXyqwNuPuVseJAjpWUdqfaWNz4oHp
+	ZK5JG3VTB9X1zvvuy9Mwx0es2TKyaF27qIvZL8i6bFcKE8yLp6LVufGZX9Vp55ZXztCqbe+OOuc
+	zA95gCDHZy/q4GfVzFVgk09W7ZFAdeyyWghxReKYZAc0gjIl6e1DEXG2t6MRozpwzPQkx2OGU7J
+	ah3iKHyTc2ocbVRZfUSfeen3UHybPtH9l0=
+X-Google-Smtp-Source: AGHT+IGDr7zfGuIAMJSA1MvTb1ljatVa+MfXwdfqyf9as9/ILumMyL4rrQSmaRC64HVvA8ltMX0YLrwYqWd2JVaJlVE=
+X-Received: by 2002:a05:6214:23c6:b0:707:4e41:d352 with SMTP id
+ 6a1803df08f44-707670532a0mr69396966d6.6.1753949002615; Thu, 31 Jul 2025
+ 01:03:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+References: <20250728152548.3969143-1-glider@google.com> <20250728152548.3969143-10-glider@google.com>
+ <CACT4Y+Y6gkd23+cVEkTs_MDfvOskd=Z4=dVh-LL-F_Jbgf8xnA@mail.gmail.com>
+In-Reply-To: <CACT4Y+Y6gkd23+cVEkTs_MDfvOskd=Z4=dVh-LL-F_Jbgf8xnA@mail.gmail.com>
+From: Alexander Potapenko <glider@google.com>
+Date: Thu, 31 Jul 2025 10:02:45 +0200
+X-Gm-Features: Ac12FXwla-B03ct7tMQ3jw6Uy5HlsYMbId5MW3BmN9-L_RLD8ecivdhVV9pI6Zo
+Message-ID: <CAG_fn=WDOu2sRv_RhRm8XhgCAgVJsMaPXp9TbcaknTn_84cNOg@mail.gmail.com>
+Subject: Re: [PATCH v3 09/10] kcov: selftests: add kcov_test
+To: Dmitry Vyukov <dvyukov@google.com>
+Cc: quic_jiangenj@quicinc.com, linux-kernel@vger.kernel.org, 
+	kasan-dev@googlegroups.com, Aleksandr Nogikh <nogikh@google.com>, 
+	Andrey Konovalov <andreyknvl@gmail.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Marco Elver <elver@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
-> Add support for per-cpu run-time verification linear temporal logic
-> monitors. This is analogous to deterministic automaton per-cpu
-> monitors.
->=20
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> ---
->=20
-> diff --git a/kernel/trace/rv/rv_trace.h b/kernel/trace/rv/rv_trace.h
-> index 4a6faddac614..f9e5fd044c45 100644
-> --- a/kernel/trace/rv/rv_trace.h
-> +++ b/kernel/trace/rv/rv_trace.h
-> @@ -177,6 +177,53 @@ DECLARE_EVENT_CLASS(error_ltl_monitor_id,
-> =C2=A0#include <monitors/pagefault/pagefault_trace.h>
-> =C2=A0#include <monitors/sleep/sleep_trace.h>
-> =C2=A0// Add new monitors based on CONFIG_LTL_MON_EVENTS_ID here
-> +
-> +#ifdef CONFIG_LTL_MON_EVENTS_IMPLICIT
-> +DECLARE_EVENT_CLASS(event_ltl_monitor,
-> +
-> +	TP_PROTO(unsigned int cpu, char *states, char *atoms, char
-> *next),
-> +
+On Tue, Jul 29, 2025 at 1:20=E2=80=AFPM Dmitry Vyukov <dvyukov@google.com> =
+wrote:
+>
+> On Mon, 28 Jul 2025 at 17:26, Alexander Potapenko <glider@google.com> wro=
+te:
+> >
+> > Implement test fixtures for testing different combinations of coverage
+> > collection modes:
+> >  - unique and non-unique coverage;
+> >  - collecting PCs and comparison arguments;
+> >  - mapping the buffer as RO and RW.
+> >
+> > To build:
+> >  $ make -C tools/testing/selftests/kcov kcov_test
+> >
+> > Signed-off-by: Alexander Potapenko <glider@google.com>
+> > ---
+> > v3:
+> >  - Address comments by Dmitry Vyukov:
+> >    - add tools/testing/selftests/kcov/config
+> >    - add ifdefs to KCOV_UNIQUE_ENABLE and KCOV_RESET_TRACE
+> >  - Properly handle/reset the coverage buffer when collecting unique
+> >    coverage
+> >
+> > Change-Id: I0793f1b91685873c77bcb222a03f64321244df8f
+> > ---
+> >  MAINTAINERS                              |   1 +
+> >  tools/testing/selftests/kcov/Makefile    |   6 +
+> >  tools/testing/selftests/kcov/config      |   1 +
+> >  tools/testing/selftests/kcov/kcov_test.c | 401 +++++++++++++++++++++++
+> >  4 files changed, 409 insertions(+)
+> >  create mode 100644 tools/testing/selftests/kcov/Makefile
+> >  create mode 100644 tools/testing/selftests/kcov/config
+> >  create mode 100644 tools/testing/selftests/kcov/kcov_test.c
+> >
+> > diff --git a/MAINTAINERS b/MAINTAINERS
+> > index 6906eb9d88dae..c1d64cef693b9 100644
+> > --- a/MAINTAINERS
+> > +++ b/MAINTAINERS
+> > @@ -13018,6 +13018,7 @@ F:      include/linux/kcov_types.h
+> >  F:     include/uapi/linux/kcov.h
+> >  F:     kernel/kcov.c
+> >  F:     scripts/Makefile.kcov
+> > +F:     tools/testing/selftests/kcov/
+> >
+> >  KCSAN
+> >  M:     Marco Elver <elver@google.com>
+> > diff --git a/tools/testing/selftests/kcov/Makefile b/tools/testing/self=
+tests/kcov/Makefile
+> > new file mode 100644
+> > index 0000000000000..08abf8b60bcf9
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/kcov/Makefile
+> > @@ -0,0 +1,6 @@
+> > +# SPDX-License-Identifier: GPL-2.0-only
+> > +LDFLAGS +=3D -static
+> > +
+> > +TEST_GEN_PROGS :=3D kcov_test
+> > +
+> > +include ../lib.mk
+> > diff --git a/tools/testing/selftests/kcov/config b/tools/testing/selfte=
+sts/kcov/config
+> > new file mode 100644
+> > index 0000000000000..75726b2aa9979
+> > --- /dev/null
+> > +++ b/tools/testing/selftests/kcov/config
+> > @@ -0,0 +1 @@
+> > +CONFIG_KCOV=3Dy
+>
+> Doesn't it also need CONFIG_KCOV_UNIQUE=3Dy since it tests the unique
+> mode as well?
 
-You don't really need to follow to the ID/IMPLICIT convention here.
-
-These LTL per-cpu monitors are, in fact, not implicit since they do
-have an id (the CPU), implicit makes sense with the current
-implementation of da_get_monitor that uses the current CPU (doesn't
-have to stay that way, but there was no need to change so far).
-
-If you don't want to get rid of the task's comm in the tracepoint (and
-unify both with an integer id, like with DA), I'd suggest you use
-different names like CONFIG_LTL_MON_EVENTS_TASK (in fact that doesn't
-just have an ID) and CONFIG_LTL_MON_EVENTS_CPU (or even
-CONFIG_LTL_MON_EVENTS_ID, for this it actually makes sense).
-
-I'd prefer it as general as possible to ease new monitor types, but to
-be real picky the LTLs per-task are not ID and the per-cpu are not
-IMPLICIT.
-
-The id field is what the rv userspace tool uses to differentiate
-monitor types, by the way.
-
-
-> +#endif /* CONFIG_LTL_MON_EVENTS_IMPLICIT */
-> +
->  #endif /* CONFIG_LTL_MON_EVENTS_ID */
-
-Also, I'm not sure if that was intended, but
-CONFIG_LTL_MON_EVENTS_IMPLICIT gets compiled only with
-CONFIG_LTL_MON_EVENTS_ID.
-
-Thanks,
-Gabriele
-
+You are right, I missed that.
+Another option would be to skip the test under #ifndef
+CONFIG_KCOV_UNIQUE, but I think for KCOV developers it is important to
+enable all the necessary config options.
 
