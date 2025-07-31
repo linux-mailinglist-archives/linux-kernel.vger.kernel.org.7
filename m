@@ -1,81 +1,120 @@
-Return-Path: <linux-kernel+bounces-751836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36562B16E13
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:02:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C592B16E16
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 11:03:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C2DFC4E00B5
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:02:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 942E616E70C
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 09:03:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9AF52BD029;
-	Thu, 31 Jul 2025 09:02:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52B40290D81;
+	Thu, 31 Jul 2025 09:03:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oJz5Gbaq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="e/0ZkerW";
+	dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b="24f4CS50"
+Received: from mailrelay-egress16.pub.mailoutpod3-cph3.one.com (mailrelay-egress16.pub.mailoutpod3-cph3.one.com [46.30.212.3])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55B0329994B;
-	Thu, 31 Jul 2025 09:02:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28B38275844
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 09:02:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.30.212.3
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753952555; cv=none; b=BnQepeUfAutK+wNdpJil7C80Eu8RpGA6odMKJcUeuaRjcV9e5vGxGSboEne8d3liA0P7KpF0IBfWwsQ+KeXYnUqa72QbTUcWG973QOmzm0xQqWbUKuwsI0OsnI6D6DriYuJ2990RaXzIXs5W6Kg1tfe9szTPXuh8vdZuISQ1nYE=
+	t=1753952583; cv=none; b=eHCHzW/f3eErIm3TecZkWr3TiehqwtwB6JXxlDtfinLsRuOgHYPxmzmRTCA2qLFhCR4AkyTkeYd/uU8D4y10xfbqFZQ2RtO0Ofbie9FiBE1z+n9SOO6ecA0A/h6XbDcAlPrCU3h2DRpAIwsCwMZk5MsEcg01q42ybJ+gMEuxEAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753952555; c=relaxed/simple;
-	bh=rBvKooI8uLrGB7LDoTsQ+vWdoAN9j0Kp0TmnAKR2yrg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=jT4yMQj8mIn47uaWxeRhwB5IHdwxmdJCklhV4SUbgxyPeRo+FGlY7CqP3+4gb7Uypp9JsLs7+7f2ShZ1gE2ZW8xvwWgx4VdncCsU8MAoyB8E64wycKlSaaAMkU0MTdfHIiJhdE5k6+9/jxWANjQVxOo7da7Euz7zk46iwhUWz0I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oJz5Gbaq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5D96C4CEF6;
-	Thu, 31 Jul 2025 09:02:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753952554;
-	bh=rBvKooI8uLrGB7LDoTsQ+vWdoAN9j0Kp0TmnAKR2yrg=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=oJz5Gbaqif6ggAEXa1z14AK8O8xIDzFI/Q6AhHv7+HTWhnPm337QNHPSZtQR8tBgQ
-	 smjFrAx9KvO+wuD+S4IsqKgu5KmB00MDtNMJFhLcdkKMA0J2ztHLHklaeRNu4VbvL3
-	 O63F5uFgFfW91gZ5yGZAOyR9KSCGR99XLEl7v6N6X2KUunpkGJLHQbqiCJvIQ0w4Ec
-	 bYc2cuCeslwd6H3KrlD9CULo0ObW28chEPJdESKJaoMJHJGF5mHAVa5XI2ptHg1mR/
-	 KeMG/j8uQ8NMBiL6aDfJisLzN0Vq7CJ83bkTNaEfGKXFkGO3tffdn+71Fb+Fglmwp+
-	 yQnx8ysuhN4GA==
-From: Lee Jones <lee@kernel.org>
-To: linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>
-Cc: Laurent Pinchart <laurent.pinchart@ideasonboard.com>, 
- Lee Jones <lee@kernel.org>, Dan Carpenter <dan.carpenter@linaro.org>
-In-Reply-To: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
-References: <20250717-adp5585-drop-ret-v1-1-2ae65bd780aa@analog.com>
-Subject: Re: (subset) [PATCH] mfd: adp5585: Drop useless return statement
-Message-Id: <175395255348.1068483.17805196039345490694.b4-ty@kernel.org>
-Date: Thu, 31 Jul 2025 10:02:33 +0100
+	s=arc-20240116; t=1753952583; c=relaxed/simple;
+	bh=aGrAH/Tbb6SSGgZDJ06gVdgOyL4PKYXs6RPb1SJ9MZU=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=javuIudG6f1D0HeEvhGiB6Mnz2+DoDeEtlspexMRztJVpqmNfndYfCAR1CX5Jd0i8oTlL9zKFHvKDbwRN80RvGGuiykaIjSA0nDmvtYOZUsNb83Ccg6BY0q8RIWT0FDPLoGjOkkmq3oNz7DBLs3JKONlvnvyIzCaFyoIhH+Loqw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se; spf=none smtp.mailfrom=konsulko.se; dkim=pass (2048-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=e/0ZkerW; dkim=permerror (0-bit key) header.d=konsulko.se header.i=@konsulko.se header.b=24f4CS50; arc=none smtp.client-ip=46.30.212.3
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=konsulko.se
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=konsulko.se
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; t=1753952578; x=1754557378;
+	d=konsulko.se; s=rsa1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=8BwiugyGiIx5huwWXGhp1Gaxm7XgAQiVNO4WhfBafE8=;
+	b=e/0ZkerWldZOJhyo3/TNKzQlyQwDWSN/m8zXlitwCXnrR+wG+qmSEqSaHodl8x+XmshVpWl4zg6DU
+	 Jf1Rb6ChBQ8hoVKTkpzYFz29jcnxVQ+9Xoh0CemHD+keH9kdizHHIsPh+KTfqEiIHl1uOrqhO50bxJ
+	 REYRelU9ufsTV7QIVSiqII3DTovBqwLvZIF5yTvR+ZFkd1XdlfnaJx4L6TtVy50eV/+WO1lXvd1g7x
+	 CZOmMHmOID250oilyVtZgMagshmylzUruRzOzhkbPRBIbpR1VmSiTrx0RCcQWVbw55ZnASQ3TZN8YG
+	 vxwXpZ8Bk4lYEXJuR40QklGd6jlpolA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; t=1753952578; x=1754557378;
+	d=konsulko.se; s=ed1;
+	h=to:references:message-id:content-transfer-encoding:cc:date:in-reply-to:from:
+	 subject:mime-version:content-type:from;
+	bh=8BwiugyGiIx5huwWXGhp1Gaxm7XgAQiVNO4WhfBafE8=;
+	b=24f4CS50xBjUkRcbBmrVztFzUeo6tMFD47Di0TF9dCJJwkK5aDnTsR71NoAxweYI7Q+NCT9HWK1vM
+	 x30J+0ZCw==
+X-HalOne-ID: 25f7a752-6ded-11f0-b15b-d510462faafc
+Received: from smtpclient.apple (unknown [2a01:cb1d:9264:6f00:816e:7fc8:3908:5295])
+	by mailrelay4.pub.mailoutpod3-cph3.one.com (Halon) with ESMTPSA
+	id 25f7a752-6ded-11f0-b15b-d510462faafc;
+	Thu, 31 Jul 2025 09:02:57 +0000 (UTC)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-Mailer: b4 0.15-dev-c81fc
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.200.121\))
+Subject: Re: [PATCH v14 4/4] rust: support large alignments in allocations
+From: Vitaly Wool <vitaly.wool@konsulko.se>
+In-Reply-To: <DBPO1RQMZDH2.2WFOZO0X4DODN@kernel.org>
+Date: Thu, 31 Jul 2025 11:02:45 +0200
+Cc: linux-mm@kvack.org,
+ akpm@linux-foundation.org,
+ linux-kernel@vger.kernel.org,
+ Uladzislau Rezki <urezki@gmail.com>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ rust-for-linux@vger.kernel.org,
+ Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ bpf@vger.kernel.org,
+ Herbert Xu <herbert@gondor.apana.org.au>,
+ Jann Horn <jannh@google.com>,
+ Pedro Falcato <pfalcato@suse.de>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <933C4F7E-0E14-4C6A-AA18-ADB21CE1953F@konsulko.se>
+References: <20250730191921.352591-1-vitaly.wool@konsulko.se>
+ <20250730192101.358943-1-vitaly.wool@konsulko.se>
+ <DBPO1RQMZDH2.2WFOZO0X4DODN@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+X-Mailer: Apple Mail (2.3826.200.121)
 
-On Thu, 17 Jul 2025 15:51:34 +0100, Nuno Sá wrote:
-> In adp5585_reset_ev_parse(), when parsing the
-> adi,reset-pulse-width-us property, we were returning in case it was
-> found and valid. No point in doing that as we'll be returning anyways
-> after the exiting the property scope. And it could actually lead to bugs
-> if new properties happen to added after this one.
-> 
-> 
-> [...]
 
-Applied, thanks!
 
-[1/1] mfd: adp5585: Drop useless return statement
-      commit: 649c3af846064d9f721e976295db7bcc7ad2bffe
+> On Jul 30, 2025, at 10:18=E2=80=AFPM, Danilo Krummrich =
+<dakr@kernel.org> wrote:
+>=20
+> On Wed Jul 30, 2025 at 9:21 PM CEST, Vitaly Wool wrote:
+>> diff --git a/rust/kernel/alloc/allocator_test.rs =
+b/rust/kernel/alloc/allocator_test.rs
+>> index d19c06ef0498..17b27c6e9e37 100644
+>> --- a/rust/kernel/alloc/allocator_test.rs
+>> +++ b/rust/kernel/alloc/allocator_test.rs
+>> @@ -40,6 +40,7 @@ unsafe fn realloc(
+>>         layout: Layout,
+>>         old_layout: Layout,
+>>         flags: Flags,
+>> +        nid: NumaNode,
+>>     ) -> Result<NonNull<[u8]>, AllocError> {
+>>         let src =3D match ptr {
+>>             Some(src) =3D> {
+>=20
+> I think this hunk should be on patch 3.
+>=20
+> Also, don't you see a warning when running the rusttest target? I =
+think it has
+> to be _nid, given that the argument is unused.
 
---
-Lee Jones [李琼斯]
+Indeed, thanks. I=E2=80=99ll respin the patchset shortly.
 
+~Vitaly=
 
