@@ -1,131 +1,127 @@
-Return-Path: <linux-kernel+bounces-752505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0E42B17669
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:04:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8506B1766A
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 21:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1F12958071C
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:04:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0617A836A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 19:05:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BC3624166F;
-	Thu, 31 Jul 2025 19:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DC7523ABB1;
+	Thu, 31 Jul 2025 19:05:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CJh7BvAF"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="FK9TJqiz"
+Received: from mail-ed1-f47.google.com (mail-ed1-f47.google.com [209.85.208.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96FE823ABB1
-	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:04:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78ED9A923
+	for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 19:05:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753988669; cv=none; b=N2goDd/Z3sEe8ufGi9KwbgsJ5eEFoiZW73C1/R4SAB2J7gXVrLB0bU6Wr2mgZckSupVrVAAkMN2BSVAQZqJxAA4tN7uIuSowYguUxjJPcd4jQvl2ga81Vw8uFVXyhBMHenzpTo6728tfLeSHGLAfZ9o++jx841xKHxCTCU/KK7U=
+	t=1753988732; cv=none; b=WBMyg9SrjUlOvyeViv1PwUiGMYXVc2Uh8nRyg2L8PJ2hQ3Ve5MUJESH/ObajLowQ83joXgI09aAvQPF5op00+7XyOCs09D53DRMIv46E9QHZkb0inV//vHJzXrFDbk08DhATy1uuN0AUQJUlR2Q8KhTTseumxiEuWyzZnb0dNVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753988669; c=relaxed/simple;
-	bh=gJXzkDWaDEoED0mXWlnwlQgnRDnNkaAlLSo4DQeBxzs=;
+	s=arc-20240116; t=1753988732; c=relaxed/simple;
+	bh=x1ypT2fJPNgyIicOoC6mzglibewwl7Bcb9TDib5VIsQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Gu/h+JFn3XcdT3gRxOeaP00RIoUBTbwPdn2OHWn6qZklKgivkIRq5cRlOLpwSuyy06auynIfEfaFJhHspzJXWQwGgRPEew1dy0lWXW5lCJQXbOGdVZNmiTTBNMgUJbSdi03as5Ifmlg0v6yQ/DJbGiNa5OD7GFa38SWOV/h+ZvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CJh7BvAF; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-312a806f002so184524a91.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:04:28 -0700 (PDT)
+	 To:Cc:Content-Type; b=Y+8C6lDeJqN2/hP0orvwWeHGOIGDLYWLPjraqh8BlmVNQKErmI1n2RTJ+ukG7pRkIbIYdheOBVRsDSuKDQECAhnRRlqqDCT16rOgyWCqm+0H/BlvWgxKR5KNfTMZeaBka8OOldZf5I54cW9rNc8/ZALxtv4o+7YjEmx4vwNRQn0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=FK9TJqiz; arc=none smtp.client-ip=209.85.208.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f47.google.com with SMTP id 4fb4d7f45d1cf-615c8ca53efso590453a12.2
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:05:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1753988668; x=1754593468; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d9hLQS1Qj2wO2t6Q4M7+LSgEvKKDPESGAJRbvOUbOkk=;
-        b=CJh7BvAFhtpP1HgjOcXfxqdcHaYncBB/ydsZZYw1FCn76aaUSCwXgcB/6mhdjsiRHh
-         jNrvjNDJoT01srNitQYKsDEC/1aoybtHQPGy1mukj2/SHaBwHT9e/YPFhvAW1ksRHrt5
-         x2DzFiucu4LsXb7MdA3xBaj6k9iiDC0F9dQsEqVCojVNeGaRzWx1x0PEaDGhUfLf9Ijf
-         HZIMs0PLvzwSUFY4G846GDdPBPd92LcW9alqCtdB2m8z/IhX49UguWvuuAjk2YAJODjw
-         G71AMjtvY7mgit6CpFLzzbi//+mNE+9/z+iyOtvKs9dY1fzeNRrZvDf3u00HjQ3umhVh
-         EHaQ==
+        d=linux-foundation.org; s=google; t=1753988728; x=1754593528; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=2PT6XPI8glH5ApErKJyggXcgzcrrKoKKUUfLUjAEO0M=;
+        b=FK9TJqizTdkest6m+MwsMMNXb4fRAD+xgoXjddAXdVip4ivUY2PfR1CRKBZiPvYTC/
+         nLvAu5emZw3TC0JLHq/DPYxjTejNXkAryn4V4Wk8cazLEM9kyXqS582AlLfS3YDyslKq
+         IsbAilrGRo7mMAAyTVRMANaG0xS1NN5reVvLs=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1753988668; x=1754593468;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d9hLQS1Qj2wO2t6Q4M7+LSgEvKKDPESGAJRbvOUbOkk=;
-        b=ngfA5cmSZ0bAHnmPlgBDi4R9ypr1PKclBACtS96Om022YsvFFFuCR8iP10m8sKP4Tz
-         GnwqldHQYMiQphtjCfRevqoiAY7pdAMRW3WuGIKV26nuDzBJxBs4pkRuQzCnoC8JZ3Mo
-         vyAPpVbFk57Vu8Adw2MWMLKV69IJjZ8e3u6DHnfbfxLFbVqoGRaVGGuuNMBmedr4nSPi
-         KbPxARHUQVF9yib/3OTsmnu9wZnDNfNr0KbVMoF5WHcDQ5lWK4maKojgSyWs5oXAiaUb
-         U+SrABqxOwdBJJscw50X5aF7bimra7TH8mykx0Fbe7RALZLMVL3zoGRCu2l5fsObcWEn
-         xWVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXBiGPI+Rp0c0dV/FQxFXs4iPNhAOBJy0JQgbifY2hdTogq8YiaPTQtsEuFuv+Xyz14fvlg5my60H0veeo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrXLvyugGqpk2Sjb4L+w/7jl2gIW6MpkHXed/AOJYyItF3NrWC
-	F8yeC0rg4cMRGobTHf4NOzWK2vF6XcsTwgpv2gb5meeO2ZRDNN1kNsqxu/fukATbMoZyaJIlEiR
-	LBQweNsid1AP2/PWDnxmwHSvNMmKbJ3c=
-X-Gm-Gg: ASbGncuBByDDj3wMfnST6y1odUVlxlQaR0EcGanwBuRmNdPT6nIFH0iOAGNKvdHeSNz
-	qtyftMJgsYR7Agy1eIgA0gd0j8MRhenSw3AFi3aMrgUSJ/NLC+Hb9aokv0QInFpbtikXE3yOhYg
-	zk6Zhmd8GHk2LAARbuXtkGw7VIFudG9/h+XNDc8D9lNpGPq/jNdHoiB7VVLxhxZfEfUFYVsSiA7
-	HOob1KV
-X-Google-Smtp-Source: AGHT+IF2bYEl2+BEOAeHiljf3vUKpTyZm8+ers0QVY/s0tVH7OkxrGDLUBtiEkAByU+NxHzaKfQ59C63xqQyq7UvwYc=
-X-Received: by 2002:a17:90b:380a:b0:31f:ea:ca84 with SMTP id
- 98e67ed59e1d1-31f5dda82d5mr633555a91.2.1753988667626; Thu, 31 Jul 2025
- 12:04:27 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1753988728; x=1754593528;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2PT6XPI8glH5ApErKJyggXcgzcrrKoKKUUfLUjAEO0M=;
+        b=vqg83cwkIp8whYCFoWjbJtKGHxjgzaedM7DULGaXkHyoobz0ymtqgGU3LeiRWB39er
+         IMChkBOYmYs9ODYv+Bs2TYiXatLsOMd7Vw3YrgPpn0Z62GlJWe69qGOw6boihG8/+MTi
+         OEjrOuSfZH5fCTjdLpBsvaUZl7x4Y9OXmFaYLWMjs/nkJs+Cj9tmM8uRw6N+9EUYOJ8Z
+         Ha9qH9qDVPwDmmQFpEv85ctLDXZ/POLp3YMMKxwH3FFRflg75IZq6u4PxHsP/GTxJQJi
+         I+oCv41QjqIm4Vmhwxg9jUT3XZIdWTVFlFkQomWNBGjT+yfy3CSs2wJiRYAO7bcxxK3f
+         Sf7A==
+X-Gm-Message-State: AOJu0Yyw9Ebb81BF+POSkyy9yREW0kpJP1KOHRo1P4Vx8/p8A+mVZH55
+	e4mVdIb/d8Ki2sY0QduLTwJsFCpFI9gGfKB7e7F0fV0shtaQ1qolroOT7QQ6Z4e6wtLNmDI0VPE
+	/F8nSGRw=
+X-Gm-Gg: ASbGnctF3pR7m5/M8Fp+dXcF5dfcalEOBbvPk7KvcMK/jjvVzV/n+On9PHQ1OMZ3umX
+	2HI7tf2Ec7Gc0mYlwgwv/yL7suwV587cZx+iCwrCES0RDCB1qJ+xMtAw8zZptIhub07hxBGIbY1
+	UnHR2zA/8vNaylShLnGzlVzUME/T0DFYataBB35opzQ0l/3SvBZdzsM7laY3Fz5tBy2bJyo7NQv
+	RqQuPPyTOJnyHrPVhsjkpVqPcZA5vcHP9N/kBJH3/A9ENA3KwE7J4tXWDSQ4IGzWWCvvaylXhww
+	pIh7lrhPDAF/+E6SenNEsV7OHpOTicXvH5/b+FMTuqvGg4RHMoS6uVN7TFDn3YvctI/NkdSAfPr
+	WKBxX/iaUmq398qk9i0CBqeqHRQNwqlExlqLwg9H/nDe21Iqcw9ocVvg6YQCTc8OvzvYXm8pU
+X-Google-Smtp-Source: AGHT+IEaVRfP82GHEon11O+bR79z6VW7HgSCNjhqDRf6QJBqxiyIL6ehs7tzp+5ixpoDxVAtQQ0tfg==
+X-Received: by 2002:a17:907:e8e:b0:ae3:67c7:54a6 with SMTP id a640c23a62f3a-af8fd96f774mr926202366b.34.1753988728492;
+        Thu, 31 Jul 2025 12:05:28 -0700 (PDT)
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com. [209.85.208.50])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0def2esm151133766b.61.2025.07.31.12.05.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 12:05:27 -0700 (PDT)
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6155e75a9acso1064954a12.0
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 12:05:27 -0700 (PDT)
+X-Received: by 2002:a05:6402:2355:b0:615:a3f9:7be5 with SMTP id
+ 4fb4d7f45d1cf-615a3f99733mr5652402a12.25.1753988727246; Thu, 31 Jul 2025
+ 12:05:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAPM=9tzVm80-v6_5nt6kko3nR+aQLZ7R98i419FV8f4-ayQWUw@mail.gmail.com>
- <CAHk-=wirxHy+KU6jmtO2dzmGQ1BwaOdd5Mjtrc40fGvZVULQQg@mail.gmail.com>
- <CAHk-=wjn5Pg2Gp=o2NVv-nRKqE=E75AxUypWCCpQ7MDXuHx+YA@mail.gmail.com>
- <CAHk-=whnuRuQEky2GsCDRQSf1dZbpoqnK+puw=qdR-D7aap9SQ@mail.gmail.com>
- <CAPM=9tygJqtbmYzB5gktxp-7fBfv_9gNq9p9+SdZ6wiYE2-6PQ@mail.gmail.com>
- <CAHk-=whB1X1c6rWbY34wZVGcnaY=yfPGLOtjd5h3mMDGV9Lbkg@mail.gmail.com>
- <CAPM=9tyb1mELymOJv62KJom4mGF0UBifbVqLJUFdS1C7Eeu3jg@mail.gmail.com>
- <CAPM=9tzDWmYBKQGB0ybDzhYHkg0p98_6PJA8OuPahRep8+QPvQ@mail.gmail.com>
- <CAHk-=whOb_ebQQbnXeqb8uXf32WA32nrL3=HQ2y8hBm9hFgVOw@mail.gmail.com>
- <CAHk-=wh+79KkMXsNqyPxeU+c5U2h-n13ko6J_QzwtjyYCKhrSw@mail.gmail.com>
- <CAHk-=wgEGn0azq0n5BfWg4ZStrZYanLCX1a+quug7HKmjimhpw@mail.gmail.com>
- <CADnq5_NBM1Kso==+N=1xCjF+xiS7Vy4g47uvUN7sSWs8bontZQ@mail.gmail.com> <CAHk-=wiN+0FBwxwj1UiKsfHgW=C_aWy20F6PPt5M_ACnfukehQ@mail.gmail.com>
-In-Reply-To: <CAHk-=wiN+0FBwxwj1UiKsfHgW=C_aWy20F6PPt5M_ACnfukehQ@mail.gmail.com>
-From: Alex Deucher <alexdeucher@gmail.com>
-Date: Thu, 31 Jul 2025 15:04:16 -0400
-X-Gm-Features: Ac12FXzIgbuFXPjEc5kXfIQBbe_eDpBAwA8exmzuGM7zNQzkl_SPo-Foyl2jwFI
-Message-ID: <CADnq5_MjQbDYZYvSi5D5sVN1oeaLdxRPCQdt99LkMW=FWdcOQQ@mail.gmail.com>
-Subject: Re: [git pull] drm for 6.17-rc1
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: Dave Airlie <airlied@gmail.com>, Dillon Varone <dillon.varone@amd.com>, 
-	Ivan Lipski <ivan.lipski@amd.com>, Daniel Wheeler <daniel.wheeler@amd.com>, 
-	Alex Deucher <alexander.deucher@amd.com>, Wenjing Liu <wenjing.liu@amd.com>, 
-	Simona Vetter <simona@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, 
-	LKML <linux-kernel@vger.kernel.org>
+References: <20250730151013.GC6782@google.com>
+In-Reply-To: <20250730151013.GC6782@google.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 31 Jul 2025 12:05:10 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whwhtLWi7n1RjOk4Yvmt4sHdEMd9DdzaLdfHc_8StU-qA@mail.gmail.com>
+X-Gm-Features: Ac12FXwkMR_sa7-aatpk2e2co0_SuKZZ9aejVZnXIfXrkL8WCNxajW2xO_n2rD0
+Message-ID: <CAHk-=whwhtLWi7n1RjOk4Yvmt4sHdEMd9DdzaLdfHc_8StU-qA@mail.gmail.com>
+Subject: Re: [GIT PULL] LEDs for v6.17
+To: Lee Jones <lee@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Pavel Machek <pavel@ucw.cz>
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 2:01=E2=80=AFPM Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Thu, 31 Jul 2025 at 06:09, Alex Deucher <alexdeucher@gmail.com> wrote:
-> >
-> > I think it may be fixed here:
-> > https://patchwork.freedesktop.org/patch/663973/
->
-> Yes, this patch fixes the problem for me.
->
-> I don't know if it's due to the pointer validation (ie this part):
->
-> -       if (!dsc)
-> +       if (!dsc || !dsc->ctx || !dsc->ctx->dc ||
-> dsc->ctx->dc->debug.disable_dsc)
->                 return;
->
-> or whether it's the divide-by-zero that the commit talks about.
->
-> Should I just apply this directly, or expect a pull request in the
-> next day or two?
+Just a small and unimportant nit:
 
-Just typing up the PR now to send to Dave and Simona.
+On Wed, 30 Jul 2025 at 08:10, Lee Jones <lee@kernel.org> wrote:
+>
+>  * A potential buffer overflow warning in PCA955x was reported by older GCC
+>   versions has been fixed by using a more precise format specifier when
+>   creating the default LED label.
 
-Thanks,
+I'm trying to encourage people to use more straightforward language in
+commit messages, and I ended up rewriting some of yours.
 
-Alex
+In particular, try to avoid passive voice.
+
+So instead of "A fix has been implemented to Xyz" just say that it
+contains "A fix for Xyz" (or even just "Fix Xyz").
+
+Straight and to the point.
+
+As an example, I edited that "was reported by gcc" and "has been
+fixed", so that bullet point became
+
+       - Fix a potential buffer overflow warning in PCA955x reported by
+         older GCC versions by using a more precise format specifier when
+         creating the default LED label.
+
+in my tree.
+
+This is not a huge deal, I just wanted to point out that "simple and
+to the point" is a good thing, and talking about fixes in some kind of
+passive voice is just strange.
+
+            Linus
 
