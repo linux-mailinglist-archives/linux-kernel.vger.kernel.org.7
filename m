@@ -1,94 +1,100 @@
-Return-Path: <linux-kernel+bounces-751506-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-751507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFCB0B16A67
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:29:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7D1A7B16A6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 04:30:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D17775A551F
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:29:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 389D75A5E71
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 02:30:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A48B238C21;
-	Thu, 31 Jul 2025 02:29:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85AC523ABAE;
+	Thu, 31 Jul 2025 02:30:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HY6OYDUm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="CyfgZAWw"
+Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D835230BF2;
-	Thu, 31 Jul 2025 02:29:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 685F1A94F;
+	Thu, 31 Jul 2025 02:30:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753928990; cv=none; b=ZWJTqjJGDzwb2y/lG7b342dtKHGvV/ZyGVcENEul1jrfGhtnYBYm+2ukKSAtsGtBFPOGN6fHx7f2OASgkhXOkFRPW/TNhXXJTwTYkYy74MdlG/vMfdgkcuoeGa6nlptnYPFB7u8zZU0DzGPMuSnQZnPu3c5EmNPIjybXmJ76eHw=
+	t=1753929037; cv=none; b=XJy3q0wOZjxMsmGi9y+0W/7OrX/QswMADJ5ueSZ7xoOdoIjn9sycdvS0/+GbmzO7cV4POyj6nl2QCJ8RjWBpbH5GpgryJBszdgYFOWJXyJ3jGQl7QDUpE8ksWrHB3DCD610gcOeuENhWJz+vZUGZfRgkhbuQ4IbJBqu6tj0PyXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753928990; c=relaxed/simple;
-	bh=i0gTbPZvu3RX5j8puSP3ClFEEtG1bYE9IjCLTVHNC8Q=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=ZAUFz1SeKlBSzR7JpkySKBMvZsRqdtnAWHiRRv291acSwFG/gvRShDIdUNqOd2lwJWlsUi8zWXDMPxZNeOvQJRAHGHPjnmfxSm34gzudAFwd3W3vNgLXRXSG1dqG1uNmiNcHShLGXK7rkndohYc877rA8KpdbmuSkT63uGwiR8k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HY6OYDUm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEFE3C4CEE7;
-	Thu, 31 Jul 2025 02:29:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753928989;
-	bh=i0gTbPZvu3RX5j8puSP3ClFEEtG1bYE9IjCLTVHNC8Q=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=HY6OYDUmA5ZOfwFCeTh+fh9FGu2jpzc0PWqC9dCU7gqZMXcBDpbNtOfgpz4CCD5nE
-	 EPFpRqWQmma/PuRbYv3qa05sinl5OhwuMjd1Qfsulh03fnvtTi+VZ//8FxhZhw0vY7
-	 ctztviG8gx4jy7R1/cq8FCnb2ZOskXwir43cNL+5H4vbrng+Cuu4TY0t15FuX0boI9
-	 I4EumwV0yk5o89P8Kbdkaz8gyOaoQlWjvsTeLMhcYcTxUVvlwykYWQC0o1RRCPdYb3
-	 U5vT7SbXCBCnKbVkBDKeJJ2Ud2gWpbrC6jVxTobvhSLGRR1Ae41pGzkVK5yovSwQb6
-	 SxEndaj4Uk0vA==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EACAB383BF5F;
-	Thu, 31 Jul 2025 02:30:06 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1753929037; c=relaxed/simple;
+	bh=GQkDPLCi2StQpsUNzGuKJMftf7ArsxQi2n/TY08G0oA=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=tyIKehIrvZ4zhUtYhgOOsoswTQ2Cz7y7PHZxQ2bm8Z4IenjNWyazoRzptMt02MNFbmYBGt04tPco/I5YPKX3Ddra3A6M6yTsRqWxXlmaFeY4c3PJzJVfPrZeuEbq+70qqpV7gtHr+LeyrVkUmFr/qdDCWpxWii2jAWrIhGtB7ho=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=CyfgZAWw; arc=none smtp.client-ip=203.29.241.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=codeconstruct.com.au; s=2022a; t=1753929032;
+	bh=8jEKI+a2l5XlR/E3JP8s37RLYXVe77DyLwBFBCUJqfg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References;
+	b=CyfgZAWwliTD+nM38ntQktYQ6EDUNpi1cSwNgQDwKa6MmNl8SVPJGeIz7K9giG4Di
+	 e5Wz6neH3xPuwqfYdFUv60ksXRiZsq9DIWMeRGARjKmMSdZB+KefgmezJ/loQt1HM4
+	 iK4SE2HpyeyLAh+aYVOdZX261BuuFO8srTPoVhLfYT2mulmzYC4qglZ5mVdDxdJ9I+
+	 PT9mA5lJ6PMe9SjzCIrd+GYCnb7aGt7beSe5aMUDc2CtfgHJxMt4dfUnVCbxHTn06d
+	 BJViD8JZXtPjGJwcNf/aqlBHJu6C/f1kdnQerG6xTz9ECtH9+OhSUiipnj48R7qtKj
+	 O3gdcNXzV8jhQ==
+Received: from [192.168.68.112] (unknown [180.150.112.70])
+	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id B881069374;
+	Thu, 31 Jul 2025 10:30:29 +0800 (AWST)
+Message-ID: <b32a9de1d591d3012240919d23dbb22305cce6e2.camel@codeconstruct.com.au>
+Subject: Re: [PATCH v9 2/3] ARM: dts: aspeed: clemente: add Meta Clemente BMC
+From: Andrew Jeffery <andrew@codeconstruct.com.au>
+To: Leo Wang <leo.jt.wang@gmail.com>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>, Kees Cook
+ <kees@kernel.org>, Tony Luck <tony.luck@intel.com>,  "Guilherme G. Piccoli"
+ <gpiccoli@igalia.com>, Geert Uytterhoeven <geert+renesas@glider.be>, Magnus
+ Damm <magnus.damm@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, linux-renesas-soc@vger.kernel.org, 
+	leo.jt.wang@fii-foxconn.com, george.kw.lee@fii-foxconn.com, 
+	bruce.jy.hung@fii-foxconn.com
+Date: Thu, 31 Jul 2025 12:00:29 +0930
+In-Reply-To: <20250723-add-support-for-meta-clemente-bmc-v9-2-b76e7de4d6c8@fii-foxconn.com>
+References: 
+	<20250723-add-support-for-meta-clemente-bmc-v9-0-b76e7de4d6c8@fii-foxconn.com>
+	 <20250723-add-support-for-meta-clemente-bmc-v9-2-b76e7de4d6c8@fii-foxconn.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.46.4-2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH net] netlink: avoid infinite retry looping in
- netlink_unicast()
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175392900576.2584771.4406793154439387342.git-patchwork-notify@kernel.org>
-Date: Thu, 31 Jul 2025 02:30:05 +0000
-References: <20250728080727.255138-1-pchelkin@ispras.ru>
-In-Reply-To: <20250728080727.255138-1-pchelkin@ispras.ru>
-To: Fedor Pchelkin <pchelkin@ispras.ru>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com,
- kuniyu@google.com, edumazet@google.com, horms@kernel.org,
- netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
- lvc-project@linuxtesting.org, stable@vger.kernel.org
 
-Hello:
+On Wed, 2025-07-23 at 11:42 +0800, Leo Wang wrote:
+> From: Leo Wang <leo.jt.wang@gmail.com>
+>=20
+> Add linux device tree entry for Meta Clemente compute-tray
+> BMC using AST2600 SoC.
+>=20
+> Signed-off-by: Leo Wang <leo.jt.wang@gmail.com>
 
-This patch was applied to netdev/net.git (main)
-by Jakub Kicinski <kuba@kernel.org>:
+Aside from the usual ASPEED warnings, I see:
 
-On Mon, 28 Jul 2025 11:06:47 +0300 you wrote:
-> netlink_attachskb() checks for the socket's read memory allocation
-> constraints. Firstly, it has:
-> 
->   rmem < READ_ONCE(sk->sk_rcvbuf)
-> 
-> to check if the just increased rmem value fits into the socket's receive
-> buffer. If not, it proceeds and tries to wait for the memory under:
-> 
-> [...]
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dtb: adc@34 (maxim,ma=
+x1363): '#address-cells', '#size-cells', 'channel@0', 'channel@1', 'channel=
+@2', 'channel@3' do not match any of the regexes: '^pinctrl-[0-9]+$'
+        from schema $id: http://devicetree.org/schemas/iio/adc/maxim,max136=
+3.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-clemente.dtb: adc@35 (maxim,ma=
+x1363): '#address-cells', '#size-cells', 'channel@0', 'channel@1', 'channel=
+@2', 'channel@3' do not match any of the regexes: '^pinctrl-[0-9]+$'
+        from schema $id: http://devicetree.org/schemas/iio/adc/maxim,max136=
+3.yaml#
 
-Here is the summary with links:
-  - [net] netlink: avoid infinite retry looping in netlink_unicast()
-    https://git.kernel.org/netdev/net/c/759dfc7d04ba
+Can you please submit a binding for this device, or drop the nodes from
+the devicetree for now?
 
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
-
-
+Andrew
 
