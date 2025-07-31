@@ -1,76 +1,83 @@
-Return-Path: <linux-kernel+bounces-752207-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752208-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76E42B17281
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:53:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78694B17284
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 15:53:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B8B61C22B51
-	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:53:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C77562EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 31 Jul 2025 13:53:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40ACC2D0C9E;
-	Thu, 31 Jul 2025 13:53:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD692D0C8E;
+	Thu, 31 Jul 2025 13:53:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SVgHsPgq"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aZhC1KhQ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FEBB2BF00B;
-	Thu, 31 Jul 2025 13:53:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4AE2BF00B;
+	Thu, 31 Jul 2025 13:53:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1753969981; cv=none; b=lGEImCd1z8H9JDWPElyC4gfxK+iNpasHCwMnCvarSEQePRw4gLuFoVckT9YxUGDPmk2cBnddfQpcMvw+F8fqAM7Ec5TK7rdN8SGYoaZullETd1FzwmYKuvNvKv1hiBK8PneCsUwdQrikVVTeI8CC1rbAphgXcYgVAdqUWrPPYvU=
+	t=1753969991; cv=none; b=g7YLMqWb5z7Z6jKvoKOczrkmz0CcijhbAi3xRlfBUTROR8OKdvxYH6rHHWh6YvwOmsX1JloBUI2aRTO6U6etCffujNVV+oDoTnRW1qqGbfwLHOPqyWxB8JhPNBxklFfsGOF+9pgf8DmU/CihH4N5yjfnjnbxeZeS+em/xqJwZ8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1753969981; c=relaxed/simple;
-	bh=1uzHul501LXGLaBrQTZB57yDuyt6034qVPUjWFa0aXA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=umO/v16sSraduaiafDTCVRDv+GoCR6GbiWIkNPQAL0ECN/DcG1bA0EQtHQrmFEDthVrkhO+aYlIApws5O3nJ2cHgAc+42DytSp13zJxliGCG4Lt2f37J6SV4XEqlarRvKW2mZsPBxVeyvGYKaVIdo1uHuFVry8IN8EVam7MIay8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SVgHsPgq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C054CC4CEEF;
-	Thu, 31 Jul 2025 13:52:57 +0000 (UTC)
+	s=arc-20240116; t=1753969991; c=relaxed/simple;
+	bh=AZrEvd5CkZWyj2crdtUevGjO4dk8FdeJGcOeI+4NkwA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=awzjFUGFhfFPVH1qD7L6ZMTGcXbbb+rlFlom6FsTYMmFXCQ/Hsyij1H4OOvH6Yl4VA7wFbaleFsNMpDXN1lMTFQALmt9ppfOyzCi1SHo+W7OiVvTh4Fg+1bW9TdfFDYCdO3HQ0TzLayPbihO0r467/E4UV6Aedk5Pwwrr+ENnIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aZhC1KhQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D90E8C4CEEF;
+	Thu, 31 Jul 2025 13:53:09 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1753969981;
-	bh=1uzHul501LXGLaBrQTZB57yDuyt6034qVPUjWFa0aXA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=SVgHsPgqY5PU6aMXsnQG/jSj4WoMv/XNf2BPDzSPMYtGrUIS7owi3yl+IusiQ4+ze
-	 lHe/ChrYwGGEc5HXFRblM2FSDydL9EGoRM3B9ByQOhAALJK4gVfVMuJl1nQNhTjJ8/
-	 n57d/LMFX3d3CM7/skKsmSUAzpadgw5nblJtLZWwc15O0ExIQ5fwhKQXNOGpAc7jAm
-	 7zP87z+USqYY5+/dM9xAiSsX/9Xf2btLma5DYTyGRZCeiKIfYSGMt+mWwsd4cdv7MK
-	 dlJ+Vyft7dSRJwB8JfcqTH5BLqBs9ZXj/GtT5mLob556KfwLe7U/TQJNf/2jfg7Cf3
-	 nZP3g/S7sMEqw==
-Message-ID: <f958ac81-c092-4958-a61a-d30c8389f431@kernel.org>
-Date: Thu, 31 Jul 2025 15:52:56 +0200
+	s=k20201202; t=1753969991;
+	bh=AZrEvd5CkZWyj2crdtUevGjO4dk8FdeJGcOeI+4NkwA=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=aZhC1KhQIIxpXpr1iC5fjtrGE6hrEZujJPYV7+3pe5MIgeI9gWwwmOrJFXfIRjca6
+	 vLzA2j6aEGujaOtxB70IQwgNDeyWQ1MxiaYLIx5uHzK78cH76N8oNoUSA3Gub/8W+k
+	 jqOah13m1e9kIdIIixln8+CeGfIPrY8PbFZJa2TOZ2G4S0gjrZbRPc/gHgcW7W+w1u
+	 u2oVdGWLvwS0OnHjnTW8rHKpWIEKznW0FS6QlrXcTGBSuxv4cpY8MjrwGgbJNV72C6
+	 DwD/EiznBVS1EIUIqIcmOIhMyHToE/DEoJw5MdzuL01/qKGT6oUfvwrXZaV73mWA6N
+	 q7QmAzl3bwCWA==
+From: Lee Jones <lee@kernel.org>
+To: kernel@oss.qualcomm.com, Lee Jones <lee@kernel.org>, 
+ Pavel Machek <pavel@kernel.org>, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, 
+ Fenglin Wu <fenglin.wu@oss.qualcomm.com>
+Cc: Subbaraman Narayanamurthy <subbaraman.narayanamurthy@oss.qualcomm.com>, 
+ linux-leds@vger.kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
+References: <20250729-fix-torch-clamp-issue-v2-0-9b83816437a3@oss.qualcomm.com>
+Subject: Re: [PATCH v2 0/2] leds: flash: leds-qcom-flash: update torch
+ current clamp setting
+Message-Id: <175396998963.1216636.9777141623306195589.b4-ty@kernel.org>
+Date: Thu, 31 Jul 2025 14:53:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/7] rust: gpu: update ARef and AlwaysRefCounted imports
- from sync::aref
-To: Shankari Anand <shankari.ak0208@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
- =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
- Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>,
- Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>
-References: <20250716090941.811418-1-shankari.ak0208@gmail.com>
- <CAPRMd3n-1nx6BnL=OtrrJqS1gCxYAw2wSaHUQ19174Y=ShqO6g@mail.gmail.com>
-From: Danilo Krummrich <dakr@kernel.org>
-Content-Language: en-US
-In-Reply-To: <CAPRMd3n-1nx6BnL=OtrrJqS1gCxYAw2wSaHUQ19174Y=ShqO6g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c81fc
 
-On 7/31/25 3:37 PM, Shankari Anand wrote:
-> Hello, can this patch be picked up for review?
+On Tue, 29 Jul 2025 12:51:21 +0800, Fenglin Wu wrote:
+> There is a current clamp register needs to be updated when enabling
+> torch LED, and the register address is different between different
+> PMIC flash LED modules. Add changes to address it.
+> 
+> 
 
-Where is the rest of the series?
+Applied, thanks!
+
+[1/2] leds: flash: leds-qcom-flash: update torch current clamp setting
+      commit: f1b908cc8c7110872064e4a55a88b34938b4054a
+[2/2] leds: flash: leds-qcom-flash: add a separate register map for PMI8998
+      commit: 82f1f0522cad9193a42593b9e9622433efcf5f26
+
+--
+Lee Jones [李琼斯]
+
 
