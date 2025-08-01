@@ -1,101 +1,96 @@
-Return-Path: <linux-kernel+bounces-753767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A8FCB18793
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:04:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F30B0B1879D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F6801896294
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:04:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 945F27A366E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:08:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDAC28D8D8;
-	Fri,  1 Aug 2025 19:04:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF10228D85E;
+	Fri,  1 Aug 2025 19:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="boPJekur"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kzUL/xBB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28511C3C14;
-	Fri,  1 Aug 2025 19:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB5C347DD;
+	Fri,  1 Aug 2025 19:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754075067; cv=none; b=apFUbtiH9D8jbt234M0Ef0ZvkNia9TuajejCxmEmU2KJOj9vCV2xZydaF1Yym4L2VTW6Fz/GhbIyGnwddhRQEeaUHe7xD2G7jUOnSBKPqT3YrVXcYju6/kja32MeAXgYPUBtNIu62WqFcSglyvy67G1dVB9adIf0COzk/moY4w8=
+	t=1754075367; cv=none; b=YwLHsR4YI5qD5d30zx9gDp4xHGFNkRWHYDCxHOrHY6UVP002dUQ+BSwgA5zBYJsS8r/jlWeMzmTeykbTpcb7RYdU5LgeYl/xYUxjJAj3dfm/nL3YCUaSBokV9opLAX9nxkqIveLDUF6ih1J/gRoeXFphqnfkQH1majeWQeZUUFQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754075067; c=relaxed/simple;
-	bh=HJe0kFKAC7sQpZV/+M2j0ktEYyu9CBSPr7LmwnC8U3U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QRGqSpiHjGNpWYQf6q99UYyiuPmz1TqZG76ASR5YfaYHOqSGskQ4ZWCTkHlKVVPXT9WiIcLRo9+QC4GyXhT5H1xeX83BLjJraC5s3RyTgiFsd/+hDTWCvKYm1ppXwxmR5Kky/fonBEMIFjjFF3CGyP+tpzGs5IvXpHgMZseMzLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=boPJekur; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39664C4CEE7;
-	Fri,  1 Aug 2025 19:04:26 +0000 (UTC)
+	s=arc-20240116; t=1754075367; c=relaxed/simple;
+	bh=kO9wrnucrOAW44UKJumefrBMsdJJKbh3QjKVipeFrYc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=NpzHLhd6N9PgiqkaIHJbIIMt7eHwpu8Rrvq4nTF8bOBgRFk/jynYdGHP0wZWl0RlCzRasMfZYeAmbwypftxfG2THfqjAnztDZmxl5+7paXJI0+gHDP0ZBnH8cbpQOKE5pPKVm0oIorGmMO3jtRpuDIVL+Kiz54yenVG4Z82Hcbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kzUL/xBB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 782CAC4CEE7;
+	Fri,  1 Aug 2025 19:09:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754075066;
-	bh=HJe0kFKAC7sQpZV/+M2j0ktEYyu9CBSPr7LmwnC8U3U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=boPJekurkkIdE6DwfpOTN7FPSF48NXkNA0M7l2AtV+DLYrzebpLhtiJ2pesD5gMsb
-	 YK828FSqkg3wRoVF5XsL45kS2q3DRs3b/SY0R2EkK7Gkl8jnaOO0fLcxYak29LCEn/
-	 oWbl52SFq84EiA3N0O+kAw9mjXyz5mzCriPRFLg8d+b17lWBjMeVrPNhZZ1iZiZbLh
-	 LR7s3r4ZJfCqNchvPOvtZAXEGT/RoUCD4Il7f3yMrES7yqCQg47jGpw1N+cMagyjLr
-	 bhOiPuIIb2pjlbQEjKZSvnh2lUiBHdoAPtyICIu3MLv2Xa1ST7lccfgUQ5Qj8I2XfL
-	 c1T2GL0dJqGgw==
-Date: Fri, 1 Aug 2025 12:03:31 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] tpm: Compare HMAC values in constant time
-Message-ID: <20250801190331.GC1274@sol>
-References: <20250731215255.113897-1-ebiggers@kernel.org>
- <20250731215255.113897-2-ebiggers@kernel.org>
- <3ed1ae7e7f52afe53ce2ff00f362ed153b3eec20.camel@HansenPartnership.com>
- <20250801030210.GA1495@sol>
- <ca85bbe8a3235102707da3b24dba07a8649c3771.camel@HansenPartnership.com>
- <20250801171125.GA1274@sol>
- <2da3f6d36dccb86f19292015ea48e5d7a89e3171.camel@HansenPartnership.com>
- <20250801184026.GB1274@sol>
- <321c09c7cb2edb113ce9a829d37c0ae5c835e17f.camel@HansenPartnership.com>
+	s=k20201202; t=1754075366;
+	bh=kO9wrnucrOAW44UKJumefrBMsdJJKbh3QjKVipeFrYc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=kzUL/xBBvzl9N2h4bMfuiw7qvFdTG6dMbf3sn2aCa26GA6oKfrqSrjeElHLM7PviX
+	 9pJIA5zMO+/MFKH2ajDenZpBwQgfQ5iQ7Uo4sHry7nLZMsyDYl30C1EYubzeice+sL
+	 yVsGLyEP9WolnqkXOdOu5ZNS8CHdEMeorDhC0y3T3psk89PBye1pPQQlJ6N3Ryc2t4
+	 qt2JBbMwCHcwLdHfiCGkdbSrWhD13GIbm0aqmDrz8bbAyqpDgW5EekjIPUQ6th6aaB
+	 oOtd+1zKMj8/puH/BW9oeOEsrqWRlbpoCKRLfS2Kp0xExzPALqwPGKY+lBZoMkgDnX
+	 W+UXyoJ6FBq2g==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <321c09c7cb2edb113ce9a829d37c0ae5c835e17f.camel@HansenPartnership.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Aug 2025 21:09:22 +0200
+Message-Id: <DBRBTLBPR9AT.3TB5N5Z79DQ6W@kernel.org>
+Cc: "Boqun Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Andreas
+ Hindborg" <a.hindborg@kernel.org>, "Alice Ryhl" <aliceryhl@google.com>,
+ "Trevor Gross" <tmgross@umich.edu>, "Danilo Krummrich" <dakr@kernel.org>,
+ "Alexandre Courbot" <acourbot@nvidia.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <patches@lists.linux.dev>
+Subject: Re: [PATCH] rust: prelude: re-export
+ `core::mem::{align,size}_of{,_val}`
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Miguel Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>
+X-Mailer: aerc 0.20.1
+References: <20250801161752.443431-1-ojeda@kernel.org>
+In-Reply-To: <20250801161752.443431-1-ojeda@kernel.org>
 
-On Fri, Aug 01, 2025 at 02:53:09PM -0400, James Bottomley wrote:
-> On Fri, 2025-08-01 at 11:40 -0700, Eric Biggers wrote:
-> > On Fri, Aug 01, 2025 at 02:03:47PM -0400, James Bottomley wrote:
-> > > On Fri, 2025-08-01 at 10:11 -0700, Eric Biggers wrote:
-> [...]
-> > > > It's true that such attacks don't work with one-time keys.  But
-> > > > here it's not necessarily a one-time key.  E.g.,
-> > > > tpm2_get_random() sets a key, then authenticates multiple
-> > > > messages using that key.
-> > > 
-> > > The nonces come one from us and one from the TPM.  I think ours
-> > > doesn't change if the session is continued although it could,
-> > > whereas the TPM one does, so the HMAC key is different for every
-> > > communication of a continued session.
-> > 
-> > Again, tpm2_get_random() sets a HMAC key once and then uses it
-> > multiple times.
-> 
-> No it doesn't.  If you actually read the code, you'd find it does what
-> I say above.  Specifically  tpm_buf_fill_hmac_session() which is called
-> inside that loop recalculates the hmac key from the nonces.  This
-> recalculated key is what is used in tpm_buf_check_hmac_response(), and
-> which is where the new tpm nonce is collected for the next iteration.
+On Fri Aug 1, 2025 at 6:17 PM CEST, Miguel Ojeda wrote:
+> Rust 1.80.0 added:
+>
+>     align_of
+>     align_of_val
+>     size_of
+>     size_of_val
+>
+> from `core::mem` to the prelude [1].
+>
+> For similar reasons, and to minimize potential confusion when code may
+> work in later versions but not in our current minimum, add it to our
+> prelude too.
+>
+> Link: https://github.com/rust-lang/rust/pull/123168 [1]
+> Link: https://lore.kernel.org/rust-for-linux/CANiq72kOLYR2A95o0ji2mDmEqOK=
+h9e9_60zZKmgF=3DvZmsW6DRg@mail.gmail.com/ [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 
-tpm_buf_fill_hmac_session() computes a HMAC value, but it doesn't modify
-the HMAC key.  tpm2_parse_start_auth_session() is the only place where
-the HMAC key is changed.  You may be confusing HMAC values with keys.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-- Eric
+---
+Cheers,
+Benno
+
+> ---
+>  rust/kernel/prelude.rs | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
 
