@@ -1,95 +1,118 @@
-Return-Path: <linux-kernel+bounces-752828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752830-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5A6FFB17B5B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:02:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B91CDB17B61
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:09:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D81703BB750
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:02:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A417625977
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:09:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DCC11465A1;
-	Fri,  1 Aug 2025 03:02:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7738117A2E6;
+	Fri,  1 Aug 2025 03:09:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YGXnGqJm"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="I4i9Ovht"
+Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0CB12FF6F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 03:02:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537C078F58
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 03:08:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754017371; cv=none; b=MZz4LGNIEM6lge4EJ3HexSW03u62R6Wn+QRJzkfHq8aYej0EHcWIEVGQj/wT9/9pv+HcJa+Qoqu4kSWw3VVTSmgScet3n7tE8SY2+UBnhYMiEkhAr6FLBdUB9MWly1Yp5nJrKbwdiHWc2I2lnwCeN+voRQk964IQQNWTkRI8MsQ=
+	t=1754017740; cv=none; b=IYFtj5zFLbUM1rKUs48yzmAwgZzvFREW2ScaBH2rwRxyJP79o2/o1aDuKeL/UvXnFeIcUxm0nEMyVdIcoHbbqQAgyDGX0/os0BDNb5FAqrfhxwj4e4a4HAjQdvrBY2OhaeCtLUHdTiZcVU9OhRid8QGWfjfmiT9bTRfChPDP4Ys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754017371; c=relaxed/simple;
-	bh=p20Xxl+itiPTVTN9K/Rj5u1N4M+6Q1+WogOfcN8095M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PJi94PQk+SQjhKC17OHqJmSaACf1092UtjW/7H+UMmWmTiJfjc4+RyfPjizgibP0jbbRGxFM8ooi5zOrEMwtXHODxGB3ftGhnEywSG3rd7sJMG/uAfd/8RgZx+s0p5vCgQT1kVNurNl+T2MSbKeDvFSMJuG5FgquYxkH2ee9KOg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YGXnGqJm; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754017369;
+	s=arc-20240116; t=1754017740; c=relaxed/simple;
+	bh=8Mfxq5dwPBUl/M7U36C3YDR2x59+cP9MPUOyH03QLIk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CMYAabhW/GBblfFseJp7wFPsus5fkns1Fujz+BWIOgXmzDnHaeKaa5qMi+ELs0XxWwU8TgoufjtNVUgOWf/4dOGYiQg6E9Ln8UHbeel5fzOIcoW6pHOlmZvO59ljvtEpGirPW4PLwlpsnhi717nHYo0EUhHEUFORMzwj6X1X3c0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=I4i9Ovht; arc=none smtp.client-ip=91.218.175.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <49f21df7-5505-4ce4-9bde-4431bf97831e@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754017736;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=NlRwIOX39loAW8Ndc7IEtOq9p1vayc9rGBUA9qXU/0w=;
-	b=YGXnGqJm9xBbw/SALAnQo7w4S06W8Q0jv1nGvvi5Re7p9dTH8qC6LHoBY5qkFTWlaKBX8W
-	1AbFW+4VJQRfhAKEahcM7vZ/BSh2zWi7dEyK/Oy1rMWN+95T/BXmN/RKtnLVlsZQAJIRqW
-	MwDKJCZnPS8LdCe8le8uxeFQfl/B+Fg=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-644-ATep_vWVM4mb-Cfc0HRovQ-1; Thu,
- 31 Jul 2025 23:02:42 -0400
-X-MC-Unique: ATep_vWVM4mb-Cfc0HRovQ-1
-X-Mimecast-MFC-AGG-ID: ATep_vWVM4mb-Cfc0HRovQ_1754017360
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1D9DA1800374;
-	Fri,  1 Aug 2025 03:02:40 +0000 (UTC)
-Received: from localhost (unknown [10.72.112.183])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AD09D3000199;
-	Fri,  1 Aug 2025 03:02:36 +0000 (UTC)
-Date: Fri, 1 Aug 2025 11:02:32 +0800
-From: Baoquan He <bhe@redhat.com>
-To: Brian Mak <makb@juniper.net>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>, x86@kernel.org,
-	kexec@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH RESEND] x86/kexec: Carry forward the boot DTB on kexec
-Message-ID: <aIwuSFKSUJDI6ULl@MiWiFi-R3L-srv>
-References: <20250729182142.4875-1-makb@juniper.net>
+	bh=TBWx6QhC/Z3ipdqXrlpZTEvlWTyG1IuxqMS3NBan+/0=;
+	b=I4i9Ovht/6ttZGHMwtaw4Df8LkCOT9MbgermS2L1+hAAHMbcPM0etP3ncjOxTwBiNuhJ1s
+	mnXTlyElz3801w7trgPVOD6VJNoGAxLbq1yJQYo31xuf0bY4jQ+MjNsxKXMEeO1ioPf33p
+	Y/7a1K65TGCJY7/8fVKsb0AJR4JDjjk=
+Date: Thu, 31 Jul 2025 20:08:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729182142.4875-1-makb@juniper.net>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Subject: Re: [PATCH] selftests: bpf: Add missing symbol declarations to common
+ header
+Content-Language: en-GB
+To: chenyuan_fl@163.com, ast@kernel.org, daniel@iogearbox.net,
+ andrii@kernel.org
+Cc: bpf@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Yuan Chen <chenyuan@kylinos.cn>
+References: <20250801025239.80595-1-chenyuan_fl@163.com>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250801025239.80595-1-chenyuan_fl@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On 07/29/25 at 11:21am, Brian Mak wrote:
-> The kexec_file_load syscall on x86 currently does not support passing
-> a device tree blob to the new kernel.
-> 
-> To add support for this, we copy the behavior of ARM64 and PowerPC and
-> copy the current boot's device tree blob for use in the new kernel. We
-> do this on x86 by passing the device tree blob as a setup_data entry in
-> accordance with the x86 boot protocol.
 
-I see how, but no why. Why do we need to add DTB for x86?
+
+On 7/31/25 7:52 PM, chenyuan_fl@163.com wrote:
+> From: Yuan Chen <chenyuan@kylinos.cn>
+>
+> Fix implicit function declaration errors in bpf_qdisc_xxx.c by adding
+> the required kernel symbol declarations to the shared header file
+> bpf_qdisc_common.h. This ensures all qdisc BPF programs can properly
+> resolve these kernel functions.
+>
+> The added declarations include:
+> - bpf_qdisc_skb_drop
+> - bpf_qdisc_bstats_update
+> - bpf_kfree_skb
+> - bpf_skb_get_hash
+> - bpf_qdisc_watchdog_schedule
+>
+> Using a common header prevents duplication and ensures consistency
+> across different qdisc implementations.
+
+If you have proper and recent vmlinux.h (with recent pahole as well during
+kernel build), all the above declarations should be in vmlinux.h.
+How did you generate your vmlinux.h? Can you just generate a better one
+based on recent kernel/pahole?
+
+>
+> Signed-off-by: Yuan Chen <chenyuan@kylinos.cn>
+> ---
+>   tools/testing/selftests/bpf/progs/bpf_qdisc_common.h | 9 +++++++++
+>   1 file changed, 9 insertions(+)
+>
+> diff --git a/tools/testing/selftests/bpf/progs/bpf_qdisc_common.h b/tools/testing/selftests/bpf/progs/bpf_qdisc_common.h
+> index 3754f581b328..4c896b3e0f65 100644
+> --- a/tools/testing/selftests/bpf/progs/bpf_qdisc_common.h
+> +++ b/tools/testing/selftests/bpf/progs/bpf_qdisc_common.h
+> @@ -14,6 +14,15 @@
+>   
+>   struct bpf_sk_buff_ptr;
+>   
+> +extern void bpf_qdisc_skb_drop(struct sk_buff *skb,
+> +			       struct bpf_sk_buff_ptr *to_free_list) __ksym;
+> +extern void bpf_qdisc_bstats_update(struct Qdisc *sch,
+> +				    const struct sk_buff *skb) __ksym;
+> +extern void bpf_kfree_skb(struct sk_buff *skb) __ksym;
+> +extern u32 bpf_skb_get_hash(struct sk_buff *skb) __ksym;
+> +extern void bpf_qdisc_watchdog_schedule(struct Qdisc *sch, u64 expire,
+> +					u64 delta_ns) __ksym;
+> +
+>   static struct qdisc_skb_cb *qdisc_skb_cb(const struct sk_buff *skb)
+>   {
+>   	return (struct qdisc_skb_cb *)skb->cb;
 
 
