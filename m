@@ -1,264 +1,119 @@
-Return-Path: <linux-kernel+bounces-753449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C537B1832E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:05:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CDCBB1832A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7384C5A0633
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:05:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6C08A7A2D9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:03:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2109926A095;
-	Fri,  1 Aug 2025 14:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C02CC266B64;
+	Fri,  1 Aug 2025 14:04:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="cMVSnMq/"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mhVN12b1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8206426657B;
-	Fri,  1 Aug 2025 14:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754057109; cv=pass; b=uRXuR5XfnA0GUJC6erZWTfJ7/Dto1pQaZHGREYY5z0eY1vI10gIfzFd0Ar55YCgY55aYR8b40LEYuoVZRKGb5967Tfyly0I6g72M475dqGYpwDrnpvGCxZJVjj5VTHgl9eKU64P+F94phZ9teX9VR2U7ce0cLnw+SRPpfr0jiGo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754057109; c=relaxed/simple;
-	bh=IvwDY0j+SJZREw4lZmoxZuCFFsmcbBZiszUJJweliAg=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=EzVZFOcmYeYZenjj8OBF2omgg/cWkEb56BNikyjf51rEvb6pyP5PiD1pXY7G6/WdL/VZHSQsicDpHD60o1FwD3x7kn8XI5XsGmggEVcNpuIplBy2J0kRiNgj7jIGocvMk70PVn9zDP4IiFNQpSJEHzgeKZDj0d4sppEaZbH/1Bo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=cMVSnMq/; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754057093; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=cUnymMh/HGlvGEspneAgSNC3tW4UbQqAugNCRhNvRLez9AGgzBEv3V+Ese8PSyp4NSR/xbkSCA14vKUV2/wHUmPp903uoXj+Mbtt3/1azkSGswAYjod3Qw9ES9Ec1T46aBqeotmGs0h9A8LraOKpZo9T+otbg4VkMgTu6PZmgis=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754057093; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=SIuicZOreiJhSEfa7GtOtPdtVIuNxAma9Nw9rHALgKE=; 
-	b=FM6Kry8II+NjyuOd/ZsuVp28vIHalaBLmWcl7bM0qgKxxvi924cEMCtZDxIBiDn6bOv6q0qGDxdJKUmBHqT5vUFV/bqkPxQ1R8qKQ/81Glx+CW+H94AxffLFd1Qt9UQhcSfGGdofB/SRBjTa7MLSoQlQ/gKJseIKYagjiBD4B08=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754057093;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=SIuicZOreiJhSEfa7GtOtPdtVIuNxAma9Nw9rHALgKE=;
-	b=cMVSnMq/5wSjXBcd/hn5Fgl8SegwPIRRw4t0FoZdOfttStGzuOW9dTGoeVb3fn7G
-	IRSniYbStoSU3BW7WG/9pSLaVTSYvQnPcsSFMr61VxnujEGFH24yatz5xoqryWx3hRW
-	X8Eat9HN0AoK95qs0D/DfS64V2jjfoDZrMJ6E4cw=
-Received: by mx.zohomail.com with SMTPS id 1754057091653547.7640404221518;
-	Fri, 1 Aug 2025 07:04:51 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD82264628
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:04:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754057099; cv=none; b=R2bgG1ZcM+hwmw7ZjZRHlKQyryKLWgG7xR9rTpAmpBOhCiAUrMrObsVBWB7g5X2/BCbzxO0LFIJLdCpT+hqUwB8giMookexgKEZRDvJuE7UtKIPwBOWsr97FV+OzHuD0Pu5TWNZ8+QzMs7/0QqUGDjeX/FDCIrBXcrPTXdjo2T4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754057099; c=relaxed/simple;
+	bh=rhp32RlGZQWi0qaev57mn8Lf6Y/ncV8+flahaYlr1h0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mlYde2sOAWVyEEEZGAPn47SN+1rVFG0s2KL1OACiwp7Bl/gbxHYrdkgtomK4whPdUmpakUhuTISrhWQIPTVKCHb01502DaVf8WJtmICqxJ4HqksMlJlMkUvrjEFfarrCiXH5zSlNVTu3Ln42CLF6/H8SJ+zQ0f7VhNssDGSYTeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mhVN12b1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C909CC4CEE7;
+	Fri,  1 Aug 2025 14:04:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754057098;
+	bh=rhp32RlGZQWi0qaev57mn8Lf6Y/ncV8+flahaYlr1h0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mhVN12b1haQLw3UTPQ/OFTK0vLoR4Uo4zSoTd60d5dOaQ1WJlLYg7Qlx1xxKm5s9k
+	 vhz9T8jXHuQw46BMDWAadLcZ1IorBaBgg5u4BIc+Rbw5viXuqUgmNNWcrSX++Ryku6
+	 g1tsqfwMLbJ6pkrE1gQhSoahrjZ6YspUJh8sCxEI14tNJ7UBKK3imB4/A3PmcD20Qs
+	 kLghoGA0WUoDvuDuJBSPaBFIxO14FLmvewJC78oc2WU44eI/REQTvu8QclIRV2Gmlg
+	 B1zb/dnAKk2F48m7wtWXmbIUGfSbZ/BX7CqwcmINAjHnDR2dlHh+ChqRpY9Q6U4xK3
+	 EmLnOzxuWHD1A==
+Date: Fri, 1 Aug 2025 16:04:54 +0200
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	Sascha Bischoff <sascha.bischoff@arm.com>,
+	Timothy Hayes <timothy.hayes@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] irqchip/gic-v5: iwb: Remove module boilerplate
+Message-ID: <aIzJhqnooJ/hO2Tv@lpieralisi>
+References: <20250801-gic-v5-fixes-6-17-v1-0-4fcedaccf9e6@kernel.org>
+ <20250801-gic-v5-fixes-6-17-v1-2-4fcedaccf9e6@kernel.org>
+ <86v7n76xgm.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [RFC PATCH v2 3/4] rust: miscdevice: add uring_cmd() for
- MiscDevice trait
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250727150329.27433-4-sidong.yang@furiosa.ai>
-Date: Fri, 1 Aug 2025 11:04:36 -0300
-Cc: Caleb Sander Mateos <csander@purestorage.com>,
- Benno Lossin <lossin@kernel.org>,
- Miguel Ojeda <ojeda@kernel.org>,
- Arnd Bergmann <arnd@arndb.de>,
- Jens Axboe <axboe@kernel.dk>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- rust-for-linux@vger.kernel.org,
- linux-kernel@vger.kernel.org,
- io-uring@vger.kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <BC40C40D-D835-4B5E-927C-A55939110114@collabora.com>
-References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
- <20250727150329.27433-4-sidong.yang@furiosa.ai>
-To: Sidong Yang <sidong.yang@furiosa.ai>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86v7n76xgm.wl-maz@kernel.org>
 
-Hi Sidong,
+On Fri, Aug 01, 2025 at 01:24:57PM +0100, Marc Zyngier wrote:
+> On Fri, 01 Aug 2025 08:58:19 +0100,
+> Lorenzo Pieralisi <lpieralisi@kernel.org> wrote:
+> > 
+> > The IWB driver cannot be compiled as a module and is as matter of fact a
+> > builtin driver at present.
+> 
+> What is blocking that?
 
-> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
->=20
-> This patch adds uring_cmd() function for MiscDevice trait and its
-> callback implementation. It uses IoUringCmd that io_uring_cmd rust
-> abstraction.
+Yep, you read my mind I need to test this but AFAICS at the moment
+the answer is: nothing.
 
-I can=E2=80=99t parse this.
+> > Make it explicitly so by removing useless boilerplate and by using the
+> > builtin_platform_driver() helper to initialize its registration
+> > functions.
+> > 
+> > Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+> > Cc: Thomas Gleixner <tglx@linutronix.de>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > ---
+> >  drivers/irqchip/irq-gic-v5-iwb.c | 3 +--
+> >  1 file changed, 1 insertion(+), 2 deletions(-)
+> > 
+> > diff --git a/drivers/irqchip/irq-gic-v5-iwb.c b/drivers/irqchip/irq-gic-v5-iwb.c
+> > index ad9fdc14d1c6..c3a3b30e9f4e 100644
+> > --- a/drivers/irqchip/irq-gic-v5-iwb.c
+> > +++ b/drivers/irqchip/irq-gic-v5-iwb.c
+> > @@ -263,7 +263,6 @@ static const struct of_device_id gicv5_iwb_of_match[] = {
+> >  	{ .compatible = "arm,gic-v5-iwb" },
+> >  	{ /* END */ }
+> >  };
+> > -MODULE_DEVICE_TABLE(of, gicv5_iwb_of_match);
+> >  
+> >  static struct platform_driver gicv5_iwb_platform_driver = {
+> >  	.driver = {
+> > @@ -274,4 +273,4 @@ static struct platform_driver gicv5_iwb_platform_driver = {
+> >  	.probe				= gicv5_iwb_device_probe,
+> >  };
+> >  
+> > -module_platform_driver(gicv5_iwb_platform_driver);
+> > +builtin_platform_driver(gicv5_iwb_platform_driver);
+> > 
+> 
+> I'd rather we make the driver buildable as a module if at all
+> possible, instead of forcing it as built-in for everyone. It would
+> definitely help pipe-cleaning the potential missing dependencies.
 
->=20
-> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
-> ---
-> rust/kernel/miscdevice.rs | 41 +++++++++++++++++++++++++++++++++++++++
-> 1 file changed, 41 insertions(+)
->=20
-> diff --git a/rust/kernel/miscdevice.rs b/rust/kernel/miscdevice.rs
-> index 288f40e79906..54be866ea7ff 100644
-> --- a/rust/kernel/miscdevice.rs
-> +++ b/rust/kernel/miscdevice.rs
-> @@ -14,6 +14,7 @@
->     error::{to_result, Error, Result, VTABLE_DEFAULT_ERROR},
->     ffi::{c_int, c_long, c_uint, c_ulong},
->     fs::File,
-> +    io_uring::IoUringCmd,
->     mm::virt::VmaNew,
->     prelude::*,
->     seq_file::SeqFile,
-> @@ -175,6 +176,19 @@ fn show_fdinfo(
->     ) {
->         build_error!(VTABLE_DEFAULT_ERROR)
->     }
-> +
-> +    /// Handler for uring_cmd.
-> +    ///
-> +    /// This function is invoked when userspace process submits the =
-uring_cmd op
-> +    /// on io_uring submission queue. The `io_uring_cmd` would be =
-used for get
-> +    /// arguments cmd_op, sqe, cmd_data.
+Yes - I took a shortcut by removing boilerplate (that the
+compiler/linker remove anyway) - it makes sense to rework the
+build to make it possible to build as a module instead.
 
-Please improve this. I don=E2=80=99t think that anyone reading this can =
-really get
-a good grasp on what this function does.
+This patch can be dropped then, I will work on the follow-up.
 
-What does `issue_flags` do?
-
-> +    fn uring_cmd(
-> +        _device: <Self::Ptr as ForeignOwnable>::Borrowed<'_>,
-> +        _io_uring_cmd: Pin<&mut IoUringCmd>,
-> +        _issue_flags: u32,
-> +    ) -> Result<i32> {
-> +        build_error!(VTABLE_DEFAULT_ERROR)
-> +    }
-> }
->=20
-> /// A vtable for the file operations of a Rust miscdevice.
-> @@ -332,6 +346,28 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
->         T::show_fdinfo(device, m, file);
->     }
->=20
-> +    /// # Safety
-> +    ///
-> +    /// `ioucmd` is not null and points to a valid =
-`bindings::io_uring_cmd`.
-
-Please rewrite this as =E2=80=9Cthe caller must ensure that  `ioucmd` =
-points to a
-valid `bindings::io_uring_cmd`=E2=80=9D or some variation thereof.
-
-> +    unsafe extern "C" fn uring_cmd(
-> +        ioucmd: *mut bindings::io_uring_cmd,
-> +        issue_flags: ffi::c_uint,
-> +    ) -> ffi::c_int {
-> +        // SAFETY: The file is valid for the duration of this call.
-> +        let ioucmd =3D unsafe { IoUringCmd::from_raw(ioucmd) };
-
-What file?
-
-Also, this is what you wrote for IoUringCmd::from_raw:
-
-+
-+ /// Constructs a new `IoUringCmd` from a raw `io_uring_cmd`
-+ ///
-+ /// # Safety
-+ ///
-+ /// The caller must guarantee that:
-+ /// - The pointer `ptr` is not null and points to a valid =
-`bindings::io_uring_cmd`.
-+ /// - The memory pointed to by `ptr` remains valid for the duration of =
-the returned reference's lifetime `'a`.
-+ /// - The memory will not be moved or freed while the returned =
-`Pin<&mut IoUringCmd>` is alive.
-+ #[inline]
-+ pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> =
-Pin<&'a mut IoUringCmd> {
-
-Here, you have to mention how the safety requirements above are =
-fulfilled in this call site.
-
-> +        let file =3D ioucmd.file();
-> +
-> +        // SAFETY: The file is valid for the duration of this call.
-
-Same here.
-
-> +        let private =3D unsafe { (*file.as_ptr()).private_data =
-}.cast();
-
-Perhaps this can be hidden away in an accessor?
-
-> +        // SAFETY: uring_cmd calls can borrow the private data of the =
-file.
-> +        let device =3D unsafe { <T::Ptr as =
-ForeignOwnable>::borrow(private) };
-
-This is ForeignOwnable::borrow():
-
-    /// Borrows a foreign-owned object immutably.
-    ///
-    /// This method provides a way to access a foreign-owned value from =
-Rust immutably. It provides
-    /// you with exactly the same abilities as an `&Self` when the value =
-is Rust-owned.
-    ///
-    /// # Safety
-    ///
-    /// The provided pointer must have been returned by a previous call =
-to [`into_foreign`], and if
-    /// the pointer is ever passed to [`from_foreign`], then that call =
-must happen after the end of
-    /// the lifetime `'a`.
-    ///
-    /// [`into_foreign`]: Self::into_foreign
-    /// [`from_foreign`]: Self::from_foreign
-    unsafe fn borrow<'a>(ptr: *mut Self::PointedTo) -> =
-Self::Borrowed<'a>;
-
-You must say how the safety requirements above are fulfilled in this =
-call site
-as well. In particular, are you sure that this is true? i.e.:
-
-> The provided pointer must have been returned by a previous call to
-> [`into_foreign`],
-
-
-> +
-> +        match T::uring_cmd(device, ioucmd, issue_flags) {
-> +            Ok(ret) =3D> ret as ffi::c_int,
-> +            Err(err) =3D> err.to_errno() as ffi::c_int,
-
-c_int is in the prelude. Also, please have a look at =
-error::from_result().
-
-> +        }
-> +    }
-> +
->     const VTABLE: bindings::file_operations =3D =
-bindings::file_operations {
->         open: Some(Self::open),
->         release: Some(Self::release),
-> @@ -354,6 +390,11 @@ impl<T: MiscDevice> MiscdeviceVTable<T> {
->         } else {
->             None
->         },
-> +        uring_cmd: if T::HAS_URING_CMD {
-> +            Some(Self::uring_cmd)
-> +        } else {
-> +            None
-> +        },
->         // SAFETY: All zeros is a valid value for =
-`bindings::file_operations`.
->         ..unsafe { MaybeUninit::zeroed().assume_init() }
->     };
-> --=20
-> 2.43.0
->=20
->=20
-
-=E2=80=94 Daniel
-
+Lorenzo
 
