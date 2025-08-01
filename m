@@ -1,182 +1,169 @@
-Return-Path: <linux-kernel+bounces-753589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE4C6B184F9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:31:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29CD4B184FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:31:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0B1916D8EB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:31:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F28E1C242D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:32:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFDD20326;
-	Fri,  1 Aug 2025 15:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D532727EA;
+	Fri,  1 Aug 2025 15:31:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="aRxfUs9T"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="H/LdQtDa"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 864D01B7F4
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:30:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9832A1B7F4;
+	Fri,  1 Aug 2025 15:31:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062255; cv=none; b=YxFJ8fsuMGCbA/ZqE8qO7gL4Vu/SarAtyCskqbFSvAC8kdY/x45E9v5CHEHBayZ13PjqA8rqo7WJ7OsLa6oJ7Jasmjnl3OCL8p2WDUlPIQZfxWAkmnCKCNY6kqsgU0TQUDuH3E49wCZnovvX5Pl85pAXBg0HSIeD1HHZG+CLZ/o=
+	t=1754062283; cv=none; b=fmCDt0CIGHHgdxtpo/1sayiIbA5lDEQnM63CvLV2PKHrODO3DLpZXPdBf7YEysbVj4kYU1qwxcKOqg+SbD1TPLiQXFJpEkQ9OK2MC2ZmaxwlAWsW95jhU/4DQNy3RVySDl3u2opwkZo2ncjN1BMVJ45SThBgoP9KSNl/SKHPG0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062255; c=relaxed/simple;
-	bh=7akrvybSuCww6Aao3DyWFeiL7vWdSkmvf97d4yc+JYU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fdX4z+nzV3GatRBe0n0IdToNTbGfNHzxHMQEM0VHEYIwPGtcKQlnkk3Mn8m16FBjvRtm83X4FBphqwhgpGKOEZbRwWEhigzBATn6oIUw41V9FmIOkebleUnvdG2HfWtbwbfopUxr+LMFgKzmkNzwSw7YzyHWSSVvUUQcVuuQxV0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=aRxfUs9T; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754062252;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=TCi1+HoXdkRVSSOUpmZn555kzLpizeDbqqPts9w0KWE=;
-	b=aRxfUs9T6Q26DjLMQn1sXRVROgZLT4j5A45i6UwEqIg7MnPddcebV8NCuAjMJu3POSoWhG
-	U4zCa9gZy1gZFx4I2C7wmzFqFFLIu8dfNqa9eM1KmaDzUB5/5iuSNLzqeroMZ5rW849sGL
-	gnWanJ7M7ZwjWala1spkpilH5pFX2Wo=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-252-UYTRC6vpPmaeKv1Jwbay6Q-1; Fri, 01 Aug 2025 11:30:51 -0400
-X-MC-Unique: UYTRC6vpPmaeKv1Jwbay6Q-1
-X-Mimecast-MFC-AGG-ID: UYTRC6vpPmaeKv1Jwbay6Q_1754062250
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-45867ac308dso5263485e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:30:51 -0700 (PDT)
+	s=arc-20240116; t=1754062283; c=relaxed/simple;
+	bh=y6mkOrGwcWMo5LKjnRE7fq4giaHva3fen9P05JzBrBQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=UDsNm+Spl9zalAv8nYBdtnFsb5TxXbjCwAFYrfQuHE2E+XZcQodBltG+JdPrkwNkk65fs6oDHfWM+MAW/3a9eDSJnb+KkLDXtA90s4VCyEMLsMq8DOvoMbH1lxnHdG+F/jiQAAGW2XVU8MQS3bJg7rb9r05typf6O9avN3G7AX0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=H/LdQtDa; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b79bddd604so1339238f8f.0;
+        Fri, 01 Aug 2025 08:31:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754062280; x=1754667080; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=I4UHueSc9BAu6grTRDLcGU5I69yEzCQOkcHM/+5O8oc=;
+        b=H/LdQtDam3Yw01AsW6ya8OY+7HjidjuFXM9v/zTToyAfkIooTTMG6n3+7xF9YJuXZ4
+         N6NiVne0WQJ0OX6TXtMoSCKJ9MG11mnq0Ref5YK91n1yJDdGtN33X6UsuTwNNr70ycEx
+         W0FfB8qpUwNH20XGR4D/T+8My+VBah196rDO25jOFznmHi6mgu44BfkggkmKzx+Gq4ng
+         ckM2fobB6ld5tyPRKqpoRBXL4372stB/S8jx9Qhf7KtHycViarIWVSuCWJZjWTQnWv4h
+         ka/6psG3G/TukoZJGA/UAxAdp+zdQF9/DIX0BoGtPRvJ8Thv74W6D6y/RJM/Dr3oOoPb
+         tbTQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754062250; x=1754667050;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=TCi1+HoXdkRVSSOUpmZn555kzLpizeDbqqPts9w0KWE=;
-        b=JgiE5ZRg0SSlO/t0d5dVrJfj+SJWweJzAG88fpUmW0wtiVqU1VbBzrFeLgyk3TGSZI
-         Mjc8JsW1vsYEyYLRFFSOQmim9N2e1FZvDGe8XsH3vS5dVwZ5mvcXu4dLUbseRIDMCD1B
-         8DXiu91f5KsWjMkIl7RhZTszSQVO4VGkVXYow7Y+T6jQaiVkrsd3RQRUOhQ8NhBo5TKG
-         ZM6Uc/eFQzDxLiNyz2gVOJKrbrODRCMnyMVrhGB4PQynWd6AKfc7OQ7qxOfyfnwzLMPH
-         LEwylm15uJAdEIV8Ct24rZ23WG9+YhVKTofNfXY0yYalvsWMqblpMaeDRGz4Ms/dzx00
-         ByIw==
-X-Gm-Message-State: AOJu0YzsFlhS0zlBIOMRPQ7EBAgbYecda3NjHX/yhDWMfMg1XYK4pcVC
-	va/8qWLBV2u3x2IuBJPV69uMchBX+X0VCTJbCg1r8P4UG9BJYcOJkHn8gkuvyzjShW+689FtWat
-	IrQEm86TA8fScLn8MVh4Ep0FD/lEmH6rXUTFFZnyYHn4pbVtdosN1OzFGxvhz+sDDWw==
-X-Gm-Gg: ASbGncv0iwbMuXF56i/C+sqlz4lTjZGbOpc0Q6wgBUZeOIwbymVM+p3IE3lyi7DW/Y7
-	QsrDNYQs/dbNt8vSl8gX8cF6hZW2Xz/yv/eBytPJ0vgpevwVGpj7JEjxt/NqzYc1frYXeqBl9Qm
-	yCIAtO//T+yK9zVzTuXph6Hd4YKsaWWLEb2b3xtue/jAZN0cOYu6V2qx36LYLT5Z6akW6e1Yn+F
-	nsfoU2cQG7ZCZLQLaEFqPnLWB6+avfZZ75rqH5LgmCzGz/UCIShw04VfOp12euSp+7SboJFuFQS
-	XUkHa1bVHFvW5ZruTvLGAF5+TTqYP9puBF1JGD/ha6MWpr/BOy0hOu1IyCmhRknkmdf336jcd3Q
-	VZbgYtbt4Cg961xr3DzYc/KwVVjdhYhWkU7T/gU4VuaRdPNqA6sX2p4tegcv2Cgxx
-X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr92153755e9.33.1754062249727;
-        Fri, 01 Aug 2025 08:30:49 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEUB5TcsYvRJNB+TvTZn9gO82Mj1g+cFuoQumEuT1Z47ONxoVqJ+Dm0x1gQESNybtDTjIpcKQ==
-X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr92153235e9.33.1754062249262;
-        Fri, 01 Aug 2025 08:30:49 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf54bdsm73593495e9.6.2025.08.01.08.30.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 08:30:48 -0700 (PDT)
-Message-ID: <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
-Date: Fri, 1 Aug 2025 17:30:46 +0200
+        d=1e100.net; s=20230601; t=1754062280; x=1754667080;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=I4UHueSc9BAu6grTRDLcGU5I69yEzCQOkcHM/+5O8oc=;
+        b=sKZfxka4gm9Udukxys8cQSKGo745I7HVmY/Xl0AwYdF6OiSfi+HFW6QSUqNstWFyX/
+         Q0xpX0fhuGgc5fnKzzdPUjgwsXHMvuqSrKbQ/49vgZOHvLjsNc7qjP5LWIoAbOFNJCli
+         0fYYMQ3jVpK8ggY9kFpY6bioou1YoYNAH5QL2NkTkqGZYCN42Cpl7h9AaRwNpCtLyxwJ
+         iyZMn+HPBv/4s9A02bisoQytnC9UTwTzB4O/X71cOj4S2xTn9CnNVF8GcW1cdm6ogEFM
+         qXOUsF85DShDWnTgT3riLEV1EdJq79brgaFpzAx0I9dHrW8riuPQb5BA6C1gIQgiatMA
+         cJag==
+X-Forwarded-Encrypted: i=1; AJvYcCUHusADv0SmBzRA7iC/TzacCjqSygKt0qZfnGh6ROO2RmMKxocrqdqb830yiS1qR6PqCzPGEh34UleDXBVKnkvwotc=@vger.kernel.org, AJvYcCVrhyFM7XcbDMPBqlKT4E1m9ujLWqYNwXUpVMpTqYqs+WDMMBpkmF5C6Cl5biXFCKCtUuxQ0qVHmtczSjMQDQs=@vger.kernel.org, AJvYcCW5bfJ+Ue1WVpT9vH4wZR0ZRBeAhspx93NusSL+aWGysOQLBHXJ2huApwUS+wo4yjGcNKQVf99Kov6O@vger.kernel.org, AJvYcCXeDlnDwLL+JYjzgQa1+QtZMJ7JF4Kw9m64is+EzGn2Af4nBTfM/sDlBO3oOT/rK9Nagygn95zfiyBENf59@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1ROWQSIooIIkGKQjv2aUDOR9DxQ/KDG7Fdw/LiNBeVTDBCgq1
+	CcZJw+m3J34FGISU8mCS/HHwaoeMhHMhXggE5Dhu7TNl3ukp7TL/XrF+AfM9f0Jnyvx2McY31UP
+	Bt8FO9wNhxLNDHDglg1RFXBij56KBasTF+NSp
+X-Gm-Gg: ASbGncu3E8oUda1l9U+XyYfJ5y484QXOkvyWggH/sdbO6bzACjlYPfoFs/BAiP+nwtZ
+	9/fy/iLjd2eZkto8Lmm6fQd6QhP8Uf6kAPAMQHrNlk3sHpZZDwBCKrQWRE9cLP7w+QqjOsczM7b
+	AkizlLkAlpXsipxjBcHe47+Wy/o3X1QcV+Y2ReAqDQmD0NEEnpy5epfblG2AAxZVqObhR5ZbucB
+	bU63Ixi
+X-Google-Smtp-Source: AGHT+IG/PEclFnHnCQeI2QGLM29cWdJHKI1N8xyEXdcVOwzbQatLkiNjlXHy9Zk8mQM/o19QgqGiswZnW6NA2rQ+Lq0=
+X-Received: by 2002:a05:6000:1786:b0:3b7:8d2a:b33c with SMTP id
+ ffacd0b85a97d-3b8d94716bamr171723f8f.18.1754062279697; Fri, 01 Aug 2025
+ 08:31:19 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
- huge_zero_folio_shrinker
-To: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>,
- "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
- x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-2-kernel@pankajraghav.com> <87v7n7r7xx.fsf@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <87v7n7r7xx.fsf@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aIw-P6zkQSOhvYJW@shikoro> <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+ <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
+In-Reply-To: <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 1 Aug 2025 16:30:53 +0100
+X-Gm-Features: Ac12FXyy_ISzry_ypkaPqy_BT3ZWEZfMu2muHoo9P9HSEXIjK4mKJRz5zn1zayk
+Message-ID: <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 01.08.25 06:18, Ritesh Harjani (IBM) wrote:
-> "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
-> 
->> From: Pankaj Raghav <p.raghav@samsung.com>
->>
->> As we already moved from exposing huge_zero_page to huge_zero_folio,
->> change the name of the shrinker to reflect that.
->>
-> 
-> Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
-> consistent naming?
+Hi Guenter,
 
-Then we should also rename put_huge_zero_folio(). Renaming 
-MMF_HUGE_ZERO_PAGE should probably be done separately.
+On Fri, Aug 1, 2025 at 2:52=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
+rote:
+>
+> On 8/1/25 04:05, Lad, Prabhakar wrote:
+> > Hi Wolfram,
+> >
+> > Thank you for the review.
+> >
+> > On Fri, Aug 1, 2025 at 5:10=E2=80=AFAM Wolfram Sang
+> > <wsa+renesas@sang-engineering.com> wrote:
+> >>
+> >> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+> >>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >>>
+> >>> Update the watchdog minimum timeout value to be derived from
+> >>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+> >>> consistent minimum timeout in seconds.
+> >>
+> >> I don't understand this change. Why is the _minimum_ timeout based on
+> >> the _maximum_ heartbeat?
+> >>
+> > The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+> > ensure the minimum watchdog period (in seconds) is compatible with the
+> > underlying hardware.
+> >
+> > max_hw_heartbeat_ms is calculated as:
+> > max_hw_heartbeat_ms =3D (1000 * 16384 * cks_div) / clk_rate;
+> >
+> > This value varies by SoC:
+> >   RZ/T2H: cks_div =3D 8192, clk =E2=89=88 62.5 MHz -> max_hw_heartbeat_=
+ms ~ 2147ms
+> >   RZ/V2H: cks_div =3D 256, clk =E2=89=88 240 MHz -> max_hw_heartbeat_ms=
+ ~ 174ms
+> >
+> > Since min_timeout is in seconds, setting it to:
+> > min_timeout =3D DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+> >
+> > ensures:
+> > The minimum timeout period is never less than what the hardware can sup=
+port.
+> > - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+> > - For V2H, it=E2=80=99s just 1s (174ms -> 1s).
+> >
+>
+> Sorry, I completely fail to understand the logic.
+>
+> If the maximum timeout is, say, 2 seconds, why would the hardware
+> not be able to support a timeout of 1 second ?
+>
+The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter. On
+initialization the down counters on the SoCs are configured to the max
+down counter. On RZ/V2H down counter value 4194304 (which evaluates to
+174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). The
+board will be reset when we get an underflow error.
 
--- 
+So for example on T2H consider this example:
+- down counter is 134217728
+- min_timeout is set to 1 in the driver
+- When set  WDIOC_SETTIMEOUT to 1
+In this case the board will be reset after 2147ms, i.e. incorrect
+behaviour as we expect the board to be reset after 1 sec. Hence the
+min_timeout is set to 3s (2147ms -> 3s).
+
+Please let me know if my understanding of min_timeout is incorrect here.
+
 Cheers,
-
-David / dhildenb
-
+Prabhakar
 
