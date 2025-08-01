@@ -1,143 +1,151 @@
-Return-Path: <linux-kernel+bounces-753547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7002DB18460
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:59:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D667B18461
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B82E2188E3FC
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 24C25A81EB4
 	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:59:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FB89270542;
-	Fri,  1 Aug 2025 14:59:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004F026FDA5;
+	Fri,  1 Aug 2025 14:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="U7wOJ3ne"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Noh9TXzF"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 13C4D271441
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E71021ABAD;
+	Fri,  1 Aug 2025 14:59:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060352; cv=none; b=G48wT/8gOsUklF3ZE2dbOS9olf2LX2v5aRAaIcWfiiMMZZcy+yMP4KGGDQTXbfi+tklA9o5NjGdx1K2zHVOy/ENWG1vxJd1OCpNGD2DrQE6r5aW2DDIssNNCdMTnG4321kSVKHGFGFHTe37ERUpv7krckQeo/siicEW/pTa/xdw=
+	t=1754060390; cv=none; b=dfLWlI/RXR+Fv9oi5l0QpWxF43R/sb2JDFZ3saethuuwKof5gl3dlCYW8W7+LlGZvSakMQUfEWXTMlbhf5qvR+wAaDRTYHa4+qeEFQKbGYUEsONJrcGfr+p3AxjjS7Wg/JqGegcpnEFsMOtArP/Gqqf9UqE5ju0ZwE1SH+nm950=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060352; c=relaxed/simple;
-	bh=4BjNwYs5t/TeS7JMzM3vUjVwMjprEYq9o5942+GXyQg=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=fx7QrMSJK6TVHeWk/uKc4pY1FkDOY6MAg6i+664/ZwGP9g7Uuquhievg1eEPRrYM1ZXiEB+VN6mj6MEnp/eTgzWsrewP9XpgL46VZfUwukv7lznXjoQCrWXKjmpPCVw+qDoxQonqBm2+dhNrkieDVEVypP9xTK1nR81wkIajPfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=U7wOJ3ne; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-45896cf24ebso9828555e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:59:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754060349; x=1754665149; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4BjNwYs5t/TeS7JMzM3vUjVwMjprEYq9o5942+GXyQg=;
-        b=U7wOJ3neI4blSrVG/7f3gr9vrakC1qqEE7RvLiDY774yjaxjMqoA218E1j0YDmT/kR
-         DIIVxvemXWDrwkbPoK079HG8KQmoTvVC70l20XOmR+HEo2Yt35NR2zi4nq0kopIAofGN
-         XD0l9bi5CsDMyNhIStwdFn7ZKHKRIYlBizMReZ1YfSuIsqaDJBTBevwtFG+rvcO3Ztuy
-         GXOkPB80EeKt5sq0lH1rlPS8hosyuu7ENt/mH+NQsIJPL0zlRur2n/LjeYWRZRMihRqd
-         C6mJpoeYNeD5UPT4jEL+Wp4Qtt2vnbhirjoAdW8Uvu1anv4MR+EqzPweVB7t1uiQyX/T
-         O1vg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754060349; x=1754665149;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4BjNwYs5t/TeS7JMzM3vUjVwMjprEYq9o5942+GXyQg=;
-        b=xUSa3wZ51gst044s++u2QPnXg+e8W5/GCSmM0Cotux2W1e+mrvLTXKi0YMArS0/cBx
-         6rl9RLqi67XeQD+VLQFZGCKwMWyWPF+2CG8nDEwPehIs5Auo8O0CwlZtNC0QZ9gQVu1+
-         gEzn0dZ+78TzsG5YJPgB6wjSTLc/RNgA95fZWBsFU5pC61ViumVDvd7DxcoKN4Nu1Qpl
-         lG0m+NnhAH1jZzsqXfsb9MmPUNz2WXggwiUrGOQQYDElqqlEeyHu7UMR+Fe2IwbJM8Gp
-         LCYZdTKaQEMP1GCNU9/i85ipil0DnNuR0FmniWopMRHgJqeyFDaeGXhfgjURcrW9Vyw6
-         CMZg==
-X-Forwarded-Encrypted: i=1; AJvYcCWZj9cwlj6lP0/jCcUwqpfD2as2h64cRzy7Z88g6jKKDn3QRqD6MtyUyO0xK10rBOnJPsUYmGUwWWbGCGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxR1+9CbnPG4uNdWfbsZhkETAODW8cOdl1vOpMrr9jJJjxAUlL4
-	Eukzoi0PSzLmcNh3tBGqio9FgIhgGQsLPSkzElMbqE5T9WDKZqygchx3huMDSQx+9sE=
-X-Gm-Gg: ASbGncsiZg/rge2ktswHjrN6yskS76lJqMVb+56nbJ4r+JyCKALXqdo1zl+l/3IiKv4
-	jT67pjRwR3j8eNNXPpsfJr1Wvo05Ey169StheJg7gRcZVjQcaHnZhCiFGGYRThlB3ouCTqDIApn
-	Kq3+nUbwRqx1S/Imd7J66fqfz6WNs/8sPEWvoOQeP3SNVYKfeq/woaSfIZRraaKqEJ4GGxhZjYe
-	KhJYAaeMdUkRo9lKt3FOXiTLEBtKUw3btvlvtlibF9KHjelL5VnGIqTBFOeksJ2aMEY8/EONnKx
-	OUlluht4GIYODOzuZaeSlswpxVaW0cRe2KQ1eaJe1oL1CpmJQBxDHzLbkoRsea/RWklVmeSp8He
-	5fZSOVMGqBLSqWg4I9+L6/dsXCHRRH7nQuqZG
-X-Google-Smtp-Source: AGHT+IHFVWbDzd1wxGcMpL06tK3u4JPh9n7RnrlNMdR93I+jSvHQrSHrY2AbiMq2wTWtpQtNYOwDMQ==
-X-Received: by 2002:a05:600c:8b65:b0:441:b698:3431 with SMTP id 5b1f17b1804b1-45892bcfaf9mr93121045e9.28.1754060349100;
-        Fri, 01 Aug 2025 07:59:09 -0700 (PDT)
-Received: from [10.1.1.59] ([80.111.64.44])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a3038121sm67756345e9.1.2025.08.01.07.59.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 07:59:08 -0700 (PDT)
-Message-ID: <188efc4a8e37bc5dc64dd18989f9a254ef218449.camel@linaro.org>
-Subject: Re: [PATCH v2 2/6] futex: Use RCU-based per-CPU reference counting
- instead of rcuref_t
-From: =?ISO-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>
-To: Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior
-	 <bigeasy@linutronix.de>, linux-kernel@vger.kernel.org
-Cc: =?ISO-8859-1?Q?Andr=E9?= Almeida <andrealmeid@igalia.com>, Darren Hart	
- <dvhart@infradead.org>, Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar	
- <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, Peter Zijlstra	
- <peterz@infradead.org>, Valentin Schneider <vschneid@redhat.com>, Waiman
- Long	 <longman@redhat.com>, Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>, "Liam R. Howlett"
- <Liam.Howlett@oracle.com>, Lorenzo Stoakes	 <lorenzo.stoakes@oracle.com>,
- Michal Hocko <mhocko@suse.com>, Mike Rapoport	 <rppt@kernel.org>, Suren
- Baghdasaryan <surenb@google.com>, Vlastimil Babka	 <vbabka@suse.cz>,
- linux-mm@kvack.org
-Date: Fri, 01 Aug 2025 15:59:06 +0100
-In-Reply-To: <87ldo5ihu0.ffs@tglx>
-References: <87ldo5ihu0.ffs@tglx>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.1-1+build2 
+	s=arc-20240116; t=1754060390; c=relaxed/simple;
+	bh=pAZ5jRvsMmLsz+XSoDQJfYBg8JvBO6bMeG29Wk93cvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DB67K3Jm2tSy7JX1Jb3GfyMTJAbml46JIQReKoo9EJr9svFdmqfzsk8f15EeZWqiYHxgiT4/sP4BLV57/7QMFqUsK2BCYjp/2fF66JOX6hVnqDOZOExcYJ/SJNXdmHzx6yGEGySzprunxYDwJj1L6TvS8aaqAyq2rJtKkPvAfzU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Noh9TXzF; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5716IvQl015303;
+	Fri, 1 Aug 2025 14:59:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=rkA8li
+	2kiIN2vGtrkJIcUMV8KNRLWYgYSUF6Y5Cmtu8=; b=Noh9TXzFBThGLqjh7D3rQ8
+	N/jbdii9fp0Gp9bqHuilImpyPNQshICSIJut/QRgSJ/Ry49MNM/kmL1mx9pKWBzi
+	GWf+hPehVoiKNKa8YBh8hGbbRFN1tPavLeux+Tke1LBDSur4xc/Kc4+/wNxOT4yh
+	seSAZZsCkNRf8s5RgQolnm8CrdAtYTLLGwKBI6W2mSRbccMf4Zik0dmBxp3O4sJ/
+	qHtgPnh7+uZzXEvTypJnAW3mJ3zAQeVa6dtBlzsfRNWrYOG3SHfkUcAG7kaEU6PP
+	5VYgXjrhLrPlX6ejJ05v8/D+yZxXL1Ik8tizaEIzYJoPoDMKchtzm2X18LV3/WuA
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr9bb0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 14:59:23 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571B1JDA028782;
+	Fri, 1 Aug 2025 14:59:22 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 485c231hdn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 14:59:22 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571ExLvo25297568
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 14:59:21 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9C97E5805F;
+	Fri,  1 Aug 2025 14:59:21 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5E2775805C;
+	Fri,  1 Aug 2025 14:59:21 +0000 (GMT)
+Received: from [9.61.163.64] (unknown [9.61.163.64])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Aug 2025 14:59:21 +0000 (GMT)
+Message-ID: <51c32617-5283-4bb5-b881-2f95d0132a58@linux.ibm.com>
+Date: Fri, 1 Aug 2025 09:59:19 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/6] MAINTAINERS: Add FSI bindings to FSI subsystem entry
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ninad Palsule <ninad@linux.ibm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-fsi@lists.ozlabs.org
+References: <20250731-dt-fsi-cleanups-v1-0-e7b695a29fc3@kernel.org>
+ <20250731-dt-fsi-cleanups-v1-4-e7b695a29fc3@kernel.org>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20250731-dt-fsi-cleanups-v1-4-e7b695a29fc3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDExMyBTYWx0ZWRfX8kHrqhF4COX2
+ 7UnZts6lvi4Nz3aqeSA/kZPY9Te7UnLFP0Noq9OmOjNsecMVewyybNXoXgjFBU2cJ/LBqmOanJr
+ qS7aoQeg3z9o58f/diWXzvcWdCl88V/V5spw/13A9rL/sjQTg0LJExGkpvm8WoGUHio7LqO+Hhi
+ bkPbu7A1aUptWUP204YyjegXcuTOvtb8bd5bMhNRIWT2n94RREmb8hjZMGaoOhgZmbtyk32z2Qa
+ LJJKRKoJX3bp28U5YKNqvKHPSpCQqFgdCitquDuvaeJBN1U8fROQr0lAo4EsyFEh3oBPOeUHAWY
+ O88rYEWJ79O5S8bcGKmXsu0NhF/I2MdfIbbwJIqIL+bcbJ4ZyJUDiuK9PiXqw4JsqmDNkIYeA9m
+ BpOEQ+JluRhYQr5t5Idx73xyLvsdcS40/xOVVNu+6vUOBBFy3ixfjITcBauchxCbjEPGAkTg
+X-Authority-Analysis: v=2.4 cv=Je28rVKV c=1 sm=1 tr=0 ts=688cd64b cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=voM4FWlXAAAA:8 a=VnNF1IyMAAAA:8
+ a=VwQbUJbxAAAA:8 a=cTLu4zB1kE6kTx7l-YIA:9 a=QEXdDO2ut3YA:10
+ a=IC2XNlieTeVoXbcui8wp:22
+X-Proofpoint-GUID: aTpJEyPSXWlFWEvVEbyq6mm8MZ2nW6Ei
+X-Proofpoint-ORIG-GUID: aTpJEyPSXWlFWEvVEbyq6mm8MZ2nW6Ei
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1011 lowpriorityscore=0 spamscore=0 adultscore=0
+ suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ mlxscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010113
 
-On Wed, 2025-07-30 at 21:44 +0200, Thomas Gleixner wrote:
-> On Wed, Jul 30 2025 at 13:20, Andr=C3=A9 Draszik wrote:
-> > kmemleak complains about a new memleak with this commit:
-> >=20
-> > [=C2=A0 680.179004][=C2=A0 T101] kmemleak: 1 new suspected memory leaks=
- (see /sys/kernel/debug/kmemleak)
-> >=20
-> > $ cat /sys/kernel/debug/kmemleak
-> > unreferenced object (percpu) 0xc22ec0eface8 (size 4):
-> > =C2=A0 comm "swapper/0", pid 1, jiffies 4294893115
-> > =C2=A0 hex dump (first 4 bytes on cpu 7):
-> > =C2=A0=C2=A0=C2=A0 01 00 00 00=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ....
-> > =C2=A0 backtrace (crc b8bc6765):
-> > =C2=A0=C2=A0=C2=A0 kmemleak_alloc_percpu+0x48/0xb8
-> > =C2=A0=C2=A0=C2=A0 pcpu_alloc_noprof+0x6ac/0xb68
-> > =C2=A0=C2=A0=C2=A0 futex_mm_init+0x60/0xe0
-> > =C2=A0=C2=A0=C2=A0 mm_init+0x1e8/0x3c0
-> > =C2=A0=C2=A0=C2=A0 mm_alloc+0x5c/0x78
-> > =C2=A0=C2=A0=C2=A0 init_args+0x74/0x4b0
-> > =C2=A0=C2=A0=C2=A0 debug_vm_pgtable+0x60/0x2d8
-> >=20
-> > Reverting this commit (and patches 3 and 4 in this series due to contex=
-t),
-> > makes kmemleak happy again.
->=20
-> Unsurprisingly ...
->=20
-> debug_vm_pgtable() allocates it via mm_alloc() -> mm->init() and then
-> after the selftest it invokes mmdrop(), which does not free it, as it is
-> only freed in __mmput().
->=20
-> The patch below should fix it.
 
-It does. Thanks Thomas!
+On 7/31/25 17:12, Rob Herring (Arm) wrote:
+> Maintainers of a subsystem should also be the maintainer for
+> corresponding DT bindings. Add the FSI bindings to the FSI subsystem
+> entry.
 
-A.
+
+Acked-by: Eddie James <eajames@linux.ibm.com>
+
+
+>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+>   MAINTAINERS | 1 +
+>   1 file changed, 1 insertion(+)
+>
+> diff --git a/MAINTAINERS b/MAINTAINERS
+> index a92290fffa16..4a7b4656822c 100644
+> --- a/MAINTAINERS
+> +++ b/MAINTAINERS
+> @@ -9810,6 +9810,7 @@ R:	Ninad Palsule <ninad@linux.ibm.com>
+>   L:	linux-fsi@lists.ozlabs.org
+>   S:	Supported
+>   Q:	http://patchwork.ozlabs.org/project/linux-fsi/list/
+> +F:	Documentation/devicetree/bindings/fsi/
+>   F:	drivers/fsi/
+>   F:	include/linux/fsi*.h
+>   F:	include/trace/events/fsi*.h
+>
 
