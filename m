@@ -1,171 +1,298 @@
-Return-Path: <linux-kernel+bounces-753717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29101B186DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:43:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30E56B186DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:45:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 0A6584E01FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:43:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 106497ACA0B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B02A28C5D2;
-	Fri,  1 Aug 2025 17:43:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB334287501;
+	Fri,  1 Aug 2025 17:45:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="J4cBhHlk"
-Received: from out-173.mta0.migadu.com (out-173.mta0.migadu.com [91.218.175.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="m8U+XqwE"
+Received: from mail-qt1-f179.google.com (mail-qt1-f179.google.com [209.85.160.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DA061A08DB
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 65811190685
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754070206; cv=none; b=sMDmC2WTJKXmIqubudkj4yUQmTsEYxnjNAd/cB9VGTIH7k5MHXpDpPiK4KTwCbtzYfY+zg8lU2wyp5wLgFalHIdFU5+n9m7Zhof233kTT4AuvCMFfjofMT082D9Hwr+6dq8MudQdjFC4cfpJoQZ70/yUIZEs6xCBKLKTeEOte0U=
+	t=1754070325; cv=none; b=K7vqS7XCAr8zpoqOGlw7Ya6434AtCKRc+1PY3rHWOJtGMdjtWqznkJUZvNvPFBzBFKXezjAfkMKksvSljLS4Sv4oE1bRfWPkOczkT9EE1WY6gYqi0X5Fp44F8T+NvnNso75o3jLi27on/bYfVJChRnaqcgBiyX7wcqdn7irwiPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754070206; c=relaxed/simple;
-	bh=Nsz+8eLWi+ttEmdt1o+WzKgTHtlqGqfw4qFgaJThX5M=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=gaJPu0s5hfwQ+9KDHesAdjkAOmftjzXs59PNO9OpHTaQfQ0JqDLY/HZnh+tPe6DcrZT/WnUi9PUn1bdmaG94/bpfR1aQn14SxkpQHbfQgb5w6t+5EbfJn7BEJoDVIr1qRdS0b5Eb6UaFA6D39HFFkuK/gtsaB4F3qxLXcLseGEg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=J4cBhHlk; arc=none smtp.client-ip=91.218.175.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <53f6d267-62af-4dad-8fa7-a2a497b22636@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1754070202;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=CeWhdWQUjjY6qtmHWK9NWvqGGMpBxisoCeR/n+R6EY8=;
-	b=J4cBhHlkUCErWxEVkMQqOgbDi09LfhUv5VpBBaW8Umpyw/gu8cOX25rq1jlpyV6ZqIbt9b
-	BVL8ge/2NGwtCduHs+FR8ZiB7zL7SVilXSgyGsSHrImPZMVbYEmSGwabJ1DE1+f21EkSiw
-	AXjHTwgciEhzf0QATa58jRP/xeGU4Bw=
-Date: Fri, 1 Aug 2025 13:43:19 -0400
+	s=arc-20240116; t=1754070325; c=relaxed/simple;
+	bh=QkxrClDD/r7ObcszWwRaleCIYfCpwoja1Cbr+1AGO/k=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SpCrv+bmbTu+dcKPsSnK/FqoqK+3FyxdnGJDdeEjk5cqd6w9ey2KufMZiLUuFUzthGWhCYj362EG4BtJYmm2KscScWji3A6uCmwIGvCS+Lq0p9avIw3miCjQbwdJrho7SN9/MpqzpelGFA1IJ2ngkR29LCAz6RQzN1FVT/kzV4Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=m8U+XqwE; arc=none smtp.client-ip=209.85.160.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f179.google.com with SMTP id d75a77b69052e-4aaf43cbbdcso10491cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:45:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754070322; x=1754675122; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=i7IQTebdaJ3TqvzAA9sQ8hmg2eU6dzDaIHSRdOARha0=;
+        b=m8U+XqwEhR1CvnQe6RuAzEzT8A86zniB87r8+a2UGERJ938mVjrV5TzanHj8+Pwunh
+         2mW8S1/CNw84aggtD9cQKt6t93jRB7dzXkXzr2H7f3PYFOh8803nzpGf+RnKD153WxmO
+         MJyWuwdIl2tRv+J7XmIQu8glVxsY2TsWUJADW1hx5IhMf2w1WQXyGbWwo7Qz+GYwN2V0
+         tOnQgVtuxaXFLDsxQ68biP0udo1bddbMVva/7JPTOQR3wcck/EbJBw87eRmyYEdDYqqj
+         sa+abOBb4wtHf6u9HVs8RKgIu3/4qqSBc8ECJm2UwDeP5rMVIaPiONIvrNbTLbRlv/0S
+         ETLA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754070322; x=1754675122;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=i7IQTebdaJ3TqvzAA9sQ8hmg2eU6dzDaIHSRdOARha0=;
+        b=L5EYFQIHUnlsa8VCCIEZ/B2ziA8G4wE6rEp8I9P1bRVPPpuXRPWVBdwiCNNbW5aLRL
+         DLNj5StTqrviSaqn4w8P1KnRjAFKP44fWCw/HOdJbhhwc1yogyBhGA2xdT/gTzINu1Ew
+         R/X/XjHWT3ojPi1kdGN5jmlQcmrfj70QSkKt2PwdXQENnmARZq4ZrMSs81RF1qGvywtx
+         wrd6i/CmMRi3mEoI5I4KqHXDP+e2D5lmktOiSbmeEkpsxTk1wKH0D9VyHzJpUrJJfwun
+         Duq43pKlvHZIeLr6PBPFNNBZ0OGTU4l9dmAkyh+mBiaTT47xO1s85QMS0LXUaAeMbPRi
+         xedw==
+X-Forwarded-Encrypted: i=1; AJvYcCUAxdEGuqgquYX3+XpohSoVrgac3+j2BxlfL+O0ZGipwDTyQJ+UQ6SppcZylfYlFBuiT8XhVTxaYJHrDzg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLedAtcmQfQIrDIafbhslgtwGOI02QZZdQ1sMwUshs4dLMphju
+	PM08cauujpS0OvT3XxPER/fvG1YioomhEIsNZUFuKGDcZ0c50r8Vz7XS5pscPpT52dKkHz+5MEg
+	VIh+j+pbdoDih+6yB374labOPy89xFuwiOu4oH3vY
+X-Gm-Gg: ASbGncuQ6vdZLdalRCYbkA6P9QUMSqd6Dw89jrdeEZqGxjF0xgP+aaDybfRSeLl+515
+	D/W5UOI7t8q6/zTTfKoCyAPZP+8iIZfL0REOotBCXMoFNxzq63GnEGbkdTeZ8JkOR+90od1eIc0
+	hX+/D6R6tWXv0CARN2VQfIzXNw0og6yrh1/QcMwDKzPw+h3Z3VRcwVzUbB/q2ZwbrszQK8HNTck
+	ge1EmN/nhHuxOz+4XEhK+SCKQmvW9YqT/U=
+X-Google-Smtp-Source: AGHT+IE7jTp06+1/B/HvPXKXnzSMflRllAiRRQS5xDxthQyL5W90KUUmbib79VXEYr+Tf3jInm1VMds+8WcQQgIzQnA=
+X-Received: by 2002:a05:622a:164b:b0:4a9:a4ef:35c2 with SMTP id
+ d75a77b69052e-4af00895293mr5522311cf.23.1754070321651; Fri, 01 Aug 2025
+ 10:45:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Sean Anderson <sean.anderson@linux.dev>
-Subject: [BUG] pci: nwl: Unhandled AER correctable error
-To: Lorenzo Pieralisi <lpieralisi@kernel.org>,
- =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- linux-pci@vger.kernel.org
-Cc: Rob Herring <robh@kernel.org>, Mahesh J Salgaonkar
- <mahesh@linux.ibm.com>, Oliver O'Halloran <oohall@gmail.com>,
- Bjorn Helgaas <bhelgaas@google.com>, Michal Simek <michal.simek@amd.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+References: <20250731154442.319568-1-surenb@google.com> <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
+ <aIzMGlrR1SL5Y_Gp@x1.local> <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
+ <aIzp6WqdzhomPhhf@x1.local> <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
+ <aIz1xrzBc2Spa2OH@x1.local>
+In-Reply-To: <aIz1xrzBc2Spa2OH@x1.local>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 1 Aug 2025 17:45:10 +0000
+X-Gm-Features: Ac12FXwZOx_WXSa-qtibQWiRqYk9c7J105y71GpiIr-2l8CCMOLx2rXPFV1awyg
+Message-ID: <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+To: Peter Xu <peterx@redhat.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Fri, Aug 1, 2025 at 5:13=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+>
+> On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrote:
+> > On Fri, Aug 1, 2025 at 9:23=E2=80=AFAM Peter Xu <peterx@redhat.com> wro=
+te:
+> > >
+> > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan wrote:
+> > > > On Fri, Aug 1, 2025 at 7:16=E2=80=AFAM Peter Xu <peterx@redhat.com>=
+ wrote:
+> > > > >
+> > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbrand wrote=
+:
+> > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
+> > > > > >
+> > > > > > Hi!
+> > > > > >
+> > > > > > Did you mean in you patch description:
+> > > > > >
+> > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-present =
+PMDs"
+> > > > > >
+> > > > > > Talking about THP holes is very very confusing.
+> > > > > >
+> > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLE=
+S and it
+> > > > > > > encounters a non-present THP, it fails to properly recognize =
+an unmapped
+> > > > > >
+> > > > > > You mean a "non-present PMD that is not a migration entry".
+> > > > > >
+> > > > > > > hole and tries to access a non-existent folio, resulting in
+> > > > > > > a crash. Add a check to skip non-present THPs.
+> > > > > >
+> > > > > > That makes sense. The code we have after this patch is rather c=
+omplicated
+> > > > > > and hard to read.
+> > > > > >
+> > > > > > >
+> > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmai=
+l.com
+> > > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0=
+050.GAE@google.com/
+> > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > > > > Cc: stable@vger.kernel.org
+> > > > > > > ---
+> > > > > > > Changes since v1 [1]
+> > > > > > > - Fixed step size calculation, per Lokesh Gidra
+> > > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, p=
+er Lokesh Gidra
+> > > > > > >
+> > > > > > > [1] https://lore.kernel.org/all/20250730170733.3829267-1-sure=
+nb@google.com/
+> > > > > > >
+> > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++--------=
+--------
+> > > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
+> > > > > > >
+> > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > > > index cbed91b09640..b5af31c22731 100644
+> > > > > > > --- a/mm/userfaultfd.c
+> > > > > > > +++ b/mm/userfaultfd.c
+> > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd=
+_ctx *ctx, unsigned long dst_start,
+> > > > > > >             ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
+> > > > > > >             if (ptl) {
+> > > > > > > -                   /* Check if we can move the pmd without s=
+plitting it. */
+> > > > > > > -                   if (move_splits_huge_pmd(dst_addr, src_ad=
+dr, src_start + len) ||
+> > > > > > > -                       !pmd_none(dst_pmdval)) {
+> > > > > > > -                           struct folio *folio =3D pmd_folio=
+(*src_pmd);
+> > > > > > > +                   if (pmd_present(*src_pmd) || is_pmd_migra=
+tion_entry(*src_pmd)) {
+> > > > >
+> > > > > [1]
+> > > > >
+> > > > > > > +                           /* Check if we can move the pmd w=
+ithout splitting it. */
+> > > > > > > +                           if (move_splits_huge_pmd(dst_addr=
+, src_addr, src_start + len) ||
+> > > > > > > +                               !pmd_none(dst_pmdval)) {
+> > > > > > > +                                   if (pmd_present(*src_pmd)=
+) {
+> > >
+> > > [2]
+> > >
+> > > > > > > +                                           struct folio *fol=
+io =3D pmd_folio(*src_pmd);
+> > >
+> > > [3]
+> > >
+> > > > > > > +
+> > > > > > > +                                           if (!folio || (!i=
+s_huge_zero_folio(folio) &&
+> > > > > > > +                                                          !P=
+ageAnonExclusive(&folio->page))) {
+> > > > > > > +                                                   spin_unlo=
+ck(ptl);
+> > > > > > > +                                                   err =3D -=
+EBUSY;
+> > > > > > > +                                                   break;
+> > > > > > > +                                           }
+> > > > > > > +                                   }
+> > > > > >
+> > > > > > ... in particular that. Is there some way to make this code sim=
+pler / easier
+> > > > > > to read? Like moving that whole last folio-check thingy into a =
+helper?
+> > > > >
+> > > > > One question might be relevant is, whether the check above [1] ca=
+n be
+> > > > > dropped.
+> > > > >
+> > > > > The thing is __pmd_trans_huge_lock() does double check the pmd to=
+ be !none
+> > > > > before returning the ptl.  I didn't follow closely on the recent =
+changes on
+> > > > > mm side on possible new pmd swap entries, if migration is the onl=
+y possible
+> > > > > one then it looks like [1] can be avoided.
+> > > >
+> > > > Hi Peter,
+> > > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (!pmd_non=
+e()
+> > > > && !pmd_present()) PMD to pass and that's when this crash is hit.
+> > >
+> > > First for all, thanks for looking into the issue with Lokesh; I am st=
+ill
+> > > catching up with emails after taking weeks off.
+> > >
+> > > I didn't yet read into the syzbot report, but I thought the bug was a=
+bout
+> > > referencing the folio on top of a swap entry after reading your curre=
+nt
+> > > patch, which has:
+> > >
+> > >         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len)=
+ ||
+> > >             !pmd_none(dst_pmdval)) {
+> > >                 struct folio *folio =3D pmd_folio(*src_pmd); <----
+> > >
+> > > Here looks like *src_pmd can be a migration entry. Is my understandin=
+g
+> > > correct?
+> >
+> > Correct.
+> >
+> > >
+> > > > If we drop the check at [1] then the path that takes us to
+> > >
+> > > If my above understanding is correct, IMHO it should be [2] above tha=
+t
+> > > makes sure the reference won't happen on a swap entry, not necessaril=
+y [1]?
+> >
+> > Yes, in case of migration entry this is what protects us.
+> >
+> > >
+> > > > split_huge_pmd() will bail out inside split_huge_pmd_locked() with =
+no
+> > > > indication that split did not happen. Afterwards we will retry
+> > >
+> > > So we're talking about the case where it's a swap pmd entry, right?
+> >
+> > Hmm, my understanding is that it's being treated as a swap entry but
+> > in reality is not. I thought THPs are always split before they get
+> > swapped, no?
+>
+> Yes they should be split, afaiu.
+>
+> >
+> > > Could you elaborate why the split would fail?
+> >
+> > Just looking at the code, split_huge_pmd_locked() checks for
+> > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
+> > pmd_trans_huge() is false if !pmd_present() and it's not a migration
+> > entry, so __split_huge_pmd_locked() will be skipped.
+>
+> Here might be the major part of where confusion came from: I thought it
+> must be a migration pmd entry to hit the issue, so it's not?
+>
+> I checked the code just now:
+>
+> __handle_mm_fault:
+>                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
+>                         VM_BUG_ON(thp_migration_supported() &&
+>                                           !is_pmd_migration_entry(vmf.ori=
+g_pmd));
+>
+> So IIUC pmd migration entry is still the only possible way to have a swap
+> entry.  It doesn't look like we have "real" swap entries for PMD (which c=
+an
+> further points to some swapfiles)?
 
-AER correctable errors are pretty rare. I only saw one once before and
-came up with commit 78457cae24cb ("PCI: xilinx-nwl: Rate-limit misc
-interrupt messages") in response. I saw another today and,
-unfortunately, clearing the correctable AER bit in MSGF_MISC_STATUS is
-not sufficient to handle the IRQ. It gets immediately re-raised,
-preventing the system from making any other progress. I suspect that it
-needs to be cleared in PCI_ERR_ROOT_STATUS. But since the AER IRQ never
-gets delivered to aer_irq, those registers never get tickled.
+Correct. AFAIU here we stumble on a pmd entry which was allocated but
+never populated.
 
-The underlying problem is that pcieport thinks that the IRQ is going to
-be one of the MSIs or a legacy interrupt, but it's actually a native
-interrupt:
-
-           CPU0       CPU1       CPU2       CPU3       
- 42:          0          0          0          0     GICv2 150 Level     nwl_pcie:misc
- 45:          0          0          0          0  nwl_pcie:legacy   0 Level     PCIe PME, aerdrv
- 46:         25          0          0          0  nwl_pcie:msi 524288 Edge      nvme0q0
- 47:          0          0          0          0  nwl_pcie:msi 524289 Edge      nvme0q1
- 48:          0          0          0          0  nwl_pcie:msi 524290 Edge      nvme0q2
- 49:         46          0          0          0  nwl_pcie:msi 524291 Edge      nvme0q3
- 50:          0          0          0          0  nwl_pcie:msi 524292 Edge      nvme0q4
-
-In the above example, AER errors will trigger interrupt 42, not 45.
-Actually, there are a bunch of different interrupts in MSGF_MISC_STATUS,
-so maybe nwl_pcie_misc_handler should be an interrupt controller
-instead? But even then pcie_port_enable_irq_vec() won't figure out the
-correct IRQ. Any ideas on how to fix this?
-
-Additionally, any tips on actually triggering AER/PME stuff in a
-consistent way? Are there any off-the-shelf cards for sending weird PCIe
-stuff over a link for testing? Right now all I have 
-
---Sean
-
-# lspci -vv
-00:00.0 PCI bridge: Xilinx Corporation Device d011 (prog-if 00 [Normal decode])
-	Control: I/O- Mem+ BusMaster+ SpecCycle- MemWINV- VGASnoop- ParErr- Stepping- SERR- FastB2B- DisINTx-
-	Status: Cap+ 66MHz- UDF- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- >SERR- <PERR- INTx-
-	Latency: 0
-	Interrupt: pin A routed to IRQ 45
-	Bus: primary=00, secondary=01, subordinate=0c, sec-latency=0
-	I/O behind bridge: 00000000-00000fff [size=4K]
-	Memory behind bridge: e0000000-e00fffff [size=1M]
-	Prefetchable memory behind bridge: [disabled]
-	Secondary status: 66MHz- FastB2B- ParErr- DEVSEL=fast >TAbort- <TAbort- <MAbort- <SERR- <PERR-
-	BridgeCtl: Parity- SERR+ NoISA- VGA- VGA16- MAbort- >Reset- FastB2B-
-		PriDiscTmr- SecDiscTmr- DiscTmrStat- DiscTmrSERREn-
-	Capabilities: [40] Power Management version 3
-		Flags: PMEClk- DSI- D1- D2- AuxCurrent=0mA PME(D0+,D1+,D2+,D3hot+,D3cold-)
-		Status: D0 NoSoftRst+ PME-Enable- DSel=0 DScale=0 PME-
-	Capabilities: [60] Express (v2) Root Port (Slot-), MSI 00
-		DevCap:	MaxPayload 256 bytes, PhantFunc 0
-			ExtTag- RBE+
-		DevCtl:	CorrErr+ NonFatalErr+ FatalErr+ UnsupReq+
-			RlxdOrd+ ExtTag- PhantFunc- AuxPwr- NoSnoop+
-			MaxPayload 128 bytes, MaxReadReq 512 bytes
-		DevSta:	CorrErr- NonFatalErr- FatalErr- UnsupReq- AuxPwr- TransPend+
-		LnkCap:	Port #0, Speed 5GT/s, Width x2, ASPM not supported
-			ClockPM- Surprise- LLActRep+ BwNot+ ASPMOptComp+
-		LnkCtl:	ASPM Disabled; RCB 64 bytes, Disabled- CommClk-
-			ExtSynch- ClockPM- AutWidDis- BWInt- AutBWInt-
-		LnkSta:	Speed 5GT/s (ok), Width x2 (ok)
-			TrErr- Train- SlotClk+ DLActive+ BWMgmt- ABWMgmt+
-		RootCap: CRSVisible-
-		RootCtl: ErrCorrectable- ErrNon-Fatal- ErrFatal- PMEIntEna+ CRSVisible-
-		RootSta: PME ReqID 0000, PMEStatus- PMEPending-
-		DevCap2: Completion Timeout: Range B, TimeoutDis+ NROPrPrP- LTR-
-			 10BitTagComp- 10BitTagReq- OBFF Not Supported, ExtFmt- EETLPPrefix-
-			 EmergencyPowerReduction Not Supported, EmergencyPowerReductionInit-
-			 FRS- LN System CLS Not Supported, TPHComp- ExtTPHComp- ARIFwd-
-			 AtomicOpsCap: Routing- 32bit- 64bit- 128bitCAS-
-		DevCtl2: Completion Timeout: 50us to 50ms, TimeoutDis- LTR- OBFF Disabled, ARIFwd-
-			 AtomicOpsCtl: ReqEn- EgressBlck-
-		LnkCtl2: Target Link Speed: 5GT/s, EnterCompliance- SpeedDis-
-			 Transmit Margin: Normal Operating Range, EnterModifiedCompliance- ComplianceSOS-
-			 Compliance De-emphasis: -6dB
-		LnkSta2: Current De-emphasis Level: -6dB, EqualizationComplete- EqualizationPhase1-
-			 EqualizationPhase2- EqualizationPhase3- LinkEqualizationRequest-
-			 Retimer- 2Retimers- CrosslinkRes: unsupported
-	Capabilities: [100 v1] Device Serial Number 00-00-00-00-00-00-00-00
-	Capabilities: [10c v1] Virtual Channel
-		Caps:	LPEVC=0 RefClk=100ns PATEntryBits=1
-		Arb:	Fixed- WRR32- WRR64- WRR128-
-		Ctrl:	ArbSelect=Fixed
-		Status:	InProgress-
-		VC0:	Caps:	PATOffset=00 MaxTimeSlots=1 RejSnoopTrans-
-			Arb:	Fixed- WRR32- WRR64- WRR128- TWRR128- WRR256-
-			Ctrl:	Enable+ ID=0 ArbSelect=Fixed TC/VC=ff
-			Status:	NegoPending- InProgress-
-	Capabilities: [128 v1] Vendor Specific Information: ID=1234 Rev=1 Len=018 <?>
-	Capabilities: [140 v1] Advanced Error Reporting
-		UESta:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-		UEMsk:	DLP- SDES- TLP- FCP- CmpltTO- CmpltAbrt- UnxCmplt- RxOF- MalfTLP- ECRC- UnsupReq- ACSViol-
-		UESvrt:	DLP+ SDES+ TLP- FCP+ CmpltTO- CmpltAbrt- UnxCmplt- RxOF+ MalfTLP+ ECRC- UnsupReq- ACSViol-
-		CESta:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr-
-		CEMsk:	RxErr- BadTLP- BadDLLP- Rollover- Timeout- AdvNonFatalErr+
-		AERCap:	First Error Pointer: 00, ECRCGenCap+ ECRCGenEn- ECRCChkCap+ ECRCChkEn-
-			MultHdrRecCap- MultHdrRecEn- TLPPfxPres- HdrLogCap-
-		HeaderLog: 00000000 00000000 00000000 00000000
-		RootCmd: CERptEn+ NFERptEn+ FERptEn+
-		RootSta: CERcvd- MultCERcvd- UERcvd- MultUERcvd-
-			 FirstFatal- NonFatalMsg- FatalMsg- IntMsg 0
-		ErrorSrc: ERR_COR: 0000 ERR_FATAL/NONFATAL: 0000
-	Kernel driver in use: pcieport
+>
+> --
+> Peter Xu
+>
 
