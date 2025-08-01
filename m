@@ -1,97 +1,63 @@
-Return-Path: <linux-kernel+bounces-753372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08FFCB18202
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:54:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE0E6B182AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B1E4E78BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A464587B7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30892472B1;
-	Fri,  1 Aug 2025 12:54:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 782E94315A;
+	Fri,  1 Aug 2025 13:46:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mVAzJraa"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BAC1A3178;
-	Fri,  1 Aug 2025 12:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b="yVW7+rlV"
+Received: from www.linux-watchdog.org (www.linux-watchdog.org [185.87.125.42])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B68E28F49;
+	Fri,  1 Aug 2025 13:46:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.87.125.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754052882; cv=none; b=pLmepx6NqTQJUgRcdKuBdCy1Tjm5Bblha3QW7FcMdGNWTLY0IZ2RiJY9uMbBLkqNeHFG6hYei2ibUriLVw/HS+fv4wCIU3V8h1AIwaCpd6BscpKvgPe7g1RMcgIkY/UmgTRqpEGBi7BQO4SndZNN2H9ccerUqydDd4+evPQ7xXs=
+	t=1754055992; cv=none; b=AHFVzHWFlGhy+TvJYZi4pdzZX+2M+5Y65LWGJeqk33Y33srFh6FIf62Qhqm1OHQj/UIOMZEWzRgWHPiE6X6sdH7s4svIzv5XHN+7zff2Oy6aySkxRBLtD+b+4aCAps0dRPlDF5XeEScpnWVJQAIgfCL4rzUUeRTO5K09qC63Vig=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754052882; c=relaxed/simple;
-	bh=W17CgRpCcA1BSn73lMqnsBAYjeIbaRzoHzy/VqgdLBA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bcHVqBZ5jLUwGzrmcXBu31XMsR7g+Pje2stcc5BpmQifGq1ERqZtSTyGy16F9kJEA3FPdBJQNCVQtBp3lWrKkLEZJ+5AcX+zp72yDYb+zIOwfGOU3TgQnxA+HFTTW2Z9bq7BaT+6FomSSVbsXmk46NtpZPc8J5eUK0uNuR1OOf0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mVAzJraa; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5717lj6i017116;
-	Fri, 1 Aug 2025 12:53:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=RM+wXDg91nZxzEfKUC/aUjfAHLwDla
-	aWmzTLZ9E6EDI=; b=mVAzJraayJpip02bsi84Pzk5Iw3//MbbeEOVIWW75AIHpp
-	nRzo1ya7t+g7Vlz0xkW7e2qmpgvyUxWXo9zSr8QHZ4bxeH+fLiuBnS3Q58Ll/wZJ
-	lSPoOhb5k7LqaPPiL0zCSE0ewK7eq6++jvAdK2F37JdjKoQKaXnKazIhHFLB/Y6j
-	vIWStK6itk3nYo5QUBgqjiRWLP8OGntWu/9DGT9gajsGemE/aom9MXjDDjrn6HDe
-	25PnXxewQ8hRXLy7WMWhzBJ88ysO4S8eU44O01edlnf3e5Z7nx+XHrNvS1IyNEMC
-	ooC5oWCkq0PVf9MJ6+OoYFaCRck5olXILbJsLtKA==
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4864k896xm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 12:53:57 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5718jBmD017275;
-	Fri, 1 Aug 2025 12:53:57 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859r0hj3h-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 12:53:56 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571CrqLa43385276
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 12:53:52 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B2EA82004B;
-	Fri,  1 Aug 2025 12:53:52 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id D242720043;
-	Fri,  1 Aug 2025 12:53:51 +0000 (GMT)
-Received: from osiris (unknown [9.111.82.186])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Fri,  1 Aug 2025 12:53:51 +0000 (GMT)
-Date: Fri, 1 Aug 2025 14:53:50 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: Jens Remus <jremus@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-Subject: Re: [RFC PATCH v1 11/16] s390/unwind_user/sframe: Enable
- HAVE_UNWIND_USER_SFRAME
-Message-ID: <20250801125350.9905B20-hca@linux.ibm.com>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-12-jremus@linux.ibm.com>
+	s=arc-20240116; t=1754055992; c=relaxed/simple;
+	bh=MifSY8tRIAg1qFUULhDhX2OU31xcFDWcCK4ISt43qmI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=cPBI5BwT32kR1KoOvgjKHMlgAIr+3aUkvXnf10fa5RRsH12kic5jNeKVQdkyWftHxoqTaN3g2pf/DCXEFtv9lpvYeIGtrZrc7PuOc7qVXtSvhBhcDc9EkpVXkOOW9emPHPO626s6AQOFAiy8ExZwaFdGXn1q1LGxyJdvkAE+J3c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org; spf=pass smtp.mailfrom=linux-watchdog.org; dkim=pass (2048-bit key) header.d=linux-watchdog.org header.i=@linux-watchdog.org header.b=yVW7+rlV; arc=none smtp.client-ip=185.87.125.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=linux-watchdog.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux-watchdog.org
+Received: by www.linux-watchdog.org (Postfix, from userid 500)
+	id 9913E40A0A; Fri,  1 Aug 2025 14:54:10 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 www.linux-watchdog.org 9913E40A0A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-watchdog.org;
+	s=odk20250313; t=1754052850;
+	bh=MifSY8tRIAg1qFUULhDhX2OU31xcFDWcCK4ISt43qmI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=yVW7+rlVjkwtuPwUlCy5K35O1MdxjHmt10XO5JDF2ixxbV9AJwqqc4MiziTKvN8lO
+	 +6dCHzCRnATMUEsNzW+8NMQUlfP7f2ukZHGiXE82ZDK0cPLdqowOjnOrE3PA7WJ14j
+	 O22sF2pyHlsc74QgYrv2V0MxcrasxZkFO1REURyVgzoovZfKUfIISnjxmJ1BAdW6nd
+	 kvstkYaMuS+VrOfz0gQk16px39DRr/EJjW7FMN+jksgn3rf3lN5hcsNwRfBMiQzvXj
+	 76iWM+igrP5qM+jy/bXsjBsiCTCGmUMyQ1KUq1ojc/6U86rvFXETzf2JU6M0gmY5NW
+	 qRHRMQyTmt9+Q==
+Date: Fri, 1 Aug 2025 14:54:10 +0200
+From: Wim Van Sebroeck <wim@linux-watchdog.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Linux Watchdog Mailing List <linux-watchdog@vger.kernel.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Aaron Plattner <aplattner@nvidia.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Frank Li <Frank.Li@nxp.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Rob Herring <robh@kernel.org>,
+	Sebastian Reichel <sebastian.reichel@collabora.com>,
+	Ziyan Fu <fuzy5@lenovo.com>
+Subject: [GIT PULL REQUEST] watchdog - v6.17 release cycle.
+Message-ID: <20250801125410.GA25291@www.linux-watchdog.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,71 +66,74 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250710163522.3195293-12-jremus@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BAGEYFyOjhcKCT6uRHhsnl48vgulLEex
-X-Proofpoint-GUID: BAGEYFyOjhcKCT6uRHhsnl48vgulLEex
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA5MiBTYWx0ZWRfX2prHMf8SZzOt
- dFahisWf+YI1ynsFhUwkRqOkgc0PbQ+8TgjAVcymyypToUVqaA9NFlLYJRgjH0aKjM8eDwtEFoi
- rz+nuCkolnJQs3yg5skvKJbUt8GU3ZN9D41rED2Hl1fWaPLmnGPHw1eNB/eU5mlZ1uy8GlEQl+/
- VgaHrFjdDE2C3SHAO8H2/ziyY88HC9wooRuRaWDInrGlyrykymJnvijtW0c5oMKlAChOLwibhGF
- WjPGoSlK4/xdgrWUkajj26ugTxVrMVCrJ+3Z2twKyj2K6MtmkurlbohSIy8RF6VDL+FShqtK/QC
- GlmbUXugnIDn3Z+CAXZePneKlX8UZiNlwyA9vhXjt07ac4VwJWgTqYOY2astV6vOH0sMk8lFfyM
- FsP/xh2QUe1D7Jot0IxSds6ZFJk2qv6bcNZSlbeDpXqjj+RXmYjmiTwWPfg2Y4CXmObTzyx+
-X-Authority-Analysis: v=2.4 cv=ZoDtK87G c=1 sm=1 tr=0 ts=688cb8e5 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=vXNe0y40mXAc93P3-MgA:9
- a=CjuIK1q_8ugA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_04,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 clxscore=1015
- adultscore=0 impostorscore=0 mlxlogscore=439 bulkscore=0 phishscore=0
- suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010092
+User-Agent: Mutt/1.5.20 (2009-12-10)
 
-On Thu, Jul 10, 2025 at 06:35:17PM +0200, Jens Remus wrote:
-> Add s390 support for unwinding of user space using SFrame.  This
-> leverages the previous commits to address the following s390
-> particularities:
-> 
-> - The CFA is defined as the value of the stack pointer (SP) at call
->   site in the previous frame + 160.  Therefore the SP unwinds as
->   SP = CFA - 160.  Therefore use a SP value offset from CFA of -160.
-> 
-> - The return address (RA) is not saved on the stack at function entry.
->   It is also not saved in the function prologue, when in leaf functions.
->   Therefore the RA does not necessarily need to be unwound in the first
->   unwinding step for the topmost frame.
-> 
-> - The frame pointer (FP) and/or return address (RA) may be saved in
->   other registers when in leaf functions.  GCC effectively uses
->   floating-point registers (FPR) for this purpose.  Therefore DWARF
->   register numbers may be encoded in the SFrame FP/RA offsets.
+Hi Linus,
 
-...
+Please pull following watchdog changes for the v6.17 release cycle.
 
-> +static inline void __s390_get_dwarf_fpr(unsigned long *val, int regnum)
-> +{
-> +	switch (regnum) {
-> +	case 16:
-> +		fpu_std(0, (freg_t *)val);
-> +		break;
+This series contains:
+* sbsa: Adjust keepalive timeout to avoid MediaTek WS0 race condition
+* Various improvements and fixes
 
-...
+The output from git request-pull:
+----------------------------------------------------------------
+The following changes since commit d7b8f8e20813f0179d8ef519541a3527e7661d3a:
 
-> +static inline int s390_unwind_user_get_reg(unsigned long *val, int regnum)
-> +{
-> +	if (0 <= regnum && regnum <= 15) {
-> +		struct pt_regs *regs = task_pt_regs(current);
-> +		*val = regs->gprs[regnum];
-> +	} else if (16 <= regnum && regnum <= 31) {
-> +		__s390_get_dwarf_fpr(val, regnum);
+  Linux 6.16-rc5 (2025-07-06 14:10:26 -0700)
 
-This won't work with other potential in-kernel fpu users. User space fpr
-contents may have been written to the current task's fpu save area and fprs
-may have been clobbered by in-kernel users; so you need to get register
-contents from the correct location. See arch/s390/include/asm/fpu.h.
+are available in the git repository at:
+
+  git://www.linux-watchdog.org/linux-watchdog.git tags/linux-watchdog-6.17-rc1
+
+for you to fetch changes up to 48defdf6b083f74a44e1f742db284960d3444aec:
+
+  watchdog: sbsa: Adjust keepalive timeout to avoid MediaTek WS0 race condition (2025-07-28 12:07:08 +0200)
+
+----------------------------------------------------------------
+linux-watchdog 6.17-rc1 tag
+
+----------------------------------------------------------------
+Aaron Plattner (1):
+      watchdog: sbsa: Adjust keepalive timeout to avoid MediaTek WS0 race condition
+
+Andy Shevchenko (2):
+      watchdog: it87_wdt: Don't use "proxy" headers
+      watchdog: Don't use "proxy" headers
+
+Dan Carpenter (1):
+      watchdog: ziirave_wdt: check record length in ziirave_firm_verify()
+
+Frank Li (1):
+      dt-bindings: watchdog: nxp,pnx4008-wdt: allow clocks property
+
+Geert Uytterhoeven (1):
+      watchdog: renesas_wdt: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+
+Rob Herring (Arm) (1):
+      watchdog: rti_wdt: Use of_reserved_mem_region_to_resource() for "memory-region"
+
+Sebastian Reichel (1):
+      watchdog: dw_wdt: Fix default timeout
+
+Ziyan Fu (1):
+      watchdog: iTCO_wdt: Report error if timeout configuration fails
+
+ .../bindings/watchdog/nxp,pnx4008-wdt.yaml         |  3 ++
+ drivers/watchdog/dw_wdt.c                          |  2 +
+ drivers/watchdog/iTCO_wdt.c                        |  6 ++-
+ drivers/watchdog/it87_wdt.c                        |  4 +-
+ drivers/watchdog/renesas_wdt.c                     |  8 ++--
+ drivers/watchdog/rti_wdt.c                         | 14 ++----
+ drivers/watchdog/sbsa_gwdt.c                       | 50 ++++++++++++++++++++--
+ drivers/watchdog/watchdog_core.h                   |  8 +++-
+ drivers/watchdog/watchdog_pretimeout.c             |  2 +
+ drivers/watchdog/ziirave_wdt.c                     |  3 ++
+ include/linux/watchdog.h                           | 12 ++++--
+ 11 files changed, 87 insertions(+), 25 deletions(-)
+----------------------------------------------------------------
+
+Kind regards,
+Wim.
+
 
