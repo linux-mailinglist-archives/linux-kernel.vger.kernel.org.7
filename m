@@ -1,263 +1,121 @@
-Return-Path: <linux-kernel+bounces-753358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65E23B181E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675B7B181E3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE04A85E4C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDACF5A0604
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336F024679D;
-	Fri,  1 Aug 2025 12:35:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 295BE248873;
+	Fri,  1 Aug 2025 12:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Ymopx8th"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="h2OM8FoK"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2FE244687
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:35:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3B23231832;
+	Fri,  1 Aug 2025 12:35:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754051732; cv=none; b=L128PEFt2X0LnnGQChkZ2vuHisuLl7Pb6akh5S5cmNyxxFlIMUxnZhq+OUX7D/NEi4XEvCOZoXc6DLxB7fS9lO/BKP1bTC1M0+hK5VhmTIagmARVTuXegduo78xSOam7CdTt5R7ondAlD8rhyHIMhcci2kutNCEfgqaY8lh6+LI=
+	t=1754051733; cv=none; b=MCGfhcebboKi5M4x94FWGQ4gB0ejjxo5uzFKPk0yJPES7gyO21IuRel/YbPszoJ8+5UIiF1NRSW/YMy2TcgcdwNh6Hf2i/NKFt4pWpp8CNsMr88c44zpqHYut6Q7wQAWOzwGw9QnMxt40MLZvbQRChRr7Z25XwkEkt3ZUiPPObc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754051732; c=relaxed/simple;
-	bh=5xlxAc0IlypcSqL4qke5Y+EHHHB5RzWlhM9F0Fni38Y=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
-	 References:In-Reply-To; b=DK+UreLZ4quEv5wVxnnUPy5y8/Gp6L7p9xBOmmil5saV9hiw2jHnHFySJGxOR5BnPg1V3hwTWWcE5cE1hAMIWjqWiVFq1UiIpiqs1NAXvp8tL8duWXaXRtRqJ06oBdmR2C1VVs6miWzImlErly0uWd2oiyS3HlCXUiJhIDKfAiY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Ymopx8th; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-adfb562266cso337205666b.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:35:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1754051728; x=1754656528; darn=vger.kernel.org;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HTe303xQoaLkqOpFXbhSdoe5iBautaDCxOKMpejo+Ms=;
-        b=Ymopx8thqwf9j1ae4toLI7fR6g9b27Vdiwbt2hpVzE7I59tm7qPvhJgg81XF7It26S
-         y2+oh/JxHY5lQnciE+sdgjJRdZlElLVQDD+oS6j+EViujEvcKdX42UK1/WZXL9SJGrSc
-         xDsR4fx/g3lrPRjS5G+RMLeriNs8yzcZHYu9sKtLMsNm80FAgzZd+BPxQvAKnGuqe1yV
-         0+zu8MNo2sJQ7KM/EWBrMLk7Tg7HCRJueSCbjiMi72c3P4N1l3IcgNBlxH50m0WCTFOq
-         DktL7O+1smeK5mwaueHtLMCqc08hju13f9H7LTq1mSv1wclFWs1LqGd+4azb2nhkzlmz
-         HwDg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754051728; x=1754656528;
-        h=in-reply-to:references:cc:to:from:subject:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=HTe303xQoaLkqOpFXbhSdoe5iBautaDCxOKMpejo+Ms=;
-        b=nOYu19OCyLOD1nvbdX42dfKud6teooV4P//eqWAd0uZvNpi4pH2k1g/NQ8gSP9wXD4
-         0qjsogqvqe7GDXG7syLpEGpH4VLPZCmtmGDeegTbIrsvr+kx+1nBgKFymNpkiiHOmBP6
-         p8iTQXHCCrUYDOlO2f5da5HcBbBJn/zKrbZNPNWoOrn6PtKcicx7zNn+EtGiGbvAW7FO
-         lUifCBBSLyPa10D0zLFNKfGARl+0g20OaKBR+4nHbzNAH0VAKetnuuYHDusZnNQSuuXO
-         ctfbOobWLiYj5muffFJTkSAscFvtEMJhNcdCFzuZPjuef58qIWkYsFwsL54SMB0NKVli
-         58xA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJAT1C0I6JNg1cbhkQ0x2j+iVSMx5zsAa6N4aH+ijvq2dH12aUBdQKWb1FFidemMeov+ZKfG/nrOTkY48=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL/R9zFUKuri9EU6zPy4/AgC9nEmXG6RKhUB47j/2+t79OoHQZ
-	XU5a0syeYBd+tLLhi21T6haD5T4ZoXl1WgmwiyLU+jlogZdbXei/PlNeS3gUxc8D6b4=
-X-Gm-Gg: ASbGncsLxtulCQkn8HWCjAHk5JXVM61eYDdAyE58RJWQFq+4atb3xkxDxCw1Okw5k5a
-	nPR4P5O4dpBYCCd2X1SgE0i2NSLbeveY54rPj0f/GaP9Gq1oA7JP3TXXUjouIetce23BoxCfWec
-	fsji5mReXaK0bMXQJXZNo0XBh7ApQDw0NjexfDCovTpQQ/hvYjc7ThQjSATIJK+SK+hGpsUXB7K
-	TSIh174L2w48phxaoQ7Oc2qH0r0Vwe85Zsu7lN7rm4q3VC5ed50NtlxS3HreV+/rRyZ4zI2Ar1z
-	Q53tk4K70kbZdHg/UZwN1TJbw9PKibMEjJUdKYDJ71gW2azalz7ideivT04+RnPldeygTxLGixc
-	4l8eDZ6G8DmhnTUjXMdLWYAYS6eUzXADC6RILHTEXItcmTre6drM575JpF5aYvqhLO0rmegubSP
-	sbGw==
-X-Google-Smtp-Source: AGHT+IEFQiah+wKwddE1ODHWk/oM0tAixNPAeW3M8+san/X23qEcM9zhKki8FSkhvO3m3y+J8Og1Xg==
-X-Received: by 2002:a17:907:98b:b0:ae6:eff6:165b with SMTP id a640c23a62f3a-af8fdaa539cmr1291383866b.60.1754051728325;
-        Fri, 01 Aug 2025 05:35:28 -0700 (PDT)
-Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0763c8sm277718966b.22.2025.08.01.05.35.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 05:35:27 -0700 (PDT)
+	s=arc-20240116; t=1754051733; c=relaxed/simple;
+	bh=C8FmHEvnmbzUP4vtQLOTlZM8bMrMzhs7Se6Hmqknmxg=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FyCfiPM3s1hpt5qtV0MotwKudeT7ZtyiOwPYZF71y/2bpwhwJGovbrba5rezJsBdZBZVpwwPvxT4mu7P3MHLybrR4IlKvRkQmdYAdXuLWRmp41WaFqDP/N3UrsII2Cqu317bHGVZ4yPZCawhAxSoCiQvj9yUY+c2XQVxVBzsFbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=h2OM8FoK; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754051729;
+	bh=C8FmHEvnmbzUP4vtQLOTlZM8bMrMzhs7Se6Hmqknmxg=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=h2OM8FoKBU/uigF8dHwvR14102JwdYaEyHsLlmXalyFOExzw3bpBEIAuSFEqf8MhJ
+	 vlOPl3sUFrPh+a0wv8VALo7NmRalG6TbVpJxZ9Hc2cWDP9EKHGCUpBsHwG0SYpSOMp
+	 /mCa0hJ2Lg8iSAZSEhgcGogoohvqKcUfAbLyBVJuN++hM0673cCkhclGkpvmKQZO4i
+	 rauQBq2pVMO6KLT9bU8bJSlvWmi2g7mizAbHruUUX1v05KZg0aKRQ3K0V5UWDGX8OC
+	 0oEm5yz5RVRijShKZPiMwZQ5devf13niFalwG9kyJK7AxYm3xje5VwT3rW5x8osYFD
+	 bZvaHnzLi7Hdg==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 48D9117E0DD7;
+	Fri,  1 Aug 2025 14:35:28 +0200 (CEST)
+Message-ID: <5a12d6adc1ffcdfca7ad2d77dc7a080839f5a375.camel@collabora.com>
+Subject: Re: [PATCH v6 06/24] dt-bindings: media: i2c: max96717: add support
+ for MAX96793
+From: Julien Massot <julien.massot@collabora.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>, Cosmin Tanislav	
+ <cosmin.tanislav@analog.com>, Tomi Valkeinen	
+ <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Niklas
+ =?ISO-8859-1?Q?S=F6derlund?=	 <niklas.soderlund@ragnatech.se>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Date: Fri, 01 Aug 2025 14:35:27 +0200
+In-Reply-To: <20250716193111.942217-7-demonsingur@gmail.com>
+References: <20250716193111.942217-1-demonsingur@gmail.com>
+	 <20250716193111.942217-7-demonsingur@gmail.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Aug 2025 14:35:27 +0200
-Message-Id: <DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com>
-Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space
- confusion
-From: "Luca Weiss" <luca.weiss@fairphone.com>
-To: "Takashi Iwai" <tiwai@suse.de>
-Cc: "Arnd Bergmann" <arnd@kernel.org>, "Mark Brown" <broonie@kernel.org>,
- "Wesley Cheng" <quic_wcheng@quicinc.com>, "Arnd Bergmann" <arnd@arndb.de>,
- "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Greg
- Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dan Carpenter"
- <dan.carpenter@linaro.org>, <linux-sound@vger.kernel.org>,
- <linux-kernel@vger.kernel.org>
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <20250513123442.159936-1-arnd@kernel.org>
- <20250513123442.159936-4-arnd@kernel.org>
- <DBR2363A95M1.L9XBNC003490@fairphone.com> <87v7n72pg0.wl-tiwai@suse.de>
-In-Reply-To: <87v7n72pg0.wl-tiwai@suse.de>
+MIME-Version: 1.0
 
-Hi Takashi,
+On Wed, 2025-07-16 at 22:30 +0300, Cosmin Tanislav wrote:
+> MAX96793 is a newer variant of the MAX96717 which also supports GMSL3
+> links.
+>=20
+> Document this compatibility.
+>=20
+> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
+> Acked-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+> =C2=A0.../devicetree/bindings/media/i2c/maxim,max96717.yaml=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 3 +++
+> =C2=A01 file changed, 3 insertions(+)
+>=20
+> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.y=
+aml
+> b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> index 78ecbab8205a5..02a44db982852 100644
+> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
+> @@ -30,6 +30,8 @@ description:
+> =C2=A0
+> =C2=A0=C2=A0 MAX9295A only supports pixel mode.
+> =C2=A0
+> +=C2=A0 MAX96793 also supports GMSL3 mode.
+> +
+> =C2=A0properties:
+> =C2=A0=C2=A0 compatible:
+> =C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
+> @@ -39,6 +41,7 @@ properties:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0 - maxim,max96717
+> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0 - maxim,max96793
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: max=
+im,max96717f
+> =C2=A0
+> =C2=A0=C2=A0 '#gpio-cells':
 
-On Fri Aug 1, 2025 at 2:31 PM CEST, Takashi Iwai wrote:
-> On Fri, 01 Aug 2025 13:31:42 +0200,
-> Luca Weiss wrote:
->>=20
->> Hi Arnd,
->>=20
->> On Tue May 13, 2025 at 2:34 PM CEST, Arnd Bergmann wrote:
->> > From: Arnd Bergmann <arnd@arndb.de>
->> >
->> > uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
->> > device, and the returned address for the buffer is a CPU local virtual
->> > address that may or may not be in the linear mapping, as well as a DMA
->> > address token that is accessible by the USB device, and this in turn
->> > may or may not correspond to the physical address.
->> >
->> > The use in the driver however assumes that these addresses are the
->> > linear map and the CPU physical address, respectively. Both are
->> > nonportable here, but in the end only the virtual address gets
->> > used by converting it to a physical address that gets mapped into
->> > a second iommu.
->> >
->> > Make this more explicit by pulling the conversion out first
->> > and warning if it is not part of the linear map, and using the
->> > actual physical address to map into the iommu in place of the
->> > dma address that may already be iommu-mapped into the usb host.
->>=20
->> This patch is breaking USB audio offloading on Qualcomm devices on 6.16,
->> as tested on sm6350 and sc7280-based smartphones.
->>=20
->> [  420.463176] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
-s: AFE Port already open
->> [  420.472676] ------------[ cut here ]------------
->> [  420.472691] WARNING: CPU: 2 PID: 175 at sound/usb/qcom/qc_audio_offlo=
-ad.c:1056 handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
->> [  420.472726] Modules linked in: rfcomm zram zsmalloc zstd_compress alg=
-if_hash algif_skcipher bnep nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 n=
-ft_reject nft_ct nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnet=
-link ipv6 fuse uhid uinput snd_usb_audio_qmi q6asm_dai q6routing q6afe_dai =
-q6usb q6afe_clocks q6adm q6asm snd_q6dsp_common q6afe q6core apr pdr_interf=
-ace snd_soc_sm8250 snd_soc_qcom
->> _common snd_soc_qcom_offload_utils snd_soc_qcom_sdw soundwire_bus soc_us=
-b snd_soc_core snd_compress snd_usb_audio ath10k_snoc ath10k_core snd_hwdep=
- snd_usbmidi_lib ath fastrpc snd_pcm mac80211 hci_uart qrtr_smd snd_timer b=
-tqca qcom_pd_mapper snd_rawmidi bluetooth libarc4 qcom_pdr_msg cfg80211 snd=
- soundcore ecdh_generic ecc rfkill qrtr qcom_stats qcom_q6v5_pas ipa qcom_p=
-il_info qcom_q6v5 qcom_common
->> [  420.473018] CPU: 2 UID: 0 PID: 175 Comm: kworker/u32:9 Tainted: G    =
-    W           6.16.0 #1-postmarketos-qcom-sm6350 NONE
->> [  420.473033] Tainted: [W]=3DWARN
->> [  420.473038] Hardware name: Fairphone 4 (DT)
->> [  420.473045] Workqueue: qmi_msg_handler qmi_data_ready_work
->> [  420.473065] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTY=
-PE=3D--)
->> [  420.473075] pc : handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio=
-_qmi]
->> [  420.473091] lr : handle_uaudio_stream_req+0xc84/0x13f8 [snd_usb_audio=
-_qmi]
->> [  420.473104] sp : ffff800082f939a0
->> [  420.473110] x29: ffff800082f93b10 x28: ffff0000cfb796b8 x27: 00000000=
-00008000
->> [  420.473128] x26: ffff0000842afc80 x25: ffffa8e75a23b0e0 x24: 00000000=
-00008000
->> [  420.473145] x23: ffffa8e75a23bcf0 x22: ffff800082f93bd0 x21: 00000000=
-00000000
->> [  420.473161] x20: ffff800082f93c98 x19: ffff0000939bb740 x18: ffffa8e7=
-7925a4d0
->> [  420.473178] x17: ffffffffffffffff x16: ffffa8e777ef9728 x15: ffffa8e7=
-7925a000
->> [  420.473194] x14: 0000000000000000 x13: 0000000000000dc0 x12: ffff8000=
-80000000
->> [  420.473211] x11: 0000000000000cc0 x10: 0000000000000001 x9 : ffffa8e7=
-7944b880
->> [  420.473227] x8 : ffffd719b5f4d000 x7 : ffff00009033da18 x6 : 00000000=
-00000000
->> [  420.473244] x5 : 0000000000000000 x4 : ffff800082f93938 x3 : 00000000=
-00000000
->> [  420.473260] x2 : 0000000000000000 x1 : ffff0000857790c0 x0 : 00000000=
-00000000
->> [  420.473277] Call trace:
->> [  420.473283]  handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi=
-] (P)
->> [  420.473300]  qmi_invoke_handler+0xbc/0x108
->> [  420.473314]  qmi_handle_message+0x90/0x1a8
->> [  420.473326]  qmi_data_ready_work+0x210/0x390
->> [  420.473339]  process_one_work+0x150/0x3a0
->> [  420.473351]  worker_thread+0x288/0x480
->> [  420.473362]  kthread+0x118/0x1e0
->> [  420.473375]  ret_from_fork+0x10/0x20
->> [  420.473390] ---[ end trace 0000000000000000 ]---
->> [  420.479244] qcom-q6afe aprsvc:service:4:4: cmd =3D 0x100e5 returned e=
-rror =3D 0x1
->> [  420.479540] qcom-q6afe aprsvc:service:4:4: DSP returned error[1]
->> [  420.479558] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x7000=
- failed -22
->> [  420.479572] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
-s: fail to start AFE port 88
->> [  420.479583] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
-s: ASoC error (-22): at snd_soc_dai_prepare() on USB_RX
->>=20
->> Reverting this patch makes it work as expected on 6.16.0.
->>=20
->> Let me know if I can be of any help to resolve this.
->
-> I guess just dropping WARN_ON() would help?
->
-> As far as I read the code, pa argument isn't used at all in
-> uaudio_iommu_map() unless as sgt is NULL.  In this case, sgt is never
-> NULL, hence the pa argument is just a placeholder.
-> That said, the whole xfer_buf_pa (and its sanity check) can be dropped
-> there.
-
-Just the WARN splat is not the problem, it's actually failing
-afterwards. Without the patch it works as expected.
-
-But I'm not familiar with this code, or other deep technical details for
-the USB audio offloading or DMA things so not sure what's actually going
-on.
-
-Regards
-Luca
-
->
->
-> Takashi
->
-> --- a/sound/usb/qcom/qc_audio_offload.c
-> +++ b/sound/usb/qcom/qc_audio_offload.c
-> @@ -1020,7 +1020,6 @@ static int uaudio_transfer_buffer_setup(struct snd_=
-usb_substream *subs,
->  	struct sg_table xfer_buf_sgt;
->  	dma_addr_t xfer_buf_dma;
->  	void *xfer_buf;
-> -	phys_addr_t xfer_buf_pa;
->  	u32 len =3D xfer_buf_len;
->  	bool dma_coherent;
->  	dma_addr_t xfer_buf_dma_sysdev;
-> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct sn=
-d_usb_substream *subs,
->  	if (!xfer_buf)
->  		return -ENOMEM;
-> =20
-> -	/* Remapping is not possible if xfer_buf is outside of linear map */
-> -	xfer_buf_pa =3D virt_to_phys(xfer_buf);
-> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
-> -		ret =3D -ENXIO;
-> -		goto unmap_sync;
-> -	}
->  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
->  			xfer_buf_dma, len);
-> =20
->  	/* map the physical buffer into sysdev as well */
-> +	/* note: NULL passed to pa argument as we use sgt */
->  	xfer_buf_dma_sysdev =3D uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
-> -					       xfer_buf_pa, len, &xfer_buf_sgt);
-> +					       NULL, len, &xfer_buf_sgt);
->  	if (!xfer_buf_dma_sysdev) {
->  		ret =3D -ENOMEM;
->  		goto unmap_sync;
-
+Reviewed-by: Julien Massot <julien.massot@collabora.com>
 
