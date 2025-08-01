@@ -1,128 +1,116 @@
-Return-Path: <linux-kernel+bounces-753322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47DBCB18188
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BC8B18189
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:18:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C56241C81D08
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:17:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E3CDF562FD0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:18:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B74052459CD;
-	Fri,  1 Aug 2025 12:17:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC36423E334;
+	Fri,  1 Aug 2025 12:18:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jm6lQfiz"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bCQmgqdn"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7E61F78E6;
-	Fri,  1 Aug 2025 12:17:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6D662F5E
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754050637; cv=none; b=sBPPX9YOx0013I3SuV5Ib+JZIq9LlpaNQzYBzfhfbydGMOPUr6Ljl/9ZNGoTdkRP/+/xKBv+qCaC6ck04a0mdQ6duFOfw+FmW2IRoU+0YQskIADLcU3d8tPfnPXiNQ2Pzp/uzoaLtrVVCg1joZO0irzXJFuONMDazxDwNK6Hm/4=
+	t=1754050686; cv=none; b=SG/cAYXgVHNZrLui91sRciuUFzJxzBfxwYYeFYz0Id9M8aMEvilDYoEiE3CXFazQeqXKae6eMDvtu8ncxICoJdf5BqzGr8jMOwfJrFLGvACySGPcm7EoQEntKoBdrDdSYVk+xGhzWXkbJQfdRVZLoK12+IIOksqPNJKySeoOksA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754050637; c=relaxed/simple;
-	bh=iqWJ70y9buvA8nkZlc67QtTGQA3nl96+0Hhd7pFajYs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Owyr0Md3s0XYzQTWjfReBO+sRNoPfhfbWtud5mXkywttnukIMThL9VTjop4buGiJqbYRqKHXvURayn1sfJDgRVjAUTs0pah6+s0bA3MSRs7LNJJyZWHsk/VJGO1iI0j9FMNLsB827mCqsjM33aydsWbuKtC6sXsT+aH/uVAmSvw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jm6lQfiz; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754050633;
-	bh=iqWJ70y9buvA8nkZlc67QtTGQA3nl96+0Hhd7pFajYs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=jm6lQfizSsqJcUBefLSOsUCpwkP4p4z7b52sE+/dPAVQ1hkpBEC16xy7KV5DWiqld
-	 91WqMEiPfOi70qjgsNEYG6hIGMJx+8gamdhu+wgTwND8hTTUtRWzatTaeIz9LYW9nY
-	 MvOoAAIDNP8c9kmnqWIWqSHQ+t5e+dQrwsN+tNZ9rBBMKWkaTndoSOsFIlkJZAVRet
-	 03yilDAdCIAO8EwEyk09foPNuHQbNlmz8i8yJXROUFKQkVNZkEh1x07oTEBSD4Tr7o
-	 XOiTxKoeUA3zSBNHV9FHKRHmTTiTt6umyTO/9AvlWm+POtimM/XEMm6bL7SKS7BxaV
-	 Qe7+4T+ujMs2A==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2d600c8f85cF092D4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9C88117E0DD7;
-	Fri,  1 Aug 2025 14:17:12 +0200 (CEST)
-Message-ID: <b8d48519e607698ada70ec1f87ee6e222e14940e.camel@collabora.com>
-Subject: Re: [PATCH v6 02/24] dt-bindings: media: i2c: max96717: add myself
- as maintainer
-From: Julien Massot <julien.massot@collabora.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>, Cosmin Tanislav	
- <cosmin.tanislav@analog.com>, Tomi Valkeinen	
- <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Niklas
- =?ISO-8859-1?Q?S=F6derlund?=	 <niklas.soderlund@ragnatech.se>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Date: Fri, 01 Aug 2025 14:17:11 +0200
-In-Reply-To: <20250716193111.942217-3-demonsingur@gmail.com>
-References: <20250716193111.942217-1-demonsingur@gmail.com>
-	 <20250716193111.942217-3-demonsingur@gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754050686; c=relaxed/simple;
+	bh=YsZ1llpJlYq+AjYwqeb+mqRwUxkLzdHogXR1ktSXBGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YZxjX7OZ7kPITznkdlGqVrMCak0gs/XgVvE5mR+tbB3wmUdFKbP69gHwo3KgcYdfTwZGDLGYUpOkt5Gs7wzKQDgBtq7PLBRVHtk5Abhw+dSTeSEWeOBWXxu8d8TtzIsKcGwZotM5RIiWKUUVwq6ZJfTWxQICIPrPxKNWh1C/6Ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bCQmgqdn; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4589b3e3820so20682405e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754050683; x=1754655483; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=YsZ1llpJlYq+AjYwqeb+mqRwUxkLzdHogXR1ktSXBGA=;
+        b=bCQmgqdn1fC5Pn/wup8TDZTCI1QpDU9oy/naZ/DKp2h2Iju86Iut4D5hpogXnbCkWs
+         fwAkI5g2RHwcNwukmjH2JsrYo7JNdvHMRFniH3HpBQxo6BRIqlBuprWr1szNA3kZFEc7
+         6oUU6GMwg0zfYUcRryUCSUBKhumNl4fAZx1GpQxBEF9tucmlE1MwHjJFw29o+Bm7PXxt
+         1ZtzIBrNDuLzorNUQWrNGIB8WNnLZkeKMo3Q6hdxCfpr5dVYHNGMsL6C/fpXvHofuqGM
+         wqEM10zWgm31uCDSMk16fzqA34bQiWcXkqVTw7bLbBtQaINjgFjyM+Qob2Yhku8B/B/X
+         oyHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754050683; x=1754655483;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to
+         :content-language:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=YsZ1llpJlYq+AjYwqeb+mqRwUxkLzdHogXR1ktSXBGA=;
+        b=Kcy9dTH/pWzI+dtFc2TlS8oD0aX0j5gauiXzqAKfxDeKYHef2G9h05y2uicoRrjwxZ
+         xFPFSQC8qneq1wSK8H+2DjhOIgSQouWZtwbJuYK0P9u5lF2hOP37ncYRxUxgIXG+wfJH
+         VqO9eBVnQlawWvCLOcBJ1z5VgrbRdQIjI7dMbwT36CXHab5mJWX/unJkiTeswhVP6A64
+         JU/smXQNaqZ/sSFmYbyPByxqgq7fdbCrpw2I5Y3AcNAw7JcBK4whX3pFx49C8JkrYD8O
+         pzyC4ULrpa/unnWdIX/lNiYaM0C1kLtJB72LN+87v6ipMs0Z9B7dDbRVJZ5uwHfeRjBJ
+         6jqw==
+X-Forwarded-Encrypted: i=1; AJvYcCUjwwjR8Yt4N5z8JMA8r3224HHB27cVGFvs8CROLw5v3qky9p3ixmw/P1oRHkMX16aqB+GAY0Jv0JTOwHg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxkCKS1THwad+HNMJw5/N1rQbr11u+JEPJItn7e8Ubf9Ta0PiF5
+	IHUi3SqhA8hQ4iFb4m2HDXrDuKfdgSLe7WxCJgyeq8QgCYjKC8YvIYU+
+X-Gm-Gg: ASbGncvSavLO4dRLjA3Ha/tsnDTXebHXNtHD+fXEx6qEIDaA7rzzOZ2Wcp7d/a2Zxvc
+	jEaN2YPX54GhvBMaoKBYVQqiTuQXQzUd/52+F25Oymio50rRRjMs46tdbLqjyPZqCTVq/if7XOE
+	Yn+4HyBFun5UEOIZfb9DMatYXY3dlB0SUbrjzsuGXJZu89hgkBSsCn3HuRAFjg6P7T+BoNDo3Z9
+	itVW/SjZtXP+6A/gnNO2fyiIsa8N29vr7++FnESdH7bE5+n3aSM9Vd5BOdaiKVRzhjzjKsBSCLF
+	wgcxSW1VEhkq1D4d2vHB11c8ykF29Vu/bdTu91YULqBWYIn8+enJoVghKp9eGWITAawR+xqqTPW
+	glM+XT4ZHxOuv4jMJMQyZVykDX1HiPlSR4nRsRyPsZM8xA75PSw==
+X-Google-Smtp-Source: AGHT+IHrJFPu6CRAATEvAklTPqretPHJtlzsftD5zl+L+B6Yf1bmLAz9RezcD7RpfLo+BJQVo8zS1g==
+X-Received: by 2002:a05:6000:652:b0:3b7:90df:c53e with SMTP id ffacd0b85a97d-3b79501f11bmr8833925f8f.28.1754050682841;
+        Fri, 01 Aug 2025 05:18:02 -0700 (PDT)
+Received: from [192.168.1.129] ([82.79.237.20])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458af78fed0sm11896105e9.0.2025.08.01.05.18.01
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 05:18:02 -0700 (PDT)
+Message-ID: <c39de58f-7fd9-40e3-b48e-b26b9b3ec5ad@gmail.com>
+Date: Fri, 1 Aug 2025 15:18:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/2] arm64: defconfig: enable i.MX AIPSTZ driver
+Content-Language: en-US
+To: Fabio Estevam <festevam@gmail.com>
+Cc: Shawn Guo <shawnguo@kernel.org>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Sascha Hauer <s.hauer@pengutronix.de>,
+ Alexander Stein <alexander.stein@ew.tq-group.com>,
+ Mark Brown <broonie@kernel.org>,
+ Pengutronix Kernel Team <kernel@pengutronix.de>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ imx@lists.linux.dev
+References: <20250707234628.164151-1-laurentiumihalcea111@gmail.com>
+ <20250707234628.164151-3-laurentiumihalcea111@gmail.com>
+ <CAOMZO5DfuRKYHkC8e4mNzetY204UdPDBHzUVy4M9pyjKpx401w@mail.gmail.com>
+From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+In-Reply-To: <CAOMZO5DfuRKYHkC8e4mNzetY204UdPDBHzUVy4M9pyjKpx401w@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Cosmin,
 
-On Wed, 2025-07-16 at 22:30 +0300, Cosmin Tanislav wrote:
-> Analog Devices is taking responsability for the maintenance of the Maxim
-> GMSL2/3 devices.
-> Add myself to the maintainers list and to the device tree bindings.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> =C2=A0Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml | 1=
- +
-> =C2=A0MAINTAINERS=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
-> =C2=A02 files changed, 2 insertions(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.y=
-aml
-> b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> index d1e8ba6e368ec..15ab37702a927 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> @@ -9,6 +9,7 @@ title: MAX96717 CSI-2 to GMSL2 Serializer
-> =C2=A0
-> =C2=A0maintainers:
-> =C2=A0=C2=A0 - Julien Massot <julien.massot@collabora.com>
-> +=C2=A0 - Cosmin Tanislav <cosmin.tanislav@analog.com>
-> =C2=A0
-> =C2=A0description:
-> =C2=A0=C2=A0 The MAX96717 serializer converts MIPI CSI-2 D-PHY formatted =
-input
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 24c557ee091d7..e973b0a985815 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -14761,6 +14761,7 @@ F:	drivers/media/i2c/max96714.c
-> =C2=A0
-> =C2=A0MAX96717 GMSL2 SERIALIZER DRIVER
-> =C2=A0M:	Julien Massot <julien.massot@collabora.com>
-> +M:	Cosmin Tanislav <cosmin.tanislav@analog.com>
-> =C2=A0L:	linux-media@vger.kernel.org
-> =C2=A0S:	Maintained
-> =C2=A0F:	Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
 
-Reviewed-by: Julien Massot <julien.massot@collabora.com>
+On 7/8/2025 4:39 AM, Fabio Estevam wrote:
+> On Mon, Jul 7, 2025 at 8:46 PM Laurentiu Mihalcea
+> <laurentiumihalcea111@gmail.com> wrote:
+>> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+>>
+>> Enable the config (CONFIG_IMX_AIPSTZ) for the i.MX AIPSTZ driver, which
+>> is required for platforms using the AIPSTZ bridge (e.g. i.MX8MP).
+> Shouldn't this be enabled via a select in Kconfig instead?
+
+would've been nice but I'm not sure we have an i.MX8MP SoC-specific config option for that?
+or do you have anything particular in your mind?
 
