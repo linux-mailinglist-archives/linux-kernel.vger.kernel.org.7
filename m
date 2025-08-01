@@ -1,159 +1,164 @@
-Return-Path: <linux-kernel+bounces-753762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED8A8B18784
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:56:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B981B18788
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D76107AED88
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:55:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9240D1899221
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AE228DB5B;
-	Fri,  1 Aug 2025 18:56:34 +0000 (UTC)
-Received: from mail-io1-f77.google.com (mail-io1-f77.google.com [209.85.166.77])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30E9B28D8ED;
+	Fri,  1 Aug 2025 18:59:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="ZTCaMLon"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18D3126FA7B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:56:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.77
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF4D1B644
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:59:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754074593; cv=none; b=jNqqK11QJpVDESGlUtkh5+0e5XBi8iVN1T0YFZ7+sAlOauTQz/iZ51Sbyc1Kr2n1EgSHneSCNHQ5ZEkZNQeSiXw80269f+Fr1xwltjmpHSATJVpa+XG3BXGGzC0JQGpEd8BkixbKXG5hMDb57+3E0LRI65kyACPFuj1e7GMsYPQ=
+	t=1754074774; cv=none; b=HaHVZG8iYZWsUZDEl1MeIUtMdNmXog7RQawsNK5fQoqtc4sMNxQKyY4VBTGTl6TtFc2GCZc3aOxYfEP6gzsMhKxUT3UTIosGPIUiY43khBCEedaqkhwnlyi6X9uGeYjQAovtb70qR0Y15e65tBD7EqS5bOx599wwgpfmRTYQMq8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754074593; c=relaxed/simple;
-	bh=w+uyx2u4tVR4KOFa03FtOQKGG260nLh2xxxVtLd4lOE=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=hzgMMOiVihC5ASY5AMAaWG9A4VSNwnsRyyFGLMiqzGKgXibdYx84FznPLPK7NNwjIMeOl+kmGBvaFeMiqsRrmn3Ks8N17n+w8dPbE4XIEyVTf8XtTipjauVBLO8oxFCbbnhjWo+cPL3wgpOciO4RFRTrLskNTUlntyW4/k0Eusc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.77
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f77.google.com with SMTP id ca18e2360f4ac-8760733a107so188479039f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:56:31 -0700 (PDT)
+	s=arc-20240116; t=1754074774; c=relaxed/simple;
+	bh=ZCus/7TYCpdBpSHkNX8J3JFdhNbHBG34XLdpJYdbpIQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RKkpGCp/ZTDHqmDABFOyXIvUcWPU5OoGpRIwTSpDXqZujqMFybltHyr11jpmb+IbSmPDItOg6m000LzEnD3v3MbXnjYq4L6xeO/Xjjf2YwqIPJ0gK+A2Z0V6LjGgcr6fFlfzUlva+E+09OtzVdYTr6b818tCB0DyOFeTtjh9osM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=ZTCaMLon; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4af12ba9800so1799051cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:59:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1754074772; x=1754679572; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=AyIY9+7qRYH18QG3yHqvpWY8fQNePxyU0Y1cLmmOWtc=;
+        b=ZTCaMLonk0sWV4srn7TL5HMvKjS23M3cnkfYZ96fjpGIpI80FGw7FFLGijI0/3p6Os
+         uh6KrtA1IlybiV8hlSQuLfZyhXcZR3NNKidQM79QHLR+NftTOR1f/BLKPhK3z7EFx3zz
+         j+GHoBQHwfgmo+pl3iMaxHTjhrtdgCEs/OihBE1ztXFv97iqcpQKLL6bkzi0+4EhBu6R
+         er7gxlDPGGqCq1ruqfdrPCYtb5mNL/hoUz0VIPMqQnifq8vbFJt2X5osfPa7TfO/Y3s9
+         L7+/PoyAZZ5hpxOqAlHruioeyp1aUAIoq1fXXAJ4h3Oh/MVkq2H7Z8IW1GeDZqSfZOyc
+         uaiQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754074591; x=1754679391;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hYD0nOQRmQukhL/2Ybf6mOxuk5DEQqvSI9aIA75367k=;
-        b=YLBHzccM5DhXAJkc02hbAoHqkPW4bHeisg5pjsEugI1ORMxsnwaRuVw+b0XyiOVgt6
-         VV4MsRtVFB1GvHE3uRgO7MXZ4BmmsSv1ge2F7E1Bo6ln8N2vsUhfbrfcZgk9wEUgYfmu
-         sZSHB8SEnlblMa0wnILrW8HZNGP5gVT7O/5KgGoEQEhXXV/+N9JHxVl86/a7baR3x9Wf
-         2i2w18onPo4KMnQz/7cfsO/W4b6oSiwAislyGIz0A+yxHRZWL6Ib9IYii6AU/gbixgCz
-         hS+Ow31NT7wceFt8xhoKGFj7MhghsLFt2p1EDlrfIQ1n2/pVOmYgjoAoJC6IW/Tpso4Y
-         qAhw==
-X-Forwarded-Encrypted: i=1; AJvYcCX8dIZ9B9yjbZ/qWMw/Orbwq6mGN0LpHZNbhTiWsOGhGI4nLMPszG1uYeVCYBS6uHEcIKmK6xHfrOYx8R0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyvLoCMrtE7ZKVzAwI43F44r7MTtHpz93T0w0aLF73w/AVhNxLb
-	LkDoNX9lplq/dvGnWUoSN0UeRvBH24AgYgl4TdmWNLkZgZT4/NBTWRPnaPOzNRlbbinxWedc7lX
-	FiDETVznCvtgkNfoX1PWItyoPwLURTWKp3doKpP55TwiWcdWjo1Ty4Sxnpoc=
-X-Google-Smtp-Source: AGHT+IHL3atBPemYe6B0V5/guJyT0zhR6u/wEoZT73+aXkHpZ5L4pRfTdkaAKrngBclr3hnmj5r8Mk+eOpNbArUNN6W32MnC7UoR
+        d=1e100.net; s=20230601; t=1754074772; x=1754679572;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AyIY9+7qRYH18QG3yHqvpWY8fQNePxyU0Y1cLmmOWtc=;
+        b=GpXpYYt13W7oCTTLF/+ixf8EhE5Aoe3V39abarXEuYjP5jo4zByNeX2Nr9hY3y4ZVt
+         JGNuER7Mqrv6mIdwv4meyvk1Qe3GyJaGBxhud/CqEnoUnqnEyvu+pkzOM4kgnP7qwBEF
+         CCz+yWJoLjUf2J+N1eyl0bUlcC+WQF6XPwOtP1pBfzi67q0zn4H2EdmEqrY8Hzfu2jZk
+         qaWKtoUdCEbksdiPF5yjAYh+SP6T3DNflMKt2QzhtDTZTprtO/3WIUw+sKpU3jNA4bjb
+         557JW10DnezmqePZV3rv4Je6ER9Uz3Lb/7e9RgWe2NffIeenfiItNSUYUL/Kwm+BM5Nr
+         Gadw==
+X-Gm-Message-State: AOJu0YyTxP6HUz1k9BgaYYdK3y7cIdYU0bKDIqDUvcrp0/feTX6izUdP
+	8Nw1ziyNKUQ72w0Zrhh/yMAj0ci+bvTrjHW1UVO79m064n+Gz8SX00wURRehuRJQwq8=
+X-Gm-Gg: ASbGncvkUKTO/7zGXyrCUrakrOSWQjNYaUm9ttZZ5yeVoCVcg4UXNJq4/8KojtksiPo
+	jpD0PSPpGhbhIgZwhwsKOTDH4XF0tn0ZwHKtSv00c87WRUfUteQOUe/7GHuvg/SNd5LVjDpV3Ya
+	Gs5PGbHa7kb1nrUjUnM6B62GH6UE81yomHnbbuoxD7L1ro/pL6z2wsSM1tsVgzdZZ0RhbzFSpUl
+	+g2xmBUUNGg6difA16EzNDhWOqkTbs7uHkpCoZWyLke7QpUmVQP2SH0B5LAvyT4Ry0erOJrbiJb
+	oHWfytR1fDV4rwt6VGahc/zXz6S39PeZg8n+ZmJ2qflQxstOIkaxLwSviu8z/wja020YjdffY9d
+	VxfNAXE4vMdZs77vHFbH4mPJwOOO6vho4jKk8DebjLlVp4WM0XlHSjJG61gGYqz6muvkY
+X-Google-Smtp-Source: AGHT+IHvW1P/vYfLuQdieKRLav2sj0iL8HcBFcWOObvqQ/GoW+Jjhx1hxhp1NE0qHlpxeA4ab2Hb6w==
+X-Received: by 2002:a05:622a:15c2:b0:4ab:887c:8b with SMTP id d75a77b69052e-4af10a88ee3mr13217181cf.42.1754074771752;
+        Fri, 01 Aug 2025 11:59:31 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeed670c6sm24010891cf.37.2025.08.01.11.59.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 11:59:31 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uhuyY-000000014Fy-2vCk;
+	Fri, 01 Aug 2025 15:59:30 -0300
+Date: Fri, 1 Aug 2025 15:59:30 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
+	suzuki.poulose@arm.com, yuzenghui@huawei.com,
+	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
+	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
+	mark.rutland@arm.com, praan@google.com
+Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
+Message-ID: <20250801185930.GH26511@ziepe.ca>
+References: <20250728175316.3706196-1-smostafa@google.com>
+ <20250728175316.3706196-30-smostafa@google.com>
+ <20250730144253.GM26511@ziepe.ca>
+ <aIo1ImP7R7VhRpVE@google.com>
+ <20250730164752.GO26511@ziepe.ca>
+ <aIt67bOzp6XS_yO-@google.com>
+ <20250731165757.GZ26511@ziepe.ca>
+ <aIurlx5QzEtjpFLd@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:164f:b0:3e2:a749:250b with SMTP id
- e9e14a558f8ab-3e41615d149mr9886455ab.14.1754074590865; Fri, 01 Aug 2025
- 11:56:30 -0700 (PDT)
-Date: Fri, 01 Aug 2025 11:56:30 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688d0dde.050a0220.f0410.0130.GAE@google.com>
-Subject: [syzbot] [btrfs?] WARNING in btrfs_lookup_extent_info (2)
-From: syzbot <syzbot+c035bce0effd1de39e05@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aIurlx5QzEtjpFLd@google.com>
 
-Hello,
+On Thu, Jul 31, 2025 at 05:44:55PM +0000, Mostafa Saleh wrote:
+> > > They are not random, as part of this series the SMMUv3 driver is split
+> > > where some of the code goes to “arm-smmu-v3-common.c” which is used by
+> > > both drivers, this reduces a lot of duplication.
+> > 
+> > I find it very confusing.
+> > 
+> > It made sense to factor some of the code out so that pKVM can have
+> > it's own smmv3 HW driver, sure.
+> > 
+> > But I don't understand why a paravirtualized iommu driver for pKVM has
+> > any relation to smmuv3. Shouldn't it just be calling some hypercalls
+> > to set IDENTITY/BLOCKING?
+> 
+> Well it’s not really “paravirtualized” as virtio-iommu, this is an SMMUv3
+> driver (it uses the same binding a the smmu-v3)
 
-syzbot found the following issue on:
+> It re-use the same probe code, fw/hw parsing and so on (inside the kernel),
+> also re-use the same structs to make that possible. 
 
-HEAD commit:    038d61fd6422 Linux 6.16
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=17bd14a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=831eea247244ce8c
-dashboard link: https://syzkaller.appspot.com/bug?extid=c035bce0effd1de39e05
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+I think this is not quite true, I think you have some part of the smmu driver
+bootstrap the pkvm protected driver.
 
-Unfortunately, I don't have any reproducer for this issue yet.
+But then the pkvm takes over all the registers and the command queue.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-038d61fd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/45453fb53a5d/vmlinux-038d61fd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4094774b8a7e/bzImage-038d61fd.xz
+Are you saying the event queue is left behind for the kernel? How does
+that work if it doesn't have access to the registers?
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+c035bce0effd1de39e05@syzkaller.appspotmail.com
+So what is left of the actual *iommu subsystem* driver is just some
+pkvm hypercalls?
 
-BTRFS info (device loop0): balance: start -d -m
-BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
-BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
-------------[ cut here ]------------
-WARNING: CPU: 0 PID: 5337 at fs/btrfs/extent-tree.c:209 btrfs_lookup_extent_info+0xcc6/0xd80 fs/btrfs/extent-tree.c:209
-Modules linked in:
-CPU: 0 UID: 0 PID: 5337 Comm: syz.0.0 Not tainted 6.16.0-syzkaller #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_lookup_extent_info+0xcc6/0xd80 fs/btrfs/extent-tree.c:209
-Code: 8b ff ff ff 48 8b 7c 24 50 48 c7 c6 31 97 ae 8d ba a9 00 00 00 b9 8b ff ff ff e8 c5 85 6a fd e9 16 fe ff ff e8 0b ee 00 fe 90 <0f> 0b 90 e9 6d fd ff ff e8 dd 44 b0 07 89 d9 80 e1 07 38 c1 0f 8c
-RSP: 0018:ffffc9000ddfeea0 EFLAGS: 00010293
-RAX: ffffffff83bf4305 RBX: ffff8880363d43b0 RCX: ffff8880118c0000
-RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
-RBP: ffffc9000ddff000 R08: ffff8880363d43b3 R09: 1ffff11006c7a876
-R10: dffffc0000000000 R11: ffffed1006c7a877 R12: dffffc0000000000
-R13: ffff88805325c6d4 R14: 0000000000000000 R15: ffffc9000ddff0c0
-FS:  00007fe87d3d46c0(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 0000200000453000 CR3: 0000000011d7e000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- update_ref_for_cow+0x998/0x1210 fs/btrfs/ctree.c:373
- btrfs_force_cow_block+0x9d4/0x1e10 fs/btrfs/ctree.c:527
- btrfs_cow_block+0x40a/0x830 fs/btrfs/ctree.c:688
- do_relocation+0xd64/0x1610 fs/btrfs/relocation.c:2275
- relocate_tree_block fs/btrfs/relocation.c:2528 [inline]
- relocate_tree_blocks+0x118b/0x1e90 fs/btrfs/relocation.c:2635
- relocate_block_group+0x760/0xd90 fs/btrfs/relocation.c:3607
- btrfs_relocate_block_group+0x966/0xde0 fs/btrfs/relocation.c:4008
- btrfs_relocate_chunk+0x12a/0x3b0 fs/btrfs/volumes.c:3437
- __btrfs_balance+0x1870/0x21d0 fs/btrfs/volumes.c:4212
- btrfs_balance+0xc94/0x11d0 fs/btrfs/volumes.c:4589
- btrfs_ioctl_balance+0x3d3/0x610 fs/btrfs/ioctl.c:3583
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fe880f8e9a9
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fe87d3d4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 00007fe8811b6080 RCX: 00007fe880f8e9a9
-RDX: 0000200000000180 RSI: 00000000c4009420 RDI: 0000000000000005
-RBP: 00007fe881010d69 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000001 R14: 00007fe8811b6080 R15: 00007ffc53dc1948
- </TASK>
+It seems more sensible to me to have a pkvm HW driver for SMMUv3 that
+is split between pkvm and kernel, that operates the HW - but is NOT an
+iommu subsystem driver
 
+Then an iommu subsystem driver that does the hypercalls, that is NOT
+connected to SMMUv3 at all.
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+In other words you have two cleanly seperate concerns here, an "pkvm
+iommu subsystem" that lets pkvm control iommu HW - and the current
+"iommu subsystem" that lets the kernel control iommu HW. The same
+driver should not register to both.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> As mentioned in the cover letter, we can also still build nesting on top of
+> this driver, and I plan to post an RFC for that, once this one is sorted.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+I would expect nesting to present an actual paravirtualized SMMUv3
+though, with a proper normal SMMUv3 IOMMU subystem driver. This is how
+ARM architecture is built to work, why mess it up?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+So my advice above seems cleaner, you have the pkvm iommu HW driver
+that turns around and presents a completely normal SMMUv3 HW API which
+is bound by the ordinately SMMUv3 iommu subsystem driver.
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Jason
 
