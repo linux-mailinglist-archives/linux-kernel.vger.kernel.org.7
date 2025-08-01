@@ -1,112 +1,72 @@
-Return-Path: <linux-kernel+bounces-752950-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752951-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23528B17CE0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:26:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2F324B17CE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:26:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C2A65A02F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:26:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60A087B025E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:25:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B08231F4199;
-	Fri,  1 Aug 2025 06:26:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="XqxOq+ZH";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BsOa2VH2"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E701F4E34;
+	Fri,  1 Aug 2025 06:26:34 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247721E990E;
-	Fri,  1 Aug 2025 06:26:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E911E990E
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 06:26:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754029575; cv=none; b=qmDVr2diELilavN85Lijamu9NHfomiIJmIkYmdDFX0VJSTlu002FDZfLvAjGw5tm34rMb32+1wVo2iSwZomNtaf2vGRxd6syIWKD6jWgTCamuto9wfm4kUkBJap/kgMzZzAkxgphcz+ycll4hogaiX2VZDKhB1Itt85Yn5BT/9k=
+	t=1754029593; cv=none; b=mj3OyEDTqXqNdItAuXWia0rQvEcQAceCVbsoYDrxSO9Um3pE4zq1wGDdHbEBmyVtkL6YI2qbrwL0PDtFwsyV22Gw/6RMy8FE0+g4+yr0HFeaDy9g5EzWhNPUbuLAzlF93fZzxoMao1ItuR+yr84kUhFnECnw6Vs3QGzo5YzVHXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754029575; c=relaxed/simple;
-	bh=Iyuos2WuMUuHbuCKML4q7MLBu7sUFymL6NohcPoiDeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WfD8VJnwS9PXfiAqaqYSaPWRDB3iJHsdoQQiAwnYZ6G7GZRsrckbRljVcPMqBUy+SKUPCU9kdrwutzqh8/o/NMrR4jUilBrnWn3MYeyidZrHOR4njX714oatQJMyYNgooJii00dwsGFtGgJObT1IA//VssAs2ZQRbEWeCLIWFt8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=XqxOq+ZH; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BsOa2VH2; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 1 Aug 2025 08:26:02 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754029565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hv4ZCOwdnfJ/J4InRvz3xUjn19Zuy/e34BlQyBxdsyA=;
-	b=XqxOq+ZHQeuO09wR4/5YFQQ9lFc2XKiXcOlPHJ+NLPJtrO2bSn2J9wRdmE/x76eV51tUYQ
-	xZ18f5W+d3WgQUg8BTgJFwICf154gmczm4pfeustRMP1cM8VPeL47TKr4CXnf29toKZtz8
-	RjVOhmXAyi3EV40FcO7X9KbYD6DwGdKSj2NPPCpyLehVc8D7KWsz+0AFrYmxzf930IbhiR
-	1YJHycZcGe1t+guDcPxYfZblU4mVz5Aaz/1ouRtXSUEQH6wW1bt67Ew7DC5F6JMFBAf58y
-	YbrQO856mhB4CfUnTkShkopvLTFA5awnP4W1ghVcZfZmujWLr5grcYY0sQ/+eg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754029565;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Hv4ZCOwdnfJ/J4InRvz3xUjn19Zuy/e34BlQyBxdsyA=;
-	b=BsOa2VH2SGayPn7tLXVzDtxAJJiecj3v8TSSnrrXn2IK33nEbpQur8YrcVmItF+GQ4vCQP
-	L794yl5VBjezxQDQ==
-From: Nam Cao <namcao@linutronix.de>
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 2/5] rv/ltl: Support per-cpu monitors
-Message-ID: <20250801062602.u-m4BDbt@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
- <da946aaf40a8d1a320dc62673013ceceef1c93b3.1753879295.git.namcao@linutronix.de>
- <0fb442dc58bd36345b60f4bb8f6be73db74900ac.camel@redhat.com>
+	s=arc-20240116; t=1754029593; c=relaxed/simple;
+	bh=PbG8XQYG0g35yJ9gdzlcsnnlLyMa3IkLVqr15YnaMcI=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=i0jNjNSahcpTtuaoForOzj5F/I0wVLuWjY853yIR152VgcEkpUDm/AKp7W/sqe7UJy+csKgOrbl4lw4o19xXY0vzoHi+SHOjWVK8MM8eHdbCKlBXW/4os7BrtfomgjpQojpqhNcVb6ZXjdvGTNeFFERafNTlAsE29+7pgMaI/Fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.174])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4btbSR0xLFz14MCN;
+	Fri,  1 Aug 2025 14:21:27 +0800 (CST)
+Received: from kwepemf500018.china.huawei.com (unknown [7.202.181.5])
+	by mail.maildlp.com (Postfix) with ESMTPS id 10BA91401F2;
+	Fri,  1 Aug 2025 14:26:21 +0800 (CST)
+Received: from [10.67.145.254] (10.67.145.254) by
+ kwepemf500018.china.huawei.com (7.202.181.5) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 14:26:20 +0800
+Message-ID: <8c6eb963-0a3a-8b75-8ab4-a0b2e10f3d40@hisilicon.com>
+Date: Fri, 1 Aug 2025 14:26:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0fb442dc58bd36345b60f4bb8f6be73db74900ac.camel@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.0.2
+To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
+CC: <yangwei24@huawei.com>, <yaohongshi@hisilicon.com>
+From: wangwudi <wangwudi@hisilicon.com>
+Subject: Question on the scheduling of timer interrupt and FIO interrupt
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemf500018.china.huawei.com (7.202.181.5)
 
-On Thu, Jul 31, 2025 at 10:02:19AM +0200, Gabriele Monaco wrote:
-> You don't really need to follow to the ID/IMPLICIT convention here.
-> 
-> These LTL per-cpu monitors are, in fact, not implicit since they do
-> have an id (the CPU), implicit makes sense with the current
-> implementation of da_get_monitor that uses the current CPU (doesn't
-> have to stay that way, but there was no need to change so far).
-> 
-> If you don't want to get rid of the task's comm in the tracepoint (and
-> unify both with an integer id, like with DA), I'd suggest you use
-> different names like CONFIG_LTL_MON_EVENTS_TASK (in fact that doesn't
-> just have an ID) and CONFIG_LTL_MON_EVENTS_CPU (or even
-> CONFIG_LTL_MON_EVENTS_ID, for this it actually makes sense).
-> 
-> I'd prefer it as general as possible to ease new monitor types, but to
-> be real picky the LTLs per-task are not ID and the per-cpu are not
-> IMPLICIT.
-> 
-> The id field is what the rv userspace tool uses to differentiate
-> monitor types, by the way.
+Hi, all
+When running some FIO tests on ARM64 server(Kunpeng), frequent NVMe interrupts occupy the
+CPU, and the CPU's hardirq load is 100%. The watchdog feed interrupt arch_timer cannot be
+responded, triggering the hardlockup.
+GIC driver uses GICV3_PRIO_IRQ to set the same priority for arch_timer interrupt and NVMe
+interrupt. In GIC spec, "If, on a particular CPU interface, multiple pending interrupts
+have the same priority, and have sufficient priority for the interface to signal them to
+the PE, it is IMPLEMENTATION DEFINED how the interface selects which interrupt to signal."
+Shell we consider setting a higher priority for the arch_timer interrupt to fix this case?
 
-Ah, these names didn't make sense to me. But DA use them, so I was
-"whatever".
-
-Thanks for the explanation, let's use the _CPU names instead.
-
-> > +#endif /* CONFIG_LTL_MON_EVENTS_IMPLICIT */
-> > +
-> >  #endif /* CONFIG_LTL_MON_EVENTS_ID */
-> 
-> Also, I'm not sure if that was intended, but
-> CONFIG_LTL_MON_EVENTS_IMPLICIT gets compiled only with
-> CONFIG_LTL_MON_EVENTS_ID.
-
-That was certainly not intended.
-
-Nam
+Thanks for your help.
+Wangwudi
 
