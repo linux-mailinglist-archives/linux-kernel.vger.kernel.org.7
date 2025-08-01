@@ -1,159 +1,217 @@
-Return-Path: <linux-kernel+bounces-753523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 405E0B18425
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:44:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65D06B18427
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:46:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EE8593BC777
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:44:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7178F58341F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:46:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC5D326FA77;
-	Fri,  1 Aug 2025 14:43:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3092641E3;
+	Fri,  1 Aug 2025 14:46:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HqSJGCVR"
-Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkhjs190"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AB325743E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:43:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F631B95B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:46:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059437; cv=none; b=K3Q4fAx+V6HglEUF0mlR1nuPtFfh+vFDFRZC2w42OSUhiXZLOCIzEUS+RtJxnTy8h2cyHuxXi6jE4fAsbRbLI2E6TvcYzUXLQ8mTyeQ793AHrWTQWB52m4ISLmQgDxJimrE7Cf6EDl63pMzg0uUEym4BuChpHlanTAc2zka+pMw=
+	t=1754059595; cv=none; b=UvAEan8gvj1CcMMo08xVhnRi2lBumozT79MJ5kQxI9Pf7gAuwC5fn1ZA6NQsTU4ptBHC5/2oOu9rZfVTYSDBJHG0xkYyyrJ/xmZFmeZ6hpApd5o8Zzwqh3FoJU9F1H8kV8CfSS/wNI6NIxZmyKCmZkaIIneW76UgvhfcDeCy1jk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059437; c=relaxed/simple;
-	bh=xbRNygqeCI/g92dMO05R8xANYrSCMlkw/7PZ6ZSdPoo=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=GbrPwb3ZGf4IpKeG3afvukpg9GKbRQCSPA0MCD0b9Bivw7lTCtoW2cx4pU/oUEsjuS5MBZwTS6+8e3Lg8dF7pG0rL6oB7tRrgPi3JniYabM7IZyBskAR3EZf58EY4anf4s7DXVwzXabjuikgHJrP76fhdwRoR+PkPCp7kMRIYQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HqSJGCVR; arc=none smtp.client-ip=217.70.183.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 2545244343;
-	Fri,  1 Aug 2025 14:43:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754059433;
+	s=arc-20240116; t=1754059595; c=relaxed/simple;
+	bh=+yoTY6yazGqtzU9wYBLRmdeuy6FQWG1zEpIB1hfnyos=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=D0UmzcOR3XxUAKS9vkZ/8l7d7PAMFkGy2T1ctz53wMXMcx50xu02RzDlTHIgnt3B466p5urkItGC2OhZcU2GRv7GusXyK0Hqd1KkLB/kZ9qGizcep/VYZoUVazyHYOcnD1cbMGEhv9NsXm6/69S/6g/xt7/vqPoGT6GfjNsSOtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkhjs190; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754059593;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=yK4ipANA6XLeByXgFwmLEFeRRYI7v5g/yoyt5zSHMD4=;
-	b=HqSJGCVRhcTia5nmSTiP/eck5fzRmFedbhUeDHKbEFrdhpJrvEavG94xtqpegvpApO1UST
-	TjbwbxT1L/2T6Og/0U32wQN9vuYoD4433AUNo/QNRq3/jGzzsizr9tVZHskr6kQGDnB5NN
-	VLLinr7H9LlaevSgL5M/EqU5mcx0RybyzutJBoIpxPC/wPyqfRE9MX0oD6NjMPLzJhufmm
-	8ZAR0ocAhXY4NxVftXkgB8JeXE6NifdjStUwjilbrVYaMH7rGPE2xeN+U/HFAMzEtOlM5g
-	FHiGVcdooBUiI8E3lh2hZsA1wg7BHh/jwEBTZuxelbCOs/6CN1Ju3jZD2srdfQ==
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Date: Fri, 01 Aug 2025 16:43:49 +0200
-Subject: [PATCH 2/2] drm/vkms: Properly order plane for blending
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=wfKEuSvGNLIOEeuYVrCUQFDZLH95SE68FOENdwseoJM=;
+	b=bkhjs1900IxNeKtBXmf7DbHelyOS74LOSkSQQ4ZKVz0ajMO/BAMom4b9Pwyk8P3MTR6wLL
+	1zfW5fEC/4uCtD/AwouF2Jc+Sqk5z1MTNfzSUKJB6zCrXZjLmjGgFuMXSJKxrDEmv85gCG
+	HCCvH3iVLZsfj6PubTFcwpMhKKm3Imc=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-690-hDJKDKgmOLmW4U7Pabng0w-1; Fri, 01 Aug 2025 10:46:32 -0400
+X-MC-Unique: hDJKDKgmOLmW4U7Pabng0w-1
+X-Mimecast-MFC-AGG-ID: hDJKDKgmOLmW4U7Pabng0w_1754059589
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso7073425e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:46:30 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754059589; x=1754664389;
+        h=mime-version:user-agent:content-transfer-encoding:autocrypt
+         :references:in-reply-to:date:cc:to:from:subject:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wfKEuSvGNLIOEeuYVrCUQFDZLH95SE68FOENdwseoJM=;
+        b=SkqevTXtN5+wJSDwbOzaGZnhIq/ePjwoFGRVfsJqODxiRwwMPEcCvvpn+9RbFC77OE
+         d0vvL+vQUk/GeSENs555JvowckIy+c2ohqo/aaa7qUMcBUMh09DeizbYDBT6szAkFgGI
+         nr8jt2ZbXPR2yKOWbv7CQsMm34XcnACjBMwUTCAMB9g0USaren2gmoKGJ1hW2FpGPda7
+         HAmFD2sBsuFp9Gb7gMwAGw+ToQqP9ZfkW8yoFoTaFQhlWaXKy7d8DjR90tmfMfJ6oU5k
+         4JRKbuOtGutX30rtgYZUix6kpRR3kDbbBppnApj9by9l0EODsSLWbBzmRkS5Wm7o419f
+         3wVA==
+X-Gm-Message-State: AOJu0YyAMH0bfRVkBbVwk7xxyBh5G1PLHechfysE5xrLAHPov9I2akPy
+	HXs8t7rUzAVBXTwALYezKg2OdOLLlk5lQR3wLNDZg7YCWQTJTp/MJ6iH93bwth4GhyDOZ966M4l
+	t1FAdRB0VdbOVo/E13GuItbEffHESZiZqo/ZHOiOG0fMEdkGHJ4gYl5jl5PC+9CWuvQ==
+X-Gm-Gg: ASbGncuQ6+YCeWKrEsya2BIMVN0STMfolXnQac9IkRHRyoDTMKgX7OMsxV0nMdfoe34
+	7sEVZLTO5vy8zXkFGokl41bhbGlsN5L2PikjmLZbq2ZrYkP9rE5sR+XAynuw7nFtMDSaXVl2/di
+	G/B7/1drK9eNwV3vzLOwoy6CsXshCCiiAFxfcEszBom/3+sF5Y/fZMpTJSYLpNQIY8GVRYYNxSt
+	56TS4tVIsgk9VkXzXwfSD4lwnONMLL6m7YqTPGcwvW9Nw/qb7O5M0IowewCPWeX67XuLio4G9ia
+	5Z/nc1mdamxhOYHC57H/2IYlRVOoxp39wsW5MT8yUbvGsbs0SxumJxQ0KpAyCCPx2w==
+X-Received: by 2002:a05:600c:64c7:b0:453:6b3a:6c06 with SMTP id 5b1f17b1804b1-45892bcfd4amr109720045e9.29.1754059589016;
+        Fri, 01 Aug 2025 07:46:29 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEvrL7M0VzLs8T6AWKtQGtQXKhcc1Z4XWhyHuRZxj/SjTgUZcgGuG7/yMqhFhfFAcNBhbkcsw==
+X-Received: by 2002:a05:600c:64c7:b0:453:6b3a:6c06 with SMTP id 5b1f17b1804b1-45892bcfd4amr109719735e9.29.1754059588511;
+        Fri, 01 Aug 2025 07:46:28 -0700 (PDT)
+Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c80sm6088985f8f.43.2025.08.01.07.46.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 07:46:28 -0700 (PDT)
+Message-ID: <1d12942942150462f77ea87fec8f294f46c87b4f.camel@redhat.com>
+Subject: Re: [PATCH v9 6/8] sched/isolation: Force housekeeping if isolcpus
+ and nohz_full don't leave any
+From: Gabriele Monaco <gmonaco@redhat.com>
+To: Waiman Long <llong@redhat.com>, Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>,  Thomas Gleixner <tglx@linutronix.de>
+Date: Fri, 01 Aug 2025 16:46:26 +0200
+In-Reply-To: <a2ef7773-bec6-466f-81b3-e1d8f6cbe7b6@redhat.com>
+References: <20250730131158.101668-1-gmonaco@redhat.com>
+	 <20250730131158.101668-7-gmonaco@redhat.com>
+	 <a2ef7773-bec6-466f-81b3-e1d8f6cbe7b6@redhat.com>
+Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
+ keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
+ 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
+ Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
+ Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
+ xyhmqeUWOzFx5P43S1E1dhsrLWgP
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-vkms-fix-zpos-v1-2-d83ba1e6291d@bootlin.com>
-References: <20250801-vkms-fix-zpos-v1-0-d83ba1e6291d@bootlin.com>
-In-Reply-To: <20250801-vkms-fix-zpos-v1-0-d83ba1e6291d@bootlin.com>
-To: Haneen Mohammed <hamohammed.sa@gmail.com>, 
- Simona Vetter <simona@ffwll.ch>, Melissa Wen <melissa.srw@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>
-Cc: thomas.petazzoni@bootlin.com, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, Louis Chauvet <louis.chauvet@bootlin.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2542;
- i=louis.chauvet@bootlin.com; h=from:subject:message-id;
- bh=xbRNygqeCI/g92dMO05R8xANYrSCMlkw/7PZ6ZSdPoo=;
- b=owEBbQKS/ZANAwAIASCtLsZbECziAcsmYgBojNKm+N6ReAgv5etfRseZt/O/Z7/nzOWM5g7Dg
- NZyBvuZBYiJAjMEAAEIAB0WIQRPj7g/vng8MQxQWQQgrS7GWxAs4gUCaIzSpgAKCRAgrS7GWxAs
- 4nb9D/wOOQGnHoqr1UxnEadidkrvQUtCgmTJzA9Zf8iTPKoshPDm8ERCBly/IHnPrvWy77/Xfnc
- U6BG1fzoq6UyCfEuIyX2zZnQTYGh/NCq+vHe7VzKPkr2JHG9W49Stu0+g60wKMKxZGNhyr5Z0c7
- n32w6ZZ/jUY7r7ICjvrlBR7Pnjm/WwXY+OyFYzCB6+jSKmUVIWkJ+yPh1Dwng+V6EAw9dTCVjul
- nBO30lZSSUZggHGx4dittSvmgDJFbE2XiyApTsIl3o+2lA5ALTapYLlcDM0qSYuYXWjxWLPkIE8
- j0p6tmww1PFnV/U3fY73lD6g/ZiJbk5hFj3jKZ9pv/IEw3txtOmkfdpDSnyF7hzMq5uv1pZGKdj
- lRMknrEIk0ubc7HhZTW231pNrB8US8m/BSN3xx549oY1I+9NT7adtJuOHOGdPxtIGFFQAcSiRkG
- +/y2umfarf6Tx07iOZL21G0lmaQjT+r5jeARg4AQJPgCosE6a0dluSmWA4raX9Hj8Qo+lWn1zcB
- c8dNJk8Xh1RJrMgojkDIlqiCnZCXft0ktLplLKqaJQDbDl95tXfxAx/X0Hld/0D2VUJiFoY+vxv
- bvsZm9NREFT89kkU19hqZd4YAh/Hg0YMTeBXJFWBe81g11uiAqbh+dpLh1XAGmFqxmQfjnaDciV
- 9ir0vIM7k95oZaw==
-X-Developer-Key: i=louis.chauvet@bootlin.com; a=openpgp;
- fpr=8B7104AE9A272D6693F527F2EC1883F55E0B40A5
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefleeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeehtdejtddtteeiiefgleejkeetteevhfdukeegleffjeehgeeivefhgeduffdvvdenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepuddupdhrtghpthhtohephhgrmhhohhgrmhhmvggurdhsrgesghhmrghilhdrtghomhdprhgtphhtthhopegurhhiqdguvghvvghlsehlihhsthhsrdhfrhgvvgguvghskhhtohhprdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepthiiihhmmhgvrhhmrghnnhesshhushgvrdguvgdprhgtphhtthhopehmvghli
- hhsshgrrdhsrhifsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
 
-The current blending algorithm requires that vkms_state->active_planes be
-ordered by z-order. This has not been an issue so far because the planes
-are registered in the correct order in DRM (primary-overlay-cursor).
-This new algorithm now uses the configured z-order to populate
-active_planes.
 
-Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
----
- drivers/gpu/drm/vkms/vkms_crtc.c | 26 ++++++++++++++++++++------
- drivers/gpu/drm/vkms/vkms_drv.c  |  1 +
- 2 files changed, 21 insertions(+), 6 deletions(-)
 
-diff --git a/drivers/gpu/drm/vkms/vkms_crtc.c b/drivers/gpu/drm/vkms/vkms_crtc.c
-index e60573e0f3e9510252e1f198b00e28bcc7987620..f3f3ad8ede29987b385d53834970bcd0c6adefa7 100644
---- a/drivers/gpu/drm/vkms/vkms_crtc.c
-+++ b/drivers/gpu/drm/vkms/vkms_crtc.c
-@@ -200,14 +200,28 @@ static int vkms_crtc_atomic_check(struct drm_crtc *crtc,
- 	vkms_state->num_active_planes = i;
- 
- 	i = 0;
--	drm_for_each_plane_mask(plane, crtc->dev, crtc_state->plane_mask) {
--		plane_state = drm_atomic_get_existing_plane_state(crtc_state->state, plane);
- 
--		if (!plane_state->visible)
--			continue;
-+	unsigned int current_zpos = 0;
-+
-+	while (i < vkms_state->num_active_planes) {
-+		unsigned int next_zpos = UINT_MAX;
-+
-+		drm_for_each_plane_mask(plane, crtc->dev, crtc_state->plane_mask) {
-+			plane_state = drm_atomic_get_existing_plane_state(crtc_state->state, plane);
-+
-+			if (!plane_state->visible)
-+				continue;
-+
-+			if (plane_state->normalized_zpos == current_zpos)
-+				vkms_state->active_planes[i++] = to_vkms_plane_state(plane_state);
-+
-+			if (plane_state->normalized_zpos > current_zpos &&
-+			    plane_state->normalized_zpos < next_zpos)
-+				next_zpos = plane_state->normalized_zpos;
-+		}
-+
-+		current_zpos = next_zpos;
- 
--		vkms_state->active_planes[i++] =
--			to_vkms_plane_state(plane_state);
- 	}
- 
- 	return 0;
-diff --git a/drivers/gpu/drm/vkms/vkms_drv.c b/drivers/gpu/drm/vkms/vkms_drv.c
-index e8472d9b6e3b2b5d6d497763288bf3dc6fde5987..e492791a7a970b768184292bf82318e3fca6b36a 100644
---- a/drivers/gpu/drm/vkms/vkms_drv.c
-+++ b/drivers/gpu/drm/vkms/vkms_drv.c
-@@ -135,6 +135,7 @@ static int vkms_modeset_init(struct vkms_device *vkmsdev)
- 	dev->mode_config.max_height = YRES_MAX;
- 	dev->mode_config.cursor_width = 512;
- 	dev->mode_config.cursor_height = 512;
-+	dev->mode_config.normalize_zpos = true;
- 	/*
- 	 * FIXME: There's a confusion between bpp and depth between this and
- 	 * fbdev helpers. We have to go with 0, meaning "pick the default",
+On Thu, 2025-07-31 at 11:09 -0400, Waiman Long wrote:
+>=20
+> On 7/30/25 9:11 AM, Gabriele Monaco wrote:
+> > Currently the user can set up isolcpus and nohz_full in such a way
+> > that
+> > leaves no housekeeping CPU (i.e. no CPU that is neither domain
+> > isolated
+> > nor nohz full). This can be a problem for other subsystems (e.g.
+> > the
+> > timer wheel imgration).
+> >=20
+> > Prevent this configuration by invalidating the last setting in case
+> > the
+> > union of isolcpus and nohz_full covers all CPUs.
+> >=20
+> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+> > ---
+> > =C2=A0 kernel/sched/isolation.c | 12 ++++++++++++
+> > =C2=A0 1 file changed, 12 insertions(+)
+> >=20
+> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+> > index 93b038d48900..0019d941de68 100644
+> > --- a/kernel/sched/isolation.c
+> > +++ b/kernel/sched/isolation.c
+> > @@ -165,6 +165,18 @@ static int __init housekeeping_setup(char
+> > *str, unsigned long flags)
+> > =C2=A0=C2=A0			}
+> > =C2=A0=C2=A0		}
+> > =C2=A0=20
+> > +		/* Check in combination with the previously set
+> > cpumask */
+> > +		type =3D find_first_bit(&housekeeping.flags,
+> > HK_TYPE_MAX);
+> > +		first_cpu =3D
+> > cpumask_first_and_and(cpu_present_mask,
+> > +						=C2=A0
+> > housekeeping_staging,
+> > +						=C2=A0
+> > housekeeping.cpumasks[type]);
+> > +		if (first_cpu >=3D nr_cpu_ids || first_cpu >=3D
+> > setup_max_cpus) {
+> > +			pr_warn("Housekeeping: must include one
+> > present CPU neither "
+> > +				"in nohz_full=3D nor in isolcpus=3D,
+> > ignoring setting %s\n",
+> > +				str);
+> > +			goto free_housekeeping_staging;
+> > +		}
+> > +
+> > =C2=A0=C2=A0		iter_flags =3D flags & ~housekeeping.flags;
+> > =C2=A0=20
+> > =C2=A0=C2=A0		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
+>=20
+> I do have a question about this check. Currently isolcpus=3Ddomain is
+> bit 0, managed_irq is bit 1 and nohz_full is bit 2. If manage_irq
+> come first followed by nohz_full and then isolcpus=3Ddomain. By the
+> time, isolcpus=3Ddomain is being set, you are comparing its cpumask
+> with that of manage_irq, not nohz_full.
+>=20
+> Perhaps you can reuse the non_housekeeping_mask for doing the check,
+> e.g.
+>=20
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpumask_and(non_housekee=
+ping_mask, cpu_present_mask,=20
+> housekeeping_staging);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iter_flags =3D housekeep=
+ing.flags & ~flags;
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for_each_set_bit(type, &=
+iter_flags, HK_TYPE_MAX)
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 cpumask_and(non_housekeeping_mask,=20
+> non_housekeeping_mask, housekeeping.cpumasks[type]);
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cpumask_empty(non_ho=
+usekeeping_mask)) {
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
+=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn(...
 
--- 
-2.50.1
+Mmh right didn't think passing different masks in isocpus was possible.
+
+You mean something like this right?
+
+ isolcpus=3Dmanaged_irq,0-4 nohz_full=3D8-15 isolcpus=3Ddomain,0-7
+
+Which doesn't block the nohz_full because the first mask (managed_irq)
+leaves spaces.
+
+Right now we block assignments like
+
+ isolcpus=3Dmanaged_irq,0-7 nohz_full=3D8-15
+
+and=20
+
+ isolcpus=3Dmanaged_irq,0-7 -a isolcpus=3Ddomain,8-15
+
+although this series doesn't really have problems with it.
+Shouldn't we just ignore these cases and just count domain + nohz_full?
+
+The solution you propose is to check all housekeeping, so it would also
+prevent the (safe?) assignments above, right?
+
+We could just check against the previously set domain/nohz_full and
+leave other flags alone, couldn't we?
+
+Thanks,
+Gabriele
 
 
