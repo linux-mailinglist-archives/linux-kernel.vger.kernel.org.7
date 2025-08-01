@@ -1,129 +1,256 @@
-Return-Path: <linux-kernel+bounces-753848-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753849-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFFF7B188E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:42:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3FA9B188ED
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:48:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ED6D57B5F57
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:40:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36F90AA138D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:48:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A32B28DF12;
-	Fri,  1 Aug 2025 21:41:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D82C221282;
+	Fri,  1 Aug 2025 21:48:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NDxdDNhj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="boVu1spM"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C547819F121
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:41:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B1B13A258
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754084513; cv=none; b=trN2i8KEDYdcZOMzLIji/VdUk8pf2gyN8c19TGtgfRGBG8MU9O8WOKh01jXfR1EudRcfkQWPRqkykYG/OckKvnT02dMZ8RdXVgMNQqhcnRnM44BDdP/tjGl1siW9Hj5pOEuscUQdeSzwIU2qmSH2HV4OB4OnMYv1Oq+CwN/mwVQ=
+	t=1754084894; cv=none; b=D3hZNv6Mff6Iv2GSxeLJ3Gzkl9lID849rSIC9F2XhQl5jMDj9xFYMkjJZwVBeXTTddAeIgQg+kRwEwQoWpX+P2KSPho912uWuiqbxjA568k6DrCtgX5Qa+2xvslp4M8HiRROKjYJQE/gFtAJ17Oj1BPbAkOweSGWUXL5ba9Wi08=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754084513; c=relaxed/simple;
-	bh=i625gcnny+wSz3HQOlwjTnzLTAmeo9OEca0WJzZ3RE8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sikbx7bJdNa5DPgnRX7miuqs7Oui2KqHG3zjbFM4mmtokQ1gtzkwo8tCizrWdiClj8jIFAC3r5i8ljheLHaf9h8hd7KcjWXzrjhBfjER7Av4EGB/SX7Encpp/uJOmWdgxP0QciyTE+YdfS8Z9gWPalqJAxmNcLYsvGsseoFHWBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NDxdDNhj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30201C4CEE7;
-	Fri,  1 Aug 2025 21:41:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754084513;
-	bh=i625gcnny+wSz3HQOlwjTnzLTAmeo9OEca0WJzZ3RE8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=NDxdDNhjmTyerZebxCxtEP3yEL5CswFVc7TqX3DCv0J1EugdAqUxff1lQ9CLWBVLm
-	 Spv5eniCRCnkjqZ4pPq8ERtfBnlNctbuqucOYNZzhtp5BMCE9+5NKMwR17wfLyLhpK
-	 l0vVybyjEwweTDjzyDT5S3TJFAKKROBibRT3avqYrCWpE8NHaIUfL/uU9f/VjYoyL/
-	 bq8gZNgZzF47H+1W4GYIMW5+ohw760kJ5R8zZmryzFU2QZKaVYEGG30H+f6ZbRhlfG
-	 s9iFcrr+YZlkkfAjLE8b62Tc2z1jlCLk8ftvzFw3zktVtC2hG+Yb00X5cjnCmkv3tM
-	 kOSmsPB3+gIQA==
-Date: Fri, 1 Aug 2025 14:41:51 -0700
-From: Drew Fustini <fustini@kernel.org>
-To: Palmer Dabbelt <palmer@dabbelt.com>
-Cc: rkrcmar@ventanamicro.com, Bjorn Topel <bjorn@rivosinc.com>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Paul Walmsley <paul.walmsley@sifive.com>, samuel.holland@sifive.com,
-	dfustini@tenstorrent.com, andybnac@gmail.com,
-	Conor Dooley <conor.dooley@microchip.com>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
-	linux-riscv-bounces@lists.infradead.org
-Subject: Re: [PATCH] riscv: Add sysctl to control discard of vstate during
- syscall
-Message-ID: <aI00nzzma4gXrmh/@x1>
-References: <DBHTIDY0HRM0.2B8L1WG7IBCXM@ventanamicro.com>
- <mhng-E49DDC7D-A330-4626-A122-4146AADDBB33@Palmers-Mini.rwc.dabbelt.com>
+	s=arc-20240116; t=1754084894; c=relaxed/simple;
+	bh=2nYU1lkP3rdwvxv7duZEWvr237Q7jYErtWE5+DzE6ys=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=hjyYR0bAhSgYLb3vD6G2dskG0sQZRFEhctlNoGAjwsKPxIqGSIjpRxcA2cz25H6v4nrUGzlhy6QAVzVHwWm83ggigQU5nRIZK7bab9KxswWZEdbGLsFAcDBCtkNoUWYVzmaEugu0WSfign2fw6ONnpRuPonE0G/EarfxDxX5NHA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=boVu1spM; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3a588da60dfso1193093f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 14:48:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754084890; x=1754689690; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=fI91IK0Uee+l0l0RWTtUg4WuMooWIVkt0N1mcrqEpF0=;
+        b=boVu1spM8aZjuoy3DX2oVYh+Oal/aUnAVq+GSHIEuM880u07jG25ErqybIo2+LkAOV
+         mO3NrOfxO+swqDN9GU0oZS7tBNUNRlgv+EXwguouV4cqs56HKCi1p5BPMWtAZ3AWmJjV
+         sMNsxWjwFnQeK8li/ypBk9rUIFH0Zh0lxP4TTPO3gmqkJPOmfLk3j8clCc81Pi2PZCk8
+         7E13RkzfLmWDz1aHMijLSaCawsSsUsE9UX8DEbPmLOWpHqm/FgPwW8ZCU2lBrBqhKcuT
+         +Y4MBK+uVMrisgj4MBMZuif+qSyteI2+1iTMi9BiYYIPvztyBNZmpvQKYBHYxd7sG12Z
+         YvMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754084890; x=1754689690;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=fI91IK0Uee+l0l0RWTtUg4WuMooWIVkt0N1mcrqEpF0=;
+        b=o8ZStP8ZpN/R76ihoDeyn8hZVl5ZhHbCaKfNnc+Tw/+qPb52bYSCWHMy7Et4aTZw5q
+         lZ+ovem62i4dqj9A7TOTENtlAjubz8ZWzQK+QtBhuvgxOqzb66ylEeNLgnv7he5i+yjx
+         KlFiKdW6+wt58HGiaKQMThSHRlGoivLP7wUQZd4JlRqqBQoPPvF5o9erc18EX8ogP/PJ
+         MI5pUJ6M6D1Z85G1NBT/g23KnQARPRRIxUdJHy8FZfz8r+kLEOPg/IcjB3QLL5yFPYX9
+         tc1DfYeVBlUQyq+x57V7TEv6b1q69h0GVJT7i623nHnkdZE6Ld/03TIZ5aVClLic3Rwo
+         nwwg==
+X-Forwarded-Encrypted: i=1; AJvYcCW16z8TqRlmdE/4qxI7AUbm0d/2iqInESTyk0Fv3Tm4GMX9AijY4CKKIYuK56Vrt8X/u5YbY7DDtNvPYGI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw5p4dvKtJUMHFiGo0oAKSNNpEomEU1x1nSxXfan/Tjes2v7Oyc
+	4hI2Dxt9zWfcvf7Zv4mT5BDXeoa/RQIOwtzA/LpnE4xwvFOHwoRjQFLH6djOPezUYow=
+X-Gm-Gg: ASbGncs3ktH6CAcnY45DqiOUEkub/xpNxcJaomJ4wKtQ55dcyAyvtvJDTAYbQByj0er
+	SAWdPK35yCRnsscK8R975T1GwKgYRfidsSjv3juf5H2qnzXAgD9A5gWtGQZ1+EKs5N4a9To2H9e
+	lve9htrUKR1MEYZgqsDEGE2cJ/zQFNFGuLNGytXBsfDrkXlzQZnFbaAMTstvZt6l/pogrYgt/sH
+	N8fIZYbiSLoUG3TcLfb116T9Hw/eNSQEvz7ajC+oTZzQw4ZrJS/qJaX34ZOXvW0m6fDWX8BXQn5
+	Xkhv6pE9elM1W8uKHm7m4QXNh2xCQYvkzda9lELSSOgkV6k4YEU78+B/VK8RzEotUJOxN6eBe8L
+	DV2jfh7VpK28Ktnze7kmV498Bk8WyDGWyVGWoiNdofN1GhCjb2g==
+X-Google-Smtp-Source: AGHT+IGcxPd6ttW5Fwu5Shapyv7KzTnHMlxiyiHlTA8E6mP0eDANxculcsx2qawer8ysoo6aDZPWhw==
+X-Received: by 2002:a5d:5f87:0:b0:3b7:8473:31bd with SMTP id ffacd0b85a97d-3b8d9409097mr975786f8f.0.1754084890278;
+        Fri, 01 Aug 2025 14:48:10 -0700 (PDT)
+Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da6141sm8315065a91.1.2025.08.01.14.48.06
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 14:48:09 -0700 (PDT)
+Message-ID: <45b62d6f-40fb-41c0-9c1a-e97b341930e3@suse.com>
+Date: Sat, 2 Aug 2025 07:18:04 +0930
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <mhng-E49DDC7D-A330-4626-A122-4146AADDBB33@Palmers-Mini.rwc.dabbelt.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [syzbot] [btrfs?] WARNING in btrfs_lookup_extent_info (2)
+To: syzbot <syzbot+c035bce0effd1de39e05@syzkaller.appspotmail.com>,
+ clm@fb.com, dsterba@suse.com, josef@toxicpanda.com,
+ linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com
+References: <688d0dde.050a0220.f0410.0130.GAE@google.com>
+Content-Language: en-US
+From: Qu Wenruo <wqu@suse.com>
+Autocrypt: addr=wqu@suse.com; keydata=
+ xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
+ 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
+ 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
+ 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
+ gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
+ AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
+ FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
+ Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
+ fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
+ 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
+ V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
+ rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
+ rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
+ Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
+ E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
+ vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
+ g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
+ AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
+ cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
+ qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
+ /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
+ o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
+ JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
+In-Reply-To: <688d0dde.050a0220.f0410.0130.GAE@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Jul 30, 2025 at 06:05:59PM -0700, Palmer Dabbelt wrote:
-> My first guess here would be that trashing the V register state is still
-> faster on the machines that triggered this patch, it's just that the way
-> we're trashing it is slow.  We're doing some wacky things in there (VILL,
-> LMUL, clearing to -1), so it's not surprising that some implementations are
-> slow on these routines.
+
+
+在 2025/8/2 04:26, syzbot 写道:
+> Hello,
 > 
-> This came up during the original patch and we decided to just go with this
-> way (which is recommended by the ISA) until someone could demonstrate it's
-> slow, so sounds like it's time to go revisit those.
+> syzbot found the following issue on:
 > 
-> So I'd start with something like
+> HEAD commit:    038d61fd6422 Linux 6.16
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17bd14a2580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=831eea247244ce8c
+> dashboard link: https://syzkaller.appspot.com/bug?extid=c035bce0effd1de39e05
+> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
 > 
->    diff --git a/arch/riscv/include/asm/vector.h b/arch/riscv/include/asm/vector.h
->    index b61786d43c20..1fba33e62d2b 100644
->    --- a/arch/riscv/include/asm/vector.h
->    +++ b/arch/riscv/include/asm/vector.h
->    @@ -287,7 +287,6 @@ static inline void __riscv_v_vstate_discard(void)
->                    "vmv.v.i        v8, -1\n\t"
->                    "vmv.v.i        v16, -1\n\t"
->                    "vmv.v.i        v24, -1\n\t"
->    -               "vsetvl         %0, x0, %1\n\t"
->                    ".option pop\n\t"
->                    : "=&r" (vl) : "r" (vtype_inval));
+> Unfortunately, I don't have any reproducer for this issue yet.
 > 
-> to try and see if we're tripping over bad implementation behavior, in which
-> case we can just hide this all in the kernel.  Then we can split out these
-> performance issues from other things like lazy save/restore and a
-> V-preserving uABI, as it stands this is all sort of getting mixed up.
+> Downloadable assets:
+> disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-038d61fd.raw.xz
+> vmlinux: https://storage.googleapis.com/syzbot-assets/45453fb53a5d/vmlinux-038d61fd.xz
+> kernel image: https://storage.googleapis.com/syzbot-assets/4094774b8a7e/bzImage-038d61fd.xz
+> 
+> IMPORTANT: if you fix the issue, please add the following tag to the commit:
+> Reported-by: syzbot+c035bce0effd1de39e05@syzkaller.appspotmail.com
 
-Thank you for your insights and the suggestion of removing vsetvl.
+The real problem happens before that:
 
-Using our v6.16-rc1 branch [1], the avg duration of getppid() is 198 ns
-with the existing upstream behavior in __riscv_v_vstate_discard():
+[   76.684845][ T5354] FAULT_INJECTION: forcing a failure.
+[   76.684845][ T5354] name failslab, interval 1, probability 0, space 
+0, times 1
+[   76.699734][ T5354] CPU: 0 UID: 0 PID: 5354 Comm: syz.0.0 Not tainted 
+6.16.0-syzkaller #0 PREEMPT(full)
+[   76.699754][ T5354] Hardware name: QEMU Standard PC (Q35 + ICH9, 
+2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+[   76.699761][ T5354] Call Trace:
+[   76.699766][ T5354]  <TASK>
+[   76.699772][ T5354]  dump_stack_lvl+0x189/0x250
+[   76.699851][ T5354]  ? __pfx____ratelimit+0x10/0x10
+[   76.699894][ T5354]  ? __pfx_dump_stack_lvl+0x10/0x10
+[   76.699908][ T5354]  ? __pfx__printk+0x10/0x10
+[   76.699927][ T5354]  ? __pfx___might_resched+0x10/0x10
+[   76.699940][ T5354]  ? fs_reclaim_acquire+0x7d/0x100
+[   76.699992][ T5354]  should_fail_ex+0x414/0x560
+[   76.700013][ T5354]  should_failslab+0xa8/0x100
+[   76.700030][ T5354]  kmem_cache_alloc_noprof+0x73/0x3c0
+[   76.700043][ T5354]  ? __btrfs_inc_extent_ref+0x1e0/0x710
+[   76.700063][ T5354]  __btrfs_inc_extent_ref+0x1e0/0x710
+[   76.700085][ T5354]  ? __pfx___btrfs_inc_extent_ref+0x10/0x10
+[   76.700113][ T5354]  __btrfs_run_delayed_refs+0xea2/0x3a50
 
-debian@tt-blackhole:~$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 198 seconds
-avg latency: 198.10 ns
+An ENOMEM is injected to a critical path. And we handled it gracefully, 
+not crashing the kernel.
 
-I removed 'vsetvl' as you suggested but the average duration only
-decreased a very small amount to 197.5 ns, so it seems that the other
-instructions are what is taking a lot of time on the X280 cores:
+But this also means the extent tree is not properly updated (thus can be 
+considered as a corrupted extent tree)>
+> BTRFS info (device loop0): balance: start -d -m
+> BTRFS info (device loop0): relocating block group 6881280 flags data|metadata
+> BTRFS info (device loop0): relocating block group 5242880 flags data|metadata
+> ------------[ cut here ]------------
+> WARNING: CPU: 0 PID: 5337 at fs/btrfs/extent-tree.c:209 btrfs_lookup_extent_info+0xcc6/0xd80 fs/btrfs/extent-tree.c:209
 
-debian@tt-blackhole:~$ ./null_syscall --vsetvli
-vsetvli complete
- iterations: 1000000000
-   duration: 197 seconds
-avg latency: 197.53 ns
+The warning is very likely to be caused by the previous error injection.
 
-This is compared to a duration of 150 ns when using this patch with
-abi.riscv_v_vstate_discard=0 which skips all the clobbering assembly.
-
-Do you have any other suggestions for the __riscv_v_vstate_discard()
-inline assembly that might be worth me testing on the X280 cores?
+I'd say, if you're injecting errors, please allow us to give a warning 
+or two.
 
 Thanks,
-Drew
+Qu
 
-[1] https://github.com/tenstorrent/linux/tree/tt-blackhole-v6.16-rc1
+> Modules linked in:
+> CPU: 0 UID: 0 PID: 5337 Comm: syz.0.0 Not tainted 6.16.0-syzkaller #0 PREEMPT(full)
+> Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+> RIP: 0010:btrfs_lookup_extent_info+0xcc6/0xd80 fs/btrfs/extent-tree.c:209
+> Code: 8b ff ff ff 48 8b 7c 24 50 48 c7 c6 31 97 ae 8d ba a9 00 00 00 b9 8b ff ff ff e8 c5 85 6a fd e9 16 fe ff ff e8 0b ee 00 fe 90 <0f> 0b 90 e9 6d fd ff ff e8 dd 44 b0 07 89 d9 80 e1 07 38 c1 0f 8c
+> RSP: 0018:ffffc9000ddfeea0 EFLAGS: 00010293
+> RAX: ffffffff83bf4305 RBX: ffff8880363d43b0 RCX: ffff8880118c0000
+> RDX: 0000000000000000 RSI: 0000000000000000 RDI: 0000000000000000
+> RBP: ffffc9000ddff000 R08: ffff8880363d43b3 R09: 1ffff11006c7a876
+> R10: dffffc0000000000 R11: ffffed1006c7a877 R12: dffffc0000000000
+> R13: ffff88805325c6d4 R14: 0000000000000000 R15: ffffc9000ddff0c0
+> FS:  00007fe87d3d46c0(0000) GS:ffff88808d218000(0000) knlGS:0000000000000000
+> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+> CR2: 0000200000453000 CR3: 0000000011d7e000 CR4: 0000000000352ef0
+> Call Trace:
+>   <TASK>
+>   update_ref_for_cow+0x998/0x1210 fs/btrfs/ctree.c:373
+>   btrfs_force_cow_block+0x9d4/0x1e10 fs/btrfs/ctree.c:527
+>   btrfs_cow_block+0x40a/0x830 fs/btrfs/ctree.c:688
+>   do_relocation+0xd64/0x1610 fs/btrfs/relocation.c:2275
+>   relocate_tree_block fs/btrfs/relocation.c:2528 [inline]
+>   relocate_tree_blocks+0x118b/0x1e90 fs/btrfs/relocation.c:2635
+>   relocate_block_group+0x760/0xd90 fs/btrfs/relocation.c:3607
+>   btrfs_relocate_block_group+0x966/0xde0 fs/btrfs/relocation.c:4008
+>   btrfs_relocate_chunk+0x12a/0x3b0 fs/btrfs/volumes.c:3437
+>   __btrfs_balance+0x1870/0x21d0 fs/btrfs/volumes.c:4212
+>   btrfs_balance+0xc94/0x11d0 fs/btrfs/volumes.c:4589
+>   btrfs_ioctl_balance+0x3d3/0x610 fs/btrfs/ioctl.c:3583
+>   vfs_ioctl fs/ioctl.c:51 [inline]
+>   __do_sys_ioctl fs/ioctl.c:907 [inline]
+>   __se_sys_ioctl+0xfc/0x170 fs/ioctl.c:893
+>   do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+>   do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+>   entry_SYSCALL_64_after_hwframe+0x77/0x7f
+> RIP: 0033:0x7fe880f8e9a9
+> Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+> RSP: 002b:00007fe87d3d4038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+> RAX: ffffffffffffffda RBX: 00007fe8811b6080 RCX: 00007fe880f8e9a9
+> RDX: 0000200000000180 RSI: 00000000c4009420 RDI: 0000000000000005
+> RBP: 00007fe881010d69 R08: 0000000000000000 R09: 0000000000000000
+> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+> R13: 0000000000000001 R14: 00007fe8811b6080 R15: 00007ffc53dc1948
+>   </TASK>
+> 
+> 
+> ---
+> This report is generated by a bot. It may contain errors.
+> See https://goo.gl/tpsmEJ for more information about syzbot.
+> syzbot engineers can be reached at syzkaller@googlegroups.com.
+> 
+> syzbot will keep track of this issue. See:
+> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+> 
+> If the report is already addressed, let syzbot know by replying with:
+> #syz fix: exact-commit-title
+> 
+> If you want to overwrite report's subsystems, reply with:
+> #syz set subsystems: new-subsystem
+> (See the list of subsystem names on the web dashboard)
+> 
+> If the report is a duplicate of another one, reply with:
+> #syz dup: exact-subject-of-another-report
+> 
+> If you want to undo deduplication, reply with:
+> #syz undup
+> 
+
 
