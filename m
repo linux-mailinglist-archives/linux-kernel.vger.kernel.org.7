@@ -1,49 +1,79 @@
-Return-Path: <linux-kernel+bounces-753026-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2469CB17DE2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:59:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05D8BB17DDF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:59:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 591513AD040
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:59:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E2C16FBF9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:58:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF59E21B185;
-	Fri,  1 Aug 2025 07:58:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEC2212FB3;
+	Fri,  1 Aug 2025 07:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gVNXkKfP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pvvef5+S"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A3421A43D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:58:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E1149DF0;
+	Fri,  1 Aug 2025 07:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754035128; cv=none; b=SNYk4aelK/i/XK8V6qmVDVeArCAuXao8w2WUekosisoLyQatUgf+B896eiWNM6n+24bzt0OcmO7+71lyrtblRu0TzuE3tQVGV1MsXy/ySJhxuqmbLzBErZMReoW1tC2oG9V8qxtx3CA6uahbQgFh4OpWnnWx+UfY4INiuoYJ5c8=
+	t=1754035123; cv=none; b=ndp7fatOwYhWbTvLL3VhAryBEYmix/i0la/xCrCN3fJntuVBJcX+P7JjkEKMs4EPDM2dXO8UclUaizMsePQBqqMRr+QSCVq+CxH4V5OUar49JXOAt6OuV40fon1s0Mt87Gf+B/6IhbCV4e2p4gbBv8oCuwzI3jOX9coNYdsjgqk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754035128; c=relaxed/simple;
-	bh=hTPka0+81M201oPI7GZI6XuIue8ZoP/MzhVc+eZGACg=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Q+qjXqkTWNrVWlt5NCCZAA1AA6ALDCLhtjzXt2jYB1x55mQl3u+6c9rZr0Awm2yyAL9N8xwFEDkJZhMw/LDILd5uwe7G8DhD5d5XI3f5Fqu69vTowOuGAQ+onwYoH8B8smjAgxe4KBa3J9x2eTTD5qO2O59mZZ2twuppttyl/q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gVNXkKfP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2B706C4CEF8;
-	Fri,  1 Aug 2025 07:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754035127;
-	bh=hTPka0+81M201oPI7GZI6XuIue8ZoP/MzhVc+eZGACg=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:From;
-	b=gVNXkKfPSVCJTbgWig5KIlQBcYWtKG/dz0HXi8RJz3eZKzie1Cstp/+pt/XVoLtws
-	 vpecW5OF2dlDv5JxPC1DwggmQBLQXdD5OY5QsFVSdhdWk+G/nMPkA/6/51Whg4NviA
-	 zQPNAAuePCRlplcnTiSMVqaqBL8xnEaUDU/rEp9Vg4lbKoFvlg28ma3n5p7FKBWmKg
-	 UlLh5YR0SBz+1rClqyKaA3tLQ33h5EngqH72ZQ1d+Ek/b40pHG6cxPMGp4VnL5udIY
-	 PHOz+akB45uPdJXNm4bGUO8V/2C+LJeV1oe4ZYpGlXmZUahumR0BlB5ZQgC8ch2lGM
-	 JekxPyAUVloPA==
-From: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Date: Fri, 01 Aug 2025 09:58:20 +0200
-Subject: [PATCH 3/3] irqchip/gic-v5: Remove IRQD_RESEND_WHEN_IN_PROGRESS
- for ITS IRQs
+	s=arc-20240116; t=1754035123; c=relaxed/simple;
+	bh=gZJIQtZcU8RgAFF6bz0NixEA+52kPSSbVzusMfq/yhA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bJ1A7QNIZWTjNtzy7uqg/TiTvXV+kHzcnInrafksUZAcpqthWk4+HV50EKNmHhlp7KysJXO+fLrZgV+3QMP5hkBab0BkEPkZSGUnrkdw/eOLAmBNj++BYIwq5GQKtTcfu9Eb+fs/ArZsSqg+Ycyz5usPXT4wmmHFyORMD8+tUXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pvvef5+S; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451d3f72391so11787575e9.3;
+        Fri, 01 Aug 2025 00:58:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754035120; x=1754639920; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=if+jrugCoYKdMUAChMOY2irCS/mGgiPfCTcd1NEbdjY=;
+        b=Pvvef5+SqjKMBGFBIEaYUYnTyMQqbXnvssiYnJb7DwN4UDOpbBB+L9LnP2A/GvEF6W
+         U/5SxGC4R7XrIq4wyFrS62H5IdTQsD8wTtdEvXIzaWkDii8MH2jLKHIroZn0WS8qCntZ
+         E9ajoD8mgjL8uRi3kxh5jIQR2YM6RVAqiaeYgIY/oCCS7pxn3JSOJ+RzTFaWADA8yE6v
+         TOGNuzDmPX0JTKuFp2F05PxqyMXQkyaBCzGbfcltcfvNAQ6HYHV1qujWxx0FXK1uAZrg
+         BKaKWnD8bgVhB7oBdHwr50s3bdrPTNs9mvllNipIYxMP8J6lehYpzUiU7hoCkfJjk6wB
+         jMsg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754035120; x=1754639920;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=if+jrugCoYKdMUAChMOY2irCS/mGgiPfCTcd1NEbdjY=;
+        b=Fn9BYivAyTPTkaQWEaqFoHOIi2iES0ourgAKUipoP7equR/ayygyDVPrrFqiOsPBuW
+         QSL2Nqi6tCfGYTGx0/L9SDjfO5M632TrpKimF8WchLWQa98KNWStazYh6dxU457S6MUQ
+         iF5nHN7hGRIQf3OAuJW4ZuTui0oJWW5Nv+BCJvHjBRZz4v7/Uomiw3WKPKYOJeQeMMoH
+         xZ/LLeE411kmAJdczGLwDyS7FOYqJhvv/8M6I3rzJ6qeg3dSEXu5YmtVDQwDBrwaCkxU
+         BLoUz/jZEIUrna1cTrwjt8mdad74vJyYwQ/lf7W31Sha7yXMjdZ0kj6QEaTWN2r4bsjY
+         LeQQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWPZCeQHiQ5gGtOU3/G1e9RDZoZ1ZNjxOmdeHDSsEZJZNzQHpeoQ5REmOgGfKKd2OE+Xwh6jJMVMdxmrY37@vger.kernel.org, AJvYcCWV8xk2ADyqP3tzJoM4b9Vvn4uwR1q2KEohuIC6U5ZicaefQutgFtvULo0DaA9qywFVaVyT6pq6JftQTavU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXJT0BHaFV7XIOjIIqeYdjALzSTyIKgsvq3+SW2zpOfiEVernV
+	uos8la9QPQIWG1WUBBD1hLYm84OgD5Aj7kyEri9jrEpYlW37GE4gCBqqXaa0oQ==
+X-Gm-Gg: ASbGncsmI1kPwYzY45UgUB5+PxAL6cYCiAHecNKnC6Nr4oKrP1af+nAzS57Vg7SDHcA
+	aDjAyBo8I32qnsXA4IIkIVqfI8re1ZYkmz7oJ3lZsd7x9aFyEtYuOFKbo4zdFPUEdJ6pgAHQMdN
+	LCTrpB4/qiAS1yh59Xp06OyusShWuyJ+bA09G7XUEKxMBG/VVu8RmfrIdzRPbdsCsceAEMAmqJv
+	gQluC7Tf7dY8nqhFNI1MmlHH2w3Br52cQfFQbykUErKlraxQnE+TV8wpLiaK+QVgMg21jJArbi0
+	txdeF2FUBviPM9gLHGt1C5R4CmbHjE4ztznG6B18hYar5rSEBbelYCR5Nue0SzDVlcxu5m8A0py
+	Hvjd0+XrrcpJ5MFZvD/1HV3rrGPAuzKhZNaa0jaeKTk2Cv3foc8AcY2LJrxajOQ==
+X-Google-Smtp-Source: AGHT+IHyWNxPi2finIbBIOeg6Q79VKyVKB7VXLAIFgQqUupvSjpN3TOAAtQGbNCGEpDirXnIys3JeQ==
+X-Received: by 2002:a05:600c:1c21:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-458aa45997emr13496465e9.23.1754035119694;
+        Fri, 01 Aug 2025 00:58:39 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4589ee4f0f8sm55368405e9.15.2025.08.01.00.58.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 00:58:39 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Fri, 01 Aug 2025 09:58:35 +0200
+Subject: [PATCH] spi: spi-qpic-snand: use correct CW_PER_PAGE value for OOB
+ write
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -52,46 +82,78 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-gic-v5-fixes-6-17-v1-3-4fcedaccf9e6@kernel.org>
-References: <20250801-gic-v5-fixes-6-17-v1-0-4fcedaccf9e6@kernel.org>
-In-Reply-To: <20250801-gic-v5-fixes-6-17-v1-0-4fcedaccf9e6@kernel.org>
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
- Sascha Bischoff <sascha.bischoff@arm.com>, 
- Timothy Hayes <timothy.hayes@arm.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Lorenzo Pieralisi <lpieralisi@kernel.org>
-X-Mailer: b4 0.15-dev-6f78e
+Message-Id: <20250801-qpic-snand-oob-cwpp-fix-v1-1-f5a41b86af2e@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKpzjGgC/x2MQQqAIBAAvyJ7bsFMC/pKdDDdai9qChVEf086z
+ sDMA4UyU4FRPJDp5MIxVGgbAW63YSNkXxmUVEYOXYtHYocl2OAxxgXdlRKufGO/qJ5IGzfoDmq
+ dMlX9n6f5fT+oq7uKaQAAAA==
+X-Change-ID: 20250731-qpic-snand-oob-cwpp-fix-6b26ee45c743
+To: Mark Brown <broonie@kernel.org>, 
+ Md Sadre Alam <quic_mdalam@quicinc.com>, 
+ Varadarajan Narayanan <quic_varada@quicinc.com>, 
+ Sricharan Ramabadhran <quic_srichara@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-GICv5 LPI interrupts have an active state hence they cannot retrigger
-while the IRQ is being handled.
+The qcom_spi_program_oob() function uses only the last codeword to write
+the OOB data into the flash, but it sets the CW_PER_PAGE field in the
+CFG0 register as it would use all codewords.
 
-Therefore setting IRQD_RESEND_WHEN_IN_PROGRESS for GICv5 ITS
-interrupts provides no benefit and it is useless (and confusing),
-it solves an issue that cannot happen.
+It seems that this confuses the hardware somehow, and any access to the
+flash fails with a timeout error after the function is called. The problem
+can be easily reproduced with the following commands:
 
-Remove it.
+    # dd if=/dev/zero bs=2176 count=1 > /tmp/test.bin
+    1+0 records in
+    1+0 records out
+    # flash_erase /dev/mtd4 0 0
+    Erasing 128 Kibyte @ 0 -- 100 % complete
+    # nandwrite -O /dev/mtd4 /tmp/test.bin
+    Writing data to block 0 at offset 0x0
+    # nanddump -o /dev/mtd4 >/dev/null
+    ECC failed: 0
+    ECC corrected: 0
+    Number of bad blocks: 0
+    Number of bbt blocks: 0
+    Block size 131072, page size 2048, OOB size 128
+    Dumping data starting at 0x00000000 and ending at 0x00020000...
+    [   33.197605] qcom_snand 79b0000.spi: failure to read oob
+    libmtd: error!: MEMREADOOB64 ioctl failed for mtd4, offset 0 (eraseblock 0)
+            error 110 (Operation timed out)
+    [   35.277582] qcom_snand 79b0000.spi: failure in submitting cmd descriptor
+    libmtd: error!: cannot read 2048 bytes from mtd4 (eraseblock 0, offset 2048)
+            error 110 (Operation timed out)
+    nanddump: error!: mtd_read
 
-Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Marc Zyngier <maz@kernel.org>
+Change the code to use the correct CW_PER_PAGE value to avoid this.
+
+Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
 ---
- drivers/irqchip/irq-gic-v5-its.c | 1 -
- 1 file changed, 1 deletion(-)
+ drivers/spi/spi-qpic-snand.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/irqchip/irq-gic-v5-its.c b/drivers/irqchip/irq-gic-v5-its.c
-index 340640fdbdf6..9290ac741949 100644
---- a/drivers/irqchip/irq-gic-v5-its.c
-+++ b/drivers/irqchip/irq-gic-v5-its.c
-@@ -973,7 +973,6 @@ static int gicv5_its_irq_domain_alloc(struct irq_domain *domain, unsigned int vi
- 		irqd = irq_get_irq_data(virq + i);
- 		irqd_set_single_target(irqd);
- 		irqd_set_affinity_on_activate(irqd);
--		irqd_set_resend_when_in_progress(irqd);
- 	}
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index 0cfa0d960fd3c245c2bbf4f5e02d0fc0b13e7696..5216d60e01aab26f927baaea24296571a77527cb 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -1196,7 +1196,7 @@ static int qcom_spi_program_oob(struct qcom_nand_controller *snandc,
+ 	u32 cfg0, cfg1, ecc_bch_cfg, ecc_buf_cfg;
  
- 	return 0;
+ 	cfg0 = (ecc_cfg->cfg0 & ~CW_PER_PAGE_MASK) |
+-	       FIELD_PREP(CW_PER_PAGE_MASK, num_cw - 1);
++	       FIELD_PREP(CW_PER_PAGE_MASK, 0);
+ 	cfg1 = ecc_cfg->cfg1;
+ 	ecc_bch_cfg = ecc_cfg->ecc_bch_cfg;
+ 	ecc_buf_cfg = ecc_cfg->ecc_buf_cfg;
 
+---
+base-commit: 926406a85ad895fbe6ee4577cdbc4f55245a0742
+change-id: 20250731-qpic-snand-oob-cwpp-fix-6b26ee45c743
+
+Best regards,
 -- 
-2.48.0
+Gabor Juhos <j4g8y7@gmail.com>
 
 
