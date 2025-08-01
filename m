@@ -1,50 +1,50 @@
-Return-Path: <linux-kernel+bounces-753474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40146B18380
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:15:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 519CFB1837A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:14:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2FB16581535
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:15:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 123E53AED26
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:14:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF20C26D4D9;
-	Fri,  1 Aug 2025 14:14:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82BA326C38D;
+	Fri,  1 Aug 2025 14:14:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="Y3PbJk9Y"
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="i6N0iP0B"
 Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD3726A095;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DCCB269AFB;
 	Fri,  1 Aug 2025 14:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754057690; cv=none; b=SVX6sB67d7iwHuhUztJqaaryCcSivrUKW+jUxOwEumbq6vaSAFXuq+hOy2W7L8zTvVO1Xjd3tmDEN3fVGnqoWVwZdG8ldlV1gSEHJQlUzrDQL1yWnL/DmD7ZV3u7mKeNcxYZ4cElTsb9Td/ExtY5ACJdL+06NZiwZBbxOCSeaZU=
+	t=1754057688; cv=none; b=jPDLjN2DajTcywkzFvn1wb5ZrE940V8qV8T8pT4JhuzGndZQXljPkdsGiMLhJmz1Ky89UY9Euy/CvFkBBnq9bUecJHLhdj5o7Jipp5IxWQCYpiatSCU9IEcBpUruj7BzGar98HEageFnPynekLpfc8wXEb80eond6nueWc4HuuQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754057690; c=relaxed/simple;
-	bh=5LSakXMhRgZECB7vEp/4cohPbSrDyK93lA3vWzIivaY=;
-	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=Uyb8aAJ4Umj3yGBwAiU+3ghZEK2QEures9yl/MC6BuYc8Iu0DRW+fwGYx52qRPd2N/Smmfd21sI3t6MDoBtCAW5p5jBnDgmN9eaeBSU2zS20/C9NM5pPHNEG7FhGpfZ5FIsDgJJiXuo1CK0gHYHWNR6p4+Txu5IWgH9XPH45ZfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=Y3PbJk9Y; arc=none smtp.client-ip=37.205.8.231
+	s=arc-20240116; t=1754057688; c=relaxed/simple;
+	bh=X8bDc3mEF7A+jWR5/Mtli4JbbUPbP/jIzLwqkvh83zk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=D+UwoXC9j7axk86GxTW1y2DHaAcFAPGCjcD5m+tj1Ye4wVZaxZhKB6/TUIlWcwSQ/IAXYOLV0zBKfHMf1GiZj8gzgeVdJrOhNCnJdcwVNr2ZDjM1tOtXuU0b0i0SHZ7Dan0JHXyjlw/SzAZNOEFtPWb8jr/5jVjtxTuJ61IcEtQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=i6N0iP0B; arc=none smtp.client-ip=37.205.8.231
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
-DKIM-Signature: a=rsa-sha256; bh=y6QtmCaO8/r48Kdfs8oIgYVHptog7txRzNSieCu7rZA=;
+DKIM-Signature: a=rsa-sha256; bh=xg6p9F3CDjFSzSKSOC4/hpt/VNg4sb7Ukef6jTBb/9A=;
  c=relaxed/relaxed; d=dujemihanovic.xyz;
- h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:Message-Id:Message-Id:References:Autocrypt:Openpgp;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
  i=@dujemihanovic.xyz; s=default; t=1754057669; v=1; x=1754489669;
- b=Y3PbJk9YGG3iEuwuu41fZDrB+wNpuy7p105l8d5Dv31akuCKvpFAlobvI0VQhqbeXqychovA
- ydUO3ebLmXzynQnRcD+OiyR3Z6saB+uljNpmVo2P9s6hbBZp6do2UNzy1W4QG7yavWnPPtn6FgW
- 0k9+7hMq4I5OFzOllwAzWhiskZ8U0GhHbP1t7ONTzkKfHYySMaC6IYiD9eXUg3NSdu5t/E57sPw
- McY9endaen6QR+cNLOboWU8HfsTSO8KfgS8L5lPVK3WArEr25TJQFCEXYMEMqPNdO5PJNa9ANqH
- coAo5ErnqdCA8FJNIy0s483wdiC+9Lu2l52KteHIUSvuw==
+ b=i6N0iP0BaDHQLYoTpRhu7egSc/yKlvNRbElMuGsRpE7zntaKAQ1+33b1r6asHzmD1aWpomZ3
+ 2o3BPdTPTFI5mQFgjwNyLiYWEZTB74htkkRxFxeBc0qfmc5PE+E9Pi9LCeKiXD/WdoIF9ZybHLf
+ PIKoCUfTZGLQMWeUfLN9ZkiXm6p+OATclFc6EkOmXySJqCg0W0G4gxNVF03tz4muok/Pjgi9DMe
+ hwlgEXWv8M2ELBwLiOGQI+0TLFavPSoiu2pgrsiq40t4xJKYvS8+E4vXrTb+4Tm6974bWL59zbq
+ K8p9xtd4EbKdm3tsCZsPi9UJNwQuMG+Kpd5j0BdyxRLqw==
 Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
- ESMTPS id 0cca0676; Fri, 01 Aug 2025 16:14:29 +0200
+ ESMTPS id 2cca7fc8; Fri, 01 Aug 2025 16:14:29 +0200
 From: =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Subject: [PATCH RFC v2 0/2] mmc: sdhci-pxav3: pinctrl setting for fast bus
- clocks
-Date: Fri, 01 Aug 2025 16:14:14 +0200
-Message-Id: <20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz>
+Date: Fri, 01 Aug 2025 16:14:15 +0200
+Subject: [PATCH RFC v2 1/2] dt-bindings: mmc: sdhci-pxa: add state_uhs
+ pinctrl
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,11 +53,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-B4-Tracking: v=1; b=H4sIALbLjGgC/22Oyw7CIBREf6W5azFABR8rExM/wK3popaLXBNLA
- 5a0Nv13CWuXZ2ZyMgtEDIQRTtUCARNF8n0Guamgc23/REYmM0guFd+LAxumNtVsdJGZo9IPi0b
- UlkPeDwEtTcV1h9v1Ak0OHcWPD3PxJ1GqP6okGGcSd0pIpa2w+mzGF74pP/CJuu00f6FZ1/UHl
- cVdXq8AAAA=
-X-Change-ID: 20250718-pxav3-uhs-d956bfed13f0
+Message-Id: <20250801-pxav3-uhs-v2-1-afc1c428c776@dujemihanovic.xyz>
+References: <20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz>
+In-Reply-To: <20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz>
 To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, 
  Krzysztof Kozlowski <krzk+dt@kernel.org>, 
  Conor Dooley <conor+dt@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>
@@ -67,60 +65,103 @@ Cc: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
  ~postmarketos/upstreaming@lists.sr.ht, 
  =?utf-8?q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1840;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2667;
  i=duje@dujemihanovic.xyz; s=20240706; h=from:subject:message-id;
- bh=5LSakXMhRgZECB7vEp/4cohPbSrDyK93lA3vWzIivaY=;
- b=owGbwMvMwCW21nBykGv/WmbG02pJDBk9p4/M5VkVv8TwRoDlv4WP/76S8siJ/V39Y4+Xt8g/x
- orzKRYVHaUsDGJcDLJiiiy5/x2v8X4W2bo9e5kBzBxWJpAhDFycAjAR2WUM/50V3y1adrH+t7ND
- p2z9mY//pHiD+L+7TXA13FLRPMGzMYvhn1IP15T3s6V1V8n6H0k88fYCy/lStaqfTydcV7VUqvo
- rzAQA
+ bh=X8bDc3mEF7A+jWR5/Mtli4JbbUPbP/jIzLwqkvh83zk=;
+ b=owGbwMvMwCW21nBykGv/WmbG02pJDBk9p4/4vskRf7H2/pumTTsil4g9/yYTUyNWzSo7g+F8g
+ H3H1vasjlIWBjEuBlkxRZbc/47XeD+LbN2evcwAZg4rE8gQBi5OAZiI+EZGhiXyOXE+F3QWNR8I
+ CrrfOSHxZrzxQYv82IlcPc4PS8v49jMy3K2uuP/90A3m4otf5ESEFy+QPm6tyJ23SehoDg/LL5a
+ 7LAA=
 X-Developer-Key: i=duje@dujemihanovic.xyz; a=openpgp;
  fpr=6DFF41D60DF314B5B76BA630AD319352458FAD03
 
-Hello,
+On the pxav3 controller, increasing the drive strength of the data pins
+might be required to maintain stability on fast bus clocks (above 100
+MHz). Add a state_uhs pinctrl to allow this.
 
-This small series adds a pinctrl setting for fast MMC bus clocks to the
-pxav3 driver. On bus clocks above 100 MHz, driving the data pins at a
-higher current helps maintain signal quality.
-
-This series is related to Marvell PXA1908 SoC support; the latest
-version of that patchset (v16 as of now) can be found at
-https://lore.kernel.org/20250708-pxa1908-lkml-v16-0-b4392c484180@dujemihanovic.xyz
-
-The series is RFC because of the following:
-* I'm unsure whether setting pinctrl-{names,1} to true in the top level
-  of the binding is correct.
-* Other mainline MMC drivers select between default and UHS states based
-  on the signal voltage. The PXA1908 vendor kernel does it based on the
-  bus clock. I followed the vendor kernel, but do not know whether this
-  is bad practice and therefore the other mainline drivers should be
-  followed instead.
+The existing state_cmd_gpio pinctrl is changed to apply only on pxav1 as
+it's unneeded on the other controllers.
 
 Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
 ---
 Changes in v2:
-- Address maintainer comments:
-  - Newline between properties in if:
-  - Don't try to lookup pinstates if pinctrl is NULL
-  - Only change pinstates if both are valid
-  - Replace dev_warn() with dev_dbg()
-- Link to v1: https://lore.kernel.org/r/20250718-pxav3-uhs-v1-0-2e451256f1f6@dujemihanovic.xyz
-
+- Newlines between properties in if:
 ---
-Duje Mihanović (2):
-      dt-bindings: mmc: sdhci-pxa: add state_uhs pinctrl
-      mmc: sdhci-pxav3: add state_uhs pinctrl setting
-
  .../devicetree/bindings/mmc/sdhci-pxa.yaml         | 47 +++++++++++++++++-----
- drivers/mmc/host/sdhci-pxav3.c                     | 31 +++++++++++++-
- include/linux/platform_data/pxa_sdhci.h            |  7 ++++
- 3 files changed, 74 insertions(+), 11 deletions(-)
----
-base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
-change-id: 20250718-pxav3-uhs-d956bfed13f0
+ 1 file changed, 37 insertions(+), 10 deletions(-)
 
-Best regards,
+diff --git a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+index 4869ddef36fd89265a1bfe96bb9663b553ac5084..fba1cc50fdf07cc25d42f45512c385a9b8207b9b 100644
+--- a/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
++++ b/Documentation/devicetree/bindings/mmc/sdhci-pxa.yaml
+@@ -30,6 +30,41 @@ allOf:
+           maxItems: 1
+         reg-names:
+           maxItems: 1
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mrvl,pxav1-mmc
++    then:
++      properties:
++        pinctrl-names:
++          description:
++            Optional for supporting PXA168 SDIO IRQ errata to switch CMD pin between
++            SDIO CMD and GPIO mode.
++          items:
++            - const: default
++            - const: state_cmd_gpio
++
++        pinctrl-1:
++          description:
++            Should switch CMD pin to GPIO mode as a high output.
++  - if:
++      properties:
++        compatible:
++          contains:
++            const: mrvl,pxav3-mmc
++    then:
++      properties:
++        pinctrl-names:
++          description:
++            Optional for increasing stability of the controller at fast bus clocks.
++          items:
++            - const: default
++            - const: state_uhs
++
++        pinctrl-1:
++          description:
++            Should switch the drive strength of the data pins to high.
+ 
+ properties:
+   compatible:
+@@ -62,21 +97,13 @@ properties:
+       - const: io
+       - const: core
+ 
+-  pinctrl-names:
+-    description:
+-      Optional for supporting PXA168 SDIO IRQ errata to switch CMD pin between
+-      SDIO CMD and GPIO mode.
+-    items:
+-      - const: default
+-      - const: state_cmd_gpio
++  pinctrl-names: true
+ 
+   pinctrl-0:
+     description:
+       Should contain default pinctrl.
+ 
+-  pinctrl-1:
+-    description:
+-      Should switch CMD pin to GPIO mode as a high output.
++  pinctrl-1: true
+ 
+   mrvl,clk-delay-cycles:
+     description: Specify a number of cycles to delay for tuning.
+
 -- 
-Duje Mihanović <duje@dujemihanovic.xyz>
+2.50.1
 
 
