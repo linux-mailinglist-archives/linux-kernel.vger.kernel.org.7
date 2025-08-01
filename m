@@ -1,109 +1,147 @@
-Return-Path: <linux-kernel+bounces-753574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64CC5B184BE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A918B184C2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:14:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 250414E15D2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:13:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8C6F25A151A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:14:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 529B6270569;
-	Fri,  1 Aug 2025 15:13:52 +0000 (UTC)
-Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AEEC1270EBF;
+	Fri,  1 Aug 2025 15:14:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B1C26E71F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39AB826FA7B;
+	Fri,  1 Aug 2025 15:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754061232; cv=none; b=NQ2ZY4Dh+6gEzJYeMajwdCLVvsM/vTN72Cd/ptCfDwAAt726XpB2+ZJNxmJuYSCLO7SexeMTgSYDssFrKGV+Lz5mJ5PSh8Vqt86F5C/G8Gb2RwW6ACxQXPXXMLaGYG+6Qxq4a4xamCpcnYO9m94X99NL0z2VBCwdh/3GIIYm4xI=
+	t=1754061284; cv=none; b=gg6l0t7hjFKDmFBiSEy2lHrzf4BrA4PygPRNX44CzCMNwc0qCPXZ95W2q/21EJAdSHWF3oBAsi13mRR8vJUXZvTp6S3E/KmdAmV4KtGRY1o7bFWDjsFC09+ANdcm/97yBJu9GaLygBEhRGmk8wtNKj6OJ+ViYCiV28p/FOsFDtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754061232; c=relaxed/simple;
-	bh=C2y32lRSVTMtr1KeNFOZCFbVFkLJg6Owjmr4DXQmCgQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=uObh1yjoe/onu3w5ZSTRKA28YtTlApVk0QkyjPXrWpaYShp5JPqkWnD0lluweaKwAIzOvOb93f5pw/6m2cm6qItWeY6yTNV+cgdf1aoRL8kLRJsn/b3TDnC7t+aP58AFqF78Yk80cX1n1J1Be6ptCPMA7dpRw1T++7ZMsjiGvJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
-Received: from [IPV6:2400:2410:b120:f200:9e5c:8eff:fec0:ee40] (unknown [IPv6:2400:2410:b120:f200:9e5c:8eff:fec0:ee40])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by psionic.psi5.com (Postfix) with ESMTPSA id 241D03F116;
-	Fri,  1 Aug 2025 17:13:45 +0200 (CEST)
-Message-ID: <8f8ad642-bc62-4210-be11-6a5bd64411c5@hogyros.de>
-Date: Sat, 2 Aug 2025 00:13:42 +0900
+	s=arc-20240116; t=1754061284; c=relaxed/simple;
+	bh=z/VXTL9XJ4xncPDLbz2NCbekM9lyeRi/bg0hzGvJNV0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ZyN6UibjAbdFtMquNaaIt5wySqYaNVaNRPT4Awof19C1SsN0AcNNAeuuGOQvkigLClOQBwA03gTcflDJR9oBdX9nNx2ViSjb0lwOiInyO11iqo7XpWlanHBPOil1aLtnA8FCQlQdGY1BengIOEomsKmdZYXJEBZkkApHlLmL//A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf13.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id 5F2501A012E;
+	Fri,  1 Aug 2025 15:14:34 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf13.hostedemail.com (Postfix) with ESMTPA id 8C44420011;
+	Fri,  1 Aug 2025 15:14:32 +0000 (UTC)
+Date: Fri, 1 Aug 2025 11:14:53 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org, Douglas Raillard
+ <douglas.raillard@arm.com>, Yonghong Song <yonghong.song@linux.dev>
+Subject: [PATCH v2] tracing: Have unsigned int function args displayed as 
+ hexadecimal
+Message-ID: <20250801111453.01502861@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Mark xe driver as BROKEN if kernel page size is not
- 4kB
-To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-References: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
- <20250801102130.2644-1-Simon.Richter@hogyros.de>
- <274fefe9b46bb856e5968431ed524ebe1b8e8cd4.camel@linux.intel.com>
- <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
-Content-Language: en-US
-From: Simon Richter <Simon.Richter@hogyros.de>
-In-Reply-To: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------wNpcGvIeCpp5TfJ0uKxU5349"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: iyzrnr6w4pjc1djibas7in4xd3rr8x5q
+X-Rspamd-Server: rspamout07
+X-Rspamd-Queue-Id: 8C44420011
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18xssWv1N8xOSx5bKZvuO7jwFLxY1ftaow=
+X-HE-Tag: 1754061272-841103
+X-HE-Meta: U2FsdGVkX1+lplGtHrEAOkWKXPskBQQAellZmOYwCbwAU98pNAaFo31+QYlRNB/tKE+WEwWhpUmiSmvXvt5kQWhomZcmMfOoLL1FETZ66ZZ8uuEiM/VEYynAVv77VYUXoFgbpuLNRNmzpRfn57FZxLWZtpO0T50W2sxzpm9vLjcjno8w+oh+ilaiKzMJpefGec0I1qO5vuUo23L2wTiYuRS3lDvooqx9lgsixZ8quEO16HXPR+RTMAJNk1NX7F+x5V15U/TXlT1HJCgjBRo5FxXbMAEMQ5t0cC+hm4WSBpYp7tm5dNzkrvwoLn2jd9Ho/muqSrZWt4h7cGk8+tOcG6cO6VVzibYWBSF5h2EiuQhvjFFaKZ6L07pgIm9eXGqQvRVIzTkW4HY3TvRf9KYXUA==
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------wNpcGvIeCpp5TfJ0uKxU5349
-Content-Type: multipart/mixed; boundary="------------CTEnt37qgnx0gBPXTd3N0LIT";
- protected-headers="v1"
-From: Simon Richter <Simon.Richter@hogyros.de>
-To: =?UTF-8?Q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
- intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Message-ID: <8f8ad642-bc62-4210-be11-6a5bd64411c5@hogyros.de>
-Subject: Re: [PATCH v3] Mark xe driver as BROKEN if kernel page size is not
- 4kB
-References: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
- <20250801102130.2644-1-Simon.Richter@hogyros.de>
- <274fefe9b46bb856e5968431ed524ebe1b8e8cd4.camel@linux.intel.com>
- <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
-In-Reply-To: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
+From: Steven Rostedt <rostedt@goodmis.org>
 
---------------CTEnt37qgnx0gBPXTd3N0LIT
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+Most function arguments that are passed in as unsigned int or unsigned
+long are better displayed as hexadecimal than normal integer. For example,
+the functions:
 
-SGksDQoNCk9uIDgvMS8yNSAyMzo1NiwgVGhvbWFzIEhlbGxzdHLDtm0gd3JvdGU6DQoNCj4g
-V291bGQgeW91IG1pbmQgaWYgd2UgZGlkIHRoZSBmb2xsb3dpbmc6DQoNClsuLi5dDQoNCj4g
-QW5kIGluc3RlYWQgaGVyZSBhZGQNCj4gCWRlcGVuZHMgb24gUEFHRV9TSVpFXzRLQiB8fCBD
-T01QSUxFX1RFU1QgfHwgQlJPS0VODQoNClRoYXQgaXMgYSBsb3QgbmljZXIsIEkgbGlrZSBp
-dC4NCg0KICAgIFNpbW9uDQo=
+static void __create_object(unsigned long ptr, size_t size,
+				int min_count, gfp_t gfp, unsigned int objflags);
 
---------------CTEnt37qgnx0gBPXTd3N0LIT--
+static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
+			    size_t len);
 
---------------wNpcGvIeCpp5TfJ0uKxU5349
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
+void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
 
------BEGIN PGP SIGNATURE-----
+Show up in the trace as:
 
-iQEzBAEBCgAdFiEEtjuqOJSXmNjSiX3Tfr04e7CZCBEFAmiM2aYACgkQfr04e7CZ
-CBELugf8DqUbmek/kQtrnhBllfJ7bBzpmAmD+F0ojUiPgJS9JT+rKEvRLJYaboyK
-EbwvUNQkcks0/dWYLoo0+nSCeeabgxCmADS9qwE7Q/aS4y+m2CmgIeKqnnTsgVt9
-ImIyfH+p5XJSFAAJ0VgaYN89z0mfCkmOfN6Y7ULBGamEEyu/21qXUS/6yP1xM4e9
-1XlklQuIoekGfdpJzdrQ80zj69DU+iOvnoG0u00CsZDYBvhWZnPgMj3P6LW8E7Fu
-N88a9Lbm09KvX7f1jv0V+Q0Ip5YoipkdrAflcIkr/aFn8bW2ECzcbyYojioZZqTF
-iXNF1QKNvbPmK5Vk+phNqG1HSmmcKQ==
-=Sg8e
------END PGP SIGNATURE-----
+    __create_object(ptr=-131387050520576, size=4096, min_count=1, gfp=3264, objflags=0) <-kmem_cache_alloc_noprof
+    stack_access_ok(state=0xffffc9000233fc98, _addr=-60473102566256, len=8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
 
---------------wNpcGvIeCpp5TfJ0uKxU5349--
+Instead, by displaying unsigned as hexadecimal, they look more like this:
+
+    __create_object(ptr=0xffff8881028d2080, size=0x280, min_count=1, gfp=0x82820, objflags=0x0) <-kmem_cache_alloc_node_noprof
+    stack_access_ok(state=0xffffc90000003938, _addr=0xffffc90000003930, len=0x8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
+
+Which is much easier to understand as most unsigned longs are usually just
+pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
+better as hexadecimal as a lot of flags are passed as unsigned.
+
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+Changes since v1: https://lore.kernel.org/20250731193126.2eeb21c6@gandalf.local.home
+
+- Fixed whitespace issues (Yonghong Song)
+
+ kernel/trace/trace_output.c | 17 ++++++++++++++++-
+ 1 file changed, 16 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 0b3db02030a7..fe54003de860 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -690,6 +690,12 @@ int trace_print_lat_context(struct trace_iterator *iter)
+ }
+ 
+ #ifdef CONFIG_FUNCTION_TRACE_ARGS
++
++static u32 btf_type_int(const struct btf_type *t)
++{
++	return *(u32 *)(t + 1);
++}
++
+ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 			 unsigned long func)
+ {
+@@ -701,6 +707,8 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 	struct btf *btf;
+ 	s32 tid, nr = 0;
+ 	int a, p, x;
++	int int_data;
++	u16 encode;
+ 
+ 	trace_seq_printf(s, "(");
+ 
+@@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+ 			trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_INT:
+-			trace_seq_printf(s, "%ld", arg);
++			/* Get the INT encodoing */
++			int_data = btf_type_int(t);
++			encode = BTF_INT_ENCODING(int_data);
++			/* Print unsigned ints as hex */
++			if (encode & BTF_INT_SIGNED)
++				trace_seq_printf(s, "%ld", arg);
++			else
++				trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_ENUM:
+ 			trace_seq_printf(s, "%ld", arg);
+-- 
+2.47.2
+
 
