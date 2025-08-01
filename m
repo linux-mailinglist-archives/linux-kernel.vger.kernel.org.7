@@ -1,154 +1,117 @@
-Return-Path: <linux-kernel+bounces-753885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDFE4B1897F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF2BB18981
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A85B3BAA47
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:30:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E0A4167E0E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:32:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC73521A449;
-	Fri,  1 Aug 2025 23:30:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F19BA1FE451;
+	Fri,  1 Aug 2025 23:32:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RhT12GCY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="BZSjt7nd"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E0F41C62;
-	Fri,  1 Aug 2025 23:30:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10CEA13A258
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 23:32:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754091047; cv=none; b=B+/dmTg1ySpRHrO65n0E1Q61ZyQtqtnHOcGxRpqugcD4Uv6luWDBkMLOl4c5eVJwTE5xBV7A0xNuQORvTy5DpyD9SKQGVhplNcPOPEiwt+p6aKBUm2SfUpy9ZKH1ALz+pkUcYpKEWIr6/cWlLOkmyL9Eb3537Q6QyieSeKwr8rY=
+	t=1754091132; cv=none; b=Ilkei8D0Kb0bgNddaxEMRFxdxreNhTs/SqMuQ7BkUxTvg7u0GXZW1NjlBA3D4H9yohX2h4qAQt30o9NZ5J1EcUyij6TVDSxtNNd812m7YO5MXqaVvIRJ89Ocjz0SsQ8q9aDn/q0q6F0CmZJvymLkcTsWGbcB0GpTxXNRYOSmwZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754091047; c=relaxed/simple;
-	bh=ctwKht944Ty5r59IlMbVaQb5+XsFWdWm6fDxZsJiL7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=SKqgbs/pndS3oqaABSlhKqKrOnVqnlSzYtYwN7KJG4A8kgp1Gt24/vDZU+/OlPWT7kqhQn1BSXwKkYy6sgoUuag7Ok5xV8tT0gdtft3LnYo/HbOmCflNvZadvk50q8tfQYX/euOq0H/BW5zClm4BbqbXXfRL+lmlBLl3HVcfwNA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RhT12GCY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73EF6C4CEE7;
-	Fri,  1 Aug 2025 23:30:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754091046;
-	bh=ctwKht944Ty5r59IlMbVaQb5+XsFWdWm6fDxZsJiL7Q=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=RhT12GCYqCttbObWM0kp9mAskV2wLU/cel7pO99XFGSosrg1ezGm1oQhnHIt5rVe0
-	 g9E9S4MljV1cYdcivwH0PAW26cDaFYkmxWNaBJ+Yz6RgAOhVfDWq1d29LAW3zZR9rq
-	 ZeJLpGy5laJ5wNupnSPF9/Y9NuuKevDafKTeQWBN15P8FoHjzAVjXW/Z6MGcrnM/DA
-	 FeMpaOMp85lvPHnef2IeuXMuvTKlzt5ZFe3MQUF5Wb4M5I94SsW2U4ZIxpjsld0rE6
-	 RU4S6QaiWPxNFW1tzTMEhZs1iSNpFJdi1Y2Ri8jWgPWHpoYOZRZYKtk5DHT3uUUZD4
-	 pRTFDNtF6GJJw==
-From: SeongJae Park <sj@kernel.org>
-To: pyyjason@gmail.com
-Cc: SeongJae Park <sj@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Usama Arif <usamaarif642@gmail.com>,
-	damon@lists.linux.dev,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	kernel-team@meta.com
-Subject: Re: [PATCH v3 1/2] mm/damon: Move has filter to ops-common
-Date: Fri,  1 Aug 2025 16:30:44 -0700
-Message-Id: <20250801233044.1392-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <a290e7913a1c39f605b8cceafd86d41c2dbebf82.1754088635.git.pyyjason@gmail.com>
-References: 
+	s=arc-20240116; t=1754091132; c=relaxed/simple;
+	bh=02BRk3qOj+AXcW6cS1tsqHn8w2sSkZL1ah0aPFZiI64=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ir8H49Q89xUiM7KNLI2GlZUI8Bl1uT48g2JxXQeXW4qCgRhOOHlOuztXU5xYKEL+3/QHLEDp6E6tqtCKqWGZ//Bi9DJwR7GAj/fBvgZGcVUWE7D251Cay5Xra//t/DQZaLnkv7Q+OWGrwxNIMgxaU31lyH+o35TsGuC3mePZJ9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=BZSjt7nd; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f2dd307d4so1505880a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 16:32:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754091130; x=1754695930; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PSc5/xHGPO2izKvP398GTrx8yfXFlkYy/vj0X5FEFGU=;
+        b=BZSjt7ndhpZAlU7xJLtztdYs4mtRRBGYnHytQEpXDuyDCruFN2t3pd4m5uRg+Ex4En
+         enEYip+AGoqn1ZiZcwT1nihuENPh6pGQfGl6diNQJ5JQzvHYawsfLLkXe9Bq/yag9iwu
+         QaeoKRcUzBdLuuhrIEGOBhuBF0ti04adGi4zfRXc/J8LA+ZUTWTEWRjE7L0SVIkNBHhw
+         Zbz0j7EHgWYd7MlKUClram8X6JElAN2cWw62/u76O+5AUtMAyvT8lhSn4FQ4XVnmkjRa
+         itjySJxXodEp/G6ZrrvTCRsGE7iJf2+HzJ9JDVyPJtPNR0n+5tkS90OiaXfcu17MRtli
+         +l1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754091130; x=1754695930;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=PSc5/xHGPO2izKvP398GTrx8yfXFlkYy/vj0X5FEFGU=;
+        b=U6/P5H6KKUwvoAAJJKAxQ8BpksSKOIM4Gkh4LHylQ0UHxNGk9nrNd0GM/PMX346V9N
+         myrEkuRH7/D4iTAvmqo+77e+/+9v4/54Xz5YY9PJStrWwsgz8qsb+nLJ9JahZ3E7o77V
+         l2bSPZlo5mv9GJw9lwR2Zf1Kg7XepgBBYX8zJf4AxBxMoNTpYxuR+X7JSFcv1eep2hoy
+         LvslMGMUMUB3AueZ1CiMQUCmN9e9PIAQzZ1Y36tOf05dFjRfF04iYvOqMYICfc3QTfS1
+         wcD7ryiQ8c4o2M3MhFLsZSW1QhsSb+ZGDjBlASWiW11NsE+b69lvmOkT5bKy71oYzyh6
+         GwYg==
+X-Forwarded-Encrypted: i=1; AJvYcCUr4Q+QGAKL+iFw0p9fF3BTASQrZiYVfzswFm9KLPeYhQLpfLCJLMI348OG2CpLZp8sPuOmiN83qw+vMBY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXbhy4sks5reDVl2y7DFTG76G5Uqx0xYlNphjkJl92ZwZuYf6z
+	ptv3IhFQkBuBnmrShyYoVUB6Ji+T3TdkyqMRjfGI7jIRVmu92xNZM3AHpGdKjwaW7Ytep723z+c
+	lI18oMw==
+X-Google-Smtp-Source: AGHT+IFswYzNJSBzjZEx6753vDf34RgMKloGefTqDtW4F+VAa5PH/hjJaMnf4SfTwiHSsphb9MXAnDq3zbI=
+X-Received: from pjx3.prod.google.com ([2002:a17:90b:5683:b0:31f:26b:cc66])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3ec2:b0:311:ff02:3fcc
+ with SMTP id 98e67ed59e1d1-32116210418mr2258056a91.14.1754091130448; Fri, 01
+ Aug 2025 16:32:10 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:32:09 -0700
+In-Reply-To: <7de2b6ed-af39-4434-9ead-5b06ed4761c5@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+References: <20250324173121.1275209-1-mizhang@google.com> <20250324173121.1275209-21-mizhang@google.com>
+ <a700ab4c-0e8d-499d-be71-f24c4a6439cf@amd.com> <aG6QeTXrd7Can8PK@google.com>
+ <7dc97db7-5eea-4b65-aed3-4fc2846e13a6@linux.intel.com> <aIlpaL-yEU_0kgrD@google.com>
+ <7de2b6ed-af39-4434-9ead-5b06ed4761c5@linux.intel.com>
+Message-ID: <aI1OefS8b9vfHyu9@google.com>
+Subject: Re: [PATCH v4 20/38] KVM: x86/pmu: Check if mediated vPMU can
+ intercept rdpmc
+From: Sean Christopherson <seanjc@google.com>
+To: Dapeng Mi <dapeng1.mi@linux.intel.com>
+Cc: Sandipan Das <sandipan.das@amd.com>, Mingwei Zhang <mizhang@google.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Paolo Bonzini <pbonzini@redhat.com>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, Liang@google.com, 
+	Kan <kan.liang@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kvm@vger.kernel.org, linux-kselftest@vger.kernel.org, 
+	Yongwei Ma <yongwei.ma@intel.com>, Xiong Zhang <xiong.y.zhang@linux.intel.com>, 
+	Jim Mattson <jmattson@google.com>, Zide Chen <zide.chen@intel.com>, 
+	Eranian Stephane <eranian@google.com>, Shukla Manali <Manali.Shukla@amd.com>, 
+	Nikunj Dadhania <nikunj.dadhania@amd.com>
+Content-Type: text/plain; charset="us-ascii"
 
-On Fri,  1 Aug 2025 22:59:50 +0000 pyyjason@gmail.com wrote:
-
-> From: Yueyang Pan <pyyjason@gmail.com>
+On Wed, Jul 30, 2025, Dapeng Mi wrote:
 > 
-> This patch moves damon_pa_scheme_has_filter to ops-common. renaming
-> to damon_ops_has_filter.
-> Doing so allows us to reuse its logic in the vaddr version
-> of DAMOS_STAT
-
-Let's update the subject to better reflect the change, e.g.,
-
-    mm/damon/paddr: move filters existence check function to ops-common
-
+> On 7/30/2025 8:38 AM, Sean Christopherson wrote:
+> > On Tue, Jul 29, 2025, Dapeng Mi wrote:
+> >> BTW, Sean, may I know your plan about the mediated vPMU v5 patch set? Thanks.
+> > I'll get it out this week (hopefully tomorrow).
 > 
-> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
-> ---
->  mm/damon/ops-common.c |  9 +++++++++
->  mm/damon/ops-common.h |  2 ++
->  mm/damon/paddr.c      | 11 +----------
->  3 files changed, 12 insertions(+), 10 deletions(-)
-> 
-> diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
-> index 99321ff5cb92..de5404477242 100644
-> --- a/mm/damon/ops-common.c
-> +++ b/mm/damon/ops-common.c
-> @@ -412,3 +412,12 @@ unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
->  
->  	return nr_migrated;
->  }
-> +
-> +bool damon_ops_has_filter(struct damos *s)
+> Thumbs up! Thanks.
 
-Thank you for renaming this following my suggestion!  My suggestion was
-damos_ops_has_filter(), though?
+I lied, I'm not going to get it out until Monday.  Figuring out how to deal with
+instruction emulation in the fastpath VM-Exit handlers took me longer than I was
+hoping/expecting.
 
-> +{
-> +	struct damos_filter *f;
-> +
-> +	damos_for_each_ops_filter(f, s)
-> +		return true;
-> +	return false;
-> +}
-> diff --git a/mm/damon/ops-common.h b/mm/damon/ops-common.h
-> index 61ad54aaf256..d3d36bca90b9 100644
-> --- a/mm/damon/ops-common.h
-> +++ b/mm/damon/ops-common.h
-> @@ -21,3 +21,5 @@ int damon_hot_score(struct damon_ctx *c, struct damon_region *r,
->  
->  bool damos_folio_filter_match(struct damos_filter *filter, struct folio *folio);
->  unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid);
-> +
-> +bool damon_ops_has_filter(struct damos *s);
-> diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-> index 53a55c5114fb..9d9cdcc10b8e 100644
-> --- a/mm/damon/paddr.c
-> +++ b/mm/damon/paddr.c
-> @@ -262,22 +262,13 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
->  	return applied * PAGE_SIZE;
->  }
->  
-> -static bool damon_pa_scheme_has_filter(struct damos *s)
-> -{
-> -	struct damos_filter *f;
-> -
-> -	damos_for_each_ops_filter(f, s)
-> -		return true;
-> -	return false;
-> -}
-> -
->  static unsigned long damon_pa_stat(struct damon_region *r, struct damos *s,
->  		unsigned long *sz_filter_passed)
->  {
->  	unsigned long addr;
->  	struct folio *folio;
->  
-> -	if (!damon_pa_scheme_has_filter(s))
-> +	if (!damon_ops_has_filter(s))
->  		return 0;
->  
->  	addr = r->ar.start;
-> -- 
-> 2.43.0
+It's fully tested, and I have all but one changelog written, but I'm out of time
+for today (I made a stupid goof (inverted a !) that cost me an ~hour today, *sigh*).
 
-Looks good otherwise.
+Unless I get hit by a meteor, I'll get it out Monday.
 
-
-Thanks,
-SJ
+Sorry for the delay.  :-/
 
