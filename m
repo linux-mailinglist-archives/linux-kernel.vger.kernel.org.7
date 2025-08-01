@@ -1,123 +1,107 @@
-Return-Path: <linux-kernel+bounces-753356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1AD3B181DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:34:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6372EB181DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FA333AC494
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:34:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE181896CC4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 155BF247299;
-	Fri,  1 Aug 2025 12:34:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86CA24678E;
+	Fri,  1 Aug 2025 12:35:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ntAzYNM/"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VpN8hIX2"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DE07239E69;
-	Fri,  1 Aug 2025 12:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F522F757;
+	Fri,  1 Aug 2025 12:35:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754051673; cv=none; b=EJTyxqKkILIw+hY+smN2N2lUF88zJ4rqU77x3S4QP7UAjJyytzK9MM2rLduQmFuW01/50E11sMzvXqWCcg2wdXxYXBjxOR02zjx41Ay+bN5gP1vG1/TAhXnv9f+O/83IBxiW3G2IqBc9EU4P+2X9RWVERd9Odd6h1bfS26i+p4M=
+	t=1754051708; cv=none; b=dL2Mh42DmYbBwgkShD8xgye6tZCQot0ZURs0JH8cSGqUxVWUIUnMwafz6M9hw0de4KntKde3TFkQEwdsMRjfDfUYYqS18cM4EEYvIu3BEX7Q9b7+j1C1AmRwgq+u1hkNmB7+9htayez4UAKWaEbbtMj/RWggCiyjW1tstMQmXAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754051673; c=relaxed/simple;
-	bh=gFI2pTssP7nGhWUGJLnw+yPgpk5f3RrGH63eLLAPMrQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=SG/8GitZsjQVvBXxY3zNc60zUs+UH3z+ov1+jBwm42KXE7Pu/iQOe7RFTgrXgECR9qR37OsREk3AR1LASw5HfA7yJoE5Cv6JDJL18+sCk7khL3tx9gCFkG7rKQZlF0CoLA+IcvaLAfVoF9548Sn3p09wut7c9KDu6nog6dy//wY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ntAzYNM/; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754051668;
-	bh=gFI2pTssP7nGhWUGJLnw+yPgpk5f3RrGH63eLLAPMrQ=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=ntAzYNM/xoPxg7tl/ecqiifizscOEUvCqWHrGHx2xpq39nBPiyDD6fPoZXq7PEjtx
-	 1rDJE08GD7psMW9/F45FXfSVl3/IaL9r/WD48Hhbx82eWT0xUrLXQJjoNZJTnldaym
-	 PFV8i6rPg2GuC6AMkqFlnOjKyyJfrlBwcYK/4CtXOWFyRPLk9MpLc14DwU0SUc8+r2
-	 Gy/xjTX8sdd8Cfb8orMGmSyVm5EHQ240PCCZqV8H/lRmvT49XDj2AKFBCvN4LKAXrr
-	 IhB9rcrOJFXEbBt5pyjBLuWxdjHQz3Yjs8wI3sz6Sg1eA0UAUczuF0jEt3rBBp/CLi
-	 qHRNxYJVfat+g==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2d600c8F85cF092d4aF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A5D0217E0202;
-	Fri,  1 Aug 2025 14:34:27 +0200 (CEST)
-Message-ID: <ab6fdc6a603bb1d09c4c28b73ac91e67f27bb833.camel@collabora.com>
-Subject: Re: [PATCH v6 05/24] dt-bindings: media: i2c: max96717: add support
- for MAX9295A
-From: Julien Massot <julien.massot@collabora.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>, Cosmin Tanislav	
- <cosmin.tanislav@analog.com>, Tomi Valkeinen	
- <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Niklas
- =?ISO-8859-1?Q?S=F6derlund?=	 <niklas.soderlund@ragnatech.se>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Date: Fri, 01 Aug 2025 14:34:26 +0200
-In-Reply-To: <20250716193111.942217-6-demonsingur@gmail.com>
-References: <20250716193111.942217-1-demonsingur@gmail.com>
-	 <20250716193111.942217-6-demonsingur@gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754051708; c=relaxed/simple;
+	bh=jB1Vx2WL8qzCQ5++PQCPXvRjDSCfgrjYiYkZfI/7QaQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fS6vRqqaECKAb1/aYF6DPakmNEUeJeJvuTaiyzdHU/mJpkSHmdt/Y3JY45iZn7n3sVgpPifdbPrCPkaGqW1V6mJ5ltzQ49929rPKc4hQSYa5GbYoTrx89yai2NhIu7imeB/o6viPYUlwNBlCamhIXKlO7svUhwHu/cXmSYSAkbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VpN8hIX2; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=1fuJBAjBUjwQeX0vysnbqS8rGM0e+eRddEy6DFpPWwg=; b=VpN8hIX21sSiiiW5Rq5wlrVTV3
+	yM/3WQq+isxOP/xggGyGMu2xlPZXV0/OUFF+OHgacmRhNyeD5Erwq8vkjh512tM2HaHFUadeP24+M
+	GuptjiK8nASLqc58uzJPjn3mm82STgtXGl33cmncliq9voSNkZZz5+2bhFcvkNm818ONeL0EISpkp
+	QyLk9amLr/mnfKHd8JQ+C0E+OqgUEi//FMnugqcO1mtGV+FJcWNnGqlRO9IqRw2Lc8JY11SW6xRtQ
+	KFC/2nvEuXEGaDYBTUE7ZJ1+9rVAf+wSMhnmm5JH43Epy8DX422RhmaUTdFdrqGjc4rxTBN/ZZbHK
+	33b55XQQ==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60270)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uhoyR-0006V6-2S;
+	Fri, 01 Aug 2025 13:34:59 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uhoyQ-00024e-09;
+	Fri, 01 Aug 2025 13:34:58 +0100
+Date: Fri, 1 Aug 2025 13:34:57 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: patchwork-bot+netdevbpf@kernel.org
+Cc: =?utf-8?b?QmVuY2UgQ3PDs2vDoXMgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org,
+	geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
+	davem@davemloft.net, robh@kernel.org, andrew@lunn.ch,
+	andriy.shevchenko@linux.intel.com, dmitry.torokhov@gmail.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	buday.csaba@prolan.hu, hkallweit1@gmail.com, edumazet@google.com,
+	kuba@kernel.org, pabeni@redhat.com
+Subject: Re: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
+Message-ID: <aIy0cTjW1ETsY2NS@shell.armlinux.org.uk>
+References: <20250728153455.47190-2-csokas.bence@prolan.hu>
+ <175392840851.2582155.14607525521532592549.git-patchwork-notify@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <175392840851.2582155.14607525521532592549.git-patchwork-notify@kernel.org>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-On Wed, 2025-07-16 at 22:30 +0300, Cosmin Tanislav wrote:
-> MAX9295A is an older variant of the MAX96717 which does not support
-> tunnel mode.
->=20
-> Document the compatibility.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
-> =C2=A0.../devicetree/bindings/media/i2c/maxim,max96717.yaml=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0 | 7 ++++++-
-> =C2=A01 file changed, 6 insertions(+), 1 deletion(-)
->=20
-> diff --git a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.y=
-aml
-> b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> index 9afaa8a7a3f52..78ecbab8205a5 100644
-> --- a/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> +++ b/Documentation/devicetree/bindings/media/i2c/maxim,max96717.yaml
-> @@ -25,12 +25,17 @@ description:
-> =C2=A0
-> =C2=A0=C2=A0 The GMSL2 serial link operates at a fixed rate of 3Gbps or 6=
-Gbps in the
-> =C2=A0=C2=A0 forward direction and 187.5Mbps in the reverse direction.
-> +
-> =C2=A0=C2=A0 MAX96717F only supports a fixed rate of 3Gbps in the forward=
- direction.
-> =C2=A0
-> +=C2=A0 MAX9295A only supports pixel mode.
-> +
-> =C2=A0properties:
-> =C2=A0=C2=A0 compatible:
-> =C2=A0=C2=A0=C2=A0=C2=A0 oneOf:
-> -=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - const: maxim,max96717f
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - maxim,max9295a
-> +=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - maxim,max96717f
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - items:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 - enum:
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 - maxim,max96717
+On Thu, Jul 31, 2025 at 02:20:08AM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
+> Hello:
+> 
+> This patch was applied to netdev/net.git (main)
+> by Jakub Kicinski <kuba@kernel.org>:
+> 
+> On Mon, 28 Jul 2025 17:34:55 +0200 you wrote:
+> > Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
+> > devm_gpiod_get_optional() in favor of the non-devres managed
+> > fwnode_get_named_gpiod(). When it was kind-of reverted by commit
+> > 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
+> > functionality was not reinstated. Nor was the GPIO unclaimed on device
+> > remove. This leads to the GPIO being claimed indefinitely, even when the
+> > device and/or the driver gets removed.
+> > 
+> > [...]
+> 
+> Here is the summary with links:
+>   - [net] net: mdio_bus: Use devm for getting reset GPIO
+>     https://git.kernel.org/netdev/net/c/3b98c9352511
 
-Reviewed-by: Julien Massot <julien.massot@collabora.com>
+This needs to be reverted, it's an abuse of devm on a device that is
+not being probed. Sorry, I don't have time to generate a patch.
+
+-- 
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
