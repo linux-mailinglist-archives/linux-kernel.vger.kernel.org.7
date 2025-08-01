@@ -1,72 +1,85 @@
-Return-Path: <linux-kernel+bounces-752951-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752952-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F324B17CE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:26:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA586B17CEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:29:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 60A087B025E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:25:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5FC551C24960
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:29:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23E701F4E34;
-	Fri,  1 Aug 2025 06:26:34 +0000 (UTC)
-Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61E911E990E
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 06:26:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CFE71F4C98;
+	Fri,  1 Aug 2025 06:29:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Blto+PeN"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70DB1E990E;
+	Fri,  1 Aug 2025 06:28:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754029593; cv=none; b=mj3OyEDTqXqNdItAuXWia0rQvEcQAceCVbsoYDrxSO9Um3pE4zq1wGDdHbEBmyVtkL6YI2qbrwL0PDtFwsyV22Gw/6RMy8FE0+g4+yr0HFeaDy9g5EzWhNPUbuLAzlF93fZzxoMao1ItuR+yr84kUhFnECnw6Vs3QGzo5YzVHXk=
+	t=1754029742; cv=none; b=TqXRvKJNDZjfsnlp6BS1r1L8EC/bucFeeRZFf62onQA1gge+2c+YwkW4RqUH/E2Df0eZmHM9gLCw5EyLEPoeU/O5ba3REdO9Jua/TpLcYKcq07yrkayE2SMiivd9FUCMqDemo+Hoio4d/yMNULiSaLw5PS5yoUy0x/F4Lp9uh7M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754029593; c=relaxed/simple;
-	bh=PbG8XQYG0g35yJ9gdzlcsnnlLyMa3IkLVqr15YnaMcI=;
-	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=i0jNjNSahcpTtuaoForOzj5F/I0wVLuWjY853yIR152VgcEkpUDm/AKp7W/sqe7UJy+csKgOrbl4lw4o19xXY0vzoHi+SHOjWVK8MM8eHdbCKlBXW/4os7BrtfomgjpQojpqhNcVb6ZXjdvGTNeFFERafNTlAsE29+7pgMaI/Fg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.187
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.174])
-	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4btbSR0xLFz14MCN;
-	Fri,  1 Aug 2025 14:21:27 +0800 (CST)
-Received: from kwepemf500018.china.huawei.com (unknown [7.202.181.5])
-	by mail.maildlp.com (Postfix) with ESMTPS id 10BA91401F2;
-	Fri,  1 Aug 2025 14:26:21 +0800 (CST)
-Received: from [10.67.145.254] (10.67.145.254) by
- kwepemf500018.china.huawei.com (7.202.181.5) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Aug 2025 14:26:20 +0800
-Message-ID: <8c6eb963-0a3a-8b75-8ab4-a0b2e10f3d40@hisilicon.com>
-Date: Fri, 1 Aug 2025 14:26:20 +0800
+	s=arc-20240116; t=1754029742; c=relaxed/simple;
+	bh=TZGG7jmoZvxkE/IKFE16zmJqWQQALJW+8CQ4vDqU3wU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=qR5vOyDtXMKwZqcyzTddKzBu2m2c77+YkU2WqbqtCaYZeQ8FzqaAxg6J14gMZwugt0ZPWNcWvNixbAwXiAWwe7oWoH/CdaTyJlerdIVQdyugwtRhCRQ307lotxht2jUo3tkA3SG9HBe5LbapjwGrEqbNRlUlnQ/46F9HjjMQbvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Blto+PeN reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=dC9KBw4sEw7jTJErqmakBD0kKQgNF16I4/sEVGhGTmY=; b=B
+	lto+PeNwDpC8srkaginYB0U4gqIN9WJWFIvDk/BYFkvbLN/wEXkrGQc9WrLOEh7f
+	lFA9ylmVjq8RcKzFsX8aJS4g+lnPwffLO8+9FW//6jEo2yjq6TIryofG9mNQuP6Q
+	04BwBQBgM4eH5glWunGbU7YqHVPxALQU+lnOoIS9sg=
+Received: from andyshrk$163.com ( [58.22.7.114] ) by
+ ajax-webmail-wmsvr-40-100 (Coremail) ; Fri, 1 Aug 2025 14:28:09 +0800 (CST)
+Date: Fri, 1 Aug 2025 14:28:09 +0800 (CST)
+From: "Andy Yan" <andyshrk@163.com>
+To: "Stephen Rothwell" <sfr@canb.auug.org.au>
+Cc: "Simona Vetter" <simona.vetter@ffwll.ch>,
+	"Andy Yan" <andy.yan@rock-chips.com>,
+	"Dmitry Baryshkov" <dmitry.baryshkov@oss.qualcomm.com>,
+	"Intel Graphics" <intel-gfx@lists.freedesktop.org>,
+	DRI <dri-devel@lists.freedesktop.org>,
+	"Linux Kernel Mailing List" <linux-kernel@vger.kernel.org>,
+	"Linux Next Mailing List" <linux-next@vger.kernel.org>
+Subject: Re:Re: linux-next: build warning after merge of the drm-misc tree
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
+ Copyright (c) 2002-2025 www.mailtech.cn 163com
+In-Reply-To: <20250801144354.0ac00f39@canb.auug.org.au>
+References: <20250716203115.6e02e50c@canb.auug.org.au>
+ <20250801144354.0ac00f39@canb.auug.org.au>
+X-NTES-SC: AL_Qu2eBvyZtk4j7yCcZekfmkcVgOw9UcO5v/Qk3oZXOJF8jCrp+T8Sd2ZaF1DE/tCJOQeHiwGOexp84/ZoY4N9R58o3UA/dpqW8flVjzX0UsNm4w==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=UTF-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.0.2
-To: Marc Zyngier <maz@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <yangwei24@huawei.com>, <yaohongshi@hisilicon.com>
-From: wangwudi <wangwudi@hisilicon.com>
-Subject: Question on the scheduling of timer interrupt and FIO interrupt
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
- kwepemf500018.china.huawei.com (7.202.181.5)
+Message-ID: <7304e450.4ca8.198645108de.Coremail.andyshrk@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:ZCgvCgDnT_15XoxoQz8LAA--.23127W
+X-CM-SenderInfo: 5dqg52xkunqiywtou0bp/xtbBEgCcXmiMTk2huQACst
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-Hi, all
-When running some FIO tests on ARM64 server(Kunpeng), frequent NVMe interrupts occupy the
-CPU, and the CPU's hardirq load is 100%. The watchdog feed interrupt arch_timer cannot be
-responded, triggering the hardlockup.
-GIC driver uses GICV3_PRIO_IRQ to set the same priority for arch_timer interrupt and NVMe
-interrupt. In GIC spec, "If, on a particular CPU interface, multiple pending interrupts
-have the same priority, and have sufficient priority for the interface to signal them to
-the PE, it is IMPLEMENTATION DEFINED how the interface selects which interrupt to signal."
-Shell we consider setting a higher priority for the arch_timer interrupt to fix this case?
-
-Thanks for your help.
-Wangwudi
+CkhlbGxv77yMCgpBdCAyMDI1LTA4LTAxIDEyOjQzOjU0LCAiU3RlcGhlbiBSb3Rod2VsbCIgPHNm
+ckBjYW5iLmF1dWcub3JnLmF1PiB3cm90ZToKPkhpIGFsbCwKPgo+T24gV2VkLCAxNiBKdWwgMjAy
+NSAyMDozMToxNSArMTAwMCBTdGVwaGVuIFJvdGh3ZWxsIDxzZnJAY2FuYi5hdXVnLm9yZy5hdT4g
+d3JvdGU6Cj4+Cj4+IEFmdGVyIG1lcmdpbmcgdGhlIGRybS1taXNjIHRyZWUsIHRvZGF5J3MgbGlu
+dXgtbmV4dCBidWlsZCAoaHRtbGRvY3MpCj4+IHByb2R1Y2VkIHRoaXMgd2FybmluZzoKPj4gCj4+
+IGRyaXZlcnMvZ3B1L2RybS9kcm1fYnJpZGdlLmM6MTI0Mjogd2FybmluZzogRnVuY3Rpb24gcGFy
+YW1ldGVyIG9yIHN0cnVjdCBtZW1iZXIgJ2Nvbm5lY3Rvcicgbm90IGRlc2NyaWJlZCBpbiAnZHJt
+X2JyaWRnZV9kZXRlY3QnCj4+IAo+PiBJbnRyb2R1Y2VkIGJ5IGNvbW1pdAo+PiAKPj4gICA1ZDE1
+NmE5YzNkNWUgKCJkcm0vYnJpZGdlOiBQYXNzIGRvd24gY29ubmVjdG9yIHRvIGRybSBicmlkZ2Ug
+ZGV0ZWN0IGhvb2siKQo+Cj5JIGFtIHN0aWxsIHNlZWluZyB0aGF0IHdhcm5pbmcuICBUaGF0IGNv
+bW1pdCBpcyBub3cgaW4gTGludXMnIHRyZWUuCgoKVGhlIGZpeCBpcyBoZXJl77yaCgpodHRwczov
+L2xvcmUua2VybmVsLm9yZy9kcmktZGV2ZWwvMjAyNTA3MTYxMjU2MDIuMzE2NjU3My0xLWFuZHlz
+aHJrQDE2My5jb20vCgpIb3BlIHRoYXQgYSBNYWludGFpbmVyIGNhbiByZXZpZXcgYW5kIGFwcGx5
+IGl0LgoKCj4KPi0tIAo+Q2hlZXJzLAo+U3RlcGhlbiBSb3Rod2VsbAo=
 
