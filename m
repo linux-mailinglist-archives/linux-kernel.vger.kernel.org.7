@@ -1,156 +1,79 @@
-Return-Path: <linux-kernel+bounces-752908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E5A9B17C3A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:47:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E5A7B17C3E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116791C2380E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:48:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D9BE5A66F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:51:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7302C1D61B7;
-	Fri,  1 Aug 2025 04:47:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6E641E3DFE;
+	Fri,  1 Aug 2025 04:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3vTfSVf"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AlpkL48Z"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C5A2E36F5;
-	Fri,  1 Aug 2025 04:47:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F66C1D95A3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 04:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754023669; cv=none; b=RJNfFcY7f3dA0nQHJY7silJIpvLCdV9CwtrMnhCbHwljrEKvN5oBIsPrKvlQyHRSnXzu9KLaSq3GAguwV55MKRSGd2mo5JRcF38RbcqsDcZgpKwy+UHk3ugD8Uqxmju98KFsCTaTIOMfvzaX7UyefflmDTtistQnzTsh9TQklXk=
+	t=1754023890; cv=none; b=YxoQHil78Y5uW/As6x3wqWgG6gbU7OD+xKSL4g2kRrfdMjEdnze79YPqOhWBcxSCd10n+Ntnt/02bu+s4T8vOeepOlz2DrU2lo3A2/T9ODfH2CsgErzN+jZl53lHc2ba2hZYp7lj+gsVWKxi7KTL3tTMHD3aVi893BPnNWOF+Ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754023669; c=relaxed/simple;
-	bh=Z6GuhGLpQlEJDbFdROmqYuJfyRyqqJhwKdI3KHUcOEk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oT5UqoJrspNQkjG8BV75q/rMqhG3IcuDPnnAILU3PGlHSjcqnakvaXQgSciT3dKElmH393KVwq4ZifEC24u/kqgMU8C16g3OKZvKXEAbKRbI0fsXqtSdG189N0o5uGpzhIxskHqyXsnyImhdtvjasavLqnpdPA6ODyMkuZ2WyxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3vTfSVf; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAEAC4CEE7;
-	Fri,  1 Aug 2025 04:47:47 +0000 (UTC)
+	s=arc-20240116; t=1754023890; c=relaxed/simple;
+	bh=BRymtlzuxn/nDTRBdiswM96a4s9V1L5n3BdsG8BqbN4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=UI0IB4w33vaTw/ZMbxOXRyGJ0WiGJnoMJMgIa3sDoCxaRswNEGcmkDJXeSlD1yFvlLXd6l+fYKJqsVvX3jWdoEevP+o0zwxtewaidnKzOR4ZwzDi0wrTNanf3Pd0LxdLcqMUSqC89wwh62MtGX5Qeby5gY9P/nDE6laCd1nZBXo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AlpkL48Z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF5A4C4CEEB;
+	Fri,  1 Aug 2025 04:51:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754023669;
-	bh=Z6GuhGLpQlEJDbFdROmqYuJfyRyqqJhwKdI3KHUcOEk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=U3vTfSVfkvNFoP4SiyFFIhwhrGxu3g35ESb1EOxoAn42EqYCBuLyMCj0McN3sdJ0w
-	 aE34QDYUDD2JOl+vpadEqhPELX+AiazQ1keGvpxugJQ6GlG5HPDFTvsT/fImtSpxDS
-	 Cb1c40EDYl7vGbqmMjHbgiZjQ+5aUJhSH4zEz9cXaRU7YXbAhSzhyblv5gxlHIysRv
-	 vpuOZ1VPxpcS+28EjzLIi6jKnMNbOXsYbYE2N72nQ9EDRXswzEngp51kL1TLrn+GuK
-	 qsvzDGsivVjkN4RScJGvI6bKFlFILlOLNW8O73Lolxtbjb0DTlLpvIueQhe/BblodJ
-	 RSWQU4mC4E+xg==
-Message-ID: <9fffb5be-eced-4207-86fc-8939de1ab16e@kernel.org>
-Date: Fri, 1 Aug 2025 06:47:46 +0200
+	s=k20201202; t=1754023890;
+	bh=BRymtlzuxn/nDTRBdiswM96a4s9V1L5n3BdsG8BqbN4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=AlpkL48Z8Qzfe7AZMrSIMpLYnCMON9pqdu7czC+5LuceV7XO0x1I74tykOmYD2Cow
+	 55IjyblBhW8PJjEL10IfrkB7kfrfoeJ1+VrSKC7n2+Zz7+0F/j1p2SsUXD8tOHHBn2
+	 VFflPuBz/lgO40JK+nCtlHOSsvTlcnDAFHxh9sauoOgdInb1enR/JrJLKqIiT32JlA
+	 FwKu7qCgVTUg5dcsVPEcXlrsaFRtzTR5/BxxUQa6FItxt4kNmlaYdBVdCgBHwlteO9
+	 G7WQ7yf2vezypIrfkCht2OrfKmW40T0lKhA1LJRVtU+IH4Y5FQZNP2zcjOefSq6Uxr
+	 SAV8G8+G6XSMw==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id A130D383BF52;
+	Fri,  1 Aug 2025 04:51:46 +0000 (UTC)
+Subject: Re: [git pull] drm fixes for 6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <CAPM=9twBSSdGXPYQMTz9yWqKg=8RNpAXui4Uf=BvB60mUiZqfw@mail.gmail.com>
+References: <CAPM=9twBSSdGXPYQMTz9yWqKg=8RNpAXui4Uf=BvB60mUiZqfw@mail.gmail.com>
+X-PR-Tracked-List-Id: Direct Rendering Infrastructure - Development
+ <dri-devel.lists.freedesktop.org>
+X-PR-Tracked-Message-Id: <CAPM=9twBSSdGXPYQMTz9yWqKg=8RNpAXui4Uf=BvB60mUiZqfw@mail.gmail.com>
+X-PR-Tracked-Remote: https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-08-01
+X-PR-Tracked-Commit-Id: 6531a2cf07ef156956840853692755cc7e1621b7
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 89748acdf226fd1a8775ff6fa2703f8412b286c8
+Message-Id: <175402390531.3433303.7044614939045683231.pr-tracker-bot@kernel.org>
+Date: Fri, 01 Aug 2025 04:51:45 +0000
+To: Dave Airlie <airlied@gmail.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Sima Vetter <sima@ffwll.ch>, dri-devel <dri-devel@lists.freedesktop.org>, LKML <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 07/33] tty: vt: use _IO() to define ioctl numbers
-To: Nicolas Pitre <nico@fluxnic.net>,
- Christophe Leroy <christophe.leroy@csgroup.eu>
-Cc: gregkh@linuxfoundation.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
- linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
- "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
-References: <20250611100319.186924-1-jirislaby@kernel.org>
- <20250611100319.186924-8-jirislaby@kernel.org>
- <97ec2636-915a-498c-903b-d66957420d21@csgroup.eu>
- <3ac7427b-4f17-480e-99ae-f00e5c00e678@csgroup.eu>
- <9811012p-4q9q-284q-n2qr-7597s16p8sq5@syhkavp.arg>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <9811012p-4q9q-284q-n2qr-7597s16p8sq5@syhkavp.arg>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-On 31. 07. 25, 22:58, Nicolas Pitre wrote:
-> On Thu, 31 Jul 2025, Christophe Leroy wrote:
-> 
->>
->>
->> Le 31/07/2025 à 16:35, Christophe Leroy a écrit :
->>> Hi Jiri,
->>>
->>> Le 11/06/2025 à 12:02, Jiri Slaby (SUSE) a écrit :
->>>> _IO*() is the proper way of defining ioctl numbers. All these vt numbers
->>>> were synthetically built up the same way the _IO() macro does.
->>>>
->>>> So instead of implicit hex numbers, use _IO() properly.
->>>>
->>>> To not change the pre-existing numbers, use only _IO() (and not _IOR()
->>>> or _IOW()). The latter would change the numbers indeed.
->>>
->>> On powerpc your assumption is wrong, because _IOC_NONE is not 0:
->>>
->>> $ git grep _IOC_NONE arch/powerpc/
->>> arch/powerpc/include/uapi/asm/ioctl.h:#define _IOC_NONE 1U
->>>
->>> Therefore the value changes even with _IO(), leading to failure of Xorg as
->>> reported by Christian.
->>>
->>
->> And is likely an issue on the 4 following architectures:
->>
->> $ git grep _IOC_NONE arch/ | grep 1U
->> arch/alpha/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
->> arch/mips/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
->> arch/powerpc/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
->> arch/sparc/include/uapi/asm/ioctl.h:#define _IOC_NONE        1U
-> 
-> IMHO this one patch could simply be reverted and the "old" code let be.
+The pull request you sent on Fri, 1 Aug 2025 09:05:07 +1000:
 
-Oh, right -- it's easy to revert (no conflicts).
+> https://gitlab.freedesktop.org/drm/kernel.git tags/drm-next-2025-08-01
 
-We could use _IOC(0, 'V', number, 0) directly, but I am not sure, that's 
-worth it.
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/89748acdf226fd1a8775ff6fa2703f8412b286c8
 
-thanks,
+Thank you!
+
 -- 
-js
-suse labs
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
