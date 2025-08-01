@@ -1,185 +1,175 @@
-Return-Path: <linux-kernel+bounces-753167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753168-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22175B17F6A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:35:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2345AB17F72
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 767311C21FC1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:36:12 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AE5947B6310
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:34:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80CE8226CF9;
-	Fri,  1 Aug 2025 09:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 358DE22B8B5;
+	Fri,  1 Aug 2025 09:36:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="HlpmpxAX"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KZggZVA9"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 274E522839A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF419228C9D;
+	Fri,  1 Aug 2025 09:35:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754040942; cv=none; b=Uu0ITiGX5UCCmHL8ByUjemvV/O9mLxO13t3nyZF5iyuEiP49J9O8yl/9MOs4ZKTf9Rpvgg9ZN2drXiw7DAVbx0lRhYjBKkw3juY2tSlrZgNLAOjergODwF+wPvcZon7ClIsw3IJPCm3y/amx0Deu494HrFjrQvjjm0kD5N5SACE=
+	t=1754040960; cv=none; b=Fo78SpnzzmCNv9FGPsi7pyX9BaOgLU7Otjy4ODW0kmu2NtaE+JySpmLr4MA9EVCv8XSwdA92Ep0QnHhN0vzUI4oGzd2odu9l+G9Oiaq6I1igFUlFx8Y4jh2u7urJMhch5WtBq2xkVrgMYoy8Up3xUb7xvNB04qBxpAxihvnQbnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754040942; c=relaxed/simple;
-	bh=RereaYefPMJ+AN1G/WR2ZPJ7Q/9VsGyrmIOo6U3bInI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TnMTRm6JjW9ocX2y/iEN+SCUDUXyk2LzB+Y9qna/r8NaMqTUr2yZA9BTLljvNa1Po0yT8acOE0w6REY3DoZOmmrWcP8LiCQqI/l9l25Wlo2uueYxQYYrOrCeP9SxyQEP9BxXEBfLXZp5CK/22HV2XYRHcu0Vwn5zhq/k42L1JaQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=HlpmpxAX; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5718lRI6024687
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 09:35:40 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	FTE8Tu8b1amkpQAae9PG0gDF8STmsmRt79+CR3F5UKg=; b=HlpmpxAXKwE/hM1u
-	Vvr45SBbJSsOe208L9fPmhGEtdQ7zzm59J2Sp07WRhzO7rBeZaXdlrIwqqYH+6nn
-	7a5yeh6hOwgvw1qKBjhmTekG2uiDf9OrPOetBdNKvf2aD5X31PAR031EJXZ0ftte
-	RiHFgnWyPtj6oI0O0dA6yOLjurfsNDi3LOe4jvlHCjpbLkit+g29lMYwNoEyNZXK
-	JxPPajHIsUlwQCMSX0jrcQBeYKhG4BUrfNO/UATglbrCWS3fYvM6/SrPhUahdauM
-	Mno8z7oA/gKNWhCB1NsYffFz4V/47S2lWdD69jVy4nlMbhIrJMCgjQXRuJGCMWPx
-	4l/vfQ==
-Received: from mail-pg1-f198.google.com (mail-pg1-f198.google.com [209.85.215.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48887g3ree-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 09:35:40 +0000 (GMT)
-Received: by mail-pg1-f198.google.com with SMTP id 41be03b00d2f7-b423dcff27aso666461a12.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:35:40 -0700 (PDT)
+	s=arc-20240116; t=1754040960; c=relaxed/simple;
+	bh=63+Ixi4ckuMma+HuIR/Djmfai08XglpZMQ9ULfkEgmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=vAg8F/PhT5biiLvA4MewcQTUkhqO9atKv61EWKnLUxf2hOv2FHacM4LPf1PlzRzq7EQfcdf4QQ5vY0qUGHeg5wRE8YWbEAIp6phIcIim+bs/PDzKVrMZuZ6F9eu5W5Gm4D2UrDHcuoLIcqL4/SPBYVdto4LnON+qV9cxQWIEyWg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KZggZVA9; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-3b77673fd78so849832f8f.0;
+        Fri, 01 Aug 2025 02:35:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754040957; x=1754645757; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=63+Ixi4ckuMma+HuIR/Djmfai08XglpZMQ9ULfkEgmA=;
+        b=KZggZVA92ZI2nanL3n8kLEJvTzkIgcHHLy4vaNzCbBRBTp5oM3c0BNZyqhQXFsp1f5
+         jE7BWZkYZChWziD1Tvbwf2GWyBZR62ZgeYQ6uUV0Dv+oqKWiH9+u560aIzeJrDC56H3m
+         RjHg8jjiGfyINbemWfD7FOvt+YZpBSrK3spY3J4D8jC2E+4PxRj0lOpfAYLMQI7GyBX4
+         G7r51VPTUgNAE4dx3/U5HQ7J2C/pvaxzjaa2XomZnpsGP62gh8PQ3ralhuJ8CTbuX5eR
+         i8IHg2WjBAaD08Dz94LxXbyYvvER32vkES6WSQW87EzgAdOwCjdnoPZGHIiZ19Ux2Lw3
+         EMJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754040939; x=1754645739;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FTE8Tu8b1amkpQAae9PG0gDF8STmsmRt79+CR3F5UKg=;
-        b=EdqvhmblPW+uUhMuu8gTD8gJzpq07EMzX3KgN62P6HwjifnAfNW1FuLCAXJwT7YTSy
-         qD3LDoEt/WO0nbha5pUARCIok5fBIae0h/XSAFp4XjW/4E6N3dr0pXCn749QDfrIClFG
-         iHtzRADPklrhV9ka78NsiepxcDyHMDillZYvO6dBhseI+puaN3fNwDL6JN7i3foHj2tu
-         0LPHWpTl1RsHty9GwyeYogwZRBEIAJEsv1M16tAq/TlflbUI2yHC3OZfa4gSf+22q/F+
-         DH9U6ECs2ULfHI/1YeX26yJwgqt6uBnyjbmIOWaDc9i9ysx7pjARi12+EweGXiWSPfNE
-         dvOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUl0lD+3LkWjoczyPLgLSWmr2X0kI89WuBOpEIlNJLCr+oziTUswm1sl/AZ0TzkBlTjoERbUyUat2uB2Vk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvVx8T4rNlKmBmUMotVLo5dUs+sxYJ9rPz9MRu5/W1ytLWdEZw
-	4vynVqg8g/nS68h9FZq94hv8V3dxWlFWCQV/qHVImKjSenTFnMlMDN5VI2NfUern0uEUCLHJoin
-	wzXNNEhAWkwGuGCNrCozQOElPQ4/PRuaJtm3VgZSOxUaOekxbGBt6F12qUyQXhhDD83E=
-X-Gm-Gg: ASbGncvcz3X0J3iq44lYSfEpQ2dNdoRGnkSvev3jdEPzVNilKpM2rcf7yNbxxhf9W6o
-	dwIR2f1SusvH5bD1temARjo3fxb1sRNeIUXvq3guFCtR/RbuqCjIFcwJju+esGdLvaH30/M6q8q
-	XT2j6cxxaHLYREPJrzVp8oS+pWY7iFWPV77/5K8jyO6z+P7/7EYDw/PVI0WaZsOCVZrjySeorUG
-	XzjrsLi8ZW7O9Otmb531CmeXjtuCfuc8gHXAXjqeTQjRYT2DHICYaT8HyeiADdeIlGP4yXof0fL
-	c4yPSVpgdiPkQyURp+noTFQI0NxUnwPfUBoX8g9w+GX/SyIbg7ZzB/43OM+UagB/XPjzeTK7Mg=
-	=
-X-Received: by 2002:a17:903:22d0:b0:240:1850:cb18 with SMTP id d9443c01a7336-24096bcc7a9mr150191705ad.53.1754040939353;
-        Fri, 01 Aug 2025 02:35:39 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGbZdxiptvpigi7eLXKhWCFOZQbYGfK+h+OEAOD3ELNf+6iC45wP9TbESkBH3N8d372w+JIbg==
-X-Received: by 2002:a17:903:22d0:b0:240:1850:cb18 with SMTP id d9443c01a7336-24096bcc7a9mr150191225ad.53.1754040938913;
-        Fri, 01 Aug 2025 02:35:38 -0700 (PDT)
-Received: from [10.218.42.132] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207ebc3266sm4196042a91.13.2025.08.01.02.35.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 02:35:38 -0700 (PDT)
-Message-ID: <7f1393ab-5ae2-428a-92f8-3c8a5df02058@oss.qualcomm.com>
-Date: Fri, 1 Aug 2025 15:05:31 +0530
+        d=1e100.net; s=20230601; t=1754040957; x=1754645757;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=63+Ixi4ckuMma+HuIR/Djmfai08XglpZMQ9ULfkEgmA=;
+        b=ExJ7lmy4kOQ4s6tpg6cQQd8n29Ye3ZGzO2NtgSo217PH+P7kG2R4dcia/1TV8ZjJw3
+         XNkzhWh6UwBX78J1vLHOMIfFm+O5BTUxpGYuLQdFY7+x+YWJIUk4a+EGr24yceS5bfUP
+         F6s+akImlkz2O2anOtfFL2cE/6q8oLkDvwa9pMQrqAICMNN9KFHaGvFsE9P4kFoib49e
+         nO1DihcjGfw9QcDqfSMdhDm7RN38uiqwRPsbkCOKBD1hEC0xKo/cwy6IoVEFH+uslYCX
+         cGVWJcq75+meys6RZQV0bySEPmIkcvoZS/BIQ8INL4rT6IEpRthiR7S3R07dbZcA3FtU
+         zG3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUHcDPIY5wc2TYXzKM8aXjeD02P3SFUqH8FPC/QIYu7gyOfuHX7f9UjizbCkQZVaYaaf4/Kplbpaf/7c1w=@vger.kernel.org, AJvYcCUqBw648sUdqa7olubm4WPiePZKAUxwBObl7vR4HBLoFg7823DrUe8OgttrolHWVlah2SSjcBi+AMpebIaV@vger.kernel.org, AJvYcCVEWd+8KUD6OeqgzumcKu463A3sMQ9WVvzno5LxW9aRqI8RMjTmEk6E1Q1TCwU1BkIchJJROmleYWjr@vger.kernel.org, AJvYcCVGBQ1gbt+z4AP7EPgk/JlFomTN19wUHeFL+DzxgBaM4RwAxjGuabCLgqfLcZkrWzqHs0Eh93bkXEOVkA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfrwKrCrkUUOcfBbRxFIy5bE3NgJR+iGBVa7woTjL8urt2nfw6
+	Nq0X39ZV7ko49/m2avFCDmKP9fhCaaRAyl2dq2DmCa//SXdH/Stq4D+4
+X-Gm-Gg: ASbGncs9XJAZ5w3qb/OeBlZQonjjjRBUTLSZKvt0GO0kxSQWHkKVasAXJpxdawD8q38
+	MYqqzQY5BmcpzROFFb7V3yz/G+JaKe5/tEO+xKYweA2+m1OD2lCokCT0OsrVvxsln82xjhIq9iM
+	/2lSZs9jlDgElWOLl3hTIpVe48P0RIXdyEweE8b+HMfzgZuZ6qikI+Pm4/5VPqOcBINv2ZLmSTS
+	741p9771HxwHEzZQJGp4j7fNkkJLW8OwptilDxGlQuUhlCNMn/jQZ+aE79C4DMUuBhEruA060rM
+	SNG4yjyc4h+znSoNikqbfLWdC2fq4mTrfSWC9qjOrvTmrzqctdC1Ni2Kg7Z+UspLBnmW03iiZRO
+	lTyqynNBcZQVD+yvhdojdfqcHeri1zMCWZXvNfJZhUUtAbAh1UgIQ7fqdCeejw7/SVyikYjJFR8
+	qERom5Mgh22xdVxrHf2vI=
+X-Google-Smtp-Source: AGHT+IEzT4QuTnS+opylwWwJ8ZFtEhpWVGV493HDhdtwWSkvwRk079L725rbuM+nKLoxjSQ7k7xhGg==
+X-Received: by 2002:a05:6000:220d:b0:3a5:8a09:70b7 with SMTP id ffacd0b85a97d-3b8d348e65amr1831729f8f.38.1754040956756;
+        Fri, 01 Aug 2025 02:35:56 -0700 (PDT)
+Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c47c516sm5284172f8f.62.2025.08.01.02.35.55
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 02:35:55 -0700 (PDT)
+Date: Fri, 1 Aug 2025 11:35:53 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Aaron Kling <webgeek1234@gmail.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Jonathan Hunter <jonathanh@nvidia.com>, 
+	Bartosz Golaszewski <brgl@bgdev.pl>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+Message-ID: <ofym7vi5wudw2agh4ydgvxvw5vlptncouz57dm4c5ervixc5rj@bq5afsmhzpuz>
+References: <20250608-tegra186-pinctrl-v2-0-502d41f3eedd@gmail.com>
+ <20250608-tegra186-pinctrl-v2-2-502d41f3eedd@gmail.com>
+ <yw2uglyxxx22d3lwyezy34wdniouu32zppfgwqs5omny3ge5zd@iuqo4qmi55a2>
+ <CACRpkdZha_ucjWvP_NQ+z2vbD65Y3u7Q0U57NYbJ=vqQ6uPGGA@mail.gmail.com>
+ <yslfabklduaybg255d3ulaxmzpghyj54zdfeqkx3oxgisxf6fo@2wecuqpvvefc>
+ <CALHNRZ8jq++KVKxKP2-GwMA6CauP=cM2_wt==MRAV4mOzK2kxw@mail.gmail.com>
+ <xc72g7j7png443pjxu2wpsuqofgrpxvn43emkt3rv5qrjzf7vt@qzvsiy3eakub>
+ <CALHNRZ928+=85FbvfKt1c4VX7RudU7ehuOa6wwLj8JJNz+=W-A@mail.gmail.com>
+ <CACRpkdbLzAJS=iqgOEzE9kD-fM9tx22JTDPgQeLwbTFKiStrtw@mail.gmail.com>
+ <CALHNRZ_1_WeUrfqUiOTsy3cEkwm2k7nj+4hA-7xZFgoA+DZKjg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
- dynamically
-To: Viresh Kumar <viresh.kumar@linaro.org>
-Cc: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
-        Stephen Boyd <sboyd@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Lorenzo Pieralisi <lpieralisi@kernel.org>,
-        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, linux-pm@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
- <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
- <20250801072845.ppxka4ry4dtn6j3m@vireshk-i7>
- <7bac637b-9483-4341-91c0-e31d5c2f0ea3@oss.qualcomm.com>
- <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
-Content-Language: en-US
-From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-In-Reply-To: <20250801085628.7gdqycsggnqxdr67@vireshk-i7>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=Vdn3PEp9 c=1 sm=1 tr=0 ts=688c8a6c cx=c_pps
- a=Qgeoaf8Lrialg5Z894R3/Q==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=lAXUmMm_w8SOBygwRYEA:9
- a=QEXdDO2ut3YA:10 a=x9snwWr2DeNwDh03kgHS:22
-X-Proofpoint-ORIG-GUID: UFIfhKGPFZ16eH3fzA8gMpSF5JVwUHzh
-X-Proofpoint-GUID: UFIfhKGPFZ16eH3fzA8gMpSF5JVwUHzh
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2OSBTYWx0ZWRfXzvV+zwGK9cWp
- rxg1KH34phk8AiP6CyXi3XJ3olOWAWjYCIWE6XmX4oAEhyjPmj45BlWiLL5J8+PhYYrY3eQZQ4f
- eX5eSKmLM0/XvxoNmMYImkIOakWl3YTL6S4lOuXDf75OLFJL65Z04V8Lv044f841RUOjtezgbXF
- IHnoa1ATJ8C28yDswD9QeMdla0c9OaSB2pAScKGnzdcW+S05tDrNjtgmfa48tJUIzPFljWHRCq1
- SrDh+sbCFDUMcuvxbfsAqeg8BG/8p8yKLp5if9Zjtv2SDjZq1vfO/KwzMzJNx0u0cO9aa6s7QNS
- 1rPDMj67qW7kAo9yFzlJr2FBDMfUXogT6KjRMTN/4X3wJslwUHuHi8zU9HE2JqusAaVjT+KYn8d
- sHzoqC9yY7mtgzL8tA9Z3cBrt1pCFrFlErzL2Vk1cBXPej9LpuOsdK1mvIr2lLlYyKONCKtl
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_03,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
- priorityscore=1501 malwarescore=0 mlxlogscore=999 spamscore=0 phishscore=0
- bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010069
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="o43wulfghexnnu4w"
+Content-Disposition: inline
+In-Reply-To: <CALHNRZ_1_WeUrfqUiOTsy3cEkwm2k7nj+4hA-7xZFgoA+DZKjg@mail.gmail.com>
 
 
+--o43wulfghexnnu4w
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v2 2/3] pinctrl: tegra: Add Tegra186 pinmux driver
+MIME-Version: 1.0
 
-On 8/1/2025 2:26 PM, Viresh Kumar wrote:
-> On 01-08-25, 13:58, Krishna Chaitanya Chundru wrote:
->> When ever PCIe link speed/width changes we need to update the OPP votes,
->> If we use named properties approach we might not be able to change it
->> dynamically without removing the OPP table first. For that reason only
->> we haven't used that approach.
-> 
-> I am not sure I understand it fully. I thought this was a one time configuration
-> you were required to do at boot time based on platform's configuration.
->
-I am not fully familiar with OPP here.
+On Fri, Aug 01, 2025 at 01:33:10AM -0500, Aaron Kling wrote:
+> On Wed, Jul 23, 2025 at 6:08=E2=80=AFAM Linus Walleij <linus.walleij@lina=
+ro.org> wrote:
+> >
+> > On Mon, Jul 14, 2025 at 7:45=E2=80=AFAM Aaron Kling <webgeek1234@gmail.=
+com> wrote:
+> >
+> > > I started looking at the pinmux scripts a few days ago, but updating
+> > > the pinmux driver import/export for the t194 style spiderwebbed out of
+> > > control quickly. I expected it to be hairy, but that was an
+> > > underestimation. Doesn't help that I'm not the most proficient at
+> > > python either. I'll continue the effort later, but if someone with
+> > > more familiarity wants to try, it might be quicker.
+> >
+> > If this means people with 186 dev boards cannot use mainline
+> > Linux and they would if this driver was applied, maybe we need
+> > to apply it anyways?
+>=20
+> I wouldn't call t186 unusable without it. The devkits work fine
+> without kernel pinmuxing as the bootloader configures everything to a
+> reasonable default. It's only if something non-standard (for example,
+> an audio codec) is plugged into one of the expansion headers that
+> runtime configuration could be needed. However, I do agree that it
+> would be worthwhile to move this forward for merging. Since it is
+> unlikely I will get the generation script to a usable state soon. If
+> Thierry or one of the other tegra maintainers agrees, I can start
+> addressing the review comments and send a new revision.
 
-> If you need to change the performance at runtime, won't you switch to a
-> different OPP ?
-> 
-yes we do set different OPP when we change it.
+Alright then. Looks like we can't find anybody willing to work on those
+scripts and it sounds like I'm one of very few that thinks there's still
+some worth to them in this day.
 
-Currently we are fetching the OPP based on the frequency and setting
-that OPP using dev_pm_opp_set_opp().
+Can you make a pass over the driver and make sure we have sufficient
+spacing (last time I looked the various tables in this driver were all
+very clustered together, so a few blank lines here and there would go a
+long way to make things more readable), consistent indentation and such?
 
-As you are suggesting to use dev_pm_opp_set_prop_name() here.
-This what I understood
+Thanks,
+Thierry
 
-First set prop name using dev_pm_opp_set_prop_name then
-set opp dev_pm_opp_set_opp()
+--o43wulfghexnnu4w
+Content-Type: application/pgp-signature; name="signature.asc"
 
-if you want to change above one we need to first clear using
-dev_pm_opp_put_prop_name() then again call dev_pm_opp_set_prop_name
-& dev_pm_opp_set_opp()
+-----BEGIN PGP SIGNATURE-----
 
-I was in a impression that once you call dev_pm_opp_put_prop_name()
-the previous votes will be removed. we don't want that to happen.
-if this is not correct we can use this approach.
+iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMinkACgkQ3SOs138+
+s6GkFxAAjngJguKpmN35lTqVwxregbkYYA5/xmvpDzqsIaNYfbZIvLUI5OivXlBL
+m2JwklBPSyhP8ziXUGJcwim2xVWxordoaAn1fHAvVEJ3WAtt2/NkuCtDzF4dr63i
+VVnQWLmwfbmuWBAyJCNCgfKUXqp7er3SUaqNV9fujQcCJKJkKbZWr+11PCciF2Sg
+A6uMLXsjLhdqV+1m0xhqQWgskogW/wAwHWUS1WeVfdVEaWnF0LD8Xs68RW3iivcv
+DVMV90ZSQaQaYIEK2okTenqh4OCIHMAyUjwhx5tvIwIZ6USwulDLHZoJ56ZrCDoY
+MuXqqZMTEy9U3ONaXo2FU9WRAVxT5zqN4ViaRyJ9dRoED0lNCY/JqFe4sf11QVFU
+lMbimTJgVBsQALz9F8mr6Afaw1SnO8AHtl6ZVlr3zzpbPyo9XaDcapquXZcsGzMM
+LftAGY83vrATV5mX8wEeanDTVUr3OuVCATdBJx1n7A0Ls239JRzHjU5moN47qTLW
+rrvDt4gpHKiBX90ZwERuYxR8qRpDjP8exQ7tUVujATQLFPwkGSS29qi8FK8t7h1f
+DWUJ1JNZkToGW/Vy8gQIEGpY+aRoLK2UlsMpOjnQpawC16W/onAyg6sSp0YF8apg
+Qq6vlggy0GEvO11GELaeIjQ9CnQiUdvXnLEWceMDoy6UFEudY78=
+=mx0Q
+-----END PGP SIGNATURE-----
 
-If this is not correct assumption can you point me any reference to this
-I was not able to find any reference on this.
-
-- Krishna Chaitanya.
-
-> I don't have much knowledge of how PCIe works, maybe that's why the confusion.
-> 
+--o43wulfghexnnu4w--
 
