@@ -1,248 +1,154 @@
-Return-Path: <linux-kernel+bounces-753281-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 85E89B180F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:21:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8827EB18102
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:22:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CA6E7B0779
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:19:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B813416DAAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1D6C245033;
-	Fri,  1 Aug 2025 11:20:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w1uDnVAB"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2060.outbound.protection.outlook.com [40.107.243.60])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DBD421FF3C;
-	Fri,  1 Aug 2025 11:20:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.60
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754047258; cv=fail; b=nxcWC3ZuB/nfTPjRcYbWrbcZfbBm278xJ/ZSWFjnujomf2Zy85xhhMV/Olsqfi4wJmJpZ7DxQzxfySNhLpiAr7QmhFDYlcKt8p96gIk4iyuBljnDCdjRZMaTdvM5BlmMasGuYewHFCsaKxwLWwdzvDO6nnB+Zx8H07UfJD6ZYkk=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754047258; c=relaxed/simple;
-	bh=TVPjxNPxOAjyedBHFR7OonwnwWOjizXCiEmlX9O6vr0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OVA9XgPGjut8T7KXkUTdEIEFncbQYsBcZZR2JM+sg2QKEQv9cKMcIvpJnfhuzjafw/VGZzR7cg4QLC+f+BX2wKwR0O9qRdpS9v7O1zracgDDPfTD7okZ6ejcugVD89QNyy5xRVn9eo6JgXOl0IsXVbYGNZffChOYXsWxdcFm+/g=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w1uDnVAB; arc=fail smtp.client-ip=40.107.243.60
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bgRsEXuZiO36Vy4yp0bOGL9eW3fWM0qyI+N5Bqf5heKZCUNy2S7jeEZJinBTvIBrupFMC81o5yMlzZJ4i+uio4wN32E0RBsLE6X7sL7RadUnew+0juySnaQwSNigm53zA4zLOL3lVZNT1bQKGGLWgW4+BHTE6AtLj3qw1rLF5sXeqd6EAHHOmGNLtHP7OkaCjrzAL2HcWEqXSaz8DWKWzjPCyxQqwG9M1KV4+uUQAD+22o7kYfcT72o+a8hpFS4V3kPmQTzww+cRxX+JHlc1ghIOhLRAXlSGERuLJG7zRgfbyPism28ScH8X77ismj4+ulUGS+xzMdQwEq95gMb6nw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=qhdMxAzCCMAChM6sX9WfU7maotPK5GWfs0GaLqgUEFo=;
- b=dyP85KE2BvlalOSXOv2dhgG6ol458THXolpuFWLpMwcJ8f0c6HFhxkCJTaMCSKdFUn6K/okmCqtKe7ozKnuSqac53UDGLMxF5FEdJewoGxt33Z2f7BYSrYtrqQfPmeOQM3QEdxLQ7Lv0Ax2F1qqwR5iDAgUANtXmGg7mpPqe+kYwmHQa0JDoJurDAK9uSxBS24MOK94BmblVBarZ+fMYNTeLTxpaN29730qkgspREscPzChADrCW3K/3ahqWgWt5vWc7hSaymbTCA90QdOxoefmUqTwqvPaSOMMaVs+OWBB/EIAbJIUkyZCBCYYZx54Xdqb6v7cy5O6q7kfh2McPBg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=qhdMxAzCCMAChM6sX9WfU7maotPK5GWfs0GaLqgUEFo=;
- b=w1uDnVABBnLIlCcbHv7l4McWTKKIkc6XjSSafQa3vEBa4UYLJw8+2sDn4oLx2Ymiq1n+vT2W8JXEqVyAH2dSqtYpUq/6Ov1uQ9woBc+9N7Zx6pcX5yd1IiCinqGhBYe0LhedfyzSm2vDYV3KM7KvSdbW9i5BJQP6bXSY/9GK3uE=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
- by CH2PR12MB4197.namprd12.prod.outlook.com (2603:10b6:610:ab::9) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Fri, 1 Aug
- 2025 11:20:55 +0000
-Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
- ([fe80::7f35:efe7:5e82:5e30%4]) with mapi id 15.20.8989.010; Fri, 1 Aug 2025
- 11:20:55 +0000
-Message-ID: <091bd33b-f72f-4d9f-b234-29ddfa21acb3@amd.com>
-Date: Fri, 1 Aug 2025 13:20:50 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] arm64: zynqmp: Enable PSCI 1.0
-To: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
- git@xilinx.com
-Cc: Conor Dooley <conor+dt@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
- "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
- <devicetree@vger.kernel.org>,
- "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
-References: <32be8050838512d4340486227c32f38298ddde57.1752839409.git.michal.simek@amd.com>
-Content-Language: en-US
-From: Michal Simek <michal.simek@amd.com>
-Autocrypt: addr=michal.simek@amd.com; keydata=
- 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
- mpwx1d8=
-In-Reply-To: <32be8050838512d4340486227c32f38298ddde57.1752839409.git.michal.simek@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: BY5PR04CA0003.namprd04.prod.outlook.com
- (2603:10b6:a03:1d0::13) To SJ2PR12MB8109.namprd12.prod.outlook.com
- (2603:10b6:a03:4f5::8)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4121C246770;
+	Fri,  1 Aug 2025 11:22:23 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E60221FCA
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:22:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754047342; cv=none; b=qQ+bJOS+OID1XH907VV8djr2TI7PvSWwq1iZmLpEHEjUhbgzRQzghMK7UJ3R39vln+kui8jHjqipKYaXXkm2dv6wVryx6mf8EbPIJqd6et3VDMlRw/qqYdaioe2qUqaQR7anryPiPrd/VdBJubCDmqkUnZnUdHm/B2AciR8LSws=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754047342; c=relaxed/simple;
+	bh=ylNmsTr+YV8w0Tt8IPdp+yaSt3V8z3Ju3+xAJQLromU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ZbSlwv3sE4oh8gjqWlP/CNzTYAPRI9UzsSktkxm3tcM6Mg78/SY7xCCaVGvXAY0az73+NB9EEFCvEnRg1HO/W7w1Nb/eLrILhTDNVm7bTNFu/EWYNxPfhtk817wZvwY8cJ5rCAWD4wg67CSAsKRs+3wtb9yx0XQZa10Q7KuxpAs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C47931516;
+	Fri,  1 Aug 2025 04:22:05 -0700 (PDT)
+Received: from [10.57.54.55] (unknown [10.57.54.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 919B33F66E;
+	Fri,  1 Aug 2025 04:22:12 -0700 (PDT)
+Message-ID: <8d810d87-e6a5-42bf-83c5-ba3aaec1889f@arm.com>
+Date: Fri, 1 Aug 2025 13:22:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|CH2PR12MB4197:EE_
-X-MS-Office365-Filtering-Correlation-Id: 535ea41e-e9b2-4f3e-7d21-08ddd0ed7b3a
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Vitld3ZLbnBXenVQZVp2NStXM1d3MVlOSFdHSWhRSEdkamhBTEZiYWs1cFNr?=
- =?utf-8?B?Qmd6aTkxQ05Jbjc1OXhGSktTdktYT0g4WlFUdDhzWG1DaG5PK3ZTaXRQMDFN?=
- =?utf-8?B?VlJPdi9yL1BBVHBrOEsrcTlMT0dRVkVGMmpkLzRYaHM4Tzd6eU1aalVmYWZZ?=
- =?utf-8?B?a0t6eGNJZnhIR0JJOWtncjUxdi9qMi9GWTV0SVFDQklQdmkvdUhzUHIwd2J4?=
- =?utf-8?B?OTZKMVFYdlVrTmFnWTNNVVFnOWpOd3dFVms4cnRoM3B2eFIrT3liOFVMRWMv?=
- =?utf-8?B?VjVFdXNQQXQ5UUdQRkkyUHd0QlJtUzdNaEo4QW9kSDV3QlFMbUdDTUhqSjI4?=
- =?utf-8?B?NTZlSVl2R0RxTTJHYm94Y2NWNEJXd01aWC9pckVnME1UK25XUm4vZmpCZnpE?=
- =?utf-8?B?QWVZYkJMYmVjVnplWUZ6bTlPcmpDNE9keFBXbm81TllhTVk3a2g1dTNVZFA0?=
- =?utf-8?B?d2p2QlgyZGgyY1lhR0NBNmZZYlRpZlhmMFVQeng1MVFsMlFLbzkycDI4N2Ro?=
- =?utf-8?B?TXl6WS9VWnZSSlBnWGdZOE5QeGh2TndsSTZoQmY4MzJocHVNWS83b3oyODJn?=
- =?utf-8?B?OFlrZlBlWUVaekptL2JmVDBNbkEzUFJPWThLcXBKQk5tUzFJb1FhNSt0eUJl?=
- =?utf-8?B?UWhubnB2Ynk1RkZ6TXRYeFJNOFdVSzF4eXBoN3FaSDJPR1g0V0dYSHB4RjRD?=
- =?utf-8?B?WTRXZWhWZVI3OE9JaC85Q3luWTM3U0JWMTdHY1cxV1p5MGZkbTRubFlZb2NC?=
- =?utf-8?B?RHB4SjB6KzJGa0lSWWQrUDRxVjJXMUp4dGdYc29LK0NLV0t0Z212bWZrVnBT?=
- =?utf-8?B?bjdtSzk0dEYrZDB3aTBvK051WTgxdG1DM2FPYVhyZTllTmpFZ05yYUUxM2p4?=
- =?utf-8?B?Z0pGdFFKbnhTemhvUVAvMnQzOFBDVnJoTW10ZWl1blBJM1BjYjY1V3JORzkz?=
- =?utf-8?B?MzZGYlYwSkRVM2pCTUFXSklxYm52UGNOOVVSaHVITUNKakRMdkNVaXdkbTNV?=
- =?utf-8?B?bW9lNHhhbzN6WVdqaVd2bEtWTjlUcjM4RjZZSytqSGpSaWY3cGI4RWFIQVN1?=
- =?utf-8?B?aTRnN1NITS9QT2ZyeDRsV1B6UmRzVDl0SmRDSnZUWko2ak81Y0FYRVpZRXdZ?=
- =?utf-8?B?QmlpVWlXcVljZDJsRElnVHdIZW4rWm8wNGRzL0VjZUJXNS9qWGZ5U01nVklQ?=
- =?utf-8?B?R002em00T2xoZXR2WGtzOEFyYzNJeDRpRGNyMCtFQkVIWmlWaTdsNmhKbkZC?=
- =?utf-8?B?TXVxdVRoRHhKOXVlNG9sREQyZDIyRzFFVUlENnR6YXRoTzh3S3ZHRkRZZTZU?=
- =?utf-8?B?S0tQRHBBV2FRRHBrekRmVjVKdG8rRTNWeTJGYWV4dWRqM2lvQ0NFQ2IwUFdn?=
- =?utf-8?B?VllpY0xuL1ZnNVd4YnE3VVFNS3pabzZQNVZZRmxpTm53WHFraEpZQkhUU3JH?=
- =?utf-8?B?emtWZytjOVA3UjBwVlY0dTh4WXdiaU5rc1dlNzRFTWFNK2NDKzRSTVVmOUQw?=
- =?utf-8?B?Vm5tbWhEY0xER3UrNlVneUhEeUR3eDZocVBqV2dFYnVLR1lQLytYbUF6UFZS?=
- =?utf-8?B?TTlQSjY4eEozZjB4ZEdmZGx3RUY5YktjRnJoNEtlRVZZcEVRUTZBVFNqYlhU?=
- =?utf-8?B?STk2alZTQ0FmaTRMZnZ0NlVqK1hWK0VBS0d4ckNCTFJwd09GczdnV0tWN05J?=
- =?utf-8?B?MlRmNGRRbmhCYTNyVC96QVBsZHBLVnZVSEJ0clJqSmNrWHA4VnR3VVdod0xm?=
- =?utf-8?B?S1BkVUZ3b2MvaGZHSVp1OVF4aExKRlRkTWlFUlUxOWE3MkVHa1JpUHlPdVR5?=
- =?utf-8?B?TDdtU1FkQUViK2tXdzdjUm9BR0J5U0d3ZmloUWhqQXJpVUlkUk5yQkFKSXQ4?=
- =?utf-8?B?VFZxdkl2bGgyQWtrK2VCNXBBaDJnekV4di9EdFRqV2xoRGc9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dnpOWFhJVkZBczJ6ZVNHRGMrZFdIQTR4YW9OcElPNCt0SjFhMjlzVDZJVHMx?=
- =?utf-8?B?ODM0eWwyWFM0Q0xlYmVVMkZLbWhadVBHS3ljVFAzNkN0eUlEdXJtR2NlbkxU?=
- =?utf-8?B?bzM0NCtzK3hZZ0pZZytFVWdKNU54K1VJazhnZ0E5VE83bWxvcDJxd1M2bWJW?=
- =?utf-8?B?dlBnNTdiRTFHVFB5U1BzNHU1R0RWU1k5ZnpyQ2ViREwrOWpGR2tGckFIMUFt?=
- =?utf-8?B?SjA3MnZ2eGx5MmJ5cDlnVkt3cXNhaHpTZFNmMUtrLzRaRkhpNWdYQ29paDVO?=
- =?utf-8?B?dlZWa3hidGwzN29NZldtU0FtM0s3UnJmMUxWdjVIdnI2YUZOa3dOVS85c1h2?=
- =?utf-8?B?VGFWWUE5aVBwTnV3eWlBNFl3bmVkUmJwUUJxV29yNGpBYVJQT3dwK0FEbnp3?=
- =?utf-8?B?M1JBcjZIVGZMMmx5Z2doRGErZVN6eFRBMm01eUpyVnFGdHoySXp1SnJIRHps?=
- =?utf-8?B?aE1oMVIxTzdnOFA4bHljUXpSMU9xbFRqNjdOWnBPbWJNUkhxR0hmK0JLQTJh?=
- =?utf-8?B?K2EyZmptT3hNYUJnRk9ORDcxVzd5WUdZNEtBZWpPQmlaR0FOV2tzNjhuczBF?=
- =?utf-8?B?SzFGNTI4azJieFZUamtlMlFIMjNaMHVZY3MrdmwwZWxnZU9QeVFvWWllYkpj?=
- =?utf-8?B?TFNOL2h2QUI5UnRiN05sT3F3NkU4S09kYXJxcFREblhUbkMwa2FndExTU2hX?=
- =?utf-8?B?WUR4Y1VhM3BNWWkzb01VT1pTeng4d0RYbGlZOVdqNTJhRitqcUUybmhrK2Fk?=
- =?utf-8?B?M0o0M3ZXN0ZJTnN6WmNRbytWS01LQW03U0RJYXFlWG5OTzEvTUNYbW5ockVi?=
- =?utf-8?B?Qmd6N25pM1hYNVFwMElBODU4Ty9jSU5vNlYxa0xDK003cFJYTDROSmxXbXJY?=
- =?utf-8?B?R1NSZndsQzhFNnovM1lQb1dpMjEyZ1gwN25DcVdBc05kd0QrYVlleTJuU0xI?=
- =?utf-8?B?UVEzREVUT0x5R2p2UUo1TlI1VzUzVEtvWWxlWG1jT29nOHlnM1E3REtidmJL?=
- =?utf-8?B?WWF6RS9XSGN4bzVOeDM2MXc0blpvcXYwMjZGRG9SZ3F3cU94eEtXV3V1MmhM?=
- =?utf-8?B?NXJNL0FEc3FpcGU1SGNPRkllYkovVXBRSnJZdnU3dVhkTXEvU05iL2htbHNr?=
- =?utf-8?B?cGMvL2RsNkoySVFXSkNiNThMQzNkQ2pwS0dzNXhSWHZLZ3h2RVQ2cDFhS0sr?=
- =?utf-8?B?cnhrVDQvUXEwY0pXRjBYMmhzVlVldnd4SjBtV2NKbHdaMW5FNWRDMm9LZ0xM?=
- =?utf-8?B?ZVRqdU1EWWZnOTR6aTZSTEY0eTlqRHdSZERDMFYydk1uR09aWWY2R01BMUpR?=
- =?utf-8?B?S2lEVXhKbmpyc2F4cEhWVllSRjErKy9xZXJicUt2TXgwNHlGTUFIYWkwdkxp?=
- =?utf-8?B?ODFjY3FaMXZiNWZMRUVkRURQdU0rQVZ1bFVrYzlmSFNJSWhEOGtzdzFnOVpG?=
- =?utf-8?B?RjhLNEpQY1NsaTR6RkNpTnlEdFRFckhVWmR3ZEF1VkZoSEZrM3VMa1crSkw0?=
- =?utf-8?B?RENJK0gzR1dnNThXaXVMSXhDTmVzOXpVWlVTUHFka2NiZitVbFlkei9VOTV0?=
- =?utf-8?B?YTExbFRYays5U0ZzZ2VqRHluNmVHQVl1eFYrSy9PK3pKZGJQaUZmdnlDY3dI?=
- =?utf-8?B?Q0hxT1N5d1ZxdXBubEFlS2VZRnR1dlJYblBBNFBycUU0S1E0bkN4MGp5UE9x?=
- =?utf-8?B?T2dEaTBiSWJIRWoySU5MNmkwbGZicVdNNm90ckxXVjhJMzN5RDZwMVo2QXdO?=
- =?utf-8?B?SkEyNXdjcWd2eHBSQUhSaHBXSnNlNnhGVFBqancyTkd3UWlzbTUxZ2xFZTNB?=
- =?utf-8?B?bktkQjJwVktQeEdDSDkxcnlXNlRNd2JqNlRwK0xvT3d2UitoUVFjVG4wTjFV?=
- =?utf-8?B?aFUzeklEbnczcVFhaVZtQ0hZUmgzcXFQM3NZalRiWVVsdmM1RHlJcWtHVlJU?=
- =?utf-8?B?YlJ6YVpNYzF2OFB1WUJVNzcxekxCK0U3N1Job3RvNWNZbHgvZzFLZVlRYUNC?=
- =?utf-8?B?cjVOcXpzMkFuTHVMNFdMaERicEVSc1pXMGRSWnhpMVVlQmMwUldxajQyajdy?=
- =?utf-8?B?N3NySkpQOGczNE5JT1FtNGt2QzBINk1ZY0M5enFwYy8vbk52SjR0YXdnMXVY?=
- =?utf-8?Q?lpKvgYusBYNbN23Og06uMtqVf?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 535ea41e-e9b2-4f3e-7d21-08ddd0ed7b3a
-X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 11:20:55.0938
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: a4JoI7vsi2LaW4xqHbRsJadtMrjiebBSxxRVghsf0eVmdRlfy6CZfBqXx4dYDleM
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4197
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
+To: Ryan Roberts <ryan.roberts@arm.com>, Will Deacon <will@kernel.org>
+Cc: Catalin Marinas <catalin.marinas@arm.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250606135654.178300-1-ryan.roberts@arm.com>
+ <aEgeQCCzRt-B8_nW@arm.com> <3cad01ea-b704-4156-807e-7a83643917a8@arm.com>
+ <aEhKSq0zVaUJkomX@arm.com> <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
+ <20250612145906.GB12912@willie-the-truck>
+ <066fa735-98ad-45f4-9316-b983d2e5a3d3@arm.com>
+Content-Language: en-GB
+From: Kevin Brodsky <kevin.brodsky@arm.com>
+In-Reply-To: <066fa735-98ad-45f4-9316-b983d2e5a3d3@arm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 12/06/2025 18:00, Ryan Roberts wrote:
+> On 12/06/2025 15:59, Will Deacon wrote:
+>> On Tue, Jun 10, 2025 at 05:37:20PM +0100, Ryan Roberts wrote:
+>>> On 10/06/2025 16:07, Catalin Marinas wrote:
+>>>> On Tue, Jun 10, 2025 at 02:41:01PM +0100, Ryan Roberts wrote:
+>>>>> On 10/06/2025 13:00, Catalin Marinas wrote:
+>>>>>> On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
+>>>>>>> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
+>>>>>>> provided a quick fix to ensure that lazy_mmu_mode continues to work when
+>>>>>>> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
+>>>>>>> nest.
+>>>>>>>
+>>>>>>> The solution in that patch is the make the implementation tolerant to
+>>>>>> s/is the make/is to make/
+>>>>>>
+>>>>>>> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
+>>>>>>> exit becomes a nop. But this sacrifices the optimization opportunity for
+>>>>>>> the remainder of the outer user.
+>>>>>> [...]
+>>>>>>> I wonder if you might be willing to take this for v6.16? I think its a neater
+>>>>>>> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
+>>>>>>> lazy_mmu_mode to be nested") - which is already in Linus's master.
+>>>>>>>
+>>>>>>> To be clear, the current solution is safe, I just think this is much neater.
+>>>>>> Maybe better, though I wouldn't say much neater. One concern I have is
+>>>>>> about whether we'll get other such nesting in the future and we need to
+>>>>>> fix them in generic code. Here we control __kernel_map_pages() but we
+>>>>>> may not for other cases.
+>>>>>>
+>>>>>> Is it the fault of the arch code that uses apply_to_page_range() via
+>>>>>> __kernel_map_pages()? It feels like it shouldn't care about the lazy
+>>>>>> mode as that's some detail of the apply_to_page_range() implementation.
+>>>>>> Maybe this API should just allow nesting.
+>>>>> I don't think it is possible to properly support nesting:
+>>>>>
+>>>>> enter_lazy_mmu
+>>>>>     for_each_pte {
+>>>>>         read/modify-write pte
+>>>>>
+>>>>>         alloc_page
+>>>>>             enter_lazy_mmu
+>>>>>                 make page valid
+>>>>>             exit_lazy_mmu
+>>>>>
+>>>>>         write_to_page
+>>>>>     }
+>>>>> exit_lazy_mmu
+>>>>>
+>>>>> This example only works because lazy_mmu doesn't support nesting. The "make page
+>>>>> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
+>>>>> page can be accessed in write_to_page. If nesting was supported, the inner
+>>>>> exit_lazy_mmu would become a nop and write_to_page would explode.
+>>>> What I meant is for enter/exit_lazy_mmu to handle a kind of de-nesting
+>>>> themselves: enter_lazy_mmu would emit the barriers if already in lazy
+>>>> mode, clear pending (well, it doesn't need to do this but it may be
+>>>> easier to reason about in terms of flattening). exit_lazy_mmu also needs
+>>>> to emit the barriers but leave the lazy mode on if already on when last
+>>>> entered. This does need some API modifications to return the old mode on
+>>>> enter and get an argument for exit. But the correctness wouldn't be
+>>>> affected since exit_lazy_mmu still emits the barriers irrespective of
+>>>> the nesting level.
+>>> Ahh I see what you mean now; exit always emits barriers but only the last exit
+>>> clears TIF_LAZY_MMU.
+>>>
+>>> I think that's much cleaner, but we are changing the API which needs changes to
+>>> all the arches and my attempt at [1] didn't really gain much enthusiasm.
+>> To be honest, I don't think the proposal in this series is really
+>> improving what we have. Either we support nested lazy mode or we don't;
+>> having __kernel_map_pages() mess around with the lazy mmu state because
+>> it somehow knows that set_memory_valid() is going to use it is fragile
+>> and ugly.
+>>
+>> So I'm incined to leave the current code as-is, unless we can remove it
+>> in favour of teaching the core code how to handle it instead.
+> Yeah fair enough. I'm not going to have time to do the proper nesting support
+> thing. But I'll see if I can find someone internally that I might be able to
+> convince. If not, we'll just leave as is.
 
+I've started working on supporting nesting as Catalin suggested above -
+modifying the API so that enter() returns whether the call is nested,
+and leave() takes the value returned by enter(). I've got it working
+without too much trouble, there's a fair amount of churn at the call
+sites but a trivial Coccinelle script can handle most of them.
 
-On 7/18/25 13:50, Michal Simek wrote:
-> TF-A is using PSCI 1.0 version for quite a long time but it was never
-> reflected in DT.
-> 
-> Signed-off-by: Michal Simek <michal.simek@amd.com>
-> ---
-> 
->   arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> index b20a560741e5..5f26649c9e11 100644
-> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
-> @@ -187,7 +187,7 @@ pmu {
->   	};
->   
->   	psci {
-> -		compatible = "arm,psci-0.2";
-> +		compatible = "arm,psci-1.0", "arm,psci-0.2";
->   		method = "smc";
->   	};
->   
+This new approach will also help with protecting page tables with
+kpkeys: lazy_mmu is very useful to write to POR_EL1 less often [1], but
+this currently assumes that nesting doesn't occur. In fact the new API
+should allow the old value of POR_EL1 to be returned by enter(), meaning
+we wouldn't need to store it in a thread-local variable.
 
-Applied.
-M
+- Kevin
+
+[1]
+https://lore.kernel.org/linux-mm/20250411091631.954228-19-kevin.brodsky@arm.com/
 
 
