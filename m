@@ -1,92 +1,120 @@
-Return-Path: <linux-kernel+bounces-753231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 136ABB18054
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 67468B1806C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:50:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17520583CF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:43:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 231BE3AF16C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:50:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B014C239085;
-	Fri,  1 Aug 2025 10:43:07 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CAC623535E;
+	Fri,  1 Aug 2025 10:49:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b="1VmYqi3x"
+Received: from mx4.wp.pl (mx4.wp.pl [212.77.101.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD354233D88
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:43:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD282B9A5
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:49:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.77.101.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754044987; cv=none; b=A0mHib96J8wK5QmCuIzkEgKTe2uIQKe6vnV/cP4q2FfY3RbBrzbYMyjzVF3n/rm69G0ZpQBTRELtC5uc3AsO/Q7QLUCtQFX3FFFDtDfw71kOsZZ6mwK+Hari5q1Bi/BU7LRxrj6X4XcAr+Km6iVTUQ44V0JytTTuyQyM4O/r9Ow=
+	t=1754045397; cv=none; b=gV1AWFN4HTNbnjlGcJi1H6a/tvA4nAfXrmxvRwK9vBabFDTPAtPS238tKcFCesZdkA795S98LYjbQP8EpqLm3XaWToJC77MfG53BIhd4gKAK7bVIKwhtdVxJpqX/JWJeS/564BccDl067vIbraQWBULwh19Wuhs5RaL6n0WG720=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754044987; c=relaxed/simple;
-	bh=zjyj9ZoVbLtOedm3SnSBw1q0yHuF8I7QpJ+Senhv4wk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Qvng+DQfgwzy2uqpPyelkd2+5Ezyy7XuXXJ2YPK035EegD4liIsEDxwnyZ96I06RLBrDN/MzvnXUh1x3JpKf4x46DMzG/8kHg7NbcNI8gYWjlmFAFz2xSA6xg0ghuHGiDS5EBAq4Gzn2m54uyBpbRYmJ+PxrwY5eJ/wzQWJVl/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e3f75449b4so11344265ab.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 03:43:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754044985; x=1754649785;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=PoQsNyoD90if1Yi5tS33Af8CsMkfK/KVVhqGF8eskKg=;
-        b=n1Kw7l/XBrDryCskbQHoe9pw3JJUI3q0x0zKvzVItZtymnwB3twt/qeECrIONXxt2x
-         lkHgpvWlA9pzW8fseMtVdE20icR4zd4EmLI2Ld0vnbk7/C3XIepcU878dWplIBJRiDEC
-         jPnWoCmBvCrT0hv1cdWA/J+jL7EMEtYJTYBvbSrnY69MVhrps6OHgdpvMgoQYNVnVQq5
-         I3cLvhorN7oBCZylnpQEuXqPwmvR2f9K862wOqkz71czUy/qq1z3ycPlG49zVnVjFspe
-         V0eRbi45jS/jM8MUkNDCQhZUWhh9xEEyLM6YJpdbx/+uQTeo0l4jXQjjpS9f8iqjDRnp
-         QN4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTvPYQTz6CJtKPOvi3lYtx6B7A3jcJxksCs1doWZUEFRPjR2lZE+n0Bv3sds6PfQoNaSXCY+I+vYmHSGg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yws9PnUJVYp7PfLvZOwQ8rgyYvERoknDhf3rBH6QiuWxcFS5xjW
-	MoQmIYmVA6+ASvwqFt7z0JBzgTtVKff4fat7Ie+4QkxKz70b1ptyHeOSelxYT63ksXCUopZsl/z
-	CINbDq6djXC5RJvMfAchz4I43NW18nbxmneQ5Lcae29wUXdnxCC2suylKFi8=
-X-Google-Smtp-Source: AGHT+IFn3GqlqczW8Kp3yLnyoOXYouUB0OgxOv/K5MuUj3oqnh8jvj0ofAx18tw0dUCUJ0q0ldnZ1QbnYxPuSzxZXHmarLSHq4TC
+	s=arc-20240116; t=1754045397; c=relaxed/simple;
+	bh=vdGghAuRqFh9v9OKtYjOGn/D80mvNRjAfBd2IBvyKbs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=P/+YcBqx37FVH18KLPKCiAbT8TKFhjjxU1hPU0vCXke9PAl14yuA/ZKIt/lpA9ppHgqtd+FFU9rBg5i2TKUIsRjT2P35hcKPOotIchpCUlWjWFJCM2o0oarjNO83KB/GuTuMTLn8lsczY3rCBTUo5zWuh2pADZU+TEW7QZpKz4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl; spf=pass smtp.mailfrom=wp.pl; dkim=pass (2048-bit key) header.d=wp.pl header.i=@wp.pl header.b=1VmYqi3x; arc=none smtp.client-ip=212.77.101.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=wp.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=wp.pl
+Received: (wp-smtpd smtp.wp.pl 44112 invoked from network); 1 Aug 2025 12:43:05 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=wp.pl; s=20241105;
+          t=1754044985; bh=S8Xh4dwltKo48ODYTlU5bLdmTB5/mPSV+B2vDyT/wTg=;
+          h=From:To:Cc:Subject;
+          b=1VmYqi3xIM+gs+DDDQ3Vcx6jGfXAwH/D9iz4hnq5A3xEnbPOjQhJouvOzTJQLBCow
+           /Noa5yMFh7ySZEkxlRM3dbtGsJ/i1obMfDxwnJWvdbWDuwaqzV7jFmpyD+jEp62nsC
+           hhfyjr1IbLtSa8A+vjWKjqLKWk0sbxlPhiLShPjUA2sVzrx7vHeI6nKUpFg/+d4iYO
+           76Qr0qHA0VtbPzqAmwcO9vufmPujoFK8rONfogZFwhkfo4ToMwu3HpemYt/DDzninp
+           sEuTq7Q507woM2uFtykEFEiBsA5/XeyP4hflwYs40gBAiYQoPbndzPkeHEnUMd47Ak
+           UiER5HasZZ8QQ==
+Received: from 89-64-3-229.dynamic.play.pl (HELO localhost) (stf_xl@wp.pl@[89.64.3.229])
+          (envelope-sender <stf_xl@wp.pl>)
+          by smtp.wp.pl (WP-SMTPD) with ECDHE-RSA-AES256-GCM-SHA384 encrypted SMTP
+          for <arnd@kernel.org>; 1 Aug 2025 12:43:05 +0200
+Date: Fri, 1 Aug 2025 12:43:04 +0200
+From: Stanislaw Gruszka <stf_xl@wp.pl>
+To: Arnd Bergmann <arnd@kernel.org>
+Cc: Rosen Penev <rosenp@gmail.com>, Johannes Berg <johannes.berg@intel.com>,
+	Sergio Paracuellos <sergio.paracuellos@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-wireless@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] net: wireless: rt2x00: fix CRC_CCITT dependency
+Message-ID: <20250801104304.GA120216@wp.pl>
+References: <20250731075837.1969136-1-arnd@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c243:0:b0:3e2:a749:250b with SMTP id
- e9e14a558f8ab-3e3f625d741mr152096705ab.14.1754044984117; Fri, 01 Aug 2025
- 03:43:04 -0700 (PDT)
-Date: Fri, 01 Aug 2025 03:43:04 -0700
-In-Reply-To: <e9f2e391-5c83-481a-9fa4-727c25922f1c@redhat.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688c9a38.a00a0220.26d0e1.0069.GAE@google.com>
-Subject: Re: [syzbot] [mm?] WARNING in trace_suspend_resume
-From: syzbot <syzbot+99d4fec338b62b703891@syzkaller.appspotmail.com>
-To: akpm@linux-foundation.org, andrii@kernel.org, ast@kernel.org, 
-	bpf@vger.kernel.org, daniel@iogearbox.net, david@redhat.com, 
-	liam.howlett@oracle.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	lorenzo.stoakes@oracle.com, mhocko@suse.com, rppt@kernel.org, 
-	sashal@kernel.org, surenb@google.com, syzkaller-bugs@googlegroups.com, 
-	vbabka@suse.cz
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731075837.1969136-1-arnd@kernel.org>
+X-WP-MailID: 59c87c2862a208fdaded71fd867ec669
+X-WP-AV: skaner antywirusowy Poczty Wirtualnej Polski
+X-WP-SPAM: NO 0000000 [UZMB]                               
 
-Hello,
-
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
-
-Reported-by: syzbot+99d4fec338b62b703891@syzkaller.appspotmail.com
-Tested-by: syzbot+99d4fec338b62b703891@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         89748acd Merge tag 'drm-next-2025-08-01' of https://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=114c39bc580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e4e0e50eb954bc80
-dashboard link: https://syzkaller.appspot.com/bug?extid=99d4fec338b62b703891
-compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=135daf82580000
-
-Note: testing is done by a robot and is best-effort only.
+On Thu, Jul 31, 2025 at 09:58:33AM +0200, Arnd Bergmann wrote:
+> From: Arnd Bergmann <arnd@arndb.de>
+> 
+> Compile-testing this driver on Arm platforms shows a link failure
+> when the CRC functions are not part of the kernel:
+> 
+> x86_64-linux-ld: drivers/net/wireless/ralink/rt2x00/rt2800lib.o: in function `rt2800_check_firmware':
+> rt2800lib.c:(.text+0x20e5): undefined reference to `crc_ccitt'
+> 
+> Move the select statement to the correct Kconfig symbol to match
+> the call site.
+> 
+> Fixes: 311b05e235cf ("wifi: rt2x00: add COMPILE_TEST")
+> Signed-off-by: Arnd Bergmann <arnd@arndb.de>
+Acked-by: Stanislaw Gruszka <stf_xl@wp.pl>
+> ---
+>  drivers/net/wireless/ralink/rt2x00/Kconfig | 3 +--
+>  1 file changed, 1 insertion(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/wireless/ralink/rt2x00/Kconfig b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> index d66fc839c3ce..17f063fc0b57 100644
+> --- a/drivers/net/wireless/ralink/rt2x00/Kconfig
+> +++ b/drivers/net/wireless/ralink/rt2x00/Kconfig
+> @@ -66,7 +66,6 @@ config RT2800PCI
+>  	select RT2X00_LIB_PCI
+>  	select RT2X00_LIB_FIRMWARE
+>  	select RT2X00_LIB_CRYPTO
+> -	select CRC_CCITT
+>  	select EEPROM_93CX6
+>  	help
+>  	  This adds support for rt27xx/rt28xx/rt30xx wireless chipset family.
+> @@ -142,7 +141,6 @@ config RT2800USB
+>  	select RT2X00_LIB_USB
+>  	select RT2X00_LIB_FIRMWARE
+>  	select RT2X00_LIB_CRYPTO
+> -	select CRC_CCITT
+>  	help
+>  	  This adds support for rt27xx/rt28xx/rt30xx wireless chipset family.
+>  	  Supported chips: RT2770, RT2870 & RT3070, RT3071 & RT3072
+> @@ -217,6 +215,7 @@ config RT2800SOC
+>  
+>  config RT2800_LIB
+>  	tristate
+> +	select CRC_CCITT
+>  
+>  config RT2800_LIB_MMIO
+>  	tristate
+> -- 
+> 2.39.5
+> 
 
