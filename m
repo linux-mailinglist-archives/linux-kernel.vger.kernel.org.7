@@ -1,271 +1,150 @@
-Return-Path: <linux-kernel+bounces-753118-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2069B17EDA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:10:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B912B17EE4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:11:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25337188ECD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:10:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0EF6717CE1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:11:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4DD522129F;
-	Fri,  1 Aug 2025 09:09:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED16E221FCC;
+	Fri,  1 Aug 2025 09:10:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JiRWiddG"
-Received: from mail-pl1-f196.google.com (mail-pl1-f196.google.com [209.85.214.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="JVHlinzC"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9623920D50C;
-	Fri,  1 Aug 2025 09:09:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFDAF2206B7;
+	Fri,  1 Aug 2025 09:10:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039399; cv=none; b=mvENma3sJFjal2/AU9PqcQ8Y/YpfD8XLfHx7ToXrHjiSxF/jNUGfuPQPTIJFqIIL04AT8Ynp2WuB0yOcbkUm9fGU07dgEJdIQaKFSXYhJkVKVUv0TJat5pN7ixMQ7+0GDWfo4xytrN4JgohZnQsSQzTG+Hjvl1x7XsYWCTH84f4=
+	t=1754039458; cv=none; b=OeFvn8hWlYeVWJk3LA+/F1VsCBrpWRyBCOLpxJOmzDsrtPgcJ4JndHVNNCjR93MzNDjKwDupx+x6P8IFqYY7Ti/HxvcakdC4RgQ70Gw6+8NTTsYJcNfYHNexea8trycxuCSma6c8ueNlfg8pasVqu+eQIelCwq7Wgf3fn1Ev6Bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039399; c=relaxed/simple;
-	bh=n4Ixi3fYDbUfs+fuzHa0N0j02ntzgphgaIShRouvows=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nhikzQxKBu2UkZoLV81oa3FBCU/OjfkJmzFtg0tXP1xV6NMfYBgSN6fMt3m+4KIxATste0xpjjWlxk9vwJ599M2DJR/XxqbZ78XyMaA1ExqR7K5s4DdWNBWUZ8cwxN+ly/3vU2EqRVSi0K69DsrLZhUc18ynwMtoSnBH9wOT2IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JiRWiddG; arc=none smtp.client-ip=209.85.214.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f196.google.com with SMTP id d9443c01a7336-2403ca0313aso11908985ad.0;
-        Fri, 01 Aug 2025 02:09:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754039397; x=1754644197; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9vP4UDhxH/4RAWHjsHwISLfLYU+GjjD8clL/MRd1n8s=;
-        b=JiRWiddGCHPLipdf4+LsQCTVUyo0G4nQg4C69uyYg/0tGEbM5d8MN7zmC8Wvfwp1By
-         Kie5hSVBU1Yurn9po8yoVEF/lyKunsf3Q0aAG0rClaw53dLKW8LzAbU1g1NrTPM2g7Gt
-         3m0471MEjhIuifEhc6Yp6b03McKL+HGqp8CRuHA4IKty/PVmeFQnYlmxuZi1GmsTBNhA
-         ybUcA26oKFus2QhIkhX+pmTD2UJgbhbMLYiriX4TBqdAPhZo1aA/xDYL7W8EuMCJWffY
-         7eK8lwIw2gNdhmkuvWdTTB3c0G2OU/wMwbSJ/kWWlly4C27MzAUCdGH+eOjjexXD4q96
-         flJg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754039397; x=1754644197;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9vP4UDhxH/4RAWHjsHwISLfLYU+GjjD8clL/MRd1n8s=;
-        b=Jv/rEXY1QgsSpUjNHu9nAfsjzsr205ZJwM/VqF+HnuSws//wwg859usHhSTLf1dlXl
-         kfgn4yJv0T0h6vgxQ7PnqYcaDaXFljx/sFdHGhFlthBv+ln72ad03+0jvDNnSFEeakd9
-         lK15BkoiDDLBvhxeUqPRPR4ghWItPJ8U1NYVQ2ZQLmAruK40uEgHf0ix+TbueE9cE7it
-         2PMyIKZhLM0Avb8bI3ndYHgFRudWLFtuij1SN0RXfGxmOHDxUP/7u4lC67pFmWoUf9Om
-         vbXWW9yxb0j/p/0ro1yuOLEViHvjKfRapEVfiDt1ZeF/pQCISgjR0u7zEejsH2pJNnPw
-         nZww==
-X-Forwarded-Encrypted: i=1; AJvYcCWojULafYfYzE7w0XF8FnIxJGpK3PZhol+WZEuXbAOuSKVsUnN0rpFVm95W3eW5fuSvEW2OksXsP264zBg=@vger.kernel.org, AJvYcCXFYHIP5FOUa59Szh699gSiO+ObCU8s7shpGo/+/jACuWb2VsZssI5RieWuYZ30wFtfypWPnwfi@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqVMzBXYGtU0eTGCHWrEsLm7K7wtuKhFo1Wq3GYP2CmKli+SxQ
-	rxDPjOnYEZXq9KnK8RXNhoEeCyNbwAKksEKY30R2kfR94+oNV0Pshogm
-X-Gm-Gg: ASbGncvRs3vMNBJxdDl678irrj587hOhUuvosP1+kiPNNyDIcOlXbJgzsoG1tuHmc6Q
-	KhkvDK1616Y3c91wmVMIHGVG8XY8MvQj0PYxXJoYbfsPcXz0YOwaPzH3WCmHeUyM4iXbAa1XZSq
-	eGubis0LjerlCxqbAnYscfZokg97klfMD1AS2K5qkozQahPupBXi0wpUKm2mNnsnTXz30KfVTm7
-	eMFyJ+9KU9Z5iK5qIgrUsT402sbfnVZH+dz8olc3sjOvUBVabtcIhPN4bZMJcokicdlFcGBYYiq
-	qiaEx9pIZznK2cv9XO2XXYkmWxFiP3Tj1uNW7I8+LiNN5srLZ2mqAy3ZRRjNcz3RjNUHbRt1zd5
-	fsxn++cAfVkVvu3q8kLgceuzuRK/5MQ==
-X-Google-Smtp-Source: AGHT+IHChPwRTNYpUHcgeeM7piFCcgYCUBrVKH+gbNGL2Jnz6aoBql0VB21y+2TzAjiFGYRHyBoQtw==
-X-Received: by 2002:a17:902:e5d2:b0:240:8262:1a46 with SMTP id d9443c01a7336-2422a6a7ddcmr26693015ad.25.1754039396664;
-        Fri, 01 Aug 2025 02:09:56 -0700 (PDT)
-Received: from 7940hx ([43.129.244.20])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef65d2sm38019985ad.31.2025.08.01.02.09.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:09:56 -0700 (PDT)
-From: Menglong Dong <menglong8.dong@gmail.com>
-X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
-To: edumazet@google.com,
-	kuniyu@google.com,
-	kraig@google.com
-Cc: ncardwell@google.com,
-	davem@davemloft.net,
-	dsahern@kernel.org,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	horms@kernel.org,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH net v2] net: ip: order the reuseport socket in __inet_hash
-Date: Fri,  1 Aug 2025 17:09:49 +0800
-Message-ID: <20250801090949.129941-1-dongml2@chinatelecom.cn>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754039458; c=relaxed/simple;
+	bh=KG8SEJsxR35Ub7apl7gSu3Pk2x+IayjrBt13TX3awmU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ENrk97TDeUYfcx47Zl0s6DHm+MVHq/rPZE+KCHqs0DdJ8T8Se7pxE16vpnvzLfV4Gsz1beTjjLn1/5XKDDx2EFQUF1FaO2sT9cl9l0VGRmCIvrP65oy/1Zo4qxHiXvxtzpmt1uD6nUzi5PdUkE0obhZSTVsqudO1uM78cWPbefE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=JVHlinzC; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5711BiJb003172;
+	Fri, 1 Aug 2025 09:10:35 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	JuWECCovdxGS9AcNOSSyDetDCmE65Syhg0owZeeCwSQ=; b=JVHlinzCR03GZStv
+	eL/SCtBMK+m0e+a7630reRIL0x8gkqjl5FDBRLonUr2/gWXXYOUQ1n3icZmDBXwM
+	96BZWoRy2ZKcCpprhKRv/bX503Yl8tIi+00zEOmSzrgQuTfrZfGp9n1JwgWf1Q8k
+	iv28offjDnqX/x5HMsOO2RiA1Kx8zvOvJSLzfe4oG2lYH4aZb8vzAUtPuAKQRwGl
+	VX/B/z7wg812+68iDyUYsP+dKoCwlDNmRDJgoQLL2srCPbXnaR510JytEHF6KOm9
+	xWRtnBlgQggCULXQ8RNS6U7M7ZBwfuZjRagSTcD040SMyUKrncbLI4AWJoLGF1L3
+	gvzUhQ==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pbmb0rj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 09:10:35 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5719AXg3017428
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Aug 2025 09:10:33 GMT
+Received: from [10.216.46.165] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 1 Aug
+ 2025 02:10:28 -0700
+Message-ID: <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+Date: Fri, 1 Aug 2025 14:40:25 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+To: Manivannan Sadhasivam <mani@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk@kernel.org>
+CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
+ <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+ <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=LsaSymdc c=1 sm=1 tr=0 ts=688c848b cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=Z5aP1FD7F3mh5Buj_IcA:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2NiBTYWx0ZWRfXyf4pZ2DMkoRM
+ UizINbL8FvZrbk4un0Xxwg/t4cqu9FHLpYIunRTetELgMLNJTCIfqyUdZKAiLkEqqFZsH3KbYvB
+ COKdCJJtJW+2MeJkyEmHvo3knaf+FtHi1fRIpoxOFObhuBdDYkPlF/VchoBHKf1TzXH5zXBKTdQ
+ gyOLi70jHZr2wfVzGvFddHX4pvi10DZJuHYWlSZfSA3dJjvIoG+RQT/jNBFbInE+pvdPpvC4Z7U
+ 8rOQ3OpifuhElqgJQCZ1WSvqrPJO9RF6ImMxjPY4U8v+t7zq6fFK2YRJlhOaBfh46ZMdzxIgrlZ
+ UCS+fjxqNGN9Kl6YDu+8RqCuBUaQ9ZFs0zXY8OqOu/KX5Wj1YMFteDg4GRenG46CyLwZO0/hlvQ
+ j9NSVSebGOl8wQDVZDlykjPNC81UA7lO9IGuBn1EDHu74qVZss5eWia41SSHf2wmC4yHnkfl
+X-Proofpoint-ORIG-GUID: VL0XS-Z68SZho4-zG-U2VXj2Beh-pMMO
+X-Proofpoint-GUID: VL0XS-Z68SZho4-zG-U2VXj2Beh-pMMO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_02,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 mlxlogscore=999 spamscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508010066
 
-For now, the socket lookup will terminate if the socket is reuse port in
-inet_lhash2_lookup(), which makes the socket is not the best match.
 
-For example, we have socket1 and socket2 both listen on "0.0.0.0:1234",
-but socket1 bind on "eth0". We create socket1 first, and then socket2.
-Then, all connections will goto socket2, which is not expected, as socket1
-has higher priority.
 
-This can cause unexpected behavior if TCP MD5 keys is used, as described
-in Documentation/networking/vrf.rst -> Applications.
+On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
+> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
+>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
+>>> support automotive use cases that require limiting the maximum Tx/Rx HS
+>>> gear and rate due to hardware constraints.
+>>
+>> What hardware constraints? This needs to be clearly documented.
+>>
+> 
+> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
+> but keep on responding to other comments. This won't help you to get this series
+> merged in any form.
+> 
+> Please address *all* review comments before posting next iteration.
 
-Therefore, we compute a score for the reuseport socket and add it to the
-list with order in __inet_hash(). Sockets with high score will be added
-to the head.
+Hi Mani,
 
-Link: https://lore.kernel.org/netdev/20250731123309.184496-1-dongml2@chinatelecom.cn/
-Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
----
-v2:
-- As Kuniyuki advised, sort the reuseport socket in __inet_hash() to keep
-  the lookup for reuseport O(1)
----
- include/linux/rculist_nulls.h | 34 ++++++++++++++++++++++++
- include/net/sock.h            |  5 ++++
- net/ipv4/inet_hashtables.c    | 49 ++++++++++++++++++++++++++++++++---
- 3 files changed, 84 insertions(+), 4 deletions(-)
+Apologies for the delay in responding. 
+I had planned to explain the hardware constraints in the next patchset’s commit message, which is why I didn’t reply earlier. 
 
-diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
-index 89186c499dd4..da500f4ae142 100644
---- a/include/linux/rculist_nulls.h
-+++ b/include/linux/rculist_nulls.h
-@@ -52,6 +52,13 @@ static inline void hlist_nulls_del_init_rcu(struct hlist_nulls_node *n)
- #define hlist_nulls_next_rcu(node) \
- 	(*((struct hlist_nulls_node __rcu __force **)&(node)->next))
- 
-+/**
-+ * hlist_nulls_pprev_rcu - returns the element of the list after @node.
-+ * @node: element of the list.
-+ */
-+#define hlist_nulls_pprev_rcu(node) \
-+	(*((struct hlist_nulls_node __rcu __force **)&(node)->pprev))
-+
- /**
-  * hlist_nulls_del_rcu - deletes entry from hash list without re-initialization
-  * @n: the element to delete from the hash list.
-@@ -145,6 +152,33 @@ static inline void hlist_nulls_add_tail_rcu(struct hlist_nulls_node *n,
- 	}
- }
- 
-+/**
-+ * hlist_nulls_add_before_rcu
-+ * @n: the new element to add to the hash list.
-+ * @next: the existing element to add the new element before.
-+ *
-+ * Description:
-+ * Adds the specified element to the specified hlist
-+ * before the specified node while permitting racing traversals.
-+ *
-+ * The caller must take whatever precautions are necessary
-+ * (such as holding appropriate locks) to avoid racing
-+ * with another list-mutation primitive, such as hlist_nulls_add_head_rcu()
-+ * or hlist_nulls_del_rcu(), running on this same list.
-+ * However, it is perfectly legal to run concurrently with
-+ * the _rcu list-traversal primitives, such as
-+ * hlist_nulls_for_each_entry_rcu(), used to prevent memory-consistency
-+ * problems on Alpha CPUs.
-+ */
-+static inline void hlist_nulls_add_before_rcu(struct hlist_nulls_node *n,
-+					      struct hlist_nulls_node *next)
-+{
-+	WRITE_ONCE(n->pprev, next->pprev);
-+	n->next = next;
-+	rcu_assign_pointer(hlist_nulls_pprev_rcu(n), n);
-+	WRITE_ONCE(next->pprev, &n->next);
-+}
-+
- /* after that hlist_nulls_del will work */
- static inline void hlist_nulls_add_fake(struct hlist_nulls_node *n)
- {
-diff --git a/include/net/sock.h b/include/net/sock.h
-index c8a4b283df6f..42aa1919eeee 100644
---- a/include/net/sock.h
-+++ b/include/net/sock.h
-@@ -885,6 +885,11 @@ static inline void __sk_nulls_add_node_tail_rcu(struct sock *sk, struct hlist_nu
- 	hlist_nulls_add_tail_rcu(&sk->sk_nulls_node, list);
- }
- 
-+static inline void __sk_nulls_add_node_before_rcu(struct sock *sk, struct sock *next)
-+{
-+	hlist_nulls_add_before_rcu(&sk->sk_nulls_node, &next->sk_nulls_node);
-+}
-+
- static inline void sk_nulls_add_node_rcu(struct sock *sk, struct hlist_nulls_head *list)
- {
- 	sock_hold(sk);
-diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-index ceeeec9b7290..80d8bec41a58 100644
---- a/net/ipv4/inet_hashtables.c
-+++ b/net/ipv4/inet_hashtables.c
-@@ -334,6 +334,26 @@ static inline int compute_score(struct sock *sk, const struct net *net,
- 	return score;
- }
- 
-+static inline int compute_reuseport_score(struct sock *sk)
-+{
-+	int score = 0;
-+
-+	if (sk->sk_bound_dev_if)
-+		score += 2;
-+
-+	if (sk->sk_family == PF_INET)
-+		score += 10;
-+
-+	/* the priority of sk_incoming_cpu should be lower than sk_bound_dev_if,
-+	 * as it's optional in compute_score(). Thank God, this is the only
-+	 * variable condition, which we can't judge now.
-+	 */
-+	if (READ_ONCE(sk->sk_incoming_cpu))
-+		score++;
-+
-+	return score;
-+}
-+
- /**
-  * inet_lookup_reuseport() - execute reuseport logic on AF_INET socket if necessary.
-  * @net: network namespace.
-@@ -739,6 +759,27 @@ static int inet_reuseport_add_sock(struct sock *sk,
- 	return reuseport_alloc(sk, inet_rcv_saddr_any(sk));
- }
- 
-+static void inet_hash_reuseport(struct sock *sk, struct hlist_nulls_head *head)
-+{
-+	const struct hlist_nulls_node *node;
-+	int score, curscore;
-+	struct sock *sk2;
-+
-+	curscore = compute_reuseport_score(sk);
-+	/* lookup the socket to insert before */
-+	sk_nulls_for_each_rcu(sk2, node, head) {
-+		if (!sk2->sk_reuseport)
-+			continue;
-+		score = compute_reuseport_score(sk2);
-+		if (score <= curscore) {
-+			__sk_nulls_add_node_before_rcu(sk, sk2);
-+			return;
-+		}
-+	}
-+
-+	__sk_nulls_add_node_tail_rcu(sk, head);
-+}
-+
- int __inet_hash(struct sock *sk, struct sock *osk)
- {
- 	struct inet_hashinfo *hashinfo = tcp_get_hashinfo(sk);
-@@ -761,11 +802,11 @@ int __inet_hash(struct sock *sk, struct sock *osk)
- 			goto unlock;
- 	}
- 	sock_set_flag(sk, SOCK_RCU_FREE);
--	if (IS_ENABLED(CONFIG_IPV6) && sk->sk_reuseport &&
--		sk->sk_family == AF_INET6)
--		__sk_nulls_add_node_tail_rcu(sk, &ilb2->nulls_head);
--	else
-+	if (!sk->sk_reuseport)
- 		__sk_nulls_add_node_rcu(sk, &ilb2->nulls_head);
-+	else
-+		inet_hash_reuseport(sk, &ilb2->nulls_head);
-+
- 	sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
- unlock:
- 	spin_unlock(&ilb2->lock);
--- 
-2.50.1
+To clarify: the limitations are due to customer board designs, not our SoC. Some boards can't support higher gear operation, hence the need for optional limit-hs-gear and limit-rate properties.
+
+I’ll ensure this is clearly documented in the next revision.
+
+
+Thanks,
+Ram.
+
+> 
+> - Mani
+> 
 
 
