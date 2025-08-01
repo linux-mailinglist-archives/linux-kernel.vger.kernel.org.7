@@ -1,97 +1,102 @@
-Return-Path: <linux-kernel+bounces-753715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3F41B186D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:41:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60F81B186D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:42:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0076E188DFF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:41:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C1223BAB1D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:42:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C03A32701C5;
-	Fri,  1 Aug 2025 17:41:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50A0A28C860;
+	Fri,  1 Aug 2025 17:42:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="LfM0ZBEY"
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="nh+ZeRmT"
 Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18542182D3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:41:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30DFF1A08DB
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:42:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754070070; cv=none; b=RUNZFcDa/AQn3LDv1xhXRbFsT3p/hdEXXTXKBtouKIsRAf134amp2GZIBv90Xdio1D8ZlOcg+hpaE8q3lYutlibKk0fpKR+5u/89AZ/DkEAIidsgYqEFJ610aCEQUZ45SC7qk/3pEL5CJHRH0s5Q+Pd/D/CcEXar9bHaqPcY2h8=
+	t=1754070122; cv=none; b=lXuH8YQfG4LtvI766md1xwj5aB/NlnjDas9PlOsvl0mjb5UwtKxj1YWrc3rESOYMT4c2IxOPeClb3LEmYp35p/p1oai1PneHGCuIN/jaGTHwDaUce2jIa7afLhub0+aPCPGFBEo2LoFZ2v3EFJOy23V8jdYDqvx0uXNInqR3/5w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754070070; c=relaxed/simple;
-	bh=qX4/Gta/0qJljFewqm7g2+SbhR0hTNDOH4e1NugN41U=;
+	s=arc-20240116; t=1754070122; c=relaxed/simple;
+	bh=MjIo352WqpQR2z0hIEvwzSfkfO/tgHtMOcawPBa/DLY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aTcvTBkMdghleh5tQ239w5K5FR7EjXITYiAOLMSTlE6TR4GFPsEBsPy2hxczStvgAbm/RR+Pq9UfjqY3FSK53YwD9s/1ZnM410i3qvEnsM+dVFHvDwNvfBB0kF5UYXjwJ7YP/cLG1Nq4lnsjWdWDp1Y6yfflP3jItQmwO+wNgD8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=LfM0ZBEY; arc=none smtp.client-ip=205.220.168.131
+	 Content-Type:Content-Disposition:In-Reply-To; b=avuMyQGocPdmr48enNU69YPJwrf172v2XvW09gIvNX47auKEJey7lQ9u5vd/TwDQW6UWygiOKFUYNIUHLJJnWijI4GMjqDPv3isPNhG/+e9wISOpLc9MNGIJHuu5Nn3Vxshx1/Q9VEcKoNnxcVZ89KvoHBhpp3EIX3EtDle9JAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=nh+ZeRmT; arc=none smtp.client-ip=205.220.168.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719HGJL018997
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 17:41:06 GMT
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571HfgoT019984
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 17:42:00 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=TAjqsWG+09WgcEob8VLyeHOX
-	BEVCAsO//HB0wzN0Dsg=; b=LfM0ZBEY5sfySZKfIylbPz+OU21VVVPRZEKyqQlf
-	c23LIfgNs2B3XFaRQybRDSFl3TDy9hceOqdA93nToXnbyL7gu1C+TIoXcnAZleLD
-	iNJiQNnywFXMCuUOHGolIA/PYQPzHwp9hnWOJagCQtqCvoHXYf0Y7YGlMJsC200F
-	bK7HB1bzVP8W1G6EcoS2S4vOuZirCLFT7pxbra2GauWaE8EScPhbUCV4wqWLGPpU
-	kN0/EYcsp0KQT4cIcLwJtKFjKmgwpSMM0rBzw41pkPImjdhrXI2fyZVrCtwF+Ggq
-	nMt8GWPs8/J6ZVGHI/LSO7krYgbJSLVVTF2bBnEkVDMYwA==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwghars-1
+	:references:subject:to; s=qcppdkim1; bh=mQpZu297GrOahwaw/VEhcnsV
+	4khl4o9Em5OSPsyffWU=; b=nh+ZeRmTP3xeUxvNw3fR80rBxHT0jaMSDNXtJ8OJ
+	HO5DU/1U6/zqBABcmXqKVDWDK0rGZMnH3SnBafQ/QthML2hLKOBc8j9Y5sS4Hhn7
+	xR4d/Y7D9BeV4wIYGDdkWmxPlJfAqul0SbrDGBtARwPnHwO3SE81f/Ie+dVQCe5q
+	tSmzpTGE8DhKLi9WyYmhgCy84+793Tj3JauQr/w52lPf9Y52b2e70l8V3jgebK/N
+	7KD9y9cjWeWxiWJ3OTz2IkrC/TIeH5yAcOekvhfCdkNigwhPmRKJVInfdHpV7ycd
+	QqDiNHo+wW+s9IF4j+lJIicQgU/9AJAr9XgmQCmFkyHeNg==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48887g58mn-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 17:41:06 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4aeb486c46eso37336231cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:41:05 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 17:42:00 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab99d1a223so49095871cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:42:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754070065; x=1754674865;
+        d=1e100.net; s=20230601; t=1754070119; x=1754674919;
         h=in-reply-to:content-disposition:mime-version:references:message-id
          :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=TAjqsWG+09WgcEob8VLyeHOXBEVCAsO//HB0wzN0Dsg=;
-        b=v+cW9rsHJF06bY8oANRDix8Eop1/tQwBaCrlcLBZW24DVSSRKnE5tfANPzQjBo+OrV
-         xfjQ/ELpYFUOrJg39veE5vIb59nf7XqLcQVHk1ya4+ziAAmrwuamsEageP6iihHWOnxa
-         UZ8Fyp/Z3rMdtMi2sUNjrqMnT+4oM4BeUTDaJ47RNjgRvUaP96xl2soNAsEWOfK+8Pma
-         UZ9zginSQV/EJNuSlnCKBSDorgvorjw3YTjGFZncA5GlkJx0IJucTO3Tkj9X2v+DGPIJ
-         jwtaTL1Y22pvNZMLhWTN7fZdtrxTmIYbA4IPSwVv7fs7vUmWQ6ceO+9OhXGkJykAKIJy
-         AvPA==
-X-Forwarded-Encrypted: i=1; AJvYcCWGJ3vgjPfT6IRxw0TNGo0kez/CHLv6hcWr18TVgGFQm0+t240u35vuNX9D2mOJy/6QRtHXForc49EwU+A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzUoRVn9i8tXa7cL+9BtVISCtJ3SWPSdCwO0Pm31uyH6SxV2uXb
-	TqvPXgs+nnk3MMmieWvBT2eFQWlBBLH+yIUTuNtxVAtzCbJvZtVhOEbdMtuXRv3smP+ioEGF+Vq
-	ylwb32f1JaIK2mohLsgPDun+ctJJS+d6jitX5Op0eU4BFqeSioWr5wPx5+OD49xtRkPE=
-X-Gm-Gg: ASbGncvAWAyloDwsaeYUW456XWzhK4I5C44/5Vr+3unWZjT2NfjviXK4HAUKbMKht4m
-	Ufs4+S6dSejnBzVyUaz3IpGq7/nP6bxA/TFZBytLDYLNCYpmaRbPRqC9W09EK+MgsfzTdGs5p4K
-	L4AIStUJLEjLIhy6zDGmrPQF5tAYK1ujTLFePc/ltuocGejMrVR+BoVNlBEIjokt3j86GUM8OdS
-	D2tljKyMBN4hyZ3DqnbiOIN3f/kRVR95zUL+a4J0DXo2lYAcCxORhLbLCMiV/NQtkGpS47EMMIz
-	GnjNKkR5u7rIaJWnFLDgvQLmIfzyiKqSXybWRW6x7Dxy+o74eCPJzSj62lwCKDvDzNeu93E5phO
-	EokN2vmrcQTzmu2xUWUP0pWt6buxPTahMHrw04qUUci7+GA/kJB9s
-X-Received: by 2002:a05:622a:4cf:b0:4a9:c2e1:89c4 with SMTP id d75a77b69052e-4af10d11dbemr9816731cf.47.1754070064570;
-        Fri, 01 Aug 2025 10:41:04 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH7Ab4B6jqYhlQ+NXunglR7CtdqDQ1rwdXyehj8v1lg2vJ1+icL9dUzr7rCyfChKa3r6LzegQ==
-X-Received: by 2002:a05:622a:4cf:b0:4a9:c2e1:89c4 with SMTP id d75a77b69052e-4af10d11dbemr9816281cf.47.1754070063932;
-        Fri, 01 Aug 2025 10:41:03 -0700 (PDT)
+        bh=mQpZu297GrOahwaw/VEhcnsV4khl4o9Em5OSPsyffWU=;
+        b=bdzMkWhCL3oSe04anogpyV1E9WhVfcmsXCae6h0Xns73Zdp0svfzk03YJPdSb0x4vZ
+         dsRbG5eDmApKcbzNMbefX4wVUhVEc0WBD87MxLTPb7n4atQJSguOJpfit4O0flBLprGa
+         jebfC6iaSkS/0w5fwFQsviVbpt7mFEI8/zXKu2f2fdBZTELcIqhHMqmiZbWsN1Hw3Drm
+         bXCL24lgLGqXhq7DCt+Dyx03fl0oF5u0A9y4nkVPjxGmByjzJlA5TawgHE7nyxJ+YDCM
+         VfO9vf7GbhrJWKC3u2k34rQ9lYhk6y1g3LlPHFqTbkIlwSd1sukSCUdyUgOny5Vcg3Nn
+         OMbg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXKAUOSmVtVFVPFnycAjjmnkuWwUPg9Lt4sWbI7osmtdOKivv6jLrFgeJ2I13cqp5s1pItUbtd4UlU624=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtVemd//a2/UHlWmFLIGzv3wK2WKN8Akc4+SWVGa52WNWvv2v/
+	Gtrdyv/FltIfUl9TFa+wRP3VStG4UvN8NoYuvUKiSGyqA9iV28h8ykKuyLK19J6anqqkLewp2Vn
+	Qlj1RsARPMlXehamwrPkJkbEr6CCf5ZivXuAR+lllDqBkERMeRKG1DN5Ck5NiVG/Of/U=
+X-Gm-Gg: ASbGncvwgoe4Ng2effTQjAlUNXoKdUTf/hlEg/2GSgKuZcOBx8PveKa1mHw8ZLp0MAh
+	8PgqU1vXue+JhXpvk2nfgxcVQlzQPlP7PIoMciAodFsQDC38q2oX6+RjACOoRdd1ln73aVm6/tz
+	P6kxOr/eV9oz8hwd9tWJvaEYqRsa6A6dh84HPyBRcfgdGUZfh9ENpfoAhWEeWWFFF96sFzcEeTs
+	ywTPkg9hdTCETqgM+GaHy2Kta0imqvuiJZCQbZK7wOnK43sq6ZkBqmwPqhaOdsXFzo0V+1lTz3D
+	l1JdJCbCSr6XEY7Nl965smnrwT4z4beGBMMUuM+z37OYRNzMq5rye8SwE4BWHpKJkHIpOvxddDk
+	ZXM3CHoFt3amzfJBTNNSywG1ETsWjPvfTcbHNbNfLAgaIsV5/NGGH
+X-Received: by 2002:a05:622a:110a:b0:4ab:66c5:b265 with SMTP id d75a77b69052e-4af1076bf9fmr11281981cf.0.1754070118713;
+        Fri, 01 Aug 2025 10:41:58 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEv9K/9Mrcl2aEP8DkEGqC5ecwKIA835bE0VNaNM98VN6YobWwCpiPGo6+PwfkoAmPywEoKnw==
+X-Received: by 2002:a05:622a:110a:b0:4ab:66c5:b265 with SMTP id d75a77b69052e-4af1076bf9fmr11281531cf.0.1754070118210;
+        Fri, 01 Aug 2025 10:41:58 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332382a6f74sm6639461fa.20.2025.08.01.10.41.02
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c98a7dsm676692e87.85.2025.08.01.10.41.57
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 10:41:03 -0700 (PDT)
-Date: Fri, 1 Aug 2025 20:41:01 +0300
+        Fri, 01 Aug 2025 10:41:57 -0700 (PDT)
+Date: Fri, 1 Aug 2025 20:41:55 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Ayushi Makhija <quic_amakhija@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        robdclark@gmail.com, lumag@kernel.org, sean@poorly.run,
-        marijn.suijten@somainline.org, airlied@gmail.com, simona@ffwll.ch,
-        quic_rajeevny@quicinc.com, quic_vproddut@quicinc.com,
-        quic_jesszhan@quicinc.com
-Subject: Re: [PATCH] drm/msm: update the high bitfield of certain DSI
- registers
-Message-ID: <e6bg2nin5zqoemjxevqhzhshgeit24t6wxb3pnfazrk6hkxajq@773bvnmqs5id>
-References: <20250730123938.1038640-1-quic_amakhija@quicinc.com>
+To: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+        venkata.valluru@oss.qualcomm.com, jessica.zhang@oss.qualcomm.com
+Subject: Re: [PATCH] drm/bridge: lt9611uxc: add support for 4K@30 resolution
+Message-ID: <yhj6q4y62yzvhnxjm4g6sx3552g6mwz2uk3kvwfewi5hcknebp@euy5iosfilux>
+References: <20250729-lt9611uxc-4k30-v1-1-cacab6843f9d@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,50 +105,65 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250730123938.1038640-1-quic_amakhija@quicinc.com>
-X-Authority-Analysis: v=2.4 cv=WvgrMcfv c=1 sm=1 tr=0 ts=688cfc32 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=COk6AnOGAAAA:8 a=CjfMZ6mt8HIBDwBlgy4A:9
- a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 4w7ZfKMqM142B9kI3_s5btfK9OgwvCg_
-X-Proofpoint-GUID: 4w7ZfKMqM142B9kI3_s5btfK9OgwvCg_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEzNiBTYWx0ZWRfXz1CqUIxBI0qK
- ROL3mGCUWSa0iOCriqlDQcQ15NYt0S4AfwlYPRnbowQbSnyzFPipLHOzXtPw6IY8kNMNTgfQ7w7
- mojDiIzXroi0io55WECiGjpG6KoRFZU+BgCgUQS/UCvKQJR90bjEb1jqmTmEBBmkOJbmmEYFOuG
- Ja4qeATwo2F1NdFDWg5c4CpfztVkavo9ccTC1ppFJoJc+8JGpg/3TR+yHeuE1IRT5mranSbZLM/
- z7zJAXh9HvYiLke7s8MFOvHE9puT57fbd03hG2hhg0lWArb/fyPzeCMgsgcJCwZF9wJevu80+sd
- ALVPIoMFsoQQ6Tq7YOQeOiyYb9cz4/dhav4krJObusrWAgsIkhQ3CKLkZKvaeE4n/GnDM92M7SX
- OfVspjsPPT7jvS0kJEUVvDAvjnJe5d/gJ7tJkiRhR+C1HAKIYnDQlWTzq2m4Bvothk2zjgR+
+In-Reply-To: <20250729-lt9611uxc-4k30-v1-1-cacab6843f9d@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=Vdn3PEp9 c=1 sm=1 tr=0 ts=688cfc68 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=QkhM9EBQO5yHTPfk-M4A:9 a=CjuIK1q_8ugA:10
+ a=uxP6HrT_eTzRwkO_Te1X:22
+X-Proofpoint-ORIG-GUID: xWDqaII3QI7oIvBiul9VZLM9G8iEXvjZ
+X-Proofpoint-GUID: xWDqaII3QI7oIvBiul9VZLM9G8iEXvjZ
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEzOCBTYWx0ZWRfX1nKxNSKAD2hk
+ MU6RFIxyiSkPWG36itdyCEuYtfp6Mbaml3zIeYIhZgAl/0kqlnfqmnQ8ryt4Hx7XJjqJK6T/c+H
+ Hpv3IzxZt/7+FpuTSlOqUDx4r+KRvJt+s0vRaqQgxCJh5K35Ota0RtJp+S4bHiQU2xN8peXVVq5
+ 4Igw1FksJif1edVNpLyVG04+CzeeOxTfBhWHQ9DhKknp2+xB6wULqaAMGYt3lPy+96Q3Cs9TzVW
+ cPhYYGzvv21iiXcUDNm0KRYc2YdxSdgPLocDig2AezfVMvzc80wyVzDDrOS17LhLD4JVhzhQE8i
+ 7PciYD2Dr0Gs0L0gcBrPwAXpnfepnpjVp0L+W84Dqaip1mb0Nq3qx+9K/XBtphsSQkSDNqskbrA
+ JxRUqFy85WX9r3haqHNu3Bmp01+BN3VBqZ9VG65ZiMCW3Lwv9O/qjkWO5fybaqB5OR+H/z3D
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-01_06,2025-08-01_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=694 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508010136
+ suspectscore=0 mlxscore=0 lowpriorityscore=0 impostorscore=0 clxscore=1015
+ priorityscore=1501 malwarescore=0 mlxlogscore=895 spamscore=0 phishscore=0
+ bulkscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010138
 
-On Wed, Jul 30, 2025 at 06:09:38PM +0530, Ayushi Makhija wrote:
-> Currently, the high bitfield of certain DSI registers
-> do not align with the configuration of the SWI registers
-> description. This can lead to wrong programming these DSI
-> registers, for example for 4k resloution where H_TOTAL is
-> taking 13 bits but software is programming only 12 bits
-> because of the incorrect bitmask for H_TOTAL bitfeild,
-> this is causing DSI FIFO errors. To resolve this issue,
-> increase the high bitfield of the DSI registers from 12 bits
-> to 16 bits in dsi.xml to match the SWI register configuration.
+On Tue, Jul 29, 2025 at 07:00:30PM +0530, Nilesh Laad wrote:
+> Add 3840x2160@30 mode in lt9611uxc modes to add support for
+> 4K@30 resolution.
 > 
-
-Fixes: 4f52f5e63b62 ("drm/msm: import XML display registers database")
-
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-
-> Signed-off-by: Ayushi Makhija <quic_amakhija@quicinc.com>
+> Signed-off-by: Nilesh Laad <nilesh.laad@oss.qualcomm.com>
 > ---
->  drivers/gpu/drm/msm/registers/display/dsi.xml | 28 +++++++++----------
->  1 file changed, 14 insertions(+), 14 deletions(-)
+>  drivers/gpu/drm/bridge/lontium-lt9611uxc.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+> index cfe389b4c25c..ac53da6c9711 100644
+> --- a/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+> +++ b/drivers/gpu/drm/bridge/lontium-lt9611uxc.c
+> @@ -100,6 +100,7 @@ struct lt9611uxc_mode {
+>   * Enumerate them here to check whether the mode is supported.
+>   */
+>  static struct lt9611uxc_mode lt9611uxc_modes[] = {
+> +	{ 3840, 4400, 2160, 2250, 30 },
+
+This should only be applicable if both DSI links are used.
+
+>  	{ 1920, 2200, 1080, 1125, 60 },
+>  	{ 1920, 2200, 1080, 1125, 30 },
+>  	{ 1920, 2640, 1080, 1125, 25 },
+> 
+> ---
+> base-commit: 9744cbe3603db5dbd6e63da9c3bed8df68a6d3ba
+> change-id: 20250729-lt9611uxc-4k30-6175bb8a0570
+> prerequisite-message-id: 20250725-lt9611uxc-modes-v1-1-6a13b181927d@oss.qualcomm.com
+> prerequisite-patch-id: 6c7107d0c8810b85d722fd32e45f736fff81860b
+> 
+> Best regards,
+> --  
+> Nilesh Laad <nilesh.laad@oss.qualcomm.com>
+> 
 
 -- 
 With best wishes
