@@ -1,149 +1,126 @@
-Return-Path: <linux-kernel+bounces-753106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DBC7EB17EBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:02:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB86EB17EC0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:02:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6908E3AD8D7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:02:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FB2C3BC5B3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:02:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AA21B9F6;
-	Fri,  1 Aug 2025 09:01:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B70221FCD;
+	Fri,  1 Aug 2025 09:02:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QMcJ5I+/"
-Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvdfuEoR"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEDD2AEE4
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:01:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1168918C02E;
+	Fri,  1 Aug 2025 09:02:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754038915; cv=none; b=sJ9D9nxX27CK8lGnYYgC0ziJBvGs+RfSaRsrkEW8WVT6WA+e9/q/CwGrtnnS6NXShcXfuhnxkqVOIjcQG9hVMni9hdStGBmkpJxy8V9oReukw5T3yiSDOR/COOxXHXjIngb260BEQN6MS3MsfhVAWb1PfbUYnHAQBs7dJi0zF7s=
+	t=1754038924; cv=none; b=BvIjAhQXaRuJTatsCXer3PaPbakfxKHYKrVpTrQrwZzSHylnvBwMS2bkqYWTHn6ZfE/DtX8JOM6eu2wDO4MkZ9uJ2nAxhSwBM64hRXqP5Yoy4f40V1GTXMYo45oVEF9Cyxht75lx/YeTIwlzErTB3FdyqLLpDRBpHbvA45zmFPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754038915; c=relaxed/simple;
-	bh=kJK+rQkXpBpV/rwip2EUxwLS6eel1wFgg/6G3axRc4k=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=uvHW9H/enwdj2fuEPwS4bRsZGhejyXyh73XqIGu9x+s8/RBLBwveQPb8wdPbY4QhRYrkHPEJeZcid/rqAllFc4nWEs4D4eakJVOZJamXy9FvBwvd8w7xyTFnKJMGGutXzLhrF52DSsDrsxUOClGUATk5yfeFkU6gwhOb5OUCzdU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QMcJ5I+/; arc=none smtp.client-ip=209.85.128.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-456267c79deso1609045e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:01:53 -0700 (PDT)
+	s=arc-20240116; t=1754038924; c=relaxed/simple;
+	bh=LQAn9Z74ApWpKknEzR5YdobzGb9ilQ/9BWm/QkLbzYI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h9VxyrnHD8pJch1OMaU2J2iCxzUxhXWGdAqDDsZB9OHD/wmwt/S8NoS7ET+eWT7YqCyzqdduI0IZA9TCK2Rlrx0DTJXOOstwxs1fh5akVh2s30qMf2q6gNMqkrIidf3cWJJ6ISTwmmAwuNipwHMI+92C8p/4iDeoTqhA3LJGxAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvdfuEoR; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-240763b322fso13722325ad.0;
+        Fri, 01 Aug 2025 02:02:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754038912; x=1754643712; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=kqS553FeKDYKCwtAkb20JFc25+oBMc4a/Aa0vW9Z30U=;
-        b=QMcJ5I+/63JzyZOvTBx9QCrVDgK76EvEcoJfUuU5/+GSxrtCZnWumoFj/RYejp9HeG
-         G7hX39U/qbcHn2BQrXCOTEMC6DnnJCrUNv8d53GFLVOiryv2T6seTTaKeocC5AN/TvVo
-         hBe/T0uzI55mrs3HRBK/Afd90tUoT+8VuIP7SsZJ0NwD5bxX0WgGOvPGZ1WpA8b5xvq3
-         P4AqnT8y6UEzLY2zFvxxgsyA/U/gxEod8Ey50LrbjlLduL9AFEhqpIKdSu0/7Ga9L7Lq
-         XaqNWP5Lva5Ny4BbFvuU6j5UFh/C8WUGvcMqxSu3kvGAc5ax8rTvdMcd2NzcKEVqjdk8
-         ZYHw==
+        d=gmail.com; s=20230601; t=1754038922; x=1754643722; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=WNVpnicvngUWIcQSeSIW5UVxijfvMDVXuIS6fIxxIrQ=;
+        b=YvdfuEoRk0rRwVd9iVbxWzBJg71ozVQwCwN02h18PnUAfWPmNyAH8nNDUpM2to9Xot
+         gCJSFffLQ8uKqDkqyCuUfWFo4eWncgBuBQHrWCsz1Zw5PYKWm4bd/pRzJSqS9ZtsQDGa
+         rGYCPZRAHy+1RCylwp6nagbhDab6KwLKyyeVp4UlrdwUzdvqWHmfQv/kLFNZt6Wq9YmH
+         wCyWwSK/V92TJxJeHMpQmyWP7+//mwWuRswNDM+zYRkoalSNPbvLq7pkXMmOBEyfQD9v
+         OjEOZ9cTHLEHM4qFCsnW1mhMp+VG1qnxzRPbs4DVY0qmPmWcJw5Blgn3Up+MryrBrT3R
+         bAGA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754038912; x=1754643712;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=kqS553FeKDYKCwtAkb20JFc25+oBMc4a/Aa0vW9Z30U=;
-        b=RH6Yy3tysTFqsQFOibkU/dOhL2skNWqh08gOFUY2hfYhgOsZem0VUgAgoT5RiWAIG8
-         JFYLS9gYKIq8+FG5gvo7FzFywHr8a0Km74ib8+ijEMMrOU/ESuN/2SWYcTTN2mMDJ++r
-         jQEHiWT1IGOKqU/G5IQYSn/6Cj1hQ0By4BDniuIssmNuM9R4C61PPQzFCs+YJMb/2/SM
-         zxW/bh0raWiUKuLfkkvcEPCo7TjZFsLrtNANVp1Oy6eIQZWsibw5Uamcg4Act1uTTzLY
-         AWNWKUOok0VR3oRRzWrjTJROn5XFPWrEvgs0nKC2JeZDL0jebjk9QYxhoPrl/g6Q8m0D
-         YZwQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXl+ClzZgKVmTAJcv4K/Ze79HhNbXXgyACvWmSok0KPwtsG/eLpkCimyNGRLCYoBEzAPFxMYvd06M8+rfo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXuNUAKU3IVVvNwMkE1d3bG3KlOG/cJXCmpdJpzzxqqUTbtU4O
-	xyvWmTEPwpmxCglv8NOh0K/QG3C8LFJySTeIxthMyLaoIpgXQufQsk+01ae/DTUsr0utl2Cw9Fl
-	WsaRQEqd6avvhiN5pKQ==
-X-Google-Smtp-Source: AGHT+IEGSrHjQNIVZDe9AaJDH6jkeAL+E4bmquGJQcAIgyUXYfrcUzo8KPM7x7yoZFwquE6owm//RFtb5/69b2A=
-X-Received: from wmbhj23.prod.google.com ([2002:a05:600c:5297:b0:456:21f4:7a98])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:4f09:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-458b0216ba7mr8716695e9.0.1754038912604;
- Fri, 01 Aug 2025 02:01:52 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754038922; x=1754643722;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WNVpnicvngUWIcQSeSIW5UVxijfvMDVXuIS6fIxxIrQ=;
+        b=dR5XsFhtHWVK5PWj3BNjEqsepsjTs8hX0zZBzNx93vlsyWFs2zItDYHKh+YMCoY5pZ
+         /W35uV/RdqZg/EarNuSz28fQPcsiOdIRWuE22VMgkQ66SjgIeETcWkwduxstoyWCMyNB
+         UVU0F8W1zN09kn8MhcDnDFcxSKiIQeP1Ueu7gSk/2wJDePGQxzO3lxNtsxa7l1ELovja
+         vWXNpF7Ovv41nB8XKnaqxz2YdpwGvNPtVzyolqwjF0MnlROg99Z7xNwe/Hd3UnYr1wcb
+         p+inXxFu+EeZkpaKppZWGoqaRF6Kip3YzPoyPqPHyAKOJXX+R4MHKyo+LRd/4L1gOyVL
+         w7jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU0/GjDXB6iAOTr27Clxuai36UURmV9K94rY+8pLauQSBoZZUSlVj8ftMmHhaM8oisQsP7WO7l/Ru+YUbtp@vger.kernel.org, AJvYcCW97/0a0cyezgkxc8KQZHrHZNdq6Kje+CxEDWlyeSRjyBezC8cMPVWWlNYZPUhUoIsZ7sZm5Mwqmfk=@vger.kernel.org, AJvYcCWG/WzwrQ6kRRdb1GLtX/v0eGSprYTjJuEb80T80H65ib7r+BhXX/UfTUEQQtD26xWxA7O879AKSFLXd2proaa8@vger.kernel.org
+X-Gm-Message-State: AOJu0YyzIM/G4ZewE4FP38HRlzxSWbAKO6DK6RfaUSmbMV/v8ciH6mZi
+	2VPkUdg562h5DExHYftDOAz/c1rWxCc/2dK0T1ZSrtojQm/grWhZg03Y
+X-Gm-Gg: ASbGncu485R8IybyuSMGCLBVCU5w0pVGNeI97+52YVF37o9vPYvhULoxnO+VsCA1XwR
+	I/TlAbuLE/0TxYaKvDloT+Fj84mi9vFnL65fxHC/rnVlXvFmXhTGy4n8T35tpUMRDK7BLOafpk8
+	l9BuFqQNAYXLjfJMh8/tQGZgAo3k/N1AwfX0SJdEPFg8T2oDON3P1hhO4laQxyGbRoxIqV1E+VL
+	JdbbbmYHkzw7UxRJR8EeyxFB1uq1HDyePEmiQZFlGVfCfU5hjDenR4ueUN2bBO4d1KsU45btBPQ
+	scE3GyvdbE2fvmV5QmbDKSbXpzJmqYssHwpVn0F/6CptBzl12QX9zePIiPoIHaWeQYChtgMUQiX
+	O4bWO1R3bJMjKkgXAW0nNt/Z0jWA=
+X-Google-Smtp-Source: AGHT+IFYvnKgARqKCy9fJNB6z4QxA4wIrT54OgyyEjOC446jlLt0Q9WKuoFiFZZl35o6xiFvSIKMcQ==
+X-Received: by 2002:a17:903:1aee:b0:23f:d861:bd4b with SMTP id d9443c01a7336-24096a63f17mr180276215ad.5.1754038922100;
+        Fri, 01 Aug 2025 02:02:02 -0700 (PDT)
+Received: from fedora ([209.132.188.88])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef678dsm37997035ad.39.2025.08.01.02.01.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 02:02:00 -0700 (PDT)
 Date: Fri, 1 Aug 2025 09:01:51 +0000
-In-Reply-To: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
+From: Hangbin Liu <liuhangbin@gmail.com>
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: netdev@vger.kernel.org, Jay Vosburgh <jv@jvosburgh.net>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+	Nikolay Aleksandrov <razor@blackwall.org>,
+	Simon Horman <horms@kernel.org>, Shuah Khan <shuah@kernel.org>,
+	Jonathan Corbet <corbet@lwn.net>, Petr Machata <petrm@nvidia.com>,
+	Amit Cohen <amcohen@nvidia.com>,
+	Vladimir Oltean <vladimir.oltean@nxp.com>,
+	Alessandro Zanni <alessandro.zanni87@gmail.com>,
+	linux-doc@vger.kernel.org, linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 2/2] selftests: bonding: add test for passive LACP
+ mode
+Message-ID: <aIyCfz3KUcYoE4Ix@fedora>
+References: <20250725062848.18889-1-liuhangbin@gmail.com>
+ <20250725062848.18889-3-liuhangbin@gmail.com>
+ <20250725072112.6b3c4f83@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
-Message-ID: <aIyCf85_Xe6etC8Q@google.com>
-Subject: Re: [PATCH 0/3] Groundwork for Lock<T> when T is pinned
-From: Alice Ryhl <aliceryhl@google.com>
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
-	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725072112.6b3c4f83@kernel.org>
 
-On Wed, Jul 30, 2025 at 02:14:43PM -0300, Daniel Almeida wrote:
-> It's currently impossible to have a pinned struct within the Lock<T> type.
-> This is problematic, because drivers might want to do this for various
-> reasons, specially as they grow in complexity.
+On Fri, Jul 25, 2025 at 07:21:12AM -0700, Jakub Kicinski wrote:
+> On Fri, 25 Jul 2025 06:28:48 +0000 Hangbin Liu wrote:
+> > Add a selftest to verify bonding behavior when `lacp_active` is set to `off`.
+> > 
+> > The test checks the following:
+> > - The passive LACP bond should not send LACPDUs before receiving a partner's
+> >   LACPDU.
+> > - The transmitted LACPDUs must not include the active flag.
+> > - After transitioning to EXPIRED and DEFAULTED states, the passive side should
+> >   still not initiate LACPDUs.
 > 
-> A trivial example is:
+> Strangely this test fails on a normal kernel build but passes with
+> debug options enabled:
 > 
-> struct Foo {
->   #[pin]
->   bar: Mutex<Bar>,
->   #[pin]
->   p: PhantomPinned,
-> }
-> 
-> struct Bar {
->   #[pin]
->   baz: Mutex<Baz>,
->   #[pin]
->   p: PhantomPinned,
-> }
-> 
-> Note that Bar is pinned, so having it in a Mutex makes it impossible to
-> instantiate a Foo that pins the Bar in bar. This is specially undesirable,
-> since Foo is already pinned, and thus, it could trivially enforce that its
-> bar field is pinned as well.
-> 
-> This can be trivially solved by using Pin<KBox<Bar>> instead of
-> structurally pinning, at the cost of an extra (completely unneeded)
-> allocation and ugly syntax.
-> 
-> This series lays out the groundwork to make the above possible without any
-> extra allocations.
-> 
-> - Patch 1 structurally pins the 'data' field in Lock<T>
-> - Patch 2 constrains the DerefMut implementation for safety reasons
-> - Patch 3 adds an accessor to retrieve a Pin<&mut T>
-> 
-> Note that this is just the beginning of the work needed to make a Pin<&mut
-> T> actually useful due to pin projections being currently unsupported.
-> 
-> In other words, it is currently impossible (even with the current patch) to
-> do this:
-> 
-> let mut data: MutexGuard<'_, Data> = mutex.lock();
-> let mut data: Pin<&mut Data> = data.as_mut();
-> let foo = &mut data.foo; // <- won't compile
-> 
-> The above is something that Benno is working on.
-> 
-> Thanks Boqun, Benno and the rest of the team for brainstorming the issue
-> and for and laying out a series of steps to implement a solution.
-> 
-> ---
-> Daniel Almeida (3):
->       rust: lock: pin the inner data
->       rust: lock: guard: add T: Unpin bound to DerefMut
->       rust: lock: add a Pin<&mut T> accessor
+> https://netdev.bots.linux.dev/contest.html?branch=net-next-2025-07-25--09-00&test=bond-passive-lacp-sh
 
-With the things that Benno said fixed:
+I guess on the normal kernel, the checking starts too soon before negotiation
+finished. I will add some sleep time before checking.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Thanks
+Hangbin
 
