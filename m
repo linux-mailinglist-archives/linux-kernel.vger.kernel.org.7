@@ -1,81 +1,64 @@
-Return-Path: <linux-kernel+bounces-753650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AFE7B185F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:42:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02458B185EF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:42:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0A0BC626383
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:42:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DCF41C23833
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:42:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C2C11B21BF;
-	Fri,  1 Aug 2025 16:42:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7AEA1A08CA;
+	Fri,  1 Aug 2025 16:42:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mHo9bYH3"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZSBx5qnB"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 348681A8F60
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:42:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 810F917B505;
+	Fri,  1 Aug 2025 16:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754066543; cv=none; b=N+5SxTd0B9cTEZPoDeKtwBcSbYR/AWSLuJlXhO65RvSuq/BPjWl8wA6DvzY06g4fDkU7e9owkWYn8sAs2xhJRxLg5ztdK+6VqLu2zjs6cFASzJEdX2X70cVUMb/FHGNZNlRCY2ma/cBdPucuXVZzkYcRMV4jLtSR8eHtWnoh2/8=
+	t=1754066540; cv=none; b=Yl67q901nAUhpEpd+f4WG9+nIm+4Ywv6BZFyt7QgM+O2SmsbXbsMsdG3h0CWaBWgH063941hYSdYhVlhFVIl1lUQGWEtjkN1friCiZ1klng+F5FOo7Q2OomYqg8mXlviReIsTCTZk+W2p7t0QUTsPjpfQeEdcJPTnp4CIu5NgpE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754066543; c=relaxed/simple;
-	bh=tDUPqlQlm9WKJbyBmh/TndQVa5yrpqL7WftVXqTD/c0=;
+	s=arc-20240116; t=1754066540; c=relaxed/simple;
+	bh=xZFZ88dk/ITCyvuMw5RIUKUaCfsJxDvieg74ZzbBdOc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BRe3kZGAEhgElPoOTHP9IIYas1OTxMfxAKWvhyNsqwIRbxam5YvwAxA9gywnbhftqYs6E4d/jsYYI7IKMxF51cvIQYHvuaMe+VVKoPcRzx4nZyEPbwymr3Onvj8BZfezh8a4zOLVC7ZmHeQocTR/1ruROa+AH9AqCuS0XUd/nCw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mHo9bYH3; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719lm1A002109;
-	Fri, 1 Aug 2025 16:42:08 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=7lzPbO
-	3Zz51sBAJ4mlBy4X5irw7c9yo7CvSEZJhlTQk=; b=mHo9bYH3kzQYLhou8lMQI5
-	RYBnVw9NS/bE0AVjTeLUg4UapUnRX2qwLTR4Dlp7aaO8rOlfVANtsI4wqmteEB+X
-	oXqEsY5J2t1ZT065+d2seGL0HbZzej1uRgAL2qDVOgB1bb4h8f9XpZchzPfjKE5Q
-	D6/M07gynDTiW6WWIhSRAFNVBOTrGXGw4JYZBOwbH1Q7Ba4mEp+vhwJh5joihXK/
-	xMnY6qudxHz7NrtLk3QTRYTxHGojGEX4iFVtp+vMkH431uatDnaIJUr3caUapqMY
-	5gdjr6h36LwkwMpdhIG/jnMXARLzjiFoi6i/y3ezbyqxdTehJnRdeFz6tFcEiaeA
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6j80g3-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 16:42:08 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 571GTGPT027847;
-	Fri, 1 Aug 2025 16:42:07 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 486c6j80fw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 16:42:07 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571Cj7Qd017369;
-	Fri, 1 Aug 2025 16:42:06 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859r0jann-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 16:42:06 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571Gg24q47710486
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 16:42:02 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6B8DD20040;
-	Fri,  1 Aug 2025 16:42:02 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id E64832004B;
-	Fri,  1 Aug 2025 16:42:00 +0000 (GMT)
-Received: from [9.39.23.28] (unknown [9.39.23.28])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Aug 2025 16:42:00 +0000 (GMT)
-Message-ID: <322f02ee-4de9-4b1c-9727-409eb50c21fe@linux.ibm.com>
-Date: Fri, 1 Aug 2025 22:12:00 +0530
+	 In-Reply-To:Content-Type; b=Lmkx22D4LhhInKryrdcxcLfoFL2bXWyxRTGXLmDlrVZAuNcpxxOTjV2bnC3Zv1MOnKFG5/3dbyHbIlTBRj6jHGvf/K/od5AZc6ZstHPNKptyV4vsefliR/qB//HFKeBEf8XVgcLB6ztVylxjhRfUIa3Dv43gdVxvMpybjMDNS6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZSBx5qnB; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754066539; x=1785602539;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=xZFZ88dk/ITCyvuMw5RIUKUaCfsJxDvieg74ZzbBdOc=;
+  b=ZSBx5qnBJxXPckR7cu/deP0pvAQcfbiAQC/FjIm0lpnXIDQbyQVjhhJY
+   YX54YzHjlGUAVWfgWjw1aAvYtgEIyPHnPQDeGtjQ6qYYjPiIVBi0AXc9k
+   TvoPytiqQN11s1R0HW7s6HTR5DIgHWm8hUCpTtFG2LZL7HBedqIwB8XF9
+   qAshw4vWWq0n6ynGV7eZZebmVwPcW6FI8RIomwOYBZ/rmfWZhbjzzpfYc
+   2imkYFtUqGd4pYTXjh8DcRk7PiWEmxTQ/dvpOJT07PoTfFu1SVwKf16Jk
+   UU6ccWE880FKZFRGkXIyICbIuYsq/5HXA3hyoPgHOMR85FwHb5FyvxKfR
+   A==;
+X-CSE-ConnectionGUID: py2mVcrpS3i0GBXJ0Y7DbA==
+X-CSE-MsgGUID: klzAjXuWQ8CEhuPZKxx5Wg==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="78971002"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="78971002"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:42:15 -0700
+X-CSE-ConnectionGUID: Zy56MuSKSNy9sMoSeBMXwg==
+X-CSE-MsgGUID: pAk1IW+jQWSLs8iihiEetQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="167793365"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
+  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:42:14 -0700
+Message-ID: <1a216d75-4411-4aa6-ae29-c7815eec248f@intel.com>
+Date: Fri, 1 Aug 2025 09:42:13 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,112 +66,73 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] powerpc/qspinlock: Add spinlock contention tracepoint
-To: "Nysal Jan K.A." <nysal@linux.ibm.com>
-Cc: Michael Ellerman <mpe@ellerman.id.au>, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Nicholas Piggin <npiggin@gmail.com>
-References: <20250725081432.1254986-1-nysal@linux.ibm.com>
- <20250731061856.1858898-1-nysal@linux.ibm.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Subject: Re: [PATCH v10 1/6] x86/sgx: Convert sgx_(vepc_)open to
+ __sgx_(vepc_)open
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
+ mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+ chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+ bondarn@google.com, scott.raynor@intel.com
+References: <20250801112619.1117549-1-elena.reshetova@intel.com>
+ <20250801112619.1117549-2-elena.reshetova@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-In-Reply-To: <20250731061856.1858898-1-nysal@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ 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
+In-Reply-To: <20250801112619.1117549-2-elena.reshetova@intel.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: wCuFmtzg-IvhBFynuU-RO3dOMmz8--I1
-X-Authority-Analysis: v=2.4 cv=Mbtsu4/f c=1 sm=1 tr=0 ts=688cee60 cx=c_pps
- a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=Q9BW1oDvyV82DcSIcF4A:9
- a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: SaYTAZEKmauWp9N7F5xDBkM6GAgcK3en
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEyNiBTYWx0ZWRfX/Hf8anFraG1b
- zfy7NTlSWhG67DNHPDxV4JD11ReHLaSWQKIGQh3FpP+nlMg+6RVscqRo7R8fsPL/H3nUO6X09Qe
- 5NzJ6jBLmD3m4Naon+6qfT+hVP3nfQMvROb8nfQPbVWA7n8pOCD7rvoIFP5mh/8yE152SkY+1Gm
- Te+zU8JUUhFdKlYf4MBPo7R3VAdRJkMrGDJP+O2leW0X3dV3gOZ7lIVX20CoCK0ch+Rwo9Sstz+
- 33I6FR+N1IE+9t3lHcZm3aRgAhzvIAwEMyz/otHeT7GO4SzIeIO0VUlUOQa6C9fgVFLeSzofh9f
- gkInFmMUw2PqPD5yScbUYew+Y7KgLTQY9B7USMOb1midjUrBpmaQLnUWoSyAY8PN4Gbm8FHgu3D
- +F4Ld3Y9yY/y4r8DByGCq0Ccml270/jDfaAtuhrZguF+6QTntWVwXMO+GUeIdSBn+nbxo0RL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1015 adultscore=0 bulkscore=0 suspectscore=0 priorityscore=1501
- spamscore=0 mlxscore=0 impostorscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508010126
 
-
-
-On 7/31/25 11:48, Nysal Jan K.A. wrote:
-> Add a lock contention tracepoint in the queued spinlock slowpath.
-> Also add the __lockfunc annotation so that in_lock_functions()
-> works as expected.
+On 8/1/25 04:25, Elena Reshetova wrote:
+> In order to introduce the counting of active sgx users on top
+> of clean functions that allocate vepc structures, covert existing
+> sgx_(vepc_)open to __sgx_(vepc_)open. Later patch will introduce the
+> top level wrappers that manage the usage count.
 > 
+> No functional change intended in this patch.
 
-There is bit of pure code movement. Given that is small, single patch is fine.
-
-> Signed-off-by: Nysal Jan K.A. <nysal@linux.ibm.com>
-
-Tried the patch and able to see tracepoints.
-
-Reviewed-by: Shrikanth Hegde <sshegde@linux.ibm.com>
-
-> ---
->   arch/powerpc/lib/qspinlock.c | 19 ++++++++++---------
->   1 file changed, 10 insertions(+), 9 deletions(-)
-> 
-> diff --git a/arch/powerpc/lib/qspinlock.c b/arch/powerpc/lib/qspinlock.c
-> index bcc7e4dff8c3..95ab4cdf582e 100644
-> --- a/arch/powerpc/lib/qspinlock.c
-> +++ b/arch/powerpc/lib/qspinlock.c
-> @@ -9,6 +9,7 @@
->   #include <linux/sched/clock.h>
->   #include <asm/qspinlock.h>
->   #include <asm/paravirt.h>
-> +#include <trace/events/lock.h>
->   
->   #define MAX_NODES	4
->   
-> @@ -708,26 +709,26 @@ static __always_inline void queued_spin_lock_mcs_queue(struct qspinlock *lock, b
->   	qnodesp->count--;
->   }
->   
-> -void queued_spin_lock_slowpath(struct qspinlock *lock)
-> +void __lockfunc queued_spin_lock_slowpath(struct qspinlock *lock)
->   {
-> +	trace_contention_begin(lock, LCB_F_SPIN);
->   	/*
->   	 * This looks funny, but it induces the compiler to inline both
->   	 * sides of the branch rather than share code as when the condition
->   	 * is passed as the paravirt argument to the functions.
->   	 */
->   	if (IS_ENABLED(CONFIG_PARAVIRT_SPINLOCKS) && is_shared_processor()) {
-> -		if (try_to_steal_lock(lock, true)) {
-> +		if (try_to_steal_lock(lock, true))
->   			spec_barrier();
-> -			return;
-> -		}
-> -		queued_spin_lock_mcs_queue(lock, true);
-> +		else
-> +			queued_spin_lock_mcs_queue(lock, true);
->   	} else {
-> -		if (try_to_steal_lock(lock, false)) {
-> +		if (try_to_steal_lock(lock, false))
->   			spec_barrier();
-> -			return;
-> -		}
-> -		queued_spin_lock_mcs_queue(lock, false);
-> +		else
-> +			queued_spin_lock_mcs_queue(lock, false);
->   	}
-> +	trace_contention_end(lock, 0);
->   }
->   EXPORT_SYMBOL(queued_spin_lock_slowpath);
->   
-> 
-
+I'm not following at all why this patch is needed. It looks like pure
+unneeded churn to me.
 
