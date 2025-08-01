@@ -1,122 +1,116 @@
-Return-Path: <linux-kernel+bounces-753313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE59EB1816F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:01:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8802DB18171
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:02:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6071B3A2024
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:01:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A86D9177CAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEF222FAF8;
-	Fri,  1 Aug 2025 12:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h+/JIR9n"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78C6680B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:01:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CAE522D78F;
+	Fri,  1 Aug 2025 12:02:42 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 999DE80B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:02:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754049703; cv=none; b=FXEFdXKQ0lGkeo+kUOoYmQyQfUGrVuG86k4a1eB3MI4I+fuwLzW+kbsnAooCQD6mX0o3Yna+34cB4chfp5ew8ihZeyCu6BJEPaKq1cg5vIz0OYcv6zRqeG9CJ9z+3mPoCQF+NtuA6lrg4n0JhgFgJUV5M0UuTas1hZuOuNsuPiM=
+	t=1754049762; cv=none; b=lUUPv3rw6iA6BQOaI47yZjiGPuRRZXIujPSVj9ZwuGkQfpGggiDudFI4OhmSeUD6R4j8kfFqxHHC/QyVWOsVXqNiecPPoPeJfGacewlFx6OJnv7KIHyBwu7syYzY3gk35WeXBCSMeLiD6HzPb8+OgDLRlFBqsW6w95uFMudspgc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754049703; c=relaxed/simple;
-	bh=uOoLORZbVz/2DjHrvQwdE/xKoSWkkYOsM2fYvuYSxFs=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=o8x9Jge56O+O7oop20bC1JLjU7dNL0MXKBHxjoHgPg8RRn2wT7TEDDn+axCbO1DkL5+TeonCTiXkCDUx0I9rg1IJVUECAnI6Dqg4uMdG0rx7VZrzNhCi0+Lsz0kRrwojSVtLiQlJip3Z1fcl1Nq8a8RGIibwq1foHO6aGADWqxs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h+/JIR9n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF2F4C4CEE7;
-	Fri,  1 Aug 2025 12:01:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754049703;
-	bh=uOoLORZbVz/2DjHrvQwdE/xKoSWkkYOsM2fYvuYSxFs=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=h+/JIR9nibIna+akEcLThAyq6TgJbtwZzNpTbQWAatG3VAMzBqM3DKsQp6hY2ycFo
-	 81JXKMc/UEQQVZOUC2uzJ+XuHJjO/2Ia9P4fsBUKScsKVtGNLcoBA5txTHyTc65CmY
-	 bIA7Xf9OkC5Xr/bYvGx2kRj+W1jdWOqyhBqa3zNGbDlXuUFGTx2JgCEQUrsJj8Rj/1
-	 lqjMt5lHDaCERJFddCo1ocjpq2aHU9TklTLEAmxwzNmCRKAycow3Gn7WjFbeuMA0My
-	 H64+VHCaL/v9r75YkjCVZMBn1hZ/QnfuUAccGGDJ3ZZHE+NIaYPL64bFcLTq+AD7RR
-	 VkKizrKCltwZQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uhoSB-003Bli-P7;
-	Fri, 01 Aug 2025 13:01:40 +0100
-Date: Fri, 01 Aug 2025 13:01:38 +0100
-Message-ID: <86y0s36yjh.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: wangwudi <wangwudi@hisilicon.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>,
-	<linux-arm-kernel@lists.infradead.org>,
-	<linux-kernel@vger.kernel.org>,
-	<yangwei24@huawei.com>,
-	<yaohongshi@hisilicon.com>, Zenghui Yu <zenghui.yu@linux.dev>
-Subject: Re: Question on the scheduling of timer interrupt and FIO interrupt
-In-Reply-To: <8c6eb963-0a3a-8b75-8ab4-a0b2e10f3d40@hisilicon.com>
-References: <8c6eb963-0a3a-8b75-8ab4-a0b2e10f3d40@hisilicon.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754049762; c=relaxed/simple;
+	bh=ZOH5WjKRJ5tUTyd3dy8PGVJZdah/OUl6IABtUIOhEO8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VNHWztx1+sW7H47fzF6265ARKsUGBVktrVs8BymwhvfHrE162ZMI8lJQcuIP576cS5zB26DKOGC5t4WtK+THCmHP3IKW/ZRknFn5vGKpL5Q04LQDjvPgDGX+Am98vbPNxCBYw0RA0S7tkxPqYnvEo/jHJQK9l/UFGTB0bVppueg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E5FAB1516;
+	Fri,  1 Aug 2025 05:02:31 -0700 (PDT)
+Received: from e129823.cambridge.arm.com (e129823.arm.com [10.1.197.6])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 4CEF43F673;
+	Fri,  1 Aug 2025 05:02:38 -0700 (PDT)
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: thomas.weissschuh@linutronix.de,
+	ryabinin.a.a@gmail.com,
+	glider@google.com,
+	andreyknvl@gmail.com,
+	dvyukov@google.com,
+	vincenzo.frascino@arm.com,
+	akpm@linux-foundation.org
+Cc: kasan-dev@googlegroups.com,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Yeoreum Yun <yeoreum.yun@arm.com>
+Subject: [PATCH v3] kunit: kasan_test: disable fortify string checker on kasan_strings() test
+Date: Fri,  1 Aug 2025 13:02:36 +0100
+Message-Id: <20250801120236.2962642-1-yeoreum.yun@arm.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: wangwudi@hisilicon.com, tglx@linutronix.de, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, yangwei24@huawei.com, yaohongshi@hisilicon.com, zenghui.yu@linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-+ Zenghui, in case he has seen this before.
+Similar to commit 09c6304e38e4 ("kasan: test: fix compatibility with
+FORTIFY_SOURCE") the kernel is panicing in kasan_string().
 
-On Fri, 01 Aug 2025 07:26:20 +0100,
-wangwudi <wangwudi@hisilicon.com> wrote:
-> 
-> Hi, all
-> When running some FIO tests on ARM64 server(Kunpeng), frequent NVMe interrupts occupy the
-> CPU, and the CPU's hardirq load is 100%. The watchdog feed interrupt arch_timer cannot be
-> responded, triggering the hardlockup.
+This is due to the `src` and `ptr` not being hidden from the optimizer
+which would disable the runtime fortify string checker.
 
-I am extremely surprised that even with a screaming NVMe (or even
-several of them), you end up in a situation where you don't have the
-resource to take the timer interrupt.
+Call trace:
+  __fortify_panic+0x10/0x20 (P)
+  kasan_strings+0x980/0x9b0
+  kunit_try_run_case+0x68/0x190
+  kunit_generic_run_threadfn_adapter+0x34/0x68
+  kthread+0x1c4/0x228
+  ret_from_fork+0x10/0x20
+ Code: d503233f a9bf7bfd 910003fd 9424b243 (d4210000)
+ ---[ end trace 0000000000000000 ]---
+ note: kunit_try_catch[128] exited with irqs disabled
+ note: kunit_try_catch[128] exited with preempt_count 1
+     # kasan_strings: try faulted: last
+** replaying previous printk message **
+     # kasan_strings: try faulted: last line seen mm/kasan/kasan_test_c.c:1600
+     # kasan_strings: internal error occurred preventing test case from running: -4
 
->
-> GIC driver uses GICV3_PRIO_IRQ to set the same priority for arch_timer interrupt and NVMe
-> interrupt. In GIC spec, "If, on a particular CPU interface, multiple pending interrupts
-> have the same priority, and have sufficient priority for the interface to signal them to
-> the PE, it is IMPLEMENTATION DEFINED how the interface selects which interrupt to signal."
-> Shell we consider setting a higher priority for the arch_timer interrupt to fix this case?
+Signed-off-by: Yeoreum Yun <yeoreum.yun@arm.com>
+---
+Patch History
+=============
+from v2 to v3:
+  - rewrite commit message.
+  - Using OPTIMIZER_HIDE_VAR() instead of __NO_FORTIFY
+  - https://lore.kernel.org/all/20250801092805.2602490-1-yeoreum.yun@arm.com/
 
-Linux only deals with two priorities: the normal interrupt priority,
-and NMI, where the NMI can preempt any other interrupt. obviously, we
-don't want to make the timer an NMI, as it would break a lot of
-things.
+from v1 to v2:
+  - Using __NO_FORTIFY instead of skipping kasan_strings() when
+    CONFIG_FORTIFY_SOURCE is enabled.
+  - https://lore.kernel.org/all/aIs4rwZ1o53iTuP%2F@e129823.arm.com/
+---
+ mm/kasan/kasan_test_c.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Which means that even if you were to give the timer a higher priority,
-it should not be allowed to preempt any other interrupt. Which means
-that you'd need to set the binary point so that both the NVMe and
-timer priorities fall into the same preemption bucket.
+diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
+index 5f922dd38ffa..a1a0e60645da 100644
+--- a/mm/kasan/kasan_test_c.c
++++ b/mm/kasan/kasan_test_c.c
+@@ -1578,9 +1578,11 @@ static void kasan_strings(struct kunit *test)
 
-But it also means that you now are eating into the few bits of
-priority that we have, and that will cause problems with the NMI
-priority. Also, how to you decide what interrupts should be of a
-higher priority?
+ 	ptr = kmalloc(size, GFP_KERNEL | __GFP_ZERO);
+ 	KUNIT_ASSERT_NOT_ERR_OR_NULL(test, ptr);
++	OPTIMIZER_HIDE_VAR(ptr);
 
-I find it surprising that your GIC doesn't have some form of
-round-robin scheme to pick the next HPPI, because that's clearly a
-fairness problem, and punting that on SW is pretty ugly.
+ 	src = kmalloc(KASAN_GRANULE_SIZE, GFP_KERNEL | __GFP_ZERO);
+ 	strscpy(src, "f0cacc1a0000000", KASAN_GRANULE_SIZE);
++	OPTIMIZER_HIDE_VAR(src);
 
-Thanks,
+ 	/*
+ 	 * Make sure that strscpy() does not trigger KASAN if it overreads into
+--
+LEVI:{C3F47F37-75D8-414A-A8BA-3980EC8A46D7}
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
