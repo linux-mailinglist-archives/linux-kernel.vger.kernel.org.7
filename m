@@ -1,141 +1,187 @@
-Return-Path: <linux-kernel+bounces-753237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DAA97B18064
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:47:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55D4EB18065
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64E761C81D9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:47:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8B77F1C821F1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13779238C2A;
-	Fri,  1 Aug 2025 10:47:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D504233715;
+	Fri,  1 Aug 2025 10:48:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BWQFOMw7"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3bQCwe+8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tNnXAiRK";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="3bQCwe+8";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="tNnXAiRK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22DF218ADE;
-	Fri,  1 Aug 2025 10:47:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270AC1C3306
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:48:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754045236; cv=none; b=FTKN3DtAi5+qMj5Veji4OqmlzxXQ0csDYrsGe4hy4BG2YZVtJS+yaPOVkOsXRq+NOT2+lW6dviS5S45h1gshSdbnM0zhiHoecNvo+8prqP40ZdY7nsGm/X66VRaz65QaNx3ZrK2O5ukvT8jVu2wVZrJJyckCTpaR/XYiSijRmv8=
+	t=1754045293; cv=none; b=VNjg0zfJqT2TUY0QtNHrx7gCz2zplCyUivCEaxsKLCeblSedGkrIoyFrqR/DThh/G4j2Y5yAqUzKcAMgC/SjeYMypPWy7eQrYL/0jgWT7qPJWF/7ZdEeUrc8NqIU6RHYw4/y9lqJ7l7H74yeKanCkMFOkFwsYlcbKdlPKf9ll5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754045236; c=relaxed/simple;
-	bh=Be1VdHknPGZ0mnCukpBYN7nwrz6fHVbtRMnRJIgiK/U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=oKHME2fzvGlrstbyetIMQrv5beIKiosqf3jUNmj3HW9wgpYk7f+Wz3RoKUdMttt0b/NTUb+X/DDDk/CKQKBbmwN+5vFEIaQc9LAtNfcaa5cSPsL8jJtC4dQcbrg1mZ8Gaf21fcVDMgUgdI8NYIDLrxObED6m4oqa63QHkhQcIwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BWQFOMw7; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-3138b2f0249so1766252a91.2;
-        Fri, 01 Aug 2025 03:47:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754045234; x=1754650034; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=jmrAbzYZUxB9t3jmDwLlL4LFVN3kzC0P+SWz2BBpLpQ=;
-        b=BWQFOMw7XOANBRg5fIxraWLbLNKvCR07u5kbczZ2InHUTIb3kaTwRMJh2lXG3wnFMD
-         MnO867zz/RwMYQ8xytrE4FIhh4/kEoFGVuXSDhGS9sEaV30oNNytqk5hqGIYbMRQaBAG
-         NB97Dl4Vmz4AsHkgq2eH3B9GsvlvApksLbieiuUl/C+GAboyZrwhMgj8/kxLtQK87KaK
-         4C2ExaQGoA5dUpw+tuKn7s92f/1eivjoyx6V74Snn0DjUAf4rMoeNo6PBZEF7SEdCxhq
-         6wuiiMdZCvPzFSsy9OJHIIqpuOQf9S2W/oZeZEWKKlloIPvlIgAsWBIo13+tYjjwGYoc
-         mbVw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754045234; x=1754650034;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jmrAbzYZUxB9t3jmDwLlL4LFVN3kzC0P+SWz2BBpLpQ=;
-        b=INriFbsvzVYDBMwWjpCeQDgF542r6cPlNF6YEEYepgguraXK8Ues415qjcoLQAJ1ps
-         nRBTwp9NzWm9KH14CB74LnDvzUX+9SxFYg22yaqCP6jsQMlKKFwSoZCEWDbd8XddojH6
-         shafXSRvw9qoiuv+XPVfB+emK87kFvei0dQTqmCYQnM3w+/TFoj0dWWOoZyGe0RtDqjV
-         EF7+F1Uf1CSduYQ4zqgnEgmKpEvStKMq05hsJZIunuTtpYL7A/rU0uGa0pj2Xc35zW5G
-         HFluI/d6cVhfITeQB9dRbNPWYFHybHftY7gF3crFymy0+DM42K/ft/21sPnwrFAQerZd
-         79Ig==
-X-Forwarded-Encrypted: i=1; AJvYcCVQG47r9ihvh2VlN9kIuVeUTQQHMfLaVpcGudp1Ia1Hi+bLxPQ/uxJr0lQ52ScIgF6FeliMethrw1zn024=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWmo/OvLFdL/h6V+JbsTjg5hFLSA/TnbkSA2BchFKAZbjONKr7
-	qzsn5rVCVALrgM2kGkHyFN5uGM48Ck9FrIYYQ1i/awGxjle6SUcKLczGkvQLdr5R+YkFcw==
-X-Gm-Gg: ASbGncvFz4RhJBraDLBX3lzrTQtO9tv0DhC9KqrL3FtWmckdRbi9pxx3Aj4ypI9eWbm
-	ecrKqSVZckJSy8JEtdAqgvq2Xzl8EqV/OQDi5c9xLiqI54tREw9yk+qQj8bfCJltf9mEyynTGBz
-	mgtIzDG/hKeGzbZGy0nBl2piyI4VoOdRnfDkwH0BmNzBp9XSp6/lFPNucf4M7SSuSRc0Yu3iyoH
-	Yb0Z62Sb0AxvFSr2bSXSuPZRmGe7aGH1lHpUHyxZdLHQcgf8KYQsYBYMpulr4shxClq1ji9i25n
-	88WyjMLcdWbJyw7+R+/I/G4Al0gX8iTcGYNrLFqCyU4G8KymaN7FtCc8/UT+1i4pjPQj7DpSDY0
-	bXZI4039HMF/lrNE+p367Bncl/2mG8rbJ0mzsqPNnMHzKLaK+
-X-Google-Smtp-Source: AGHT+IGNMZmsxePR1+idcUjHltzGKr71lv2D833dgV8FkSekSun2b0iBomBYX74UhGSDiSsHy3+gaw==
-X-Received: by 2002:a17:90b:3c07:b0:31f:20a:b54c with SMTP id 98e67ed59e1d1-31f5dca2727mr17026023a91.0.1754045234007;
-        Fri, 01 Aug 2025 03:47:14 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1c80:a6e0:3232:35a4:62e3:6fd8])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-320f77d81bfsm2102298a91.12.2025.08.01.03.47.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 03:47:13 -0700 (PDT)
-From: darshanrathod475@gmail.com
-To: platform-driver-x86@vger.kernel.org
-Cc: stuart.w.hayes@gmail.com,
-	hansg@kernel.org,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH] platform/x86: dell_rbu: fix assignment in if condition
-Date: Fri,  1 Aug 2025 16:17:05 +0530
-Message-Id: <20250801104705.1824495-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754045293; c=relaxed/simple;
+	bh=qawU/hgul6DO0p7PkqaVzmv3qF3Q0v23J+MMsJIYuAs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o4C0bM3QDiVk3dR9mNjCI+V8/WBHmNKL21x9vPhjLFHAZyodAKPf7mgFbQsJ7N/NCylq9UT1ISp40Lm+EMp/VSot2Ql6HLKumUjIElgaYYgylWdaCWVgtEZjn1gyR9YsYhJZNq8P/dchgL0oQEpfUJXPUGU3cJMC9cSr9HzpuTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3bQCwe+8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tNnXAiRK; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=3bQCwe+8; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=tNnXAiRK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 4CFCA1F802;
+	Fri,  1 Aug 2025 10:48:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754045290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nlpcRid/jLviLnOCIII1zFUp+X5/v5OApsbSvqgkX0g=;
+	b=3bQCwe+8m+b1pJXki7i0SE19LRJuLZX/aYgO8A3ZiSqrxzSq+JlrRllc40Ijgjp0TEoRmy
+	oEmC7LLWO65q+KAukErRJmt4xvjB2DU7z1kH1ytR78Z+c0qtd40vBaJ5wmgvdX4pZNQolO
+	uULuN2WRCFTgAM3bwR4y0sDtMF26K4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754045290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nlpcRid/jLviLnOCIII1zFUp+X5/v5OApsbSvqgkX0g=;
+	b=tNnXAiRKs4dWG6re5uc2xbcv5wm+9c7z4s8kRNOflfN1gsjkjp0s4yqknTPOzjZfL2uObF
+	VqmUlolodqbMRNDw==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754045290; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nlpcRid/jLviLnOCIII1zFUp+X5/v5OApsbSvqgkX0g=;
+	b=3bQCwe+8m+b1pJXki7i0SE19LRJuLZX/aYgO8A3ZiSqrxzSq+JlrRllc40Ijgjp0TEoRmy
+	oEmC7LLWO65q+KAukErRJmt4xvjB2DU7z1kH1ytR78Z+c0qtd40vBaJ5wmgvdX4pZNQolO
+	uULuN2WRCFTgAM3bwR4y0sDtMF26K4A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754045290;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=nlpcRid/jLviLnOCIII1zFUp+X5/v5OApsbSvqgkX0g=;
+	b=tNnXAiRKs4dWG6re5uc2xbcv5wm+9c7z4s8kRNOflfN1gsjkjp0s4yqknTPOzjZfL2uObF
+	VqmUlolodqbMRNDw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 3E7D413876;
+	Fri,  1 Aug 2025 10:48:10 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id w3vxDmqbjGhSUwAAD6G6ig
+	(envelope-from <jack@suse.cz>); Fri, 01 Aug 2025 10:48:10 +0000
+Received: by quack3.suse.cz (Postfix, from userid 1000)
+	id ABB00A09FB; Fri,  1 Aug 2025 12:48:09 +0200 (CEST)
+Date: Fri, 1 Aug 2025 12:48:09 +0200
+From: Jan Kara <jack@suse.cz>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>, 
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs: correctly check for errors from replace_fd() in
+ receive_fd_replace()
+Message-ID: <fq2s55tc5hhvh4dfjdzek4neozffmn36rwdlsrsxxjqzts2f4c@j67nruhocdiz>
+References: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
+X-Spamd-Result: default: False [-3.80 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_RHS_NOT_FQDN(0.50)[];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	ARC_NA(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	MISSING_XM_UA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_COUNT_THREE(0.00)[3];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_TLS_LAST(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:email]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -3.80
 
-From: Darshan Rathod <darshanrathod475@gmail.com>
+On Fri 01-08-25 09:38:38, Thomas Weiﬂschuh wrote:
+> replace_fd() returns either a negative error number or the number of the
+> new file descriptor. The current code misinterprets any positive file
+> descriptor number as an error.
+> 
+> Only check for negative error numbers, so that __receive_sock() is called
+> correctly for valid file descriptors.
+> 
+> Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+> Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
 
-Refactor to remove assignments from inside if conditions, as required
-by kernel coding style. This improves code readability and resolves
-checkpatch.pl warnings:
+Indeed. I'm wondering how come nobody noticed... Feel free to add:
 
-    ERROR: do not use assignment in if condition
+Reviewed-by: Jan Kara <jack@suse.cz>
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/platform/x86/dell/dell_rbu.c | 8 +++++---
- 1 file changed, 5 insertions(+), 3 deletions(-)
+								Honza
 
-diff --git a/drivers/platform/x86/dell/dell_rbu.c b/drivers/platform/x86/dell/dell_rbu.c
-index 2a140d1c656a..403df9bd9522 100644
---- a/drivers/platform/x86/dell/dell_rbu.c
-+++ b/drivers/platform/x86/dell/dell_rbu.c
-@@ -232,7 +232,8 @@ static int packetize_data(const u8 *data, size_t length)
- 			done = 1;
- 		}
- 
--		if ((rc = create_packet(temp, packet_length)))
-+		rc = create_packet(temp, packet_length);
-+		if (rc)
- 			return rc;
- 
- 		pr_debug("%p:%td\n", temp, (end - temp));
-@@ -276,7 +277,7 @@ static int do_packet_read(char *data, struct packet_data *newpacket,
- 	return bytes_copied;
- }
- 
--static int packet_read_list(char *data, size_t * pread_length)
-+static int packet_read_list(char *data, size_t *pread_length)
- {
- 	struct packet_data *newpacket;
- 	int temp_count = 0;
-@@ -445,7 +446,8 @@ static ssize_t read_packet_data(char *buffer, loff_t pos, size_t count)
- 	bytes_left = rbu_data.imagesize - pos;
- 	data_length = min(bytes_left, count);
- 
--	if ((retval = packet_read_list(ptempBuf, &data_length)) < 0)
-+	retval = packet_read_list(ptempBuf, &data_length);
-+	if (retval < 0)
- 		goto read_rbu_data_exit;
- 
- 	if ((pos + count) > rbu_data.imagesize) {
+> ---
+> Untested, it stuck out while reading the code.
+> ---
+>  fs/file.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 6d2275c3be9c6967d16c75d1b6521f9b58980926..56c3a045121d8f43a54cf05e6ce1962f896339ac 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1387,7 +1387,7 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+>  	if (error)
+>  		return error;
+>  	error = replace_fd(new_fd, file, o_flags);
+> -	if (error)
+> +	if (error < 0)
+>  		return error;
+>  	__receive_sock(file);
+>  	return new_fd;
+> 
+> ---
+> base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
+> change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+> 
+> Best regards,
+> -- 
+> Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
 -- 
-2.25.1
-
+Jan Kara <jack@suse.com>
+SUSE Labs, CR
 
