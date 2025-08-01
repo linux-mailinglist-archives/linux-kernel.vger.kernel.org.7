@@ -1,211 +1,122 @@
-Return-Path: <linux-kernel+bounces-753008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F04A0B17DAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:37:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A6C8FB17DB6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:38:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B68B1C208FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:37:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BDE731C218B6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C081E835B;
-	Fri,  1 Aug 2025 07:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0B691F5619;
+	Fri,  1 Aug 2025 07:38:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFE0cfzl"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="kGi2ZJGe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="iUl8Vj+D"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEB972624
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA1A6F9D9;
+	Fri,  1 Aug 2025 07:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754033830; cv=none; b=FvXsHPsDyPrv9/rDv4NulzI+0MJtN4EaO4PaYU6FpDau5OtkDO+xClHEf5gemU+blpkh1cX7Y3d6mqpZh+VmzHOzX4vbF6Njkn2XDCPpmtIX+dH/YLJyQN2RlCBo1JG9g/DPMc/qUnW0+yF9O9gTveHUcEn/xg3fqc93sp0WcxU=
+	t=1754033925; cv=none; b=lT1RuyZI0B6EVrrQ7Ir9OhZPhXA/0p+2Z0fkLNvt6HzkwgDMobbgL79R+HAaGEhLSxyDnklcet3jepHFa0qgqWl83z8uHoMUM1CJmXkkhYa+BFbXY5PyJ56Uqss4f4vNhLfIKxKVLku71Uu+gd56dSZybdbWhZY+Q5GU3gTQj/E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754033830; c=relaxed/simple;
-	bh=9PksvV60rPpkHXM49AYBINimvOYKjRD+kBMp7Fglaec=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ayNfQO+6ZGAt0zPIQH+tRTaSHIujwHkdT2nZi8PggFdbET3pXe+/5FYtitYW48e2O+/2uSkEqJc/DgoIRQxxXtr/UOK+ZJFMOt8UCv0hwwVpmNIAXv4KmDGlsGb7GwH8X0fO4HNIejb9zBCMdp2aD2GxnPhrUombDX1JsMcqG3U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFE0cfzl; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754033827;
+	s=arc-20240116; t=1754033925; c=relaxed/simple;
+	bh=PGSS8x7qm8EIe3sbWot/wbVpmWKX74SZE2yiS8a1uXw=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pT5rbU1h2DowCyq+JwGMZpqpnIhuMKGP2/H7AYV2j+y/kMYWrXfiAQtbVUACk6oQiwA6k36QQEA7Lu91MRVyiVb4MikJURx1syrXNSXDsw4aR8h2+f5iRXaBEXvb2mcbghxnQdpaU4Unf7+MAIyjDziF+WaJ7EscdeaIF9CgiWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=kGi2ZJGe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=iUl8Vj+D; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754033921;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=hQRmO76ymO9d1FjhA+KyC8CA+pyqdQrBvGUMGWyi74o=;
-	b=hFE0cfzlvsv6v/437Jr24QodNclWaNllmon6G8VrPgz3LOkokmw9KK2qn52UCejhtkg5Oh
-	tuw2ELAdwnLZ0xXRicC6x19N/MnsAuSP9cvxScdMIULVip1ATHkqJmATE4J5CnA7zI5I2f
-	jCwOWukUz1LeLa/m5Zsbm8SW1+4WNkw=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-304-OmTeBxUjNf6w9u0NreQZJw-1; Fri, 01 Aug 2025 03:37:06 -0400
-X-MC-Unique: OmTeBxUjNf6w9u0NreQZJw-1
-X-Mimecast-MFC-AGG-ID: OmTeBxUjNf6w9u0NreQZJw_1754033825
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4586cc8f9f2so2717105e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:37:06 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754033825; x=1754638625;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hQRmO76ymO9d1FjhA+KyC8CA+pyqdQrBvGUMGWyi74o=;
-        b=XuoZ6HY5cVvGyRbopsMsbi8cfNLRZ3gc57ArwAm1Piny9/kRnkf8x0YEo7fGDcxZcJ
-         VpFFVzLBizpsXI+nNZwSlNV/xtZWUrd1crin1819O0ShLBuAZrAs8PXrWLKz2KQWFje+
-         1No7HfQdrlo8xblnsvzLNRJgcAl74agS7tlZsBQbzPKJ9wvvk0R+xdzZTX4mdxjjA2Oq
-         aUU2rCrdeyGKQQhTik8p2T32BBis9r0ieSaKnNCeezG7jSzP0wrKymw+UCVigwDqsQOq
-         f8E17b+6bp9qLR9clVtrYehgdUA1y6T2CuOT1g/U94ivt7qZ+uCvWrrrRdXZmgEGh+zI
-         Ke4w==
-X-Forwarded-Encrypted: i=1; AJvYcCWJ6kGbOP4vJdE4wBOEvMrCyelm7woE9zYZbQTjpDTkZM+lQtEwq3WH4aq6WnVpitup2jx6dT1N2yqOdVs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymwfFEgVthtQL0Ch2FDUVYJcpMFnlrq/RWgmbvRdRg1xomnzIu
-	Ovm+pdBVJYtJx2Trb1DzsqOYZg0XrfzS+/L/Khl8qnUDregrzOIzuf6eaXPTDRpaNB3XsX3jMEe
-	yUigB6ztmK2F80xZWV/r7c/1l1qD8+F4oWUQljBoVpn0vLCF0uAhOGlEAvlizt7FDzA==
-X-Gm-Gg: ASbGncuXsykMK4EE8i7nHMUBR/HHxpDyQzwHa7K5D3TJWcT5x1fTbFSw/8dPrlEhoyY
-	uabxY5U/mJzN5ZMRwVWVYw4BwPmg76joLUGxmNCkhb7l//nZkKVXfwyhFTQKRJ91/40huanNYVy
-	+zo2QkSOxkjfZgdkZZtMfoMs14sdE3iGXk1Kkq/MGrmE8+uxYGHe3/39l336Hy8m6cUCgGqnFRH
-	tC3BVIvVE7qo0W+JpLSs3FBqGU0kwexR8hWxw+ehbCsaYuMajlcj4PFSLqRSXJLR/fItJaVtyDN
-	7Ukwhx/hMZKUvL20X9ldtrqY26uCeV6TARLQxCdpOIRuJzbjFkqDx1LrmoPaVNP2gKzw5w==
-X-Received: by 2002:a05:600c:c177:b0:456:c3c:d285 with SMTP id 5b1f17b1804b1-45892b94d53mr86278875e9.1.1754033825012;
-        Fri, 01 Aug 2025 00:37:05 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF24FUQ/Q3kShbLBfjxre55PIDzRBaRc02gcnWhZSCIw8TXypuo4hlDxwc11bKhk3tdzHkPJw==
-X-Received: by 2002:a05:600c:c177:b0:456:c3c:d285 with SMTP id 5b1f17b1804b1-45892b94d53mr86278575e9.1.1754033824517;
-        Fri, 01 Aug 2025 00:37:04 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfe56sm97779725e9.20.2025.08.01.00.37.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 00:37:03 -0700 (PDT)
-Date: Fri, 1 Aug 2025 09:37:01 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Yuri Andriaccio <yurand2000@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org,
-	Luca Abeni <luca.abeni@santannapisa.it>,
-	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
-Subject: Re: [PATCH v2] sched/deadline: Remove fair-servers from real-time
- task's bandwidth accounting
-Message-ID: <aIxunUAqdecVuUMs@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250725164412.35912-1-yurand2000@gmail.com>
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5kF2WlUlEx7Vqnbj22AkyXv6Snlc8aWmu7qYKOYjR2Y=;
+	b=kGi2ZJGe64q7dEkyQUw2e1Ec9kq+WN2oRBAJDaj42ercgCEJGmN1Nl6Y2XXxl5JX6aLTjy
+	0UXenrKnJI8nvaB2mNmJgUnwgNX9szLLQfdD82PlTE4umiPou9wIcEkgiKl5z/hWPDWFLF
+	vMfuZM1n83zxQBo2zsxwl3HaT8DznH9qNRBBF9p3cVpmkVHDGrjk5SkBkqubUHfdh1BMQY
+	AtAbEu9xLaqr7vvbU5Pu0XlU/ycfxT3BnJJZtMmIA71Yu7Srr5TSVPcZnJP+bn1d/90GKo
+	Ntp+Cnk6sHpOrq12h92iqwISvrOXIfpb8llZ6XbedK9w5EC0JIdAzuR7PwVeZA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754033921;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5kF2WlUlEx7Vqnbj22AkyXv6Snlc8aWmu7qYKOYjR2Y=;
+	b=iUl8Vj+DMODle1VAKyqzKCwTXzSUGWrP6rXXRLozwpiXCTtWAcL4cUxsEITAer4V8rPjnB
+	8cNaeIrl7zruV6Dw==
+Date: Fri, 01 Aug 2025 09:38:38 +0200
+Subject: [PATCH] fs: correctly check for errors from replace_fd() in
+ receive_fd_replace()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250725164412.35912-1-yurand2000@gmail.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+Message-Id: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
+X-B4-Tracking: v=1; b=H4sIAP1ujGgC/x2M4QpAQBAGX0X729U5HfIqknT7HVtCeyUl7+7yc
+ 2pmHkpQQaK+eEhxSZJjz1CVBYV13hcY4czkrPO2s5WJchtFgFyYIk+Kc5sDTBuZfUDja8eU41O
+ RzX88jO/7AY2Nv/hoAAAA
+X-Change-ID: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+To: Alexander Viro <viro@zeniv.linux.org.uk>, 
+ Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+ Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>
+Cc: linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ stable@vger.kernel.org, 
+ =?utf-8?q?Thomas_Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754033920; l=1294;
+ i=thomas.weissschuh@linutronix.de; s=20240209; h=from:subject:message-id;
+ bh=PGSS8x7qm8EIe3sbWot/wbVpmWKX74SZE2yiS8a1uXw=;
+ b=OOn1jtA+R/DDitrIWgv1RnQw5cNJhSUhdhc3wUpCSB/tOmMJUfGj+BsCUhw662PgfLeaVLHqg
+ lwetsICDeSKAF1LWTkt/23USztKQlF+6fcWWRF1n31YkM7rvKmEzXZl
+X-Developer-Key: i=thomas.weissschuh@linutronix.de; a=ed25519;
+ pk=pfvxvpFUDJV2h2nY0FidLUml22uGLSjByFbM6aqQQws=
 
-Hi Yuri,
+replace_fd() returns either a negative error number or the number of the
+new file descriptor. The current code misinterprets any positive file
+descriptor number as an error.
 
-On 25/07/25 18:44, Yuri Andriaccio wrote:
-> Fair-servers are currently used in place of the old RT_THROTTLING mechanism to
-> prevent the starvation of SCHED_OTHER (and other lower priority) tasks when
-> real-time FIFO/RR processes are trying to fully utilize the CPU. To allow the
-> RT_THROTTLING mechanism, the maximum allocatable bandwidth for real-time tasks
-> has been limited to 95% of the CPU-time.
-> 
-> The RT_THROTTLING mechanism is now removed in favor of fair-servers, which are
-> currently set to use, as expected, 5% of the CPU-time. Still, they share the
-> same bandwidth that allows to run real-time tasks, and which is still set to 95%
-> of the total CPU-time. This means that by removing the RT_THROTTLING mechanism,
-> the bandwidth remaning for real-time SCHED_DEADLINE tasks and other dl-servers
-> (FIFO/RR are not affected) is only 90%.
-> 
-> This patch reclaims the 5% lost CPU-time, which is definitely reserved for
-> SCHED_OTHER tasks, but should not be accounted togheter with the other real-time
-> tasks. More generally, the fair-servers' bandwidth must not be accounted with
-> other real-time tasks.
-> 
-> Updates:
-> - Make the fair-servers' bandwidth not be accounted into the total allocated
->   bandwidth for real-time tasks.
-> - Remove the admission control test when allocating a fair-server.
-> - Do not account for fair-servers in the GRUB's bandwidth reclaiming mechanism.
-> - Limit the max bandwidth to (BW_UNIT - max_rt_bw) when changing the parameters
->   of a fair-server, preventing overcommitment.
-> - Add dl_bw_fair, which computes the total allocated bandwidth of the
->   fair-servers in the given root-domain.
-> - Update admission tests (in sched_dl_global_validate) when changing the
->   maximum allocatable bandwidth for real-time tasks, preventing overcommitment.
-> 
-> Since the fair-server's bandwidth can be changed through debugfs, it has not
-> been enforced that a fair-server's bw must be always equal to (BW_UNIT -
-> max_rt_bw), rather it must be less or equal to this value. This allows retaining
-> the fair-servers' settings changed through the debugfs when chaning the
-> max_rt_bw.
-> 
-> This also means that in order to increase the maximum bandwidth for real-time
-> tasks, the bw of fair-servers must be first decreased through debugfs otherwise
-> admission tests will fail, and viceversa, to increase the bw of fair-servers,
-> the bw of real-time tasks must be reduced beforehand.
-> 
-> This v2 version addresses the compilation error on i386 reported at:
-> https://lore.kernel.org/oe-kbuild-all/202507220727.BmA1Osdg-lkp@intel.com/
-> 
-> v1: https://lore.kernel.org/all/20250721111131.309388-1-yurand2000@gmail.com/
-> 
-> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
-> ---
+Only check for negative error numbers, so that __receive_sock() is called
+correctly for valid file descriptors.
 
-Thanks for this. I have been testing it and it looks good. Just a couple
-of comments below.
+Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+Cc: stable@vger.kernel.org
+Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+---
+Untested, it stuck out while reading the code.
+---
+ fs/file.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/fs/file.c b/fs/file.c
+index 6d2275c3be9c6967d16c75d1b6521f9b58980926..56c3a045121d8f43a54cf05e6ce1962f896339ac 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1387,7 +1387,7 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
+ 	if (error)
+ 		return error;
+ 	error = replace_fd(new_fd, file, o_flags);
+-	if (error)
++	if (error < 0)
+ 		return error;
+ 	__receive_sock(file);
+ 	return new_fd;
 
-> @@ -1688,17 +1690,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
->  
->  	cpus = dl_bw_cpus(cpu);
->  	cap = dl_bw_capacity(cpu);
-> +	max_bw = div64_ul(cap_scale(BW_UNIT - dl_b->bw, cap), (unsigned long)cpus);
+---
+base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
+change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
 
-fc975cfb3639 ("sched/deadline: Fix dl_server runtime calculation
-formula") essentially removed cap/freq scaling for dl-servers. Should we
-rather not scale max_bw here as well?
-
-> -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
-> +	if (new_bw > max_bw)
->  		return -EBUSY;
->  
->  	if (init) {
->  		__add_rq_bw(new_bw, &rq->dl);
-> -		__dl_add(dl_b, new_bw, cpus);
->  	} else {
-> -		__dl_sub(dl_b, dl_se->dl_bw, cpus);
-> -		__dl_add(dl_b, new_bw, cpus);
-> -
->  		dl_rq_change_utilization(rq, dl_se, new_bw);
->  	}
-
-...
-
-> @@ -3149,10 +3138,13 @@ int sched_dl_global_validate(void)
->  			goto next;
->  
->  		dl_b = dl_bw_of(cpu);
-> -		cpus = dl_bw_cpus(cpu);
-> +		cap = dl_bw_capacity(cpu);
-> +		fair_bw = dl_bw_fair(cpu);
->  
->  		raw_spin_lock_irqsave(&dl_b->lock, flags);
-> -		if (new_bw * cpus < dl_b->total_bw)
-> +		if (cap_scale(new_bw, cap) < dl_b->total_bw)
-> +			ret = -EBUSY;
-
-It's kind of a minor one, but can't we return early at this point already?
-
-> +		if (cap_scale(new_bw, cap) + fair_bw > cap_scale(BW_UNIT, cap))
->  			ret = -EBUSY;
->  		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
-
-Thanks!
-Juri
+Best regards,
+-- 
+Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 
 
