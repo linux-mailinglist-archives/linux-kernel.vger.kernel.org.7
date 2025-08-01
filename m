@@ -1,118 +1,208 @@
-Return-Path: <linux-kernel+bounces-753139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7514B17F21
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:21:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 04F59B17F23
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:21:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4B1188208D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:21:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 587581883AC5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:21:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0EF221D9E;
-	Fri,  1 Aug 2025 09:21:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZuVu5+OU"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0915A2222AA;
+	Fri,  1 Aug 2025 09:21:26 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B92221723
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:21:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23D73221572
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:21:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754040069; cv=none; b=sOQ+qSU8VVWlLskFalorrUAQYlPqnDUubUkQTljXVlIcYpXGb9RRKIAyl8ltNbVawghsiZ17TZthwcgUm1HE4SDQ1N/+Z6RuXlzBpZXewxZ6BboQV2VwoRuh2qjwniNiKNSpb6KBaxm5uIsKSOakxlcswzQIFL+Z6q8Ul164IZI=
+	t=1754040085; cv=none; b=QySmynN/TzgC9DXpjHQULYUbFLxatLiQqkFH0Cql1iWQTMHH+QsUdyUcPYnw+XdeC5gori4Rgf9yWRyoWMMFxQvUisnAUhmdJcV/zKpYZ8hcb7rKFnDYXpalAI0wg1Vg8gufuukatH67XaPXotMIVcr/EHTGYY5CbS52GJzZWRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754040069; c=relaxed/simple;
-	bh=cKEMaZ3xwUu+fSWQ2Hl9xASFWa0pTzYBZ3KKX3hjrm0=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=VaIBdTgmGBDmierr+JAIGLxqLnwFQ5PVWNu9ZLUXRYVZy4hKrzRvmRkrjlVBdmgD63u/YrS62mLf9ZO6K5+NncJEWozuo0W60+BiDEifs4JdCRqwgUJ9rvq4TiaMkp70gYhpHe6O4BSQqRNnIei0mhR4POi1edWbslm75ySSTzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZuVu5+OU; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754040068; x=1785576068;
-  h=message-id:subject:from:to:date:in-reply-to:references:
-   content-transfer-encoding:mime-version;
-  bh=cKEMaZ3xwUu+fSWQ2Hl9xASFWa0pTzYBZ3KKX3hjrm0=;
-  b=ZuVu5+OUjkzkF0nunhHwIh1rmweLMdLO8m5Dm+Ng5eq8GCRxb7CEZnvn
-   anP9ku5PCBmztwt0CmsTPAZ32D/3PjOvn803LMiPzViCycDyTvdcZ/5/q
-   0bEqQdp10KoWG3My05mskmS7Jhu+aD9rYnAG4JQRUDVmSou9z8UFiNuDZ
-   S1+WDHpCPrjcjIoE5KemZ430CVEpgZ6yJ/LTTi0gVUA0/Sfvn5tWJDT+y
-   puKy41oLzsZTDkIy9jW2RkB4yeKi+eflaY1R0L79T2K3V1Ua+AdauLlf3
-   A/GIa/LumE/8ubiR92IY5XSAeb9+WZ76l2hAMP6wJnSHrCNOGr5k3ujBv
-   A==;
-X-CSE-ConnectionGUID: jbRO7FgTSBi+bpz44GCO3w==
-X-CSE-MsgGUID: o48dCQvlSh6V4e8YqSYazA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56252216"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="56252216"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 02:21:07 -0700
-X-CSE-ConnectionGUID: 63UaVF4bTeCXP614Ugu8xQ==
-X-CSE-MsgGUID: yBhDIk81QAqE2hjylSFGsw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="163083171"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.244.137]) ([10.245.244.137])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 02:21:05 -0700
-Message-ID: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
-Subject: Re: [PATCH v2 1/1] Mark xe driver as BROKEN if kernel page size is
- not 4kB
-From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
-To: Simon Richter <Simon.Richter@hogyros.de>,
- intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org
-Date: Fri, 01 Aug 2025 11:20:40 +0200
-In-Reply-To: <20250727070413.9743-2-Simon.Richter@hogyros.de>
-References: <20250727070413.9743-1-Simon.Richter@hogyros.de>
-	 <20250727070413.9743-2-Simon.Richter@hogyros.de>
-Organization: Intel Sweden AB, Registration Number: 556189-6027
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
+	s=arc-20240116; t=1754040085; c=relaxed/simple;
+	bh=du22HW51W7TM7URApKT2N9pcyVmjYUuUAreMpBjTbQU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=kybciAyVT4p6TRHvFaJilkr2l3nixFEFrVM+RFEVDim2owK3ZQDc8yt8zLKW+6sJ7Hyrqt/JSb13mGqkO+UuTgMyyaoG50FzD9dm1Jhks9NviDeA03R+MwgcsK9A/zXzJB8aq3pXEm0VoD3WU2MpimsEKpsZywbF9Zg5M1gL6/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4btgPB2h7Tz2RW1l;
+	Fri,  1 Aug 2025 17:18:54 +0800 (CST)
+Received: from dggemv705-chm.china.huawei.com (unknown [10.3.19.32])
+	by mail.maildlp.com (Postfix) with ESMTPS id 379AB1A0171;
+	Fri,  1 Aug 2025 17:21:19 +0800 (CST)
+Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
+ dggemv705-chm.china.huawei.com (10.3.19.32) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 17:21:18 +0800
+Received: from [10.159.166.136] (10.159.166.136) by
+ kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 17:21:18 +0800
+Message-ID: <31aaa735-9c46-4507-9289-171a5d80a149@huawei.com>
+Date: Fri, 1 Aug 2025 17:21:17 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 drm-dp 02/11] drm/hisilicon/hibmc: fix dp
+ probabilistical detect errors after HPD irq
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
+	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
+	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
+	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
+	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
+	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
+References: <20250718065125.2892404-1-shiyongbang@huawei.com>
+ <20250718065125.2892404-3-shiyongbang@huawei.com>
+ <f7co2accpkvt4b5jy7ar4j6jqiytmysd3ki32hvhg7w2ohqoo6@nwwxeif6f73q>
+From: Yongbang Shi <shiyongbang@huawei.com>
+In-Reply-To: <f7co2accpkvt4b5jy7ar4j6jqiytmysd3ki32hvhg7w2ohqoo6@nwwxeif6f73q>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
+ kwepemq100007.china.huawei.com (7.202.195.175)
 
-On Sun, 2025-07-27 at 16:04 +0900, Simon Richter wrote:
-> This driver, for the time being, assumes that the kernel page size is
-> 4kB,
-> so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with
-> 64kB
-> pages.
->=20
-> Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
-> Cc: stable@vger.kernel.org
 
-This looks reasonable to me. During your testing, did you notice
-whether there were compilation errors on !4K as well? If not, what do
-you thing on allowing !4K also for COMPILE_TEST?
+> On Fri, Jul 18, 2025 at 02:51:16PM +0800, Yongbang Shi wrote:
+>> From: Baihan Li <libaihan@huawei.com>
+>>
+>> The debouncing when HPD pulled out still remains sometimes, 200ms still can
+>> not ensure helper_detect() is correct. Add hibmc_dp_detect_link() in
+>> detect_ctx(), which is to try dp link training.
+> I'm not sure if I follow the commit message. Anyway, link training
+> should be a part of atomic_(pre)_enable, not a detect_ctx.
 
-Thanks,
-Thomas
+Okay, I will change it. thanks for your advice!
+
+The problem is that when I unpluged the connector, sometimes the drm_connector_helper_detect_from_ddc()
+return connected in dp's detect_ctx().
 
 
-> ---
-> =C2=A0drivers/gpu/drm/xe/Kconfig | 2 +-
-> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
-> index 2bb2bc052120..7c9f1de7b35f 100644
-> --- a/drivers/gpu/drm/xe/Kconfig
-> +++ b/drivers/gpu/drm/xe/Kconfig
-> @@ -1,7 +1,7 @@
-> =C2=A0# SPDX-License-Identifier: GPL-2.0-only
-> =C2=A0config DRM_XE
-> =C2=A0	tristate "Intel Xe2 Graphics"
-> -	depends on DRM && PCI
-> +	depends on DRM && PCI && (PAGE_SIZE_4KB || BROKEN)
-> =C2=A0	depends on KUNIT || !KUNIT
-> =C2=A0	depends on INTEL_VSEC || !INTEL_VSEC
-> =C2=A0	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
-
+>> Fixes: 3c7623fb5bb6 ("drm/hisilicon/hibmc: Enable this hot plug detect of irq feature")
+>> Signed-off-by: Baihan Li <libaihan@huawei.com>
+>> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
+>> ---
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    | 27 +++++++++++++++----
+>>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h    |  2 ++
+>>   .../gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c    | 10 ++++---
+>>   3 files changed, 30 insertions(+), 9 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> index 8f0daec7d174..2d2fb6e759c3 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
+>> @@ -3,6 +3,7 @@
+>>   
+>>   #include <linux/io.h>
+>>   #include <linux/delay.h>
+>> +#include <drm/drm_managed.h>
+>>   #include "dp_config.h"
+>>   #include "dp_comm.h"
+>>   #include "dp_reg.h"
+>> @@ -162,6 +163,8 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
+>>   
+>>   	mutex_init(&dp_dev->lock);
+>>   
+>> +	drmm_mutex_init(drm_dev, &dp->link_train_mutex);
+>> +
+>>   	dp->dp_dev = dp_dev;
+>>   
+>>   	dp_dev->dev = drm_dev;
+>> @@ -238,19 +241,33 @@ void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable)
+>>   	msleep(50);
+>>   }
+>>   
+>> -int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +int hibmc_dp_detect_link(struct hibmc_dp *dp)
+>>   {
+>>   	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
+>> -	int ret;
+>> +	int ret = 0;
+>> +
+>> +	mutex_lock(&dp->link_train_mutex);
+>>   
+>>   	if (!dp_dev->link.status.channel_equalized) {
+>>   		ret = hibmc_dp_link_training(dp_dev);
+>> -		if (ret) {
+>> +		if (ret)
+>>   			drm_err(dp->drm_dev, "dp link training failed, ret: %d\n", ret);
+>> -			return ret;
+>> -		}
+>>   	}
+>>   
+>> +	mutex_unlock(&dp->link_train_mutex);
+>> +
+>> +	return ret;
+>> +}
+>> +
+>> +int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode)
+>> +{
+>> +	struct hibmc_dp_dev *dp_dev = dp->dp_dev;
+>> +	int ret;
+>> +
+>> +	ret = hibmc_dp_detect_link(dp);
+>> +	if (ret)
+>> +		return ret;
+>> +
+>>   	hibmc_dp_display_en(dp, false);
+>>   	hibmc_dp_link_cfg(dp_dev, mode);
+>>   
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> index 665f5b166dfb..9b45e88e47e4 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.h
+>> @@ -50,9 +50,11 @@ struct hibmc_dp {
+>>   	struct drm_dp_aux aux;
+>>   	struct hibmc_dp_cbar_cfg cfg;
+>>   	u32 irq_status;
+>> +	struct mutex link_train_mutex; /* link training mutex */
+>>   };
+>>   
+>>   int hibmc_dp_hw_init(struct hibmc_dp *dp);
+>> +int hibmc_dp_detect_link(struct hibmc_dp *dp);
+>>   int hibmc_dp_mode_set(struct hibmc_dp *dp, struct drm_display_mode *mode);
+>>   void hibmc_dp_display_en(struct hibmc_dp *dp, bool enable);
+>>   void hibmc_dp_set_cbar(struct hibmc_dp *dp, const struct hibmc_dp_cbar_cfg *cfg);
+>> diff --git a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> index d06832e62e96..354e18bb2998 100644
+>> --- a/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> +++ b/drivers/gpu/drm/hisilicon/hibmc/hibmc_drm_dp.c
+>> @@ -34,9 +34,12 @@ static int hibmc_dp_connector_get_modes(struct drm_connector *connector)
+>>   static int hibmc_dp_detect(struct drm_connector *connector,
+>>   			   struct drm_modeset_acquire_ctx *ctx, bool force)
+>>   {
+>> -	mdelay(200);
+>> +	struct hibmc_drm_private *priv = to_hibmc_drm_private(connector->dev);
+>>   
+>> -	return drm_connector_helper_detect_from_ddc(connector, ctx, force);
+>> +	if (!hibmc_dp_detect_link(&priv->dp))
+>> +		return connector_status_connected;
+>> +
+>> +	return connector_status_disconnected;
+>>   }
+>>   
+>>   static const struct drm_connector_helper_funcs hibmc_dp_conn_helper_funcs = {
+>> @@ -128,8 +131,7 @@ irqreturn_t hibmc_dp_hpd_isr(int irq, void *arg)
+>>   		hibmc_dp_reset_link(&priv->dp);
+>>   	}
+>>   
+>> -	if (dev->registered)
+>> -		drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>> +	drm_connector_helper_hpd_irq_event(&priv->dp.connector);
+>>   
+>>   	drm_dev_exit(idx);
+>>   
+>> -- 
+>> 2.33.0
+>>
 
