@@ -1,127 +1,150 @@
-Return-Path: <linux-kernel+bounces-753126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF74BB17EF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:14:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD252B17EEA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:12:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0B66117B84B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:14:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7AF583B580E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3F2D2236FB;
-	Fri,  1 Aug 2025 09:14:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 940CB2222AA;
+	Fri,  1 Aug 2025 09:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="kHneXBoV"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="a+l59xB7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B79793C38;
-	Fri,  1 Aug 2025 09:14:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFE8814F70;
+	Fri,  1 Aug 2025 09:12:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039657; cv=none; b=pCKE5wCDqharB+L3/AzGaptnPphiniB7RDzrfJbsLy99NxqRlSh2Mycgp2Bx+imqWUotuqU10KsmWUMfxN7H6FCwGQZMZUmqxlyomR0m3CpGwlBvE0cXhqqtxoDRAgR55VORPuOZ+SArk3FYhiXadTiiewvXho94sniV++9Uk2o=
+	t=1754039568; cv=none; b=L/y5tvuj4dENgltIUX1oF1FFYs6NLKdUU28/gcECx8tpWoND8Ossmm1VTPcz9u9cGsrzzDBfZwN8I7m1C67vPtx5dUuvq6IeHteJguNlgT9aFEE+iz7zWn6tJhPmt9oYxrFbuHsq2tJ6rfS+PlHGVwMa3HEInolPfyvzrLot1jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039657; c=relaxed/simple;
-	bh=gJCswTbeSm0cfVQDYDQlFj9ENNDHXqLsDS5p8UVfsgY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=reMt4WUEXRK/9IC1qN1omPH/TkLmM1CVqcLv/JEF9tYG9IrxgVrUyvjMAJDT4sIh8v2W6kczjHHI+gkTj1V2M6QiFF82RxXSS1QjlEuMgrslXgS4bpMik9lopQnrFgJr4nXkjwlIZkAUjfVzpGk2Z3F0wWrgxNC6p4EmSX/IsoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=kHneXBoV; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 3516520E2E;
-	Fri,  1 Aug 2025 11:14:13 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id vMBKehoM4TjO; Fri,  1 Aug 2025 11:14:12 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754039652; bh=gJCswTbeSm0cfVQDYDQlFj9ENNDHXqLsDS5p8UVfsgY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References;
-	b=kHneXBoV4+3z2CKrLnBMl2/wPm8HQG+g/FZ79WqnWUyBdRcVgEQJ7/1pL4HC25Tk8
-	 sTQC63MV4YROaCJTJgkBaiF7GHg+rR5IwXNg7rBSjd8leon5qvE4ZZLdd2kZVvo+gC
-	 Miqqv49cvTIs3Dlz0gnW2wYK+typqmE/TvxoZi4w+15bTnk8zfWZq11Z/NPD3uNkUE
-	 ECGGSD3gGiDKnUlRhWMyb1PHsyQB25j4DeJr+GkP3BN55b/jfRU4hlQAWYkWoetxhN
-	 T5YxIIYPXTJ7TRcJAzculAzZmEhPPjT95yqbazpkLwEgwQF0aBa1lU2CwjPk3dPD/k
-	 o9+BYsI2k72FQ==
-From: Yao Zi <ziyao@disroot.org>
-To: Drew Fustini <fustini@kernel.org>,
-	Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>
-Cc: linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yao Zi <ziyao@disroot.org>
-Subject: [PATCH net v2 3/3] riscv: dts: thead: Add APB clocks for TH1520 GMACs
-Date: Fri,  1 Aug 2025 09:12:40 +0000
-Message-ID: <20250801091240.46114-4-ziyao@disroot.org>
-In-Reply-To: <20250801091240.46114-1-ziyao@disroot.org>
-References: <20250801091240.46114-1-ziyao@disroot.org>
+	s=arc-20240116; t=1754039568; c=relaxed/simple;
+	bh=/0aIoMWpMvoKgmbhWwt6QEfVxNIXHXS3+4r5hcmLZpo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YOBBf0pb7BeDaOMUMVNIbCOQyX1xVW4YI/AgAyR+ylDtDirb7XFhfn3MqKhORKhcdvDQcETuyWeb7LYCBTFfuW9+moVp7MV/iKknGmYJARh4KIfrFXCRJQEJ4Y7Q2QENjme0L/UX/uq1RtQYZ0pMrZxmy1O3ra2NvOjYec0HkaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=a+l59xB7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0678FC4CEE7;
+	Fri,  1 Aug 2025 09:12:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754039567;
+	bh=/0aIoMWpMvoKgmbhWwt6QEfVxNIXHXS3+4r5hcmLZpo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=a+l59xB7qoAyviFi3i7LZLuyTEAXVbrhAkRc7BF7nst+vregdi/ujA/4dmeORT9Di
+	 QW495UpQlbytopSioQ5wvuzfL9S3mwiqBP0pOHGLqYSmSfv8b9erDck1OnkLRr/Bj2
+	 g2roHwrOZ9kO/Krgbu53rqjuE4AM+MxRvVNfA3DQ+0VPvtTQqR3UYY5New8ZskPaCm
+	 fYvuIc8sR3SxpuC36CYrrLdcIixWM4fyuhDKdlTt03TXsscXSescdxzMGjwZ3bDPc9
+	 PUV3fA+xQb8AP02mae2d2at7Y7JH6QcH3f8F6WGi8Zu/u8nAVPy+r5zilrhi49JUM1
+	 Iqv5Qs4rywmeg==
+Message-ID: <1701ec08-21bc-45b8-90bc-1cd64401abd8@kernel.org>
+Date: Fri, 1 Aug 2025 11:12:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+To: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>,
+ Manivannan Sadhasivam <mani@kernel.org>
+Cc: alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ andersson@kernel.org, konradybcio@kernel.org,
+ James.Bottomley@hansenpartnership.com, martin.petersen@oracle.com,
+ agross@kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
+ <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+ <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+ <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <fa1847e3-7dab-45d0-8c1c-0aca1e365a2a@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Describe perisys-apb4-hclk as the APB clock for TH1520 SoC, which is
-essential for accessing GMAC glue registers.
+On 01/08/2025 11:10, Ram Kumar Dwivedi wrote:
+> 
+> 
+> On 01-Aug-25 1:58 PM, Manivannan Sadhasivam wrote:
+>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
+>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+>>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
+>>>> support automotive use cases that require limiting the maximum Tx/Rx HS
+>>>> gear and rate due to hardware constraints.
+>>>
+>>> What hardware constraints? This needs to be clearly documented.
+>>>
+>>
+>> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
+>> but keep on responding to other comments. This won't help you to get this series
+>> merged in any form.
+>>
+>> Please address *all* review comments before posting next iteration.
+> 
+> Hi Mani,
+> 
+> Apologies for the delay in responding. 
+> I had planned to explain the hardware constraints in the next patchset’s commit message, which is why I didn’t reply earlier. 
+> 
+> To clarify: the limitations are due to customer board designs, not our SoC. Some boards can't support higher gear operation, hence the need for optional limit-hs-gear and limit-rate properties.
+> 
 
-Fixes: 7e756671a664 ("riscv: dts: thead: Add TH1520 ethernet nodes")
-Signed-off-by: Yao Zi <ziyao@disroot.org>
-Reviewed-by: Drew Fustini <fustini@kernel.org>
-Tested-by: Drew Fustini <fustini@kernel.org>
----
- arch/riscv/boot/dts/thead/th1520.dtsi | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
+That's vague and does not justify the property. You need to document
+instead hardware capabilities or characteristic. Or explain why they
+cannot. With such form I will object to your next patch.
 
-diff --git a/arch/riscv/boot/dts/thead/th1520.dtsi b/arch/riscv/boot/dts/thead/th1520.dtsi
-index 42724bf7e90e..03f1d7319049 100644
---- a/arch/riscv/boot/dts/thead/th1520.dtsi
-+++ b/arch/riscv/boot/dts/thead/th1520.dtsi
-@@ -297,8 +297,9 @@ gmac1: ethernet@ffe7060000 {
- 			reg-names = "dwmac", "apb";
- 			interrupts = <67 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "macirq";
--			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC1>;
--			clock-names = "stmmaceth", "pclk";
-+			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC1>,
-+				 <&clk CLK_PERISYS_APB4_HCLK>;
-+			clock-names = "stmmaceth", "pclk", "apb";
- 			snps,pbl = <32>;
- 			snps,fixed-burst;
- 			snps,multicast-filter-bins = <64>;
-@@ -319,8 +320,9 @@ gmac0: ethernet@ffe7070000 {
- 			reg-names = "dwmac", "apb";
- 			interrupts = <66 IRQ_TYPE_LEVEL_HIGH>;
- 			interrupt-names = "macirq";
--			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC0>;
--			clock-names = "stmmaceth", "pclk";
-+			clocks = <&clk CLK_GMAC_AXI>, <&clk CLK_GMAC0>,
-+				 <&clk CLK_PERISYS_APB4_HCLK>;
-+			clock-names = "stmmaceth", "pclk", "apb";
- 			snps,pbl = <32>;
- 			snps,fixed-burst;
- 			snps,multicast-filter-bins = <64>;
--- 
-2.50.1
-
+Best regards,
+Krzysztof
 
