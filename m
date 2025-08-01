@@ -1,130 +1,84 @@
-Return-Path: <linux-kernel+bounces-753210-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753212-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D412B18009
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:15:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 308B8B18017
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:22:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1DE133B206B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:15:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4FCB1C80441
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:22:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DA6233715;
-	Fri,  1 Aug 2025 10:15:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="GCw54UNB"
-Received: from fanzine2.igalia.com (fanzine2.igalia.com [213.97.179.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 889BB23507C;
+	Fri,  1 Aug 2025 10:21:54 +0000 (UTC)
+Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026E915C0;
-	Fri,  1 Aug 2025 10:15:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.97.179.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 328041C7013;
+	Fri,  1 Aug 2025 10:21:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754043351; cv=none; b=VRUR/IRwegokQOIovgEUUR9+N/JcugAZFEb9u+tJ0DSXeFosQ39ieBHCvr+TTdehIcoARuVmXnRuxGFP86R3Q29m8b2mJHMk0VN7pU+5IC0FKjehqYebAwmKbD63o6RRm6guOuKpJqAKKtbgi6FKEGGLqnDRgj0wGV4fZjHtFnw=
+	t=1754043714; cv=none; b=fOxGBjJHA/tIjK8EQ4xitecChSRJLzIDyrtO2wvXNTXZ7EnQlSTzCEUtMWnBrpakE9lDgZkRWJj5HgNOs4jgLcKYAMNjDUxWemvBJX6hxjKtLTRL6V4trbvRfRJfaXOJyJsZXt2AnwF4Vbc022NzyYJc2bRncpBZoA/tGJktNXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754043351; c=relaxed/simple;
-	bh=ImQxTp1iJ29lWKGzPsMU2DV+X4JRj4v4T6JVXO7/vyQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=JV1aliYHTUZq+U0+ifuyMe3pE2zU7JQgbGFKY5KMY4UeBLSqTnDggcjZmkoFGjxX7U+sI2ghkzYscm34WecKNOSHWCyed7SETAY6Ox0S3lIZQAvRCICHSRNUH+lUCd5KDBwYRvVOaM50dvozuiCJUejTz1MX79p0xdsVAqrDdG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=GCw54UNB; arc=none smtp.client-ip=213.97.179.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
-	Date:References:In-Reply-To:Subject:Cc:To:From:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=HDLzFV0w64w0DKyjH0FbiVLsM2SS4NNuyTADnNpFyag=; b=GCw54UNBda85MIyTRuSflNrO81
-	DmPy82npLhJktPvRb4javXtFQckHOb5IRcgikim6A8VhV0NCAedtJqwwX5aTR82+16OEVmDj+H6hf
-	nRzR8E1IsaDT25MuGJ3q0mW2FLRb/o8eziZgexZ8RM0IUhug6ObC8yajxN2mr/Ttl0k5dMDjK+QUL
-	cZFm72ybD0N+tKPeMSt1LSPMRBza2lXOq1Dd/4PFSiGxry3/EyVnOBGWqK0jxRJ8rfKJaqXoNduPE
-	vSIURZnpZ7P/iEeKlhqkrSN9ACGHbrSJ/4p61f1n4yQxbTYcmz/QKi02gb+muIzBjlml1riwdahLP
-	826fuZsQ==;
-Received: from bl23-10-177.dsl.telepac.pt ([144.64.10.177] helo=localhost)
-	by fanzine2.igalia.com with utf8esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
-	id 1uhmnU-007DUX-8k; Fri, 01 Aug 2025 12:15:32 +0200
-From: Luis Henriques <luis@igalia.com>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Theodore Ts'o <tytso@mit.edu>,  Miklos Szeredi <miklos@szeredi.hu>,
-  Bernd Schubert <bschubert@ddn.com>,  linux-fsdevel@vger.kernel.org,
-  linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-In-Reply-To: <20250731173858.GE2672029@frogsfrogsfrogs> (Darrick J. Wong's
-	message of "Thu, 31 Jul 2025 10:38:58 -0700")
-References: <8734afp0ct.fsf@igalia.com>
-	<20250729233854.GV2672029@frogsfrogsfrogs>
-	<20250731130458.GE273706@mit.edu>
-	<20250731173858.GE2672029@frogsfrogsfrogs>
-Date: Fri, 01 Aug 2025 11:15:26 +0100
-Message-ID: <8734abgxfl.fsf@igalia.com>
+	s=arc-20240116; t=1754043714; c=relaxed/simple;
+	bh=GDW5QDcpPb9JU3npIpVzC1ayE0pLOff4rJNdsgJIbxY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=XDSMLIuo8xI16PIFnaTFlpM+OtrbIIRPNoJivyZ7RoLtJe/bNhjLBZXj4Kq5PTu5/IEwH1/e4ZnVRs+8Ut7fHcb979UH+1Znis4/nedfwJx0F1SAN3yIRh+W7Bh0rRmK15zkqXoDsuExj3UmP3bmNNF20O7rL3E1rBi6idTw5nY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
+Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by psionic.psi5.com (Postfix) with ESMTPSA id DAE6C3F116;
+	Fri,  1 Aug 2025 12:21:40 +0200 (CEST)
+From: Simon Richter <Simon.Richter@hogyros.de>
+To: thomas.hellstrom@linux.intel.com,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Simon Richter <Simon.Richter@hogyros.de>,
+	stable@vger.kernel.org
+Subject: [PATCH v3] Mark xe driver as BROKEN if kernel page size is not 4kB
+Date: Fri,  1 Aug 2025 19:19:13 +0900
+Message-ID: <20250801102130.2644-1-Simon.Richter@hogyros.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
+References: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31 2025, Darrick J. Wong wrote:
+This driver, for the time being, assumes that the kernel page size is 4kB,
+so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with 64kB
+pages.
 
-> On Thu, Jul 31, 2025 at 09:04:58AM -0400, Theodore Ts'o wrote:
->> On Tue, Jul 29, 2025 at 04:38:54PM -0700, Darrick J. Wong wrote:
->> >=20
->> > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
->> > could restart itself.  It's unclear if doing so will actually enable us
->> > to clear the condition that caused the failure in the first place, but=
- I
->> > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
->> > aren't totally crazy.
->>=20
->> I'm trying to understand what the failure scenario is here.  Is this
->> if the userspace fuse server (i.e., fuse2fs) has crashed?  If so, what
->> is supposed to happen with respect to open files, metadata and data
->> modifications which were in transit, etc.?  Sure, fuse2fs could run
->> e2fsck -fy, but if there are dirty inode on the system, that's going
->> potentally to be out of sync, right?
->>=20
->> What are the recovery semantics that we hope to be able to provide?
->
-> <echoing what we said on the ext4 call this morning>
->
-> With iomap, most of the dirty state is in the kernel, so I think the new
-> fuse2fs instance would poke the kernel with FUSE_NOTIFY_RESTARTED, which
-> would initiate GETATTR requests on all the cached inodes to validate
-> that they still exist; and then resend all the unacknowledged requests
-> that were pending at the time.  It might be the case that you have to
-> that in the reverse order; I only know enough about the design of fuse
-> to suspect that to be true.
->
-> Anyhow once those are complete, I think we can resume operations with
-> the surviving inodes.  The ones that fail the GETATTR revalidation are
-> fuse_make_bad'd, which effectively revokes them.
+Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+Cc: stable@vger.kernel.org
+---
+ drivers/gpu/drm/xe/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Ah! Interesting, I have been playing a bit with sending LOOKUP requests,
-but probably GETATTR is a better option.
+diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+index 2bb2bc052120..ea12ff033439 100644
+--- a/drivers/gpu/drm/xe/Kconfig
++++ b/drivers/gpu/drm/xe/Kconfig
+@@ -1,7 +1,7 @@
+ # SPDX-License-Identifier: GPL-2.0-only
+ config DRM_XE
+ 	tristate "Intel Xe2 Graphics"
+-	depends on DRM && PCI
++	depends on DRM && PCI && (PAGE_SIZE_4KB || COMPILE_TEST || BROKEN)
+ 	depends on KUNIT || !KUNIT
+ 	depends on INTEL_VSEC || !INTEL_VSEC
+ 	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
+-- 
+2.47.2
 
-So, are you currently working on any of this?  Are you implementing this
-new NOTIFY_RESTARTED request?  I guess it's time for me to have a closer
-look at fuse2fs too.
-
-Cheers,
---=20
-Lu=C3=ADs
-
-> All of this of course relies on fuse2fs maintaining as little volatile
-> state of its own as possible.  I think that means disabling the block
-> cache in the unix io manager, and if we ever implemented delalloc then
-> either we'd have to save the reservations somewhere or I guess you could
-> immediately syncfs the whole filesystem to try to push all the dirty
-> data to disk before we start allowing new free space allocations for new
-> changes.
->
-> --D
->
->>      	     	      		     	     - Ted
->>=20
 
