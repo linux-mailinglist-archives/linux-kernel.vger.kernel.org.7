@@ -1,123 +1,231 @@
-Return-Path: <linux-kernel+bounces-753651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9626EB185F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:43:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C7BB185F3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B1DEE3ABAD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D09B83AB1C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:44:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 350A71A23A0;
-	Fri,  1 Aug 2025 16:43:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D70041A5BBF;
+	Fri,  1 Aug 2025 16:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dbUbXoog";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nFiKbOZq"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="4Ejh3A8f"
+Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C348823AD;
-	Fri,  1 Aug 2025 16:43:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B38F4156C40
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:44:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754066583; cv=none; b=MlahCx3VojvLglXAfL+t2Iz4yN/VjuNS5TRByGFcFvINth3X5iofL7IDD5ElkFZD64FW442XmktUhd4uam6+0iQoeGsplRf6JX/Nd5Ymo9V7qijy3QzyN6rcvBczsneZ5Oov+4IqUlI0YOpfb3rW1GcDcairXE0GlCZHrsZ/0pE=
+	t=1754066662; cv=none; b=NXvaQ0dKbkAVX2WXx2/f43J8yQL7cn0zckHeRhCfFJ9G6BPJDUL5VBHMZpe8yrTDvj7j1Vy/phXmiq6wDTvyqKh4gM+5/he0xWoV3Pt7qZ1T2L3+JbH8FaxMRwMye0AS7+88luW+IgoRcEWmHoHFsMX5y18aREEfApgoRiXVx10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754066583; c=relaxed/simple;
-	bh=DGtK1iyj7wvSoVOqHvbrfVNGwmUEG/R34k7uB/IHsvI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=jHuucVAyZ85JX/fPBvvCHq0VkLezGKutLNMPa0I3gooC9a3m4ebdivRVzKXtRH5xZFnXDfGB6vFriRLPUJcpPwPES52qmqx7vq4/KMGoKi6TRGBOnJx7C3hc2Ap8OemLaqeLDW87nrPYiX1W2uNnMioBmNRJDKaE4QN9Cu19uyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dbUbXoog; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nFiKbOZq; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 01 Aug 2025 16:42:53 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754066577;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkkdj39T+WAHHDnfSrAolZKP+9KWdnSKEIIW7bwNi1c=;
-	b=dbUbXoogxiKeosOSY1fbLkA7yVQ05baCugKFWleKyCisQugbO65dLXyNuJ+cIp/5c+QwyO
-	e6TJM71Y2LLNoE73iXYLcRNCrNFO9kJ/70UUN/FynYi5CMSubUSrbpeN1oTGhxt8p1hVDU
-	IkDLE6NF6adOelu59iqsCS0va2uSNyaJDolzydGOxh7bHiwzFtLrErUGCJC06IoLbWflJ1
-	d6RcOafMeIZP6p4ekwh2w3JN/FbxcuhqOWIpxHs/Riu72bWg3BhChZogQKbGu9mlbjxQlg
-	Jp9uqtFUvMgNtsV7nEasa7bWexSuOQATKRQtq8BKOnPaziwru0lOd8WR6WtGBw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754066577;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Pkkdj39T+WAHHDnfSrAolZKP+9KWdnSKEIIW7bwNi1c=;
-	b=nFiKbOZqXShqThk+Vzm5+5nkjw0xrk3h3WZE74Q+kZpMvBeM6KpmsHixwZ2o0ici2iQRiW
-	8iwANGTxqa4lRCCw==
-From: "tip-bot2 for Tony Luck" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/cpu: Add new Intel CPU model numbers for
- Wildcatlake and Novalake
-Cc: Tony Luck <tony.luck@intel.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20250730150437.4701-1-tony.luck@intel.com>
-References: <20250730150437.4701-1-tony.luck@intel.com>
+	s=arc-20240116; t=1754066662; c=relaxed/simple;
+	bh=igrMx6iFIDdFmFIB8l2bfoLXUmpgB2zic38Ft4a8CSI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=nz3lZHGHWqppcP/vYXb7S6ZD4tH8thefV0DT7YesJye9SlUdrZKBE2y1Z0/HO/HgYmv9gojIPbS+eAa6i1OAwxZdJouuFqwl8w+eY+VyDrfBaHty45bBGmvzo99sZdYfl+GACBx0hClk7pplIZbWKb5aAJ4xJKU74MZ4hg01mNM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=4Ejh3A8f; arc=none smtp.client-ip=209.85.216.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31f3b65ce07so3321604a91.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 09:44:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754066660; x=1754671460; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmFw3mXH/exEQe+/QLbl03MUiMl4ucnB+5XoLqj1sUc=;
+        b=4Ejh3A8fdkDUKLKlRPnnC1YrywmY11XvMTj90HdjGak46bdvxa81tCQG+o/lnQb0lE
+         v1KcGTvEIg0zMb1PoSeZs43EN2QFhO4VKTh5IR+2jJTHSjSJpSM2yKljw6Y3BJR2ZYY6
+         2F4AQSHJp1LaDlFMzTeLscpJi9Qf8+TL2mWvSYCheYNSHW12rFd6ozH2L3Xd/hMIOWUp
+         xoZuktkj8+by2DRXGdd+022IPE+V5idgrppkYF3taP7zGnal36J6uqRT4INz+PdyQj8s
+         CF8lq4KLd3YGKqD1jvpkeZ4BLCyckSYwJsWlK5wahh+VB8kXJUe+FVvESp+0iw4etRRS
+         XJGw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754066660; x=1754671460;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=cmFw3mXH/exEQe+/QLbl03MUiMl4ucnB+5XoLqj1sUc=;
+        b=oaudt/fT2Efk1LThejpQciPRhDe11H5hbqjl4Y/OmHzNmI3YMx7wKIRT5qIp5vpx1w
+         xSimqnzxl81/LeLDAFZcUwPmBBA1+AOysyelSYFZKJqhgaecQhkDAgHYHDG6UVWNSJzR
+         7ma8XVyfBPgHmBVs5ttDcUY2IYR6cijh/cIYcx+Xn9ki+qGILlbZBpDlHEELz+E6z1XQ
+         cBG4pE8XGCEkmGYoGf6WbYb9DLCLKE6P1Xwh/hq6otFu5k4eHMR/VnDXBJR2YZZPx9W9
+         9l4yDblXhgFMtT8rzTqk6r/4FizaTXOOPTu5Ii95n89Na9OZa3i8HW8WhEj8ox3AheHH
+         I9Rg==
+X-Forwarded-Encrypted: i=1; AJvYcCXr+2aNdJOrR6tbP/2ii55Uf6pdAUlQ2TGa4O7vnnWHMJrGyirBEZPVPjMi6YAK2v6EV5+v87ozKz++wnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwRp5hVcEGLOiNXDNqkB7XEZRUsg3z0Y2MUpwNcghTABXRoWrHo
+	/nDlqunmkxTRBhRd6wmM2JiKt9F9bNxKPa42RAy6OKcxGi1GR543bB97v3uIsINs19O2RtLmXgC
+	SAkKerg==
+X-Google-Smtp-Source: AGHT+IHTCPWlBsVY++6yRHnsFzrU+E4U0uWTRC0q7DUxzgBPU0wzo6RMGy3C5kq+eZLK/o+LJzUMjGasNMs=
+X-Received: from pjf12.prod.google.com ([2002:a17:90b:3f0c:b0:311:462d:cb60])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:1812:b0:311:da03:3437
+ with SMTP id 98e67ed59e1d1-321162b44b8mr568364a91.27.1754066660052; Fri, 01
+ Aug 2025 09:44:20 -0700 (PDT)
+Date: Fri, 1 Aug 2025 09:44:18 -0700
+In-Reply-To: <b27f807e-b04f-487d-be13-74a8b0a61b42@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Message-ID: <175406657359.1420.1839409256517255125.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <20250729193341.621487-1-seanjc@google.com> <20250729193341.621487-6-seanjc@google.com>
+ <b27f807e-b04f-487d-be13-74a8b0a61b42@intel.com>
+Message-ID: <aIzu4q_7yBmCIOWK@google.com>
+Subject: Re: [PATCH 5/5] KVM: TDX: Add sub-ioctl KVM_TDX_TERMINATE_VM
+From: Sean Christopherson <seanjc@google.com>
+To: Adrian Hunter <adrian.hunter@intel.com>
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>, 
+	Paolo Bonzini <pbonzini@redhat.com>, linux-arm-kernel@lists.infradead.org, 
+	kvmarm@lists.linux.dev, kvm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Vishal Annapurve <vannapurve@google.com>, Xiaoyao Li <xiaoyao.li@intel.com>, 
+	Rick Edgecombe <rick.p.edgecombe@intel.com>, Nikolay Borisov <nik.borisov@suse.com>, 
+	Yan Y Zhao <yan.y.zhao@intel.com>, Kai Huang <kai.huang@intel.com>, 
+	"binbin.wu@linux.intel.com" <binbin.wu@linux.intel.com>
+Content-Type: text/plain; charset="us-ascii"
 
-The following commit has been merged into the x86/urgent branch of tip:
++Chao
 
-Commit-ID:     49f848788a4d157bb6648a57963cb060fed3d56e
-Gitweb:        https://git.kernel.org/tip/49f848788a4d157bb6648a57963cb060fed=
-3d56e
-Author:        Tony Luck <tony.luck@intel.com>
-AuthorDate:    Wed, 30 Jul 2025 08:04:37 -07:00
-Committer:     Borislav Petkov (AMD) <bp@alien8.de>
-CommitterDate: Fri, 01 Aug 2025 18:22:34 +02:00
+On Fri, Aug 01, 2025, Adrian Hunter wrote:
+> On 29/07/2025 22:33, Sean Christopherson wrote:
+> > +static int tdx_terminate_vm(struct kvm *kvm)
+> > +{
+> > +	if (kvm_trylock_all_vcpus(kvm))
+> > +		return -EBUSY;
+> > +
+> > +	kvm_vm_dead(kvm);
+> > +	to_kvm_tdx(kvm)->vm_terminated = true;
+> > +
+> > +	kvm_unlock_all_vcpus(kvm);
+> > +
+> > +	tdx_mmu_release_hkid(kvm);
+> > +
+> > +	return 0;
+> > +}
+> 
+> As I think I mentioned when removing vm_dead first came up,
+> I think we need more checks.  I spent some time going through
+> the code and came up with what is below:
+> 
+> First, we need to avoid TDX VCPU sub-IOCTLs from racing with
+> tdx_mmu_release_hkid().  But having any TDX sub-IOCTL run after
+> KVM_TDX_TERMINATE_VM raises questions of what might happen, so
+> it is much simpler to understand, if that is not possible.
+> There are 3 options:
+> 
+> 1. Require that KVM_TDX_TERMINATE_VM is valid only if
+> kvm_tdx->state == TD_STATE_RUNNABLE.  Since currently all
+> the TDX sub-IOCTLs are for initialization, that would block
+> the opportunity for any to run after KVM_TDX_TERMINATE_VM.
+> 
+> 2. Check vm_terminated in tdx_vm_ioctl() and tdx_vcpu_ioctl()
+> 
+> 3. Test KVM_REQ_VM_DEAD in tdx_vm_ioctl() and tdx_vcpu_ioctl()
+> 
+> [ Note cannot check is_hkid_assigned() because that is racy ]
+> 
+> Secondly, I suggest we avoid SEAMCALLs that will fail and
+> result in KVM_BUG_ON() if HKID has been released.
+> 
+> There are 2 groups of those: MMU-related and TDVPS_ACCESSORS.
+> 
+> For the MMU-related, the following 2 functions should return
+> an error immediately if vm_terminated:
+> 
+> 	tdx_sept_link_private_spt()
+> 	tdx_sept_set_private_spte()
+> 
+> For that not be racy, extra synchronization is needed so that
+> vm_terminated can be reliably checked when holding mmu lock
+> i.e.
+> 
+> static int tdx_terminate_vm(struct kvm *kvm)
+> {
+> 	if (kvm_trylock_all_vcpus(kvm))
+> 		return -EBUSY;
+> 
+> 	kvm_vm_dead(kvm);
+> +
+> +       write_lock(&kvm->mmu_lock);
+> 	to_kvm_tdx(kvm)->vm_terminated = true;
+> +       write_unlock(&kvm->mmu_lock);
+> 
+> 	kvm_unlock_all_vcpus(kvm);
+> 
+> 	tdx_mmu_release_hkid(kvm);
+> 
+> 	return 0;
+> }
+> 
+> Finally, there are 2 TDVPS_ACCESSORS that need avoiding:
+> 
+> 	tdx_load_mmu_pgd()
+> 		skip td_vmcs_write64() if vm_terminated
+> 
+> 	tdx_protected_apic_has_interrupt()
+> 		skip td_state_non_arch_read64() if vm_terminated
 
-x86/cpu: Add new Intel CPU model numbers for Wildcatlake and Novalake
+Oof.  And as Chao pointed out[*], removing the vm_dead check would allow creating
+and running vCPUs in a dead VM, which is most definitely not desirable.  Squashing
+the vCPU creation case is easy enough if we keep vm_dead but still generally allow
+ioctls, and it's probably worth doing that no matter what (to plug the hole where
+pending vCPU creations could succeed):
 
-Wildcatlake is a mobile CPU. Novalake has both desktop and mobile
-versions.
-
-  [ bp: Merge into a single patch. ]
-
-Signed-off-by: Tony Luck <tony.luck@intel.com>
-Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
-Link: https://lore.kernel.org/20250730150437.4701-1-tony.luck@intel.com
----
- arch/x86/include/asm/intel-family.h | 5 +++++
- 1 file changed, 5 insertions(+)
-
-diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel=
--family.h
-index be10c18..e345dbd 100644
---- a/arch/x86/include/asm/intel-family.h
-+++ b/arch/x86/include/asm/intel-family.h
-@@ -150,6 +150,11 @@
-=20
- #define INTEL_PANTHERLAKE_L		IFM(6, 0xCC) /* Cougar Cove / Crestmont */
-=20
-+#define INTEL_WILDCATLAKE_L		IFM(6, 0xD5)
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index d477a7fda0ae..941d2c32b7dc 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4207,6 +4207,11 @@ static int kvm_vm_ioctl_create_vcpu(struct kvm *kvm, unsigned long id)
+ 
+        mutex_lock(&kvm->lock);
+ 
++       if (kvm->vm_dead) {
++               r = -EIO;
++               goto unlock_vcpu_destroy;
++       }
 +
-+#define INTEL_NOVALAKE			IFM(18, 0x01)
-+#define INTEL_NOVALAKE_L		IFM(18, 0x03)
+        if (kvm_get_vcpu_by_id(kvm, id)) {
+                r = -EEXIST;
+                goto unlock_vcpu_destroy;
+
+And then to ensure vCPUs can't do anything, check KVM_REQ_VM_DEAD after acquiring
+vcpu->mutex.
+
+diff --git a/virt/kvm/kvm_main.c b/virt/kvm/kvm_main.c
+index 6c07dd423458..883077eee4ce 100644
+--- a/virt/kvm/kvm_main.c
++++ b/virt/kvm/kvm_main.c
+@@ -4433,6 +4433,12 @@ static long kvm_vcpu_ioctl(struct file *filp,
+ 
+        if (mutex_lock_killable(&vcpu->mutex))
+                return -EINTR;
 +
- /* "Small Core" Processors (Atom/E-Core) */
-=20
- #define INTEL_ATOM_BONNELL		IFM(6, 0x1C) /* Diamondville, Pineview */
++       if (kvm_test_request(KVM_REQ_VM_DEAD, vcpu)) {
++               r = -EIO;
++               goto out;
++       }
++
+        switch (ioctl) {
+        case KVM_RUN: {
+                struct pid *oldpid;
+
+
+That should address all TDVPS paths (I hope), and I _think_ would address all
+MMU-related paths as well?  E.g. prefault requires a vCPU.
+
+Disallowing (most) vCPU ioctls but not all VM ioctls on vm_dead isn't great ABI
+(understatement), but I think we need/want the above changes even if we keep the
+general vm_dead restriction.  And given the extremely ad hoc behavior of taking
+kvm->lock for VM ioctls, trying to enforce vm_dead for "all" VM ioctls seems like
+a fool's errand.
+
+So I'm leaning toward keeping "KVM: Reject ioctls only if the VM is bugged, not
+simply marked dead" (with a different shortlog+changelog), but keeping vm_dead
+(and not introducing kvm_tdx.vm_terminated).
+
+Thoughts?
+
+[*] https://lore.kernel.org/all/aIlzeT+yFG2Tvb3%2F@intel.com
 
