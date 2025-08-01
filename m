@@ -1,202 +1,238 @@
-Return-Path: <linux-kernel+bounces-753243-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753244-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EBDFB1807A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:55:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E806B18082
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:00:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 619875849F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:55:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E261DA84286
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:00:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E63F7239E89;
-	Fri,  1 Aug 2025 10:55:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD1C723817D;
+	Fri,  1 Aug 2025 10:59:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pg2tI85C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HJ6U1st/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Pg2tI85C";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="HJ6U1st/"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WERKOMoG"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95769235355
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:55:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 520222367DF
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:59:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754045703; cv=none; b=D8md9+jOztGZ6c87jadv6yoicCuosgvfioeE+Cn5oWOBOBin/BUctmujuNAIPYdTCdzMaaop6GJIs401tahO2Uyv13p1e06cd2d2LFYl+biIe/76k411nlzmrcpA0Y9hSpT9+aKdwU6lD3xyB/3VBFq7sBhK/SrV1dDbrsxuClc=
+	t=1754045995; cv=none; b=j/hoJcxO0/aslwlWMEvyll/O8pEhaBAo4r9DwVUouf21bZEIjBlaL7AbjjnwuDnNubYBfC4IGS+F0viyu82FH+9ra1Hqdj7MCVlycgUybp8dJLH9gjRk8IkJYUzCmXKSu0go15xpzQDV9dUBaMw0k5xyjgAYmlnUkWzTPgjptnc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754045703; c=relaxed/simple;
-	bh=iFNjEA5UrxJ9dLszHZx3/VeM1j6iD/wy4bdbIk/ydeM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dKvIsjp/DPl3f2dlW4+T95XwENFcN3g/vNYhaqvXp1Uv/NF3u925PxWanXFHgiZowzc1MbDCgDn87EKBE9Ne89Gcu3t7IWk1oqEpdFbRoNqJKta0WiyeUp9rshJiK31IzmZ2fxptg2eGQ3dnojXUOutpogcSufg6AtWaLo/5j9M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pg2tI85C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HJ6U1st/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Pg2tI85C; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=HJ6U1st/; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id AE26421BC8;
-	Fri,  1 Aug 2025 10:54:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754045699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kUelM/m2ojYS6BCoujA87YICyrlEhvbcyegFbCoU5gE=;
-	b=Pg2tI85CPQGxtJhIsi2Wu2Xkqx7+aFxexxAY5eyAagLO1J7c3AfNo51A5UrQ2GS4B710v5
-	bgvc9aXwPwOEsNKCnAiFUDu3zqQHQizXqsrhh+3s6eWP1cnsh4orB325rFDP6Mexk8nN9n
-	E/lhCUwHiPGOJthjN5HPm/tPh+rqzHQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754045699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kUelM/m2ojYS6BCoujA87YICyrlEhvbcyegFbCoU5gE=;
-	b=HJ6U1st/+peiDVDV4RHr5Y8Z9dn6Tw66H6aK4gNdtoA1YqVghHXFYBqiMKwOfTt0KUUYAU
-	k50/IxSwrWubGWAw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1754045699; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kUelM/m2ojYS6BCoujA87YICyrlEhvbcyegFbCoU5gE=;
-	b=Pg2tI85CPQGxtJhIsi2Wu2Xkqx7+aFxexxAY5eyAagLO1J7c3AfNo51A5UrQ2GS4B710v5
-	bgvc9aXwPwOEsNKCnAiFUDu3zqQHQizXqsrhh+3s6eWP1cnsh4orB325rFDP6Mexk8nN9n
-	E/lhCUwHiPGOJthjN5HPm/tPh+rqzHQ=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1754045699;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=kUelM/m2ojYS6BCoujA87YICyrlEhvbcyegFbCoU5gE=;
-	b=HJ6U1st/+peiDVDV4RHr5Y8Z9dn6Tw66H6aK4gNdtoA1YqVghHXFYBqiMKwOfTt0KUUYAU
-	k50/IxSwrWubGWAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 7034713876;
-	Fri,  1 Aug 2025 10:54:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id pcwCGgOdjGiDVQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Fri, 01 Aug 2025 10:54:59 +0000
-Message-ID: <7821b672-eae7-4730-afe4-b72b80ac6ea2@suse.cz>
-Date: Fri, 1 Aug 2025 12:54:59 +0200
+	s=arc-20240116; t=1754045995; c=relaxed/simple;
+	bh=/4HcNsYuPuKqKa0GMfjXIWddRLLdPlG956ypUck+HYA=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=NJrPHamtC3umE/6wph/Bs01EQZkwQtLSS0GaD+jp02sy0aZxzzCMR1qiJR/W7kx8lIUQsPesFQ+n/zxBelC+KUQ3pYrI8R8lHb1FcShbYmx3ClshUmmxgwv/CYhHU5AXCmzlZkMgKObn4k5gEJjXtkS5JZa8PHLLWmqs3idpKkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WERKOMoG; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719gBmG007014
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 10:59:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=zTFFAeIFTLiRy/i60mIiB2
+	RbpJFjzSiBU0ApmUpYKnQ=; b=WERKOMoG00NbFz9aKmnIpQzad8au6L6g6DMvC9
+	4O+f2W/xA50biPAgtzWOT5hVv838s15YjdJH7xPmSpUOiS6/rLrTAFuR1KaiBjxi
+	urgdY6IUTYsqofYdzpjaLO8G5yk2JZGtqzWIMtsFnRDB6RFP9v9SyEXNn66SENyx
+	eyOrj9wFK8TNyrSypFEMAtg6qjAksDi4dGHkqapiuahJdJbdEsqYD49i5q71bTh9
+	YEmGPwaDshASsA8Sth90ZwvLlHj1nWobPRaCCgzlArllndJgSBrX4ZECCYFRTkp7
+	p6DLUEodTJCxf+OUOvx0WYXpcDjj4EXksUuhQTcItb1a9Pkw==
+Received: from mail-pj1-f69.google.com (mail-pj1-f69.google.com [209.85.216.69])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 488u6508rk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:59:53 +0000 (GMT)
+Received: by mail-pj1-f69.google.com with SMTP id 98e67ed59e1d1-31ed9a17f22so2553908a91.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 03:59:52 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754045992; x=1754650792;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zTFFAeIFTLiRy/i60mIiB2RbpJFjzSiBU0ApmUpYKnQ=;
+        b=ggqbyVPV9uQEJ6JSUgk9JJliJ6WBnDJMI4lkfKgDOyxk8dfpHOEEWZe76AtfYPZ3sZ
+         NgwUecWCBSPc7BuzONo3vQ8ODGcBVLKtNgYT38HqyU7H0wIL6qHLPkBTy4aWQCGTDccD
+         pGCmWgPLjwXaKPyANn5yed1dHoDxd1NbEwEt7jYFz6frpzSiocv2+sa3f9v2Yn9Qtgkn
+         OzVriomGe4wDb+19X/SeUy9KYef8iNckzMTucYULxL/5HdjsRIcei0y5t5RPe3GYkmVO
+         j65KyOBWk8uZ4FODgUVDlRfuku2wAE0BbrVP6a4GVrkfDyF9nneSYfj22KjRULbctuu3
+         HtOA==
+X-Forwarded-Encrypted: i=1; AJvYcCWBV22dBLMnjbTKGyWbVMaLTL1Z8MLv0hlFcMBWs0ejWLNtpYX8VCft1r3amFA7RH8UKdKu2XSPDsSJu5s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/4Xtg0mYaVqDa3MFkMr9t4p1Thh/DenhpLsrmvHSfvPuHxZkj
+	kDaumbiY0jHbuopUvHLmKEKaK4lzVnBgCG8mMRZAqdf1HduvXLqRhFEVK8R4kYx+XQDsMLfxiY8
+	86IZ/t6Eq5IxVTnga+3eqyG3UQb6zZ0rbde6bF8hlsb2857lT9Panm7GKW3v5JTbszeY=
+X-Gm-Gg: ASbGnctV21sdAHVemaMg/AW+CT+4rhdfO2dq0HTsrWhe9sZXu2AvhJlGwQalQvW/UmG
+	p9oVgvoXLjDycm6rpx6XMyrKM6XHg1nAq3bBPD5oFjjk9NMwryn+BNDLQX8xQYMweu6BaFanjjy
+	7o1eDWwCSiWP/En7CqTF3ocvzoRkZrPHR+t0CypH/eNUUbVA+L0A4+iu/xF6XtrxiafeFnTGEwr
+	Y6m/x2QV2iV3fjYZlsLcPPZO54W6JWUNQWMLgzgbn+qAtVlnLwgkssxkt/UcoNvj/n76sZgo46T
+	1x2OhfKn/yqmqjDrIh3n67bG49xIu7Iaorv4ORKK7pssH0kdfJz+sNvH2VyvWSf7oOYnGqyDm0U
+	=
+X-Received: by 2002:a17:90b:4b83:b0:312:1d2d:18e2 with SMTP id 98e67ed59e1d1-320fbc0cbe3mr3394406a91.20.1754045991702;
+        Fri, 01 Aug 2025 03:59:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG6bONo1H4JD3Nq/jZ9zCujvL2MwG8Nx+GThjxrvIdSlYPJkARGgDxuNMI80MhgDVXQ2524lA==
+X-Received: by 2002:a17:90b:4b83:b0:312:1d2d:18e2 with SMTP id 98e67ed59e1d1-320fbc0cbe3mr3394360a91.20.1754045991123;
+        Fri, 01 Aug 2025 03:59:51 -0700 (PDT)
+Received: from hu-krichai-hyd.qualcomm.com ([202.46.23.25])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f0b4aesm7154395a91.26.2025.08.01.03.59.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 03:59:50 -0700 (PDT)
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+Subject: [PATCH v4 0/3] PCI: Add support for PCIe WAKE# interrupt
+Date: Fri, 01 Aug 2025 16:29:41 +0530
+Message-Id: <20250801-wake_irq_support-v4-0-6b6639013a1a@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] fs/proc/task_mmu: factor out proc_maps_private fields
- used by PROCMAP_QUERY
-Content-Language: en-US
-To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com,
- peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org,
- paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com,
- brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com,
- linux@weissschuh.net, willy@infradead.org, osalvador@suse.de,
- andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu,
- tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com,
- linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- linux-mm@kvack.org, linux-kselftest@vger.kernel.org
-References: <20250731220024.702621-1-surenb@google.com>
- <20250731220024.702621-3-surenb@google.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- m6M14QORSWTLRg==
-In-Reply-To: <20250731220024.702621-3-surenb@google.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.999];
-	MIME_GOOD(-0.10)[text/plain];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[28];
-	FREEMAIL_CC(0.00)[oracle.com,redhat.com,google.com,cmpxchg.org,kernel.org,gmail.com,toxicpanda.com,huawei.com,weissschuh.net,infradead.org,suse.de,arm.com,csgroup.eu,vger.kernel.org,kvack.org];
-	RCVD_TLS_ALL(0.00)[];
-	R_RATELIMIT(0.00)[to_ip_from(RLqwhhqik4qyk5i1fk54co8f1o)];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
-X-Spam-Score: -4.30
+X-B4-Tracking: v=1; b=H4sIAB2ejGgC/3XOwW7CMAwG4FdBOS8ocdOGcOI9EEImcUfEIG3Sh
+ k2o774AByatXCz9lvz9vrFE0VNi68WNRco++XApQX0smD3i5ZO4dyUzEFCLCgy/4on2Pvb7NHZ
+ diAPXRmto7co6pVg56yK1/vtBbnfPHKkfizy8lkefhhB/HrVZ3rfPBiXk/4YsueAOCKBVKKh1m
+ 5DSsh/xy4bzeVkGu5sZ/jhy5tMMxRHNAckZXGmUb5zq5TSinnGq4ugD1o2zRhisZ5xpmn4BPQm
+ ZClwBAAA=
+X-Change-ID: 20250329-wake_irq_support-79772fc8cd44
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        cros-qcom-dts-watchers@chromium.org,
+        Bjorn Helgaas <bhelgaas@google.com>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Danilo Krummrich <dakr@kernel.org>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org,
+        quic_vbadigan@quicinc.com, quic_mrana@quicinc.com, sherry.sun@nxp.com,
+        linux-pm@vger.kernel.org,
+        Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>,
+        Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Manivannan Sadhasivam <mani@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754045985; l=4504;
+ i=krishna.chundru@oss.qualcomm.com; s=20230907; h=from:subject:message-id;
+ bh=/4HcNsYuPuKqKa0GMfjXIWddRLLdPlG956ypUck+HYA=;
+ b=+IKXpiXeiPS33FaFgO8OgLiygKkSZTU3k5pDppPOhq2n37xvJjg2voFkqfd06SghIU2IKSmMJ
+ 7RtYtHKFAGyBRBeX76k1dIIoOWwrZLa7HJcxzWKuhM3qVym6ACEewFp
+X-Developer-Key: i=krishna.chundru@oss.qualcomm.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-Proofpoint-ORIG-GUID: VzBTpn61I2Gcpj8P4WG_LJ6MF-864OeB
+X-Proofpoint-GUID: VzBTpn61I2Gcpj8P4WG_LJ6MF-864OeB
+X-Authority-Analysis: v=2.4 cv=f+RIBPyM c=1 sm=1 tr=0 ts=688c9e29 cx=c_pps
+ a=vVfyC5vLCtgYJKYeQD43oA==:117 a=ZePRamnt/+rB5gQjfz0u9A==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
+ a=Ikd4Dj_1AAAA:8 a=s8YR1HE3AAAA:8 a=CDPgDjw5ZRyPGz7T9_kA:9 a=QEXdDO2ut3YA:10
+ a=rl5im9kqc5Lf4LNbBjHf:22 a=jGH_LyMDp9YhSvY-UuyI:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA4MSBTYWx0ZWRfX2NVpYlPLYDPF
+ Msz+1kkvXsfgw/lYSnUp3DI0/TpJrGABriU7l6OweeZSPnBJsCUAAyuKnzW9cO/woQ8wuQynfYU
+ ek2pmB79VZgKWDTQNTATWxjPFrJB6ThA6DFuABc2WKPfqH4nzbGnek4TJrdy3KAur7cxhUas2fz
+ M2CqLUO8boDOEuqmlvF+jVibHStizjTYBh0I3JYrQoFRk8+27sn8Y1idd20KSQst5vd/N0Tl9v8
+ kjQcoZr9B1ZqlFufKojQnK8nECFiKqd+KCEldgDbdez0ioJFqg56jxwGiCfop1RkfZj8G0eYm4j
+ 5CPjQrFGN3Ap7SvpHd9Pw7ql9S5OE8QXTEYDUr7KSPDfGyWEObNfGmGAH0OIWEAZPOmwm/Jz1BW
+ Ugi3y98eOGpN8JwSetlcY/6EIByBd3zrpexd1uJpRjCp5PpkCTHdabKR+2/UnC6mKmcUg6bc
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_03,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 malwarescore=0 mlxlogscore=845 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010081
 
-On 8/1/25 00:00, Suren Baghdasaryan wrote:
-> Refactor struct proc_maps_private so that the fields used by PROCMAP_QUERY
-> ioctl are moved into a separate structure. In the next patch this allows
-> ioctl to reuse some of the functions used for reading /proc/pid/maps
-> without using file->private_data. This prevents concurrent modification
-> of file->private_data members by ioctl and /proc/pid/maps readers.
-> 
-> The change is pure code refactoring and has no functional changes.
+PCIe WAKE# interrupt is needed for bringing back PCIe device state from
+D3cold to D0.
 
-I think you'll need to adjust task_nommu.c as well, minimally I see it also
-has m_start() acceding priv->mm directly so it won't compile now?
+This is pending from long time, there was two attempts done previously to
+add WAKE# support[1], [2]. Those series tried to add support for legacy
+interrupts along with WAKE#. Legacy interrupts are already available in
+the latest kernel and we can ignore them. For the wake IRQ the series is
+trying to use interrupts property define in the device tree.
 
-Also not sure about the naming, struct is named "proc_maps_query_data" and
-priv field named "query" but the read() implementation uses it too, via
-priv->query, although it does no PROCMAP_QUERY.
+This series is using gpio property instead of interrupts, from
+gpio desc driver will allocate the dedicate IRQ.
 
-Seems to me it's actually something like a mm+vma locking context? Which can
-be either stored in proc_maps_private for read() operations, or local
-on-stack for ioctl().
+According to the PCIe specification 6, sec 5.3.3.2, there are two defined
+wakeup mechanisms: Beacon and WAKE# for the Link wakeup mechanisms to
+provide a means of signaling the platform to re-establish power and
+reference clocks to the components within its domain. Adding WAKE#
+support in PCI framework.
+
+According to the PCIe specification, multiple WAKE# signals can exist in a
+system. In configurations involving a PCIe switch, each downstream port
+(DSP) of the switch may be connected to a separate WAKE# line, allowing
+each endpoint to signal WAKE# independently. To support this, the WAKE#
+should be described in the device tree node of the upstream bridge to which
+the endpoint is connected. For example, in a switch-based topology, the
+WAKE# GPIO can be defined in the DSP of the switch. In a direct connection
+scenario, the WAKE# can be defined in the root port. If all endpoints share
+a single WAKE# line, the GPIO should be defined in the root port.
+
+During endpoint probe, the driver searches for the WAKE# in its immediate
+upstream bridge. If not found, it continues walking up the hierarchy until
+it either finds a WAKE# or reaches the root port. Once found, the driver
+registers the wake IRQ in shared mode, as the WAKE# may be shared among
+multiple endpoints.
+
+When the IRQ is asserted, the wake handler triggers a pm_runtime_resume().
+The PM framework ensures that the parent device is resumed before the
+child i.e controller driver which can bring back link to D0.
+
+WAKE# is added in dts schema and merged based on this patch.
+https://lore.kernel.org/all/20250515090517.3506772-1-krishna.chundru@oss.qualcomm.com/
+
+[1]: https://lore.kernel.org/all/b2b91240-95fe-145d-502c-d52225497a34@nvidia.com/T/
+[2]: https://lore.kernel.org/all/20171226023646.17722-1-jeffy.chen@rock-chips.com/
+
+Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+---
+Changes in v4:
+- Move wake from portdrv to core framework to endpoint (Bjorn).
+- Added support for multiple WAKE# case (Bjorn). But traverse from
+  endpoint upstream port to root port till you get WAKE#. And use
+  IRQF_SHARED flag for requesting interrupts.
+- Link to v3: https://lore.kernel.org/r/20250605-wake_irq_support-v3-0-7ba56dc909a5@oss.qualcomm.com
+
+Changes in v3:
+- Update the commit messages, function names etc as suggested by Mani.
+- return wake_irq if returns error (Neil).
+- Link to v2: https://lore.kernel.org/r/20250419-wake_irq_support-v2-0-06baed9a87a1@oss.qualcomm.com
+
+Changes in v2:
+- Move the wake irq teardown after pcie_port_device_remove
+  and move of_pci_setup_wake_irq before pcie_link_rcec (Lukas)
+- teardown wake irq in shutdown also.
+- Link to v1: https://lore.kernel.org/r/20250401-wake_irq_support-v1-0-d2e22f4a0efd@oss.qualcomm.com
+
+---
+Krishna Chaitanya Chundru (3):
+      arm64: dts: qcom: sc7280: Add wake GPIO
+      PM: sleep: wakeirq: Add support for custom IRQ flags in dedicated wake IRQ setup
+      PCI: Add support for PCIe WAKE# interrupt
+
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts   |  1 +
+ arch/arm64/boot/dts/qcom/sc7280-herobrine.dtsi |  1 +
+ arch/arm64/boot/dts/qcom/sc7280-idp.dtsi       |  1 +
+ drivers/base/power/wakeirq.c                   | 43 +++++++++++++++--
+ drivers/pci/of.c                               | 66 ++++++++++++++++++++++++++
+ drivers/pci/pci-driver.c                       | 10 ++++
+ drivers/pci/pci.h                              | 10 ++++
+ drivers/pci/probe.c                            |  2 +
+ drivers/pci/remove.c                           |  1 +
+ include/linux/pci.h                            |  2 +
+ include/linux/pm_wakeirq.h                     |  6 +++
+ 11 files changed, 138 insertions(+), 5 deletions(-)
+---
+base-commit: 5f10a4bfd256d0ff64ef13baf7af7b1adf00740c
+change-id: 20250329-wake_irq_support-79772fc8cd44
+
+Best regards,
+-- 
+Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+
 
