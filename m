@@ -1,145 +1,134 @@
-Return-Path: <linux-kernel+bounces-752981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B865DB17D5E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C208B17D60
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EBA587212
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:19:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782E74E6B06
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF851F37D3;
-	Fri,  1 Aug 2025 07:19:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832B71FF1C7;
+	Fri,  1 Aug 2025 07:19:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q/gE5Hqe"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQqjJU87"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CCD3C26
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:19:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B89E158545
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:19:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754032747; cv=none; b=EQzEv2qDdGu3MlNbvag06fZOWakQG9/AWo5WUBloMaUAG5Mf83kpIyWQNpkE7AsI2ShATa92+BIqSnMLgo7PqUXBWs93nMfFSKViq19oIKVyh1I+aw99mvLaMXCcpYK021KCAst9bbDak9/ZQ2UyMB9pfulae06SSQS7vSNmwKQ=
+	t=1754032754; cv=none; b=srTk8TpAwT0jv6fzhIVgpmvFaypZrpD/BUWZBGytZ4Ul1uq/OC6abk0v6C3r5U/jWRC7OtJHM0UmLm+0Z1Jz0MaJt1cfBibRP0XIKQOxjykYD7nNvCpX5AbthG05AkwOTijBN1jUbez/GpUbGzWajmwXxfnWkveXGcXwE8TyiNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754032747; c=relaxed/simple;
-	bh=TYjLHC/Pp0ytAq/FGSdF8xCtocdkWfrMCnL4dVfmpek=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pkNwxp8ntPwXnlOe/n2PTTTYDDsOQJaHSwZqPRqpt5MuWfjufaHrkPsicqUsVSgn3gPJSoPIsp0azn454ivb2QiYLbNxYsvG7i4n1xTUGkHIqx6oNOUkj80vys+/FgsRtdMyBC6ZiU6/jt7xnoJ9FK8ah02OsOjf8fPNdyvS5Ds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q/gE5Hqe; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45555e3317aso2719005e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:19:05 -0700 (PDT)
+	s=arc-20240116; t=1754032754; c=relaxed/simple;
+	bh=Mbl+RyTD2gFwGo7uHhpS/tKBW0RUI/sFTtJ1XeFL9Z8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=r7SrEIeIQSS8AgJIRnwAC/eg0zeJiF0QaStNdEeBGNAzL1Bl5UkhRM9xXHDdfpwwYhLVI/1Kw0PQc//EOI5tkXsblkR7fcdYx2B1z/GbhdAHnpHwrxgX8of4JpgBOkDz6lBTjf6ebloRtOK5QXsp5mBdPUS/Kx5CX0Zbeq/Eu5A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQqjJU87; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae36e88a5daso245826366b.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:19:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754032744; x=1754637544; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6yXoFBX87IgNPakRa1KKSp0Mi46FaeH8eAGWkq4o2TU=;
-        b=Q/gE5HqeJnWUs+tMwL+u2zW6Mncsjy1lfI6SGsW8pO389PAug8xln5jfj77TzNBE19
-         o+t39+oVhXePvu4iSPDFIkuHmHi8UDfjuTjUoNlsq90sYYx5/OcZ8o+CEPU4xAUkbxU7
-         qd45WPrCyLyt+pA7zs+r6c1OTlouXmdqzD9KW3PQdI0itiKmPMTpPN8qshjpps+SAW3P
-         N3p6ohgBAufI+lkd0FnQOPmhK0J9J9Ek1vUZiHBrVRZ+JhLfc37no7sjUYaIuGqdSUbg
-         eg+Yy53qCXprmmFkBtEFZhKMCZGm5oQaHPIxy/XttzXhBxBQcAjfw6yDGYj99gFUUNJ9
-         d3yw==
+        d=gmail.com; s=20230601; t=1754032750; x=1754637550; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GZwv/qzs+19lK98+ODjU5waUBilwF5SbMGy7Dm5005I=;
+        b=jQqjJU87mW8ghyp7EilAH35I+H0+5awUjRSRbt3PEHNABrmnGrbml31/brTJnHFRI7
+         r4UblB1iQPpbWjo2rTPizjPS+nyqLhAUuQA8CW2PWJAx+puy/RZ1pD4o3L4RWeAWJdtL
+         ECTVWskrSH7kDj+Fa+iul2WKLGMi30T7u1Wm0T+sI2HPqllqrkri27BLcfl8GG/1w2KL
+         yo89QmJ36IGca8I9k4zMzzqq4ja6Anv2sFE5wNRE8Yt21kkZjS7Voo/YE3II+OB44xOk
+         tyQ2l/6HHsYnk/SgospNSOATzT5xplGC8eGjPYNIWJih6fWsCboju1Qb+fAEYDE+ZlRj
+         BoJg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754032744; x=1754637544;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6yXoFBX87IgNPakRa1KKSp0Mi46FaeH8eAGWkq4o2TU=;
-        b=DNMcZLF1HXErBD1g9yLrlQDOuFgbrICti7Z6gX5LQmUX66lohjCGpBFayz9Xv8lYKW
-         rk3LoIUIQIJsZnrkeRP46Pr/bCCC0fge8Fg8rW3CCZ01T9mkjLMIQnMmEa9nV5UPH89f
-         y4xDSSvD+pTLVet3kJDlW4+PXg2hg3ue5NuZMtBl2KR3blTaEzX34PC+dUPq9r0fSU2r
-         EeGM96HBDxcuye1JJLNDipOT2Y3lSVf1LST92EdXqn9MBKbhdSQtfqL7myYQt6yxoTja
-         2aV3YVhBXhfN+LlmgTsmNmG2beZZ/gv+350BmaM0s1gHzAuo6wRdgJXGX40e0qvCV3sm
-         UizA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeSVrNeDYNhLzuN6hy2nedYdbPWlWZeYU4ywST4NKNy6dzjMsYSqaYMk3waU7qybblovxJvuBi0HH5OmU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwSijpcGdBI5NDn7DCE/8WVaoEp17TTX+pc2yDoSeGQKz3rzHON
-	mFKIAkz0fouE4owNgorkJcar2oiV2c3loZB+GU6LC2rz76q3FOfTDoMQc8tq5nnLV9Y=
-X-Gm-Gg: ASbGncu5HuFPIvmzz6yxozBiKhY3LQXIj2dgK5YETG1ZYzk+mL6mDOez0dNh9LtFSce
-	I7t2sg3Xw0IbsP2e6gYfXRMFag4APLf0XLBiq814GmX+6INnM+kk+zLFhh1VSKuw4FMiwVBdxs3
-	dO6Af6kevy8+MtRE5loY3365DyYrfK9NVE7nhThHDdbxoLwqZSrjqq3E0ILpK37K2wct8AZlOcJ
-	iWEq654chG6nJPGrKi2eNYfA6CxU44tW4FkwsT5LHfaknP+BR1DkoGDDciOyIYecbqe8UVlD3dW
-	7ypD5eb2RLNM/bDezt4kyBIVYmdIf8hfvbHaWsOQgDfCvegXHMQvEnQ3Yaa+F7AVjids4YBsSqh
-	NYnvHEWOyGmARiqA73ULVfPnT
-X-Google-Smtp-Source: AGHT+IFrM+1qPEm/v+IAgtQORrTytS39rb8W00LNW0JxurkZHcD7rv5qHPyt47qa17w0y5R6I+pY3g==
-X-Received: by 2002:a05:600c:4fcc:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458a963c968mr15328055e9.19.1754032743750;
-        Fri, 01 Aug 2025 00:19:03 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a700:e8fb:ed3d:8380])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf5683sm54621895e9.7.2025.08.01.00.19.03
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 00:19:03 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Robert Jarzmik <robert.jarzmik@free.fr>,
-	Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	=?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
-Subject: [PATCH] Revert "gpio: pxa: Make irq_chip immutable"
-Date: Fri,  1 Aug 2025 09:18:58 +0200
-Message-ID: <20250801071858.7554-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1754032750; x=1754637550;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=GZwv/qzs+19lK98+ODjU5waUBilwF5SbMGy7Dm5005I=;
+        b=nEGyjNd9jY3M8aAqZEmw4wWGC7pGdsCWZE6g5pEtfZDFx3u8BWuas80g/b+KDXof9z
+         mac3hEKhrGS637wpqstGcxrtbDUSJ4hu+A5fvEiILMSNdX2tyOwGDU6vTvrVYWViQx6s
+         AZkaSWWmq1Z0Gs9ifLpbqVV2v8L1Tq8xE2cYsPzv61TDl/s4IG8fPkWsg6liQwim46No
+         h45mPyfWtJ0gQ5h+7YHsBUv6cLzjevyE+8m7Z6KaIXyK25ydQl2arbvgjPrMmUHcOoxK
+         +Yzc6/SvSddRX9pXTaOAwMDNGa1vtIcZ/0/KBh3/ThJpMQNwBF96UWohfhlgzutXUidH
+         Fcfg==
+X-Forwarded-Encrypted: i=1; AJvYcCVCDoQDORXCgBfKZLhYto3C87TsuCn/LTiReNzrsBcJ02F5qYx6TwiPuRdcKyIJD3Oup1eCjVi7cF3vu7c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzkpfIrdJXcpATnRFc7k0EQJODn+/JUfWENnbStEIs2tl3Jv2Lc
+	jNGgjmiRJ1nLoz18owi9onq70iWsQBV2mROSizYB+aef29gPGvdHV9wjuloJmw==
+X-Gm-Gg: ASbGncsOnq3qBy+YOiG/uvcfM2IY5kvxul+xR2zJzRLdH1DFX1i7tvm61zA4lpUmXFm
+	iCvtix/AqwCb8bLOO9hFfmEPz4z5Hrpq6miCYHsfoAADOkqt1UBdmhMU4HQuccUwMvGwjTjp/HD
+	M0ug5znF2TDigswIO9SeGMHShyCmcsJo2Ph+vXWQDnf3qnAvyIojUEydGNkNk+wGeoBN6ylqcnq
+	OMWJdAk45yhQt4lo0l4csQAo0giCHcy5+MGczFr1/f83a4yCrpUKeHIe1mftkr3wRpTMOoYEltd
+	8YESKmyBPQbsTx+MtOUuVcywmY7rEpeNwJvdm5/qZk8wPEcB1iBhBMlG6zrQEH7L9OFFrV6H0ly
+	yDu6SRuE+htFuexslUjLq6cmRqpByBF+OajIraUIBwo5qOytaUtq1ZWsg5Q==
+X-Google-Smtp-Source: AGHT+IF0QDEuCcmr8EjWLA4qqb0NrlU2hIjfuVXZIQbkssIh/lLuqkGBQ0k0LDR4BAnagV3h88KFDQ==
+X-Received: by 2002:a17:907:7f90:b0:ae3:c6a3:f833 with SMTP id a640c23a62f3a-af93173c5edmr167493266b.23.1754032750236;
+        Fri, 01 Aug 2025 00:19:10 -0700 (PDT)
+Received: from [192.168.0.101] (ip-77-25-33-2.web.vodafone.de. [77.25.33.2])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a218cf8sm242483366b.95.2025.08.01.00.19.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 00:19:09 -0700 (PDT)
+Message-ID: <b77087d4-a80d-46e6-8d96-3ce976bc70d7@gmail.com>
+Date: Fri, 1 Aug 2025 09:19:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/8] staging: rtl8723bs: move rtw_init_mlme_timer to
+ core/rtw_mlme.c
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: gregkh@linuxfoundation.org, hdegoede@redhat.com,
+ Larry.Finger@lwfinger.net, linux-staging@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250730104501.150270-1-straube.linux@gmail.com>
+ <20250730104501.150270-4-straube.linux@gmail.com>
+ <05bc4742-ef57-482b-a2af-23a7f238fd69@suswa.mountain>
+Content-Language: en-US
+From: Michael Straube <straube.linux@gmail.com>
+In-Reply-To: <05bc4742-ef57-482b-a2af-23a7f238fd69@suswa.mountain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Am 31.07.25 um 17:59 schrieb Dan Carpenter:
+> On Wed, Jul 30, 2025 at 12:44:56PM +0200, Michael Straube wrote:
+>> +static void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
+>> +{
+>> +	struct adapter *adapter =
+>> +	timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
+> 
+> You accidentally deleted a tab here.  This should have been:
+> 
+> 	struct adapter *adapter =
+> 		timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
+> 
+> regards,
+> dan carpenter
+> 
+>> +
+>> +	rtw_clear_scan_deny(adapter);
+>> +}
+> 
+> [ snip ]
+> 
+>> -static void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
+>> -{
+>> -	struct adapter *adapter =
+>> -		timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
+>> -
+>> -	rtw_clear_scan_deny(adapter);
+>> -}
+> 
 
-This reverts commit 20117cf426b6 ("gpio: pxa: Make irq_chip immutableas")
-as it caused a regression on samsung coreprimevelte and we've not been
-able to fix it so far.
+Hi Dan,
+thank you for reviewing, I'll fix that up and send v2.
 
-Reported-by: Duje Mihanović <duje@dujemihanovic.xyz>
-Closes: https://lore.kernel.org/all/3367665.aeNJFYEL58@radijator/
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpio-pxa.c | 8 +-------
- 1 file changed, 1 insertion(+), 7 deletions(-)
-
-diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
-index 13f7da2a9486..cbcdd416f8b9 100644
---- a/drivers/gpio/gpio-pxa.c
-+++ b/drivers/gpio/gpio-pxa.c
-@@ -499,8 +499,6 @@ static void pxa_mask_muxed_gpio(struct irq_data *d)
- 	gfer = readl_relaxed(base + GFER_OFFSET) & ~GPIO_bit(gpio);
- 	writel_relaxed(grer, base + GRER_OFFSET);
- 	writel_relaxed(gfer, base + GFER_OFFSET);
--
--	gpiochip_disable_irq(&pchip->chip, gpio);
- }
- 
- static int pxa_gpio_set_wake(struct irq_data *d, unsigned int on)
-@@ -520,21 +518,17 @@ static void pxa_unmask_muxed_gpio(struct irq_data *d)
- 	unsigned int gpio = irqd_to_hwirq(d);
- 	struct pxa_gpio_bank *c = gpio_to_pxabank(&pchip->chip, gpio);
- 
--	gpiochip_enable_irq(&pchip->chip, gpio);
--
- 	c->irq_mask |= GPIO_bit(gpio);
- 	update_edge_detect(c);
- }
- 
--static const struct irq_chip pxa_muxed_gpio_chip = {
-+static struct irq_chip pxa_muxed_gpio_chip = {
- 	.name		= "GPIO",
- 	.irq_ack	= pxa_ack_muxed_gpio,
- 	.irq_mask	= pxa_mask_muxed_gpio,
- 	.irq_unmask	= pxa_unmask_muxed_gpio,
- 	.irq_set_type	= pxa_gpio_irq_type,
- 	.irq_set_wake	= pxa_gpio_set_wake,
--	.flags = IRQCHIP_IMMUTABLE,
--	GPIOCHIP_IRQ_RESOURCE_HELPERS,
- };
- 
- static int pxa_gpio_nums(struct platform_device *pdev)
--- 
-2.48.1
-
+regards,
+Michael
 
