@@ -1,256 +1,274 @@
-Return-Path: <linux-kernel+bounces-753182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA49EB17FA6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:50:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37701B17FA8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E693AE646
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:50:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 544D6582B45
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:50:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CED8F231A23;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9B9D2356CE;
+	Fri,  1 Aug 2025 09:50:06 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38A30231A51;
 	Fri,  1 Aug 2025 09:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HKnp0afs"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5972E22DFB8;
-	Fri,  1 Aug 2025 09:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754041803; cv=none; b=gPHSqDiR2qGopnthhXPS4OZ9mucQDIqrv/5kVj/BcxMdgzljGp4sjUBTUYvdOfS/ABHqxWGuj8f6RVfHXJvnAv8EWj5vYN/G+Hk/dnuKVWl+6AUbdhEWxl/TZQbLGBz1oAsYM8AZ6IsiAZeR2XHrZXkMILPM6ze9BWUPjF2B1ck=
+	t=1754041806; cv=none; b=WU66GBwlsgmrRTNU3+EoimnuaebFENiHzxZy0htM4bMoimZf7xJwEmElhB7FU/92yMfaIZdo0aFPqlWkEJmUgbUq3qqvNZSO0pGA1Pbtz3R3y5Pb7TzslSUGtVqOBnqgOlusb3F47GOxM7sGDElNijVoOvevHL5pFKkZbGw4jx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754041803; c=relaxed/simple;
-	bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Xloq0ctAox9JKIcZbaPTdFMet4q7CopDwBmzf88L/pq+FRyYogVuxYFyfXV5r0ayZ72i18g9T22iK2Wfuvsw9DFd3rWx8lIvFs4c1OyE8+AxgXYBywSsxv+v2G0Nxf6hg1OSBlxc4pyOrpZqKwqgM4XXvCI0XdMI5+vw8PlfEPg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HKnp0afs; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso8202555e9.3;
-        Fri, 01 Aug 2025 02:50:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754041800; x=1754646600; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
-        b=HKnp0afsVA4vPj7RB8S7xNdz8VOQ9mshR5hiUWekxp42G071yUPOMf1/p99Z6nrt6X
-         3hKnm+PRUXxFFOuf/ekjWUSEdrO3luDR40/hyrTH6RajgmYRi8w3AVhPPJ7stj6/VsZm
-         DxtLj/s21Ce1F081nTSDToaMA8zQwccceTuiXPPZZtKo1rD0hIWVjpcUS2bkQRC9Frgp
-         BqlqGYOLOYhnYKeK2dlHUjoQ0sgE2H9acnnoHWzWVZnddvUAigadT6YJoA+7DhnzCajd
-         gDF0dz9snYgr22JiTI5nqmwh/8b4wYjHSflwSvFe9LBzhfmujIF/O27//yHc0NNDu13M
-         5tDQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754041800; x=1754646600;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=QB7yktojV4SmiuIB2Em5vaLnXdNR8TBgORvLFQ22RrI=;
-        b=Rb0vWJC9ooh0YXFMAP3tzcSQib+9hZ6JpT4OZd8Vs3JGB07Ff7EHAxb89wfBWB3TX9
-         YXJBDd2Cx01npGxx8e41JhdG4oxnoRALnZdqYIApLgpw3WthA7I897LncySs5MWpG/HN
-         0xmyYvqEdPrv6DW3Wj/ucqwHlSatxxbnc7g+9ipnJyVCCafaqY3qzgw+LeO0MgMWt0oB
-         3TTNHZqkmMBgY8LvG7vQGbuRiopB+dJb0/m4Bqzb2HjQXajBZxYWLRowAaWixsfFzUKJ
-         x2WE7a4rA4SgXX/DIGivoEhV5f+09FApbRmT3lkHd6AoaTkaku/r41h+FMT/7Bu8itsd
-         wqdw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9nH+0v3iRor330Juvl4BxZMpSaY3St3HApl8y5xVHh2CaxP++F8Xcfb/CwKoIv6czO1UNYZybkE0XPGAekUwM@vger.kernel.org, AJvYcCUKJ1z0usa9DyQJgcIwtS7FQSAqlnXjZQDMt4grwR4yfV3uz1sBjT0PCphD4vCHPk4dESIPiufXSWPuNPE=@vger.kernel.org, AJvYcCV/D9CrTOt7ZePHloM7IfIakVGUVuGGRAdexRdz/nGTCepiDcPzDUvh8qBxxNrFuB77Q82mNl6sbDYj@vger.kernel.org, AJvYcCVJXst12TegiwTKMuDxolSwp9zjosO8AJQxYYfnr9O8m8rQXAPUOrEq/kfwgtP+m1ekoV2H1mOD+IfvK56m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi3TYLUNaVZ7YSdyLKSsbhkYBv+YW3MX1bGUqsdB7DLM8/ebi/
-	OgkWtFQmJrPMndKp47P9LsUeMiGjvr2fPIWOnmhxwka6rwCmL/Uh23zL
-X-Gm-Gg: ASbGncv/FyXC78eE4hUfluCcJ/Aq0mHkC5UM2dqbtWiuqPYaR6hVRpRczA+5qtxW3k0
-	OsB43pkA5VbfhiH6lluuKpwlYQH9US8GZcfXJi/10zQOcQdCGM24Fdf84bXqe+DWErc3KA0fN/A
-	jUzroVDu1osf5W0SdsLDQq0Im0pv7B0eREjUiqlcdv1YqJb/a/CEwp7q790anksnNn9OMbWYlqd
-	w6CQbq1UjkR1rOWuwIRngddLgw1UYmUtGYbOdJupBPIFX+llIvKR+o5Npb5PjJIqe2JkIsWM1RZ
-	ufj7wod2Hr1dz70yOdugm3FLzmdO5fu3CpWyOXyCMW8tb/cZQgaMTJBlDZt6LBxOcIFMeqSE58T
-	kevbtxG2fPp7zLHBrCv8RaKpVvHfgGQSKLh4NtlNjHXfMehuKFXYu36C1W7nl3ZQP82LBC7h9iK
-	iJM9S477KM
-X-Google-Smtp-Source: AGHT+IGM1VbcACYVMzznygtA8YnBMiWc/770n/UqPcXfYjRmcqZqIg2si3EXfeB1ZBYpCKSU7rfNXg==
-X-Received: by 2002:a05:600c:3ba6:b0:450:cf42:7565 with SMTP id 5b1f17b1804b1-45892bce8c7mr82868975e9.23.1754041799445;
-        Fri, 01 Aug 2025 02:49:59 -0700 (PDT)
-Received: from orome (p200300e41f4e9b00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f4e:9b00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953f887asm99109165e9.29.2025.08.01.02.49.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:49:58 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:49:56 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Aaron Kling <webgeek1234@gmail.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Kees Cook <kees@kernel.org>, Tony Luck <tony.luck@intel.com>, 
-	"Guilherme G. Piccoli" <gpiccoli@igalia.com>, devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-Message-ID: <m2jfr3glrivqykyblgk2beagrtbfxyqcoqb3bowadixpcduauj@cqw6resa3uhn>
-References: <53c943dc-5ea6-456b-a289-08212fc01d5d@kernel.org>
- <CALHNRZ8+X61YzQ_gYRkuAZrz2XFiZK36GDgk=801+384y2KnOQ@mail.gmail.com>
- <CALHNRZ-YZg3cKzRBMGaxRpejFMLSpOOz-FPQEaQVXFpFao40WA@mail.gmail.com>
- <CALHNRZ-jxC5PXqiG4tNShybaU9gZjTz4YT+VXgfQFNQ-Ox7crg@mail.gmail.com>
- <yczvbwanjadyfife3hnp2khxkgs77pokypqkxotlldjskshskt@xckrkfucg6xx>
- <CALHNRZ--ZUxqrXHEnizXC8ddHC5LFA10oH+CgQmOcTt+cJ1CWw@mail.gmail.com>
- <6abdc70c-0def-4cf1-b1f4-ea9bdde4fcb5@kernel.org>
- <CALHNRZ8=ikQe4L6h9VHpTGm+OFU0iZA_OV6LUP6jDUySBv4+Lg@mail.gmail.com>
- <lvj5atllziwnfreau25fejckllzhgur3rgh5udpx6boz55lgu5@h6fpsnz4xmkg>
- <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
+	s=arc-20240116; t=1754041806; c=relaxed/simple;
+	bh=+8YKkvy7AZVkeSk4edfgOVhSuHUD6b2Rg/Zla9A+Jkc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=MCmHxqgij/R+FrmvIs+bafCPINNDE9M9Bi585TWleZ/t+ZTlPxSiV8tpIIE9xGxRAhshW4y+ATdpQwEAdgxM/zNTG1YljKMCYifC+0Fj2IHDF19hce6EWuZnUycrcx4WA4u3JXNYfGfOP8CLTMhoEhAMrT42Gxiz9YGUvYq668o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8E059150C;
+	Fri,  1 Aug 2025 02:49:55 -0700 (PDT)
+Received: from J2N7QTR9R3 (usa-sjc-imap-foss1.foss.arm.com [10.121.207.14])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 268A03F66E;
+	Fri,  1 Aug 2025 02:50:01 -0700 (PDT)
+Date: Fri, 1 Aug 2025 10:49:56 +0100
+From: Mark Rutland <mark.rutland@arm.com>
+To: Jiri Olsa <olsajiri@gmail.com>
+Cc: Steven Rostedt <rostedt@kernel.org>, Florent Revest <revest@google.com>,
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Menglong Dong <menglong8.dong@gmail.com>,
+	Naveen N Rao <naveen@kernel.org>,
+	Michael Ellerman <mpe@ellerman.id.au>,
+	=?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@rivosinc.com>,
+	Andy Chiu <andybnac@gmail.com>,
+	Alexandre Ghiti <alexghiti@rivosinc.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>
+Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
+Message-ID: <aIyNOd18TRLu8EpY@J2N7QTR9R3>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="wjc6ud3w4refol5k"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <CALHNRZ9VEUzU07j_fUWhNnF24y64wkO5_Vun-mf6d_m=Xyx4dA@mail.gmail.com>
+In-Reply-To: <aIn_12KHz7ikF2t1@krava>
 
+On Wed, Jul 30, 2025 at 01:19:51PM +0200, Jiri Olsa wrote:
+> On Tue, Jul 29, 2025 at 06:57:40PM +0100, Mark Rutland wrote:
+> > Hi Jiri,
+> > 
+> > [adding some powerpc and riscv folk, see below]
+> > 
+> > On Tue, Jul 29, 2025 at 12:28:03PM +0200, Jiri Olsa wrote:
+> > > hi,
+> > > while poking the multi-tracing interface I ended up with just one
+> > > ftrace_ops object to attach all trampolines.
+> > > 
+> > > This change allows to use less direct API calls during the attachment
+> > > changes in the future code, so in effect speeding up the attachment.
+> > 
+> > How important is that, and what sort of speedup does this result in? I
+> > ask due to potential performance hits noted below, and I'm lacking
+> > context as to why we want to do this in the first place -- what is this
+> > intended to enable/improve?
+> 
+> so it's all work on PoC stage, the idea is to be able to attach many
+> (like 20,30,40k) functions to their trampolines quickly, which at the
+> moment is slow because all the involved interfaces work with just single
+> function/tracempoline relation
 
---wjc6ud3w4refol5k
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] arm64: tegra: Enable ramoops on Tegra210 and newer
-MIME-Version: 1.0
+Do you know which aspect of that is slow? e.g. is that becuase you have
+to update each ftrace_ops independently, and pay the synchronization
+overhead per-ops?
 
-On Mon, Jul 14, 2025 at 01:01:19AM -0500, Aaron Kling wrote:
-> On Thu, Jul 3, 2025 at 2:24=E2=80=AFAM Thierry Reding <thierry.reding@gma=
-il.com> wrote:
-> >
-> > On Mon, Jun 30, 2025 at 01:48:28PM -0500, Aaron Kling wrote:
-> > > On Thu, May 29, 2025 at 3:53=E2=80=AFAM Krzysztof Kozlowski <krzk@ker=
-nel.org> wrote:
-> > > >
-> > > > On 28/05/2025 19:35, Aaron Kling wrote:
-> > > > >>>>
-> > > > >>>> Friendly reminder to the Tegra maintainers about this question.
-> > > > >>>>
-> > > > >>> In lieu of a response from the Tegra subsystem maintainers, I c=
-an only
-> > > > >>> hazard an assumption, Krzysztof. I presume the pstore carveout =
-is
-> > > > >>> bootloader controlled because various stages of the boot stack =
-can
-> > > > >>> dynamically allocate memory, and this became bootloader control=
-led to
-> > > > >>> prevent any of those from overwriting pstore. I worry about har=
-dcoding
-> > > > >>> an address in the kernel dt, then finding out later that there'=
-s an
-> > > > >>> in-use configuration that overwrites or corrupts that section o=
-f ram
-> > > > >>> during boot. What are your thoughts on this? And is there any w=
-ay for
-> > > > >>> this patch to proceed?
-> > > > >>
-> > > > >> I haven't been able to find anything out about this yet. General=
-ly it's
-> > > > >> difficult to get the bootloaders updated for these devices. Tegr=
-a194 and
-> > > > >> Tegra234 may be new enough to make an update eventually go into a
-> > > > >> release, but for Tegra186 and older, I honestly wouldn't hold my
-> > > > >> breath.
-> > > > >>
-> > > > >> Thierry
-> > > > >
-> > > > > Krzysztof, based on this response, is there any way or form that =
-the
-> > > > > Tegra186 part of this could be submitted? I can drop the newer
-> > > > > platforms from this patch if Thierry can get a response to his ot=
-her
-> > > > > reply about how the bootloader could conform.
-> > > > >
-> > > > I don't NAK it. Eventually it is up to platform maintainer if they
-> > > > accept known DTC warnings.
-> > > >
-> > > > Best regards,
-> > > > Krzysztof
-> > >
-> > > If the decision is up the the tegra maintainers, then Thierry, what's
-> > > your thoughts now? What is in this patch should be compatible with
-> > > existing l4t and android bootloaders. But it does add a few new dtb
-> > > check lines.
-> >
-> > I don't adding new DTC warnings, especially ones that we know up front
-> > we can never get rid of. The memory one is a notable exception because
-> > the system becomes unusable without it.
-> >
-> > ramoops is not in that same category. While it's certainly nice to have,
-> > I don't think it's critical enough to warrant that permanent exception.
-> > Where possible I think we need to work to address issues souch as this
-> > at the root and fix bootloaders to do the right thing.
-> >
-> > For any cases where we can't fix the bootloaders, I think that's
-> > something we have to live with. Having the support for this live in a
-> > fork is a fair compromise, I think.
-> >
-> > I know this is frustrating, and it's very painful for me personally
-> > because I initially set out to redress a lot of these things and failed
-> > to do so.
-> >
-> > However I can't justify accepting endless amounts of quirks upstream,
-> > all of which would set a bad precedent, just for the sake of things
-> > being upstream.
-> >
-> > Thierry
->=20
-> Alright, so to make sure everything is on the same page, let me walk
-> through the archs.
->=20
-> T210: This fits within dt check requirements afaik. If I send a v2
-> with only t210, would that patch be acceptable? Though, I would like
-> to double check that my assumption about the arch is correct. The
-> downstream 4.9 kernel does allocations for ramoop I can't quite track
-> in the vendor code. I'm assuming that by matching what the downstream
-> kernel picks, that it's within a large carveout that the bootloader
-> will never touch. I've not seen any corruption in my use of it so far.
-> Is this a safe assumption?
+I ask because it might be possible to do some more batching there, at
+least for architectures like arm64 that use the CALL_OPS approach.
 
-I haven't looked into ramoops support at all yet, so I don't know how
-this is handled. If we can find out where exactly this memory is and
-that it's guaranteed to be static, then maybe we can hardcode this. If
-not, I don't think there's much of a chance to get anything in.
+> there's ongoing development by Menglong [1] to organize such attachment
+> for multiple functions and trampolines, but still at the end we have to use
+> ftrace direct interface to do the attachment for each involved ftrace_ops 
+> 
+> so at the point of attachment it helps to have as few ftrace_ops objects
+> as possible, in my test code I ended up with just single ftrace_ops object
+> and I see attachment time for 20k functions to be around 3 seconds
+> 
+> IIUC Menglong's change needs 12 ftrace_ops objects so we need to do around
+> 12 direct ftrace_ops direct calls .. so probably not that bad, but still
+> it would be faster with just single ftrace_ops involved
+> 
+> [1] https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
+> 
+> > 
+> > > However having just single ftrace_ops object removes direct_call
+> > > field from direct_call, which is needed by arm, so I'm not sure
+> > > it's the right path forward.
+> > 
+> > It's also needed by powerpc and riscv since commits:
+> > 
+> >   a52f6043a2238d65 ("powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT_CALLS")
+> >   b21cdb9523e5561b ("riscv: ftrace: support direct call using call_ops")
+> > 
+> > > Mark, Florent,
+> > > any idea how hard would it be to for arm to get rid of direct_call field?
+> > 
+> > For architectures which follow the arm64 style of implementation, it's
+> > pretty hard to get rid of it without introducing a performance hit to
+> > the call and/or a hit to attachment/detachment/modification. It would
+> > also end up being a fair amount more complicated.
+> > 
+> > There's some historical rationale at:
+> > 
+> >   https://lore.kernel.org/lkml/ZfBbxPDd0rz6FN2T@FVFF77S0Q05N/
+> > 
+> > ... but the gist is that for several reasons we want the ops pointer in
+> > the callsite, and for atomic modification of this to switch everything
+> > dependent on that ops atomically, as this keeps the call logic and
+> > attachment/detachment/modification logic simple and pretty fast.
+> > 
+> > If we remove the direct_call pointer from the ftrace_ops, then IIUC our
+> > options include:
+> > 
+> > * Point the callsite pointer at some intermediate structure which points
+> >   to the ops (e.g. the dyn_ftrace for the callsite). That introduces an
+> >   additional dependent load per call that needs the ops, and introduces
+> >   potential incoherency with other fields in that structure, requiring
+> >   more synchronization overhead for attachment/detachment/modification.
+> > 
+> > * Point the callsite pointer at a trampoline which can generate the ops
+> >   pointer. This requires that every ops has a trampoline even for
+> >   non-direct usage, which then requires more memory / I$, has more
+> >   potential failure points, and is generally more complicated. The
+> >   performance here will vary by architecture and platform, on some this
+> >   might be faster, on some it might be slower.
+> > 
+> >   Note that we probably still need to bounce through an intermediary
+> >   trampoline here to actually load from the callsite pointer and
+> >   indirectly branch to it.
+> > 
+> > ... but I'm not really keen on either unless we really have to remove 
+> > the ftrace_ops::direct_call field, since they come with a substantial
+> > jump in complexity.
+> 
+> ok, that sounds bad.. thanks for the details
+> 
+> Steven, please correct me if/when I'm wrong ;-)
+> 
+> IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
+> it will bypass ftrace trampoline and call directly the direct trampoline
+> for the function, like:
+> 
+>    <foo>:
+>      call direct_trampoline
+>      ...
 
-> T186: Software support for this arch is eol, so what the bootloader
-> does cannot be changed. Presumably no other choice but to relegate to
-> a commit in a fork or out of tree patches.
+More details at the end of this reply; arm64 can sometimes do this, but
+not always, and even when there's a single ftrace_ops we may need to
+bounce through a common trampoline (which can still be cheap).
 
-Sounds about right.
+> IF there are other ftrace_ops 'users' on the same function, we execute
+> each of them like:
+> 
+>   <foo>:
+>     call ftrace_trampoline
+>       call ftrace_ops_1->func
+>       call ftrace_ops_2->func
+>       ...
 
-> T194: Some software support still exists for this arch in L4T r35. Is
-> there any positive feedback on making bootloader changes to meet dt
-> check requirements, or is it too late in the cycle?
->=20
-> T234: Still has active software support in L4T r36. But essentially
-> the same question as t194.
+More details at the end of this reply; arm64 does essentially the same
+thing via the ftrace_list_ops and ftrace_ops_list_func().
 
-We can probably fix things for these two generations.
+> with our direct ftrace_ops->func currently using ftrace_ops->direct_call
+> to return direct trampoline for the function:
+> 
+> 	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
+> 	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> 	-{
+> 	-       unsigned long addr = READ_ONCE(ops->direct_call);
+> 	-
+> 	-       if (!addr)
+> 	-               return;
+> 	-
+> 	-       arch_ftrace_set_direct_caller(fregs, addr);
+> 	-}
 
-> T264: I assume whatever happens for t234 will be mirrored here.
+More details at the end of this reply; at present, when an instrumented
+function has a single ops, arm64 can call ops->direct_call directly from
+the common trampoline, and only needs to fall back to
+call_direct_funcs() when there are multiple ops.
 
-Yes. We do try to incrementally improve things on newer generations, so
-anything we fix for Tegra194/Tegra234 I expect will be done for Tegra264
-and later chips, too.
+> in the new changes it will do hash lookup (based on ip) for the direct
+> trampoline we want to execute:
+> 
+> 	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
+> 	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
+> 	+{
+> 	+       unsigned long addr;
+> 	+
+> 	+       addr = ftrace_find_rec_direct(ip);
+> 	+       if (!addr)
+> 	+               return;
+> 	+
+> 	+       arch_ftrace_set_direct_caller(fregs, addr);
+> 	+}
+> 
+> still this is the slow path for the case where multiple ftrace_ops objects use
+> same function.. for the fast path we have the direct attachment as described above
+> 
+> sorry I probably forgot/missed discussion on this, but doing the fast path like in
+> x86_64 is not an option in arm, right?
 
-Thierry
+On arm64 we have a fast path, BUT branch range limitations means that we
+cannot always branch directly from the instrumented function to the
+direct func with a single branch instruction. We use ops->direct_call to
+handle that case within a common trampoline, which is significantly
+cheaper that iterating over the ops and/or looking up the direct func
+from a hash.
 
---wjc6ud3w4refol5k
-Content-Type: application/pgp-signature; name="signature.asc"
+With CALL_OPS, we place a pointer to the ops immediately before the
+instrumented function, and have the instrumented function branch to a
+common trampoline which can load that pointer (and can then branch to
+any direct func as necessary).
 
------BEGIN PGP SIGNATURE-----
+The instrumented function looks like:
 
-iQIzBAABCgAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmiMjcQACgkQ3SOs138+
-s6EXbxAAp/2ISBeceWrB2Fi/iGZ1o81c0FJnyu3V3xrJS/qzF188lvcMdeLQ2bsN
-AqQxJ8JP1bl5MEpJ2gcJ+W/0DadKxIJGyxVEUPHblZK+A2V/6V8ha5HLJ0/cdgV2
-Z7yWTiDQx4rZgK+ojKqXcjnS+xFC0WXNkYz5dvhzZsFOIneH7/vywTgmX8j83bhU
-UZ5YrtyD9aeQcJH5ttB9TCcFOPcK/PeZrbBEDudmPk0GFJWPCCr6OEtoSO6r7Hpi
-U5mCt/FfMrGe15ko3YB+YSXbofd9SMQIVtUxJgQtihrZAWX9fS7Ccc1EdKhIHDNg
-3P3T1LzNFRAuf6wID6AELgWJQuBZMuaBGBnjRKf1z5+8ilyncXJOR/e2QHNZQDyl
-XwatXoFrMJb0+MgjD5zwD5jyZKDTT7Y3oSZQlOTvdRt52q6gPCW7jLJwQhUdPX7s
-3xXwByUP7UuxZAMAMGLQmXNEOy3wPHihgRTG1xuhXufjiTpqKga5LG/PjKouD+P3
-20CG53EmBhQF6p/MlYcxClJAGRJgpp0Vnr9eUSoNEesEof5olkPWFBmTUME6xyLo
-kjfLbVIfQZWuhougWjNf+MFLRB5Y/GbbaDPp09lma78iwO6NTZvim69q4LLSrreM
-3VizxRCsbmnvu2UdkY9fiSWnT7WCAwpM4eSY7U/LdxKoiUjqMes=
-=7rs+
------END PGP SIGNATURE-----
+	# Aligned to 8 bytes
+	func - 8:
+		< pointer to ops >
+	func:
+		BTI		// optional
+		MOV	X9, LR	// save original return address
+		NOP		// patched to `BL ftrace_caller`
+	func_body:
 
---wjc6ud3w4refol5k--
+... and then in ftrace_caller we can recover the 'ops' pointer with:
+
+	BIC	<tmp>, LR, 0x7					// align down (skips BTI)
+	LDR	<ops>, [<tmp>, #-16]				// load ops pointer
+
+	LDR	<direct>, [<ops>, #FTRACE_OPS_DIRECT_CALL]	// load ops->direct_call
+	CBNZ	<direct>, ftrace_caller_direct			// if !NULL, make direct call
+
+	< fall through to non-direct func case here >
+
+Having the ops (and ops->direct_call) means that getting to the direct
+func is significantly cheaper than having to lookup the direct func via
+the hash.
+
+Where an instrumented function has a single ops, this can get to the
+direct func with a low constant overhead, significantly cheaper than
+looking up the direct func via the hash.
+
+Where an instrumented function has multiple ops, the ops pointer is
+pointed at a common ftrace_list_ops, where ftrace_ops_list_func()
+iterates over all the other relevant ops.
+
+Mark.
 
