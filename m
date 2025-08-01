@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-753663-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82F99B18618
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:57:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAB1FB1861C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:58:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DF7C6258F0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:57:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED5C41C2279F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 393FD1DCB09;
-	Fri,  1 Aug 2025 16:57:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3FC491DDC1B;
+	Fri,  1 Aug 2025 16:57:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="OARbWuqN"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="dJfM2wc3"
+Received: from mail-qk1-f175.google.com (mail-qk1-f175.google.com [209.85.222.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E27E11D799D;
-	Fri,  1 Aug 2025 16:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 215E11DBB13
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:57:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754067443; cv=none; b=V80jRbwCFkKuM+PjAaAi8SsYzUBoU/ytQPlEaytL3FNECi/EfsyB0dAk4S7YLA5xAkib4uKqDY5zIfmZS16tu0zDs6C0TxN6QS2u9YDlYzcmyQmrI3E+lYo2QOjqhuXYgEVAkm/ZCcBr6UEd7GhOioWKjsr+Wn5NiuyI+lrbPQA=
+	t=1754067473; cv=none; b=LPuKvGAexyK84It6/LAKeeIu/X+29wXK9+plDgMmLEBdrv0mLBFWcqPTdp/SAe1KxBZxN4apuQw9OxZ6X3wyjha75qpSH9g8cIHOraR4yJYW1QLtAwAUTPy9h6rzRGv5F97ATHQBsabjR1kbbtfTCoz8Lc5lfKgfQfSd2BCGl6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754067443; c=relaxed/simple;
-	bh=gWrECkBQba7Mb51irv5Aubf/6htm69Ajn4uQkfCbS/c=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JuwggjEzB8z6TQwF0+pChc9oFhmcJwz3WiwPNqb16RwD7HkGSyapyDhnKAkeyEfug7j9qy70d3Vn3mpTO1o/stXiVGnBEz/6/XthXvBvfoB/9RlJ9z4NUA4XjxGTSY3desYgdWZRF6TTVYt0/uKLRulFQGb7R0CWTJ8ZJOH5zxw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=OARbWuqN; arc=none smtp.client-ip=198.175.65.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754067442; x=1785603442;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=gWrECkBQba7Mb51irv5Aubf/6htm69Ajn4uQkfCbS/c=;
-  b=OARbWuqN2tSufbHhlokTwXTqjz+1hCj6dkkdGtwZf80cK50en0fByJwD
-   MHRvcE0QCnMKoQ44wQEf8LtVBDdGqDgrb9ySqwvxAuxJKfbc3c54gtCrH
-   9B4IQCXFm3HAL8OMGXSAsC8TCaHHQiPLdKfVMv/KByuNKrEeqVmBRpOgK
-   HQH+wLcJRxJHyAzvvbhjSNyXo/A/f50kDPSMAcXqseJA0XxvsE+IQZ/pj
-   0aGBQUW772WdRAbJ6Ygv/5wi1NrDhoPP/7Pfi7WikdSGjOaC2bz+Cz0tq
-   UK1jQXSUqd1Oetilbfj3X870Aa133R4iaD9174/J4DeCYbcHM56FPD97h
-   A==;
-X-CSE-ConnectionGUID: Fa1LGqgjRc6iQM/koHe1mQ==
-X-CSE-MsgGUID: MCDNQMBMQZi+Z3NZgAvYDQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="67494526"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="67494526"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:57:19 -0700
-X-CSE-ConnectionGUID: wRLR/fXXTf6Mbb+XYpi/kQ==
-X-CSE-MsgGUID: KX9mFKKaTUKS6W7PWE907g==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="163986187"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:57:19 -0700
-Message-ID: <80006246-d0c5-475d-a8c7-bdb5446d9489@intel.com>
-Date: Fri, 1 Aug 2025 09:57:18 -0700
+	s=arc-20240116; t=1754067473; c=relaxed/simple;
+	bh=vDejQUFTFKWHa1k801+hC0Yzdnwhqf+NoOVFx9dNlc8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=B81HcedExkXICQNrNMraqEAS+3BLgmNUe87ykmDa9WfIDbu3R9iihDBZ5g0asM9ep/CgzqlUpuC57OKLjrreb1mNrSnkLqBfMLXZ4pjBKcekIldxTt8F1/IJH3I3vijx1DZmIM2BalbJ/ojJHBtDYtJ/CactwsLdYpuLy5AQgDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=dJfM2wc3; arc=none smtp.client-ip=209.85.222.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f175.google.com with SMTP id af79cd13be357-7e34493ecb4so113837585a.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 09:57:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1754067471; x=1754672271; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=PDG0NiUkE6aQQh2+3vtxR81GyiRPYX8OvGtHO76jA4Q=;
+        b=dJfM2wc3j3H/mesSDcAy2ptGjlnL6BXpjsgyWzJDLDVFYdnsqt5oF97BRruv+vwT6a
+         31HxaCw6qlqOJa2BYhAPUHFJ4SGKc+ojIMm2eUiCVZQP4WjaqwlZhrbKpyGk/vmrumbg
+         9BWoqA6e4LwokCz9+z1VEnazea+g0p/XTPvpbw9HAxIR89DVJ0tO13hJxIWkYuJSFg7n
+         xj+MP735juI0dVuhYEQwfU8ODF34Wn0nygN5D8gzlVXxuMrw7MUrs/0d4M2x9b5Rj2Rc
+         F772guoSIihsoAWefuJGn/Il5QYW2hQyDqbrfk9xdBHB6bSJ69MB3qgOX7VSb7zl+U+G
+         41pQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754067471; x=1754672271;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PDG0NiUkE6aQQh2+3vtxR81GyiRPYX8OvGtHO76jA4Q=;
+        b=AFAZPHtrj3DOiB6ETgEFARNgLeCz9YOY5c/xsvh3B1t52FA26/tdS/W2+MUqMOLhJw
+         wvX6tRCZ+1qv5dYLzq2HaLsZDepav/EOZIamkZUhw1O/uEjSkQZ2RZvaN3GUkZ/PA2QT
+         0PcYUSTOn4eZ9HT6u3Riml5uKwWi4b4MbHcd7oBeB6yGHo0WTNCv0iMQLflG45I+iVra
+         3eDfeQpHwP/EfyJ6Xv1IY4n+LRWzb/2FMyQ4qLatcy6OQPwfWaTW1r1Wl6iESHezop3T
+         WINxZV9sIGt8z1ll4uYrKXT59Z0FJWMRPHBSd34TcSh4CpVHMhCpEZgnfYudM4A20e/d
+         jNKA==
+X-Forwarded-Encrypted: i=1; AJvYcCWIn/gc+VuVosemLmga8ar9ij80PlsarjPVebWmzS5bkjcTm0ACjxM0kUHXGIx1optkEqpWAyiIToqlB0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgNtPZt6csSUHQok1xxeiS6i8U7RYCnIYthZesvTrA65efyGc5
+	wWivnqXafyJdBBnuB2Q4tyJiDh/kMmXzsT1G/1vCqTV2SidmetMlgc+N/xpmoRmMS9U=
+X-Gm-Gg: ASbGncuxjPMMpYO3SYby7RF6M+uzriMJiiFk1AtN3G81RDxInmY2GjgOixOfw/hZwK8
+	tgf1TaaW3w60VwtEyJJTvjWP6st3c/GuW5I5t7023VICAWvjevBLLrX6G/NvHbnzVl2HlUuSPQ9
+	XY1Nj3uuYWyd9S8ZpJ6Jr35+1uMUuxnfCtRmoEUZcKzpBL9y4+kzHTpnn39xIT6yx+pud/PAGgS
+	GUH+5+45yQEiCOix7ZP7nFlF6mWg6ANpTsXR6rRCExKZP5H8Mzt5vA2Zm2Be4kQMPsG8kPAy7XD
+	QKAwCKjSjz65WUh9skojOETIYdy0cNMlGnJghn3p5XHdwdFaXt/kl4fRfLYJwb/ffuQF+WiYoIV
+	gm0pbIosD54DBOF6t53UXm4DL91W6QrZzeLWVrtIEBxYVyTOJruH+PLyf2cB3/800IBUo
+X-Google-Smtp-Source: AGHT+IERBfIl6+3LPr31vnFrHmPwk8v4BHZ0fVqJ0PrqlgFbKe+fN+UuB/UkeSinm2wl6jaqpYu7OQ==
+X-Received: by 2002:a05:620a:4093:b0:7e0:f7e3:7927 with SMTP id af79cd13be357-7e6962a98edmr81964885a.21.1754067470755;
+        Fri, 01 Aug 2025 09:57:50 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e67f597e32sm234364185a.18.2025.08.01.09.57.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 09:57:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uht4n-000000013IN-2zx7;
+	Fri, 01 Aug 2025 13:57:49 -0300
+Date: Fri, 1 Aug 2025 13:57:49 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: David Hildenbrand <david@redhat.com>
+Cc: Alistair Popple <apopple@nvidia.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Yonatan Maman <ymaman@nvidia.com>,
+	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>,
+	Danilo Krummrich <dakr@kernel.org>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Ben Skeggs <bskeggs@nvidia.com>,
+	Michael Guralnik <michaelgur@nvidia.com>,
+	Or Har-Toov <ohartoov@nvidia.com>,
+	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>,
+	linux-mm@kvack.org, linux-rdma@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
+Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
+ private pages
+Message-ID: <20250801165749.GF26511@ziepe.ca>
+References: <aHpXXKTaqp8FUhmq@casper.infradead.org>
+ <20250718144442.GG2206214@ziepe.ca>
+ <aH4_QaNtIJMrPqOw@casper.infradead.org>
+ <7lvduvov3rvfsgixbkyyinnzz3plpp3szxam46ccgjmh6v5d7q@zoz4k723vs3d>
+ <aIBcTpC9Te7YIe4J@ziepe.ca>
+ <cn7hcxskr5prkc3jnd4vzzeau5weevzumcspzfayeiwdexkkfe@ovvgraqo7svh>
+ <a3f1af02-ef3f-40f8-be79-4c3929a59bb7@redhat.com>
+ <i5ya3n7bhhufpczprtp2ndg7bxtykoyjtsfae6dfdqk2rfz6ix@nzwnhqfwh6rq>
+ <20250801164058.GD26511@ziepe.ca>
+ <b8009500-8b0b-4bb9-ae5e-6d2135adbfdd@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 4/6] x86/sgx: Define error codes for use by
- ENCLS[EUPDATESVN]
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
- mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
- chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
- bondarn@google.com, scott.raynor@intel.com
-References: <20250801112619.1117549-1-elena.reshetova@intel.com>
- <20250801112619.1117549-5-elena.reshetova@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
- oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
- 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
- ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
- VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
- iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
- c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
- pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
- ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
- QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
- c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
- LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
- lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
- MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
- IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
- aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
- I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
- E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
- F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
- CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
- P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
- 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
- GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
- MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
- Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
- lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
- 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
- qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
- BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
- 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
- vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
- FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
- l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
- yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
- +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
- asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
- WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
- sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
- KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
- MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
- hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
- vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
-In-Reply-To: <20250801112619.1117549-5-elena.reshetova@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <b8009500-8b0b-4bb9-ae5e-6d2135adbfdd@redhat.com>
 
-On 8/1/25 04:25, Elena Reshetova wrote:
-> Add error codes for ENCLS[EUPDATESVN], then SGX CPUSVN update
-> process can know the execution state of EUPDATESVN and notify
-> userspace.
+On Fri, Aug 01, 2025 at 06:50:18PM +0200, David Hildenbrand wrote:
+> On 01.08.25 18:40, Jason Gunthorpe wrote:
+> > On Fri, Jul 25, 2025 at 10:31:25AM +1000, Alistair Popple wrote:
+> > 
+> > > The only issue would be if there were generic code paths that somehow have a
+> > > raw pfn obtained from neither a page-table walk or struct page. My assumption
+> > > (yet to be proven/tested) is that these paths don't exist.
+> > 
+> > hmm does it, it encodes the device private into a pfn and expects the
+> > caller to do pfn to page.
+> > 
+> > This isn't set in stone and could be changed..
+> > 
+> > But broadly, you'd want to entirely eliminate the ability to go from
+> > pfn to device private or from device private to pfn.
+> > 
+> > Instead you'd want to work on some (space #, space index) tuple, maybe
+> > encoded in a pfn_t, but absolutely and typesafely distinct. Each
+> > driver gets its own 0 based space for device private information, the
+> > space is effectively the pgmap.
+> > 
+> > And if you do this, maybe we don't need struct page (I mean the type!)
+> > backing device memory at all.... Which would be a very worthwhile
+> > project.
+> > 
+> > Do we ever even use anything in the device private struct page? Do we
+> > refcount it?
 > 
-> Signed-off-by: Elena Reshetova <elena.reshetova@intel.com>
-> ---
->  arch/x86/include/asm/sgx.h | 37 ++++++++++++++++++++++---------------
->  1 file changed, 22 insertions(+), 15 deletions(-)
-> 
-> diff --git a/arch/x86/include/asm/sgx.h b/arch/x86/include/asm/sgx.h
-> index 6a0069761508..1abf1461fab6 100644
-> --- a/arch/x86/include/asm/sgx.h
-> +++ b/arch/x86/include/asm/sgx.h
-> @@ -28,21 +28,22 @@
->  #define SGX_CPUID_EPC_MASK	GENMASK(3, 0)
->  
->  enum sgx_encls_function {
-> -	ECREATE	= 0x00,
-> -	EADD	= 0x01,
-> -	EINIT	= 0x02,
-> -	EREMOVE	= 0x03,
-> -	EDGBRD	= 0x04,
-> -	EDGBWR	= 0x05,
-> -	EEXTEND	= 0x06,
-> -	ELDU	= 0x08,
-> -	EBLOCK	= 0x09,
-> -	EPA	= 0x0A,
-> -	EWB	= 0x0B,
-> -	ETRACK	= 0x0C,
-> -	EAUG	= 0x0D,
-> -	EMODPR	= 0x0E,
-> -	EMODT	= 0x0F,
-> +	ECREATE		= 0x00,
-> +	EADD		= 0x01,
-> +	EINIT		= 0x02,
-> +	EREMOVE		= 0x03,
-> +	EDGBRD		= 0x04,
-> +	EDGBWR		= 0x05,
-> +	EEXTEND		= 0x06,
-> +	ELDU		= 0x08,
-> +	EBLOCK		= 0x09,
-> +	EPA		= 0x0A,
-> +	EWB		= 0x0B,
-> +	ETRACK		= 0x0C,
-> +	EAUG		= 0x0D,
-> +	EMODPR		= 0x0E,
-> +	EMODT		= 0x0F,
-> +	EUPDATESVN	= 0x18,
->  };
+> ref-counted and map-counted ...
 
-This update is not consistent with the changelog nor the patch subject.
+Hm, so it would turn into another struct page split up where we get
+ourselves a struct device_private and change all the places touching
+its refcount and mapcount to use the new type.
 
->  /**
-> @@ -73,6 +74,10 @@ enum sgx_encls_function {
->   *				public key does not match IA32_SGXLEPUBKEYHASH.
->   * %SGX_PAGE_NOT_MODIFIABLE:	The EPC page cannot be modified because it
->   *				is in the PENDING or MODIFIED state.
-> + * %SGX_INSUFFICIENT_ENTROPY:	Insufficient entropy in RNG.
-> + * %SGX_NO_UPDATE:		EUPDATESVN was successful, but CPUSVN was not
-> + *				updated because current SVN was not newer than
-> + *				CPUSVN.
+If we could use some index scheme we could then divorce from struct
+page and strink the struct size sooner.
 
-This comment bothers me. This is an *ERROR* code. It means that
-EUPDATESVN was *NOT* successful. It failed. It didn't do an update.
-
-Now, it's not a _bad_ error code. It's kinda like read() returning 0.
-It's a "no harm no foul" kind of thing. But it's *NOT* success.
-
-Ideally, we find a way to relay this in a very succinct way.
+Jason
 
