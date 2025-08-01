@@ -1,112 +1,109 @@
-Return-Path: <linux-kernel+bounces-753597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBE8FB18514
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D4D7B18515
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:36:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B2DA118860C7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EC75CA84EFA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:36:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B7932727EA;
-	Fri,  1 Aug 2025 15:35:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BDF1271469;
+	Fri,  1 Aug 2025 15:36:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YOIP77NF"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NeTbiJYP"
+Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A1418BC3B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:35:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80A1726CE06;
+	Fri,  1 Aug 2025 15:36:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062512; cv=none; b=O5bvuJ9GQSNCOR9UhQGhXB7v5aCptvySp8Rt9JDAezv4Psxc3KTKmsvhF5uBQyLjd28kT9sNK3VbiIHecHutV6Gc4ymH8WmxIYdN1uAHMJHzfMWD8T9ks1DsN116Ymfw0xNmLz+WnHD3nk6U9Xs9RGH293MsvDPCu6SJaRzM43o=
+	t=1754062572; cv=none; b=FxItkQ6hl4xSU0nU/Uujec9tD+o9Jrftdz6oYDyYJ/ihMvOa5+ab0jOhuN/mNvV3gJcjGfIIgcuY5uIGgR5tEP/Ih7BLi5ytmzA6Jrz9J7Xq0YpwJ+zLVBQBmMvyMgx2F1IirecXM74k5YYj6V14snp6UMtP6rWjaXSbBPdBQlw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062512; c=relaxed/simple;
-	bh=3t7pavYnxvZ2zr+sT6EoGPHPeQNdp+X8VdJPWKkQuPc=;
+	s=arc-20240116; t=1754062572; c=relaxed/simple;
+	bh=aZQwspZkYDsMYZ9F9Yy7SFi+A0vpDpdUoNJSp+qMEdY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RgpEDY+Tq9AHUl/TS3enNj3VrjP4k+I+kbZnV0bMc+0yxQKEL3hzP+o72+R1Qu5vluk/mrBNa+e1fdmiQaRZ40YXVz6q+Js5+eKPz8Jobuyu6VSEC5AAEXqsIC/RUj4/DyVpD0aov2mM/f6pA+0VHYV4mt1qA9Hz3ii55Y29/pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YOIP77NF; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754062510;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3t7pavYnxvZ2zr+sT6EoGPHPeQNdp+X8VdJPWKkQuPc=;
-	b=YOIP77NF7lazTK/RehrrpO2QcQJxkYt687yj3WIwODxSyom4Ig2vTEH/CpFgO/pLWoBR3W
-	OXgQupzcxwutznlvlYUhLRwWWKLtHerIv0c/WEt6YdYVskDQNFzhDcvBNc1H2fNa4q5QyC
-	LIHkU2k/VpVSe/Z0l0lPeMbQId6rTIY=
-Received: from mail-ej1-f72.google.com (mail-ej1-f72.google.com
- [209.85.218.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-669-VsWbN5TMO6qeVMwESP2PnA-1; Fri, 01 Aug 2025 11:35:04 -0400
-X-MC-Unique: VsWbN5TMO6qeVMwESP2PnA-1
-X-Mimecast-MFC-AGG-ID: VsWbN5TMO6qeVMwESP2PnA_1754062503
-Received: by mail-ej1-f72.google.com with SMTP id a640c23a62f3a-af911f05997so155847366b.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:35:04 -0700 (PDT)
+	 To:Cc:Content-Type; b=ixYEcATAdqPQDjOLIAagCQeV9Lwv4tvmPiX9PK46q25oLSqlsVQp1cVQvOcTomK2Xh0bjGI68v+ct3xv6xGm8Bf4xy4nOwixa9sowmCpGrY6MMaaNoU/zoIE7ly12Ut5/2ftCG2pxsr7VvnWI1C61ACcFH4LrnS5Y3WmJtwt9QA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NeTbiJYP; arc=none smtp.client-ip=209.85.215.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b38fdac002bso240377a12.0;
+        Fri, 01 Aug 2025 08:36:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754062570; x=1754667370; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=aZQwspZkYDsMYZ9F9Yy7SFi+A0vpDpdUoNJSp+qMEdY=;
+        b=NeTbiJYPSDkZ0waKeOiBPRkRYys0B/NaBR/nQq7VRtc17Tn40ZCjgDGVmGUvKCnENo
+         +gLJ/05zgC+kFPFP5SMOyGOEW4goNxXImFTUN3X4SKkpcAQcFcg1vlwj4z50eTgoEdDa
+         J7Qzsz/p5kUUaF+beITC+jxoyB1IBUQTVmuYIBtUp7U+Cd0YsaI0owNcyN3FrMmLzW/F
+         agcPEhjxRIpd7xARWUEj4s3y4z9PKO+22F2MEyceQ0Lea3lQepOt+fAe5h4CYO3Xr1pw
+         F01f9RJd+y04Zi7K/mkbxZ2YmADyf2YiMkY92AzK9a1xU+ELd7tM9usQ4enVL9Arz10u
+         kxlw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754062503; x=1754667303;
+        d=1e100.net; s=20230601; t=1754062570; x=1754667370;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=3t7pavYnxvZ2zr+sT6EoGPHPeQNdp+X8VdJPWKkQuPc=;
-        b=Wd2F2ek6N4tUCyG99b9VqQKNr6mwSZ0L/Mwl5z8EMyAz19KqEKdwkF1WaLvIYnzGWk
-         p0cjyN8VNVsSrk4G1trVs1J7cBhkzU4ekG/N+oO4nt1ycG/lUZ354B7cfiSoSxnQFSSw
-         R7ZzS7CGlwJLJ6tKmI6bX7Po1edh5AmCQ8jAZmL42GlWf85HBbrf7HiKVOTthLQUuMr/
-         5YLhe74nHN/J6wnW8Oas7sSVFj6uA4BCtMm6sRFvkPa1KTgxtI/s7y0PjEn82V90dMf8
-         ZPM9u2CtJ7oiJI08294655weLRNwDrL20PbhH4FWyaCwkXsEjFfUhEQ9IYSc8B4gSwQU
-         Usvw==
-X-Forwarded-Encrypted: i=1; AJvYcCV0QUy602J72055o/Ve8uAjHK5YsDizP52r0hyRp5T4aRxUavSnfM+7Yv/x9iIllh828RdoOSRH0mykNsU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXsyEHS129GC+2fpSxEQiQvgCN+g/33MFFPV6Ww7cHEDp5O5ef
-	amboXdfhtvLr4inrKs+OA1hohiTzYv2SbruenHmHKVzMnlAw97nA1AOjF4tSmLX/K1/wKSWtoDX
-	U9lF4iB3GKOEYECJyOHrQmwyp9hi5AfWQ7yT/SKDuMudTZYBQAnXI/PhY/Nocn7WYOkwZkwuaEN
-	ZlA87HdEJw8cs60aKcK8vxjOHPv8zVofN0nn2n3oojfXObqmMO
-X-Gm-Gg: ASbGncvSLyHyzpX609b0rPZilI3kES/ostbjx07dovgRTBkLnHUmjs/VFjtEaeiucZd
-	bISPmu4nnJ5fEnxzLW0dQDpFclScvMycK0zg3yJF1PkvaxovN1Pg0Z/JidFu7zRkIw2OMtNcRns
-	7t/yr405eIKUNqQ66ZM/x5G3rQP22woTMDpqcVGCuYClwSu1IhMbs=
-X-Received: by 2002:a17:907:9455:b0:ae6:dd93:d7d1 with SMTP id a640c23a62f3a-af94022bd18mr24177466b.56.1754062502697;
-        Fri, 01 Aug 2025 08:35:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEffcQ80umUTy89ebwr2s4PAM6/RBBB8AMdwFz4nIXXP4EkDzw5biAznHDWzpfhf0kLY0g1Q4rSu75I/gxLePE=
-X-Received: by 2002:a17:907:9455:b0:ae6:dd93:d7d1 with SMTP id
- a640c23a62f3a-af94022bd18mr24173766b.56.1754062502265; Fri, 01 Aug 2025
- 08:35:02 -0700 (PDT)
+        bh=aZQwspZkYDsMYZ9F9Yy7SFi+A0vpDpdUoNJSp+qMEdY=;
+        b=lnJ/GFufdOCNAMKoMamXeqRSC4sRQ9YgKhMoVFXDgKlL09Gqzka0GcspfOr/ZJlFqu
+         uMwO4pEiGEyvjMNyAX1OO3hXt/thN82l+vpZL7/cbSbd4waazsRrK3FweGoslbZ31P8p
+         YGSg051E2iE5Jo6VGF/HFs6CuE/5qX/57ENZORLlI+wzSmsyke8TzLRHWNMlz/cVMgcG
+         8YEhjos8xT2mJy9Q1vd5kaOakBSWTrjlrIM7t80wJF9zur3J96kbeepbduZ6SyLHIHSy
+         SyFTH2FDqWQq48OKA7ILbaGY+dxmvWlv70OVqB746OFUSEg37w9FlSkgXJgQvqvsjN8q
+         fwcQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV1JiObnBXBIGZN4CfEZ6ck1WaVsxaFxYBXOdeBbxDcR6zvq7z/9H5iZ62veTnViL8pHlH9sa4vJHhwQSz97p0=@vger.kernel.org, AJvYcCWaHehbmeLwbX7QimYvoXeXbC3PWf4GhjJhfTmoqLJPno2S+ttEa/X2dee7RN5sguTApVItVG+fN4JEp/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFs7YZkFlPYCm9Kfp6VjACZkajPmfF3b9zSLTJnzf7fawrDwno
+	31GjEb+saQuGx1aZi+TtK50Ias4rAhdX7672jYA3oqzPK9lT+s0UHvuZw0DOnt8bZ2Fy1lez5Zt
+	3VM8AjAYkTdAd0CwI+IWWup5mYBZgzOg=
+X-Gm-Gg: ASbGnctN1nnWAQk4wwtLRNXmbEWdXd0l9uPJhf+bGh7ST/0wZbU72WS5OTLbx4abwQT
+	D5pVpRFDLK2wpbZt+/q/e7GX2nLNLjO5Rjx582GdIdR0HkWx0S61GMIe2DL6oAFoLm9sFBwOO4/
+	TnXgeSt8yRQuIsls0XsHwEJEgg3s8jRLva9Hg7WjFAnozYuak+kZQXzNR+L5ixyWkenIuTkeNLM
+	+MdhLrN
+X-Google-Smtp-Source: AGHT+IEejn7+Ub0GRMZe2KS2o3Avdid2AwRwDRKfrybwb6UtyYJLJk5yJHEpnyBS4UgGIvTJFtAn9Y3saj4i/iSs81M=
+X-Received: by 2002:a17:90b:1c03:b0:311:a314:c2c9 with SMTP id
+ 98e67ed59e1d1-321161e2197mr137642a91.1.1754062569787; Fri, 01 Aug 2025
+ 08:36:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801071622.63dc9b78@gandalf.local.home> <CAADnVQLky+R-tfkGaDo-R_-tJ8E3bmWz8Ug7etgTKsCpfXTSKw@mail.gmail.com>
- <20250801110705.373c69b4@gandalf.local.home> <CAADnVQLFLSwrnHKZUtUpwQ1tst71AfYCcbbtK2haxF=R9StpSw@mail.gmail.com>
- <20250801111919.13c0620e@gandalf.local.home> <CAADnVQJnTqXLNT9YWWkpLqjxw7MGMrq_CTT7Dhb__R0uO2-COA@mail.gmail.com>
-In-Reply-To: <CAADnVQJnTqXLNT9YWWkpLqjxw7MGMrq_CTT7Dhb__R0uO2-COA@mail.gmail.com>
-From: Tomas Glozar <tglozar@redhat.com>
-Date: Fri, 1 Aug 2025 17:34:51 +0200
-X-Gm-Features: Ac12FXxzpQTuJoSDpFwJ5S798l7k_pWSubckc5Xl8rkjsWL2kupB9MLIkTqSUgE
-Message-ID: <CAP4=nvSNeviiHg89L3dB9pGzi4Obf_s=bWJ8v89Q-fsJbuqymQ@mail.gmail.com>
-Subject: Re: [PATCH] btf: Simplify BTF logic with use of __free(btf_put)
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>
+References: <20250624042802.105623-1-christiansantoslima21@gmail.com> <DBR3913BFPSK.18K4JBYOPQVRG@nvidia.com>
+In-Reply-To: <DBR3913BFPSK.18K4JBYOPQVRG@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Fri, 1 Aug 2025 17:35:57 +0200
+X-Gm-Features: Ac12FXxC69kafbGgVSNnodv16N9ncoi3UbZB8MkI2F19sB87rpeIcrxjT3vU6sQ
+Message-ID: <CANiq72kOLYR2A95o0ji2mDmEqOKh9e9_60zZKmgF=vZmsW6DRg@mail.gmail.com>
+Subject: Re: [PATCH v8] rust: transmute: Add methods for FromBytes trait
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, ~lkcamp/patches@lists.sr.ht, 
+	richard120310@gmail.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-p=C3=A1 1. 8. 2025 v 17:29 odes=C3=ADlatel Alexei Starovoitov
-<alexei.starovoitov@gmail.com> napsal:
+On Fri, Aug 1, 2025 at 3:22=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
+om> wrote:
 >
-> but __free() is imo garbage. It's essence of what's wrong with C++
->
+> Another small nit: this is not a macro, so you don't need to use the
+> `::` prefix here. Actually even `size_of::<T>()` seems to work.
 
-Here, you at least can read the beginning of the function though, and
-see that a free will be done at the end, like Go's defer, right?
+Yeah, it works because Rust 1.80 moved it into the prelude. However,
+we still have to support 1.78.
 
+What we can do is adding it into our prelude meanwhile.
+
+Cheers,
+Miguel
 
