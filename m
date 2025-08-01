@@ -1,233 +1,211 @@
-Return-Path: <linux-kernel+bounces-753007-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753008-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id EECB1B17DAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:36:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F04A0B17DAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:37:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0BEDA5675B1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:36:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B68B1C208FB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:37:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5AC1DF270;
-	Fri,  1 Aug 2025 07:36:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C081E835B;
+	Fri,  1 Aug 2025 07:37:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="lLTxt9/t"
-Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010050.outbound.protection.outlook.com [52.101.69.50])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hFE0cfzl"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6057E78F58
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:36:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.50
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754033789; cv=fail; b=JIPtTuOU3NbaX00mVQ4qVJGR3IyQ7udMsedoNRGlaVma5+ztJyQIl2DkgneoROYCA1LABF1OAWmpfK5SRsnuz+hQcAT6Q5IVAlTrAggpElhXCbXWrD3IzmAImx//PE0pAkQZo/JUEHFGeMFeSaEULKHuE6JQZ5nMOhm2L0fXkSU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754033789; c=relaxed/simple;
-	bh=G4t1pIfwTGGS3wFD3du2tzlV0F801R1bVMsx89BbICk=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=bWH4zTAYgHMqFgd5Xtc/F+XqXnYld4pb/xo6Ae1AU6ksBzq8tl5nNU9sUo8mEH2PjcBSDqsUnBJgTPR7RCW/vqqq25pcb5CLQQrKYpbShyFX3g6svnwidzn5e6eVVCgUcg4U/fEAxR+Ua9TJuQrX4Z9z1SsPe6Uf+oGsmeh7QfI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=lLTxt9/t; arc=fail smtp.client-ip=52.101.69.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=DewRz3TnMotXuzw/7iKNf3F3Dzn2hC2wwr3abUFqU00Sy4oeo2/Wd7PtrUjm71xZIfxrKm/riwpmrVetVZZHVVgi5ht/qAvdBRBcGLCO8j++TYNm/XjDVwvvExX+vHCuV/pdeyuTpEEB0C6tvBScZTGBLiNAgJTrb1+2H+yhBOi2D4JPifHCxt9ZB9aSKrw36swxXlpQm1txml6I7UK3aei8Wfuie1vgD4G3W6JQLmTvvgug9rjU1GiyPF8L7X3b88T4xoEmaNJH6qGs+lK9lkdMTf0UztocGWOt17rqyYKHfX/S52Y3iGg/MnrS33BkASxliv9v4i0a2GiUMrDmUQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=XevVesc5wLRPbXYgRZ0WGs2XhZPUGLOPjmLAA5adRPs=;
- b=L3UeuECmBMUyNRLqLKk8b+u9FuFk8to27umrGQggWRYX7fmZSSw2d0ivFN7/PCbhNjkrJejK+s30i507ssRNlpaE95rodKcsApmeS8FiUNSQJ+izlM5ErGNBrBp3Y1iw31dE6/nyC0XYb9IvZgreNytH8j2vWobiYTU2fNQg4VHKxDj2/P4Wi0KbgI30Z+ZthyEAeP3HzdRqxmMmLCsl3yMOmi0FPNO6LAfyGzCajp9B4/pHGrLxdBsX5fKw1seQoi/SkgwLkVs6GLCoD0sn42rXnNoRpAlF4qKD2z/vvfk3/shJVBAXW5xNqOJv/MsQqWT2+nzAP4CxpvFieoe4Kg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=XevVesc5wLRPbXYgRZ0WGs2XhZPUGLOPjmLAA5adRPs=;
- b=lLTxt9/tZtMkgsp5GEXXjon1oqTRFUBKPR+Wsmmv1tZQZtm86W3mE1n2uHo5TQ+m70EHf6TtNnq5csJdAoI9xdQ6NV2DFVRmtFHPAtDGLr44+8b2wZAEogPKxWYqtc43/EnuvTcbtXk6o4+v20RFFmFS7OcoJjMD84CKwKxNDejpH80aaXKzS8Rc7c1FMlAEB2IWx23RvckiwBOM6rzvALzysO+vW9AFQFbVvePhlODr4gzjd+ydsZPd/N/SjAAHlGKiEDtlhvP9Bv0dMAdWwHx3c3UPsGA4iA/EIoZ9IbmM0EDYMUFP9bpAZkQiY5Haxdow+AWnjHwF47CFnQDpiA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from PAXPR04MB8590.eurprd04.prod.outlook.com (2603:10a6:102:219::10)
- by PAXPR04MB8127.eurprd04.prod.outlook.com (2603:10a6:102:1c5::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.22; Fri, 1 Aug
- 2025 07:36:24 +0000
-Received: from PAXPR04MB8590.eurprd04.prod.outlook.com
- ([fe80::8cc7:661f:ab20:7d18]) by PAXPR04MB8590.eurprd04.prod.outlook.com
- ([fe80::8cc7:661f:ab20:7d18%5]) with mapi id 15.20.8989.015; Fri, 1 Aug 2025
- 07:36:24 +0000
-Message-ID: <bc268247-b081-463b-93eb-ea8eca7de75b@oss.nxp.com>
-Date: Fri, 1 Aug 2025 10:36:21 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 20/20] clocksource/drivers/nxp-pit: Add NXP Automotive
- s32g2 / s32g3 support
-Content-Language: en-GB
-To: Daniel Lezcano <daniel.lezcano@linaro.org>, tglx@linutronix.de
-Cc: S32@nxp.com, linux-kernel@vger.kernel.org
-References: <20250730082725.183133-1-daniel.lezcano@linaro.org>
- <20250730082725.183133-21-daniel.lezcano@linaro.org>
-From: Ghennadi Procopciuc <ghennadi.procopciuc@oss.nxp.com>
-In-Reply-To: <20250730082725.183133-21-daniel.lezcano@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM8P189CA0001.EURP189.PROD.OUTLOOK.COM
- (2603:10a6:20b:218::6) To PAXPR04MB8590.eurprd04.prod.outlook.com
- (2603:10a6:102:219::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAEB972624
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754033830; cv=none; b=FvXsHPsDyPrv9/rDv4NulzI+0MJtN4EaO4PaYU6FpDau5OtkDO+xClHEf5gemU+blpkh1cX7Y3d6mqpZh+VmzHOzX4vbF6Njkn2XDCPpmtIX+dH/YLJyQN2RlCBo1JG9g/DPMc/qUnW0+yF9O9gTveHUcEn/xg3fqc93sp0WcxU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754033830; c=relaxed/simple;
+	bh=9PksvV60rPpkHXM49AYBINimvOYKjRD+kBMp7Fglaec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ayNfQO+6ZGAt0zPIQH+tRTaSHIujwHkdT2nZi8PggFdbET3pXe+/5FYtitYW48e2O+/2uSkEqJc/DgoIRQxxXtr/UOK+ZJFMOt8UCv0hwwVpmNIAXv4KmDGlsGb7GwH8X0fO4HNIejb9zBCMdp2aD2GxnPhrUombDX1JsMcqG3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hFE0cfzl; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754033827;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=hQRmO76ymO9d1FjhA+KyC8CA+pyqdQrBvGUMGWyi74o=;
+	b=hFE0cfzlvsv6v/437Jr24QodNclWaNllmon6G8VrPgz3LOkokmw9KK2qn52UCejhtkg5Oh
+	tuw2ELAdwnLZ0xXRicC6x19N/MnsAuSP9cvxScdMIULVip1ATHkqJmATE4J5CnA7zI5I2f
+	jCwOWukUz1LeLa/m5Zsbm8SW1+4WNkw=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-304-OmTeBxUjNf6w9u0NreQZJw-1; Fri, 01 Aug 2025 03:37:06 -0400
+X-MC-Unique: OmTeBxUjNf6w9u0NreQZJw-1
+X-Mimecast-MFC-AGG-ID: OmTeBxUjNf6w9u0NreQZJw_1754033825
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-4586cc8f9f2so2717105e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:37:06 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754033825; x=1754638625;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hQRmO76ymO9d1FjhA+KyC8CA+pyqdQrBvGUMGWyi74o=;
+        b=XuoZ6HY5cVvGyRbopsMsbi8cfNLRZ3gc57ArwAm1Piny9/kRnkf8x0YEo7fGDcxZcJ
+         VpFFVzLBizpsXI+nNZwSlNV/xtZWUrd1crin1819O0ShLBuAZrAs8PXrWLKz2KQWFje+
+         1No7HfQdrlo8xblnsvzLNRJgcAl74agS7tlZsBQbzPKJ9wvvk0R+xdzZTX4mdxjjA2Oq
+         aUU2rCrdeyGKQQhTik8p2T32BBis9r0ieSaKnNCeezG7jSzP0wrKymw+UCVigwDqsQOq
+         f8E17b+6bp9qLR9clVtrYehgdUA1y6T2CuOT1g/U94ivt7qZ+uCvWrrrRdXZmgEGh+zI
+         Ke4w==
+X-Forwarded-Encrypted: i=1; AJvYcCWJ6kGbOP4vJdE4wBOEvMrCyelm7woE9zYZbQTjpDTkZM+lQtEwq3WH4aq6WnVpitup2jx6dT1N2yqOdVs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymwfFEgVthtQL0Ch2FDUVYJcpMFnlrq/RWgmbvRdRg1xomnzIu
+	Ovm+pdBVJYtJx2Trb1DzsqOYZg0XrfzS+/L/Khl8qnUDregrzOIzuf6eaXPTDRpaNB3XsX3jMEe
+	yUigB6ztmK2F80xZWV/r7c/1l1qD8+F4oWUQljBoVpn0vLCF0uAhOGlEAvlizt7FDzA==
+X-Gm-Gg: ASbGncuXsykMK4EE8i7nHMUBR/HHxpDyQzwHa7K5D3TJWcT5x1fTbFSw/8dPrlEhoyY
+	uabxY5U/mJzN5ZMRwVWVYw4BwPmg76joLUGxmNCkhb7l//nZkKVXfwyhFTQKRJ91/40huanNYVy
+	+zo2QkSOxkjfZgdkZZtMfoMs14sdE3iGXk1Kkq/MGrmE8+uxYGHe3/39l336Hy8m6cUCgGqnFRH
+	tC3BVIvVE7qo0W+JpLSs3FBqGU0kwexR8hWxw+ehbCsaYuMajlcj4PFSLqRSXJLR/fItJaVtyDN
+	7Ukwhx/hMZKUvL20X9ldtrqY26uCeV6TARLQxCdpOIRuJzbjFkqDx1LrmoPaVNP2gKzw5w==
+X-Received: by 2002:a05:600c:c177:b0:456:c3c:d285 with SMTP id 5b1f17b1804b1-45892b94d53mr86278875e9.1.1754033825012;
+        Fri, 01 Aug 2025 00:37:05 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF24FUQ/Q3kShbLBfjxre55PIDzRBaRc02gcnWhZSCIw8TXypuo4hlDxwc11bKhk3tdzHkPJw==
+X-Received: by 2002:a05:600c:c177:b0:456:c3c:d285 with SMTP id 5b1f17b1804b1-45892b94d53mr86278575e9.1.1754033824517;
+        Fri, 01 Aug 2025 00:37:04 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953cfe56sm97779725e9.20.2025.08.01.00.37.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 00:37:03 -0700 (PDT)
+Date: Fri, 1 Aug 2025 09:37:01 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Yuri Andriaccio <yurand2000@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org,
+	Luca Abeni <luca.abeni@santannapisa.it>,
+	Yuri Andriaccio <yuri.andriaccio@santannapisa.it>
+Subject: Re: [PATCH v2] sched/deadline: Remove fair-servers from real-time
+ task's bandwidth accounting
+Message-ID: <aIxunUAqdecVuUMs@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250725164412.35912-1-yurand2000@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB8590:EE_|PAXPR04MB8127:EE_
-X-MS-Office365-Filtering-Correlation-Id: 1e53388d-8262-4a75-e433-08ddd0ce1df7
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|19092799006|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?Y2dTTWhqdnFPaXp6TkZ1aVZ4UmJPQnYrdGtwWFk4VzBXMmVLUUQ2Z0xHd2lk?=
- =?utf-8?B?cnhLR29KRDFUZE9VQmd0WnBPVXQ5WXlLRXVscDFwTHdycDJzSzNOa2xtMGdJ?=
- =?utf-8?B?Qm4vT1lEYU1udS90K1VTLzNSZSsvTnZ4d1BYWjZ3dFRaZkxvQnlvN3RtYk4v?=
- =?utf-8?B?SEpZaXgwZnlvV0NIeXNlbWYyblNGTnhETk5SeitwQ2xHcXNjUXVKN3NpaHhn?=
- =?utf-8?B?UTI1cEp6R3ZQZjQyMWQ1WmZ1WS9JcGtPL3hqZEVtTEkxbFo2dHBuNnFJRGhu?=
- =?utf-8?B?eUgzSjRGc3V2bWFUZ2I4NFVQSTV5ejd0YlFrOXNpVXdpaG0xYjlvelFOeTlS?=
- =?utf-8?B?ekk4V2xZMUZaeGVTN0ZnUTRUckJ0akNESHV3OWVwS0xuVnRlVmN0dmZ6dkJm?=
- =?utf-8?B?RWNIbXRtY0w5cXpESGdjTXk1ODh6UzV1eEhQcXNsMnhNRSt3RWI3RFRnbjRJ?=
- =?utf-8?B?UThJOXprZHo0alpPblY4RVZ3R3l3YXByME9rbE9lcWNWZFg1RzV6VlJTdHpu?=
- =?utf-8?B?eGI1UWZ3SEdYWDd4TFZ4NlBYaSt4M0l5YlFBK0dWSGZrb3p2bHFKVW5TamR6?=
- =?utf-8?B?MXU1SHRvbkZKdWlUYVA1ME1TMmZQVW1qb1huY2VWbmRVb1FiUUN2bDZmZGZp?=
- =?utf-8?B?WjFhdy9jQ0pBQi8vMzU1b2krRUZwVWZuRzdvRTZ5SmdkWTRjTTdMeG5EVVZq?=
- =?utf-8?B?amtBd0FVTGRUNm53R3ZwVG5JNVlOM0hkeXZSWTNNSFRNZjdKUWErditlQnNI?=
- =?utf-8?B?RXFNNEZDME9GaHUxdnQ1Yi92ckZzVXFWZ2dkNWRRZW9BaHlNNGkxcnY0SFcv?=
- =?utf-8?B?UXV1K1VLcHBsWVplS05mSFBGTFpTVnhOekxWOU92TmVVM3JabDF4YTFseFBS?=
- =?utf-8?B?dXE5d2hIQlZMaGRDRDVZOXBIS1YvY1FyV1Yxdmg2a0NPUGZSbEVkZDBDNVp1?=
- =?utf-8?B?Q3lxdnpQRXY5bEY0Mjd1MUdFN09Va3A3WjVnclRqak5kWWgrVUExNUxNa2Mz?=
- =?utf-8?B?cSszUmpob0ZBb3Z6MHNOUFkzTjYvL0xSTnpFSE0zUjNOR0tWMVUyQzdUcEtE?=
- =?utf-8?B?OE80QU5pZHl0aXJXY1RhL09oanc5U242N0VqU1dXTllkM2RRNTcvMkRSY3Nm?=
- =?utf-8?B?dWZDZjV3amJiL0xxT3hDK0pxN2hBdTFBSG5idzNhaktwaU1yK3Fldnk3WFl0?=
- =?utf-8?B?emVkUEw5cC85RHY1NjVsV0NsZTJxODY5SEx5Qzc3THBNd3Z2VCtGQ0R2OEJq?=
- =?utf-8?B?RGkwSmVsai9MRnZTZDZuNTNCUUJ2emlHQ0d6UWxTT3NSUlEzbEtKR040OXRw?=
- =?utf-8?B?SU1GZWlRRlJPUWNVNGVaOURyOUdTMFlWajhNK2dleHpmWWR4NEl2NDdnVTV6?=
- =?utf-8?B?ZXNKNkx2RWlLWnRGZmFWaWkrN0d5dHRqQjhPbGZpeDl2WitnQ00wek1nWlR0?=
- =?utf-8?B?OVJZc2t1aEdiaUdXdlFWcGpQTTVGT2Z6RVVlM0l6d3F4SEY4eTNkbUFNRWVv?=
- =?utf-8?B?bzl2Yk5EMnFhOTh0NjQ2Y3Y3VVBaaFVTR1J4Z3ZtVHFZQjRhTWxBSDlmWXhC?=
- =?utf-8?B?SE5LMHZDRmlMK3JFajAvZ3REd0R1OVJydHBkQzNoYWJWMVhpd2ZBcWIyMWlV?=
- =?utf-8?B?QXZTbmFoL04zYndUdDlGako4QkkrN3lFeUxHZ25heWtXa29RT1JiejBkaUw2?=
- =?utf-8?B?Q1JrcFd0ZWhabENBOXY5N05vUW01VHBFKzlzMk1YWnhPZC9kdG9RaU9UUFEx?=
- =?utf-8?B?UGkrd1VCaE9sSXRIOVJkSVkrMlVpNk1rN25XaGYrM2xTM2R6bStNR1hEMDNa?=
- =?utf-8?B?UFp2bzFJOS9kOHdPdXBFMitsVmFQWUIvc2pXcHNlMU1aeUhqTWloSjB5Tjlp?=
- =?utf-8?B?Qk1iZndBMlkza2lsaDBMUHp1bzFVTFpYaW9pMnFOZFRuck95YVlOVmU3akxB?=
- =?utf-8?Q?6tRApvUrVaU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB8590.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(19092799006)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?QTlHWnl5WkxZL0hQK1hqZ01mWFE5eCtuS0RXTHJCM2ZvaERLbEdlZWN6UmF2?=
- =?utf-8?B?eFZ3TTljbjAyNmtHOFM3UWRBT2tIT01XV0lxK0lJcStlZ1VnNWJzS3dwMGZT?=
- =?utf-8?B?djVjUmNjZjVKeW1qdGkyWVhaNUlMNmQ0YlhLck5EL3M5cC9iUkhEV0tYbWVz?=
- =?utf-8?B?Nmo3eTZ4ZFdZc2pZQkVVK3BxU0lON2hVOWFEZUJVZmRVTGtTdUkzbTBhR3NH?=
- =?utf-8?B?bUxtN1RnWEdvQmRrem85STI1cytjalg5RXVhY2ZhdVdKY0sybFd0aHVSMWha?=
- =?utf-8?B?UXV0ZU1KeWZyZ0ZUa21iM29HMS92T1pMZjVPd2hpWUlmM0JydHZ3U0lZWXov?=
- =?utf-8?B?eGV2dlB6NXQ4eWlCb084K2ZxNUJSL29oMmszTVYzNnJFYnRZVVdPZEFzTDBl?=
- =?utf-8?B?cUdZL0pvN0x0NGxuVFg4Yml6UXc2S2N0ZWJ6eS80bDFEOVBCcGZCTlFUeDVw?=
- =?utf-8?B?N2ZoMWlNZmY4c1RxcUNCdXd5YWkySmcyNGUwMmFlRWljemV4dVFlYzFGQjFy?=
- =?utf-8?B?bDhLK2RobEJ0ODRpcEE0VWJyd0tOSUplNDd3VHNNbmZnQWFRQkduUE5Ddll6?=
- =?utf-8?B?Y2RrbUFHK2ZkeHBqSTVibnVZTTdTdFdXS1Q3cXMxRVQ1bEROOWtrd1o3RWFO?=
- =?utf-8?B?S0doQXF2MjdCUVg2RHlEWUdkZHRmM3RGblc5U2Nqa3U5TU9RaUVlRFNyOWt0?=
- =?utf-8?B?TGtsVnllSUpVOHA2N3gxMXE3RGUwU2FlS21sODZSSzRJL2phUXUyYUErb2U2?=
- =?utf-8?B?REVHaWNwZkhoRUtxVkpNbGFVYTNFZG9DcmJBZ2VkM1ZRMllkV1g4VWpDVW9S?=
- =?utf-8?B?bWhkZ0NPRHFiK1A5RWpqTzl6N0tMdjBUZUdlQnlTZktEMStEMEY4WUtPVnZr?=
- =?utf-8?B?TzFZOHZnRmtad3FsQ1owMFhpUmlHR0ZIdGRXYUZiVzBIV0J1TDJwOHZpQ1hv?=
- =?utf-8?B?a3NNZWRyeGQvVWlHNEtURXpRRjZkZTZFODBsZ3cyN2JhK1VMaUVrM2NXVUF2?=
- =?utf-8?B?QXpoZFlYNEFIUXVmRk51dVMxZ05NUEhUOXFYNVRDbnNXRXZpem5Yd0R0RFZj?=
- =?utf-8?B?N1VlN0F1THZqL0JUUXd1TTl1VzkwbXAwaytlMjNRUG1IbXJpYnAyeE1BYnRl?=
- =?utf-8?B?bURBZ1ZVN1g5TDR0dDE1VXYyY2RFR3VhMHhYUTFhRzZpcHk3cGQzZmFnVWFi?=
- =?utf-8?B?dURpOEtMNGU3MFNYZXVSb0NTNkVjMWMwQUUrNVZFTmhHNWNZSUtIR0FsSkQ4?=
- =?utf-8?B?ZmlXcVpjOTdrcVhSTFpDeG96UWRvem52OVhpckpjT3BiZm9wUnJxVHZTODBw?=
- =?utf-8?B?MUZVSWhrOXc0T0RBdUhUeVRGS1FMVVRocTlBRDFic3JPSG52dDQrTFQrc0N4?=
- =?utf-8?B?UCs0WXRsb005YmFUQ1RLVkNYcHhaYnhzVElsUTFGOWNyZ1JwZFFtMjI1alZ5?=
- =?utf-8?B?V29sYzZaUjJQQ0xLa292NWE3VkZYeGNWMjV0cHdhVk1NcjZNNEcxQ1hSSjhZ?=
- =?utf-8?B?R3BseHRRdGpuSnBkSGhDSkQ5blJNS3JTUEMxUlVvaGcya2hWWGJGNlYrMW02?=
- =?utf-8?B?UE56ZTJmYTF0ajRmbTFMR1NIWEFMMjludTVKMXBzbXJhR080eG9IN1E3ajRB?=
- =?utf-8?B?LzJaQ2R6czczdkgyRjVCL1kvdmt2dFBra3pKL3dCZW5VTnRSc2RXM0tISHhy?=
- =?utf-8?B?cDVDeUdnWmg3NkttaXRaQnhiZGJOd3VCRmZjaFozNWphUWlINEp3cVFvT3RW?=
- =?utf-8?B?TXQ2UGJsL0FZd1JQazBwNEFzYlhFRlAyb0lBODRIOEcxaHBsTU1jZk1GTWJa?=
- =?utf-8?B?QTFKK0NXLzFaV1FyT1BObWhicEpKZEZVS2xOMHYrQTdJSndxZE5tV05ud0ZW?=
- =?utf-8?B?RWk4L2FwdFRITlI0eGlyb2gwOEFLd3hDRXQyVmJ4R0F3QkFPdFJxOVNOSHd1?=
- =?utf-8?B?OUVoK00rbnpTVUJVTXlOUWRQdlNIbTE3dlFaYnZwZFd0MEozdXpndVgydlcy?=
- =?utf-8?B?a0Q1V28rbmkxc01hWnc2aitUeURhK0ZYUHdTbjAyb0pQaHBBbERaZDhCK0dE?=
- =?utf-8?B?alZZdjNnMC9TYmd6eVM2clIzRlM2YkU0TENFWDU0ZXBQTzR3eG93WW41QVFQ?=
- =?utf-8?B?RWJheEVWVEppSzRLRjEwMWlndmhOSHRxTjJ6OXptb3VtYmRpazhPRm0yVHhx?=
- =?utf-8?Q?xgY/ZfdYd3jBteznMi7Djzc=3D?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 1e53388d-8262-4a75-e433-08ddd0ce1df7
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB8590.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 07:36:24.3450
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: TdMRcyzDNnFoBCDNpGp7qNRpiXvseNGOlRN/ZD4WSjijd/ftgQKEl+yUa9axeH7NExJVS8bQLiRVckUg8LFKY2/o5zlMJrJT8pb9UgnyTJ4=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8127
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250725164412.35912-1-yurand2000@gmail.com>
 
-On 7/30/2025 11:27 AM, Daniel Lezcano wrote:
-[...]
+Hi Yuri,
 
-> -static int __init pit_timer_init(struct device_node *np)
-> +static int pit_timer_init(struct device_node *np)
->  {
->  	struct pit_timer *pit;
->  	struct clk *pit_clk;
-> @@ -262,16 +297,31 @@ static int __init pit_timer_init(struct device_node *np)
->  
->  	clk_rate = clk_get_rate(pit_clk);
->  
-> -	/* enable the pit module */
-> -	pit_module_enable(timer_base);
-> +	pit_module_disable(timer_base);
->  
->  	ret = pit_clocksource_init(pit, name, timer_base, clk_rate);
-> -	if (ret)
-> +	if (ret) {
-> +		pr_err("Failed to initialize clocksource '%pOF'\n", np);
->  		goto out_pit_module_disable;
-> +	}
->  
-> -	ret = pit_clockevent_init(pit, name, timer_base, clk_rate, irq, 0);
-> -	if (ret)
-> +	ret = pit_clockevent_per_cpu_init(pit, name, timer_base, clk_rate, irq, pit_instances);
-> +	if (ret) {
-> +		pr_err("Failed to initialize clockevent '%pOF'\n", np);
->  		goto out_pit_clocksource_unregister;
-> +	}
-> +
-> +	/* enable the pit module */
-> +	pit_module_enable(timer_base);
-> +
-> +	pit_instances++;
-> +
-> +	if (pit_instances == max_pit_instances) {
-> +		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "PIT timer:starting",
-> +					pit_clockevent_starting_cpu, NULL);
-> +		if (ret < 0)
-> +			goto out_pit_clocksource_unregister;
+On 25/07/25 18:44, Yuri Andriaccio wrote:
+> Fair-servers are currently used in place of the old RT_THROTTLING mechanism to
+> prevent the starvation of SCHED_OTHER (and other lower priority) tasks when
+> real-time FIFO/RR processes are trying to fully utilize the CPU. To allow the
+> RT_THROTTLING mechanism, the maximum allocatable bandwidth for real-time tasks
+> has been limited to 95% of the CPU-time.
+> 
+> The RT_THROTTLING mechanism is now removed in favor of fair-servers, which are
+> currently set to use, as expected, 5% of the CPU-time. Still, they share the
+> same bandwidth that allows to run real-time tasks, and which is still set to 95%
+> of the total CPU-time. This means that by removing the RT_THROTTLING mechanism,
+> the bandwidth remaning for real-time SCHED_DEADLINE tasks and other dl-servers
+> (FIFO/RR are not affected) is only 90%.
+> 
+> This patch reclaims the 5% lost CPU-time, which is definitely reserved for
+> SCHED_OTHER tasks, but should not be accounted togheter with the other real-time
+> tasks. More generally, the fair-servers' bandwidth must not be accounted with
+> other real-time tasks.
+> 
+> Updates:
+> - Make the fair-servers' bandwidth not be accounted into the total allocated
+>   bandwidth for real-time tasks.
+> - Remove the admission control test when allocating a fair-server.
+> - Do not account for fair-servers in the GRUB's bandwidth reclaiming mechanism.
+> - Limit the max bandwidth to (BW_UNIT - max_rt_bw) when changing the parameters
+>   of a fair-server, preventing overcommitment.
+> - Add dl_bw_fair, which computes the total allocated bandwidth of the
+>   fair-servers in the given root-domain.
+> - Update admission tests (in sched_dl_global_validate) when changing the
+>   maximum allocatable bandwidth for real-time tasks, preventing overcommitment.
+> 
+> Since the fair-server's bandwidth can be changed through debugfs, it has not
+> been enforced that a fair-server's bw must be always equal to (BW_UNIT -
+> max_rt_bw), rather it must be less or equal to this value. This allows retaining
+> the fair-servers' settings changed through the debugfs when chaning the
+> max_rt_bw.
+> 
+> This also means that in order to increase the maximum bandwidth for real-time
+> tasks, the bw of fair-servers must be first decreased through debugfs otherwise
+> admission tests will fail, and viceversa, to increase the bw of fair-servers,
+> the bw of real-time tasks must be reduced beforehand.
+> 
+> This v2 version addresses the compilation error on i386 reported at:
+> https://lore.kernel.org/oe-kbuild-all/202507220727.BmA1Osdg-lkp@intel.com/
+> 
+> v1: https://lore.kernel.org/all/20250721111131.309388-1-yurand2000@gmail.com/
+> 
+> Signed-off-by: Yuri Andriaccio <yurand2000@gmail.com>
+> ---
 
-The function 'pit_clockevent_per_cpu_init' invokes 'request_irq', but
-the corresponding 'free_irq' call is missing in the cleanup path.
+Thanks for this. I have been testing it and it looks good. Just a couple
+of comments below.
 
-> +	}
+...
+
+> @@ -1688,17 +1690,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
 >  
->  	return 0;
+>  	cpus = dl_bw_cpus(cpu);
+>  	cap = dl_bw_capacity(cpu);
+> +	max_bw = div64_ul(cap_scale(BW_UNIT - dl_b->bw, cap), (unsigned long)cpus);
+
+fc975cfb3639 ("sched/deadline: Fix dl_server runtime calculation
+formula") essentially removed cap/freq scaling for dl-servers. Should we
+rather not scale max_bw here as well?
+
+> -	if (__dl_overflow(dl_b, cap, old_bw, new_bw))
+> +	if (new_bw > max_bw)
+>  		return -EBUSY;
 >  
-> @@ -289,4 +339,33 @@ static int __init pit_timer_init(struct device_node *np)
+>  	if (init) {
+>  		__add_rq_bw(new_bw, &rq->dl);
+> -		__dl_add(dl_b, new_bw, cpus);
+>  	} else {
+> -		__dl_sub(dl_b, dl_se->dl_bw, cpus);
+> -		__dl_add(dl_b, new_bw, cpus);
+> -
+>  		dl_rq_change_utilization(rq, dl_se, new_bw);
+>  	}
+
+...
+
+> @@ -3149,10 +3138,13 @@ int sched_dl_global_validate(void)
+>  			goto next;
 >  
->  	return ret;
->  }
--- 
-Regards,
-Ghennadi
+>  		dl_b = dl_bw_of(cpu);
+> -		cpus = dl_bw_cpus(cpu);
+> +		cap = dl_bw_capacity(cpu);
+> +		fair_bw = dl_bw_fair(cpu);
+>  
+>  		raw_spin_lock_irqsave(&dl_b->lock, flags);
+> -		if (new_bw * cpus < dl_b->total_bw)
+> +		if (cap_scale(new_bw, cap) < dl_b->total_bw)
+> +			ret = -EBUSY;
+
+It's kind of a minor one, but can't we return early at this point already?
+
+> +		if (cap_scale(new_bw, cap) + fair_bw > cap_scale(BW_UNIT, cap))
+>  			ret = -EBUSY;
+>  		raw_spin_unlock_irqrestore(&dl_b->lock, flags);
+
+Thanks!
+Juri
+
 
