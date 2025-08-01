@@ -1,171 +1,286 @@
-Return-Path: <linux-kernel+bounces-752861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752862-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D612AB17BCB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:25:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA08FB17BCF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:27:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F6C27AA973
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:23:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9130D4E0D58
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:27:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9111E8320;
-	Fri,  1 Aug 2025 04:25:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71B61E7C12;
+	Fri,  1 Aug 2025 04:27:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PdC2tAoB"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY2oBLBp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A7680B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 04:25:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939B80B;
+	Fri,  1 Aug 2025 04:27:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754022318; cv=none; b=A5xAdPXXvKqdtBNSyBloy4DtytsjNPDejMntJINb7qnBIA6DLb8bm4WhS2+0s8U9q42ylKElfPXv3OgGEQ9viEsSRNFx0D58fmIw9SjEngPJ0KKQ9+mJDcatMVEsENhG7Gtk2jn8bHvTGXBoK4sLjnOYRKmfr5/AsG8s94rZHfg=
+	t=1754022435; cv=none; b=pYBrh+iMoiEynCDX7nlV6tG0E/9Gd29TVDYj4ZRSz6ygVbddYIQFumIL99MOgTBBgPikhSPtkBSwFO8yeJuYfv9s6Tstbyl8uyPQAyfco27XV8khPgALfbujeRUGA41BsawYJtuCfA3NwnpyQLemIULYQIfO2o+bSnfD87JQZxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754022318; c=relaxed/simple;
-	bh=uBlorlwIYp1hcEgGWzhSFeKrBrorhnWYZjy/YHECfXg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ILtJ46i1YYtr1br7Ilu/uoylA9VQshJmLQ635dbC32UtrGWZb5ixyj2+ZHIfRm0uMMDJgsLHr9N7mcJMep7yJnBlRlLQNW/tRJw/obq2rUF3+oO/7HShyXy8ro/bLKgTC4DizS/CFBgqn9UU/ezZM0tlSpYfeeP8Et8MCX1OoxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PdC2tAoB; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VNvQgC004992
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 04:25:16 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	zxRRtXcN5asqDedioHABDaioEx42PozHmsddFvNpWDw=; b=PdC2tAoBbSyWFYWM
-	rw5Lpp581108vLB9AQws2QgTh/eSPipVej45NFsUmRGzJ6tFyEXfcmswa88EsCq2
-	4EOszvfsXOQnHHcHBVVCFLhQ5BxUlPJNmXxO0S1R2DziK0LcLxt778KCSkBnJJq3
-	ijPWIpu7tlvmdkWbEsuPfK+AK62CCG0cUqKYxakY/NAC0NAlYS5xjB74v/py+57K
-	HeW2cbobabX4iWoriuZsgoCYy6o82hq20HOE9oMOhDM5fQ6qNk1RTX83D0o06CeA
-	fl8r6PuWmEhF6MRwqZT4FMAJlDFv8Qw8AwDxER87Is3Pv5czgIOpqm+O+9Pm0Z3J
-	dSumuA==
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q86ancr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 04:25:16 +0000 (GMT)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23fd831def4so9596685ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:25:16 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754022315; x=1754627115;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=zxRRtXcN5asqDedioHABDaioEx42PozHmsddFvNpWDw=;
-        b=n7ixy3kq/t3RET5hu/ph0FL5TNqxd4gAhlmH1dKvZbP3g36hg4g2Y57rQCK06ycL8l
-         5E2XZ0TqeSji4ulE5lF9t1vc2TTkdWo1yRMc/zSm3VaUHdTWJamxhCqpFkezx+YANLR4
-         ybyu71P4nl+uES/e2bIF2xXVv0vWU0cDSmye7pgVVilNDrExtRmJchXZLmdQ9PxHKrXy
-         wpY1oFyTgW3lIzCF8dk1Ykc3wiYXi5/wiVSzhOktk28YVcDD0lq/lxtldpJ5mmWud6RW
-         TnOJC9WUL3QxcV4hNJeDwrQVOL/XkB03bjfqWR28e2YtTHC1WBUQuSomfR5+N6ZV5O0R
-         VtFw==
-X-Forwarded-Encrypted: i=1; AJvYcCUkqgiOfknm2NDtAaa0JGkmBcBHZhGIApbClBm4pTVkMLgz8awV8XqGrAiwNnDtqgn9MLZBsN4FlWADoC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyroZx/nzNPTZuuBc38+aX0OYJsPO9/eueWfIcMOpAd6EjQu1dq
-	X+UEdy8oFgKd94UAMHI1iffYWc1X3iJutlLh2S4VVtd6oTkv3WKraJ56OBy3OJ2irlFdMYKuSnV
-	PMtz9CWPOvY6H5gMxvsllP6+Zx2lc1xaEhfAGlyiq13zb0bUUyLzFYpR/aC0gVYjcRf8=
-X-Gm-Gg: ASbGnctDWFa7UV3/ZPvUZzM7/6dNcEeVZ9oTmB83tguobY06z5TWAN1Iut1pOE1O8gH
-	bS3w/HTWZ88754UW9zWa8lXuMSlEFuG4R40drsqqB43kvcPrtzCkgOPzDycz8hKKr9ZAUEqQS7/
-	nkQ40ULs0Azp2WqK1BxnFKJNpMA12QDQFOtE5tfAkKRyMJdg5OEIzRBP9ZMqkZIKHx4OrwdUH98
-	ckSChcfYtk1Ckg2EGGMFhMNbpAccPtEJJVDOgybDwoVvGSeRu0F/UIwXOQGDjg1kKjDeJCGX6eZ
-	2J4GF4om8nlmFj1ieHxg3SKTeXlLdU3jMab+CG0i7XY4cwUrqSZ6yU3ACn9PUISlbJU=
-X-Received: by 2002:a17:902:e810:b0:23e:3bdf:e3bd with SMTP id d9443c01a7336-24096abfe73mr152706055ad.22.1754022315102;
-        Thu, 31 Jul 2025 21:25:15 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFzY+vcz3mT6FLuRg3s6hOjW8qEGzR7nQiQB6+tGHCmk4xO2hr0y7gSoPjaDxIHjG9/RlVWqg==
-X-Received: by 2002:a17:902:e810:b0:23e:3bdf:e3bd with SMTP id d9443c01a7336-24096abfe73mr152705565ad.22.1754022314647;
-        Thu, 31 Jul 2025 21:25:14 -0700 (PDT)
-Received: from [10.217.216.26] ([202.46.22.19])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a917sm31713485ad.116.2025.07.31.21.25.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 31 Jul 2025 21:25:14 -0700 (PDT)
-Message-ID: <2b802703-5214-4103-a1ab-e4c26a18ebb7@oss.qualcomm.com>
-Date: Fri, 1 Aug 2025 09:55:08 +0530
+	s=arc-20240116; t=1754022435; c=relaxed/simple;
+	bh=uq+kpMSFanUZqXprllI7t2UiWSiMj8A4yFiG4lcfQaM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HWV4rlDaCVebGE838MLNe3WZKcMPBZPTM7BscgWoxkxZSY+O2qfXynydBLwOfeGPAip0mM+NCwE5ytXODA1KTc6xhWvDSJtzctnsfY9pJaA6lG3MAvFj6y84qTDLmjxAX+WDtGpFn1YS2QjWtLKmJWRoqwT7G1m9TGC4qFVY/Pc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY2oBLBp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A31C4CEE7;
+	Fri,  1 Aug 2025 04:27:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754022434;
+	bh=uq+kpMSFanUZqXprllI7t2UiWSiMj8A4yFiG4lcfQaM=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GY2oBLBpQcT1AD8Lawicv4Gwe8/iOjkFp0Yk556aCc0e/v3wFxCgipGTEH1TThYqO
+	 R4dOoX8U9dEMtQtft9FacSXJ6C9OKgfnUfMUEQ0qIhPHWHeiQnZxu9rvYZCn/kuYLp
+	 qrHW028OtYChbwNdm8fB2S7ssXDF+bxfdJ4qm42tBs4RtSrMJ1PjM4lbIXhLFBN/rc
+	 n7Ee3Qt+Qtquku61d5qr5jRXQ7lAUao33qQRe/83EcdfWWzv7vZ5BUGukdSgF7A5Rq
+	 hFN53MwdRlkh400JVEZBx0O/FXW5AkUAZxzPOFZNEOuL4/VW7kyiVmMGuqdc3u6NXs
+	 XdcNHTBJZMzsw==
+Date: Fri, 1 Aug 2025 06:27:10 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 03/12] docs: kdoc: backslashectomy in kdoc_parser
+Message-ID: <20250801062710.552dac5a@foz.lan>
+In-Reply-To: <20250801001326.924276-4-corbet@lwn.net>
+References: <20250801001326.924276-1-corbet@lwn.net>
+	<20250801001326.924276-4-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 7/7] clk: qcom: gcc: Add support for Global Clock
- Controller
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
- <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-7-227cfe5c8ef4@oss.qualcomm.com>
- <25uelsjuw4xxfopvfn4wvlj2zgivwbjprm74if5ddwvht4ibfz@yctc2kvfmxyw>
- <8b30c83f-5f35-49d5-9c37-4002addf519a@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <8b30c83f-5f35-49d5-9c37-4002addf519a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDAyNyBTYWx0ZWRfX2Zjqtetow6lQ
- WIU3eyNjIhdZa0gJ3e6bWm638AswGMaUngvPPyLwgZF3Ix9uzKxd1PFtdeW4E0QbViXBdLzh+U7
- WgNcnAN/kZHNQTHBK2ZlenSOKb95oLuI55DUB0Y0E4r3ZcO6HC++mGU33IXoYWW7GuqG5xKhtZZ
- 4iFShL7QWThvxj2kX8LUw1H6/iRkhzrCAq+cDg/yEbBIJymFw7KKvCmkHtm0/fBlSu9HTgJkSMj
- FmFKhfiqYVSJ5EfzvVHGba5Iuzr4lN7DLaEM3k3p6ouc/HTevq5N/FPgv3sAt2coP/+ZED4l0RJ
- tVHxEfvXjOdtdpG5wNrkjvtTipC5odUoDsiNC+e9ogq3+zGwLqYcaT2ZKhuXxjAa/T+QXfGGUkF
- NO7AKXwiLzYvWdKfeM82DznWFNYotHw1xt1eufWE2lw3o2uI2QXG1z8OLaFwzgo0obx9uU07
-X-Authority-Analysis: v=2.4 cv=TqLmhCXh c=1 sm=1 tr=0 ts=688c41ac cx=c_pps
- a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=-exJQLPiCZ_865CLFvcA:9
- a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
-X-Proofpoint-ORIG-GUID: UHuNXO_ffQ74eu8CqvwlnZuuDiZD_E6-
-X-Proofpoint-GUID: UHuNXO_ffQ74eu8CqvwlnZuuDiZD_E6-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-07-31_04,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
- malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501 clxscore=1015
- impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508010027
+
+Em Thu, 31 Jul 2025 18:13:17 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
+
+> A lot of the regular expressions in this file have extraneous backslashes
+
+This one is a bit scary... It could actually cause issues somewhere.
+Also, IMHO, some expressions look worse on my eyes ;-)
+
+> that may have been needed in Perl, but aren't helpful here.  Take them out
+> to reduce slightly the visual noise.
+
+No idea if Perl actually requires, but, at least for me, I do prefer to
+see all special characters properly escaped with a backslash. This way,
+it is a lot clearer that what it is expecting is a string, instead of
+using something that may affect regex processing.
+
+This is specially important for my eyes when expecting for dots,
+parenthesis and brackets.
 
 
-
-On 7/29/2025 4:19 PM, Konrad Dybcio wrote:
-> On 7/29/25 12:48 PM, Dmitry Baryshkov wrote:
->> On Tue, Jul 29, 2025 at 11:12:41AM +0530, Taniya Das wrote:
->>> Add support for Global clock controller for Glymur platform.
->>>
->>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>> ---
->>>  drivers/clk/qcom/Kconfig      |    9 +
->>>  drivers/clk/qcom/Makefile     |    1 +
->>>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++++++++++
->>>  3 files changed, 8633 insertions(+)
->>>
->>> +static void clk_glymur_regs_configure(struct device *dev, struct regmap *regmap)
->>> +{
->>> +	int ret;
->>> +
->>> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
->>> +				       ARRAY_SIZE(gcc_dfs_clocks));
->>
->> Why are you doing this manually instead of using
->> qcom_cc_driver_data.dfs_rcgs ?
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 40 ++++++++++++++++-----------------
+>  1 file changed, 20 insertions(+), 20 deletions(-)
 > 
-> I guess that has been merged last week or so, so yeah, please rebase
-> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 9948ede739a5..e1efa65a3480 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -46,7 +46,7 @@ doc_decl = doc_com + KernRe(r'(\w+)', cache=False)
+>  known_section_names = 'description|context|returns?|notes?|examples?'
+>  known_sections = KernRe(known_section_names, flags = re.I)
+>  doc_sect = doc_com + \
+> -    KernRe(r'\s*(\@[.\w]+|\@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
+> +    KernRe(r'\s*(@[.\w]+|@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
+>             flags=re.I, cache=False)
+>  
+>  doc_content = doc_com_body + KernRe(r'(.*)', cache=False)
+> @@ -60,7 +60,7 @@ attribute = KernRe(r"__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)",
+>  export_symbol = KernRe(r'^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*', cache=False)
+>  export_symbol_ns = KernRe(r'^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"\)\s*', cache=False)
+>  
+> -type_param = KernRe(r"\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
+> +type_param = KernRe(r"@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
+>  
+>  #
+>  # Tests for the beginning of a kerneldoc block in its various forms.
+> @@ -331,7 +331,7 @@ class KernelDoc:
+>  
+>          self.entry.anon_struct_union = False
+>  
+> -        param = KernRe(r'[\[\)].*').sub('', param, count=1)
+> +        param = KernRe(r'[)[].*').sub('', param, count=1)
 
-Yes, sure I will rebase on the latest changes.
+This one, for instance, IMHO looks a lot worse for my eyes to understand
+that there is a "[" that it is not an operator, but instead a string.
+The open close parenthesis also looks weird. My regex-trained eyes think
+that this would be part of a capture group.
 
--- 
+>  
+>          if dtype == "" and param.endswith("..."):
+>              if KernRe(r'\w\.\.\.$').search(param):
+> @@ -405,7 +405,7 @@ class KernelDoc:
+>  
+>          for arg in args.split(splitter):
+>              # Strip comments
+> -            arg = KernRe(r'\/\*.*\*\/').sub('', arg)
+> +            arg = KernRe(r'/\*.*\*/').sub('', arg)
+
+A pattern like /..../ is a standard way to pass search group with Regex
+on many languages and utils that accept regular expressions like the
+sed command. Dropping the backslash here IMHO makes it confusing ;-)
+
+>  
+>              # Ignore argument attributes
+>              arg = KernRe(r'\sPOS0?\s').sub(' ', arg)
+> @@ -428,14 +428,14 @@ class KernelDoc:
+>  
+>                  arg = arg.replace('#', ',')
+>  
+> -                r = KernRe(r'[^\(]+\(\*?\s*([\w\[\]\.]*)\s*\)')
+> +                r = KernRe(r'[^(]+\(\*?\s*([\w[\].]*)\s*\)')
+
+Here, [.] is also a lot more confusing for me than [\.]
+
+Ok, both works the same way on all implementations I know, but, as a doc
+means any character, I need to re-read this two or three times to understand
+that here it is waiting for a dot character instead of any character.
+
+
+----
+
+Here, I became too tired of reading regular expressions... better
+stop to avoid headaches ;-)
+
+Seriously, IMHO this patch makes a lot worse to understand what brackets,
+parenthesis and dots are strings, and which ones are part of the regex
+syntax. 
+
+
+>                  if r.match(arg):
+>                      param = r.group(1)
+>                  else:
+>                      self.emit_msg(ln, f"Invalid param: {arg}")
+>                      param = arg
+>  
+> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+> +                dtype = KernRe(r'([^(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+>                  self.push_parameter(ln, decl_type, param, dtype,
+>                                      arg, declaration_name)
+>  
+> @@ -443,14 +443,14 @@ class KernelDoc:
+>                  # Array-of-pointers
+>  
+>                  arg = arg.replace('#', ',')
+> -                r = KernRe(r'[^\(]+\(\s*\*\s*([\w\[\]\.]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
+> +                r = KernRe(r'[^(]+\(\s*\*\s*([\w[\].]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
+>                  if r.match(arg):
+>                      param = r.group(1)
+>                  else:
+>                      self.emit_msg(ln, f"Invalid param: {arg}")
+>                      param = arg
+>  
+> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+> +                dtype = KernRe(r'([^(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
+>  
+>                  self.push_parameter(ln, decl_type, param, dtype,
+>                                      arg, declaration_name)
+> @@ -637,8 +637,8 @@ class KernelDoc:
+>              # it is better to also move those to the NestedMatch logic,
+>              # to ensure that parenthesis will be properly matched.
+>  
+> -            (KernRe(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
+> -            (KernRe(r'DECLARE_PHY_INTERFACE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, PHY_INTERFACE_MODE_MAX)'),
+> +            (KernRe(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
+> +            (KernRe(r'DECLARE_PHY_INTERFACE_MASK\s*\(([^)]+)\)', re.S), r'DECLARE_BITMAP(\1, PHY_INTERFACE_MODE_MAX)'),
+>              (KernRe(r'DECLARE_BITMAP\s*\(' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'unsigned long \1[BITS_TO_LONGS(\2)]'),
+>              (KernRe(r'DECLARE_HASHTABLE\s*\(' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'unsigned long \1[1 << ((\2) - 1)]'),
+>              (KernRe(r'DECLARE_KFIFO\s*\(' + args_pattern + r',\s*' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'\2 *\1'),
+> @@ -700,7 +700,7 @@ class KernelDoc:
+>                      s_id = s_id.strip()
+>  
+>                      newmember += f"{maintype} {s_id}; "
+> -                    s_id = KernRe(r'[:\[].*').sub('', s_id)
+> +                    s_id = KernRe(r'[:[].*').sub('', s_id)
+>                      s_id = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', s_id)
+>  
+>                      for arg in content.split(';'):
+> @@ -709,7 +709,7 @@ class KernelDoc:
+>                          if not arg:
+>                              continue
+>  
+> -                        r = KernRe(r'^([^\(]+\(\*?\s*)([\w\.]*)(\s*\).*)')
+> +                        r = KernRe(r'^([^(]+\(\*?\s*)([\w.]*)(\s*\).*)')
+>                          if r.match(arg):
+>                              # Pointer-to-function
+>                              dtype = r.group(1)
+> @@ -767,12 +767,12 @@ class KernelDoc:
+>          self.check_sections(ln, declaration_name, decl_type)
+>  
+>          # Adjust declaration for better display
+> -        declaration = KernRe(r'([\{;])').sub(r'\1\n', declaration)
+> +        declaration = KernRe(r'([{;])').sub(r'\1\n', declaration)
+>          declaration = KernRe(r'\}\s+;').sub('};', declaration)
+>  
+>          # Better handle inlined enums
+>          while True:
+> -            r = KernRe(r'(enum\s+\{[^\}]+),([^\n])')
+> +            r = KernRe(r'(enum\s+\{[^}]+),([^\n])')
+>              if not r.search(declaration):
+>                  break
+>  
+> @@ -969,8 +969,8 @@ class KernelDoc:
+>          # - pci_match_device, __copy_to_user (long return type)
+>  
+>          name = r'[a-zA-Z0-9_~:]+'
+> -        prototype_end1 = r'[^\(]*'
+> -        prototype_end2 = r'[^\{]*'
+> +        prototype_end1 = r'[^(]*'
+> +        prototype_end2 = r'[^{]*'
+>          prototype_end = fr'\(({prototype_end1}|{prototype_end2})\)'
+>  
+>          # Besides compiling, Perl qr{[\w\s]+} works as a non-capturing group.
+> @@ -1044,7 +1044,7 @@ class KernelDoc:
+>          Stores a typedef inside self.entries array.
+>          """
+>  
+> -        typedef_type = r'((?:\s+[\w\*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
+> +        typedef_type = r'((?:\s+[\w*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
+>          typedef_ident = r'\*?\s*(\w\S+)\s*'
+>          typedef_args = r'\s*\((.*)\);'
+>  
+> @@ -1265,7 +1265,7 @@ class KernelDoc:
+>              self.dump_section()
+>  
+>              # Look for doc_com + <text> + doc_end:
+> -            r = KernRe(r'\s*\*\s*[a-zA-Z_0-9:\.]+\*/')
+> +            r = KernRe(r'\s*\*\s*[a-zA-Z_0-9:.]+\*/')
+>              if r.match(line):
+>                  self.emit_msg(ln, f"suspicious ending line: {line}")
+>  
+> @@ -1476,14 +1476,14 @@ class KernelDoc:
+>          """Ancillary routine to process a function prototype"""
+>  
+>          # strip C99-style comments to end of line
+> -        line = KernRe(r"\/\/.*$", re.S).sub('', line)
+> +        line = KernRe(r"//.*$", re.S).sub('', line)
+>          #
+>          # Soak up the line's worth of prototype text, stopping at { or ; if present.
+>          #
+>          if KernRe(r'\s*#\s*define').match(line):
+>              self.entry.prototype = line
+>          elif not line.startswith('#'):   # skip other preprocessor stuff
+> -            r = KernRe(r'([^\{]*)')
+> +            r = KernRe(r'([^{]*)')
+>              if r.match(line):
+>                  self.entry.prototype += r.group(1) + " "
+>          #
+
+
+
 Thanks,
-Taniya Das
-
+Mauro
 
