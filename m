@@ -1,75 +1,78 @@
-Return-Path: <linux-kernel+bounces-753134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52ACEB17F16
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:18:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 57AF0B17F18
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:19:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EDBA18860F4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4320B188CE7D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93744220685;
-	Fri,  1 Aug 2025 09:18:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FB28223DFD;
+	Fri,  1 Aug 2025 09:18:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VKCcccot"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsKDelXO"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 492BE3C38;
-	Fri,  1 Aug 2025 09:18:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 63FEB221DB4;
+	Fri,  1 Aug 2025 09:18:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039923; cv=none; b=PiEW0HtVjgs3PreCCiJEu2o1+fF0WYLknAxr1z2Qm5V0yO6p0cRacqO4ePbYXZZgVq5LqmRLERg17mC1sPB73UARb+mKvf5hQKRnB00Sk2zKRoDxFy2M7m+1TmjKNChkv2Qx9eHJF03OHioGyeRXFlVeOC3Xoa8J/ysq+Qwbq2Q=
+	t=1754039926; cv=none; b=BJHzWKthgZWtZ4xtV2StGarv9BIG1UQVHrhWAgq11Mq3YphJVU8NF68PILjPpKrUj+zfTzx+07ybJI9MH2tlZ72MVvWaulHLZPo1N31wwc+X38XaDQw9yGkJyzIkl2OnJr3mETjEPM6uTinjGVUGfngmLvjooDktENpMG9HedC8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039923; c=relaxed/simple;
-	bh=DM2zbqGlMpxPbk5bYPaJq/q4J4+lOoVy3pNl9ij3ByU=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=eP1eJ5lhAyCptveQD4NgI0JyTrcUKSopxnNMJ/XMRPl1G7k1gL6Hm6p2Sb4lJEN4yL3CUSlo5Wf2KuX20xcwnkxUJ2/Mu2WrpNRDmV7kFAwxdfx5lDDwUNgpVIv8HGKuy8xXXTcKtm4ybPWhO5C4RR95Sx2AIOCDTvjkrjxxwDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VKCcccot; arc=none smtp.client-ip=209.85.128.53
+	s=arc-20240116; t=1754039926; c=relaxed/simple;
+	bh=QcoOAH1s06MPN/im803hG8+hLavbNrR9KDrB42elT/I=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=RFTxUynQOucIVYbQbS2p0fy4UqP24MwqEaOtqV1PU6xxkW9TahFdi0g8dFJEiM44Yth1AeiGnJUi4E8i/FR+Pm2Eu8OXXfuOB5OoDeA3NIxGXuxxM0s0cRKDdU4FlKtmVD8Dg9wQllCRUx+0cdwKtusp05THLfPwQSc6BhlmO+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsKDelXO; arc=none smtp.client-ip=209.85.128.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-45555e3317aso3338035e9.3;
-        Fri, 01 Aug 2025 02:18:41 -0700 (PDT)
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-45610582d07so12916575e9.0;
+        Fri, 01 Aug 2025 02:18:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754039919; x=1754644719; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OXzHZvZFg/7OiUCWnuamIDUXt4QwG2aw48t2rlvoPE=;
-        b=VKCcccot4nqi4oh3joJUduJtAZ5h6PxWimPwxnxYtOzC6NYO2G0lMOO3De8T1nworE
-         DvWfXOMdKuu24jnbuKL/YDJi/rDzp/2eqb4eqXrq8PabrEPxItGGQ9WNzTZJncKVGy4G
-         1eXNMIlK73lgdCivJ9mb6rRPFnv4a+y4Y76bRNirsKhbNwnJtdtYTvuc0wnv+kP9UjZg
-         OVZ/pXoGhOBPZpym9kVNxs0z8TwjJJWyLTr97waTIWF9o6A5nonqIVcn5uPk7RBsG0nP
-         eOT7DSM+LFFLJlreHOUGQX4zRMfu5HSN3ZWtgeB9eU8VGE4z2VIpxhtCg9pWZ9XljmFa
-         vhew==
+        d=gmail.com; s=20230601; t=1754039923; x=1754644723; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xtLunnP4TedJqPo1vsBP+WsJ5NT7Bmy4r8DnYlq+CEY=;
+        b=lsKDelXONGBW+S9SglkMQu6Kv6drcpZyEYiWWawZAgySW+Xcs7uLwiqt7rj8FwAhD9
+         QSvQz2kTaL4/azZ2BzNpM7m39QdEOsJlMY1KXjp5+7mmjNmXozmmdRJcIRaTVp5TQ9r9
+         CwoGWkK6Yc1TTsfLiHFZ59w+uDgLujQYbRnbbiMf5g4fPCs/ff51UtQzeF4Pw2Jy5Ql7
+         PB66LJSgSHy+093aMslKN6F+iQWdfKC/Gqd0mp63oYaG9FJE0tlmU11+S1ju0R137p3C
+         uvJdexVErzsuxoMLm9i8uLVbQjgO1w70VmkKX+yfuceNe7u5K+SpLJkLyTvoe1l4RWQE
+         KM7w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754039919; x=1754644719;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=9OXzHZvZFg/7OiUCWnuamIDUXt4QwG2aw48t2rlvoPE=;
-        b=ScfCqYKekxjntsp1kbmbJYB2mG0ma3mHerTOWAPzX9Iblo4c6Lq4yDpw1ht+VVzUI9
-         UBBf1gVjwFRZzQi/O9mWEz1YSE72NscKoUvzWua9Ti72ru/aL3sP/cCdu0KUpADWVA0H
-         ezEfDJHjR+IqMASFzra13E0UOWoW0SfASZdE/F5IHZ5TKcrGi4VREGQpkdlROBRO0jUd
-         2sFe4dWOQU1czTBoUZKItfeRu9sUfY46YF5zfySNg0Hidw1/AaQKWOi5wa0SD4x+dDFc
-         WTK9UVhNkOjmMQvQk54aAIGiG2o8Mv/RdUTIjVLbLbqHWNf8xVxLKzw0GhEruyv/oKGI
-         Hwsg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBn8oi38xel/D6Ux/8aidJmKkufyLRhqneMfxeg+bq+BKZ78OnnBvOmaTRc9Cr7es6g4/W/pF8N/Eut1Y=@vger.kernel.org, AJvYcCWxf35nsql26eKZ7au3E0H5FjPG82I0zaFLYDvHUAV0rMROSC2Xiu63jL2g3X1gvbzi87oVVjbi2X8es8k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+JbXl+q7ML6epvp1bb8bvKh9W6Mb1dTtWEDjxcrQ5VfYMnP/n
-	v7JS1CjZ45Kb8I26FFpLgmBRpZnwsBob87olvGsVOdctbAb61cnLKNXx
-X-Gm-Gg: ASbGncvtanxPv79FLMUGMFPd9u+qVD67sw0DRxkQVen6igN5VOltwP+Znu6PbBcSlkw
-	6/eX/YaWj+Sjl47BmahrtV1UqAvvPWxJwY9CPx54EO77HtNFIJv+Gp6d1jDdecoOQTOQrqbdQUy
-	6T2RyFeix/1yLUkIT/RC7GJd02MtpvXjAcWo1o5IF+D/Fp3fCcYi+0L85mM2W/OoeukpV+1I3Zl
-	mwN2JpjvhVKSJ01a2Awn36YSyXOg6AaeJupDWcbHLM2Esxga0QkzcB0wQoAJyIOKGLGfiie6fD9
-	k++JTqYp6BHK01hpX/Ncg9w668i8fIwqRs/emjkLZy5HI4vKOoQSap1ZucaISjhIvd+M+Rr5bUI
-	zB/R0ieWmPyd+LI66g/qlo9oFDGkV2TSKaisTetc6ENDdg3E7/P5pWO/bfoY3N1+hkhvuVo6tgg
-	eZYQ==
-X-Google-Smtp-Source: AGHT+IEe0pNPbigzu96UgzYklOvX77/sciOzq5+IAwimo0FIOMEER5bpY4XblUXQDZ+bRyR0eBRXQw==
-X-Received: by 2002:a05:600c:528a:b0:458:7005:2ac3 with SMTP id 5b1f17b1804b1-458a5858a2emr47023755e9.21.1754039919355;
-        Fri, 01 Aug 2025 02:18:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754039923; x=1754644723;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xtLunnP4TedJqPo1vsBP+WsJ5NT7Bmy4r8DnYlq+CEY=;
+        b=u6GLo18851jTJEQqYw1ZpouPujx4iuTXdGTbsDeK41D0lcd+XtOz5aGmCynNQ2Yo+e
+         +hFH0nOZoU3x9mAyaIZKXqU3W6Rl9CFbKAwxPQ5Hpr9leiJ8Ij5Qt+NRW8wAuuMSvnXr
+         GIkgKhJrF+dfaauR3T32e3liJBc2kRLXUDQZWbmJ0QNJ4dI2ieA9wVXEslLVD07ayCis
+         IS3vt5HRv3HsiwQOqeJB8OSwX/dNIknj2sQFL0sgRoFR323KL62H6/hNfxGXkKCyRRs4
+         wBnqo8FGTl0rWA1rgqYWRoHNhzj8vp/GRY7qnmbh1+3ATOk5whUCni069tUvTTk+X79j
+         yq/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVHuU7/B0l6FqEMEcUh/IwY3tjql3mMsGwedGI3hlciGzjxFDgXVnZcuuWJLOjWF9iR08q/lM47c4IR6Ac=@vger.kernel.org, AJvYcCVRuAZgh5MRMTgWKFpXbpZy1RjWzoFZKVAEuD75IyHMUiyj1fyps8qcFHhKD7uGZ5xgAHJKZjMEErFefI0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzutTRWxHKSHYUs/q51p5rAe7aXVFfMgOFwsqF0KwF5Moj+cVY/
+	UvaibwiJaolSVSYO6C7CzPV3jVTePIcZDG9eZFlm6XXsWYJVF1RiSWfn
+X-Gm-Gg: ASbGncsHorKwBshlj6LxV9ry+e4vtve3Dfk6zioYVubpKJoYwycHmnmaVDc0sbYER6U
+	eNkqvk8J3pqgZ62uK2T4sxxY9dPxMhiEaaYVBBH3ov7AS6CexJXoFXykS6++r59hkNaG/Zqnvxy
+	CNQcJUIspC/v1JUz6SejRF7RhgoKLcek/rjGH3BO5s1AQ3YsIwqCCm5dgBAA1O0vpW/IBwkOYCs
+	oQNQemSBZQJYnPV+zX7XG4APOZvyYlSR1JcVLhAFQkC1q87cLwJLkJtXmLMdzvux1RT/uNyNrSU
+	0YF595J4GjytdvbqaTq3T/51d9OIYMZSOjaMcu/MdpBiArkDJifLVeMr5Fvv6uq73jQg5xBdtQ3
+	1RqxMfALLl6LqAhQcOy89/v6xy1VLI2/tnztZeV9Q4KuehzOpdeLHWEd69vbSsY9RnoabrTJpFM
+	Ssdl7WEdHGjo5s
+X-Google-Smtp-Source: AGHT+IFi/skLLCRiAqQgbi5epGmUch5tPREIEOTjh2ICmnSbjfdG3rTwP7VXpgf+GU2FtdKGaxac6w==
+X-Received: by 2002:a05:600c:3e1b:b0:455:e858:cd04 with SMTP id 5b1f17b1804b1-45892bd217bmr88566565e9.25.1754039922271;
+        Fri, 01 Aug 2025 02:18:42 -0700 (PDT)
 Received: from Ansuel-XPS24 (host-80-181-255-224.pool80181.interbusiness.it. [80.181.255.224])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458953787a8sm95789065e9.14.2025.08.01.02.18.37
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458953787a8sm95789065e9.14.2025.08.01.02.18.39
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:18:38 -0700 (PDT)
+        Fri, 01 Aug 2025 02:18:41 -0700 (PDT)
 From: Christian Marangi <ansuelsmth@gmail.com>
 To: Jaroslav Kysela <perex@perex.cz>,
 	Takashi Iwai <tiwai@suse.com>,
@@ -95,10 +98,12 @@ To: Jaroslav Kysela <perex@perex.cz>,
 	linux-sound@vger.kernel.org,
 	linux-arm-kernel@lists.infradead.org,
 	linux-mediatek@lists.infradead.org
-Subject: [RFC RESEND PATCH 0/2] ASoC: airoha: Add initial driver AN7581
-Date: Fri,  1 Aug 2025 11:18:07 +0200
-Message-ID: <20250801091812.4866-1-ansuelsmth@gmail.com>
+Subject: [RFC RESEND PATCH 1/2] ASoC: mediatek: move some header to global include
+Date: Fri,  1 Aug 2025 11:18:08 +0200
+Message-ID: <20250801091812.4866-2-ansuelsmth@gmail.com>
 X-Mailer: git-send-email 2.50.0
+In-Reply-To: <20250801091812.4866-1-ansuelsmth@gmail.com>
+References: <20250801091812.4866-1-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,61 +112,331 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This is an initial series to add the Sound system for Airoha AN7581.
+In preparation for support of Airoha SoC sound system based on Mediatek
+AFE, move some header to global include to prevent having to use complex
+redirection for inclusion.
 
-It's based mainly on the Mediatek AFE system with some bigger
-changes for additional Codec (that will be submitted later)
-
-A small cleanup to make it possible to use the Mediatek AFE
-header and API without having to use complex redirection to
-reach the local header.
-
-Posting as RFC to make sure these rework changes are happly
-accepted.
-
-Christian Marangi (2):
-  ASoC: mediatek: move some header to global include
-  ASoC: airoha: Add AFE driver for Airoha AN7581
-
- .../sound/mediatek}/mtk-afe-fe-dai.h          |   0
- .../sound/mediatek}/mtk-afe-platform-driver.h |   0
- sound/soc/Makefile                            |   1 +
- sound/soc/airoha/Kconfig                      |  10 +
- sound/soc/airoha/Makefile                     |   2 +
- sound/soc/airoha/an7581/Makefile              |   7 +
- sound/soc/airoha/an7581/an7581-afe-common.h   |  35 ++
- sound/soc/airoha/an7581/an7581-afe-pcm.c      | 455 ++++++++++++++++++
- sound/soc/airoha/an7581/an7581-reg.h          |  29 ++
- sound/soc/mediatek/common/mtk-afe-fe-dai.c    |   4 +-
- .../mediatek/common/mtk-afe-platform-driver.c |   2 +-
- sound/soc/mediatek/mt2701/mt2701-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt6797/mt6797-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt7986/mt7986-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt8173/mt8173-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt8183/mt8183-afe-pcm.c    |   4 +-
- .../mediatek/mt8183/mt8183-da7219-max98357.c  |   2 +-
- .../mt8183/mt8183-mt6358-ts3a227-max98357.c   |   2 +-
- sound/soc/mediatek/mt8186/mt8186-afe-pcm.c    |   4 +-
- .../soc/mediatek/mt8186/mt8186-misc-control.c |   4 +-
- .../mediatek/mt8186/mt8186-mt6366-common.c    |   2 +-
- sound/soc/mediatek/mt8186/mt8186-mt6366.c     |   2 +-
- sound/soc/mediatek/mt8188/mt8188-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt8188/mt8188-mt6359.c     |   2 +-
- sound/soc/mediatek/mt8192/mt8192-afe-pcm.c    |   4 +-
- .../mt8192/mt8192-mt6359-rt1015-rt5682.c      |   2 +-
- sound/soc/mediatek/mt8195/mt8195-afe-pcm.c    |   4 +-
- sound/soc/mediatek/mt8195/mt8195-mt6359.c     |   2 +-
- sound/soc/mediatek/mt8365/mt8365-afe-pcm.c    |   4 +-
- 29 files changed, 571 insertions(+), 32 deletions(-)
+Signed-off-by: Christian Marangi <ansuelsmth@gmail.com>
+---
+ .../common => include/sound/mediatek}/mtk-afe-fe-dai.h        | 0
+ .../sound/mediatek}/mtk-afe-platform-driver.h                 | 0
+ sound/soc/mediatek/common/mtk-afe-fe-dai.c                    | 4 ++--
+ sound/soc/mediatek/common/mtk-afe-platform-driver.c           | 2 +-
+ sound/soc/mediatek/mt2701/mt2701-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt6797/mt6797-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt7986/mt7986-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8173/mt8173-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8183/mt8183-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c            | 2 +-
+ sound/soc/mediatek/mt8183/mt8183-mt6358-ts3a227-max98357.c    | 2 +-
+ sound/soc/mediatek/mt8186/mt8186-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8186/mt8186-misc-control.c               | 4 ++--
+ sound/soc/mediatek/mt8186/mt8186-mt6366-common.c              | 2 +-
+ sound/soc/mediatek/mt8186/mt8186-mt6366.c                     | 2 +-
+ sound/soc/mediatek/mt8188/mt8188-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8188/mt8188-mt6359.c                     | 2 +-
+ sound/soc/mediatek/mt8192/mt8192-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c       | 2 +-
+ sound/soc/mediatek/mt8195/mt8195-afe-pcm.c                    | 4 ++--
+ sound/soc/mediatek/mt8195/mt8195-mt6359.c                     | 2 +-
+ sound/soc/mediatek/mt8365/mt8365-afe-pcm.c                    | 4 ++--
+ 22 files changed, 32 insertions(+), 32 deletions(-)
  rename {sound/soc/mediatek/common => include/sound/mediatek}/mtk-afe-fe-dai.h (100%)
  rename {sound/soc/mediatek/common => include/sound/mediatek}/mtk-afe-platform-driver.h (100%)
- create mode 100644 sound/soc/airoha/Kconfig
- create mode 100644 sound/soc/airoha/Makefile
- create mode 100644 sound/soc/airoha/an7581/Makefile
- create mode 100644 sound/soc/airoha/an7581/an7581-afe-common.h
- create mode 100644 sound/soc/airoha/an7581/an7581-afe-pcm.c
- create mode 100644 sound/soc/airoha/an7581/an7581-reg.h
 
+diff --git a/sound/soc/mediatek/common/mtk-afe-fe-dai.h b/include/sound/mediatek/mtk-afe-fe-dai.h
+similarity index 100%
+rename from sound/soc/mediatek/common/mtk-afe-fe-dai.h
+rename to include/sound/mediatek/mtk-afe-fe-dai.h
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.h b/include/sound/mediatek/mtk-afe-platform-driver.h
+similarity index 100%
+rename from sound/soc/mediatek/common/mtk-afe-platform-driver.h
+rename to include/sound/mediatek/mtk-afe-platform-driver.h
+diff --git a/sound/soc/mediatek/common/mtk-afe-fe-dai.c b/sound/soc/mediatek/common/mtk-afe-fe-dai.c
+index 3809068f5620..de58ee0afe27 100644
+--- a/sound/soc/mediatek/common/mtk-afe-fe-dai.c
++++ b/sound/soc/mediatek/common/mtk-afe-fe-dai.c
+@@ -11,9 +11,9 @@
+ #include <linux/pm_runtime.h>
+ #include <linux/regmap.h>
+ #include <sound/soc.h>
+-#include "mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include <sound/pcm_params.h>
+-#include "mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ #include "mtk-base-afe.h"
+ 
+ #define AFE_BASE_END_OFFSET 8
+diff --git a/sound/soc/mediatek/common/mtk-afe-platform-driver.c b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+index 6b6330583941..fc1681281ad5 100644
+--- a/sound/soc/mediatek/common/mtk-afe-platform-driver.c
++++ b/sound/soc/mediatek/common/mtk-afe-platform-driver.c
+@@ -10,7 +10,7 @@
+ #include <linux/dma-mapping.h>
+ #include <sound/soc.h>
+ 
+-#include "mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "mtk-base-afe.h"
+ 
+ int mtk_afe_combine_sub_dai(struct mtk_base_afe *afe)
+diff --git a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+index fcae38135d93..ce50eda77bd9 100644
+--- a/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
++++ b/sound/soc/mediatek/mt2701/mt2701-afe-pcm.c
+@@ -16,8 +16,8 @@
+ 
+ #include "mt2701-afe-common.h"
+ #include "mt2701-afe-clock-ctrl.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ static const struct snd_pcm_hardware mt2701_afe_hardware = {
+ 	.info = SNDRV_PCM_INFO_MMAP | SNDRV_PCM_INFO_INTERLEAVED
+diff --git a/sound/soc/mediatek/mt6797/mt6797-afe-pcm.c b/sound/soc/mediatek/mt6797/mt6797-afe-pcm.c
+index f62a32f2f2b6..dd8583df7d0a 100644
+--- a/sound/soc/mediatek/mt6797/mt6797-afe-pcm.c
++++ b/sound/soc/mediatek/mt6797/mt6797-afe-pcm.c
+@@ -16,8 +16,8 @@
+ #include "mt6797-afe-clk.h"
+ #include "mt6797-interconnection.h"
+ #include "mt6797-reg.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ enum {
+ 	MTK_AFE_RATE_8K = 0,
+diff --git a/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c b/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
+index 7a6ad9116e55..640c3a7bff2d 100644
+--- a/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
++++ b/sound/soc/mediatek/mt7986/mt7986-afe-pcm.c
+@@ -16,8 +16,8 @@
+ 
+ #include "mt7986-afe-common.h"
+ #include "mt7986-reg.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ enum {
+ 	MTK_AFE_RATE_8K = 0,
+diff --git a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+index 04ed0cfec174..6c58daa0a963 100644
+--- a/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
++++ b/sound/soc/mediatek/mt8173/mt8173-afe-pcm.c
+@@ -18,8 +18,8 @@
+ #include <sound/soc.h>
+ #include "mt8173-afe-common.h"
+ #include "../common/mtk-base-afe.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ /*****************************************************************************
+  *                  R E G I S T E R       D E F I N I T I O N
+diff --git a/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c b/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
+index e8884354995c..9e1fa40bcb56 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
++++ b/sound/soc/mediatek/mt8183/mt8183-afe-pcm.c
+@@ -17,8 +17,8 @@
+ #include "mt8183-afe-clk.h"
+ #include "mt8183-interconnection.h"
+ #include "mt8183-reg.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ enum {
+ 	MTK_AFE_RATE_8K = 0,
+diff --git a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+index 3388e076ccc9..faba30a58e9e 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
++++ b/sound/soc/mediatek/mt8183/mt8183-da7219-max98357.c
+@@ -16,7 +16,7 @@
+ 
+ #include "../../codecs/da7219.h"
+ #include "../../codecs/rt1015.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "mt8183-afe-common.h"
+ 
+ #define DA7219_CODEC_DAI "da7219-hifi"
+diff --git a/sound/soc/mediatek/mt8183/mt8183-mt6358-ts3a227-max98357.c b/sound/soc/mediatek/mt8183/mt8183-mt6358-ts3a227-max98357.c
+index 497a9043be7b..5d6bcaaebd8f 100644
+--- a/sound/soc/mediatek/mt8183/mt8183-mt6358-ts3a227-max98357.c
++++ b/sound/soc/mediatek/mt8183/mt8183-mt6358-ts3a227-max98357.c
+@@ -15,7 +15,7 @@
+ 
+ #include "../../codecs/rt1015.h"
+ #include "../../codecs/ts3a227e.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "mt8183-afe-common.h"
+ 
+ #define RT1015_CODEC_DAI "rt1015-aif"
+diff --git a/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c b/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
+index db7c93401bee..2ffb64d88c56 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
++++ b/sound/soc/mediatek/mt8186/mt8186-afe-pcm.c
+@@ -14,8 +14,8 @@
+ #include <linux/reset.h>
+ #include <sound/soc.h>
+ 
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ #include "mt8186-afe-common.h"
+ #include "mt8186-afe-clk.h"
+diff --git a/sound/soc/mediatek/mt8186/mt8186-misc-control.c b/sound/soc/mediatek/mt8186/mt8186-misc-control.c
+index 2317de8c44c0..96ee69fdc8a6 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-misc-control.c
++++ b/sound/soc/mediatek/mt8186/mt8186-misc-control.c
+@@ -11,8 +11,8 @@
+ #include <linux/regmap.h>
+ #include <sound/soc.h>
+ 
+-#include "../common/mtk-afe-fe-dai.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-fe-dai.h>
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "mt8186-afe-common.h"
+ 
+ static const char * const mt8186_sgen_mode_str[] = {
+diff --git a/sound/soc/mediatek/mt8186/mt8186-mt6366-common.c b/sound/soc/mediatek/mt8186/mt8186-mt6366-common.c
+index fa08eb0654d8..4155db56c59a 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-mt6366-common.c
++++ b/sound/soc/mediatek/mt8186/mt8186-mt6366-common.c
+@@ -9,7 +9,7 @@
+ #include <sound/soc.h>
+ 
+ #include "../../codecs/mt6358.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "mt8186-afe-common.h"
+ #include "mt8186-mt6366-common.h"
+ 
+diff --git a/sound/soc/mediatek/mt8186/mt8186-mt6366.c b/sound/soc/mediatek/mt8186/mt8186-mt6366.c
+index 43546012cf61..9c47949864fc 100644
+--- a/sound/soc/mediatek/mt8186/mt8186-mt6366.c
++++ b/sound/soc/mediatek/mt8186/mt8186-mt6366.c
+@@ -22,7 +22,7 @@
+ #include "../../codecs/da7219.h"
+ #include "../../codecs/mt6358.h"
+ #include "../../codecs/rt5682.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "../common/mtk-dsp-sof-common.h"
+ #include "../common/mtk-soc-card.h"
+ #include "../common/mtk-soundcard-driver.h"
+diff --git a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c b/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+index ac4fdf8ba78f..30bb0cd34953 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
++++ b/sound/soc/mediatek/mt8188/mt8188-afe-pcm.c
+@@ -24,8 +24,8 @@
+ #include "mt8188-afe-common.h"
+ #include "mt8188-afe-clk.h"
+ #include "mt8188-reg.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ #define MT8188_MEMIF_BUFFER_BYTES_ALIGN  (0x40)
+ #define MT8188_MEMIF_DL7_MAX_PERIOD_SIZE (0x3fff)
+diff --git a/sound/soc/mediatek/mt8188/mt8188-mt6359.c b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+index a2a76b6df631..0801c26ef36d 100644
+--- a/sound/soc/mediatek/mt8188/mt8188-mt6359.c
++++ b/sound/soc/mediatek/mt8188/mt8188-mt6359.c
+@@ -19,7 +19,7 @@
+ #include "../../codecs/mt6359.h"
+ #include "../../codecs/mt6359-accdet.h"
+ #include "../../codecs/rt5682.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "../common/mtk-soundcard-driver.h"
+ #include "../common/mtk-dsp-sof-common.h"
+ #include "../common/mtk-soc-card.h"
+diff --git a/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c b/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
+index fd6af74d7995..1498714ff6c0 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
++++ b/sound/soc/mediatek/mt8192/mt8192-afe-pcm.c
+@@ -16,8 +16,8 @@
+ #include <linux/reset.h>
+ #include <sound/soc.h>
+ 
+-#include "../common/mtk-afe-fe-dai.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-fe-dai.h>
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ 
+ #include "mt8192-afe-common.h"
+ #include "mt8192-afe-clk.h"
+diff --git a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
+index bf483a8fb34a..910ff56cc607 100644
+--- a/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
++++ b/sound/soc/mediatek/mt8192/mt8192-mt6359-rt1015-rt5682.c
+@@ -19,7 +19,7 @@
+ #include "../../codecs/mt6359.h"
+ #include "../../codecs/rt1015.h"
+ #include "../../codecs/rt5682.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "../common/mtk-soc-card.h"
+ #include "../common/mtk-soundcard-driver.h"
+ #include "mt8192-afe-common.h"
+diff --git a/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c b/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
+index 5d025ad72263..a18fdfd9049c 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
++++ b/sound/soc/mediatek/mt8195/mt8195-afe-pcm.c
+@@ -20,8 +20,8 @@
+ #include "mt8195-afe-common.h"
+ #include "mt8195-afe-clk.h"
+ #include "mt8195-reg.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ #define MT8195_MEMIF_BUFFER_BYTES_ALIGN  (0x40)
+ #define MT8195_MEMIF_DL7_MAX_PERIOD_SIZE (0x3fff)
+diff --git a/sound/soc/mediatek/mt8195/mt8195-mt6359.c b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+index e57391c213e7..9594689d935a 100644
+--- a/sound/soc/mediatek/mt8195/mt8195-mt6359.c
++++ b/sound/soc/mediatek/mt8195/mt8195-mt6359.c
+@@ -19,7 +19,7 @@
+ #include "../../codecs/mt6359.h"
+ #include "../../codecs/rt1011.h"
+ #include "../../codecs/rt5682.h"
+-#include "../common/mtk-afe-platform-driver.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
+ #include "../common/mtk-dsp-sof-common.h"
+ #include "../common/mtk-soc-card.h"
+ #include "../common/mtk-soundcard-driver.h"
+diff --git a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+index 10793bbe9275..ddedf55e0d8c 100644
+--- a/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
++++ b/sound/soc/mediatek/mt8365/mt8365-afe-pcm.c
+@@ -19,8 +19,8 @@
+ #include "mt8365-afe-clk.h"
+ #include "mt8365-reg.h"
+ #include "../common/mtk-base-afe.h"
+-#include "../common/mtk-afe-platform-driver.h"
+-#include "../common/mtk-afe-fe-dai.h"
++#include <sound/mediatek/mtk-afe-platform-driver.h>
++#include <sound/mediatek/mtk-afe-fe-dai.h>
+ 
+ #define AFE_BASE_END_OFFSET 8
+ 
 -- 
 2.50.0
 
