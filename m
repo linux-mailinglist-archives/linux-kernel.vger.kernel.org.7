@@ -1,220 +1,264 @@
-Return-Path: <linux-kernel+bounces-753684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82E09B1865E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:13:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 251C4B18660
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E161760B7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D81E7A32EE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:12:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1AF1DF755;
-	Fri,  1 Aug 2025 17:13:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D2E1E1C1A;
+	Fri,  1 Aug 2025 17:14:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XCXkHomO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4bFfPKG"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F376F2F2;
-	Fri,  1 Aug 2025 17:12:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0119C546
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:13:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068381; cv=none; b=ak/ByYApSO3gDouWxiDB0mnMBnNC48Ilr47W0q8HcxWXa6LuWHu9VEypN3l6u1D9RxhYbHwqgRHn2FM+hZc936hCxqSkP4p4wF83IR2tPiWzIuyWlcs6HXWLYRC20aw5siNKoRTd3uGIAINS62wx3a4ixMwZTUUinEVdfF0++7c=
+	t=1754068440; cv=none; b=ckKXsN6rLf1W6OOX0WvA9o7g3N3Uzqg1p5Y/PEy2AW4jHeaMAOGdinrhYSXws7Rw0SAZKUmWEjbN0CUljt2h9mH7QQDEumQRfhsS/Lolj+JQz+prHv7uosKIHOLkKo/7s/wwSY6LkOCkF7xqwgkoaNFVUDONR/bWPPODnjHJ1o4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068381; c=relaxed/simple;
-	bh=kDa4f8s4fQtBcRBxRFCuMeNUACPev/hRdUXx1TbDDLQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=uszRpIwMijfjfxVyKE+Y0908lzA1Fqac+7bCNmbU3RWrjs0RrzyPaiHo5YOABWN+HdSBs9z2UBgTlpYGmKBkKJSG1NF0aHjoUGcA/uAw4sCpsjGfGlidWg0sKxF4qyTxAZRg3lAx3uE5SiuItkbVpNkB41PJsv2iWBn6FW+T6zA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XCXkHomO; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754068380; x=1785604380;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=kDa4f8s4fQtBcRBxRFCuMeNUACPev/hRdUXx1TbDDLQ=;
-  b=XCXkHomOv9XBQ37Xz4nlwcWoMMMD3L0PgAc8/VTgxjKKzykMhB6yQAiB
-   DrI29TEs/qlAXSiVp1uXYNNaoVGgX2LGLAnen7FE6DwqbYMef9rL/sWXI
-   qEDBsD3ekFX0RtqVCnzcsiOY2eO+mNE2t0CTaECGUeT25jRAewYpLIUCr
-   izXE+Byhugoyx+sy1UgAFmhN71SgDgKyO+4GwFedhAGy2vK9EZU8roHx3
-   P5CmpjVv6bwBrqB86hOUvf4FwbHdis1TwLULF0Jk7KmBF8hCqj70ywxb1
-   GWxASvqvLsGstgX2UzaqDwQaZ6c5tvrCvCaWGcq78oloAnd68UnjVpVpd
-   A==;
-X-CSE-ConnectionGUID: ZXKvTPmjT7exNqrjRl5xYw==
-X-CSE-MsgGUID: CLLSTA1jS8asnsWSQ3dxXA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="67788385"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="67788385"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 10:12:59 -0700
-X-CSE-ConnectionGUID: 4W1TGk90Rq6w0Asfd2mdcw==
-X-CSE-MsgGUID: azLkx13EQluNt3pEM9IGsQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="163624955"
-Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 10:12:59 -0700
-Message-ID: <96866c15-2eb1-4df4-9e63-dfd5e40ecb91@intel.com>
-Date: Fri, 1 Aug 2025 10:12:58 -0700
+	s=arc-20240116; t=1754068440; c=relaxed/simple;
+	bh=urjHTNxVtznsZGPK5MfG0R49OKWj2ch5jHzSEmSRmi8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HYeNbtxh7RNadwp1xMQz2JY6Bp2pcJO6V6U33T5ovUzqR1aD2CUyCmeoFDLtlFcMSDHZF+jxFbO8BQhuwOS6gNV81foPkhalhoYMyOMB/+V9zYs0YE1/+saMA5U1b+x5md/ehFjFGeOorSK1RE75jiFk6EBRmu4CbHFlIOkyj+k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4bFfPKG; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754068437;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=UapQRB4TdH6jPVjzlLlw/CIcbZ+SS127yBars+dasnY=;
+	b=E4bFfPKGADA5XJIVWQDJfLrojC5d6uX81nDf3B5VpmMlLH9zgmLwky9qScNY4l05gIOosj
+	S39gQPof8EVukt7EvljDPsAYC0zlxSbbPaMxUcHdxaPmRcZEsE4QCT0lCqJ11qOHKLMwPw
+	cnbgxw2yf/DzcUr9OH+kk2OZYh+frxg=
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
+ [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-567-9R0PgB5kMX6m5-Budb_fPA-1; Fri, 01 Aug 2025 13:13:56 -0400
+X-MC-Unique: 9R0PgB5kMX6m5-Budb_fPA-1
+X-Mimecast-MFC-AGG-ID: 9R0PgB5kMX6m5-Budb_fPA_1754068436
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab401e333bso76098271cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:13:56 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754068436; x=1754673236;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=UapQRB4TdH6jPVjzlLlw/CIcbZ+SS127yBars+dasnY=;
+        b=YPkVQHZevc4aEN9lPKbr72BbUAkDey5kkcph9yKB4w516Hp2F9wWzs1otFDpE7d2fq
+         UHIfnC/uHuwwL3LHbBKaHb7c/F4o+pEi2btvCdLR5Mt0CXaOFd0ccb1j+fcMEFJ9ddUU
+         x07BGlEqADrufbSyAzWRDcq6ubbpH6YiZgNQrskdebPRBcxP2bp8L/CPd9FJ/rerzt+v
+         JbBL15UIE1MdskiZ19Hvn77DBNkTnNg7fMY5F685sWw1IYoIDUdbR7LhLf3E7KySsJgW
+         a6QM23nApRHUX9T5qBj+jSimLxkncawlDUVFihnrFSSmfMi2s3inGYy6kUWhClM1Nb+E
+         p2vA==
+X-Forwarded-Encrypted: i=1; AJvYcCVexqX8aHuB+mR73hes3qG0EesKRPzmAF0Ap7QrULSVS4TECCZe0ZF0UW5ZNVZsgYOyX8x+PI/yqXMZ+5E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZqOKI1rfP5DCjTu35cvtt22WYkzKc1YhNcfpWi9J6NGeFpsb9
+	zsP6VgBQ0CcVOQqFSUakoMe45a0O+4c7x9+R+T3uGvl1mjX4q4KiTFFTojfXmtTQysehUW4Wot5
+	rf5lmqjscgIceX5A/UCy91RGtBx8HCWOkr2Dxq/wpOgkI1qvh6O0ACYgYWbWTJX1bww==
+X-Gm-Gg: ASbGncshW8RVOPKVUIwUngtv5U2TMumugWIAQunhAlNfGacsGwbrmoJfdcejMwdhbZh
+	9I4noO8zr18fn+A9A4zRw7WJDwaaBXk4+rXn5JAFcXm25B7wUBiFlDjUWfkjKr+IUgNtgfoLrFx
+	Ju0Ra5J4ZoXJ95qFOvwR1muwSGIg8jmFUqd0s19meSZ9pRgyJTnfKwiEEaNgc7Xrddi4ev237e6
+	2YiXInYIlRjsupCn3tIf2b3vRvlbZIJQy5ZcymMuNYJpsVFGsw61OhfP1j7sNploUf/y0h3eJeu
+	y87YRdD4vHV785dv6dg6NeykA6FOm+st
+X-Received: by 2002:a05:622a:a953:20b0:4af:36a:a60f with SMTP id d75a77b69052e-4af036aa957mr25038531cf.21.1754068435404;
+        Fri, 01 Aug 2025 10:13:55 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG8+K6i2QRol52KGBLA9S6CAT2dneVBlknXiG0f/LH2d8sJO8oI3hxjPNdTh/rQMWdVl3tj8g==
+X-Received: by 2002:a05:622a:a953:20b0:4af:36a:a60f with SMTP id d75a77b69052e-4af036aa957mr25037891cf.21.1754068434728;
+        Fri, 01 Aug 2025 10:13:54 -0700 (PDT)
+Received: from x1.local ([174.89.135.171])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeebde17fsm22954801cf.1.2025.08.01.10.13.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 10:13:54 -0700 (PDT)
+Date: Fri, 1 Aug 2025 13:13:42 -0400
+From: Peter Xu <peterx@redhat.com>
+To: Suren Baghdasaryan <surenb@google.com>
+Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
+	aarcange@redhat.com, lokeshgidra@google.com, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com,
+	stable@vger.kernel.org
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+Message-ID: <aIz1xrzBc2Spa2OH@x1.local>
+References: <20250731154442.319568-1-surenb@google.com>
+ <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
+ <aIzMGlrR1SL5Y_Gp@x1.local>
+ <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
+ <aIzp6WqdzhomPhhf@x1.local>
+ <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 5/6] x86/sgx: Implement ENCLS[EUPDATESVN]
-To: Elena Reshetova <elena.reshetova@intel.com>
-Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
- mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
- x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
- chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
- bondarn@google.com, scott.raynor@intel.com
-References: <20250801112619.1117549-1-elena.reshetova@intel.com>
- <20250801112619.1117549-6-elena.reshetova@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <20250801112619.1117549-6-elena.reshetova@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
 
-The changelog is missing a tidbit about the fact that this is still dead
-code until sgx_inc_usage_count() gets a real implementation.
+On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrote:
+> On Fri, Aug 1, 2025 at 9:23 AM Peter Xu <peterx@redhat.com> wrote:
+> >
+> > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan wrote:
+> > > On Fri, Aug 1, 2025 at 7:16 AM Peter Xu <peterx@redhat.com> wrote:
+> > > >
+> > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbrand wrote:
+> > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
+> > > > >
+> > > > > Hi!
+> > > > >
+> > > > > Did you mean in you patch description:
+> > > > >
+> > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-present PMDs"
+> > > > >
+> > > > > Talking about THP holes is very very confusing.
+> > > > >
+> > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+> > > > > > encounters a non-present THP, it fails to properly recognize an unmapped
+> > > > >
+> > > > > You mean a "non-present PMD that is not a migration entry".
+> > > > >
+> > > > > > hole and tries to access a non-existent folio, resulting in
+> > > > > > a crash. Add a check to skip non-present THPs.
+> > > > >
+> > > > > That makes sense. The code we have after this patch is rather complicated
+> > > > > and hard to read.
+> > > > >
+> > > > > >
+> > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
+> > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > > > > > Cc: stable@vger.kernel.org
+> > > > > > ---
+> > > > > > Changes since v1 [1]
+> > > > > > - Fixed step size calculation, per Lokesh Gidra
+> > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, per Lokesh Gidra
+> > > > > >
+> > > > > > [1] https://lore.kernel.org/all/20250730170733.3829267-1-surenb@google.com/
+> > > > > >
+> > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----------------
+> > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
+> > > > > >
+> > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > > > > > index cbed91b09640..b5af31c22731 100644
+> > > > > > --- a/mm/userfaultfd.c
+> > > > > > +++ b/mm/userfaultfd.c
+> > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+> > > > > >             ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+> > > > > >             if (ptl) {
+> > > > > > -                   /* Check if we can move the pmd without splitting it. */
+> > > > > > -                   if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+> > > > > > -                       !pmd_none(dst_pmdval)) {
+> > > > > > -                           struct folio *folio = pmd_folio(*src_pmd);
+> > > > > > +                   if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
+> > > >
+> > > > [1]
+> > > >
+> > > > > > +                           /* Check if we can move the pmd without splitting it. */
+> > > > > > +                           if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+> > > > > > +                               !pmd_none(dst_pmdval)) {
+> > > > > > +                                   if (pmd_present(*src_pmd)) {
+> >
+> > [2]
+> >
+> > > > > > +                                           struct folio *folio = pmd_folio(*src_pmd);
+> >
+> > [3]
+> >
+> > > > > > +
+> > > > > > +                                           if (!folio || (!is_huge_zero_folio(folio) &&
+> > > > > > +                                                          !PageAnonExclusive(&folio->page))) {
+> > > > > > +                                                   spin_unlock(ptl);
+> > > > > > +                                                   err = -EBUSY;
+> > > > > > +                                                   break;
+> > > > > > +                                           }
+> > > > > > +                                   }
+> > > > >
+> > > > > ... in particular that. Is there some way to make this code simpler / easier
+> > > > > to read? Like moving that whole last folio-check thingy into a helper?
+> > > >
+> > > > One question might be relevant is, whether the check above [1] can be
+> > > > dropped.
+> > > >
+> > > > The thing is __pmd_trans_huge_lock() does double check the pmd to be !none
+> > > > before returning the ptl.  I didn't follow closely on the recent changes on
+> > > > mm side on possible new pmd swap entries, if migration is the only possible
+> > > > one then it looks like [1] can be avoided.
+> > >
+> > > Hi Peter,
+> > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (!pmd_none()
+> > > && !pmd_present()) PMD to pass and that's when this crash is hit.
+> >
+> > First for all, thanks for looking into the issue with Lokesh; I am still
+> > catching up with emails after taking weeks off.
+> >
+> > I didn't yet read into the syzbot report, but I thought the bug was about
+> > referencing the folio on top of a swap entry after reading your current
+> > patch, which has:
+> >
+> >         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+> >             !pmd_none(dst_pmdval)) {
+> >                 struct folio *folio = pmd_folio(*src_pmd); <----
+> >
+> > Here looks like *src_pmd can be a migration entry. Is my understanding
+> > correct?
+> 
+> Correct.
+> 
+> >
+> > > If we drop the check at [1] then the path that takes us to
+> >
+> > If my above understanding is correct, IMHO it should be [2] above that
+> > makes sure the reference won't happen on a swap entry, not necessarily [1]?
+> 
+> Yes, in case of migration entry this is what protects us.
+> 
+> >
+> > > split_huge_pmd() will bail out inside split_huge_pmd_locked() with no
+> > > indication that split did not happen. Afterwards we will retry
+> >
+> > So we're talking about the case where it's a swap pmd entry, right?
+> 
+> Hmm, my understanding is that it's being treated as a swap entry but
+> in reality is not. I thought THPs are always split before they get
+> swapped, no?
 
-On 8/1/25 04:25, Elena Reshetova wrote:
-...
-> +/**
-> + * sgx_update_svn() - Attempt to call ENCLS[EUPDATESVN].
-> + * This instruction attempts to update CPUSVN to the
-> + * currently loaded microcode update SVN and generate new
-> + * cryptographic assets. Must be called when EPC is empty.
+Yes they should be split, afaiu.
 
-As a general rule, I'd much rather have the "Must be $FOO" rules written
-in code than in a comment, or along with a comment:
+> 
+> > Could you elaborate why the split would fail?
+> 
+> Just looking at the code, split_huge_pmd_locked() checks for
+> (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
+> pmd_trans_huge() is false if !pmd_present() and it's not a migration
+> entry, so __split_huge_pmd_locked() will be skipped.
 
-	/* EPC is guaranteed to be empty when there are no users: */
-	WARN(count, "Elevated usage count...");
+Here might be the major part of where confusion came from: I thought it
+must be a migration pmd entry to hit the issue, so it's not?
 
-> + * Most of the time, there will be no update and that's OK.
+I checked the code just now:
 
-This should go with the check for SGX_NO_UPDATE, not here.
+__handle_mm_fault:
+		if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
+			VM_BUG_ON(thp_migration_supported() &&
+					  !is_pmd_migration_entry(vmf.orig_pmd));
 
-> + * If the failure is due to SGX_INSUFFICIENT_ENTROPY, the
-> + * operation can be safely retried. In other failure cases,
-> + * the retry should not be attempted.
+So IIUC pmd migration entry is still the only possible way to have a swap
+entry.  It doesn't look like we have "real" swap entries for PMD (which can
+further points to some swapfiles)?
 
-Ditto. This is rewriting the code in comments.
-
-> + * Return:
-> + * 0: Success or not supported
-> + * -EAGAIN: Can be safely retried, failure is due to lack of
-> + *  entropy in RNG.
-> + * -EIO: Unexpected error, retries are not advisable.
-> + */
-> +static int __maybe_unused sgx_update_svn(void)
-> +{
-> +	int ret;
-> +
-> +	/*
-> +	 * If EUPDATESVN is not available, it is ok to
-> +	 * silently skip it to comply with legacy behavior.
-> +	 */
-> +	if (!cpu_feature_enabled(X86_FEATURE_SGX_EUPDATESVN))
-> +		return 0;
-> +
-> +	for (int i = 0; i < RDRAND_RETRY_LOOPS; i++) {
-> +		ret = __eupdatesvn();
-> +
-> +		/* Stop on success or unexpected errors: */
-> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
-> +			break;
-> +	}
-> +
-> +	/*
-> +	 * SVN successfully updated.
-> +	 * Let users know when the update was successful.
-> +	 */
-> +	if (!ret)
-> +		pr_info("SVN updated successfully\n");
-> +
-> +	if (!ret || ret == SGX_NO_UPDATE)
-> +		return 0;
-> +
-> +	/*
-> +	 * SVN update failed due to lack of entropy in DRNG.
-> +	 * Indicate to userspace that it should retry.
-> +	 */
-> +	if (ret == SGX_INSUFFICIENT_ENTROPY)
-> +		return -EAGAIN;
-
-There are four cases to handle. Doesn't it make sense to just write it
-as four literal "case"s?
-
-	switch (ret) {
-	case 0:
-		pr_info("...");
-		return 0;
-	case SGX_NO_UPDATE:
-		return 0;
-	case SGX_INSUFFICIENT_ENTROPY:
-		return -EAGAIN;
-	default:
-		break;
-	}
-
-
-> +	ENCLS_WARN(ret, "EUPDATESVN");
-> +	return -EIO;
-> +}
-> +
->  int sgx_inc_usage_count(void)
->  {
->  	return 0;
+-- 
+Peter Xu
 
 
