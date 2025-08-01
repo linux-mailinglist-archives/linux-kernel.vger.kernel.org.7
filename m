@@ -1,135 +1,119 @@
-Return-Path: <linux-kernel+bounces-752831-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752833-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5B5E9B17B68
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93C62B17B6C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F87586D43
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 338A16269BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:31:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3671E18C91F;
-	Fri,  1 Aug 2025 03:30:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ociUoZqM"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFE7A1714B7;
+	Fri,  1 Aug 2025 03:31:27 +0000 (UTC)
+Received: from smtpbguseast3.qq.com (smtpbguseast3.qq.com [54.243.244.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8961E33F9;
-	Fri,  1 Aug 2025 03:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904F98615A;
+	Fri,  1 Aug 2025 03:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.243.244.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754019020; cv=none; b=OoZnLvN3ngdQywVidelIZgtfAGLGjjsjFcNGWuwFuAXzg61yvNcjsPCtBQVbNGH6K5CgWABjJuEJ5LAmTZdU+6rfnLJwDSMmX5sIdMX2+Fmyt9vpaeQRy4Ndi7Jaf1E2Jy65gc43ea0q3NWLMXfxrH+IPysr7I6AwyQF1CcsQcQ=
+	t=1754019087; cv=none; b=Mc+pjrvAzdfdReerJrYIVxMvPy2MC//iynKZ2dQk1b5llA8Gyh+s61gvOXgO8fC8k+FX09rfhZLJPIM/mQyI71uwYZVvltwbqEAIwA/A+ccHpsNWjfw7iF1RypXZT3U9x1qytczVxgxpmf3pCbvzvk8ijHxmku07ZwcwwJfabVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754019020; c=relaxed/simple;
-	bh=+rG6RkrtlD4q+DZ9d/Kr/kFnjxBupXnlqBW37stsxhM=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MGerfNUrMT+z3m+b9P19wL01pgBgBl5IwtmOyVNv7ZWDj0vd5fqmleqTB4iFudT9y57LjcU3CZyDcNBcwBSNPLR56fEF9+1zQ8MV9skR0+haEZFJ++b0ij9cTTz5zALQ7FhFiOAmdsqv/C1R+iWksXgaswucB+cXxqrlCfF/MdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ociUoZqM; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754018782;
-	bh=YEpyVB7BXORcn8/ntzQKlvVRXmUjh1dmTI9nTw3UdoA=;
-	h=Date:From:To:Cc:Subject:From;
-	b=ociUoZqMkeRW/nAbheDJkGiMBGgXgB5KuB48oCPRCR6P27qftTnMYumw+2xYVdq0F
-	 OPfWvxdeg0DwNZ7OhXDkif0I24SETB19+EoPRyJbUr94reCJunRSwmc+SXtk9wEIrZ
-	 B4Q0Ir1dopumTAQ3TysKixAP4JHQsAJabNlZ4RJLR3DykNJIdAq037tPTaSJVYSoNZ
-	 wBsxhqhAyICT4lyATTsOUabTLuu7h3k+wpPC/e64fe6KfnXt71GQ2txsD8w9BYpNa+
-	 JhQnvzOUt5bZSvCL2pyxMNZcMyWlwG1BaUN3dfAkfC5uUBD4731HAGOel1OxoLSsTV
-	 wKpMvVpvb2tuw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4btWZP6MxLz4w2N;
-	Fri,  1 Aug 2025 13:26:21 +1000 (AEST)
-Date: Fri, 1 Aug 2025 13:29:41 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
- Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
- <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the modules tree with the kbuild tree
-Message-ID: <20250801132941.6815d93d@canb.auug.org.au>
+	s=arc-20240116; t=1754019087; c=relaxed/simple;
+	bh=M5x0rYlpjgPFrul119gb//i85gX/gViUK3cJ5dM8bYg=;
+	h=From:To:Cc:Subject:Mime-Version:Content-Type:Date:Message-ID:
+	 References:In-Reply-To; b=riTkzF4ksskDx/6EghEe4TEkPNvELGdRIdpzv7mL+nWe8IMQ9x97vhuQygDuqwBqLwnYPC6XcCqCrhan1cwWFhno5OL+ax+GvVfhHy6OiRs5OO6KCtUILoDvRonvUKAKuC2xx8WhA/hxn7KsfkNmCK+ANO3Qbaqw0M144+gtcbo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn; spf=pass smtp.mailfrom=kylinos.com.cn; arc=none smtp.client-ip=54.243.244.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.com.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.com.cn
+EX-QQ-RecipientCnt: 4
+X-QQ-GoodBg: 2
+X-QQ-SSF: 00400000000000F0
+X-QQ-FEAT: D4aqtcRDiqT0lIevWKG+BWOIYOYYzrVdtBspb4IB9XY=
+X-QQ-BUSINESS-ORIGIN: 2
+X-QQ-Originating-IP: DuT7lxumEGg+2WYCAVw2O2fn56W4pwTWqYy0fYV/Jog=
+X-QQ-STYLE: 
+X-QQ-mid: lv3sz3a-2t1754019043t1c38adcd
+From: "=?utf-8?B?WmhvdSBKaWZlbmc=?=" <zhoujifeng@kylinos.com.cn>
+To: "=?utf-8?B?S2VudCBPdmVyc3RyZWV0?=" <kent.overstreet@linux.dev>
+Cc: "=?utf-8?B?Q29seSBMaQ==?=" <colyli@kernel.org>, "=?utf-8?B?bGludXgtYmNhY2hl?=" <linux-bcache@vger.kernel.org>, "=?utf-8?B?bGludXgta2VybmVs?=" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/es/NFSMNXHYTi43OYQqAAud";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Mime-Version: 1.0
+Content-Type: text/plain;
+	charset="utf-8"
+Content-Transfer-Encoding: base64
+Date: Fri, 1 Aug 2025 11:30:43 +0800
+X-Priority: 3
+Message-ID: <tencent_22DE1AC52BA931BD442CE823@qq.com>
+X-QQ-MIME: TCMime 1.0 by Tencent
+X-Mailer: QQMail 2.x
+X-QQ-Mailer: QQMail 2.x
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+	<etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
+	<tencent_656F159830BC538C2D26CD68@qq.com>
+	<zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
+In-Reply-To: <zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
+X-QQ-ReplyHash: 841665476
+X-BIZMAIL-ID: 9704118644632358436
+X-QQ-SENDSIZE: 520
+Received: from qq.com (unknown [127.0.0.1])
+	by smtp.qq.com (ESMTP) with SMTP
+	id ; Fri, 01 Aug 2025 11:30:44 +0800 (CST)
+Feedback-ID: lv:kylinos.com.cn:qybglogicsvrgz:qybglogicsvrgz5a-0
+X-QQ-XMAILINFO: MZ6Tfega+cDUkCQimrMfH9B0NH4rXRlbr1UTy3CL60zyhofFVtmm9KgN
+	YJo/oiZ27x1K6XHvHyArZ6DOGg7AmJP7ShbnVNOaAL0B7AC+21Xl8Pk0YAB32xqjiX79Qlg
+	+5lit7F6U0lrUEo+f0ocTDZnJ4hQqYBIaQtjGaJaeYmPV+Lqb216Sn6H9yQ0VvNEedJHWbR
+	9xF+l4ok4MvCZgc2X8MyDYRf7JX1UyegOl1kjUwdaDn4KF4CtM63njrHvhLd/2sW91FErv2
+	B5izxJMjHkYI9+KKLYc2rEs2z3Dr7vTmMDZzFywPG0l9WAOBloSFS+Iu+8PU6/SX35jyvuO
+	0lC6Xjw6S3B4SfwYPrAQhUUGaG/vNb11LtZnyOi5+9EaFRqRzpZPKA3hL8jCL2WxKbxtWV4
+	VZOJwkGpfZWx/DrQHD8Be6QbgbNEsK7EqdCpzBndXzwH22L0L6fh58zGnLSAtqPyq2s7DiO
+	JJHfTvY1Kj/4lp7OVfbL5Iwnw0r7xvfmn3HiFJKUM51Fnl4y3kc82AYN8oEMNM90dM2gNd5
+	jj1IyjFHtkp0ABNDktk6aeoOg/0fBklODfLvUXOAtxkAWHEFF0k2QHpnQeQCozXUOT413Oi
+	l6W4xYvDLa/7kEs4+cqFlQuYH7bGTbMG6VI0LbgZQv9dmcMl30Gowjt0UzQeIUk6lJ5vxWj
+	O3XJO4n19lQFzPxLTDobihePfnzyUYB6FFesrV6Ik4zKnU8vrq55hRV8A/HV6TnqxQi+E4F
+	oGo0g47fQ7VOJo0xG5fcUIca8pDY2S3BFSBkaXsrhBqkOTGBqvhjnuVhcW0DyMCn8Z3CAB4
+	WIyNth2SkVbflTg9mh5LGK0MjaU2NJyjEHxD6y2ZeDr1wBY60sHpQUy4VmT3OMt5XSm4IOW
+	Jt0FzrkyGxzhtfzwbxUz9Ekrw7w5U8cfRSczkfyLK6u1mItJUvdyr2D7O1gt6st9F1XvAtQ
+	xJa2vod+GYCCLg1nDTqgeB5FGU/xOVel9AcYC2hI/zEZu04dhSRVlZqVQKd+PnS7X8/bWOV
+	QzSShDBpybawwJ320OinWTu3hlcT0nbklsPymXbp1aXx7bpvvJKxh0SPAEAkdQcOO1jeh+C
+	bh32LvSNxQD
+X-QQ-XMRINFO: NI4Ajvh11aEj8Xl/2s1/T8w=
+X-QQ-RECHKSPAM: 0
 
---Sig_/es/NFSMNXHYTi43OYQqAAud
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+T24gRnJpLCAxIEF1ZyAyMDI1IGF0IDEwOjM3LCBLZW50IE92ZXJzdHJlZXQgPGtlbnQub3Zl
+cnN0cmVldEBsaW51eC5kZXY+IHdyb3RlOg0KPg0KPiBPbiBGcmksIEF1ZyAwMSwgMjAyNSBh
+dCAxMDoyNzoyMUFNICswODAwLCBaaG91IEppZmVuZyB3cm90ZToNCj4gPiBJbiB0aGUgd3Jp
+dGViYWNrIG1vZGUsIHRoZSBjdXJyZW50IGJjYWNoZSBjb2RlIHVzZXMgdGhlDQo+ID4gUkVR
+X09QX1dSSVRFIG9wZXJhdGlvbiB0byBoYW5kbGUgZGlydHkgZGF0YSwgYW5kIGNsZWFycyB0
+aGUgYmtleQ0KPiA+IGRpcnR5IGZsYWcgaW4gdGhlIGJ0cmVlIGR1cmluZyB0aGUgYmlvIGNv
+bXBsZXRpb24gY2FsbGJhY2suIEkgdGhpbmsNCj4gPiB0aGVyZSBtaWdodCBiZSBhIHBvdGVu
+dGlhbCByaXNrOiBpZiBpbiB0aGUgZXZlbnQgb2YgYW4gdW5leHBlY3RlZA0KPiA+IHBvd2Vy
+IG91dGFnZSwgdGhlIGRhdGEgaW4gdGhlIEhERCBoYXJkd2FyZSBjYWNoZSBtYXkgbm90IGhh
+dmUNCj4gPiBoYWQgdGltZSB0byBiZSBwZXJzaXN0ZWQsIHRoZW4gdGhlIGRhdGEgaW4gdGhl
+IEhERCBoYXJkd2FyZSBjYWNoZQ0KPiA+IHRoYXQgaXMgcGVuZGluZyBwcm9jZXNzaW5nIG1h
+eSBiZSBsb3N0LiBTaW5jZSBhdCB0aGlzIHRpbWUgdGhlIGJrZXkNCj4gPiBkaXJ0eSBmbGFn
+IGluIHRoZSBidHJlZSBoYXMgYmVlbiBjbGVhcmVkLCB0aGUgZGF0YSBzdGF0dXMgcmVjb3Jk
+ZWQNCj4gPiBieSB0aGUgYmtleSBkb2VzIG5vdCBtYXRjaCB0aGUgYWN0dWFsIHNpdHVhdGlv
+biBvZiB0aGUgU1NEIGFuZA0KPiA+IEhERC4NCj4gPiBBbSBJIHVuZGVyc3RhbmRpbmcgdGhp
+cyBjb3JyZWN0bHk/DQo+DQo+IEZvciB3aGF0IHlvdSdyZSBkZXNjcmliaW5nLCB3ZSBuZWVk
+IHRvIG1ha2Ugc3VyZSB0aGUgYmFja2luZyBkZXZpY2UgaXMNCj4gZmx1c2hlZCB3aGVuIHdl
+J3JlIGZsdXNoaW5nIHRoZSBqb3VybmFsLg0KPg0KPiBJdCdzIHBvc3NpYmxlIHRoYXQgdGhp
+cyBpc24ndCBoYW5kbGVkIGNvcnJlY3RseSBpbiBiY2FjaGU7IGJjYWNoZWZzDQo+IGRvZXMs
+IGFuZCBJIHdyb3RlIHRoYXQgY29kZSBhZnRlciBiY2FjaGUgLSBidXQgdGhlIGJjYWNoZSB2
+ZXJzaW9uIHdvdWxkDQo+IGxvb2sgcXVpdGUgZGlmZmVyZW50Lg0KPg0KPiBZb3UndmUgcmVh
+ZCB0aGF0IGNvZGUgbW9yZSByZWNlbnRseSB0aGFuIEkgaGF2ZSAtIGhhdmUgeW91IGNoZWNr
+ZWQgZm9yDQo+IHRoYXQ/DQoNCkluIHRoZSBgd3JpdGVfZGlydHlfZmluaXNoYCBmdW5jdGlv
+biwgdGhlcmUgaXMgYW4gYXR0ZW1wdCB0byB1cGRhdGUgdGhlDQpgYmtleWAgc3RhdHVzLCBi
+dXQgSSBkaWQgbm90IG9ic2VydmUgYW55IGxvZ2dpbmcgd3JpdGluZyBwcm9jZXNzLiBJbiB0
+aGUNCmNvcmUgZnVuY3Rpb24gYGpvdXJuYWxfd3JpdGVfdW5sb2NrZWRgIG9mIGJjYWNoZSBm
+b3Igd3JpdGluZyBsb2dzLCBJDQphbHNvIGNvdWxkbid0IGZpbmQgdGhlIGNvZGUgbG9naWMg
+Zm9yIHNlbmRpbmcgYSBGTFVTSCBjb21tYW5kIHRvIHRoZQ0KYmFja2VuZCBIREQu
 
-Hi all,
-
-Today's linux-next merge of the modules tree got a conflict in:
-
-  include/linux/moduleparam.h
-
-between commit:
-
-  7934a8dd8692 ("module: remove meaningless 'name' parameter from __MODULE_=
-INFO()")
-
-from the kbuild tree and commit:
-
-  40a826bd6c82 ("module: Rename MAX_PARAM_PREFIX_LEN to __MODULE_NAME_LEN")
-
-from the modules tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc include/linux/moduleparam.h
-index 00166f747e27,a04a2bc4f51e..000000000000
---- a/include/linux/moduleparam.h
-+++ b/include/linux/moduleparam.h
-@@@ -17,12 -24,8 +24,9 @@@
-  #define __MODULE_INFO_PREFIX KBUILD_MODNAME "."
-  #endif
- =20
-- /* Chosen so that structs with an unsigned long line up. */
-- #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
--=20
- -#define __MODULE_INFO(tag, name, info)					  \
- -	static const char __UNIQUE_ID(name)[]				  \
- +/* Generic info of form tag =3D "info" */
- +#define MODULE_INFO(tag, info)					  \
- +	static const char __UNIQUE_ID(modinfo)[]			  \
-  		__used __section(".modinfo") __aligned(1)		  \
-  		=3D __MODULE_INFO_PREFIX __stringify(tag) "=3D" info
- =20
-
---Sig_/es/NFSMNXHYTi43OYQqAAud
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiMNKUACgkQAVBC80lX
-0Gy5lwf/YFH7H4I78EgLgYyJOao1U3eDSZdx/z/uCMoa4doViHpNDhKG8WLpVqOO
-E7cT4s0AyE1LMkcnAYP4PyiJE69WTp46kuX0Tp31os5/VYuS3UafUqclszaxxHdr
-Z5at7cA46lz0OIEPphqFTY79lTgki8eCEV1fmP8wp5fq52fK9BPIUhfA3I4gv5lw
-3iZXcIaxoqrkdvxSHEwFN9n8NPfS2adOJAlG9WEmWbahGHvPikL7uuegyj1/mIP9
-witlTy18luyP3rSRwJswX5oum/qN+ZKjw0I93kFKb5pkyTsBdtwRPTNOFaUgdMQu
-NHX3ZTGTo2rjMTo/e1WZv08TJtL2Zg==
-=j8Hi
------END PGP SIGNATURE-----
-
---Sig_/es/NFSMNXHYTi43OYQqAAud--
 
