@@ -1,139 +1,505 @@
-Return-Path: <linux-kernel+bounces-753417-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E0C3B182A2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:41:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 64C71B182AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:49:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED8601C82314
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:41:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3CDF5A85555
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:49:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42F9B25B687;
-	Fri,  1 Aug 2025 13:41:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF33322D78F;
+	Fri,  1 Aug 2025 13:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="c1QhIUfE"
-Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="guA68300"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D489A20F098
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:41:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055671; cv=none; b=RFfeOwYYD7XH8wLwx4K08YmXvGua/QWcXx/cyD+d2nAFuZtAXlX6Ut5mUn8mcUW7DQfwpVD4MqrpYR9QilG/GNVyV/Ujf6Atk0arbxkgHFtSBwpMU1U9TSm2wv12svOXjjgGcGWG3t5qvqSoyALdoK5Pwks49nwdh5HUk3BwDTY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055671; c=relaxed/simple;
-	bh=r1c9l1OijXU/QDDLBcy3ZcjwcgLrgltP3dZGJovejCY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=V94M9MSRVBgSuEpFpkxFRnxXdRkoOH0Tsk3fBrPGzXvXuneMu1wYDEfQmIbaIFXrtOutjdUso4cIRNDCyasCV9s9isurwCkRCIJ7AGicO1HoYb0Y5bboRsiK3bnw00HsrUxKwZ/9+wZYGR2igntKu2mwmIl2L0vO+J4X36Byba8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=c1QhIUfE; arc=none smtp.client-ip=209.85.218.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
-Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-ae0dd7ac1f5so306092466b.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:41:09 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fairphone.com; s=fair; t=1754055668; x=1754660468; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=fco+a29BOB9mtDgoYWIpNOSq5S/ZGt3leEcvdoqeQzk=;
-        b=c1QhIUfEhKHVK78f5nQ65L9bdCehwMZ8HpANGaiIOHFhfH+FnzYXydJOQ582aW4808
-         fwk37JMyBD0J5wHdT0QrVNjnHwVTbfXyn0SGDMp5tCQSo96SkmsebKC36DfYVIn4KQPO
-         FIo2k3ebwEu9RFU23L1qePLbbCemm0FiLS2an5eCqZgQn8A0Z9nb9t3lVOSv2BQcwH0j
-         JmKULiwRKDbjPHYb0XtFtW7st4mRzPAt+QCf/2oeONytaWYv3xwd/E9BXvMxKARVPdR5
-         U87ftPBiuUTVajJrbys9sb7iwohFsPGbmqwXHOSjFBMEnGU9guR8nXMi1K64mHMViJc/
-         yNkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754055668; x=1754660468;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fco+a29BOB9mtDgoYWIpNOSq5S/ZGt3leEcvdoqeQzk=;
-        b=LeSBqY4p0j20bWtjk/ZdkHmzyL+sERk51Fm1DHULcwJfBFKvIzdWYlhuOmUmyWuhtf
-         gqnYFguS1xjxiyIRlncAXfF13LI38Igyclbee8pv9kGySLq1/oeDc+UrkCJgZVAan2TV
-         H71nnCaKj2Pv8fdVk2B9T+/6xzDGuNRcfyennn1rB9LRAAs6NYGTrtflx3I4cVMJZfRF
-         G3byNLtxLRS6JqUzF9f8b4Nmp1SSe32O8WkIRFgw2cJ+w3e3GwoHxcY8nUa0h+pRzVSB
-         ePd+yVxKre+aEXU0bG4bLhBpDAV7hplC5+1WAcZI8IQw7Q0JLwq9Y0+Ag0e2m+LFCXLp
-         HCSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUoM7Lr4sqapsV7M+wNHwETT1HRjr8cWH2vRbWkVLfaSlKj/6JvXgLyuPjq29DVFO594p19Z4+FgURpXVY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwBTLe+mzZCWSvaJ0AgNXFG5kyNqtrgupG4gpDFu/hIGhZ9lFVh
-	TLQosK6Y+wwA6k/moKaC/BTrKsEzHUNPDI8suvvzCgKn4cdGceUmI59wui9cAoHQw4c=
-X-Gm-Gg: ASbGnctPCSwC9h8kKh/9W8KZZ5Ve9fTtabNekK1YSsId5eWxy9DtWrta2qTKza0yphc
-	hcPYQfvdZLwQWFkg9QckT7+Co5yfnTF8hZk4bvKlVdzd61csux0bbI6xs5cwIHe+i8mIUbmLQpP
-	8808QTeqdu5I3yjYlb61UnfB0E61jZxOwAfJLTWmweO/s9cUhi07GHHGtP1hkXN0gYz2Ft65VwA
-	sZrnmhpO31p6oiwxwToTwmD3R97IIQOutAdUaSJxu9xkOe1OSAc/IUOgSa5PTIo144Rx8oP22WE
-	aHrtu6qtWarDznmHfEIWdBMW17DNAy5h9I8xhdLHguKqY3/te9K4GjI6rocL5FEe4bcQ+lr2m1b
-	W8Ay6rThQS2pjtjDUCk5Us+PViseiojDPv95a0eQOondd3piysMJpHzGGPjSIqmD58iYjHLTIQE
-	LnwhU=
-X-Google-Smtp-Source: AGHT+IFj00+KEhfyTUdUoeMsQOAVFICxssAUXXiQsbArF6rrRmD2nbeXGkEAgVBJGf4w+/U9QBdSNw==
-X-Received: by 2002:a17:907:3e1a:b0:af9:3d0a:f393 with SMTP id a640c23a62f3a-af93d0b0315mr71429966b.25.1754055668022;
-        Fri, 01 Aug 2025 06:41:08 -0700 (PDT)
-Received: from otso.local (144-178-202-138.static.ef-service.nl. [144.178.202.138])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0df10asm288082566b.59.2025.08.01.06.41.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:41:07 -0700 (PDT)
-From: Luca Weiss <luca.weiss@fairphone.com>
-Date: Fri, 01 Aug 2025 15:40:59 +0200
-Subject: [PATCH] arm64: dts: qcom: sm6350: Add rpmh-stats node
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE48335977;
+	Fri,  1 Aug 2025 13:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754056159; cv=pass; b=GNiwHnOdJ/n+e9ZBTk+TrcAs7bmuqa9uaKit+O6KWbA20k5HduV0Oe7cUVZ0xtddI6dY2crbA+xWixYBYHUsFb5YAHfEEI5dCFVoezbb8T+ROubgOUmGtCtJuaFTfxIZnHz9jZw6MU9Hy7A5cmZzScYR15mBsTTy55ezKJohvbo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754056159; c=relaxed/simple;
+	bh=6LsAS/wu7KwX4V8T1a/Z42eqYEpNt2GVqneS9HDsMTI=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=fIqZH7T2lZ9ULTV1dpfLNFVFU32pp5R8uRqSgTEN5ckbesw61zDsBqik52UUmcMffivSlh23CUcBBV9+q2OcZLZ1hdU1z4xcS0ggaU6QsOLPpTODUBusyvo9ucnPZWV0V+BUY44i3ohkxuBghb0AEJiUOcj6UJHgsz6oCqw2WKQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=guA68300; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754056137; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=Z4m3vQLygAfygti5PyKdg0jDT2mG7stnZA4BJormwFJ2VGYoq7EEiPW0lC9h0aVPAAXp2RjtkPk3Dvs3LL80/A4cIu0E553d4t08FF+aXODrjXb559OZFVJXkdGw4PYJWbkXJeKVlYgTXtYjP5+1uhdEylcORFZj91spuiFRILY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754056137; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=eZHQ7rcT6yQWosjzQmPSOHVZJEHNKhkiHi1TOcOClQY=; 
+	b=ailP5D0Vkr5734o/KKKhsyXHtPoWKJs/R9v6xl+OYrq6I1+/tQqxVu5Td6+VU5zCglYhayhQ/OCTXNZcThv9QaR0/MPeHG4MSXRDai9tSKsciWwZZ+lTlcPhNjxaHy5ioTZ0sTcrNAfd9Ts30vIifN7L9skTyJnX59qXGp5R7Ks=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754056137;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=eZHQ7rcT6yQWosjzQmPSOHVZJEHNKhkiHi1TOcOClQY=;
+	b=guA683001pubrgje39RhTMoz8bARpzFCujCR7km/eYbgyubnqn7bdfVzDm8RDRjg
+	dXp0iWTZ9ihjwfe4vA3tIthEPbs62DCgfqblWQWHnvGtbhnATqJYAfuZgiclZMOV1Nb
+	bu59boaJZSRCWumWUjZTrS4yL7FOd1tbXIYL3ErU=
+Received: by mx.zohomail.com with SMTPS id 1754056135088990.9045317152799;
+	Fri, 1 Aug 2025 06:48:55 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-sm6350-rpmh-stats-v1-1-f1fb649d1095@fairphone.com>
-X-B4-Tracking: v=1; b=H4sIAOrDjGgC/x3MTQqAIBBA4avErBtQy9CuEi0kp5pFPzgSQXT3p
- OW3eO8BocQk0FcPJLpY+NgLdF3BtIZ9IeRYDEYZq5zSKFvXWIXp3FaUHLKgddF7FyYXYwulOxP
- NfP/PYXzfD+cRroFjAAAA
-X-Change-ID: 20250801-sm6350-rpmh-stats-58d998ac8dd4
-To: Bjorn Andersson <andersson@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org, 
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Luca Weiss <luca.weiss@fairphone.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754055667; l=1009;
- i=luca.weiss@fairphone.com; s=20250611; h=from:subject:message-id;
- bh=r1c9l1OijXU/QDDLBcy3ZcjwcgLrgltP3dZGJovejCY=;
- b=tAHAiNynxK3Ng3bMtjfpSPW5u2gDSl91hy5GdfnCwmCR4BXuMzsfpHCbjiNS09KU/gl/wt4/n
- d28cvt0FPR4C+Fyc/3S93nOYzig+JU97Q7B7lehVkdaDfAvXkp1NaoZ
-X-Developer-Key: i=luca.weiss@fairphone.com; a=ed25519;
- pk=O1aw+AAust5lEmgrNJ1Bs7PTY0fEsJm+mdkjExA69q8=
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction for
+ io-uring cmd
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250727150329.27433-3-sidong.yang@furiosa.ai>
+Date: Fri, 1 Aug 2025 10:48:40 -0300
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Miguel Ojeda <ojeda@kernel.org>,
+ Arnd Bergmann <arnd@arndb.de>,
+ Jens Axboe <axboe@kernel.dk>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ io-uring@vger.kernel.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+ <20250727150329.27433-3-sidong.yang@furiosa.ai>
+To: Sidong Yang <sidong.yang@furiosa.ai>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-The qcom_stats driver allows querying sleep stats from various
-remoteprocs. Add a node to enable it.
+Hi Sidong,
 
-Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
----
- arch/arm64/boot/dts/qcom/sm6350.dtsi | 5 +++++
- 1 file changed, 5 insertions(+)
+> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+>=20
+> This patch introduces rust abstraction for io-uring sqe, cmd. =
+IoUringSqe
+> abstracts io_uring_sqe and it has cmd_data(). and IoUringCmd is
+> abstraction for io_uring_cmd. =46rom this, user can get cmd_op, flags,
+> pdu and also sqe.
 
-diff --git a/arch/arm64/boot/dts/qcom/sm6350.dtsi b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-index 2d891a5640dead6b60386006bcbbb9aad40a660b..2493b9611dcb675f4c33794ecc0ee9e8823e24d4 100644
---- a/arch/arm64/boot/dts/qcom/sm6350.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm6350.dtsi
-@@ -2487,6 +2487,11 @@ aoss_qmp: power-management@c300000 {
- 			#clock-cells = <0>;
- 		};
- 
-+		sram@c3f0000 {
-+			compatible = "qcom,rpmh-stats";
-+			reg = <0x0 0x0c3f0000 0x0 0x400>;
-+		};
-+
- 		spmi_bus: spmi@c440000 {
- 			compatible = "qcom,spmi-pmic-arb";
- 			reg = <0x0 0x0c440000 0x0 0x1100>,
+IMHO you need to expand this substantially.
 
----
-base-commit: 0b90c3b6d76ea512dc3dac8fb30215e175b0019a
-change-id: 20250801-sm6350-rpmh-stats-58d998ac8dd4
+Instead of a very brief discussion of *what* you're doing, you need to =
+explain
+*why* you're doing this and how this patch fits with the overall plan =
+that you
+have in mind.
 
-Best regards,
--- 
-Luca Weiss <luca.weiss@fairphone.com>
+Also, for the sake of reviewers, try to at least describe the role of =
+all the
+types you've mentioned.
 
+>=20
+> Signed-off-by: Sidong Yang <sidong.yang@furiosa.ai>
+> ---
+> rust/kernel/io_uring.rs | 183 ++++++++++++++++++++++++++++++++++++++++
+> rust/kernel/lib.rs      |   1 +
+> 2 files changed, 184 insertions(+)
+> create mode 100644 rust/kernel/io_uring.rs
+>=20
+> diff --git a/rust/kernel/io_uring.rs b/rust/kernel/io_uring.rs
+> new file mode 100644
+> index 000000000000..0acdf3878247
+> --- /dev/null
+> +++ b/rust/kernel/io_uring.rs
+> @@ -0,0 +1,183 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +// Copyright (C) 2025 Furiosa AI.
+> +
+
+Perhaps this instead [0].
+
+
+> +//! IoUring command and submission queue entry abstractions.
+
+Maybe expand this just a little bit as well.
+
+> +//!
+> +//! C headers: =
+[`include/linux/io_uring/cmd.h`](srctree/include/linux/io_uring/cmd.h) =
+and
+> +//! =
+[`include/linux/io_uring/io_uring.h`](srctree/include/linux/io_uring/io_ur=
+ing.h)
+> +
+> +use core::{mem::MaybeUninit, pin::Pin, ptr::addr_of_mut};
+> +
+> +use crate::{fs::File, types::Opaque};
+> +
+> +/// A Rust abstraction for the Linux kernel's `io_uring_cmd` =
+structure.
+
+Is there a link for io_uring_cmd that you can use here?
+
+> +///
+> +/// This structure is a safe, opaque wrapper around the raw C =
+`io_uring_cmd`
+> +/// binding from the Linux kernel. It represents a command structure =
+used
+> +/// in io_uring operations within the kernel.
+
+Perhaps backticks on =E2=80=9Cio_uring=E2=80=9D ?
+
+> +///
+> +/// # Type Safety
+> +///
+> +/// The `#[repr(transparent)]` attribute ensures that this wrapper =
+has
+> +/// the same memory layout as the underlying `io_uring_cmd` =
+structure,
+> +/// allowing it to be safely transmuted between the two =
+representations.
+> +///
+> +/// # Fields
+> +///
+> +/// * `inner` - An opaque wrapper containing the actual =
+`io_uring_cmd` data.
+> +///             The `Opaque` type prevents direct access to the =
+internal
+> +///             structure fields, ensuring memory safety and =
+encapsulation.
+
+Place this on top of the field itself please. Also, I don=E2=80=99t =
+think you need
+this at all because you don't need to explain the Opaque type, as it's
+extensively used in the kernel crate.
+
+> +///
+> +/// # Usage
+
+I don=E2=80=99t think you need this.
+
+> +///
+> +/// This type is used internally by the io_uring subsystem to manage
+> +/// asynchronous I/O commands. It is typically accessed through a =
+pinned
+> +/// mutable reference: `Pin<&mut IoUringCmd>`. The pinning ensures =
+that
+> +/// the structure remains at a fixed memory location, which is =
+required
+> +/// for safe interaction with the kernel's io_uring infrastructure.
+
+I don=E2=80=99t think you need anything other than:
+
+> +/// This type is used internally by the io_uring subsystem to manage
+> +/// asynchronous I/O commands.
+
+Specifically, you don=E2=80=99t need to say this:
+
+>  The pinning ensures that
+> +/// the structure remains at a fixed memory location,
+
+
+
+> +///
+> +/// Users typically receive this type as an argument in the =
+`file_operations::uring_cmd()`
+> +/// callback function, where they can access and manipulate the =
+io_uring command
+> +/// data for custom file operations.
+> +///
+> +/// This type should not be constructed or manipulated directly by
+> +/// kernel module developers.
+
+Well, this is pub, so the reality is that it can be manipulated directly
+through whatever public API it offers.
+
+> +#[repr(transparent)]
+> +pub struct IoUringCmd {
+> +    inner: Opaque<bindings::io_uring_cmd>,
+> +}
+> +
+> +impl IoUringCmd {
+> +    /// Returns the cmd_op with associated with the io_uring_cmd.
+
+Backticks
+
+> +    #[inline]
+> +    pub fn cmd_op(&self) -> u32 {
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+
+Not sure I understand what you=E2=80=99re trying to say here. Perhaps =
+add an
+invariant saying that `self.inner` always points to a valid
+`bindings::io_uring_cmd` and mention that here instead.
+
+> +        unsafe { (*self.inner.get()).cmd_op }
+> +    }
+> +
+> +    /// Returns the flags with associated with the io_uring_cmd.
+> +    #[inline]
+> +    pub fn flags(&self) -> u32 {
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+> +        unsafe { (*self.inner.get()).flags }
+> +    }
+> +
+> +    /// Returns the ref pdu for free use.
+
+I have no idea what =E2=80=9Cref pdu=E2=80=9D is. You need to describe =
+these acronyms.
+
+> +    #[inline]
+> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
+
+Why MaybeUninit? Also, this is a question for others, but I don=E2=80=99t =
+think
+that `u8`s can ever be uninitialized as all byte values are valid for =
+`u8`.
+
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+> +        let inner =3D unsafe { &mut *self.inner.get() };
+> +        let ptr =3D addr_of_mut!(inner.pdu) as *mut MaybeUninit<[u8; =
+32]>;
+
+&raw mut
+
+> +
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+> +        unsafe { &mut *ptr }
+> +    }
+> +
+> +    /// Constructs a new `IoUringCmd` from a raw `io_uring_cmd`
+
+[`IoUringCmd`]
+
+By the way, always build the docs and see if they look nice.
+
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must guarantee that:
+> +    /// - The pointer `ptr` is not null and points to a valid =
+`bindings::io_uring_cmd`.
+> +    /// - The memory pointed to by `ptr` remains valid for the =
+duration of the returned reference's lifetime `'a`.
+> +    /// - The memory will not be moved or freed while the returned =
+`Pin<&mut IoUringCmd>` is alive.
+
+This returns a wrapper over a mutable reference. You must mention =
+Rust=E2=80=99s aliasing rules here.
+
+> +    #[inline]
+> +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> =
+Pin<&'a mut IoUringCmd> {
+> +        // SAFETY: The caller guarantees that the pointer is not =
+dangling and stays valid for the
+> +        // duration of 'a. The cast is okay because `IoUringCmd` is =
+`repr(transparent)` and has the
+> +        // same memory layout as `bindings::io_uring_cmd`. The =
+returned `Pin` ensures that the object
+> +        // cannot be moved, which is required because the kernel may =
+hold pointers to this memory
+> +        // location and moving it would invalidate those pointers.
+
+Please break this into multiple paragraphs.
+
+> +        unsafe { Pin::new_unchecked(&mut *ptr.cast()) }
+> +    }
+> +
+> +    /// Returns the file that referenced by uring cmd self.
+> +    #[inline]
+> +    pub fn file(&self) -> &File {
+> +        // SAFETY: The call guarantees that the `self.inner` is not =
+dangling and stays valid
+> +        let file =3D unsafe { (*self.inner.get()).file };
+> +        // SAFETY: The call guarantees that `file` points valid file.
+> +        unsafe { File::from_raw_file(file) }
+> +    }
+> +
+> +    /// Returns a reference to the uring cmd's SQE.
+
+Please define what `SQE` means. Add links if possible.
+
+> +    #[inline]
+> +    pub fn sqe(&self) -> &IoUringSqe {
+> +        // SAFETY: The call guarantees that the `self.inner` is not =
+dangling and stays valid
+> +        let sqe =3D unsafe { (*self.inner.get()).sqe };
+> +        // SAFETY: The call guarantees that the `sqe` points valid =
+io_uring_sqe.
+
+Backticks
+
+> +        unsafe { IoUringSqe::from_raw(sqe) }
+> +    }
+> +
+> +    /// Called by consumers of io_uring_cmd, if they originally =
+returned -EIOCBQUEUED upon receiving the command
+
+Backticks
+
+> +    #[inline]
+> +    pub fn done(self: Pin<&mut IoUringCmd>, ret: isize, res2: u64, =
+issue_flags: u32) {
+
+The arguments are cryptic here. Please let us know what they do.
+
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+> +        unsafe {
+> +            bindings::io_uring_cmd_done(self.inner.get(), ret, res2, =
+issue_flags);
+> +        }
+> +    }
+> +}
+> +
+> +/// A Rust abstraction for the Linux kernel's `io_uring_sqe` =
+structure.
+> +///
+> +/// This structure is a safe, opaque wrapper around the raw C =
+`io_uring_sqe`
+> +/// binding from the Linux kernel. It represents a Submission Queue =
+Entry
+
+Ah, SQE =3D=3D Submission Queue Entry. Is there a link for this?
+
+> +/// used in io_uring operations within the kernel.
+> +///
+> +/// # Type Safety
+> +///
+> +/// The `#[repr(transparent)]` attribute ensures that this wrapper =
+has
+> +/// the same memory layout as the underlying `io_uring_sqe` =
+structure,
+> +/// allowing it to be safely transmuted between the two =
+representations.
+> +///
+> +/// # Fields
+> +///
+> +/// * `inner` - An opaque wrapper containing the actual =
+`io_uring_sqe` data.
+> +///             The `Opaque` type prevents direct access to the =
+internal
+> +///             structure fields, ensuring memory safety and =
+encapsulation.
+> +///
+> +/// # Usage
+> +///
+> +/// This type represents a submission queue entry that describes an =
+I/O
+> +/// operation to be executed by the io_uring subsystem. It contains
+> +/// information such as the operation type, file descriptor, buffer
+> +/// pointers, and other operation-specific data.
+
+This description is very good :)
+
+> +///
+> +/// Users can obtain this type from `IoUringCmd::sqe()` method, which
+> +/// extracts the submission queue entry associated with a command.
+
+[`IoUringCmd::sqe`]
+
+> +///
+> +/// This type should not be constructed or manipulated directly by
+> +/// kernel module developers.
+
+Again, this is pub and can be freely manipulated through whatever
+public API it offers.
+
+> +#[repr(transparent)]
+> +pub struct IoUringSqe {
+> +    inner: Opaque<bindings::io_uring_sqe>,
+> +}
+> +
+> +impl<'a> IoUringSqe {
+
+Why is this =E2=80=98a here?
+
+> +    /// Returns the cmd_data with associated with the io_uring_sqe.
+> +    /// This function returns 16 byte array. We don't support =
+IORING_SETUP_SQE128 for now.
+> +    pub fn cmd_data(&'a self) -> &'a [Opaque<u8>] {
+
+This is automatically placed by the compiler. See the lifetime elision =
+rules
+[1].
+
+Also why does this return a reference to an array of Opaque<u8>?
+
+You can return a &[u8] here if you can prove that this reference is =
+legal given
+Rust's aliasing rules. If you can't, then you have to look at what the =
+DMA
+allocator code is doing and use that as an example, i.e.: have a look at =
+the
+dma_read and dma_write macros and mark the function that returns the =
+slice as
+"unsafe".
+
+> +        // SAFETY: The call guarantees that `self.inner` is not =
+dangling and stays valid
+> +        let cmd =3D unsafe { =
+(*self.inner.get()).__bindgen_anon_6.cmd.as_ref() };
+
+What do you mean by =E2=80=9Cthe call=E2=80=9D ? Same in all other =
+places where this sentence is used.
+> +
+> +        // SAFETY: The call guarantees that `cmd` is not dangling and =
+stays valid
+> +        unsafe { core::slice::from_raw_parts(cmd.as_ptr() as *const =
+Opaque<u8>, 16) }
+> +    }
+> +
+> +    /// Constructs a new `IoUringSqe` from a raw `io_uring_sqe`
+> +    ///
+> +    /// # Safety
+> +    ///
+> +    /// The caller must guarantee that:
+> +    /// - The pointer `ptr` is not null and points to a valid =
+`bindings::io_uring_sqe`.
+> +    /// - The memory pointed to by `ptr` remains valid for the =
+duration of the returned reference's lifetime `'a`.
+
+Must mention Rust=E2=80=99s aliasing rules here.
+
+> +    #[inline]
+> +    pub unsafe fn from_raw(ptr: *const bindings::io_uring_sqe) -> &'a =
+IoUringSqe {
+> +        // SAFETY: The caller guarantees that the pointer is not =
+dangling and stays valid for the
+> +        // duration of 'a. The cast is okay because `IoUringSqe` is =
+`repr(transparent)` and has the
+> +        // same memory layout as `bindings::io_uring_sqe`.
+> +        unsafe { &*ptr.cast() }
+> +    }
+> +}
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index 6b4774b2b1c3..fb310e78d51d 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -80,6 +80,7 @@
+> pub mod fs;
+> pub mod init;
+> pub mod io;
+> +pub mod io_uring;
+> pub mod ioctl;
+> pub mod jump_label;
+> #[cfg(CONFIG_KUNIT)]
+> --=20
+> 2.43.0
+>=20
+>=20
+
+[0] =
+https://spdx.github.io/spdx-spec/v3.0.1/model/Software/Properties/copyrigh=
+tText/
+[1] https://doc.rust-lang.org/reference/lifetime-elision.html=
 
