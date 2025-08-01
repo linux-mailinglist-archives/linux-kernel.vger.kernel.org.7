@@ -1,111 +1,111 @@
-Return-Path: <linux-kernel+bounces-753856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753854-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B31CB18918
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:02:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0869B18913
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:02:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9EAAA46FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:02:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C1A84AA39A6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:02:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0679B227B88;
-	Fri,  1 Aug 2025 22:02:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FB95225A3E;
+	Fri,  1 Aug 2025 22:02:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipvrn3ZA"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="r1BlZvi8"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA488207E03;
-	Fri,  1 Aug 2025 22:02:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B182E630;
+	Fri,  1 Aug 2025 22:02:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754085759; cv=none; b=fB5h9yrFU4QmExzbEbXIy9On2nyX28J1Ff5bV7Dj8kYQ0GOw2Q24L0SRtQhBdhNGtArXquBwGTNfZ0UV0RYadAWraiGX+sdgD4+aQHFXe7vvAwqkWwjqimF3uHs7s7O9a4+U4oYGGkL2IyzJTHtNxuxgVqjxF4dWYvDhSQtoTyA=
+	t=1754085741; cv=none; b=qcr6ajJY/E7VhscXIt//djLN4vBm+82Gd4UXVh8oxWBMyN4LhFOQWDDxA8JjBBfRXWX3UkjivaV+CD9TQb1WiN7sfSHRaS4zHozDcPIbi8Zj6JYOPg7Qjs/eLjrYcU1ri2xK63MqMsXsZHhMAFXTs11wxKmXwjLHUzNDqPj46hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754085759; c=relaxed/simple;
-	bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dXKYUDSUGgpRnf5ojHouu4tXMZLHSWtVclRXwWnmi7uV/aCiPrPdZV/a3JB09dUo9xhY6TZGotlQMB9SpSUY6O1z5zCbKSsF61vOLPW424UKKxfo5wP1vnlVV2OyesbAMwol0Zl2iZGld5tu/VJ+CumxMWmmbqx9SuBLNZKpH+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipvrn3ZA; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af93bcaf678so100808066b.0;
-        Fri, 01 Aug 2025 15:02:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754085756; x=1754690556; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
-        b=ipvrn3ZALX7GrY3ZFvq50CivTK1DkI4Dn1Pj5lZ5tShASvoErQiAoSn9jLaf0IH0tl
-         RczuRH87s+Qw5AHR/YkED8nOxlTVQb4yDSfLMkUGb0RTTQiiWun4UsfuFdRo58dB9v9t
-         Rl5SWaS1u/nzwhsTc58tqPXbLA3hE9emfk7gOmgzxBHHdvMToz7hfb3bWotWVvwnElMs
-         U7BJ2uKsl7/Is3XYKBHmlHpl3oro521Ncb+fGSNmNpfQnmkobKTYAumllB1K5DAvZGeC
-         IGA/pP6zGwKgC6cOAt5LGROYKQTl2cugol+Bc5BqQbmyRw4tT4uU6KTO5kMIZN18LGqq
-         gAXw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754085756; x=1754690556;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
-        b=mhZk5LoI2vDjjgDzj1Ay8sW8Rqcho9EPvp88o2F+R894+utYScITsAiq3xO31pwoUE
-         SaJJ6d8Yuw1N7wndkzhLUgmHwakp6/TC8IsxjHLsfqltfHGO543gA3gtYV/es597VmqY
-         7tv/oSOCvGYT4Xb/M79gxZOhNu4AhLt+cICkvN5d3qC07lEhiwOhWLRFHyz+yUng54zN
-         sLfBFr9ibNueOJhBu6tLjAf1eGMsywPcpm6lQ+XraNE94nOn+Hws0DY7wleyKnGc58pY
-         ygu5mJUccxJ37+ueljDyfdmAo28jwH1VrDxXCokOSbn4ST4YbHVp8E1KtOlP5SinX8jB
-         KT/A==
-X-Forwarded-Encrypted: i=1; AJvYcCVrf1ybnSRP5u7FLjb3U60kYMZc8qB8lOxQkPecDqTAgWh5RqMiiDwlukxjyIwI8Ye7aL7ZcYKJvcZMwebn@vger.kernel.org, AJvYcCXGRyjDP7Ap48D09LaxrHp1q5as+fdl9tbzGiqOyRmn9yjiMGuklSK3GU85NefVItD4k5I9ip2d3bI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzZt9/KWvM4iU8/mWvUi3jK3o6KpBt22XIvAe0h1xTVgUcQ69B/
-	gg70sCiHwVXYgFiGTQ66/AAZgZGgwuCswn+MfhSfNi7DtRKjBE96ZcqJKYn5pNMs/xga5ACu2Vh
-	TT2dadnH4kF4UCGD+sG5nhZ2wFCxZ2UM=
-X-Gm-Gg: ASbGncvPNi5cy2etDZ1FBJotFUH617FNMh+VrEyoHcOSPYJwoBeAWNElgRypDq/MasN
-	CK3nuGvNrHjABm3iJH02o6ZKHK46qniBgNHaDYi0fhz0XC01RLhq5D2KBZwu5TCutPBNYkNOcKz
-	EIhyeCzU3RlcOOkyxvGCXQX7Q13nTOUsF1x6LztM1P5+ST1HcmQmv2qtTEJOTEwf4+PpPrN8h6P
-	ATlBG8Log==
-X-Google-Smtp-Source: AGHT+IEOrjdBS8qR0cLal4YE8OYocdcEucADefhnUSyEUlqAphqAR6aw+RfmQdz332wyWSHXM7HhYlhvxMmpogk/5mA=
-X-Received: by 2002:a17:907:7f0f:b0:ae0:db23:e3e3 with SMTP id
- a640c23a62f3a-af940017c8dmr157691766b.16.1754085755835; Fri, 01 Aug 2025
- 15:02:35 -0700 (PDT)
+	s=arc-20240116; t=1754085741; c=relaxed/simple;
+	bh=O6TIqBiOGFX2hC9KjwxsvIHMeLSf2YQDy1J/KHF416Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tUtnYNO1ZPlOT7StpRzJSXoz7xWUc8HqU0b9VVhgbpBkMgN2o9oBdqjB7pgJuv0rrP0olq7o+cq7HPP3g3DPiTqWY5n4GToy+bMYvIbwevhVwFye08p5cwABrdSZFwMExrmV4TS+HKHV7H2JNUfGy0nWPKwmBxcA6dZdlXy7sFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=r1BlZvi8; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=owta+X3NcgkTdhOwj+zQx9oNDSxqNnmvxaNHTrw4HBw=; b=r1BlZvi8H3AwcZHx0HHEiBaPYV
+	1CAaZbw/VY7BhoTJtwhtzXfamQrq/XLGJ7i8mZtSu+K4NMqEBy5R2/AiISJDfvj7McO7BF98RLh16
+	9RRrYfytXV5qSO5IQCnrERy7E7wdHLTeHAZ6atR/mO3Ej+jLo2CPWwNhiTDZEg5Xpb4uBCZCDjkqB
+	EQ6JvYuVSWQdlw0gq+rtR+aVIkDibAZBs5Wy8RkJZQ+OeOeeFcH1nHbXIgKdMQuf2E4NZmshjFsFj
+	VQAVoB/CD1xHjFQHxmC+RrkAfLPO62WpOPXicb2Cc4H6+DxcXCqu7vnSk757QEXwq+CbDPAPFPu/s
+	YMN8nRvw==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uhxpP-00000002VMa-46DH;
+	Fri, 01 Aug 2025 22:02:16 +0000
+Date: Fri, 1 Aug 2025 23:02:15 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Jan Kara <jack@suse.cz>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Christian Brauner <brauner@kernel.org>,
+	Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH] fs: correctly check for errors from replace_fd() in
+ receive_fd_replace()
+Message-ID: <20250801220215.GS222315@ZenIV>
+References: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
+ <fq2s55tc5hhvh4dfjdzek4neozffmn36rwdlsrsxxjqzts2f4c@j67nruhocdiz>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1754041258.git.mazziesaccount@gmail.com> <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
-In-Reply-To: <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 2 Aug 2025 00:01:57 +0200
-X-Gm-Features: Ac12FXy2U3nHPM-c1Tv54OHI2hVcb8efeg1MS2GnbFr62Fx-8ffRLi45Z9KvkoY
-Message-ID: <CAHp75VerC+m1XMpZFO6dLp+0HdB1+Xn47on38Mg5AXfDYwWd4A@mail.gmail.com>
-Subject: Re: [RFC PATCH 1/2] iio: adc: ad7476: Simplify chip type detection
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
-	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <fq2s55tc5hhvh4dfjdzek4neozffmn36rwdlsrsxxjqzts2f4c@j67nruhocdiz>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Fri, Aug 1, 2025 at 12:07=E2=80=AFPM Matti Vaittinen
-<mazziesaccount@gmail.com> wrote:
->
-> The ad7476 driver uses a table of structures for defining the IC variant
-> specific data. Table is indexed using enum values, which are picked by
-> SPI ID.
->
-> Having the table and an enum adds extra complexity. It is potentially
-> unsafe if someone alters the enumeration values, or size of the IC data
-> table.
+On Fri, Aug 01, 2025 at 12:48:09PM +0200, Jan Kara wrote:
+> On Fri 01-08-25 09:38:38, Thomas Weiﬂschuh wrote:
+> > replace_fd() returns either a negative error number or the number of the
+> > new file descriptor. The current code misinterprets any positive file
+> > descriptor number as an error.
+> > 
+> > Only check for negative error numbers, so that __receive_sock() is called
+> > correctly for valid file descriptors.
+> > 
+> > Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+> > Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+> > Cc: stable@vger.kernel.org
+> > Signed-off-by: Thomas Weiﬂschuh <thomas.weissschuh@linutronix.de>
+> 
+> Indeed. I'm wondering how come nobody noticed...
 
-I don't see the problem here. I like the part about converting ID
-tables to use chip_info instead of plain integers, but other than that
-I do not see how enum is worse than the split version.
+One word: seccomp.  Considering the background amount of bogus userland
+behaviour coming with it, I wouldn't expect a... vigorous test coverage
+for that one ;-/
 
---=20
-With Best Regards,
-Andy Shevchenko
+It's definitely a bug that needs fixing, but I'm not sure this is the right
+way to fix it.
+
+Look: replace_fd(fd, file, flags) returns fd on success and -E... on failure.
+Not a single user cares which non-negative value had been returned.  What's
+more, "returns fd on success" is a side effect of using do_dup2() and
+being lazy about it.
+
+And the entire thing is not on any hot paths.  So I suspect that a better fix
+would be
+
+	err = do_dup2(files, file, fd, flags);
+	if (err < 0)
+		return err;
+	return 0;
+
+in replace_fd() in place of
+	return do_dup2(files, file, fd, flags);
+
+so we don't invite more surprises like that.
 
