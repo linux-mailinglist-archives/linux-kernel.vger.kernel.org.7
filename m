@@ -1,196 +1,170 @@
-Return-Path: <linux-kernel+bounces-753027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5BE9B17DE4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:59:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B49AAB17DD2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9AA5C16E91D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:59:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B432A7B268A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:51:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946FD20F070;
-	Fri,  1 Aug 2025 07:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="tRDMdfEn";
-	dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b="flHLfnIk"
-Received: from gw2.atmark-techno.com (gw2.atmark-techno.com [35.74.137.57])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAD96204863;
+	Fri,  1 Aug 2025 07:53:14 +0000 (UTC)
+Received: from mail-vs1-f48.google.com (mail-vs1-f48.google.com [209.85.217.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E7CF2080C0
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:59:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=35.74.137.57
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C491273FD;
+	Fri,  1 Aug 2025 07:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754035155; cv=none; b=V6e37oo2/9kz6d5+JmWTlXIjEDKs2xJRl6tMarP1TLj1mgpqcVi76oTtlBGtnM5lf9Z0b1K5tnl1KRgpryhyTugWMaYJ0zz/6uPHqwnVxBaRA2iIBxRHKDdLCl0INIYYwmP9hDMLset8Lw7k5IAO/8dwxCyWTi3FCUlab1NA4TY=
+	t=1754034794; cv=none; b=ORuHGUx1Uqr5WPlN5c5uMbce2gwhhFjFDT/YkznnTBQcZQxhcEGbGmvDIKIYSvR/0ADh/GSo0U78gmJLsGsEcrByca0MJkM6biCdIExFSGoQUR207YnY7gqrdrAmADUmNI6ACXxuHXD/Fz69fDhDRKC3MVEG1++htDUzpIZXrsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754035155; c=relaxed/simple;
-	bh=g2tsbghthZF7Ok70mi07TWd2XLpIQrg341UrJzs6YD0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=B8kMTJyWmOaZYoGtcDobkt9JJG1S2GCVtbAh7B/+WO+yrHEoOQ1dJHIRaVAZCQI221F5Z6AfbY7KTnkICFk6btUbMWpbXLrFSsEi4rarAmZpkyo68KEd/22WWjrCxJ6ME09zkSZxln6M78ul8WigBkxldrHbu0nPUutDjcMTBx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com; spf=pass smtp.mailfrom=atmark-techno.com; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=tRDMdfEn; dkim=pass (2048-bit key) header.d=atmark-techno.com header.i=@atmark-techno.com header.b=flHLfnIk; arc=none smtp.client-ip=35.74.137.57
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=atmark-techno.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=atmark-techno.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=atmark-techno.com;
-	s=gw2_bookworm; t=1754034732;
-	bh=g2tsbghthZF7Ok70mi07TWd2XLpIQrg341UrJzs6YD0=;
-	h=From:Date:Subject:To:Cc:From;
-	b=tRDMdfEnptSK4wCKkLhwa2BKDJx8V9BHmKW4ct0WmPdGhHnC0HA2yCOLE48JTVwor
-	 tua9PwczW/kAOk9fqkAz5eO+ZI9BONC0VD3SeO0kNsBn7xtdS2c91d0EBJKIRReEgc
-	 6PEVOU0uyWxNxKuNprtnVjvS7In+4j5HwE6qwfq2Cm8GJE4aa/XSaPzhJP5jXLRs3T
-	 3LIB8Dz2lDYwU6cnjJ0crquK9Xv0YOCTuOzoT08QnWDV4aNZiHW1le/FQRiipj4roI
-	 T0VxbZBVgpsLYVrxMraABUdtZPusFdgg7E20t+oHJX7s/188fV1zUUZa/nTkKkntj3
-	 v0jg9mFA8/s9w==
-Received: from gw2.atmark-techno.com (localhost [127.0.0.1])
-	by gw2.atmark-techno.com (Postfix) with ESMTP id 59CBBAA
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:52:12 +0900 (JST)
-Authentication-Results: gw2.atmark-techno.com;
-	dkim=pass (2048-bit key; unprotected) header.d=atmark-techno.com header.i=@atmark-techno.com header.a=rsa-sha256 header.s=google header.b=flHLfnIk;
-	dkim-atps=neutral
-Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
-	by gw2.atmark-techno.com (Postfix) with ESMTPS id 03B79133
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:52:12 +0900 (JST)
-Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-2407248a180so11616085ad.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:52:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=atmark-techno.com; s=google; t=1754034731; x=1754639531; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PENsYT4Bk55TgvBflADdlJ0hEBYRAmRAKBWvshuKGFI=;
-        b=flHLfnIk8pu4ZAIIFoCLr90OkDA/06wliXEyo+OwPk/eieb45eOgQhOSwW62cn9lxT
-         l6Eiz9EY6/AWWzvgw0cvrLMw5W4qvGMUDN7ieAcHnEkGZNHBrNnh3KGf2pdZAfmzl0bY
-         2Or1KMnJcgfxIM7Llhq4Ms2gN1466kGrWIH7ygVR7RN84GEOSkePNBUG9TMtT4PHyHUn
-         OrWNAC8x4G7AjYZOOd3NvF4qcgXSfD3H+S2B+cVLzYU/p4HnyGeO7t4QzeVGH8FCo20E
-         5MsxGKCFyTm+s+MLTnuTSGpRd+wdl1zXSK+PeXUMcU8+mytvaZ40XfU8kXlZnNIVsckQ
-         H9Qw==
+	s=arc-20240116; t=1754034794; c=relaxed/simple;
+	bh=oLgt1/cGb6EuE5nSEM0TtuVrL7A1aY7RnNmfEhjf0n8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=g0PLYgi3Wz066GhZoNd1bApQ0e59gkDKByZLZW3Oyub6ljNo7nKqpJr722aEeRxYaGXhNvV2exK/igvYWqUd7Q8wN/bCD9UxoYash+1W9cbT6m1d+kVnwJbocbaPRc/BVxLqlLHgS+y1NKcQwWHRIaiPASl6UE/k+0ocBpaiVWA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f48.google.com with SMTP id ada2fe7eead31-4efbfe9c7a5so1911453137.0;
+        Fri, 01 Aug 2025 00:53:12 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754034731; x=1754639531;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1754034792; x=1754639592;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=PENsYT4Bk55TgvBflADdlJ0hEBYRAmRAKBWvshuKGFI=;
-        b=FJ4JxKgdV/z0T0zlThzrnFwvEtbsGhW02tkJmrP0DFij1ixzow5K5mQpu7C18Lx+uA
-         PHcHxqJBp+OWwu2RYwaQA20mn5aNsAE9HeO7scv14MWPD3WzFTwvt14s+GuxfkXx1rWW
-         yLa1ISGhpj7LqS659lYWmwkZ6CRamRRE26GQDLjpQksGAXJPp/iCf+heEg9gSApTICpW
-         uU5/KCK24srhQcVW92Ru9i7sZXj6v7LLR4zuVhHfYx87fcUpjverXpmaiZ6jd45QIFuc
-         BpTTlcyot6M/monc4GdmstJN/BXQxuOSJxs9Dme5m8bnmwiD6dE0c7iNM+Pq1RY4ahNP
-         zDIA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2KA60JfTV2ps+XGZfqsPBADgK5TGNqd63r9va2dGuFXl/R3y1zVb1qp7zVh0rr6t2wf26m1HoxKUZM9k=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx7+dy4ss4B2r/jCRDlvAmzK5+PKVLfDDBG/5+/xy15Xazw7PVe
-	NLY/9ssagce/o6KabLr57k54ywXcIM1K3bebhxlDDjh0QBls4ixN7GStQG1mIjbE2bAiRXXw/mH
-	RExOguVJ5v3ci42Gvsml6X4LoZ5qf/zyL8P2vJrlVm3gANwRihcYBBS9zZ53BZt7D1rQsv+z2GG
-	o=
-X-Gm-Gg: ASbGnctcKEbZio+VgKHZjd+88q9/m0Uw4e7JaZSDPX+b1jBkkT+mS2G8Vj1+GPeiXOe
-	+xJkocS6/mm/zg3CotmL6LxVevT3dSHhOO907tGlYV9Xz/grLUDY26ASxiZLNbFtg3va0cV4Bvp
-	wACPjnOZeoLIvl1GlpQR6zy4bU53BJmzGAWaqCy8Y4fGGUbUmz4oIDgnFOwzkksqeA+uW4M/+sa
-	Ygt8lGZMrZacbmR0QnrsKi/yZ1RTLpXuWPZHrZAwIc1x/HD+HhREXfF3qAwUwL5UJD23BCj9++Y
-	2rQ7MnwN/Ofn6GJTr2HJZ2gAiuIifzpuqAGqdF7mc/Ik4VDx7c1GhZk0fOc2rtEVvrGu/KW10Ts
-	AVTk3kcOCYgcmX2lC/zHGZ8E=
-X-Received: by 2002:a17:903:41cd:b0:23f:f96d:7579 with SMTP id d9443c01a7336-2422a6b1438mr29079705ad.37.1754034730913;
-        Fri, 01 Aug 2025 00:52:10 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOJMlsA/0Ci10UBu7wXYxPx1rv5jG/rLEYL/kGPe3kSOexBTZ+C91YMZPnXolYXEWyk3ovxw==
-X-Received: by 2002:a17:903:41cd:b0:23f:f96d:7579 with SMTP id d9443c01a7336-2422a6b1438mr29079365ad.37.1754034730487;
-        Fri, 01 Aug 2025 00:52:10 -0700 (PDT)
-Received: from localhost (117.209.187.35.bc.googleusercontent.com. [35.187.209.117])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241e8aab53dsm36045405ad.170.2025.08.01.00.52.09
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Fri, 01 Aug 2025 00:52:09 -0700 (PDT)
-From: Dominique Martinet <dominique.martinet@atmark-techno.com>
-Date: Fri, 01 Aug 2025 16:52:02 +0900
-Subject: [PATCH] USB: lower "Device is not authorized for usage" message to
- info
+        bh=DzFKrk5qEr4Es0kahjlnt5GIGR4PQyQRZQNgTseC61A=;
+        b=vryZUWSRRCI44yxBAjBHKelBomnZ2acDL5oLyJJLahRklYO9wm64G/aFFasYdw51iT
+         CsN+sQa/uoWaskdNW649GlTtL+sTE1YDL7Ay6Zrik4zkJZqvknprEYRG61mopv7nTOvs
+         8JAKoWschVh4TIJNza3r81LVluw/G01wVcRz4RX5Kd7YukW7QTCZ7SC/3G4r0AXipOvJ
+         Cx03fVc38btJGz9vJN7IJryArUazkvomH0PFixEAwh/6MFSw4u/V8aAIfXZU0fOFR/RT
+         D99cXbjfleHysMyI68NxN/vNG5K/M0CYdSostkvfII4NOnY9hKQZj32noD8OG5qSXifk
+         a/EQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCUb4Zq8eidVQYYMIFjMc63FOwciGEAzqIr3IDedI3b061NSEpiBwuos87GQ1tx5XdQ+TjFoSJVo/TZg==@vger.kernel.org, AJvYcCUdNNGXbwfi2/I/q0fSBwPfznZk5qIbICBJjwvtyb9Z701nP92QhCCzLjwl9uCpSaFvPbZjovMO8i7oqQw=@vger.kernel.org, AJvYcCUvqv2ySP5whsoIpXyPL23jFX1mxlEKFp2YgzamqlYVs6COqP9ZXIt4nYK8QCf3DwfJHGjELDRw02Iu@vger.kernel.org, AJvYcCXHiZC4T8AVbT/5N2d968rOZtLv/G+njlby6/sNsfsErAi9p/qWF8fUvrPeR+2Gxnh7ay4e+qMAP2W+Og==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxs/icqbCPrUZTO1jhxuoKChFX3/0EoxhFqbxtWl/cLOFWnocYB
+	OenYADsmSafiu1iwHzk8MyI1ZUY6oKpKVOHFIQv0iY2MVUe9XpK6OEqRvI+XXbXV
+X-Gm-Gg: ASbGncvDbXoMGbaJEJPNa9cUEYzxfiXjAqmTobfrcZZYvd8UsF8eM2GTUcMfoeqVDib
+	UGiIoIl/lje80WiJkiqStMi3IbhGKH+GE/FHLwtRUMEqNe8FnQzvGvjJbZ9jYXdPY0jXSConZkn
+	pzlZlQRxXLEqJbPxd7oqxqMMoEENVgkZsnwat8Bi3NhM4hW+PsbFZ5far+litpRGZ9W4KBR1MKf
+	OBo6wm3DKN1FTXAinkBElYpz0jkBEHQ+FtJ3TRqjUDFQoJSGWvwC9UAOEX4KK5r+BSi2CBn9KAb
+	0NJiWOcJmHyvWEQCFi/RBPpk9pXofLTkgJ2srJQjEtw80gv3lpCIM9jBYqSlc/tVQK9UnUk7/C1
+	djCghDjTdIOSgAK7Mb3z71vjgHYBy6J6BCacIc+zBHkOQh85C1JfKH199kvPM
+X-Google-Smtp-Source: AGHT+IH8ZCF1y9qER27dQCY8WWuoBK9OLgaVzKvECUpp4rg+YPt02uN4bfERbxFbjgUdHD1tauAoJw==
+X-Received: by 2002:a05:6102:324e:10b0:4f3:2f5f:c2e8 with SMTP id ada2fe7eead31-4fc0fe5e086mr1838199137.1.1754034791710;
+        Fri, 01 Aug 2025 00:53:11 -0700 (PDT)
+Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com. [209.85.217.49])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88d8f3f0c5dsm754672241.13.2025.08.01.00.53.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 00:53:10 -0700 (PDT)
+Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4fc2132cc97so538634137.1;
+        Fri, 01 Aug 2025 00:53:10 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWSAkB8dMewm47egHPwhelcGYuhFEE57+rhCo1mKCwGhm+7eLi7MEr2pTyLL1ZWw33UcjjdI+DeLpM/tVo=@vger.kernel.org, AJvYcCX4cQ3aArJw8nVnqS5OMX1BROBpt3Ir4KwsiR2FdgRwOxKoeQnHPUzSTeGoedOieaUKVA+qPLtLXL+d@vger.kernel.org, AJvYcCX4qh0yT+F8IrFCZMSwzuZh5h3JO/waU8jkDGvL8p3T6hUv/TQZKjtl/hEAwDwJB6bPyN88wmnfTkd9EQ==@vger.kernel.org, AJvYcCXAuoD9ZlDWx+KDhut2KvIkBMwqFhrgwjG0cM21mvK2HbcG01Hf3drkOT0GDuz1n8hV9NHkmOm3ShgDKw==@vger.kernel.org
+X-Received: by 2002:a05:6102:6102:10b0:4fb:f495:43ec with SMTP id
+ ada2fe7eead31-4fc1014a568mr1725889137.12.1754034790307; Fri, 01 Aug 2025
+ 00:53:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-usb-auth-v1-1-a59bfdf0293f@atmark-techno.com>
-X-B4-Tracking: v=1; b=H4sIACFyjGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCwND3dLiJN3E0pIM3aRkC4s08zTD5CQDEyWg8oKi1LTMCrBR0bG1tQA
- oz/V/WgAAAA==
-X-Change-ID: 20250801-usb-auth-bc88f7f1cb04
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Dominique Martinet <dominique.martinet@atmark-techno.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2453;
- i=dominique.martinet@atmark-techno.com; h=from:subject:message-id;
- bh=g2tsbghthZF7Ok70mi07TWd2XLpIQrg341UrJzs6YD0=;
- b=owEBbQKS/ZANAwAKAfKKYH/WjHEHAcsmYgBojHInI9+feSKPrPIhJE/NBsJSvf6AdWGchQWmb
- 0c8Q2H88NeJAjMEAAEKAB0WIQQoFSiLMD+txr0veJbyimB/1oxxBwUCaIxyJwAKCRDyimB/1oxx
- B8p1D/0Ss0LBU0KzWLVQVV6icyJsApWnOBdruWFiT02N9cnyz4M7tTrLHeQ85EX92Df80gu+pUH
- 6ToMoa8tqNLWWlxAUdHUkkWN/wTXTRphPBrZaZRWER6ByTel92sSo+U/2zNfYyYvFjmk5cPLpUy
- nRkhF1dE+AyIQ5Tnc+WO9Y8Ji7fAcNUy1C4qhHE87bI4x+ftMyAqE5WyHhXqSAnvAa6ORqp7w3w
- g51TXVUFezjRliDKiPI5thxcJYU7PtANVGO0D+63OfLQqYovU48dY7+SKUZtjtuF3hYZGlh6Vqe
- +6661+NyDz2nYGS3Vq2TToqyYVT3DViR+fp7AakTd5jmUr+h3l1W8mlik+txaRdYJV97Dm1f5wr
- rgqUIAr2gEUsSYiE7cTCnd3eohbW07JgKeWKUgurpP5Pu0BJUzInPHVCltatO8BAba+8teWWSwy
- KLTRRlI3EXz0PLk1ljc2DePSdczibEjMChyx6BlaOe81qc+bGeLdxlychd2dgl60r4F342ZylLz
- M/htfYp2xfd+aAtWaQcXEPWTy5WKnBZwyuJ9dyekPMazOYJrMhptNVvxjhUtRKB7E72s9C8KRIt
- kNosJfP5Ws8bFPKyfbO2ZttnnHOAXW8ME91ZeA+Jf6t3ecpRmtMea7i9mkx4rljUOYiG9ZXKDqo
- gxo3pbmGBUAaXMg==
-X-Developer-Key: i=dominique.martinet@atmark-techno.com; a=openpgp;
- fpr=2815288B303FADC6BD2F7896F28A607FD68C7107
+References: <4e10bea3aa91ee721bb40e9388e8f72f930908fe.camel@linux.ibm.com> <20250731173858.1173442-1-gbayer@linux.ibm.com>
+In-Reply-To: <20250731173858.1173442-1-gbayer@linux.ibm.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Aug 2025 09:52:58 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVwFeV46oCid_sMHjXfP+yyGTpBfs9t3uaa=wRxNcSOAQ@mail.gmail.com>
+X-Gm-Features: Ac12FXxryTPC1ndd8ms1Hjwe7h8qRvkBWHnbRS0kseU5i-4Dc5zEC3g15MUQeuA
+Message-ID: <CAMuHMdVwFeV46oCid_sMHjXfP+yyGTpBfs9t3uaa=wRxNcSOAQ@mail.gmail.com>
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+To: Gerd Bayer <gbayer@linux.ibm.com>
+Cc: 18255117159@163.com, bhelgaas@google.com, helgaas@kernel.org, 
+	agordeev@linux.ibm.com, borntraeger@linux.ibm.com, 
+	ilpo.jarvinen@linux.intel.com, jingoohan1@gmail.com, kwilczynski@kernel.org, 
+	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-next@vger.kernel.org, linux-pci@vger.kernel.org, lpieralisi@kernel.org, 
+	mani@kernel.org, robh@kernel.org, schnelle@linux.ibm.com
+Content-Type: text/plain; charset="UTF-8"
 
-This message is not a useful error in practice:
-- when using tools such as usbguard, the message is always printed but
-  it does not presume anything regarding the actual device acceptance
-  (later 'authorized to connect' message is at info level, and not
-   displayed on console)
-- this can be a source of flood if a usb device connection is flaky
-- ... and it is only displayed as the result of an admin action
-  (modifying authorized_default), working as intended, so not likely
-  to be an error.
+Hi Gerd,
 
-This is still useful to know when looking at usb devices problems, so
-info seems appropriate for this class of messages together with the
-later eventual authorized message.
+On Thu, 31 Jul 2025 at 20:57, Gerd Bayer <gbayer@linux.ibm.com> wrote:
+> Simple pointer-casts to map byte and word reads from PCI config space
+> into dwords (i.e. u32) produce unintended results on big-endian systems.
+> Add the necessary adjustments under compile-time switch
+> CONFIG_CPU_BIG_ENDIAN.
+>
+> pci_bus_read_config() was just introduced with
+> https://lore.kernel.org/all/20250716161203.83823-2-18255117159@163.com/
+>
+> Signed-off-by: Gerd Bayer <gbayer@linux.ibm.com>
 
-Signed-off-by: Dominique Martinet <dominique.martinet@atmark-techno.com>
----
- drivers/usb/core/driver.c  | 4 ++--
- drivers/usb/core/generic.c | 2 +-
- 2 files changed, 3 insertions(+), 3 deletions(-)
+Thanks for your patch!
 
-diff --git a/drivers/usb/core/driver.c b/drivers/usb/core/driver.c
-index c3177034b779eb9e7c61b941c358f615b33ce01d..69216c3951fd9613d9e10ecd75ace8e6fb888229 100644
---- a/drivers/usb/core/driver.c
-+++ b/drivers/usb/core/driver.c
-@@ -332,10 +332,10 @@ static int usb_probe_interface(struct device *dev)
- 		return error;
- 
- 	if (udev->authorized == 0) {
--		dev_err(&intf->dev, "Device is not authorized for usage\n");
-+		dev_info(&intf->dev, "Device is not authorized for usage\n");
- 		return error;
- 	} else if (intf->authorized == 0) {
--		dev_err(&intf->dev, "Interface %d is not authorized for usage\n",
-+		dev_info(&intf->dev, "Interface %d is not authorized for usage\n",
- 				intf->altsetting->desc.bInterfaceNumber);
- 		return error;
- 	}
-diff --git a/drivers/usb/core/generic.c b/drivers/usb/core/generic.c
-index 9c6ae5e1198bb2043d27e2f309a46f8ce512225f..a48994e11ef3d07ada3b945558fc8e0924d5ce54 100644
---- a/drivers/usb/core/generic.c
-+++ b/drivers/usb/core/generic.c
-@@ -243,7 +243,7 @@ int usb_generic_driver_probe(struct usb_device *udev)
- 	 * with the driver core and lets interface drivers bind to them.
- 	 */
- 	if (udev->authorized == 0)
--		dev_err(&udev->dev, "Device is not authorized for usage\n");
-+		dev_info(&udev->dev, "Device is not authorized for usage\n");
- 	else {
- 		c = usb_choose_configuration(udev);
- 		if (c >= 0) {
+> --- a/drivers/pci/access.c
+> +++ b/drivers/pci/access.c
+> @@ -89,15 +89,24 @@ int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 size,
+>                         u32 *val)
+>  {
+>         struct pci_bus *bus = priv;
+> +       int rc;
+>
+> -       if (size == 1)
+> -               return pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> -       else if (size == 2)
+> -               return pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> -       else if (size == 4)
+> -               return pci_bus_read_config_dword(bus, devfn, where, val);
+> -       else
+> -               return PCIBIOS_BAD_REGISTER_NUMBER;
+> +       if (size == 1) {
+> +               rc = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> +#if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> +               *val = ((*val >> 24) & 0xff);
+> +#endif
 
----
-base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
-change-id: 20250801-usb-auth-bc88f7f1cb04
+IMHO this looks ugly and error-prone.  In addition, it still relies
+on the caller initializing the upper bits to zero on little-endian.
 
-Best regards,
+What about:
+
+    u8 byte;
+
+    rc = pci_bus_read_config_byte(bus, devfn, where, &byte);
+    *val = byte;
+
+> +       } else if (size == 2) {
+> +               rc = pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> +#if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> +               *val = ((*val >> 16) & 0xffff);
+> +#endif
+
+and:
+
+    u16 word;
+
+    rc = pci_bus_read_config_word(bus, devfn, where, &word);
+    *val = word;
+
+> +       } else if (size == 4) {
+> +               rc = pci_bus_read_config_dword(bus, devfn, where, val);
+> +       } else {
+> +               rc =  PCIBIOS_BAD_REGISTER_NUMBER;
+> +       }
+> +       return rc;
+>  }
+>
+>  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-Dominique Martinet <dominique.martinet@atmark-techno.com>
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
-
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
