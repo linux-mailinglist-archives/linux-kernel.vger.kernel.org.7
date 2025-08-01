@@ -1,84 +1,163 @@
-Return-Path: <linux-kernel+bounces-753155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC336B17F4B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:29:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E24BAB17F4D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:30:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F12B5877F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:29:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0931B188E9DD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 06444225793;
-	Fri,  1 Aug 2025 09:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="eMcBTEn2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33D8F222582
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:29:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5809228CB8;
+	Fri,  1 Aug 2025 09:30:41 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70D5221D3F6;
+	Fri,  1 Aug 2025 09:30:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754040578; cv=none; b=T4IAGCa4cjKIptOxxUMSRjqXhrvhF5uoNL/wp8tAKnFhyQ2vTy/00vw25eJU5LQft7wYV7qgAhbO8CNR5ArNf71BDUH++w58Krg4VhJHV0uhJzN8Et5Sd6U5OE6U04AsqffoJhmTxQM9cyFdAlH14k2zp8oxcX0YuWCZuCAhOlQ=
+	t=1754040641; cv=none; b=nesXReyjGcXw5E4pBeEFYDzZfeItjTk3I6YKs3WtnUQcroaPohbEwhSOunWczUhmojkjKJHS3i5M9rotxk1fCUwGe3vKi3H03pI3Nq5BitE/fe/q3sOKRL4LnfUF7nesYoOPcFqOsX935ZaqViNDHIXpKeUSFp5cDEP2Dl44Y3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754040578; c=relaxed/simple;
-	bh=bfaiaPcNaXDzcQAotjUypFK2DTSXDKuwacItKskBqzM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RLM5d4tqSr4TqHvevMQxUCJ3De4VJvXfsHiDh2aBJEM+sze4f0Fqf+LPZe8Lh7pmIJcLSlo+4qtmxU4X9rlaQytlpO4lWPkInkaYZ9tHw0qUYY2iw2EUEqHySzPX+uIrTkBqeau3sGUiAZDxogKjIcCxCUCd5bLUnVbxiQn9mOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=eMcBTEn2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 402BDC4CEE7;
-	Fri,  1 Aug 2025 09:29:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754040576;
-	bh=bfaiaPcNaXDzcQAotjUypFK2DTSXDKuwacItKskBqzM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eMcBTEn2gZhuIaYVvObPA4K+Qsj2EQWRbdN2UNZEe0/kw3NoOQppfHXyT95/hYJMx
-	 gSwlyst1yjCtMwEEF6r8YKMDOE//9vRaPEf/wcMcJ+vZfN8zTrSbqlJ0rSgj8JlO6Y
-	 Hllyxes0l6xG+MRki9eVXV00H3AUD3mGYlUq+NWI=
-Date: Fri, 1 Aug 2025 10:29:32 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: WangYuli <wangyuli@uniontech.com>
-Cc: alexander.usyskin@intel.com, arnd@arndb.de,
-	linux-kernel@vger.kernel.org, zhanjun@uniontech.com,
-	niecheng1@uniontech.com, guanwentao@uniontech.com
-Subject: Re: [PATCH] mei: vsc: fix potential array bounds violation in ACE
- address allocation
-Message-ID: <2025080118-murky-morbidity-97d1@gregkh>
-References: <78151482AFE8973A+20250801090600.544000-1-wangyuli@uniontech.com>
+	s=arc-20240116; t=1754040641; c=relaxed/simple;
+	bh=Q/Y0tbgbPrbBf99+QkFEhAXhItdfzeo+28ANDqH73Tc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ajerbiXT701DKS6U0vcmlOMm7jh1XVowCriDSaw16Op000VOsDCowEasWuhayRZEJdA5SgfdDSvX475B4U1hVZr5lItT6Hb0S949ASo+sgkgG1mhFtlYBjnF18o0T4u+CdQLszZGxjL/EihUQMDiY4sfCYr+uvV58EIqtsJhtXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id A9CBD169C;
+	Fri,  1 Aug 2025 02:30:30 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DC89A3F66E;
+	Fri,  1 Aug 2025 02:30:36 -0700 (PDT)
+Message-ID: <791e259b-3a57-487d-81ca-9d83f83ad685@arm.com>
+Date: Fri, 1 Aug 2025 10:30:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <78151482AFE8973A+20250801090600.544000-1-wangyuli@uniontech.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: "Aneesh Kumar K.V" <aneesh.kumar@kernel.org>, linux-coco@lists.linux.dev,
+ kvmarm@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+ Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun <yilun.xu@linux.intel.com>,
+ Steven Price <steven.price@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-5-aneesh.kumar@kernel.org>
+ <20250728143318.GD26511@ziepe.ca> <yq5a5xfbbe35.fsf@kernel.org>
+ <20250729143339.GH26511@ziepe.ca>
+ <bbe2a41a-8f72-4224-a0bc-225c1e35a180@arm.com>
+ <20250731121740.GQ26511@ziepe.ca>
+ <1388fb70-3d2d-4c41-9526-521cb75eb422@arm.com>
+ <20250731164420.GW26511@ziepe.ca>
+Content-Language: en-US
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20250731164420.GW26511@ziepe.ca>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 01, 2025 at 05:06:00PM +0800, WangYuli wrote:
-> When ACE images require dynamic address allocation, the code accesses
-> frags[frag_index - 1] without bounds checking. This could lead to:
+On 31/07/2025 17:44, Jason Gunthorpe wrote:
+> On Thu, Jul 31, 2025 at 02:48:23PM +0100, Suzuki K Poulose wrote:
+>> On 31/07/2025 13:17, Jason Gunthorpe wrote:
+>>> On Wed, Jul 30, 2025 at 11:09:35AM +0100, Suzuki K Poulose wrote:
+>>>>>> It is unclear whether devices would need to perform DMA to shared
+>>>>>> (unencrypted) memory while operating in this mode, as TLPs with T=1
+>>>>>> are generally expected to target private memory.
+>>>>>
+>>>>> PCI SIG supports it, kernel should support it.
+>>>>
+>>>> ACK. On Arm CCA, the device can access shared IPA, with T=1 transaction
+>>>> as long as the mapping is active in the Stage2 managed by RMM.
+>>>
+>>> Right, I expect that the T=0 SMMU S2 translation is a perfect subset of
+>>> the T=1 S2 rmm translation. At most pages that are not available to
+>>> T=0 should be removed when making the subset.
+>>
+>> Yes, this is what the VMM is supposed to do today, see [0] & [1].
 > 
-> - Array underflow if frag_index is 0
-
-How can that happen?  Does this value come from the kernel or from the
-hardware?
-
-> - Use of uninitialized fragment data for address calculations
-> - Silent failures in address allocation
+> Okay great!
 > 
-> Add proper validation before accessing the previous fragment and
-> provide clear error messages when validation fails.
+>>> I'm not sure what the plan is here on ARM though, do you expect to
+>>> pre-load the entire T=0 SMMU S2 with the shared IPA aliases and rely
+>>> on the GPT for protection or will the hypervisor dynamically change
+>>> the T=0 SMMU S2 after each shared/private change? Same question for
+>>
+>> Yes, share/private transitions do go all the way back to VMM and it
+>> is supposed to make the necessary changes to the SMMU S2 (as in [1]).
 > 
-> Signed-off-by: WangYuli <wangyuli@uniontech.com>
+> Okay, it works, but also why?
+> 
+>  From a hypervisor perspective when using VFIO I'd like the guestmemfd
+> to fix all the physical memory immediately, so the entire physical map
+> is fixed and known. Backed by 1G huge pages most likely.
+> 
+> Is there a reason not to just dump that into the T=0 SMMU using 1G
+> huge pages and never touch it again? The GPT provides protection?
 
-What commit id does this fix?
+That is possible, once we get guest_memfd mmap support merged upstream.
+GPT does provide protection. The only caveat is, does the guest_memfd
+support this at all ? i.e., shared->private transitions with a shared
+mapping in place (Though this is in SMMU only, not the Host CPU
+pagetables)
 
-How was this tested?
 
-thanks,
+> 
+> Sure sounds appealing..
+> 
+>> As for the RMM S2, the current plan is to re-use the CPU S2 managed
+>> by RMM.
+> 
+> Yes, but my question is if the CPU will be prepopulated
+>   
+>> Actually it is. But might solve the problem for confidential VMs,
+>> where the S2 mapping is kind of pinned.
+> 
+> Not kind of pinned, it is pinned in the hypervisor..
+>   
+>> Population of S2 is a bit tricky for CVMs, as there are restrictions
+>> due to :
+>>    1) Pre-boot measurements
+>>    2) Restrictions on modifying the S2 (at least on CCA).
+> 
+> I haven't dug into any of this, but I'd challenge you to try to make
+> it run fast if the guestmemfd has a full fixed address map in 1G pages
+> and could just dump them into the RMM efficiently once during boot.
+> 
+> Perhaps there are ways to optimize the measurements for huge amounts
+> of zero'd memory.
 
-greg k-h
+There is. We (VMM) can choose not to "measure" the zero'd pages.
+
+
+>> Filling in the S2, with already populated S2 is complicated for CCA
+>> (costly, but not impossible). But the easier way is for the Realm to
+>> fault in the pages before they are used for DMA (and S2 mappings can be
+>> pinned by the hyp as default). Hence that suggestion.
+> 
+> I guess, but it's weird, kinda slow, and the RMM can never unfault them..
+> 
+> How will you reconstruct the 1G huge pages in the S2 if you are only
+> populating on faults? Can you really fault the entire 1G page? If so
+> why can't it be prepopulated?
+
+It is tricky to prepopulate the 1G page, as parts of the pages may be
+"populated" with contents. We can recreate the 1G block mapping by
+"FOLD" ing the leaf level tables, all the way upto 1G, after the
+mappings are created. We have to do that anyway for CCA.
+
+I think we can go ahead with VMM pre-populating the entire DRAM
+and keeping it pinned for DA. Rather than doing this from the
+vfio kernel, it could be done by the VMM as it has better knowledge
+of the populated contents and map the rest as "unmeasured" 0s.
+
+Suzuki
 
