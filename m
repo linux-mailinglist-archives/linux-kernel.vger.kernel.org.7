@@ -1,109 +1,95 @@
-Return-Path: <linux-kernel+bounces-753824-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753825-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D5A5B18886
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:05:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60C6AB1888F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:11:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEB564692
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:05:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BCC3A1FBB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:11:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9380928A724;
-	Fri,  1 Aug 2025 21:05:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FB9628D8DF;
+	Fri,  1 Aug 2025 21:11:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IBt/GmGu"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="f9X+OE6T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49781A01C6;
-	Fri,  1 Aug 2025 21:04:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A4E62036FE
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:11:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754082300; cv=none; b=f6jyVEm553HAERUFcALHWyRNg1sj+G/drLqDrYoVrWwBoYGaZ+UdQotoT9vwwXc/yJm+igO3/VD2NfexhtIWbcGJpgvY7U/8LVm5IY12QKBFgqJU6mvDqA2oJzSTRbjl2fDgjUiv7a/9CFJoeRWNkW+JzIqwMBMAhcvTO4IAMhU=
+	t=1754082663; cv=none; b=B53XNAM7RA2jJHO1Jx4xS6WKsNPfB97YQTEq/zvhq3zsdoKghoH5oVpFGrqocXQOBOzLUPcd2x+OAEjqzEc2j42RyopEvXjW49+8sZa6y3FPHoE4iOAc9kTBaQ9VGc7OTSbxYe8kFtyCd8UD29WbKT6LNC67jCJ1xAa0iBQA8vM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754082300; c=relaxed/simple;
-	bh=TRUqs6xlhglbCyWGVZLqMEQiUXQwndHXQ6HDJSNkuRU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Tm2dksUT/UDgwVLCVv2NGlvp+LDidhFRVGf37cjI+3iSLXtpJ04C9ZTSsjBlDe16uSGwf5+19WTIJ66VPCvUfhNp1LCFuj0Vng/jyFnBd43wnVqnxlV+mIptdA0UxnEx7FFeQa1WxQucE0G7dcdYLcY2MLHh0jL/fq9STVsrNPw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IBt/GmGu; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-240b3335c20so14923675ad.3;
-        Fri, 01 Aug 2025 14:04:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754082298; x=1754687098; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=8e2o2DOmm2yAsxtpRoWoG1Ii2DzD6+fXPkOVUpk/X+U=;
-        b=IBt/GmGuflh75WJdHvmxmII3eJ6apV/KIzOecAPuPy7NCwHgy5jek4gfhClrLrW9Oi
-         2QyKRkr5TmYor/iGFw9Qh51JGArGNr5mc8btyRTWYWaU4tHNeETwmwT8vx3tRDjwzNHw
-         fLJhyZrCXRPp09qPjz+G/LafkWCkCn80HeWXxeGMjpEop/a3MmiTT61juazS3AA6c8Ft
-         TqNGLDX2P7H9M4khUABKz42gyoWGCderMRwIhTF/uKaVv1NEPaK6zGloYNiEyuyY1ASH
-         Sf0+QkFEeVrLDzVnaHemIROK7c4/J6RwpP448pbXHer9OZiPZNRKJM8TEOCBMWVCQJuR
-         thww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754082298; x=1754687098;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:sender
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8e2o2DOmm2yAsxtpRoWoG1Ii2DzD6+fXPkOVUpk/X+U=;
-        b=SfYmayrNtGlQutgs5u2e7fHvLfNSmNA0/0owGhk5kXmWbhAVGpHTRg9Cd8cGSseaeZ
-         vFnonmnD8C9XXjQ4xYGkhdHhOEXZ+BakYfyd6nIIzk6rt71iyGk7eWWN37S70+1q8KKi
-         h9pax76tR1BL53Itd1/5YlUAh07eqUtZYMjsWEKSGvftgJGnHyLQeyP4INO29dwkmE73
-         qrEvMG+qcce95RfMP813mrZGw5xTXkHKokEcA13+Ouv9lVR9TvdJlhy8cVzlWXykVd26
-         /4QFH0Mq/eZBc0uJ15XTy6D0JAg/SLMQHFjOkVfSYvUAr9+enUpwfTfJmUCXO4VHzVOl
-         +yaQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvzcxvGOZM+wCAkL2nuXdmtprQiW2xTf8cpWFMMRoYYQtyN2ofpXBLFQYCXE+j0syQwshEIWESrMedvaI=@vger.kernel.org, AJvYcCVjmzTqz2A625Pan4yFhzClvI3mVOJePREfv3ox4eu8TPunCQVKrCDiNoGnhh/RjsoooYpdyUwxGTU=@vger.kernel.org, AJvYcCXJVicd6ltIoNkQjJnMkd6z5BiG56TqCiOFFz/jEbiAKdcZ65jf3iA50GTeKPxx1+ngUQOg7tl+frOi1Mlj@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxri2yMj0g7hdHUwMjHBIu+SmePINLLTkSLTmuqeOLjpmuJbIz4
-	O0YTrdf+qmiHlHwyw8QVQNcQpWwRCKvhAyQIJ1nKnorAGjzA+B8iuw96
-X-Gm-Gg: ASbGnctcEhuNB2cyUEJKPG4N2pI0IzTXBR2jFIwy5uMpMY6uMTN846FZUAeHpOzpi1r
-	iCOHVaEz/jV08QTPhmhWdWDwR8ZIN3KMafRYueJk8T/7qqFwLVmMfwTNqQp7FW7sYBPlHND2hDM
-	mKfDmVNFCELN9ApME55QszSDsPMWf1xbTOwZmhDvv4gv3Z0Zgx2Q1Ja7IHQQ71cHkFjk/5vmWVq
-	TzE+nhc53uvEhzgqRc4ZeO5Rlb7Gu/POdASIyQcIRdwVjb0L3ct3Rk888d8PXmssP2ujm213XW0
-	cYq6SIxZXHuJJVp0NowLHNfHPZzlZQyAYjrw0MMv2eW/cyfuajy8C7IGoxhJDUOgDhnb8EuulPk
-	rQNzNcBO2h0ljUdZa2xSGMqXaMmCmhPFstAs=
-X-Google-Smtp-Source: AGHT+IEcmQguvA4OSb6zM+Ox4Lwc+OtLle2Il5C+7tUf33JxrxfEuMHkNj0e/uf56oBX/EbPogiZ9w==
-X-Received: by 2002:a17:902:db04:b0:240:99fa:dd1c with SMTP id d9443c01a7336-24246f1fc4fmr14571295ad.10.1754082297773;
-        Fri, 01 Aug 2025 14:04:57 -0700 (PDT)
-Received: from server.roeck-us.net ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89a3a6fsm50893175ad.147.2025.08.01.14.04.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 14:04:57 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Date: Fri, 1 Aug 2025 14:04:56 -0700
-From: Guenter Roeck <linux@roeck-us.net>
-To: Eugene Shalygin <eugene.shalygin@gmail.com>
-Cc: Runar =?iso-8859-1?B?R3L4buVz?= <noizez@me.com>,
-	Jean Delvare <jdelvare@suse.com>, Jonathan Corbet <corbet@lwn.net>,
-	linux-hwmon@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] hwmon: (asus-ec-sensors) add X670E-I GAMING WIFI
-Message-ID: <2ed06671-fe2d-4008-b185-a1398a515925@roeck-us.net>
-References: <20250801195020.11106-1-eugene.shalygin@gmail.com>
+	s=arc-20240116; t=1754082663; c=relaxed/simple;
+	bh=ww7t1UI4eak/tTR1kr/oRbXmt8cJpLrpmmFrejZkmk8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=tiKCt657vfZt6fQRd+lOZy1POGkzQ9F5rEdu7bwDsiMzhfgG95Mc6tNrM7iL4pwY1reQ0nUKJ3YGtixuIHCahnQ2NaEhY6Udi0TvnHz7ranSlV9nagWfS77LsiM7jx3WqOEi9t/fYn8UiufJTqckgK5ily19Ig2Sx2R6B+RWca0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=f9X+OE6T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 55AEEC4CEE7;
+	Fri,  1 Aug 2025 21:11:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754082662;
+	bh=ww7t1UI4eak/tTR1kr/oRbXmt8cJpLrpmmFrejZkmk8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=f9X+OE6T2ufAtHATllC8W5aKWaZ12A5bdEZvrMetKyo7MIpzCOJKgiBQi1bvRSZvJ
+	 ZRy/aKgf6gcmVyJDMpIgJ5zgTtgQ7Vo4mk3M9ynRhfptQvDRrDWCQPMSrakeUQ6azD
+	 jU/4m1DF7WMHLXmSWPs4vrDjdq1j6PitZ1vd3uBQ=
+Date: Fri, 1 Aug 2025 14:11:01 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: david@redhat.com, surenb@google.com, aarcange@redhat.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for
+ CONFIG_HIGHPTE
+Message-Id: <20250801141101.9f3555a172609cb64fde7f71@linux-foundation.org>
+In-Reply-To: <20250731144431.773923-1-sashal@kernel.org>
+References: <20250731144431.773923-1-sashal@kernel.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801195020.11106-1-eugene.shalygin@gmail.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 01, 2025 at 09:50:08PM +0200, Eugene Shalygin wrote:
-> From: Runar Grønås <noizez@me.com>
+On Thu, 31 Jul 2025 10:44:31 -0400 Sasha Levin <sashal@kernel.org> wrote:
+
+> With CONFIG_HIGHPTE on 32-bit ARM, move_pages_pte() maps PTE pages using
+> kmap_local_page(), which requires unmapping in Last-In-First-Out order.
 > 
-> Add support for ROG STRIX X670E-I GAMING WIFI
+> The current code maps dst_pte first, then src_pte, but unmaps them in
+> the same order (dst_pte, src_pte), violating the LIFO requirement.
+> This causes the warning in kunmap_local_indexed():
 > 
-> Signed-off-by: Runar Grønås <noizez@me.com>
-> Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
+>   WARNING: CPU: 0 PID: 604 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>   addr \!= __fix_to_virt(FIX_KMAP_BEGIN + idx)
+> 
+> Fix this by reversing the unmap order to respect LIFO ordering.
+> 
+> This issue follows the same pattern as similar fixes:
+> - commit eca6828403b8 ("crypto: skcipher - fix mismatch between mapping and unmapping order")
+> - commit 8cf57c6df818 ("nilfs2: eliminate staggered calls to kunmap in nilfs_rename")
+> 
+> Both of which addressed the same fundamental requirement that kmap_local
+> operations must follow LIFO ordering.
+> 
+> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> Co-developed-by: Claude claude-opus-4-20250514
 
-Applied.
+Well this is innovative.  I doubt if Co-developed-by: is appropriate
+for this (where's Claude's Signed-off-by:?)
 
-Thanks,
-Guenter
+I'd support creating a new changelog tag for this case.
+
+And really, if AI was recruited in developing a kernel patch, it would
+be helpful if the changelog were to have a paragraph describing just
+how the AI assist was used.  At least, until everyone knows all about
+this?  You probably already have a presentation or a web page, so
+adding a link to that would suffice, thanks.
+
 
