@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-753268-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E2D3B180CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:17:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A23E0B180D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:18:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 42C447B4720
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:16:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64164625A80
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:18:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B69B1244660;
-	Fri,  1 Aug 2025 11:17:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0DDA2459EA;
+	Fri,  1 Aug 2025 11:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="FRoHrdfc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TuJJvz8v"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D115723D28C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:17:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFD45221FCA;
+	Fri,  1 Aug 2025 11:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754047049; cv=none; b=SFo4o+KKquoBx2mKid7mybKc7VUCqQC2125CIV7QGoB0G1joa9HXbqtJo9YC6mZyiXqzLJYA8FaickVyXdHDt9GfTKnFp0Bb1ffSiXKq/lo2VQiQjDfX0wY+gnUQXlXULgqOvyVbxV9pG2lLxnDLedYHZHyXZpCbYMu5EfIQsvE=
+	t=1754047091; cv=none; b=N2NvX9+AjFblsZ74I9AbvUuE+KF3SCUOCLmZkj9bd2te4L08IiaMBojAWULhP96o7+Ro/y5ZjiS0KEUCtcPrrK0aWdRPpt5fkExpbLAAyNbrcD9bJe3pCWbt6fVP9pKRWThngdGB5ozevhWpVxusWGCXGL33SwbHQalL0MqvBM0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754047049; c=relaxed/simple;
-	bh=8JQsiVWTM3ruJ2jFKdGrmV8VbBNegx7F5yFOdazGfKQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p+linrm0TjrRhllBsMmH61Lx+/ZcyaOmcW1MmI1rCCo8YrOgYgPMPAV0UREtN6GHW3l+y7ov8fjXvMi3IN41BCp3crXTWffXhK2sqLr0dAVOk4LqqmKuzAbRUuZV5N4H0pWrHI5FQXSr7Zb2fQ9hb3hjbzCuU+9a1fK8JNHSKi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=FRoHrdfc; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754047045;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TkK4LWOcguxSSKDlgoUZDb5ZXpOEItT6YyrOmMD6H70=;
-	b=FRoHrdfcEA1FqVFAXNN3m/QWbwFp86ghttYaJYIWWQcWX5vcqIY/Ai3TDCOmRRkTuCKNA1
-	c2DQmDQLH60j8nx8ahwLEuhjXsOJS0qU09+emqyp4X1+LUHSGj01wYXMhmoVnqOBxG8jIN
-	hw3FWR0SE23knF+rBe0fM1N4LVp3Zrk=
-Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-578-Dfo5LgvDPfKPJDVYzXvpxA-1; Fri,
- 01 Aug 2025 07:17:22 -0400
-X-MC-Unique: Dfo5LgvDPfKPJDVYzXvpxA-1
-X-Mimecast-MFC-AGG-ID: Dfo5LgvDPfKPJDVYzXvpxA_1754047040
-Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	s=arc-20240116; t=1754047091; c=relaxed/simple;
+	bh=PuTz5rP+g1ZNjvUwlN2rQtxoXWKf+C3pIRkEwIk533k=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=W3KWcCp25vxGpU1w0fu07uuP0Jgqc17jyVtsn5z2IVvorttEKWBVyat8ExlKyL384zfu1hinY5R5qW1/YCDXRaQwBGI85ugsGKA1MAFseH7qXiWpDQrfrVtSKp0sPP/4f4uK9TZrjRdBoUEE5pa2+ci2WWARXwCmNoKk1JvP7Ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TuJJvz8v; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754047085;
+	bh=PuTz5rP+g1ZNjvUwlN2rQtxoXWKf+C3pIRkEwIk533k=;
+	h=From:Subject:Date:To:Cc:From;
+	b=TuJJvz8vFL99CAaAFlgj7f3CllPTWHCLan9hM0cD1Cjr+Luo0h5MfgVGpC/p2waZX
+	 tzMVV5LhUvsYMg7w+rnZpXAupaLFoR7vx0FZbJ78yHPS1MEt7uSm2Ve7suHVi4kG9W
+	 D65RdIu23GcUpsaUqewq2iUTaFhHbeR3Mknbz+oDTM5lgbtZgr5UpUGqdGiKiU7REv
+	 mDkFkXBDqN4Y094si7k+fx8PG5BHD/bca8u+180HUyGbyQI+wI/FLjnLQOvI3M9Tak
+	 F+5a2PqNF1mZ5xjH24e+xoNQTthUuocashNJX8aZnPdovHcBCQBI/aECzBKEckVWmT
+	 Q/0VOoew0NODw==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2d600c8f85cF092d4af51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3F7B21800350;
-	Fri,  1 Aug 2025 11:17:20 +0000 (UTC)
-Received: from [10.44.32.226] (unknown [10.44.32.226])
-	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1732C1955E89;
-	Fri,  1 Aug 2025 11:17:16 +0000 (UTC)
-Message-ID: <9af427df-ad31-46c8-8796-3d7ab55ee9d1@redhat.com>
-Date: Fri, 1 Aug 2025 13:17:15 +0200
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id ADD4417E01FD;
+	Fri,  1 Aug 2025 13:18:04 +0200 (CEST)
+From: Julien Massot <julien.massot@collabora.com>
+Subject: [PATCH 0/9] MediaTek devicetree/bindings warnings sanitization
+ second round
+Date: Fri, 01 Aug 2025 13:18:02 +0200
+Message-Id: <20250801-mtk-dtb-warnings-v1-0-6ba4e432427b@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dpll: Make ZL3073X invisible
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
- Prathosh Satish <Prathosh.Satish@microchip.com>,
- Jiri Pirko <jiri@resnulli.us>, Jakub Kicinski <kuba@kernel.org>,
- Conor Dooley <conor.dooley@microchip.com>
-Cc: netdev@vger.kernel.org, linux-spi@vger.kernel.org,
- linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <97804163aeb262f0e0706d00c29d9bb751844454.1753874405.git.geert+renesas@glider.be>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <97804163aeb262f0e0706d00c29d9bb751844454.1753874405.git.geert+renesas@glider.be>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
+X-B4-Tracking: v=1; b=H4sIAGqijGgC/x3MQQqAIBBA0avIrBvQKIyuEi1KxxoiC5UKwrsnL
+ d/i/xciBaYIvXgh0MWRD1+gKgFmnfxCyLYYalm3spMK97ShTTPeU/Dsl4iq1bZxRkmnNZTsDOT
+ 4+ZfDmPMHxs4ujGIAAAA=
+X-Change-ID: 20250801-mtk-dtb-warnings-157d4fc10f77
+To: kernel@collabora.com, Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Ikjoon Jang <ikjn@chromium.org>, 
+ Enric Balletbo i Serra <eballetbo@kernel.org>, 
+ Chen-Yu Tsai <wenst@chromium.org>, Weiyi Lu <weiyi.lu@mediatek.com>, 
+ Eugen Hristev <eugen.hristev@linaro.org>, 
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+ Julien Massot <jmassot@collabora.com>, Sean Wang <sean.wang@kernel.org>, 
+ Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+ linux-mediatek@lists.infradead.org, linux-sound@vger.kernel.org, 
+ linux-gpio@vger.kernel.org, Julien Massot <julien.massot@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 30. 07. 25 1:23 odp., Geert Uytterhoeven wrote:
-> Currently, the user is always asked about the Microchip Azurite
-> DPLL/PTP/SyncE core driver, even when I2C and SPI are disabled, and thus
-> the driver cannot be used at all.
-> 
-> Fix this by making the Kconfig symbol for the core driver invisible
-> (unless compile-testing), and selecting it by the bus glue sub-drivers.
-> Drop the modular defaults, as drivers should not default to enabled.
-> 
-> Fixes: 2df8e64e01c10a4b ("dpll: Add basic Microchip ZL3073x support")
-> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> ---
->   drivers/dpll/zl3073x/Kconfig | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
+This patch series continues the effort to address Device Tree validation warnings for MediaTek platforms, with a focus on MT8183. It follows the initial cleanup series by Angelo (https://www.spinics.net/lists/kernel/msg5780177.html)
 
-Please use 'PATCH net'... otherwise:
+The patches in this set eliminate several of the remaining warnings by improving or converting DT bindings to YAML, adding missing properties, and updating device tree files accordingly.
 
-Reviewed by: Ivan Vecera <ivecera@redhat.com>
+Signed-off-by: Julien Massot <julien.massot@collabora.com>
+---
+Julien Massot (9):
+      dt-bindings: clock: mediatek: Add power-domains property
+      dt-bindings: arm: mediatek: Support mt8183-audiosys binding variant
+      arm64: dts: mt8183: Rename nodes to match audiosys binding schema
+      ASoc: dt-binding: Convert mt8183-afe-pcm binding to YAML
+      dt-bindings: sound: Convert MT8183 DA7219 sound card bindings to YAML
+      ASoC: dt-binding: Convert MediaTek mt8183-mt6358 bindings to YAML
+      dt-bindings: pinctrl: mediatek: mt8183: Allow gpio-line-names
+      arm64: dts: mediatek: mt8183-kukui: Fix pull-down/up-adv values
+      arm64: dts: mediatek: mt8183-pumkin: Fix pull-down/up-adv values
+
+ .../bindings/arm/mediatek/mediatek,audsys.yaml     |  17 +-
+ .../devicetree/bindings/clock/mediatek,syscon.yaml |   3 +
+ .../bindings/pinctrl/mediatek,mt8183-pinctrl.yaml  |   2 +
+ .../devicetree/bindings/sound/mt8183-afe-pcm.txt   |  42 ----
+ .../devicetree/bindings/sound/mt8183-afe-pcm.yaml  | 225 +++++++++++++++++++++
+ .../bindings/sound/mt8183-da7219-max98357.txt      |  21 --
+ .../devicetree/bindings/sound/mt8183-da7219.yaml   |  49 +++++
+ .../sound/mt8183-mt6358-ts3a227-max98357.txt       |  25 ---
+ .../devicetree/bindings/sound/mt8183-mt6358.yaml   |  59 ++++++
+ arch/arm64/boot/dts/mediatek/mt8183-kukui.dtsi     |  22 +-
+ arch/arm64/boot/dts/mediatek/mt8183-pumpkin.dts    |  22 +-
+ arch/arm64/boot/dts/mediatek/mt8183.dtsi           |   4 +-
+ 12 files changed, 378 insertions(+), 113 deletions(-)
+---
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+change-id: 20250801-mtk-dtb-warnings-157d4fc10f77
+
+Best regards,
+-- 
+Julien Massot <julien.massot@collabora.com>
 
 
