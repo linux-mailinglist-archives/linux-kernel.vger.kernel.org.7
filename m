@@ -1,56 +1,62 @@
-Return-Path: <linux-kernel+bounces-753633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 396D3B18590
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:16:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8C21B18594
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:18:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EDD11C243C8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:16:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33BC7540713
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:18:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83D6E28C854;
-	Fri,  1 Aug 2025 16:16:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5528C86D;
+	Fri,  1 Aug 2025 16:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="kgP0v2mC"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D391C639;
-	Fri,  1 Aug 2025 16:16:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU94o7vT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B283D1A0BF3;
+	Fri,  1 Aug 2025 16:18:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754064974; cv=none; b=uiZvpA0liWzEexB4MLnOpA3rHqQH88WEiM6BY5UawrPvXcMiBh5O1zn9V5bcBX50nBsXWB2NbgBbMQmGCVIAOK4HeKbKyNjxVo+dlD2pztlWS34MY6Y/VRv2N9yYifbEdZr9kY9PXnoXWiFvbO5YAuaLWYHwmEI5M4Ua1b9HwdE=
+	t=1754065091; cv=none; b=UwXqRa9uyM23MRfgCSoDPxrR5KbjXV19jqlS1k9rPt9kzscR2eoByKvrCoY4xSPDPACwsiDYgepYm9EI4QuICy2f1KgITGW509x2kVeKR4tc48Of00OndfJ4Qdw9qY10CLdfKsA1/T+UVg2MkmZH1ZA1iaqynJ68Bn63F7P4bBU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754064974; c=relaxed/simple;
-	bh=R7Mrm5U34ZLR5OOy9r7H0nw7NEK6cOX4iXSo0t9f9RA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=MIAqDKWkT3h9pxBXYspEzwuVHbwF7p/TToTNywqzxR8EsZ4O95aFH2S61tuetNLYVJGizAnt1Yhgpq9d0WfLKMwHDt2DCmS9Y3lHEmKLxTw6ooLLmLNOInzXo1ZM8WMiMbYnk87WOO1X/GvdDzNMMuj44X5qgSbHetSTycp2udA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=kgP0v2mC; arc=none smtp.client-ip=220.197.31.2
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=Bf
-	/pvO/QNZtOK68n137XZi4C9EIWXgIS4QoE0ay0bbg=; b=kgP0v2mC8g8re/FkjP
-	dbek9tSr/z3Sm2gMFqZ+GBxHSf6YrLYXLCIgM+CqOua6fNZky3T+jZMSFFvq3mGt
-	MHlAB55kxuOsrq7s19khyjiW2GIdACdItw4d1+nuzVubMVx260IheFTli8MBVVwx
-	SvS72la17Yn57u+wPRoNvCriE=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g1-3 (Coremail) with SMTP id _____wDn7c0j6IxoIAufIw--.10599S3;
-	Sat, 02 Aug 2025 00:15:34 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: andrii@kernel.org
-Cc: ast@kernel.org,
-	daniel@iogearbox.net,
-	yonghong.song@linux.dev,
+	s=arc-20240116; t=1754065091; c=relaxed/simple;
+	bh=yFaqUizzdoWOiqGVh6MjpjtilluZGlU0Tj1trX0kkmo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JBQ6MfQjN02v1/JxcUSD8KKZIw+u4Gygv8cjz1BiuRnSaEC0rHQFktG4uIOAFFZUtBkWL/DLtkZpP7CbXzomSfqXZpznB9uEFD38tMwfNsExmzBeHGoPCsWCBM/bBeMOWwsKKY6SWk2zecF/U5AU+rvJF5f4T7rwoj5btxy9xvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU94o7vT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E951C4CEE7;
+	Fri,  1 Aug 2025 16:18:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754065091;
+	bh=yFaqUizzdoWOiqGVh6MjpjtilluZGlU0Tj1trX0kkmo=;
+	h=From:To:Cc:Subject:Date:From;
+	b=LU94o7vT1m7ulhc3OmvYbaBqeFADggIKRkJBdwXHTuNt4iG8RQSsFU5bptUV6Rnu6
+	 +Yolqh6AVw2mxcmBAIxboDg5RWQUljwRGOSNA5OzIvitHJcjpAfKAaBSmtbthQUW22
+	 iLjXGixaEOKOh1857is6vyOsgV1XImr/AfUvZ8DAJ02j6OsRZfbj4/7h79lbUIbgYm
+	 J+WFGtgUAkzaUg13PtH5g2d2QVAazx+V3DngwAG3N8dASVykM5ChoadcL5T4qOnzNJ
+	 HHSnz5AuUTSXyzsG+SNAn4dXzVLF2GLEvY04o1N/JOYOL53Qxg6VNBbY5gZHqZeCq2
+	 YyUk+PArR1CcA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Alexandre Courbot <acourbot@nvidia.com>,
+	rust-for-linux@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	Jiawei Zhao <Phoenix500526@163.com>
-Subject: [PATCH v4 1/1] libbpf: fix USDT SIB argument handling causing unrecognized register error
-Date: Fri,  1 Aug 2025 16:15:30 +0000
-Message-ID: <20250801161531.816845-2-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250801161531.816845-1-phoenix500526@163.com>
-References: <20250801161531.816845-1-phoenix500526@163.com>
+	patches@lists.linux.dev
+Subject: [PATCH] rust: prelude: re-export `core::mem::{align,size}_of{,_val}`
+Date: Fri,  1 Aug 2025 18:17:52 +0200
+Message-ID: <20250801161752.443431-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,248 +64,46 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDn7c0j6IxoIAufIw--.10599S3
-X-Coremail-Antispam: 1Uf129KBjvJXoWxtryfArWkXF4kCrWrCFyUWrg_yoWfXF4kpa
-	y09wn2yF1ftF4Sva1rXF4UZrW3Crs7JrWrAr18Ja4YvFWxGr1kXrWfKF45trn8G397tF43
-	ZF4SgrWfGay5Zr7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x0ptQ6p_UUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgAmciGiM5e83nQABsY
 
-From: Jiawei Zhao <Phoenix500526@163.com>
+Rust 1.80.0 added:
 
-On x86-64, USDT arguments can be specified using Scale-Index-Base (SIB)
-addressing, e.g. "1@-96(%rbp,%rax,8)". The current USDT implementation
-in libbpf cannot parse this format, causing `bpf_program__attach_usdt()`
-to fail with -ENOENT (unrecognized register).
+    align_of
+    align_of_val
+    size_of
+    size_of_val
 
-This patch fixes this by implementing the necessary changes:
-- add correct handling for SIB-addressed arguments in `bpf_usdt_arg`.
-- add adaptive support to `__bpf_usdt_arg_type` and
-`__bpf_usdt_arg_spec` to represent SIB addressing parameters.
+from `core::mem` to the prelude [1].
 
-Signed-off-by: Jiawei Zhao <Phoenix500526@163.com>
+For similar reasons, and to minimize potential confusion when code may
+work in later versions but not in our current minimum, add it to our
+prelude too.
+
+Link: https://github.com/rust-lang/rust/pull/123168 [1]
+Link: https://lore.kernel.org/rust-for-linux/CANiq72kOLYR2A95o0ji2mDmEqOKh9e9_60zZKmgF=vZmsW6DRg@mail.gmail.com/ [2]
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 ---
- tools/lib/bpf/usdt.bpf.h                      | 33 +++++++++++++-
- tools/lib/bpf/usdt.c                          | 43 ++++++++++++++++---
- tools/testing/selftests/bpf/Makefile          |  5 +++
- tools/testing/selftests/bpf/prog_tests/usdt.c | 18 +++++---
- 4 files changed, 86 insertions(+), 13 deletions(-)
+ rust/kernel/prelude.rs | 5 ++++-
+ 1 file changed, 4 insertions(+), 1 deletion(-)
 
-diff --git a/tools/lib/bpf/usdt.bpf.h b/tools/lib/bpf/usdt.bpf.h
-index 2a7865c8e3fe..246513088c3a 100644
---- a/tools/lib/bpf/usdt.bpf.h
-+++ b/tools/lib/bpf/usdt.bpf.h
-@@ -34,6 +34,7 @@ enum __bpf_usdt_arg_type {
- 	BPF_USDT_ARG_CONST,
- 	BPF_USDT_ARG_REG,
- 	BPF_USDT_ARG_REG_DEREF,
-+	BPF_USDT_ARG_SIB,
- };
+diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+index 25fe97aafd02..198d09a31449 100644
+--- a/rust/kernel/prelude.rs
++++ b/rust/kernel/prelude.rs
+@@ -12,7 +12,10 @@
+ //! ```
  
- struct __bpf_usdt_arg_spec {
-@@ -43,6 +44,10 @@ struct __bpf_usdt_arg_spec {
- 	enum __bpf_usdt_arg_type arg_type;
- 	/* offset of referenced register within struct pt_regs */
- 	short reg_off;
-+	/* offset of index register in pt_regs, only used in SIB mode */
-+	short idx_reg_off;
-+	/* scale factor for index register, only used in SIB mode */
-+	short scale;
- 	/* whether arg should be interpreted as signed value */
- 	bool arg_signed;
- 	/* number of bits that need to be cleared and, optionally,
-@@ -149,7 +154,7 @@ int bpf_usdt_arg(struct pt_regs *ctx, __u64 arg_num, long *res)
- {
- 	struct __bpf_usdt_spec *spec;
- 	struct __bpf_usdt_arg_spec *arg_spec;
--	unsigned long val;
-+	unsigned long val, idx;
- 	int err, spec_id;
+ #[doc(no_inline)]
+-pub use core::pin::Pin;
++pub use core::{
++    mem::{align_of, align_of_val, size_of, size_of_val},
++    pin::Pin,
++};
  
- 	*res = 0;
-@@ -202,6 +207,32 @@ int bpf_usdt_arg(struct pt_regs *ctx, __u64 arg_num, long *res)
- 			return err;
- #if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
- 		val >>= arg_spec->arg_bitshift;
-+#endif
-+		break;
-+	case BPF_USDT_ARG_SIB:
-+		/* Arg is in memory addressed by SIB (Scale-Index-Base) mode
-+		 * (e.g., "-1@-96(%rbp,%rax,8)" in USDT arg spec). Register
-+		 * is identified like with BPF_USDT_ARG_SIB case, the offset
-+		 * is in arg_spec->val_off, the scale factor is in arg_spec->scale.
-+		 * Firstly, we fetch the base register contents and the index
-+		 * register contents from pt_regs. Secondly, we multiply the
-+		 * index register contents by the scale factor, then add the
-+		 * base address and the offset to get the final address. Finally,
-+		 * we do another user-space probe read to fetch argument value
-+		 * itself.
-+		 */
-+		err = bpf_probe_read_kernel(&val, sizeof(val), (void *)ctx + arg_spec->reg_off);
-+		if (err)
-+			return err;
-+		err = bpf_probe_read_kernel(&idx, sizeof(idx), (void *)ctx + arg_spec->idx_reg_off);
-+		if (err)
-+			return err;
-+		err = bpf_probe_read_user(&val, sizeof(val),
-+				(void *)val + idx * arg_spec->scale + arg_spec->val_off);
-+		if (err)
-+			return err;
-+#if __BYTE_ORDER__ == __ORDER_BIG_ENDIAN__
-+		val >>= arg_spec->arg_bitshift;
- #endif
- 		break;
- 	default:
-diff --git a/tools/lib/bpf/usdt.c b/tools/lib/bpf/usdt.c
-index 4e4a52742b01..1f8b9e1c9819 100644
---- a/tools/lib/bpf/usdt.c
-+++ b/tools/lib/bpf/usdt.c
-@@ -200,6 +200,7 @@ enum usdt_arg_type {
- 	USDT_ARG_CONST,
- 	USDT_ARG_REG,
- 	USDT_ARG_REG_DEREF,
-+	USDT_ARG_SIB,
- };
- 
- /* should match exactly struct __bpf_usdt_arg_spec from usdt.bpf.h */
-@@ -207,6 +208,8 @@ struct usdt_arg_spec {
- 	__u64 val_off;
- 	enum usdt_arg_type arg_type;
- 	short reg_off;
-+	short idx_reg_off;
-+	short scale;
- 	bool arg_signed;
- 	char arg_bitshift;
- };
-@@ -1283,11 +1286,39 @@ static int calc_pt_regs_off(const char *reg_name)
- 
- static int parse_usdt_arg(const char *arg_str, int arg_num, struct usdt_arg_spec *arg, int *arg_sz)
- {
--	char reg_name[16];
--	int len, reg_off;
--	long off;
-+	char reg_name[16] = {0}, idx_reg_name[16] = {0};
-+	int len, reg_off, idx_reg_off, scale = 1;
-+	long off = 0;
-+
-+	if (sscanf(arg_str, " %d @ %ld ( %%%15[^,] , %%%15[^,] , %d ) %n",
-+				arg_sz, &off, reg_name, idx_reg_name, &scale, &len) == 5 ||
-+		sscanf(arg_str, " %d @ ( %%%15[^,] , %%%15[^,] , %d ) %n",
-+				arg_sz, reg_name, idx_reg_name, &scale, &len) == 4 ||
-+		sscanf(arg_str, " %d @ %ld ( %%%15[^,] , %%%15[^)] ) %n",
-+				arg_sz, &off, reg_name, idx_reg_name, &len) == 4 ||
-+		sscanf(arg_str, " %d @ ( %%%15[^,] , %%%15[^)] ) %n",
-+				arg_sz, reg_name, idx_reg_name, &len) == 3
-+		) {
-+		/* Scale Index Base case, e.g., 1@-96(%rbp,%rax,8)
-+		 * 1@(%rbp,%rax,8)
-+		 * 1@-96(%rbp,%rax)
-+		 * 1@(%rbp,%rax)
-+		 */
-+		arg->arg_type = USDT_ARG_SIB;
-+		arg->val_off = off;
-+		arg->scale = scale;
-+
-+		reg_off = calc_pt_regs_off(reg_name);
-+		if (reg_off < 0)
-+			return reg_off;
-+		arg->reg_off = reg_off;
- 
--	if (sscanf(arg_str, " %d @ %ld ( %%%15[^)] ) %n", arg_sz, &off, reg_name, &len) == 3) {
-+		idx_reg_off = calc_pt_regs_off(idx_reg_name);
-+		if (idx_reg_off < 0)
-+			return idx_reg_off;
-+		arg->idx_reg_off = idx_reg_off;
-+	} else if (sscanf(arg_str, " %d @ %ld ( %%%15[^)] ) %n",
-+				arg_sz, &off, reg_name, &len) == 3) {
- 		/* Memory dereference case, e.g., -4@-20(%rbp) */
- 		arg->arg_type = USDT_ARG_REG_DEREF;
- 		arg->val_off = off;
-@@ -1298,7 +1329,7 @@ static int parse_usdt_arg(const char *arg_str, int arg_num, struct usdt_arg_spec
- 	} else if (sscanf(arg_str, " %d @ ( %%%15[^)] ) %n", arg_sz, reg_name, &len) == 2) {
- 		/* Memory dereference case without offset, e.g., 8@(%rsp) */
- 		arg->arg_type = USDT_ARG_REG_DEREF;
--		arg->val_off = 0;
-+		arg->val_off = off;
- 		reg_off = calc_pt_regs_off(reg_name);
- 		if (reg_off < 0)
- 			return reg_off;
-@@ -1306,7 +1337,7 @@ static int parse_usdt_arg(const char *arg_str, int arg_num, struct usdt_arg_spec
- 	} else if (sscanf(arg_str, " %d @ %%%15s %n", arg_sz, reg_name, &len) == 2) {
- 		/* Register read case, e.g., -4@%eax */
- 		arg->arg_type = USDT_ARG_REG;
--		arg->val_off = 0;
-+		arg->val_off = off;
- 
- 		reg_off = calc_pt_regs_off(reg_name);
- 		if (reg_off < 0)
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 910d8d6402ef..f53c86023334 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -759,6 +759,11 @@ TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
- $(eval $(call DEFINE_TEST_RUNNER,test_maps))
- 
-+# Force usdt.c to use -O2 optimization to generate SIB addressing
-+$(OUTPUT)/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/cpuv4/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/no_alu32/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+
- # Define test_verifier test runner.
- # It is much simpler than test_maps/test_progs and sufficiently different from
- # them (e.g., test.h is using completely pattern), that it's worth just
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 495d66414b57..86f354d25aef 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -14,10 +14,15 @@ static volatile int idx = 2;
- static volatile __u64 bla = 0xFEDCBA9876543210ULL;
- static volatile short nums[] = {-1, -2, -3, -4};
- 
--static volatile struct {
--	int x;
--	signed char y;
--} t1 = { 1, -127 };
-+/*
-+ * TODO:  At O2 optimization level, t1's USDT argument spec becomes -1@4+t1(%rip).
-+ * Since libbpf doesn't support RIP addressing mode yet, this causes "unrecognized register" errors.
-+ * This test will be re-enabled once libbpf supports RIP addressing mode.
-+ */
-+// static volatile struct {
-+//	int x;
-+//	signed char y;
-+// } t1 = { 1, -127 };
- 
- #define SEC(name) __attribute__((section(name), used))
- 
-@@ -27,6 +32,7 @@ unsigned short test_usdt12_semaphore SEC(".probes");
- 
- static void __always_inline trigger_func(int x) {
- 	long y = 42;
-+	signed char t1 = -127;
- 
- 	if (test_usdt0_semaphore)
- 		STAP_PROBE(test, usdt0);
-@@ -36,7 +42,7 @@ static void __always_inline trigger_func(int x) {
- 		STAP_PROBE12(test, usdt12,
- 			     x, x + 1, y, x + y, 5,
- 			     y / 7, bla, &bla, -9, nums[x],
--			     nums[idx], t1.y);
-+			     nums[idx], t1);
- 	}
- }
- 
-@@ -106,7 +112,7 @@ static void subtest_basic_usdt(void)
- 	ASSERT_EQ(bss->usdt12_args[8], -9, "usdt12_arg9");
- 	ASSERT_EQ(bss->usdt12_args[9], nums[1], "usdt12_arg10");
- 	ASSERT_EQ(bss->usdt12_args[10], nums[idx], "usdt12_arg11");
--	ASSERT_EQ(bss->usdt12_args[11], t1.y, "usdt12_arg12");
-+	ASSERT_EQ(bss->usdt12_args[11], -127, "usdt12_arg12");
- 
- 	int usdt12_expected_arg_sizes[12] = { 4, 4, 8, 8, 4, 8, 8, 8, 4, 2, 2, 1 };
- 
+ pub use ::ffi::{
+     c_char, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint, c_ulong, c_ulonglong,
+
+base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
 -- 
-2.43.0
+2.50.1
 
 
