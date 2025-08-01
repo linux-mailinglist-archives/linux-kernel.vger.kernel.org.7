@@ -1,251 +1,282 @@
-Return-Path: <linux-kernel+bounces-753352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF336B181D0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:31:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AE83B181D4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:32:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFB3189E2A0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:32:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B1655603DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:32:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD4B23BCE3;
-	Fri,  1 Aug 2025 12:31:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F1E9246348;
+	Fri,  1 Aug 2025 12:32:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nSeSw68+";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E67CWSHZ";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y4hG6VcY";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NLfpmwiK"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="GIZeW8ci"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2061.outbound.protection.outlook.com [40.107.92.61])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F7B179A3
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:31:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754051509; cv=none; b=V4a1Fw/VYVfFoJlXmL0wu4mXZ+XcOLkBSV1PBkw1IPorc/vuwoHA1z2dvRjtc4KvTOAL88cHtuxvPHCS3MsmYDx2rNaDHu/1PiShFcqK7aOmgUomNKfBAly0DBS2BFbsL1W8N8mEJ98kcPomn8dc6hYqihP5UMr3xgTKpNPH+U8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754051509; c=relaxed/simple;
-	bh=NDVeyc3tco35ClOIogxmJkOF9LbPvncbPgIIHiyzVmw=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=cYywN2H3FrGm2W+DFWaYgvoY/l1KZpUlzcO01rZrZxyIo0vZZxMWUL0IvSxtnKttB9h+nrAkzJYSKxk84Z7bp8l+CbwviyBwf90p+sMbu7wQwCblE7W9zMH78KVNPkEx7TiqKCiDKkKqOTvcyb/PC81A8u437OCOseuzKfFAOBM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nSeSw68+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E67CWSHZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y4hG6VcY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NLfpmwiK; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id E9B151F807;
-	Fri,  1 Aug 2025 12:31:43 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754051505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
-	b=nSeSw68+7SPIi9J0KUcOhchWWLZOhY7HK7WL9Nu/66f6uVLoulN8bhaZNSg2GLfilL6EqI
-	PrxjOhJ5bN9og4r0kqlAQE0sjkmVNr2GufzMpzeQnignvrc+jG6hkKvE5drrUTbTHZj9ki
-	o7QMQ2RCf7sOW4pqssMfWWYzrS+cY2A=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754051505;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
-	b=E67CWSHZSaTGkohghOtBjqi+Uzi4wa4rxka9dpk90DtfoaSSj28A70Cz1ssKSIqiHs4OAL
-	EpS5jvsvXsTUEkCA==
-Authentication-Results: smtp-out2.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754051503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
-	b=Y4hG6VcYcgSl79FpkVgPRpFtnOnc7T+7Cu9MhnPmXCNb3i1JrCY3Qut91SqNn38ElY7rwe
-	ci4Pwc8vt8MwDMI2t4KDosd5uk530KQ38bl0snvlyoBN5QJLhu/oBKSKyYkY0bqUqTGYVL
-	v9gVR9EKQbpqS/pIHk8cyXrj9xE2C4o=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754051503;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
-	b=NLfpmwiKuLrmhOFIUe7FQprMx46Heh0V6qrxDisp3b+KeXEL9sieFWA+Bm2iFIv9zEYt4o
-	A4mTfGjUcpmahXAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A03B0138A5;
-	Fri,  1 Aug 2025 12:31:43 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ZWzhJa+zjGgedQAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 01 Aug 2025 12:31:43 +0000
-Date: Fri, 01 Aug 2025 14:31:43 +0200
-Message-ID: <87v7n72pg0.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: "Luca Weiss" <luca.weiss@fairphone.com>
-Cc: "Arnd Bergmann" <arnd@kernel.org>,
-	"Mark Brown" <broonie@kernel.org>,
-	"Wesley Cheng" <quic_wcheng@quicinc.com>,
-	"Arnd Bergmann" <arnd@arndb.de>,
-	"Jaroslav Kysela" <perex@perex.cz>,
-	"Takashi Iwai" <tiwai@suse.com>,
-	"Greg Kroah-Hartman"
- <gregkh@linuxfoundation.org>,
-	"Dan Carpenter" <dan.carpenter@linaro.org>,
-	<linux-sound@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
-In-Reply-To: <DBR2363A95M1.L9XBNC003490@fairphone.com>
-References: <20250513123442.159936-1-arnd@kernel.org>
-	<20250513123442.159936-4-arnd@kernel.org>
-	<DBR2363A95M1.L9XBNC003490@fairphone.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6318179A3;
+	Fri,  1 Aug 2025 12:32:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754051555; cv=fail; b=Hhxb38l1JNKfC+hLtQZNFzmKc5cDe06dTyenl/c/VR3BeaRZGg11053tvmTEOIhukCesrv1++0kmdAQ0aLcVJ0ZLjw0w/ciTdPT7GQkCtfN3IdIAd7oHUiryrAB/7aLx7Dq2LVU4U658SmYwmybe/O4BFqg321/uVW8pLoc2wyU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754051555; c=relaxed/simple;
+	bh=jjrb7C79Ex6lN8/iPHspI94fzEDicnyWBDshw2mCdSk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=sKII88yh2jh5jsJSfIbcuF8jVmGvxPtakZ0HxaaREgY+GjXEtwYNUiuIj2GKa/L9BBxTica7eG22f7IFrhMbdhcjUiU9Cg0e2AaTW/dOzJ1/47aDBnYvaboeTKOqcHKqjds5aTo8CgUsyo/m3svvw0rq509B82txRiYrnqREihw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=GIZeW8ci; arc=fail smtp.client-ip=40.107.92.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pUgUGHQgeT7hClnkxE2eCr46gSj+zwkD0LAwQPqc8nkSrOXmUvzKP3B9+6LKZu2QD2OtWAR8dIr/iLRlDdjt3+bIjeG3VYHEVAZVr7mnb+191RMYPj+9SvzLwCis6nDGsqN0byJTPbYlK41Yb0O/i3vDVD3dA5jO7taDDJjsFSt8WOtbZGyL0FArnMFtwIkJCptd80/4D3pOO79kfZVWzP8OnRXxt+IiTpUXKy7bHI1vw2/0nRxSamKCzyH+n9ts6LpftInPu2GS/2dZCY4qmprLPeUkm6ugfLKyS/6SYP3TIZmjgGvAWufFkJfE3sU6Knwho5CqqpzZEiteDC2X8Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pb6749OBLPKlltDZbx5flSg+BBhKMJjd5oJXMwbP1F4=;
+ b=QuI6IPcANCh4cl8axSD37EV7mT23/EV5ulQNo2+HF5WPuKcgwCpNV8mv2vjX4W1pQCEIbXD/obxhgQEhyxnKzCtriNQltxy0eHzPHE0OO/6gGXC+0t/zG8bhtRn5PRuBW9vORqi92vdYZl2RBQfPfDOMPHe0n5UxIPHNnlK0UHaVwT4EZdgzkIHv77Cl3ptHl4hCCsKoietBCnDGAMpHvFwOU0+bPmZNGrBdRQiB32oIyqeMsz1t+birxOYTM0HbcQQTpLnoV7PG6lY5gRHGrVh34SbADGe9jHJB0RzgMjpY56GCCKddrhnHfvVNBpi65TgAMF4GzupDqJBLtnSfdA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pb6749OBLPKlltDZbx5flSg+BBhKMJjd5oJXMwbP1F4=;
+ b=GIZeW8ci6XDlh3wat6fzst5r2yVii1pZFjyACx6FS0pfUrG1Ne+wGYw9jbWXBi2y6byqtj3d1i3mAS6JGfDTkv7PdL52mVnnze4/oaSamb3Da+onRYqAPELRdRmT+i1+BLpr0BgJYx1u/Hl3Fe5TS5P4znG9VuKmVUnP8y99RmM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by DS5PPF6BCF148B6.namprd12.prod.outlook.com (2603:10b6:f:fc00::652) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.13; Fri, 1 Aug
+ 2025 12:32:30 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.8989.017; Fri, 1 Aug 2025
+ 12:32:30 +0000
+Message-ID: <a9fd04bc-bd13-4bea-97da-2ed3beeb78ce@amd.com>
+Date: Fri, 1 Aug 2025 18:02:18 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [EXTERNAL] Re: linux-6.6.y regression on amd-pstate
+To: "Jones, Morgan" <Morgan.Jones@viasat.com>
+Cc: Sasha Levin <sashal@kernel.org>,
+ "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ David Arcari <darcari@redhat.com>,
+ Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>,
+ "rafael@kernel.org" <rafael@kernel.org>,
+ "viresh.kumar@linaro.org" <viresh.kumar@linaro.org>,
+ "gautham.shenoy@amd.com" <gautham.shenoy@amd.com>,
+ "perry.yuan@amd.com" <perry.yuan@amd.com>,
+ "skhan@linuxfoundation.org" <skhan@linuxfoundation.org>,
+ "li.meng@amd.com" <li.meng@amd.com>, "ray.huang@amd.com"
+ <ray.huang@amd.com>, "stable@vger.kernel.org" <stable@vger.kernel.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ Christian Heusel <christian@heusel.eu>,
+ Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+References: <66f08ce529d246bd8315c87fe0f880e6@viasat.com>
+ <645f2e77-336b-4a9c-b33e-06043010028b@amd.com>
+ <2e36ee28-d3b8-4cdb-9d64-3d26ef0a9180@amd.com>
+ <d6477bd059df414d85cd825ac8a5350d@viasat.com>
+ <d6808d8e-acaf-46ac-812a-0a3e1df75b09@amd.com>
+ <7f50abf9-e11a-4630-9970-f894c9caee52@amd.com>
+ <f9085ef60f4b42c89b72c650a14db29c@viasat.com>
+ <be2d96b0-63a6-42ea-a13b-1b9cf7f04694@amd.com>
+ <2024090834-hull-unbalance-ca6b@gregkh>
+ <2ffb55e3-6752-466a-b06b-98c324a8d3cc@heusel.eu>
+ <2024090825-clarity-cofounder-5c79@gregkh>
+ <534cb3af86bd4371800ebfb3035382c2@viasat.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <534cb3af86bd4371800ebfb3035382c2@viasat.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BM1P287CA0014.INDP287.PROD.OUTLOOK.COM
+ (2603:1096:b00:40::29) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-0.998];
-	MIME_GOOD(-0.10)[text/plain];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DBL_PROHIBIT(0.00)[0.0.0.4:email];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,arndb.de:email]
-X-Spam-Flag: NO
-X-Spam-Score: -3.30
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|DS5PPF6BCF148B6:EE_
+X-MS-Office365-Filtering-Correlation-Id: 122ba1d6-c5b5-4f74-ab29-08ddd0f77b13
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?U2lJWm9nWk5rMG5pQ01SZDd0cTBRZ1NIU1JlOS9CSGlSL0dheUR2YlJOWS9U?=
+ =?utf-8?B?eFpJVmRrdWpiL1hQZnNVZEtqRWRiaEN3OFJrZDdKTHMvTC9oVVQ1N1RTVVBF?=
+ =?utf-8?B?azZBNnJ6c0duOEJ6Um9HZDF3RUJIZ3Yxc3RGcmw4aXRObkphdzFhSXR0Vlpa?=
+ =?utf-8?B?SXRHM1A1ZWZUMUY5QkJydDNFZTRLUmloTnBqOVVxcE1HVzQyMGZ0UStSdUxC?=
+ =?utf-8?B?dlVXM3VSKzVFTFl4NjBqSmNtWlVyaHUxQVU0MDZaNlhudFllUWIwdVlNQWF4?=
+ =?utf-8?B?UFY2Q1lBQ0hENVlQcHk1RlA1eGVnL3EwZGdWcGkyVGVTQUZtQ3RnRmtESGhD?=
+ =?utf-8?B?Y2x2NVRkYVR1c1lOMGk5V3BZVklXNXBKZnRvc1B3cGgwNTd2VzNBSXlJYkdR?=
+ =?utf-8?B?c0xFSTJBV2R4eTNhTXQwMGR3SnJrOGlDZXo3NUk3OHV6VVlHRjdOYThPdzN2?=
+ =?utf-8?B?UW8xUkR1MThkRjd0Ymx1RTNmemlucmdhNkxPenE0azdCWmtvNGVnbmdUeU1w?=
+ =?utf-8?B?NXN3alpqYWVwSkdLNi80Ujc0MUhQNVp6bEliV0J6R1BXbXhqZ3JQUVNhR2JY?=
+ =?utf-8?B?azhSdHBJYTVGQTkzRWRQbnFhMlVJbXBoOEJrMkhmTUswWnMyQWpvb1JBYmRm?=
+ =?utf-8?B?aVVFSmF0aTZVOEFvNjhMQlZvT2NZWEovVHRYRnpFRk5WQ2xmb0ZQVUtPSVg2?=
+ =?utf-8?B?Z0R6SGNpcjZSaTFhWEx1RXVZNmd6WjViLzRUNVpPRHYzNE9zaU1NU0lZOUFq?=
+ =?utf-8?B?TEVlcVZvRGNndmxiWjduR3lJcDhCeG1SSU54SU41MHdrR0pydW1RbVN2eENM?=
+ =?utf-8?B?cEQzTW04aE0ydStEQVIyeE4yZExVNTZGUmFUTzE2M1pWWG1SSkZJUXYzMFdI?=
+ =?utf-8?B?R3d5NzNyQ3NHeXpGNUlaZFlnVGtaTkVLZWFyNWo5aHF6bHMvaHF5TXp2RG1p?=
+ =?utf-8?B?SEFsT2MxK3gwOUZQanVsRjNTUCszRWI1RnNYOW9keEk5RGxlb2Y4dU5vaXR0?=
+ =?utf-8?B?aUMzcHVJTkQ0bktqMG9nMlErR1RtZldTT1QrMWd1Yy9CU1FvTVdzamFmQVlF?=
+ =?utf-8?B?SGtOVnlvVTVob2o1RllZSkwzYWZDSjJRQUpvRG9nbThOQ29pL3NiNUZTL0tO?=
+ =?utf-8?B?c01RZmdPVVN2NHFLN2k4cnR6bXZhRWpKVzBpcUczLzRjNXhlY2l5Wm5rV1lW?=
+ =?utf-8?B?SFVjUjFjTUdPaE1PK1JuNzNmbWk3T1pISFNMUVVCR2pZUThyYXZrMHlTQXgv?=
+ =?utf-8?B?NEVtSUF1cTJCdytPNVBvaDlWVmVGTkZpZ09VSUdWNXoyUTMySXgzd2w5R1Js?=
+ =?utf-8?B?OG93VXdLL1p6S2c3cTlOcERBVmRicENFaDdxRTZGVGJmUUZHWDJoRU4wWWs5?=
+ =?utf-8?B?c2Q1cWZibUUzb1dtbFdudUlWbWZkNGgwU0RvMS9Ed1hUV1lxVFhDVnpIbVJn?=
+ =?utf-8?B?TkpzUzRVeC95cUVMVmFaQ003TVdNSWNvL2ExSlVnZjA0d1AwTmhRRGlCOEpZ?=
+ =?utf-8?B?M0JuTGU3ZEZPNEZER3pEdlNJQ1ByMnBTK25MZ1hiVnBoQ2VvZlZLbEF0Q3pM?=
+ =?utf-8?B?bEVtVlVpTWZNeEhRWXNGRlZsMzcvazlPNDB2QUxzZWlkTVhKUTdIVlFtVHpC?=
+ =?utf-8?B?RGJIR21ibjFUMGlvRkxLaE43ZkI5N0dCZ3lDaUFXQUZqeU5NUXdwbHFORDln?=
+ =?utf-8?B?Z3pUSkprY2E1U0ZDZ1lPMzJ3VkJxR0JaUndmdHBBWnRTU3VqVmhxUWQyV2U2?=
+ =?utf-8?B?VzRxa01nb1VnSnJ6WVFRald4anVDMzV3SzZaR24xZWhGa1RVUjM3WVF0V09z?=
+ =?utf-8?B?ZUpBU0Y3S296d1lHaGtHM1YvQ0VnRXFJaU9Hd2FxSkJtdXJCNSswRDgwWjNB?=
+ =?utf-8?B?T1dxV3NyUWNDQXk4eFI0dFVzUGtHMEtiMGs2VmdFbmMyQm5UNWI4SkJDSk5j?=
+ =?utf-8?Q?OK4zJczpMAs=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?ODNXRDRDcDNxR2ZRL0xHS0Z1STduSVlRcXhjb0xDb2FrMjdjQjNSTkdIZ3ND?=
+ =?utf-8?B?V2FUVWUxS2pWZkJIdjZZaXFMYTRqTUgwandQRGcwR0hBVFIzMWoxTnRDVzJh?=
+ =?utf-8?B?QlFNbUl5SXdhblZxN0pDYmwyU29YdE1TbjhQV2o2Ym5xUFIxMWNwdlhXY2lB?=
+ =?utf-8?B?eThqUy80MGVhQUUrRERuQnVVK3hBTFNwNnhJZGlmam00VDcyY2NkOFFYeGdr?=
+ =?utf-8?B?TUc4YXBZV05xOHU1elJtV2FSUHVYT1VTMFJQYVJ3eWFHMGp4U1V6QnVKNDZ4?=
+ =?utf-8?B?Qkk5SFliM3dJQTE0Z3JRKzN4UWRYVjlpV2FERHZQc254TWVSanNKdTJOZGNi?=
+ =?utf-8?B?V2hMbXliRVNxbGtZRm5pTUtEQndPcUhETXp4ZExVdEluTHF3UzlrazZVM21j?=
+ =?utf-8?B?ZysxWnNzelFubGRmT2w5VWxHK2ovcVdSbTZPWXRTaXRRQ1lUeWJ6bVFudWVY?=
+ =?utf-8?B?b1pvTFp4UjhYSURwT2JLSzhVeFVwN2E4eXRMTENHUmFQV1NTeVJvMjNKS3Zo?=
+ =?utf-8?B?TTJIVnBaRmZ2UjBhSUJhSkRxT0lveXljc3JUSWg3bXM0ckhTUVR5SDl6NERS?=
+ =?utf-8?B?RlpxaGFpVENYYmRyelFROWFuR0RhR2lFT1o4S1gxaGxnRWt6OXkwRnMrYmdl?=
+ =?utf-8?B?YkxZYkZTQzhvY1hrSms3ajMvejFuOUEzdFB4Z0Z1NmN6WlExOGRUaUF1bWVN?=
+ =?utf-8?B?d3cxaFN3emNlc2Qxd3N5UnM5ZXVWUEJwR2ZhNXVqU0duOGxUaHBJaDNVR1hu?=
+ =?utf-8?B?OCtsY1JadzFuNHBZUG5qc052Nzh4R2dSbzNlT29yQ2xnajRyeTFDNFhMZmtj?=
+ =?utf-8?B?TVZ6WG80a0lsTS9tWFZOVTRwYU1GUXlOOThGM0FxL283aUFvQUx1V0hNSStI?=
+ =?utf-8?B?Y0EyUWZXM2FUMVhSRUttQVRSdkpUbjc1dzRGN1lkRXNHeU1xQXdiNXd5dXY3?=
+ =?utf-8?B?Z05YTDJKZ3RObGEyZVhJaXRqcFFFWHA3TmNKTllTL3RCN203K2VraVNvSTVt?=
+ =?utf-8?B?QjFueEpNNldkSGhSbG9ML3NBdngvWjZLbW9IbFRhMEdFZ08rNVZsekRaSVlZ?=
+ =?utf-8?B?UVpxNTBBT3hRK21JamNYTXVKaW5qUThHd213WGFUVk1laFdkdWsyRFI1eTVr?=
+ =?utf-8?B?dlQzR1A4dExMYXY0K3BzZTRGSnJFTDU2Y1QwZU10aStIVjFnbTlScENobW85?=
+ =?utf-8?B?aGdIdTJPOGR5MXpCYURVS2FsM3NlanBBZ3NqRjVKNE1DdDBVUnN2cnJnV3Mw?=
+ =?utf-8?B?cUx4VHRtalc5WkxHQVYxZGpIVmRnNmFyajU1N2plQzlRcHJZZmxGbXcvOUZw?=
+ =?utf-8?B?dGU5Z0RibGNaUTZ3dk5yZlBOZzNkc2NmK1hGdjFPWGtKK2dkMHo0b3ZWWlcz?=
+ =?utf-8?B?Q3M0UVpzbEk4dWJEUDJ2VTBLUUNrOVU1YUpLN2hqOEJkMzZJOUtzaWpCcm4v?=
+ =?utf-8?B?ZEtMdlFZMkswaXYrSDZ0NU5odklia1Iva2QrRzJxaE5uZEw2Qi82bHd6UGdl?=
+ =?utf-8?B?cnhzOWdaZ1hIaDNDQU4veWVwa0pPN2V4QU5SQ05xakZLanpXb0YyL0ZucUM2?=
+ =?utf-8?B?MkdwQ213NjFCekJEVkdFVXQ1dzBsTTlFVjBuaVhDT2RGWnpHSTMvQ0RGTjY4?=
+ =?utf-8?B?MDNnbHYwanJiU1JSU3ptM3E4Y1pZRVUzYTVISnN1WEc4TU5OSzhqQmNGTG8r?=
+ =?utf-8?B?UC9KdmxZRkhHN1F2VHZnZ0RGdVpkMjYzR1hqWEdaM0xCV05lU3g2Y3VJcXFO?=
+ =?utf-8?B?RUcramhQMElmdEJuVC9Qa2VUQVBZLzBxWnZBbFpkaERxZmlNdnE3UXozOW5x?=
+ =?utf-8?B?dWd3dWxSbFVNTVpEVXBPdkRkdDRRT3ZPcW9GRU9wTC9BZjNYZEp1TS81Y1pG?=
+ =?utf-8?B?OFZyVmF1UFdmK04yeHhDQjBrTytLS3EwYTUzWTN3VXFvcXQzYmZta0F4QWFJ?=
+ =?utf-8?B?a0dLUFFOTGxMUDdsZXlTWDg3M3pZampEbkFWS0JsSkUwdUxYWjUxZ2RMQkxN?=
+ =?utf-8?B?a1FUMUQ3TExORWVSMFdJalNuek9LWGVoSmV0c0tGdkZ1OGY2R1drRVI5VDRH?=
+ =?utf-8?B?MzczR0FtSGRiZXZ5WktXSDR2WFR3ei9CTnJKVUdmeWRhOExMc3R5a2ZnZkdS?=
+ =?utf-8?Q?JCzZGqRdOsUaJdpls7TXzVsfY?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 122ba1d6-c5b5-4f74-ab29-08ddd0f77b13
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 12:32:30.0854
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nWy8BXHqWGW+wwl6X88skw1R7mEnCB2mFS4c0u8X6u9ShXlkeCjQSLa7pDHGIpV8CDYPJFc6j1DjhhWq+rgJ5A==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS5PPF6BCF148B6
 
-On Fri, 01 Aug 2025 13:31:42 +0200,
-Luca Weiss wrote:
+On 8/1/2025 2:14 AM, Jones, Morgan wrote:
+> Hey all,
 > 
-> Hi Arnd,
+> I think some form of this is back between 6.12 and 6.15 on our fractious AMD EPYC 7702. The symptom appears to be that the core will not boost past 2 GHz (the nominal frequency), so we lose out on 1.36 GHz of boost frequency. Downgrade from 6.15.7 to LTS (6.12.39) seems to fix it.
 > 
-> On Tue May 13, 2025 at 2:34 PM CEST, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
-> > device, and the returned address for the buffer is a CPU local virtual
-> > address that may or may not be in the linear mapping, as well as a DMA
-> > address token that is accessible by the USB device, and this in turn
-> > may or may not correspond to the physical address.
-> >
-> > The use in the driver however assumes that these addresses are the
-> > linear map and the CPU physical address, respectively. Both are
-> > nonportable here, but in the end only the virtual address gets
-> > used by converting it to a physical address that gets mapped into
-> > a second iommu.
-> >
-> > Make this more explicit by pulling the conversion out first
-> > and warning if it is not part of the linear map, and using the
-> > actual physical address to map into the iommu in place of the
-> > dma address that may already be iommu-mapped into the usb host.
+> Keeping an eye out for other threads reporting similar symptoms on recent kernels:
 > 
-> This patch is breaking USB audio offloading on Qualcomm devices on 6.16,
-> as tested on sm6350 and sc7280-based smartphones.
+> [    0.000000] Linux version 6.15.7-xanmod1 (nixbld@localhost) (gcc (GCC) 14.2.1 20250322, GNU ld (GNU Binutils) 2.44) #1-NixOS SMP PREEMPT_DYNAMIC Tue Jan  1 00:00:00 UTC 1980
 > 
-> [  420.463176] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: AFE Port already open
-> [  420.472676] ------------[ cut here ]------------
-> [  420.472691] WARNING: CPU: 2 PID: 175 at sound/usb/qcom/qc_audio_offload.c:1056 handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
-> [  420.472726] Modules linked in: rfcomm zram zsmalloc zstd_compress algif_hash algif_skcipher bnep nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ipv6 fuse uhid uinput snd_usb_audio_qmi q6asm_dai q6routing q6afe_dai q6usb q6afe_clocks q6adm q6asm snd_q6dsp_common q6afe q6core apr pdr_interface snd_soc_sm8250 snd_soc_qcom
-> _common snd_soc_qcom_offload_utils snd_soc_qcom_sdw soundwire_bus soc_usb snd_soc_core snd_compress snd_usb_audio ath10k_snoc ath10k_core snd_hwdep snd_usbmidi_lib ath fastrpc snd_pcm mac80211 hci_uart qrtr_smd snd_timer btqca qcom_pd_mapper snd_rawmidi bluetooth libarc4 qcom_pdr_msg cfg80211 snd soundcore ecdh_generic ecc rfkill qrtr qcom_stats qcom_q6v5_pas ipa qcom_pil_info qcom_q6v5 qcom_common
-> [  420.473018] CPU: 2 UID: 0 PID: 175 Comm: kworker/u32:9 Tainted: G        W           6.16.0 #1-postmarketos-qcom-sm6350 NONE
-> [  420.473033] Tainted: [W]=WARN
-> [  420.473038] Hardware name: Fairphone 4 (DT)
-> [  420.473045] Workqueue: qmi_msg_handler qmi_data_ready_work
-> [  420.473065] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
-> [  420.473075] pc : handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
-> [  420.473091] lr : handle_uaudio_stream_req+0xc84/0x13f8 [snd_usb_audio_qmi]
-> [  420.473104] sp : ffff800082f939a0
-> [  420.473110] x29: ffff800082f93b10 x28: ffff0000cfb796b8 x27: 0000000000008000
-> [  420.473128] x26: ffff0000842afc80 x25: ffffa8e75a23b0e0 x24: 0000000000008000
-> [  420.473145] x23: ffffa8e75a23bcf0 x22: ffff800082f93bd0 x21: 0000000000000000
-> [  420.473161] x20: ffff800082f93c98 x19: ffff0000939bb740 x18: ffffa8e77925a4d0
-> [  420.473178] x17: ffffffffffffffff x16: ffffa8e777ef9728 x15: ffffa8e77925a000
-> [  420.473194] x14: 0000000000000000 x13: 0000000000000dc0 x12: ffff800080000000
-> [  420.473211] x11: 0000000000000cc0 x10: 0000000000000001 x9 : ffffa8e77944b880
-> [  420.473227] x8 : ffffd719b5f4d000 x7 : ffff00009033da18 x6 : 0000000000000000
-> [  420.473244] x5 : 0000000000000000 x4 : ffff800082f93938 x3 : 0000000000000000
-> [  420.473260] x2 : 0000000000000000 x1 : ffff0000857790c0 x0 : 0000000000000000
-> [  420.473277] Call trace:
-> [  420.473283]  handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi] (P)
-> [  420.473300]  qmi_invoke_handler+0xbc/0x108
-> [  420.473314]  qmi_handle_message+0x90/0x1a8
-> [  420.473326]  qmi_data_ready_work+0x210/0x390
-> [  420.473339]  process_one_work+0x150/0x3a0
-> [  420.473351]  worker_thread+0x288/0x480
-> [  420.473362]  kthread+0x118/0x1e0
-> [  420.473375]  ret_from_fork+0x10/0x20
-> [  420.473390] ---[ end trace 0000000000000000 ]---
-> [  420.479244] qcom-q6afe aprsvc:service:4:4: cmd = 0x100e5 returned error = 0x1
-> [  420.479540] qcom-q6afe aprsvc:service:4:4: DSP returned error[1]
-> [  420.479558] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x7000 failed -22
-> [  420.479572] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: fail to start AFE port 88
-> [  420.479583] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: ASoC error (-22): at snd_soc_dai_prepare() on USB_RX
+> # cat /proc/cmdline
+> [snip] amd_pstate=active amd_prefcore=enable amd_pstate.shared_mem=1
 > 
-> Reverting this patch makes it work as expected on 6.16.0.
+> # cat /proc/cpuinfo
+> [snip]
+> processor       : 127
+> vendor_id       : AuthenticAMD
+> cpu family      : 23
+> model           : 49
+> model name      : AMD EPYC 7702 64-Core Processor
+> stepping        : 0
+> microcode       : 0x830107d
+> cpu MHz         : 400.000
+> cache size      : 512 KB
+> physical id     : 0
+> siblings        : 128
+> core id         : 63
+> cpu cores       : 64
+> apicid          : 127
+> initial apicid  : 127
+> fpu             : yes
+> fpu_exception   : yes
+> cpuid level     : 16
+> wp              : yes
+> flags           : fpu vme de pse tsc msr pae mce cx8 apic sep mtrr pge mca cmov pat pse36 clflush mmx fxsr sse sse2 ht syscall nx mmxext fxsr_opt pdpe1gb rdtscp lm constant_tsc rep_good nopl xtopology nonstop_tsc cpuid extd_apicid aperfmperf rapl pni pclmulqdq monitor ssse3 fma cx16 sse4_1 sse4_2 movbe popcnt aes xsave avx f16c rdrand lahf_lm cmp_legacy svm extapic cr8_legacy abm sse4a misalignsse 3dnowprefetch osvw ibs skinit wdt tce topoext perfctr_core perfctr_nb bpext perfctr_llc mwaitx cpb cat_l3 cdp_l3 hw_pstate ssbd mba ibrs ibpb stibp vmmcall fsgsbase bmi1 avx2 smep bmi2 cqm rdt_a rdseed adx smap clflushopt clwb sha_ni xsaveopt xsavec xgetbv1 xsaves cqm_llc cqm_occup_llc cqm_mbm_total cqm_mbm_local clzero irperf xsaveerptr rdpru wbnoinvd amd_ppin arat npt lbrv svm_lock nrip_save tsc_scale vmcb_clean flushbyasid decodeassists pausefilter pfthreshold avic v_vmsave_vmload vgif v_spec_ctrl umip rdpid overflow_recov succor smca sev sev_es
+> bugs            : sysret_ss_attrs spectre_v1 spectre_v2 spec_store_bypass retbleed smt_rsb srso ibpb_no_ret
+> bogomips        : 3992.75
+> TLB size        : 3072 4K pages
+> clflush size    : 64
+> cache_alignment : 64
+> address sizes   : 43 bits physical, 48 bits virtual
+> power management: ts ttp tm hwpstate cpb eff_freq_ro [13] [14]
 > 
-> Let me know if I can be of any help to resolve this.
+> # cpupower frequency-info
+> analyzing CPU 76:
+>    driver: amd-pstate-epp
+>    CPUs which run at the same hardware frequency: 76
+>    CPUs which need to have their frequency coordinated by software: 76
+>    energy performance preference: performance
+>    hardware limits: 408 MHz - 3.36 GHz
+>    available cpufreq governors: performance powersave
+>    current policy: frequency should be within 1.51 GHz and 3.36 GHz.
+>                    The governor "performance" may decide which speed to use
+>                    within this range.
+>    current CPU frequency: 1.98 GHz (asserted by call to kernel)
+>    boost state support:
+>      Supported: yes
+>      Active: yes
+>    amd-pstate limits:
+>      Highest Performance: 255. Maximum Frequency: 3.36 GHz.
+>      Nominal Performance: 152. Nominal Frequency: 2.00 GHz.
+>      Lowest Non-linear Performance: 115. Lowest Non-linear Frequency: 1.51 GHz.
+>      Lowest Performance: 31. Lowest Frequency: 400 MHz.
+>      Preferred Core Support: 0. Preferred Core Ranking: 255.
+> 
+> Regards,
+> Morgan
+> 
 
-I guess just dropping WARN_ON() would help?
+Hello Morgan,
 
-As far as I read the code, pa argument isn't used at all in
-uaudio_iommu_map() unless as sgt is NULL.  In this case, sgt is never
-NULL, hence the pa argument is just a placeholder.
-That said, the whole xfer_buf_pa (and its sanity check) can be dropped
-there.
+6.12 to 6.15 unfortunately includes a pretty big overhaul to the 
+amd-pstate driver.  But I'm pretty surprised to hear this regression as 
+we have had a lot of mileage on it across a very wide variety of hardware.
 
+That being said:
+1) Please capture a report using amd-pstate from amd-debug-tools 
+(https://git.kernel.org/pub/scm/linux/kernel/git/superm1/amd-debug-tools.git/about/) 
+both on a good and bad kernel and share them.
 
-Takashi
+2) Can you reproduce on mainline 6.16?
 
---- a/sound/usb/qcom/qc_audio_offload.c
-+++ b/sound/usb/qcom/qc_audio_offload.c
-@@ -1020,7 +1020,6 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
- 	struct sg_table xfer_buf_sgt;
- 	dma_addr_t xfer_buf_dma;
- 	void *xfer_buf;
--	phys_addr_t xfer_buf_pa;
- 	u32 len = xfer_buf_len;
- 	bool dma_coherent;
- 	dma_addr_t xfer_buf_dma_sysdev;
-@@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
- 	if (!xfer_buf)
- 		return -ENOMEM;
- 
--	/* Remapping is not possible if xfer_buf is outside of linear map */
--	xfer_buf_pa = virt_to_phys(xfer_buf);
--	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
--		ret = -ENXIO;
--		goto unmap_sync;
--	}
- 	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
- 			xfer_buf_dma, len);
- 
- 	/* map the physical buffer into sysdev as well */
-+	/* note: NULL passed to pa argument as we use sgt */
- 	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
--					       xfer_buf_pa, len, &xfer_buf_sgt);
-+					       NULL, len, &xfer_buf_sgt);
- 	if (!xfer_buf_dma_sysdev) {
- 		ret = -ENOMEM;
- 		goto unmap_sync;
+If 1 and 2 don't lead an obvious answer:
+
+3) Can you please bisect?
+
+Thanks,
 
