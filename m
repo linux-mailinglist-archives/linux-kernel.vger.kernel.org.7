@@ -1,94 +1,119 @@
-Return-Path: <linux-kernel+bounces-752768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7087CB17AAA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:54:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEA94B17AAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A23E258751B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:54:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F9A4626F61
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767713596D;
-	Fri,  1 Aug 2025 00:54:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 771FF4207F;
+	Fri,  1 Aug 2025 00:59:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="a5+x+lWw"
+Received: from out30-111.freemail.mail.aliyun.com (out30-111.freemail.mail.aliyun.com [115.124.30.111])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A374AB67A
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 00:54:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3C0AD531
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 00:59:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.111
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754009645; cv=none; b=t0Fq0gP9k9dxesMpRt4nXF/3o6K208oZWvC2eBclfvewZRIU9/OtwiLXZD3J9oXRGM2jEyIiR9aEKhQPPIHx31UYKUOd6rXE6NLniLkKQerW5kGh48bU6tluuAkCBLQun4tnmqtxidwY0A5SC00A1WjmMHTGSzI0mBf2UC+wBwU=
+	t=1754009972; cv=none; b=CA1pXBwWHgGgtsSyDmuxZEePJcc3HoI4tnM7Mwtg3srKEoWBz1RuleLB8CIgnb19GyJINUvrkKKpOUir+akpP6baLk1mfhyK1tzp1CNYadNiMmCKJ5HMLiGO2iwCh94GM98WsXibeA5IFaHe3V1EUuRdQu1R1UdKG8Oh8Hp2UuI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754009645; c=relaxed/simple;
-	bh=SWWSAxzg0urfm7YQfgJMgzkC5z/Raw2jx2xKLULcbqQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=DyRtEYyAz94jptplIFC+71c0nOD+GDP+vZZ5gkgW1D3+awMSfPKuQ+nD/CO6W6f5HMyDwL4wlNjjr4dhrBs+v50LfUsW7qCiWkvW13izenfOGktyGXCC4Y8ziszH/Rw5obLWhyNFxxi84xt4DsKtJelVnQieYc5ue2veTkQs3KA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e3e973055fso31023325ab.1
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:54:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754009643; x=1754614443;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w+4lsoY/uOE9b0JrS65NlzuPeknd2zacB9YwHmUemzA=;
-        b=FnxjROZI8/Lj8LqRRlSPyleE9F9e/akrpITqZ1HoYvFCw+rLgK07Mdl3tHgWFgCJnd
-         79uoCtyzv74NxUY5+Qnd+VJfu7lh+6kTTdvp7SnTupPPqCF3UDi4FPHUrF1wrBY9+woR
-         Stz4fyTIKrqHQUiSOqfEz1W1us7rqjwrm+3ghFn2ARfJHZyPwGNs69jyzzEgRowU+Qlt
-         aOEzn1oOqboA0MIzJ8t2hwq25MNkwIYZZh57IR5Q5RpsVjKL6u1RxyVWN7C3iCBg4JM2
-         UW/SKKwogN0b3ryruZUkRVoKYtDVTlgKlBBtZNF4BXimL4G2h1u1CnHQSe7jZZGtJsK8
-         TsTw==
-X-Forwarded-Encrypted: i=1; AJvYcCUySowYs2qQ21TY7S/a8mYopS30HlJ/1vtdfLvGas163RRnpxt0b01nXMztf3txnvQvvzbojrUt6nv565w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwChCOF5XeAVv7uCJTUeNIiRvSQyEithPPFXTFfI1oYLiAi+8QH
-	EXG3uchvu475vLjTQLiQaDwfES5jZqrtBwF2eS0Pi4UwB7G3vdxO4fnHFrQa6Q9USOLMJBT6gzq
-	yOGco5SS7HNyE/s6n+yWwdSc56vQJkmGvGZmu2PcJ/CRa9PgYMgITjIos2Wg=
-X-Google-Smtp-Source: AGHT+IFaVZdBQYjo1zKx0gGcfXAh4/MccliMcbrduNQGUM94KUkUcjqih+MSl8N2B6gZ6Cc8Vq+QioJtZnXDJZ39XZcejI1qbHLb
+	s=arc-20240116; t=1754009972; c=relaxed/simple;
+	bh=aJPdXU/BqhTVbziStCi0tpAMpCYu5ptfxhP3KWfLJ3I=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tpiAveLWx4pB2Tz8RSTCbZFLkt/F0ZDukirj4v+pa+JAVZhWra19VhkaHv2e4mrH1KiK8PqRoYvxTd6+IUVz+/JfYKc5eEFfBBUt72q4E3IetCNVk5OFfPfvGRLRNlgUwZcwzxyDfE4rwuVWKm6RivzitM5SOR2ECeMpOmEm8Wk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=a5+x+lWw; arc=none smtp.client-ip=115.124.30.111
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754009962; h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type;
+	bh=HWGSRyHKDYyYoQd9gVbPetRMPdyqFOTxvd9o21Vtc74=;
+	b=a5+x+lWwgh27jIIgY1Ng78/Lz3Pz7f0MCjDGF/k80oOcADfZ73HBgHEGauL+8WoAx6aSScIQu0CwFXX9F2ZyaODCgGbvpkLvYZQABIGtOGVFHzvRbOoE8EJs3ZbiFv3go7GwIpM4tc4iCGSIiAhdQhKPXv7KpN5zXQp2mSN9iHg=
+Received: from DESKTOP-5N7EMDA(mailfrom:ying.huang@linux.alibaba.com fp:SMTPD_---0WkZQUTh_1754009960 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Fri, 01 Aug 2025 08:59:21 +0800
+From: "Huang, Ying" <ying.huang@linux.alibaba.com>
+To: Joshua Hahn <joshua.hahnjy@gmail.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  SeongJae Park
+ <sj@kernel.org>,  David Hildenbrand <david@redhat.com>,  Zi Yan
+ <ziy@nvidia.com>,  Johannes Weiner <hannes@cmpxchg.org>,  Matthew Brost
+ <matthew.brost@intel.com>,  Rakie Kim <rakie.kim@sk.com>,  Byungchul Park
+ <byungchul@sk.com>,  Gregory Price <gourry@gourry.net>,  Alistair Popple
+ <apopple@nvidia.com>,  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
+  kernel-team@meta.com
+Subject: Re: [PATCH v2] mempolicy: Clarify what zone reclaim means
+In-Reply-To: <20250731210738.1451854-1-joshua.hahnjy@gmail.com> (Joshua Hahn's
+	message of "Thu, 31 Jul 2025 14:07:37 -0700")
+References: <20250731210738.1451854-1-joshua.hahnjy@gmail.com>
+Date: Fri, 01 Aug 2025 08:59:20 +0800
+Message-ID: <87ectvamc7.fsf@DESKTOP-5N7EMDA>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2610:b0:3e3:f9fa:2c8c with SMTP id
- e9e14a558f8ab-3e3f9fa2e8amr168893905ab.12.1754009642873; Thu, 31 Jul 2025
- 17:54:02 -0700 (PDT)
-Date: Thu, 31 Jul 2025 17:54:02 -0700
-In-Reply-To: <6888736f.a00a0220.b12ec.00ca.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688c102a.a00a0220.26d0e1.0056.GAE@google.com>
-Subject: Re: [syzbot] [net?] WARNING in xfrm_state_fini (3)
-From: syzbot <syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
-	hdanton@sina.com, herbert@gondor.apana.org.au, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, sd@queasysnail.net, steffen.klassert@secunet.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=ascii
 
-syzbot has bisected this issue to:
+Joshua Hahn <joshua.hahnjy@gmail.com> writes:
 
-commit 2a198bbec6913ae1c90ec963750003c6213668c7
-Author: Sabrina Dubroca <sd@queasysnail.net>
-Date:   Fri Jul 4 14:54:34 2025 +0000
+> The zone_reclaim_mode API controls the reclaim behavior when a node runs out of
+> memory. Contrary to its user-facing name, it is internally referred to as
+> "node_reclaim_mode".
+>
+> This can be confusing. But because we cannot change the name of the API since
+> it has been in place since at least 2.6, let's try to be more explicit about
+> what the behavior of this API is. 
+>
+> Change the description to clarify what zone reclaim entails, and be explicit
+> about the RECLAIM_ZONE bit, whose purpose has led to some confusion in the
+> past already [1] [2].
+>
+> [1] https://lore.kernel.org/linux-mm/1579005573-58923-1-git-send-email-alex.shi@linux.alibaba.com/
+> [2] https://lore.kernel.org/linux-mm/20200626003459.D8E015CA@viggo.jf.intel.com/
+>
+> Signed-off-by: Joshua Hahn <joshua.hahnjy@gmail.com>
+> ---
+>  include/uapi/linux/mempolicy.h | 8 +++++++-
+>  1 file changed, 7 insertions(+), 1 deletion(-)
+>
+> diff --git a/include/uapi/linux/mempolicy.h b/include/uapi/linux/mempolicy.h
+> index 1f9bb10d1a47..6c9c9385ff89 100644
+> --- a/include/uapi/linux/mempolicy.h
+> +++ b/include/uapi/linux/mempolicy.h
+> @@ -66,10 +66,16 @@ enum {
+>  #define MPOL_F_MORON	(1 << 4) /* Migrate On protnone Reference On Node */
+>  
+>  /*
+> + * Enabling zone reclaim means the page allocator will attempt to fulfill
+> + * the allocation request on the current node by triggering reclaim and
+> + * trying to shrink the current node.
+> + * Fallback allocations on the next candidates in the zonelist are considered
+> + * zone when reclaim fails to free up enough memory in the current node/zone.
+> + *
+>   * These bit locations are exposed in the vm.zone_reclaim_mode sysctl
+>   * ABI.  New bits are OK, but existing bits can never change.
 
-    Revert "xfrm: destroy xfrm_state synchronously on net exit path"
+As far as I know, sysctl isn't considered kernel ABI now.  So, cghane
+this line too?
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1714d2a2580000
-start commit:   038d61fd6422 Linux 6.16
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=1494d2a2580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=1094d2a2580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=4066f1c76cfbc4fe
-dashboard link: https://syzkaller.appspot.com/bug?extid=6641a61fe0e2e89ae8c5
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16ca1782580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=140194a2580000
+>   */
+> -#define RECLAIM_ZONE	(1<<0)	/* Run shrink_inactive_list on the zone */
+> +#define RECLAIM_ZONE	(1<<0)	/* Enable zone reclaim */
+>  #define RECLAIM_WRITE	(1<<1)	/* Writeout pages during reclaim */
+>  #define RECLAIM_UNMAP	(1<<2)	/* Unmap pages during reclaim */
+>  
+>
+> base-commit: 260f6f4fda93c8485c8037865c941b42b9cba5d2
 
-Reported-by: syzbot+6641a61fe0e2e89ae8c5@syzkaller.appspotmail.com
-Fixes: 2a198bbec691 ("Revert "xfrm: destroy xfrm_state synchronously on net exit path"")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+---
+Best Regards,
+Huang, Ying
 
