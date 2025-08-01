@@ -1,197 +1,157 @@
-Return-Path: <linux-kernel+bounces-753528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 447C2B1842F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:49:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9EAABB18430
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:50:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C876E1C27078
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:50:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C390258654D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:50:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C126D4F9;
-	Fri,  1 Aug 2025 14:49:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B6C026D4F9;
+	Fri,  1 Aug 2025 14:50:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quantatw.com header.i=@quantatw.com header.b="S40i6uXQ"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013009.outbound.protection.outlook.com [52.101.127.9])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="HYkklHo/"
+Received: from out-186.mta1.migadu.com (out-186.mta1.migadu.com [95.215.58.186])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9474221283;
-	Fri,  1 Aug 2025 14:49:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.9
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059789; cv=fail; b=rc3Xig8B3ea8KIqyxRoT7/AExnR5LdiFFCFyLh0bdeTOawl2XtDaFmGwZUy+YEE6zbis5VWJH60QR4qycJLMNP7ORgm/Xd6dtzt50kkOSNhX1tUW+KSCXW6M0/iwdGyC3v6LflKHqPrWZIH1vkaXYX+U8QFcb1q8vFbfHFdot6Y=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059789; c=relaxed/simple;
-	bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=D5ieLDkyvWcVBy41SDJaC9af4yKakig/I826MM3BElDeIgjojW43rqu/PAtRCZ5e847MqhjgfA2kZEt8uU/Bvh7fglodHy0R94xhZMQZv/Qc0RYzrlr0S73YJUlXwflrkougAe0wTTPudu/mcggJ9DILV6371vn77MfQp/YowOA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantatw.com; spf=pass smtp.mailfrom=quantatw.com; dkim=pass (2048-bit key) header.d=quantatw.com header.i=@quantatw.com header.b=S40i6uXQ; arc=fail smtp.client-ip=52.101.127.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantatw.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quantatw.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=ilNLiKSkRq8vdmWnRC3k2E1/9Au9cAusXOBotxl6CO/qlIrbhpzemYJY4stZlcn5gyF83PMVhan8W+psaDmc9JuE/mIBeHwTI34nRx1e3KVgXM3F/igK2VYTeN4gxHywoX6fYzAvyjyyz2pNmSljgvOBh7eGEs2iPQpLpQkhTUWpPzWKU95RFs41Qyn1okqyPXv7FuxHMD64gy5wfzfEaFVcYzIuWY/2cS2RbqOAiXaIsVmhKt/LwAJ719xCAjmfo2W5qri2tECXUiknqWzsDAkFuCBvqpWKRA3eLqLKrn0ByOJ921mU8c7s9U2RQHZqrsDLS8/CTn4cy5OLMHyQDA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
- b=K5f2O2wwoodf6dnQjOWqFf5yMuPcxlAWGHMP3lyWYJ9/bhiNpZq/w9MTv9vdlc2PrOwWDakBHy781Cg/O5ItQCzoiKmOLTRzKEjlJ9t1Bouszjco1SaVpUwfp7lFX/3EsjZJ6HpEwNLEeH6+AsSV8wLJ6Uh89s6RHU5RJTuF++asedAVe7qGvHXPx+gayXW4QQ0JgcVfhnu/fpe0paSLHeedQjz2ohyajGKdN6xuaHNkLDiQO5LMNTBS08Wl5YUU07ZMigITXd6py3AuIIeaPFdiUZfYcVPT6P/HCKxdNPsz61XBH+4Jme2tnGTeIj2Q/0jtmx0eRetOat0254YPcg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=quantatw.com; dmarc=pass action=none header.from=quantatw.com;
- dkim=pass header.d=quantatw.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quantatw.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
- b=S40i6uXQPeEen6R6Atyf/rsBPjQHlNXg/Tt2ftgCblEbrTk9EetvYtPnkjIWLqAqM6uQdh2O2tho4xf/r6YNRcR67gEUGGTwrj4If/Mku1lAR5Wnh92Bn3e4etTskl7MiMbuWw08gexhCzLb1zyjXACTwsitYfx8I1rmSNyZFg5G9LwwFku4/bIvA75RhHzNFa5QK/vyNs7ymqBrooW/om62MIwqXgzzKDI81GTiEQpNCuaruwbAEyLX3qTIMhr1RAXxa4KoxFqYhmP6zfWg9+krsRzAMnKcnwA+G0s4VprC1mG5fCfsaSG6QH5juUKT7px4wLGHz+pdWgxrssUaUg==
-Received: from KL1PR04MB7709.apcprd04.prod.outlook.com (2603:1096:820:13a::5)
- by SG2PR04MB5890.apcprd04.prod.outlook.com (2603:1096:4:1b9::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
- 2025 14:49:42 +0000
-Received: from KL1PR04MB7709.apcprd04.prod.outlook.com
- ([fe80::7476:4a70:cc28:6143]) by KL1PR04MB7709.apcprd04.prod.outlook.com
- ([fe80::7476:4a70:cc28:6143%4]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
- 14:49:42 +0000
-From: =?utf-8?B?UC4gSy4gTGVlICjmnY7mn4/lr6wp?= <P.K.Lee@quantatw.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, "P.K. Lee" <pkleequanta@gmail.com>,
-	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
-	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
-	"joel@jms.id.au" <joel@jms.id.au>, "andrew@codeconstruct.com.au"
-	<andrew@codeconstruct.com.au>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
-	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "patrick@stwcx.xyz" <patrick@stwcx.xyz>
-CC: =?utf-8?B?SmVycnkgTGluICjmnpflqIHlro8p?= <Jerry.Lin@quantatw.com>,
-	=?utf-8?B?SmFzb24gSHN1ICjlvpDkvbPnrJkp?= <Jason-Hsu@quantatw.com>,
-	=?utf-8?B?WWFuZyBDaGVuICjpmbPpmb0p?= <Yang.Chen@quantatw.com>
-Subject: RE: [External]  Re: [PATCH v10 1/2] dt-bindings: arm:aspeed add Meta
- Ventura board
-Thread-Topic: [External]  Re: [PATCH v10 1/2] dt-bindings: arm:aspeed add Meta
- Ventura board
-Thread-Index: AQHcAu8I/fhoBm7Ye02W3MqI8IV9+bRN3+ww
-Date: Fri, 1 Aug 2025 14:49:42 +0000
-Message-ID:
- <KL1PR04MB7709935954C0100A8296D078DF26A@KL1PR04MB7709.apcprd04.prod.outlook.com>
-References: <20250801141131.2238599-1-pkleequanta@gmail.com>
- <20250801141131.2238599-2-pkleequanta@gmail.com>
- <6452a85c-0b90-4c46-9685-5cd6886dca15@kernel.org>
-In-Reply-To: <6452a85c-0b90-4c46-9685-5cd6886dca15@kernel.org>
-Accept-Language: zh-TW, en-US
-Content-Language: zh-TW
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=quantatw.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: KL1PR04MB7709:EE_|SG2PR04MB5890:EE_
-x-ms-office365-filtering-correlation-id: 2cc30730-9a5c-4db4-af1b-08ddd10aa652
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?eHh4NTJwcGFOZnEwRC84aUdRVUZZSEpEbi9rVDk3dlVWeVRPNEMrcmV1b1JP?=
- =?utf-8?B?bmxhRHR1WmtOYWpkYzZKWjkreXBLM0J2WW9sbXQwZ2RldlE2NmhUa0o2ZWZX?=
- =?utf-8?B?dk9mYjdyMnhGUTVnajEzMzJOemNaYWVXdXhwU1FzNGFrWGliWituSFhWc09r?=
- =?utf-8?B?WlljRllJOEd1M2hVa2tadkx4L3Y0Ty9Rbk5TRkR3NWFaUGd2b2U2d0xsUG5z?=
- =?utf-8?B?Nm84VndsQWtwalFZVVY0MjM2UVlPNzRXTEtzQUphU01SS3FMVFRTbFJPYVVk?=
- =?utf-8?B?SGk2T2IwYXcxc2Z3Z1IrS3RLckZLNVo4U0t6ZzZUR3d0Um1vNGtyUy9UcTBa?=
- =?utf-8?B?SzQwb3AySlo1OVpwbEw0YWVRTEZPdENFUzhOL2lmc3ZucVhGWjFxalV0N1B1?=
- =?utf-8?B?TkVqRlBwdi9Dcll1YlFDY1RST1cybDlWYm9oMTdnRUR6RmRNNGYyeHRTMjRt?=
- =?utf-8?B?TkcyMjJDKzNhTDNtbVBrT2M5V2dIL08wdndseThBbUwzakZvLzBVRWl3Z0xI?=
- =?utf-8?B?ZjhaYWk4bkRFWHQ4Ump2VW1oNzh4MncwS1Bmakg4VXRJcjRocmt6RmpVeVg1?=
- =?utf-8?B?Yi80SFJnSWF0YVMwbFFwY0FkL3JoUVA4aDM0VytZZ1BkZXczdE92a3RuSmdG?=
- =?utf-8?B?TnRvb1RzWWQyYzIxcUpTZUp0c1hZa3JZTXZSMWQ2V0YydEI3OVloN3ZjUkxi?=
- =?utf-8?B?ejBWN0IzN3VTWEhiSU5ZL2pBckl3ODkxaG9tK2Z2SHhQYytVRTlPdWlBK1VC?=
- =?utf-8?B?L3BBNG5FZ1J4SWRxbWZEQ3MvMmxyVDZZVkdFNk5Zd3hyU1BnRXUwQWFaYVZ5?=
- =?utf-8?B?aDFxelFOVEM1M1RLSnZTVmFEMmhrMWFCWFFaQThpTkY5WWo1TzNXOFV1TnFY?=
- =?utf-8?B?UlM3c0pEM1VqbWkxRE1wK3NUN0ZSbnZSMFc4bGhWMHhZOStualFRNUxWZXpo?=
- =?utf-8?B?RE1NNWdDdk5qQUxQYTJRaEpneUlWbWRPdVdGZjMrbTZ4blE3SENiNTBTcDFt?=
- =?utf-8?B?RzErZnVoVUgwZGQweGttWVVuODFrZFZzWGlHUUJIQ0F1WHVFZUNGTjdRMytq?=
- =?utf-8?B?dVhlSkM5bDRrcnhrZzhzYTl1UUt1TUV6MjVrVU5SYTdEVUwyeUtUM1FXbTBU?=
- =?utf-8?B?MXJYT3dWeExYcnNzT2RQRS9maGlBUkoydW9VTEI1WnNIY1VZZ2tCNURNdWVG?=
- =?utf-8?B?RFJnMUlBM3BHY1BhOWNnSG44MkVoVUZWTmp3VDhobDRIeFVtelYzV3ozUjhI?=
- =?utf-8?B?blJTcmRVM3Yxc1JBbFQwZ09KUG5FRm5tYzFTODZYOW15c1pIOERKSCtFN1B2?=
- =?utf-8?B?c0g2K3VvbytzN0RhRHEvcDkrVXp1MFpFREszcXBveTBueWllK1ZScldUY0x5?=
- =?utf-8?B?ajQ0bHR0Q0FhdHBHbHRFVDFvQUVTWHp3VGhJVTh2UTEvUTVWVmo1L2FWOTlt?=
- =?utf-8?B?b0RZNDFiMENpdjBPNkNBNDFuTHFJM2lpYXdhUjJOQnBOOHpUWC9wS04rSlJM?=
- =?utf-8?B?QjB2U1FoUEtybUVNL1ROanNkb1pxTXZlaTBOdmNTNStxRDkvODRmZWhKNzNB?=
- =?utf-8?B?R01UaDIvaVJEOXJ0a3JmSjU1NFJrZjhlVW1QYnZtcDJZczNRK3Zsa2d5VkE0?=
- =?utf-8?B?TFNEYWhLZlZ2VE10Z0xKQnM4eXIyQWx4Z1hhSDR6T0JhMlRaVXNWNCtxaWZo?=
- =?utf-8?B?LzlLelViTmh0V2R0OUN5SllqU09aYkVhQUVxRWlheHpXam9iaEJraW5HcUxG?=
- =?utf-8?B?VGpia3QxUUh4elZKVWNNTWJ6Z1lyZnN3NXIxZWlja0o0eXJzekM5SmxDN0Ra?=
- =?utf-8?B?LzR1SmRHbDJpTWw2Nm1kOVZwWnRsYlJnMmdJSHhBcFZsK2x0aS82bHRQQTh0?=
- =?utf-8?B?bEI3T1RMV1BmdnBhakIxeExnMlJRMmx5L3pqSExQYktEcFBxcVBndjZONXAy?=
- =?utf-8?B?YUxManFvN2lhSHdWLzU5WWc0My9qTjBWaXozamZUMG1PQ1JPaDdRa0FRQWxM?=
- =?utf-8?Q?klnPFyKeClMIH4tRK6sAPek/oq3Qas=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR04MB7709.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?OFQzczFYQ2s0WUNhdmFBSmxyMUJCaVlJRjFWNFJCcWVYVXdTSUpNeHorSTQy?=
- =?utf-8?B?YzhVNzNqZEFXTWgvV0Q0ckFOOVNsVWwreG5JUVcrc1M1R0hDSlRkN1Rva1Fy?=
- =?utf-8?B?dGwyemdQcmoxdjBPMTB5NkRIR1k5Vjdwc0VBbmlxNlN4Y3lYL1RPWjdMSTZY?=
- =?utf-8?B?WUpMZXdQSWxvMmZITlV0NlI4eHk1bmR1d3FjUG9Ka0x1L3pBMVFVRk9NeVNs?=
- =?utf-8?B?aVlhZEVpTEk1OTYza1REWnBrVnUyWlNacWt4U0hQdjU0a0Q4NVFZcEFNeTIz?=
- =?utf-8?B?MmJaYStZWnFxdys3eUlBanh2QXJWTXJnUFBtNXV1Q3lxVitYTExxcFcrY09K?=
- =?utf-8?B?UGVML2QvWllsK0hJVHF2T1RwRzhFVHluLzAxTW5pQ0ptUmROMHBmY2ZGcHlU?=
- =?utf-8?B?SDBIMDhTUXh3TldlbkExWUFheEhoaDJKaEFXa2FsTzM4N3Q1NUhVcldpSzNO?=
- =?utf-8?B?TWR5SGdQZ0tqZ1VsdGZHODI5Q3dXT2s2cEIvV202TWxTaHMzeDFsNFQ3UXpY?=
- =?utf-8?B?UTdBcmV4N2NUTVZoanBwbG93YmJrRm5ENUY3QlVuMUhLRWRDaDVNaHlsMTlL?=
- =?utf-8?B?VzdYb1lZcjVhdzV3cW93THBWOFJXcGVXcDB1QWRYeE54WjQ1YWY3UGdmamlk?=
- =?utf-8?B?RnZPWFE0K0tVVnk4SXExRVR1dmM2SVA2Y1N2YWpaanZBVEY1M1RRcmxFZ29p?=
- =?utf-8?B?RG9hUHRScDN0UkhxYldqcCtrdjc2cGV5UXFNUFIvSHBiVVlKTWpITlZVdHdj?=
- =?utf-8?B?d0NHeFVVZ2d1RlhaMTBjT1l6L0JUakFSRitUaWswNXdkZXBCYndkWU9CSWNJ?=
- =?utf-8?B?UWZEa01mZDU0TnhyVVdOQURGRUpEbHdNUVZ5ZXgwU1Y0TlZaMnBvK29LRndN?=
- =?utf-8?B?dlk0UFZoZ2I4a1kxVlJQMURwRGxTMG0xQkN6ZjF6dDhnbllLSGN0aDRTWHpE?=
- =?utf-8?B?WjJmbFRKSmFSWWV2SVNlZHRmUlFpcVpCdUtLZ0NJeWIyaUhMZnhjWCs1eWZ3?=
- =?utf-8?B?U0xpOGpPUjdJTWg3dEVRYWJ1L0tTNktSbTlmT1FIQW15MmpQMWJ4Ris4UGJR?=
- =?utf-8?B?REtBRUdEcXRiYmZKTFozMVRCYkkyME5tZDlVOTR2MFdXWXJGeE5ma1VieFNx?=
- =?utf-8?B?ZVpVV09QbEw3bzc2Ty9JSjJtMy8xa29UWHdIbEUvZFVPV2RpakJwOTlKSk5O?=
- =?utf-8?B?d1hKcFdPWDRnSWpsS3RUakgxS1lYSkxiRmxNL1hxT293MmhVdytER0RlMSth?=
- =?utf-8?B?YVE4bGJUWkozSFRtSnZyeGFVeGxUZUpqNy9TRXRGdGVCMGdjcEVFN1UxM0tx?=
- =?utf-8?B?a2FHL0RoeWhqUG8yS2dNbFY4M0tSUnliWnFCSFVRdXlBQmdzZ05oU2ZEK3hJ?=
- =?utf-8?B?NzFDRy9EZjdTL0hjOFhBYjJvZ1ovdElPbFN6aUliQlc2TTk3RWIrUlEwQjZu?=
- =?utf-8?B?QktNdVpuaTRlQW9nOW5GcmdMU084K0lublU1emhxQ3d4cy9mOFdDaTdEZnVZ?=
- =?utf-8?B?VytYSzdwMEYyMytHZ25JZGQ2MHZmbmgzNGVZVFJUK2oyeCszcXpNclNPbGJZ?=
- =?utf-8?B?L2JpRUdSMHZ3WEhWOWRJcmZSOWh2MXF5UXNWd0F3VmpURkVZQTZ1bTg1QmxS?=
- =?utf-8?B?UUtQQkVhL3IwbzZPay8reVI5UDdJQVhJT25hVWlUanhROGxoWDZ1UE5RS29x?=
- =?utf-8?B?R1pHT1hVRFVrRTM0NWN2QUVBblYxK3ZXdmxQMWUxQUlmaURHZklNL3RSelhh?=
- =?utf-8?B?ZXFRYXVaS09mN0xnY3Jyc20zTUJNWml0TlVRR1I3aHJMMWlqNTlzNW04a1oy?=
- =?utf-8?B?eUw4U25icE04SXJLdlRsejNPbEpTSUtxUGNOVndqa2FjMzhVbCtNNE5udWxs?=
- =?utf-8?B?dXEyMXkyUmVYRVNPRU9LR2hIWFFzRElTWDRnemFzTzJYVjBaMjN6d3luQk9F?=
- =?utf-8?B?WGhUVkVJK0YxMXZXdkpMbmM5N3lHb2tDZ0FRV1pHd2JQSjhOeUFHaGJLTHJZ?=
- =?utf-8?B?UTRBejRuTHBhQ1N1RXpJYlV6bzNsa2M1c2FONUtEanZpd0ZNVEhvWkQ0SmV4?=
- =?utf-8?B?MkprbzkvMmN0YkFKdWFGVTRZaFFISmlEWnpBM3NpTUU4b3I1aEI1eHgwSDlR?=
- =?utf-8?Q?dLUmbTO7JnT6PdTf6luUgEqGt?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8017C221283
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:50:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.186
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754059803; cv=none; b=eveKfb+fVyfUQeS35gY3xolHla3OdlbSEVnsHLLbziODgEtGWdUuZ4o3xY8qx8fSNaDz3t7jXDtQtXGcOzIx9n2G8L7b0FNupGedjGur/wK0SlsM9LEEDbLbk7G6IOCusiy3npqV4eqgR/EQyHiHzk8uwQEVi+zUJD/85v4sPI4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754059803; c=relaxed/simple;
+	bh=3x2WSU5tShhnaeGf2R++yN8NTbuM1u7Sz8hBqev70/M=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DM0R6CQQySKB1/EsmhsV6vYoChSGOLj7ZM78etRrd0iJQTQj8vIwvq/QaGAZNSzhTs9nm5oPJsSApUtY6jlq80n9IP4h5WZyjumLEAaOY7PHY2ABoocbGz1DWjq7YTlLFQ2JJK1LIfzraIeALJyl2Hh1XM1eAK4FSwm7rjPoaAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=HYkklHo/; arc=none smtp.client-ip=95.215.58.186
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <9bfa8866-a90f-41bf-8b22-bf704c01a2e5@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754059798;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kK5yweiPTMZrq6GkWQNhJfrmVEH0GQuE8rqp8Hc+11k=;
+	b=HYkklHo/orcX7L1b93efOOUr9L5f8VGX6WzRJINCCLIfU8KTSoQBYkdgioQD6bjCsO2n2r
+	22aMtxQ5IpaRct2qlZhmyJsz9LdCMHizpmOwGN+mCm6hjzSgyWqNK2baTEwK2XpxLh00aw
+	6NDraVcYNGcDX5uiqd5o/zIyhz8m7Us=
+Date: Fri, 1 Aug 2025 07:49:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: quantatw.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR04MB7709.apcprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 2cc30730-9a5c-4db4-af1b-08ddd10aa652
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 14:49:42.6309
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 179b0327-07fc-4973-ac73-8de7313561b2
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: +GEOQgdhlnxgxAAPSYytYer7DFsEr8WrjMu7ZrwvaP0nkSZv20vlLwoKfnPTRu9Ul0Uxbq9+RtzicV8YJM42TA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR04MB5890
+Subject: Re: [PATCH] tracing: Have unsigned int function args displayed as
+ hexadecimal
+Content-Language: en-GB
+To: Steven Rostedt <rostedt@goodmis.org>, LKML
+ <linux-kernel@vger.kernel.org>,
+ Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org,
+ Douglas Raillard <douglas.raillard@arm.com>
+References: <20250731193126.2eeb21c6@gandalf.local.home>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Yonghong Song <yonghong.song@linux.dev>
+In-Reply-To: <20250731193126.2eeb21c6@gandalf.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-PiBPbiAwMS8wOC8yMDI1IDE2OjExLCBQLksuIExlZSB3cm90ZToNCj4gPiBGcm9tOiAiUC5LLiBM
-ZWUiIDxwLmsubGVlQHF1YW50YXR3LmNvbT4NCj4gPg0KPiA+IERvY3VtZW50IHRoZSBuZXcgY29t
-cGF0aWJsZXMgdXNlZCBvbiBNZXRhIFZlbnR1cmEuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQ
-LksuIExlZSA8cC5rLmxlZUBxdWFudGF0dy5jb20+DQo+IA0KPiBTbyB5b3UganVzdCBpZ25vcmVk
-IGV2ZXJ5dGhpbmcgSSB3cm90ZT8NCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoN
-Ck15IGFwb2xvZ2llcywgSSBvdmVybG9va2VkIHRoYXQuIEFwcHJlY2lhdGUgdGhlIHJlbWluZGVy
-Lg0KDQpCZXN0IHJlZ2FyZHMsDQpQLksuDQo=
+
+
+On 7/31/25 4:31 PM, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+>
+> Most function arguments that are passed in as unsigned int or unsigned
+> long are better displayed as hexadecimal than normal integer. For example,
+> the functions:
+>
+> static void __create_object(unsigned long ptr, size_t size,
+> 				int min_count, gfp_t gfp, unsigned int objflags);
+>
+> static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
+> 			    size_t len);
+>
+> void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+>
+> Show up in the trace as:
+>
+>      __create_object(ptr=-131387050520576, size=4096, min_count=1, gfp=3264, objflags=0) <-kmem_cache_alloc_noprof
+>      stack_access_ok(state=0xffffc9000233fc98, _addr=-60473102566256, len=8) <-unwind_next_frame
+>      __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
+>
+> Instead, by displaying unsigned as hexadecimal, they look more like this:
+>
+>      __create_object(ptr=0xffff8881028d2080, size=0x280, min_count=1, gfp=0x82820, objflags=0x0) <-kmem_cache_alloc_node_noprof
+>      stack_access_ok(state=0xffffc90000003938, _addr=0xffffc90000003930, len=0x8) <-unwind_next_frame
+>      __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
+>
+> Which is much easier to understand as most unsigned longs are usually just
+> pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
+> better as hexadecimal as a lot of flags are passed as unsigned.
+>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+LGTM. But it seems some format issue. See below.
+
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+
+> ---
+>   kernel/trace/trace_output.c | 17 ++++++++++++++++-
+>   1 file changed, 16 insertions(+), 1 deletion(-)
+>
+> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+> index 0b3db02030a7..b18393d66a7f 100644
+> --- a/kernel/trace/trace_output.c
+> +++ b/kernel/trace/trace_output.c
+> @@ -690,6 +690,12 @@ int trace_print_lat_context(struct trace_iterator *iter)
+>   }
+>   
+>   #ifdef CONFIG_FUNCTION_TRACE_ARGS
+> +
+> +static u32 btf_type_int(const struct btf_type *t)
+> +{
+> +	return *(u32 *)(t + 1);
+> +}
+> +
+>   void print_function_args(struct trace_seq *s, unsigned long *args,
+>   			 unsigned long func)
+>   {
+> @@ -701,6 +707,8 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+>   	struct btf *btf;
+>   	s32 tid, nr = 0;
+>   	int a, p, x;
+> +	int int_data;
+> +	u16 encode;
+>   
+>   	trace_seq_printf(s, "(");
+>   
+> @@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+>   			trace_seq_printf(s, "0x%lx", arg);
+>   			break;
+>   		case BTF_KIND_INT:
+> -			trace_seq_printf(s, "%ld", arg);
+> +			/* Get the INT encodoing */
+> +			int_data = btf_type_int(t);
+> +                        encode = BTF_INT_ENCODING(int_data);
+
+See different identation between above 'int_data' and 'encode'. The same as below.
+
+> +                        /* Print unsigned ints as hex */
+> +                        if (encode & BTF_INT_SIGNED)
+> +				trace_seq_printf(s, "%ld", arg);
+> +                        else
+> +                                trace_seq_printf(s, "0x%lx", arg);
+>   			break;
+>   		case BTF_KIND_ENUM:
+>   			trace_seq_printf(s, "%ld", arg);
+
 
