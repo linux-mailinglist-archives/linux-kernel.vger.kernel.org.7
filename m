@@ -1,208 +1,133 @@
-Return-Path: <linux-kernel+bounces-753303-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2190B1814A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:46:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60E99B1814C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:47:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28EB8541938
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:46:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 931871AA7A93
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:47:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6939A72617;
-	Fri,  1 Aug 2025 11:46:15 +0000 (UTC)
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7131E5B9A;
+	Fri,  1 Aug 2025 11:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="e6bpmgnv"
+Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FCD68BEE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:46:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8556E17BA5;
+	Fri,  1 Aug 2025 11:46:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754048775; cv=none; b=HqqId8dGGZyNks2JuXSn9gdFVxnvVzFfDvm4eWvCjKW2VZMnheD8eqiJLFr0HPPbZYVH9yPNLOTvxWxulniCbqUEgcrzkSWx7LLK9wF7tjfoaOqmb36a4jNSwkrWNezSDQ7ZexhlFobCrDnkK1y7zU+vaog9m74wJptOF91IH3w=
+	t=1754048818; cv=none; b=BvR0PDZB136a5bZ7fHG2iBz3jLXtorBFul86mmXO9B3ph5HryU4QU3E6XeVeH9umQPkoeTxSmGIDFKrXXCuVjaE5Tn1W/FEwD4dunjuWUarAVPVcGdObB/GIPmYV9mquv9uInZPb1htrKwLTv8d9FX5DIHq/P5rcdsta/w32NN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754048775; c=relaxed/simple;
-	bh=Am5u1xFAJXUBe3cT7nd3dGeDhVt+fDSY5rX8Wkd/SEA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=BOxxoMnP1IsYmXrkd4J+LzVcQpX/qx31FpIdEB9rFiyCJ+LWzc/WPZg7uFvIF8Tetd6QvIVX7VvM+vr5KGcg53GuO5ZUpx+9BaYESGE8+JTdAIjerXMnbZqLmIZdgvMmoxWgT438u+4nNjezAbOQ3NXhcpUIllxWyPKnczFRKmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr; spf=pass smtp.mailfrom=ghiti.fr; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ghiti.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ghiti.fr
-Received: by mail.gandi.net (Postfix) with ESMTPSA id EEB37439C0;
-	Fri,  1 Aug 2025 11:45:59 +0000 (UTC)
-Message-ID: <ffb83627-bd28-4bf9-8051-57dfca407f87@ghiti.fr>
-Date: Fri, 1 Aug 2025 13:45:58 +0200
+	s=arc-20240116; t=1754048818; c=relaxed/simple;
+	bh=y1ul/ePEL6TuTljSvrve3qgbisA5RKF5kOvE/Fx3ZyQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=e3ZgY4bCDbshWb7P18U3uKNwuEgmZQlT+Lt0Wk2XeOFjL5+KRBXeCXc4JtvnafaFpKoIMEHAs26rvap8pyfPvnlgv7ZbvqM/Q8gBYmqYSU7mEtNEKPp2E2G+VDwSqb80/fV7Xfebil6Nq6Mo/4ZYLfg94tK/Oh8c99GCKjJT1II=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=e6bpmgnv; arc=none smtp.client-ip=5.161.67.119
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
+Received: from [127.0.0.1] (localhost [127.0.0.1])
+	by mx.nixnet.email (Postfix) with ESMTPSA id 6A9247D326;
+	Fri,  1 Aug 2025 13:46:42 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
+	t=1754048805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=bYwCqmJrhPqYZqyuDDiVsTLJbguAyJltYFAQRIfPEys=;
+	b=e6bpmgnvIcV7iKSmDn00e5xC5ex4qX8Xt0cQrU0q1+S1TcMU0WIeDgcnSdi1tjkNEXKd8R
+	JJgmrlZmPkGSd/bx6E4y9OiwYEWsZCdbKq1zUgzccjk9hUfW3Qftj+uokXj022JXMJsd3T
+	Uvom74EupBPfJJ8EKMlYGGVxU3EgN2g=
+From: Achill Gilgenast <fossdd@pwned.life>
+To: Eduard Zingerman <eddyz87@gmail.com>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Viktor Malik <vmalik@redhat.com>,
+	bpf@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Achill Gilgenast <fossdd@pwned.life>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Song Liu <song@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>
+Subject: [PATCH] libbpf: avoid possible use of uninitialized mod_len
+Date: Fri,  1 Aug 2025 13:46:06 +0200
+Message-ID: <20250801114613.610070-1-fossdd@pwned.life>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <a74ec917c2e3bf4d756a5ce2745f0f0a2970805a.camel@gmail.com>
+References: <a74ec917c2e3bf4d756a5ce2745f0f0a2970805a.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: cacheinfo: init cache levels via fetch_cache_info
- when SMP disabled
-To: liu.xuemei1@zte.com.cn, paul.walmsley@sifive.com
-Cc: palmer@dabbelt.com, aou@eecs.berkeley.edu, spersvold@gmail.com,
- sudeep.holla@arm.com, mikisabate@gmail.com, robh@kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250801093201232CYacRrFIHaDJWsjc3rbNz@zte.com.cn>
-Content-Language: en-US
-From: Alexandre Ghiti <alex@ghiti.fr>
-In-Reply-To: <20250801093201232CYacRrFIHaDJWsjc3rbNz@zte.com.cn>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: 0
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefiedtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecunecujfgurhepkfffgggfuffvvehfhfgjtgfgsehtkeertddtvdejnecuhfhrohhmpeetlhgvgigrnhgurhgvucfihhhithhiuceorghlvgigsehghhhithhirdhfrheqnecuggftrfgrthhtvghrnheptdeguefhhfevueejteevveeikeelkedvffdufeelveeggfeikeekgfeghfdttdevnecukfhppedujeeirddugeejrddugeehrdeggeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedujeeirddugeejrddugeehrdeggedphhgvlhhopegludelvddrudeikedruddrudehlegnpdhmrghilhhfrhhomheprghlvgigsehghhhithhirdhfrhdpnhgspghrtghpthhtohepuddtpdhrtghpthhtoheplhhiuhdrgihuvghmvghiudesiihtvgdrtghomhdrtghnpdhrtghpthhtohepphgruhhlrdifrghlmhhslhgvhiesshhifhhivhgvrdgtohhmpdhrtghpthhtohepphgrlhhmvghrsegurggssggvlhhtrdgtohhmpdhrtghpthhtoheprghouhesvggvtghsrdgsvghrkhgvlhgvhidrvgguuhdprhgtphhtthhopehsphgvrhhsvhholhgusehgmhgrihhlrdgtohhmpdhrtghpthhtohepshhuuggvvghprdhhohhllhgrsegrrhhmrdgtohhmpdhrtghpthhtohepmhhik
- hhishgrsggrthgvsehgmhgrihhlrdgtohhmpdhrtghpthhtoheprhhosghhsehkvghrnhgvlhdrohhrgh
-X-GND-Sasl: alex@ghiti.fr
+X-Spam: Yes
 
-Hi Jessica,
+If not fn_name, mod_len does never get initialized which fails now with
+gcc15 on Alpine Linux edge:
 
-On 8/1/25 03:32, liu.xuemei1@zte.com.cn wrote:
->
-> On 7/31/25 21:29, alex@ghiti.fr wrote:
->
-> > > From: Jessica Liu <liu.xuemei1@zte.com.cn>
->
-> > >
->
-> > > As described in commit 1845d381f280 ("riscv: cacheinfo: Add back
->
-> > > init_cache_level() function"), when CONFIG_SMP is undefined, the cache
->
-> > > hierarchy detection needs to be performed through the 
-> init_cache_level(),
->
-> > > whereas when CONFIG_SMP is defined, this detection is handled 
-> during the
->
-> > > init_cpu_topology() process.
->
-> > >
->
-> > > Furthermore, while commit 66381d36771e ("RISC-V: Select ACPI PPTT 
-> drivers")
->
-> > > enables cache information retrieval through the ACPI PPTT table, the
->
-> > > init_of_cache_level() called within init_cache_level() cannot 
-> support cache
->
-> > > hierarchy detection through ACPI PPTT. Therefore, when CONFIG_SMP is
->
-> > > undefined, we directly invoke the fetch_cache_info function to 
-> initialize
->
-> > > the cache levels.
->
-> > >
->
-> > > Signed-off-by: Jessica Liu <liu.xuemei1@zte.com.cn>
->
-> > > ---
->
-> > >   arch/riscv/kernel/cacheinfo.c | 6 +++++-
->
-> > >   1 file changed, 5 insertions(+), 1 deletion(-)
->
-> > >
->
-> > > diff --git a/arch/riscv/kernel/cacheinfo.c 
-> b/arch/riscv/kernel/cacheinfo.c
->
-> > > index 26b085dbdd07..f81ca963d177 100644
->
-> > > --- a/arch/riscv/kernel/cacheinfo.c
->
-> > > +++ b/arch/riscv/kernel/cacheinfo.c
->
-> > > @@ -73,7 +73,11 @@ static void ci_leaf_init(struct cacheinfo 
-> *this_leaf,
->
-> > >
->
-> > >   int init_cache_level(unsigned int cpu)
->
-> > >   {
->
-> > > -    return init_of_cache_level(cpu);
->
-> > > +#ifdef CONFIG_SMP
->
-> > > +    return 0;
->
-> > > +#endif
->
-> > > +
->
-> > > +    return fetch_cache_info(cpu);
->
-> > >   }
->
-> > >
->
-> > >   int populate_cache_leaves(unsigned int cpu)
->
-> >
->
-> >
->
-> > Is the current behaviour wrong or just redundant? If wrong, I'll add a
->
-> > Fixes tag to backport, otherwise I won't.
->
-> >
->
-> > Thanks,
->
-> >
->
-> > Alex
->
->
-> Hi Alex,
->
->
-> The current behavior is actually wrong when using ACPI on !CONFIG_SMP
->
-> systems. The original init_of_cache_level() cannot detect cache hierarchy
->
-> through ACPI PPTT table, which means cache information would be missing
->
-> in this configuration.
->
->
-> The patch fixes this by directly calling fetch_cache_info() when
->
-> CONFIG_SMP is undefined, which properly handles both DT and ACPI cases.
->
->
-> So yes, it would be appropriate to add a Fixes tag. The commit being
->
-> fixed is 1845d381f280 ("riscv: cacheinfo: Add back init_cache_level() 
-> function").
->
->
-> Please let me know if you need any additional information.
->
+	libbpf.c: In function 'find_kernel_btf_id.constprop':
+	libbpf.c:10100:33: error: 'mod_len' may be used uninitialized [-Werror=maybe-uninitialized]
+	10100 |                 if (mod_name && strncmp(mod->name, mod_name, mod_len) != 0)
+	      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+	libbpf.c:10070:21: note: 'mod_len' was declared here
+	10070 |         int ret, i, mod_len;
+	      |                     ^~~~~~~
 
-I'm about to send my first PR for 6.17 so I'll delay merging this one 
-for the first rc.
+Signed-off-by: Achill Gilgenast <fossdd@pwned.life>
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Acked-by: Eduard Zingerman <eddyz87@gmail.com>
+Link: https://lore.kernel.org/bpf/20250729094611.2065713-1-fossdd@pwned.life/
+---
+ tools/lib/bpf/libbpf.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks for the explanation,
+diff --git a/tools/lib/bpf/libbpf.c b/tools/lib/bpf/libbpf.c
+index e067cb5776bd..fb4d92c5c339 100644
+--- a/tools/lib/bpf/libbpf.c
++++ b/tools/lib/bpf/libbpf.c
+@@ -10086,27 +10086,27 @@ static int libbpf_find_prog_btf_id(const char *name, __u32 attach_prog_fd, int t
+ 	btf__free(btf);
+ 	if (err <= 0) {
+ 		pr_warn("%s is not found in prog's BTF\n", name);
+ 		goto out;
+ 	}
+ out:
+ 	return err;
+ }
+ 
+ static int find_kernel_btf_id(struct bpf_object *obj, const char *attach_name,
+ 			      enum bpf_attach_type attach_type,
+ 			      int *btf_obj_fd, int *btf_type_id)
+ {
+-	int ret, i, mod_len;
++	int ret, i, mod_len = 0;
+ 	const char *fn_name, *mod_name = NULL;
+ 
+ 	fn_name = strchr(attach_name, ':');
+ 	if (fn_name) {
+ 		mod_name = attach_name;
+ 		mod_len = fn_name - mod_name;
+ 		fn_name++;
+ 	}
+ 
+ 	if (!mod_name || strncmp(mod_name, "vmlinux", mod_len) == 0) {
+ 		ret = find_attach_btf_id(obj->btf_vmlinux,
+ 					 mod_name ? fn_name : attach_name,
+ 					 attach_type);
+-- 
+2.50.1
 
-Alex
-
-
->
-> Best regards,
->
-> Jessica
->
->
->
->
->
->
 
