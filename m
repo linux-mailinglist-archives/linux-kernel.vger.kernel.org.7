@@ -1,80 +1,93 @@
-Return-Path: <linux-kernel+bounces-753328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753327-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1DF57B18198
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:20:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47010B18195
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 427E7563AA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:20:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56BF6563603
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6528E2441B8;
-	Fri,  1 Aug 2025 12:20:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="REiPAhwZ"
-Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDC53246765;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9E423FC52;
 	Fri,  1 Aug 2025 12:20:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKbYnG8P"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27ACD23E334;
+	Fri,  1 Aug 2025 12:20:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754050809; cv=none; b=VxTZjjQq0xfr3V5UGWT4GUO0lMc6AhOlIDwXlZyReMeLIowWdsnzvxDW1T7BExW8CWYKLvsacNZnMPY/8wI8TNTW6zEADtWD5TCPBfT9Ujto03UychqyizM7HV9aqEvwJcy8MotXEQqBe6K3KgXR0A3aokPvdLsR3IGe+TZa2sw=
+	t=1754050806; cv=none; b=AgDa0fEdSlmk/GJF9mhL4voX828EyOwcJKIsc2HB7x4CJfmw+m5b8+0JDyFjKv6oxmtnllru2EC7dFzYd0wRfrDwYLAW6z9OdzhNWNOZX9o5JRwxsSAB9b7Td5howniIeEcWrJ7iOlSvhQpDqaFKtM7MO0s2y3GEjS3gpNenNWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754050809; c=relaxed/simple;
-	bh=iROPkrsXYZXrNDsn7b1cjF9839szWqzNnNNDV+KxiG0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b/pIkF0ZHHFHZoRJd0T0NuZGtnj8X4r7JG23rpNP91fSDoFozFmB3vPUbc0TLNq2DnBkqkkzj4d65As5xh2lnCo2Egnf2yPinCmmD2Y4fhtFAeA/2O2WhhqrHRi/8dYtuee8hR4w3q2rMZy6sJLUxcPHsX5ntVVYaxgf5ldsbA8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=REiPAhwZ; arc=none smtp.client-ip=198.47.23.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllvem-sh03.itg.ti.com ([10.64.41.86])
-	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 571CJqg83727254;
-	Fri, 1 Aug 2025 07:19:52 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754050793;
-	bh=PgHY7KIZFZ8t2DI4sOYMaRrOgbk3f1xCaugWWVlTH9w=;
-	h=From:To:CC:Subject:Date;
-	b=REiPAhwZVjGAKHweiYdMd99mLDJ/RwRnRvUk5V67EBBDYpIiR8uKkOz+Y1K/dJlWm
-	 9bMn9PA+pV64TLBB8RVyfG3ReeYN5w/I0mp+i/Nmm5IyDfFccm1HHEWNqlXsPQapCa
-	 v01q0Sd0flg1BdJ8BJbFryHFv9Gi7FCB8/28Kpto=
-Received: from DFLE101.ent.ti.com (dfle101.ent.ti.com [10.64.6.22])
-	by fllvem-sh03.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 571CJqRp4083325
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Fri, 1 Aug 2025 07:19:52 -0500
-Received: from DFLE107.ent.ti.com (10.64.6.28) by DFLE101.ent.ti.com
- (10.64.6.22) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Fri, 1
- Aug 2025 07:19:52 -0500
-Received: from fllvem-mr07.itg.ti.com (10.64.41.89) by DFLE107.ent.ti.com
- (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Fri, 1 Aug 2025 07:19:52 -0500
-Received: from fllv0122.itg.ti.com (fllv0122.itg.ti.com [10.247.120.72])
-	by fllvem-mr07.itg.ti.com (8.18.1/8.18.1) with ESMTP id 571CJqKV251872;
-	Fri, 1 Aug 2025 07:19:52 -0500
-Received: from localhost (danish-tpc.dhcp.ti.com [172.24.231.152])
-	by fllv0122.itg.ti.com (8.14.7/8.14.7) with ESMTP id 571CJooZ009995;
-	Fri, 1 Aug 2025 07:19:51 -0500
-From: MD Danish Anwar <danishanwar@ti.com>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller"
-	<davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
-	<kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>, Meghana Malladi
-	<m-malladi@ti.com>,
-        Himanshu Mittal <h-mittal1@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <netdev@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <srk@ti.com>,
-        Vignesh Raghavendra
-	<vigneshr@ti.com>,
-        Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v2] net: ti: icssg-prueth: Fix emac link speed handling
-Date: Fri, 1 Aug 2025 17:49:48 +0530
-Message-ID: <20250801121948.1492261-1-danishanwar@ti.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754050806; c=relaxed/simple;
+	bh=JFYz6V+IvtvDYDI+ZKwyHZMHqrO8EobbLmbXNEJrJKk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=PM7zH9d7RQbiWP23rEEjQ/U/Gkud+6TmrSlsi8LOrrgkJBD4hyyXw76+PFy4GFrf1IY5lPZzEmucdARvdJVN340LJKbSL11dd7MNPuJb2X9+/rHeZoMDZsY4lxwDsyngM8V9mvSV7Un51u126ScyaQfbejie9F441xOetrqETZE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKbYnG8P; arc=none smtp.client-ip=209.85.221.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-3b7862bd22bso1816372f8f.1;
+        Fri, 01 Aug 2025 05:20:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754050803; x=1754655603; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KJ8fM5OWDAHdvBcoHevsxuePklCRjlv/vRe3mZGgCP8=;
+        b=dKbYnG8Poqz1vdhsFJbK0hPtMuG/kc330DQSCoiPp4whyZlcaANjzDWVwY/xEpVV9s
+         sNpCpzC0LOTvX6CfeOZHhj15CTb2whBX+HUY53l4MysuDn/qQy1UlvLnUpKqCnz4jZEB
+         iWAZJU1GVptoscbcFicn16HARV2vlcGTSMo3u9wHniLG+bnLiUEJ7hTq7pz8wxBtbU5j
+         u1MQs8dHLGdwWtYQiee62oxgpbiqaTb4jg+k3/JVpso1gDINeP83QlX86pb85nyr79x3
+         SEwW1evp+fkBbdMtN0Zl5Gsu+7L7KZ73zJI2f43ltQQLmZqmwMZndiyt6OK+trTsUhUw
+         5xew==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754050803; x=1754655603;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KJ8fM5OWDAHdvBcoHevsxuePklCRjlv/vRe3mZGgCP8=;
+        b=H//hNcyYmU6peNNLgzPG365pR5cpN77L5CTklfpJobrmdIcq7BQvEEugYWmgajmj+x
+         M5E+VImOlzI67e3tGeFdaxE+4jkAelkINq75u8+IAF4XTm6sccXhG7keHyOAQzXgsH9/
+         P8D8td3q84BNcDB60um5i+6OC1iIhkp1OMaIzSYTrrMjC/+qqXZ70oi4UNohAiVibSQN
+         eUjzE3JJPyKpZO2QvnwCDV6rOrHxrbhEhVaeD0sj5tKwxK1586IFIHKqruAsEmLJ0eD3
+         zYFrRYFnNY8MaCHSQJUMqaGXIBr2IyXrUao5JiZZHcJiugFRyyfkxH0+7ow8vZ6aV3q2
+         Z8jQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVX+4WfDfV8BGT7SdvXrw3Vd8YvsKwXMlJEEElL71dqYOG18scGD4Bsi5UTsjgJPlrm42A4lDmtHvSVjh7mCqM0njc=@vger.kernel.org, AJvYcCW/uL/FzI0+qzgpb7CnMS9ljnsFLdaUqY2VmMdGqmUrnHanRznKIJ/dmuB07sXkeoj344QWBIAm6jgybb1r@vger.kernel.org, AJvYcCWwV71gaAFOPRfcJ+WkwVWzhurMw19rvn0g7IRW/KEBZvenZcSCYGa/sgWZcEaVEKkrzTskNbMWwOTv@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWSvPQzlwbLsF+uPfh1w9Vjkv41q23/Lcp0st/Bqh6K6Ha+76y
+	c+wFufeKHfC+BneEKiIMRjIHJlpGvmSPrfOtwzMnqrD2ZjK3iFx796pw
+X-Gm-Gg: ASbGnctSLpmP9TrvgFo5y/a8AcUWcdM/uOpju4mK/luce9PRgiz0zDZEbqG5WRrShKS
+	XeGQvkbUOdPCmo0zS5MM7m41GaNBlTxqzOCo1jrkAaRYfSs3NTvyNIkVVfRvXXZJEwaMxYnr/xR
+	8rAgU7r9tDD7A6hpy3oYhqDIq0Kz6+GMZGoIrq81mvUWpA+3lbduXJsa6QaB57dzK9Rp+wfBiCM
+	qlH0RMwYT9ozfJ5lhHgowop13J6kVQ6PAaGdcuFjatmElkkleqKHzyj0O9/P8snLaLSJNWLg9dP
+	IF3khSFkwDPxnrpyPcibNqcg4lKzxkWYVx+POQE9ZobcusnO91PG8gxsLO+IRtDiY73sMtl6GYb
+	wBwe10KU1mkhRlwB1/sBZR4hRyxOr4BSNRGLnAmvT5uQjxzBinY/oRd8qKW9yi9C+EQWY9h7D0g
+	==
+X-Google-Smtp-Source: AGHT+IFfnc4+dszPguVkgyk1YUFpIJF9igwQLvvN40rTuusp2iyO5vQePl/JWxlsRO2NCkxAPHQZEw==
+X-Received: by 2002:a05:6000:2484:b0:3b7:8f49:94e4 with SMTP id ffacd0b85a97d-3b79d43cd68mr4812706f8f.7.1754050803170;
+        Fri, 01 Aug 2025 05:20:03 -0700 (PDT)
+Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4534b3sm5674472f8f.47.2025.08.01.05.20.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 05:20:02 -0700 (PDT)
+From: Biju <biju.das.au@gmail.com>
+X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Biju Das <biju.das.jz@bp.renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-renesas-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Biju Das <biju.das.au@gmail.com>
+Subject: [PATCH v2] arm64: dts: renesas: rzg2lc-smarc: Disable CAN-FD channel0
+Date: Fri,  1 Aug 2025 13:19:53 +0100
+Message-ID: <20250801121959.267424-1-biju.das.jz@bp.renesas.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,58 +95,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-When link settings are changed emac->speed is populated by
-emac_adjust_link(). The link speed and other settings are then written into
-the DRAM. However if both ports are brought down after this and brought up
-again or if the operating mode is changed and a firmware reload is needed,
-the DRAM is cleared by icssg_config(). As a result the link settings are
-lost.
+From: Biju Das <biju.das.jz@bp.renesas.com>
 
-Fix this by calling emac_adjust_link() after icssg_config(). This re
-populates the settings in the DRAM after a new firmware load.
+On RZ/G2LC SMARC EVK, CAN-FD channel0 is not populated and channel0 is
+a required property. Currently we are deleting a wrong node. Fixing the
+wrong node invoked dtb warning message. Disable CAN-FD channel0 instead
+of deleting the node.
 
-Fixes: 9facce84f406 ("net: ti: icssg-prueth: Fix firmware load sequence.")
-Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
+Fixes: 46da632734a5 ("arm64: dts: renesas: rzg2lc-smarc: Enable CANFD channel 1")
+Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 ---
-v1 - v2: Added phydev lock before calling emac_adjust_link() as suggested
-by Andrew Lunn <andrew@lunn.ch>
-v1 https://lore.kernel.org/all/20250731120812.1606839-1-danishanwar@ti.com/
+v1->v2:
+ * Updated the commit header and description.
+ * Fixed the bot warning by disabling the channel instead of deleting it.
+---
+ arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 2b973d6e2341..58aec94b7771 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -50,6 +50,8 @@
- /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
- #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
- 
-+static void emac_adjust_link(struct net_device *ndev);
-+
- static int emac_get_tx_ts(struct prueth_emac *emac,
- 			  struct emac_tx_ts_response *rsp)
- {
-@@ -229,6 +231,12 @@ static int prueth_emac_common_start(struct prueth *prueth)
- 		ret = icssg_config(prueth, emac, slice);
- 		if (ret)
- 			goto disable_class;
-+
-+		if (emac->ndev->phydev) {
-+			mutex_lock(&emac->ndev->phydev->lock);
-+			emac_adjust_link(emac->ndev);
-+			mutex_unlock(&emac->ndev->phydev->lock);
-+		}
- 	}
- 
- 	ret = prueth_emac_start(prueth);
-
-base-commit: 01051012887329ea78eaca19b1d2eac4c9f601b5
+diff --git a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+index 345b779e4f60..0d357516e0be 100644
+--- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
++++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+@@ -48,7 +48,9 @@ sound_card {
+ #if (SW_SCIF_CAN || SW_RSPI_CAN)
+ &canfd {
+ 	pinctrl-0 = <&can1_pins>;
+-	/delete-node/ channel@0;
++	channel0 {
++		status = "disabled";
++	};
+ };
+ #else
+ &canfd {
 -- 
-2.34.1
+2.43.0
 
 
