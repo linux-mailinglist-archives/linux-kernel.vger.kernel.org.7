@@ -1,510 +1,217 @@
-Return-Path: <linux-kernel+bounces-753203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3647FB17FF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:10:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 794FCB17FF7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:11:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E64B03A7E23
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:10:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 358EA3A4C59
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:10:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABCAD23507C;
-	Fri,  1 Aug 2025 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5CE233733;
+	Fri,  1 Aug 2025 10:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dT8noPon";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="KEfs32jV"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="Ywt5n6ms"
+Received: from OS0P286CU011.outbound.protection.outlook.com (mail-japanwestazon11010041.outbound.protection.outlook.com [52.101.228.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DD0420E030;
-	Fri,  1 Aug 2025 10:09:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C516620E030;
+	Fri,  1 Aug 2025 10:10:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.228.41
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754042996; cv=fail; b=DLnI5DXEQA7Xc+A8waNZj4NwVnfbqSHmv2wR3HzWd/jhKAXj5T8hNeX+wLV8OA+GtQwTYqgxQfZZqMBVfRL0zI2E10JLTWt3uQvUUiywngNRjFouAbsN6oQ1+RpAYzPAc37Rqtg76UNCtdcGgZaiJGoG0NObrne2xurhW02SjcI=
+	t=1754043052; cv=fail; b=aSmUVqy5Z7RmGrO+74oL+ig1ySMq5Atu8H9xTi96hwgWCxgILdWkbsju1zcFKYXIw2ne4tYBLKtS2ysji23R5oZu4b9AgEcd62RTQ5KlZGREw9l3WusrAjpeElw3e0oo6o07Hp7uTzdVtyMuwgBh4rQ9egyfxK0uVoTfMUOWEfQ=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754042996; c=relaxed/simple;
-	bh=Oa4XvKxRQSypAr9/yF3+hV4o5+id39UCCiWnf8/W+Zo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=iWOhPgC8XMT4B8KQ8xLw5WCWmcOq+reTrNLWpivin0NGd/L4KPbKj7ywtTaEFjLaAUkazNx4kD+TKgVLYQUhO1rN3WHnatWViOy07MXhE5+ZABFu/jZTU4W2R/oWHyOHKhNu8xn/mZZhmM4bfwOmZokT/RzoeJa9IQbfDnW7Yuk=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dT8noPon; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=KEfs32jV; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5717C4mM005751;
-	Fri, 1 Aug 2025 10:08:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2025-04-25; bh=8rgHOsdtLw1cxmIl5a
-	6mbCI2I4e4ewi5dvWtiIO6udM=; b=dT8noPonF+cCU4/Pq2fz+6bfn2muQRkgMB
-	T4LlWK6nOjxL5Q+EPsmwVe4eWUTn63r3QkdTPg72l2hDA1RbEws4u0heGA3GtBYG
-	j3U+qzFxKMaZz9qcTCtMnEelnMuKm/r1S1ge5TtO3Y95tzcyqWMqNGyQ+K4WM3Wz
-	YQ6YQ1GHQuxRDFW390x3rRflB5S6CgHwiPoLM7HH0f44r6sWajT1/Hk8Q/NifkqW
-	iiqh50cubuyJepMpv/kChR6Vr+Vs8mb360VpRWKb0XcDevlyQgLUFuCcg3ig/F/h
-	hR5koN26Dj8NDsvzjLB8VT1kjMfLYvwYjV/BwJDXAiaCOo5YZedA==
-Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 487y2p2ufn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 01 Aug 2025 10:08:58 +0000 (GMT)
-Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5719ELu8016723;
-	Fri, 1 Aug 2025 10:08:57 GMT
-Received: from nam02-bn1-obe.outbound.protection.outlook.com (mail-bn1nam02on2062.outbound.protection.outlook.com [40.107.212.62])
-	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nfkyhhn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 01 Aug 2025 10:08:57 +0000
+	s=arc-20240116; t=1754043052; c=relaxed/simple;
+	bh=ebVqE4JGlN5bFSZgXz5/ZfNXb0PKVEETkqnp/VJ8/1E=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=XIKv4H8weyaBJzYz/nWly6Zndf8KE5Z3C/li3MCt973VfUdt35p/39RjU9oAE7vBAQ5UFeHiWDRyDtFtVx8qk0GDv+mP0ItviQlx9jOlPJrGrDTvMFjFuz6ydu8qxM8euHvUnyrk1kxJcS6XujYpJPAgwVOyEoFnPJ6QlQAPjiY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=Ywt5n6ms; arc=fail smtp.client-ip=52.101.228.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=BbnFw4hgROEADqEbN/k3sJS4YErqe+OoKAHZZMVs/pivyBUi5uVDFzDRbq4lNOi/igXCly7syWHQPaDwwLctlrHLyFlA6AjJPcdKWcFVvHrEYsZ2lhFo0hyUwwdlWo1DPymteenN6KisWIUjUH5iCpC/6XljthyKqguObISGiUTbaCbGhgFbEMo98/ARdD7WBHe6zbMuJiCd+Z8he+UHbEwiP20CNQmAqUWBiglPMke0DU1aHUWRnknvlSF+zIL3UnJAiN3u57e1Qqaf1MsrfYIX4NXiKA7JDmzHzTqk2O60b3Ts94YF7sGXg3jBiXGA/Lm3OCsn6nFe+3mLBUWaLw==
+ b=JCCDPCbYXQq6TCQdbC4DAy5NKpQ4vhGUcdla/hdq61uZYvQMWeg/wRmtUL+FUliRMynAtMW3RaFTrj4yFJ03cJ2nk7skVFmoEVHFU/jLpwVDEgYTg6FISZM2QlViD5JFVo4OP1GBtYmxCIoanHe3RmDRZlgfZbMgLsEn9ynBeu1mMhRTdEjmwGs4pGvLRsOLdlzgg4xQCG0sdIEk5DFxkYIcPoi05s08LfqIf7QQ5gmbclIqQPaT5ptPLA4DgPoN8beaxcN5hra63y/5mt0AUv2LCG6EMJbj0UrxWpyvKuLEbmRF1TtglP7HMUcVZWPwzCu4l6e37kxTZjSgRNBuCw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8rgHOsdtLw1cxmIl5a6mbCI2I4e4ewi5dvWtiIO6udM=;
- b=YR2cGOY1gWLp66rZN1usMcBtFUS2AErg8jkMcjfnB9tc/oA4K08Qjcru5roJDr6hbSha+kVPSyjKRd9XvAXI/jklqk3/82FfgGvuRC+w2cTYoXLWz65UPQuSPlQSl82yHcLIC59ZWcfL2FQDmjH1g0ljPkEd3DPaNJw6inQU8JJMXsO4eeP5vMdLJE26osYY2Re//FDt/Q5XrrbXU7ciIgFuItNiZZ0j3zcY2T/wbAwvmU3yUvTHhbzagVPdAcHtY7roLVl0KmppvskM22lSkVoZAESYpDhL6I1/N6F+vbVABcdUya64wM/xcYDEubRN9VIJqsmlgVijWNhxbL+inw==
+ bh=ebVqE4JGlN5bFSZgXz5/ZfNXb0PKVEETkqnp/VJ8/1E=;
+ b=vA5vmEbZcGDARB6JtW4t3VPkccLxX8uIabXscndP2/tmXAxEM1j86C5rqa2/3J/aE7DbBpjR+GJlVJsYx4WJBRjRbE/cYw9Uqk7BnnJAPUqiQzAttihQqOHYNDoBos/JAiIWFnpeNaum+otMOhRtb2i8utsYl2Da1N9ZMdx+pRbXU+wqc/N+5PH900AR1Vumn6MVC3JxW8N1PjuxHrK30fjfNdLUqW6tTAh02PgPUogypJUnO7Wf4iphCNsCL1dsB1DTEoXQW7YbpyegHK/oqj9XMT8NAu6sX6rtE2/FKgQ3m9rvZIsXQ1xektvfTeIkP1VBEb+ZoNbSsIEVi+kiSA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=8rgHOsdtLw1cxmIl5a6mbCI2I4e4ewi5dvWtiIO6udM=;
- b=KEfs32jV3S5EKmfPcAXt5g63fuRMXnTpvnOu+y+l+N2fII3nk+0fCJ8YyhF1+Myw8MSCsEXywnpMexs8FHb5/vXYCh33FVyMd/g8dVFxTP7i+e/MkiXIfCxNnlL6xbopYploLq2nXd1RdBj3eSYvyq9Ph4J52h0oXrXlCO/8jfA=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by PH3PPF7B51A0F8B.namprd10.prod.outlook.com (2603:10b6:518:1::7ad) with
+ bh=ebVqE4JGlN5bFSZgXz5/ZfNXb0PKVEETkqnp/VJ8/1E=;
+ b=Ywt5n6msUlLm/KPr0EqvKs5h7lwifRiZOVUO81rNGVBLEoMHCjSPFiqs3Vs3hC01vjCJgCwDx2ue/AuwdLfepWLEhJY3E2VgGE5h2jeBeT+Zw/WkDXF+FeWz9q+MRszXSWZX0yuYbcq5Pzx1rpm/v8eZADV/7TgnosPSNIpy4wU=
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com (2603:1096:400:3d0::7)
+ by TYCPR01MB6077.jpnprd01.prod.outlook.com (2603:1096:400:61::13) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Fri, 1 Aug
- 2025 10:08:50 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
- 10:08:50 +0000
-Date: Fri, 1 Aug 2025 11:08:47 +0100
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Usama Arif <usamaarif642@gmail.com>,
-        Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-        linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
-        surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org,
-        baohua@kernel.org, shakeel.butt@linux.dev, riel@surriel.com,
-        ziy@nvidia.com, laoar.shao@gmail.com, dev.jain@arm.com,
-        baolin.wang@linux.alibaba.com, npache@redhat.com,
-        Liam.Howlett@oracle.com, ryan.roberts@arm.com, vbabka@suse.cz,
-        jannh@google.com, Arnd Bergmann <arnd@arndb.de>, sj@kernel.org,
-        linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-        kernel-team@meta.com
-Subject: Re: [PATCH v2 2/5] mm/huge_memory: convert "tva_flags" to "enum
- tva_type" for thp_vma_allowable_order*()
-Message-ID: <f76da1e5-ab70-4765-a8a4-01a84ae49c3e@lucifer.local>
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-3-usamaarif642@gmail.com>
- <c44cb864-3b36-4aa2-8040-60c97bfdc28e@lucifer.local>
- <09acd558-19b9-4964-823b-502b9044f954@redhat.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09acd558-19b9-4964-823b-502b9044f954@redhat.com>
-X-ClientProxiedBy: MM0P280CA0078.SWEP280.PROD.OUTLOOK.COM
- (2603:10a6:190:8::13) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
+ 2025 10:10:46 +0000
+Received: from TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1]) by TY3PR01MB11346.jpnprd01.prod.outlook.com
+ ([fe80::86ef:ca98:234d:60e1%7]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
+ 10:10:46 +0000
+From: Biju Das <biju.das.jz@bp.renesas.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, geert <geert@linux-m68k.org>,
+	biju.das.au <biju.das.au@gmail.com>
+CC: magnus.damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting
+ node
+Thread-Topic: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting
+ node
+Thread-Index: AQHcAhnPYXXZJZvDfUKebpJ6p3R1PbRNZ/qAgAALdYCAABI2AIAACR/A
+Date: Fri, 1 Aug 2025 10:10:46 +0000
+Message-ID:
+ <TY3PR01MB1134621E4F7282C5CB3344B0D8626A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+References: <20250731125109.147422-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXTbOcYPrgHxpCNJEWNhcd8e5NBC0gyYQXn0KmQ8wqEMw@mail.gmail.com>
+ <TY3PR01MB11346C00F991D3D718D16417A8626A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+ <4ba8a463-43bc-402c-9814-5ef811d4c715@kernel.org>
+In-Reply-To: <4ba8a463-43bc-402c-9814-5ef811d4c715@kernel.org>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: TY3PR01MB11346:EE_|TYCPR01MB6077:EE_
+x-ms-office365-filtering-correlation-id: d59f28dd-de68-4aec-9f10-08ddd0e3aeba
+x-ld-processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|1800799024|366016|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?NVV6VEg2MitPcmxKT1N4TmE0YVdPV05sd0ZvWUpPblUxMjF3cFBzTnF0a2pC?=
+ =?utf-8?B?c0lyV1NmamlxZTgrcVJuUGsvaGZvSWRQSlJRczJXQ2lhN2pqZ0dhOGJPUTFo?=
+ =?utf-8?B?MHUrZVlCdkY1dzV0RUJ4L0RyOGRPdVM5Y0pqK3plbFArbWt1Uk55dDh2RXR0?=
+ =?utf-8?B?ejEycFYxeFZqYWNITEoxTUtIQjJxV00yLzhsTmRoK0I1Vmg1SDkrM3ZQbE5K?=
+ =?utf-8?B?bE82UUtveEY4VFBMcEROWkViQW9rbWsyaElIajN4VVZvODFlWmVZUmtPYWlR?=
+ =?utf-8?B?YTFmMG1od3ZyL0trZG5OckxOYVJ1cE5OajE1aWx6cW8wWTh5eVJFNzJQUUdr?=
+ =?utf-8?B?akFad1VZSDhxTHJiMlBtNXRxaEljdmpneWxzRkJBN3BYWmtLdnNJQWhDRUtl?=
+ =?utf-8?B?MW9rSHdrckdxc0hLOENtQUErbmU3MXNkRmFWUW5xTjFUTXE2MWhUSEgzSkNH?=
+ =?utf-8?B?bmo5SGFEYVJLbDJaUHcxdkQxVHFKVysyZDNZcWpxMmdtYTdhNmtIMWxNMUlW?=
+ =?utf-8?B?YzRvbDljbW5vMmRFczk2YmFrbjJDSU9wanZLcWhtZzh6RkJMMWdGZFV0dnhu?=
+ =?utf-8?B?aVZSMjZVSStZbzV2bmN3RjhUenR2M2xMVE0zRGpRanpWakZaRTAzRDBDcm5t?=
+ =?utf-8?B?YnNlUVovYW5YSnBleWJjdG8zSnNzNFVLWVFvbWR5eVBKellmUlVma1I0azRw?=
+ =?utf-8?B?bkU1cHBGMnpsUHZqWjRJNXZmWEpwaEU5bzlESjIrNlpKcnZmVEJzUUFTSjZs?=
+ =?utf-8?B?cnNLN0hmclQreUJVYTMxbUFzNGxOUUI3cHR5NWg4NkhBU01jb3Q0d3lySFV1?=
+ =?utf-8?B?NGxVRWZJK3djWWhsVndLTlJ0TWZmVGtEOHpleFBPUGNpWllEL0VWMUw1clpn?=
+ =?utf-8?B?azdNU3VWbDVyOE8rWXAwRi9COHVVM1NYZW80aUh6Wjg5NzAycWJSVS9wNnNY?=
+ =?utf-8?B?b01Gc1dhQzF1MDhtZm9TK3YzbEw5dHBqZzRRaFZFRzVQYkxCRnIzSER2dngw?=
+ =?utf-8?B?RnNUMHZQMzZNQXZIK0pndGx3bWhvRHoyaVNzZ0xqOGNGM05RVHVyeGFWQ3Ri?=
+ =?utf-8?B?VDFjc3BWSXcyRGQrRVhvN3ZhZWVxeGtOTFdwMVhpbDJBc2VoV2l3WnUxME9h?=
+ =?utf-8?B?QnM4MDltU1FBWGVaUzZzOTFPOUgxVzkvZmtjWFJMeUJGdFdqN1BZUDFzNVZo?=
+ =?utf-8?B?MkZUYnRqdmlqd0c0WW9KQU1PeCt2ZVFkcmcyVHI1K1U5L1JrZTlmcUFwV2I4?=
+ =?utf-8?B?UVNWcFZILzMrK2gyOTF5bnZIN2JxbDZXUFlxUXlSUXNjK0VqcjRrL05CVjlH?=
+ =?utf-8?B?UkFWTDBncjE1c0VyTG0zUGhFSjNQdnkwL3MxRU9xY0xFcHZwejFnc1d2a0hU?=
+ =?utf-8?B?dU5GWWpJdHRSTDFyZ0ZqdnNXdGZiUnN3MzFMMFJXODNVYmliNGduU2J5N3ZW?=
+ =?utf-8?B?TVVSdit3aWVFeDZQVjMzZDJMeHRtdmZ0Q1M5RnRMM3JjZ2RqMmVjRDBncE8z?=
+ =?utf-8?B?YkVyUTdibXZvL1NuMDl4WmtiVUY2cFcvQ3hUMGNnRFVrbG1IV2YrYkJyM0lE?=
+ =?utf-8?B?b0x2dzZiUUJucExQL2g3ZXhKVEU2SHBPK3BBU0V5QmkxQTVaRk1neHNjL1ZG?=
+ =?utf-8?B?WEdtOU5OOFF5SDh5RXlTSWFRZUxFWEJwRWVSbmFUaWFVdFhGdGlBSEFLQkpn?=
+ =?utf-8?B?eWNXWDYwWkl4Nlc0Z3Jid2JCWC92UTVxWk9hRy9RTkY5R3dBd1dKMkhHdmln?=
+ =?utf-8?B?aFJIUlVuRVRadXdVV3F0TzcrMkxjRXFBa3ZCUXpzcFlVSCt4ME9YcWp4TS9r?=
+ =?utf-8?B?dXpIQkpKWFlSUmxzQ0lnWTdRT1R5SWQ3b05aSngvS21SNkpOTXZCTXc3aUdH?=
+ =?utf-8?B?OXBTMnFiUDBjZnlpVGhZZlpHNnYrei96NTkrVXNNcm0rcDZEb0c0YW93RlNh?=
+ =?utf-8?B?aUIvMEtVOXlkTkFMbWh3U2N3UXEzWTdQS2s1YnRVVjArZ2JQYkRQZUFBZ0JG?=
+ =?utf-8?B?cUladUphUHBRPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:TY3PR01MB11346.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?RnZpZmpENVp6bDNrVlgxZ3NrWnJNLyttSElGRXV2am5kNnRkSytWNU1TZ0N6?=
+ =?utf-8?B?b2YwblB0MlBiL3hhbmpXdjdjNjNBdU5uQmpxd2J3RlhDdnNZNGJaSGdsRGhr?=
+ =?utf-8?B?dmFHRlg5TVlGRHNzQTNFM2xmMFc2R2R3dTdDMUwrK3J4Qk9qRDRnSDR5Uzkx?=
+ =?utf-8?B?dERiMm1CRTNtQ0NrVFFMUU5tOFJlUXM5UUEzNjBuMWFQRnZYeVQ4L1JlcElG?=
+ =?utf-8?B?bFZKV280TGV3UnVscXpnaVZTanRLSjQ2dk13d3FQaU9sRTU2VUdxUnRoMkl6?=
+ =?utf-8?B?RlgvMjU3aHh1OWk3TVEyN3dWeTNSSWs5QkFBamljaWoyMXJZQTUzNDBRcXg0?=
+ =?utf-8?B?NmE4TVhWWHBKSFdmWjZ5aS9sWWViKzd0ejJXYVdnQVZFN3YxSnlZT2FTYk1T?=
+ =?utf-8?B?ak1mUmNMWlFWRUtuY0taYjQ3QTRCQm9kclBFQ3Q1OCtubng0MW9GbWlSMkln?=
+ =?utf-8?B?aXVkOUVuYTNoVXo3enZmaWw0RENodFlYYTlUNW0rL1hCNnJBQXNzMElId0Ri?=
+ =?utf-8?B?TXBaRkxhS3puY3laWFhORmhRRWpBbXZNeFlpWUtyOTkvQURyZHYyTFg3ZkFn?=
+ =?utf-8?B?MFF3TEY5enQyUGdKZkNlaFo1MUdVQkhscTd5SVVrU0F1OGJtaVlYTSswRlg0?=
+ =?utf-8?B?QWhoM0dhSjBpSGxiN2FPWFl6R2xUOHM0VUNaRXVqdkRiM2JvaGhTNGdGZi84?=
+ =?utf-8?B?ejlMUmJjdXVYcy95UWZJUmRIMGNJWndwa01Tazl1dHhTdVZxZjNTUS9LUWlY?=
+ =?utf-8?B?N0Rja1dzNU9yNzRzWHpDWUpxRzlUM2p1UXZoQUV4U2xrRmJlejlPbS9VNnlC?=
+ =?utf-8?B?aWRUUEMxaFRjME10U3ZtTENRQnBIcjVPRWpRYlpLOE1vVFdGRnlkcGowUU5M?=
+ =?utf-8?B?cUo3R0VMTzZQMTArd3Rma2tVQ0lvWjNyWlR3NENkcjRWOFJneXJNaGJtbitF?=
+ =?utf-8?B?NTBDbjdLSHhpc0I1eDhMakJaNmlnQmtDdmtiTTI4U1Z0ZEUyNXA4U0RJeVJK?=
+ =?utf-8?B?SGxRSzZnME02SDdUeWkwMUdrMERGaStpNTd0R3JrTFNmcXVWTDM2Y3Iwbkhn?=
+ =?utf-8?B?Z0w2NnBGTUJsNWlvV2JmZDR6Q0RzTmpibGNrbXEzUGVhQUJuU09UN2JvOWsv?=
+ =?utf-8?B?UjNZbFdpUjVRRzNOUEZIcDJ6OFl6N0xKTldNeGpLVmZVN2dkNnFzRDloOTI1?=
+ =?utf-8?B?eFhDVGlUK2NnYnM5ZDVmQStOZW93MC9yWlhMNDVLYVoyQ3FwZGF5ZTQrb1JI?=
+ =?utf-8?B?ZkcrUllYVDdVVldVT3QrUzlTbzBPZnFjNm1sSzl1bUFxbGlEeS9rQTd6VGZn?=
+ =?utf-8?B?OEVaNFdKQWNkWGZqZlhsdG1jM0tLM1A4cCtIOEZFWEFsWll0eFJXeWdURWtC?=
+ =?utf-8?B?bFV2WDlPaEFFV2FuMWFGRzUyMjlzcUtpWVVEbjVYTlBjK0IzMUI1UnFiVEha?=
+ =?utf-8?B?MEphNUYwb0p2VDhpSGlXNUJhRDhSQnp1QWFrZWEvS2VMZEQvSkkyd1ExeElJ?=
+ =?utf-8?B?VDBkL01rWStScG1vSmpMM0RNMFFTNEhGUWoyZjc1SFJhVkVoVmlFdDJkYmVY?=
+ =?utf-8?B?aGRUL2N5VHRHM0R0dWl6bHo4MVBmQk0wME5USk0rbmdzeStuMURnSVIzRVds?=
+ =?utf-8?B?Z3RmZWdIbVRFU3ZtK3FJbndLRWNqMm5haEsvQlQvdnN2N1IzenMzYnJOWVFy?=
+ =?utf-8?B?NVVldi9leSszd251eFh2RUFxSGpNVk9PTjNrcGRLZmhYN1ZYeWozd2NkeTRl?=
+ =?utf-8?B?VDl1R0dMSUFZbTRaNHNLSlU3N3VBYW0relMwQW5ZaUtKU3dnWFR0eVBqd3Av?=
+ =?utf-8?B?M3VMWFBqcEdoRmFZbzBHRUk0S0lmQnAyTjRtbmJjVkNJbUlqcjlvb05CWFNj?=
+ =?utf-8?B?TTJUQml2Y1pXNVNWQ2JtUnlNOEhiWXR3SmhENW84dHdJYWZndmFRQzlnTTU5?=
+ =?utf-8?B?Vy9VQ3R2L25hWXZPNVhMbWZBL0xhOHdXc0NuLzR1U1B5MmJFUUhZNXhhSW9E?=
+ =?utf-8?B?cmdwY1JwRERIOS9oa1JKeWJtMlh4L2ZTeWs4UEl1UXJWTStuQ290bU9mUExs?=
+ =?utf-8?B?cks1VGFLOEQ1anRGNjdJS1lQQitUZkVKSkVlQkFFSmdIYnVlNk43R2FLdzdx?=
+ =?utf-8?Q?/61ixjP6r9P4KxDrVIAn+jf3x?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|PH3PPF7B51A0F8B:EE_
-X-MS-Office365-Filtering-Correlation-Id: a18ef8c2-e1e6-44af-0241-08ddd0e36978
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|366016|1800799024|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?39r1m8Fa+bn4w00UGlv96HMlCHy2HPDC8EK9cxB0dqzFDLN62U0H0+F5nEUb?=
- =?us-ascii?Q?DKCa674+xIhBgWkj47Nrw+Re1oMrmfv9k0m3HOH2JpiGoBuqdALnxTqagpo2?=
- =?us-ascii?Q?hbg1O0GcR1SlXzngD0NRWhDPL0odMwdrif+ahJxiyrLk7awaDKU/xMeiZU6P?=
- =?us-ascii?Q?DNqmBEg1HNnRpAduMjyPJYUpd1TEN9OXRFdSLBYsV9dSsRRZpA+35me3XV25?=
- =?us-ascii?Q?ndb0jfBYD/fv3tIICGAW/cB7zejbvbQ5aYoxp13kdEzHRNHpN8VSgEZg7ciA?=
- =?us-ascii?Q?ie0pwSDac8VFKlKxl7fvhmsgGutwt5Sdkr9I+nZzlHQVbKBvSL6JjBbtfe+G?=
- =?us-ascii?Q?5M0fH6MHIVd4fUAeRSWKgdUxii2fCr5LofOKs97zlgwhIb+AL5SLkgA8zCKK?=
- =?us-ascii?Q?wPwejEVqjwIH4KBY4ruTwQP+oUelfskW/ORQ8NTWyZcbSWoKwlnCqH2vRCkL?=
- =?us-ascii?Q?yfcpT5nmRXxQKM0iQNSDFST3mfHTRRU8Xbf25uVUtCXio8Yi/VvPROCkqnST?=
- =?us-ascii?Q?yCHy1zREvKgwYb2hu0DfCIztvzWASNp+e6QX0SW1vNEISFxk+aO1M0Hi67+c?=
- =?us-ascii?Q?CBhE0urb5DCh3zM0NPlE/NfM9xfL18JF1Ugp2fs31LZ7Hor8twz/eb0CktL9?=
- =?us-ascii?Q?RMIPuXj8wZ2Sn67fRHP2h/YYh21UeTdGrbO+v9wI1cKj0gQHjQR5wBWPyWy+?=
- =?us-ascii?Q?Ouungho5YY7kON6GO+JNhty8yQydZk6jWIrbwNE5tOe7i39W5e2xP6bnb0Ha?=
- =?us-ascii?Q?9b7S6fv1EatwzyvFWfShZLbkwAdhed1ZpwnzAL/ZGmlu6YSiQ1Fb9mWR0Le1?=
- =?us-ascii?Q?nlCTg4B/+IM4d0eDFXQ4U+f0fsdv8yUkOkcyYqHCIEQ/jfxb5tSbcqSDrxFt?=
- =?us-ascii?Q?G6UqQOi7MT1X4zN8q3vU0/A8bZidJRHTIDX2+87XMugCyQG8dL9bowh3LE7s?=
- =?us-ascii?Q?43fycbCsYvpkk+a+NeOpMmvQ2tRHf5IrwV1vehAnn+hMDUPjbUrbF/lPaeZ6?=
- =?us-ascii?Q?yddNwFQjtu3SQR/qXrUvQ7k2ViB6X8pfOEkqRQW6EgmiytLIuHaq4s1xM6gk?=
- =?us-ascii?Q?3JuayiL5QpjRd8WoxdzhFP3C6Q1QaynzmhPQd/+yZ80mpmAXrrX4B6fHyU+n?=
- =?us-ascii?Q?Hp5iV+R/6QYoaAdNDnT3PTsc+qvWSEiPiKeZs1s3Zho1EpGrjuiv2UsHEdhy?=
- =?us-ascii?Q?i/aigRxqvnsfLLAzTbPY5liwdgQL+YhM1S273Nc2/qMtJEXnxNeo6RONNcmq?=
- =?us-ascii?Q?NvaLZPnH1u166a81VcKK7jw8NqOXDvw/STA6Oh6Y+0Sp/H01AeaE+hb2WX3f?=
- =?us-ascii?Q?8/ra4TJA2Ec53h3KHZ63VkxwLpYorJ1BD1Hvv/WZL6gA5she3/Iuj1DTlJQS?=
- =?us-ascii?Q?qvWwkELQadBpIUo/vPx57IKgci0/Wfoy/r/Pb7aXUk+/0M4p/mkqNCbQswY3?=
- =?us-ascii?Q?hZHXtbngGLU=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?H+/ElxqcxDLef/lPhpMnHUgAWR2w1KaT1FIE/6oXHGU071NnDggOREzGJcVj?=
- =?us-ascii?Q?7/fpyB3RsV9PRpPqrqu0O42H7sgjWQ6W35QcxEFFLb7tA+mnLr/os8Brw4gg?=
- =?us-ascii?Q?mbE+uTIYl80tfxBl76ByzePSmKYCp5d9GozEM4hdeXABrEHpJBe8Geh9A/lf?=
- =?us-ascii?Q?V9K1ZCNUsFlfotoPizbgr/zu+FoNlD4d+p+kWZfEZCCCHeDm2QAiPtrsFInb?=
- =?us-ascii?Q?KsyJcoTgX7Db4xR7+ZWhpMqv5/Cs5nluOTX8bvZArdY2PGgt0/bfk+G4h0sY?=
- =?us-ascii?Q?yFcl9fknYBgTbidE+T3WW63NmJeK6JKmt0EnKGuuL6OmpIvpsh0WFB2QPihQ?=
- =?us-ascii?Q?w73yidPh58m4kjtfI1yDQuYuFDTvBkndc8PlaRCmIodGohDBmLeMP+MNNrPQ?=
- =?us-ascii?Q?Y3DZS0wEsotKq3bZaiH0CfIfxWxlYEgUGlabVEXtnanRFZJ1YQZ9zlNB+MrE?=
- =?us-ascii?Q?eqdDnX1yL3WfnwUJoKc5MBrHA+SMKW29k2JUE1pu1i0JZnxDJSWWUC4pDtRW?=
- =?us-ascii?Q?L7siK5+3uic+HS3gmtxFl45oZoycrw2vii9p1q3v7/78HNUqcjIQ0HNmfjOG?=
- =?us-ascii?Q?wbf2yOVBZJc1nK0v2ex8aE6KY9ijUzX+x7SqROnrgJaAWAvsuYtnFcisnVYD?=
- =?us-ascii?Q?PMnCEeHO7aOwR3rI8C30QCLojTERl7w8JC3JXOOo4HyfAIwJMsVxpimSk52c?=
- =?us-ascii?Q?KZKuTIcUZFNpjInUMJzvUugHajKWoDmRyChGxB0eYwUy9k92GYBDbS5zyXcw?=
- =?us-ascii?Q?iRSDuZ0zY4kStfDTw/nAD2wY6n3mf8evUG8BtYSw928PoWo0s77O8sn3W9CK?=
- =?us-ascii?Q?G1LYZvxqsw0v9RJsmRJvCEk8gTZY73aDcokYJSkHo8H1ayy43NUPE5OzjDmC?=
- =?us-ascii?Q?aZBq6XhDO8AvPQ7HQOLlb5q61uiZhd45UARBy6+f0klhcU+hT371ABNiC7Lk?=
- =?us-ascii?Q?OiST92io1ij34vsA3mt/DpNHtyrA1qMq+bB39YFpJoBukz0j38k3QFneHC4x?=
- =?us-ascii?Q?dj+04yTQ2cmtoQJHK4iWZqbBqNhdJjP2NOHiZCVxpRZDKnfTir+JG62leTwy?=
- =?us-ascii?Q?Picxb/bGrVGSCZJjCaB9MmURJTmOnmKXMc9Xab/348Cv52SAcWvWPSeWOnM/?=
- =?us-ascii?Q?ONCGa4+gIBjr2nxHn+tlXYGRzW6sOcN0lCu4HvywH5l19OI9AvedH7H+Tdd9?=
- =?us-ascii?Q?4Yjc26NpuKqFw+Sim6jlDD4X4xhwVkI/4KMHkKV5HOqeDD0FyLm05fujj1uf?=
- =?us-ascii?Q?PtTdWVGd6hu9Si6UW8vzKR6zL9tJHFuxih6gj7OjyYpJF4KQQS2OOA2HPiL6?=
- =?us-ascii?Q?EL72diiQZObSN8SJIHpfxi8TF0MxEoAuSSF1H/IES4LWMrWAi/bUbDJU8Jzb?=
- =?us-ascii?Q?zNafZ5VDWSbX7BbSdkGQPSJiv9nennZ+dbnr4Ht8kp8h/3gQHhypBAASh/Jx?=
- =?us-ascii?Q?9sxY5otDFdVDAaxp1alszt1xmXh6QbAGl0p82fkfmWhjPC9gQWspo3Uc7BFI?=
- =?us-ascii?Q?VQvQ2QTmqwg6ffPqnIe7i5c6zfD5OZGkAKVLFBGoCUMYrIH3BZ4exggZQutg?=
- =?us-ascii?Q?MaJuP+a9wDBa78oKJU9Xg7rg4Npid6Yk5EJZq51wTelvIHw09eksUccxaTbz?=
- =?us-ascii?Q?eA=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	O/3cuLgYiqhGLSSAdOKnHiIwLqzbHVDQCa7um26cugfGb9TB66xNWHtqO5QZJzUyqRCdUAapFVZmv/huvtP59YBHJwVj0NcJRI/XisFzq7ZOTtU7rGCbyGkjDrDSV1ldNaBaSa0huUQeNNmg8PkFQdTigPotVpqRNp+/aA7RLfu4O+JsixgCsVoXFkbRfHcITnE8NqVXd49GmKg+J1ELH98dSNQSCy0M+Cwo0QP1MzFdw2OV7zgTKWtIb+Inrz6E2FaSVWtBeLYQFL+7dmRbjjdNWfC6XvTDl5vgJzTRzhVFOqX1POxKSBrs7hejMZ6140C8OxKsBAk6ZFH99NdySFotHcbCNxD7ahEPLQglABCFR5d4Tw7Q98gTe68epCr1KbLqJxbBjrsMyaD3xg/DIjkX8TP8oYinrSxsSwVtfRsShQDaA8wdz3dfnALJkc5KttHo1UvBFfjLklebcYl1GouMoAc2tVi6lyi1wojEaK0q2w9raC0b1dgiLkYvXmltUV93vPabDv9HYd/FhR4Pbys7tyKUfDjVl0LmlTQChoPYyolfLIiqpnj5ruJYAcsaCzZ9v9+OUy1x51n0UhZvqakdMzzsNjBG+Bj1cmznYU8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a18ef8c2-e1e6-44af-0241-08ddd0e36978
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-OriginatorOrg: bp.renesas.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 10:08:50.4268
+X-MS-Exchange-CrossTenant-AuthSource: TY3PR01MB11346.jpnprd01.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: d59f28dd-de68-4aec-9f10-08ddd0e3aeba
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 10:10:46.4016
  (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: quKht0srogYz0Ti1VI40uoyHZARTEUhdVGceFUNDIf2ZE6xgcEu/RI74bLe2nSsOILW7ZM7ZIJTh0VBdWPCZ1YhsAzNXUjArm3qf92jhEoA=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH3PPF7B51A0F8B
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_03,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
- phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2508010075
-X-Authority-Analysis: v=2.4 cv=COwqXQrD c=1 sm=1 tr=0 ts=688c923a b=1 cx=c_pps
- a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=20KFwNOVAAAA:8 a=pGLkceISAAAA:8
- a=KZZk3aPqlL5hFo5lmooA:9 a=CjuIK1q_8ugA:10 cc=ntf awl=host:12070
-X-Proofpoint-ORIG-GUID: SbhfKKl7yCjP31l0wVklg4OJDbsjfjBc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA3NCBTYWx0ZWRfXz71/7EoEEIfW
- TtuhmMHqr4oHF0Aua+Jeu4Y5u7nhnR5n8DfsIxo/t5CqHg7uRzfVHXDNUqAZIUY/d583oymmNjB
- yOXkfGRl87geW3kunqnZ6KxA2oVbLmCF8d70BBygko3QxFgwJiPv131Ezgq1/Oeh2eqYl1M1AXa
- kfrliqR98ZaSGtgY0b9DmpG7V/pFY4GhlUiYsXwWUA46TozCRSIgjrdP5mNtmhtXwZsld17uY5F
- o1/9Ke+XxzXEs38Pq33uB3KzQDSrdExHJXpyVyKE1bxfQyd5SUJo1Yt4naMkpLBqgKSICZ/Djun
- tHSl4GaUs76uagNREBKwsEM6QilN7/dUo54I/Nq2UvmW3sCad33jY6tKBl/Yr1pFLhz/y2JJ1zS
- yel3A9V50iv7dYrQXWf2c/Kd265301KQ/17JnGRZUp7nMs0U1zSPhnSW9kl45bKuHZiB5ct4
-X-Proofpoint-GUID: SbhfKKl7yCjP31l0wVklg4OJDbsjfjBc
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 53d82571-da19-47e4-9cb4-625a166a4a2a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: VcCUy2o64hLbekYXCbchEd8BhK0HEYlhn63ftRpUlFHCMb2czP96+Ud5jefwTt7J4UaIeyVya+v0SbsIocDkzse2HwUrMzGAjSjhb964fj4=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYCPR01MB6077
 
-On Thu, Jul 31, 2025 at 06:15:35PM +0200, David Hildenbrand wrote:
-> On 31.07.25 16:00, Lorenzo Stoakes wrote:
-> > On Thu, Jul 31, 2025 at 01:27:19PM +0100, Usama Arif wrote:
-> > > From: David Hildenbrand <david@redhat.com>
-> > >
-> > > Describing the context through a type is much clearer, and good enough
-> > > for our case.
->
-> Just for the other patch, I'll let Usama take it from here, just a bunch of
-> comments.
-
-Ack!
-
->
-> >
-> > This is pretty bare bones. What context, what type? Under what
-> > circumstances?
-> >
-> > This also is missing detail on the key difference here - that actually it
-> > turns out we _don't_ need these to be flags, rather we can have _distinct_
-> > modes which are clearer.
-> >
-> > I'd say something like:
-> >
-> > 	when determining which THP orders are eligiible for a VMA mapping,
-> > 	we have previously specified tva_flags, however it turns out it is
-> > 	really not necessary to treat these as flags.
-> >
-> > 	Rather, we distinguish between distinct modes.
-> >
-> > 	The only case where we previously combined flags was with
-> > 	TVA_ENFORCE_SYSFS, but we can avoid this by observing that this is
-> > 	the default, except for MADV_COLLAPSE or an edge cases in
-> > 	collapse_pte_mapped_thp() and hugepage_vma_revalidate(), and adding
-> > 	a mode specifically for this case - TVA_FORCED_COLLAPSE.
-> >
-> > 	... stuff about the different modes...
-> >
-> > >
-> > > We have:
-> > > * smaps handling for showing "THPeligible"
-> > > * Pagefault handling
-> > > * khugepaged handling
-> > > * Forced collapse handling: primarily MADV_COLLAPSE, but one other odd case
-> >
-> > Can we actually state what this case is? I mean I guess a handwave in the
-> > form of 'an edge case in collapse_pte_mapped_thp()' will do also.
->
-> Yeah, something like that. I think we also call it when we previously
-> checked that there is a THP and that we might be allowed to collapse. E.g.,
-> collapse_pte_mapped_thp() is also called from khugepaged code where we
-> already checked the allowed order.
-
-See below...
-
->
-> >
-> > Hmm actually we do weird stuff with this so maybe just handwave.
-> >
-> > Like uprobes calls collapse_pte_mapped_thp()... :/ I'm not sure this 'If we
-> > are here, we've succeeded in replacing all the native pages in the page
-> > cache with a single hugepage.' comment is even correct.
->
-> I think in all these cases we already have a THP and want to force that
-> collapse in the page table.
-
-...Yeah, I remember looking at this before and thinking 'it makes sense to force it
-here'.
-
-But since we have some sort of random edge cases here probably best to hand wave
-'and a few other places' or sth (I see Usama has proposed a commit msg, will
-look shortly of course ::)
-
->
-> [...]
->
-> > >
-> > > Really, we want to ignore sysfs only when we are forcing a collapse
-> > > through MADV_COLLAPSE, otherwise we want to enforce.
-> >
-> > I'd say 'ignoring this edge case, ...'
-> >
-> > I think the clearest thing might be to literally list the before/after
-> > like:
-> >
-> > * TVA_SMAPS | TVA_ENFORCE_SYSFS -> TVA_SMAPS
-> > * TVA_IN_PF | TVA_ENFORCE_SYSFS -> TVA_PAGEFAULT
-> > * TVA_ENFORCE_SYSFS             -> TVA_KHUGEPAGED
-> > * 0                             -> TVA_FORCED_COLLAPSE
-> >
->
-> That makes sense.
-
-Thanks!
-
->
-> > >
-> > > With this change, we immediately know if we are in the forced collapse
-> > > case, which will be valuable next.
-> > >
-> > > Signed-off-by: David Hildenbrand <david@redhat.com>
-> > > Acked-by: Usama Arif <usamaarif642@gmail.com>
-> > > Signed-off-by: Usama Arif <usamaarif642@gmail.com>
-> >
-> > Overall this is a great cleanup, some various nits however.
-> >
-> > > ---
-> > >   fs/proc/task_mmu.c      |  4 ++--
-> > >   include/linux/huge_mm.h | 30 ++++++++++++++++++------------
-> > >   mm/huge_memory.c        |  8 ++++----
-> > >   mm/khugepaged.c         | 18 +++++++++---------
-> > >   mm/memory.c             | 14 ++++++--------
-> > >   5 files changed, 39 insertions(+), 35 deletions(-)
-> > >
-> > > diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-> > > index 3d6d8a9f13fc..d440df7b3d59 100644
-> > > --- a/fs/proc/task_mmu.c
-> > > +++ b/fs/proc/task_mmu.c
-> > > @@ -1293,8 +1293,8 @@ static int show_smap(struct seq_file *m, void *v)
-> > >   	__show_smap(m, &mss, false);
-> > >
-> > >   	seq_printf(m, "THPeligible:    %8u\n",
-> > > -		   !!thp_vma_allowable_orders(vma, vma->vm_flags,
-> > > -			   TVA_SMAPS | TVA_ENFORCE_SYSFS, THP_ORDERS_ALL));
-> > > +		   !!thp_vma_allowable_orders(vma, vma->vm_flags, TVA_SMAPS,
-> > > +					      THP_ORDERS_ALL));
-> >
-> > This !! is so gross, wonder if we could have a bool wrapper. But not a big
-> > deal.
-> >
-> > I also sort of _hate_ the smaps flag anyway, invoking this 'allowable
-> > orders' thing just for smaps reporting with maybe some minor delta is just
-> > odd.
-> >
-> > Something like `bool vma_has_thp_allowed_orders(struct vm_area_struct
-> > *vma);` would be nicer.
-> >
-> > Anyway thoughts for another time... :)
->
-> Yeah, that's not the only nasty bit here ... :)
-
-Indeed, sometimes I get distracted by this... but we'll fix it over time!
-
->
-> >
-> > >
-> > >   	if (arch_pkeys_enabled())
-> > >   		seq_printf(m, "ProtectionKey:  %8u\n", vma_pkey(vma));
-> > > diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> > > index 71db243a002e..b0ff54eee81c 100644
-> > > --- a/include/linux/huge_mm.h
-> > > +++ b/include/linux/huge_mm.h
-> > > @@ -94,12 +94,15 @@ extern struct kobj_attribute thpsize_shmem_enabled_attr;
-> > >   #define THP_ORDERS_ALL	\
-> > >   	(THP_ORDERS_ALL_ANON | THP_ORDERS_ALL_SPECIAL | THP_ORDERS_ALL_FILE_DEFAULT)
-> > >
-> > > -#define TVA_SMAPS		(1 << 0)	/* Will be used for procfs */
-> >
-> > Dumb question, but what does 'TVA' stand for? :P
->
-> Whoever came up with that probably used the function name where this is
-> passed in
->
-> thp_vma_allowable_orders()
-
-Ahhh ok that makes sense, thanks!
-
-'THP VMA Allowable' is kind of funny, like an abbreviation that abbreviates 2
-abbreviations :P
-
->
-> >
-> > > -#define TVA_IN_PF		(1 << 1)	/* Page fault handler */
-> > > -#define TVA_ENFORCE_SYSFS	(1 << 2)	/* Obey sysfs configuration */
-> > > +enum tva_type {
-> > > +	TVA_SMAPS,		/* Exposing "THPeligible:" in smaps. */
-> >
-> > How I hate this flag (just an observation...)
-> >
-> > > +	TVA_PAGEFAULT,		/* Serving a page fault. */
-> > > +	TVA_KHUGEPAGED,		/* Khugepaged collapse. */
-> >
-> > This is equivalent to the TVA_ENFORCE_SYSFS case before, sort of a default
-> > I guess, but actually quite nice to add the context that it's sourced from
-> > khugepaged - I assume this will always be the case when specified?
-> >
-> > > +	TVA_FORCED_COLLAPSE,	/* Forced collapse (i.e., MADV_COLLAPSE). */
-> >
-> > Would put 'e.g.' here, then that allows 'space' for the edge case...
->
-> Makes sense.
-
-Thanks!
-
->
-> >
-> > > +};
-> > >
-> > > -#define thp_vma_allowable_order(vma, vm_flags, tva_flags, order) \
-> > > -	(!!thp_vma_allowable_orders(vma, vm_flags, tva_flags, BIT(order)))
-> > > +#define thp_vma_allowable_order(vma, vm_flags, type, order) \
-> > > +	(!!thp_vma_allowable_orders(vma, vm_flags, type, BIT(order)))
-> >
-> > Nit, but maybe worth keeping tva_ prefix - tva_type - here just so it's
-> > clear what type it refers to.
-> >
-> > But not end of the world.
-> >
-> > Same comment goes for param names below etc.
->
-> No strong opinion, but I prefer to drop the prefix when it can be deduced
-> from the type and we are inside of the very function that essentially
-> defines these types (tva prefix is implicit, no other type applies).
->
-> These should probably just be inline functions at some point with proper
-> types and doc (separate patch uin the future, of course).
-
-Yeah I mean this is the most petty of petty comments. Just as long as it's
-consistent it's ok.
-
-Slightly an aside, but I'm motivated by previous case of passing around VMA
-flags as a 'flags' parameter, when in some functions you also have mmap flags
-and it suddenly becomes painful to know which is which.
-
-Probably here, given limited scope it's not really likely to be an issue.
-
->
-> [...]
->
-> > > +++ b/mm/khugepaged.c
-> > > @@ -474,8 +474,7 @@ void khugepaged_enter_vma(struct vm_area_struct *vma,
-> > >   {
-> > >   	if (!test_bit(MMF_VM_HUGEPAGE, &vma->vm_mm->flags) &&
-> > >   	    hugepage_pmd_enabled()) {
-> > > -		if (thp_vma_allowable_order(vma, vm_flags, TVA_ENFORCE_SYSFS,
-> > > -					    PMD_ORDER))
-> > > +		if (thp_vma_allowable_order(vma, vm_flags, TVA_KHUGEPAGED, PMD_ORDER))
-> > >   			__khugepaged_enter(vma->vm_mm);
-> > >   	}
-> > >   }
-> > > @@ -921,7 +920,8 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> > >   				   struct collapse_control *cc)
-> > >   {
-> > >   	struct vm_area_struct *vma;
-> > > -	unsigned long tva_flags = cc->is_khugepaged ? TVA_ENFORCE_SYSFS : 0;
-> > > +	enum tva_type tva_type = cc->is_khugepaged ? TVA_KHUGEPAGED :
-> > > +				 TVA_FORCED_COLLAPSE;
-> >
-> > This is great, this is so much clearer.
-> >
-> > A nit though, I mean I come back to my 'type' vs 'tva_type' nit above, this
-> > is inconsistent, so we should choose one approach and stick with it.
->
-> This is outside of the function, so I would prefer to keep it here, but no
-> stong opinion.
-
-I'd rather we be consistent, but this isn't a huge big deal, obviously.
-
->
-> >
-> > >
-> > >   	if (unlikely(hpage_collapse_test_exit_or_disable(mm)))
-> > >   		return SCAN_ANY_PROCESS;
-> > > @@ -932,7 +932,7 @@ static int hugepage_vma_revalidate(struct mm_struct *mm, unsigned long address,
-> > >
-> > >   	if (!thp_vma_suitable_order(vma, address, PMD_ORDER))
-> > >   		return SCAN_ADDRESS_RANGE;
-> > > -	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_flags, PMD_ORDER))
-> > > +	if (!thp_vma_allowable_order(vma, vma->vm_flags, tva_type, PMD_ORDER))
-> > >   		return SCAN_VMA_CHECK;
-> > >   	/*
-> > >   	 * Anon VMA expected, the address may be unmapped then
-> > > @@ -1532,9 +1532,10 @@ int collapse_pte_mapped_thp(struct mm_struct *mm, unsigned long addr,
-> > >   	 * in the page cache with a single hugepage. If a mm were to fault-in
-> > >   	 * this memory (mapped by a suitably aligned VMA), we'd get the hugepage
-> > >   	 * and map it by a PMD, regardless of sysfs THP settings. As such, let's
-> > > -	 * analogously elide sysfs THP settings here.
-> > > +	 * analogously elide sysfs THP settings here and pretend we are
-> > > +	 * collapsing.
-> >
-> > I think saying pretending here is potentially confusing, maybe worth saying
-> > 'force collapse'?
->
-> Makes sense.
-
-Thanks!
-
->
-> --
-> Cheers,
->
-> David / dhildenb
->
+SGkgS3J6eXN6dG9mIEtvemxvd3NraSwNCg0KPiAtLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0K
+PiBGcm9tOiBLcnp5c3p0b2YgS296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+DQo+IFNlbnQ6IDAx
+IEF1Z3VzdCAyMDI1IDEwOjE2DQo+IFN1YmplY3Q6IFJlOiBbUEFUQ0hdIGFybTY0OiBkdHM6IHJl
+bmVzYXM6IHJ6ZzJsYy1zbWFyYzogRml4IHR5cG8gZm9yIGRlbGV0aW5nIG5vZGUNCj4gDQo+IE9u
+IDAxLzA4LzIwMjUgMTA6MTEsIEJpanUgRGFzIHdyb3RlOg0KPiA+IEhpIEdlZXJ0LA0KPiA+DQo+
+ID4gVGhhbmtzIGZvciB0aGUgZmVlZGJhY2suDQo+ID4NCj4gPj4gLS0tLS1PcmlnaW5hbCBNZXNz
+YWdlLS0tLS0NCj4gPj4gRnJvbTogR2VlcnQgVXl0dGVyaG9ldmVuIDxnZWVydEBsaW51eC1tNjhr
+Lm9yZz4NCj4gPj4gU2VudDogMDEgQXVndXN0IDIwMjUgMDg6MzANCj4gPj4gU3ViamVjdDogUmU6
+IFtQQVRDSF0gYXJtNjQ6IGR0czogcmVuZXNhczogcnpnMmxjLXNtYXJjOiBGaXggdHlwbyBmb3IN
+Cj4gPj4gZGVsZXRpbmcgbm9kZQ0KPiA+Pg0KPiA+PiBIaSBCaWp1LA0KPiA+Pg0KPiA+PiBPbiBU
+aHUsIDMxIEp1bCAyMDI1IGF0IDE0OjUxLCBCaWp1IDxiaWp1LmRhcy5hdUBnbWFpbC5jb20+IHdy
+b3RlOg0KPiA+Pj4gRnJvbTogQmlqdSBEYXMgPGJpanUuZGFzLmp6QGJwLnJlbmVzYXMuY29tPg0K
+PiA+Pj4NCj4gPj4+IEZpeCB0eXBvIGZvciBkZWxldGluZyBub2RlICdjaGFubmVsQDAnLT4nY2hh
+bm5lbDAnLg0KPiA+Pj4NCj4gPj4+IEZpeGVzOiA0NmRhNjMyNzM0YTUgKCJhcm02NDogZHRzOiBy
+ZW5lc2FzOiByemcybGMtc21hcmM6IEVuYWJsZQ0KPiA+Pj4gQ0FORkQgY2hhbm5lbCAxIikNCj4g
+Pj4+IFNpZ25lZC1vZmYtYnk6IEJpanUgRGFzIDxiaWp1LmRhcy5qekBicC5yZW5lc2FzLmNvbT4N
+Cj4gPj4NCj4gPj4gVGhhbmtzIGZvciB5b3VyIHBhdGNoIQ0KPiA+Pg0KPiA+Pj4gLS0tIGEvYXJj
+aC9hcm02NC9ib290L2R0cy9yZW5lc2FzL3J6ZzJsYy1zbWFyYy5kdHNpDQo+ID4+PiArKysgYi9h
+cmNoL2FybTY0L2Jvb3QvZHRzL3JlbmVzYXMvcnpnMmxjLXNtYXJjLmR0c2kNCj4gPj4+IEBAIC00
+OCw3ICs0OCw3IEBAIHNvdW5kX2NhcmQgew0KPiA+Pj4gICNpZiAoU1dfU0NJRl9DQU4gfHwgU1df
+UlNQSV9DQU4pDQo+ID4+PiAgJmNhbmZkIHsNCj4gPj4+ICAgICAgICAgcGluY3RybC0wID0gPCZj
+YW4xX3BpbnM+Ow0KPiA+Pj4gLSAgICAgICAvZGVsZXRlLW5vZGUvIGNoYW5uZWxAMDsNCj4gPj4+
+ICsgICAgICAgL2RlbGV0ZS1ub2RlLyBjaGFubmVsMDsNCj4gPj4NCj4gPj4gQXMgcG9pbnRlZCBv
+dXQgYnkgUm9iJ3MgYm90LCB5b3UgbXVzdCBub3QgZGVsZXRlIHRoaXMgbm9kZS4NCj4gPj4gSW5z
+dGVhZCwgc2V0IGNoYW5uZWwwJ3Mgc3RhdHVzIHRvIGRpc2FibGVkLg0KPiA+DQo+ID4gT0suIFdp
+bGwgZml4IHRoaXMgaW4gbmV4dCB2ZXJzaW9uLg0KPiANCj4gUGxlYXNlIFRFU1QgeW91ciBwYXRj
+aCBiZWZvcmUgc2VuZGluZyBpdC4gVGhpcyB3b3VsZCBhdm9pZCB0aGlzIGVudGlyZSBkaXNjdXNz
+aW9uLg0KDQpTb3JyeSBmb3IgdGhhdC4gV2lsbCB0YWtlIGNhcmUgbmV4dCB0aW1lLg0KDQpDaGVl
+cnMsDQpCaWp1DQo=
 
