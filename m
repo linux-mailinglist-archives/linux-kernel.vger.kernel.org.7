@@ -1,310 +1,314 @@
-Return-Path: <linux-kernel+bounces-753612-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753614-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4455AB18545
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:51:20 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10F55B1854D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:54:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C933A17D19B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:51:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 070504E01D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:54:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B245027AC3D;
-	Fri,  1 Aug 2025 15:51:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CE7627B4EE;
+	Fri,  1 Aug 2025 15:54:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="FTa4HOPa"
-Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="bfLPMzse";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="PA2iNrYk"
+Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0183227A917
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:51:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063469; cv=none; b=d6mOcOZg/RO4UbreYBygo+9Z/Bo9aU2Q3oJ+iPpHh/bneGJPuzhfNMDulzGsRb2Wr1vmm2VqS6AsfVk1jinWlrs5Ytt32kKCtrwRbOABYodSFmrUntAuX2fGGVJeOzcJ/Ik2tRue06evH2HymURD4u7Hz8WtgTngr8jOgUUkXik=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063469; c=relaxed/simple;
-	bh=RpGOywfowaGN9OsyBA2/LgrnaFIHzI9fYHm6QlHqw2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=N1QRb2ttlhxktZvnFG9VJSJ4TxW8tsDkrWOEKwdCbUgJmNpCntGKP0c7BLMsKigUEBSoHoJ1AdLNuwMj2YhrChzlM8DQK2YXCdpEmJo/fPldbDhrn1hE3SQ3jP6lN55KRAmuVl60w4WYu76HXIMN+0lkD61FHctegvgPmXtTWZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=FTa4HOPa; arc=none smtp.client-ip=209.85.160.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4aedd1b006bso20154661cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:51:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6866126C39B;
+	Fri,  1 Aug 2025 15:54:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754063682; cv=fail; b=d7jTNMIiqcv8gmTI8h6LIzvqppMn+2ZDYeBGtdwBEIJUhgXou01yYOsSIYnjtkJ4uqnNpvAkWvMVgmQ2A4DM363TGsbI+9+9mC8P5w6ZaRzoFQgV+4NB6voA/KGp9J1gZccv/vqvVaVHVUDDG1yFg+BooM1NkVrxEtvNwAOE1gc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754063682; c=relaxed/simple;
+	bh=exKcrExpfwE8CHAM2lesQU5gy9RQ9CZQV0+gtp6z8Pw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=EEVHd7ndRcQ7vSTYQzrJwgVxW63F02FQbtcPcawNxiQ3Q1/Y1MKGQNLgIpNY7lMLSUXq4sAMUZPL+212d2F7JCFKjkb1/WUYqU6y2slgwIDD2R+xfWZZdq6wayLXqH+OJfSs6ufj7E2+tjgUcQufCZnPXOHTV4LHDzTlxJ9r9qM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=bfLPMzse; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=PA2iNrYk; arc=fail smtp.client-ip=205.220.165.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246627.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571EmxIY013929;
+	Fri, 1 Aug 2025 15:53:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=NRw8m1a3px6az8NIWq
+	/F+UeXaY6Z9h+KUFu5sNwsxz8=; b=bfLPMzse6mf49hisPMTuwKIJiy8eKO2HUb
+	pbx8AZt8dFhip7rlOzQNzuj6UcYpixHHWcfI+afGHwMHoOUIeZdbGj3EA65OsRlB
+	MxZS8yJVA/NkNxKtTQVKJBoz7bwcVwrEZuWPda0PwOi6myM9tmxK6/ieZOUBN+yt
+	2ikPbajJS6uTHGVb9KhqfHErpckR/TWHYwmyJbRialT0kNWPmXezmJ0rkZjQNZiY
+	IqPQAdIxxx7Dc/yTPwDEflwjtQwEq1uQ8DmQOUqsAvi3Yr8/lyRoZWzMAdHOmmoy
+	ZOMcgMNHthljo9nygA+4aqq1xP47I2QSgH2RM3ICXk1uSEMdBxBA==
+Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 484q29xnec-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 01 Aug 2025 15:53:13 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 571FUn6X003459;
+	Fri, 1 Aug 2025 15:53:12 GMT
+Received: from ch4pr04cu002.outbound.protection.outlook.com (mail-northcentralusazon11013010.outbound.protection.outlook.com [40.107.201.10])
+	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 484nfdyq0p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 01 Aug 2025 15:53:12 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pkTaLzR+btB8/oQvYQDTEaWgJFi3WPnS8hueSHYn/m8FeueT0FmfW1yzWLQQat44eDU86onEcWHqDTZTVtbzD3Sa2Ozifgk0ztK1GqsdyKlpMsmDiIJqhlQh4A4gco6/HjId0EMzS01SH54NlbMBDzeZ5wBvEWZgn2oVQS+Uipl1vZCz+CVosLhlxE4zHWep8JJqKiwQsqxMGkPggU8TelRDoWr0LlWwalV3NDdVmDspMBIZ/qt87WSR2gnd8Un/vxQFKhKamOdzJKLWTuOULmWZzWp6YzYpfT2mkrKkBXUsHaZ+g66/KgwDRNfrayx5iIrmdnNV2ILoD9M239weNg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=NRw8m1a3px6az8NIWq/F+UeXaY6Z9h+KUFu5sNwsxz8=;
+ b=y3e6m//LZl4cOM9ahtimYPDq/eINLztsKybizaMp+9WfnHWSKcyWDNBchUKbaI0ovlXDiAKeXGzmZrpN68K+gjRMKvtOOdd0pzIn4+xZfGgA+dHrOdlHVMuL+3QWLliZcY38TH5lBy57lK5wx5+WCOCuZKcCkrSWZVy4kjn6aiqDuJEGqH3vkQEPRZJADEl43awioTb4ro1DiHldrEFxAYPUlLXEps0cTGJ64ZLTT6FzEmM7t/phCcpkjwUUKXGV1JT178nydtEob1khBzdkFXhOf/EH4yhyFdJfn7s+hYFBzipzb0qhFVhXBei1VHWJ/BgSkmrWGzREswapB1QUwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754063467; x=1754668267; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=z3gynLxJTqeTyUkKqh0jIH8V/DuEC4i3JqHA8TCee7s=;
-        b=FTa4HOPaAmcytdM3VHYuB0XywqAms82n2swzRONdlt97ztwLx+zoG+dbhgpL2Rzw8Q
-         CA5gdtctNFiPp1emGo2dCSdD0DxQk5r9Gl3Dzb842vHty6uVYEr7Bd0qcZKQaV8t5ojf
-         EaiqvL6MU2QnHsnoSpkx3N1hmZ/hv7X75cH0ZG335nbKXqz8OUpf5dnaDOxxmxHvhM0i
-         bvKl9NRPV8958Lb+32YbRuAG5VAWE+VrYLLpCMN6YHlsj9ya3EM6tctcSj1eopPQvkxI
-         lZOGYtO4c2NcXPv1uxAA1eRoeIHni5HBwZ3xfJFU3V8nV/wbBNgzeLNoi75PEGcKt1sK
-         r+dA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754063467; x=1754668267;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=z3gynLxJTqeTyUkKqh0jIH8V/DuEC4i3JqHA8TCee7s=;
-        b=TUAbmRnbKKB88rd05vFxj5rH+vS7vZmpL7wymGgfjHJc9LU8nGHkER84lVaXnbS88q
-         nPISGCTdGavMXMKMpx63wX5rS+XoP26w0RlflMse/2LtycAEjfMFm+4QfM4stjTySRw+
-         5+Cmu3w923u/bxfQCGRU9SDWxZsKhNUA+66aK+neHnCENs7nhMtuINdEhD12Lgv+24+8
-         we5EMqNYcBZUUQmxUfA3F+6Lejedt4h3lEaf/cnGMhJs5LD1DuBTo6D9brCE0dJYIBUC
-         ioSk71B/5yV1D7DJRYaqw6ornuaiiRJOkAJ8A46/KBOTiT/DlmT6/3EKBaD1CYksfptl
-         AMNg==
-X-Forwarded-Encrypted: i=1; AJvYcCVjRRGPz48NK28c0+FyNTwRKolMKW3aQ1Zp4jAscplyI9TXf7By95TGQE8i5jZ4/5F7Agc/ao2VE8A1zXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzsrmPG0+3ZNMDeQ2FBeTM4VKOGv91Rn6AJkjzaoyhOsIQcaqnM
-	3hqcZ0P10LaVdn1tKsc3+2nOtf08YBi+TAuc/wHiGIUMDvBxMffnhsZ40d6pOkxkq4k=
-X-Gm-Gg: ASbGncsyhdlMhFPuli4AR+JqHBGzCpvc1o/GS3rALK1eSxiEcrzF9l5WV05TRZsZ9id
-	O9kY9l4aCSXnuCN3fXY4nV1AIRKf8+A/vC8lcdKi1bdPdVK6GOmzgcgB/DxYuWenkC4S1Ga/KpU
-	t0Pw4hr4byZ7BOeHgjk9EzLld313kqIbRPa4SwKgLrRadG6XQ2+VR7aV1fbg/W3f/6otrFEg3rQ
-	7IRwY0btUOw9JMNo8x5qiep9vfd51EXWnMPQM3azTaGy0scTHsouUVLLQ55ZK1dCE4hK5xbex+Q
-	qLU7CyoVzpEgRFS5XHHTtlGNjXmtyHJONK9vOnkYsPZXZrzTXx3uoBi007QTSvXLaSlL2N/OGnx
-	vx0Xbv7zVowKIwjviAFplfddUxXbTCAWbGPk+vVb0/zRljZqGkSyyoyuZoWB6tOx7lRvJ
-X-Google-Smtp-Source: AGHT+IEyXPyGXUOy8NoNlJS1LStkuChjrlNcwcpgQHWbKJrFB6xXGqddUnimBUGWOittnxJdqJOp0g==
-X-Received: by 2002:ac8:5c94:0:b0:4ab:6715:bf48 with SMTP id d75a77b69052e-4af10ac17femr3708001cf.36.1754063466582;
-        Fri, 01 Aug 2025 08:51:06 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e681f2369dsm208619285a.80.2025.08.01.08.51.05
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 08:51:05 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uhs2C-000000012nE-3uEu;
-	Fri, 01 Aug 2025 12:51:04 -0300
-Date: Fri, 1 Aug 2025 12:51:04 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: dan.j.williams@intel.com
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
-Message-ID: <20250801155104.GC26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=NRw8m1a3px6az8NIWq/F+UeXaY6Z9h+KUFu5sNwsxz8=;
+ b=PA2iNrYkYA/gOb10ekq9rAbbrSaBnkkQYgrU3Uew/bZR7Gepxkcdw/NR+9kqtvOIj3ER9VeMqf9egBWrbh7/DsWhQXzGDY1w/FppQKnuIDFWYLQOL7Ms0mbXX15Hy9aJcPTIQMtRb7xQSxUALt97VP3gHD5MnNf1+YBV8gMH5Rc=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by CH3PR10MB7413.namprd10.prod.outlook.com (2603:10b6:610:154::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
+ 2025 15:53:07 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
+ 15:53:07 +0000
+Date: Fri, 1 Aug 2025 16:53:04 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
+Cc: Suren Baghdasaryan <surenb@google.com>,
+        Ryan Roberts <ryan.roberts@arm.com>,
+        Baolin Wang <baolin.wang@linux.alibaba.com>,
+        Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>,
+        "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>,
+        Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>,
+        Dave Hansen <dave.hansen@linux.intel.com>,
+        Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+        Dev Jain <dev.jain@arm.com>,
+        "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+        Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org,
+        willy@infradead.org, linux-mm@kvack.org, x86@kernel.org,
+        linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+        "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+        gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
+ huge_zero_folio_shrinker
+Message-ID: <f00bd734-df95-4057-8263-460c044298f8@lucifer.local>
+References: <20250724145001.487878-1-kernel@pankajraghav.com>
+ <20250724145001.487878-2-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250724145001.487878-2-kernel@pankajraghav.com>
+X-ClientProxiedBy: MM0P280CA0060.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::21) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|CH3PR10MB7413:EE_
+X-MS-Office365-Filtering-Correlation-Id: f8bf2a97-f003-486a-2604-08ddd1138236
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|7416014|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?oLGuwugyznZPaGLlyQtEiv4Nv/N+W16riU0WFFf5FkJDGsIM8A0Wi9+6/fHq?=
+ =?us-ascii?Q?Hc3Fb1fY8j1k2A9Cc6b/W4Ussz2bnKewaWb6ozgf2biTgyUO2wlctlEHsRGb?=
+ =?us-ascii?Q?8TclxVxpalYDrxa+1oQ+PfU3fWEYyuATsGTMiM+1KCDyxzcomQTTUzklLUr7?=
+ =?us-ascii?Q?NG/usLB1CBxRQs+/szIE7sg9BXxwI2yv2JaccPVdfnI921KtCPVdh+b55rRc?=
+ =?us-ascii?Q?2JTFYAM272BbMnplqMgngZvHmS/URu6AoAnIuJK0s35YeooYjVLI9iHP6COq?=
+ =?us-ascii?Q?B0wOMbKKkSGcmIiiQuP/eENVXBY/J6zyIp4ju1+5vsblWE0KIaYKHk0/bWGZ?=
+ =?us-ascii?Q?9uB9tt1pWrtJXZLPML/3CyNhSe0odChwFKeOMNDWo9kx7hiCbEW6tJMsLSqF?=
+ =?us-ascii?Q?3WXsRPJUC4GyHG+DUjfEh1EzL453hiZ9BcfFnqHTu6zFyhJ6ABe9vBYjift3?=
+ =?us-ascii?Q?DLLiomRc5cO4FdmxHR5wID6p6AdRz0UCQBzKBUzTxlUei2Cig/33g+LD8bsV?=
+ =?us-ascii?Q?2+XP07aWp0VM3ljFzPPVEGslf9Z0uJK3ZZ1ENOLeDQv7sJufEGUEiouydsi/?=
+ =?us-ascii?Q?fICqKgXSnqpzAwGqQmefQ2w6CuRL/KGVI1LKlzmXl2Vr3fUczkhw4kdlSXcu?=
+ =?us-ascii?Q?0Z+328VLlccqvbCze7931N1e6einhJgRhXnrw6F8x3BbTYwfMsfmqooTI18N?=
+ =?us-ascii?Q?4Q/mNpGCHXjlzGoZkbF8tjLq3tLNnQyCpjMmPPqYtO1TuIvw08GOgIPZpY5U?=
+ =?us-ascii?Q?wVBf3Yh1RApW/xuTxbsnVzBVnIyoNzSGdDdTSMEveIcJqpeUV1WbjQsKpcZo?=
+ =?us-ascii?Q?k2rwQkpr1TR1FCJj6iXXzH5pDeMb6p99xffUmAoAlMM7WRTKM4UhT0pPFxvz?=
+ =?us-ascii?Q?TBBANlI05yt1RLKZgBiuA6vYT4nfWqhGin90pMdGgNhdkAYZ6fwpDNEMAhiH?=
+ =?us-ascii?Q?xC3hjEDbtXrXQ7rwfp+ChgPkl1UHguBKVsOyPjJVs6/aneo3z9P+DL8hTyFN?=
+ =?us-ascii?Q?P2Sl8Zi+YOUqcg4m9XoO7riQzM4389/1fvUjEO2VgEvW+dFfblUu5cE4Sqwq?=
+ =?us-ascii?Q?vpVnwmCnT2pRK6nZ6DQcpSSqRxKmMVd1PxFOVTxI9CnRhN/JkLdShk6nvvK+?=
+ =?us-ascii?Q?daduuysrQCIQLwguIa5eSZ/Oaw6/8o1gtyOr17bx30W+h3aAvvN3eHPEWxkv?=
+ =?us-ascii?Q?VCb/QnNE7KyB7yFA+h+swaP6vrmixbolfEcfC6NsSKX63oZKFfbypOCORf/B?=
+ =?us-ascii?Q?4//NsySF++PcmQVofxlTfRI9iq0J2QziU813jIC/Zhx+49f4YQRId/OHFEPp?=
+ =?us-ascii?Q?fF9KeM3gh90EiSfWsEZhHeXbkdi3GVCV9xn6RW//WyMHf57cUPSAw5RRFb5N?=
+ =?us-ascii?Q?jjvkg3mBiW16HFLqcHiQ2cl/gPQMaxf5k+A0zFqE1jA9J+L3OQ=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?OV5HlXjK1MO3GNwkaODd0IEdkJMDLcotqdZnT7bqVLiANpHBlO0wmeqH0As9?=
+ =?us-ascii?Q?h6aofK7rzmgy2nkrqkXOKrhzWUuvl6+TbGBWo3MOuizQ2DKtjrt0ajuiONGW?=
+ =?us-ascii?Q?PpmQQxFgPU1yyhepx16v8QLfEaIvYiP/sqtNwQQk+M6EmoalN/6Rsfamt9rP?=
+ =?us-ascii?Q?+vpKMfQrYBSs/Btp/9UCdX5Jwn51XtauVm0KP6roUlKV8pDAWIqzLhJNmYOM?=
+ =?us-ascii?Q?eZeyX3Qfb4TOBQdpoRAWTIr0FcImJi1FbSUTHyGfEMnpr/s1QpVigVE2zTdt?=
+ =?us-ascii?Q?HXckoGlw6UhZDc/6BtwdkyKfr9NH2o5HaKrQB1tze5MRPNlZel8vBoNzg+6H?=
+ =?us-ascii?Q?mc29foOmD/UhRHbhLVGxj3WX2Toh2ABquqvieEDHOaw5tLaeq5mRulvPqja8?=
+ =?us-ascii?Q?GmLMKZI8YsCNxvqU+ANzh3hVjhAMo25F8SPS5kG8vgTfSW0PoPLraM6fE4ID?=
+ =?us-ascii?Q?NOl5pIFgdpja8DFofBUaRpy370RgFOHONuyjs+rzUR4AO+zsBtjDup0dgJYd?=
+ =?us-ascii?Q?Tv5QU6yHCFXUyMo6XdJuTmS6PaVMBHSigz0yJidTgNXRY/bZIpTTAFB47SMf?=
+ =?us-ascii?Q?9zOAvN9uvpAoQlALtU27/oe8GyZEFBoVI6mJH7hSh5y0EzLUe/eT9LOOs/je?=
+ =?us-ascii?Q?DKvig2d25hQEBlb3LOOM1+rfZN3eM/BWSie/6Blz55oMBn9TBVdKRCBqs4UA?=
+ =?us-ascii?Q?UqctMYjt3Wxjvwz8jh69BWH1OoZg/nKPXmF0+ryOc/IFXo7prN6SyuYzwwqw?=
+ =?us-ascii?Q?qW4i3SoIBYrOcwluAHlAwJISOovZBj67ZSXGVZ2CGy5rxZq34gaNzaojh/XH?=
+ =?us-ascii?Q?yuRovpIY247LAdTP1glJGwKvs4nZWKe+pxXurmw29HiWlSf3DVVoR7v/W07Y?=
+ =?us-ascii?Q?xAK4Ta6ADuyVg1NeIFU1SpKgeGsNsEDbJFO4IDwQx7RNeNfmSRxF5LpQvXsj?=
+ =?us-ascii?Q?9G4GJYc/cN8C4yMxLCjb+pYz3QQ0m+1rQi6Sx80F6B6nSiUhIroZKVDGxuER?=
+ =?us-ascii?Q?9q/VrXu5Qf3q0uK5LUPvcg2ZmaGHcXMJmjnXxhzKeJqKTQo5gXwElxijBjYF?=
+ =?us-ascii?Q?wd/AQcw4TtS7NOJTAhZUNSGVrW/53g135wOIx9s05ybEmpgFoD1qzUBup96O?=
+ =?us-ascii?Q?cjOMLtjg5WRJQ0S9REhuWKDqfQaeclRfmGjPpjFjDz09mdUFrfKVIKNYutud?=
+ =?us-ascii?Q?ixf6MZipygNphl5a8ui3oQKRjffdvxmwspwSGecGS4InUn0HeQ0VMB6MHRlc?=
+ =?us-ascii?Q?YmvDD1Wfuz7+oa/g45iPLSDjSbM3pJ9p05RtAhS4fpHl6SMBuGZ2gej4OxQe?=
+ =?us-ascii?Q?+dUfdtyaBfwqHC3oMtFQqEYyBB64Jb+nKhzuyym1Y0USzfJYUynA0LmPUsyb?=
+ =?us-ascii?Q?OLFQA9rrHSc/Hv84PMaFa79Oq1nSQwV9TYd1uy5puHoNkOFuiCh6+DxnYniG?=
+ =?us-ascii?Q?appdTf/bKyGChxM/2c24OLkwh3ghwWA3u+FNE3ULSilNik5ZUuvHtE8cCA+t?=
+ =?us-ascii?Q?yMAKH+cpiNuPrnrba4+apHqX0CiY5Uz1ojryVU0tvIPkD0kEWa6OeWWmodEJ?=
+ =?us-ascii?Q?YKrWWEkvHvGxCWBTaEoBbWmGMvyWqDw/R0Kg60cF6Bk3AlMgComntHq/7le7?=
+ =?us-ascii?Q?rg=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	qFeMtxpH9tCQpbmIEiOGPb7Ld0HCYQp1YO/8Z0li2uKSPmfXNTY+2VAd4mNiY4UsFvchRhZ9mh4uQqn5FCdnpTr/LKNPQUslS4V1g+GIoblNU+znIswQDm6McHG6+9nEy+R0myhs9oqlmehtpoL8b/8CgpoxCY38tXFOF6X53ZJ0GjDp3UENG7LdnbdUGfuRzMXsdly5Y8thus/blnfCFIPsl2SrYeC++Y41cLnZZKfztlvU5YkEy85Eq2Qvknb29PlCE9QOXEHmNKIROF+2thhzV4E5naR3q9h68F30tfU22V646yKfoDxPSha8REyeckB65uRVZmahgcCeAkMpSytbgw2kerF5ekpARMcShRImKydzj+QBtZ2kBjNhZSAIOoHjKRZpenQEzrdH1J2zrf1n/tq7cBxJPlKfAR0UxWWr2F3K/asdr6RgM4jVTsCf4lyA63dvTyPJWcep0DuR19jBXSaxXDRZJPm5QXnUdz44qI93/qolQLPqKm4qbhJkUZfhgppLYUHxNML4NeObcaHZTim3bD6+VdoS036Wo6hVZzH997VReuQFxqUbNpQ9VlICohR9ei5VPqD/sjnUuxW/xCBV30AQAs936OodBqY=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f8bf2a97-f003-486a-2604-08ddd1138236
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 15:53:07.6851
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: pLIUE3st2IzuVHb4iTtka6h+Ae/TPUV3v3QsD3VbuPIQQjq5n1ylV5BdGW7bzdTL0q9RdUCwQRxqzAM+KfTLWhd9+754WZZcU26Mr/gK1g8=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7413
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 malwarescore=0 bulkscore=0 spamscore=0
+ mlxscore=0 phishscore=0 adultscore=0 suspectscore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2508010122
+X-Proofpoint-ORIG-GUID: l3EJicd3uklyJlAsSS4tRcj09mU74zmk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEyMiBTYWx0ZWRfX7gY1yrrHP5Cz
+ L+ow80N95O6GgIqcVkIQA/+09j6kXjhEkv16yMjXcFcQUhwrU4ISPjlyBrLXtdDv8AjhvOd9CK1
+ HGL4JKzX8ZxT9OizYVtxUKE5ohBUfLLea8JuVrxVwxQBl6XbyGH4vL+I0qivm5IvNP4pyKePe/0
+ uFQZbNXzw8twMU4XFscYmx4CE04Z1mCE7Fv/nvqRVzFabuP4pQuDYoZJ4M7wrBZrsUhLrCeZkyX
+ N7q6lxnXwpWf/NZfsR2MIQ5hp35DJ8J16V0OiW54M2p9QH51yI6B181+w8UYVvoQqwtxIRIv535
+ xGOLtOpGxa3Y+Wyp++G/LmDB2pfXohfDWbtipwUlDZdkXyFqDQrlqHZXnSiiw2665hjVQvZCyCc
+ SmL5JjOIiFZYPSzb9wf1PH+PAii6mFYFgLX3mGNo20etj3gnEcH6mYXxawibaKbR+QbMEobK
+X-Authority-Analysis: v=2.4 cv=FvIF/3rq c=1 sm=1 tr=0 ts=688ce2e9 cx=c_pps
+ a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=hD80L64hAAAA:8 a=20KFwNOVAAAA:8
+ a=yPCof4ZbAAAA:8 a=p5Tm_5Oj0aXCBKwpJbcA:9 a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: l3EJicd3uklyJlAsSS4tRcj09mU74zmk
 
-On Thu, Jul 31, 2025 at 07:07:17PM -0700, dan.j.williams@intel.com wrote:
-> Aneesh Kumar K.V (Arm) wrote:
-> > Host:
-> > step 1.
-> > echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
-> > echo vfio-pci > /sys/bus/pci/devices/${DEVICE}/driver_override
-> > echo ${DEVICE} > /sys/bus/pci/drivers_probe
-> > 
-> > step 2.
-> > echo 1 > /sys/bus/pci/devices/$DEVICE/tsm/connect
-> 
-> Just for my own understanding... presumably there is no ordering
-> constraint for ARM CCA between step1 and step2, right? I.e. The connect
-> state is independent of the bind state.
-> 
-> In the v4 PCI/TSM scheme the connect command is now:
-> 
-> echo $tsm_dev > /sys/bus/pci/devices/$DEVICE/tsm/connect
-
-What does this do on the host? It seems to somehow prep it for VM
-assignment? Seems pretty strange this is here in sysfs and not part of
-creating the vPCI function in the VM through VFIO and iommufd?
-
-Frankly, I'm nervous about making any uAPI whatsoever for the
-hypervisor side at this point. I don't think we have enough of the
-solution even in draft format. I'd really like your first merged TSM
-series to only have uAPI for the guest side where things are hopefully
-closer to complete..
-
-> > step 1:
-> > echo ${DEVICE} > /sys/bus/pci/devices/${DEVICE}/driver/unbind
-> > 
-> > step 2: Move the device to TDISP LOCK state
-> > echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/lock
-> 
-> Ok, so my stance has recently picked up some nuance here. As Jason
-> mentions here:
-> 
-> http://lore.kernel.org/20250410235008.GC63245@ziepe.ca
-> 
-> "However it works, it should be done before the driver is probed and
-> remain stable for the duration of the driver attachment. From the
-> iommu side the correct iommu domain, on the correct IOMMU instance to
-> handle the expected traffic should be setup as the DMA API's iommu
-> domain."
-
-I think it is not just the dma api, but also the MMIO registers may
-move location (form shared to protected IPA space for
-example). Meaning any attached driver is completely wrecked.
-
-> I agree with that up until the point where the implication is userspace
-> control of the UNLOCKED->LOCKED transition. That transition requires
-> enabling bus-mastering (BME), 
-
-Why? That's sad. BME should be controlled by the VM driver not the
-TSM, and it should be set only when a VM driver is probed to the RUN
-state device?
-
-> and *then* locking the device. That means userspace is blindly
-> hoping that the device is in a state where it will remain quiet on the
-> bus between BME and LOCKED, and that the previous unbind left the device
-> in a state where it is prepared to be locked again.
-
-Yes, but we broadly assume this already in Linux. Drivers assume their
-devices are quiet when they are bound the first time, we expect on
-unbinding a driver quiets the device before removing.
-
-So broadly I think you can assume that a device with no driver is
-quiet regardless of BME.
-
-> 2 potential ways to solve this, but open to other ideas:
-> 
-> - Userspace only picks the iommu domain context for the device not the
->   lock state. Something like:
-> 
->   private > /sys/bus/pci/devices/${DEVICE}/tsm/domain
-> 
->   ...where the default is "shared" and from that point the device can
->   not issue DMA until a driver attaches.  Driver controls
->   UNLOCKED->LOCKED->RUN.
-
-What? Gross, no way can we let userspace control such intimate details
-of the kernel. The kernel must auto set based on what T=x mode the
-device driver binds into.
-
-> - Userspace is not involved in this transition and the dma mapping API
->   is updated to allow a driver to switch the iommu domain at runtime,
->   but only if the device has no outstanding mappings and the transition
->   can only happen from ->probe() context. Driver controls joining
->   secure-world-DMA and UNLOCKED->LOCKED->RUN.
-
-I don't see why it is so complicated. The driver is unbound before it
-reaches T=1 so we expect the device to be quiet (bigger problems if
-not).  When the PCI core reaches T=1 it tells the DMA API to
-reconfigure things for the unbound struct device. Then we bind a
-driver as normal.
-
-Driver controls nothing. All existing T=0 drivers "just work" with no
-source changes in T=1 mode. DMA API magically hides the bounce
-buffering. Surely this should be the baseline target functionality
-from a Linux perspective?
-
-So we should not have "driver controls" statements at all. Userspace
-prepares the PCI device, driver probes onto a T=1 environment and just
-works.
-
-> > step 3: Moves the device to TDISP RUN state
-> > echo 1 > /sys/bus/pci/devices/${DEVICE}/tsm/accept
-> 
-> This has the same concern from me about userspace being in control of
-> BME. It feels like a departure from typical expectations.  
-
-It is, it is architecturally broken for BME to be controlled by the
-TSM. BME is controlled by the guest OS driver only.
-
-IMHO if this is a real worry (and I don't think it is) then the right
-answer is for physical BME to be set on during locking, but VIRTUAL
-BME is left off. Virtual BME is created by the hypervisor/tsm by
-telling the IOMMU to block DMA.
-
-The Guest OS should not participate in this broken design, the
-hypervisor can set pBME automatically when the lock request comes in,
-and the quality of vBME emulation is left up to the implementation,
-but the implementation must provide at least a NOP vBME once locked.
-
-> Now, the nice thing about the scheme as proposed in this set is that
-> userspace has all the time in the world between "lock" and "accept" to
-> talk to a verifier.
-
-Seems right to me. There should be NO trusted kernel driver bound
-until the verifier accepts the attestation. Anything else allows un
-accepted devices to attack the kernel drivers. Few kernel drivers
-today distrust their HW interfaces as hostile actors and security
-defend against them. Therefore we should be very reluctant to bind
-drivers to anything..
-
-Arguably a CC secure kernel should have an allow list of audited
-secure drivers that can autoprobe and all other drivers must be
-approved by userspace in some way, either through T=1 and attestation
-or some customer-aware risk assumption.
-
-From that principal the kernel should NOT auto probe drivers to T=0
-devices that can be made T=1. Userspace should handle attaching HW to
-such devices, and userspace can sequence whatever is required,
-including the attestation and verifying.
-
-Otherwise, if you say, have a TDISP capable mlx5 device and boot up
-the cVM in a comporomised host the host can probably completely hack
-your cVM by exploiting the mlx5 drivers's total trust in the HW
-interface while running in T=0 mode.
-
-You must attest it and switch to T=1 before binding any driver if you
-care about mitigating this risk.
-
-> With the driver in control there would need to be something like a
-> usermodehelper to notify userspace that the device is in the locked
-> state and to go ahead and run the attestation while the driver waits*.
-
-It doesn't make sense to require modification to all existing drivers
-in Linux! The starting point must have the core code do this sequence
-for every driver. Once that is working we can talk about if other
-flows are needed.
-
-> > step 4: Load the driver again.
-> > echo ${DEVICE} > /sys/bus/pci/drivers_probe
-> 
-> TIL drivers_probe
-> 
-> Maybe want to recommend:
-> 
-> echo ${DEVICE} > /sys/bus/pci/drivers/${DRIVER}/bind
+On Thu, Jul 24, 2025 at 04:49:58PM +0200, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 >
-> ...to users just in case there are multiple drivers loaded for the
-> device for the "shared" vs "private" case?
+> As we already moved from exposing huge_zero_page to huge_zero_folio,
+> change the name of the shrinker to reflect that.
+>
+> No functional changes.
+>
+> Suggested-by: David Hildenbrand <david@redhat.com>
+> Acked-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 
-Generic userspace will have a hard time to know what the driver names
-are..
+Makes sense to rename other related stuff as pointed out by Ritesh and
+David, but for this part:
 
-The driver_probe option looks good to me as the default.
+Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-I'm not sure how generic code can handle "multiple drivers".. Most
-devices will be able to work just fine with T=0 mode with bounce
-buffers so we should generally not encourage people to make completely
-different drivers for T=0/T=1 mode.
-
-I think what is needed is some way for userspace to trigger the
-"locking configuration" you mentioned, that may need a special driver,
-but ONLY if the userspace is sequencing the device to T=1 mode. Not
-sure how to make that generic, but I think so long as userspace is
-explicitly controlling driver binding we can punt on that solution to
-the userspace project :)
-
-The real nastyness is RAS - what do you do when the device falls out
-of RUN, the kernel driver should pretty much explode. But lots of
-people would like the kernel driver to stay alive and somehow we FLR,
-re-attest and "resume" the kernel driver without allowing any T=0
-risks. For instance you can keep your netdev and just see a lot of
-lost packets while the driver thrashes.
-
-But I think we can start with the idea that such RAS failures have to
-reload the driver too and work on improvements. Realistically few
-drivers have the sort of RAS features to consume this anyhow and maybe
-we introduce some "enhanced" driver mode to opt-into down the road.
-
-Jason
+> ---
+>  mm/huge_memory.c | 24 ++++++++++++------------
+>  1 file changed, 12 insertions(+), 12 deletions(-)
+>
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 2b4ea5a2ce7d..5d8365d1d3e9 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -266,15 +266,15 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
+>  		put_huge_zero_page();
+>  }
+>
+> -static unsigned long shrink_huge_zero_page_count(struct shrinker *shrink,
+> -					struct shrink_control *sc)
+> +static unsigned long shrink_huge_zero_folio_count(struct shrinker *shrink,
+> +						  struct shrink_control *sc)
+>  {
+>  	/* we can free zero page only if last reference remains */
+>  	return atomic_read(&huge_zero_refcount) == 1 ? HPAGE_PMD_NR : 0;
+>  }
+>
+> -static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
+> -				       struct shrink_control *sc)
+> +static unsigned long shrink_huge_zero_folio_scan(struct shrinker *shrink,
+> +						 struct shrink_control *sc)
+>  {
+>  	if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
+>  		struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
+> @@ -287,7 +287,7 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
+>  	return 0;
+>  }
+>
+> -static struct shrinker *huge_zero_page_shrinker;
+> +static struct shrinker *huge_zero_folio_shrinker;
+>
+>  #ifdef CONFIG_SYSFS
+>  static ssize_t enabled_show(struct kobject *kobj,
+> @@ -849,8 +849,8 @@ static inline void hugepage_exit_sysfs(struct kobject *hugepage_kobj)
+>
+>  static int __init thp_shrinker_init(void)
+>  {
+> -	huge_zero_page_shrinker = shrinker_alloc(0, "thp-zero");
+> -	if (!huge_zero_page_shrinker)
+> +	huge_zero_folio_shrinker = shrinker_alloc(0, "thp-zero");
+> +	if (!huge_zero_folio_shrinker)
+>  		return -ENOMEM;
+>
+>  	deferred_split_shrinker = shrinker_alloc(SHRINKER_NUMA_AWARE |
+> @@ -858,13 +858,13 @@ static int __init thp_shrinker_init(void)
+>  						 SHRINKER_NONSLAB,
+>  						 "thp-deferred_split");
+>  	if (!deferred_split_shrinker) {
+> -		shrinker_free(huge_zero_page_shrinker);
+> +		shrinker_free(huge_zero_folio_shrinker);
+>  		return -ENOMEM;
+>  	}
+>
+> -	huge_zero_page_shrinker->count_objects = shrink_huge_zero_page_count;
+> -	huge_zero_page_shrinker->scan_objects = shrink_huge_zero_page_scan;
+> -	shrinker_register(huge_zero_page_shrinker);
+> +	huge_zero_folio_shrinker->count_objects = shrink_huge_zero_folio_count;
+> +	huge_zero_folio_shrinker->scan_objects = shrink_huge_zero_folio_scan;
+> +	shrinker_register(huge_zero_folio_shrinker);
+>
+>  	deferred_split_shrinker->count_objects = deferred_split_count;
+>  	deferred_split_shrinker->scan_objects = deferred_split_scan;
+> @@ -875,7 +875,7 @@ static int __init thp_shrinker_init(void)
+>
+>  static void __init thp_shrinker_exit(void)
+>  {
+> -	shrinker_free(huge_zero_page_shrinker);
+> +	shrinker_free(huge_zero_folio_shrinker);
+>  	shrinker_free(deferred_split_shrinker);
+>  }
+>
+> --
+> 2.49.0
+>
 
