@@ -1,53 +1,63 @@
-Return-Path: <linux-kernel+bounces-753817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E6D42B18872
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:01:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C794FB18874
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:03:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25478562D92
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:01:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 884AA3A6F41
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:02:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB84E21D3F5;
-	Fri,  1 Aug 2025 21:01:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6AF28C852;
+	Fri,  1 Aug 2025 21:02:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ntW0V/Mk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jslcEZqK"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 307632147F9;
-	Fri,  1 Aug 2025 21:01:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 227FF4207F;
+	Fri,  1 Aug 2025 21:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754082106; cv=none; b=JwBF5LRl3OJc/C9MmmOacH5hUeW/odGkdBigpEcwqicMFhuXQDhzghudmqLgaOEfgq6wlAki+I4mfCOn6xMlykOnS9jY1HqSMSVCfkVEwMDnltAv7wUu4HmC2ObyT+tn4pt8W7j5bN35GZPjjxwI8rrU3347vNURaUYDmnl2V8M=
+	t=1754082172; cv=none; b=eSQ/GNgyukxdvGTiLNq0+aD1lv9Ah63F1x3UduUfakjW6caC8ULm5XDReJS0YaXnIWSbAlL0Get7ZQcM7j1vCPxgxBc8hcEVYNpd35UoB3ySXELWinQR7V133aGep1xckS9YU7vGqEn/6OWROFEOiqDVx/opNuWRJSDMFvLdr94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754082106; c=relaxed/simple;
-	bh=eYn24Df2DPfktFg3q3iAncFfxzsR6pbSbJtejQ6BcTA=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=RBP57a0FCx5/4pD2TtS/aaaHvVyf5ZgGmEJOJOxqtvMm9kZu/Niu5YXWCH+KV4VfthISkiuPFXaZGL7/tKYwCXz7NwDMiRNLRvMJ4C4D6qygqGKEUx3jCaycEYQhDBMIb3QlQvVY/qCFSpQaz/rBMQbIzv9ZROKbllNUkWPg7+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ntW0V/Mk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D950C4CEE7;
-	Fri,  1 Aug 2025 21:01:45 +0000 (UTC)
+	s=arc-20240116; t=1754082172; c=relaxed/simple;
+	bh=ayyylkq7rdFa1jgiPcSRwE0mQe0Oe76IsLxcC+7LEV4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d6IhA+GajN7GeczR3k37nmLBDtNr3EbwryvmfyzV7V+UlxS7/TpyvALcWmqiKSCRObQEY5Kr3Bd+bkSKGlCb6wdmwkD6g3VzNWsnU1U3VpVAWXVLl/p++qL088XE8qNQoEYmQSCGSsuiCeQsMPvmEz1Gjj43F3UFNQX5caV2rZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jslcEZqK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41DE0C4CEE7;
+	Fri,  1 Aug 2025 21:02:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754082105;
-	bh=eYn24Df2DPfktFg3q3iAncFfxzsR6pbSbJtejQ6BcTA=;
+	s=k20201202; t=1754082171;
+	bh=ayyylkq7rdFa1jgiPcSRwE0mQe0Oe76IsLxcC+7LEV4=;
 	h=From:To:Cc:Subject:Date:From;
-	b=ntW0V/Mke++hBis9S+ymDYqKcsySZKDRLd8xnQmQkmZhZjdpADMWV2hutrQmSN0OC
-	 UKEGoz2lRSOLo74exG2gSDM9SSeDcF5vt7iu/FUbnKfWMmvhfOOUclUzgw0UjM6oUr
-	 en5SzkaEt2FPUlhTZQZFK1VpP2Dl4QNc0mJTOcZruiR55ACtyf3WP8ttlxJZntmQL+
-	 HlZpoo2/ZLk4DKeTKfd1TCVMjFpdwLkgW9KS1OKtIL9gpeRooV66B8ZWRo93RcoQv3
-	 gKOhYWNYPP3qY8036i+yrxyIjggotyzu50Kl2lgFXIW6VXny+2+U3RWBxiYx/qm3jh
-	 xXaZA9w1DXa8A==
-From: SeongJae Park <sj@kernel.org>
-To: damon@lists.linux.dev
-Cc: SeongJae Park <sj@kernel.org>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: DAMON Beer/Coffee/Tea chat reminder for the week of 2025-08-04
-Date: Fri,  1 Aug 2025 14:01:42 -0700
-Message-Id: <20250801210142.1858-1-sj@kernel.org>
-X-Mailer: git-send-email 2.39.5
+	b=jslcEZqK0veZp0ElsZzOSM4XH3KJQmF8lr62kDqMAcqerFGKm1CanZx/xyvZO7LDa
+	 EHCsR+FTmdF4pcVljdatfliyGRlPCrwsa5/rtGtnsrAxpCV6kd2+u8op4rARLazy8W
+	 ykKV/4nCx3Zbw4yPQsfMBlzYAA3Ggk+b7nXBaB6wGixVmC0tuZ7Sf+vFvSOj8a+3Pa
+	 lXFME12DFEzann0rT67aPQ+ukAL4t0znL/G53xY8AjGcAAWe9E6923LygG9sXWzlq7
+	 9SUSJpZr83xfkANBYPtmvBkZsNSh0gY/gwgkn6QxLJTDVkdbJX0U6lk4pbQlRSiwBF
+	 jRoj+hpZLyl0w==
+From: Jiri Olsa <jolsa@kernel.org>
+To: Oleg Nesterov <oleg@redhat.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org,
+	Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: [RFC 0/4] uprobe,bpf: Allow to change app registers from uprobe
+Date: Fri,  1 Aug 2025 23:02:34 +0200
+Message-ID: <20250801210238.2207429-1-jolsa@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,44 +66,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Hello,
+hi,
+we recently had several requests for tetragon to be able to change
+user application function return value or divert its execution through
+instruction pointer change.
+
+This *RFC* patchset adds support for uprobe program to change app's
+registers including instruction pointer.
+
+There's a hiccup with instruction pointer change.. if uprobe handler
+changes instruction pointer, the current code will still execute the
+original instruction and increment the (new) ip with its length.
+
+This makes the new instruction pointer bogus and application will
+likely crash on illegal instruction execution.
+
+I think if user decides to take execution elsewhere, we can skip
+original instruction execution (patch#1), but I might be easily
+wrong and overlooking something.. hence RFC ;-)
+
+thoughts? thanks,
+jirka
 
 
-This is yet another reminder of upcoming DAMON Beer/Coffee/Tea chats
-(https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing)
-for the week of 2025-08-04.
+---
+Jiri Olsa (4):
+      uprobe: Do not emulate/sstep original instruction when ip is changed
+      bpf: Allow uprobe program to change context registers
+      selftests/bpf: Add uprobe context registers changes test
+      selftests/bpf: Add uprobe context ip register change test
 
-We have two reserved time slots for meetings in the week, as usual.
-
-I will skip those for weeks of 2025-09-01 and 2025-09-15 since I will have a
-travel during the time.  Feel free to reach out in any way as usual, though!
-
-Next six time slots that I reserved in advance are as below.
-
-2025-08-04 (Mon) 18:00 PT (not yet reserved)
-2025-08-06 (Wed) 09:30 PT (not yet reserved)
-2025-08-18 (Mon) 18:00 PT (not yet reserved)
-2025-08-20 (Wed) 09:30 PT (not yet reserved)
-2025-09-29 (Mon) 18:00 PT (not yet reserved)
-2025-10-01 (Wed) 09:30 PT (not yet reserved)
-
-Please reach out to me (sj@kernel.org or whatever) to reserve the
-not-yet-reserved time slots for your topics.  The reservation is made in a
-First-Come First-Served way, and I will send a Google Meet link to
-reservation-confirmed attendees.
-
-Please note that other time slots are also available on demands.
-
-Shared Calendar
----------------
-
-You can get the schedule via this shared Google Calendar:
-https://calendar.google.com/calendar/u/0?cid=ZDIwOTA4YTMxNjc2MDQ3NTIyMmUzYTM5ZmQyM2U4NDA0ZGIwZjBiYmJlZGQxNDM0MmY4ZTRjOTE0NjdhZDRiY0Bncm91cC5jYWxlbmRhci5nb29nbGUuY29t
-
-You can also get the past and upcoming schedules via
-https://docs.google.com/document/d/1v43Kcj3ly4CYqmAkMaZzLiM2GEnWfgdGbZAH3mi2vpM/edit?usp=sharing
-
-
-Thanks,
-SJ
+ include/linux/bpf.h                             |   1 +
+ kernel/events/core.c                            |   4 +++
+ kernel/events/uprobes.c                         |   3 ++
+ kernel/trace/bpf_trace.c                        |   3 +-
+ tools/testing/selftests/bpf/prog_tests/uprobe.c | 162 ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++-
+ tools/testing/selftests/bpf/progs/test_uprobe.c |  38 ++++++++++++++++++++++++
+ 6 files changed, 208 insertions(+), 3 deletions(-)
 
