@@ -1,171 +1,135 @@
-Return-Path: <linux-kernel+bounces-752843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B08FB17B81
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B5E9B17B68
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C000C3ADE34
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:43:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67F87586D43
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8311991B6;
-	Fri,  1 Aug 2025 03:43:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3671E18C91F;
+	Fri,  1 Aug 2025 03:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="dTD6gLEJ";
-	dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b="pnRgjqoe"
-Received: from bayard.4d2.org (bayard.4d2.org [155.254.16.17])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ociUoZqM"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 050E613EFF3;
-	Fri,  1 Aug 2025 03:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.254.16.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8961E33F9;
+	Fri,  1 Aug 2025 03:30:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754019821; cv=none; b=M81iHL/xabVywfhPmbn3JsdcRdGDYW3luLN+5cKnY2ZarB3sh+TS6CCYt3twcxWLbnWg70I1vaR7rnNAlV4YEiz/81bweHDFTJ0rx7BTYRhyIXT0DfGELMOR/Zf0VuYc5rtnhv5AP1RCZcGK3k73s7HbkzJ2D5cp9tan9/qJNfA=
+	t=1754019020; cv=none; b=OoZnLvN3ngdQywVidelIZgtfAGLGjjsjFcNGWuwFuAXzg61yvNcjsPCtBQVbNGH6K5CgWABjJuEJ5LAmTZdU+6rfnLJwDSMmX5sIdMX2+Fmyt9vpaeQRy4Ndi7Jaf1E2Jy65gc43ea0q3NWLMXfxrH+IPysr7I6AwyQF1CcsQcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754019821; c=relaxed/simple;
-	bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nHoS8Ah2rVxX7mTsnyMMf40b92EL4UyV+PwsIKSSGsmreVtakbW6UtWA46+j6F4hVab6biMZV69xQdHw3G0eJH2/4Cc3vgyCvYen7fWYuILtK/qKjSjVsGP0a51VsH9WUpdRyCN2J8smf0M/ngiC9hJ8dNTEIXHkHG5dEpsrkr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org; spf=pass smtp.mailfrom=4d2.org; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=dTD6gLEJ; dkim=pass (2048-bit key) header.d=4d2.org header.i=@4d2.org header.b=pnRgjqoe; arc=none smtp.client-ip=155.254.16.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=4d2.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=4d2.org
-Received: from localhost (bayard.4d2.org [127.0.0.1])
-	by bayard.4d2.org (Postfix) with ESMTP id 77F3F12FB41C;
-	Thu, 31 Jul 2025 20:25:42 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754018742; bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dTD6gLEJ2CxMefUxfELj+QGXw7f1ofNLfDbbteWeH0CUnHdx0xr3kDgc+CCm60WTv
-	 mP1RYMfwcVQ/EyKU3dx9NbiQcnP1y/NgPN8L6n/tVAKt8X14V/zj7k6I5miD0iJvSQ
-	 M+y8cSVF9F+3h1rLhWuTCH5W7NZSKmSs5UhIZ98vzXJqJUtSkst6j4fW/RdduEC6Ha
-	 0tUV/5BgD7dFkgj9woUOasCD7LjOWjPUJzL1Kpe/MibT3ttBJ2DUxdy13lS8P7Vdjc
-	 4YAjbNfvE89YPtIoHOJyLwVHwyc8eLU722xMB1ko0CfWIuu41vrrkDmJw4UpvNNQ9K
-	 KuPg/DJbTyJRQ==
-X-Virus-Scanned: amavis at 4d2.org
-Received: from bayard.4d2.org ([127.0.0.1])
- by localhost (bayard.4d2.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id W3_rfJeT08lw; Thu, 31 Jul 2025 20:25:39 -0700 (PDT)
-Received: from ketchup (unknown [117.171.66.9])
+	s=arc-20240116; t=1754019020; c=relaxed/simple;
+	bh=+rG6RkrtlD4q+DZ9d/Kr/kFnjxBupXnlqBW37stsxhM=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MGerfNUrMT+z3m+b9P19wL01pgBgBl5IwtmOyVNv7ZWDj0vd5fqmleqTB4iFudT9y57LjcU3CZyDcNBcwBSNPLR56fEF9+1zQ8MV9skR0+haEZFJ++b0ij9cTTz5zALQ7FhFiOAmdsqv/C1R+iWksXgaswucB+cXxqrlCfF/MdI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ociUoZqM; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754018782;
+	bh=YEpyVB7BXORcn8/ntzQKlvVRXmUjh1dmTI9nTw3UdoA=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ociUoZqMkeRW/nAbheDJkGiMBGgXgB5KuB48oCPRCR6P27qftTnMYumw+2xYVdq0F
+	 OPfWvxdeg0DwNZ7OhXDkif0I24SETB19+EoPRyJbUr94reCJunRSwmc+SXtk9wEIrZ
+	 B4Q0Ir1dopumTAQ3TysKixAP4JHQsAJabNlZ4RJLR3DykNJIdAq037tPTaSJVYSoNZ
+	 wBsxhqhAyICT4lyATTsOUabTLuu7h3k+wpPC/e64fe6KfnXt71GQ2txsD8w9BYpNa+
+	 JhQnvzOUt5bZSvCL2pyxMNZcMyWlwG1BaUN3dfAkfC5uUBD4731HAGOel1OxoLSsTV
+	 wKpMvVpvb2tuw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature ECDSA (prime256v1) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: heylenay@4d2.org)
-	by bayard.4d2.org (Postfix) with ESMTPSA id C3E1112FB405;
-	Thu, 31 Jul 2025 20:25:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=4d2.org; s=mail;
-	t=1754018739; bh=RyU/06axbOmuAEJla6gJSqqD6WDLQtT4/yHasgWo1pg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pnRgjqoe3THj7xbnE85paANZv0icsEkbjpr9Ce/YDMcF8rblWRxnJYHNON/ekjKd3
-	 305OiLnwCecZ4BuKK1fhaIYEv4S8/FKCH53aIkZUekhlJ0D4GfdSHyKwYdt054iKvQ
-	 uxpy51q9ELngIZpIOzeYhRUCFdk/fjzf4DWzPyza9oQJVOY0yf3LdJ6FIK2DNXFPtv
-	 LAJuxvSIOw8s/tyc9Yl8bAeaTRMxSg2wXtK99TYKyEQF25L5vbmUweZ3RUNCInRnQF
-	 LqZImkf8dO+8NGI+FWXtyZ8B1DoUKLENjYg37vf5FY9eJ9mxSsuwTjuGvNvHhnGzZp
-	 ROz16puH1/qzg==
-Date: Fri, 1 Aug 2025 03:25:32 +0000
-From: Haylen Chu <heylenay@4d2.org>
-To: Troy Mitchell <troy.mitchell@linux.spacemit.com>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>, Yixun Lan <dlan@gentoo.org>,
-	Alex Elder <elder@riscstar.com>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org, linux-riscv@lists.infradead.org,
-	spacemit@lists.linux.dev, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org, Yao Zi <ziyao@disroot.org>
-Subject: Re: [PATCH RESEND v3 2/2] clk: spacemit: fix sspax_clk
-Message-ID: <aIwzrHKD-GiZ0oFv@ketchup>
-References: <20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com>
- <20250731-k1-clk-i2s-v3-2-2f655ddb0c6f@linux.spacemit.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4btWZP6MxLz4w2N;
+	Fri,  1 Aug 2025 13:26:21 +1000 (AEST)
+Date: Fri, 1 Aug 2025 13:29:41 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Masahiro Yamada <masahiroy@kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the modules tree with the kbuild tree
+Message-ID: <20250801132941.6815d93d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250731-k1-clk-i2s-v3-2-2f655ddb0c6f@linux.spacemit.com>
+Content-Type: multipart/signed; boundary="Sig_/es/NFSMNXHYTi43OYQqAAud";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Thu, Jul 31, 2025 at 10:14:07PM +0800, Troy Mitchell wrote:
-> Hardware Requirement:
-> When FNCLKSEL in APBC_SSPAX_CLK_RST is set to 7 (3'b111),
-> BIT3 must be set to 1 for the SSPAx parent clock to be I2S_BCLK.
+--Sig_/es/NFSMNXHYTi43OYQqAAud
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-The change itself looks good to me. But additionally, maybe it's helpful
-to have a comment explaining this, just like twsi8_clk's case.
+Hi all,
 
-> This patch introduces SSPAx_I2S_BCLK as a virtual gate to enable BIT3.
-> 
-> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
-> Suggested-by: Yao Zi <ziyao@disroot.org>
-> ---
->  drivers/clk/spacemit/ccu-k1.c | 25 +++++++++++++++++++++----
->  1 file changed, 21 insertions(+), 4 deletions(-)
+Today's linux-next merge of the modules tree got a conflict in:
 
-With a comment added, feel free to add my
+  include/linux/moduleparam.h
 
-Reviewed-by: Haylen Chu <heylenay@4d2.org>
+between commit:
 
-Regards,
-Haylen Chu
+  7934a8dd8692 ("module: remove meaningless 'name' parameter from __MODULE_=
+INFO()")
 
-> diff --git a/drivers/clk/spacemit/ccu-k1.c b/drivers/clk/spacemit/ccu-k1.c
-> index cdde37a0523537c2f436e481ae8d6ec5a581b87e..24a561499a7c11b6a661c026f0bd2fac28fe7b04 100644
-> --- a/drivers/clk/spacemit/ccu-k1.c
-> +++ b/drivers/clk/spacemit/ccu-k1.c
-> @@ -349,7 +349,10 @@ CCU_GATE_DEFINE(aib_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_AIB_CLK_RST, BIT(1),
->  
->  CCU_GATE_DEFINE(onewire_clk, CCU_PARENT_NAME(vctcxo_24m), APBC_ONEWIRE_CLK_RST, BIT(1), 0);
->  
-> -static const struct clk_parent_data sspa_parents[] = {
-> +CCU_GATE_DEFINE(sspa0_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA0_CLK_RST, BIT(3), 0);
-> +CCU_GATE_DEFINE(sspa1_i2s_bclk, CCU_PARENT_HW(i2s_bclk), APBC_SSPA1_CLK_RST, BIT(3), 0);
-> +
-> +static const struct clk_parent_data sspa0_parents[] = {
->  	CCU_PARENT_HW(pll1_d384_6p4),
->  	CCU_PARENT_HW(pll1_d192_12p8),
->  	CCU_PARENT_HW(pll1_d96_25p6),
-> @@ -357,10 +360,22 @@ static const struct clk_parent_data sspa_parents[] = {
->  	CCU_PARENT_HW(pll1_d768_3p2),
->  	CCU_PARENT_HW(pll1_d1536_1p6),
->  	CCU_PARENT_HW(pll1_d3072_0p8),
-> -	CCU_PARENT_HW(i2s_bclk),
-> +	CCU_PARENT_HW(sspa0_i2s_bclk),
->  };
-> -CCU_MUX_GATE_DEFINE(sspa0_clk, sspa_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-> -CCU_MUX_GATE_DEFINE(sspa1_clk, sspa_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-> +CCU_MUX_GATE_DEFINE(sspa0_clk, sspa0_parents, APBC_SSPA0_CLK_RST, 4, 3, BIT(1), 0);
-> +
-> +static const struct clk_parent_data sspa1_parents[] = {
-> +	CCU_PARENT_HW(pll1_d384_6p4),
-> +	CCU_PARENT_HW(pll1_d192_12p8),
-> +	CCU_PARENT_HW(pll1_d96_25p6),
-> +	CCU_PARENT_HW(pll1_d48_51p2),
-> +	CCU_PARENT_HW(pll1_d768_3p2),
-> +	CCU_PARENT_HW(pll1_d1536_1p6),
-> +	CCU_PARENT_HW(pll1_d3072_0p8),
-> +	CCU_PARENT_HW(sspa1_i2s_bclk),
-> +};
-> +CCU_MUX_GATE_DEFINE(sspa1_clk, sspa1_parents, APBC_SSPA1_CLK_RST, 4, 3, BIT(1), 0);
-> +
->  CCU_GATE_DEFINE(dro_clk, CCU_PARENT_HW(apb_clk), APBC_DRO_CLK_RST, BIT(1), 0);
->  CCU_GATE_DEFINE(ir_clk, CCU_PARENT_HW(apb_clk), APBC_IR_CLK_RST, BIT(1), 0);
->  CCU_GATE_DEFINE(tsen_clk, CCU_PARENT_HW(apb_clk), APBC_TSEN_CLK_RST, BIT(1), 0);
-> @@ -965,6 +980,8 @@ static struct clk_hw *k1_ccu_apbc_hws[] = {
->  	[CLK_SSPA1_BUS]		= &sspa1_bus_clk.common.hw,
->  	[CLK_TSEN_BUS]		= &tsen_bus_clk.common.hw,
->  	[CLK_IPC_AP2AUD_BUS]	= &ipc_ap2aud_bus_clk.common.hw,
-> +	[CLK_SSPA0_I2S_BCLK]	= &sspa0_i2s_bclk.common.hw,
-> +	[CLK_SSPA1_I2S_BCLK]	= &sspa1_i2s_bclk.common.hw,
->  };
->  
->  static const struct spacemit_ccu_data k1_ccu_apbc_data = {
-> 
-> -- 
-> 2.50.0
-> 
+from the kbuild tree and commit:
+
+  40a826bd6c82 ("module: Rename MAX_PARAM_PREFIX_LEN to __MODULE_NAME_LEN")
+
+from the modules tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc include/linux/moduleparam.h
+index 00166f747e27,a04a2bc4f51e..000000000000
+--- a/include/linux/moduleparam.h
++++ b/include/linux/moduleparam.h
+@@@ -17,12 -24,8 +24,9 @@@
+  #define __MODULE_INFO_PREFIX KBUILD_MODNAME "."
+  #endif
+ =20
+- /* Chosen so that structs with an unsigned long line up. */
+- #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
+-=20
+ -#define __MODULE_INFO(tag, name, info)					  \
+ -	static const char __UNIQUE_ID(name)[]				  \
+ +/* Generic info of form tag =3D "info" */
+ +#define MODULE_INFO(tag, info)					  \
+ +	static const char __UNIQUE_ID(modinfo)[]			  \
+  		__used __section(".modinfo") __aligned(1)		  \
+  		=3D __MODULE_INFO_PREFIX __stringify(tag) "=3D" info
+ =20
+
+--Sig_/es/NFSMNXHYTi43OYQqAAud
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiMNKUACgkQAVBC80lX
+0Gy5lwf/YFH7H4I78EgLgYyJOao1U3eDSZdx/z/uCMoa4doViHpNDhKG8WLpVqOO
+E7cT4s0AyE1LMkcnAYP4PyiJE69WTp46kuX0Tp31os5/VYuS3UafUqclszaxxHdr
+Z5at7cA46lz0OIEPphqFTY79lTgki8eCEV1fmP8wp5fq52fK9BPIUhfA3I4gv5lw
+3iZXcIaxoqrkdvxSHEwFN9n8NPfS2adOJAlG9WEmWbahGHvPikL7uuegyj1/mIP9
+witlTy18luyP3rSRwJswX5oum/qN+ZKjw0I93kFKb5pkyTsBdtwRPTNOFaUgdMQu
+NHX3ZTGTo2rjMTo/e1WZv08TJtL2Zg==
+=j8Hi
+-----END PGP SIGNATURE-----
+
+--Sig_/es/NFSMNXHYTi43OYQqAAud--
 
