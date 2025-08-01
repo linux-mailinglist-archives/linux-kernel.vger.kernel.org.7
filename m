@@ -1,217 +1,209 @@
-Return-Path: <linux-kernel+bounces-752818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC389B17B43
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:40:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8695CB17B44
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:41:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 102501AA6BD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:41:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ABDC1AA684A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:41:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5A0514B96E;
-	Fri,  1 Aug 2025 02:40:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="tF5BrzNZ"
-Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11023107.outbound.protection.outlook.com [52.101.127.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F365173451;
-	Fri,  1 Aug 2025 02:40:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.107
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754016052; cv=fail; b=u6w57tNK2CJyBwnWv7NIgfH8PZKppSHk7/1EoJ4ayGV52qJdHx0L7Pix0C4soeYRhweVaFDfJ9JQscO2NTMYSv/YUIUBbZCpPkkjp4bbUbMjvQyPfdmcZyK+du5wthU+S1MUxOrKfuRXr/HbJ4WLaagC3NubsN/LBkfttFUt0Gw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754016052; c=relaxed/simple;
-	bh=SnJvMEtORjmCBTGOFNZbTZem5zEMqaXe+vLFeSuWHnE=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=iAFfaff7B5N/ZSoCXWw/rl5PC+C2fiGhJE1suR1l0hUGBckNsV0dvxSAev2K9zzh5ayg4E7Gs5OtZObE5cQWL0yps2NUTxIoi2zBmsKaT1hnrISEkSdUNVWjNBTiMpiW4pUixYiHQb2s8m12LA5bM2M0d50YV5EihmfbBMNoWXc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=tF5BrzNZ; arc=fail smtp.client-ip=52.101.127.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=h188k7TKD6dEFgiTn5v0MWLrFRFzRqI6QrbBWFtU07zco/9Yyw5fbyzsPJaOZc+PQkZ/G9XuexRTbffD48oYtB4FP3hb0q8jZE+i8eNRzClrHnuYWDH5usKQl6MpfUL9SLJrIQOtUPtbZmvN48rupysOfnRM62HsDYJolIutxOzdD5YT3ZqrxeUJ+X2EhWqA9ivWyCLjDbPvI+ewgTG98IRJiunwWr6sX4r3q5baS20RFR4ZEpVso8EIyWENabgpcGx/bjYhfrLJorgZRovs+dyGDbsHUP/JPTpTgU3yMMgAgcxgLEAjZjOrVC1c8BrDAa0k2N+pX+jP/w5IYqHQjg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=EZLq1vvwsDP14HmITFIDa/VLEkifkZ0pLED/ow/FeQU=;
- b=LYK9u++xgR9D3/F6W3RlTfvKNOfS+QAdvpwGKVumD+oAWNcKP7HRlbO/N299TkfnpbBNeOG450kJfyCvjFCSNEAqKmDNNvEIGu63adwddz78Yp7bIE3gfV5OuvA/WzH6ntWW+Y7hJjet2EZVkzuIZKXIQRmbVQ1ffQeO3uN2F784z4Fu9iUKk10BBflby9GUSnw7X1Cfnxc25cusr2Mx+8aCUAdMLdB5Gcj7YTreJtqy7/MM4OM+zzvpl7jdcC7pDcSH00NZVdTg5xCEUY47Ks1h32m/lWb/OwgRLVtd5C8v1z4+aodwNF2MRaAQ7fGP9X5IUK1KysIq/4uLCIDFZQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=EZLq1vvwsDP14HmITFIDa/VLEkifkZ0pLED/ow/FeQU=;
- b=tF5BrzNZzyIyNNrdPmFDtfyHxQlK5Fk0qdPjXbO17rkprAsTY/wdDT4lNk9tYmc66qeuRPdsVYMNBwjFWRvWJrpobNqV5OqSLp0nqkihhVDXly6RDdLJqIPhguvf/eXcQ5C72G/GrEB1UpK5YfxLHvT3pYAMpQT2GJM4XXT9QzSrpcRVQaETILbHbAb+6qPLKkZqyaOwfmqjq3jC8Htb5AUjRvZ1z0dGkYJLLoF1kmVVxcHzQuJFaF++HgbkG9ZGh2GRGNEz1W+mJ8/wKFCQrhLXZubn88ZVl5HeOyPpuKgr/efMSYBNwDazg5uA5xsZQkiA/wvetBthWDTx6VMIfw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com (2603:1096:820:6d::13)
- by PUZPR03MB6887.apcprd03.prod.outlook.com (2603:1096:301:101::11) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Fri, 1 Aug
- 2025 02:40:46 +0000
-Received: from KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca]) by KL1PR03MB5778.apcprd03.prod.outlook.com
- ([fe80::9d11:d1f6:1097:22ca%4]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
- 02:40:46 +0000
-Message-ID: <f815a5ff-920e-4842-9d6b-f4a11944b9b7@amlogic.com>
-Date: Fri, 1 Aug 2025 10:40:06 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] clk: Add fault tolerance to of_clk_hw_onecell_get()
-To: Stephen Boyd <sboyd@kernel.org>,
- Chuan Liu via B4 Relay <devnull+chuan.liu.amlogic.com@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>
-Cc: linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250731-add_fault_tolerance_to_of_clk_hw_onecell_get-v1-1-886214fab4a7@amlogic.com>
- <175398035351.3513.14541914855277799230@lazor>
-From: Chuan Liu <chuan.liu@amlogic.com>
-In-Reply-To: <175398035351.3513.14541914855277799230@lazor>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SG2PR04CA0213.apcprd04.prod.outlook.com
- (2603:1096:4:187::11) To KL1PR03MB5778.apcprd03.prod.outlook.com
- (2603:1096:820:6d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3AB13D8B1;
+	Fri,  1 Aug 2025 02:40:59 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A07178372
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 02:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754016059; cv=none; b=rztLpDsv8izrA8is+6H4wB9edFC/BOe0mkpo3PdJ8g+GRPmEAH9EPSkM1kyhO8P+wYqNGFetlBy05rzKQg8xs03n+vASBjVtWKqb52vR4qfQXfuV3CFVcjTByLMHQjPrOlgw34DYM3dtFik/OpVSNJmFccuDQCZ82pOACiXwYJQ=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754016059; c=relaxed/simple;
+	bh=2GjSBEQDr8n3WHbA0gc66yOjON6M1kfeaas1gVNz3Lc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJIO6rpktWF4xr+kODchsH7dr0KBHtMeNG/P6+gLTnqsEXy8/lVjyufz+Wu43Xolk4yVOW5iyeeHqPyBt+PUVUDuWQtivzAi60NqwVCFh0ZV9tm6tg8/jcLCeEhSyMrD66MWi7OUcYDVFwreVrhNz65iuisGA1+azzF3qpNuzJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 871DA16A3;
+	Thu, 31 Jul 2025 19:40:47 -0700 (PDT)
+Received: from [10.164.146.15] (J09HK2D2RT.blr.arm.com [10.164.146.15])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18C4A3F5A1;
+	Thu, 31 Jul 2025 19:40:53 -0700 (PDT)
+Message-ID: <d1445c9c-6603-4ff2-9cac-2a60ed4efe4b@arm.com>
+Date: Fri, 1 Aug 2025 08:10:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: KL1PR03MB5778:EE_|PUZPR03MB6887:EE_
-X-MS-Office365-Filtering-Correlation-Id: a63338b6-0d4b-4ece-418e-08ddd0a4d18d
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?a3Faa0JZSlA5RmFaTTF4UG8vdFgyNThnM0pqb3VYUUN5c1QwbEpkckJUSUdB?=
- =?utf-8?B?UzlaTC9IMnNOeUFzcEhhSlBFbk9EMU5FSFlNQ2pNTXhsdFFYV2UwdTFsd2JE?=
- =?utf-8?B?SU5KRXZKWFZIUEtweWFoM0JWVW16MzJqaGQ5Zm1USGlPR2UvK1RDRm9FNGxW?=
- =?utf-8?B?WVRZRzdRRmIwekJHOUlFajJNWG95RFU2Zmp2ZE5wTkdIQUxjVjY4RXlTQXVU?=
- =?utf-8?B?dXFGek5PY012RDhYMEJMbjkwMWMwZWxOZklqbmJxV0Z4NWNLaXQwUkd2L1dL?=
- =?utf-8?B?ZWszdHU3bjM4MXExN0E2eEtxS1V6QW55UVBnVTd0NE5kbFh2TEQ2OURONU9j?=
- =?utf-8?B?MkNtRjg5TWoraG0zT1VNUVBkOXdWSldaM2gxN0x1NFZpbGcrcXg0UkJINzdl?=
- =?utf-8?B?eHdSb0VWQWdkNmpPSzNMc21UNE15MGFWWVJIOVN1amd4dFltTEdTMEZ5d2lG?=
- =?utf-8?B?ZytmU0ZaL29DMUNXVjg3YjBVeDludmIzSGNkZmpWd1FsRHByVkZQaTRXclFL?=
- =?utf-8?B?dzZJQ3RCVWQ4V2c4NDNIVzh5aTJiVzFvSVZPZEhrb1QyNmVlN3ovUnArdVZM?=
- =?utf-8?B?Qit1MmlRa0xoZWY1QzlVTjFYV2JsUEVqSll6cTNFRFQ0eEJ1RkozaTk2cmtW?=
- =?utf-8?B?NXZld2NIN3V3UUdkeE9zY2ttanFpK3Bxb3RJOUtRNlJsVmxPMERGaUZaeksw?=
- =?utf-8?B?aTVtd04xbzcvb2Q4VDhFSmQ5cTF6RHJzaHhKSG5WRXZWUm9XZzBPUEcxOTRq?=
- =?utf-8?B?S0d1c05UOXpnTjd6ZlJzc3ZHWXVSOWFlUjFBd0JPNHNJZ1Z1UW5ZQndtK0pU?=
- =?utf-8?B?TU9vTXV4emVwWTJZc2pEVXpobCtudEJRWkFNYjl6czVpYW90RisxY2t5NENE?=
- =?utf-8?B?ZUpxVER0Z1NKdVBpc0tiN2pUdWd3U1hpWDgxU09rWmp1TjJsMXhjT2V6TVVa?=
- =?utf-8?B?MWM3YWpieEdWTy9jVWwyTmY4TUpyUlltcVJUMXRZSjRmTG13VFE2TmRMYVBx?=
- =?utf-8?B?dW9zdmZFRXluWTFxOGFjNzc1T1drNjZpVko3cFlycmRjN0g3NS9ldVRRN1Rz?=
- =?utf-8?B?T2Z6cW45S3FOM3FIbzBrMGp6NXRwTWtZREtDU2RoWXExa3lOZ1I0dVF6bFcx?=
- =?utf-8?B?S2lZOWNrbis2QTYxVDNtRTlhTDJuRUdUVzRnZ1ZFVkxyTDB6Nk9GRC9LdVYx?=
- =?utf-8?B?OElRb3VSODZPRUhLeVp1dlh1V290UW1ON3MwbTBOUXRrSjViVXhJMXZXWFJI?=
- =?utf-8?B?dEN1VVNOb0lJdVQ2ODRJN0NKWmkzb1JhZWhYM0VlaTBDR041WUNmSlBMZUI3?=
- =?utf-8?B?MU1yai9hbGN0Y3J6bFJ3UHNaWEdSajROSVkyOE9WMEl4WXhjNWxuYVFXOHpB?=
- =?utf-8?B?QmYwU3NoVjVtMFZET3VhRHVOMVFRZnZiOER2eTVVQnk1V3BQcVk4emx5Qnkw?=
- =?utf-8?B?eFUvcS9ra0k1OGZTckpFcisvOFVuckV6aGdNeDlnbTV2OWkySURVcVJrZC9p?=
- =?utf-8?B?dTM1Tmhqd1IwQlJMUU5Lcm9sejJoRGhkQlRFMVFFbld4a3kxSHBib3JRZWJO?=
- =?utf-8?B?ZDQzSE41ZTcwUTFHNmJqd1dkTFpMNU1mNHdOTnZ1NWdVZEJXMG5qK0E0cE91?=
- =?utf-8?B?V2ZqcDl0UjZQR0YydGUrMDlTQlpnb3IrZnU0WkhIbW1CT1VSR2IrT25CaG80?=
- =?utf-8?B?UXc0dVo4MXd4Y3RXTDlocVVXOVNzaDVxeVdHbVVIWkFIeHc4QnZWS2YydHgx?=
- =?utf-8?B?U1RCbzFaNXArZEVmamJBTEdhL3NYb0MzeDYzNW5MUVJ0R2pRZnVJTXZtYXJL?=
- =?utf-8?B?Z0JjT3VXSXUvY0g1SzVqRWNITGd5c3RlRFJHSmVWZ2pSRnN3c1hsL1B0M0Yx?=
- =?utf-8?B?TndzNFVhUDEzL1VYNzVXem1CVENldm9pallVaGx4UWdiRlE9PQ==?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR03MB5778.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?dzhwWmdwQjNkeTM3OVFSd2IweXc1UzgvTzJCUkloSkwrTFphK0tRc3ZDcTZQ?=
- =?utf-8?B?KzYyaCtpUnhDWjlQUnFmRXNnOXlBSEhWaWpSMlBEWEp5YlNMVHRKdU5scDk2?=
- =?utf-8?B?UXhkOUtEVFpRUzV6RGRya041cVdBSjhZR3lvWEdBcnQvaEY1TnN1VlRyNlhU?=
- =?utf-8?B?S1RWN29KL281MkN0UDFEQ2xBQ1B4bm9XanJUcm9MMUszaHVWS0VQZDZlZ3B5?=
- =?utf-8?B?bVpmbzM2ZTE0bmhTZmJ4RTcwNit5WTZIcDRpaFVkemNRTnd6WDRXd1JaWUpF?=
- =?utf-8?B?dFV1RlJLbzZ5R1N3Ym8vSFJ5ZkZpNVBicWR3MVJ0S3R5UXF4bE9Hc0tsYnlu?=
- =?utf-8?B?a1hkNkl0Ti9zd0VzZllUbXFUQVNpSnI2NzZHblM0Z1JrVUR2VHYwUmZXcjFh?=
- =?utf-8?B?RjlzbU9HSGZuT3lyaUE4V2NHOTBiWCtwR2Q4ai9YaERDWVcrR1RCZ05lK0pi?=
- =?utf-8?B?cFkwRTRicEFyOWo4MWlmWDRTRDU0ckoybVN4Z1F2YVJFVlQ4V2FZSWg4L1JJ?=
- =?utf-8?B?Z21Xak5OaGFjc1JmL25TTUxkQllqdWN1S3BQNnFRWFpHbnZxYms1eU52NzdW?=
- =?utf-8?B?Vy9sUGVsUHZTemxNL1ZjMnMrbis1YW5qZ3ZxUWMvNGw3NnBCRVRBL2IrM1kr?=
- =?utf-8?B?SXAxUFdaOTQzNWwrTHNYcUxOR1poU0JBWVozNkNyT1FFM0dSZTVvVGlPSFRN?=
- =?utf-8?B?UEV3QXN0eU52bEsyVFVjZE1vWUQ3NmsvdWFFQXB3ZjJMalNmOU10Q2VBTVU2?=
- =?utf-8?B?Z3RTenlLWnFac1J2RlJtbVJpaU9BaVhxKzVPWWFHNXhTVkxDSmROWmk0c1FT?=
- =?utf-8?B?bGp0cXFIYUFwS2VoeFFDMk0xZm9mb1haZE90WmNPbldmNGZZYXdYZklLZzNp?=
- =?utf-8?B?cG9QeTBSZks0bEVGUkNKR05XUkpQcDFNbEdLK2lZaXlyS1laV21EWG9uTVhG?=
- =?utf-8?B?ZVVkWE1heE1XaERuem5ib1E2Tm52amhFVDhFK0d0dG1TY2pmbU9neG9aMm5q?=
- =?utf-8?B?ZWlyRG5IMWRUaW1CbHh0OG5QeUlmWUJ0Rjd4eTN0MHFOOWVrVVRqS2t2bFZL?=
- =?utf-8?B?TzJJMHJicS93L2dIWjVvUGJSbVFidTFrMk02RDVFall1c2xpSThSR0pobHVr?=
- =?utf-8?B?UE15TDNWTXZiMlcwM1JHR2E3U2ttUmw0K2VqTnBqK0Y1bkJkRndQbDMvVWxa?=
- =?utf-8?B?NDNvbVNERW9zQjkwSEhxNDBWTC9mTm5zWno2RHpGN1hoeWR6TUtSSkE1MVlQ?=
- =?utf-8?B?cklFc3E2V0k2RjkwZ2ZUN1o2cEtqcVJIbldpOE54K0lwN1EwN1JFeVZ5MG9u?=
- =?utf-8?B?ek1kNHY2VWRtYXE5ck5YTzdRNlFpZ2RVVlJHbXk1Y0RoRXEybVlHM1paKzZ2?=
- =?utf-8?B?MnBzMHRlQVQ2MHJrVldPOVdtRGxuLzdjbmlzZHJpS3N6NEphcHAxQTB3bnVp?=
- =?utf-8?B?d2dyRXByRkp5ZGhqQ3JTSFVsWWdLdzdQMHBZbElVT0VoVHNyREF1SGZLcXFs?=
- =?utf-8?B?bm9WeWZad05WejV1bHlXY2k1emFlcHRUQVhqTk1RNGxjR3JpYU5rRkVERlJP?=
- =?utf-8?B?bUNoU2ZvWWFveEthSTZYdG5kSDlSY0FSdEVEWTVHQzl5R2JyNjNidWNSZTY0?=
- =?utf-8?B?b0U5SWxhRFZmMVplTXF2NkFsUXl3QUc3Z3ZMR0tIQmxjTEtQYzFHTkxRWnVh?=
- =?utf-8?B?MDZTdnNwTWFmUGZMcGFKR29pdW1uak4zYjJGdWR1bndoS3djUmprMkRBd1RG?=
- =?utf-8?B?ZHhZYjI1UUZxLytnY3dObWdWb1pHSUVkajBiZTNJOEd0S2JOMS9SQ1AvZitC?=
- =?utf-8?B?K1ZPTUpNWkZHUld2ODBoSEdoOElwV3ljc2J0OG92d2tzRjBrSUZ1cnI3OExt?=
- =?utf-8?B?NjlRbHppV1gwOEtqcDhOZUZyelRaSytrcWJabHVJYnBXWHQ3SG9mNm9OWjNZ?=
- =?utf-8?B?VVhrdEd2V010ajBKQzZ3c1ZnQ1pTcGpqTEVhVUNzejhGcGc4N1N3dXoxVndG?=
- =?utf-8?B?SEsrbnQvYVMwTTMwdFY3aU1VbVVxZU5tQmJPeUVXdXV3M1lNYmFFaUVMTm9h?=
- =?utf-8?B?eXJSVXlEVkdpZ000ZHZMUUk2K1hjT2VQMktKSCtjNjhPZU42dnU5b0FCM1lw?=
- =?utf-8?Q?VJFZ1/1SIRtCwgKs6XaCD5kYj?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: a63338b6-0d4b-4ece-418e-08ddd0a4d18d
-X-MS-Exchange-CrossTenant-AuthSource: KL1PR03MB5778.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 02:40:46.7189
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: DbBGqIGptOr2lh8tE49XDFNA1Gq8CIRQHMrN2s37JZ8rnMJ9GBOGPzWXyT8Ad033wrS/P7T/4JKTxZB6KBdOZw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PUZPR03MB6887
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
+ destroy_args()
+To: "Herton R. Krzesinski" <herton@redhat.com>, linux-mm@kvack.org
+Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
+References: <20250731214051.4115182-1-herton@redhat.com>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250731214051.4115182-1-herton@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Stephen:
+Hello Herton,
 
-   Thanks for the quick feedback. I'll improve the KUnit tests and send v2.
+On 01/08/25 3:10 AM, Herton R. Krzesinski wrote:
+> The mm/debug_vm_pagetable test allocates manually page table entries for the
+> tests it runs, using also its manually allocated mm_struct. That in itself is
+> ok, but when it exits, at destroy_args() it fails to clear those entries with
+> the *_clear functions.
+> 
+> The problem is that leaves stale entries. If another process allocates
+> an mm_struct with a pgd at the same address, it may end up running into
+> the stale entry. This is happening in practice on a debug kernel with
 
+Should not the allocators ensure that the allocated memory elements are
+all cleaned up before using them ?
 
-On 8/1/2025 12:45 AM, Stephen Boyd wrote:
-> [ EXTERNAL EMAIL ]
->
-> Quoting Chuan Liu via B4 Relay (2025-07-31 05:39:58)
->> From: Chuan Liu <chuan.liu@amlogic.com>
->>
->> In specific cases, even a clk_provider managing only a single clock may
->> reference of_clk_hw_onecell_get() to access its member clocks, as seen
->> in implementations like clk-scmi.
->>
->> For a clk_provider with only one clock, when calling
->> of_parse_phandle_with_args(), the phandle_args->args[] members are not
->> assigned. In this case, the reference to phandle_args->args[0] in
->> of_clk_hw_onecell_get() becomes invalid. If phandle_args->args[0]
->> initially contains a non-zero value, this will trigger an error.
->>
->> Signed-off-by: Chuan Liu <chuan.liu@amlogic.com>
->> ---
->> Error conditions observed:
->>
->> scmi_clk: protocol@14 {
->>          reg = <0x14>;
->>          #clock-cells = <0>;
->> };
->>
->> phandle1: clock-controller@1 {
->>          #clock-cells = <1>;
->> }
->>
->> clock-consumer@2 {
->>          assigned-clocks = <&phandle1 1>,
->>                            <&scmi_clk>;
->>          assigned-clock-rates = <xxx>,
->>                                 <xxx>;
->> }
->>
->> Under these conditions, executing of_clk_set_defaults() triggers the
->> error: 'of_clk_hw_onecell_get: invalid index 1'.
-> Please write a KUnit test.
+> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
+> extra debugging I added (it prints a warning trace if pgtables_bytes goes
+> negative, in addition to the warning at check_mm() function):
+> 
+> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
+> [    2.539366] kmem_cache info
+> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
+> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
+> (...)
+> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
+> [    2.552816] Modules linked in:
+> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
+> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
+> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
+> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
+> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
+> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
+> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
+> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
+> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
+> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
+> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
+> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
+> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
+> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
+> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
+> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
+> [    2.553199] Call Trace:
+> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
+> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
+> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
+> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
+> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
+> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
+> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
+> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
+> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
+> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
+> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+> (...)
+> [    2.558892] ---[ end trace 0000000000000000 ]---
+> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
+> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
+> 
+> Here the modprobe process ended up with an allocated mm_struct from the
+> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
+> problem, since the mm_struct is initialized again etc., however, if it ends up
+> using the same pgd table, it bumps into the old stale entry when clearing/freeing
+> the page table entries, so it tries to free an entry already gone (that one
+> which was allocated by the debug_vm_pgtable test), which also explains the
+
+How did you ensure that it was allocated from debug_vm_pgtable ? Trace prints during
+its execution and then matching up the addresses ? Just curious.
+
+> negative pgtables_bytes since it's accounting for not allocated entries in the
+> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
+So should they clear entries or doing so would add to overall latency ?
+
+> and clearing of the entries is explicitly done in the free_pgtables->
+> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
+> free_pte_range path. However, the debug_vm_pgtable test does not call
+> free_pgtables, since it allocates mm_struct and entries manually for its test
+> and eg. not goes through page faults. So it also should clear manually the
+> entries before exit at destroy_args().
+
+Makes sense.
+
+> 
+> This problem was noticed on a reboot X number of times test being done
+> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
+> enabled. Depends on the system, but on a 100 times reboot loop the
+> problem could manifest once or twice, if a process ends up getting the
+> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
+> After using this patch, I couldn't reproduce/experience the problems
+> anymore. I was able to reproduce the problem as well on latest upstream
+> kernel (6.16).
+
+Seems like a very rare case i.e both to reproduce and also to confirm if this patch
+here has indeed solved the problem. Just wondering - did you try to reproduce this
+problem on any other platform than powerpc ?
+
+> 
+> I also modified destroy_args() to use mmput() instead of mmdrop(), there
+> is no reason to hold mm_users reference and not release the mm_struct
+> entirely, and in the output above with my debugging prints I already
+> had patched it to use mmput, it did not fix the problem, but helped
+> in the debugging as well.
+
+Makes sense.
+
+> 
+> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+> ---
+>  mm/debug_vm_pgtable.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+> 
+> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+> index 7731b238b534..0f5ddefd128a 100644
+> --- a/mm/debug_vm_pgtable.c
+> +++ b/mm/debug_vm_pgtable.c
+> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
+>  
+>  	/* Free page table entries */
+>  	if (args->start_ptep) {
+> +		pmd_clear(args->pmdp);
+>  		pte_free(args->mm, args->start_ptep);
+>  		mm_dec_nr_ptes(args->mm);
+>  	}
+>  
+>  	if (args->start_pmdp) {
+> +		pud_clear(args->pudp);
+>  		pmd_free(args->mm, args->start_pmdp);
+>  		mm_dec_nr_pmds(args->mm);
+>  	}
+>  
+>  	if (args->start_pudp) {
+> +		p4d_clear(args->p4dp);
+>  		pud_free(args->mm, args->start_pudp);
+>  		mm_dec_nr_puds(args->mm);
+>  	}
+>  
+> -	if (args->start_p4dp)
+> +	if (args->start_p4dp) {
+> +		pgd_clear(args->pgdp);
+>  		p4d_free(args->mm, args->start_p4dp);
+> +	}
+>  
+>  	/* Free vma and mm struct */
+>  	if (args->vma)
+>  		vm_area_free(args->vma);
+>  
+>  	if (args->mm)
+> -		mmdrop(args->mm);
+> +		mmput(args->mm);
+>  }
+>  
+>  static struct page * __init
+A quick test on arm64 platform looked fine. It might be better to get this
+enabled and tested on multiple platforms via linux-next.
 
