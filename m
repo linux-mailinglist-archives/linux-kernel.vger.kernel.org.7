@@ -1,137 +1,171 @@
-Return-Path: <linux-kernel+bounces-752863-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752861-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CF3B17BD2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:30:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D612AB17BCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:25:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 905337A77BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:29:05 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9F6C27AA973
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:23:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EE951EB193;
-	Fri,  1 Aug 2025 04:30:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9111E8320;
+	Fri,  1 Aug 2025 04:25:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dsYncnkw"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="PdC2tAoB"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19FB81519B4;
-	Fri,  1 Aug 2025 04:30:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5A7680B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 04:25:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754022621; cv=none; b=B9s5m81lKa712iJoZHnktauw8SQvtGflwDUA3+mhWaq971q2KZK7wLQ36dpBS8anZV2DnhQhksY70OfitvrKxGt1arix+9WIiZRNNYQeTTHObnaPgoZjERQsXhNbYgLl26MqmR9jno3e/BhhbTYCnMyOI0JyLwAjOcGHw0O3uvo=
+	t=1754022318; cv=none; b=A5xAdPXXvKqdtBNSyBloy4DtytsjNPDejMntJINb7qnBIA6DLb8bm4WhS2+0s8U9q42ylKElfPXv3OgGEQ9viEsSRNFx0D58fmIw9SjEngPJ0KKQ9+mJDcatMVEsENhG7Gtk2jn8bHvTGXBoK4sLjnOYRKmfr5/AsG8s94rZHfg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754022621; c=relaxed/simple;
-	bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=rZ/eZUqmsDmEzzfLHgAMUYR54CH3d7naz9lE+0lXFdQRXcbfDhAbqutVUmDQs0Eefd/3igcPOasNDJ3PjmUS7mB3pGuT+fC8Wg+TrCxhA6QqNot4X+8tAG00dOlbzTfEPr5Rh5e+s/8jxZAHYsekwfUgfR5oTA16v6YvaCi9FyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dsYncnkw; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b271f3ae786so1395982a12.3;
-        Thu, 31 Jul 2025 21:30:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754022619; x=1754627419; darn=vger.kernel.org;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
-        b=dsYncnkwJH0c3pkrIwmpq9HPZq5KVs0oSvMx0YjmSsNWzOu5pC7HzgLFgZhC/dXyt8
-         7VZq1COcBjdImXlVRFqwhiryoQDqylykTC8iVB9kq9ZlTXhbvNI1Kkr7vIhgxvF0HUhB
-         0P/gk8EaG4SB/rbyU5TDLrEFN2Ph6XFa5k80j6APE+G3LUDrfRoSR62SrU0TjJRRKHXo
-         vpfjdTkp+gzIaFGIbxYwD8kxtkgLSWXuI9ikLytyUEa0xtvXi5bf5qVeH/tPc3XWzA65
-         j0lgV4BbaDSSZYNQhVz202sJLAuuVzk9y2XH4eB2CCqSvNOlNHw3GzZRfY6Q0X/mm7dt
-         PXtQ==
+	s=arc-20240116; t=1754022318; c=relaxed/simple;
+	bh=uBlorlwIYp1hcEgGWzhSFeKrBrorhnWYZjy/YHECfXg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ILtJ46i1YYtr1br7Ilu/uoylA9VQshJmLQ635dbC32UtrGWZb5ixyj2+ZHIfRm0uMMDJgsLHr9N7mcJMep7yJnBlRlLQNW/tRJw/obq2rUF3+oO/7HShyXy8ro/bLKgTC4DizS/CFBgqn9UU/ezZM0tlSpYfeeP8Et8MCX1OoxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=PdC2tAoB; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VNvQgC004992
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 04:25:16 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zxRRtXcN5asqDedioHABDaioEx42PozHmsddFvNpWDw=; b=PdC2tAoBbSyWFYWM
+	rw5Lpp581108vLB9AQws2QgTh/eSPipVej45NFsUmRGzJ6tFyEXfcmswa88EsCq2
+	4EOszvfsXOQnHHcHBVVCFLhQ5BxUlPJNmXxO0S1R2DziK0LcLxt778KCSkBnJJq3
+	ijPWIpu7tlvmdkWbEsuPfK+AK62CCG0cUqKYxakY/NAC0NAlYS5xjB74v/py+57K
+	HeW2cbobabX4iWoriuZsgoCYy6o82hq20HOE9oMOhDM5fQ6qNk1RTX83D0o06CeA
+	fl8r6PuWmEhF6MRwqZT4FMAJlDFv8Qw8AwDxER87Is3Pv5czgIOpqm+O+9Pm0Z3J
+	dSumuA==
+Received: from mail-pl1-f198.google.com (mail-pl1-f198.google.com [209.85.214.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484q86ancr-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 04:25:16 +0000 (GMT)
+Received: by mail-pl1-f198.google.com with SMTP id d9443c01a7336-23fd831def4so9596685ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 21:25:16 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754022619; x=1754627419;
-        h=references:message-id:date:in-reply-to:subject:cc:to:from
+        d=1e100.net; s=20230601; t=1754022315; x=1754627115;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=piYJV8Y4LjN/W8XtRqLL1KO0JAveKpssg3VbBT7bOd4=;
-        b=o4/oeZ4t5lt1bUg7K9/NscfPIptqCNmxuVqGT+PKrddIQPR5vmRNBjehh0lRMHttvq
-         j24gMrAjv5v1huFk21amcoa7m3kROM8S9DYW/RlQ5LPlyB5xIqpF/8SLVV19AOaIjw4a
-         5FltlnpwFRxB9PJm2DLdXQ7E2DU33Zz0UFOVHjhfkROArR736AcuHapwQ2m65fX/l/ce
-         oGb760kA0IZ/X9i4Jo7EhH0j4+YaiaH+TBVO/r0wyIfzn56cWO24c1TnJ8lJR7arqblA
-         DDoluDTJ0VzLwqc4LjAHmiI6lb3jUMPyRMEQmY2evy6Y79KgVOgMBV2D3iXMAWymzPQ0
-         EQTA==
-X-Forwarded-Encrypted: i=1; AJvYcCWUpP2dd2Xw9be9xKLMCAVbi6Sw1EI5Hg6M1GjmB4dDQrtggZiME7RFXs47bVdZwdcRgngyrSlpb3VdfOaW2A==@vger.kernel.org, AJvYcCXOQSFrc7eqAdSqN+0PjDA8lkWiCHgUwmBLkIZh3P2ecgJ0tLdByvqm77I+i7J8aKccFzH23OAQctGqMw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyD9SOuSGvP5QIMBr0cnE5jAYMigTN3VNsvR7+scSp0A1iX86q+
-	xZ4LmOyqbrZTzw/J0uYlQ80LRH621hE4Llsxo0vM6Tf8iH98B9KNjKfuZrNcfg==
-X-Gm-Gg: ASbGncugpS2v+QRsYgVWU27MXwYjSX6XcbDlY1xiM2+MOCR+NUUz7SZRxJdJ29YvTXR
-	i/YBOYDjYZ2UTZWmFObpWbPxo5XnztZAmEqM2C0Jo8nFjmu89/+lWadyNEsCkcFZMKqxQ7SfBcO
-	EE166BPKm6zapBGZ5TLWKSjz9Y0cHGjfCIZ5HVwPv0uWBRenPDoN06jpmF/9sgWRM/e8UBqE0p5
-	Lc30KYveIU1m5JCqTt7jLO5eVaRc2RSQKVQ/aMb/9ROd0mMh2fiJKYRdC2FtgOZDLKPBstYmH/7
-	7+7pi3bdc0WjYLFaKdliaSzonJjqrceLFlXzDZV2OkdvB5xxpfG1kJOwPKt1rCA8jgBTTCxeuKf
-	Rcn/8ouDeQRCeLr0=
-X-Google-Smtp-Source: AGHT+IHsBcZ7jbf88T/H26yKkIr5RGXZAEkQ0zGeJsJopMViNuzkuMhxbnUjM/2qC4wMrVQtn4dP+A==
-X-Received: by 2002:a05:6a20:12d1:b0:21f:a6c9:34d with SMTP id adf61e73a8af0-23dc0cf620fmr14523968637.1.1754022619024;
-        Thu, 31 Jul 2025 21:30:19 -0700 (PDT)
-Received: from dw-tp ([49.205.218.89])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bcce8fa92sm2999321b3a.45.2025.07.31.21.30.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 21:30:18 -0700 (PDT)
-From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
-In-Reply-To: <20250724145001.487878-3-kernel@pankajraghav.com>
-Date: Fri, 01 Aug 2025 09:53:56 +0530
-Message-ID: <87tt2rr7oj.fsf@gmail.com>
-References: <20250724145001.487878-1-kernel@pankajraghav.com> <20250724145001.487878-3-kernel@pankajraghav.com>
+        bh=zxRRtXcN5asqDedioHABDaioEx42PozHmsddFvNpWDw=;
+        b=n7ixy3kq/t3RET5hu/ph0FL5TNqxd4gAhlmH1dKvZbP3g36hg4g2Y57rQCK06ycL8l
+         5E2XZ0TqeSji4ulE5lF9t1vc2TTkdWo1yRMc/zSm3VaUHdTWJamxhCqpFkezx+YANLR4
+         ybyu71P4nl+uES/e2bIF2xXVv0vWU0cDSmye7pgVVilNDrExtRmJchXZLmdQ9PxHKrXy
+         wpY1oFyTgW3lIzCF8dk1Ykc3wiYXi5/wiVSzhOktk28YVcDD0lq/lxtldpJ5mmWud6RW
+         TnOJC9WUL3QxcV4hNJeDwrQVOL/XkB03bjfqWR28e2YtTHC1WBUQuSomfR5+N6ZV5O0R
+         VtFw==
+X-Forwarded-Encrypted: i=1; AJvYcCUkqgiOfknm2NDtAaa0JGkmBcBHZhGIApbClBm4pTVkMLgz8awV8XqGrAiwNnDtqgn9MLZBsN4FlWADoC8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyroZx/nzNPTZuuBc38+aX0OYJsPO9/eueWfIcMOpAd6EjQu1dq
+	X+UEdy8oFgKd94UAMHI1iffYWc1X3iJutlLh2S4VVtd6oTkv3WKraJ56OBy3OJ2irlFdMYKuSnV
+	PMtz9CWPOvY6H5gMxvsllP6+Zx2lc1xaEhfAGlyiq13zb0bUUyLzFYpR/aC0gVYjcRf8=
+X-Gm-Gg: ASbGnctDWFa7UV3/ZPvUZzM7/6dNcEeVZ9oTmB83tguobY06z5TWAN1Iut1pOE1O8gH
+	bS3w/HTWZ88754UW9zWa8lXuMSlEFuG4R40drsqqB43kvcPrtzCkgOPzDycz8hKKr9ZAUEqQS7/
+	nkQ40ULs0Azp2WqK1BxnFKJNpMA12QDQFOtE5tfAkKRyMJdg5OEIzRBP9ZMqkZIKHx4OrwdUH98
+	ckSChcfYtk1Ckg2EGGMFhMNbpAccPtEJJVDOgybDwoVvGSeRu0F/UIwXOQGDjg1kKjDeJCGX6eZ
+	2J4GF4om8nlmFj1ieHxg3SKTeXlLdU3jMab+CG0i7XY4cwUrqSZ6yU3ACn9PUISlbJU=
+X-Received: by 2002:a17:902:e810:b0:23e:3bdf:e3bd with SMTP id d9443c01a7336-24096abfe73mr152706055ad.22.1754022315102;
+        Thu, 31 Jul 2025 21:25:15 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFzY+vcz3mT6FLuRg3s6hOjW8qEGzR7nQiQB6+tGHCmk4xO2hr0y7gSoPjaDxIHjG9/RlVWqg==
+X-Received: by 2002:a17:902:e810:b0:23e:3bdf:e3bd with SMTP id d9443c01a7336-24096abfe73mr152705565ad.22.1754022314647;
+        Thu, 31 Jul 2025 21:25:14 -0700 (PDT)
+Received: from [10.217.216.26] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a917sm31713485ad.116.2025.07.31.21.25.10
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 21:25:14 -0700 (PDT)
+Message-ID: <2b802703-5214-4103-a1ab-e4c26a18ebb7@oss.qualcomm.com>
+Date: Fri, 1 Aug 2025 09:55:08 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 7/7] clk: qcom: gcc: Add support for Global Clock
+ Controller
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
+ <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-7-227cfe5c8ef4@oss.qualcomm.com>
+ <25uelsjuw4xxfopvfn4wvlj2zgivwbjprm74if5ddwvht4ibfz@yctc2kvfmxyw>
+ <8b30c83f-5f35-49d5-9c37-4002addf519a@oss.qualcomm.com>
+Content-Language: en-US
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+In-Reply-To: <8b30c83f-5f35-49d5-9c37-4002addf519a@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDAyNyBTYWx0ZWRfX2Zjqtetow6lQ
+ WIU3eyNjIhdZa0gJ3e6bWm638AswGMaUngvPPyLwgZF3Ix9uzKxd1PFtdeW4E0QbViXBdLzh+U7
+ WgNcnAN/kZHNQTHBK2ZlenSOKb95oLuI55DUB0Y0E4r3ZcO6HC++mGU33IXoYWW7GuqG5xKhtZZ
+ 4iFShL7QWThvxj2kX8LUw1H6/iRkhzrCAq+cDg/yEbBIJymFw7KKvCmkHtm0/fBlSu9HTgJkSMj
+ FmFKhfiqYVSJ5EfzvVHGba5Iuzr4lN7DLaEM3k3p6ouc/HTevq5N/FPgv3sAt2coP/+ZED4l0RJ
+ tVHxEfvXjOdtdpG5wNrkjvtTipC5odUoDsiNC+e9ogq3+zGwLqYcaT2ZKhuXxjAa/T+QXfGGUkF
+ NO7AKXwiLzYvWdKfeM82DznWFNYotHw1xt1eufWE2lw3o2uI2QXG1z8OLaFwzgo0obx9uU07
+X-Authority-Analysis: v=2.4 cv=TqLmhCXh c=1 sm=1 tr=0 ts=688c41ac cx=c_pps
+ a=MTSHoo12Qbhz2p7MsH1ifg==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=-exJQLPiCZ_865CLFvcA:9
+ a=QEXdDO2ut3YA:10 a=GvdueXVYPmCkWapjIL-Q:22
+X-Proofpoint-ORIG-GUID: UHuNXO_ffQ74eu8CqvwlnZuuDiZD_E6-
+X-Proofpoint-GUID: UHuNXO_ffQ74eu8CqvwlnZuuDiZD_E6-
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-07-31_04,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 phishscore=0 bulkscore=0 lowpriorityscore=0 suspectscore=0
+ malwarescore=0 adultscore=0 spamscore=0 priorityscore=1501 clxscore=1015
+ impostorscore=0 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508010027
 
-"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
 
-> From: Pankaj Raghav <p.raghav@samsung.com>
->
-> There are many places in the kernel where we need to zeroout larger
-> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> is limited by PAGE_SIZE.
->
-> This is especially annoying in block devices and filesystems where we
-> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-> bvec support in block layer, it is much more efficient to send out
-> larger zero pages as a part of single bvec.
->
-> This concern was raised during the review of adding LBS support to
-> XFS[1][2].
->
-> Usually huge_zero_folio is allocated on demand, and it will be
-> deallocated by the shrinker if there are no users of it left. At moment,
-> huge_zero_folio infrastructure refcount is tied to the process lifetime
-> that created it. This might not work for bio layer as the completions
-> can be async and the process that created the huge_zero_folio might no
-> longer be alive. And, one of the main point that came during discussion
-> is to have something bigger than zero page as a drop-in replacement.
->
-> Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
-> the huge_zero_folio, and it will never drop the reference. This makes
-> using the huge_zero_folio without having to pass any mm struct and does
-> not tie the lifetime of the zero folio to anything, making it a drop-in
-> replacement for ZERO_PAGE.
->
-> If STATIC_HUGE_ZERO_FOLIO config option is enabled, then
-> mm_get_huge_zero_folio() will simply return this page instead of
-> dynamically allocating a new PMD page.
->
-> This option can waste memory in small systems or systems with 64k base
-> page size. So make it an opt-in and also add an option from individual
-> architecture so that we don't enable this feature for larger base page
-> size systems.
 
-Can you please help me understand why will there be memory waste with
-64k base pagesize, if this feature gets enabled?
+On 7/29/2025 4:19 PM, Konrad Dybcio wrote:
+> On 7/29/25 12:48 PM, Dmitry Baryshkov wrote:
+>> On Tue, Jul 29, 2025 at 11:12:41AM +0530, Taniya Das wrote:
+>>> Add support for Global clock controller for Glymur platform.
+>>>
+>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+>>> ---
+>>>  drivers/clk/qcom/Kconfig      |    9 +
+>>>  drivers/clk/qcom/Makefile     |    1 +
+>>>  drivers/clk/qcom/gcc-glymur.c | 8623 +++++++++++++++++++++++++++++++++++++++++
+>>>  3 files changed, 8633 insertions(+)
+>>>
+>>> +static void clk_glymur_regs_configure(struct device *dev, struct regmap *regmap)
+>>> +{
+>>> +	int ret;
+>>> +
+>>> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+>>> +				       ARRAY_SIZE(gcc_dfs_clocks));
+>>
+>> Why are you doing this manually instead of using
+>> qcom_cc_driver_data.dfs_rcgs ?
+> 
+> I guess that has been merged last week or so, so yeah, please rebase
+> 
 
-Is it because systems with 64k base pagsize can have a much larger PMD
-size then 2M and hence this static huge folio won't really get used?
+Yes, sure I will rebase on the latest changes.
 
-Just want to understand this better. On Power with Radix MMU, PMD size
-is still 2M, but with Hash it can be 16M.
-So I was considering if we should enable this with Radix. Hence the ask
-to better understand this.
+-- 
+Thanks,
+Taniya Das
 
--ritesh
 
