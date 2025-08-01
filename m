@@ -1,264 +1,202 @@
-Return-Path: <linux-kernel+bounces-753685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 251C4B18660
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:14:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DF84B18662
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:15:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D81E7A32EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:12:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 842AE7A969A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D2E1E1C1A;
-	Fri,  1 Aug 2025 17:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E1241DFDAB;
+	Fri,  1 Aug 2025 17:14:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E4bFfPKG"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GYysjp/p"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72E0119C546
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:13:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59BE76F2F2
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:14:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068440; cv=none; b=ckKXsN6rLf1W6OOX0WvA9o7g3N3Uzqg1p5Y/PEy2AW4jHeaMAOGdinrhYSXws7Rw0SAZKUmWEjbN0CUljt2h9mH7QQDEumQRfhsS/Lolj+JQz+prHv7uosKIHOLkKo/7s/wwSY6LkOCkF7xqwgkoaNFVUDONR/bWPPODnjHJ1o4=
+	t=1754068495; cv=none; b=UY+kdIeWuQhA8on6GlzMnNfHeRH/2eF3HyqEuGRWgH0Im6uBemMKOaulAGLs1pV7KpChLL5lM5EEO/S2cjcS59WzoiTADleCQeRqMTCUUfBLcHF7rRMOjvQ+JuHR2SVkNAQOUlMS7IPfn0S/sAUJ6ErJ0bRGRp1TCkoTPs93aN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068440; c=relaxed/simple;
-	bh=urjHTNxVtznsZGPK5MfG0R49OKWj2ch5jHzSEmSRmi8=;
+	s=arc-20240116; t=1754068495; c=relaxed/simple;
+	bh=aOijRpLMfZAU+sXieMt/YHjyo6Js0ax034/IV5JCtLE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HYeNbtxh7RNadwp1xMQz2JY6Bp2pcJO6V6U33T5ovUzqR1aD2CUyCmeoFDLtlFcMSDHZF+jxFbO8BQhuwOS6gNV81foPkhalhoYMyOMB/+V9zYs0YE1/+saMA5U1b+x5md/ehFjFGeOorSK1RE75jiFk6EBRmu4CbHFlIOkyj+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E4bFfPKG; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754068437;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UapQRB4TdH6jPVjzlLlw/CIcbZ+SS127yBars+dasnY=;
-	b=E4bFfPKGADA5XJIVWQDJfLrojC5d6uX81nDf3B5VpmMlLH9zgmLwky9qScNY4l05gIOosj
-	S39gQPof8EVukt7EvljDPsAYC0zlxSbbPaMxUcHdxaPmRcZEsE4QCT0lCqJ11qOHKLMwPw
-	cnbgxw2yf/DzcUr9OH+kk2OZYh+frxg=
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com
- [209.85.160.200]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-567-9R0PgB5kMX6m5-Budb_fPA-1; Fri, 01 Aug 2025 13:13:56 -0400
-X-MC-Unique: 9R0PgB5kMX6m5-Budb_fPA-1
-X-Mimecast-MFC-AGG-ID: 9R0PgB5kMX6m5-Budb_fPA_1754068436
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab401e333bso76098271cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:13:56 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Hau+yBjlpwoGEPFPas1AELXNfDklub4FLzf5EV7e55gXN7nrLOJ19ADZvVY4wLsPUGSJ7mQ9BJapj/lblfepNL9tAknYinbnaKOzBziIL2u8jEII0n9m18Cly3F3EeCkGdg9QUY14OUbvI9eAJDnCVxA5IuEcFrEhY5PEnGSgvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GYysjp/p; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571CLsi1002445
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 17:14:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=GjIpDMJZqcrrLx0t+DaOeXkF
+	Njy3j/r+a5kooErWBOY=; b=GYysjp/p7UOydI9jf1O/41ACeaPDHfC5Xj0UjIVY
+	WiwMHfFPRmHJaCda2exNe2hdckTN1gqs2Om48b2HGKPNQG1SNzcXIG6K0Hca4k3a
+	jkqzeQgSxg4HNMafdszgKI9sFanuaQ9RJMltKpN8o/E/+0s3ZqKPtc/x8zJttLuw
+	SMiXgnugfSBDUzY3sAuWJkpdALi1Cy/JNyENK+cHKE9okeXF/pe//nRnPPZxpJl2
+	X12N3Vs/e/z5+/rNy8ODaKKNrCeabG2fUFJgPysPqfp9IKd3HJa+/rJNJ5s635Wa
+	r6tZybT9EDRa8WkZoLde5G2GCFhNq6Xk011an5vGAgbgVA==
+Received: from mail-qt1-f198.google.com (mail-qt1-f198.google.com [209.85.160.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 488wgrrxvk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 17:14:53 +0000 (GMT)
+Received: by mail-qt1-f198.google.com with SMTP id d75a77b69052e-4ab969af6e3so13668551cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:14:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754068436; x=1754673236;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=UapQRB4TdH6jPVjzlLlw/CIcbZ+SS127yBars+dasnY=;
-        b=YPkVQHZevc4aEN9lPKbr72BbUAkDey5kkcph9yKB4w516Hp2F9wWzs1otFDpE7d2fq
-         UHIfnC/uHuwwL3LHbBKaHb7c/F4o+pEi2btvCdLR5Mt0CXaOFd0ccb1j+fcMEFJ9ddUU
-         x07BGlEqADrufbSyAzWRDcq6ubbpH6YiZgNQrskdebPRBcxP2bp8L/CPd9FJ/rerzt+v
-         JbBL15UIE1MdskiZ19Hvn77DBNkTnNg7fMY5F685sWw1IYoIDUdbR7LhLf3E7KySsJgW
-         a6QM23nApRHUX9T5qBj+jSimLxkncawlDUVFihnrFSSmfMi2s3inGYy6kUWhClM1Nb+E
-         p2vA==
-X-Forwarded-Encrypted: i=1; AJvYcCVexqX8aHuB+mR73hes3qG0EesKRPzmAF0Ap7QrULSVS4TECCZe0ZF0UW5ZNVZsgYOyX8x+PI/yqXMZ+5E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZqOKI1rfP5DCjTu35cvtt22WYkzKc1YhNcfpWi9J6NGeFpsb9
-	zsP6VgBQ0CcVOQqFSUakoMe45a0O+4c7x9+R+T3uGvl1mjX4q4KiTFFTojfXmtTQysehUW4Wot5
-	rf5lmqjscgIceX5A/UCy91RGtBx8HCWOkr2Dxq/wpOgkI1qvh6O0ACYgYWbWTJX1bww==
-X-Gm-Gg: ASbGncshW8RVOPKVUIwUngtv5U2TMumugWIAQunhAlNfGacsGwbrmoJfdcejMwdhbZh
-	9I4noO8zr18fn+A9A4zRw7WJDwaaBXk4+rXn5JAFcXm25B7wUBiFlDjUWfkjKr+IUgNtgfoLrFx
-	Ju0Ra5J4ZoXJ95qFOvwR1muwSGIg8jmFUqd0s19meSZ9pRgyJTnfKwiEEaNgc7Xrddi4ev237e6
-	2YiXInYIlRjsupCn3tIf2b3vRvlbZIJQy5ZcymMuNYJpsVFGsw61OhfP1j7sNploUf/y0h3eJeu
-	y87YRdD4vHV785dv6dg6NeykA6FOm+st
-X-Received: by 2002:a05:622a:a953:20b0:4af:36a:a60f with SMTP id d75a77b69052e-4af036aa957mr25038531cf.21.1754068435404;
-        Fri, 01 Aug 2025 10:13:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG8+K6i2QRol52KGBLA9S6CAT2dneVBlknXiG0f/LH2d8sJO8oI3hxjPNdTh/rQMWdVl3tj8g==
-X-Received: by 2002:a05:622a:a953:20b0:4af:36a:a60f with SMTP id d75a77b69052e-4af036aa957mr25037891cf.21.1754068434728;
-        Fri, 01 Aug 2025 10:13:54 -0700 (PDT)
-Received: from x1.local ([174.89.135.171])
-        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeebde17fsm22954801cf.1.2025.08.01.10.13.53
+        d=1e100.net; s=20230601; t=1754068492; x=1754673292;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=GjIpDMJZqcrrLx0t+DaOeXkFNjy3j/r+a5kooErWBOY=;
+        b=YYn0g2ycSQF2jcsIKkHkyr8JxzweE8Ph1l0zEYXsu0D2yLYaomvkiOoRUzHdo43V+j
+         dsywzespyQYh8A4vmBDeeWVBwA3Bq40i9SFJLSm2Ng0Wd7GGLIOJgjL/oYmKWPJoO/5a
+         BGsHNPGyXpm1gnZlpf8OGybyB9pmwc5FHqdswBqC4Pf3v+rojv8glw8cATTYBxjfyYLR
+         3V2g2tfq9UPXjOl8Q54Hfv3qkjzFqRkheExDNRtFFKXntXB3zyza98iu2AHHz38R3JBY
+         Vusj7M8szjoIabMukkXg93C73WA/xrc4UlRLKPhAUhu946KPOiP7GSgom34vuXDxzDCE
+         +8qA==
+X-Forwarded-Encrypted: i=1; AJvYcCVI236uwyz8KBJQnk/M6l7M04K2IeFl70NT8IKXYVAwvfrjmoviT78AELHhfxbx3ySQWqjCaUelJ+1m+mw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx91Vu9Hd3cYQoEeB7ovIatRnL9Z/id+ZRZzZnyprR9iau9SeCk
+	bxJwMM3x24bxZGiMf9taOw6AX6TWQ/utld/CL19c4GbBU+qij++gtcBdVcclgBGdu1cTz07vreT
+	7WaPnEqdINC38KwGEinD1tks1zUKOvwO9IMBIoqUy5ehiXt5tDTlFNOrJ6fcIXaMT/No=
+X-Gm-Gg: ASbGncshXdoIH9TqyyaGDIbVRzhECXR7CDJMH3tkpKQDfG0Qi1lriVSPX3TjiAtEUPC
+	5pq4M7F9N/r+qWYh2hYlnECfNOqZTYQNj3g3UQmI3hlH6yfMAAkrpq55MSYN5cSj3kJPz4bZMOL
+	k+njjbs6c5vKqApLMJnIRieMd+NyXbKv8oNhh03Ju91v0zdjuf3Nd6ok+o8VAqGr+3nRibHA8r7
+	I2JD503CjizHhiIWYLJZw0D5u4wmcJyOy6g8Bfo9HsR9Ed9ihDiEKERDNAu37BhSijpTQ1qnvJh
+	lNMsJjKjINfe38DCeA0bsNmyPKVY4ytEkJXsBdkTca0sQZxbV+4qvCdFuMF2VBT4/EvfNVNvEUU
+	vsonqTeAZJcOUGEle4D5kTIrxTQWVHJxhrmnwSzT/6dUFof6r4HMj
+X-Received: by 2002:a05:622a:1819:b0:4a6:f4ca:68e8 with SMTP id d75a77b69052e-4af10d8d43bmr6534221cf.48.1754068492163;
+        Fri, 01 Aug 2025 10:14:52 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHUZeft7UM185DJ31idsTVovKtr5SEN51ZI55OaWAMuhEXrYhTLrjzffx3vJ/vf8XKyK2sS4Q==
+X-Received: by 2002:a05:622a:1819:b0:4a6:f4ca:68e8 with SMTP id d75a77b69052e-4af10d8d43bmr6533521cf.48.1754068491453;
+        Fri, 01 Aug 2025 10:14:51 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ace49sm657841e87.71.2025.08.01.10.14.50
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 10:13:54 -0700 (PDT)
-Date: Fri, 1 Aug 2025 13:13:42 -0400
-From: Peter Xu <peterx@redhat.com>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org,
-	aarcange@redhat.com, lokeshgidra@google.com, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com,
-	stable@vger.kernel.org
-Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
- a THP hole
-Message-ID: <aIz1xrzBc2Spa2OH@x1.local>
-References: <20250731154442.319568-1-surenb@google.com>
- <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
- <aIzMGlrR1SL5Y_Gp@x1.local>
- <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
- <aIzp6WqdzhomPhhf@x1.local>
- <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
+        Fri, 01 Aug 2025 10:14:50 -0700 (PDT)
+Date: Fri, 1 Aug 2025 20:14:48 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Umang Chheda <umang.chheda@oss.qualcomm.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Rakesh Kota <quic_kotarake@quicinc.com>,
+        Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+Subject: Re: [PATCH V2 2/2] arm64: dts: qcom: Add Monaco evaluation kit
+ initial board support
+Message-ID: <4rxy4iuqy3dstfuv744gw327gf5n5g6notjpmkspjme2w4sd3j@5sbqfoumb5y7>
+References: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
+ <20250801163607.1464037-3-umang.chheda@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
+In-Reply-To: <20250801163607.1464037-3-umang.chheda@oss.qualcomm.com>
+X-Authority-Analysis: v=2.4 cv=fs7cZE4f c=1 sm=1 tr=0 ts=688cf60d cx=c_pps
+ a=mPf7EqFMSY9/WdsSgAYMbA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=EUspDBNiAAAA:8 a=dzsA3FzLxQdHMSIhhz4A:9
+ a=CjuIK1q_8ugA:10 a=dawVfQjAaf238kedN5IG:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: WN9eMmlxik2krUtNxfJPE6lCKdSVNeIV
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEzMyBTYWx0ZWRfX+DtB9hOtSYT1
+ +nUQpru5CDVoH1apfeyd998cdfBpSNgv1HXxL+qSZJCPDGzlifXeFAH/QCx+VeT5SbDDvyBJ52g
+ lefbOPgLpqk1+hh8CAbtxq0IF+k3mbbAvDYBcawqxY+pcKpjP8on7xiOGfh3ZY4m7WfL3ALR1xN
+ QeJ7CZncVT+RQ92lNE632MeaNkNvnNkI02k90i0EmlfbS9lT3GSGF0bST1/sGcgGQdBJLabAB2s
+ A+iN+kFghV+GpeqRfKRRsBO6vP5MZ6bNPTS+/FAstf1cXeZ2iEWDISdoB1PePSWO8lARok0v1H1
+ gPVlr4DD7k9VCHXSLDLmn5R2bvxdXw5nJciGaKsNv0uuxuFpgo0OpyqXPJfNnpS2yFGueMz6Zjp
+ pGjh21CV0tcwQxiEl34RbrUoeT5J/SHxw3lJT5s4pa9H63OIThFaZBLWf2y2UdFHvMtRQKHJ
+X-Proofpoint-ORIG-GUID: WN9eMmlxik2krUtNxfJPE6lCKdSVNeIV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
+ adultscore=0 priorityscore=1501 phishscore=0 mlxlogscore=999 impostorscore=0
+ bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010133
 
-On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrote:
-> On Fri, Aug 1, 2025 at 9:23 AM Peter Xu <peterx@redhat.com> wrote:
-> >
-> > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan wrote:
-> > > On Fri, Aug 1, 2025 at 7:16 AM Peter Xu <peterx@redhat.com> wrote:
-> > > >
-> > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbrand wrote:
-> > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
-> > > > >
-> > > > > Hi!
-> > > > >
-> > > > > Did you mean in you patch description:
-> > > > >
-> > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-present PMDs"
-> > > > >
-> > > > > Talking about THP holes is very very confusing.
-> > > > >
-> > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
-> > > > > > encounters a non-present THP, it fails to properly recognize an unmapped
-> > > > >
-> > > > > You mean a "non-present PMD that is not a migration entry".
-> > > > >
-> > > > > > hole and tries to access a non-existent folio, resulting in
-> > > > > > a crash. Add a check to skip non-present THPs.
-> > > > >
-> > > > > That makes sense. The code we have after this patch is rather complicated
-> > > > > and hard to read.
-> > > > >
-> > > > > >
-> > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
-> > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
-> > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > Cc: stable@vger.kernel.org
-> > > > > > ---
-> > > > > > Changes since v1 [1]
-> > > > > > - Fixed step size calculation, per Lokesh Gidra
-> > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, per Lokesh Gidra
-> > > > > >
-> > > > > > [1] https://lore.kernel.org/all/20250730170733.3829267-1-surenb@google.com/
-> > > > > >
-> > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----------------
-> > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
-> > > > > >
-> > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > > index cbed91b09640..b5af31c22731 100644
-> > > > > > --- a/mm/userfaultfd.c
-> > > > > > +++ b/mm/userfaultfd.c
-> > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
-> > > > > >             ptl = pmd_trans_huge_lock(src_pmd, src_vma);
-> > > > > >             if (ptl) {
-> > > > > > -                   /* Check if we can move the pmd without splitting it. */
-> > > > > > -                   if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> > > > > > -                       !pmd_none(dst_pmdval)) {
-> > > > > > -                           struct folio *folio = pmd_folio(*src_pmd);
-> > > > > > +                   if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
-> > > >
-> > > > [1]
-> > > >
-> > > > > > +                           /* Check if we can move the pmd without splitting it. */
-> > > > > > +                           if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> > > > > > +                               !pmd_none(dst_pmdval)) {
-> > > > > > +                                   if (pmd_present(*src_pmd)) {
-> >
-> > [2]
-> >
-> > > > > > +                                           struct folio *folio = pmd_folio(*src_pmd);
-> >
-> > [3]
-> >
-> > > > > > +
-> > > > > > +                                           if (!folio || (!is_huge_zero_folio(folio) &&
-> > > > > > +                                                          !PageAnonExclusive(&folio->page))) {
-> > > > > > +                                                   spin_unlock(ptl);
-> > > > > > +                                                   err = -EBUSY;
-> > > > > > +                                                   break;
-> > > > > > +                                           }
-> > > > > > +                                   }
-> > > > >
-> > > > > ... in particular that. Is there some way to make this code simpler / easier
-> > > > > to read? Like moving that whole last folio-check thingy into a helper?
-> > > >
-> > > > One question might be relevant is, whether the check above [1] can be
-> > > > dropped.
-> > > >
-> > > > The thing is __pmd_trans_huge_lock() does double check the pmd to be !none
-> > > > before returning the ptl.  I didn't follow closely on the recent changes on
-> > > > mm side on possible new pmd swap entries, if migration is the only possible
-> > > > one then it looks like [1] can be avoided.
-> > >
-> > > Hi Peter,
-> > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (!pmd_none()
-> > > && !pmd_present()) PMD to pass and that's when this crash is hit.
-> >
-> > First for all, thanks for looking into the issue with Lokesh; I am still
-> > catching up with emails after taking weeks off.
-> >
-> > I didn't yet read into the syzbot report, but I thought the bug was about
-> > referencing the folio on top of a swap entry after reading your current
-> > patch, which has:
-> >
-> >         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
-> >             !pmd_none(dst_pmdval)) {
-> >                 struct folio *folio = pmd_folio(*src_pmd); <----
-> >
-> > Here looks like *src_pmd can be a migration entry. Is my understanding
-> > correct?
+On Fri, Aug 01, 2025 at 10:06:07PM +0530, Umang Chheda wrote:
+> Add initial device tree support for Monaco EVK board, based on
+> Qualcomm's QCS8300 SoC.
 > 
-> Correct.
-> 
-> >
-> > > If we drop the check at [1] then the path that takes us to
-> >
-> > If my above understanding is correct, IMHO it should be [2] above that
-> > makes sure the reference won't happen on a swap entry, not necessarily [1]?
-> 
-> Yes, in case of migration entry this is what protects us.
-> 
-> >
-> > > split_huge_pmd() will bail out inside split_huge_pmd_locked() with no
-> > > indication that split did not happen. Afterwards we will retry
-> >
-> > So we're talking about the case where it's a swap pmd entry, right?
-> 
-> Hmm, my understanding is that it's being treated as a swap entry but
-> in reality is not. I thought THPs are always split before they get
-> swapped, no?
+> Implement basic features like uart/ufs to enable 'boot to shell'.
 
-Yes they should be split, afaiu.
+"boot to shell" only makes sense if the platform is new and not all
+devices are enabled in the Linux kernel. Granted by the current level of
+the platform support, DT files for the EVK should have much more
+features. Please submit a full DT at once.
 
 > 
-> > Could you elaborate why the split would fail?
+> Co-developed-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> Co-developed-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> Signed-off-by: Nirmesh Kumar Singh <quic_nkumarsi@quicinc.com>
+> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile       |   1 +
+>  arch/arm64/boot/dts/qcom/monaco-evk.dts | 199 ++++++++++++++++++++++++
+>  2 files changed, 200 insertions(+)
+>  create mode 100644 arch/arm64/boot/dts/qcom/monaco-evk.dts
 > 
-> Just looking at the code, split_huge_pmd_locked() checks for
-> (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
-> pmd_trans_huge() is false if !pmd_present() and it's not a migration
-> entry, so __split_huge_pmd_locked() will be skipped.
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 4bfa926b6a08..e78f56762b6d 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -29,6 +29,7 @@ dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp433.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp449.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp453.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= ipq9574-rdp454.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= monaco-evk.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8216-samsung-fortuna3g.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-acer-a1-724.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= msm8916-alcatel-idol347.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/monaco-evk.dts b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+> new file mode 100644
+> index 000000000000..1e0635c93556
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/monaco-evk.dts
+> @@ -0,0 +1,199 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2025 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +
+> +#include "qcs8300.dtsi"
 
-Here might be the major part of where confusion came from: I thought it
-must be a migration pmd entry to hit the issue, so it's not?
+No qcs8300-pmics.dtsi? Why?
 
-I checked the code just now:
-
-__handle_mm_fault:
-		if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
-			VM_BUG_ON(thp_migration_supported() &&
-					  !is_pmd_migration_entry(vmf.orig_pmd));
-
-So IIUC pmd migration entry is still the only possible way to have a swap
-entry.  It doesn't look like we have "real" swap entries for PMD (which can
-further points to some swapfiles)?
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. Monaco EVK";
+> +	compatible = "qcom,monaco-evk", "qcom,qcs8300";
+> +
+> +	aliases {
+> +		serial0 = &uart7;
+> +	};
+> +
+> +	chosen {
+> +		stdout-path = "serial0:115200n8";
+> +	};
+> +};
+> +
 
 -- 
-Peter Xu
-
+With best wishes
+Dmitry
 
