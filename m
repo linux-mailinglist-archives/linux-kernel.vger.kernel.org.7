@@ -1,162 +1,271 @@
-Return-Path: <linux-kernel+bounces-753550-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753551-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B8FBB18467
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:02:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 114A9B1846A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:04:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 010EF5672BA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:02:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 436F6567425
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:04:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 50CBD2571D8;
-	Fri,  1 Aug 2025 15:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E84CE2571AA;
+	Fri,  1 Aug 2025 15:03:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mPcrlalu"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="LGI1QlUo"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08AD24690;
-	Fri,  1 Aug 2025 15:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B82A54690;
+	Fri,  1 Aug 2025 15:03:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060561; cv=none; b=Nho/i0xRJdkowyU9tHb7C9QwbWi7NWSPBnU2dyh6kiA6KX9J4tkz5mk5essjqDI41VBQugzo0WI5HuIoGR3OxpxFgK4q1GLHBhEOzyuvGB+9MES928KV3RjGdaRwFLvum5LC/ssG9hl7fQlN94mqeVfWT2gUuZaIKvDV6kBzD88=
+	t=1754060633; cv=none; b=Qu9zyL97JRP4PkS+rGx+4ss6APeRfaJG9SsgMqEsgiLsKiv/8M62wlNfVE+FYZhwm5nX3XX69pDhoC16INIEFM4LjsajCEngh5g5QK7SgfrBOzIayQZ0caaNvvvkWyK8RgnuA50Ixls5iJO5mCYWxTEmUJBeP+Zk51UY1pxiMw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060561; c=relaxed/simple;
-	bh=OGs/zjt23oeVvRyGTQ5LM4hO8UmeAAkrKfuW1sIdqII=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Eceo5RLJdosvcxZiDnqchEBpjlRiKgqtq3RvBu1DWkRmCeZuo/eFNwIXOOCb97cpkE8JBio5LWq2cfedjkBfyUsLtF6tLRNX8eErt+gPNnoPa0EID23mtdy0MtszeQpkNBAuh0DF+7fXZxa3sFaXTWIfpiRBfQWJo2JEcgQnMek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mPcrlalu; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4563a57f947so12874775e9.1;
-        Fri, 01 Aug 2025 08:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754060557; x=1754665357; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xIs7RIYZnKjSY6t2jaZDFOukHpNQNdpysTR2/kJbT3Y=;
-        b=mPcrlaluoGZrU/q5Ye86dvSKPQsAH2V82Xgas3av5wuggDOsGdCBIImDM0nyB2xclo
-         V2bD3oBx/t9mDXf3a30hyepJgkrB2+AL+pBabdsSNlq9MSuqGHbzrKOA13RSSOuIKEQr
-         OuHvNX1H6zn499jDZPV4TZi+wF2PNvTeTm2gRsozG7dtXxWTU6dIjG85zyhrC6yl0+dv
-         cn7BaK/LruEL9EZGoQVo5ObX/LXetfZ6mYWqQhwAdp6mzf3f9sDTuepa0EoTMDuKwxNy
-         XWo5/T/YriFjt3yEOvxBIb7NQO3/m5otVBtu+EgN/8NNC/n0gC8f143xmJwNGfXc0tGX
-         AxDw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754060557; x=1754665357;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xIs7RIYZnKjSY6t2jaZDFOukHpNQNdpysTR2/kJbT3Y=;
-        b=rzCCJuE94P3IShT98g03e8SK88quNq8sFItmUt0okFukFKPOQR1SE2P1j/xM6h4UGK
-         Tq/zyi2ZQ2VkHbeuX6FOU1ubiV+CpygGQnIk4lJGZxtE08uekgtot+HsXS0Si+Y95teT
-         UUbhc5e8Fn4txbieKyS1Y1jZWQKvyzkZkYWXYSbe187iIPJ18ZiocTjLkJVyTexJDmS5
-         5DELW2tb7bknikQRwGNf18Sn+MQPh/jWAKqwKv4oAGqa9CFfqRvj7slNV3QtgTNmbpbC
-         t49F4ww8O6xn1HnsCxubs9FKCj+F09Xqm3q4dCa1YnqhHv98xVdpzr4OH/ekGe0sByKf
-         6SSA==
-X-Forwarded-Encrypted: i=1; AJvYcCXN23PDfI/VenqpkoSOh5DQFikoWunF/+byljGCrQmJluVMYNOovWrV/J/0c3HteC2+VY2faz4ITyAdA3Txd2iBQwL7@vger.kernel.org, AJvYcCXbRK5/gTzksnOV7okfAfaMdSMMJBnT04R4HTke88fh2hhMSOnVXBxBPED873pWUYm3E8E=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0CbakWRZ7Y3t4NZvBYkgvisupr3Emmb1T8CjZY9qW8aOoVTlG
-	Ur+QjNlNY8cAvGnNsXzuI7Cm+rklp0yPtbtm3igPHzST+U0GchjBxkhbscDY/B2jl2W8MDi+G32
-	RDwfYZwI7d5VB4q6RaWrriDuDtQT2gQs=
-X-Gm-Gg: ASbGncsMUJPE2OKQc3zHhhg3aaIsk8EfINGmY4jLmyFCpcTCNpUBr98+kBPuLgcW026
-	SJX9yc2qiaWpYOln6CoceUo+Y2ERHmcfKmFqg+1cP7HMbTlCNLW/Kq45VocAD+Ite/op+7+aR+l
-	tXgKD6ZKNsssE79z06DMhtRUb0CSek2vnnkUlO7t00+Ul90eAIlwnXTy3GlGj5hk1cQLXpcwLX1
-	Ko3/F+2LG1nS0Irb5jxZelhnDdDHXMOsjIZ
-X-Google-Smtp-Source: AGHT+IHdXD3CXIjBp8hrOdw9VLJ3bcyQXI5pJhPM/3JLAldgwJO6va75xGJn195gtlayZ2ExmybVxMO9Q79WUnwiW2E=
-X-Received: by 2002:a05:6000:40db:b0:3b6:d0d:79c1 with SMTP id
- ffacd0b85a97d-3b79d4511a7mr5494920f8f.10.1754060556730; Fri, 01 Aug 2025
- 08:02:36 -0700 (PDT)
+	s=arc-20240116; t=1754060633; c=relaxed/simple;
+	bh=L1h+dx+2xXkj4zM2GpO7rUPl6V/axz/5ALFK5sdvo80=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OumKeuGFc00gfPkyWuFHR4c3BertTJuX3eqArQB6EKuAP32QOr3ENd+TMOwyRkkgDbdECRqYYR0HJ6QlQoKvA2zab+lOI6mCimCrWbnoXIS7VfnHWle0GJrfdQBodWwWq21h47jppB37EmpHGxMyuzA/1lL9Xrd2bhGnofmH0w0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=LGI1QlUo; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571B6aWW015630;
+	Fri, 1 Aug 2025 15:03:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=gDmG46
+	Tk3Fu6LK97TgF72a8HHzYJ3HI4cdqzY4OubmQ=; b=LGI1QlUoUZejyC1agmDUer
+	tb/ipM8pu6VL5ju0GpxYcpGWierr1asbq0zYtwE1V8cPBUAtazux3BGdZWqJoHUh
+	VAkRB8rJNclZIHCWCxyM48v2pprFcrWL+w+LqAeY0El2tw+OASLSHgs8HS7GL//W
+	jgHSG435ncKskKOzpnc+nGvskanN2TQtbnqvLtO1x50qPC+lXII9eqiVyGn/wzTx
+	UbcBoqayVfWANSNYaYla7oDlnIB0aqXFj9+DdhamBiD7ZiS1EkUOOZHv/e/cF8ik
+	HXuF5kuJ8anVMzkNY3LxsumtZ3cieRoqtU6fUgljIDqSkaaAh9oMae5PiGaf78fQ
+	==
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr9c3d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 15:03:30 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571B1JEW028782;
+	Fri, 1 Aug 2025 15:03:29 GMT
+Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 485c231j4v-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 15:03:29 +0000
+Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
+	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571F3SUu56492292
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 15:03:28 GMT
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AE5FD5805F;
+	Fri,  1 Aug 2025 15:03:28 +0000 (GMT)
+Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 715D35805A;
+	Fri,  1 Aug 2025 15:03:28 +0000 (GMT)
+Received: from [9.61.163.64] (unknown [9.61.163.64])
+	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Aug 2025 15:03:28 +0000 (GMT)
+Message-ID: <ea5177ba-5905-40aa-91b0-9bcb66b6f0d4@linux.ibm.com>
+Date: Fri, 1 Aug 2025 10:03:25 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801071622.63dc9b78@gandalf.local.home>
-In-Reply-To: <20250801071622.63dc9b78@gandalf.local.home>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 1 Aug 2025 08:02:24 -0700
-X-Gm-Features: Ac12FXzhVGbzzq9uO0g0HZvhRsAZT5Ko_guZPc0sBg-98_qTHuvCXF5RSFlAa08
-Message-ID: <CAADnVQLky+R-tfkGaDo-R_-tJ8E3bmWz8Ug7etgTKsCpfXTSKw@mail.gmail.com>
-Subject: Re: [PATCH] btf: Simplify BTF logic with use of __free(btf_put)
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
-	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	KP Singh <kpsingh@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 6/6] dt-bindings: fsi: Convert
+ aspeed,ast2400-cf-fsi-master to DT schema
+To: "Rob Herring (Arm)" <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
+        Andrew Jeffery <andrew@codeconstruct.com.au>,
+        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
+        Ninad Palsule <ninad@linux.ibm.com>
+Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-fsi@lists.ozlabs.org
+References: <20250731-dt-fsi-cleanups-v1-0-e7b695a29fc3@kernel.org>
+ <20250731-dt-fsi-cleanups-v1-6-e7b695a29fc3@kernel.org>
+Content-Language: en-US
+From: Eddie James <eajames@linux.ibm.com>
+In-Reply-To: <20250731-dt-fsi-cleanups-v1-6-e7b695a29fc3@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDExMyBTYWx0ZWRfXwkqOO444EumL
+ YXjZ+64rSmUjTmtLSxPfWnM4021W3gqsEQnnSb0HENfzkTFimBJfR7mCrgaIo6aMTMtp3PDbnvM
+ epWcngSfV0HEhKtKRrQxQoK+9NcPiAVhyQfODx0jxTdBdy2nZd8xGhdV+fXPCi9kZCJkzhCTSeK
+ engtvGWpOoHFHSn+Y7mkAUhYj6Wo8Zwte3SPKhT33BYopPAjiyjoHFqNU1wMZXxGO+ihXqwTAPX
+ 6BeVpFhSzoLwJ2E6OCqpijcs2kQkO6SAIXXayKzuzo+fCG2T/islMnKvz5/YcIYIymBYtEHpZ64
+ GliIoc1pyV6O6KZ00qfhvJZcSzHhWY0izOpO1DdvbSg6Nktfu9gerXa32A0vke/qe290gez6xPt
+ FYa21WDN02TpHENI0YvLrnR46JtLZLb22kXwyDAC2MrdqvB3WCFaQcWMQOzB8QqH1sGnN/sl
+X-Authority-Analysis: v=2.4 cv=Je28rVKV c=1 sm=1 tr=0 ts=688cd742 cx=c_pps
+ a=aDMHemPKRhS1OARIsFnwRA==:117 a=aDMHemPKRhS1OARIsFnwRA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8 a=VnNF1IyMAAAA:8
+ a=VwQbUJbxAAAA:8 a=KHSZ2H1nh6ehvMvmo5AA:9 a=QEXdDO2ut3YA:10
+ a=sptkURWiP4Gy88Gu7hUp:22
+X-Proofpoint-GUID: ABclAUaAHOJT_qgRJ99oyhE207k_zMBu
+X-Proofpoint-ORIG-GUID: ABclAUaAHOJT_qgRJ99oyhE207k_zMBu
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 spamscore=0 adultscore=0
+ suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ mlxscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010113
 
-On Fri, Aug 1, 2025 at 4:16=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org>=
- wrote:
+
+On 7/31/25 17:12, Rob Herring (Arm) wrote:
+> Convert the ASpeed Coldfire offloaded GPIO FSI master.
 >
-> From: Steven Rostedt <rostedt@goodmis.org>
+> Drop the "fsi-master" compatible as it has not be used consistently and
+> doesn't represent anything.
+
+
+Acked-by: Eddie James <eajames@linux.ibm.com>
+
+
 >
-> Several functions need to call btf_put() on the btf pointer before it
-> returns leading to using "goto" branches to jump to the end to call
-> btf_put(btf). This can be simplified by introducing DEFINE_FREE() to allo=
-w
-> functions to define the btf descriptor with:
->
->    struct btf *btf __free(btf_put) =3D NULL;
->
-> Then the btf descriptor will always have btf_put() called on it if it
-> isn't NULL or ERR before exiting the function.
->
-> Where needed, no_free_ptr(btf) is used to assign the btf descriptor to a
-> pointer that will be used outside the function.
->
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
 > ---
->  include/linux/btf.h         |  4 +++
->  kernel/bpf/btf.c            | 56 +++++++++++--------------------------
->  kernel/trace/trace_btf.c    | 15 +++++-----
->  kernel/trace/trace_output.c |  8 ++----
->  4 files changed, 31 insertions(+), 52 deletions(-)
+>   .../bindings/fsi/aspeed,ast2400-cf-fsi-master.yaml | 81 ++++++++++++++++++++++
+>   .../devicetree/bindings/fsi/fsi-master-ast-cf.txt  | 36 ----------
+>   2 files changed, 81 insertions(+), 36 deletions(-)
 >
-> diff --git a/include/linux/btf.h b/include/linux/btf.h
-> index b2983706292f..e118c69c4996 100644
-> --- a/include/linux/btf.h
-> +++ b/include/linux/btf.h
-> @@ -8,6 +8,7 @@
->  #include <linux/bpfptr.h>
->  #include <linux/bsearch.h>
->  #include <linux/btf_ids.h>
-> +#include <linux/cleanup.h>
->  #include <uapi/linux/btf.h>
->  #include <uapi/linux/bpf.h>
+> diff --git a/Documentation/devicetree/bindings/fsi/aspeed,ast2400-cf-fsi-master.yaml b/Documentation/devicetree/bindings/fsi/aspeed,ast2400-cf-fsi-master.yaml
+> new file mode 100644
+> index 000000000000..690b6c936f18
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/fsi/aspeed,ast2400-cf-fsi-master.yaml
+> @@ -0,0 +1,81 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/fsi/aspeed,ast2400-cf-fsi-master.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: ASpeed ColdFire offloaded GPIO-based FSI master
+> +
+> +maintainers:
+> +  - Eddie James <eajames@linux.ibm.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/fsi/fsi-controller.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - aspeed,ast2400-cf-fsi-master
+> +      - aspeed,ast2500-cf-fsi-master
+> +
+> +  clock-gpios:
+> +    maxItems: 1
+> +    description: GPIO for FSI clock
+> +
+> +  data-gpios:
+> +    maxItems: 1
+> +    description: GPIO for FSI data signal
+> +
+> +  enable-gpios:
+> +    maxItems: 1
+> +    description: GPIO for enable signal
+> +
+> +  trans-gpios:
+> +    maxItems: 1
+> +    description: GPIO for voltage translator enable
+> +
+> +  mux-gpios:
+> +    maxItems: 1
+> +    description:
+> +      GPIO for pin multiplexing with other functions (eg, external FSI masters)
+> +
+> +  memory-region:
+> +    maxItems: 1
+> +    description:
+> +      Reference to the reserved memory for the ColdFire. Must be 2M aligned on
+> +      AST2400 and 1M aligned on AST2500.
+> +
+> +  aspeed,cvic:
+> +    description: Reference to the CVIC node.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +  aspeed,sram:
+> +    description: Reference to the SRAM node.
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+> +
+> +required:
+> +  - compatible
+> +  - clock-gpios
+> +  - data-gpios
+> +  - enable-gpios
+> +  - trans-gpios
+> +  - mux-gpios
+> +  - memory-region
+> +  - aspeed,cvic
+> +  - aspeed,sram
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    fsi-master {
+> +      compatible = "aspeed,ast2500-cf-fsi-master";
+> +      clock-gpios = <&gpio 0>;
+> +      data-gpios = <&gpio 1>;
+> +      enable-gpios = <&gpio 2>;
+> +      trans-gpios = <&gpio 3>;
+> +      mux-gpios = <&gpio 4>;
+> +      memory-region = <&coldfire_memory>;
+> +      aspeed,cvic = <&cvic>;
+> +      aspeed,sram = <&sram>;
+> +    };
+> diff --git a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt b/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> deleted file mode 100644
+> index 3dc752db748b..000000000000
+> --- a/Documentation/devicetree/bindings/fsi/fsi-master-ast-cf.txt
+> +++ /dev/null
+> @@ -1,36 +0,0 @@
+> -Device-tree bindings for ColdFire offloaded gpio-based FSI master driver
+> -------------------------------------------------------------------------
+> -
+> -Required properties:
+> - - compatible =
+> -	"aspeed,ast2400-cf-fsi-master" for an AST2400 based system
+> -   or
+> -	"aspeed,ast2500-cf-fsi-master" for an AST2500 based system
+> -
+> - - clock-gpios = <gpio-descriptor>;	: GPIO for FSI clock
+> - - data-gpios = <gpio-descriptor>;	: GPIO for FSI data signal
+> - - enable-gpios = <gpio-descriptor>;	: GPIO for enable signal
+> - - trans-gpios = <gpio-descriptor>;	: GPIO for voltage translator enable
+> - - mux-gpios = <gpio-descriptor>;	: GPIO for pin multiplexing with other
+> -                                          functions (eg, external FSI masters)
+> - - memory-region = <phandle>;		: Reference to the reserved memory for
+> -                                          the ColdFire. Must be 2M aligned on
+> -					  AST2400 and 1M aligned on AST2500
+> - - aspeed,sram = <phandle>;		: Reference to the SRAM node.
+> - - aspeed,cvic = <phandle>;		: Reference to the CVIC node.
+> -
+> -Examples:
+> -
+> -    fsi-master {
+> -        compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
+> -
+> -	clock-gpios = <&gpio 0>;
+> -        data-gpios = <&gpio 1>;
+> -        enable-gpios = <&gpio 2>;
+> -        trans-gpios = <&gpio 3>;
+> -        mux-gpios = <&gpio 4>;
+> -
+> -	memory-region = <&coldfire_memory>;
+> -	aspeed,sram = <&sram>;
+> -	aspeed,cvic = <&cvic>;
+> -    }
 >
-> @@ -150,6 +151,9 @@ struct btf *btf_get_by_fd(int fd);
->  int btf_get_info_by_fd(const struct btf *btf,
->                        const union bpf_attr *attr,
->                        union bpf_attr __user *uattr);
-> +
-> +DEFINE_FREE(btf_put, struct btf *, if (!IS_ERR_OR_NULL(_T)) btf_put(_T))
-> +
->  /* Figure out the size of a type_id.  If type_id is a modifier
->   * (e.g. const), it will be resolved to find out the type with size.
->   *
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 1d2cf898e21e..480657912c96 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -3788,7 +3788,7 @@ static int btf_parse_kptr(const struct btf *btf, st=
-ruct btf_field *field,
->         /* If a matching btf type is found in kernel or module BTFs, kptr=
-_ref
->          * is that BTF, otherwise it's program BTF
->          */
-> -       struct btf *kptr_btf;
-> +       struct btf *kptr_btf __free(btf_put) =3D NULL;
-
-Sorry I hate this __free() style.
-It's not a simplification, but an obfuscation of code and logic.
-
---
-pw-bot: cr
 
