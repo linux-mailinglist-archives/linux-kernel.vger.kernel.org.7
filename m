@@ -1,360 +1,134 @@
-Return-Path: <linux-kernel+bounces-752936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752937-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8BEB17CB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:00:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92373B17CB8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B67AC163A61
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:00:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87E2A1C25BBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09A4F1F2C45;
-	Fri,  1 Aug 2025 06:00:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D401F4C8C;
+	Fri,  1 Aug 2025 06:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="DV4FXQp/"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgSEXUb3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35BC0DDC3;
-	Fri,  1 Aug 2025 06:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D76ABA27;
+	Fri,  1 Aug 2025 06:01:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754028043; cv=none; b=Ne0GwgvAR0YdUswGIxgpFW8VH6v8vmbg1yhQ9r3lMuM07YgIWh5rHCcBhFdandvj4zBLFzeH0h2X6ajtRrxBV+f4g3VZx4anI9npwj72r2TKIJVpK1OGjCfIIzajDUvAPbeM+csRGNBYQST0AMN7tIIoxtJqfKpmfCPU+p49q9o=
+	t=1754028064; cv=none; b=QIk/drhW488CffNtjSPof9548kCPPz2yERYcyp2DqYM7tCt5scpdXQ819OeSiWnskcFdObJ6FvdxZ1xBsTBsfochrl7O8V2WMKJpnEuOax2LxhahqjDQQ02E0eFppME37/k04P1mrhUkYIWsATT5Bce/EgH1Q1xIz4656SxDL9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754028043; c=relaxed/simple;
-	bh=Uk6FNkjiuU6KebCqcIkLmVP5LAzCcrrnI83BBYjUbIU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sOkkmxnhbndrEzUKJxCV0hFg9GL8+gQTkuzNex6PoUGnndxjm3NXsbqw9dz7KY15V1/C7k0hocjw/ZTWiFIHYVcvZu1tcAbjan639CdUCX4QI8Da93XZLTtfeBiNJWjasYTIfj5SuWEXX70GqUn7WSqm749HX2fRB2dOMp4rqXk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=DV4FXQp/; arc=none smtp.client-ip=212.227.17.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1754028038; x=1754632838; i=w_armin@gmx.de;
-	bh=izZmsp93jevYHwwBsyPpdSc6PEJGVjnNB2jeH/0/B68=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=DV4FXQp/iYcnGNiPB70dHl8LhNE9CuOOg/M6lDJ86eioCKqoz6PHEnappfrGFQzf
-	 6YhYsCOy8vewPRUKN+XIw5BnYK4dSTLkFcKVxE24cdolI6aIbpG0L+xfVOR42ph+g
-	 /TNFZgYIKi9N8TfOKZYVshmLsYFbNpsn9zrE0oR9lbjmAGjCGFOXA3c8SeKXFduoT
-	 SRt8/0dHbMdphSvDdMwKzn5pO//5iZ+amRixBIoVUV8YG+g3n6x9utea4uE3Zg0Vy
-	 xc78UahdoDNy5NDBZLHMpBz5OpH8uxCTKoCuGMJhKClE5sclrjF8rnXrMG7Qbz+LF
-	 KZByqAx7eM/Mv3c1Mg==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [192.168.0.69] ([87.177.78.219]) by mail.gmx.net (mrgmx104
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MxUrx-1uSdum3SIb-00t6T2; Fri, 01
- Aug 2025 08:00:37 +0200
-Message-ID: <c3314673-0b9d-464a-81cf-7cf1bd737a8b@gmx.de>
-Date: Fri, 1 Aug 2025 08:00:35 +0200
+	s=arc-20240116; t=1754028064; c=relaxed/simple;
+	bh=/263uIWcvhc0I5wZ3WHa0/u1tV91vOaXPF5PpqenmT0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qy11vegT6wBZxQDK2IRc1ulmgvzfELgSHJlbnmbdGqko0F8oEhm5W9lNmXfCknGr/giHwUYko2zoWaoc2kz69ZpUWauuEhsz27yC1hOYJ2E9denKH4DadVlELh7v7/VnIy9HvJAaWyc/5kiQ4UFr5WIBi5KIG1+UtBIkH827CKs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgSEXUb3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4FCDC4CEE7;
+	Fri,  1 Aug 2025 06:00:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754028063;
+	bh=/263uIWcvhc0I5wZ3WHa0/u1tV91vOaXPF5PpqenmT0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WgSEXUb30+pWs5GoXv2VA0qaCXKyTl3k2ikLLryeXh2n9LZXECRSptTzAhDl97YkC
+	 py21gmJ+O3NPGbEKvZuF1VJgpKc5n0ObYWneRIVLWRujqdbF1CZlfkE/FWH6VLFWpg
+	 PREbWhaHPMdM5oJKelqLHF9TFxDYfxSkjrihZ9lR8PnwEeKzelv45XkXVHPOGuTNh8
+	 Ls8jGZRlAilSMGH8Bxj6GEAQ0yLOlfJziWvoClU6L1wdhIkqLV3DCNjLEyaU3gz3Bj
+	 7+y/G/kAjcq1mcpgYkAWVt8SlAlkOwn+Ky4kXVYU+iUwkGN83mdd6ELcAfxAbDiZZL
+	 +s2+fki20RAqg==
+Date: Fri, 1 Aug 2025 11:30:48 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Aaron Kling <webgeek1234@gmail.com>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-tegra@vger.kernel.org, linux-pm@vger.kernel.org
+Subject: Re: [PATCH v7 0/3] PCI: tegra: Allow building as a module
+Message-ID: <omchhpbmsydfcsm6mzmbdiupsrxmxxvkxqf33fgi563akn76vf@vkc7k2zhlvee>
+References: <20250731-pci-tegra-module-v7-0-cad4b088b8fb@gmail.com>
+ <CALHNRZ9tOJccZ5sQjvkoPe4-+VUtWRxAzAOUainGUCs4+_RBCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] platform/x86: Add WMI driver for Redmibook keyboard.
-To: Gladyshev Ilya <foxido@foxido.dev>
-Cc: linux-input@vger.kernel.org, nikita.nikita.krasnov@gmail.com,
- Hans de Goede <hansg@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- linux-kernel@vger.kernel.org, platform-driver-x86@vger.kernel.org
-References: <20250730185619.8725-1-foxido@foxido.dev>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <20250730185619.8725-1-foxido@foxido.dev>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:s/x6Q7YoWb4Sq1+0MSVvMLtEDHRIIKiVeRGz280RJxYZliOE41P
- HT7CMiDKspw8lWSe0qufSyOMPufa1iZ5yE4x3WOVCrKBXJKyyjwILo+rlixrT4LpGsS1o8v
- l3bVxzFQ2xiVETn8IIZWkbjYkhJBZSDDZ+8YVV8sZpOEgyagoZi5a0CeKkWlyfHnDSTq0xU
- AVgylWuvN99NVRmEnGCRA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:vRi6Vlswy+4=;WCzs9OU+dscIHzNiw/ZEvq6taqE
- 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
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CALHNRZ9tOJccZ5sQjvkoPe4-+VUtWRxAzAOUainGUCs4+_RBCw@mail.gmail.com>
 
-Am 30.07.25 um 20:56 schrieb Gladyshev Ilya:
+On Thu, Jul 31, 2025 at 05:01:55PM GMT, Aaron Kling wrote:
+> On Thu, Jul 31, 2025 at 4:59 PM Aaron Kling via B4 Relay
+> <devnull+webgeek1234.gmail.com@kernel.org> wrote:
+> >
+> > Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+> > ---
+> > Changes in v7:
+> > - Rebased on 6.16
+> > - Updated mailing address list
+> > - Link to v6: https://lore.kernel.org/r/20250507-pci-tegra-module-v6-0-5fe363eaa302@gmail.com
+> >
+> > Changes in v6:
+> > - Remove unused debugfs cleanup function, as caught by kernel ci
+> > - Link to v5: https://lore.kernel.org/r/20250505-pci-tegra-module-v5-0-827aaac998ba@gmail.com
+> >
+> > Changes in v5:
+> > - Copy commit message exactly word for word on patch 1, as required by reviewer
+> > - Delete remove callback in patch 3, per request
+> > - Don't clean up debugfs, per request, which drops patch 4 entirely
+> > - Link to v4: https://lore.kernel.org/r/20250505-pci-tegra-module-v4-0-088b552c4b1a@gmail.com
+> >
+> > Changes in v4:
+> > - Updated commit messages for patches 1 and 2, per review
+> > - Link to v3: https://lore.kernel.org/r/20250502-pci-tegra-module-v3-0-556a49732d70@gmail.com
+> >
+> > Changes in v3:
+> > - Add patch to drop remove callback, per request
+> > - Link to v2: https://lore.kernel.org/r/20250428-pci-tegra-module-v2-0-c11a4b912446@gmail.com
+> >
+> > Changes in v2:
+> > - Add patch to export tegra_cpuidle_pcie_irqs_in_use as required when
+> >   building pci-tegra as a module for arm
+> > - Drop module exit to prevent module unloading, as requested
+> > - Link to v1: https://lore.kernel.org/r/20250420-pci-tegra-module-v1-0-c0a1f831354a@gmail.com
+> >
+> > ---
+> > Aaron Kling (3):
+> >       irqdomain: Export irq_domain_free_irqs
+> >       cpuidle: tegra: Export tegra_cpuidle_pcie_irqs_in_use
+> >       PCI: tegra: Allow building as a module
+> >
+> >  drivers/cpuidle/cpuidle-tegra.c    |  1 +
+> >  drivers/pci/controller/Kconfig     |  2 +-
+> >  drivers/pci/controller/pci-tegra.c | 35 ++++-------------------------------
+> >  kernel/irq/irqdomain.c             |  1 +
+> >  4 files changed, 7 insertions(+), 32 deletions(-)
+> > ---
+> > base-commit: 038d61fd642278bab63ee8ef722c50d10ab01e8f
+> > change-id: 20250313-pci-tegra-module-7cbd1c5e70af
+> >
+> > Best regards,
+> > --
+> > Aaron Kling <webgeek1234@gmail.com>
+> >
+> >
+> 
+> Continuing the conversation from the last revision [0]. Is there any
+> path forward for this series?
+> 
 
-> This driver implements support for various Fn keys (like Cut) and Xiaomi
-> specific AI button.
->
-> Signed-off-by: Gladyshev Ilya <foxido@foxido.dev>
-> ---
-> Changes since v2:
-> - Fix Kconfig dependencies
-> - Accept WMI buffers that are bigger than expected
->
-> Link to v2: https://lore.kernel.org/platform-driver-x86/20250729190528.8=
-446-1-foxido@foxido.dev/
-> ---
->   MAINTAINERS                      |   6 ++
->   drivers/platform/x86/Kconfig     |  12 +++
->   drivers/platform/x86/Makefile    |   1 +
->   drivers/platform/x86/redmi-wmi.c | 129 +++++++++++++++++++++++++++++++
->   4 files changed, 148 insertions(+)
->   create mode 100644 drivers/platform/x86/redmi-wmi.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index c0b444e5fd5a..eb25fb10e751 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -20965,6 +20965,12 @@ S:	Maintained
->   T:	git https://github.com/pkshih/rtw.git
->   F:	drivers/net/wireless/realtek/rtw89/
->  =20
-> +REDMIBOOK WMI DRIVERS
-> +M:	Gladyshev Ilya <foxido@foxido.dev>
-> +L:	platform-driver-x86@vger.kernel.org
-> +S:	Maintained
-> +F:	drivers/platform/x86/redmi-wmi.c
-> +
->   REDPINE WIRELESS DRIVER
->   L:	linux-wireless@vger.kernel.org
->   S:	Orphan
-> diff --git a/drivers/platform/x86/Kconfig b/drivers/platform/x86/Kconfig
-> index e5cbd58a99f3..9f98a7042e43 100644
-> --- a/drivers/platform/x86/Kconfig
-> +++ b/drivers/platform/x86/Kconfig
-> @@ -109,6 +109,18 @@ config XIAOMI_WMI
->   	  To compile this driver as a module, choose M here: the module will
->   	  be called xiaomi-wmi.
->  =20
-> +config REDMI_WMI
-> +	tristate "Redmibook WMI key driver"
-> +	depends on ACPI_WMI
-> +	depends on INPUT
-> +	select INPUT_SPARSEKMAP
-> +	help
-> +	  Say Y here if you want support for WMI-based hotkey events on
-> +	  Xiaomi Redmibook devices.
-> +
-> +	  To compile this driver as a module, choose M here: the module will
-> +	  be called redmi-wmi.
-> +
->   config GIGABYTE_WMI
->   	tristate "Gigabyte WMI temperature driver"
->   	depends on ACPI_WMI
-> diff --git a/drivers/platform/x86/Makefile b/drivers/platform/x86/Makefi=
-le
-> index bea87a85ae75..406dd0807ba7 100644
-> --- a/drivers/platform/x86/Makefile
-> +++ b/drivers/platform/x86/Makefile
-> @@ -13,6 +13,7 @@ obj-$(CONFIG_HUAWEI_WMI)		+=3D huawei-wmi.o
->   obj-$(CONFIG_MXM_WMI)			+=3D mxm-wmi.o
->   obj-$(CONFIG_NVIDIA_WMI_EC_BACKLIGHT)	+=3D nvidia-wmi-ec-backlight.o
->   obj-$(CONFIG_XIAOMI_WMI)		+=3D xiaomi-wmi.o
-> +obj-$(CONFIG_REDMI_WMI)			+=3D redmi-wmi.o
->   obj-$(CONFIG_GIGABYTE_WMI)		+=3D gigabyte-wmi.o
->  =20
->   # Acer
-> diff --git a/drivers/platform/x86/redmi-wmi.c b/drivers/platform/x86/red=
-mi-wmi.c
-> new file mode 100644
-> index 000000000000..3dbf4a40a4ff
-> --- /dev/null
-> +++ b/drivers/platform/x86/redmi-wmi.c
-> @@ -0,0 +1,129 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/* WMI driver for Xiaomi Redmibooks */
-> +
-> +#include <linux/acpi.h>
-> +#include <linux/device.h>
-> +#include <linux/input.h>
-> +#include <linux/input/sparse-keymap.h>
-> +#include <linux/module.h>
-> +#include <linux/mutex.h>
-> +#include <linux/unaligned.h>
-> +#include <linux/wmi.h>
-> +
-> +#include <uapi/linux/input-event-codes.h>
-> +
-> +#define WMI_REDMIBOOK_KEYBOARD_EVENT_GUID "46C93E13-EE9B-4262-8488-563B=
-CA757FEF"
-> +
-> +#define AI_KEY_VALUE_MASK 0x00000100
-> +
-> +static const struct key_entry redmi_wmi_keymap[] =3D {
-> +	{KE_KEY, 0x00000201,	{KEY_SELECTIVE_SCREENSHOT}},
-> +	{KE_KEY, 0x00000301,	{KEY_ALL_APPLICATIONS}},
-> +	{KE_KEY, 0x00001b01,	{KEY_SETUP}},
-> +
-> +	/* AI button has code for each position */
-> +	{KE_KEY, 0x00011801,	{KEY_ASSISTANT}},
-> +	{KE_KEY, 0x00011901,	{KEY_ASSISTANT}},
-> +
-> +	/* Keyboard backlight */
-> +	{KE_IGNORE, 0x00000501, {}},
-> +	{KE_IGNORE, 0x00800501, {}},
-> +	{KE_IGNORE, 0x00050501, {}},
-> +	{KE_IGNORE, 0x000a0501, {}},
-> +
-> +	{KE_END}
-> +};
-> +
-> +struct redmi_wmi {
-> +	struct input_dev *input_dev;
-> +	/* Protects the key event sequence */
-> +	struct mutex key_lock;
-> +};
-> +
-> +static int redmi_wmi_probe(struct wmi_device *wdev, const void *context=
-)
-> +{
-> +	struct redmi_wmi *data;
-> +	int err;
-> +
-> +	/* Init dev */
-> +	data =3D devm_kzalloc(&wdev->dev, sizeof(*data), GFP_KERNEL);
-> +	if (!data)
-> +		return -ENOMEM;
-> +
-> +	dev_set_drvdata(&wdev->dev, data);
-> +
-> +	err =3D devm_mutex_init(&wdev->dev, &data->key_lock);
-> +	if (err)
-> +		return err;
-> +
-> +	/* Setup input device */
-> +	data->input_dev =3D devm_input_allocate_device(&wdev->dev);
-> +	if (!data->input_dev)
-> +		return -ENOMEM;
+Daniel, could you please look into the cpufreq patch?
 
-Please leave a blank line here.
+- Mani
 
-> +	data->input_dev->name =3D "Redmibook WMI keys";
-> +	data->input_dev->phys =3D "wmi/input0";
-> +
-> +	err =3D sparse_keymap_setup(data->input_dev, redmi_wmi_keymap, NULL);
-> +	if (err)
-> +		return err;
-> +
-> +	return input_register_device(data->input_dev);
-> +}
-> +
-> +static void redmi_wmi_notify(struct wmi_device *wdev, union acpi_object=
- *obj)
-> +{
-> +	struct redmi_wmi *data =3D dev_get_drvdata(&wdev->dev);
-> +	bool autorelease =3D true;
-> +	int value =3D 1;
-> +
-> +	if (obj->type !=3D ACPI_TYPE_BUFFER) {
-> +		dev_err(&wdev->dev, "Bad response type %u\n", obj->type);
-> +		return;
-> +	}
-> +
-> +	if (obj->buffer.length < 32) {
-> +		dev_err(&wdev->dev, "Invalid buffer length %u\n", obj->buffer.length)=
-;
-> +		return;
-> +	}
-> +
-> +	/* For linearizability */
-> +	guard(mutex)(&data->key_lock);
-
-You only need to guard the actual input reporting, so please move the guar=
-d just above the call to
-sparse_keymap_report_entry().
-
-> +
-> +	u32 payload =3D get_unaligned_le32(obj->buffer.pointer);
-> +	struct key_entry *entry =3D sparse_keymap_entry_from_scancode(data->in=
-put_dev, payload);
-> +
-> +	if (!entry) {
-> +		dev_dbg(&wdev->dev, "Unknown WMI event with payload %u", payload);
-> +		return;
-> +	}
-> +
-> +	/* AI key quirk */
-> +	if (entry->keycode =3D=3D KEY_ASSISTANT) {
-> +		value =3D !(payload & AI_KEY_VALUE_MASK);
-> +		autorelease =3D false;
-> +	}
-> +
-> +	sparse_keymap_report_entry(data->input_dev, entry, value, autorelease)=
-;
-> +}
-> +
-> +static const struct wmi_device_id redmi_wmi_id_table[] =3D {
-> +	{ .guid_string =3D WMI_REDMIBOOK_KEYBOARD_EVENT_GUID },
-
-Please use "{ WMI_REDMIBOOK_KEYBOARD_EVENT_GUID, NULL }," instead.
-
-With the above issues fixed:
-
-Reviewed-by: Armin Wolf <W_Armin@gmx.de>
-
-> +	{ }
-> +};
-> +
-> +static struct wmi_driver redmi_wmi_driver =3D {
-> +	.driver =3D {
-> +		.name =3D "redmi-wmi",
-> +		.probe_type =3D PROBE_PREFER_ASYNCHRONOUS
-> +	},
-> +	.id_table =3D redmi_wmi_id_table,
-> +	.probe =3D redmi_wmi_probe,
-> +	.notify =3D redmi_wmi_notify,
-> +	.no_singleton =3D true,
-> +};
-> +module_wmi_driver(redmi_wmi_driver);
-> +
-> +MODULE_DEVICE_TABLE(wmi, redmi_wmi_id_table);
-> +MODULE_AUTHOR("Gladyshev Ilya <foxido@foxido.dev>");
-> +MODULE_DESCRIPTION("Redmibook WMI driver");
-> +MODULE_LICENSE("GPL");
+-- 
+மணிவண்ணன் சதாசிவம்
 
