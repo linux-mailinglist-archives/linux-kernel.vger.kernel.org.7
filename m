@@ -1,196 +1,214 @@
-Return-Path: <linux-kernel+bounces-752800-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 867BDB17B0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:01:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 83A97B17B25
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:16:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 824531C27583
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:01:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9BE91C27BA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C17241519AC;
-	Fri,  1 Aug 2025 02:00:49 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1714913EFF3;
+	Fri,  1 Aug 2025 02:16:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EOoKQ7ZG"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2B09224D6;
-	Fri,  1 Aug 2025 02:00:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40C020326;
+	Fri,  1 Aug 2025 02:16:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754013649; cv=none; b=lfL63NMX/MVdH8hh7lU8K48DZ3lLDCXZDPhby9WEQFxwY/AgpCublkQnBmojxbUEQsrsin3rV5Uv7lJ7yBm96XjXrLYp1VqQKJ+MWScL2iW6+PvFl8WDmi9pC/DG1ySl0DuzqydL20C0bDG4X6Lh3647hQNtDsltWeYyjfjKiG0=
+	t=1754014604; cv=none; b=sm91M/G1d78bpDI/bubgl65eBPN8e9D0jk54RNGEARC0W8ZNtPs3s1YYtPRVNdERVLqI+Z/ocaS6t5sXOjA+J6TrVHWqdHxKEg7IBg3rDdP4RbnvS+bJdTDPZ/hLHGWKq3weuOhismTPrYauFjClQvdGENKXxVIVk3+9HxtMyqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754013649; c=relaxed/simple;
-	bh=uUgBHxk1XWPT9uqTiGzegsSuOWtCEXVRytWcBEnLKxo=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=DxEfhcPfZe05uOpAbroz7kgogpFqNkMZWsmlfXOTrCj6FdAQgCHPU8xUJg/Rgma5HO1+3Jvxdsi55aXrExgSsDInj2gl9KhQO98A+cfXBdXjERDhwcarKf1HnIcUMQWZYg/CqZUjodlEdtEVSTUuDcwlfOBy+iveAtuKROFgr4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4btTgd1j1MzYQvgt;
-	Fri,  1 Aug 2025 10:00:45 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id DFFB71A10E9;
-	Fri,  1 Aug 2025 10:00:43 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgC3MxTJH4xo6bCnCA--.58432S3;
-	Fri, 01 Aug 2025 10:00:43 +0800 (CST)
-Subject: Re: [PATCH v4 11/11] md/md-llbitmap: introduce new lockless bitmap
-To: Yu Kuai <yukuai@kernel.org>, corbet@lwn.net, agk@redhat.co,
- snitzer@kernel.org, mpatocka@redhat.com, hch@lst.de, song@kernel.org,
- hare@suse.de
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- dm-devel@lists.linux.dev, linux-raid@vger.kernel.org, yangerkun@huawei.com,
- yi.zhang@huawei.com, johnny.chenyi@huawei.com,
- "yukuai (C)" <yukuai3@huawei.com>
-References: <20250721171557.34587-1-yukuai@kernel.org>
- <20250721171557.34587-12-yukuai@kernel.org>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <f282237e-be12-b178-0e25-3a73bd20d77c@huaweicloud.com>
-Date: Fri, 1 Aug 2025 10:00:41 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754014604; c=relaxed/simple;
+	bh=8DsDuKyLSQ6J57SR4sqDq8FfwCscM9sDogsCD6oZntI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R/i0uPCE6zQO/vlKovzTzIQ3BULK1u8nb7TU4KSJ7HSK9dSOTeLit+Q7yr7YEXgtJnDT6iEmiQgnWuZLV2x85xmvr4Hh4lcvoFMoQDCuXljzg//NPtYgcvy2T5vF+GKNU/8Amenu0S8rYT78eCtk23ZK0DNfgJTejVWIK2IQp4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EOoKQ7ZG; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754014603; x=1785550603;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=8DsDuKyLSQ6J57SR4sqDq8FfwCscM9sDogsCD6oZntI=;
+  b=EOoKQ7ZGmFaaIaugfWLzUnITkHXDXcQ1GoFVfZRZW6s00WciClOeoHms
+   cfowI8PVBAuZ7OsPzPet3UXihBNHNMl/PzWJa5GfvZc9iKZkOEP7xpQOM
+   Esha355Bmcyb8E5r9u7SKm+x4lYEXsW9Gd3Ag9oH4kxo4+mCHuPO05MGx
+   HWfUAj5nOBMZGLJreFvBvnIyMH6zTFJ3i1EqWCkMI237f+nXyRsJ3iYgb
+   9V/CPqJqdxOluoFUanUXELzkXPI7QMtGxr/t2rPXht19+Tqv+tFtDqCii
+   zQ20n1OPw1Ce66f/KX7bTsvTc+x4UOOl51IV4N5A2vSrQhUWWa+/Aoy8K
+   w==;
+X-CSE-ConnectionGUID: Jkt07b8YRZqAwWd1I9yl7w==
+X-CSE-MsgGUID: 34/cXtoaRfq+GxipeiI9fA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56052515"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="56052515"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 19:16:42 -0700
+X-CSE-ConnectionGUID: RB3PguwuTm6Umpo4iIRG8A==
+X-CSE-MsgGUID: ZDI7glPKRA2D2P6X66I1Pw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="164222086"
+Received: from yilunxu-optiplex-7050.sh.intel.com (HELO localhost) ([10.239.159.165])
+  by fmviesa010.fm.intel.com with ESMTP; 31 Jul 2025 19:16:37 -0700
+Date: Fri, 1 Aug 2025 10:07:13 +0800
+From: Xu Yilun <yilun.xu@linux.intel.com>
+To: dan.j.williams@intel.com
+Cc: Chao Gao <chao.gao@intel.com>, linux-coco@lists.linux.dev,
+	x86@kernel.org, kvm@vger.kernel.org, seanjc@google.com,
+	pbonzini@redhat.com, eddie.dong@intel.com,
+	kirill.shutemov@intel.com, dave.hansen@intel.com,
+	kai.huang@intel.com, isaku.yamahata@intel.com,
+	elena.reshetova@intel.com, rick.p.edgecombe@intel.com,
+	Farrah Chen <farrah.chen@intel.com>,
+	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
+	"H. Peter Anvin" <hpa@zytor.com>, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 07/20] x86/virt/tdx: Expose SEAMLDR information via
+ sysfs
+Message-ID: <aIwhUb3z9/cgsMwb@yilunxu-OptiPlex-7050>
+References: <20250523095322.88774-1-chao.gao@intel.com>
+ <20250523095322.88774-8-chao.gao@intel.com>
+ <aIhUVyJVQ+rhRB4r@yilunxu-OptiPlex-7050>
+ <688bd9a164334_48e5100f1@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <20250721171557.34587-12-yukuai@kernel.org>
-Content-Type: text/plain; charset=gbk; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgC3MxTJH4xo6bCnCA--.58432S3
-X-Coremail-Antispam: 1UD129KBjvJXoWxJF43uw4UGF1UGFWrurW3KFg_yoW5Zw47pF
-	WIvF9xKayfJr1rXw17Xrn5ZFZ5XrWkKwsIqFn7A345WrnF9rnIkrWrGFWUJw4rZwn8JFs5
-	ta15Krs8KF1DuFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUU9Ib4IE77IF4wAFF20E14v26ryj6rWUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4IIrI8v6xkF7I0E8cxan2IY04v7Mxk0xIA0c2IE
-	e2xFo4CEbIxvr21lc7CjxVAaw2AFwI0_Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4I
-	kC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWU
-	WwC2zVAF1VAY17CE14v26r4a6rW5MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr
-	0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWU
-	JVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJb
-	IYCTnIWIevJa73UjIFyTuYvjxUFku4UUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <688bd9a164334_48e5100f1@dwillia2-xfh.jf.intel.com.notmuch>
 
-Hi,
+On Thu, Jul 31, 2025 at 02:01:21PM -0700, dan.j.williams@intel.com wrote:
+> Xu Yilun wrote:
+> > > +static const struct attribute_group *tdx_subsys_groups[] = {
+> > > +	SEAMLDR_GROUP,
+> > > +	NULL,
+> > > +};
+> > > +
+> > >  static void tdx_subsys_init(void)
+> > >  {
+> > >  	struct tdx_tsm *tdx_tsm;
+> > >  	int err;
+> > >  
+> > > +	err = get_seamldr_info();
+> > > +	if (err) {
+> > > +		pr_err("failed to get seamldr info %d\n", err);
+> > > +		return;
+> > > +	}
+> > > +
+> > >  	/* Establish subsystem for global TDX module attributes */
+> > > -	err = subsys_virtual_register(&tdx_subsys, NULL);
+> > > +	err = subsys_virtual_register(&tdx_subsys, tdx_subsys_groups);
+> > >  	if (err) {
+> > >  		pr_err("failed to register tdx_subsys %d\n", err);
+> > >  		return;
+> > 
+> > As mentioned, TDX Connect also uses this virtual TSM device. And I tend
+> > to extend it to TDX guest, also make the guest TSM management run on
+> > the virtual device which represents the TDG calls and TDG_VP_VM calls.
+> > 
+> > So I'm considering extract the common part of tdx_subsys_init() out of
+> > TDX host and into a separate file, e.g.
+> > 
+> > ---
+> > 
+> > +source "drivers/virt/coco/tdx-tsm/Kconfig"
+> > +
+> >  config TSM
+> >         bool
+> > diff --git a/drivers/virt/coco/Makefile b/drivers/virt/coco/Makefile
+> > index c0c3733be165..a54d3cb5b4e9 100644
+> > --- a/drivers/virt/coco/Makefile
+> > +++ b/drivers/virt/coco/Makefile
+> > @@ -10,3 +10,4 @@ obj-$(CONFIG_INTEL_TDX_GUEST) += tdx-guest/
+> >  obj-$(CONFIG_ARM_CCA_GUEST)    += arm-cca-guest/
+> >  obj-$(CONFIG_TSM)              += tsm-core.o
+> >  obj-$(CONFIG_TSM_GUEST)                += guest/
+> > +obj-y                          += tdx-tsm/
+> > diff --git a/drivers/virt/coco/tdx-tsm/Kconfig b/drivers/virt/coco/tdx-tsm/Kconfig
+> > new file mode 100644
+> > index 000000000000..768175f8bb2c
+> > --- /dev/null
+> > +++ b/drivers/virt/coco/tdx-tsm/Kconfig
+> > @@ -0,0 +1,2 @@
+> > +config TDX_TSM_BUS
+> > +       bool
+> > diff --git a/drivers/virt/coco/tdx-tsm/Makefile b/drivers/virt/coco/tdx-tsm/Makefile
+> > new file mode 100644
+> > index 000000000000..09f0ac08988a
+> > --- /dev/null
+> > +++ b/drivers/virt/coco/tdx-tsm/Makefile
+> > @@ -0,0 +1 @@
+> > +obj-$(CONFIG_TDX_TSM_BUS) += tdx-tsm-bus.o
+> 
+> Just name it bus.c.
 
-ÔÚ 2025/07/22 1:15, Yu Kuai Ð´µÀ:
-> +static int llbitmap_read_sb(struct llbitmap *llbitmap)
-> +{
-> +	struct mddev *mddev = llbitmap->mddev;
-> +	unsigned long daemon_sleep;
-> +	unsigned long chunksize;
-> +	unsigned long events;
-> +	struct page *sb_page;
-> +	bitmap_super_t *sb;
-> +	int ret = -EINVAL;
-> +
-> +	if (!mddev->bitmap_info.offset) {
-> +		pr_err("md/llbitmap: %s: no super block found", mdname(mddev));
-> +		return -EINVAL;
-> +	}
-> +
-> +	sb_page = llbitmap_read_page(llbitmap, 0);
-> +	if (IS_ERR(sb_page)) {
-> +		pr_err("md/llbitmap: %s: read super block failed",
-> +		       mdname(mddev));
+I'm about to make the change but I see there is already tdx-guest misc
+virtual device in Guest OS:
 
-There should return -EIO directly here.
-> +		ret = -EIO;
-> +		goto out;
+  What:		/sys/devices/virtual/misc/tdx_guest/xxxx
 
-And the out tag can be removed.
+And if we add another tdx_subsys, we have:
+
+  What:		/sys/devices/virtual/tdx/xxxx
+
+Do we really want 2 virtual devices? What's their relationship? I can't
+figure out.
+
+So I'm considering reuse the misc/tdx_guest device as a tdx root device
+in guest. And that removes the need to have a common tdx tsm bus.
+
+What do you think?
+
+> 
+> > ---
+> > 
+> > And put the tdx_subsys_init() in tdx-tsm-bus.c. We need to move host
+> > specific initializations out of tdx_subsys_init(), e.g. seamldr_group &
+> > seamldr fw upload.
+> 
+> Just to be clear on the plan here as I think this TD Preserving set
+> should land before we start upstreamming any TDX Connect bits.
+> 
+> - Create drivers/virt/coco/tdx-tsm/bus.c for registering the tdx_subsys.
+>   The tdx_subsys has sysfs attributes like "version" (host and guest
+>   need this, but have different calls to get at the information) and
+>   "firmware" (only host needs that). So the common code will take sysfs
+>   groups passed as a parameter.
+> 
+> - The "tdx_tsm" device which is unused in this patch set can be
+
+It is used in this patch, Chao creates tdx module 'version' attr on this
+device. But I assume you have different opinion: tdx_subsys represents
+the whole tdx_module and should have the 'version', and tdx_tsm is a
+sub device dedicate for TDX Connect, is it?
 
 Thanks,
-Kuai
+Yilun
 
-> +	}
-> +
-> +	sb = kmap_local_page(sb_page);
-> +	if (sb->magic != cpu_to_le32(BITMAP_MAGIC)) {
-> +		pr_err("md/llbitmap: %s: invalid super block magic number",
-> +		       mdname(mddev));
-> +		goto out_put_page;
-> +	}
-> +
-> +	if (sb->version != cpu_to_le32(BITMAP_MAJOR_LOCKLESS)) {
-> +		pr_err("md/llbitmap: %s: invalid super block version",
-> +		       mdname(mddev));
-> +		goto out_put_page;
-> +	}
-> +
-> +	if (memcmp(sb->uuid, mddev->uuid, 16)) {
-> +		pr_err("md/llbitmap: %s: bitmap superblock UUID mismatch\n",
-> +		       mdname(mddev));
-> +		goto out_put_page;
-> +	}
-> +
-> +	if (mddev->bitmap_info.space == 0) {
-> +		int room = le32_to_cpu(sb->sectors_reserved);
-> +
-> +		if (room)
-> +			mddev->bitmap_info.space = room;
-> +		else
-> +			mddev->bitmap_info.space = mddev->bitmap_info.default_space;
-> +	}
-> +	llbitmap->flags = le32_to_cpu(sb->state);
-> +	if (test_and_clear_bit(BITMAP_FIRST_USE, &llbitmap->flags)) {
-> +		ret = llbitmap_init(llbitmap);
-> +		goto out_put_page;
-> +	}
-> +
-> +	chunksize = le32_to_cpu(sb->chunksize);
-> +	if (!is_power_of_2(chunksize)) {
-> +		pr_err("md/llbitmap: %s: chunksize not a power of 2",
-> +		       mdname(mddev));
-> +		goto out_put_page;
-> +	}
-> +
-> +	if (chunksize < DIV_ROUND_UP(mddev->resync_max_sectors,
-> +				     mddev->bitmap_info.space << SECTOR_SHIFT)) {
-> +		pr_err("md/llbitmap: %s: chunksize too small %lu < %llu / %lu",
-> +		       mdname(mddev), chunksize, mddev->resync_max_sectors,
-> +		       mddev->bitmap_info.space);
-> +		goto out_put_page;
-> +	}
-> +
-> +	daemon_sleep = le32_to_cpu(sb->daemon_sleep);
-> +	if (daemon_sleep < 1 || daemon_sleep > MAX_SCHEDULE_TIMEOUT / HZ) {
-> +		pr_err("md/llbitmap: %s: daemon sleep %lu period out of range",
-> +		       mdname(mddev), daemon_sleep);
-> +		goto out_put_page;
-> +	}
-> +
-> +	events = le64_to_cpu(sb->events);
-> +	if (events < mddev->events) {
-> +		pr_warn("md/llbitmap :%s: bitmap file is out of date (%lu < %llu) -- forcing full recovery",
-> +			mdname(mddev), events, mddev->events);
-> +		set_bit(BITMAP_STALE, &llbitmap->flags);
-> +	}
-> +
-> +	sb->sync_size = cpu_to_le64(mddev->resync_max_sectors);
-> +	mddev->bitmap_info.chunksize = chunksize;
-> +	mddev->bitmap_info.daemon_sleep = daemon_sleep;
-> +
-> +	llbitmap->barrier_idle = DEFAULT_BARRIER_IDLE;
-> +	llbitmap->chunksize = chunksize;
-> +	llbitmap->chunks = DIV_ROUND_UP(mddev->resync_max_sectors, chunksize);
-> +	llbitmap->chunkshift = ffz(~chunksize);
-> +	ret = llbitmap_cache_pages(llbitmap);
-> +
-> +out_put_page:
-> +	__free_page(sb_page);
-> +out:
-> +	kunmap_local(sb);
-> +	return ret;
-> +}
-
+>   registered on the "tdx" bus to move feature support like TDX Connect
+>   into a typical driver model.
+> 
+> So the change for this set is create a bus.c that is host/guest
+> agnostic, drop the tdx_tsm device and leave that to the TDX Connect
+> patches to add back. 
+> 
+> The TDX Connect pathes will register the tdx_tsm device near where the
+> bus is registered for the host and guest cases.
+> 
+> Concerns?
+> 
+> In the meantime, until this set lands in tip we can work out the
+> organization in tsm.git#staging.
 
