@@ -1,86 +1,95 @@
-Return-Path: <linux-kernel+bounces-753234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE2F4B1805D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:46:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF86B1805F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:46:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 794AF3B2F4E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:46:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 780771C82148
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:46:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 168A421C17D;
-	Fri,  1 Aug 2025 10:46:08 +0000 (UTC)
-Received: from mxct.zte.com.cn (mxct.zte.com.cn [183.62.165.209])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2ABB233D88;
+	Fri,  1 Aug 2025 10:46:22 +0000 (UTC)
+Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC1032B9A5;
-	Fri,  1 Aug 2025 10:46:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=183.62.165.209
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2589615DBC1;
+	Fri,  1 Aug 2025 10:46:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754045167; cv=none; b=XTlxesu55QUmk4GG3DVQBsBkxD20JA3EvJym6HUAIYjnXeParnju/N7I7Cc769Y/FEvBchypKlxiz9BKwtG1s1CjX/FAYum2rsrLTsD2IIgriVTxadXweGPb08E+AwqaQkBipEFnJXDQ+l0QaZIdl9+gQL05Sydy5CJGOk44JKQ=
+	t=1754045182; cv=none; b=vEcpZt5fuqOoisVgptsHD4SBUhYMMiSNP7LwNzzMullqwPH/PqcSBdTEYAC6EjHq5Jn25udTKOS+NQsx6S0m1pJXffkjQeUEVsg3xTDvy3eTncdaBUXbjPup7a14sO70zY6IsFS/ay54nOyxxvPEjt1yEgKAIPtGkKnbNDNEU20=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754045167; c=relaxed/simple;
-	bh=wO4YLE/qyjKXyEjvQuQolcQxJAnNhE8s1QqCW8/R8rM=;
-	h=Date:Message-ID:In-Reply-To:References:Mime-Version:From:To:Cc:
-	 Subject:Content-Type; b=qTkaBs0phMx0UZsbFAsPhb6REM66UOZ3/fuu8HBEfVqHwdPAFiGfjg5em0BlD3bV5aQqt6iZ6PzioQjE+Xh08w/v8AtKqnaOX2p19U4d+zIoGYWZpSQ2XH3aqhF4jWMACGr5hNuMNXq3YfQ9WwQS6BPPzEIzJxcCL4kS9mwuoAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=183.62.165.209
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mse-fl1.zte.com.cn (unknown [10.5.228.132])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4btjKc4HKhz5B0m9;
-	Fri, 01 Aug 2025 18:45:56 +0800 (CST)
-Received: from szxl2zmapp07.zte.com.cn ([10.1.32.52])
-	by mse-fl1.zte.com.cn with SMTP id 571AjdMq066312;
-	Fri, 1 Aug 2025 18:45:39 +0800 (+08)
-	(envelope-from yang.yang29@zte.com.cn)
-Received: from mapi (szxl2zmapp06[null])
-	by mapi (Zmail) with MAPI id mid14;
-	Fri, 1 Aug 2025 18:45:42 +0800 (CST)
-Date: Fri, 1 Aug 2025 18:45:42 +0800 (CST)
-X-Zmail-TransId: 2b08688c9ad65f5-397e7
-X-Mailer: Zmail v1.0
-Message-ID: <20250801184542180vULzMsTl45L6TbNV9yato@zte.com.cn>
-In-Reply-To: <202507281628341752gMXCMN7S-Vz_LHYHum9r@zte.com.cn>
-References: 202507281628341752gMXCMN7S-Vz_LHYHum9r@zte.com.cn
+	s=arc-20240116; t=1754045182; c=relaxed/simple;
+	bh=O3INA7RvN/wZUo1wVHML2fUr9P9OP2pLkh9o6VnxvOQ=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=sQmg9X3TvjVZK8TkcdpyPcwNI67Ss927/z0fe74MG5y7I4uUlYc3O4cskBynqy50NnWqfj7U/l98V1PwOKni/6K8T0k1bg98jSmJfl836FQU9pDcf/if3db1sFSssWUZNgbAhTUMkuQ1xqYG01YwkeHfwVl6G0qoCYXfTBV5MmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.214])
+	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4btjMC4V9zz27j4w;
+	Fri,  1 Aug 2025 18:47:19 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id B2FD41A016C;
+	Fri,  1 Aug 2025 18:46:17 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 18:46:16 +0800
+Message-ID: <3bf4236a-2f68-4c09-a9bc-9534111854f2@huawei.com>
+Date: Fri, 1 Aug 2025 18:46:16 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <yang.yang29@zte.com.cn>
-To: <fan.yu9@zte.com.cn>, <wang.yaxin@zte.com.cn>
-Cc: <akpm@linux-foundation.org>, <corbet@lwn.net>,
-        <linux-kernel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
-        <fan.yu9@zte.com.cn>, <xu.xin16@zte.com.cn>
-Subject: =?UTF-8?B?UmU6IFtQQVRDSCBsaW51eC1uZXh0XSBkZWxheXRvcDogRW5oYW5jZSBlcnJvciBsb2dnaW5nIGFuZCBhZGQgUFNJIGZlYXR1cmUgZGVzY3JpcHRpb24=?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl1.zte.com.cn 571AjdMq066312
-X-TLS: YES
-X-SPF-DOMAIN: zte.com.cn
-X-ENVELOPE-SENDER: yang.yang29@zte.com.cn
-X-SPF: None
-X-SOURCE-IP: 10.5.228.132 unknown Fri, 01 Aug 2025 18:45:56 +0800
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 688C9AE4.000/4btjKc4HKhz5B0m9
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<shenjian15@huawei.com>, <liuyonglong@huawei.com>, <chenhao418@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net 2/3] net: hibmcge: fix the division by zero issue
+To: Simon Horman <horms@kernel.org>
+References: <20250731134749.4090041-1-shaojijie@huawei.com>
+ <20250731134749.4090041-3-shaojijie@huawei.com>
+ <20250801101154.GK8494@horms.kernel.org>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <20250801101154.GK8494@horms.kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: kwepems100002.china.huawei.com (7.221.188.206) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-> 2) PSI feature documentation:
-> - Updated header comment to reflect PSI monitoring capability
-> - Improved output formatting for PSI information
 
-Acked-by: Yang Yang <yang.yang29@zte.com.cn>
+on 2025/8/1 18:11, Simon Horman wrote:
+> On Thu, Jul 31, 2025 at 09:47:48PM +0800, Jijie Shao wrote:
+>> When the network port is down, the queue is released, and ring->len is 0.
+>> In debugfs, hbg_get_queue_used_num() will be called,
+>> which may lead to a division by zero issue.
+>>
+>> This patch adds a check, if ring->len is 0,
+>> hbg_get_queue_used_num() directly returns 0.
+>>
+>> Fixes: 40735e7543f9 ("net: hibmcge: Implement .ndo_start_xmit function")
+>> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> Thanks,
+>
+> Thinking aloud:
+>
+> I see that hbg_get_queue_used_num() can be called for both RX and TX
+> rings via the debugfs code hbg_dbg_ring(). And that hbg_net_stop()
+> clears the RX and TX ring configuration using hbg_txrx_uninit().
 
-Looking forward for this:
-Another suggestion, we can provide a new command to control
-the display of either the total memory delay for tasks or detailed
-memory delays. This approach offers two benefits: first, it better
-aligns with PSI results; second, it offers choices for users with
-different interests (e.g., some users may not have enabled or
-are not concerned about swap delay).
+Yes, yes.
+
+> So I agree that when the port is down ring-len will be 0.
+>
+> Reviewed-by: Simon Horman <horms@kernel.org>
+>
+>
 
