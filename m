@@ -1,133 +1,105 @@
-Return-Path: <linux-kernel+bounces-753737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7E428B18729
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:09:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB72B1872D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:10:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41B4E54498D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:09:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB78BAA07C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:10:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D55B28C84A;
-	Fri,  1 Aug 2025 18:09:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE45F28C871;
+	Fri,  1 Aug 2025 18:10:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iiSLwHpR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lbzEz2t+"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CBC0188CC9;
-	Fri,  1 Aug 2025 18:09:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BC41188CC9;
+	Fri,  1 Aug 2025 18:10:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754071742; cv=none; b=sgGgOYqANm6b0Ze/FXR3aZaldzBaYEiTmj/2fElm3JpEVrXOo3kUYSsVE34/ujueNf/PBM+/4J807M26x9j1wtj7oPLjk+v9d4SihNphb7QMO13SrjI50BvEj1yMuxojIQqgKKNDlrn+hnm/vC6dFxboFvc3uTZldAz5ViNN8IE=
+	t=1754071807; cv=none; b=nnY6itK2KSgdTHizQo0dkmxuKMbHc9Vk5RFRYxH3nvPRN22z1FPmsYNfkBpTLMcO/a/JdEkU2G0eMAa+D03VV+NectftkmIBUVNUJtqLENWFQnKZSWmZaFkG6AI5c+Aq7bnyJapop2oWtG+B33xf13kPVH3ev2zx4uYlyy/Fxl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754071742; c=relaxed/simple;
-	bh=P7L2cubhAgXEB6EZdVMzRyHwCAk6GbODDnnzBqOIslc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jfs/6zLlu+jmjoTPo+Oz8Km9RS8vAPf6qvilwjaZ84ApnouxP5a42eQ/nS3WknzEu3bSIbm5AfFxrowgctznZJWWCOcESAqTnGecmfycvQHlUeV910ceDTJqzgRgjdFsk1Wdr5sxNgcglbbKBWRRpCac2sh6ge9xiUBb6p+wIwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iiSLwHpR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A5694C4CEE7;
-	Fri,  1 Aug 2025 18:09:00 +0000 (UTC)
+	s=arc-20240116; t=1754071807; c=relaxed/simple;
+	bh=Gvasecl1j+vZklWoLagG0CgLtJclQwQBokOZMstnbQY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=O1Y8UvQ4r7WQCrPUrSn0g87PlAcWqNZP2nv1to7JaO7lhtawfUtKRuV7p6A5gSpxu6Js9Dy46KmWl+byzkp7HTeHSHUsErYS1EXLhKd3j7CWBF18jh/yEuztBhiEZZ6x/Ci/PzTv0aoYeuS5xiHqnLRCXcu9XY1j8549AO2t1Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lbzEz2t+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CE208C4CEF8;
+	Fri,  1 Aug 2025 18:10:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754071742;
-	bh=P7L2cubhAgXEB6EZdVMzRyHwCAk6GbODDnnzBqOIslc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=iiSLwHpR4qPaT8zHyzBFYi1+V2nfjEasrfYAJMGFvJttrKti9VG5YGoY0tUXgN/1a
-	 64F4vdbR4K5q7R6kBr8QrGtFLoEBUtvkYBQGr+elBhUc6K65aur8CDtHK+ffH3Dugi
-	 TXpnN6n+jkZcYcFNt0wO+B3XnRLtD+soDyDY5sitq9klYpPq/BJQduDixJqSXBZLCH
-	 FEQ4TZ0amgmU6WBI344SgjOaaQbZXAUXkew2F932ndSI0B/0N8EfLMzPEervm15gER
-	 d3pjxhyVdigTuYFPJIG3TC8tuyJoeyeCX+igv+Mj2GCXEuuiFb0cRri8IW0Q9rRj9V
-	 SvaBxK2DrSj7Q==
-Date: Fri, 1 Aug 2025 12:08:58 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: Gerd Bayer <gbayer@linux.ibm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Hans Zhang <hans.zhang@cixtech.com>,
-	Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
-	bhelgaas@google.com, Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	jingoohan1@gmail.com,
-	Krzysztof =?iso-8859-1?Q?Wilczy=B4nski?= <kwilczynski@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-next <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>, geert@linux-m68k.org
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-Message-ID: <aI0CupiFvyOvgNQY@kbusch-mbp>
-References: <20250731183944.GA3424583@bhelgaas>
- <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
- <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
- <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
- <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
- <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
- <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
- <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
- <659b8389-16a7-423b-a231-5489c7cc0da9@163.com>
+	s=k20201202; t=1754071806;
+	bh=Gvasecl1j+vZklWoLagG0CgLtJclQwQBokOZMstnbQY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=lbzEz2t+osusLbrCDjhXPGDSl4Be6FPW/n6O837z199K0iSiaiaUQ4pEJzK27Cb//
+	 kWakTKN1BIXkRfxh2CVi/H6hLHjjD5AqcurDDqGc9JG2qUW+2A+aroLuAzRE9WwB3z
+	 IlPnL98XFaA6pDTI2DCZ/mkNr5iTQgpYfS8KwnLRwFKO/mXuSlQvWvk2LwhHOngwmC
+	 UUUXqz2jJkLHxoxyXz87EZQo3j0LbnXXtesZabdUM7OPqDok5wcyp/ASWwOaHBqqpH
+	 +3gIC0Z2YBABkgjVmyLEDqwWaQFxk6/wRY+JR9yNwIPo9sTATi4Zril+I90N0Hy54+
+	 9Tug62/FIz5cg==
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-af9180a11bcso480669266b.0;
+        Fri, 01 Aug 2025 11:10:06 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVdWUDD4hLRdiA35txeMcMxY0Ww/cKr0VI1ANT7mj/6iYaOZ3DVGDIIdMI40g6Cgwgns87LSXPmgllz+1L7Cuo=@vger.kernel.org, AJvYcCWNVYDsLfyNPw9x07Ld1aqJ2xHK/q86Q8b7wfbtvObOigVC1mDAflDamgSIFS60dtfhtdj9wvZtjW3xDLQk@vger.kernel.org, AJvYcCWQVkwfxjuwI9LYJrDqY1g1Vz/xt9SeXfPm/KQIiPki/NYnn+eQMqNnX+R0f0/T8ZDu/1bBCrIJjd8R@vger.kernel.org, AJvYcCXY2kvajsCk8a4O/54ExVXjFZUahqnGk6olnsZ9vl9KKKzaByNwuCoVxCUDKSRp63sWZvk1pLcmGP2P+g==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx0TLyuIlGK9JgF62Jm3noZjRvLQBANEfXN9W/XS08avb+8Yvrb
+	/hBndM7iY9hnJYk1efqdob79Z+tRjHxuUMUbbTb1y4/c6N0/wqj+4egOQr3H+jwr/vlTK45jZc7
+	WrOyJNzV3q+2KQSQxe9xIK7GjrXAanA==
+X-Google-Smtp-Source: AGHT+IEOZjY7/v0CLBnxcrJdKlxiNQUiV/2WX97mH4Fg8teaaqzX8PxYfFhCm14UySL1h/i3m3TzRz4x9INodldCP2M=
+X-Received: by 2002:a17:906:730f:b0:ae2:3544:8121 with SMTP id
+ a640c23a62f3a-af9407b825fmr70487266b.9.1754071805337; Fri, 01 Aug 2025
+ 11:10:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <659b8389-16a7-423b-a231-5489c7cc0da9@163.com>
+References: <20250618082313.549140-1-herve.codina@bootlin.com> <20250618082313.549140-2-herve.codina@bootlin.com>
+In-Reply-To: <20250618082313.549140-2-herve.codina@bootlin.com>
+From: Rob Herring <robh@kernel.org>
+Date: Fri, 1 Aug 2025 13:09:54 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJ=jmXVwjtNCjRpUKj02dnJEz4GHMX2wMRaWw=M+sZQ0w@mail.gmail.com>
+X-Gm-Features: Ac12FXyZOFsU_8sFtIcKv6WyIEy-XVGWoFMOuKgE21jTygmocn09boIL1KPbUwc
+Message-ID: <CAL_JsqJ=jmXVwjtNCjRpUKj02dnJEz4GHMX2wMRaWw=M+sZQ0w@mail.gmail.com>
+Subject: Re: [PATCH v3 1/1] schemas: i2c: Introduce I2C bus extensions
+To: Herve Codina <herve.codina@bootlin.com>
+Cc: Ayush Singh <ayush@beagleboard.org>, Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Andi Shyti <andi.shyti@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, linux-i2c@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, devicetree-spec@vger.kernel.org, 
+	Luca Ceresoli <luca.ceresoli@bootlin.com>, Thomas Petazzoni <thomas.petazzoni@bootlin.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 02, 2025 at 12:54:27AM +0800, Hans Zhang wrote:
-> As I mentioned in my reply to Mani's email, the data ultimately read here is
-> also a forced type conversion.
-> 
-> #define PCI_OP_READ(size, type, len) \
-> int noinline pci_bus_read_config_##size \
-> 	(struct pci_bus *bus, unsigned int devfn, int pos, type *value)	\
-> {									\
-> 	unsigned long flags;						\
-> 	u32 data = 0;							\
-> 	int res;							\
-> 									\
-> 	if (PCI_##size##_BAD)						\
-> 		return PCIBIOS_BAD_REGISTER_NUMBER;			\
-> 									\
-> 	pci_lock_config(flags);						\
-> 	res = bus->ops->read(bus, devfn, pos, len, &data);		\
-> 	if (res)							\
-> 		PCI_SET_ERROR_RESPONSE(value);				\
-> 	else								\
-> 		*value = (type)data;					\
-> 	pci_unlock_config(flags);					\
-> 									\
-> 	return res;							\
-> }
-> 
-> And this function. Could it be that I misunderstood something?
+On Wed, Jun 18, 2025 at 3:23=E2=80=AFAM Herve Codina <herve.codina@bootlin.=
+com> wrote:
+>
+> An I2C bus can be wired to the connector and allows an add-on board to
+> connect additional I2C devices to this bus.
+>
+> Those additional I2C devices could be described as sub-nodes of the I2C
+> bus controller node however for hotplug connectors described via device
+> tree overlays there is additional level of indirection, which is needed
+> to decouple the overlay and the base tree:
+>
+>   --- base device tree ---
+>
+>   i2c1: i2c@abcd0000 {
+>       compatible =3D "xyz,foo";
+>       i2c-bus-extension@0 {
 
-The above macro retains the caller's type for "value". If the caller
-passes a "u8 *", the value is deferenced as a u8.
+This is at I2C bus address 0? No. You are mixing 2 different address
+spaces. Don't do that.
 
-The function below promotes everything to a u32 pointer and deferences
-it as such regardless of what type the user passed in.
- 
-> int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
-> 			    int where, int size, u32 *val)
-> {
-> 	void __iomem *addr;
-> 
-> 	addr = bus->ops->map_bus(bus, devfn, where);
-> 	if (!addr)
-> 		return PCIBIOS_DEVICE_NOT_FOUND;
-> 
-> 	if (size == 1)
-> 		*val = readb(addr);
-> 	else if (size == 2)
-> 		*val = readw(addr);
-> 	else
-> 		*val = readl(addr);
-> 
-> 	return PCIBIOS_SUCCESSFUL;
-> }
+You could solve this with just a property in the parent. If there's
+more than 1, then it's just multiple phandles. However I don't think
+you need this at all. You can just search the DT for 'i2c-parent' and
+find phandles that match the i2c controller node. But why does the
+controller driver need to know about connectors? Shouldn't the
+connector driver drive this and tell the controller there's more
+devices?
+
+Rob
 
