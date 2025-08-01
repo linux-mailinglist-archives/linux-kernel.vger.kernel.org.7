@@ -1,180 +1,143 @@
-Return-Path: <linux-kernel+bounces-753541-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 971CCB18450
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:57:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 04B76B1844D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:57:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EBDB83A27A4
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8EC421C83474
 	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:57:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8935826FA54;
-	Fri,  1 Aug 2025 14:57:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D10826E6FF;
+	Fri,  1 Aug 2025 14:56:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="cu7ufEW9"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KzpdQ/Th"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 712DB26CE3A;
-	Fri,  1 Aug 2025 14:57:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7F122D9ED
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:56:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060239; cv=none; b=KLojiBLrjcHPMmBB6JmZMpKyIdO003AvXrGjkCeb1YUEj79zwefsNi6tIBYNg6SlC5kJrJ+A88MijUyHRUFLFYCCsFJsVkUbxOBukjpYC6NGwzraLVWe45NEpq/yHsjjYW2jjAmq1b5OojaCyFCDbWF3jUdscT2Pw47XFYoAahc=
+	t=1754060215; cv=none; b=bzZRlHBceOj4w0meUkOn6L/CbIy6kcKYgd1JSfQiKyi9g2PCxhxGob0UbELI8LFCNEiRxXwkl/mSIpHYPrcFg3AxN9LAzh2FcqRN003L6g8BuaVI9xyc4lpvdgabzIjwCPAcBq+OeszeO1XWOsXGWPNn2MouXBnLPPv5hkI9DX8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060239; c=relaxed/simple;
-	bh=gbE+jehCMIkCOBGQxsTXoSyQr6yIokZ5llUIZWqQ1K8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=okV/qHcuaWqAWxT/i1tGZiHPqYMzFFqWKnRSxp56DsDcdbBPxCJzKly1KILOKM8wPXU9/m3Wj/0irg9HyQIeBTbVgSNaWpwIWhP0DrT7IoPDJHRYD34uj4qyhOiNkdKOByDZD/vhmOJdAfxcbommuiZsd5BGAy6pN5YceRiAEdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=cu7ufEW9; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5716RQ45021860;
-	Fri, 1 Aug 2025 14:56:55 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=YnSnKu
-	FRT8BCgjASZrg1uqVgtZph4jMWjiixUwKGaeI=; b=cu7ufEW9j3hSs64eHtRRpY
-	56JgN2/rMmAdcaMuWm8mJLl99nnqlB4MGOQq+RuPMtlfTM1gJX4mdrkIrqdSvGrA
-	jIN4XSekS2D6XxUseipDHOuhZxb1MbJ8hvE0QcoeBp41HlJYDC+6y5uCblzWC79E
-	jJgwLraPZAU7vgwpZIGCl3w0qFM+TRdSEbhWSWYMius7tj8aUJGFcKC7Mz/kWfmr
-	RyxbxI12K+X07Ae0x1CFFwfkhmj7zNaKSTMU1xsAWLnT5xNnGSi81ME3oIjVG/iy
-	hYITdpLc2KUDS4w9+tCHykE0zhordXGmyqk5+SYUVo+qvMBLxW449gWTu8eTgxyg
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qen9d0w-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 14:56:54 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571ED5Ka015999;
-	Fri, 1 Aug 2025 14:56:53 GMT
-Received: from smtprelay06.wdc07v.mail.ibm.com ([172.16.1.73])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aun1r64-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 14:56:53 +0000
-Received: from smtpav02.dal12v.mail.ibm.com (smtpav02.dal12v.mail.ibm.com [10.241.53.101])
-	by smtprelay06.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571EuqPt32178850
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 14:56:53 GMT
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7958158051;
-	Fri,  1 Aug 2025 14:56:52 +0000 (GMT)
-Received: from smtpav02.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1A3AC5805A;
-	Fri,  1 Aug 2025 14:56:52 +0000 (GMT)
-Received: from [9.61.163.64] (unknown [9.61.163.64])
-	by smtpav02.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Aug 2025 14:56:52 +0000 (GMT)
-Message-ID: <0dbd00c1-7b47-4e6e-a8bc-5dd0b5d7e539@linux.ibm.com>
-Date: Fri, 1 Aug 2025 09:56:50 -0500
+	s=arc-20240116; t=1754060215; c=relaxed/simple;
+	bh=r0E35VIAkuo74voRf9YU/g+WLq5EnMCalL9y2IWLAj8=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=nOMLVmZqbqLNK6S3Azfj9IYVCHcAEHtItiu7JwMSeUOwUu4dItkvocGOfJaM3qP2gB2wZ9/mmzxVDEUC6Y82luUGGKa5IR+BUQO+giG8BxAGwOtNYN5ULTVZWQYeP5s+aqk5S6463XddUNvM60/c+FW5SYzHggIwdGdIWfDIKpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KzpdQ/Th; arc=none smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754060214; x=1785596214;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=r0E35VIAkuo74voRf9YU/g+WLq5EnMCalL9y2IWLAj8=;
+  b=KzpdQ/ThZ36zgdZaIWWYMEQmmgqWyHEZN5e+KCWckcssdLjMX2rWIhwW
+   8rgsFQANISvxLAS17aIVn+iWjZ6YD8Eriol+YTO1p3I0hSy7oW3KybPuI
+   8OmhpHqC2WQPCsYH9HAfm22nwCYDvbY8Aswl8SaJsiekVd1JoXPTK7QOW
+   YdXTXWDjFUmoMcmSQoe8FL44muHBwgA4kBQcehgxQTp5o94tl5QsDzlEQ
+   EHnN7KjqFEOlqBtm0vPbbKSjV6fzDxg20X5fXbLZ9PIE0xjcoJ2Zwk32o
+   rxpSfBIRtFjzDGp1h6J+MsUE2Ch7JPaAl++9GKT5eaJ7S9Wt0FsTa9Ti9
+   g==;
+X-CSE-ConnectionGUID: azTRX0wZRZSwV0WDENtH1w==
+X-CSE-MsgGUID: i92hIEAvSBe1eBup1AMp/Q==
+X-IronPort-AV: E=McAfee;i="6800,10657,11509"; a="56489378"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="56489378"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:56:53 -0700
+X-CSE-ConnectionGUID: pcYBPNepR0CHZUNq+XHD7g==
+X-CSE-MsgGUID: kP3e0BFXSwSiAT8JkVa4BQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="167844863"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.244.137]) ([10.245.244.137])
+  by fmviesa005-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:56:52 -0700
+Message-ID: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
+Subject: Re: [PATCH v3] Mark xe driver as BROKEN if kernel page size is not
+ 4kB
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Simon Richter <Simon.Richter@hogyros.de>,
+ intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 01 Aug 2025 16:56:50 +0200
+In-Reply-To: <274fefe9b46bb856e5968431ed524ebe1b8e8cd4.camel@linux.intel.com>
+References: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
+		 <20250801102130.2644-1-Simon.Richter@hogyros.de>
+	 <274fefe9b46bb856e5968431ed524ebe1b8e8cd4.camel@linux.intel.com>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] ARM: dts: aspeed: Drop "no-gpio-delays"
-To: "Rob Herring (Arm)" <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
-        Andrew Jeffery <andrew@codeconstruct.com.au>,
-        Benjamin Herrenschmidt <benh@kernel.crashing.org>,
-        Ninad Palsule <ninad@linux.ibm.com>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-        linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
-        linux-fsi@lists.ozlabs.org
-References: <20250731-dt-fsi-cleanups-v1-0-e7b695a29fc3@kernel.org>
- <20250731-dt-fsi-cleanups-v1-1-e7b695a29fc3@kernel.org>
-Content-Language: en-US
-From: Eddie James <eajames@linux.ibm.com>
-In-Reply-To: <20250731-dt-fsi-cleanups-v1-1-e7b695a29fc3@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: HIw9ud3jprKX7EaZVCKTXNHQ5Xj2KOwx
-X-Proofpoint-GUID: HIw9ud3jprKX7EaZVCKTXNHQ5Xj2KOwx
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDExMyBTYWx0ZWRfX9IsCkPss3zXH
- 14wNQTMiDkysyvTxDCJW6qeSsum2KPu5soAYnGADq2plh9VwpWivHL7WME3ByJyiHRRoKX9dzdc
- EYxn5BcRRcGUFP2k2WpOFqIhWlmj/TMWw3reYieGLRh41H953e2eVX6oXeQ7IAzjWyaLPDgVdo3
- jO72JIL+sXKXCWnMuH/FZ5G0Oo3/IM07w46Vk9ZLZR/g2mCiY2U32Nu/+PxXg0tpueZEh1XukfU
- mlsm9okJAwFhgaytZEHP5ZQfyLoanOPULC4ilQdADYZOuboivV0ivLcpbKobal6wOzZuVjpMnJE
- zYyKQDlGMXjxSjUAyQk0Gc0BnsvmcIfx7RkUxIP9qD6cMNGZyoD6EMo5OfP+EGt8Pp1L63zQC2M
- TSum2VC6y7niTAhc1mqmPwGzl01e9+2ohpvGd4kOhNpv9p9N+NCwZH2SKd5Dzqm0ggKCkTaD
-X-Authority-Analysis: v=2.4 cv=BJOzrEQG c=1 sm=1 tr=0 ts=688cd5b6 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=VwQbUJbxAAAA:8
- a=dLEtqkc4Rl9NwHs-IUkA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=974 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1011 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010113
+
+On Fri, 2025-08-01 at 16:39 +0200, Thomas Hellstr=C3=B6m wrote:
+> On Fri, 2025-08-01 at 19:19 +0900, Simon Richter wrote:
+> > This driver, for the time being, assumes that the kernel page size
+> > is
+> > 4kB,
+> > so it fails on loong64 and aarch64 with 16kB pages, and ppc64el
+> > with
+> > 64kB
+> > pages.
+> >=20
+> > Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+> > Cc: stable@vger.kernel.org
+>=20
+> Reviewed-by: Thomas Hellstr=C3=B6m <thomas.hellstrom@linux.intel.com>
+> I will add a Fixes: tag and push this.
+>=20
+> Thanks,
+> Thomas
+
+Actually, I see that the patch in its current form will cause grief
+when backporting since that depends line has changed during driver
+lifetime. I noticed that when trying to find a good Fixes: tag.
+
+Would you mind if we did the following:
+
+>=20
+>=20
+> > ---
+> > =C2=A0drivers/gpu/drm/xe/Kconfig | 2 +-
+> > =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+> >=20
+> > diff --git a/drivers/gpu/drm/xe/Kconfig
+> > b/drivers/gpu/drm/xe/Kconfig
+> > index 2bb2bc052120..ea12ff033439 100644
+> > --- a/drivers/gpu/drm/xe/Kconfig
+> > +++ b/drivers/gpu/drm/xe/Kconfig
+> > @@ -1,7 +1,7 @@
+> > =C2=A0# SPDX-License-Identifier: GPL-2.0-only
+> > =C2=A0config DRM_XE
+> > =C2=A0	tristate "Intel Xe2 Graphics"
+> > -	depends on DRM && PCI
+> > +	depends on DRM && PCI && (PAGE_SIZE_4KB || COMPILE_TEST ||
+> > BROKEN)
+
+Scratch this change
+
+> > =C2=A0	depends on KUNIT || !KUNIT
+> > =C2=A0	depends on INTEL_VSEC || !INTEL_VSEC
+> > =C2=A0	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
+
+And instead here add
+	depends on PAGE_SIZE_4KB || COMPILE_TEST || BROKEN
+
+Thanks,
+Thomas
 
 
-On 7/31/25 17:12, Rob Herring (Arm) wrote:
-> The "no-gpios-delays" property only applies to the "fsi-master-gpio"
-> binding and not the "aspeed,ast2[45]00-cf-fsi-master" binding. It
-> doesn't really make sense either as the timing is controlled by the
-> offloaded firmware.
+>=20
+>=20
 
-
-Thanks for the series Rob. It's fine with me if you take the bindings 
-(we're not using the FSI tree now, Grek just merges stuff as needed)
-
-Acked-by: Eddie James <eajames@linux.ibm.com>
-
-
->
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->   arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts | 1 -
->   arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts      | 1 -
->   arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts     | 1 -
->   3 files changed, 3 deletions(-)
->
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts
-> index 78a5656ef75d..f42254ba6aeb 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-inspur-fp5280g2.dts
-> @@ -57,7 +57,6 @@ fsi: gpio-fsi {
->   		compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
->   		#address-cells = <2>;
->   		#size-cells = <0>;
-> -		no-gpio-delays;
->   
->   		memory-region = <&coldfire_memory>;
->   		aspeed,sram = <&sram>;
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts
-> index b1d0ff85d397..e5b8d07e7622 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-nicole.dts
-> @@ -80,7 +80,6 @@ fsi: gpio-fsi {
->   		compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
->   		#address-cells = <2>;
->   		#size-cells = <0>;
-> -		no-gpio-delays;
->   
->   		memory-region = <&coldfire_memory>;
->   		aspeed,sram = <&sram>;
-> diff --git a/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts b/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts
-> index 24df24ad9c80..2180fa9b6f24 100644
-> --- a/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts
-> +++ b/arch/arm/boot/dts/aspeed/aspeed-bmc-opp-romulus.dts
-> @@ -71,7 +71,6 @@ fsi: gpio-fsi {
->   		compatible = "aspeed,ast2500-cf-fsi-master", "fsi-master";
->   		#address-cells = <2>;
->   		#size-cells = <0>;
-> -		no-gpio-delays;
->   
->   		memory-region = <&coldfire_memory>;
->   		aspeed,sram = <&sram>;
->
 
