@@ -1,55 +1,57 @@
-Return-Path: <linux-kernel+bounces-753742-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753743-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7807B1873A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:14:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22018B1873B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:14:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2C046AA0B85
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:14:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FADF5671A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:14:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2AD28CF52;
-	Fri,  1 Aug 2025 18:14:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DBC728C860;
+	Fri,  1 Aug 2025 18:14:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vF7ndXBb"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gyMTsLul"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7013441C62;
-	Fri,  1 Aug 2025 18:14:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F36541C62
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:14:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754072040; cv=none; b=i9lOy0vZh6W4oeK954vPpc4GbuRX3taTeUNl4ct5SWrNRXcbVOO2mSP9hMehIrIybVRfxvWa7dw0p6kuPJt0eqaUJB9REykH+lkksZZD1xK695GplHjh3SObxLmaH56wr4ARxO819LA6TSMfWsDegDPmEUZmNvDdeXO5fM7aTv0=
+	t=1754072048; cv=none; b=bvCyOwOTkvXycWF/7lGtF6iQSo0sHKwTBrivScgc9Pa7CHIfC6bGa/6zPimTDpuo4kf/YsrJUFQvFwuqjzuVJ7/Du+q9OGqUyO59/YKj4ua65Li+2Yuwzqcy9KpW/jmVgTRbnVkgHXy12J1e6CWVLa8GFSGysGod8A01n/4Sfl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754072040; c=relaxed/simple;
-	bh=6Z7i5YajHNTIkkMs+weIqxL2dvnDzhrWWIA+qiSFCgc=;
+	s=arc-20240116; t=1754072048; c=relaxed/simple;
+	bh=3nj88DXwdIUKnWYFszs1tYhh29siaAN6sBkS3oig794=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=LDmavNgBAtqCwMGIfkZSBH+TGHgsjbj1wauzNDpRrH9dozkgdcjUAMpGbmcy7zzQdn4wMxE+qXdFmeXdzNTx7tZM6Vj7ma2fETOt4xyQ8U+2ZLEEnTHI88sTGih6D/c1LoMZC5EdZhHp3ZE5HWPfAWaR2J9mNfs3nb7IHMklGEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vF7ndXBb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id F033AC4CEE7;
-	Fri,  1 Aug 2025 18:13:58 +0000 (UTC)
+	 MIME-Version:Content-Type; b=afKj8ixQMhTw4fnfteWe08fn+VAxc8+KtalSuJYKOBinnS+RGYMGHHwOi0IzBIMrgUkeBbPM4OAKMajbwb9v2+O9CQRZnwQAcox/PGvLDzi11FCrON6FpORvdNIKL6SBQY94f20wSwB54qQ2g0KXqoSYEW35eblNTrI+3/CwnLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gyMTsLul; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAF67C4CEE7;
+	Fri,  1 Aug 2025 18:14:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754072040;
-	bh=6Z7i5YajHNTIkkMs+weIqxL2dvnDzhrWWIA+qiSFCgc=;
+	s=k20201202; t=1754072048;
+	bh=3nj88DXwdIUKnWYFszs1tYhh29siaAN6sBkS3oig794=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=vF7ndXBbrJEWlueEh/oFS5irY7lyj2JePvxLctiKBLKgivFTbQ3ArdL6o7dXHcl9v
-	 dxcfcl5OwykClkWeyEMZGad7KiU+k2x4WGa9NxTwN2hgyVPtE4zG/khiOsyrb7pWng
-	 XubgHS/7+K0eVCiC64fuzar3vOxdIT3TlTneEDi1xchT4ezG03z2aM8OFYvBA9ee7d
-	 4yI3eLzxhPUXCOyw7SD4ScHaKT+/kBVnrL+iW1fkCSgMbTwLra5jydS1RtcGvCprin
-	 gtD+0G1waVwcv0AytYE2mKd+dBSrUV6o7j7fhxCPpKN1XJx9an08cIR/DqrQL7Ojgl
-	 WUjMK1/hVwx9A==
+	b=gyMTsLulgROTDxvqHxiAWIzMugwUyYZeoynGUBoFfJi9ToEhT/NwNg4s1dKw+c0Bh
+	 wCBdYNYRhq/41wDgp+9weP3Xqix4ycTg39Rv7gBlIGUG8rkZOA7NQRnQO/WhylxIs9
+	 7HaB6Qn7dOUSqkfHsIFoascoXHjVsStpKsCVcS1yMOq967sHWh0fPuSooJN4vsuVuk
+	 KO8WolJEsxUi1NuP7zHhamcpbrDDSPXu9ArZc877hkB95tfTcluqVadO3ilvUqhp4h
+	 xyAhFJNd2lUmJAh9aN0adSi4UHUdbck1RJdF4r/X2ezy3JO/0k7uaMPd0mbhIOuHPr
+	 6of0g/Rr8OVKQ==
 From: Mark Brown <broonie@kernel.org>
-To: Simon Trimmer <simont@opensource.cirrus.com>
-Cc: linux-spi@vger.kernel.org, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, patches@opensource.cirrus.com
-In-Reply-To: <20250731160109.1547131-1-simont@opensource.cirrus.com>
-References: <20250731160109.1547131-1-simont@opensource.cirrus.com>
-Subject: Re: [PATCH] spi: cs42l43: Property entry should be a
- null-terminated array
-Message-Id: <175407203870.139709.8000597693697838500.b4-ty@kernel.org>
-Date: Fri, 01 Aug 2025 19:13:58 +0100
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+ "Rafael J. Wysocki" <rafael@kernel.org>, Danilo Krummrich <dakr@kernel.org>, 
+ Mark Brown <broonie@kernel.org>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, 
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
+References: <20250731-regmap-irq-nesting-v1-0-98b4d1bf20f0@kernel.org>
+Subject: Re: [PATCH 0/2] regmap: Fix lockdep warnings for nested
+ regmap-irqs
+Message-Id: <175407204662.140152.11666162096319589102.b4-ty@kernel.org>
+Date: Fri, 01 Aug 2025 19:14:06 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,24 +62,27 @@ Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-cff91
 
-On Thu, 31 Jul 2025 16:01:09 +0000, Simon Trimmer wrote:
-> The software node does not specify a count of property entries, so the
-> array must be null-terminated.
-> 
-> When unterminated, this can lead to a fault in the downstream cs35l56
-> amplifier driver, because the node parse walks off the end of the
-> array into unknown memory.
+On Thu, 31 Jul 2025 21:38:17 +0100, Mark Brown wrote:
+> Russell King reported that lockdep warns when it sees nested regmap-irq
+> interrupt controllers since it defaults to using a single lock class for
+> all mutexes allocated from a single place in the code.  We end up with
+> both the parent and child regmap-irq locked simultaneously.  The second
+> patch here uses an explicit lockdep key to disambiguate things for
+> regmap, the first adds missing mutex cleanup which I noticed while
+> writing that patch.
 > 
 > [...]
 
 Applied to
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/regmap.git for-next
 
 Thanks!
 
-[1/1] spi: cs42l43: Property entry should be a null-terminated array
-      commit: a735ee58c0d673d630a10ac2939dccb54df0622a
+[1/2] regmap: irq: Free the regmap-irq mutex
+      commit: 1da33858af6250184d2ef907494d698af03283de
+[2/2] regmap: irq: Avoid lockdep warnings with nested regmap-irq chips
+      commit: 76b6e14aa7b081337d118a82397d919b5e072bb4
 
 All being well this means that it will be integrated into the linux-next
 tree (usually sometime in the next 24 hours) and sent to Linus during
