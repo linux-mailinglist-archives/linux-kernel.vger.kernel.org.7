@@ -1,337 +1,571 @@
-Return-Path: <linux-kernel+bounces-753836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B44CDB188BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:27:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7D33B188C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:31:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D8482583B62
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:27:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CFB3A58565C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:31:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B0FA28EA4B;
-	Fri,  1 Aug 2025 21:27:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D07D28F520;
+	Fri,  1 Aug 2025 21:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GYpCv7aj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1CsOvilh"
+Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A80614AD2B;
-	Fri,  1 Aug 2025 21:27:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E821A0712
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754083647; cv=none; b=NVpSahfqFh99HqQOfksBez/O7VhYAN39WFFlR8/gBcJeCQ6JkZ/83iysZM1ajEGkKy3X/ce8ZSbgmlK3VcDRAsLi0DL6CcUAXqVDXf2sN8i8KUW73qKFHJBgu5ac/71MaLDkLVC2p0c+y55bj4lMGVa0vdrfP1+LxNUa2z/yshY=
+	t=1754083874; cv=none; b=EMN2PyYdmrOrD9xcrq6K1Ff4L0axQUKeLNI4zBc4ARJvQ1n+Ny0EiT4zQhnAY5bBuIJtydvB1GtTS6qk3sPn0et+fbq15oIy6qxpPOHH9XqPoWiBd6vDJ/CqhBFrb50iO60TXYCtpzv5t1H0iiA2ExzluZcMWYQqaGIo1kgYMb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754083647; c=relaxed/simple;
-	bh=0SxswfLZxEHoTgRaIAQYChRRKBrt2yMqSX3GGZmr4v8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=UnoViA3aBWHZ9swsxySscesnUoWMrvhcM1emBMi/zvgnzqmLX4ZlwBlU1dxdSktpZaLpGVwrHWNcBj1aAuYKLc7NNRMbR2gOBsCQHE3qZKLJqRYdD5jF4efK88xL0wdZJySygNMHd4WJepgEjQgkp5CGRP1r387hfKdWB9iURSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GYpCv7aj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EA277C4CEE7;
-	Fri,  1 Aug 2025 21:27:26 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754083647;
-	bh=0SxswfLZxEHoTgRaIAQYChRRKBrt2yMqSX3GGZmr4v8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GYpCv7ajxY0nQzOSBWd6r8ISWaIDw/D1bgTcr6771KsHkbNHcBh3RGr418ucMGJFG
-	 Di2Ei7hmYabZZRF27ukYa65LyQGeqLfQ32LE94TbjbSCS1NadmNmImP3KQAMQk5hSF
-	 45hEf1524sFSCxB1cHOwwMKUQIBEDFtONZUnjW2Jc4YBBV0D0jMbir+pFi1dQ1XcN+
-	 J9Bqdf1TaVaTOe1MYt6m42ZGpdhBS5QoIwn2nnWucA/vM6H9a4K4B4MUZ7QUqS57nt
-	 6nGv+k4Q9Y17pgmj2BMJAzx1mf5xEH0HjvjStopRqfl0h24TpbgVcW+FOk2LYNQRdA
-	 ui64eRfK0nL7A==
-Date: Fri, 1 Aug 2025 16:27:25 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	cros-qcom-dts-watchers@chromium.org,
-	Bjorn Helgaas <bhelgaas@google.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@kernel.org>, Len Brown <lenb@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Danilo Krummrich <dakr@kernel.org>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, quic_vbadigan@quicinc.com,
-	quic_mrana@quicinc.com, sherry.sun@nxp.com,
-	linux-pm@vger.kernel.org
-Subject: Re: [PATCH v4 3/3] PCI: Add support for PCIe WAKE# interrupt
-Message-ID: <20250801212725.GA3506354@bhelgaas>
+	s=arc-20240116; t=1754083874; c=relaxed/simple;
+	bh=rDmRBe2jSUzS9GrUo/EBS5Ra6ndYf8UAIzhX0sIz2u8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=nJLXZErn7K+6HLOsx/++NzF/Vzv3p7Lhu/bLeOdDinWvqxJbW6jdAkXSUQuB9uzyCIgX99RnKDfOf7k3tWTqrg0Ry6GWUbdn0pUOTYkYINfu+1jaWoHoR0vif8oQznf0gz7HRn2gxFhxUGX+z0wEm8WuesVvr2f50qwxyUJoWV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1CsOvilh; arc=none smtp.client-ip=209.85.160.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4abd3627e7eso26127091cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 14:31:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754083870; x=1754688670; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=2/7JzvGfwHz+itssOFHoIOwgYd5OJUilza0SmVhPEzI=;
+        b=1CsOvilhUsagj2VqROplehDX3fGnWrMa3RpAfm9/Xj4AqMQKyka7BFvuuyTcS78daz
+         uXEzVfWuymxkYQnQGokaXLDc5CoWsNUkbF13UPlbAWleOe31WA+x8MOLw/NoL9IrEvPH
+         Uus6yrnxuYgL6gLaiomKz8N4OqHlhIeVjjlycN/wlc1dIvTpKGg8OQW9ooL3ztEnSY6W
+         wheIYe6Ok0W8Gm6oBfV/pzdHXxGTbTRM2al5/znpSrXLXSalVhsMx2sqYvCVVh9CXZmM
+         h06FP2td8lNxadg2in+L+E0OmtZcgBJzKhr6Oeyh1MdfcppGBhEFGmhg27GXBUqM3Edq
+         8epA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754083870; x=1754688670;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=2/7JzvGfwHz+itssOFHoIOwgYd5OJUilza0SmVhPEzI=;
+        b=bnR3xethfqRT/o/qhkMRGVCkQ0zkORVk+6eAX4uTPez8ijK5SIBJm2f1BkIMc3jJ+U
+         vlMdSY+BWhuRbPAOy6UQ2yXVh/291topZCPZBDebrY2pn9WBlpbsvcWlw9IdihvtO86F
+         muRLKYT9xKwuzYgfMdjidCmMp1BHTG30cPvEMdI7XGd3fK7CvLhVgaV976p1YsudJKqL
+         NdkdFUykslSN71ceAJHMcYChjRynkMp/1l2oDETnVCoIpVV7mCrTogkkH2cNpeMLbK9G
+         KyuIgi8Jkl45P0BsHh8MgTtNCq9o9BFxXiUEwrZ6mzCJxeeofIKL5zNpFhUlHGA9zhK9
+         xowg==
+X-Forwarded-Encrypted: i=1; AJvYcCWuMeQQRVuGkcbCZvkSJKSdHFbcZPK1hutzQ2ImMbql9S+6HcA1IQTQ7oJo+UPJt4GIhvaAP1PbKUYAOuY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx2R/soVyg98M/PnGhyR7EnadxaAPJFwqID85W1tAzykHeryUgc
+	9VvjvaXA8ry/uYYjFmvuaHmYfYGETPZxTv5Ztz3iH/ZeZ1h/pAioVTxvMpKJ2vRw42gxfcf0HSJ
+	tsKFvEWFz/mmFFcl6yrnVttZzI4/X77XSy3wexdl+
+X-Gm-Gg: ASbGncuitXsJOoCLHkPAOHyPiy81FOBg+NKw/iBQKwBemhSYTyTx4tIwgAtc5ZV3aCh
+	PA615CL6ROc5S90BRzfHO4qPM73FjCh/lrep5mg8CDZ4CxxxcktlA5ZIr8IQyQJVxODjgLw6LlL
+	0Pth9MlMXJiqmBotabnf6zvJCHIxjWO/Et4LNfKzvuV1QMTQ4nwujHDQs2rcAQM94eteq6CXsH7
+	hsfTJHHHGTMT7K+JuIZ19P+3mEBy4GDIQvf21RTZmSTMW0+gUU=
+X-Google-Smtp-Source: AGHT+IGq3OEWEOw8g068ugBnYeIFEeQ24RSjWdDQ6DmK/9fc5zMrOlsV9XPe12baT9g9zjTvpmNm+ddvGAG8BZ8moeg=
+X-Received: by 2002:a05:6214:19c2:b0:707:494:ec4 with SMTP id
+ 6a1803df08f44-7093670d9d4mr18595976d6.27.1754083869800; Fri, 01 Aug 2025
+ 14:31:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801-wake_irq_support-v4-3-6b6639013a1a@oss.qualcomm.com>
+References: <20250714-support-forcepads-v1-11-71c7c05748c9@google.com>
+ <202507151942.94dhYylY-lkp@intel.com> <CAMCVhVNYePCuCw_SSTxwAdcastPP_azik44kG18o0_QK37OiZA@mail.gmail.com>
+ <aHmOZiQ7TAQ3TjpQ@rli9-mobl> <CAMCVhVNTWKg89MhPJeVvKK5ZhXYy2WCJFBGJo2Hg5=aCUZz32A@mail.gmail.com>
+ <aIrbJy7Rb6aVNOk9@xsang-OptiPlex-9020>
+In-Reply-To: <aIrbJy7Rb6aVNOk9@xsang-OptiPlex-9020>
+From: Jonathan Denose <jdenose@google.com>
+Date: Fri, 1 Aug 2025 16:30:58 -0500
+X-Gm-Features: Ac12FXyab0lrMTFLFGuVNXNCY4TipKwI7kXVrrlKXznk_rhcWE_Or4t5SI91s3A
+Message-ID: <CAMCVhVM4fbtAAVReSBJ7noGOjp+MO94kbrwQXs-zWvcHWCmwFw@mail.gmail.com>
+Subject: Re: [PATCH 11/11] HID: multitouch: add haptic multitouch support
+To: Oliver Sang <oliver.sang@intel.com>
+Cc: Philip Li <philip.li@intel.com>, kernel test robot <lkp@intel.com>, Jiri Kosina <jikos@kernel.org>, 
+	Benjamin Tissoires <bentiss@kernel.org>, Dmitry Torokhov <dmitry.torokhov@gmail.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Henrik Rydberg <rydberg@bitmath.org>, oe-kbuild-all@lists.linux.dev, 
+	linux-input@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Angela Czubak <aczubak@google.com>, 
+	"Sean O'Brien" <seobrien@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025 at 04:29:44PM +0530, Krishna Chaitanya Chundru wrote:
-> According to the PCIe specification 6, sec 5.3.3.2, there are two defined
-> wakeup mechanisms: Beacon and WAKE# for the Link wakeup mechanisms to
-> provide a means of signaling the platform to re-establish power and
-> reference clocks to the components within its domain. Adding WAKE#
-> support in PCI framework.
+On Wed, Jul 30, 2025 at 9:55=E2=80=AFPM Oliver Sang <oliver.sang@intel.com>=
+ wrote:
+>
+> hi, Jonathan,
+>
+> On Mon, Jul 21, 2025 at 11:06:33AM -0500, Jonathan Denose wrote:
+> > On Thu, Jul 17, 2025 at 6:59=E2=80=AFPM Philip Li <philip.li@intel.com>=
+ wrote:
+> > >
+> > > On Thu, Jul 17, 2025 at 01:43:28PM -0500, Jonathan Denose wrote:
+> > > > On Tue, Jul 15, 2025 at 6:36=E2=80=AFAM kernel test robot <lkp@inte=
+l.com> wrote:
+> > > > > kernel test robot noticed the following build errors:
+> > > > >
+> > > > > [auto build test ERROR on 86731a2a651e58953fc949573895f2fa6d45684=
+1]
+> > > > >
+> > > > > url:    https://github.com/intel-lab-lkp/linux/commits/Jonathan-D=
+enose/HID-add-haptics-page-defines/20250714-231444
+> > > > > base:   86731a2a651e58953fc949573895f2fa6d456841
+> > > > > patch link:    https://lore.kernel.org/r/20250714-support-forcepa=
+ds-v1-11-71c7c05748c9%40google.com
+> > > > > patch subject: [PATCH 11/11] HID: multitouch: add haptic multitou=
+ch support
+> > > > > config: hexagon-randconfig-r112-20250715 (https://download.01.org=
+/0day-ci/archive/20250715/202507151942.94dhYylY-lkp@intel.com/config)
+> > > > > compiler: clang version 17.0.6 (https://github.com/llvm/llvm-proj=
+ect 6009708b4367171ccdbf4b5905cb6a803753fe18)
+> > > > > reproduce: (https://download.01.org/0day-ci/archive/20250715/2025=
+07151942.94dhYylY-lkp@intel.com/reproduce)
+> > > >
+> > > > I'm having trouble reproducing this build error. I tried following =
+the
+> > >
+> > > Sorry Jonathan, the reproduce step we provide is wrong, would you min=
+d to give
+> > > a try similar to the steps in [1]? We will resolve the bug as early a=
+s possible.
+> > >
+> > > [1] https://download.01.org/0day-ci/archive/20250717/202507170506.Wzz=
+1lR5I-lkp@intel.com/reproduce
+> > >
+> > > > steps in the linked reproduce file, but when running:
+> > > > COMPILER_INSTALL_PATH=3D$HOME/0day ~/lkp-tests/kbuild/make.cross C=
+=3D1
+> > > > CF=3D'-fdiagnostic-prefix -D__CHECK_ENDIAN__ -fmax-errors=3Dunlimit=
+ed
+> > > > -fmax-warnings=3Dunlimited' O=3Dbuild_dir ARCH=3Dhexagon olddefconf=
+ig
+> > > >
+> > > > I get the errors:
+> > > > 0day/gcc-4.6.1-nolibc/hexagon-linux/bin/hexagon-linux-gcc: unknown =
+C compiler
+> > > > scripts/Kconfig.include:45: Sorry, this C compiler is not supported=
+.
+> > > >
+> > > > It looks to me like the hexagon-linux-gcc compiler is correctly
+> > > > installed at $HOME/0day so I'm not sure what to do from here. Can
+> > > > someone please assist me with this?
+> > > >
+> > > > --
+> > > > Jonathan
+> > > >
+> > Great! Thanks for providing the correct reproduce steps Phillip.
+> >
+> > I tried them and both of the make.cross steps completed successfully.
+> > I am not getting the build errors that the test bot is reporting.
+>
+> sorry for this. just want to confirm one thing, did you follow below step=
+s?
+> (the link [1] above is just for example, we need do small modification to
+> reproduce the issue in original report, there are 4 diff in below with [1=
+],
+> (1) use your commit, (2) 'wget' command to get correct config (3) change =
+to
+> use clang-17, btw, clang-20 can also reproduce the issue (4) change build
+> source to 'drivers/hid')
+>
+> reproduce:
+>         git clone https://github.com/intel/lkp-tests.git ~/lkp-tests
+>         # https://github.com/intel-lab-lkp/linux/commit/4ccef2fdc95970f67=
+857113edb4103d53205ac9c
+>         git remote add linux-review https://github.com/intel-lab-lkp/linu=
+x
+>         git fetch --no-tags linux-review Jonathan-Denose/HID-add-haptics-=
+page-defines/20250714-231444
+>         git checkout 4ccef2fdc95970f67857113edb4103d53205ac9c
+>         # save the config file
+>         wget https://download.01.org/0day-ci/archive/20250715/20250715194=
+2.94dhYylY-lkp@intel.com/config
+>         mkdir build_dir && cp config build_dir/.config
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang-17 ~/lkp-test=
+s/kbuild/make.cross W=3D1 O=3Dbuild_dir ARCH=3Dhexagon olddefconfig
+>         COMPILER_INSTALL_PATH=3D$HOME/0day COMPILER=3Dclang-17 ~/lkp-test=
+s/kbuild/make.cross W=3D1 O=3Dbuild_dir ARCH=3Dhexagon SHELL=3D/bin/bash dr=
+ivers/hid/
+>
+>
+> I can reproduce the issue with above steps, if you still cannot reproduce=
+,
+> could you give me your full log? below is mine just FYI (this is for clan=
+g-20,
+> and I use some different folders but not important)
+>
+> xsang@xsang-OptiPlex-9020:~/linux$ COMPILER_INSTALL_PATH=3D/home/xsang/cr=
+oss-compiler/ COMPILER=3Dclang-20 /home/xsang/lkp-tests/kbuild/make.cross W=
+=3D1 O=3Dbuild_dir ARCH=3Dhexagon olddefconfig
+> Compiler will be installed in /home/xsang/cross-compiler/
+> lftpget -c https://cdn.kernel.org/pub/tools/llvm/files/./llvm-20.1.8-x86_=
+64.tar.xz
+> /home/xsang/linux
+> tar Jxf /home/xsang/cross-compiler//./llvm-20.1.8-x86_64.tar.xz -C /home/=
+xsang/cross-compiler/
+> PATH=3D/home/xsang/cross-compiler//llvm-20.1.8-x86_64/bin:/home/xsang/.lo=
+cal/bin:/home/xsang/bin:/home/xsang/.local/bin:/usr/local/sbin:/usr/local/b=
+in:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/hom=
+e/xsang/.local/bin
+> make --keep-going LLVM=3D1 CROSS_COMPILE=3Dhexagon-linux- --jobs=3D72 KCF=
+LAGS=3D -Wno-error=3Dreturn-type -Wreturn-type -funsigned-char -Wundef W=3D=
+1 O=3Dbuild_dir ARCH=3Dhexagon olddefconfig
+> make[1]: Entering directory '/home/xsang/linux/build_dir'
+>   GEN     Makefile
+>   HOSTCC  scripts/basic/fixdep
+>   HOSTCC  scripts/kconfig/conf.o
+>   HOSTCC  scripts/kconfig/confdata.o
+>   HOSTCC  scripts/kconfig/expr.o
+>   LEX     scripts/kconfig/lexer.lex.c
+>   YACC    scripts/kconfig/parser.tab.[ch]
+>   HOSTCC  scripts/kconfig/menu.o
+>   HOSTCC  scripts/kconfig/preprocess.o
+>   HOSTCC  scripts/kconfig/symbol.o
+>   HOSTCC  scripts/kconfig/util.o
+>   HOSTCC  scripts/kconfig/lexer.lex.o
+>   HOSTCC  scripts/kconfig/parser.tab.o
+>   HOSTLD  scripts/kconfig/conf
+> #
+> # configuration written to .config
+> #
+> make[1]: Leaving directory '/home/xsang/linux/build_dir'
+>
+>
+> xsang@xsang-OptiPlex-9020:~/linux$ COMPILER_INSTALL_PATH=3D/home/xsang/cr=
+oss-compiler/ COMPILER=3Dclang-20 /home/xsang/lkp-tests/kbuild/make.cross W=
+=3D1 O=3Dbuild_dir ARCH=3Dhexagon SHELL=3D/bin/bash drivers/hid/
+> Compiler will be installed in /home/xsang/cross-compiler/
+> PATH=3D/home/xsang/cross-compiler//llvm-20.1.8-x86_64/bin:/home/xsang/.lo=
+cal/bin:/home/xsang/bin:/home/xsang/.local/bin:/usr/local/sbin:/usr/local/b=
+in:/usr/sbin:/usr/bin:/sbin:/bin:/usr/games:/usr/local/games:/snap/bin:/hom=
+e/xsang/.local/bin
+> make --keep-going LLVM=3D1 CROSS_COMPILE=3Dhexagon-linux- --jobs=3D72 KCF=
+LAGS=3D -Wno-error=3Dreturn-type -Wreturn-type -funsigned-char -Wundef W=3D=
+1 O=3Dbuild_dir ARCH=3Dhexagon SHELL=3D/bin/bash drivers/hid/
+> make[1]: Entering directory '/home/xsang/linux/build_dir'
+>   GEN     Makefile
+>   GENSEED scripts/basic/randstruct.seed
+>   WRAP    arch/hexagon/include/generated/uapi/asm/ucontext.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/auxvec.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/bitsperlong.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/bpf_perf_event.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/errno.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/fcntl.h
+>   UPD     include/generated/uapi/linux/version.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/ioctl.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/ipcbuf.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/ioctls.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/mman.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/msgbuf.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/poll.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/posix_types.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/resource.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/sembuf.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/shmbuf.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/siginfo.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/sockios.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/socket.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/stat.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/statfs.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/termbits.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/types.h
+>   WRAP    arch/hexagon/include/generated/uapi/asm/termios.h
+>   SYSHDR  arch/hexagon/include/generated/uapi/asm/unistd_32.h
+>   UPD     include/config/kernel.release
+>   UPD     include/generated/compile.h
+>   HOSTCC  scripts/dtc/dtc.o
+>   HOSTCC  scripts/dtc/flattree.o
+>   HOSTCC  scripts/dtc/fstree.o
+>   HOSTCC  scripts/dtc/data.o
+>   HOSTCC  scripts/dtc/livetree.o
+>   HOSTCC  scripts/dtc/treesource.o
+>   HOSTCC  scripts/dtc/srcpos.o
+>   HOSTCC  scripts/dtc/checks.o
+>   HOSTCC  scripts/dtc/util.o
+>   LEX     scripts/dtc/dtc-lexer.lex.c
+>   YACC    scripts/dtc/dtc-parser.tab.[ch]
+>   HOSTCC  scripts/dtc/libfdt/fdt.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_ro.o
+>   UPD     include/generated/utsrelease.h
+>   HOSTCC  scripts/dtc/libfdt/fdt_wip.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_sw.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_rw.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_strerror.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_empty_tree.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_addresses.o
+>   HOSTCC  scripts/dtc/libfdt/fdt_overlay.o
+>   HOSTCC  scripts/dtc/fdtoverlay.o
+>   WRAP    arch/hexagon/include/generated/asm/extable.h
+>   WRAP    arch/hexagon/include/generated/asm/iomap.h
+>   WRAP    arch/hexagon/include/generated/asm/kvm_para.h
+>   WRAP    arch/hexagon/include/generated/asm/mcs_spinlock.h
+>   WRAP    arch/hexagon/include/generated/asm/text-patching.h
+>   WRAP    arch/hexagon/include/generated/asm/archrandom.h
+>   WRAP    arch/hexagon/include/generated/asm/barrier.h
+>   WRAP    arch/hexagon/include/generated/asm/bug.h
+>   WRAP    arch/hexagon/include/generated/asm/cfi.h
+>   WRAP    arch/hexagon/include/generated/asm/compat.h
+>   WRAP    arch/hexagon/include/generated/asm/current.h
+>   WRAP    arch/hexagon/include/generated/asm/device.h
+>   WRAP    arch/hexagon/include/generated/asm/div64.h
+>   WRAP    arch/hexagon/include/generated/asm/dma-mapping.h
+>   WRAP    arch/hexagon/include/generated/asm/emergency-restart.h
+>   WRAP    arch/hexagon/include/generated/asm/ftrace.h
+>   WRAP    arch/hexagon/include/generated/asm/hardirq.h
+>   WRAP    arch/hexagon/include/generated/asm/hw_irq.h
+>   WRAP    arch/hexagon/include/generated/asm/irq_regs.h
+>   WRAP    arch/hexagon/include/generated/asm/irq_work.h
+>   WRAP    arch/hexagon/include/generated/asm/kdebug.h
+>   WRAP    arch/hexagon/include/generated/asm/kmap_size.h
+>   WRAP    arch/hexagon/include/generated/asm/kprobes.h
+>   WRAP    arch/hexagon/include/generated/asm/local.h
+>   WRAP    arch/hexagon/include/generated/asm/local64.h
+>   WRAP    arch/hexagon/include/generated/asm/mmiowb.h
+>   WRAP    arch/hexagon/include/generated/asm/module.h
+>   WRAP    arch/hexagon/include/generated/asm/module.lds.h
+>   WRAP    arch/hexagon/include/generated/asm/msi.h
+>   WRAP    arch/hexagon/include/generated/asm/pci.h
+>   WRAP    arch/hexagon/include/generated/asm/percpu.h
+>   WRAP    arch/hexagon/include/generated/asm/preempt.h
+>   WRAP    arch/hexagon/include/generated/asm/rqspinlock.h
+>   WRAP    arch/hexagon/include/generated/asm/runtime-const.h
+>   WRAP    arch/hexagon/include/generated/asm/rwonce.h
+>   WRAP    arch/hexagon/include/generated/asm/sections.h
+>   WRAP    arch/hexagon/include/generated/asm/serial.h
+>   WRAP    arch/hexagon/include/generated/asm/shmparam.h
+>   WRAP    arch/hexagon/include/generated/asm/simd.h
+>   WRAP    arch/hexagon/include/generated/asm/softirq_stack.h
+>   WRAP    arch/hexagon/include/generated/asm/topology.h
+>   WRAP    arch/hexagon/include/generated/asm/trace_clock.h
+>   WRAP    arch/hexagon/include/generated/asm/vga.h
+>   WRAP    arch/hexagon/include/generated/asm/video.h
+>   WRAP    arch/hexagon/include/generated/asm/word-at-a-time.h
+>   WRAP    arch/hexagon/include/generated/asm/xor.h
+>   SYSTBL  arch/hexagon/include/generated/asm/syscall_table_32.h
+>   HOSTCC  scripts/dtc/dtc-lexer.lex.o
+>   HOSTCC  scripts/dtc/dtc-parser.tab.o
+>   HOSTLD  scripts/dtc/fdtoverlay
+>   HOSTLD  scripts/dtc/dtc
+>   HOSTCC  scripts/kallsyms
+>   HOSTCC  scripts/asn1_compiler
+>   HOSTCC  scripts/insert-sys-cert
+>   CC      scripts/mod/empty.o
+>   HOSTCC  scripts/mod/mk_elfconfig
+>   CC      scripts/mod/devicetable-offsets.s
+>   UPD     scripts/mod/devicetable-offsets.h
+>   MKELF   scripts/mod/elfconfig.h
+>   HOSTCC  scripts/mod/modpost.o
+>   HOSTCC  scripts/mod/file2alias.o
+>   HOSTCC  scripts/mod/sumversion.o
+>   HOSTCC  scripts/mod/symsearch.o
+>   HOSTLD  scripts/mod/modpost
+>   CC      kernel/bounds.s
+>   CHKSHA1 ../include/linux/atomic/atomic-arch-fallback.h
+>   CHKSHA1 ../include/linux/atomic/atomic-instrumented.h
+>   CHKSHA1 ../include/linux/atomic/atomic-long.h
+>   UPD     include/generated/timeconst.h
+>   UPD     include/generated/bounds.h
+>   CC      arch/hexagon/kernel/asm-offsets.s
+>   UPD     include/generated/asm-offsets.h
+>   CALL    ../scripts/checksyscalls.sh
+>   CC      drivers/hid/hid-core.o
+>   CC      drivers/hid/hid-input.o
+>   CC      drivers/hid/hid-quirks.o
+>   CC      drivers/hid/hid-debug.o
+>   CC      drivers/hid/hid-haptic.o
+>   CC [M]  drivers/hid/usbhid/hid-core.o
+>   CC      drivers/hid/hidraw.o
+>   CC [M]  drivers/hid/usbhid/hiddev.o
+>   CC [M]  drivers/hid/usbhid/hid-pidff.o
+>   CC      drivers/hid/hid-a4tech.o
+>   CC      drivers/hid/hid-alps.o
+>   CC      drivers/hid/hid-apple.o
+>   CC      drivers/hid/hid-belkin.o
+>   CC      drivers/hid/hid-cherry.o
+>   CC      drivers/hid/hid-cmedia.o
+>   CC      drivers/hid/hid-cougar.o
+>   CC      drivers/hid/hid-ezkey.o
+>   CC      drivers/hid/hid-icade.o
+>   CC      drivers/hid/hid-ite.o
+>   CC      drivers/hid/hid-jabra.o
+>   CC      drivers/hid/hid-kensington.o
+>   CC      drivers/hid/hid-ortek.o
+>   CC      drivers/hid/hid-razer.o
+>   CC      drivers/hid/hid-rmi.o
+>   CC      drivers/hid/hid-saitek.o
+>   CC      drivers/hid/hid-sjoy.o
+>   CC      drivers/hid/hid-tivo.o
+>   CC      drivers/hid/hid-udraw-ps3.o
+>   CC      drivers/hid/hid-led.o
+>   CC      drivers/hid/hid-wiimote-core.o
+>   CC      drivers/hid/hid-wiimote-modules.o
+>   CC      drivers/hid/hid-wiimote-debug.o
+>   CC [M]  drivers/hid/uhid.o
+>   CC [M]  drivers/hid/hid-generic.o
+>   CC [M]  drivers/hid/hid-axff.o
+>   CC [M]  drivers/hid/hid-appleir.o
+>   CC [M]  drivers/hid/hid-asus.o
+>   CC [M]  drivers/hid/hid-aureal.o
+>   CC [M]  drivers/hid/hid-betopff.o
+>   CC [M]  drivers/hid/hid-bigbenff.o
+>   CC [M]  drivers/hid/hid-chicony.o
+>   CC [M]  drivers/hid/hid-corsair.o
+>   CC [M]  drivers/hid/hid-corsair-void.o
+>   CC [M]  drivers/hid/hid-cp2112.o
+>   CC [M]  drivers/hid/hid-cypress.o
+>   CC [M]  drivers/hid/hid-emsff.o
+>   CC [M]  drivers/hid/hid-elan.o
+>   CC [M]  drivers/hid/hid-elo.o
+>   CC [M]  drivers/hid/hid-gembird.o
+>   CC [M]  drivers/hid/hid-gfrm.o
+>   CC [M]  drivers/hid/hid-vivaldi-common.o
+>   CC [M]  drivers/hid/hid-google-stadiaff.o
+>   CC [M]  drivers/hid/hid-vivaldi.o
+>   CC [M]  drivers/hid/hid-gt683r.o
+>   CC [M]  drivers/hid/hid-gyration.o
+>   CC [M]  drivers/hid/hid-holtek-kbd.o
+>   CC [M]  drivers/hid/hid-holtek-mouse.o
+>   CC [M]  drivers/hid/hid-holtekff.o
+>   CC [M]  drivers/hid/hid-kye.o
+>   CC [M]  drivers/hid/hid-kysona.o
+>   CC [M]  drivers/hid/hid-letsketch.o
+>   CC [M]  drivers/hid/hid-macally.o
+>   CC [M]  drivers/hid/hid-magicmouse.o
+>   CC [M]  drivers/hid/hid-mcp2221.o
+>   CC [M]  drivers/hid/hid-megaworld.o
+>   CC [M]  drivers/hid/hid-microsoft.o
+>   CC [M]  drivers/hid/hid-nintendo.o
+>   CC [M]  drivers/hid/hid-nti.o
+>   CC [M]  drivers/hid/hid-pl.o
+>   CC [M]  drivers/hid/hid-penmount.o
+>   CC [M]  drivers/hid/hid-picolcd_core.o
+>   CC [M]  drivers/hid/hid-picolcd_fb.o
+>   CC [M]  drivers/hid/hid-picolcd_backlight.o
+>   CC [M]  drivers/hid/hid-picolcd_leds.o
+>   CC [M]  drivers/hid/hid-picolcd_cir.o
+>   CC [M]  drivers/hid/hid-picolcd_debugfs.o
+> ../drivers/hid/hid-haptic.c:13:6: error: redefinition of 'hid_haptic_feat=
+ure_mapping'
+>    13 | void hid_haptic_feature_mapping(struct hid_device *hdev,
+>       |      ^
+> ../drivers/hid/hid-haptic.h:83:6: note: previous definition is here
+>    83 | void hid_haptic_feature_mapping(struct hid_device *hdev,
+>       |      ^
+> ../drivers/hid/hid-haptic.c:51:6: error: redefinition of 'hid_haptic_chec=
+k_pressure_unit'
+>    51 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *hap=
+tic,
+>       |      ^
+> ../drivers/hid/hid-haptic.h:89:6: note: previous definition is here
+>    89 | bool hid_haptic_check_pressure_unit(struct hid_haptic_device *hap=
+tic,
+>       |      ^
+> ../drivers/hid/hid-haptic.c:65:5: error: redefinition of 'hid_haptic_inpu=
+t_mapping'
+>    65 | int hid_haptic_input_mapping(struct hid_device *hdev,
+>       |     ^
+> ../drivers/hid/hid-haptic.h:95:5: note: previous definition is here
+>    95 | int hid_haptic_input_mapping(struct hid_device *hdev,
+>       |     ^
+> ../drivers/hid/hid-haptic.c:81:5: error: redefinition of 'hid_haptic_inpu=
+t_configured'
+>    81 | int hid_haptic_input_configured(struct hid_device *hdev,
+>       |     ^
+> ../drivers/hid/hid-haptic.h:104:5: note: previous definition is here
+>   104 | int hid_haptic_input_configured(struct hid_device *hdev,
+>       |     ^
+> ../drivers/hid/hid-haptic.c:403:5: error: redefinition of 'hid_haptic_ini=
+t'
+>   403 | int hid_haptic_init(struct hid_device *hdev,
+>       |     ^
+> ../drivers/hid/hid-haptic.h:114:5: note: previous definition is here
+>   114 | int hid_haptic_init(struct  CC [M]  drivers/hid/hid-redragon.o
+>  hid_device *hdev, struct hid_haptic_device **haptic_ptr)
+>       |     ^
+> ../drivers/hid/hid-haptic.c:569:6: error: redefinition of 'hid_haptic_pre=
+ssure_reset'
+>   569 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic)
+>       |      ^
+> ../drivers/hid/hid-haptic.h:126:6: note: previous definition is here
+>   126 | void hid_haptic_pressure_reset(struct hid_haptic_device *haptic) =
+{}
+>       |      ^
+> ../drivers/hid/hid-haptic.c:575:6: error: redefinition of 'hid_haptic_pre=
+ssure_increase'
+>   575 | void hid_haptic_pressure_increase(struct hid_haptic_device *hapti=
+c,
+>       |      ^
+> ../drivers/hid/hid-haptic.h:128:6: note: previous definition is here
+>   128 | void hid_haptic_pressure_increase(struct hid_haptic_device *hapti=
+c,
+>       |   CC [M]  drivers/hid/hid-retrode.o
+>      ^
+> 7 errors generated.
+> make[5]: *** [../scripts/Makefile.build:287: drivers/hid/hid-haptic.o] Er=
+ror 1
+>   CC [M]  drivers/hid/hid-roccat.o
+>   CC [M]  drivers/hid/hid-roccat-common.o
+>   CC [M]  drivers/hid/hid-roccat-arvo.o
+>   CC [M]  drivers/hid/hid-roccat-isku.o
+>   CC [M]  drivers/hid/hid-roccat-kone.o
+>   CC [M]  drivers/hid/hid-roccat-koneplus.o
+>   CC [M]  drivers/hid/hid-roccat-konepure.o
+>   CC [M]  drivers/hid/hid-roccat-kovaplus.o
+>   CC [M]  drivers/hid/hid-roccat-lua.o
+>   CC [M]  drivers/hid/hid-roccat-pyra.o
+>   CC [M]  drivers/hid/hid-roccat-ryos.o
+>   CC [M]  drivers/hid/hid-roccat-savu.o
+>   CC [M]  drivers/hid/hid-samsung.o
+>   CC [M]  drivers/hid/hid-sony.o
+>   CC [M]  drivers/hid/hid-steam.o
+>   CC [M]  drivers/hid/hid-sunplus.o
+>   CC [M]  drivers/hid/hid-gaff.o
+>   CC [M]  drivers/hid/hid-tmff.o
+>   CC [M]  drivers/hid/hid-thrustmaster.o
+>   CC [M]  drivers/hid/hid-uclogic-core.o
+>   CC [M]  drivers/hid/hid-uclogic-rdesc.o
+>   CC [M]  drivers/hid/hid-uclogic-params.o
+>   CC [M]  drivers/hid/hid-xinmo.o
+>   CC [M]  drivers/hid/hid-zpff.o
+>   CC [M]  drivers/hid/hid-vrc2.o
+>   CC [M]  drivers/hid/wacom_sys.o
+>   CC [M]  drivers/hid/wacom_wac.o
+>   CC [M]  drivers/hid/hid-waltop.o
+>   CC [M]  drivers/hid/hid-winwing.o
+>   CC [M]  drivers/hid/hid-uclogic-rdesc-test.o
+>   LD [M]  drivers/hid/usbhid/usbhid.o
+>   LD [M]  drivers/hid/hid-uclogic-test.o
+>   LD [M]  drivers/hid/hid-picolcd.o
+>   LD [M]  drivers/hid/hid-uclogic.o
+>   LD [M]  drivers/hid/wacom.o
+> make[5]: Target 'drivers/hid/' not remade because of errors.
+> make[4]: *** [../scripts/Makefile.build:554: drivers/hid] Error 2
+> make[4]: Target 'drivers/hid/' not remade because of errors.
+> make[3]: *** [../scripts/Makefile.build:554: drivers] Error 2
+> make[3]: Target 'drivers/hid/' not remade because of errors.
+> make[2]: *** [/home/xsang/linux/Makefile:2003: .] Error 2
+> make[2]: Target 'drivers/hid/' not remade because of errors.
+> make[1]: *** [/home/xsang/linux/Makefile:248: __sub-make] Error 2
+> make[1]: Target 'drivers/hid/' not remade because of errors.
+> make[1]: Leaving directory '/home/xsang/linux/build_dir'
+> make: *** [Makefile:248: __sub-make] Error 2
+> make: Target 'drivers/hid/' not remade because of errors.
+>
+>
+>
+> > --
+> > Jonathan
+> >
+Hi Oliver,
 
-I think Beacon is a hardware mechanism invisible to software (PCIe
-r7.0, sec 4.2.7.8.1).
+I think I didn't have the right config so the issue wasn't reproducing
+but I'm seeing it now so I'll fix and resubmit.
 
-> According to the PCIe specification, multiple WAKE# signals can exist in a
-> system. In configurations involving a PCIe switch, each downstream port
-> (DSP) of the switch may be connected to a separate WAKE# line, allowing
-> each endpoint to signal WAKE# independently. To support this, the WAKE#
-> should be described in the device tree node of the upstream bridge to which
-> the endpoint is connected.
-
-I think this says a bit more than we know.  AFAICS, the PCIe spec does
-not require any particular WAKE# routing.  WAKE# *could* be routed to
-an upstream bridge (as shown in the 5.3.3.2 implementation note), but
-it doesn't have to be.  I think we need to allow WAKE# to be described
-by an Endpoint directly (which I think this patch does).
-
-I'm not sure about searching upstream PCI bridges.  I don't think
-there's anything in the PCIe spec about a connection between WAKE#
-routing and the PCI topology.  Maybe we need to search enclosing DT
-scopes?  I'm not really sure how DT works in this respect.  WAKE#
-could be routed to some GPIO completely unrelated to the PCI host
-bridge.
-
-I don't see anything that would prevent a Switch Port from asserting a
-WAKE# interrupt, so I'm not sure we should restrict it to Endpoints.
-
-> For example, in a switch-based topology, the
-> WAKE# can be defined in the DSP of the switch. In a direct connection
-> scenario, the WAKE# can be defined in the root port. If all endpoints share
-> a single WAKE# line, the GPIO should be defined in the root port.
-> 
-> During endpoint probe, the driver searches for the WAKE# in its immediate
-> upstream bridge. If not found, it continues walking up the hierarchy until
-> it either finds a WAKE# or reaches the root port. Once found, the driver
-> registers the wake IRQ in shared mode, as the WAKE# may be shared among
-> multiple endpoints.
-> 
-> When the IRQ is asserted, the wake handler triggers a pm_runtime_resume().
-
-I guess "wake handler" refers to handle_threaded_wake_irq()?  If so,
-just use the name directly to make it easier for people to follow
-this.
-
-> The PM framework ensures that the parent device is resumed before the
-> child i.e controller driver which can bring back link to D0.
-
-Nit: a *device* can be in D0.  Links would be in L0, etc.
-
-> WAKE# is added in dts schema and merged based on this link.
-> 
-> Link: https://lore.kernel.org/all/20250515090517.3506772-1-krishna.chundru@oss.qualcomm.com/
-> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
-> ...
-
-> +void pci_parse_of_wake_gpio(struct pci_dev *dev)
-> +{
-> +	struct device_node *dn __free(device_node) = pci_device_to_OF_node(dev);
-
-I'm still trying to wrap my head around __free().  Why are we using
-__free() and no_free_ptr() here?  AFAICS we're not allocating anything
-here.
-
-> +	struct gpio_desc *gpio;
-> +
-> +	if (!dn)
-> +		return;
-> +
-> +	gpio = fwnode_gpiod_get_index(of_fwnode_handle(no_free_ptr(dn)),
-> +				      "wake", 0, GPIOD_IN, NULL);
-> +	if (!IS_ERR(gpio))
-> +		dev->wake = gpio;
-> +}
-> +
-> +void pci_remove_of_wake_gpio(struct pci_dev *dev)
-> +{
-> +	if (!dev->wake)
-> +		return;
-> +
-> +	gpiod_put(dev->wake);
-> +	dev->wake = NULL;
-> +}
->  #endif	/* CONFIG_OF_IRQ */
->  
->  static int pci_parse_request_of_pci_ranges(struct device *dev,
-> @@ -1010,3 +1035,44 @@ int of_pci_get_equalization_presets(struct device *dev,
->  	return 0;
->  }
->  EXPORT_SYMBOL_GPL(of_pci_get_equalization_presets);
-> +
-> +int pci_configure_wake_irq(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *bridge = pdev;
-> +	struct gpio_desc *wake;
-> +	int ret, wake_irq;
-> +
-> +	while (bridge) {
-> +		wake = bridge->wake;
-> +		if (wake)
-> +			break;
-> +		bridge = pci_upstream_bridge(bridge);  // Move to upstream bridge
-
-If we need to search more scopes, I think we should be searching DT
-scopes, not PCI bridges.
-
-> +	}
-> +
-> +	if (!wake)
-> +		return 0;
-> +
-> +	wake_irq = gpiod_to_irq(wake);
-> +	if (wake_irq < 0) {
-> +		dev_err(&pdev->dev, "Failed to get wake irq: %d\n", wake_irq);
-> +		return wake_irq;
-> +	}
-> +
-> +	device_init_wakeup(&pdev->dev, true);
-> +
-> +	ret = dev_pm_set_dedicated_wake_irq_flags(&pdev->dev, wake_irq,
-> +						  IRQF_SHARED | IRQ_TYPE_EDGE_FALLING);
-> +	if (ret < 0) {
-> +		dev_err(&pdev->dev, "Failed to set wake IRQ: %d\n", ret);
-> +		device_init_wakeup(&pdev->dev, false);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +void pci_remove_wake_irq(struct pci_dev *pdev)
-> +{
-> +	dev_pm_clear_wake_irq(&pdev->dev);
-> +	device_init_wakeup(&pdev->dev, false);
-> +}
-> diff --git a/drivers/pci/pci-driver.c b/drivers/pci/pci-driver.c
-> index b853585cb1f87216981bde2a7782b8ed9c337636..2a1dca1d19b914d21b300ea78be0e0dce418cc88 100644
-> --- a/drivers/pci/pci-driver.c
-> +++ b/drivers/pci/pci-driver.c
-> @@ -447,10 +447,19 @@ static int pci_device_probe(struct device *dev)
->  	if (error < 0)
->  		return error;
->  
-> +	if (pci_pcie_type(pci_dev) == PCI_EXP_TYPE_ENDPOINT) {
-
-I guess there's a policy question here: configuring this in
-pci_device_probe() implies that we only pay attention to WAKE# when a
-driver is bound to the device.  Or, since WAKE# may be shared, I guess
-we pay attention to it if any device sharing this WAKE# IRQ has a
-driver?
-
-And since we check for Endpoint, we ignore any potential WAKE# IRQs
-from Switches?
-
-ACPI has corresponding wakeup mechanisms.  Are they limited to devices
-with drivers or to Endpoints?  Seems like this OF-based mechanism
-should work similarly if possible.
-
-> +		error =  pci_configure_wake_irq(pci_dev);
-> +		if (error) {
-> +			pcibios_free_irq(pci_dev);
-
-As far as I can tell, pcibios_free_irq() is a no-op and I should have
-removed it completely at the time of 6c777e8799a9 ("Revert "PCI, x86:
-Implement pcibios_alloc_irq() and pcibios_free_irq()"").
-
-I think we should remove it before this series rather than add new
-calls.
-
-> +			return error;
-> +		}
-> +	}
-> +
->  	pci_dev_get(pci_dev);
->  	error = __pci_device_probe(drv, pci_dev);
->  	if (error) {
->  		pcibios_free_irq(pci_dev);
-> +		pci_remove_wake_irq(pci_dev);
->  		pci_dev_put(pci_dev);
->  	}
->  
-> @@ -475,6 +484,7 @@ static void pci_device_remove(struct device *dev)
->  		pm_runtime_put_noidle(dev);
->  	}
->  	pcibios_free_irq(pci_dev);
-> +	pci_remove_wake_irq(pci_dev);
->  	pci_dev->driver = NULL;
->  	pci_iov_remove(pci_dev);
->  
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index 12215ee72afb682b669c0e3a582b5379828e70c4..c8cf0b404a4f31b271f187dddd75a007c7566982 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -920,6 +920,11 @@ void pci_release_of_node(struct pci_dev *dev);
->  void pci_set_bus_of_node(struct pci_bus *bus);
->  void pci_release_bus_of_node(struct pci_bus *bus);
->  
-> +void pci_parse_of_wake_gpio(struct pci_dev *dev);
-> +void pci_remove_of_wake_gpio(struct pci_dev *dev);
-> +int pci_configure_wake_irq(struct pci_dev *pdev);
-> +void pci_remove_wake_irq(struct pci_dev *pdev);
-> +
->  int devm_of_pci_bridge_init(struct device *dev, struct pci_host_bridge *bridge);
->  bool of_pci_supply_present(struct device_node *np);
->  int of_pci_get_equalization_presets(struct device *dev,
-> @@ -965,6 +970,11 @@ static inline int devm_of_pci_bridge_init(struct device *dev, struct pci_host_br
->  	return 0;
->  }
->  
-> +static inline void pci_parse_of_wake_gpio(struct pci_dev *dev) { }
-> +static inline void pci_remove_of_wake_gpio(struct pci_dev *dev) { }
-> +static inline int pci_configure_wake_irq(struct pci_dev *pdev) { return 0; }
-> +static inline void pci_remove_wake_irq(struct pci_dev *pdev) { }
-> +
->  static inline bool of_pci_supply_present(struct device_node *np)
->  {
->  	return false;
-> diff --git a/drivers/pci/probe.c b/drivers/pci/probe.c
-> index e6a34db778266862564532becc2a30aec09bab22..4fb9d8df19bc41cb84dcd1886546076bcc867a43 100644
-> --- a/drivers/pci/probe.c
-> +++ b/drivers/pci/probe.c
-> @@ -2717,6 +2717,8 @@ void pci_device_add(struct pci_dev *dev, struct pci_bus *bus)
->  	/* Set up MSI IRQ domain */
->  	pci_set_msi_domain(dev);
->  
-> +	pci_parse_of_wake_gpio(dev);
-> +
->  	/* Notifier could use PCI capabilities */
->  	ret = device_add(&dev->dev);
->  	WARN_ON(ret < 0);
-> diff --git a/drivers/pci/remove.c b/drivers/pci/remove.c
-> index 445afdfa6498edc88f1ef89df279af1419025495..1910f7c18b8f9b11c8136fea970788aaf834c97f 100644
-> --- a/drivers/pci/remove.c
-> +++ b/drivers/pci/remove.c
-> @@ -52,6 +52,7 @@ static void pci_destroy_dev(struct pci_dev *dev)
->  	if (pci_dev_test_and_set_removed(dev))
->  		return;
->  
-> +	pci_remove_of_wake_gpio(dev);
->  	pci_doe_sysfs_teardown(dev);
->  	pci_npem_remove(dev);
->  
-> diff --git a/include/linux/pci.h b/include/linux/pci.h
-> index 05e68f35f39238f8b9ce08df97b384d1c1e89bbe..8f861298e41d2f0d2dd0fc3f5778fe0e77a93511 100644
-> --- a/include/linux/pci.h
-> +++ b/include/linux/pci.h
-> @@ -548,6 +548,8 @@ struct pci_dev {
->  	/* These methods index pci_reset_fn_methods[] */
->  	u8 reset_methods[PCI_NUM_RESET_METHODS]; /* In priority order */
->  
-> +	struct gpio_desc *wake; /* Holds WAKE# gpio */
-> +
->  #ifdef CONFIG_PCIE_TPH
->  	u16		tph_cap;	/* TPH capability offset */
->  	u8		tph_mode;	/* TPH mode */
-> 
-> -- 
-> 2.34.1
-> 
+Thanks!
+--=20
+Jonathan
 
