@@ -1,175 +1,144 @@
-Return-Path: <linux-kernel+bounces-753875-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753876-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88286B1894C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:05:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 901CEB18950
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:08:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABF6016EF7B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:05:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B7776627CBE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E81B61FBEB9;
-	Fri,  1 Aug 2025 23:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1222C26FA7B;
+	Fri,  1 Aug 2025 23:08:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZK3uZiUV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dj4UyGcG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C0C62222D7
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 23:04:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 647671E0B91;
+	Fri,  1 Aug 2025 23:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754089492; cv=none; b=ans31dJav3H6rwzYXO2QDVCfJJopiVhuj+uM2v14QJiyqyMEn6nyEBLExOYimttOmTCUWZ33pkqoMRqIKUpYBxdg5Gz5YyW9+VBdYFjc6S1en6l3u+93QF3XZGTBxo40JHay9K8irKn1LwWHfQ53nG0qaPM3G6OhpscYgf++22g=
+	t=1754089688; cv=none; b=W26j3VOoXRZNQbyHyeHo8ho2+ybvJPO1xEPc0d+mVUUB8twmTT6c6WJb6SGnuWALM6Ca1cm5C0nfkQ8qvkWB8Uf39vARoxZbzEli7b12XuhwoTeIPV4VrJrJh4nOpB6UBkApDLDBwbj7WO+4k8tQOU1jryg2hmSCHo17Zd6N3W8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754089492; c=relaxed/simple;
-	bh=9KR/tNiOgAxan+X0qaqlPVk+bks29bd7diAxAiAcQGQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=TvkZDytMjavOX3Hbe1T8u2FsSwoqzq1jvQUfh6MGSVDoyM0U3h3E4jnFPmq7bnTcKSn9L/ThoXKhRm4SVaKNQoRLd+Ab3p2IG5f/+vsRh/Mmm5kz/VLNjZdqL0ajYLAM9eT/hLEzNaGt1P7Xnl6vCVnoBaxZIVsFnqdMJCLEuoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZK3uZiUV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DEDE1C4CEEB
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 23:04:51 +0000 (UTC)
+	s=arc-20240116; t=1754089688; c=relaxed/simple;
+	bh=6pOY9vWaKIl9etre7R8PY0gT1B9BcwDb9n4CCJLLzNo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=WjiqAc4Mh7nA1t9n7kmRCqWvR8PxqeGN5+Y1/5iKJJPiP3o++JP3//i8bTsfEdjw/+YcGZoUIHZPysCBu05uehKyt/rqiZXo3IxTmwmucifIQV/52J80stHCabq3KQiKJSHmxnBDmKH2GCzy3DL9G6xMbwqARWooETYiabCmbqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dj4UyGcG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96870C4CEE7;
+	Fri,  1 Aug 2025 23:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754089491;
-	bh=9KR/tNiOgAxan+X0qaqlPVk+bks29bd7diAxAiAcQGQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ZK3uZiUVFwAWl30Yexuz/b/kEsVFNgxSShy0KDZ3dcj+PGh+5hZPIa7116Kw56oRi
-	 xIUPfRhFO9abHI4foqY/U5fQcE+wR8hESz1RfQjERV2ELkGNIkPTGqrY+dDNr3l2iW
-	 g/gdAulYF0jeO7UeLdLzIiQszVTsqmKrWSApYsDK01p5fhx0gYu08K5CuPgHuLXv5l
-	 vJ7le98Img26C37dCWrsuOjRxMHZPfD5xU1rJj7CW1rRugCVokQX74RR554JHt/Nib
-	 UJG3i6GTw0Rg78g5Vkig3L9XXjOKuHlQ6Sf6F0RPKZI+3yhElmAqPE+ZRBqAToRWhz
-	 493UTA+fTfY8w==
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-456007cfcd7so11815e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 16:04:51 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXqSJP5sKeBiu8C1C1x8dlBl+3eZ+pIvPpdGBQQ+blMEJZCAI/uVNNFcFSJGol7JbVjfFQwWxPMcL8Q4SY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwyCYHoDKY61ko7fdtKWlCHgCNxrpvhnb4W6tKbWoLyDdslATVT
-	L4naiRVAzCec7EbXvG5P/kgn1idjsMy8zJN1XjLGuuuzgeLSE+19lihZGG8G8sSOr/747kG3Uzq
-	vb9dmiTgkgKEok3eS/fvtC0Te8XC0Cewo0zTLa5zU
-X-Google-Smtp-Source: AGHT+IHCeGxdJGl6Rwma71WQbR98WU5ymsS87qBsgPEiwP1y/FmbZ2BSVF4t0BFrnDfmre4oNRzorh3ZwFlO3Q8Byh0=
-X-Received: by 2002:a05:600c:1c25:b0:439:8f59:2c56 with SMTP id
- 5b1f17b1804b1-458b6e822b0mr517815e9.2.1754089490309; Fri, 01 Aug 2025
- 16:04:50 -0700 (PDT)
+	s=k20201202; t=1754089687;
+	bh=6pOY9vWaKIl9etre7R8PY0gT1B9BcwDb9n4CCJLLzNo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=dj4UyGcGbuIkBc98+22HPLqigl8NgNkMOdvw1zAqKlBQbRiiBxUzvRfWrVyzOtC6D
+	 cjuiqHDMdxYBp16KLznBJPAhgVMiEnno49wryNNiuQ5AIayb0Lzi/MAMXBDmJHtduV
+	 atkxVrhkNH6oExT6DhZwgH4YEXVh0epCd6rbjc37Rud5naxpUDu9/SX15b0QuZeA2G
+	 Go7Lyxio35OeHyJsgXdE/F2mkL3LAAOw5HayQ4Me9AMRRIbkXeJ9elEBJHllp+5v7C
+	 4RpA+plFtMLbsK5xWsInIJVj3hWYYCznrcH0gHUz+H3oxe5ida+og57qZTFXSnj0Nh
+	 B4pJak/XeYcjw==
+Date: Fri, 1 Aug 2025 16:08:05 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Byungchul Park <byungchul@sk.com>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+ harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+ davem@davemloft.net, hawk@kernel.org, john.fastabend@gmail.com,
+ sdf@fomichev.me, saeedm@nvidia.com, leon@kernel.org, tariqt@nvidia.com,
+ mbloch@nvidia.com, andrew+netdev@lunn.ch, edumazet@google.com,
+ pabeni@redhat.com, akpm@linux-foundation.org, david@redhat.com,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com, horms@kernel.org,
+ jackmanb@google.com, hannes@cmpxchg.org, ziy@nvidia.com,
+ ilias.apalodimas@linaro.org, willy@infradead.org, brauner@kernel.org,
+ kas@kernel.org, yuzhao@google.com, usamaarif642@gmail.com,
+ baolin.wang@linux.alibaba.com, almasrymina@google.com, toke@redhat.com,
+ asml.silence@gmail.com, bpf@vger.kernel.org, linux-rdma@vger.kernel.org,
+ sfr@canb.auug.org.au
+Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
+ for page pool in page type
+Message-ID: <20250801160805.28fa1e05@kernel.org>
+In-Reply-To: <20250729110210.48313-1-byungchul@sk.com>
+References: <20250729110210.48313-1-byungchul@sk.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-luo-pci-v1-0-955b078dd653@kernel.org>
- <20250728-luo-pci-v1-20-955b078dd653@kernel.org> <87zfconsaw.ffs@tglx>
- <CAF8kJuOM=2oEFP20xWtQ==ECwF_vNB032Os3-N12zY1xVau-yw@mail.gmail.com> <20250731150132.GV26511@ziepe.ca>
-In-Reply-To: <20250731150132.GV26511@ziepe.ca>
-From: Chris Li <chrisl@kernel.org>
-Date: Fri, 1 Aug 2025 16:04:39 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuPbJWea+o=GTFEM6KRCq4DxDad+83+vM0Np+n=Mmzqzag@mail.gmail.com>
-X-Gm-Features: Ac12FXzFtHTJHakYV4RYMb4cJgU-1h5y9qOlDd4pooYwaMDWI_1OEJfpSnDXlvk
-Message-ID: <CAF8kJuPbJWea+o=GTFEM6KRCq4DxDad+83+vM0Np+n=Mmzqzag@mail.gmail.com>
-Subject: Re: [PATCH RFC 20/25] PCI/LUO: Avoid write to liveupdate devices at boot
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Bjorn Helgaas <bhelgaas@google.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Danilo Krummrich <dakr@kernel.org>, Len Brown <lenb@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-pci@vger.kernel.org, linux-acpi@vger.kernel.org, 
-	David Matlack <dmatlack@google.com>, Pasha Tatashin <tatashin@google.com>, 
-	Jason Miu <jasonmiu@google.com>, Vipin Sharma <vipinsh@google.com>, 
-	Saeed Mahameed <saeedm@nvidia.com>, Adithya Jayachandran <ajayachandra@nvidia.com>, 
-	Parav Pandit <parav@nvidia.com>, William Tu <witu@nvidia.com>, Mike Rapoport <rppt@kernel.org>, 
-	Leon Romanovsky <leon@kernel.org>, Junaid Shahid <junaids@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 31, 2025 at 8:02=E2=80=AFAM Jason Gunthorpe <jgg@ziepe.ca> wrot=
-e:
->
-> On Tue, Jul 29, 2025 at 06:51:27PM -0700, Chris Li wrote:
->
-> > They follow a pattern that the original kernel needs to write to the
-> > device and change the device state. The liveupdate device needs to
-> > maintain the previous state not changed, therefore needs to prevent
-> > such write initialization in liveupdate case.
->
-> No, I fundamentally reject this position and your testing methodology.
->
-> The new kernel *should* be writing to config space and it *should* be
-> doing things like clearing and gaining control over MSI. It is fully
-> wrong to be blocking it like you are doing just to satify some
-> incorrect qemu based test checking for no config access.
+On Tue, 29 Jul 2025 20:02:10 +0900 Byungchul Park wrote:
+> [PATCH linux-next v3] mm, page_pool: introduce a new page type for page pool in page type
 
-First of all, let me clarify that the PCI PF and VF tests I mention in
-the cover letter are run on the real data center servers, not qemu.
-QEMU does not have the correct IOMMU simulation for my workstation
-anyway. I do use qemu in development to quickly check if I screwed up
-something badly. The real test is always on the real machine. Our
-internal test dashboard has reached a high two digit number now, all
-with real hardware.
+linux-next does not accept patches. This has to go either via networking or MM.
 
-With that out of the way. Let me explain why we did it the way we did.
-I believe you and I eventually want the same thing, just different
-ways to get there. I am also working on a series that allows fine
-grain control of  PCI preservation. It allows the driver to select
-exactly what needs to be preserved, rather than the current
-"preserved" vs "depended" control. With the fine grain control, it can
-basically do what you described, allow new kernel writes to config
-space they don't want to preserve. However this RFC series is already
-getting very long, that is why I did not include the fine grain
-control series in this RFC. Keep in mind that this is just RFC, I want
-to demonstrate the problem space, and what source code needs to be
-modified in order to preserve all config space. It is not the final
-version that gets merged. Your feedback is important to us.
+> -	if (unlikely(page_has_type(page)))
+> +	if (unlikely(page_has_type(page))) {
 
-My philosophy is that the LUO PCI subsystem is for service of the PCI
-device driver. Ultimately it is the PCI device driver who decides what
-part of the config space they want to preserve or overwrite. The PCI
-layer is just there to facilitate that service.
+Maybe add :
 
-Regarding the testing. There are many different tests we can write and
-run. Preserving all config space is just one of them.  We also have
-other tests that partially preserve the config space and write to some
-config as it needs to. That is why I need to have the fine grain
-control series.
+		/* networking expects to clear its page type before releasing */
 
-If you still think it is unjustifiable to have one test try to
-preserve all config space for liveupdate. Please elaborate your
-reasoning. I am very curious.
-With the fine grained control we let the driver decide what the driver
-wants to preserve vs not, will that remove your objection?
+> +		WARN_ON_ONCE(PageNetpp(page));
+>  		/* Reset the page_type (which overlays _mapcount) */
+>  		page->page_type = UINT_MAX;
+> +	}
 
-> Only some config accesse are bad. Each and every "bad" one needs to be
-> clearly explained *why* it is bad and only then mitigated.
+>  static inline bool netmem_is_pp(netmem_ref netmem)
+>  {
+> -	return (netmem_get_pp_magic(netmem) & PP_MAGIC_MASK) == PP_SIGNATURE;
+> +	/* Use ->pp for net_iov to identify if it's pp, 
 
-That is exactly the reason why we have the conservative test that
-preserves every config space test as a starting point. It does not
-mean that is the ending point.  We also have tests that only partially
-preserve the config space driver actually needs. When things break, we
-can quickly compare to find out not preserving which register will
-break which device. This incremental approach is very effective to
-deal with very complex devices.
+Please try to use precise language, this code is confusing as is.
+net_iov may _belong_ to a page pool.
 
-Another constraint is that the data center servers are dependent on
-the network device able to connect to the network appropriately. Take
-diorite NIC  for example, if I try only preserving ATS/PASID did not
-finish the rest of liveupdate, the nic wasn't able to boot up and
-connect to the network all the way. Even if the test passes for the
-ATS part, the over test fails because the server is not back online. I
-can't include that test into the test dashboard, because it brings
-down the server. The only way to recover from that is rebooting the
-server, which takes a long time for a big server. I can only keep that
-non-passing test as my own private developing test, not the regression
-test set.
+	* which requires that non-pp net_iov should have ->pp NULL'd.
 
-That is the reason we to have some conservative tests passing first,
-then expand to the more risky tests. We are actually quickly expanding
-our test metrics for doing more and more interesting(and risky) stuff.
+I don't think this adds any information.
 
-I hope that clarifies the eventual end goal and the development
-approach we take.
+> +	 */
+> +	if (netmem_is_net_iov(netmem))
+> +		return !!__netmem_clear_lsb(netmem)->pp;
+> +
+> +	/* For system memory, page type bit in struct page can be used
 
-> Most mitigation are far harder than just if'ing around the config
-> write. My ATS/PASID/etc example for instance.
+"page type bit" -> "page type", it's not a bit.
 
-Exactly why we can't add those risky(non working) tests into the
-dashboard before the conservative passing one.
+> +	 * to identify if it's pp.
 
-Chris
+... to identify pages which belong to a page pool.
+
+> +	 */
+> +	return PageNetpp(__netmem_to_page(netmem));
+>  }
+>  
+>  static inline void netmem_set_pp(netmem_ref netmem, struct page_pool *pool)
+> diff --git a/net/core/page_pool.c b/net/core/page_pool.c
+> index 05e2e22a8f7c..37eeab76c41c 100644
+> --- a/net/core/page_pool.c
+> +++ b/net/core/page_pool.c
+> @@ -654,7 +654,6 @@ s32 page_pool_inflight(const struct page_pool *pool, bool strict)
+>  void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+>  {
+>  	netmem_set_pp(netmem, pool);
+> -	netmem_or_pp_magic(netmem, PP_SIGNATURE);
+>  
+>  	/* Ensuring all pages have been split into one fragment initially:
+>  	 * page_pool_set_pp_info() is only called once for every page when it
+> @@ -665,12 +664,19 @@ void page_pool_set_pp_info(struct page_pool *pool, netmem_ref netmem)
+>  	page_pool_fragment_netmem(netmem, 1);
+>  	if (pool->has_init_callback)
+>  		pool->slow.init_callback(netmem, pool->slow.init_arg);
+> +
+> +	/* If it's page-backed */
+
+Please don't add obvious comments.
+
+> +	if (!netmem_is_net_iov(netmem))
+> +		__SetPageNetpp(__netmem_to_page(netmem));
 
