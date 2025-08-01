@@ -1,208 +1,241 @@
-Return-Path: <linux-kernel+bounces-753625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9028EB1856E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:09:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8615AB18570
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 748FB5820F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:09:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FBEA58460F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E99528C84B;
-	Fri,  1 Aug 2025 16:09:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rvKWKKbA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64C9828C5D5;
+	Fri,  1 Aug 2025 16:09:38 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86E5A26C39B;
-	Fri,  1 Aug 2025 16:09:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0EB3428C034
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:09:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754064564; cv=none; b=FjvYjwpkuavAqG0lNQbBk5qy3m6Rh+EESpMvdiBuR1LwzHAUNfdVJGWxtRq+h5qTu0b9YckRA6SgFENWEW3DEj4FVjY5TGKOfIHBYz0ageIF/VZHrlC+48SlKMp59J4m2aSbAg9D2HD3RTUmVOOlDLxRlJtLG8kTMy1VREZBL9o=
+	t=1754064577; cv=none; b=igjOoDoR5tD5fhw8/P3RDNWilZtznsuxu0pzMxJNGJCHx9NVRFB3JAo0evkLZ0Bd8FpM/OPeEZ94yNxRSW8MxMB+xaYrSipvkamBykgbnXuZL9myFSHF5PvOoPXMWvMC7AEWRvR/sTz3m9Kj7wF2uy9/JfhC32LT0hdR7wUsv6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754064564; c=relaxed/simple;
-	bh=fF7jdCoxSI4PIYqc+nC8jQ5Zo2bBLXUC0r4Wf+iGzd8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JHFY8b9+7idXsG7TFQT5jlZiI0A8j+KrwB6sItpNR769pERZz6j74B4w8qrIVWIFOnLwTu0cG2B+YUsU83zenWnomiqqaSzqrwCqyJu4CBxmPl6NpA3KBfIh7oEblLNiQShBV08JDMfn6mJLno8Bie5iMze588UtoOzwZ7pTeos=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rvKWKKbA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B856EC4CEE7;
-	Fri,  1 Aug 2025 16:09:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754064564;
-	bh=fF7jdCoxSI4PIYqc+nC8jQ5Zo2bBLXUC0r4Wf+iGzd8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=rvKWKKbAWpN9RgkvBv1iHGLhHE5Yszey8SjnnYGuY17WCKQDoro7TkUsJnl7f3MQR
-	 Q/K3Zq+/XCKg23+Snpvd9UnCfXui69teQ14tsUSCc1zrERer3cslnmmSUlB1LtnKNs
-	 XWefJZR00eZSj1CTLDbyiGxkz5Lx3aLNuhjOiX0k4UCuYT9DFYuoDe6l8UPVla0gzU
-	 Xo00+IR/MmOBQ6FXJKthXYDnljneXb17nJnMGlMNxhGWLmD/kYi13D18pbpDALFmXI
-	 zDE1Rk/8DaksAvyKvJj7YB+YIOhVEcAgGbGtlVGi8zl8cdZ5n/5JKrSADLDvAGl3XR
-	 aNqELRO3R+iiA==
-Message-ID: <4fa9074e-609a-42aa-975a-a6daa7dd6d42@kernel.org>
-Date: Fri, 1 Aug 2025 18:09:18 +0200
+	s=arc-20240116; t=1754064577; c=relaxed/simple;
+	bh=nomBDu1of4B5QpjDNgqXKAwUb8fdoh2SChFEJflAXJE=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sJ/1CC4A7/ixlAhSSumUk4M9ILWn6cz0MiOmRYZ5jsxa/1hitIGh1HwzMvug5OSC4WtSGklm0E2yEzPetVJja3XTOF1HMmKCyy9EWeWvpmVBHXb9C4d7deF6CQ6c4Wt8+/Us2arHGTASw/Mdedsqgr6wZKT2U8upKCL2O3KoRaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4btrSd6Jmqz6L5CV;
+	Sat,  2 Aug 2025 00:07:29 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C8971402F3;
+	Sat,  2 Aug 2025 00:09:32 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 1 Aug
+ 2025 18:09:31 +0200
+Date: Fri, 1 Aug 2025 17:09:30 +0100
+From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+To: James Morse <james.morse@arm.com>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	"Rob Herring" <robh@kernel.org>, Ben Horgan <ben.horgan@arm.com>, Rohit
+ Mathew <rohit.mathew@arm.com>, Shanker Donthineni <sdonthineni@nvidia.com>,
+	"Zeng Heng" <zengheng4@huawei.com>, Lecopzer Chen <lecopzerc@nvidia.com>,
+	"Carl Worth" <carl@os.amperecomputing.com>,
+	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <lcherian@marvell.com>,
+	<bobo.shaobowang@huawei.com>, <tan.shaopeng@fujitsu.com>,
+	<baolin.wang@linux.alibaba.com>, Jamie Iles <quic_jiles@quicinc.com>, Xin Hao
+	<xhao@linux.alibaba.com>, <peternewman@google.com>, <dfustini@baylibre.com>,
+	<amitsinght@marvell.com>, David Hildenbrand <david@redhat.com>, Rex Nie
+	<rex.nie@jaguarmicro.com>, Dave Martin <dave.martin@arm.com>, Koba Ko
+	<kobak@nvidia.com>
+Subject: Re: [RFC PATCH 00/36] arm_mpam: Add basic mpam driver
+Message-ID: <20250801170930.000051fe@huawei.com>
+In-Reply-To: <20250711183648.30766-1-james.morse@arm.com>
+References: <20250711183648.30766-1-james.morse@arm.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
- UFS controller
-To: Manivannan Sadhasivam <mani@kernel.org>
-Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com,
- avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org,
- krzk+dt@kernel.org, conor+dt@kernel.org, andersson@kernel.org,
- konradybcio@kernel.org, agross@kernel.org, linux-arm-msm@vger.kernel.org,
- linux-scsi@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
- <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
- <eab85cb3-7185-4474-9428-8699fbe4a8e5@kernel.org>
- <40ace3bc-7e5d-417a-b51a-148c5f498992@quicinc.com>
- <2a7bf809-73d9-4cb6-bcc9-3625ef1eb1fa@kernel.org>
- <kayobeddgln5oi3g235ruh7f7adbqr7srim7tmt3iwa3zn33m4@cenneffnuhnv>
- <5a32e933-03b9-4cc3-914c-46bdb2cedce6@kernel.org>
- <54gttzkpxg55vrh5wsvyvteovki377w3yjfejjddpzzrvldwkg@p7sc4knnvla3>
-Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <54gttzkpxg55vrh5wsvyvteovki377w3yjfejjddpzzrvldwkg@p7sc4knnvla3>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100010.china.huawei.com (7.191.174.197) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On 01/08/2025 17:33, Manivannan Sadhasivam wrote:
-> On Fri, Aug 01, 2025 at 04:20:37PM GMT, Krzysztof Kozlowski wrote:
->> On 01/08/2025 14:24, Manivannan Sadhasivam wrote:
->>> On Thu, Jul 31, 2025 at 10:38:56AM GMT, Krzysztof Kozlowski wrote:
->>>> On 31/07/2025 10:34, Ram Kumar Dwivedi wrote:
->>>>>
->>>>>
->>>>> On 31-Jul-25 12:15 PM, Krzysztof Kozlowski wrote:
->>>>>> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
->>>>>>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
->>>>>>> on the Qualcomm SM8650 platform by updating the device tree node. This
->>>>>>> includes adding new register regions and specifying the MSI parent
->>>>>>> required for MCQ operation.
->>>>>>>
->>>>>>> MCQ is a modern queuing model for UFS that improves performance and
->>>>>>> scalability by allowing multiple hardware queues. 
->>>>>>>
->>>>>>> Changes:
->>>>>>> - Add reg entries for mcq_sqd and mcq_vs regions.
->>>>>>> - Define reg-names for the new regions.
->>>>>>> - Specify msi-parent for interrupt routing.
->>>>>>>
->>>>>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
->>>>>>> ---
->>>>>>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 9 ++++++++-
->>>>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
->>>>>>>
->>>>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>> index e14d3d778b71..5d164fe511ba 100644
->>>>>>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
->>>>>>> @@ -3982,7 +3982,12 @@ ufs_mem_phy: phy@1d80000 {
->>>>>>>  
->>>>>>>  		ufs_mem_hc: ufshc@1d84000 {
->>>>>>>  			compatible = "qcom,sm8650-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
->>>>>>> -			reg = <0 0x01d84000 0 0x3000>;
->>>>>>> +			reg = <0 0x01d84000 0 0x3000>,
->>>>>>> +			      <0 0x01da5000 0 0x2000>,
->>>>>>> +			      <0 0x01da4000 0 0x0010>;
->>>>>>
->>>>>>
->>>>>> These are wrong address spaces. Open your datasheet and look there.
->>>>>>
->>>>> Hi Krzysztof,
->>>>>
->>>>> I’ve reviewed it again, and it is correct and functioning as expected both on our upstream and downstream codebase.
->>>>> I think it is probably overlooked by you. Can you please double check from your end?
->>>>>
->>>>
->>>> No, it is not overlooked. There is no address space of length 0x10 at
->>>> 0x01da4000 in qcom doc/datasheet system. Just open the doc and look
->>>> there by yourself. The size is 0x15000.
->>>>
->>>
->>> The whole UFS MCQ region is indeed of size 0x15000, but the SQD and VS registers
->>> are at random offsets, not fixed across the SoC revisions. And there are some
->>> big holes within the whole region for things like ICE and all.
->>>
->>> So it makes sense to map only the part of these regions and leave the unused
->>> ones.
->> Each item in the reg represents some continuous, dedicated address
->> space, not individual registers or artificially decided subsection. The
->> holes in such address space is not a problem, we do it all the time for
->> all other devices as well.
->>
->> You need to use the definition of that address space.
->>
+On Fri, 11 Jul 2025 18:36:12 +0000
+James Morse <james.morse@arm.com> wrote:
+
+> Hello,
 > 
-> What if some of the registers in that whole address space is shared with other
-> peripherals such as ICE?
-
-
-It will be a different address space. We don't talk about imaginary
-3rd-party SoC. Qualcomm datasheet lists address spaces in very precise
-way. We were recently fixing all address spaces for remoterpocs based on
-that.
-
+> This is just enough MPAM driver for the ACPI and DT pre-requisites.
+> It doesn't contain any of the resctrl code, meaning you can't actually drive it
+> from user-space yet.
 > 
-> I agree with the fact that artifically creating separate register spaces leads
-> to issues, but here I'm worried about hardcoding the offsets in the driver which
-> can change between SoCs and also the shared address space with ICE.
+> This is the initial group of patches that allows the resctrl code to be built
+> on top. Including that will increase the number of trees that may need to
+> coordinate, so breaking it up make sense.
+> 
+> The locking looks very strange - but is influenced by the 'mpam-fb' firmware
+> interface specification that is still alpha. That thing needs to wait for an
+> interrupt after every system register write, which significantly impacts the
+> driver. Some features just won't work, e.g. reading the monitor registers via
+> perf.
+> The aim is to not have to make invasive changes to the locking to support the
+> firmware interface, hence it looks strange from day-1.
+> 
+> I've not found a platform that can test all the behaviours around the monitors,
+> so this is where I'd expect the most bugs.
+> 
+> It's unclear where in the tree this should be put. It affects memory bandwidth
+> and cache allocation, but doesn't (yet) interact with perf. The main interaction
+> is with resctrl in fs/resctrl - but there will be no filesystem code in here.
+> Its also likely there will be other in-kernel users. (in-kernel MSC emulation by
+> KVM being an obvious example).
+> (I'm not a fan of drivers/resctrl or drivers/mpam - its not the sort of thing
+>  that justifies being a 'subsystem'.)
+> 
+> For now, I've put this under drivers/platform/arm64. Other ideas welcome.
+> 
+> The first three patches are currently a series on the list, the PPTT stuff
+> has previously been posted - this is where the users of those helpers appear.
+> 
+Hi James,
 
-Drivers are expected to hard-code offsets and all drivers do it. Look at
-display, sound codecs (both SoC and soundwire devices). Everything
-hard-coded offsets internal to address space.
+Whilst I get that this is minimal, I was a bit surprised that it doesn't
+contain enough to have the driver actually bind to the platform devices
+I think that needs the CPU hotplug handler to register a requester.
+So about another 4 arch patches from your tree.  Maybe you can shuffle
+things around to help with that.
 
-What you essentially want is (making it border case) "reg" per register.
+That makes this a pain to test in isolation.
 
-Best regards,
-Krzysztof
+Given desire to poke the corners, I'm rebasing the old QEMU emulation and
+will poke it some more.  Now we are getting close to upstream kernel support
+maybe I'll even clean that up for potential upstream QEMU.
+
+For bonus points I 'could' hook it up to the cache simulator and actually
+generate real 'counts' but that's probably more for fun than because it's
+useful. Fake numbers are a lot cheaper to get.
+
+Jonathan
+> 
+> The MPAM spec that describes all the system and MMIO registers can be found
+> here:
+> https://developer.arm.com/documentation/ddi0598/db/?lang=en
+> (Ignored the 'RETIRED' warning - that is just arm moving the documentation
+>  around. This document has the best overview)
+> 
+> This series is based on v6.16-rc4, and can be retrieved from:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/driver/rfc
+> 
+> The rest of the driver can be found here:
+> https://git.kernel.org/pub/scm/linux/kernel/git/morse/linux.git mpam/snapshot/v6.16-rc4
+> 
+> What is MPAM? Set your time-machine to 2020:
+> https://lore.kernel.org/lkml/20201030161120.227225-1-james.morse@arm.com/
+> 
+> 
+> Bugs welcome,
+> Thanks,
+> 
+> James Morse (31):
+>   cacheinfo: Add arch hook to compress CPU h/w id into 32 bits for
+>     cache-id
+>   arm64: cacheinfo: Provide helper to compress MPIDR value into u32
+>   cacheinfo: Expose the code to generate a cache-id from a device_node
+>   ACPI / PPTT: Add a helper to fill a cpumask from a processor container
+>   ACPI / PPTT: Stop acpi_count_levels() expecting callers to clear
+>     levels
+>   ACPI / PPTT: Find cache level by cache-id
+>   ACPI / PPTT: Add a helper to fill a cpumask from a cache_id
+>   arm64: kconfig: Add Kconfig entry for MPAM
+>   ACPI / MPAM: Parse the MPAM table
+>   platform: arm64: Move ec devices to an ec subdirectory
+>   arm_mpam: Add probe/remove for mpam msc driver and kbuild boiler plate
+>   arm_mpam: Add the class and component structures for ris firmware
+>     described
+>   arm_mpam: Add MPAM MSC register layout definitions
+>   arm_mpam: Add cpuhp callbacks to probe MSC hardware
+>   arm_mpam: Probe MSCs to find the supported partid/pmg values
+>   arm_mpam: Add helpers for managing the locking around the mon_sel
+>     registers
+>   arm_mpam: Probe the hardware features resctrl supports
+>   arm_mpam: Merge supported features during mpam_enable() into
+>     mpam_class
+>   arm_mpam: Reset MSC controls from cpu hp callbacks
+>   arm_mpam: Add a helper to touch an MSC from any CPU
+>   arm_mpam: Extend reset logic to allow devices to be reset any time
+>   arm_mpam: Register and enable IRQs
+>   arm_mpam: Use a static key to indicate when mpam is enabled
+>   arm_mpam: Allow configuration to be applied and restored during cpu
+>     online
+>   arm_mpam: Probe and reset the rest of the features
+>   arm_mpam: Add helpers to allocate monitors
+>   arm_mpam: Add mpam_msmon_read() to read monitor value
+>   arm_mpam: Track bandwidth counter state for overflow and power
+>     management
+>   arm_mpam: Add helper to reset saved mbwu state
+>   arm_mpam: Add kunit test for bitmap reset
+>   arm_mpam: Add kunit tests for props_mismatch()
+> 
+> Rob Herring (2):
+>   cacheinfo: Set cache 'id' based on DT data
+>   dt-bindings: arm: Add MPAM MSC binding
+> 
+> Rohit Mathew (2):
+>   arm_mpam: Probe for long/lwd mbwu counters
+>   arm_mpam: Use long MBWU counters if supported
+> 
+> Shanker Donthineni (1):
+>   arm_mpam: Add support for memory controller MSC on DT platforms
+> 
+>  .../devicetree/bindings/arm/arm,mpam-msc.yaml |  227 ++
+>  MAINTAINERS                                   |    6 +-
+>  arch/arm64/Kconfig                            |   19 +
+>  arch/arm64/include/asm/cache.h                |   17 +
+>  drivers/acpi/arm64/Kconfig                    |    3 +
+>  drivers/acpi/arm64/Makefile                   |    1 +
+>  drivers/acpi/arm64/mpam.c                     |  365 +++
+>  drivers/acpi/pptt.c                           |  240 +-
+>  drivers/acpi/tables.c                         |    2 +-
+>  drivers/base/cacheinfo.c                      |   57 +
+>  drivers/platform/arm64/Kconfig                |   73 +-
+>  drivers/platform/arm64/Makefile               |   10 +-
+>  drivers/platform/arm64/ec/Kconfig             |   73 +
+>  drivers/platform/arm64/ec/Makefile            |   10 +
+>  .../platform/arm64/{ => ec}/acer-aspire1-ec.c |    0
+>  .../arm64/{ => ec}/huawei-gaokun-ec.c         |    0
+>  .../arm64/{ => ec}/lenovo-yoga-c630.c         |    0
+>  drivers/platform/arm64/mpam/Kconfig           |   23 +
+>  drivers/platform/arm64/mpam/Makefile          |    4 +
+>  drivers/platform/arm64/mpam/mpam_devices.c    | 2910 +++++++++++++++++
+>  drivers/platform/arm64/mpam/mpam_internal.h   |  697 ++++
+>  .../platform/arm64/mpam/test_mpam_devices.c   |  390 +++
+>  include/linux/acpi.h                          |   17 +
+>  include/linux/arm_mpam.h                      |   56 +
+>  include/linux/cacheinfo.h                     |    1 +
+>  25 files changed, 5117 insertions(+), 84 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/arm/arm,mpam-msc.yaml
+>  create mode 100644 drivers/acpi/arm64/mpam.c
+>  create mode 100644 drivers/platform/arm64/ec/Kconfig
+>  create mode 100644 drivers/platform/arm64/ec/Makefile
+>  rename drivers/platform/arm64/{ => ec}/acer-aspire1-ec.c (100%)
+>  rename drivers/platform/arm64/{ => ec}/huawei-gaokun-ec.c (100%)
+>  rename drivers/platform/arm64/{ => ec}/lenovo-yoga-c630.c (100%)
+>  create mode 100644 drivers/platform/arm64/mpam/Kconfig
+>  create mode 100644 drivers/platform/arm64/mpam/Makefile
+>  create mode 100644 drivers/platform/arm64/mpam/mpam_devices.c
+>  create mode 100644 drivers/platform/arm64/mpam/mpam_internal.h
+>  create mode 100644 drivers/platform/arm64/mpam/test_mpam_devices.c
+>  create mode 100644 include/linux/arm_mpam.h
+> 
+
 
