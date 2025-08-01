@@ -1,97 +1,97 @@
-Return-Path: <linux-kernel+bounces-753371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D47D8B18201
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FFCB18202
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623B44E786B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:53:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 91B1E4E78BA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:54:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC27024887E;
-	Fri,  1 Aug 2025 12:53:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D30892472B1;
+	Fri,  1 Aug 2025 12:54:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfJxHhi0"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="mVAzJraa"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3574E2472BD
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2BAC1A3178;
+	Fri,  1 Aug 2025 12:54:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754052807; cv=none; b=UVMIZJUg0dVOnW6bnSutbB6j9mzTGyCt+vZcFVml0boq8cRZ/CH0H2b+FXXgDc/8wyxBmOJ3wspn+qZJTmNdOzVw31IXXAb+l3nuuuFIjG+efjq4QrhsP+Qu+eUdAbS21LHv/CuDa3/7fCi+8XV726Cx2BaMt1yl8fkKdBy2tKo=
+	t=1754052882; cv=none; b=pLmepx6NqTQJUgRcdKuBdCy1Tjm5Bblha3QW7FcMdGNWTLY0IZ2RiJY9uMbBLkqNeHFG6hYei2ibUriLVw/HS+fv4wCIU3V8h1AIwaCpd6BscpKvgPe7g1RMcgIkY/UmgTRqpEGBi7BQO4SndZNN2H9ccerUqydDd4+evPQ7xXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754052807; c=relaxed/simple;
-	bh=XtWgiIWMoJllV9e1y806U0puc+WrmW9T2bEvClGfLOg=;
+	s=arc-20240116; t=1754052882; c=relaxed/simple;
+	bh=W17CgRpCcA1BSn73lMqnsBAYjeIbaRzoHzy/VqgdLBA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PnX3DZJ2KdWQ3lV9TtgpELVFwMZsDmeIF6GeAMg4pXWPTebfXG0chfSTNGieS6xf19pUlm9kayoqsZSBp/vfFUqClk0aBhUbrUZgN7WY3OFGOQkD0zM8xR0LcVCQJI1hmI0Gq9N84yMJR25JcYWrrbNVgC1R2MiSbfxOMyIWN9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PfJxHhi0; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754052804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=ToMkPcgkrGjaTE7xYaILR6bhh6LbYVJ5c41vC3bW6kU=;
-	b=PfJxHhi0OjKNLFw57XFNUFJfc3iJrOpVQjMAV1/MpKYv65IF0ikoyvtJWE+33ZivITC0q4
-	4wpyIPMbEU0Ylkza5TArI6969f/I+RAKTRYTjOEe47se6XsfDtpQL/m7NFPjRjJQLeJIkN
-	8Oej92Z8GDKnvn7PiLD6ZaR+8BUG4bI=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-455-YLY24t_BPc24WUwdRshW2g-1; Fri, 01 Aug 2025 08:53:23 -0400
-X-MC-Unique: YLY24t_BPc24WUwdRshW2g-1
-X-Mimecast-MFC-AGG-ID: YLY24t_BPc24WUwdRshW2g_1754052802
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7851a096fso1123780f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:53:22 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754052802; x=1754657602;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ToMkPcgkrGjaTE7xYaILR6bhh6LbYVJ5c41vC3bW6kU=;
-        b=EtkczqTeg+hSzw7VjOdyg/i72sNWf73yMYNlAgb/5Q4As1doVvh3iskKJw265sJNTY
-         KC3/KajRtsEZPtX7exArtZb/gTDwYNO9FnFIvZrqAY8nZsdC5JKr8MFtoxOAQEfJXj7I
-         tHspcMtN+bE5bxLo3ngTo+Y3nNekBQoRzw8Oji+g2K/FHg+YsCNYEk0tph3vMj5q3jqC
-         kbM5vzlt5Rfbn3M8MBDl1ILWF0Z06SItoRmqTIwUlY8LyyJf97cWGyiS8xSyuWOZpl65
-         dGB/nD8jDCG7Kx25srwlyAr1UqaahQet5Ea+9dN1O0nfnZRnmmHxjEokOzUiEyauX7Pc
-         76fw==
-X-Forwarded-Encrypted: i=1; AJvYcCXSZBh1+ygqY6YTe6R680/PE052M6fWqMk92KbirVFFREERJSoBllBoOaRQX/0NHL3F925pKVUJBzC81rk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG4TC9Ktdo/pwgO/f4Zj9aC3cxovFF+Q6BefDO5GEqYLGpstd3
-	RaguxPxzCvGfFlL5LYzMh1H3isBSKP3iPxR4iDRSjo5CrP/MoSx6aFDW931W1sOorVzU1q4hoYi
-	uRxP7/YHLgRsWnQ7Vb3kxjsaWycxP4qkZ5wNwnljLK4n2vrng5u7GQnWZ8aeZd0gRgw==
-X-Gm-Gg: ASbGncvKLYEZF7bcGRNmGUqr25jtIIg/UswEznB/F3l/NT6mvy3xIIyQ6RzC/qEv2X1
-	ROsQEZ+FwXWNaNXTaF4xkBXfAA7qY3su7waedxApeoetQL8PDsh+WrIGpiKIGDD3aWawt36Iefi
-	tCj/q7TMuIGCyK5Z+OBVcbry2+CU96cgj3iQTnHvRhnyMNDIWzMdWlC7dyiuc6XqPrZqUy7pAdD
-	+IBen7GLPuw3583FPmm2dkFCZRUR6b60vu06s0yYR/rniw7q3zf28QgEKxPTKVm7zhvIm+2NUI3
-	JsIThCjsuPN3KgJJmXh8IQl+NQ2SiefiD8UOqW5ZHBsZ8hu43w5F77GW/nvIi/vlIZbHLQ==
-X-Received: by 2002:a05:6000:25c8:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b8d343ae4dmr2383019f8f.11.1754052801530;
-        Fri, 01 Aug 2025 05:53:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFg2ppPHTB4DYsb+w8Pi4WsTxsBWXyjNMNbInSaCwaEGMEhkeo7Iy3wCsgRDqHOwV/P+Dk9Bw==
-X-Received: by 2002:a05:6000:25c8:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b8d343ae4dmr2382992f8f.11.1754052801028;
-        Fri, 01 Aug 2025 05:53:21 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953eaed4sm98611525e9.27.2025.08.01.05.53.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 05:53:20 -0700 (PDT)
-Date: Fri, 1 Aug 2025 14:53:18 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: Tommaso Cucinotta <tommaso.cucinotta@gmail.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
-	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-Subject: Re: [PATCH] sched/deadline: sched_getattr(...flags=1) returns the
- runtime left and abs deadline for DEADLINE tasks
-Message-ID: <aIy4vmuBh9QemI63@jlelli-thinkpadt14gen4.remote.csb>
-References: <20250715164148.1151620-1-tommaso.cucinotta@santannapisa.it>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bcHVqBZ5jLUwGzrmcXBu31XMsR7g+Pje2stcc5BpmQifGq1ERqZtSTyGy16F9kJEA3FPdBJQNCVQtBp3lWrKkLEZJ+5AcX+zp72yDYb+zIOwfGOU3TgQnxA+HFTTW2Z9bq7BaT+6FomSSVbsXmk46NtpZPc8J5eUK0uNuR1OOf0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=mVAzJraa; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5717lj6i017116;
+	Fri, 1 Aug 2025 12:53:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=RM+wXDg91nZxzEfKUC/aUjfAHLwDla
+	aWmzTLZ9E6EDI=; b=mVAzJraayJpip02bsi84Pzk5Iw3//MbbeEOVIWW75AIHpp
+	nRzo1ya7t+g7Vlz0xkW7e2qmpgvyUxWXo9zSr8QHZ4bxeH+fLiuBnS3Q58Ll/wZJ
+	lSPoOhb5k7LqaPPiL0zCSE0ewK7eq6++jvAdK2F37JdjKoQKaXnKazIhHFLB/Y6j
+	vIWStK6itk3nYo5QUBgqjiRWLP8OGntWu/9DGT9gajsGemE/aom9MXjDDjrn6HDe
+	25PnXxewQ8hRXLy7WMWhzBJ88ysO4S8eU44O01edlnf3e5Z7nx+XHrNvS1IyNEMC
+	ooC5oWCkq0PVf9MJ6+OoYFaCRck5olXILbJsLtKA==
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 4864k896xm-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 12:53:57 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5718jBmD017275;
+	Fri, 1 Aug 2025 12:53:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 4859r0hj3h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 12:53:56 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571CrqLa43385276
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 12:53:52 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B2EA82004B;
+	Fri,  1 Aug 2025 12:53:52 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id D242720043;
+	Fri,  1 Aug 2025 12:53:51 +0000 (GMT)
+Received: from osiris (unknown [9.111.82.186])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  1 Aug 2025 12:53:51 +0000 (GMT)
+Date: Fri, 1 Aug 2025 14:53:50 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: Jens Remus <jremus@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org,
+        Steven Rostedt <rostedt@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>
+Subject: Re: [RFC PATCH v1 11/16] s390/unwind_user/sframe: Enable
+ HAVE_UNWIND_USER_SFRAME
+Message-ID: <20250801125350.9905B20-hca@linux.ibm.com>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-12-jremus@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -100,177 +100,71 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250715164148.1151620-1-tommaso.cucinotta@santannapisa.it>
+In-Reply-To: <20250710163522.3195293-12-jremus@linux.ibm.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: BAGEYFyOjhcKCT6uRHhsnl48vgulLEex
+X-Proofpoint-GUID: BAGEYFyOjhcKCT6uRHhsnl48vgulLEex
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA5MiBTYWx0ZWRfX2prHMf8SZzOt
+ dFahisWf+YI1ynsFhUwkRqOkgc0PbQ+8TgjAVcymyypToUVqaA9NFlLYJRgjH0aKjM8eDwtEFoi
+ rz+nuCkolnJQs3yg5skvKJbUt8GU3ZN9D41rED2Hl1fWaPLmnGPHw1eNB/eU5mlZ1uy8GlEQl+/
+ VgaHrFjdDE2C3SHAO8H2/ziyY88HC9wooRuRaWDInrGlyrykymJnvijtW0c5oMKlAChOLwibhGF
+ WjPGoSlK4/xdgrWUkajj26ugTxVrMVCrJ+3Z2twKyj2K6MtmkurlbohSIy8RF6VDL+FShqtK/QC
+ GlmbUXugnIDn3Z+CAXZePneKlX8UZiNlwyA9vhXjt07ac4VwJWgTqYOY2astV6vOH0sMk8lFfyM
+ FsP/xh2QUe1D7Jot0IxSds6ZFJk2qv6bcNZSlbeDpXqjj+RXmYjmiTwWPfg2Y4CXmObTzyx+
+X-Authority-Analysis: v=2.4 cv=ZoDtK87G c=1 sm=1 tr=0 ts=688cb8e5 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=vXNe0y40mXAc93P3-MgA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_04,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 lowpriorityscore=0 mlxscore=0 clxscore=1015
+ adultscore=0 impostorscore=0 mlxlogscore=439 bulkscore=0 phishscore=0
+ suspectscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010092
 
-Hi Tommaso,
-
-On 15/07/25 18:39, Tommaso Cucinotta wrote:
-> The SCHED_DEADLINE scheduler allows reading the statically configured
-> run-time, deadline, and period parameters through the sched_getattr()
-> system call. However, there is no immediate way to access, from user space,
-> the current parameters used within the scheduler: the instantaneous runtime
-> left in the current cycle, as well as the current absolute deadline.
+On Thu, Jul 10, 2025 at 06:35:17PM +0200, Jens Remus wrote:
+> Add s390 support for unwinding of user space using SFrame.  This
+> leverages the previous commits to address the following s390
+> particularities:
 > 
-> The `flags' sched_getattr() parameter, so far mandated to contain zero,
-> now supports the SCHED_GETATTR_FLAG_DL_DYNAMIC=1 flag, to request
-> retrieval of the leftover runtime and absolute deadline, converted to a
-> CLOCK_MONOTONIC reference, instead of the statically configured parameters.
+> - The CFA is defined as the value of the stack pointer (SP) at call
+>   site in the previous frame + 160.  Therefore the SP unwinds as
+>   SP = CFA - 160.  Therefore use a SP value offset from CFA of -160.
 > 
-> This feature is useful for adaptive SCHED_DEADLINE tasks that need to
-> modify their behavior depending on whether or not there is enough runtime
-> left in the current period, and/or what is the current absolute deadline.
+> - The return address (RA) is not saved on the stack at function entry.
+>   It is also not saved in the function prologue, when in leaf functions.
+>   Therefore the RA does not necessarily need to be unwound in the first
+>   unwinding step for the topmost frame.
 > 
-> Notes:
-> - before returning the instantaneous parameters, the runtime is updated;
-> - the abs deadline is returned shifted from rq_clock() to ktime_get_ns(),
->   in CLOCK_MONOTONIC reference; this causes multiple invocations from the
->   same period to return values that may differ for a few ns (showing some
->   small drift), albeit the deadline doesn't move, in rq_clock() reference;
-> - the abs deadline value returned to user-space, as unsigned 64-bit value,
->   can represent nearly 585 years since boot time;
-> - setting flags=0 provides the old behavior (retrieve static parameters).
+> - The frame pointer (FP) and/or return address (RA) may be saved in
+>   other registers when in leaf functions.  GCC effectively uses
+>   floating-point registers (FPR) for this purpose.  Therefore DWARF
+>   register numbers may be encoded in the SFrame FP/RA offsets.
 
-As we discussed this offline before your submission you know that I was
-already on board with the idea, so I would really like to hear what
-Peter and others think about this.
+...
 
-Still a few comments below.
+> +static inline void __s390_get_dwarf_fpr(unsigned long *val, int regnum)
+> +{
+> +	switch (regnum) {
+> +	case 16:
+> +		fpu_std(0, (freg_t *)val);
+> +		break;
 
-$SUBJECT can maybe simply be "sched/deadline: Add reporting of remaining
-time/abs deadline to sched_getattr".
+...
 
-> See also the notes from discussion held at OSPM 2025 on the topic
-> "Making user space aware of current deadline-scheduler parameters":
-> https://lwn.net/Articles/1022054/
+> +static inline int s390_unwind_user_get_reg(unsigned long *val, int regnum)
+> +{
+> +	if (0 <= regnum && regnum <= 15) {
+> +		struct pt_regs *regs = task_pt_regs(current);
+> +		*val = regs->gprs[regnum];
+> +	} else if (16 <= regnum && regnum <= 31) {
+> +		__s390_get_dwarf_fpr(val, regnum);
 
-I would probably remove the link from the changelog as it might
-disappear/change in the future.
-
-> Signed-off-by: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
-> ---
->  include/uapi/linux/sched.h |  3 +++
->  kernel/sched/deadline.c    | 18 +++++++++++++++---
->  kernel/sched/sched.h       |  2 +-
->  kernel/sched/syscalls.c    | 16 +++++++++++-----
->  4 files changed, 30 insertions(+), 9 deletions(-)
-> 
-> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
-> index 359a14cc..52b69ce8 100644
-> --- a/include/uapi/linux/sched.h
-> +++ b/include/uapi/linux/sched.h
-> @@ -146,4 +146,7 @@ struct clone_args {
->  			 SCHED_FLAG_KEEP_ALL		| \
->  			 SCHED_FLAG_UTIL_CLAMP)
->  
-> +/* Only for sched_getattr() own flag param, if task is SCHED_DEADLINE */
-> +#define SCHED_GETATTR_FLAG_DL_DYNAMIC	0x01
-> +
->  #endif /* _UAPI_LINUX_SCHED_H */
-> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
-> index 9c7d9528..1b5cd7fa 100644
-> --- a/kernel/sched/deadline.c
-> +++ b/kernel/sched/deadline.c
-> @@ -3290,13 +3290,25 @@ void __setparam_dl(struct task_struct *p, const struct sched_attr *attr)
->  	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
->  }
->  
-> -void __getparam_dl(struct task_struct *p, struct sched_attr *attr)
-> +void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
->  {
->  	struct sched_dl_entity *dl_se = &p->dl;
-> +	struct rq *rq = task_rq(p);
-> +	u64 adj_deadline;
->  
->  	attr->sched_priority = p->rt_priority;
-> -	attr->sched_runtime = dl_se->dl_runtime;
-> -	attr->sched_deadline = dl_se->dl_deadline;
-> +	if (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
-> +		guard(raw_spinlock_irq)(&rq->__lock);
-> +		update_rq_clock(rq);
-> +		update_curr_dl(rq);
-
-I p is not current maybe we don't need to call update_curr_dl() as p
-will still have sensible dynamic parameters updated last time it
-blocked?
-
-Also, even though this is superuser stuff and all, mildly fear this
-could be used as a DOS attack vector? Do we want to be super defensive
-and add some kind of rate limiting?
-
-> +
-> +		attr->sched_runtime = dl_se->runtime;
-> +		adj_deadline = dl_se->deadline - rq_clock(rq) + ktime_get_ns();
-> +		attr->sched_deadline = adj_deadline;
-> +	} else {
-> +		attr->sched_runtime = dl_se->dl_runtime;
-> +		attr->sched_deadline = dl_se->dl_deadline;
-> +	}
->  	attr->sched_period = dl_se->dl_period;
->  	attr->sched_flags &= ~SCHED_DL_FLAGS;
->  	attr->sched_flags |= dl_se->flags;
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index 3058fb62..f69bf019 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -353,7 +353,7 @@ extern int  sched_dl_global_validate(void);
->  extern void sched_dl_do_global(void);
->  extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
->  extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
-> -extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr);
-> +extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
->  extern bool __checkparam_dl(const struct sched_attr *attr);
->  extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
->  extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
-> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
-> index 77ae87f3..c80b3568 100644
-> --- a/kernel/sched/syscalls.c
-> +++ b/kernel/sched/syscalls.c
-> @@ -928,10 +928,10 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
->  	return -E2BIG;
->  }
->  
-> -static void get_params(struct task_struct *p, struct sched_attr *attr)
-> +static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
->  {
->  	if (task_has_dl_policy(p)) {
-> -		__getparam_dl(p, attr);
-> +		__getparam_dl(p, attr, flags);
->  	} else if (task_has_rt_policy(p)) {
->  		attr->sched_priority = p->rt_priority;
->  	} else {
-> @@ -997,7 +997,7 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
->  		return -ESRCH;
->  
->  	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
-> -		get_params(p, &attr);
-> +		get_params(p, &attr, 0);
->  
->  	return sched_setattr(p, &attr);
->  }
-> @@ -1082,7 +1082,7 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
->  	int retval;
->  
->  	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
-> -		      usize < SCHED_ATTR_SIZE_VER0 || flags))
-> +		     usize < SCHED_ATTR_SIZE_VER0))
->  		return -EINVAL;
->  
->  	scoped_guard (rcu) {
-> @@ -1090,6 +1090,12 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
->  		if (!p)
->  			return -ESRCH;
->  
-> +		if (flags) {
-> +			if (!task_has_dl_policy(p)
-> +			    || flags != SCHED_GETATTR_FLAG_DL_DYNAMIC)
-
-Nit pick. Formatting usually has line break after '||'.
-
-> +				return -EINVAL;
-> +		}
-> +
-
-Thanks!
-Juri
-
+This won't work with other potential in-kernel fpu users. User space fpr
+contents may have been written to the current task's fpu save area and fprs
+may have been clobbered by in-kernel users; so you need to get register
+contents from the correct location. See arch/s390/include/asm/fpu.h.
 
