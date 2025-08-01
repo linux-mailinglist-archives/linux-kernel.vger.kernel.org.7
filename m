@@ -1,134 +1,150 @@
-Return-Path: <linux-kernel+bounces-753594-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753595-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD62B18509
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:33:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D1FBFB1850E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E514A8198F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:33:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FE28172B71
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F4B9272E7E;
-	Fri,  1 Aug 2025 15:33:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED0E1274668;
+	Fri,  1 Aug 2025 15:33:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pmGrHBPS"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KNADI7XD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A8326F476
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 441E914B96E;
+	Fri,  1 Aug 2025 15:33:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062418; cv=none; b=fivEoxHaQ+2qkB3Mh1E3xr28NdOfVquJjY96DSBkQneXyJeKAEQkwHR9QB6zfefzHy11jcBbe1KAvrtc+z3TjKXvJLEwMF5GF6GkyIX35OCikTku+b6ATWDaCy3WB7cn6wfuhjhT3VtOnJmjRfZLpueCkR1DI5ULV7kFQTZ2yTY=
+	t=1754062437; cv=none; b=n5kUlQ57wVQB/HF1hyzXgmr+0G4ktUpszk1MIjARxzKqyw+sTAjiQJC4nvamXr+2fJQSo83tNoSKG4sHT5MH0qsQXAFWdSv1O0slgW/2UT9CobFPOA2gb3trkpHSOeY8G/Deq6+DuJRA+x3lgWL5vKwgm/fFVDvx2NO6/RzPaxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062418; c=relaxed/simple;
-	bh=Hlg5IiIUSg37cw8hEXFqC6WPT7GHYQIYrncw2fqeeFs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jhaH5ii3ZZctbVpmWcFd3FkA00ftca9fxijiwSlmLgVw/tIUtHiaVFHNl2DpAwrJseRpYemTnmJyRKnP9IkbqTlxOfmv3JWW0PTu9JuN5Is1yPy1U/iZnIwME3p/kMSyOigOG8cxuRLjE8A3VB1FhT6yu2D1cAPG56+dn/Rg2sg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pmGrHBPS; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso481671cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:33:37 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754062416; x=1754667216; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Hlg5IiIUSg37cw8hEXFqC6WPT7GHYQIYrncw2fqeeFs=;
-        b=pmGrHBPSRxXBV1OSQ7R6Hr0nBWQrrtE3INbqCauaijfJpLKw/GOL+eHypTKyS8G+dr
-         VSc/4oXlN7WwcPY0ZP+t8XGkwIYqn+OT+YJusKYEB6fsuYgU/I2la2+vSbpgCbAB9H6Y
-         rHhG7agLldSS90BG1kf+ASUt1T+fYncjKBN4NN6dXb2Dp6fexe+xhupgkbTOgmFv2D27
-         EfFIbZ/xwahEBaGu6bHXZsuwJjKDSBkm7jE3nj3vCVrYuT7oFYOO8JPNEcb1Qkns+XMj
-         b7ugjf13JV86x1/MdFyBlptOmPQkSd+zFoIRtFvAD/0UY1FY8dd/J8bXuD7yzN9lrHZk
-         zpGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754062416; x=1754667216;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Hlg5IiIUSg37cw8hEXFqC6WPT7GHYQIYrncw2fqeeFs=;
-        b=Nu30kiDtJsAegFyBMabkQE2YKiIb9xLsjcRCTsEUtPsmltutnv2sjmgLTJFODjC+9/
-         zHL/bWtEM1FFiQDMS3fO7Qx6x4i+mZ8RWM0WIkAaZODjIRzkeZ8e4QHMrRR5V8+70oTs
-         FFjHDorDzAfoWAefE42oUuySPY2VGBQuBEnCM3p5SupdZ1FIqU/giTXVDBftM5sFF79a
-         SF0VzjYyKEMzaCY9sUnRW3ALPowE7lZPn5x0gejaY4iYPM0qZPKZOK0DaKnY+G+q7S/4
-         CRVASWf+aC+JWYL/yJJFRvkNDoPLkjQgpPu8XFj+xPDmc6LxN8DcQONuYNMKp4hZTjpX
-         Pbsg==
-X-Forwarded-Encrypted: i=1; AJvYcCWJTOoQfGfR3oCOYebtlVmi3goWgByLFEWnvwdE8ymW5wh65fCaVJAXPTjRF5/xv85x7Q1QIgz6sUK1fSY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwteoS3oJSZJTeu/4N0akuN6Uy3JYZCWQRTu99vzXtqOhg+YRuk
-	n84ZS/l2m6xoRSQaIYPpCJX03WB9L5u1NN8DgBaWzbzQaBtWDPPMugshOLJuaG6IPrx1itJjLU2
-	bLZIAOCv6FQ6Y4iUrPCnHqiz/IiZ3VcXlASL6kkyx
-X-Gm-Gg: ASbGnculBKwiws7r/6l5mRiWgoVAKrgtIF+1qL1su9yLfG+c2M3ktoJqsirNo8bStRx
-	FWz58jLRx/k4i3C/t5mP7ar3c3fLdneNMdXkPufkUaHkYegfiDTmUxI+cAoONJe+FyC17LZ5V62
-	meCNTCyR0l72SPU0z4qsY9rp2pA2Ius1wKT5KyNjFwePSQ2Ya/BAyKFbz14YgkFFHP7ThL18GI8
-	PSsJw==
-X-Google-Smtp-Source: AGHT+IEsz7cqbW/kEbKXp/wzbnkRSdJg8iPGlbcCDsMA3W/EALhw5TKX2XX+IJPal4VjoqUJ4+13OZd6BTyXLQ5Nvpk=
-X-Received: by 2002:a05:622a:1652:b0:4ab:54d2:3666 with SMTP id
- d75a77b69052e-4af00896fccmr5243681cf.25.1754062415661; Fri, 01 Aug 2025
- 08:33:35 -0700 (PDT)
+	s=arc-20240116; t=1754062437; c=relaxed/simple;
+	bh=pPVXXjSd3b/wxdsyWsr19KEUVs/RT5iHUF61lgzHuxI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=R0UGae2sjFK5/llHQpHxWP9iFSAO6CKjQ4U5U+pb9wSukO5XvGwCetvcAHt8AsyhwxCqR4gLgs/rGVgYwSR70JiJXMcLHkW357QOL6AGhycWkvny9jvUf8BT3RI1wWsKZ7V+HjgbDb8dpP26pepqrhGOIfwtCwj/tVxhHmNZ9O8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KNADI7XD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9B1BDC4CEE7;
+	Fri,  1 Aug 2025 15:33:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754062436;
+	bh=pPVXXjSd3b/wxdsyWsr19KEUVs/RT5iHUF61lgzHuxI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=KNADI7XDsILoja5+zLjnYQ0htKdoCrK3UYGEINpUndvm0I7056v5xqRcgiD7Z5dHT
+	 7Tn/pxCYlMqbwOSx1YheGVpfRKYUyEFhCmv6aWGQtd4stWjdFenIBFBmEErGkRNedz
+	 YrrlRkEG8uIjfm2YGF+JluLuGG7m1q+nvwLFj+tYhktYJXf0rrYNI60JgbyxUApTca
+	 4YBA02ytf/BdO8M6aQ3i7mvWgZyhbLbqWO3ZCU7uXsGYb64k5ugEl6KWOyUFFFn2c5
+	 5qeTFmET+82nuk0K+SZKcIRLxNT6N63rhsJdhMJb7oO040cmAs8td3knxk0BiCrzjc
+	 jR1vQu+qsgCrQ==
+Date: Fri, 1 Aug 2025 21:03:46 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com, 
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V1 2/3] arm64: dts: qcom: sm8650: Enable MCQ support for
+ UFS controller
+Message-ID: <54gttzkpxg55vrh5wsvyvteovki377w3yjfejjddpzzrvldwkg@p7sc4knnvla3>
+References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+ <20250730082229.23475-3-quic_rdwivedi@quicinc.com>
+ <eab85cb3-7185-4474-9428-8699fbe4a8e5@kernel.org>
+ <40ace3bc-7e5d-417a-b51a-148c5f498992@quicinc.com>
+ <2a7bf809-73d9-4cb6-bcc9-3625ef1eb1fa@kernel.org>
+ <kayobeddgln5oi3g235ruh7f7adbqr7srim7tmt3iwa3zn33m4@cenneffnuhnv>
+ <5a32e933-03b9-4cc3-914c-46bdb2cedce6@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731220024.702621-1-surenb@google.com> <20250731220024.702621-3-surenb@google.com>
- <7821b672-eae7-4730-afe4-b72b80ac6ea2@suse.cz>
-In-Reply-To: <7821b672-eae7-4730-afe4-b72b80ac6ea2@suse.cz>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 1 Aug 2025 08:33:24 -0700
-X-Gm-Features: Ac12FXwW-ZHVyxPhLTgiyxybxi8oKVAlrLZn75JD6yLNdxGMHYIyQEgr1Szxvd0
-Message-ID: <CAJuCfpEhC77ZD7Zvg+9nqb=DAj2kufnLGpD72gXFbQ5Bbp-ayQ@mail.gmail.com>
-Subject: Re: [PATCH 2/3] fs/proc/task_mmu: factor out proc_maps_private fields
- used by PROCMAP_QUERY
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
-	lorenzo.stoakes@oracle.com, david@redhat.com, peterx@redhat.com, 
-	jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, paulmck@kernel.org, 
-	shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
-	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
-	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
-	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
-	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <5a32e933-03b9-4cc3-914c-46bdb2cedce6@kernel.org>
 
-On Fri, Aug 1, 2025 at 3:55=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
-te:
->
-> On 8/1/25 00:00, Suren Baghdasaryan wrote:
-> > Refactor struct proc_maps_private so that the fields used by PROCMAP_QU=
-ERY
-> > ioctl are moved into a separate structure. In the next patch this allow=
-s
-> > ioctl to reuse some of the functions used for reading /proc/pid/maps
-> > without using file->private_data. This prevents concurrent modification
-> > of file->private_data members by ioctl and /proc/pid/maps readers.
-> >
-> > The change is pure code refactoring and has no functional changes.
->
-> I think you'll need to adjust task_nommu.c as well, minimally I see it al=
-so
-> has m_start() acceding priv->mm directly so it won't compile now?
+On Fri, Aug 01, 2025 at 04:20:37PM GMT, Krzysztof Kozlowski wrote:
+> On 01/08/2025 14:24, Manivannan Sadhasivam wrote:
+> > On Thu, Jul 31, 2025 at 10:38:56AM GMT, Krzysztof Kozlowski wrote:
+> >> On 31/07/2025 10:34, Ram Kumar Dwivedi wrote:
+> >>>
+> >>>
+> >>> On 31-Jul-25 12:15 PM, Krzysztof Kozlowski wrote:
+> >>>> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
+> >>>>> Enable Multi-Circular Queue (MCQ) support for the UFS host controller
+> >>>>> on the Qualcomm SM8650 platform by updating the device tree node. This
+> >>>>> includes adding new register regions and specifying the MSI parent
+> >>>>> required for MCQ operation.
+> >>>>>
+> >>>>> MCQ is a modern queuing model for UFS that improves performance and
+> >>>>> scalability by allowing multiple hardware queues. 
+> >>>>>
+> >>>>> Changes:
+> >>>>> - Add reg entries for mcq_sqd and mcq_vs regions.
+> >>>>> - Define reg-names for the new regions.
+> >>>>> - Specify msi-parent for interrupt routing.
+> >>>>>
+> >>>>> Signed-off-by: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+> >>>>> ---
+> >>>>>  arch/arm64/boot/dts/qcom/sm8650.dtsi | 9 ++++++++-
+> >>>>>  1 file changed, 8 insertions(+), 1 deletion(-)
+> >>>>>
+> >>>>> diff --git a/arch/arm64/boot/dts/qcom/sm8650.dtsi b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> index e14d3d778b71..5d164fe511ba 100644
+> >>>>> --- a/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> +++ b/arch/arm64/boot/dts/qcom/sm8650.dtsi
+> >>>>> @@ -3982,7 +3982,12 @@ ufs_mem_phy: phy@1d80000 {
+> >>>>>  
+> >>>>>  		ufs_mem_hc: ufshc@1d84000 {
+> >>>>>  			compatible = "qcom,sm8650-ufshc", "qcom,ufshc", "jedec,ufs-2.0";
+> >>>>> -			reg = <0 0x01d84000 0 0x3000>;
+> >>>>> +			reg = <0 0x01d84000 0 0x3000>,
+> >>>>> +			      <0 0x01da5000 0 0x2000>,
+> >>>>> +			      <0 0x01da4000 0 0x0010>;
+> >>>>
+> >>>>
+> >>>> These are wrong address spaces. Open your datasheet and look there.
+> >>>>
+> >>> Hi Krzysztof,
+> >>>
+> >>> I’ve reviewed it again, and it is correct and functioning as expected both on our upstream and downstream codebase.
+> >>> I think it is probably overlooked by you. Can you please double check from your end?
+> >>>
+> >>
+> >> No, it is not overlooked. There is no address space of length 0x10 at
+> >> 0x01da4000 in qcom doc/datasheet system. Just open the doc and look
+> >> there by yourself. The size is 0x15000.
+> >>
+> > 
+> > The whole UFS MCQ region is indeed of size 0x15000, but the SQD and VS registers
+> > are at random offsets, not fixed across the SoC revisions. And there are some
+> > big holes within the whole region for things like ICE and all.
+> > 
+> > So it makes sense to map only the part of these regions and leave the unused
+> > ones.
+> Each item in the reg represents some continuous, dedicated address
+> space, not individual registers or artificially decided subsection. The
+> holes in such address space is not a problem, we do it all the time for
+> all other devices as well.
+> 
+> You need to use the definition of that address space.
+> 
 
-Ugh, yes, you are right. I'll need to adjust NOMMU code as well. And
-kernel test bot seems to be complaining already :)
+What if some of the registers in that whole address space is shared with other
+peripherals such as ICE?
 
->
-> Also not sure about the naming, struct is named "proc_maps_query_data" an=
-d
-> priv field named "query" but the read() implementation uses it too, via
-> priv->query, although it does no PROCMAP_QUERY.
->
-> Seems to me it's actually something like a mm+vma locking context? Which =
-can
-> be either stored in proc_maps_private for read() operations, or local
-> on-stack for ioctl().
+I agree with the fact that artifically creating separate register spaces leads
+to issues, but here I'm worried about hardcoding the offsets in the driver which
+can change between SoCs and also the shared address space with ICE.
 
-Yes, I struggled with the naming of this structure. Any help with this
-is highly appreciated.
+- Mani
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
