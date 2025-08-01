@@ -1,99 +1,152 @@
-Return-Path: <linux-kernel+bounces-753537-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53BB4B18445
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:54:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 190ABB1844B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3640A83375
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:54:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37E6A7AA581
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:55:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6739626E6ED;
-	Fri,  1 Aug 2025 14:54:41 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8778A2571D8
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:54:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9540926FA4B;
+	Fri,  1 Aug 2025 14:56:45 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3676022D9ED;
+	Fri,  1 Aug 2025 14:56:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060081; cv=none; b=P9+DLODoDhR09OHlamlZpX+iPWKWHo02sGJv63U3KpwL2VMnqtq0yzVVEPg7HQ1FRMKbZMmWo50UwMS2bwc6zyL1fBLwJdQ/PA0r4h1Zo3Vk1rc5VekQMe56Xzk+nas1Zuc3G3ORBL6lTSaDGMImMNqT18Y5mfE9e5IaE8a22SI=
+	t=1754060205; cv=none; b=UWp15GIkDiV6hABmT0MOkuYZNON/ViYrj0dJMTQu/rrHFIvm/Y8n06/ChKSNVb5cdWoSzyUzyXFDrct6W0xgDK7KJ4b3zNcthS5fev8UvWTofZUgGsM5tVw2b/gA3jUh6ePSyvSb8yphnUej+ACiFv+n7ZNHNC24/Am8Y96r7Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060081; c=relaxed/simple;
-	bh=3vwxf43HnM6fp2DvlIv0MBH+Wklk/GbWFUrJKGnUpN0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TmJq5xUGX92eNQtcgE4aIgYTFNmCQdrLWSqQNhe9Ed4WHx5+HjZ6WFuqYNdgIBFw8Xe1SFp7NV+9SPMUGTSHki+P6Jk/sOi9IG5Yp4WXFxok8nu0y7KFhPnVG4vhxak9QKv9cslNNa8575pFbbU3AHH+uDBQ0cswNXCeClXKHH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id CA05B1516;
-	Fri,  1 Aug 2025 07:54:30 -0700 (PDT)
-Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2FD9E3F66E;
-	Fri,  1 Aug 2025 07:54:36 -0700 (PDT)
-Message-ID: <cb977466-ad2d-48af-b388-b3c55a5169e2@arm.com>
-Date: Fri, 1 Aug 2025 15:54:34 +0100
+	s=arc-20240116; t=1754060205; c=relaxed/simple;
+	bh=N8mt0CeZ+jpyRoE3MYFXrL2J5GTr3fT8urbv+hG3NTA=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=SkjxHO/AjpLHPNamPG5XpD4V8DFJdt8n8WB8r71wFeNFlHzyicXoqCz2+biGEq6PzktGLh0wKVuZOLI2aYBCIWIcBC4LUnWzS5XcT17yt2FkAxjI8h1QsAf4XRZrykFevWrjKMlvwl7X2x8VGotMzAgUCQzhZ1f9uaGgIPgEL8E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4btpr56h0Cz23jcP;
+	Fri,  1 Aug 2025 22:54:13 +0800 (CST)
+Received: from kwepemf200012.china.huawei.com (unknown [7.202.181.238])
+	by mail.maildlp.com (Postfix) with ESMTPS id 972C514027A;
+	Fri,  1 Aug 2025 22:56:38 +0800 (CST)
+Received: from localhost (10.173.124.246) by kwepemf200012.china.huawei.com
+ (7.202.181.238) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 1 Aug
+ 2025 22:56:38 +0800
+From: Hogan Wang <hogan.wang@huawei.com>
+To: <tglx@linutronix.de>, <x86@kernel.org>, <dave.hansen@linux.intel.com>,
+	<kvm@vger.kernel.org>, <alex.williamson@redhat.com>
+CC: <weidong.huang@huawei.com>, <yechuan@huawei.com>, <hogan.wang@huawei.com>,
+	<wangxinxin.wang@huawei.com>, <jianjay.zhou@huawei.com>,
+	<wangjie88@huawei.com>, <maz@kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] x86/irq: Plug vector setup race
+Date: Fri, 1 Aug 2025 22:56:33 +0800
+Message-ID: <20250801145633.2412-1-hogan.wang@huawei.com>
+X-Mailer: git-send-email 2.45.1
+In-Reply-To: <87a54kil52.ffs@tglx>
+References: <87a54kil52.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/3] sched_ext: Guarantee rq lock on scx_bpf_cpu_rq()
-To: Andrea Righi <arighi@nvidia.com>
-Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, tj@kernel.org,
- void@manifault.com, mingo@redhat.com, peterz@infradead.org
-References: <20250801141741.355059-1-christian.loehle@arm.com>
- <20250801141741.355059-4-christian.loehle@arm.com> <aIzUX4d0KRXI4E8O@gpd4>
-Content-Language: en-US
-From: Christian Loehle <christian.loehle@arm.com>
-In-Reply-To: <aIzUX4d0KRXI4E8O@gpd4>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems500002.china.huawei.com (7.221.188.17) To
+ kwepemf200012.china.huawei.com (7.202.181.238)
 
-On 8/1/25 15:51, Andrea Righi wrote:
-> On Fri, Aug 01, 2025 at 03:17:41PM +0100, Christian Loehle wrote:
->> Most fields in scx_bpf_cpu_rq() assume that its rq_lock is held.
->> Furthermore they become meaningless without rq lock, too.
->> Only return scx_bpf_cpu_rq() when we hold rq lock of that rq.
->>
->> All upstream scx schedulers can be converted into the new
->> scx_bpf_remote_curr() instead.
->>
->> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->> ---
->>  kernel/sched/ext.c | 4 ++--
->>  1 file changed, 2 insertions(+), 2 deletions(-)
->>
->> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
->> index 92e66bb0b5f2..627df3088fd0 100644
->> --- a/kernel/sched/ext.c
->> +++ b/kernel/sched/ext.c
->> @@ -7425,7 +7425,7 @@ __bpf_kfunc s32 scx_bpf_task_cpu(const struct task_struct *p)
->>  }
->>  
->>  /**
->> - * scx_bpf_cpu_rq - Fetch the rq of a CPU
->> + * scx_bpf_cpu_rq - Fetch the rq of a CPU if its rq lock is currently held
->>   * @cpu: CPU of the rq
->>   */
->>  __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
->> @@ -7433,7 +7433,7 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
->>  	if (!kf_cpu_valid(cpu, NULL))
->>  		return NULL;
->>  
->> -	return cpu_rq(cpu);
->> +	return this_cpu_read(locked_rq) == cpu_rq(cpu) ? cpu_rq(cpu) : NULL;
-> 
-> Maybe we should consider an access to an unlocked rq as invalid and trigger
-> scx_exit(), similar to what we do with the kf_cpu_valid() check?
-
-Makes sense to me!
-
-> 
-> Also heads up that locked_rq has been renamed scx_locked_rq_state in 6.17.
-
-Ah, thanks! I'll rebase!
+> On Thu, Jul 24 2025 at 12:49, Thomas Gleixner wrote:=0D
+> =0D
+=0D
+Thank you very much for your professional, friendly, and detailed response.=
+=0D
+Based on the clear modification suggestions you provided, I conducted=0D
+retesting and validation using the following methods:=0D
+=0D
+1) Start a virtual machine with 192U384G specification, and configure=0D
+   one VirtioNet network card and one VirtioSCSI disk.=0D
+2) After the virtual machine starts successfully, execute the following=0D
+   script inside the virtual machine. The interrupt number 30 is the=0D
+   VirtioNet MSI-x interrupt.=0D
+=0D
+for((;;))=0D
+    do (for((i=3D0;i<192;i++))=0D
+	    do echo $i > /proc/irq/30/smp_affinity_list=0D
+		sleep 0.1=0D
+	done)=0D
+done=0D
+=0D
+After a 7x24-hour test, no error logs of the type "No irq handler for=0D
+vector" were found, I believe this issue should have already been=0D
+resolved. =0D
+=0D
+As you said, this fix cannot solve the problem of lost interrupts.=0D
+=0D
+I believe an effective solution to the issue of lost interrupts=0D
+might be to modify the vifo module to avoid un-plug/plug irq,=0D
+and instead use a more lightweight method to switch interrupt=0D
+modes. Just like:=0D
+=0D
+vfio_irq_handler()=0D
+	if kvm_mode=0D
+		vfio_send_eventfd(kvm_irq_fd);=0D
+	else=0D
+		vfio_send_eventfd(qemu_irq_fd);=0D
+=0D
+However, this will bring about some troubles:=0D
+1) The kvm_mode variable should be protected, leading to performance loss. =
+=0D
+2) The VFIO interface requires the passing of two eventfds. =0D
+3) Add another interface to implement mode switching. =0D
+=0D
+Do you have a better solution to fix this interrupt loss issue? =0D
+	=0D
+There is a question that has been troubling me: Why are interrupts=0D
+still reported after they have been masked and the interrupt remapping=0D
+table entries have been disabled? Is this interrupt cached somewhere?=0D
+=0D
+> Hogan!=0D
+> =0D
+> > Hogan reported a vector setup race, which overwrites the interrupt =0D
+> > descriptor in the per CPU vector array resulting in a disfunctional dev=
+ice.=0D
+> >=0D
+> > CPU0				CPU1=0D
+> > 				interrupt is raised in APIC IRR=0D
+> > 				but not handled=0D
+> >   free_irq()=0D
+> >     per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;=0D
+> >=0D
+> >   request_irq()			common_interrupt()=0D
+> >   				  d =3D this_cpu_read(vector_irq[vector]);=0D
+> >=0D
+> >     per_cpu(vector_irq, CPU1)[vector] =3D desc;=0D
+> >=0D
+> >     				  if (d =3D=3D VECTOR_SHUTDOWN)=0D
+> > 				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);=0D
+> >=0D
+> > free_irq() cannot observe the pending vector in the CPU1 APIC as there =
+=0D
+> > is no way to query the remote CPUs APIC IRR.=0D
+> >=0D
+> > This requires that request_irq() uses the same vector/CPU as the one =0D
+> > which was freed, but this also can be triggered by a spurious interrupt=
+.=0D
+> >=0D
+> > Prevent this by reevaluating vector_irq under the vector lock, which =0D
+> > is held by the interrupt activation code when vector_irq is updated.=0D
+> =0D
+> Does this fix your problem?=0D
+=0D
+Thanks,=0D
+=0D
+		Hogan=0D
+-- =0D
+2.45.1=0D
 
