@@ -1,159 +1,123 @@
-Return-Path: <linux-kernel+bounces-753023-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753045-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05D8BB17DDF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:59:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AB57B17E16
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:17:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F0E2C16FBF9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:58:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 96CC01AA2269
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:17:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AEC2212FB3;
-	Fri,  1 Aug 2025 07:58:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BB4E1CEAD6;
+	Fri,  1 Aug 2025 08:17:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Pvvef5+S"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zml6/eah"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4E1149DF0;
-	Fri,  1 Aug 2025 07:58:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4F7C5B21A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754035123; cv=none; b=ndp7fatOwYhWbTvLL3VhAryBEYmix/i0la/xCrCN3fJntuVBJcX+P7JjkEKMs4EPDM2dXO8UclUaizMsePQBqqMRr+QSCVq+CxH4V5OUar49JXOAt6OuV40fon1s0Mt87Gf+B/6IhbCV4e2p4gbBv8oCuwzI3jOX9coNYdsjgqk=
+	t=1754036250; cv=none; b=XKmjcfQ1v5lyAhaYK75xwu3X7vtwRw6g+IH9oRmVbdjzNg0R0rMx5lkoOclerkyGHduqHwV9GOsggekmiAFZutaikv7MoFqfsMKCoBQVkkfltgKqaA5GRWcviXDDtOinIi+ogR5R5BcS0aG7YXzsJB9XIQ0vEiUywzaEQ7BOdak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754035123; c=relaxed/simple;
-	bh=gZJIQtZcU8RgAFF6bz0NixEA+52kPSSbVzusMfq/yhA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=bJ1A7QNIZWTjNtzy7uqg/TiTvXV+kHzcnInrafksUZAcpqthWk4+HV50EKNmHhlp7KysJXO+fLrZgV+3QMP5hkBab0BkEPkZSGUnrkdw/eOLAmBNj++BYIwq5GQKtTcfu9Eb+fs/ArZsSqg+Ycyz5usPXT4wmmHFyORMD8+tUXY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Pvvef5+S; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-451d3f72391so11787575e9.3;
-        Fri, 01 Aug 2025 00:58:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754035120; x=1754639920; darn=vger.kernel.org;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=if+jrugCoYKdMUAChMOY2irCS/mGgiPfCTcd1NEbdjY=;
-        b=Pvvef5+SqjKMBGFBIEaYUYnTyMQqbXnvssiYnJb7DwN4UDOpbBB+L9LnP2A/GvEF6W
-         U/5SxGC4R7XrIq4wyFrS62H5IdTQsD8wTtdEvXIzaWkDii8MH2jLKHIroZn0WS8qCntZ
-         E9ajoD8mgjL8uRi3kxh5jIQR2YM6RVAqiaeYgIY/oCCS7pxn3JSOJ+RzTFaWADA8yE6v
-         TOGNuzDmPX0JTKuFp2F05PxqyMXQkyaBCzGbfcltcfvNAQ6HYHV1qujWxx0FXK1uAZrg
-         BKaKWnD8bgVhB7oBdHwr50s3bdrPTNs9mvllNipIYxMP8J6lehYpzUiU7hoCkfJjk6wB
-         jMsg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754035120; x=1754639920;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=if+jrugCoYKdMUAChMOY2irCS/mGgiPfCTcd1NEbdjY=;
-        b=Fn9BYivAyTPTkaQWEaqFoHOIi2iES0ourgAKUipoP7equR/ayygyDVPrrFqiOsPBuW
-         QSL2Nqi6tCfGYTGx0/L9SDjfO5M632TrpKimF8WchLWQa98KNWStazYh6dxU457S6MUQ
-         iF5nHN7hGRIQf3OAuJW4ZuTui0oJWW5Nv+BCJvHjBRZz4v7/Uomiw3WKPKYOJeQeMMoH
-         xZ/LLeE411kmAJdczGLwDyS7FOYqJhvv/8M6I3rzJ6qeg3dSEXu5YmtVDQwDBrwaCkxU
-         BLoUz/jZEIUrna1cTrwjt8mdad74vJyYwQ/lf7W31Sha7yXMjdZ0kj6QEaTWN2r4bsjY
-         LeQQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPZCeQHiQ5gGtOU3/G1e9RDZoZ1ZNjxOmdeHDSsEZJZNzQHpeoQ5REmOgGfKKd2OE+Xwh6jJMVMdxmrY37@vger.kernel.org, AJvYcCWV8xk2ADyqP3tzJoM4b9Vvn4uwR1q2KEohuIC6U5ZicaefQutgFtvULo0DaA9qywFVaVyT6pq6JftQTavU@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXJT0BHaFV7XIOjIIqeYdjALzSTyIKgsvq3+SW2zpOfiEVernV
-	uos8la9QPQIWG1WUBBD1hLYm84OgD5Aj7kyEri9jrEpYlW37GE4gCBqqXaa0oQ==
-X-Gm-Gg: ASbGncsmI1kPwYzY45UgUB5+PxAL6cYCiAHecNKnC6Nr4oKrP1af+nAzS57Vg7SDHcA
-	aDjAyBo8I32qnsXA4IIkIVqfI8re1ZYkmz7oJ3lZsd7x9aFyEtYuOFKbo4zdFPUEdJ6pgAHQMdN
-	LCTrpB4/qiAS1yh59Xp06OyusShWuyJ+bA09G7XUEKxMBG/VVu8RmfrIdzRPbdsCsceAEMAmqJv
-	gQluC7Tf7dY8nqhFNI1MmlHH2w3Br52cQfFQbykUErKlraxQnE+TV8wpLiaK+QVgMg21jJArbi0
-	txdeF2FUBviPM9gLHGt1C5R4CmbHjE4ztznG6B18hYar5rSEBbelYCR5Nue0SzDVlcxu5m8A0py
-	Hvjd0+XrrcpJ5MFZvD/1HV3rrGPAuzKhZNaa0jaeKTk2Cv3foc8AcY2LJrxajOQ==
-X-Google-Smtp-Source: AGHT+IHyWNxPi2finIbBIOeg6Q79VKyVKB7VXLAIFgQqUupvSjpN3TOAAtQGbNCGEpDirXnIys3JeQ==
-X-Received: by 2002:a05:600c:1c21:b0:456:27a4:50ac with SMTP id 5b1f17b1804b1-458aa45997emr13496465e9.23.1754035119694;
-        Fri, 01 Aug 2025 00:58:39 -0700 (PDT)
-Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4589ee4f0f8sm55368405e9.15.2025.08.01.00.58.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 00:58:39 -0700 (PDT)
-From: Gabor Juhos <j4g8y7@gmail.com>
-Date: Fri, 01 Aug 2025 09:58:35 +0200
-Subject: [PATCH] spi: spi-qpic-snand: use correct CW_PER_PAGE value for OOB
- write
+	s=arc-20240116; t=1754036250; c=relaxed/simple;
+	bh=9e5iYs2mtroQCYu2N6AsFFm9UXU9EBua5F+CU24L634=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=pIvHxahhLSkD05BD7nk09uOU/cBKAZIZIJpC1nT0R3W+3zzw/s7ei0TfjEsd/sBAmv1N3nC57g6r5iO4QRVwM94gSqN8XYOMDJWo1AJXINhnXyJG8T1H6tGGEwmW8B68OWecmY22y3EslBSoydWAUlRJJCFg0s6I0ZRFuyb8XoA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zml6/eah; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754036249; x=1785572249;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=9e5iYs2mtroQCYu2N6AsFFm9UXU9EBua5F+CU24L634=;
+  b=Zml6/eahT4rsLKM37AGixBpFC7jXu2ISa0wC4sJ8bHyG8LGMKe7Z1Ypp
+   xDKEgiRRfpY+fw5OY/CvBXwgx52jvHgoQWj96Dg/FU5OtqlkbIs4XzxIQ
+   FnoJVWneqSvHxLIWfq1L4qvjvxx0aWMAQqxOH3b99AiGujWB6FYuHGMMi
+   vwwbxOHql7S/p/wLptYLaQ/oYXJLizSW/BKGe8u+y2etPiVLEcZg5qTmZ
+   ngXnenFrqqTktJdueca4lMUunvZn3os/PeEqDXnm3etZnvZcV1fEpTxCR
+   v7WLEDyhx9Zr+iyYs8lMrDueTcAo/mLfx+8MtcN3qlWygev4sbFKyySIw
+   Q==;
+X-CSE-ConnectionGUID: piQAesqFQg2pu5E7af3VpA==
+X-CSE-MsgGUID: DOYWXqgOQuilm6jeb4aScw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="60203828"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="60203828"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 00:59:38 -0700
+X-CSE-ConnectionGUID: UY5YKdtsS528HwOyb0PRGA==
+X-CSE-MsgGUID: JC/XWvz4T/CzdpllmIzaoA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163066860"
+Received: from igk-lkp-server01.igk.intel.com (HELO b3b7d4258b7c) ([10.91.175.65])
+  by fmviesa007.fm.intel.com with ESMTP; 01 Aug 2025 00:59:36 -0700
+Received: from kbuild by b3b7d4258b7c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhkfu-0001At-17;
+	Fri, 01 Aug 2025 07:59:34 +0000
+Date: Fri, 1 Aug 2025 09:59:15 +0200
+From: kernel test robot <lkp@intel.com>
+To: Frank Li <Frank.Li@nxp.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	"Rob Herring (Arm)" <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Stefan Agner <stefan@agner.ch>
+Subject: arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: dcu@2ce0000
+ (fsl,ls1021a-dcu): 'display', 'display@0' do not match any of the regexes:
+ '^pinctrl-[0-9]+$'
+Message-ID: <202508010949.JIDIe4WV-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-qpic-snand-oob-cwpp-fix-v1-1-f5a41b86af2e@gmail.com>
-X-B4-Tracking: v=1; b=H4sIAKpzjGgC/x2MQQqAIBAAvyJ7bsFMC/pKdDDdai9qChVEf086z
- sDMA4UyU4FRPJDp5MIxVGgbAW63YSNkXxmUVEYOXYtHYocl2OAxxgXdlRKufGO/qJ5IGzfoDmq
- dMlX9n6f5fT+oq7uKaQAAAA==
-X-Change-ID: 20250731-qpic-snand-oob-cwpp-fix-6b26ee45c743
-To: Mark Brown <broonie@kernel.org>, 
- Md Sadre Alam <quic_mdalam@quicinc.com>, 
- Varadarajan Narayanan <quic_varada@quicinc.com>, 
- Sricharan Ramabadhran <quic_srichara@quicinc.com>
-Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org, 
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Gabor Juhos <j4g8y7@gmail.com>
-X-Mailer: b4 0.14.2
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-The qcom_spi_program_oob() function uses only the last codeword to write
-the OOB data into the flash, but it sets the CW_PER_PAGE field in the
-CFG0 register as it would use all codewords.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   f2d282e1dfb3d8cb95b5ccdea43f2411f27201db
+commit: 83e6769f80a1b8e1a97f8d1cecd8631b976fc009 dt-bindings: display: imx: convert fsl,dcu.txt to yaml format
+date:   9 days ago
+config: arm-randconfig-2051-20250730 (https://download.01.org/0day-ci/archive/20250801/202508010949.JIDIe4WV-lkp@intel.com/config)
+compiler: arm-linux-gnueabi-gcc (GCC) 8.5.0
+dtschema version: 2025.6.2.dev4+g8f79ddd
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250801/202508010949.JIDIe4WV-lkp@intel.com/reproduce)
 
-It seems that this confuses the hardware somehow, and any access to the
-flash fails with a timeout error after the function is called. The problem
-can be easily reproduced with the following commands:
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508010949.JIDIe4WV-lkp@intel.com/
 
-    # dd if=/dev/zero bs=2176 count=1 > /tmp/test.bin
-    1+0 records in
-    1+0 records out
-    # flash_erase /dev/mtd4 0 0
-    Erasing 128 Kibyte @ 0 -- 100 % complete
-    # nandwrite -O /dev/mtd4 /tmp/test.bin
-    Writing data to block 0 at offset 0x0
-    # nanddump -o /dev/mtd4 >/dev/null
-    ECC failed: 0
-    ECC corrected: 0
-    Number of bad blocks: 0
-    Number of bbt blocks: 0
-    Block size 131072, page size 2048, OOB size 128
-    Dumping data starting at 0x00000000 and ending at 0x00020000...
-    [   33.197605] qcom_snand 79b0000.spi: failure to read oob
-    libmtd: error!: MEMREADOOB64 ioctl failed for mtd4, offset 0 (eraseblock 0)
-            error 110 (Operation timed out)
-    [   35.277582] qcom_snand 79b0000.spi: failure in submitting cmd descriptor
-    libmtd: error!: cannot read 2048 bytes from mtd4 (eraseblock 0, offset 2048)
-            error 110 (Operation timed out)
-    nanddump: error!: mtd_read
+dtcheck warnings: (new ones prefixed by >>)
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: watchdog@2ad0000 (fsl,imx21-wdt): big-endian: False schema does not allow True
+   	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: watchdog@2ad0000 (fsl,imx21-wdt): Unevaluated properties are not allowed ('clock-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/watchdog/fsl-imx-wdt.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b50000 (fsl,vf610-sai): dma-names:1: 'tx' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b60000 (fsl,vf610-sai): dma-names:1: 'tx' was expected
+   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: sai@2b60000 (fsl,vf610-sai): Unevaluated properties are not allowed ('dma-names' was unexpected)
+   	from schema $id: http://devicetree.org/schemas/sound/fsl,sai.yaml#
+>> arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: dcu@2ce0000 (fsl,ls1021a-dcu): 'display', 'display@0' do not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/display/fsl,ls1021a-dcu.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: display-timings: 'mode0' does not match any of the regexes: '^pinctrl-[0-9]+$', '^timing'
+   	from schema $id: http://devicetree.org/schemas/display/panel/display-timings.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): queue-group@2d10000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): queue-group@2d14000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
+   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d10000 (fsl,etsec2): Unevaluated properties are not allowed ('queue-group@2d10000', 'queue-group@2d14000' were unexpected)
+   	from schema $id: http://devicetree.org/schemas/net/fsl,gianfar.yaml#
+   arch/arm/boot/dts/nxp/ls/ls1021a-iot.dtb: ethernet@2d50000 (fsl,etsec2): queue-group@2d50000: '#address-cells', '#size-cells' do not match any of the regexes: '^pinctrl-[0-9]+$'
 
-Change the code to use the correct CW_PER_PAGE value to avoid this.
-
-Fixes: 7304d1909080 ("spi: spi-qpic: add driver for QCOM SPI NAND flash Interface")
-Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
----
- drivers/spi/spi-qpic-snand.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
-index 0cfa0d960fd3c245c2bbf4f5e02d0fc0b13e7696..5216d60e01aab26f927baaea24296571a77527cb 100644
---- a/drivers/spi/spi-qpic-snand.c
-+++ b/drivers/spi/spi-qpic-snand.c
-@@ -1196,7 +1196,7 @@ static int qcom_spi_program_oob(struct qcom_nand_controller *snandc,
- 	u32 cfg0, cfg1, ecc_bch_cfg, ecc_buf_cfg;
- 
- 	cfg0 = (ecc_cfg->cfg0 & ~CW_PER_PAGE_MASK) |
--	       FIELD_PREP(CW_PER_PAGE_MASK, num_cw - 1);
-+	       FIELD_PREP(CW_PER_PAGE_MASK, 0);
- 	cfg1 = ecc_cfg->cfg1;
- 	ecc_bch_cfg = ecc_cfg->ecc_bch_cfg;
- 	ecc_buf_cfg = ecc_cfg->ecc_buf_cfg;
-
----
-base-commit: 926406a85ad895fbe6ee4577cdbc4f55245a0742
-change-id: 20250731-qpic-snand-oob-cwpp-fix-6b26ee45c743
-
-Best regards,
 -- 
-Gabor Juhos <j4g8y7@gmail.com>
-
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
