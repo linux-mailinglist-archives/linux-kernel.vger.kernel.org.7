@@ -1,99 +1,80 @@
-Return-Path: <linux-kernel+bounces-752783-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CBC00B17AD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:30:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9279B17AD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:31:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0CEF75455AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:30:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D6C01C80C1B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:31:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 20DF413AD05;
-	Fri,  1 Aug 2025 01:29:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F341D52B;
+	Fri,  1 Aug 2025 01:31:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hATgpV+3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75ADC78F26;
-	Fri,  1 Aug 2025 01:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="biw9pb6g"
+Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C666E1BC41;
+	Fri,  1 Aug 2025 01:31:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754011795; cv=none; b=pq4z9SzasB0uddDyM2qmNrFmmAPURQdFPO9j8q5lhGQm3lCGaoAzSc2Dp14jRJWVFOfxafSEZPhXZZtSV19GHvFj/6Mx9CLIw8k7EhD7pDtLYOjo9EhR+WXt13vR+I6bXJzjnKzQa5fBSY+bNrnP28K8S4gYBejmonHOlCb+fV4=
+	t=1754011894; cv=none; b=hA9s1cQp/BAfBr3U45jJmhVJZsKycyv39wPuP+s5a/ZLwuZvtqUpON2wKKsrsGXaZUq64yKULpOyeB5KMQ3P0jY+ie7bIp7HKAjlZQK2rrQ2nUNu3qbB8Kcru96XbW6maUuwQw8NuwJHmk7b4DAksCdEJzXotZMAwqtDfnj2lWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754011795; c=relaxed/simple;
-	bh=1BE+9oBhcTylDitTiXbzexLR2EordeI+B2H+uniTVs4=;
-	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
-	 In-Reply-To:To:Cc; b=K3bg9oxjxHHl5Cjzrg0OX1PKvf/erYKGoBENuFOTt+mWwhcSHVpwTroI10snjmdHkAz4Tyk/KFweHSll0TChIxSCDBRjvVOZjC7ZfELuDBD/CHkXoGPlt9jK/YFW9IxyDd5a9u8esRQGkZQKQyGAoxlR/3agI4VfMihm008VYfM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hATgpV+3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id ECD95C4CEEF;
-	Fri,  1 Aug 2025 01:29:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754011795;
-	bh=1BE+9oBhcTylDitTiXbzexLR2EordeI+B2H+uniTVs4=;
-	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
-	b=hATgpV+3peMrAg3cQ7RKli+CYasgvWaxBqE4JUXISuIQNKF8+uIAEUfGW+hGVagbu
-	 lbeQUzJiD4DsVNHyrDlM3EHA/oHR2Fc5ur1P5rGhNTYXsM9hkKbNvKEpDo/emadXUo
-	 3SMYF4ImxD2uH5sOq0RoPZvFkgnI4Z2aSFgSjgWSouAU5aXYudbIm2LVA8kXk8KJRP
-	 Dk+uIrXakMtyzbRiDubjnswMPyxViPEpnkZufgg6cv4XEp2705/g5O2LxiYVk/4nd1
-	 9NnJMnbYl9nJt4g1EGgtftv7Q7R5LfbomONj8jihKQ4x7uSMfuU2X0sXjsqgx/bDUr
-	 rz75pcXv9boWQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD39383BF51;
-	Fri,  1 Aug 2025 01:30:11 +0000 (UTC)
-Content-Type: text/plain; charset="utf-8"
+	s=arc-20240116; t=1754011894; c=relaxed/simple;
+	bh=gmDxmGr10ha0SVthIS5G5pwuQ+FfYR2x/0H9aKwNkQo=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References; b=pN7hvDQ6u6bGSm8VbbQ8v5yKsntSkXA21rr2/DjNg+YTLQiNGhjwIPbMM4Ul8l13DwyJ8JWwiK2ElJzL1+BqKVoQz8Mt/pVyHjjwWyIHFcfa/iYStfEEhr6NYvuYrNAQZJk1WRfwNWkhLr3YF2hq1/vW+srotLVVzyvazKshE9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=biw9pb6g; arc=none smtp.client-ip=13.77.154.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
+Received: by linux.microsoft.com (Postfix, from userid 1158)
+	id 8737621176F5; Thu, 31 Jul 2025 18:31:32 -0700 (PDT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 8737621176F5
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
+	s=default; t=1754011892;
+	bh=gmDxmGr10ha0SVthIS5G5pwuQ+FfYR2x/0H9aKwNkQo=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=biw9pb6gbvBaCHeJ5x9yLE2OSG/x2+ASu8EDT8ZOkxEa3y32X/yLSa3Kz7az20PbU
+	 DHqmpYTNvyykRtg7Cwfrhgyk0SeI4N72v21gXj1CjOdfBdnLf1x3RdojqcTxDaS9FC
+	 shpnBdFvO3X3ffkRC0m9xLVTDPKQiX79ADXZyXvQ=
+From: Hardik Garg <hargar@linux.microsoft.com>
+To: gregkh@linuxfoundation.org
+Cc: akpm@linux-foundation.org,
+	broonie@kernel.org,
+	conor@kernel.org,
+	f.fainelli@gmail.com,
+	hargar@microsoft.com,
+	jonathanh@nvidia.com,
+	linux-kernel@vger.kernel.org,
+	linux@roeck-us.net,
+	lkft-triage@lists.linaro.org,
+	patches@kernelci.org,
+	patches@lists.linux.dev,
+	pavel@denx.de,
+	rwarsow@gmx.de,
+	shuah@kernel.org,
+	srw@sladewatkins.net,
+	stable@vger.kernel.org,
+	sudipm.mukherjee@gmail.com,
+	torvalds@linux-foundation.org
+Subject: Re: [PATCH 6.15 00/92] 6.15.9-rc1 review
+Date: Thu, 31 Jul 2025 18:31:32 -0700
+Message-Id: <1754011892-27600-1-git-send-email-hargar@linux.microsoft.com>
+X-Mailer: git-send-email 1.8.3.1
+In-Reply-To: <20250730093230.629234025@linuxfoundation.org>
+References: <20250730093230.629234025@linuxfoundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Subject: Re: [PATCH bpf-next v14 0/3] Support kCFI + BPF on arm64
-From: patchwork-bot+netdevbpf@kernel.org
-Message-Id: 
- <175401181050.3387850.17837483390753961310.git-patchwork-notify@kernel.org>
-Date: Fri, 01 Aug 2025 01:30:10 +0000
-References: <20250801001004.1859976-5-samitolvanen@google.com>
-In-Reply-To: <20250801001004.1859976-5-samitolvanen@google.com>
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: bpf@vger.kernel.org, puranjay@kernel.org, ast@kernel.org,
- daniel@iogearbox.net, catalin.marinas@arm.com, will@kernel.org,
- andrii@kernel.org, mark.rutland@arm.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- mbland@motorola.com
 
-Hello:
-
-This series was applied to bpf/bpf.git (master)
-by Alexei Starovoitov <ast@kernel.org>:
-
-On Fri,  1 Aug 2025 00:10:05 +0000 you wrote:
-> Hi folks,
-> 
-> These patches add KCFI types to arm64 BPF JIT output. Puranjay and
-> Maxwell have been working on this for some time now, but I haven't
-> seen any progress since June 2024, so I decided to pick up the latest
-> version[1] posted by Maxwell and fix the few remaining issues I
-> noticed. I confirmed that with these patches applied, I no longer see
-> CFI failures in jitted code when running BPF self-tests on arm64.
-> 
-> [...]
-
-Here is the summary with links:
-  - [bpf-next,v14,1/3] cfi: add C CFI type macro
-    https://git.kernel.org/bpf/bpf/c/5ccaeedb489b
-  - [bpf-next,v14,2/3] cfi: Move BPF CFI types and helpers to generic code
-    https://git.kernel.org/bpf/bpf/c/f1befc82addd
-  - [bpf-next,v14,3/3] arm64/cfi,bpf: Support kCFI + BPF on arm64
-    https://git.kernel.org/bpf/bpf/c/710618c760c0
-
-You are awesome, thank you!
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/patchwork/pwbot.html
+The kernel, bpf tool, and perf tool builds fine for v6.15.9-rc1 on x86 and arm64 Azure VM.
 
 
+Tested-by: Hardik Garg <hargar@linux.microsoft.com>
+
+
+Thanks,
+Hardik
 
