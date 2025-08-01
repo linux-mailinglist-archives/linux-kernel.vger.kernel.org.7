@@ -1,88 +1,179 @@
-Return-Path: <linux-kernel+bounces-752956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752955-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA84DB17D03
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:36:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49192B17D02
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:36:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0421AA4F39
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:36:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B3F11AA0F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:36:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE1E01F9F7A;
-	Fri,  1 Aug 2025 06:36:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D896A1FC0FC;
+	Fri,  1 Aug 2025 06:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="Zj3vTsvo"
-Received: from out30-110.freemail.mail.aliyun.com (out30-110.freemail.mail.aliyun.com [115.124.30.110])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ahhFo5Oc"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A19041F09A8;
-	Fri,  1 Aug 2025 06:36:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.110
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C00E1F09A8
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 06:35:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754030172; cv=none; b=VEJJ+P+z3ZCf8iVC3HzO1A37Fyupv3A7Ld8dEKg9u9iQKi1iUwqlGHodPtgfP4UW/MNThyWnw9Nb2CnvBGyYJk1KWbd2kAsAICMUtajy3L1FPlzeZcxkiCoYmKAsllTlJEIa4+7mj2GLuKo9KcheV2l0mRFEKOhmiyqFvInOh9g=
+	t=1754030155; cv=none; b=glIddj+rsJR8oicEhMOdOe25Bsj9OYyRCHnaJ8O28SyHhXuYKmgZFy9O32VdoI7LD4GWFVa5qPiLEij4ilzCT2VNp0a4wRvgrsL8FqCinBy4fpPNiJaQAa55HJFur2fZkMVaf80OstoWpqn+x3DXccpKQMhdWi50fQQacZe3Hfc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754030172; c=relaxed/simple;
-	bh=pM/QBuIYaRKXnp5dOtfsp04gUrSP40de5purZtlACYs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rlGhTsft6aIJRSXtK6Ac4SQhuyDLt+h5ySbFVm4T8DP+5NFYtDiBb1t78Xz+t8VrXb2Urt6AHCNP8Wdng/ACGmfNeoxzKIEwHLYkFJ9oAP2N6SAboTwt6TP7QvJxcoaM7G3yh3s/L9CJNDP4G54/vfv2k3b8TTRJfjOY2/nawrU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=Zj3vTsvo; arc=none smtp.client-ip=115.124.30.110
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754030157; h=From:To:Subject:Date:Message-ID:MIME-Version;
-	bh=nH/yQqjXFlgNpji/ayBxu2aP+izc9H8eGxFTy7MIHfs=;
-	b=Zj3vTsvoApX8ORjvcwRK4tooNssFU+avcS7H+3kzKbqusdLKMG9ZOK9YIrOpQkcxA76Zw3/ijLZrASuzoy1gjWUYrG/8MuzuBD3B6m2c1CB882qzB7RpSxj8DA2hT1epCCc2Po3dsf9HP+copUi87CsJHHV4Ag7zw7Y7ivBWhkU=
-Received: from localhost(mailfrom:jiapeng.chong@linux.alibaba.com fp:SMTPD_---0Wkcn-QC_1754030141 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Fri, 01 Aug 2025 14:35:56 +0800
-From: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-To: rafael@kernel.org
-Cc: daniel.lezcano@linaro.org,
-	rui.zhang@intel.com,
-	lukasz.luba@arm.com,
-	linux-pm@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiapeng Chong <jiapeng.chong@linux.alibaba.com>,
-	Abaci Robot <abaci@linux.alibaba.com>
-Subject: [PATCH -next] thermal/drivers/mediatek/lvts_thermal: remove unneeded semicolon
-Date: Fri,  1 Aug 2025 14:35:40 +0800
-Message-ID: <20250801063540.2959610-1-jiapeng.chong@linux.alibaba.com>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1754030155; c=relaxed/simple;
+	bh=Y+BztVPzZLppNQnoFJrQr/MAk7o3bTjHPtyxPE/UvPg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mN7hV/MPkhJSiGrLJPL5/x7RZIQXGMUGzlVFe0fo85jA7jFykT5cRLV9k90cmpFK8hkhBMt/JAUwGX28iKg/gpHsaa8VEgeZaqaOXjIz0e73qpCAWnOOUcD4pDhTu8GejIdNTfZeKJFI3A4+kXkLMiHp3jx4evrN1wRIhtCAiaU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ahhFo5Oc; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5710ZD6g001112
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 06:35:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	xDaOrDWwXzPaCCV3E6MSXbRpVt2vbjIVpkSmk2gQwM8=; b=ahhFo5Ocu02X+EDX
+	2dOZJJIH8fCWuMACi+BDhKbmT4CBvIwjgibUKWQAo2ZXKa9IbIwZg2QBykmt88iD
+	XmQJQBPcXostdW+vzaQZl6Ps6uF+SLzd/gA2c89ToOXmIM732a3/XV0D47gYCPDG
+	pZhuMoSKEBqiwBMRa7zlxPNZwGauLVxQmzICUvFsCE5hWF6NS3GOf+OvFzv8tt2a
+	oMimohYt3khQXQQtWCzZuPnIIOrj6gr7pHjceyqvvLpC0sM0v2BX/+5D8gD5FBlD
+	BTi7MOZeRKKmWb4CsanB48UhmBPvbC7TsLfN8SjcPT/6ONvY1B6svvWzMItg7zLd
+	h/A+Pw==
+Received: from mail-pl1-f199.google.com (mail-pl1-f199.google.com [209.85.214.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwey3ue-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:35:51 +0000 (GMT)
+Received: by mail-pl1-f199.google.com with SMTP id d9443c01a7336-2400cbd4241so23764345ad.3
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 23:35:51 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754030150; x=1754634950;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xDaOrDWwXzPaCCV3E6MSXbRpVt2vbjIVpkSmk2gQwM8=;
+        b=Sbuw5Na8JATqXmRrfvRLUk5K05wQZFsVzZtBv76qqk7rP10i7PI+cfXkafq5SeXVgw
+         CjKOG1qJrLnScSScoAGJP0gfvoRP3YlSYwaYkgVV7pdJaq6/5om0Y1GDnn/2GN4vcRTr
+         9TQ560aeYviIzgU4kMNZjhQ3CU9ZooXyEJv0y6jfSqqzEA6us41bmA6LSdpteRminwBp
+         kHyUq/IWEuUjikQkfxvBy+WcbS3HXToxu8CGeIe013MMvCtCJHpWYX/wFp6dcocQwHSm
+         PLlpxymd9hf8kW4OoRisRNz17UoeOuKdIPKw/SSv23FxmE2S5RLbFA2qwJeJShzIWaGB
+         +djw==
+X-Forwarded-Encrypted: i=1; AJvYcCXm52BdSFkHwA/jW36zn9ayMRotTvP7iIdxvKC4cUIWOM8Vqes89aOPxa3sGV4hCgCaDaFIALRO5Ef4aSM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzcn/AUon3rUKVfZ3kEyq84feuxH/YVCvzbA7FLtNsrHEhhtkyf
+	eaevdoa50NJNt2Nr6W+LGhngiJd+7xlmeRi1JPRrL+W8hZwoFe2sIq+W+MxEYy7zm6JYHlbatF/
+	aNFIQvKdZnoeKSAywdXW8um4ABmPQMEx11Yb1OGAYggjLQnt31uXCgEmuzlVIpxuo5zg=
+X-Gm-Gg: ASbGncthjZGGryippCHr5KPFPGKSI8BLA5cD1okkaRIs5Jhezr5A30aJ8TDuurv5P/S
+	wcRlm7Hl4rMn3enUW4vEpR8FlyCes9OGob3qRxD8ktLaGXEyaIByVHfdJyeHU6UZZ9OGXkuh6QH
+	a6QMO+Ra1jNrHV9Ynziu38He2id9hqszRku3Ii0iGiciemQSb5cytq4y+pTshWQ/kR046JgBTbu
+	Fsp3KPUwyJCZjXDhLrgUfWB/Xo+B0SizrnmyozGzGHthT8cB4alRXVgZkVHuZ4FyaU9zN9tRc9z
+	sdoRokg38kQyG4ZR66Br6IRjlMrcR6APL4IcbnIABVnZAYfeVE+lotKQy1FQxIdt0gQWukm5VQ=
+	=
+X-Received: by 2002:a17:903:1b6e:b0:240:79d5:8772 with SMTP id d9443c01a7336-24096b31ed0mr152945095ad.46.1754030150105;
+        Thu, 31 Jul 2025 23:35:50 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFC8ggFWew8fx0Y0149oLd84SpnYbaKhSyeI9yLySGHjuqLPclWYwhq160/UUOByeO0hKrc3w==
+X-Received: by 2002:a17:903:1b6e:b0:240:79d5:8772 with SMTP id d9443c01a7336-24096b31ed0mr152944685ad.46.1754030149702;
+        Thu, 31 Jul 2025 23:35:49 -0700 (PDT)
+Received: from [10.218.42.132] ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef75bdsm34394445ad.11.2025.07.31.23.35.44
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 31 Jul 2025 23:35:49 -0700 (PDT)
+Message-ID: <0dfe9025-de00-4ec2-b6ca-5ef8d9414301@oss.qualcomm.com>
+Date: Fri, 1 Aug 2025 12:05:43 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/3] opp: Add bw_factor support to adjust bandwidth
+ dynamically
+To: Viresh Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Stephen Boyd <sboyd@kernel.org>,
+        "Rafael J. Wysocki" <rafael@kernel.org>,
+        Manivannan Sadhasivam <mani@kernel.org>,
+        Lorenzo Pieralisi <lpieralisi@kernel.org>,
+        =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+        Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-pci@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        devicetree@vger.kernel.org
+References: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
+Content-Language: en-US
+From: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+In-Reply-To: <20250717-opp_pcie-v1-0-dde6f452571b@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: GeCwhZnoEGEnevVukvzA_H5RlRlTQsmN
+X-Authority-Analysis: v=2.4 cv=Wv0rMcfv c=1 sm=1 tr=0 ts=688c6047 cx=c_pps
+ a=JL+w9abYAAE89/QcEU+0QA==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=IBex7tjcYQtJ9Xp6WB0A:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=324X-CrmTo6CU4MGRt3R:22
+X-Proofpoint-GUID: GeCwhZnoEGEnevVukvzA_H5RlRlTQsmN
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA0NCBTYWx0ZWRfX44HMjslrne2H
+ xsxFXvDQ5jew76FTTTT9sa1COr/evwK1GsSrkx0mBemc3h6V6dEBFGTF5km57iOvq30XhVy+ZoO
+ orsNgAb4wjffYhj3Tc1s1wSuyzDXk0wGFtKej7N0v9pisH0zDiPbYje541ID4CC1rQY59sk0k+k
+ anvbpC7O1WKp1MQU5gor6pIMX9o/fBWNL/pSgjZH599U5xne4yNOwSc4Qgxj84dRg8nU+ujWq44
+ QIZahFcJ4+UDsBX+VBDNlLaxl3RCkho3lWifsbJByZGt5P1Ao+XpkS3RAdopOrIQckA5ugaaVu7
+ tgJVi3CQJmHMiBTPiEUh3peB9x7byAhjof/K4oW5s5tCP/ippxZE4UvBD0BycBBu3ht5uAmEApW
+ wih6wbmy59inBBuLPQ2qdXampt9pfyo741IN5kkZHM90ndYoXWQDn1H2zpZgJLYvYF6JGa3V
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_01,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 priorityscore=1501 malwarescore=0 clxscore=1015
+ lowpriorityscore=0 bulkscore=0 mlxscore=0 adultscore=0 impostorscore=0
+ phishscore=0 mlxlogscore=999 suspectscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508010044
 
-No functional modification involved.
+Hi Viresh,
 
-./drivers/thermal/mediatek/lvts_thermal.c:642:2-3: Unneeded semicolon.
+Can you please review this once.
 
-Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=23244
-Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
----
- drivers/thermal/mediatek/lvts_thermal.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Thanks & Regards,
+Krishna Chaitanya.
 
-diff --git a/drivers/thermal/mediatek/lvts_thermal.c b/drivers/thermal/mediatek/lvts_thermal.c
-index f4d1e66d7db9..ab55b20cda47 100644
---- a/drivers/thermal/mediatek/lvts_thermal.c
-+++ b/drivers/thermal/mediatek/lvts_thermal.c
-@@ -639,7 +639,7 @@ static int lvts_sensor_init(struct device *dev, struct lvts_ctrl *lvts_ctrl,
- 
- 		lvts_sensor[i].low_thresh = INT_MIN;
- 		lvts_sensor[i].high_thresh = INT_MIN;
--	};
-+	}
- 
- 	lvts_ctrl->valid_sensor_mask = lvts_ctrl_data->valid_sensor_mask;
- 
--- 
-2.43.5
-
+On 7/17/2025 7:31 PM, Krishna Chaitanya Chundru wrote:
+> The existing OPP table in the device tree for PCIe is shared across
+> different link configurations such as data rates 8GT/s x2 and 16GT/s x1.
+> These configurations often operate at the same frequency, allowing them
+> to reuse the same OPP entries. However, 8GT/s and 16 GT/s may have
+> different characteristics beyond frequency—such as RPMh votes in QCOM
+> case, which cannot be represented accurately when sharing a single OPP.
+> 
+> To avoid conflicts and duplication in the device tree, we now define only
+> one set of OPP entries per table and introduce a new mechanism to adjust
+> bandwidth dynamically using a `bw_factor`.
+> 
+> The `bw_factor` is a multiplier applied to the average and peak bandwidth
+> values of an OPP entry. This allows PCIe drivers to modify the effective
+> bandwidth at runtime based on the actual link width without needing
+> separate OPP entries for each configuration.
+> 
+> Signed-off-by: Krishna Chaitanya Chundru <krishna.chundru@oss.qualcomm.com>
+> ---
+> Krishna Chaitanya Chundru (3):
+>        opp: Add bw_factor support to adjust bandwidth dynamically
+>        PCI: qcom: Use bw_factor to adjust bandwidth based on link width
+>        arm64: dts: qcom: sm8450: Keep only x1 lane PCIe OPP entries
+> 
+>   arch/arm64/boot/dts/qcom/sm8450.dtsi   | 17 ++--------------
+>   drivers/opp/core.c                     | 37 ++++++++++++++++++++++++++++++++--
+>   drivers/opp/opp.h                      |  2 ++
+>   drivers/pci/controller/dwc/pcie-qcom.c |  8 ++++++--
+>   include/linux/pm_opp.h                 |  7 +++++++
+>   5 files changed, 52 insertions(+), 19 deletions(-)
+> ---
+> base-commit: e2291551827fe5d2d3758c435c191d32b6d1350e
+> change-id: 20250717-opp_pcie-793160b2b113
+> 
+> Best regards,
 
