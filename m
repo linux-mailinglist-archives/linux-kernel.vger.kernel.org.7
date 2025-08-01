@@ -1,203 +1,276 @@
-Return-Path: <linux-kernel+bounces-753370-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753371-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0B7CB181FE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:53:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D47D8B18201
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:53:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B6C84E7814
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:53:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 623B44E786B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:53:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4CAF24728A;
-	Fri,  1 Aug 2025 12:53:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC27024887E;
+	Fri,  1 Aug 2025 12:53:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H6Nr6og6"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="PfJxHhi0"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3073137923
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:53:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3574E2472BD
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:53:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754052804; cv=none; b=qIK/CNxtUlv7QwywtyDXG+RAkXHb6/jwzDHHBIZcbLkXLSTJsaR2rz7Sl1kEgd5S12Bkbv4oYhs3qoNBZJrqoGpBqZvnbVoz+kS52K+ra4Qgt+sRv08dT/C2mvmWtR3zJE+wF2+owFAnjF/TwOUvbWoofkozRd3bwfznR2DqWlo=
+	t=1754052807; cv=none; b=UVMIZJUg0dVOnW6bnSutbB6j9mzTGyCt+vZcFVml0boq8cRZ/CH0H2b+FXXgDc/8wyxBmOJ3wspn+qZJTmNdOzVw31IXXAb+l3nuuuFIjG+efjq4QrhsP+Qu+eUdAbS21LHv/CuDa3/7fCi+8XV726Cx2BaMt1yl8fkKdBy2tKo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754052804; c=relaxed/simple;
-	bh=aH7oGvLM6qjD1D4LjlsahaN0JbiUXKD9cVat+vL0Hro=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JCqLxBNebJS6Fjg8gcWeXiQHbZCz+12RfXMM3R4g4bCNoUEnckNc2bxVZ1DSmhyD/AnLHo1eDF6pIuxZnrD4zKzN/OtygXeqvbxfkhCI+kSgFm/sbY19NeVS0DzdcKA3AgnplS0FJdEl2ullW5WTkU1vH7ezc8Z2TOv2MVaEYP0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H6Nr6og6; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1754052807; c=relaxed/simple;
+	bh=XtWgiIWMoJllV9e1y806U0puc+WrmW9T2bEvClGfLOg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PnX3DZJ2KdWQ3lV9TtgpELVFwMZsDmeIF6GeAMg4pXWPTebfXG0chfSTNGieS6xf19pUlm9kayoqsZSBp/vfFUqClk0aBhUbrUZgN7WY3OFGOQkD0zM8xR0LcVCQJI1hmI0Gq9N84yMJR25JcYWrrbNVgC1R2MiSbfxOMyIWN9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=PfJxHhi0; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754052801;
+	s=mimecast20190719; t=1754052804;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=h3ruNDNlPjMbrJaLbLdhknmMkmPcPZs8o/QuFn2NwxE=;
-	b=H6Nr6og6YmFWQMwJ5gVzWly92bsTpp5UXTmgfl+OTay177QxFKZDygEoT4mxjtukwR4qdc
-	oCoDFhH5GevqD+gnDDXryJA+xcuBYJ4sPr0bJxxSgm7ZR7Nyyl7paox+En4WaZOGQ1Cu+Z
-	FH0qnSvOXBwREluRjZ1dJizUAJTtSv0=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	 in-reply-to:in-reply-to:references:references;
+	bh=ToMkPcgkrGjaTE7xYaILR6bhh6LbYVJ5c41vC3bW6kU=;
+	b=PfJxHhi0OjKNLFw57XFNUFJfc3iJrOpVQjMAV1/MpKYv65IF0ikoyvtJWE+33ZivITC0q4
+	4wpyIPMbEU0Ylkza5TArI6969f/I+RAKTRYTjOEe47se6XsfDtpQL/m7NFPjRjJQLeJIkN
+	8Oej92Z8GDKnvn7PiLD6ZaR+8BUG4bI=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-443-BItBGz3aPMC10fz_ZfxuOw-1; Fri, 01 Aug 2025 08:53:20 -0400
-X-MC-Unique: BItBGz3aPMC10fz_ZfxuOw-1
-X-Mimecast-MFC-AGG-ID: BItBGz3aPMC10fz_ZfxuOw_1754052799
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-45867ac308dso4572545e9.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:53:20 -0700 (PDT)
+ us-mta-455-YLY24t_BPc24WUwdRshW2g-1; Fri, 01 Aug 2025 08:53:23 -0400
+X-MC-Unique: YLY24t_BPc24WUwdRshW2g-1
+X-Mimecast-MFC-AGG-ID: YLY24t_BPc24WUwdRshW2g_1754052802
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7851a096fso1123780f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:53:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754052799; x=1754657599;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=h3ruNDNlPjMbrJaLbLdhknmMkmPcPZs8o/QuFn2NwxE=;
-        b=IlTlILeqnR1Ztqp19APW9U6yTazTYA+1U2TjvIaEeCHzqnfRVQs73N7n43khBsnE1a
-         crKys9uismKk1cQQKhbymrT6mxP5zTPLXb1pQlClo0AiT582H11fycrOwi/js6WcCbh5
-         N+1iPo5b1ndZgtndAVvYvwOxCaP+IvfAKvFZGPykMfiYOVd/qVFvFgpQYiNxcqVMT6Yn
-         qXn3gnCr45LCcfxO/BzYIQmMEONidXCeBRGTCoAU9WqlwqHMsQJk0uxl3xN+UrUhmgAZ
-         WzH3YjWHt9/ZnA6trTA/s2zazEq8LPOBgZFI+aql6ui/Ixw63h5VeVDdrlvlI1MHeHd4
-         YZ+w==
-X-Forwarded-Encrypted: i=1; AJvYcCW8NsFopiyLtB2zhyAldf3lhC8mljEXdEq75XA2zQwmWLaLfMcbJpxned/4hdgsdO7/9OHc3JjVewLlGiM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwbiQ+TyW8d7LpFpddZSPZ5iVT+MgW/kvpqWhOkACFWtijd97Y2
-	7xJmeRyUQAGaEl2FqNvVjog8qw2eiCE10smWlv6jMUPamiPzvdeFQ5KNbcbrrN06ltNm13pJobi
-	3pwKBWeu31v3+dNfKYXsiuUCRi0c73aLI47bMY3tCS+uLUGDkTX9T1uqCfPKDNVITfA==
-X-Gm-Gg: ASbGncvXHcdx4pKSj1zI+z2hW8UorDPlNijxwFWIeOrAfLjugJLvLAi2qcUwVbWwi78
-	sf91dozq26O681Q9zkHOnK/P3RudTSd7FcGFUB3nhp/oGGneIHahhJtxLVs1QMwI5qzTxY0LK30
-	mDPKdO91mXv/1p0WEzWKr2CmhSyykiMKNntDpFvOM2m6ZK2MtmToUEPR828ueWlQ01CgApF4ey8
-	zl6Ia6RcrJv8/v5B3v1Fpi6vyeETkdm17rVmkjDuBBeGZK12PXVG81EObvk2dUyYOde57F21Zhj
-	pupMnM0LMahhRtUF1cdnC8YGs1MWZQ/AT89oTtosvilg/mKGJCTFWg8gHdMWJFD0+GFq35NVfrH
-	o6iAnEXVi5cEvfCMdD1f0ezk0wJocR0aNbNfYYVVVesUGNC6ebw4vnJECo9EqDi1R
-X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr87196525e9.33.1754052799241;
-        Fri, 01 Aug 2025 05:53:19 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFdOjdW1qaq63aXhEjK0A1+Z+TR4so0aHNv+en625bxoCoFF4KP1QmdOz4NRJh+MBuuVmlFrA==
-X-Received: by 2002:a05:600c:8b6e:b0:456:27a4:50ad with SMTP id 5b1f17b1804b1-45892be4bf9mr87196295e9.33.1754052798771;
-        Fri, 01 Aug 2025 05:53:18 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a99ce1d2sm26772525e9.23.2025.08.01.05.53.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 05:53:17 -0700 (PDT)
-Message-ID: <8ba84519-7e69-4058-9ac1-d3e2e622a6ab@redhat.com>
-Date: Fri, 1 Aug 2025 14:53:16 +0200
+        d=1e100.net; s=20230601; t=1754052802; x=1754657602;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ToMkPcgkrGjaTE7xYaILR6bhh6LbYVJ5c41vC3bW6kU=;
+        b=EtkczqTeg+hSzw7VjOdyg/i72sNWf73yMYNlAgb/5Q4As1doVvh3iskKJw265sJNTY
+         KC3/KajRtsEZPtX7exArtZb/gTDwYNO9FnFIvZrqAY8nZsdC5JKr8MFtoxOAQEfJXj7I
+         tHspcMtN+bE5bxLo3ngTo+Y3nNekBQoRzw8Oji+g2K/FHg+YsCNYEk0tph3vMj5q3jqC
+         kbM5vzlt5Rfbn3M8MBDl1ILWF0Z06SItoRmqTIwUlY8LyyJf97cWGyiS8xSyuWOZpl65
+         dGB/nD8jDCG7Kx25srwlyAr1UqaahQet5Ea+9dN1O0nfnZRnmmHxjEokOzUiEyauX7Pc
+         76fw==
+X-Forwarded-Encrypted: i=1; AJvYcCXSZBh1+ygqY6YTe6R680/PE052M6fWqMk92KbirVFFREERJSoBllBoOaRQX/0NHL3F925pKVUJBzC81rk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG4TC9Ktdo/pwgO/f4Zj9aC3cxovFF+Q6BefDO5GEqYLGpstd3
+	RaguxPxzCvGfFlL5LYzMh1H3isBSKP3iPxR4iDRSjo5CrP/MoSx6aFDW931W1sOorVzU1q4hoYi
+	uRxP7/YHLgRsWnQ7Vb3kxjsaWycxP4qkZ5wNwnljLK4n2vrng5u7GQnWZ8aeZd0gRgw==
+X-Gm-Gg: ASbGncvKLYEZF7bcGRNmGUqr25jtIIg/UswEznB/F3l/NT6mvy3xIIyQ6RzC/qEv2X1
+	ROsQEZ+FwXWNaNXTaF4xkBXfAA7qY3su7waedxApeoetQL8PDsh+WrIGpiKIGDD3aWawt36Iefi
+	tCj/q7TMuIGCyK5Z+OBVcbry2+CU96cgj3iQTnHvRhnyMNDIWzMdWlC7dyiuc6XqPrZqUy7pAdD
+	+IBen7GLPuw3583FPmm2dkFCZRUR6b60vu06s0yYR/rniw7q3zf28QgEKxPTKVm7zhvIm+2NUI3
+	JsIThCjsuPN3KgJJmXh8IQl+NQ2SiefiD8UOqW5ZHBsZ8hu43w5F77GW/nvIi/vlIZbHLQ==
+X-Received: by 2002:a05:6000:25c8:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b8d343ae4dmr2383019f8f.11.1754052801530;
+        Fri, 01 Aug 2025 05:53:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFg2ppPHTB4DYsb+w8Pi4WsTxsBWXyjNMNbInSaCwaEGMEhkeo7Iy3wCsgRDqHOwV/P+Dk9Bw==
+X-Received: by 2002:a05:6000:25c8:b0:3b6:1e6:c9fb with SMTP id ffacd0b85a97d-3b8d343ae4dmr2382992f8f.11.1754052801028;
+        Fri, 01 Aug 2025 05:53:21 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458953eaed4sm98611525e9.27.2025.08.01.05.53.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 05:53:20 -0700 (PDT)
+Date: Fri, 1 Aug 2025 14:53:18 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: Tommaso Cucinotta <tommaso.cucinotta@gmail.com>
+Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>,
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org,
+	Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+Subject: Re: [PATCH] sched/deadline: sched_getattr(...flags=1) returns the
+ runtime left and abs deadline for DEADLINE tasks
+Message-ID: <aIy4vmuBh9QemI63@jlelli-thinkpadt14gen4.remote.csb>
+References: <20250715164148.1151620-1-tommaso.cucinotta@santannapisa.it>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 4/5] selftests: prctl: introduce tests for disabling
- THPs completely
-To: Usama Arif <usamaarif642@gmail.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250731122825.2102184-1-usamaarif642@gmail.com>
- <20250731122825.2102184-5-usamaarif642@gmail.com>
- <7b13d8b5-a534-47f8-b6c5-09a65bffc691@redhat.com>
- <22e263a3-a1d2-4159-b3c8-44f7a29bace9@gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <22e263a3-a1d2-4159-b3c8-44f7a29bace9@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250715164148.1151620-1-tommaso.cucinotta@santannapisa.it>
 
->>> +
->>> +struct test_results {
->>> +    int prctl_get_thp_disable;
->>
->> The result is always one, does that here make sense?
+Hi Tommaso,
+
+On 15/07/25 18:39, Tommaso Cucinotta wrote:
+> The SCHED_DEADLINE scheduler allows reading the statically configured
+> run-time, deadline, and period parameters through the sched_getattr()
+> system call. However, there is no immediate way to access, from user space,
+> the current parameters used within the scheduler: the instantaneous runtime
+> left in the current cycle, as well as the current absolute deadline.
 > 
-> Its 3 in the next patch for PR_THP_DISABLE_EXCEPT_ADVISED :)
+> The `flags' sched_getattr() parameter, so far mandated to contain zero,
+> now supports the SCHED_GETATTR_FLAG_DL_DYNAMIC=1 flag, to request
+> retrieval of the leftover runtime and absolute deadline, converted to a
+> CLOCK_MONOTONIC reference, instead of the statically configured parameters.
 > 
-> I will remove this struct, but I think maybe it might have been a good idea to squash this
-> with the next patch to show why the struct was useful.
-
-I think it's reasonable to keep them separate.
-
+> This feature is useful for adaptive SCHED_DEADLINE tasks that need to
+> modify their behavior depending on whether or not there is enough runtime
+> left in the current period, and/or what is the current absolute deadline.
 > 
->>
->>> +    int prctl_applied_collapse_none;
->>
->> "prctl_applied" is a bit confusing. And most of these always have the same value.
->>
->> Can't we special case the remaining two cases on the current policy and avoid this struct compeltely?
->>
+> Notes:
+> - before returning the instantaneous parameters, the runtime is updated;
+> - the abs deadline is returned shifted from rq_clock() to ktime_get_ns(),
+>   in CLOCK_MONOTONIC reference; this causes multiple invocations from the
+>   same period to return values that may differ for a few ns (showing some
+>   small drift), albeit the deadline doesn't move, in rq_clock() reference;
+> - the abs deadline value returned to user-space, as unsigned 64-bit value,
+>   can represent nearly 585 years since boot time;
+> - setting flags=0 provides the old behavior (retrieve static parameters).
+
+As we discussed this offline before your submission you know that I was
+already on board with the idea, so I would really like to hear what
+Peter and others think about this.
+
+Still a few comments below.
+
+$SUBJECT can maybe simply be "sched/deadline: Add reporting of remaining
+time/abs deadline to sched_getattr".
+
+> See also the notes from discussion held at OSPM 2025 on the topic
+> "Making user space aware of current deadline-scheduler parameters":
+> https://lwn.net/Articles/1022054/
+
+I would probably remove the link from the changelog as it might
+disappear/change in the future.
+
+> Signed-off-by: Tommaso Cucinotta <tommaso.cucinotta@santannapisa.it>
+> ---
+>  include/uapi/linux/sched.h |  3 +++
+>  kernel/sched/deadline.c    | 18 +++++++++++++++---
+>  kernel/sched/sched.h       |  2 +-
+>  kernel/sched/syscalls.c    | 16 +++++++++++-----
+>  4 files changed, 30 insertions(+), 9 deletions(-)
 > 
-> The values are different in the next patch when PR_THP_DISABLE_EXCEPT_ADVISED is used.
-> 
-> Just to explain how I came about using this struct test_results (though it doesnt matter as
-> I will remove it for the next revision):
-> I wanted to maximise code reuse and only wanted to have one instance of prctl_thp_disable_test.
-> I actually started with special casing, but went the brute force way of adding too many if else
-> statements and it was looking quite messy after I added the tests for PR_THP_DISABLE_EXCEPT_ADVISED.
-> I saw this struct test_results in another kselftest and thought this should make it much better and
-> extendable.
-> 
-> I have removed struct test_results and changed prctl_thp_disable_test to the following for next revision:
+> diff --git a/include/uapi/linux/sched.h b/include/uapi/linux/sched.h
+> index 359a14cc..52b69ce8 100644
+> --- a/include/uapi/linux/sched.h
+> +++ b/include/uapi/linux/sched.h
+> @@ -146,4 +146,7 @@ struct clone_args {
+>  			 SCHED_FLAG_KEEP_ALL		| \
+>  			 SCHED_FLAG_UTIL_CLAMP)
+>  
+> +/* Only for sched_getattr() own flag param, if task is SCHED_DEADLINE */
+> +#define SCHED_GETATTR_FLAG_DL_DYNAMIC	0x01
+> +
+>  #endif /* _UAPI_LINUX_SCHED_H */
+> diff --git a/kernel/sched/deadline.c b/kernel/sched/deadline.c
+> index 9c7d9528..1b5cd7fa 100644
+> --- a/kernel/sched/deadline.c
+> +++ b/kernel/sched/deadline.c
+> @@ -3290,13 +3290,25 @@ void __setparam_dl(struct task_struct *p, const struct sched_attr *attr)
+>  	dl_se->dl_density = to_ratio(dl_se->dl_deadline, dl_se->dl_runtime);
+>  }
+>  
+> -void __getparam_dl(struct task_struct *p, struct sched_attr *attr)
+> +void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+>  {
+>  	struct sched_dl_entity *dl_se = &p->dl;
+> +	struct rq *rq = task_rq(p);
+> +	u64 adj_deadline;
+>  
+>  	attr->sched_priority = p->rt_priority;
+> -	attr->sched_runtime = dl_se->dl_runtime;
+> -	attr->sched_deadline = dl_se->dl_deadline;
+> +	if (flags & SCHED_GETATTR_FLAG_DL_DYNAMIC) {
+> +		guard(raw_spinlock_irq)(&rq->__lock);
+> +		update_rq_clock(rq);
+> +		update_curr_dl(rq);
 
-Yeah, or just duplicate that function and call it 
-prctl_thp_disable_unless_advised_test() in the next patch.
+I p is not current maybe we don't need to call update_curr_dl() as p
+will still have sensible dynamic parameters updated last time it
+blocked?
 
-Makes the code easier to read and the duplication is limited.
+Also, even though this is superuser stuff and all, mildly fear this
+could be used as a DOS attack vector? Do we want to be super defensive
+and add some kind of rate limiting?
 
--- 
-Cheers,
+> +
+> +		attr->sched_runtime = dl_se->runtime;
+> +		adj_deadline = dl_se->deadline - rq_clock(rq) + ktime_get_ns();
+> +		attr->sched_deadline = adj_deadline;
+> +	} else {
+> +		attr->sched_runtime = dl_se->dl_runtime;
+> +		attr->sched_deadline = dl_se->dl_deadline;
+> +	}
+>  	attr->sched_period = dl_se->dl_period;
+>  	attr->sched_flags &= ~SCHED_DL_FLAGS;
+>  	attr->sched_flags |= dl_se->flags;
+> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+> index 3058fb62..f69bf019 100644
+> --- a/kernel/sched/sched.h
+> +++ b/kernel/sched/sched.h
+> @@ -353,7 +353,7 @@ extern int  sched_dl_global_validate(void);
+>  extern void sched_dl_do_global(void);
+>  extern int  sched_dl_overflow(struct task_struct *p, int policy, const struct sched_attr *attr);
+>  extern void __setparam_dl(struct task_struct *p, const struct sched_attr *attr);
+> -extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr);
+> +extern void __getparam_dl(struct task_struct *p, struct sched_attr *attr, unsigned int flags);
+>  extern bool __checkparam_dl(const struct sched_attr *attr);
+>  extern bool dl_param_changed(struct task_struct *p, const struct sched_attr *attr);
+>  extern int  dl_cpuset_cpumask_can_shrink(const struct cpumask *cur, const struct cpumask *trial);
+> diff --git a/kernel/sched/syscalls.c b/kernel/sched/syscalls.c
+> index 77ae87f3..c80b3568 100644
+> --- a/kernel/sched/syscalls.c
+> +++ b/kernel/sched/syscalls.c
+> @@ -928,10 +928,10 @@ static int sched_copy_attr(struct sched_attr __user *uattr, struct sched_attr *a
+>  	return -E2BIG;
+>  }
+>  
+> -static void get_params(struct task_struct *p, struct sched_attr *attr)
+> +static void get_params(struct task_struct *p, struct sched_attr *attr, unsigned int flags)
+>  {
+>  	if (task_has_dl_policy(p)) {
+> -		__getparam_dl(p, attr);
+> +		__getparam_dl(p, attr, flags);
+>  	} else if (task_has_rt_policy(p)) {
+>  		attr->sched_priority = p->rt_priority;
+>  	} else {
+> @@ -997,7 +997,7 @@ SYSCALL_DEFINE3(sched_setattr, pid_t, pid, struct sched_attr __user *, uattr,
+>  		return -ESRCH;
+>  
+>  	if (attr.sched_flags & SCHED_FLAG_KEEP_PARAMS)
+> -		get_params(p, &attr);
+> +		get_params(p, &attr, 0);
+>  
+>  	return sched_setattr(p, &attr);
+>  }
+> @@ -1082,7 +1082,7 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+>  	int retval;
+>  
+>  	if (unlikely(!uattr || pid < 0 || usize > PAGE_SIZE ||
+> -		      usize < SCHED_ATTR_SIZE_VER0 || flags))
+> +		     usize < SCHED_ATTR_SIZE_VER0))
+>  		return -EINVAL;
+>  
+>  	scoped_guard (rcu) {
+> @@ -1090,6 +1090,12 @@ SYSCALL_DEFINE4(sched_getattr, pid_t, pid, struct sched_attr __user *, uattr,
+>  		if (!p)
+>  			return -ESRCH;
+>  
+> +		if (flags) {
+> +			if (!task_has_dl_policy(p)
+> +			    || flags != SCHED_GETATTR_FLAG_DL_DYNAMIC)
 
-David / dhildenb
+Nit pick. Formatting usually has line break after '||'.
+
+> +				return -EINVAL;
+> +		}
+> +
+
+Thanks!
+Juri
 
 
