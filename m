@@ -1,420 +1,197 @@
-Return-Path: <linux-kernel+bounces-753527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F3CB1842C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:49:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 447C2B1842F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:49:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2B4181890B8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:49:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C876E1C27078
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E914261388;
-	Fri,  1 Aug 2025 14:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E0C126D4F9;
+	Fri,  1 Aug 2025 14:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iruLuDfY"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
+	dkim=pass (2048-bit key) header.d=quantatw.com header.i=@quantatw.com header.b="S40i6uXQ"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013009.outbound.protection.outlook.com [52.101.127.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486061B95B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:48:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059732; cv=none; b=rqKszFD+7m4TLAmWYq6Rb5yd5MKpT2SaJJfKLWJ8Ot96m+PtULXA2dwoZZt0TIcKhmFm9EcVOwFlbtfp6ta8yAViuf7FCgcEuLtjq/VJu4Wra27RnZlkbPCCrliVhbAM7hWv0gmR/GPQflyI7F+ecaODM1AMXkZZVCRBvBDkzv8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059732; c=relaxed/simple;
-	bh=4aTYOtvGvyeRYelP+ciu4gLIvTbVYyxY77M62iEFa7U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i1rXqAn2HmA8ecwAA2Q0xYkK30rAa6kYzEmt2LCgOVLejbgKDL85BCs9/jzoHCeSbMP888R97qdqTrkOutx84DSQay1O0ezFr4WbhSjsZ1ToOinIOLjqCk1sg3jnyeFAnRQxLXwj4cKyTC9HEhpaDsLcet+5JeCY/bSAv/7uwsA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iruLuDfY; arc=none smtp.client-ip=198.175.65.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754059731; x=1785595731;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=4aTYOtvGvyeRYelP+ciu4gLIvTbVYyxY77M62iEFa7U=;
-  b=iruLuDfY/0v2wFkqwL2X4h9VSM6fwRRWpNcM4FfD4YdWXGw+3H26HwO+
-   Sa46HaSkaroZJPzHckDKP12P0wSrl/UWewou4W6JPkrRvxNBTjHbYmcM+
-   +ghPcKEeNpm2WaI8NlVVIk3mjnqTFimC2A8sVpYj7iPSKwGwGqjiprQLD
-   ezUMZjrLLUSL/gCnawTGN2IgSwB2+xWCbOMx1AcQW9Qq0AJc/elrbGMXa
-   ekOmXAWCmiYuULoKqu2AUiLO4PTPuSwichmc3mtPen7K/Oa8n8gsJepdg
-   aKsdKwQwhDAyVeuGQgpWe1yN/NRoV5hnfV5ZYHmBxDxIdC386eQE/mhee
-   A==;
-X-CSE-ConnectionGUID: hvF+SCL4Q6yKw0c2s+O3HA==
-X-CSE-MsgGUID: Shasfj8mTeK7zDe1cd2P0w==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56297356"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="56297356"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:48:50 -0700
-X-CSE-ConnectionGUID: TYHM6LT3SnSH9XKnKtkRkw==
-X-CSE-MsgGUID: EmC0+ROvSd2rJ2rFSthKqA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="163933885"
-Received: from mfalkows-mobl.ger.corp.intel.com (HELO [10.245.84.158]) ([10.245.84.158])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:48:47 -0700
-Message-ID: <84335bcc-b7a6-4a4a-ac80-2bd6062e2dd5@linux.intel.com>
-Date: Fri, 1 Aug 2025 16:48:41 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9474221283;
+	Fri,  1 Aug 2025 14:49:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754059789; cv=fail; b=rc3Xig8B3ea8KIqyxRoT7/AExnR5LdiFFCFyLh0bdeTOawl2XtDaFmGwZUy+YEE6zbis5VWJH60QR4qycJLMNP7ORgm/Xd6dtzt50kkOSNhX1tUW+KSCXW6M0/iwdGyC3v6LflKHqPrWZIH1vkaXYX+U8QFcb1q8vFbfHFdot6Y=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754059789; c=relaxed/simple;
+	bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=D5ieLDkyvWcVBy41SDJaC9af4yKakig/I826MM3BElDeIgjojW43rqu/PAtRCZ5e847MqhjgfA2kZEt8uU/Bvh7fglodHy0R94xhZMQZv/Qc0RYzrlr0S73YJUlXwflrkougAe0wTTPudu/mcggJ9DILV6371vn77MfQp/YowOA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantatw.com; spf=pass smtp.mailfrom=quantatw.com; dkim=pass (2048-bit key) header.d=quantatw.com header.i=@quantatw.com header.b=S40i6uXQ; arc=fail smtp.client-ip=52.101.127.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=quantatw.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quantatw.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=ilNLiKSkRq8vdmWnRC3k2E1/9Au9cAusXOBotxl6CO/qlIrbhpzemYJY4stZlcn5gyF83PMVhan8W+psaDmc9JuE/mIBeHwTI34nRx1e3KVgXM3F/igK2VYTeN4gxHywoX6fYzAvyjyyz2pNmSljgvOBh7eGEs2iPQpLpQkhTUWpPzWKU95RFs41Qyn1okqyPXv7FuxHMD64gy5wfzfEaFVcYzIuWY/2cS2RbqOAiXaIsVmhKt/LwAJ719xCAjmfo2W5qri2tECXUiknqWzsDAkFuCBvqpWKRA3eLqLKrn0ByOJ921mU8c7s9U2RQHZqrsDLS8/CTn4cy5OLMHyQDA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
+ b=K5f2O2wwoodf6dnQjOWqFf5yMuPcxlAWGHMP3lyWYJ9/bhiNpZq/w9MTv9vdlc2PrOwWDakBHy781Cg/O5ItQCzoiKmOLTRzKEjlJ9t1Bouszjco1SaVpUwfp7lFX/3EsjZJ6HpEwNLEeH6+AsSV8wLJ6Uh89s6RHU5RJTuF++asedAVe7qGvHXPx+gayXW4QQ0JgcVfhnu/fpe0paSLHeedQjz2ohyajGKdN6xuaHNkLDiQO5LMNTBS08Wl5YUU07ZMigITXd6py3AuIIeaPFdiUZfYcVPT6P/HCKxdNPsz61XBH+4Jme2tnGTeIj2Q/0jtmx0eRetOat0254YPcg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=quantatw.com; dmarc=pass action=none header.from=quantatw.com;
+ dkim=pass header.d=quantatw.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quantatw.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=b+Iu5srfvlSrKQApJNparhjUP0P50O9qi1Yt6y4Z0JM=;
+ b=S40i6uXQPeEen6R6Atyf/rsBPjQHlNXg/Tt2ftgCblEbrTk9EetvYtPnkjIWLqAqM6uQdh2O2tho4xf/r6YNRcR67gEUGGTwrj4If/Mku1lAR5Wnh92Bn3e4etTskl7MiMbuWw08gexhCzLb1zyjXACTwsitYfx8I1rmSNyZFg5G9LwwFku4/bIvA75RhHzNFa5QK/vyNs7ymqBrooW/om62MIwqXgzzKDI81GTiEQpNCuaruwbAEyLX3qTIMhr1RAXxa4KoxFqYhmP6zfWg9+krsRzAMnKcnwA+G0s4VprC1mG5fCfsaSG6QH5juUKT7px4wLGHz+pdWgxrssUaUg==
+Received: from KL1PR04MB7709.apcprd04.prod.outlook.com (2603:1096:820:13a::5)
+ by SG2PR04MB5890.apcprd04.prod.outlook.com (2603:1096:4:1b9::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
+ 2025 14:49:42 +0000
+Received: from KL1PR04MB7709.apcprd04.prod.outlook.com
+ ([fe80::7476:4a70:cc28:6143]) by KL1PR04MB7709.apcprd04.prod.outlook.com
+ ([fe80::7476:4a70:cc28:6143%4]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
+ 14:49:42 +0000
+From: =?utf-8?B?UC4gSy4gTGVlICjmnY7mn4/lr6wp?= <P.K.Lee@quantatw.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>, "P.K. Lee" <pkleequanta@gmail.com>,
+	"robh@kernel.org" <robh@kernel.org>, "krzk+dt@kernel.org"
+	<krzk+dt@kernel.org>, "conor+dt@kernel.org" <conor+dt@kernel.org>,
+	"joel@jms.id.au" <joel@jms.id.au>, "andrew@codeconstruct.com.au"
+	<andrew@codeconstruct.com.au>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-aspeed@lists.ozlabs.org"
+	<linux-aspeed@lists.ozlabs.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "patrick@stwcx.xyz" <patrick@stwcx.xyz>
+CC: =?utf-8?B?SmVycnkgTGluICjmnpflqIHlro8p?= <Jerry.Lin@quantatw.com>,
+	=?utf-8?B?SmFzb24gSHN1ICjlvpDkvbPnrJkp?= <Jason-Hsu@quantatw.com>,
+	=?utf-8?B?WWFuZyBDaGVuICjpmbPpmb0p?= <Yang.Chen@quantatw.com>
+Subject: RE: [External]  Re: [PATCH v10 1/2] dt-bindings: arm:aspeed add Meta
+ Ventura board
+Thread-Topic: [External]  Re: [PATCH v10 1/2] dt-bindings: arm:aspeed add Meta
+ Ventura board
+Thread-Index: AQHcAu8I/fhoBm7Ye02W3MqI8IV9+bRN3+ww
+Date: Fri, 1 Aug 2025 14:49:42 +0000
+Message-ID:
+ <KL1PR04MB7709935954C0100A8296D078DF26A@KL1PR04MB7709.apcprd04.prod.outlook.com>
+References: <20250801141131.2238599-1-pkleequanta@gmail.com>
+ <20250801141131.2238599-2-pkleequanta@gmail.com>
+ <6452a85c-0b90-4c46-9685-5cd6886dca15@kernel.org>
+In-Reply-To: <6452a85c-0b90-4c46-9685-5cd6886dca15@kernel.org>
+Accept-Language: zh-TW, en-US
+Content-Language: zh-TW
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=quantatw.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: KL1PR04MB7709:EE_|SG2PR04MB5890:EE_
+x-ms-office365-filtering-correlation-id: 2cc30730-9a5c-4db4-af1b-08ddd10aa652
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|1800799024|366016|376014|7416014|921020|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?eHh4NTJwcGFOZnEwRC84aUdRVUZZSEpEbi9rVDk3dlVWeVRPNEMrcmV1b1JP?=
+ =?utf-8?B?bmxhRHR1WmtOYWpkYzZKWjkreXBLM0J2WW9sbXQwZ2RldlE2NmhUa0o2ZWZX?=
+ =?utf-8?B?dk9mYjdyMnhGUTVnajEzMzJOemNaYWVXdXhwU1FzNGFrWGliWituSFhWc09r?=
+ =?utf-8?B?WlljRllJOEd1M2hVa2tadkx4L3Y0Ty9Rbk5TRkR3NWFaUGd2b2U2d0xsUG5z?=
+ =?utf-8?B?Nm84VndsQWtwalFZVVY0MjM2UVlPNzRXTEtzQUphU01SS3FMVFRTbFJPYVVk?=
+ =?utf-8?B?SGk2T2IwYXcxc2Z3Z1IrS3RLckZLNVo4U0t6ZzZUR3d0Um1vNGtyUy9UcTBa?=
+ =?utf-8?B?SzQwb3AySlo1OVpwbEw0YWVRTEZPdENFUzhOL2lmc3ZucVhGWjFxalV0N1B1?=
+ =?utf-8?B?TkVqRlBwdi9Dcll1YlFDY1RST1cybDlWYm9oMTdnRUR6RmRNNGYyeHRTMjRt?=
+ =?utf-8?B?TkcyMjJDKzNhTDNtbVBrT2M5V2dIL08wdndseThBbUwzakZvLzBVRWl3Z0xI?=
+ =?utf-8?B?ZjhaYWk4bkRFWHQ4Ump2VW1oNzh4MncwS1Bmakg4VXRJcjRocmt6RmpVeVg1?=
+ =?utf-8?B?Yi80SFJnSWF0YVMwbFFwY0FkL3JoUVA4aDM0VytZZ1BkZXczdE92a3RuSmdG?=
+ =?utf-8?B?TnRvb1RzWWQyYzIxcUpTZUp0c1hZa3JZTXZSMWQ2V0YydEI3OVloN3ZjUkxi?=
+ =?utf-8?B?ejBWN0IzN3VTWEhiSU5ZL2pBckl3ODkxaG9tK2Z2SHhQYytVRTlPdWlBK1VC?=
+ =?utf-8?B?L3BBNG5FZ1J4SWRxbWZEQ3MvMmxyVDZZVkdFNk5Zd3hyU1BnRXUwQWFaYVZ5?=
+ =?utf-8?B?aDFxelFOVEM1M1RLSnZTVmFEMmhrMWFCWFFaQThpTkY5WWo1TzNXOFV1TnFY?=
+ =?utf-8?B?UlM3c0pEM1VqbWkxRE1wK3NUN0ZSbnZSMFc4bGhWMHhZOStualFRNUxWZXpo?=
+ =?utf-8?B?RE1NNWdDdk5qQUxQYTJRaEpneUlWbWRPdVdGZjMrbTZ4blE3SENiNTBTcDFt?=
+ =?utf-8?B?RzErZnVoVUgwZGQweGttWVVuODFrZFZzWGlHUUJIQ0F1WHVFZUNGTjdRMytq?=
+ =?utf-8?B?dVhlSkM5bDRrcnhrZzhzYTl1UUt1TUV6MjVrVU5SYTdEVUwyeUtUM1FXbTBU?=
+ =?utf-8?B?MXJYT3dWeExYcnNzT2RQRS9maGlBUkoydW9VTEI1WnNIY1VZZ2tCNURNdWVG?=
+ =?utf-8?B?RFJnMUlBM3BHY1BhOWNnSG44MkVoVUZWTmp3VDhobDRIeFVtelYzV3ozUjhI?=
+ =?utf-8?B?blJTcmRVM3Yxc1JBbFQwZ09KUG5FRm5tYzFTODZYOW15c1pIOERKSCtFN1B2?=
+ =?utf-8?B?c0g2K3VvbytzN0RhRHEvcDkrVXp1MFpFREszcXBveTBueWllK1ZScldUY0x5?=
+ =?utf-8?B?ajQ0bHR0Q0FhdHBHbHRFVDFvQUVTWHp3VGhJVTh2UTEvUTVWVmo1L2FWOTlt?=
+ =?utf-8?B?b0RZNDFiMENpdjBPNkNBNDFuTHFJM2lpYXdhUjJOQnBOOHpUWC9wS04rSlJM?=
+ =?utf-8?B?QjB2U1FoUEtybUVNL1ROanNkb1pxTXZlaTBOdmNTNStxRDkvODRmZWhKNzNB?=
+ =?utf-8?B?R01UaDIvaVJEOXJ0a3JmSjU1NFJrZjhlVW1QYnZtcDJZczNRK3Zsa2d5VkE0?=
+ =?utf-8?B?TFNEYWhLZlZ2VE10Z0xKQnM4eXIyQWx4Z1hhSDR6T0JhMlRaVXNWNCtxaWZo?=
+ =?utf-8?B?LzlLelViTmh0V2R0OUN5SllqU09aYkVhQUVxRWlheHpXam9iaEJraW5HcUxG?=
+ =?utf-8?B?VGpia3QxUUh4elZKVWNNTWJ6Z1lyZnN3NXIxZWlja0o0eXJzekM5SmxDN0Ra?=
+ =?utf-8?B?LzR1SmRHbDJpTWw2Nm1kOVZwWnRsYlJnMmdJSHhBcFZsK2x0aS82bHRQQTh0?=
+ =?utf-8?B?bEI3T1RMV1BmdnBhakIxeExnMlJRMmx5L3pqSExQYktEcFBxcVBndjZONXAy?=
+ =?utf-8?B?YUxManFvN2lhSHdWLzU5WWc0My9qTjBWaXozamZUMG1PQ1JPaDdRa0FRQWxM?=
+ =?utf-8?Q?klnPFyKeClMIH4tRK6sAPek/oq3Qas=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-tw;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:KL1PR04MB7709.apcprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?OFQzczFYQ2s0WUNhdmFBSmxyMUJCaVlJRjFWNFJCcWVYVXdTSUpNeHorSTQy?=
+ =?utf-8?B?YzhVNzNqZEFXTWgvV0Q0ckFOOVNsVWwreG5JUVcrc1M1R0hDSlRkN1Rva1Fy?=
+ =?utf-8?B?dGwyemdQcmoxdjBPMTB5NkRIR1k5Vjdwc0VBbmlxNlN4Y3lYL1RPWjdMSTZY?=
+ =?utf-8?B?WUpMZXdQSWxvMmZITlV0NlI4eHk1bmR1d3FjUG9Ka0x1L3pBMVFVRk9NeVNs?=
+ =?utf-8?B?aVlhZEVpTEk1OTYza1REWnBrVnUyWlNacWt4U0hQdjU0a0Q4NVFZcEFNeTIz?=
+ =?utf-8?B?MmJaYStZWnFxdys3eUlBanh2QXJWTXJnUFBtNXV1Q3lxVitYTExxcFcrY09K?=
+ =?utf-8?B?UGVML2QvWllsK0hJVHF2T1RwRzhFVHluLzAxTW5pQ0ptUmROMHBmY2ZGcHlU?=
+ =?utf-8?B?SDBIMDhTUXh3TldlbkExWUFheEhoaDJKaEFXa2FsTzM4N3Q1NUhVcldpSzNO?=
+ =?utf-8?B?TWR5SGdQZ0tqZ1VsdGZHODI5Q3dXT2s2cEIvV202TWxTaHMzeDFsNFQ3UXpY?=
+ =?utf-8?B?UTdBcmV4N2NUTVZoanBwbG93YmJrRm5ENUY3QlVuMUhLRWRDaDVNaHlsMTlL?=
+ =?utf-8?B?VzdYb1lZcjVhdzV3cW93THBWOFJXcGVXcDB1QWRYeE54WjQ1YWY3UGdmamlk?=
+ =?utf-8?B?RnZPWFE0K0tVVnk4SXExRVR1dmM2SVA2Y1N2YWpaanZBVEY1M1RRcmxFZ29p?=
+ =?utf-8?B?RG9hUHRScDN0UkhxYldqcCtrdjc2cGV5UXFNUFIvSHBiVVlKTWpITlZVdHdj?=
+ =?utf-8?B?d0NHeFVVZ2d1RlhaMTBjT1l6L0JUakFSRitUaWswNXdkZXBCYndkWU9CSWNJ?=
+ =?utf-8?B?UWZEa01mZDU0TnhyVVdOQURGRUpEbHdNUVZ5ZXgwU1Y0TlZaMnBvK29LRndN?=
+ =?utf-8?B?dlk0UFZoZ2I4a1kxVlJQMURwRGxTMG0xQkN6ZjF6dDhnbllLSGN0aDRTWHpE?=
+ =?utf-8?B?WjJmbFRKSmFSWWV2SVNlZHRmUlFpcVpCdUtLZ0NJeWIyaUhMZnhjWCs1eWZ3?=
+ =?utf-8?B?U0xpOGpPUjdJTWg3dEVRYWJ1L0tTNktSbTlmT1FIQW15MmpQMWJ4Ris4UGJR?=
+ =?utf-8?B?REtBRUdEcXRiYmZKTFozMVRCYkkyME5tZDlVOTR2MFdXWXJGeE5ma1VieFNx?=
+ =?utf-8?B?ZVpVV09QbEw3bzc2Ty9JSjJtMy8xa29UWHdIbEUvZFVPV2RpakJwOTlKSk5O?=
+ =?utf-8?B?d1hKcFdPWDRnSWpsS3RUakgxS1lYSkxiRmxNL1hxT293MmhVdytER0RlMSth?=
+ =?utf-8?B?YVE4bGJUWkozSFRtSnZyeGFVeGxUZUpqNy9TRXRGdGVCMGdjcEVFN1UxM0tx?=
+ =?utf-8?B?a2FHL0RoeWhqUG8yS2dNbFY4M0tSUnliWnFCSFVRdXlBQmdzZ05oU2ZEK3hJ?=
+ =?utf-8?B?NzFDRy9EZjdTL0hjOFhBYjJvZ1ovdElPbFN6aUliQlc2TTk3RWIrUlEwQjZu?=
+ =?utf-8?B?QktNdVpuaTRlQW9nOW5GcmdMU084K0lublU1emhxQ3d4cy9mOFdDaTdEZnVZ?=
+ =?utf-8?B?VytYSzdwMEYyMytHZ25JZGQ2MHZmbmgzNGVZVFJUK2oyeCszcXpNclNPbGJZ?=
+ =?utf-8?B?L2JpRUdSMHZ3WEhWOWRJcmZSOWh2MXF5UXNWd0F3VmpURkVZQTZ1bTg1QmxS?=
+ =?utf-8?B?UUtQQkVhL3IwbzZPay8reVI5UDdJQVhJT25hVWlUanhROGxoWDZ1UE5RS29x?=
+ =?utf-8?B?R1pHT1hVRFVrRTM0NWN2QUVBblYxK3ZXdmxQMWUxQUlmaURHZklNL3RSelhh?=
+ =?utf-8?B?ZXFRYXVaS09mN0xnY3Jyc20zTUJNWml0TlVRR1I3aHJMMWlqNTlzNW04a1oy?=
+ =?utf-8?B?eUw4U25icE04SXJLdlRsejNPbEpTSUtxUGNOVndqa2FjMzhVbCtNNE5udWxs?=
+ =?utf-8?B?dXEyMXkyUmVYRVNPRU9LR2hIWFFzRElTWDRnemFzTzJYVjBaMjN6d3luQk9F?=
+ =?utf-8?B?WGhUVkVJK0YxMXZXdkpMbmM5N3lHb2tDZ0FRV1pHd2JQSjhOeUFHaGJLTHJZ?=
+ =?utf-8?B?UTRBejRuTHBhQ1N1RXpJYlV6bzNsa2M1c2FONUtEanZpd0ZNVEhvWkQ0SmV4?=
+ =?utf-8?B?MkprbzkvMmN0YkFKdWFGVTRZaFFISmlEWnpBM3NpTUU4b3I1aEI1eHgwSDlR?=
+ =?utf-8?Q?dLUmbTO7JnT6PdTf6luUgEqGt?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] accel/amdxdna: Unify pm and rpm suspend and resume
- callbacks
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com,
- mario.limonciello@amd.com
-References: <20250731163550.960686-1-lizhi.hou@amd.com>
-Content-Language: en-US
-From: "Falkowski, Maciej" <maciej.falkowski@linux.intel.com>
-In-Reply-To: <20250731163550.960686-1-lizhi.hou@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: quantatw.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: KL1PR04MB7709.apcprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2cc30730-9a5c-4db4-af1b-08ddd10aa652
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 14:49:42.6309
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 179b0327-07fc-4973-ac73-8de7313561b2
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: +GEOQgdhlnxgxAAPSYytYer7DFsEr8WrjMu7ZrwvaP0nkSZv20vlLwoKfnPTRu9Ul0Uxbq9+RtzicV8YJM42TA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SG2PR04MB5890
 
-On 7/31/2025 6:35 PM, Lizhi Hou wrote:
-
-> The suspend and resume callbacks for pm and runtime pm should be same.
-> During suspending, it needs to stop all hardware contexts first. And
-> the hardware contexts will be restarted after the device is resumed.
->
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
-> ---
->   drivers/accel/amdxdna/aie2_ctx.c        | 32 +++++++----
->   drivers/accel/amdxdna/aie2_pci.c        | 41 ++++++++++++--
->   drivers/accel/amdxdna/aie2_pci.h        |  4 +-
->   drivers/accel/amdxdna/amdxdna_ctx.c     | 26 ---------
->   drivers/accel/amdxdna/amdxdna_ctx.h     |  2 -
->   drivers/accel/amdxdna/amdxdna_pci_drv.c | 74 +++----------------------
->   drivers/accel/amdxdna/amdxdna_pci_drv.h |  4 +-
->   7 files changed, 69 insertions(+), 114 deletions(-)
->
-> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-> index 2cff5419bd2f..7444117f0e17 100644
-> --- a/drivers/accel/amdxdna/aie2_ctx.c
-> +++ b/drivers/accel/amdxdna/aie2_ctx.c
-> @@ -141,9 +141,11 @@ static void aie2_hwctx_wait_for_idle(struct amdxdna_hwctx *hwctx)
->   	dma_fence_put(fence);
->   }
->   
-> -void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx)
-> +void aie2_hwctx_suspend(struct amdxdna_client *client)
->   {
-> -	struct amdxdna_dev *xdna = hwctx->client->xdna;
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	struct amdxdna_hwctx *hwctx;
-> +	unsigned long hwctx_id;
->   
->   	/*
->   	 * Command timeout is unlikely. But if it happens, it doesn't
-> @@ -151,15 +153,21 @@ void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx)
->   	 * and abort all commands.
->   	 */
->   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	aie2_hwctx_wait_for_idle(hwctx);
-> -	aie2_hwctx_stop(xdna, hwctx, NULL);
-> -	hwctx->old_status = hwctx->status;
-> -	hwctx->status = HWCTX_STAT_STOP;
-> +	mutex_lock(&client->hwctx_lock);
-> +	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
-> +		aie2_hwctx_wait_for_idle(hwctx);
-> +		aie2_hwctx_stop(xdna, hwctx, NULL);
-> +		hwctx->old_status = hwctx->status;
-> +		hwctx->status = HWCTX_STAT_STOP;
-
-nit: You might refactor this status shift for maintainability to 
-something like
-aie2_hwctx_shift_status(HWCTX_STAT_STOP);
-
-But that is just a nit, otherwise
-
-Reviewed-by: Maciej Falkowski <maciej.falkowski@linux.intel.com>
-> +	}
-> +	mutex_unlock(&client->hwctx_lock);
->   }
->   
-> -void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx)
-> +void aie2_hwctx_resume(struct amdxdna_client *client)
->   {
-> -	struct amdxdna_dev *xdna = hwctx->client->xdna;
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	struct amdxdna_hwctx *hwctx;
-> +	unsigned long hwctx_id;
->   
->   	/*
->   	 * The resume path cannot guarantee that mailbox channel can be
-> @@ -167,8 +175,12 @@ void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx)
->   	 * mailbox channel, error will return.
->   	 */
->   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	hwctx->status = hwctx->old_status;
-> -	aie2_hwctx_restart(xdna, hwctx);
-> +	mutex_lock(&client->hwctx_lock);
-> +	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
-> +		hwctx->status = hwctx->old_status;
-> +		aie2_hwctx_restart(xdna, hwctx);
-> +	}
-> +	mutex_unlock(&client->hwctx_lock);
->   }
->   
->   static void
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index 3474a8d4e560..8b6f17430d3a 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -440,6 +440,41 @@ static int aie2_hw_start(struct amdxdna_dev *xdna)
->   	return ret;
->   }
->   
-> +static int aie2_hw_suspend(struct amdxdna_dev *xdna)
-> +{
-> +	struct amdxdna_client *client;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	list_for_each_entry(client, &xdna->client_list, node)
-> +		aie2_hwctx_suspend(client);
-> +
-> +	aie2_hw_stop(xdna);
-> +	mutex_unlock(&xdna->dev_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aie2_hw_resume(struct amdxdna_dev *xdna)
-> +{
-> +	struct amdxdna_client *client;
-> +	int ret;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	ret = aie2_hw_start(xdna);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "Start hardware failed, %d", ret);
-> +		goto unlock;
-> +	}
-> +
-> +	list_for_each_entry(client, &xdna->client_list, node)
-> +		aie2_hwctx_resume(client);
-> +
-> +unlock:
-> +	mutex_unlock(&xdna->dev_lock);
-> +
-> +	return ret;
-> +}
-> +
->   static int aie2_init(struct amdxdna_dev *xdna)
->   {
->   	struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
-> @@ -901,8 +936,8 @@ static int aie2_set_state(struct amdxdna_client *client,
->   const struct amdxdna_dev_ops aie2_ops = {
->   	.init           = aie2_init,
->   	.fini           = aie2_fini,
-> -	.resume         = aie2_hw_start,
-> -	.suspend        = aie2_hw_stop,
-> +	.resume         = aie2_hw_resume,
-> +	.suspend        = aie2_hw_suspend,
->   	.get_aie_info   = aie2_get_info,
->   	.set_aie_state	= aie2_set_state,
->   	.hwctx_init     = aie2_hwctx_init,
-> @@ -910,6 +945,4 @@ const struct amdxdna_dev_ops aie2_ops = {
->   	.hwctx_config   = aie2_hwctx_config,
->   	.cmd_submit     = aie2_cmd_submit,
->   	.hmm_invalidate = aie2_hmm_invalidate,
-> -	.hwctx_suspend  = aie2_hwctx_suspend,
-> -	.hwctx_resume   = aie2_hwctx_resume,
->   };
-> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-> index 385914840eaa..6b21909841e0 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.h
-> +++ b/drivers/accel/amdxdna/aie2_pci.h
-> @@ -288,8 +288,8 @@ int aie2_sync_bo(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->   int aie2_hwctx_init(struct amdxdna_hwctx *hwctx);
->   void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx);
->   int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size);
-> -void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx);
-> -void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx);
-> +void aie2_hwctx_suspend(struct amdxdna_client *client);
-> +void aie2_hwctx_resume(struct amdxdna_client *client);
->   int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->   void aie2_hmm_invalidate(struct amdxdna_gem_obj *abo, unsigned long cur_seq);
->   void aie2_restart_ctx(struct amdxdna_client *client);
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-> index be073224bd69..b47a7f8e9017 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-> @@ -60,32 +60,6 @@ static struct dma_fence *amdxdna_fence_create(struct amdxdna_hwctx *hwctx)
->   	return &fence->base;
->   }
->   
-> -void amdxdna_hwctx_suspend(struct amdxdna_client *client)
-> -{
-> -	struct amdxdna_dev *xdna = client->xdna;
-> -	struct amdxdna_hwctx *hwctx;
-> -	unsigned long hwctx_id;
-> -
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	mutex_lock(&client->hwctx_lock);
-> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx)
-> -		xdna->dev_info->ops->hwctx_suspend(hwctx);
-> -	mutex_unlock(&client->hwctx_lock);
-> -}
-> -
-> -void amdxdna_hwctx_resume(struct amdxdna_client *client)
-> -{
-> -	struct amdxdna_dev *xdna = client->xdna;
-> -	struct amdxdna_hwctx *hwctx;
-> -	unsigned long hwctx_id;
-> -
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	mutex_lock(&client->hwctx_lock);
-> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx)
-> -		xdna->dev_info->ops->hwctx_resume(hwctx);
-> -	mutex_unlock(&client->hwctx_lock);
-> -}
-> -
->   static void amdxdna_hwctx_destroy_rcu(struct amdxdna_hwctx *hwctx,
->   				      struct srcu_struct *ss)
->   {
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
-> index f0a4a8586d85..c652229547a3 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
-> @@ -147,8 +147,6 @@ static inline u32 amdxdna_hwctx_col_map(struct amdxdna_hwctx *hwctx)
->   
->   void amdxdna_sched_job_cleanup(struct amdxdna_sched_job *job);
->   void amdxdna_hwctx_remove_all(struct amdxdna_client *client);
-> -void amdxdna_hwctx_suspend(struct amdxdna_client *client);
-> -void amdxdna_hwctx_resume(struct amdxdna_client *client);
->   
->   int amdxdna_cmd_submit(struct amdxdna_client *client,
->   		       u32 cmd_bo_hdls, u32 *arg_bo_hdls, u32 arg_bo_cnt,
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> index f2bf1d374cc7..fbca94183f96 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> @@ -343,89 +343,29 @@ static void amdxdna_remove(struct pci_dev *pdev)
->   	mutex_unlock(&xdna->dev_lock);
->   }
->   
-> -static int amdxdna_dev_suspend_nolock(struct amdxdna_dev *xdna)
-> -{
-> -	if (xdna->dev_info->ops->suspend)
-> -		xdna->dev_info->ops->suspend(xdna);
-> -
-> -	return 0;
-> -}
-> -
-> -static int amdxdna_dev_resume_nolock(struct amdxdna_dev *xdna)
-> -{
-> -	if (xdna->dev_info->ops->resume)
-> -		return xdna->dev_info->ops->resume(xdna);
-> -
-> -	return 0;
-> -}
-> -
->   static int amdxdna_pmops_suspend(struct device *dev)
->   {
->   	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	struct amdxdna_client *client;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	list_for_each_entry(client, &xdna->client_list, node)
-> -		amdxdna_hwctx_suspend(client);
->   
-> -	amdxdna_dev_suspend_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> +	if (!xdna->dev_info->ops->suspend)
-> +		return -EOPNOTSUPP;
->   
-> -	return 0;
-> +	return xdna->dev_info->ops->suspend(xdna);
->   }
->   
->   static int amdxdna_pmops_resume(struct device *dev)
->   {
->   	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	struct amdxdna_client *client;
-> -	int ret;
-> -
-> -	XDNA_INFO(xdna, "firmware resuming...");
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_resume_nolock(xdna);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "resume NPU firmware failed");
-> -		mutex_unlock(&xdna->dev_lock);
-> -		return ret;
-> -	}
->   
-> -	XDNA_INFO(xdna, "hardware context resuming...");
-> -	list_for_each_entry(client, &xdna->client_list, node)
-> -		amdxdna_hwctx_resume(client);
-> -	mutex_unlock(&xdna->dev_lock);
-> -
-> -	return 0;
-> -}
-> -
-> -static int amdxdna_rpmops_suspend(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	int ret;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_suspend_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> -
-> -	XDNA_DBG(xdna, "Runtime suspend done ret: %d", ret);
-> -	return ret;
-> -}
-> -
-> -static int amdxdna_rpmops_resume(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	int ret;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_resume_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> +	if (!xdna->dev_info->ops->resume)
-> +		return -EOPNOTSUPP;
->   
-> -	XDNA_DBG(xdna, "Runtime resume done ret: %d", ret);
-> -	return ret;
-> +	return xdna->dev_info->ops->resume(xdna);
->   }
->   
->   static const struct dev_pm_ops amdxdna_pm_ops = {
->   	SYSTEM_SLEEP_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume)
-> -	RUNTIME_PM_OPS(amdxdna_rpmops_suspend, amdxdna_rpmops_resume, NULL)
-> +	RUNTIME_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume, NULL)
->   };
->   
->   static struct pci_driver amdxdna_pci_driver = {
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> index ab79600911aa..40bbb3c06320 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> @@ -50,13 +50,11 @@ struct amdxdna_dev_ops {
->   	int (*init)(struct amdxdna_dev *xdna);
->   	void (*fini)(struct amdxdna_dev *xdna);
->   	int (*resume)(struct amdxdna_dev *xdna);
-> -	void (*suspend)(struct amdxdna_dev *xdna);
-> +	int (*suspend)(struct amdxdna_dev *xdna);
->   	int (*hwctx_init)(struct amdxdna_hwctx *hwctx);
->   	void (*hwctx_fini)(struct amdxdna_hwctx *hwctx);
->   	int (*hwctx_config)(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size);
->   	void (*hmm_invalidate)(struct amdxdna_gem_obj *abo, unsigned long cur_seq);
-> -	void (*hwctx_suspend)(struct amdxdna_hwctx *hwctx);
-> -	void (*hwctx_resume)(struct amdxdna_hwctx *hwctx);
->   	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->   	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
->   	int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
-Best regards,
-Maciej
+PiBPbiAwMS8wOC8yMDI1IDE2OjExLCBQLksuIExlZSB3cm90ZToNCj4gPiBGcm9tOiAiUC5LLiBM
+ZWUiIDxwLmsubGVlQHF1YW50YXR3LmNvbT4NCj4gPg0KPiA+IERvY3VtZW50IHRoZSBuZXcgY29t
+cGF0aWJsZXMgdXNlZCBvbiBNZXRhIFZlbnR1cmEuDQo+ID4NCj4gPiBTaWduZWQtb2ZmLWJ5OiBQ
+LksuIExlZSA8cC5rLmxlZUBxdWFudGF0dy5jb20+DQo+IA0KPiBTbyB5b3UganVzdCBpZ25vcmVk
+IGV2ZXJ5dGhpbmcgSSB3cm90ZT8NCj4gDQo+IEJlc3QgcmVnYXJkcywNCj4gS3J6eXN6dG9mDQoN
+Ck15IGFwb2xvZ2llcywgSSBvdmVybG9va2VkIHRoYXQuIEFwcHJlY2lhdGUgdGhlIHJlbWluZGVy
+Lg0KDQpCZXN0IHJlZ2FyZHMsDQpQLksuDQo=
 
