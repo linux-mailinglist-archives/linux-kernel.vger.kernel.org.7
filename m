@@ -1,176 +1,138 @@
-Return-Path: <linux-kernel+bounces-753257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50E0B180AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:05:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C40D9B180AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:06:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B07A173630
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:05:36 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3A43A722F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:06:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD66F23A993;
-	Fri,  1 Aug 2025 11:05:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 306DE238C29;
+	Fri,  1 Aug 2025 11:06:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jathTBlF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzPbsVC1"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F037160;
-	Fri,  1 Aug 2025 11:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5CC81FE451;
+	Fri,  1 Aug 2025 11:06:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754046324; cv=none; b=Xe+RgUQcabDGLt+5p7S/ZCAS99aE1ERTmyUJhHIaX04iRRM0lS+o2yr3R5WzGcSLtJPkZlW1KayynEHJPiMsAfP+Fnt5bL6FeV8OArrx1bMdMZDoQqRVH/YcpMXEayJx6IpZLBYb+QNnAyWo0Vi0hskjmQ4F2vLK9UNiAZXTZtw=
+	t=1754046367; cv=none; b=tIijeGfiQNhHSBWBMDvGKej75jT/ifOZLV0BXMSJY28O1O5gWYRbb+qTgY0SMeBT6zUWZ3vF63EpZ4au0Pg2jZjCABPkI1dKCYdOvdE1WckfpYectUfBUzQs1thbux4NFh7ZUudfmRKnuIes+RYh/vXFoVxs+ATqzg/G3M0v8eo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754046324; c=relaxed/simple;
-	bh=difHokwBktTQLgVwGBkJrWHShhZQ9E1oVaauNa7VNeE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hVBB/jqeP+QBjKqUk5bv/zq4BLr690cSJfoeiSYYXo0/SWU6MgFpX5h8IBuVEAoz8u+39EqPZfRfuIkpBv2/ghut1jr4krbBfcSI3H2/dfE83HMxaNZNRLGzqL3ASAcCIoRHLBiCLC97vIXD3DxurQ8MsbYaEs8Yt4i86nV1/CA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jathTBlF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16632C4CEF4;
-	Fri,  1 Aug 2025 11:05:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754046323;
-	bh=difHokwBktTQLgVwGBkJrWHShhZQ9E1oVaauNa7VNeE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jathTBlF7iNB+Cbbbv7Bp8B6REodF3f8dw7fmOFIiC+dZs0hemDJzvRtNduOKaUle
-	 vTB1fiiDyKwLK+zVQk2HdErEi/cMItC5fvDRXoqxgeFVxWd0oW3EIIZe0dkT4elBV5
-	 9eXfMv+4Xj5zum0UeONQ0DcgcEHNruLxbtq/TSHdt6TJ5Rxa2d/10JdiYPhazEWpUK
-	 REIULTqWqdNdmXZbo7SHopLECBdKFJ5tvp9k3GYSHaykwIFg+C+xdptN6jWK+1FNIM
-	 R8+3Jt8spyvo83SbsLV0ds+/+W7NDOsD9Cqk5P2juo5OeUguL2R52jKC2VOl1HDyt6
-	 R+bHMMYu10i1Q==
-Date: Fri, 1 Aug 2025 12:05:18 +0100
-From: Simon Horman <horms@kernel.org>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net 1/3] net: hibmcge: fix rtnl deadlock issue
-Message-ID: <20250801110518.GN8494@horms.kernel.org>
-References: <20250731134749.4090041-1-shaojijie@huawei.com>
- <20250731134749.4090041-2-shaojijie@huawei.com>
- <20250801100520.GJ8494@horms.kernel.org>
- <15388e7f-45a8-4356-88c9-45848c3a296f@huawei.com>
+	s=arc-20240116; t=1754046367; c=relaxed/simple;
+	bh=9Mw0t40fjQ76HH/OAgll6gVUTRT1TaQS8IoUhIok9tE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e9FhmCSDuIkao9JaLBFnlTllUy3jXZvCTbbswdr55wAhO1gkFb80u7NeEpoChyViK95C/G5s4kPrwCqLwmFR/1ceBBhwLwfpudyKDN/nq9iYvXZaRnJHL67WNjPNbgSu2+Sw9aqTSKeT2Kn2R63bHParqVpN5WQsktzshu+SN5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzPbsVC1; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4555f89b236so12530785e9.1;
+        Fri, 01 Aug 2025 04:06:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754046364; x=1754651164; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=9Mw0t40fjQ76HH/OAgll6gVUTRT1TaQS8IoUhIok9tE=;
+        b=LzPbsVC103ou0ABQ1b2ZKne1VyRK3At9902o89oNzF/aZ/WWL78yt+8QrDAWjte+tu
+         cZlPo27prjiWPLVz0AqF6yl3Y9vbyeH84Q8lLc1OpEpWI2eRByxXWo6HPECIY20nbZuX
+         Ldph3pBENAKeSK59Zd2MQcWF0DyNhezvkz3TDZWOZcz962Btyd6wrZs4C57r4WfcU2AS
+         X1l4YP1fxnCjHyQr7Jv4ojU2XcZHyRk7CRCF/4B8SUAyR8uriTGcJVvlPprC3mp0uO6r
+         KOXhDN+7/xQJQFiMz0vr67cW32bZ1LvfnBpddJQ+x0I5+lNhxaSxO8Izk3zyTQ6lDTQY
+         tb5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754046364; x=1754651164;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=9Mw0t40fjQ76HH/OAgll6gVUTRT1TaQS8IoUhIok9tE=;
+        b=N7Z8uuQdtqBcevtxjkz+BaG9cXFkDOyyj5B7th/uf06ebY2R/fL6R1DLS6kHtkIr2x
+         0vc9CvVroqXpm1AOHlD2vFL9GYLxyjDkqWjGXDtYWH4AvGHOzFXEVLPzHEQQFKVe9KcS
+         iDw9KBgs7QMF+3UgeucADt8IYttiJ3jAGIAV5cPz6K1JpOVrR1fZdl+bwxd4jtNVUkbZ
+         +LxqVxF4ONzxLndv26IqJRUhnzSOlLC8e8t3cM3ESlkSPTyZjHRebHeMCN5fmMGIZg9U
+         GBrVcp1JuFL3THD1pf0Uw3+QjqzfeYS+nRgjW2MOzcbbzN8zSIXNdV4EY6HBkZjofmV1
+         IUqg==
+X-Forwarded-Encrypted: i=1; AJvYcCUWiJPnPxOvvSoIQRCLYd/m2c65bJIyC2MeplsdgpbKfhoJZ7G5BIFVO8jKLxN7dWmGrJ0oNlY1h2Bt@vger.kernel.org, AJvYcCUnhLQykJNiWRy0MsUwHhx21sph7fI51i1VfK6pzjffmZFG4rY5c+l46bSeL6x2V1eHs6DlSRTFqhCOVuba910v28g=@vger.kernel.org, AJvYcCWQ0ilRjb5C8v3yYGELWMwY5vSrN9VNAQBfRqf1aJYKO85aB7QO5JG7dZVgG9R3GrChfJCUdgtyrWwJ7bQc@vger.kernel.org, AJvYcCWfm7M8MWGHUFsRXhgi40yth1HJizZanQ6DGLIRFjXO6prjgMVbKdPPjEv/IEbQMv1E5fO10wg3k0LP6KraQr4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy1tAYpbmlYH+W2Xu8jVEOaAC2BOmY9bLvmtreCg1qkNjrE4CE
+	eiv0S8Eelks2A+W2OdWYUq2w0VQXAtFPAP8bMvlXUAsJgT68z4+JXo6yV6zBeajfzjm4LlA9Rks
+	srJqJW8KLDU1RYOBLqD4Q1rfy0kf1VzY=
+X-Gm-Gg: ASbGncvCHL+j5K/hn6dJi0o550hLv9Djyh4pY2y0bkKPqoZAMDaVyI5VkTDcsD7Y0jB
+	EgMguMBS/Qy45RdoLaRgieZq9n/stNgTrOiUE3pyV8f7CBq8tYak09l7OSH3GMPm0sUJ7QIBMyr
+	Gf7ZD/JN7ITil2Dn2dM6AESPMKygRmXfgOQTfAdxWhF3LezgksjIrt8ba+uHdcs/frVVfc0kGJe
+	yzDmyaABQ==
+X-Google-Smtp-Source: AGHT+IF6rbYUAUvHLGMWrspjPR8qmEYWgCvQGOHemjzTIoQpAQgpNsCVesAlJQuzFTMxOvVJAMW77LFWCD8as4pka98=
+X-Received: by 2002:a05:600c:c493:b0:44a:b478:1387 with SMTP id
+ 5b1f17b1804b1-458aa451b6amr23386495e9.17.1754046363760; Fri, 01 Aug 2025
+ 04:06:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <15388e7f-45a8-4356-88c9-45848c3a296f@huawei.com>
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com> <aIw-P6zkQSOhvYJW@shikoro>
+In-Reply-To: <aIw-P6zkQSOhvYJW@shikoro>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 1 Aug 2025 12:05:35 +0100
+X-Gm-Features: Ac12FXwdhscTbtCEXx15hTQ8-vO126tqeuyAQYiMx1pJw-10W5cz9cIf6jQQ0kI
+Message-ID: <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025 at 06:44:36PM +0800, Jijie Shao wrote:
-> 
-> on 2025/8/1 18:05, Simon Horman wrote:
-> > On Thu, Jul 31, 2025 at 09:47:47PM +0800, Jijie Shao wrote:
-> > > Currently, the hibmcge netdev acquires the rtnl_lock in
-> > > pci_error_handlers.reset_prepare() and releases it in
-> > > pci_error_handlers.reset_done().
-> > > 
-> > > However, in the PCI framework:
-> > > pci_reset_bus - __pci_reset_slot - pci_slot_save_and_disable_locked -
-> > >   pci_dev_save_and_disable - err_handler->reset_prepare(dev);
-> > > 
-> > > In pci_slot_save_and_disable_locked():
-> > > 	list_for_each_entry(dev, &slot->bus->devices, bus_list) {
-> > > 		if (!dev->slot || dev->slot!= slot)
-> > > 			continue;
-> > > 		pci_dev_save_and_disable(dev);
-> > > 		if (dev->subordinate)
-> > > 			pci_bus_save_and_disable_locked(dev->subordinate);
-> > > 	}
-> > > 
-> > > This will iterate through all devices under the current bus and execute
-> > > err_handler->reset_prepare(), causing two devices of the hibmcge driver
-> > > to sequentially request the rtnl_lock, leading to a deadlock.
-> > > 
-> > > Since the driver now executes netif_device_detach()
-> > > before the reset process, it will not concurrently with
-> > > other netdev APIs, so there is no need to hold the rtnl_lock now.
-> > > 
-> > > Therefore, this patch removes the rtnl_lock during the reset process and
-> > > adjusts the position of HBG_NIC_STATE_RESETTING to ensure
-> > > that multiple resets are not executed concurrently.
-> > > 
-> > > Fixes: 3f5a61f6d504f ("net: hibmcge: Add reset supported in this module")
-> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> > > ---
-> > >   drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 13 ++++---------
-> > >   1 file changed, 4 insertions(+), 9 deletions(-)
-> > > 
-> > > diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-> > > index 503cfbfb4a8a..94bc6f0da912 100644
-> > > --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-> > > +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
-> > > @@ -53,9 +53,11 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
-> > >   {
-> > >   	int ret;
-> > > -	ASSERT_RTNL();
-> > > +	if (test_and_set_bit(HBG_NIC_STATE_RESETTING, &priv->state))
-> > > +		return -EBUSY;
-> > >   	if (netif_running(priv->netdev)) {
-> > > +		clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
-> > >   		dev_warn(&priv->pdev->dev,
-> > >   			 "failed to reset because port is up\n");
-> > >   		return -EBUSY;
-> > > @@ -64,7 +66,6 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
-> > >   	netif_device_detach(priv->netdev);
-> > >   	priv->reset_type = type;
-> > > -	set_bit(HBG_NIC_STATE_RESETTING, &priv->state);
-> > >   	clear_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
-> > >   	ret = hbg_hw_event_notify(priv, HBG_HW_EVENT_RESET);
-> > >   	if (ret) {
-> > > @@ -84,10 +85,8 @@ static int hbg_reset_done(struct hbg_priv *priv, enum hbg_reset_type type)
-> > >   	    type != priv->reset_type)
-> > >   		return 0;
-> > > -	ASSERT_RTNL();
-> > > -
-> > > -	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
-> > >   	ret = hbg_rebuild(priv);
-> > > +	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
-> > Hi Jijie,
-> > 
-> > If I understand things correctly, then with this patch the
-> > HBG_NIC_STATE_RESETTING bit is used to prevent concurrent execution.
-> > 
-> > Noting that a reset may be triggered via eththool, where hbg_reset() is
-> > used as a callback, I am concerned about concurrency implications for lines
-> > below this one.
-> 
-> Yes, just like the following, it can lead to reset and net open concurrency.
-> ===========
-> 
->      reset1                                              reset2                               open
-> 
-> set_bit HBG_NIC_STATE_RESETTING
-> 
->      netif_device_detach()
->      resetting...
-> 
-> clear_bit HBG_NIC_STATE_RESETTING
->                                               set_bit HBG_NIC_STATE_RESETTING
->                                                    netif_device_detach()
-> 
->       netif_device_attach()
->                                                          resetting...                     hbg_net_open()
->                                                                                           hbg_txrx_init()
-> 
->                                               clear_bit HBG_NIC_STATE_RESETTING
->                                                       netif_device_attach()
-> 
-> ============
-> Thank you for your reminder.
-> I will fix it in V2
+Hi Wolfram,
 
-Likewise, thanks.
+Thank you for the review.
 
--- 
-pw-bot: cr
+On Fri, Aug 1, 2025 at 5:10=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Update the watchdog minimum timeout value to be derived from
+> > `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+> > consistent minimum timeout in seconds.
+>
+> I don't understand this change. Why is the _minimum_ timeout based on
+> the _maximum_ heartbeat?
+>
+The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+ensure the minimum watchdog period (in seconds) is compatible with the
+underlying hardware.
 
+max_hw_heartbeat_ms is calculated as:
+max_hw_heartbeat_ms =3D (1000 * 16384 * cks_div) / clk_rate;
+
+This value varies by SoC:
+ RZ/T2H: cks_div =3D 8192, clk =E2=89=88 62.5 MHz -> max_hw_heartbeat_ms ~ =
+2147ms
+ RZ/V2H: cks_div =3D 256, clk =E2=89=88 240 MHz -> max_hw_heartbeat_ms ~ 17=
+4ms
+
+Since min_timeout is in seconds, setting it to:
+min_timeout =3D DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+
+ensures:
+The minimum timeout period is never less than what the hardware can support=
+.
+- For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+- For V2H, it=E2=80=99s just 1s (174ms -> 1s).
+
+Cheers,
+Prabhakar
 
