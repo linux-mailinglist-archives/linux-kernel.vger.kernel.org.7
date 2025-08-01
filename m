@@ -1,175 +1,157 @@
-Return-Path: <linux-kernel+bounces-753132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 754CEB17F08
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:16:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE6C7B17F06
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:16:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 319B0A83571
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:16:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBBEE581497
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:16:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A36F4221FC9;
-	Fri,  1 Aug 2025 09:16:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99F85220685;
+	Fri,  1 Aug 2025 09:16:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="zJCY9CFh"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TaTG9UVo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84C28212D83
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:16:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCA701E7C19;
+	Fri,  1 Aug 2025 09:16:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039785; cv=none; b=ecdQGmNkfE6Sx1g1qlsYAL3k8v+guUTYlM/yAsTQGJg0Uo39nCN8FKlne2YgIWldocTC3yv68WcsuwWJHwjEjz1+IwvBUEFAAB+oRm9wBO8SwgMK7GMh/a0LNuLWvEnL2mM4PUNXUUxzSX6sgqB+6s84iDxNvxGjS/jMG5EyYmY=
+	t=1754039777; cv=none; b=GwrKKxkJ8F+7HziqWGpwZ/Nul2PFXhHg6ly3e3Geo3CYWXKIBiW1/ZF54FUbSxtdvaEkUtiZ4FW7TTPUv5CDnd7mjFcOuZPF5DZZ/uQPXkjwgy11vFiKVQq0S05aaTCGohCq9Lb+akPHDejrFX7wEHGR4vMryhJF01pZV1gyRtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039785; c=relaxed/simple;
-	bh=fa9+ov28+MX2K1Kp1KjWa2+srlo/bIqCExyH063Zjkk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=k2qQGO4HYPM/hnKMGeUh1uBnYYCdMLX9yGRqNaoITpv8vxu+pT0uGqQ572yExjA05ggilqStVvdRJS/c5rUPgyTBXeVKv49Ndk5K9lmeSIqGn4rWLSMIFmyotxdT0YlEDQlSkvdNJmFExLKP815E7zQNagvYCR+yRNRIIWbOPpM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=zJCY9CFh; arc=none smtp.client-ip=209.85.160.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab86a29c98so316771cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:16:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754039781; x=1754644581; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DsbZnKhWzsjIK8O2iDWXpNdpZv9uvnWsvlRdO5T4I/0=;
-        b=zJCY9CFhgmk4yrH84k5T6hiEp68qdWEIzeQjnRTIJA2cy7Mmq4/N3bsnFZmZeyECbx
-         BSv/hWZscOzgBFMb5TGYhSq5I64rlTBQgdj5BMyes/K5jAjyNOAsmnMCkN3NdGcybym/
-         OrSCdReIaO1unr8gUtzlqEMTs8bC2wledbCxco2xCXS4bn/62UDKNmpWaeBMsks5P5q2
-         WUCOHq9zB9SDYZnjLrlXxY/MixtRv1sr2DRen1xj53u/7dmRP1zQzcaQl8rg4lTtgwkU
-         kmTAtGni3hdVxIUltOnvIfIUAUZJHve2/aZx1vE7nHk1D0kEZQZlXBGEiqAUpmaZE4j7
-         Pbtw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754039781; x=1754644581;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=DsbZnKhWzsjIK8O2iDWXpNdpZv9uvnWsvlRdO5T4I/0=;
-        b=b+Xd9QP5eWq5ke11HAk/Y8E4gjY8e+pcd6wYOt+pS7ZYhmwYUUxU7Dy27dklKynG9w
-         7/dKEQ+SdCeNnPCi7farWBsZCSXAHt0D3Gm9YjV8ktpI7hLl8z4NDyFKQDbd8APaAsJ7
-         fGDYWuwnLxp188VtXtyQv60433QsEiAbdHJttUioMUwcWkdw0CE7FOSXwnOHMfzE+0qn
-         pLqR3zfS/HlPxj3F3gCAAObzexlvpH4YUR+CAO8wv+l4A1NnWNE5tqoCUjNrurhjvxa5
-         tL8J+eA4wgJwnDCanseYvAdJmEcvCDQeSiArHfyZ5Zu3CINW7qhzTzisZgWaVmtXU+GZ
-         xK4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZac2pDYL/+0OC19ST5TFzXw1TpzKidBOBRnjl0t4vFdI7tsU4fh2H5v71QFAnsOxGwpNqzjzZjBsHdqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzHjNg/hnXAC2Sem4+xnThOGLFAawK4ph0miJPeiZzK1DDPRPbD
-	j8yjl5AfhMSf3r5DkcbV2KDKQxzb1ks4e9yaI5Jub+HvOw6ipRcnSTEyJimMttJMnRDRL9HT4+5
-	crJjyXeRRNKvhw7cXb3rDxOuYI9iEkA7k/XqM+cyRkWZt8RWmgjIVBEz8it4=
-X-Gm-Gg: ASbGncuHQq8P54He/CC1U/PtzsmuNiISedPrMOXWYJM0AJOxVKJGUdtiwDoCEnj3Tgp
-	fdLgLDvyBsmbwEDwkit99YR2LkF8lmlEdAWyjqKa4yeEO6InO2uCAu/DB3dsinLAfAIQX3Vqvz4
-	ba6wSlUViqaWnmCULUZMteM4MHfccdScPJnU35kDdeS8pJe/XS8XDyFNj97t9COmAEpXbwWPmtP
-	DgB1G8=
-X-Google-Smtp-Source: AGHT+IEJ9gZkrr+QV9xlixblkDKToRoKnuV69cDq/FKpB1m6r8hiV84seprZDaQlUudjazAfohOas/SZpHO/oK1O1Z4=
-X-Received: by 2002:ac8:57c4:0:b0:48d:8f6e:ece7 with SMTP id
- d75a77b69052e-4af006c115emr3662741cf.3.1754039781021; Fri, 01 Aug 2025
- 02:16:21 -0700 (PDT)
+	s=arc-20240116; t=1754039777; c=relaxed/simple;
+	bh=HymzmLf2fmwqD3gyxEPyAoceiwxrUsiU1UA2nbmDVUg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=m7Qw3KHulcElbzOLUFnIpDbAfYIyQu4XerpcPhttiH2wmPKlPvFkwmIWhxQGDO4zStT/OLUtpER9diKs8SDVuxqC/C0jvGoyDEGAnq3PA0Jzqcfk74XMJVVY0n8xkfM3eIonD4xAxO26aCMhqkIfam+CkoV7fwkgtbFNFayqanc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TaTG9UVo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2FCAC4CEE7;
+	Fri,  1 Aug 2025 09:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754039776;
+	bh=HymzmLf2fmwqD3gyxEPyAoceiwxrUsiU1UA2nbmDVUg=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TaTG9UVo7qMSdf8QtetkRpPQKP1fQllGUx/Z7QIEqPg+AtmBg6QLpegaGBqPITR6n
+	 6jbjDIvGHt4GXug7r8yqui+SIUNLgbPqYFshk8ElDx9EIHJC0F5K3is6lpekCrKmZU
+	 1xqcT00LRczedOMPo1JCDHKUdgS35c+ZDYQMfewVQCcbsOZ5/8JNkPEHMQwRn+NcTa
+	 mclDeBS66ApJ8u8ujWtB+V4zhaCKTSKqjvt4H9qwKGsoAGSg2fVjCvxPBdSGmBUnyo
+	 4LBjkUsFAlpWqc54ADXUkGiDW+zDsUDWr30CHbZzvW+Nm28TwPSzfcmxfW/87/VO5+
+	 ARHiWC1K/wWsQ==
+Message-ID: <4ba8a463-43bc-402c-9814-5ef811d4c715@kernel.org>
+Date: Fri, 1 Aug 2025 11:16:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAFivqmKBgYVa6JUh82TS2pO915PUDYZMH+k-5=-0u1-K9-gMMw@mail.gmail.com>
- <aHTOSyhwIAaW_1m1@arm.com> <CAFivqmJ912sEdSih_DFkiWRm478XUJhNDe=s2M_UO2gVTu4e3w@mail.gmail.com>
- <CAJZ5v0irG16e2cM_tX_UeEJVmB_EdUvk-4Nv36dXoUS=Ud3U5A@mail.gmail.com>
- <CAFivqmLoDv_pWdmBG8ws-CMUBXcb9bS1TgMaxW9YZMqqHpRSyA@mail.gmail.com>
- <20250722032727.zmdwj6ztitkmr4pf@vireshk-i7> <CAFivqmLG0LriipbmM8qXZMKRRpH3_D02dNipnzj2aWRf9mSdCA@mail.gmail.com>
- <CAFivqmJ4nf_WnCZTNGke+9taaiJ9tZLvLL4Mx_B7uR-1DR_ajA@mail.gmail.com>
- <aIso4kLtChiQkBjH@arm.com> <CAFivqm+kbRbJsJ_Obb4bV6fgxbqAwOndLUCDwHvWWnpMYoNoNw@mail.gmail.com>
- <aIvSe9VtZ-zlYfbQ@arm.com>
-In-Reply-To: <aIvSe9VtZ-zlYfbQ@arm.com>
-From: Prashant Malani <pmalani@google.com>
-Date: Fri, 1 Aug 2025 02:16:08 -0700
-X-Gm-Features: Ac12FXyiyR_nWdM8AoeyrPqneFIz4IuACWU7woeh5UlvHMD9kIQ3YDAT9xAtfZw
-Message-ID: <CAFivqmKR1dqVqTsoznH2-n8cyAM1=5zEGcEvmESU8RNGac-0sA@mail.gmail.com>
-Subject: Re: [PATCH v2 2/2] cpufreq: CPPC: Dont read counters for idle CPUs
-To: Beata Michalska <beata.michalska@arm.com>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Jie Zhan <zhanjie9@hisilicon.com>, Ionela Voinescu <ionela.voinescu@arm.com>, 
-	Ben Segall <bsegall@google.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:CPU FREQUENCY SCALING FRAMEWORK" <linux-pm@vger.kernel.org>, Mel Gorman <mgorman@suse.de>, 
-	Peter Zijlstra <peterz@infradead.org>, Steven Rostedt <rostedt@goodmis.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>, 
-	z00813676 <zhenglifeng1@huawei.com>, sudeep.holla@arm.com
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting
+ node
+To: Biju Das <biju.das.jz@bp.renesas.com>, geert <geert@linux-m68k.org>,
+ "biju.das.au" <biju.das.au@gmail.com>
+Cc: "magnus.damm" <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>,
+ Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ "linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250731125109.147422-1-biju.das.jz@bp.renesas.com>
+ <CAMuHMdXTbOcYPrgHxpCNJEWNhcd8e5NBC0gyYQXn0KmQ8wqEMw@mail.gmail.com>
+ <TY3PR01MB11346C00F991D3D718D16417A8626A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <TY3PR01MB11346C00F991D3D718D16417A8626A@TY3PR01MB11346.jpnprd01.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-HI Beata,
+On 01/08/2025 10:11, Biju Das wrote:
+> Hi Geert,
+> 
+> Thanks for the feedback.
+> 
+>> -----Original Message-----
+>> From: Geert Uytterhoeven <geert@linux-m68k.org>
+>> Sent: 01 August 2025 08:30
+>> Subject: Re: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting node
+>>
+>> Hi Biju,
+>>
+>> On Thu, 31 Jul 2025 at 14:51, Biju <biju.das.au@gmail.com> wrote:
+>>> From: Biju Das <biju.das.jz@bp.renesas.com>
+>>>
+>>> Fix typo for deleting node 'channel@0'->'channel0'.
+>>>
+>>> Fixes: 46da632734a5 ("arm64: dts: renesas: rzg2lc-smarc: Enable CANFD
+>>> channel 1")
+>>> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
+>>
+>> Thanks for your patch!
+>>
+>>> --- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+>>> +++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+>>> @@ -48,7 +48,7 @@ sound_card {
+>>>  #if (SW_SCIF_CAN || SW_RSPI_CAN)
+>>>  &canfd {
+>>>         pinctrl-0 = <&can1_pins>;
+>>> -       /delete-node/ channel@0;
+>>> +       /delete-node/ channel0;
+>>
+>> As pointed out by Rob's bot, you must not delete this node.
+>> Instead, set channel0's status to disabled.
+> 
+> OK. Will fix this in next version.
 
-On Thu, 31 Jul 2025 at 13:31, Beata Michalska <beata.michalska@arm.com> wrote:
+Please TEST your patch before sending it. This would avoid this entire
+discussion.
 
-> Thank you for the info, but I'm exploring ways that will not increase the time
-> window between the reads.
-
-IMO this issue is intractable on non-RT OSes like Linux (at least,
-Linux when it is not compiled for RT), since we basically need to
-ensure atomicity for the reading of both ref and del registers together.
-We can't disable preemption here, since some of
-the code paths (like PCC regs) acquire semaphores [2].
-
-This also explains why we don't see this issue while reading the same
-registers from firmware (running an RTOS). There, the same readings
-are accurate (whether the CPU is idle or loaded).
-
-So mitigations like increasing the delay are the only practical recourse.
-IAC, I hope this doesn't detract from the discussion regarding the patch
-series in this thread, which is about the idle optimization
-(which I think we should pursue).
-
-> While we are at it, would you be able to drop me some numbers from your
-> platform, preferably good and `bad` ones:
-> both counter values, and the bits that are used for mapping performance to
-> actual frequency (nominal freq/perf, reference perf)
-
-Sure. There are two pathological scenarios.
-The first is when the CPU is idle/mostly idle. Here are some counter readings
-(I used ftrace for all of these, and the max possible frequency is 3.4GHz):
-
-t0: del:2936200649, ref:972155370
-t1: del:2936208538, ref:972157370
-ref_perf:10
-delivered_perf:39
-
-t0: del:1733705541, ref:518550840
-t1: del:1733713524, ref:518552820
-ref_perf:10
-delivered_perf:40
-
-This scenario is handled by this patch series.
-
-The second is the heavily loaded CPU case.
-Here are the counter readings:
-t0: del:93896505680, ref:27625620970
-t1: del:93896521640, ref:27625625360
-ref_perf:10
-delivered_perf:36
-
-t0: del:94258513479, ref:27795493670
-t1: del:94258529230, ref:27795498090
-ref_perf:10
-delivered_perf:35
-
-These aren't as bad, but still above the stated maximum.
-These get addressed by [1].
-
-And here is a "good" measurement when the CPU is loaded:
-t0: del:102081104909, ref:30074917840
-t1: del:102081121558, ref:30074922660
-ref_perf:10
-delivered_perf:34
-
-HTH,
-
--Prashant
-
-[1] https://lore.kernel.org/linux-pm/20250730220812.53098-1-pmalani@google.com/
-[2] https://elixir.bootlin.com/linux/v6.16-rc7/source/drivers/acpi/cppc_acpi.c#L1509
-
--- 
--Prashant
+Best regards,
+Krzysztof
 
