@@ -1,158 +1,126 @@
-Return-Path: <linux-kernel+bounces-753177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753176-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09AB3B17F8B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:45:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94FDDB17F89
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:45:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3468C568082
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:45:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49C784E6526
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:45:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BC5623315A;
-	Fri,  1 Aug 2025 09:45:28 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65DB422F74E;
+	Fri,  1 Aug 2025 09:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="YwMNHNYy"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BDD1F429C;
-	Fri,  1 Aug 2025 09:45:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED83F2E36E5;
+	Fri,  1 Aug 2025 09:45:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754041527; cv=none; b=JCZSqpbGPBDiZM0QP2tQX6QhmuiK7Tp27UYhIPSQk7l2QoYaMSej9LKlu6rX+Elu/qr3M6m4ZG0ykUe6QH6Q/YKfF2NkbtFYWxj80RUhL6HmuoA1/wcQJoVQexpLGGHs2vDxfgEhVwF23Mc+lfWt2s+YB8MEQJDjr6e+VGzUJBY=
+	t=1754041525; cv=none; b=SAZiLiyTI8LdZKoSB2pqzMFYX5lQ7MqDUlAA/mRQUPrGpLe+373Hb+7lm1NHbSasVWKiZ+uAjmj7jT8PhXltwonF4OKhhNr8G8j5EKc7Y0XDdeaTvAa7Ux/0YmTCqP1YBD2zr8Lj7GKoe6rY83mWa6s/Vbeo7nZqUt6d2wRRG1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754041527; c=relaxed/simple;
-	bh=KcfImWe2ntjQGDLAHqEzuW4roK41FAxxJvrp+z88SKo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=LpDJmdahNhXD2kmcjxef+UIS/VdXxdJHLGDjuv9U9pHo7yr8Hg9Z0M7F1P9NKHhlhSZkAiWqx410BjjmOsekUdPQ3qjmsxQgPlq9DdnuHzEA0IAQiD++EY/4JLQ9nsAXXBwFbeTxa2V0Qnh5BqGFie3W4QSMmYOUfk1KffzdrUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 35293e966ebc11f0b29709d653e92f7d-20250801
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:ca5dd5f4-92d7-4c45-b2d7-7cf99f183c14,IP:0,U
-	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:-5
-X-CID-META: VersionHash:6493067,CLOUDID:8ece0e5e0af63e6f711ca3f2e1c044df,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:-3,IP:nil,UR
-	L:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,S
-	PR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 35293e966ebc11f0b29709d653e92f7d-20250801
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <lijiayi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 613529967; Fri, 01 Aug 2025 17:45:07 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 20842160038C1;
-	Fri,  1 Aug 2025 17:45:07 +0800 (CST)
-X-ns-mid: postfix-688C8CA2-9711391225
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id CA7A2160038C0;
-	Fri,  1 Aug 2025 09:45:04 +0000 (UTC)
-From: Jiayi Li <lijiayi@kylinos.cn>
-To: maximlevitsky@gmail.com
-Cc: gregkh@linuxfoundation.org,
-	kai.heng.feng@canonical.com,
-	oakad@yahoo.com,
-	ulf.hansson@linaro.org,
-	luoqiu@kylinsec.com.cn,
-	viro@zeniv.linux.org.uk,
-	linux-mmc@vger.kernel.org,
+	s=arc-20240116; t=1754041525; c=relaxed/simple;
+	bh=qJVrbgFEjb8qceqM0uFyEYEUqH64XxmgCXWH2Medvs8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=eOUxLwUijmCKMWSCMjIzqiUtluO2UwqVFW8LPwekxdo8RMCLRLycwtZiMJTHX4ASXZG4d6qwJ3K5req1+shAKWJjz25nYaDdDXLlNf7deT9BjRhuCdMlUkKWGrivEpIStcIG6iP1q/BRYRVb2kFO+sWGv5aZT2dVRpV3i0AAYIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=YwMNHNYy; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 8811225D5A;
+	Fri,  1 Aug 2025 11:45:22 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id 0C_rDAlOpObn; Fri,  1 Aug 2025 11:45:21 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1754041521; bh=qJVrbgFEjb8qceqM0uFyEYEUqH64XxmgCXWH2Medvs8=;
+	h=From:To:Cc:Subject:Date;
+	b=YwMNHNYyJ/8SgYtB0wJP/c2a7b/tWXvCKQ462Wg8t64Li2DC2VnCpjlAvQyhN7qOs
+	 xf8qWGSwZbL3qzGOPl5TTI+jvDOCZO8R1IhE98BaXuxSMxZLWyoXhWPmQILY24pQBO
+	 PI4hQucFMRQjxzihEaSrY2vX55/rtfxN3mW/HsBb1PCWOUxgJ8B5Jy4jsaaQwrC1mi
+	 V3In6j16auSKwgYPpee+fyd/CpbE5pfQSSx2C08zeL1GPdxWSXTBl2b9NTxFFNE+GD
+	 Wa0HcaEVx3Krdw5jbau5uSiU9UYr8SNXQRWqNkACozAEoWlaWyC8c0pe8kJTm+XOqg
+	 PfHdJ3B05sesA==
+From: Yao Zi <ziyao@disroot.org>
+To: Drew Fustini <fustini@kernel.org>,
+	Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>
+Cc: nux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	jiayi_dec@163.com,
-	Jiayi Li <lijiayi@kylinos.cn>
-Subject: [PATCH] memstick: Fix deadlock by moving removing flag earlier
-Date: Fri,  1 Aug 2025 17:44:59 +0800
-Message-ID: <20250801094459.318184-1-lijiayi@kylinos.cn>
-X-Mailer: git-send-email 2.47.1
+	Yao Zi <ziyao@disroot.org>
+Subject: [PATCH net] net: stmmac: thead: Enable TX clock before MAC initialization
+Date: Fri,  1 Aug 2025 09:45:07 +0000
+Message-ID: <20250801094507.54011-1-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-The existing memstick core patch: commit 62c59a8786e6 ("memstick: Skip
-allocating card when removing host") sets host->removing in
-memstick_remove_host(),but still exists a critical time window where
-memstick_check can run after host->eject is set but before removing is se=
-t.
+The clk_tx_i clock must be supplied to the MAC for successful
+initialization. On TH1520 SoC, the clock is provided by an internal
+divider configured through GMAC_PLLCLK_DIV register when using RGMII
+interface. However, currently we don't setup the divider before
+initialization of the MAC, resulting in DMA reset failures if the
+bootloader/firmware doesn't enable the divider,
 
-In the rtsx_usb_ms driver, the problematic sequence is:
+[    7.839601] thead-dwmac ffe7060000.ethernet eth0: Register MEM_TYPE_PAGE_POOL RxQ-0
+[    7.938338] thead-dwmac ffe7060000.ethernet eth0: PHY [stmmac-0:02] driver [RTL8211F Gigabit Ethernet] (irq=POLL)
+[    8.160746] thead-dwmac ffe7060000.ethernet eth0: Failed to reset the dma
+[    8.170118] thead-dwmac ffe7060000.ethernet eth0: stmmac_hw_setup: DMA engine initialization failed
+[    8.179384] thead-dwmac ffe7060000.ethernet eth0: __stmmac_open: Hw setup failed
 
-rtsx_usb_ms_drv_remove:          memstick_check:
-  host->eject =3D true
-  cancel_work_sync(handle_req)     if(!host->removing)
-  ...                              memstick_alloc_card()
-                                     memstick_set_rw_addr()
-                                       memstick_new_req()
-                                         rtsx_usb_ms_request()
-                                           if(!host->eject)
-                                           skip schedule_work
-                                       wait_for_completion()
-  memstick_remove_host:                [blocks indefinitely]
-    host->removing =3D true
-    flush_workqueue()
-    [block]
+Let's simply write GMAC_PLLCLK_DIV_EN to GMAC_PLLCLK_DIV to enable the
+divider before MAC initialization. The rate doesn't matter, which we
+could reclock properly according to the link speed later after link is
+up.
 
-1. rtsx_usb_ms_drv_remove sets host->eject =3D true
-2. cancel_work_sync(&host->handle_req) runs
-3. memstick_check work may be executed here <-- danger window
-4. memstick_remove_host sets removing =3D 1
-
-During this window (step 3), memstick_check calls memstick_alloc_card,
-which may indefinitely waiting for mrq_complete completion that will
-never occur because rtsx_usb_ms_request sees eject=3Dtrue and skips
-scheduling work, memstick_set_rw_addr waits forever for completion.
-
-This causes a deadlock when memstick_remove_host tries to flush_workqueue=
-,
-waiting for memstick_check to complete, while memstick_check is blocked
-waiting for mrq_complete completion.
-
-Fix this by setting removing=3Dtrue at the start of rtsx_usb_ms_drv_remov=
-e,
-before any work cancellation. This ensures memstick_check will see the
-removing flag immediately and exit early, avoiding the deadlock.
-
-Fixes: 62c59a8786e6 ("memstick: Skip allocating card when removing host")
-Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+Signed-off-by: Yao Zi <ziyao@disroot.org>
+Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
 ---
- drivers/memstick/core/memstick.c    | 1 -
- drivers/memstick/host/rtsx_usb_ms.c | 1 +
- 2 files changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/mem=
-stick.c
-index 043b9ec756ff..95e65f4958f2 100644
---- a/drivers/memstick/core/memstick.c
-+++ b/drivers/memstick/core/memstick.c
-@@ -555,7 +555,6 @@ EXPORT_SYMBOL(memstick_add_host);
-  */
- void memstick_remove_host(struct memstick_host *host)
- {
--	host->removing =3D 1;
- 	flush_workqueue(workqueue);
- 	mutex_lock(&host->lock);
- 	if (host->card)
-diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/=
-rtsx_usb_ms.c
-index 3878136227e4..5b5e9354fb2e 100644
---- a/drivers/memstick/host/rtsx_usb_ms.c
-+++ b/drivers/memstick/host/rtsx_usb_ms.c
-@@ -812,6 +812,7 @@ static void rtsx_usb_ms_drv_remove(struct platform_de=
-vice *pdev)
- 	int err;
-=20
- 	host->eject =3D true;
-+	msh->removing =3D true;
- 	cancel_work_sync(&host->handle_req);
- 	cancel_delayed_work_sync(&host->poll_card);
-=20
---=20
-2.47.1
+Note that the DMA reset failures cannot be reproduced with the vendor
+U-Boot, which always enables the divider, regardless whether the port is
+used[1].
+
+As this schema (enables the divider first and reclock it later) requires
+access to the APB glue registers, the patch depends on v2 of series
+"Fix broken link with TH1520 GMAC when linkspeed changes"[2] to ensure
+the APB bus clock is ungated.
+
+[1]: https://github.com/revyos/thead-u-boot/blob/93ff49d9f5bbe7942f727ab93311346173506d27/board/thead/light-c910/light.c#L581-L582
+[2]: https://lore.kernel.org/netdev/20250801091240.46114-1-ziyao@disroot.org/
+
+ drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+index 95096244a846..a65c2443bf42 100644
+--- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
++++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+@@ -164,6 +164,7 @@ static int thead_dwmac_enable_clk(struct plat_stmmacenet_data *plat)
+ 	case PHY_INTERFACE_MODE_RGMII_RXID:
+ 	case PHY_INTERFACE_MODE_RGMII_TXID:
+ 		/* use pll */
++		writel(GMAC_PLLCLK_DIV_EN, dwmac->apb_base + GMAC_PLLCLK_DIV);
+ 		writel(GMAC_GTXCLK_SEL_PLL, dwmac->apb_base + GMAC_GTXCLK_SEL);
+ 		reg = GMAC_TX_CLK_EN | GMAC_TX_CLK_N_EN | GMAC_TX_CLK_OUT_EN |
+ 		      GMAC_RX_CLK_EN | GMAC_RX_CLK_N_EN;
+-- 
+2.50.1
 
 
