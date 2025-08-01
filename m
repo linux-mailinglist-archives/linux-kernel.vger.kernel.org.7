@@ -1,157 +1,149 @@
-Return-Path: <linux-kernel+bounces-753105-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 675F6B17EBA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:00:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DBC7EB17EBC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:02:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADA62626D85
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:00:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6908E3AD8D7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:02:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6625121FF58;
-	Fri,  1 Aug 2025 09:00:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 627AA21B9F6;
+	Fri,  1 Aug 2025 09:01:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ACobMMPC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="QMcJ5I+/"
+Received: from mail-wm1-f73.google.com (mail-wm1-f73.google.com [209.85.128.73])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8A082AEE4;
-	Fri,  1 Aug 2025 09:00:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DEDD2AEE4
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:01:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.73
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754038846; cv=none; b=Plig5JiNFLe92LzTpFrwxZi2j0svBs+9VMkxVURks8dA472VQywZA+2Lh5NatCoL2a70rgVoVEOchdc9OqL4+PzPj5jReNClfOhlktV07DMKZATSFCR7z4Mh3k7CMYe6AU7OE/CzfKCPnxXUcggqAai1qc7fDkc+ZJuBskPYRG0=
+	t=1754038915; cv=none; b=sJ9D9nxX27CK8lGnYYgC0ziJBvGs+RfSaRsrkEW8WVT6WA+e9/q/CwGrtnnS6NXShcXfuhnxkqVOIjcQG9hVMni9hdStGBmkpJxy8V9oReukw5T3yiSDOR/COOxXHXjIngb260BEQN6MS3MsfhVAWb1PfbUYnHAQBs7dJi0zF7s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754038846; c=relaxed/simple;
-	bh=3tgjkleCScnfgdzhTua0mmKjP9FXf9xN4KNZz5k2+kU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QzeURxQCjfPlEuE/03kjGwbnc8YVwWqZSYcxXl7tZJJUjj2GQy9eNskGpgD1tRgWZnli0lQFDSO9iq8z4lq7nZQBn2sGJUi8LqDo6tgQcPu4o07RVWg+VOBO4cZeb6vx9k3OcD7xiOwgajuTwabKsddSr0bxLKn2JUQnkId3lFM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ACobMMPC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BF5E1C4CEE7;
-	Fri,  1 Aug 2025 09:00:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754038845;
-	bh=3tgjkleCScnfgdzhTua0mmKjP9FXf9xN4KNZz5k2+kU=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=ACobMMPCcRhLK1IjcDY5TFHYraC6/EORUTlrtz/h132d1ba+Z5+Oo6+fhjqiQRvBH
-	 LK4vthHeRhy/S0SrFLqnDEhHXJAhqI5uh7U5j5UZ4q7Qdo/d860/RY9BI72n1sX5qZ
-	 4zfo+x1jo1Ua3UnmWNtdk39mcnQZH/9XGF91ZGcmb3MX/+v5wsDx9AcZY+1isHPbLj
-	 kokCKeMA9a6VKA6db4j++Lwq0TZHyLtdcx16VEEbYMS71opNb7X9SVZKKd/RJBmSTJ
-	 j22NUGeHI6OSNx/wPQcMw8TEE7yNouDxaH8bF0KryQkDc5cgnNJu2PC03uza6XKFxO
-	 v4h/2HRvp2B2Q==
-Message-ID: <98bd97cd-0d34-4bb6-869f-68feec1de68e@kernel.org>
-Date: Fri, 1 Aug 2025 11:00:39 +0200
+	s=arc-20240116; t=1754038915; c=relaxed/simple;
+	bh=kJK+rQkXpBpV/rwip2EUxwLS6eel1wFgg/6G3axRc4k=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=uvHW9H/enwdj2fuEPwS4bRsZGhejyXyh73XqIGu9x+s8/RBLBwveQPb8wdPbY4QhRYrkHPEJeZcid/rqAllFc4nWEs4D4eakJVOZJamXy9FvBwvd8w7xyTFnKJMGGutXzLhrF52DSsDrsxUOClGUATk5yfeFkU6gwhOb5OUCzdU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=QMcJ5I+/; arc=none smtp.client-ip=209.85.128.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-wm1-f73.google.com with SMTP id 5b1f17b1804b1-456267c79deso1609045e9.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:01:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754038912; x=1754643712; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqS553FeKDYKCwtAkb20JFc25+oBMc4a/Aa0vW9Z30U=;
+        b=QMcJ5I+/63JzyZOvTBx9QCrVDgK76EvEcoJfUuU5/+GSxrtCZnWumoFj/RYejp9HeG
+         G7hX39U/qbcHn2BQrXCOTEMC6DnnJCrUNv8d53GFLVOiryv2T6seTTaKeocC5AN/TvVo
+         hBe/T0uzI55mrs3HRBK/Afd90tUoT+8VuIP7SsZJ0NwD5bxX0WgGOvPGZ1WpA8b5xvq3
+         P4AqnT8y6UEzLY2zFvxxgsyA/U/gxEod8Ey50LrbjlLduL9AFEhqpIKdSu0/7Ga9L7Lq
+         XaqNWP5Lva5Ny4BbFvuU6j5UFh/C8WUGvcMqxSu3kvGAc5ax8rTvdMcd2NzcKEVqjdk8
+         ZYHw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754038912; x=1754643712;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kqS553FeKDYKCwtAkb20JFc25+oBMc4a/Aa0vW9Z30U=;
+        b=RH6Yy3tysTFqsQFOibkU/dOhL2skNWqh08gOFUY2hfYhgOsZem0VUgAgoT5RiWAIG8
+         JFYLS9gYKIq8+FG5gvo7FzFywHr8a0Km74ib8+ijEMMrOU/ESuN/2SWYcTTN2mMDJ++r
+         jQEHiWT1IGOKqU/G5IQYSn/6Cj1hQ0By4BDniuIssmNuM9R4C61PPQzFCs+YJMb/2/SM
+         zxW/bh0raWiUKuLfkkvcEPCo7TjZFsLrtNANVp1Oy6eIQZWsibw5Uamcg4Act1uTTzLY
+         AWNWKUOok0VR3oRRzWrjTJROn5XFPWrEvgs0nKC2JeZDL0jebjk9QYxhoPrl/g6Q8m0D
+         YZwQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXl+ClzZgKVmTAJcv4K/Ze79HhNbXXgyACvWmSok0KPwtsG/eLpkCimyNGRLCYoBEzAPFxMYvd06M8+rfo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXuNUAKU3IVVvNwMkE1d3bG3KlOG/cJXCmpdJpzzxqqUTbtU4O
+	xyvWmTEPwpmxCglv8NOh0K/QG3C8LFJySTeIxthMyLaoIpgXQufQsk+01ae/DTUsr0utl2Cw9Fl
+	WsaRQEqd6avvhiN5pKQ==
+X-Google-Smtp-Source: AGHT+IEGSrHjQNIVZDe9AaJDH6jkeAL+E4bmquGJQcAIgyUXYfrcUzo8KPM7x7yoZFwquE6owm//RFtb5/69b2A=
+X-Received: from wmbhj23.prod.google.com ([2002:a05:600c:5297:b0:456:21f4:7a98])
+ (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
+ 2002:a05:600c:4f09:b0:439:643a:c8d5 with SMTP id 5b1f17b1804b1-458b0216ba7mr8716695e9.0.1754038912604;
+ Fri, 01 Aug 2025 02:01:52 -0700 (PDT)
+Date: Fri, 1 Aug 2025 09:01:51 +0000
+In-Reply-To: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 2/4] dt-bindings: mmc: controller: Add
- max-sd-hs-frequency property
-To: Sarthak Garg <quic_sartgarg@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>,
- Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- quic_cang@quicinc.com, quic_nguyenb@quicinc.com, quic_rampraka@quicinc.com,
- quic_pragalla@quicinc.com, quic_sayalil@quicinc.com,
- quic_nitirawa@quicinc.com, quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
- <20250801084518.2259767-3-quic_sartgarg@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
- cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
- JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
- gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
- J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
- NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
- BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
- vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
- Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
- TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
- S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
- FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJoF1BKBQkWlnSaAAoJEBuTQ307
- QWKbHukP/3t4tRp/bvDnxJfmNdNVn0gv9ep3L39IntPalBFwRKytqeQkzAju0whYWg+R/rwp
- +r2I1Fzwt7+PTjsnMFlh1AZxGDmP5MFkzVsMnfX1lGiXhYSOMP97XL6R1QSXxaWOpGNCDaUl
- ajorB0lJDcC0q3xAdwzRConxYVhlgmTrRiD8oLlSCD5baEAt5Zw17UTNDnDGmZQKR0fqLpWy
- 786Lm5OScb7DjEgcA2PRm17st4UQ1kF0rQHokVaotxRM74PPDB8bCsunlghJl1DRK9s1aSuN
- hL1Pv9VD8b4dFNvCo7b4hfAANPU67W40AaaGZ3UAfmw+1MYyo4QuAZGKzaP2ukbdCD/DYnqi
- tJy88XqWtyb4UQWKNoQqGKzlYXdKsldYqrLHGoMvj1UN9XcRtXHST/IaLn72o7j7/h/Ac5EL
- 8lSUVIG4TYn59NyxxAXa07Wi6zjVL1U11fTnFmE29ALYQEXKBI3KUO1A3p4sQWzU7uRmbuxn
- naUmm8RbpMcOfa9JjlXCLmQ5IP7Rr5tYZUCkZz08LIfF8UMXwH7OOEX87Y++EkAB+pzKZNNd
- hwoXulTAgjSy+OiaLtuCys9VdXLZ3Zy314azaCU3BoWgaMV0eAW/+gprWMXQM1lrlzvwlD/k
- whyy9wGf0AEPpLssLVt9VVxNjo6BIkt6d1pMg6mHsUEVzsFNBFVDXDQBEADNkrQYSREUL4D3
- Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
- MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
- OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
- GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
- 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
- YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
- 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
- BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
- JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
- 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
- YpsFAmgXUF8FCRaWWyoACgkQG5NDfTtBYptO0w//dlXJs5/42hAXKsk+PDg3wyEFb4NpyA1v
- qmx7SfAzk9Hf6lWwU1O6AbqNMbh6PjEwadKUk1m04S7EjdQLsj/MBSgoQtCT3MDmWUUtHZd5
- RYIPnPq3WVB47GtuO6/u375tsxhtf7vt95QSYJwCB+ZUgo4T+FV4hquZ4AsRkbgavtIzQisg
- Dgv76tnEv3YHV8Jn9mi/Bu0FURF+5kpdMfgo1sq6RXNQ//TVf8yFgRtTUdXxW/qHjlYURrm2
- H4kutobVEIxiyu6m05q3e9eZB/TaMMNVORx+1kM3j7f0rwtEYUFzY1ygQfpcMDPl7pRYoJjB
- dSsm0ZuzDaCwaxg2t8hqQJBzJCezTOIkjHUsWAK+tEbU4Z4SnNpCyM3fBqsgYdJxjyC/tWVT
- AQ18NRLtPw7tK1rdcwCl0GFQHwSwk5pDpz1NH40e6lU+NcXSeiqkDDRkHlftKPV/dV+lQXiu
- jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
- zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
- XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250801084518.2259767-3-quic_sartgarg@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+References: <20250730-lock-t-when-t-is-pinned-v1-0-1b97d5f28aa2@collabora.com>
+Message-ID: <aIyCf85_Xe6etC8Q@google.com>
+Subject: Re: [PATCH 0/3] Groundwork for Lock<T> when T is pinned
+From: Alice Ryhl <aliceryhl@google.com>
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Will Deacon <will@kernel.org>, Boqun Feng <boqun.feng@gmail.com>, Waiman Long <longman@redhat.com>, 
+	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?B?QmrDtnJu?= Roy Baron" <bjorn3_gh@protonmail.com>, Benno Lossin <lossin@kernel.org>, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
+	Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="utf-8"
 
-On 01/08/2025 10:45, Sarthak Garg wrote:
-> Some platforms may require limiting the maximum frequency used in SD
-> High-Speed (HS) mode due to board-level hardware constraints. For
-> example, certain boards may include level shifters or other components
-> that cannot reliably operate at the default 50 MHz HS frequency.
+On Wed, Jul 30, 2025 at 02:14:43PM -0300, Daniel Almeida wrote:
+> It's currently impossible to have a pinned struct within the Lock<T> type.
+> This is problematic, because drivers might want to do this for various
+> reasons, specially as they grow in complexity.
 > 
-> Introduce a new optional device tree property max-sd-hs-frequency to
-> limit the maximum frequency (in Hz) used for SD cards operating in
-> High-Speed (HS) mode.
+> A trivial example is:
 > 
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> struct Foo {
+>   #[pin]
+>   bar: Mutex<Bar>,
+>   #[pin]
+>   p: PhantomPinned,
+> }
+> 
+> struct Bar {
+>   #[pin]
+>   baz: Mutex<Baz>,
+>   #[pin]
+>   p: PhantomPinned,
+> }
+> 
+> Note that Bar is pinned, so having it in a Mutex makes it impossible to
+> instantiate a Foo that pins the Bar in bar. This is specially undesirable,
+> since Foo is already pinned, and thus, it could trivially enforce that its
+> bar field is pinned as well.
+> 
+> This can be trivially solved by using Pin<KBox<Bar>> instead of
+> structurally pinning, at the cost of an extra (completely unneeded)
+> allocation and ugly syntax.
+> 
+> This series lays out the groundwork to make the above possible without any
+> extra allocations.
+> 
+> - Patch 1 structurally pins the 'data' field in Lock<T>
+> - Patch 2 constrains the DerefMut implementation for safety reasons
+> - Patch 3 adds an accessor to retrieve a Pin<&mut T>
+> 
+> Note that this is just the beginning of the work needed to make a Pin<&mut
+> T> actually useful due to pin projections being currently unsupported.
+> 
+> In other words, it is currently impossible (even with the current patch) to
+> do this:
+> 
+> let mut data: MutexGuard<'_, Data> = mutex.lock();
+> let mut data: Pin<&mut Data> = data.as_mut();
+> let foo = &mut data.foo; // <- won't compile
+> 
+> The above is something that Benno is working on.
+> 
+> Thanks Boqun, Benno and the rest of the team for brainstorming the issue
+> and for and laying out a series of steps to implement a solution.
+> 
 > ---
->  .../devicetree/bindings/mmc/mmc-controller-common.yaml | 10 ++++++++++
->  1 file changed, 10 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> index 9a7235439759..6c2529b976d1 100644
-> --- a/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> +++ b/Documentation/devicetree/bindings/mmc/mmc-controller-common.yaml
-> @@ -93,6 +93,16 @@ properties:
->      minimum: 400000
->      maximum: 384000000
->  
-> +  max-sd-hs-frequency:
+> Daniel Almeida (3):
+>       rust: lock: pin the inner data
+>       rust: lock: guard: add T: Unpin bound to DerefMut
+>       rust: lock: add a Pin<&mut T> accessor
 
-Use standard unit suffixes. s/frequency/hz/
+With the things that Benno said fixed:
 
-
-
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    description: |
-> +      Maximum frequency (in Hz) to be used for SD cards operating in
-> +      High-Speed (HS) mode. This is useful for board-specific limitations,
-> +      such as level shifters or others where the card cannot reliably
-> +      operate at the default 50 MHz HS frequency.
-
-Don't repeat constraints in free form text.
-
-default:
-
-
+Reviewed-by: Alice Ryhl <aliceryhl@google.com>
 
