@@ -1,183 +1,184 @@
-Return-Path: <linux-kernel+bounces-753500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C72CB183C5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:28:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A25FAB183C9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:29:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A1563172636
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:28:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D30FA8067A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:29:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0534B26D4EA;
-	Fri,  1 Aug 2025 14:28:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B384426E70C;
+	Fri,  1 Aug 2025 14:29:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FB6Nx8Ni"
-Received: from mail-vs1-f49.google.com (mail-vs1-f49.google.com [209.85.217.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RDaJqEtn"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0C2E2472B1;
-	Fri,  1 Aug 2025 14:28:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B4BE26E17F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754058526; cv=none; b=saeb6PHyWP0odECn0ixDdKEJYcVoVPg95SaJKL5iNu+v2uB0uRWuaRqVA2d0bzzkB+N3Z2W0xH3+v+vwWGkIKgxvZ/iY+NA+Iq9NHhwsJifWXA6obu6R6c5sxzT8Y3fhLQQ3SK8hMeaRwRJ+3cJpi2A6bm1/IF1YHqktXi0g9rE=
+	t=1754058564; cv=none; b=ZT49ozaq/xtd+j2RRDIWaO2BYnrDawrrs1zvItU9sp1bRH5N/HomAiTlURXbJf9aYysaMFrxbfEht1J99EIqI0zGBiyn3Jd6gaZeLo+/SjxETx3ahpJkmZlhUL0BeKV2WlzyGnwjxUHH/zoj14KT3iP4IyC88wbfVOECetERNLI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754058526; c=relaxed/simple;
-	bh=AIluz0CWTlkf+ryYSxTPKTsH1l3zg8Y6Xjxx3xiLVjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hlb4pH9nQkfvqukzFwNIra0a5CQKnfp5qvYglVDBD2oi62Lm8tyO3qQ/2dMYkpTBJsBpTd5xugKeY0q4wHL9LLkJ5q4DAObSCumiUsQDl5eKaMmOQSbCNVG8sQIBZ/JvIz+qHrW/3zw1DBZ3DKgIRHcGY5/4yA2LWsnzL+j074A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FB6Nx8Ni; arc=none smtp.client-ip=209.85.217.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f49.google.com with SMTP id ada2fe7eead31-4fbf846d16fso1347539137.1;
-        Fri, 01 Aug 2025 07:28:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754058523; x=1754663323; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=enklQFOwEVlBN/RmOFCGBCNOiLV3Zi/krrC4kYv0Lv4=;
-        b=FB6Nx8NinIYMQSNoIkY1dbqB+rHRi/Ne5Pl7k/+hszP427bOdsN4QtxqYhcVbKA/lF
-         UplR3QkJxcIX+f7a8D+27ten2hKCnXyJVNJ/7up0W5/ZNn46bQukXsjHrfbKGaeGQ4g2
-         37MZRgVk9hcIbo1PvvC+WbqYNuZssQ45Gs0MxO16+4KSegs/doHkXS5K/8ZTI9x+hlR+
-         qPdecxkZb9MYoUEtngXbGgM+CihJe3djtM4Gno7CxivimtYpAQ3ZxwV2iS+PCitKPTti
-         oaVO2RTcN/ApsXveDUxnFjx0Gh/NKH9UZSUDn9NSb6nPSY4/I3FIGv0NZyHczw8h+wbi
-         qTFA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754058523; x=1754663323;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=enklQFOwEVlBN/RmOFCGBCNOiLV3Zi/krrC4kYv0Lv4=;
-        b=i4vMuE8qVmyXG6Nt7FQEUnWzeGZw3GqiU+IuUyLTVy6+bg7rsrExN8YH6j4SrcPLLh
-         CkF9Z0nFhlBj6M4LWOz+p5yfVJsdWFD9reWItgLQhuCVc5P173s1DyxuCXnVGi8UvenC
-         3B6/il+udkTUMCXvS4LFq5g7t2lAsg4GOvjlL/0P7140RPvDke2lxxVH7uOQG1Kri7za
-         QW6pMnmp3DDeKW1wdpCINs3Oukho4A//fP/RQBjJ0djpmt9ZVCei1wD2JASHTjPKqvLV
-         yyxF4V1WmgnfGTAXKxUkkmgt46p6JJLxTisCI9dfu+ZZ2Huum5+6uQ18uODmfShDCH7Y
-         Q9aA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA00Xsj4iaFhSqWCIk0ljloACFQVWOFQurd+gr+HJB7WI7dIk5Lqomrl9cZbVsURtqPhozGI+skWO7@vger.kernel.org, AJvYcCUBr6ahO+Mahi2EEvGhdIr+SjH4NUk09CqLuC2qfThl4sERa1dg8TUsASnzm3URB0A6ATDI9GoUpe9u@vger.kernel.org, AJvYcCVHkaouqAyTk3PSpb+gdbhOT6WMaWo3Vyexkz4IwWvfQucXbEeps6cz1P/UmChN9mgohkmUez2f5BjGPStz@vger.kernel.org, AJvYcCXh3ltipxzdLkDE7f2RQRGoYYPN3L825q2pPH/uhFtFzm1zuBH1+olhQpXOa5SBGAuhMknAtRKT+OWMoUz/Nw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yya5c9xKOE9HKEBmXx7SmipvDBoI/75eOfjeAuRje3buMqBGZUD
-	b+QU1dOcqJ4DTiuQPFfSht1ahpywSa8fj6DeuLYZyWDQM3/YK9MDbR+KzyFJzSB+bLP+ZHcLd5S
-	Lu3+QspaUZIAR5Lsjs5pVcxtt1ovG+AQ=
-X-Gm-Gg: ASbGnctJNUREPrYykz+1UZbZcserLnCz46i4m+8NloU69Oe6YWkf0bnqNQFbKfBK4gc
-	FCgl/CVoEALyOkYk/TGV2Qzh2HGXJpL/VZoivCp+H9Vu1GQTH2RrI3tHQFh3eOpp2GiD8Umv/lw
-	LbV+A+XCNjhzKlXyvOMbOIicsIsKkDGE0sxyFOfhdiIEwIBR71rRBKwxKQQdukkh/yXrYa7DxvY
-	TxP5MkwDybu4nqTiPiLUgOS8Q==
-X-Google-Smtp-Source: AGHT+IFE74O+sbnSVic7t4Vc8ApRGNLfpxfLAcrdxoJjnrrGm5LNrQWaWD7dOtDZh3n/VkhweJi4vQ+qTHbbNZBzVmc=
-X-Received: by 2002:a05:6102:6102:10b0:4fb:f495:43ec with SMTP id
- ada2fe7eead31-4fc1014a568mr2223339137.12.1754058523415; Fri, 01 Aug 2025
- 07:28:43 -0700 (PDT)
+	s=arc-20240116; t=1754058564; c=relaxed/simple;
+	bh=pzLInYE2T4FA2HuRv2+KH8MVOqyQtP2jwo7Tnyk0ge4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=cZszK00gmqBy8oXxcD/B4k92b814JoPAHDPEg7EF2mB0GvBK6TQeqjvF+YXFwHV1fiSpkT0IsvKJKEiH4irLgAMxdX1nFa3Q+5rTumCrH7Qirl8qHhAnuHpY5uAxms0sU+WJziAXGNSScynobx3op5KRiavah7irqhmQNektiNk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RDaJqEtn; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754058561;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=5Po6QeoxP4AkYuTcSujxbpu8JHxcCowvdsZgxmuI0io=;
+	b=RDaJqEtnTVoYeRsp4++z5rWAwtwdg9ijwnhP+OFpqHb3rKj1PyJm3uAOOrcyv+bBwaBAep
+	ILhQn92mUWlgItSzwA8yovCpoaFpHtVM2nmf9wkXefbnpBG1gSQZvpoXoXUu2shYlzrW6r
+	PwwLvHEYQOzxFqVZm2Fgq5PkGsqXRaE=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-403-M3GFcp_RNbWnRA9D1dJ_rA-1; Fri,
+ 01 Aug 2025 10:29:16 -0400
+X-MC-Unique: M3GFcp_RNbWnRA9D1dJ_rA-1
+X-Mimecast-MFC-AGG-ID: M3GFcp_RNbWnRA9D1dJ_rA_1754058555
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 30B0A180048E;
+	Fri,  1 Aug 2025 14:29:15 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.45.225.137])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 61D833000218;
+	Fri,  1 Aug 2025 14:29:12 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>,
+	linux-kernel@vger.kernel.org,
+	linux-spdx@vger.kernel.org,
+	linux-media@vger.kernel.org
+Subject: [PATCH v2] media: pci/ivtv: Replace GPLv2 boilerplate text with SPDX
+Date: Fri,  1 Aug 2025 16:29:10 +0200
+Message-ID: <20250801142910.749361-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250617090032.1487382-1-mitltlatltl@gmail.com>
- <20250617090032.1487382-3-mitltlatltl@gmail.com> <36f3ef2d-fd46-492a-87e6-3eb70467859d@oss.qualcomm.com>
-In-Reply-To: <36f3ef2d-fd46-492a-87e6-3eb70467859d@oss.qualcomm.com>
-From: Pengyu Luo <mitltlatltl@gmail.com>
-Date: Fri, 1 Aug 2025 22:27:55 +0800
-X-Gm-Features: Ac12FXyEiR7WBLYRTG7PF-J5G5Sq4Cm7xfdTtw6UG5leGd5p1jqsinBxIETuVjs
-Message-ID: <CAH2e8h50mtsEpAZoUvYtD-HRMeuDQ4pcjq6P=0vsjvtZoajC-g@mail.gmail.com>
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sc8280xp: Describe GPI DMA
- controller nodes
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-Cc: Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>, 
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>, linux-arm-msm@vger.kernel.org, 
-	dmaengine@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Thu, Jul 31, 2025 at 6:33=E2=80=AFAM Konrad Dybcio
-<konrad.dybcio@oss.qualcomm.com> wrote:
->
-> On 6/17/25 11:00 AM, Pengyu Luo wrote:
-> > SPI on SC8280XP requires DMA (GSI) mode to function properly. Without
-> > it, SPI controllers fall back to FIFO mode, which causes:
-> >
-> > [    0.901296] geni_spi 898000.spi: error -ENODEV: Failed to get tx DMA=
- ch
-> > [    0.901305] geni_spi 898000.spi: FIFO mode disabled, but couldn't ge=
-t DMA, fall back to FIFO mode
-> > ...
-> > [   45.605974] goodix-spi-hid spi0.0: SPI transfer timed out
-> > [   45.605988] geni_spi 898000.spi: Can't set CS when prev xfer running
-> > [   46.621555] spi_master spi0: failed to transfer one message from que=
-ue
-> > [   46.621568] spi_master spi0: noqueue transfer failed
-> > [   46.621577] goodix-spi-hid spi0.0: spi transfer error: -110
-> > [   46.621585] goodix-spi-hid spi0.0: probe with driver goodix-spi-hid =
-failed with error -110
-> >
-> > Therefore, describe GPI DMA controller nodes for qup{0,1,2}, and
-> > describe DMA channels for SPI and I2C, UART is excluded for now, as
-> > it does not yet support this mode.
-> >
-> > Note that, since there is no public schematic, this is derived from
-> > Windows drivers. The drivers do not expose any DMA channel mask
-> > information, so all available channels are enabled.
-> >
-> > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > ---
->
-> [...]
->
-> > +             gpi_dma0: dma-controller@900000  {
->
-> Double space before '{'
->
+From: Thomas Huth <thuth@redhat.com>
 
-Ack
+The FSF does not reside in 59 Temple Place anymore, so we should
+not ask the people to write to that address in case they need a
+copy of the GPL.
 
-> > +                     compatible =3D "qcom,sc8280xp-gpi-dma", "qcom,sm6=
-350-gpi-dma";
-> > +                     reg =3D <0 0x00900000 0 0x60000>;
-> > +
-> > +                     interrupts =3D <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>,
-> > +                                  <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
->
-> The last entry is incorrect and superfluous, please remove
->
+Anyway, all other files in this directory already had their boilerplate
+text replaced by a proper SPDX tag in the earlier commit 1a59d1b8e05ea
+("treewide: Replace GPLv2 boilerplate/reference with SPDX - rule 156"),
+so let's do the same in the remaining files now, too.
 
-Sure, I can remove it. But the last entry is here in qcgpi8280.inf
+Signed-off-by: Thomas Huth <thuth@redhat.com>
+---
+ v2: Use the correct "media:" prefix in the subject
 
-[Hardware_Registry_Base_8280]
-HKR,QUP\0,"NumGpii",%REG_DWORD%, 13
-HKR,Interrupt\0,"0",%REG_DWORD%, 276
-HKR,Interrupt\0,"1",%REG_DWORD%, 277
-HKR,Interrupt\0,"2",%REG_DWORD%, 278
-HKR,Interrupt\0,"3",%REG_DWORD%, 279
-HKR,Interrupt\0,"4",%REG_DWORD%, 280
-HKR,Interrupt\0,"5",%REG_DWORD%, 281
-HKR,Interrupt\0,"6",%REG_DWORD%, 282
-HKR,Interrupt\0,"7",%REG_DWORD%, 283
-HKR,Interrupt\0,"8",%REG_DWORD%, 284
-HKR,Interrupt\0,"9",%REG_DWORD%, 285
-HKR,Interrupt\0,"10",%REG_DWORD%, 286
-HKR,Interrupt\0,"11",%REG_DWORD%, 287
-HKR,Interrupt\0,"12",%REG_DWORD%, 288
+ drivers/media/pci/ivtv/ivtv-driver.c  | 15 +--------------
+ drivers/media/pci/ivtv/ivtv-driver.h  | 15 +--------------
+ drivers/media/pci/ivtv/ivtv-streams.c | 15 +--------------
+ 3 files changed, 3 insertions(+), 42 deletions(-)
 
-> You can also enable the gpi_dma nodes by default
->
+diff --git a/drivers/media/pci/ivtv/ivtv-driver.c b/drivers/media/pci/ivtv/ivtv-driver.c
+index ecc20cd89926f..65f557373879f 100644
+--- a/drivers/media/pci/ivtv/ivtv-driver.c
++++ b/drivers/media/pci/ivtv/ivtv-driver.c
+@@ -1,22 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+     ivtv driver initialization and card probing
+     Copyright (C) 2003-2004  Kevin Thayer <nufan_wfk at yahoo.com>
+     Copyright (C) 2004  Chris Kennedy <c@groovy.org>
+     Copyright (C) 2005-2007  Hans Verkuil <hverkuil@xs4all.nl>
+-
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
+-
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
+-
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ /* Main Driver file for the ivtv project:
+diff --git a/drivers/media/pci/ivtv/ivtv-driver.h b/drivers/media/pci/ivtv/ivtv-driver.h
+index a6ffa99e16bc6..a919fcf51a38c 100644
+--- a/drivers/media/pci/ivtv/ivtv-driver.h
++++ b/drivers/media/pci/ivtv/ivtv-driver.h
+@@ -1,22 +1,9 @@
++/* SPDX-License-Identifier: GPL-2.0-or-later */
+ /*
+     ivtv driver internal defines and structures
+     Copyright (C) 2003-2004  Kevin Thayer <nufan_wfk at yahoo.com>
+     Copyright (C) 2004  Chris Kennedy <c@groovy.org>
+     Copyright (C) 2005-2007  Hans Verkuil <hverkuil@xs4all.nl>
+-
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
+-
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
+-
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ #ifndef IVTV_DRIVER_H
+diff --git a/drivers/media/pci/ivtv/ivtv-streams.c b/drivers/media/pci/ivtv/ivtv-streams.c
+index ac085925d3cb7..3e79e4f1d8c84 100644
+--- a/drivers/media/pci/ivtv/ivtv-streams.c
++++ b/drivers/media/pci/ivtv/ivtv-streams.c
+@@ -1,22 +1,9 @@
++// SPDX-License-Identifier: GPL-2.0-or-later
+ /*
+     init/start/stop/exit stream functions
+     Copyright (C) 2003-2004  Kevin Thayer <nufan_wfk at yahoo.com>
+     Copyright (C) 2004  Chris Kennedy <c@groovy.org>
+     Copyright (C) 2005-2007  Hans Verkuil <hverkuil@xs4all.nl>
+-
+-    This program is free software; you can redistribute it and/or modify
+-    it under the terms of the GNU General Public License as published by
+-    the Free Software Foundation; either version 2 of the License, or
+-    (at your option) any later version.
+-
+-    This program is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-    GNU General Public License for more details.
+-
+-    You should have received a copy of the GNU General Public License
+-    along with this program; if not, write to the Free Software
+-    Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+  */
+ 
+ /* License: GPL
+-- 
+2.50.1
 
-Got it.
-
-Best wishes,
-Pengyu
 
