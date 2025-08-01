@@ -1,317 +1,95 @@
-Return-Path: <linux-kernel+bounces-753569-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753565-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 82CCBB184AA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:11:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C434B184A4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:10:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2291C83978
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3490CA87625
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:09:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D80271442;
-	Fri,  1 Aug 2025 15:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="KgGUyWk9"
-Received: from mail-pf1-f171.google.com (mail-pf1-f171.google.com [209.85.210.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423132749DA;
+	Fri,  1 Aug 2025 15:08:52 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D948C2777F7
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:09:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DA3271454;
+	Fri,  1 Aug 2025 15:08:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060950; cv=none; b=LG1oJxNtjSOuIUDie7rtmQMfO+x+mAW2dq2qYNp+UoRVBF6m9FiFQID59ka1ATLCPzRVVbyLvkETAd8ZqIoyY5chXabxM0BeQJzI69O1qrA1vb47cDx5TFZ6LrSMDGt4WKDgZq2kuRdnZ3JBDRa2p58xud6nvaa7ZuENoft/uzY=
+	t=1754060931; cv=none; b=hDrub4sNRC0Cg0kqXil03dzUcA8jc1cBgNxwrrmbRjL5pLML+TfFeRoWsV+umxm29nUYPV/H6QSyA1vpx4lSGe2NH679PsSJckv7GkUdFbmbGWqCUDPDOX881PbH0G8j+t1B2EC32/Y4r/7ctHULKEddOvOLyBB7zQe+OGcIYUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060950; c=relaxed/simple;
-	bh=L0RJjmTLlYkHLbKt8l66Y1ANmmW3YDpsTiGU9UI7WH8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=jwQm3AqZZCvUMr2I/AoqjxmksaaNIiy46E2byADTABKYxNOMTqNs2v0KnupKWKxvoRb35uayLg+pAh4yi+OAQDMo7azl+XQX3TZ+fhPz5Q8GcAfbej3xaUh/ANrchWE9cUVw66lEPe0RydHeHTYvmRIZmbScHdJknVSuoraG+Mw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=KgGUyWk9; arc=none smtp.client-ip=209.85.210.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pf1-f171.google.com with SMTP id d2e1a72fcca58-76bd202ef81so2231360b3a.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:09:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754060948; x=1754665748; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=qMyTzj0YkyEhVsWHYdHluPcgaxyf2WjhZvLWIgnb3dk=;
-        b=KgGUyWk9653gfLhLC0jnlIpmY4Jf/AN8iivneqkB+/zaCY8BcknvFxY+CNfMbq6LuG
-         J+433qk5OUI4jMlwQhC89oyDXJxPsGCs5pDO3YP1aAbRFZUFE1uYR7CVxEoGXuzDXmZL
-         EO/4EcH7xdjz0ofb+m2uQlgY4RRYtMfArAnNL1ZclZniLd51L77dELw5+Z7m/wsdjrHs
-         IpPaHKCBB1uVEq5EejWK33HoAJPGiBg4sFBWIlZpYqaIHaju0TSpXmAtG1nz7RYmM1gO
-         HU4UcVBQ2x2/44A2wit7HIOz31wR6YgXz83gdo9E0uK9kfN7acl014N3AjXsUX5VMdQh
-         rnDA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754060948; x=1754665748;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qMyTzj0YkyEhVsWHYdHluPcgaxyf2WjhZvLWIgnb3dk=;
-        b=fU4cFEN+Pxb0sCexnwqN/TZQdDAr1go+qnkPsHC5dy8NIiIUukQHeB0B5EDE4kyhcl
-         DE8EETFMR3RAYcYl2W1I/DD2Rq1haM9bil7IfEQAnTeYIAWXMqb6UWgnEWvBZitZGr00
-         u6UQn+3/hRa8FHss7bdKuwOyipfflLwr2ag3KPFMq2r8neRG9WRh/FIeBNyBDR9k6hyK
-         uQvLygRKQbk7yb57OYiFVltZ3N28IzavQvQcPAmTEFu4fn1+Z22f0h4WlaOMXzB9jmG2
-         +9/0E+V1Ca6eQ29mkSMHVhWUBBnCJkUOeORxv859SaB2S0AzVlLt9uS8DaFYT0b0AzdL
-         6DEg==
-X-Forwarded-Encrypted: i=1; AJvYcCVZEFs/KiVWwur5j+ouqQVr7wpjtIiUJKSO+8PyHdAJb+TTBFadOZtLFje98I972SI06Ao/5pdMQvzPjTY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwxzS8MPcxpCKyEnXHwE7/LyGbl5Apq6JSRndZxnZ+zUOdir496
-	v7cp6ZZA002+Fs6kCGB0cbmoIwnZ9zDXHZJsG8pF+UmDJWiA/Jf8tN2orCflrbf/pZw=
-X-Gm-Gg: ASbGncsblb0hnuj8OBnupbILlAqvVjbKmrdmBYpbo01uIOVlWuoI5n+L8SKGs+oqfh4
-	NqjtfTR+53hm12/SHq8dkR1Khvlkl3Ua2JGOr3AC/tTd09iAALJxC1CWJskREKsG/Fv97MpNEUP
-	V6zoZUnl250jb3dpEwKo+jH+ryHkH6GWOf37FljJQnBVCRz1WYMiH3Zia7LVq7fCknAJPRvU4pw
-	KwkjIIYIVeJR5tMz41CRodVL2TTADEwdNjg8lyQzHsSx3grua8vlhhxwnKcEu95gYXZkbY0YLKQ
-	pmEzTHgdG454Rm8xSHgln0rXTUvZPR2V28cdbOcPPJTCI3iEA0G+rzL7UsoXgeHlVOM54K7wWbL
-	nmWQYgwuxs+OLJGDRkg==
-X-Google-Smtp-Source: AGHT+IFbIzv1RI9jaQPJA/y6fxdr9d8t/skdnwH51V+twjPoFCHjhTBO5pTmvEwfCUPhQB227TDx+w==
-X-Received: by 2002:a17:903:22c4:b0:240:a54e:218e with SMTP id d9443c01a7336-240a54e232cmr152369305ad.53.1754060948100;
-        Fri, 01 Aug 2025 08:09:08 -0700 (PDT)
-Received: from [127.0.1.1] ([112.64.60.64])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aafa11sm45639705ad.172.2025.08.01.08.09.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 08:09:07 -0700 (PDT)
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 01 Aug 2025 23:07:37 +0800
-Subject: [PATCH v14 13/13] drm/msm/dpu: Enable quad-pipe for DSC and
- dual-DSI case
+	s=arc-20240116; t=1754060931; c=relaxed/simple;
+	bh=rasj1vF9KNPtkxjQ9MPsKrTo+IxOhyWt5ILF41hd4Lo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=s1OqJiY+P+zTOqivZTtVrWFpqWkfjf6dURHrFR6I3DGdUmIetyeKlfSu7aNHrS/aIlTSgAmCwhRdgjWbVvRTJkNjTP1UrSH5BSdMmRqBCPyg7nYQmqR0sMnw51/6DIeuYdynVG+0/RD9zVdimz9vYsVIamB+1Qv4d5dARdlmV9w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay01.hostedemail.com (Postfix) with ESMTP id 9046F1D92C3;
+	Fri,  1 Aug 2025 15:08:48 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 9885020013;
+	Fri,  1 Aug 2025 15:08:46 +0000 (UTC)
+Date: Fri, 1 Aug 2025 11:09:07 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yonghong Song <yonghong.song@linux.dev>
+Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
+ <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ bpf@vger.kernel.org, Douglas Raillard <douglas.raillard@arm.com>
+Subject: Re: [PATCH] tracing: Have unsigned int function args displayed as
+ hexadecimal
+Message-ID: <20250801110907.121f32ee@gandalf.local.home>
+In-Reply-To: <9bfa8866-a90f-41bf-8b22-bf704c01a2e5@linux.dev>
+References: <20250731193126.2eeb21c6@gandalf.local.home>
+	<9bfa8866-a90f-41bf-8b22-bf704c01a2e5@linux.dev>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-v6-16-rc2-quad-pipe-upstream-v14-13-b626236f4c31@linaro.org>
-References: <20250801-v6-16-rc2-quad-pipe-upstream-v14-0-b626236f4c31@linaro.org>
-In-Reply-To: <20250801-v6-16-rc2-quad-pipe-upstream-v14-0-b626236f4c31@linaro.org>
-To: Rob Clark <robdclark@gmail.com>, 
- Abhinav Kumar <quic_abhinavk@quicinc.com>, 
- Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, 
- Marijn Suijten <marijn.suijten@somainline.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Jessica Zhang <quic_jesszhan@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
- Jun Nie <jun.nie@linaro.org>, Dmitry Baryshkov <lumag@kernel.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754060859; l=8147;
- i=jun.nie@linaro.org; s=20240403; h=from:subject:message-id;
- bh=L0RJjmTLlYkHLbKt8l66Y1ANmmW3YDpsTiGU9UI7WH8=;
- b=I4x2VzIeZZcQrMOHoQWPzpCyld0+wvb0QhXLrqR0yjgWwmb5JZigsGOsJsLXSgN8SIJ6rkWQ8
- JyYL9Abo2MxDMVrJVXyPrPRyQ8mz+JgNKiyZHKbfPUpZ/3D/YBwyVHV
-X-Developer-Key: i=jun.nie@linaro.org; a=ed25519;
- pk=MNiBt/faLPvo+iJoP1hodyY2x6ozVXL8QMptmsKg3cc=
+X-Rspamd-Queue-Id: 9885020013
+X-Stat-Signature: yxeho5oa7yktraxxt4cwzyfdippmmrd9
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX197pik6S8leMlPpMBdVTeGUNcW1D3B0DGo=
+X-HE-Tag: 1754060926-227062
+X-HE-Meta: U2FsdGVkX19i9CxOMIycSCcv6gXRkpNZK1ckGg5GGF5Ac/dJ/9t0LY0UbYiGZL4XodtuQAjMgLO8VZChBpHHzgUH+d4LGa3eOEH8jDpGxGRI7q6M2dn493VWq9y5TPjirQl7C7RtMydNNsYLtUIjoqM8Hn1mbEwnkQm7/3gQRGFY8rqb3drpDKUfIHNLLiEVeSzHemyL4ImCJ8jp7QdNI/LUqICuKEH5wVLxNfJX7dE8PBCwVFQQ7MN73ZyrwfClYQrG6oi6VnRJsIKAaeo1kZLV2RYCxjkzsb9UxmgsvBApnPB586wMlMAPieL+KOyR
 
-To support high-resolution cases that exceed the width limitation of
-a pair of SSPPs, or scenarios that surpass the maximum MDP clock rate,
-additional pipes are necessary to enable parallel data processing
-within the SSPP width constraints and MDP clock rate.
+On Fri, 1 Aug 2025 07:49:53 -0700
+Yonghong Song <yonghong.song@linux.dev> wrote:
 
-Request 4 mixers and 4 DSCs for high-resolution cases where both DSC
-and dual interfaces are enabled. More use cases can be incorporated
-later if quad-pipe capabilities are required.
+> > @@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
+> >   			trace_seq_printf(s, "0x%lx", arg);
+> >   			break;
+> >   		case BTF_KIND_INT:
+> > -			trace_seq_printf(s, "%ld", arg);
+> > +			/* Get the INT encodoing */
+> > +			int_data = btf_type_int(t);
+> > +                        encode = BTF_INT_ENCODING(int_data);  
+> 
+> See different identation between above 'int_data' and 'encode'. The same as below.
 
-Signed-off-by: Jun Nie <jun.nie@linaro.org>
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Reviewed-by: Jessica Zhang <quic_jesszhan@quicinc.com>
----
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c         | 27 +++++++++++++++++------
- drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h         |  6 ++---
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c      | 28 ++++++++----------------
- drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h   |  2 +-
- drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h      |  2 +-
- 6 files changed, 35 insertions(+), 32 deletions(-)
+Bah, I think I cut and pasted into emacs and it used spaces instead of tabs.
 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-index 1c7a5e545745320018c3e9a2d163cbfd3dceaf7b..2625ad777e477d2d5a6a746989bb9e10493e19ad 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.c
-@@ -200,7 +200,7 @@ static int dpu_crtc_get_lm_crc(struct drm_crtc *crtc,
- 		struct dpu_crtc_state *crtc_state)
- {
- 	struct dpu_crtc_mixer *m;
--	u32 crcs[CRTC_DUAL_MIXERS];
-+	u32 crcs[CRTC_QUAD_MIXERS];
- 
- 	int rc = 0;
- 	int i;
-@@ -1328,6 +1328,7 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	struct drm_display_mode *mode = &crtc_state->adjusted_mode;
- 	struct msm_display_topology topology = {0};
- 	struct drm_encoder *drm_enc;
-+	u32 num_rt_intf;
- 
- 	drm_for_each_encoder_mask(drm_enc, crtc->dev, crtc_state->encoder_mask)
- 		dpu_encoder_update_topology(drm_enc, &topology, crtc_state->state,
-@@ -1341,11 +1342,14 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	 * Dual display
- 	 * 2 LM, 2 INTF ( Split display using 2 interfaces)
- 	 *
-+	 * If DSC is enabled, try to use 4:4:2 topology if there is enough
-+	 * resource. Otherwise, use 2:2:2 topology.
-+	 *
- 	 * Single display
- 	 * 1 LM, 1 INTF
- 	 * 2 LM, 1 INTF (stream merge to support high resolution interfaces)
- 	 *
--	 * If DSC is enabled, use 2 LMs for 2:2:1 topology
-+	 * If DSC is enabled, use 2:2:1 topology
- 	 *
- 	 * Add dspps to the reservation requirements if ctm is requested
- 	 *
-@@ -1357,14 +1361,23 @@ static struct msm_display_topology dpu_crtc_get_topology(
- 	 * (mode->hdisplay > MAX_HDISPLAY_SPLIT) check.
- 	 */
- 
--	if (topology.num_intf == 2 && !topology.cwb_enabled)
--		topology.num_lm = 2;
--	else if (topology.num_dsc == 2)
-+	num_rt_intf = topology.num_intf;
-+	if (topology.cwb_enabled)
-+		num_rt_intf--;
-+
-+	if (topology.num_dsc) {
-+		if (dpu_kms->catalog->dsc_count >= num_rt_intf * 2)
-+			topology.num_dsc = num_rt_intf * 2;
-+		else
-+			topology.num_dsc = num_rt_intf;
-+		topology.num_lm = topology.num_dsc;
-+	} else if (num_rt_intf == 2) {
- 		topology.num_lm = 2;
--	else if (dpu_kms->catalog->caps->has_3d_merge)
-+	} else if (dpu_kms->catalog->caps->has_3d_merge) {
- 		topology.num_lm = (mode->hdisplay > MAX_HDISPLAY_SPLIT) ? 2 : 1;
--	else
-+	} else {
- 		topology.num_lm = 1;
-+	}
- 
- 	if (crtc_state->ctm)
- 		topology.num_dspp = topology.num_lm;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-index 6eaba5696e8e6bd1246a9895c4c8714ca6589b10..455073c7025b0bcb970d8817f197d9bcacc6dca5 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_crtc.h
-@@ -210,7 +210,7 @@ struct dpu_crtc_state {
- 
- 	bool bw_control;
- 	bool bw_split_vote;
--	struct drm_rect lm_bounds[CRTC_DUAL_MIXERS];
-+	struct drm_rect lm_bounds[CRTC_QUAD_MIXERS];
- 
- 	uint64_t input_fence_timeout_ns;
- 
-@@ -218,10 +218,10 @@ struct dpu_crtc_state {
- 
- 	/* HW Resources reserved for the crtc */
- 	u32 num_mixers;
--	struct dpu_crtc_mixer mixers[CRTC_DUAL_MIXERS];
-+	struct dpu_crtc_mixer mixers[CRTC_QUAD_MIXERS];
- 
- 	u32 num_ctls;
--	struct dpu_hw_ctl *hw_ctls[CRTC_DUAL_MIXERS];
-+	struct dpu_hw_ctl *hw_ctls[CRTC_QUAD_MIXERS];
- 
- 	enum dpu_crtc_crc_source crc_source;
- 	int crc_frame_skip_count;
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-index 4616b360812491afbe63f8ffd4a57bc9604382e7..d13eeb3a707e186faec67ec02a634c14414d9048 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder.c
-@@ -55,7 +55,7 @@
- #define MAX_PHYS_ENCODERS_PER_VIRTUAL \
- 	(MAX_H_TILES_PER_DISPLAY * NUM_PHYS_ENCODER_TYPES)
- 
--#define MAX_CHANNELS_PER_ENC 2
-+#define MAX_CHANNELS_PER_ENC 4
- #define MAX_CWB_PER_ENC 2
- 
- #define IDLE_SHORT_TIMEOUT	1
-@@ -675,22 +675,12 @@ void dpu_encoder_update_topology(struct drm_encoder *drm_enc,
- 
- 	dsc = dpu_encoder_get_dsc_config(drm_enc);
- 
--	/* We only support 2 DSC mode (with 2 LM and 1 INTF) */
--	if (dsc) {
--		/*
--		 * Use 2 DSC encoders, 2 layer mixers and 1 or 2 interfaces
--		 * when Display Stream Compression (DSC) is enabled,
--		 * and when enough DSC blocks are available.
--		 * This is power-optimal and can drive up to (including) 4k
--		 * screens.
--		 */
--		WARN(topology->num_intf > 2,
--		     "DSC topology cannot support more than 2 interfaces\n");
--		if (topology->num_intf >= 2 || dpu_kms->catalog->dsc_count >= 2)
--			topology->num_dsc = 2;
--		else
--			topology->num_dsc = 1;
--	}
-+	/*
-+	 * Set DSC number as 1 to mark the enabled status, will be adjusted
-+	 * in dpu_crtc_get_topology()
-+	 */
-+	if (dsc)
-+		topology->num_dsc = 1;
- 
- 	connector = drm_atomic_get_new_connector_for_encoder(state, drm_enc);
- 	if (!connector)
-@@ -2179,8 +2169,8 @@ static void dpu_encoder_helper_reset_mixers(struct dpu_encoder_phys *phys_enc)
- 	struct dpu_hw_mixer_cfg mixer;
- 	int i, num_lm;
- 	struct dpu_global_state *global_state;
--	struct dpu_hw_blk *hw_lm[2];
--	struct dpu_hw_mixer *hw_mixer[2];
-+	struct dpu_hw_blk *hw_lm[MAX_CHANNELS_PER_ENC];
-+	struct dpu_hw_mixer *hw_mixer[MAX_CHANNELS_PER_ENC];
- 	struct dpu_hw_ctl *ctl = phys_enc->hw_ctl;
- 
- 	memset(&mixer, 0, sizeof(mixer));
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-index 61b22d9494546885db609efa156222792af73d2a..09395d7910ac87c035b65cf476350bf6c9619612 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_encoder_phys.h
-@@ -302,7 +302,7 @@ static inline enum dpu_3d_blend_mode dpu_encoder_helper_get_3d_blend_mode(
- 
- 	/* Use merge_3d unless DSC MERGE topology is used */
- 	if (phys_enc->split_role == ENC_ROLE_SOLO &&
--	    dpu_cstate->num_mixers == CRTC_DUAL_MIXERS &&
-+	    (dpu_cstate->num_mixers != 1) &&
- 	    !dpu_encoder_use_dsc_merge(phys_enc->parent))
- 		return BLEND_3D_H_ROW_INT;
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-index a78bb2c334e30bc86554bde45355808b790c6235..ce0265c13e050fbd48ac5c3202e8fa23edd1220d 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_catalog.h
-@@ -24,7 +24,7 @@
- #define DPU_MAX_IMG_WIDTH 0x3fff
- #define DPU_MAX_IMG_HEIGHT 0x3fff
- 
--#define CRTC_DUAL_MIXERS	2
-+#define CRTC_QUAD_MIXERS	4
- 
- #define MAX_XIN_COUNT 16
- 
-diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-index e4875a1f638db6f1983d9c51cb399319d27675e9..5cedcda285273a46cd6e11da63cde92cab94b9f4 100644
---- a/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-+++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_hw_mdss.h
-@@ -34,7 +34,7 @@
- #define DPU_MAX_PLANES			4
- #endif
- 
--#define STAGES_PER_PLANE		1
-+#define STAGES_PER_PLANE		2
- #define PIPES_PER_STAGE			2
- #define PIPES_PER_PLANE			(PIPES_PER_STAGE * STAGES_PER_PLANE)
- #ifndef DPU_MAX_DE_CURVES
+-- Steve
 
--- 
-2.34.1
+
+> 
+> > +                        /* Print unsigned ints as hex */
+> > +                        if (encode & BTF_INT_SIGNED)
+> > +				trace_seq_printf(s, "%ld", arg);
+> > +                        else
+> > +                                trace_seq_printf(s, "0x%lx", arg);
+> >   			break;
+> >   		case BTF_KIND_ENUM:
+> >   			trace_seq_printf(s, "%ld", arg);  
 
 
