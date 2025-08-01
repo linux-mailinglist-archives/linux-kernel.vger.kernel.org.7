@@ -1,559 +1,287 @@
-Return-Path: <linux-kernel+bounces-752777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20D89B17AC5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A69EAB17AC7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:20:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2AAFC7A7E34
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:18:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95E695845E6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:20:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E89C478F29;
-	Fri,  1 Aug 2025 01:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="aFSwQNMj"
-Received: from mail-yb1-f173.google.com (mail-yb1-f173.google.com [209.85.219.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11BB313E02A;
+	Fri,  1 Aug 2025 01:20:09 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 961714207F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 01:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D597D4207F;
+	Fri,  1 Aug 2025 01:20:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754011195; cv=none; b=Q1kQ0Ncd9ENBbtkdp09Zz8lWmTTH9Le8XlVnjPgbHDO8Yg2iCJZv0tXtFSzHdWK7VgVM7xI95xSzXzTemDg7Rrg2giYSVjQoTJju7i5+rWIpTWZVcWVZI55lCHPxzBhWotSKBN/mc2WW46hU//Q0JUw/K+1thfwU2r7CNMxvay8=
+	t=1754011208; cv=none; b=nyJIknov3teUxspCpnPmKdFDEd8YYIc6XrekvyL0frTs+9Qk5fYm5LlbqCQTpBkYKuGjSge80O9D10Oc33OIJ27bKotle9B2NTsaP0Qm/j0JGSqn8A4q1veOHOs77aUjvwYfdr/Jry8DMK7m2zXNsbjI1CplS93v/slRlHFJT1Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754011195; c=relaxed/simple;
-	bh=YUQA+ZxHt9fj/lg7SpY1Pt1C9T6/y/qdphwfGNfQ7e0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WyK0rsfg/Fy+ww/BGtSvrO2i0KNizp4bAjTROaf4iYMgSa6A8MYH8ZHIsw+cTmbll/Ua67GlCp7RNaOYdIKhcCf4oXTcRX6E+8Os053I1BbaHH+13mnLx5MP3HstXgCgKPdPa/AMzVmcfL9KOSXoVKwgSRIGzJF9Z0mGj6TJ5LQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=aFSwQNMj; arc=none smtp.client-ip=209.85.219.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yb1-f173.google.com with SMTP id 3f1490d57ef6-e8986a25cbfso908908276.0
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 18:19:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754011192; x=1754615992; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=XXUiw9bAmvFij/Xs2oriGu47rDApjJHReezfEKz8cZk=;
-        b=aFSwQNMjYOAudqUy9lGWoMnX7IFMvFB0xSBq2KML9CwEud8ii2+LTYPL/90DkOsRqf
-         whbgejVdKZlHX/xM8JiYbKKSpVC+KiRZCI00YEYTK6S42mR3CQji2BH33X7S54jcxT8Z
-         TqzRg8xOJGpEbK5cTwHRLPBtWUbqnK+FbiTyMAueH9rIeKF+szbPvAARPLpxh9f+YbQp
-         TdR3x7oSdACsqIebuykLTT2ha0Og3fDDt0LsagnMpIFTU6fwT5/YFc1KGSpxDl6ogyH/
-         vzrZeS/hc0Nk4lWYCYFsFFJO5paG/BWIwbWJyAyZ/JvITIWtRWF4tecPjpI/QoLjhXMh
-         c8Zw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754011192; x=1754615992;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=XXUiw9bAmvFij/Xs2oriGu47rDApjJHReezfEKz8cZk=;
-        b=ANADac2oczl8uMcCRfXj7PekR167jS6P7s0QDKG2RtL+2tKxkN124Q/hQY72qRGeRi
-         jEXLVXEjsGZL/FJu2SDpItgvrHBsqdSRmpKA2KEPLSFs92ALDkSMH+cqh1f4CVefQYlN
-         OMQE7oOZcE+ZHMrYTprtPKeDAZuQLPx1+r7b/XAV6nBKgWyJ9/riS3dE0xUYAOprmeUZ
-         XsDYxH/9iiR8+Z12MaJ9vxdjRbMppUnKsS0dVCkutA1kNNqcpwQnZypXb5s/DAyBpOhP
-         a3LJWvp06cZkkyVTgVu54AtLOghYMOrhDgw96hHlcMgCuO2gazlSTmY5dZtcu8QHbIwD
-         6Phw==
-X-Forwarded-Encrypted: i=1; AJvYcCWpNSRYNz28MJmnAiAYa6A4nB5eWy1yxz5cI8Eg+dYyQXLm52Pq+p+jGMQOIbrVy/6SZxq3Qw73P0c4aGI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDcapNi1Uhv/6pgEuda6RcHCCNzXee7uUQrT63knppev4wsVRU
-	KNtJBJwIY8L2dv2nFdVy5CdNfOlKfUOfdi1JxGUgELvrCRa+h+0CoXSyrDKx4vzMNiGWtr3cKji
-	qr+O//mQodYr+vPFjmptfBAdmhRaWaKvxtupu7tI9bw==
-X-Gm-Gg: ASbGncu1xmjIxPv4YPLgylXwyz8hQ6qBh6XNMeqEFVYSrfWVKkzIuF19q+FmcP10UH6
-	UEusRB+tdeaUC2KC8GXvUplI1+KpNP8Y7EttOYn7SzE/tWgUijun/PylOYJwBGpPCeaM9aPW6/i
-	/v+/Gfff775Zj1pRJU58LdZWPZu9fKosGS31FI8dtXB9+cgdtrFLc5dmLlD9mKtXgPiJTUzq5la
-	10V+NnuGe297BOu7g==
-X-Google-Smtp-Source: AGHT+IEKt+ZT0pexcO15N/b7Q9t7zFCWvynIZkq2ZL8JrZr8XHCjFwlbmL9fDBuc1oF57Go+UCki+q53Mf7Rd7P3+vU=
-X-Received: by 2002:a05:690c:3581:b0:70e:1771:c165 with SMTP id
- 00721157ae682-71b6d7f8699mr11775427b3.29.1754011192243; Thu, 31 Jul 2025
- 18:19:52 -0700 (PDT)
+	s=arc-20240116; t=1754011208; c=relaxed/simple;
+	bh=qhtL3kaBwtwXJpYb7s2yew2UqErPiOBEzMW6cuZJSF8=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=Xmre/7NB6uiCdYLLe2eydF0W084q9CeTyTw68Wkd/pjNSJMq+Bx+CQY28eyqv+9hJd8RRu6QDKV+yyuQ/if3KqboiH0se+PITekH2LWqI+14UEvDPJV1bMXjiEEVstbAoqID/Z1kPzIqH9fmdeNjeJBEOffy/TRh9AuQ0nkk3Nk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uheR3-0047RW-Uz;
+	Fri, 01 Aug 2025 01:19:51 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250728-v6-16-rc2-quad-pipe-upstream-v13-0-954e4917fe4f@linaro.org>
- <20250728-v6-16-rc2-quad-pipe-upstream-v13-10-954e4917fe4f@linaro.org>
- <4dpeif7wynynbsccbhc253wkshuylnsjslsosmrnyld3bmot5l@yqrmpln44qe2>
- <CABymUCMa06E0zavQsKeDw_rjTW5F9o4ancxWuQynMO3wsHKFwA@mail.gmail.com>
- <4c492060-cdde-43c6-8351-d969b0f9322b@oss.qualcomm.com> <CABymUCO63-V7MoWpgCTEV_8R_4rVHM-1=eyRP34=OdKGpYSLDQ@mail.gmail.com>
- <c7346b52-c5a0-4aa2-a8d4-92761e33b011@oss.qualcomm.com>
-In-Reply-To: <c7346b52-c5a0-4aa2-a8d4-92761e33b011@oss.qualcomm.com>
-From: Jun Nie <jun.nie@linaro.org>
-Date: Fri, 1 Aug 2025 09:19:41 +0800
-X-Gm-Features: Ac12FXzDFQAwvQWbG77uzpAUTLkbkRxIduTGvtusB4QM0I09WiqTGVfPaX3PXmk
-Message-ID: <CABymUCPgXAaJCLTiN1XxK1JEjxnr9qPye_E6gMLSMvEhgXJk6w@mail.gmail.com>
-Subject: Re: [PATCH v13 10/12] drm/msm/dpu: support SSPP assignment for
- quad-pipe case
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robdclark@gmail.com>, Abhinav Kumar <quic_abhinavk@quicinc.com>, 
-	Dmitry Baryshkov <lumag@kernel.org>, Sean Paul <sean@poorly.run>, 
-	Marijn Suijten <marijn.suijten@somainline.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+From: "NeilBrown" <neil@brown.name>
+To: "Jeff Layton" <jlayton@kernel.org>
+Cc: "Alexander Viro" <viro@zeniv.linux.org.uk>,
+ "Christian Brauner" <brauner@kernel.org>, "Jan Kara" <jack@suse.cz>,
+ "Steven Rostedt" <rostedt@goodmis.org>,
+ "Masami Hiramatsu" <mhiramat@kernel.org>,
+ "Mathieu Desnoyers" <mathieu.desnoyers@efficios.com>,
+ "Chuck Lever" <chuck.lever@oracle.com>,
+ "Olga Kornievskaia" <okorniev@redhat.com>, "Dai Ngo" <Dai.Ngo@oracle.com>,
+ "Tom Talpey" <tom@talpey.com>, "Trond Myklebust" <trondmy@hammerspace.com>,
+ "Anna Schumaker" <anna@kernel.org>, linux-fsdevel@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+ linux-nfs@vger.kernel.org, "Jeff Layton" <jlayton@kernel.org>
+Subject: Re: [PATCH v4 8/8] nfsd: freeze c/mtime updates with outstanding
+ WRITE_ATTRS delegation
+In-reply-to: <20250730-nfsd-testing-v4-8-7f5730570a52@kernel.org>
+References: <20250730-nfsd-testing-v4-0-7f5730570a52@kernel.org>,
+ <20250730-nfsd-testing-v4-8-7f5730570a52@kernel.org>
+Date: Fri, 01 Aug 2025 11:19:51 +1000
+Message-id: <175401119116.2234665.1029066014854377072@noble.neil.brown.name>
 
-Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=B9=B4=
-8=E6=9C=881=E6=97=A5=E5=91=A8=E4=BA=94 01:08=E5=86=99=E9=81=93=EF=BC=9A
->
-> On 31/07/2025 18:37, Jun Nie wrote:
-> > Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=
-=B9=B47=E6=9C=8831=E6=97=A5=E5=91=A8=E5=9B=9B 22:22=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >>
-> >> On 31/07/2025 13:52, Jun Nie wrote:
-> >>> Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com> =E4=BA=8E2025=E5=
-=B9=B47=E6=9C=8831=E6=97=A5=E5=91=A8=E5=9B=9B 02:52=E5=86=99=E9=81=93=EF=BC=
-=9A
-> >>>>
-> >>>> On Mon, Jul 28, 2025 at 09:14:34PM +0800, Jun Nie wrote:
-> >>>>> Currently, SSPPs are assigned to a maximum of two pipes. However,
-> >>>>> quad-pipe usage scenarios require four pipes and involve configurin=
-g
-> >>>>> two stages. In quad-pipe case, the first two pipes share a set of
-> >>>>> mixer configurations and enable multi-rect mode when certain
-> >>>>> conditions are met. The same applies to the subsequent two pipes.
-> >>>>>
-> >>>>> Assign SSPPs to the pipes in each stage using a unified method and
-> >>>>> to loop the stages accordingly.
-> >>>>>
-> >>>>> Signed-off-by: Jun Nie <jun.nie@linaro.org>
-> >>>>> ---
-> >>>>>    drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c | 160 ++++++++++++++++=
-++------------
-> >>>>>    1 file changed, 99 insertions(+), 61 deletions(-)
-> >>>>>
-> >>>>> diff --git a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c b/drivers/gp=
-u/drm/msm/disp/dpu1/dpu_plane.c
-> >>>>> index 55429f29a4b95594771d930efe42aaa4126f6f07..e1e16a8d5ac55ba52a0=
-f460d62901dced65e3a9e 100644
-> >>>>> --- a/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> >>>>> +++ b/drivers/gpu/drm/msm/disp/dpu1/dpu_plane.c
-> >>>>> @@ -959,6 +959,30 @@ static int dpu_plane_is_multirect_parallel_cap=
-able(struct dpu_hw_sspp *sspp,
-> >>>>>    }
-> >>>>>
-> >>>>>
-> >>>>> +static bool dpu_plane_get_single_pipe_in_stage(struct dpu_plane_st=
-ate *pstate,
-> >>>>> +                                            struct dpu_sw_pipe **s=
-ingle_pipe,
-> >>>>> +                                            struct dpu_sw_pipe_cfg=
- **single_pipe_cfg,
-> >>>>> +                                            int stage_index)
-> >>>>> +{
-> >>>>> +     int pipe_idx, i, valid_pipe =3D 0;
-> >>>>> +
-> >>>>> +     for (i =3D 0; i < PIPES_PER_STAGE; i++) {
-> >>>>
-> >>>> Why do you need to loop here? Is there a case when pipe 0 is not
-> >>>> assigned, but pipe 1 is?
-> >>>
-> >>> Loop the pipe in a stage to count the valid pipes. If there are 2 val=
-id
-> >>> pipes in stage of the current plane, this function will return false.
-> >>> Or you prefer the below coding?
-> >>>
-> >>> 1029         pipe_idx =3D stage_index * PIPES_PER_STAGE;
-> >>> 1030         if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_rect)=
- !=3D 0 &&
-> >>> 1031             drm_rect_width(&pstate->pipe_cfg[pipe_idx +
-> >>> 1].src_rect) =3D=3D 0) {
-> >>
-> >> Yes, this is better from my POV. But the bigger question is why do you
-> >> need it at all? What is wrong with the existing check? Can it be that
-> >> pipe0 is not used, but pipe1 is used?
-> >
-> > There is no case that pipe0 is not used, but pipe1 is used. Existing ch=
-eck
-> > does not filter the plane which contains single pipe in a stage, which =
-can
-> > be a candidate for SSPP sharing. If the stage contains 2 valid pipes or
-> > no valid pipes, it is skipped in dpu_plane_try_multirect_shared(), or i=
-t is
-> > skipped to be stored in prev_adjacent_plane_state[].
->
-> Oh, I see, you need to check both pipes because you might need to skip
-> it completely. I'd really prefer to have more explicit code:
->
-> - check for pipe0, skip this part of the plane if there is none
-> - check for pipe1, if there is none, it's a candidate for sharing.
+On Wed, 30 Jul 2025, Jeff Layton wrote:
+> Instead of allowing the ctime to roll backward with a WRITE_ATTRS
+> delegation, set FMODE_NOCMTIME on the file and have it skip mtime and
+> ctime updates.
+>=20
+> It is possible that the client will never send a SETATTR to set the
+> times before returning the delegation. Add two new bools to struct
+> nfs4_delegation:
+>=20
+> dl_written: tracks whether the file has been written since the
+> delegation was granted. This is set in the WRITE and LAYOUTCOMMIT
+> handlers.
+>=20
+> dl_setattr: tracks whether the client has sent at least one valid
+> mtime that can also update the ctime in a SETATTR.
 
-Yeah, this is the logic of the current implementation. So the your only
-concern is the loop. Will remove the loop as above code.
+Do we really need both of these?
+Could we set dl_written on a write and clear it on a setattr that sets
+mtime/ctime?=20
+Then on close, if it is still set we force an mtime update.
 
->
-> If that becomes too ugly, then yes, explicit check for pipe0 and pipe1
-> are better than a loop.
->
-> >
-> >>
-> >>> 1032                         if (single_pipe)
-> >>
-> >> You don't need these ifs. You always pass a valid pointer.
-> >
-> > OK, a valid pointer can be passed though the return value may not be ne=
-eded.
->
-> You are always passing a valid pointer there. If at any point we add
-> other usage, then we'd need to add this if.
->
-> >>
-> >>> 1033                                 *single_pipe =3D &pstate->pipe[p=
-ipe_idx];
-> >>> 1034                         if (single_pipe_cfg)
-> >>> 1035                                 *single_pipe_cfg =3D
-> >>> &pstate->pipe_cfg[pipe_idx];
-> >>> 1036                 return true;
-> >>> 1037         }
-> >>> 1038
-> >>> 1039         return false;
-> >>>
-> >>>>
-> >>>>> +             pipe_idx =3D stage_index * PIPES_PER_STAGE + i;
-> >>>>> +             if (drm_rect_width(&pstate->pipe_cfg[pipe_idx].src_re=
-ct) !=3D 0) {
-> >>>>> +                     valid_pipe++;
-> >>>>> +                     if (valid_pipe > 1)
-> >>>>> +                             return false;
-> >>>>> +
-> >>>>> +                     if (single_pipe)
-> >>>>> +                             *single_pipe =3D &pstate->pipe[pipe_i=
-dx];
-> >>>>> +                     if (single_pipe_cfg)
-> >>>>> +                             *single_pipe_cfg =3D &pstate->pipe_cf=
-g[pipe_idx];
-> >>>>> +             }
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     return valid_pipe =3D=3D 1;
-> >>>>> +}
-> >>>>> +
-> >>>>>    static int dpu_plane_atomic_check_sspp(struct drm_plane *plane,
-> >>>>>                                        struct drm_atomic_state *sta=
-te,
-> >>>>>                                        const struct drm_crtc_state =
-*crtc_state)
-> >>>>> @@ -1023,17 +1047,20 @@ static bool dpu_plane_try_multirect_paralle=
-l(struct dpu_sw_pipe *pipe, struct dp
-> >>>>>    static int dpu_plane_try_multirect_shared(struct dpu_plane_state=
- *pstate,
-> >>>>>                                           struct dpu_plane_state *p=
-rev_adjacent_pstate,
-> >>>>>                                           const struct msm_format *=
-fmt,
-> >>>>> -                                       uint32_t max_linewidth)
-> >>>>> +                                       uint32_t max_linewidth, int=
- stage_index)
-> >>>>>    {
-> >>>>> -     struct dpu_sw_pipe *pipe =3D &pstate->pipe[0];
-> >>>>> -     struct dpu_sw_pipe *r_pipe =3D &pstate->pipe[1];
-> >>>>> -     struct dpu_sw_pipe_cfg *pipe_cfg =3D &pstate->pipe_cfg[0];
-> >>>>> -     struct dpu_sw_pipe *prev_pipe =3D &prev_adjacent_pstate->pipe=
-[0];
-> >>>>> -     struct dpu_sw_pipe_cfg *prev_pipe_cfg =3D &prev_adjacent_psta=
-te->pipe_cfg[0];
-> >>>>> +     struct dpu_sw_pipe *pipe, *prev_pipe;
-> >>>>> +     struct dpu_sw_pipe_cfg *pipe_cfg, *prev_pipe_cfg;
-> >>>>>         const struct msm_format *prev_fmt =3D msm_framebuffer_forma=
-t(prev_adjacent_pstate->base.fb);
-> >>>>>         u16 max_tile_height =3D 1;
-> >>>>>
-> >>>>> -     if (prev_adjacent_pstate->pipe[1].sspp !=3D NULL ||
-> >>>>> +     if (!dpu_plane_get_single_pipe_in_stage(pstate, &pipe,
-> >>>>> +                                             &pipe_cfg, stage_inde=
-x))
-> >>>>> +             return false;
+I would be inclined to put this bit in ->f_mode setting it precisely when
+FMODE_NOCMTIME is uses to skip the update.  (There are 4 spare fmode bits).
 
-The current stage is tested with a single valid pipe, skipped if false.
+But none of that need delay the current patchset which looks good to me
+(though I haven't dug quite enough to give a Reviewed-by).
 
-> >>>>> +
-> >>>>> +     if (!dpu_plane_get_single_pipe_in_stage(prev_adjacent_pstate,
-> >>>>> +                                             &prev_pipe, &prev_pip=
-e_cfg,
-> >>>>> +                                             stage_index) ||
-> >>>>>             prev_pipe->multirect_mode !=3D DPU_SSPP_MULTIRECT_NONE)
-> >>>>>                 return false;
-> >>>>>
-> >>>>> @@ -1048,11 +1075,6 @@ static int dpu_plane_try_multirect_shared(st=
-ruct dpu_plane_state *pstate,
-> >>>>>         if (MSM_FORMAT_IS_UBWC(prev_fmt))
-> >>>>>                 max_tile_height =3D max(max_tile_height, prev_fmt->=
-tile_height);
-> >>>>>
-> >>>>> -     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> >>>>> -     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> >>>>> -
-> >>>>> -     r_pipe->sspp =3D NULL;
-> >>>>> -
-> >>>>>         if (dpu_plane_is_parallel_capable(pipe_cfg, fmt, max_linewi=
-dth) &&
-> >>>>>             dpu_plane_is_parallel_capable(prev_pipe_cfg, prev_fmt, =
-max_linewidth) &&
-> >>>>>             (pipe_cfg->dst_rect.x1 >=3D prev_pipe_cfg->dst_rect.x2 =
-||
-> >>>>> @@ -1181,36 +1203,69 @@ static int dpu_plane_virtual_atomic_check(s=
-truct drm_plane *plane,
-> >>>>>         return 0;
-> >>>>>    }
-> >>>>>
-> >>>>> +static int dpu_plane_assign_resource_in_stage(struct dpu_sw_pipe *=
-pipe,
-> >>>>> +                                           struct dpu_sw_pipe_cfg =
-*pipe_cfg,
-> >>>>> +                                           struct drm_plane_state =
-*plane_state,
-> >>>>> +                                           struct dpu_global_state=
- *global_state,
-> >>>>> +                                           struct drm_crtc *crtc,
-> >>>>> +                                           struct dpu_rm_sspp_requ=
-irements *reqs)
-> >>>>> +{
-> >>>>> +     struct drm_plane *plane =3D plane_state->plane;
-> >>>>> +     struct dpu_kms *dpu_kms =3D _dpu_plane_get_kms(plane);
-> >>>>> +     struct dpu_sw_pipe *r_pipe =3D pipe + 1;
-> >>>>> +     struct dpu_sw_pipe_cfg *r_pipe_cfg =3D pipe_cfg + 1;
-> >>>>> +
-> >>>>> +     if (drm_rect_width(&pipe_cfg->src_rect) !=3D 0) {
-> >>>>> +             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, glob=
-al_state, crtc, reqs);
-> >>>>> +             if (!pipe->sspp)
-> >>>>> +                     return -ENODEV;
-> >>>>> +             pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> >>>>> +             pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0 &&
-> >>>>> +         dpu_plane_try_multirect_parallel(pipe, pipe_cfg, r_pipe, =
-r_pipe_cfg,
-> >>>>> +                                           pipe->sspp,
-> >>>>> +                                           msm_framebuffer_format(=
-plane_state->fb),
-> >>>>> +                                           dpu_kms->catalog->caps-=
->max_linewidth))
-> >>>>> +             goto stage_assinged;
-> >>>>> +
-> >>>>> +     if (drm_rect_width(&r_pipe_cfg->src_rect) !=3D 0) {
-> >>>>> +             r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, gl=
-obal_state, crtc, reqs);
-> >>>>> +             if (!r_pipe->sspp)
-> >>>>> +                     return -ENODEV;
-> >>>>> +             r_pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> >>>>> +             r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_NONE;
-> >>>>> +     }
-> >>>>> +
-> >>>>> +stage_assinged:
-> >>>>> +     return 0;
-> >>>>> +}
-> >>>>> +
-> >>>>>    static int dpu_plane_virtual_assign_resources(struct drm_crtc *c=
-rtc,
-> >>>>>                                               struct dpu_global_sta=
-te *global_state,
-> >>>>>                                               struct drm_atomic_sta=
-te *state,
-> >>>>>                                               struct drm_plane_stat=
-e *plane_state,
-> >>>>> -                                           struct drm_plane_state =
-*prev_adjacent_plane_state)
-> >>>>> +                                           struct drm_plane_state =
-**prev_adjacent_plane_state)
-> >>>>>    {
-> >>>>>         const struct drm_crtc_state *crtc_state =3D NULL;
-> >>>>>         struct drm_plane *plane =3D plane_state->plane;
-> >>>>>         struct dpu_kms *dpu_kms =3D _dpu_plane_get_kms(plane);
-> >>>>>         struct dpu_rm_sspp_requirements reqs;
-> >>>>> -     struct dpu_plane_state *pstate, *prev_adjacent_pstate;
-> >>>>> +     struct dpu_plane_state *pstate, *prev_adjacent_pstate[STAGES_=
-PER_PLANE];
-> >>>>>         struct dpu_sw_pipe *pipe;
-> >>>>> -     struct dpu_sw_pipe *r_pipe;
-> >>>>>         struct dpu_sw_pipe_cfg *pipe_cfg;
-> >>>>> -     struct dpu_sw_pipe_cfg *r_pipe_cfg;
-> >>>>>         const struct msm_format *fmt;
-> >>>>> -     int i;
-> >>>>> +     int i, ret;
-> >>>>>
-> >>>>>         if (plane_state->crtc)
-> >>>>>                 crtc_state =3D drm_atomic_get_new_crtc_state(state,
-> >>>>>                                                            plane_st=
-ate->crtc);
-> >>>>>
-> >>>>>         pstate =3D to_dpu_plane_state(plane_state);
-> >>>>> -     prev_adjacent_pstate =3D prev_adjacent_plane_state ?
-> >>>>> -             to_dpu_plane_state(prev_adjacent_plane_state) : NULL;
-> >>>>> -
-> >>>>> -     pipe =3D &pstate->pipe[0];
-> >>>>> -     r_pipe =3D &pstate->pipe[1];
-> >>>>> -     pipe_cfg =3D &pstate->pipe_cfg[0];
-> >>>>> -     r_pipe_cfg =3D &pstate->pipe_cfg[1];
-> >>>>> +     for (i =3D 0; i < STAGES_PER_PLANE; i++)
-> >>>>> +             prev_adjacent_pstate[i] =3D prev_adjacent_plane_state=
-[i] ?
-> >>>>> +                     to_dpu_plane_state(prev_adjacent_plane_state[=
-i]) : NULL;
-> >>>>>
-> >>>>>         for (i =3D 0; i < PIPES_PER_PLANE; i++)
-> >>>>>                 pstate->pipe[i].sspp =3D NULL;
-> >>>>> @@ -1225,42 +1280,27 @@ static int dpu_plane_virtual_assign_resourc=
-es(struct drm_crtc *crtc,
-> >>>>>
-> >>>>>         reqs.rot90 =3D drm_rotation_90_or_270(plane_state->rotation=
-);
-> >>>>>
-> >>>>> -     if (drm_rect_width(&r_pipe_cfg->src_rect) =3D=3D 0) {
-> >>>>> -             if (!prev_adjacent_pstate ||
-> >>>>> -                 !dpu_plane_try_multirect_shared(pstate, prev_adja=
-cent_pstate, fmt,
-> >>>>> -                                                 dpu_kms->catalog-=
->caps->max_linewidth)) {
-> >>>>> -                     pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->=
-rm, global_state, crtc, &reqs);
-> >>>>> -                     if (!pipe->sspp)
-> >>>>> -                             return -ENODEV;
-> >>>>> -
-> >>>>> -                     r_pipe->sspp =3D NULL;
-> >>>>> +     for (i =3D 0; i < STAGES_PER_PLANE; i++) {
-> >>>>> +             if (!prev_adjacent_pstate[i])
-> >>>>> +                     goto assignment;
-> >>>>>
-> >>>>> -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> >>>>> -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_N=
-ONE;
-> >>>>> -
-> >>>>> -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOL=
-O;
-> >>>>> -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT=
-_NONE;
-> >>>>> -             }
-> >>>>> -     } else {
-> >>>>> -             pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms->rm, glob=
-al_state, crtc, &reqs);
-> >>>>> -             if (!pipe->sspp)
-> >>>>> -                     return -ENODEV;
-> >>>>> -
-> >>>>> -             if (!dpu_plane_try_multirect_parallel(pipe, pipe_cfg,=
- r_pipe, r_pipe_cfg,
-> >>>>> -                                                   pipe->sspp,
-> >>>>> -                                                   msm_framebuffer=
-_format(plane_state->fb),
-> >>>>> -                                                   dpu_kms->catalo=
-g->caps->max_linewidth)) {
-> >>>>> -                     /* multirect is not possible, use two SSPP bl=
-ocks */
-> >>>>> -                     r_pipe->sspp =3D dpu_rm_reserve_sspp(&dpu_kms=
-->rm, global_state, crtc, &reqs);
-> >>>>> -                     if (!r_pipe->sspp)
-> >>>>> -                             return -ENODEV;
-> >>>>> +             if (dpu_plane_try_multirect_shared(pstate, prev_adjac=
-ent_pstate[i], fmt,
-> >>>>> +                                                dpu_kms->catalog->=
-caps->max_linewidth,
-> >>>>> +                                                i))
-> >>>>> +                     continue;
-> >>>>
-> >>>>
-> >>>> if (prev_adjacent_pstate[i] &&
-> >>>>       dpu_plane_try_multirect_shared())
-> >>>>           continue;
-> >>>>
-> >>>> No need for the goto.
-> >>>
-> >>> Right, it will be simpler.
-> >>>>
-> >>>>>
-> >>>>> -                     pipe->multirect_index =3D DPU_SSPP_RECT_SOLO;
-> >>>>> -                     pipe->multirect_mode =3D DPU_SSPP_MULTIRECT_N=
-ONE;
-> >>>>> +assignment:
-> >>>>> +             if (dpu_plane_get_single_pipe_in_stage(pstate, NULL, =
-NULL, i))
-> >>>>> +                     prev_adjacent_plane_state[i] =3D plane_state;
+Thanks,
+NeilBRown
 
-Only plane with a stage that contains a single valid pipe will be the
-candidate for later
-planes. Since it is current plane to be allocated with SSPP, and it
-fails to share SSPP
-with the previous plane in above code, so there is no need to get the
-valid pipe here.
-Thus the pointer for dpu_plane_get_single_pipe_in_stage() is NULL.
+>=20
+> When unlocking the lease for the delegation, clear FMODE_NOCMTIME. If
+> the file has been written, but no setattr for the delegated mtime and
+> ctime has been done, update the timestamps to current_time().
+>=20
+> Suggested-by: NeilBrown <neil@brown.name>
+> Signed-off-by: Jeff Layton <jlayton@kernel.org>
+> ---
+>  fs/nfsd/nfs4proc.c  | 26 ++++++++++++++++++++++++--
+>  fs/nfsd/nfs4state.c | 42 ++++++++++++++++++++++++++++++++++++++++++
+>  fs/nfsd/state.h     |  4 +++-
+>  3 files changed, 69 insertions(+), 3 deletions(-)
+>=20
+> diff --git a/fs/nfsd/nfs4proc.c b/fs/nfsd/nfs4proc.c
+> index aacd912a5fbe29ba5ccac206d13243308f36b7fa..bfebe6e25638a76d3607bb79a23=
+9bdc92e42e7b5 100644
+> --- a/fs/nfsd/nfs4proc.c
+> +++ b/fs/nfsd/nfs4proc.c
+> @@ -1151,7 +1151,9 @@ vet_deleg_attrs(struct nfsd4_setattr *setattr, struct=
+ nfs4_delegation *dp)
+>  	if (setattr->sa_bmval[2] & FATTR4_WORD2_TIME_DELEG_MODIFY) {
+>  		if (nfsd4_vet_deleg_time(&iattr->ia_mtime, &dp->dl_mtime, &now)) {
+>  			iattr->ia_ctime =3D iattr->ia_mtime;
+> -			if (!nfsd4_vet_deleg_time(&iattr->ia_ctime, &dp->dl_ctime, &now))
+> +			if (nfsd4_vet_deleg_time(&iattr->ia_ctime, &dp->dl_ctime, &now))
+> +				dp->dl_setattr =3D true;
+> +			else
+>  				iattr->ia_valid &=3D ~(ATTR_CTIME | ATTR_CTIME_SET);
+>  		} else {
+>  			iattr->ia_valid &=3D ~(ATTR_CTIME | ATTR_CTIME_SET |
+> @@ -1238,12 +1240,26 @@ nfsd4_setattr(struct svc_rqst *rqstp, struct nfsd4_=
+compound_state *cstate,
+>  	return status;
+>  }
+> =20
+> +static void nfsd4_file_mark_deleg_written(struct nfs4_file *fi)
+> +{
+> +	spin_lock(&fi->fi_lock);
+> +	if (!list_empty(&fi->fi_delegations)) {
+> +		struct nfs4_delegation *dp =3D list_first_entry(&fi->fi_delegations,
+> +							      struct nfs4_delegation, dl_perfile);
+> +
+> +		if (dp->dl_type =3D=3D OPEN_DELEGATE_WRITE_ATTRS_DELEG)
+> +			dp->dl_written =3D true;
+> +	}
+> +	spin_unlock(&fi->fi_lock);
+> +}
+> +
+>  static __be32
+>  nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_compound_state *cstate,
+>  	    union nfsd4_op_u *u)
+>  {
+>  	struct nfsd4_write *write =3D &u->write;
+>  	stateid_t *stateid =3D &write->wr_stateid;
+> +	struct nfs4_stid *stid =3D NULL;
+>  	struct nfsd_file *nf =3D NULL;
+>  	__be32 status =3D nfs_ok;
+>  	unsigned long cnt;
+> @@ -1256,10 +1272,15 @@ nfsd4_write(struct svc_rqst *rqstp, struct nfsd4_co=
+mpound_state *cstate,
+>  	trace_nfsd_write_start(rqstp, &cstate->current_fh,
+>  			       write->wr_offset, cnt);
+>  	status =3D nfs4_preprocess_stateid_op(rqstp, cstate, &cstate->current_fh,
+> -						stateid, WR_STATE, &nf, NULL);
+> +						stateid, WR_STATE, &nf, &stid);
+>  	if (status)
+>  		return status;
+> =20
+> +	if (stid) {
+> +		nfsd4_file_mark_deleg_written(stid->sc_file);
+> +		nfs4_put_stid(stid);
+> +	}
+> +
+>  	write->wr_how_written =3D write->wr_stable_how;
+>  	status =3D nfsd_vfs_write(rqstp, &cstate->current_fh, nf,
+>  				write->wr_offset, &write->wr_payload,
+> @@ -2550,6 +2571,7 @@ nfsd4_layoutcommit(struct svc_rqst *rqstp,
+>  	mutex_unlock(&ls->ls_mutex);
+> =20
+>  	nfserr =3D ops->proc_layoutcommit(inode, rqstp, lcp);
+> +	nfsd4_file_mark_deleg_written(ls->ls_stid.sc_file);
+>  	nfs4_put_stid(&ls->ls_stid);
+>  out:
+>  	return nfserr;
+> diff --git a/fs/nfsd/nfs4state.c b/fs/nfsd/nfs4state.c
+> index 205ee8cc6fa2b9f74d08f7938b323d03bdf8286c..81fa7cc6c77b3cdc5ff22bc60ab=
+0654f95dc258d 100644
+> --- a/fs/nfsd/nfs4state.c
+> +++ b/fs/nfsd/nfs4state.c
+> @@ -1222,6 +1222,42 @@ static void put_deleg_file(struct nfs4_file *fp)
+>  		nfs4_file_put_access(fp, NFS4_SHARE_ACCESS_READ);
+>  }
+> =20
+> +static void nfsd4_finalize_deleg_timestamps(struct nfs4_delegation *dp, st=
+ruct file *f)
+> +{
+> +	struct iattr ia =3D { .ia_valid =3D ATTR_ATIME | ATTR_CTIME | ATTR_MTIME =
+};
+> +	struct inode *inode =3D file_inode(f);
+> +	int ret;
+> +
+> +	/* don't do anything if FMODE_NOCMTIME isn't set */
+> +	if ((READ_ONCE(f->f_mode) & FMODE_NOCMTIME) =3D=3D 0)
+> +		return;
+> +
+> +	spin_lock(&f->f_lock);
+> +	f->f_mode &=3D ~FMODE_NOCMTIME;
+> +	spin_unlock(&f->f_lock);
+> +
+> +	/* was it never written? */
+> +	if (!dp->dl_written)
+> +		return;
+> +
+> +	/* did it get a setattr for the timestamps at some point? */
+> +	if (dp->dl_setattr)
+> +		return;
+> +
+> +	/* Stamp everything to "now" */
+> +	inode_lock(inode);
+> +	ret =3D notify_change(&nop_mnt_idmap, f->f_path.dentry, &ia, NULL);
+> +	inode_unlock(inode);
+> +	if (ret) {
+> +		struct inode *inode =3D file_inode(f);
+> +
+> +		pr_notice_ratelimited("Unable to update timestamps on inode %02x:%02x:%l=
+u: %d\n",
+> +					MAJOR(inode->i_sb->s_dev),
+> +					MINOR(inode->i_sb->s_dev),
+> +					inode->i_ino, ret);
+> +	}
+> +}
+> +
+>  static void nfs4_unlock_deleg_lease(struct nfs4_delegation *dp)
+>  {
+>  	struct nfs4_file *fp =3D dp->dl_stid.sc_file;
+> @@ -1229,6 +1265,7 @@ static void nfs4_unlock_deleg_lease(struct nfs4_deleg=
+ation *dp)
+> =20
+>  	WARN_ON_ONCE(!fp->fi_delegees);
+> =20
+> +	nfsd4_finalize_deleg_timestamps(dp, nf->nf_file);
+>  	kernel_setlease(nf->nf_file, F_UNLCK, NULL, (void **)&dp);
+>  	put_deleg_file(fp);
+>  }
+> @@ -6265,6 +6302,8 @@ nfs4_open_delegation(struct svc_rqst *rqstp, struct n=
+fsd4_open *open,
+>  	memcpy(&open->op_delegate_stateid, &dp->dl_stid.sc_stateid, sizeof(dp->dl=
+_stid.sc_stateid));
+> =20
+>  	if (open->op_share_access & NFS4_SHARE_ACCESS_WRITE) {
+> +		struct file *f =3D dp->dl_stid.sc_file->fi_deleg_file->nf_file;
+> +
+>  		if (!nfsd4_add_rdaccess_to_wrdeleg(rqstp, open, fh, stp) ||
+>  				!nfs4_delegation_stat(dp, currentfh, &stat)) {
+>  			nfs4_put_stid(&dp->dl_stid);
+> @@ -6278,6 +6317,9 @@ nfs4_open_delegation(struct svc_rqst *rqstp, struct n=
+fsd4_open *open,
+>  		dp->dl_atime =3D stat.atime;
+>  		dp->dl_ctime =3D stat.ctime;
+>  		dp->dl_mtime =3D stat.mtime;
+> +		spin_lock(&f->f_lock);
+> +		f->f_mode |=3D FMODE_NOCMTIME;
+> +		spin_unlock(&f->f_lock);
+>  		trace_nfsd_deleg_write(&dp->dl_stid.sc_stateid);
+>  	} else {
+>  		open->op_delegate_type =3D deleg_ts && nfs4_delegation_stat(dp, currentf=
+h, &stat) ?
+> diff --git a/fs/nfsd/state.h b/fs/nfsd/state.h
+> index bf9436cdb93c5dd5502ecf83433ea311e3678711..b6ac0f37e9cdfcfddde5861c8c0=
+c51bad60101b7 100644
+> --- a/fs/nfsd/state.h
+> +++ b/fs/nfsd/state.h
+> @@ -217,10 +217,12 @@ struct nfs4_delegation {
+>  	struct nfs4_clnt_odstate *dl_clnt_odstate;
+>  	time64_t		dl_time;
+>  	u32			dl_type;
+> -/* For recall: */
+> +	/* For recall: */
+>  	int			dl_retries;
+>  	struct nfsd4_callback	dl_recall;
+>  	bool			dl_recalled;
+> +	bool			dl_written;
+> +	bool			dl_setattr;
+> =20
+>  	/* for CB_GETATTR */
+>  	struct nfs4_cb_fattr    dl_cb_fattr;
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
 
-> >>>>>
-> >>>>> -                     r_pipe->multirect_index =3D DPU_SSPP_RECT_SOL=
-O;
-> >>>>> -                     r_pipe->multirect_mode =3D DPU_SSPP_MULTIRECT=
-_NONE;
-> >>>>> -             }
-> >>>>> +             pipe =3D &pstate->pipe[i * PIPES_PER_STAGE];
-> >>>>> +             pipe_cfg =3D &pstate->pipe_cfg[i * PIPES_PER_STAGE];
-> >>>>> +             ret =3D dpu_plane_assign_resource_in_stage(pipe, pipe=
-_cfg,
-> >>>>> +                                                      plane_state,
-> >>>>> +                                                      global_state=
-,
-> >>>>> +                                                      crtc, &reqs)=
-;
-> >>>>> +             if (ret)
-> >>>>> +                     return ret;
-> >>>>>         }
-> >>>>>
-> >>>>>         return dpu_plane_atomic_check_sspp(plane, state, crtc_state=
-);
-> >>>>> @@ -1273,7 +1313,7 @@ int dpu_assign_plane_resources(struct dpu_glo=
-bal_state *global_state,
-> >>>>>                                unsigned int num_planes)
-> >>>>>    {
-> >>>>>         unsigned int i;
-> >>>>> -     struct drm_plane_state *prev_adjacent_plane_state =3D NULL;
-> >>>>> +     struct drm_plane_state *prev_adjacent_plane_state[STAGES_PER_=
-PLANE] =3D { NULL };
-> >>>>>
-> >>>>>         for (i =3D 0; i < num_planes; i++) {
-> >>>>>                 struct drm_plane_state *plane_state =3D states[i];
-> >>>>> @@ -1284,11 +1324,9 @@ int dpu_assign_plane_resources(struct dpu_gl=
-obal_state *global_state,
-> >>>>>
-> >>>>>                 int ret =3D dpu_plane_virtual_assign_resources(crtc=
-, global_state,
-> >>>>>                                                              state,=
- plane_state,
-> >>>>> -                                                          prev_adj=
-acent_plane_state);
-> >>>>> +                                                          &prev_ad=
-jacent_plane_state[0]);
-> >>>>
-> >>>> It's exactly the prev_adjacent_plane_state.
-> >>>
-> >>> Yes, I will change it.
-> >>>
-> >>>>
-> >>>>>                 if (ret)
-> >>>>>                         break;
-> >>>>> -
-> >>>>> -             prev_adjacent_plane_state =3D plane_state;
-> >>>>>         }
-> >>>>>
-> >>>>>         return 0;
-> >>>>>
-> >>>>> --
-> >>>>> 2.34.1
-> >>>>>
-> >>>>
-> >>>> --
-> >>>> With best wishes
-> >>>> Dmitry
-> >>
-> >>
-> >> --
-> >> With best wishes
-> >> Dmitry
->
->
-> --
-> With best wishes
-> Dmitry
 
