@@ -1,150 +1,225 @@
-Return-Path: <linux-kernel+bounces-753734-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753735-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE75B1871A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:04:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01971B1871E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:04:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 02F271AA735E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:04:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D084C188EB22
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:04:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76B2628C860;
-	Fri,  1 Aug 2025 18:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9B528BAB1;
+	Fri,  1 Aug 2025 18:04:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="b96qIs+u"
-Received: from lamorak.hansenpartnership.com (lamorak.hansenpartnership.com [198.37.111.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuI8XG8X"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31C151DCB09;
-	Fri,  1 Aug 2025 18:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.37.111.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3D1DC99C;
+	Fri,  1 Aug 2025 18:04:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754071432; cv=none; b=DYO45gJPewoPCCOyh2AFUvPJpbvyftNI971t+ZBKpS0eM1tC/xv3wE63HbvoiQkaLPjZM1Zd6tbF92/Ctl5k2rw/UdeKRt27tyYR3VG3L5gfIQDsjmLDa+4knnDeCJ3nodOvF7H1h15/fS/Mi7EYxvGF1mMmyw0AiWASr+9PjoA=
+	t=1754071465; cv=none; b=fLXlOPRKREOcd5C6yfHpDvCV0jcyU1j620aOlzjvr66BMt5A7phXu/gITXLN3yR160BC8lRAafn5vFnRi3xilgnEXA/1wCVmYMVlAbZsEI5759xv3lgxJqgHvrWwJiWBZIxcF1VRc4NSswCLVcbLOcA4jwU2Nqoiv8q6c4AbHcE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754071432; c=relaxed/simple;
-	bh=jpm9UETghuIrnawF1EnF0l2LDTiuVEUnI/bZIPbrfbQ=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=HvVK+dbel3mRUXLrBQ6Ao5E9Uf14uIHBVgIz+2/Y50ctItCoIZ59+CjQxiYUaCv9NnGFkrIteB4e0s73n5lD/fi5E8wZtGCGberXGFl0MU1OObOEk8O8Gdr2RwrYMzOouIRGX19cB4p3MskWpY1+CSkHGCH9R8D+Ztpedmf64NQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=b96qIs+u; arc=none smtp.client-ip=198.37.111.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1754071428;
-	bh=jpm9UETghuIrnawF1EnF0l2LDTiuVEUnI/bZIPbrfbQ=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=b96qIs+u7pIg4O0/RDlDSRd3xI0cvRBAdf9ix0LdsV6dycSfVNDHfwgYFzl8DKSsR
-	 LqExlxURBMgbCIOgdF0jCOyZ+/kzWvYFaZ1ZGjKEsaznbIP7FU8NU+k4io62NazLzm
-	 +HN7s2hGVZbkpOw3vOe11mo9IDaeG+U6QihkK0s4=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange x25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by lamorak.hansenpartnership.com (Postfix) with ESMTPSA id 767851C0232;
-	Fri, 01 Aug 2025 14:03:48 -0400 (EDT)
-Message-ID: <2da3f6d36dccb86f19292015ea48e5d7a89e3171.camel@HansenPartnership.com>
-Subject: Re: [PATCH 1/2] tpm: Compare HMAC values in constant time
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Eric Biggers <ebiggers@kernel.org>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>, 
-	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>, 
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	stable@vger.kernel.org
-Date: Fri, 01 Aug 2025 14:03:47 -0400
-In-Reply-To: <20250801171125.GA1274@sol>
-References: <20250731215255.113897-1-ebiggers@kernel.org>
-	 <20250731215255.113897-2-ebiggers@kernel.org>
-	 <3ed1ae7e7f52afe53ce2ff00f362ed153b3eec20.camel@HansenPartnership.com>
-	 <20250801030210.GA1495@sol>
-	 <ca85bbe8a3235102707da3b24dba07a8649c3771.camel@HansenPartnership.com>
-	 <20250801171125.GA1274@sol>
-Autocrypt: addr=James.Bottomley@HansenPartnership.com;
- prefer-encrypt=mutual;
- keydata=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
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.50.3 
+	s=arc-20240116; t=1754071465; c=relaxed/simple;
+	bh=jtVs4YM3HugwAbhWrHuORF3i3AWrbmHy7uCsJ4n4FSc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iVX/lkV2/6kyFUXu8yNZiNbxVDEnjX3m0nMvBX1/3AYNx3H2QANlk4cEN8BajE2pyhQRxrHgwMl83zaHoaFNnJIh1cxDDhkqiFNLV6TMHhz04hu6FkYQlXPaEAgz3cbXj26v1HcihNkeZZBA2rIGxZJ+Z9LhVU4D8NYWV7e4/0s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuI8XG8X; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31effad130bso964713a91.3;
+        Fri, 01 Aug 2025 11:04:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754071463; x=1754676263; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=gn8QwK2PIACuutr4KjQ3PXKlXST9xlDrnNTcVggzZy4=;
+        b=PuI8XG8XrGU7Z0iyQmJVT4KeCPiEmk/eYxy1J1x1tbpuIc3InqLMnGX68hcygwS1s9
+         joNw8c4U5gm6pwI38MyoMxiDLtraE4Z49FSrEbhTVT7s716l+a6nNfSwQzp4n1TSX5W3
+         7nBxOdL6+MdPbGqXxaFq4D7cQaaLM+bob/yEFm6YegPpNCjyITCTAGPZsFN1qt5VewVw
+         lZCOmU6cFjEwLWsLx8VyJIoWc763LfDvCA8qysplFHAB5UY4jk3qSgZAzF+p2H2DjVNv
+         EmhZjng46bomij984lHRDqYwJHFWF8O/QMrMeyug0CMbLzu/ittS/oUUMewen+UCyBlo
+         gtzw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754071463; x=1754676263;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gn8QwK2PIACuutr4KjQ3PXKlXST9xlDrnNTcVggzZy4=;
+        b=pB0FX+4hp0jCeBaCbJ5pVVKasA0LzBDVcYuZ0RuuwjdMV6w6XuGly3OOZDB9WrcRz8
+         PZfflpB2sB7mrAzC3nKAJrYvzwlFeZV0ievviZGJPU0iokt+No1ruIo7wLXxevo5U0qM
+         c337CByOed4Nhxucb/WQh8a1iTikmTRra917gAEsmKwMkc6jy/6TIu1vN3sDLKJAxsQR
+         TmJyueVJXvjj/dcOZFpas0IRh4q6amB/OZ/iIpEoRIuW+R0hZcxdsLYZEq4CrgDkSqAS
+         A07IrKQsuG+20ztjdn2Ow+yLcFPKx2HimnWTlmp68gzWa4mmSEdXWY+GHp4komApxTce
+         9hTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV53KPhIY3rQhphn9McqpohEVyoCTcac8xfOWZ1YSlkMa7or1WxOddyxQE9wuZhOVmiSq5I2jwVPRYcvL9X@vger.kernel.org, AJvYcCW8SaihE1az9+1G63KolkLyENoUwoHApdL/UP27qxjVwBHsd5t4gIENv2YwFBK2SAZ9aM6plQo2pgePTTNcP5s=@vger.kernel.org, AJvYcCXDtqvbbObzOF65I1A9qYpGFmYVq8CHkVFbhtun2ZYaVpyvGyravMhp3g95RuKfHqeuYkW2dtkG6UrC/ILi+sIUnQ8=@vger.kernel.org, AJvYcCXdose+WxMYGXgqTZ0rl0YWVvaSdtgC3IP3wDVmgToCahZjM2jv1R1syy0MyBNdnSZlA2SVfy+AOOma@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNAPMV+sQ2IQARzaJBLS/aj7XaS4fhkQ9sMGRAw4yE0taz44DR
+	JHlRRYhK+lp3KJNRPj4K2kbFEpX+uaWo8RgtrvYo+HNSll2LDJxVpI3i
+X-Gm-Gg: ASbGncuNHHUSvsBFCIKjON3hovIDjvqOOP9E7VHo/JKPYmraxzf45QUFXYW+nnY5V3P
+	JgjAqmUN79tDZP6+MQ2wWSVul7ajvNUZxE+RfEYF6NjvaalohgJG76YjFJ4IIdRhWb/ri5sIAVl
+	CU/nHFP+4AQrlskPMaAOJE3Iys9tBhuWVXIp4XRnDcSYJ1XqpSHQ5u3aOUsNt7ggMhn4huTaypT
+	rd/K+lqggBEEwVA4sMs4kXjH8+0/lFjRfvlzsDvEhfkM+QiPSK0JvcOSahDBQrH7PX1L1Qxo0S6
+	HQhJyZfetVw9DrrERGdTg50aukAyZN/EpKOJoM2dmgM6JZ88s8/10wKE36K34DtTPZNCtD4/oSg
+	T11dmpny9fkfrMj1z4lwj/CwEKSdmYMBDuy06IJBRneWhrihOI+AoSa4h171qb65UkB09mkygFj
+	QfuyN+ArnIjXR+pnF5
+X-Google-Smtp-Source: AGHT+IF/Q5VicR3q+/5Ioe/gArLWmCx1gbjfP7yi6cWvPwNAjxEGFO3teqYgxHOSgy3WnTbbVxouqw==
+X-Received: by 2002:a17:90b:38c9:b0:311:ea13:2e61 with SMTP id 98e67ed59e1d1-32116306ccbmr737677a91.34.1754071462801;
+        Fri, 01 Aug 2025 11:04:22 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32106bab5ecsm1734437a91.19.2025.08.01.11.04.20
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 11:04:22 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net>
+Date: Fri, 1 Aug 2025 11:04:20 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on
+ max_hw_heartbeat_ms
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aIw-P6zkQSOhvYJW@shikoro>
+ <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+ <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
+ <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 2025-08-01 at 10:11 -0700, Eric Biggers wrote:
-> On Fri, Aug 01, 2025 at 07:36:02AM -0400, James Bottomley wrote:
-> > On Thu, 2025-07-31 at 20:02 -0700, Eric Biggers wrote:
-> > > On Thu, Jul 31, 2025 at 10:28:49PM -0400, James Bottomley wrote:
-> > > > On Thu, 2025-07-31 at 14:52 -0700, Eric Biggers wrote:
-> > > > > To prevent timing attacks, HMAC value comparison needs to be
-> > > > > constant time.=C2=A0 Replace the memcmp() with the correct
-> > > > > function, crypto_memneq().
-> > > >=20
-> > > > Um, OK, I'm all for more security but how could there possibly
-> > > > be a timing attack in the hmac final comparison code?=C2=A0 All it'=
-s
-> > > > doing is seeing if the HMAC the TPM returns matches the
-> > > > calculated one.=C2=A0 Beyond this calculation, there's nothing
-> > > > secret about the HMAC key.
-> > >=20
-> > > I'm not sure I understand your question.=C2=A0 Timing attacks on MAC
-> > > validation are a well-known issue that can allow a valid MAC to
-> > > be guessed without knowing the key.=C2=A0 Whether it's practical in
-> > > this particular case for some architecture+compiler+kconfig
-> > > combination is another question, but there's no reason not to use
-> > > the constant-time comparison function that solves this problem.
-> > >=20
-> > > Is your claim that in this case the key is public, so the MAC
-> > > really just serves as a checksum (and thus the wrong primitive is
-> > > being used)?
-> >=20
-> > The keys used for TPM HMAC calculations are all derived from a
-> > shared secret and updating parameters making them one time ones
-> > which are never reused, so there's no benefit to an attacker
-> > working out after the fact what the key was.
->=20
-> MAC timing attacks forge MACs; they don't leak the key.
+On 8/1/25 08:30, Lad, Prabhakar wrote:
+> Hi Guenter,
+> 
+> On Fri, Aug 1, 2025 at 2:52 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 8/1/25 04:05, Lad, Prabhakar wrote:
+>>> Hi Wolfram,
+>>>
+>>> Thank you for the review.
+>>>
+>>> On Fri, Aug 1, 2025 at 5:10 AM Wolfram Sang
+>>> <wsa+renesas@sang-engineering.com> wrote:
+>>>>
+>>>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+>>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>>>
+>>>>> Update the watchdog minimum timeout value to be derived from
+>>>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+>>>>> consistent minimum timeout in seconds.
+>>>>
+>>>> I don't understand this change. Why is the _minimum_ timeout based on
+>>>> the _maximum_ heartbeat?
+>>>>
+>>> The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+>>> ensure the minimum watchdog period (in seconds) is compatible with the
+>>> underlying hardware.
+>>>
+>>> max_hw_heartbeat_ms is calculated as:
+>>> max_hw_heartbeat_ms = (1000 * 16384 * cks_div) / clk_rate;
+>>>
+>>> This value varies by SoC:
+>>>    RZ/T2H: cks_div = 8192, clk ≈ 62.5 MHz -> max_hw_heartbeat_ms ~ 2147ms
+>>>    RZ/V2H: cks_div = 256, clk ≈ 240 MHz -> max_hw_heartbeat_ms ~ 174ms
+>>>
+>>> Since min_timeout is in seconds, setting it to:
+>>> min_timeout = DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+>>>
+>>> ensures:
+>>> The minimum timeout period is never less than what the hardware can support.
+>>> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+>>> - For V2H, it’s just 1s (174ms -> 1s).
+>>>
+>>
+>> Sorry, I completely fail to understand the logic.
+>>
+>> If the maximum timeout is, say, 2 seconds, why would the hardware
+>> not be able to support a timeout of 1 second ?
+>>
+> The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter. On
+> initialization the down counters on the SoCs are configured to the max
+> down counter. On RZ/V2H down counter value 4194304 (which evaluates to
+> 174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). The
+> board will be reset when we get an underflow error.
+> 
+> So for example on T2H consider this example:
+> - down counter is 134217728
+> - min_timeout is set to 1 in the driver
+> - When set  WDIOC_SETTIMEOUT to 1
+> In this case the board will be reset after 2147ms, i.e. incorrect
+> behaviour as we expect the board to be reset after 1 sec. Hence the
+> min_timeout is set to 3s (2147ms -> 3s).
+> 
+> Please let me know if my understanding of min_timeout is incorrect here.
+> 
 
-> It's true that such attacks don't work with one-time keys.=C2=A0 But here
-> it's not necessarily a one-time key.=C2=A0 E.g., tpm2_get_random() sets a
-> key, then authenticates multiple messages using that key.
+The driver is missing a set_timeout function. It should set RZ/T2H
+to 62514079 if a timeout of 1 second is configured.
 
-The nonces come one from us and one from the TPM.  I think ours doesn't
-change if the session is continued although it could, whereas the TPM
-one does, so the HMAC key is different for every communication of a
-continued session.
-
-> I guses I'm struggling to understand the point of your comments.
-
-Your commit message, still quoted above, begins "To prevent timing
-attacks ..." but I still don't think there are any viable timing
-attacks against this code.  However, that statement gives the idea that
-it's fixing a crypto vulnerablility and thus is going to excite the AI
-based CVE producers.
-
-> =C2=A0 Even if in a follow-up message you're finally able to present a
-> correct argument for why memcmp() is okay, it's clearly subtle enough
-> that we should just use crypto_memneq() anyway, just like everywhere
-> else in the kernel that validates MACs.=C2=A0 If you're worried about
-> performance, you shouldn't be: it's a negligible difference that is
-> far outweighed by all the optimizations I've been making to
-> lib/crypto/.
-
-So if you change the justification to something like "crypto people
-would like to update hmac compares to be constant time everywhere to
-avoid having to check individual places for correctness" I think I'd be
-happy.
-
-Regards,
-
-James
+Guenter
 
 
