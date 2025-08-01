@@ -1,95 +1,200 @@
-Return-Path: <linux-kernel+bounces-753565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753570-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C434B184A4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:10:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 23986B184B1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:12:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3490CA87625
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:09:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B5EAD1624F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:12:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423132749DA;
-	Fri,  1 Aug 2025 15:08:52 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0017.hostedemail.com [216.40.44.17])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6B9D26D4DE;
+	Fri,  1 Aug 2025 15:12:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3ONOnTNS"
+Received: from mail-qt1-f177.google.com (mail-qt1-f177.google.com [209.85.160.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3DA3271454;
-	Fri,  1 Aug 2025 15:08:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D80A4690
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:12:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754060931; cv=none; b=hDrub4sNRC0Cg0kqXil03dzUcA8jc1cBgNxwrrmbRjL5pLML+TfFeRoWsV+umxm29nUYPV/H6QSyA1vpx4lSGe2NH679PsSJckv7GkUdFbmbGWqCUDPDOX881PbH0G8j+t1B2EC32/Y4r/7ctHULKEddOvOLyBB7zQe+OGcIYUE=
+	t=1754061130; cv=none; b=lZoQ86LFmzkwfKdyyIkZzx0Vn91Tti1tjG614Pp7uh0eSfS67ZHXpHqUpiwu7fqMjozpQrrYA4cjqdINLPySu0D0uCvIy4VjmOiSVz9aGZea93d2kJPdufct9QMUHuezDjrJBBa/1v9TQ3UngNRp2u0e6fefcDvTJBRvmK/0TiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754060931; c=relaxed/simple;
-	bh=rasj1vF9KNPtkxjQ9MPsKrTo+IxOhyWt5ILF41hd4Lo=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=s1OqJiY+P+zTOqivZTtVrWFpqWkfjf6dURHrFR6I3DGdUmIetyeKlfSu7aNHrS/aIlTSgAmCwhRdgjWbVvRTJkNjTP1UrSH5BSdMmRqBCPyg7nYQmqR0sMnw51/6DIeuYdynVG+0/RD9zVdimz9vYsVIamB+1Qv4d5dARdlmV9w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf16.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay01.hostedemail.com (Postfix) with ESMTP id 9046F1D92C3;
-	Fri,  1 Aug 2025 15:08:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf16.hostedemail.com (Postfix) with ESMTPA id 9885020013;
-	Fri,  1 Aug 2025 15:08:46 +0000 (UTC)
-Date: Fri, 1 Aug 2025 11:09:07 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Yonghong Song <yonghong.song@linux.dev>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- bpf@vger.kernel.org, Douglas Raillard <douglas.raillard@arm.com>
-Subject: Re: [PATCH] tracing: Have unsigned int function args displayed as
- hexadecimal
-Message-ID: <20250801110907.121f32ee@gandalf.local.home>
-In-Reply-To: <9bfa8866-a90f-41bf-8b22-bf704c01a2e5@linux.dev>
-References: <20250731193126.2eeb21c6@gandalf.local.home>
-	<9bfa8866-a90f-41bf-8b22-bf704c01a2e5@linux.dev>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754061130; c=relaxed/simple;
+	bh=fxFG5jnZ4dMkX4nyXGKB5dGsWGN4AxI6xsEXNzeIaLI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FSZHUlLTQvG/zZcuIYjXkHlb9abBiw5ojs3Wh/WXuaYo3day3u4ljT5+OfuOyof2zLzUmFFxl6DZ0EqMTbqk/y61uBUa+IEeTRX4XuwFar+Q0pJtkX55WSXhPFAGm1hVPrQeKJKxCMcYtXOHAYkKIGroCkoDtX2HduXUuBNZh7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3ONOnTNS; arc=none smtp.client-ip=209.85.160.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f177.google.com with SMTP id d75a77b69052e-4aef56cea5bso186881cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:12:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754061127; x=1754665927; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SoCvDf2STWqjlVzd+8uazfHv+yAfec07kh2ZhHKg+3g=;
+        b=3ONOnTNSNDLDqYzXxHbxbKN0GAlOnk1xy6zYNVVrOGB9TOoWGha6lcCm/sMwBT70rH
+         DGZq41cI1l6uQHUu9HeHIuRFJxgkI1n4lt9wTo3gmmW7+cPxFcTLR53/edDu337duVZ+
+         fAQdbyAJkf7AtJsBY8/M5TE4DaabSV6iJ5ZZtVf9CIpIhQLLQfF/qxo3HOvouFxbPzTm
+         pC2Kf+s056NOfEUow1qZLuAgpImtwcrlkPYnubKyqL4RC4MNYYROsjckrjDFirn5UQcD
+         7QD+ib+jHwpJD4RgFc+REQMUqVSVOioiY+ykOglp7KjdGd+Rdxlx9WRWCZLNtFqUG6Yw
+         dqUw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754061127; x=1754665927;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SoCvDf2STWqjlVzd+8uazfHv+yAfec07kh2ZhHKg+3g=;
+        b=UJW/fXZfoPOHLCOPnmgAR3Iqn1yvdzyXdxeiJLLOcBL06avT7fo6T5FZIWY4RuRbAi
+         IMAxtTgJg+WSxLl5txnibt3aq0TvHWYxHAcwc/cBPDgbfSJERnteHOUHivKJ4Erx1w6/
+         z7pA9tp/2Anx3MmshCD3ROVD9K4wLNlUirZS6kQjepW6yQ9Qtw9B6qXg9NYamCHAbc10
+         jiLYEhlDxFeP2o4wqO1034vZN91j7OBW4qu2rwzOuc5bqM97Pwz/JuXOoB6mUo5C0jpX
+         NLCBrtQKzcQUdMvrZ1Yl5hgDUVjp+KEztEredWyHvIrGF2Aw6mOKvqepwWG4Z0Ejl+c9
+         dzLg==
+X-Forwarded-Encrypted: i=1; AJvYcCXkSD1CrSMWebArKCLpW38gKL7d+bpmWqSfKRJQ0motWndPRBN9LUwegVuibxBeAiBsbloonNpy2MOlO+g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwR82p1Uh6ALzfehk+KGN68sRLf578oi6D+oa3xFiskXIrrR13P
+	5iyGZ8mLOoFhuONpdk22Tj1nE60rHnEVN2JPFp/QGnCWatgCU8l2F1la7fbkjp2+a4T3p3nojSf
+	wOybNno/2y2N2KAdl9MZabkvaepr02nq908bKc70y
+X-Gm-Gg: ASbGncvOhpd06AufchKb8KMU62fm667JpkjOg1yLHc1BMsKxG+GYGQxq6adn40Tf8mP
+	NpnMp2zoQ5aGgIlDJKj/yigFuPpLrOXpZ+jwsSTwqy6e2SXPZQtWosY8o6tu9dQgzLjQsxTUFZG
+	7T5S46U7EF/MZKKSQqWaQO5Cq65Ny77ApVW8X5Qu4weFKnWvqKYNAPKRqxalhVav2oH/IMlNskN
+	VxmI3NZ0s9S+CzZgckpCnCqBpcF2dirlF65TA==
+X-Google-Smtp-Source: AGHT+IEcXXFNQJXhQXaLDDs9kA4bqVnd84TK3sznmDH2mazS4z6rzXjrqdGlkijgDyhkzMQKRWnLp921znoYXPeBhuo=
+X-Received: by 2002:a05:622a:86:b0:4ae:e478:268d with SMTP id
+ d75a77b69052e-4af0079bc5cmr4436381cf.5.1754061126793; Fri, 01 Aug 2025
+ 08:12:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 9885020013
-X-Stat-Signature: yxeho5oa7yktraxxt4cwzyfdippmmrd9
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX197pik6S8leMlPpMBdVTeGUNcW1D3B0DGo=
-X-HE-Tag: 1754060926-227062
-X-HE-Meta: U2FsdGVkX19i9CxOMIycSCcv6gXRkpNZK1ckGg5GGF5Ac/dJ/9t0LY0UbYiGZL4XodtuQAjMgLO8VZChBpHHzgUH+d4LGa3eOEH8jDpGxGRI7q6M2dn493VWq9y5TPjirQl7C7RtMydNNsYLtUIjoqM8Hn1mbEwnkQm7/3gQRGFY8rqb3drpDKUfIHNLLiEVeSzHemyL4ImCJ8jp7QdNI/LUqICuKEH5wVLxNfJX7dE8PBCwVFQQ7MN73ZyrwfClYQrG6oi6VnRJsIKAaeo1kZLV2RYCxjkzsb9UxmgsvBApnPB586wMlMAPieL+KOyR
+References: <20250731154442.319568-1-surenb@google.com> <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
+In-Reply-To: <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 1 Aug 2025 08:11:54 -0700
+X-Gm-Features: Ac12FXwHTk6dY4NJRJgP0bh8zoHGQ_RejUiRmgYpnRzf77eWrvYI8LNs-_ARMGI
+Message-ID: <CAJuCfpHkxe1Sb3jL6hK02+zQVFw7yOYte3BR5XDnHRvx7aTjNg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+To: David Hildenbrand <david@redhat.com>
+Cc: akpm@linux-foundation.org, peterx@redhat.com, aarcange@redhat.com, 
+	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 1 Aug 2025 07:49:53 -0700
-Yonghong Song <yonghong.song@linux.dev> wrote:
+On Fri, Aug 1, 2025 at 7:21=E2=80=AFAM David Hildenbrand <david@redhat.com>=
+ wrote:
+>
+> On 31.07.25 17:44, Suren Baghdasaryan wrote:
+>
+> Hi!
+>
+> Did you mean in you patch description:
+>
+> "userfaultfd: fix a crash in UFFDIO_MOVE with some non-present PMDs"
+>
+> Talking about THP holes is very very confusing.
 
-> > @@ -744,7 +752,14 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
-> >   			trace_seq_printf(s, "0x%lx", arg);
-> >   			break;
-> >   		case BTF_KIND_INT:
-> > -			trace_seq_printf(s, "%ld", arg);
-> > +			/* Get the INT encodoing */
-> > +			int_data = btf_type_int(t);
-> > +                        encode = BTF_INT_ENCODING(int_data);  
-> 
-> See different identation between above 'int_data' and 'encode'. The same as below.
+Hi David,
+Yes, "hole" is not a technical term, so I'll change as you suggested.
 
-Bah, I think I cut and pasted into emacs and it used spaces instead of tabs.
+>
+> > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+> > encounters a non-present THP, it fails to properly recognize an unmappe=
+d
+>
+> You mean a "non-present PMD that is not a migration entry".
 
--- Steve
+Yes, will fix.
 
 
-> 
-> > +                        /* Print unsigned ints as hex */
-> > +                        if (encode & BTF_INT_SIGNED)
-> > +				trace_seq_printf(s, "%ld", arg);
-> > +                        else
-> > +                                trace_seq_printf(s, "0x%lx", arg);
-> >   			break;
-> >   		case BTF_KIND_ENUM:
-> >   			trace_seq_printf(s, "%ld", arg);  
+>
+> > hole and tries to access a non-existent folio, resulting in
+> > a crash. Add a check to skip non-present THPs.
+>
+> That makes sense. The code we have after this patch is rather
+> complicated and hard to read.
+>
+> >
+> > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@go=
+ogle.com/
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> > Cc: stable@vger.kernel.org
+> > ---
+> > Changes since v1 [1]
+> > - Fixed step size calculation, per Lokesh Gidra
+> > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, per Lokesh =
+Gidra
+> >
+> > [1] https://lore.kernel.org/all/20250730170733.3829267-1-surenb@google.=
+com/
+> >
+> >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----------------
+> >   1 file changed, 29 insertions(+), 16 deletions(-)
+> >
+> > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> > index cbed91b09640..b5af31c22731 100644
+> > --- a/mm/userfaultfd.c
+> > +++ b/mm/userfaultfd.c
+> > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx,=
+ unsigned long dst_start,
+> >
+> >               ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
+> >               if (ptl) {
+> > -                     /* Check if we can move the pmd without splitting=
+ it. */
+> > -                     if (move_splits_huge_pmd(dst_addr, src_addr, src_=
+start + len) ||
+> > -                         !pmd_none(dst_pmdval)) {
+> > -                             struct folio *folio =3D pmd_folio(*src_pm=
+d);
+> > +                     if (pmd_present(*src_pmd) || is_pmd_migration_ent=
+ry(*src_pmd)) {
+> > +                             /* Check if we can move the pmd without s=
+plitting it. */
+> > +                             if (move_splits_huge_pmd(dst_addr, src_ad=
+dr, src_start + len) ||
+> > +                                 !pmd_none(dst_pmdval)) {
+> > +                                     if (pmd_present(*src_pmd)) {
+> > +                                             struct folio *folio =3D p=
+md_folio(*src_pmd);
+> > +
+> > +                                             if (!folio || (!is_huge_z=
+ero_folio(folio) &&
+> > +                                                            !PageAnonE=
+xclusive(&folio->page))) {
+> > +                                                     spin_unlock(ptl);
+> > +                                                     err =3D -EBUSY;
+> > +                                                     break;
+> > +                                             }
+> > +                                     }
+>
+> ... in particular that. Is there some way to make this code simpler /
+> easier to read? Like moving that whole last folio-check thingy into a
+> helper?
 
+Do you mean refactor the section after "if (ptf)" into a separate function?
+I was trying to minimize the code changes to simplify backporting but
+since additional indentation changes this whole block, I think it does
+not make much difference. Please let me know if I understood you
+correctly and I'll move the code into a separate function.
+Thanks,
+Suren.
+
+>
+>
+> --
+> Cheers,
+>
+> David / dhildenb
+>
 
