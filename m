@@ -1,78 +1,103 @@
-Return-Path: <linux-kernel+bounces-753364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3A78B181EC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:37:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E845B181F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:40:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A9B0C7A65E2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A380C169C2F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:40:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C3AF2472B7;
-	Fri,  1 Aug 2025 12:37:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96952247299;
+	Fri,  1 Aug 2025 12:40:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="K6dIM0Tq"
-Received: from NAM04-MW2-obe.outbound.protection.outlook.com (mail-mw2nam04on2080.outbound.protection.outlook.com [40.107.101.80])
+	dkim=pass (2048-bit key) header.d=softathome1.onmicrosoft.com header.i=@softathome1.onmicrosoft.com header.b="Yml94zOf"
+Received: from PA5P264CU001.outbound.protection.outlook.com (mail-francecentralazon11010005.outbound.protection.outlook.com [52.101.167.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1E36E2472B1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:37:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.101.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 700121F16B;
+	Fri,  1 Aug 2025 12:39:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.167.5
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754051825; cv=fail; b=oddlb5myU+TqdiazZLe4o8A4qjXyripvyd/YApICOq/Y0CPFRRbBDff6GmWus1HEAahMTxJ59gA8T4hoJuGWycJaESwtzGp8cJwWuK83NzeJnUzwsGtTi1RmVu16Fv3sk7NZZx3VBy1vJuWDIXVQGY7ObU4WFAaCo/0r0Pz9wB4=
+	t=1754051999; cv=fail; b=ZZIJmJfaopx5GrHG4N5t3Edte959Mpuz1by1/mzVYkTToQP9oYDGahsCRULLycIgWwbpvlrv1YEiQzYJ/RaQslFhCp0jlBQdugaEmIhdauSV4JsoAt+l1ybrlRRn2Cry+rkKZTldiCl4Uzafg8gqAS4yCfUA0xP5KuIBIdzbtWw=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754051825; c=relaxed/simple;
-	bh=tiBC0fYYViY05blo2PWdaduOS7HAAveCNbzi7MDZlno=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=e3L1+1E0Qq0OA5bNlj8J2M1R2svm4+GcwcZMu/VF4TATIGNsWi7NXc+0PNYoHZ282RhViQe0vwFC+USUY4QR9kufxV27soyrBjpft3TQIa2oRWZgLgW1A7doxEwagbnFPXogRtqPzVFlLspPpbi7vRviO+smLiX+A6RggZMXPQ0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=K6dIM0Tq; arc=fail smtp.client-ip=40.107.101.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+	s=arc-20240116; t=1754051999; c=relaxed/simple;
+	bh=yIpQlNaCjHSEDfJ1RYhVmoPXzUN6Zr5/BvqsczqwrBk=;
+	h=Message-ID:Date:From:Subject:To:Cc:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=Mzr/7ur6hFEGTaK4PmtnDdc6lU2AwS6iJm+qXoZcol+zVX54wJlROBKS6Pk7paifMTdEneByqx6JBZ9EHkajgrBNh+KR3uLaJ1v34F9fX7FJc9JcpFCWDzxSRtLqura9mVqRg6y5inr5HUQM6Pj1tPHjw6je1j0HLJ5wyPqDOlE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=softathome.com; spf=pass smtp.mailfrom=softathome.com; dkim=pass (2048-bit key) header.d=softathome1.onmicrosoft.com header.i=@softathome1.onmicrosoft.com header.b=Yml94zOf; arc=fail smtp.client-ip=52.101.167.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=softathome.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=softathome.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=SenzfK5jeN+tUmnP+2d4ZrQjhk24yrcuA8HlSB0eHokpLr8GAgMyEdAmejeD9yFwvmGJd8ssEl1YnLx/LWazxOdXpcpq99NUjANaWO3llOlwoNH5LWMqmbA9anO8iIxjKP1k1BNn2w+l8LmymZo3JqBT+Iq8PujUBUhShQU1F1+apD+0CGhQBfESvPoT9MPJdkwT0IMn0nWnbJm6rb3aS1P7DXwUUVMPu/QipQvuIurmgrBzMqWY9fGwjitUO3w2ri+Me39m3G5WmiGWGVo+K/0dlqsF70rM6cldJSBRF3Td8grIpiqETCjpoC9mvU+XMLOVlzycrJr+XRhHnBhaCw==
+ b=oJA+iZy3K4C56AmXKCpdMTqN7vEJx6j0i2SrQPOHIhb8UwnxTj2+K2ZubfzI6at84SP3eXqs/+kvQ3Yetm8Wn9+NfqGJuXnca6fREz5tLWSzsIjvmqVLcbOCaifOzz43LL/QJM9V+RQvuhONllCRTmoiLDr0VQ2ncTHNqvd+1vNQZZDFpb26IFzHthyhcUo8ObprwV/JPhtlHZNc67fKb1mCQ6zvX8XEFWuYDpfPYyP2ZvCbWb+ANJpUNvQ7zhhenHTyJV5CpGskvRJryDF8GpecIaxpCuGkddX0EEl1MSLArc0+Dmdn1bv7ZaAAISIfkNmRMiPptzyAq8zPAbjyJg==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UBvhVPsnjUyN/nR0AskCtv4uk+XHE+W9UcNINlo+yGI=;
- b=fiqfkvXr9QjRJ3O34/edb0GNNEfqODWAXQmTnA1WgTjR6Kg0K7kwKam/PgzeInWtlhbLYjigsQQajqNIo92uLAVfKAlK9fuQsKYm2atkmYKDvBOVViduypmY+w5yLXmps+m56waUX+Cyk1lZZ8Ks6UlJmpx5SPIJw2x4hAFUxKaGvQ87nyUF8GtQB7hFIQvDgL8wh6r17UVteUOshpZWbgWc69vsbSCG5LEV/CU9eiFIcfdtlGF21uVws3rgVFD+736RKuKQdVxpuyXNrd0o9/fZ83Na+QYvJd0RBKsiYrV0SBHL7NzYJdjEUMkcJULrNl4ZENKYfCcM3Mh0DYGqWw==
+ bh=1+eRmQMeI849K3yvrpHDrNPQUNV8I+xRrhRuo0ibXe0=;
+ b=SLwN3c5laBzwxBdq+dIyFMjKqiwNgYge27i1l0jKzzJli7nfaR+1ypOakipQrIO1nX1W/Oxy3zUmKz3nsXU+30WetG5Pd9KdLTiZL69QF0qJtP1X4ibCPiPhX4WMtdOysP86TV/LrYXAhAHyqF15j30kl5jsLs0qQZg75YeKthBHddeP4Z3m+xNR1AosOHJyP7JcRmJrGKehGJJUvr23zJjioSsenLSFVSZjN87nNpDBlEC6IFLdRV9eOxAN7NJ/rUtt/W7nrMdmLJuOfh8AaDzvyCg1noeJGcaSH+gxNSnulUm9PgLMVa4Tv2zaMZfVQu7EHEODi47bbGTzEXjyqw==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ smtp.mailfrom=softathome.com; dmarc=pass action=none
+ header.from=softathome.com; dkim=pass header.d=softathome.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=softathome1.onmicrosoft.com; s=selector1-softathome1-onmicrosoft-com;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UBvhVPsnjUyN/nR0AskCtv4uk+XHE+W9UcNINlo+yGI=;
- b=K6dIM0TqxNvr5H4aFCYtg5JP6YgTZFg1/H2erEM5y53XYxJ7W3cJxRJ+VZRv3JRb64T2ksQCkfH5RZjlIxMzZZSBwQzOXrqEQYJtY2cd7MA+dP7WCfucbWNtgi25QyB4cGCu7BAlpcxDF5Walw3giNoWVVT34NAOgSejbm4x3RQ=
+ bh=1+eRmQMeI849K3yvrpHDrNPQUNV8I+xRrhRuo0ibXe0=;
+ b=Yml94zOfbs2JT5IteN0dxgswa7ij8JLTMMwngj08xxqi+I91482o+1w4n5619qYFTXj65SgtCzI1vu8SI6jOB5at+9BT4KVihBMQj4R4LSL3hz3WVK6kqQ5B0cgaO26xncU7njUXgFlrBN1JcbGXjHF5t2x2moLw8mKp6j0wWTUcxust9ia9+Ts0xQ4HAqDlS56YZCN6LWr9+E5fsE7CkkmTtftEmB5jZzR3n7b6IsxDKOnxqQyv9de1No9AwcMhYQVEdR58+6ONoaD4QO5+5sAfQVJ35XowHIgyI16D7LLTmpOCg3CqKEaaBGfoETMIzsP2aCWqq3rdhVLMaeEEHA==
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CH2PR12MB4166.namprd12.prod.outlook.com (2603:10b6:610:78::13) with
+ header.d=none;dmarc=none action=none header.from=softathome.com;
+Received: from PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM (2603:10a6:108:1::63f)
+ by PR1P264MB1870.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:1b5::15) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Fri, 1 Aug
- 2025 12:37:00 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%7]) with mapi id 15.20.8989.017; Fri, 1 Aug 2025
- 12:37:00 +0000
-Message-ID: <a6528c4e-b42b-4cd9-84cb-ae8e109e3430@amd.com>
-Date: Fri, 1 Aug 2025 18:06:52 +0530
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
+ 2025 12:39:51 +0000
+Received: from PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::5daa:6a62:2542:e8e7]) by PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM
+ ([fe80::5daa:6a62:2542:e8e7%2]) with mapi id 15.20.8989.015; Fri, 1 Aug 2025
+ 12:39:50 +0000
+Message-ID: <c6272a2f-e157-485a-ab16-c3610a969a00@softathome.com>
+Date: Fri, 1 Aug 2025 14:39:50 +0200
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V1] accel/amdxdna: Unify pm and rpm suspend and resume
- callbacks
-To: Lizhi Hou <lizhi.hou@amd.com>, ogabbay@kernel.org,
- quic_jhugo@quicinc.com, jacek.lawrynowicz@linux.intel.com,
- dri-devel@lists.freedesktop.org
-Cc: linux-kernel@vger.kernel.org, max.zhen@amd.com, sonal.santan@amd.com
-References: <20250731163550.960686-1-lizhi.hou@amd.com>
+From: Olivier Blin <olivier.blin@softathome.com>
+Subject: Re: [PATCH] selftests: breakpoints: use suspend_stats to reliably
+ check suspend success
+To: Moon Hee Lee <moonhee.lee.ca@gmail.com>, shuah@kernel.org
+Cc: yifei.l.liu@oracle.com, zhujun2@cmss.chinamobile.com,
+ linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linux.dev
+References: <20250626191626.36794-1-moonhee.lee.ca@gmail.com>
 Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20250731163550.960686-1-lizhi.hou@amd.com>
+Autocrypt: addr=olivier.blin@softathome.com; keydata=
+ xsBNBFooBzUBCADN0hSTI9HfQ6N9mWlqoeGKmpJ0UAh0VHYKE9tzUuVHq6rUXK4GS2F9S9KP
+ oATwGuihDcIyhNZCg+Te2bDSmB+cfrSx5eaM815b6VmpZeUelWad/IXC42o0uRLvbLPZxdhs
+ WD+buNkC0IJs2RtYet5/dUGIJg23JRaUpJNtC46cQmbmDy0yEWokU2wp9he4XQ6QMJbWLdOu
+ X2dLzdAhERKa6VIFrRIagFfeVQZHwNG6WIAj2Z+9zdQbanVugA5iD85Ht6qP/VfjN99tLxHd
+ TN+lXJMJYzmivyzlqFAZJXkl7M+5HWgFiQo+AiB+WvIg/7rYdQcnryLaSWB48ZzC3V0fABEB
+ AAHNKk9saXZpZXIgQmxpbiA8b2xpdmllci5ibGluQHNvZnRhdGhvbWUuY29tPsLAeAQTAQIA
+ IgUCWigHNQIbAwYLCQgHAwIGFQgCCQoLBBYCAwECHgECF4AACgkQO0EjVlHGs4mNawf/Wc5F
+ qvG6/K1MshtZQ/2gehE6FZpun55Z+zZkxktro6HtVbeGNyRtAwxwZPZOvThDNbsGbHaIrFLu
+ 6mwyL2Ev/5zvtHgs5U8VNQhErlwZyJ3lEj+1htWBx1BSuL2Rgpo1EdjhM1aczc5JM1MrSlAi
+ 93wmVE/2bW2FUT/Dtz+1P95LbW87kbY8Nnl0NDIufEjVtsMF0Gk3qeYLTVXXWhopTrUgb4yL
+ zHrbdShnCudJ52eenA4ZtGW/6rRakk+ioR//6DF4n/R4OCCHL4ZQCIX8zBadrzdxrLWBYiwy
+ 0Sb7wJ7ON7i5p+Zg56iwJqBOKsSZuOSWKmyJJf8nnebi3I8lH87ATQRaKAc1AQgA2XlYWqNF
+ KMo1BmBCG82fH6ggGAI4Y82rE0zyaefuWAe1dac4OPzKBGfKQRziF7PMTx/lzLWDF+d1stOi
+ ALNcMXhRDDzhyCNuOZkyPMpz6LUTMhQ05v4UBw1FujwxbMzaLSHyZWWLDtPpBcO0nwN/598W
+ DT1gNKd95KYpAlrJMKaU7TCtvmn/jWpo7jiScLuncZeaBEhzIW4pQfvic/lbo8eG4tdMwkFI
+ CChhmgAg1aCvYb2D+mxZfBr2rqtDqm1+YKEAML9D84QyJu8UdYCJrpgi0GHD0qO4+rEhFwO/
+ PA60Ia7x0XzPC6M5epBcIPdftv3OhkTTWCC7YYbeRqInrwARAQABwsBfBBgBAgAJBQJaKAc1
+ AhsMAAoJEDtBI1ZRxrOJvbkIAKHmOPiu+bZTTl0m52VR/se8nN2ok8u/zs3mlkIMQbkRBP3n
+ mJLSdLUcv3WdoDpEypJ7aR4wMQ3NVW6a2Db/xMTtrBY9qON/LrxItgej+bO5+oEeVLzASR/7
+ nH+z9JD55+Z0kHigvupXXVJFjwdX3yjldp6/Owf5X2P13OxkORMWGta4Uv3RYQZZUmQpeR2d
+ I0IcLpzV2gTiVicFUh2q2kFmttuxaK/zlHqOssfASbGhrpbXig2d8ircZzu9x26UiLBQgs8w
+ 0u+BwEIXwHRX9W5Kna1r/lqnlNwe+khLPD4WYjossMQf8H5p3gLnX4rxC7oLo8iRaMnYGFd5
+ 63eCM7I=
+In-Reply-To: <20250626191626.36794-1-moonhee.lee.ca@gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: PN3PEPF0000017E.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c04::4e) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+Content-Transfer-Encoding: quoted-printable
+X-ClientProxiedBy: PA7P264CA0124.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:102:36e::9) To PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM
+ (2603:10a6:108:1::63f)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,437 +105,201 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH2PR12MB4166:EE_
-X-MS-Office365-Filtering-Correlation-Id: d27627a4-94cf-4593-c83e-08ddd0f81c4b
+X-MS-TrafficTypeDiagnostic: PA3PPF4C106CF41:EE_|PR1P264MB1870:EE_
+X-MS-Office365-Filtering-Correlation-Id: 6601d851-7754-4d74-322c-08ddd0f88205
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|376014|1800799024|7053199007;
 X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?TnZhdnJIb0tlM1NRVFM1LzA5emhpNTJ6TmFxcGFWamlZMEpuekE1bGFYVi8r?=
- =?utf-8?B?Z3ZYelZRQm9TaEQ3NUM5MlpyeE9rTFgzcWJIS1FjeTJyQXF1ZWRZY1VaQVA4?=
- =?utf-8?B?bm1NdWdaOXU1b3UxU2hFakcxZS9mV091V21neWlEWEhQYk1oZ3pKbHVXdVVE?=
- =?utf-8?B?MVRESjZoMmpPUFdvZVhnRVZja2l6bndhRTBubENHaXgvNjJ6bmI2aUVOZ1VP?=
- =?utf-8?B?dkQ1eTRLbDM5d1RVZlV4NEgwLzNjaHovUWJlVk5tUGJsUjc0UFJiaGo5Wkta?=
- =?utf-8?B?eTZOYXBxcGZPRElhT29xdmJINDRkdXdUY0dCUjY4VkFzelNwQUFOMHVQWUs0?=
- =?utf-8?B?eTRnUkZRUTZPOFJ5S2o3QjBNV1o3dXgwZ2RVLzdxNW9US2crdVhSQnBWWTFJ?=
- =?utf-8?B?dW5BcDMvUWpSWWYyZ0liYm5oTWFndkdQRFphWjd6T0NvS3ZYYUcwYnVuTVRK?=
- =?utf-8?B?bVFOTEptNzFoeEVlV3NmcHAyWUQwVHhEaDRCZS84NlRQWmhTeVJNRVp1K3Zi?=
- =?utf-8?B?b1hSbjJMWk5oMEEvdjF3dXkycytkYUpUdUNMTVd4NXFFNlpZVkV6TUxiVUNs?=
- =?utf-8?B?dVluVDRTZ3h1THdGR1BDZmFmY1VHaTJBMUNtc3B4RUQyT1owMlJLNlJxbTM4?=
- =?utf-8?B?TkM5V0hTZkZsVFdHTGE1cEpKR3FmdXBOR2YyaWF6alBBcEVMK1g4RmNuYkFL?=
- =?utf-8?B?VmZqSThVQVp4MGJwT29DTFFTdU5mQUgvZjBtVTNIOElROW1IUStyZkNoaWdJ?=
- =?utf-8?B?U25YOUZBdzlkbFY3b0kveUVwWmo0V2Z1VjZtV0ZOSXJCMGMyU1RwUVJwMkw5?=
- =?utf-8?B?LzBvSkRPMk9MZUpPbFpEYUpsdFRGc3lUbG9GNDVwRVZtMys0c0JWaTM5bWRZ?=
- =?utf-8?B?QmZjQXFmdW9Ea2hhem1PdmN0YlBKM2FaWnNnNmQwbTRGa0pGNVFEeTl1b3FM?=
- =?utf-8?B?TkNwRkxzQkZhRGpPUkJzT2NLcGJscjUycVMvS3VSd2NMd3pXNkY0Q0pxOHBl?=
- =?utf-8?B?VHJqZTdyZnp1T0RyeGh4MDNzMlJHWThJcmpPUG1sUVRqNnhra25adGZhQUhi?=
- =?utf-8?B?YlRnV2luT3NmTUdFOUFoak00bUFmWi9rNXNSRnVHRHVWZVd4dFBBd01jeGRC?=
- =?utf-8?B?R3YxYno2NHZhSTUyK1RkdnJSSlBMNVhUMUUyWnFGTkJlWkl1R2tnQXl6M2dB?=
- =?utf-8?B?MnBlTExYQzFoQWUxVFdhWUJTQlFYVWg3Mzd4eVlHV1dweExNakxqd3FHanV2?=
- =?utf-8?B?RnYvRnYyeGRFaXBjVzhVVWtnSHFPYVBWaWphNjZxSTZocXR0dU9mdm5RM3RH?=
- =?utf-8?B?SmxWZTRvbzIyVm1OdGUwV09NZEZaV0VVMEdPbTYvZFpXWWR3L0V6V1h6M3FP?=
- =?utf-8?B?UGtJQ1pnRmwxZUdHWmVlSElRU0dCRmtXa2habEQranJ2MEdJaFhXR3pYbFFN?=
- =?utf-8?B?azIxNHh3RElPbVQrdFF2aWhyb05aRzdmbzBhTXJnU29IdVFnZ0YyQzFkSS9H?=
- =?utf-8?B?Mk10eVpLMDZ0cVFacnF2cmQ1TVdqdkNmbVlyaUtNMGVYWmloamZETFRaaHo1?=
- =?utf-8?B?ZnlFeC9mcEI2UVNiNDhEMGwxRGZ3TDVsYXY2bDUxVVRuMmxTT1NKYTd6QVQy?=
- =?utf-8?B?K2FEYm0vZnRCYmN6YVBoY0U3KzVucUFUVHF5U1BOWk9pVXM2Q0c0bWZuNkdr?=
- =?utf-8?B?T2NLNzhjK2QvRXAvUmRmNE1la3BBMTh1aE9rMUJjV0dGbjUxQmhHQjJPdkNm?=
- =?utf-8?B?OCtiN3VHMTRxVG5wTHg4dTZiSFFualBrMjBPNDhZemJZeGlPNVcxZ1lTd3pv?=
- =?utf-8?B?YURJUFhnQkNGaStNbUtNdFE2UEFMZEREcHJ2SmpHdFFGQzg5MnlVNEJLNlpu?=
- =?utf-8?B?M2tUT1FnRFMxM09rS05TUjVkcGxVbFJyWXZSeVFQdW9RbWFvcWVrV0k0cFIy?=
- =?utf-8?Q?16wb4C/yZkY=3D?=
+	=?utf-8?B?QlpKM0NuTGtJMVFSajdOMm5kYXZKTkdNeXFmcEhPNVlCdnkxcDFJZXd5ZW5y?=
+ =?utf-8?B?M1p2VUVHMzhma0grczM3aW9CbThzYy9sTjVGVUpUYVpFUkJMWDdXMHlHL2E4?=
+ =?utf-8?B?UE4vU3paZUU5WktMNFBxZTdlOXQrWHMvMUFRbVNQMzJOL1FaSit4d1BMZWNE?=
+ =?utf-8?B?b0ZYUzFKZDJ2blBDWXJ0Z0grM1dMYTIzZi84TTNldjJaZjRVKzJCd3V1THJE?=
+ =?utf-8?B?dEFZS2NOTjNWK2Z2cUo4UHJvRnpMQlQ3K1RiTFZuVVJJdUliY1lya0dMYkdW?=
+ =?utf-8?B?UjN2UWxQUnVjdEdnaDlyVGFheXNhMEo0d0x6MWMvYWdvZG5pUmw4anB6Z2lT?=
+ =?utf-8?B?MVBqSUdhTnBpQnZ2Wk9nQVZqZUVnWkdJTEFXRnk2OTVJRGlhaWFxcHJTT0Rk?=
+ =?utf-8?B?RldlQkhkdHF2MDhUSDF2VS8zMUdtRzRRL0Y0UDRTdFJwSXZva3dzaFpNN2hG?=
+ =?utf-8?B?cjByM2l0SXJXNkdzZnhpZ0xsMHJ2V250YjhDVzhOd1hxU1F3TzBLUjhvMGxM?=
+ =?utf-8?B?YlBFRlpla2puU2hYUmx1WVlUUDJCZUxsaXpjZlhMRUxDSjBnbHVQRlZLM1NP?=
+ =?utf-8?B?RmlwSzN0cWJJLzZiSkJFVEtiVEJsdktIaUd2a2FmWG9ST0YwU043c3FRV1kv?=
+ =?utf-8?B?eFM2SFIrS01CZEF1U2lPa2tJRmZZS2JhQlNrKzY2Z0pkWC9YaG53ak81QWYz?=
+ =?utf-8?B?MDR6bExvMlEyOTRvYkZGRkc4enFiZ1Azd25ydHRGOXBFSTNDMk1ZTjhBQjIx?=
+ =?utf-8?B?UzNjeld4NEJDU1czdUtIMk80ZjBiTDhsdFQ3SzcyYkhiTGhnMyt2U1A2MVNT?=
+ =?utf-8?B?MlgxUnBrRjAwTEJBR1BLaThMTFJFM2pTeHNOeFErWkVDUHVpVzJtdnRCcFor?=
+ =?utf-8?B?TUwzUFlzMWd4Y3FDU3JoWno0eTkvM2lmNnE2VW1rWnVJOGtnWDlGOXc2bUFJ?=
+ =?utf-8?B?dm1ia0pIV2p0N1ZiNUpnM2pCRzlleE9UM1QrYy9uYklzT2Viai9SK2RqUUNv?=
+ =?utf-8?B?NE54RTZjZlNPWmxoS2I2UlJVZDJmbVE4Z0JuNm5ia2lJMTdtZWxmd2p4MGJF?=
+ =?utf-8?B?ZlhJWjV1aFJURHFWYjZUQzdGZXlVbjE2dThnNUxCQVRpelNTUEpDWnBKTXRy?=
+ =?utf-8?B?WEt6SFUxczVHc1BTZlhRdEVIVmVDVlN5V3B5WUZnTFVUMVVweTlkN2Z4UGJS?=
+ =?utf-8?B?VysrcW1Cd3prNGpvRXdadjhHR3BlcGZ5N2huV3lSTDZMYUFFOWQ0eGJEaXQw?=
+ =?utf-8?B?RmI0UGtPWWg3QWtWbStneUFRZkMxVGt2Z2JXb01vMkZoZVhteTAwRk9ERGEz?=
+ =?utf-8?B?R1ZPd0FZVjlMU28zbFJrWjUzRENsU0MzR3lUTXQzRVkzK3RhWG5ZZkM1R2J3?=
+ =?utf-8?B?ZXRNNnpEbWJpTGxPQjJ5WXJjekNBZ3RJd1Y0bGRONkttb1hlblM5YnphdHJZ?=
+ =?utf-8?B?YVpobUxLS1FmQWRVOUJsT0M1T3RmV3NZZEFoWUtCL1A4bmsxL3JaTmI1T0I4?=
+ =?utf-8?B?dVBvc0lKV1N2SEo1NXRmL3kyekdxQ1VrSU16Y0R4ajFhUlJMa0taUmpsbmRW?=
+ =?utf-8?B?ZGRGRG9rbGFIZW9aaGNkYzlkQUFRODg0S1d3UHhHQS9NVEJjQk9UaTBQZHRo?=
+ =?utf-8?B?cWhrVHk5dDdaa2pPYXExeEhpTndZYjVZbFdHdXhpMndJUHBrcElYMkdudGVY?=
+ =?utf-8?B?QUYvakIzQXRwVlAxMUxMbHVOYmJ2ZU92Y3BORVFLVkdldmdTQ29ocnRmVUNH?=
+ =?utf-8?B?QkVTL3U2cEhiZWZEU0dFM2N6TC9NenNqYTJXblJKbnZIWk9YRUUyR0NVTnZF?=
+ =?utf-8?B?blJlblQwazUwVmJ1b05EWXlSU3ZuSU4rcVl0NXBiT0l0czRFR0VWZTF5cUR4?=
+ =?utf-8?B?K0Nqa0U0UVZuWVlwbWNmZmVxeUgwUnF2K0VsakhmcEdIWjluaytudEdBY01P?=
+ =?utf-8?Q?VTjCGXUVRyw=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(376014)(1800799024)(7053199007);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SlVkTFhvRWpvWUJBTTlNY2tRc2FqRlo4UVUyM1lFLzU1QW93STM2Q244V1po?=
- =?utf-8?B?bG8rcExoWnRpdVFiVkxweWF6OUFPekN3NHZpbW90U0FIcXpIdklpWEo1SkJE?=
- =?utf-8?B?Y1BsWklSZGwxSExkdXRJdTcyem9RN2tYTkh6WkdsL1pwcjdkYWRLbWllSHNL?=
- =?utf-8?B?SFVwUHlma2JLUVZmaWExVEtPa2lOVzQ1Sng0R0tWMFlXTEFOYkRheXh6aGJ1?=
- =?utf-8?B?K0d4dSt0N2lkdEVMVVVzdnVvLy9ySU51ZFZXWVlkMFpjMlJPRVJ0U0l6Q1ZL?=
- =?utf-8?B?MUhBODdKTjRtL0pTblEzcGRTZnptNVU2ajIrcUpoa3kwcFphMm5uWG5xVFZ5?=
- =?utf-8?B?VXI4djFWdGJqUERuUHpGSDl5WjRhVlNkR3JMUS93NjUxQ3ZKckZoUGRjdkh3?=
- =?utf-8?B?WDl3R2lEY1BsV2xFK0VRNFF1N0Z4ZS9qQjYyaEVBUEIrUWVCcTFiN1VWdzd3?=
- =?utf-8?B?ajhCM3JVMDh2T1lZVTRlcS9FRUlBUGlmeWFUamtqYzM2N0NxaVJhTkJUQTVj?=
- =?utf-8?B?U2hjTldSZjFmcTVoOTRlR1hzbFVITTlQSXZHMERLelVPa3RnV1Z2aXhDNEx1?=
- =?utf-8?B?UE5kTTlER1h5OVhDZ3BMdXdhell3cVlJWEZSM1hRVmxCb3lXUzR2cTkzeVFO?=
- =?utf-8?B?NVVHZmFVMHUzckhTNFJ6RUZEZVlxV3VGRUhmNCtUdTFmaVFjR0QwalQ4Slp3?=
- =?utf-8?B?NkluMWFQSEJJK1psbmNDS0h5NmxvS1o4aDI0YU5WaGJXUGlLNlBmaS9XREFD?=
- =?utf-8?B?V0o1QUQrNVliVDJiblhFRDJIMzlOVm1ON0k0SXNKbisvOHoycVZVblZoYmV0?=
- =?utf-8?B?alU1NmVUOS84OGsxRGtneTJZRXd1RWQ3WFJVVUgyQXl4dXB2RG1DdjcyVlpi?=
- =?utf-8?B?Snd1djlOY0E4eTIzVENuOU5ZeXBJMHlRaG1IVXZhSHh4TFZKdGZuNWtBQlJv?=
- =?utf-8?B?TWRvSXozanU0RDMzcndVNU9hS2oyenJOL2htYXpLV1JXOWN5VXpzWDVKUnVL?=
- =?utf-8?B?TTJGUkNvNmh6SDNlVU5ZSHZQU3VVd0lIU0FkOG9iV2FvV1hVcmw2NHNyNjFo?=
- =?utf-8?B?VEJFRUxKK3ZxcUNDeWd1ZEJzMnlkZGJWQ3IyZUwySk1BSGpPV0F4dEhEWm9F?=
- =?utf-8?B?bXkxQUJrejJJMy92ajZkL0VvejBkUW5ZRFhqTXkyZCt5UzM1dlBnVnd0dWxv?=
- =?utf-8?B?VEJKTTVvcE1mdUQ2S3k4RDhweHJna3NuY2ZCNStLbVp5NEg5L0tPRWpwYWcv?=
- =?utf-8?B?RlBHYVhmSnpTYVVyV0poVTJLU3FpMFM4NmpUS3owOEptQVppQlhIcld5bGdo?=
- =?utf-8?B?bGk5bjcrVzdyYmVGMlhLKy8rU1lJRE9qa3pLVjNObWkyUy92enNGa3BrdTA5?=
- =?utf-8?B?RklpWlRiaW1qcGdnRFRNWFo4UnNaaEdyMStKYmc2enhVYSt1eC9udFlETTBz?=
- =?utf-8?B?M1MzNTBESGpJekZjN09rVlNRUnNKZEJNVkM5WldmRFFpdnhvSVZBcG84dDlW?=
- =?utf-8?B?a21ySHBYNWE1UTY1UHljYm40TW54YkFwRHl0cm9FcUZzVGR0RnIvdG9KRDJO?=
- =?utf-8?B?SHkrRXBXR3BYM0hrYy9IaTRacEZGUVQ2SGVsL2VHNlRGNDAwZ1B3SVJWWmha?=
- =?utf-8?B?S0lDNUF0SlB5cVpwQ0Nmei9ucHVPa01SSmt6UGVzbjQ2UC9xR0NMK1RvdXRF?=
- =?utf-8?B?dkIvcWRBTFpHU2RobnFxTGpzS1dvMXpIdVNQTHQ2MVhYYnAxR2NxYjV1UkhO?=
- =?utf-8?B?NGhaUUFWTElxUTBBZmNBVUpINDlsK0kzakJoUDFGN3AwSE1LTFU5ck1pYzNn?=
- =?utf-8?B?K0NuR2hjejVsNXlwTXlvS1BiZHc3b0JoblkvNWhhdTk2SHRyOGxXN244a2Nl?=
- =?utf-8?B?cnVGNk5Pcm1RMVdadm55THdUSEIzb1dSWFZ6M0FOcUVVNmNaeW91QTkwQ2FW?=
- =?utf-8?B?MGZOL1NvRjVKRmVoWUM1Vll3VzdNbGQvYTg1dEtzYXRPWCt4OERXSlFiNHAv?=
- =?utf-8?B?STdCUG43QkVLa3dUN0h1TEd6eVBZSWQyZmxjN0I3d1orcFhwR1hxbllnUWph?=
- =?utf-8?B?ak51WFJoQzZOYTFzbGs5VkV3QlFPQ2llYVU2Qm9KcUFjbEFBTXFySW1GREJZ?=
- =?utf-8?Q?lX+LTscvx4O+qYfYJC+DOhYx3?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d27627a4-94cf-4593-c83e-08ddd0f81c4b
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+	=?utf-8?B?ZjVSTkZkdTcrajN0ck5tS2NYN0NiVHM5WEZ1VVFxMUt3ZG5ZTC95QXE0eVdH?=
+ =?utf-8?B?REVFWVlSZlN5M2h4WTE2ZzJCVWQrWTQvK25VZkVMOHllS293b3NjRkFWVDFx?=
+ =?utf-8?B?WXgwTXdqZ1Bsbjk5ZDhaMnZ2dUJEYVQyU3I2dERmVUZTUmhVaVpXeXUxU1BP?=
+ =?utf-8?B?aWdRa1gzUFE2Wk1PMzVmV01keXZ0STRwV0ZYRjYvS0sxdlJtOXgxU0dOeDNX?=
+ =?utf-8?B?b05LYng2cEpKSzZCTGpPTTlCWVRuNms0OXJ1RnpldC9xaVRnUnNOQ3hlZzZm?=
+ =?utf-8?B?YzRUdG16dkZFSU9MdnMyQ0gzM3M0c2N5QTRWbTc0eEJ3cDJSNkExL3grMG13?=
+ =?utf-8?B?dlNvaDdsUllCcENDeFUrc2hROUd4bDF2ZXErN2piVUxwdXpRdlgrK3dTTGVE?=
+ =?utf-8?B?NjhkWlhzYldiVVZTS1o1NGV2ODZ3YVErbDJEVWd5cjMzUjF2SVFMYTFPcVZQ?=
+ =?utf-8?B?VEVvemdadlJSZ3R2TmRESmFkMFFBancxUUVSVjZaWE03L2NKS2tvNnVLL01V?=
+ =?utf-8?B?REdsdzFsWWQvVFR5dTVUd2kwUzZzeWdKLzlicGtjaEhlSDVEc1lycDRJWlE5?=
+ =?utf-8?B?QkJDNm1EcCt0eENmRUlqMGpsZk5yK1NVVWRiOThkVGd0YTU5dThickN1T2t2?=
+ =?utf-8?B?OFZBS3NybkhBZkx6cmhuOU5Xd2JFL2ZVTGtGY0ZQeDQ1SmdoelJxL3NvaUxQ?=
+ =?utf-8?B?U3JKbTB5U2djd3FwbXNTUU03cm9CdjJQbHNtMlVXWkpYRndXWEY2TGNLSmVK?=
+ =?utf-8?B?RmsySkw5MXgraTVxcTVYakpLUFMvSGV4TGZ4akw1aC9SS2QwSmZFSHE5YnBa?=
+ =?utf-8?B?bDB1SUFzRGtKTmxENTlaempDU0QrZ0JuazZiWG0zZXIwREI5cS83NEc2azEr?=
+ =?utf-8?B?Tkk3YmRoeUhGbFZBbTFVQ0RJcmkxT1dYVVpMeXBVaWwzMVFGeCtkUEV0MkY2?=
+ =?utf-8?B?dGlZMElWbnhuQ0c5R0VCTHo1UmdUUkRza3dtMjNad3FtRVMyMXNNNEp5WTJj?=
+ =?utf-8?B?Nzg0L0JYSmcwbDhpRHpHK0s4bEx1dnk3cTh4RTlHeWQvb2VJdzV6eWgwdm9X?=
+ =?utf-8?B?c2lNQ0pIbVljeHZJWGRBaVQxQzQ3USszN1FLajBCalBkRklCQWFnSHpENjc5?=
+ =?utf-8?B?M25rZU12eXFnTStBbURLR0V4V2Q2NUxWQlF1Y0lZWFZKbUZjeDRCMXVDTU1y?=
+ =?utf-8?B?djhydEl1ejIrcVpFVzNJdG8zWWF2UUQrWERiVCtvSlJ2T3lzV1RDaUVHdzNP?=
+ =?utf-8?B?K0ZHeXBZM2dLOGhTdE5lNVQ1ak1oVGVUelhHYmxaZ0FCMlRlOEIzdC81YlFx?=
+ =?utf-8?B?S0xjQW5PampudWJkVXJRclZtU1RCTm9ycU5JUCtTUmxlN3RSYVNSN0FjRWdE?=
+ =?utf-8?B?dzBtYk9KQXhxY0VaYlNsWjVKcW9NWHltZ2JrRjJJc05yRFFNUjVPb2FVaEJo?=
+ =?utf-8?B?M1A2UlRtcFpwVzhZQUlJRGhiWWtYYkxrMmdtS1lVcDRZSFlmUGkwdi9XMnJT?=
+ =?utf-8?B?RXBXZHRrdkhkendldlpFM1lSaG5yWDF5TkUyRFp1ZUZObFZoVHo4YmM4VVlI?=
+ =?utf-8?B?NHprWmExWmRMNHNJbUplbG0wV01aRUFuTUlZWGhoRmpZbzFuMUR3Y3F6d0RM?=
+ =?utf-8?B?alJoK1hpYU9IN1c5YTNTTEw1eEUvVU1RdDBoT2hKNWJvQkpGejFqT3JrcW5K?=
+ =?utf-8?B?UUV6cjVPenltT3J4VmpQZUk4WWE0aFBKS3hxZGlWdDlzck1waDZ4ODA2WEgz?=
+ =?utf-8?B?NEhPdUFONW0vV2ZRSlprZFZQNlMwOHY0aVVGRzJibC9kczEyR1FXVWRWS2xG?=
+ =?utf-8?B?aS9Da1lNc2JObG1KMThrbzJLR0lHNzU3d0lyNC9seDRDMDk3NXg3K3c1N0JF?=
+ =?utf-8?B?MzZCaVMrY1FySEJDT3RCVE44dHVFTVQ5ZFgvUlp5T2R4ZTdBWHFRNnNMOG9a?=
+ =?utf-8?B?aitPNUI2RDZPL2NqcWhQR1d5WXJOeW9YZlVtQnBmc3FlWXk3REM0UDkxMjRK?=
+ =?utf-8?B?ZVF0aDhHY3VLYkZhaUNFaFo4MytZVmNuWVllaXlhQVBLS1lPeEgrNm01UEpz?=
+ =?utf-8?B?KzhNenVIUTBsMGZiU3JrOFBJYTgxMHJYUXpQeGlCMS91TlFaSmxMWkNFQmtE?=
+ =?utf-8?B?VnJtQkFYUVdCN3pZS0ZWNm5xeVpDalgrdDBFNGd2NVJFcHE1Sy9ndkNVR2kx?=
+ =?utf-8?B?NVFieGN6MXVQYkM3cmhZeXpveFB1V2RUQmhBNHQ4Q2lQcnFaZExWUUJza3NM?=
+ =?utf-8?B?K2hCdnY3ejR6T0dMU21tTHd1TmJBPT0=?=
+X-OriginatorOrg: softathome.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 6601d851-7754-4d74-322c-08ddd0f88205
+X-MS-Exchange-CrossTenant-AuthSource: PA3PPF4C106CF41.FRAP264.PROD.OUTLOOK.COM
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 12:37:00.5966
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 12:39:50.9589
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-Id: aa10e044-e405-4c10-8353-36b4d0cce511
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: rxF37Z7DN/DPtbPx9l0IYwgGQG8BTn4m6/pArGl2AoVKcTUutWlh7dltck+ohQzGY5DZh76BDIshoQk4oLl4iw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4166
+X-MS-Exchange-CrossTenant-UserPrincipalName: o2FBhg0jhWOmvnbyvt3ryTtcYZr2GTuB1lgp3WWBptxowYjNZTBDg3DVnULQ8vH1tvAVRDEEt7XSUSTbhzu3UlkFpCCXo0hYjzCPS/lZbBo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR1P264MB1870
 
-On 7/31/2025 10:05 PM, Lizhi Hou wrote:
-> The suspend and resume callbacks for pm and runtime pm should be same.
-> During suspending, it needs to stop all hardware contexts first. And
-> the hardware contexts will be restarted after the device is resumed.
-> 
-> Signed-off-by: Lizhi Hou <lizhi.hou@amd.com>
+Le 26/06/2025 =C3=A0 21:16, Moon Hee Lee a =C3=A9crit :
+
+[...]
+
+> Replace the timer-based check with a read from
+> /sys/power/suspend_stats/success. This counter is incremented only
+> after a full suspend/resume cycle, providing a reliable and race-free
+> indicator.
+>
+> Also remove the unused file descriptor for /sys/power/state, which
+> remained after switching to a system() call to trigger suspend [1].
+>
+> [1]https://lore.kernel.org/all/20240930224025.2858767-1-yifei.l.liu@oracl=
+e.com/
+>
+> Fixes: c66be905cda2 ("selftests: breakpoints: use remaining time to check=
+ if suspend succeed")
+> Signed-off-by: Moon Hee Lee<moonhee.lee.ca@gmail.com>
 > ---
->   drivers/accel/amdxdna/aie2_ctx.c        | 32 +++++++----
->   drivers/accel/amdxdna/aie2_pci.c        | 41 ++++++++++++--
->   drivers/accel/amdxdna/aie2_pci.h        |  4 +-
->   drivers/accel/amdxdna/amdxdna_ctx.c     | 26 ---------
->   drivers/accel/amdxdna/amdxdna_ctx.h     |  2 -
->   drivers/accel/amdxdna/amdxdna_pci_drv.c | 74 +++----------------------
->   drivers/accel/amdxdna/amdxdna_pci_drv.h |  4 +-
->   7 files changed, 69 insertions(+), 114 deletions(-)
-> 
-> diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-> index 2cff5419bd2f..7444117f0e17 100644
-> --- a/drivers/accel/amdxdna/aie2_ctx.c
-> +++ b/drivers/accel/amdxdna/aie2_ctx.c
-> @@ -141,9 +141,11 @@ static void aie2_hwctx_wait_for_idle(struct amdxdna_hwctx *hwctx)
->   	dma_fence_put(fence);
->   }
->   
-> -void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx)
-> +void aie2_hwctx_suspend(struct amdxdna_client *client)
->   {
-> -	struct amdxdna_dev *xdna = hwctx->client->xdna;
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	struct amdxdna_hwctx *hwctx;
-> +	unsigned long hwctx_id;
->   
->   	/*
->   	 * Command timeout is unlikely. But if it happens, it doesn't
-> @@ -151,15 +153,21 @@ void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx)
->   	 * and abort all commands.
->   	 */
->   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	aie2_hwctx_wait_for_idle(hwctx);
-> -	aie2_hwctx_stop(xdna, hwctx, NULL);
-> -	hwctx->old_status = hwctx->status;
-> -	hwctx->status = HWCTX_STAT_STOP;
-> +	mutex_lock(&client->hwctx_lock);
-> +	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
-> +		aie2_hwctx_wait_for_idle(hwctx);
-> +		aie2_hwctx_stop(xdna, hwctx, NULL);
-> +		hwctx->old_status = hwctx->status;
-> +		hwctx->status = HWCTX_STAT_STOP;
-> +	}
-> +	mutex_unlock(&client->hwctx_lock);
->   }
->   
-> -void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx)
-> +void aie2_hwctx_resume(struct amdxdna_client *client)
->   {
-> -	struct amdxdna_dev *xdna = hwctx->client->xdna;
-> +	struct amdxdna_dev *xdna = client->xdna;
-> +	struct amdxdna_hwctx *hwctx;
-> +	unsigned long hwctx_id;
->   
->   	/*
->   	 * The resume path cannot guarantee that mailbox channel can be
-> @@ -167,8 +175,12 @@ void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx)
->   	 * mailbox channel, error will return.
->   	 */
->   	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	hwctx->status = hwctx->old_status;
-> -	aie2_hwctx_restart(xdna, hwctx);
-> +	mutex_lock(&client->hwctx_lock);
-> +	amdxdna_for_each_hwctx(client, hwctx_id, hwctx) {
-> +		hwctx->status = hwctx->old_status;
-> +		aie2_hwctx_restart(xdna, hwctx);
-> +	}
-> +	mutex_unlock(&client->hwctx_lock);
->   }
->   
->   static void
-> diff --git a/drivers/accel/amdxdna/aie2_pci.c b/drivers/accel/amdxdna/aie2_pci.c
-> index 3474a8d4e560..8b6f17430d3a 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.c
-> +++ b/drivers/accel/amdxdna/aie2_pci.c
-> @@ -440,6 +440,41 @@ static int aie2_hw_start(struct amdxdna_dev *xdna)
->   	return ret;
->   }
->   
-> +static int aie2_hw_suspend(struct amdxdna_dev *xdna)
-> +{
-> +	struct amdxdna_client *client;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	list_for_each_entry(client, &xdna->client_list, node)
-> +		aie2_hwctx_suspend(client);
-> +
-> +	aie2_hw_stop(xdna);
-> +	mutex_unlock(&xdna->dev_lock);
-> +
-> +	return 0;
-> +}
-> +
-> +static int aie2_hw_resume(struct amdxdna_dev *xdna)
-> +{
-> +	struct amdxdna_client *client;
-> +	int ret;
-> +
-> +	mutex_lock(&xdna->dev_lock);
-> +	ret = aie2_hw_start(xdna);
-> +	if (ret) {
-> +		XDNA_ERR(xdna, "Start hardware failed, %d", ret);
-> +		goto unlock;
-> +	}
-> +
-> +	list_for_each_entry(client, &xdna->client_list, node)
-> +		aie2_hwctx_resume(client);
-> +
-> +unlock:
-> +	mutex_unlock(&xdna->dev_lock);
-> +
-> +	return ret;
-> +}
-> +
+>   .../breakpoints/step_after_suspend_test.c     | 41 ++++++++++++++-----
+>   1 file changed, 31 insertions(+), 10 deletions(-)
 
-You could avoid introducing goto in the new code if you used a guard. IE:
+[...]
 
-guard(mutex)(&xdna->dev_lock);
-ret = aie2_hw_start(xdna);
-if (ret) {
-	XDNA_ERR()
-	return ret;
-}
-list_for_each_entry();
-
-return ret;
-
-You can drop a few lines from unlock in mutexes elsewhere too.
-
->   static int aie2_init(struct amdxdna_dev *xdna)
+>   void suspend(void)
 >   {
->   	struct pci_dev *pdev = to_pci_dev(xdna->ddev.dev);
-> @@ -901,8 +936,8 @@ static int aie2_set_state(struct amdxdna_client *client,
->   const struct amdxdna_dev_ops aie2_ops = {
->   	.init           = aie2_init,
->   	.fini           = aie2_fini,
-> -	.resume         = aie2_hw_start,
-> -	.suspend        = aie2_hw_stop,
-> +	.resume         = aie2_hw_resume,
-> +	.suspend        = aie2_hw_suspend,
->   	.get_aie_info   = aie2_get_info,
->   	.set_aie_state	= aie2_set_state,
->   	.hwctx_init     = aie2_hwctx_init,
-> @@ -910,6 +945,4 @@ const struct amdxdna_dev_ops aie2_ops = {
->   	.hwctx_config   = aie2_hwctx_config,
->   	.cmd_submit     = aie2_cmd_submit,
->   	.hmm_invalidate = aie2_hmm_invalidate,
-> -	.hwctx_suspend  = aie2_hwctx_suspend,
-> -	.hwctx_resume   = aie2_hwctx_resume,
->   };
-> diff --git a/drivers/accel/amdxdna/aie2_pci.h b/drivers/accel/amdxdna/aie2_pci.h
-> index 385914840eaa..6b21909841e0 100644
-> --- a/drivers/accel/amdxdna/aie2_pci.h
-> +++ b/drivers/accel/amdxdna/aie2_pci.h
-> @@ -288,8 +288,8 @@ int aie2_sync_bo(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job,
->   int aie2_hwctx_init(struct amdxdna_hwctx *hwctx);
->   void aie2_hwctx_fini(struct amdxdna_hwctx *hwctx);
->   int aie2_hwctx_config(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size);
-> -void aie2_hwctx_suspend(struct amdxdna_hwctx *hwctx);
-> -void aie2_hwctx_resume(struct amdxdna_hwctx *hwctx);
-> +void aie2_hwctx_suspend(struct amdxdna_client *client);
-> +void aie2_hwctx_resume(struct amdxdna_client *client);
->   int aie2_cmd_submit(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->   void aie2_hmm_invalidate(struct amdxdna_gem_obj *abo, unsigned long cur_seq);
->   void aie2_restart_ctx(struct amdxdna_client *client);
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.c b/drivers/accel/amdxdna/amdxdna_ctx.c
-> index be073224bd69..b47a7f8e9017 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.c
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.c
-> @@ -60,32 +60,6 @@ static struct dma_fence *amdxdna_fence_create(struct amdxdna_hwctx *hwctx)
->   	return &fence->base;
->   }
->   
-> -void amdxdna_hwctx_suspend(struct amdxdna_client *client)
-> -{
-> -	struct amdxdna_dev *xdna = client->xdna;
-> -	struct amdxdna_hwctx *hwctx;
-> -	unsigned long hwctx_id;
+> -     int power_state_fd;
+>       int timerfd;
+>       int err;
+> +     int count_before;
+> +     int count_after;
+>       struct itimerspec spec =3D {};
+>
+>       if (getuid() !=3D 0)
+>               ksft_exit_skip("Please run the test as root - Exiting.\n");
+>
+> -     power_state_fd =3D open("/sys/power/state", O_RDWR);
+> -     if (power_state_fd < 0)
+> -             ksft_exit_fail_msg(
+> -                     "open(\"/sys/power/state\") failed %s)\n",
+> -                     strerror(errno));
 > -
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	mutex_lock(&client->hwctx_lock);
-> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx)
-> -		xdna->dev_info->ops->hwctx_suspend(hwctx);
-> -	mutex_unlock(&client->hwctx_lock);
-> -}
-> -
-> -void amdxdna_hwctx_resume(struct amdxdna_client *client)
-> -{
-> -	struct amdxdna_dev *xdna = client->xdna;
-> -	struct amdxdna_hwctx *hwctx;
-> -	unsigned long hwctx_id;
-> -
-> -	drm_WARN_ON(&xdna->ddev, !mutex_is_locked(&xdna->dev_lock));
-> -	mutex_lock(&client->hwctx_lock);
-> -	amdxdna_for_each_hwctx(client, hwctx_id, hwctx)
-> -		xdna->dev_info->ops->hwctx_resume(hwctx);
-> -	mutex_unlock(&client->hwctx_lock);
-> -}
-> -
->   static void amdxdna_hwctx_destroy_rcu(struct amdxdna_hwctx *hwctx,
->   				      struct srcu_struct *ss)
->   {
-> diff --git a/drivers/accel/amdxdna/amdxdna_ctx.h b/drivers/accel/amdxdna/amdxdna_ctx.h
-> index f0a4a8586d85..c652229547a3 100644
-> --- a/drivers/accel/amdxdna/amdxdna_ctx.h
-> +++ b/drivers/accel/amdxdna/amdxdna_ctx.h
-> @@ -147,8 +147,6 @@ static inline u32 amdxdna_hwctx_col_map(struct amdxdna_hwctx *hwctx)
->   
->   void amdxdna_sched_job_cleanup(struct amdxdna_sched_job *job);
->   void amdxdna_hwctx_remove_all(struct amdxdna_client *client);
-> -void amdxdna_hwctx_suspend(struct amdxdna_client *client);
-> -void amdxdna_hwctx_resume(struct amdxdna_client *client);
->   
->   int amdxdna_cmd_submit(struct amdxdna_client *client,
->   		       u32 cmd_bo_hdls, u32 *arg_bo_hdls, u32 arg_bo_cnt,
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.c b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> index f2bf1d374cc7..fbca94183f96 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.c
-> @@ -343,89 +343,29 @@ static void amdxdna_remove(struct pci_dev *pdev)
->   	mutex_unlock(&xdna->dev_lock);
->   }
->   
-> -static int amdxdna_dev_suspend_nolock(struct amdxdna_dev *xdna)
-> -{
-> -	if (xdna->dev_info->ops->suspend)
-> -		xdna->dev_info->ops->suspend(xdna);
-> -
-> -	return 0;
-> -}
-> -
-> -static int amdxdna_dev_resume_nolock(struct amdxdna_dev *xdna)
-> -{
-> -	if (xdna->dev_info->ops->resume)
-> -		return xdna->dev_info->ops->resume(xdna);
-> -
-> -	return 0;
-> -}
-> -
->   static int amdxdna_pmops_suspend(struct device *dev)
->   {
->   	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	struct amdxdna_client *client;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	list_for_each_entry(client, &xdna->client_list, node)
-> -		amdxdna_hwctx_suspend(client);
->   
-> -	amdxdna_dev_suspend_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> +	if (!xdna->dev_info->ops->suspend)
-> +		return -EOPNOTSUPP;
->   
-> -	return 0;
-> +	return xdna->dev_info->ops->suspend(xdna);
->   }
->   
->   static int amdxdna_pmops_resume(struct device *dev)
->   {
->   	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	struct amdxdna_client *client;
-> -	int ret;
-> -
-> -	XDNA_INFO(xdna, "firmware resuming...");
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_resume_nolock(xdna);
-> -	if (ret) {
-> -		XDNA_ERR(xdna, "resume NPU firmware failed");
-> -		mutex_unlock(&xdna->dev_lock);
-> -		return ret;
-> -	}
->   
-> -	XDNA_INFO(xdna, "hardware context resuming...");
-> -	list_for_each_entry(client, &xdna->client_list, node)
-> -		amdxdna_hwctx_resume(client);
-> -	mutex_unlock(&xdna->dev_lock);
-> -
-> -	return 0;
-> -}
-> -
-> -static int amdxdna_rpmops_suspend(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	int ret;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_suspend_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> -
-> -	XDNA_DBG(xdna, "Runtime suspend done ret: %d", ret);
-> -	return ret;
-> -}
-> -
-> -static int amdxdna_rpmops_resume(struct device *dev)
-> -{
-> -	struct amdxdna_dev *xdna = pci_get_drvdata(to_pci_dev(dev));
-> -	int ret;
-> -
-> -	mutex_lock(&xdna->dev_lock);
-> -	ret = amdxdna_dev_resume_nolock(xdna);
-> -	mutex_unlock(&xdna->dev_lock);
-> +	if (!xdna->dev_info->ops->resume)
-> +		return -EOPNOTSUPP;
->   
-> -	XDNA_DBG(xdna, "Runtime resume done ret: %d", ret);
-> -	return ret;
-> +	return xdna->dev_info->ops->resume(xdna);
->   }
->   
->   static const struct dev_pm_ops amdxdna_pm_ops = {
->   	SYSTEM_SLEEP_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume)
-> -	RUNTIME_PM_OPS(amdxdna_rpmops_suspend, amdxdna_rpmops_resume, NULL)
-> +	RUNTIME_PM_OPS(amdxdna_pmops_suspend, amdxdna_pmops_resume, NULL)
->   };
->   
->   static struct pci_driver amdxdna_pci_driver = {
-> diff --git a/drivers/accel/amdxdna/amdxdna_pci_drv.h b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> index ab79600911aa..40bbb3c06320 100644
-> --- a/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> +++ b/drivers/accel/amdxdna/amdxdna_pci_drv.h
-> @@ -50,13 +50,11 @@ struct amdxdna_dev_ops {
->   	int (*init)(struct amdxdna_dev *xdna);
->   	void (*fini)(struct amdxdna_dev *xdna);
->   	int (*resume)(struct amdxdna_dev *xdna);
-> -	void (*suspend)(struct amdxdna_dev *xdna);
-> +	int (*suspend)(struct amdxdna_dev *xdna);
->   	int (*hwctx_init)(struct amdxdna_hwctx *hwctx);
->   	void (*hwctx_fini)(struct amdxdna_hwctx *hwctx);
->   	int (*hwctx_config)(struct amdxdna_hwctx *hwctx, u32 type, u64 value, void *buf, u32 size);
->   	void (*hmm_invalidate)(struct amdxdna_gem_obj *abo, unsigned long cur_seq);
-> -	void (*hwctx_suspend)(struct amdxdna_hwctx *hwctx);
-> -	void (*hwctx_resume)(struct amdxdna_hwctx *hwctx);
->   	int (*cmd_submit)(struct amdxdna_hwctx *hwctx, struct amdxdna_sched_job *job, u64 *seq);
->   	int (*get_aie_info)(struct amdxdna_client *client, struct amdxdna_drm_get_info *args);
->   	int (*set_aie_state)(struct amdxdna_client *client, struct amdxdna_drm_set_state *args);
+>       timerfd =3D timerfd_create(CLOCK_BOOTTIME_ALARM, 0);
+>       if (timerfd < 0)
+>               ksft_exit_fail_msg("timerfd_create() failed\n");
+> @@ -152,14 +172,15 @@ void suspend(void)
+>       if (err < 0)
+>               ksft_exit_fail_msg("timerfd_settime() failed\n");
+>
+> +     count_before =3D get_suspend_success_count_or_fail();
+> +
+>       system("(echo mem > /sys/power/state) 2> /dev/null");
+>
+> -     timerfd_gettime(timerfd, &spec);
+> -     if (spec.it_value.tv_sec !=3D 0 || spec.it_value.tv_nsec !=3D 0)
 
+Hi,
+
+
+Shouldn't you also remove the timerfd variable?
+It seems to be of no functional use after this change.
+-- This message and any attachments herein are, unless otherwise stated, co=
+nfidential, intended solely for the addressees and are SoftAtHome=E2=80=99s=
+ ownership. Any unauthorized use, reproduction or dissemination is prohibit=
+ed unless formaly agreed beforehand by the sender. If you are not the inten=
+ded addressee of this message, please immediately delete it and all its att=
+achments from your computer system and notify the sender. SoftAtHome reserv=
+es the right to monitor all email communications through its networks. Any =
+views or opinions presented are solely those of its author and do not neces=
+sarily represent those of SoftAtHome. The internet cannot guarantee the int=
+egrity of this message. SoftAtHome not shall be liable for the message if a=
+ltered, changed or falsified. While we take all reasonable precautions to e=
+nsure that viruses are not transmitted via emails, we recommend that you ta=
+ke your own measures to prevent viruses from entering your computer system.=
+ SoftAtHome is a French Soci=C3=A9t=C3=A9 Anonyme with a Board of Directors=
+, having a capital of 6 450 699 Euros having its registered office located =
+at 9-11 rue du d=C3=A9barcad=C3=A8re =E2=80=93 92700 =E2=80=93 Colombes =E2=
+=80=93 France =E2=80=93 Tel + 33 (0)1 57 66 88 88 =E2=80=93 Fax + 33 (0)1 5=
+7 66 88 89 - RCS Nanterre B 500 440 813 =E2=80=93 Intra-Community VAT: FR 0=
+4500440813 -- Ce message et toutes les pi=C3=A8ces jointes qui y sont inclu=
+ses sont, sauf indication contraire, confidentiels, destin=C3=A9s uniquemen=
+t aux destinataires et sont la propri=C3=A9t=C3=A9 de SoftAtHome. Toute uti=
+lisation non autoris=C3=A9e, reproduction ou diffusion est interdite, sauf =
+accord formel pr=C3=A9alable de l'exp=C3=A9diteur. Si vous n'=C3=AAtes pas =
+le destinataire pr=C3=A9vu de ce message, veuillez le supprimer imm=C3=A9di=
+atement ainsi que toutes ses pi=C3=A8ces jointes de votre syst=C3=A8me info=
+rmatique et en informer l'exp=C3=A9diteur. SoftAtHome se r=C3=A9serve le dr=
+oit de surveiller toutes les communications par e-mail via ses r=C3=A9seaux=
+. Les opinions exprim=C3=A9es dans ce message sont celles de leur auteur et=
+ ne repr=C3=A9sentent pas n=C3=A9cessairement celles de SoftAtHome. L=E2=80=
+=99Internet ne permettant pas d=E2=80=99assurer l=E2=80=99int=C3=A9grit=C3=
+=A9 de ce message, SoftAtHome d=C3=A9cline toute responsabilit=C3=A9 =C3=A0=
+ ce titre, dans l=E2=80=99hypoth=C3=A8se o=C3=B9 il aurait =C3=A9t=C3=A9 al=
+t=C3=A9r=C3=A9, d=C3=A9form=C3=A9 ou falsifi=C3=A9. Par ailleurs et malgr=
+=C3=A9 toutes les pr=C3=A9cautions prises pour =C3=A9viter la pr=C3=A9sence=
+ de virus dans nos envois, nous vous recommandons de prendre, de votre c=C3=
+=B4t=C3=A9, les mesures permettant d'assurer la non-introduction de virus d=
+ans votre syst=C3=A8me informatique. SoftAtHome est une Soci=C3=A9t=C3=A9 A=
+nonyme fran=C3=A7aise =C3=A0 Conseil d=E2=80=99Administration ayant un capi=
+tal de 6 450 699 euros, dont le si=C3=A8ge social est situ=C3=A9 au 9-11 ru=
+e du d=C3=A9barcad=C3=A8re - 92700 - Colombes - France - Tel + 33 (0)1 57 6=
+6 88 88 - Fax + 33 (0)1 57 66 88 89 RCS Nanterre B 500 440 813 - TVA intrac=
+ommunautaire : FR 04500440813
 
