@@ -1,136 +1,139 @@
-Return-Path: <linux-kernel+bounces-753381-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753382-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E08C9B18222
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:05:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9614B18223
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:06:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9A7F87ABA0E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:03:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 429EF18842FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:06:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C134324A058;
-	Fri,  1 Aug 2025 13:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288CC24887E;
+	Fri,  1 Aug 2025 13:06:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="l6VvVs2i"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eorKkjYN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 761F523B611;
-	Fri,  1 Aug 2025 13:04:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10EAA19F13F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:06:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754053485; cv=none; b=FWi3eS2SvgIoUI1aHlexFvWFUKDWJa4C0CXDWxlaIHKlSBTTfhv3JbVj1rmSefYOOkiVKei1WfwKlNKXXQLIBPSiqIU3TGmIwebNTzKgv04xKPrrxhbzNmeW3kjz3L6YsRXJWjCks2+voULAZSSHHQrx5j1tbVfTkp9bAfBkfbo=
+	t=1754053569; cv=none; b=McOGK2oQnSQY6qPMn1rjoVAxfBOQOV86dU+WUcJyz5bqjlCexsVn5v4DUNVgnicBSTI5LIBrGDNge/bdDZNlRkGENMvDnTHWhdpdPcq4f62OaKOyIbr+S1TLjFEMyW/Hy2emQPabefaLCt1h29NbSoUvSKmRkBp6ClZ/gF5khkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754053485; c=relaxed/simple;
-	bh=aYl1QhqEmpOLgi8VZ2bX/1UFtuzJMhkXX+iiC5Jlw/4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=m/zB3i6gXkwxV+QL1BrQUSTShfQNz8ww21f5Nt3tg0OU6lcwuRcIo0d8Yzq6n8L666K7zKZ7a+9bv/hHd6D2spqJpeBmnlyAq0Lt9kdLMNvwdqs9JGFq4cN0N/cROkfwL2cHhBo+G8JmSoPhWXS7/9F9zFTKllceTSePsO0RTZ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=l6VvVs2i; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id B750CA0A8D;
-	Fri,  1 Aug 2025 15:04:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=vuuCUbfqt4x45Bee4k7s
-	/8tQWFwPYbWJe+4a/dGtm4U=; b=l6VvVs2ilY38iEpd526GqUQtUyHpCOH7T4Qu
-	qz2+HDoKnX3Oaia2gy/v/zWAYPLriflIRXIz0vuswLxtmrVUTjvCFfYMCIeaVSge
-	L0tBcugP5tdawUGobooJ6OoHNmDwas96NVkB6lYek01zmlwQpkB82RYD+j/u8V1r
-	OO9RCFn3ITnia4L+DrIY2ur5FriNpqREezI3mNM5L+fxJnYyTX5XWh0TyW9rTymO
-	8nUc87WbS1e3QUsX097NAfB506iPqsaHs+jSPzpv/WP0Da3l9ouQpsE99DDzYrPF
-	5vB4jH1SuofuOw44AciMJAl+gHb2gHjwIt2Q+wsaZc86b9lxm+abBydAY2sa26Us
-	wRx7rLkipE3hrDifN8PIsY9NMCXcne/Xxh/oXZCOwaCnHikkmiSgDmj6Yz3f6Ztk
-	xtxuCL1cPfZ7OTa7R1uZarDvgaJrStaIrv+zJJy9craWmgGiEoosB9ZJUfybo2k4
-	04x78LSlbBDLQS1DbarjcdPZN7uWyxRsxe3Vml5jESFc28oDtDsRLZujGq5o1TdY
-	dvQkT7i8jD5yvmPbRNXAN4VqDSmaNthaU80xyJFEmOVSfvY4BBemNKaFkQ5xxOCM
-	2fMamksH/JvZHTyefOwaniVOZHK1NziTZA709qUnns5S54X1RLdF4adiv48m5NBc
-	15nziEE=
-Message-ID: <86bb6477-56d9-415a-a0ad-9a5d963a285e@prolan.hu>
-Date: Fri, 1 Aug 2025 15:04:31 +0200
+	s=arc-20240116; t=1754053569; c=relaxed/simple;
+	bh=X+6e/IdlOphMsOvvEV8Ay2A0t6/Mh3wGQRWB5DbzH7Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=RjqHepktCLhqSyYzZfmYa28WtJoWMiOCGm85o1hRbKKqOoZRimA8qWZdSTeGb38yyzYNpEUdoNUWbM++aW6tdObMGwEmxqIrCxdhlUTy+My45sJm4mX2S6l9InNcXVfHoVcY8r3EK8jGfkU2pt2UdbbTgzL+LtHdKAmz0INkQLo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eorKkjYN; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754053566;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=X+6e/IdlOphMsOvvEV8Ay2A0t6/Mh3wGQRWB5DbzH7Y=;
+	b=eorKkjYN0NG2ULJSJpW0ABX25FyfbHBbpkhbI/Ig12BjtN/i8BAB4abbHylIxTsalugJI1
+	R50QI/sKNBA+Nd844k8fURXJBjCvWcwRbDHxF5Sged+fENA/efZjbVc/DLm+PlzLeKMUN0
+	YWDTcsONhdVH7+6vAY8L1SWNj/Da2EY=
+Received: from mail-lj1-f197.google.com (mail-lj1-f197.google.com
+ [209.85.208.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-608-WNKumXJZPE673-eTjhXveA-1; Fri, 01 Aug 2025 09:06:04 -0400
+X-MC-Unique: WNKumXJZPE673-eTjhXveA-1
+X-Mimecast-MFC-AGG-ID: WNKumXJZPE673-eTjhXveA_1754053562
+Received: by mail-lj1-f197.google.com with SMTP id 38308e7fff4ca-3322b98b1a6so7991391fa.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:06:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754053562; x=1754658362;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=X+6e/IdlOphMsOvvEV8Ay2A0t6/Mh3wGQRWB5DbzH7Y=;
+        b=gqn4icxfgrvfpwddnGO7gNYubXZ/zZEKhU3ymZDNtQ0YtkMGD4/hrbvJNUBVGM6dQb
+         HrZujo3oocOKjAXGktwjcNO4Jq2G9v4Ug8Sh9VuB1UP9mjVNcLRpYNQYX2Mvm3sMi3ub
+         qVdezZwObrc7FSdZgd43xEKlSdOPSCJlpu+uJdQ9q2mntFcRczKNJerL+S/M6PCLTH4w
+         3RFLBIDk0GGq4qh7D/+eN+MS/S3KaCFoUpAwhXpVIKD2fWv7J1Cpyn5BLPgKN3PHNbNr
+         clkLhMOEw+CaTwSzr8h1hb5u/HWplZVioIHcQfTmG37V17iO5jGIR5YeGtZPTu9s5dom
+         Lggg==
+X-Forwarded-Encrypted: i=1; AJvYcCWFbbpKolrpTvkEtVs7tCOhH6QDkSoLgkExFkWkw/7keQtYCDJGK/OoBHLUuduX0XoX5irKeX30LfYngGw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/t0xYHoOrcQyxrU8NZ+nokUbPCZkUEsAvoYR3elDuWvsEiQOz
+	IUUbdYxQhIID30IAfVk/FLMxgC7hJOZMa5z4EsacAnWrGbOkYwsgsqBvSJogIaVtS75p3UtFUok
+	QD456fA/4ZwcMSgjlVic3PGsFODnrMnjjT8+Mt4+lqvcodRvVVmqMaLI6OukmCAvRXv+/2REZnj
+	lL5VjCKQb57CoFXzJ1CitQPn2jgPYRp6qatl43wANY
+X-Gm-Gg: ASbGncvdg67gRpaD8g6I6oq4KZvb/r3YJECv7rkBZO+g2ESemruJcLxenkBnNOFv2rE
+	m9aNmlXqUDOs97MPHNUhLULQhLUSn4bLUo15oTL+f1ApuS1Srv3MgLV5EW9eCRvSoIeSRvbd4/q
+	pG83/LPNhgnvNLQre5yPnE
+X-Received: by 2002:a05:651c:54c:b0:332:32cd:3030 with SMTP id 38308e7fff4ca-33232cd322fmr23013731fa.30.1754053562016;
+        Fri, 01 Aug 2025 06:06:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwPekJyaRBrU4XHAaPoLUYuXzoYjPAsppCTKKhF9uqbOBME0quueqtHalfWUF3r20fmIamlMzDLhps4jDkaZQ=
+X-Received: by 2002:a05:651c:54c:b0:332:32cd:3030 with SMTP id
+ 38308e7fff4ca-33232cd322fmr23013331fa.30.1754053561509; Fri, 01 Aug 2025
+ 06:06:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
-To: "Russell King (Oracle)" <linux@armlinux.org.uk>, Geert Uytterhoeven
-	<geert@linux-m68k.org>
-CC: Mark Brown <broonie@kernel.org>, Sergei Shtylyov
-	<sergei.shtylyov@cogentembedded.com>, "David S. Miller"
-	<davem@davemloft.net>, Rob Herring <robh@kernel.org>, Andrew Lunn
-	<andrew@lunn.ch>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	"Dmitry Torokhov" <dmitry.torokhov@gmail.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Csaba Buday <buday.csaba@prolan.hu>, "Heiner
- Kallweit" <hkallweit1@gmail.com>, Eric Dumazet <edumazet@google.com>, "Jakub
- Kicinski" <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-References: <20250728153455.47190-2-csokas.bence@prolan.hu>
- <95449490-fa58-41d4-9493-c9213c1f2e7d@sirena.org.uk>
- <CAMuHMdVdsZtRpbbWsRC_YSYgGojA-wxdxRz7eytJvc+xq2uqEw@mail.gmail.com>
- <aIy0HqFvCggTEyUk@shell.armlinux.org.uk>
-Content-Language: en-US
-From: =?UTF-8?B?Q3PDs2vDoXMgQmVuY2U=?= <csokas.bence@prolan.hu>
-In-Reply-To: <aIy0HqFvCggTEyUk@shell.armlinux.org.uk>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: ATLAS.intranet.prolan.hu (10.254.0.229) To
- ATLAS.intranet.prolan.hu (10.254.0.229)
-X-EsetResult: clean, is OK
-X-EsetId: 37303A296767155E677C65
+References: <20250704170748.97632-1-wander@redhat.com> <20250704170748.97632-3-wander@redhat.com>
+ <20250707112622.GZ1613376@noisy.programming.kicks-ass.net>
+ <ppdduzdqnd3kwourcmocfi35i7wcbuagmzqgtgmyr55aps774t@37wucnoii7o3> <20250708184656.GB477119@noisy.programming.kicks-ass.net>
+In-Reply-To: <20250708184656.GB477119@noisy.programming.kicks-ass.net>
+From: Wander Lairson Costa <wander@redhat.com>
+Date: Fri, 1 Aug 2025 10:05:50 -0300
+X-Gm-Features: Ac12FXyz6W_OFFg15W09K4lkzCr3Pdj1iLkCY-v9uSyvK6uNsriEI0u894aKnQk
+Message-ID: <CAAq0SUkdvA7SKsM_a5z+_Dx8wAEdyw2KKgE=VnyQ7Q-ocZHq4g@mail.gmail.com>
+Subject: Re: [PATCH v3 2/2] tracing/preemptirq: Optimize preempt_disable/enable()
+ tracepoint overhead
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Ingo Molnar <mingo@redhat.com>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, 
+	Valentin Schneider <vschneid@redhat.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, David Woodhouse <dwmw@amazon.co.uk>, 
+	Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>, 
+	open list <linux-kernel@vger.kernel.org>, 
+	"open list:TRACING" <linux-trace-kernel@vger.kernel.org>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Clark Williams <williams@redhat.com>, 
+	Gabriele Monaco <gmonaco@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Tue, Jul 8, 2025 at 3:47=E2=80=AFPM Peter Zijlstra <peterz@infradead.org=
+> wrote:
+>
+Sorry for the late reply. A mix of PTO + higher priority backlog items.
 
-On 2025. 08. 01. 14:33, Russell King (Oracle) wrote:
-> On Fri, Aug 01, 2025 at 02:25:17PM +0200, Geert Uytterhoeven wrote:
->> Hi Mark,
->>
->> On Fri, 1 Aug 2025 at 14:01, Mark Brown <broonie@kernel.org> wrote:
->>> On Mon, Jul 28, 2025 at 05:34:55PM +0200, Bence Csókás wrote:
->>>> Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
->>>> devm_gpiod_get_optional() in favor of the non-devres managed
->>>> fwnode_get_named_gpiod(). When it was kind-of reverted by commit
->>>> 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
->>>> functionality was not reinstated. Nor was the GPIO unclaimed on device
->>>> remove. This leads to the GPIO being claimed indefinitely, even when the
->>>> device and/or the driver gets removed.
->>>
->>> I'm seeing multiple platforms including at least Beaglebone Black,
->>> Tordax Mallow and Libre Computer Alta printing errors in
->>> next/pending-fixes today:
->>>
->>> [    3.252885] mdio_bus 4a101000.mdio:00: Resources present before probing
->>>
->>> Bisects are pointing to this patch which is 3b98c9352511db in -next,
->>
->> My guess is that &mdiodev->dev is not the correct device for
->> resource management.
-> 
-> No, looking at the patch, the patch is completely wrong.
-> 
-> Take for example mdiobus_register_gpiod(). Using devm_*() there is
-> completely wrong, because this is called from mdiobus_register_device().
-> This is not the probe function for the device, and thus there is no
-> code to trigger the release of the resource on unregistration.
-> 
-> Moreover, when the mdiodev is eventually probed, if the driver fails
-> or the driver is unbound, the GPIO will be released, but a reference
-> will be left behind.
-> 
-> Using devm* with a struct device that is *not* currently being probed
-> is fundamentally wrong - an abuse of devm.
-
-The real question is: why on Earth is mdiobus_register_device() called 
-_before_ the probe()? And mdiobus_unregister_device() after the remove()???
-
-Anyways, in this case we could probably put the release of the GPIO into 
-mdiobus_unregister_device() instead. But this inverted logic should 
-probably be dealt with eventually.
-
-Bence
+> On Tue, Jul 08, 2025 at 10:09:45AM -0300, Wander Lairson Costa wrote:
+> > On Mon, Jul 07, 2025 at 01:26:22PM +0200, Peter Zijlstra wrote:
+> > > On Fri, Jul 04, 2025 at 02:07:43PM -0300, Wander Lairson Costa wrote:
+> > > > +#if defined(CONFIG_DEBUG_PREEMPT) || defined(CONFIG_TRACE_PREEMPT_=
+TOGGLE)
+> > > > +#define preempt_count_dec_and_test() \
+> > > > + ({ preempt_count_sub(1); should_resched(0); })
+> > > > +#endif
+> > >
+> > > Also this is terrible. Surely you can do better.
+> > >
+> >
+> > Thank you for pointing this out. I'm not sure I've fully understood the
+> > concern here. My understanding was that this logic was pre-existing and
+> > my patch only reorganized it.
+> >
+> > I'm clearly missing something. Could you please elaborate a bit on the
+> > issue you've spotted?
+>
+> The normal (!DEBUG) case uses __preempt_count_dec_and_test(), which is
+> significantly better.
+>
+Maybe I am missing something, but my understanding is that this behavior di=
+dn't
+change. When DEBUG_PREEMPT and TRACE_PREEMPT_TOGGLE are not defined,
+__preempt_count_dec_and_test() is used.
 
 
