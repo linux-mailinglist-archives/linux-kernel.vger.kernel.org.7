@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-753240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753241-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3593EB1806D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:51:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 397A5B1806F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:52:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 890F81C25D06
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 181055843D2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA7E72367A3;
-	Fri,  1 Aug 2025 10:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9828E23817D;
+	Fri,  1 Aug 2025 10:52:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RqtX865n"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b="MFPtCz9E"
+Received: from todd.t-8ch.de (todd.t-8ch.de [159.69.126.157])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF102B9A5
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11E6C2B9A5;
+	Fri,  1 Aug 2025 10:52:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=159.69.126.157
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754045494; cv=none; b=Cmmz0wwLaj+ZySA7ViF+2MHu8Q0Pv47dfAa7ATLQxBg1YijsYIZJro4JLuxy7DSf7JG4oc0vxcEWdBBoX/UYpwSdZdftXod81AD6p/yKfOk3g8PU448YXSVa9Y97Hx05soQwBVcofmf+LSZAodcVNvboWUu71E4XPU/M85GuUjU=
+	t=1754045541; cv=none; b=pLJ7iszFIHsX+GeDqW3o75gejYXmlANgouD2VRuAdTsoG2zph6cPHd8Ffc44cebOmQbihQBpJFaTwhscz5o/LIvynOCEsu1UVCAuZS/vKjEJhkZK68WtCIk1BpGyg73hCY/xR2IUgBa3//5SgqULnlcw/nBOXAyM6ybJMu+XMnM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754045494; c=relaxed/simple;
-	bh=WPSglG3XGbB2wDw/Z59J8t68VBc0K9D4p90j2/nD11M=;
+	s=arc-20240116; t=1754045541; c=relaxed/simple;
+	bh=Pq4K8Lbc77aD4fbd+31DfDceIFn4GKRekMM7Bcbhbaw=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ch33qcbF3slttARpsjsBpSWsxgY8TfA+YYflFny+kOiPvXWIKgCojMKGD1gNxgHug1DG5TNl4iZIlnseAZsYrRNkfnwGN7s4sGCg/HNieKjbKUBLDhkr0cgbc4lVkEGB16JsXCxA5BbryDliOxqjgD84XirlAePEdgn1PeOYRYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RqtX865n; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754045491;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=trEnncG2/S++UtO33faV1YMVFurJwgznDgyvzs7SHtU=;
-	b=RqtX865niiKj176IZQsvIPmHfE0v+VU93unYaO19CM38TLw43ZVAOYy+tt6j57/QBRr6j1
-	geVRxtEcZgy6FInrqebN2GIIoy0dy6OHghtecX8B3MxgNReR8VFubfrVvrdgbpK1WZ1uNk
-	hESyQVWg03i6AoffZGxv7woA7V36+JQ=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-622-Bm6LSpqFNjSr6u5HpgC8KQ-1; Fri,
- 01 Aug 2025 06:51:28 -0400
-X-MC-Unique: Bm6LSpqFNjSr6u5HpgC8KQ-1
-X-Mimecast-MFC-AGG-ID: Bm6LSpqFNjSr6u5HpgC8KQ_1754045486
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0ADE9195609E;
-	Fri,  1 Aug 2025 10:51:26 +0000 (UTC)
-Received: from localhost (unknown [10.22.66.109])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 398EC3000199;
-	Fri,  1 Aug 2025 10:51:23 +0000 (UTC)
-Date: Fri, 1 Aug 2025 07:51:22 -0300
-From: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-To: Oleg Nesterov <oleg@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <aIycKn9typGtfPuD@uudg.org>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
- <20250801102428.GB27835@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=I3IUdzDsmkPL0JQea9fGadrN9nXart+x8n0R1OsoYUByik7WSLGoYAgeIotAP3ELOniLkyKNnDh7Ez/vrggKRyQTnfbvKZw0ip1VjRZYtiFNrZeenIxogn8vJmhHQJpPNfOmIgByRwXcTJEWrOUVJqmc3H6TCwUBCfDTFLEMpvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net; spf=pass smtp.mailfrom=weissschuh.net; dkim=pass (1024-bit key) header.d=weissschuh.net header.i=@weissschuh.net header.b=MFPtCz9E; arc=none smtp.client-ip=159.69.126.157
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=weissschuh.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=weissschuh.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=weissschuh.net;
+	s=mail; t=1754045535;
+	bh=Pq4K8Lbc77aD4fbd+31DfDceIFn4GKRekMM7Bcbhbaw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MFPtCz9E09oRpuzc89z+FHmxx7ew/EaVMdUB1wrjQVihZpQ3HrUYJLrAlxozJeVF1
+	 uK4CVbyUWqTAersD5/jIxjOlXzs7g3Bfrnwx2JIEUw5/UJ7UZFJcOla5v+ihZAUMl5
+	 zhL/ZJwt4hWKd2UP2FPe6lmPk8oC88DdGLyRC/V0=
+Date: Fri, 1 Aug 2025 12:52:15 +0200
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>
+To: Naman Jain <namjain@linux.microsoft.com>
+Cc: Michael Kelley <mhklinux@outlook.com>, 
+	"stable@vger.kernel.org" <stable@vger.kernel.org>, Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>, 
+	"K . Y . Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, 
+	Long Li <longli@microsoft.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>, "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 6.12] Drivers: hv: Make the sysfs node size for the ring
+ buffer dynamic
+Message-ID: <8f642ca2-04dc-4d87-b120-5d128ec3202e@t-8ch.de>
+References: <20250723070200.2775-1-namjain@linux.microsoft.com>
+ <SN6PR02MB41579080792040E166B5EB69D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <e1d394bd-93a6-4d8f-b7f9-fc01449df98a@t-8ch.de>
+ <SN6PR02MB415792B00B021D4DB76A6014D425A@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <4abf15ac-de18-48d4-9420-19d40f26fdd2@linux.microsoft.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250801102428.GB27835@redhat.com>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <4abf15ac-de18-48d4-9420-19d40f26fdd2@linux.microsoft.com>
 
-On Fri, Aug 01, 2025 at 12:24:29PM +0200, Oleg Nesterov wrote:
-> On 07/29, Oleg Nesterov wrote:
-> >
-> > On 07/29, Luis Claudio R. Goncalves wrote:
-> > >
-> > > On Tue, Jul 29, 2025 at 01:47:03PM +0200, Oleg Nesterov wrote:
-> > > > On 07/29, Luis Claudio R. Goncalves wrote:
-> > > > >
-> > > > > +	/* In !RT, it is always safe to call __put_task_struct(). */
-> > > > > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > > > > +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> > > > > +
-> > > > > +		lock_map_acquire_try(&put_task_map);
-> > > > > +		__put_task_struct(t);
-> > > > > +		lock_map_release(&put_task_map);
-> > > > > +		return;
-> > > > > +	}
-> > > >
-> > > > FWIW:
-> > > >
-> > > > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > > >
-> > > >
-> > > > At the same time... I don't understand this DEFINE_WAIT_OVERRIDE_MAP().
-> > > > IIUC, we need to shut up lockdep when put_task_struct() is called under
-> > > > raw_spinlock_t and __put_task_struct() paths take spinlock_t, right?
-> > > > Perhaps this deserves a comment...
-> > >
-> > > I reverted that code to the previous state, commit 893cdaaa3977 ("sched:
-> > > avoid false lockdep splat in put_task_struct()") and simplified the "if"
-> > > statement.
-> >
-> > Yes, yes, I see and I have already acked your patch.
+Hi Naman,
+
+On 2025-07-31 21:13:27+0530, Naman Jain wrote:
+> On 7/30/2025 1:15 AM, Michael Kelley wrote:
+> > From: Thomas Weißschuh <linux@weissschuh.net> Sent: Tuesday, July 29, 2025 11:47 AM
+> > > On 2025-07-29 18:39:45+0000, Michael Kelley wrote:
+> > > > From: Naman Jain <namjain@linux.microsoft.com> Sent: Wednesday, July 23, 2025 12:02 AM
+<snip>
+
+> > > > Unfortunately, I don't see a fix, short of backporting support for the
+> > > > .bin_size function, as this is exactly the problem that function solves.
+> > > 
+> > > It should work out in practice. (I introduced the .bin_size function)
+> > 
+> > The race I describe is unlikely, particularly if attribute groups are created
+> > once and then not disturbed. But note that the Hyper-V fcopy group can
+> > get updated in a running VM via update_sysfs_group(), which also calls
+> > create_files(). Such an update might marginally increase the potential for
+> > the race and for getting the wrong size. Still, I agree it should work out
+> > in practice.
+> > 
+> > Michael
+> > 
+> > > 
+> > > Thomas
 > 
-> So I think you should just resend it.
+> hi Thomas,
+> Would it be possible to port your changes on 6.12 kernel, to avoid such
+> race conditions?
 
-Thank you! I was a bit unsure on how to proceed :)
- 
-> s/LD_WAIT_SLEEP/LD_WAIT_CONFIG/ needs another discussion even if I am right,
-> sorry for the confusion.
+Possible, surely. But Greg has to accept it.
+And you will need to do the backports.
 
-For what is worth, I tested the change with LD_WAIT_CONFIG and it worked as
-expected.
+> Or if it has a lot of dependencies, or if you have a
+> follow-up advice, please let us us know.
 
-Luis
+Not more than mentioned before.
 
-> Oleg.
-> 
----end quoted text---
 
+Thomas
 
