@@ -1,138 +1,149 @@
-Return-Path: <linux-kernel+bounces-753215-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753214-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B85CB1801E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:26:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 301D5B1801D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:25:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 806BB173BCA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:26:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BBB456409E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:25:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8B8E2367A8;
-	Fri,  1 Aug 2025 10:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34033236A9F;
+	Fri,  1 Aug 2025 10:24:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RppKjpFi"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b="sKkEAK+q"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9ED61C3306
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:25:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A33230278
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:24:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754043956; cv=none; b=Cfbg4j550PP2PHayIUuSH5ZJDTCajkGiAhZ/OEUTL8oC3L1Z7+j1ykDlgP40AZKTqs3/Mqzpg0ISLqdz4zl5pIrkZ1J1v3dg5Ko542e5IcrVHCHCcMNkOkNXqoIuneFZ5p9w7h5l0yWHh41fRbfbhCWBkjgfhZuZcbagor0e0Mk=
+	t=1754043896; cv=none; b=HZU6nKbT4N6Wbd8NlG230EUHxvictQ5uH5h34uylV4w76kC0jkAavlSRjioB6zGj2F8nuWChGPfFEl87RoiuUhoqWsGtthnMJAg86aXODDISfoN+ZnEwVqRHE+bSmW9XjkzYy+/hayy6qSxCYhApqZ5L9K2LZanWtuFUF8tCACk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754043956; c=relaxed/simple;
-	bh=hapeyy6ZUbsbldLETwPLW02PG29HLqTfMFCCw/DwPiQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=or5d77Ua55koeo970M7aIk9a+hUg3wtzaCqoZdo9fBtikvflkr2ARrqSqvOoSe4T/gBAbGhR2eDXfJkm4rYVk1mTLHSRQkzteDf8LWAglmfv9mq5vz4FFpAH4AMFo2D2CcGldcWvNGJNg97QStINn/Ugc64j+W3uUVYZaYBGfR8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RppKjpFi; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754043953;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=7fBy/ubE+PTLysJPtmvIHw7wyj6tGguI9dSijz7MCsA=;
-	b=RppKjpFifgqLL9RgLoGuKSBRru6P6so7mays0/3v3QcZ2j5VCr+YvqwjGUqRmhR1Up44ls
-	OAw+gG6HNfLZ0mvBI1o0be0CBTDhO3oeELyThnTO4fdFQpc9YFrVlIAPMzJCp6lanDKh/B
-	5fqW+FYVS3hnOZD/JCd0X5H0AYBV8HM=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-6-DAHlOX1YN0GXCAgaD-eg1w-1; Fri,
- 01 Aug 2025 06:25:50 -0400
-X-MC-Unique: DAHlOX1YN0GXCAgaD-eg1w-1
-X-Mimecast-MFC-AGG-ID: DAHlOX1YN0GXCAgaD-eg1w_1754043948
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EFC591956094;
-	Fri,  1 Aug 2025 10:25:47 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.225.194])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id A19F718003FC;
-	Fri,  1 Aug 2025 10:25:40 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Fri,  1 Aug 2025 12:24:37 +0200 (CEST)
-Date: Fri, 1 Aug 2025 12:24:29 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: "Luis Claudio R. Goncalves" <lgoncalv@redhat.com>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Clark Williams <clrkwllms@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>, Tejun Heo <tj@kernel.org>,
-	David Vernet <dvernet@meta.com>, Barret Rhoden <brho@google.com>,
-	Josh Don <joshdon@google.com>, Crystal Wood <crwood@redhat.com>,
-	linux-kernel@vger.kernel.org, linux-rt-devel@lists.linux.dev,
-	Juri Lelli <juri.lelli@redhat.com>, Ben Segall <bsegall@google.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ingo Molnar <mingo@redhat.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Wander Lairson Costa <wander@redhat.com>
-Subject: Re: [PATCH v6] sched: do not call __put_task_struct() on rt if
- pi_blocked_on is set
-Message-ID: <20250801102428.GB27835@redhat.com>
-References: <aGvTz5VaPFyj0pBV@uudg.org>
- <20250728201441.GA4690@redhat.com>
- <aIh5QajyaVT7MtVp@uudg.org>
- <20250729114702.GA18541@redhat.com>
- <aIjCYEkgNvVpMYCS@uudg.org>
- <20250729130936.GB18541@redhat.com>
+	s=arc-20240116; t=1754043896; c=relaxed/simple;
+	bh=6Mq6oAQNk9G2vGUWKhNW/phyNRM7m+km9IU16P/sDMc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JbPYF6vpPvvqNrbTp6wlNUhYfSFi5ORBYegznUwWHfL1kcWoaFCbzQw6vKHVvagqmaqKnUuRUPGYuv0mlfuBreVv3mCMEU2qFpVpYcqlVDwc4xExnQ6hRO0d5whHEagpUn0zJfbQjFpZtBkp5hTcJoHkaWqH5ibjVq22za3Fsqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org; spf=none smtp.mailfrom=blackwall.org; dkim=pass (2048-bit key) header.d=blackwall-org.20230601.gappssmtp.com header.i=@blackwall-org.20230601.gappssmtp.com header.b=sKkEAK+q; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=blackwall.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=blackwall.org
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4563cfac19cso19916305e9.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 03:24:54 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=blackwall-org.20230601.gappssmtp.com; s=20230601; t=1754043893; x=1754648693; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=RXz5l43BuR/bYmJ36qm34Ab7vEbhJOs7yXXKOmMn1Pg=;
+        b=sKkEAK+qwgcnmGX7Nl4kr4iTyARkvQfcQQeYGF0MXK3w7xSzD2IKsv3uIvwYc3OUWc
+         l+s+x0WitM2PuX3Ky8OMmE0MFY+pAA7Q9NaqbkbnNFZcM/u00FXeVEHpM+LkUBedLU70
+         eptSGjA+AYFTth+thjYHN0/kE6NNoO+X5Ko5HsiBEPSgCuWF/HiXdxFO3BiF+V8/NS5A
+         B4x2B+B4HBIdfZUNpicLM+ZaDW+m81Uem7cTKNtK/MG90ALaOqXze2W5Ax1a54JDo/RE
+         bKHxNv2s4H3WKlLD1lS5VHsCqfm4AbrvRIyD6+VJZ1NccOR/POMXJpQ9oINVyoufuBiQ
+         JeHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754043893; x=1754648693;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=RXz5l43BuR/bYmJ36qm34Ab7vEbhJOs7yXXKOmMn1Pg=;
+        b=TfUy83IZZHh95UTVgMjPt5VNRpK0l+eDaLB7DG65AeKvwUdvKfMeU3vILyWnT/tDcH
+         6z6ctxxuLU1hwEy4a4BiImlFWSsduM1sxbyHDkWQHypc2BoRs/KV79T5qXV0LEEWH7Sh
+         Ci+rWc/re5848zBpkfhQnY91xMGOBAGwCs8HixpFxxW/ixNVjaVfPK+Beow3pGheq02M
+         GsOMWJQk8+tG3PsEnuLhnZwHJBp9zUuOdn00dO2FROIG6hHqEN5wHE9xVr5GwUiV8Jus
+         vib5ISSwN+JelzHo2li/whY0iHQt8r0WuHis1EMPGNQnwC463oHjLit4sMB4WWcTqyj8
+         ajOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXHhLPdEnDh8Ci0lFeMvO9XA06x0aCxZN+9djwFIoj9FU7qC4//EAJhvhl7vghnIQRWN3UgBE3NVzeBXJg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJPPT7w3wdvmhX3XIXBBjkg4mPsxGqWJD5Rqr96Qm6NzrdjX8W
+	8WH/rqVcQzmUXN4UeFBkBYgIWB+XME/DxQCQ6fYsgriKoCnqeknbbLRefDDHZr/1BaY=
+X-Gm-Gg: ASbGncufMBaxCnr3gRknXN8t+L/5gCMfcSP/UagyaOOmF0yNIW66i7+4fXqnzQAnTop
+	92ilDqWUmHWOTjwscXMsXwP3IHaJ2V3xi0slr/hwEyeY54ge7SNI/K+gHaJQg1syIo6t+YOjh03
+	qvpjwKaHbweogXy8J4Nl4qNxshWwbyFi3RGJhu7HY5/I6HsArlZML7l12Jf0TalYFxSIKAWok8j
+	fszfyTuXF3UerLdR0maa2Tak5mRBV4DihFXIVBI436I1WyPInOrhFVsPaveIwT+dyu1qtPcM6UR
+	9k8c1FkpXIMF2zC+4YxOf5GeVI54TlkIt2J7BtRhhJ6aWi+Y9/sdA1khO/FK6FNVuCoeOjUxufN
+	uvhwV5wYU1DObBx3JsX0cfPHE5oxU4AJ4s2dX3xwPcQ0oE6Fy6XkChPwGuMnJPbZW
+X-Google-Smtp-Source: AGHT+IHrrBxuIk4uMp4NxvYRpxZVKZWLA6LtZYbX6EDGswGHHdVdl5ACmSynIRjCaNFs0Uyzw63xyg==
+X-Received: by 2002:a05:600c:518d:b0:442:f97f:8174 with SMTP id 5b1f17b1804b1-45892bc6f5bmr105851345e9.18.1754043892507;
+        Fri, 01 Aug 2025 03:24:52 -0700 (PDT)
+Received: from [192.168.0.205] (78-154-15-142.ip.btc-net.bg. [78.154.15.142])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3c4beasm5292931f8f.30.2025.08.01.03.24.51
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 03:24:52 -0700 (PDT)
+Message-ID: <04b0f2b9-1aa5-49e6-9522-80df7a8f1a45@blackwall.org>
+Date: Fri, 1 Aug 2025 13:24:50 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729130936.GB18541@redhat.com>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] benet: fix BUG when creating VFs
+To: Michal Schmidt <mschmidt@redhat.com>,
+ Ajit Khaparde <ajit.khaparde@broadcom.com>,
+ Sriharsha Basavapatna <sriharsha.basavapatna@broadcom.com>,
+ Somnath Kotur <somnath.kotur@broadcom.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250801101338.72502-1-mschmidt@redhat.com>
+Content-Language: en-US
+From: Nikolay Aleksandrov <razor@blackwall.org>
+In-Reply-To: <20250801101338.72502-1-mschmidt@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 07/29, Oleg Nesterov wrote:
->
-> On 07/29, Luis Claudio R. Goncalves wrote:
-> >
-> > On Tue, Jul 29, 2025 at 01:47:03PM +0200, Oleg Nesterov wrote:
-> > > On 07/29, Luis Claudio R. Goncalves wrote:
-> > > >
-> > > > +	/* In !RT, it is always safe to call __put_task_struct(). */
-> > > > +	if (!IS_ENABLED(CONFIG_PREEMPT_RT)) {
-> > > > +		static DEFINE_WAIT_OVERRIDE_MAP(put_task_map, LD_WAIT_SLEEP);
-> > > > +
-> > > > +		lock_map_acquire_try(&put_task_map);
-> > > > +		__put_task_struct(t);
-> > > > +		lock_map_release(&put_task_map);
-> > > > +		return;
-> > > > +	}
-> > >
-> > > FWIW:
-> > >
-> > > Acked-by: Oleg Nesterov <oleg@redhat.com>
-> > >
-> > >
-> > > At the same time... I don't understand this DEFINE_WAIT_OVERRIDE_MAP().
-> > > IIUC, we need to shut up lockdep when put_task_struct() is called under
-> > > raw_spinlock_t and __put_task_struct() paths take spinlock_t, right?
-> > > Perhaps this deserves a comment...
-> >
-> > I reverted that code to the previous state, commit 893cdaaa3977 ("sched:
-> > avoid false lockdep splat in put_task_struct()") and simplified the "if"
-> > statement.
->
-> Yes, yes, I see and I have already acked your patch.
+On 8/1/25 13:13, Michal Schmidt wrote:
+> benet crashes as soon as SRIOV VFs are created:
+> 
+>  kernel BUG at mm/vmalloc.c:3457!
+>  Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+>  CPU: 4 UID: 0 PID: 7408 Comm: test.sh Kdump: loaded Not tainted 6.16.0+ #1 PREEMPT(voluntary)
+>  [...]
+>  RIP: 0010:vunmap+0x5f/0x70
+>  [...]
+>  Call Trace:
+>   <TASK>
+>   __iommu_dma_free+0xe8/0x1c0
+>   be_cmd_set_mac_list+0x3fe/0x640 [be2net]
+>   be_cmd_set_mac+0xaf/0x110 [be2net]
+>   be_vf_eth_addr_config+0x19f/0x330 [be2net]
+>   be_vf_setup+0x4f7/0x990 [be2net]
+>   be_pci_sriov_configure+0x3a1/0x470 [be2net]
+>   sriov_numvfs_store+0x20b/0x380
+>   kernfs_fop_write_iter+0x354/0x530
+>   vfs_write+0x9b9/0xf60
+>   ksys_write+0xf3/0x1d0
+>   do_syscall_64+0x8c/0x3d0
+> 
+> be_cmd_set_mac_list() calls dma_free_coherent() under a spin_lock_bh.
+> Fix it by freeing only after the lock has been released.
+> 
+> Fixes: 1a82d19ca2d6 ("be2net: fix sleeping while atomic bugs in be_ndo_bridge_getlink")
+> Signed-off-by: Michal Schmidt <mschmidt@redhat.com>
+> ---
+>  drivers/net/ethernet/emulex/benet/be_cmds.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/drivers/net/ethernet/emulex/benet/be_cmds.c b/drivers/net/ethernet/emulex/benet/be_cmds.c
+> index d730af4a50c7..bb5d2fa15736 100644
+> --- a/drivers/net/ethernet/emulex/benet/be_cmds.c
+> +++ b/drivers/net/ethernet/emulex/benet/be_cmds.c
+> @@ -3856,8 +3856,8 @@ int be_cmd_set_mac_list(struct be_adapter *adapter, u8 *mac_array,
+>  	status = be_mcc_notify_wait(adapter);
+>  
+>  err:
+> -	dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va, cmd.dma);
+>  	spin_unlock_bh(&adapter->mcc_lock);
+> +	dma_free_coherent(&adapter->pdev->dev, cmd.size, cmd.va, cmd.dma);
+>  	return status;
+>  }
+>  
 
-So I think you should just resend it.
-
-s/LD_WAIT_SLEEP/LD_WAIT_CONFIG/ needs another discussion even if I am right,
-sorry for the confusion.
-
-Oleg.
+Reviewed-by: Nikolay Aleksandrov <razor@blackwall.org>
 
 
