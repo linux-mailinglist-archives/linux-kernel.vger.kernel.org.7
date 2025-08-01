@@ -1,90 +1,123 @@
-Return-Path: <linux-kernel+bounces-753054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753053-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 52D84B17E2C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:22:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 28E0DB17E2D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:22:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 75D66584A23
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:22:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 879CD6232CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:22:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB90219A95;
-	Fri,  1 Aug 2025 08:22:25 +0000 (UTC)
-Received: from leonov.paulk.fr (leonov.paulk.fr [185.233.101.22])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D729E2147EF;
+	Fri,  1 Aug 2025 08:21:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aJ1g6Ukl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359CE20B1E8;
-	Fri,  1 Aug 2025 08:22:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.233.101.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40F5C20B1E8;
+	Fri,  1 Aug 2025 08:21:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754036544; cv=none; b=IeNduAgeiRYaygnWMKkN88UFmztny8ELcVNPL9tZIb7CQiAwEMHRnuW5SM80vn9I5RpxogapnGDlLqhX9eyoXlwPtx+oRDOYzmUXEHtT38VZUlxvffV0G3wbyjCYlWwH6yGH5xP7PG0P5C2k+Ir5tg1v5jujzCY3D5bvREYpkss=
+	t=1754036515; cv=none; b=Hhh2CcVHYhaZmbQcwtpShcYciHu5/ScgxsMmoOCPVEt5qAgdp7pxPKOojxWT2APxlHO49E1BerJoWLrt5soTLokSRJ7Z9NJSf66Ef+dPembhCjyI84zDQme/VoukDi7bWbRhGRJOKbaTXvTpq1Owtjt9Yj0/8nCr99n5ZcFNGZw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754036544; c=relaxed/simple;
-	bh=pHwO2lQbomnHeulpznF5TDaTNdoAuuEEitIN2jfiTGY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=kD5R0G9CZiLEkpFE/jrt8hkpYgt16FuhXGByFMC0HNjKMUszJsdbkOhwvktqDVzOt0YEtw5fgiTCv4pmNir8kYUMFKlIUsgt2iW1wX7NUEo4lsJTkW2iwtdZ+/rttqcqb9nfAQi8ec9INjC3ErUSiW0zHfxGTtsUXf5S1sjDxoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io; spf=pass smtp.mailfrom=sys-base.io; arc=none smtp.client-ip=185.233.101.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sys-base.io
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sys-base.io
-Received: from laika.paulk.fr (12.234.24.109.rev.sfr.net [109.24.234.12])
-	by leonov.paulk.fr (Postfix) with ESMTPS id 352F41F00050;
-	Fri,  1 Aug 2025 08:22:18 +0000 (UTC)
-Received: by laika.paulk.fr (Postfix, from userid 65534)
-	id BB13CB00FC8; Fri,  1 Aug 2025 08:22:17 +0000 (UTC)
-X-Spam-Level: *
-Received: from shepard (unknown [192.168.1.65])
-	by laika.paulk.fr (Postfix) with ESMTP id 71270B00FC9;
-	Fri,  1 Aug 2025 08:21:51 +0000 (UTC)
-From: Paul Kocialkowski <paulk@sys-base.io>
-To: linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Cc: Jack Zhu <jack.zhu@starfivetech.com>,
-	Changhuang Liang <changhuang.liang@starfivetech.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Hans Verkuil <hverkuil@xs4all.nl>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Paul Kocialkowski <paulk@sys-base.io>
-Subject: [PATCH] media: starfive: camss: Use common dma-contig dma addr helper
-Date: Fri,  1 Aug 2025 10:21:49 +0200
-Message-ID: <20250801082149.591192-1-paulk@sys-base.io>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754036515; c=relaxed/simple;
+	bh=EG1IipNgpyo8fGH1RjMBEme5aivIHxhO25P/hri0Swc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=Sarp61voWZ8zyAu7f65c+ilrxyi+iS8W0ebp6kQkS1d/ypQNYOd5AvcrnhPu6VNgpWD9LVkyQsuO2UMg4fPQzSVJNq7mc9YXFRNRi/YpcxCCPnvxn/D6XF/fSB2Jqs2DG6i9KQBqTyqWbfFU0hWHNsB2Slttu4w8buaUB6bhgsg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aJ1g6Ukl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D855FC4CEE7;
+	Fri,  1 Aug 2025 08:21:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754036514;
+	bh=EG1IipNgpyo8fGH1RjMBEme5aivIHxhO25P/hri0Swc=;
+	h=Date:Subject:Cc:To:From:References:In-Reply-To:From;
+	b=aJ1g6Ukl/rIfiZE32tISmRV3Y01llKNJXC3iF62e8/nZCWT3EnYligf3hqKlehipG
+	 YgKQK5InWKVZhyZJmCBcCEI6OOGMd9WscJXNsVBwU6GsVDBwhk8R2PHbDYhcQelgUZ
+	 mbLuXwmNBjLBYADzUnP9mmFWz18Wb2J5kq2XRjjuSyUfL5APGozxCpci9VffueSItO
+	 r7iO3cJe8OAdMl5AREqpCpGBfrvjYjrT2DABwX830dRD/TD2+IFTHI3igqML64+Rpj
+	 pYbTpyV2f/ae7BQBiQ5hbLCk5oU9Zr5JwuEA8HD5wjRVVzhL/TgdZnVu57XHRU+TrK
+	 z0Pw7CK8/CqGg==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Aug 2025 10:21:49 +0200
+Message-Id: <DBQY1S7V8IIS.3NCGOZ8ALU7QG@kernel.org>
+Subject: Re: [PATCH 3/4] rust: drm: remove pin annotations from drm::Device
+Cc: <lorenzo.stoakes@oracle.com>, <vbabka@suse.cz>,
+ <Liam.Howlett@oracle.com>, <urezki@gmail.com>, <ojeda@kernel.org>,
+ <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>, <gary@garyguo.net>,
+ <bjorn3_gh@protonmail.com>, <a.hindborg@kernel.org>,
+ <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+ <tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+ <rust-for-linux@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+ <linux-kernel@vger.kernel.org>
+To: "Benno Lossin" <lossin@kernel.org>
+From: "Danilo Krummrich" <dakr@kernel.org>
+References: <20250731154919.4132-1-dakr@kernel.org>
+ <20250731154919.4132-4-dakr@kernel.org>
+ <DBQGW0NIQJRX.MU0QD5GMFJYM@kernel.org>
+In-Reply-To: <DBQGW0NIQJRX.MU0QD5GMFJYM@kernel.org>
 
-The vb2_plane_cookie helpers is not meant to be used directly by
-drivers using the generic dma-contig allocator.
+On Thu Jul 31, 2025 at 8:54 PM CEST, Benno Lossin wrote:
+> On Thu Jul 31, 2025 at 5:48 PM CEST, Danilo Krummrich wrote:
+>> The #[pin_data] and #[pin] annotations are not necessary for
+>> drm::Device, since we don't use any pin-init macros, but only
+>> __pinned_init() on the impl PinInit<T::Data, Error> argument of
+>> drm::Device::new().
+>
+> But you're still pinning `Device`, right?
 
-Use the common helper to retrieve the plane dma address instead.
+A drm::Device instance never exists other than as ARef<drm::Device>.
 
-Signed-off-by: Paul Kocialkowski <paulk@sys-base.io>
----
- drivers/staging/media/starfive/camss/stf-video.c | 4 +---
- 1 file changed, 1 insertion(+), 3 deletions(-)
+>> Fixes: 1e4b8896c0f3 ("rust: drm: add device abstraction")
+>> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+>> ---
+>>  rust/kernel/drm/device.rs | 2 --
+>>  1 file changed, 2 deletions(-)
+>>
+>> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
+>> index d19410deaf6c..d0a9528121f1 100644
+>> --- a/rust/kernel/drm/device.rs
+>> +++ b/rust/kernel/drm/device.rs
+>> @@ -54,10 +54,8 @@ macro_rules! drm_legacy_fields {
+>>  ///
+>>  /// `self.dev` is a valid instance of a `struct device`.
+>>  #[repr(C)]
+>> -#[pin_data]
+>>  pub struct Device<T: drm::Driver> {
+>>      dev: Opaque<bindings::drm_device>,
+>> -    #[pin]
+>>      data: T::Data,
+>
+> Looking at this code again, I also noticed that it was wrong before this
+> patch: `Device<T>` implemented `Unpin` if `T::Data` did which is most
+> likely wrong (or is `drm_device` not address sensitive?).
 
-diff --git a/drivers/staging/media/starfive/camss/stf-video.c b/drivers/staging/media/starfive/camss/stf-video.c
-index a0420eb6a0aa..b0b9b70b9641 100644
---- a/drivers/staging/media/starfive/camss/stf-video.c
-+++ b/drivers/staging/media/starfive/camss/stf-video.c
-@@ -167,10 +167,8 @@ static int video_buf_init(struct vb2_buffer *vb)
- 	struct stfcamss_video *video = vb2_get_drv_priv(vb->vb2_queue);
- 	struct stfcamss_buffer *buffer = to_stfcamss_buffer(vbuf);
- 	const struct v4l2_pix_format *fmt = &video->active_fmt.fmt.pix;
--	dma_addr_t *paddr;
- 
--	paddr = vb2_plane_cookie(vb, 0);
--	buffer->addr[0] = *paddr;
-+	buffer->addr[0] = vb2_dma_contig_plane_dma_addr(vb, 0);
- 
- 	if (fmt->pixelformat == V4L2_PIX_FMT_NV12)
- 		buffer->addr[1] =
--- 
-2.50.1
+It is, but as mentioned above a drm::Device only ever exists as
+ARef<drm::Device>.
+
+So, in drm::Device::new() we allocate the drm::Device with __drm_dev_alloc(=
+),
+initialize data in-place within this allocated memory and create an
+ARef<drm::Device> directly from the raw pointer returned by __drm_dev_alloc=
+().
+
+> So good to see that fixed, thanks!
+>
+> ---
+> Cheers,
+> Benno
+>
+>>  }
+>> =20
 
 
