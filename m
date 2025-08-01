@@ -1,174 +1,102 @@
-Return-Path: <linux-kernel+bounces-753606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753607-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B828CB18538
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:47:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE4D5B18539
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:48:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF38B3BBF82
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:47:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3FD733ADB71
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:48:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EA27A91F;
-	Fri,  1 Aug 2025 15:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43B9F27A908;
+	Fri,  1 Aug 2025 15:48:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ms6bNuvP"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="dZICWx0g"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB671422DD;
-	Fri,  1 Aug 2025 15:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F08126E70D
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:48:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063228; cv=none; b=ui7f4/t/07chnIvPCRO21ctbmOWgaiKABQqQDWFVSc23orrtaMbhS/moarRK7XEkn62oDjWlkV7sb7PNA2OZuzpQXBUISlIi0sWLeV1OISLUfEg4ebV/9bQIwngOh8U1AyRGrYDxcGo5GCID3ISWp+58oZBgtyrJ8kk3zqw7lYw=
+	t=1754063296; cv=none; b=VfAg3gHiC/wk38E3d5YQq//wV0ozZGSk9j6icWO2EY0+qju66s0ogIpS7ZR/sNT4MCD/M3PyHiwiRDygCV1PzJ5xhuAfg50JcB7PhnJOGgc7n6gJ6nwuS/pEZ0pgTh0HnGspVC4jLOPCx/zMFqbodN/qVS8oiYtYHJ/b1IBrSaA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063228; c=relaxed/simple;
-	bh=IZLE0uQ5DCz6jPq/q6fqEhZzNu7X7r+PRJ75Kyqp8Es=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WEiz2GBp96VZzF0pzSDbqk8XEsLZxn08ZDFPd4+RI5f3S7ZUlUa/6sLjU9w3s6lCVpKOdfye94EIh6YJXPcJUWRKEV9xnSW8VienUeA/REzU+aArT1ZHOXtdAhQfuQlSHfFkSUGkJs9WUcHx/ZHB2nZpRNe1cGmNR1mok/jZY7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ms6bNuvP; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571CFYNJ022189;
-	Fri, 1 Aug 2025 15:46:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=h59C4O
-	mJ3GTo2VYKRthh2qI8+QbWDWMyT568rgGhJS0=; b=ms6bNuvPEDr69E+TiXg18K
-	dXWxi8h+L42Ie9HkUchk9lKMm+K8caaqd1VoNryg0bIYKKISHrRnl9VCSmStUZCa
-	X8bQHkwmai4VSrziPTyL5kkdSERb85j1ebxoZDnfjy7nJoDwPGeLvjhxdpcdUQTM
-	8EINndKpnuL3f/I/GHZ7lV8HaSZPUE+vVs4BQA7hxxvsVwkGoKxYPFdsbFM00nyQ
-	hByjCVKXdh6BYwhLaKGDlUBuCV7efelAZOx7kChwW9kExyxkpv97jjlg7DiKgoWL
-	uESqkmLcYIZ1sr1QFBmh63/Ubgn8ch6pP6v3/GGpW6xzNrg6/GtiqpI+lCX5ElWw
-	==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qen9k6u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 15:46:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571EVTXo016005;
-	Fri, 1 Aug 2025 15:46:40 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aun1vmn-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 15:46:40 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571FkaTo54657366
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 15:46:36 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 49CF72004B;
-	Fri,  1 Aug 2025 15:46:36 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 09A9320043;
-	Fri,  1 Aug 2025 15:46:34 +0000 (GMT)
-Received: from [9.111.205.109] (unknown [9.111.205.109])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Aug 2025 15:46:33 +0000 (GMT)
-Message-ID: <8b9a66b5-8b9f-410a-a072-7b9ba72ef7c3@linux.ibm.com>
-Date: Fri, 1 Aug 2025 17:46:33 +0200
+	s=arc-20240116; t=1754063296; c=relaxed/simple;
+	bh=J8kNE3M4KMnaGiwJc0Y0DX8xCE63Cunt0nVNLh+91GE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=guXmOVJoTkm/S6HHQpqVEwOSGSV8Akep+X2ce5rQ6w7/zSMT1owLmdkgsVMLm9iOA9ZM4sUNRLMw2uZDL2/3BivjqstGsl69pAFtUvAvRhpI5GXCKYiqJbehIQOwDRaAAMq63c6F6u8bC4ya90BUuS4xCpQx0QfA92bDWA2nTXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=dZICWx0g; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754063279;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=JsFp9eC4npbziHlk8jxpTi0iJRPCG0xnW8Hvy7cexHg=;
+	b=dZICWx0g57n7gei9IiQOT+IyrFqPGaTVPlySQmfsoZsrp3t39qnyu28hmIUmp/2Lt53xtf
+	Ec7AGnrg0JzdMr2FC4xOjVTI8apT/IX8WEMmna2dLIuZDX2AJmv86RBwLjKRrqC2hW2Z1H
+	QVgUer3ilzVQN9qTMOkO5OvpR9ARHFI=
+From: Sean Anderson <sean.anderson@linux.dev>
+To: Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>,
+	linux-sound@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Sean Anderson <sean.anderson@linux.dev>
+Subject: [PATCH] ALSA: usb-audio: Don't use printk_ratelimit for debug prints
+Date: Fri,  1 Aug 2025 11:47:10 -0400
+Message-Id: <20250801154710.739464-1-sean.anderson@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 11/16] s390/unwind_user/sframe: Enable
- HAVE_UNWIND_USER_SFRAME
-To: Heiko Carstens <hca@linux.ibm.com>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-12-jremus@linux.ibm.com>
- <20250801125350.9905B20-hca@linux.ibm.com>
-Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250801125350.9905B20-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: PMc1SC4fMrYhi_5iW0UoAeWPP3X40gNH
-X-Proofpoint-GUID: PMc1SC4fMrYhi_5iW0UoAeWPP3X40gNH
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEyMSBTYWx0ZWRfX3VR0bbPEi1/N
- h9ITlUVbxcHye9ysJmGbCsP+TmQNQIMg16yR/922jfcPwXmPFi+19NfIzmRt5Ox+5/8zgHwkIqZ
- IadH9XkRbhNqCiNSQnCjICrT7nhNEfaEgRE3doZwEau91e3Lhif42unwxkJDbkjZpt46TfAZhLf
- bAbg56Dft/albpJY0o5L1uFIeKGSE7wHzgmqeS+zKrgDb+h81zU8i90mDj4Bvla+bQhDf6+xHr8
- Ez06O/8DbvIietzNv09Tq4hPeWV6jOaTLjqztnM0Ks6IzRj0q3xBszjGluqiokwJOvCdMAOMZEl
- yCmu6eW7M69iaMNHPBpJaD64n8ZC+BkvUsforkekh1rVSeWWpbOdA1wNfCbUQdCajWSHBqMCluW
- mXEGBCz51tjRFgsUEaluwgeg91tjx+E1aMjJs72As5r4Qi0swKcB6XMoXdGO8dYhZIH6llFs
-X-Authority-Analysis: v=2.4 cv=BJOzrEQG c=1 sm=1 tr=0 ts=688ce162 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=XDj3Yx29t083uedsr5QA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=596 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
- adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010121
+X-Migadu-Flow: FLOW_OUT
 
-On 8/1/2025 2:53 PM, Heiko Carstens wrote:
-> On Thu, Jul 10, 2025 at 06:35:17PM +0200, Jens Remus wrote:
+printk_ratelimit is deprecated, since it shares state with all other
+printk sites. Additionally, the suppression message is printed at
+warning level even though the actual messages are printed at debug and
+are (usually) invisible! This can result in thousands of messages like
 
->> +static inline void __s390_get_dwarf_fpr(unsigned long *val, int regnum)
->> +{
->> +	switch (regnum) {
->> +	case 16:
->> +		fpu_std(0, (freg_t *)val);
->> +		break;
-> 
-> ...
-> 
->> +static inline int s390_unwind_user_get_reg(unsigned long *val, int regnum)
->> +{
->> +	if (0 <= regnum && regnum <= 15) {
->> +		struct pt_regs *regs = task_pt_regs(current);
->> +		*val = regs->gprs[regnum];
->> +	} else if (16 <= regnum && regnum <= 31) {
->> +		__s390_get_dwarf_fpr(val, regnum);
-> 
-> This won't work with other potential in-kernel fpu users. User space fpr
-> contents may have been written to the current task's fpu save area and fprs
-> may have been clobbered by in-kernel users; so you need to get register
-> contents from the correct location. See arch/s390/include/asm/fpu.h.
+retire_capture_urb: 4992 callbacks suppressed
 
-Thanks!  Will implement all the review feedback and send a RFC V2 once I
-am back from vacation.  Will be away from keyboard for a few weeks.
+in the console, and can inhibit debugging since it is unclear what the
+source of the suppressed callbacks is.
 
-Regards,
-Jens
+Switch to dev_dbg_ratelimited which doesn't print anything unless debug
+is enabled.
+
+Signed-off-by: Sean Anderson <sean.anderson@linux.dev>
+---
+
+ sound/usb/pcm.c | 9 ++++-----
+ 1 file changed, 4 insertions(+), 5 deletions(-)
+
+diff --git a/sound/usb/pcm.c b/sound/usb/pcm.c
+index 08bf535ed163..96339594dfd5 100644
+--- a/sound/usb/pcm.c
++++ b/sound/usb/pcm.c
+@@ -1280,11 +1280,10 @@ static void retire_capture_urb(struct snd_usb_substream *subs,
+ 
+ 	for (i = 0; i < urb->number_of_packets; i++) {
+ 		cp = (unsigned char *)urb->transfer_buffer + urb->iso_frame_desc[i].offset + subs->pkt_offset_adj;
+-		if (urb->iso_frame_desc[i].status && printk_ratelimit()) {
+-			dev_dbg(&subs->dev->dev, "frame %d active: %d\n",
+-				i, urb->iso_frame_desc[i].status);
+-			// continue;
+-		}
++		if (urb->iso_frame_desc[i].status)
++			dev_dbg_ratelimited(&subs->dev->dev,
++					    "frame %d active: %d\n", i,
++					    urb->iso_frame_desc[i].status);
+ 		bytes = urb->iso_frame_desc[i].actual_length;
+ 		if (subs->stream_offset_adj > 0) {
+ 			unsigned int adj = min(subs->stream_offset_adj, bytes);
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+2.35.1.1320.gc452695387.dirty
 
 
