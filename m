@@ -1,248 +1,84 @@
-Return-Path: <linux-kernel+bounces-753461-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753462-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4A14B1835E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:09:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CECFEB18362
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:10:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E84B6277DD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C31918866AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:10:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EE2326C3B6;
-	Fri,  1 Aug 2025 14:09:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7C8F26B2B0;
+	Fri,  1 Aug 2025 14:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="cZHcldpM"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
+	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="GhnWjxPA"
+Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1224826C39E;
-	Fri,  1 Aug 2025 14:09:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25F922D78F;
+	Fri,  1 Aug 2025 14:10:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754057349; cv=none; b=Q7pkga15FKZteER30UoDfkZE9lFLPccBgSH8K4IylWVKYL6Kmd7fUvlod0+eZOq8//OaJswfYPGqkp5FnDCSgyalUEumD9ywZZUC0VRO4+WhyzUIwK5U+wCBb0TpcgYw0jp4OQ2xM5KvWuscZWnhDHV+oheRuLh/ba16hfU66QU=
+	t=1754057409; cv=none; b=UKDP1FzhltSQzr7rCXzAh2+/BnrFnJeRyrASUphGuklALF3zhEEaDBoaHu82f/pmCVQHu+kHufyAGuqb21CrPtSzZzHzPjuK/0R7lvwKLHUWd6R1oWjdJeBsdynziYT0PHVLZA9hlL3ghl8hMVIFL+xx+zOqmcWc/HCKVTwU+nk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754057349; c=relaxed/simple;
-	bh=lRc9m8B3YFNeJUhLRAInJmLHf4ALq4sDFeTOHRTMwG0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=OeL95R7bYsfNgz7UeSp9hTtODYANdFQWKyI2uBcORMD4pt9eBMeKbph39ikUHpnCxO1ngeleRZCwbq9F4+Ii6SlL2G5Vq7DTpD+YnwuSYP914wR5/9w956HQ6dJXyvjghQGMBh0cQ2AVOC4l/43hk4pLTAmN0XkG4aJOdJwpCWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=cZHcldpM; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 23704442F4;
-	Fri,  1 Aug 2025 14:09:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754057345;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=1eO26JKteHxuoy1a4A2nQ0PM4JCEHGZpVMXmkOKugo8=;
-	b=cZHcldpMfzXVrQHo+B8lfp/Nuq2Ys5uQaJPLBUzlBEmzmlnkwj3uvOUYnb9NiK4CgX5dwi
-	veszdP4Mwy+cHfar+TijKIBuor+xQf4qTF8PfdJ+Tx82dkL4+kfKO8/VctFzO3M5ixAUZg
-	LhNfUTSJ+tUXsJZrcUdCCgzC98pKRK+wsL1ESkP6IBhdP58U+hcmb+ZVzS8t0HiZH0EKyk
-	/chKpMSlhF3n639ltSSEfcRrzA7Bj4UvwuwYSSXLCnUKJx1ur0hbPJPCgHAVNlGk+uAk2s
-	kzv8BWJ7nqnp5iWF2VVGi4NfDcljptURLzrTb7H7FMV5HwDf4AKr6bhWO6FtAA==
-Message-ID: <b9e2dae7-6cd6-4fd2-b7e0-8869647bd72f@bootlin.com>
-Date: Fri, 1 Aug 2025 16:09:02 +0200
+	s=arc-20240116; t=1754057409; c=relaxed/simple;
+	bh=gXVB3JgvcsjhNsqRuiqUSIKj5/B+YcRUloogjLKHC9o=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=Yjue1q6eTsHzwqk7Pyw688bGC6QLdH3KUnQbuoJTh2KjNyg1ExRyjmu4Rkjo1yLVltGBD5yZJX/2m0o6f0nimKIYuXCq2j+pIW1NZJeHxYkppXUNA9KD7C3fWK7gSlIr1V9mPtOzOaD/TiDwKrEzwUQu06Bmj7NoDbCmRXxM6hg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=GhnWjxPA; arc=none smtp.client-ip=45.79.88.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
+DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net D70AF40AD2
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
+	t=1754057407; bh=SicK+6ONz+x3jilrdJ4NRec8oYN9uCe2XP2ecenR050=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=GhnWjxPA1XJyPvFFAPoxVR5+jpmNqTW7nqryO/WZsx7vMGoWUaTumcrHDMqXrO1KR
+	 9fzaGTdHMONWfDDMAdg6KmPErRDhCJxSz4xnLTb7TmaqJRKAzDHsYhxW3Hgopkond5
+	 llTmsGqi3kwgKPyROkrwnVyosVX5CCyF1j1eYwbVOiX8j1bYfbvtkycbWTu1mZG36h
+	 4pTBxlol47nBi6B9sOvW7aRI+UQm+gnVDFBRMVHsBsCwbmlbgwM+jOFU2TQlPhDQNT
+	 OQOHdxWcdnCsCWJDSZyU+JMvRNl9LrP0ZJQU0PynQUD9hRLQ9k462henzsMC9Hdo6i
+	 NzhPa7CVj/ibQ==
+Received: from localhost (unknown [IPv6:2601:280:4600:2da9::1fe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by ms.lwn.net (Postfix) with ESMTPSA id D70AF40AD2;
+	Fri,  1 Aug 2025 14:10:06 +0000 (UTC)
+From: Jonathan Corbet <corbet@lwn.net>
+To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 05/12] docs: kdoc: split top-level prototype parsing out
+ of dump_struct()
+In-Reply-To: <20250801073411.06cb530e@foz.lan>
+References: <20250801001326.924276-1-corbet@lwn.net>
+ <20250801001326.924276-6-corbet@lwn.net> <20250801073411.06cb530e@foz.lan>
+Date: Fri, 01 Aug 2025 08:10:05 -0600
+Message-ID: <87ldo3rv42.fsf@trenco.lwn.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/8] drm/komeda: use drmm_writeback_connector_init()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
- Jani Nikula <jani.nikula@linux.intel.com>,
- "Kandpal, Suraj" <suraj.kandpal@intel.com>,
- Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
- Rodrigo Siqueira <siqueira@igalia.com>,
- Alex Deucher <alexander.deucher@amd.com>,
- =?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Liviu Dudau <liviu.dudau@arm.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- Rob Clark <robin.clark@oss.qualcomm.com>, Dmitry Baryshkov
- <lumag@kernel.org>, Abhinav Kumar <abhinav.kumar@linux.dev>,
- Jessica Zhang <jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
- Marijn Suijten <marijn.suijten@somainline.org>,
- Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
- Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Dave Stevenson <dave.stevenson@raspberrypi.com>,
- =?UTF-8?Q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
- Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
- <20250801-wb-drop-encoder-v1-2-824646042f7d@oss.qualcomm.com>
-Content-Language: en-US
-From: Louis Chauvet <louis.chauvet@bootlin.com>
-Autocrypt: addr=louis.chauvet@bootlin.com; keydata=
- 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
-In-Reply-To: <20250801-wb-drop-encoder-v1-2-824646042f7d@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefkeelucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefkffggfgfuvfevfhfhjggtgfesthekredttddvjeenucfhrhhomhepnfhouhhishcuvehhrghuvhgvthcuoehlohhuihhsrdgthhgruhhvvghtsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeekieevtdefgedtkeehteehtddttdefhffhgeejleejjeeluddvhfdugedvkeehveenucffohhmrghinhepsghoohhtlhhinhdrtghomhenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedunecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplgduledvrdduieekrddtrddvtdgnpdhmrghilhhfrhhomheplhhouhhishdrtghhrghuvhgvthessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfeegpdhrtghpthhtohepughmihhtrhihrdgsrghrhihshhhkohhvsehoshhsrdhquhgrlhgtohhmmhdrtghomhdprhgtphhtthhopehjrghnihdrnhhikhhulhgrsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepshhurhgrjhdrkhgrnhguphgrlhesihhnthgvlhdrtghomhdprhgtphhtthhopehhrghrrhihrdifvghnt
- hhlrghnugesrghmugdrtghomhdprhgtphhtthhopehsuhhnphgvnhhgrdhlihesrghmugdrtghomhdprhgtphhtthhopehsihhquhgvihhrrgesihhgrghlihgrrdgtohhmpdhrtghpthhtoheprghlvgigrghnuggvrhdruggvuhgthhgvrhesrghmugdrtghomhdprhgtphhtthhopegthhhrihhsthhirghnrdhkohgvnhhighesrghmugdrtghomh
-X-GND-Sasl: louis.chauvet@bootlin.com
+Content-Type: text/plain
 
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
 
+> Em Thu, 31 Jul 2025 18:13:19 -0600
+> Jonathan Corbet <corbet@lwn.net> escreveu:
+>>  
+>> -        struct_members = KernRe(type_pattern + r'([^{};]+)(\{)([^{}]*)(\})([^{};]*)(;)')
+>> +        struct_members = KernRe(r'(struct|union)([^{};]+)(\{)([^{}]*)(\})([^{};]*)(;)')
+>
+> I would prefer keeping type_pattern here. 
 
-Le 01/08/2025 à 15:51, Dmitry Baryshkov a écrit :
-> Use drmm_plain_encoder_alloc() to allocate simple encoder and
-> drmm_writeback_connector_init() in order to initialize writeback
-> connector instance.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-> ---
->   .../drm/arm/display/komeda/komeda_wb_connector.c   | 30 ++++++++++++----------
->   1 file changed, 17 insertions(+), 13 deletions(-)
-> 
-> diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> index 875cdbff18c9dc97e736049feaa8a1fe1bcc82ff..210841b4453abfe60cecc1cfc79a84298be3e684 100644
-> --- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> +++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
-> @@ -5,6 +5,7 @@
->    *
->    */
->   #include <drm/drm_framebuffer.h>
-> +#include <drm/drm_managed.h>
->   #include "komeda_dev.h"
->   #include "komeda_kms.h"
->   
-> @@ -121,17 +122,10 @@ komeda_wb_connector_fill_modes(struct drm_connector *connector,
->   	return 0;
->   }
->   
-> -static void komeda_wb_connector_destroy(struct drm_connector *connector)
-> -{
-> -	drm_connector_cleanup(connector);
-> -	kfree(to_kconn(to_wb_conn(connector)));
-> -}
-> -
->   static const struct drm_connector_funcs komeda_wb_connector_funcs = {
->   	.reset			= drm_atomic_helper_connector_reset,
->   	.detect			= komeda_wb_connector_detect,
->   	.fill_modes		= komeda_wb_connector_fill_modes,
-> -	.destroy		= komeda_wb_connector_destroy,
->   	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
->   	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
->   };
-> @@ -143,13 +137,15 @@ static int komeda_wb_connector_add(struct komeda_kms_dev *kms,
->   	struct komeda_wb_connector *kwb_conn;
->   	struct drm_writeback_connector *wb_conn;
->   	struct drm_display_info *info;
-> +	struct drm_encoder *encoder;
-> +
->   	u32 *formats, n_formats = 0;
->   	int err;
->   
->   	if (!kcrtc->master->wb_layer)
->   		return 0;
->   
-> -	kwb_conn = kzalloc(sizeof(*kwb_conn), GFP_KERNEL);
-> +	kwb_conn = drmm_kzalloc(&kms->base, sizeof(*kwb_conn), GFP_KERNEL);
->   	if (!kwb_conn)
->   		return -ENOMEM;
->   
-> @@ -165,11 +161,19 @@ static int komeda_wb_connector_add(struct komeda_kms_dev *kms,
->   		return -ENOMEM;
->   	}
->   
-> -	err = drm_writeback_connector_init(&kms->base, wb_conn,
-> -					   &komeda_wb_connector_funcs,
-> -					   &komeda_wb_encoder_helper_funcs,
-> -					   formats, n_formats,
-> -					   BIT(drm_crtc_index(&kcrtc->base)));
-> +	encoder = drmm_plain_encoder_alloc(&kms->base, NULL,
-> +					   DRM_MODE_ENCODER_VIRTUAL, NULL);
-> +	if (IS_ERR(encoder))
-> +		return PTR_ERR(encoder);
-> +
-> +	drm_encoder_helper_add(encoder, &komeda_wb_encoder_helper_funcs);
-> +
-> +	encoder->possible_crtcs = BIT(drm_crtc_index(&kcrtc->base));
+The problem is that type_pattern no longer exists in that function.  I'd
+have to redefine it, or make it global.  It seems like a rather trivial
+thing to make global (and, as a result, make people go to the top of the
+file to figure out what it really is).
 
-Maybe use drm_crtc_mask?
-
-With this:
-
-Reviewed-by: Louis Chauvet <louis.chauvet@bootlin.com>
-
-> +
-> +	err = drmm_writeback_connector_init(&kms->base, wb_conn,
-> +					    &komeda_wb_connector_funcs,
-> +					    encoder,
-> +					    formats, n_formats);
->   	komeda_put_fourcc_list(formats);
->   	if (err) {
->   		kfree(kwb_conn);
-> 
-
--- 
-Louis Chauvet, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
-
+jon
 
