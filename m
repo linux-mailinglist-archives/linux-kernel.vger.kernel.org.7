@@ -1,303 +1,204 @@
-Return-Path: <linux-kernel+bounces-753178-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8734AB17F8D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:46:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95B50B17F91
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A97B0166A66
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:46:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CCC143BA8AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:47:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1023322F77B;
-	Fri,  1 Aug 2025 09:46:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F6322FAC3;
+	Fri,  1 Aug 2025 09:47:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X7sK3xPd"
-Received: from mail-qk1-f181.google.com (mail-qk1-f181.google.com [209.85.222.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eRCmxn4n"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FF531C3F0C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:46:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14D7F1A76DE;
+	Fri,  1 Aug 2025 09:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754041602; cv=none; b=hK7rH8Ka8V4GwR3c4ZvIHKml8ZIIS4JkhtV+6odYvrsOJoLiep2knp1c+J2vNtVA5lWWRfFkbkdDK7JtMqzIFL1V7BlIeaqf1FylaePoGQ/xu+eu51nfCqyzKxtrDyMO8InbypZJuSATH/ciOnOHZ2ZDaQoPWk9gKFYNDfsnoVU=
+	t=1754041642; cv=none; b=fPYR9abU94AJRGQcEoFD4Ee2okB5+7rn3wXBMvq6LMnTdbZY7GezU/NJ+WtZlLQt2cFUVLML60E1DSpMDVH3mMRAVoul3NHCWOZ1Hkfuf3SJvIyiPqEdZZLOhrmzs58ep/xVBupVQ/B336QeCEKVGi7GBfMVOLoEjDjKz2Kb1UE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754041602; c=relaxed/simple;
-	bh=659EqXl6yE+K192+p2hXdLrilZLhFeUSbKmGL5IEDuE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aM8UFkWgTyBnqVFj2IFCTpQf8qopgdWNgcl3mva00eZ4EIicshwVQiiQkm0wRobEMOyl/iiWFeeutQvBX3M1esYee+7+focEIWN25NJz+5DbI+8RNze8GL3fi0jFLJ4IaKgmCwpE9A5QTUvMB65gOl2AqK4P3qEdJ1VFCckVFBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X7sK3xPd; arc=none smtp.client-ip=209.85.222.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qk1-f181.google.com with SMTP id af79cd13be357-7dd8773f9d9so146021285a.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:46:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754041599; x=1754646399; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fPi1aRA1xy91XJSfBFoK3IbCuYOH+ZWgmp1gomg+FIY=;
-        b=X7sK3xPdtIjUIUvE2ICZSNdL+u7DcbZ26VpNBZzAhs/mjgmxfak5b9q580nzmeejQX
-         akBSAhahTe48ru1dsoFCkMJxOm26CmyQy7zm81wR+Jf8gCTMah0WZKT/OL/d1aXahKl2
-         nLT8MwmRaDo1LV1cM3b7EgoTMyUVK2mW8hnSin5n+6PUXsNd1H7vOYn6+/qaJ++7PYge
-         1cBMUH4gZM0K27W54OpOIfOPp6qrJ8K4x14cYRRaJXfqRlB31f0GI62V7ltVDG/tsIV5
-         smXNWeHZsO0IW81rChHSL4yqY/Kybn6GZz89/bL+aL3xyz2/oa+1wqZZ4l+tOSUEi2kz
-         52Sg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754041599; x=1754646399;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fPi1aRA1xy91XJSfBFoK3IbCuYOH+ZWgmp1gomg+FIY=;
-        b=knpRQIXi5jrOTLFYVh40c2xOSjXV1UQbg/agHVjonNDUmspSppkkgKvdWkTxgyzvyR
-         FO6w59u8ak61aeTFF0BYXsx3C2I/XaTrVAdGT6zLPbwI7sW0PFXlZbqY9+lmJgvJZBzs
-         qh/evx+Obl3oIEKBKoZIVDibP8Mj9fjgb6FaiY+CvcybmZGTIlJPFDSy44cw3VHVU/WA
-         AXBLjpBFr3sYC5iTRXAWK6FfeYEBQp24oe5wkGGoo0l+y9jZQikV3yfmRUH+5BTJgnnj
-         REuNsdMNXirOg67fbUff0gTQxrRtC6eyBohR/V322oj+gY2e9eTUn1ydSlQJuzlE52cI
-         FoqA==
-X-Forwarded-Encrypted: i=1; AJvYcCWSslqHRQxWd4CIaAl3lMq+xHubQrWJeJ72ExjAMxyYQEsJ0bxGYqAX+8QBs8jYZyjKRdHwaB4LOqzTgiA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxMnVD/zOe3mVcQn9Tzfb55wUfd7nssRAMo+ZsXdoUIvN/4mKhw
-	Tg/5gqOYmQtgSqLgoOzL/KM0H93gHvm1TaAUywvfz9umgDkjoh8QsROkwnwQO9rTAHf3ZFC62N7
-	yyUlKd8R8snnbTiiOmbihD9kscCC/alhwuHMUK7pj
-X-Gm-Gg: ASbGncuoF0V2d2XgAN4E5r56I2opi4honTcVYf6sxTONu5gwoJr/iwPHH/G7FhS6NMf
-	1JYiAQUOddUaW9k2YC+Wjuell9NYUHsfD8kcIzd1SP7468dc3VOvp9EytgjQEhKhFTik6OpfRwn
-	AupxAeeHax3Hc2yQtp/LM2p5vGrYIKv4pOR9IARvFN9fVSJtMbT12dcGhDwKEX4cuhlmm5DNg2l
-	yx65QwNooO3Rxqsnw==
-X-Google-Smtp-Source: AGHT+IH5+AVzG2YKzJItrUExqdrxQbWcyIoiCHcENs4Lyz2n4Tl4WHQkFzDLbWs1ZPUbGv2W2sIGATnVtkwCM+4GgD4=
-X-Received: by 2002:a05:620a:a901:b0:7e0:9b88:133f with SMTP id
- af79cd13be357-7e66f397bd8mr1279842385a.39.1754041599054; Fri, 01 Aug 2025
- 02:46:39 -0700 (PDT)
+	s=arc-20240116; t=1754041642; c=relaxed/simple;
+	bh=BMntt7/aru1tXJivT6Bbb/N8lgR4/vQlo8pUtzmlNNg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AKX4eqafHhTgENAezl9JT8SPq+p62bW8/M5k83EUt4sRcsmKn3bVmDVCnZIMESHbS3KTvsE+hkP2yOCk/TC/bBpvKTBy4DS/1sziWSp9saft9fCLjaEgmXiDfEQIOnS+uf6oA6WEpFzEHfg5BscMik61YCLXQSi9CyRmiUCKdWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eRCmxn4n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EC484C4CEE7;
+	Fri,  1 Aug 2025 09:47:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754041641;
+	bh=BMntt7/aru1tXJivT6Bbb/N8lgR4/vQlo8pUtzmlNNg=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=eRCmxn4njKU3sJ695x1FfbE19HUDyG20lp/Dq0VOYikHH0qwCDShuwa6up4RoRaHq
+	 tbdlxX9qw0rjuykrA8mofJQe8CpLTXLap00+KCYJXPHAGml3zCaTr4gZeUyh5xTVV0
+	 qcP7hOG4zhUKWTxq1O1Mm6N2uwWnOJ4sTX8GyFWJMsQopE9lH2JDmQhXVrQgB3xNd7
+	 015UL392LIrYzqbs5gzYg0yU2Mk6wS3iKrantn2RvMEPiVRntn8+OATcso4lnoEq9o
+	 scyte6/IIAs7dIrKFyC//TG8y1vIh8nE3VsvGs7s2ksDQ6O05l2lKy0fsKT5nBMIkH
+	 hHxUWv2ZwCFJA==
+Date: Fri, 1 Aug 2025 15:17:09 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Hans Zhang <hans.zhang@cixtech.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>, 
+	Gerd Bayer <gbayer@linux.ibm.com>, Hans Zhang <18255117159@163.com>, bhelgaas@google.com, 
+	Alexander Gordeev <agordeev@linux.ibm.com>, Christian Borntraeger <borntraeger@linux.ibm.com>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, jingoohan1@gmail.com, 
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org, 
+	linux-next <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Niklas Schnelle <schnelle@linux.ibm.com>, geert@linux-m68k.org
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+Message-ID: <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
+References: <20250731183944.GA3424583@bhelgaas>
+ <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
+ <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
+ <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801090949.129941-1-dongml2@chinatelecom.cn>
-In-Reply-To: <20250801090949.129941-1-dongml2@chinatelecom.cn>
-From: Eric Dumazet <edumazet@google.com>
-Date: Fri, 1 Aug 2025 02:46:27 -0700
-X-Gm-Features: Ac12FXx4oNA4sAnx7B_ITjSBDalU-s3xy4RLLSG5kiFNg6GqhW7MbWEy_QgYKYI
-Message-ID: <CANn89i+1-geie7HrSmZeU-OvT-aDJabbtcwrZaHr-1S16yuRZw@mail.gmail.com>
-Subject: Re: [PATCH net v2] net: ip: order the reuseport socket in __inet_hash
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: kuniyu@google.com, kraig@google.com, ncardwell@google.com, 
-	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
 
-On Fri, Aug 1, 2025 at 2:09=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> For now, the socket lookup will terminate if the socket is reuse port in
-> inet_lhash2_lookup(), which makes the socket is not the best match.
->
-> For example, we have socket1 and socket2 both listen on "0.0.0.0:1234",
-> but socket1 bind on "eth0". We create socket1 first, and then socket2.
-> Then, all connections will goto socket2, which is not expected, as socket=
-1
-> has higher priority.
->
-> This can cause unexpected behavior if TCP MD5 keys is used, as described
-> in Documentation/networking/vrf.rst -> Applications.
->
-> Therefore, we compute a score for the reuseport socket and add it to the
-> list with order in __inet_hash(). Sockets with high score will be added
-> to the head.
->
-> Link: https://lore.kernel.org/netdev/20250731123309.184496-1-dongml2@chin=
-atelecom.cn/
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
+On Fri, Aug 01, 2025 at 05:25:51PM GMT, Hans Zhang wrote:
+> 
+> 
+> On 2025/8/1 16:18, Manivannan Sadhasivam wrote:
+> > EXTERNAL EMAIL
+> > 
+> > On Thu, Jul 31, 2025 at 09:01:17PM GMT, Arnd Bergmann wrote:
+> > > On Thu, Jul 31, 2025, at 20:39, Bjorn Helgaas wrote:
+> > > > On Thu, Jul 31, 2025 at 07:38:58PM +0200, Gerd Bayer wrote:
+> > > > > 
+> > > > > -  if (size == 1)
+> > > > > -          return pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> > > > > -  else if (size == 2)
+> > > > > -          return pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
+> > > > > -  else if (size == 4)
+> > > > > -          return pci_bus_read_config_dword(bus, devfn, where, val);
+> > > > > -  else
+> > > > > -          return PCIBIOS_BAD_REGISTER_NUMBER;
+> > > > > +  if (size == 1) {
+> > > > > +          rc = pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
+> > > > > +#if (IS_ENABLED(CONFIG_CPU_BIG_ENDIAN))
+> > > > > +          *val = ((*val >> 24) & 0xff);
+> > > > > +#endif
+> > > > 
+> > > > Yeah, this is all pretty ugly.  Obviously the previous code in
+> > > > __pci_find_next_cap_ttl() didn't need this.  My guess is that was
+> > > > because the destination for the read data was always the correct type
+> > > > (u8/u16/u32), but here we always use a u32 and cast it to the
+> > > > appropriate type.  Maybe we can use the correct types here instead of
+> > > > the casts?
+> > > 
+> > > Agreed, the casts here just add more potential for bugs.
+> > > 
+> > 
+> > Ack. Missed the obvious issue during review.
+> > 
+> > > The pci_bus_read_config() interface itself may have been a
+> > > mistake, can't the callers just use the underlying helpers
+> > > directly?
+> > > 
+> > 
+> > They can! Since the callers of this API is mostly the macros, we can easily
+> > implement the logic to call relevant accessors based on the requested size.
+> > 
+> > Hans, could you please respin the series based the feedback since the series is
+> > dropped for 6.17.
+> > 
+> 
+> Dear all,
+> 
+> I am once again deeply sorry for the problems that occurred in this series.
+> I only test pulling the ARM platform.
+> 
+> Thank you very much, Gerd, for reporting the problem.
+> 
+> Thank you all for your discussions and suggestions for revision.
+> 
+> Hi Mani,
+> 
+> Geert provided a solution. My patch based on this is as follows. Please
+> check if there are any problems.
+> https://lore.kernel.org/linux-pci/CAMuHMdVwFeV46oCid_sMHjXfP+yyGTpBfs9t3uaa=wRxNcSOAQ@mail.gmail.com/
+> 
+> Also, please ask Gerd to help test whether it works properly. Thank you very
+> much.
+> 
+> 
+> If there are no issues, am I sending the new version? Can this series of
+> pacth 0001 be directly replaced?
+> 
 
-You forgot a Fixes: tag, and a selftest.
+What benefit does this helper provide if it simply invokes the accessors based
+on the requested size? IMO, the API should not return 'int' sized value if the
+caller has explicitly requested to read variable size from config space.
 
-> ---
-> v2:
-> - As Kuniyuki advised, sort the reuseport socket in __inet_hash() to keep
->   the lookup for reuseport O(1)
+- Mani
 
-Keeping sorted the list is difficult, we would have to intercept
-SO_BINDTODEVICE, SO_BINDTOIFINDEX, SO_INCOMING_CPU.
-
-This also makes the patch risky to backport to stable versions,
-because it is complex and possibly buggy.
-
-Therefore I prefer your first approach.
-
-> ---
->  include/linux/rculist_nulls.h | 34 ++++++++++++++++++++++++
->  include/net/sock.h            |  5 ++++
->  net/ipv4/inet_hashtables.c    | 49 ++++++++++++++++++++++++++++++++---
->  3 files changed, 84 insertions(+), 4 deletions(-)
->
-> diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.=
-h
-> index 89186c499dd4..da500f4ae142 100644
-> --- a/include/linux/rculist_nulls.h
-> +++ b/include/linux/rculist_nulls.h
-> @@ -52,6 +52,13 @@ static inline void hlist_nulls_del_init_rcu(struct hli=
-st_nulls_node *n)
->  #define hlist_nulls_next_rcu(node) \
->         (*((struct hlist_nulls_node __rcu __force **)&(node)->next))
->
-> +/**
-> + * hlist_nulls_pprev_rcu - returns the element of the list after @node.
-> + * @node: element of the list.
-> + */
-> +#define hlist_nulls_pprev_rcu(node) \
-> +       (*((struct hlist_nulls_node __rcu __force **)&(node)->pprev))
-> +
->  /**
->   * hlist_nulls_del_rcu - deletes entry from hash list without re-initial=
-ization
->   * @n: the element to delete from the hash list.
-> @@ -145,6 +152,33 @@ static inline void hlist_nulls_add_tail_rcu(struct h=
-list_nulls_node *n,
->         }
->  }
->
-> +/**
-> + * hlist_nulls_add_before_rcu
-> + * @n: the new element to add to the hash list.
-> + * @next: the existing element to add the new element before.
-> + *
-> + * Description:
-> + * Adds the specified element to the specified hlist
-> + * before the specified node while permitting racing traversals.
-> + *
-> + * The caller must take whatever precautions are necessary
-> + * (such as holding appropriate locks) to avoid racing
-> + * with another list-mutation primitive, such as hlist_nulls_add_head_rc=
-u()
-> + * or hlist_nulls_del_rcu(), running on this same list.
-> + * However, it is perfectly legal to run concurrently with
-> + * the _rcu list-traversal primitives, such as
-> + * hlist_nulls_for_each_entry_rcu(), used to prevent memory-consistency
-> + * problems on Alpha CPUs.
-> + */
-> +static inline void hlist_nulls_add_before_rcu(struct hlist_nulls_node *n=
-,
-> +                                             struct hlist_nulls_node *ne=
-xt)
-> +{
-> +       WRITE_ONCE(n->pprev, next->pprev);
-I do not think WRITE_ONCE() is necessary here, @n is private to this cpu,
-and following rcu_assign_pointer() has the needed barrier.
-
-> +       n->next =3D next;
-> +       rcu_assign_pointer(hlist_nulls_pprev_rcu(n), n);
-> +       WRITE_ONCE(next->pprev, &n->next);
-> +}
-> +
->  /* after that hlist_nulls_del will work */
->  static inline void hlist_nulls_add_fake(struct hlist_nulls_node *n)
+> 
+> 
+> 
+> The patch is as follows:
+> diff --git a/drivers/pci/access.c b/drivers/pci/access.c
+> index ba66f55d2524..2bfd8fc1c0f5 100644
+> --- a/drivers/pci/access.c
+> +++ b/drivers/pci/access.c
+> @@ -89,15 +89,25 @@ int pci_bus_read_config(void *priv, unsigned int devfn,
+> int where, u32 size,
+>                         u32 *val)
 >  {
-> diff --git a/include/net/sock.h b/include/net/sock.h
-> index c8a4b283df6f..42aa1919eeee 100644
-> --- a/include/net/sock.h
-> +++ b/include/net/sock.h
-> @@ -885,6 +885,11 @@ static inline void __sk_nulls_add_node_tail_rcu(stru=
-ct sock *sk, struct hlist_nu
->         hlist_nulls_add_tail_rcu(&sk->sk_nulls_node, list);
->  }
->
-> +static inline void __sk_nulls_add_node_before_rcu(struct sock *sk, struc=
-t sock *next)
-> +{
-> +       hlist_nulls_add_before_rcu(&sk->sk_nulls_node, &next->sk_nulls_no=
-de);
-> +}
+>         struct pci_bus *bus = priv;
+> +       int rc;
 > +
->  static inline void sk_nulls_add_node_rcu(struct sock *sk, struct hlist_n=
-ulls_head *list)
->  {
->         sock_hold(sk);
-> diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-> index ceeeec9b7290..80d8bec41a58 100644
-> --- a/net/ipv4/inet_hashtables.c
-> +++ b/net/ipv4/inet_hashtables.c
-> @@ -334,6 +334,26 @@ static inline int compute_score(struct sock *sk, con=
-st struct net *net,
->         return score;
->  }
->
-> +static inline int compute_reuseport_score(struct sock *sk)
-> +{
-> +       int score =3D 0;
+> +       if (size == 1) {
+> +               u8 byte;
 > +
-> +       if (sk->sk_bound_dev_if)
-> +               score +=3D 2;
+> +               rc = pci_bus_read_config_byte(bus, devfn, where, &byte);
+> +               *val = byte;
+> +       } else if (size == 2) {
+> +               u16 word;
 > +
-> +       if (sk->sk_family =3D=3D PF_INET)
-> +               score +=3D 10;
-> +
-> +       /* the priority of sk_incoming_cpu should be lower than sk_bound_=
-dev_if,
-> +        * as it's optional in compute_score(). Thank God, this is the on=
-ly
-
-Please do not bring God here.
-
-> +        * variable condition, which we can't judge now.
-> +        */
-> +       if (READ_ONCE(sk->sk_incoming_cpu))
-> +               score++;
-> +
-> +       return score;
-> +}
-> +
->  /**
->   * inet_lookup_reuseport() - execute reuseport logic on AF_INET socket i=
-f necessary.
->   * @net: network namespace.
-> @@ -739,6 +759,27 @@ static int inet_reuseport_add_sock(struct sock *sk,
->         return reuseport_alloc(sk, inet_rcv_saddr_any(sk));
->  }
->
-> +static void inet_hash_reuseport(struct sock *sk, struct hlist_nulls_head=
- *head)
-> +{
-> +       const struct hlist_nulls_node *node;
-> +       int score, curscore;
-> +       struct sock *sk2;
-> +
-> +       curscore =3D compute_reuseport_score(sk);
-> +       /* lookup the socket to insert before */
-> +       sk_nulls_for_each_rcu(sk2, node, head) {
-> +               if (!sk2->sk_reuseport)
-> +                       continue;
-> +               score =3D compute_reuseport_score(sk2);
-> +               if (score <=3D curscore) {
-> +                       __sk_nulls_add_node_before_rcu(sk, sk2);
-> +                       return;
-> +               }
+> +               rc = pci_bus_read_config_word(bus, devfn, where, &word);
+> +               *val = word;
+> +       } else if (size == 4) {
+> +               rc = pci_bus_read_config_dword(bus, devfn, where, val);
+> +       } else {
+> +               rc = PCIBIOS_BAD_REGISTER_NUMBER;
 > +       }
-> +
-> +       __sk_nulls_add_node_tail_rcu(sk, head);
-> +}
-> +
->  int __inet_hash(struct sock *sk, struct sock *osk)
->  {
->         struct inet_hashinfo *hashinfo =3D tcp_get_hashinfo(sk);
-> @@ -761,11 +802,11 @@ int __inet_hash(struct sock *sk, struct sock *osk)
->                         goto unlock;
->         }
->         sock_set_flag(sk, SOCK_RCU_FREE);
-> -       if (IS_ENABLED(CONFIG_IPV6) && sk->sk_reuseport &&
-> -               sk->sk_family =3D=3D AF_INET6)
-> -               __sk_nulls_add_node_tail_rcu(sk, &ilb2->nulls_head);
+> 
+> -       if (size == 1)
+> -               return pci_bus_read_config_byte(bus, devfn, where, (u8
+> *)val);
+> -       else if (size == 2)
+> -               return pci_bus_read_config_word(bus, devfn, where, (u16
+> *)val);
+> -       else if (size == 4)
+> -               return pci_bus_read_config_dword(bus, devfn, where, val);
 > -       else
-> +       if (!sk->sk_reuseport)
->                 __sk_nulls_add_node_rcu(sk, &ilb2->nulls_head);
-> +       else
-> +               inet_hash_reuseport(sk, &ilb2->nulls_head);
-> +
->         sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
->  unlock:
->         spin_unlock(&ilb2->lock);
-> --
-> 2.50.1
->
+> -               return PCIBIOS_BAD_REGISTER_NUMBER;
+> +       return rc;
+>  }
+> 
+>  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
+> 
+> 
+> 
+> Best regards,
+> Hans
+> 
+> 
+> 
+
+-- 
+மணிவண்ணன் சதாசிவம்
 
