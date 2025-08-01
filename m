@@ -1,252 +1,205 @@
-Return-Path: <linux-kernel+bounces-753600-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753601-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC0A4B18518
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:37:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 814CFB18526
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:43:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51C171882180
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:37:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 36EF8A8382F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:43:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCE51271454;
-	Fri,  1 Aug 2025 15:37:06 +0000 (UTC)
-Received: from mta20.hihonor.com (mta20.hihonor.com [81.70.206.69])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40F0A2727EA;
+	Fri,  1 Aug 2025 15:43:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="pg79AUC6"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2061.outbound.protection.outlook.com [40.107.92.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF87B26CE06
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:37:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=81.70.206.69
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062626; cv=none; b=tGAdMUWCA9qUn+uuHvNt/NUloYoe/FWxjfYu4K46g+bPv3hVx1HB82T82dUNFJXD95/cYM1s6splU8suPSIeBwUcYvlabAXdoXEaLSonrHQlN2jUiwO/0n5lwegRJe/tRVprGUq/kGIXX7Jrbbt4E4XhJdX2L7QXZOwu3sxtm2w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062626; c=relaxed/simple;
-	bh=6uYcKYYXmIgA5WR9TND4uBOl3tk1Lbk52OhKyLXMXfs=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=kwN2797ndkpCAoEAKWvaSuaK6QeoJYILyp+NSwBrY8ZW4YwUfnXxc6EBlwnwwA7FwBIC/2xERTUcLCbZukK6O6pfic/L8ZZh6qdvg5V2JDux6GEOSP8Ns9llsPQrni3+6Ok7qfbUkpGwB1LAwQZ2xIVf6p9sx2KhJA5knn5mO0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com; spf=pass smtp.mailfrom=honor.com; arc=none smtp.client-ip=81.70.206.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=honor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=honor.com
-Received: from w001.hihonor.com (unknown [10.68.25.235])
-	by mta20.hihonor.com (SkyGuard) with ESMTPS id 4btqjv6SPqzYmG8V;
-	Fri,  1 Aug 2025 23:33:55 +0800 (CST)
-Received: from a018.hihonor.com (10.68.17.250) by w001.hihonor.com
- (10.68.25.235) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 1 Aug
- 2025 23:36:54 +0800
-Received: from localhost.localdomain (10.144.20.219) by a018.hihonor.com
- (10.68.17.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Fri, 1 Aug
- 2025 23:36:53 +0800
-From: <zhongjinji@honor.com>
-To: <linux-mm@kvack.org>
-CC: <akpm@linux-foundation.org>, <mhocko@suse.com>, <rientjes@google.com>,
-	<shakeel.butt@linux.dev>, <npache@redhat.com>,
-	<linux-kernel@vger.kernel.org>, <tglx@linutronix.de>, <mingo@redhat.com>,
-	<peterz@infradead.org>, <dvhart@infradead.org>, <dave@stgolabs.net>,
-	<andrealmeid@igalia.com>, <liulu.liu@honor.com>, <feng.han@honor.com>
-Subject: [[PATCH v2] 2/2] futex: Only delay OOM reaper for processes using robust futex
-Date: Fri, 1 Aug 2025 23:36:49 +0800
-Message-ID: <20250801153649.23244-2-zhongjinji@honor.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250801153649.23244-1-zhongjinji@honor.com>
-References: <20250801153649.23244-1-zhongjinji@honor.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D569614B96E
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:43:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.61
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754062983; cv=fail; b=KNbZV2GzoVMWGP3BGpmyONaxau949gqlEz6loOARRTqpphpbeSYe/BwUyS8UhKOlFzEWhUOdo7j7N+anph4/AhF3m8fYlZk87ypFoqJJLdmzmmNjV8NXQ8GPKJxhMr+nGGajX7AZwt3WbaT6xGvJxiBZ2KpLIeabsWwWX/VJ+4s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754062983; c=relaxed/simple;
+	bh=XBt/R2rLvqNgtv3axoZ7bXzVlKNWNmx+2voTXKBaUzc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=q18e/niQatdvbnO2R7/Qu1JDSWrg2PqiCnYkJj7eBK1lAKCOyvLY8bkaFAGM9HOqkSZlcR0gS0P/xdEq5MHbvDv3hHjP6UXq9g5jIUtRYZeZu/l3ou/1cJ31PNlO17cO/BpEV4WjFVxrNWs9vIPdGSFG9GrGvdYsdRhVGepsG6Q=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=pg79AUC6; arc=fail smtp.client-ip=40.107.92.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IgiwKGjUerOO4RybtiStYY9MdIWdUoDQ/6DdYQSXsd5k/8gUlDbQncDdbgVsZSZNiQ5jU0WvRN1KXDlZQugnJf3wJNmTqCjhtk3Of0ScvLXWbEYBjVqHHY1e6xGn+04sTLQmmYstFpLd7yf6+sAHXJ+Vlt5VgJT0UZMNOIIW8ff1V7NtTCnGQGKuTO5NLwtkrT4yFoy9Vss0wiGjEvdRk+c++EX6eyj6YmGTwMjpsMVn/EbBDLHObTml5tOU/jvnclvVFnUYVVVfAyfs2AXpBA5FwQ91G8ehTflOE+eA5BkNN21VlbOvS2cgWYttcMfu0RaaU4kw/a6f5w+YyEbj1Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XBt/R2rLvqNgtv3axoZ7bXzVlKNWNmx+2voTXKBaUzc=;
+ b=GpbQADLxbIFvrXQEf7MMq45c4G5dGvtOZ6Pv4GFjNIdmhcO2ewjvQm6ErRWHhz9CyFWhc7zHFkZyuxtIzKe/rz24UD7bj/XrDwqOsV9yjUA7lZujsaABeucTUq3O4GzPPrYlQtAACyo1O7Hh7uszbdf/uhdaCn5hNcO0dw6hIPHQSN3KvTozy40qyaqk/xqOfaLknXWnsim+L1RX4IiJKIcvJuvufdDHI7il1M1VU/F71vbrMPX0b1PA8+F3YWT35Yxcx+loZemCEeuXDWFOnpwGXaZ534CuyuOjkEJMxcweuC7OJf1bt1zGIX42iC35LdMpe094B6XYIXRHpPaq0g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XBt/R2rLvqNgtv3axoZ7bXzVlKNWNmx+2voTXKBaUzc=;
+ b=pg79AUC6k1VcWxJJHP5hQYg/dK4IZD8T+3qmDOdNy7e5j4fmVGvkFe0NB6o/jzGv0GJMVyyhGzSf0XoZgV9wol0Ye4GwL6N8+Ef7jno9pTUwxdu6EVHDNOw4fcBtalIZo5xQ583LgCK94i/ev0iqfSNIQyRUzWNHaVaxEsYnR8WRzOyNTANj8EPujnSTBxHNCDae5O+3Ks5bbhEGSdogLJp1mCwHgpYlgfhgfGQ6+IKHtag1RoHG7bR0FXEnglOfsEJqNNtqPajjwUb2x9gDvV18xKi0CVQlvxbGtVtE0xZ5G/82BCmdFsL2oHHACt5LVQmdeeQz1gsDMW5gDAqPQA==
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com (2603:10b6:930:31::20)
+ by SN7PR12MB7980.namprd12.prod.outlook.com (2603:10b6:806:341::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Fri, 1 Aug
+ 2025 15:42:58 +0000
+Received: from CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::e420:4e37:166:9c56]) by CY5PR12MB6526.namprd12.prod.outlook.com
+ ([fe80::e420:4e37:166:9c56%6]) with mapi id 15.20.8989.010; Fri, 1 Aug 2025
+ 15:42:58 +0000
+From: Timur Tabi <ttabi@nvidia.com>
+To: "dakr@kernel.org" <dakr@kernel.org>
+CC: "dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"phasta@kernel.org" <phasta@kernel.org>, "nouveau@lists.freedesktop.org"
+	<nouveau@lists.freedesktop.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] drm/nouveau: Remove surplus struct member
+Thread-Topic: [PATCH] drm/nouveau: Remove surplus struct member
+Thread-Index: AQHcArhaZgaV8Ssmsk+22JdzJ0CH7bRN4b4AgAAGKYCAAAiRAA==
+Date: Fri, 1 Aug 2025 15:42:58 +0000
+Message-ID: <39dac3cf6ecef55a0e3dac7a381670491f09b8aa.camel@nvidia.com>
+References: <20250801074531.79237-2-phasta@kernel.org>
+	 <809d2ff29bb87f782f7a813d67d3d604882db320.camel@nvidia.com>
+	 <DBR6S322NP7E.1T932OJTX6A63@kernel.org>
+In-Reply-To: <DBR6S322NP7E.1T932OJTX6A63@kernel.org>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+user-agent: Evolution 3.56.0-1 
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CY5PR12MB6526:EE_|SN7PR12MB7980:EE_
+x-ms-office365-filtering-correlation-id: 07693e0d-b299-4674-5da5-08ddd112175d
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?dytpcTc2UVFvYUoxRWZzcThmdmY2dnJNQktNZ0Q1WXFVNGEwbXJzTFhEbS9O?=
+ =?utf-8?B?NTUrWG9leExiZGs3WFpBN2FEb3dPVFd3bVdHYlhUeno2UHM2M0t4TlAySUhV?=
+ =?utf-8?B?TXNWK2wxdmpHTGRyQURyK2kyTyt2THFTcXN6RWJ6STNLVE1LcTljUDZIK0V6?=
+ =?utf-8?B?R1hBNUlGSSsxSGFKWnIzcm94NCtoSXl4U3hCdUMxQVk4bzRvY2psRi80dnZD?=
+ =?utf-8?B?N2JGVlRyUlVXTDUzbkpOSlA0Zm5iS09MYmtuQ0RQTmJiZEJ5YUJXeDFCTlRR?=
+ =?utf-8?B?cEl5ekxzclVxbzFjUnYxbDhqc21IL0t5djcwTEZhVHEwNURoYTkvZ0xEMWJS?=
+ =?utf-8?B?VTRQRmhzSEpVMkpXbHdocXNvd2NlL0N6ZDZFQTVkWW85MEpFQitBZmhkdzEv?=
+ =?utf-8?B?c21FNTVlWit6eFV1ckZCb2RKMlpEV3lUWkY3MWczaEJzZkp6elNnUnJiQS9t?=
+ =?utf-8?B?TzN3TlRZODNiOC9PTnBvN1hYVkQ3K3ZTVUN5TkNOY2V1SDlCUzUySldhZ29Q?=
+ =?utf-8?B?VjFmNC9vcnRiM3B6UVcyalVTWDg4L2xqWlRuTXgxZkw3QmoyRVFRTGtVdGF1?=
+ =?utf-8?B?SHRxZjJLZVdTMXhEQ2gwYUJDN3dkRGt5SHVrMWVINWo2eHMzZlRaaG9TbU55?=
+ =?utf-8?B?Vkc0dE8vcC9uc3pNNS9xcnBvL0pXdUJ1OGFPaDR5ZVJzU2kwYVVSTHJsWmhp?=
+ =?utf-8?B?MkJBMjFVcFNwSUF2dXpvazZyUHFGMnA2c1djZm5UVktZRU9abmhLeDRBUlRH?=
+ =?utf-8?B?K1dLQlE3S1F4K295THBOVXNKK241dng4azVsaGF2SG9TTVYxWWROSjZzTmZB?=
+ =?utf-8?B?UkVPL0NqMlJtNXFGZFJ6R2ZydWh0S1JQbW9tR291VHUxeXhhc0FVSVRmTGRV?=
+ =?utf-8?B?RHpKSDJhaFBGVlIrSzhPVFcxb0VEeG0rVzZ6c0N5R2txc3hQQTNUMXlZd0d2?=
+ =?utf-8?B?RnZ6WitleG1acFkwbzRXWi9xOXo5b2JmYVNTVFZOVEVFVEtWazJnWW1PMjdx?=
+ =?utf-8?B?OCtsY2FhaHI5cW5TV283c2dmek1oSUZObHdoMWtEclBIeUNualhoU0N0RTQz?=
+ =?utf-8?B?aXFmbXM5RjFja0l5Q2hDYkx1T2dJcjlVejNKaTA2RjJXYVVoSkk5Unljc2dK?=
+ =?utf-8?B?VHRZdXJUZ0RhbHo0UmZiNlB4SVNLMDAvMmRYL3prT0gwODhTbExmcXhRRkZF?=
+ =?utf-8?B?aDRwTUJkU2p1YWd0NElnQ2QvK0RIaDFHYjUwamU0cSsvNHNIYUVsVTZkTTJ5?=
+ =?utf-8?B?enJsaUVqSVdTem1TN0dQWU5OV3VBVFFyVUNiNFU1c2hyWVZZdEEvaExBbERX?=
+ =?utf-8?B?cUE3NFYwQVpobHIzdmdhZjZsSUZKTjFCdEdVb3B2MHFkUzVoRUVKa3cvWkph?=
+ =?utf-8?B?SkxpYTF3a2tFRUJ3ZStiNTRlYXVUR3o4QkwxUFowTnhmSUk0dDhOWUw1Mml3?=
+ =?utf-8?B?aUNWdlRwTWtFQXhDTUxzck5VbmprZDhvMldNVE11WVBsQXNVbEhnamxGS05a?=
+ =?utf-8?B?eTJNRU5LS1ZyMnhHYWpFN01MV28zajVNNVZ3R1RIYVhKMmxqNzlEMUpNamVQ?=
+ =?utf-8?B?UjA0TWdNN1pORmZ1dFhEbytwWVZCQUlxejhlNUNkb3FBdmtseG9Qd2xMZWxo?=
+ =?utf-8?B?ODU5djQzZUF4VVR3V09EUU1GV1JRVjRjV2FsbmZGTkV4QUs4N3o5a3lDUTRW?=
+ =?utf-8?B?K2pleHF3bXkyeVNadThvSG1zcTc5Si9qQUoxYVRmNHNxR3hOdlhoTHRqWElC?=
+ =?utf-8?B?dWtUNnZnQUNJbnNBVjdtV1VmRzQ1SlozYzNzTHhGU2pOcXFjMFdBTllhOTZ4?=
+ =?utf-8?B?MjJ2bjVBUHJLK1A2WmZjVmhmOGhqNlNwL1dvMzJhSUg4ODBTU1oreEJWN2pa?=
+ =?utf-8?B?SmFWK3pWcnlrTWhmYmFSRTNDNTgzQ2hZNmZYWmswRFBBSzVTZ3RnbStnOE1B?=
+ =?utf-8?B?REt3K204N1ZOMHRUT0JtVVVWSmlqVVlqd0pDc05vRmRBT0lqNWwvT1hES1lh?=
+ =?utf-8?B?SFMrRG1sd1JnPT0=?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY5PR12MB6526.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?a1VrYnR3Z2hHKzR6ajZRQnQyTG5oRHhuYlIraTNsdTlHc1Z5R3d1ZkNob25L?=
+ =?utf-8?B?T2MrbExQc1RmeWNKMTZkWmNQZTAyUHBGOEo3YmVpVGc1WjVCNTh5elVJUWk1?=
+ =?utf-8?B?ZnlmcTIvTzRZMExoV0NJRlFValFuZDJueG42U2NGM2NvMXhSRXpPU2NYakYr?=
+ =?utf-8?B?bHhJc3Ntd1dKb285TlhRaTlVTjY5RG5xVCtoK2dqWkQ4S3NqWjRKRit1bjBM?=
+ =?utf-8?B?OWttUlBhRDlvMEV0K2lWUXhleEVHaEV1VWNiUkl3aStjSDJlMXJTNEZOdXhq?=
+ =?utf-8?B?TzQ3VUhBNWgrL3RTNnBnWXBqMHR5andXdmJaZUc2YUpmRWNBMkVnd25hVmxr?=
+ =?utf-8?B?aWMyOUY0SStkb0pnVWxXNXZiOHIzcVhNOFhoL2lSZHFwSnJPT1dEcXB3V2RG?=
+ =?utf-8?B?M1kwRHFtQ2IxSEhrbjJnd2Y4ZjkwdzFnUXFNdEhrWVdGUFhTZXViVGo2K0VE?=
+ =?utf-8?B?WnVvWjlNbW52V2M4NkEreHVqbnJwOTViUStGeTJwdGE0akhwdVZ1L2dvN0Vx?=
+ =?utf-8?B?YkY0bXFjNEV3WitrcXR1WkJlZHdMd0tYMHp1Wm0zVnN4RW05UmdTTmR1MkJq?=
+ =?utf-8?B?V2Vuc0MwTVFpL1NPeEtQZUxJaVBjMWc4WnNBMkUxOWdmWGswVlp3SVBKL3F3?=
+ =?utf-8?B?KzhnQ2pjdWxrVTBvYTV3bFpuSm1EMXJPbFkzUVU4a1RSbHdXSVFyalpiOFZ0?=
+ =?utf-8?B?bjUzSyszQlVudjdlMXQ3R2FZUlkrdndKZ0ZYYWI2cldHL1J0VVdrZzJ3OW1U?=
+ =?utf-8?B?ZUIveUNrak9yRXYvZTFsOEJWeFFkaUMyRWl5a3FVUDVqYkZFNVBKeUpmbU1o?=
+ =?utf-8?B?T0NBRnRWTXZlTy9KTHhIS0VjUG9BeWM3amVHNGRoNjlFcE1tYnltbVZHc3ox?=
+ =?utf-8?B?N1FpbU5VaVRSUmdOTWN0TUdwWnEvNzdTL1FZR0pBOHJjK1FKV05seWJtdHR2?=
+ =?utf-8?B?aURIekEwQ1dJdkNtZ3Y2enNrc01ncG41Y1R2NDRraXJqWS9TbW5kdmZGRDln?=
+ =?utf-8?B?WkJEb1hjMmI1czY0N2JVSUM3VU9jSU1sNE53STZCUG0vTksrMmc5Q0h0eWZE?=
+ =?utf-8?B?SzRJZ3B5aHBoWDBsSUZvbEkvdDBTdUlURUowK2t0SU1YTnZiOVZIZHdVdDhO?=
+ =?utf-8?B?c3Q1L1Vab0pUb0lQMUJCZEVEWmdjS2dNK2Q5cjhKRU5FVXRmdDFHMDdzYmV1?=
+ =?utf-8?B?V2ZrWWJkZG5lRWw5ejRBbEsxNmcxbDdxdEFtZjZnVjlIRzlhSllLaElrdWor?=
+ =?utf-8?B?MXppS29wM3Biei8vV0VQZlNQUUtqOG5EMjVNSVFOdk1tNjZDVlpjR2dGTGpF?=
+ =?utf-8?B?eUJVUWlWcmJFSmg2V0hVMmI0K3YwRnNaWktNMEV3eFNyb2ROdTUzQ3plWmpa?=
+ =?utf-8?B?bnd2cnBUZ3FVS1Rnd0pzR0ZqK0xFR1VZMnNnNVRWWUQxTkpoMHE1VDBJNlNN?=
+ =?utf-8?B?SEl4RlgvL2s0T0RQVkpES252QkRWYXVDUWwzQnhMNHNhcHFmK0JScjl6NWdw?=
+ =?utf-8?B?MDNVRFA5cm1UMGNxY05NcGh5bWlvenkvcnlrZnNWNzJBSFc2UE5ZeDA2Rmlh?=
+ =?utf-8?B?MllsUm9sKzR1N2QyTTNYUUlWT1QyUkM0TkNPd0ZsaDZmbHlSd2tmY01wSXJ3?=
+ =?utf-8?B?VlNtWXRhUkRRcDNZcTNldU5ZVFU0d0NVUkdyYjdLWVNuNHBmL1R4ajN5Z3lm?=
+ =?utf-8?B?TTYycmt3aHNXT2VDLy9HM005NGlwZ1ZTUWtkQm9TQTIyMG5lbUVHanVLNXlD?=
+ =?utf-8?B?Yyt1bXJkMFJvNjYvYmdTdXprWGFRcjVna00xeWNVc2RqM3QvRUZxcmoyWHRk?=
+ =?utf-8?B?RkEyVS9YK2ZDVlBBbUZFcnNGbVB0eXY0dStaTE1MdlJPVE1zaVhNdlN4ZkFp?=
+ =?utf-8?B?ZkZRUkRZRTdML1YzOGs1dUFHSnozM3MrNkVYWVpNdDJhMS9lU0FQUk5rWDJr?=
+ =?utf-8?B?Sm0yU3FmQlRuTGtlV1JkQTBsUEYzcU5HSU4zZmZjK1dydEtXN2ZxaC9XTHZO?=
+ =?utf-8?B?S0NTSGdqSTVGYkRjOU5nZGMrZitoRnNJQTBsekJkOEZJaUhSWDdzZURyb2g3?=
+ =?utf-8?B?aVdQdGZ1REk2QWlaaWdkZ3NKaHY2a0dyclJTQXVmU1FDVEo5bUcybFA3cWpw?=
+ =?utf-8?Q?C2DX/tUiomIgNr2o5aqJBmOil?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <79F68983D174D14CAABAC58BDDBF3B36@namprd12.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: w010.hihonor.com (10.68.28.113) To a018.hihonor.com
- (10.68.17.250)
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CY5PR12MB6526.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 07693e0d-b299-4674-5da5-08ddd112175d
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 15:42:58.7723
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: Q1yw8+ipgVldas7Oc9sPIsDQjlU2AyN7G/FAPRbaiYGAOo1fZ7E7qBDU4YFrLryScsXi1jGdWg2ncUsXriqyyQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7980
 
-From: zhongjinji <zhongjinji@honor.com>
-
-After merging the patch
-https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u,
-the OOM reaper runs less frequently because many processes exit within 2 seconds.
-
-However, when a process is killed, timely handling by the OOM reaper allows
-its memory to be freed faster.
-
-Since relatively few processes use robust futex, delaying the OOM reaper for
-all processes is undesirable, as many killed processes cannot release memory
-more quickly.
-
-This patch modifies the behavior so that only processes using robust futex
-are delayed by the OOM reaper, allowing the OOM reaper to handle more
-processes in a timely manner.
-
-Signed-off-by: zhongjinji <zhongjinji@honor.com>
----
- mm/oom_kill.c | 41 +++++++++++++++++++++++++++++++----------
- 1 file changed, 31 insertions(+), 10 deletions(-)
-
-diff --git a/mm/oom_kill.c b/mm/oom_kill.c
-index 25923cfec9c6..3ecb21a1c870 100644
---- a/mm/oom_kill.c
-+++ b/mm/oom_kill.c
-@@ -30,6 +30,7 @@
- #include <linux/syscalls.h>
- #include <linux/timex.h>
- #include <linux/jiffies.h>
-+#include <linux/futex.h>
- #include <linux/cpuset.h>
- #include <linux/export.h>
- #include <linux/notifier.h>
-@@ -692,7 +693,7 @@ static void wake_oom_reaper(struct timer_list *timer)
-  * before the exit path is able to wake the futex waiters.
-  */
- #define OOM_REAPER_DELAY (2*HZ)
--static void queue_oom_reaper(struct task_struct *tsk)
-+static void queue_oom_reaper(struct task_struct *tsk, bool delay)
- {
- 	/* mm is already queued? */
- 	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
-@@ -700,7 +701,7 @@ static void queue_oom_reaper(struct task_struct *tsk)
- 
- 	get_task_struct(tsk);
- 	timer_setup(&tsk->oom_reaper_timer, wake_oom_reaper, 0);
--	tsk->oom_reaper_timer.expires = jiffies + OOM_REAPER_DELAY;
-+	tsk->oom_reaper_timer.expires = jiffies + (delay ? OOM_REAPER_DELAY : 0);
- 	add_timer(&tsk->oom_reaper_timer);
- }
- 
-@@ -742,7 +743,7 @@ static int __init oom_init(void)
- }
- subsys_initcall(oom_init)
- #else
--static inline void queue_oom_reaper(struct task_struct *tsk)
-+static inline void queue_oom_reaper(struct task_struct *tsk, bool delay)
- {
- }
- #endif /* CONFIG_MMU */
-@@ -871,11 +872,12 @@ static inline bool __task_will_free_mem(struct task_struct *task)
-  * Caller has to make sure that task->mm is stable (hold task_lock or
-  * it operates on the current).
-  */
--static bool task_will_free_mem(struct task_struct *task)
-+static bool task_will_free_mem(struct task_struct *task, bool *delay_reap)
- {
- 	struct mm_struct *mm = task->mm;
- 	struct task_struct *p;
- 	bool ret = true;
-+	bool has_robust = !delay_reap;
- 
- 	/*
- 	 * Skip tasks without mm because it might have passed its exit_mm and
-@@ -888,6 +890,15 @@ static bool task_will_free_mem(struct task_struct *task)
- 	if (!__task_will_free_mem(task))
- 		return false;
- 
-+	/*
-+	 * Check if a process is using robust futexes. If so, delay its handling by the
-+	 * OOM reaper. The reason is that if the owner of a robust futex lock is killed
-+	 * while waiters are still alive, the OOM reaper might free the robust futex
-+	 * resources before futex_cleanup runs, causing the waiters to wait indefinitely.
-+	 */
-+	if (!has_robust)
-+		has_robust = check_robust_futex(task);
-+
- 	/*
- 	 * This task has already been drained by the oom reaper so there are
- 	 * only small chances it will free some more
-@@ -912,8 +923,12 @@ static bool task_will_free_mem(struct task_struct *task)
- 		ret = __task_will_free_mem(p);
- 		if (!ret)
- 			break;
-+		if (!has_robust)
-+			has_robust = __check_robust_futex(p);
- 	}
- 	rcu_read_unlock();
-+	if (delay_reap)
-+		*delay_reap = has_robust;
- 
- 	return ret;
- }
-@@ -923,6 +938,7 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 	struct task_struct *p;
- 	struct mm_struct *mm;
- 	bool can_oom_reap = true;
-+	bool delay_reap;
- 
- 	p = find_lock_task_mm(victim);
- 	if (!p) {
-@@ -950,6 +966,7 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 	 * reserves from the user space under its control.
- 	 */
- 	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
-+	delay_reap = check_robust_futex(victim);
- 	mark_oom_victim(victim);
- 	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID:%u pgtables:%lukB oom_score_adj:%hd\n",
- 		message, task_pid_nr(victim), victim->comm, K(mm->total_vm),
-@@ -990,11 +1007,13 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
- 		if (unlikely(p->flags & PF_KTHREAD))
- 			continue;
- 		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_TGID);
-+		if (!delay_reap)
-+			delay_reap = __check_robust_futex(p);
- 	}
- 	rcu_read_unlock();
- 
- 	if (can_oom_reap)
--		queue_oom_reaper(victim);
-+		queue_oom_reaper(victim, delay_reap);
- 
- 	mmdrop(mm);
- 	put_task_struct(victim);
-@@ -1020,6 +1039,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	struct mem_cgroup *oom_group;
- 	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
- 					      DEFAULT_RATELIMIT_BURST);
-+	bool delay_reap = false;
- 
- 	/*
- 	 * If the task is already exiting, don't alarm the sysadmin or kill
-@@ -1027,9 +1047,9 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
- 	 * so it can die quickly
- 	 */
- 	task_lock(victim);
--	if (task_will_free_mem(victim)) {
-+	if (task_will_free_mem(victim, &delay_reap)) {
- 		mark_oom_victim(victim);
--		queue_oom_reaper(victim);
-+		queue_oom_reaper(victim, delay_reap);
- 		task_unlock(victim);
- 		put_task_struct(victim);
- 		return;
-@@ -1112,6 +1132,7 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
- bool out_of_memory(struct oom_control *oc)
- {
- 	unsigned long freed = 0;
-+	bool delay_reap = false;
- 
- 	if (oom_killer_disabled)
- 		return false;
-@@ -1128,9 +1149,9 @@ bool out_of_memory(struct oom_control *oc)
- 	 * select it.  The goal is to allow it to allocate so that it may
- 	 * quickly exit and free its memory.
- 	 */
--	if (task_will_free_mem(current)) {
-+	if (task_will_free_mem(current, &delay_reap)) {
- 		mark_oom_victim(current);
--		queue_oom_reaper(current);
-+		queue_oom_reaper(current, delay_reap);
- 		return true;
- 	}
- 
-@@ -1231,7 +1252,7 @@ SYSCALL_DEFINE2(process_mrelease, int, pidfd, unsigned int, flags)
- 	mm = p->mm;
- 	mmgrab(mm);
- 
--	if (task_will_free_mem(p))
-+	if (task_will_free_mem(p, NULL))
- 		reap = true;
- 	else {
- 		/* Error only if the work has not been done already */
--- 
-2.17.1
-
+T24gRnJpLCAyMDI1LTA4LTAxIGF0IDE3OjEyICswMjAwLCBEYW5pbG8gS3J1bW1yaWNoIHdyb3Rl
+Og0KPiBPbiBGcmkgQXVnIDEsIDIwMjUgYXQgNDo1MCBQTSBDRVNULCBUaW11ciBUYWJpIHdyb3Rl
+Og0KPiA+IERvZXMgbWVhbiB0aGF0IHRoZSBUT0RPIGhhcyBiZWVuIGRvbmUsIG9yIHRoYXQgc29t
+ZW9uZSBjb21wbGV0ZWx5IGZvcmdvdCBhbmQgbm93IHlvdXIgcGF0Y2gNCj4gPiBpcw0KPiA+IHJl
+bW92ZSBhbGwgcmVtaW5kZXJzPw0KPiA+IA0KPiA+IElmIGl0J3MgdGhlIGZvcm1hdCwgbWF5YmUg
+YWRkIGEgZml4ZXM6IHRhZyBmb3IgdGhlIGNvbW1pdCB0aGF0IHJlc29sdmVkIHRoZSBUT0RPPw0K
+PiANCj4gVGhlIFRPRE8gd2FzIGludHJvZHVjZWQgYnkgY29tbWl0IGViYjk0NWE5NGJiYSAoImRy
+bS9ub3V2ZWF1OiBwb3J0IGFsbCBlbmdpbmVzDQo+IHRvIG5ldyBlbmdpbmUgbW9kdWxlIGZvcm1h
+dCIpIGZyb20gMjAxMi4NCj4gDQo+IEl0J3MgYSBiaXQgaGFyZCB0byBrbm93IHdoYXQgZXhhY3Rs
+eSByZXNvbHZlcyAidGhpcyB3aWxsIGJlIHJld29ya2VkIGluIHRoZSBuZWFyDQo+IGZ1dHVyZSIg
+Zm9yIGEgY29tbWl0IHdpdGggdGhlIGZvbGxvd2luZyBkaWZmc3RhdC4gOikNCj4gDQo+IAkxNDYg
+ZmlsZXMgY2hhbmdlZCwgMTQyMTkgaW5zZXJ0aW9ucygrKSwgMTEwOTkgZGVsZXRpb25zKC0pDQo+
+IA0KPiBUaGUgbGFzdCByZW1haW5zIG9mIGFjY2VsX2RvbmUgd2VyZSByZW1vdmVkIHdpdGggY29t
+bWl0DQo+IDRlMmVjMjUwMGJmYyAoImRybS9ub3V2ZWF1OiBSZW1vdmUgZmlsZSBub3V2ZWF1X2Zi
+Y29uLmMiKSwgYnV0IEkgZG9uJ3QgdGhpbmsgd2UNCj4gc2hvdWxkIG1lbnRpb24gdGhpcyBjb21t
+aXQsIGdpdmVuIHRoYXQgYXBwYXJlbnRseSBubyBvbmUga25vd3Mgd2hhdCB3YXMgaW50ZW5kZWQN
+Cj4gdG8gYmUgcmV3b3JrZWQgaGVyZSBbMV0uDQo+IA0KPiBXZSBjb3VsZCBtZW50aW9uIHRoZSBh
+Ym92ZSBpbiB0aGUgY29tbWl0IG1lc3NhZ2UsIHRob3VnaCBpdCB3aWxsIGFsc28gYmUNCj4gYXZh
+aWxhYmxlIHRocm91Z2ggdGhlIGxvcmUgbGluayBpbiB0aGUgY29tbWl0IG1lc3NhZ2Ugb25jZSB0
+aGUgcGF0Y2ggaXMgYXBwbGllZC4NCg0KSXQncyB5b3VyIGNhbGwsIEknbSBqdXN0IGxlZXJ5IG9m
+IHJlbW92aW5nIGEgVE9ETyB3aXRob3V0IGFueSBtZW50aW9uIG9mIHdoZXRoZXIgaXQncyBhY3R1
+YWxseQ0KZG9uZS4NCg0KPiBOSVQ6IFBsZWFzZSBkb24ndCB0b3AgcG9zdCwgdXNlIGludGVybGVh
+dmVkIHN0eWxlIFsyXSBpbnN0ZWFkLg0KDQpTb3JyeSwgY29mZmVlIGRpZG4ndCBraWNrIGluIHll
+dC4NCg==
 
