@@ -1,134 +1,246 @@
-Return-Path: <linux-kernel+bounces-753744-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B2B7B18740
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:17:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B95B18742
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:18:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CBB085670AF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:17:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C585649D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47EEC2797AF;
-	Fri,  1 Aug 2025 18:17:02 +0000 (UTC)
-Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801BB2874FA;
+	Fri,  1 Aug 2025 18:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tYqCwjCG"
+Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A01318DB01;
-	Fri,  1 Aug 2025 18:16:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E03188CC9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:18:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754072221; cv=none; b=q3yp9IQvPYJQ12v08Oi/KmV8+xT24IpcGl2Kxehhevr8ZyFnQx3xGaImdS5V4QVEBGIylfV7mGxokOTTqCv5ROg4OTI/gBft7kmtm42WpKuAJHrOfHm9tRB/PdgA21nkjlYOQVDSMJhpRNyfMV4xNsWXHo3EqGOuPyiujj21st4=
+	t=1754072286; cv=none; b=CaefzPd4UmA2zu/kYYomBHIZrssKY5o/pXXhkttyGyP0e47iq7f4Eh7ND9IFW5rM3qfg3b604OOTVn/A8ey3yOEcP3VCRwj26O6yJIt+kwIatWITmyJJU3qV7phvOW53DRdnIJ8NeNhC2gVEd/orsxdB83ilcU59FTR101mG790=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754072221; c=relaxed/simple;
-	bh=GL/E2AB1e06foJAPp+gV5GFNw+zaw1Z1wD2y+Y0eSzs=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=BQ02lOEFpIrRVyw0z6bQIgvUUJdqzxCD9EGqR+rlrmIJswi25dYQJfYiUTBdv9+qgw2DIAHhhLKj8vEVPK+hKaENuLyp09NrnHbKvBYSu4OF/Bo/HQl0tXCYO9r2pz/B8cp3dwWeno39+osCiesuwL8Ir8eOd1nYyTDMtIbOWyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
-Received: from [10.223.11.83] (unknown [82.141.252.181])
-	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id E87D1432F6;
-	Fri,  1 Aug 2025 18:16:49 +0000 (UTC)
-Authentication-Results: Plesk;
-        spf=pass (sender IP is 82.141.252.181) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[10.223.11.83]
-Received-SPF: pass (Plesk: connection is authenticated)
-Message-ID: <6ce83e5c-de34-4ef2-b9f4-2ad15e645969@arnaud-lcm.com>
-Date: Fri, 1 Aug 2025 19:16:47 +0100
+	s=arc-20240116; t=1754072286; c=relaxed/simple;
+	bh=YL2B6gEXrJOvRYYui6bt3ppoA05sAipcf7SBVn38r3s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=W9woRrbTXN05KSy1qw1dscSWH9VB9CKKwBwBQuXHdNc8pnhG6l0cJ1jiN1AKQVCQZBFxCZWLI3w6k0Ny65yJH1YKRhXkiIOXiMeg88eP04jO6nEkwc5LPOVVwEqz7ilruuh4dVFVvG0fBGitgKcSa6s/umpm+Rc+p9w4p4VENi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tYqCwjCG; arc=none smtp.client-ip=209.85.208.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b5931037eso19669031fa.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:18:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754072283; x=1754677083; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HLBVWalAvcyfl5wmHOrCf7XYp2lIoIUMZMHifMzN82A=;
+        b=tYqCwjCGT+7qjGYk1pjwQMHxd/57ASSoS0Flz0aVyxTqADN7jIWyBZ1CXzWt2NZFCS
+         VgwWJXGutWigkYLvA734hhKAnD7Tw0wKk0sxw1aI6K7q6QUet2LYKdzVTSQApojdIXAL
+         QR9wRScumVpU0Aj2EOIIQrzSfNOd9eCoKDIG1bc3N1h/tExg4dZBntT7s3JJq85fC5Ss
+         OOgEDK3eCV1cjFomGiZ7jZ8m+IG+t+B7JamypUoH3r9YlSMUSfgNChRif7BSwjSzcfHJ
+         5H632KIfrm274Fmy4k4SEMyIhLC68geZN4+tSLN/VDPGF95jUAeTxtLPKyX7eZMU9zTs
+         Hfkw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754072283; x=1754677083;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HLBVWalAvcyfl5wmHOrCf7XYp2lIoIUMZMHifMzN82A=;
+        b=SUI4jbky98skwiGMUMjH2aGlfF/U6sUha19e6aiAecOhgK4gbd6F6go6DOgSql2t66
+         8yzAGxQfbLt3qEiljP0UEbGS04QQjbApPXKK1gvrlNosQy08J4ZDsAOoD5N1q4enMaZw
+         bn3Dl204aelFHywNrLa79SmG2+NbSR6W2DgL7n3rPxjCC/TGf5E+2iIIl8eEsRKB0dZq
+         /IeOvMNaz6ByPbvM/XBgHb8pd6Z+IjmHXD3hrulaSJqwW/3bGy7QTCN7V1rvWTpw8y6z
+         QU/acBK6SQK+5FU14yQduekYM2oS3BElPqLks8k6MHQ0TXTw0gW11hTFGyWwCagcCxC7
+         V10g==
+X-Forwarded-Encrypted: i=1; AJvYcCXJXU6s/R1q3Q8nLT3/am2wurs7BFYTWx68oEUNB2qqJ7I9dW2ePKGB6s5Oa/t1K5ugFsqDqkgzPo3twfg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YysiayUqn9pzOyAgq2YoVrPqw59O7yQy77huCF2jn3GfWghDMWu
+	j/pBfQ0EStUaJE1iCXT3IX1z8U3IHPVrMO5989o5Eea3KhLeeAIYzIXZlFPufA6ae6D8SGeEf/P
+	2beXoxuBli+mQn14kvc1S290Rxu4MvEknnShIifH9
+X-Gm-Gg: ASbGncu4vA7F9IQuZu37HJFoMiIpQQ06UW9GfFsjvoceoXH2FHjWPejjswKIpldBF5x
+	v+hdFbHrI/pzhqS1YRVq0DjycUx9Q5t+sCRWmtPH7vBkvHXMthUaqVNCNi1LCWJSyAELWb6q/Fh
+	mGC7v0j2qglH4Rq7BK0P/2i751Zo+gMctJHZw68dpN7fK/D0ckVgynAidg1z6CsG6ppT54T1i23
+	jWdblI=
+X-Google-Smtp-Source: AGHT+IGEfUaghABA5DNvg5gyW3d2855oZuYkBZv3LcxmE/vVGwOdccz+q+H6M6wVnet9p88MTN4WT+jz1gEyz4s2QSY=
+X-Received: by 2002:a2e:b531:0:b0:332:133b:1513 with SMTP id
+ 38308e7fff4ca-33256796e05mr766051fa.30.1754072282670; Fri, 01 Aug 2025
+ 11:18:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] bpf: fix stackmap overflow check in
- __bpf_get_stackid()
-From: "Lecomte, Arnaud" <contact@arnaud-lcm.com>
-To: Yonghong Song <yonghong.song@linux.dev>, song@kernel.org,
- jolsa@kernel.org, ast@kernel.org, daniel@iogearbox.net, andrii@kernel.org,
- martin.lau@linux.dev, eddyz87@gmail.com, john.fastabend@gmail.com,
- kpsingh@kernel.org, sdf@fomichev.me, haoluo@google.com
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org,
- syzkaller-bugs@googlegroups.com,
- syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
-References: <20250729165622.13794-1-contact@arnaud-lcm.com>
- <2b69e397-a457-4dba-86f1-47b7fe87ef79@linux.dev>
- <5124b615-3a71-4a44-a497-eea3b5964fda@arnaud-lcm.com>
-Content-Language: en-US
-In-Reply-To: <5124b615-3a71-4a44-a497-eea3b5964fda@arnaud-lcm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-PPP-Message-ID: <175407221104.18149.4380539792465254642@Plesk>
-X-PPP-Vhost: arnaud-lcm.com
+References: <20250707224720.4016504-1-jthoughton@google.com>
+ <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
+ <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com>
+ <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
+ <aIft7sUk_w8rV2DB@google.com> <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
+In-Reply-To: <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
+From: David Matlack <dmatlack@google.com>
+Date: Fri, 1 Aug 2025 11:17:34 -0700
+X-Gm-Features: Ac12FXyG-livDFOfmfOOHNKjIHeLx2MQ0V7JxyxWoRrLh7_sfVekRt_nK9TcnqU
+Message-ID: <CALzav=eQWJ-97T7YPt2ikFJ+hPqUSqQ+U_spq8M4vMaQWfasWQ@mail.gmail.com>
+Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
+ MMU read lock
+To: James Houghton <jthoughton@google.com>
+Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
+	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Well, it turns out it is less straightforward than it looked like to 
-detect the memory corruption
-  without KASAN. I am currently in holidays for the next 3 days so I've 
-limited access to a
-computer. I should be able to sort this out on monday.
+On Mon, Jul 28, 2025 at 2:49=E2=80=AFPM James Houghton <jthoughton@google.c=
+om> wrote:
+>
+> On Mon, Jul 28, 2025 at 2:38=E2=80=AFPM Sean Christopherson <seanjc@googl=
+e.com> wrote:
+> >
+> > On Mon, Jul 28, 2025, David Matlack wrote:
+> > > On Mon, Jul 28, 2025 at 11:08=E2=80=AFAM James Houghton <jthoughton@g=
+oogle.com> wrote:
+> > > > On Wed, Jul 23, 2025 at 1:35=E2=80=AFPM Sean Christopherson <seanjc=
+@google.com> wrote:
+> > > > > > @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(st=
+ruct kvm *kvm,
+> > > > > >       rcu_read_lock();
+> > > > > >
+> > > > > >       for ( ; to_zap; --to_zap) {
+> > > > > > -             if (list_empty(nx_huge_pages))
+> > > > > > +#ifdef CONFIG_X86_64
+> > > > >
+> > > > > These #ifdefs still make me sad, but I also still think they're t=
+he least awful
+> > > > > solution.  And hopefully we will jettison 32-bit sooner than late=
+r :-)
+> > > >
+> > > > Yeah I couldn't come up with anything better. :(
+> > >
+> > > Could we just move the definition of tdp_mmu_pages_lock outside of
+> > > CONFIG_X86_64? The only downside I can think of is slightly larger kv=
+m
+> > > structs for 32-bit builds.
+> >
+> > Hmm, I was going to say "no, because we'd also need to do spin_lock_ini=
+t()", but
+> > obviously spin_(un)lock() will only ever be invoked for 64-bit kernels.=
+  I still
+> > don't love the idea of making tdp_mmu_pages_lock visible outside of CON=
+FIG_X86_64,
+> > it feels like we're just asking to introduce (likely benign) bugs.
+> >
+> > Ugh, and I just noticed this as well:
+> >
+> >   #ifndef CONFIG_X86_64
+> >   #define KVM_TDP_MMU -1
+> >   #endif
+> >
+> > Rather than expose kvm->arch.tdp_mmu_pages_lock, what about using a sin=
+gle #ifdef
+> > section to bury both is_tdp_mmu and a local kvm->arch.tdp_mmu_pages_loc=
+k pointer?
+>
+> SGTM.
+>
+> >
+> > Alternatively, we could do:
+> >
+> >         const bool is_tdp_mmu =3D IS_ENABLED(CONFIG_X86_64) && mmu_type=
+ !=3D KVM_SHADOW_MMU;
+>
+> I tried something like this before and it didn't work; my compiler
+> still complained. Maybe I didn't do it quite right...
+>
+> >
+> > to avoid referencing KVM_TDP_MMU, but that's quite ugly.  Overall, I th=
+ink the
+> > below strikes the best balance between polluting the code with #ifdefs,=
+ and
+> > generating robust code.
+> >
+> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
+_host.h
+> > index 52bf6a886bfd..c038d7cd187d 100644
+> > --- a/arch/x86/include/asm/kvm_host.h
+> > +++ b/arch/x86/include/asm/kvm_host.h
+> > @@ -1372,10 +1372,6 @@ enum kvm_mmu_type {
+> >         KVM_NR_MMU_TYPES,
+> >  };
+> >
+> > -#ifndef CONFIG_X86_64
+> > -#define KVM_TDP_MMU -1
+> > -#endif
+> > -
+> >  struct kvm_arch {
+> >         unsigned long n_used_mmu_pages;
+> >         unsigned long n_requested_mmu_pages;
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index a6a1fb42b2d1..e2bde6a5e346 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled(str=
+uct kvm *kvm,
+> >  static void kvm_recover_nx_huge_pages(struct kvm *kvm,
+> >                                       const enum kvm_mmu_type mmu_type)
+> >  {
+> > +#ifdef CONFIG_X86_64
+> > +       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
+> > +       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages_loc=
+k;
+> > +#else
+> > +       const bool is_tdp_mmu =3D false;
+> > +       spinlock_t *tdp_mmu_pages_lock =3D NULL;
+> > +#endif
+> >         unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type);
+> > -       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
+> >         struct list_head *nx_huge_pages;
+> >         struct kvm_mmu_page *sp;
+> >         LIST_HEAD(invalid_list);
+> > @@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struct kv=
+m *kvm,
+> >         rcu_read_lock();
+> >
+> >         for ( ; to_zap; --to_zap) {
+> > -#ifdef CONFIG_X86_64
+> >                 if (is_tdp_mmu)
+> > -                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
+> > -#endif
+> > +                       spin_lock(tdp_mmu_pages_lock);
+> > +
+> >                 if (list_empty(nx_huge_pages)) {
+> > -#ifdef CONFIG_X86_64
+> >                         if (is_tdp_mmu)
+> > -                               spin_unlock(&kvm->arch.tdp_mmu_pages_lo=
+ck);
+> > -#endif
+> > +                               spin_unlock(tdp_mmu_pages_lock);
+> >                         break;
+> >                 }
+> >
+> > @@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct kvm=
+ *kvm,
+> >
+> >                 unaccount_nx_huge_page(kvm, sp);
+> >
+> > -#ifdef CONFIG_X86_64
+> >                 if (is_tdp_mmu)
+> > -                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+> > -#endif
+> > +                       spin_unlock(tdp_mmu_pages_lock);
+> >
+> >                 /*
+> >                  * Do not attempt to recover any NX Huge Pages that are=
+ being
+> > --
+>
+> LGTM! Thanks Sean.
 
-Thanks,
-Arnaud
+Is the compiler not smart enough to optimize out
+kvm->arch.tdp_mmu_pages_lock? (To avoid needing the extra local
+variable?) I thought there was some other KVM code that relied on
+similar optimizations but I would have to go dig them up to remember.
 
-On 30/07/2025 08:10, Arnaud Lecomte wrote:
-> On 29/07/2025 23:45, Yonghong Song wrote:
->>
->>
->> On 7/29/25 9:56 AM, Arnaud Lecomte wrote:
->>> Syzkaller reported a KASAN slab-out-of-bounds write in 
->>> __bpf_get_stackid()
->>> when copying stack trace data. The issue occurs when the perf trace
->>>   contains more stack entries than the stack map bucket can hold,
->>>   leading to an out-of-bounds write in the bucket's data array.
->>> For build_id mode, we use sizeof(struct bpf_stack_build_id)
->>>   to determine capacity, and for normal mode we use sizeof(u64).
->>>
->>> Reported-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=c9b724fbb41cf2538b7b
->>> Tested-by: syzbot+c9b724fbb41cf2538b7b@syzkaller.appspotmail.com
->>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
->>
->> Could you add a selftest? This way folks can easily find out what is
->> the problem and why this fix solves the issue correctly.
->>
-> Sure, will be done after work
-> Thanks,
-> Arnaud
->>> ---
->>> Changes in v2:
->>>   - Use utilty stack_map_data_size to compute map stack map size
->>> ---
->>>   kernel/bpf/stackmap.c | 8 +++++++-
->>>   1 file changed, 7 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/kernel/bpf/stackmap.c b/kernel/bpf/stackmap.c
->>> index 3615c06b7dfa..6f225d477f07 100644
->>> --- a/kernel/bpf/stackmap.c
->>> +++ b/kernel/bpf/stackmap.c
->>> @@ -230,7 +230,7 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>>       struct bpf_stack_map *smap = container_of(map, struct 
->>> bpf_stack_map, map);
->>>       struct stack_map_bucket *bucket, *new_bucket, *old_bucket;
->>>       u32 skip = flags & BPF_F_SKIP_FIELD_MASK;
->>> -    u32 hash, id, trace_nr, trace_len, i;
->>> +    u32 hash, id, trace_nr, trace_len, i, max_depth;
->>>       bool user = flags & BPF_F_USER_STACK;
->>>       u64 *ips;
->>>       bool hash_matches;
->>> @@ -241,6 +241,12 @@ static long __bpf_get_stackid(struct bpf_map *map,
->>>         trace_nr = trace->nr - skip;
->>>       trace_len = trace_nr * sizeof(u64);
->>> +
->>> +    /* Clamp the trace to max allowed depth */
->>> +    max_depth = smap->map.value_size / stack_map_data_size(map);
->>> +    if (trace_nr > max_depth)
->>> +        trace_nr = max_depth;
->>> +
->>>       ips = trace->ip + skip;
->>>       hash = jhash2((u32 *)ips, trace_len / sizeof(u32), 0);
->>>       id = hash & (smap->n_buckets - 1);
->>
->>
+Either way, this LGTM!
 
