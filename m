@@ -1,191 +1,118 @@
-Return-Path: <linux-kernel+bounces-753617-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753619-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D9F7B18555
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:58:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7243CB18559
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:59:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56A41C81E37
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB8681C8314A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:59:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDF6287501;
-	Fri,  1 Aug 2025 15:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7BF28750B;
+	Fri,  1 Aug 2025 15:59:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuX8EzgW"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gMpdt0JO"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5B828727C;
-	Fri,  1 Aug 2025 15:57:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEE072874ED
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063878; cv=none; b=n1RqGmPllPyrwoJV5Ph4rhWQdDtRS2AXVQvkUeirEgwRj640NYcCyzr7TRDp0VQBDBWLXqkk9DBcrOH5KCjrKN6INRW/u+XT2smkX441KCp9p8wIMuoMkPotqu0eMvEYu2ujxlBfeN9000SIVc2ULlMVeHREORTl8XaQ3l9lcZw=
+	t=1754063958; cv=none; b=Kj40ZVAw5YY7gSmyNk/LgB4Tt1WkLFy+RGGle9QoQ32dUjCjT5m2pzXorZhHZx5IKtNQQXZJnvePKHIb6+PJKF7Nc2vdZmhPB+9BiffFw775wEBbO+crjgyzHV4Psn/wXv12Cby+77ER6I3EP0ZjfbNq01BXW2H9sSXeyVvt4XU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063878; c=relaxed/simple;
-	bh=9hup+ts6H389VBPmzqObyPrifVRhy4TatN5AbeUY2iw=;
+	s=arc-20240116; t=1754063958; c=relaxed/simple;
+	bh=OWS+qszPxynxUdX7fOxWHDslTPoHW3w9/GGcefClUyo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IBLl/SKRfZjAUEjw8fy8ktTKIhjwnEB+p+lyfgqJ5LeF1FOuvwPwu6fu5EGgdv/ZeJ+pxsJxn0d2xs4sTi3tW98h4cXGaLTVSQqF0IpiU3/q48w1I1jAmMOsgsaoCWF3KjNzlZoSBn/4bGnpfrqcTezaUxgLboACIv6vJbt5MG0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuX8EzgW; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55b79ea50f8so1878545e87.0;
-        Fri, 01 Aug 2025 08:57:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754063875; x=1754668675; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/VvudzAIJzhH76ohIestnUnL2H/t2R/HphAlC3uM+pw=;
-        b=SuX8EzgWXzyPUXMW5wECgns5tyvszDD8aklEGVrkEH62wy2FvpVZRygDI5EMGLljLa
-         fe6r/elWHtFhch8UpqPHxE5KDHNg6d7ZifqCV4klGuxIMARHlgFxWO5YnkGuwBO7V2w4
-         YUL/ieJSI0pEKV/ZlNihu2prkqjtl7oUn4MrBhySqvakO3ofVwrB3K4TC87cKub4RJjR
-         Inha1wFVo+jFjWtlqSIkpWTLwxmJV3aDxyQhc1qbdy29/fNlSARHcSJ1ThWrFO/gFv1x
-         S5bAEEpEKSSnN2pDlG4jaZssjmslPp9kYM+2HCIJrZjJ9Yl6ygEXVXd8jhpdM3Uao3QR
-         lMbA==
+	 To:Cc:Content-Type; b=j+erfT09DRBN9VL1aHYLjBdu10H2mBvMtFFpS7TCGlXgAashLBT/T7azmh9YNriewQ7iC+8YjCXGQOpE/6dys/XSBZfgPyb6WFihYpMlIvXSxEJu0E4053n+WRRLq+ieJLIHqTSbnIx0n/MZGqN8B3Ok/zl+y7r1apZS857LJ1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gMpdt0JO; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754063955;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OWS+qszPxynxUdX7fOxWHDslTPoHW3w9/GGcefClUyo=;
+	b=gMpdt0JOGbJ6/ljXnWogy388rEGLqcyMV6ulXXDm/b7zBSamJCvQU70NaB3MqK+N9voXw0
+	4ciy+PgROB5oXU+HBrriNOHgGX139arxzXLfjYeZSfDaBkHf2vGu/a6DA+TE27rKNzV4hB
+	c1NuQ4LK6zH0gXP/T0e8/mPeUHal/ME=
+Received: from mail-ed1-f70.google.com (mail-ed1-f70.google.com
+ [209.85.208.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-537-ybQ3Ii_qNC6w0j1w4FB99g-1; Fri, 01 Aug 2025 11:59:14 -0400
+X-MC-Unique: ybQ3Ii_qNC6w0j1w4FB99g-1
+X-Mimecast-MFC-AGG-ID: ybQ3Ii_qNC6w0j1w4FB99g_1754063952
+Received: by mail-ed1-f70.google.com with SMTP id 4fb4d7f45d1cf-615ad109dadso1528836a12.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:59:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754063875; x=1754668675;
+        d=1e100.net; s=20230601; t=1754063952; x=1754668752;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/VvudzAIJzhH76ohIestnUnL2H/t2R/HphAlC3uM+pw=;
-        b=wBfVaOpFhY1I//TQ8k3D4TvmzBDK/rbmwCKoYyx/TeQp+p8B+QOlZRAFPNyOCvjaRX
-         WX3B1i/yTeny5vLlmcNIhpid8w4IyBHVopHio6TY3ZPsWWuf/ZGrnPFOL5W8M7SikIQe
-         f37neSIfk6IJi9eONC8acbKLy1NAWlRZHxGf9oMIMw4CKvT58dYvIolMxTsACGnHQLaX
-         OQ6x/fqnSsaD/t6/ixXJFBIC0JSbGnmBRKIRtdRsYfIdP7T+t2LW9NfzhNA5wbMnaU4t
-         bJkdko1V0nyAw9ql9sLP/uT/iJftqEvCe1wCjDt1WoF6pyqRnk0noxm25s7gXQfKjH8s
-         qFUQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUHAjYEANkzdp7HgkrKdHIacUq2VyJpla1G1smj2gUV2+7HKjxUqcO9TpM2P42TXcumx8c8eyozSm5PIcqCHGc=@vger.kernel.org, AJvYcCVwnW7Uz7JEVUvyILOSJVNBwkm0mkpO8YfUU8O1KSUyuCli8m2x4tF8SG7RXWmFcJqDj6APIaU00al6uTzr@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDlUiAS80i10F1bybEaSgvpzqyYhw7tfMMOvarGWkZqTD1RKK0
-	TTJlZKsNo9KVY8T0P5inUvPGdp4COf3jiB7mIJ+P7oFqi9RAoArj+g0KAD7GBdBbJZaBLH+oRpZ
-	nYf33PDiQvG8Yv7ADJCTaLO/u/n6fhfQ=
-X-Gm-Gg: ASbGncvTmLbCiCJSUT4wOmD+jMGyYEmmlyqZ8Pr5dYh2dpKrbap97v1HM50CmRmC3rb
-	0OeUw4v9Ss+IdTJgiQNLNjBGO3/+RGVyMhxWDW9X2JyAsZL55kpRTr9sl6k3rAtauxIhKPSqtSO
-	x1Izo2boSD/zojXXVMBmRK/nX6sIZOVF+8yVPLlsQSlXh0Ml3bpnL8iz4TPghvch+0ieExXTYGq
-	49AWg==
-X-Google-Smtp-Source: AGHT+IE6Yt6iDgb+tRl+UfS4re9d01zMUis3JNGKoNWNHgJ48wF55I3TK9egBf1KUWQxvH8FLZaX3zJj97wX6V7FQxA=
-X-Received: by 2002:a2e:a884:0:b0:32b:b0f8:fe75 with SMTP id
- 38308e7fff4ca-33224bd6915mr41280771fa.29.1754063874417; Fri, 01 Aug 2025
- 08:57:54 -0700 (PDT)
+        bh=OWS+qszPxynxUdX7fOxWHDslTPoHW3w9/GGcefClUyo=;
+        b=lwv6JO3L9izQ9hGSplK3ohy0QfQiQaTA1v434yFs9PJP6wolQNY+63C2Vi/MV9MUZG
+         YsSdaTnioY0EO2Z8n042vean4vCOcJ4mIKfr4i5o5y7873w9eyR46bpYxNf02q4WAO6k
+         hKXm4hbxDvfA1k1POvqjNVRD+/jT8S9XV5iRfcmH1hERXB0gvOGmmR9+/sarok3rasXd
+         CfFqxf9y6xHfLlPBFLd0z0rUTi7alurF0v0+v3y0dUX5q2JYGkvEw646iQyt5CcNZ4EG
+         Mprldb/qrweCmtqx3/y0lEufatPTcdaGk3hZLKUT1JXi9pS45IFgpazUVUKqzKEOxm1k
+         r0tg==
+X-Forwarded-Encrypted: i=1; AJvYcCWyfYgONzy6Ijz6tiy5pZ/gCngzErIF0t0Ak/AqHPwvHoKO8YlMHePC5uPMQBUiwPXLDyXz8Y0s0Y55lgs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyxQVtKVrKdxIKT12Y7U7X9cv5JspNoXWf6Mj3h6Wzv96oFj3ZK
+	PI/wnPEpcMtsOmeoQ3bVvz2dBB7oXpkO7zEOfKnZqOquNrrJ+mVxsMoukAkpI2zAnO9J3rSJ1RZ
+	mWigXUKx9stN4Ed+tQy3nJUHx/WmAb4Cuu/oApBUNL8uQF2o07UnYufiPA2ymNIk7r7vggWlDRl
+	v6aEtD2z/5RIiIZQH4w+tLk3dnpive3LO7W+YHdKV/
+X-Gm-Gg: ASbGncsdI9m7WhDXJApX4P6yw+tb/44yoKQuXodcMa6wglYjLLqc6wSlcSY8RywqnC2
+	ijAJQVoK9CisL9gunWvQZUMrdpbdBawmKQlR55EbCpfOQWMeI3m53V6z6eO/c9hmoN+V9Id4p5K
+	ASEPFu5PPj18biiPVXrJtXID4gaTbE40hreB1+hbJv+CTODCHVQ9o=
+X-Received: by 2002:a17:907:72cd:b0:ae3:eed1:d018 with SMTP id a640c23a62f3a-af93ffce9e9mr31675166b.9.1754063952278;
+        Fri, 01 Aug 2025 08:59:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7gDLgqDRY4tShzR8qch1OHQdTeFZwbZn86L1VGXm8xMl9d9FjpVxU37mgy2WPfkCsyOBoNeq6AkntpSnGTks=
+X-Received: by 2002:a17:907:72cd:b0:ae3:eed1:d018 with SMTP id
+ a640c23a62f3a-af93ffce9e9mr31673166b.9.1754063951899; Fri, 01 Aug 2025
+ 08:59:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
-In-Reply-To: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Fri, 1 Aug 2025 11:57:41 -0400
-X-Gm-Features: Ac12FXwRReFV8vyfVeX0pajTzXu9yIhVrZ-Mx5kkUr_Y5BachubzJ6BgD5OB7rs
-Message-ID: <CABBYNZJu3izq6ZhNRKjMz-mW1CcP2VAE7Xs5oq=NupnVD7aayg@mail.gmail.com>
-Subject: Re: [PATCH v3] Bluetooth: iso: fix socket matching ambiguity between
- BIS and CIS
-To: yang.li@amlogic.com
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250801071622.63dc9b78@gandalf.local.home> <CAADnVQLky+R-tfkGaDo-R_-tJ8E3bmWz8Ug7etgTKsCpfXTSKw@mail.gmail.com>
+ <20250801110705.373c69b4@gandalf.local.home> <CAADnVQLFLSwrnHKZUtUpwQ1tst71AfYCcbbtK2haxF=R9StpSw@mail.gmail.com>
+ <20250801111919.13c0620e@gandalf.local.home> <CAADnVQJnTqXLNT9YWWkpLqjxw7MGMrq_CTT7Dhb__R0uO2-COA@mail.gmail.com>
+ <CAP4=nvSNeviiHg89L3dB9pGzi4Obf_s=bWJ8v89Q-fsJbuqymQ@mail.gmail.com> <20250801115649.0b31f582@gandalf.local.home>
+In-Reply-To: <20250801115649.0b31f582@gandalf.local.home>
+From: Tomas Glozar <tglozar@redhat.com>
+Date: Fri, 1 Aug 2025 17:59:00 +0200
+X-Gm-Features: Ac12FXwcKBqQk5Q39rPaZjcF8K0IpRgeY7lVuPr9-grtekwZqZCa6oQn2sVe4Us
+Message-ID: <CAP4=nvQEtaMY9t81ZzyWFtDzy+jVfQubotW7ypg-Kt9aoA-hbQ@mail.gmail.com>
+Subject: Re: [PATCH] btf: Simplify BTF logic with use of __free(btf_put)
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, LKML <linux-kernel@vger.kernel.org>, 
+	Linux Trace Kernel <linux-trace-kernel@vger.kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
+	Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa <jolsa@kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
+	KP Singh <kpsingh@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Yang,
-
-On Thu, Jul 31, 2025 at 4:00=E2=80=AFAM Yang Li via B4 Relay
-<devnull+yang.li.amlogic.com@kernel.org> wrote:
+p=C3=A1 1. 8. 2025 v 17:56 odes=C3=ADlatel Steven Rostedt <rostedt@goodmis.=
+org> napsal:
 >
-> From: Yang Li <yang.li@amlogic.com>
->
-> When both BIS and CIS links exist, their sockets are in
-> the BT_LISTEN state.
-
-We probably need to introduce tests to iso-test that setup both then
-to avoid reintroducing the problem.
-
-> dump sock:
->   sk 000000001977ef51 state 6
->   src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
->   sk 0000000031d28700 state 7
->   src 10:a5:62:31:05:cf dst00:00:00:00:00:00
->   sk 00000000613af00e state 4   # listen sock of bis
->   src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
->   sk 000000001710468c state 9
->   src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
->   sk 000000005d97dfde state 4   #listen sock of cis
->   src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
->
-> To locate the CIS socket correctly, check both the BT_LISTEN
-> state and whether dst addr is BDADDR_ANY.
->
-> Link: https://github.com/bluez/bluez/issues/1224
->
-> Signed-off-by: Yang Li <yang.li@amlogic.com>
-> ---
->  net/bluetooth/iso.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
->
-> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
-> index eaffd25570e3..9a4dea03af8c 100644
-> --- a/net/bluetooth/iso.c
-> +++ b/net/bluetooth/iso.c
-> @@ -1919,6 +1919,11 @@ static bool iso_match_pa_sync_flag(struct sock *sk=
-, void *data)
->         return test_bit(BT_SK_PA_SYNC, &iso_pi(sk)->flags);
->  }
->
-> +static bool iso_match_dst(struct sock *sk, void *data)
-> +{
-> +       return !bacmp(&iso_pi(sk)->dst, (bdaddr_t *)data);
-> +}
-> +
->  static void iso_conn_ready(struct iso_conn *conn)
->  {
->         struct sock *parent =3D NULL;
-> @@ -1981,7 +1986,7 @@ static void iso_conn_ready(struct iso_conn *conn)
->
->                 if (!parent)
->                         parent =3D iso_get_sock(&hcon->src, BDADDR_ANY,
-> -                                             BT_LISTEN, NULL, NULL);
-> +                                             BT_LISTEN, iso_match_dst, B=
-DADDR_ANY);
->
->                 if (!parent)
->                         return;
-> @@ -2220,7 +2225,7 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t =
-*bdaddr, __u8 *flags)
->                 }
->         } else {
->                 sk =3D iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
-> -                                 BT_LISTEN, NULL, NULL);
-> +                                 BT_LISTEN, iso_match_dst, BDADDR_ANY);
-
-Perhaps we should add helper function that wrap the iso_get_sock (e.g.
-iso_get_sock_cis and iso_get_sock_bis) to make it clearer what is the
-expected socket type, also if the hcon has been set perhaps that
-should be matched as well with CIS_LINK/BIS_LINK, or perhaps we
-introduce a socket type to differentiate since the use of the address
-can make the logic a little confusing when the socket types are mixed
-together.
-
-Now looking at the source code perhaps we can have a separate list for
-cis and bis sockets instead of global iso_sk_list (e.g. cis_sk_list
-and bis_sk_list), that way we don't need a type and there is no risk
-of confusing the sockets since they would never be in the same list.
-
->         }
->
->  done:
->
-> ---
-> base-commit: 9c533991fe15be60ad9f9a7629c25dbc5b09788d
-> change-id: 20250731-bis_cis_coexist-717a442d5c42
->
-> Best regards,
-> --
-> Yang Li <yang.li@amlogic.com>
->
+> But regardless. This will just be a difference of opinion, and I respect
+> that Alexei doesn't want to use it in his code.
 >
 
+Of course.
 
---=20
-Luiz Augusto von Dentz
+I just wanted to point out this is (in my opinion not nearly) as bad
+as what C++ is doing.
+
+Tomas
+
 
