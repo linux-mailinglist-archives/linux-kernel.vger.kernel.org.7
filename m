@@ -1,264 +1,160 @@
-Return-Path: <linux-kernel+bounces-753712-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E54ABB186CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12601B186C8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:38:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 19DD1566948
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:39:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8AB001C21517
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:39:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A7C28CF68;
-	Fri,  1 Aug 2025 17:38:42 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E0E27A931;
+	Fri,  1 Aug 2025 17:38:40 +0000 (UTC)
+Received: from mail-il1-f206.google.com (mail-il1-f206.google.com [209.85.166.206])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 560D027934E
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E42272E63
 	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.206
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754069922; cv=none; b=NAMsfbAnmdqbbuI5GN+HOXSExKqZwigel3BZEiPBNLvHvLi4liESlXAXsBWgWJiyJ+VReJcQmIfxYAabq7Cd3SX1R7lqcaGbf/qgNpNRde2hvdt/d/IJDvdk3KPELydmh9VDv7exqfssgVf8o2KRGD3VW9UWkht4vtukLIBA88s=
+	t=1754069920; cv=none; b=sOy1A/1fJiyJr3E1Z73nmN1H9n2/W5/+kpmxxT3HH+KqS1HdD9qHu70PrTf2hE78EwOcuhQTQBnLbonZ0INtPUz8KyGztosIAuXdwAFt9jLahjNzE12LotbPsHkvugU7HEM+M80P+rWJTzdCu/m7rNEQHPgtAKzun4qO00LeTws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754069922; c=relaxed/simple;
-	bh=2W1rcozhKyT/eJtvyet4sQjLkvad9Gnv1dzDOUDYB3I=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=bYWTcPPACVEMk5IiJPBIANk7Em5YM6vACwRfau0t2MSujaf2cv5GUQHT80YxPOKcBDnzBKec8f7JNfxQM6BqrBYJivepYGHAB3aLcxbvb8xRCxixlhVq/R/DTFSijkoZuDrN97jyYVa0qBniZt5dEu52ArQ/StqirtEgKQE3Btg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+	s=arc-20240116; t=1754069920; c=relaxed/simple;
+	bh=XlYxRB6g94pbyBNMU+NHqn+SfVBTiWFB4blcO11nBS0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=MvDgmyx5ZP54XXGw9l/C1uzi8w8+hIq6eRwTMAqnXZLYHTjBwl8Hfy9VTZEwUk4Ayyd0PrU3TrS88Sn7brsmKHnF9utqD4wTmfMufK2ITNiqAxJ2cvWHZ3lWIGZZ/6yxsdkO/1M/ZlutJU4Dy6z2O0UD0w598ngURi39ZUduDwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.206
 Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e3f0287933so36211835ab.0
+Received: by mail-il1-f206.google.com with SMTP id e9e14a558f8ab-3e3e69b2951so20988105ab.0
         for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:38:38 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754069917; x=1754674717;
+        d=1e100.net; s=20230601; t=1754069918; x=1754674718;
         h=to:from:subject:message-id:date:mime-version:x-gm-message-state
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=MZkksdtlo6oEnxgG9PkLGlnNp4AsmDgbjYiK41mFU1w=;
-        b=xSuJJxHaF+QowksFMkXDP5ibR3ecaOwCI7/ZQ/kcTay/FcLdzxtvWHagYwjfhCl5aT
-         JmzWwPm2ARVNl9ZkBucut6co3aswqR8xWMzdcPaQT8hxJfJmtm3qHqDSZAWxEs+wwmT0
-         uDKSdnxxElaNPMtTrV1BuZ4ClRy6HrLVTCjaxntInYRep90jx3wtMVNne78gD/33Fsoi
-         Simg9AJ/gvIylAHp2jTZHfD6ndYGTnhb9GFSR/R4cOuoQJPfeXdRnR2mEHThsryLPF2Q
-         B2m175IbGKCxW3d1iZIv+sQGHr0KiVJ3b/jFQxULcfnnrcM0vbVsurQifPopEDuWHnX3
-         +qvA==
-X-Forwarded-Encrypted: i=1; AJvYcCWwvnbdQySwhPnc/Qn+62HXu6yzLAETpAP5Kj6wlpYfqkkQ8A82ymIEer+hoI4u+OBIk9YzmBAJ3KSucT0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxX7+8i9//Hs9+gDWTBjF7v4n8IZlgeX8ceudeQQxKkz1ak+sTA
-	xJhCB74M+gqWDyvGbgnoKRQ77kLbqZx1lHhbTK3Zpf7/6z+IjrmANZVlOrPqrUofq0hSqA7L5za
-	GYwHPlmSz+BoUBxHEECFWw2vzg5UdYCc3szEzk7EWmOL+Mw68vTGGB68w7uk=
-X-Google-Smtp-Source: AGHT+IGpqjvcRrrrv3bLRpoLAqttMGP2kYB4MOE6sykpWaQJ3fKQ1BGnbInS6T/T3Vmhh+O+Wyvtt+DLx0ZYugmkulmf3qgwkn6f
+        bh=jC6+HaDPuCHZJYlINPrCsO+9NjDfze3yT/eVSA8l9YA=;
+        b=ZkbRjDUYHOatlphdVjuYBMR+dt1hgiLcx2oO9mMkdEzUkdLN0vK5VmSB4bo63jmJAi
+         3leo/0+7evJDvyOp3ipXB+JzDz52uI+h+YtaDyKWEyz8D1j4oKD3+38lNYrf7Q0l0oPN
+         pehMBf/pG1LNhy+QO/GV/p879A2M3rkQq99LmPh+AmuoVgTR7CH9aXg0aJpj3ROV+nfS
+         9Gtii6lRHErUUiK27iEIbY3NOr7fRKJ/xyrQWOIO1j48aKZIG+RGoS6rf2AnPybbinDO
+         2taJUM3RWD0/wEqVkVrNxiEe8UwDj6ddSfVnioYaxC8UcuttR59VD0pgebhJouIZCdjh
+         4PTg==
+X-Forwarded-Encrypted: i=1; AJvYcCUFE6iIq4urZtiU8L5PsDoH52dxf1Q9HtzHkqdeIcXnVO4iqxCG10bSo5lXjATfW3aQXezP6SuOE30d1Vg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHxf6fvLmRUa/2SnjQY11MJGV4tkUVANejpqLPHg7u+jxmMr8x
+	OxG00KZsTfQpnlYwSIuJVc2q71Aguc3JrQwEnsec0q7EpUO9zV7+VXxm4KGjrv4w8lODbCk6Dyh
+	+qe1TcFUvdhF1Wx06//0XIOqmpRrDXbOCfaVczmwRUkuXCN+d7lLxBQ8ljo0=
+X-Google-Smtp-Source: AGHT+IEgrz79XLf17kxz+VSuZ/DrVwHlAKwGFOv3ARCEw+DM/XZ9vs9zQlH1y9gTYLROUBFW4w95QdOgEB3lvUsw5NVxl/nCNqdT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2601:b0:3e3:d968:bb49 with SMTP id
- e9e14a558f8ab-3e41610a4d7mr7565625ab.1.1754069917442; Fri, 01 Aug 2025
+X-Received: by 2002:a05:6e02:2166:b0:3e3:dcfa:eadb with SMTP id
+ e9e14a558f8ab-3e4057ce907mr111020085ab.1.1754069917770; Fri, 01 Aug 2025
  10:38:37 -0700 (PDT)
 Date: Fri, 01 Aug 2025 10:38:37 -0700
 X-Google-Appengine-App-Id: s~syzkaller
 X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688cfb9d.050a0220.f0410.012e.GAE@google.com>
-Subject: [syzbot] [hfs?] INFO: task hung in hfsplus_find_init (3)
-From: syzbot <syzbot+6f9eae7d87e0afb22029@syzkaller.appspotmail.com>
-To: frank.li@vivo.com, glaubitz@physik.fu-berlin.de, 
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	slava@dubeyko.com, syzkaller-bugs@googlegroups.com
+Message-ID: <688cfb9d.050a0220.f0410.012f.GAE@google.com>
+Subject: [syzbot] [mm?] [ntfs3?] kernel BUG in set_page_refcounted
+From: syzbot <syzbot+2a0d2af125c01db73079@syzkaller.appspotmail.com>
+To: akpm@linux-foundation.org, almaz.alexandrovich@paragon-software.com, 
+	apopple@nvidia.com, byungchul@sk.com, david@redhat.com, gourry@gourry.net, 
+	joshua.hahnjy@gmail.com, linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	matthew.brost@intel.com, ntfs3@lists.linux.dev, rakie.kim@sk.com, 
+	syzkaller-bugs@googlegroups.com, ying.huang@linux.alibaba.com, ziy@nvidia.com
 Content-Type: text/plain; charset="UTF-8"
 
 Hello,
 
 syzbot found the following issue on:
 
-HEAD commit:    f2d282e1dfb3 Merge tag 'bitmap-for-6.17' of https://github..
+HEAD commit:    260f6f4fda93 Merge tag 'drm-next-2025-07-30' of https://gi..
 git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=144faf82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=8b51b56c81c0761d
-dashboard link: https://syzkaller.appspot.com/bug?extid=6f9eae7d87e0afb22029
+console output: https://syzkaller.appspot.com/x/log.txt?x=15c31834580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=bb7581d3fb1bb0d7
+dashboard link: https://syzkaller.appspot.com/bug?extid=2a0d2af125c01db73079
 compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=124faf82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=100642a2580000
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=149062a2580000
 
 Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/70f09e088d5c/disk-f2d282e1.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9baa408863b9/vmlinux-f2d282e1.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/36063ac42323/bzImage-f2d282e1.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/7fea0d017f73/mount_0.gz
+disk image: https://storage.googleapis.com/syzbot-assets/1fce1d4d56ce/disk-260f6f4f.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/01688cdba884/vmlinux-260f6f4f.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/eba9b2f77e6a/bzImage-260f6f4f.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/95ad5335ac08/mount_0.gz
 
 IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+6f9eae7d87e0afb22029@syzkaller.appspotmail.com
+Reported-by: syzbot+2a0d2af125c01db73079@syzkaller.appspotmail.com
 
-INFO: task kworker/u8:3:49 blocked for more than 143 seconds.
-      Not tainted 6.16.0-syzkaller-10355-gf2d282e1dfb3 #0
-"echo 0 > /proc/sys/kernel/hung_task_timeout_secs" disables this message.
-task:kworker/u8:3    state:D
- stack:21000 pid:49    tgid:49    ppid:2      task_flags:0x4208160 flags:0x00004000
-Workqueue: writeback wb_workfn
- (flush-7:0)
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1798/0x4cc0 kernel/sched/core.c:6961
- __schedule_loop kernel/sched/core.c:7043 [inline]
- schedule+0x165/0x360 kernel/sched/core.c:7058
- schedule_preempt_disabled+0x13/0x30 kernel/sched/core.c:7115
- __mutex_lock_common kernel/locking/mutex.c:676 [inline]
- __mutex_lock+0x7e3/0x1340 kernel/locking/mutex.c:760
- hfsplus_find_init+0x15a/0x1d0 fs/hfsplus/bfind.c:28
- hfsplus_cat_write_inode+0x1e6/0x7a0 fs/hfsplus/inode.c:592
- write_inode fs/fs-writeback.c:1525 [inline]
- __writeback_single_inode+0x6f1/0xff0 fs/fs-writeback.c:1745
- writeback_sb_inodes+0x6c7/0x1010 fs/fs-writeback.c:1976
- __writeback_inodes_wb+0x111/0x240 fs/fs-writeback.c:2047
- wb_writeback+0x44f/0xaf0 fs/fs-writeback.c:2158
- wb_check_old_data_flush fs/fs-writeback.c:2262 [inline]
- wb_do_writeback fs/fs-writeback.c:2315 [inline]
- wb_workfn+0xaef/0xef0 fs/fs-writeback.c:2343
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xae1/0x17b0 kernel/workqueue.c:3319
- worker_thread+0x8a0/0xda0 kernel/workqueue.c:3400
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-Showing all locks held in the system:
-1 lock held by khungtaskd/31:
- #0: ffffffff8e139e60 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #0: ffffffff8e139e60 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #0: ffffffff8e139e60 (rcu_read_lock){....}-{1:3}, at: debug_show_all_locks+0x2e/0x180 kernel/locking/lockdep.c:6775
-4 locks held by kworker/u8:3/49:
- #0: ffff8881412ee948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #0: ffff8881412ee948 ((wq_completion)writeback){+.+.}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
- #1: ffffc90000b97bc0 (
-(work_completion)(&(&wb->dwork)->work)
-){+.+.}-{0:0}
-, at: process_one_work kernel/workqueue.c:3212 [inline]
-, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
- #2: ffff8880332b00e0
- (
-&type->s_umount_key
-#42
-){.+.+}-{4:4}
-, at: super_trylock_shared+0x20/0xf0 fs/super.c:563
- #3: 
-ffff8880792320b0
- (
-&tree->tree_lock){+.+.}-{4:4}, at: hfsplus_find_init+0x15a/0x1d0 fs/hfsplus/bfind.c:28
-5 locks held by kworker/u8:4/61:
- #0: 
-ffff8880b8739f58
- (
-&rq->__lock
-){-.-.}-{2:2}
-, at: raw_spin_rq_lock_nested+0x2a/0x140 kernel/sched/core.c:636
- #1: 
-ffff8880b8724008
- (
-per_cpu_ptr(&psi_seq, cpu)){-.-.}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
-per_cpu_ptr(&psi_seq, cpu)){-.-.}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
- #2: ffffffff8dfd2f50 (cpu_hotplug_lock){++++}-{0:0}, at: static_key_disable+0x12/0x20 kernel/jump_label.c:247
- #3: ffffffff99c6aca8 (
-&obj_hash[i].lock
-){-.-.}-{2:2}
-, at: debug_object_activate+0xbb/0x420 lib/debugobjects.c:818
- #4: 
-ffffffff8dfe6308
- (
-text_mutex
-){+.+.}-{4:4}
-, at: arch_jump_label_transform_apply+0x17/0x30 arch/x86/kernel/jump_label.c:145
-2 locks held by getty/5605:
- #0: 
-ffff88803031a0a0
- (
-&tty->ldisc_sem
-){++++}-{0:0}
-, at: tty_ldisc_ref_wait+0x25/0x70 drivers/tty/tty_ldisc.c:243
- #1: 
-ffffc900036c32f0
- (
-&ldata->atomic_read_lock){+.+.}-{4:4}, at: n_tty_read+0x43e/0x1400 drivers/tty/n_tty.c:2222
-4 locks held by syz-executor384/5873:
-
-=============================================
-
-NMI backtrace for cpu 0
-CPU: 0 UID: 0 PID: 31 Comm: khungtaskd Not tainted 6.16.0-syzkaller-10355-gf2d282e1dfb3 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- nmi_cpu_backtrace+0x39e/0x3d0 lib/nmi_backtrace.c:113
- nmi_trigger_cpumask_backtrace+0x17a/0x300 lib/nmi_backtrace.c:62
- trigger_all_cpu_backtrace include/linux/nmi.h:160 [inline]
- check_hung_uninterruptible_tasks kernel/hung_task.c:307 [inline]
- watchdog+0xf93/0xfe0 kernel/hung_task.c:470
- kthread+0x711/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3fc/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-Sending NMI from CPU 0 to CPUs 1:
-NMI backtrace for cpu 1
-CPU: 1 UID: 0 PID: 5873 Comm: syz-executor384 Not tainted 6.16.0-syzkaller-10355-gf2d282e1dfb3 #0 PREEMPT(full) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-RIP: 0010:kasan_check_range+0xd/0x2c0 mm/kasan/generic.c:188
-Code: 0f 0b cc cc cc cc cc cc cc cc cc cc cc 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 55 41 57 41 56 41 55 41 54 <53> b0 01 48 85 f6 0f 84 ba 01 00 00 4c 8d 04 37 49 39 f8 0f 82 82
-RSP: 0018:ffffc9000414eb30 EFLAGS: 00000056
-RAX: 00000000ffffff01 RBX: ffffffff99dbe400 RCX: ffffffff819df6c1
-RDX: 0000000000000001 RSI: 0000000000000004 RDI: ffffc9000414eba0
-RBP: ffffc9000414ec10 R08: ffffffff99dbe403 R09: 1ffffffff33b7c80
-R10: dffffc0000000000 R11: fffffbfff33b7c81 R12: ffffffff99dbe410
-R13: ffffffff99dbe408 R14: 1ffffffff33b7c82 R15: 1ffffffff33b7c81
-FS:  0000555574d53380(0000) GS:ffff888125d5c000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffcbbc35f19 CR3: 00000000714b1000 CR4: 0000000000350ef0
-Call Trace:
- <TASK>
- instrument_atomic_read_write include/linux/instrumented.h:96 [inline]
- atomic_try_cmpxchg_acquire include/linux/atomic/atomic-instrumented.h:1301 [inline]
- queued_spin_lock include/asm-generic/qspinlock.h:111 [inline]
- do_raw_spin_lock+0x121/0x290 kernel/locking/spinlock_debug.c:116
- __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:111 [inline]
- _raw_spin_lock_irqsave+0xb3/0xf0 kernel/locking/spinlock.c:162
- uart_port_lock_irqsave include/linux/serial_core.h:717 [inline]
- serial8250_console_write+0x17e/0x1ba0 drivers/tty/serial/8250/8250_port.c:3355
- console_emit_next_record kernel/printk/printk.c:3138 [inline]
- console_flush_all+0x728/0xc40 kernel/printk/printk.c:3226
- __console_flush_and_unlock kernel/printk/printk.c:3285 [inline]
- console_unlock+0xc4/0x270 kernel/printk/printk.c:3325
- vprintk_emit+0x5b7/0x7a0 kernel/printk/printk.c:2450
- _printk+0xcf/0x120 kernel/printk/printk.c:2475
- hfsplus_bnode_read_u16 fs/hfsplus/bnode.c:101 [inline]
- hfsplus_bnode_dump+0x322/0x450 fs/hfsplus/bnode.c:403
- hfsplus_brec_remove+0x480/0x550 fs/hfsplus/brec.c:229
- __hfsplus_delete_attr+0x1d4/0x360 fs/hfsplus/attributes.c:299
- hfsplus_delete_attr+0x231/0x2d0 fs/hfsplus/attributes.c:345
- hfsplus_removexattr fs/hfsplus/xattr.c:796 [inline]
- __hfsplus_setxattr+0x768/0x1fe0 fs/hfsplus/xattr.c:279
- hfsplus_setxattr+0x11e/0x180 fs/hfsplus/xattr.c:436
- hfsplus_user_setxattr+0x40/0x60 fs/hfsplus/xattr_user.c:30
- __vfs_removexattr+0x431/0x470 fs/xattr.c:518
- __vfs_removexattr_locked+0x1ed/0x230 fs/xattr.c:553
- vfs_removexattr+0x80/0x1b0 fs/xattr.c:575
- removexattr fs/xattr.c:1023 [inline]
- filename_removexattr fs/xattr.c:1052 [inline]
- path_removexattrat+0x35d/0x690 fs/xattr.c:1088
- __do_sys_removexattr fs/xattr.c:1100 [inline]
- __se_sys_removexattr fs/xattr.c:1097 [inline]
- __x64_sys_removexattr+0x62/0x70 fs/xattr.c:1097
+ do_group_exit+0x21c/0x2d0 kernel/exit.c:1105
+ __do_sys_exit_group kernel/exit.c:1116 [inline]
+ __se_sys_exit_group kernel/exit.c:1114 [inline]
+ __x64_sys_exit_group+0x3f/0x40 kernel/exit.c:1114
+ x64_sys_call+0x21f7/0x2200 arch/x86/include/generated/asm/syscalls_64.h:232
  do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
  do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7fd613ef9bd9
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fff6590fb28 EFLAGS: 00000246 ORIG_RAX: 00000000000000c5
-RAX: ffffffffffffffda RBX: 0000200000000340 RCX: 00007fd613ef9bd9
-RDX: ffffffffffffffb8 RSI: 0000200000000080 RDI: 0000200000000040
-RBP: 0000200000000380 R08: 0000555574d544c0 R09: 0000555574d544c0
-R10: 0000000000000000 R11: 0000000000000246 R12: 0030656c69662f2e
-R13: 00007fff6590fd78 R14: 431bde82d7b634db R15: 0000200000000390
+------------[ cut here ]------------
+kernel BUG at mm/internal.h:491!
+Oops: invalid opcode: 0000 [#1] SMP KASAN PTI
+CPU: 1 UID: 0 PID: 7687 Comm: syz.0.738 Tainted: G        W           6.16.0-syzkaller-08685-g260f6f4fda93 #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+RIP: 0010:set_page_refcounted+0x142/0x1e0 mm/internal.h:491
+Code: 48 89 d8 48 25 ff 0f 00 00 74 21 e8 18 4e a4 ff e9 2c ff ff ff e8 0e 4e a4 ff 48 89 df 48 c7 c6 a0 47 17 8b e8 4f 05 e9 ff 90 <0f> 0b 48 89 df be 08 00 00 00 e8 3f 27 03 00 48 89 d8 48 c1 e8 03
+RSP: 0018:ffffc900065f7670 EFLAGS: 00010246
+RAX: 0ebb44fe4874cf00 RBX: ffffea00011839ff RCX: 0ebb44fe4874cf00
+RDX: 0000000000000001 RSI: ffffffff8d1dbecc RDI: ffff88802f581dc0
+RBP: 00000000000000ff R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed1017124863 R12: 1ffffd4000230746
+R13: 0000000000000000 R14: ffffea0001183a33 R15: dffffc0000000000
+FS:  00007f4368d266c0(0000) GS:ffff888126c1e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007feecfc73000 CR3: 0000000034c06000 CR4: 00000000003526f0
+Call Trace:
+ <TASK>
+ alloc_pages_noprof+0xe4/0x1e0 mm/mempolicy.c:2513
+ folio_alloc_noprof+0x22/0xc0 mm/mempolicy.c:2520
+ filemap_alloc_folio_noprof+0xdf/0x510 mm/filemap.c:1007
+ do_read_cache_folio+0x1c0/0x560 mm/filemap.c:3885
+ do_read_cache_page mm/filemap.c:3989 [inline]
+ read_cache_page+0x5d/0x170 mm/filemap.c:3998
+ read_mapping_page include/linux/pagemap.h:993 [inline]
+ inode_read_data+0xa7/0x480 fs/ntfs3/inode.c:1054
+ ntfs_fill_super+0x39c8/0x40b0 fs/ntfs3/super.c:1533
+ get_tree_bdev_flags+0x40e/0x4d0 fs/super.c:1692
+ vfs_get_tree+0x8f/0x2b0 fs/super.c:1815
+ do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
+ do_mount fs/namespace.c:4133 [inline]
+ __do_sys_mount fs/namespace.c:4344 [inline]
+ __se_sys_mount+0x317/0x410 fs/namespace.c:4321
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4369ac030a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f4368d25e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f4368d25ef0 RCX: 00007f4369ac030a
+RDX: 0000200000000080 RSI: 000020000001f740 RDI: 00007f4368d25eb0
+RBP: 0000200000000080 R08: 00007f4368d25ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 000020000001f740
+R13: 00007f4368d25eb0 R14: 000000000001f771 R15: 0000200000000100
  </TASK>
-INFO: NMI handler (nmi_cpu_backtrace_handler) took too long to run: 3.116 msecs
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:set_page_refcounted+0x142/0x1e0 mm/internal.h:491
+Code: 48 89 d8 48 25 ff 0f 00 00 74 21 e8 18 4e a4 ff e9 2c ff ff ff e8 0e 4e a4 ff 48 89 df 48 c7 c6 a0 47 17 8b e8 4f 05 e9 ff 90 <0f> 0b 48 89 df be 08 00 00 00 e8 3f 27 03 00 48 89 d8 48 c1 e8 03
+RSP: 0018:ffffc900065f7670 EFLAGS: 00010246
+RAX: 0ebb44fe4874cf00 RBX: ffffea00011839ff RCX: 0ebb44fe4874cf00
+RDX: 0000000000000001 RSI: ffffffff8d1dbecc RDI: ffff88802f581dc0
+RBP: 00000000000000ff R08: 0000000000000000 R09: 0000000000000000
+R10: dffffc0000000000 R11: ffffed1017124863 R12: 1ffffd4000230746
+R13: 0000000000000000 R14: ffffea0001183a33 R15: dffffc0000000000
+FS:  00007f4368d266c0(0000) GS:ffff888126c1e000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007feecfc73000 CR3: 0000000034c06000 CR4: 00000000003526f0
 
 
 ---
