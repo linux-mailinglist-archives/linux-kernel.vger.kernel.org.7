@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-753315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753316-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB895B18176
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:05:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C21EB18179
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:05:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4847B17BC2F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:05:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D3A01C81A3F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12FD123D2B0;
-	Fri,  1 Aug 2025 12:05:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5F7E23D2B0;
+	Fri,  1 Aug 2025 12:05:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b="Xyp3H310"
-Received: from mx.nixnet.email (mx.nixnet.email [5.161.67.119])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX2QbAFz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D45B2222CB;
-	Fri,  1 Aug 2025 12:05:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=5.161.67.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C27F2EB10;
+	Fri,  1 Aug 2025 12:05:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754049904; cv=none; b=X9AtSIQU3iwnDeivwSepATGPrwZPIpYRmBBKVqb9j/TWcvBsvUyhLuHk2lJ2tdnBxRL2KQJjnG+0ILRxFSV/reSnAtTsDaXP8PSal+mo+2i48BEUnXN4x848Pvdm6o6+HhtjvL2M3zzzxDy/RC8D/K/yffUw1GLn40ESkjff6vA=
+	t=1754049939; cv=none; b=rNqBA9yU/2dw4lnofHVGIcatKD2418MD2881GEiIdtmpJ/gW/A6rm1cminUOjsFwacF8AZC6n3gAWD2ICZYm26QWFrT07pKHqoK+lvARzSdFMS0MPtDZ+2eKknvRTen+ALcJoSJzgNAetUSL6M2s0bY9as7lTq6p0B0KWNBliIw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754049904; c=relaxed/simple;
-	bh=CJroq+C4YzlYLxQYxU2/Qhbe761CIfjoXbImkliiNaA=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=CVJZhcwYC3Nf5U1JCxuz1XQ7TmnDDvrVauQixh71dCu+qAmvgRnt7eHq1TFcN5pxRzHTDGVs4OwhF8LFMGBieCYYwdJr29lVwGylASsB9RViqnRynOyhQ5+MDWoXPMNgAoI96veayFyJa99ObH92RnGylUl7LV65jgHLwrxUYYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life; spf=pass smtp.mailfrom=pwned.life; dkim=pass (1024-bit key) header.d=pwned.life header.i=@pwned.life header.b=Xyp3H310; arc=none smtp.client-ip=5.161.67.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=pwned.life
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pwned.life
-Received: from [127.0.0.1] (localhost [127.0.0.1])
-	by mx.nixnet.email (Postfix) with ESMTPSA id 58A137D326;
-	Fri,  1 Aug 2025 14:04:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pwned.life; s=202002021149;
-	t=1754049900;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AhPQ34PAQrs3lQQWV914FbKArWwOxAA5okbdCnstF0Q=;
-	b=Xyp3H310RcIDGWXHTpuNl7HDErUW64CGZze78KDCRYQF85KvM71rU8hwHmZ9eCW1n5SvM0
-	Iw6rHwr+i+XyI3ISIr/TC1rC6A+7xmOILOdZeeFZVPBTrqvtFyodN20xGJnvP0FjJCM4qO
-	36X/4aacPAPtgh0CE8oxYNCd01KlOiI=
+	s=arc-20240116; t=1754049939; c=relaxed/simple;
+	bh=GM7VspiuNJbWJfvQBErQDCx2bV8UH8sNG4aEdut/aes=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nANwHoGm7axzMAYn5T6v2OZdAQzeByV2uz5Bm10/b6/qH66/qb6CpIn2dbxGMzhuMW6ZFuTNt0PyBlW1VjCC1LiBz5VE6BHiNh6Rq2QIfnsGfHbqV5cI7HZ1EnhAC4ZpwX7achRCa2VOpesm1Q89z0ovfYcCvjXfIGLA6brI5eo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX2QbAFz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DF6DC4CEE7;
+	Fri,  1 Aug 2025 12:05:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754049935;
+	bh=GM7VspiuNJbWJfvQBErQDCx2bV8UH8sNG4aEdut/aes=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=LX2QbAFzWP4riFP/JJv51l2FyaX9fyPK28wMVGHcCfFKEtSFKVpZ0FgtSPOucSLlo
+	 6F9mQvqm5SbUGEKvWIVf7NTkzhFFSQF2fpERwB3xIoq9+aJoX6tV0y0j2re+htZDca
+	 4TQ/su42Nre4xrONdEbvGAZiJlHIUeul9jjsER/2v6tU+kfhy9CnqhrYZlssjmWglo
+	 MCc+SQaTDvuVBDckvzUSTZz6AVRbpgDqBqAYpi/Vb85APyR5ixD4tqWKZ9AfeD/m7l
+	 I7xHyotIH7HMM4PjyI7zDUo1D42nSzZfZ9OX1u3wkM/BCIfYQv1wRpF60Ua25tRbcc
+	 Dg3O4I4BmkLTQ==
+Date: Fri, 1 Aug 2025 13:05:28 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Joris Verhaegen <verhaegen@google.com>
+Cc: Vinod Koul <vkoul@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+	Cezary Rojewski <cezary.rojewski@intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Ranjani Sridharan <ranjani.sridharan@linux.intel.com>,
+	Kai Vehmanen <kai.vehmanen@linux.intel.com>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Srinivas Kandagatla <srini@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>,
+	Orson Zhai <orsonzhai@gmail.com>,
+	Baolin Wang <baolin.wang@linux.alibaba.com>,
+	Chunyan Zhang <zhang.lyra@gmail.com>,
+	Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
+	Masami Hiramatsu <mhiramat@kernel.org>, kernel-team@android.com,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	patches@opensource.cirrus.com, linux-arm-msm@vger.kernel.org,
+	sound-open-firmware@alsa-project.org,
+	linux-arm-kernel@lists.infradead.org,
+	Miller Liang <millerliang@google.com>
+Subject: Re: [PATCH v4 1/3] ALSA: compress_offload: Add 64-bit safe timestamp
+ infrastructure
+Message-ID: <13ad9530-8e9a-4955-8844-aaf49146e988@sirena.org.uk>
+References: <20250801092720.1845282-1-verhaegen@google.com>
+ <20250801092720.1845282-2-verhaegen@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Fri, 01 Aug 2025 14:04:54 +0200
-Message-Id: <DBR2SLKGO5OO.276GT83Y3D6DA@pwned.life>
-Cc: <linux-kernel@vger.kernel.org>, "Martin KaFai Lau"
- <martin.lau@linux.dev>, "Song Liu" <song@kernel.org>, "John Fastabend"
- <john.fastabend@gmail.com>, "KP Singh" <kpsingh@kernel.org>, "Stanislav
- Fomichev" <sdf@fomichev.me>, "Hao Luo" <haoluo@google.com>, "Jiri Olsa"
- <jolsa@kernel.org>, "Achill Gilgenast" <fossdd@pwned.life>
-Subject: Re: [PATCH] libbpf: avoid possible use of uninitialized mod_len
-From: "Achill Gilgenast" <fossdd@pwned.life>
-To: "Eduard Zingerman" <eddyz87@gmail.com>, "Yonghong Song"
- <yonghong.song@linux.dev>, "Alexei Starovoitov" <ast@kernel.org>, "Daniel
- Borkmann" <daniel@iogearbox.net>, "Andrii Nakryiko" <andrii@kernel.org>,
- "Viktor Malik" <vmalik@redhat.com>, <bpf@vger.kernel.org>
-X-Greeting: Hi mom! Look, I'm in somebodys mail client!
-X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
-References: <a74ec917c2e3bf4d756a5ce2745f0f0a2970805a.camel@gmail.com>
- <20250801114613.610070-1-fossdd@pwned.life>
-In-Reply-To: <20250801114613.610070-1-fossdd@pwned.life>
+MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="3hce4ALIJPGSBrPW"
+Content-Disposition: inline
+In-Reply-To: <20250801092720.1845282-2-verhaegen@google.com>
+X-Cookie: Who messed with my anti-paranoia shot?
 
-On Fri Aug 1, 2025 at 1:46 PM CEST, Achill Gilgenast wrote:
-> If not fn_name, mod_len does never get initialized which fails now with
-> gcc15 on Alpine Linux edge:
->
-> 	libbpf.c: In function 'find_kernel_btf_id.constprop':
-> 	libbpf.c:10100:33: error: 'mod_len' may be used uninitialized [-Werror=
-=3Dmaybe-uninitialized]
-> 	10100 |                 if (mod_name && strncmp(mod->name, mod_name, mod=
-_len) !=3D 0)
-> 	      |                                 ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~=
-~~~~~
-> 	libbpf.c:10070:21: note: 'mod_len' was declared here
-> 	10070 |         int ret, i, mod_len;
-> 	      |                     ^~~~~~~
->
-> Signed-off-by: Achill Gilgenast <fossdd@pwned.life>
-> Acked-by: Yonghong Song <yonghong.song@linux.dev>
-> Acked-by: Eduard Zingerman <eddyz87@gmail.com>
-> Link: https://lore.kernel.org/bpf/20250729094611.2065713-1-fossdd@pwned.l=
-ife/
 
-Oops, the subject should've been v2. I forgot to pass -v2 to git
-send-email.
+--3hce4ALIJPGSBrPW
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+
+On Fri, Aug 01, 2025 at 10:27:14AM +0100, Joris Verhaegen wrote:
+> The copied_total field in struct snd_compr_tstamp is a 32-bit
+> value that can overflow on long-running high-bitrate streams,
+> leading to incorrect calculations for buffer availablility.
+
+Acked-by: Mark Brown <broonie@kernel.org>
+
+--3hce4ALIJPGSBrPW
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiMrYcACgkQJNaLcl1U
+h9AdmAf+IBbNJ4JZ0K2alkJmSZ4ClSpvLsc0OJHhkr8kbAMrBOyFn67A/Hw95kxf
+x3856yC73oTlON1VWQ1DCxThT1ubwy4iK9vnC8dmfKo7ZgkUVdY8dfcoVG7QPeab
+ZySf3lBoPZ/S2gVGj6xJATKtWPD4llhjHtICjjKT9zhVCSZgHaY9W048zBrnEw00
+vLxTiYQrYcDgygYjmfRkOBZw6z4n6C4jaesRnMUJfx5uUrb1kwDnPTsS+aIEA1MZ
+uKirsvNKBuPvnxBbadHLFnuJfWHLBcKjGH5WkO8F5DFYMzW1UgzUpZJEhK0IZyMc
+lP89DWksuDpwBsl8JcYJ4mW+VgxX0Q==
+=8Yki
+-----END PGP SIGNATURE-----
+
+--3hce4ALIJPGSBrPW--
 
