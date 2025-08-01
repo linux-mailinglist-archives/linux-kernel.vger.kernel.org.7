@@ -1,377 +1,121 @@
-Return-Path: <linux-kernel+bounces-753776-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753777-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AF80B187C1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:30:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B25B6B187C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:31:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 552A0AA3016
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:30:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4BEB563303
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:31:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7880E28D85E;
-	Fri,  1 Aug 2025 19:30:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2122928D82F;
+	Fri,  1 Aug 2025 19:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RPUnxaTD"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HHK+K7Cu"
+Received: from mail-qt1-f170.google.com (mail-qt1-f170.google.com [209.85.160.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6533B28CF50
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 19:30:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236631F03C5
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 19:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754076619; cv=none; b=JvjxX63YuTovCL+dbnCnDEAnIGZIIo4KeiGrAMBP1YGbU8jOMZD1siZ5szUa3rnvvj9pTZhj2kHCqFqdff6HEgTS0DTiGUZXUjSSYY6fXH5MLkNLeXwG0VdF5LP8orCFkepWjVUMYOcnKX0S7VYxR7x8/1Rpl8eVDLaEP6p+EGk=
+	t=1754076660; cv=none; b=EofK+w7kPyhNL8CFE/yvMToAhzisoKV0XOR+9/5yYXrHj4YaL8532TPe/bXjfk6CPYEQjWb6zuthapakpp0WiMEMI2bo87UokxXbr3M65P7vqBXAhpJCXXc+l2vL43vNM59c1T15aBe6UF+uVUTGXiXBo9wIyDqe9JBG81OuFXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754076619; c=relaxed/simple;
-	bh=mfanK206pIXizsL2pLcY7vv9XivfIfMYTdb6jhjHWyk=;
+	s=arc-20240116; t=1754076660; c=relaxed/simple;
+	bh=Tn75XQYhjJo+TWDkRdCfnZdS3TGmeZchqZWPBeig22E=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CQUV2z52gjWt3kMksXWpAG2l3kijWKj5eoBU38Cjm1qq+89ck4g99Qy/S7jKbfcxswKoRKUxzhtAnYGjtVhV9aU9vZogtQ95Xk8j1NcrPxEDWoRk2RYep9OPUqZnfcZxLOdJ1Zgzswg/0ce9Y8eLX29OwtF3xXh1OSW6m8LWAQU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RPUnxaTD; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=M8WBlY98jeH2aABdHwpVuMcvkAm01oxJg1BmxDGELvaMAHo3D543mls10KQ3n/XI0VO0aix5pAagwyYq6hJBeuMP7OqMZtrlG93jvAzghWH4cq3Y+Prb7QrNMl2gck8NF6Md+hBxpwSl28LdqQZYVa6WaftjCtXpIIPT0NbiL3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HHK+K7Cu; arc=none smtp.client-ip=209.85.160.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab86a29c98so57701cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 12:30:16 -0700 (PDT)
+Received: by mail-qt1-f170.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso72331cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 12:30:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754076615; x=1754681415; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754076658; x=1754681458; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=twDNEhjIuV3P8FWkQWfYnM6bEXR/NJ1nyF/4WQ2JH/0=;
-        b=RPUnxaTDgBXNkEZSjTQnRwLIRsOr55Va2xyZfHU6enzDy23hfQMsiotuKBCHQVqZIm
-         lf/myJtHULJ5umH/QuVey8EZ5vHSRtOTahRjIVpGa2ssyJq+EWYx7b55acDX611weLhR
-         /3q1Su1Hl/G+f27jPzVHrnVzS+qL2hGyueBZsSOGFrsfN7DNJLk7URO4OFPaKIoodVav
-         bM1ZsE9FD8aFD+nUZ09FzYFCNavjyud9yt/PWRAqPmUJJDtT44sYxpf696OIipf3/mVl
-         ppumpTCTfrhjU+brpkrTl6BT2t6jr3Rlzu4QTbYaeCHYmKGlIsF5x4S0fp/2Wu5YLTaQ
-         BXIw==
+        bh=Tn75XQYhjJo+TWDkRdCfnZdS3TGmeZchqZWPBeig22E=;
+        b=HHK+K7Cuj+m86DT7fUiStpyZ5py/pKWNDGFBifxgli2bNVoJWs1jedmfpSPP6MweDs
+         HrCWqp1qkNrSd0KFHsGjvZF7fBmHRqRpYB9qW1a2MIfk/UD9OMHEmNAot7lTteF2D4Z0
+         LlEqa1PrSneOGuWDrMxVAi3bLwPxyLyrbkYnWfwWqoeQpTEQjb/HsnwBfzdK1ixotYRq
+         jBfmFcWCdSjCpAgdXK6jtOWDDV8my+k3LyupzBXF33zpIHvasID6uGGFqeZFLDBOnl1k
+         6x1xt7RDB79GNnjDJPQ4cSYXGKWImXJXWouM9SQ2aAkMu/vOu749Q10gg5Foi6aMk4ur
+         9Q5g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754076615; x=1754681415;
+        d=1e100.net; s=20230601; t=1754076658; x=1754681458;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=twDNEhjIuV3P8FWkQWfYnM6bEXR/NJ1nyF/4WQ2JH/0=;
-        b=SDBhKtvBBwK7+uo1TBPkj2fe5rb3DNXLmL8NE/TOnUlIWGWTOOJQ2PZrB/31GVRXG/
-         IIR6UBs6ZO5BXvoCndGyEWW0KCENkN+RrxnGIl/7TJ9V5dF5HOyWzCRVNAOAAhIc7Ck5
-         aZjJDHYy/3F9Irhueenj0rTYu4iuv6angRaU6X2BzmtQRn+4aM8wSjAaFzcZnIzk20E4
-         mA2eymkNe0/pe/QUzwlgWSlztlF1CNnSs+PRoTUT30jgMHg9fM47o9bJCIKLYIlbSCLa
-         Cn/q+SfooAdV7KCwu6U32ARbvMKAxX5ljawW/T0UDn5idxt7cEZm9+VNqG87bgPGTkIj
-         hV0Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVY29qVtFETuYuSU4Xsu8RrnSLGT6mb8l8FvlhLQR820LpHylvdfuwc94xWpPjB6kqGuLNfJiUf4QuryYw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxmUgCTSYrJUzfi+k4Sb3qC9rv9h17rdRcgGYFY1UlXcPfVAoUs
-	i9sdK7rwaH8Ze4DeHv9tHCtkisuhAUIxKHbBqlceBSmqZq+qzM9YWV0V66cbIQ+TmeliPTsIOBY
-	gfFrT0ncKE15ejNfyqxRTrWBzmeuvaLeIOoqBj1et
-X-Gm-Gg: ASbGncsHnsnDpRCoVnEKY4CUI45+rhAa73O+ksIsxyquNNPRPVK6PYzL7LkaWYaCRJh
-	f9hakX08BeuXivnQp/B0eGOwvzKc/+CS33r3Q119qeMscF0azGwIaHUfxnJJJI2RX7hVdDvCPFW
-	ZbGJV14rEIYjAaCDQqUA890SuDeutOAKhI+H5+WUlaXV1M5kZLF14JXpsXLGzfqQifJSs7seHXv
-	BAj6/cZZ+UrdAQKMYXRAseQYXYRdAK+bvY=
-X-Google-Smtp-Source: AGHT+IGJz6lFXVxVdLxtOYGPbfOs+p+cwbfDc9Hr4tq8znJjmVLXS2URnxtlM7GxjpvFbqbJihK6yqO34DNYKLHSJ4U=
-X-Received: by 2002:ac8:5d49:0:b0:4ae:e478:268d with SMTP id
- d75a77b69052e-4af13199dd2mr477631cf.5.1754076614621; Fri, 01 Aug 2025
- 12:30:14 -0700 (PDT)
+        bh=Tn75XQYhjJo+TWDkRdCfnZdS3TGmeZchqZWPBeig22E=;
+        b=guyl8OsM+SrbP96ERuSev9t50UiTOiEKnNZJedSpmkhhnYMiZ5E79Sue1k0TXz7b8O
+         1pOOTrDlQrcsdEErsep32vTZtOzs4Vhxl9UUNFHYbuq2cb4DU+5/afFs3O0rqUB8bcq0
+         SEzRG8fJi+8My8nghrtW9K3/r2HXN8xNCuQlG6B0fdVnPmP5CVkd90kDxhMKUi/+34gC
+         Zil/DRL1iOE1FCzWg+1bhY7CULSLu4oY9b/c9bHgkWxpnJDRG9Ba0I1WZD5sSw/ywzGJ
+         kiXutPKVqDCc7lCpchCtuoB1fu86SqXt1xGxru3OlunXlj+8ypBVWMaJNLwFA3TBPSFr
+         gDJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU07mXYGvEOyXO92ZVzfiPUwLdyFVwfHA4gqk/RDVCBOkO9H3HuwbP7VhMQ+PGHIhuFaT6loFOpXTRtmb4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYq+0OdYz2ntemDFuTy9l+Z0XUzSDvx7NZPBbEOYrv7J/0uGmH
+	CTEhJa9YMwxzHXIODwC3we/RLBK5L8I4nTqkyhDcrd32JI/PgR5rzkckyf6B+a4X86GUVO1xdr+
+	aO+ahiYhW8mI1IftUbdh91GDD2MnSjDHLGDa+c1Xe
+X-Gm-Gg: ASbGncsGltBbrEysQVsTUhrLOg+fN2MzEOTqQ9NMsh3yJ+whtu5ztV4voVDKW6lB/jQ
+	MpkfxWipIUbdkvQlENkBKEYn09Nfdu0LfMw36nnF3MoH9NIAhhl3rr9ne6iUKU+c0l3gjtp/cRq
+	SOhBCg1f/e858spicAlCQLpB5IQAQpV7FMDlZ3nXceTqbY1F1l4Cq2/d/hUsI0kJmES3aX4YqIA
+	YsThC5+uakueYUQHUy1yMoLRYj/Gqd8FYY=
+X-Google-Smtp-Source: AGHT+IH0mW5f/qmqu9jwFpseJ5sBEGT+3smSxDV4uopSaI0KwsbmE/+dq3CsqpUFK06gNcNwwYnxKt51RS3MEF3u6D0=
+X-Received: by 2002:a05:622a:1984:b0:4a7:1743:106b with SMTP id
+ d75a77b69052e-4af12de2691mr759991cf.6.1754076657499; Fri, 01 Aug 2025
+ 12:30:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731154442.319568-1-surenb@google.com> <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
- <aIzMGlrR1SL5Y_Gp@x1.local> <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
- <aIzp6WqdzhomPhhf@x1.local> <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
- <aIz1xrzBc2Spa2OH@x1.local> <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
- <aI0Ffc9WXeU2X71O@x1.local>
-In-Reply-To: <aI0Ffc9WXeU2X71O@x1.local>
+References: <20250731220024.702621-2-surenb@google.com> <20250801183833.30370-1-sj@kernel.org>
+In-Reply-To: <20250801183833.30370-1-sj@kernel.org>
 From: Suren Baghdasaryan <surenb@google.com>
-Date: Fri, 1 Aug 2025 19:30:02 +0000
-X-Gm-Features: Ac12FXwqbmtzOOF0OpEWd-6TjRB4swEi2Z6oN7xIU_JaZp9vQNVpQvwwBAnRsUI
-Message-ID: <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
- a THP hole
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+Date: Fri, 1 Aug 2025 19:30:45 +0000
+X-Gm-Features: Ac12FXxvF4QVnElqOuim-YcXYx27wMsfO8zYCFlPV8Iub6EM4IPZ7MZ5jF-KLug
+Message-ID: <CAJuCfpH+bXgm0RK=CRxD_evnwkdeqg=-hrf5dtejCMXhxg5cpg@mail.gmail.com>
+Subject: Re: [PATCH 1/3] selftests/proc: test PROCMAP_QUERY ioctl while vma is
+ concurrently modified
+To: SeongJae Park <sj@kernel.org>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, david@redhat.com, vbabka@suse.cz, 
+	peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, mhocko@kernel.org, 
+	paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, brauner@kernel.org, 
+	josef@toxicpanda.com, yebin10@huawei.com, linux@weissschuh.net, 
+	willy@infradead.org, osalvador@suse.de, andrii@kernel.org, 
+	ryan.roberts@arm.com, christophe.leroy@csgroup.eu, tjmercier@google.com, 
+	kaleshsingh@google.com, aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org, 
+	linux-kselftest@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 1, 2025 at 6:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
+On Fri, Aug 1, 2025 at 6:38=E2=80=AFPM SeongJae Park <sj@kernel.org> wrote:
 >
-> On Fri, Aug 01, 2025 at 05:45:10PM +0000, Suren Baghdasaryan wrote:
-> > On Fri, Aug 1, 2025 at 5:13=E2=80=AFPM Peter Xu <peterx@redhat.com> wro=
-te:
-> > >
-> > > On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrote:
-> > > > On Fri, Aug 1, 2025 at 9:23=E2=80=AFAM Peter Xu <peterx@redhat.com>=
+> On Thu, 31 Jul 2025 15:00:22 -0700 Suren Baghdasaryan <surenb@google.com>=
  wrote:
-> > > > >
-> > > > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan wrot=
-e:
-> > > > > > On Fri, Aug 1, 2025 at 7:16=E2=80=AFAM Peter Xu <peterx@redhat.=
-com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbrand w=
-rote:
-> > > > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
-> > > > > > > >
-> > > > > > > > Hi!
-> > > > > > > >
-> > > > > > > > Did you mean in you patch description:
-> > > > > > > >
-> > > > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-pres=
-ent PMDs"
-> > > > > > > >
-> > > > > > > > Talking about THP holes is very very confusing.
-> > > > > > > >
-> > > > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_=
-HOLES and it
-> > > > > > > > > encounters a non-present THP, it fails to properly recogn=
-ize an unmapped
-> > > > > > > >
-> > > > > > > > You mean a "non-present PMD that is not a migration entry".
-> > > > > > > >
-> > > > > > > > > hole and tries to access a non-existent folio, resulting =
-in
-> > > > > > > > > a crash. Add a check to skip non-present THPs.
-> > > > > > > >
-> > > > > > > > That makes sense. The code we have after this patch is rath=
-er complicated
-> > > > > > > > and hard to read.
-> > > > > > > >
-> > > > > > > > >
-> > > > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspo=
-tmail.com
-> > > > > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693=
-ce.0050.GAE@google.com/
-> > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > > ---
-> > > > > > > > > Changes since v1 [1]
-> > > > > > > > > - Fixed step size calculation, per Lokesh Gidra
-> > > > > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLE=
-S, per Lokesh Gidra
-> > > > > > > > >
-> > > > > > > > > [1] https://lore.kernel.org/all/20250730170733.3829267-1-=
-surenb@google.com/
-> > > > > > > > >
-> > > > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----=
-------------
-> > > > > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
-> > > > > > > > >
-> > > > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > > > > > index cbed91b09640..b5af31c22731 100644
-> > > > > > > > > --- a/mm/userfaultfd.c
-> > > > > > > > > +++ b/mm/userfaultfd.c
-> > > > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfau=
-ltfd_ctx *ctx, unsigned long dst_start,
-> > > > > > > > >             ptl =3D pmd_trans_huge_lock(src_pmd, src_vma)=
-;
-> > > > > > > > >             if (ptl) {
-> > > > > > > > > -                   /* Check if we can move the pmd witho=
-ut splitting it. */
-> > > > > > > > > -                   if (move_splits_huge_pmd(dst_addr, sr=
-c_addr, src_start + len) ||
-> > > > > > > > > -                       !pmd_none(dst_pmdval)) {
-> > > > > > > > > -                           struct folio *folio =3D pmd_f=
-olio(*src_pmd);
-> > > > > > > > > +                   if (pmd_present(*src_pmd) || is_pmd_m=
-igration_entry(*src_pmd)) {
-> > > > > > >
-> > > > > > > [1]
-> > > > > > >
-> > > > > > > > > +                           /* Check if we can move the p=
-md without splitting it. */
-> > > > > > > > > +                           if (move_splits_huge_pmd(dst_=
-addr, src_addr, src_start + len) ||
-> > > > > > > > > +                               !pmd_none(dst_pmdval)) {
-> > > > > > > > > +                                   if (pmd_present(*src_=
-pmd)) {
-> > > > >
-> > > > > [2]
-> > > > >
-> > > > > > > > > +                                           struct folio =
-*folio =3D pmd_folio(*src_pmd);
-> > > > >
-> > > > > [3]
-> > > > >
-> > > > > > > > > +
-> > > > > > > > > +                                           if (!folio ||=
- (!is_huge_zero_folio(folio) &&
-> > > > > > > > > +                                                        =
-  !PageAnonExclusive(&folio->page))) {
-> > > > > > > > > +                                                   spin_=
-unlock(ptl);
-> > > > > > > > > +                                                   err =
-=3D -EBUSY;
-> > > > > > > > > +                                                   break=
-;
-> > > > > > > > > +                                           }
-> > > > > > > > > +                                   }
-> > > > > > > >
-> > > > > > > > ... in particular that. Is there some way to make this code=
- simpler / easier
-> > > > > > > > to read? Like moving that whole last folio-check thingy int=
-o a helper?
-> > > > > > >
-> > > > > > > One question might be relevant is, whether the check above [1=
-] can be
-> > > > > > > dropped.
-> > > > > > >
-> > > > > > > The thing is __pmd_trans_huge_lock() does double check the pm=
-d to be !none
-> > > > > > > before returning the ptl.  I didn't follow closely on the rec=
-ent changes on
-> > > > > > > mm side on possible new pmd swap entries, if migration is the=
- only possible
-> > > > > > > one then it looks like [1] can be avoided.
-> > > > > >
-> > > > > > Hi Peter,
-> > > > > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (!pmd=
-_none()
-> > > > > > && !pmd_present()) PMD to pass and that's when this crash is hi=
-t.
-> > > > >
-> > > > > First for all, thanks for looking into the issue with Lokesh; I a=
-m still
-> > > > > catching up with emails after taking weeks off.
-> > > > >
-> > > > > I didn't yet read into the syzbot report, but I thought the bug w=
-as about
-> > > > > referencing the folio on top of a swap entry after reading your c=
-urrent
-> > > > > patch, which has:
-> > > > >
-> > > > >         if (move_splits_huge_pmd(dst_addr, src_addr, src_start + =
-len) ||
-> > > > >             !pmd_none(dst_pmdval)) {
-> > > > >                 struct folio *folio =3D pmd_folio(*src_pmd); <---=
--
-> > > > >
-> > > > > Here looks like *src_pmd can be a migration entry. Is my understa=
-nding
-> > > > > correct?
-> > > >
-> > > > Correct.
-> > > >
-> > > > >
-> > > > > > If we drop the check at [1] then the path that takes us to
-> > > > >
-> > > > > If my above understanding is correct, IMHO it should be [2] above=
- that
-> > > > > makes sure the reference won't happen on a swap entry, not necess=
-arily [1]?
-> > > >
-> > > > Yes, in case of migration entry this is what protects us.
-> > > >
-> > > > >
-> > > > > > split_huge_pmd() will bail out inside split_huge_pmd_locked() w=
-ith no
-> > > > > > indication that split did not happen. Afterwards we will retry
-> > > > >
-> > > > > So we're talking about the case where it's a swap pmd entry, righ=
-t?
-> > > >
-> > > > Hmm, my understanding is that it's being treated as a swap entry bu=
-t
-> > > > in reality is not. I thought THPs are always split before they get
-> > > > swapped, no?
-> > >
-> > > Yes they should be split, afaiu.
-> > >
-> > > >
-> > > > > Could you elaborate why the split would fail?
-> > > >
-> > > > Just looking at the code, split_huge_pmd_locked() checks for
-> > > > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
-> > > > pmd_trans_huge() is false if !pmd_present() and it's not a migratio=
-n
-> > > > entry, so __split_huge_pmd_locked() will be skipped.
-> > >
-> > > Here might be the major part of where confusion came from: I thought =
-it
-> > > must be a migration pmd entry to hit the issue, so it's not?
-> > >
-> > > I checked the code just now:
-> > >
-> > > __handle_mm_fault:
-> > >                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
-> > >                         VM_BUG_ON(thp_migration_supported() &&
-> > >                                           !is_pmd_migration_entry(vmf=
-.orig_pmd));
-> > >
-> > > So IIUC pmd migration entry is still the only possible way to have a =
-swap
-> > > entry.  It doesn't look like we have "real" swap entries for PMD (whi=
-ch can
-> > > further points to some swapfiles)?
+>
+> > Extend /proc/pid/maps tearing tests to verify PROCMAP_QUERY ioctl opera=
+tion
+> > correctness while the vma is being concurrently modified.
 > >
-> > Correct. AFAIU here we stumble on a pmd entry which was allocated but
-> > never populated.
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 >
-> Do you mean a pmd_none()?
+> Acked-by: SeongJae Park <sj@kernel.org>
+> Tested-by: SeongJae Park <sj@kernel.org>
 
-Yes.
-
->
-> If so, that goes back to my original question, on why
-> __pmd_trans_huge_lock() returns non-NULL if it's a pmd_none()?  IMHO it
-> really should have returned NULL for pmd_none().
-
-That was exactly the answer I gave Lokesh when he theorized about the
-cause of this crash but after reproducing it I saw that
-pmd_trans_huge_lock() happily returns the PTL as long as PMD is not
-pmd_none(). And that's because it passes as is_swap_pmd(). But even if
-we change that we still need to implement the code to skip the entire
-PMD.
+Thanks SJ! I'll include this in my next respin.
 
 >
-> IOW, I still don't understand why below won't already work:
->
-> =3D=3D=3D8<=3D=3D=3D
-> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> index 52d7d5f144b8e..33e78f52ee9f5 100644
-> --- a/mm/userfaultfd.c
-> +++ b/mm/userfaultfd.c
-> @@ -1880,13 +1880,15 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, u=
-nsigned long dst_start,
->                         /* Check if we can move the pmd without splitting=
- it. */
->                         if (move_splits_huge_pmd(dst_addr, src_addr, src_=
-start + len) ||
->                             !pmd_none(dst_pmdval)) {
-> -                               struct folio *folio =3D pmd_folio(*src_pm=
-d);
-> -
-> -                               if (!folio || (!is_huge_zero_folio(folio)=
- &&
-> -                                              !PageAnonExclusive(&folio-=
->page))) {
-> -                                       spin_unlock(ptl);
-> -                                       err =3D -EBUSY;
-> -                                       break;
-> +                               if (pmd_present(*src_pmd)) {
-> +                                       struct folio *folio =3D pmd_folio=
-(*src_pmd);
-> +
-> +                                       if (!folio || (!is_huge_zero_foli=
-o(folio) &&
-> +                                                      !PageAnonExclusive=
-(&folio->page))) {
-> +                                               spin_unlock(ptl);
-> +                                               err =3D -EBUSY;
-> +                                               break;
-> +                                       }
->                                 }
->
->                                 spin_unlock(ptl);
->
-> =3D=3D=3D8<=3D=3D=3D
->
-> Likely I missed something important..  I'll be afk for a while soon, I'll
-> also double check (maybe early next week) on the reproducer.
 >
 > Thanks,
+> SJ
 >
-> --
-> Peter Xu
->
+> [...]
 
