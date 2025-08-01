@@ -1,149 +1,146 @@
-Return-Path: <linux-kernel+bounces-753622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753623-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A06FB1855F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:03:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7003AB18560
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F22FD188EAA3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:03:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8F38F162D9F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 758E928BAB3;
-	Fri,  1 Aug 2025 16:03:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AB3F28BAB3;
+	Fri,  1 Aug 2025 16:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KhP5Fdtn"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GNRjmcpq"
+Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61B5026B756
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:03:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E35FA26B756
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:03:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754064198; cv=none; b=qtvMXa7UpV8HmhyNzLDG84LUBkQxRb2AbDMcREyNFr/PaTY+qWnZqLWn4DHgq3X6KxnRDy91i7rC6YGvlxtvoo1oEbXWR1p4LG8ffAkTLXvdZjOyF2P5zv+iyFywk4lBWORhcwgVY3PjRjQx1OL4cT5dMFMZdp9nGoT3+puFGl8=
+	t=1754064240; cv=none; b=NPuFiRUZsSGXi/VF32EC+zmQ/K0Y+QX4C9puH4+vCALVCPixosdQogPxOzROkAoDea/gNc4QJAO++3LDFufzyCI8y6MHxe23iXINJYEEa04Oc9C1E0TDRTvLQN8ieXNtM+dooJEkSzqm1qoIvaKR7IylWvGwi/2QVss6HZ+Bmwg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754064198; c=relaxed/simple;
-	bh=kTBVDH2a7C5AaUhSLvbnLRucMiqIC9KeXaHey8lqNgw=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=ZnmaBo66bOKVQut+7t4uwpb9XUFshtDeobpZ+cFbP6x7Gvly4ZkED0/OmHv/QhAP6PBA0ucXJ1qf1dzNTFkci4PcnLyjeMEC70Sg9d21DZAY3sCt6FGQbHk+wI+RofDRdAUTFKWW+xXq9Mx9aR3B+cmhg+IL2QorpIS2SirL3Y4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KhP5Fdtn; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754064195;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=vMRSYj4Eiotram2sHuDHJExcsIVaBr8JOLhPuPHdhRI=;
-	b=KhP5FdtnkISMKLJMniOfU5pqrAkLchPgZmYtHn/kpuhj1tVqlv3gqkVxnJ3JwpmulZgNPW
-	SV3T8ouIo4rFhlJbCFAOeISAzUNvNrjiIAWsJbIvgsRJ3V5IIwmajQKjHtmu4JT4Us7h2+
-	n8JCW1D335GtxY6nX/6LKYiK76cOq3o=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-488-krdO-0dNNGixB0Ek-KK5gA-1; Fri, 01 Aug 2025 12:03:14 -0400
-X-MC-Unique: krdO-0dNNGixB0Ek-KK5gA-1
-X-Mimecast-MFC-AGG-ID: krdO-0dNNGixB0Ek-KK5gA_1754064193
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-458aed20a9fso4128295e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 09:03:14 -0700 (PDT)
+	s=arc-20240116; t=1754064240; c=relaxed/simple;
+	bh=xyZ+FQBq+KvXO3ea7BvsdacMmWGRiYuWxG7s/qnV924=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=kf6NQgTYk2EfdfOADB88tFKhOqaaxNLz+TOimky2gpW4iwCjdbvyiAaL8wvEJJBsfEa5ijZTNyHrZYbp411VcMlJhI/d4UG5IbwgEN+dVVtScBcb8eZdhBTQEhq1melFoEfR/ArzEmJUMKk10lSusKMalurSzyq8WV7NJD9fKLQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GNRjmcpq; arc=none smtp.client-ip=209.85.128.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-456108bf94bso6560485e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 09:03:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754064237; x=1754669037; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zRxnGgR7U4/KRc3TFVEUz3gjh5ISqNhcChVahRuuqe0=;
+        b=GNRjmcpqwwzS+jczEuwt2GlBVwm3toP5e7ukdkzO87ReB8IAw3LfFm5jnGgsezyICd
+         McWaiVwbIYT1QJn3wYIvXBqPW+QDBfRM2HaxMGaZ86koqPVMsn1VvI3pStaG92Iv3UGB
+         Yrd6txNAJ8EuquEbT2PuSxmBhOCYUI+MsvZWJtzVjV0qkXGUmKZPLdPpWgdSEhVlx2zn
+         gY9+lR/YsFgefsU+CzdUI26HHDODNCgTX3Cs4OGOOKaEtfP6XNF8ziEjXhZAmTayierL
+         6bFlzmy3gKYpi4gLEw50/o1zZNeUku1HbkvZcLwgFKq/sWocTPkNRXkQz5hgJiyQ0a+W
+         WCng==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754064193; x=1754668993;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vMRSYj4Eiotram2sHuDHJExcsIVaBr8JOLhPuPHdhRI=;
-        b=lllzgADTR6ov/KnN6+i4UKF+H9BaO+V97BVQnY7sDghMWryC0QlNUwLUBU20ntnQ3k
-         11l3Cy110il3Lj3G/aBfa5TjsWzrX2YF8mp0OCzLG1vu52uHwVfkvyns0rHgG4pVIiC9
-         uZXzHX7nVJYmtVU7OUto0dUZJBFU2h14kskFxwVS3D5johAgcc7fog+HJa9eKyq2I7w7
-         2FRDfnUKRrqHWQYvTx2JwLh/NC3z/q+7AOSIp8jzeT8C/vjdj5X6ZOkIHMUreyBbQBY9
-         oX+d1vHfr/BbZmPxhWx4S3pluL5081fEV+b8zRrlB1ztPL7uPad1FWDBa2fp7lif9AZj
-         VJ5g==
-X-Gm-Message-State: AOJu0YzKUjDUR8Isqb+lwOGjoaF06YValfN6GnyzxN4v6y41JBIMOARC
-	5g/qO0YTuodr5o/WJ/okn0yduNNERZAI8SfeKPtnfTltCaiFlUO2PC0ZyhKIB9nZlbJrkiNsCNQ
-	cDC+kuRpNBvOPLBBBGvB3AaPKZH4k0KlS1aHOV2URsb9ZKKHZ3Eu+S2PCknmKR7KEb8EyDOInyv
-	jQ
-X-Gm-Gg: ASbGncuv6piG1sk1pzEbKjmmBgsNTvrwKXYsrJ+134sCE2zN+3OX7i7bHD6U/Sjknu+
-	slGLQcWnrKmEG1v6mFoskyLg5XeGur+i27NEeBO7RVPN/xg8orANhZaB6qVqpuGPoh9p0DIQMQg
-	FQ24OyM6Ig00BbfzxtqU/j7DzsG27wl2nTF3SCTznQAuy/5KBJrGmzb3MYYu+GVm6yvNQmVd6E2
-	T+OcvpqvaArx8V38AjA5wmZMTOMwXysnYuIGAqy9uctwUW5ZFqE5BztSohwrucnS4g7kX5LliVc
-	BjGb/PV1hjI5gULijmFq+O1Rb7nVhFYJdJArfiQBAykcDZa//VF8ycei1GXDT963CA==
-X-Received: by 2002:a05:600c:8706:b0:456:1e4a:bb5b with SMTP id 5b1f17b1804b1-45892cea07fmr100053595e9.32.1754064192644;
-        Fri, 01 Aug 2025 09:03:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFpHFN+pfRBNzyHHdmUW/iRK6kM8LUuFBQ2WK0phy6SH+KCRgWuXRMrJhznxXKQiJUaaGwLfg==
-X-Received: by 2002:a05:600c:8706:b0:456:1e4a:bb5b with SMTP id 5b1f17b1804b1-45892cea07fmr100051305e9.32.1754064190370;
-        Fri, 01 Aug 2025 09:03:10 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458af999486sm13440465e9.5.2025.08.01.09.03.09
+        d=1e100.net; s=20230601; t=1754064237; x=1754669037;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zRxnGgR7U4/KRc3TFVEUz3gjh5ISqNhcChVahRuuqe0=;
+        b=cxyscEKStrN9Fr6s8Ngtk6AwqS0+Oi2oXzHitcE/pfYVpTZzfLr3k6iBu2SXBbAq3V
+         HsHGcq13j7kbo/fadQXykX4SgbJOtWZdWZdghuRcE2Ahl+HZiiK2TP2jCQ3RQFdamyY7
+         kQ9NzFG3Rr9dqmbPuieO5UiBjUOXLV1lPocWOs+B89O6uks1V5nJbPXvodS3qHSe38Ra
+         4/vQhC62QBzZn+WKLT0zxyZSSMB4LChaCx8IydMZyKU2gas5gnfhzi6OmrVDLAvXpFED
+         Y2mRedkrnZBlDRnP964YWUpNf5waP9f5tT07kAv2sj9pPjFzp3oGjmRxC5h0xOf74iJR
+         Q0DQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVxY8Rk0Y3FXzPksPw26nw0CqGE3ar1F3alG7ppQxzJYNHYpt9vKr2e5W79Z7QOMjV1nDcVZPlokKptUig=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPpKtxWHRVohKY0FTghmiPAahUJfmTMjggl5slo0i9tk0Chm7w
+	H8lMyJ4S/LR0GsahOF3xENNRL8dKzfsXZZ3FBQoQuDvjgoPDL3OBHGpY
+X-Gm-Gg: ASbGncubX/eEKHoExfjfoo+xPVzAgntg/CZu/ZlHQGcgJYnVAc+6cX/kGsos6Rr3Giu
+	Gvstto5zn6cw1DI5SBccZY3gUxnRx/SejSjPD3hGsCmKWIUIztEdyjlonKIuvhyTpVDDWe/De0s
+	yREyzItyEfyO4fmq13eKeAwh6oWqXbKnUAxdchUDJS5qF0QHXdX1ldWkNGBnDxjjkVLQmvDs7XT
+	xKXPb65n/OMCKSBNj5L69ASKNTjOESC55FZI4Bva5H3eXONeOfWVcdRh34TxnMw9d/kx1z3hGx7
+	NCx0ZJyCqoeK/oADWqqkBJUOMAoHCr70DyzKA0CuJmhLZhpteRh+8gkNEyaQ3db4oajgmad/7RL
+	NBS0bHYMC7lYjiuU5Izq+eQ==
+X-Google-Smtp-Source: AGHT+IFtHwOsIUUdv6TCs8szY/jwlcGR0zdV+18UIPj2cmMVwrO1rHjhKFjCVQtudAofNkKPHw7y7A==
+X-Received: by 2002:a05:600c:5253:b0:458:affe:a5c1 with SMTP id 5b1f17b1804b1-458b2159badmr15424955e9.5.1754064236763;
+        Fri, 01 Aug 2025 09:03:56 -0700 (PDT)
+Received: from yuri-laptop ([37.160.61.162])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458af8c5a87sm15011285e9.2.2025.08.01.09.03.54
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 09:03:10 -0700 (PDT)
-Message-ID: <b2788740ecc02ae70706506468bb71a1e23180cc.camel@redhat.com>
-Subject: Re: [PATCH v9 7/8] cgroup/cpuset: Fail if isolated and nohz_full
- don't leave any housekeeping
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Waiman Long <llong@redhat.com>
-Cc: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>,  Frederic Weisbecker	 <frederic@kernel.org>,
- Thomas Gleixner <tglx@linutronix.de>
-Date: Fri, 01 Aug 2025 18:03:08 +0200
-In-Reply-To: <bdbc1a11-1546-47e6-bb14-d3ad940907ed@redhat.com>
-References: <20250730131158.101668-1-gmonaco@redhat.com>
-	 <20250730131158.101668-8-gmonaco@redhat.com>
-	 <bdbc1a11-1546-47e6-bb14-d3ad940907ed@redhat.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+        Fri, 01 Aug 2025 09:03:56 -0700 (PDT)
+From: Yuri Andriaccio <yurand2000@gmail.com>
+To: juri.lelli@redhat.com
+Cc: bsegall@google.com,
+	dietmar.eggemann@arm.com,
+	linux-kernel@vger.kernel.org,
+	luca.abeni@santannapisa.it,
+	mgorman@suse.de,
+	mingo@redhat.com,
+	peterz@infradead.org,
+	rostedt@goodmis.org,
+	vincent.guittot@linaro.org,
+	vschneid@redhat.com,
+	yuri.andriaccio@santannapisa.it
+Subject: Re: [PATCH v2] sched/deadline: Remove fair-servers from real-time task's bandwidth accounting
+Date: Fri,  1 Aug 2025 18:03:52 +0200
+Message-ID: <20250801160352.4816-1-yurand2000@gmail.com>
+X-Mailer: git-send-email 2.50.1
+In-Reply-To: <aIxunUAqdecVuUMs@jlelli-thinkpadt14gen4.remote.csb>
+References: <aIxunUAqdecVuUMs@jlelli-thinkpadt14gen4.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-On Thu, 2025-07-31 at 11:39 -0400, Waiman Long wrote:
->=20
-> On 7/30/25 9:11 AM, Gabriele Monaco wrote:
-> > +static bool isolcpus_nohz_conflict(struct cpumask *new_cpus)
-> > +{
-> > +	cpumask_var_t full_hk_cpus;
-> > +	int res =3D false;
-> > +
-> > +	if (!housekeeping_enabled(HK_TYPE_KERNEL_NOISE))
-> > +		return false;
-> > +
-> > +	if (!alloc_cpumask_var(&full_hk_cpus, GFP_KERNEL))
-> > +		return true;
-> > +
-> > +	cpumask_and(full_hk_cpus,
-> > housekeeping_cpumask(HK_TYPE_KERNEL_NOISE),
-> > +		=C2=A0=C2=A0=C2=A0 housekeeping_cpumask(HK_TYPE_DOMAIN));
-> > +	cpumask_and(full_hk_cpus, full_hk_cpus, cpu_online_mask);
-> > +	if (!cpumask_weight_andnot(full_hk_cpus, new_cpus))
-> > +		res =3D true;
-> > +
-> > +	free_cpumask_var(full_hk_cpus);
-> > +	return res;
-> > +}
->=20
-> First of all, isolated_cpus currently include those CPUs excluded
-> from boot time isolcpus=3Ddomain setting, but it also include new
-> isolated
-> cpus created by used by cpuset isolated partitions. Your current=20
-> isolcpus_nohz_conflicts() does not check isolated_cpus which I think
-> is incomplete.
+Hi,
 
-Right, good point! Thanks for the review.
-Somehow it was working fine with cpuset+isolcpus, but doesn't work if I
-have multiple cpusets.
+thanks for reviewing the patch.
 
-Thanks,
-Gabriele
+> > @@ -1688,17 +1690,14 @@ int dl_server_apply_params(struct sched_dl_entity *dl_se, u64 runtime, u64 perio
+> >  
+> >    cpus = dl_bw_cpus(cpu);
+> >    cap = dl_bw_capacity(cpu);
+> > +  max_bw = div64_ul(cap_scale(BW_UNIT - dl_b->bw, cap), (unsigned long)cpus);
+> 
+> fc975cfb3639 ("sched/deadline: Fix dl_server runtime calculation
+> formula") essentially removed cap/freq scaling for dl-servers. Should we
+> rather not scale max_bw here as well?
 
+Now that I think about it, you are correct. Since the fair-servers' rate is
+fixed (i.e. by default 50ms every second), the bandwidth must be scaled for both
+the CPU and the server, or equally, neither needs scaling for the check in
+question.
+
+...
+
+> > @@ -3149,10 +3138,13 @@ int sched_dl_global_validate(void)
+> >        goto next;
+> >  
+> >      dl_b = dl_bw_of(cpu);
+> > -    cpus = dl_bw_cpus(cpu);
+> > +    cap = dl_bw_capacity(cpu);
+> > +    fair_bw = dl_bw_fair(cpu);
+> >  
+> >      raw_spin_lock_irqsave(&dl_b->lock, flags);
+> > -    if (new_bw * cpus < dl_b->total_bw)
+> > +    if (cap_scale(new_bw, cap) < dl_b->total_bw)
+> > +      ret = -EBUSY;
+> 
+> It's kind of a minor one, but can't we return early at this point already?
+
+Yes, I suppose so. I'll update the patch to return as soon as the error
+condition is met.
+
+Additionally, I'll also update some of the checks in the above function to
+reflect the aforementioned fixed rate behaviour for fair-servers.
+
+Have a nice day,
+Yuri
 
