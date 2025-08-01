@@ -1,79 +1,64 @@
-Return-Path: <linux-kernel+bounces-753683-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753684-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26071B1865D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:13:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82E09B1865E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5BCA5171C4A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 99E161760B7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 583781DFE12;
-	Fri,  1 Aug 2025 17:12:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E1AF1DF755;
+	Fri,  1 Aug 2025 17:13:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pZ+UU+Kj"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="XCXkHomO"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DCE76F2F2
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:12:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28F376F2F2;
+	Fri,  1 Aug 2025 17:12:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068375; cv=none; b=MvCsNkgTMYAdMDyXJg9WwkaVyZqfvCQ6S5OP7gvZujtpfULDIfUopD9iTqEBRiLjPXvUxyMz5L+bQ+io9QuJLSgqSV2t9Xh43P8Qyno8GtAZjei28nQuiAcKSZ2DlNyXI6Zzk10KwvgKqCcyETW30MzWX6HTbDaj/sLId5G098A=
+	t=1754068381; cv=none; b=ak/ByYApSO3gDouWxiDB0mnMBnNC48Ilr47W0q8HcxWXa6LuWHu9VEypN3l6u1D9RxhYbHwqgRHn2FM+hZc936hCxqSkP4p4wF83IR2tPiWzIuyWlcs6HXWLYRC20aw5siNKoRTd3uGIAINS62wx3a4ixMwZTUUinEVdfF0++7c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068375; c=relaxed/simple;
-	bh=A/j4Ifuce0u9/jL3Ix+TUiyIc4jO4+FIGeZc4i+1OBg=;
+	s=arc-20240116; t=1754068381; c=relaxed/simple;
+	bh=kDa4f8s4fQtBcRBxRFCuMeNUACPev/hRdUXx1TbDDLQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lPsrhVIGaJnrSB2XTuMmzPdvCt5g3pEC4LPNn490ArNHjBbhJlbdYI7RHQDaU6OaKFM357A60hIGSXU6xXygQWqdZIP6WeKNM3UOmUWREXq9iUCbalomm18heGrzIhyxVqB1xyNQl2fVD9od4HqxDbjyz36/R5ZZVP4vauXx3rE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pZ+UU+Kj; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso6052525e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:12:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754068371; x=1754673171; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xpFchoVzlzh0jyiCYJs375yN6Y3U3tX4URylglb/9mE=;
-        b=pZ+UU+KjpF78OXkM1ZjNKUhEWL+nnXhILA+Q6TrdxLt8ENMx93QLGHOKfo1oeD7ui6
-         ODIszvaWE5N7jOc10SZa0V8svwhtCt1Jxist2lJ1WKcbWK3dmUVaMX7xZnrQ7g0bd9Ud
-         HxjItJ/vJZ2vKAj1GomHhcH2klvLINiOF+13e3ETP7gGKVnd7a4a4SSY0YuklYu5v6Gg
-         Fi8YlAHwhMLgHD5cbG2ivMARQOuVhq03PzkI6dUb+K+kswrNCqye/Ym5SJRVhlRILMHZ
-         vh23IQqO44zMbEG6du4sT6ezkBY8PrF9NchrBfhF/YCprldtxBarDX7Vops21Mh69jdI
-         qS0Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754068371; x=1754673171;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xpFchoVzlzh0jyiCYJs375yN6Y3U3tX4URylglb/9mE=;
-        b=gsUT49T5Okxv2dYthcpDqnI90S6N/tPHvSVq86PCUCV1ZKewK9fSMNurRAXhDaFtYJ
-         XfqDjZS8lhHtLiRMTnYvvXRCnnGdbWgAl26v/EJZaGV1h45otWJ/+77ET7lWrHQynbzy
-         vQGmauZfrTWlp6mxxg/d1bxbL0rF2A5TBFcZSYvcFkNSBt9omLGjAeH++3Big3qLDyki
-         oIOcGw1AABqgyv9uZ3BQind4sG79jHfjWjbZm70exboZgPBrFMNhEAtVM62X8ZWk+OcK
-         +0tFe3mmAprsrv0l6XjfTB8L31t51eGwDv2BD6jz2wbSpwwgbTTE6SkFuYgXTSJg51U4
-         YOIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXc8X1O5lpIgFhNkq5I1jpZjFPMmRefqiNvKnW6aFCMIs+i+cf1t3PpcimcaZt5GV6r0ACNaWio8J1eQF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNac4K8t7P+WU4qAk03ebQTouvP3sSGXk0FmmbBD5GfplOAoKH
-	92t+C3XeAQBgNSR4bM6NXyx8THrS8JETCns6xEp0qX9fGqVyz2SsMlSAnb+kMZcXTJU=
-X-Gm-Gg: ASbGncvQDH9QgedMNrVU1Op3UjrCnmHYp7VaU181geNKVC57tL0ZVyqH9ZowEm1kpL6
-	DsUZer0qUYZ0CVuUmkL/6Q/thApjFQHZCNCb420uQfVwjJGEhTGhdq9SNMZToUWCnGHvv3nGKOA
-	b6HgwEZRWCZqXW0D8i6BAWP3D8wuXxn+8jIO8VHzVUCoX33tFZY4is+ldUOJVI7+w6Z4BK22UfW
-	RgaMJJoboEUma6aI9lzEQmrOI38W3NwNPQ6WgmWUz/k60KGD7N9EfV/N65kuYoip9t5Kp+dyhr+
-	e4QAC0NhkdZG3Ue31Ei6yf2XZqX5wlJfrQfwYqNnuRII+kUu+fQDtsDoKFt8LT6cY+24/3cgme6
-	/qA6lnn5CLj9rddAkq5XdWYxmoKu57SwbWgOIt4Ki68sz8eQXMJ0Jj3pErnEjPw==
-X-Google-Smtp-Source: AGHT+IG8FK5nU3TfGOcq2jwE4t/LH9fg3G6zA6CPhqrXPHAhHe8RghP9OG9d+H/XSEzhyijEnqWbyA==
-X-Received: by 2002:a05:6000:26ca:b0:3a4:dc42:a0c3 with SMTP id ffacd0b85a97d-3b8d94ca582mr522194f8f.56.1754068371489;
-        Fri, 01 Aug 2025 10:12:51 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c46ee84sm6360936f8f.57.2025.08.01.10.12.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 10:12:50 -0700 (PDT)
-Message-ID: <8e9f462c-872b-4fac-bcd6-aefbb3bd9493@linaro.org>
-Date: Fri, 1 Aug 2025 19:12:49 +0200
+	 In-Reply-To:Content-Type; b=uszRpIwMijfjfxVyKE+Y0908lzA1Fqac+7bCNmbU3RWrjs0RrzyPaiHo5YOABWN+HdSBs9z2UBgTlpYGmKBkKJSG1NF0aHjoUGcA/uAw4sCpsjGfGlidWg0sKxF4qyTxAZRg3lAx3uE5SiuItkbVpNkB41PJsv2iWBn6FW+T6zA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=XCXkHomO; arc=none smtp.client-ip=192.198.163.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754068380; x=1785604380;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=kDa4f8s4fQtBcRBxRFCuMeNUACPev/hRdUXx1TbDDLQ=;
+  b=XCXkHomOv9XBQ37Xz4nlwcWoMMMD3L0PgAc8/VTgxjKKzykMhB6yQAiB
+   DrI29TEs/qlAXSiVp1uXYNNaoVGgX2LGLAnen7FE6DwqbYMef9rL/sWXI
+   qEDBsD3ekFX0RtqVCnzcsiOY2eO+mNE2t0CTaECGUeT25jRAewYpLIUCr
+   izXE+Byhugoyx+sy1UgAFmhN71SgDgKyO+4GwFedhAGy2vK9EZU8roHx3
+   P5CmpjVv6bwBrqB86hOUvf4FwbHdis1TwLULF0Jk7KmBF8hCqj70ywxb1
+   GWxASvqvLsGstgX2UzaqDwQaZ6c5tvrCvCaWGcq78oloAnd68UnjVpVpd
+   A==;
+X-CSE-ConnectionGUID: ZXKvTPmjT7exNqrjRl5xYw==
+X-CSE-MsgGUID: CLLSTA1jS8asnsWSQ3dxXA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="67788385"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="67788385"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 10:12:59 -0700
+X-CSE-ConnectionGUID: 4W1TGk90Rq6w0Asfd2mdcw==
+X-CSE-MsgGUID: azLkx13EQluNt3pEM9IGsQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163624955"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO [10.125.109.249]) ([10.125.109.249])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 10:12:59 -0700
+Message-ID: <96866c15-2eb1-4df4-9e63-dfd5e40ecb91@intel.com>
+Date: Fri, 1 Aug 2025 10:12:58 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,34 +66,155 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH -next] thermal/drivers/mediatek/lvts_thermal: remove
- unneeded semicolon
-To: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>, rafael@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org, Abaci Robot <abaci@linux.alibaba.com>
-References: <20250801063540.2959610-1-jiapeng.chong@linux.alibaba.com>
+Subject: Re: [PATCH v10 5/6] x86/sgx: Implement ENCLS[EUPDATESVN]
+To: Elena Reshetova <elena.reshetova@intel.com>
+Cc: jarkko@kernel.org, seanjc@google.com, kai.huang@intel.com,
+ mingo@kernel.org, linux-sgx@vger.kernel.org, linux-kernel@vger.kernel.org,
+ x86@kernel.org, asit.k.mallick@intel.com, vincent.r.scarlata@intel.com,
+ chongc@google.com, erdemaktas@google.com, vannapurve@google.com,
+ bondarn@google.com, scott.raynor@intel.com
+References: <20250801112619.1117549-1-elena.reshetova@intel.com>
+ <20250801112619.1117549-6-elena.reshetova@intel.com>
+From: Dave Hansen <dave.hansen@intel.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250801063540.2959610-1-jiapeng.chong@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Autocrypt: addr=dave.hansen@intel.com; keydata=
+ xsFNBE6HMP0BEADIMA3XYkQfF3dwHlj58Yjsc4E5y5G67cfbt8dvaUq2fx1lR0K9h1bOI6fC
+ oAiUXvGAOxPDsB/P6UEOISPpLl5IuYsSwAeZGkdQ5g6m1xq7AlDJQZddhr/1DC/nMVa/2BoY
+ 2UnKuZuSBu7lgOE193+7Uks3416N2hTkyKUSNkduyoZ9F5twiBhxPJwPtn/wnch6n5RsoXsb
+ ygOEDxLEsSk/7eyFycjE+btUtAWZtx+HseyaGfqkZK0Z9bT1lsaHecmB203xShwCPT49Blxz
+ VOab8668QpaEOdLGhtvrVYVK7x4skyT3nGWcgDCl5/Vp3TWA4K+IofwvXzX2ON/Mj7aQwf5W
+ iC+3nWC7q0uxKwwsddJ0Nu+dpA/UORQWa1NiAftEoSpk5+nUUi0WE+5DRm0H+TXKBWMGNCFn
+ c6+EKg5zQaa8KqymHcOrSXNPmzJuXvDQ8uj2J8XuzCZfK4uy1+YdIr0yyEMI7mdh4KX50LO1
+ pmowEqDh7dLShTOif/7UtQYrzYq9cPnjU2ZW4qd5Qz2joSGTG9eCXLz5PRe5SqHxv6ljk8mb
+ ApNuY7bOXO/A7T2j5RwXIlcmssqIjBcxsRRoIbpCwWWGjkYjzYCjgsNFL6rt4OL11OUF37wL
+ QcTl7fbCGv53KfKPdYD5hcbguLKi/aCccJK18ZwNjFhqr4MliQARAQABzUVEYXZpZCBDaHJp
+ c3RvcGhlciBIYW5zZW4gKEludGVsIFdvcmsgQWRkcmVzcykgPGRhdmUuaGFuc2VuQGludGVs
+ LmNvbT7CwXgEEwECACIFAlQ+9J0CGwMGCwkIBwMCBhUIAgkKCwQWAgMBAh4BAheAAAoJEGg1
+ lTBwyZKwLZUP/0dnbhDc229u2u6WtK1s1cSd9WsflGXGagkR6liJ4um3XCfYWDHvIdkHYC1t
+ MNcVHFBwmQkawxsYvgO8kXT3SaFZe4ISfB4K4CL2qp4JO+nJdlFUbZI7cz/Td9z8nHjMcWYF
+ IQuTsWOLs/LBMTs+ANumibtw6UkiGVD3dfHJAOPNApjVr+M0P/lVmTeP8w0uVcd2syiaU5jB
+ aht9CYATn+ytFGWZnBEEQFnqcibIaOrmoBLu2b3fKJEd8Jp7NHDSIdrvrMjYynmc6sZKUqH2
+ I1qOevaa8jUg7wlLJAWGfIqnu85kkqrVOkbNbk4TPub7VOqA6qG5GCNEIv6ZY7HLYd/vAkVY
+ E8Plzq/NwLAuOWxvGrOl7OPuwVeR4hBDfcrNb990MFPpjGgACzAZyjdmYoMu8j3/MAEW4P0z
+ F5+EYJAOZ+z212y1pchNNauehORXgjrNKsZwxwKpPY9qb84E3O9KYpwfATsqOoQ6tTgr+1BR
+ CCwP712H+E9U5HJ0iibN/CDZFVPL1bRerHziuwuQuvE0qWg0+0SChFe9oq0KAwEkVs6ZDMB2
+ P16MieEEQ6StQRlvy2YBv80L1TMl3T90Bo1UUn6ARXEpcbFE0/aORH/jEXcRteb+vuik5UGY
+ 5TsyLYdPur3TXm7XDBdmmyQVJjnJKYK9AQxj95KlXLVO38lczsFNBFRjzmoBEACyAxbvUEhd
+ GDGNg0JhDdezyTdN8C9BFsdxyTLnSH31NRiyp1QtuxvcqGZjb2trDVuCbIzRrgMZLVgo3upr
+ MIOx1CXEgmn23Zhh0EpdVHM8IKx9Z7V0r+rrpRWFE8/wQZngKYVi49PGoZj50ZEifEJ5qn/H
+ Nsp2+Y+bTUjDdgWMATg9DiFMyv8fvoqgNsNyrrZTnSgoLzdxr89FGHZCoSoAK8gfgFHuO54B
+ lI8QOfPDG9WDPJ66HCodjTlBEr/Cwq6GruxS5i2Y33YVqxvFvDa1tUtl+iJ2SWKS9kCai2DR
+ 3BwVONJEYSDQaven/EHMlY1q8Vln3lGPsS11vSUK3QcNJjmrgYxH5KsVsf6PNRj9mp8Z1kIG
+ qjRx08+nnyStWC0gZH6NrYyS9rpqH3j+hA2WcI7De51L4Rv9pFwzp161mvtc6eC/GxaiUGuH
+ BNAVP0PY0fqvIC68p3rLIAW3f97uv4ce2RSQ7LbsPsimOeCo/5vgS6YQsj83E+AipPr09Caj
+ 0hloj+hFoqiticNpmsxdWKoOsV0PftcQvBCCYuhKbZV9s5hjt9qn8CE86A5g5KqDf83Fxqm/
+ vXKgHNFHE5zgXGZnrmaf6resQzbvJHO0Fb0CcIohzrpPaL3YepcLDoCCgElGMGQjdCcSQ+Ci
+ FCRl0Bvyj1YZUql+ZkptgGjikQARAQABwsFfBBgBAgAJBQJUY85qAhsMAAoJEGg1lTBwyZKw
+ l4IQAIKHs/9po4spZDFyfDjunimEhVHqlUt7ggR1Hsl/tkvTSze8pI1P6dGp2XW6AnH1iayn
+ yRcoyT0ZJ+Zmm4xAH1zqKjWplzqdb/dO28qk0bPso8+1oPO8oDhLm1+tY+cOvufXkBTm+whm
+ +AyNTjaCRt6aSMnA/QHVGSJ8grrTJCoACVNhnXg/R0g90g8iV8Q+IBZyDkG0tBThaDdw1B2l
+ asInUTeb9EiVfL/Zjdg5VWiF9LL7iS+9hTeVdR09vThQ/DhVbCNxVk+DtyBHsjOKifrVsYep
+ WpRGBIAu3bK8eXtyvrw1igWTNs2wazJ71+0z2jMzbclKAyRHKU9JdN6Hkkgr2nPb561yjcB8
+ sIq1pFXKyO+nKy6SZYxOvHxCcjk2fkw6UmPU6/j/nQlj2lfOAgNVKuDLothIxzi8pndB8Jju
+ KktE5HJqUUMXePkAYIxEQ0mMc8Po7tuXdejgPMwgP7x65xtfEqI0RuzbUioFltsp1jUaRwQZ
+ MTsCeQDdjpgHsj+P2ZDeEKCbma4m6Ez/YWs4+zDm1X8uZDkZcfQlD9NldbKDJEXLIjYWo1PH
+ hYepSffIWPyvBMBTW2W5FRjJ4vLRrJSUoEfJuPQ3vW9Y73foyo/qFoURHO48AinGPZ7PC7TF
+ vUaNOTjKedrqHkaOcqB185ahG2had0xnFsDPlx5y
+In-Reply-To: <20250801112619.1117549-6-elena.reshetova@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 01/08/2025 08:35, Jiapeng Chong wrote:
-> No functional modification involved.
-> 
-> ./drivers/thermal/mediatek/lvts_thermal.c:642:2-3: Unneeded semicolon.
-> 
-> Reported-by: Abaci Robot <abaci@linux.alibaba.com>
-> Closes: https://bugzilla.openanolis.cn/show_bug.cgi?id=23244
-> Signed-off-by: Jiapeng Chong <jiapeng.chong@linux.alibaba.com>
-> ---
+The changelog is missing a tidbit about the fact that this is still dead
+code until sgx_inc_usage_count() gets a real implementation.
 
-Applied, thanks
+On 8/1/25 04:25, Elena Reshetova wrote:
+...
+> +/**
+> + * sgx_update_svn() - Attempt to call ENCLS[EUPDATESVN].
+> + * This instruction attempts to update CPUSVN to the
+> + * currently loaded microcode update SVN and generate new
+> + * cryptographic assets. Must be called when EPC is empty.
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+As a general rule, I'd much rather have the "Must be $FOO" rules written
+in code than in a comment, or along with a comment:
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+	/* EPC is guaranteed to be empty when there are no users: */
+	WARN(count, "Elevated usage count...");
+
+> + * Most of the time, there will be no update and that's OK.
+
+This should go with the check for SGX_NO_UPDATE, not here.
+
+> + * If the failure is due to SGX_INSUFFICIENT_ENTROPY, the
+> + * operation can be safely retried. In other failure cases,
+> + * the retry should not be attempted.
+
+Ditto. This is rewriting the code in comments.
+
+> + * Return:
+> + * 0: Success or not supported
+> + * -EAGAIN: Can be safely retried, failure is due to lack of
+> + *  entropy in RNG.
+> + * -EIO: Unexpected error, retries are not advisable.
+> + */
+> +static int __maybe_unused sgx_update_svn(void)
+> +{
+> +	int ret;
+> +
+> +	/*
+> +	 * If EUPDATESVN is not available, it is ok to
+> +	 * silently skip it to comply with legacy behavior.
+> +	 */
+> +	if (!cpu_feature_enabled(X86_FEATURE_SGX_EUPDATESVN))
+> +		return 0;
+> +
+> +	for (int i = 0; i < RDRAND_RETRY_LOOPS; i++) {
+> +		ret = __eupdatesvn();
+> +
+> +		/* Stop on success or unexpected errors: */
+> +		if (ret != SGX_INSUFFICIENT_ENTROPY)
+> +			break;
+> +	}
+> +
+> +	/*
+> +	 * SVN successfully updated.
+> +	 * Let users know when the update was successful.
+> +	 */
+> +	if (!ret)
+> +		pr_info("SVN updated successfully\n");
+> +
+> +	if (!ret || ret == SGX_NO_UPDATE)
+> +		return 0;
+> +
+> +	/*
+> +	 * SVN update failed due to lack of entropy in DRNG.
+> +	 * Indicate to userspace that it should retry.
+> +	 */
+> +	if (ret == SGX_INSUFFICIENT_ENTROPY)
+> +		return -EAGAIN;
+
+There are four cases to handle. Doesn't it make sense to just write it
+as four literal "case"s?
+
+	switch (ret) {
+	case 0:
+		pr_info("...");
+		return 0;
+	case SGX_NO_UPDATE:
+		return 0;
+	case SGX_INSUFFICIENT_ENTROPY:
+		return -EAGAIN;
+	default:
+		break;
+	}
+
+
+> +	ENCLS_WARN(ret, "EUPDATESVN");
+> +	return -EIO;
+> +}
+> +
+>  int sgx_inc_usage_count(void)
+>  {
+>  	return 0;
+
 
