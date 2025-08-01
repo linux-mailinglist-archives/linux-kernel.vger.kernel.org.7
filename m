@@ -1,260 +1,456 @@
-Return-Path: <linux-kernel+bounces-753470-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753469-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4608BB18375
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:13:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53DB6B18373
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:13:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42922562BD3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:13:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 640A2544483
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7898B26C3A2;
-	Fri,  1 Aug 2025 14:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 004EA26B75B;
+	Fri,  1 Aug 2025 14:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="OO/u4c1/"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIPDeZgw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B171626C3A5
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:13:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AB126A095;
+	Fri,  1 Aug 2025 14:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754057624; cv=none; b=qnnl6vELfy3hmtuMe4HHe5YQ/V82MaEiT9DglYGp7I3TMaanpGD8p4ueucSWfqDQWa3mUsgpyp77a+q3VJ7LLiMTxdpnKvg486Ql3O3FayvbCWTEcsy3yhLinqkckzG8Zw2ViMDqVOsLTg8lgKYrVHmJVE38N15N1tQCAjENjDM=
+	t=1754057619; cv=none; b=aRxTXhK9/LC6Xta+lljd6VOkgDZZBiUBi1UBEejaX6cnh1XGFNISH2dKrCoHasLoQbsIwMT8MSbm1z+th9RPwja/iE7FhQ103gtxkwQNb+3bvHuobBA4MjnmrS2yF3FAOht0IXyfd4eKD1Eh8U+tW368HifmJi7adaJfQ3uLMKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754057624; c=relaxed/simple;
-	bh=kvbVEF7c9SDapc6JykRKt8pOB7KOFmfvV7rTwygDQAI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=DOc3uDWpVli/Fz4gKvZKFsJ3NDb5+g9T86Ek7EbqtniChLja5AKVP7ebYvrYlzMgj9io0uxlCxYbjNDEhlh4YRk5ycqAND7RePT8QlZf3Yx6mimh6PKDPWjYUecPaENQt2GJuEUbmo9o2GJZpgFH3tqOampJ0BniOsSqOak7Aio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=OO/u4c1/; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754057621;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=EbFv2TD7NDloKozndUcyagdfd/67A0nNkTyyQSYo1J8=;
-	b=OO/u4c1/RIzkLtmdXN0ce4l3cJ06MNu20FIjmDV6+ceDyWVWlVndOy9e3eL7HoRPRylDDo
-	FHpjdAqod+jWy++LNbshv0eydf8Uoic7cHnDUw7slTnpOxvJTvowD26BryiSC7hiibZnbV
-	mEdlt2zchqhIBb05XGnKK/7SrmDXXRQ=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-418-bKLqbSXsPlWOzfhe3jaVDw-1; Fri, 01 Aug 2025 10:13:40 -0400
-X-MC-Unique: bKLqbSXsPlWOzfhe3jaVDw-1
-X-Mimecast-MFC-AGG-ID: bKLqbSXsPlWOzfhe3jaVDw_1754057619
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b79c28f8ceso1614545f8f.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:13:40 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754057619; x=1754662419;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:from:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EbFv2TD7NDloKozndUcyagdfd/67A0nNkTyyQSYo1J8=;
-        b=krLXdBP7J3KMlvU76LDc44qjhPui3FyS6Fn1aunYxLaWaBSFVOpDhrAK8In72U9KDV
-         nYJL2JZAGw8jpwCuXIoaHJzvZjDJ/QUVA51NB3y5KaUEl9WM4FttVnKREh++64eUIbTp
-         vVeJHaNHGnUcHGN3Pu2Vfj4318xWtUGL612ZypN3zYXGRoeqeaKTuOKtWmWQAf9lYsPM
-         SCfp6SR09va/0FLKUoHgQfLsyVTiRfwWgbSpj1CpkVtNB9kD0SC7gYYSNuZa/Dazucl1
-         num+xDiUPBEgSdGIeQ4JLKr0Mmyj9ObSzg2ETaAAfFVftLnnCTJdCYqSCUtJ8KQ7hmMo
-         07hw==
-X-Forwarded-Encrypted: i=1; AJvYcCWXEnwtxK6z7ivTOdGVLkbhoDBkNBwqgdhPCI9B3fuABTk9Q3/zlSM1gObc31013QkbjHm0yZDr75gsGEM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXRyv1JqdlAxyb4A/3Ac9HPHLM8o8HN5dTOOAG4I5uM5/aDy39
-	ItDRlFE7qKDtbe/GhRlAAOixZiB29DbAymkD+ImOLSz6jiBmLIhPTzn4c5fcvYJ/lmR56q+yGIp
-	qV0GPdekofycDdsQWnUFugeu5ZgklARcOxx5CWxhj5Hxha5chLLjaE+DthOC9bUeSoA==
-X-Gm-Gg: ASbGncs2fg+QvmUebFNJm1m0NOQ8Tivk9bDEo1LfrF4ImQbSzwbr2eHLcS7DHjlDgM1
-	AOsg4wBMjlciavz2UTAKud1L8CyvZldJWvIDLQPvdBVpfZoIuCE/Pn+gfrDRPjF0nNxkC1KOqN5
-	lQcoPpaQ2NS29bOJPy9LueCQW07rK3eQzv+1PESvXwwxlXFb/+xylXIgA6eMXJojEfnsSoznXoG
-	1QSLDsyKHT+6vbju2xFjcZCHhSAdAh/fMKXq8r6r8zMMBO2n4lNzaMbxBavfAeUCdW1M2KnlMKB
-	od1cPYZguSo00KgPShYahyGM5fSrnjmVBnrf8kKKIihgU3KhVXPPk0JmHzPVTLTO8SJpTmTTWYF
-	8PC/bl2hP5ESWG0GdtZThklhcRn4aCiyV8Vh9oSF2/1lR7QyK5VYwv01nZslZavbs
-X-Received: by 2002:a05:6000:401f:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3b794fe4fe6mr9647145f8f.11.1754057618885;
-        Fri, 01 Aug 2025 07:13:38 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHJTKNrIL7Q9PR+TZ1c1/4AnaNhnzCQk8bo5y4cNtdcfLm5Ah+gjARoH1ht5K9SxH9oWHUnAg==
-X-Received: by 2002:a05:6000:401f:b0:3b7:76e8:ba1e with SMTP id ffacd0b85a97d-3b794fe4fe6mr9647105f8f.11.1754057618361;
-        Fri, 01 Aug 2025 07:13:38 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee628fcsm66571965e9.31.2025.08.01.07.13.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 07:13:37 -0700 (PDT)
-Message-ID: <286466e3-9d1c-40a0-a467-a48cb2b657b4@redhat.com>
-Date: Fri, 1 Aug 2025 16:13:32 +0200
+	s=arc-20240116; t=1754057619; c=relaxed/simple;
+	bh=gsmM1hlpa9ZTykeARSywzNo3kKIbp5DEz7gzKeF6uak=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=as41lig7K2S39ODuyU0GRQdP+ZvDCq92/d/x02J5p7LrHUC0eUCVdf+dab/eSTyenuzjN/LBeMfbrXPGuD0f1/9xrbNNHoWONeG6YVbHI2irKS7GaGd7v88hWRkCeRb/BViRUi2CN4MLX9QqdRvgO6uqcEQS+KaaPSaCjiLpsMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIPDeZgw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEE5DC4CEF6;
+	Fri,  1 Aug 2025 14:13:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754057615;
+	bh=gsmM1hlpa9ZTykeARSywzNo3kKIbp5DEz7gzKeF6uak=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=cIPDeZgwK4SYF7yWAXbPhD60yge2cS6B7a0EUK3SX5psD+jOSs90ScbGS1VumwZC4
+	 nNYptv+zIczG3GNxk20cRU3usdeDj6nvIYJc5sUjYBSLhzFZUaqwFpcwTG13qAAZAd
+	 trJ3MwiCd4mL26DkN94j29fayTTA+XVJb4S+X1YH2IVsVp2+4cpD0D+2cJ8s86RRdi
+	 5IDlP4iIssX1+7XLB/ngKt8VcYNkr8WcwhBj9fn6OTkFcS0e3sbXV8kJyECiD8M0Lm
+	 4B2BpID1xq2EFEXIXRJ3OnzoTh6Rq9arI09MdbU+vKZISWOwGYs7SYiYh6GEicY1YR
+	 ZVxRNojV3VJBA==
+From: Pratyush Yadav <pratyush@kernel.org>
+To: Mike Rapoport <rppt@kernel.org>
+Cc: Andrew Morton <akpm@linux-foundation.org>,  Alexander Graf
+ <graf@amazon.com>,  Changyuan Lyu <changyuanl@google.com>,  Pasha Tatashin
+ <pasha.tatashin@soleen.com>,  Pratyush Yadav <pratyush@kernel.org>,  Shuah
+ Khan <shuah@kernel.org>,  Thomas Weischuh <linux@weissschuh.net>,
+  kexec@lists.infradead.org,  linux-kernel@vger.kernel.org,
+  linux-kselftest@vger.kernel.org,  linux-mm@kvack.org
+Subject: Re: [PATCH v2] kho: add test for kexec handover
+In-Reply-To: <20250801100630.3473918-1-rppt@kernel.org>
+References: <20250801100630.3473918-1-rppt@kernel.org>
+Date: Fri, 01 Aug 2025 16:13:32 +0200
+Message-ID: <mafs0zfcjcepf.fsf@kernel.org>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/userfaultfd: fix missing PTE unmap for non-migration
- entries
-From: David Hildenbrand <david@redhat.com>
-To: Sasha Levin <sashal@kernel.org>
-Cc: Andrew Morton <akpm@linux-foundation.org>, peterx@redhat.com,
- aarcange@redhat.com, surenb@google.com, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250630031958.1225651-1-sashal@kernel.org>
- <20250630175746.e52af129fd2d88deecc25169@linux-foundation.org>
- <a4d8b292-154a-4d14-90e4-6c822acf1cfb@redhat.com> <aG06QBVeBJgluSqP@lappy>
- <a8f863b1-ea06-4396-b4da-4dca41e3d9a5@redhat.com> <aItjffoR7molh3QF@lappy>
- <214e78a0-7774-4b1e-8d85-9a66d2384744@redhat.com> <aIzAj9xUOPCsmZEG@lappy>
- <593b222e-1a62-475c-9502-76e128d3625d@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <593b222e-1a62-475c-9502-76e128d3625d@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 01.08.25 16:06, David Hildenbrand wrote:
-> On 01.08.25 15:26, Sasha Levin wrote:
->> On Thu, Jul 31, 2025 at 02:56:25PM +0200, David Hildenbrand wrote:
->>> On 31.07.25 14:37, Sasha Levin wrote:
->>>> On Tue, Jul 08, 2025 at 05:42:16PM +0200, David Hildenbrand wrote:
->>>>> On 08.07.25 17:33, Sasha Levin wrote:
->>>>>> On Tue, Jul 08, 2025 at 05:10:44PM +0200, David Hildenbrand wrote:
->>>>>>> On 01.07.25 02:57, Andrew Morton wrote:
->>>>>>>> On Sun, 29 Jun 2025 23:19:58 -0400 Sasha Levin <sashal@kernel.org> wrote:
->>>>>>>>
->>>>>>>>> When handling non-swap entries in move_pages_pte(), the error handling
->>>>>>>>> for entries that are NOT migration entries fails to unmap the page table
->>>>>>>>> entries before jumping to the error handling label.
->>>>>>>>>
->>>>>>>>> This results in a kmap/kunmap imbalance which on CONFIG_HIGHPTE systems
->>>>>>>>> triggers a WARNING in kunmap_local_indexed() because the kmap stack is
->>>>>>>>> corrupted.
->>>>>>>>>
->>>>>>>>> Example call trace on ARM32 (CONFIG_HIGHPTE enabled):
->>>>>>>>>     WARNING: CPU: 1 PID: 633 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
->>>>>>>>>     Call trace:
->>>>>>>>>       kunmap_local_indexed from move_pages+0x964/0x19f4
->>>>>>>>>       move_pages from userfaultfd_ioctl+0x129c/0x2144
->>>>>>>>>       userfaultfd_ioctl from sys_ioctl+0x558/0xd24
->>>>>>>>>
->>>>>>>>> The issue was introduced with the UFFDIO_MOVE feature but became more
->>>>>>>>> frequent with the addition of guard pages (commit 7c53dfbdb024 ("mm: add
->>>>>>>>> PTE_MARKER_GUARD PTE marker")) which made the non-migration entry code
->>>>>>>>> path more commonly executed during userfaultfd operations.
->>>>>>>>>
->>>>>>>>> Fix this by ensuring PTEs are properly unmapped in all non-swap entry
->>>>>>>>> paths before jumping to the error handling label, not just for migration
->>>>>>>>> entries.
->>>>>>>>
->>>>>>>> I don't get it.
->>>>>>>>
->>>>>>>>> --- a/mm/userfaultfd.c
->>>>>>>>> +++ b/mm/userfaultfd.c
->>>>>>>>> @@ -1384,14 +1384,15 @@ static int move_pages_pte(struct mm_struct *mm, pmd_t *dst_pmd, pmd_t *src_pmd,
->>>>>>>>>    		entry = pte_to_swp_entry(orig_src_pte);
->>>>>>>>>    		if (non_swap_entry(entry)) {
->>>>>>>>> +			pte_unmap(src_pte);
->>>>>>>>> +			pte_unmap(dst_pte);
->>>>>>>>> +			src_pte = dst_pte = NULL;
->>>>>>>>>    			if (is_migration_entry(entry)) {
->>>>>>>>> -				pte_unmap(src_pte);
->>>>>>>>> -				pte_unmap(dst_pte);
->>>>>>>>> -				src_pte = dst_pte = NULL;
->>>>>>>>>    				migration_entry_wait(mm, src_pmd, src_addr);
->>>>>>>>>    				err = -EAGAIN;
->>>>>>>>> -			} else
->>>>>>>>> +			} else {
->>>>>>>>>    				err = -EFAULT;
->>>>>>>>> +			}
->>>>>>>>>    			goto out;
->>>>>>>>
->>>>>>>> where we have
->>>>>>>>
->>>>>>>> out:
->>>>>>>> 	...
->>>>>>>> 	if (dst_pte)
->>>>>>>> 		pte_unmap(dst_pte);
->>>>>>>> 	if (src_pte)
->>>>>>>> 		pte_unmap(src_pte);
->>>>>>>
->>>>>>> AI slop?
->>>>>>
->>>>>> Nah, this one is sadly all me :(
->>>>>
->>>>> Haha, sorry :P
->>>>
->>>> So as I was getting nowhere with this, I asked AI to help me :)
->>>>
->>>> If you're not interested in reading LLM generated code, feel free to
->>>> stop reading now...
->>>>
->>>> After it went over the logs, and a few prompts to point it the right
->>>> way, it ended up generating a patch (below) that made sense, and fixed
->>>> the warning that LKFT was being able to trigger.
->>>>
->>>> If anyone who's more familiar with the code than me (and the AI) agrees
->>>> with the patch and ways to throw their Reviewed-by, I'll send out the
->>>> patch.
->>>
->>> Seems to check out for me. In particular, out pte_unmap() everywhere
->>> else in that function (and mremap.c:move_ptes) are ordered properly.
->>>
->>> Even if it would not fix the issue, it would be a cleanup :)
->>>
->>> Acked-by: David Hildenbrand <david@redhat.com>
->>
->> David, I ended up LLM generating a .cocci script to detect this type of
->> issues, and it ended up detecting a similar issue in
->> arch/loongarch/mm/init.c.
-> 
-> Does loongarch have these kmap_local restrictions?
+Hi Mike,
 
-loongarch doesn't use HIGHMEM, so it probably doesn't matter. Could be 
-considered a cleanup, though.
+On Fri, Aug 01 2025, Mike Rapoport wrote:
+
+> From: "Mike Rapoport (Microsoft)" <rppt@kernel.org>
+>
+> Testing kexec handover requires a kernel driver that will generate some
+> data and preserve it with KHO on the first boot and then restore that
+> data and verify it was preserved properly after kexec.
+>
+> To facilitate such test, along with the kernel driver responsible for
+> data generation, preservation and restoration add a script that runs a
+> kernel in a VM with a minimal /init. The /init enables KHO, loads a
+> kernel image for kexec and runs kexec reboot. After the boot of the
+> kexeced kernel, the driver verifies that the data was properly
+> preserved.
+
+Nice! Thanks for working on this.
+
+I see that a lot of the driver assumes KHO cleans everything up on free.
+That stops being true with Pasha' proposed LUO patches. The series also
+gets rid of the notifier chain. So this test would need a bit of a
+refactor once those patches land.
+
+Other than this, I only have some minor comments below.
+
+>
+> Signed-off-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
+> ---
+> v2 changes:
+> * fix section mismatch warning in lib/test_kho.c
+> * address Thomas' comments about nolibc and initrd generation
+>
+> v1: https://lore.kernel.org/all/20250727083733.2590139-1-rppt@kernel.org
+>
+[...
+> diff --git a/lib/test_kho.c b/lib/test_kho.c
+> new file mode 100644
+> index 000000000000..c2eb899c3b45
+> --- /dev/null
+> +++ b/lib/test_kho.c
+> @@ -0,0 +1,305 @@
+> +// SPDX-License-Identifier: GPL-2.0-or-later
+> +/*
+> + * Test module for KHO
+> + * Copyright (c) 2025 Microsoft Corporation.
+> + *
+> + * Authors:
+> + *   Saurabh Sengar <ssengar@microsoft.com>
+> + *   Mike Rapoport <rppt@kernel.org>
+> + */
+> +
+> +#define pr_fmt(fmt) KBUILD_MODNAME ": " fmt
+> +
+> +#include <linux/mm.h>
+> +#include <linux/gfp.h>
+> +#include <linux/slab.h>
+> +#include <linux/kexec.h>
+> +#include <linux/libfdt.h>
+> +#include <linux/module.h>
+> +#include <linux/printk.h>
+> +#include <linux/vmalloc.h>
+> +#include <linux/kexec_handover.h>
+> +
+> +#include <net/checksum.h>
+> +
+> +#define KHO_TEST_MAGIC	0x4b484f21	/* KHO! */
+> +#define KHO_TEST_FDT	"kho_test"
+> +#define KHO_TEST_COMPAT "kho-test-v1"
+> +
+> +static long max_mem = (PAGE_SIZE << MAX_PAGE_ORDER) * 2;
+> +module_param(max_mem, long, 0644);
+> +
+> +struct kho_test_state {
+> +	unsigned int nr_folios;
+> +	struct folio **folios;
+> +	struct folio *fdt;
+> +	__wsum csum;
+> +};
+> +
+> +static struct kho_test_state kho_test_state;
+> +
+> +static int kho_test_notifier(struct notifier_block *self, unsigned long cmd,
+> +			     void *v)
+> +{
+> +	struct kho_test_state *state = &kho_test_state;
+> +	struct kho_serialization *ser = v;
+> +	int err = 0;
+> +
+> +	switch (cmd) {
+> +	case KEXEC_KHO_ABORT:
+> +		return NOTIFY_DONE;
+> +	case KEXEC_KHO_FINALIZE:
+> +		/* Handled below */
+> +		break;
+> +	default:
+> +		return NOTIFY_BAD;
+> +	}
+> +
+> +	err |= kho_preserve_folio(state->fdt);
+> +	err |= kho_add_subtree(ser, KHO_TEST_FDT, folio_address(state->fdt));
+> +
+> +	return err ? NOTIFY_BAD : NOTIFY_DONE;
+> +}
+> +
+> +static struct notifier_block kho_test_nb = {
+> +	.notifier_call = kho_test_notifier,
+> +};
+> +
+> +static int kho_test_save_data(struct kho_test_state *state, void *fdt)
+> +{
+> +	phys_addr_t *folios_info __free(kvfree) = NULL;
+> +	int err = 0;
+> +
+> +	folios_info = kvmalloc_array(state->nr_folios, sizeof(*folios_info),
+> +				     GFP_KERNEL);
+
+Since you copy this data into the FDT anyway, why not use
+fdt_property_placeholder() instead? You can just build the list directly
+in the FDT then and avoid the memcpy().
+
+> +	if (!folios_info)
+> +		return -ENOMEM;
+> +
+> +	for (int i = 0; i < state->nr_folios; i++) {
+> +		struct folio *folio = state->folios[i];
+> +		unsigned int order = folio_order(folio);
+> +
+> +		folios_info[i] = virt_to_phys(folio_address(folio)) | order;
+
+I did something similar for memfd preservation -- stashed some extra
+data into the unused bits in the physical address. Perhaps we should
+come up with a neat abstraction to do it more cleanly?
+
+Not needed for this patch, just thinking out loud.
+
+> +
+> +		err = kho_preserve_folio(folio);
+> +		if (err)
+> +			return err;
+> +	}
+> +
+> +	err |= fdt_begin_node(fdt, "data");
+> +	err |= fdt_property(fdt, "nr_folios", &state->nr_folios,
+> +			    sizeof(state->nr_folios));
+> +	err |= fdt_property(fdt, "folios_info", folios_info,
+> +			    state->nr_folios * sizeof(*folios_info));
+> +	err |= fdt_property(fdt, "csum", &state->csum, sizeof(state->csum));
+> +	err |= fdt_end_node(fdt);
+> +
+> +	return err;
+> +}
+> +
+> +static int kho_test_prepare_fdt(struct kho_test_state *state)
+> +{
+> +	const char compatible[] = KHO_TEST_COMPAT;
+> +	unsigned int magic = KHO_TEST_MAGIC;
+> +	ssize_t fdt_size;
+> +	int err = 0;
+> +	void *fdt;
+> +
+> +	fdt_size = state->nr_folios * sizeof(phys_addr_t) + PAGE_SIZE;
+> +	state->fdt = folio_alloc(GFP_KERNEL, get_order(fdt_size));
+> +	if (!state->fdt)
+> +		return -ENOMEM;
+> +
+> +	fdt = folio_address(state->fdt);
+> +
+> +	err |= fdt_create(fdt, fdt_size);
+> +	err |= fdt_finish_reservemap(fdt);
+> +
+> +	err |= fdt_begin_node(fdt, "");
+> +	err |= fdt_property(fdt, "compatible", compatible, sizeof(compatible));
+> +	err |= fdt_property(fdt, "magic", &magic, sizeof(magic));
+
+Doesn't the compatible pretty much do what magic does? Instead of a
+magic number, it is a "magic" string, no?
+
+> +	err |= kho_test_save_data(state, fdt);
+> +	err |= fdt_end_node(fdt);
+> +
+> +	err |= fdt_finish(fdt);
+> +
+> +	if (err)
+> +		folio_put(state->fdt);
+> +
+> +	return err;
+> +}
+> +
+> +static int kho_test_generate_data(struct kho_test_state *state)
+> +{
+> +	size_t alloc_size = 0;
+> +	__wsum csum = 0;
+> +
+> +	while (alloc_size < max_mem) {
+> +		int order = get_random_u32() % NR_PAGE_ORDERS;
+> +		struct folio *folio;
+> +		unsigned int size;
+> +		void *addr;
+> +
+> +		/* cap allocation so that we won't exceed max_mem */
+> +		if (alloc_size + (PAGE_SIZE << order) > max_mem) {
+> +			order = get_order(max_mem - alloc_size);
+> +			if (order)
+> +				order--;
+
+I'm guessing this is because get_order() rounds up, so you want to make
+sure you don't exceed max_mem due to the rounding up. If so, a comment
+would be nice here.
+
+> +		}
+> +		size = PAGE_SIZE << order;
+> +
+> +		folio = folio_alloc(GFP_KERNEL | __GFP_NORETRY, order);
+> +		if (!folio)
+> +			goto err_free_folios;
+> +
+> +		state->folios[state->nr_folios++] = folio;
+> +		addr = folio_address(folio);
+> +		get_random_bytes(addr, size);
+> +		csum = csum_partial(addr, size, csum);
+> +		alloc_size += size;
+> +	}
+> +
+> +	state->csum = csum;
+> +	return 0;
+> +
+> +err_free_folios:
+> +	for (int i = 0; i < state->nr_folios; i++)
+> +		folio_put(state->folios[i]);
+
+Reset state->nr_folios as well? kho_test_cleanup() reads it.
+
+> +	return -ENOMEM;
+> +}
+> +
+> +static int kho_test_save(void)
+> +{
+> +	struct kho_test_state *state = &kho_test_state;
+> +	struct folio **folios __free(kvfree) = NULL;
+
+The __free causes a use-after-free and double-free in
+kho_test_cleanup().
+
+> +	unsigned long max_nr;
+> +	int err;
+> +
+> +	max_mem = PAGE_ALIGN(max_mem);
+> +	max_nr = max_mem >> PAGE_SHIFT;
+> +
+> +	folios = kvmalloc_array(max_nr, sizeof(*state->folios), GFP_KERNEL);
+> +	if (!folios)
+> +		return -ENOMEM;
+> +	state->folios = folios;
+> +
+> +	err = kho_test_generate_data(state);
+> +	if (err)
+> +		return err;
+> +
+> +	err = kho_test_prepare_fdt(state);
+> +	if (err)
+> +		return err;
+> +
+> +	return register_kho_notifier(&kho_test_nb);
+> +}
+> +
+> +static int kho_test_restore_data(const void *fdt, int node)
+> +{
+> +	const unsigned int *nr_folios;
+> +	const phys_addr_t *folios_info;
+> +	const __wsum *old_csum;
+> +	__wsum csum = 0;
+> +	int len;
+> +
+> +	node = fdt_path_offset(fdt, "/data");
+> +
+> +	nr_folios = fdt_getprop(fdt, node, "nr_folios", &len);
+> +	if (!nr_folios || len != sizeof(*nr_folios))
+
+Thinking out loud, this kind of pattern is repeated throughout the memfd
+preservation code, and likely will be used by other users of KHO as
+well. I suppose something like the proposed KSTATE mechanism would let
+us abstract these away. Something for later down the line...
+
+> +		return -EINVAL;
+> +
+> +	old_csum = fdt_getprop(fdt, node, "csum", &len);
+> +	if (!old_csum || len != sizeof(*old_csum))
+> +		return -EINVAL;
+> +
+> +	folios_info = fdt_getprop(fdt, node, "folios_info", &len);
+> +	if (!folios_info || len != sizeof(*folios_info) * *nr_folios)
+> +		return -EINVAL;
+> +
+> +	for (int i = 0; i < *nr_folios; i++) {
+> +		unsigned int order = folios_info[i] & ~PAGE_MASK;
+> +		phys_addr_t phys = folios_info[i] & PAGE_MASK;
+> +		unsigned int size = PAGE_SIZE << order;
+> +		struct folio *folio;
+> +
+> +		folio = kho_restore_folio(phys);
+> +		if (!folio)
+> +			break;
+> +
+> +		if (folio_order(folio) != order)
+
+Restore and put the rest of the folios as well so they aren't leaked?
+
+> +			break;
+> +
+> +		csum = csum_partial(folio_address(folio), size, csum);
+> +		folio_put(folio);
+> +	}
+> +
+> +	if (csum != *old_csum)
+> +		return -EINVAL;
+> +
+> +	return 0;
+> +}
+> +
+> +static int kho_test_restore(phys_addr_t fdt_phys)
+> +{
+> +	void *fdt = phys_to_virt(fdt_phys);
+> +	const unsigned int *magic;
+> +	int node, len, err;
+> +
+> +	node = fdt_path_offset(fdt, "/");
+> +	if (node < 0)
+> +		return -EINVAL;
+> +
+> +	if (fdt_node_check_compatible(fdt, node, KHO_TEST_COMPAT))
+> +		return -EINVAL;
+> +
+> +	magic = fdt_getprop(fdt, node, "magic", &len);
+> +	if (!magic || len != sizeof(*magic))
+> +		return -EINVAL;
+> +
+> +	if (*magic != KHO_TEST_MAGIC)
+> +		return -EINVAL;
+> +
+> +	err = kho_test_restore_data(fdt, node);
+> +	if (err)
+> +		return err;
+> +
+> +	pr_info("KHO restore succeeded\n");
+> +	return 0;
+> +}
+> +
+> +static int __init kho_test_init(void)
+> +{
+> +	phys_addr_t fdt_phys;
+> +	int err;
+> +
+> +	err = kho_retrieve_subtree(KHO_TEST_FDT, &fdt_phys);
+> +	if (!err)
+> +		return kho_test_restore(fdt_phys);
+> +
+> +	if (err != -ENOENT) {
+> +		pr_warn("failed to retrieve %s FDT: %d\n", KHO_TEST_FDT, err);
+> +		return err;
+> +	}
+> +
+> +	return kho_test_save();
+> +}
+> +module_init(kho_test_init);
+> +
+> +static void kho_test_cleanup(void)
+> +{
+> +	for (int i = 0; i < kho_test_state.nr_folios; i++)
+> +		folio_put(kho_test_state.folios[i]);
+> +
+> +	kvfree(kho_test_state.folios);
+
+Free state->fdt as well?
+
+> +}
+> +
+> +static void __exit kho_test_exit(void)
+> +{
+> +	unregister_kho_notifier(&kho_test_nb);
+> +	kho_test_cleanup();
+> +}
+> +module_exit(kho_test_exit);
+> +
+> +MODULE_AUTHOR("Mike Rapoport <rppt@kernel.org>");
+> +MODULE_DESCRIPTION("KHO test module");
+[...]
 
 -- 
-Cheers,
-
-David / dhildenb
-
+Regards,
+Pratyush Yadav
 
