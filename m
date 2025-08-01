@@ -1,127 +1,121 @@
-Return-Path: <linux-kernel+bounces-753850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6415FB188EE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:53:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 02DA7B188F0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:56:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EBD8E1C26BF4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:53:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 367F45A16AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1070C2206B7;
-	Fri,  1 Aug 2025 21:53:08 +0000 (UTC)
-Received: from www262.sakura.ne.jp (www262.sakura.ne.jp [202.181.97.72])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E2A221572;
+	Fri,  1 Aug 2025 21:56:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="euBIlkv0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4459616F8E9;
-	Fri,  1 Aug 2025 21:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.181.97.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 048F616F8E9
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:56:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754085187; cv=none; b=nC9aNKHzYOpj0/Torj3rj7y7LVNbXRxpt9kv274GcIW3jJgzbj0KkMopNBp/uim31fXWNgYtWvKHcXxLBUeKHO1vE9JKSB8W479szJWWS840Bx3Ctl4obd//0LEl92h6ugNI8kjASvWJwPywVxYGg299qdA/2q0g206PgaD4OZM=
+	t=1754085388; cv=none; b=RUfXxZQRx0N74AHXXhPj7v9TTCVEIZmH35QKO0kLK7uC1GHqrnBNAKGmTvyhNuBE13FQMziNrc+Q7ZZ4JVw/IQpStm+xPcG4m9KQZ2WtyCPXDE0uPVH57Ysa9Q5Q6W7zIvITgRP2mIW6Eet+C2W96KtCbWaFWrSu+AcrM4s0KP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754085187; c=relaxed/simple;
-	bh=bRWx2pAgCkgzaxaEhGPC83Gy2yU8rwcb+0y2pqaC6A4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TEb83rxDJsWmlq5wmUW9zVOp3hNRlBZyrKWcHMCSxmhxfPlyP2fBTX66oKcUQ4pDKQNQJWCfhstaJJj3tvIJkdfv51cyfJ1hAfYiUE6tBhLFmKzEvC2nl4PsPpzY/snrgMY7oDapD0Lg+nvLQqDnxHrtzh6pwuBjE5fwXmCPIHk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp; arc=none smtp.client-ip=202.181.97.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=I-love.SAKURA.ne.jp
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=I-love.SAKURA.ne.jp
-Received: from www262.sakura.ne.jp (localhost [127.0.0.1])
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTP id 571Lq1OE017435;
-	Sat, 2 Aug 2025 06:52:01 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Received: from [192.168.1.10] (M106072142033.v4.enabler.ne.jp [106.72.142.33])
-	(authenticated bits=0)
-	by www262.sakura.ne.jp (8.15.2/8.15.2) with ESMTPSA id 571Lq1dn017431
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=NO);
-	Sat, 2 Aug 2025 06:52:01 +0900 (JST)
-	(envelope-from penguin-kernel@I-love.SAKURA.ne.jp)
-Message-ID: <98938e56-b404-4748-94bd-75c88415fafe@I-love.SAKURA.ne.jp>
-Date: Sat, 2 Aug 2025 06:52:01 +0900
+	s=arc-20240116; t=1754085388; c=relaxed/simple;
+	bh=7hEZjfVHsVFrCWk4VRJ0IR8tJXn2+S/PfLITW43SYfs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nSfeqhCLx3LOyc7vXgK1SNyVZ3vKMr37J5RsnNWs95h1SgMepPBhw5HOf4gFclEKwAkA72zDOc7SG9iFxhy5VB6J7kpOElE/xxmLWxfHpqNTQ5yIATw2Z8Iyx4/ynSStmLsBNlU2w4v5QywYnLNz+g2J15G9miCA3N2Ai44mOs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=euBIlkv0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 411E7C4CEE7;
+	Fri,  1 Aug 2025 21:56:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754085387;
+	bh=7hEZjfVHsVFrCWk4VRJ0IR8tJXn2+S/PfLITW43SYfs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=euBIlkv0O+49/YsuKNYZBMRVQ5nW8mZou3U+SHI2LFeLzs74k9Pu4KIMN0Fn/Vd1f
+	 tkHnrJ756TQEXEAoos4csrWq8spYPKhskireuQAG3WPALynJNk3lX7GhYeeGQtR+gv
+	 kfLQTweVz/J32yG0AqFIno461ivEeh6awd5VoKzgkB37/55e24576Ptq7y+as1ZdHB
+	 LGT/OIBMbhMs0HRfbp+yzRKCnIr71XPEnkYPgnMkuoseCkkFTU1vwTHYWcEZsFRv92
+	 sgXBr1hB+Kjou+IhLu5KMsxHH+19CnAme/c+7Vw8JFkOJRBM3sjcoJMaGcqcnUwzes
+	 ZqOVvM9kzm49g==
+Date: Fri, 1 Aug 2025 17:56:25 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: david@redhat.com, surenb@google.com, aarcange@redhat.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for
+ CONFIG_HIGHPTE
+Message-ID: <aI04CQZZzgCDO2A5@lappy>
+References: <20250731144431.773923-1-sashal@kernel.org>
+ <20250801141101.9f3555a172609cb64fde7f71@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] hfs: update sanity check of the root record
-To: Viacheslav Dubeyko <Slava.Dubeyko@ibm.com>,
-        "leocstone@gmail.com" <leocstone@gmail.com>,
-        "jack@suse.cz" <jack@suse.cz>,
-        "willy@infradead.org" <willy@infradead.org>,
-        "brauner@kernel.org" <brauner@kernel.org>
-Cc: "glaubitz@physik.fu-berlin.de" <glaubitz@physik.fu-berlin.de>,
-        "frank.li@vivo.com" <frank.li@vivo.com>,
-        "slava@dubeyko.com" <slava@dubeyko.com>,
-        "linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
-        "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "akpm@linux-foundation.org" <akpm@linux-foundation.org>,
-        Alexander Viro <viro@zeniv.linux.org.uk>
-References: <4c1eb34018cabe33f81b1aa13d5eb0adc44661e7.camel@dubeyko.com>
- <bb8d0438-6db4-4032-ba44-f7b4155d2cef@I-love.SAKURA.ne.jp>
- <5ef2e2838b0d07d3f05edd2a2a169e7647782de5.camel@ibm.com>
- <8cb50ca3-8ccc-461e-866c-bb322ef8bfc6@I-love.SAKURA.ne.jp>
- <d4abeee2-e291-4da4-9e0e-7880a9c213e3@I-love.SAKURA.ne.jp>
- <650d29da-4f3a-4cfe-b633-ea3b1f27de96@I-love.SAKURA.ne.jp>
- <6db77f5cb0a35de69a5b6b26719e4ffb3fdac8c5.camel@ibm.com>
- <1779f2ad-77da-40e3-9ee0-ef6c4cd468fa@I-love.SAKURA.ne.jp>
- <12de16685af71b513f8027a8bfd14bc0322eb043.camel@ibm.com>
- <0b9799d4-b938-4843-a863-8e2795d33eca@I-love.SAKURA.ne.jp>
- <427fcb57-8424-4e52-9f21-7041b2c4ae5b@I-love.SAKURA.ne.jp>
- <5498a57ea660b5366ef213acd554aba55a5804d1.camel@ibm.com>
- <57d65c2f-ca35-475d-b950-8fd52b135625@I-love.SAKURA.ne.jp>
- <f0580422d0d8059b4b5303e56e18700539dda39a.camel@ibm.com>
- <5f0769cd-2cbb-4349-8be4-dfdc74c2c5f8@I-love.SAKURA.ne.jp>
- <06bea1c3fc9080b5798e6b5ad1ad533a145bf036.camel@ibm.com>
-Content-Language: en-US
-From: Tetsuo Handa <penguin-kernel@I-love.SAKURA.ne.jp>
-In-Reply-To: <06bea1c3fc9080b5798e6b5ad1ad533a145bf036.camel@ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Virus-Status: clean
-X-Anti-Virus-Server: fsav403.rs.sakura.ne.jp
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20250801141101.9f3555a172609cb64fde7f71@linux-foundation.org>
 
-On 2025/08/02 3:26, Viacheslav Dubeyko wrote:
-> On Fri, 2025-08-01 at 06:12 +0900, Tetsuo Handa wrote:
->> On 2025/08/01 3:03, Viacheslav Dubeyko wrote:
->>> On Thu, 2025-07-31 at 07:02 +0900, Tetsuo Handa wrote:
->>>> On 2025/07/31 4:24, Viacheslav Dubeyko wrote:
->>>>> If we considering case HFS_CDR_DIR in hfs_read_inode(), then we know that it
->>>>> could be HFS_POR_CNID, HFS_ROOT_CNID, or >= HFS_FIRSTUSER_CNID. Do you mean that
->>>>> HFS_POR_CNID could be a problem in hfs_write_inode()?
->>>>
->>>> Yes. Passing one of 1, 5 or 15 instead of 2 from hfs_fill_super() triggers BUG()
->>>> in hfs_write_inode(). We *MUST* validate at hfs_fill_super(), or hfs_read_inode()
->>>> shall have to also reject 1, 5 and 15 (and as a result only accept 2).
->>>
->>> The fix should be in hfs_read_inode(). Currently, suggested solution hides the
->>> issue but not fix the problem.
+On Fri, Aug 01, 2025 at 02:11:01PM -0700, Andrew Morton wrote:
+>On Thu, 31 Jul 2025 10:44:31 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>
+>> With CONFIG_HIGHPTE on 32-bit ARM, move_pages_pte() maps PTE pages using
+>> kmap_local_page(), which requires unmapping in Last-In-First-Out order.
 >>
->> Not fixing this problem might be hiding other issues, by hitting BUG() before
->> other issues shows up.
+>> The current code maps dst_pte first, then src_pte, but unmaps them in
+>> the same order (dst_pte, src_pte), violating the LIFO requirement.
+>> This causes the warning in kunmap_local_indexed():
 >>
-> 
-> I am not going to start a philosophical discussion. We simply need to fix the
-> bug. The suggested patch doesn't fix the issue.
+>>   WARNING: CPU: 0 PID: 604 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>   addr \!= __fix_to_virt(FIX_KMAP_BEGIN + idx)
+>>
+>> Fix this by reversing the unmap order to respect LIFO ordering.
+>>
+>> This issue follows the same pattern as similar fixes:
+>> - commit eca6828403b8 ("crypto: skcipher - fix mismatch between mapping and unmapping order")
+>> - commit 8cf57c6df818 ("nilfs2: eliminate staggered calls to kunmap in nilfs_rename")
+>>
+>> Both of which addressed the same fundamental requirement that kmap_local
+>> operations must follow LIFO ordering.
+>>
+>> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+>> Co-developed-by: Claude claude-opus-4-20250514
+>
+>Well this is innovative.  I doubt if Co-developed-by: is appropriate
+>for this (where's Claude's Signed-off-by:?)
 
-What is your issue?
+Claude (or any other AI) can't legally sign off on code :)
 
-My issue (what syzbot is reporting) is that the kernel crashes if the inode number
-of the record retrieved as a result of hfs_cat_find_brec(HFS_ROOT_CNID) is not
-HFS_ROOT_CNID. My suggested patch does fix my issue.
+>I'd support creating a new changelog tag for this case.
 
-> Please, don't use hardcoded value. I already shared the point that we must use
-> the declared constants.
-> 
-> This function is incorrect and it cannot work for folders and files at the same
-> time.
+This is in the context of a proposal on workflows@:
+https://lore.kernel.org/workflows/20250728105634.GF787@pendragon.ideasonboard.com/T/#t
 
-I already shared that I don't plan to try writing such function
-( http://lkml.kernel.org/r/38d8f48e-47c3-4d67-9caa-498f3b47004f@I-love.SAKURA.ne.jp ).
+The Co-developed-by: usage wasn't my proposal, but it looked like the
+majority of folks were okay with it.
 
-Please show us your patch that solves your issue.
+Input is definitely welcome!
 
+>And really, if AI was recruited in developing a kernel patch, it would
+>be helpful if the changelog were to have a paragraph describing just
+>how the AI assist was used.  At least, until everyone knows all about
+>this?  You probably already have a presentation or a web page, so
+>adding a link to that would suffice, thanks.
+
+Kees actually has a good writeup about his experience with AI tooling
+here: https://hachyderm.io/@kees/114907228284590439 , my experience is
+fairly similar.
+
+Kees logged his prompts as part of the patch he sent in
+(https://lore.kernel.org/lkml/20250724080756.work.741-kees@kernel.org/)
+which was interesting, but I didn't see much value in doing that beyond
+the demo purposes as this is not really reproducible.
+
+-- 
+Thanks,
+Sasha
 
