@@ -1,293 +1,145 @@
-Return-Path: <linux-kernel+bounces-753201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4025AB17FEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:07:55 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B6F9B17FEC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 927B31C2096F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:08:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4017F7B56D3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:07:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3CF59233155;
-	Fri,  1 Aug 2025 10:07:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A/fx/S0F"
-Received: from mail-lf1-f44.google.com (mail-lf1-f44.google.com [209.85.167.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A661E23372C;
+	Fri,  1 Aug 2025 10:08:38 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA4692264C7;
-	Fri,  1 Aug 2025 10:07:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B2821A449
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 10:08:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754042867; cv=none; b=Yt/zCafSqueUnSSX+lKfqa6dPwnZGy/zxkeF+6lsLefrYCJuZ2H0Cnngl3tzjx0VQJcG7VPcdxZ/cix4UO0j8LqKUWmRnP1vil7qqoPaFbx9OWAvwzuVRs1PWP2pXFu+oF9A+96zVTlIpUKubUXZCdRlnJlZMWKdRqoCaHT+W5U=
+	t=1754042918; cv=none; b=L9CkC62RxOF74C8cn+JlKVrQanEcA0/wOI/e38rmgt5EBODqKEN0QaV6eWwnv0Lj4Mb4X1NgTOJQ/iTntjB6WZ+FyDYS7HiIBoD513LfWXc6WZPFJw/TfonTF6DxCaIwCinXLH/a1DS0FAu+d5cGinQKN68CQld3xkB1RzBM+aM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754042867; c=relaxed/simple;
-	bh=/4ZfYDxS0RbwwYjfDVsaX1prz5zvolRK5fF2tdOubmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=frQKVivcFjyu6YnOGq6gmEw34/3t2McfUmSDgUz1xTMovysKJDPqJCKPEkKBk0gNIgBXUCvcgI7v6sC74xKuKINwdW5Y76aM2SMjoT4YTQRTcd96Jv0qjF+jJJhI/6fCPa156+LhI39q26xzH0G2pUYbjXsBgxJmTWdcYGQXsok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A/fx/S0F; arc=none smtp.client-ip=209.85.167.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f44.google.com with SMTP id 2adb3069b0e04-55b87604220so1375851e87.1;
-        Fri, 01 Aug 2025 03:07:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754042864; x=1754647664; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SsaHrDFeM7wf+O/YMnBa1zIkBw5GHo8eRLOe0W2Um3E=;
-        b=A/fx/S0FwX4r/6iJ9FbjWtEn4mmP/eStIxlz5EK7MRedpJNG7p0ZZpwOnKEjQ+GF8K
-         EZgKPyzlNDELflz6xFQ3Bo2V884Koq71/Tx3gqeiD7jFn4gLlm+oXSjqkdXe45B+s5BB
-         xoQqm2m8+ZNE4bJzibYT0maB3j6WHn0LFcaRhVJV9iYVFgflPtY9OIN56dPMBLZMNTq4
-         1o2y4Z8YBXznFhJ/q0y7ztUBO5xWKXSUrU4M+zPlOE+g56lk8pgBCcZzA0yPymRXCQ5E
-         BcsqUrN4rV9JM2UKwZi6dNaeaRhpbZ+sID05gvChGB/lPSd/PNLoDhAwGRkUvdYTySy9
-         4S7g==
+	s=arc-20240116; t=1754042918; c=relaxed/simple;
+	bh=k00Wu+AKjQQdOE/pjpz5y5D2HK7NNRH2IVBzpOeN6yo=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=J8wh4UHKnmy29O5/nNMQv5nYg24ygAhns5IIuS99nwoiJFAXzpw8baREQ+89IWi80CG8V8H/fGnOTA0DW2sApu76JczZWqG+PUSADRpc/IEksc7DZ+xXRs69p/m2lCKm0bq6Jrgg7/0zXZHfmYKuFDQ1DXG5CGdscaVJ5cKtxIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-87c306a1b38so98264539f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 03:08:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754042864; x=1754647664;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SsaHrDFeM7wf+O/YMnBa1zIkBw5GHo8eRLOe0W2Um3E=;
-        b=M0CW9tDPw1NhFYbLgeUw1E7DhJIpanN9Wv1VBdUai663qLEBc79tnp1Rwm2MbCMNJi
-         Sw68gzyeMsRZ/YdiCGZTpWc3L/Lh4EECPfCe71is+EboNfHTE+dlvvFVHMXanLdBZJlX
-         fXBFJ58WKOjob+7lLdD0kEeHJsAsJ19a422El5L1oVaTblh4q8kLNbqrzlCJy6QyNIuh
-         myEOXbe4Iunb8kjJcLZGlFbULBwyad9a26ZUCVzfGDk1D3Z+RdxlEFR2t+yZNew5NrRd
-         UC+z65aUnL4VOSzQo5jxdzrMzCDX/c/8S13DDA3L2kU3BqP2UrtGBGOb+a2zWuzyuUkd
-         PPAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWcRzbQHMikMYLMA5RGdnf/JuOOTsGpuoJmXJqU9RBRAoGjAyqf5Y7tITkj/wVHkc0nuKYepNWsSv4=@vger.kernel.org, AJvYcCWyDxM9QQCPTCYhk2889ZfXagEmdHh031CPY36UEwXmNgBOo2qLeWfRZECObyPxug254njue7pSOYunicIg@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx2DE9iH5iTbFGf6H3KJNmrj4K9T7Ka4XRcjy+3fGY2CBrW8vrh
-	ISQGd5QF6B8JQLaXFUFGsmk0yyI9HZbqlz2i4e+K+/5QllcyuguHWkZy
-X-Gm-Gg: ASbGncuFs4aSp3dvVD0G7rZWbylbT/L4GbfSYozx+hyIZFXAq5YqyUC2sxzGsLMCjHc
-	OWP07goOQ93+8cB0yiZtLjJFf4CN+eITp5f7W/e7YQUXjMosA8bxfEv/lsdLY2AAT2aW2dN3uTp
-	OlHOkZk2i/9KH1ssleaKv20yiYYZRR9TYQWFtsewKWENKi8AcK3sD3AFHuuhiqet/M5Jd0sLkZ0
-	JRyxYNO+Qb1t9CsE3M+5KCfXixBArResdYz0voct4DknjJM9WdQUK1wYQwWQ7TR2Y5YVHpRL5nH
-	x2/hDPfHYfoBWbeku4dX1RjPctvYpasGJlOL5bzdMNRfMH63pUV8g+/F6bvO2tB/UBKHXr/YxeK
-	efMTaAFR3RaKNJSnbtrkl/NVMqETO
-X-Google-Smtp-Source: AGHT+IEvzzJZrWPjWN/zodz/bPyIveP/iYFOHWuha5Q1Us+ys7xppCVNSi6jXCyn/Wtu1fQMP5f3kA==
-X-Received: by 2002:a05:6512:12cd:b0:553:2773:f3f9 with SMTP id 2adb3069b0e04-55b7bff3691mr3147392e87.8.1754042863497;
-        Fri, 01 Aug 2025 03:07:43 -0700 (PDT)
-Received: from mva-rohm ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca3214sm538712e87.126.2025.08.01.03.07.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 03:07:42 -0700 (PDT)
-Date: Fri, 1 Aug 2025 13:07:39 +0300
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>,
-	Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [RFC PATCH 2/2] iio: adc: ad7476: Simplify scale handling
-Message-ID: <1ce13bf8f5cfc5076e45f12c5e9499113f86df16.1754041258.git.mazziesaccount@gmail.com>
-References: <cover.1754041258.git.mazziesaccount@gmail.com>
+        d=1e100.net; s=20230601; t=1754042916; x=1754647716;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=7w7rtn71IA3v6fWvnpRTNyOOQWiNby/MER9Gaoys718=;
+        b=ldBG3VwPtb0nkMAnuf2eVeQ86gnGUrf6O4KqjtGojW87Exb5GSkkSnpFNLuRA4nUTa
+         3QXYvfJTAGxeiPl7l5S/6Cb6bu2GUyyuz4vjk2vVlgzMRUueQuMtxQHCd6Cul3TUoV+m
+         NFTyAGVQKee0s7bMcdmejUakbSCmzHc7ZfYZWaih1/DMhV9sOKfctYj6NTLkVSfWXbLu
+         ocgRMszs5VSd4uFXSebc1xgQkjjb948MKdu3ahMtykCVFpBypiFwnQc9Pspb5Fn9cvm3
+         P7kcGQ1LfLdyy+r7VC5hdanSr0QCZJrtgWqnaK0jbqEyM2PlNgFr10xVUXIygCczzzwN
+         37Sg==
+X-Forwarded-Encrypted: i=1; AJvYcCXnH7McNFqXzL7EsyhfEWd2sV34os/XuuZ64KjlbMSy3HgfeJQqeFgiGQct3x6zxCMcfacZORY1X8ZaADk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrYAlmE1uWZ8oZk+XftOnMucIrmrPeaKg61vBYHrKsPRa/eQ6D
+	c9BZ2I0uUi0HjqJB/pgIMw+tQ28T+DMIav2Ora8Le2eJotukFZxMnX9G+AEVKKeEN2N/ARs0xji
+	e8miXV8IZ+Qxj6oB+F1gJnAlhprBZHFJf9FWhLuifdRSFxLdR1/2KZvqJRQc=
+X-Google-Smtp-Source: AGHT+IEcCOZ1M5lbEw3vt0apHj5RxEq0/i9/RDLxOMwkyUCYyuVOVJgI+Nmoj/lU+criLegiKyakG8fk/nWWAYPgvsN+vbwhBNEW
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="QxQjTTFP1NoL/Kg6"
-Content-Disposition: inline
-In-Reply-To: <cover.1754041258.git.mazziesaccount@gmail.com>
+X-Received: by 2002:a05:6e02:178d:b0:3e3:fd04:5768 with SMTP id
+ e9e14a558f8ab-3e40d65443cmr40280935ab.5.1754042915829; Fri, 01 Aug 2025
+ 03:08:35 -0700 (PDT)
+Date: Fri, 01 Aug 2025 03:08:35 -0700
+In-Reply-To: <688b8332.a00a0220.26d0e1.0044.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688c9223.a00a0220.26d0e1.0068.GAE@google.com>
+Subject: Re: [syzbot] [mm?] WARNING in trace_suspend_resume
+From: syzbot <syzbot+99d4fec338b62b703891@syzkaller.appspotmail.com>
+To: Liam.Howlett@oracle.com, akpm@linux-foundation.org, andrii@kernel.org, 
+	ast@kernel.org, bpf@vger.kernel.org, daniel@iogearbox.net, david@redhat.com, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, lorenzo.stoakes@oracle.com, 
+	mhocko@suse.com, rppt@kernel.org, surenb@google.com, 
+	syzkaller-bugs@googlegroups.com, vbabka@suse.cz
+Content-Type: text/plain; charset="UTF-8"
 
+syzbot has found a reproducer for the following issue on:
 
---QxQjTTFP1NoL/Kg6
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+HEAD commit:    f2d282e1dfb3 Merge tag 'bitmap-for-6.17' of https://github..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11709cf0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c686e0c98d241433
+dashboard link: https://syzkaller.appspot.com/bug?extid=99d4fec338b62b703891
+compiler:       arm-linux-gnueabi-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e0e2a2580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=12a439bc580000
 
-The ad7476 driver supports variants with different amount of supply
-regulators. On some variants there is only VCC, which is used as a
-reference voltage. Others have separate VREF regulator, and some rely on
-internal VREF. Some have both internal VREF and option to connect
-external one.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/98a89b9f34e4/non_bootable_disk-f2d282e1.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/25cab46afcee/vmlinux-f2d282e1.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/77cd04442f1b/zImage-f2d282e1.xz
 
-The ad7476 driver reads the regulator voltage only when the user asks to
-get the scale. This means the driver needs to do some dancing while
-picking the correct reference regulator (or internal reference), and
-store it for the later use.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+99d4fec338b62b703891@syzkaller.appspotmail.com
 
-According to the discussion:
-https://lore.kernel.org/linux-iio/20250331122247.05c6b09d@jic23-huawei/
-variable voltage references are rare, making it hard to justify the
-added complexity for supporting those.
+------------[ cut here ]------------
+WARNING: CPU: 0 PID: 4155 at mm/highmem.c:622 kunmap_local_indexed+0x20c/0x224 mm/highmem.c:622
+Modules linked in:
+Kernel panic - not syncing: kernel: panic_on_warn set ...
+CPU: 0 UID: 0 PID: 4155 Comm: syz.1.17 Not tainted 6.16.0-syzkaller #0 PREEMPT 
+Hardware name: ARM-Versatile Express
+Call trace: 
+[<80201a24>] (dump_backtrace) from [<80201b20>] (show_stack+0x18/0x1c arch/arm/kernel/traps.c:257)
+ r7:00000000 r6:8281f77c r5:00000000 r4:8224bc00
+[<80201b08>] (show_stack) from [<8021fb00>] (__dump_stack lib/dump_stack.c:94 [inline])
+[<80201b08>] (show_stack) from [<8021fb00>] (dump_stack_lvl+0x54/0x7c lib/dump_stack.c:120)
+[<8021faac>] (dump_stack_lvl) from [<8021fb40>] (dump_stack+0x18/0x1c lib/dump_stack.c:129)
+ r5:00000000 r4:82a76d18
+[<8021fb28>] (dump_stack) from [<80202624>] (vpanic+0x10c/0x360 kernel/panic.c:440)
+[<80202518>] (vpanic) from [<802028ac>] (trace_suspend_resume+0x0/0xd8 kernel/panic.c:574)
+ r7:804be014
+[<80202878>] (panic) from [<802548c4>] (check_panic_on_warn kernel/panic.c:333 [inline])
+[<80202878>] (panic) from [<802548c4>] (get_taint+0x0/0x1c kernel/panic.c:328)
+ r3:8280c684 r2:00000001 r1:822326d8 r0:8223a0a0
+[<80254850>] (check_panic_on_warn) from [<80254a28>] (__warn+0x80/0x188 kernel/panic.c:845)
+[<802549a8>] (__warn) from [<80254ca8>] (warn_slowpath_fmt+0x178/0x1f4 kernel/panic.c:872)
+ r8:00000009 r7:82266338 r6:df985d14 r5:840d5400 r4:00000000
+[<80254b34>] (warn_slowpath_fmt) from [<804be014>] (kunmap_local_indexed+0x20c/0x224 mm/highmem.c:622)
+ r10:00000000 r9:ded86c30 r8:deb6caa4 r7:00a00000 r6:00000003 r5:840d5400
+ r4:ffefd000
+[<804bde08>] (kunmap_local_indexed) from [<8053ace8>] (__kunmap_local include/linux/highmem-internal.h:102 [inline])
+[<804bde08>] (kunmap_local_indexed) from [<8053ace8>] (move_pages_pte mm/userfaultfd.c:1457 [inline])
+[<804bde08>] (kunmap_local_indexed) from [<8053ace8>] (move_pages+0xb1c/0x1a00 mm/userfaultfd.c:1860)
+ r7:00a00000 r6:00000000 r5:8490d6ac r4:ffefb000
+[<8053a1cc>] (move_pages) from [<805c401c>] (userfaultfd_move fs/userfaultfd.c:1923 [inline])
+[<8053a1cc>] (move_pages) from [<805c401c>] (userfaultfd_ioctl+0x1254/0x2408 fs/userfaultfd.c:2046)
+ r10:8425d6c0 r9:df985e98 r8:00000001 r7:21000000 r6:00000000 r5:20000040
+ r4:8486d000
+[<805c2dc8>] (userfaultfd_ioctl) from [<8056c4d4>] (vfs_ioctl fs/ioctl.c:51 [inline])
+[<805c2dc8>] (userfaultfd_ioctl) from [<8056c4d4>] (do_vfs_ioctl fs/ioctl.c:552 [inline])
+[<805c2dc8>] (userfaultfd_ioctl) from [<8056c4d4>] (__do_sys_ioctl fs/ioctl.c:596 [inline])
+[<805c2dc8>] (userfaultfd_ioctl) from [<8056c4d4>] (sys_ioctl+0x130/0xba0 fs/ioctl.c:584)
+ r10:840d5400 r9:00000003 r8:8572d780 r7:20000040 r6:8572d780 r5:00000000
+ r4:c028aa05
+[<8056c3a4>] (sys_ioctl) from [<80200060>] (ret_fast_syscall+0x0/0x1c arch/arm/mm/proc-v7.S:67)
+Exception stack(0xdf985fa8 to 0xdf985ff0)
+5fa0:                   00000000 00000000 00000003 c028aa05 20000040 00000000
+5fc0: 00000000 00000000 002f6300 00000036 00000000 002f62d4 00000938 00000000
+5fe0: 7eb28780 7eb28770 000193dc 001321f0
+ r10:00000036 r9:840d5400 r8:8020029c r7:00000036 r6:002f6300 r5:00000000
+ r4:00000000
+Rebooting in 86400 seconds..
 
-Drop the support for the variable voltage references and simplify things
-by using the managed regulator get and enable interfaces.
-
-Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
 
 ---
-NOTE: This is 100% untested as I lack of the hardware. I have tried to
-maintain the existing logic, but there is always some room for an error.
-All testing and logic reviewing is greatly appreciated.
----
- drivers/iio/adc/ad7476.c | 84 ++++++++++------------------------------
- 1 file changed, 21 insertions(+), 63 deletions(-)
-
-diff --git a/drivers/iio/adc/ad7476.c b/drivers/iio/adc/ad7476.c
-index bdfffc4f5724..7b1d6a0fd941 100644
---- a/drivers/iio/adc/ad7476.c
-+++ b/drivers/iio/adc/ad7476.c
-@@ -39,10 +39,10 @@ struct ad7476_chip_info {
- struct ad7476_state {
- 	struct spi_device		*spi;
- 	const struct ad7476_chip_info	*chip_info;
--	struct regulator		*ref_reg;
- 	struct gpio_desc		*convst_gpio;
- 	struct spi_transfer		xfer;
- 	struct spi_message		msg;
-+	int				scale_mv;
- 	/*
- 	 * DMA (thus cache coherency maintenance) may require the
- 	 * transfer buffers to live in their own cache lines.
-@@ -111,7 +111,6 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
- {
- 	int ret;
- 	struct ad7476_state *st =3D iio_priv(indio_dev);
--	int scale_uv;
-=20
- 	switch (m) {
- 	case IIO_CHAN_INFO_RAW:
-@@ -126,14 +125,7 @@ static int ad7476_read_raw(struct iio_dev *indio_dev,
- 			GENMASK(st->chip_info->channel[0].scan_type.realbits - 1, 0);
- 		return IIO_VAL_INT;
- 	case IIO_CHAN_INFO_SCALE:
--		if (st->ref_reg) {
--			scale_uv =3D regulator_get_voltage(st->ref_reg);
--			if (scale_uv < 0)
--				return scale_uv;
--		} else {
--			scale_uv =3D st->chip_info->int_vref_uv;
--		}
--		*val =3D scale_uv / 1000;
-+		*val =3D st->scale_mv;
- 		*val2 =3D chan->scan_type.realbits;
- 		return IIO_VAL_FRACTIONAL_LOG2;
- 	}
-@@ -286,18 +278,10 @@ static const struct iio_info ad7476_info =3D {
- 	.read_raw =3D &ad7476_read_raw,
- };
-=20
--static void ad7476_reg_disable(void *data)
--{
--	struct regulator *reg =3D data;
--
--	regulator_disable(reg);
--}
--
- static int ad7476_probe(struct spi_device *spi)
- {
- 	struct ad7476_state *st;
- 	struct iio_dev *indio_dev;
--	struct regulator *reg;
- 	int ret;
-=20
- 	indio_dev =3D devm_iio_device_alloc(&spi->dev, sizeof(*st));
-@@ -308,58 +292,32 @@ static int ad7476_probe(struct spi_device *spi)
- 	st->chip_info =3D
- 		(struct ad7476_chip_info *)spi_get_device_id(spi)->driver_data;
-=20
--	reg =3D devm_regulator_get(&spi->dev, "vcc");
--	if (IS_ERR(reg))
--		return PTR_ERR(reg);
--
--	ret =3D regulator_enable(reg);
--	if (ret)
--		return ret;
--
--	ret =3D devm_add_action_or_reset(&spi->dev, ad7476_reg_disable, reg);
--	if (ret)
--		return ret;
--
--	/* Either vcc or vref (below) as appropriate */
--	if (!st->chip_info->int_vref_uv)
--		st->ref_reg =3D reg;
-+	/* Use VCC for reference voltage if vref / internal vref aren't used */
-+	if (!st->chip_info->int_vref_uv && !st->chip_info->has_vref) {
-+		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "vcc");
-+		if (ret < 0)
-+			return ret;
-+		st->scale_mv =3D ret / 1000;
-+	} else {
-+		ret =3D devm_regulator_get_enable(&spi->dev, "vcc");
-+		if (ret < 0)
-+			return ret;
-+	}
-=20
- 	if (st->chip_info->has_vref) {
--
--		/* If a device has an internal reference vref is optional */
--		if (st->chip_info->int_vref_uv) {
--			reg =3D devm_regulator_get_optional(&spi->dev, "vref");
--			if (IS_ERR(reg) && (PTR_ERR(reg) !=3D -ENODEV))
--				return PTR_ERR(reg);
--		} else {
--			reg =3D devm_regulator_get(&spi->dev, "vref");
--			if (IS_ERR(reg))
--				return PTR_ERR(reg);
--		}
--
--		if (!IS_ERR(reg)) {
--			ret =3D regulator_enable(reg);
--			if (ret)
-+		ret =3D devm_regulator_get_enable_read_voltage(&spi->dev, "vref");
-+		if (ret < 0) {
-+			/* Vref is optional if a device has an internal reference */
-+			if (!st->chip_info->int_vref_uv || ret !=3D -ENODEV)
- 				return ret;
--
--			ret =3D devm_add_action_or_reset(&spi->dev,
--						       ad7476_reg_disable,
--						       reg);
--			if (ret)
--				return ret;
--			st->ref_reg =3D reg;
- 		} else {
--			/*
--			 * Can only get here if device supports both internal
--			 * and external reference, but the regulator connected
--			 * to the external reference is not connected.
--			 * Set the reference regulator pointer to NULL to
--			 * indicate this.
--			 */
--			st->ref_reg =3D NULL;
-+			st->scale_mv =3D ret / 1000;
- 		}
- 	}
-=20
-+	if (!st->scale_mv)
-+		st->scale_mv =3D st->chip_info->int_vref_uv / 100;
-+
- 	if (st->chip_info->has_vdrive) {
- 		ret =3D devm_regulator_get_enable(&spi->dev, "vdrive");
- 		if (ret)
---=20
-2.50.1
-
-
---QxQjTTFP1NoL/Kg6
-Content-Type: application/pgp-signature; name=signature.asc
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCgAdFiEEIx+f8wZb28fLKEhTeFA3/03aocUFAmiMkesACgkQeFA3/03a
-ocX//gf/TAURqv8cvjFpzH7Hf9NyMobNOLx6oj4zfAQ3PUCQYKHRsj1s5kQMnlky
-MKae4smTlhnI9c6T18SA8lTULbXQUcTdvGvOl13ppcXnrhY2N1qYigUHcuXXIy4L
-t2+nj0NIh2/6m7bL7NtVMFd+XWfHFiXvc74kMyy+9eNnROh1t/LLJlDCPS4eL1sa
-IyMFl8bk+ynCfVVmWbQDTApBBr2AQYFFrC1W82aw1yWvFO5MJfrzFMpFWTfnkEYM
-qm+TDb1S4L6IS7cYSZ/eTBhCCd5aEyqhzAKZqOKLZuQwvcKdQ050Wx3/STQrnC8s
-u19IHuFQX5q8MHmugW293cFnBeDUBQ==
-=yQsV
------END PGP SIGNATURE-----
-
---QxQjTTFP1NoL/Kg6--
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
 
