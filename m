@@ -1,128 +1,71 @@
-Return-Path: <linux-kernel+bounces-753793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A6C77B18805
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F17AB18808
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:16:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6987416B938
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:15:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC4E16DEAF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:16:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BABCB2144D7;
-	Fri,  1 Aug 2025 20:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 787B921638A;
+	Fri,  1 Aug 2025 20:16:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KlkK79AR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PGEh8xjd"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1643C77111;
-	Fri,  1 Aug 2025 20:15:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFBFB77111;
+	Fri,  1 Aug 2025 20:16:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754079350; cv=none; b=sErRCzF3hwbjUrVJo+fZU6bedrtdajOEcB92cNakew+8sMTeq88PMeOLLTr1KOYS4gEHDaYbpJ4viX1a6oMGEagpQM1guHxvZDVAzw9PTpRI0hMAyqboTGkSziPw6I/GmS0yvOPCbJYeJ2qk+2IgE3YpwbTVjDTngKuyKoNB+/g=
+	t=1754079408; cv=none; b=maX7BRDnbM6TgPLhVOfcULLFEQ60aT4FGSOpn5hbKcnsnt0r3dDsQ/Q3DPQqLtIbl2ayJPMnEt1DxnHKO/k8Ul59zkTxDp4MWw1ePwQ+JzMgcIVD6EpR4Ts18jwghljhPSM5O/MmSxWFhiKm/Ki4VHudIwllbTCWbM5kwvGOdxE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754079350; c=relaxed/simple;
-	bh=KCGSw5/Bp54la2qDUzQm9jnwIIRKcCH/zxZ0U6jbIC0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=shxKqJmm7hjxHdpOe8DWIPtYsbwWlP0o1NqIm2APFa63c+f1T2owuL8PinaeUYZXFMFtfRLodkHZ19R1pctMM8E5yXVUlDbg4S99F07NDCIVanDnkmnIbFOV3o6xAJW1t8mQ75QHGjbRmmEBUW3vZnr9SV31tsz1oo7BoJlRLuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KlkK79AR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9EC67C4CEE7;
-	Fri,  1 Aug 2025 20:15:49 +0000 (UTC)
+	s=arc-20240116; t=1754079408; c=relaxed/simple;
+	bh=/CC5jlOrj0HOLtx2QBzIqUYDKmt4Kun4qKsf86Qthk0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=RzsovjZJZX+lSL9aQBkylJa7OuWlH90voRM3hhmITuVbAc6wthhFRXDvJQnAEa6kKPJJfX/JL1wYQrEHXObubJmmwKNV4BUY6PMPJC8DgZP/wtNQk9simQCx5V2M40khrSs+0f+SNfAc+PL+UQF4DDs3bhqPPN095dYsMskYVeg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PGEh8xjd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFBCAC4CEE7;
+	Fri,  1 Aug 2025 20:16:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754079349;
-	bh=KCGSw5/Bp54la2qDUzQm9jnwIIRKcCH/zxZ0U6jbIC0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=KlkK79ARWGVT7sIpq4cFnVEYopFRn9V64rTfUBF9rZ4DqjNvenubWMhvAMblR8ep1
-	 PEAjCh2ESWglpx0z6UJbG4BTRCr1803jOCJynTEKEFpI1cOoKjEB/NrdnZKjooG4lJ
-	 tIOhfwm94wq+GSDSVpjeNYfxaLJo3ewoUqMCCZwAZlobtoOhxwaOr66BDv4DbklN1O
-	 Z20L5WHfIR6PRmOVCpFUvKojlzFJgPv+otICGnZ6UqKj3d9eYaWEnLKombzirRlNpn
-	 Z/s6w6EyDqsRfQk0Vhz8EAEUAEFCVjbW5F+Og885OPck4wf/7OqCf0Gh2r4qIYOmIu
-	 ktuE87gs/RbAw==
-Date: Fri, 1 Aug 2025 13:14:55 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: James Bottomley <James.Bottomley@hansenpartnership.com>
-Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
-	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
-	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: Re: [PATCH 1/2] tpm: Compare HMAC values in constant time
-Message-ID: <20250801201455.GA5141@sol>
-References: <20250731215255.113897-2-ebiggers@kernel.org>
- <3ed1ae7e7f52afe53ce2ff00f362ed153b3eec20.camel@HansenPartnership.com>
- <20250801030210.GA1495@sol>
- <ca85bbe8a3235102707da3b24dba07a8649c3771.camel@HansenPartnership.com>
- <20250801171125.GA1274@sol>
- <2da3f6d36dccb86f19292015ea48e5d7a89e3171.camel@HansenPartnership.com>
- <20250801184026.GB1274@sol>
- <321c09c7cb2edb113ce9a829d37c0ae5c835e17f.camel@HansenPartnership.com>
- <20250801190331.GC1274@sol>
- <605314b70efde2e31f9e6a34a6bb0ea0060e0c67.camel@HansenPartnership.com>
+	s=k20201202; t=1754079408;
+	bh=/CC5jlOrj0HOLtx2QBzIqUYDKmt4Kun4qKsf86Qthk0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=PGEh8xjdVlx3D6kwdOX8RUNt5sIL0+hOxt3km6us5Y475r+NFwODYGc+C/bdss/2z
+	 AxUkN3FEunsmKdjxsk9U9XXQVmE9TUEusXAjNs1kRHHAQWYbOqNZbsFdvK7w1jCGbu
+	 WNhjTkxKG0m0uhWEtVmJc7AhVf2GXL98XegujHMP45MhpluK/jFqWZTHWRWkzi0DIC
+	 nihIiqFAtqQ1Ad/feGj6+iNVLuy7VwpM12gQfKNLHDAE7RzNb/SRdhn322s7A3slR+
+	 UeCoWOh9GTP9IvUDnrKW76cznA0oI99pB42mW2Swkt4msUNLCijhK9DPUGVtKL06W2
+	 7e4QKsAU/9fjw==
+Date: Fri, 1 Aug 2025 13:16:47 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Marcelo Schmitt <marcelo.schmitt@analog.com>
+Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>, Michael Hennerich
+ <michael.hennerich@analog.com>, Andrew Lunn <andrew+netdev@lunn.ch>, "David
+ S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Paolo
+ Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ netdev@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net-next] dt-bindings: net: Replace bouncing Alexandru
+ Tachici emails
+Message-ID: <20250801131647.316347ed@kernel.org>
+In-Reply-To: <20250724113758.61874-2-krzysztof.kozlowski@linaro.org>
+References: <20250724113758.61874-2-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <605314b70efde2e31f9e6a34a6bb0ea0060e0c67.camel@HansenPartnership.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 01, 2025 at 03:20:52PM -0400, James Bottomley wrote:
-> On Fri, 2025-08-01 at 12:03 -0700, Eric Biggers wrote:
-> > On Fri, Aug 01, 2025 at 02:53:09PM -0400, James Bottomley wrote:
-> > > On Fri, 2025-08-01 at 11:40 -0700, Eric Biggers wrote:
-> > > > On Fri, Aug 01, 2025 at 02:03:47PM -0400, James Bottomley wrote:
-> > > > > On Fri, 2025-08-01 at 10:11 -0700, Eric Biggers wrote:
-> > > [...]
-> > > > > > It's true that such attacks don't work with one-time keys. 
-> > > > > > But here it's not necessarily a one-time key.  E.g.,
-> > > > > > tpm2_get_random() sets a key, then authenticates multiple
-> > > > > > messages using that key.
-> > > > > 
-> > > > > The nonces come one from us and one from the TPM.  I think ours
-> > > > > doesn't change if the session is continued although it could,
-> > > > > whereas the TPM one does, so the HMAC key is different for
-> > > > > every communication of a continued session.
-> > > > 
-> > > > Again, tpm2_get_random() sets a HMAC key once and then uses it
-> > > > multiple times.
-> > > 
-> > > No it doesn't.  If you actually read the code, you'd find it does
-> > > what I say above.  Specifically  tpm_buf_fill_hmac_session() which
-> > > is called inside that loop recalculates the hmac key from the
-> > > nonces.  This recalculated key is what is used in
-> > > tpm_buf_check_hmac_response(), and which is where the new tpm nonce
-> > > is collected for the next
-> > > iteration.
-> > 
-> > tpm_buf_fill_hmac_session() computes a HMAC value, but it doesn't
-> > modify the HMAC key.  tpm2_parse_start_auth_session() is the only
-> > place where the HMAC key is changed.  You may be confusing HMAC
-> > values with keys.
-> 
-> Is this simply a semantic quibble about what gets called a key?  For
-> each TPM command we compute a cphash across all the command parameters
-> (and for each return a rphash).  This hash then forms a
-> hmac(session_key, cphash | our_nonce | tpm_nonce | attrs).  The point
-> being that although session_key is fixed across the session, the
-> our_nonce and tpm_nonce can change with every iteration.  Since the
-> cphash is over the ciphertext, it's the only bit you get to vary with a
-> chosen ciphertext attack, so the other parameters effectively key the
-> hmac.
+On Thu, 24 Jul 2025 13:37:59 +0200 Krzysztof Kozlowski wrote:
+> Marcelo Schmitt, could you confirm that you are okay (or not) with this?
 
-No, it's not "simply a semantic quibble".  You're just wrong.
-
-As I said earlier, our_nonce (which is not a key) does appear to make
-MAC timing attacks not possible.  All the other fields appear to be
-attacker-controlled, contrary to what you're claiming above.
-
-Anyway, point taken: I'll drop the Fixes and Cc stable from the commit,
-and include my own analysis of why MAC timing attacks don't appear to be
-possible with this protocol.  Everything else in this thread has just
-been a pointless distraction.
-
-- Eric
+Doesn't look like Marcelo is responding, Marcelo?
 
