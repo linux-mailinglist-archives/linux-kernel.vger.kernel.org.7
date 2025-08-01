@@ -1,166 +1,154 @@
-Return-Path: <linux-kernel+bounces-753137-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753138-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95DB7B17F1B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:19:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E47A5B17F1E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:19:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 344A97A4DA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:17:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52DEA83CE3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 967042264D0;
-	Fri,  1 Aug 2025 09:18:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B222587;
+	Fri,  1 Aug 2025 09:19:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PLkV4FeO"
-Received: from mail-wm1-f74.google.com (mail-wm1-f74.google.com [209.85.128.74])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m02Narbv"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E668224256
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:18:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32FF14F70;
+	Fri,  1 Aug 2025 09:19:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039931; cv=none; b=ohSN2KuFJl25Hv9cT4uhFGQekDmDgS3mKCzZRCeASodIzEHKAhG6YBx2l6TVAtmr084M2nBCUmCZRqekkN5e+6Nm8jeUEhBMEDjWgrfNC7/zyvipo4M/CN8GLpy+utR1c7hbsInUwsWOtcXJs/4MEcihm2TIvoCFkPN6gzuk3eI=
+	t=1754039988; cv=none; b=s1/Jp9PaitrL7i5FxQ4B5hHpkLpjvticqLarL2B/BCPcZAzWyWD9bs94hqSQ4q2kvjGT0TpGoBia08oUfuj1Bda+/J/YD+2DNETvzX17JBrKhFi9yIHtpigpGWgj5Iqx2BUsl4K6Q28qsdcTsQGJ8/jHhYZ73WPs6db5aulIk4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039931; c=relaxed/simple;
-	bh=CaBYQCyAa09aBCMB+C0SD9r3fiTxVP88jvyR9stLsRw=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qAOuM4QO4fMgm3J00XTKS7N9h6QV3u508zNtHv6fnVQNPWXc4SXAm1DNtvAfugiHOhA8d6kUhs5Juado1ROnKx0ErSoYW648i9P8AVYqESeZZ9EAqGGGPckmvDkOvq85zN+gKnNux4z+kWFAQfzpxNzySSK8i2FbImYZxTfZXS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PLkV4FeO; arc=none smtp.client-ip=209.85.128.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
-Received: by mail-wm1-f74.google.com with SMTP id 5b1f17b1804b1-451d3f03b74so9426615e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:18:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754039927; x=1754644727; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPJ/V5RI8K47BlVRi/QYNKYG6CvA+YvGWmagXwaMydA=;
-        b=PLkV4FeOahLBOrXwCqrlzeZa3HhRyAoKjtcjGchAj5fpbrp1shwLRUqsU3bpJn2b/P
-         StJIbf4isfl8u/loiT7PG2pO4tAIHAicZ+fQWENLAjKQwYTEO2omAf/zHQpg0vzHTzmk
-         mLsikPgjie8d7II/sXHwFzkX2uVA8j0jNladSEMIV+9kyX9LkNC0mso4JIwn/qTNohCb
-         a73xqMKm6ij7nVdXhU/QtuAuontmkPL57+CbIN+fFsm7kreUl8sFAaLleW0Ppet+mcqP
-         QirtO9ld1T3O01y/WqaCaoQWFsWoxhH0oEDrrC7KZ8vKLbdDQbTip8FW+z8uChiPmeW2
-         pUGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754039927; x=1754644727;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=TPJ/V5RI8K47BlVRi/QYNKYG6CvA+YvGWmagXwaMydA=;
-        b=f/OwuQGCOoVbG8K95v6E1qjmQ7NjeKK4m7LlS4SkcDzjOmLtmnUu45qlVylMzz57rL
-         3lFEm7zk4hZ8b4Z7yJ3w3dNyJ3Wws8+RiJXaiVrlNmW1SxUpYjdIOFPjv7POtdfduFRP
-         SwilShtcuxW4ORWEBAQBfo6FyVp++fRfb69l4cHmQrhxSTj5cmO2CKxEZiyhm6xvMJ2D
-         09Rde37GmliEVTFY8Xxod2+nUhDeXU25fyPyBukJG6edQ7IYXrl2B99HbaYNimADxTxS
-         oUHn0wLRXRLPpzU9cuotDVniYofGGhSZssSY+cWGct5at2Un8Y4MhOvahZa/m4lmA3FS
-         PkSw==
-X-Forwarded-Encrypted: i=1; AJvYcCXP8ltFua18M4gvPJpcaGQz96teHBrNCjnYPZxh+pjEcq0BE279KmrChEbokgEGQbJp9mE3eM14G2OFWEQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0mrVbypk18BP1v6+8nfRFC+6+QUaME5dmmtq7EZNVQyFcBES3
-	CSebYWDdP32HSUsWOOpOUxLLNB4dv8IgkxrP3LgdWHubA/UBBgOp4AI+hyT7RX0ybpI6UbMzj+B
-	SSwMr/cc+WKDhPvX76w==
-X-Google-Smtp-Source: AGHT+IG5NOG6HNujXCAaZiDz9P+DKaUO9EQNwoy/JaT1RYCYpKkIaBQBCpy2nJhwB2K8nNEaJFZ6PYv/FKhZr48=
-X-Received: from wmbhj26.prod.google.com ([2002:a05:600c:529a:b0:458:a7c9:d6e5])
- (user=aliceryhl job=prod-delivery.src-stubby-dispatcher) by
- 2002:a05:600c:1e12:b0:456:161c:3d6f with SMTP id 5b1f17b1804b1-45892b9e2ecmr91292135e9.11.1754039927660;
- Fri, 01 Aug 2025 02:18:47 -0700 (PDT)
-Date: Fri, 1 Aug 2025 09:18:46 +0000
-In-Reply-To: <20250731154919.4132-3-dakr@kernel.org>
+	s=arc-20240116; t=1754039988; c=relaxed/simple;
+	bh=KUslAaHshNiP9XtKMRFYG5/AAWdTBX8QI/ME/Hmi5s4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=TSyFOSsDF4EyY70QGx0N+UftMbnsMdTBFHEv+qWVXvDH1461Mhh+DT67oMJBx6Em1EIjO4yOeVjZwWf4RTcg64hlYIzVHA73OjJ6NSbrcyspbVcC7dtI0dON0mlK7so3QuH6MKmT53KZDpgjby7KWuA2t5KGurEW/jLnN2pwcTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m02Narbv; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5718mdn2001318;
+	Fri, 1 Aug 2025 09:19:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	wkDHzH8PytjlT3iOlVClw/v1tB31SfTOT8w7bQO5blg=; b=m02Narbvil9W4U44
+	Ar0h6sKWF22qWO1Cmjomemd6b83r1PyUBQ24rCS+/O7EiBau2l9Qr90Xv2QrYE7l
+	3qhLWJCkrrOFI1LLhgtal+KEwspl7mn/F7PaaMHeqbzfOErB2DKEA1OoN+YD+ROh
+	Odlz77RzyO8Sr+OBE0kWVn5TEDhvMw+q6JLSwdcj5eX+s4SWjT6KWoCyJPsvWgqX
+	s5aoen9qB+7F2cEOhNSK9byWflGVd+MiQO8n4HYavu3x2jGhGgFxl/uLmJdLc6Vq
+	Y8Q4aFNJZZ/0U6nv6CEEuGYZunApc1O4YfucTszxEYBxJ8fIi+wiDq3Jv9uc2/0N
+	+iN+Zw==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484nyubq01-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 09:19:26 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5719JPlT012529
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Aug 2025 09:19:25 GMT
+Received: from [10.216.46.165] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 1 Aug
+ 2025 02:19:19 -0700
+Message-ID: <e8cc99e1-d117-42cb-8dec-47809f637934@quicinc.com>
+Date: Fri, 1 Aug 2025 14:49:16 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250731154919.4132-1-dakr@kernel.org> <20250731154919.4132-3-dakr@kernel.org>
-Message-ID: <aIyGdr8vKV4XE6Io@google.com>
-Subject: Re: [PATCH 2/4] rust: drm: ensure kmalloc() compatible Layout
-From: Alice Ryhl <aliceryhl@google.com>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: lorenzo.stoakes@oracle.com, vbabka@suse.cz, Liam.Howlett@oracle.com, 
-	urezki@gmail.com, ojeda@kernel.org, alex.gaynor@gmail.com, 
-	boqun.feng@gmail.com, gary@garyguo.net, bjorn3_gh@protonmail.com, 
-	lossin@kernel.org, a.hindborg@kernel.org, tmgross@umich.edu, 
-	maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de, 
-	airlied@gmail.com, simona@ffwll.ch, rust-for-linux@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
+ properties to UFS
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Manivannan Sadhasivam
+	<mani@kernel.org>
+CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <andersson@kernel.org>, <konradybcio@kernel.org>,
+        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
+        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
+ <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
+ <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
+ <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
+ <03efb3dc-108e-453e-91e4-160a0500cff1@kernel.org>
+Content-Language: en-US
+From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
+In-Reply-To: <03efb3dc-108e-453e-91e4-160a0500cff1@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: W9BHbRSc9VHVUMzzL9dDJakFIxci7FAv
+X-Proofpoint-ORIG-GUID: W9BHbRSc9VHVUMzzL9dDJakFIxci7FAv
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2OCBTYWx0ZWRfX58DP2tsPUlNw
+ TePdhd4wuy2/J0UYNDRJN5DJb31zhVAULG+lzdd/p79/SrFNuD0gRO2g+H9IPq8dE0VDSfhErlR
+ khLbohR57n8y4TpvpDgUYGjCmTzuMqg0TjPQWSXJBVNWDg1Gzg5NorUzvOK9qq0Awtlmgo0+dYf
+ tJYc5rAGI7/C/BSW5D16kfW1XXs+vyMFUPCGVH4OBIQLFNLZPqLrxokWJy1bHIlOe0S+NXh49Dv
+ qUBSiQ2Md/OD/S/Ec/CQxW7eC7wOfvd5CIKghVnlHtKZT4WVfcoC+c0LIuDc9KsyPPFWvAHgVC1
+ u83dVQEa/kQQR0aOCs//GmTRws03WKPjLQ0j0ySk339WPUT+U0KVx9lGZhTFHafOdYS+MyRaVz8
+ PFGi4uc23bNV1AkHbyBAiPufKvvz03dWq2XqaU7AzrniNS+44IEvuPoi8kUL8XE8alaLUzNL
+X-Authority-Analysis: v=2.4 cv=CLoqXQrD c=1 sm=1 tr=0 ts=688c869e cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
+ a=l2YULQpEWTdrfJCYAS8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_02,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
+ clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010068
 
-On Thu, Jul 31, 2025 at 05:48:07PM +0200, Danilo Krummrich wrote:
-> drm::Device is allocated through __drm_dev_alloc() (which uses
-> kmalloc()) and the driver private data, <T as drm::Driver>::Data, is
-> initialized in-place.
-> 
-> Due to the order of fields in drm::Device
-> 
->   pub struct Device<T: drm::Driver> {
->      dev: Opaque<bindings::drm_device>,
->      data: T::Data,
->   }
 
-I'm not convinced this patch is right.
 
-Imagine this scenario: T::Data has size and alignment both equal to 16,
-and lets say that drm_device has a size that is a multiple of 8 but not
-16 such as 72. In that case, you will allocate 72+16=88 bytes for
-Device, but actually the size of Device is 96 because there is 8 bytes
-of padding between dev and data.
+On 01-Aug-25 2:34 PM, Krzysztof Kozlowski wrote:
+> On 01/08/2025 10:28, Manivannan Sadhasivam wrote:
+>> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
+>>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
+>>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
+>>>> support automotive use cases that require limiting the maximum Tx/Rx HS
+>>>> gear and rate due to hardware constraints.
+>>>
+>>> What hardware constraints? This needs to be clearly documented.
+>>>
+>>
+>> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
+>> but keep on responding to other comments. This won't help you to get this series
+>> merged in any form.
+>>
+>> Please address *all* review comments before posting next iteration.
+> 
+> There was enough of time to respond to this, so I assume this patchset
+> is abandoned and there will be no new version.
 
-Alice
 
-> even with an arbitrary large alignment requirement of T::Data it can't
-> happen that the size of Device is smaller than its alignment requirement.
+
+Hi Krzysztof,
+
+I was waiting for your DT binding bifurcation patch to be merged before posting the next version, which is why I didn’t respond earlier. 
+I had planned to include the hardware constraints explanation in the next commit message.
+
+I’ll make sure to address all pending comments in the upcoming revision.
+
+Thanks,
+Ram.
+
 > 
-> However, let's not rely on this subtle circumstance and create a proper
-> kmalloc() compatible Layout.
-> 
-> Fixes: 1e4b8896c0f3 ("rust: drm: add device abstraction")
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> ---
->  rust/kernel/drm/device.rs | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/rust/kernel/drm/device.rs b/rust/kernel/drm/device.rs
-> index 3bb7c83966cf..d19410deaf6c 100644
-> --- a/rust/kernel/drm/device.rs
-> +++ b/rust/kernel/drm/device.rs
-> @@ -5,6 +5,7 @@
->  //! C header: [`include/linux/drm/drm_device.h`](srctree/include/linux/drm/drm_device.h)
->  
->  use crate::{
-> +    alloc::allocator::Kmalloc,
->      bindings, device, drm,
->      drm::driver::AllocImpl,
->      error::from_err_ptr,
-> @@ -12,7 +13,7 @@
->      prelude::*,
->      types::{ARef, AlwaysRefCounted, Opaque},
->  };
-> -use core::{mem, ops::Deref, ptr, ptr::NonNull};
-> +use core::{alloc::Layout, mem, ops::Deref, ptr, ptr::NonNull};
->  
->  #[cfg(CONFIG_DRM_LEGACY)]
->  macro_rules! drm_legacy_fields {
-> @@ -96,6 +97,10 @@ impl<T: drm::Driver> Device<T> {
->  
->      /// Create a new `drm::Device` for a `drm::Driver`.
->      pub fn new(dev: &device::Device, data: impl PinInit<T::Data, Error>) -> Result<ARef<Self>> {
-> +        // `__drm_dev_alloc` uses `kmalloc()` to allocate memory, hence ensure a `kmalloc()`
-> +        // compatible `Layout`.
-> +        let layout = Kmalloc::aligned_layout(Layout::new::<Self>());
-> +
->          // SAFETY:
->          // - `VTABLE`, as a `const` is pinned to the read-only section of the compilation,
->          // - `dev` is valid by its type invarants,
-> @@ -103,7 +108,7 @@ pub fn new(dev: &device::Device, data: impl PinInit<T::Data, Error>) -> Result<A
->              bindings::__drm_dev_alloc(
->                  dev.as_raw(),
->                  &Self::VTABLE,
-> -                mem::size_of::<Self>(),
-> +                layout.size(),
->                  mem::offset_of!(Self, dev),
->              )
->          }
-> -- 
-> 2.50.0
-> 
+> Best regards,
+> Krzysztof
+
 
