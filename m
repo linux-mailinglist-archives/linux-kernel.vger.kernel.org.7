@@ -1,97 +1,81 @@
-Return-Path: <linux-kernel+bounces-753378-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54D1AB1821B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:04:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70B29B18220
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:05:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D918E627E17
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:04:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 380667A5A2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:03:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D80255F2F;
-	Fri,  1 Aug 2025 13:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA86924728A;
+	Fri,  1 Aug 2025 13:04:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b="HXbUItXc"
-Received: from linux.microsoft.com (linux.microsoft.com [13.77.154.182])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15895236457;
-	Fri,  1 Aug 2025 13:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=13.77.154.182
+	dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b="leL8Prvo"
+Received: from mx.olsak.net (mx.olsak.net [37.205.8.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4FC23B611;
+	Fri,  1 Aug 2025 13:04:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=37.205.8.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754053431; cv=none; b=K32cRbno+DcilwQfvKhj4iOhdP5AGDf/VXzS/wFpvc4n9DMqSZpxD/ElcmJA2lsDtc1aXI6J8/8iTPjdQAAnhK3QSlUslytws9W/e3qJrZMt8WOCTZ5zraUID6g5W9ymDWm0+PHGXda00FmiBJOrmuH+TrseVDWaTNhYrUzZZYw=
+	t=1754053471; cv=none; b=fthHkoxdsEu6CYAfmnp5L/Ih8VmSazK4yB3cWiHUjWUJyIlBh275p+Mj/T0SEhvPqqO7JSoDnrjsStP2viWNSktfLyX4nZXWE+cuQJS1ZgH3/zqjdNDLoEPvwu8g/Ps2SbfAHO7yNh1cmX+Lz+5hcl9bATrPqMIYR00ajwH3rV8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754053431; c=relaxed/simple;
-	bh=nLmqkVS9iQjauEy4rNIt9xm6IznauJc6LTLgt+KT0/g=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=p866id5XfedQ0ntmnCdJwPEHZ7ghaRHC77A5Tlk3aucQD9VIsQ7wQzUufrVZXOV0uJjMCp8W3er07Trjm7G9yPbz0/buu97lk+rQRd/SmU2TCWUU9yOaKwHlxLUcHEygJgcLxzLvkL4IcQJzgxmLeJfG0MmlcPSopXAksIlwIVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com; spf=pass smtp.mailfrom=linux.microsoft.com; dkim=pass (1024-bit key) header.d=linux.microsoft.com header.i=@linux.microsoft.com header.b=HXbUItXc; arc=none smtp.client-ip=13.77.154.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.microsoft.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.microsoft.com
-Received: from [100.79.129.131] (unknown [4.194.122.136])
-	by linux.microsoft.com (Postfix) with ESMTPSA id 3AF0E2018F0C;
-	Fri,  1 Aug 2025 06:03:46 -0700 (PDT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 linux.microsoft.com 3AF0E2018F0C
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.microsoft.com;
-	s=default; t=1754053429;
-	bh=k47eOFDtblZTXzV626qQ8FC8NdB08Nl0iHc9y8piA/g=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=HXbUItXcptdZ0a55CSqNyeflST4IwBaAaATj+QdjdEiskHAWN6qxBeiU+Q0Vo3Rsn
-	 CMWWlnB4ubqKeRLqNfrJWa9icwyvZzfyX4gvJwyhdW8l9c7lV1nrsGFuwHkPgG3+u/
-	 OpHZSRpEAtopRXQg1v2wXggorwfrvJzEq5pzxhh0=
-Message-ID: <300b5c01-33bc-4ce6-942c-e32b6e55e5c7@linux.microsoft.com>
-Date: Fri, 1 Aug 2025 18:33:44 +0530
+	s=arc-20240116; t=1754053471; c=relaxed/simple;
+	bh=0ofQnYkYP1zm9pb/GPwWwKnVLvTK+tBM+9AqSedKsCw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ictewXkqkS0PACH9g2lFMyo1LzbM60crrPNepM54paOZn3WED8RdG/9IexmHkmSryr51hQQ4Qg/tVbZYL2yj4ppugmrz5FGKjQ3Mp2TsJ7EzSkjJN+gZ9fSvaN10cayJHZywvJ+RENGXm0ikdXwhYclFaSv2rdx+AwogkWzmrVU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz; spf=pass smtp.mailfrom=dujemihanovic.xyz; dkim=pass (2048-bit key) header.d=dujemihanovic.xyz header.i=@dujemihanovic.xyz header.b=leL8Prvo; arc=none smtp.client-ip=37.205.8.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=dujemihanovic.xyz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dujemihanovic.xyz
+DKIM-Signature: a=rsa-sha256; bh=0ofQnYkYP1zm9pb/GPwWwKnVLvTK+tBM+9AqSedKsCw=;
+ c=relaxed/relaxed; d=dujemihanovic.xyz;
+ h=Subject:Subject:Sender:To:To:Cc:Cc:From:From:Date:Date:MIME-Version:MIME-Version:Content-Type:Content-Type:Content-Transfer-Encoding:Content-Transfer-Encoding:Reply-To:In-Reply-To:In-Reply-To:Message-Id:Message-Id:References:References:Autocrypt:Openpgp;
+ i=@dujemihanovic.xyz; s=default; t=1754053454; v=1; x=1754485454;
+ b=leL8Prvox8goe7kSsHPdB3r5gKN6jipe+BC9yjECFUNnB76ctnWjQGG80JDSlzG4ddVxFe+7
+ VufFj8WgHlUIZYLqD3NHSS7MFTLiDt0trElyvo24SmYfTaoE9aUzaRAQiN2PU414yAUy2Vp/ak/
+ Yq9wTlJwQAOSDQMEoPoUpXdAe1EblAMJ4xW+olySYeF4qsspg7SVhhVYvpkaARx0XHNRo0CMi1S
+ k2g/pfYFMHG9asAt3sFhTs98MoUwNNphwOSQwDh7dVWbWll3vYnC1ScYfbC2LL8l901Pu3502QS
+ 5hpQPzzr5LfNys7FRx9tH4iSgTgIgmziIniX4sjBEBewA==
+Received: by mx.olsak.net (envelope-sender <duje@dujemihanovic.xyz>) with
+ ESMTPS id 50e07a10; Fri, 01 Aug 2025 15:04:14 +0200
+From: Duje =?UTF-8?B?TWloYW5vdmnEhw==?= <duje@dujemihanovic.xyz>
+To: Robert Jarzmik <robert.jarzmik@free.fr>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: Re: [PATCH] Revert "gpio: pxa: Make irq_chip immutable"
+Date: Fri, 01 Aug 2025 15:04:13 +0200
+Message-ID: <5030606.31r3eYUQgx@radijator>
+In-Reply-To: <20250801071858.7554-1-brgl@bgdev.pl>
+References: <20250801071858.7554-1-brgl@bgdev.pl>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-of-arasan: Ensure CD logic stabilization
- before power-up
-To: "Potthuri, Sai Krishna" <sai.krishna.potthuri@amd.com>,
- Adrian Hunter <adrian.hunter@intel.com>, "Simek, Michal"
- <michal.simek@amd.com>, Ulf Hansson <ulf.hansson@linaro.org>
-Cc: "linux-mmc@vger.kernel.org" <linux-mmc@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org"
- <linux-arm-kernel@lists.infradead.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "git (AMD-Xilinx)" <git@amd.com>,
- "saikrishna12468@gmail.com" <saikrishna12468@gmail.com>
-References: <20250721095357.3783222-1-sai.krishna.potthuri@amd.com>
- <cf04326b-4de4-4637-aa3b-fa1c358b9ae4@intel.com>
- <BY5PR12MB425804611D4B29ADDCC82906DB59A@BY5PR12MB4258.namprd12.prod.outlook.com>
-Content-Language: en-US
-From: Prasanna Kumar T S M <ptsm@linux.microsoft.com>
-In-Reply-To: <BY5PR12MB425804611D4B29ADDCC82906DB59A@BY5PR12MB4258.namprd12.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi Sai Krishna,
+On Friday, 1 August 2025 09:18:58 Central European Summer Time Bartosz=20
+Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>=20
+> This reverts commit 20117cf426b6 ("gpio: pxa: Make irq_chip immutableas")
+> as it caused a regression on samsung coreprimevelte and we've not been
+> able to fix it so far.
+>=20
 
-On 25-07-2025 11:19, Potthuri, Sai Krishna wrote:
->> Will this work with all Arasan variants?
-> Yes, this is expected to work across all Arasan variants that comply with the standard
-> SDHCI register definitions. The SDHCI_CD_STABLE bit is defined in both the
-> standard SDHCI specification and Arasan's user guide.
+Tested-by: Duje Mihanovi=C4=87 <duje@dujemihanovic.xyz>
 
-As SDHCI_CD_STABLE bit is defined in SDHCI specification, why are you 
-making a driver specific fix? Is this problem specific to Arasan eMMC? 
-If not, does it make sense to make this a framework level change instead 
-of a driver specific change?
+Could the fix be backported to v6.16.y?
 
-Given that you are planning to add a quirk, doing this in common code 
-would be better.
+Regards,
+=2D-
+Duje
 
-> On Xilinx/AMD Versal and ZynqMP platforms, the CD stable bit is typically set within
-> a few milliseconds. However, to be on the safer side and ensure compatibility across
-> all Arasan variants, a timeout of 1 second is added.
-> Please let me know if you prefer to increase the timeout or if this logic should be
-> enabled by a platform specific quirk.
-
-Thanks,
-
-Prasanna Kumar
 
 
