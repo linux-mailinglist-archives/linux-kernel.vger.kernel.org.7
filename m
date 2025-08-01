@@ -1,142 +1,149 @@
-Return-Path: <linux-kernel+bounces-753723-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90EA7B186EF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:56:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A813B18700
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BF739543724
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:56:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CA42A6280EB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:00:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1871628CF5F;
-	Fri,  1 Aug 2025 17:56:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CEB828C860;
+	Fri,  1 Aug 2025 18:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0QKJ9d/D"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="EW2Ja2EY"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC9C01AAA1B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8121DC99C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754070974; cv=none; b=ovyuaWA0dzM5DMVUq5QbNSUJ9y6f7JdrUeQz3JzfjhsID9hO2yXYxPRsBId/H7IF6uyPz8YvZAXVPquJ0ADfYho+av2U3A7wdKfO6n7ANZdo3vW5xAtsGZm2LmeLEXorZkjZh8pMoHYjdKle8FyKAUPv3EtrwHRHfHpH2XJoeO0=
+	t=1754071218; cv=none; b=fOl7QQ4Z+KgWEBlvhDTNdfaGRYP9NJBHzM2XBihHT2k52lOjZcZJsFLklB/dNpOwhRzaf/fsWcseqe6D3r3Ovmr/DvGk6+T6uk62DH/E6aJ68xl1xukH4HEihWOi/UsHWhz4DVF1E6UnRlEjfb4r0qyDchzxEDWqAbWJbLX4+fA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754070974; c=relaxed/simple;
-	bh=0M/tJPfKsbYH+xw3E6m9VJlr0c68OrqSrrrzuvjYw3Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f817jgqgwbkHpiB0wJ9oWYcgv0UbbfxJUsb7LXpUdAWTB3xv+89z9TZroF2YvlT35OIycXTOUhZvBX9uKmyMuhSj1VdGuFvRjQFJxsntkmmmK+hk8yxH4zIif7EhxUyraqaIA7NujTJjv3SjM6KRnwMaES//0lALkpsXNeEEvJo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0QKJ9d/D; arc=none smtp.client-ip=209.85.128.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-458b2d9dba5so3471385e9.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:56:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754070971; x=1754675771; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zfAsYAfR+/YK9jsRvUDbKg5u2kXyF1RTviQ65IrOhxo=;
-        b=0QKJ9d/DOYaLUpsRI8McY6kaeO7KPaDWxo9DfDxkS7eSiSHA82KMy2Jglc8lRKzAp8
-         /Kz+r4yquRNhpJ/x1/gs+EuxkfDMSfzn9P3zxtcz+LRuT2Mf5D68BJUSHVDQU+FXi899
-         zoxWORNcgUIKcuErQv5j175alfk01uyN6x45TXeVkAqDQTlrzQLLK0DChqEurGciN1Ab
-         ecMJ8dEjZRVhhJ4Rrsj2KfbcVcNcRy/Lv6cm0n7stY+aTvGfgpigrlM24IQBL9MNYxAS
-         /cgpIjxZCiCBYVPVNIwgOyw7ljsfS/6hdIfjVjQ7UzvcT91FToGFe3mg9OjL2p5nKj2Y
-         qSbQ==
+	s=arc-20240116; t=1754071218; c=relaxed/simple;
+	bh=EvQ+6IfQMsPUowcbChu8GLraQRRsmBVri80l+sOVixU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RAh1LNk3N06K9qv943vEt9NZ3Ts2YaxIc/vrHC0mW38qkUsJ92R78VKJqppcz05zwepz9HnOTQvzYiKGQXHsn5PZV0CViBOyGVDFLJkJLF/YoGan2CbpePOQLNaA37q5jrpQ6jD1a3n+09qaZeUXjAleEEp2mv6W6n7EHTCWNkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=EW2Ja2EY; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571HfZmG022642
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 18:00:15 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=iHQTKYkj0qpzUWY7+WEgpg8wdP0WoJQ6dPs
+	zuReeFiA=; b=EW2Ja2EYQ2iz82iQwENTK1cE6hsXSob9TuTFT78v5DR4od4kq0l
+	bNpMMTYnpLdAR8uTpw3w8ELN2i9GnUHFAkdCmdUYlMiNKUon42n8B4senmalZrpP
+	cvNJHyOOE5+O0xqN3mcb5rlLMmraYuS6GmXye3YySW9UG0XCnv8jhi0wtpSDO0ZW
+	+D2XPZJLwn/Jf4CjLj3ZXcz2ymo1I4sYq1P6ioognzMkn4eWcPoVcyE2aARzQdlA
+	3kmkZnYfdlwejawSvbqrVR1QN4CHuEFAEDu6obhRcCPrKWEavBBiJ+QH8NQZx0yx
+	UPxkFdW1u8LQCAA3k4RyQq6dW3KgG2Q1/pw==
+Received: from mail-pl1-f197.google.com (mail-pl1-f197.google.com [209.85.214.197])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 488u651fak-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 18:00:15 +0000 (GMT)
+Received: by mail-pl1-f197.google.com with SMTP id d9443c01a7336-2400499ab2fso19954665ad.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:00:15 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754070971; x=1754675771;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zfAsYAfR+/YK9jsRvUDbKg5u2kXyF1RTviQ65IrOhxo=;
-        b=LYUUQ0583/mMTrjdhCZxDBhL5bwA+cqBNBc0pJFJ8XGIulfqvXbuFicRrVcJqDgjYI
-         /BQAee4sQ+c7g9cgVrYIbiubyolTNOqCxh3ZVnp//guWYM2Ipne8yzyi5mYLejwvSDOu
-         2vSyiZOqDHbf2vwdeLWStEI8KjelAUO3WcR9nGIMBSPMveRppZ8A0IKE75SAoVwWcu7e
-         /wLllhg9QKsCWlsr0NgCEJklgDqYZvqNsPBkbmoJ4yF+UEsJ7ePePGE5e3tO7vymjQTQ
-         8yC1pePneJzsgyaDHZSmf6au8OudfgeO95Cegy22Fj5sTQzarBgFn9jBmmbsY9nvlg65
-         ddUA==
-X-Forwarded-Encrypted: i=1; AJvYcCWOBWpASa0f6PDaXtuvzR7kHjcOJCOrCGUON1QmPEUSNx0XPcwjD9J/DH2TipSktNg7WXwyGYTyomYWRlw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgtPiYRdmaQPivufaxZWShW+a1Bio4n2b96hCnBoiJdgT2pHQQ
-	9n2csv/G1uke+SaQ2VckkAEmhoX7L1J4C90S9N+U6bWIaweVX8C0TIncWULbOB7es9wAijXxWgw
-	kbQE4Z08C0geOnG1PzYrucUKhM2MMKT+/2aofJPJ8
-X-Gm-Gg: ASbGncszRmiZJRH8Z+Ct0ZBnFXMmyUUCkuCnk/eHUz5pNhjMgr/DImIHTM2bg4KKwQB
-	Itafai4pCBR7ANup/rbJy8ndm+it8Tgi+rPijUQ32G/6E8NxnQOyOjWAzvDrMF6oBI89UkVer37
-	1oaFKTs+8TB9qfiHUgOR7nW+gqm2UjOzMSkcVB3I75SS5h5g9dezolEfcsu1ff8DP2ooo07SG4G
-	Hto/UCP
-X-Google-Smtp-Source: AGHT+IH5iyoraxt1MqhsOV7Wo1Vl0oy/M8gdsqvDQuvj38MG42AcgPxCKrGsYFjRYglZAErHpBINtAm5x8csp6uGERE=
-X-Received: by 2002:a05:6000:401f:b0:3b7:8914:cd94 with SMTP id
- ffacd0b85a97d-3b8d94c1367mr465035f8f.41.1754070970934; Fri, 01 Aug 2025
- 10:56:10 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754071214; x=1754676014;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iHQTKYkj0qpzUWY7+WEgpg8wdP0WoJQ6dPszuReeFiA=;
+        b=I0Dm5R9gacSpWnhZaHkmJUnULuWcRP9jTbvDTVZDQkwdmnL48U6ss/3NCEHm+BrnnW
+         f1mv7+jWjZBUS8Z7L/8hirDNd29Vx+YmErImRGEzr2YC9spruguRFgaxhSinbgJyGrX9
+         c7+MFa+9CR+5j2gWKgy26ul+j5gSeLFKVLQ9OySfJk7F/XwRe8SxcJfwGiTY8lL5dIFn
+         hhD3Chw4hbB2IU5BmaYCWxMrYtu1bhkT/Adm6K8u6DXqqGuu7VUXu6pao0lLwnuYqH7Y
+         nJrrL1oxS5n72TAqpkyRbMPr96OEd6B+1/UL7VxkijZ3cDfkNNy1avBJc8lDkBA83fKT
+         IxVw==
+X-Forwarded-Encrypted: i=1; AJvYcCUIq75m+Yiff70wm7QvUYBVRURVlz6NWjvSU9RXYs5bd8W3uaajUbZOckBr1mCF9aGNb6wE+QI+AuOoJNQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzceLLmTdQ4/Jiz2Od8egWdbgs4dPUnpYB27UZBaYsBq4soVkR3
+	dxwGP989ojghohLY7yo+0dBLD2/MVldeW77qzHN/SpWrG0lsuTC1JqrKVklvBRYpLdO6OAq603h
+	54urH/mPwJo4z0sgmPCs3aV6CGGRhTW6EEQYtAv44rmcd88xwPWYhfLV0O31Am0elD2g=
+X-Gm-Gg: ASbGnctiN9GJlJelDiHqMsXvUY+7S/Zj/md4t+T+Q7Rm1ZkSebbUigfnpHlNLSFMlCe
+	Eum2p3udLW7ISfzre9v2vUcLAV0OSNK28FvQn1W4zh2tTdSuesjdrY0RoJiLr82rZIElNT6U0TR
+	Y4rNq2UXQDtN2boi6kj2qnT4NTkktFyocJQylicURkpeAoHgECRAkbZxnittcPtcDnuh1QWc5t/
+	US7A9kXmUzRRMFmLEmVncaej79KEQBhbRSw+sU70u80J3g24YdeAywFCVO/ivWuE0xlPanTmeQO
+	XMYvATwwqi8AmSQLDPr2AEwHI9O6ubvKPEcbwuRlI5ZvDRilv7E=
+X-Received: by 2002:a17:902:d415:b0:240:417d:8115 with SMTP id d9443c01a7336-24246f595eamr4151415ad.16.1754071213691;
+        Fri, 01 Aug 2025 11:00:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHIiS1uNtFlKO/TgDqfd33YVLs9CK624JVjnlxU52duE5nqqItwb0e7s0qZCDfogQasU+SoRg==
+X-Received: by 2002:a17:902:d415:b0:240:417d:8115 with SMTP id d9443c01a7336-24246f595eamr4151005ad.16.1754071213205;
+        Fri, 01 Aug 2025 11:00:13 -0700 (PDT)
+Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef7562sm48517715ad.24.2025.08.01.11.00.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 11:00:12 -0700 (PDT)
+From: Rob Clark <robin.clark@oss.qualcomm.com>
+To: dri-devel@lists.freedesktop.org
+Cc: linux-arm-msm@vger.kernel.org, freedreno@lists.freedesktop.org,
+        Akhil P Oommen <akhilpo@oss.qualcomm.com>,
+        Connor Abbott <cwabbott0@gmail.com>,
+        Rob Clark <robin.clark@oss.qualcomm.com>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        David Airlie <airlied@gmail.com>, Dmitry Baryshkov <lumag@kernel.org>,
+        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        linux-kernel@vger.kernel.org (open list),
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        Sean Paul <sean@poorly.run>, Simona Vetter <simona@ffwll.ch>
+Subject: [PATCH v3 0/7] drm/msm: Various snapshot fixes
+Date: Fri,  1 Aug 2025 10:59:57 -0700
+Message-ID: <20250801180009.345662-1-robin.clark@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801161752.443431-1-ojeda@kernel.org>
-In-Reply-To: <20250801161752.443431-1-ojeda@kernel.org>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Fri, 1 Aug 2025 19:55:59 +0200
-X-Gm-Features: Ac12FXyPfPflOZinXuov3eku6WJJUyueclLsgVuYKQ--6v94gWhcCn1e-LQsq6c
-Message-ID: <CAH5fLghFKZgW8T82ZKQNAANfhGBEQG2oLE2rmUOAb6N9UDEMhw@mail.gmail.com>
-Subject: Re: [PATCH] rust: prelude: re-export `core::mem::{align,size}_of{,_val}`
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, 
-	Alexandre Courbot <acourbot@nvidia.com>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, patches@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: K8JmTYvjAeQQl-qlJpDPXyTbUQwN4mcn
+X-Proofpoint-GUID: K8JmTYvjAeQQl-qlJpDPXyTbUQwN4mcn
+X-Authority-Analysis: v=2.4 cv=f+RIBPyM c=1 sm=1 tr=0 ts=688d00af cx=c_pps
+ a=cmESyDAEBpBGqyK7t0alAg==:117 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
+ a=w1cFhwVCMIBtwBHhTYMA:9 a=1OuFwYUASf3TG4hYMiVC:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEzOCBTYWx0ZWRfXwXcom4MMUo/8
+ vSDtWMpxMwHhUfJZy0Zn/6IIbF6JgG0rKKDs/uBD/xM0fJBko5Vd6sMO3FbNQACfGtMeI0KQmGv
+ PL/v66p0d7Nf51dztLgULYasOY6FELxAviaikh6FmRNlTxHj5X/eDwp4bz6DNFqI/dq6dw64fAf
+ LUaebQyoDqIT0HEframmQS/1YPv2yZ/whYzSZ+D7tjmzfYaGPSWtneVOUfQylApV0XdCN6n8oZ+
+ HYD7IGHeoyVulXhe2Rf/10KwEbhHdpsClzbXAKP7FJWNFRxm0iZL74jA5Xmq5P5ZYHPMpOmST/9
+ pU6DjM8HzcqYsgkGhk9gKNZ9QwDLvn/58Lr7CdXu1rUQ9QU/ffFTYgwB9yP3ufv2zbDSvLImAys
+ UxulKGtK90BHyID1hJDziR+jF3lDR7uepMG/mgBOywbqFHDq+a4Jm4Fp2nrIFZdJYKWkMLXq
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_06,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ spamscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ lowpriorityscore=0 suspectscore=0 phishscore=0 priorityscore=1501 bulkscore=0
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010138
 
-On Fri, Aug 1, 2025 at 6:18=E2=80=AFPM Miguel Ojeda <ojeda@kernel.org> wrot=
-e:
->
-> Rust 1.80.0 added:
->
->     align_of
->     align_of_val
->     size_of
->     size_of_val
->
-> from `core::mem` to the prelude [1].
->
-> For similar reasons, and to minimize potential confusion when code may
-> work in later versions but not in our current minimum, add it to our
-> prelude too.
->
-> Link: https://github.com/rust-lang/rust/pull/123168 [1]
-> Link: https://lore.kernel.org/rust-for-linux/CANiq72kOLYR2A95o0ji2mDmEqOK=
-h9e9_60zZKmgF=3DvZmsW6DRg@mail.gmail.com/ [2]
-> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
-> ---
->  rust/kernel/prelude.rs | 5 ++++-
->  1 file changed, 4 insertions(+), 1 deletion(-)
->
-> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-> index 25fe97aafd02..198d09a31449 100644
-> --- a/rust/kernel/prelude.rs
-> +++ b/rust/kernel/prelude.rs
-> @@ -12,7 +12,10 @@
->  //! ```
->
->  #[doc(no_inline)]
-> -pub use core::pin::Pin;
-> +pub use core::{
-> +    mem::{align_of, align_of_val, size_of, size_of_val},
-> +    pin::Pin,
-> +};
->
->  pub use ::ffi::{
->      c_char, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint=
-, c_ulong, c_ulonglong,
->
-> base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
-> --
-> 2.50.1
->
+Various fixes I've found so far while ingesting upstream devcore dumps
+into internal tools.
 
-Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+Rob Clark (7):
+  drm/msm: Add missing "location"s to devcoredump
+  drm/msm: Fix section names and sizes
+  drm/msm: Fix order of selector programming in cluster snapshot
+  drm/msm: Constify snapshot tables
+  drm/msm: Fix a7xx debugbus read
+  drm/msm: Fix debugbus snapshot
+  drm/msm: Fix a7xx TPL1 cluster snapshot
+
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.c   | 47 +++++++++++++------
+ drivers/gpu/drm/msm/adreno/a6xx_gpu_state.h   | 38 +++++++--------
+ .../drm/msm/adreno/adreno_gen7_0_0_snapshot.h | 19 +++++---
+ .../drm/msm/adreno/adreno_gen7_2_0_snapshot.h | 10 ++--
+ .../drm/msm/adreno/adreno_gen7_9_0_snapshot.h | 34 +++++++-------
+ drivers/gpu/drm/msm/registers/adreno/a6xx.xml | 14 +++++-
+ 6 files changed, 101 insertions(+), 61 deletions(-)
+
+-- 
+2.50.1
+
 
