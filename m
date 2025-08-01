@@ -1,209 +1,155 @@
-Return-Path: <linux-kernel+bounces-752819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8695CB17B44
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:41:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D684AB17B45
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:42:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9ABDC1AA684A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:41:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 32D331AA70CC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:42:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA3AB13D8B1;
-	Fri,  1 Aug 2025 02:40:59 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98A07178372
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 02:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC18E1EA65;
+	Fri,  1 Aug 2025 02:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="c4d4cB3j"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 670EF1F5EA
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 02:42:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754016059; cv=none; b=rztLpDsv8izrA8is+6H4wB9edFC/BOe0mkpo3PdJ8g+GRPmEAH9EPSkM1kyhO8P+wYqNGFetlBy05rzKQg8xs03n+vASBjVtWKqb52vR4qfQXfuV3CFVcjTByLMHQjPrOlgw34DYM3dtFik/OpVSNJmFccuDQCZ82pOACiXwYJQ=
+	t=1754016132; cv=none; b=JwS9eJPRQP2lZY5VNBc4glogyrqDrQmgvzBGgK3WvDQ0OFmJGEUNCn8fm6fWZzmH8cRMQn+cFGBul6jWLhOMXnSiXDgigTLmOz7w6vS+QtuV5PIK8EKQTyzJCHcG2nrOmxdFdLfFWWn1zO4e5yd5sZQSItnom2loobw0DUSU9qY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754016059; c=relaxed/simple;
-	bh=2GjSBEQDr8n3WHbA0gc66yOjON6M1kfeaas1gVNz3Lc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mJIO6rpktWF4xr+kODchsH7dr0KBHtMeNG/P6+gLTnqsEXy8/lVjyufz+Wu43Xolk4yVOW5iyeeHqPyBt+PUVUDuWQtivzAi60NqwVCFh0ZV9tm6tg8/jcLCeEhSyMrD66MWi7OUcYDVFwreVrhNz65iuisGA1+azzF3qpNuzJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 871DA16A3;
-	Thu, 31 Jul 2025 19:40:47 -0700 (PDT)
-Received: from [10.164.146.15] (J09HK2D2RT.blr.arm.com [10.164.146.15])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 18C4A3F5A1;
-	Thu, 31 Jul 2025 19:40:53 -0700 (PDT)
-Message-ID: <d1445c9c-6603-4ff2-9cac-2a60ed4efe4b@arm.com>
-Date: Fri, 1 Aug 2025 08:10:50 +0530
+	s=arc-20240116; t=1754016132; c=relaxed/simple;
+	bh=LYXq4DasOMn9bVE/1iFYCJjSyUGOkTeSL3iyfCseTAg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=fPzq9dlRzn+jL+CGYldlTLiYN6dLL2MGylb9BP2Y//aeHfd7J3ZNIzW49YWzQcxLyR4ww3eU+I2V0u9h5NCsstc/CIfoLORmJXuXg4ZuPURBMY39WrEDlPFtz4wqIDwpb6DkMbfgw+jOvaKbcJbFPY6e79GqStLKXAJWEhZva08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=c4d4cB3j; arc=none smtp.client-ip=198.175.65.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754016131; x=1785552131;
+  h=date:from:to:cc:subject:message-id:mime-version:
+   content-transfer-encoding;
+  bh=LYXq4DasOMn9bVE/1iFYCJjSyUGOkTeSL3iyfCseTAg=;
+  b=c4d4cB3j+AKYKRFN9J8m0toVootVHeZdbBRMUXtNTqCJSU4URg6FlR/B
+   /SF00424M9uFboi8/mj7/ArtdQ6FtJgUHykAIeKeTklfUBPR48qbsHXMB
+   vBp2hiQNaJQZt3kWCGFjsNZFNqvQIyxfzYXEmvQP8IJQ7zF32bNVnm8J2
+   L1s9ZVI5I8bNg32tXqP4dLnc6R5srkEeKe1CMDsqAEdaaIgNLv6yjaqHV
+   PpoDA01R8JJy9gZJ9wFbqeE4ERmKQui5i/zKGTN4cFiosGEoxEJQEOz6E
+   r/CI8n0eKRULK9+ZEIl9klbfF4XhZF2OFWiZxm0yylplXWrR3FZWaE1/l
+   Q==;
+X-CSE-ConnectionGUID: 78e8jav3T+G8SyMmMZq1rQ==
+X-CSE-MsgGUID: 9kaHw2p3Q22l+r2S/yZPiw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56054185"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="56054185"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 31 Jul 2025 19:42:10 -0700
+X-CSE-ConnectionGUID: 1uONOu97S8OQBaxLiqHWlA==
+X-CSE-MsgGUID: nDElMjbyRGOL/0xJqA/T2A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163776184"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa008.jf.intel.com with ESMTP; 31 Jul 2025 19:42:07 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1uhfiZ-0004J2-2H;
+	Fri, 01 Aug 2025 02:41:59 +0000
+Date: Fri, 1 Aug 2025 10:41:09 +0800
+From: kernel test robot <lkp@intel.com>
+To: Kees Cook <kees@kernel.org>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: kernel/kstack_erase.c:34:56: sparse: sparse: incorrect type in
+ argument 3 (different address spaces)
+Message-ID: <202508011029.WGeVHkWa-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
- destroy_args()
-To: "Herton R. Krzesinski" <herton@redhat.com>, linux-mm@kvack.org
-Cc: linux-kernel@vger.kernel.org, akpm@linux-foundation.org
-References: <20250731214051.4115182-1-herton@redhat.com>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250731214051.4115182-1-herton@redhat.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
 
-Hello Herton,
+Hi Kees,
 
-On 01/08/25 3:10 AM, Herton R. Krzesinski wrote:
-> The mm/debug_vm_pagetable test allocates manually page table entries for the
-> tests it runs, using also its manually allocated mm_struct. That in itself is
-> ok, but when it exits, at destroy_args() it fails to clear those entries with
-> the *_clear functions.
-> 
-> The problem is that leaves stale entries. If another process allocates
-> an mm_struct with a pgd at the same address, it may end up running into
-> the stale entry. This is happening in practice on a debug kernel with
+First bad commit (maybe != root cause):
 
-Should not the allocators ensure that the allocated memory elements are
-all cleaned up before using them ?
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   6a68cec16b647791d448102376a7eec2820e874f
+commit: 32e42ab9fc88a884435c27527a433f61c4d2b61b sched/task_stack: Add missing const qualifier to end_of_stack()
+date:   5 days ago
+config: loongarch-randconfig-r112-20250801 (https://download.01.org/0day-ci/archive/20250801/202508011029.WGeVHkWa-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
+reproduce: (https://download.01.org/0day-ci/archive/20250801/202508011029.WGeVHkWa-lkp@intel.com/reproduce)
 
-> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
-> extra debugging I added (it prints a warning trace if pgtables_bytes goes
-> negative, in addition to the warning at check_mm() function):
-> 
-> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
-> [    2.539366] kmem_cache info
-> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
-> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
-> (...)
-> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
-> [    2.552816] Modules linked in:
-> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
-> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
-> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
-> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
-> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
-> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
-> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
-> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
-> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
-> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
-> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
-> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
-> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
-> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
-> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
-> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
-> [    2.553199] Call Trace:
-> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
-> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
-> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
-> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
-> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
-> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
-> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
-> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
-> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
-> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
-> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
-> (...)
-> [    2.558892] ---[ end trace 0000000000000000 ]---
-> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
-> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
-> 
-> Here the modprobe process ended up with an allocated mm_struct from the
-> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
-> problem, since the mm_struct is initialized again etc., however, if it ends up
-> using the same pgd table, it bumps into the old stale entry when clearing/freeing
-> the page table entries, so it tries to free an entry already gone (that one
-> which was allocated by the debug_vm_pgtable test), which also explains the
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508011029.WGeVHkWa-lkp@intel.com/
 
-How did you ensure that it was allocated from debug_vm_pgtable ? Trace prints during
-its execution and then matching up the addresses ? Just curious.
+sparse warnings: (new ones prefixed by >>)
+>> kernel/kstack_erase.c:34:56: sparse: sparse: incorrect type in argument 3 (different address spaces) @@     expected void * @@     got void [noderef] __user *buffer @@
+   kernel/kstack_erase.c:34:56: sparse:     expected void *
+   kernel/kstack_erase.c:34:56: sparse:     got void [noderef] __user *buffer
+>> kernel/kstack_erase.c:54:35: sparse: sparse: incorrect type in initializer (incompatible argument 3 (different address spaces)) @@     expected int ( [usertype] *proc_handler )( ... ) @@     got int ( * )( ... ) @@
+   kernel/kstack_erase.c:54:35: sparse:     expected int ( [usertype] *proc_handler )( ... )
+   kernel/kstack_erase.c:54:35: sparse:     got int ( * )( ... )
 
-> negative pgtables_bytes since it's accounting for not allocated entries in the
-> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
-So should they clear entries or doing so would add to overall latency ?
+vim +34 kernel/kstack_erase.c
 
-> and clearing of the entries is explicitly done in the free_pgtables->
-> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
-> free_pte_range path. However, the debug_vm_pgtable test does not call
-> free_pgtables, since it allocates mm_struct and entries manually for its test
-> and eg. not goes through page faults. So it also should clear manually the
-> entries before exit at destroy_args().
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  23  
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  24  #ifdef CONFIG_SYSCTL
+78eb4ea25cd5fd kernel/stackleak.c Joel Granados    2024-07-24  25  static int stack_erasing_sysctl(const struct ctl_table *table, int write,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  26  			void __user *buffer, size_t *lenp, loff_t *ppos)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  27  {
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  28  	int ret = 0;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  29  	int state = !static_branch_unlikely(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  30  	int prev_state = state;
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03  31  	struct ctl_table table_copy = *table;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  32  
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03  33  	table_copy.data = &state;
+0e148d3cca0dc1 kernel/stackleak.c Thomas Weiﬂschuh 2024-05-03 @34  	ret = proc_dointvec_minmax(&table_copy, write, buffer, lenp, ppos);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  35  	state = !!state;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  36  	if (ret || !write || state == prev_state)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  37  		return ret;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  38  
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  39  	if (state)
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  40  		static_branch_disable(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  41  	else
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  42  		static_branch_enable(&stack_erasing_bypass);
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  43  
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  44  	pr_warn("stackleak: kernel stack erasing is %s\n",
+62e9c1e8ecee87 kernel/stackleak.c Thorsten Blum    2024-12-22  45  					str_enabled_disabled(state));
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  46  	return ret;
+964c9dff009189 kernel/stackleak.c Alexander Popov  2018-08-17  47  }
+1751f872cc97f9 kernel/stackleak.c Joel Granados    2025-01-28  48  static const struct ctl_table stackleak_sysctls[] = {
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  49  	{
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  50  		.procname	= "stack_erasing",
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  51  		.data		= NULL,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  52  		.maxlen		= sizeof(int),
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  53  		.mode		= 0600,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21 @54  		.proc_handler	= stack_erasing_sysctl,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  55  		.extra1		= SYSCTL_ZERO,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  56  		.extra2		= SYSCTL_ONE,
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  57  	},
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  58  };
+0df8bdd5e3b3e5 kernel/stackleak.c Xiaoming Ni      2022-01-21  59  
 
-Makes sense.
+:::::: The code at line 34 was first introduced by commit
+:::::: 0e148d3cca0dc1a7c6063939f6cb9ba4866c39a7 stackleak: Use a copy of the ctl_table argument
 
-> 
-> This problem was noticed on a reboot X number of times test being done
-> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
-> enabled. Depends on the system, but on a 100 times reboot loop the
-> problem could manifest once or twice, if a process ends up getting the
-> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
-> After using this patch, I couldn't reproduce/experience the problems
-> anymore. I was able to reproduce the problem as well on latest upstream
-> kernel (6.16).
+:::::: TO: Thomas Weiﬂschuh <linux@weissschuh.net>
+:::::: CC: Kees Cook <keescook@chromium.org>
 
-Seems like a very rare case i.e both to reproduce and also to confirm if this patch
-here has indeed solved the problem. Just wondering - did you try to reproduce this
-problem on any other platform than powerpc ?
-
-> 
-> I also modified destroy_args() to use mmput() instead of mmdrop(), there
-> is no reason to hold mm_users reference and not release the mm_struct
-> entirely, and in the output above with my debugging prints I already
-> had patched it to use mmput, it did not fix the problem, but helped
-> in the debugging as well.
-
-Makes sense.
-
-> 
-> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
-> ---
->  mm/debug_vm_pgtable.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 7731b238b534..0f5ddefd128a 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
->  
->  	/* Free page table entries */
->  	if (args->start_ptep) {
-> +		pmd_clear(args->pmdp);
->  		pte_free(args->mm, args->start_ptep);
->  		mm_dec_nr_ptes(args->mm);
->  	}
->  
->  	if (args->start_pmdp) {
-> +		pud_clear(args->pudp);
->  		pmd_free(args->mm, args->start_pmdp);
->  		mm_dec_nr_pmds(args->mm);
->  	}
->  
->  	if (args->start_pudp) {
-> +		p4d_clear(args->p4dp);
->  		pud_free(args->mm, args->start_pudp);
->  		mm_dec_nr_puds(args->mm);
->  	}
->  
-> -	if (args->start_p4dp)
-> +	if (args->start_p4dp) {
-> +		pgd_clear(args->pgdp);
->  		p4d_free(args->mm, args->start_p4dp);
-> +	}
->  
->  	/* Free vma and mm struct */
->  	if (args->vma)
->  		vm_area_free(args->vma);
->  
->  	if (args->mm)
-> -		mmdrop(args->mm);
-> +		mmput(args->mm);
->  }
->  
->  static struct page * __init
-A quick test on arm64 platform looked fine. It might be better to get this
-enabled and tested on multiple platforms via linux-next.
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
