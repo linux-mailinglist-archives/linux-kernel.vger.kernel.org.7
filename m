@@ -1,150 +1,208 @@
-Return-Path: <linux-kernel+bounces-752762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30C32B17A93
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:25:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 10824B17AA0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:29:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 287981C249FD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:25:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2233BBE57
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:29:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6E3FBE49;
-	Fri,  1 Aug 2025 00:25:07 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F99CA6B;
+	Fri,  1 Aug 2025 00:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="no9uVix6"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 114841862;
-	Fri,  1 Aug 2025 00:25:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213998F40;
+	Fri,  1 Aug 2025 00:29:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754007907; cv=none; b=CzbHtsqZ9NC0YjdJtfnOgNXBXUhLwTO+p4aJBF4wqnpSscpySaoYsqJGjKH/H9wOYX+zv2xtwUy+ZBuVIZIixkSzb1mUFO9vIVV+Eey2RObNrhdFoeObOAFSwG2JRJkP1ogatK4+eY8Z0i7u8aVODB4EJx65ivsCYZc2UqTpaAM=
+	t=1754008185; cv=none; b=dsfiRvklim7UWU6k8rVYVb5XspMo1CsrRgbeJVdm/W10V2A+OmBoSKH+kGm1Y5dWarq7jvoE+W3cmqP/GyA5Wxq5NaEIosl22cD8sI5iwKntdRHr2M/STWQdyBBfAmfrfh/iLi7PH8uqoqQttitG8tF4B/m793bzuKnEOjcgWVg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754007907; c=relaxed/simple;
-	bh=EOQv1qcT/OkdpOw9CGpuqepOjLi/A//XzPP16t9jr30=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=tTFs9A5sSmiEsySGEaSdxiLuY2+7qZP0Vlxk0vfBfPctkDNe2iaKVV52sQx2FMSZA9NPXzragEOR9t2zei83HoScdIZRFo9seE+RHrm47mMZYrn8K25sgtnT1a4rBWDRwW+JvwUEwdeqd0LbMVONdKRKoR/8ZOuNglG4c74fxWI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4btRY95Jv5zYQvYj;
-	Fri,  1 Aug 2025 08:25:01 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 6A94D1A1121;
-	Fri,  1 Aug 2025 08:25:00 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHwhJaCYxoOySgCA--.13105S3;
-	Fri, 01 Aug 2025 08:25:00 +0800 (CST)
-Subject: Re: [PATCH v2 1/2] lib/sbitmap: convert shallow_depth from one word
- to the whole sbitmap
-To: Jan Kara <jack@suse.cz>, Yu Kuai <yukuai1@huaweicloud.com>
-Cc: yukuai@kernel.org, axboe@kernel.dk, akpm@linux-foundation.org,
- yang.yang@vivo.com, dlemoal@kernel.org, ming.lei@redhat.com,
- linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
- yi.zhang@huawei.com, yangerkun@huawei.com, johnny.chenyi@huawei.com,
- Omar Sandoval <osandov@fb.com>, "yukuai (C)" <yukuai3@huawei.com>
-References: <20250729031906.3615228-1-yukuai1@huaweicloud.com>
- <20250729031906.3615228-2-yukuai1@huaweicloud.com>
- <ozjsdoiqa2uem65qqj4fjbrwm6toxlj5bzv7f5dg5xfiljv3zi@wcaamboo2r6h>
- <8edcdef6-8749-aa45-e7d2-ada677645d76@huaweicloud.com>
- <jr54uomodnzqyw4bu4hcdpllgafkhueyygiiempuudwjy3vir5@d7lv3jsxxqx2>
- <223acbc1-60d4-4687-8eea-5306aa44ae24@kernel.org>
- <c748a3ee-bf33-e13e-d507-984277acbb32@huaweicloud.com>
- <imit4dkxy55c6a6tfqzaa6hf67nrawedotc3rzltlmmgmf3b3t@nde6h6cy3agw>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <12d82243-237c-d890-a975-392b151d55a9@huaweicloud.com>
-Date: Fri, 1 Aug 2025 08:24:58 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754008185; c=relaxed/simple;
+	bh=eZgXmtVleqBOW2a9EhVWZV3RbUp8RIO3Kyrj/CMoaP4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WhUzFIxBrDy/bAqnAR3X7vwUdyh6V2LDwrSiOA57ALrRCawLRKl6pl58B5a3HMA43rq1ObrLXc4V4mRo+NN52HskKGkRjT7iTtADYNqB274Yzhupl7QCvmeRSZVDMinqqJ9CGKkjChSP/OsfEvIX5A5JaJXj00/IPwKtXmAVwU4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=no9uVix6; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F912C4CEEF;
+	Fri,  1 Aug 2025 00:29:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754008184;
+	bh=eZgXmtVleqBOW2a9EhVWZV3RbUp8RIO3Kyrj/CMoaP4=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=no9uVix6afnOBiymx4pq2a/XjiwyLroJSmeFDpg9ocCAHSNVTEJH2cTtKNRfJhgvX
+	 +WNtGUcU3DJuUSesVwjGKvWOPfI0AV30FXiYYJC9Wlm7JaApQSffkC14N1kDKYLc3S
+	 z2ptC81L6WP7o5tuMQ2yGmji584d3RGre8Juy0dMPibngWGiCbleXYIeEpSyOr5q9a
+	 s08SGMrShIQ+RtMPd/GmRwCCevnWZLoPx+mIuIAXPs9nrLZ/euQ9Fbr+mY2dIrnCZm
+	 /y+Cmkl0Uq2fMJ/lCjbEE36H12Oe/AvX3mBeDXuvfR7EUwaagD9kY6DfRA1lTVdyr8
+	 q6IaTQrYjLpYw==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 2F2D6CE0A73; Thu, 31 Jul 2025 17:29:44 -0700 (PDT)
+Date: Thu, 31 Jul 2025 17:29:44 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Steven Rostedt <rostedt@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	Josh Poimboeuf <jpoimboe@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Indu Bhagat <indu.bhagat@oracle.com>,
+	"Jose E. Marchesi" <jemarch@gnu.org>,
+	Beau Belgrave <beaub@linux.microsoft.com>,
+	Jens Remus <jremus@linux.ibm.com>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+	Sam James <sam@gentoo.org>
+Subject: Re: [PATCH v16 09/10] unwind deferred: Use SRCU
+ unwind_deferred_task_work()
+Message-ID: <21c67d70-d8c2-4d6b-99d8-2de8f2966621@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <20250729182304.965835871@kernel.org>
+ <20250729182406.331548065@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <imit4dkxy55c6a6tfqzaa6hf67nrawedotc3rzltlmmgmf3b3t@nde6h6cy3agw>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHwhJaCYxoOySgCA--.13105S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7ZF48Kw4UJr4xuw4xKF1fCrg_yoW8WF4kpr
-	4Ut3W7Kw4UtF1jkFn0qa1DXF1akr13A3ZIgF43Xw1xCrWDtaySqF1YvF90vry7ZrWkurWj
-	yFWfXry7J3WYqaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUBY14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
-	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
-	4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwACI402YVCY1x02628vn2kI
-	c2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v26r1q6r43MxAIw28IcxkI7V
-	AKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrVAFwI0_Jr0_Jr4lx2IqxVCj
-	r7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUtVW8ZwCIc40Y0x0EwIxGrwCI42IY6x
-	IIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267AKxVW8JVWxJwCI42IY6xAI
-	w20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_Gr1lIxAIcVC2z280aVCY1x
-	0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7VUbGQ6JUUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729182406.331548065@kernel.org>
 
-Hi,
+On Tue, Jul 29, 2025 at 02:23:13PM -0400, Steven Rostedt wrote:
+> From: Steven Rostedt <rostedt@goodmis.org>
+> 
+> Instead of using the callback_mutex to protect the link list of callbacks
+> in unwind_deferred_task_work(), use SRCU instead. This gets called every
+> time a task exits that has to record a stack trace that was requested.
+> This can happen for many tasks on several CPUs at the same time. A mutex
+> is a bottleneck and can cause a bit of contention and slow down performance.
+> 
+> As the callbacks themselves are allowed to sleep, regular RCU cannot be
+> used to protect the list. Instead use SRCU, as that still allows the
+> callbacks to sleep and the list can be read without needing to hold the
+> callback_mutex.
+> 
+> Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com/
+> 
+> Cc: "Paul E. McKenney" <paulmck@kernel.org>
+> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
 
-在 2025/08/01 0:27, Jan Kara 写道:
-> On Thu 31-07-25 10:38:58, Yu Kuai wrote:
->> Hi,
->>
->> 在 2025/07/31 2:24, Yu Kuai 写道:
->>> hi, Jan!
->>>
->>> 在 2025/7/30 21:03, Jan Kara 写道:
->>>> I think having two APIs will be even more confusing than the current
->>>> state.
->>>> But as I wrote I think you can have API to specify shallow depth in total
->>>> size and in sbitmap_queue_get_shallow() do:
->>>>
->>>> shallow_per_word = (shallow_depth << sb->shift) / sb->depth;
->> In order to consider the last word, I think we should use __map_depth()
->> here.
-> 
-> Right.
-> 
->>>> rounding_index = shallow_depth - shallow_per_word * sb->depth;
->> And then it's not possible to calculate this rounding index easily. How
->> about following, although the reminder handling is not perfect.
->>
->>   static unsigned int __map_depth_with_shallow(const struct sbitmap *sb,
->>                                               int index,
->>                                               unsigned int shallow_depth)
->>   {
->>          unsigned int word_depth = __map_depth(sb, index);
->>          unsigned int shallow_word_depth = word_depth * shallow_depth;
->>          unsigned reminder = do_div(shallow_word_depth, sb->depth);
->>
->>          if (reminder && !(index & 0x1))
-> 
-> Well, why not:
-> 	if (remainder > index)
-Do you mean reminder > index * shallow_depth? This looks correct, and
-with the consideration for the last word:
+One quite likely stupid question below.
 
-if (index == sb->map_nr - 1)
-	shallow_word_depth = max(shallow_word_depth, 1);
-else if (reminder > index * shallow_depth)
-	shallow_word_depth++;
+							Thanx, Paul
 
-Thanks,
-Kuai
+> ---
+>  kernel/unwind/deferred.c | 27 +++++++++++++++++++++------
+>  1 file changed, 21 insertions(+), 6 deletions(-)
+> 
+> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
+> index 2311b725d691..a5ef1c1f915e 100644
+> --- a/kernel/unwind/deferred.c
+> +++ b/kernel/unwind/deferred.c
+> @@ -41,7 +41,7 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
+>  #define UNWIND_MAX_ENTRIES					\
+>  	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
+>  
+> -/* Guards adding to and reading the list of callbacks */
+> +/* Guards adding to or removing from the list of callbacks */
+>  static DEFINE_MUTEX(callback_mutex);
+>  static LIST_HEAD(callbacks);
+>  
+> @@ -49,6 +49,7 @@ static LIST_HEAD(callbacks);
+>  
+>  /* Zero'd bits are available for assigning callback users */
+>  static unsigned long unwind_mask = RESERVED_BITS;
+> +DEFINE_STATIC_SRCU(unwind_srcu);
+>  
+>  static inline bool unwind_pending(struct unwind_task_info *info)
+>  {
+> @@ -174,8 +175,9 @@ static void unwind_deferred_task_work(struct callback_head *head)
+>  
+>  	cookie = info->id.id;
+>  
+> -	guard(mutex)(&callback_mutex);
+> -	list_for_each_entry(work, &callbacks, list) {
+> +	guard(srcu)(&unwind_srcu);
+> +	list_for_each_entry_srcu(work, &callbacks, list,
+> +				 srcu_read_lock_held(&unwind_srcu)) {
+>  		if (test_bit(work->bit, &bits)) {
+>  			work->func(work, &trace, cookie);
+>  			if (info->cache)
+> @@ -213,7 +215,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+>  {
+>  	struct unwind_task_info *info = &current->unwind_info;
+>  	unsigned long old, bits;
+> -	unsigned long bit = BIT(work->bit);
+> +	unsigned long bit;
+>  	int ret;
+>  
+>  	*cookie = 0;
+> @@ -230,6 +232,14 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
+>  	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
+>  		return -EINVAL;
+>  
+> +	/* Do not allow cancelled works to request again */
+> +	bit = READ_ONCE(work->bit);
+> +	if (WARN_ON_ONCE(bit < 0))
+> +		return -EINVAL;
+> +
+> +	/* Only need the mask now */
+> +	bit = BIT(bit);
+> +
+>  	guard(irqsave)();
+>  
+>  	*cookie = get_cookie(info);
+> @@ -281,10 +291,15 @@ void unwind_deferred_cancel(struct unwind_work *work)
+>  		return;
+>  
+>  	guard(mutex)(&callback_mutex);
+> -	list_del(&work->list);
 
-> ?
-> 
-> That should accurately distribute the remainder across the remaining words,
-> shouldn't it?
-> 
->>                  shallow_word_depth++;
->>
->>          return shallow_word_depth;
->>   }
-> 
-> 								Honza
-> 
+What happens if unwind_deferred_task_work() finds this item right here...
 
+> +	list_del_rcu(&work->list);
+
+...and then unwind_deferred_request() does its WARN_ON_ONCE() check
+against -1 right here?
+
+Can't that cause UAF?
+
+This is quite possibly a stupid question because I am not seeing where to
+apply this patch, so I don't know what other mechanisms might be in place.
+
+> +	/* Do not allow any more requests and prevent callbacks */
+> +	work->bit = -1;
+>  
+>  	__clear_bit(bit, &unwind_mask);
+>  
+> +	synchronize_srcu(&unwind_srcu);
+> +
+>  	guard(rcu)();
+>  	/* Clear this bit from all threads */
+>  	for_each_process_thread(g, t) {
+> @@ -307,7 +322,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
+>  	work->bit = ffz(unwind_mask);
+>  	__set_bit(work->bit, &unwind_mask);
+>  
+> -	list_add(&work->list, &callbacks);
+> +	list_add_rcu(&work->list, &callbacks);
+>  	work->func = func;
+>  	return 0;
+>  }
+> -- 
+> 2.47.2
+> 
+> 
 
