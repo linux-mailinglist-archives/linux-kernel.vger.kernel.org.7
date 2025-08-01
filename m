@@ -1,52 +1,58 @@
-Return-Path: <linux-kernel+bounces-753195-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753196-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 085C0B17FD9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:02:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7854B17FDE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:05:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BCE15800CB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:02:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DF709625500
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:05:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE412224882;
-	Fri,  1 Aug 2025 10:02:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3F1422CBD8;
+	Fri,  1 Aug 2025 10:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="JQEQUW7p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XcUCOqiJ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E48E43169;
-	Fri,  1 Aug 2025 10:02:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 499792E36FF;
+	Fri,  1 Aug 2025 10:05:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754042565; cv=none; b=rQ++v6Q5tuDkg7iCPL1XvniiNmhPoFZXvGCA0Ex4C9IGhcQ4bEFcepEID4eDryfWli3Vl/OlLK/LkOGXgiwmOvZPcyj6i5uGyBAIla2yWu532KahGA3XDlh1Lf507WINu3sirahr56InwyWfJyVyzi1iIdVQ0yUInfSfXuJMAcE=
+	t=1754042726; cv=none; b=MOJVBAPGtLvADIg7aPIf3DsKBDrphJG4Jg9v3Ke/1ijgmFlfwMqEOGDCRHMKChuDHZZdKRepPAxy26SBzhLgv/Hlf0k3zUNL+anYhv2lmNlAtf9eIWaY5+t7dtbqVxRhPejtoxfQyiyMLdhFVaoR20tm5e5K+rkz1U+Q5ThLB/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754042565; c=relaxed/simple;
-	bh=PQTdbHWk76OpgeQjhGtCUlTLwNSWy0TCHQwpI0BRDXU=;
+	s=arc-20240116; t=1754042726; c=relaxed/simple;
+	bh=w6pDTD1NLo2TxxU9cYo4iXHA37Y0HGWEzLWLKMXP5JQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MlT0qAfLgCaDVShZDz8cbrGsxnIYZxcvqP0aeZbT273JfrcTFyfBq3rqoyrO6olCGA/DvTN471x5i6cRCnt7xPhia0pHCy9F1/l1wAaN94ZtneKKz0LyDzwdhE2UrSSLPxqI1zCeRjiHXlCscnboiDqfCYgn/yvC/sX6GcjRuik=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=JQEQUW7p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 67CC9C4CEF4;
-	Fri,  1 Aug 2025 10:02:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754042564;
-	bh=PQTdbHWk76OpgeQjhGtCUlTLwNSWy0TCHQwpI0BRDXU=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=dJ62btIcXXjLqjaXnDwr6rZ5jEjpqG1e/VnvHDvlpQDTtbany3p/QZSq/pO1AKRqpCtFvFbVzE1k+dl2kk2NTPfTtJsZ69iMRbh7KENDUsI4Gz6UWRxpIZz/BUaCP7ZSPhalzHKMjj3qwlTvS7kcgQeOVt8X1s1V+RDauaoUDm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XcUCOqiJ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 336FAC4CEE7;
+	Fri,  1 Aug 2025 10:05:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754042725;
+	bh=w6pDTD1NLo2TxxU9cYo4iXHA37Y0HGWEzLWLKMXP5JQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=JQEQUW7pL2l9snCH+ToOQ7UjW/i020662mBYW+l2Q62jMcNfVJDUM8OWt5Rv+5zDN
-	 cQsCZyFS/YJBeaqDN10xm0JyEOY2EudDuaRdkV1eKtvY/YcF2h9hw3B0SxyPU73oVc
-	 6StnirPifFnWHwR8+GPAEZXq2AtWX8qugz1obnE0=
-Date: Fri, 1 Aug 2025 11:02:41 +0100
-From: Greg KH <gregkh@linuxfoundation.org>
-To: Jiayi Li <lijiayi@kylinos.cn>
-Cc: maximlevitsky@gmail.com, kai.heng.feng@canonical.com, oakad@yahoo.com,
-	ulf.hansson@linaro.org, luoqiu@kylinsec.com.cn,
-	viro@zeniv.linux.org.uk, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jiayi_dec@163.com
-Subject: Re: [PATCH] memstick: Fix deadlock by moving removing flag earlier
-Message-ID: <2025080132-pacifist-spiritism-0cbe@gregkh>
-References: <20250801094459.318184-1-lijiayi@kylinos.cn>
+	b=XcUCOqiJXtno7wspxwIoeunM3oJuz+wxoThzYMMvha3X3QyANwsjqHRTaLO8ncHj/
+	 Ai/BVotdsfYyzVYU/cNUqY+z2SU3+5sRt0BrSWbj8NGOnaCsKxbR7K3vMtGvZNx5+L
+	 fihTM4zX+rKtIESGqBd4BZcofuOzf7rBhnq7n4aJbrlajufy9Z/xlh27sk11yLFpRe
+	 H7vZJrMviMLC3uGNpnF+OkWcx6p208I6AK4W4D4EwyWIBIrTXso/eR+pwtD/UILe6Y
+	 hDrWhwJhkbC6qFbPegwuKg5Kl+VAgosvRtgxOGZCiw3jteQxmLXhiK2/dFa4Kmtd6I
+	 9JUZOoWeFSg0w==
+Date: Fri, 1 Aug 2025 11:05:20 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/3] net: hibmcge: fix rtnl deadlock issue
+Message-ID: <20250801100520.GJ8494@horms.kernel.org>
+References: <20250731134749.4090041-1-shaojijie@huawei.com>
+ <20250731134749.4090041-2-shaojijie@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,111 +61,121 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250801094459.318184-1-lijiayi@kylinos.cn>
+In-Reply-To: <20250731134749.4090041-2-shaojijie@huawei.com>
 
-On Fri, Aug 01, 2025 at 05:44:59PM +0800, Jiayi Li wrote:
-> The existing memstick core patch: commit 62c59a8786e6 ("memstick: Skip
-> allocating card when removing host") sets host->removing in
-> memstick_remove_host(),but still exists a critical time window where
-> memstick_check can run after host->eject is set but before removing is set.
+On Thu, Jul 31, 2025 at 09:47:47PM +0800, Jijie Shao wrote:
+> Currently, the hibmcge netdev acquires the rtnl_lock in
+> pci_error_handlers.reset_prepare() and releases it in
+> pci_error_handlers.reset_done().
 > 
-> In the rtsx_usb_ms driver, the problematic sequence is:
+> However, in the PCI framework:
+> pci_reset_bus - __pci_reset_slot - pci_slot_save_and_disable_locked -
+>  pci_dev_save_and_disable - err_handler->reset_prepare(dev);
 > 
-> rtsx_usb_ms_drv_remove:          memstick_check:
->   host->eject = true
->   cancel_work_sync(handle_req)     if(!host->removing)
->   ...                              memstick_alloc_card()
->                                      memstick_set_rw_addr()
->                                        memstick_new_req()
->                                          rtsx_usb_ms_request()
->                                            if(!host->eject)
->                                            skip schedule_work
->                                        wait_for_completion()
->   memstick_remove_host:                [blocks indefinitely]
->     host->removing = true
->     flush_workqueue()
->     [block]
+> In pci_slot_save_and_disable_locked():
+> 	list_for_each_entry(dev, &slot->bus->devices, bus_list) {
+> 		if (!dev->slot || dev->slot!= slot)
+> 			continue;
+> 		pci_dev_save_and_disable(dev);
+> 		if (dev->subordinate)
+> 			pci_bus_save_and_disable_locked(dev->subordinate);
+> 	}
 > 
-> 1. rtsx_usb_ms_drv_remove sets host->eject = true
-> 2. cancel_work_sync(&host->handle_req) runs
-> 3. memstick_check work may be executed here <-- danger window
-> 4. memstick_remove_host sets removing = 1
+> This will iterate through all devices under the current bus and execute
+> err_handler->reset_prepare(), causing two devices of the hibmcge driver
+> to sequentially request the rtnl_lock, leading to a deadlock.
 > 
-> During this window (step 3), memstick_check calls memstick_alloc_card,
-> which may indefinitely waiting for mrq_complete completion that will
-> never occur because rtsx_usb_ms_request sees eject=true and skips
-> scheduling work, memstick_set_rw_addr waits forever for completion.
+> Since the driver now executes netif_device_detach()
+> before the reset process, it will not concurrently with
+> other netdev APIs, so there is no need to hold the rtnl_lock now.
 > 
-> This causes a deadlock when memstick_remove_host tries to flush_workqueue,
-> waiting for memstick_check to complete, while memstick_check is blocked
-> waiting for mrq_complete completion.
+> Therefore, this patch removes the rtnl_lock during the reset process and
+> adjusts the position of HBG_NIC_STATE_RESETTING to ensure
+> that multiple resets are not executed concurrently.
 > 
-> Fix this by setting removing=true at the start of rtsx_usb_ms_drv_remove,
-> before any work cancellation. This ensures memstick_check will see the
-> removing flag immediately and exit early, avoiding the deadlock.
-> 
-> Fixes: 62c59a8786e6 ("memstick: Skip allocating card when removing host")
-> Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+> Fixes: 3f5a61f6d504f ("net: hibmcge: Add reset supported in this module")
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 > ---
->  drivers/memstick/core/memstick.c    | 1 -
->  drivers/memstick/host/rtsx_usb_ms.c | 1 +
->  2 files changed, 1 insertion(+), 1 deletion(-)
+>  drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 13 ++++---------
+>  1 file changed, 4 insertions(+), 9 deletions(-)
 > 
-> diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/memstick.c
-> index 043b9ec756ff..95e65f4958f2 100644
-> --- a/drivers/memstick/core/memstick.c
-> +++ b/drivers/memstick/core/memstick.c
-> @@ -555,7 +555,6 @@ EXPORT_SYMBOL(memstick_add_host);
->   */
->  void memstick_remove_host(struct memstick_host *host)
+> diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> index 503cfbfb4a8a..94bc6f0da912 100644
+> --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> @@ -53,9 +53,11 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
 >  {
-> -	host->removing = 1;
->  	flush_workqueue(workqueue);
->  	mutex_lock(&host->lock);
->  	if (host->card)
-> diff --git a/drivers/memstick/host/rtsx_usb_ms.c b/drivers/memstick/host/rtsx_usb_ms.c
-> index 3878136227e4..5b5e9354fb2e 100644
-> --- a/drivers/memstick/host/rtsx_usb_ms.c
-> +++ b/drivers/memstick/host/rtsx_usb_ms.c
-> @@ -812,6 +812,7 @@ static void rtsx_usb_ms_drv_remove(struct platform_device *pdev)
->  	int err;
+>  	int ret;
 >  
->  	host->eject = true;
-> +	msh->removing = true;
->  	cancel_work_sync(&host->handle_req);
->  	cancel_delayed_work_sync(&host->poll_card);
+> -	ASSERT_RTNL();
+> +	if (test_and_set_bit(HBG_NIC_STATE_RESETTING, &priv->state))
+> +		return -EBUSY;
 >  
+>  	if (netif_running(priv->netdev)) {
+> +		clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+>  		dev_warn(&priv->pdev->dev,
+>  			 "failed to reset because port is up\n");
+>  		return -EBUSY;
+> @@ -64,7 +66,6 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
+>  	netif_device_detach(priv->netdev);
+>  
+>  	priv->reset_type = type;
+> -	set_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+>  	clear_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+>  	ret = hbg_hw_event_notify(priv, HBG_HW_EVENT_RESET);
+>  	if (ret) {
+> @@ -84,10 +85,8 @@ static int hbg_reset_done(struct hbg_priv *priv, enum hbg_reset_type type)
+>  	    type != priv->reset_type)
+>  		return 0;
+>  
+> -	ASSERT_RTNL();
+> -
+> -	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+>  	ret = hbg_rebuild(priv);
+> +	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+
+Hi Jijie,
+
+If I understand things correctly, then with this patch the
+HBG_NIC_STATE_RESETTING bit is used to prevent concurrent execution.
+
+Noting that a reset may be triggered via eththool, where hbg_reset() is
+used as a callback, I am concerned about concurrency implications for lines
+below this one.
+
+>  	if (ret) {
+>  		priv->stats.reset_fail_cnt++;
+>  		set_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+> @@ -101,12 +100,10 @@ static int hbg_reset_done(struct hbg_priv *priv, enum hbg_reset_type type)
+>  	return ret;
+>  }
+>  
+> -/* must be protected by rtnl lock */
+>  int hbg_reset(struct hbg_priv *priv)
+>  {
+>  	int ret;
+>  
+> -	ASSERT_RTNL();
+>  	ret = hbg_reset_prepare(priv, HBG_RESET_TYPE_FUNCTION);
+>  	if (ret)
+>  		return ret;
+> @@ -171,7 +168,6 @@ static void hbg_pci_err_reset_prepare(struct pci_dev *pdev)
+>  	struct net_device *netdev = pci_get_drvdata(pdev);
+>  	struct hbg_priv *priv = netdev_priv(netdev);
+>  
+> -	rtnl_lock();
+>  	hbg_reset_prepare(priv, HBG_RESET_TYPE_FLR);
+>  }
+>  
+> @@ -181,7 +177,6 @@ static void hbg_pci_err_reset_done(struct pci_dev *pdev)
+>  	struct hbg_priv *priv = netdev_priv(netdev);
+>  
+>  	hbg_reset_done(priv, HBG_RESET_TYPE_FLR);
+> -	rtnl_unlock();
+>  }
+>  
+>  static const struct pci_error_handlers hbg_pci_err_handler = {
 > -- 
-> 2.47.1
+> 2.33.0
 > 
-
-Hi,
-
-This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
-a patch that has triggered this response.  He used to manually respond
-to these common problems, but in order to save his sanity (he kept
-writing the same thing over and over, yet to different people), I was
-created.  Hopefully you will not take offence and will fix the problem
-in your patch and resubmit it so that it can be accepted into the Linux
-kernel tree.
-
-You are receiving this message because of the following common error(s)
-as indicated below:
-
-- You have marked a patch with a "Fixes:" tag for a commit that is in an
-  older released kernel, yet you do not have a cc: stable line in the
-  signed-off-by area at all, which means that the patch will not be
-  applied to any older kernel releases.  To properly fix this, please
-  follow the documented rules in the
-  Documentation/process/stable-kernel-rules.rst file for how to resolve
-  this.
-
-If you wish to discuss this problem further, or you have questions about
-how to resolve this issue, please feel free to respond to this email and
-Greg will reply once he has dug out from the pending patches received
-from other developers.
-
-thanks,
-
-greg k-h's patch email bot
 
