@@ -1,193 +1,424 @@
-Return-Path: <linux-kernel+bounces-753629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38946B18588
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:12:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1949BB1858C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 351AB7B4044
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:10:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DA551AA634A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:15:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E3428C860;
-	Fri,  1 Aug 2025 16:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RV1BLiYN"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012024.outbound.protection.outlook.com [52.101.66.24])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F4B2701D1;
-	Fri,  1 Aug 2025 16:11:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.24
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754064715; cv=fail; b=nTbzBF3ZWGWv40tC9bs55h2SxXFjH1qVNYnO3TzkEjn1jL4GF3CnXHBtsx5HHkyZAOrbJSv1ahCrOaq38Y6dM5oDR/+HBKFHm4AtyfQlqa0y7TIC/SrJbdHYL1IhvGuZWepVXxALqEoZSYI/W5wGpOBY20OXu+yB0Jo6cszSQRs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754064715; c=relaxed/simple;
-	bh=gdXyQl8lQ82X8B9fTKSLDgf4rfIdOHOmEFO4psHW9oM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=G6yEpBU28m1PumIz4Vxa1v+tvrR8a/wLbM6ME4ivHaeVSWZSXcxrfX+XHRZdQcHSdGKZViIQcFEnmXkyngFv9CLTtAzGQRt9/FtQVzhdU2Dagq073YHar/DrZwJG26XZrJj5yTOPZSaJ+MIt4+ua3EjzvNlq/B4xlAnxqYYnzww=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RV1BLiYN; arc=fail smtp.client-ip=52.101.66.24
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=mFq+/yL569nETJkXHzY6RFYUlnb1mdtwb2Xod7L0CEwqP1xi6sbFrAS+fAmdnQkkbnGKArIezVqg1NEYI14AK8EXEFgtNxyicJGWfhlRI2WKrLaRPxqS+55qOWNZl/bm9u+8jeY3mRtdMgWQMYGItnPFnFP3JB/+GgkGMCrlJ9qkmldjHxQWkdjmGcpGdDbRZqzrv8AhTZmjGmWflk65eHiA42uoPW4uiWdFgB4WG7DXirzIB5vqSs6HX2Xc2pFc5yotjK0C5vtUwa9XcuV5IVr0dcqZ4nant4OaLP305UuqfKHo9G4Gl42B5i9sPk93B85B2gJNCWHYjpK0QpvgXA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=A3imuZbR8+418sQ1/dFIsH+OLG+ZaPDADieKbFFXuic=;
- b=PGRFZpz0ARqFvR/ZJtj1+kmy6pp8qygp4haC7fGncrOyjgeZfwfGytSFV91FfdmBRwN++MfctrIqFbPStoNnC2zXnBRZsPJWQ7ccY184ZsTLmtt9H7vz/d9nblHhmaXdyod3NsCVIQEqroyGMW8/vX7WoY96ha8F+ybH7O16OXSI3ltC9UEQ3bfcLyc1Bwp6kyDFHlsyTXvAGfUt28n3Xu9xbsgvLC5diW2ie7eFNVTk4makKRDCIu+oWv4Y138b7WeiSpDLmmt21vCWlXIyeSkiFshC8/qz5v8N1GYlqjFyuA5jHvsBNM3ummwMMREsVR+NxaG7CpoT9fFPeEX1jg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=A3imuZbR8+418sQ1/dFIsH+OLG+ZaPDADieKbFFXuic=;
- b=RV1BLiYNZBj0uPBxpLw/nDqG5b/wvoSMRMYSGQGi9hLbFX4HbUKchTEypmIfWtHQu6FWX80Ly60fonroa+g9AC1CkA82NgWn9xIqBFlMkRwlFlhR+S6nI6uRxqTUQyWFt6Q9Mb2J5HCaJOkvXip7x2vm8E6iIrs1FHwmBDT5eAVTuZ06LId5kMHb7NyjPQAAeY/3U1Rr/qsgdMceLD9phMvE4ZjE1xMSzuaGrs10nz6Tr0XKiRcXGMLIMqtVE67ysFjIq1XS2FT6NXSO3p5EisBR94GJvrpVg4U5tHZrJWydoqaP6XGe9ehmW6wZCU18MDC/JEJGB76UCh3lD65XiQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
- by PAXPR04MB8896.eurprd04.prod.outlook.com (2603:10a6:102:20f::8) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Fri, 1 Aug
- 2025 16:11:50 +0000
-Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
- ([fe80::9126:a61e:341d:4b06%5]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
- 16:11:50 +0000
-Date: Fri, 1 Aug 2025 12:11:42 -0400
-From: Frank Li <Frank.li@nxp.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	Kishon Vijay Abraham I <kishon@kernel.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] misc: pci_endpoint_test: Fix array underflow in
- pci_endpoint_test_ioctl()
-Message-ID: <aIznPp+sKYJq7vGa@lizhi-Precision-Tower-5810>
-References: <aIzCYdH9dOMDag5i@stanley.mountain>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aIzCYdH9dOMDag5i@stanley.mountain>
-X-ClientProxiedBy: SJ0PR03CA0020.namprd03.prod.outlook.com
- (2603:10b6:a03:33a::25) To PAXPR04MB9642.eurprd04.prod.outlook.com
- (2603:10a6:102:240::14)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 703D728C846;
+	Fri,  1 Aug 2025 16:14:40 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EA192874FA
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:14:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754064879; cv=none; b=kMlsr2nEY4o5KJ1RGDWpx8EfTbfVfuJ7gfyFe+QD56Ity4t61iAa46EemGNQkdlEeuipW9nRF+bnWM1V+HQpNAgUQDcLam9cq7rxO0lq6NhTvQs56YdYtFyEhAhlfxF/IOQX9ZXa8XoKV4pdneyNiGo/d9SRtKxY0h1p2ZYOjAo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754064879; c=relaxed/simple;
+	bh=rLzpKJvroypHayzsRGgJ5IYQZSv8qdK8nSovabdc65Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FmkIcggP2KTY96gB7G9yPLu8+OSBfNTsPVhY4BWretzQzyqYhg8OXp9Q9sUI0TngjnAx1gDG8KN5tPCNZSmqfeXmtihWuqw2OS0RLDlFEMa67TVWwXUyzFG3r2/Tm32LnsL/l7yF5g3FvbA+prew5DucGxEQyOp9fy2tVm2GRRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C71381516;
+	Fri,  1 Aug 2025 09:14:26 -0700 (PDT)
+Received: from [10.57.87.210] (unknown [10.57.87.210])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F40503F673;
+	Fri,  1 Aug 2025 09:14:32 -0700 (PDT)
+Message-ID: <737dd4f2-c48b-449d-bb37-2f7ee0eb8fcd@arm.com>
+Date: Fri, 1 Aug 2025 17:14:31 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|PAXPR04MB8896:EE_
-X-MS-Office365-Filtering-Correlation-Id: 57545d80-9f8b-4533-9ce3-08ddd1161f67
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|52116014|376014|7416014|19092799006|1800799024|7053199007|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?iFtl4wpWoyUtbQ0yk4P/ahu9VQdHzvDlpRvhMmJZ4IyK39KnRHoqVam23MRy?=
- =?us-ascii?Q?SkOf+UQoqnMzsP+dBOBo4mtTPGRzo7WS4Jgn3Pjz83855iCUocQKXWbuht6F?=
- =?us-ascii?Q?MlweN+OsyMWsy3HdeZOikU0fVOb7P6wHFBiX0r1ErbSi2tpP4hTYUYeAXDfm?=
- =?us-ascii?Q?BXggzCiT5Ooci6G6C9TOPdqifWfW57uvuWLsyquGXqZlNARD9N5xCzj22OIn?=
- =?us-ascii?Q?yFGRcuSHXeu4ZhT1s+XL6bqhT09tA8GemF2roz+dsmgym5d//i25V44ztU12?=
- =?us-ascii?Q?WSiFyBwjUIYZwodaMvPJLrU8Un9QmKZtOvZEi30hpjtMHYEaqPTpARZB7AAi?=
- =?us-ascii?Q?go92xTTgENXBh6+JBYyP/Dy1flUKG8c8/rBxaGE2RVgxaMEbpLlc4X/cm10r?=
- =?us-ascii?Q?UgCA/JGRjzbJkqsj8QgBhUoOYq2mmOwGAepXoYOigM2paL24a2+Roaeduqpc?=
- =?us-ascii?Q?MoSchKfNGIvKbyc4C3Vp7zTvsvNc6l13YAmGtf+P57jjXfahDPs59aWHPaNS?=
- =?us-ascii?Q?YzPeveNBQHCTE28uPAvefhfJHhjL6Kp79xC+9vE467Gh2RKEoiYFAe3t5sFK?=
- =?us-ascii?Q?ZZ8woAH4hPzzlmspZiqxjUzEplBVt1Utw6CyfDlSpIgsE1KxLiAO0f6DDW7H?=
- =?us-ascii?Q?G+cRe8NPdk93XHwa7tsrtnli9KDtgJKX5pilHG2iotvJEZPTSYRKsOx2AaJu?=
- =?us-ascii?Q?V5zs911lm5h0umy1pba4CIaPRZ+Z8loR5DcwHkSX7jHTBCkIc2WSxUiRdgY+?=
- =?us-ascii?Q?dqiiWGCDY9Rcd7yUZOs40Zlq5WgSJVby+mqNfpcOTBr7PxavbYpy0Ik/Xq2H?=
- =?us-ascii?Q?M90vQ3+4ltR8d4kozzdSUAJDvgOrTjCPBR07rLWNAzZMlgEE5Dvw/v2rxnsg?=
- =?us-ascii?Q?EyqYZCMo5yBHM50M1Kggk00hA51tr8t9XkZsBGcEspyyBtA9cmic/NMiYnX2?=
- =?us-ascii?Q?wIPleL49eC1J7UUMPSBvsXCCpDS3I61zcU9PijmJoNYZITw0W7EtGDoYMmUY?=
- =?us-ascii?Q?EURSNS490H+heKQ1t5L7eZqCGt3eXtaGQorLkmzdD66NlsfYf02oDnecYKQw?=
- =?us-ascii?Q?aL3Dt4TqM0HDYvvTtasdaZwf0FRhz8B++RoPVyGV6YRX1d4FUZB9/GVdcNIP?=
- =?us-ascii?Q?S/D+akIupPoLCc19TmLVSi766C5oZG0hbHEsLJ6AGF01rkhyTQPuBmgIQnpB?=
- =?us-ascii?Q?twCYSRxVlwut5/WroDJgNp2qihmKJxgs04FE33AwdpMoBM39bL6Iil2Ncl6f?=
- =?us-ascii?Q?POtgTNZZXP4wJnJiDPdM14CzccA6uggdxWNUNQG40aKlluEnxKzzr8D5grqt?=
- =?us-ascii?Q?zK9BUck8AcVJT2J2IehY1bX0SZSepRa0GA8KCJVCqy0HZ+TpZ2xbUrkIxf6f?=
- =?us-ascii?Q?bAU5GkUbS02VXHlJjFrZtaUSQUnd7wzm0GNzJfSy0yZfOB7sqVYN2RREEshV?=
- =?us-ascii?Q?mDm2vNmAKZYM2KXZNcmZEVfD5a19X1okkS36YWZYutcmgrIZhN2woQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(52116014)(376014)(7416014)(19092799006)(1800799024)(7053199007)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?+obxJXPlIqDZTv3kk0tqAuO483ZwzFIAn0bwZLCSpPDkfamIs0PnzJFRltRI?=
- =?us-ascii?Q?ecv9JbaUFa6H3EvY9iWJsk8P50gRF5CHNeAQMNJjMzglOVu+kGlm8jnKUh8Y?=
- =?us-ascii?Q?ZzrlmmoR54R2L8FDmeydJ37dECW4OlPTcRVyqIqssHEoBwHO5QxKilNZ+ZGx?=
- =?us-ascii?Q?FPr0E3q5A3k2oxOpiGiIBrJr1JaHe6RpuTE+7PYZcFeuKYmI3d9eFf19sXRK?=
- =?us-ascii?Q?0sH0GlfIdDoxn/6hzkIG2J8lWmUMLStWXZBKai63saKUUce11OrpGFWEHz6C?=
- =?us-ascii?Q?k/9vy5QoukVye+zHMuF133mqrroQ4F+2DTmMErnwvTWpmjrQ9LsxAhlfdyv6?=
- =?us-ascii?Q?lVkifjU7sPhcwB2FpNFD19B8gA9zbEZaSSUtCxC36Py8Fz1aQiSLSv+eNo9R?=
- =?us-ascii?Q?658kp+UHj0td4/2g3N49IysfTcLauV2YCkdHnmvKX1/pC4yKhC/vnM6kM6LB?=
- =?us-ascii?Q?lhM+izKg7l9PoHJCBCmg3omUGUY/IOBgA7PvPb7XBOo7JvGQEmBBqGkVqz8D?=
- =?us-ascii?Q?6139qum2iDNnuqjNU4Eu2zuTIOCHTjuy396xFXK5+vJSvZVGRtb0HhhtJ3Ni?=
- =?us-ascii?Q?PZzz6jXna0pAgHjG7yorSGdBsyQHWJqoYBPfD+nJ5OjFv9Ry5avJa1zRtGMI?=
- =?us-ascii?Q?Jss1R8am/gWbgZaEotm+RlRSLQtv7DzUdGesnbuwv2gEKPSfKSPEy9xd1OHW?=
- =?us-ascii?Q?aD+A4KGr5QOkabjUV+pRX1NPiIXHX+haHztz3Pzqh4dHF+v5BziryUkcdEaP?=
- =?us-ascii?Q?mK0P+PmmXG0p5auxQKTAUGb4rD3lN/N5Pl1ZDkDgWdsdcnnEtWdbR067ljco?=
- =?us-ascii?Q?XVNMvNmxfqNm01ak6NKth73IfvRrS+QKrlSvyrc3bVhBaNC2MxPCxnsQqMzc?=
- =?us-ascii?Q?bAvtOkmz/oB0q2Zr7dYeyJfBDAtxlm6drDb98vfKxeH3HebOMkbVORCaFSdo?=
- =?us-ascii?Q?ZxmE6oF2xdLcyhTFbJ2HFu3h/2lcrcwC23emQVBnFY6dMBbGXXscMkhMg3Qp?=
- =?us-ascii?Q?wxXu7Ph5t7SsqNsDzVAZuYMxoWAGIJNA0pwqwN+T5zYIyyUaI+iFijWwYhot?=
- =?us-ascii?Q?BttpYqAJGt0zTUn2UkwTNTSo1Mlu352hN6AdKJvupjeq5qzFt09T6OngTuaF?=
- =?us-ascii?Q?cKcc82MNcUEdafTftRT5Hwsbca4rwRje81oozRafYFJEYhVBzoLG4hexBh4e?=
- =?us-ascii?Q?kUlPERpmNh0s8iNG93pKoDO9MUENd/bd7uYIxM7Yee8nbk9mIv6URawTZ1Vx?=
- =?us-ascii?Q?J59n8hqo+SUSuCCJnX6S1WviTxeCXKuW3akf2/AOzj4khTlfzwJUOkR97XZr?=
- =?us-ascii?Q?Jib/BOUWp2kFN5ezs89ixdb7oeZ5CpGP3jcV7ibCjPeMgdrvk5a+VKIopN1/?=
- =?us-ascii?Q?Ob9GRqEzr+Za0vzD/FcJAul4l1lGh1tsg77LVStZP2Yjlysrwbe4SOu9YtOX?=
- =?us-ascii?Q?DpiZSDlkfMd2ucj5EndZXd5iQsB4tSUHVtfoG4wJFrGuQx1fnENNw1KESXSw?=
- =?us-ascii?Q?L5QwotG5ONgS2UVrw4HMiWBVHs8pAoSQHB035+k8q2f8+sPT5Fd/IMsZybys?=
- =?us-ascii?Q?bzHqaJYpV0NQ8xdaJVMtd9w0T05uP9rbnj31SUgP?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 57545d80-9f8b-4533-9ce3-08ddd1161f67
-X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 16:11:50.4500
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: xMxPAaR1S8x+/uCe6WVkC2Q1ULYiOLMdQ8ZLYEsU61sC0zZVLVA2myFJLucvYQLpE83//CIzalEBHmldESPb1A==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAXPR04MB8896
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/4] arm64: mm: split linear mapping if BBML2 is not
+ supported on secondary CPUs
+Content-Language: en-GB
+To: Yang Shi <yang@os.amperecomputing.com>, will@kernel.org,
+ catalin.marinas@arm.com, akpm@linux-foundation.org, Miko.Lenczewski@arm.com,
+ dev.jain@arm.com, scott@os.amperecomputing.com, cl@gentwo.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+References: <20250724221216.1998696-1-yang@os.amperecomputing.com>
+ <20250724221216.1998696-5-yang@os.amperecomputing.com>
+From: Ryan Roberts <ryan.roberts@arm.com>
+In-Reply-To: <20250724221216.1998696-5-yang@os.amperecomputing.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 01, 2025 at 04:34:25PM +0300, Dan Carpenter wrote:
-> We recently added NO_BAR (-1) to the pci_barno enum which, in practical
-
-Since commit ...., add NO_BAR (-1) to the pci_barno enum, ...
-
-Frank
-
-> terms, changes the enum from an unsigned int to a signed int.  If the
-> user passes a negative number in pci_endpoint_test_ioctl() then it
-> results in an array underflow in pci_endpoint_test_bar().
->
-> Fixes: eefb83790a0d ("misc: pci_endpoint_test: Add doorbell test case")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 24/07/2025 23:11, Yang Shi wrote:
+> The kernel linear mapping is painted in very early stage of system boot.
+> The cpufeature has not been finalized yet at this point.  So the linear
+> mapping is determined by the capability of boot CPU.  If the boot CPU
+> supports BBML2, large block mapping will be used for linear mapping.
+> 
+> But the secondary CPUs may not support BBML2, so repaint the linear mapping
+> if large block mapping is used and the secondary CPUs don't support BBML2
+> once cpufeature is finalized on all CPUs.
+> 
+> If the boot CPU doesn't support BBML2 or the secondary CPUs have the
+> same BBML2 capability with the boot CPU, repainting the linear mapping
+> is not needed.
+> 
+> Signed-off-by: Yang Shi <yang@os.amperecomputing.com>
 > ---
->  drivers/misc/pci_endpoint_test.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/misc/pci_endpoint_test.c b/drivers/misc/pci_endpoint_test.c
-> index 1c156a3f845e..f935175d8bf5 100644
-> --- a/drivers/misc/pci_endpoint_test.c
-> +++ b/drivers/misc/pci_endpoint_test.c
-> @@ -937,7 +937,7 @@ static long pci_endpoint_test_ioctl(struct file *file, unsigned int cmd,
->  	switch (cmd) {
->  	case PCITEST_BAR:
->  		bar = arg;
-> -		if (bar > BAR_5)
-> +		if (bar <= NO_BAR || bar > BAR_5)
->  			goto ret;
->  		if (is_am654_pci_dev(pdev) && bar == BAR_0)
->  			goto ret;
-> --
-> 2.47.2
->
+>  arch/arm64/include/asm/mmu.h   |   6 +-
+>  arch/arm64/kernel/cpufeature.c |   8 ++
+>  arch/arm64/mm/mmu.c            | 173 +++++++++++++++++++++++++++------
+>  arch/arm64/mm/pageattr.c       |   2 +-
+>  arch/arm64/mm/proc.S           |  57 ++++++++---
+>  5 files changed, 196 insertions(+), 50 deletions(-)
+> 
+> diff --git a/arch/arm64/include/asm/mmu.h b/arch/arm64/include/asm/mmu.h
+> index 57f4b25e6f33..9bf50e8897e2 100644
+> --- a/arch/arm64/include/asm/mmu.h
+> +++ b/arch/arm64/include/asm/mmu.h
+> @@ -56,6 +56,8 @@ typedef struct {
+>   */
+>  #define ASID(mm)	(atomic64_read(&(mm)->context.id) & 0xffff)
+>  
+> +extern bool linear_map_requires_bbml2;
+> +
+>  static inline bool arm64_kernel_unmapped_at_el0(void)
+>  {
+>  	return alternative_has_cap_unlikely(ARM64_UNMAP_KERNEL_AT_EL0);
+> @@ -71,7 +73,9 @@ extern void create_pgd_mapping(struct mm_struct *mm, phys_addr_t phys,
+>  			       pgprot_t prot, bool page_mappings_only);
+>  extern void *fixmap_remap_fdt(phys_addr_t dt_phys, int *size, pgprot_t prot);
+>  extern void mark_linear_text_alias_ro(void);
+> -extern int split_kernel_pgtable_mapping(unsigned long start, unsigned long end);
+> +extern int split_kernel_pgtable_mapping(unsigned long start, unsigned long end,
+> +					unsigned int flags);
+> +extern int linear_map_split_to_ptes(void *__unused);
+>  
+>  /*
+>   * This check is triggered during the early boot before the cpufeature
+> diff --git a/arch/arm64/kernel/cpufeature.c b/arch/arm64/kernel/cpufeature.c
+> index 1c96016a7a41..23c01d679c40 100644
+> --- a/arch/arm64/kernel/cpufeature.c
+> +++ b/arch/arm64/kernel/cpufeature.c
+> @@ -85,6 +85,7 @@
+>  #include <asm/insn.h>
+>  #include <asm/kvm_host.h>
+>  #include <asm/mmu_context.h>
+> +#include <asm/mmu.h>
+>  #include <asm/mte.h>
+>  #include <asm/hypervisor.h>
+>  #include <asm/processor.h>
+> @@ -2009,6 +2010,12 @@ static int __init __kpti_install_ng_mappings(void *__unused)
+>  	return 0;
+>  }
+>  
+> +static void __init linear_map_maybe_split_to_ptes(void)
+> +{
+> +	if (linear_map_requires_bbml2 && !system_supports_bbml2_noabort())
+> +		stop_machine(linear_map_split_to_ptes, NULL, cpu_online_mask);
+> +}
+> +
+>  static void __init kpti_install_ng_mappings(void)
+>  {
+>  	/* Check whether KPTI is going to be used */
+> @@ -3855,6 +3862,7 @@ void __init setup_system_features(void)
+>  {
+>  	setup_system_capabilities();
+>  
+> +	linear_map_maybe_split_to_ptes();
+>  	kpti_install_ng_mappings();
+>  
+>  	sve_setup();
+> diff --git a/arch/arm64/mm/mmu.c b/arch/arm64/mm/mmu.c
+> index f63b39613571..22f2d0869fdd 100644
+> --- a/arch/arm64/mm/mmu.c
+> +++ b/arch/arm64/mm/mmu.c
+> @@ -482,11 +482,11 @@ void create_kpti_ng_temp_pgd(pgd_t *pgdir, phys_addr_t phys, unsigned long virt,
+>  
+>  #define INVALID_PHYS_ADDR	-1
+>  
+
+[...]
+
+I'll review the actual walker separately (I've run out of time today).
+
+
+>  
+> +extern u32 repaint_done;
+> +
+> +int __init linear_map_split_to_ptes(void *__unused)
+> +{
+> +	typedef void (repaint_wait_fn)(void);
+> +	extern repaint_wait_fn bbml2_wait_for_repainting;
+> +	repaint_wait_fn *wait_fn;
+> +
+> +	int cpu = smp_processor_id();
+> +
+> +	wait_fn = (void *)__pa_symbol(bbml2_wait_for_repainting);
+> +
+> +	/*
+> +	 * Repainting just can be run on CPU 0 because we just can be sure
+> +	 * CPU 0 supports BBML2.
+> +	 */
+> +	if (!cpu) {
+> +		phys_addr_t kernel_start = __pa_symbol(_stext);
+> +		phys_addr_t kernel_end = __pa_symbol(__init_begin);
+> +		phys_addr_t start, end;
+> +		unsigned long vstart, vend;
+> +		int flags = NO_BLOCK_MAPPINGS | NO_CONT_MAPPINGS;
+> +		u64 i;
+> +		int ret;
+> +
+> +		/*
+> +		 * Wait for all secondary CPUs get prepared for repainting
+> +		 * the linear mapping.
+> +		 */
+> +		smp_cond_load_acquire(&repaint_done, VAL == num_online_cpus());
+
+Is this correct? I would have thought the primary is waiting for the
+secondaries, so "VAL == num_online_cpus() - 1" ?
+
+> +
+> +		memblock_mark_nomap(kernel_start, kernel_end - kernel_start);
+> +		/* Split the whole linear mapping */
+> +		for_each_mem_range(i, &start, &end) {
+
+I think I asked this in the last round; but I just want to double check;
+memblock is definitely still valid here and we are definitely going to get
+exactly the same regions out as we did in map_mem()? I wonder if it's possible
+between then and now that some other component has reserved some memory? In that
+case we wouldn't walk that region?
+
+Perhaps it would be safer (and simpler) to just walk all of [PAGE_OFFSET,
+_stext) and [__init_begin, PAGE_END) and ignore the holes?
+
+> +			if (start >= end)
+> +				return -EINVAL;
+> +
+> +			vstart = __phys_to_virt(start);
+> +			vend = __phys_to_virt(end);
+> +			ret = split_kernel_pgtable_mapping(vstart, vend, flags);
+> +			if (ret)
+> +				panic("Failed to split linear mappings\n");
+> +
+> +			flush_tlb_kernel_range(vstart, vend);
+> +		}
+> +		memblock_clear_nomap(kernel_start, kernel_end - kernel_start);
+> +
+> +		/*
+> +		 * Relies on dsb in flush_tlb_kernel_range() to avoid
+> +		 * reordering before any page table split operations.
+> +		 */
+> +		WRITE_ONCE(repaint_done, 0);
+> +	} else {
+> +		/*
+> +		 * The secondary CPUs can't run in the same address space
+> +		 * with CPU 0 because accessing the linear mapping address
+> +		 * when CPU 0 is repainting it is not safe.
+> +		 *
+> +		 * Let the secondary CPUs run busy loop in idmap address
+> +		 * space when repainting is ongoing.
+> +		 */
+> +		cpu_install_idmap();
+> +		wait_fn();
+> +		cpu_uninstall_idmap();
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  #ifdef CONFIG_KFENCE
+>  
+>  bool __ro_after_init kfence_early_init = !!CONFIG_KFENCE_SAMPLE_INTERVAL;
+> @@ -1079,7 +1174,8 @@ void __pi_map_range(u64 *pgd, u64 start, u64 end, u64 pa, pgprot_t prot,
+>  		    int level, pte_t *tbl, bool may_use_cont, u64 va_offset);
+>  
+>  static u8 idmap_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
+> -	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
+> +	  kpti_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init,
+> +	  bbml2_ptes[IDMAP_LEVELS - 1][PAGE_SIZE] __aligned(PAGE_SIZE) __ro_after_init;
+>  
+>  static void __init create_idmap(void)
+>  {
+> @@ -1104,6 +1200,19 @@ static void __init create_idmap(void)
+>  			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+>  			       __phys_to_virt(ptep) - ptep);
+>  	}
+> +
+> +	/*
+> +	 * Setup idmap mapping for repaint_done flag.  It will be used if
+> +	 * repainting the linear mapping is needed later.
+> +	 */
+> +	if (linear_map_requires_bbml2) {
+> +		u64 pa = __pa_symbol(&repaint_done);
+> +		ptep = __pa_symbol(bbml2_ptes);
+> +
+> +		__pi_map_range(&ptep, pa, pa + sizeof(u32), pa, PAGE_KERNEL,
+> +			       IDMAP_ROOT_LEVEL, (pte_t *)idmap_pg_dir, false,
+> +			       __phys_to_virt(ptep) - ptep);
+> +	}
+>  }
+>  
+>  void __init paging_init(void)
+> diff --git a/arch/arm64/mm/pageattr.c b/arch/arm64/mm/pageattr.c
+> index 6566aa9d8abb..4471d7e510a1 100644
+> --- a/arch/arm64/mm/pageattr.c
+> +++ b/arch/arm64/mm/pageattr.c
+> @@ -140,7 +140,7 @@ static int update_range_prot(unsigned long start, unsigned long size,
+>  	data.set_mask = set_mask;
+>  	data.clear_mask = clear_mask;
+>  
+> -	ret = split_kernel_pgtable_mapping(start, start + size);
+> +	ret = split_kernel_pgtable_mapping(start, start + size, 0);
+>  	if (WARN_ON_ONCE(ret))
+>  		return ret;
+>  
+> diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+> index 80d470aa469d..f0f9c49a4466 100644
+> --- a/arch/arm64/mm/proc.S
+> +++ b/arch/arm64/mm/proc.S
+> @@ -239,6 +239,25 @@ SYM_FUNC_ALIAS(__pi_idmap_cpu_replace_ttbr1, idmap_cpu_replace_ttbr1)
+>  	dsb	nshst
+>  	.endm
+>  
+> +	.macro wait_for_boot_cpu, tmp1, tmp2, tmp3, tmp4
+> +	/* Increment the flag to let the boot CPU know we're ready */
+> +1:	ldxr	\tmp3, [\tmp2]
+> +	add	\tmp3, \tmp3, #1
+> +	stxr	\tmp4, \tmp3, [\tmp2]
+> +	cbnz	\tmp4, 1b
+> +
+> +	/* Wait for the boot CPU to finish its job */
+> +	sevl
+> +1:	wfe
+> +	ldxr	\tmp3, [\tmp2]
+> +	cbnz	\tmp3, 1b
+> +
+> +	/* All done, act like nothing happened */
+> +	msr	ttbr1_el1, \tmp1
+> +	isb
+> +	ret
+> +	.endm
+
+You've defined the macro within "#ifdef CONFIG_UNMAP_KERNEL_AT_EL0" but then
+need to use it outside of that scope.
+
+But I don't think this needs to be a macro; I think it would be better as a
+function (as I suggested in the last round). Then the text only needs to appear
+once in the image and it can be used from both places (see below).
+
+> +
+>  /*
+>   * void __kpti_install_ng_mappings(int cpu, int num_secondaries, phys_addr_t temp_pgd,
+>   *				   unsigned long temp_pte_va)
+> @@ -416,29 +435,35 @@ alternative_else_nop_endif
+>  __idmap_kpti_secondary:
+>  	/* Uninstall swapper before surgery begins */
+>  	__idmap_cpu_set_reserved_ttbr1 x16, x17
+> +	wait_for_boot_cpu swapper_ttb, flag_ptr, w16, w17
+>  
+> -	/* Increment the flag to let the boot CPU we're ready */
+> -1:	ldxr	w16, [flag_ptr]
+> -	add	w16, w16, #1
+> -	stxr	w17, w16, [flag_ptr]
+> -	cbnz	w17, 1b
+> +	.unreq	swapper_ttb
+> +	.unreq	flag_ptr
+> +SYM_FUNC_END(idmap_kpti_install_ng_mappings)
+> +	.popsection
+> +#endif
+>  
+> -	/* Wait for the boot CPU to finish messing around with swapper */
+> -	sevl
+> -1:	wfe
+> -	ldxr	w16, [flag_ptr]
+> -	cbnz	w16, 1b
+> +/*
+> + * Wait for repainting is done. Run on secondary CPUs
+> + * only.
+> + */
+> +	.pushsection	".data", "aw", %progbits
+> +SYM_DATA(repaint_done, .long 1)
+> +	.popsection
+>  
+> -	/* All done, act like nothing happened */
+> -	msr	ttbr1_el1, swapper_ttb
+> -	isb
+> -	ret
+> +	.pushsection ".idmap.text", "a"
+> +SYM_TYPED_FUNC_START(bbml2_wait_for_repainting)
+> +	swapper_ttb	.req	x0
+> +	flag_ptr	.req	x1
+> +	mrs     swapper_ttb, ttbr1_el1
+> +	adr_l   flag_ptr, repaint_done
+> +	__idmap_cpu_set_reserved_ttbr1 x16, x17
+> +	wait_for_boot_cpu swapper_ttb, flag_ptr, w16, w17
+>  
+>  	.unreq	swapper_ttb
+>  	.unreq	flag_ptr
+> -SYM_FUNC_END(idmap_kpti_install_ng_mappings)
+> +SYM_FUNC_END(bbml2_wait_for_repainting)
+>  	.popsection
+> -#endif
+
+How about this instead?
+
+---8<---
+diff --git a/arch/arm64/mm/proc.S b/arch/arm64/mm/proc.S
+index 8c75965afc9e..a116b2b8ad59 100644
+--- a/arch/arm64/mm/proc.S
++++ b/arch/arm64/mm/proc.S
+@@ -416,8 +416,30 @@ alternative_else_nop_endif
+ __idmap_kpti_secondary:
+ 	/* Uninstall swapper before surgery begins */
+ 	__idmap_cpu_set_reserved_ttbr1 x16, x17
++	b scondary_cpu_wait
++
++	.unreq	swapper_ttb
++	.unreq	flag_ptr
++SYM_FUNC_END(idmap_kpti_install_ng_mappings)
++	.popsection
++#endif
++
++	.pushsection	".data", "aw", %progbits
++SYM_DATA(repaint_done, .long 1)
++	.popsection
++
++	.pushsection ".idmap.text", "a"
++SYM_TYPED_FUNC_START(bbml2_wait_for_repainting)
++	/* Must be same registers as in idmap_kpti_install_ng_mappings */
++	swapper_ttb	.req	x3
++	flag_ptr	.req	x4
++
++	mrs     swapper_ttb, ttbr1_el1
++	adr_l   flag_ptr, repaint_done
++	__idmap_cpu_set_reserved_ttbr1 x16, x17
+
+ 	/* Increment the flag to let the boot CPU we're ready */
++scondary_cpu_wait:
+ 1:	ldxr	w16, [flag_ptr]
+ 	add	w16, w16, #1
+ 	stxr	w17, w16, [flag_ptr]
+@@ -436,9 +458,8 @@ __idmap_kpti_secondary:
+
+ 	.unreq	swapper_ttb
+ 	.unreq	flag_ptr
+-SYM_FUNC_END(idmap_kpti_install_ng_mappings)
++SYM_FUNC_END(bbml2_wait_for_repainting)
+ 	.popsection
+-#endif
+
+ /*
+  *	__cpu_setup
+---8<---
+
+Thanks,
+Ryan
+
 
