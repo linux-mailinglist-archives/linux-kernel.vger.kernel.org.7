@@ -1,198 +1,157 @@
-Return-Path: <linux-kernel+bounces-753862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 53DF3B18929
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:14:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 711D9B18923
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:12:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA91A7A932B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:13:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C7C041C273AE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:12:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E9E22C355;
-	Fri,  1 Aug 2025 22:14:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD58E22A4F8;
+	Fri,  1 Aug 2025 22:11:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Fb2ksHyC"
-Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Ce4r4f0+"
+Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80BA417DFE7;
-	Fri,  1 Aug 2025 22:14:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 948E3226CF4
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 22:11:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754086475; cv=none; b=vBsjgyFA8P3GYOHmg/pWi2ambhLMmlcLpO+vSGYKirqToCQuuUy2Eu8GQGDFvz1/9OQAxvk9UqCz5bEcLmgUNXnLmhn7XVPokcdOX/rCvVj2DenH+zXZgXwB+R9Psv5P2hG2PO7FyKLyRro0CnGXZzRcLruEks9nbxz2ULWsU4Y=
+	t=1754086314; cv=none; b=nG2cScpBefx3IVneEpXwXt6t5ZRPb0ly9vdweimqZRjZSam9kMJ3lnhUFNPuDB4S7mPrPJc3+hPmlwU2og6wl8oqTiA8ZCPVIPCANWXx8zhne2IloQpPs4HslYSNlK8X01x+JStJEM+kLrXQYbjVBn2/cVnB7vePF8hL6kAmp2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754086475; c=relaxed/simple;
-	bh=6jFFp2TF2ORPTUkoemrBDFo+C640qqrBvWnhcj9YQgk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=MNALiS2nRIVdHHEiu0A2er3togetpDB52k3YCXfILo/uiRKG25igS97pQhiveOYDzsybrrPdGQUZfh/uQ0u84wMjR6fiW8FJKE6AlXccltJD08PudNJtHGhrVsE+tqjCIRki8AJioYi6Jbvelb3DFUvKj4khn56V/T+0RolS0Rg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Fb2ksHyC; arc=none smtp.client-ip=209.85.214.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-2405c0c431cso27378695ad.1;
-        Fri, 01 Aug 2025 15:14:33 -0700 (PDT)
+	s=arc-20240116; t=1754086314; c=relaxed/simple;
+	bh=eHUeeGYj1DUUjEDytbOhyX4cEB/IIIVyN+YMyuRZU4Y=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=YzWf7pXooOXvzntRKzYWAWQB9DbhVpok9ZDgTkeBrS317wr89JzR1EbTBzjOJkSeGWrwubQUXBm19bbDrBcCjILDN419im75AZT/Q3YrqQ+s1lgRfLzjwF2UQbeQ+kjc3QUhfINqSBiQD2pyTVdQtOcGbCm5FiZOzb8YjnLFN78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Ce4r4f0+; arc=none smtp.client-ip=209.85.128.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-712be7e034cso22020887b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 15:11:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754086473; x=1754691273; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Ka10QAcpnp+/cqg6oNfjmwxtyofLve/81RK2ixTruYE=;
-        b=Fb2ksHyCJzFmShK/zYVOPBCaCbtQTPi/hvzYsFdCdRu1Ex9UFOq2UodHCN2fVZsD/3
-         eWiwIq3BA0OSG9iOgZpXVtThAJWf1fSFFRywjMKeQL5/4cFZH1U8YhxRANQV/oOOEEwB
-         BYKlm7EBryHbovOtTWuc6RNvSdjmHD+9bObVQ9z2nRTPTpr0+T4L5h789vEblZM+VKtS
-         KV/ze3JxvuIntLAaN4rgaX0GoowU7vGdtd5n8jBbp23+5ffNH2xOQWYQ+aalkT2IoNCa
-         TQwOVB2cnKRe3WaAnAhMT0QX2WXfLQFx4NVk/jRp72ttFx25DuzT/xOAZRgNdpgYIKLJ
-         OocA==
+        d=linaro.org; s=google; t=1754086311; x=1754691111; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0ZQ3ptl+nXCUruGL17lHqoeg1DTCDNqkoTZmaRK16Pk=;
+        b=Ce4r4f0+V8yeZYA0C/KiFyR4R2kzMcdy6IqjxMmhqlbaKjNUZaQfnCkmysyi4xQMB9
+         j9dv96OQMjY7qHiUrvBitOHN182R5TuWrsksf2UqPNOvShWc3VyZ88yxSz4igsgrRiSK
+         FP/QtG3SlfFsqxbPS/xqyb5y1tmoAYaurrJavd1RvRZ0xyn1ajAh/DdaCMtDcl8FshsO
+         A4y9xZe7CUSF+I6TPjheme2w4flBiVX2hsEt+c6sTyhUWtk97H4Wks3F5we0gaV4/Gw5
+         TTbBSDDx9s60XNsf8vzvsq0g5yG8JJgLe7Tt1a+UYFPg6D0vAlmuZ6s91VmhOiGZ5hLF
+         1OgQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754086473; x=1754691273;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Ka10QAcpnp+/cqg6oNfjmwxtyofLve/81RK2ixTruYE=;
-        b=mr9I0JqCbAs/RzF/jw++xpZlcKk/gwgt/rx5o2ywch8t/0T2GXTKhE6cjgUETdIw7x
-         GUSCYsSOkGWTJTekEiUN9PTHbi2tnhbzSH1ufjGXf4PaXf+vuYhb8s/vmzLxUlnzmxbu
-         0JyNUmvkgCydhGnDTDK/QDWVJZdqiguLdkbbyUXb4i+6Erw6rqPDwL2bwcpuhnH7xKx8
-         GgPBO1xbGHscvlRwGX+/2xh4kYWjZQreU8KSNefSaLd2hCyF77qKPFqv3Xabw8y6xjOl
-         knD7milk0uD9jkQvUcqIwWQbp9o0OGA7bi+NJQDGKBw2DVPaLLCUw41S9KH8lS7YM6dt
-         OpZg==
-X-Forwarded-Encrypted: i=1; AJvYcCX3mSlz9+gkW6Ih5IcfTDIU+INcBl10huRZSJopsH+yzp7aKZ0oaFGIlVIYK+gK1hmPhNR6aRjjdidxwhor@vger.kernel.org, AJvYcCXJ6dEPhLg3qp5U78HEIsrovMcaJ4Zrda3CvcId5+f5OGH10zc2WV/297Fpb23Rd0l3tdlVdtVnLDQb@vger.kernel.org, AJvYcCXOAFXb/uLm7OUHFLsRBddUrB3ajE9ksSLnb6wVmeCQ02kGNACYrk6eX4nvMVGug/GL32J+0u90xgsJ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx0AL0Jzhw0PAoP/Kaqc2QlyZL2IKfQ+dqNarH6maI1P2jgoRyU
-	CQjPIaYa7a1CZpZwUcKetxLgFVk/XZs1C/YXvX4zcq9cugJa7veOCpF/
-X-Gm-Gg: ASbGncudHYJg1HYrUZ2uJW9U/xWDdjqQKEqArTZl+TbmAUnlVsXWVyJ3dPvCP8zJG7S
-	3d4CJHmJnn8UBXJaEsRURSBPKkKfgSN4gn1HkfSTZkh40R1tpvZVULi7NpBvuj/qM/WaXJrHYqD
-	GfOxg7AzFXnkxJkMholPNxoAj9/2oYTz0fku49GUj8z5SfDPoVVF5J0gAV6f5vFb2r4yjvyAden
-	wm/Gmjb3x74LO35eY/63OlxNCmjHUyZrZJS7pwQgM9sU+LXM5ogvjmlROjV6p0zrGG7i8g61j30
-	fGV2ELFktrTIO9CKdzwZ0l/ZDcEgCEfogJtgJWlqMfJuaUTFPidn+s5SqshxEER7oUvQg3tz0BK
-	VvIByhqtt/4Qd7InqJcMeh34rl1xoWjLo1Y2ERUqbsk8M4w==
-X-Google-Smtp-Source: AGHT+IFaBUwtnQp/p9GpecBpVBytui4XP9GVir2TB1oy4UveZJZ7U//s9gPI6sWgitSbxDFIqaxXsg==
-X-Received: by 2002:a17:903:2351:b0:23f:c945:6081 with SMTP id d9443c01a7336-24246fe0988mr13127865ad.31.1754086472747;
-        Fri, 01 Aug 2025 15:14:32 -0700 (PDT)
-Received: from localhost.localdomain ([2804:14d:4c64:81ec:30ba:c1b2:e5d9:eced])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-3207eba6f4csm5605047a91.5.2025.08.01.15.14.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 15:14:31 -0700 (PDT)
-From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-To: jic23@kernel.org,
-	dlechner@baylibre.com,
-	nuno.sa@analog.com,
-	andy@kernel.org,
-	conor+dt@kernel.org,
-	krzk+dt@kernel.org,
-	jean-baptiste.maneyrol@tdk.com,
-	robh@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht,
-	linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: [PATCH v4] dt-bindings: iio: pressure: add invensense,icp10100
-Date: Fri,  1 Aug 2025 19:10:00 -0300
-Message-ID: <20250801221424.132305-1-rodrigo.gobbi.7@gmail.com>
-X-Mailer: git-send-email 2.48.1
+        d=1e100.net; s=20230601; t=1754086311; x=1754691111;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0ZQ3ptl+nXCUruGL17lHqoeg1DTCDNqkoTZmaRK16Pk=;
+        b=OBjC1azdD2bJ6M4pFfrw7SRmy5X8hAgINZdh1+LBylwxnn6VFEfIQ6ACEX2ql//OfH
+         dwlHJRwZUwwP1KlbOBSWK4+X1KSGsH6GaNq/Ru7tCaMZARtyYuAzNcWLnboDAc+bs6xV
+         SRsTs1+fig4EauUTt+D0crDOm+RcYKKX5net5nztbrxqGJgobb/xSimQM8XISgbZkHaS
+         SJrvO+nGYGkYkUx77Z0fXoFuE0B8LudjuwG8dtXQwtYcNA5022VxeK112lYRvJsPDu4Y
+         jBezLtdoZ/zDz2WDI99+nnAKUoVAE3s3sbHL0sePj2nPApvfjl3sxGxoJgtP4kyNbZSD
+         El2w==
+X-Forwarded-Encrypted: i=1; AJvYcCVSAWjt5qdRF9fSdQ+6qFzQ7ywpeVdGDR/uDsndATQYR+ehyMKUha9eJLz2OnRDqVefOevsuN19s5lf61M=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyZLosAj6ncIBmJ8vhiqvftVclUzLejc/1Sy6TC6Qic/WOOxpzH
+	wn4fOeDLv3awKc84vRCU5o5uwEKPz4CewM4Gfx58hivuFBPJOacC+xM+Le1azMcj37jHZFlaYwo
+	bo93Fk+a5HnRFY0SUnZmqgkJCKSXO3gPFg+5Olo0/iw==
+X-Gm-Gg: ASbGnctn8NYCpt3fAj/b234H9Jx7mIFMg4fZ01NuecBR920UCbYulyGb8nBpEERh3j6
+	dtlkxL8ZX78PRLrRX8J/KDRP0wS5ZD9MbXix5ZxtYzWz9TLtxS0DY+vZPwFTkAKUslruC0AWPaG
+	X+UxuGNFtTl5jjbjFrhVRa1/jULXPqA1ftTxPhSxQmQAGzohOXbg5wDgRCXNmf3057caFALyZ0/
+	68/7g==
+X-Google-Smtp-Source: AGHT+IHHqeJHNAbgmM8GMieWnZy5D9PazvXOXJxMb+nmM8OfoRPhTwJEHb5ZjR+06/LLEwPYiHrsAqqhXrmv7gbk9Bc=
+X-Received: by 2002:a05:690c:d8c:b0:71a:27d2:2bdd with SMTP id
+ 00721157ae682-71b7f62d7famr21657777b3.13.1754086311325; Fri, 01 Aug 2025
+ 15:11:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com> <20250730074253.1884111-4-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250730074253.1884111-4-ivo.ivanov.ivanov1@gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 1 Aug 2025 17:11:39 -0500
+X-Gm-Features: Ac12FXwPXRZu6Ot3_0uSchflAwrF7qDuOzVPDdy_jKO2tY1n3bXW3MwJ9wqx3gQ
+Message-ID: <CAPLW+4=QwTv96KMdJ7tcWd+Swh-fC7+h9bo22e2aZMeRbg4wKQ@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] arm64: dts: exynos2200: increase peric1 and cmgp
+ syscon sizes
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-There is no txt file for it, add yaml for invensense,icp10100
-which is already used in the driver. Also, document other compatibles
-for ICP-101xx family and add invensense,icp10100 as a fallback.
+On Wed, Jul 30, 2025 at 2:43=E2=80=AFAM Ivaylo Ivanov
+<ivo.ivanov.ivanov1@gmail.com> wrote:
+>
+> Some USI instances have swconfig offsets that reside over the currently
+> defined syscon ranges for peric1 and cmgp. Increase their sizes.
+>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
 
-Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
----
-On 7/28/25 02:19, Krzysztof Kozlowski wrote:
-> On Sun, Jul 27, 2025 at 09:32:02PM -0300, Rodrigo Gobbi wrote:
->> +properties:
->> +  compatible:
->> +    items:
->> +      - enum:
->> +          - invensense,icp10101
->> +          - invensense,icp10110
->> +          - invensense,icp10111
->> +      - const: invensense,icp10100
-> 
-> This does not allow using invensense,icp10100 alone. Try it yourself on
-> DTS - you will see warnings.
-> 
-> You need oneOf, just takek a peak at some random bindings.
-> 
-> Best regards,
-> Krzysztof
-Tested against a dummy dtb/dtbs_check and with dt_binding_check,
-looks ok now.
-Tks and regards.
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-Changelog:
-v4: allow the fallback to be used alone
-v3: https://lore.kernel.org/all/20250728004039.8634-1-rodrigo.gobbi.7@gmail.com/
-v2: https://lore.kernel.org/linux-devicetree/20250701221700.34921-1-rodrigo.gobbi.7@gmail.com/
-v1: https://lore.kernel.org/all/20250626212742.7986-1-rodrigo.gobbi.7@gmail.com/
----
- .../iio/pressure/invensense,icp10100.yaml     | 52 +++++++++++++++++++
- 1 file changed, 52 insertions(+)
- create mode 100644 Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
+>  arch/arm64/boot/dts/exynos/exynos2200.dtsi | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos2200.dtsi b/arch/arm64/boot=
+/dts/exynos/exynos2200.dtsi
+> index 943e83851..bab77b442 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos2200.dtsi
+> @@ -328,7 +328,7 @@ cmu_peric1: clock-controller@10700000 {
+>
+>                 syscon_peric1: syscon@10720000 {
+>                         compatible =3D "samsung,exynos2200-peric1-sysreg"=
+, "syscon";
+> -                       reg =3D <0x10720000 0x2000>;
+> +                       reg =3D <0x10720000 0x3000>;
 
-diff --git a/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml b/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
-new file mode 100644
-index 000000000000..5d980aa04bb3
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/pressure/invensense,icp10100.yaml
-@@ -0,0 +1,52 @@
-+# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/pressure/invensense,icp10100.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: InvenSense ICP-101xx Barometric Pressure Sensors
-+
-+maintainers:
-+  - Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-+
-+description: |
-+  Support for ICP-101xx family: ICP-10100, ICP-10101, ICP-10110, ICP-10111.
-+  Those devices uses a simple I2C communication bus, measuring the pressure
-+  in a ultra-low noise at the lowest power.
-+  Datasheet: https://product.tdk.com/system/files/dam/doc/product/sensor/pressure/capacitive-pressure/data_sheet/ds-000186-icp-101xx.pdf
-+
-+properties:
-+  compatible:
-+    oneOf:
-+      - items:
-+          - enum:
-+              - invensense,icp10101
-+              - invensense,icp10110
-+              - invensense,icp10111
-+          - const: invensense,icp10100
-+      - const: invensense,icp10100
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd-supply: true
-+
-+required:
-+  - compatible
-+  - reg
-+  - vdd-supply
-+
-+additionalProperties: false
-+
-+examples:
-+  - |
-+    i2c {
-+        #address-cells = <1>;
-+        #size-cells = <0>;
-+        pressure@63 {
-+            compatible = "invensense,icp10101", "invensense,icp10100";
-+            reg = <0x63>;
-+            vdd-supply = <&vdd_1v8>;
-+        };
-+    };
-+...
--- 
-2.48.1
+Exynos850 TRM says that all System Register instances (in Exynos850
+SoC) use 16 KiB (0x4000) of address space for their registers. And I
+can see some SYSREG registers actually have offsets over 0x3000. In
+reality though all IP cores are aligned by 0x10000. I have a feeling
+Samsung does the IP cores integration in the same way for all their
+modern Exynos SoCs. It can be actually deduced by looking at the
+starting addresses of the nodes in the device tree, they are always
+aligned by 0x10000.
 
+Hence I'd recommend doing this:
+  1. Use either 0x4000 or 0x10000 size (not 0x3000). For the
+reference, Exynos850 and gs101 use 0x10000 value.
+  2. Replace the size values for all sysreg nodes in your device tree
+(not only peric1 and cmgp), for consistency and to prevent possible
+issues in future.
+
+Also, maybe it'd be better to use "sysreg_" prefix for these node
+labels (not "syscon_"), as it's called System Register in TRM. But
+that's minor, and probably out of scope for this patch.
+
+>                 };
+>
+>                 pinctrl_peric1: pinctrl@10730000 {
+> @@ -471,7 +471,7 @@ cmu_cmgp: clock-controller@14e00000 {
+>
+>                 syscon_cmgp: syscon@14e20000 {
+>                         compatible =3D "samsung,exynos2200-cmgp-sysreg", =
+"syscon";
+> -                       reg =3D <0x14e20000 0x2000>;
+> +                       reg =3D <0x14e20000 0x3000>;
+>                 };
+>
+>                 pinctrl_cmgp: pinctrl@14e30000 {
+> --
+> 2.43.0
+>
+>
 
