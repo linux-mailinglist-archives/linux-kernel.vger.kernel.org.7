@@ -1,53 +1,52 @@
-Return-Path: <linux-kernel+bounces-753673-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CEC66B1863E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:06:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2788CB18640
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:06:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8A7723B3A09
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:06:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC846AA11F8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:06:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B77431DDC33;
-	Fri,  1 Aug 2025 17:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B52C728C867;
+	Fri,  1 Aug 2025 17:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="JQQwl83a"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="YQ5MCVA0"
 Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CD901EEA49
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F16A2874FC
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754067945; cv=none; b=NC9ds/dkjB7vZVmhjZq5xlwsSq4yb70urszjb4QVGg8n4w7uu9vifEmv0l6EjSy8ArjDvRK4F73lHlKb7JF+NLn2YPL2HGFLidJNjXxHhECYv/g44D0q0LiLe+aYpF6lFE7zN0YRdJ63px7rG0X1s4cUBiGb8z523XS65FDCGT8=
+	t=1754067947; cv=none; b=TJ97owoep9d5EoBQ1F8262ReLjQpXP1ILKC6A1WHMg+sR8vxQawnhDTWFES9DQ0nixvBi9n0zQC8pSTAXWK/9XKO7Sjsk+DKfKk+KoKx5Q2NXYHbztQ3KQ4611VFC6U5/rMbpYKOO0HEh/WM8ezcmksNCN6i235w3oHu22tWmLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754067945; c=relaxed/simple;
-	bh=SSk1RJ2YypQ+fpkQ0Kfi6AJljwwfOGPnmaXGZTa6s/U=;
+	s=arc-20240116; t=1754067947; c=relaxed/simple;
+	bh=5Fo3epZRUEY/w4ka3NAf8eO5BWx/fqjp1XJWI235sGs=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=raJU+vc8XjluWjYkl3I0azAzGiogPfr5HO1ZvKDfj8vAcmqkXvpKKjaA8PxsFKBArk3oAgRIFVfaBQ5xc4lBh3YUfNWXTODBSyx+D8oLTULPRUv+igzFmiF/gqyabyw4lCcIDfo4SFcPJ6M2G/k99/WE0a+vRA+pwvufFldRZEw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=JQQwl83a; arc=none smtp.client-ip=217.70.178.235
+	 In-Reply-To:To:Cc; b=ocFCLPjj5UZNxf3p7UC1m3PPo0BjBHwlCTM076u+06qP1SAzeUBkaDBnBuBcne6hlJQ/j821fHMogsauPBHfgjvq5YzTgDRsnltD1jLqNpt8vczpt+e1e0Jkf8FIRNzOKeY8clgn+xKrbLOr5RzXtn8z5qCZOgWGwAhbvDHLoA4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=YQ5MCVA0; arc=none smtp.client-ip=217.70.178.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 1454A442CE;
-	Fri,  1 Aug 2025 17:05:40 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 2601844231;
+	Fri,  1 Aug 2025 17:05:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754067942;
+	t=1754067944;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=Fwf5eGBZP+QoRiYaNiP4uHHT3crUyo5DSA0BmyOkwcw=;
-	b=JQQwl83adF2ko4IMx6hMfbSsBnAxDY/4LcGtrzEM3JMK18PUANzNVkdY6varfpUv/5rEjU
-	utDNeMtKwOLvHoZYU6Vqa2tJh++r9uYbbEFZQJWpn9vjn80tXThrCj25yQpyu1LQ9JrVeN
-	JqSMSMbLNU7IVv2soxfD59JA/MWR2bZ7oFSOL9qo2XfMJxc24BgADZTBDx+93Yrl2Crqh7
-	4IHHzqg1PayexUtPUB2no2LZO0yR+BycViHIcuHwABE2oEEelklcvJRj+OJTtrXuwzvelw
-	cRDNCGPrUSucErXbPLrhgd5BNPsjvA+OYxDWe/yQ8Bhd9vyAOcmAXSAS+8xuYA==
+	bh=Rv+d+y0YmAy4cPKjIj08TWYT9gGm4xFaUigENnLzxpQ=;
+	b=YQ5MCVA0kINjN5Fl+60t0/suNNToBhAdKw3TvO0mDbGGb+r3OpdmjihJUxQRCjUB/buk1O
+	VUcPykqsTcH45tCA/ewcHISzG58uM5FSv61CT+lNInJnbaRlgAnZRdZ4T2apcul22LxKS9
+	4g4/k2DG5D6mhOKkGwMr8D17ZOugtbO7rh7nFciXguKNrK+CeEOIwRoT9MwxRmqvofTyHH
+	W+1QTCpQ0Ry08iwRP0au5KTDSatRF4LqDTVw6N1EK6GKbjUdAhmPksPlCHcbNQP0WzyZe3
+	Xl3SdPLwH9FEmS+DmcrAyGnms5b02HB1mjYx/WmeOZxtI+fmt5BZv1R2JceilA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 01 Aug 2025 19:05:25 +0200
-Subject: [PATCH v2 3/9] drm/bridge: imx93-mipi-dsi: use
- drm_bridge_chain_get_last_bridge()
+Date: Fri, 01 Aug 2025 19:05:26 +0200
+Subject: [PATCH v2 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +55,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-3-888912b0be13@bootlin.com>
+Message-Id: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-4-888912b0be13@bootlin.com>
 References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
 In-Reply-To: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -90,36 +89,34 @@ Besides being cleaner and more efficient, this change is necessary in
 preparation for drm_bridge_get_next_bridge() to get a reference to the
 returned bridge.
 
-Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
----
- drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c | 12 +++++-------
- 1 file changed, 5 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c b/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
-index bea8346515b8c8ce150040f58d288ac564eeb563..8f7a0d46601a41e1bfc04587398b0f1536a6a16c 100644
---- a/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
-+++ b/drivers/gpu/drm/bridge/imx/imx93-mipi-dsi.c
-@@ -492,14 +492,12 @@ static int imx93_dsi_get_phy_configure_opts(struct imx93_dsi *dsi,
- static enum drm_mode_status
- imx93_dsi_validate_mode(struct imx93_dsi *dsi, const struct drm_display_mode *mode)
- {
--	struct drm_bridge *bridge = dw_mipi_dsi_get_bridge(dsi->dmd);
-+	struct drm_bridge *dmd_bridge = dw_mipi_dsi_get_bridge(dsi->dmd);
-+	struct drm_bridge *last_bridge __free(drm_bridge_put) =
-+		drm_bridge_chain_get_last_bridge(dmd_bridge->encoder);
+---
+
+Changed in v2:
+- use cleanup action instead of explicit drm_bridge_put() for consistency
+  with other patches in the series
+---
+ drivers/gpu/drm/omapdrm/omap_drv.c | 6 ++----
+ 1 file changed, 2 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+index 054b71dba6a75b8c42198c4b102a093f43a675a2..794267f0f007850e43949f93be5c98d0e32a84ea 100644
+--- a/drivers/gpu/drm/omapdrm/omap_drv.c
++++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+@@ -378,10 +378,8 @@ static int omap_display_id(struct omap_dss_device *output)
+ 	struct device_node *node = NULL;
  
--	/* Get the last bridge */
--	while (drm_bridge_get_next_bridge(bridge))
--		bridge = drm_bridge_get_next_bridge(bridge);
+ 	if (output->bridge) {
+-		struct drm_bridge *bridge = output->bridge;
 -
--	if ((bridge->ops & DRM_BRIDGE_OP_DETECT) &&
--	    (bridge->ops & DRM_BRIDGE_OP_EDID)) {
-+	if ((last_bridge->ops & DRM_BRIDGE_OP_DETECT) &&
-+	    (last_bridge->ops & DRM_BRIDGE_OP_EDID)) {
- 		unsigned long pixel_clock_rate = mode->clock * 1000;
- 		unsigned long rounded_rate;
+-		while (drm_bridge_get_next_bridge(bridge))
+-			bridge = drm_bridge_get_next_bridge(bridge);
++		struct drm_bridge *bridge __free(drm_bridge_put) =
++			drm_bridge_chain_get_last_bridge(output->bridge->encoder);
  
+ 		node = bridge->of_node;
+ 	}
 
 -- 
 2.50.1
