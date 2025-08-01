@@ -1,74 +1,74 @@
-Return-Path: <linux-kernel+bounces-753843-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753844-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9ECD6B188D9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:37:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDB77B188DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACC3F16B124
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:37:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AD7983BE217
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:37:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D04C28CF6D;
-	Fri,  1 Aug 2025 21:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D9320F076;
+	Fri,  1 Aug 2025 21:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GKjxtpt3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VZkJS0zS"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A3C420F076
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 21:37:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51B1228ECDF;
+	Fri,  1 Aug 2025 21:37:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754084225; cv=none; b=Ail8j1OEiF6EQTPwo58sbMWNgh5yxMnsYdc7DuWjkCVmtt797HhX7ZPMPU2AYrbUWhqgNUkj9Wl967MQdL/4wZZD2Wiuc2/tDPCNC+o1ypz8a5PuTF1U3v+Sajxijkgj419BoLhrvuXOEh9Jdu7KyANr3py6Dw7Mq8Kgj5l+MGM=
+	t=1754084227; cv=none; b=sdoRwjpBKZzNn5YQF6Js1lgArnwt8nUBjTEim5K+0ojUoe7m6DOVB5R/k332s7t6lA6eX4vd2n6OCUk5p+wHMUoKfJEpybswMbyOD7sWdCzaASOj8h76dOlGTqWuADpI6uCdAkQZKxFOOCZh3xP/UfVy+3VedJ+XRaWuKfABipw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754084225; c=relaxed/simple;
-	bh=tvNR9WuzUsYgh3BrjbQivBMy5nrsSxmL+ZfibhZR7tk=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=MYZSjg27p/PJwEkpkXMjKE6AYXGCY0aGNU8cqAGDF/XdgiPhipKww6+HeM3MbkDsQ+8Kco9budm5qkNUQifuQ4tuKLJiux+FCBGA7L3LbhwQbKCZrxdNGFd638kX+n8Z02j4yGEBNOFDkH3uTs09VCDBV46oj60i2tnbcfo5iX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GKjxtpt3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E299CC4CEE7;
-	Fri,  1 Aug 2025 21:37:04 +0000 (UTC)
+	s=arc-20240116; t=1754084227; c=relaxed/simple;
+	bh=8t52XgXD6VVUixH33PTUlVuKXYILCXgzbeaDcJ3qd64=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=iEUZX9Apmcxvd7kPIoE7N/oD0s9gGv91I8dN8RUm7IhJ8CGBOG/5pjuwdcVhnnKgQJFWC9dIz7ck2FmrwKLU+KmXbsQzTRmj8FsR2j3Fbg9M47pnRVW31PcaCRTy263qjx8BA/tW8Qy9inQLo9l/opRad33VmVNqYS9RdX+5cCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VZkJS0zS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 271F7C4CEE7;
+	Fri,  1 Aug 2025 21:37:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754084224;
-	bh=tvNR9WuzUsYgh3BrjbQivBMy5nrsSxmL+ZfibhZR7tk=;
+	s=k20201202; t=1754084227;
+	bh=8t52XgXD6VVUixH33PTUlVuKXYILCXgzbeaDcJ3qd64=;
 	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=GKjxtpt3rR33iwblzhb4HMZ35o4uj09XKDS3jtALeX/uH02s+LRdzXj0NlCJzitqh
-	 q+qsPWFy+jjHU/Y/qzKqOJo2DTg/Fl/00GqieTozq/y4G+C/lxD+5mXpdpYf5Q2Q9R
-	 bFO9lgbluQoGV74DCj4ZVSF3mDDl9HO9fnTxbxZC97IBeAzXDZ7K0bBpzfa+DfIU0m
-	 nGIxYu9lDoBW+L2n4ixJsWEBoFqLZdyHUp28UOchhymJ8/Ya2ircMkXG1on3sgXPco
-	 Myu/NPk51HVnrXK7myXqiaxpJ14nKoaygYi3RQDs3ORJhtGRK9qLbW7UJVKYmx3Wfx
-	 be6/ZAekWSIVA==
+	b=VZkJS0zSKdsErEWHpXCEl9V+f8OULXysBpIz1tE9Z/RLxBAez83Mo4CgiXtaSEidI
+	 1XjyhS4sIKWhiU4jHJ9nh0cYrc9u+8LKVgtU4YSWv1cKfDSfvSsGUk1loIPI3stENl
+	 zgAQGCBLx5wOc0aBB2gR4pzz0lcBLHWnMeuN2H22l7jKwQCFob4aLF3QyRA3I/QNl4
+	 aHS00ixVdD5FANI6WsZq93NE33GRl5FFQAQ9lL6BJ33ujuacDVeAC1FMZPgbGwGUKp
+	 bWVhSHSMx4s5+/EEsuBPZB756IAfi4IGNJfbXistBS/ad+mCpyjOJjiJ6Vm8HXyLGY
+	 6snE4RQS4JicA==
 Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 715D3383BF56;
-	Fri,  1 Aug 2025 21:37:21 +0000 (UTC)
-Subject: Re: [GIT PULL]: SoundWire subsystem updates for v6.17
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADEF3383BF56;
+	Fri,  1 Aug 2025 21:37:23 +0000 (UTC)
+Subject: Re: [GIT PULL] sound updates #2 for 6.17-rc1
 From: pr-tracker-bot@kernel.org
-In-Reply-To: <aIy0LYXrdYiQCMWZ@vaman>
-References: <aIy0LYXrdYiQCMWZ@vaman>
+In-Reply-To: <87qzxv2p97.wl-tiwai@suse.de>
+References: <87qzxv2p97.wl-tiwai@suse.de>
 X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <aIy0LYXrdYiQCMWZ@vaman>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-6.17-rc1
-X-PR-Tracked-Commit-Id: 34b1cb4ec286603127aa8c4191ea527eb8dd3567
+X-PR-Tracked-Message-Id: <87qzxv2p97.wl-tiwai@suse.de>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.17-rc1-2
+X-PR-Tracked-Commit-Id: df485a4b2b3ee5b35c80f990beb554e38a8a5fb1
 X-PR-Merge-Tree: torvalds/linux.git
 X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 6fac1139d99e283ba0c7ed2d1acad9ec2807ba3a
-Message-Id: <175408424003.4088284.15513233071371253513.pr-tracker-bot@kernel.org>
-Date: Fri, 01 Aug 2025 21:37:20 +0000
-To: Vinod Koul <vkoul@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, LKML <linux-kernel@vger.kernel.org>
+X-PR-Merge-Commit-Id: 7a64bdfaf3e641862e8088a19205692b8b229753
+Message-Id: <175408424220.4088284.13258779399118456338.pr-tracker-bot@kernel.org>
+Date: Fri, 01 Aug 2025 21:37:22 +0000
+To: Takashi Iwai <tiwai@suse.de>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Linux Sound Mailing List <linux-sound@vger.kernel.org>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 
-The pull request you sent on Fri, 1 Aug 2025 18:03:49 +0530:
+The pull request you sent on Fri, 01 Aug 2025 14:35:48 +0200:
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/soundwire.git tags/soundwire-6.17-rc1
+> git://git.kernel.org/pub/scm/linux/kernel/git/tiwai/sound.git tags/sound-6.17-rc1-2
 
 has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/6fac1139d99e283ba0c7ed2d1acad9ec2807ba3a
+https://git.kernel.org/torvalds/c/7a64bdfaf3e641862e8088a19205692b8b229753
 
 Thank you!
 
