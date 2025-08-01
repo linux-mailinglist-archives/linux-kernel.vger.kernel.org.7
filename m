@@ -1,236 +1,143 @@
-Return-Path: <linux-kernel+bounces-753434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 905E1B182F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:54:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35A52B182F7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:54:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7AC431C826AB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:53:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC091C836CA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:54:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F37F273D66;
-	Fri,  1 Aug 2025 13:51:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763C2E371F;
+	Fri,  1 Aug 2025 13:52:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="eXVQ9LVF"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bi/O9ZFI"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26D4A272E42
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:51:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE65C35977
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:52:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754056293; cv=none; b=Hc0Afy+rLMtrzAq7sOYYk3B3uS1NtsYPhNhTDQYQbioEUGx98iHWHzUDkFSQPUdguLk2nshHqeWyE8okd7l/ZQJMTesROFOZSBzDKCcwU+pLHEE93aACj0gxYpm6xqbPOm0DzYy/KOek+EzR3xZuDt+cWxaiDPtI1DQM5O+fVZw=
+	t=1754056325; cv=none; b=RoJLUUudHVR9guhUnI0sLJTJhvuORMSXrTD7acRJMPmJPMrn6RxIJve3phRA7tG6l3zpRJv9dHawfM7KxPcrTr5eMSWmm9m+33IvAYPNgdTojXBKETxSZCD76OnPz82SXxSncQj7yDW7Qw9L09N7qBFQMZ45wPTcFf3r13vHIoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754056293; c=relaxed/simple;
-	bh=pqburrqLe4QINUtvUHnD5bh/z2B1X5GNCfeW27TyBDU=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=tOzLkm0G8Et+jv/bMThDt4gNp4FLSWucLlmX6bb9uVQhu10lN5GU7EgZJMgt2bIVqS3r8s2JKW41jzScEjjRX3ZW5ZhuYoP4UlK8Fw8tZz5ozGPKCZWsoYMRGTZFVYV7wd9HNSiS31COm+18/notzltfbA0Dszcq0OzuFg0+hrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=eXVQ9LVF; arc=none smtp.client-ip=205.220.168.131
+	s=arc-20240116; t=1754056325; c=relaxed/simple;
+	bh=vhTrP+GJIoA6ydMovg9Eb79KfHnKL5N79rl9tjjQND4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gwta+96m5EjRTwBCTnYh4yZIYezLbnYM00Ib96wrJTRF6nSYarorqzzV4DVITBy0CaEI8y1p402O5l0sk7iY/8YMMaMha/EeWf7itqZtn1G1ZBwuuJsNjBf69UEE0iA9MXDJweukW+WuzwBA3cK1/c0dC3RpKHZ0oWAahHsZS8s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bi/O9ZFI; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57197hjS001415
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:51:31 GMT
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719AaUE006860
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:52:03 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/+B92RCJ6sUHTgOKCSTnvICSpksHijR6GnMpjqqV4BE=; b=eXVQ9LVFhvEmF8lP
-	p9sioUtRWNt9qlqVfwKTdPd1dZALSuCSCvuZW72ZEejYAPH5sWUFPxZdU4BkUHY6
-	R/8s63SNsGc607WfI7Cd2xNxJYTgezciEz7y1mc6Ne+7LgSYkC59/ssXEcgOShbc
-	kRZKCH/4jd4WbuTIdT4Gy0mFisGvULyws82hWZ2gWBevfGFN7msYcdVI1ZS9EMUU
-	/Z/L70BgzcNyrTIsgpte9+9Do3S/Xvewaot3JKueUJjFszQxfsCwoUHbQ468TZB1
-	dvk90tLfShZfp5ruHToipUTTXme5/zz/XdnyGXhwvVVj3A7Pwxwp3YC34lf0pdVm
-	4/xV/g==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484nyucg67-1
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=gN0kT+Wo9uqVQiZqrtrMEVeC
+	TpUgjT6nfQXr88CiLMA=; b=bi/O9ZFICWERMwdfqU3CSHhfOZ+dZ2SPf5u4IBJ8
+	STMrTJ5V5x0GInC3QxbnkNiC6D6/zlLBj7wADw7+31fOJAr318toyHs9qsOx9SYw
+	wgXbsKChxFQliYQnXco4Hgr0XpStXktg7NH+HoSEFtTK/tqH0R2dzpd8kRESIIQf
+	qaB9pTSng4G71fuxDFPFlb9qfCixlu/v68HdTroTU4Rw+ShNTR48SPgDI/tyNKO5
+	oAl6t8nuZ831scdlPytVI8qlsllaM7Hln1omTN811t23/u7m5aEsZHBbfGEzC0Y7
+	TWcNQLn4t46fnbuh1BzqnIs8uZ6TT6nDBkMRNMdtiMoQqA==
+Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pm2uvkc-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:51:31 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab844acca0so15501031cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:51:31 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:52:02 +0000 (GMT)
+Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab9ba884easo7097261cf.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:52:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754056290; x=1754661090;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+B92RCJ6sUHTgOKCSTnvICSpksHijR6GnMpjqqV4BE=;
-        b=pjXFAnfVhLJFyg+m4tcpn+b0oMETyeN8zs3dy2hi80CaFHHsqhhgisZJkhAYtsL0z6
-         vudfcW9e4qBEYpXFb9q15fB/vs5YPUpGp+gXCoPvv3QVy224nNonYMsfWj1dXCrDhceS
-         SYraZAuOZ9vpTjmzm8JoYImMHgNeHC/UqbyNR65BbbVZNXXdXtlUZnEwRs4BFkVbRkXK
-         /S98bCK12247ca3S26zh6MrlvsRLhTQcnhPtyk5Ajvm49YfdKj3k56BURAB6qlNTcczT
-         utM6qAXMNfbp9zT5UJek1Bl6rylFeCc8GoX+1Q1bdxd1IUR37pO3LLfgt8pXkPvrJ6iI
-         HsLA==
-X-Forwarded-Encrypted: i=1; AJvYcCVVj51TGO+9kn03xOpW1qt0TXK560QsgM2gu0wry7H87GzH0KlYm5drjix6TreQnq4YQphNgHb+kghDgGs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8oPMJGE1EfPV2K20+HDwKTtNm+w2+lUcWJnMCT97PnNe59JD/
-	bUIL+tEzG1eyxxhjJj8L4Zo0QaG78oiaSU/vsB8sDgDqVOXDVuC6s3NTlXx0spMliiehY+yODc4
-	CbLIrHz+XhWsk84pY28gWV4IsbUkdCzo3Um6sn+RuPE2fI9ARk9MCLx1lf8g5xkicSgI=
-X-Gm-Gg: ASbGnctG5r//el0XWOmrlaepM20cS2+vnqzczdVidv4wS38MLRWb0Mq+4W9KjjwSAFk
-	f96+bRKVVwsfsRKiENnBnY0ABX8c19L2TpD8xtXI7KI5w1n3KCZtcuSEKv/e443rzwB44dHKA6J
-	PLrda2cTnQBhyysxwmwOp5rtWag3NvOhGpX2dif93zh0d+wJPb5EsEeFuNjgoUGTqtduyf0dMWV
-	IYcSArEJVqXvOB4Q+vDLpWT3rn9ibPpYWBNtuLiclXozDexwRWtFGBbljNV0BwLhTI+P3Zz90mo
-	yjmut2sJU6igD2pCUeoYsF2gEuaIKVW0Xb4F3gDEAXKVPxJE5/yC/xUYmRFVTUnFIRd5enCNLQe
-	F9c3scO/ZhLFzPrl6z/Llow4w5BuoTQXEbxU3p0Oxaoy/3rVJkWoA
-X-Received: by 2002:a05:622a:a20a:b0:4af:c21:41b1 with SMTP id d75a77b69052e-4af0c214570mr6065351cf.55.1754056289660;
-        Fri, 01 Aug 2025 06:51:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFbygvQYA6zDq+LhVmG3CR/4GN/47/XqDWnOK52WBf4RbtBM6/jIq15Eol7L7jNRSofKyA/8A==
-X-Received: by 2002:a05:622a:a20a:b0:4af:c21:41b1 with SMTP id d75a77b69052e-4af0c214570mr6064831cf.55.1754056289082;
-        Fri, 01 Aug 2025 06:51:29 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754056322; x=1754661122;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gN0kT+Wo9uqVQiZqrtrMEVeCTpUgjT6nfQXr88CiLMA=;
+        b=T/h3KVU39GyOwcf2M2cN7Vgb0kfLDtHN7Aq2Bu/5u/R92Im4ECRFk1qBlwPmZr8Hp4
+         CFM9bKT5npaEMhJ6ANLTPV0MoF4LFdpBMRjHp0aE6UI6BHmd24h7DwJujM67wiqA9Nnx
+         CKNDPWK6LQSejJRv+exUN0bi8cUxWErckUR/Dn/hAc0BXt6CoJ+EJ6lpNdXm0bQs97yn
+         q6jXjaoUeEStrWMBAXNuvmPTp9+SCEMPEdlTwK4rcsgqjMU6p3XEYOXFqx+A+Z9Ip1wQ
+         DRFEFXg4AI+sYk7ObHkFhnGR1lAvRFOQLMXLMXJ0N4Adm+qrC7BqK0Sw1AuJ4zMNnyzj
+         yhOQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUAh8E7W+9X9FGxFFpyKpjDAAIgyIF8RJnblg6qWReSy56zbnN4JRSinECdR1/D44dGjndY0Arf9rYfqsc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYFMu3U29LFi8nZaMu2ZyK2f9fY/WmzNDDX44sI2mGn3vYN13H
+	Sq0hRJHkC0pUAnHUgM521gnKBWGl0l8aK3XEcf3b01UuAu+4XoqEYxQGn9LtnpMv63QgZlszx7g
+	vQZhREbd26xRd+64ReZl1UBZPWfpEmy1QVnFjOzVZRTvxecf4LMuCSzR0LDCmy4hFdo4=
+X-Gm-Gg: ASbGncuhS7wgkI+dRdMFrW4GTj0IETSDTifZYqL+6XHAE6hqpLFNzqgcQMgjxEqqNAQ
+	1KssCwqOMrXWPwlGYqIi0BFf711szYA4IHM3atDgGVhzIrDsAQ1QLDm7QzhV9mEmOQPxhMc5F/M
+	kQ5e05DKr3DOeum6mPvlJsyugZ8fcVjIEbzKRAX+rbU4d84ST05n3/uiKkhgMYFQ4EFKOBhhHaG
+	axpQwjPd465yPpYdYCnEWSTC+w/u5MAxlfX4vUMFGsIcH4xMnbOq4AAtMuYohnUnLlLsMMk2U56
+	Pi/yo2rNbipOPL45vVEDyv7K4ZS/xDRMvR1mKXysRTSq0kaxWNULsaD4ah958Gk+zmqOJ0MH/Pp
+	hacl37pJnlEpW9F2+aVnAJmB2a5C01zK5DA3CzIkkcPJw0SyhFExw
+X-Received: by 2002:ac8:5fca:0:b0:4ab:af74:e0be with SMTP id d75a77b69052e-4aedbc59deamr162312791cf.43.1754056321925;
+        Fri, 01 Aug 2025 06:52:01 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEbJ9/UfCMEp6ALYbfsnGI7L7qxlBrcJTulkDzMGsNnw0pPYnM9xZM+cCoRA4uOKSXu3GzEkg==
+X-Received: by 2002:ac8:5fca:0:b0:4ab:af74:e0be with SMTP id d75a77b69052e-4aedbc59deamr162312451cf.43.1754056321484;
+        Fri, 01 Aug 2025 06:52:01 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238273006sm5917801fa.9.2025.08.01.06.51.28
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ac5f5sm603568e87.64.2025.08.01.06.52.00
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:51:28 -0700 (PDT)
+        Fri, 01 Aug 2025 06:52:00 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:51:59 +0300
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 01 Aug 2025 16:51:16 +0300
-Subject: [PATCH 8/8] drm: writeback: rename
- drm_writeback_connector_init_with_encoder()
+To: Luca Weiss <luca.weiss@fairphone.com>
+Cc: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
+        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] arm64: dts: qcom: sm6350: Add rpmh-stats node
+Message-ID: <nn6p367tg4l2qi6277rclxrbk5zxzoelzeoxvl3exgbjabjoxd@pujfujycift7>
+References: <20250801-sm6350-rpmh-stats-v1-1-f1fb649d1095@fairphone.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-wb-drop-encoder-v1-8-824646042f7d@oss.qualcomm.com>
-References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
-In-Reply-To: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
-To: Jani Nikula <jani.nikula@linux.intel.com>,
-        "Kandpal, Suraj" <suraj.kandpal@intel.com>,
-        Harry Wentland <harry.wentland@amd.com>, Leo Li <sunpeng.li@amd.com>,
-        Rodrigo Siqueira <siqueira@igalia.com>,
-        Alex Deucher <alexander.deucher@amd.com>,
-        =?utf-8?q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        Liviu Dudau <liviu.dudau@arm.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-        Tomi Valkeinen <tomi.valkeinen+renesas@ideasonboard.com>,
-        Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Dave Stevenson <dave.stevenson@raspberrypi.com>,
-        =?utf-8?q?Ma=C3=ADra_Canal?= <mcanal@igalia.com>,
-        Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>
-Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3016;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=pqburrqLe4QINUtvUHnD5bh/z2B1X5GNCfeW27TyBDU=;
- b=owGbwMvMwMXYbdNlx6SpcZXxtFoSQ0bPsZDobW4vfKRTTQ7I9IreLqleOCt7nltN8yGzxgf5O
- 5s8egU6GY1ZGBi5GGTFFFl8ClqmxmxKDvuwY2o9zCBWJpApDFycAjCRC/rs/4z+eBz0TL8iMp9x
- 23dr/dQ1Qe+samT3Pm8yl4y0nTyTneN5y1e1HP+LUzWNVyv+fP3yw47Ygqk7Ou8KBvubXv/Z+ml
- v6wkr1itul793iittLc1Tu/GGfXu7OrvKnYlPZldYVMr+u7XGR1zk4Kdk5R3r3i04My1iUb1tpe
- al6ZesUs2YWnZ913bV2Ht0+8fsj2yFrhqx1Yq7uRgU6hb8DGpoC7ygm9C57ENL87bC+itts3SfT
- V7+Qe5sIteVwprDjHtjy//v3cXwTWnjW530O8VerTGKwX8P9fW/3xkWmH/WUDaWM25a/fba0ozp
- +QyFjHOYhBljH9fvkjvlXJ7d6jF3q9kRH6/lpiqmoY+4AA==
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-GUID: iFvyRGyXujtUQb78stkSZasw-9CgQGto
-X-Proofpoint-ORIG-GUID: iFvyRGyXujtUQb78stkSZasw-9CgQGto
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwNSBTYWx0ZWRfX6gUhpo+OxBLv
- 1riUSVqwvKu0uYl8v08aqKY7atQ/7m8hcseG/jrlGIz99evJoormw0nq5DpqgrmFnVkjwHGEcOI
- BwvtRXr0UsHH3WZtUSUP+nSPfUeNsFrSbYVHSm77LjilGBfUz/mDkVJDKQQsdFXCSJgV+YHQgXF
- n/Dy3UP5+ceWbH+V9LLfjv9MccCncOiLtieFw6didRKvG4Ev+sjJgFJOGDmwEW6Y+OZ6VKxn+m4
- u9uoIfrKHlPfsJdER1xPMp7McJdPY4Txka6Ph65H3zU/6JQ0JSSf4EwLQlflHLPk5WbySJXgoZr
- dnhPljDCOLlqh4XMJhHLxfXYus/WuLwQhr/5Egkior8MHvTa1HsFzguf5/u7zKpTLLAg5oBygJJ
- cpx+yKZFbzwm7mPVyRGQSAbU/94HWW4OFT4K5mD9BnqjPhe9mAzONUIjBbnVsyWVHUnv2OMw
-X-Authority-Analysis: v=2.4 cv=CLoqXQrD c=1 sm=1 tr=0 ts=688cc663 cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=By2WwYRBACVvdXAjiroA:9 a=QEXdDO2ut3YA:10
- a=kacYvNCVWA4VmyqE58fU:22
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801-sm6350-rpmh-stats-v1-1-f1fb649d1095@fairphone.com>
+X-Proofpoint-GUID: 3MCIIUisF2Peuc6T60_9X_eiqQlFuK2v
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwNSBTYWx0ZWRfX1hv0utgAz+Ki
+ K69g4Y+l6czKzIrdAkGiqbMQU3FeDyZFYT7mU6h+RWaHeAa/vCxM9BdhqFdiWzakG1wM4C0RXjv
+ k4JL7mvju0JjHqDjWF9h5v3XfDpYh06Wa5XB7mYC5Nm+z0nSbFXv5SaH0QXMF6jy9M+8rAHit4f
+ p9CMxaMR2Ck3kPkzofm3GCccXBYokYa1YUeOxj5ZwZdVGG5EWNfJWSUcGXpGsvpq5lQFU6Tmm6E
+ mr6LW3zTPDfdFpJp8Sf0NU5cwcoWoqwaUcA5GTHnM1PsHoBHjf8/jbV0BfxHh9Gc8S2+ZNmxash
+ JTHMIsouCNQtYNH3fuET/++GsvW5PnWhSMfNpYDCGauXjTLzgMQYCx8PjyXpm8J7QM/cGGws4vw
+ zdnLQFGesY91kDDGbrv0Fxmi6xvC1O/6oGgxbIALBfs2MEeoVi28ImmHD0brjwW5SvNvcBnL
+X-Authority-Analysis: v=2.4 cv=HfYUTjE8 c=1 sm=1 tr=0 ts=688cc682 cx=c_pps
+ a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=NGnrDkvxLCtUz6Rj-iUA:9
+ a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=Soq9LBFxuPC4vsCAQt-j:22
+X-Proofpoint-ORIG-GUID: 3MCIIUisF2Peuc6T60_9X_eiqQlFuK2v
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010105
+ mlxscore=0 clxscore=1015 bulkscore=0 suspectscore=0 impostorscore=0
+ spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=883 phishscore=0
+ priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508010105
 
-Rename drm_writeback_connector_init_with_encoder() to
-drm_writeback_connector_init() and adapt its interface to follow
-drmm_writeback_connector_init().
+On Fri, Aug 01, 2025 at 03:40:59PM +0200, Luca Weiss wrote:
+> The qcom_stats driver allows querying sleep stats from various
+> remoteprocs. Add a node to enable it.
+> 
+> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
+> ---
+>  arch/arm64/boot/dts/qcom/sm6350.dtsi | 5 +++++
+>  1 file changed, 5 insertions(+)
+> 
 
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
----
- drivers/gpu/drm/drm_writeback.c | 14 +++++++-------
- include/drm/drm_writeback.h     | 10 +++++-----
- 2 files changed, 12 insertions(+), 12 deletions(-)
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-diff --git a/drivers/gpu/drm/drm_writeback.c b/drivers/gpu/drm/drm_writeback.c
-index 1a01df91b2c5868e158d489b782f4c57c61a272c..ec2575c4c21b7449707b0595322e2202a0cf9865 100644
---- a/drivers/gpu/drm/drm_writeback.c
-+++ b/drivers/gpu/drm/drm_writeback.c
-@@ -235,7 +235,7 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
- }
- 
- /**
-- * drm_writeback_connector_init_with_encoder - Initialize a writeback connector with
-+ * drm_writeback_connector_init - Initialize a writeback connector with
-  * a custom encoder
-  *
-  * @dev: DRM device
-@@ -263,11 +263,11 @@ static int __drm_writeback_connector_init(struct drm_device *dev,
-  *
-  * Returns: 0 on success, or a negative error code
-  */
--int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
--					      struct drm_writeback_connector *wb_connector,
--					      struct drm_encoder *enc,
--					      const struct drm_connector_funcs *con_funcs,
--					      const u32 *formats, int n_formats)
-+int drm_writeback_connector_init(struct drm_device *dev,
-+				 struct drm_writeback_connector *wb_connector,
-+				 const struct drm_connector_funcs *con_funcs,
-+				 struct drm_encoder *enc,
-+				 const u32 *formats, int n_formats)
- {
- 	struct drm_connector *connector = &wb_connector->base;
- 	int ret;
-@@ -284,7 +284,7 @@ int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
- 
- 	return ret;
- }
--EXPORT_SYMBOL(drm_writeback_connector_init_with_encoder);
-+EXPORT_SYMBOL(drm_writeback_connector_init);
- 
- /**
-  * drm_writeback_connector_cleanup - Cleanup the writeback connector
-diff --git a/include/drm/drm_writeback.h b/include/drm/drm_writeback.h
-index 879ca103320cc225ffb3687419088361315535fc..958466a05e604b387722610fc11f9e841316d21b 100644
---- a/include/drm/drm_writeback.h
-+++ b/include/drm/drm_writeback.h
-@@ -137,11 +137,11 @@ drm_connector_to_writeback(struct drm_connector *connector)
- 	return container_of(connector, struct drm_writeback_connector, base);
- }
- 
--int drm_writeback_connector_init_with_encoder(struct drm_device *dev,
--				struct drm_writeback_connector *wb_connector,
--				struct drm_encoder *enc,
--				const struct drm_connector_funcs *con_funcs, const u32 *formats,
--				int n_formats);
-+int drm_writeback_connector_init(struct drm_device *dev,
-+				 struct drm_writeback_connector *wb_connector,
-+				 const struct drm_connector_funcs *con_funcs,
-+				 struct drm_encoder *enc,
-+				 const u32 *formats, int n_formats);
- 
- int drmm_writeback_connector_init(struct drm_device *dev,
- 				  struct drm_writeback_connector *wb_connector,
 
 -- 
-2.39.5
-
+With best wishes
+Dmitry
 
