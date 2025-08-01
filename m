@@ -1,259 +1,146 @@
-Return-Path: <linux-kernel+bounces-753511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450E2B18403
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:37:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BA27B18406
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:38:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B81174D31
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:37:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8AB0B3AE656
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:38:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7515126E6E3;
-	Fri,  1 Aug 2025 14:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D1EE26FDA3;
+	Fri,  1 Aug 2025 14:37:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aA7VZBtG"
-Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jb1ziA0A"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017221ABAD
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:37:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBE5021ABAD;
+	Fri,  1 Aug 2025 14:37:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059069; cv=none; b=pOF7LyV/84u7xqByfbtp6v2NWm6fcRL5vBMaIDzoxyGJaoeryq1C8wLLn25U8xCwhVpGBBTZF/cyX4YCZ15e9h4hxoRZBxZjctXSYB55WXGn5C7JSXqKAMShRKWF5127B8XNSw6AAZPU6UG+a5R3xQ1+kBAG6SsFDk5qulVTYqs=
+	t=1754059075; cv=none; b=j1vX4sxDBy/9V6dZTwFcqXEynBHVvZlW6gWZLLnMVjOpSW1T5tIjTZH4DNJPH663swVCbGq09emFMBJei59mi3kRaxS5dw3mAviL+SgIWAnHZt1J6cCGxk0ktxsizTFhc2oSUH4G6DY4j2LJHazFCsTphZkxl6hHe5FLu+ql0bw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059069; c=relaxed/simple;
-	bh=NKKdjAQ3G5+Vd85KL39xBwn9YfuWKoWTVGqWY7DyZ1M=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=H3JyNvsGoQKPFqTzgKy6fbx93IeEB8KUV5gohT7EfRk5/9iW40Js2KXHVuqkg+DeAl5kMzv4TdNIaRmXnb57bpMTIYK1o1lgAQIM3lcPO/XPS8ntHEhUYcCUzCuMSHkDyAAirZlsEu4KVYANALS4AKPh0hXhjLUA8j2fgUHOSwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aA7VZBtG; arc=none smtp.client-ip=209.85.214.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-240012b74dfso8720305ad.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:37:47 -0700 (PDT)
+	s=arc-20240116; t=1754059075; c=relaxed/simple;
+	bh=+XF6yjXcxLQIbrAsZMYEVZBgCBcPV2NMJeR7aT3pBPM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FlMbXhRCZJbhnymOifc8QMNWxVqC3zqskYEoiuEl7YejtdoEzg6u81bLwkYUmMiW9Sh3w5KWPHq90wbb1YvOiVQz95BPsPzJeR7FO+tFh9+joQFP0VbdsnYCGozbbLsgJ0IJZLanoriM8lNMzD7S8gwW6WwsncJxLXnW3HG/RMc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jb1ziA0A; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-455f151fe61so1881775e9.0;
+        Fri, 01 Aug 2025 07:37:53 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754059067; x=1754663867; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOlHgDPsy2Fr6zSw+wwR0RuNJNvFscDpq9lae4rfQXM=;
-        b=aA7VZBtGzkLAbKzMkrrFI59PH9HA5CA2PUAaMk5JjVwRptIUtKdT93YDCFk38I2px1
-         0MmOoKHZ32HpPZxN2e9xwb0xAhA6L8cPIWMVVjG51hD8cUhOBcHAJ2Xxr6l/d5X2vDxr
-         z6MCUQJp2eYXNaV7aCC9KnWoS5gkply8fRRq5a08INU3NuxWYN/qfeZvquMMMBVN7vM2
-         VqQz8E2X+zRlULbga34A4OvUUnHhO+3EfQ6hQa4pvDHrCexw8C5WsprWmw2J4C9kvYcT
-         TiYQ5CJ8txwTo3PXvWMBnaRu40790y3jz6DOT3++ghgcIozJ3Sq3rP7bEP2YVJ6r8Y7t
-         REdA==
+        d=gmail.com; s=20230601; t=1754059072; x=1754663872; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=eaWMGQT2XZF0zuRN1qxbhYwli8Qn/DH5XeR8hdE3Zpo=;
+        b=jb1ziA0AQga8n+erlP+LQVYugEGdxdJ9+owfSpqMvJHnmcLK6H+TNU2n6e1l78IxE7
+         oU2xs1JNun30GJ6e+gaEpNweym5vP2A/OOHKoTW0D79tMphhw65fd8rKLBS2pSOKMWq8
+         ktx5Biq6DD/UrSblgBZwTTz6G0/2QpSHBhnN4WNlRY1GJx1No50bj3MulVUpn863prhc
+         KjLjfEeTU4D39Q+KRYufwIfKwl1jCikKQIeR/GSuvvemAWH/9am40nHtzGzoK66BEZ8e
+         rROGG2N7KM7W5Noof8jXyjIPs88Rmh+jO/N8dkskA5xJPj0uE482oT6mwiwbnxwThnm+
+         8VWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754059067; x=1754663867;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=yOlHgDPsy2Fr6zSw+wwR0RuNJNvFscDpq9lae4rfQXM=;
-        b=sBwQpeG8XwVZ+aUQyWhqRztS0GqF+O+uk5wXxyIsMIDeQAVPuvfXJZiSJ5jtz/BMKi
-         pX2c5seVI/35smkm7eZhBamFnic+iWtuyDsQe+3fKtaIIHEJCS13IJxkInN2sV6XDmQw
-         wMlU/qoaAr+8y6JJ1wgnsRJtFWGxBx5o/s4eW6H+GQIUmxslVZ07dSJfUmHhxPcv6KH+
-         uo3MAWtp9cO0qenPAFHUzcKV+t+VEdBvr/Gtpaahf/ehOHLjIWAupbjltEW0Oqp6+9UF
-         O5lhUZKbNwJ7mxZC7qNsFZWLTtRCg4vbm//KVJJrITbHAfGbL6UgvnqD3wWT9dz/JfFd
-         A53Q==
-X-Gm-Message-State: AOJu0Yykd45murFXPzuF8pQPJj8GElkKagB9Cb80Sb9M4j1TMnA8Im46
-	UEO/bixApCKie/Yej4lYVvnr3y9pE7qbhPTES1bsNs2ROyo3c57Ux0QRm8emL2P4hIFnut4Xlks
-	qRHyyKw==
-X-Google-Smtp-Source: AGHT+IF+kb+SCqqqR7Utl6JGMbB+gW9G8CEZFUWQpz5R/1cIPRw8iYhRBptocx8dAQFd0KF7iNgWRtYCR/g=
-X-Received: from pjbpw16.prod.google.com ([2002:a17:90b:2790:b0:311:f699:df0a])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e550:b0:235:779:edf0
- with SMTP id d9443c01a7336-24096c00a4dmr158408115ad.50.1754059067500; Fri, 01
- Aug 2025 07:37:47 -0700 (PDT)
-Date: Fri, 1 Aug 2025 07:37:46 -0700
-In-Reply-To: <20250730174605.1614792-3-xin@zytor.com>
+        d=1e100.net; s=20230601; t=1754059072; x=1754663872;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=eaWMGQT2XZF0zuRN1qxbhYwli8Qn/DH5XeR8hdE3Zpo=;
+        b=pEf5TZo5hJURLIXK8ZKxMSW+F1dW9ko6QORXcygwp8IDJ6/TLJq3k8dJs/sdMQNilA
+         uSgEScKeG+d89zJbCDhtuc3S6kNRJBzfWO6MaDAxt3LHRuZOLki8/krP7cxROPHWMSyF
+         JMlA+sabkP8hsx0B1VxSLsBaoqIR1BL6EDQIO/znTqv1CxNj1dh6Hyo6czdl0uAy9jMG
+         iADvy4C0BFMqfBVtbIcOWzlVSSV/XqWuJ5KQ20kgAdSI9fbAICpmKKAVJHaA47G1KQhn
+         1XalAjCsNqoxptXRtmT+BXtWQmEumv2VZTBIITzre/y/la12WCH/WriidoCSmB6BRcZ2
+         Dbzw==
+X-Forwarded-Encrypted: i=1; AJvYcCV6T/P0xvkrmm0IJiBdPyCTJgYJTFlMMDWjjToz1N3zkpkyLaqA/rGiPB4aNIMLKfgxg83qO36j@vger.kernel.org, AJvYcCXFfkWanysNblFdxk9+lFO3te54VzqigI9aJhUfI7iRueJV+W2B616CuKC1b56eQexzYd/X16MIo4TZJyo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXsutqzPrQtrkTNL+nwkd81OWTD1x5isB29yaFgxFNXTiPq91N
+	TJ0PIGNXn10+X85vw5mrZ+Kmn3iFXQC6293YnKUq1u3LvsyYMEK+cnAZ
+X-Gm-Gg: ASbGncsS3jHRCGyOWy3I3waCMrQAPQ+dY1I7Zp6+y9g250k7P91F085dFvfVrdHWJgn
+	7klTvJrTzG6Dg/cozuFd5IuSvRmT/5FsbHGJKUJnYbCLhYC1bKH8b0+CeQNyvyPRHT4hgawpeBx
+	lGpR7lkw5xRQ7iskBa3KjE1q0nCDZZHgagHzMfBgbB7HGBdM6OtNintk/MHwe0U0FhNSQjwcAIh
+	nRGsGmrO3X9hjtZQvsn7tx6C59jXqwelo5MzL+R5lWPhsZR/1dDFL7vu22YUcibytVBAnCBV0na
+	Y1UwyfbkLh/MSzpBf62NrbK169NUr12IRxdhZc2W/n+QuL8EHJNBMJZUU/ncGOHNgwPelJIs7+T
+	9w4BG6aPNzSth4H/JP5e3HD9udg==
+X-Google-Smtp-Source: AGHT+IFQSGujFLymtt+7W9RElumjhKkLpu+6d1wLH4LW3Puhu+kn+azvFhuphDGxKATMhZp9flLTHg==
+X-Received: by 2002:a05:600c:19cc:b0:456:c48:4907 with SMTP id 5b1f17b1804b1-458b0c21eacmr7758165e9.0.1754059071849;
+        Fri, 01 Aug 2025 07:37:51 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d30d:7300:b5a7:e112:cd90:eb82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3abedesm6209527f8f.3.2025.08.01.07.37.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 07:37:51 -0700 (PDT)
+Date: Fri, 1 Aug 2025 17:37:48 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <20250801143748.q2bchvxkci7in6cj@skbuf>
+References: <aIuEvaSCIQdJWcZx@FUE-ALEWI-WINX>
+ <20250731171642.2jxmhvrlb554mejz@skbuf>
+ <aIvDcxeBPhHADDik@shell.armlinux.org.uk>
+ <20250801110106.ig5n2t5wvzqrsoyj@skbuf>
+ <aIyq9Vg8Tqr5z0Zs@FUE-ALEWI-WINX>
+ <aIyr33e7BUAep2MI@shell.armlinux.org.uk>
+ <aIytuIUN+BSy2Xug@FUE-ALEWI-WINX>
+ <aIyx0OLWGw5zKarX@shell.armlinux.org.uk>
+ <20250801130420.m3fbqlvtzbdo5e5d@skbuf>
+ <aIzI5roBAaRgzXxH@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250730174605.1614792-1-xin@zytor.com> <20250730174605.1614792-3-xin@zytor.com>
-Message-ID: <aIzROnILlYuaE2FB@google.com>
-Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation helpers
-From: Sean Christopherson <seanjc@google.com>
-To: "Xin Li (Intel)" <xin@zytor.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
-	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	chao.gao@intel.com
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIzI5roBAaRgzXxH@shell.armlinux.org.uk>
 
-On Wed, Jul 30, 2025, Xin Li (Intel) wrote:
-> Add helper functions to centralize guest MSR read and write emulation.
-> This change consolidates the MSR emulation logic and makes it easier
-> to extend support for new MSR-related VM exit reasons introduced with
-> the immediate form of MSR instructions.
+On Fri, Aug 01, 2025 at 03:02:14PM +0100, Russell King (Oracle) wrote:
+> It looks like the SerDes driver is managed by the MAC (it validates
+> each mode against the serdes PHY driver's validate function - serdes
+> being mac_dev->fman_mac->serdes. If this SerDes doesn't exist, then
+> only mac_dev->phy_if is supported.
 > 
-> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
-> ---
->  arch/x86/include/asm/kvm_host.h |  1 +
->  arch/x86/kvm/x86.c              | 67 +++++++++++++++++++++++----------
->  2 files changed, 49 insertions(+), 19 deletions(-)
+> So, I don't think there's any need for the Lynx to reach out to the
+> SerDes in mainline as it currently stands.
 > 
-> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-> index f19a76d3ca0e..a854d9a166fe 100644
-> --- a/arch/x86/include/asm/kvm_host.h
-> +++ b/arch/x86/include/asm/kvm_host.h
-> @@ -201,6 +201,7 @@ enum kvm_reg {
->  	VCPU_EXREG_SEGMENTS,
->  	VCPU_EXREG_EXIT_INFO_1,
->  	VCPU_EXREG_EXIT_INFO_2,
-> +	VCPU_EXREG_EDX_EAX,
+> As the SerDes also dictates which modes and is managed by fman, I'd
+> suggest for mainline that the code needs to implement the following
+> pseudocode:
+> 
+> 	config->supported_interfaces = mac_support |
+> 				(pcs->supported_interfaces &
+> 				serdes_supported_interfaces);
+> 
+> rather than the simple "or pcs->supported_interfaces into the
+> supported bitmap" that we can do in other drivers.
 
-I really, really don't want to add a "reg" for this.  It's not an actual register,
-and bleeds details of one specific flow throughout KVM.
+The PCS needs to reach out to the SerDes lane in the more developed
+downstream code due to the need to manage the lane (software-driven link
+training according to 802.3 clause 72) for backplane link modes. The
+AN/LT block is grouped together with the PCS, not with the MAC.
 
-The only path where KVM _needs_ to differentiate between the "legacy" instructions
-and the immediate variants instruction is in the inner RDMSR helper.
+This design decision also makes it so that the other non-critical lane
+management tasks (initialization, power management, figure out supported
+interface modes, reconfiguration upon major reconfig) are done only once
+in a central place (the PCS driver) rather than replicated at the
+following PCS consumer sites (MAC drivers), which all need these features,
+preferably with a unified behavior:
+- drivers/net/dsa/ocelot/seville_vsc9953.c
+- drivers/net/dsa/ocelot/felix_vsc9959.c
+- drivers/net/ethernet/freescale/dpaa2/dpaa2-mac.c
+- drivers/net/ethernet/freescale/fman/fman_memac.c
+- drivers/net/ethernet/freescale/enetc/enetc_pf.c
 
-For the WRMSR helper, KVM can and should simply pass in @data, not pass in a reg
-and then have the helper do an if-else on the reg:
-
-  int kvm_emulate_wrmsr(struct kvm_vcpu *vcpu)
-  {
-  	return __kvm_emulate_wrmsr(vcpu, kvm_rcx_read(vcpu),
-  				   kvm_read_edx_eax(vcpu));
-  }
-  EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr);
-  
-  int kvm_emulate_wrmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
-  {
-  	return __kvm_emulate_wrmsr(vcpu, msr, kvm_register_read(vcpu, reg));
-  }
-  EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr_imm);
-
-And for the RDMSR userspace completion, KVM is already eating an indirect function
-call, so the wrappers can simply pass in the appropriate completion helper.  It
-does mean having to duplicate the vcpu->run->msr.error check, but we'd have to
-duplicate the "r == VCPU_EXREG_EDX_EAX" by sharing a callback, *and* we'd also
-need to be very careful about setting the effective register in the other existing
-flows that utilize complete_fast_rdmsr.
-
-Then to communicate that the legacy form with implicit destination operands is
-being emulated, pass -1 for the register.  It's not the prettiest, but I do like
-using "reg invalid" to communicate that the destination is implicit.
-
-  static int __kvm_emulate_rdmsr(struct kvm_vcpu *vcpu, u32 msr, int reg,
-  			       int (*complete_rdmsr)(struct kvm_vcpu *))
-  {
-  	u64 data;
-  	int r;
-  
-  	r = kvm_get_msr_with_filter(vcpu, msr, &data);
-  	if (!r) {
-  		trace_kvm_msr_read(msr, data);
-  
-  		if (reg < 0) {
-  			kvm_rax_write(vcpu, data & -1u);
-  			kvm_rdx_write(vcpu, (data >> 32) & -1u);
-  		} else {
-  			kvm_register_write(vcpu, reg, data);
-  		}
-  	} else {
-  		/* MSR read failed? See if we should ask user space */
-  		if (kvm_msr_user_space(vcpu, msr, KVM_EXIT_X86_RDMSR, 0,
-  				       complete_rdmsr, r))
-  			return 0;
-  		trace_kvm_msr_read_ex(msr);
-  	}
-  
-  	return kvm_x86_call(complete_emulated_msr)(vcpu, r);
-  }
-  
-  int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
-  {
-  	return __kvm_emulate_rdmsr(vcpu, kvm_rcx_read(vcpu), -1,
-  				   complete_fast_rdmsr);
-  }
-  EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr);
-  
-  int kvm_emulate_rdmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
-  {
-  	vcpu->arch.cui_rdmsr_imm_reg = reg;
-  
-  	return __kvm_emulate_rdmsr(vcpu, msr, reg, complete_fast_rdmsr_imm);
-  }
-  EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr_imm);
-
->  };
->  
->  enum {
-> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
-> index a1c49bc681c4..5086c3b30345 100644
-> --- a/arch/x86/kvm/x86.c
-> +++ b/arch/x86/kvm/x86.c
-> @@ -2024,54 +2024,71 @@ static int kvm_msr_user_space(struct kvm_vcpu *vcpu, u32 index,
->  	return 1;
->  }
->  
-> -int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
-> +static int kvm_emulate_get_msr(struct kvm_vcpu *vcpu, u32 msr, int reg)
-
-Please keep "rdmsr" and "wrmsr" when dealing emulation of those instructions to
-help differentiate from the many other MSR get/set paths.  (ignore the actual
-emulator hooks; that code is crusty, but not worth the churn to clean up).
-
-> @@ -2163,9 +2180,8 @@ static int handle_fastpath_set_tscdeadline(struct kvm_vcpu *vcpu, u64 data)
->  	return 0;
->  }
->  
-> -fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
-> +static fastpath_t handle_set_msr_irqoff(struct kvm_vcpu *vcpu, u32 msr, int reg)
-
-I think it makes sense to (a) add the x86.c code and the vmx.c code in the same
-patch, and then (b) add fastpath support in a separate patch to make the initial
-(combined x86.c + vmx.c) patch easier to review.  Adding the x86.c plumbing/logic
-before the VMX support makes the x86.c change difficult to review, as there are
-no users of the new paths, and the VMX changes are quite tiny.  Ignoring the arch
-boilerplate, the VMX changes barely add anything relative to the x86.c changes.
-
-diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-index ae2c8c10e5d2..757e4bb89f36 100644
---- a/arch/x86/kvm/vmx/vmx.c
-+++ b/arch/x86/kvm/vmx/vmx.c
-@@ -6003,6 +6003,23 @@ static int handle_notify(struct kvm_vcpu *vcpu)
-        return 1;
- }
- 
-+static int vmx_get_msr_imm_reg(struct kvm_vcpu *vcpu)
-+{
-+       return vmx_get_instr_info_reg(vmcs_read32(VMX_INSTRUCTION_INFO))
-+}
-+
-+static int handle_rdmsr_imm(struct kvm_vcpu *vcpu)
-+{
-+       return kvm_emulate_rdmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
-+                                    vmx_get_msr_imm_reg(vcpu));
-+}
-+
-+static int handle_wrmsr_imm(struct kvm_vcpu *vcpu)
-+{
-+       return kvm_emulate_wrmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
-+                                    vmx_get_msr_imm_reg(vcpu));
-+}
-+
- /*
-  * The exit handlers return 1 if the exit was handled fully and guest execution
-  * may resume.  Otherwise they set the kvm_run parameter to indicate what needs
-@@ -6061,6 +6078,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
-        [EXIT_REASON_ENCLS]                   = handle_encls,
-        [EXIT_REASON_BUS_LOCK]                = handle_bus_lock_vmexit,
-        [EXIT_REASON_NOTIFY]                  = handle_notify,
-+       [EXIT_REASON_MSR_READ_IMM]            = handle_rdmsr_imm,
-+       [EXIT_REASON_MSR_WRITE_IMM]           = handle_wrmsr_imm,
- };
- 
- static const int kvm_vmx_max_exit_handlers =
-@@ -6495,6 +6514,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
- #ifdef CONFIG_MITIGATION_RETPOLINE
-        if (exit_reason.basic == EXIT_REASON_MSR_WRITE)
-                return kvm_emulate_wrmsr(vcpu);
-+       else if (exit_reason.basic == EXIT_REASON_MSR_WRITE_IMM)
-+               return handle_wrmsr_imm(vcpu);
-        else if (exit_reason.basic == EXIT_REASON_PREEMPTION_TIMER)
-                return handle_preemption_timer(vcpu);
-        else if (exit_reason.basic == EXIT_REASON_INTERRUPT_WINDOW)
+So, in downstream, yes, the MAC acquires the SerDes lane using
+devm_of_phy_optional_get(), but it just passes it to the PCS and lets it
+do the above.
 
