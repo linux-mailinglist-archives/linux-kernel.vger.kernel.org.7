@@ -1,305 +1,209 @@
-Return-Path: <linux-kernel+bounces-753638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753639-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B2BA5B185C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:28:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 84861B185CB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF70C1C2566A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:28:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1BFE11C24250
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:30:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECEF228CF5D;
-	Fri,  1 Aug 2025 16:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E41E28CF5F;
+	Fri,  1 Aug 2025 16:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="v321MfF2"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="NrLkKbpC"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2069.outbound.protection.outlook.com [40.107.92.69])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3929C1F2C45;
-	Fri,  1 Aug 2025 16:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754065705; cv=none; b=us0N9iUL2Secm3/oMjEQQcfrqaFNf/KlNq85z7YDReTwGsgUtjqlrzTzCxcaX5jcl/Hi4C/HcmTIvcEXahQeevMEGEilvM4fhGh0mDMmrag3tnMGORCB8CiKEVnQvYxdTdt2S5fRlDTYf/TgRYm2AzFEMalJBMu/6oN2ijb7gc8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754065705; c=relaxed/simple;
-	bh=7KN7jxN1xhOuuMgct4p3MSXPg+2R2mCAvX5lQLKS+wI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ToGgHlklueDDWKHK86BE2DjXKEUGs5gUUZhR31erGoeAJRbLQ6V8Ot+xHM4cV8t+A+JEvJznABoZao/7jPjSYDVIi/tHg9P9Y7DRPH3fS9hSaBbZcJG01sXgGI1q/LHQW16R1S2AxI9NHsRu5y3vXByH24uJHiWjl+2+9O+6Lg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=v321MfF2; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 571GRqDD2947859
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Fri, 1 Aug 2025 09:27:53 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 571GRqDD2947859
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754065674;
-	bh=OLtNWbgnEawrqTKJxWuW7Pqkf2cPjeHWlfO8F9mfG3Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=v321MfF2NHtBPo6fPuxU8Iyzhcc/zIbyXRhZnIKDCVwfrpo6yeTXZtA3gbXBgg8GK
-	 Wn2AWemVe3iM3El1/xKU7O9umGCcdETZdJQvh4tASwD6Zw5l6AH/7q+0ySgezDZiRs
-	 cYCHcDh7HJhJx5ENZHuiRM9IaGMJOGEOXqk0WTiF/AAh0/EkXDjXVEAVi0YUJA2GGv
-	 1/zZKdyyNc+WOdIEyQY6bbyU5PNCxQjHU/JEHWoZS2JZ/22cn4GJ0h90FnRzgG5sLo
-	 /0hweQXLFvvWxoxqvCOKh0snH8LJ6xkwuoFnG2neawVX5M3QlpxpTMqiNVpTrymrZZ
-	 qo7KJuLhUdObA==
-Message-ID: <72a0c74e-529a-4b1e-bf9c-07468caa24d4@zytor.com>
-Date: Fri, 1 Aug 2025 09:27:52 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0460B2063FD;
+	Fri,  1 Aug 2025 16:29:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.69
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754065778; cv=fail; b=dTDHJ4lzBV+HQ0tSanVAG5GErps5snX+fqmaqRc8moq2dYfEuXrf7IOcQQf+Q/EtKu+bKLZVlzqQ4IF++Dh0t0aoVCQCJcdNR7sL6qdZj+PyGcZ1rMOw0HVVwuhE0oQ53FbWa9kR+qoPmsdPfVhR1+9uuWGEbVioJsPxPZFXhdQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754065778; c=relaxed/simple;
+	bh=yLcBcgg1fYMuGCl7zYc2TSahI6fel/u3GS0DAiTRaGU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=H6RsUYzjR9TbtRFTUR7u5bZhXQ0WzQ24ug5FoJQiZHQ8YVapdqvbvAiBhAztaueCM63Ej5oDJ+H1MwXAc2ztYi3x4o0KFU02ptBLsIklWzvEhNI1xGGowBOafd0GEKDcxP33kJQbGDiyrXNRTbjU3Bmjn0gC0AtZ/Gjhxr0w61c=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=NrLkKbpC; arc=fail smtp.client-ip=40.107.92.69
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=D2H3oXkqvw3iZWVinRSowcrxvH6CvkGeTL/+ZUdvL8bW0/37RMuDV4t18Xuz+LcXWX/QRijRUMJ7OLqavw9P7I58dw1yC0HYdoxlUSYNHhPmcDE9qV7hpZiOheJsymqh96VEZC6oCgnWt15AOOhJSrqgZX7GvlsTf3p3CYy+fgUCHngtPyXNe1bCte9eWhYK3mB6q4jz6GYtElAI5kuBSJ4j0xso7m2cStVCytxCriGKqEq2PksqdjncLFuqgPaskFxnA152lq6d5vwTIa+dRQ/kdB1CohreROPIhfr8a+Qi0np+0HOnmMMVihC2ukbno14OUKy31WcFqGPVfZ9T3A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=pJJM4EZKVnt3t+yNadjWzDSo/q5ptRkPqEfLmtp2Vek=;
+ b=ILXeVPJliQCoIk2rr5VAfMswza94TrBs/pPuj5fWCEEJeo2oovTaGGPBWYNR8Nd43KFMl8PFudR9JT8hwUMd7NDgJbMStELQnqXktDH/F5ETtZahuTnTbQ7QH14EsZk2tV+/z0XDq4DpGsqXR8TV4E/cIG0LXjP52VTNj1z3Jj6dRB/RVsk7s0jnG9hdgoYQkS2k3nIowByQDn2Fi8AtVivopQZ3gQRAib1esjYJN5fdOKj/byR3ziF8VV/WNZnjTL8+TOjdTVKaT0QXTREyY4tJEzuzYkMLAnL6F3Eyo/7hWjCUaY55L2v+KXmyDW7606yYxnRSJ9nczIcvr6MuwQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=pJJM4EZKVnt3t+yNadjWzDSo/q5ptRkPqEfLmtp2Vek=;
+ b=NrLkKbpCsA0Fhbs1RpvCKdnnNKewsB12s0tHrlta3u2r3eW1+5fTMLp6SazG8aaK3jgobNjtZEXMpzCFlSFWOVjwRzyx7AaBtbvuc/LqOA8i2QVD+fVwqqiJ7jbvnU9O0/GCv3P3FPCXbKwEYUZdujH50MRv8rKv8ihVc5YOGYGL5/5CLAtMSw1Kz6vRCcnUcNFemsSxwr3puRshb/4cppkjWPSSn6gmL+1XXBoZMLtOb3QQwZ9FhaquZjGfHaFSj+oObiOI4rWPL1p5gTHP1X6aH81ynLoI1ydzlcyo80jXZ2hrTHZZkwzLk2K4NeJ8pDUH8GuMi1FPUBc7NuIpow==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com (2603:10b6:610:17c::13)
+ by PH7PR12MB7281.namprd12.prod.outlook.com (2603:10b6:510:208::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Fri, 1 Aug
+ 2025 16:29:31 +0000
+Received: from CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732]) by CH3PR12MB8659.namprd12.prod.outlook.com
+ ([fe80::6eb6:7d37:7b4b:1732%7]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
+ 16:29:31 +0000
+Date: Fri, 1 Aug 2025 13:29:30 -0300
+From: Jason Gunthorpe <jgg@nvidia.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>,
+	Jens Axboe <axboe@kernel.dk>,
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>,
+	Amir Goldstein <amir73il@gmail.com>, Kees Cook <kees@kernel.org>,
+	Josef Bacik <josef@toxicpanda.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Pedro Falcato <pfalcato@suse.de>, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+	David Hildenbrand <david@redhat.com>
+Subject: Re: [PATCH 00/10] convert the majority of file systems to
+ mmap_prepare
+Message-ID: <20250801162930.GB184255@nvidia.com>
+References: <cover.1750099179.git.lorenzo.stoakes@oracle.com>
+ <20250801140057.GA245321@nvidia.com>
+ <3cf76128-390a-4ef2-85a7-e3ee21ba04b5@lucifer.local>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3cf76128-390a-4ef2-85a7-e3ee21ba04b5@lucifer.local>
+X-ClientProxiedBy: YT4PR01CA0157.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:b01:ac::29) To CH3PR12MB8659.namprd12.prod.outlook.com
+ (2603:10b6:610:17c::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation
- helpers
-To: Sean Christopherson <seanjc@google.com>
-Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com,
-        tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-        dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com,
-        chao.gao@intel.com
-References: <20250730174605.1614792-1-xin@zytor.com>
- <20250730174605.1614792-3-xin@zytor.com> <aIzROnILlYuaE2FB@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aIzROnILlYuaE2FB@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR12MB8659:EE_|PH7PR12MB7281:EE_
+X-MS-Office365-Filtering-Correlation-Id: 88bb2e3d-65e7-4277-8328-08ddd11897c2
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?6bXujqj7XFkkwTg7yoVHCuHF8Nps+EKlGQpwW8mdbUqIvef0BJ8fYwakmBZD?=
+ =?us-ascii?Q?v0GOtVYLkHpPuY+5EdM6/IojMBBtfmqDUopiVRtQ5p8N1OapSl0GCXfPA6eA?=
+ =?us-ascii?Q?lSSn2GPqJTDNRFafqPn3UpXU1br4ihDNzdYNujF4TySO/KC3059Dr1BislNN?=
+ =?us-ascii?Q?qR0rNu8356CT2DheqSHsxWRRj/CFJ868tTaiM/aW1ps3yWbfviRfs8m1rwzc?=
+ =?us-ascii?Q?Lm6ErqBWVlUAWMDcL+1ucvouGb7nn0fZm8BeTQc8j/WcgMS1fgexAT58sVxL?=
+ =?us-ascii?Q?DWGDQFtghr44ishsDP22wUYoM5Q8ngqjd6jc49dqHyxbM9NddO9H2wVd0HT1?=
+ =?us-ascii?Q?OaOUdTQUwwBj2MiyKpT8fmbclVN11QdETWNWpvbP76q+1Qz+Ni0EYJJmGfq3?=
+ =?us-ascii?Q?4jVu9bCn9BFUpLkOzw1tO2lOcrSARgLOPFJmoSI664e3soPvCJnz7wVbgf1v?=
+ =?us-ascii?Q?N+KDasTr2q10RCLKxQAvV5T6PNWdxbqc72rHe8cYfdYj4tSR98TvBjFQQno+?=
+ =?us-ascii?Q?qMPJqzskfIsGFHPcX8CNLvmdTSLlzuw3Sif6ttMs9rEb/7JV7/sv8ZyIOJuv?=
+ =?us-ascii?Q?8aGNoxMsKfbjkFAjJmxfbTSAnLxbkCwlVw8KhwGoOTrGwVofVrQELggwfX3A?=
+ =?us-ascii?Q?9ufQV7wesutA4YyPDBTnbRJD98oRLYpExU8lzloQ535OMcrtMJf0uy6ys5ca?=
+ =?us-ascii?Q?itjYPYjg+nTkLkYl0HSEkcSGoWn65CY4XQewO/f3mm4w6u9on1s4rsxmvHJh?=
+ =?us-ascii?Q?C4dnLOjS5XZPfZnWNB2YEpzagE5bEelMYM+PT/DlHrxnqvObM7qL4CBTWYxu?=
+ =?us-ascii?Q?1BFlhR7eKW6M+yicQQgmoA8C0olSF8wNry0E1OMZaycbDx0J5inujQPgKvp+?=
+ =?us-ascii?Q?yaH1eTXk44Vu5rLJLytQ9HhkWL4X7fVtkFPgn4zuuVkvKnzsvoarzTuKxw9+?=
+ =?us-ascii?Q?3Puk/+7W1v9EL7+7veImaYqjI4lKzawmy66CcKT5yVKtRtOsOWxdZa4Kxtvj?=
+ =?us-ascii?Q?L03ikyjDG2/qQaNYwEN30yGgivqDl4o+BNR98DmHCjdam1wPD7yn8St0+s0M?=
+ =?us-ascii?Q?eP3zFfUGPc/M55utLQTW4yl7xztbzld26vAMQxBw7Kd0TH/2noV3rIWP9nbw?=
+ =?us-ascii?Q?nWO6d7HAlF4+4y2xokdOMdXBt1QmdtHwmVP8481QH6oqomd4Lutq7XmTvxsf?=
+ =?us-ascii?Q?fS3zRP4wNNN8if6NGfiaNJ+SZK7Q1OKMZBZRa9mhvbe0gFByS2vLbaVxbhgE?=
+ =?us-ascii?Q?6CllMgL9/yqjZkohpKx1WdfH7WDi+jgOq6wy2iIQ3GUZmnYci5HVJFbA5/Sx?=
+ =?us-ascii?Q?IZDrRqwOt8WaUEQj1lL5tpGwU113a41MIfGcxQbb1HzMttD+9E6wvHmkLiof?=
+ =?us-ascii?Q?KhD/2WqJBl0gZGPCoXVSPY+/tkkEnxGbx98qtUXu9jzb3jewfw=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR12MB8659.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?/eCvRK1UlY1d6/9xJaFu5mW7W/n6j/XZnxDxlI56LkBAXpds/JRuqfponf+/?=
+ =?us-ascii?Q?OGgBAb8789of5qfqu30SCpIvC8/4m4C0uR/C11vBHBxCHlpM1KAJNUTiqe8X?=
+ =?us-ascii?Q?eKR/1t6lHgAZIuB/V8TsdnAMn3HPwbaLVourho32nuLb9ho172GQbURu0WF6?=
+ =?us-ascii?Q?lc2Xeowz5XXLCXYqXhTJVL+XM6PKjchUTyMX0wb9ASp90se4IY9L0waHvWqS?=
+ =?us-ascii?Q?L2geEJBSRN439jOYJqXplZuPFmYelMYxQHI7ngvpiNCvXwKBH1Yiv85ExJjl?=
+ =?us-ascii?Q?pJaVzHhJZqh/4tCBNUzAT6LrvGmoNa7/X6u4qE9AV+B2UgQXcwei/Zvo2pP5?=
+ =?us-ascii?Q?gqTzNAsGxYvR7XAASYd0TPdweK6h8DAyEjZgmyus3XNdXiccFCp7VcW7NFck?=
+ =?us-ascii?Q?higm5i8fKMSJ4N7nfvGbdJG7VAAAhK7VEDS9i0uzksvPSiJ/GUDV8E/a7GVB?=
+ =?us-ascii?Q?dhJ4kwezOoE7YAf4AJvCwpvPdbnpHm48L3zHmQwRLXyyea/wn2Cg5bu/kQFw?=
+ =?us-ascii?Q?mYR7/VDqx3H+WWoI3pJIu7Wow/bPxxkEgvBptf9VJB6TCZR3Q51HZ3VxF6SZ?=
+ =?us-ascii?Q?v0C6G56EP7IRtra9wJBTH76rPG1KHRJ8Tco9CMVdxVS0/e+ny41sgoBaMUz8?=
+ =?us-ascii?Q?1X+9G2uiyDgy7fmHYaaVencFXIm/hbC4RiR1/ranlgChYGwrygV9hehAD7fW?=
+ =?us-ascii?Q?tOi56yTdC7DBhCcWoytgQCC9SwahzJaa21lHOlSqWHX7DXk6ydQRjCyCYBKk?=
+ =?us-ascii?Q?4hI2IJ7X5EGUxw1YIbd5qTdD3uZC7rBTsiaFiObn9Tr8D8w6OdVi1CcynEP7?=
+ =?us-ascii?Q?eFdOL+6D7WlVNbi9EbPiBETQLvQOU95wZzsaNfYgHU5lJ5lFPpzw1QrbJHeD?=
+ =?us-ascii?Q?THbuY64qNV5Elfvaxy/P+w/l6/q0TKwERE9u355vyeSWXKOmHMqBZceozNnb?=
+ =?us-ascii?Q?pRG0icZHhMSQOjuY9NYW4z+GPo2ka3QlOr45T8T1bF+JTKUkhxpZgEeGvPHI?=
+ =?us-ascii?Q?BDMXy4WZVbhqV2hrOcd2OwIyq+7CeiGLKUyIHNX3w9TwyeuLld7Xqu6QOJwX?=
+ =?us-ascii?Q?pLdRlL23t/g1JzsqCaud5rUw5dTADYZOpQE/lPACEYgZEnEhFyaXumqmDmMr?=
+ =?us-ascii?Q?zWp7KL+EVdje+uLexocE69V97Vfkv7lBSqYovcVoT9BRihn9vBlDrkB28Lsu?=
+ =?us-ascii?Q?mmUIi0ZN77zSbw/aYBo0Kwmlbkx0z7vVkPwvVWTV3ToI8kgAoNkTZeeLhfSq?=
+ =?us-ascii?Q?0sem4ksVT3ZnFTeEo/pbU5xhbZXquFbf7Qby/4eisN6VBSumOoC/jWxX/IJI?=
+ =?us-ascii?Q?fp38SMGcCFth0idJa/7gSs4zMgVBuup3sksjdqmGkE8zQURWm2zEYA7OV6Zh?=
+ =?us-ascii?Q?MSx7Um+XAXDUeH7VE25LMFU2s5ECoIx34Hed7fy9Pf3lk4tXrdrAVtTqtSaF?=
+ =?us-ascii?Q?ZQ3YEa40Nhe6Rjb3jkuMwDYE0Aa52sx9E7F8VC5H61rJBpc8kVgFTiy1lcCS?=
+ =?us-ascii?Q?w11LpmbV0a5JenZGeU5W/YRmEx+6669zXGSROiEDzXOJrquRlNPAUdafk4AF?=
+ =?us-ascii?Q?JnPTkA+uKWhtrbyHuRI=3D?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 88bb2e3d-65e7-4277-8328-08ddd11897c2
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR12MB8659.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 16:29:31.3585
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: F6pt/ZToG53hF2HArccnZg2upkh5UNLJe4eGTZmksj4NCMoklVLXZUEaEM01Z2EQ
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7281
 
-On 8/1/2025 7:37 AM, Sean Christopherson wrote:
-> On Wed, Jul 30, 2025, Xin Li (Intel) wrote:
->> Add helper functions to centralize guest MSR read and write emulation.
->> This change consolidates the MSR emulation logic and makes it easier
->> to extend support for new MSR-related VM exit reasons introduced with
->> the immediate form of MSR instructions.
->>
->> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
->> ---
->>   arch/x86/include/asm/kvm_host.h |  1 +
->>   arch/x86/kvm/x86.c              | 67 +++++++++++++++++++++++----------
->>   2 files changed, 49 insertions(+), 19 deletions(-)
->>
->> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
->> index f19a76d3ca0e..a854d9a166fe 100644
->> --- a/arch/x86/include/asm/kvm_host.h
->> +++ b/arch/x86/include/asm/kvm_host.h
->> @@ -201,6 +201,7 @@ enum kvm_reg {
->>   	VCPU_EXREG_SEGMENTS,
->>   	VCPU_EXREG_EXIT_INFO_1,
->>   	VCPU_EXREG_EXIT_INFO_2,
->> +	VCPU_EXREG_EDX_EAX,
+On Fri, Aug 01, 2025 at 03:12:48PM +0100, Lorenzo Stoakes wrote:
+> > I would like to suggest we add a vma->prepopulate() callback which is
+> > where the remap_pfn should go. Once the VMA is finalized and fully
+> > operational the vma_ops have the opportunity to prepopulate any PTEs.
 > 
-> I really, really don't want to add a "reg" for this.  It's not an actual register,
-> and bleeds details of one specific flow throughout KVM.
+> I assume you mean vma->vm_ops->prepopulate ?
 
-Sure.
+Yes
 
-> 
-> The only path where KVM _needs_ to differentiate between the "legacy" instructions
-> and the immediate variants instruction is in the inner RDMSR helper.
-> 
-> For the WRMSR helper, KVM can and should simply pass in @data, not pass in a reg
-> and then have the helper do an if-else on the reg:
+> We also have to think about other places where we prepopulate also, for
+> instance the perf mmap call now prepopulates (ahem that was me).
 
-My initial patch passes @data in the WRMSR path, but to make it 
-consistent with the handling of RDMSR I changed it to @reg.
+Yes, vfio would also like to do this but can't due to the below issue.
 
-Yes, passing @data makes more sense because it hides unneccesary details.
+> > This could then actually be locked properly so it is safe with
+> > concurrent unmap_mapping_range() (current mmap callback is not safe)
+> 
+> Which lock in particular is problematic? You'd want to hold an rmap write
+> lock to avoid racing zap?
 
-> 
->    int kvm_emulate_wrmsr(struct kvm_vcpu *vcpu)
->    {
->    	return __kvm_emulate_wrmsr(vcpu, kvm_rcx_read(vcpu),
->    				   kvm_read_edx_eax(vcpu));
->    }
->    EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr);
->    
->    int kvm_emulate_wrmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
->    {
->    	return __kvm_emulate_wrmsr(vcpu, msr, kvm_register_read(vcpu, reg));
->    }
->    EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr_imm);
-> 
-> And for the RDMSR userspace completion, KVM is already eating an indirect function
-> call, so the wrappers can simply pass in the appropriate completion helper.  It
-> does mean having to duplicate the vcpu->run->msr.error check, but we'd have to
-> duplicate the "r == VCPU_EXREG_EDX_EAX" by sharing a callback, *and* we'd also
-> need to be very careful about setting the effective register in the other existing
-> flows that utilize complete_fast_rdmsr.
-> 
-> Then to communicate that the legacy form with implicit destination operands is
-> being emulated, pass -1 for the register.  It's not the prettiest, but I do like
-> using "reg invalid" to communicate that the destination is implicit.
-> 
->    static int __kvm_emulate_rdmsr(struct kvm_vcpu *vcpu, u32 msr, int reg,
->    			       int (*complete_rdmsr)(struct kvm_vcpu *))
+I have forgotten, but there was a race with how the current mmap op
+was called relative to when the VMA was tracked.
 
-Yeah, it is a clean way to pass a userspace completion callback.
+ie we should be able to do 
 
->    {
->    	u64 data;
->    	int r;
->    
->    	r = kvm_get_msr_with_filter(vcpu, msr, &data);
->    	if (!r) {
->    		trace_kvm_msr_read(msr, data);
->    
->    		if (reg < 0) {
->    			kvm_rax_write(vcpu, data & -1u);
->    			kvm_rdx_write(vcpu, (data >> 32) & -1u);
->    		} else {
->    			kvm_register_write(vcpu, reg, data);
->    		}
->    	} else {
->    		/* MSR read failed? See if we should ask user space */
->    		if (kvm_msr_user_space(vcpu, msr, KVM_EXIT_X86_RDMSR, 0,
->    				       complete_rdmsr, r))
->    			return 0;
->    		trace_kvm_msr_read_ex(msr);
->    	}
->    
->    	return kvm_x86_call(complete_emulated_msr)(vcpu, r);
->    }
->    
->    int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
->    {
->    	return __kvm_emulate_rdmsr(vcpu, kvm_rcx_read(vcpu), -1,
->    				   complete_fast_rdmsr);
->    }
->    EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr);
->    
->    int kvm_emulate_rdmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
->    {
->    	vcpu->arch.cui_rdmsr_imm_reg = reg;
->    
->    	return __kvm_emulate_rdmsr(vcpu, msr, reg, complete_fast_rdmsr_imm);
->    }
->    EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr_imm);
-> 
->>   };
->>   
->>   enum {
->> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
->> index a1c49bc681c4..5086c3b30345 100644
->> --- a/arch/x86/kvm/x86.c
->> +++ b/arch/x86/kvm/x86.c
->> @@ -2024,54 +2024,71 @@ static int kvm_msr_user_space(struct kvm_vcpu *vcpu, u32 index,
->>   	return 1;
->>   }
->>   
->> -int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
->> +static int kvm_emulate_get_msr(struct kvm_vcpu *vcpu, u32 msr, int reg)
-> 
-> Please keep "rdmsr" and "wrmsr" when dealing emulation of those instructions to
-> help differentiate from the many other MSR get/set paths.  (ignore the actual
-> emulator hooks; that code is crusty, but not worth the churn to clean up).
+     CPU0                              CPU1
+vm_ops_prepopulate()
+   mutex_lock()
+   if (!is_mapping_valid)
+      return -EINVAL;                                       
+   <fill ptes>
+   mutex_unlock()
+                                        mutex_lock()
+					is_mapping_valid = false
+					unmap_mapping_range()	  
+                                        mutex_unlock()
 
-Once the rules are laid out, it's easy to act :)
+And be sure there are no races. Use the lock of your choice for the
+mutex.
 
-> 
->> @@ -2163,9 +2180,8 @@ static int handle_fastpath_set_tscdeadline(struct kvm_vcpu *vcpu, u64 data)
->>   	return 0;
->>   }
->>   
->> -fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
->> +static fastpath_t handle_set_msr_irqoff(struct kvm_vcpu *vcpu, u32 msr, int reg)
-> 
-> I think it makes sense to (a) add the x86.c code and the vmx.c code in the same
-> patch, and then (b) add fastpath support in a separate patch to make the initial
-> (combined x86.c + vmx.c) patch easier to review.  Adding the x86.c plumbing/logic
-> before the VMX support makes the x86.c change difficult to review, as there are
-> no users of the new paths, and the VMX changes are quite tiny.  Ignoring the arch
-> boilerplate, the VMX changes barely add anything relative to the x86.c changes.
+The above is not true today under mmap, IIRC the VMA is not added to
+the lists that unmap_mapping_range walks until after mmap() returns.
 
-Will do.
-
-> 
-> diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
-> index ae2c8c10e5d2..757e4bb89f36 100644
-> --- a/arch/x86/kvm/vmx/vmx.c
-> +++ b/arch/x86/kvm/vmx/vmx.c
-> @@ -6003,6 +6003,23 @@ static int handle_notify(struct kvm_vcpu *vcpu)
->          return 1;
->   }
->   
-> +static int vmx_get_msr_imm_reg(struct kvm_vcpu *vcpu)
-> +{
-> +       return vmx_get_instr_info_reg(vmcs_read32(VMX_INSTRUCTION_INFO))
-> +}
-> +
-> +static int handle_rdmsr_imm(struct kvm_vcpu *vcpu)
-> +{
-> +       return kvm_emulate_rdmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
-> +                                    vmx_get_msr_imm_reg(vcpu));
-> +}
-> +
-> +static int handle_wrmsr_imm(struct kvm_vcpu *vcpu)
-> +{
-> +       return kvm_emulate_wrmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
-> +                                    vmx_get_msr_imm_reg(vcpu));
-> +}
-> +
->   /*
->    * The exit handlers return 1 if the exit was handled fully and guest execution
->    * may resume.  Otherwise they set the kvm_run parameter to indicate what needs
-> @@ -6061,6 +6078,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
->          [EXIT_REASON_ENCLS]                   = handle_encls,
->          [EXIT_REASON_BUS_LOCK]                = handle_bus_lock_vmexit,
->          [EXIT_REASON_NOTIFY]                  = handle_notify,
-> +       [EXIT_REASON_MSR_READ_IMM]            = handle_rdmsr_imm,
-> +       [EXIT_REASON_MSR_WRITE_IMM]           = handle_wrmsr_imm,
->   };
->   
->   static const int kvm_vmx_max_exit_handlers =
-> @@ -6495,6 +6514,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
->   #ifdef CONFIG_MITIGATION_RETPOLINE
->          if (exit_reason.basic == EXIT_REASON_MSR_WRITE)
->                  return kvm_emulate_wrmsr(vcpu);
-> +       else if (exit_reason.basic == EXIT_REASON_MSR_WRITE_IMM)
-> +               return handle_wrmsr_imm(vcpu);
->          else if (exit_reason.basic == EXIT_REASON_PREEMPTION_TIMER)
->                  return handle_preemption_timer(vcpu);
->          else if (exit_reason.basic == EXIT_REASON_INTERRUPT_WINDOW)
-> 
-
-Thanks!
-     Xin
+Jason
 
