@@ -1,366 +1,281 @@
-Return-Path: <linux-kernel+bounces-753610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753613-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B856EB18540
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:49:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D13EB18547
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177471887E7F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:49:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDF53583748
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:51:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE31A27AC34;
-	Fri,  1 Aug 2025 15:49:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A7A27AC34;
+	Fri,  1 Aug 2025 15:51:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZ6bKTLA"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JnGDJHEu"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B8027A906
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:49:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063359; cv=none; b=DuLdEs6H7ZyyxTMKfztULynaMvpv4DRbiwV/dPiIqzEwekWkES5OuiCa2myU7lpIufLZzgPHzGxItwrtNn8RbR93c8QiQ7UrydLnpYGm5AZyMb7NXWW9pPkIPUQJQGDWrmpLTDu/MKkwcx3av+be/EBjzv2pxZTH4cLdHOxi6Ls=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063359; c=relaxed/simple;
-	bh=XU5p7WZyqh3uP1O0X5Eh4WB92edzlxU/5ueYZy2GNkU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=L4Sz2RUFwb3ld/8+0/jAOzMF+RO4LQSzXq3i2OS07HmMD02fU1lQxvXRYCc1L70Utu0XHtkNTpU9F6j1oxXyrmpzfAjIA4btjpsQ2ffd2So6q2QeJq0Bn/HWMhuhbGzOPtHFfkJUwQIFETnV82Q+trAv/tBDcE195h3Bd8zS40Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZ6bKTLA; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754063356;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=Az/lcHresqK+moKhYaM464MNdTcCwiYM0QUDNB9aXcU=;
-	b=KZ6bKTLAnQV9yl8LCJA/Y/QnHaBwIIXdX9rSybYCHff26kyxBrnUA2OCZVWjMl7ivuLohe
-	/1m6cK7oRS7kxsS67oR3Q9eC7VMAlfYKCJI8Ulvs2rFpMtfpah7mnew3zhCFjiNSBakabb
-	N661wbrXFdmdReScYVEI3jGlRc0RKBo=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-628-B7FYVT3cPtO-nL2SNO13Cg-1; Fri, 01 Aug 2025 11:49:15 -0400
-X-MC-Unique: B7FYVT3cPtO-nL2SNO13Cg-1
-X-Mimecast-MFC-AGG-ID: B7FYVT3cPtO-nL2SNO13Cg_1754063354
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7865dc367so1168032f8f.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:49:14 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754063354; x=1754668154;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Az/lcHresqK+moKhYaM464MNdTcCwiYM0QUDNB9aXcU=;
-        b=kPgzl110av/4OAE5hEQ6inH/BB0tx+gLHRUrG38cY5ElNbkSdv/7seFMvFK771I0dp
-         tBKJRZtvyRHBR9QUDIisLoPiQ0YbGP1SLdkD5bmjmGS8Po1LLeNDA5vhLIIJ5KG+HmDd
-         E4pVf9WwgvRAX1c5GZ/opbPHMvxCSkjIGN7g+74t+LKpLWPSNrAxFBUGdRSt9O9fxJuE
-         f0IyLK9H6cCErq9ydSMKE1CJD69R5A2/d5zxmfDb532WQ4L/3ikYSSxcsGpEhLeT7qJ/
-         zSFyc7GjTn4dmF06R1jlCbZgqjSKrfPULbJEIRT2Yllx5kral+4UQM3YbfAY7Q4CNm1s
-         AH7w==
-X-Gm-Message-State: AOJu0YziCMBZnkDqNX7bVu1LAii0D6cYDkkrQTt5MNd1ahcCeQFXIcTn
-	gA3PvFddB7qUUUOA+RLkzZB4x3WzHM/TOxw538dHd3HmDum41FkZNSIGe6ctI1lIyCc63eCB4M2
-	xMoe4akuFJpUOz6X8oxqPvYLUKlHYlhGdB5LpQr1434r50PcA5nLtBO7DtNVE3lRfbw==
-X-Gm-Gg: ASbGncvm5Js4Y+158uKB8bRupfFEIv46iKs9IhrW9yLl2hRlcsB7Gtfh0CUTkilgwz8
-	M/4Af4hLThXh6YU4NWGUfi6jBkNKv8+0viMKLNw9rkAmAK9Ad3Wg3wYh89BiMtvxds4LjaDFiW9
-	jt2rgDYZwYjqpEobKtv2iyuDJya9iYmGWtZjDus2hxSLv+DCcbA4NwXSoXssqic3WnyXC2eqGMO
-	NBI16xn/JHz/7apJcz7W0Z7SWb15tFoJpIb085gDlna6dvIIVXtZHfs0tWSEkEVoqkqB7iFf3+O
-	TsVqMxqGLkZAE88IErv98WNkkdInFSNroqOLLbIXF6sA9UTVhnvo2ngK+DFN/SblgduuSCNPtZb
-	XYuvGWQQXA2jMYca7qC6Dwjeb1mpyNsoqPUY1jcXAIgrZJMdGib1dwfctmdmDFc0j
-X-Received: by 2002:a5d:5d0e:0:b0:3b7:89c2:464b with SMTP id ffacd0b85a97d-3b8d946ac69mr243874f8f.5.1754063353692;
-        Fri, 01 Aug 2025 08:49:13 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2DBedDYQ23+gwq7i61urTwz0CARF2LptKXy1Zi0AMl+j8e9WYtV69W+oHsDf1pQvk2OOq0w==
-X-Received: by 2002:a5d:5d0e:0:b0:3b7:89c2:464b with SMTP id ffacd0b85a97d-3b8d946ac69mr243821f8f.5.1754063353088;
-        Fri, 01 Aug 2025 08:49:13 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4818c1sm6216272f8f.65.2025.08.01.08.49.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 08:49:12 -0700 (PDT)
-Message-ID: <d8899e72-5735-4779-9222-5f27f8c16b80@redhat.com>
-Date: Fri, 1 Aug 2025 17:49:10 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA0F11D7E37;
+	Fri,  1 Aug 2025 15:51:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.9
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754063481; cv=fail; b=SvTOzYFJ3Nb7YapKnJ/zPTCSYgaHrWECKgrOK75R/a+Tvb/L0IkmUinYot7leoXImKpDTeBJQohdHkKlV5IPDRGhO9scpmYwh1xFqq2MKcGnFVoivRIo8MFRxONhvW/xpmxGOR6GIQy9kdr8ft0hLaqGoby2kLKQ0I6Hr3mgMQY=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754063481; c=relaxed/simple;
+	bh=Y6BrLjp044d+hncq6bQhOT+F0wXgE9os31UROoZCp6w=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=nGWpzHmIVtNweDeTFcuTChlJZfY6tmotlI+lLF5e3G53gSjnvRGUc7ncvqrWu3q6j96syC5SthmHQW7vVu0mSrQeEdEkLGv18vIvanBpXyyPAJBXuOVG/6NqwEF9ZxNVDn0wcQLxCKw5VwE5LLlykUWZ1s9/1WKumRnnxaXOi6A=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JnGDJHEu; arc=fail smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754063480; x=1785599480;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=Y6BrLjp044d+hncq6bQhOT+F0wXgE9os31UROoZCp6w=;
+  b=JnGDJHEuAFiV7N5NwnlBLHwUDivYYwce+hy5VywouOaA0gs8VyU/sIO5
+   eSFEwMPhmY9eMUqYgyrY0fmFh+cJTf2yVjfLM5Lp84OfH4oIY0BZ2PRK0
+   L+sOYm3VL6hJ7T3QpAO6tXBQu2c9Z4s2cu4SPt5hUU9WvH+BfFqiz6fUH
+   In2oylk2YQXwWKDqxwigDSNKWXeTIFHJ+jxH8oYTVULQyYmXmaUzFf9tu
+   bNYgYs/dTbOvXl9CO83b8nDBRV5j+mVeWvqx8OwfqKEpnxEJuddDyR/1N
+   GPwNzCErQGELrx926PWmSOi+1MwM90ThDWvB+gxnBc0Fw2eiSn5VYIQ1b
+   g==;
+X-CSE-ConnectionGUID: MgMtrRrpRZ6DFi9rkeSZMg==
+X-CSE-MsgGUID: 5ANZTg16SDWEnrW5WG7/GQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="78967114"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="78967114"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 08:51:15 -0700
+X-CSE-ConnectionGUID: 67qthLFZT+27Hd5VjKe2mg==
+X-CSE-MsgGUID: F9dLx+PVQkOpsLWr3TrPhA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="194554401"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa002.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 08:51:14 -0700
+Received: from ORSMSX902.amr.corp.intel.com (10.22.229.24) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 1 Aug 2025 08:51:13 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Fri, 1 Aug 2025 08:51:13 -0700
+Received: from NAM04-DM6-obe.outbound.protection.outlook.com (40.107.102.71)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 1 Aug 2025 08:51:12 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=fj8Gju0lBn0Af2cyF7dHg1rhInzSuH1B/36RzVkeIbCNLonO+9tx4ro2YrJvpUoeXcs8blg5cnNyscpd6tP/z+qBVTmO/fmdl6tP8dwqfZdsK4pIjg3HjMisNDHiBovM2StIar4Cs5Ell8Z0kDFxU05svasxFrmQLFnN5l0P+bC53w0RKYPbr8l4ADfXdfpkA4LV89GjnJvf8ZaF9R5wSY2jVLHlIEMBoJqBUk1AlcTKwWksDJyAfmniqdJuVeqHLGLMXzuNa2pwiN2Mfd4fkg3mpD+yxgfH6/h/EsbXgP6/MEFxVS3K5LCnBZuh6r0Cn6kIO4LJxChRGyGnhMVw0Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=EUqFGC4Vrdea4RaPYvjnPbFVnwLxu3db9Xb2WDQuY88=;
+ b=f6JQfdpJcfT7Aa46uBghV9iQs7kjlUHH+Zv7O8CgHjT/U9K9oGUDAKMJ1UTyx6gQxc5vjeiQdO3t1+vEm1wZzqN62wnwh/ShKvwUEBZbbP7x7bSGL+geHkNvzoejoQHwU0fGCV2F069LJHv/stNKv5Lsc/acYxtSPizE+0ZclYvekgfo/+1nrHDS5056OVU0FwJb92HGBpbC25qk9vobuULbech9N3LXGmZoHcGGFzjMJice/2bOSnm1PFQlHsuybg4AEh7KDk8y1cXIGvS4EquBxjsxvgFzomu8gp+5lS+/EK9/xV/3fPRrkQQlwZhJSHxJXFYwxLKNyoTdDNN7mw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from SA1PR11MB7130.namprd11.prod.outlook.com (2603:10b6:806:29f::10)
+ by MW4PR11MB6715.namprd11.prod.outlook.com (2603:10b6:303:20e::15) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Fri, 1 Aug
+ 2025 15:50:43 +0000
+Received: from SA1PR11MB7130.namprd11.prod.outlook.com
+ ([fe80::fc98:7fe:bac0:f2d4]) by SA1PR11MB7130.namprd11.prod.outlook.com
+ ([fe80::fc98:7fe:bac0:f2d4%4]) with mapi id 15.20.8989.010; Fri, 1 Aug 2025
+ 15:50:43 +0000
+From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
+To: Kyle Manna <kyle@kylemanna.com>, "Luck, Tony" <tony.luck@intel.com>,
+	Borislav Petkov <bp@alien8.de>, Jason Baron <jbaron@akamai.com>
+CC: James Jernigan <jameswestonjernigan@gmail.com>, James Morse
+	<james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Robert
+ Richter" <rric@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
+	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: RE: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
+ for EDAC support
+Thread-Topic: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
+ for EDAC support
+Thread-Index: AQHb/GafXcVlZ3WZRkiBtd6ukhBRJbRBVQ7ggADIQoCAC9vO0A==
+Date: Fri, 1 Aug 2025 15:50:43 +0000
+Message-ID: <SA1PR11MB71307A62016838428EAB52F58926A@SA1PR11MB7130.namprd11.prod.outlook.com>
+References: <20250724064415.1134574-1-kyle@kylemanna.com>
+ <CY8PR11MB7134484D663C31DA1544945B895EA@CY8PR11MB7134.namprd11.prod.outlook.com>
+ <e3bc0591-7ebf-4738-8848-599edd11c10d@app.fastmail.com>
+In-Reply-To: <e3bc0591-7ebf-4738-8848-599edd11c10d@app.fastmail.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SA1PR11MB7130:EE_|MW4PR11MB6715:EE_
+x-ms-office365-filtering-correlation-id: a72f448e-bb43-427c-caef-08ddd1132c2a
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|1800799024|376014|38070700018;
+x-microsoft-antispam-message-info: =?iso-8859-1?Q?WataMUcaJsMKosH5H0cY5YwMMe2yc555HphyeQqcj3G3XCgHXQDqRcmuq+?=
+ =?iso-8859-1?Q?QL3npHEXm/dNRoe3/0edsGldKRpELUhK3jzcAZyADIeTezWrSMCMpJ8EOZ?=
+ =?iso-8859-1?Q?DxT6HtLiRGRKm6zWHMT8dYEIIuThNxaDvOkQCkHUT1zbhGlf8vX+fvSJNu?=
+ =?iso-8859-1?Q?7F+jCli1O9xoEagMKr1M8KntHgtFigIX1xlG+wDtxbK8Y2+JHbH/BRG9Db?=
+ =?iso-8859-1?Q?7jOdQJBn9rPzMFW9YyQm5+dbau3/8YufrphhLVUtykEk3NfTFE13JTJY4Q?=
+ =?iso-8859-1?Q?xcqFLVyhA+Wc30PFj4z6pcl+eKV4HiVjElrizU9vup3w431CwSZz/2k5Zm?=
+ =?iso-8859-1?Q?mOLwemsypQhfrnGbDQ/4dvgkQTsk0GdFEbutftk3BNqgwjsjbF8qVpbizM?=
+ =?iso-8859-1?Q?uzsHt1N31WCIjwMca2fcbnCV+2kUTMowYcXgbpJKExD77IG+B1rDd6qbz+?=
+ =?iso-8859-1?Q?4E9uuyQ4f4E2KWghPDB7d+f9Kvj/O4EC/mi5hoI2+JprS/5eysc1IMVACF?=
+ =?iso-8859-1?Q?tMeHVZqTkerKZULaggw5ulnvcU6vSaFUnv7qrqipAsoc9X4tc4U1yyMb6V?=
+ =?iso-8859-1?Q?7OMyR8fHvBkaSygswGU6KxmWN3B7sJAqJszWX8baCkTCds0b/inCrS7sP4?=
+ =?iso-8859-1?Q?3ka9wf716fj+mA7sOaDBu9bkrewPFbBjiEqCGCY2HvU1f0HiZ5mGanr3Bx?=
+ =?iso-8859-1?Q?QE4nwBsjgRSnvOHEENdI6YdEgWyQwc6lN0VavIW/BQL8k3cR6K8C44ur3A?=
+ =?iso-8859-1?Q?280Tz6ubCERevKqGtCdOg4bimUgD4zlEH8JO4zmH75PVvIeL+IRyt8ZhJJ?=
+ =?iso-8859-1?Q?fW0mgtnQj7ztvQmcjM5hDOB+viFnIhU7gN2CQdl3wOvAkShoyCooeLf+/2?=
+ =?iso-8859-1?Q?hQcMgoZ7TZpTWEaoedUxzTSPYEbcwcKlz0aOHbSU3ffeIV4cjefPqucL1q?=
+ =?iso-8859-1?Q?BJMo9RmWH0gM49J2PhAgJINE99jkxrxX5UXVm+BFN4zPzfW8O0kBtlzpW9?=
+ =?iso-8859-1?Q?ikjX8GhmWP002ZjDDSOVznC0FefjBW74FhsK8wimhSl0TV3mDlhDfR05vN?=
+ =?iso-8859-1?Q?B1jHNz1UFOG+saP/QzeM8uMZrVsDjg448ABm9kgqZRCM46DV2A787qFKKi?=
+ =?iso-8859-1?Q?7pM5mXgt2jktAh/QzbMeQIi/xIuY4vYqTEE3DhrwOPpAZU4txhbVC147O1?=
+ =?iso-8859-1?Q?Q6u7qmYB9oNXE98U9xcA2bD4t3HToCKqwTZbAZUTfgcBAGG7JfcvTzrf7c?=
+ =?iso-8859-1?Q?2+zr6alO6m6sTuNrS+0IFlPKmQji0WfxkQaGidqGjxe2rdDBqwvano3Rbt?=
+ =?iso-8859-1?Q?WJf864FaFZo6Xh1s0nmqxWrSVLDsKf2qHJ2g8uLPBVvLfOSUQC1RzKoVlc?=
+ =?iso-8859-1?Q?wbCzWDGkuucnjjns4SGq4iWl+yCBf/W9JNs/4k2gVZd7gIfh7j+EA55RSU?=
+ =?iso-8859-1?Q?uj/bEagzoq/73qj7ifgwfFM4hefo8TkSPOBZhErIU8EqmCCXQuejdjm+uf?=
+ =?iso-8859-1?Q?nZjWe6AE6E6TsfmPfFJHUB?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB7130.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?iso-8859-1?Q?mSKKnzuImsPiOLQkY61Wzc8QadPplqU3miOxnWBGRQWZtbYX+9KOq22jmh?=
+ =?iso-8859-1?Q?tSWV0EkR0B0bpOFm8ayKapr7tX/qIfLrMctQS/yqnEw0ACAiZO3pkuw45B?=
+ =?iso-8859-1?Q?gJMRDiWzXlI+VnGiZ4XUNanxrPOAyTS5X98183Kbh+5qrMsKQlJ9Lpzj2u?=
+ =?iso-8859-1?Q?FpvIMlGt1BtKAfCuLqaXb7ASbU3CkpKTPl8nPEScg1yhzgLMm7wFNWWXKy?=
+ =?iso-8859-1?Q?UWynMBo5Op4ixCb03EGvYDsUkfQicdNoHiuTtfrYGVUKBbK6dduoLdxw1k?=
+ =?iso-8859-1?Q?O4yuzCgtjNrd91+sgQKcvgLNr56dR3JMXK5qR0gC7QbO2dKvFNc2t2TUPh?=
+ =?iso-8859-1?Q?Ck31oNt8tljGBWYGDpV8wIbmEugGY/2cO1Aud6uc4YOq1wBj04sIHP1ZFk?=
+ =?iso-8859-1?Q?rwsnocXh6waWmNioAmVFgYznaj/m7VEy20mfB03nlkjWauZzmN5VLYnZO1?=
+ =?iso-8859-1?Q?fUT/nT1WVTGSmhbNm2mtSIpA/FSRk66EfP6XCKsq94sbNkykDP5mQvtf5Z?=
+ =?iso-8859-1?Q?lc+ynEVt0BJFlUwuU5MqA/g7id2/rC+UgLhlCbN6GI8kPdR73O2tMe3rAu?=
+ =?iso-8859-1?Q?HL9ycmHGu48dvLhGnpdVy3E6lfzIzkhKg+N5KHOfoODrpvJsfP8vB/xxCo?=
+ =?iso-8859-1?Q?XKWw5tc192n2t6u9KPPfmONzSfOSo3SRQkDPXqYn6Gv8BDq23YyIUA4/nK?=
+ =?iso-8859-1?Q?MktD9S7LGZv22KpzB++Y3JQFuTN/SJcaufPsppOvWxL6/HvTO5w6xuRyF9?=
+ =?iso-8859-1?Q?NuP+nAJhR4crPe4wGTbRI/zeFCIu3K/EbmWGtxHAXY/KO80nBxRCCoUKlk?=
+ =?iso-8859-1?Q?aLja1nDYsp/oqbTz3qLEgiN4EBaCdUlNRmDovvUSnXFoQfunMiOuDDFCfG?=
+ =?iso-8859-1?Q?EEty9ac36F4nxDLFHJ2rcIdLS/NAWUelVL/VH3pWFBPNmKHLPFcx/5R2Y+?=
+ =?iso-8859-1?Q?yabQnMrIiHcDgwkG8FKo9w6YNxNeeDvu2EYNlU5QTLkHp6huK5WfOCwPuj?=
+ =?iso-8859-1?Q?1tSpRCojTwGZUqs6RuS4uAoZiMEqc2YpI6zGgmJCAu0M9/TiCXrAZP64hq?=
+ =?iso-8859-1?Q?kn1AMKlTO2brwrazz0B5HNcaf/VNRkzsr5/gxBYEzJia+v1liUWCexqMJe?=
+ =?iso-8859-1?Q?yXAJYQSV/7LpZ+mxUHq8B7bPNTYYr0QIE2ajMkvfiVyTv8t3GZWCzyxoMw?=
+ =?iso-8859-1?Q?7ElFNidAYyWzbDNPBiyemV9UjvMl64IheV+LbQdLs9tfF0SScTA801bKzL?=
+ =?iso-8859-1?Q?vzZPsK3WQp12JukRtvvADQ+PfsERONU/1jMYQza1wMe+C4D2bVZHgrSPUS?=
+ =?iso-8859-1?Q?3NkyNAJRXAyTPLLJBjH9DvbUaNvtLqXCHZAyMYSCqVppqXhwkBSLGzbgCe?=
+ =?iso-8859-1?Q?szpb2Agjp3v4NGlJ2zH4sEKUzQg+q3A2r9ovW2ExddytCliWnXldnSdvAZ?=
+ =?iso-8859-1?Q?V7r8l0ZiFF3rllKQICYpqGuKo0PKz9qMDm85/yNSBptoj00jZxzpQZu+O3?=
+ =?iso-8859-1?Q?pdFVzw9acmFJv4hVPQF+TJXQ5CJBPvt2TZpDjrhXxC+vi1JPeIwdrARdhq?=
+ =?iso-8859-1?Q?Y3ZzMF2PgfrJzXDNg0F7bCwP5MGj6VV5kyTFEI8I2Oh8E65Uwf8nD4j7Kf?=
+ =?iso-8859-1?Q?CkfSUSBUTpZqLjHvZ7hp3lmQi14xS/jXOx?=
+Content-Type: text/plain; charset="iso-8859-1"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
-To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
- Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
- Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
- Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
- Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
- Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
- Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
- <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
- Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
- Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
- x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
- "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
- gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-3-kernel@pankajraghav.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250724145001.487878-3-kernel@pankajraghav.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB7130.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a72f448e-bb43-427c-caef-08ddd1132c2a
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 15:50:43.1716
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: RVippTzLYue0YA8+JmPO8FS6uWSiy4aU/LjurwDoqaH46Dr5nsxvWKnA9X6XYl9sO+BjhK+u9r3aDgvOQojnQQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB6715
+X-OriginatorOrg: intel.com
 
-On 24.07.25 16:49, Pankaj Raghav (Samsung) wrote:
-> From: Pankaj Raghav <p.raghav@samsung.com>
-> 
-> There are many places in the kernel where we need to zeroout larger
-> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
-> is limited by PAGE_SIZE.
-> 
-> This is especially annoying in block devices and filesystems where we
-> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
-> bvec support in block layer, it is much more efficient to send out
-> larger zero pages as a part of single bvec.
-> 
-> This concern was raised during the review of adding LBS support to
-> XFS[1][2].
-> 
-> Usually huge_zero_folio is allocated on demand, and it will be
-> deallocated by the shrinker if there are no users of it left. At moment,
-> huge_zero_folio infrastructure refcount is tied to the process lifetime
-> that created it. This might not work for bio layer as the completions
-> can be async and the process that created the huge_zero_folio might no
-> longer be alive. And, one of the main point that came during discussion
-> is to have something bigger than zero page as a drop-in replacement.
-> 
-> Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
+Hi Kyle,
 
-"... will result in allocating the huge zero folio on first request, if not already allocated, and turn it static such that it can never get freed."
+> From: Kyle Manna <kyle@kylemanna.com>
+>> [...]=20
+> Hi Qiuxu,
+>=20
+> On Thu, Jul 24, 2025, at 07:31, Zhuo, Qiuxu wrote:
+> > Do you have access to these machines to load the ie31200_edac driver
+> > with your patch? If yes, would you take dmesg logs?
+>=20
+> I have access to a i5-12600K, here are the logs that I observed:
+>=20
+> $ dmesg | rg -i -e edac -e ecc -e ie31200 | rg -v systemd | rg edac
+> [   14.379905] caller ie31200_init_one+0x1b5/0x480 [ie31200_edac] mapping
+> multiple BARs
+> [   14.382709] EDAC MC0: Giving out device to module ie31200_edac
+> controller IE31200: DEV 0000:00:00.0 (INTERRUPT)
+> [   14.383042] EDAC MC1: Giving out device to module ie31200_edac
+> controller IE31200_1: DEV 0000:00:00.0 (INTERRUPT)
+>=20
+> I posted additional logs from sysfs and "ras-mc-ctl" here[0] after I lear=
+ned that
+> support was added for related processors as well as discussion with other
+> users trying to get W680 + ECC working.
+>=20
+> [0] https://forums.servethehome.com/index.php?threads/intel-w680-ddr5-
+> and-ecc-reporting.42559/#post-470425
 
-> the huge_zero_folio, and it will never drop the reference. This makes
-> using the huge_zero_folio without having to pass any mm struct and does
-> not tie the lifetime of the zero folio to anything, making it a drop-in
-> replacement for ZERO_PAGE.
-> 
-> If STATIC_HUGE_ZERO_FOLIO config option is enabled, then
-> mm_get_huge_zero_folio() will simply return this page instead of
-> dynamically allocating a new PMD page.
-> 
-> This option can waste memory in small systems or systems with 64k base
-> page size. So make it an opt-in and also add an option from individual
-> architecture so that we don't enable this feature for larger base page
-> size systems.
-> > [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
-> [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
-> 
-> Co-developed-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: David Hildenbrand <david@redhat.com>
-> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
-> ---
->   arch/x86/Kconfig        |  1 +
->   include/linux/huge_mm.h | 18 ++++++++++++++++++
->   mm/Kconfig              | 21 +++++++++++++++++++++
->   mm/huge_memory.c        | 42 +++++++++++++++++++++++++++++++++++++++++
->   4 files changed, 82 insertions(+)
-> 
-> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
-> index 0ce86e14ab5e..8e2aa1887309 100644
-> --- a/arch/x86/Kconfig
-> +++ b/arch/x86/Kconfig
-> @@ -153,6 +153,7 @@ config X86
->   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
->   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
->   	select ARCH_WANTS_THP_SWAP		if X86_64
-> +	select ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO if X86_64
->   	select ARCH_HAS_PARANOID_L1D_FLUSH
->   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
->   	select BUILDTIME_TABLE_SORT
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 7748489fde1b..78ebceb61d0e 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -476,6 +476,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
->   
->   extern struct folio *huge_zero_folio;
->   extern unsigned long huge_zero_pfn;
-> +extern atomic_t huge_zero_folio_is_static;
->   
->   static inline bool is_huge_zero_folio(const struct folio *folio)
->   {
-> @@ -494,6 +495,18 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
->   
->   struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
->   void mm_put_huge_zero_folio(struct mm_struct *mm);
-> +struct folio *__get_static_huge_zero_folio(void);
-> +
-> +static inline struct folio *get_static_huge_zero_folio(void)
-> +{
-> +	if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
-> +		return NULL;
-> +
-> +	if (likely(atomic_read(&huge_zero_folio_is_static)))
-> +		return huge_zero_folio;
-> +
-> +	return __get_static_huge_zero_folio();
-> +}
->   
->   static inline bool thp_migration_supported(void)
->   {
-> @@ -685,6 +698,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
->   {
->   	return 0;
->   }
-> +
-> +static inline struct folio *get_static_huge_zero_folio(void)
-> +{
-> +	return NULL;
-> +}
->   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
->   
->   static inline int split_folio_to_list_to_order(struct folio *folio,
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 0287e8d94aea..e2132fcf2ccb 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -835,6 +835,27 @@ config ARCH_WANT_GENERAL_HUGETLB
->   config ARCH_WANTS_THP_SWAP
->   	def_bool n
->   
-> +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
-> +	def_bool n
-> +
-> +config STATIC_HUGE_ZERO_FOLIO
-> +	bool "Allocate a PMD sized folio for zeroing"
-> +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
-> +	help
-> +	  Without this config enabled, the huge zero folio is allocated on
-> +	  demand and freed under memory pressure once no longer in use.
-> +	  To detect remaining users reliably, references to the huge zero folio
-> +	  must be tracked precisely, so it is commonly only available for mapping
-> +	  it into user page tables.
-> +
-> +	  With this config enabled, the huge zero folio can also be used
-> +	  for other purposes that do not implement precise reference counting:
-> +	  it is still allocated on demand, but never freed, allowing for more
-> +	  wide-spread use, for example, when performing I/O similar to the
-> +	  traditional shared zeropage.
-> +
-> +	  Not suitable for memory constrained systems.
-> +
->   config MM_ID
->   	def_bool n
->   
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 5d8365d1d3e9..c160c37f4d31 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -75,6 +75,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
->   static bool split_underused_thp = true;
->   
->   static atomic_t huge_zero_refcount;
-> +atomic_t huge_zero_folio_is_static __read_mostly;
->   struct folio *huge_zero_folio __read_mostly;
->   unsigned long huge_zero_pfn __read_mostly = ~0UL;
->   unsigned long huge_anon_orders_always __read_mostly;
-> @@ -266,6 +267,47 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
->   		put_huge_zero_page();
->   }
->   
-> +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
-> +#define FAIL_COUNT_LIMIT 2
-> +
-> +struct folio *__get_static_huge_zero_folio(void)
-> +{
-> +	static unsigned long fail_count_clear_timer;
-> +	static atomic_t huge_zero_static_fail_count __read_mostly;
-> +
-> +	if (unlikely(!slab_is_available()))
-> +		return NULL;
-> +
-> +	/*
-> +	 * If we failed to allocate a huge zero folio multiple times,
-> +	 * just refrain from trying for one minute before retrying to get
-> +	 * a reference again.
-> +	 */
+Thanks for the logs.=20
+Successfully loading the driver indicated the=A0i5-12600K is ECC capable.=20
+=20
+>=20
+> >> diff --git a/drivers/edac/ie31200_edac.c
+> >> b/drivers/edac/ie31200_edac.c index
+> >> a53612be4b2f..2078c12bbed2 100644
+> >> --- a/drivers/edac/ie31200_edac.c
+> >> +++ b/drivers/edac/ie31200_edac.c
+> >> @@ -94,6 +94,8 @@
+> >>
+> >>  /* Alder Lake-S */
+> >>  #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
+> >> +#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668
 
-Is this "try twice" really worth it? Just try once, and if it fails, try only again in the future.
+Add a small comment, please.
 
-I guess we'll learn how that will behave in practice, and how we'll have to fine-tune it :)
++#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668 /* 6P+6E, e.g. i7-12700=
+K */
 
+> >> +#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648
 
-In shrink_huge_zero_page_scan(), should we probably warn if something buggy happens?
+Ditto.
++#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648 /* 6P+4E, e.g. i5-12600=
+K */
 
-Something like
+> >>
+> >
+> > I didn't find the place in your spec above that indicates these two
+> > CPUs with these two DIDs have Out-Of-Band ECC capabilities.
+> > Could you point it out to me?
+>=20
+> This Intel CPU page[1] lists ECC memory support and the same on the Intel
+> W680 chipset page[2]. The datasheet was used to confirm the DIDs[3] were
+> valid.
+>=20
+> [1] https://www.intel.com/content/www/us/en/products/sku/134589/intel-
+> core-i512600k-processor-20m-cache-up-to-4-90-ghz/specifications.html
+> [2] https://www.intel.com/content/www/us/en/products/sku/218834/intel-
+> w680-chipset/specifications.html
+> [3] https://edc.intel.com/content/www/us/en/design/ipla/software-
+> development-platforms/client/platforms/alder-lake-desktop/12th-generation=
+-
+> intel-core-processors-datasheet-volume-1-of-2/011/device-ids/
+>=20
+> Given that you added the i9-12900k (0x4660) in 180f091224a00 and I've
+> personally verified the i5-12600k (0x4648) is working (see dmesg logs abo=
+ve),
+> I've added the i7-12700k (0x4668) to assist future users.
 
-diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-index 2b4ea5a2ce7d2..b1109f8699a24 100644
---- a/mm/huge_memory.c
-+++ b/mm/huge_memory.c
-@@ -277,7 +277,11 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
-                                        struct shrink_control *sc)
-  {
-         if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
--               struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
-+               struct folio *zero_folio;
-+
-+               if (WARN_ON_ONCE(atomic_read(&huge_zero_folio_is_static)))
-+                       return 0;
-+               zero_folio = xchg(&huge_zero_folio, NULL);
-                 BUG_ON(zero_folio == NULL);
-                 WRITE_ONCE(huge_zero_pfn, ~0UL);
-                 folio_put(zero_folio);
+Thanks for the detailed specs and your verification.
+Please add the comments after the new DIDs as mentioned above, other than t=
+hat LGTM
 
-
--- 
-Cheers,
-
-David / dhildenb
-
+    Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>=20
 
