@@ -1,108 +1,118 @@
-Return-Path: <linux-kernel+bounces-753852-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E82CAB188F1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:58:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34923B18921
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:09:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A41AAA39A1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:58:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C5FD21C84829
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:09:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6921222586;
-	Fri,  1 Aug 2025 21:58:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E31226CF4;
+	Fri,  1 Aug 2025 22:08:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DI3rps9/"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nrn2vkmj"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB9F420C00E;
-	Fri,  1 Aug 2025 21:58:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 72AB12E36F8;
+	Fri,  1 Aug 2025 22:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754085503; cv=none; b=FTe4CnRjYQv7bnfahc3Fe+7ir9JLW1LLW++6NDArI9aKr+UhzWnhzEJJyErAD0+mYaAwiXjBNfFtSwtnjvtcIddF2IhdDGPTIWptjm/BrBT9AzXnNxnnd4I+B7jZD6ltpKNIcZzJKiQGPooiBM8vpvgSNt3Hf9jKh6ILWR3CQLw=
+	t=1754086136; cv=none; b=AyWuCOeTu+QGJPHRQqVchwRv6O+57De9pr/Y2YnM5WCU1d12VaqNPi/EWecgwq/Fi85eItgda2wmXzz5xnB/hsu5RcFOSlOwu2r3rT3RxZNAoHIvhKt3hiqtMxyGsEB2Jwz0eSWYrPD9vDaCjkJ3xZXJP5ktUYSd3mtSUUGYEY4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754085503; c=relaxed/simple;
-	bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Rpq0iSgCwL1eVQrX1c9TbFHBwECkKYfTOGnJt93exnB4T4gpBQ4IFYvUQtNR0YC+ozyODkIwz5/Udg2vcb5aP1XU4zRpww0p5fkJkrWRGLNkINMhCt9kjuDwdMlxQoFrsYwkWggQo74Ey4EVbqNvDs0yAxnPsvXpWNeL2HSYl08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DI3rps9/; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-af910372ab3so519741466b.1;
-        Fri, 01 Aug 2025 14:58:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754085500; x=1754690300; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-        b=DI3rps9/qk7TYFb2iUmxg9mEZQV12DpuZwyvRRSL/tjzjolpBHl5HOPr1KYq5Tilyr
-         vY/noGPlqi4qqCbwiwbEGjOe1xewNRCDHB+MhksyCorhcfG7RMJ71ctsD4w4gK5C1zz4
-         ++J/bZnMZj4cT1NChuXSb8hAo+bXiqeAwHPoArsxKYE1hD1pdfTFirox0TomqiG3e43Z
-         4kTc00ZQ9XN4s92Icoc7O5rTnfG9i06ffr9UIVRn37bsyfaa/rQ/3cQ75fCtwhKBRNEb
-         DAP3mrxaQl1GbmYyihGekPmfgQQ/Xz2BYyzkZ6ZR0asyLDyyoKqmrciYv8RmHScjwEUQ
-         Q9gg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754085500; x=1754690300;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9W9aLRKcskQT2G+1SL74xY98V8kvoY+yZ4RYwLfO4lQ=;
-        b=e3aVZgZZby4F6Ntez+/2BYg1nNtlOMoJHBZQjCfsKx/VpaxZZ6EYDxFGRY1Uq1JAHs
-         1ZIoaKznsm2VfrvoclnPqFMIjLVEsUTsgj0HQQZUqK45Mdzdbz0y/24/mGUEMKOM7z8g
-         srJ3ix4HwDRaNDQaAKp7ZpKFqPR4uFsAA8YZpldeG6QtmvBgYqjxGqaQUaur3AmJlEXN
-         a5gRmVFNBrp269MOkYJb3mf+HuMPZww2t46RdUlFf3Sz71cCK3wp52MDnD/pmf9glJDa
-         ZV5jH3B6uy0sYJhZx9/W5zK551llBjwqV4mO8861Frl/SUq/ogqTWOKgWz9ys0RJoRR5
-         JQ6g==
-X-Forwarded-Encrypted: i=1; AJvYcCV3Kb0dvNFX4YnWP9WNz5QH9slaLd02w69Vly2Mxt4kgdrmhr/9op5vfMPk6bGOeTrYwII99ra2QT0V0zQV@vger.kernel.org, AJvYcCWqWYQSinSd+cQG/nVwuL2iY3A5BYoGmo9suvYbKTQsqS61UWfOb/5pRdygB9KcBuAr9zpeFbrX8V8VtyQ=@vger.kernel.org, AJvYcCXVoqqWcuaO+WLkZOz43LQ7kcAZoKdgKOyVaFxTJZFR0g/4kMqN1chKj9Sa36nD1OAEoIekjagZKbjsjKOrjWw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6PSJxCfSdCioqsosqrwBIU5bkUFcPVyxnSxiUVDpZ1xVHdgZG
-	f90OMHJCsQCXqGJAdFkm4eMBDYRYciy5UnPdW6Sjy5oa9qlUkvTqz77ZQgf+UOr3MaB6ri020q0
-	HhlPn1JqDeBBj8ohkz35tWHhF1zi6Mv0=
-X-Gm-Gg: ASbGnctNwiJVDX8Ue1j4+cYVnxzu3GxVUI+48r3jagDhFiHwgyNPJL51Zn8AeYw/2XL
-	j2CjrZBf7TqFjPxN0RvDsK4bUC8Q/6kuZaf2Xbu19/1sbAK+Dipxof7cEEBCgl+JwNhUry2dn9M
-	CkA8vsrrjglS5DQ4jdAisKe9aLx0wbw4I7xRpTdAkIYUWmkmprWYBLVnvLiP7MGawn9X6fAo5Yf
-	J8GMi1sDBpggaJko21m
-X-Google-Smtp-Source: AGHT+IGRVGVyVuPJT5g+alark4GxiU9Zv8r0lEr7ASyTvdvyElIxZVu7IYlNYR9NTTG/h/hIC6BKUMEQv7AJTLW61rY=
-X-Received: by 2002:a17:906:6a10:b0:af2:4690:9df3 with SMTP id
- a640c23a62f3a-af91beb7837mr862906366b.14.1754085499840; Fri, 01 Aug 2025
- 14:58:19 -0700 (PDT)
+	s=arc-20240116; t=1754086136; c=relaxed/simple;
+	bh=uQ6zMqVlQY4KiSfQ9ZT2G3DVnYBY7rJDyuIo3bT9gSc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=n4JEkCyZuwUQQy46FaOLZeoyVmS+Ti/OZm56zZvodfHbop8GgW2lG75e+LnJTjnZqWL05+1uY1UARuf7i2qWBlzml5yx+oCVWPYy4nHDjiMy+BEVLQmrfZzhWvXnYVcHx/XAOUlYz4Yvi/DnecjbwBATFsICmqSEHLF4pgagzIo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nrn2vkmj; arc=none smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754086134; x=1785622134;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uQ6zMqVlQY4KiSfQ9ZT2G3DVnYBY7rJDyuIo3bT9gSc=;
+  b=nrn2vkmjcUobPBOiOu4sXOopYb2yYn9950wCu4QodcDYAX+hV4K83BYK
+   TvXQTap29Jjai5pSy8TUv/6PLnfT2SblpmaeqFcaYQcAiYEJSlA3a8ZOK
+   JZS/RYQQFcnA6BUl2Yf+log71wOIbNZ+Teo4/wR7Eo2PLMWqQK4lbpDOZ
+   pwLJvodPpA0/UkyUeqKA1xK0r6Lb6yN9lvKLagfahLFADageqoZo1vNmh
+   k0dpmNLlLXC3AxIWEiGmXhikLcwAxlYzBxU9ccodGxNDGsuQPZ71bFJRd
+   IWooCfFqw5C/Org+sd+LBzfwM9kISMcCF8fMUUy3t2XCSzERhW7aY2uI1
+   w==;
+X-CSE-ConnectionGUID: X9ypP+rKRISCrDyWJXQ8Aw==
+X-CSE-MsgGUID: fNmvRDDmR2+aT5enavcINw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="73899311"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="73899311"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 15:08:54 -0700
+X-CSE-ConnectionGUID: 0zJ700BdSyaS4IECpd2vUg==
+X-CSE-MsgGUID: S8xIxYcPTq2n611v6XZTfg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="163593949"
+Received: from ldmartin-desk2.corp.intel.com (HELO vcostago-mobl3.intel.com) ([10.125.110.9])
+  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 15:08:53 -0700
+From: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+To: dmaengine@vger.kernel.org
+Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
+	Vinicius Costa Gomes <vinicius.gomes@intel.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Vinod Koul <vkoul@kernel.org>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] dmaengine: idxd: Add a new IAA device ID for Wildcat Lake family platforms
+Date: Fri,  1 Aug 2025 14:59:35 -0700
+Message-ID: <20250801215936.188555-1-vinicius.gomes@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801160023.2434130-1-colin.i.king@gmail.com>
-In-Reply-To: <20250801160023.2434130-1-colin.i.king@gmail.com>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Fri, 1 Aug 2025 23:57:43 +0200
-X-Gm-Features: Ac12FXymuCoCTkN9AJAJa7gXREI0nQIfvbT-NIqpDvHhaI6WuM_cL9u36xBUzHw
-Message-ID: <CAHp75VeDt=1=9epJPQjzfyyph09bov9UWWwpaAXgu01Egf1hag@mail.gmail.com>
-Subject: Re: [PATCH][next] media: atomisp: Fix incorrect snprintf format
- specifiers for signed integers
-To: Colin Ian King <colin.i.king@gmail.com>
-Cc: Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>, 
-	Mauro Carvalho Chehab <mchehab@kernel.org>, Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 1, 2025 at 6:01=E2=80=AFPM Colin Ian King <colin.i.king@gmail.c=
-om> wrote:
->
-> There are incorrect %u format specifiers being used to for signed integer=
-s,
-> fix this by using %d instead.
+From: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
 
-Both of them sound to me like the fix of the symptom and not the
-cause. Can we simply make types of the iterators to be unsigned
-instead?
+A new IAA device ID, 0xfd2d, is introduced across all Wildcat Lake
+family platforms. Add the device ID to the IDXD driver.
 
---=20
-With Best Regards,
-Andy Shevchenko
+Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
+Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
+---
+ drivers/dma/idxd/init.c      | 2 ++
+ drivers/dma/idxd/registers.h | 1 +
+ 2 files changed, 3 insertions(+)
+
+diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
+index 35bdefd3728b..f98aa41fa42e 100644
+--- a/drivers/dma/idxd/init.c
++++ b/drivers/dma/idxd/init.c
+@@ -80,6 +80,8 @@ static struct pci_device_id idxd_pci_tbl[] = {
+ 	{ PCI_DEVICE_DATA(INTEL, IAA_DMR, &idxd_driver_data[IDXD_TYPE_IAX]) },
+ 	/* IAA PTL platforms */
+ 	{ PCI_DEVICE_DATA(INTEL, IAA_PTL, &idxd_driver_data[IDXD_TYPE_IAX]) },
++	/* IAA WCL platforms */
++	{ PCI_DEVICE_DATA(INTEL, IAA_WCL, &idxd_driver_data[IDXD_TYPE_IAX]) },
+ 	{ 0, }
+ };
+ MODULE_DEVICE_TABLE(pci, idxd_pci_tbl);
+diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
+index 9c1c546fe443..0d84bd7a680b 100644
+--- a/drivers/dma/idxd/registers.h
++++ b/drivers/dma/idxd/registers.h
+@@ -10,6 +10,7 @@
+ #define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
+ #define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
+ #define PCI_DEVICE_ID_INTEL_IAA_PTL	0xb02d
++#define PCI_DEVICE_ID_INTEL_IAA_WCL	0xfd2d
+ 
+ #define DEVICE_VERSION_1		0x100
+ #define DEVICE_VERSION_2		0x200
+-- 
+2.50.1
+
 
