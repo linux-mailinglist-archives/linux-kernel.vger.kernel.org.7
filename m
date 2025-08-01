@@ -1,293 +1,111 @@
-Return-Path: <linux-kernel+bounces-753853-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753856-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id A821AB18910
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:00:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B31CB18918
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:02:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 8F51F4E0300
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:00:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CB9EAAA46FD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:02:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3295B2264A1;
-	Fri,  1 Aug 2025 22:00:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0679B227B88;
+	Fri,  1 Aug 2025 22:02:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TTieYSsw"
-Received: from mail-pj1-f73.google.com (mail-pj1-f73.google.com [209.85.216.73])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ipvrn3ZA"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB3A12E630
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 22:00:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA488207E03;
+	Fri,  1 Aug 2025 22:02:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754085650; cv=none; b=ZMqYpMgML693AVjwbUpvyZlWo+8CzC3HWunvXSzrQ/3wuOq92+9JjPMm09V8hXNCs+o3P6l46Clz5uu7HNxGZ0IcAknEMT7lpPNwhpGRRgv//5yFfwjA9j0vmxYaEr1+C521vtuHD0nOv8n/r/MPYJi5QMynDXHyYkNz47vMvN0=
+	t=1754085759; cv=none; b=fB5h9yrFU4QmExzbEbXIy9On2nyX28J1Ff5bV7Dj8kYQ0GOw2Q24L0SRtQhBdhNGtArXquBwGTNfZ0UV0RYadAWraiGX+sdgD4+aQHFXe7vvAwqkWwjqimF3uHs7s7O9a4+U4oYGGkL2IyzJTHtNxuxgVqjxF4dWYvDhSQtoTyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754085650; c=relaxed/simple;
-	bh=FJbGcCue6qpLoRxmdJLZqLsTcNdoa2JmYIW1qA7u5j8=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=jtxriOpES4sjHWLq9bKLSAHDy5Scti3+EkaerdDX9fKiGZVKan5CG/tTSR8u1e8HJtLIegJGWFTp/lvrxmQqa6CSEaFn5eSC7CDu/r15cJfEPQ2+vM1zQ0AbSEPm8/j2p+qN+KEQXs9iylewCvhCs+meYkf5knD94Q1vXTSBFZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TTieYSsw; arc=none smtp.client-ip=209.85.216.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pj1-f73.google.com with SMTP id 98e67ed59e1d1-31eec1709e7so1964630a91.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 15:00:48 -0700 (PDT)
+	s=arc-20240116; t=1754085759; c=relaxed/simple;
+	bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=dXKYUDSUGgpRnf5ojHouu4tXMZLHSWtVclRXwWnmi7uV/aCiPrPdZV/a3JB09dUo9xhY6TZGotlQMB9SpSUY6O1z5zCbKSsF61vOLPW424UKKxfo5wP1vnlVV2OyesbAMwol0Zl2iZGld5tu/VJ+CumxMWmmbqx9SuBLNZKpH+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ipvrn3ZA; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af93bcaf678so100808066b.0;
+        Fri, 01 Aug 2025 15:02:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754085648; x=1754690448; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6hWtAmBq8NWkkuIGz9saUWFccZ5KABPtbv3tcTlVdv8=;
-        b=TTieYSswxKwNhUnyptysmvCWduxxv0FDM2p/phhiJHW6/JUGUDpJllnDABRVsL6P9I
-         C8Fgz0CnbAzsAvrwGV5g9Wgls5D/0r2S1qn6bOkNe0Ag2e2Hko5JJ4SDy6oN7QVduW38
-         vlbQ9r1OsOKopR8JxEPKbt+ywS6Cme5GtSOiHx6EFLYEtJH2Hp4bJwBzKVGMeQNwqgOy
-         VuUQtdgjfI/TKIPUUrwUbVxxybSMPBxleBWjbDu9559JinlvoMNVZXkaXAmAra6jPZmx
-         USy5UNjxvxNgyKgspInQXYcIhwRAiLwGI6a8fDxwUG1WskPAbAJytvtP+AbKjQxlsAc8
-         GGYg==
+        d=gmail.com; s=20230601; t=1754085756; x=1754690556; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
+        b=ipvrn3ZALX7GrY3ZFvq50CivTK1DkI4Dn1Pj5lZ5tShASvoErQiAoSn9jLaf0IH0tl
+         RczuRH87s+Qw5AHR/YkED8nOxlTVQb4yDSfLMkUGb0RTTQiiWun4UsfuFdRo58dB9v9t
+         Rl5SWaS1u/nzwhsTc58tqPXbLA3hE9emfk7gOmgzxBHHdvMToz7hfb3bWotWVvwnElMs
+         U7BJ2uKsl7/Is3XYKBHmlHpl3oro521Ncb+fGSNmNpfQnmkobKTYAumllB1K5DAvZGeC
+         IGA/pP6zGwKgC6cOAt5LGROYKQTl2cugol+Bc5BqQbmyRw4tT4uU6KTO5kMIZN18LGqq
+         gAXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754085648; x=1754690448;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=6hWtAmBq8NWkkuIGz9saUWFccZ5KABPtbv3tcTlVdv8=;
-        b=q2Ir+IWf0dIAWT4eA0dBCBo+tX5x7wWneTTBvCiXcbwXZ6iAcx9K1airQfMvwWmnDl
-         fwXWZx18xFcnZAHvPWQDzwAOigGDymtTnklic0ypX7wm4wNvWGHQaO/6By3+TTKybFgP
-         f+X9XrfUzF5DKCTklDwN0SsXiGTIWlt8pxjfpoIrSI/ZP2gtAaZY12Xlz0vHjIe4VlW/
-         rKqeUQpJ6bjxjibwbDND6ULPf7d1OmVEelwtlkfsUQWai64fgeqXKHmKoCNvAmMs+i80
-         aw1ciF5mpOP6rZHWgMkNRO9sfEgiAbRvFny7iDToKaCZE5J+Fp0K3NzuacQObHLKF+1j
-         ztmA==
-X-Forwarded-Encrypted: i=1; AJvYcCVwYgkT4u9J/kgX479QwKz/2NQaEGW/weLq99lcrC8rxLbGtEVbIiWlmmv0NTc7COqdZfuWiD2Un2nXjTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKjRZIxPycOkKQH4AVT9M4nQkU4xbjzP8IITuYa8z2+H6BaObY
-	MYpCu6/Ihy3iH6MXDmePa/v2j88wpR9TEIoeqrslO3vGe5lpoehzWKTM+JBY2fccLq4MmEnvOA/
-	AMLy0Og==
-X-Google-Smtp-Source: AGHT+IGfcgNlNPWZ5oNIPHk6Lj5LPjCCB2x8xNhsWx0DyHgtmxUxN/54VjWC/Vymhntx9L93TmAfrNXldKw=
-X-Received: from pjbqx16.prod.google.com ([2002:a17:90b:3e50:b0:313:242b:1773])
- (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:4c88:b0:31e:b77c:1f09
- with SMTP id 98e67ed59e1d1-321162b4134mr1730610a91.19.1754085648200; Fri, 01
- Aug 2025 15:00:48 -0700 (PDT)
-Date: Fri, 1 Aug 2025 15:00:46 -0700
-In-Reply-To: <CALzav=eQWJ-97T7YPt2ikFJ+hPqUSqQ+U_spq8M4vMaQWfasWQ@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1754085756; x=1754690556;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=6shhsmOa9537nSzALzaClYTzvSQ041r/HPWfbFTrzu4=;
+        b=mhZk5LoI2vDjjgDzj1Ay8sW8Rqcho9EPvp88o2F+R894+utYScITsAiq3xO31pwoUE
+         SaJJ6d8Yuw1N7wndkzhLUgmHwakp6/TC8IsxjHLsfqltfHGO543gA3gtYV/es597VmqY
+         7tv/oSOCvGYT4Xb/M79gxZOhNu4AhLt+cICkvN5d3qC07lEhiwOhWLRFHyz+yUng54zN
+         sLfBFr9ibNueOJhBu6tLjAf1eGMsywPcpm6lQ+XraNE94nOn+Hws0DY7wleyKnGc58pY
+         ygu5mJUccxJ37+ueljDyfdmAo28jwH1VrDxXCokOSbn4ST4YbHVp8E1KtOlP5SinX8jB
+         KT/A==
+X-Forwarded-Encrypted: i=1; AJvYcCVrf1ybnSRP5u7FLjb3U60kYMZc8qB8lOxQkPecDqTAgWh5RqMiiDwlukxjyIwI8Ye7aL7ZcYKJvcZMwebn@vger.kernel.org, AJvYcCXGRyjDP7Ap48D09LaxrHp1q5as+fdl9tbzGiqOyRmn9yjiMGuklSK3GU85NefVItD4k5I9ip2d3bI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZt9/KWvM4iU8/mWvUi3jK3o6KpBt22XIvAe0h1xTVgUcQ69B/
+	gg70sCiHwVXYgFiGTQ66/AAZgZGgwuCswn+MfhSfNi7DtRKjBE96ZcqJKYn5pNMs/xga5ACu2Vh
+	TT2dadnH4kF4UCGD+sG5nhZ2wFCxZ2UM=
+X-Gm-Gg: ASbGncvPNi5cy2etDZ1FBJotFUH617FNMh+VrEyoHcOSPYJwoBeAWNElgRypDq/MasN
+	CK3nuGvNrHjABm3iJH02o6ZKHK46qniBgNHaDYi0fhz0XC01RLhq5D2KBZwu5TCutPBNYkNOcKz
+	EIhyeCzU3RlcOOkyxvGCXQX7Q13nTOUsF1x6LztM1P5+ST1HcmQmv2qtTEJOTEwf4+PpPrN8h6P
+	ATlBG8Log==
+X-Google-Smtp-Source: AGHT+IEOrjdBS8qR0cLal4YE8OYocdcEucADefhnUSyEUlqAphqAR6aw+RfmQdz332wyWSHXM7HhYlhvxMmpogk/5mA=
+X-Received: by 2002:a17:907:7f0f:b0:ae0:db23:e3e3 with SMTP id
+ a640c23a62f3a-af940017c8dmr157691766b.16.1754085755835; Fri, 01 Aug 2025
+ 15:02:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com>
- <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
- <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com>
- <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
- <aIft7sUk_w8rV2DB@google.com> <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
- <CALzav=eQWJ-97T7YPt2ikFJ+hPqUSqQ+U_spq8M4vMaQWfasWQ@mail.gmail.com>
-Message-ID: <aI05DvQlMWJXewUi@google.com>
-Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
- MMU read lock
-From: Sean Christopherson <seanjc@google.com>
-To: David Matlack <dmatlack@google.com>
-Cc: James Houghton <jthoughton@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
+MIME-Version: 1.0
+References: <cover.1754041258.git.mazziesaccount@gmail.com> <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
+In-Reply-To: <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 2 Aug 2025 00:01:57 +0200
+X-Gm-Features: Ac12FXy2U3nHPM-c1Tv54OHI2hVcb8efeg1MS2GnbFr62Fx-8ffRLi45Z9KvkoY
+Message-ID: <CAHp75VerC+m1XMpZFO6dLp+0HdB1+Xn47on38Mg5AXfDYwWd4A@mail.gmail.com>
+Subject: Re: [RFC PATCH 1/2] iio: adc: ad7476: Simplify chip type detection
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	David Lechner <dlechner@baylibre.com>, =?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, 
+	linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025, David Matlack wrote:
-> On Mon, Jul 28, 2025 at 2:49=E2=80=AFPM James Houghton <jthoughton@google=
-.com> wrote:
-> > > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > > index a6a1fb42b2d1..e2bde6a5e346 100644
-> > > --- a/arch/x86/kvm/mmu/mmu.c
-> > > +++ b/arch/x86/kvm/mmu/mmu.c
-> > > @@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled(s=
-truct kvm *kvm,
-> > >  static void kvm_recover_nx_huge_pages(struct kvm *kvm,
-> > >                                       const enum kvm_mmu_type mmu_typ=
-e)
-> > >  {
-> > > +#ifdef CONFIG_X86_64
-> > > +       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
-> > > +       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages_l=
-ock;
-> > > +#else
-> > > +       const bool is_tdp_mmu =3D false;
-> > > +       spinlock_t *tdp_mmu_pages_lock =3D NULL;
-> > > +#endif
-> > >         unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type);
-> > > -       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
-> > >         struct list_head *nx_huge_pages;
-> > >         struct kvm_mmu_page *sp;
-> > >         LIST_HEAD(invalid_list);
-> > > @@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struct =
-kvm *kvm,
-> > >         rcu_read_lock();
-> > >
-> > >         for ( ; to_zap; --to_zap) {
-> > > -#ifdef CONFIG_X86_64
-> > >                 if (is_tdp_mmu)
-> > > -                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> > > -#endif
-> > > +                       spin_lock(tdp_mmu_pages_lock);
-> > > +
-> > >                 if (list_empty(nx_huge_pages)) {
-> > > -#ifdef CONFIG_X86_64
-> > >                         if (is_tdp_mmu)
-> > > -                               spin_unlock(&kvm->arch.tdp_mmu_pages_=
-lock);
-> > > -#endif
-> > > +                               spin_unlock(tdp_mmu_pages_lock);
-> > >                         break;
-> > >                 }
-> > >
-> > > @@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct k=
-vm *kvm,
-> > >
-> > >                 unaccount_nx_huge_page(kvm, sp);
-> > >
-> > > -#ifdef CONFIG_X86_64
-> > >                 if (is_tdp_mmu)
-> > > -                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> > > -#endif
-> > > +                       spin_unlock(tdp_mmu_pages_lock);
-> > >
-> > >                 /*
-> > >                  * Do not attempt to recover any NX Huge Pages that a=
-re being
-> > > --
-> >
-> > LGTM! Thanks Sean.
->=20
-> Is the compiler not smart enough to optimize out kvm->arch.tdp_mmu_pages_=
-lock?
+On Fri, Aug 1, 2025 at 12:07=E2=80=AFPM Matti Vaittinen
+<mazziesaccount@gmail.com> wrote:
+>
+> The ad7476 driver uses a table of structures for defining the IC variant
+> specific data. Table is indexed using enum values, which are picked by
+> SPI ID.
+>
+> Having the table and an enum adds extra complexity. It is potentially
+> unsafe if someone alters the enumeration values, or size of the IC data
+> table.
 
-Yes, the compiler will eliminate dead code at most optimization levels.  Bu=
-t that
-optimization phase happens after initial compilation, i.e. the compiler nee=
-ds to
-generate the (probably intermediate?) code before it can trim away paths th=
-at are
-unreachable.
+I don't see the problem here. I like the part about converting ID
+tables to use chip_info instead of plain integers, but other than that
+I do not see how enum is worse than the split version.
 
-> (To avoid needing the extra local variable?) I thought there was some oth=
-er
-> KVM code that relied on similar optimizations but I would have to go dig =
-them
-> up to remember.
-
-KVM, and the kernel, absolutely relies on dead code elimination.  KVM most =
-blatantly
-uses the technique to avoid _defining_ stubs for code that is guarded by a =
-Kconfig,
-e.g. all of these functions are defined in sev.c (guarded by CONFIG_KVM_AMD=
-_SEV),
-but callers are guarded only with sev_guest() or sev_es_guest(), not with e=
-xplicit
-#idefs.
-
-There are no build errors because the function calls aren't fully resolved =
-until
-link time (when svm.o is linked into kvm-amd.o).  But KVM still needs to _d=
-eclare_
-the functions, otherwise the compiler would fail during its initial code ge=
-neration.
-
-  int pre_sev_run(struct vcpu_svm *svm, int cpu);
-  void sev_init_vmcb(struct vcpu_svm *svm);
-  void sev_vcpu_after_set_cpuid(struct vcpu_svm *svm);
-  int sev_es_string_io(struct vcpu_svm *svm, int size, unsigned int port, i=
-nt in);
-  void sev_es_vcpu_reset(struct vcpu_svm *svm);
-  void sev_es_recalc_msr_intercepts(struct kvm_vcpu *vcpu);
-  void sev_vcpu_deliver_sipi_vector(struct kvm_vcpu *vcpu, u8 vector);
-  void sev_es_prepare_switch_to_guest(struct vcpu_svm *svm, struct sev_es_s=
-ave_area *hostsa);
-  void sev_es_unmap_ghcb(struct vcpu_svm *svm);
-
-Other notable "users" of dead code elimination are the BUILD_BUG_ON() famil=
-y of
-compile-time asserts.  So long as the condition can be resolved to a consta=
-nt
-false value during compile time, the "call" to __compiletime_error() will b=
-e
-elided and everyone is happy.
-
-  #ifdef __OPTIMIZE__
-  /*
-   * #ifdef __OPTIMIZE__ is only a good approximation; for instance "make
-   * CFLAGS_foo.o=3D-Og" defines __OPTIMIZE__, does not elide the condition=
-al code
-   * and can break compilation with wrong error message(s). Combine with
-   * -U__OPTIMIZE__ when needed.
-   */
-  # define __compiletime_assert(condition, msg, prefix, suffix)		\
-	do {								\
-		/*							\
-		 * __noreturn is needed to give the compiler enough	\
-		 * information to avoid certain possibly-uninitialized	\
-		 * warnings (regardless of the build failing).		\
-		 */							\
-		__noreturn extern void prefix ## suffix(void)		\
-			__compiletime_error(msg);			\
-		if (!(condition))					\
-			prefix ## suffix();				\
-	} while (0)
-  #else
-  # define __compiletime_assert(condition, msg, prefix, suffix) ((void)(con=
-dition))
-  #endif
-
-Note, static_assert() is different in that it's a true assertion that's res=
-olved
-early on during compilation.
-
- * Contrary to BUILD_BUG_ON(), static_assert() can be used at global
- * scope, but requires the expression to be an integer constant
- * expression (i.e., it is not enough that __builtin_constant_p() is
- * true for expr).
-
-
-From a previous thread related to asserts (https://lore.kernel.org/all/aFGY=
-0KVUksf1a6xB@google.com):
-
- : The advantage of BUILD_BUG_ON() is that it works so long as the conditio=
-n is
- : compile-time constant, whereas static_assert() requires the condition to=
- an
- : integer constant expression.  E.g. BUILD_BUG_ON() can be used so long as=
- the
- : condition is eventually resolved to a constant, whereas static_assert() =
-has
- : stricter requirements.
- :=20
- : E.g. the fls64() assert below is fully resolved at compile time, but isn=
-'t a
- : purely constant expression, i.e. that one *needs* to be BUILD_BUG_ON().
- :=20
- : --
- : arch/x86/kvm/svm/avic.c: In function =E2=80=98avic_init_backing_page=E2=
-=80=99:
- : arch/x86/kvm/svm/avic.c:293:45: error: expression in static assertion is=
- not constant
- :   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=3D
- : include/linux/build_bug.h:78:56: note: in definition of macro =E2=80=98_=
-_static_assert=E2=80=99
- :    78 | #define __static_assert(expr, msg, ...) _Static_assert(expr, msg=
-)
- :       |                                                        ^~~~
- : arch/x86/kvm/svm/avic.c:293:9: note: in expansion of macro =E2=80=98stat=
-ic_assert=E2=80=99
- :   293 |         static_assert(__PHYSICAL_MASK_SHIFT <=3D
- :       |         ^~~~~~~~~~~~~
- : make[5]: *** [scripts/Makefile.build:203: arch/x86/kvm/svm/avic.o] Error=
- 1
- : --
- :=20
- : The downside of BUILD_BUG_ON() is that it can't be used at global scope,=
- i.e.
- : needs to be called from a function.
- :=20
- : As a result, when adding an assertion in a function, using BUILD_BUG_ON(=
-) is
- : slightly preferred, because it's less likely to break in the future.  E.=
-g. if
- : X2AVIC_MAX_PHYSICAL_ID were changed to something that is a compile-time =
-constant,
- : but for whatever reason isn't a pure integer constant.
+--=20
+With Best Regards,
+Andy Shevchenko
 
