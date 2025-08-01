@@ -1,244 +1,85 @@
-Return-Path: <linux-kernel+bounces-753803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42478B1882D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:33:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05638B18839
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:38:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DBAA9AA2A5A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:33:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88D6D1C84088
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:39:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4F02139CE;
-	Fri,  1 Aug 2025 20:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25D1228DB59;
+	Fri,  1 Aug 2025 20:38:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="TGsDV9pF"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZO8Wfou0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1183615539A;
-	Fri,  1 Aug 2025 20:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754080420; cv=fail; b=W3+IZTOScydANrS2DQtWyVxfCte51AGEx5M+7pem1AvAYdWKLxAoORvPMwwXHle+flYviZsbyZEiw+H0CbFwo6+8OrMh153A4l4eOvYWPiuA3hv56EORVkAuGFJoHVKqojqr//Pd121uDHEoy8WebuuUFLjG4AjestbmtzJJMAE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754080420; c=relaxed/simple;
-	bh=/na8d/9LlyyIJsxpL9V1ycGyYChPR3VKNFwsfBUdvwA=;
-	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=fqghSa3V5dtmhLgHKUOzudN3MHpHyCjAbIBdw3+WDbp2SAoCwyikzKci78PUN2oO9zWZfiuSvcxkIjIi7abzV9nFk87rdVNbq3EWjfiKNGWjGDO6CVIJXmSHcs8DV5v1R98632dXnh93iRannUIeRA5Wa5528wzwH8EDC0XapuU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=TGsDV9pF; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754080419; x=1785616419;
-  h=date:from:to:cc:subject:message-id:references:
-   in-reply-to:mime-version;
-  bh=/na8d/9LlyyIJsxpL9V1ycGyYChPR3VKNFwsfBUdvwA=;
-  b=TGsDV9pFFwZq/TkBneP5OXTcpftZfBdu2xOCEGo3f4ry8+xTIe7bfQuz
-   xDiy1l9JCKCAhnFqpz+tmQ6RpOkOeinkHXv+TyXRPzfJS4QZ5lMIUYC5l
-   QNcewUHEbMok+Nrm0/svAfpDmWn7z9glkD8GyAcKbWItBSD6ovnx+5aGy
-   WymRFWUlowLA987NX/JkJASjtGGa9JKNsrsSjAFA/yytLS71VypIB1eEY
-   Ks52h4tZWzaUlsTYom6ynb0YAKlra9e17RkEiNTL/oaLOb/Kc9a54Jb3S
-   pY9Q2T1t9eRGXJ7VTHsb4hs4gnRqbpEnVv9QgEnPjNN3oszaTLPnhi09f
-   g==;
-X-CSE-ConnectionGUID: M7GheGFNQbKH+4212lL2Ig==
-X-CSE-MsgGUID: MuRKdeKLRj2D4XsmkN5f2A==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="81888116"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="81888116"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 13:33:38 -0700
-X-CSE-ConnectionGUID: RtZPAFbNTJihh90sJtRUZA==
-X-CSE-MsgGUID: hTztcfz1Sq+QNViRY0X/TQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="164041995"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 13:33:38 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 1 Aug 2025 13:33:37 -0700
-Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Fri, 1 Aug 2025 13:33:37 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (40.107.223.54)
- by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 1 Aug 2025 13:33:37 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=btEnJLuSEQxYy08InGvJ5gJs8Kv33wadIIlS/LXjdCa/ZqOqqJsx1RKxhrt/5JInYZtGC502/6hFwLiA9NhaGUtaI44PTqhf44K/trgySA9Wa9ky7mwsD3Tem0suUVoDOsA3zGbRds5U7M0TGunBg+TGw9Ra3+kg7aVvVJ2NhmZPjcKaCKsDxNN5GUfa5znn/fBF5qRrax+tOa22oCilyDGsJwMU2f27u91DJaxgir1Rdmh0u7oB4KN3X1SrbxA0bFgME/1Af4L67zSnJd9BIU8V2XW84+KduaqeYqJjCyaCd1X2uV6oNOsaMNNGyq0ySAbXEdeFWRNJ1dlRWqNclA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=OGikSBPxM7GxhVjfX/tXrzq4etibn76MHdOCiaEKZSg=;
- b=eQ4tBbGuyttJUvSuvR0wBnhNJim5oDWm0U4nWbsqBxBahjYWHbhvmBtc0a7BV36MMXA98pgEWtw3pCW+y0BzvvcJUUx/Ng0bM6hL2bGEvwhz0ifUBk2ewne3h0wZ5wX84HFMx9/q6OSirY6fehNIHV6b9pjKro032UH2ZdVmHL0dfnxO5+2g9K4MIMRHu4H5Fy6UJTP6jqhRj6d/4APEsHAcRpofBM6QEjRbiX6AKDbd1BnZ8w1lgrA1NMstNePgIXmcbjhq+MjC4sJ37GZDxJHUyBwWn/4wqOgIiE6ZghS48kidawmzpt/T2ABLa0RV7ve1+83aUtK/h8a9UAmIpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com (2603:10b6:930:c6::19)
- by CH3PR11MB8435.namprd11.prod.outlook.com (2603:10b6:610:169::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.14; Fri, 1 Aug
- 2025 20:32:54 +0000
-Received: from CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563]) by CYYPR11MB8430.namprd11.prod.outlook.com
- ([fe80::76d2:8036:2c6b:7563%5]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
- 20:32:54 +0000
-Date: Fri, 1 Aug 2025 16:32:49 -0400
-From: Rodrigo Vivi <rodrigo.vivi@intel.com>
-To: "Cavitt, Jonathan" <jonathan.cavitt@intel.com>
-CC: Colin Ian King <colin.i.king@gmail.com>, Jani Nikula
-	<jani.nikula@linux.intel.com>, Tvrtko Ursulin <tursulin@ursulin.net>, "David
- Airlie" <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	"intel-gfx@lists.freedesktop.org" <intel-gfx@lists.freedesktop.org>,
-	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
-	"kernel-janitors@vger.kernel.org" <kernel-janitors@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH][next] drm/i915: remove redundant repeated checks on err
-Message-ID: <aI0kcelkFZjHxU72@intel.com>
-References: <20250801151705.2432911-1-colin.i.king@gmail.com>
- <CH0PR11MB5444A54DF5DA955CC30A8FD3E526A@CH0PR11MB5444.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <CH0PR11MB5444A54DF5DA955CC30A8FD3E526A@CH0PR11MB5444.namprd11.prod.outlook.com>
-X-ClientProxiedBy: SJ0PR05CA0086.namprd05.prod.outlook.com
- (2603:10b6:a03:332::31) To CYYPR11MB8430.namprd11.prod.outlook.com
- (2603:10b6:930:c6::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 792042153C1;
+	Fri,  1 Aug 2025 20:38:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754080716; cv=none; b=eLwHFmGrGBfAqhqa35YvH1MvCz/wzF3xkvjQeo0TK7RwJiZZQaSJI1t7c/prjzH7X3nCSF/RbhVUxdrD/SrsiWV3b9XBx86EB8gF+N/1UCDTov8mtRXnOD4/Z3BFVxOXst3O0QD/QNhr4219qp3Mcv+ku/plsjNP6tWHdGY0ig4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754080716; c=relaxed/simple;
+	bh=nDxsBCHCQu8MBsf5iftU3Rf3IAMDt/R09xhx4+Q+U3k=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=o9H69ncW1XKdobv2St8h/m/DYfzzEBYJHI+2adyLEnjt0alLQThKI2b8nv0pa1sY+noa0LwhLPm1Z2MqJfsmfUMUfnBdS7/pZso5m9MhPO4eEO/XXaC0E3F+olIrps5tDW7Zez8qHpD3t63fzTGNFBuNz0vxliZY1Xz2IKKzSA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZO8Wfou0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 25DBDC4CEF4;
+	Fri,  1 Aug 2025 20:38:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754080716;
+	bh=nDxsBCHCQu8MBsf5iftU3Rf3IAMDt/R09xhx4+Q+U3k=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ZO8Wfou0ALyzV29VeMxHFakPK/thVibaNxkeowmwrc6xh3x/lr76MxHWe5H+NYdkZ
+	 J6tvlmFBblH2F1klWIrU10iWMS0Red033ofHwm6+KyibcSvF+GENRHyoiHKn/yFtdU
+	 EwOX8Oe5/RDR0cy9O9EAprMjoCOZFQy7lLx3+8mL7dsAUBLS9zF6rEOGZBp+Sx3UKn
+	 YOcyT60G4qLzGxrO1FellpACnjnfbL5BrsfBq2ZdP3s7KYq2UrWuwGtgOVCakXu7G9
+	 XDFUBppkkMgYBmnZYkYQCozWNWL4lJtnocMxNtyhz+Si38G3VSyAaA6QZqWE/doq04
+	 syJO6ST40cnMw==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uhwWn-00000007jZ4-28xx;
+	Fri, 01 Aug 2025 16:38:57 -0400
+Message-ID: <20250801203722.072085868@kernel.org>
+User-Agent: quilt/0.68
+Date: Fri, 01 Aug 2025 16:37:22 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>,
+ Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Subject: [PATCH v2 0/5] tracing: Cleanups with use of guard() and __free()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CYYPR11MB8430:EE_|CH3PR11MB8435:EE_
-X-MS-Office365-Filtering-Correlation-Id: 51468373-b079-4a49-4a01-08ddd13a97d8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
-X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?hBcyUDVgByFlKj5w8Sas8AxxVVQlociRxb6jf2EgjkHpo428SCIAKeFFn281?=
- =?us-ascii?Q?M0r9Cg5lMGrE1UXaretZd/POohNHnQukgAUKuOWlw1V2nOdUSg7iWIjd8K/E?=
- =?us-ascii?Q?gElT31X3rrSgQLAMzAo67jCUoLVnYs3vsprLD5V7Xt3qN16x9Z+ji1n0XekK?=
- =?us-ascii?Q?5wjW6ftrHRjSLpbRoUH4A6cfX76gsq4izLN9r5JL2CK1pnKPSnt9GYiO8Jb8?=
- =?us-ascii?Q?1EH15ENThyXIWvHlM8RAT8ZpusgDjE6vi4ny09bDDWK6npgelm03e1fcF0ui?=
- =?us-ascii?Q?q/99NqYNpoabeoBxYyDwrZSImhREnnVg8sqWlszOBI4NpV9NazdDq69p4FXw?=
- =?us-ascii?Q?7n6kHU9+wLji9IvZH8l3adJO0wPbJqB0jj4TAEE6P56t+rVubmmnDhIpREWi?=
- =?us-ascii?Q?Rw2Rp0lWqcjVJEsgMb2l0ne1vZZ1QNGDAJy0Wucdkzhr6XFruKfXXG7Gvlcx?=
- =?us-ascii?Q?IDeeOnfZUHHYfZbNGyAK6nPKl/+nqP3eH5EBbhxzRHgC3qWebhFhGkRQgiBj?=
- =?us-ascii?Q?XAyg0cRjSqE48MCNLmFbRwhH6gMQDhrSfAliJpiic+P7fVp+rLR1+4TPZFHU?=
- =?us-ascii?Q?DwJbpeVPQuP0Fqpq06Odq9GC7X/L5S9Z1ERjFKB3BugkRNRIUcZZo8LqkOQT?=
- =?us-ascii?Q?uIWVrtPLFEAqxzW5yP6x3Y0i1FJJ4XU7UHFw3vmwpKCVwECae1hRWY0dOT2c?=
- =?us-ascii?Q?0cZjN56BeP/ZToRmlKxHY93Mx5booaG2jHh3fZTBBjw2yWYILANRLo8u2fdq?=
- =?us-ascii?Q?CX6Pz56vdSFFhov8QLvoasYrq7mBGlv1QmeemfgO1QiHzo7JecYgWVqPSEUk?=
- =?us-ascii?Q?BuWk/1MugsLr7nerxsTnh4pDVGL7en8eLwfv7su4qacp5mKV9mJotPERmO+3?=
- =?us-ascii?Q?1GMjkg8YAGYbBbN9f17FP9UPBiiEHwokPUWJZoi82sBlMM3Gk+4TJ7Fct/WS?=
- =?us-ascii?Q?GZXcXW5/lBww3vu3HkMmkOeQwUZqYI9AeohRBHXFbkTHapIDrUIGpPxfB4Cv?=
- =?us-ascii?Q?epGJ75HI7oZ8fieqvPSicdRi/bzUYsSHLkBgowNZZZGOhbfoZRKJqoWgJZsp?=
- =?us-ascii?Q?440ELKE+ZhEN8V3zgvqs5H8ODrlL4IrE4j72s7SrtyDMYLZ4a2dJisqACD9V?=
- =?us-ascii?Q?vNWTzZ5RtUu7w4VrVPNb61nu25Jc39SwuBwVfy1lLni+bOmjrhiIeQiKiwYf?=
- =?us-ascii?Q?1zPOb/6xGzjo5OqG1uUhbNBxPVNJLTSO0Xo5lTDW/3aWRzs4p2cN1dWo4JKT?=
- =?us-ascii?Q?Gj1kpQPAWzgsR9Gx8GI+aTvkx5HLX5bfAYvgVHb8B2T6DczQVaaMgz0XPASS?=
- =?us-ascii?Q?8w2Si+MXys4d3qjoy2lDiQNvSGi+Z26xqs/DI0W3vozbx+jhvQ6EVDO27aYj?=
- =?us-ascii?Q?vEozHYp2pOzWabpBtwKCkOsVc+75Qn4kfzHVWAI+Q/2UxiaUNGc01JzKNxPC?=
- =?us-ascii?Q?VkUg4QiE/mE=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR11MB8430.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?XzhAGbgGN0EPT3tqjU306FeYAWucj+r80rVLOOYNc7dcA9TFW3XTVaxyuEJt?=
- =?us-ascii?Q?EHVL6wcO//8HjRPg4CyN7nfS655x/vIrsi4jbDiBBSQzSHIPAx4boX4/1hZQ?=
- =?us-ascii?Q?LuAej0A1Hs/GT+xUS2FUOlk6MHq4lmD00VUl4BisokpBeqyzWGLasXatQ7PX?=
- =?us-ascii?Q?XoZXdRsFeQyV3iygHqCfss6GuGMmJjIebxCnFFZRL1tmIDfD6tSklm+X5xwV?=
- =?us-ascii?Q?uwds8s740s6Wt3+R0ucJzHhvYC1a0Pu5YN/eeZcBo2EZCJ0imHHsZTcRepLE?=
- =?us-ascii?Q?fkb9k7+WWqU0P7l5v4fTI4tprFbMXmTu+FLng15Q8LUZRhng757kzg7PD1C0?=
- =?us-ascii?Q?ldl6q+9diIiUe1I2Ha1felsciSjk88mh14CG+rXEdxu14YgjpWv2ZPVOgmpJ?=
- =?us-ascii?Q?wZJRL1L7RuTZvTDOTS5PvDSnA/Zhx+6IiwmnzJ19FTt3iNCd19YEykJ2W+gW?=
- =?us-ascii?Q?krTtsL3iv8zNtSbNxth5GN2N213W/ACSV1L1n0OFGTO/qkoreuVrKSYnIGu/?=
- =?us-ascii?Q?DR4g8xjD5D13qtNBteoauU49toQkJKZxZhM0zohhRZLn3eMiSbHJy/cszUzy?=
- =?us-ascii?Q?iN88SH6D7vnLoduJbtjs7deOt9nf0f6IPnzDOZvpHTixjyJE+SOD6EtYxJt3?=
- =?us-ascii?Q?HkVtcIzV+ORP2FxM9921fEuU2xvVM50kX117YOcO8cdykBB5/0+zt+O5HBll?=
- =?us-ascii?Q?X9Uo4OMks2Ry1yU1nGBEhQrOG4DMuuuqzGHmukWGY5bCjBQSTH517LCTgh8Z?=
- =?us-ascii?Q?68mkkSaSlYivF/BpqgzTXJvXl2OQpc1ziS38LrXRflSfIas8uPyUoSf/xuwZ?=
- =?us-ascii?Q?waG9IY+hZ2k3p5parQ1e0GB705QTjCSx7FaZB3SLxZfJlEe+zuWDsM2prFAJ?=
- =?us-ascii?Q?+0/VUf2r3guFMmX7FnOFyRSbpCqwBjIQt5PyTQiLviArU1zlXwCsCFw5ymcl?=
- =?us-ascii?Q?VT7tJAmwEkpU/sx60JJzDU6VT8uQS4nPIjJ6jvEk1GoJauNUe5QhFWekI6Vw?=
- =?us-ascii?Q?xn9pLep4T2NZWgwNsSqGcDZsUL1LINNbs4TFt5+gtsiOxwtrt2MTxhY4HafL?=
- =?us-ascii?Q?J6qQ4uGqjp06DkrluH0pZ3HOP+o1EdASEp6FXBp+muyse4JuKMsZI4csoKxn?=
- =?us-ascii?Q?I4r22KQXg57AjrzHLX+Vd+k7zNm8DuF7uSiC/GFbxtx8tpP96nMrMcRwCbO+?=
- =?us-ascii?Q?khlxww0oZLcqgTuJeoQgHf+K9E7CZOiWj9hZKX/gKa4+UuF05C+ult/wWyRx?=
- =?us-ascii?Q?3VEgLMBCfuClBr5QLQIEzzvRsF82txYeB28OwqwMMgBBOcyClQ1MEyo7Cumx?=
- =?us-ascii?Q?RSFboEVt47N+u+ZaF2Lr8iw3cy9mnr3MsxuwpLx4NyS8cwAQihAg1X68aoW9?=
- =?us-ascii?Q?frcyPVELe5NfRHai9haYxlLxBjNGzuLqcuhiiSD3iGOyuh+yAfASuVGt7GGR?=
- =?us-ascii?Q?C6GDg/pV+fWwYh3tsPvgoC30Ml2l/2QGrMofCB9NniyB587fYoK9WwmryGEX?=
- =?us-ascii?Q?A+SQoBJ4n5ltjpfAiwNWjgqym7Bi86tXttkAjHXF6WPW4koyN1CMDHWm1ubX?=
- =?us-ascii?Q?dxl+iSjztLxZMPVAoWl+960NZo5iXU7kAT77Bi4xnvPwlJh7pg8FCT0T38iT?=
- =?us-ascii?Q?RA=3D=3D?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 51468373-b079-4a49-4a01-08ddd13a97d8
-X-MS-Exchange-CrossTenant-AuthSource: CYYPR11MB8430.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 20:32:54.4191
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: aHbUHm2+vXRqhWxUa31VK1F5nYXCPTp8JGQRtm4MBiNI49f0p/eMmnSWKnqTR22PMj9u3nNLegRInJmezMlBzA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR11MB8435
-X-OriginatorOrg: intel.com
 
-On Fri, Aug 01, 2025 at 06:26:47PM +0000, Cavitt, Jonathan wrote:
-> -----Original Message-----
-> From: Intel-gfx <intel-gfx-bounces@lists.freedesktop.org> On Behalf Of Colin Ian King
-> Sent: Friday, August 1, 2025 8:17 AM
-> To: Jani Nikula <jani.nikula@linux.intel.com>; Vivi, Rodrigo <rodrigo.vivi@intel.com>; Tvrtko Ursulin <tursulin@ursulin.net>; David Airlie <airlied@gmail.com>; Simona Vetter <simona@ffwll.ch>; intel-gfx@lists.freedesktop.org; dri-devel@lists.freedesktop.org
-> Cc: kernel-janitors@vger.kernel.org; linux-kernel@vger.kernel.org
-> Subject: [PATCH][next] drm/i915: remove redundant repeated checks on err
-> > 
-> > There are a couple of redundant repeated checks on err being non-zero that
-> > are always true because they are inside a previous check on err being
-> > non-zero. Remove the duplicated checks.
-> > 
-> > Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> 
-> Reviewed-by: Jonathan Cavitt <jonathan.cavitt@intel.com>
+This is a cleanup to use guard() and __free() where possible.
 
-pushed to drm-intel-gt-next
+Changes since v1: https://lore.kernel.org/linux-trace-kernel/20250801142506.431659758@kernel.org
 
-> -Jonathan Cavitt
-> 
-> > ---
-> >  drivers/gpu/drm/i915/gem/selftests/i915_gem_migrate.c | 6 ++----
-> >  1 file changed, 2 insertions(+), 4 deletions(-)
-> > 
-> > diff --git a/drivers/gpu/drm/i915/gem/selftests/i915_gem_migrate.c b/drivers/gpu/drm/i915/gem/selftests/i915_gem_migrate.c
-> > index d8f4a10d71de..3913b48cece7 100644
-> > --- a/drivers/gpu/drm/i915/gem/selftests/i915_gem_migrate.c
-> > +++ b/drivers/gpu/drm/i915/gem/selftests/i915_gem_migrate.c
-> > @@ -142,8 +142,7 @@ static int lmem_pages_migrate_one(struct i915_gem_ww_ctx *ww,
-> >  		if (err) {
-> >  			if (!silent_migrate)
-> >  				pr_err("Object failed migration to smem\n");
-> > -			if (err)
-> > -				return err;
-> > +			return err;
-> >  		}
-> >  
-> >  		if (i915_gem_object_is_lmem(obj)) {
-> > @@ -161,8 +160,7 @@ static int lmem_pages_migrate_one(struct i915_gem_ww_ctx *ww,
-> >  		if (err) {
-> >  			if (!silent_migrate)
-> >  				pr_err("Object failed migration to lmem\n");
-> > -			if (err)
-> > -				return err;
-> > +			return err;
-> >  		}
-> >  
-> >  		if (i915_gem_object_has_struct_page(obj)) {
-> > -- 
-> > 2.50.0
-> > 
-> > 
+- Do not use guard(preempt) for trace_event_buffer_lock_reserve() as that
+  returns with preemption enabled between the disable and enable preempt.
+
+
+Steven Rostedt (5):
+      tracing: Remove unneeded goto out logic
+      tracing: Add guard(ring_buffer_nest)
+      tracing: Add guard() around locks and mutexes in trace.c
+      tracing: Use __free(kfree) in trace.c to remove gotos
+      ring-buffer: Convert ring_buffer_write() to use guard(preempt_notrace)
+
+----
+ include/linux/ring_buffer.h       |   3 +
+ kernel/trace/ring_buffer.c        |  16 +--
+ kernel/trace/trace.c              | 287 ++++++++++++++------------------------
+ kernel/trace/trace_events_synth.c |   6 +-
+ kernel/trace/trace_output.c       |  17 +--
+ 5 files changed, 114 insertions(+), 215 deletions(-)
 
