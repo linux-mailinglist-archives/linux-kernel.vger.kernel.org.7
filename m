@@ -1,152 +1,176 @@
-Return-Path: <linux-kernel+bounces-753256-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753257-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E370EB180A8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:05:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B50E0B180AA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:05:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E6FC1890F98
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:05:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B07A173630
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:05:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B18623AE87;
-	Fri,  1 Aug 2025 11:05:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD66F23A993;
+	Fri,  1 Aug 2025 11:05:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="IZskYN6m"
-Received: from mail-ot1-f42.google.com (mail-ot1-f42.google.com [209.85.210.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jathTBlF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE82E23ABB4
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:05:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A9F037160;
+	Fri,  1 Aug 2025 11:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754046313; cv=none; b=myZTbSgDYp22N/B5EbNXZxY7hC3dsJDfVZGxDC3y/mY1QrR3mOPf2beGHQk3el3jOmDQlhBJkIxn/lOq5aeX1oY6kPQUsmGNbzGCsZwaLuVptrahTyNzQv34yi4PX5mBjSnmvaSw8AkFcuFV8k1gLS51UiwScqmxE8MNzPGvdoE=
+	t=1754046324; cv=none; b=Xe+RgUQcabDGLt+5p7S/ZCAS99aE1ERTmyUJhHIaX04iRRM0lS+o2yr3R5WzGcSLtJPkZlW1KayynEHJPiMsAfP+Fnt5bL6FeV8OArrx1bMdMZDoQqRVH/YcpMXEayJx6IpZLBYb+QNnAyWo0Vi0hskjmQ4F2vLK9UNiAZXTZtw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754046313; c=relaxed/simple;
-	bh=/+jMRUVcZ6t8Pl8l4LNW+ajilhtOkPFN+4QMcHsiT+g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Fxw5RfkkDP4OOSGARf2KCR6NpyH6mx73ob3AGGH7lYXiwxOzDQMcZc5Y1EB903icePvaoq7rmSj436JF8MC5Gm/+a9KKecScZL90mJy+pILo0hpTk9m30edCgM0qH3JafmN1ywy9SW1n4wwsabGzk4Z7B2+PNDorFxKejRbTFUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=IZskYN6m; arc=none smtp.client-ip=209.85.210.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ot1-f42.google.com with SMTP id 46e09a7af769-74121e0fb77so446201a34.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 04:05:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1754046311; x=1754651111; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/+jMRUVcZ6t8Pl8l4LNW+ajilhtOkPFN+4QMcHsiT+g=;
-        b=IZskYN6mZrvU/Q8092yR4joeg+TARsyo10jcJJt31M3dQHkf7oXFB2veU/I4YxNV4H
-         wwH904rYXHg8xy6+v+XiqyGHJ7OtI4lH+6I2ajj/CVrtM0fyRnYHFs+nh3l0rqa85T9+
-         AMVjHEAlLaBq34xGySiizsDWypESszjJh6f5U=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754046311; x=1754651111;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/+jMRUVcZ6t8Pl8l4LNW+ajilhtOkPFN+4QMcHsiT+g=;
-        b=xDBTzsFQq+nNdheUZL3jKl3U8E/5/Zj2Dvgywi77GxZ/Jahl+WVJoNjkAKexxKo4xo
-         qBroz9nD5VPiWJvtobRXp5C/OucVWrd85Fn91r7OP1PSCYr/trn+o2n6GkiHSvBlC+uf
-         LeNydc3XAlskdAose4KPr50GyO2gk789sYNIUdAsFBEy+VexoRicmC9vhZcv+i/RHar5
-         IgNALA+Cz22iYuRHqd026yru+jrdMchJFG2tw2TzzVElnE9rqIOerF8gYA1uo3GnHvuQ
-         9X2d0cntgvUqvnZWg1qz8IpH4k/p7CFm2b0L55zF7NzpCwnkMrPTTJJraSpzdcIwC74c
-         eqkw==
-X-Forwarded-Encrypted: i=1; AJvYcCU9JYL0zrEe7Lrv9IRibsO3RcdDl9aUbqWZyWe2dc+VkJjgev0u+bSwH0P7Hj+dVLpV9pVBpJvZkbWb8ls=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywmk6GZzfYgiuX0DI/piCD/o8t3UITY70n970PAbgrQpQZ6Mh4c
-	VBmalqHh4txXNjPleiG+L6Qmz2AU1eBj8JLUONSFMFifI4+c6xHYUNhBoogPJOeQwXnfXjV3Dmv
-	Czejkzwz/MJaPjG5g612QPtTRg2bzM9wTKkbWsEM8
-X-Gm-Gg: ASbGncsleUefH0x4jPi4UnOxdmg9fUt/aqPXagk3hMoPAXKb6dvPGd+woOWRruHMUCa
-	YSQujrwVcqhSRSkJ+3EleCTAHeeOR2VY1QIuPSMmvBpUj26Rt7rTzy+UsDSZlXHcVgvTqdZIOk2
-	rzVQrMXbKp+9HXXShiZztan1PCY+7uEgfO0VzLRbUy6G2PUuIGNj3KRllh7TiQBj9M8yROyaWdP
-	fxNbXwsOKNTMtasboGX3scA4VH+y5UHM+yxbCIsdtPRnQ==
-X-Google-Smtp-Source: AGHT+IFcu23cfo1L+r2ndOaJ6tIGjp3L6Og5YNOYpWEWiKowVEeAG4TrrXquLF+MqSuI+nCk5jD+RBvLEHmkGlbWWB8=
-X-Received: by 2002:a05:6830:3987:b0:73e:9293:554b with SMTP id
- 46e09a7af769-74177aadc6fmr7049993a34.12.1754046310929; Fri, 01 Aug 2025
- 04:05:10 -0700 (PDT)
+	s=arc-20240116; t=1754046324; c=relaxed/simple;
+	bh=difHokwBktTQLgVwGBkJrWHShhZQ9E1oVaauNa7VNeE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hVBB/jqeP+QBjKqUk5bv/zq4BLr690cSJfoeiSYYXo0/SWU6MgFpX5h8IBuVEAoz8u+39EqPZfRfuIkpBv2/ghut1jr4krbBfcSI3H2/dfE83HMxaNZNRLGzqL3ASAcCIoRHLBiCLC97vIXD3DxurQ8MsbYaEs8Yt4i86nV1/CA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jathTBlF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16632C4CEF4;
+	Fri,  1 Aug 2025 11:05:20 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754046323;
+	bh=difHokwBktTQLgVwGBkJrWHShhZQ9E1oVaauNa7VNeE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jathTBlF7iNB+Cbbbv7Bp8B6REodF3f8dw7fmOFIiC+dZs0hemDJzvRtNduOKaUle
+	 vTB1fiiDyKwLK+zVQk2HdErEi/cMItC5fvDRXoqxgeFVxWd0oW3EIIZe0dkT4elBV5
+	 9eXfMv+4Xj5zum0UeONQ0DcgcEHNruLxbtq/TSHdt6TJ5Rxa2d/10JdiYPhazEWpUK
+	 REIULTqWqdNdmXZbo7SHopLECBdKFJ5tvp9k3GYSHaykwIFg+C+xdptN6jWK+1FNIM
+	 R8+3Jt8spyvo83SbsLV0ds+/+W7NDOsD9Cqk5P2juo5OeUguL2R52jKC2VOl1HDyt6
+	 R+bHMMYu10i1Q==
+Date: Fri, 1 Aug 2025 12:05:18 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew+netdev@lunn.ch, shenjian15@huawei.com,
+	liuyonglong@huawei.com, chenhao418@huawei.com,
+	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
+	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net 1/3] net: hibmcge: fix rtnl deadlock issue
+Message-ID: <20250801110518.GN8494@horms.kernel.org>
+References: <20250731134749.4090041-1-shaojijie@huawei.com>
+ <20250731134749.4090041-2-shaojijie@huawei.com>
+ <20250801100520.GJ8494@horms.kernel.org>
+ <15388e7f-45a8-4356-88c9-45848c3a296f@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731101344.2761757-1-treapking@google.com>
- <1519a7c3872a59b7b5f12e99529237035499bc26@intel.com> <CAD=FV=VBhamkffZhVuMEoiwfAoeHRzSORo+=eqMLYVsSBMO-bQ@mail.gmail.com>
-In-Reply-To: <CAD=FV=VBhamkffZhVuMEoiwfAoeHRzSORo+=eqMLYVsSBMO-bQ@mail.gmail.com>
-From: Pin-yen Lin <treapking@chromium.org>
-Date: Fri, 1 Aug 2025 19:04:59 +0800
-X-Gm-Features: Ac12FXz59Gv-xeWJuJdY52SRDvtajWsArQQuLuzom-4gp2vT2ns_QxyRWnAtOXk
-Message-ID: <CAEXTbpcPxpbtwy70uGxMcwsTcjpTqEX3EBZUyMg-6k5ULE1PmA@mail.gmail.com>
-Subject: Re: [PATCH 1/2] drm/panel: Allow powering on panel follower after
- panel is enabled
-To: Doug Anderson <dianders@chromium.org>, Jani Nikula <jani.nikula@linux.intel.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>, Jessica Zhang <quic_jesszhan@quicinc.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-input@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	Chen-Yu Tsai <wenst@chromium.org>, Pin-Yen Lin <treapking@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <15388e7f-45a8-4356-88c9-45848c3a296f@huawei.com>
 
-Hi Doug and Jani,
+On Fri, Aug 01, 2025 at 06:44:36PM +0800, Jijie Shao wrote:
+> 
+> on 2025/8/1 18:05, Simon Horman wrote:
+> > On Thu, Jul 31, 2025 at 09:47:47PM +0800, Jijie Shao wrote:
+> > > Currently, the hibmcge netdev acquires the rtnl_lock in
+> > > pci_error_handlers.reset_prepare() and releases it in
+> > > pci_error_handlers.reset_done().
+> > > 
+> > > However, in the PCI framework:
+> > > pci_reset_bus - __pci_reset_slot - pci_slot_save_and_disable_locked -
+> > >   pci_dev_save_and_disable - err_handler->reset_prepare(dev);
+> > > 
+> > > In pci_slot_save_and_disable_locked():
+> > > 	list_for_each_entry(dev, &slot->bus->devices, bus_list) {
+> > > 		if (!dev->slot || dev->slot!= slot)
+> > > 			continue;
+> > > 		pci_dev_save_and_disable(dev);
+> > > 		if (dev->subordinate)
+> > > 			pci_bus_save_and_disable_locked(dev->subordinate);
+> > > 	}
+> > > 
+> > > This will iterate through all devices under the current bus and execute
+> > > err_handler->reset_prepare(), causing two devices of the hibmcge driver
+> > > to sequentially request the rtnl_lock, leading to a deadlock.
+> > > 
+> > > Since the driver now executes netif_device_detach()
+> > > before the reset process, it will not concurrently with
+> > > other netdev APIs, so there is no need to hold the rtnl_lock now.
+> > > 
+> > > Therefore, this patch removes the rtnl_lock during the reset process and
+> > > adjusts the position of HBG_NIC_STATE_RESETTING to ensure
+> > > that multiple resets are not executed concurrently.
+> > > 
+> > > Fixes: 3f5a61f6d504f ("net: hibmcge: Add reset supported in this module")
+> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> > > ---
+> > >   drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c | 13 ++++---------
+> > >   1 file changed, 4 insertions(+), 9 deletions(-)
+> > > 
+> > > diff --git a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> > > index 503cfbfb4a8a..94bc6f0da912 100644
+> > > --- a/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> > > +++ b/drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c
+> > > @@ -53,9 +53,11 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
+> > >   {
+> > >   	int ret;
+> > > -	ASSERT_RTNL();
+> > > +	if (test_and_set_bit(HBG_NIC_STATE_RESETTING, &priv->state))
+> > > +		return -EBUSY;
+> > >   	if (netif_running(priv->netdev)) {
+> > > +		clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+> > >   		dev_warn(&priv->pdev->dev,
+> > >   			 "failed to reset because port is up\n");
+> > >   		return -EBUSY;
+> > > @@ -64,7 +66,6 @@ static int hbg_reset_prepare(struct hbg_priv *priv, enum hbg_reset_type type)
+> > >   	netif_device_detach(priv->netdev);
+> > >   	priv->reset_type = type;
+> > > -	set_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+> > >   	clear_bit(HBG_NIC_STATE_RESET_FAIL, &priv->state);
+> > >   	ret = hbg_hw_event_notify(priv, HBG_HW_EVENT_RESET);
+> > >   	if (ret) {
+> > > @@ -84,10 +85,8 @@ static int hbg_reset_done(struct hbg_priv *priv, enum hbg_reset_type type)
+> > >   	    type != priv->reset_type)
+> > >   		return 0;
+> > > -	ASSERT_RTNL();
+> > > -
+> > > -	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+> > >   	ret = hbg_rebuild(priv);
+> > > +	clear_bit(HBG_NIC_STATE_RESETTING, &priv->state);
+> > Hi Jijie,
+> > 
+> > If I understand things correctly, then with this patch the
+> > HBG_NIC_STATE_RESETTING bit is used to prevent concurrent execution.
+> > 
+> > Noting that a reset may be triggered via eththool, where hbg_reset() is
+> > used as a callback, I am concerned about concurrency implications for lines
+> > below this one.
+> 
+> Yes, just like the following, it can lead to reset and net open concurrency.
+> ===========
+> 
+>      reset1                                              reset2                               open
+> 
+> set_bit HBG_NIC_STATE_RESETTING
+> 
+>      netif_device_detach()
+>      resetting...
+> 
+> clear_bit HBG_NIC_STATE_RESETTING
+>                                               set_bit HBG_NIC_STATE_RESETTING
+>                                                    netif_device_detach()
+> 
+>       netif_device_attach()
+>                                                          resetting...                     hbg_net_open()
+>                                                                                           hbg_txrx_init()
+> 
+>                                               clear_bit HBG_NIC_STATE_RESETTING
+>                                                       netif_device_attach()
+> 
+> ============
+> Thank you for your reminder.
+> I will fix it in V2
 
-Thanks for the review.
+Likewise, thanks.
 
-On Fri, Aug 1, 2025 at 12:38=E2=80=AFAM Doug Anderson <dianders@chromium.or=
-g> wrote:
->
-> Hi,
->
-> On Thu, Jul 31, 2025 at 3:31=E2=80=AFAM Jani Nikula <jani.nikula@linux.in=
-tel.com> wrote:
-> >
-> > On Thu, 31 Jul 2025, Pin-Yen Lin <treapking@chromium.org> wrote:
-> > > Some touch controllers have to be powered on after the panel's backli=
-ght
-> > > is enabled. To support these controllers, introduce after_panel_enabl=
-ed
-> > > flag to the panel follower and power on the device after the panel an=
-d
-> > > its backlight are enabled.
-> >
-> > I think it's *very* confusing and error prone to call follower hooks at
-> > different places depending on a flag. The hook names and documentation
-> > say *when* they get called, and that should not change.
-> >
-> > I think the right approach would be to add .panel_enabled and
-> > .panel_disabling hooks to struct drm_panel_follower_funcs, and have the=
-m
-> > called after panel (and backlight) have been enabled and before panel
-> > (and backlight) are disabled, respectively.
-> >
-> > In i2c-hid-core.c, you'd then have two copies of struct
-> > drm_panel_follower_funcs, and use one or the other depending on the
-> > quirk. You can even reuse the functions.
-> >
-> > I think overall it'll be be more consistent, more flexible, and probabl=
-y
-> > fewer lines of code too.
+-- 
+pw-bot: cr
 
-I was thinking that we probably will never have a device that needs to
-register both .panel_prepared() and .panel_enabled(), so I implemented
-it like this. I'll update this in the next version.
-
-I'll also fix the s-o-b line. Apparently I've messed up with my local
-git setting.
->
-> Yes, exactly what Jani said. We've wanted to do this before, but I
-> just never got around to it. There's even a (public) bug for it in the
-> Google bug tracker and I've just assigned it to you. :-P
->
-> https://issuetracker.google.com/305780363
-
-So my series is not a new idea :P
->
-> -Doug
-
-
-Regards,
-Pin-yen
 
