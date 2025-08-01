@@ -1,142 +1,189 @@
-Return-Path: <linux-kernel+bounces-752789-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752790-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B76AB17ADE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:36:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7EA72B17AE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DA881C25AB6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:36:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 192074E856B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 01:43:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA14E74420;
-	Fri,  1 Aug 2025 01:36:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49F7513B280;
+	Fri,  1 Aug 2025 01:43:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="a1fJcoiR"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cl2CgTJu"
+Received: from mail-yw1-f194.google.com (mail-yw1-f194.google.com [209.85.128.194])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47B0923AD;
-	Fri,  1 Aug 2025 01:36:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25F183C17;
+	Fri,  1 Aug 2025 01:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754012181; cv=none; b=U3dPGYVo14h6/Cm6cRHp9KE61r4Vz1bPvQdHqiXp1c3GllFxq16H7zkoTRWaGZRiQ1x9PfhQ2RaVwgasFUJTA2ih6Jr+10vLIWd9JEmcfr7qdOeQWcphEe6HPCeyetNV4uSU2Jssvo3nvJyi5Axm6lDINFazpA5EcKREj3AWuzs=
+	t=1754012590; cv=none; b=ov5wGKth+uArVSkQUCPaeB1H4GC6v2FOyEK22OGBuEI88Dp/Svgz+cg9RkNL2faFXLl08cNaSV2WyOzFIiUzrl4snXAcCSdcTUTHihhTXN3+xVTssgIjPtr6iGsyY8q7H+nx5iB22vaXUiL7UHbyO8mbYTK2WZlRoSuz/uh2JeM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754012181; c=relaxed/simple;
-	bh=5SNsFNLVWYOZFqNAoOz9IHjAl8j+Cg/aGn2QpUZyKgA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RLiS/3nLFwQ76NLOFjIk6yIC3lAwQwFf1PPxcV3Jms6kKmZoNOClJuDk7PGD2dBf2fs7i4UaSmEcoKCBRpc2swAn4DttHhcFmq1FNeOzmyq0eiMFWQlBTPtIwBnMQCOMU9kVZ7D8TdG+JPfgaGyGU+2YczgP/i4jFzJ7SNwxi08=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=a1fJcoiR; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5711ZkZT2441379
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Thu, 31 Jul 2025 18:35:47 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5711ZkZT2441379
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754012148;
-	bh=EgWSSRCbXkSWBQ/z1xshtc+sAmsdQQ8TiuhWS5SqWjQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=a1fJcoiRdAaGnQhMvG9bBK1PxYIUehGfoar3etETXoVw8UJRsCeCFzZZIwz0cfSAI
-	 9Y5TmH+7PQSJenuuJffwyliLOwPhRNLHdrGTeAtUNCrxvhNj9x4zjPU9HZd67yXRzk
-	 alUmQcrhpFhtWtJgnqWW2W+Gq8VNkGLHqUwrnpZuade2NPjfcc47S60YtFn669i5XF
-	 I8fwtC57UpJairG5ZDMvdc9xtIORBuiSJDOQZcTmWe9IXMXcS+Slffu5DFViUciJTr
-	 sDW9WMfbMMzNiizYfdpPFHJund1KA3lMYHI+dhW6VyriP051L1nHIqJSI1Wxsy/He6
-	 n+QR4Rmtiv2dQ==
-Message-ID: <b3774d86-5589-4b01-a633-ae28794a4cfd@zytor.com>
-Date: Thu, 31 Jul 2025 18:35:46 -0700
+	s=arc-20240116; t=1754012590; c=relaxed/simple;
+	bh=N4Q5miAGpxlGfSXr83VjddicIT/BiIK7HPIuYbDoGvY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=e4iqF1TQytlFfXQwJOIb/pmY2WMnwOJMw8BgGDe5RUGWt5euK9oG3u3qsv+vrj1YkTojWsYWBt2joqsgKOo1qdDE2D2CFJLbL4vuPwLVVsDOPtrkTmmtfMjMpBLz5spcUHhqRdB/JJFNAMoYcndsLPn7PwE/NNSV4FwnlcynIR4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cl2CgTJu; arc=none smtp.client-ip=209.85.128.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f194.google.com with SMTP id 00721157ae682-71a3f7f0addso15722957b3.2;
+        Thu, 31 Jul 2025 18:43:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754012588; x=1754617388; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Vg54mcNOWV4pT7SvP9l1EEus3Ufwp4XwJcmkPSo2fik=;
+        b=Cl2CgTJuLD5lXQ5yoziJwyccymk4NhKcRRFOuVmlp7IElmMI7ocYNUL9YDhhkzhIAF
+         Rh3AohvErLwHd61icpBpCNb8pDrsT93TPzvRUpTrqBYhJR8zt6BpSdkTV9qDurVWsL/B
+         YUoDIP9S09mpDcQX0oHLuS2Zykc2+v3XN4Jv2l6G3rATJrlh93vzA421QjT8fvDHFMzQ
+         Ufi826zbsU/m0PONpPxX7pVEjlSWMCGdTjfSej+vKDBY6U8ok63b26ugihmUXHQ+8z3Q
+         jya5HAKIcQ3jdFYKpOEeAksK1Tu2Mrn+rANNKNVVtjiDqlonBlsjhw21R4MRz63SEbF6
+         cYcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754012588; x=1754617388;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Vg54mcNOWV4pT7SvP9l1EEus3Ufwp4XwJcmkPSo2fik=;
+        b=dGt2us2/oLke63ddoDm7HVrPxkzZH/A+nN9kg73OEFQSHrRLDRRlVhdsO1imwweKry
+         JF7AWcAzo4vHjuelczHvZbPojH2BfCk1JldbW4YH7ctCFsmaJEdm7RgNSHbTF9K5isUT
+         EfKW0aFyP5nPclPStvYc2cAqWzsg7Bfff30Y+YW34tyrkaz9x04OGhGMdzQ3QdiLK8JA
+         K3hnWNs4wCTXrtiTBKlDwfmDKIVwRWCB6WwnZpaMdzqNbVfj9ivhf6lT/4smNaS1yLwO
+         h1t/6vslQHLBnyzH0D3aIBtF6oyIHZC0wGN1LO8bRS6IBdIpw8/SKk8tKRlGzkP9Uf+O
+         /jiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUrJcJ//hR5OlCikm2RVqsWkf5yd2IbQl9z39Tk/hoHnnPRj+ztR4QsEM5y75q/juQr0bEOpcCl@vger.kernel.org, AJvYcCVpzisn1qDTpIVnZcK64O4Q+p7LRPm2K1A/HJ51yvUwdxj2LmqCNbvAReafc0F7nFqt+Y3hDsQ94BeIvzaN@vger.kernel.org, AJvYcCWmkZ/RE3f7xlXsue0WU86nrzNmJ9kJFOOiFFFQvqbFyrewIT8DAFVxi78tRIFj8TfgO8o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIZXIPBQ/zcsCNMglSAJUG+8phz/kmX4AOYPqdSbeAsbWZdLoa
+	pfC8+wkHGHeJsRaH2hQXqcyvgmZzIUybcU4XoxJuB7rGf2F7wC8AKeNijpax9Pktt4PcI281ltB
+	43W+DWYWHyCrihyjfhyCY/yD8ARvzTJkMZ64NZ/4=
+X-Gm-Gg: ASbGnctmlqes9SJngRpaM35LYHtRUwtBb/gyYvn84p0IX4VjgrEiftLo1ks4TvsBTD4
+	UZEZEgbkW6o97jIKLETFVzAxvwpn7k02Wq13610K2fN8nLOI2OVilG8QAYK4W2exeQVbqDHOf5Z
+	ygmh8aOj92q9bkhPOvI/YVEYPpFwkEbyK0ueBWN7ynJzHT1ntBxoQN945ZWc2LE+tvpIGimF2yG
+	kh9c0c=
+X-Google-Smtp-Source: AGHT+IG3VYdBG5WRJkmwgqjcOvLij9zCubY0eTDbLYeCX5pOkIV0RjU1PUH4J+wlTs9cCnuBusTUnHpIPoKcXIdWeQ8=
+X-Received: by 2002:a05:690c:7001:b0:71a:1c50:8898 with SMTP id
+ 00721157ae682-71a46659cd3mr132619967b3.20.1754012587918; Thu, 31 Jul 2025
+ 18:43:07 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation
- helpers
-To: Sean Christopherson <seanjc@google.com>
-Cc: Chao Gao <chao.gao@intel.com>, linux-kernel@vger.kernel.org,
-        kvm@vger.kernel.org, pbonzini@redhat.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com
-References: <20250730174605.1614792-1-xin@zytor.com>
- <20250730174605.1614792-3-xin@zytor.com> <aItGzjhpfzIbG+Op@intel.com>
- <7af6dcf5-fbcd-4173-a588-38cf6c536282@zytor.com>
- <aIwOmEzLgkP-9ZDE@google.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <aIwOmEzLgkP-9ZDE@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250703121521.1874196-1-dongml2@chinatelecom.cn>
+ <20250703121521.1874196-3-dongml2@chinatelecom.cn> <CAADnVQKP1-gdmq1xkogFeRM6o3j2zf0Q8Atz=aCEkB0PkVx++A@mail.gmail.com>
+ <45f4d349-7b08-45d3-9bec-3ab75217f9b6@linux.dev> <3bccb986-bea1-4df0-a4fe-1e668498d5d5@linux.dev>
+ <CAADnVQ+Afov4E=9t=3M=zZmO9z4ZqT6imWD5xijDHshTf3J=RA@mail.gmail.com>
+ <20250716182414.GI4105545@noisy.programming.kicks-ass.net>
+ <CAADnVQ+5sEDKHdsJY5ZsfGDO_1SEhhQWHrt2SMBG5SYyQ+jt7w@mail.gmail.com>
+ <CADxym3Za-zShEUyoVE7OoODKYXc1nghD63q2xv_wtHAyT2-Z-Q@mail.gmail.com> <CAADnVQ+XGYp=ORtA730u7WQKqSGGH6R4=9CtYOPP_uHuJrYAkQ@mail.gmail.com>
+In-Reply-To: <CAADnVQ+XGYp=ORtA730u7WQKqSGGH6R4=9CtYOPP_uHuJrYAkQ@mail.gmail.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 1 Aug 2025 09:42:57 +0800
+X-Gm-Features: Ac12FXy-vpmSHlsvL-oIX1qMJ0s6c0XklwUy2mr9pJMFQsV90eCj8vUHSIkVBx0
+Message-ID: <CADxym3arEsBB-b0Hr52pcwH7H+Lgg6-NKYczPn6W49WRND-UJg@mail.gmail.com>
+Subject: Re: Inlining migrate_disable/enable. Was: [PATCH bpf-next v2 02/18]
+ x86,bpf: add bpf_global_caller for global trampoline
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Menglong Dong <menglong.dong@linux.dev>, 
+	Steven Rostedt <rostedt@goodmis.org>, Jiri Olsa <jolsa@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@linux.dev>, Eduard Zingerman <eddyz87@gmail.com>, 
+	LKML <linux-kernel@vger.kernel.org>, Network Development <netdev@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
->>>> +
->>>> 		handled = !handle_fastpath_set_x2apic_icr_irqoff(vcpu, data);
->>>> 		break;
->>>> 	case MSR_IA32_TSC_DEADLINE:
->>>> -		data = kvm_read_edx_eax(vcpu);
->>>> +		if (reg == VCPU_EXREG_EDX_EAX)
->>>> +			data = kvm_read_edx_eax(vcpu);
->>>> +		else
->>>> +			data = kvm_register_read(vcpu, reg);
->>>> +
->>>
->>> Hoist this chunk out of the switch clause to avoid duplication.
->>
->> I thought about it, but didn't do so because the original code doesn't read
->> the MSR data from registers when a MSR is not being handled in the
->> fast path, which saves some cycles in most cases.
-> 
-> Can you hold off on doing anything with this series?  Mostly to save your time.
+On Fri, Aug 1, 2025 at 12:15=E2=80=AFAM Alexei Starovoitov
+<alexei.starovoitov@gmail.com> wrote:
+>
+> On Mon, Jul 28, 2025 at 2:20=E2=80=AFAM Menglong Dong <menglong8.dong@gma=
+il.com> wrote:
+> >
+> > On Thu, Jul 17, 2025 at 6:35=E2=80=AFAM Alexei Starovoitov
+> > <alexei.starovoitov@gmail.com> wrote:
+> > >
+> > > On Wed, Jul 16, 2025 at 11:24=E2=80=AFAM Peter Zijlstra <peterz@infra=
+dead.org> wrote:
+> > > >
+> > > > On Wed, Jul 16, 2025 at 09:56:11AM -0700, Alexei Starovoitov wrote:
+> > > >
+> > > > > Maybe Peter has better ideas ?
+> > > >
+> > > > Is it possible to express runqueues::nr_pinned as an alias?
+> > > >
+> > > > extern unsigned int __attribute__((alias("runqueues.nr_pinned"))) t=
+his_nr_pinned;
+> > > >
+> > > > And use:
+> > > >
+> > > >         __this_cpu_inc(&this_nr_pinned);
+> > > >
+> > > >
+> > > > This syntax doesn't actually seem to work; but can we construct
+> > > > something like that?
+> > >
+> > > Yeah. Iant is right. It's a string and not a pointer dereference.
+> > > It never worked.
+> > >
+> > > Few options:
+> > >
+> > > 1.
+> > >  struct rq {
+> > > +#ifdef CONFIG_SMP
+> > > +       unsigned int            nr_pinned;
+> > > +#endif
+> > >         /* runqueue lock: */
+> > >         raw_spinlock_t          __lock;
+> > >
+> > > @@ -1271,9 +1274,6 @@ struct rq {
+> > >         struct cpuidle_state    *idle_state;
+> > >  #endif
+> > >
+> > > -#ifdef CONFIG_SMP
+> > > -       unsigned int            nr_pinned;
+> > > -#endif
+> > >
+> > > but ugly...
+> > >
+> > > 2.
+> > > static unsigned int nr_pinned_offset __ro_after_init __used;
+> > > RUNTIME_CONST(nr_pinned_offset, nr_pinned_offset)
+> > >
+> > > overkill for what's needed
+> > >
+> > > 3.
+> > > OFFSET(RQ_nr_pinned, rq, nr_pinned);
+> > > then
+> > > #include <generated/asm-offsets.h>
+> > >
+> > > imo the best.
+> >
+> > I had a try. The struct rq is not visible to asm-offsets.c, so we
+> > can't define it in arch/xx/kernel/asm-offsets.c. Do you mean
+> > to define a similar rq-offsets.c in kernel/sched/ ? It will be more
+> > complex than the way 2, and I think the second way 2 is
+> > easier :/
+>
+> 2 maybe easier, but it's an overkill.
+> I still think asm-offset is cleaner.
+> arch/xx shouldn't be used, of course, since this nr_pinned should
+> be generic for all archs.
+> We can do something similar to drivers/memory/emif-asm-offsets.c
 
-Sure.
+Great, I'll have a try on this way!
 
-> 
-> Long story short, I unexpectedly dove into the fastpath code this week while sorting
-> out an issue with the mediated PMU series, and I ended up with a series of patches
-> to clean things up for both the mediated PMU series and for this series.
-> 
-> With luck, I'll get the cleanups, the mediated PMU series, and a v2 of this series
-> posted tomorrow (I also have some feedback on VCPU_EXREG_EDX_EAX; we can avoid it
-> entirely without much fuss).
-> 
-
-Will wait and take a look when you post them.
-
+> and do that within kernel/sched/.
+> rq-offsets.c as you said.
+> It will generate rq-offsets.h in a build dir that can be #include-d.
+>
+> I thought about another alternative (as a derivative of 1):
+> split nr_pinned from 'struct rq' into its own per-cpu variable,
+> but I don't think that will work, since rq_has_pinned_tasks()
+> doesn't always operate on this_rq().
+> So the acceptable choices are realistically 1 and 3 and
+> rq-offsets.c seems cleaner.
+> Pls give it another try.
 
