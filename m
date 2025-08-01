@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-753814-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753815-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E7B0B18867
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:55:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C72B1886A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:59:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BAD3B5EEB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:55:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D46987A4459
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:58:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334FC28D857;
-	Fri,  1 Aug 2025 20:55:47 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3197E214A91;
+	Fri,  1 Aug 2025 20:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="inS6GtA1"
+Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA01A01C6;
-	Fri,  1 Aug 2025 20:55:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 044B720C00E
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 20:59:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754081746; cv=none; b=rqEp8MEHTNg9mvefd1QcQKjkejGvlg6EpBcW9s613paSRqb+3B8e17R8RrRANV082YpqaIwu3mp3Vn4VMG9a/kxNr0dMoCwudPYr1tFyqWgIjK5DcAeqyyPXMloax50YyB9aPKt6h3cPJKRjEavSfAKvZGt670y3HOf123Tmg8Y=
+	t=1754081964; cv=none; b=ntOw6zerfpjdjE1D7d+58uGC37QyOiERv8shmSH1ysICQoTWmw7JMGReAM1CXTK3Ns9NZ7NKV99KxlnFYioWfvZY34mKlooTYJadyIZcMzYrRCDS0QjNV2qlrpeGZnqM+g2YnNwPTP0HLygxs7yF/2z95MtHcsJ6XqqdYUDg3Bs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754081746; c=relaxed/simple;
-	bh=YKoSvIfIZ7AfnVI0xRJuSnbZ0NUlNJsWfV+lTb4X1ME=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RtCiv1M8Jq3E2f3wdjNUZ7SO12G3El1VhJ5ozsqJhIGF1lS46B/y4w9M4ydR1M6/5+Jd550h4oSHeFbX7uT3eIBO9ihooQsuPzexxmhosUqG11Vf4wiUNFpk0tOu6vqA5b2304jHoYaqs9aTS7b+Uw3JSMPr6YgYq0RwKcyg25U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay10.hostedemail.com (Postfix) with ESMTP id 52F62C02E9;
-	Fri,  1 Aug 2025 20:55:42 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 455F82000F;
-	Fri,  1 Aug 2025 20:55:40 +0000 (UTC)
-Date: Fri, 1 Aug 2025 16:56:01 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>
-Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org, Douglas Raillard 
- <douglas.raillard@arm.com>, Yonghong Song <yonghong.song@linux.dev>, Martin
- KaFai Lau <martin.lau@linux.dev>
-Subject: [PATCH v3] tracing: Have unsigned int function args displayed as
- hexadecimal
-Message-ID: <20250801165601.7770d65c@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754081964; c=relaxed/simple;
+	bh=zinTPD9UNIfaO9lLXZzQqyYrRAHoFMqMMtDkP7g2iAo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kty0QtOyV8JUBbaPNzraQfvejHx3GKwqqB7DvzmExiULU2x1J2CmAw3h15Mnx8c5kmKBDcKtsXeP8JXAt+tcmtYdQmK6r2l/tctYfPXCP2LmvmJFBft2HjcZTlx8wVRZOrHULfbiqSu51Lhc3vnd0iL64NmO7CNwCEVHR0a9ZmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=inS6GtA1; arc=none smtp.client-ip=209.85.128.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-71b76c2f903so9207467b3.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:59:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754081962; x=1754686762; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qqET3yrln63sKOqtKsLCt9GeuSdg6kTdsyx4gEPoi98=;
+        b=inS6GtA1pZ6gz5x0kEz/36G7tqAdQLFYMncO+Q+Z22wrpCJ8Yj2eh0zorHIhobgZeQ
+         0uqoRnLRPzlLYEloJFW0sMHqW2ocNK/uUbO41eC3vSJgcMBBGT1mdXOQM49osLvn4CNW
+         bq+ZwYX9niDkYKP7eNRjl6sdmPuAi1SmhfYcg5STvbNlA4+5Z+Lr5ctqgtmwM311H6Xh
+         Igt9Ij6rYGqKhGF4AI5zI6vN+gWNKJC5KtRvskhwPN4F6bRgwlhnziVv830zjFv0+Sb8
+         XyL18XKlPtLA0zEWQS3X++PQZs4RByGRwIZEZanBdg2aYylGGLXPNEOoEKrWUnBx7qxf
+         lURw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754081962; x=1754686762;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qqET3yrln63sKOqtKsLCt9GeuSdg6kTdsyx4gEPoi98=;
+        b=cc803IjDT8BQOfXISMBHtzvjVJbBGu9aL5/QuNW/8UhJvkfDUkhR6ACUdCUxrZFenf
+         UQ/M9f4Hfoahk5DbUrCYdk71mtkzMMIByd4NLZMZ2oh9K1a0+UH7u/g13A/pOOlhhNMT
+         Nl+2xd+X5jkdsjaCOcGTAYR1Od6U0M0axf5ROJvs5ZqYhRuMjuAknKbwB6ShSdooQ7EH
+         MD9MKEtIRVtOlsu+6VRQo8VDPoM4mkb3Nb/uiHHTyB44fWzeHynje1VP3Lgt5bDpMm6S
+         rSuBxXWx/GAAJrErW7bFh+zKDZW5G1p4OeWRYOEcDnkE7w8IoftVEaLNr6lV7+jgZHD3
+         XJbA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhh77s02jPAGD25WYJW5nqEDt/8zyEPCBrnJBMyKs88wemY+vjrgrqz4xb4PrIJnLSyDgrqC27klSseNo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdIBCId8Ifrx59h1YLLRoG3ARNCp2Ik6VEGp2YKKqsIwp5VjFH
+	67sBFz6L40xooVF8NINtg+Ew+0Jwmdi6Tn1+6idQQ31YpCjF/pb7ezk1gTi+ay7Iq2MfnfLn316
+	wInEyVkQjFeDki/6rUInvq1Ui3BFNH/RtWo1CJaQcI0qU/o/pX4cvvPY=
+X-Gm-Gg: ASbGncuJkkb+EAKC8PTfIU0CjWDf3645VrrZcgdnL9I7ILF6RP0Ul4d11WuNdl8FJaH
+	bMvv/Kh7gOVpAWAnqHlX83XnNHN39TZsIdCt1w+B73aDslOBFg8WpwqPRv5VAPwXMi5hRpD+yAs
+	ygfTW1a7diosMJDc+I/87X4yPumzV64HqebZyZH0eK6NRwGY7LPc8jcgITylE+oHzOfoumtkpUs
+	6TtUkL93tRj5asv
+X-Google-Smtp-Source: AGHT+IHKd1jJXv78xY/0PrFBxMZydcsWN552v7cnDSpVMcUFX+EeAaX4TfUi3JPVYyXTGczQLE+cROOwGZIJgBxNeNw=
+X-Received: by 2002:a05:690c:3101:b0:71a:186:59af with SMTP id
+ 00721157ae682-71b7ef85224mr13019307b3.30.1754081961974; Fri, 01 Aug 2025
+ 13:59:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20250730074253.1884111-1-ivo.ivanov.ivanov1@gmail.com> <20250730074253.1884111-2-ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20250730074253.1884111-2-ivo.ivanov.ivanov1@gmail.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 1 Aug 2025 15:59:11 -0500
+X-Gm-Features: Ac12FXyXKS4Uf9Z3hgF_FjM8XlnTs6lt758RvGFER7GO1W1HQaOxbu8Nf1Gdh5A
+Message-ID: <CAPLW+4mesdhGf-RnQ9S6m_gaxS7hgt3=WQwoO-+Be=CuNiBzxw@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] arm64: dts: exynos2200: fix typo in hsi2c23 bus
+ pins label
+To: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+Cc: Krzysztof Kozlowski <krzk+dt@kernel.org>, Alim Akhtar <alim.akhtar@samsung.com>, 
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-samsung-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Rspamd-Queue-Id: 455F82000F
-X-Stat-Signature: 4rgkmjttq7tus4ozhrsxm3tdjtfistk7
-X-Rspamd-Server: rspamout06
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1+toM6PJ9IUUVVrvcyW7KbjTmf3peylLOQ=
-X-HE-Tag: 1754081740-584668
-X-HE-Meta: U2FsdGVkX19Fm/hcv1qlHgsYskUR6qWw97KTHYFsmgwN52SRvUQc5kPI93X08cMuGbEtEF+3ByRMMXt7Nxc/YgO6of4iMd4wFR5zdfCqzAsmm34El8qxMZfVdJ/GCdGl5cvQkAf285LnVZFTiQDpoTqdl961kG1YXBR1gSezBFe8zfUOrct9E/LLqRxkolXa30B9axNSwGDNJPD6r40GEyvOgs88jMP2zfuRnrHp8GE+eG4clHZMvhPADo9chazNxv6hXEaUQZe6tw3UaKeGiJzbldaxRlu6TFxJ5X7rYji6+1EJPANmi9aRqUTPh/6x7K9KokdNNnIQVM0H8pDNguJ5ZCm+i32Z8WYUQ0tmJ3jwJygQV34jNV+fONAp3j/kDpb3imCWbvvTPsQ8UhfMgQ==
 
-=46rom aff4ac7a3e0bc7e7db72a0fae52f1a8b06e415f0 Mon Sep 17 00:00:00 2001
-From: Steven Rostedt <rostedt@goodmis.org>
-Date: Fri, 1 Aug 2025 11:14:53 -0400
-Subject: [PATCH] tracing: Have unsigned int function args displayed as
- hexadecimal
+On Wed, Jul 30, 2025 at 2:43=E2=80=AFAM Ivaylo Ivanov
+<ivo.ivanov.ivanov1@gmail.com> wrote:
+>
+> The '2' in 'hsi2c23' was missed while making the device tree. Fix that so
+> we can properly reference the node.
+>
+> Signed-off-by: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+> ---
 
-Most function arguments that are passed in as unsigned int or unsigned
-long are better displayed as hexadecimal than normal integer. For example,
-the functions:
+Reviewed-by: Sam Protsenko <semen.protsenko@linaro.org>
 
-static void __create_object(unsigned long ptr, size_t size,
-				int min_count, gfp_t gfp, unsigned int objflags);
-
-static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
-			    size_t len);
-
-void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
-
-Show up in the trace as:
-
-    __create_object(ptr=3D-131387050520576, size=3D4096, min_count=3D1, gfp=
-=3D3264, objflags=3D0) <-kmem_cache_alloc_noprof
-    stack_access_ok(state=3D0xffffc9000233fc98, _addr=3D-60473102566256, le=
-n=3D8) <-unwind_next_frame
-    __local_bh_disable_ip(ip=3D-2127311112, cnt=3D256) <-handle_softirqs
-
-Instead, by displaying unsigned as hexadecimal, they look more like this:
-
-    __create_object(ptr=3D0xffff8881028d2080, size=3D0x280, min_count=3D1, =
-gfp=3D0x82820, objflags=3D0x0) <-kmem_cache_alloc_node_noprof
-    stack_access_ok(state=3D0xffffc90000003938, _addr=3D0xffffc90000003930,=
- len=3D0x8) <-unwind_next_frame
-    __local_bh_disable_ip(ip=3D0xffffffff8133cef8, cnt=3D0x100) <-handle_so=
-ftirqs
-
-Which is much easier to understand as most unsigned longs are usually just
-pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
-better as hexadecimal as a lot of flags are passed as unsigned.
-
-Changes since v2: https://lore.kernel.org/20250801111453.01502861@gandalf.l=
-ocal.home
-
-- Use btf_int_encoding() instead of open coding it (Martin KaFai Lau)
-
-Acked-by: Yonghong Song <yonghong.song@linux.dev>
-Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
----
- kernel/trace/trace_output.c | 8 +++++++-
- 1 file changed, 7 insertions(+), 1 deletion(-)
-
-diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-index 0b3db02030a7..97db0b0ccf3e 100644
---- a/kernel/trace/trace_output.c
-+++ b/kernel/trace/trace_output.c
-@@ -701,6 +701,7 @@ void print_function_args(struct trace_seq *s, unsigned =
-long *args,
- 	struct btf *btf;
- 	s32 tid, nr =3D 0;
- 	int a, p, x;
-+	u16 encode;
-=20
- 	trace_seq_printf(s, "(");
-=20
-@@ -744,7 +745,12 @@ void print_function_args(struct trace_seq *s, unsigned=
- long *args,
- 			trace_seq_printf(s, "0x%lx", arg);
- 			break;
- 		case BTF_KIND_INT:
--			trace_seq_printf(s, "%ld", arg);
-+			encode =3D btf_int_encoding(t);
-+			/* Print unsigned ints as hex */
-+			if (encode & BTF_INT_SIGNED)
-+				trace_seq_printf(s, "%ld", arg);
-+			else
-+				trace_seq_printf(s, "0x%lx", arg);
- 			break;
- 		case BTF_KIND_ENUM:
- 			trace_seq_printf(s, "%ld", arg);
---=20
-2.47.2
-
+>  arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi b/arch/ar=
+m64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> index f618ff290..5877da7ba 100644
+> --- a/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> +++ b/arch/arm64/boot/dts/exynos/exynos2200-pinctrl.dtsi
+> @@ -1438,7 +1438,7 @@ i3c11_bus: i3c11-bus-pins {
+>                 samsung,pin-drv =3D <EXYNOS7_PIN_DRV_LV1>;
+>         };
+>
+> -       hsi223_bus: hsi2c23-bus-pins {
+> +       hsi2c23_bus: hsi2c23-bus-pins {
+>                 samsung,pins =3D "gpp11-2", "gpp11-3";
+>                 samsung,pin-function =3D <EXYNOS_PIN_FUNC_3>;
+>                 samsung,pin-pud =3D <EXYNOS_PIN_PULL_UP>;
+> --
+> 2.43.0
+>
+>
 
