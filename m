@@ -1,87 +1,72 @@
-Return-Path: <linux-kernel+bounces-753091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27D3CB17E87
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:46:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FDCDB17E83
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:46:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41F6517705C
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9CF4B1C80D4A
 	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:46:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EABEF22A4F1;
-	Fri,  1 Aug 2025 08:45:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D825E2264CE;
+	Fri,  1 Aug 2025 08:45:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="jp6cXhd0"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dUX87Sgb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7D3223DED;
-	Fri,  1 Aug 2025 08:45:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24948221F03
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:45:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754037944; cv=none; b=tcxa6khu/+Oudrjv/enLN/XXogciiPnz6s5Lwlrz6HE4S1KpeMVUr1AbynOlflCvw/LdI7V7g2JImn0VEwEm9hI6eSdqmMVGHA5h1kmvm+5/+mDOrZyvtPBiczwl03TtqRB6A3GW4WfclTyW0Rn+WujvyzSuelhw/zdJtOaiBaA=
+	t=1754037943; cv=none; b=qsuOFNbGgTjbt/hPHXKC8ENLlOqfFxEVIaAUxRfk2cwZqIFn0U7FvZHX21S1rsHNz4htbjXfHuuuCaxByjeMxmBBx9r3Ra20Q3goYKUKBJRkBXwEFc//zZXPdyZUw01rHqSNTwMTWpGYOqsXX1r5COSGfYKAzyuPQ3BuxBdz27A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754037944; c=relaxed/simple;
-	bh=0vyE3UCyjkj/o1K3T7y2waAk5yGOj6bxA41NSNPvr7Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=DNI0rzjfYNdnGZq7yYL68aZuKlb5fewdgGqvtK/FWe+OC5itoql7Uwx3NAWu8TtrMl/oB+NERd99ZfdwbAm01FHKUvKmP/Ro39N3R0+VvVQaQjOyqYlNfuTYkWDYuzkPCZta2gFEWreAi9wzi5w4TCXkBiBDxa93jmBus4VmRyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=jp6cXhd0; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5710HeXO022949;
-	Fri, 1 Aug 2025 08:45:37 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=a9YziugwfDj
-	3Lcvi/AidcVUYP95GX74Yw1Z/Ds18ka0=; b=jp6cXhd0lo+PcWRVm+WkzJbAv0O
-	/DdvYjJEQVWb2B/wfK3c5XqlJi4uy9kPow+nYC4JlBMeW24LzOtOcTNknOIli0YW
-	B0MWTX6W8hS3JMYGJKjEsrjkxPoKsC3rl95qdnCbBvnAk/gdRb5BBwlpxf9ieFnC
-	r41dQn9CuTbp6Qs+x2nqijf9sUREKJQXkjLKSwU7L+7cCBMEWY3uTV6zxNUO+r1N
-	xIlF+oCfOL/zGRd6MVMMS0Xno1S4671lwOwttmjdGCEUygnRt2vXOAA1wLHgMbeH
-	OAQYlVuRmlQs7mDbtuZDXi0ecQBv4wMwwnffmXmzNyg8KRHmUDJfS7xzw0g==
-Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrka59-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 08:45:36 +0000 (GMT)
-Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 5718jWfx016931;
-	Fri, 1 Aug 2025 08:45:33 GMT
-Received: from pps.reinject (localhost [127.0.0.1])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 4859bemgt2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 08:45:33 +0000
-Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
-	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 5718jXGX016940;
-	Fri, 1 Aug 2025 08:45:33 GMT
-Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-sartgarg-hyd.qualcomm.com [10.147.242.251])
-	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 5718jXaR016937
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 08:45:33 +0000
-Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 2339771)
-	id 4324E5CA; Fri,  1 Aug 2025 14:15:32 +0530 (+0530)
-From: Sarthak Garg <quic_sartgarg@quicinc.com>
-To: Ulf Hansson <ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Adrian Hunter <adrian.hunter@intel.com>
-Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        quic_cang@quicinc.com, quic_nguyenb@quicinc.com,
-        quic_rampraka@quicinc.com, quic_pragalla@quicinc.com,
-        quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com,
-        quic_bhaskarv@quicinc.com, kernel@oss.qualcomm.com,
-        Sarthak Garg <quic_sartgarg@quicinc.com>
-Subject: [PATCH V4 4/4] arm64: dts: qcom: sm8550: Remove SDR104/SDR50 broken capabilities
-Date: Fri,  1 Aug 2025 14:15:18 +0530
-Message-Id: <20250801084518.2259767-5-quic_sartgarg@quicinc.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
-References: <20250801084518.2259767-1-quic_sartgarg@quicinc.com>
+	s=arc-20240116; t=1754037943; c=relaxed/simple;
+	bh=mErEHekBTnKVAx87It6XFqvTlhjv+gnhwhUgGAie3mc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A+bTKU+OGiqEnGmgJUNELzbwd6VXTU3t1TvC+k4DYHMMUVUNtJ3b7gZXjORsiS8WLQHcPqOrOm7rHmD62D6s+GFQOdjg3ZlCKY17qHGyux5TJduAV699FaylnCHnPW7bemO1hoRPSs7sgzWWZ8wfBznAYYFkt+ckSR73joY3JOY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dUX87Sgb; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754037940;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=OMDFLsJa+7WoP3pFG+QjuosRKNifY7eB+BWLzO6ziM0=;
+	b=dUX87SgbTcEfENZx7ZyJ11vp3B9rniasd6XOWNWoU9d7QoHqRZ/gmXRuukYg7eES1lu0d+
+	0lRIqsWyD7QI25hMQcgHjylWW6a4H6ZVNsyVy2GWVwizG36bgiINJlI+dQtJ5qfQrW3285
+	mv7MnSxk/taA2T+tO/1Y8qyQ5z6fios=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-83-I4_KE8PiOL2V2VYhwxYURQ-1; Fri,
+ 01 Aug 2025 04:45:38 -0400
+X-MC-Unique: I4_KE8PiOL2V2VYhwxYURQ-1
+X-Mimecast-MFC-AGG-ID: I4_KE8PiOL2V2VYhwxYURQ_1754037937
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id CEB1619560AF;
+	Fri,  1 Aug 2025 08:45:36 +0000 (UTC)
+Received: from thuth-p1g4.redhat.com (unknown [10.45.225.137])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 1B9ED1955E89;
+	Fri,  1 Aug 2025 08:45:32 +0000 (UTC)
+From: Thomas Huth <thuth@redhat.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>
+Cc: x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	linux-kernel@vger.kernel.org,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	linux-spdx@vger.kernel.org
+Subject: [PATCH] x86/mtrr: Remove license boilerplate text with bad FSF address
+Date: Fri,  1 Aug 2025 10:45:31 +0200
+Message-ID: <20250801084531.34089-1-thuth@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,102 +74,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-QCInternal: smtphost
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2MiBTYWx0ZWRfX5xYefqMgqvMl
- eVk5KSAcetZqV+I2XpYp1R7/0qJY3K3BnmTw7s7gPxWca27N6AJi5gGInzgEu4MPJFjpfJHQgd4
- U449ONcSzJLekzoPJFscmIXJmH1xx90wcz7HcOXcoywsGwMHlFVqmHuAmnfXZw1D2X0nzqJHeQv
- lLseJg7qku4QJ+OWi0HKRkJhBoVBUSP2VhpMtjS6n565cfCu4fF1idYjz5iKjUXhkQP4zp1mE0F
- n41yAf1L/O4JAb4U6/ieg+rZ3f+YpkM3oGSES8d9mwJHHzSE9UzC8wwn/zBOcSySTgyePIug2O0
- lTZ/R2aSHGvqp2L976hZM1ddkLTCXuPyTiaQ0RNwtcynQHfIBG6rx8UFTS3nFQ7kMYBEBV7Ko+b
- cKZURW2DMdpL2QMLFDFBKtnv5G1dc5H1vbO5uVHy89i63a+AnOYOQyVZkbf+f6KIAPhDUZ5x
-X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688c7eb1 cx=c_pps
- a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
- a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=XT_FJVZuhd4KiCc4GssA:9
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: WhPEeeMeSP_pEBElCitlD7lkzaENfJUN
-X-Proofpoint-ORIG-GUID: WhPEeeMeSP_pEBElCitlD7lkzaENfJUN
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_02,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=999 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010062
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-The kernel now handles level shifter limitations affecting SD card
-modes, making it unnecessary to explicitly disable SDR104 and SDR50
-capabilities in the device tree.
+From: Thomas Huth <thuth@redhat.com>
 
-However, due to board-specific hardware constraints particularly related
-to level shifter in this case the maximum frequency for SD High-Speed
-(HS) mode must be limited to 37.5 MHz to ensure reliable operation of SD
-card in HS mode. This is achieved using the max-sd-hs-frequency property
-in the board DTS.
+The Free Software Foundation does not reside in "675 Mass Ave, Cambridge"
+anymore, so we should not mention that address in the source code here.
+But instead of updating the address to their current location, let's
+rather drop the license boilerplate text here and use a proper SPDX
+license identifier instead. The text talks about the "GNU *Library*
+General Public License" and "any later version", so LGPL-2.0+ is the
+right choice here.
 
-Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+Signed-off-by: Thomas Huth <thuth@redhat.com>
 ---
- arch/arm64/boot/dts/qcom/sm8550-hdk.dts                     | 1 +
- arch/arm64/boot/dts/qcom/sm8550-mtp.dts                     | 1 +
- arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts | 1 +
- arch/arm64/boot/dts/qcom/sm8550.dtsi                        | 3 ---
- 4 files changed, 3 insertions(+), 3 deletions(-)
+ arch/x86/include/asm/mtrr.h        | 15 +--------------
+ arch/x86/kernel/cpu/mtrr/cleanup.c | 15 +--------------
+ arch/x86/kernel/cpu/mtrr/mtrr.c    | 15 +--------------
+ 3 files changed, 3 insertions(+), 42 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-index 29bc1ddfc7b2..a6bc3c11598b 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-hdk.dts
-@@ -1164,6 +1164,7 @@ &sdhc_2 {
- 	vmmc-supply = <&vreg_l9b_2p9>;
- 	vqmmc-supply = <&vreg_l8b_1p8>;
+diff --git a/arch/x86/include/asm/mtrr.h b/arch/x86/include/asm/mtrr.h
+index c69e269937c56..76b95bd1a4058 100644
+--- a/arch/x86/include/asm/mtrr.h
++++ b/arch/x86/include/asm/mtrr.h
+@@ -1,21 +1,8 @@
++/* SPDX-License-Identifier: LGPL-2.0+ */
+ /*  Generic MTRR (Memory Type Range Register) ioctls.
  
-+	max-sd-hs-frequency = <37500000>;
- 	bus-width = <4>;
- 	no-sdio;
- 	no-mmc;
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-index 5648ab60ba4c..166d3595633d 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-mtp.dts
-@@ -818,6 +818,7 @@ &sdhc_2 {
- 	pinctrl-1 = <&sdc2_sleep &sdc2_card_det_n>;
- 	vmmc-supply = <&vreg_l9b_2p9>;
- 	vqmmc-supply = <&vreg_l8b_1p8>;
-+	max-sd-hs-frequency = <37500000>;
- 	bus-width = <4>;
- 	no-sdio;
- 	no-mmc;
-diff --git a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-index d90dc7b37c4a..039ead5b8784 100644
---- a/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-+++ b/arch/arm64/boot/dts/qcom/sm8550-sony-xperia-yodo-pdx234.dts
-@@ -716,6 +716,7 @@ &sdhc_2 {
- 	pinctrl-names = "default", "sleep";
- 	vmmc-supply = <&pm8550_l9>;
- 	vqmmc-supply = <&pm8550_l8>;
-+	max-sd-hs-frequency = <37500000>;
- 	no-sdio;
- 	no-mmc;
- 	status = "okay";
-diff --git a/arch/arm64/boot/dts/qcom/sm8550.dtsi b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-index 82cabf777cd2..bc7c4b77f277 100644
---- a/arch/arm64/boot/dts/qcom/sm8550.dtsi
-+++ b/arch/arm64/boot/dts/qcom/sm8550.dtsi
-@@ -3191,9 +3191,6 @@ &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 			bus-width = <4>;
- 			dma-coherent;
+     Copyright (C) 1997-1999  Richard Gooch
  
--			/* Forbid SDR104/SDR50 - broken hw! */
--			sdhci-caps-mask = <0x3 0>;
+-    This library is free software; you can redistribute it and/or
+-    modify it under the terms of the GNU Library General Public
+-    License as published by the Free Software Foundation; either
+-    version 2 of the License, or (at your option) any later version.
 -
- 			status = "disabled";
+-    This library is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-    Library General Public License for more details.
+-
+-    You should have received a copy of the GNU Library General Public
+-    License along with this library; if not, write to the Free
+-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-
+     Richard Gooch may be reached by email at  rgooch@atnf.csiro.au
+     The postal address is:
+       Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.
+diff --git a/arch/x86/kernel/cpu/mtrr/cleanup.c b/arch/x86/kernel/cpu/mtrr/cleanup.c
+index 18cf79d6e2c5a..763534d77f593 100644
+--- a/arch/x86/kernel/cpu/mtrr/cleanup.c
++++ b/arch/x86/kernel/cpu/mtrr/cleanup.c
+@@ -1,21 +1,8 @@
++// SPDX-License-Identifier: LGPL-2.0+
+ /*
+  * MTRR (Memory Type Range Register) cleanup
+  *
+  *  Copyright (C) 2009 Yinghai Lu
+- *
+- * This library is free software; you can redistribute it and/or
+- * modify it under the terms of the GNU Library General Public
+- * License as published by the Free Software Foundation; either
+- * version 2 of the License, or (at your option) any later version.
+- *
+- * This library is distributed in the hope that it will be useful,
+- * but WITHOUT ANY WARRANTY; without even the implied warranty of
+- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+- * Library General Public License for more details.
+- *
+- * You should have received a copy of the GNU Library General Public
+- * License along with this library; if not, write to the Free
+- * Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+  */
+ #include <linux/init.h>
+ #include <linux/pci.h>
+diff --git a/arch/x86/kernel/cpu/mtrr/mtrr.c b/arch/x86/kernel/cpu/mtrr/mtrr.c
+index ecbda0341a8a3..4b3d492afe17c 100644
+--- a/arch/x86/kernel/cpu/mtrr/mtrr.c
++++ b/arch/x86/kernel/cpu/mtrr/mtrr.c
+@@ -1,22 +1,9 @@
++// SPDX-License-Identifier: LGPL-2.0+
+ /*  Generic MTRR (Memory Type Range Register) driver.
  
- 			sdhc2_opp_table: opp-table {
+     Copyright (C) 1997-2000  Richard Gooch
+     Copyright (c) 2002	     Patrick Mochel
+ 
+-    This library is free software; you can redistribute it and/or
+-    modify it under the terms of the GNU Library General Public
+-    License as published by the Free Software Foundation; either
+-    version 2 of the License, or (at your option) any later version.
+-
+-    This library is distributed in the hope that it will be useful,
+-    but WITHOUT ANY WARRANTY; without even the implied warranty of
+-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+-    Library General Public License for more details.
+-
+-    You should have received a copy of the GNU Library General Public
+-    License along with this library; if not, write to the Free
+-    Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+-
+     Richard Gooch may be reached by email at  rgooch@atnf.csiro.au
+     The postal address is:
+       Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.
 -- 
-2.34.1
+2.50.1
 
 
