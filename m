@@ -1,216 +1,217 @@
-Return-Path: <linux-kernel+bounces-752921-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752922-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C12C6B17C64
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:34:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 731F6B17C66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E5DFA56559B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:34:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C336C1C25E96
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C2E1917E3;
-	Fri,  1 Aug 2025 05:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 095281EEA47;
+	Fri,  1 Aug 2025 05:35:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EofZYBgE"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8BiK7oA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F0672608;
-	Fri,  1 Aug 2025 05:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58147AD4B;
+	Fri,  1 Aug 2025 05:35:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754026472; cv=none; b=e6h7TgYBtxQwuR3416r6yzNe1S3796PwZhguj+DpF53g2lg9DWDZXM9p2WGD8LDp/7ydIOGP0nf0JE8m9Ayc1pXCBO0XVDmCSULWW5SJYaj85LtTI1vxL1YtsM8EMju10QhWAloih4DfwqbqIP2+Z4Ec50ftyiBDnYnsBGow+cg=
+	t=1754026535; cv=none; b=FXd+VYDcQJINrxZsp/IvdRUBfRSFcf2XsG4PQikLATypi2XmAon5ddTgM7VXBN+MQfbwfxseiszHUkBsckZOWhRbPk7D0JPmIiN03lFmyPiZEzk90Iirq+0nNONtl32HWSBP3FkClNOvTEjXEBsWuGqz8bko2LIpOluc+kDQqDI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754026472; c=relaxed/simple;
-	bh=lUEltV6OAtiyidgRHr/HCdDCnnAgasUSDgbkEO46Ilo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=h+xHOyquOnTeZbE7xmNDCDdwby6PnD+rezRuzUSVBcTFpOFUUB6h112MsyGtlrN4Z/4ire2zLqzs5nifNqyZqxwMb1D8MctHsQv5BbxfWnlYD/BTG5hMyLclSCOwb2iiMON0yndDF+U3Hvkn34a1vSm3zKQaAgvCf48i6FCB9q8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EofZYBgE; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45622a1829eso4348315e9.1;
-        Thu, 31 Jul 2025 22:34:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754026469; x=1754631269; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=UnpAJsRbjz5iHGkErkzsTDAvzXrJNXwTeomVOzxagis=;
-        b=EofZYBgEEI2dVyqBZlRS15KIrNv0RHw2TgfesW5rXeBd3V1iNYIiK3BlH4vY08pWJI
-         VWBtn9mHl6A7uZQTptx/8ZcGSXdER7sh8Zqde87Wn3NxTttyYoIhOzZRVGmoEuzoQnyT
-         uYRSO6LNTpCMHghKDnrEiQg2UOvk+UglEZe4lxIF2w/TNAXGrxd0iRKs5FnDospQlub7
-         w/amcRrbgkAIJZptjJxn8Wn8SxmQ3ved1ilcvD/Y1RQ1T5dd7ppK0GC/WRgLSVxpkQsD
-         1AFBAR0TfNmhrN1zSPZvPtFZJbUgpvYL6WxL1XQDcUzeeYwAIXWt0ZOAGcXjV3BVSvpK
-         f6xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754026469; x=1754631269;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UnpAJsRbjz5iHGkErkzsTDAvzXrJNXwTeomVOzxagis=;
-        b=N1BuKLF1KHx2fGWe2GFpdUciV6RWoCdTDblIxH2BwhgrSHrVi4nGwCePJjr578DWfk
-         rmqCUpHtoteNGLkhZy4/XzGF9+q1zVIFfM2yWOp2DQWBngwxSmaG8PUo+H80XryXIufq
-         e4gxHyvs2UAJVKy0O0xxUyS2DXN2savOm4VHgszvMWWiph0lDvjABPEebgL6y6x3pzW3
-         CKR+XAZlGJkmFdkGBl9gYzh34hxlFfCdUmjb4gyotBB+9GGgQmUyhYF1P5kdZcl1iceF
-         gyrIe4gVhdKIMTzTiwZ3/xf34cm/O1EoxSdLQNBkBvMnCz+c/go4Sy8VaYDiDDMTgXsW
-         teYg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8P2vV0goFtMfRhUZGG6IxeFRU1Woa2UO5ZRzo9dXAY7IGli1ndONMp0NsPIgWkHUzCfVsEt/9MhVb2sE=@vger.kernel.org, AJvYcCWS5RhzNuaRUMLYE/TNmnXLAVqioVwZNW5bctzRWeitOKm4iFR5+5UTRpuzofSgzp1pXAObOs7c8UzoBNw=@vger.kernel.org, AJvYcCXA7TXP4qSn3aSNCRahneDUp6sFJRTJUa+jGLcVrMTDOK2UlVfZ4cnmHqu8llsPRT9v1H+m/ZK1P8TmaTnIVvP1/Lo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwnSDjeZutRhr3xr1QBYP8vmzcLmG2GgaIj8cUhJVB0Vgu++PxO
-	ThwKz00T392485pAWoVg0A3OzKqxUDjorKXBIpgJxEiZVuNNOIcTcpMs
-X-Gm-Gg: ASbGnctOcMNwt5zmHVX4mSgWmJj5BM/TtqimqnRu4QTABu4Ne+wDjNHvdeEJw1OQkQQ
-	aXXE3KwHuTmyHQj3vljY7VceSV3UVtCQ3DpYCaE/aDJQU05ulMIjJnwqh5oUdzdTcijKh9rD9p8
-	Ip3f9t7RAz7+WtYBIELftmW7A9Z3RfEfelBVTD3KTafaak29IWbb+9QkcAk5th0Fzd/W+TrsxV+
-	EgDI+DG3HofPqZ0qoKb5Qpmhqbp8cw7a3vsCCBGC8FVBXSMe5fWMeSvH9A1o9UGfrTkGpJRIYO2
-	GP9zoviPYXDHNkUmkvFBLtEtiMcuQ4HlWUnJ5IZcZXqgFQGRQWAlkrPjjSq8CY88yCRefjYbRlA
-	Gc+cclMa5isPpHtH6LAYpGJh5k32RJvAYCM+B+u63aL6BRI71rb9yYoiw/WCcQbD0+8fCg53WIB
-	YTievErOhP
-X-Google-Smtp-Source: AGHT+IGFH/YPjJWqwHqXBIAgMvQbNywFxXEl9OBHGSm8hLbyg8ZUCBLzRVlELjJD4uf6BegtqoB3VA==
-X-Received: by 2002:a05:600c:4ecd:b0:456:43c:dcdc with SMTP id 5b1f17b1804b1-458af3b7b6dmr4251945e9.33.1754026469219;
-        Thu, 31 Jul 2025 22:34:29 -0700 (PDT)
-Received: from biju.lan (host31-53-6-191.range31-53.btcentralplus.com. [31.53.6.191])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edfcdf4sm51056875e9.11.2025.07.31.22.34.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 22:34:28 -0700 (PDT)
-From: Biju <biju.das.au@gmail.com>
-X-Google-Original-From: Biju <biju.das.jz@bp.renesas.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>
-Cc: Biju Das <biju.das.jz@bp.renesas.com>,
-	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
-	Hans Verkuil <hverkuil@kernel.org>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
-	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
-	Daniel Scally <dan.scally+renesas@ideasonboard.com>,
-	linux-media@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Biju Das <biju.das.au@gmail.com>,
-	linux-renesas-soc@vger.kernel.org
-Subject: [PATCH] media: rzg2l-cru: Drop function pointer to configure CSI
-Date: Fri,  1 Aug 2025 06:34:22 +0100
-Message-ID: <20250801053426.4273-1-biju.das.jz@bp.renesas.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754026535; c=relaxed/simple;
+	bh=y9whsQXN2FDYrjO95/LDRMRLczoY+cLNs6bFtPphbzo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TvHddJMxtGyWHg0trV5BR9LtlwEmuuc3fVyASeyh2kkOowIfCYtcoWNKwPMjjpVdIdc2xnp6ZARS372zIiLgpFoSjhGklI9kdF3psIcvb3JYDGDZi8xcgVvxtoeo8GD9gFSNJa0VuQl3cVyQ7N3+jL0kUqTlwvQp0u4DPRa8esQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8BiK7oA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6110C4CEE7;
+	Fri,  1 Aug 2025 05:35:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754026534;
+	bh=y9whsQXN2FDYrjO95/LDRMRLczoY+cLNs6bFtPphbzo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=u8BiK7oAu7UGx27I0wXjLhEsH82vj5p0eHo2c5QO6zy9bglhML/8z4Xubq12INNy2
+	 5FRxh5HgsOdJPKgPz17pzq+LNaMYrEx65qBVEr0J5nWQPQ/yVaTXPTbHgCf56crZBW
+	 YMarhjDgIbG/po2Qr3FbvS/hiceXnScRnrD93ZoGyYy4FtOalGMIyIzWM3HtC13FSa
+	 6K3svI1pQgL9F5U/QsuRnaQuHgd8dytfvNSo7kbf4wWZf0VEprDhIfblf3htR4/4VB
+	 ercY6XZHQkY3os2wQqkYBKYFjLn8yZvEiuHkxj5Phkk/YL2ni0psTex3dEivX5VnKd
+	 tBmEX3SyfLxWw==
+Date: Fri, 1 Aug 2025 07:35:30 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 04/12] docs: kdoc: move the prefix transforms out of
+ dump_struct()
+Message-ID: <20250801073530.661e2078@foz.lan>
+In-Reply-To: <20250801072841.0246eeac@foz.lan>
+References: <20250801001326.924276-1-corbet@lwn.net>
+	<20250801001326.924276-5-corbet@lwn.net>
+	<20250801072841.0246eeac@foz.lan>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-From: Biju Das <biju.das.jz@bp.renesas.com>
+Em Fri, 1 Aug 2025 07:28:41 +0200
+Mauro Carvalho Chehab <mchehab+huawei@kernel.org> escreveu:
 
-Drop function pointer to configure CSI to avoid code duplication
-by checking the presence of vc select register in rzg2l_cru_info.
-After this change, limit the scope of the rzg2l_cru_csi2_setup()
-to static.
+> Em Thu, 31 Jul 2025 18:13:18 -0600
+> Jonathan Corbet <corbet@lwn.net> escreveu:
+> 
+> > dump_struct is one of the longest functions in the kdoc_parser class,
+> > making it hard to read and reason about.  Move the definition of the prefix
+> > transformations out of the function, join them with the definition of
+> > "attribute" (which was defined at the top of the file but only used here),
+> > and reformat the code slightly for shorter line widths.
+> > 
+> > Just code movement in the end.  
+> 
+> This patch itself LGTM:
+> 
+> Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
----
- .../platform/renesas/rzg2l-cru/rzg2l-core.c   |  2 --
- .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  9 ------
- .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 30 ++++++-------------
- 3 files changed, 9 insertions(+), 32 deletions(-)
+In time, my R-B from patch 4 and above assumes that patch 3 is
+dropped, as I'm not re-checking the regular expressions.
 
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-index 806acc8f9728..3c5fbd857371 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
-@@ -367,7 +367,6 @@ static const struct rzg2l_cru_info rzg3e_cru_info = {
- 	.enable_interrupts = rzg3e_cru_enable_interrupts,
- 	.disable_interrupts = rzg3e_cru_disable_interrupts,
- 	.fifo_empty = rzg3e_fifo_empty,
--	.csi_setup = rzg3e_cru_csi2_setup,
- };
- 
- static const u16 rzg2l_cru_regs[] = {
-@@ -412,7 +411,6 @@ static const struct rzg2l_cru_info rzg2l_cru_info = {
- 	.enable_interrupts = rzg2l_cru_enable_interrupts,
- 	.disable_interrupts = rzg2l_cru_disable_interrupts,
- 	.fifo_empty = rzg2l_fifo_empty,
--	.csi_setup = rzg2l_cru_csi2_setup,
- };
- 
- static const struct of_device_id rzg2l_cru_of_id_table[] = {
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-index be95b41c37df..3a200db15730 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
-@@ -92,9 +92,6 @@ struct rzg2l_cru_info {
- 	void (*enable_interrupts)(struct rzg2l_cru_dev *cru);
- 	void (*disable_interrupts)(struct rzg2l_cru_dev *cru);
- 	bool (*fifo_empty)(struct rzg2l_cru_dev *cru);
--	void (*csi_setup)(struct rzg2l_cru_dev *cru,
--			  const struct rzg2l_cru_ip_format *ip_fmt,
--			  u8 csi_vc);
- };
- 
- /**
-@@ -204,11 +201,5 @@ void rzg3e_cru_disable_interrupts(struct rzg2l_cru_dev *cru);
- 
- bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru);
- bool rzg3e_fifo_empty(struct rzg2l_cru_dev *cru);
--void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
--			  const struct rzg2l_cru_ip_format *ip_fmt,
--			  u8 csi_vc);
--void rzg3e_cru_csi2_setup(struct rzg2l_cru_dev *cru,
--			  const struct rzg2l_cru_ip_format *ip_fmt,
--			  u8 csi_vc);
- 
- #endif
-diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-index a8817a7066b2..d75cd5fa9f7c 100644
---- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-+++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
-@@ -257,30 +257,18 @@ static void rzg2l_cru_initialize_axi(struct rzg2l_cru_dev *cru)
- 	rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
- }
- 
--void rzg3e_cru_csi2_setup(struct rzg2l_cru_dev *cru,
--			  const struct rzg2l_cru_ip_format *ip_fmt,
--			  u8 csi_vc)
-+static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
-+				 const struct rzg2l_cru_ip_format *ip_fmt,
-+				 u8 csi_vc)
- {
- 	const struct rzg2l_cru_info *info = cru->info;
- 	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
- 
--	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
--
--	/* Set virtual channel CSI2 */
--	icnmc |= ICnMC_VCSEL(csi_vc);
--
--	rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
--	rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
--			ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
--	rzg2l_cru_write(cru, info->image_conv, icnmc);
--}
--
--void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
--			  const struct rzg2l_cru_ip_format *ip_fmt,
--			  u8 csi_vc)
--{
--	const struct rzg2l_cru_info *info = cru->info;
--	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
-+	if (cru->info->regs[ICnSVC]) {
-+		rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
-+		rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
-+				ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
-+	}
- 
- 	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
- 
-@@ -299,7 +287,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
- 	const struct rzg2l_cru_ip_format *cru_ip_fmt;
- 
- 	cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
--	info->csi_setup(cru, cru_ip_fmt, csi_vc);
-+	rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
- 
- 	/* Output format */
- 	cru_video_fmt = rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat);
--- 
-2.43.0
+> 
+> but see my notes below:
+> 
+> > +struct_prefixes = [
+> > +    # Strip attributes
+> > +    (struct_attribute, ' '),
+> > +    (KernRe(r'\s*__aligned\s*\([^;]*\)', re.S), ' '),
+> > +    (KernRe(r'\s*__counted_by\s*\([^;]*\)', re.S), ' '),
+> > +    (KernRe(r'\s*__counted_by_(le|be)\s*\([^;]*\)', re.S), ' '),
+> > +    (KernRe(r'\s*__packed\s*', re.S), ' '),
+> > +    (KernRe(r'\s*CRYPTO_MINALIGN_ATTR', re.S), ' '),
+> > +    (KernRe(r'\s*____cacheline_aligned_in_smp', re.S), ' '),
+> > +    (KernRe(r'\s*____cacheline_aligned', re.S), ' '),
+> > +    #
+> > +    # Unwrap struct_group macros based on this definition:
+> > +    # __struct_group(TAG, NAME, ATTRS, MEMBERS...)
+> > +    # which has variants like: struct_group(NAME, MEMBERS...)
+> > +    # Only MEMBERS arguments require documentation.
+> > +    #
+> > +    # Parsing them happens on two steps:
+> > +    #
+> > +    # 1. drop struct group arguments that aren't at MEMBERS,
+> > +    #    storing them as STRUCT_GROUP(MEMBERS)
+> > +    #
+> > +    # 2. remove STRUCT_GROUP() ancillary macro.
+> > +    #
+> > +    # The original logic used to remove STRUCT_GROUP() using an
+> > +    # advanced regex:
+> > +    #
+> > +    #   \bSTRUCT_GROUP(\(((?:(?>[^)(]+)|(?1))*)\))[^;]*;
+> > +    #
+> > +    # with two patterns that are incompatible with
+> > +    # Python re module, as it has:
+> > +    #
+> > +    #   - a recursive pattern: (?1)
+> > +    #   - an atomic grouping: (?>...)
+> > +    #
+> > +    # I tried a simpler version: but it didn't work either:
+> > +    #   \bSTRUCT_GROUP\(([^\)]+)\)[^;]*;
+> > +    #
+> > +    # As it doesn't properly match the end parenthesis on some cases.
+> > +    #
+> > +    # So, a better solution was crafted: there's now a NestedMatch
+> > +    # class that ensures that delimiters after a search are properly
+> > +    # matched. So, the implementation to drop STRUCT_GROUP() will be
+> > +    # handled in separate.
+> > +    #
+> > +    (KernRe(r'\bstruct_group\s*\(([^,]*,)', re.S), r'STRUCT_GROUP('),
+> > +    (KernRe(r'\bstruct_group_attr\s*\(([^,]*,){2}', re.S), r'STRUCT_GROUP('),
+> > +    (KernRe(r'\bstruct_group_tagged\s*\(([^,]*),([^,]*),', re.S), r'struct \1 \2; STRUCT_GROUP('),
+> > +    (KernRe(r'\b__struct_group\s*\(([^,]*,){3}', re.S), r'STRUCT_GROUP('),
+> > +    #
+> > +    # Replace macros
+> > +    #
+> > +    # TODO: use NestedMatch for FOO($1, $2, ...) matches  
+> 
+> This comment is actually related to patch 03/12: regex cleanups:
+> 
+> If you want to simplify a lot the regular expressions here, the best
+> is to take a look at the NestedMatch class and improve it. There are lots
+> of regular expressions here that are very complex because they try
+> to ensure that something like these:
+> 
+> 	1. function(<arg1>)
+> 	2. function(<arg1>, <arg2>,<arg3>,...)
+> 
+> are properly parsed[1], but if we turn it into something that handle (2) as 
+> well, we could use it like:
+> 
+> 	match = NestedMatch.search("function", string)
+> 	# or, alternatively:
+> 	# match = NestedMatch.search("function($1, $2, $3)", string)
+> 
+> 	if match:
+> 		arg1 = match.group(1)
+> 		arg2 = match.group(2)
+> 		arg3 = match.group(3)
+> 
+> or even do more complex changes like:
+> 
+> 	NestedMatch.sub("foo($1, $2)", "new_name($2)", string)
+> 
+> A class implementing that will help to transform all sorts of functions
+> and simplify the more complex regexes on kernel-doc. Doing that will
+> very likely simplify a lot the struct_prefixes, replacing it by something
+> a lot more easier to understand:
+> 
+> 	# Nice and simpler set of replacement rules
+> 	struct_nested_matches = [
+> 		("__aligned", ""),
+> 		("__counted_by", ""),
+> 		("__counted_by_(be|le)", ""),
+> 	...
+> 		# Picked those from stddef.h macro replacement rules
+> 		("struct_group(NAME, MEMBERS...)", "__struct_group(, NAME, , MEMBERS)"),
+> 		("struct_group(TAG, NAME, ATTRS, MEMBERS...)",
+> 		 """	__struct_group(TAG, NAME, ATTRS, MEMBERS...)
+> 		        union {
+> 		                struct { MEMBERS } ATTRS;
+> 		                struct __struct_group_tag(TAG) { MEMBERS } ATTRS NAME;
+> 		        } ATTRS"""),
+> 	...
+> 	]
+> 
+> 	members = trim_private_members(members)
+> 	for from, to in struct_nested_matches:
+>               members = NestedMatch.sub(from, to, members)
+> 		
+> Granted, wiring this up takes some time and lots of testing - we should
+> likely have some unit tests to catch issues there - but IMO it is
+> worth the effort.
+> 
+> -
+> 
+> [1] NestedMatch() is currently limited to match function(<args>), as it was
+>     written to replace really complex regular expressions with 
+>     recursive patterns and atomic grouping, that were used only to
+>     capture macro calls for: 
+> 
+> 	STRUCT_GROUP(...)
+> 
+>    I might have used instead "import regex", but I didn't want to add the
+>    extra dependency of a non-standard Python library at the Kernel build.
+> 
+> Thanks,
+> Mauro
 
+
+
+Thanks,
+Mauro
 
