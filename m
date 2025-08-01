@@ -1,108 +1,128 @@
-Return-Path: <linux-kernel+bounces-753383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86B08B18226
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:06:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4EC76B18229
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D88E188CB34
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:07:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA095188FE2C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:08:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE10A248F7A;
-	Fri,  1 Aug 2025 13:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5273248863;
+	Fri,  1 Aug 2025 13:07:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MbsM8BNI"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rNGTFS5Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31D28247284;
-	Fri,  1 Aug 2025 13:06:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34F5719F13F
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:07:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754053593; cv=none; b=keYNY0NgeHfLXkJ+/efkYGr0nKNG55fXCLsvt1S0bT/L9zx+ZC8DOdIIPi6SkQlFMPbqAXOhf1JUXfWS9ae+Mkzy+ifzeErx01qWnJsGQoKqTxPvC3ZiZmAguYzlrMEg0ux+dZyRzpLGbkpX6PymD7Pc9tGYsxfBch591bIK8hg=
+	t=1754053657; cv=none; b=lvROerZlrF5ThysxoLo/pCyd8h4X6N5x9RfUY6AyizTLUxkc9DeLIDdsTQq0L7rK6qram/rZ/M41U6+DoWpuNicS0NhLsH8Oi1cHwcn8BtEGoO/OmZnz/jm184BE1RJXqzdPom0aY8wW+wAnGCTTd7SxVDuqP0XT3KGrft0uR1M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754053593; c=relaxed/simple;
-	bh=sEw9KSgIPZRHJ1gVK4TjPXW0BX1S9WDtiHbYXd25qCw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J55j+53zPAo3VUIC/+nCLBscjzVMXMiosZi/7toAjogWCpv1ECnhi0vPAGg9K/Ugy0It3f+VFFyCEX8pHKhio1uaNmxIlFh1KkFrsy3WPg0cMe6fEKIWi1F6vq3WLDJA1XdqvBnRg0Q7KlZ3axU7jOLx/A99o01os+NAYHtBNKY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MbsM8BNI; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754053591; x=1785589591;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=sEw9KSgIPZRHJ1gVK4TjPXW0BX1S9WDtiHbYXd25qCw=;
-  b=MbsM8BNIQNqAAy8YGXToflpBEYcCVo4gVr+RQ+l74Yo2VR43PEF2BRLi
-   qceDqCrjztwFFTIdFiYrJjCR0iEnPpz+MCVXdC5WMKxZ7MCojeSg9krBF
-   SFyadHt+D9Hq6z4c9Psyb5/QLsYxBRg0J3nAK/PHgjJJaRQxILPOobnm8
-   kXWTmc+SeW44D23qrCGHHTx7oW/6/O6A17QdkbVs28RPqh9VW7EGqYnZI
-   g+Qk016AS/pTC8KE2OBoboca3HLYPXR6jBg0ApJWBd80YVwPr09l8xRiV
-   6yPIYTBD2sreGjBXpJhzm3u+lc66XCUh9Kqiyy3K2ggjkyk7EdrrNsfNl
-   g==;
-X-CSE-ConnectionGUID: QvXMwEMaTgiyx9Cx6G1zRA==
-X-CSE-MsgGUID: GJDISb8kROGbp62nyJg0NA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56358984"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="56358984"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 06:06:30 -0700
-X-CSE-ConnectionGUID: a7YXSyRgQW2Z1sLrJLrlvg==
-X-CSE-MsgGUID: X3MyL08pSt6KoYfPN6KGrA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="194522052"
-Received: from mnyman-desk.fi.intel.com (HELO [10.237.72.199]) ([10.237.72.199])
-  by orviesa002.jf.intel.com with ESMTP; 01 Aug 2025 06:06:28 -0700
-Message-ID: <42d12655-dca5-4465-a19d-17a2e4984d31@linux.intel.com>
-Date: Fri, 1 Aug 2025 16:06:26 +0300
+	s=arc-20240116; t=1754053657; c=relaxed/simple;
+	bh=j7y8KCY6NrUVmlOUbXDVCtVZndOnq4LmqUjbLeFOglk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=SUFOzIe6Em1oVd5ukvPLg5KceffUrlziG23iKNa/AePs0uIR1FSUdIgg2Ou0PzjsO7Xhme2+AuNKNCNBNSsUY/aEukCmt75O5cSo7LwxUwh3lI4GnYHAzkjGrczrIlrNDzO1wzG8yGqbe2v/la2mMVTawoYhuYVRsObhn1jXSlM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rNGTFS5Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2E677C4CEE7;
+	Fri,  1 Aug 2025 13:07:34 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754053654;
+	bh=j7y8KCY6NrUVmlOUbXDVCtVZndOnq4LmqUjbLeFOglk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rNGTFS5YSX9TfKSaU9ggPe4cDO+QklfGW+zEYiOCzv/X7y01UnIiDQA8kqMta7iU0
+	 mrc5BHp9CHeyjLH4YOR0m2LKbRAI5JgCrzz8qCYl6u+kE/cYoEiGkD1Q+SXXpI0nqP
+	 QzxpTDboxZcrLMubdqTiNr0DUkomGdEc5Gkiz3+3N7W/AJYvp2XI0NBBoFcYM6no2J
+	 4nPFYO1bNO/CJ2igXVZ+L42up9Ah3Yo/mAkyiCtP6K587vuuLl6XxSNfFmIIRxmcaM
+	 /IMfzSferRMhq9fnd9r6KdGTFIFQ4PVAPMXgIYkqXywYpHqw+V0Dfx1/oFyVQraOz1
+	 naQSqQd8VZKgA==
+Date: Fri, 1 Aug 2025 15:07:31 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Waiman Long <llong@redhat.com>
+Cc: Gabriele Monaco <gmonaco@redhat.com>, linux-kernel@vger.kernel.org,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH v9 8/8] timers: Exclude isolated cpus from timer migration
+Message-ID: <aIy8E7IdpPr_KFtF@localhost.localdomain>
+References: <20250730131158.101668-1-gmonaco@redhat.com>
+ <20250730131158.101668-9-gmonaco@redhat.com>
+ <664fc8e7-98f6-410c-976e-2e497e5132f8@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] usb:xhci:Fix slot_id resource race conflict
-To: Weitao Wang <WeitaoWang-oc@zhaoxin.com>, gregkh@linuxfoundation.org,
- mathias.nyman@intel.com, linux-usb@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: WeitaoWang@zhaoxin.com, wwt8723@163.com, CobeChen@zhaoxin.com,
- stable@vger.kernel.org
-References: <20250730152715.8368-1-WeitaoWang-oc@zhaoxin.com>
-Content-Language: en-US
-From: Mathias Nyman <mathias.nyman@linux.intel.com>
-In-Reply-To: <20250730152715.8368-1-WeitaoWang-oc@zhaoxin.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <664fc8e7-98f6-410c-976e-2e497e5132f8@redhat.com>
 
-On 30.7.2025 18.27, Weitao Wang wrote:
-> In such a scenario, device-A with slot_id equal to 1 is disconnecting
-> while device-B is enumerating, device-B will fail to enumerate in the
-> follow sequence.
-> 
-> 1.[device-A] send disable slot command
-> 2.[device-B] send enable slot command
-> 3.[device-A] disable slot command completed and wakeup waiting thread
-> 4.[device-B] enable slot command completed with slot_id equal to 1 and
-> wakeup waiting thread
-> 5.[device-B] driver check this slot_id was used by someone(device-A) in
-> xhci_alloc_virt_device, this device fails to enumerate as this conflict
-> 6.[device-A] xhci->devs[slot_id] set to NULL in xhci_free_virt_device
-> 
-> To fix driver's slot_id resources conflict, clear xhci->devs[slot_id] and
-> xhci->dcbba->dev_context_ptrs[slot_id] pointers in the interrupt context
-> when disable slot command completes successfully. Simultaneously, adjust
-> function xhci_free_virt_device to accurately handle device release.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 7faac1953ed1 ("xhci: avoid race between disable slot command and host runtime suspend")
-> Signed-off-by: Weitao Wang <WeitaoWang-oc@zhaoxin.com>
+Le Thu, Jul 31, 2025 at 02:25:30PM -0400, Waiman Long a écrit :
+> On 7/30/25 9:11 AM, Gabriele Monaco wrote:
+> > The timer migration mechanism allows active CPUs to pull timers from
+> > idle ones to improve the overall idle time. This is however undesired
+> > when CPU intensive workloads run on isolated cores, as the algorithm
+> > would move the timers from housekeeping to isolated cores, negatively
+> > affecting the isolation.
+> > 
+> > Exclude isolated cores from the timer migration algorithm, extend the
+> > concept of unavailable cores, currently used for offline ones, to
+> > isolated ones:
+> > * A core is unavailable if isolated or offline;
+> > * A core is available if non isolated and online;
+> > 
+> > A core is considered unavailable as isolated if it belongs to:
+> > * the isolcpus (domain) list
+> > * an isolated cpuset
+> > Except if it is:
+> > * in the nohz_full list (already idle for the hierarchy)
+> For the nohz_full list here, do you mean nohz_full housekeeping or
+> non-housekeeping list?
 
-Thanks, added to queue with some minor commit message tuning
+nohz_full.
 
--Mathias
+> > @@ -436,6 +437,20 @@ static inline bool tmigr_is_not_available(struct tmigr_cpu *tmc)
+> >   	return !(tmc->tmgroup && tmc->available);
+> >   }
+> > +/*
+> > + * Returns true if @cpu should be excluded from the hierarchy as isolated.
+> > + * Domain isolated CPUs don't participate in timer migration, nohz_full
+> > + * CPUs are still part of the hierarchy but are always considered idle.
+> > + * This check is necessary, for instance, to prevent offline isolated CPU from
+> > + * being incorrectly marked as available once getting back online.
+> > + */
+> > +static inline bool tmigr_is_isolated(int cpu)
+> > +{
+> > +	return (!housekeeping_cpu(cpu, HK_TYPE_DOMAIN) ||
+> > +		cpuset_cpu_is_isolated(cpu)) &&
+> > +	       housekeeping_cpu(cpu, HK_TYPE_KERNEL_NOISE);
+> > +}
+> 
+> Does that mean a CPU in the nohz_full non-housekeeping list is always
+> considered not isolated WRT timer migration and hence will be made available
+> for timer migration purpose?
+
+Exactly, because nohz_full CPUs become idle (from a tick and timer migration
+POV) when they stop their tick. And since they are idle, their global timer
+are handled by the timekeeping CPU.
+
+This is much better than making the CPU unavailable like is done in this
+patchset for domain isolated CPUs, because unavailable CPUs must still handle
+their own global timers. Unfortunately we can't just fake them as well as idle,
+like we do with nohz_full CPUs, because that would mean walking the whole timer
+migration tree everytime a timer is queued or modified. This would be too
+costly.
+
+Indeed that should be commented somewhere in this function.
+
+Thanks.
+
+-- 
+Frederic Weisbecker
+SUSE Labs
 
