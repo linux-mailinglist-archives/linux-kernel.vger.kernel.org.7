@@ -1,131 +1,152 @@
-Return-Path: <linux-kernel+bounces-753113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753112-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3A1BB17ECE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:07:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FB38B17ECD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F418C564131
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:07:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE63E7AC670
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:04:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8596D218584;
-	Fri,  1 Aug 2025 09:07:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673D9218584;
+	Fri,  1 Aug 2025 09:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="Wb9FpksB"
-Received: from smtpbgjp3.qq.com (smtpbgjp3.qq.com [54.92.39.34])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RXmYFlUy"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB9E2AEE4
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:07:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.92.39.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE6D14F70
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:06:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039242; cv=none; b=OqpQRAxbOSSru7u6HFeEIAflB2wxIa2qce+VxHf3DBfW69VNbEDFOEsw9qnjPgVIee7RJhXGv3imq4T5xIgAP5XaLjlTU4RlSiwUdt3gu8CNZ/LrR0Hdp/ZCLiA6LVv0fubFJXzdzRcbgcDRjgj6ytKIEHL9QcJgj9wf31vFbRA=
+	t=1754039175; cv=none; b=BOk5MLOuQQxfQtINnv95AqdqCU0xXS1jBN/rvLpdKieIMJY/mbDPaxFWZccH7G/LqjrUfhG6N4IWMZTAQl+HIjld83LZnTf5fwKBJtvbMY+R5Pjy2eLQ3bbrB0d7ryMIiBVGoKLBiY2tFat44mxD0q6nmlqMVm7w2ituutjpTQI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039242; c=relaxed/simple;
-	bh=jWfN9U7HSeOOEeb232m6YC+b3wA0NE60+ePggoODAFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=d3M+jNzpZL8DbNtxpEOZVUVtMVYwKYgK/3f4CddjfMNOEXa0t9Uf6Gwzk2zljTTnI2HZvs7yBMxXJEiTmDhXmH7jkdF/1S8pW8l4TMlvrsTveNQkoEOZckodYxLxEX7A/EBuklULIAeaebgTY9gPKN9ptKfurE5Ng/PgkElYZtk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=Wb9FpksB; arc=none smtp.client-ip=54.92.39.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1754039214;
-	bh=pnMtw/DWvge/1AgXY0gXlGjA0EEKIxjlEa2RlC3rDHk=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version;
-	b=Wb9FpksBvjZsOV0RiFrX9enabLXZfRMtoGiKgK6giP1B5c+14dMfmrpd5AFrGESBc
-	 EiC9neQmHfutXYxNGND8+W4cEM1xKPr4fZ9vcwx5UdsqWwyABbCv1M6ezc0oZ1ZXHT
-	 fuuS4TxIoYsHosMnCeTPrGP1FTLoOpbksEbhE4CI=
-X-QQ-mid: zesmtpip3t1754039171t6d2c0da3
-X-QQ-Originating-IP: NLVxtxx5vHsEbFass3QzTVgPiJyuunuo9M4wi4g9+KE=
-Received: from avenger-e500 ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 01 Aug 2025 17:06:09 +0800 (CST)
-X-QQ-SSF: 0000000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 11178572120782440509
-EX-QQ-RecipientCnt: 8
-From: WangYuli <wangyuli@uniontech.com>
-To: alexander.usyskin@intel.com,
-	arnd@arndb.de,
-	gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org,
-	zhanjun@uniontech.com,
-	niecheng1@uniontech.com,
-	guanwentao@uniontech.com,
-	WangYuli <wangyuli@uniontech.com>
-Subject: [PATCH] mei: vsc: fix potential array bounds violation in ACE address allocation
-Date: Fri,  1 Aug 2025 17:06:00 +0800
-Message-ID: <78151482AFE8973A+20250801090600.544000-1-wangyuli@uniontech.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754039175; c=relaxed/simple;
+	bh=CoCj0hlnhxMtx48zaAGtk524FDJ1/DuDwggLxXvsSIg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dus36S1L8Cgusl21TzWLp1tAEG6Dgjl44+G35nBiKLUY5lGpUdwyf8qsCPfyRrxqvuxihzyH9G/GC4EYWVi2e6XazLQzctwgFWoNysB16o8R2Mi0l5zfjlT874mvhllblS86r1gK4yZIin3MVNX7l9XUUOPGuSdtiVMHBUv+aYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RXmYFlUy; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754039173;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=w5CR5jl7F0fSUqZEm0AUvx7ezpEgL76Cth4F+ybafT8=;
+	b=RXmYFlUy7CEcss8K2oFJU6eN+q8eUIQxDJCh2OWvK3rzo4rkvORBaERX+6O1MsnkNFCcp5
+	Akxlekj12g86CDGpfh0nVV351snvMFzt+9NLRvv3rO193NzMqNMgK1srA8Gf7G8Mkq/7yN
+	0IOAdutFdl+IeTO/JMLuLyWv225mBYQ=
+Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
+ [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-653-YXxMXbvHO2uoWB1qtknM5w-1; Fri, 01 Aug 2025 05:06:11 -0400
+X-MC-Unique: YXxMXbvHO2uoWB1qtknM5w-1
+X-Mimecast-MFC-AGG-ID: YXxMXbvHO2uoWB1qtknM5w_1754039170
+Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7886bfc16so744129f8f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:06:11 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754039169; x=1754643969;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w5CR5jl7F0fSUqZEm0AUvx7ezpEgL76Cth4F+ybafT8=;
+        b=QnAK+y8fEhcs1+p8xehvGfZpRdvwMtrRGdmSWbUkAAM0HHmq4GdcJt+yafVAqS4k1R
+         G+f0MkOgVV+Hw7buq6lGWLNerdJnpXfOkDXszIXtCgDVZiHniyRA4Pi+0KPZQoSHOfdi
+         vpmHh0c4M5W6FBNZB2Fk3C06j6ic9w31hYOxH9QhBNSKNdXf68inQiFrq+TWP544yDu0
+         /22zHEfv9Q8n8nd5uYrAmfCLCG6rVqfNUEAcKMMn1blNcRGaW2+aKMle1Xj96SmXzP6y
+         d+kLXPEV2Rcpw0D/HUKanT89OH14wVuzbozfxgf0HVqWS/v3GmjP7WdX/GGt+sUS6J0o
+         JquA==
+X-Gm-Message-State: AOJu0YzvPEUPomSBL1DDNgDUloTw80aDbQ/unhJokPSzVUIvt4Pjfnhd
+	K3ZLJztUMLFqHqS3gLcxPcIVfv5AtOggMVcDsjk8K950fsjx+mcH2n22TTvH8TS44rpr9r+6B5/
+	/KlNxb8RWpvEi2OHI74SKJBMlEjxkx+C67qfkDZya38aLfWb06bY/ZkBI5r9fNgcw4ZSjgAFKiE
+	te
+X-Gm-Gg: ASbGncsIssqscqKBsDIIG+zmm4AbyPm2/LLqBFrOV/k3uadg/5+kbqJyOD0RIVWo1C4
+	cy8W9XApdtoJOWjivmqBhMquTRXmD7V300oj6SiDA6YWDG5NTxS2SezK2JxOwHMMwcnb67gcj4I
+	zMEuq8+q86Eu96WNUBWszBpxBaU7nmsz2qHl3e0QMvrwoQ6BDPrxAP3H1CrV3wL58gZwMYfGQBj
+	QPrZbWGGLAGCwzSawVtBdc1odQuu/K1u8aDe8MptZh54s0aZEKlhRxCKgFAToQwHNIHBcCpGLNm
+	5/bRUKV30fxlRjnhiHnYndq67rq1uhRiIytfAks0K2xOYWWYawb1HhunPnJ6r5y1BdpwHQ==
+X-Received: by 2002:a05:6000:24c6:b0:3b7:6828:5f78 with SMTP id ffacd0b85a97d-3b8d343afadmr1682726f8f.4.1754039169093;
+        Fri, 01 Aug 2025 02:06:09 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGTi1Fa9TEH8nqKMEd+slRdcxzYt6awfrK20vVt4LCyIMlXwe2dJepCulZgCynDTlUyIzj2Eg==
+X-Received: by 2002:a05:6000:24c6:b0:3b7:6828:5f78 with SMTP id ffacd0b85a97d-3b8d343afadmr1682683f8f.4.1754039168597;
+        Fri, 01 Aug 2025 02:06:08 -0700 (PDT)
+Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6ff7sm5236741f8f.75.2025.08.01.02.06.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 02:06:07 -0700 (PDT)
+Date: Fri, 1 Aug 2025 11:06:06 +0200
+From: Juri Lelli <juri.lelli@redhat.com>
+To: David Haufe <dhaufe@simplextrading.com>
+Cc: linux-kernel@vger.kernel.org
+Subject: Re: Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
+ Interrupts on isolcpu/nohz_full cores, performance regression
+Message-ID: <aIyDfs1Dh0OGJEgM@jlelli-thinkpadt14gen4.remote.csb>
+References: <CAKJHwtOw_G67edzuHVtL1xC5Vyt6StcZzihtDd0yaKudW=rwVw@mail.gmail.com>
+ <aIsUwT1Ai0zcMRpT@jlelli-thinkpadt14gen4.remote.csb>
+ <CAKJHwtOZkrR9kEj+tffq=o0i1fPi3P+8BTHz3RyPDmn=uDOF7g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: MG0eYPcxdOU4aCmmEeFSf3kVGNsf52L3PSM6FRw6be7aoGjoU7aGrt5B
-	9Mhv9WAUbZOJDISNuQ4Q6spbZiZL1tlX/Kz6sTlflIrb1f1FHAy5Z4MB0YS7hYZOmE8n5dL
-	r7sr/PQCs5sPjKJGd1td4gX64QJsCdjr1ToyIf9lvuuEdsFsmhVklnAMlozLKh0Rdrttg8T
-	mjxAiDgnJweuEQ206ZR75RnHjm49hqV2jJREMFklMdnA3PAShnuas0duqMrXEQrNNHI8vxQ
-	BJYbiSphUe8bO5BFB8KZbttXX5LPtCDeEZk5jtIoRpkUnpSJQ9T6aU32DLjBthvkdyHeUl7
-	CLMrChFe/aYanjp0dgl8gBc2S9rUbh8wHlSzSKuJJfWjqJru6AaSDK45tLuC+33MU3XTOlO
-	j51y6KNPJaIs9rv3Pc4v4P+ThkRl5h0GKdrV9ECjwL1Pj/N5MrPRf/EeJIlGVWJYIAKVgao
-	7CGnQjoxMa0NQCbUJIFUiAtfqYTNsE/Xw0VxMZRdcm8u96y9GTQKngAUCl9xeYFU9nQ7wHS
-	lb2m3bC/r3VU9AbzPTvSm5moyuraLE1S5HzEGEBLgq3wSpCp+mmnrBwnWQDpwj2Q83tn9sI
-	uITmFAwO9h8qTfAjYfwS0wWqqv3sNwJWjy+cpvLTl6WMNyfRdQF6XWX5LqYb4f+5Ek2Z1be
-	pAzImH7AloGm8qJOOP/An+U62KY/7B6++jy7BBECQcEg4XrE2U0GquzoLFnZXgvSk0/DB9I
-	Q+HvhT1qTDoBrYVFMSLkluEW+xPvkO3I8qI9Sg09Wf5JI5EDnmZ1Bqca5tHAm2QHvo3Qnnu
-	PZfLOCqhXcZdEz1r92DI3JkjtZNTNX9rJI9waxePGiy3JjCG6zaRjLJurXsL2U/YOmglYYa
-	sf6M+jxEQUmHR6ukSC7Q15HMUfwwo8vFrTv6U6zJtzNdS04W2gdxR3pRfsvfJlSgaHz5Q0O
-	5b7uUp/EL+qnq2Vv/Iw/uQnDoCTWyaoFEm9xsaJGAlaplUMOvTj549fyGECHLGCbKxWAAi7
-	wibm2Lgfh5YoLIdRrEVmQy5T2SKX/z8sixDl1utGMHR2cD5kgV/z0MyyAdXk4=
-X-QQ-XMRINFO: M/715EihBoGSf6IYSX1iLFg=
-X-QQ-RECHKSPAM: 0
+In-Reply-To: <CAKJHwtOZkrR9kEj+tffq=o0i1fPi3P+8BTHz3RyPDmn=uDOF7g@mail.gmail.com>
 
-When ACE images require dynamic address allocation, the code accesses
-frags[frag_index - 1] without bounds checking. This could lead to:
+Hi,
 
-- Array underflow if frag_index is 0
-- Use of uninitialized fragment data for address calculations
-- Silent failures in address allocation
+On 31/07/25 12:48, David Haufe wrote:
+> Kernel 6.16 shows the issue. /kernel/sched/fair.c calls dl_server_start()
+> and there is no assessment prior to that point or later of the
+> isolcpu/nohz_full+single-process condition of the core. Same function_graph
+> trace generated. Code is the same at tip+sched/core.
+> 
+> On Thu, Jul 31, 2025 at 2:02 AM Juri Lelli <juri.lelli@redhat.com> wrote:
+> 
+> > Hello,
+> >
+> > Thanks for the report.
+> >
+> > On 30/07/25 11:51, David Haufe wrote:
+> > > [1.] Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
+> > > Interrupts on isolcpu/nohz_full cores, performance regression
+> > > [2.] The code for dl_server_timer is causing new IPI/Function Call
+> > > Interrupts to fire on isolcpu/nohz_full cores which previously had no
+> > > interrupts. When there is a single, SCHED_OTHER process running on an
+> > > isolcpu/nohz_full core, dl_server_timer executes on a housekeeping
+> > > core. This ultimately invokes add_nr_running() and
+> > > sched_update_tick_dependency() and finally tick_nohz_dep_set_cpu().
+> > > Setting the single process running on an isolcpu/nohz_full core to
+> > > FIFO (rt priority) prevents this new interrupt, as it is not seen as a
+> > > fair schedule process anymore. Having to use rt priority is
+> > > unnecessary and a regression to prior kernels. Kernel function_graph
+> > > trace below showing core 0 (housekeeping) sending the IPI to core 19
+> > > (nohz_full, isolcpu, rcu_nocb_poll) which is running a single
+> > > SCHED_OTHER process. I believe this has been observed by others.
+> > >
+> > https://community.clearlinux.org/t/sysjitter-worse-in-kernel-6-12-than-6-6/10206
+> >
+> > Would you be able to check if the following branch, containing multiple
+> > fixes for dl-server, is still affected by the regression?
 
-Add proper validation before accessing the previous fragment and
-provide clear error messages when validation fails.
+Apologies, I forgot to share the actual branch. :-/
 
-Signed-off-by: WangYuli <wangyuli@uniontech.com>
----
- drivers/misc/mei/vsc-fw-loader.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+Could you please test with
 
-diff --git a/drivers/misc/mei/vsc-fw-loader.c b/drivers/misc/mei/vsc-fw-loader.c
-index 43abefa806e1..e2d318ecb76a 100644
---- a/drivers/misc/mei/vsc-fw-loader.c
-+++ b/drivers/misc/mei/vsc-fw-loader.c
-@@ -516,7 +516,19 @@ static int vsc_identify_ace_image(struct vsc_fw_loader *fw_loader)
- 		frag->type = ace_image_map[i].image_type;
- 
- 		if (!frag->location) {
-+			if (frag_index == 0) {
-+				dev_err(fw_loader->dev,
-+					"Cannot auto-allocate address for first fragment\n");
-+				ret = -EINVAL;
-+				goto err_release_image;
-+			}
- 			last_frag = &fw_loader->frags[frag_index - 1];
-+			if (!last_frag->location || !last_frag->size) {
-+				dev_err(fw_loader->dev,
-+					"Previous fragment not properly initialized for auto-allocation\n");
-+				ret = -EINVAL;
-+				goto err_release_image;
-+			}
- 			frag->location =
- 				ALIGN(last_frag->location + last_frag->size, SZ_4K);
- 		}
--- 
-2.50.1
+https://github.com/jlelli/linux/commits/upstream/fix-dlserver-1/
+
+Among various other fixes, 219a63335b67 ("sched/deadline: Don't count
+nr_running twice for dl_server proxy tasks") is making sure we don't
+count fair tasks twice, so I am wondering if it can have an effect on
+entering nohz_full.
+
+Thanks,
+Juri
 
 
