@@ -1,155 +1,90 @@
-Return-Path: <linux-kernel+bounces-753695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753697-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8E818B1868B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:22:26 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8CB18695
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:24:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B896317F966
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:22:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F08E586545
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:24:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 209BA26CE37;
-	Fri,  1 Aug 2025 17:22:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B1B28150A;
+	Fri,  1 Aug 2025 17:24:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="h1LrvfmU"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikTW9TRv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F29523AD
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:22:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C626CE36;
+	Fri,  1 Aug 2025 17:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068940; cv=none; b=h81fhN7oBqDQ1+pPXs2WWY0DMDI/aVhXWgdnpZN4IvTwlacBg/rukoX5y4O0CxRkjQunYO0epSVXGdleP36qwj6ZwwcRjcPnaxp2okmABzaBRpdwZaNXYuQpuQ+kyiuf4sgU5r9kYe7M5F/gTX2Y/T8qt8nrMrb8tui8ddUNjHY=
+	t=1754069078; cv=none; b=hsWuiJuKzXo2KNH24Y4omFzKC07ZvQTQVbF3tZtdCwRVzaONWpYA6t6JR7ByM7SkNo5cHvV2JO1DbbfypMCz4rHc67B6N1ubxmNIQ4NPLiej34ry5KACbzn4cXjK/VgDo1X3XGOhZR7wp5b5Hl9txc0pqM3WBguX/EwUwOXARC0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068940; c=relaxed/simple;
-	bh=F4U3zLqHM8NpqW1pxXipEfzZi7+0Ycu/7mQRmHJXjNE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jt15EM2zoNDUmJQCBEtaLoOnhZEdl1TIMT0LsU4ebNgfI0fbAg5u5nxA7EZgzrpkRycw1sbuT67i7+OlYnhAjkZ4DPbu7L6Tz46YNkdVJqsVa2DRM5NnaRiuJ5ioy7618XDf36IY6mVDOujE4eyhfj96EsS1q7MNZYdkiwE/3U0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=h1LrvfmU; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-45618ddd62fso13131445e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:22:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754068937; x=1754673737; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=3M/PDNKda01rnV3OeJ4NocScrvK7XCljjn5Nn7NUvKM=;
-        b=h1LrvfmUw0OzSRB7ak5Wyus2nhqdj3beFoANdHEK0uZycmnGOVSVVJXNMmqaqU22bl
-         DFmjBQo5Bc8Q+8YBEuNao6NHaG8eVvLHUTZe8HpuZfUZCzL1Z4PAjumZ5BmvDX3p1hQA
-         DPNIzrMHpeeFslE9ri0bFdkM5kSZf90Xpdi8RZmyFyP6l/1oj4h6SQf123y4XHAOnm3D
-         LdB2v0AXA/6z0d5MQtxWjACaG+Pt8W5QamRAe0kVfCoBjajHXnTk2HGShraEqlHk+G1k
-         sPB7aQ5Im3BxE3IxypSDj+LQi/bKdCc+C07por9MFdL85QUe2zclk33INcvYiGoFCAjw
-         EoZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754068937; x=1754673737;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3M/PDNKda01rnV3OeJ4NocScrvK7XCljjn5Nn7NUvKM=;
-        b=dPmi3nmjRzjiaH1xBXjLnz+W2OcFlI1XLgV9QkoyymS32vBrgnL/Z+iSEnmyImaEEv
-         lMuy1H7+nM35Fez3s8ZDhcZtjB0quVFf1jErEgNTktw4SkKxfrO0f1ljEez9uDnKbHaH
-         3NRNSl+R83WqqSotNFMMja+3uZXFC2P93ZDzPzy7NJhen8YR8Mf7hHjYYOraj9gYV+Jf
-         ZIi+Rx7B1dXVfVpBsxUiNMaNAP5QP0CaQYBpsnPfBs0un575EXCp+oQoNIyLVtAbqnB+
-         pzduizgXWYDnkvmAqXxveopmVn55WvIoyvbFPSKetZ4A7Dkz0uAII2UN8ixZYHDYNRbN
-         Hu6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUcHqhR4D/OcHzX3ClDpUNtMEqiPtBMeC+9D0q5w0jibjlWOdHZ/9VFdYkPzCFZCl8q/ipZq/Ehwzsq0qM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwRa662igus1xxemUuvGp2nxQR3gjioylISUYbsqXhFVp7sNfuw
-	u2x1jZlXZysIMYBiWOrQJrf++WDt/wfKSNjrUC534ak/EkO3AnIyINcZoUtx1FW2sls=
-X-Gm-Gg: ASbGnct7bqnpK1zvTidWazH8N/pMQRbeyFjoxuDczrO5DEvOxZUegcfeUwjTHa751bZ
-	0fLqjvivPRXOLP/4sEoHB5wsiAIOcZLc3IHbgqVuOpiADiTUU+u1cenI2BvgMCCzyFD2j6sGvtt
-	CAmZIVMUzLljlT2A8HUFwwVYNNqfDRywY3ry145p/rexiOUBTmz9Jem8fCCUegGkkJcoCxw9mWn
-	a8GmTlXI+SNowh8RHKPQrDdH5n+qu0gDUKoRIo/WsSpnS9aljccdbn8WSdgNLfirzDpFtdTqviv
-	w2kz9wPvcyaHfWSla68ucNniQTgLE9zdhhQc8tk54Q8qtkYNOi7twLz8ZPd3sBisa2DAmkv/E3Z
-	BMuP7Ytblwx0XbOr0Dwxjcugd3aaSNU+OhvfUhnHtVFToTJ9WqSzfDu+DLUGZNg==
-X-Google-Smtp-Source: AGHT+IEr7UdyBNz9mF08fNxf3R1Ysej2mqN5c0NMeUJedJILvrCdFfPD3tDpMYty7zL96HPHkqBLJQ==
-X-Received: by 2002:a05:600c:1554:b0:456:1611:cea5 with SMTP id 5b1f17b1804b1-458b6b58472mr716105e9.18.1754068936946;
-        Fri, 01 Aug 2025 10:22:16 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c453ab0sm6681912f8f.44.2025.08.01.10.22.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 10:22:16 -0700 (PDT)
-Message-ID: <d29b1e05-f783-44ed-a2e3-585a191ec426@linaro.org>
-Date: Fri, 1 Aug 2025 19:22:15 +0200
+	s=arc-20240116; t=1754069078; c=relaxed/simple;
+	bh=0T6BW3kqNRSL3CmcE+bvOFvSzPdP7Qn/jpwOomCpddE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=mXPBH6ZjDL4nYzKH0QjEgz+fDomlnEwmppg4jKKSpdHjY8iXgI2vcgB51sB1veK6b3LKlntXapRp+W2J2EIFwFBERefGD8Zw/OHY8lSatyoLB2cqjmstP/u+Oat0/cifNQoQLV0C+2ayMA4LE0G9/Q2D5XDXBDrXkCyl+55dMUY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikTW9TRv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2622C4CEE7;
+	Fri,  1 Aug 2025 17:24:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754069077;
+	bh=0T6BW3kqNRSL3CmcE+bvOFvSzPdP7Qn/jpwOomCpddE=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
+	b=ikTW9TRv1bmX2pfGveXkD/Q+8Dwu+Mu7kGuaygWO7t3bIXKyJGLyLmiL12Nk7s9NR
+	 MV74Cuw68ebse13s1626MpofqrO3XJfg91bVD8dzwnO0VQ1gyAY6jZoLsmiSsb95BQ
+	 Bp5g4H5TMEv11BVWdgXOm712kXBIFgBR348cR0FgC+TYwrqlKSvtgMJubGBYqSnrLs
+	 e5jsXpno/6fZVTpQUUlhpfj5Wq0ZJ8GrQmR3ajByKkLLQC7NwUztqG10lPP3w2NqFh
+	 f+G/1zTWEFRf9MZLs0P8q4+RRww0GCq3mT3XPyBNBULnVfzE47lCsjF9qMpBCqxss7
+	 IMSdD2vzJFVAQ==
+From: Namhyung Kim <namhyung@kernel.org>
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+ Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
+ Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+ linux-perf-users@vger.kernel.org
+In-Reply-To: <aIofXNK8QLtLIaI3@x1>
+References: <aIofXNK8QLtLIaI3@x1>
+Subject: Re: [PATCH 1/1 v6.17] perf python: Stop using deprecated
+ PyUnicode_AsString()
+Message-Id: <175406907667.1475083.1184937311863486488.b4-ty@kernel.org>
+Date: Fri, 01 Aug 2025 10:24:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH][next] thermal: tegra: Fix dereference of pointer tz
- before it is null checked
-To: Colin Ian King <colin.i.king@gmail.com>,
- "Rafael J . Wysocki" <rafael@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
- Lukasz Luba <lukasz.luba@arm.com>, Thierry Reding
- <thierry.reding@gmail.com>, Jonathan Hunter <jonathanh@nvidia.com>,
- linux-pm@vger.kernel.org, linux-tegra@vger.kernel.org
-Cc: kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250730135441.2078022-1-colin.i.king@gmail.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20250730135441.2078022-1-colin.i.king@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Mailer: b4 0.15-dev-c04d2
 
-On 30/07/2025 15:54, Colin Ian King wrote:
-> Currently pointer tz is dereferenced before it is being null checked
-> leading to a potential null pointer deferernce issue. Fix this by
-> only defererencing it once it has been null checked.
-
-Actually the callback should assume tz is never NULL because the caller 
-does:
-
-	ret = tz->ops.set_trip_temp(tz, trip, temp);
-
-So removing the NULL pointer check is safe here.
-
-
-> Fixes: 6fc2e1a5f98f ("thermal/drivers/tegra: Switch to new of API")
+On Wed, 30 Jul 2025 10:34:20 -0300, Arnaldo Carvalho de Melo wrote:
+> As noticed while building for Fedora 43:
 > 
-> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
-> ---
->   drivers/thermal/tegra/soctherm.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
+>     GEN     /tmp/build/perf/python/perf.cpython-314-x86_64-linux-gnu.so
+>   /git/perf-6.16.0-rc3/tools/perf/util/python.c: In function ‘get_tracepoint_field’:
+>   /git/perf-6.16.0-rc3/tools/perf/util/python.c:340:9: error: ‘_PyUnicode_AsString’ is deprecated [-Werror=deprecated-declarations]
+>     340 |         const char *str = _PyUnicode_AsString(PyObject_Str(attr_name));
+>         |         ^~~~~
+>   In file included from /usr/include/python3.14/unicodeobject.h:1022,
+>                    from /usr/include/python3.14/Python.h:89,
+>                    from /git/perf-6.16.0-rc3/tools/perf/util/python.c:2:
+>   /usr/include/python3.14/cpython/unicodeobject.h:648:1: note: declared here
+>     648 | _PyUnicode_AsString(PyObject *unicode)
+>         | ^~~~~~~~~~~~~~~~~~~
+>   cc1: all warnings being treated as errors
+>   error: command '/usr/bin/gcc' failed with exit code 1
 > 
-> diff --git a/drivers/thermal/tegra/soctherm.c b/drivers/thermal/tegra/soctherm.c
-> index 53a5c649f4b1..53fa6099b67f 100644
-> --- a/drivers/thermal/tegra/soctherm.c
-> +++ b/drivers/thermal/tegra/soctherm.c
-> @@ -585,14 +585,19 @@ static int tsensor_group_thermtrip_get(struct tegra_soctherm *ts, int id)
->   static int tegra_thermctl_set_trip_temp(struct thermal_zone_device *tz,
->   					const struct thermal_trip *trip, int temp)
->   {
-> -	struct tegra_thermctl_zone *zone = thermal_zone_device_priv(tz);
-> -	struct tegra_soctherm *ts = zone->ts;
-> -	const struct tegra_tsensor_group *sg = zone->sg;
-> -	struct device *dev = zone->dev;
-> +	struct tegra_thermctl_zone *zone;
-> +	struct tegra_soctherm *ts;
-> +	const struct tegra_tsensor_group *sg;
-> +	struct device *dev;
->   
->   	if (!tz)
->   		return -EINVAL;
->   
-> +	zone = thermal_zone_device_priv(tz);
-> +	ts = zone->ts;
-> +	sg = zone->sg;
-> +	dev = zone->dev;
-> +
->   	if (trip->type == THERMAL_TRIP_CRITICAL) {
->   		/*
->   		 * If thermtrips property is set in DT,
+> [...]
+Applied to perf-tools-next, thanks!
+
+Best regards,
+Namhyung
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
