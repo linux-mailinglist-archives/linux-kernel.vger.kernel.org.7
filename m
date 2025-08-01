@@ -1,224 +1,212 @@
-Return-Path: <linux-kernel+bounces-753699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83D72B1869A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:25:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76D02B186A1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40ED63BEDD5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:25:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A55BA1C81AB3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:26:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAAAC26CE37;
-	Fri,  1 Aug 2025 17:25:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 575F527AC2F;
+	Fri,  1 Aug 2025 17:26:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DJLVYNyZ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="IkOKBOqA"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 76758199FAC
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB7513A3ED
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754069151; cv=none; b=BFbvrWiusPBgatMJQSsLRFt8gz8CrGZoqZBfwfog4XlznrDRwupaSQFkHVQDC7UFSYBxwCNhDJTlxxWfRSzoQnLr0zYba/9SzKZ9t28DF21BESBE09dViseJOQRAoK6jl07bu/HKNOciPfefBJyOzuukFq0IebquJjohdpTtHSU=
+	t=1754069169; cv=none; b=urJhghwAgy9zPLBdghTB17GKoym6aftjabQKIX9bVeu32zNIkFv/C+FbYGXXxzrP9PnyUzAm3UiUdskygv3dAXKNwXmgaKHpJ1ULYRmiKkRZb/Ou1u/EXY5Chwgp50U5oWo5lopGgQx5Kb3Xo2M0DZHg5N8cRj9bOYqwlt82ieo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754069151; c=relaxed/simple;
-	bh=sIuF/8aOxW6N0Vqi3WYC1+znFpGO/lZfoaNzUR11puQ=;
+	s=arc-20240116; t=1754069169; c=relaxed/simple;
+	bh=MdNitGZXzE66cMMSZImFec816f4hFdUUzZFH+WAD/+g=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qgfPPnsGjdfLKE3OHB3tDg0FEmMIvIYRG62SwbKqBf7b54QEIz6ZMYu2aXs4nAJEWb0Q4acETb9//uqbqZjo/MHo0uyMbdsI/tyzSbEWrTRRkb971mE22bifImyQ9BkqNfUpUwAisWQypy2t/ohL17KuFb2JXG6lw5NuqiLLEoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DJLVYNyZ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571FNdKQ023084
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 17:25:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	XH/Vu6CobRgqM/vOahebRBPXbiiPDrFWUykHMIyxvbM=; b=DJLVYNyZxPOc2Uzh
-	QgI97vYi3VEoTTL+vNNj7Brh0htiJVQl/imm8sTEL5a69E4uJbNO0MA5iDk8kWNO
-	12wj2tlSttTN1M/E3kBEUd/c/0NLYDoPd+SN0E8uxqG7r1k5Eswn79OPIE0y/dzD
-	MSODt2gaivvy6yz6SKh5jXQowtuKN8DHWYiZ7bmIQFLhYjb5S5Tje6uXun+FMG5w
-	6BZwfHC5DxEAMRJ+NhN4K2lwaZfdQVKLCkNZke76KghlJRz72fgNgV5C+j1l1IW+
-	q9MQgB8veNmt0qeEr47iVQ/Ei9pjdZifh1uEpwwyyTPYu3hmHXn9bwfS+FU2h526
-	GfNftw==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrmvxg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 17:25:47 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4aeb486c46eso37114851cf.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:25:47 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KNVTyFQJ+ZRkJCh2kL7ZEE8iACQPPJzkIMq8RKHHkPrUSYICtPT7A/z5xoQEirw4L+il0p1/suZPeEX+ePXhcRVZEPlNXwyXx5nAyYl9G/0fylJHsXJ9CN6TXtD2gFc2Ks9+yUrP5/53ivprNrOsRunGwyOgstQftucQQ1BP9lg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=IkOKBOqA; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-3b794a013bcso1418038f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754069165; x=1754673965; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6EiM/KJatc+ucR5mZfr0mKK62FA3tKj9rpi2bILnd/A=;
+        b=IkOKBOqAzcPHViCAoMvLjiTvhcxKvRB+ndF6jsurHbldSn/B2XETipealQmRt0RNq6
+         KxnNujv4tNFxG9o+o8htFrQmyuKIDbGwoncpWdAbWPub/MJeWvTJPnWkuRn7AKR9UVN8
+         GxrnIrTKQVg0l8gvn1zkPGayG5ZmnOwS0LYF8chIUrch7wo7OngR3h4axfC7Xh9ad/j3
+         sB+1qrhMONwIsqOtMZSOXgzWmnuXqK/L7eKGHdpOeLiBM9UtPWKlXjUTx4rGToA7jJsY
+         vBxU+gMKjPVIfOZJwN46p/qKe3ptm/XhzdLdUasgW1cOinxr3uQths5A371DMkKEumrM
+         YehQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754069147; x=1754673947;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=XH/Vu6CobRgqM/vOahebRBPXbiiPDrFWUykHMIyxvbM=;
-        b=lTYurtapmmC1x9BHl5K/o4PmBW0PkYsTBJeQmDUj+VCpdleDL93GShvmKI+Hc7xVZR
-         laabLwLbX1sElgJlKctHFoo9xyE1FDhCRaYeUSaTPGEK+xZFsHoXem79bJ/rCS0OLrvc
-         gdo97hAuWjQ47654TOWcXXHZzLWy+4ZXgicBqvSr6h+zpOIkgKEa5J21tHVTvSLGcWD/
-         5ruYu2DZgZzZ5ofa3cBVf1DiVKyc+aDwGHTWCzH0kKECjv88N2/DlA379KcYryXlYL1r
-         cB2q+EP3YvzwcQkLFpB8FJASwaCAXCqQSPlc9XUtNzJebYGZtKCPTWeW1q/P8yZ6ZORk
-         YEIA==
-X-Forwarded-Encrypted: i=1; AJvYcCXXVhv/+sp29f3IfBWu/DHnRjpvZqMHyhJsuW0YI37Nfx7HpS2eqUhBMa5FQhvukKIIc6J7qIlJYJCzGew=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyJPgpBUps41h9EkLFqY/zD5se2rzJksptIJVa7UC9K+V6JvPom
-	Vqqzxdp6e8xwnTZrpv4k+Dmj1V+5ag/UDxc/cm20mGfHBtbLBEESvgDNoSpAXoFsiIF+fZoDrfq
-	Ws1PY2kG9y7DtZZkprClIwfd7CmZKz9tIY8dLHyCB+LpA2ejeLfOE0nNOHmHZ8FGPUPM=
-X-Gm-Gg: ASbGnctQaiCHPUPmFVaQDiT6BpDxCrI77Ck9Brmx/orySRDuxvgoQHePEoIbIuHdJh8
-	5Jhtl3/Al79Jy1COoN268y9wOxaVAbSqAqhyW74OaH8/BgJLyDUZvp2rQja4y/De/VOcfveJv8d
-	CbAwjjnGjKbx3Db19KEPk920YMmHoTtw0/mY3/yK7ywAhhVxqXB1shJWeTai0naZz65dKogYkTS
-	wyYf5ImTmTn3ZPuZvLzFb17q052mcHNjfKGcihV6wAMVXEPYS7Kph60q/l0jauAcyKUYKyrWGNT
-	jiCzP6+HX+9nXFYarHmZSK0fpa4zUso/PhMTCxH3V9HWk06s5OnJNHp6mEvOVIo98WXYJ75XR//
-	5QwcZaDDMnu52jGZs4IaRLR0wdlP+UMkMZFWsBBCwKjJszfzuTsVL
-X-Received: by 2002:a05:622a:48b:b0:4ab:a29f:7e43 with SMTP id d75a77b69052e-4af10d214bfmr10037331cf.52.1754069146655;
-        Fri, 01 Aug 2025 10:25:46 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFgLL7jhuBQ6ZyNfR0TafP/jDj/xzyrdf1/TwB1OEgjfW7g8Kv5psllQMvktISF8y4HunnQng==
-X-Received: by 2002:a05:622a:48b:b0:4ab:a29f:7e43 with SMTP id d75a77b69052e-4af10d214bfmr10036801cf.52.1754069146142;
-        Fri, 01 Aug 2025 10:25:46 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88c99145sm653719e87.92.2025.08.01.10.25.45
+        d=1e100.net; s=20230601; t=1754069165; x=1754673965;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6EiM/KJatc+ucR5mZfr0mKK62FA3tKj9rpi2bILnd/A=;
+        b=Fcn4IuaSwXSnAb0qovyeTs2OWyeTELWqUnEeXAz4WwBWDWeRTt3PA2cyt67JtnGdg5
+         UC5cEOSXCQ7bRJqWB8Hs604FJ/b+WtFwvgD8NEgSpRHjjymXwLrezOvrtmFXN7E7P0hX
+         73d5IRn+MLbjIYxwikl9j5ENSmAV7eiLAi81EyBaHg/2JIrJnEVisIdTD5wKMplMjzt4
+         SRR2XqR8mhTzGvXGy6n8JKSl6tk8RJ7bZ7VyTzpp3dSVRyTzDqm38HHYOHfkejlOMX3M
+         vjOucbk4mA9KVn5NGssMLWz0hqZX8IKyVuisA1zhwC+lnSU7Mi51NseLoIp6BZ2mTlOX
+         cKAg==
+X-Forwarded-Encrypted: i=1; AJvYcCUR9UAOcI5p9szX7pmgMtoL+ZcBukkdi6zu8Hx/BkJEf1PCndcldfBOpWx753mq/u549uaHVsHg+b8tNXU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYaKVh+NBvXgBviYtA0P3DQPy0uOyEV95g9X+nNTFpLAJqNTyN
+	jkOzX9lrn42mCXYW+S926M0lgAcLUFCwxSMq9DdxSocTKHXYHGxwL7uAwMSKU6g5BY8=
+X-Gm-Gg: ASbGncumvOhh2ThZm+S15dQI1mbWkI8zN2Ap0nT6VEezbtKAjyDBA6PByVroFDdSu6y
+	lR2pOvQ2ej44Ch80//8U+5ZTSEBSK/ruA9Kt6lIAz6SDWBa0nLMV2ep02c6XHOU37jqSDSFJru4
+	+gm6WVBYSJutrQ3grqn+IACqjXRXc1cU6dEZvUfTD9qe2GlFWPzsoIoJiCwOQc9EcYwNrsmyhXt
+	hhQpRE0pgwqEtrh4fh0Bc6xmA6U07yMsZnU7Kp+HGP42tdXARV9xzNhSdgyAw6G3ass1M1JPXvN
+	Nsz5yW/Lo0ILQGHjGnuYSxCdQK5fkL0h+O3lkysFrmetOS1T+AVfsxlS7jw3N49OUypH/oZARFM
+	HIhx6j0EevMoyc8p+72chicaGCig=
+X-Google-Smtp-Source: AGHT+IHAUeFa6/L6+DPVdGCHqTHNZKP+82EyvT7TFvOoB5/jAHJVvAhOUppBpUCtdqpOWh869tT/Sw==
+X-Received: by 2002:a05:6000:2383:b0:3b7:810f:6caf with SMTP id ffacd0b85a97d-3b8d94bc74bmr495619f8f.32.1754069164946;
+        Fri, 01 Aug 2025 10:26:04 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589edf55e4sm72892475e9.2.2025.08.01.10.26.03
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 10:25:45 -0700 (PDT)
-Date: Fri, 1 Aug 2025 20:25:43 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Pengyu Luo <mitltlatltl@gmail.com>
-Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org,
-        dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] arm64: dts: qcom: sc8280xp: Describe GPI DMA
- controller nodes
-Message-ID: <4eg3xtjl5e2vyuyr6bxyowzs47rmbbixka2jnfpdq5hecaekox@dbadmm53a4fo>
-References: <20250617090032.1487382-1-mitltlatltl@gmail.com>
- <20250617090032.1487382-3-mitltlatltl@gmail.com>
- <36f3ef2d-fd46-492a-87e6-3eb70467859d@oss.qualcomm.com>
- <CAH2e8h50mtsEpAZoUvYtD-HRMeuDQ4pcjq6P=0vsjvtZoajC-g@mail.gmail.com>
+        Fri, 01 Aug 2025 10:26:04 -0700 (PDT)
+Date: Fri, 1 Aug 2025 20:25:58 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Mihai Moldovan <ionic@ionic.de>, linux-arm-msm@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Denis Kenzior <denkenz@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
+Message-ID: <aIz4pj5qgXSNg8mt@stanley.mountain>
+References: <cover.1753312999.git.ionic@ionic.de>
+ <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
+ <20250724130836.GL1150792@horms.kernel.org>
+ <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
+ <20250727144014.GX1367887@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: multipart/mixed; boundary="r8QhGFlBadusXMk7"
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAH2e8h50mtsEpAZoUvYtD-HRMeuDQ4pcjq6P=0vsjvtZoajC-g@mail.gmail.com>
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEzNSBTYWx0ZWRfXyA0MPBj6n0gf
- lTNhfhCG5VunnuC2S8aGeYsRp1gyEQ+MeSG66CMdSScKFZhmCKvsj5c8pQORORcTQYM8Y4wdTFZ
- +l8Dx93u840nKclmw0Re8IiXfTYVcYoZc8wd+utXQfFx/unFKrVZ8wBc+XlhgZg0ztu8gkVmFSP
- Ryggl+ZpGaBeqppRkebi/877+H0NoyJUvu/x8qLFbgA+boQLl/+USiqnjnLZkMCA8SbVsjcbn9i
- 3clfK1vZbkZ0S0if73smIv54eVzEku9JKXCWmkNwRzXdaV2uz3kJEuGpQf5DBSfrZNf2nun2nBH
- lXPs1nbTvRR5gUaUkxgNFSenKnuXFRr7XtbYeV//Z8JeN4mo1rj6C02+2qTtc+/ApK2obphbc/U
- c9SuB5jRh6eUVtXC5/45xSl2A6Vrp9BNvjO5fQZ6tJlHEh/MZghqX8IAe2DZr1BlybNOB/Pr
-X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688cf89b cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=pGLkceISAAAA:8 a=fg_vXjpDGMymyVAJzg0A:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: tdmky2uKrsKvqz5FT5kDpWLlRoz62yO7
-X-Proofpoint-ORIG-GUID: tdmky2uKrsKvqz5FT5kDpWLlRoz62yO7
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
- lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=785 clxscore=1015
- spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010135
+In-Reply-To: <20250727144014.GX1367887@horms.kernel.org>
 
-On Fri, Aug 01, 2025 at 10:27:55PM +0800, Pengyu Luo wrote:
-> On Thu, Jul 31, 2025 at 6:33 AM Konrad Dybcio
-> <konrad.dybcio@oss.qualcomm.com> wrote:
-> >
-> > On 6/17/25 11:00 AM, Pengyu Luo wrote:
-> > > SPI on SC8280XP requires DMA (GSI) mode to function properly. Without
-> > > it, SPI controllers fall back to FIFO mode, which causes:
-> > >
-> > > [    0.901296] geni_spi 898000.spi: error -ENODEV: Failed to get tx DMA ch
-> > > [    0.901305] geni_spi 898000.spi: FIFO mode disabled, but couldn't get DMA, fall back to FIFO mode
-> > > ...
-> > > [   45.605974] goodix-spi-hid spi0.0: SPI transfer timed out
-> > > [   45.605988] geni_spi 898000.spi: Can't set CS when prev xfer running
-> > > [   46.621555] spi_master spi0: failed to transfer one message from queue
-> > > [   46.621568] spi_master spi0: noqueue transfer failed
-> > > [   46.621577] goodix-spi-hid spi0.0: spi transfer error: -110
-> > > [   46.621585] goodix-spi-hid spi0.0: probe with driver goodix-spi-hid failed with error -110
-> > >
-> > > Therefore, describe GPI DMA controller nodes for qup{0,1,2}, and
-> > > describe DMA channels for SPI and I2C, UART is excluded for now, as
-> > > it does not yet support this mode.
-> > >
-> > > Note that, since there is no public schematic, this is derived from
-> > > Windows drivers. The drivers do not expose any DMA channel mask
-> > > information, so all available channels are enabled.
-> > >
-> > > Signed-off-by: Pengyu Luo <mitltlatltl@gmail.com>
-> > > ---
-> >
-> > [...]
-> >
-> > > +             gpi_dma0: dma-controller@900000  {
-> >
-> > Double space before '{'
-> >
-> 
-> Ack
-> 
-> > > +                     compatible = "qcom,sc8280xp-gpi-dma", "qcom,sm6350-gpi-dma";
-> > > +                     reg = <0 0x00900000 0 0x60000>;
-> > > +
-> > > +                     interrupts = <GIC_SPI 244 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 245 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 246 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 247 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 248 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 249 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 250 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 251 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 252 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 253 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 254 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 255 IRQ_TYPE_LEVEL_HIGH>,
-> > > +                                  <GIC_SPI 256 IRQ_TYPE_LEVEL_HIGH>;
-> >
-> > The last entry is incorrect and superfluous, please remove
-> >
-> 
-> Sure, I can remove it. But the last entry is here in qcgpi8280.inf
 
-Nevertheless, it's not a GPI interrupt.
+--r8QhGFlBadusXMk7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+On Sun, Jul 27, 2025 at 03:40:14PM +0100, Simon Horman wrote:
+> + Dan Carpenter
 > 
-> [Hardware_Registry_Base_8280]
-> HKR,QUP\0,"NumGpii",%REG_DWORD%, 13
-> HKR,Interrupt\0,"0",%REG_DWORD%, 276
-> HKR,Interrupt\0,"1",%REG_DWORD%, 277
-> HKR,Interrupt\0,"2",%REG_DWORD%, 278
-> HKR,Interrupt\0,"3",%REG_DWORD%, 279
-> HKR,Interrupt\0,"4",%REG_DWORD%, 280
-> HKR,Interrupt\0,"5",%REG_DWORD%, 281
-> HKR,Interrupt\0,"6",%REG_DWORD%, 282
-> HKR,Interrupt\0,"7",%REG_DWORD%, 283
-> HKR,Interrupt\0,"8",%REG_DWORD%, 284
-> HKR,Interrupt\0,"9",%REG_DWORD%, 285
-> HKR,Interrupt\0,"10",%REG_DWORD%, 286
-> HKR,Interrupt\0,"11",%REG_DWORD%, 287
-> HKR,Interrupt\0,"12",%REG_DWORD%, 288
+> On Sun, Jul 27, 2025 at 03:09:38PM +0200, Mihai Moldovan wrote:
+> > * On 7/24/25 15:08, Simon Horman wrote:
+> > > [...]
+> > 
+> > Thank you for the reviews, to both you and Jakub.
+> > 
+> > 
+> > > This will leak holding qrtr_nodes_lock.
+> > 
+> > It certainly does, will be fixed in v4.
+> > 
+> > 
+> > > Flagged by Smatch.
+> > 
+> > I haven't used smatch before, and probably should do so going forward.
+> > 
+> > Curiously, a simple kchecker net/qrtr/ run did not warn about the locking
+> > issue (albeit it being obvious in the patch), while it did warn about the
+> > second issue with ret. Am I missing something?
 > 
-> > You can also enable the gpi_dma nodes by default
-> >
+> TL;DR: No, I seem to have been able to reproduce what you see.
 > 
-> Got it.
+> I ran Smatch, compiled from a recent Git commit, like this:
 > 
-> Best wishes,
-> Pengyu
+> kchecker net/qrtr/af_qrtr.o
+> 
+> The warnings I saw (new to this patch) are:
+> 
+> net/qrtr/af_qrtr.c:498 qrtr_node_assign() warn: inconsistent returns 'global &qrtr_nodes_lock'.
+>   Locked on  : 484
+>   Unlocked on: 498
+> net/qrtr/af_qrtr.c:613 qrtr_endpoint_post() warn: missing error code 'ret'
+> 
+> That was with Smatch compiled from Git [1]
+> commit e1d933013098 ("return_efault: don't rely on the cross function DB")
+> 
+> I tried again with the latest head,
+> commit 2fb2b9093c5d ("sleep_info: The synchronize_srcu() sleeps").
+> And in that case I no longer see the 1st warning, about locking.
+> I think this is what you saw too.
+> 
+> This seems to a regression in Smatch wrt this particular case for this
+> code. I bisected Smatch and it looks like it was introduced in commit
+> d0367cd8a993 ("ranges: use absolute instead implied for possibly_true/false")
+> 
+> I CCed Dan in case he wants to dig into this.
 
--- 
-With best wishes
-Dmitry
+The code looks like this:
+
+	spin_lock_irqsave(&qrtr_nodes_lock, flags);
+
+        if (node->ep->id > QRTR_INDEX_HALF_UNSIGNED_MAX ||
+            nid > QRTR_INDEX_HALF_UNSIGNED_MAX)
+                return -EINVAL;
+
+The problem is that QRTR_INDEX_HALF_UNSIGNED_MAX is U32_MAX and
+node->ep->id and nid are both u32 type.  The return statement is dead
+code and I deliberately silenced warnings on impossible paths.
+
+The following patch will enable the warning again and I'll test it tonight
+to see what happens.  If it's not too painful then I'll delete it
+properly, but if it's generates a bunch of false positives then, in the
+end, I'm not overly stressed about bugs in dead code.
+
+regards,
+dan carpenter
+
+
+--r8QhGFlBadusXMk7
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: attachment; filename=diff
+
+diff --git a/check_inconsistent_locking.c b/check_inconsistent_locking.c
+index f3cce559d7a6..e95d9110a1e1 100644
+--- a/check_inconsistent_locking.c
++++ b/check_inconsistent_locking.c
+@@ -67,8 +67,8 @@ static void check_lock_bool(const char *name, struct symbol *sym)
+ 	FOR_EACH_PTR(get_all_return_strees(), stree) {
+ 		orig = __swap_cur_stree(stree);
+ 
+-		if (is_impossible_path())
+-			goto swap_stree;
++//		if (is_impossible_path())
++//			goto swap_stree;
+ 
+ 		return_sm = get_sm_state(RETURN_ID, "return_ranges", NULL);
+ 		if (!return_sm)
+@@ -145,8 +145,8 @@ static void check_lock(const char *name, struct symbol *sym)
+ 	FOR_EACH_PTR(get_all_return_strees(), stree) {
+ 		orig = __swap_cur_stree(stree);
+ 
+-		if (is_impossible_path())
+-			goto swap_stree;
++//		if (is_impossible_path())
++//			goto swap_stree;
+ 
+ 		return_sm = get_sm_state(RETURN_ID, "return_ranges", NULL);
+ 		if (!return_sm)
+
+--r8QhGFlBadusXMk7--
 
