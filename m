@@ -1,206 +1,214 @@
-Return-Path: <linux-kernel+bounces-753810-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753811-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4634DB1884C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:50:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 945D9B18850
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:51:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A116D1C27A26
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:51:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FC2AA3E2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:51:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1E320F08E;
-	Fri,  1 Aug 2025 20:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6E28D8F1;
+	Fri,  1 Aug 2025 20:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="I8c4BFeU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="3vSHthdp"
+Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D1BB1EA65
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 20:50:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9D81EA65
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 20:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754081451; cv=none; b=R3Iub/A/X2Wxdf6hOXdEx0j+f8YDlB58cqZYLpah3vOtNmY6LLtx2N59CgQyN69LevXOhkFBn3nPd/Db1HEKsLeQ/Y01w7EyleqXNyjJ36I24mUxt27dEIkraOS6IzGskLG6/3CXZZyHpxiCLdjEeCYfBL1ajIs5lnkvT/Lrryw=
+	t=1754081481; cv=none; b=qKKpF862Sq2ixgx505+N1z5N7kyaJyaO2R91rUjCigulQawPW8fXXIHVs4iipa0n28NAl/QjlQCgRt5RoUCLxMCgTNZPsW36m+SwCBbzK6Rq8XS1JJcfJPNOQTU/JdXyuou/QYMUYh+EgmfBbnF5Ef7wgdohjxgjSixTvlh+aQ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754081451; c=relaxed/simple;
-	bh=pUhYM1Dbglzu+g4J5sGreNTXk+5Sy9kj4Rqd2CLT05M=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=csrTFFbpcTSSpSGrWbIkaWYdnv8wG9LTlGHlOS+thl2hknEAzS2qgZVILBa5lZBOADNgTlf/LlI+t/wKSFrAIpQ3ukq0S3qYYEdtWks7YV3VmDb5ejj0joarMSDmOhe+2HHeH4X28BJ0MhcYx7qSbvoThD+uintO6LsQqeO1ZXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=I8c4BFeU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4C97C4CEE7;
-	Fri,  1 Aug 2025 20:50:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1754081451;
-	bh=pUhYM1Dbglzu+g4J5sGreNTXk+5Sy9kj4Rqd2CLT05M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=I8c4BFeUVtSdY/ZJvgnsXjo0/m9pVkvMHZj5MCfMuTapNpYyZ8xBB050XT2WcW2FX
-	 8pg5pdp9yjFV28YtoH7zu4DWMjGbFBVFo6DwS28yqefTOXD4IlDAy6DDGFRFYhA+hp
-	 eNU3lBsc0RiGlAv5Dk9DkiHhvwWrZVpM1zoJtI0s=
-Date: Fri, 1 Aug 2025 13:50:50 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: "Herton R. Krzesinski" <herton@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- anshuman.khandual@arm.com, Christophe Leroy <christophe.leroy@csgroup.eu>,
- Gavin Shan <gshan@redhat.com>, Gerald Schaefer
- <gerald.schaefer@linux.ibm.com>
-Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
- destroy_args()
-Message-Id: <20250801135050.c9cc7226938f9f0f4fa3b83d@linux-foundation.org>
-In-Reply-To: <20250731214051.4115182-1-herton@redhat.com>
-References: <20250731214051.4115182-1-herton@redhat.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754081481; c=relaxed/simple;
+	bh=xlUOQJI0xX3aYBcyXPghiHPXjSV2N2PF1hyKruz+imM=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fV/m5pVX+hHkYMKW/itr0/gM+ffv9anUbaQE9SHwDnrNdM0DHqpYP1XPhJq/teqaoQmnUVNY7cEIXTFXqO9Znl/cOnIwjeOAqLdQhJFCiKVvxy5uAhr3b/cXMQ4HY8Knprw9e+pirfL7FHzInNh6gCQERrzVwc07cgPlTv02u8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=3vSHthdp; arc=none smtp.client-ip=67.231.153.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
+Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
+	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571JmsD1032016
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:51:18 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=s2048-2025-q2; bh=Jb4LS8ieZ/yMT4TW1d
+	HPQYW0A8QAnqTZwf9KjQDya2Q=; b=3vSHthdpJebEzHzwWUTidFd1HPt9R9Hipm
+	2+Hak+Y5X/SXomoOcgMc3LGCU1mo7kbP/EeJY3AYhCheoFgUSe6Iv3DNviT86/rk
+	gl1MQtEhE3vJt1HWouZw132deOgvTkfJqSQpiRRJx5dPHjiPQ5UmLwTfxEzdATXi
+	PYp64YbzMgFUKsdcnQFDMmV1Kr0dlM9BtraIb4Im9cZeV9GLAeIxPfpXlJqRYj/k
+	NYnW6Y7F7y0S4tXW6w38hdQS8O8QnzF68ce1HJM3biDiW/MWThgWhm5NLKVpVp5Q
+	1CuaWsqf9ZW17eAMi7mtfWKnSKt6YqvN9elBAIpAyaAa9nchmZ2g==
+Received: from maileast.thefacebook.com ([163.114.135.16])
+	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 488rn2mr35-5
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:51:17 -0700 (PDT)
+Received: from twshared24438.15.frc2.facebook.com (2620:10d:c0a8:fe::f072) by
+ mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.2.2562.17; Fri, 1 Aug 2025 20:51:15 +0000
+Received: by devgpu013.nha3.facebook.com (Postfix, from userid 199522)
+	id 1BB5D4A4CD7; Fri,  1 Aug 2025 13:51:07 -0700 (PDT)
+From: Alex Mastro <amastro@fb.com>
+Date: Fri, 1 Aug 2025 13:50:56 -0700
+Subject: [PATCH v3] vfio/pci: print vfio-device syspath to fdinfo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-ID: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
+X-B4-Tracking: v=1; b=H4sIAK8ojWgC/1XMsQ7CIBCA4VdpbvYMRyVtnfoexgHhThgKBkw1a
+ fruEhfj+A3/v0HlErnCudug8BprzKmhP3Tggk13xuibQStt1KgIa8gvFB+TZGQhNTk79KMTaMW
+ jsMT393a5NkvJCz5DYft7DPr091g1EurJaCLD3pGa5XZ0eYF9/wBbhsvZnQAAAA==
+To: Alex Williamson <alex.williamson@redhat.com>,
+        Jonathan Corbet
+	<corbet@lwn.net>
+CC: Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
+        <linux-doc@vger.kernel.org>, <kvm@vger.kernel.org>,
+        Alex Mastro
+	<amastro@fb.com>
+X-Mailer: b4 0.13.0
+X-FB-Internal: Safe
+X-Proofpoint-ORIG-GUID: gjQa-k8nhDbKISkAw9vQv5pZLQ12EAKw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDE2NiBTYWx0ZWRfXzhwW6FzSglQU 9hYxBEX3l1CtaysK03cMD6SvUwI35lrhLNjOFk+ELdA6U6AmCueC956U62ahlXDl4wRTnSjZdhT DIydM/xekCmG2AQirQG61pZjVNxI4Rw+RbyBLKs+WjFwXrsYe+FZkmk5g7TfD+keFbIiY5T5CSb
+ u+qATxh81/1j6LRNQaLhvGKF3K+oEPlTptZYsGzE0539JayC7EVv7HDGkzyi4BRzd781+3HsyPO CJmmNnv9tZZUHJHqmRlBlSxoH2+CKm/HzvvT+hejPwKOos7QlH0/NStlZzfdyh4TpCHAJ8UGC69 fOId1JSrWos9eXpA7NzQ+VKjrrzIedbya7wuYmg2k7R5ncZ8b8fIaiQjDdfvhKxEAloGPloJKmm
+ L8RwZpCPbTefwGzh7etc/HYoCcPamNoZC2JyI5647kDeeuzJZZxuTE2gulfLeTpscbP1VEac
+X-Authority-Analysis: v=2.4 cv=HOnDFptv c=1 sm=1 tr=0 ts=688d28c5 cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8 a=DFnZXp7rDhDadfPsBKIA:9 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: gjQa-k8nhDbKISkAw9vQv5pZLQ12EAKw
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_07,2025-08-01_01,2025-03-28_01
 
-On Thu, 31 Jul 2025 18:40:51 -0300 "Herton R. Krzesinski" <herton@redhat.com> wrote:
+Print the PCI device syspath to a vfio device's fdinfo. This enables tools
+to query which device is associated with a given vfio device fd.
 
-> The mm/debug_vm_pagetable test allocates manually page table entries for the
-> tests it runs, using also its manually allocated mm_struct. That in itself is
-> ok, but when it exits, at destroy_args() it fails to clear those entries with
-> the *_clear functions.
-> 
-> The problem is that leaves stale entries. If another process allocates
-> an mm_struct with a pgd at the same address, it may end up running into
-> the stale entry. This is happening in practice on a debug kernel with
-> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
-> extra debugging I added (it prints a warning trace if pgtables_bytes goes
-> negative, in addition to the warning at check_mm() function):
+This results in output like below:
 
-A quick shot with git-blame led me to include
+$ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
+vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
 
-Fixes: 3c9b84f044a9e ("mm/debug_vm_pgtable: introduce struct pgtable_debug_args")
-Cc: <stable@vger.kernel.org>
+Signed-off-by: Alex Mastro <amastro@fb.com>
+---
+Changes in v3:
+- Remove changes to vfio_pci.c
+- Add section to Documentation/filesystems/proc.rst
+- Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
+Changes in v2:
+- Instead of PCI bdf, print the fully-qualified syspath (prefixed by
+  /sys) to fdinfo.
+- Rename the field to "vfio-device-syspath". The term "syspath" was
+  chosen for consistency e.g. libudev's usage of the term.
+- Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
+---
+ Documentation/filesystems/proc.rst | 14 ++++++++++++++
+ drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
+ include/linux/vfio.h               |  2 ++
+ 3 files changed, 36 insertions(+)
 
-And `git show 3c9b84f044a9e' tell me this email didn't have enough cc's
-(added).
+diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
+index 2a17865dfe39..fc5ed3117834 100644
+--- a/Documentation/filesystems/proc.rst
++++ b/Documentation/filesystems/proc.rst
+@@ -2162,6 +2162,20 @@ DMA Buffer files
+ where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
+ the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
+ 
++VFIO Device files
++~~~~~~~~~~~~~~~~
++
++::
++
++	pos:    0
++	flags:  02000002
++	mnt_id: 17
++	ino:    5122
++	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
++
++where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
++file.
++
+ 3.9	/proc/<pid>/map_files - Information about memory mapped files
+ ---------------------------------------------------------------------
+ This directory contains symbolic links which represent memory mapped files
+diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
+index 1fd261efc582..37a39cee10ed 100644
+--- a/drivers/vfio/vfio_main.c
++++ b/drivers/vfio/vfio_main.c
+@@ -28,6 +28,7 @@
+ #include <linux/pseudo_fs.h>
+ #include <linux/rwsem.h>
+ #include <linux/sched.h>
++#include <linux/seq_file.h>
+ #include <linux/slab.h>
+ #include <linux/stat.h>
+ #include <linux/string.h>
+@@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
+ 	return device->ops->mmap(device, vma);
+ }
+ 
++#ifdef CONFIG_PROC_FS
++static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
++{
++	char *path;
++	struct vfio_device_file *df = filep->private_data;
++	struct vfio_device *device = df->device;
++
++	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
++	if (!path)
++		return;
++
++	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
++	kfree(path);
++}
++#endif
++
+ const struct file_operations vfio_device_fops = {
+ 	.owner		= THIS_MODULE,
+ 	.open		= vfio_device_fops_cdev_open,
+@@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
+ 	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
+ 	.compat_ioctl	= compat_ptr_ioctl,
+ 	.mmap		= vfio_device_fops_mmap,
++#ifdef CONFIG_PROC_FS
++	.show_fdinfo	= vfio_device_show_fdinfo,
++#endif
+ };
+ 
+ static struct vfio_device *vfio_device_from_file(struct file *file)
+diff --git a/include/linux/vfio.h b/include/linux/vfio.h
+index 707b00772ce1..54076045a44f 100644
+--- a/include/linux/vfio.h
++++ b/include/linux/vfio.h
+@@ -16,6 +16,7 @@
+ #include <linux/cdev.h>
+ #include <uapi/linux/vfio.h>
+ #include <linux/iova_bitmap.h>
++#include <linux/seq_file.h>
+ 
+ struct kvm;
+ struct iommufd_ctx;
+@@ -135,6 +136,7 @@ struct vfio_device_ops {
+ 	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
+ 	int	(*device_feature)(struct vfio_device *device, u32 flags,
+ 				  void __user *arg, size_t argsz);
++	void	(*show_fdinfo)(struct vfio_device *device, struct seq_file *m);
+ };
+ 
+ #if IS_ENABLED(CONFIG_IOMMUFD)
 
-Thanks, I'll include this in mm.git's mm-hotfixes branch and I shall
-await further review activity.
+---
+base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
+change-id: 20250801-show-fdinfo-ef109ca738cf
 
+Best regards,
+-- 
+Alex Mastro <amastro@fb.com>
 
-> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
-> [    2.539366] kmem_cache info
-> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
-> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
-> (...)
-> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
-> [    2.552816] Modules linked in:
-> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
-> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
-> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
-> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
-> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
-> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
-> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
-> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
-> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
-> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
-> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
-> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
-> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
-> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
-> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
-> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
-> [    2.553199] Call Trace:
-> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
-> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
-> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
-> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
-> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
-> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
-> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
-> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
-> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
-> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
-> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
-> (...)
-> [    2.558892] ---[ end trace 0000000000000000 ]---
-> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
-> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
-> 
-> Here the modprobe process ended up with an allocated mm_struct from the
-> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
-> problem, since the mm_struct is initialized again etc., however, if it ends up
-> using the same pgd table, it bumps into the old stale entry when clearing/freeing
-> the page table entries, so it tries to free an entry already gone (that one
-> which was allocated by the debug_vm_pgtable test), which also explains the
-> negative pgtables_bytes since it's accounting for not allocated entries in the
-> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
-> and clearing of the entries is explicitly done in the free_pgtables->
-> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
-> free_pte_range path. However, the debug_vm_pgtable test does not call
-> free_pgtables, since it allocates mm_struct and entries manually for its test
-> and eg. not goes through page faults. So it also should clear manually the
-> entries before exit at destroy_args().
-> 
-> This problem was noticed on a reboot X number of times test being done
-> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
-> enabled. Depends on the system, but on a 100 times reboot loop the
-> problem could manifest once or twice, if a process ends up getting the
-> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
-> After using this patch, I couldn't reproduce/experience the problems
-> anymore. I was able to reproduce the problem as well on latest upstream
-> kernel (6.16).
-> 
-> I also modified destroy_args() to use mmput() instead of mmdrop(), there
-> is no reason to hold mm_users reference and not release the mm_struct
-> entirely, and in the output above with my debugging prints I already
-> had patched it to use mmput, it did not fix the problem, but helped
-> in the debugging as well.
-> 
-> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
-> ---
->  mm/debug_vm_pgtable.c | 9 +++++++--
->  1 file changed, 7 insertions(+), 2 deletions(-)
-> 
-> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
-> index 7731b238b534..0f5ddefd128a 100644
-> --- a/mm/debug_vm_pgtable.c
-> +++ b/mm/debug_vm_pgtable.c
-> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
->  
->  	/* Free page table entries */
->  	if (args->start_ptep) {
-> +		pmd_clear(args->pmdp);
->  		pte_free(args->mm, args->start_ptep);
->  		mm_dec_nr_ptes(args->mm);
->  	}
->  
->  	if (args->start_pmdp) {
-> +		pud_clear(args->pudp);
->  		pmd_free(args->mm, args->start_pmdp);
->  		mm_dec_nr_pmds(args->mm);
->  	}
->  
->  	if (args->start_pudp) {
-> +		p4d_clear(args->p4dp);
->  		pud_free(args->mm, args->start_pudp);
->  		mm_dec_nr_puds(args->mm);
->  	}
->  
-> -	if (args->start_p4dp)
-> +	if (args->start_p4dp) {
-> +		pgd_clear(args->pgdp);
->  		p4d_free(args->mm, args->start_p4dp);
-> +	}
->  
->  	/* Free vma and mm struct */
->  	if (args->vma)
->  		vm_area_free(args->vma);
->  
->  	if (args->mm)
-> -		mmdrop(args->mm);
-> +		mmput(args->mm);
->  }
->  
->  static struct page * __init
-> -- 
-> 2.47.1
 
