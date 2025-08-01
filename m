@@ -1,214 +1,201 @@
-Return-Path: <linux-kernel+bounces-753811-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753812-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 945D9B18850
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:51:30 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B47FB18856
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:51:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FC2AA3E2E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:51:29 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FEC47AF7DB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:50:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DC6E28D8F1;
-	Fri,  1 Aug 2025 20:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B15328DB59;
+	Fri,  1 Aug 2025 20:51:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b="3vSHthdp"
-Received: from mx0b-00082601.pphosted.com (mx0b-00082601.pphosted.com [67.231.153.30])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="k1LybBUB"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D9D81EA65
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 20:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.153.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD54B2139CE;
+	Fri,  1 Aug 2025 20:51:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754081481; cv=none; b=qKKpF862Sq2ixgx505+N1z5N7kyaJyaO2R91rUjCigulQawPW8fXXIHVs4iipa0n28NAl/QjlQCgRt5RoUCLxMCgTNZPsW36m+SwCBbzK6Rq8XS1JJcfJPNOQTU/JdXyuou/QYMUYh+EgmfBbnF5Ef7wgdohjxgjSixTvlh+aQ0=
+	t=1754081496; cv=none; b=X0PYTuLzDLCJziChBkAYRDNzCOAZ7i65cmjTag6yleL1G97v5WtD4QWxFe+rHmVQpenjUcW6ApCNkrChexlf67uNl5PvwoQrC1DWKpKU1OIJfKoEbNMoLNUDUr0GTcc5E9yyE4tELMGvaQmKVUi8PXVDTTSa2B56L11kG9TzJ2I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754081481; c=relaxed/simple;
-	bh=xlUOQJI0xX3aYBcyXPghiHPXjSV2N2PF1hyKruz+imM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=fV/m5pVX+hHkYMKW/itr0/gM+ffv9anUbaQE9SHwDnrNdM0DHqpYP1XPhJq/teqaoQmnUVNY7cEIXTFXqO9Znl/cOnIwjeOAqLdQhJFCiKVvxy5uAhr3b/cXMQ4HY8Knprw9e+pirfL7FHzInNh6gCQERrzVwc07cgPlTv02u8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com; spf=pass smtp.mailfrom=meta.com; dkim=pass (2048-bit key) header.d=fb.com header.i=@fb.com header.b=3vSHthdp; arc=none smtp.client-ip=67.231.153.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fb.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=meta.com
-Received: from pps.filterd (m0109332.ppops.net [127.0.0.1])
-	by mx0a-00082601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571JmsD1032016
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:51:18 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fb.com; h=cc
-	:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=s2048-2025-q2; bh=Jb4LS8ieZ/yMT4TW1d
-	HPQYW0A8QAnqTZwf9KjQDya2Q=; b=3vSHthdpJebEzHzwWUTidFd1HPt9R9Hipm
-	2+Hak+Y5X/SXomoOcgMc3LGCU1mo7kbP/EeJY3AYhCheoFgUSe6Iv3DNviT86/rk
-	gl1MQtEhE3vJt1HWouZw132deOgvTkfJqSQpiRRJx5dPHjiPQ5UmLwTfxEzdATXi
-	PYp64YbzMgFUKsdcnQFDMmV1Kr0dlM9BtraIb4Im9cZeV9GLAeIxPfpXlJqRYj/k
-	NYnW6Y7F7y0S4tXW6w38hdQS8O8QnzF68ce1HJM3biDiW/MWThgWhm5NLKVpVp5Q
-	1CuaWsqf9ZW17eAMi7mtfWKnSKt6YqvN9elBAIpAyaAa9nchmZ2g==
-Received: from maileast.thefacebook.com ([163.114.135.16])
-	by mx0a-00082601.pphosted.com (PPS) with ESMTPS id 488rn2mr35-5
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:51:17 -0700 (PDT)
-Received: from twshared24438.15.frc2.facebook.com (2620:10d:c0a8:fe::f072) by
- mail.thefacebook.com (2620:10d:c0a9:6f::237c) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.2.2562.17; Fri, 1 Aug 2025 20:51:15 +0000
-Received: by devgpu013.nha3.facebook.com (Postfix, from userid 199522)
-	id 1BB5D4A4CD7; Fri,  1 Aug 2025 13:51:07 -0700 (PDT)
-From: Alex Mastro <amastro@fb.com>
-Date: Fri, 1 Aug 2025 13:50:56 -0700
-Subject: [PATCH v3] vfio/pci: print vfio-device syspath to fdinfo
+	s=arc-20240116; t=1754081496; c=relaxed/simple;
+	bh=LywoDqFd67EXhP5iJoNCi5/k+5jfKfBPmp6QbOSYwLc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=qHsNmAekuBmemL2LFPIDjJabA78RQkzNkM6XAlS+zTxe6J4EjbV8l/3VQaALiN5JXlRIAVBcECHicO+LJwCYwn96kOufAG6cGgNWSJ/YJmarIt8W9utyplY+478y0GWErS06CE6/m23edTnP0X/WerAviMIH2fJfEHksTp9ep6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=k1LybBUB; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3a6cd1a6fecso2178567f8f.3;
+        Fri, 01 Aug 2025 13:51:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754081493; x=1754686293; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pFqBXjHE4e64eq5LEzPI2QMvIEhGcwhdF8IRrL5gzK8=;
+        b=k1LybBUBMqYLaI7j4TKRE3kykURZYzg/OGh6YKV2tjKx9cu/dYGe6wpFkSVMTYhALI
+         hhMrntBs4/AAVTA+aUvHo9gMLCsjXLlzXL+h7NhzJi6RqvLkmMs9e7BIM/joNiqtRd4r
+         LswwUpsYXxQKCqhtqTu44VsIIoZISpb73FbvRzPi07asdSmUMaLe/rLjQy8LpWr8pmJ1
+         XcorTzlbGeVaWpe8lTxbXKjw8eLBG/2PLIidVBL8ux0E42mTaKNy04woGJaw6UtFShRx
+         P0IPvhJ4qe9cJp+vUH0NghsdenGbf/Vow67FjA1OVSzyyu5HcQNCzVmQZTHQdDde0UQk
+         UhJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754081493; x=1754686293;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=pFqBXjHE4e64eq5LEzPI2QMvIEhGcwhdF8IRrL5gzK8=;
+        b=O4m6aTc8UdhYVQmxMwP7WsDeXxZTyYKKRDDgsHMaBmD2Uy1b0XFEAH2nsjKlqYzYXF
+         VhurmzAeqXU3z+p6K1wX/eyoqReu/AudkGrwD5jFJB8rXDf1qGPuhL/xDjnAIyArcngZ
+         edrmJkOMOAChO3aJn8GqOunUVaEOw3kji2FRo+DqrxeLjxqh1LVCp8qSqCIryHx06suG
+         TyeiOIGhIrSJZ3JDbGwucKW+MwQ6UJi163u6ONxSDfHl0Ya4bUku6LFTaSK0dQ4kWNhi
+         C+EtHACINMozZCh57G8QXYjHxilRhbjchfwREHETUWiGjzkZffH6pLlJtmElknjuqXPU
+         rZFQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUSJkOWAZABnmSBsaY2GpWyrKyFc9FiwZ0mjMzGGWDoS370XzcJXab0JXsxZgDVVBNgiIebO2WlycET@vger.kernel.org, AJvYcCUsCXd9gv0Lic9n1Ad9DhWSh1MCrMjoc9yq3P1EUBVV38xjjR/VsYVUxXBR1n7HeyOszYfyh1U5PusNGZl5iH8=@vger.kernel.org, AJvYcCX+8amcgAvaiVsIa83f4J4rqKGYwWNjJUNctgJQM2Ua9BS4j1mfqJY9Hi3PxTgQyrwe9I1hASkaX1mg4OHRmcK8rgo=@vger.kernel.org, AJvYcCX+AKxA4FgGzRbXMaXg5fYcdHCeoNUjHhpEoVwsFe9/l6FN2+K/J4FKybit5YE2WA95RsqW3Apxbw6CymF9@vger.kernel.org
+X-Gm-Message-State: AOJu0YyvAuDpmxOJPBziaTZ/DmfzE5YeBCYAN/+m/lZ20JU2jeY6GI82
+	sErywgpERpvW9xxj2UvgMmpkjRaoVeEHKVtyueFsLxr+BDx8kl7XqqagzJJ5zHdAXCRh1kyY0HM
+	WwnSXV9zqAKyKmVPPHkP6aXEPKyI76i8=
+X-Gm-Gg: ASbGncvA1w6Qc9eyEzYC/xwpwTT7QxLqdjQ2kJAy4yTqg9TEwZQOwmYZpw+N6MdTMpX
+	y69goA3iug741CLSLHrSYVDZnVtDi2r70js+pD8THjOxZ2TfLxKjm+1p7tmE6rWuLk2v7prAIQA
+	DgcT4/n0pPunDO9OEqea2E0va6cf6YvOOhH47d8uI2CWh1lxqQ0brCarg0wJZmvFWoT6Ghu1YVk
+	f3/33he
+X-Google-Smtp-Source: AGHT+IF50sKEAxmPJw+zBnt9N8VzaK/xu5Ai1s6z6gez/necqUX8ArDa1mgFO73kx3v57ibewH3yRA3fb8p4P9KwHgY=
+X-Received: by 2002:a05:6000:2906:b0:3b7:bedd:d268 with SMTP id
+ ffacd0b85a97d-3b8d94ce5b8mr880943f8f.53.1754081492728; Fri, 01 Aug 2025
+ 13:51:32 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
-X-B4-Tracking: v=1; b=H4sIAK8ojWgC/1XMsQ7CIBCA4VdpbvYMRyVtnfoexgHhThgKBkw1a
- fruEhfj+A3/v0HlErnCudug8BprzKmhP3Tggk13xuibQStt1KgIa8gvFB+TZGQhNTk79KMTaMW
- jsMT393a5NkvJCz5DYft7DPr091g1EurJaCLD3pGa5XZ0eYF9/wBbhsvZnQAAAA==
-To: Alex Williamson <alex.williamson@redhat.com>,
-        Jonathan Corbet
-	<corbet@lwn.net>
-CC: Jason Gunthorpe <jgg@ziepe.ca>, Keith Busch <kbusch@kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-fsdevel@vger.kernel.org>,
-        <linux-doc@vger.kernel.org>, <kvm@vger.kernel.org>,
-        Alex Mastro
-	<amastro@fb.com>
-X-Mailer: b4 0.13.0
-X-FB-Internal: Safe
-X-Proofpoint-ORIG-GUID: gjQa-k8nhDbKISkAw9vQv5pZLQ12EAKw
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDE2NiBTYWx0ZWRfXzhwW6FzSglQU 9hYxBEX3l1CtaysK03cMD6SvUwI35lrhLNjOFk+ELdA6U6AmCueC956U62ahlXDl4wRTnSjZdhT DIydM/xekCmG2AQirQG61pZjVNxI4Rw+RbyBLKs+WjFwXrsYe+FZkmk5g7TfD+keFbIiY5T5CSb
- u+qATxh81/1j6LRNQaLhvGKF3K+oEPlTptZYsGzE0539JayC7EVv7HDGkzyi4BRzd781+3HsyPO CJmmNnv9tZZUHJHqmRlBlSxoH2+CKm/HzvvT+hejPwKOos7QlH0/NStlZzfdyh4TpCHAJ8UGC69 fOId1JSrWos9eXpA7NzQ+VKjrrzIedbya7wuYmg2k7R5ncZ8b8fIaiQjDdfvhKxEAloGPloJKmm
- L8RwZpCPbTefwGzh7etc/HYoCcPamNoZC2JyI5647kDeeuzJZZxuTE2gulfLeTpscbP1VEac
-X-Authority-Analysis: v=2.4 cv=HOnDFptv c=1 sm=1 tr=0 ts=688d28c5 cx=c_pps a=MfjaFnPeirRr97d5FC5oHw==:117 a=MfjaFnPeirRr97d5FC5oHw==:17 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=FOH2dFAWAAAA:8 a=DFnZXp7rDhDadfPsBKIA:9 a=QEXdDO2ut3YA:10
-X-Proofpoint-GUID: gjQa-k8nhDbKISkAw9vQv5pZLQ12EAKw
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_07,2025-08-01_01,2025-03-28_01
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aIw-P6zkQSOhvYJW@shikoro> <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+ <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net> <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+ <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net>
+In-Reply-To: <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 1 Aug 2025 21:51:06 +0100
+X-Gm-Features: Ac12FXxwBzrw_MPAIEZUAbyIOfo-88ItW4QWQ2lgoAO1TKkCYG2E0XjqDRvETgo
+Message-ID: <CA+V-a8v0KZaeJwJAmEpRRdS3F3vC_CYv7zGN_n9a+M6qhFDMHg@mail.gmail.com>
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on max_hw_heartbeat_ms
+To: Guenter Roeck <linux@roeck-us.net>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-to query which device is associated with a given vfio device fd.
+Hi Guenter,
 
-This results in output like below:
+On Fri, Aug 1, 2025 at 7:04=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> w=
+rote:
+>
+> On 8/1/25 08:30, Lad, Prabhakar wrote:
+> > Hi Guenter,
+> >
+> > On Fri, Aug 1, 2025 at 2:52=E2=80=AFPM Guenter Roeck <linux@roeck-us.ne=
+t> wrote:
+> >>
+> >> On 8/1/25 04:05, Lad, Prabhakar wrote:
+> >>> Hi Wolfram,
+> >>>
+> >>> Thank you for the review.
+> >>>
+> >>> On Fri, Aug 1, 2025 at 5:10=E2=80=AFAM Wolfram Sang
+> >>> <wsa+renesas@sang-engineering.com> wrote:
+> >>>>
+> >>>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+> >>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >>>>>
+> >>>>> Update the watchdog minimum timeout value to be derived from
+> >>>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+> >>>>> consistent minimum timeout in seconds.
+> >>>>
+> >>>> I don't understand this change. Why is the _minimum_ timeout based o=
+n
+> >>>> the _maximum_ heartbeat?
+> >>>>
+> >>> The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+> >>> ensure the minimum watchdog period (in seconds) is compatible with th=
+e
+> >>> underlying hardware.
+> >>>
+> >>> max_hw_heartbeat_ms is calculated as:
+> >>> max_hw_heartbeat_ms =3D (1000 * 16384 * cks_div) / clk_rate;
+> >>>
+> >>> This value varies by SoC:
+> >>>    RZ/T2H: cks_div =3D 8192, clk =E2=89=88 62.5 MHz -> max_hw_heartbe=
+at_ms ~ 2147ms
+> >>>    RZ/V2H: cks_div =3D 256, clk =E2=89=88 240 MHz -> max_hw_heartbeat=
+_ms ~ 174ms
+> >>>
+> >>> Since min_timeout is in seconds, setting it to:
+> >>> min_timeout =3D DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+> >>>
+> >>> ensures:
+> >>> The minimum timeout period is never less than what the hardware can s=
+upport.
+> >>> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+> >>> - For V2H, it=E2=80=99s just 1s (174ms -> 1s).
+> >>>
+> >>
+> >> Sorry, I completely fail to understand the logic.
+> >>
+> >> If the maximum timeout is, say, 2 seconds, why would the hardware
+> >> not be able to support a timeout of 1 second ?
+> >>
+> > The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter. On
+> > initialization the down counters on the SoCs are configured to the max
+> > down counter. On RZ/V2H down counter value 4194304 (which evaluates to
+> > 174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). The
+> > board will be reset when we get an underflow error.
+> >
+> > So for example on T2H consider this example:
+> > - down counter is 134217728
+> > - min_timeout is set to 1 in the driver
+> > - When set  WDIOC_SETTIMEOUT to 1
+> > In this case the board will be reset after 2147ms, i.e. incorrect
+> > behaviour as we expect the board to be reset after 1 sec. Hence the
+> > min_timeout is set to 3s (2147ms -> 3s).
+> >
+> > Please let me know if my understanding of min_timeout is incorrect here=
+.
+> >
+>
+> The driver is missing a set_timeout function. It should set RZ/T2H
+> to 62514079 if a timeout of 1 second is configured.
+>
+Ok, you mean to handle the 1sec case, introduce the set_timeout for RZ/T2H =
+SoC.
 
-$ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+Although we cannot achieve the exact 1sec case as we can have only 4
+timeout period options (number of cycles):
 
-Signed-off-by: Alex Mastro <amastro@fb.com>
----
-Changes in v3:
-- Remove changes to vfio_pci.c
-- Add section to Documentation/filesystems/proc.rst
-- Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
-Changes in v2:
-- Instead of PCI bdf, print the fully-qualified syspath (prefixed by
-  /sys) to fdinfo.
-- Rename the field to "vfio-device-syspath". The term "syspath" was
-  chosen for consistency e.g. libudev's usage of the term.
-- Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
----
- Documentation/filesystems/proc.rst | 14 ++++++++++++++
- drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
- include/linux/vfio.h               |  2 ++
- 3 files changed, 36 insertions(+)
+1] For TIMEOUT_CYCLES =3D 1024
+ - (1000=C3=971024=C3=978192)/62500000 =3D 134.22 ms
+2] For TIMEOUT_CYCLES =3D 4096
+- (1000=C3=974096=C3=978192)/62500000 =3D 536.87 ms
+3] For TIMEOUT_CYCLES =3D 8192
+- (1000=C3=978192=C3=978192)/62500000 =3D 1,073.74 ms
+4] For TIMEOUT_CYCLES =3D 16384
+- (1000=C3=9716384=C3=978192)/62500000 =3D 2,147.48 ms
 
-diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-index 2a17865dfe39..fc5ed3117834 100644
---- a/Documentation/filesystems/proc.rst
-+++ b/Documentation/filesystems/proc.rst
-@@ -2162,6 +2162,20 @@ DMA Buffer files
- where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
- the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
- 
-+VFIO Device files
-+~~~~~~~~~~~~~~~~
-+
-+::
-+
-+	pos:    0
-+	flags:  02000002
-+	mnt_id: 17
-+	ino:    5122
-+	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-+
-+where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
-+file.
-+
- 3.9	/proc/<pid>/map_files - Information about memory mapped files
- ---------------------------------------------------------------------
- This directory contains symbolic links which represent memory mapped files
-diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-index 1fd261efc582..37a39cee10ed 100644
---- a/drivers/vfio/vfio_main.c
-+++ b/drivers/vfio/vfio_main.c
-@@ -28,6 +28,7 @@
- #include <linux/pseudo_fs.h>
- #include <linux/rwsem.h>
- #include <linux/sched.h>
-+#include <linux/seq_file.h>
- #include <linux/slab.h>
- #include <linux/stat.h>
- #include <linux/string.h>
-@@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
- 	return device->ops->mmap(device, vma);
- }
- 
-+#ifdef CONFIG_PROC_FS
-+static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
-+{
-+	char *path;
-+	struct vfio_device_file *df = filep->private_data;
-+	struct vfio_device *device = df->device;
-+
-+	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
-+	if (!path)
-+		return;
-+
-+	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
-+	kfree(path);
-+}
-+#endif
-+
- const struct file_operations vfio_device_fops = {
- 	.owner		= THIS_MODULE,
- 	.open		= vfio_device_fops_cdev_open,
-@@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
- 	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
- 	.compat_ioctl	= compat_ptr_ioctl,
- 	.mmap		= vfio_device_fops_mmap,
-+#ifdef CONFIG_PROC_FS
-+	.show_fdinfo	= vfio_device_show_fdinfo,
-+#endif
- };
- 
- static struct vfio_device *vfio_device_from_file(struct file *file)
-diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-index 707b00772ce1..54076045a44f 100644
---- a/include/linux/vfio.h
-+++ b/include/linux/vfio.h
-@@ -16,6 +16,7 @@
- #include <linux/cdev.h>
- #include <uapi/linux/vfio.h>
- #include <linux/iova_bitmap.h>
-+#include <linux/seq_file.h>
- 
- struct kvm;
- struct iommufd_ctx;
-@@ -135,6 +136,7 @@ struct vfio_device_ops {
- 	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
- 	int	(*device_feature)(struct vfio_device *device, u32 flags,
- 				  void __user *arg, size_t argsz);
-+	void	(*show_fdinfo)(struct vfio_device *device, struct seq_file *m);
- };
- 
- #if IS_ENABLED(CONFIG_IOMMUFD)
+So to handle the 1sec case I'll set the timeout period to 8192 with
+which we get a timeout of 1,073.74 ms.
 
----
-base-commit: 4518e5a60c7fbf0cdff393c2681db39d77b4f87e
-change-id: 20250801-show-fdinfo-ef109ca738cf
-
-Best regards,
--- 
-Alex Mastro <amastro@fb.com>
-
+Cheers,
+Prabhakar
 
