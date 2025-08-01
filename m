@@ -1,121 +1,144 @@
-Return-Path: <linux-kernel+bounces-753813-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753814-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A7B8B1885D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:53:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E7B0B18867
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:55:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE1F33A669F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:53:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D1BAD3B5EEB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:55:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1A4228D8DF;
-	Fri,  1 Aug 2025 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sN5ebZH8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 334FC28D857;
+	Fri,  1 Aug 2025 20:55:47 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0013.hostedemail.com [216.40.44.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44E4D1DE4DC;
-	Fri,  1 Aug 2025 20:53:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44CA01A01C6;
+	Fri,  1 Aug 2025 20:55:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754081593; cv=none; b=Bdvgp7ZePaS9t+vZF8wQn0Zmz6sd2D5YMzztpmDzuTnkGcH+GGr180APKXcJi242oN7ehpHmcKUia2iUoHIT07d8kVwRis55DaQTO0wJs+gmDOWE5mun6ccWOkrwIjaDzZfK9o1nMXrbmIxNFQGUNbMCMrt04UechkO6LWQZlKI=
+	t=1754081746; cv=none; b=rqEp8MEHTNg9mvefd1QcQKjkejGvlg6EpBcW9s613paSRqb+3B8e17R8RrRANV082YpqaIwu3mp3Vn4VMG9a/kxNr0dMoCwudPYr1tFyqWgIjK5DcAeqyyPXMloax50YyB9aPKt6h3cPJKRjEavSfAKvZGt670y3HOf123Tmg8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754081593; c=relaxed/simple;
-	bh=oihJCDhiMYArha1HuDM+3dprH0F7BEj3HiUnLGSllR8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JBnWmRHDWTqd0hShMdB9+GFD9ml4lmhR6ML03OzLh2zXuix1s37RlCV3GB8tGsN6rBBAHbgCbeB2I4HQtHCFkSIwNmmDf15G3bjppF9fyCJ8ZHAgbyLMAfROAgD0MgfaekKemqas1uZGJydbSnOc0K0r+dIMBeRNFVHQgqt4yXM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sN5ebZH8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D942AC4CEE7;
-	Fri,  1 Aug 2025 20:53:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754081592;
-	bh=oihJCDhiMYArha1HuDM+3dprH0F7BEj3HiUnLGSllR8=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=sN5ebZH8pOGJJJZDFzkeLgh/zFwMUMgeoBmNK55SP3mZPXrftNpneYtABU0G7nNx7
-	 Y6n5u4F/9p8JLwQZZY3yC7zRksne8Mmp8IrivBSdhnxaMjD3PZSNSyeUSxTjAxYzMY
-	 8NilJjpZ8fGsJi+xsQnz+tcLn/xSuOqGtqo/Aawe+p3uvFAB/JLD7EIBwP+ho4HPLe
-	 GLjikDO+WjB6NvUjsZ9HlkYggbhvXTUaaBJro6OR+5JHBUxGFPYnSOvQzFvQq64MYH
-	 q1AnKIyITC7NKzcLcuhheu8Y1Sus/KSEeWH+fHFF/DkPYBhKfpfbRLAnlhdZo0mGVV
-	 Hxo+6qvkvaPfg==
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af90fd52147so262855066b.3;
-        Fri, 01 Aug 2025 13:53:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUH9OXJJUDMnSfLzt+NbOEGcQJtf/ngB/gYyjCLxjQ4PvArfavQ6WYde11GAnAKBQLzBRt0opTLAq8=@vger.kernel.org, AJvYcCVIMAhL7Ok441+z4Rguf+LUd+avHlWP3bplIUAN3dtqBTMYBYecv7KevTs4+CsOHqM/G3gv2wdCgArl@vger.kernel.org, AJvYcCVngf3qmb/5Y+86fsFeEmOHiIQHV0kDzpISmMlk6GQnTSiieaXt7v0M+tWKv+T4i4A/q9jYk4q+AHvd1D1v@vger.kernel.org
-X-Gm-Message-State: AOJu0YxG+x1dYjdjHBIEFFR1scglh1tFzaPcD39kP8KRallp6wRlHkDz
-	augDptdc/mvj9gnPunbv2J2W9G2iaF1iNM60tJ5KHdkl4GogM+SOuys1x9M9O1gMdnwRLXQOee2
-	ESEs/81J6ocLibcX3vb588C0i57FMww==
-X-Google-Smtp-Source: AGHT+IFoHdZJnI812DHI3wywjHxToLcKIXhzuWimx/pqRfZbXCU+XcVwtk86KcJs6Y1R0LMocw8Dd82evjzlOVxLU0s=
-X-Received: by 2002:a17:907:9721:b0:af8:fb0a:45b7 with SMTP id
- a640c23a62f3a-af94001e703mr123565866b.21.1754081591472; Fri, 01 Aug 2025
- 13:53:11 -0700 (PDT)
+	s=arc-20240116; t=1754081746; c=relaxed/simple;
+	bh=YKoSvIfIZ7AfnVI0xRJuSnbZ0NUlNJsWfV+lTb4X1ME=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=RtCiv1M8Jq3E2f3wdjNUZ7SO12G3El1VhJ5ozsqJhIGF1lS46B/y4w9M4ydR1M6/5+Jd550h4oSHeFbX7uT3eIBO9ihooQsuPzexxmhosUqG11Vf4wiUNFpk0tOu6vqA5b2304jHoYaqs9aTS7b+Uw3JSMPr6YgYq0RwKcyg25U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf06.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay10.hostedemail.com (Postfix) with ESMTP id 52F62C02E9;
+	Fri,  1 Aug 2025 20:55:42 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf06.hostedemail.com (Postfix) with ESMTPA id 455F82000F;
+	Fri,  1 Aug 2025 20:55:40 +0000 (UTC)
+Date: Fri, 1 Aug 2025 16:56:01 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
+ <linux-trace-kernel@vger.kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>, Mathieu Desnoyers
+ <mathieu.desnoyers@efficios.com>, bpf@vger.kernel.org, Douglas Raillard 
+ <douglas.raillard@arm.com>, Yonghong Song <yonghong.song@linux.dev>, Martin
+ KaFai Lau <martin.lau@linux.dev>
+Subject: [PATCH v3] tracing: Have unsigned int function args displayed as
+ hexadecimal
+Message-ID: <20250801165601.7770d65c@gandalf.local.home>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250727195802.2222764-1-sashal@kernel.org> <20250727195802.2222764-2-sashal@kernel.org>
- <7h1ppxcp0d.fsf@baylibre.com>
-In-Reply-To: <7h1ppxcp0d.fsf@baylibre.com>
-From: Rob Herring <robh@kernel.org>
-Date: Fri, 1 Aug 2025 15:53:00 -0500
-X-Gmail-Original-Message-ID: <CAL_JsqJW206w1OiOZ+4nMg7XyHQq7QnOyTWM0W+DyMmu-gpAjw@mail.gmail.com>
-X-Gm-Features: Ac12FXz7Tmb3jZO7n5uJAYVaOhcu2_MFeSgTQMaSw2vCzvgO1R8xoIekd-sPcac
-Message-ID: <CAL_JsqJW206w1OiOZ+4nMg7XyHQq7QnOyTWM0W+DyMmu-gpAjw@mail.gmail.com>
-Subject: Re: [PATCH 1/4] agents: add unified agent coding assistant configuration
-To: Kevin Hilman <khilman@kernel.org>
-Cc: Sasha Levin <sashal@kernel.org>, corbet@lwn.net, linux-doc@vger.kernel.org, 
-	workflows@vger.kernel.org, josh@joshtriplett.org, kees@kernel.org, 
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	rostedt@goodmis.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+X-Rspamd-Queue-Id: 455F82000F
+X-Stat-Signature: 4rgkmjttq7tus4ozhrsxm3tdjtfistk7
+X-Rspamd-Server: rspamout06
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX1+toM6PJ9IUUVVrvcyW7KbjTmf3peylLOQ=
+X-HE-Tag: 1754081740-584668
+X-HE-Meta: U2FsdGVkX19Fm/hcv1qlHgsYskUR6qWw97KTHYFsmgwN52SRvUQc5kPI93X08cMuGbEtEF+3ByRMMXt7Nxc/YgO6of4iMd4wFR5zdfCqzAsmm34El8qxMZfVdJ/GCdGl5cvQkAf285LnVZFTiQDpoTqdl961kG1YXBR1gSezBFe8zfUOrct9E/LLqRxkolXa30B9axNSwGDNJPD6r40GEyvOgs88jMP2zfuRnrHp8GE+eG4clHZMvhPADo9chazNxv6hXEaUQZe6tw3UaKeGiJzbldaxRlu6TFxJ5X7rYji6+1EJPANmi9aRqUTPh/6x7K9KokdNNnIQVM0H8pDNguJ5ZCm+i32Z8WYUQ0tmJ3jwJygQV34jNV+fONAp3j/kDpb3imCWbvvTPsQ8UhfMgQ==
 
-On Wed, Jul 30, 2025 at 5:06=E2=80=AFPM Kevin Hilman <khilman@kernel.org> w=
-rote:
->
-> Sasha Levin <sashal@kernel.org> writes:
->
-> > Create a single source of truth for agent instructions in
-> > Documentation/AI/main.md with symlinks for all major coding
-> > agents:
-> > - CLAUDE.md (Claude Code)
-> > - .github/copilot-instructions.md (GitHub Copilot)
-> > - .cursorrules (Cursor)
-> > - .codeium/instructions.md (Codeium)
-> > - .continue/context.md (Continue)
-> > - .windsurfrules (Windsurf)
-> > - .aider.conf.yml (Aider)
->
-> This doesn't work for aider, probably because the .md it links to is not
-> YAML.  When I start aider with this, I get:
->
->   aider: error: Couldn't parse config file: while scanning a simple key
->     in "/work/kernel/linux/.aider.conf.yml", line 3, column 1
->   could not find expected ':'
->     in "/work/kernel/linux/.aider.conf.yml", line 4, column 1
->
-> Not related to this series, but related to aider... I'm curious if
-> anyone has got aider to work with the kernel repo.  It seems to have
-> problems with large repos.  When starting in the kernel, I get:
->
->   Unable to list files in git repo: cannot close exported pointers exist
->   Is your git repo corrupted?
->   Unable to read git repository, it may be corrupt?
->   cannot close exported pointers exist
->
-> but neither claude nor gemini-cli have any problems with the same repo.
->
-> The aider FAQ[1] mentions using .aiderignore to ignore parts of the
-> repo, but even with an "ignore everything" rule, I get the same error,
-> so something seems wrong with aider and large repos.
+=46rom aff4ac7a3e0bc7e7db72a0fae52f1a8b06e415f0 Mon Sep 17 00:00:00 2001
+From: Steven Rostedt <rostedt@goodmis.org>
+Date: Fri, 1 Aug 2025 11:14:53 -0400
+Subject: [PATCH] tracing: Have unsigned int function args displayed as
+ hexadecimal
 
-It worked for a bit for me, but then aider fell over after a while and
-refused to run with errors accessing git. Some suggestions to repack
-the repo didn't help. In the end, I just ran it without any git
-awareness.
+Most function arguments that are passed in as unsigned int or unsigned
+long are better displayed as hexadecimal than normal integer. For example,
+the functions:
 
-Rob
+static void __create_object(unsigned long ptr, size_t size,
+				int min_count, gfp_t gfp, unsigned int objflags);
+
+static bool stack_access_ok(struct unwind_state *state, unsigned long _addr,
+			    size_t len);
+
+void __local_bh_disable_ip(unsigned long ip, unsigned int cnt);
+
+Show up in the trace as:
+
+    __create_object(ptr=3D-131387050520576, size=3D4096, min_count=3D1, gfp=
+=3D3264, objflags=3D0) <-kmem_cache_alloc_noprof
+    stack_access_ok(state=3D0xffffc9000233fc98, _addr=3D-60473102566256, le=
+n=3D8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=3D-2127311112, cnt=3D256) <-handle_softirqs
+
+Instead, by displaying unsigned as hexadecimal, they look more like this:
+
+    __create_object(ptr=3D0xffff8881028d2080, size=3D0x280, min_count=3D1, =
+gfp=3D0x82820, objflags=3D0x0) <-kmem_cache_alloc_node_noprof
+    stack_access_ok(state=3D0xffffc90000003938, _addr=3D0xffffc90000003930,=
+ len=3D0x8) <-unwind_next_frame
+    __local_bh_disable_ip(ip=3D0xffffffff8133cef8, cnt=3D0x100) <-handle_so=
+ftirqs
+
+Which is much easier to understand as most unsigned longs are usually just
+pointers. Even the "unsigned int cnt" in __local_bh_disable_ip() looks
+better as hexadecimal as a lot of flags are passed as unsigned.
+
+Changes since v2: https://lore.kernel.org/20250801111453.01502861@gandalf.l=
+ocal.home
+
+- Use btf_int_encoding() instead of open coding it (Martin KaFai Lau)
+
+Acked-by: Yonghong Song <yonghong.song@linux.dev>
+Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+---
+ kernel/trace/trace_output.c | 8 +++++++-
+ 1 file changed, 7 insertions(+), 1 deletion(-)
+
+diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
+index 0b3db02030a7..97db0b0ccf3e 100644
+--- a/kernel/trace/trace_output.c
++++ b/kernel/trace/trace_output.c
+@@ -701,6 +701,7 @@ void print_function_args(struct trace_seq *s, unsigned =
+long *args,
+ 	struct btf *btf;
+ 	s32 tid, nr =3D 0;
+ 	int a, p, x;
++	u16 encode;
+=20
+ 	trace_seq_printf(s, "(");
+=20
+@@ -744,7 +745,12 @@ void print_function_args(struct trace_seq *s, unsigned=
+ long *args,
+ 			trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_INT:
+-			trace_seq_printf(s, "%ld", arg);
++			encode =3D btf_int_encoding(t);
++			/* Print unsigned ints as hex */
++			if (encode & BTF_INT_SIGNED)
++				trace_seq_printf(s, "%ld", arg);
++			else
++				trace_seq_printf(s, "0x%lx", arg);
+ 			break;
+ 		case BTF_KIND_ENUM:
+ 			trace_seq_printf(s, "%ld", arg);
+--=20
+2.47.2
+
 
