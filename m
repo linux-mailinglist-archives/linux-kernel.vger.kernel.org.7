@@ -1,246 +1,135 @@
-Return-Path: <linux-kernel+bounces-753745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17B95B18742
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:18:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 37637B1874B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:23:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C585649D6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B8BB61C82EB9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:23:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 801BB2874FA;
-	Fri,  1 Aug 2025 18:18:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 116D028CF7A;
+	Fri,  1 Aug 2025 18:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tYqCwjCG"
-Received: from mail-lj1-f169.google.com (mail-lj1-f169.google.com [209.85.208.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="eq7b4+be"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8E03188CC9
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:18:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D80F6188CC9;
+	Fri,  1 Aug 2025 18:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754072286; cv=none; b=CaefzPd4UmA2zu/kYYomBHIZrssKY5o/pXXhkttyGyP0e47iq7f4Eh7ND9IFW5rM3qfg3b604OOTVn/A8ey3yOEcP3VCRwj26O6yJIt+kwIatWITmyJJU3qV7phvOW53DRdnIJ8NeNhC2gVEd/orsxdB83ilcU59FTR101mG790=
+	t=1754072574; cv=none; b=togK6UiV3MsRzAJmU+kyQwxZsaJQ52T+Qdnwt8S0YAHt46nnhCS/t2J6gTRdhysS0qhXVxB3ZUQjDWrEoKN/kt2HTu4vlXTccd+m7epfdD7J9j2A9TyacCfr3l/QOairf+qKscLuucOpRfa7Tgw3HrRKYyO7vVOvo7FUjY4Bxqs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754072286; c=relaxed/simple;
-	bh=YL2B6gEXrJOvRYYui6bt3ppoA05sAipcf7SBVn38r3s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W9woRrbTXN05KSy1qw1dscSWH9VB9CKKwBwBQuXHdNc8pnhG6l0cJ1jiN1AKQVCQZBFxCZWLI3w6k0Ny65yJH1YKRhXkiIOXiMeg88eP04jO6nEkwc5LPOVVwEqz7ilruuh4dVFVvG0fBGitgKcSa6s/umpm+Rc+p9w4p4VENi4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tYqCwjCG; arc=none smtp.client-ip=209.85.208.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f169.google.com with SMTP id 38308e7fff4ca-32b5931037eso19669031fa.2
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:18:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754072283; x=1754677083; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=HLBVWalAvcyfl5wmHOrCf7XYp2lIoIUMZMHifMzN82A=;
-        b=tYqCwjCGT+7qjGYk1pjwQMHxd/57ASSoS0Flz0aVyxTqADN7jIWyBZ1CXzWt2NZFCS
-         VgwWJXGutWigkYLvA734hhKAnD7Tw0wKk0sxw1aI6K7q6QUet2LYKdzVTSQApojdIXAL
-         QR9wRScumVpU0Aj2EOIIQrzSfNOd9eCoKDIG1bc3N1h/tExg4dZBntT7s3JJq85fC5Ss
-         OOgEDK3eCV1cjFomGiZ7jZ8m+IG+t+B7JamypUoH3r9YlSMUSfgNChRif7BSwjSzcfHJ
-         5H632KIfrm274Fmy4k4SEMyIhLC68geZN4+tSLN/VDPGF95jUAeTxtLPKyX7eZMU9zTs
-         Hfkw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754072283; x=1754677083;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=HLBVWalAvcyfl5wmHOrCf7XYp2lIoIUMZMHifMzN82A=;
-        b=SUI4jbky98skwiGMUMjH2aGlfF/U6sUha19e6aiAecOhgK4gbd6F6go6DOgSql2t66
-         8yzAGxQfbLt3qEiljP0UEbGS04QQjbApPXKK1gvrlNosQy08J4ZDsAOoD5N1q4enMaZw
-         bn3Dl204aelFHywNrLa79SmG2+NbSR6W2DgL7n3rPxjCC/TGf5E+2iIIl8eEsRKB0dZq
-         /IeOvMNaz6ByPbvM/XBgHb8pd6Z+IjmHXD3hrulaSJqwW/3bGy7QTCN7V1rvWTpw8y6z
-         QU/acBK6SQK+5FU14yQduekYM2oS3BElPqLks8k6MHQ0TXTw0gW11hTFGyWwCagcCxC7
-         V10g==
-X-Forwarded-Encrypted: i=1; AJvYcCXJXU6s/R1q3Q8nLT3/am2wurs7BFYTWx68oEUNB2qqJ7I9dW2ePKGB6s5Oa/t1K5ugFsqDqkgzPo3twfg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YysiayUqn9pzOyAgq2YoVrPqw59O7yQy77huCF2jn3GfWghDMWu
-	j/pBfQ0EStUaJE1iCXT3IX1z8U3IHPVrMO5989o5Eea3KhLeeAIYzIXZlFPufA6ae6D8SGeEf/P
-	2beXoxuBli+mQn14kvc1S290Rxu4MvEknnShIifH9
-X-Gm-Gg: ASbGncu4vA7F9IQuZu37HJFoMiIpQQ06UW9GfFsjvoceoXH2FHjWPejjswKIpldBF5x
-	v+hdFbHrI/pzhqS1YRVq0DjycUx9Q5t+sCRWmtPH7vBkvHXMthUaqVNCNi1LCWJSyAELWb6q/Fh
-	mGC7v0j2qglH4Rq7BK0P/2i751Zo+gMctJHZw68dpN7fK/D0ckVgynAidg1z6CsG6ppT54T1i23
-	jWdblI=
-X-Google-Smtp-Source: AGHT+IGEfUaghABA5DNvg5gyW3d2855oZuYkBZv3LcxmE/vVGwOdccz+q+H6M6wVnet9p88MTN4WT+jz1gEyz4s2QSY=
-X-Received: by 2002:a2e:b531:0:b0:332:133b:1513 with SMTP id
- 38308e7fff4ca-33256796e05mr766051fa.30.1754072282670; Fri, 01 Aug 2025
- 11:18:02 -0700 (PDT)
+	s=arc-20240116; t=1754072574; c=relaxed/simple;
+	bh=WF0QhmeUbVgpA2hYHTvKf+I3icXtibEH9SWu6vSv6bk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=IsB7iGSFTQFwelNjX57g7/uTX6GIFMLvV5SznlIoq0UB0ZQOuHS6FZOrpPwb+PT+SdgdaXCDcveLN2MPEAE0eEg0RtfLtgCouXlTdxz0KZSYPekIqZZV8+CLCDp3eYvbU4soRgTzcSjcsdwvqgvRePM/v4sb0qGqjCgOLnFv/s4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=eq7b4+be; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754072570;
+	bh=WF0QhmeUbVgpA2hYHTvKf+I3icXtibEH9SWu6vSv6bk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=eq7b4+be3D8CGX1DnDUvCfReusRDKoHIATKVTrXS8tkld1HUqpgZ/YeqbGBqKZheZ
+	 1BfLYO7crUo3EikNDGwqcsLh5MbBKlqdQDF/9/+w9RxET1p2g2ElcBwvBzGAYiurSJ
+	 8vMtwmTgTwozSV3ZFL/3SH4RhytSAdRIjta+tTS/crPKZ3LpELuZWrCvVGGP1demjR
+	 hUu1FNI4056LLADoQfzlKrQXvqDG12xtMVKEEgY7pIWCvxW52MY+H6zCESWmmOXC3R
+	 sJ8//l4zdG+G1GgTHbtgi0MioKHrQO0u42o/WW+cfGqsqpovEcsRBKCPFrFEIcjXzg
+	 AiP7JRSMrMClA==
+Received: from integral2.. (unknown [182.253.126.229])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id 921273126FCE;
+	Fri,  1 Aug 2025 18:22:47 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	John Ernberg <john.ernberg@actia.se>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Netdev Mailing List <netdev@vger.kernel.org>,
+	Linux USB Mailing List <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	gwml@vger.gnuweeb.org,
+	stable@vger.kernel.org
+Subject: [PATCH net v1] net: usbnet: Fix the wrong netif_carrier_on() call placement
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat,  2 Aug 2025 01:20:44 +0700
+Message-Id: <20250801182044.39420-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250707224720.4016504-1-jthoughton@google.com>
- <20250707224720.4016504-4-jthoughton@google.com> <aIFHc83PtfB9fkKB@google.com>
- <CADrL8HW46uQQKYUngYwomzfKWB0Vf4nG1WRjZu84hiXxtHN14Q@mail.gmail.com>
- <CALzav=e0cUTMzox7p3AU37wAFRrOXEDdU24eqe6DX+UZYt9FeQ@mail.gmail.com>
- <aIft7sUk_w8rV2DB@google.com> <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
-In-Reply-To: <CADrL8HWE+TQ8Vm1a=eb5ZKo2+zeeE-b8-PUXLOS0g5KuJ5kfZQ@mail.gmail.com>
-From: David Matlack <dmatlack@google.com>
-Date: Fri, 1 Aug 2025 11:17:34 -0700
-X-Gm-Features: Ac12FXyG-livDFOfmfOOHNKjIHeLx2MQ0V7JxyxWoRrLh7_sfVekRt_nK9TcnqU
-Message-ID: <CALzav=eQWJ-97T7YPt2ikFJ+hPqUSqQ+U_spq8M4vMaQWfasWQ@mail.gmail.com>
-Subject: Re: [PATCH v5 3/7] KVM: x86/mmu: Recover TDP MMU NX huge pages using
- MMU read lock
-To: James Houghton <jthoughton@google.com>
-Cc: Sean Christopherson <seanjc@google.com>, Paolo Bonzini <pbonzini@redhat.com>, 
-	Vipin Sharma <vipinsh@google.com>, kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 28, 2025 at 2:49=E2=80=AFPM James Houghton <jthoughton@google.c=
-om> wrote:
->
-> On Mon, Jul 28, 2025 at 2:38=E2=80=AFPM Sean Christopherson <seanjc@googl=
-e.com> wrote:
-> >
-> > On Mon, Jul 28, 2025, David Matlack wrote:
-> > > On Mon, Jul 28, 2025 at 11:08=E2=80=AFAM James Houghton <jthoughton@g=
-oogle.com> wrote:
-> > > > On Wed, Jul 23, 2025 at 1:35=E2=80=AFPM Sean Christopherson <seanjc=
-@google.com> wrote:
-> > > > > > @@ -7559,8 +7590,17 @@ static void kvm_recover_nx_huge_pages(st=
-ruct kvm *kvm,
-> > > > > >       rcu_read_lock();
-> > > > > >
-> > > > > >       for ( ; to_zap; --to_zap) {
-> > > > > > -             if (list_empty(nx_huge_pages))
-> > > > > > +#ifdef CONFIG_X86_64
-> > > > >
-> > > > > These #ifdefs still make me sad, but I also still think they're t=
-he least awful
-> > > > > solution.  And hopefully we will jettison 32-bit sooner than late=
-r :-)
-> > > >
-> > > > Yeah I couldn't come up with anything better. :(
-> > >
-> > > Could we just move the definition of tdp_mmu_pages_lock outside of
-> > > CONFIG_X86_64? The only downside I can think of is slightly larger kv=
-m
-> > > structs for 32-bit builds.
-> >
-> > Hmm, I was going to say "no, because we'd also need to do spin_lock_ini=
-t()", but
-> > obviously spin_(un)lock() will only ever be invoked for 64-bit kernels.=
-  I still
-> > don't love the idea of making tdp_mmu_pages_lock visible outside of CON=
-FIG_X86_64,
-> > it feels like we're just asking to introduce (likely benign) bugs.
-> >
-> > Ugh, and I just noticed this as well:
-> >
-> >   #ifndef CONFIG_X86_64
-> >   #define KVM_TDP_MMU -1
-> >   #endif
-> >
-> > Rather than expose kvm->arch.tdp_mmu_pages_lock, what about using a sin=
-gle #ifdef
-> > section to bury both is_tdp_mmu and a local kvm->arch.tdp_mmu_pages_loc=
-k pointer?
->
-> SGTM.
->
-> >
-> > Alternatively, we could do:
-> >
-> >         const bool is_tdp_mmu =3D IS_ENABLED(CONFIG_X86_64) && mmu_type=
- !=3D KVM_SHADOW_MMU;
->
-> I tried something like this before and it didn't work; my compiler
-> still complained. Maybe I didn't do it quite right...
->
-> >
-> > to avoid referencing KVM_TDP_MMU, but that's quite ugly.  Overall, I th=
-ink the
-> > below strikes the best balance between polluting the code with #ifdefs,=
- and
-> > generating robust code.
-> >
-> > diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm=
-_host.h
-> > index 52bf6a886bfd..c038d7cd187d 100644
-> > --- a/arch/x86/include/asm/kvm_host.h
-> > +++ b/arch/x86/include/asm/kvm_host.h
-> > @@ -1372,10 +1372,6 @@ enum kvm_mmu_type {
-> >         KVM_NR_MMU_TYPES,
-> >  };
-> >
-> > -#ifndef CONFIG_X86_64
-> > -#define KVM_TDP_MMU -1
-> > -#endif
-> > -
-> >  struct kvm_arch {
-> >         unsigned long n_used_mmu_pages;
-> >         unsigned long n_requested_mmu_pages;
-> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> > index a6a1fb42b2d1..e2bde6a5e346 100644
-> > --- a/arch/x86/kvm/mmu/mmu.c
-> > +++ b/arch/x86/kvm/mmu/mmu.c
-> > @@ -7624,8 +7624,14 @@ static bool kvm_mmu_sp_dirty_logging_enabled(str=
-uct kvm *kvm,
-> >  static void kvm_recover_nx_huge_pages(struct kvm *kvm,
-> >                                       const enum kvm_mmu_type mmu_type)
-> >  {
-> > +#ifdef CONFIG_X86_64
-> > +       const bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
-> > +       spinlock_t *tdp_mmu_pages_lock =3D &kvm->arch.tdp_mmu_pages_loc=
-k;
-> > +#else
-> > +       const bool is_tdp_mmu =3D false;
-> > +       spinlock_t *tdp_mmu_pages_lock =3D NULL;
-> > +#endif
-> >         unsigned long to_zap =3D nx_huge_pages_to_zap(kvm, mmu_type);
-> > -       bool is_tdp_mmu =3D mmu_type =3D=3D KVM_TDP_MMU;
-> >         struct list_head *nx_huge_pages;
-> >         struct kvm_mmu_page *sp;
-> >         LIST_HEAD(invalid_list);
-> > @@ -7648,15 +7654,12 @@ static void kvm_recover_nx_huge_pages(struct kv=
-m *kvm,
-> >         rcu_read_lock();
-> >
-> >         for ( ; to_zap; --to_zap) {
-> > -#ifdef CONFIG_X86_64
-> >                 if (is_tdp_mmu)
-> > -                       spin_lock(&kvm->arch.tdp_mmu_pages_lock);
-> > -#endif
-> > +                       spin_lock(tdp_mmu_pages_lock);
-> > +
-> >                 if (list_empty(nx_huge_pages)) {
-> > -#ifdef CONFIG_X86_64
-> >                         if (is_tdp_mmu)
-> > -                               spin_unlock(&kvm->arch.tdp_mmu_pages_lo=
-ck);
-> > -#endif
-> > +                               spin_unlock(tdp_mmu_pages_lock);
-> >                         break;
-> >                 }
-> >
-> > @@ -7675,10 +7678,8 @@ static void kvm_recover_nx_huge_pages(struct kvm=
- *kvm,
-> >
-> >                 unaccount_nx_huge_page(kvm, sp);
-> >
-> > -#ifdef CONFIG_X86_64
-> >                 if (is_tdp_mmu)
-> > -                       spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
-> > -#endif
-> > +                       spin_unlock(tdp_mmu_pages_lock);
-> >
-> >                 /*
-> >                  * Do not attempt to recover any NX Huge Pages that are=
- being
-> > --
->
-> LGTM! Thanks Sean.
+The commit in the Fixes tag breaks my laptop (found by git bisect).
+My home RJ45 LAN cable cannot connect after that commit.
 
-Is the compiler not smart enough to optimize out
-kvm->arch.tdp_mmu_pages_lock? (To avoid needing the extra local
-variable?) I thought there was some other KVM code that relied on
-similar optimizations but I would have to go dig them up to remember.
+The call to netif_carrier_on() should be done when netif_carrier_ok()
+is false. Not when it's true. Because calling netif_carrier_on() when
+__LINK_STATE_NOCARRIER is not set actually does nothing.
 
-Either way, this LGTM!
+Cc: Armando Budianto <sprite@gnuweeb.org>
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/netdev/0752dee6-43d6-4e1f-81d2-4248142cccd2@gnuweeb.org
+Fixes: 0d9cfc9b8cb1 ("net: usbnet: Avoid potential RCU stall on LINK_CHANGE event")
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
+ drivers/net/usb/usbnet.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index bc1d8631ffe0..1eb98eeb64f9 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1107,31 +1107,31 @@ static const struct ethtool_ops usbnet_ethtool_ops = {
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+ static void __handle_link_change(struct usbnet *dev)
+ {
+ 	if (!test_bit(EVENT_DEV_OPEN, &dev->flags))
+ 		return;
+ 
+ 	if (!netif_carrier_ok(dev->net)) {
++		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
++			netif_carrier_on(dev->net);
++
+ 		/* kill URBs for reading packets to save bus bandwidth */
+ 		unlink_urbs(dev, &dev->rxq);
+ 
+ 		/*
+ 		 * tx_timeout will unlink URBs for sending packets and
+ 		 * tx queue is stopped by netcore after link becomes off
+ 		 */
+ 	} else {
+-		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+-			netif_carrier_on(dev->net);
+-
+ 		/* submitting URBs for reading packets */
+ 		tasklet_schedule(&dev->bh);
+ 	}
+ 
+ 	/* hard_mtu or rx_urb_size may change during link change */
+ 	usbnet_update_max_qlen(dev);
+ 
+ 	clear_bit(EVENT_LINK_CHANGE, &dev->flags);
+ }
+ 
+-- 
+Ammar Faizi
+
 
