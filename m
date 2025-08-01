@@ -1,594 +1,303 @@
-Return-Path: <linux-kernel+bounces-753486-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753487-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D1EDB183A5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:23:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D024BB183A8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:23:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DC5AC3BEB5C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:23:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7FF37B73C1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:22:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3466826CE37;
-	Fri,  1 Aug 2025 14:22:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E13D425C833;
+	Fri,  1 Aug 2025 14:23:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nOI1wN2F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="FQoFoxvc"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB09225C833;
-	Fri,  1 Aug 2025 14:22:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754058177; cv=none; b=LTNQNSz9fcCiPx43mczFgjhNmDJoo+GNQPwUqjij0J2wH3Fk+u3GWoDSGXRKBQErRCGXehN42y9GwHlvEWcJKogcgkQfB2ydcfaifBltsH9S37RBU0ReqP6EmHzE42GD/pfSB5Q8cBONpKBb6odXR5B+5Szy1xF8jchDbd7wMxQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754058177; c=relaxed/simple;
-	bh=fE/tn9r3Wla87IudWXAa61XOPYJ8WJsA+NE0fakKSaE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=hHQrSXmdRjervYlP7TB6O20oC/ZuewVzpIpKv/hGKXy2Z9noHO7Ew896V3rRWK+OQqQ91wY8h13U/d1orCYgvkaUiXMlAFZz/zUoCMFYNQN/MC20KWUpMaPF1ooPzmrU67ebjUlptYh2eFd6efZNgh0R29hGsKqFRnJyBVD5EhQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nOI1wN2F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 20321C4CEE7;
-	Fri,  1 Aug 2025 14:22:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754058177;
-	bh=fE/tn9r3Wla87IudWXAa61XOPYJ8WJsA+NE0fakKSaE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=nOI1wN2FpAEGc9jPggXpkUM07AbQBkZQOjUKo2BgnGcHtNbZjSC3CCS8UqkeK/Pgo
-	 Rp7gypII+38MSW4CP48flwGCbVxb+v3VBqD4Ak5LP31kNvVf5MhWo/2YWuqoaGNQdB
-	 8nmKwCZie7bTReNcFJfh/nyjYUfdd108+HP/Ve6S5M4F/F4XH3rFkATn+LwCUwuoFV
-	 +8R84gTp1PePBVNhSdspI2Fvg+N2FDfnhuu/muFT5bXiQ5VOzipQaceDw1dMIp61oU
-	 tPcGcBUKr9vzzha0eTgZTQNKd0MWAQKq/ZPvULkNKO7wQHktOsueAMQMbXQP61AX1D
-	 CU3iNxZct+fcQ==
-Date: Fri, 1 Aug 2025 09:22:54 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Rob Herring <robh@kernel.org>,
-	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>
-Subject: [GIT PULL v2] PCI changes for v6.17
-Message-ID: <20250801142254.GA3496192@bhelgaas>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20CFE248896;
+	Fri,  1 Aug 2025 14:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.14
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754058196; cv=fail; b=JvxwagE7L65risXhNROKo8SOMZDRC7p6znxWaHGJ52SOIdJkBVTmMHXVoTYWUwyqb3JS+F94bi8ILjHGhldZ8mPZ8SCwIhvNsBZ0O+5FhF8pBddmIi5Uy69JhesQvREKr0nUHoI6FcjD7/aMpWa77boXQCRAVLDn4pOvkdf1mvw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754058196; c=relaxed/simple;
+	bh=poRAuPAB/IWtMbBRPtMWMFGRW0e2N0Nwkik82mC9f/0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=hi5c85ZWxX2/KOPmcg5DFl0pSMHGAL4m5l3oVfWdBMN3Xq/5ejbz3l3qjh+v5e3/JX0OzkMiC1XkoGhsA/ILX0gt2iFUGoOOsbP309QkpA4luAAPJL55Sxpnv0swWG446jcx1hxJFHs8CyuSQh1GgZNqfcwjo4Ejq7QvkkbU4JQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=FQoFoxvc; arc=fail smtp.client-ip=192.198.163.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754058195; x=1785594195;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=poRAuPAB/IWtMbBRPtMWMFGRW0e2N0Nwkik82mC9f/0=;
+  b=FQoFoxvcVmFD9aFU4uNlaCnWlQua2nNdknnbK6rQZKIblxyvaTdogb/x
+   aLTvPnDJb9K9+9/mu6ONpxMAhiNuWniJ1Ks+Hv3Cld79fclBFyQ3yCCeB
+   fY1cHzB5vzOoQOqpLt1TTGJ9M/4QUsyuTsgZGPB9LuqqMcduDpPFVyJCH
+   XDv2N7HXesKuDAqIZ3piJ+mCZ12PYjKygINfBFNolKNz1ghSlQcIImf/5
+   55wsUQDCPhor/usEVMDFEjkBma/3yTG7qy4sGofCUtnN8yJnPt4kDbJc5
+   5/4xZCKywecGLLI67gMqJBPta9ILIuIIMTfoMQUIa9tzITNa7F/LRMEZM
+   Q==;
+X-CSE-ConnectionGUID: vk44X8nRSimfKTzldNg8Tg==
+X-CSE-MsgGUID: I+jSDX+5Th6B+eVMVFn5IA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56485174"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="56485174"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:23:14 -0700
+X-CSE-ConnectionGUID: tXozDTxlSLOIqvXyDKZvdQ==
+X-CSE-MsgGUID: GjoUJg7KQzOl92rfxrATtw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="200733582"
+Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
+  by orviesa001.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 07:23:14 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Fri, 1 Aug 2025 07:23:13 -0700
+Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Fri, 1 Aug 2025 07:23:13 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (40.107.101.45)
+ by edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.25; Fri, 1 Aug 2025 07:23:13 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=kM7mfw7Q77rs+tRZimBVlJ+0lNA/Sjij54F5jV3WjMKhEcNW9hfO4jRBpg4cF1aRYfwZ08nT8GXj0ByteiEsTGoQEslgiVbmGXVQjh09uDipn5uyYf7626K6xR8ECM90DeVCEwsEswElohI2Qwenq5PmUdwUdJ3R7XVOGuyjkPdlmk2J7OxFPdhY1lDqIaw32MaWAQ+P6MNE1UNyvHf/T7kiHhFb7Qga8FE/rH4swZMPWTQKsqn9kVzXIL2afnVA4UOld44xOs7O2xnA2iuwy0/G9UANRx7YL6CG4+InnVHN/DpHx3VMWl+eyDf8LHc8YrY87Z/9B9cf59zEjRj3YQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=poRAuPAB/IWtMbBRPtMWMFGRW0e2N0Nwkik82mC9f/0=;
+ b=YsvRuw/zF4pd30QhBlsDszxi5mcCazjH243yXf7El4+jDIOMGXqk5EPOMTgfR8bGx7HTJ354p32l7mc502QsGtT2vjd84G9SjcMas8N+3CVFN4E3FJAnDhsmy9C+Pe9ipixIcum7DGTO97x/SCU1TXSu6fFhRIztafIbyXeezouK7Umz1efnCERxuh6t6eppsqT8PbgCxZ75MMezO7sxhcB6yZFCwqB7MnJfL4Ua1MHkiH7Tyuubw/jdidng7KRsBoX/YbZabVe6i28SnCk9LoWrWt46bU2Ah078OQnmBPd8zmraR35iUXTCHRFX/h0f/4mz+geQGnn+OmsYc/VEVw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ (2603:10b6:f:fc00::f13) by SA1PR11MB6966.namprd11.prod.outlook.com
+ (2603:10b6:806:2bc::11) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Fri, 1 Aug
+ 2025 14:23:10 +0000
+Received: from DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::76e3:aa2a:a205:819f]) by DM3PPF208195D8D.namprd11.prod.outlook.com
+ ([fe80::76e3:aa2a:a205:819f%7]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
+ 14:23:10 +0000
+From: "Kandpal, Suraj" <suraj.kandpal@intel.com>
+To: Louis Chauvet <louis.chauvet@bootlin.com>, Dmitry Baryshkov
+	<dmitry.baryshkov@oss.qualcomm.com>, Jani Nikula
+	<jani.nikula@linux.intel.com>, Harry Wentland <harry.wentland@amd.com>, "Leo
+ Li" <sunpeng.li@amd.com>, Rodrigo Siqueira <siqueira@igalia.com>, "Alex
+ Deucher" <alexander.deucher@amd.com>, =?utf-8?B?Q2hyaXN0aWFuIEvDtm5pZw==?=
+	<christian.koenig@amd.com>, David Airlie <airlied@gmail.com>, Simona Vetter
+	<simona@ffwll.ch>, Liviu Dudau <liviu.dudau@arm.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>, Rob Clark
+	<robin.clark@oss.qualcomm.com>, Dmitry Baryshkov <lumag@kernel.org>, "Abhinav
+ Kumar" <abhinav.kumar@linux.dev>, Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>, Sean Paul <sean@poorly.run>, Marijn Suijten
+	<marijn.suijten@somainline.org>, Laurent Pinchart
+	<laurent.pinchart+renesas@ideasonboard.com>, Tomi Valkeinen
+	<tomi.valkeinen+renesas@ideasonboard.com>, Kieran Bingham
+	<kieran.bingham+renesas@ideasonboard.com>, Geert Uytterhoeven
+	<geert+renesas@glider.be>, Magnus Damm <magnus.damm@gmail.com>, "Dave
+ Stevenson" <dave.stevenson@raspberrypi.com>, =?utf-8?B?TWHDrXJhIENhbmFs?=
+	<mcanal@igalia.com>, Raspberry Pi Kernel Maintenance
+	<kernel-list@raspberrypi.com>
+CC: "amd-gfx@lists.freedesktop.org" <amd-gfx@lists.freedesktop.org>,
+	"dri-devel@lists.freedesktop.org" <dri-devel@lists.freedesktop.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
+	"freedreno@lists.freedesktop.org" <freedreno@lists.freedesktop.org>,
+	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>
+Subject: RE: [PATCH 8/8] drm: writeback: rename
+ drm_writeback_connector_init_with_encoder()
+Thread-Topic: [PATCH 8/8] drm: writeback: rename
+ drm_writeback_connector_init_with_encoder()
+Thread-Index: AQHcAutvtF48Hd1pDUSGm6UrRS1SEbRN1YcAgAAEG+A=
+Date: Fri, 1 Aug 2025 14:23:10 +0000
+Message-ID: <DM3PPF208195D8DB87B912E14EB611D075BE326A@DM3PPF208195D8D.namprd11.prod.outlook.com>
+References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
+ <20250801-wb-drop-encoder-v1-8-824646042f7d@oss.qualcomm.com>
+ <3c522dd8-0e56-4ab3-84da-d9193137d4fe@bootlin.com>
+In-Reply-To: <3c522dd8-0e56-4ab3-84da-d9193137d4fe@bootlin.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: DM3PPF208195D8D:EE_|SA1PR11MB6966:EE_
+x-ms-office365-filtering-correlation-id: 4a5ec1d0-41f8-4e94-6359-08ddd106f175
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|7416014|1800799024|366016|921020|38070700018;
+x-microsoft-antispam-message-info: =?utf-8?B?RTBGRU1SRDFwR1JPNmZaZkQraWROcEk5a1Z4WTVRU0d0M1F6b2tPZkZMZFQ0?=
+ =?utf-8?B?Y0VlYXZ6SW9iVFFkRytUTVhPa1NTOGE3MVcyd1IvU2Z6WkxIbHR4bkFGTGl4?=
+ =?utf-8?B?K2ZhUGRsRXl0ZGtsK3hYeFp5bDEzOFhaNkEycFlaVThwSHkwM3Q4djgxcTkz?=
+ =?utf-8?B?N1liTEJPOFNrYmpXMmsxcVIyak5abmxrYU51WjFCOWd1K2JvcVhLS1FDbldw?=
+ =?utf-8?B?ekljRWZjcEVaYlgvQ3RURkpOZEJTUW1IN3YwVWJUR0psWGIxVWtQeG1lRmZL?=
+ =?utf-8?B?a3V5RWpVeE4wZ21HdnJ1YmRpbnoyMVpxNnEzRTVHL0FaeU03L2pUeFFnTzZW?=
+ =?utf-8?B?QnVubVl2Nmh5UkRNTEZBOXVQTjFPdEdaR1FVdUVKckE1N0g0TFpMTTVXZVd4?=
+ =?utf-8?B?STdlQjJxV2xoRFZ2UXprQzJJZXFjd1RTOXlOdW41cnRRMHpvbnNNNlBmenE0?=
+ =?utf-8?B?RzdvdWdtVzFIQUxsNUdVV1RpeHJyUnA4c3dTMHp3aXBvNGE2dEdMNmJPbkVP?=
+ =?utf-8?B?WFZkWEZDQS9Td1Q5YVg4am14SlBQMk01bEF4bjhCb1U2amhmc0twUS9Rcmw5?=
+ =?utf-8?B?dG5HeUdEN3JtVkdRbmdNQ3k5TDhxY3VpdVlYUVNJRUE0SFcyM2NodG10cEdr?=
+ =?utf-8?B?ZkEyREJLdGt5Wm9BNHRIME9Zc3RQTUZ1M0IvOG9lYUtCZnIvMnRVUFphc1lC?=
+ =?utf-8?B?c1BLZkx5WGl5WU84ajZ0c0ZBOHNxSjJEaDZUeUd1bExFc1dGdHZJbmhvd2RC?=
+ =?utf-8?B?WDIzWDhyZ1Z2QSt5eVZaRzdNL0xOZlp3OWt4cis3WjQyVXNYWGdhSWNhN296?=
+ =?utf-8?B?V1dPckJjNDRmeHNNSFNJbHg5eUo2SXkvS25WUmYxUGs1K0x3ZVl1ZDFIRDA5?=
+ =?utf-8?B?NmRHMW9oTWFaaUZkUXRJbHNaZmJqZ2ZZRFZNZlA2YnJqZEVEZFgrUUxFOFB2?=
+ =?utf-8?B?UHJhcjQyZkRlRW5QNFJoU0NjYUI0K05raXFNeUpJKzBFZnRaN1poUVNjSmVP?=
+ =?utf-8?B?eWVWK3dhTEJpMVN0ZnFPZUZjSms5RkFGT2d1dkJzQ3NEMW5PSGdYNkZ4YWht?=
+ =?utf-8?B?YklEUERxcUllRnRNaldBRDFrbFZydXljZTNWMFFwclU1d2JBRTI4SjlqNHIz?=
+ =?utf-8?B?cTRJOTFCUkY0N29WNU9zNzY3a3NyckkxOHlBWTFHc3AzcTdzb3pHNzhBWStR?=
+ =?utf-8?B?T0pmVWhqMEp5aXRwaTRnbXQ2T21rWHhNN25zY3BzejhRVWc2c3UzZDhrdGY4?=
+ =?utf-8?B?SUtrQXlqZU4ydlJyK05tdExvWUJCL2VvOEJ2N3p4bUh1ZFYzK0w2VEVXenR3?=
+ =?utf-8?B?NURBVkhaalFzTFVzbWI5dVppVVhoVFpjRjJJeHArbmNrV0VYbU5oMnJxa09R?=
+ =?utf-8?B?MTBiN0ZNWDlLTytxczVvSDNtSk1lTGFkNUFTeHBzWHlHY1psWXlTZ1Q0Um00?=
+ =?utf-8?B?RGExRkIrL1NqUTM4TkZKUXA0TWJ3NFlhK2pOSm0wNGxkL2NQdVFBVDFab1J5?=
+ =?utf-8?B?d0p1TWpuOTVhSVN0U1lEY2xJUlJFaGtDeEpta2MxME5FMEJpc2ovRGJ0QnNI?=
+ =?utf-8?B?OVBaTnRDazRHdERnSUExVWxsY3NuaGFGVzVZZWJWY1VzaWRVMU5Vbkw1UUhR?=
+ =?utf-8?B?NnA0eEo4WUVUOFJqaWRkWUpnNHNvenZqZzUwQ0YvRndZQW5JeWpQaUtCVEVz?=
+ =?utf-8?B?QStlMzNGQ1FpNzloekdzMy9kY1o3aFd4QitNMjBaZC9JRjNIeVI2Tlo0L0tE?=
+ =?utf-8?B?K3NpTHg4K2p1WG0wWnNYWGJvekYrbWRIck1zOVBZeWE2SGRQeG8xdGtlaG4w?=
+ =?utf-8?B?R2RQSmRDTndwU1VDa1A2ZzVsNDRlOXZnY2J3QnlhZFVTRmNsMEp4dVV4M2p6?=
+ =?utf-8?B?WXVjNFlVd0FHV3dialpoWndWcGFZKzJyVWJMdGpsTCtsaGEwMG16by90NmRo?=
+ =?utf-8?Q?/UpO79kTTeNzo/pEXQOlqAsHr4jRbYrZ?=
+x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM3PPF208195D8D.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(921020)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0: =?utf-8?B?SUNWekN0Vml4YTB2Zm9DcXM2WTh3aXBxMGV3akJNSzVGWHNxSWQ5N29pUEE1?=
+ =?utf-8?B?KzRraFhQOHlXY2QwenVUcmNldmc5REdTcUlwcXlsYVFhKzUraUpHS01zVWRt?=
+ =?utf-8?B?anRxamhaVUlOVlJsQ3AxSEZGY29MbHRFKzV6RlZwOXB5R3FhTHA4emE0aUdW?=
+ =?utf-8?B?QjN4NFNEcjRaeUMxNWpFZFZLNGZXREtWeHM0UVRmQml0RkhXZjBNYm9jNmo0?=
+ =?utf-8?B?K3lNNTNGTnN2aExYWUVvSUVqOHlzT0Y0dHVILzhLekl4WXFWN2IrTldyVkNz?=
+ =?utf-8?B?UUpmYUx3c1hyS0d3QVhUUzQ0Nk56T2ZIcEJ1Y2Nscit1MHdkeTNqbEQ5dE4w?=
+ =?utf-8?B?ZTV2YlZ1QXFGcG1seWh0MTBBczcwQkU0OVRFLzRaQVRqWFRwcm5sbGF0Ung4?=
+ =?utf-8?B?Qm1heVJiaUhhTjlNbjRlTE9tR2VVeWFwZjJvTS83blRKWlJQOHpKQVR5Z2lw?=
+ =?utf-8?B?d21oa1k3RGJsWmhlZnZhK0V5anlJNGZwY2VLUWYwREpHeStnZnlqbEdsNDBx?=
+ =?utf-8?B?VEM4cWI1NHZrdThBTStGMVdlWVZvZVo1Y0ZrV2Q5QTVjQXZBOTVpUDRjWDhJ?=
+ =?utf-8?B?U1NwT2lDZ2lpcHR5a0dLakdQYVlYc0pCYW9qcXYvL3YyRDBYSTJvdTBTdlhv?=
+ =?utf-8?B?dTRlRWtpbXdZVHhEUG5WVjcrZlRyeC9vdXNPVFRhQ2FzdDdoUnk4enpjYW42?=
+ =?utf-8?B?MFZvQWgvVDhBUnhGc3N4WjA5T2VjeU1hamkyYnVGUng5ZW81U0xSMldyN3J1?=
+ =?utf-8?B?N3VOa0QvSmtmWm5GVkZGUEZFc3dEclZTRDBQTWFESDdMNno2VVJOdzBhdVJH?=
+ =?utf-8?B?MjMrL0MweVptRC90b2ExSTl2eDBqMEhmbHEyQlljNCtQLzJaSkJtOVY0K2gr?=
+ =?utf-8?B?cUljTHVoeHM0Tm1uU21mc0dSajQvR2lUWGlVaGdNeTc0VUQzVU5YM21RS1p2?=
+ =?utf-8?B?UXFUdmRNUjU3azNFeGs3U21qaGNpdVdWR3NHWWFPZTltQStKbmVmTjd2R2pO?=
+ =?utf-8?B?SmVnYjhTQnZOUFlWZFFZUnZUN0J6SFU0NXpOcnpBcnZkaGI1VFUvZ2Zyd011?=
+ =?utf-8?B?RS9wdVFOTjdZT0J4TVl5UkN1RnJmOWJ2a0E2bUN0VWZsRHYyUFg1Wmpqektv?=
+ =?utf-8?B?RUxaQ3hrdWxzWVRrMlpPVWNHVXgxRzBxaVl6NG11MEYxWXZvQkQyQjVOV2lv?=
+ =?utf-8?B?d3FEa1NxLzhVakl5MmxqTU1CL0J1dDFDVXJoT0dFOHc0ZU1kRVpqc1hUQjQ2?=
+ =?utf-8?B?V1h6U0lraG4xWkpVV3NrZDNTUFVVbkNGaGgrV3pORDl4TW1DRmdxOXRtZGxI?=
+ =?utf-8?B?dXdUcW14MyttNk5OOXE4MmhJVDgyZkZaRUp0YVNjRVVodll4QkxvY09ONnZr?=
+ =?utf-8?B?amw3WXFxd3dlQ2J3K05PSU5tN3pTc2FJeWswUWVDbkFTZDkxZ1pGdVhjakt6?=
+ =?utf-8?B?bXR4Q2F5VXpobWN3YzV5RSt0cFFEa24yZWxNbFBUV0JCcEdjWlo2VkxCci9v?=
+ =?utf-8?B?OXF2N09kSFR5SVF5YVZFb0kvQWdQQ0xXdGtZUDV0cjRRVGc0UEg0cWpHNFBL?=
+ =?utf-8?B?M0V5RDRZbTFVT0duOVVGdXlGdGQwbDhQMWNodFRUQkdoOWZ3WHlCNjZQNVZE?=
+ =?utf-8?B?VW1nLzlYRG14ZGF2LytxeUpXSFE3QndPSk5DeFZveEpZeGxuWTFwTW1hYXZ4?=
+ =?utf-8?B?dFNhVkdKTW9LTGtFMXEyRXlDdWREcWFIVWQxQmNCNmRqUkZENG5ZZDU4a3dZ?=
+ =?utf-8?B?NzlRalVSYlRVQXdaYnNIdVV0TUgwb01UWGwwanNMdWM3eHpjdFVneDhVVk9V?=
+ =?utf-8?B?UFVGeXlndVdhT3c0Z2cwNUxnODJTTExaUnE5V0VTZUpoa2ZST2RCSmtOL1ZF?=
+ =?utf-8?B?SmFxaG1rSE5ycGZINFZEenhHK3ZQVDBsRTdPVzRHZ1RPSjFrZS9oTExYUDVr?=
+ =?utf-8?B?R2tCZ29wUnZGVkNPRU5wTW5GZnljb2ppN2VMdVA3enEvYU1oQ2ZZWkNpcGdF?=
+ =?utf-8?B?R2M4ZXBaVVU0R2xDY1ZxVDZzaVRuUGkxb1RsN2lJMmNBb3ZJTW5MUEMxVnd0?=
+ =?utf-8?B?MjNHcDZlRjVaOEVVUVpJei9FWTZxcm5kNW15VmEwQXlZWWlEOFhUdkQ3bzFJ?=
+ =?utf-8?Q?W01cIqPdYVtCAq5NXC3eY5k1h?=
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-
-The following changes since commit 66db1d3cbdb0e89f8a3b5d06a8defb25d1c3f836:
-
-  PCI/pwrctrl: Add optional slot clock for PCI slots (2025-06-13 16:59:52 -0500)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git tags/pci-v6.17-changes
-
-for you to fetch changes up to 58d2b6b6b214d8b4914cd4c821a8bd0c75436c2c:
-
-  Merge branch 'pci/misc' (2025-07-31 16:12:19 -0500)
-
-This is based on v6.16-rc1, but you have 66db1d3cbdb0 ("PCI/pwrctrl: Add
-optional slot clock for PCI slots") already via 0dc89a25468e ("Merge tag
-'renesas-dts-for-v6.17-tag1' of https://git.kernel.org/pub/scm/linux/kernel/git/geert/renesas-devel into soc/dt")
-
-You should see a minor conflict in drivers/pci/pci.c between upstream
-commit:
-
-  907a7a2e5bf4 ("PCI/PM: Set up runtime PM even for devices without PCI PM")
-
-and this commit from the PCI tree:
-
-  5c0d0ee36f16 ("PCI: Support Immediate Readiness on devices without PM capabilities")
-
-My resolution (same as linux-next) is here:
-
-  https://git.kernel.org/cgit/linux/kernel/git/pci/pci.git/tree/drivers/pci/pci.c?id=7b76d8fd6a64#n3213
-
-Relative to the first pull request, this drops the pci/capability-search
-branch, which caused a regression on s390:
-https://lore.kernel.org/r/4e10bea3aa91ee721bb40e9388e8f72f930908fe.camel@linux.ibm.com
-
-----------------------------------------------------------------
-
-Enumeration:
-
-  - Allow built-in drivers, not just modular drivers, to use async initial
-    probing (Lukas Wunner)
-
-  - Support Immediate Readiness even on devices with no PM Capability (Sean
-    Christopherson)
-
-  - Consolidate definition of PCIE_RESET_CONFIG_WAIT_MS (100ms), the
-    required delay between a reset and sending config requests to a device
-    (Niklas Cassel)
-
-  - Add pci_is_display() to check for "Display" base class and use it in
-    ALSA hda, vfio, vga_switcheroo, vt-d (Mario Limonciello)
-
-  - Allow 'isolated PCI functions' (multi-function devices without a
-    function 0) for LoongArch, similar to s390 and jailhouse (Huacai Chen)
-
-Power control:
-
-  - Add ability to enable optional slot clock for cases where the PCIe host
-    controller and the slot are supplied by different clocks (Marek Vasut)
-
-PCIe native device hotplug:
-
-  - Fix runtime PM ref imbalance on Hot-Plug Capable ports caused by
-    misinterpreting a config read failure after a device has been removed
-    (Lukas Wunner)
-
-  - Avoid creating a useless PCIe port service device for pciehp if the
-    slot is handled by the ACPI hotplug driver (Lukas Wunner)
-
-  - Ignore ACPI hotplug slots when calculating depth of pciehp hotplug
-    ports (Lukas Wunner)
-
-Virtualization:
-
-  - Save VF resizable BAR state and restore it after reset (Michał
-    Winiarski)
-
-  - Allow IOV resources (VF BARs) to be resized (Michał Winiarski)
-
-  - Add pci_iov_vf_bar_set_size() so drivers can control VF BAR size
-    (Michał Winiarski)
-
-Endpoint framework:
-
-  - Add RC-to-EP doorbell support using platform MSI controller, including
-    a test case (Frank Li)
-
-  - Allow BAR assignment via configfs so platforms have flexibility in
-    determining BAR usage (Jerome Brunet)
-
-Native PCIe controller drivers:
-
-  - Convert amazon,al-alpine-v[23]-pcie, apm,xgene-pcie, axis,artpec6-pcie,
-    marvell,armada-3700-pcie, st,spear1340-pcie to DT schema format (Rob
-    Herring)
-
-  - Use dev_fwnode() instead of of_fwnode_handle() to remove OF dependency
-    in altera (fixes an unused variable), designware-host, mediatek,
-    mediatek-gen3, mobiveil, plda, xilinx, xilinx-dma, xilinx-nwl (Jiri
-    Slaby, Arnd Bergmann)
-
-  - Convert aardvark, altera, brcmstb, designware-host, iproc, mediatek,
-    mediatek-gen3, mobiveil, plda, rcar-host, vmd, xilinx, xilinx-dma,
-    xilinx-nwl from using pci_msi_create_irq_domain() to using
-    msi_create_parent_irq_domain() instead; this makes the interrupt
-    controller per-PCI device, allows dynamic allocation of vectors after
-    initialization, and allows support of IMS (Nam Cao)
-
-APM X-Gene PCIe controller driver:
-
-  - Rewrite MSI handling to MSI CPU affinity, drop useless CPU hotplug
-    bits, use device-managed memory allocations, and clean things up (Marc
-    Zyngier)
-
-  - Probe xgene-msi as a standard platform driver rather than a
-    subsys_initcall (Marc Zyngier)
-
-Broadcom STB PCIe controller driver:
-
-  - Add optional DT 'num-lanes' property and if present, use it to override
-    the Maximum Link Width advertised in Link Capabilities (Jim Quinlan)
-
-Cadence PCIe controller driver:
-
-  - Use PCIe Message routing types from the PCI core rather than defining
-    private ones (Hans Zhang)
-
-Freescale i.MX6 PCIe controller driver:
-
-  - Add IMX8MQ_EP third 64-bit BAR in epc_features (Richard Zhu)
-
-  - Add IMX8MM_EP and IMX8MP_EP fixed 256-byte BAR 4 in epc_features
-    (Richard Zhu)
-
-  - Configure LUT for MSI/IOMMU in Endpoint mode so Root Complex can
-    trigger doorbel on Endpoint (Frank Li)
-
-  - Remove apps_reset (LTSSM_EN) from
-    imx_pcie_{assert,deassert}_core_reset(), which fixes a hotplug
-    regression on i.MX8MM (Richard Zhu)
-
-  - Delay Endpoint link start until configfs 'start' written (Richard Zhu)
-
-Intel VMD host bridge driver:
-
-  - Add Intel Panther Lake (PTL)-H/P/U Vendor ID (George D Sworo)
-
-Qualcomm PCIe controller driver:
-
-  - Add DT binding and driver support for SA8255p, which supports ECAM for
-    Configuration Space access (Mayank Rana)
-
-  - Update DT binding and driver to describe PHYs and per-Root Port resets
-    in a Root Port stanza and deprecate describing them in the host bridge;
-    this makes it possible to support multiple Root Ports in the future
-    (Krishna Chaitanya Chundru)
-
-  - Add Qualcomm QCS615 to SM8150 DT binding (Ziyue Zhang)
-
-  - Add Qualcomm QCS8300 to SA8775p DT binding (Ziyue Zhang)
-
-  - Drop TBU and ref clocks from Qualcomm SM8150 and SC8180x DT bindings
-    (Konrad Dybcio)
-
-  - Document 'link_down' reset in Qualcomm SA8775P DT binding (Ziyue Zhang)
-
-  - Add required PCIE_RESET_CONFIG_WAIT_MS delay after Link up IRQ (Niklas
-    Cassel)
-
-Rockchip PCIe controller driver:
-
-  - Drop unused PCIe Message routing and code definitions (Hans Zhang)
-
-  - Remove several unused header includes (Hans Zhang)
-
-  - Use standard PCIe config register definitions instead of
-    rockchip-specific redefinitions (Geraldo Nascimento)
-
-  - Set Target Link Speed to 5.0 GT/s before retraining so we have a chance
-    to train at a higher speed (Geraldo Nascimento)
-
-Rockchip DesignWare PCIe controller driver:
-
-  - Prevent race between link training and register update via DBI by
-    inhibiting link training after hot reset and link down (Wilfred
-    Mallawa)
-
-  - Add required PCIE_RESET_CONFIG_WAIT_MS delay after Link up IRQ (Niklas
-    Cassel)
-
-Sophgo PCIe controller driver:
-
-  - Add DT binding and driver for Sophgo SG2044 PCIe controller driver in
-    Root Complex mode (Inochi Amaoto)
-
-Synopsys DesignWare PCIe controller driver:
-
-  - Add required PCIE_RESET_CONFIG_WAIT_MS after waiting for Link up on
-    Ports that support > 5.0 GT/s.  Slower Ports still rely on the
-    not-quite-correct PCIE_LINK_WAIT_SLEEP_MS 90ms default delay while
-    waiting for the Link (Niklas Cassel)
-
-----------------------------------------------------------------
-Akshay Jindal (1):
-      PCI/AER: Add message when AER_MAX_MULTI_ERR_DEVICES limit is hit
-
-Bartosz Golaszewski (1):
-      PCI/pwrctrl: Fix the kerneldoc tag for private fields
-
-Bjorn Helgaas (28):
-      PCI: Fix typos
-      Merge branch 'pci/aer'
-      Merge branch 'pci/aspm'
-      Merge branch 'pci/boot-display'
-      Merge branch 'pci/enumeration'
-      Merge branch 'pci/hotplug'
-      Merge branch 'pci/iommu'
-      Merge branch 'pci/pwrctrl'
-      Merge branch 'pci/resources'
-      Merge branch 'pci/dt-bindings'
-      Merge branch 'pci/endpoint/core'
-      Merge branch 'pci/endpoint/doorbell'
-      Merge branch 'pci/endpoint/epf-vntb'
-      Merge branch 'pci/controller/msi-parent'
-      Merge branch 'pci/controller/linkup-fix'
-      Merge branch 'pci/controller/brcmstb'
-      Merge branch 'pci/controller/cadence'
-      Merge branch 'pci/controller/dwc'
-      Merge branch 'pci/controller/dw-rockchip'
-      Merge branch 'pci/controller/imx6'
-      Merge branch 'pci/controller/mvebu'
-      Merge branch 'pci/controller/qcom'
-      Merge branch 'pci/controller/rockchip'
-      Merge branch 'pci/controller/rockchip-host'
-      Merge branch 'pci/controller/sophgo'
-      Merge branch 'pci/controller/vmd'
-      Merge branch 'pci/controller/xgene'
-      Merge branch 'pci/misc'
-
-Damien Le Moal (2):
-      PCI: endpoint: Fix configfs group list head handling
-      PCI: endpoint: Fix configfs group removal on driver teardown
-
-Florian Fainelli (2):
-      MAINTAINERS: Drop Nicolas from maintaining pcie-brcmstb
-      PCI: brcmstb: Replace open coded value with PCIE_T_RRS_READY_MS
-
-Frank Li (8):
-      PCI: imx6: Add helper function imx_pcie_add_lut_by_rid()
-      PCI: imx6: Add LUT configuration for MSI/IOMMU in Endpoint mode
-      PCI: endpoint: Add RC-to-EP doorbell support using platform MSI controller
-      PCI: endpoint: pci-ep-msi: Add checks for MSI parent and mutability
-      PCI: endpoint: Add pci_epf_align_inbound_addr() helper for inbound address alignment
-      PCI: endpoint: pci-epf-test: Add doorbell test support
-      misc: pci_endpoint_test: Add doorbell test case
-      selftests: pci_endpoint: Add doorbell test case
-
-George D Sworo (1):
-      PCI: vmd: Add VMD Device ID Support for Panther Lake (PTL)-H/P/U
-
-Geraldo Nascimento (2):
-      PCI: rockchip: Use standard PCIe definitions
-      PCI: rockchip: Set Target Link Speed to 5.0 GT/s before retraining
-
-Guilherme Giacomo Simoes (1):
-      PCI: hotplug: Remove TODO about unused .get_power(), .hardware_test()
-
-Hans Zhang (10):
-      PCI: rockchip-host: Fix "Unexpected Completion" log message
-      PCI: rockchip-host: Correct non-fatal error log message
-      PCI: rockchip-host: Remove unused header includes
-      dt-bindings: PCI: pci-ep: Extend max-link-speed to PCIe Gen5/Gen6
-      PCI/ASPM: Use boolean type for aspm_disabled and aspm_force
-      PCI/ASPM: Consolidate variable declaration and initialization
-      PCI/AER: Use bool for AER disable state tracking
-      PCI: cadence: Replace private message routing enums with PCI core definitions
-      PCI: rockchip: Remove redundant PCIe message routing definitions
-      PCI: dwc: Simplify the return value of PTM debugfs functions returning bool
-
-Huacai Chen (1):
-      PCI: Extend isolated function probing to LoongArch
-
-Inochi Amaoto (2):
-      dt-bindings: pci: Add Sophgo SG2044 PCIe host
-      PCI: dwc: Add Sophgo SG2044 PCIe controller driver in Root Complex mode
-
-Jerome Brunet (3):
-      PCI: endpoint: pci-epf-vntb: Return -ENOENT if pci_epc_get_next_free_bar() fails
-      PCI: endpoint: pci-epf-vntb: Align MW naming with config names
-      PCI: endpoint: pci-epf-vntb: Allow BAR assignment via configfs
-
-Jim Quinlan (2):
-      dt-bindings: PCI: brcm,stb-pcie: Add num-lanes property
-      PCI: brcmstb: Set MLW based on "num-lanes" DT property if present
-
-Jiri Slaby (SUSE) (1):
-      PCI: controller: Use dev_fwnode() instead of of_fwnode_handle()
-
-Jiwei Sun (2):
-      PCI: Fix link speed calculation on retrain failure
-      PCI: Adjust the position of reading the Link Control 2 register
-
-Konrad Dybcio (2):
-      dt-bindings: PCI: qcom,pcie-sc8180x: Drop unrelated clocks from PCIe hosts
-      dt-bindings: PCI: qcom,pcie-sm8150: Drop unrelated clocks from PCIe hosts
-
-Krishna Chaitanya Chundru (2):
-      dt-bindings: PCI: qcom: Move PHY & reset GPIO to Root Port node
-      PCI: qcom: Add support for parsing the new Root Port binding
-
-Lukas Wunner (5):
-      PCI: Allow built-in drivers to use async initial probing
-      PCI/ACPI: Fix runtime PM ref imbalance on Hot-Plug Capable ports
-      PCI/portdrv: Use is_pciehp instead of is_hotplug_bridge
-      PCI: pciehp: Use is_pciehp instead of is_hotplug_bridge
-      PCI: Move is_pciehp check out of pciehp_is_native()
-
-Manivannan Sadhasivam (2):
-      PCI: dwc: Make dw_pcie_ptm_ops static
-      PCI: endpoint: pci-epf-vntb: Fix the incorrect usage of __iomem attribute
-
-Marc Zyngier (13):
-      genirq: Teach handle_simple_irq() to resend an in-progress interrupt
-      PCI: xgene: Defer probing if the MSI widget driver hasn't probed yet
-      PCI: xgene: Drop useless conditional compilation
-      PCI: xgene: Drop XGENE_PCIE_IP_VER_UNKN
-      PCI: xgene-msi: Make per-CPU interrupt setup robust
-      PCI: xgene-msi: Drop superfluous fields from xgene_msi structure
-      PCI: xgene-msi: Use device-managed memory allocations
-      PCI: xgene-msi: Get rid of intermediate tracking structure
-      PCI: xgene-msi: Sanitise MSI allocation and affinity setting
-      PCI: xgene-msi: Resend an MSI racing with itself on a different CPU
-      PCI: xgene-msi: Probe as a standard platform driver
-      PCI: xgene-msi: Restructure handler setup/teardown
-      cpu/hotplug: Remove unused cpuhp_state CPUHP_PCI_XGENE_DEAD
-
-Mario Limonciello (5):
-      PCI: Add pci_is_display() to check if device is a display controller
-      vfio/pci: Use pci_is_display()
-      vga_switcheroo: Use pci_is_display()
-      iommu/vt-d: Use pci_is_display()
-      ALSA: hda: Use pci_is_display()
-
-Mayank Rana (4):
-      PCI: dwc: Export DWC MSI controller related APIs
-      PCI: host-generic: Rename and export gen_pci_init() for PCIe controller drivers
-      dt-bindings: PCI: qcom,pcie-sa8255p: Document ECAM compliant PCIe root complex
-      PCI: qcom: Add support for Qualcomm SA8255p based PCIe Root Complex
-
-Michał Winiarski (5):
-      PCI/IOV: Restore VF resizable BAR state after reset
-      PCI/IOV: Add pci_resource_num_to_vf_bar() to convert VF BAR number to/from IOV resource
-      PCI/IOV: Allow IOV resources to be resized in pci_resize_resource()
-      PCI/IOV: Check that VF BAR fits within the reservation
-      PCI/IOV: Allow drivers to control VF BAR size
-
-Nam Cao (15):
-      PCI: dwc: Switch to msi_create_parent_irq_domain()
-      PCI: mobiveil: Switch to msi_create_parent_irq_domain()
-      PCI: aardvark: Switch to msi_create_parent_irq_domain()
-      PCI: altera-msi: Switch to msi_create_parent_irq_domain()
-      PCI: brcmstb: Switch to msi_create_parent_irq_domain()
-      PCI: iproc: Switch to msi_create_parent_irq_domain()
-      PCI: mediatek-gen3: Switch to msi_create_parent_irq_domain()
-      PCI: mediatek: Switch to msi_create_parent_irq_domain()
-      PCI: rcar-host: Switch to msi_create_parent_irq_domain()
-      PCI: xilinx-xdma: Switch to msi_create_parent_irq_domain()
-      PCI: xilinx-nwl: Switch to msi_create_parent_irq_domain()
-      PCI: xilinx: Switch to msi_create_parent_irq_domain()
-      PCI: plda: Switch to msi_create_parent_irq_domain()
-      PCI: vmd: Convert to lock guards
-      PCI: vmd: Switch to msi_create_parent_irq_domain()
-
-Niklas Cassel (6):
-      PCI: Rename PCIE_RESET_CONFIG_DEVICE_WAIT_MS to PCIE_RESET_CONFIG_WAIT_MS
-      PCI: rockchip-host: Use macro PCIE_RESET_CONFIG_WAIT_MS
-      PCI: dw-rockchip: Wait PCIE_RESET_CONFIG_WAIT_MS after link-up IRQ
-      PCI: qcom: Wait PCIE_RESET_CONFIG_WAIT_MS after link-up IRQ
-      PCI: dwc: Ensure that dw_pcie_wait_for_link() waits 100 ms after link up
-      PCI: Move link up wait time and max retries macros to pci.h
-
-Richard Zhu (4):
-      PCI: imx6: Add IMX8MQ_EP third 64-bit BAR in epc_features
-      PCI: imx6: Add IMX8MM_EP and IMX8MP_EP fixed 256-byte BAR 4 in epc_features
-      PCI: imx6: Remove apps_reset toggling from imx_pcie_{assert/deassert}_core_reset
-      PCI: imx6: Delay link start until configfs 'start' written
-
-Rob Herring (Arm) (6):
-      dt-bindings: PCI: Convert st,spear1340-pcie to DT schema
-      dt-bindings: PCI: Convert axis,artpec6-pcie to DT schema
-      dt-bindings: PCI: Convert apm,xgene-pcie to DT schema
-      dt-bindings: PCI: Convert marvell,armada-3700-pcie to DT schema
-      dt-bindings: PCI: Convert amazon,al-alpine-v[23]-pcie to DT schema
-      dt-bindings: PCI: Remove 83xx-512x-pci.txt
-
-Robin Murphy (1):
-      PCI: Fix driver_managed_dma check
-
-Salah Triki (1):
-      PCI: mvebu: Use devm_add_action_or_reset() instead of devm_add_action()
-
-Sean Christopherson (1):
-      PCI: Support Immediate Readiness on devices without PM capabilities
-
-Wilfred Mallawa (1):
-      PCI: dw-rockchip: Delay link training after hot reset in EP mode
-
-Ziyue Zhang (3):
-      dt-bindings: PCI: qcom,pcie-sm8150: Document QCS615
-      dt-bindings: PCI: qcom,pcie-sa8775p: Document QCS8300
-      dt-bindings: PCI: qcom,pcie-sa8775p: Document 'link_down' reset
-
- Documentation/PCI/endpoint/pci-test-howto.rst      |  15 +
- .../devicetree/bindings/pci/83xx-512x-pci.txt      |  39 --
- .../devicetree/bindings/pci/aardvark-pci.txt       |  59 ---
- .../bindings/pci/amazon,al-alpine-v3-pcie.yaml     |  71 ++++
- .../devicetree/bindings/pci/apm,xgene-pcie.yaml    |  84 ++++
- .../devicetree/bindings/pci/axis,artpec6-pcie.txt  |  50 ---
- .../devicetree/bindings/pci/axis,artpec6-pcie.yaml | 118 ++++++
- .../devicetree/bindings/pci/brcm,stb-pcie.yaml     |   4 +
- .../bindings/pci/marvell,armada-3700-pcie.yaml     |  99 +++++
- Documentation/devicetree/bindings/pci/pci-ep.yaml  |   2 +-
- Documentation/devicetree/bindings/pci/pcie-al.txt  |  46 ---
- .../devicetree/bindings/pci/qcom,pcie-common.yaml  |  32 +-
- .../devicetree/bindings/pci/qcom,pcie-sa8255p.yaml | 122 ++++++
- .../devicetree/bindings/pci/qcom,pcie-sa8775p.yaml |  18 +-
- .../devicetree/bindings/pci/qcom,pcie-sc7280.yaml  |  16 +-
- .../devicetree/bindings/pci/qcom,pcie-sc8180x.yaml |  14 +-
- .../devicetree/bindings/pci/qcom,pcie-sm8150.yaml  |  21 +-
- .../devicetree/bindings/pci/snps,dw-pcie.yaml      |   2 +-
- .../bindings/pci/sophgo,sg2044-pcie.yaml           | 122 ++++++
- .../devicetree/bindings/pci/spear13xx-pcie.txt     |  14 -
- .../devicetree/bindings/pci/st,spear1340-pcie.yaml |  45 +++
- .../devicetree/bindings/pci/xgene-pci.txt          |  50 ---
- MAINTAINERS                                        |   7 +-
- drivers/gpu/vga/vga_switcheroo.c                   |   2 +-
- drivers/iommu/intel/iommu.c                        |   2 +-
- drivers/misc/pci_endpoint_test.c                   |  83 ++++
- drivers/pci/bus.c                                  |   5 +-
- drivers/pci/controller/Kconfig                     |  11 +
- drivers/pci/controller/cadence/pcie-cadence-ep.c   |   2 +-
- drivers/pci/controller/cadence/pcie-cadence.h      |  20 -
- drivers/pci/controller/dwc/Kconfig                 |  12 +
- drivers/pci/controller/dwc/Makefile                |   1 +
- drivers/pci/controller/dwc/pci-imx6.c              |  40 +-
- .../pci/controller/dwc/pcie-designware-debugfs.c   |  16 +-
- drivers/pci/controller/dwc/pcie-designware-host.c  | 103 ++---
- drivers/pci/controller/dwc/pcie-designware.c       |  14 +-
- drivers/pci/controller/dwc/pcie-designware.h       |  19 +-
- drivers/pci/controller/dwc/pcie-dw-rockchip.c      |  16 +-
- drivers/pci/controller/dwc/pcie-qcom.c             | 327 ++++++++++++++--
- drivers/pci/controller/dwc/pcie-sophgo.c           | 257 +++++++++++++
- drivers/pci/controller/mobiveil/Kconfig            |   1 +
- .../pci/controller/mobiveil/pcie-mobiveil-host.c   |  48 +--
- drivers/pci/controller/mobiveil/pcie-mobiveil.h    |   1 -
- drivers/pci/controller/pci-aardvark.c              |  57 ++-
- drivers/pci/controller/pci-host-common.c           |   5 +-
- drivers/pci/controller/pci-host-common.h           |   2 +
- drivers/pci/controller/pci-mvebu.c                 |   6 +-
- drivers/pci/controller/pci-xgene-msi.c             | 426 ++++++++-------------
- drivers/pci/controller/pci-xgene.c                 |  33 +-
- drivers/pci/controller/pcie-altera-msi.c           |  43 +--
- drivers/pci/controller/pcie-altera.c               |   3 +-
- drivers/pci/controller/pcie-brcmstb.c              |  80 ++--
- drivers/pci/controller/pcie-iproc-msi.c            |  44 +--
- drivers/pci/controller/pcie-mediatek-gen3.c        |  64 ++--
- drivers/pci/controller/pcie-mediatek.c             |  48 ++-
- drivers/pci/controller/pcie-rcar-host.c            |  68 ++--
- drivers/pci/controller/pcie-rockchip-ep.c          |   4 +-
- drivers/pci/controller/pcie-rockchip-host.c        |  64 ++--
- drivers/pci/controller/pcie-rockchip.h             |  26 +-
- drivers/pci/controller/pcie-xilinx-dma-pl.c        |  47 +--
- drivers/pci/controller/pcie-xilinx-nwl.c           |  44 +--
- drivers/pci/controller/pcie-xilinx.c               |  54 +--
- drivers/pci/controller/plda/Kconfig                |   1 +
- drivers/pci/controller/plda/pcie-plda-host.c       |  43 +--
- drivers/pci/controller/plda/pcie-plda.h            |   1 -
- drivers/pci/controller/plda/pcie-starfive.c        |   2 +-
- drivers/pci/controller/vmd.c                       | 249 ++++++------
- drivers/pci/endpoint/Kconfig                       |   8 +
- drivers/pci/endpoint/Makefile                      |   1 +
- drivers/pci/endpoint/functions/pci-epf-test.c      | 130 +++++++
- drivers/pci/endpoint/functions/pci-epf-vntb.c      | 144 ++++++-
- drivers/pci/endpoint/pci-ep-cfs.c                  |   1 +
- drivers/pci/endpoint/pci-ep-msi.c                  | 100 +++++
- drivers/pci/endpoint/pci-epf-core.c                |  40 +-
- drivers/pci/hotplug/TODO                           |   4 -
- drivers/pci/hotplug/pciehp_hpc.c                   |   2 +-
- drivers/pci/iov.c                                  | 153 +++++++-
- drivers/pci/msi/msi.c                              |   2 +-
- drivers/pci/pci-acpi.c                             |   7 +-
- drivers/pci/pci-driver.c                           |   6 +-
- drivers/pci/pci.c                                  |  30 +-
- drivers/pci/pci.h                                  |  84 +++-
- drivers/pci/pcie/aer.c                             |   7 +-
- drivers/pci/pcie/aspm.c                            |  11 +-
- drivers/pci/pcie/portdrv.c                         |   2 +-
- drivers/pci/pcie/ptm.c                             |   2 +-
- drivers/pci/probe.c                                |  12 +-
- drivers/pci/quirks.c                               |   6 +-
- drivers/pci/setup-bus.c                            |   3 +-
- drivers/pci/setup-res.c                            |  35 +-
- drivers/vfio/pci/vfio_pci_igd.c                    |   3 +-
- include/linux/cpuhotplug.h                         |   1 -
- include/linux/hypervisor.h                         |   3 +
- include/linux/pci-ep-msi.h                         |  28 ++
- include/linux/pci-epf.h                            |  18 +
- include/linux/pci-pwrctrl.h                        |   2 +-
- include/linux/pci.h                                |  27 ++
- include/linux/pci_hotplug.h                        |   3 +-
- include/uapi/linux/pci_regs.h                      |   9 +
- include/uapi/linux/pcitest.h                       |   1 +
- kernel/irq/chip.c                                  |   8 +-
- sound/hda/hdac_i915.c                              |   2 +-
- sound/pci/hda/hda_intel.c                          |   4 +-
- .../selftests/pci_endpoint/pci_endpoint_test.c     |  28 ++
- 104 files changed, 2996 insertions(+), 1375 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/pci/83xx-512x-pci.txt
- delete mode 100644 Documentation/devicetree/bindings/pci/aardvark-pci.txt
- create mode 100644 Documentation/devicetree/bindings/pci/amazon,al-alpine-v3-pcie.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/apm,xgene-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/axis,artpec6-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/axis,artpec6-pcie.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/marvell,armada-3700-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/pcie-al.txt
- create mode 100644 Documentation/devicetree/bindings/pci/qcom,pcie-sa8255p.yaml
- create mode 100644 Documentation/devicetree/bindings/pci/sophgo,sg2044-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/spear13xx-pcie.txt
- create mode 100644 Documentation/devicetree/bindings/pci/st,spear1340-pcie.yaml
- delete mode 100644 Documentation/devicetree/bindings/pci/xgene-pci.txt
- create mode 100644 drivers/pci/controller/dwc/pcie-sophgo.c
- create mode 100644 drivers/pci/endpoint/pci-ep-msi.c
- create mode 100644 include/linux/pci-ep-msi.h
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: DM3PPF208195D8D.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4a5ec1d0-41f8-4e94-6359-08ddd106f175
+X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 14:23:10.7211
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: btvoxaga5/hlo91o5YH6QYfNp46ujQF3BsipvzssQ6mIfVFazhUVSqLcCJo90QPZzVime1wHegsmlZImPAu2FA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6966
+X-OriginatorOrg: intel.com
+
+PiBTdWJqZWN0OiBSZTogW1BBVENIIDgvOF0gZHJtOiB3cml0ZWJhY2s6IHJlbmFtZQ0KPiBkcm1f
+d3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2RlcigpDQoNClNhbWUgaGVyZSBkcm0v
+d3JpdGViYWNrDQoNClJlZ2FyZHMsDQpTdXJhaiBLYW5kcGFsDQoNCj4gDQo+IA0KPiANCj4gTGUg
+MDEvMDgvMjAyNSDDoCAxNTo1MSwgRG1pdHJ5IEJhcnlzaGtvdiBhIMOpY3JpdMKgOg0KPiA+IFJl
+bmFtZSBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2RlcigpIHRvDQo+ID4g
+ZHJtX3dyaXRlYmFja19jb25uZWN0b3JfaW5pdCgpIGFuZCBhZGFwdCBpdHMgaW50ZXJmYWNlIHRv
+IGZvbGxvdw0KPiA+IGRybW1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0KCkuDQo+ID4NCj4gPiBT
+aWduZWQtb2ZmLWJ5OiBEbWl0cnkgQmFyeXNoa292IDxkbWl0cnkuYmFyeXNoa292QG9zcy5xdWFs
+Y29tbS5jb20+DQo+ID4gLS0tDQo+ID4gICBkcml2ZXJzL2dwdS9kcm0vZHJtX3dyaXRlYmFjay5j
+IHwgMTQgKysrKysrKy0tLS0tLS0NCj4gPiAgIGluY2x1ZGUvZHJtL2RybV93cml0ZWJhY2suaCAg
+ICAgfCAxMCArKysrKy0tLS0tDQo+ID4gICAyIGZpbGVzIGNoYW5nZWQsIDEyIGluc2VydGlvbnMo
+KyksIDEyIGRlbGV0aW9ucygtKQ0KPiA+DQo+ID4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvZ3B1L2Ry
+bS9kcm1fd3JpdGViYWNrLmMNCj4gPiBiL2RyaXZlcnMvZ3B1L2RybS9kcm1fd3JpdGViYWNrLmMg
+aW5kZXgNCj4gPg0KPiAxYTAxZGY5MWIyYzU4NjhlMTU4ZDQ4OWI3ODJmNGM1N2M2MWEyNzJjLi5l
+YzI1NzVjNGMyMWI3NDQ5NzA3YjA1OTUzDQo+IDIyZQ0KPiA+IDIyMDJhMGNmOTg2NSAxMDA2NDQN
+Cj4gPiAtLS0gYS9kcml2ZXJzL2dwdS9kcm0vZHJtX3dyaXRlYmFjay5jDQo+ID4gKysrIGIvZHJp
+dmVycy9ncHUvZHJtL2RybV93cml0ZWJhY2suYw0KPiA+IEBAIC0yMzUsNyArMjM1LDcgQEAgc3Rh
+dGljIGludCBfX2RybV93cml0ZWJhY2tfY29ubmVjdG9yX2luaXQoc3RydWN0DQo+IGRybV9kZXZp
+Y2UgKmRldiwNCj4gPiAgIH0NCj4gPg0KPiA+ICAgLyoqDQo+ID4gLSAqIGRybV93cml0ZWJhY2tf
+Y29ubmVjdG9yX2luaXRfd2l0aF9lbmNvZGVyIC0gSW5pdGlhbGl6ZSBhIHdyaXRlYmFjaw0KPiA+
+IGNvbm5lY3RvciB3aXRoDQo+ID4gKyAqIGRybV93cml0ZWJhY2tfY29ubmVjdG9yX2luaXQgLSBJ
+bml0aWFsaXplIGEgd3JpdGViYWNrIGNvbm5lY3Rvcg0KPiA+ICsgd2l0aA0KPiA+ICAgICogYSBj
+dXN0b20gZW5jb2Rlcg0KPiANCj4gSWYgSSB1bmRlcnN0b29kIGNvcnJlY3RseSB5b3VyIHNlcmll
+cyB5b3Ugd2FudCB0byByZWR1Y2UgdGhlIHVzYWdlIG9mIG5vbi0NCj4gZHJtbSB3cml0ZWJhY2ss
+IHNvIG1heWJlIHdlIGNhbiBhZGQgYSBjb21tZW50IHRvIGRpcmVjdCBwb2VwbGUgdG8gZHJtbQ0K
+PiB2YXJpYW50IHRvIGF2b2lkIG5ldyB1c2FnZSBvZiB0aGlzIEFQST8NCj4gDQo+IFdpdGggb3Ig
+d2l0aG91dCB0aGlzOg0KPiANCj4gUmV2aWV3ZWQtYnk6IExvdWlzIENoYXV2ZXQgPGxvdWlzLmNo
+YXV2ZXRAYm9vdGxpbi5jb20+DQo+IA0KPiA+ICAgICoNCj4gPiAgICAqIEBkZXY6IERSTSBkZXZp
+Y2UNCj4gPiBAQCAtMjYzLDExICsyNjMsMTEgQEAgc3RhdGljIGludCBfX2RybV93cml0ZWJhY2tf
+Y29ubmVjdG9yX2luaXQoc3RydWN0DQo+IGRybV9kZXZpY2UgKmRldiwNCj4gPiAgICAqDQo+ID4g
+ICAgKiBSZXR1cm5zOiAwIG9uIHN1Y2Nlc3MsIG9yIGEgbmVnYXRpdmUgZXJyb3IgY29kZQ0KPiA+
+ICAgICovDQo+ID4gLWludCBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2Rl
+cihzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KPiA+IC0JCQkJCSAgICAgIHN0cnVjdCBkcm1fd3Jp
+dGViYWNrX2Nvbm5lY3Rvcg0KPiAqd2JfY29ubmVjdG9yLA0KPiA+IC0JCQkJCSAgICAgIHN0cnVj
+dCBkcm1fZW5jb2RlciAqZW5jLA0KPiA+IC0JCQkJCSAgICAgIGNvbnN0IHN0cnVjdCBkcm1fY29u
+bmVjdG9yX2Z1bmNzDQo+ICpjb25fZnVuY3MsDQo+ID4gLQkJCQkJICAgICAgY29uc3QgdTMyICpm
+b3JtYXRzLCBpbnQgbl9mb3JtYXRzKQ0KPiA+ICtpbnQgZHJtX3dyaXRlYmFja19jb25uZWN0b3Jf
+aW5pdChzdHJ1Y3QgZHJtX2RldmljZSAqZGV2LA0KPiA+ICsJCQkJIHN0cnVjdCBkcm1fd3JpdGVi
+YWNrX2Nvbm5lY3Rvcg0KPiAqd2JfY29ubmVjdG9yLA0KPiA+ICsJCQkJIGNvbnN0IHN0cnVjdCBk
+cm1fY29ubmVjdG9yX2Z1bmNzDQo+ICpjb25fZnVuY3MsDQo+ID4gKwkJCQkgc3RydWN0IGRybV9l
+bmNvZGVyICplbmMsDQo+ID4gKwkJCQkgY29uc3QgdTMyICpmb3JtYXRzLCBpbnQgbl9mb3JtYXRz
+KQ0KPiA+ICAgew0KPiA+ICAgCXN0cnVjdCBkcm1fY29ubmVjdG9yICpjb25uZWN0b3IgPSAmd2Jf
+Y29ubmVjdG9yLT5iYXNlOw0KPiA+ICAgCWludCByZXQ7DQo+ID4gQEAgLTI4NCw3ICsyODQsNyBA
+QCBpbnQNCj4gPiBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2RlcihzdHJ1
+Y3QgZHJtX2RldmljZSAqZGV2LA0KPiA+DQo+ID4gICAJcmV0dXJuIHJldDsNCj4gPiAgIH0NCj4g
+PiAtRVhQT1JUX1NZTUJPTChkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcl9pbml0X3dpdGhfZW5jb2Rl
+cik7DQo+ID4gK0VYUE9SVF9TWU1CT0woZHJtX3dyaXRlYmFja19jb25uZWN0b3JfaW5pdCk7DQo+
+ID4NCj4gPiAgIC8qKg0KPiA+ICAgICogZHJtX3dyaXRlYmFja19jb25uZWN0b3JfY2xlYW51cCAt
+IENsZWFudXAgdGhlIHdyaXRlYmFjayBjb25uZWN0b3INCj4gPiBkaWZmIC0tZ2l0IGEvaW5jbHVk
+ZS9kcm0vZHJtX3dyaXRlYmFjay5oIGIvaW5jbHVkZS9kcm0vZHJtX3dyaXRlYmFjay5oDQo+ID4g
+aW5kZXgNCj4gPg0KPiA4NzljYTEwMzMyMGNjMjI1ZmZiMzY4NzQxOTA4ODM2MTMxNTUzNWZjLi45
+NTg0NjZhMDVlNjA0YjM4NzcyMjYxMGZjMQ0KPiAxZg0KPiA+IDllODQxMzE2ZDIxYiAxMDA2NDQN
+Cj4gPiAtLS0gYS9pbmNsdWRlL2RybS9kcm1fd3JpdGViYWNrLmgNCj4gPiArKysgYi9pbmNsdWRl
+L2RybS9kcm1fd3JpdGViYWNrLmgNCj4gPiBAQCAtMTM3LDExICsxMzcsMTEgQEAgZHJtX2Nvbm5l
+Y3Rvcl90b193cml0ZWJhY2soc3RydWN0DQo+IGRybV9jb25uZWN0b3IgKmNvbm5lY3RvcikNCj4g
+PiAgIAlyZXR1cm4gY29udGFpbmVyX29mKGNvbm5lY3Rvciwgc3RydWN0IGRybV93cml0ZWJhY2tf
+Y29ubmVjdG9yLCBiYXNlKTsNCj4gPiAgIH0NCj4gPg0KPiA+IC1pbnQgZHJtX3dyaXRlYmFja19j
+b25uZWN0b3JfaW5pdF93aXRoX2VuY29kZXIoc3RydWN0IGRybV9kZXZpY2UgKmRldiwNCj4gPiAt
+CQkJCXN0cnVjdCBkcm1fd3JpdGViYWNrX2Nvbm5lY3Rvcg0KPiAqd2JfY29ubmVjdG9yLA0KPiA+
+IC0JCQkJc3RydWN0IGRybV9lbmNvZGVyICplbmMsDQo+ID4gLQkJCQljb25zdCBzdHJ1Y3QgZHJt
+X2Nvbm5lY3Rvcl9mdW5jcw0KPiAqY29uX2Z1bmNzLCBjb25zdCB1MzIgKmZvcm1hdHMsDQo+ID4g
+LQkJCQlpbnQgbl9mb3JtYXRzKTsNCj4gPiAraW50IGRybV93cml0ZWJhY2tfY29ubmVjdG9yX2lu
+aXQoc3RydWN0IGRybV9kZXZpY2UgKmRldiwNCj4gPiArCQkJCSBzdHJ1Y3QgZHJtX3dyaXRlYmFj
+a19jb25uZWN0b3INCj4gKndiX2Nvbm5lY3RvciwNCj4gPiArCQkJCSBjb25zdCBzdHJ1Y3QgZHJt
+X2Nvbm5lY3Rvcl9mdW5jcw0KPiAqY29uX2Z1bmNzLA0KPiA+ICsJCQkJIHN0cnVjdCBkcm1fZW5j
+b2RlciAqZW5jLA0KPiA+ICsJCQkJIGNvbnN0IHUzMiAqZm9ybWF0cywgaW50IG5fZm9ybWF0cyk7
+DQo+ID4NCj4gPiAgIGludCBkcm1tX3dyaXRlYmFja19jb25uZWN0b3JfaW5pdChzdHJ1Y3QgZHJt
+X2RldmljZSAqZGV2LA0KPiA+ICAgCQkJCSAgc3RydWN0IGRybV93cml0ZWJhY2tfY29ubmVjdG9y
+DQo+ICp3Yl9jb25uZWN0b3IsDQo+ID4NCj4gDQo+IC0tDQo+IExvdWlzIENoYXV2ZXQsIEJvb3Rs
+aW4NCj4gRW1iZWRkZWQgTGludXggYW5kIEtlcm5lbCBlbmdpbmVlcmluZw0KPiBodHRwczovL2Jv
+b3RsaW4uY29tDQoNCg==
 
