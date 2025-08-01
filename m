@@ -1,117 +1,236 @@
-Return-Path: <linux-kernel+bounces-752939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752940-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10143B17CBC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:02:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C3BEB17CC6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:07:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 758A66241BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:02:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC2E61C27071
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9F814A60F;
-	Fri,  1 Aug 2025 06:02:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28EF01F3B8A;
+	Fri,  1 Aug 2025 06:07:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="yFYtcW0H"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GOZ1PnGs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1617B1E3DFE
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 06:02:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6B6C933987;
+	Fri,  1 Aug 2025 06:07:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754028160; cv=none; b=lD3iVHuH9N6d8fhkbt1GDxrHYJ8v7xWBAR5FI/ixmoFXR6sLiX+o+Wkf6hMn4USfC7gab7+oD475IfWEm5qy9kc/C0kos17+xOVeS+L28gNmWzz3ym479kIpYHDFpiQjMTt8iz6rlWogCBG5DlB92aqPc1qwoohSgG8ClxrH/JY=
+	t=1754028468; cv=none; b=PI8PxhiBpJtyj3Yg0H3emAGWS1Z0F20PNIUc66XMnN7gCDef9QJoF9te01w4LvGEQ72XiuK9oE/uHNE9+C+0Nsmxezb7WOl4iU5BfPRy8qY2F8F/VIKgTBgzFAgHss7or5H72KQ6OyWjlfjL67sCVpWnFZdeBi+bUl+VYobYizo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754028160; c=relaxed/simple;
-	bh=//2vQw+cUbGbrW44zq/SOMI+CYziL7FvtoNZUM7AIYQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ksKiZd4l4vYVK1xS7yOo4xkbBAqXqtLdM75nP/Cx0lMtpxpBWc3mx8yFmxuTtnJgh9mRf0d/gq63/sCNDbhR0CO10MmcblBrkqRHRYhJyO+v0LLtM5B2LfLcOO95IVv/xpHK0hjCUYM5bcldEpv1QgkzthRVhOpzRdkRSNCuASQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=yFYtcW0H; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-236377f00a1so15042685ad.3
-        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 23:02:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754028158; x=1754632958; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=YLSiyGnrFJyz6l0vLF59aMG7JUJUfV+my1hPfRT96tU=;
-        b=yFYtcW0H0UbjIL2EGSJ8SY+jLEt5wI96yZWZcuXeafc7PhMbLCwVZzMrhjibImZhKU
-         RXxPkKssX3ahSdRc9d2ogFq3XubdAfbwn5KjdhnI3sqTE00FUhsqmxNyPhOX+3As/t9v
-         t4k2W0Ni9jeypEotmIBy+4ZsidHhey5w+Gvgnb1My6JHMYy6gPtz6Rw2wz/r0uleG0iA
-         034jys8xhacOrt2cf1syZ1K6awS1F6LbfeMJ2g3cqxhbWro+VRehenn/FqMne9mjRrMT
-         moFAiKw+/DNuSs2PUqUQHfla6IQJOApql4AoiKR4CFnbwkWL5YCoDdLT2mogiHU9MTrA
-         z5ow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754028158; x=1754632958;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=YLSiyGnrFJyz6l0vLF59aMG7JUJUfV+my1hPfRT96tU=;
-        b=YA5bITUj1Rt1UQ5azoG6LY1X58p3ibTJn3mrHOKMkP7hCXcD83ryZ4T/2dBT3UMVx0
-         NbmhHNSLg4Nl4l8Go8j/oLCnVms1oMoPa6y7d3Uo70qXZmxX/q8L0J6arKjbTHzG2bgM
-         jwM2x+tvCf87qrTFtdMDILjG9AHuT0zDbTaPJEi9rj5NDSGYlKaPVcEbu4CXlD1MptKw
-         a1UhhNxBJYoP7H9srj/wuRnMu/mj1WFATXMz3hittuFRby/tQfzndwoyx18ehaoYOxLs
-         8/FlgRrVen8DWG/ar5mNs7wcccp86Z8YSCZXC9dc0BC7asl1OXjdjjfI5W8Jori/Ipj+
-         JHNg==
-X-Gm-Message-State: AOJu0Yw1atrK7PfNaiuemk1wrGWdnEmB9Y82aC3FG1kK/ZTQPwdi7yHL
-	e6k0eVvUAv7Tj5yUDntRUC3GBoYSIz8zrHafUm9hzWuf5K3yjvp2C47TJ891PVg1YvA=
-X-Gm-Gg: ASbGncv4xwwcT+j7VfrHFnMMHsL990VuCWjNnJKO0HucqBa6yECCBEWPG6T6w0rBJml
-	1zIjMHnfdT7UNODBOb+q8vgHL7TqN3GCsBg6WgQdML9vaayoYZ2PN7guuDnkfR1eUQRlC8bXpHn
-	ng7fkyQaaw/nY4Vvh2T4Ok13MFqirNjQNtlyayZohRhfpSs2wqEVfRIbRts9M1Wab4khwvFn8xE
-	LBweC9xU1zDPqaR2J8E0YDibJhTKqi7OMGK0ePlRZpEeQ03lN0Rv4pG8nBlVAXHj0WDa/CBeMSt
-	lfB+hVCNP4ioAVf2kAigENuWd8zTEAJImKAgBPcKMwhJU5zp2zWha+qKZdo2Ie3a8HxnrsZpzJM
-	rV+KsQiogZyKv8xdVSKmBT98=
-X-Google-Smtp-Source: AGHT+IG+rKm59m6f7TtpkJkR7eXRlTess2vFcE5Gxxpl8KSw3MlEUn76oh5vAQyq+9JPBKJ01jTdYQ==
-X-Received: by 2002:a17:903:198d:b0:23f:b112:2eaa with SMTP id d9443c01a7336-24096b23962mr151086215ad.41.1754028158240;
-        Thu, 31 Jul 2025 23:02:38 -0700 (PDT)
-Received: from localhost ([122.172.83.75])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977345sm33273115ad.108.2025.07.31.23.02.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 31 Jul 2025 23:02:37 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:32:35 +0530
-From: Viresh Kumar <viresh.kumar@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Rob Herring <robh@kernel.org>,
-	Saravana Kannan <saravanak@google.com>,
-	Arnd Bergmann <arnd@kernel.org>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Alex =?utf-8?Q?Benn=C3=A9e?= <alex.bennee@linaro.org>,
-	Bill Mills <bill.mills@linaro.org>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Jason Wang <jasowang@redhat.com>, devicetree@vger.kernel.org,
-	virtualization@lists.linux.dev, Sudeep Holla <sudeep.holla@arm.com>,
-	Bertrand Marquis <bertrand.marquis@arm.com>,
-	"Edgar E . Iglesias" <edgar.iglesias@amd.com>,
-	Arnaud Pouliquen <arnaud.pouliquen@foss.st.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Subject: Re: [RFC PATCH 2/6] of: reserved-memory: Add
- of_reserved_mem_lookup_by_name
-Message-ID: <20250801060235.coascv4ynfmlzbqt@vireshk-i7>
-References: <cover.1753865268.git.viresh.kumar@linaro.org>
- <feb4591cc48c70f9790c3f4d37c149fc336c3110.1753865268.git.viresh.kumar@linaro.org>
- <b32b9698-0254-43b3-8109-ee8e37482bae@kernel.org>
- <20250730105744.w5arednoluxufvio@vireshk-i7>
- <462402ce-22cf-492b-bc40-bd9dbc3a2f16@kernel.org>
+	s=arc-20240116; t=1754028468; c=relaxed/simple;
+	bh=SKcAG9s36AttOiFoT61hu0hmfOOD1shJUfG5+sw3YVo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Od31e+M2cNyzd8VsTJpvLo5UydhWBPxMiU4qh6MlNqNZnNyeUadzmiJJ79p9I/5njqOVX2+ayNi2xSZl6XAxrLPTgBgQft1WQBNgv/yJvpWAx+Gb+xLWBM2drjNeHaTF264xbaWfM7AMBujWB0uZ8x6gSTdunSkWnUnk4+HIeWM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GOZ1PnGs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E55EFC4CEE7;
+	Fri,  1 Aug 2025 06:07:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754028468;
+	bh=SKcAG9s36AttOiFoT61hu0hmfOOD1shJUfG5+sw3YVo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=GOZ1PnGscHObXscgPGu0bdqUUJUBV7Rge0EK4TnxJDCTLK1UCnj+BBQcswHa61uLC
+	 2WoMvqKUIwX32T6mx5exdPT6319MdUuB4/C5Qhsa+mVBDeHzA5Y2xH53wn3ftrE2zy
+	 icy+0tXG3aLEBgZrcL423sV6YY3s1K8KL+bCdJT5C67yOcfYxBZGFQf+Ml0ajHgcwe
+	 tly4ppmBphD0/SNGZka81RaTGWaNp+jIoZFEMhuaDs/50emKB6ZtR9fCjkamCAapCv
+	 A0TxtIHbZy0Fxn7gISCu9cXuQ3y3V5HGvm44612a9Qbuxb4eTvoEDQVj08vRB+FN6v
+	 1oolfRFOJY5MA==
+Date: Fri, 1 Aug 2025 08:07:44 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 10/12] docs: kdoc: further rewrite_struct_members()
+ cleanup
+Message-ID: <20250801080744.14f83626@foz.lan>
+In-Reply-To: <20250801001326.924276-11-corbet@lwn.net>
+References: <20250801001326.924276-1-corbet@lwn.net>
+	<20250801001326.924276-11-corbet@lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <462402ce-22cf-492b-bc40-bd9dbc3a2f16@kernel.org>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On 30-07-25, 13:24, Krzysztof Kozlowski wrote:
-> I am speaking about coding style. It's explicitly requested to use only
-> the full constructor syntax (see long time Linus' remark or just read
-> cleanup.h docs).
+Em Thu, 31 Jul 2025 18:13:24 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-Ahh, I wasn't aware of the interdependency problem. Thanks.
+> Get rid of some single-use variables and redundant checks, and generally
+> tighten up the code; no logical change.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 89 ++++++++++++++++-----------------
+>  1 file changed, 42 insertions(+), 47 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index 20e0a2abe13b..2b7d7e646367 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -673,73 +673,68 @@ class KernelDoc:
+>          while tuples:
+>              for t in tuples:
+>                  newmember = ""
+> -                maintype = t[0]
+> -                s_ids = t[5]
+> -                content = t[3]
 
--- 
-viresh
+The reason I opted for this particular approach...
+> -
+> -                oldmember = "".join(t)
+> -
+> -                for s_id in s_ids.split(','):
+> +                oldmember = "".join(t) # Reconstruct the original formatting
+> +                #
+> +                # Pass through each field name, normalizing the form and formatting.
+> +                #
+> +                for s_id in t[5].split(','):
+
+... is that it is easier to understand and to maintain:
+
+	for s_id in s_ids.split(','):
+
+than when magic numbers like this are used:
+
+	for s_id in t[5].split(','):
+
+
+>                      s_id = s_id.strip()
+>  
+> -                    newmember += f"{maintype} {s_id}; "
+> +                    newmember += f"{t[0]} {s_id}; "
+> +                    #
+> +                    # Remove bitfield/array/pointer info, getting the bare name.
+> +                    #
+>                      s_id = KernRe(r'[:[].*').sub('', s_id)
+>                      s_id = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', s_id)
+> -
+> -                    for arg in content.split(';'):
+> +                    #
+> +                    # Pass through the members of this inner structure/union.
+> +                    #
+> +                    for arg in t[3].split(';'):
+
+Here, for example, we're far away from the tuple definition... I can't
+recall anymore what "3" magic number means ;-)
+
+>                          arg = arg.strip()
+> -
+> -                        if not arg:
+> -                            continue
+> -
+> +                        #
+> +                        # Look for (type)(*name)(args) - pointer to function
+> +                        #
+>                          r = KernRe(r'^([^(]+\(\*?\s*)([\w.]*)(\s*\).*)')
+>                          if r.match(arg):
+>                              # Pointer-to-function
+> -                            dtype = r.group(1)
+> -                            name = r.group(2)
+> -                            extra = r.group(3)
+
+Same applies here. Having a named var makes easier to understand/maintain
+rest of the code. If you're willing to do something like that, better to
+use named capture groups, like:
+
+	r = KernRe(r'^(?P<dtype>[^(]+\(\*?\s*)'
+		   r'(?P<name>[\w.]*)'
+		   r'(?P<extra>\s*\).*)')
+
+together with a syntax using match.group(group_name)
+
+I'm not a particular fan of named groups, as it adds a lot more stuff
+at regexes. They're already hard enough to understand without ?P<name>,
+but at least match.group('dtype'), match.group('name'), match.group('extra')
+inside the next calls would be easier to maintain than when using magic
+numbers.
+
+Same comments apply to other changes below.
+
+
+> -
+> -                            if not name:
+> -                                continue
+> -
+>                              if not s_id:
+>                                  # Anonymous struct/union
+> -                                newmember += f"{dtype}{name}{extra}; "
+> +                                newmember += f"{r.group(1)}{r.group(2)}{r.group(3)}; "
+>                              else:
+> -                                newmember += f"{dtype}{s_id}.{name}{extra}; "
+> -
+> +                                newmember += f"{r.group(1)}{s_id}.{r.group(2)}{r.group(3)}; "
+> +                        #
+> +                        # Otherwise a non-function member.
+> +                        #
+>                          else:
+> -                            # Handle bitmaps
+> +                            #
+> +                            # Remove bitmap and array portions and spaces around commas
+> +                            #
+>                              arg = KernRe(r':\s*\d+\s*').sub('', arg)
+> -
+> -                            # Handle arrays
+>                              arg = KernRe(r'\[.*\]').sub('', arg)
+> -
+> -                            # Handle multiple IDs
+>                              arg = KernRe(r'\s*,\s*').sub(',', arg)
+> -
+> +                            #
+> +                            # Look for a normal decl - "type name[,name...]"
+> +                            #
+>                              r = KernRe(r'(.*)\s+([\S+,]+)')
+> -
+>                              if r.search(arg):
+> -                                dtype = r.group(1)
+> -                                names = r.group(2)
+> +                                for name in r.group(2).split(','):
+> +                                    name = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', name)
+> +                                    if not s_id:
+> +                                        # Anonymous struct/union
+> +                                        newmember += f"{r.group(1)} {name}; "
+> +                                    else:
+> +                                        newmember += f"{r.group(1)} {s_id}.{name}; "
+>                              else:
+>                                  newmember += f"{arg}; "
+> -                                continue
+> -
+> -                            for name in names.split(','):
+> -                                name = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', name).strip()
+> -
+> -                                if not name:
+> -                                    continue
+> -
+> -                                if not s_id:
+> -                                    # Anonymous struct/union
+> -                                    newmember += f"{dtype} {name}; "
+> -                                else:
+> -                                    newmember += f"{dtype} {s_id}.{name}; "
+> -
+> +                #
+> +                # At the end of the s_id loop, replace the original declaration with
+> +                # the munged version.
+> +                #
+>                  members = members.replace(oldmember, newmember)
+> +            #
+> +            # End of the tuple loop - search again and see if there are outer members
+> +            # that now turn up.
+> +            #
+>              tuples = struct_members.findall(members)
+>          return members
+>  
+
+
+
+Thanks,
+Mauro
 
