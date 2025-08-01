@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-753697-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AC8CB18695
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:24:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 243F3B18694
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F08E586545
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:24:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D97B53ABBE8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:24:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19B1B28150A;
-	Fri,  1 Aug 2025 17:24:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AC3F26C39B;
+	Fri,  1 Aug 2025 17:24:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ikTW9TRv"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WxOPJEr0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 786C626CE36;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9133199FAC;
 	Fri,  1 Aug 2025 17:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754069078; cv=none; b=hsWuiJuKzXo2KNH24Y4omFzKC07ZvQTQVbF3tZtdCwRVzaONWpYA6t6JR7ByM7SkNo5cHvV2JO1DbbfypMCz4rHc67B6N1ubxmNIQ4NPLiej34ry5KACbzn4cXjK/VgDo1X3XGOhZR7wp5b5Hl9txc0pqM3WBguX/EwUwOXARC0=
+	t=1754069077; cv=none; b=HzXUjtUFDtMB0GIUHc9xoYCp2HXJ058Jygcdr3FJ5e9JmPElkzXwiA/kEDwDkwmS1t6td+holg/Q6c1OJDdP3Qzwk3jpoChdAp5s+alwFJVtAXM4+mdBPAom0tL1FKCczxSb94Nl2mOA9HwpeAm9hqY6nElzLTvnEQHcgrtDozs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754069078; c=relaxed/simple;
-	bh=0T6BW3kqNRSL3CmcE+bvOFvSzPdP7Qn/jpwOomCpddE=;
+	s=arc-20240116; t=1754069077; c=relaxed/simple;
+	bh=ecxWVcBCPStvfchBAMc+hlF5f3nRLwKF2HyInHfz+i8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=mXPBH6ZjDL4nYzKH0QjEgz+fDomlnEwmppg4jKKSpdHjY8iXgI2vcgB51sB1veK6b3LKlntXapRp+W2J2EIFwFBERefGD8Zw/OHY8lSatyoLB2cqjmstP/u+Oat0/cifNQoQLV0C+2ayMA4LE0G9/Q2D5XDXBDrXkCyl+55dMUY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ikTW9TRv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2622C4CEE7;
-	Fri,  1 Aug 2025 17:24:36 +0000 (UTC)
+	 MIME-Version:Content-Type; b=R02SqElk+L0SMVS+Dqdgcl1AqXWavrweLGHcCUdCfebqVFxByKjRlWyGBtCi8kdcLY1c2mf48TErQMgxya34ReRR9mzYzhvbkBlPKNaC0SvYRtXRnh7KUPKBkvxADJBdLRPzYjmlrWNEIbvxiiD8Lhr7l0B0Ludl+aLTdMjSkAI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WxOPJEr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 691A8C4CEF7;
+	Fri,  1 Aug 2025 17:24:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
 	s=k20201202; t=1754069077;
-	bh=0T6BW3kqNRSL3CmcE+bvOFvSzPdP7Qn/jpwOomCpddE=;
+	bh=ecxWVcBCPStvfchBAMc+hlF5f3nRLwKF2HyInHfz+i8=;
 	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=ikTW9TRv1bmX2pfGveXkD/Q+8Dwu+Mu7kGuaygWO7t3bIXKyJGLyLmiL12Nk7s9NR
-	 MV74Cuw68ebse13s1626MpofqrO3XJfg91bVD8dzwnO0VQ1gyAY6jZoLsmiSsb95BQ
-	 Bp5g4H5TMEv11BVWdgXOm712kXBIFgBR348cR0FgC+TYwrqlKSvtgMJubGBYqSnrLs
-	 e5jsXpno/6fZVTpQUUlhpfj5Wq0ZJ8GrQmR3ajByKkLLQC7NwUztqG10lPP3w2NqFh
-	 f+G/1zTWEFRf9MZLs0P8q4+RRww0GCq3mT3XPyBNBULnVfzE47lCsjF9qMpBCqxss7
-	 IMSdD2vzJFVAQ==
+	b=WxOPJEr0o8SJpdVtx/wesIv97ZeFDDL2OBRJMLdTCR+pkFrlHO7UdknX9uPkXXyvR
+	 nqqvOmMW30ruA02pxLpQQba3KbJ4havP2Ztlxn5r0w1EMHPmf5EQZIP5RCGeL4gDTp
+	 jKQxDC8P+MUllwMK8KC+fD7/xHy50zRBs1GNqUfhk/rqQPvb2OV1iZ7FUVLN6shgsK
+	 +20JKEAYOMxdGNfwDLR3oFAphPqIajqtSMvZ9Iecurbc0+suEK5gSURCF5g/wRU5JQ
+	 96PFQ6/Za3jO6szwpy4j/WG4UiyVIP6ba4Pi2XTJFoAct1WkLmtwc2PE5xMYX8EvMD
+	 Su2PQGdfw8Ang==
 From: Namhyung Kim <namhyung@kernel.org>
-To: Arnaldo Carvalho de Melo <acme@kernel.org>
-Cc: Adrian Hunter <adrian.hunter@intel.com>, 
- Ian Rogers <irogers@google.com>, James Clark <james.clark@linaro.org>, 
- Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
- linux-perf-users@vger.kernel.org
-In-Reply-To: <aIofXNK8QLtLIaI3@x1>
-References: <aIofXNK8QLtLIaI3@x1>
-Subject: Re: [PATCH 1/1 v6.17] perf python: Stop using deprecated
- PyUnicode_AsString()
-Message-Id: <175406907667.1475083.1184937311863486488.b4-ty@kernel.org>
-Date: Fri, 01 Aug 2025 10:24:36 -0700
+To: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+ Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, 
+ Namhyung Kim <namhyung@kernel.org>
+Cc: Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
+ Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
+ LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+In-Reply-To: <20250731070330.57116-1-namhyung@kernel.org>
+References: <20250731070330.57116-1-namhyung@kernel.org>
+Subject: Re: [PATCH] perf record: Cache build-ID of hit DSOs only
+Message-Id: <175406907739.1475083.17263250122048351650.b4-ty@kernel.org>
+Date: Fri, 01 Aug 2025 10:24:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,25 +59,18 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 X-Mailer: b4 0.15-dev-c04d2
 
-On Wed, 30 Jul 2025 10:34:20 -0300, Arnaldo Carvalho de Melo wrote:
-> As noticed while building for Fedora 43:
+On Thu, 31 Jul 2025 00:03:30 -0700, Namhyung Kim wrote:
+> It post-processes samples to find which DSO has samples.  Based on that
+> info, it can save used DSOs in the build-ID cache directory.  But for
+> some reason, it saves all DSOs without checking the hit mark.  Skipping
+> unused DSOs can give some speedup especially with --buildid-mmap being
+> default.
 > 
->     GEN     /tmp/build/perf/python/perf.cpython-314-x86_64-linux-gnu.so
->   /git/perf-6.16.0-rc3/tools/perf/util/python.c: In function ‘get_tracepoint_field’:
->   /git/perf-6.16.0-rc3/tools/perf/util/python.c:340:9: error: ‘_PyUnicode_AsString’ is deprecated [-Werror=deprecated-declarations]
->     340 |         const char *str = _PyUnicode_AsString(PyObject_Str(attr_name));
->         |         ^~~~~
->   In file included from /usr/include/python3.14/unicodeobject.h:1022,
->                    from /usr/include/python3.14/Python.h:89,
->                    from /git/perf-6.16.0-rc3/tools/perf/util/python.c:2:
->   /usr/include/python3.14/cpython/unicodeobject.h:648:1: note: declared here
->     648 | _PyUnicode_AsString(PyObject *unicode)
->         | ^~~~~~~~~~~~~~~~~~~
->   cc1: all warnings being treated as errors
->   error: command '/usr/bin/gcc' failed with exit code 1
+> On my idle machine, `time perf record -a sleep 1` goes down from 3 sec
+> to 1.5 sec with this change.
 > 
 > [...]
 Applied to perf-tools-next, thanks!
