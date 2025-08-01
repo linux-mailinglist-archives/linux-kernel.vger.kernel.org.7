@@ -1,79 +1,87 @@
-Return-Path: <linux-kernel+bounces-752982-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752983-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C208B17D60
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2173B17D66
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:21:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 782E74E6B06
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:19:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE8747ADABB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:20:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 832B71FF1C7;
-	Fri,  1 Aug 2025 07:19:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FCB91F3FC6;
+	Fri,  1 Aug 2025 07:21:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jQqjJU87"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ElAxXGFE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B89E158545
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:19:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF76F2AE72
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:21:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754032754; cv=none; b=srTk8TpAwT0jv6fzhIVgpmvFaypZrpD/BUWZBGytZ4Ul1uq/OC6abk0v6C3r5U/jWRC7OtJHM0UmLm+0Z1Jz0MaJt1cfBibRP0XIKQOxjykYD7nNvCpX5AbthG05AkwOTijBN1jUbez/GpUbGzWajmwXxfnWkveXGcXwE8TyiNk=
+	t=1754032899; cv=none; b=RjvrUDQPw5k4YCTYIJn94c6aVu9S20a43niwY9iw96rFfJfihgQpXNaaW+HzG+O20BSuby1usQulK4k1++LymvHx3oc3MhB7ETPj+kaipvafuTy+RUSbdfdY9g2GY1B9UHwVys/d6giqCoPNSVofNSmGoT3T+plFB/4xIKUAR8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754032754; c=relaxed/simple;
-	bh=Mbl+RyTD2gFwGo7uHhpS/tKBW0RUI/sFTtJ1XeFL9Z8=;
+	s=arc-20240116; t=1754032899; c=relaxed/simple;
+	bh=XGM9lwd5EitZ4kWWbFKf6eAJoN5zr21HS4gcAE5c1Dc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=r7SrEIeIQSS8AgJIRnwAC/eg0zeJiF0QaStNdEeBGNAzL1Bl5UkhRM9xXHDdfpwwYhLVI/1Kw0PQc//EOI5tkXsblkR7fcdYx2B1z/GbhdAHnpHwrxgX8of4JpgBOkDz6lBTjf6ebloRtOK5QXsp5mBdPUS/Kx5CX0Zbeq/Eu5A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jQqjJU87; arc=none smtp.client-ip=209.85.218.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-ae36e88a5daso245826366b.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:19:11 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754032750; x=1754637550; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=GZwv/qzs+19lK98+ODjU5waUBilwF5SbMGy7Dm5005I=;
-        b=jQqjJU87mW8ghyp7EilAH35I+H0+5awUjRSRbt3PEHNABrmnGrbml31/brTJnHFRI7
-         r4UblB1iQPpbWjo2rTPizjPS+nyqLhAUuQA8CW2PWJAx+puy/RZ1pD4o3L4RWeAWJdtL
-         ECTVWskrSH7kDj+Fa+iul2WKLGMi30T7u1Wm0T+sI2HPqllqrkri27BLcfl8GG/1w2KL
-         yo89QmJ36IGca8I9k4zMzzqq4ja6Anv2sFE5wNRE8Yt21kkZjS7Voo/YE3II+OB44xOk
-         tyQ2l/6HHsYnk/SgospNSOATzT5xplGC8eGjPYNIWJih6fWsCboju1Qb+fAEYDE+ZlRj
-         BoJg==
+	 In-Reply-To:Content-Type; b=HghXf/x0tdYlPbn3/2mOKw/BY7p1s4ZM37e3L9lLHVAt4gd4nkHETAQpe+Tuj+NMb34FL2S8rEBvw9msqPDxe3FfMZzvHV/Hd1EtLICogyJF7rfyjjDI4ComuNCGGfbhk0NzLW0l4NC49piazwoDKW+uSFgDFeQaJUmput4WJQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ElAxXGFE; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754032896;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=k8xuj1kmMyeJuw59snTbgeRO/erNCN9chpx+Tbf452o=;
+	b=ElAxXGFEO4dILXuE7l+bruLQ3ng4p66DEJhY/p2/Kx2eRc6Pb+spwVyMm6BSt2sHMlMO0M
+	NJ2dTo8VLmelJb5lgmvaHbucwvUw3xGQGwSbwbRQlodtp0jyc0xp+8MM0ny6OoYyhegX6I
+	roefq/usztZ+TeXAqgmpAj6ewWUGwno=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-441-Pm6FVv8VOXm_r1Cj8YGsyQ-1; Fri, 01 Aug 2025 03:21:34 -0400
+X-MC-Unique: Pm6FVv8VOXm_r1Cj8YGsyQ-1
+X-Mimecast-MFC-AGG-ID: Pm6FVv8VOXm_r1Cj8YGsyQ_1754032893
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458a321153dso2389025e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:21:34 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754032750; x=1754637550;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=GZwv/qzs+19lK98+ODjU5waUBilwF5SbMGy7Dm5005I=;
-        b=nEGyjNd9jY3M8aAqZEmw4wWGC7pGdsCWZE6g5pEtfZDFx3u8BWuas80g/b+KDXof9z
-         mac3hEKhrGS637wpqstGcxrtbDUSJ4hu+A5fvEiILMSNdX2tyOwGDU6vTvrVYWViQx6s
-         AZkaSWWmq1Z0Gs9ifLpbqVV2v8L1Tq8xE2cYsPzv61TDl/s4IG8fPkWsg6liQwim46No
-         h45mPyfWtJ0gQ5h+7YHsBUv6cLzjevyE+8m7Z6KaIXyK25ydQl2arbvgjPrMmUHcOoxK
-         +Yzc6/SvSddRX9pXTaOAwMDNGa1vtIcZ/0/KBh3/ThJpMQNwBF96UWohfhlgzutXUidH
-         Fcfg==
-X-Forwarded-Encrypted: i=1; AJvYcCVCDoQDORXCgBfKZLhYto3C87TsuCn/LTiReNzrsBcJ02F5qYx6TwiPuRdcKyIJD3Oup1eCjVi7cF3vu7c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzkpfIrdJXcpATnRFc7k0EQJODn+/JUfWENnbStEIs2tl3Jv2Lc
-	jNGgjmiRJ1nLoz18owi9onq70iWsQBV2mROSizYB+aef29gPGvdHV9wjuloJmw==
-X-Gm-Gg: ASbGncsOnq3qBy+YOiG/uvcfM2IY5kvxul+xR2zJzRLdH1DFX1i7tvm61zA4lpUmXFm
-	iCvtix/AqwCb8bLOO9hFfmEPz4z5Hrpq6miCYHsfoAADOkqt1UBdmhMU4HQuccUwMvGwjTjp/HD
-	M0ug5znF2TDigswIO9SeGMHShyCmcsJo2Ph+vXWQDnf3qnAvyIojUEydGNkNk+wGeoBN6ylqcnq
-	OMWJdAk45yhQt4lo0l4csQAo0giCHcy5+MGczFr1/f83a4yCrpUKeHIe1mftkr3wRpTMOoYEltd
-	8YESKmyBPQbsTx+MtOUuVcywmY7rEpeNwJvdm5/qZk8wPEcB1iBhBMlG6zrQEH7L9OFFrV6H0ly
-	yDu6SRuE+htFuexslUjLq6cmRqpByBF+OajIraUIBwo5qOytaUtq1ZWsg5Q==
-X-Google-Smtp-Source: AGHT+IF0QDEuCcmr8EjWLA4qqb0NrlU2hIjfuVXZIQbkssIh/lLuqkGBQ0k0LDR4BAnagV3h88KFDQ==
-X-Received: by 2002:a17:907:7f90:b0:ae3:c6a3:f833 with SMTP id a640c23a62f3a-af93173c5edmr167493266b.23.1754032750236;
-        Fri, 01 Aug 2025 00:19:10 -0700 (PDT)
-Received: from [192.168.0.101] (ip-77-25-33-2.web.vodafone.de. [77.25.33.2])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a218cf8sm242483366b.95.2025.08.01.00.19.09
+        d=1e100.net; s=20230601; t=1754032893; x=1754637693;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=k8xuj1kmMyeJuw59snTbgeRO/erNCN9chpx+Tbf452o=;
+        b=KLC0k+5EAiCWQ4YKgGwfERMDZ7KSGNIgyEBd5aY/FjPxm04kdArreVstHeCfq+fhR6
+         Msk5/K2utvzcXSl7HY0VtPrcC9JTo4EZu9acl9k/rpphBd81sTGkb4Qt5YoBcTbKA+4s
+         OZZeVW1V1H59L6CZL1hbGxPxlOE+pUhwhTzkBSDFWO3xIR/kp1a+5y3VFNhOQ0wL60Zu
+         +SRvbpBGm1Zr24vp5TyGcLN0xMcJc0csEXfmTooUXfhq39FkPzpohA8S3yoFu03V4l9V
+         1IVPSLahzxAYbtDdgm9OxNGCSrkN1+63p4da6UH9D8wxz9G5DrfourmvPvml/WBE4uoo
+         /uag==
+X-Forwarded-Encrypted: i=1; AJvYcCV+lCJz3V2LbbDnZIOakkDEMZR1eqNM/5n+brIROhTZkcNUYJOqvS3Kf0S6DeOpwn4F2/uxBO9l+nKTibA=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyy1ZgNtp4rYBjQvzgWaSuj+BLkFjD9dDv1U5dkwSzDWSnjGMG0
+	Zg7DBo/uQwILAXipA7sAG4HBZPKx1eGNEy7bEKWLWDAzlnZE+TrXQxWs0d3yxslE3rv0CopyZmK
+	YHtw0o942VZTJHIGk8T6d3CPGVnXEG4ZA5lghP5giUBXcORYOJK+U4uziSA/Uha1KUA==
+X-Gm-Gg: ASbGncvHMciqeuGxK4i8zRDbqAXxSq+FPRfvJsAQQbXleYh+23xjY284Ne6/QaodoBi
+	OL8i9+u/L5N/60f6KMvmg128C6/GVSon8pDRxfNBdbI1ETEswW9nKA1Hz8eOR+egjf3/0bpCTMV
+	STWfwvRqOtvSHCvmZ7FudRGNdxP627gCCO8dVNc6miQ583V/LYM22HK2FfhhQxJF9GAiPROCtUu
+	GaokZbyNDqdzuz9xNJLKn9Z73Efrsy6QUs4KQn0mhJ6mzWFR2Q5L2obI/DoO5aRbQUAHuy4rifn
+	G+RodIbFzo9VbnCA1OKe2nksWl8enDls8wqbk0HBkFooszmz310Grf9I/qoBOCOVmO4t0PrfJ+3
+	fOGKzsDoovVDqFfkfpaU1XfQ3jDpztku4FOz8qmnTSjfDKxtgzPUOBiC8trUNBDyH
+X-Received: by 2002:a05:600c:c166:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-45892b95290mr88213755e9.6.1754032893003;
+        Fri, 01 Aug 2025 00:21:33 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGGnbWL+2Z46Bx7ewYm1BnyM3pVCWPyXd8fhCoLsU/ONtKYTdZJvEp9DlxsOJ15wsyICfx0Kw==
+X-Received: by 2002:a05:600c:c166:b0:43d:abd:ad1c with SMTP id 5b1f17b1804b1-45892b95290mr88213445e9.6.1754032892516;
+        Fri, 01 Aug 2025 00:21:32 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm4788092f8f.55.2025.08.01.00.21.30
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 00:19:09 -0700 (PDT)
-Message-ID: <b77087d4-a80d-46e6-8d96-3ce976bc70d7@gmail.com>
-Date: Fri, 1 Aug 2025 09:19:09 +0200
+        Fri, 01 Aug 2025 00:21:31 -0700 (PDT)
+Message-ID: <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
+Date: Fri, 1 Aug 2025 09:21:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,54 +89,136 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 3/8] staging: rtl8723bs: move rtw_init_mlme_timer to
- core/rtw_mlme.c
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: gregkh@linuxfoundation.org, hdegoede@redhat.com,
- Larry.Finger@lwfinger.net, linux-staging@lists.linux.dev,
- linux-kernel@vger.kernel.org
-References: <20250730104501.150270-1-straube.linux@gmail.com>
- <20250730104501.150270-4-straube.linux@gmail.com>
- <05bc4742-ef57-482b-a2af-23a7f238fd69@suswa.mountain>
+Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
+ a THP hole
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: peterx@redhat.com, aarcange@redhat.com, lokeshgidra@google.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
+References: <20250731154442.319568-1-surenb@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Michael Straube <straube.linux@gmail.com>
-In-Reply-To: <05bc4742-ef57-482b-a2af-23a7f238fd69@suswa.mountain>
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250731154442.319568-1-surenb@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-Am 31.07.25 um 17:59 schrieb Dan Carpenter:
-> On Wed, Jul 30, 2025 at 12:44:56PM +0200, Michael Straube wrote:
->> +static void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
->> +{
->> +	struct adapter *adapter =
->> +	timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
-> 
-> You accidentally deleted a tab here.  This should have been:
-> 
-> 	struct adapter *adapter =
-> 		timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
-> 
-> regards,
-> dan carpenter
-> 
->> +
->> +	rtw_clear_scan_deny(adapter);
->> +}
-> 
-> [ snip ]
-> 
->> -static void _rtw_set_scan_deny_timer_hdl(struct timer_list *t)
->> -{
->> -	struct adapter *adapter =
->> -		timer_container_of(adapter, t, mlmepriv.set_scan_deny_timer);
->> -
->> -	rtw_clear_scan_deny(adapter);
->> -}
-> 
+On 31.07.25 17:44, Suren Baghdasaryan wrote:
 
-Hi Dan,
-thank you for reviewing, I'll fix that up and send v2.
+Hi!
 
-regards,
-Michael
+Did you mean in you patch description:
+
+"userfaultfd: fix a crash in UFFDIO_MOVE with some non-present PMDs"
+
+Talking about THP holes is very very confusing.
+
+> When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES and it
+> encounters a non-present THP, it fails to properly recognize an unmapped
+
+You mean a "non-present PMD that is not a migration entry".
+
+> hole and tries to access a non-existent folio, resulting in
+> a crash. Add a check to skip non-present THPs.
+
+That makes sense. The code we have after this patch is rather 
+complicated and hard to read.
+
+> 
+> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+> Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/68794b5c.a70a0220.693ce.0050.GAE@google.com/
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Cc: stable@vger.kernel.org
+> ---
+> Changes since v1 [1]
+> - Fixed step size calculation, per Lokesh Gidra
+> - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES, per Lokesh Gidra
+> 
+> [1] https://lore.kernel.org/all/20250730170733.3829267-1-surenb@google.com/
+> 
+>   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++----------------
+>   1 file changed, 29 insertions(+), 16 deletions(-)
+> 
+> diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
+> index cbed91b09640..b5af31c22731 100644
+> --- a/mm/userfaultfd.c
+> +++ b/mm/userfaultfd.c
+> @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct userfaultfd_ctx *ctx, unsigned long dst_start,
+>   
+>   		ptl = pmd_trans_huge_lock(src_pmd, src_vma);
+>   		if (ptl) {
+> -			/* Check if we can move the pmd without splitting it. */
+> -			if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+> -			    !pmd_none(dst_pmdval)) {
+> -				struct folio *folio = pmd_folio(*src_pmd);
+> +			if (pmd_present(*src_pmd) || is_pmd_migration_entry(*src_pmd)) {
+> +				/* Check if we can move the pmd without splitting it. */
+> +				if (move_splits_huge_pmd(dst_addr, src_addr, src_start + len) ||
+> +				    !pmd_none(dst_pmdval)) {
+> +					if (pmd_present(*src_pmd)) {
+> +						struct folio *folio = pmd_folio(*src_pmd);
+> +
+> +						if (!folio || (!is_huge_zero_folio(folio) &&
+> +							       !PageAnonExclusive(&folio->page))) {
+> +							spin_unlock(ptl);
+> +							err = -EBUSY;
+> +							break;
+> +						}
+> +					}
+
+... in particular that. Is there some way to make this code simpler / 
+easier to read? Like moving that whole last folio-check thingy into a 
+helper?
+
+
+-- 
+Cheers,
+
+David / dhildenb
+
 
