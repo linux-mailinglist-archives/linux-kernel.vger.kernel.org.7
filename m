@@ -1,107 +1,263 @@
-Return-Path: <linux-kernel+bounces-753357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6372EB181DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65E23B181E0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2FE181896CC4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0DE04A85E4C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:35:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A86CA24678E;
-	Fri,  1 Aug 2025 12:35:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 336F024679D;
+	Fri,  1 Aug 2025 12:35:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="VpN8hIX2"
-Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b="Ymopx8th"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 699F522F757;
-	Fri,  1 Aug 2025 12:35:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A2FE244687
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:35:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754051708; cv=none; b=dL2Mh42DmYbBwgkShD8xgye6tZCQot0ZURs0JH8cSGqUxVWUIUnMwafz6M9hw0de4KntKde3TFkQEwdsMRjfDfUYYqS18cM4EEYvIu3BEX7Q9b7+j1C1AmRwgq+u1hkNmB7+9htayez4UAKWaEbbtMj/RWggCiyjW1tstMQmXAQ=
+	t=1754051732; cv=none; b=L128PEFt2X0LnnGQChkZ2vuHisuLl7Pb6akh5S5cmNyxxFlIMUxnZhq+OUX7D/NEi4XEvCOZoXc6DLxB7fS9lO/BKP1bTC1M0+hK5VhmTIagmARVTuXegduo78xSOam7CdTt5R7ondAlD8rhyHIMhcci2kutNCEfgqaY8lh6+LI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754051708; c=relaxed/simple;
-	bh=jB1Vx2WL8qzCQ5++PQCPXvRjDSCfgrjYiYkZfI/7QaQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fS6vRqqaECKAb1/aYF6DPakmNEUeJeJvuTaiyzdHU/mJpkSHmdt/Y3JY45iZn7n3sVgpPifdbPrCPkaGqW1V6mJ5ltzQ49929rPKc4hQSYa5GbYoTrx89yai2NhIu7imeB/o6viPYUlwNBlCamhIXKlO7svUhwHu/cXmSYSAkbo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=VpN8hIX2; arc=none smtp.client-ip=78.32.30.218
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description:Resent-Date:
-	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
-	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=1fuJBAjBUjwQeX0vysnbqS8rGM0e+eRddEy6DFpPWwg=; b=VpN8hIX21sSiiiW5Rq5wlrVTV3
-	yM/3WQq+isxOP/xggGyGMu2xlPZXV0/OUFF+OHgacmRhNyeD5Erwq8vkjh512tM2HaHFUadeP24+M
-	GuptjiK8nASLqc58uzJPjn3mm82STgtXGl33cmncliq9voSNkZZz5+2bhFcvkNm818ONeL0EISpkp
-	QyLk9amLr/mnfKHd8JQ+C0E+OqgUEi//FMnugqcO1mtGV+FJcWNnGqlRO9IqRw2Lc8JY11SW6xRtQ
-	KFC/2nvEuXEGaDYBTUE7ZJ1+9rVAf+wSMhnmm5JH43Epy8DX422RhmaUTdFdrqGjc4rxTBN/ZZbHK
-	33b55XQQ==;
-Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:60270)
-	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <linux@armlinux.org.uk>)
-	id 1uhoyR-0006V6-2S;
-	Fri, 01 Aug 2025 13:34:59 +0100
-Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
-	(envelope-from <linux@shell.armlinux.org.uk>)
-	id 1uhoyQ-00024e-09;
-	Fri, 01 Aug 2025 13:34:58 +0100
-Date: Fri, 1 Aug 2025 13:34:57 +0100
-From: "Russell King (Oracle)" <linux@armlinux.org.uk>
-To: patchwork-bot+netdevbpf@kernel.org
-Cc: =?utf-8?b?QmVuY2UgQ3PDs2vDoXMgPGNzb2thcy5iZW5jZUBwcm9sYW4uaHU+?=@codeaurora.org,
-	geert+renesas@glider.be, sergei.shtylyov@cogentembedded.com,
-	davem@davemloft.net, robh@kernel.org, andrew@lunn.ch,
-	andriy.shevchenko@linux.intel.com, dmitry.torokhov@gmail.com,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	buday.csaba@prolan.hu, hkallweit1@gmail.com, edumazet@google.com,
-	kuba@kernel.org, pabeni@redhat.com
-Subject: Re: [PATCH net] net: mdio_bus: Use devm for getting reset GPIO
-Message-ID: <aIy0cTjW1ETsY2NS@shell.armlinux.org.uk>
-References: <20250728153455.47190-2-csokas.bence@prolan.hu>
- <175392840851.2582155.14607525521532592549.git-patchwork-notify@kernel.org>
+	s=arc-20240116; t=1754051732; c=relaxed/simple;
+	bh=5xlxAc0IlypcSqL4qke5Y+EHHHB5RzWlhM9F0Fni38Y=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=DK+UreLZ4quEv5wVxnnUPy5y8/Gp6L7p9xBOmmil5saV9hiw2jHnHFySJGxOR5BnPg1V3hwTWWcE5cE1hAMIWjqWiVFq1UiIpiqs1NAXvp8tL8duWXaXRtRqJ06oBdmR2C1VVs6miWzImlErly0uWd2oiyS3HlCXUiJhIDKfAiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com; spf=pass smtp.mailfrom=fairphone.com; dkim=pass (2048-bit key) header.d=fairphone.com header.i=@fairphone.com header.b=Ymopx8th; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=fairphone.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fairphone.com
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-adfb562266cso337205666b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 05:35:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=fairphone.com; s=fair; t=1754051728; x=1754656528; darn=vger.kernel.org;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HTe303xQoaLkqOpFXbhSdoe5iBautaDCxOKMpejo+Ms=;
+        b=Ymopx8thqwf9j1ae4toLI7fR6g9b27Vdiwbt2hpVzE7I59tm7qPvhJgg81XF7It26S
+         y2+oh/JxHY5lQnciE+sdgjJRdZlElLVQDD+oS6j+EViujEvcKdX42UK1/WZXL9SJGrSc
+         xDsR4fx/g3lrPRjS5G+RMLeriNs8yzcZHYu9sKtLMsNm80FAgzZd+BPxQvAKnGuqe1yV
+         0+zu8MNo2sJQ7KM/EWBrMLk7Tg7HCRJueSCbjiMi72c3P4N1l3IcgNBlxH50m0WCTFOq
+         DktL7O+1smeK5mwaueHtLMCqc08hju13f9H7LTq1mSv1wclFWs1LqGd+4azb2nhkzlmz
+         HwDg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754051728; x=1754656528;
+        h=in-reply-to:references:cc:to:from:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=HTe303xQoaLkqOpFXbhSdoe5iBautaDCxOKMpejo+Ms=;
+        b=nOYu19OCyLOD1nvbdX42dfKud6teooV4P//eqWAd0uZvNpi4pH2k1g/NQ8gSP9wXD4
+         0qjsogqvqe7GDXG7syLpEGpH4VLPZCmtmGDeegTbIrsvr+kx+1nBgKFymNpkiiHOmBP6
+         p8iTQXHCCrUYDOlO2f5da5HcBbBJn/zKrbZNPNWoOrn6PtKcicx7zNn+EtGiGbvAW7FO
+         lUifCBBSLyPa10D0zLFNKfGARl+0g20OaKBR+4nHbzNAH0VAKetnuuYHDusZnNQSuuXO
+         ctfbOobWLiYj5muffFJTkSAscFvtEMJhNcdCFzuZPjuef58qIWkYsFwsL54SMB0NKVli
+         58xA==
+X-Forwarded-Encrypted: i=1; AJvYcCVJAT1C0I6JNg1cbhkQ0x2j+iVSMx5zsAa6N4aH+ijvq2dH12aUBdQKWb1FFidemMeov+ZKfG/nrOTkY48=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL/R9zFUKuri9EU6zPy4/AgC9nEmXG6RKhUB47j/2+t79OoHQZ
+	XU5a0syeYBd+tLLhi21T6haD5T4ZoXl1WgmwiyLU+jlogZdbXei/PlNeS3gUxc8D6b4=
+X-Gm-Gg: ASbGncsLxtulCQkn8HWCjAHk5JXVM61eYDdAyE58RJWQFq+4atb3xkxDxCw1Okw5k5a
+	nPR4P5O4dpBYCCd2X1SgE0i2NSLbeveY54rPj0f/GaP9Gq1oA7JP3TXXUjouIetce23BoxCfWec
+	fsji5mReXaK0bMXQJXZNo0XBh7ApQDw0NjexfDCovTpQQ/hvYjc7ThQjSATIJK+SK+hGpsUXB7K
+	TSIh174L2w48phxaoQ7Oc2qH0r0Vwe85Zsu7lN7rm4q3VC5ed50NtlxS3HreV+/rRyZ4zI2Ar1z
+	Q53tk4K70kbZdHg/UZwN1TJbw9PKibMEjJUdKYDJ71gW2azalz7ideivT04+RnPldeygTxLGixc
+	4l8eDZ6G8DmhnTUjXMdLWYAYS6eUzXADC6RILHTEXItcmTre6drM575JpF5aYvqhLO0rmegubSP
+	sbGw==
+X-Google-Smtp-Source: AGHT+IEFQiah+wKwddE1ODHWk/oM0tAixNPAeW3M8+san/X23qEcM9zhKki8FSkhvO3m3y+J8Og1Xg==
+X-Received: by 2002:a17:907:98b:b0:ae6:eff6:165b with SMTP id a640c23a62f3a-af8fdaa539cmr1291383866b.60.1754051728325;
+        Fri, 01 Aug 2025 05:35:28 -0700 (PDT)
+Received: from localhost (144-178-202-138.static.ef-service.nl. [144.178.202.138])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0763c8sm277718966b.22.2025.08.01.05.35.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 05:35:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <175392840851.2582155.14607525521532592549.git-patchwork-notify@kernel.org>
-Sender: Russell King (Oracle) <linux@armlinux.org.uk>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Aug 2025 14:35:27 +0200
+Message-Id: <DBR3FZGY4QS1.BX6M1PZS5RH4@fairphone.com>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space
+ confusion
+From: "Luca Weiss" <luca.weiss@fairphone.com>
+To: "Takashi Iwai" <tiwai@suse.de>
+Cc: "Arnd Bergmann" <arnd@kernel.org>, "Mark Brown" <broonie@kernel.org>,
+ "Wesley Cheng" <quic_wcheng@quicinc.com>, "Arnd Bergmann" <arnd@arndb.de>,
+ "Jaroslav Kysela" <perex@perex.cz>, "Takashi Iwai" <tiwai@suse.com>, "Greg
+ Kroah-Hartman" <gregkh@linuxfoundation.org>, "Dan Carpenter"
+ <dan.carpenter@linaro.org>, <linux-sound@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1-0-g2ecb8770224a-dirty
+References: <20250513123442.159936-1-arnd@kernel.org>
+ <20250513123442.159936-4-arnd@kernel.org>
+ <DBR2363A95M1.L9XBNC003490@fairphone.com> <87v7n72pg0.wl-tiwai@suse.de>
+In-Reply-To: <87v7n72pg0.wl-tiwai@suse.de>
 
-On Thu, Jul 31, 2025 at 02:20:08AM +0000, patchwork-bot+netdevbpf@kernel.org wrote:
-> Hello:
-> 
-> This patch was applied to netdev/net.git (main)
-> by Jakub Kicinski <kuba@kernel.org>:
-> 
-> On Mon, 28 Jul 2025 17:34:55 +0200 you wrote:
-> > Commit bafbdd527d56 ("phylib: Add device reset GPIO support") removed
-> > devm_gpiod_get_optional() in favor of the non-devres managed
-> > fwnode_get_named_gpiod(). When it was kind-of reverted by commit
-> > 40ba6a12a548 ("net: mdio: switch to using gpiod_get_optional()"), the devm
-> > functionality was not reinstated. Nor was the GPIO unclaimed on device
-> > remove. This leads to the GPIO being claimed indefinitely, even when the
-> > device and/or the driver gets removed.
-> > 
-> > [...]
-> 
-> Here is the summary with links:
->   - [net] net: mdio_bus: Use devm for getting reset GPIO
->     https://git.kernel.org/netdev/net/c/3b98c9352511
+Hi Takashi,
 
-This needs to be reverted, it's an abuse of devm on a device that is
-not being probed. Sorry, I don't have time to generate a patch.
+On Fri Aug 1, 2025 at 2:31 PM CEST, Takashi Iwai wrote:
+> On Fri, 01 Aug 2025 13:31:42 +0200,
+> Luca Weiss wrote:
+>>=20
+>> Hi Arnd,
+>>=20
+>> On Tue May 13, 2025 at 2:34 PM CEST, Arnd Bergmann wrote:
+>> > From: Arnd Bergmann <arnd@arndb.de>
+>> >
+>> > uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
+>> > device, and the returned address for the buffer is a CPU local virtual
+>> > address that may or may not be in the linear mapping, as well as a DMA
+>> > address token that is accessible by the USB device, and this in turn
+>> > may or may not correspond to the physical address.
+>> >
+>> > The use in the driver however assumes that these addresses are the
+>> > linear map and the CPU physical address, respectively. Both are
+>> > nonportable here, but in the end only the virtual address gets
+>> > used by converting it to a physical address that gets mapped into
+>> > a second iommu.
+>> >
+>> > Make this more explicit by pulling the conversion out first
+>> > and warning if it is not part of the linear map, and using the
+>> > actual physical address to map into the iommu in place of the
+>> > dma address that may already be iommu-mapped into the usb host.
+>>=20
+>> This patch is breaking USB audio offloading on Qualcomm devices on 6.16,
+>> as tested on sm6350 and sc7280-based smartphones.
+>>=20
+>> [  420.463176] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
+s: AFE Port already open
+>> [  420.472676] ------------[ cut here ]------------
+>> [  420.472691] WARNING: CPU: 2 PID: 175 at sound/usb/qcom/qc_audio_offlo=
+ad.c:1056 handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
+>> [  420.472726] Modules linked in: rfcomm zram zsmalloc zstd_compress alg=
+if_hash algif_skcipher bnep nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 n=
+ft_reject nft_ct nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnet=
+link ipv6 fuse uhid uinput snd_usb_audio_qmi q6asm_dai q6routing q6afe_dai =
+q6usb q6afe_clocks q6adm q6asm snd_q6dsp_common q6afe q6core apr pdr_interf=
+ace snd_soc_sm8250 snd_soc_qcom
+>> _common snd_soc_qcom_offload_utils snd_soc_qcom_sdw soundwire_bus soc_us=
+b snd_soc_core snd_compress snd_usb_audio ath10k_snoc ath10k_core snd_hwdep=
+ snd_usbmidi_lib ath fastrpc snd_pcm mac80211 hci_uart qrtr_smd snd_timer b=
+tqca qcom_pd_mapper snd_rawmidi bluetooth libarc4 qcom_pdr_msg cfg80211 snd=
+ soundcore ecdh_generic ecc rfkill qrtr qcom_stats qcom_q6v5_pas ipa qcom_p=
+il_info qcom_q6v5 qcom_common
+>> [  420.473018] CPU: 2 UID: 0 PID: 175 Comm: kworker/u32:9 Tainted: G    =
+    W           6.16.0 #1-postmarketos-qcom-sm6350 NONE
+>> [  420.473033] Tainted: [W]=3DWARN
+>> [  420.473038] Hardware name: Fairphone 4 (DT)
+>> [  420.473045] Workqueue: qmi_msg_handler qmi_data_ready_work
+>> [  420.473065] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTY=
+PE=3D--)
+>> [  420.473075] pc : handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio=
+_qmi]
+>> [  420.473091] lr : handle_uaudio_stream_req+0xc84/0x13f8 [snd_usb_audio=
+_qmi]
+>> [  420.473104] sp : ffff800082f939a0
+>> [  420.473110] x29: ffff800082f93b10 x28: ffff0000cfb796b8 x27: 00000000=
+00008000
+>> [  420.473128] x26: ffff0000842afc80 x25: ffffa8e75a23b0e0 x24: 00000000=
+00008000
+>> [  420.473145] x23: ffffa8e75a23bcf0 x22: ffff800082f93bd0 x21: 00000000=
+00000000
+>> [  420.473161] x20: ffff800082f93c98 x19: ffff0000939bb740 x18: ffffa8e7=
+7925a4d0
+>> [  420.473178] x17: ffffffffffffffff x16: ffffa8e777ef9728 x15: ffffa8e7=
+7925a000
+>> [  420.473194] x14: 0000000000000000 x13: 0000000000000dc0 x12: ffff8000=
+80000000
+>> [  420.473211] x11: 0000000000000cc0 x10: 0000000000000001 x9 : ffffa8e7=
+7944b880
+>> [  420.473227] x8 : ffffd719b5f4d000 x7 : ffff00009033da18 x6 : 00000000=
+00000000
+>> [  420.473244] x5 : 0000000000000000 x4 : ffff800082f93938 x3 : 00000000=
+00000000
+>> [  420.473260] x2 : 0000000000000000 x1 : ffff0000857790c0 x0 : 00000000=
+00000000
+>> [  420.473277] Call trace:
+>> [  420.473283]  handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi=
+] (P)
+>> [  420.473300]  qmi_invoke_handler+0xbc/0x108
+>> [  420.473314]  qmi_handle_message+0x90/0x1a8
+>> [  420.473326]  qmi_data_ready_work+0x210/0x390
+>> [  420.473339]  process_one_work+0x150/0x3a0
+>> [  420.473351]  worker_thread+0x288/0x480
+>> [  420.473362]  kthread+0x118/0x1e0
+>> [  420.473375]  ret_from_fork+0x10/0x20
+>> [  420.473390] ---[ end trace 0000000000000000 ]---
+>> [  420.479244] qcom-q6afe aprsvc:service:4:4: cmd =3D 0x100e5 returned e=
+rror =3D 0x1
+>> [  420.479540] qcom-q6afe aprsvc:service:4:4: DSP returned error[1]
+>> [  420.479558] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x7000=
+ failed -22
+>> [  420.479572] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
+s: fail to start AFE port 88
+>> [  420.479583] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dai=
+s: ASoC error (-22): at snd_soc_dai_prepare() on USB_RX
+>>=20
+>> Reverting this patch makes it work as expected on 6.16.0.
+>>=20
+>> Let me know if I can be of any help to resolve this.
+>
+> I guess just dropping WARN_ON() would help?
+>
+> As far as I read the code, pa argument isn't used at all in
+> uaudio_iommu_map() unless as sgt is NULL.  In this case, sgt is never
+> NULL, hence the pa argument is just a placeholder.
+> That said, the whole xfer_buf_pa (and its sanity check) can be dropped
+> there.
 
--- 
-RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
-FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
+Just the WARN splat is not the problem, it's actually failing
+afterwards. Without the patch it works as expected.
+
+But I'm not familiar with this code, or other deep technical details for
+the USB audio offloading or DMA things so not sure what's actually going
+on.
+
+Regards
+Luca
+
+>
+>
+> Takashi
+>
+> --- a/sound/usb/qcom/qc_audio_offload.c
+> +++ b/sound/usb/qcom/qc_audio_offload.c
+> @@ -1020,7 +1020,6 @@ static int uaudio_transfer_buffer_setup(struct snd_=
+usb_substream *subs,
+>  	struct sg_table xfer_buf_sgt;
+>  	dma_addr_t xfer_buf_dma;
+>  	void *xfer_buf;
+> -	phys_addr_t xfer_buf_pa;
+>  	u32 len =3D xfer_buf_len;
+>  	bool dma_coherent;
+>  	dma_addr_t xfer_buf_dma_sysdev;
+> @@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct sn=
+d_usb_substream *subs,
+>  	if (!xfer_buf)
+>  		return -ENOMEM;
+> =20
+> -	/* Remapping is not possible if xfer_buf is outside of linear map */
+> -	xfer_buf_pa =3D virt_to_phys(xfer_buf);
+> -	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+> -		ret =3D -ENXIO;
+> -		goto unmap_sync;
+> -	}
+>  	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+>  			xfer_buf_dma, len);
+> =20
+>  	/* map the physical buffer into sysdev as well */
+> +	/* note: NULL passed to pa argument as we use sgt */
+>  	xfer_buf_dma_sysdev =3D uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+> -					       xfer_buf_pa, len, &xfer_buf_sgt);
+> +					       NULL, len, &xfer_buf_sgt);
+>  	if (!xfer_buf_dma_sysdev) {
+>  		ret =3D -ENOMEM;
+>  		goto unmap_sync;
+
 
