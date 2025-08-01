@@ -1,62 +1,88 @@
-Return-Path: <linux-kernel+bounces-753413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17A58B1828B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:34:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FE62B1828F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:35:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4857D3A9C5F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:34:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771A51AA5088
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:35:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 72C9925A2C9;
-	Fri,  1 Aug 2025 13:34:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA1FF261573;
+	Fri,  1 Aug 2025 13:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jsM27rDa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="COSBTcni"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B446C21E0BA;
-	Fri,  1 Aug 2025 13:34:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68E3A266591
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:34:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055279; cv=none; b=CCBQ/GGJLqvXjuIuzWUmzi/s6XufvXp24MgB+FuQvPOY9iqDaGhNLOgirtEaecDbbTzBrfzxUygFie/zsyUnad87sNffGqXfIs07m1a1Pe1kHRNr5aINtQLiQpCa2ut66mprPSfNXmUnoOol/ycbBF36kDcUpmk/P6OIZcz4hy4=
+	t=1754055284; cv=none; b=Ea7tqevOjv4t3Wf1i/cEeU3ato0F3YnlSB+EKkKl7F3ALYO9KRwDw/Dh1cHilvDtgpziZfxh9QQKl4PVY8FlQYMX/lsoI1lmJZSj+FXGyUlhWx8etpklFkFAmfAuHkszG8gFVvCGm8gt/I+/JcECxyX1LV3R8oDOkIipFzYvU4U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055279; c=relaxed/simple;
-	bh=N/x7XAFTjXtfUPb0qJUtTXRvmOGAsMR5K5uMplm4A70=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNhPJqpyDoCX0UtFL5Nf7XtVt5PuPLd+0W3STgKKFVZzj40vO/ns86EBpipej5DAQTwGJqfeH9HM8wegLjYxQJBkTrdIpca4TDFXlRRQpTm2XTTRoEKsRdLUYbIilndaE1QPPzCgynrWFPTPDqFOKeraviY4QkQs+Pxiy4Aw5FM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jsM27rDa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 134B7C4CEE7;
-	Fri,  1 Aug 2025 13:34:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754055276;
-	bh=N/x7XAFTjXtfUPb0qJUtTXRvmOGAsMR5K5uMplm4A70=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jsM27rDaQLXAjtU5Vfms10gU7akFQ5pIehCS5bt+fKEKoZ1u7Vf5CiK0LOmE0Unf2
-	 tHVHlkKsBG/MfTc0d2rJf8oZ+oHG4KniX21M2hI1Zn1yMKex+Q/Ih/Dur9xp3J6gHw
-	 Y2pU9mQmM1V4OH+VOk/nGr7iyIrj9MZYXJ1ntBCkIakICEtNbNMN5L13vy6Hd+nnN/
-	 AFn/GASyQ6s4LOf2sbqdDz0avR1CBC6Mrk7plRMTJKJqSoI4QWT5QIF2F+zHGR89o6
-	 v5A0waIArdK/1qoGCeDVXIGkL6deyN2XwGitCAhn7QT1OZIzgXMHonj4zjdWBNELSw
-	 eP8KrN5aC4sww==
-Date: Fri, 1 Aug 2025 08:34:35 -0500
-From: Rob Herring <robh@kernel.org>
-To: Andrew Lunn <andrew@lunn.ch>,
-	Gregory Clement <gregory.clement@bootlin.com>,
-	Sebastian Hesselbarth <sebastian.hesselbarth@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-	Miquel Raynal <miquel.raynal@bootlin.com>
-Cc: linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Subject: Re: [PATCH] dt-binding: thermal: Convert
- marvell,armada-ap806-thermal to DT schema
-Message-ID: <20250801133435.GA3024231-robh@kernel.org>
-References: <20250702230030.2892116-1-robh@kernel.org>
+	s=arc-20240116; t=1754055284; c=relaxed/simple;
+	bh=MPOvYXHyt1VUDDVRVybn8iaD9dzrXwNCpMsrhQkJ1g4=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=IlJp7EMhaW4JvN4tDvivtt601dWNOxeAFZE0x593gl51/5CMjz9IltxpPzDw5s8pudawVyLZl6ugLC7CNyzMRJJUjNTg2YABnztaB3uS7o+CJ2QFSX/lB/CFoGIVYCWKLjOYUBmWodKX4Vs+vufabdWOtxexRfdrO/ea1/hO8oQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=COSBTcni; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-455b00283a5so8991775e9.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:34:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754055281; x=1754660081; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=JXrCxZaMMaRtHFaNQGeH/9TtujLuny+WCwC4B5wtCMc=;
+        b=COSBTcniNu9VVI60cqSqkKlfElyVj0jBO0n9flH0K6iBDw3f0uS9vQzXNAMHMUJSd8
+         7YjZTXGg9fRoBsaPSQCSzFATGbH82yMuyfAA8LM1QTZTYTMds3AG1nmUGAjfT9BsBDp1
+         KENDwvqsQP5r2FTJeO5VQZgxjYny+5fnZJXutLdncgf9hlo86TosOsPYMx7TqGBC1EP+
+         jx9wNp3+2hcq+UnEvX942lVjMUXEY+vfvq/IPF74Axjuo3GH59sqbDmTi8iWd/EfY/YR
+         WP2KNQS6zpOK+jXLxRJKXsY8xxM8OuaR3Sl20xfiVnzFfm/5wsnVFbQrXbRpXi2qCcms
+         qhXg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754055281; x=1754660081;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=JXrCxZaMMaRtHFaNQGeH/9TtujLuny+WCwC4B5wtCMc=;
+        b=XmMuVUEwj5vfLFIPgJ1jEjdhb2CTdwxWH7uemxLhnGevzEe+nP8Rf2cIICpeFTmH+x
+         Edfh5tMsmacHdz2A2rr7jFJA69D/VWNMYWWqpK5ZXuINOu8o92k4qYznJBC85hiAd9s+
+         1mSvJ3uqlS+C16AMyrRiwERdXW3WOS2WIJfXkTUfitEQpfZk1sOHwNFv6PWfGGaIGhNQ
+         hLRylBg15QCxXjkrDm6lBhTBXBVPTG6dUL7pUFVvDwObGwPg+LrUhz+S08X7B6TH2ncK
+         1PQaUnXhPu92iRuL0WQeAigaJhyZlDV5b4rkEbB/UQ/c/XG1eYCcnUZtagTq4kEjEQR8
+         XHpg==
+X-Forwarded-Encrypted: i=1; AJvYcCXTrJvLXAaAZXlB7W6xe6Az+IlGkgbIHBPzaIKiowmrRB4Oa2uhMo9Ruz4kRLLt4FyF5PtNKEgOtSHMXRg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz5R0vsn5pHqtGBSrvVAHAb3/gNbyQ7Jhvs2IU5GNzht4Vt0EOX
+	sb41hMvW6ivJkmWqFIMo8kZUmZss5duVfSCByHWbudTFASA4KY/u3gO1a9MjJo4DPZI=
+X-Gm-Gg: ASbGncvRLWsQDoPCRk9moCrkRaKgY6E6vDds1ueesm4pzZYpFv2k8BRK5m2TB6dt/pb
+	kU9BYX83zytYdPxpn5HUaM1eUJ2JpLQ/C7ALKr+BnblPd/hX4JgDpCXfZZRhqZpmHRhYe6H1glr
+	EubhV+8TmMIzP4wnX5oe8icZoSIzNbsCEJGRYSz1Q+fdoz1pXAWUTDlaK6tU72ekbGf1e7nu+gf
+	06QUQdzoihTlXsPtwPohvoOJKEQvKlQ7DIfpzBZkvw2lRB0kB6BVoxUnpTS5pgWahSs02yiyUKg
+	NPHFmKJjUX+4YMvf8VGyIFYU40a77oQubMxNkiPTjEF/vIcghwoUIflOVIQcz/Hdc3vwX2692mw
+	CuFtpZO6iObFVDUY8w0BxLGNQAat0jhUCV1M4Is+JFQ8=
+X-Google-Smtp-Source: AGHT+IEY4PzKF931Cl4hXP2ucH16DnQzD1sduXwZybAumiUjCHWrT+naQgUR/VvPTU7PmaLeiSG4OA==
+X-Received: by 2002:a05:600c:4445:b0:456:22f0:d9ca with SMTP id 5b1f17b1804b1-45892bd09b5mr98694275e9.26.1754055280691;
+        Fri, 01 Aug 2025 06:34:40 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-4589edf5683sm66413925e9.7.2025.08.01.06.34.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 06:34:40 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:34:37 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: Toan Le <toan@os.amperecomputing.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	linux-pci@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] PCI: xgene-msi: Return negative -EINVAL in
+ xgene_msi_handler_setup()
+Message-ID: <aIzCbVd93ivPinne@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,175 +91,31 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250702230030.2892116-1-robh@kernel.org>
+X-Mailer: git-send-email haha only kidding
 
-On Wed, Jul 02, 2025 at 06:00:29PM -0500, Rob Herring (Arm) wrote:
-> Convert the Marvell Armada AP80x/CP110 thermal binding to schema. It is
-> a straight forward conversion.
-> 
-> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
-> ---
->  .../arm/marvell/ap80x-system-controller.txt   | 39 ----------------
->  .../arm/marvell/cp110-system-controller.txt   | 43 ------------------
->  .../thermal/marvell,armada-ap806-thermal.yaml | 44 +++++++++++++++++++
->  3 files changed, 44 insertions(+), 82 deletions(-)
->  create mode 100644 Documentation/devicetree/bindings/thermal/marvell,armada-ap806-thermal.yaml
+There is a typo so we accidentally return positive EINVAL instead of
+negative -EINVAL.  Add the missing '-' character.
 
-Ping!
+Fixes: 6aceb36f17ab ("PCI: xgene-msi: Restructure handler setup/teardown")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pci/controller/pci-xgene-msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-> index c83245065d44..72de11bd2ef0 100644
-> --- a/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-> +++ b/Documentation/devicetree/bindings/arm/marvell/ap80x-system-controller.txt
-> @@ -115,45 +115,6 @@ ap_syscon: system-controller@6f4000 {
->  SYSTEM CONTROLLER 1
->  ===================
->  
-> -Thermal:
-> ---------
-> -
-> -For common binding part and usage, refer to
-> -Documentation/devicetree/bindings/thermal/thermal*.yaml
-> -
-> -The thermal IP can probe the temperature all around the processor. It
-> -may feature several channels, each of them wired to one sensor.
-> -
-> -It is possible to setup an overheat interrupt by giving at least one
-> -critical point to any subnode of the thermal-zone node.
-> -
-> -Required properties:
-> -- compatible: must be one of:
-> -  * marvell,armada-ap806-thermal
-> -- reg: register range associated with the thermal functions.
-> -
-> -Optional properties:
-> -- interrupts: overheat interrupt handle. Should point to line 18 of the
-> -  SEI irqchip. See interrupt-controller/interrupts.txt
-> -- #thermal-sensor-cells: shall be <1> when thermal-zones subnodes refer
-> -  to this IP and represents the channel ID. There is one sensor per
-> -  channel. O refers to the thermal IP internal channel, while positive
-> -  IDs refer to each CPU.
-> -
-> -Example:
-> -ap_syscon1: system-controller@6f8000 {
-> -	compatible = "syscon", "simple-mfd";
-> -	reg = <0x6f8000 0x1000>;
-> -
-> -	ap_thermal: thermal-sensor@80 {
-> -		compatible = "marvell,armada-ap806-thermal";
-> -		reg = <0x80 0x10>;
-> -		interrupt-parent = <&sei>;
-> -		interrupts = <18>;
-> -		#thermal-sensor-cells = <1>;
-> -	};
-> -};
-> -
->  Cluster clocks:
->  ---------------
->  
-> diff --git a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
-> index 9d5d70c98058..54ff9f218328 100644
-> --- a/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
-> +++ b/Documentation/devicetree/bindings/arm/marvell/cp110-system-controller.txt
-> @@ -189,46 +189,3 @@ CP110_LABEL(syscon0): system-controller@440000 {
->  	};
->  
->  };
-> -
-> -SYSTEM CONTROLLER 1
-> -===================
-> -
-> -Thermal:
-> ---------
-> -
-> -The thermal IP can probe the temperature all around the processor. It
-> -may feature several channels, each of them wired to one sensor.
-> -
-> -It is possible to setup an overheat interrupt by giving at least one
-> -critical point to any subnode of the thermal-zone node.
-> -
-> -For common binding part and usage, refer to
-> -Documentation/devicetree/bindings/thermal/thermal*.yaml
-> -
-> -Required properties:
-> -- compatible: must be one of:
-> -  * marvell,armada-cp110-thermal
-> -- reg: register range associated with the thermal functions.
-> -
-> -Optional properties:
-> -- interrupts-extended: overheat interrupt handle. Should point to
-> -  a line of the ICU-SEI irqchip (116 is what is usually used by the
-> -  firmware). The ICU-SEI will redirect towards interrupt line #37 of the
-> -  AP SEI which is shared across all CPs.
-> -  See interrupt-controller/interrupts.txt
-> -- #thermal-sensor-cells: shall be <1> when thermal-zones subnodes refer
-> -  to this IP and represents the channel ID. There is one sensor per
-> -  channel. O refers to the thermal IP internal channel.
-> -
-> -Example:
-> -CP110_LABEL(syscon1): system-controller@6f8000 {
-> -	compatible = "syscon", "simple-mfd";
-> -	reg = <0x6f8000 0x1000>;
-> -
-> -	CP110_LABEL(thermal): thermal-sensor@70 {
-> -		compatible = "marvell,armada-cp110-thermal";
-> -		reg = <0x70 0x10>;
-> -		interrupts-extended = <&CP110_LABEL(icu_sei) 116 IRQ_TYPE_LEVEL_HIGH>;
-> -		#thermal-sensor-cells = <1>;
-> -	};
-> -};
-> diff --git a/Documentation/devicetree/bindings/thermal/marvell,armada-ap806-thermal.yaml b/Documentation/devicetree/bindings/thermal/marvell,armada-ap806-thermal.yaml
-> new file mode 100644
-> index 000000000000..fdbdf3c1273a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/thermal/marvell,armada-ap806-thermal.yaml
-> @@ -0,0 +1,44 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/thermal/marvell,armada-ap806-thermal.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: Marvell Armada AP80x/CP110 thermal management
-> +
-> +maintainers:
-> +  - Miquel Raynal <miquel.raynal@bootlin.com>
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - marvell,armada-ap806-thermal
-> +      - marvell,armada-ap807-thermal
-> +      - marvell,armada-cp110-thermal
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    description: overheat interrupt
-> +    maxItems: 1
-> +
-> +  '#thermal-sensor-cells':
-> +    description: Cell represents the channel ID. There is one sensor per
-> +      channel. O refers to the thermal IP internal channel.
-> +    const: 1
-> +
-> +required:
-> +  - compatible
-> +  - reg
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    thermal-sensor@80 {
-> +        compatible = "marvell,armada-ap806-thermal";
-> +        reg = <0x80 0x10>;
-> +        interrupts = <18>;
-> +        #thermal-sensor-cells = <1>;
-> +    };
-> -- 
-> 2.47.2
-> 
+diff --git a/drivers/pci/controller/pci-xgene-msi.c b/drivers/pci/controller/pci-xgene-msi.c
+index 0a37a3f1809c..654639bccd10 100644
+--- a/drivers/pci/controller/pci-xgene-msi.c
++++ b/drivers/pci/controller/pci-xgene-msi.c
+@@ -311,7 +311,7 @@ static int xgene_msi_handler_setup(struct platform_device *pdev)
+ 		msi_val = xgene_msi_int_read(xgene_msi, i);
+ 		if (msi_val) {
+ 			dev_err(&pdev->dev, "Failed to clear spurious IRQ\n");
+-			return EINVAL;
++			return -EINVAL;
+ 		}
+ 
+ 		irq = platform_get_irq(pdev, i);
+-- 
+2.47.2
+
 
