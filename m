@@ -1,100 +1,127 @@
-Return-Path: <linux-kernel+bounces-753263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D8CBCB180BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:12:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38A06B180BD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9B5A9625EB4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:12:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D6E51C81E0F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:14:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7029E23C50E;
-	Fri,  1 Aug 2025 11:12:41 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F96323D2BC;
+	Fri,  1 Aug 2025 11:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CbEW4Mob"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2BAC238D57;
-	Fri,  1 Aug 2025 11:12:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A0E519AD48;
+	Fri,  1 Aug 2025 11:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754046761; cv=none; b=dVqMs5le/H2ilGpDH0Fubtz0PKR3soFw2KoJqbZWIkmfoQghL2etv9RJ2KEOFVoWHC6/DORKJOrqnzA4+xGBKh0fMTbirWyPMaCF8ytOpTOGb80HxlpmtIJgV/JE/KJcC7VSI2QTIeMd1A4PEz1FiVjbsPKks7irfoZNalgTZp0=
+	t=1754046815; cv=none; b=QTcRNncdb8bKuxVodVKYVCFb1Q26a/pxgsJir6djuL7ywIKzPs5k/qkYsvlhQM5E+GoPhuT8AlbPcGjJZJnlScCFpz0ejLItdZJAjQ+8VC8APRm+EY2NJ1+OYpjj+EWMpg3obwaxhlwu7VZdDQqzHwPCP0/fOuVflxSwrb5hPYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754046761; c=relaxed/simple;
-	bh=QNJ/tvonAX7hZ3GTAWAF6A0zR1tbH2Np4TTm/hN/1Nk=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=leVlTPxZbHCGTF/eZP20Sd/QdR09J0BHomUNggsUzZUgWXBEKFKKVbRSqTmCwrvpnI1Azzy45a0+yzRgD7T05iviNxBTVtao/q4FVwdCKRTLoM1NRjB3YUG1X4XrT2AeEi8H7VKrzanPAcTmBSdjF8ShJ6cfbUW+Fe/G6Lu+v6w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4btjqL6Cz7z6GD8B;
-	Fri,  1 Aug 2025 19:08:14 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4699B140371;
-	Fri,  1 Aug 2025 19:12:33 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Fri, 1 Aug
- 2025 13:12:32 +0200
-Date: Fri, 1 Aug 2025 12:12:31 +0100
-From: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-To: Matti Vaittinen <mazziesaccount@gmail.com>
-CC: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
-	<lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan
- Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, Nuno
- =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Andy Shevchenko
-	<andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>, Mark Brown
-	<broonie@kernel.org>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [RFC PATCH 2/2] iio: adc: ad7476: Simplify scale handling
-Message-ID: <20250801121231.0000298d@huawei.com>
-In-Reply-To: <1ce13bf8f5cfc5076e45f12c5e9499113f86df16.1754041258.git.mazziesaccount@gmail.com>
-References: <cover.1754041258.git.mazziesaccount@gmail.com>
-	<1ce13bf8f5cfc5076e45f12c5e9499113f86df16.1754041258.git.mazziesaccount@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.42; x86_64-w64-mingw32)
+	s=arc-20240116; t=1754046815; c=relaxed/simple;
+	bh=kYYvVTM4qPH2mG8oNBuS7rj/rQa1XFn68dlJ7SJHifY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qBPoyWk3K3Rl03FCLymsNLEWv02S6sHJEL+fG12fnHtppz29r7+G1XzHh/xPUQUtnHfjXL/L1mn1idrXH3j9oxqEWcttYe9ea6uEMfgT5ce3Ng1sblrba4OqTMqAROa4gdaeETBvHOadGtGwbY1KMetAzfXvJEXKQNv+yMof3UE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CbEW4Mob; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-455d297be1bso2271755e9.3;
+        Fri, 01 Aug 2025 04:13:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754046812; x=1754651612; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=QWsD4E5MkQZBKxPCQDxHGrezzNPyoGhGr3r6n78HRXI=;
+        b=CbEW4MobiAbf8Qb5EB9x3iufJ4GHYEIeLqKZQYzSh171X4EedPFpEnuKL4IwQ1AHpo
+         uJ2U33ivkYD0ZnwZEYZ9FKjbgLoWDHs4Fa9VRnKRrIAGOZRWjFmA+OD0r+cVQQVbiKPO
+         tmPs6c6StO6XVwNSdxs2tmCkDlEWEL/Vv01++qshfiGGg+48slSEXz58ynl9ScooQDtr
+         rlvMo7lPGvBi7kqu14i1Kni6/afbo0M/3wc8sJTneXufTezeFc6jWlH6iK80bRLCwbBI
+         Gc6gtvBoJ2q8b2xS8nkqSGTXSHGbRvbdPVbPJn8vaWUE0EGEnjjJgQmMUxYJVRaxD6gh
+         Tz6w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754046812; x=1754651612;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QWsD4E5MkQZBKxPCQDxHGrezzNPyoGhGr3r6n78HRXI=;
+        b=AopyX/jDxzZhSbl81Ugi6cYQ2M2QKbIM+3WDEaBzngRY891dbiHkNKO5WVIZMlJs/9
+         fmWw+63xNolr1Fyau55cjFuzOqak9SzjOXlXt3hZcdN/I+P15iIiCHCT4BGLT87ktmZT
+         5zK7uHIIL+cmq8VXmZ+34mFN3OW41X/EDXVW0PVJFHigSdTqp14jKHJZXKu+lEg11K+M
+         VK5lGMCFK4+9kX5mOtJu5o3jP2IngjGhHDY++b9LoCWZCcGJ4BIMSGargNNqANa+qFau
+         jQtNPOPAZR8/D1Ydv/Lov1FNVcWPZn2QcpN2NnwPnMHt3KCahzMiVx8Jms1eOK5MXVBj
+         nO0g==
+X-Forwarded-Encrypted: i=1; AJvYcCXiHQ4PrO04rOvORQQObjfPZGaIkOhbGEQT29UZIacay1pWn3Sl3tfJz+L3iTqpCeXnVfudbSDYVRotOLE=@vger.kernel.org, AJvYcCXjhkPbDE2lCypQvySShM9NUkwaOla/L4pDnbfFCXXI0knbtZvkRX1l4vXlmt0zNxq8t+2AlW/0@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb7zgMeP3i3To3PqMNtlR4SKWy8cUH58w6mI1VgKEJaC+CIXjG
+	KhckDTnCeIRTi81Nk8XNIXEOfdNLJOrkVqCPb/KcIM4yAVS5aUtERROx
+X-Gm-Gg: ASbGncvzjca9PZF4maVFtyrwk/Qa6aXhmYmSWRuK84XaHJtwtXANpgcQiYfPKyzWx2Y
+	rpmv71TCx2YdJYRi3Nj52xhW6xlpep7F3zMpWAzShQDFElvTmG5jjukU6nsQFAaS2YEKV3CzWwy
+	SARyCPCqbCEtWNBFRuEpws/QTm7cx3HqxOuGOp2kkDhvWsp2eoCEzyWHsrXuALbZ0ckC8kjct4b
+	3ctkTSpkrERn17GJVqUKizfP/LzMgNfxGWh0JJztXGtCLD5uAC1JsrrcrVJkjzkdulQhh2OMCwT
+	hmpDNNQR+jFitUAs/L+aDx4uTvbx4ya5ck3hBHtkUB8C3IbaSjct7yic3yoD6XEbCOvCzU+ULDl
+	YMV6eXGyBJ4v0Nss=
+X-Google-Smtp-Source: AGHT+IE7JIiob8i65gyZWYSDQUxoEkn4lMJGeIvSKpmdEp+VEBlEeE3XX/xpChu6zM2RTdMsbm2APw==
+X-Received: by 2002:a05:600c:1384:b0:455:fa91:3f9b with SMTP id 5b1f17b1804b1-45898e51908mr39441635e9.6.1754046812278;
+        Fri, 01 Aug 2025 04:13:32 -0700 (PDT)
+Received: from skbuf ([2a02:2f04:d30d:7300:b5a7:e112:cd90:eb82])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a2848sm5436728f8f.71.2025.08.01.04.13.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 04:13:31 -0700 (PDT)
+Date: Fri, 1 Aug 2025 14:13:29 +0300
+From: Vladimir Oltean <olteanv@gmail.com>
+To: "Russell King (Oracle)" <linux@armlinux.org.uk>
+Cc: Alexander Wilhelm <alexander.wilhelm@westermo.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <20250801111329.j4oaiyuiuvkncckw@skbuf>
+References: <aIuEvaSCIQdJWcZx@FUE-ALEWI-WINX>
+ <20250731171642.2jxmhvrlb554mejz@skbuf>
+ <aIvDcxeBPhHADDik@shell.armlinux.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml500012.china.huawei.com (7.191.174.4) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aIvDcxeBPhHADDik@shell.armlinux.org.uk>
 
-On Fri, 1 Aug 2025 13:07:39 +0300
-Matti Vaittinen <mazziesaccount@gmail.com> wrote:
+On Thu, Jul 31, 2025 at 08:26:43PM +0100, Russell King (Oracle) wrote:
+> Essentially, in aqr107_fill_interface_modes() I do this:
+> 
+> +       phy_set_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1, MDIO_CTRL1_LPOWER);
+> +       mdelay(10);
+> +       phy_write_mmd(phydev, MDIO_MMD_VEND1, 0x31a, 2);
 
-> The ad7476 driver supports variants with different amount of supply
-> regulators. On some variants there is only VCC, which is used as a
-> reference voltage. Others have separate VREF regulator, and some rely on
-> internal VREF. Some have both internal VREF and option to connect
-> external one.
-> 
-> The ad7476 driver reads the regulator voltage only when the user asks to
-> get the scale. This means the driver needs to do some dancing while
-> picking the correct reference regulator (or internal reference), and
-> store it for the later use.
-> 
-> According to the discussion:
-> https://lore.kernel.org/linux-iio/20250331122247.05c6b09d@jic23-huawei/
-> variable voltage references are rare, making it hard to justify the
-> added complexity for supporting those.
-> 
-> Drop the support for the variable voltage references and simplify things
-> by using the managed regulator get and enable interfaces.
-> 
-> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
+By the way, you can add:
+#define VEND1_GLOBAL_STARTUP_RATE		0x031a
+#define VEND1_GLOBAL_STARTUP_RATE_1G		2
 
-So there is risk of regression in doing this to an existing driver.
-I'm not that worried about it because as you note, we almost never
-see variable reference voltages.  So this is the whole, if no one notices
-it's not a regression exception to Linus' rules on regressions.
- 
-Looks good to me.
+according to:
+https://github.com/nxp-qoriq/linux/blob/lf-6.12.20-2.0.0/drivers/net/phy/aquantia/aquantia.h#L45-L54
 
-Jonathan
+> +       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_10M,
+> +                     VEND1_GLOBAL_CFG_SGMII_AN |
+> +                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+> +       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_100M,
+> +                     VEND1_GLOBAL_CFG_SGMII_AN |
+> +                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+> +       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_1G,
+> +                     VEND1_GLOBAL_CFG_SGMII_AN |
+> +                     VEND1_GLOBAL_CFG_SERDES_MODE_SGMII);
+> +       phy_write_mmd(phydev, MDIO_MMD_VEND1, VEND1_GLOBAL_CFG_2_5G,
+> +                     VEND1_GLOBAL_CFG_SGMII_AN |
+> +                     VEND1_GLOBAL_CFG_SERDES_MODE_OCSGMII);
+> +       phy_clear_bits_mmd(phydev, MDIO_MMD_VEND1, MDIO_CTRL1,
+> +                          MDIO_CTRL1_LPOWER);
 
