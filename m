@@ -1,39 +1,80 @@
-Return-Path: <linux-kernel+bounces-753283-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753284-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8827EB18102
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:22:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D174B18106
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:24:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B813416DAAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:22:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 762181C229F4
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4121C246770;
-	Fri,  1 Aug 2025 11:22:23 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E60221FCA
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:22:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DBBC245007;
+	Fri,  1 Aug 2025 11:24:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b="JY/2zdlX"
+Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40A1A20F087
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 11:24:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754047342; cv=none; b=qQ+bJOS+OID1XH907VV8djr2TI7PvSWwq1iZmLpEHEjUhbgzRQzghMK7UJ3R39vln+kui8jHjqipKYaXXkm2dv6wVryx6mf8EbPIJqd6et3VDMlRw/qqYdaioe2qUqaQR7anryPiPrd/VdBJubCDmqkUnZnUdHm/B2AciR8LSws=
+	t=1754047488; cv=none; b=Stnomm07NPdrEffFtje2hXe6nsVF8o3D0rPcHPiQDd3XdBYvwZ6IQYP6gNLcHymZBo3X8alZmvrRBdE1E2sOW5cM4n/QedIupyvnQDaNKJ0tc4zYOt5GybTH7i862NHlbjn2P6xS41KrzVpsF/ppJvv9HyP6G1T00zZrjfl6j2c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754047342; c=relaxed/simple;
-	bh=ylNmsTr+YV8w0Tt8IPdp+yaSt3V8z3Ju3+xAJQLromU=;
+	s=arc-20240116; t=1754047488; c=relaxed/simple;
+	bh=SRLyX5lnzN18Dbb631IaOjMakdacyZqijP0KLd6j8MI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZbSlwv3sE4oh8gjqWlP/CNzTYAPRI9UzsSktkxm3tcM6Mg78/SY7xCCaVGvXAY0az73+NB9EEFCvEnRg1HO/W7w1Nb/eLrILhTDNVm7bTNFu/EWYNxPfhtk817wZvwY8cJ5rCAWD4wg67CSAsKRs+3wtb9yx0XQZa10Q7KuxpAs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C47931516;
-	Fri,  1 Aug 2025 04:22:05 -0700 (PDT)
-Received: from [10.57.54.55] (unknown [10.57.54.55])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 919B33F66E;
-	Fri,  1 Aug 2025 04:22:12 -0700 (PDT)
-Message-ID: <8d810d87-e6a5-42bf-83c5-ba3aaec1889f@arm.com>
-Date: Fri, 1 Aug 2025 13:22:09 +0200
+	 In-Reply-To:Content-Type; b=noDUovvuzfPvyxANrlOI4j5fX7fO5n+OvaJe8rQ1tfPmcr2OhI1Ee31ML4IlzlQG0Pw/ELSUR8AIYF5++biCa6jHFHwEuoKOC8GxfzVc0PKwDN6kmmvWI5fvAPIqpb5kjlNvDpv5EB++27lT2PB8zfqsZXR7WgE4GeXlb+AIqxU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu; spf=none smtp.mailfrom=monstr.eu; dkim=pass (2048-bit key) header.d=monstr-eu.20230601.gappssmtp.com header.i=@monstr-eu.20230601.gappssmtp.com header.b=JY/2zdlX; arc=none smtp.client-ip=209.85.218.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=monstr.eu
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=monstr.eu
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af66f444488so144076066b.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 04:24:45 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=monstr-eu.20230601.gappssmtp.com; s=20230601; t=1754047484; x=1754652284; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=WhG5DbnyNiSNFxOr3+CmfhAT0XiWxX1Ob5TAR60O8tE=;
+        b=JY/2zdlXPzaJ7SrExmjybACzGdzMZYorgx7SerQWaA/dDOam4xnQilyeksM6txrTta
+         /k8rXvrWvmcF4+O/E3MCB9HBW41TAzNmX7KsvtIoXda4PdqIHugPnmSXKn+pinBhvg5B
+         NcmCnhK+kH+brGI2U4OdHo4i/C4BYv1CDSukQaKQ3TWo/IvoBvgu4IgLw8FBh7civJvs
+         7NrzWodRjsDJBhZiYzqEyvxmqOC0zGoUJMifkaOZPYjihrdA4NtRTYsEWBH0OMFkGXMy
+         aK6PiG0QtslPOZqFUA3qFxnwoqLZCKBUKxcRQMarUYpZ01d1A8pHJEJZ5JP2Ifo4E90v
+         a8SA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754047484; x=1754652284;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=WhG5DbnyNiSNFxOr3+CmfhAT0XiWxX1Ob5TAR60O8tE=;
+        b=SEXHKFn4NZGm9SBPby6t+Nd3e9RxOqkviTbjGVElV8l0/qZvO1uTjOaCqYbbJMcDCT
+         HlFFpnh3xogxN3X7U/SjLRp63WHRQUfBkm5mV/ozueOzisCQFELEiaexOZ7nb/BWJWys
+         h0HCTg8nVstmVQJWO0YDlQeVGgedL/eOQhVHhsoELYOL9lvPkXCsdqsR73MxkkyNLxtB
+         zNcNam6RLJeOP5W4xRpjHjKwD6v7WTFCqExmxtF97aAPzsebF+8q0rz80Gmk3pDRyigv
+         pV6TRVJppfdLpRSjTZKmu93qhPLlZiH6uNXQ5mEyo99EFbwHA8Dw8aeXCQAJDOC0HouF
+         m7ng==
+X-Gm-Message-State: AOJu0YyUooQZaAhLgPL+j5Gr1PqUHDd6Hd7LASCoAceEtDw+qXPblOev
+	82YFAcP3mMlClZlGKhKo3WablnQulukNBECbtNC3luLQz1yCFjKPS+ga/QD9N4q/sf5oOorhTXR
+	GwrSrA1Qa
+X-Gm-Gg: ASbGncsXHjYvvP5BZCxV3lMeucX9wTYAoIavZ8n2biPPVkIDTYvNfVF4hvkzWF8ZA45
+	6VjGLMZAKhT6y6SASZQnPcdg6rayRoTCxiMN20y2mEsYfNfGaxkoyhWLB4aWXa8hmX3DrENfgqk
+	4GmEZneWe8xbe8Ozx66PA9ChPWAjnLmIzkl5SoVlaSjjjEeuXV75x1+d8CYOGiRtxwNOpHfWa3V
+	ay0Pl6D6RzhIW7bt+ZJuogkSgX1rEHC12WoMBR/FF6F2bvYIH/Cc+GFTgnrknpc4US7GT0w3gKY
+	iLQz+TmGbL590wS/6yANj79JhmVJaLQJXVcLRPgbqPA4AlcXIJywdHL/nR+9SL3Z0EkxUBpjras
+	jhzPh1jRpSDCEIwuuC2QpGUiF
+X-Google-Smtp-Source: AGHT+IGAEwxmM6s8rcf+dLmLhqgPa7qSr1WrKscGfc7YN47rj1asFrZD+UvRmLT4EZYOZoO7IqhLxg==
+X-Received: by 2002:a17:906:c149:b0:af9:35f0:7a0f with SMTP id a640c23a62f3a-af935f07da4mr192102566b.28.1754047484211;
+        Fri, 01 Aug 2025 04:24:44 -0700 (PDT)
+Received: from [10.254.183.223] ([149.199.62.131])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c06bsm272442466b.119.2025.08.01.04.24.40
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 04:24:43 -0700 (PDT)
+Message-ID: <64e24ac1-e0dc-4d0c-a9ab-8bb26f5acdcb@monstr.eu>
+Date: Fri, 1 Aug 2025 13:24:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,114 +82,106 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1] arm64/mm: Ensure lazy_mmu_mode never nests
-To: Ryan Roberts <ryan.roberts@arm.com>, Will Deacon <will@kernel.org>
-Cc: Catalin Marinas <catalin.marinas@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-References: <20250606135654.178300-1-ryan.roberts@arm.com>
- <aEgeQCCzRt-B8_nW@arm.com> <3cad01ea-b704-4156-807e-7a83643917a8@arm.com>
- <aEhKSq0zVaUJkomX@arm.com> <b567a16a-8d80-4aab-84c2-21cbc6a6a35d@arm.com>
- <20250612145906.GB12912@willie-the-truck>
- <066fa735-98ad-45f4-9316-b983d2e5a3d3@arm.com>
-Content-Language: en-GB
-From: Kevin Brodsky <kevin.brodsky@arm.com>
-In-Reply-To: <066fa735-98ad-45f4-9316-b983d2e5a3d3@arm.com>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH 0/3] arm64: zynqmp: Add support for kr260 and kd240
+To: linux-kernel@vger.kernel.org, monstr@monstr.eu, michal.simek@xilinx.com,
+ git@xilinx.com
+Cc: Conor Dooley <conor+dt@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>,
+ "moderated list:ARM/ZYNQ ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>
+References: <cover.1752837842.git.michal.simek@amd.com>
+Content-Language: en-US
+From: Michal Simek <monstr@monstr.eu>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ mpwx1d8=
+In-Reply-To: <cover.1752837842.git.michal.simek@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 12/06/2025 18:00, Ryan Roberts wrote:
-> On 12/06/2025 15:59, Will Deacon wrote:
->> On Tue, Jun 10, 2025 at 05:37:20PM +0100, Ryan Roberts wrote:
->>> On 10/06/2025 16:07, Catalin Marinas wrote:
->>>> On Tue, Jun 10, 2025 at 02:41:01PM +0100, Ryan Roberts wrote:
->>>>> On 10/06/2025 13:00, Catalin Marinas wrote:
->>>>>> On Fri, Jun 06, 2025 at 02:56:52PM +0100, Ryan Roberts wrote:
->>>>>>> Commit 1ef3095b1405 ("arm64/mm: Permit lazy_mmu_mode to be nested")
->>>>>>> provided a quick fix to ensure that lazy_mmu_mode continues to work when
->>>>>>> CONFIG_DEBUG_PAGEALLOC is enabled, which can cause lazy_mmu_mode to
->>>>>>> nest.
->>>>>>>
->>>>>>> The solution in that patch is the make the implementation tolerant to
->>>>>> s/is the make/is to make/
->>>>>>
->>>>>>> nesting; when the inner nest exits lazy_mmu_mode, we exit then the outer
->>>>>>> exit becomes a nop. But this sacrifices the optimization opportunity for
->>>>>>> the remainder of the outer user.
->>>>>> [...]
->>>>>>> I wonder if you might be willing to take this for v6.16? I think its a neater
->>>>>>> solution then my first attempt - Commit 1ef3095b1405 ("arm64/mm: Permit
->>>>>>> lazy_mmu_mode to be nested") - which is already in Linus's master.
->>>>>>>
->>>>>>> To be clear, the current solution is safe, I just think this is much neater.
->>>>>> Maybe better, though I wouldn't say much neater. One concern I have is
->>>>>> about whether we'll get other such nesting in the future and we need to
->>>>>> fix them in generic code. Here we control __kernel_map_pages() but we
->>>>>> may not for other cases.
->>>>>>
->>>>>> Is it the fault of the arch code that uses apply_to_page_range() via
->>>>>> __kernel_map_pages()? It feels like it shouldn't care about the lazy
->>>>>> mode as that's some detail of the apply_to_page_range() implementation.
->>>>>> Maybe this API should just allow nesting.
->>>>> I don't think it is possible to properly support nesting:
->>>>>
->>>>> enter_lazy_mmu
->>>>>     for_each_pte {
->>>>>         read/modify-write pte
->>>>>
->>>>>         alloc_page
->>>>>             enter_lazy_mmu
->>>>>                 make page valid
->>>>>             exit_lazy_mmu
->>>>>
->>>>>         write_to_page
->>>>>     }
->>>>> exit_lazy_mmu
->>>>>
->>>>> This example only works because lazy_mmu doesn't support nesting. The "make page
->>>>> valid" operation is completed by the time of the inner exit_lazy_mmu so that the
->>>>> page can be accessed in write_to_page. If nesting was supported, the inner
->>>>> exit_lazy_mmu would become a nop and write_to_page would explode.
->>>> What I meant is for enter/exit_lazy_mmu to handle a kind of de-nesting
->>>> themselves: enter_lazy_mmu would emit the barriers if already in lazy
->>>> mode, clear pending (well, it doesn't need to do this but it may be
->>>> easier to reason about in terms of flattening). exit_lazy_mmu also needs
->>>> to emit the barriers but leave the lazy mode on if already on when last
->>>> entered. This does need some API modifications to return the old mode on
->>>> enter and get an argument for exit. But the correctness wouldn't be
->>>> affected since exit_lazy_mmu still emits the barriers irrespective of
->>>> the nesting level.
->>> Ahh I see what you mean now; exit always emits barriers but only the last exit
->>> clears TIF_LAZY_MMU.
->>>
->>> I think that's much cleaner, but we are changing the API which needs changes to
->>> all the arches and my attempt at [1] didn't really gain much enthusiasm.
->> To be honest, I don't think the proposal in this series is really
->> improving what we have. Either we support nested lazy mode or we don't;
->> having __kernel_map_pages() mess around with the lazy mmu state because
->> it somehow knows that set_memory_valid() is going to use it is fragile
->> and ugly.
->>
->> So I'm incined to leave the current code as-is, unless we can remove it
->> in favour of teaching the core code how to handle it instead.
-> Yeah fair enough. I'm not going to have time to do the proper nesting support
-> thing. But I'll see if I can find someone internally that I might be able to
-> convince. If not, we'll just leave as is.
 
-I've started working on supporting nesting as Catalin suggested above -
-modifying the API so that enter() returns whether the call is nested,
-and leave() takes the value returned by enter(). I've got it working
-without too much trouble, there's a fair amount of churn at the call
-sites but a trivial Coccinelle script can handle most of them.
 
-This new approach will also help with protecting page tables with
-kpkeys: lazy_mmu is very useful to write to POR_EL1 less often [1], but
-this currently assumes that nesting doesn't occur. In fact the new API
-should allow the old value of POR_EL1 to be returned by enter(), meaning
-we wouldn't need to store it in a thread-local variable.
+On 7/18/25 13:24, Michal Simek wrote:
+> Hi,
+> 
+> add description for k24 and kr260 with kd240 boards.
+> Pretty much both k24 and k26 SOMs can be plugged to other carrier cards but
+> not all combinations are tested together.
+> 
+> Thanks,
+> Michal
+> 
+> 
+> Michal Simek (3):
+>    dt-bindings: soc: xilinx: Add support for K24, KR260 and KD240 CCs
+>    arm64: zynqmp: Add support for kr260 board
+>    arm64: zynqmp: Add support for kd240 board
+> 
+>   .../bindings/soc/xilinx/xilinx.yaml           |  81 ++++
+>   arch/arm64/boot/dts/xilinx/Makefile           |  24 +
+>   .../boot/dts/xilinx/zynqmp-sck-kd-g-revA.dtso | 390 +++++++++++++++
+>   .../boot/dts/xilinx/zynqmp-sck-kr-g-revA.dtso | 438 +++++++++++++++++
+>   .../boot/dts/xilinx/zynqmp-sck-kr-g-revB.dtso | 451 ++++++++++++++++++
+>   .../boot/dts/xilinx/zynqmp-sm-k24-revA.dts    |  23 +
+>   .../boot/dts/xilinx/zynqmp-smk-k24-revA.dts   |  21 +
+>   7 files changed, 1428 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kd-g-revA.dtso
+>   create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kr-g-revA.dtso
+>   create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sck-kr-g-revB.dtso
+>   create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-sm-k24-revA.dts
+>   create mode 100644 arch/arm64/boot/dts/xilinx/zynqmp-smk-k24-revA.dts
+> 
 
-- Kevin
-
-[1]
-https://lore.kernel.org/linux-mm/20250411091631.954228-19-kevin.brodsky@arm.com/
+Applied.
+M
+-- 
+Michal Simek, Ing. (M.Eng), OpenPGP -> KeyID: FE3D1F91
+w: www.monstr.eu p: +42-0-721842854
+Maintainer of Linux kernel - Xilinx Microblaze
+Maintainer of Linux kernel - Xilinx Zynq ARM and ZynqMP/Versal ARM64 SoCs
+U-Boot custodian - Xilinx Microblaze/Zynq/ZynqMP/Versal/Versal NET SoCs
+TF-A maintainer - Xilinx ZynqMP/Versal/Versal NET SoCs
 
 
