@@ -1,88 +1,88 @@
-Return-Path: <linux-kernel+bounces-753426-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753427-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17F2AB182DF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:52:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76F6FB182DE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:52:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6C0AC3B780C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:52:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BB77583FD6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:52:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DD4126CE2B;
-	Fri,  1 Aug 2025 13:51:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DFAC26E142;
+	Fri,  1 Aug 2025 13:51:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="ZixZKNRc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="A1K+SC7z"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54B29269B1C
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:51:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4CB9221FBE
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:51:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754056284; cv=none; b=ZZvBOay6xnmFh7Mf/mHrNwB1BMWdmOo7cR5JHPNLIpsZMKBW81poSroHnRXGBYHj/sScrXJxxEHm3leBnBF2/ttug1cuI/qqzTCnLwu5jLHSNMKALoRL6uCXE4oQpZ5kFxjV04q25fxlNYLUgoc/jY7XWZCt4YNnOB0DthKcG9U=
+	t=1754056285; cv=none; b=OGbAnI1tqTxK6FAYQiJHkFphOKBrH2fGX3hdsX7alHmXVB9zv2PnFgBf+N60VTis0HKonLvMb0sgfoLS1pBXA6WAreR2oX3GIWiLczQtpnB/bjT52+UWNeTtlNjeHKund0zQ8ZyDoE59Z4Em8+sCNMxdruZJry194veHu3WTY0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754056284; c=relaxed/simple;
-	bh=Npu11OGBlNLZEIA4iffNoHuzYf6/Fg1CUI3VmwQheFU=;
+	s=arc-20240116; t=1754056285; c=relaxed/simple;
+	bh=goFFEhtD/Im3N1nsgGMsKddMGY0uKGtsCO6KqUCkWNY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rXO87fO1FmVRrhsafbOvQUbwqWHMb3JRMsrTt1Rv1TA5xE9KrycxbCd1NbOvSQ12lwFPcnFXufYrc2hXLr+l1tKd4XS64vjIdhenHeAU9axx2rq4JTZusFz+l573gWTkG4V/TP/RhgvImJbmWAfZe80uCq3+6auEbFICpDeYGYs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=ZixZKNRc; arc=none smtp.client-ip=205.220.168.131
+	 In-Reply-To:To:Cc; b=aYCnsg0uy4S4NRNgJwCnC3tcTZ05UYKEWqrJBwlhGzY5vnLcsFQlyJpzDOXaZegRHU1wVzSBUI3bB7McdtkUnHOoLljyxAN4VOtE0HOtajWbLBxx8RyMhHsx6ejd2zvkVlV2fXllkD15qPHOF5JRE0Ck/7c/aCqu1FlW9qUGtXY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=A1K+SC7z; arc=none smtp.client-ip=205.220.180.131
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571CLn2W002420
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:51:21 GMT
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571D0PEx007116
+	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:51:22 GMT
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
 	cc:content-transfer-encoding:content-type:date:from:in-reply-to
 	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	V6zL/GI63V6YYKeGM1mEryAObeKPOCarM9uKEFJtsyk=; b=ZixZKNRcrQRvodJd
-	apim1u6KzeyYaY//ocAWtkLz/m17cHyGdmVUAPav/oemBLjXWM8v5jOvdHVocNyI
-	rvLr5FVYTG15cc0OaOsqlihXATZGE9p9a0nu/gA7i7Y7zySFoyb9RqfM+39/kq0c
-	htiK2coTBIDxuR0EvVp/uYXqFjE30OEiAdkmtfDLs07DkBNbumDI9dasN5TB0CSJ
-	2d5r6trf5sCoWrC6aDCOov17JxzpbWd3mKWqpVLJ0oHEYu0bMDsIMgIK4yRQxBc/
-	KO6Vtw47yO6PTczVwalcNZcB1iTGnDVrhZOnTknXWFNdnJWnjDsD8VfMLNWAUU6C
-	+MEndA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 488wgrr7cu-1
+	oABhVeMhuZm6PTbnI/8btR4aN+7HYVmKHbDE5K4ACek=; b=A1K+SC7zD6GligY/
+	GPqmET/omO6fzaL/xEUI482+gFAiZJThvM9z5pH9qdUiTFXjW5Rs4k3pjBcuyHLu
+	N6CzocO6EDUiGpSlSdxWNTDbxPOo8AjShY6chKLTa5bfHzhCW7mgID5CgaX6KCCT
+	VuYAUC23I706bpUbkvAexLDnKaFwsA6xbDLOo8eOK0U9H7yUAY4k0cexzk/1rcdc
+	idAA8UDogPmeEEHbYVgnE0njWXQi4DbjNXxrzpyPrOPazxYrweuMlI0PJuFiwtL3
+	+LA+xfwJkBx/aLuYLww/sTwK2LCTX6gc6fljBzA0V/t1xzv9EbbfSA17DEv7S2id
+	w1CFdw==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pbmbtjy-1
 	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:51:21 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab657b88c7so19114811cf.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:51:21 -0700 (PDT)
+	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:51:22 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab44642abeso16223241cf.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:51:22 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754056280; x=1754661080;
+        d=1e100.net; s=20230601; t=1754056281; x=1754661081;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=V6zL/GI63V6YYKeGM1mEryAObeKPOCarM9uKEFJtsyk=;
-        b=GZ6T14gRacxf7p0J5C1OdCykHXoLZzNj7p+MCaBRmuOiPQTN7dX0RVHGv8QZSwVbbw
-         4WZedgwqPuM8jhKIS3Jm/ffgmtRuT2RHKvYl2StWgvVxUg9qBSB9ycfymn8pXy+Oeu6M
-         K+vAOmmmdPQ1nPtC9RRwZ05DcRy0DePyNz0WjEkCJEKlXvkWm9+Zn/87N/qKuEBLUxZM
-         DiTlmFASlZHkZh9y9hkPmW3XiQzq/rViFEvUMmAsr5ZPLBx5temTSyfV0emuTwf7/gYA
-         NzD3wmrMrK1svZNWJKhnZ9oK0g45CmyVCE8wgt2Y7fvV0swn1yOk9liZDMY1B0xsLlN6
-         p8vA==
-X-Forwarded-Encrypted: i=1; AJvYcCVNQMAKYDQSSrX8if45DkfBRIi6l8JoABDQcHUdEExN5Y4GC9ZA+ZYwqdMcDPZUP0ly59GkMehYyod0A/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIRxVf+lHIIPRgy3UFoHOaFNQgXNT08UPm9UQ5J1Mec540Mtpt
-	V2FomV3qDUOhjI6us+uliwJvnVip8Sbhnv6yqocwbn70AsRN6a4pEFcpOipmNFV4Z3E+i+SJgEr
-	qVNnU0XEbzZsmfEcSaHiIlacKND8Egp2re0dcdh20lYBXptKue7CqCmLDd/2ySR8atgM=
-X-Gm-Gg: ASbGnct9F6VIA4reyxxMkjX0t3DyX6Nit5MtGMIwK/F4H5caCnGaNDfiqXXufIYOepQ
-	D7zUr0xs61SvK7sOOf8Hwo1yQ4+hc3j1mU8Rr+3SqF4afNzwhvahU4HdEtjrR/7EtStarokaTxy
-	tj1G/R3S7HoL0vdRvFxq0MiiGKPjuETbWtQD8U9K6j7ZvYC/rR9pPiBHaM5S9fIhL8X/eQExMbB
-	p6LZ8e1/v1IWBKjgm77HbBoQd+h42L2T0EWWz7yr3d8eP5v7Z+R+yBU6/YjyGTF1so3nPtzzZ3o
-	Vo/jVE3gtVTTScnXTVM3FSX719sqGQVYJtB+dyaXS/MsZ1o7HzHiIpAbzIs642X/QaPeEAv0Gwo
-	pafbL3griXLiCdz1x6166dIJHPyVdjXJ1wUaSGCl6YSbnSRnW2pOd
-X-Received: by 2002:ac8:5813:0:b0:4af:219:b8e9 with SMTP id d75a77b69052e-4af0219bd62mr28441291cf.6.1754056280013;
+        bh=oABhVeMhuZm6PTbnI/8btR4aN+7HYVmKHbDE5K4ACek=;
+        b=pfKymEcitGBIxKkKdr2/P+V3zQXR5qcICUvNBxhPWqK0EyAS1jj2lCFL+yl2HEwpFp
+         GwgE1PbWWduVWjsNYWH68VEH9Wk0DT7WyXWxKZmGGZLeFMueFDwj0JT1VnevZlbn4FOt
+         /hlaUCwRmELpHMWKgaZ+K4D93+Y4Sw1ZMoK6Elejbfcf7oKiDAdHxZdX/IwoyExBDMYR
+         U1HTGWGabAaexwR4+fYUUEARpQLCfJVD4CoZpAvti1geqcXsarExVZkiaYCKLhIOyMCC
+         5hkkWUHes2wyQTjzN4KTfhRORX1UTge3Z9MgPQPJt0l8L+c7jSWOJV7PWBo4Ik5dztgS
+         pxpA==
+X-Forwarded-Encrypted: i=1; AJvYcCXqLGOsJZVCY4/+8pAwvOBTwkRjQWB5h52FA3L+JKZMYGSw49HKIKEQtRyba9XtVJewLxwUdZI3xTRw+y0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywpxb8PrwvCrS26o08ST6t81RQfP8UrtJPrnci36dPR7BFUCrvs
+	UD3oOgpOD8BCUCrxSsgf7jfnxMhK4F4G2BhiwqrnECFETbCVAFvfFWWZrBWA+ZL5HWbsSioiAFE
+	sIdo0aVfN1WipAXeXMNpbIJWtCTB5HnaTS3wpalZwyRV2bQSP7jVtLfpC3VCWCoBAztA=
+X-Gm-Gg: ASbGncvGoTBPbm13k5HN38E7HJfjFJCh5+zwiFqYkmdJk06WswP6wj1vlCQoT2/0Elj
+	J5/WmAWriOO3pYSCQgPYcMW4IzjpN6w7Q5CUJosCs7hgTwqul41aj80reZjMMxE5zmIWDRr3uxO
+	Qjt1VEei6mbKDUfyCqaICiPvfWKFTo+nfm1yXZC5ATIovAvCr1JX+eMGK2rnoiKo3IwqhbLx5Zv
+	T+J4LlhBd+yMO3ZYKq6N37fFZRwDGrbos+nyJ1L5s2h80CBOzj8ZHbvHlS97eyVZsPSngJC3C/+
+	lQip+OTrW9wG8hi0dhZ/4weVWYKXrtAxKNnR3j63s1Ux5WNi/eSnejtxr+JEV8gEizmatURbmgi
+	GvCP6+Lj0QNkBpv7xbBogbW5jq1UvzUics6oI3KiZc8/NG/QRt7Rt
+X-Received: by 2002:a05:622a:6090:b0:4af:a3d:9f94 with SMTP id d75a77b69052e-4af0a3da105mr12354411cf.50.1754056281363;
+        Fri, 01 Aug 2025 06:51:21 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IG52DSwGwk7HNvgjkCq+ht7oyq6LU2s445ag3X2y//8N4s5HAyIOUu28Pz6VZOfWywVilLC9Q==
+X-Received: by 2002:a05:622a:6090:b0:4af:a3d:9f94 with SMTP id d75a77b69052e-4af0a3da105mr12353661cf.50.1754056280680;
         Fri, 01 Aug 2025 06:51:20 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFR0G/8/mp3NoMeNSdNh5xGLdgi/uAIOcZPk20PI9XWjmBIPiXjC/zontxCRxjb7k+mVn1ffA==
-X-Received: by 2002:ac8:5813:0:b0:4af:219:b8e9 with SMTP id d75a77b69052e-4af0219bd62mr28440731cf.6.1754056279485;
-        Fri, 01 Aug 2025 06:51:19 -0700 (PDT)
 Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238273006sm5917801fa.9.2025.08.01.06.51.18
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-33238273006sm5917801fa.9.2025.08.01.06.51.19
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:51:18 -0700 (PDT)
+        Fri, 01 Aug 2025 06:51:19 -0700 (PDT)
 From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Fri, 01 Aug 2025 16:51:09 +0300
-Subject: [PATCH 1/8] drm/amd/display: use drmm_writeback_connector_init()
+Date: Fri, 01 Aug 2025 16:51:10 +0300
+Subject: [PATCH 2/8] drm/komeda: use drmm_writeback_connector_init()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,7 +91,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-wb-drop-encoder-v1-1-824646042f7d@oss.qualcomm.com>
+Message-Id: <20250801-wb-drop-encoder-v1-2-824646042f7d@oss.qualcomm.com>
 References: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
 In-Reply-To: <20250801-wb-drop-encoder-v1-0-824646042f7d@oss.qualcomm.com>
 To: Jani Nikula <jani.nikula@linux.intel.com>,
@@ -123,40 +123,40 @@ Cc: amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
         linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
         freedreno@lists.freedesktop.org, linux-renesas-soc@vger.kernel.org
 X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2980;
+X-Developer-Signature: v=1; a=openpgp-sha256; l=2909;
  i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=Npu11OGBlNLZEIA4iffNoHuzYf6/Fg1CUI3VmwQheFU=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBojMZSZXL0kc9QaXkC+l3w6n53625xXoOoWi1Rf
- w1dSHbBA4+JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaIzGUgAKCRCLPIo+Aiko
- 1bpSB/94A2+Addr9RNnuGBvk1NYZ/RWjJSnSxboR9iOfirpPVgua99XOaoDsSnhD3nuxJDmBBgF
- 98NqAbJF6AFI97xmYBM/6ZHsdItWame0lELe7Aw/j7btMsZu4+ROQl6Y0xZAX084XeDcL/jBaJP
- xamILenkg4IgIBeN9bJeA5pyCqsvRXSezPiBgNrZsYGeaqPvNmK9Mn0W0Y8TFvSvDNOvYTcOYSP
- iArGGeNBhFZpGcWJn4cJDKYMfOSQLAW9ZQg0/3fe0/pp9MfDoYSyOjWvZsX73WeP5lIM0vOShqs
- 9ONfy5Np+vHNO0rlKWiXD7XgdKfRRU203q22p1TS+tHpzFKa
+ bh=goFFEhtD/Im3N1nsgGMsKddMGY0uKGtsCO6KqUCkWNY=;
+ b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBojMZS1/Pfoit12OsSUjCvlkC+n29kedgBSwC22
+ eCp4uNngN6JATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaIzGUgAKCRCLPIo+Aiko
+ 1VxsB/4+wGaVMLsVmpV+09A3+p8+foUBQSgFcdvA/I4/t5sBLeSCn+vn1JqBTR0JDVzGYK1vbkk
+ BTWUu6ath0wbCVud8VRfTvlyySY1vUcez+mErbsBg45cP+wX3u5TLNpED0RVfbzxupTDV73iK0H
+ seidFyUwfyX/E/LVPD6/ADYUNls6a9V+LUE8vk3HZ4mj77kQTZC6po3gv39kemSn2tFATpftS4e
+ m0UN5xQ6ot7oxvZK6X6c4Zg1bwX7jnrbXPWb1OBC+2+Nd5Y5psNhY49pZgmW2815O6Zz5gB0iHI
+ 7WHR3RawPjs3QOkKKEt3YoK99Z3wcIgiSjmAGenNpj8/MdDB
 X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
  fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Authority-Analysis: v=2.4 cv=fs7cZE4f c=1 sm=1 tr=0 ts=688cc659 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=8cP71iSYcfV9S7Y4u-4A:9 a=QEXdDO2ut3YA:10
- a=uxP6HrT_eTzRwkO_Te1X:22
-X-Proofpoint-GUID: vlvAAo0DpGjCC6NIafXQLlMcrLW8KouO
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwMyBTYWx0ZWRfXzmUr97HA48Eo
- 2jNzpLqGwdNCHNvDPFZhngkaXMzprkIIZr7zZE9pzbZK6txiNuz+zpCDWb3Hpczp6bwkEukRbA+
- iVTH3VYvJ5GaBNK4nG17lAJ6qbBKh25PCVxFb2n1jV7o9mJxYu7IALvq6y605DtN+3GCmfNd4VW
- MdU6AyLPrK7s8MsspDbxF6rqgN8gTTCV/WA9Eg8jUucjqt1TfJ12f0db334cJLP7zJDm+2aYX9x
- MAsfjkvq9DXGZgSJVnsi88M+gbsCiVcxLNAA1Q81JLNAf8crOnScav31Lk56O2KPLNA1+d9Ov9z
- xmX/qyqcmhMiH7yP6UGmkh+xfWUCzEdsu/jdCa3zR6N8WMdNZ40Pvg22S/AnnRmQGlhLiBQ06kw
- zvizkhP+NSIGLWxOVj/2MoTVuStFehrcSHZ1eRagggVKZZTl2OhFDUHVIILbuhCiTQBU29qy
-X-Proofpoint-ORIG-GUID: vlvAAo0DpGjCC6NIafXQLlMcrLW8KouO
+X-Authority-Analysis: v=2.4 cv=LsaSymdc c=1 sm=1 tr=0 ts=688cc65a cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=EE5oNXVUeA2ILyHCr4wA:9 a=QEXdDO2ut3YA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwNSBTYWx0ZWRfX/AA1jAJQF2dM
+ i66mYIPrqSi7Gz0CM2XQ6HCIcFn5YOMCD4vJRTsvCyRtqWNuth2I/NZrAAYyZXVMUmdWTMD0roB
+ bn1lQg4NQ3yvo0tGB4uyP0GOlMFsn/vGzzOn/2A9bzluz3IBTNovX9/mUkDd6UjUDUwA7YGm97o
+ Wj6L/zJIFRWUm9lS4yvLc64C7Fwemt6Yi7NxVIBYEuGhWfiPRNOnMXwIs5EDwBEixDORH/3+vCm
+ /tjqOG/THfw7Lnpt+AaXKtPm6HR1P7Fklhug76NvowkOF+QuVmIE8kQOv2zWFEtriVhSxJvaumu
+ ywBw8PPfw2EjwiqZCTYwrBNIQ/qfuumlXydCh56skDiYrp2zXvsQeg3YU5EFCeTjeAAV5/VHY2A
+ woL/Xavc12zecJVNYajNjB7egDqijTd+tGpzbhSIc6Op5Y7zz+BTz33cc7sEf43UB83ytKM+
+X-Proofpoint-ORIG-GUID: YwHRD6ElzuvMOEzoMuaN_vW2YN_n8r24
+X-Proofpoint-GUID: YwHRD6ElzuvMOEzoMuaN_vW2YN_n8r24
 X-Proofpoint-Virus-Version: vendor=baseguard
  engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
  definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
 X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 malwarescore=0 suspectscore=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 priorityscore=1501 phishscore=0 mlxlogscore=939 impostorscore=0
- bulkscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010103
+ clxscore=1015 mlxlogscore=825 spamscore=0 phishscore=0 suspectscore=0
+ impostorscore=0 adultscore=0 lowpriorityscore=0 priorityscore=1501
+ bulkscore=0 mlxscore=0 malwarescore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508010105
 
 Use drmm_plain_encoder_alloc() to allocate simple encoder and
 drmm_writeback_connector_init() in order to initialize writeback
@@ -164,66 +164,81 @@ connector instance.
 
 Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 ---
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c    |  2 +-
- drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c | 18 +++++++++++++-----
- 2 files changed, 14 insertions(+), 6 deletions(-)
+ .../drm/arm/display/komeda/komeda_wb_connector.c   | 30 ++++++++++++----------
+ 1 file changed, 17 insertions(+), 13 deletions(-)
 
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-index 096b23ad4845d365dad707deed4e3e84b1f9945d..a9948e8d67a6e9556d21090b5cdd101258d62480 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm.c
-@@ -10003,7 +10003,7 @@ static void dm_set_writeback(struct amdgpu_display_manager *dm,
- 		return;
- 	}
+diff --git a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+index 875cdbff18c9dc97e736049feaa8a1fe1bcc82ff..210841b4453abfe60cecc1cfc79a84298be3e684 100644
+--- a/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
++++ b/drivers/gpu/drm/arm/display/komeda/komeda_wb_connector.c
+@@ -5,6 +5,7 @@
+  *
+  */
+ #include <drm/drm_framebuffer.h>
++#include <drm/drm_managed.h>
+ #include "komeda_dev.h"
+ #include "komeda_kms.h"
  
--	acrtc = to_amdgpu_crtc(wb_conn->encoder.crtc);
-+	acrtc = to_amdgpu_crtc(crtc_state->base.crtc);
- 	if (!acrtc) {
- 		drm_err(adev_to_drm(adev), "no amdgpu_crtc found\n");
- 		kfree(wb_info);
-diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-index d9527c05fc878ef6916782ff9fde847813938461..80c37487ca77c0494eaf769c5b9a3c53486aa52d 100644
---- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-+++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_wb.c
-@@ -171,7 +171,6 @@ static const struct drm_encoder_helper_funcs amdgpu_dm_wb_encoder_helper_funcs =
+@@ -121,17 +122,10 @@ komeda_wb_connector_fill_modes(struct drm_connector *connector,
+ 	return 0;
+ }
  
- static const struct drm_connector_funcs amdgpu_dm_wb_connector_funcs = {
- 	.fill_modes = drm_helper_probe_single_connector_modes,
--	.destroy = drm_connector_cleanup,
- 	.reset = amdgpu_dm_connector_funcs_reset,
- 	.atomic_duplicate_state = amdgpu_dm_connector_atomic_duplicate_state,
- 	.atomic_destroy_state = drm_atomic_helper_connector_destroy_state,
-@@ -190,17 +189,26 @@ int amdgpu_dm_wb_connector_init(struct amdgpu_display_manager *dm,
- 	struct dc *dc = dm->dc;
- 	struct dc_link *link = dc_get_link_at_index(dc, link_index);
- 	int res = 0;
+-static void komeda_wb_connector_destroy(struct drm_connector *connector)
+-{
+-	drm_connector_cleanup(connector);
+-	kfree(to_kconn(to_wb_conn(connector)));
+-}
+-
+ static const struct drm_connector_funcs komeda_wb_connector_funcs = {
+ 	.reset			= drm_atomic_helper_connector_reset,
+ 	.detect			= komeda_wb_connector_detect,
+ 	.fill_modes		= komeda_wb_connector_fill_modes,
+-	.destroy		= komeda_wb_connector_destroy,
+ 	.atomic_duplicate_state	= drm_atomic_helper_connector_duplicate_state,
+ 	.atomic_destroy_state	= drm_atomic_helper_connector_destroy_state,
+ };
+@@ -143,13 +137,15 @@ static int komeda_wb_connector_add(struct komeda_kms_dev *kms,
+ 	struct komeda_wb_connector *kwb_conn;
+ 	struct drm_writeback_connector *wb_conn;
+ 	struct drm_display_info *info;
 +	struct drm_encoder *encoder;
 +
-+	encoder = drmm_plain_encoder_alloc(&dm->adev->ddev, NULL,
+ 	u32 *formats, n_formats = 0;
+ 	int err;
+ 
+ 	if (!kcrtc->master->wb_layer)
+ 		return 0;
+ 
+-	kwb_conn = kzalloc(sizeof(*kwb_conn), GFP_KERNEL);
++	kwb_conn = drmm_kzalloc(&kms->base, sizeof(*kwb_conn), GFP_KERNEL);
+ 	if (!kwb_conn)
+ 		return -ENOMEM;
+ 
+@@ -165,11 +161,19 @@ static int komeda_wb_connector_add(struct komeda_kms_dev *kms,
+ 		return -ENOMEM;
+ 	}
+ 
+-	err = drm_writeback_connector_init(&kms->base, wb_conn,
+-					   &komeda_wb_connector_funcs,
+-					   &komeda_wb_encoder_helper_funcs,
+-					   formats, n_formats,
+-					   BIT(drm_crtc_index(&kcrtc->base)));
++	encoder = drmm_plain_encoder_alloc(&kms->base, NULL,
 +					   DRM_MODE_ENCODER_VIRTUAL, NULL);
 +	if (IS_ERR(encoder))
 +		return PTR_ERR(encoder);
 +
-+	drm_encoder_helper_add(encoder, &amdgpu_dm_wb_encoder_helper_funcs);
++	drm_encoder_helper_add(encoder, &komeda_wb_encoder_helper_funcs);
 +
-+	encoder->possible_crtcs = amdgpu_dm_get_encoder_crtc_mask(dm->adev);
- 
- 	wbcon->link = link;
- 
- 	drm_connector_helper_add(&wbcon->base.base, &amdgpu_dm_wb_conn_helper_funcs);
- 
--	res = drm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
-+	res = drmm_writeback_connector_init(&dm->adev->ddev, &wbcon->base,
- 					    &amdgpu_dm_wb_connector_funcs,
--					    &amdgpu_dm_wb_encoder_helper_funcs,
++	encoder->possible_crtcs = BIT(drm_crtc_index(&kcrtc->base));
++
++	err = drmm_writeback_connector_init(&kms->base, wb_conn,
++					    &komeda_wb_connector_funcs,
 +					    encoder,
- 					    amdgpu_dm_wb_formats,
--					    ARRAY_SIZE(amdgpu_dm_wb_formats),
--					    amdgpu_dm_get_encoder_crtc_mask(dm->adev));
-+					    ARRAY_SIZE(amdgpu_dm_wb_formats));
- 
- 	if (res)
- 		return res;
++					    formats, n_formats);
+ 	komeda_put_fourcc_list(formats);
+ 	if (err) {
+ 		kfree(kwb_conn);
 
 -- 
 2.39.5
