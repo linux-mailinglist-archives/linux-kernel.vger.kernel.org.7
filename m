@@ -1,192 +1,127 @@
-Return-Path: <linux-kernel+bounces-752994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A49F9B17D8E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:31:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4DB3B17D95
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:31:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE92622D9E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:31:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C51517B88D9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:29:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440BDBA27;
-	Fri,  1 Aug 2025 07:29:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="jOWNr48y";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UAIJenWH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2700D20FAB4;
+	Fri,  1 Aug 2025 07:30:17 +0000 (UTC)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ED0CA2AE72;
-	Fri,  1 Aug 2025 07:29:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9691F20DD48;
+	Fri,  1 Aug 2025 07:30:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754033397; cv=none; b=prliazdCnSu6tS80jzKuOnESdx3rOyXfPUPg49usjsAgTtObSteb5ZIcY8dCZrwnMzDlnyOD74DE/LOYjqHx/8pV2+ut3BiAhLLPKp1eBlkTkh/6jOGudH5qZgKCoCTJgvAemYg/EsAOCIxv7t81hNQF+eY2jxwHthaJQYrAH5k=
+	t=1754033416; cv=none; b=PLLptFDBMVZqLRfDybjcLIC2tBZbdaM02bHQIaOfgMvigzBdtSCgfWhb2Mp191wQpQ33i9N0tpD9aUufBGWhBC6jzySzxx3fGPy4+c2FTIT3Cux0BOyUUCcGEYkCUWESE/S/LiXtrQzvjUvNZkajalqG8UiYD0OuJvDC4CZ1fUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754033397; c=relaxed/simple;
-	bh=0YomaFC2FvUXwYpRwMmlIAPoXaq81r3Bx4ZUGJLAkoA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VY8D9Z9p6McQmMBapgnoUth4hOtQ+F7NvXuO2cJxhijLSR17qMDaklfFtJkfGjSwv870jKndZ79I1lEJHkabXlyfurwL65vaT1dMdvSp+4GgDn7djwoDLEU0aVlB7G9I+HGAQeKbQV/XwclAGWivjcFJyKaFqdDu/6OS2tHnZrg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=jOWNr48y; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UAIJenWH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Fri, 1 Aug 2025 09:29:46 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754033393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+N/HsYV92rLdHJz9cz9fjxxlAkQ7qlLubi8Qu1qZ+eU=;
-	b=jOWNr48y6JN/jHoghK8Va0V5dkcgKtHkr6y/0pDWnnVHyoc4gcu7tQQann01OxdrShpX7/
-	NmAfA+LibK1MhuRgYn2oz0rPZ5D5OAn6Uplc2kWE9URFyQ64jtbABfn2ESBYNKjqWYB60i
-	bPZKr2aLJ49DtfqyKI+hcBLkOnj1AZphmeHvHB6hprAJyhy+fA5cSgZBWFqUk+lK7VxD/q
-	r/MKCpD4Xdev+lGsQYSXpaVaS2ZAj89C4zH9xj02Cqie3NA1YnD7vhdaq0kyL91lodSfB7
-	0d5vqnr7JTBDHrV6tcdBHhTIQXwhSwQXZN2vhJ9VIwOg9cVprH2RiXDcL+4YXQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754033393;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+N/HsYV92rLdHJz9cz9fjxxlAkQ7qlLubi8Qu1qZ+eU=;
-	b=UAIJenWH8tDWsq5UTsSfouqyZIIkO8j5C/yva+7HU9uP3UeBF+pyjZgTbsN0t6J9/gBW5N
-	Kvhe9fVfPObNapDA==
-From: Nam Cao <namcao@linutronix.de>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Gabriele Monaco <gmonaco@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ingo Molnar <mingo@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
-	Valentin Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH 4/5] sched: Add rt task enqueue/dequeue trace points
-Message-ID: <20250801072946.nTiUlMwS@linutronix.de>
-References: <cover.1753879295.git.namcao@linutronix.de>
- <8f83869a5040bd7cd3096bd12090c1ab110ae5c4.1753879295.git.namcao@linutronix.de>
- <767a9d59081220594d21856f329fb35988ef7925.camel@redhat.com>
- <20250730151818.7RemAREO@linutronix.de>
- <5065c29035be39dee954f2b233a40ae15dcc5035.camel@redhat.com>
- <20250731073520.ktIOaGts@linutronix.de>
- <179674c6-f82a-4718-ace2-67b5e672fdee@amd.com>
+	s=arc-20240116; t=1754033416; c=relaxed/simple;
+	bh=iRTVadAHZKFXlthF/+BY/8ed4fZ+qx2tijOBhd3003A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=G/mkrlT8xPB1dhbb10K11sZ3MNGzWnt+qe2ZejG01dEpwBINPcXH7+k8xNHHex9qt+16IDqSr2VT71WerEYOcEMKg+eZ5WFuoKDk+FQMEsQf0WDcoY3Iu50hMi4o8+tk7KNQlilEaj9wo3Py4Tz2q0E3dbQQR6osp397eHaSrH8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-886c8de5d90so311517241.0;
+        Fri, 01 Aug 2025 00:30:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754033413; x=1754638213;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aqkLvIoOIR9FUnEm/FEQ+kXJsZ2x0J1RmYajooCOTvc=;
+        b=SWHj00MZapyza3FB0y5LBLRhHOlr01Q67MlWHxujIPzHk9CsXZDKH7E0CTi8i+T5Qq
+         6/UNSCMJQik5Kg9qj6G7jBV02dIyXu4ic86NiZtMjFjI/cqC1TGUDNG2L3+/R26ZxaHf
+         /8+pzXuaPUyzirf2Dhw8VS4WAUrEddUEqO6NaWUIGuEYRQOO22CmruiKRQ5XKkvxQ3sc
+         tjIeaer2vRzemQ4yeyaqmTruSHInSH6o9GZ38ckr7vh0FYKVO4dJjJetEAFIMHyzYXyi
+         OVH7/WBQsu2jMnt2swl9wExB9s5PpUicy3fD1UochOh1vZJUDTAUIi/BRBJsYD1xtoX1
+         xqBA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8TmdO48r8JCjOaXIQBu9lP3Vtx3tg2xRKLd+K2Ac26xnnliXR2oIRTk4a4M2nlmazBbf9iq9THgk0@vger.kernel.org, AJvYcCV1T070TnycdhepenYNeiWHyNZA7kEZlaKHClex95FmV1eQSy8zdvBS/PBUENI1cJNhrdp5qejE8zyhNtPw@vger.kernel.org, AJvYcCXCNancLfACboSQER2R14xASekIR2T2ANPGMrxCVbP5gq+6q1AHWY+uZRX6tvsrU+W/HbeLa6oEBSMuhjvoK4RUy3U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCU4dPoGUAP6WxjeojOfddt99AmbZeZmP3W7zl5Z9h4HpBTNGX
+	m5j2o/HsiyjobON1F4NVSlUrBDSF8InLHDeG1gigVeJtpA4zI8O3fS8TpMMEkm9s
+X-Gm-Gg: ASbGncsR+85G5I64Evz4B6pD6Q0hHNZGLLM9Yga9e8dg42pGxXNBCdsldxIdAIDZ95g
+	s9D66dfouTo8L6+ypHIxGyiWrBdppwntyQGhps3rSV93ykhfOj+2o4g9DMH0cexd5CVhMLER+7N
+	mMR7eMCoaDEE6J/9WS9fPuDZADIPGPTldmW4H4f1z8N8yeLIF1/HlGGH6hIdqZbLRSNJiT+SlJG
+	bOWF42UXHy1wULAmfydW/9RbkbMvEXvjYFSxVVJn4roTMLU+MFdBCsI1UxhvdGCz43BX3z+uyXP
+	QE61n6FxR4yFQzPzX1+nlD5qHDbHgolxbaZF5l+trXIZtD9rypj2AfubtKhWmbS5tTlK2LXsOo/
+	PUhpMN7dNtJKitCDVtCJPIwH2Z71yce/aG46kO7LYMbbt5XQTBV9JZvfUlZ1Z
+X-Google-Smtp-Source: AGHT+IHHSpuSQF2rI/x/SaRImeB5EWsw8ML2YU7F/xD0byBq+x8yIKRvtWtFP8e52Y/UtwSDOFjUeA==
+X-Received: by 2002:a05:6102:358e:b0:4fc:670:fbf with SMTP id ada2fe7eead31-4fc8ddc707dmr572234137.18.1754033413237;
+        Fri, 01 Aug 2025 00:30:13 -0700 (PDT)
+Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com. [209.85.217.53])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc14934bbesm608902137.23.2025.08.01.00.30.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 00:30:12 -0700 (PDT)
+Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4fc83dda10bso121062137.0;
+        Fri, 01 Aug 2025 00:30:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVz43uenmVMjPAxss+jcORkl+qMjGKaDuVatmkKtLKxTJLBXAnUbPa94DAGFsGblmFSSdbGYb4LUm07@vger.kernel.org, AJvYcCWYaeWslfDiKNyEKcIE1wm+OclIqaZSOkHR5Z82fwRYcP5ojxsK9CxVN3VdJJCxF+9Ic22F0cvBxypRsRAcAC2NvLM=@vger.kernel.org, AJvYcCWpijwnFg9sFtbv6ISUyd0xytXDaUqeKZyjtOfXxJ7tJEXwz8wJoZqOQPZFmSUpvkFgVSCOCzYxQP2AU+4s@vger.kernel.org
+X-Received: by 2002:a05:6102:148f:b0:4e9:add0:2816 with SMTP id
+ ada2fe7eead31-4fc8bf6d8f8mr603774137.5.1754033412670; Fri, 01 Aug 2025
+ 00:30:12 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <179674c6-f82a-4718-ace2-67b5e672fdee@amd.com>
+References: <20250731125109.147422-1-biju.das.jz@bp.renesas.com>
+In-Reply-To: <20250731125109.147422-1-biju.das.jz@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Fri, 1 Aug 2025 09:30:01 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXTbOcYPrgHxpCNJEWNhcd8e5NBC0gyYQXn0KmQ8wqEMw@mail.gmail.com>
+X-Gm-Features: Ac12FXy2OJ_6FgAPBwCOB1r8zYd0_R9sLX_ruyB3uzg1MOjqqe-yBUpDRJGBn2E
+Message-ID: <CAMuHMdXTbOcYPrgHxpCNJEWNhcd8e5NBC0gyYQXn0KmQ8wqEMw@mail.gmail.com>
+Subject: Re: [PATCH] arm64: dts: renesas: rzg2lc-smarc: Fix typo for deleting node
+To: Biju <biju.das.au@gmail.com>
+Cc: Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Biju Das <biju.das.jz@bp.renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>, linux-renesas-soc@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 01, 2025 at 09:12:08AM +0530, K Prateek Nayak wrote:
-> Just thinking out loud, putting this tracepoint here can lead to a
-> "dequeued -> dequeued" transition for fair task when they are in delayed
-> dequeue state.
-> 
->     dequeue_task(p)
->       trace_dequeue_task_tp(p) # First time
->       dequeue_task_fair(p)
->         p->se.delayed = 1
->     ...
->     <sched_switch> # p is still delayed
->     ...
->     sched_setscheduler(p)
->       if (prev_class != next_class && p->se.sched_delayed)
->         dequeue_task(p, DEQUEUE_DELAYED);
->           trace_dequeue_task_tp(p) # Second time
-> 
-> It is not an issue as such but it might come as a surprise if users are
-> expecting a behavior like below which would be the case for !fair task
-> currently (and for all tasks before v6.12):
-> 
->     digraph state_automaton {
->         center = true;
->         size = "7,11";
->         {node [shape = plaintext, style=invis, label=""] "__init_enqueue_dequeue_cycle"};
->         {node [shape = ellipse] "enqueued"};
->         {node [shape = ellipse] "dequeued"};
->         "__init_enqueue_dequeue_cycle" -> "enqueued";
->         "__init_enqueue_dequeue_cycle" -> "dequeued";
->         "enqueued" [label = "enqueued", color = green3];
->         "enqueued" -> "dequeued" [ label = "dequeue_task" ];
->         "dequeued" [label = "dequeued", color = red];
->         "dequeued" -> "enqueued" [ label = "enqueue_task" ];
->         { rank = min ;
->             "__init_enqueue_dequeue_cycle";
->             "dequeued";
->             "enqueued";
->         }
->     }
-> 
-> 
-> Another:
-> 
->    "dequeued" -> "dequeued" [ label = "dequeue_task" ];
-> 
-> edge would be needed in that case for >= v6.12. It is probably nothing
-> and can be easily handled by the users if they run into it but just
-> putting it out there for the record in case you only want to consider a
-> complete dequeue as "dequeued". Feel free to ignore since I'm completely
-> out of my depth when it comes to the usage of RV in the field :)
+Hi Biju,
 
-Ah, thanks for pointing this out. I do want to only consider complete
-dequeue as "dequeued".
+On Thu, 31 Jul 2025 at 14:51, Biju <biju.das.au@gmail.com> wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+>
+> Fix typo for deleting node 'channel@0'->'channel0'.
+>
+> Fixes: 46da632734a5 ("arm64: dts: renesas: rzg2lc-smarc: Enable CANFD channel 1")
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-These tracepoints are not visible from userspace, and RV does not care
-about enqueue/dequeue of fair tasks at the moment, so it is not a problem
-for now. But as a precaution, I trust the below patch will do.
+Thanks for your patch!
 
-Nam
+> --- a/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+> +++ b/arch/arm64/boot/dts/renesas/rzg2lc-smarc.dtsi
+> @@ -48,7 +48,7 @@ sound_card {
+>  #if (SW_SCIF_CAN || SW_RSPI_CAN)
+>  &canfd {
+>         pinctrl-0 = <&can1_pins>;
+> -       /delete-node/ channel@0;
+> +       /delete-node/ channel0;
 
-diff --git a/include/trace/events/sched.h b/include/trace/events/sched.h
-index c38f12f7f903..b50668052f99 100644
---- a/include/trace/events/sched.h
-+++ b/include/trace/events/sched.h
-@@ -906,6 +906,14 @@ DECLARE_TRACE(dequeue_task_rt,
- 	TP_PROTO(int cpu, struct task_struct *task),
- 	TP_ARGS(cpu, task));
- 
-+DECLARE_TRACE(enqueue_task,
-+	TP_PROTO(int cpu, struct task_struct *task),
-+	TP_ARGS(cpu, task));
-+
-+DECLARE_TRACE(dequeue_task,
-+	TP_PROTO(int cpu, struct task_struct *task),
-+	TP_ARGS(cpu, task));
-+
- #endif /* _TRACE_SCHED_H */
- 
- /* This part must be outside protection */
-diff --git a/kernel/sched/core.c b/kernel/sched/core.c
-index b485e0639616..553c08a63395 100644
---- a/kernel/sched/core.c
-+++ b/kernel/sched/core.c
-@@ -2077,6 +2077,8 @@ unsigned long get_wchan(struct task_struct *p)
- 
- void enqueue_task(struct rq *rq, struct task_struct *p, int flags)
- {
-+	trace_enqueue_task_tp(rq->cpu, p);
-+
- 	if (!(flags & ENQUEUE_NOCLOCK))
- 		update_rq_clock(rq);
- 
-@@ -2119,7 +2121,11 @@ inline bool dequeue_task(struct rq *rq, struct task_struct *p, int flags)
- 	 * and mark the task ->sched_delayed.
- 	 */
- 	uclamp_rq_dec(rq, p);
--	return p->sched_class->dequeue_task(rq, p, flags);
-+	if (p->sched_class->dequeue_task(rq, p, flags)) {
-+		trace_dequeue_task_tp(rq->cpu, p);
-+		return true;
-+	}
-+	return false;
- }
- 
- void activate_task(struct rq *rq, struct task_struct *p, int flags)
+As pointed out by Rob's bot, you must not delete this node.
+Instead, set channel0's status to disabled.
+
+>  };
+>  #else
+>  &canfd {
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
