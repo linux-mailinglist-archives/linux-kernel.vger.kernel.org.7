@@ -1,187 +1,90 @@
-Return-Path: <linux-kernel+bounces-753687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33052B18664
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:15:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D9D0DB18665
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:16:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3CA277ACF54
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:13:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EDAE170378
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:16:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CD021D63E6;
-	Fri,  1 Aug 2025 17:15:04 +0000 (UTC)
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FBB1D63E6;
+	Fri,  1 Aug 2025 17:15:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="c2Y0WSYG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 756D6202C3E;
-	Fri,  1 Aug 2025 17:15:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B35E078F4F;
+	Fri,  1 Aug 2025 17:15:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754068503; cv=none; b=Dsy8TyuJLM9+IL2j0Dg6NYTEjRwWsmJZLYNSikjBZH/JVHb7tBFynsq+WES6Rahq2eTm/NfDO4+Bq9EO7mo79Mt7o3emZ3xZ35seEs7kCzK7Xws/cVoObq2XufJjo+NBNIKlr+OqPFLga94fEfls7sqvQ3w+ZOwA26sVFs8qAAQ=
+	t=1754068553; cv=none; b=jz2XwcZy0NTlI5z6y9+EZndUw7l1f/eTjFhM0FAZj71CPiv3dyWUcFp8GjiZJ40TMq393hls2OQJ7y01iPIqx3VQlo9djF30pqDHK/mTl+SI/h7IDQx91uTwr9kHUkyN3PBnihTyiyY03tdTILFepkN/aVj3pB0ZYDsJLwyQBPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754068503; c=relaxed/simple;
-	bh=fm9FSGdQ8aBXWIkvQuiZZ2mFIbMCNCRpgEAoKdwzvaw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mXJc/VG7rpUi3wBW6aN2IDUckZlZEe1LlQEV6LAvm00bfVzrZiAH0vmmRAhPQbs4FvrSgnFGqjZnOPMjU9KYDTUM0mqQQozDkKs/tWbWCi4CIBoEh9ig5X5HssFnsqTFU47cr8dbOpni0WmjsvMe4Bp+q9HXrilijt2hsLrBBOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=quarantine dis=none) header.from=kernel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-b1fd59851baso1305049a12.0;
-        Fri, 01 Aug 2025 10:15:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754068502; x=1754673302;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=anVai9RwNeOh1S9jP71MYxNE6adlG4MgcT+N0OnSJy0=;
-        b=J0QdWJcgo1NuSuprQ7pahcfRlKGuQ5mELF5INgsKoS8qefVvRrOBAeocm3wNM2jyC1
-         CILUpFfy/mDPEP5XKlkIpAZe7avH2m+Dkl6tmo7upHeA8xToQ8V5ONfUFvtn+gLLYbxE
-         b69sZt09qAt1SytZTyImrTZwLUuky2A9AvegBdIsd5gVIROf6R14S+MPZYsgFRa8Hn2T
-         cw3jRTQwZxPmQaqe2IqPr3/B5npHz3D8HLyuPcLhA5SqU2c3G90FgkutEwa0AsEj0O/j
-         03mY99SNHZxPWzjfiWAVLX4A8n/2Z4eH8PkJcL4v8LBzV6NB9DhPRcAMssfciC9u9fOh
-         GqKg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOVYXYXseQPXIRWufhOpKjCDHlSQPZGTyDZJT1tj83DcqDWLqjbeSCuDaM0kuiGp2HpfzvdOL5ziYmFxgXmp3ccA==@vger.kernel.org, AJvYcCWsqhqqRoG8yLXiMjf8+Rk6Ft6477l4/IYILXamu2P1oirHM07hPnn9B4BekuP5q75luOIaZXcEHKy4EnI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAIO4kt4L6jtHM+x36SVgwxtBoAEkWIiEX+Y9VwmUszslYdxmQ
-	cMsNVCCL61WYewKbBOFOMylbzpqsAs+0FdXZxgfyQDyBo3SZsf5S0EGMQQZlzGA9b52Si4l6e99
-	/XJDKrmK3mRaAIaQYvJPgLLvqvTfeYkI=
-X-Gm-Gg: ASbGncsw98Gj5huhLVlZVZhCmc2bNY3E08RPZszujwT8MYVkityX//PIQuZaLt7s0R0
-	dbTHrVlyfy9K4ZJhA6NthVeZQey+XnppxzGU/hV3M3ADiILnc+jsinaLqMMhjnvsbR8MwBkAaOV
-	V082W3d0Tlff9bbvZkir8GeJlPBa7Zf+ee7b3F8C3jhx/COpuNHl99PUYNe5OzuQLIpmTuSlFni
-	vQl+stafnqzvI3Nynl1xWosh7RDSZVndbAC4If2
-X-Google-Smtp-Source: AGHT+IFk0qmUqcXFOzPH+qq0vtHSa9cKcU9Z09DZMB/cMDqNJRPSnC02lRUNNXUrj9UiE2gR58BNdOYACfJY6eVk+Lw=
-X-Received: by 2002:a17:90b:1350:b0:313:2754:5910 with SMTP id
- 98e67ed59e1d1-32116207254mr772758a91.15.1754068501505; Fri, 01 Aug 2025
- 10:15:01 -0700 (PDT)
+	s=arc-20240116; t=1754068553; c=relaxed/simple;
+	bh=nelnHZ4XghqoyKBiCkcP1EfH78iEZSZS5aFwfrsjXBQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=tPJ92Iyx2+pTp3PWKOLtTO6dJo73y1aQrzQFXuk+Anb2dYiw9CLKCJEqbRyjRaqt4YPV+AjTbw6aCESDmzyDwprewLf8pVbn+7+5b05FQqUwjLwwBLs585OBnRKq3eG8ejHwTtuMEYj5oRkhH1ifJdXn+fDNOCcKTGhdjRcB5Mo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=c2Y0WSYG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DF98C4CEE7;
+	Fri,  1 Aug 2025 17:15:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754068553;
+	bh=nelnHZ4XghqoyKBiCkcP1EfH78iEZSZS5aFwfrsjXBQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=c2Y0WSYG1k9X2hd10j7Lfm5ejhIp8hQ+BsppUZEWD8Bbm7p1gIZNaIrbUl9WnhpmV
+	 CQwwjgA7UO8/45F1p1FiNSGMrBxkGL8vt8AYVYme26HvIx5F1j/4ZBOIyd+ra1uSy4
+	 GmSNAhXmG5iM9beRvSddm9VZ7XuDn78NorHFx/noKYgTiRs7C/j3IWoj8/+gn1QlxD
+	 7+NANU415f2ctLQ2hQFFVK88jX1auv1KqLNaWnO7ikXTudYuC5aMUDC6CK3VBtbsbV
+	 HW1x0HYdVrxs2nSGNlC5cxMdOCSTCyh3AkcINGqCAefmyZlgpm23crvQFsOu64Xo9u
+	 FYX0k+kv6Sw1Q==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250731070330.57116-1-namhyung@kernel.org> <aIt9bTQhAo8G3oqH@x1>
- <aIuoDHBGeoFYF2fh@google.com> <CAP-5=fVeCriJk5OSEdr0poREL3QNZOO4XDAbbuBPPtczv54d8Q@mail.gmail.com>
-In-Reply-To: <CAP-5=fVeCriJk5OSEdr0poREL3QNZOO4XDAbbuBPPtczv54d8Q@mail.gmail.com>
-From: Namhyung Kim <namhyung@kernel.org>
-Date: Fri, 1 Aug 2025 10:14:48 -0700
-X-Gm-Features: Ac12FXxrbnIsyeaC8qmdiEYTzXfz7NwURB4PCMzz-O6IQTOID3O8OG40BmMnGjU
-Message-ID: <CAM9d7ci__tkn5qo9B00jvt=WXmM1czMGX1-mc=8m=xsOFw3VYQ@mail.gmail.com>
-Subject: Re: [PATCH] perf record: Cache build-ID of hit DSOs only
-To: Ian Rogers <irogers@google.com>
-Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
-	Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	linux-perf-users <linux-perf-users@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Fri, 01 Aug 2025 19:15:48 +0200
+Message-Id: <DBR9EMTZ8VTR.5G3CLY5N2IFV@kernel.org>
+Subject: Re: [PATCH v5 2/2] rust: transmute: add `as_bytes_mut` method to
+ `AsBytes` trait
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Alexandre Courbot" <acourbot@nvidia.com>, "Abdiel Janulgue"
+ <abdiel.janulgue@gmail.com>, "Danilo Krummrich" <dakr@kernel.org>, "Daniel
+ Almeida" <daniel.almeida@collabora.com>, "Robin Murphy"
+ <robin.murphy@arm.com>, "Andreas Hindborg" <a.hindborg@kernel.org>, "Miguel
+ Ojeda" <ojeda@kernel.org>, "Alex Gaynor" <alex.gaynor@gmail.com>, "Boqun
+ Feng" <boqun.feng@gmail.com>, "Gary Guo" <gary@garyguo.net>,
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, "Alice Ryhl"
+ <aliceryhl@google.com>, "Trevor Gross" <tmgross@umich.edu>
+Cc: "Christian S. Lima" <christiansantoslima21@gmail.com>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250801-as_bytes-v5-0-975f87d5dc85@nvidia.com>
+ <20250801-as_bytes-v5-2-975f87d5dc85@nvidia.com>
+In-Reply-To: <20250801-as_bytes-v5-2-975f87d5dc85@nvidia.com>
 
-Hi Ian,
+On Fri Aug 1, 2025 at 3:24 PM CEST, Alexandre Courbot wrote:
+> Types that implement both `AsBytes` and `FromBytes` can be safely
+> modified as a slice of bytes. Add a `as_bytes_mut` method for that
+> purpose.
+>
+> Reviewed-by: Alice Ryhl <aliceryhl@google.com>
+> Reviewed-by: Danilo Krummrich <dakr@kernel.org>
+> Reviewed-by: Gary Guo <gary@garyguo.net>
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 
-On Thu, Jul 31, 2025 at 5:10=E2=80=AFPM Ian Rogers <irogers@google.com> wro=
-te:
->
->
->
-> On Fri, Aug 1, 2025, 1:29=E2=80=AFAM Namhyung Kim <namhyung@kernel.org> w=
-rote:
->>
->> Hi Arnaldo,
->>
->> On Thu, Jul 31, 2025 at 11:27:57AM -0300, Arnaldo Carvalho de Melo wrote=
-:
->> > On Thu, Jul 31, 2025 at 12:03:30AM -0700, Namhyung Kim wrote:
->> > > It post-processes samples to find which DSO has samples.  Based on t=
-hat
->> > > info, it can save used DSOs in the build-ID cache directory.  But fo=
-r
->> > > some reason, it saves all DSOs without checking the hit mark.  Skipp=
-ing
->> > > unused DSOs can give some speedup especially with --buildid-mmap bei=
-ng
->> > > default.
->> >
->> > > On my idle machine, `time perf record -a sleep 1` goes down from 3 s=
-ec
->> > > to 1.5 sec with this change.
->> >
->> > Good stuff, and this is in line with the original intent, don't cache
->> > uninteresting things.
->> >
->> > But now I have do some digging, as this should've been the case since
->> > the start, why would we go to the trouble of traversing perf.data,
->> > processing all samples, yadda, yadda to then not look at it when cachi=
-ng
->> > files?
->> >
->> > The whole process of reading the build ids at the end is done here:
->> >
->> > bool dsos__read_build_ids(struct dsos *dsos, bool with_hits)
->> > {
->> >         struct dsos__read_build_ids_cb_args args =3D {
->> >                 .with_hits =3D with_hits,
->> >                 .have_build_id =3D false,
->> >         };
->> >
->> >         dsos__for_each_dso(dsos, dsos__read_build_ids_cb, &args);
->> >         return args.have_build_id;
->> > }
->> >
->> > And that dsos__read_build_ids_cb thing specifically looks at:
->> >
->> > static int dsos__read_build_ids_cb(struct dso *dso, void *data)
->> > {
->> >         struct dsos__read_build_ids_cb_args *args =3D data;
->> >         struct nscookie nsc;
->> >         struct build_id bid =3D { .size =3D 0, };
->> >
->> >         if (args->with_hits && !dso__hit(dso) && !dso__is_vdso(dso))
->> >                 return 0;
->> > <SNIP>
->> >
->> > So it will not try to read the build id if that DSO has no samples.
->> >
->> > But, that was written before PERF_RECORD_MMAP* came with a build-id, s=
-o
->> > it _will_ have a build-id and thus checking if it has hits is needed.
->> >
->> > In the past DSOs without hits wouldn't have a build-id because
->> > dsos__read_build_ids_cb() would not read that build-id from the ELF
->> > file.
->>
->> Yep, I think that's the reason.
->>
->> >
->> > Ok, now that makes sense:
->> >
->> > Reviewed-by: Arnaldo Carvalho de Melo <acme@redhat.com>
->>
->> Thanks!
->>
->> >
->> > This could have a Fixes attached to it, one that doesn't fixes somethi=
-ng
->> > that is not working, but speeds up processing by overcoming an oversig=
-ht
->> > when adding build-ids to MMAP records, so I think a:
->> >
->> > Fixes: e29386c8f7d71fa5 ("perf record: Add --buildid-mmap option to en=
-able PERF_RECORD_MMAP2's build id")
->> >
->> > Is worth.
->>
->> Sure, will add.
->
->
-> Sorry for the issue, I hope the market dsos is correct. I'm not sure the =
-fixes is correct as that patch called out not populating the .debug. we sho=
-uld make sure that's still the case for people already using --buildid-mmap=
-, they shouldn't have the .debug filled in. Sorry for my lack of a plain te=
-xt email.
+Reviewed-by: Benno Lossin <lossin@kernel.org>
 
-That's guarded by rec->no_buildid so it shouldn't change the behavior.
+---
+Cheers,
+Benno
 
-Thanks,
-Namhyung
+> ---
+>  rust/kernel/transmute.rs | 15 +++++++++++++++
+>  1 file changed, 15 insertions(+)
 
