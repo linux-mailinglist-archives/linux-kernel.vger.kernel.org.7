@@ -1,49 +1,94 @@
-Return-Path: <linux-kernel+bounces-753141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753142-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BAC1B17F25
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:22:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F556B17F27
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:22:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9C95718839A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:22:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E124586F33
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:22:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C99B222582;
-	Fri,  1 Aug 2025 09:22:08 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B45D222560;
+	Fri,  1 Aug 2025 09:22:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUf/6dcX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFV0lfmc";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="uUf/6dcX";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="CFV0lfmc"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0BAA970805
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:22:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E482222D7
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:22:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754040127; cv=none; b=L02L1WHIda5pqtYnpu5/2emLkDNpU/ZMVKwXdC8ZVXbzdsFKw+jLxXKMQxz+TfppMzsd7Cqz2MRUVeE8EQ0CLtjgdp9fpyiYZ2N4x12GNvLzmsLfQpnl6lHtZsJc5eukDPbN0alF0VOKxSz8OjHDFUBG5RgTpTBc7dLyt7p6Rm4=
+	t=1754040138; cv=none; b=TSwzlcLkYHaxomxJv7TIcLo7y0A07S8tgTdSZCL0UbpLy1ZkKXt+EBFq0hNIxcs8FQqlEyxhxC7h70ElZer88PCustzSRW4TvF6WHGEH5Wq+C19mZjXD6fO/iKRdUAEMAYJTsj5XDrlaMjmTX2sqIbfsKwwQq/qMT9m06/RN+Ug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754040127; c=relaxed/simple;
-	bh=VqBtPhTnBuBaOk6OrEanIq2rTmTC0l0IxN/94sWIyiA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=tbCSFZ6gIUrRaRqCZo7bDhFQcEIkHoG2BM+scuHRnFrbEYai/cgamkH9tfVbstEXe0+P/G6NTVhkifIIfvypB1KQuv4ebp4zQ99wuEcqxEK3MjWAB/U6KUChUaJW+wcTId4r9xQxQQ6JXHG+grYCtWj15FhO6ABiYHNIV3oxGMI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.163])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4btgPd5tFfz1R6MD;
-	Fri,  1 Aug 2025 17:19:17 +0800 (CST)
-Received: from dggemv706-chm.china.huawei.com (unknown [10.3.19.33])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5D707180042;
-	Fri,  1 Aug 2025 17:22:02 +0800 (CST)
-Received: from kwepemq100007.china.huawei.com (7.202.195.175) by
- dggemv706-chm.china.huawei.com (10.3.19.33) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Aug 2025 17:22:02 +0800
-Received: from [10.159.166.136] (10.159.166.136) by
- kwepemq100007.china.huawei.com (7.202.195.175) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Aug 2025 17:22:01 +0800
-Message-ID: <38025cee-fad5-4ce7-9646-d061e91c5226@huawei.com>
-Date: Fri, 1 Aug 2025 17:22:00 +0800
+	s=arc-20240116; t=1754040138; c=relaxed/simple;
+	bh=eDIhf53bYHa2tJ4fNebiX+tWNghU5jufGa3q8ircJ28=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VCEKYdJtVgLUlBwu6/k0kPpwt5HVUUiX9tJBEPvQF1v2EkbghuQtqlIE3X51yl5wfbAAJ2NpFaaiU9isQDXSf/sczQyAL3D6mcCGtsTtRPbH5HTkU5hqlkfqHL+JiOHoJDK90TpbxRSK20UALEJLO8IuiMhuX62tt3HHIZG1Xuc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUf/6dcX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFV0lfmc; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=uUf/6dcX; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=CFV0lfmc; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 3360C21AB1;
+	Fri,  1 Aug 2025 09:22:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754040135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9awpCXb1LKtJUXfqyXMkzip6Tg7ORwMk1sJ+IoJaYGg=;
+	b=uUf/6dcXKDZUw7tRDlDBk7SMNyye61EgucXaOHBrt/TRCIhDh8AbwNtyZirA8a081b6Zu7
+	qulAwsBG78Bum+FFCSMmjrBwBvDokxWj+eUnSglrMd1/LPwdUmkWh+jwVhpo8hHyiWNK+v
+	cq2vvNvQ+4PBLQad2eEnmDa5MPwtknA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754040135;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9awpCXb1LKtJUXfqyXMkzip6Tg7ORwMk1sJ+IoJaYGg=;
+	b=CFV0lfmcpYkpVlwWUZpndvnUqHc6X0QErhmPO6RkUtb5tb0DjdXMuypObUhHieWswptZXK
+	psZcBnwCP+rTdqAA==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754040135; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9awpCXb1LKtJUXfqyXMkzip6Tg7ORwMk1sJ+IoJaYGg=;
+	b=uUf/6dcXKDZUw7tRDlDBk7SMNyye61EgucXaOHBrt/TRCIhDh8AbwNtyZirA8a081b6Zu7
+	qulAwsBG78Bum+FFCSMmjrBwBvDokxWj+eUnSglrMd1/LPwdUmkWh+jwVhpo8hHyiWNK+v
+	cq2vvNvQ+4PBLQad2eEnmDa5MPwtknA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754040135;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=9awpCXb1LKtJUXfqyXMkzip6Tg7ORwMk1sJ+IoJaYGg=;
+	b=CFV0lfmcpYkpVlwWUZpndvnUqHc6X0QErhmPO6RkUtb5tb0DjdXMuypObUhHieWswptZXK
+	psZcBnwCP+rTdqAA==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0D1C913876;
+	Fri,  1 Aug 2025 09:22:15 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id o1w0AkeHjGiHOAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 01 Aug 2025 09:22:15 +0000
+Message-ID: <6c81ed5c-32a6-4b4d-8468-770e0d375b00@suse.cz>
+Date: Fri, 1 Aug 2025 11:22:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,178 +96,119 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 drm-dp 05/11] drm/hisilicon/hibmc: fix rare monitors
- cannot display problem
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-CC: <xinliang.liu@linaro.org>, <tiantao6@hisilicon.com>,
-	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
-	<tzimmermann@suse.de>, <airlied@gmail.com>, <daniel@ffwll.ch>,
-	<kong.kongxinwei@hisilicon.com>, <liangjian010@huawei.com>,
-	<chenjianmin@huawei.com>, <fengsheng5@huawei.com>, <libaihan@huawei.com>,
-	<shenjian15@huawei.com>, <shaojijie@huawei.com>,
-	<jani.nikula@linux.intel.com>, <dri-devel@lists.freedesktop.org>,
-	<linux-kernel@vger.kernel.org>, <shiyongbang@huawei.com>
-References: <20250718065125.2892404-1-shiyongbang@huawei.com>
- <20250718065125.2892404-6-shiyongbang@huawei.com>
- <hx6dx2xxkdjyrhjz24bnnomywsvup532bk3jo3oswzftid6yyw@gu2bjjk4ahrm>
-From: Yongbang Shi <shiyongbang@huawei.com>
-In-Reply-To: <hx6dx2xxkdjyrhjz24bnnomywsvup532bk3jo3oswzftid6yyw@gu2bjjk4ahrm>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: kwepems200002.china.huawei.com (7.221.188.68) To
- kwepemq100007.china.huawei.com (7.202.195.175)
+Subject: Re: [PATCH] tools/testing/vma: Fix function parameter declarations
+ for GCC 8.3 compatibility
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: WangYuli <wangyuli@uniontech.com>, akpm@linux-foundation.org,
+ Liam.Howlett@oracle.com, jannh@google.com, pfalcato@suse.de,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, niecheng1@uniontech.com,
+ guanwentao@uniontech.com, Jun Zhan <zhanjun@uniontech.com>,
+ linux-kbuild@vger.kernel.org
+References: <EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com>
+ <e7554f93-03e8-4315-acb7-a55312354485@lucifer.local>
+ <CB890ABC56C2FA67+56b95783-ed70-4744-9fc5-f2d93ddf2c12@uniontech.com>
+ <37b606a7-17c6-4865-a78a-ddde1bc15649@lucifer.local>
+ <d31803bb-fb32-4a94-aa89-83b02757d650@suse.cz>
+ <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
+ <671CE9DD76801AE4+34f3e3b7-4684-4fe2-80a9-93de1dde9c31@uniontech.com>
+ <20baf9ac-9328-4110-97f1-91e9e76b8914@suse.cz>
+ <27488afa-1d53-43eb-bc68-8e950d804000@lucifer.local>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <27488afa-1d53-43eb-bc68-8e950d804000@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.999];
+	MIME_GOOD(-0.10)[text/plain];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ARC_NA(0.00)[];
+	RCPT_COUNT_TWELVE(0.00)[12];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[gnu.org:url,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-
-> On Fri, Jul 18, 2025 at 02:51:19PM +0800, Yongbang Shi wrote:
->> From: Baihan Li <libaihan@huawei.com>
+On 8/1/25 10:50, Lorenzo Stoakes wrote:
+> On Fri, Aug 01, 2025 at 10:04:11AM +0200, Vlastimil Babka wrote:
 >>
->> In some case, the dp link training success at 8.1Gbps, but the sink's
->> maximum supported rate is less than 8.1G.  So change the default 8.1Gbps
->> link rate to the rate that reads from devices' capabilities.
-> You are doing more than changing default link rate. Please split away
-> non-related changes. This is especially imporant for Fixes commits.
-
-OKay! I got it. I will move these to the next feature series。
-
-
->> Fixes: 54063d86e036 ("drm/hisilicon/hibmc: add dp link moduel in hibmc drivers")
->> Signed-off-by: Baihan Li <libaihan@huawei.com>
->> Signed-off-by: Yongbang Shi <shiyongbang@huawei.com>
->> ---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h  |  4 ++-
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c    |  6 +---
->>   drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c  | 33 +++++++++++++------
->>   .../gpu/drm/hisilicon/hibmc/dp/dp_serdes.c    | 12 -------
->>   4 files changed, 27 insertions(+), 28 deletions(-)
+>> Seems like newer gcc versions got more lenient. Haven't found why, but seems
+>> they want it to stay like this:
+>> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113825
 >>
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> index 4add05c7f161..18a961466ff0 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_comm.h
->> @@ -25,6 +25,9 @@ struct hibmc_link_status {
->>   struct hibmc_link_cap {
->>   	u8 link_rate;
->>   	u8 lanes;
->> +	int rx_dpcd_revision;
->> +	bool is_tps3;
->> +	bool is_tps4;
->>   };
->>   
->>   struct hibmc_dp_link {
->> @@ -62,7 +65,6 @@ struct hibmc_dp_dev {
->>   
->>   void hibmc_dp_aux_init(struct hibmc_dp *dp);
->>   int hibmc_dp_link_training(struct hibmc_dp_dev *dp);
->> -int hibmc_dp_serdes_init(struct hibmc_dp_dev *dp);
->>   int hibmc_dp_serdes_rate_switch(u8 rate, struct hibmc_dp_dev *dp);
->>   int hibmc_dp_serdes_set_tx_cfg(struct hibmc_dp_dev *dp, u8 train_set[HIBMC_DP_LANE_NUM_MAX]);
->>   
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> index 2d2fb6e759c3..b4d612047f36 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_hw.c
->> @@ -155,7 +155,6 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   {
->>   	struct drm_device *drm_dev = dp->drm_dev;
->>   	struct hibmc_dp_dev *dp_dev;
->> -	int ret;
->>   
->>   	dp_dev = devm_kzalloc(drm_dev->dev, sizeof(struct hibmc_dp_dev), GFP_KERNEL);
->>   	if (!dp_dev)
->> @@ -169,13 +168,10 @@ int hibmc_dp_hw_init(struct hibmc_dp *dp)
->>   
->>   	dp_dev->dev = drm_dev;
->>   	dp_dev->base = dp->mmio + HIBMC_DP_OFFSET;
->> +	dp_dev->serdes_base = dp_dev->base + HIBMC_DP_HOST_OFFSET;
->>   
->>   	hibmc_dp_aux_init(dp);
->>   
->> -	ret = hibmc_dp_serdes_init(dp_dev);
->> -	if (ret)
->> -		return ret;
->> -
->>   	dp_dev->link.cap.lanes = 0x2;
->>   	dp_dev->link.cap.link_rate = DP_LINK_BW_8_1;
->>   
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> index 74f7832ea53e..6c69fa2ae9cf 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_link.c
->> @@ -39,6 +39,14 @@ static int hibmc_dp_link_training_configure(struct hibmc_dp_dev *dp)
->>   	/* enhanced frame */
->>   	hibmc_dp_reg_write_field(dp, HIBMC_DP_VIDEO_CTRL, HIBMC_DP_CFG_STREAM_FRAME_MODE, 0x1);
->>   
->> +	ret = hibmc_dp_get_serdes_rate_cfg(dp);
->> +	if (ret < 0)
->> +		return ret;
->> +
->> +	ret = hibmc_dp_serdes_rate_switch(ret, dp);
->> +	if (ret)
->> +		return ret;
->> +
->>   	/* set rate and lane count */
->>   	buf[0] = dp->link.cap.link_rate;
->>   	buf[1] = DP_LANE_COUNT_ENHANCED_FRAME_EN | dp->link.cap.lanes;
->> @@ -325,6 +333,20 @@ static int hibmc_dp_link_downgrade_training_eq(struct hibmc_dp_dev *dp)
->>   	return hibmc_dp_link_reduce_rate(dp);
->>   }
->>   
->> +static void hibmc_dp_update_caps(struct hibmc_dp_dev *dp)
->> +{
->> +	dp->link.cap.rx_dpcd_revision = dp->dpcd[DP_DPCD_REV];
->> +
->> +	dp->link.cap.is_tps3 = (dp->dpcd[DP_DPCD_REV] >= DP_DPCD_REV_13) &&
->> +			       (dp->dpcd[DP_MAX_LANE_COUNT] & DP_TPS3_SUPPORTED);
->> +	dp->link.cap.is_tps4 = (dp->dpcd[DP_DPCD_REV] >= DP_DPCD_REV_14) &&
->> +			       (dp->dpcd[DP_MAX_DOWNSPREAD] & DP_TPS4_SUPPORTED);
->> +	dp->link.cap.link_rate = dp->dpcd[DP_MAX_LINK_RATE];
->> +	dp->link.cap.lanes = dp->dpcd[DP_MAX_LANE_COUNT] & DP_MAX_LANE_COUNT_MASK;
->> +	if (dp->link.cap.lanes > HIBMC_DP_LANE_NUM_MAX)
->> +		dp->link.cap.lanes = HIBMC_DP_LANE_NUM_MAX;
->> +}
->> +
->>   int hibmc_dp_link_training(struct hibmc_dp_dev *dp)
->>   {
->>   	struct hibmc_dp_link *link = &dp->link;
->> @@ -334,16 +356,7 @@ int hibmc_dp_link_training(struct hibmc_dp_dev *dp)
->>   	if (ret)
->>   		drm_err(dp->dev, "dp aux read dpcd failed, ret: %d\n", ret);
->>   
->> -	dp->link.cap.link_rate = dp->dpcd[DP_MAX_LINK_RATE];
->> -	dp->link.cap.lanes = 0x2;
->> -
->> -	ret = hibmc_dp_get_serdes_rate_cfg(dp);
->> -	if (ret < 0)
->> -		return ret;
->> -
->> -	ret = hibmc_dp_serdes_rate_switch(ret, dp);
->> -	if (ret)
->> -		return ret;
->> +	hibmc_dp_update_caps(dp);
->>   
->>   	while (true) {
->>   		ret = hibmc_dp_link_training_cr_pre(dp);
->> diff --git a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->> index 676059d4c1e6..8191233aa965 100644
->> --- a/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->> +++ b/drivers/gpu/drm/hisilicon/hibmc/dp/dp_serdes.c
->> @@ -57,15 +57,3 @@ int hibmc_dp_serdes_rate_switch(u8 rate, struct hibmc_dp_dev *dp)
->>   
->>   	return 0;
->>   }
->> -
->> -int hibmc_dp_serdes_init(struct hibmc_dp_dev *dp)
->> -{
->> -	dp->serdes_base = dp->base + HIBMC_DP_HOST_OFFSET;
->> -
->> -	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
->> -	       dp->serdes_base + HIBMC_DP_PMA_LANE0_OFFSET);
->> -	writel(FIELD_PREP(HIBMC_DP_PMA_TXDEEMPH, DP_SERDES_VOL0_PRE0),
->> -	       dp->serdes_base + HIBMC_DP_PMA_LANE1_OFFSET);
->> -
->> -	return hibmc_dp_serdes_rate_switch(DP_SERDES_BW_8_1, dp);
->> -}
->> -- 
->> 2.33.0
+>> But I don't know if there's a way to make older gcc's lenient too.
 >>
+>> > I'll take another look.
+>> >
+>> > Thanks,
+>> >
+>>
+> 
+> WangYuli - apologies - this is my fault entirely, I misunderstood things
+> here.
+> 
+> I was wrong to dismiss this out of hand, I guess not many headers are doing
+> stubs like this, and I mistook this as being a general thing.
+> 
+> Could you please do a v2 where you add back in parameter names (and add
+> this compiler flag - I think we still should),
+
+It would be safer to add the compiler flag indeed, as we are including files
+from mm/ in vma.c here, so if some change in mm/ files makes them rely on
+syntax permitted only gnu11, we'd break the compilation of the test.
+
+Also please update the commit log to talk about function definitions and not
+function declarations, as that turned out to be the important detail. Thanks!
+
 
