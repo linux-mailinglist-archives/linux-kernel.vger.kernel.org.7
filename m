@@ -1,143 +1,198 @@
-Return-Path: <linux-kernel+bounces-753435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 35A52B182F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:54:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A26BB182F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:54:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC091C836CA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:54:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D708A8634D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1763C2E371F;
-	Fri,  1 Aug 2025 13:52:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D810426C383;
+	Fri,  1 Aug 2025 13:52:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="bi/O9ZFI"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cm53LOkn"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE65C35977
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:52:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A79B53BB48;
+	Fri,  1 Aug 2025 13:52:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754056325; cv=none; b=RoJLUUudHVR9guhUnI0sLJTJhvuORMSXrTD7acRJMPmJPMrn6RxIJve3phRA7tG6l3zpRJv9dHawfM7KxPcrTr5eMSWmm9m+33IvAYPNgdTojXBKETxSZCD76OnPz82SXxSncQj7yDW7Qw9L09N7qBFQMZ45wPTcFf3r13vHIoE=
+	t=1754056327; cv=none; b=Cansv7hdixISMHukQ1A8gUUYLBPWNExs/+DrTZdqHd1pxxjW3aZjfBsxw7Vv33HTPsdiRlvNVaob9XeRHXvMW2wzhxaVzQ6lUKG7WAUQ1wZXrBa9x+X15y02dJhKc3l08QT+vFkZ79Ft+f7Dn5Wwjb1iqfE4McJAbycbZH1QhS8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754056325; c=relaxed/simple;
-	bh=vhTrP+GJIoA6ydMovg9Eb79KfHnKL5N79rl9tjjQND4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gwta+96m5EjRTwBCTnYh4yZIYezLbnYM00Ib96wrJTRF6nSYarorqzzV4DVITBy0CaEI8y1p402O5l0sk7iY/8YMMaMha/EeWf7itqZtn1G1ZBwuuJsNjBf69UEE0iA9MXDJweukW+WuzwBA3cK1/c0dC3RpKHZ0oWAahHsZS8s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=bi/O9ZFI; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5719AaUE006860
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 13:52:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=gN0kT+Wo9uqVQiZqrtrMEVeC
-	TpUgjT6nfQXr88CiLMA=; b=bi/O9ZFICWERMwdfqU3CSHhfOZ+dZ2SPf5u4IBJ8
-	STMrTJ5V5x0GInC3QxbnkNiC6D6/zlLBj7wADw7+31fOJAr318toyHs9qsOx9SYw
-	wgXbsKChxFQliYQnXco4Hgr0XpStXktg7NH+HoSEFtTK/tqH0R2dzpd8kRESIIQf
-	qaB9pTSng4G71fuxDFPFlb9qfCixlu/v68HdTroTU4Rw+ShNTR48SPgDI/tyNKO5
-	oAl6t8nuZ831scdlPytVI8qlsllaM7Hln1omTN811t23/u7m5aEsZHBbfGEzC0Y7
-	TWcNQLn4t46fnbuh1BzqnIs8uZ6TT6nDBkMRNMdtiMoQqA==
-Received: from mail-qt1-f200.google.com (mail-qt1-f200.google.com [209.85.160.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484pm2uvkc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 13:52:02 +0000 (GMT)
-Received: by mail-qt1-f200.google.com with SMTP id d75a77b69052e-4ab9ba884easo7097261cf.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:52:02 -0700 (PDT)
+	s=arc-20240116; t=1754056327; c=relaxed/simple;
+	bh=AkvEu+pArrcXbVC0y1rWB3LFEH+acoRv0iR8JnIiB2w=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=R0LaXMbWfRWe8FOeqGIIkOc6GAiRa6Vz3lyODRGtJtaaaoEcpVIxbBqRXBo4gJBbUoQYlilXEpzxmvuTwDaZjSyV89xboJrxWlS6M1wXj1qynoG4t110I4u/0bvj/9TqzDRhAmm/YV6+tNBPtrMW9H3QL6e/7bHSR4SSsoheov8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cm53LOkn; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76bd7676e60so716126b3a.0;
+        Fri, 01 Aug 2025 06:52:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754056324; x=1754661124; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=HJCJuMgHRTXv+ij1dqQ+cA2bHND7xpFvimOP6/uDcMI=;
+        b=Cm53LOknWDrTNkZ7GrHI3yM5yxFGcAraeKCwv+fB730IjegEjpEgaUB2JQZcLugZFs
+         UwYzF97BeyJ9ZoTK93gufP3ERus2HzJSxrb1VA3sDILUIuRf0U/089ng1MaM1dhjjNcB
+         d+xmzwel7k5NPSF+PrlYIspvaiN8dyai0eivNsR70BQjyTeD/tcYmQ1n0ACaq1kTaE2N
+         gALjK0ZG81V6lvt+v4VtD/aVXCAxwRpLhO1fBh+pcE1hDDyJ/y//k9bSF8yWKpbQdFEu
+         qP2f2bctggyR2EGk1ZoR3Y2/oOFnEA+W+KjiTwKJ0RRPnThNgcdfi2V4J8rkOHn9FF7L
+         bTYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754056322; x=1754661122;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1754056324; x=1754661124;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=gN0kT+Wo9uqVQiZqrtrMEVeCTpUgjT6nfQXr88CiLMA=;
-        b=T/h3KVU39GyOwcf2M2cN7Vgb0kfLDtHN7Aq2Bu/5u/R92Im4ECRFk1qBlwPmZr8Hp4
-         CFM9bKT5npaEMhJ6ANLTPV0MoF4LFdpBMRjHp0aE6UI6BHmd24h7DwJujM67wiqA9Nnx
-         CKNDPWK6LQSejJRv+exUN0bi8cUxWErckUR/Dn/hAc0BXt6CoJ+EJ6lpNdXm0bQs97yn
-         q6jXjaoUeEStrWMBAXNuvmPTp9+SCEMPEdlTwK4rcsgqjMU6p3XEYOXFqx+A+Z9Ip1wQ
-         DRFEFXg4AI+sYk7ObHkFhnGR1lAvRFOQLMXLMXJ0N4Adm+qrC7BqK0Sw1AuJ4zMNnyzj
-         yhOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUAh8E7W+9X9FGxFFpyKpjDAAIgyIF8RJnblg6qWReSy56zbnN4JRSinECdR1/D44dGjndY0Arf9rYfqsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzYFMu3U29LFi8nZaMu2ZyK2f9fY/WmzNDDX44sI2mGn3vYN13H
-	Sq0hRJHkC0pUAnHUgM521gnKBWGl0l8aK3XEcf3b01UuAu+4XoqEYxQGn9LtnpMv63QgZlszx7g
-	vQZhREbd26xRd+64ReZl1UBZPWfpEmy1QVnFjOzVZRTvxecf4LMuCSzR0LDCmy4hFdo4=
-X-Gm-Gg: ASbGncuhS7wgkI+dRdMFrW4GTj0IETSDTifZYqL+6XHAE6hqpLFNzqgcQMgjxEqqNAQ
-	1KssCwqOMrXWPwlGYqIi0BFf711szYA4IHM3atDgGVhzIrDsAQ1QLDm7QzhV9mEmOQPxhMc5F/M
-	kQ5e05DKr3DOeum6mPvlJsyugZ8fcVjIEbzKRAX+rbU4d84ST05n3/uiKkhgMYFQ4EFKOBhhHaG
-	axpQwjPd465yPpYdYCnEWSTC+w/u5MAxlfX4vUMFGsIcH4xMnbOq4AAtMuYohnUnLlLsMMk2U56
-	Pi/yo2rNbipOPL45vVEDyv7K4ZS/xDRMvR1mKXysRTSq0kaxWNULsaD4ah958Gk+zmqOJ0MH/Pp
-	hacl37pJnlEpW9F2+aVnAJmB2a5C01zK5DA3CzIkkcPJw0SyhFExw
-X-Received: by 2002:ac8:5fca:0:b0:4ab:af74:e0be with SMTP id d75a77b69052e-4aedbc59deamr162312791cf.43.1754056321925;
-        Fri, 01 Aug 2025 06:52:01 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEbJ9/UfCMEp6ALYbfsnGI7L7qxlBrcJTulkDzMGsNnw0pPYnM9xZM+cCoRA4uOKSXu3GzEkg==
-X-Received: by 2002:ac8:5fca:0:b0:4ab:af74:e0be with SMTP id d75a77b69052e-4aedbc59deamr162312451cf.43.1754056321484;
-        Fri, 01 Aug 2025 06:52:01 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ac5f5sm603568e87.64.2025.08.01.06.52.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:52:00 -0700 (PDT)
-Date: Fri, 1 Aug 2025 16:51:59 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-To: Luca Weiss <luca.weiss@fairphone.com>
-Cc: Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: sm6350: Add rpmh-stats node
-Message-ID: <nn6p367tg4l2qi6277rclxrbk5zxzoelzeoxvl3exgbjabjoxd@pujfujycift7>
-References: <20250801-sm6350-rpmh-stats-v1-1-f1fb649d1095@fairphone.com>
+        bh=HJCJuMgHRTXv+ij1dqQ+cA2bHND7xpFvimOP6/uDcMI=;
+        b=MEpdyIdnlEMEqWeAAnaI7V+b7i536CiZ+yqybHqXjoh8uBdK8zaZpk8ET7NiuF+68W
+         zfdLtPBD24jlXOJPPQUVUgCfHUM/OtsCuXMGsqHIbbTdqAkpO+NJOPr+2GhPAWhooZSO
+         CdD6HGenf5LY6J0BRO85NiwGu5x5n+V+XfyoilXMPO2NC3F0AZI9e7hjstJftHKSHSeS
+         Ft+IJZ7YrnGIIprr17m2n6sKllKqLg18SZ09bi/D0sOoLEL0a9kyBrftok/LzEvx4DQm
+         jIRKzAZgx+nvIzcDBwyyk3O9zXaEVsk/q0QjuIvMs1DZqC8ZTFo91W7NHCVqfqc/o+u+
+         t7hg==
+X-Forwarded-Encrypted: i=1; AJvYcCV6PnwHow3l2bk5ydNjgwAEhnuteEKpQdMVeSmASF2gs6YBv/AtnEJYB7Q1alSfgzxX3kdqOjaPts1s@vger.kernel.org, AJvYcCVnuvVE83M8dlLSP3ljZIik49NUbTOJrEaYLmJkjUR1/6pRflDU8Wk274EEZ5VbNmwSGXXE5kt+IVbE4peOzHr/37Y=@vger.kernel.org, AJvYcCW69TX+DnKqmaiPuDMZU6UuCtPXSyC2D3dS/rC/WgVHCrez9Aqjor7wv4c4TNfXE30iSV68KifPdqcyN3oy@vger.kernel.org, AJvYcCXo+erTs0wOplkj4MxbypicCPzB6yA/9XSqVo6yVqMUuJiG6pIjXXhF7cz0BeCh+mMf28efoyRFkJ8DPcwIAAE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxwmcqSzolMnaeJvOroTL2JHr1YnHWMHFo8jkXteB1eAAp6Me6l
+	RYUZiV3PNtqNVCX2Jc1n8HQ2L9Gb5eYvPhf9Ofa3ayniJSSiUoheh4Ta
+X-Gm-Gg: ASbGncvYMkHeDkw2ES7Iceo6Itl5R1JqyHs+PPYk9CZINBNZ6vaqZvPRjv7IxSiwm0+
+	GaieSFPfWzSUXr6nt6yIu0SK11r7voCkfcJUtwGdHeYqX6PcInk7GwcZSMklO+KcwOveHlOmnCL
+	7j81qOQQva5rYnb3hevfqlFPxNTSF2mZQWzB2+ycijau3NiuOhyHj+tsOE4gLRttltmy32IPslS
+	TdlEXJeF0P4dtgzEnBoVyppGtFYsakWzS7Le7kyvtcyqkx46J4t78Nmhj/xQm18iSblh3VVXrny
+	AugSJK/yT2vvrecdZeMaS81ypnzlCJLKg0oJIv67hIlRu1509gUkGBE6slApl8WhvOFGla/kHa6
+	MCW0+vj/5W5YCWToSyCMPjene6nqGV7h6ArUcXcNTHH6YdDJZPysjUSruz8f778a1c0Mz6QCZnb
+	hUmnGJew==
+X-Google-Smtp-Source: AGHT+IGbagKWr5Qr9KVG5UVGps9BvoHL8pS+VjWZNJEvWtdpTayYNyyptN7bAPVPi490QhnfhS8Q/g==
+X-Received: by 2002:a05:6a00:855:b0:76b:cb1b:a51a with SMTP id d2e1a72fcca58-76bcb1ba742mr9147470b3a.6.1754056323856;
+        Fri, 01 Aug 2025 06:52:03 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76be9143a4asm150148b3a.24.2025.08.01.06.52.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 06:52:03 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
+Date: Fri, 1 Aug 2025 06:52:01 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801-sm6350-rpmh-stats-v1-1-f1fb649d1095@fairphone.com>
-X-Proofpoint-GUID: 3MCIIUisF2Peuc6T60_9X_eiqQlFuK2v
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwNSBTYWx0ZWRfX1hv0utgAz+Ki
- K69g4Y+l6czKzIrdAkGiqbMQU3FeDyZFYT7mU6h+RWaHeAa/vCxM9BdhqFdiWzakG1wM4C0RXjv
- k4JL7mvju0JjHqDjWF9h5v3XfDpYh06Wa5XB7mYC5Nm+z0nSbFXv5SaH0QXMF6jy9M+8rAHit4f
- p9CMxaMR2Ck3kPkzofm3GCccXBYokYa1YUeOxj5ZwZdVGG5EWNfJWSUcGXpGsvpq5lQFU6Tmm6E
- mr6LW3zTPDfdFpJp8Sf0NU5cwcoWoqwaUcA5GTHnM1PsHoBHjf8/jbV0BfxHh9Gc8S2+ZNmxash
- JTHMIsouCNQtYNH3fuET/++GsvW5PnWhSMfNpYDCGauXjTLzgMQYCx8PjyXpm8J7QM/cGGws4vw
- zdnLQFGesY91kDDGbrv0Fxmi6xvC1O/6oGgxbIALBfs2MEeoVi28ImmHD0brjwW5SvNvcBnL
-X-Authority-Analysis: v=2.4 cv=HfYUTjE8 c=1 sm=1 tr=0 ts=688cc682 cx=c_pps
- a=JbAStetqSzwMeJznSMzCyw==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
- a=2OwXVqhp2XgA:10 a=6H0WHjuAAAAA:8 a=EUspDBNiAAAA:8 a=NGnrDkvxLCtUz6Rj-iUA:9
- a=CjuIK1q_8ugA:10 a=uxP6HrT_eTzRwkO_Te1X:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-ORIG-GUID: 3MCIIUisF2Peuc6T60_9X_eiqQlFuK2v
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 clxscore=1015 bulkscore=0 suspectscore=0 impostorscore=0
- spamscore=0 lowpriorityscore=0 adultscore=0 mlxlogscore=883 phishscore=0
- priorityscore=1501 malwarescore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508010105
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on
+ max_hw_heartbeat_ms
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>,
+ Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aIw-P6zkQSOhvYJW@shikoro>
+ <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 01, 2025 at 03:40:59PM +0200, Luca Weiss wrote:
-> The qcom_stats driver allows querying sleep stats from various
-> remoteprocs. Add a node to enable it.
+On 8/1/25 04:05, Lad, Prabhakar wrote:
+> Hi Wolfram,
 > 
-> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
-> ---
->  arch/arm64/boot/dts/qcom/sm6350.dtsi | 5 +++++
->  1 file changed, 5 insertions(+)
+> Thank you for the review.
+> 
+> On Fri, Aug 1, 2025 at 5:10 AM Wolfram Sang
+> <wsa+renesas@sang-engineering.com> wrote:
+>>
+>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>
+>>> Update the watchdog minimum timeout value to be derived from
+>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+>>> consistent minimum timeout in seconds.
+>>
+>> I don't understand this change. Why is the _minimum_ timeout based on
+>> the _maximum_ heartbeat?
+>>
+> The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+> ensure the minimum watchdog period (in seconds) is compatible with the
+> underlying hardware.
+> 
+> max_hw_heartbeat_ms is calculated as:
+> max_hw_heartbeat_ms = (1000 * 16384 * cks_div) / clk_rate;
+> 
+> This value varies by SoC:
+>   RZ/T2H: cks_div = 8192, clk ≈ 62.5 MHz -> max_hw_heartbeat_ms ~ 2147ms
+>   RZ/V2H: cks_div = 256, clk ≈ 240 MHz -> max_hw_heartbeat_ms ~ 174ms
+> 
+> Since min_timeout is in seconds, setting it to:
+> min_timeout = DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+> 
+> ensures:
+> The minimum timeout period is never less than what the hardware can support.
+> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+> - For V2H, it’s just 1s (174ms -> 1s).
 > 
 
-Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Sorry, I completely fail to understand the logic.
 
+If the maximum timeout is, say, 2 seconds, why would the hardware
+not be able to support a timeout of 1 second ?
 
--- 
-With best wishes
-Dmitry
+Guenter
+
 
