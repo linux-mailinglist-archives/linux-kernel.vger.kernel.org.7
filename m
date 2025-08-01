@@ -1,189 +1,88 @@
-Return-Path: <linux-kernel+bounces-752827-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752829-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34974B17B59
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:02:21 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C38BB17B5F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:03:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F2721C268CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:02:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D648D5840B5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 03:03:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C30E1662E7;
-	Fri,  1 Aug 2025 03:02:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 733F918FDD2;
+	Fri,  1 Aug 2025 03:03:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="EPJNtJ3M"
-Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2065.outbound.protection.outlook.com [40.107.236.65])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="u8iyhB4o"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23391469D
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 03:02:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.65
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754017334; cv=fail; b=l35IyLHUDv70tOuywOZSxkdaJClePZQn9niBPuF/in28khbtBCiOBl0YUv57RZE062cmtVsMnon8tdv3+cXBxjKrhh+qGqSUxy/1rVD1VzrnUxlFBfJPo5nkUtrZ+69asSHCIsV1OKA2hHU/Kz3hroq4YpaW3R8dWER5pK8VjMQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754017334; c=relaxed/simple;
-	bh=PC8HjY1a5zZdMNdEjldpnXsOTU9EXY2kXus+gwEFR1s=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=R69r9/Fj4hWuFCABYd7VXOJ/PKSvClcBggzOZgRgVUSMmiR8l5LXWzjhmIXf3ZPT5CjEGtSYXQHOJONE8ClGEXjHvIwErjmDtPp1y30C3OG+Mq4zUVBJyMfihKCyIzHfvQktpkeDfp0H6SXI3AmfbKwksH8/DdlXZzQ/ko0ROaA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=EPJNtJ3M; arc=fail smtp.client-ip=40.107.236.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=OwvmZVdlwQLqPka+6WZl7o1Y70O8q1uiioByzLBwxEXt+FZxUO4Gs15JavgwFtUOMKRmS/LdVeg9ytkpyGVmAf/msSsC+WMKSQJosF7hunH9rOCryYJLyf4qjymndLEpZxr9RWyNVK9ZiP9ewNMF3255WiDidWp+y7NjR6Z+CKbpSYzbJYZiIzS6zWuCBpTAE8Ig4W8GziYcFwKgyJO1Hf4orc+uq/MfXyyZtHaVzq41J+CGAL1I1lmtPff1uw4qA26YdPkyamUBNB4O9DT+1ykLgvRFplUhT0o5G2Ah/onC27/iTU2AIRg01bYsVqJUn8qgHwZbMOURqOQL7cPG4Q==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=FapCBIQYzG9axYsvv2Pqe84YePrzfuqOq7VOhdP2yls=;
- b=YxpCWv36mmL2ckIJO4eSUKEhHyI4KBD4ZyTJxU/CtromgJKqKqnlICTv/xfarrxzT4tga7QOliIBS2L4XlBDoU6BMq7V0zqsfZ5BlvDphpll88HBFpJm8nE5+hmSFs3S/HRswO+XpOLZF2er4sqdnYrmS/LvqdCIJFPj5e15CshABkCs4fBmf7hEi/FC4/jKLS97krD0qZBDEpbvtdmjyzitZutquv2WTR9NXuazHmfSavOoSqJ08KO+RgPihkTXFeqcMjeOgw+KIkQKa4cIja0mD/qj+Q7XJAqLP69j8wzpgBLObQNZDMN0Q1Rk5wceN/dQe7l0gzZJdkTWAPK6fg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=kernel.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=FapCBIQYzG9axYsvv2Pqe84YePrzfuqOq7VOhdP2yls=;
- b=EPJNtJ3MdD6VrNQs9EQJKQxP7gO9wyovniIv74S5BmdAuOizr3Ss8wUCJlrLD5dsAnZFMOugs9kg8/HYHYsMs/3uJWWusRJt8KeOaHwumBnU83JHpXqGyAYFGjwOdXGMJwrQ5uM3AbYG9DsNwhOxYfq4tOdiC9mCgvDYp42u/1rVhEOl8bfrRMFAR3gw987sFxz+WBYtSUlJXEaRv86y7BaXK7YOrXWhCnzfQKOHH9rrUFWAlJgio+vbYJrF1RZUy53fgrbusIhueORTTRv7zwj+xXBLlU03ALjJy/B1KLRnRqjpgTOQv4MP6bGQhyqfEc82ZGCcV+Oxf4eBdx2Zeg==
-Received: from BN0PR04CA0156.namprd04.prod.outlook.com (2603:10b6:408:eb::11)
- by CH2PR12MB4231.namprd12.prod.outlook.com (2603:10b6:610:7d::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Fri, 1 Aug
- 2025 03:02:09 +0000
-Received: from BN3PEPF0000B074.namprd04.prod.outlook.com
- (2603:10b6:408:eb:cafe::18) by BN0PR04CA0156.outlook.office365.com
- (2603:10b6:408:eb::11) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.12 via Frontend Transport; Fri,
- 1 Aug 2025 03:02:09 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- BN3PEPF0000B074.mail.protection.outlook.com (10.167.243.119) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Fri, 1 Aug 2025 03:02:09 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 31 Jul
- 2025 20:01:46 -0700
-Received: from rnnvmail202.nvidia.com (10.129.68.7) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Thu, 31 Jul
- 2025 20:01:45 -0700
-Received: from Asurada-Nvidia.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.129.68.7) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Thu, 31 Jul 2025 20:01:45 -0700
-From: Nicolin Chen <nicolinc@nvidia.com>
-To: <jgg@nvidia.com>, <will@kernel.org>
-CC: <joro@8bytes.org>, <robin.murphy@arm.com>,
-	<linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-	<linux-kernel@vger.kernel.org>
-Subject: [PATCH rc] iommu/arm-smmu-v3: Fix smmu_domain->nr_ats_masters decrement
-Date: Thu, 31 Jul 2025 20:01:27 -0700
-Message-ID: <20250801030127.2006979-1-nicolinc@nvidia.com>
-X-Mailer: git-send-email 2.43.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1FC378F58;
+	Fri,  1 Aug 2025 03:03:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754017384; cv=none; b=QkPBOT0fnfsKKofKFdvN1OaQrKyqFYfU8JRFw4qMKr8WhJqrXYB+khQcu71NVkc5kD4rnsypkKXLwNrJVab2I5sRNJ+fU20XnnwY8Lw9E5I/oJW+24WThG9oHzxRwXZLOl+Ym/Y6g/Y3tzn87YePq3erS/xKMbueauj6BsTQKFM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754017384; c=relaxed/simple;
+	bh=quGH+SvR7bXJv9qhJhzkeJz0csmh9NaqTLDZAMtDyhs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JjK8PQduiwBxn4c8McUtYn3oXg7+TEpSdrMOhmiJdyz9QozSQkD1KWMgSQokN14YYRX0fBQVhre0EUoFXYSej3w0qt9r5YcrEK3+P6GLRColOJ2ltP/NHqi2ZEZfgLe2Ys14yanlybw+5zFsKwuKiJypuqGdZlURzWil6Zr5E4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=u8iyhB4o; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21974C4CEEF;
+	Fri,  1 Aug 2025 03:03:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754017384;
+	bh=quGH+SvR7bXJv9qhJhzkeJz0csmh9NaqTLDZAMtDyhs=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=u8iyhB4oTyqGaY7X2P10uIIfCZQ9q+1IfCwuPgZytOaF4cqxuLtSrPLQ2DrY+P56r
+	 g7gRwmCkzX8Vvd/Gndu5NgRsEGkAwh27/bwep13Wc+ZnbtRH0ixVcsRYBGOpz1J9un
+	 6FRdMRoTPLtSStfjivwD4nbWgAaeL46ThOrBdqwsd9K9cpRb6ZY4UNHSF05o/A9iCS
+	 ginIPFYPWTPCNCp1VhXxlNzKDnjA8/CCdEh7A5j12fmcQZj7+cEc4yIS0cXOWiZmij
+	 eYarmWO5yCxhBwaRi33fQkQuXriw9gHndwc/f/AqtA3ja5AKJfdMiqk4aJoZWD0zAD
+	 ZS5N9aoeDO0Jw==
+Date: Thu, 31 Jul 2025 20:02:10 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: James Bottomley <James.Bottomley@hansenpartnership.com>
+Cc: Peter Huewe <peterhuewe@gmx.de>, Jarkko Sakkinen <jarkko@kernel.org>,
+	linux-integrity@vger.kernel.org, Jason Gunthorpe <jgg@ziepe.ca>,
+	linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: Re: [PATCH 1/2] tpm: Compare HMAC values in constant time
+Message-ID: <20250801030210.GA1495@sol>
+References: <20250731215255.113897-1-ebiggers@kernel.org>
+ <20250731215255.113897-2-ebiggers@kernel.org>
+ <3ed1ae7e7f52afe53ce2ff00f362ed153b3eec20.camel@HansenPartnership.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: BN3PEPF0000B074:EE_|CH2PR12MB4231:EE_
-X-MS-Office365-Filtering-Correlation-Id: 66158c11-6aae-4f0f-3c58-08ddd0a7ce42
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?BnLPXS9ZmBAgSlBn4pwAgbcnEma9FWXsNEjsWe0W6P9urcaeD2iY2hkK1Dev?=
- =?us-ascii?Q?PuX7yrjAzt/cfFuLGOYTENw87vMpesxv2uMxgKkNm2EB0hi+22YsshNKU7GM?=
- =?us-ascii?Q?HZ0F5VKy5QCw6dVns/J3/b6W86xf14yi72O/IJi/l5+FNQd4LH6Fs6YzD/dK?=
- =?us-ascii?Q?xJQjpM8f6RUg2vpGoZi0YVvJGyHYBB/9GM6U45J6Hb35XDOilNNawKHgw/H8?=
- =?us-ascii?Q?kokmdhTBeQ0OIkh8r8JGfq/nHTJ2QZhY6xjptJadcAzuU74+CEKbFPfVdhD9?=
- =?us-ascii?Q?rXY3XPdfqLCPxv2kTD9vPQFYrUpjEdfRMBlJce6qts7GFbsGsGucqN0uzRyq?=
- =?us-ascii?Q?rHc+0Qtw+IUOwDNboZl9vcaGrVAUdJxw7U/H9TZY5f7rxA4hvWcQmZIoVVDd?=
- =?us-ascii?Q?hd6FpPGzHEfVSt2sg/ZwPGFsbZ52x2SIcML8gotHDo44DwA+8NwurLDGSyCj?=
- =?us-ascii?Q?Z1w9aZCph+o0CDhlUY1pBSGjx89JIN8lR15ZJqPHbjeOX8LsS4Et+fIeOxNE?=
- =?us-ascii?Q?N3bwAqA76X8Jy8g9X48E8oYrDKT6SUopdbDQ6NqRkcfexYNCemvnIUna+aOh?=
- =?us-ascii?Q?OJUozg1w7ReyrQl2xgKgjzbngsTGdu5iZoQ36q4EgyNh/gDn0wVJ+3MYk6hU?=
- =?us-ascii?Q?b9i81D/cUOmbGXZqx+6gHJAJgf2IqblOEvk7awNKcYGd2b4v47YhWUTi0qGX?=
- =?us-ascii?Q?WQtQk9E/9KGC+1pK3kceCcoGjOOLEZqmJ/ATpLHGq+zGQ89z1jh7q+JakOdx?=
- =?us-ascii?Q?SbKH0dkVo+sAD11bl8M+QST2c/6huynEr5cXEPo90Yew7bVO2S5/L6XYyf6V?=
- =?us-ascii?Q?MHsLIgqBSUoDlHEIVi0LjO0QBP0f1oron53KL7TtGT32MVPYFVYlZVxFo88f?=
- =?us-ascii?Q?IwHIW1Ypp1b9x/5r5K6wxznjKXx3oEB4HTf2WXX/KGNF94qmRJUoQOlxXTGX?=
- =?us-ascii?Q?zXIIIduHTIVjZaqDVG1TBd81/82698P+TbG5In0VS0ASiWgd96tp31Ijh2Dg?=
- =?us-ascii?Q?6cnA7u+RAmP2U2HPJT63RSOQqxY1G8rdkrksNZuecCjzZS9NnnqenAY7KcsX?=
- =?us-ascii?Q?LEUpLpdMJFXYe/zsDgARFsSRQa3tMhel30bnJza7SiVkahrK3OeCV9kLMsic?=
- =?us-ascii?Q?3YcGOc6wNdQhCnOPwmtecLhSJhGgBE4+8TRAJh4Y0vOVHK586zgMXHnGqvEr?=
- =?us-ascii?Q?JIeDgE7Psg9gYpa1B9aIIKKcUH4MRHi8k+ffyScSNb06fHJ5WpEm7Zqvwlap?=
- =?us-ascii?Q?yn7W/tm+LaT4V/doECl/mObZCqUg0ovUwctF8RVyGbE3gzxnjhrx8bTHmCTK?=
- =?us-ascii?Q?3hGeyTjQm+CCiQLF8mOU11ZI96tHf7nqhWkdX50NsPFu+KYqatmvqy69m9s/?=
- =?us-ascii?Q?AughXnLgCkSm8o3lWDbb0Nj1gXEC4kHjfrhZ+RIVt/fcTu+JPrVq399VW50R?=
- =?us-ascii?Q?38RYx/4DRJEtu7svFz7JFOWWSZRuXtirRN90eLcRBLnjXMCmgHwtyZH3G78w?=
- =?us-ascii?Q?tVkQs69mmNoxIxTbiV5LBATHRA14xCgE3FJp?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 03:02:09.2856
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 66158c11-6aae-4f0f-3c58-08ddd0a7ce42
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	BN3PEPF0000B074.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH2PR12MB4231
+In-Reply-To: <3ed1ae7e7f52afe53ce2ff00f362ed153b3eec20.camel@HansenPartnership.com>
 
-The arm_smmu_attach_commit() updates master->ats_enabled before calling
-arm_smmu_remove_master_domain() that is supposed to clean up everything
-in the old domain, including the old domain's nr_ats_masters. So, it is
-supposed to use the old ats_enabled state of the device, not an updated
-state.
+On Thu, Jul 31, 2025 at 10:28:49PM -0400, James Bottomley wrote:
+> On Thu, 2025-07-31 at 14:52 -0700, Eric Biggers wrote:
+> > To prevent timing attacks, HMAC value comparison needs to be constant
+> > time.  Replace the memcmp() with the correct function,
+> > crypto_memneq().
+> 
+> Um, OK, I'm all for more security but how could there possibly be a
+> timing attack in the hmac final comparison code?  All it's doing is
+> seeing if the HMAC the TPM returns matches the calculated one.  Beyond
+> this calculation, there's nothing secret about the HMAC key.
 
-This isn't a problem if switching between two domains where:
- - old ats_enabled = false; new ats_enabled = false
- - old ats_enabled = true;  new ats_enabled = true
-but can fail cases where:
- - old ats_enabled = false; new ats_enabled = true
-   (old domain should keep the counter but incorrectly decreased it)
- - old ats_enabled = true;  new ats_enabled = false
-   (old domain needed to decrease the counter but incorrectly missed it)
+I'm not sure I understand your question.  Timing attacks on MAC
+validation are a well-known issue that can allow a valid MAC to be
+guessed without knowing the key.  Whether it's practical in this
+particular case for some architecture+compiler+kconfig combination is
+another question, but there's no reason not to use the constant-time
+comparison function that solves this problem.
 
-Update master->ats_enabled after arm_smmu_remove_master_domain() to fix
-this.
+Is your claim that in this case the key is public, so the MAC really
+just serves as a checksum (and thus the wrong primitive is being used)?
 
-Fixes: 7497f4211f4f ("iommu/arm-smmu-v3: Make changing domains be hitless for ATS")
-Cc: stable@vger.kernel.org
-Signed-off-by: Nicolin Chen <nicolinc@nvidia.com>
----
- drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-index 312bc31d7e8eb..3c81139faecae 100644
---- a/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-+++ b/drivers/iommu/arm/arm-smmu-v3/arm-smmu-v3.c
-@@ -2997,9 +2997,9 @@ void arm_smmu_attach_commit(struct arm_smmu_attach_state *state)
- 		/* ATS is being switched off, invalidate the entire ATC */
- 		arm_smmu_atc_inv_master(master, IOMMU_NO_PASID);
- 	}
--	master->ats_enabled = state->ats_enabled;
- 
- 	arm_smmu_remove_master_domain(master, state->old_domain, state->ssid);
-+	master->ats_enabled = state->ats_enabled;
- }
- 
- static int arm_smmu_attach_dev(struct iommu_domain *domain, struct device *dev)
--- 
-2.43.0
-
+- Eric
 
