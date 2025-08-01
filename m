@@ -1,51 +1,47 @@
-Return-Path: <linux-kernel+bounces-752907-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752908-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E5E49B17C37
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:46:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E5A9B17C3A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:47:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 873C63A9D0F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:46:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 116791C2380E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02B561DED53;
-	Fri,  1 Aug 2025 04:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7302C1D61B7;
+	Fri,  1 Aug 2025 04:47:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="P1yf/8DV"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="U3vTfSVf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99A962E36F5;
-	Fri,  1 Aug 2025 04:46:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C2C5A2E36F5;
+	Fri,  1 Aug 2025 04:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754023588; cv=none; b=p5mjZRxqJdeapo+Iexm8GRB0iRBuBNfz9zm6TBXen1wdWfJBFI/6UJB8oAgjxT0pi+fKMvmm282c6ovmjCU49pCxPYzkCA1RjXZAzytBuTODvMEQhgD48+D/yXItaQ7ipneREGvnrZWWNwwvU9tl+HD0DaUaoVIAqPY+E6fYtN4=
+	t=1754023669; cv=none; b=RJNfFcY7f3dA0nQHJY7silJIpvLCdV9CwtrMnhCbHwljrEKvN5oBIsPrKvlQyHRSnXzu9KLaSq3GAguwV55MKRSGd2mo5JRcF38RbcqsDcZgpKwy+UHk3ugD8Uqxmju98KFsCTaTIOMfvzaX7UyefflmDTtistQnzTsh9TQklXk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754023588; c=relaxed/simple;
-	bh=7guHzuGZcQYyMMqHtdh9YC2fHPLufgyBGJ5WzCqVxMk=;
+	s=arc-20240116; t=1754023669; c=relaxed/simple;
+	bh=Z6GuhGLpQlEJDbFdROmqYuJfyRyqqJhwKdI3KHUcOEk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nlm3GQ7EgetzZt3oWtaS1WRVtRJyTEFOdM9BBbnr40ngUbpt1SJqpRXiczVaqd/XSVTfWrdckrAM1MfPeSfEdhJgjl/87ESnrLMyBrnxEUaeTK7oaW1+14Ja7240sI4XKINoQ3oG9PhVkyROfZ7bihAn8HJ0niRUOtPYZWApxIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=P1yf/8DV; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
-	Content-Type:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:
-	Message-ID:Sender:Reply-To:Content-ID:Content-Description;
-	bh=4B3hC59/18jVmKxVk7eYY+g94+2+67TAoLvcbjcEIQs=; b=P1yf/8DVMvPuxtkA0hyuFlFovN
-	Akl/PG4LgJfJ6/IHTDcZSojAfTo4r9vYcXCBnVzxKPM5OjWislkUhYmFaMhyEZcr5V8Z7OmbXr9Uo
-	kdA0jUVtKme11ZZ43+WKxy91FNJUSV5LPQljGNAjnL+F3f3aGLZVGPwVVegY3yKWvqAtSociHXLSK
-	7wrXQrYi+v9BfX//hc6Wn8e3jv4BQ2aM98VcqQ4IP7Ocp/SqTk5xT0DLONu4wZySWref8oCd0oJip
-	v47jKbooHAE799xVTvGoCyZ4Xb6eV7xMgOdftI8adFFq8Sx9gHv5i4avakw48OH3i7VfCuS1bJ3DI
-	+j0K4kXg==;
-Received: from [50.53.25.54] (helo=[192.168.254.17])
-	by bombadil.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uhhez-00000004ybI-1ZA2;
-	Fri, 01 Aug 2025 04:46:25 +0000
-Message-ID: <24f3c4d1-ce5b-4a67-91e4-8c34caa82aed@infradead.org>
-Date: Thu, 31 Jul 2025 21:46:24 -0700
+	 In-Reply-To:Content-Type; b=oT5UqoJrspNQkjG8BV75q/rMqhG3IcuDPnnAILU3PGlHSjcqnakvaXQgSciT3dKElmH393KVwq4ZifEC24u/kqgMU8C16g3OKZvKXEAbKRbI0fsXqtSdG189N0o5uGpzhIxskHqyXsnyImhdtvjasavLqnpdPA6ODyMkuZ2WyxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=U3vTfSVf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DFAEAC4CEE7;
+	Fri,  1 Aug 2025 04:47:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754023669;
+	bh=Z6GuhGLpQlEJDbFdROmqYuJfyRyqqJhwKdI3KHUcOEk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U3vTfSVfkvNFoP4SiyFFIhwhrGxu3g35ESb1EOxoAn42EqYCBuLyMCj0McN3sdJ0w
+	 aE34QDYUDD2JOl+vpadEqhPELX+AiazQ1keGvpxugJQ6GlG5HPDFTvsT/fImtSpxDS
+	 Cb1c40EDYl7vGbqmMjHbgiZjQ+5aUJhSH4zEz9cXaRU7YXbAhSzhyblv5gxlHIysRv
+	 vpuOZ1VPxpcS+28EjzLIi6jKnMNbOXsYbYE2N72nQ9EDRXswzEngp51kL1TLrn+GuK
+	 qsvzDGsivVjkN4RScJGvI6bKFlFILlOLNW8O73Lolxtbjb0DTlLpvIueQhe/BblodJ
+	 RSWQU4mC4E+xg==
+Message-ID: <9fffb5be-eced-4207-86fc-8939de1ab16e@kernel.org>
+Date: Fri, 1 Aug 2025 06:47:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,50 +49,108 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build warnings after merge of the drm-msm tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>, Rob Clark <robdclark@gmail.com>,
- Sean Paul <seanpaul@chromium.org>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>,
- Bagas Sanjaya <bagasdotme@gmail.com>
-References: <20250708192038.6b0fd31d@canb.auug.org.au>
- <20250801144016.4e00f355@canb.auug.org.au>
+Subject: Re: [PATCH 07/33] tty: vt: use _IO() to define ioctl numbers
+To: Nicolas Pitre <nico@fluxnic.net>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>
+Cc: gregkh@linuxfoundation.org, Christian Zigotzky <chzigotzky@xenosoft.de>,
+ linux-serial@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "linuxppc-dev@lists.ozlabs.org" <linuxppc-dev@lists.ozlabs.org>
+References: <20250611100319.186924-1-jirislaby@kernel.org>
+ <20250611100319.186924-8-jirislaby@kernel.org>
+ <97ec2636-915a-498c-903b-d66957420d21@csgroup.eu>
+ <3ac7427b-4f17-480e-99ae-f00e5c00e678@csgroup.eu>
+ <9811012p-4q9q-284q-n2qr-7597s16p8sq5@syhkavp.arg>
 Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <20250801144016.4e00f355@canb.auug.org.au>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Jiri Slaby <jirislaby@kernel.org>
+Autocrypt: addr=jirislaby@kernel.org; keydata=
+ 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
+In-Reply-To: <9811012p-4q9q-284q-n2qr-7597s16p8sq5@syhkavp.arg>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-
-
-On 7/31/25 9:40 PM, Stephen Rothwell wrote:
-> Hi all,
+On 31. 07. 25, 22:58, Nicolas Pitre wrote:
+> On Thu, 31 Jul 2025, Christophe Leroy wrote:
 > 
-> On Tue, 8 Jul 2025 19:20:38 +1000 Stephen Rothwell <sfr@canb.auug.org.au> wrote:
 >>
->> After merging the drm-msm tree, today's linux-next build (htmldocs)
->> produced these warnings:
 >>
->> drivers/gpu/drm/drm_gpuvm.c:2445: ERROR: Unexpected indentation. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2447: WARNING: Block quote ends without a blank line; unexpected unindent. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2451: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2452: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2456: ERROR: Unexpected indentation. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2457: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2458: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
->> Documentation/gpu/drm-mm:506: drivers/gpu/drm/drm_gpuvm.c:2459: WARNING: Definition list ends without a blank line; unexpected unindent. [docutils]
+>> Le 31/07/2025 à 16:35, Christophe Leroy a écrit :
+>>> Hi Jiri,
+>>>
+>>> Le 11/06/2025 à 12:02, Jiri Slaby (SUSE) a écrit :
+>>>> _IO*() is the proper way of defining ioctl numbers. All these vt numbers
+>>>> were synthetically built up the same way the _IO() macro does.
+>>>>
+>>>> So instead of implicit hex numbers, use _IO() properly.
+>>>>
+>>>> To not change the pre-existing numbers, use only _IO() (and not _IOR()
+>>>> or _IOW()). The latter would change the numbers indeed.
+>>>
+>>> On powerpc your assumption is wrong, because _IOC_NONE is not 0:
+>>>
+>>> $ git grep _IOC_NONE arch/powerpc/
+>>> arch/powerpc/include/uapi/asm/ioctl.h:#define _IOC_NONE 1U
+>>>
+>>> Therefore the value changes even with _IO(), leading to failure of Xorg as
+>>> reported by Christian.
+>>>
 >>
->> Introduced by commit
+>> And is likely an issue on the 4 following architectures:
 >>
->>   471920ce25d5 ("drm/gpuvm: Add locking helpers")
+>> $ git grep _IOC_NONE arch/ | grep 1U
+>> arch/alpha/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
+>> arch/mips/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
+>> arch/powerpc/include/uapi/asm/ioctl.h:#define _IOC_NONE	1U
+>> arch/sparc/include/uapi/asm/ioctl.h:#define _IOC_NONE        1U
 > 
-> I am still seeing those warnings.  That commit is now in Linus' tree.
+> IMHO this one patch could simply be reverted and the "old" code let be.
 
-Bagas sent a patch for this. It will apparently (& hopefully) be merged via
-the MSM tree.
+Oh, right -- it's easy to revert (no conflicts).
 
+We could use _IOC(0, 'V', number, 0) directly, but I am not sure, that's 
+worth it.
+
+thanks,
 -- 
-~Randy
-
+js
+suse labs
 
