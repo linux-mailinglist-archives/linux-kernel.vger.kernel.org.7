@@ -1,208 +1,116 @@
-Return-Path: <linux-kernel+bounces-752763-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752764-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10824B17AA0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:29:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C9A4B17AA2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:31:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB2233BBE57
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:29:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D9B613BC3DF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7F99CA6B;
-	Fri,  1 Aug 2025 00:29:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159292033A;
+	Fri,  1 Aug 2025 00:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="no9uVix6"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="OqUM4xzS"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 213998F40;
-	Fri,  1 Aug 2025 00:29:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D44F13C17;
+	Fri,  1 Aug 2025 00:31:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754008185; cv=none; b=dsfiRvklim7UWU6k8rVYVb5XspMo1CsrRgbeJVdm/W10V2A+OmBoSKH+kGm1Y5dWarq7jvoE+W3cmqP/GyA5Wxq5NaEIosl22cD8sI5iwKntdRHr2M/STWQdyBBfAmfrfh/iLi7PH8uqoqQttitG8tF4B/m793bzuKnEOjcgWVg=
+	t=1754008274; cv=none; b=FQnq96GJ5Dm2VCvDDlxnkDYJor+QHEqEUpqRJjZSHdXM/Axb3MjIJJEyrATadLgNpC6M8TdWK6tU96dMs3TSgYbp4Tii0QpwSh6M4e7JieT9RYkuMQmFr+yXKQsCMYsoMZS27DTy2x08GXrlcerO15vya3iz79Vaiibr6SP9qI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754008185; c=relaxed/simple;
-	bh=eZgXmtVleqBOW2a9EhVWZV3RbUp8RIO3Kyrj/CMoaP4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WhUzFIxBrDy/bAqnAR3X7vwUdyh6V2LDwrSiOA57ALrRCawLRKl6pl58B5a3HMA43rq1ObrLXc4V4mRo+NN52HskKGkRjT7iTtADYNqB274Yzhupl7QCvmeRSZVDMinqqJ9CGKkjChSP/OsfEvIX5A5JaJXj00/IPwKtXmAVwU4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=no9uVix6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8F912C4CEEF;
-	Fri,  1 Aug 2025 00:29:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754008184;
-	bh=eZgXmtVleqBOW2a9EhVWZV3RbUp8RIO3Kyrj/CMoaP4=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=no9uVix6afnOBiymx4pq2a/XjiwyLroJSmeFDpg9ocCAHSNVTEJH2cTtKNRfJhgvX
-	 +WNtGUcU3DJuUSesVwjGKvWOPfI0AV30FXiYYJC9Wlm7JaApQSffkC14N1kDKYLc3S
-	 z2ptC81L6WP7o5tuMQ2yGmji584d3RGre8Juy0dMPibngWGiCbleXYIeEpSyOr5q9a
-	 s08SGMrShIQ+RtMPd/GmRwCCevnWZLoPx+mIuIAXPs9nrLZ/euQ9Fbr+mY2dIrnCZm
-	 /y+Cmkl0Uq2fMJ/lCjbEE36H12Oe/AvX3mBeDXuvfR7EUwaagD9kY6DfRA1lTVdyr8
-	 q6IaTQrYjLpYw==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 2F2D6CE0A73; Thu, 31 Jul 2025 17:29:44 -0700 (PDT)
-Date: Thu, 31 Jul 2025 17:29:44 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	bpf@vger.kernel.org, Masami Hiramatsu <mhiramat@kernel.org>,
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Jiri Olsa <jolsa@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Indu Bhagat <indu.bhagat@oracle.com>,
-	"Jose E. Marchesi" <jemarch@gnu.org>,
-	Beau Belgrave <beaub@linux.microsoft.com>,
-	Jens Remus <jremus@linux.ibm.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-	Sam James <sam@gentoo.org>
-Subject: Re: [PATCH v16 09/10] unwind deferred: Use SRCU
- unwind_deferred_task_work()
-Message-ID: <21c67d70-d8c2-4d6b-99d8-2de8f2966621@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <20250729182304.965835871@kernel.org>
- <20250729182406.331548065@kernel.org>
+	s=arc-20240116; t=1754008274; c=relaxed/simple;
+	bh=MAE9cI/aOaHi3yH0MZjhKnadnNPNOZC99udhYkmkq6Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=jULz9JEVK+h/ZCfe9cm4+JhXf7Oi/gUXoui5nvOG34191Q/vccWKXn1SErRlmg2AlARl1XDb8xz4fnOyZp6cN5qij/NLzIVKwdCfEKcwsUUpdC1Gm5nTtZgd0Z/yxVWUylA6SX7TFs6AP1mnIdT4HAjpVDksNDfMEP9SskrjlLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=OqUM4xzS; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5710UpxwE2040572, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1754008251; bh=MAE9cI/aOaHi3yH0MZjhKnadnNPNOZC99udhYkmkq6Y=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=OqUM4xzSk+lBHzKOBRFzJfOEYKJ6VkBzteoV60BuuFqj2S+RHzP/H/fPh0Jh2+/Uy
+	 DeuOFvgd5QSvVnSn7BIUQ/zlf49CGH14aJtQ+WntUTAJqtPVKAHiLOV0ZmhHAXOgZt
+	 m5cw1y0Xa4qYQXTW6HKuzlyvGug3w7FQ55XmZ2E4ELKxdTRGKURruVslWlDdmtEAee
+	 q0LOABfqNIlGQXW7tWBGx/fxLL5y166Znt9Lxn0QnSr0a/ujlKWBmBJ4JFxXntXmyk
+	 jeBocuxSXCEPR0kA3+7oYyRVZgp4s8mlp2TzBtOIBdCl9KMt6Sh5uj4is8qrjsbEVT
+	 vdPiYq0gnHMcg==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5710UpxwE2040572
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 08:30:51 +0800
+Received: from RTEXMBS02.realtek.com.tw (172.21.6.95) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 08:30:52 +0800
+Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
+ RTEXMBS02.realtek.com.tw (172.21.6.95) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.35; Fri, 1 Aug 2025 08:30:51 +0800
+Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
+ RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
+ 15.01.2507.035; Fri, 1 Aug 2025 08:30:51 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Sean Anderson <sean.anderson@linux.dev>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bitterblue
+ Smith" <rtl8821cerfe2@gmail.com>
+Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeggAJapQCAAMhRwA==
+Date: Fri, 1 Aug 2025 00:30:51 +0000
+Message-ID: <d0f6162ab34440cab0c11667be092609@realtek.com>
+References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
+ <20250729204437.164320-1-sean.anderson@linux.dev>
+ <c034d5cc40784bfa859f918806c567de@realtek.com>
+ <7865d95f-a92e-405d-bc71-f1e1382ad24c@linux.dev>
+In-Reply-To: <7865d95f-a92e-405d-bc71-f1e1382ad24c@linux.dev>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+x-kse-serverinfo: RTEXMBS02.realtek.com.tw, 9
+x-kse-antispam-interceptor-info: fallback
+x-kse-antivirus-interceptor-info: fallback
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729182406.331548065@kernel.org>
+X-KSE-AntiSpam-Interceptor-Info: fallback
 
-On Tue, Jul 29, 2025 at 02:23:13PM -0400, Steven Rostedt wrote:
-> From: Steven Rostedt <rostedt@goodmis.org>
-> 
-> Instead of using the callback_mutex to protect the link list of callbacks
-> in unwind_deferred_task_work(), use SRCU instead. This gets called every
-> time a task exits that has to record a stack trace that was requested.
-> This can happen for many tasks on several CPUs at the same time. A mutex
-> is a bottleneck and can cause a bit of contention and slow down performance.
-> 
-> As the callbacks themselves are allowed to sleep, regular RCU cannot be
-> used to protect the list. Instead use SRCU, as that still allows the
-> callbacks to sleep and the list can be read without needing to hold the
-> callback_mutex.
-> 
-> Link: https://lore.kernel.org/all/ca9bd83a-6c80-4ee0-a83c-224b9d60b755@efficios.com/
-> 
-> Cc: "Paul E. McKenney" <paulmck@kernel.org>
-> Suggested-by: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-
-One quite likely stupid question below.
-
-							Thanx, Paul
-
-> ---
->  kernel/unwind/deferred.c | 27 +++++++++++++++++++++------
->  1 file changed, 21 insertions(+), 6 deletions(-)
-> 
-> diff --git a/kernel/unwind/deferred.c b/kernel/unwind/deferred.c
-> index 2311b725d691..a5ef1c1f915e 100644
-> --- a/kernel/unwind/deferred.c
-> +++ b/kernel/unwind/deferred.c
-> @@ -41,7 +41,7 @@ static inline bool try_assign_cnt(struct unwind_task_info *info, u32 cnt)
->  #define UNWIND_MAX_ENTRIES					\
->  	((SZ_4K - sizeof(struct unwind_cache)) / sizeof(long))
->  
-> -/* Guards adding to and reading the list of callbacks */
-> +/* Guards adding to or removing from the list of callbacks */
->  static DEFINE_MUTEX(callback_mutex);
->  static LIST_HEAD(callbacks);
->  
-> @@ -49,6 +49,7 @@ static LIST_HEAD(callbacks);
->  
->  /* Zero'd bits are available for assigning callback users */
->  static unsigned long unwind_mask = RESERVED_BITS;
-> +DEFINE_STATIC_SRCU(unwind_srcu);
->  
->  static inline bool unwind_pending(struct unwind_task_info *info)
->  {
-> @@ -174,8 +175,9 @@ static void unwind_deferred_task_work(struct callback_head *head)
->  
->  	cookie = info->id.id;
->  
-> -	guard(mutex)(&callback_mutex);
-> -	list_for_each_entry(work, &callbacks, list) {
-> +	guard(srcu)(&unwind_srcu);
-> +	list_for_each_entry_srcu(work, &callbacks, list,
-> +				 srcu_read_lock_held(&unwind_srcu)) {
->  		if (test_bit(work->bit, &bits)) {
->  			work->func(work, &trace, cookie);
->  			if (info->cache)
-> @@ -213,7 +215,7 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
->  {
->  	struct unwind_task_info *info = &current->unwind_info;
->  	unsigned long old, bits;
-> -	unsigned long bit = BIT(work->bit);
-> +	unsigned long bit;
->  	int ret;
->  
->  	*cookie = 0;
-> @@ -230,6 +232,14 @@ int unwind_deferred_request(struct unwind_work *work, u64 *cookie)
->  	if (WARN_ON_ONCE(!CAN_USE_IN_NMI && in_nmi()))
->  		return -EINVAL;
->  
-> +	/* Do not allow cancelled works to request again */
-> +	bit = READ_ONCE(work->bit);
-> +	if (WARN_ON_ONCE(bit < 0))
-> +		return -EINVAL;
-> +
-> +	/* Only need the mask now */
-> +	bit = BIT(bit);
-> +
->  	guard(irqsave)();
->  
->  	*cookie = get_cookie(info);
-> @@ -281,10 +291,15 @@ void unwind_deferred_cancel(struct unwind_work *work)
->  		return;
->  
->  	guard(mutex)(&callback_mutex);
-> -	list_del(&work->list);
-
-What happens if unwind_deferred_task_work() finds this item right here...
-
-> +	list_del_rcu(&work->list);
-
-...and then unwind_deferred_request() does its WARN_ON_ONCE() check
-against -1 right here?
-
-Can't that cause UAF?
-
-This is quite possibly a stupid question because I am not seeing where to
-apply this patch, so I don't know what other mechanisms might be in place.
-
-> +	/* Do not allow any more requests and prevent callbacks */
-> +	work->bit = -1;
->  
->  	__clear_bit(bit, &unwind_mask);
->  
-> +	synchronize_srcu(&unwind_srcu);
-> +
->  	guard(rcu)();
->  	/* Clear this bit from all threads */
->  	for_each_process_thread(g, t) {
-> @@ -307,7 +322,7 @@ int unwind_deferred_init(struct unwind_work *work, unwind_callback_t func)
->  	work->bit = ffz(unwind_mask);
->  	__set_bit(work->bit, &unwind_mask);
->  
-> -	list_add(&work->list, &callbacks);
-> +	list_add_rcu(&work->list, &callbacks);
->  	work->func = func;
->  	return 0;
->  }
-> -- 
-> 2.47.2
-> 
-> 
+U2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBsaW51eC5kZXY+IHdyb3RlOg0KPiBPbiA3LzI5
+LzI1IDIwOjM2LCBQaW5nLUtlIFNoaWggd3JvdGU6DQo+ID4gU2VhbiBBbmRlcnNvbiA8c2Vhbi5h
+bmRlcnNvbkBsaW51eC5kZXY+IHdyb3RlOg0KPiA+PiBUaGVyZSBhcmUgbW9yZSB1bnN1cHBvcnRl
+ZCBmdW5jdGlvbnMgdGhhbiBqdXN0IExPV1JUX1JUWS4gSW1wcm92ZSBvbg0KPiA+PiBjb21taXQg
+M2I2NjUxOWIwMjNiICgid2lmaTogcnR3ODk6IHBoeTogYWRkIGR1bW15IGMyaCBoYW5kbGVyIHRv
+IGF2b2lkDQo+ID4+IHdhcm5pbmcgbWVzc2FnZSIpIGJ5IHByaW50aW5nIGEgbWVzc2FnZSBqdXN0
+IG9uY2Ugd2hlbiB3ZSBmaXJzdA0KPiA+PiBlbmNvdW50ZXIgYW4gdW5zdXBwb3J0ZWQgY2xhc3Mu
+DQo+ID4NCj4gPiBPbmNlIEkgZW5jb3VudGVyIGFuIHVuc3VwcG9ydGVkIGNsYXNzL2Z1bmMsIEkn
+bGwgY2hlY2sgZmlybXdhcmUgdGVhbSBpZiB0aGUNCj4gPiBDMkggZXZlbnRzIGNhbiBiZSBpZ25v
+cmVkLiBJZiBzbywgSSBhZGQgYSBkdW1teSBmdW5jdGlvbiB0byBhdm9pZCB0aGUgbWVzc2FnZS4N
+Cj4gPiBJZiBub3QsIEkgc2hvdWxkIGFkZCBjb2RlIHRvIGhhbmRsZSB0aGUgZXZlbnQuDQo+ID4N
+Cj4gPiBEbyB5b3Ugd2FudCB0byBzZWUgdGhlIG1lc3NhZ2UgZXZlbiB0aG91Z2ggaXQgb25seSBh
+cHBlYXJzIG9uY2U/DQo+IA0KPiBJIG1lYW4sIG1heWJlIGl0IHNob3VsZCBqdXN0IGJlIGEgZGVi
+dWc/IEFyZSB0aGVzZSBtZXNzYWdlcyB1c2VmdWwgZm9yIGFueW9uZQ0KPiBvdGhlciB0aGFuIHRo
+ZSBkZXZlbG9wZXJzPw0KDQpZZXMsIHRoaXMgY291bGQganVzdCBiZSBhIGRlYnVnLiBIb3dldmVy
+LCBkZXZlbG9wZXJzIG5vcm1hbGx5IGRvbid0IHR1cm4gb24NCmRlYnVnIG1hc2ssIHNvIHVzaW5n
+IHJ0dzg5X2luZm8gaXMgdG8gY2xlYXJseSByZW1pbmQgZGV2ZWxvcGVycyB0byBwYXkNCmF0dGVu
+dGlvbiBvbiB0aGlzIGxhY2sgb2YgQzJIIGhhbmRsZXIuIEFuZCwgSSBzdXBwb3NlIGRldmVsb3Bl
+cnMgbXVzdCBoYW5kbGUNCnRoaXMgd2hlbiB0aGV5IHNlZSBmbG9vZGluZyBtZXNzYWdlcy4NCg0K
+PiANCj4gTWF5YmUgd2Ugc2hvdWxkIGp1c3QgcHJpbnQgb25seSB0aGUgdmVyeSBmaXJzdCB1bnN1
+cHBvcnRlZCBtZXNzYWdlIGF0IGluZm8gbGV2ZWwNCj4gYW5kIHByaW50IHRoZSByZXN0IGF0IGRl
+YnVnLg0KDQpJJ20gYWZyYWlkIGRldmVsb3BlcnMgd2lsbCBpZ25vcmUgb3IgbWlzcyB0aGUgbWVz
+c2FnZXMuIFRvIHJlZHVjZSBtZXNzYWdlcw0KaXMgZmluZSB0byBtZSAsIGJ1dCBtb3JlIGltcG9y
+dGFudCBpcyB0byBsb29rIHVwIHZlbmRvciBkcml2ZXIgdG8gc2VlIGlmDQp0aGUgQzJIIGhhbmRs
+ZXIgaXMgbmVjZXNzYXJ5LiANCg0KDQo=
 
