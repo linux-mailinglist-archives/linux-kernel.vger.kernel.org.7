@@ -1,183 +1,139 @@
-Return-Path: <linux-kernel+bounces-752935-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752934-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EFFFB17CAF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:59:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EB270B17CAD
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D9121C232D8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:59:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7C9D1C23512
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:59:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EECB1F3FE9;
-	Fri,  1 Aug 2025 05:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45D9A1F4612;
+	Fri,  1 Aug 2025 05:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="fWRPRYa4"
-Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ghIKg6xW"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE9BB660;
-	Fri,  1 Aug 2025 05:58:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2A1614A60F;
+	Fri,  1 Aug 2025 05:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754027946; cv=none; b=S+E3/zme1lci7K/Wb0OVkCosb6L4VirgR98Uvp83pwiAAFsa5L+idizgaNYXwzC+DxKHlyC1Oxa3wYm5jKjjjPuZIODWsINp7U2MKwki2otA+AqH/qapMVgeAHSpwOB63opiuEVWuL5eETiXpduszIWxIyk8jwzarnJDMmUTh8U=
+	t=1754027923; cv=none; b=V1J5/uI9ZqIDMbWhfjU9uDS6eSiJl5CqLKncv5oSGXLhDt5z1uSj00Skq4p+N7XGnLOWQpfFsY8S8RRYu8qcDNgaggf+m7fTyp1TkvE54GKwXrm3HzLcKGe54F6s1ch5TrN1/SBvFBmsAZPN8CLxTiZbiTrAK1aQNCKhaqPJqes=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754027946; c=relaxed/simple;
-	bh=TFvqmtcImAqa5Bexq4o48IS0BaB9Rj36ckv1GO81Z5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=giLd+t3FxKAbsHx9sTqS+Nn+qClElK7CHcEud4HKYYVq87L0lDme1a6vnCBqalicCjd0e4/d/kcV4+OirP0DOyU21wC/zOVdpajAhQWqIvsLdrRKLaXIGXrBT1Dqq0qSPHmeP2mVqy/2iGAmUWTuWQgtTlgjQURIoNbSI3+ObSA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=fWRPRYa4; arc=none smtp.client-ip=18.169.211.239
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
-	s=onoh2408; t=1754027882;
-	bh=TFvqmtcImAqa5Bexq4o48IS0BaB9Rj36ckv1GO81Z5o=;
-	h=Message-ID:Date:MIME-Version:Subject:To:From;
-	b=fWRPRYa4YH5M17CP0vKphcUSxPDADbXqDPwB+dS51ALiK3toxcal36P9Ae5tco8uX
-	 AW3kq8WNGu40+i3D56oG2xWuepCnhbbwiq0U6W8G0vNoUKfGcImhb1pdB9Z6oZdaXL
-	 2ezR3bqL0vAdQmN6odX32jObTOMZdKGnWVnDpz7g=
-X-QQ-mid: zesmtpip2t1754027843tc5d9a561
-X-QQ-Originating-IP: 9polwzB6wHNRa9OZhoNU/nu10Gz2XWZDq7AVf6MVhxY=
-Received: from [IPV6:240e:668:120a::212:232] ( [localhost])
-	by bizesmtp.qq.com (ESMTP) with 
-	id ; Fri, 01 Aug 2025 13:57:21 +0800 (CST)
-X-QQ-SSF: 0001000000000000000000000000000
-X-QQ-GoodBg: 1
-X-BIZMAIL-ID: 17402468212891621763
-EX-QQ-RecipientCnt: 12
-Message-ID: <671CE9DD76801AE4+34f3e3b7-4684-4fe2-80a9-93de1dde9c31@uniontech.com>
-Date: Fri, 1 Aug 2025 13:57:21 +0800
+	s=arc-20240116; t=1754027923; c=relaxed/simple;
+	bh=mgxA7W4mQwpr1uH2slOXdJ0GU38EgMRZhZgmeDvLU0Y=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=OyMUVpJOSvk9OQT2e/UJAf/RzG6BJXtQzRilQH51STySujYN/qOdj+J92BB6JHQnZmx/Ho9iXl65lOMhT7b99mj2FLD6sM/csTUs925jqsmdO1VWsMTQNiJBF+McNQUfvGBMs71HHfPayQ4UH1XY7eS3OB+aLVmoHu3njuGWVNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ghIKg6xW; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5710RolX021732;
+	Fri, 1 Aug 2025 05:58:36 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	dnPjA4Xn0J5yS+DY1Rak8L377wvl7FGLi5Y+z6aX6NM=; b=ghIKg6xW/HIfr/Ga
+	Gl/a7qo8y8WL7L0uB7SAD3wP8WhbZIqZOKjiiCyEztP8elzXP4w+r+yMIXt+XNDu
+	PiOV07LuB+SZJjs66Il9Kve1Yl9DEuHarVucC1EPTApwZw+BawjPatE8Os/ohtqv
+	5A98aOFJQJT9D1IomGG9Apl9Xcqoik51pNm+xKM4C9fjWGlOHvTaJCcQWO9CO7Ww
+	5EVhcRDVUVHLkbo5rU5dqpe/wZYoXLnJlKjdqAjOlnLiDjVzuICNymgFyX1eGlSS
+	+DD0wI/ltlJBmWQ9Cv4AfBNxx4nPItULnrdeKVQBnRWV1rl0QPCSdbWBtSTVs1do
+	PfFi7Q==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484mcrjt4d-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 05:58:36 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5715wZDt029594
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 1 Aug 2025 05:58:35 GMT
+Received: from [10.151.36.184] (10.80.80.8) by nasanex01a.na.qualcomm.com
+ (10.52.223.231) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Thu, 31 Jul
+ 2025 22:58:29 -0700
+Message-ID: <33c17569-7015-8a96-5952-3fad95883163@quicinc.com>
+Date: Fri, 1 Aug 2025 11:28:17 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/testing/vma: Fix function parameter declarations
- for GCC 8.3 compatibility
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, jannh@google.com,
- pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- niecheng1@uniontech.com, guanwentao@uniontech.com,
- Jun Zhan <zhanjun@uniontech.com>, linux-kbuild@vger.kernel.org
-References: <EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com>
- <e7554f93-03e8-4315-acb7-a55312354485@lucifer.local>
- <CB890ABC56C2FA67+56b95783-ed70-4744-9fc5-f2d93ddf2c12@uniontech.com>
- <37b606a7-17c6-4865-a78a-ddde1bc15649@lucifer.local>
- <d31803bb-fb32-4a94-aa89-83b02757d650@suse.cz>
- <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH v4 1/4] dt-bindings: clock: ipq5424-apss-clk: Add ipq5424
+ apss clock controller
 Content-Language: en-US
-From: WangYuli <wangyuli@uniontech.com>
-Autocrypt: addr=wangyuli@uniontech.com; keydata=
- xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSKP+nX39DN
- IVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAxFiEEa1GMzYeuKPkg
- qDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMBAAAKCRDF2h8wRvQL7g0UAQCH
- 3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfPbwD/SrncJwwPAL4GiLPEC4XssV6FPUAY
- 0rA68eNNI9cJLArOOARmgSyJEgorBgEEAZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7
- VTL0dvPDofBTjFYDAQgHwngEGBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIb
- DAAKCRDF2h8wRvQL7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkU
- o9ERi7qS/hbUdUgtitI89efbY0TVetgDsyeQiwU=
-In-Reply-To: <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
-Content-Type: multipart/signed; micalg=pgp-sha256;
- protocol="application/pgp-signature";
- boundary="------------omK4SvbleiFzIO0VTu0P9FLk"
-X-QQ-SENDSIZE: 520
-Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
-X-QQ-XMAILINFO: OMR9O8S7q+mY8et+CsmlYSqHfvVwmvOfhnZp+ZDSGvA3vYpdluyr7ht7
-	GTHdF9gx2J2RVobMkzyfZ6NFDL3pUWZPJ3vq3koJ3WTM8wPiOoWrE6t/MX478poeNkSCnzL
-	T6SQHsGMlxLtxEuQ5CbZgqnTiS9FaFCsmykRn8VsJM7+HRJIjF6knrfN93tHVUu3CCoUHmN
-	PvTPy0fz1g8m/MhPWiOZqvIxB0rPr8sYYyLl0teJUEsjVMvNvW/+HssFOsUQttrO7qpl7GH
-	RgbW4bFwNP9PeIqNzi3dxEo0yiKjy5+puNud6q2wko8kduwMZPf9LBVefQcGAe2x0yxYR9+
-	urKzOdq7X2GK+pJPVeykBK7SLCcjgaaLn+eI/XZo/nJVWWJHqDtqI36d2DAEFMpWn8GjyMl
-	s3VKU/AdFQuXwh+xU/kuUxwPgSMd6rqdLnRep+iXWTimRFLgmnELDl2pmbLzjAPfPln8j3M
-	Eh5DLmiVdlJkTTV36rDFYS88xKQoGokNxfVCEXKlQSbfcqcuAJ0Q0/uuYZJeWA93lanBn3e
-	Ad4eu3cPMM9kAzDnazFxpSJLS73UrDzbdg80F28SG6x670DulaXMOQvJaTUBlqd9LStDKlE
-	a4gQrSWbB3HjSXPjd+rw2bok+7wjD85kDe2DaJdkOOA9C44oXJN+Ky49SKoQxcgOQLiXYOY
-	J+1eN5AYyrIlBt08Q1QjoXLB2LA0gPXMP2d8ouegj4SloPjgoaOE5mOh6I4I9+SNmq3+dh3
-	dd4DFA4kF7CYS0jY5mNEDqWReIL4IfRxKZ/42p3VeuqGhdNT55O0CG3+aIhBtg/CepzO0n4
-	NYmZy4S2h0fsBXaY9BSe8N/9C9bFV2DiD8YgiZo6vSS6HbfmDWl38ORzotjIbt8kidUedSL
-	bGSqOBVZ29yg5AmIPGGZ4NZ+dISgprKbrkMvHLUl6jEaiJ8Xt32d5FNtb/1ym2JnahM6jYE
-	GP4FpGGLBLpFWwMKuF26WWMzTEDtgs44pFDugH3bZsmmdciFMtZ7umeVKXAHbYq8nmL4DTs
-	DgnoGiehIMX7GedS6eL2fRFqr9lCx7rrpf4sM1QXrwlCeXq9j13MayXXZKfS3EGuHExNnf2
-	deAAJFzQ+TuseJ3WgZbghAkMJjKixH75irijOdmHFK6w/BbeMxnFCb55zmaVEzded8Wxux8
-	i4mlQC37canccuY=
-X-QQ-XMRINFO: OWPUhxQsoeAVDbp3OJHYyFg=
-X-QQ-RECHKSPAM: 0
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+        Varadarajan Narayanan
+	<quic_varada@quicinc.com>,
+        <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <quic_srichara@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+References: <20250730081316.547796-1-quic_varada@quicinc.com>
+ <20250730081316.547796-2-quic_varada@quicinc.com>
+ <1705cfd6-95fe-4668-ae3b-f8fc7321d32a@kernel.org>
+From: Md Sadre Alam <quic_mdalam@quicinc.com>
+In-Reply-To: <1705cfd6-95fe-4668-ae3b-f8fc7321d32a@kernel.org>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDAzOSBTYWx0ZWRfX8PeVWtAHMZ/8
+ 55qk+CuKBZjE68a+e4qp0o8kcZnXLBjgMBh0SZIUfS2KwQAjck7WyCXWqBG6lGB4XYLy7+lMiva
+ NYyGjaL7iEwXHE+46JdbANkpyKCCg+q2XFGGkuwItt5/UslyZHSxjdif2zvAEGOl2fckaQ1QsR+
+ 8O2gpTEqNZag2My0OedFz181Gb4VOM8lXV+X0TnY5UOoyYOnBvS52Sv5K4BbIfznbsWDitPhEsv
+ Ux1R4kYh4CqRDSMFudG3NHWuAJmK4w4Tfw/rHAu6abKPJGU4otkAav3ZihH5WJBMv8kKfyMaTl7
+ OcBxjdQOFL8NIRx5DsV9cVSL2CmcGUoN7bhivmsfBURT/S2ctPlYAGg5VM5A20vmLIAz38QUo6O
+ qAMtGZrnzlc9+d1TN3KmshVG/feEzI1T0sT0hMcCXVJtQU+5xdEuyXsxFnmewXDIs4w6S/vR
+X-Authority-Analysis: v=2.4 cv=Hth2G1TS c=1 sm=1 tr=0 ts=688c578c cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8
+ a=COk6AnOGAAAA:8 a=WXmMl29sQjXzjk-Zzf0A:9 a=QEXdDO2ut3YA:10
+ a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: XHKN3hM8DMt07bQUJcVywH3tPeQREeZG
+X-Proofpoint-ORIG-GUID: XHKN3hM8DMt07bQUJcVywH3tPeQREeZG
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_01,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 mlxscore=0 priorityscore=1501 impostorscore=0
+ lowpriorityscore=0 adultscore=0 malwarescore=0 mlxlogscore=886 clxscore=1011
+ spamscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010039
 
-This is an OpenPGP/MIME signed message (RFC 4880 and 3156)
---------------omK4SvbleiFzIO0VTu0P9FLk
-Content-Type: multipart/mixed; boundary="------------n0lrM6oL0crQJSHrsvvooW83";
- protected-headers="v1"
-From: WangYuli <wangyuli@uniontech.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com, jannh@google.com,
- pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- niecheng1@uniontech.com, guanwentao@uniontech.com,
- Jun Zhan <zhanjun@uniontech.com>, linux-kbuild@vger.kernel.org
-Message-ID: <34f3e3b7-4684-4fe2-80a9-93de1dde9c31@uniontech.com>
-Subject: Re: [PATCH] tools/testing/vma: Fix function parameter declarations
- for GCC 8.3 compatibility
-References: <EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com>
- <e7554f93-03e8-4315-acb7-a55312354485@lucifer.local>
- <CB890ABC56C2FA67+56b95783-ed70-4744-9fc5-f2d93ddf2c12@uniontech.com>
- <37b606a7-17c6-4865-a78a-ddde1bc15649@lucifer.local>
- <d31803bb-fb32-4a94-aa89-83b02757d650@suse.cz>
- <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
-In-Reply-To: <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
 
---------------n0lrM6oL0crQJSHrsvvooW83
-Content-Type: multipart/mixed; boundary="------------jeVl055xXeAO1sWb0pOt76Sp"
 
---------------jeVl055xXeAO1sWb0pOt76Sp
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: base64
+On 7/30/2025 2:32 PM, Krzysztof Kozlowski wrote:
+> On 30/07/2025 10:13, Varadarajan Narayanan wrote:
+>> +---
+>> +$id: http://devicetree.org/schemas/clock/qcom,ipq5424-apss-clk.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm APSS IPQ5424 Clock Controller
+>> +
+>> +maintainers:
+>> +  - Sricharan Ramabadhran <quic_srichara@quicinc.com>
+>> +  - Md Sadre Alam <quic_mdalam@quicinc.com>
+> 
+> My v2 comments seems still valid. Your explanation suggests they moved
+> on, so it is confusing to see them here.
+> 
+> Sricharan and Md Sadre, can you provide Acks for this?
+> 
+Ack. please drop my name.
 
-SGkgYWxsLA0KDQpPbiAyMDI1LzgvMSAxMzoxNCwgTG9yZW56byBTdG9ha2VzIHdyb3RlOg0K
-PiBXYW5nWXVsaSAtIGNvdWxkIHlvdSBjaGVjaz8gSWYgaXQncyBhcyBzaW1wbGUgYXMgdGhp
-cywgZmVlbCBmcmVlIHRvIHNlbmQgYSBwYXRjaA0KPiBtYWtpbmcgdGhpcyBjaGFuZ2UuDQo+
-DQo+IFRoYW5rcywgTG9yZW56bw0KPg0KSXQncyBub3QgdGhhdCBzaW1wbGUsIG9mIGNvdXJz
-ZS4uLiBUaGF0IGRpZG4ndCB3b3JrLg0KDQpJJ2xsIHRha2UgYW5vdGhlciBsb29rLg0KDQpU
-aGFua3MsDQoNCi0tIA0KV2FuZ1l1bGkNCg==
---------------jeVl055xXeAO1sWb0pOt76Sp
-Content-Type: application/pgp-keys; name="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Disposition: attachment; filename="OpenPGP_0xC5DA1F3046F40BEE.asc"
-Content-Description: OpenPGP public key
-Content-Transfer-Encoding: quoted-printable
-
------BEGIN PGP PUBLIC KEY BLOCK-----
-
-xjMEZoEsiBYJKwYBBAHaRw8BAQdAyDPzcbPnchbIhweThfNK1tg1imM+5kgDBJSK
-P+nX39DNIVdhbmdZdWxpIDx3YW5neXVsaUB1bmlvbnRlY2guY29tPsKJBBMWCAAx
-FiEEa1GMzYeuKPkgqDuvxdofMEb0C+4FAmaBLIgCGwMECwkIBwUVCAkKCwUWAgMB
-AAAKCRDF2h8wRvQL7g0UAQCH3mrGM0HzOaARhBeA/Q3AIVfhS010a0MZmPTRGVfP
-bwD/SrncJwwPAL4GiLPEC4XssV6FPUAY0rA68eNNI9cJLArOOARmgSyJEgorBgEE
-AZdVAQUBAQdA88W4CTLDD9fKwW9PB5yurCNdWNS7VTL0dvPDofBTjFYDAQgHwngE
-GBYIACAWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCZoEsiQIbDAAKCRDF2h8wRvQL
-7sKvAP4mBvm7Zn1OUjFViwkma8IGRGosXAvMUFyOHVcl1RTgFQEAuJkUo9ERi7qS
-/hbUdUgtitI89efbY0TVetgDsyeQiwU=3D
-=3DBlkq
------END PGP PUBLIC KEY BLOCK-----
-
---------------jeVl055xXeAO1sWb0pOt76Sp--
-
---------------n0lrM6oL0crQJSHrsvvooW83--
-
---------------omK4SvbleiFzIO0VTu0P9FLk
-Content-Type: application/pgp-signature; name="OpenPGP_signature.asc"
-Content-Description: OpenPGP digital signature
-Content-Disposition: attachment; filename="OpenPGP_signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-wnsEABYIACMWIQRrUYzNh64o+SCoO6/F2h8wRvQL7gUCaIxXQQUDAAAAAAAKCRDF2h8wRvQL7oYM
-AP9lRoFGnWOM70vOjy0/9CONc4lAMiPiucvTz6WV5iX+DgD8C6fBaLmgn5oomfV0WYsliayofzpb
-aDIrjD4Qd8AVMQs=
-=ChJs
------END PGP SIGNATURE-----
-
---------------omK4SvbleiFzIO0VTu0P9FLk--
+Thanks,
+Alam.
 
