@@ -1,119 +1,182 @@
-Return-Path: <linux-kernel+bounces-753083-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753082-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88BA1B17E6C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:42:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DFAB17E6A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:42:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D7FE07AE252
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:41:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 038931C25144
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96E0A21B185;
-	Fri,  1 Aug 2025 08:42:43 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0EA21772A;
+	Fri,  1 Aug 2025 08:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dpkW4wDk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YaGSzTTk";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dpkW4wDk";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="YaGSzTTk"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEB2A2F5B;
-	Fri,  1 Aug 2025 08:42:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98C972F5B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:42:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754037763; cv=none; b=jiND7f/Mxox9v27P+0pDMbPLkIcO3GxQJgt3CdC49gOAxSnOgwVxuyyr7+Dka54WjXrRjQJg6RPh//8eGA9yvJg93K92c0k3jftlTVrfYtNtKY3RGr5B5E7TBNppUl92cPoR78DHAQHbx37XKyW/hF/f5vlKoxyFjuA7diKBuT4=
+	t=1754037752; cv=none; b=jKZ9UCyoezlTVFUJIK3IeO0MEKlPnRUuNMteXIjpttkFpDHxksAH3SQJlZpmJWtA+acDt6NlwF5V9brcb8UmJ9HqY2V242N263JPmZtLde7bw9TWXTr1FLrnJMOZIC75XYWT/MLpLsY8s9JIlelTCwkNY5kGzZfFCa7cOK3TyGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754037763; c=relaxed/simple;
-	bh=NeXMw0sZHShpRr67yZ0q58g3ZLU7+3OWKfeN9hXUJ0M=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=pwsbYUVXVmJZL3SOv3n1FwkimImuUkmRY8zj/pkr7VVkj6w8ArQTtuRsNvNbDTBg7SZFpLm9ht0ECfB2UzLY9Vz211PJJxer6m1MqtmSrBPU8/ck5imnBMNkyG/dtOPE8RpUMCiG0iXfa6hI4eDhzMfPOCEVTRYcTJVlBVVd+Yc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 737c85806eb311f0b29709d653e92f7d-20250801
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_UNTRUSTED, SRC_UNTRUSTED, IP_UNFAMILIAR, SRC_UNFAMILIAR
-	DN_TRUSTED, SRC_TRUSTED, SA_TRUSTED, SA_EXISTED, SPF_NOPASS
-	DKIM_NOPASS, DMARC_NOPASS, CIE_BAD, CIE_GOOD_SPF, CIE_UNKNOWN
-	GTI_FG_BS, GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD
-	AMN_C_TI, AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.45,REQID:e5d3c9c8-975a-4cf0-bd95-44f2bf305e6c,IP:10,
-	URL:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:30
-X-CID-INFO: VERSION:1.1.45,REQID:e5d3c9c8-975a-4cf0-bd95-44f2bf305e6c,IP:10,UR
-	L:0,TC:0,Content:0,EDM:25,RT:0,SF:-5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:30
-X-CID-META: VersionHash:6493067,CLOUDID:07321bf41f8c4a7c13233b0926743eca,BulkI
-	D:250801164227N6XVGJTR,BulkQuantity:0,Recheck:0,SF:17|19|23|43|66|74|78|10
-	2,TC:nil,Content:0|50,EDM:5,IP:-2,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BE
-	C:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_SNR
-X-UUID: 737c85806eb311f0b29709d653e92f7d-20250801
-X-User: liuhuan01@kylinos.cn
-Received: from localhost.localdomain [(123.149.3.168)] by mailgw.kylinos.cn
-	(envelope-from <liuhuan01@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1574273075; Fri, 01 Aug 2025 16:42:26 +0800
-From: liuhuan01@kylinos.cn
-To: cem@kernel.org
-Cc: djwong@kernel.org,
-	linux-xfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	liuh <liuhuan01@kylinos.cn>
-Subject: [PATCH v1] xfs: prevent readdir infinite loop with billions subdirs
-Date: Fri,  1 Aug 2025 16:41:46 +0800
-Message-Id: <20250801084145.501276-1-liuhuan01@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754037752; c=relaxed/simple;
+	bh=RRPv/hKAt5uXnIXKYp66O0ZkKC2Ah4ynt0RIQY/VkaQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=dcyvVhd+3oIKTsHXFnrBrtsmHyVjQBZe9Aj+1uRK56SdbqekpPV+MWpbORr5sPnfsjk7HC7179zDHMhEBeY7P3GaskYrRqtiFH+YUnDEF/gv3Ze/pzAHRGxGcRWPwGcbvGo2rwVFmNrl+lvm9ZNubN3NLHABg3Jtyb/XvAoGtfU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dpkW4wDk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YaGSzTTk; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dpkW4wDk; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=YaGSzTTk; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 77B0C21B51;
+	Fri,  1 Aug 2025 08:42:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754037748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T1QFIgVB5a2Z2g4OYw2eBao9ZSGPzsh8seRAvE4SjdI=;
+	b=dpkW4wDkZXaPI77BrPJGWWMYcdbK+KIsJJIxyxONpDeQA+4VWofNejx5URhsgM2CgfVnIF
+	q+FBvKp0aSEf96hTUozmXAR9y+TmLIbU1MafzRXFhUfiLEw1Ws/c0lZI0JdxjRhXqTuX7I
+	OLlI7irerb4hysTZQx7c0iNrN/W15gQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754037748;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T1QFIgVB5a2Z2g4OYw2eBao9ZSGPzsh8seRAvE4SjdI=;
+	b=YaGSzTTkz4mxzk6jtK3z9A6GvBp2DNuuxp/oLsOwQi8XinXRIYxm/xDCimQHYVT7FBWOz9
+	r4u40csS3G+U43AQ==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754037748; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T1QFIgVB5a2Z2g4OYw2eBao9ZSGPzsh8seRAvE4SjdI=;
+	b=dpkW4wDkZXaPI77BrPJGWWMYcdbK+KIsJJIxyxONpDeQA+4VWofNejx5URhsgM2CgfVnIF
+	q+FBvKp0aSEf96hTUozmXAR9y+TmLIbU1MafzRXFhUfiLEw1Ws/c0lZI0JdxjRhXqTuX7I
+	OLlI7irerb4hysTZQx7c0iNrN/W15gQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754037748;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=T1QFIgVB5a2Z2g4OYw2eBao9ZSGPzsh8seRAvE4SjdI=;
+	b=YaGSzTTkz4mxzk6jtK3z9A6GvBp2DNuuxp/oLsOwQi8XinXRIYxm/xDCimQHYVT7FBWOz9
+	r4u40csS3G+U43AQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 5B84E13876;
+	Fri,  1 Aug 2025 08:42:28 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id oYZ4FPR9jGg9LAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Fri, 01 Aug 2025 08:42:28 +0000
+Message-ID: <61ef9a4e-cc9d-46c9-94cf-4d9231ded749@suse.cz>
+Date: Fri, 1 Aug 2025 10:42:27 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/2] mm: limit the scope of vma_start_read()
+Content-Language: en-US
+To: Suren Baghdasaryan <surenb@google.com>, akpm@linux-foundation.org
+Cc: jannh@google.com, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com,
+ pfalcato@suse.de, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+References: <20250731151919.212829-1-surenb@google.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <20250731151919.212829-1-surenb@google.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.cz:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Score: -4.30
 
-From: liuh <liuhuan01@kylinos.cn>
+On 7/31/25 17:19, Suren Baghdasaryan wrote:
+> Limit the scope of vma_start_read() as it is used only as a helper for
+> higher-level locking functions implemented inside mmap_lock.c and we are
+> about to introduce more complex RCU rules for this function.
+> The change is pure code refactoring and has no functional changes.
+> 
+> Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
 
-When a directory contains billions subdirs, readdir() repeatedly
-got same data and goes to infinate loop.
-The root cause is that the pos gets truncated during assignment.
-Fix it.
-
-Signed-off-by: liuh <liuhuan01@kylinos.cn>
----
- fs/xfs/xfs_dir2_readdir.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/fs/xfs/xfs_dir2_readdir.c b/fs/xfs/xfs_dir2_readdir.c
-index 06ac5a7de60a..a7ec0d0c8070 100644
---- a/fs/xfs/xfs_dir2_readdir.c
-+++ b/fs/xfs/xfs_dir2_readdir.c
-@@ -465,7 +465,7 @@ xfs_dir2_leaf_getdents(
- 		length = xfs_dir2_data_entsize(mp, dep->namelen);
- 		filetype = xfs_dir2_data_get_ftype(mp, dep);
- 
--		ctx->pos = xfs_dir2_byte_to_dataptr(curoff) & 0x7fffffff;
-+		ctx->pos = xfs_dir2_byte_to_dataptr(curoff) & XFS_DIR2_MAX_DATAPTR;
- 		if (XFS_IS_CORRUPT(dp->i_mount,
- 				   !xfs_dir2_namecheck(dep->name,
- 						       dep->namelen))) {
-@@ -491,9 +491,9 @@ xfs_dir2_leaf_getdents(
- 	 * All done.  Set output offset value to current offset.
- 	 */
- 	if (curoff > xfs_dir2_dataptr_to_byte(XFS_DIR2_MAX_DATAPTR))
--		ctx->pos = XFS_DIR2_MAX_DATAPTR & 0x7fffffff;
-+		ctx->pos = XFS_DIR2_MAX_DATAPTR;
- 	else
--		ctx->pos = xfs_dir2_byte_to_dataptr(curoff) & 0x7fffffff;
-+		ctx->pos = xfs_dir2_byte_to_dataptr(curoff) & XFS_DIR2_MAX_DATAPTR;
- 	if (bp)
- 		xfs_trans_brelse(args->trans, bp);
- 	return error;
--- 
-2.25.1
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
