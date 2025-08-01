@@ -1,162 +1,149 @@
-Return-Path: <linux-kernel+bounces-753265-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753266-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC670B180BF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:14:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D78FB180C5
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:16:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AB75A83120
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:14:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E259DA8355F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2F8223D2BC;
-	Fri,  1 Aug 2025 11:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F378C242D74;
+	Fri,  1 Aug 2025 11:15:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JTHuNHaB"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PWRfwZws"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF808239E82;
-	Fri,  1 Aug 2025 11:13:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68801E9B0B;
+	Fri,  1 Aug 2025 11:15:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754046836; cv=none; b=Uf1H+p3alu9yROMeB5ZbuccK8hEsmzCafHBvEq9uj1vjRNeRQFdMOUFfm6g8kz3WEpaAehcLtPLUnnZLqy4xmlJPKQX1+mKtSyzv+QGc8eK/auG561qyV6YKbi4kBNObavWfBk60+jX0J5rQJw5VCE4f9Jxn1XeI2CzXRU7wDTo=
+	t=1754046952; cv=none; b=jMr67NfS2lUALh9QmgknOJq312EVgnMAUe9KtU0asUSTPGQvTqmfF3+ijG19sC3/FuPZhmIkvmVcGVO+oOlpLrQMw7LwFNP4uvN4dzg8Z2kEeY3K7/aCMiRvPQtYj3ZvTJvQBv9jbiI8KVXQbKATzJ69NMkzsqMTJ5R/BzgLsj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754046836; c=relaxed/simple;
-	bh=I1NEtaBSLXjt4L5r/ip7ZdHNXrCDf2F9jSdM65XNUdc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=mprmr7GpEu8BIrfFPZkZ9aB/ms62lfIHsvTxuO5P1+DeloIbOemov5t8TYCHIR3kRXZzagR9JNLSo0kOd4fLr1E98OWmmjJP8I2vxqw+ZD87+F8L/31t4atD9YXQZl5uxSgInvDEnt4J3TJ9I7u3NQmSa3Esoxjl+1GS7XZQBHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JTHuNHaB; arc=none smtp.client-ip=209.85.215.175
+	s=arc-20240116; t=1754046952; c=relaxed/simple;
+	bh=d2LoNBGDHqkG1oI8UNko8tQKxLJHUD+ZPPv10zHQNuQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Hixklsm9w21VjnRydzNABMrPYW+oeM0bVF6XQQUuc0ravjn1KDMYXJOX+KavHq35boLe31UyQn4pRcNMgT8GXofrFrtQKCt5W7+mbkIBtDzgrGjTIkD72xx5Ckm1nFjhUsLY6OVskXtkyWfl1M6WGbq7zvWAKBWoOl8slX3cwzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PWRfwZws; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b3bdab4bf19so1599276a12.2;
-        Fri, 01 Aug 2025 04:13:54 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-3b77b8750acso1185928f8f.0;
+        Fri, 01 Aug 2025 04:15:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754046834; x=1754651634; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=D2pJWIW2ffJA6mnDRFk1GyVzqLmZytM15VpbVSAxTPo=;
-        b=JTHuNHaB4ynIYbMGybJb0RGd1ZAYNEd0cye//5VhRoWTHwiBP/nlvs3yuOT/bAX5WC
-         NygUGTwxX4rBwImtRV/FMZW3E3TUhcnQFyHZJ5MKZ3skPCxvJyXlI5In3ToE02b7yuAF
-         7Cwy6AjSni3S+LRRLdTjG29Yiy0PWmcKxvApBbTi3v4FEC7+8iuRf35lJHpZgsRD+tgk
-         cGWgwg1g4SE3lGrJxR50fW8pHs706O49njTT9PoMVTLeG5XTEILu8PjnHVle2HwniiiF
-         LgMbIYu0aIVIBW/lqW6zpweKZM+AG29DoOviR6v24d6sU7LybPyfjCVwMnfCmmB1t5/9
-         ykWA==
+        d=gmail.com; s=20230601; t=1754046949; x=1754651749; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=r+BOmaApAnQRani5bFyxdb8l2UHhei1f6sfi+qVNR+c=;
+        b=PWRfwZwsKZP2GS6DEnkkgMQ3ZMX0/NRNmxc29RQVLNS8dSBThLX6mqBBUXpgB+yYZD
+         83z2q3d+AFChQv5txsKlJpnsPf+O9f/wTv4Vyvp4Z51ACiJr5qh4mixJkD+83Dq3CUvw
+         LldWAWck37j8VvMK28SpsrtTpIXWgrzAJcztOZKKcp0AnhASpVldg87Hv8jkhj9+NDpW
+         tpEXEKni6oXKHWQmMBtYj5NwVu2LVbEG8LY3gHeKeYLKvFNnrLiOx0kmqZ3zvTCbaG56
+         RoYEM+LMDXKvvH0HwYMvyuizex2ZznmqcfORo2p7FwkkiWlgmJLWkFYTo65IayHMw9LD
+         nUPA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754046834; x=1754651634;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=D2pJWIW2ffJA6mnDRFk1GyVzqLmZytM15VpbVSAxTPo=;
-        b=qe7fnsM8y7HEHBuC6/EJwWy0Pi7NRTe8y3nniHMRHigd0azzI4yaKuIXuf+BmmNyDP
-         /XLQRNz7sO4rvcHxtqzOKpEdPQCX1QFUgTN3FAW6XdlcamYhqGE8yYmspDn3dUi4lNPY
-         +Bt3OnQk3DJ7Og0R9ahkmcbTmgU2t/M1NDB87UIkM5Swhq7ndPjs5JpS243RPMhc6Fis
-         hPCp+vPTXArawgpb5E6ifw1/VGlaNtYfcJ9gdlOxepIdCAArazyVqeGrbEVYyPNAdaFT
-         PpbtSZGTHXziXpDbtNIuOQ9AeTlPJ+9O2mbWa6GUPj1nfw+JAWbNcsmiP4o1JxVM8Csf
-         L6VA==
-X-Forwarded-Encrypted: i=1; AJvYcCVPXNUNnjpBmw1KABSQXAmdm/qHmP9gPh3dbFIAQ1a/BkeAzbnpgM15f+vm1g6BVK/A9JxQFg7E6ZXia6ja@vger.kernel.org, AJvYcCWeANkSnyc3KGoPXH+3e/88OP2NWu0CSn0sC/tHcp2NSZz0bsAssMP1NrFWHN125yM/Iv2fQpQayDPeCoU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxfkoqo+aR6RWwbk17PvRoB2oHNyQ3Aqz2IPlHWJZP9uYfDW1MB
-	XBwBqGuCvGwFOa2mhp8/Wo7SAuXrV2yDHWDz0v3H9ja0LZ2KcaLLrFv1T9dLRI9MAdjjEg==
-X-Gm-Gg: ASbGncvTl1w5lLOLEn/tevLqbiGIpUQjad2QAEpxCEC3xwKZbnQodTwR2XnRxK7bHFu
-	1BCDBzwwECnc1fywogNMsrvHeNUE9+rPEXbEt2+/UTcns31R94Xl2LoXzivS4cTCpychWfoWhIe
-	KfP1NdwznntEA2pRsyPtDTTDxaBmszxbY/FZ1+XH8Ee3JD5l041fG+zjEdkVeaRTh+Nlm4QA7TK
-	eDRzC6Lk25pShd6N4cydeoe2KhRuy04sWPzB6C+cm7kh9SVZEg7JY8Q3LzBdVB30l5hC+g5WfB0
-	inYJSE0ivEUGeMdst3ayB4XcIvFHzi+qNv+9HOqaufutiCMnXohMZY/zeyBmMukyBjUrbHhwjNA
-	XnXNBoHoPdp5We/kkOg0Rb8MbtLgko1fUhY/YvHluTNRx7X5h
-X-Google-Smtp-Source: AGHT+IE6ke9mTSfy66z+INYMD++cBNLZ1ztgTYwduR+cIIG6VHegxybaCmAYJwJMFxrWLY7jKwYDMA==
-X-Received: by 2002:a17:903:3bcb:b0:240:b28:22a3 with SMTP id d9443c01a7336-24096ae5760mr186428355ad.29.1754046834059;
-        Fri, 01 Aug 2025 04:13:54 -0700 (PDT)
-Received: from localhost.localdomain ([2401:4900:1c80:a6e0:3232:35a4:62e3:6fd8])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8ab3d9dsm40649845ad.182.2025.08.01.04.13.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 04:13:53 -0700 (PDT)
-From: darshanrathod475@gmail.com
-To: herbert@gondor.apana.org.au
-Cc: davem@davemloft.net,
-	linux-crypto@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Darshan Rathod <darshanrathod475@gmail.com>
-Subject: [PATCH] crypto: padlock: fix assignment in if condition and minor style issues
-Date: Fri,  1 Aug 2025 16:43:45 +0530
-Message-Id: <20250801111345.1849656-1-darshanrathod475@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1754046949; x=1754651749;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=r+BOmaApAnQRani5bFyxdb8l2UHhei1f6sfi+qVNR+c=;
+        b=La98TElB3MPcoOzRffY0G1SaFOQ5jx60fKce+ZIYXwJlFWF1J+QCmPYyRqybAx6jKm
+         BOz4C3Ceia6ZnoKWYqrLXdEzRGFxZrxcQaWqv7+mrkYqeBDSn3pgU3xilk4I5XWCXtqu
+         uKO1eMI0B1Wi4G5XFLhmDPfnzyX2s8DbGPusNpixaSabCSe4nMQqBSbm6rM1bSIB+mEf
+         yryZpVYbFAz79uHP1W3iFpJwEnOS0jxppCN+XeVZjUfULtjI8jcHSkpOKETCVWrkb2Tb
+         hryn8Vq3oiE0E5IfhrKwCGOyEzTvta928AFzJRju+feTvL9kQBuyimvLGZ7e5/DX5RTn
+         VxEw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZfllFP2JfFRd3mhiV2cakcH9IDY9oDkYtxYUoyWRMSfIEg50gZIr+7fkMXed/i51CmOi9truJ8ZLPYU3XCVI=@vger.kernel.org, AJvYcCVyy9WiKBioq+wTOpj62flTRDiT6fLfCQuu9J6YMiL9VaxnDBmpWyjWNo2NAUNqmYS5FlhyA7aAin1WTO7p@vger.kernel.org, AJvYcCW3RNMS8iQAsIYyDxj7ayZRG0zrP1JyOll9n7Y2Pr4oy1ilh9EOQmtECCo3aSeO/WvFGNY4VtWqxdJR@vger.kernel.org, AJvYcCWum/10Lhbkc+lIcvpkn4mH5yKkgnV5Uod6/n7HMMjbelfW7YOW9gvIYLZXZ+jPuQDKZiadUr7CE3tIzuIdJhePiTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrm3TGqjw2/XR5ismzHKAAsIqsnnyuoHM8vo1yj0d5N7ctOwIT
+	zAzGpXJMa6NUjw1PuLC2zXMLI3SmE3THpgXUqFZCmvc5yGN6p/gGJiehOPB3J6AIDzSegkK1Gxb
+	Ob6dX5lTTPDRNlXCPo6LZ0zN0mj7WSDY=
+X-Gm-Gg: ASbGncvxjuFwhOopuz3Rw/49DPAGwBBsocAC+pj1QqvJccxrZoPlAfhi4moOUwVdWJC
+	bTTggrtLv+5e+Qhzmc2GF04f5MFfZDaBqS6Hf6pdsg7rWRwVRpbPNUy8SwBAs670zIhVvUkDVFD
+	NmNpZaDYUvkDEx6n5MoIUh+D4etUugZnWfSzIGqdfnpYTYqkZl/0V1fkUBzSegYCSGiPGd0bF33
+	OKt75iIfw==
+X-Google-Smtp-Source: AGHT+IHsfOy3LeUyGBHi4zzK0MMI7dOLV5vo4mqdDOoXykG8lbptTHP115xcOiuQ3Ftf99FTjWDlH24hasIwiyr4ogw=
+X-Received: by 2002:a5d:5d88:0:b0:3a5:8991:64b7 with SMTP id
+ ffacd0b85a97d-3b79d813d8dmr4620723f8f.26.1754046948603; Fri, 01 Aug 2025
+ 04:15:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-9-prabhakar.mahadev-lad.rj@bp.renesas.com> <aIw-sxQgdzTSLrJ_@shikoro>
+In-Reply-To: <aIw-sxQgdzTSLrJ_@shikoro>
+From: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Date: Fri, 1 Aug 2025 12:15:22 +0100
+X-Gm-Features: Ac12FXxB7KTWna_KgkuQC2HTkAPiZxLfvyASMmBcJptTa4JiUTiZzqkfcolFBD4
+Message-ID: <CA+V-a8se2NMGPEffwnAgDp4NB0vHndf2EQmvNTT5ySzr8c4OMg@mail.gmail.com>
+Subject: Re: [PATCH v2 8/9] watchdog: rzv2h: Add support for RZ/T2H
+To: Wolfram Sang <wsa+renesas@sang-engineering.com>
+Cc: Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Philipp Zabel <p.zabel@pengutronix.de>, Geert Uytterhoeven <geert+renesas@glider.be>, 
+	Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>, 
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Darshan Rathod <darshanrathod475@gmail.com>
+Hi Wolfram,
 
-Refactor to remove assignments from inside if conditions, as required
-by kernel coding style. This improves code readability and resolves
-checkpatch.pl warnings:
+Thank you for the review.
 
-   ERROR: do not use assignment in if condition
+On Fri, Aug 1, 2025 at 5:12=E2=80=AFAM Wolfram Sang
+<wsa+renesas@sang-engineering.com> wrote:
+>
+> On Tue, Jul 29, 2025 at 04:59:14PM +0100, Prabhakar wrote:
+> > From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+> >
+> > Add support for the RZ/T2H watchdog timer. The RZ/T2H requires control =
+of
+> > the watchdog counter using the WDT Debug Control Register (WDTDCR), whi=
+ch
+> > allows explicitly stopping and starting the counter. This behavior diff=
+ers
+> > from RZ/V2H, which doesn't use WDTDCR, so the driver is extended to han=
+dle
+> > this requirement.
+>
+> Is it really required or is it an additional feature?
+>
+Sorry for not being clear WDTDCR register is not present on the
+RZ/V2H(P) SoC, and is required on RZ/T2H (and RZ/N2H) SoC to
+start/stop down counting.
 
-While at it, also cleaned up minor style issues:
-- Removed extra whitespace in a multi-line comment.
-- Fixed parameter indentation in cbc_crypt_copy() for consistency.
+> > To support this, a new `wdtdcr` flag is introduced in the `rzv2h_of_dat=
+a`
+> > structure. When set, the driver maps the WDTDCR register and uses it to
+> > control the watchdog counter in the start, stop, and restart callbacks.
+> > Additionally, the clock divisor and count source for RZ/T2H are defined
+> > to match its hardware configuration.
+>
+> Where is the register placed? We need a seperate resource for it? Can
+> you kindly give an example DT node for this case?
+>
+The WDTDCR register is placed somewhere out and yes we need a separate
+resource for it.
 
-Signed-off-by: Darshan Rathod <darshanrathod475@gmail.com>
----
- drivers/crypto/padlock-aes.c | 17 ++++++++++-------
- 1 file changed, 10 insertions(+), 7 deletions(-)
+Below is the node for RZ/T2H SoC:
+        wdt0: watchdog@80082000 {
+            compatible =3D "renesas,r9a09g077-wdt";
+            reg =3D <0 0x80082000 0 0x400>,
+                  <0 0x81295100 0 0x04>;
+            clocks =3D <&cpg CPG_CORE R9A09G077_CLK_PCLKL>;
+            clock-names =3D "pclk";
+            power-domains =3D <&cpg>;
+            status =3D "disabled";
+        };
 
-diff --git a/drivers/crypto/padlock-aes.c b/drivers/crypto/padlock-aes.c
-index 1be549a07a21..f5db0442a422 100644
---- a/drivers/crypto/padlock-aes.c
-+++ b/drivers/crypto/padlock-aes.c
-@@ -1,5 +1,5 @@
- // SPDX-License-Identifier: GPL-2.0-only
--/* 
-+/*
-  * Cryptographic API.
-  *
-  * Support for VIA PadLock hardware crypto engine.
-@@ -77,8 +77,8 @@ static inline int
- aes_hw_extkey_available(uint8_t key_len)
- {
- 	/* TODO: We should check the actual CPU model/stepping
--	         as it's possible that the capability will be
--	         added in the next CPU revisions. */
-+		 as it's possible that the capability will be
-+		 added in the next CPU revisions. */
- 	if (key_len == 16)
- 		return 1;
- 	return 0;
-@@ -223,7 +223,7 @@ static void ecb_crypt_copy(const u8 *in, u8 *out, u32 *key,
- }
- 
- static u8 *cbc_crypt_copy(const u8 *in, u8 *out, u32 *key,
--			   u8 *iv, struct cword *cword, int count)
-+			  u8 *iv, struct cword *cword, int count)
- {
- 	/*
- 	 * Padlock prefetches extra data so we must provide mapped input buffers.
-@@ -493,13 +493,16 @@ static int __init padlock_init(void)
- 		return -ENODEV;
- 	}
- 
--	if ((ret = crypto_register_alg(&aes_alg)) != 0)
-+	ret = crypto_register_alg(&aes_alg);
-+	if (ret != 0)
- 		goto aes_err;
- 
--	if ((ret = crypto_register_skcipher(&ecb_aes_alg)) != 0)
-+	ret = crypto_register_skcipher(&ecb_aes_alg);
-+	if (ret != 0)
- 		goto ecb_aes_err;
- 
--	if ((ret = crypto_register_skcipher(&cbc_aes_alg)) != 0)
-+	ret = crypto_register_skcipher(&cbc_aes_alg);
-+	if (ret != 0)
- 		goto cbc_aes_err;
- 
- 	printk(KERN_NOTICE PFX "Using VIA PadLock ACE for AES algorithm.\n");
--- 
-2.25.1
-
+Cheers,
+Prabhakar
 
