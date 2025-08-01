@@ -1,124 +1,75 @@
-Return-Path: <linux-kernel+bounces-753865-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 829FBB18936
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:31:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8F6F8B1893B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:33:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0FF55656D1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:31:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C153817736A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:33:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A687227574;
-	Fri,  1 Aug 2025 22:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D766E23372C;
+	Fri,  1 Aug 2025 22:33:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jrIyDZa+"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DrMIMpTF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15F1121146C;
-	Fri,  1 Aug 2025 22:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 392C115A8;
+	Fri,  1 Aug 2025 22:33:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754087484; cv=none; b=BCRbBha25Dx8v0a+U/DuNrF4Vv+4VuhGyoP4UpFjB2nvcsPn3+SJ0HBjmsTaOz9vByNdHVtzRCOyEMZ065e9EyR0Pu19SU4RByRXOpScj95M19GafHiu5IpWJQX76Nt21HOE2/jO4IOhE7WjsXZsRCA8ANRY0DgAax7fokVH1vk=
+	t=1754087625; cv=none; b=md71cK4Grx2Aj48tPnfBr2KmJr4CHGo3MGLYFk2eQhtcG1kaxau/4YvuTsIAI1UvF/0QbWfwvOq5NyilIUim3oseD3vUZThalfkWEtsuwV7p332JnBk7Oge1YiWGGKtSOZbpIpY0WnzEnouytvczNLdH0+Dkq4IfAbpviPhoA/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754087484; c=relaxed/simple;
-	bh=lYGsLXzWFqJ8JyodS1uNE9QWm6glJtKWEhzyZ3WMbt0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tCs4mdR6629pOLi3CZtqS9xhsMuwfBZeb/z5E9R3G+ux+4u04ZokcJ4ajFYNxSsKmtgnuX4QwabaDTVD0KjfroQZFzHk8kl3KOSNiqqGmzKGdACdaRokgipk2YXPW4KqJoPTU2ezM8KBH/yskC17TDOsonkmETWQrWpLHL0DMok=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jrIyDZa+; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754087483; x=1785623483;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lYGsLXzWFqJ8JyodS1uNE9QWm6glJtKWEhzyZ3WMbt0=;
-  b=jrIyDZa+G0eOA5mWA5Jo/CcEsyLykSMDuKTLZdwIWg+MBCphEEb8ZRvV
-   yqPbXQTaBuWLXIvQXkBaAyji41pZoW4fr0NZrk2xoqkTGoHTcM4Oc8YD1
-   qWYAJYsfM2CnhKw8xIEoYlBFsG0hWCBCb+OyObbiVUpVwWpsZitJoNU5X
-   0jsluIZ2JmQpCmR06ioUfmGUc4FUEYtnImWKwvdYyLsfknI5ET3N3/1Jm
-   yZ9Cjf237s8kjxgdvISmGe/bmLFauDHmA3ImrL60VSUcHv19PgDJNmUdI
-   o1l1ZPvWb9jN5rR0WpjdkmbEu4BpEv1o18TRa3h4ua35h79iyuDN67Fxg
-   w==;
-X-CSE-ConnectionGUID: x5bO8dx2SIKBOK+zRJJxiQ==
-X-CSE-MsgGUID: eApQ6vzyT42Q9NVkOCwreA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="44036465"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="44036465"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 15:31:22 -0700
-X-CSE-ConnectionGUID: tQLmhw0FRPm8KifedDP6mw==
-X-CSE-MsgGUID: mlXRH9TDRNKQy1/3ZfqMjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163367171"
-Received: from anmitta2-mobl4.gar.corp.intel.com (HELO [10.247.119.40]) ([10.247.119.40])
-  by orviesa009-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 15:31:19 -0700
-Message-ID: <d8041f34-7c4a-4bfc-ac6e-6c7d9a1e1208@intel.com>
-Date: Fri, 1 Aug 2025 15:31:13 -0700
+	s=arc-20240116; t=1754087625; c=relaxed/simple;
+	bh=rHvT7XzTyZKGUqrO5uQ6yfryUOqdTr9MuHLG9FWPxR0=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=k92p33Vgc+RTNIhfNUaEk6jgfNpNgGoVZGqBVckSc3unfGfpZS3tnYe5iUXybA93rzcbmjps/YH+zK3PYLqkgm61Bh2rEyZTe0lvn7XBlhFueVu7ZU7SOE1oWgGQo+AVlMSZ2bm1VZ/o52W8yC596rgJ+8OE+Mt1O2owtxOIawE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DrMIMpTF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3249FC4CEE7;
+	Fri,  1 Aug 2025 22:33:44 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754087624;
+	bh=rHvT7XzTyZKGUqrO5uQ6yfryUOqdTr9MuHLG9FWPxR0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=DrMIMpTF7juPOgfakhioYc3zyLfUzAVsbQo2H4ycDqIN5WYj1t/s+UiYa66L9Y5LZ
+	 fYuKKBFrsZNJdfw4UyR1ZaZF+HlFiWGc/ex3N3VThZOPcdILaL9qKEgws7dQQUhuMK
+	 fn/2hCTLlQl65fStSZv2lr4uYzZWqkd1pUo0RuQ3xRUF72EHubgFbrSjmP2vO5exqR
+	 AcCWr53Atg0J2H5OXohHWUaq0i9FxCJ7fbpYPY+W4M3G8qeDYIWT5mfaepB76fPEb4
+	 AP7SjAWTHFvHeVzrOMvFgJptg2RFy3thhVnZ/2pYY1YhtZUfdkip75NPeAN2E+lmup
+	 fIJ93hX7SvGOg==
+Date: Fri, 1 Aug 2025 15:33:43 -0700
+From: Jakub Kicinski <kuba@kernel.org>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: intel-wired-lan@lists.osuosl.org, Michal Kubiak
+ <michal.kubiak@intel.com>, Maciej Fijalkowski
+ <maciej.fijalkowski@intel.com>, Tony Nguyen <anthony.l.nguyen@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Andrew Lunn
+ <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Alexei
+ Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Simon
+ Horman <horms@kernel.org>, nxne.cnse.osdt.itp.upstreaming@intel.com,
+ bpf@vger.kernel.org, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
+Message-ID: <20250801153343.74e0884b@kernel.org>
+In-Reply-To: <20250730160717.28976-17-aleksander.lobakin@intel.com>
+References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+	<20250730160717.28976-17-aleksander.lobakin@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dmaengine: idxd: Add a new IAA device ID for Wildcat Lake
- family platforms
-To: Vinicius Costa Gomes <vinicius.gomes@intel.com>, dmaengine@vger.kernel.org
-Cc: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>,
- Vinod Koul <vkoul@kernel.org>, linux-kernel@vger.kernel.org
-References: <20250801215936.188555-1-vinicius.gomes@intel.com>
-Content-Language: en-US
-From: Dave Jiang <dave.jiang@intel.com>
-In-Reply-To: <20250801215936.188555-1-vinicius.gomes@intel.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
+On Wed, 30 Jul 2025 18:07:15 +0200 Alexander Lobakin wrote:
+> Use __LIBETH_WORD_ACCESS to parse descriptors more efficiently when
+> applicable. It really gives some good boosts and code size reduction
+> on x86_64.
 
-
-On 8/1/25 2:59 PM, Vinicius Costa Gomes wrote:
-> From: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> 
-> A new IAA device ID, 0xfd2d, is introduced across all Wildcat Lake
-> family platforms. Add the device ID to the IDXD driver.
-> 
-> Signed-off-by: Anil S Keshavamurthy <anil.s.keshavamurthy@intel.com>
-> Signed-off-by: Vinicius Costa Gomes <vinicius.gomes@intel.com>
-
-Reviewed-by: Dave Jiang <dave.jiang@intel.com>
-> ---
->  drivers/dma/idxd/init.c      | 2 ++
->  drivers/dma/idxd/registers.h | 1 +
->  2 files changed, 3 insertions(+)
-> 
-> diff --git a/drivers/dma/idxd/init.c b/drivers/dma/idxd/init.c
-> index 35bdefd3728b..f98aa41fa42e 100644
-> --- a/drivers/dma/idxd/init.c
-> +++ b/drivers/dma/idxd/init.c
-> @@ -80,6 +80,8 @@ static struct pci_device_id idxd_pci_tbl[] = {
->  	{ PCI_DEVICE_DATA(INTEL, IAA_DMR, &idxd_driver_data[IDXD_TYPE_IAX]) },
->  	/* IAA PTL platforms */
->  	{ PCI_DEVICE_DATA(INTEL, IAA_PTL, &idxd_driver_data[IDXD_TYPE_IAX]) },
-> +	/* IAA WCL platforms */
-> +	{ PCI_DEVICE_DATA(INTEL, IAA_WCL, &idxd_driver_data[IDXD_TYPE_IAX]) },
->  	{ 0, }
->  };
->  MODULE_DEVICE_TABLE(pci, idxd_pci_tbl);
-> diff --git a/drivers/dma/idxd/registers.h b/drivers/dma/idxd/registers.h
-> index 9c1c546fe443..0d84bd7a680b 100644
-> --- a/drivers/dma/idxd/registers.h
-> +++ b/drivers/dma/idxd/registers.h
-> @@ -10,6 +10,7 @@
->  #define PCI_DEVICE_ID_INTEL_DSA_DMR	0x1212
->  #define PCI_DEVICE_ID_INTEL_IAA_DMR	0x1216
->  #define PCI_DEVICE_ID_INTEL_IAA_PTL	0xb02d
-> +#define PCI_DEVICE_ID_INTEL_IAA_WCL	0xfd2d
->  
->  #define DEVICE_VERSION_1		0x100
->  #define DEVICE_VERSION_2		0x200
-
+Could you perhaps quantify the goodness of the boost with a number? :)
 
