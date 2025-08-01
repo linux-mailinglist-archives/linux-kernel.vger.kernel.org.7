@@ -1,222 +1,184 @@
-Return-Path: <linux-kernel+bounces-753367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE296B181F5
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:41:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E548DB181F9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:44:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4021B3A04E0
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:41:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3037C1AA78C6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62ADC2472A5;
-	Fri,  1 Aug 2025 12:41:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99E0E248891;
+	Fri,  1 Aug 2025 12:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W23ZS/PE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="E4xz+r+3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3AA21F16B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:41:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E83491F16B;
+	Fri,  1 Aug 2025 12:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754052101; cv=none; b=raYr3V1Zy1p6NSYNCydhnLkNoL46MP8BrG3fwK2RHvr0YkM7HVxxHAz5zqOQ77EIQbC0G7WtO2T5LXF5aKq7+X0d3lN0TMHuKLjSW559H9Ysed6g22Heam8YlFsHK2CaeDAqB5sN2GH0ry8L/4DikW1ENWwe9/cVvQKz+eIrsRE=
+	t=1754052243; cv=none; b=oqXujBushCaRUYdVBH8BlQ8g3OazA7Nlmmra3o7/9V1Ak5ggFmr3DZrAIqH02WrfJVhr41okiRgwi8NnQKE28RJU5voPbxkTSxkSRntVikyrklHhdEm+oA6oy211kQCdEHSg4wvT9UX2rtbdcD1ndeX8lHk6y/jVxZV9TBWkiao=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754052101; c=relaxed/simple;
-	bh=7ZK741fDoXgKVr+mT2QanV6sDcWA8u8GOKb4YwTXDXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=SGYlJnLPLXXcypVKj0Zv3/OxqR6cCL2WNEHNWB6f6swJGbUxJB0wKzML/MZ3hnNIVjSrTa3/V1FDkFV1TrXaDYUAFyy/h0gnpYFhJIdrv0F1b4HL5YWniuUJl1+LFjGtvcu3kDA1yjojONEA71EYggSkHC80/qvFYpid0tcHAqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W23ZS/PE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13997C4CEE7;
-	Fri,  1 Aug 2025 12:41:40 +0000 (UTC)
+	s=arc-20240116; t=1754052243; c=relaxed/simple;
+	bh=FiT0425S7X3WbHUWOMIF4UULdXiBKCkvWg3ZnMqeZM0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aZ2nb/wdKerkWPI0n7Qpk7ntw1uw4QzO85t6vmzwoBr08Kuh3LQUHWaDej1ACs2nQJ9vkrlZ6cdeeXMlXOWnAZHnEqHXccopdU0RaEwqBTnfwqIA2prTTLsM2eVs1cNY/pnD+R2AnP4lZ7kw4BsWvzAkaxNMKTlCDHcEZN0f0jc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=E4xz+r+3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E529C4CEE7;
+	Fri,  1 Aug 2025 12:43:57 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754052101;
-	bh=7ZK741fDoXgKVr+mT2QanV6sDcWA8u8GOKb4YwTXDXU=;
-	h=Date:From:To:Cc:Subject:From;
-	b=W23ZS/PEB6H5jallqTm2K/+VLs1xF2nuvG7Th9LpsqSgPx7Hs9207aI8RakOCluVk
-	 z/G/lmmMMwH4Fx6G4Z3qz7U3nxPEpUMRbkvi1kX+cEWGQxhLQRsL/uMYmEFHOqpg60
-	 OgZr21iscB4xSAGdUNAhWvq+oPnBzeCmw/Ruxo8uFx4UgQDo9BYSk2/UxiAmxKhAVc
-	 pCkX5nLknb9M1GkJObassPl2n/ud8GbKp0YqIfi7FF4/82AvHkrhR8gD3mAjW/V46I
-	 s3uOAV6Wo9uDPpZjlalXJFoIABuNgp88Qq3GR4pcePI6njnOEbWtbNl5lboqxhZjpK
-	 eCd6OBQeySCcA==
-Date: Fri, 1 Aug 2025 18:11:38 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>
-Subject: [GIT PULL]: dmaengine subsystem updates for v6.17
-Message-ID: <aIy2AkFvYfbQ2WTD@vaman>
+	s=k20201202; t=1754052242;
+	bh=FiT0425S7X3WbHUWOMIF4UULdXiBKCkvWg3ZnMqeZM0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=E4xz+r+32ZjXVU+0L086jLIp1hvyCbtHgcWwNT6uf6pw9E3Nup1mfRV+FBNlkUCbJ
+	 DunzKp65I/bVG5wz5ZAldHNQzx+0TNCGZDB8B9GxmV22IGd4k2Sncj0GnrDFVIkfH5
+	 zyXHELvWnEh5taOHjSjau+NDYsQG6ELyNzaOl7BnRsPUpmQ60581KLfjkXjFwgZLu/
+	 QNKdJcz4emONeLI0/u+dxcM+ncndrzTz8XDE4I4lPJLQ6e0uKf9PpnHpsnIZBAR1KS
+	 ysojmaTd0rAVZLGMRQzLG2nRPQGXQ9A0miAMOO5TqasPSBX5zQosSQ4NRiFjRaM0LJ
+	 CW+BxBMS1TkXA==
+Date: Fri, 1 Aug 2025 18:13:52 +0530
+From: Manivannan Sadhasivam <mani@kernel.org>
+To: Neil Armstrong <neil.armstrong@linaro.org>
+Cc: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>, alim.akhtar@samsung.com, 
+	avri.altman@wdc.com, bvanassche@acm.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, andersson@kernel.org, konradybcio@kernel.org, agross@kernel.org, 
+	linux-arm-msm@vger.kernel.org, linux-scsi@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V1 0/3] Enable UFS MCQ support for SM8650 and SM8750
+Message-ID: <u27jbp3wkgw2cyyans3rmxspqqwufymkztvyfjacrke252nbud@yfutnxhwcspr>
+References: <20250730082229.23475-1-quic_rdwivedi@quicinc.com>
+ <aff38b98-23ff-4dcd-afab-2a0d8c8ad599@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="cR1We4SHDwaNKjyM"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aff38b98-23ff-4dcd-afab-2a0d8c8ad599@linaro.org>
 
+On Thu, Jul 31, 2025 at 10:50:21AM GMT, neil.armstrong@linaro.org wrote:
+> Hi,
+> 
+> On 30/07/2025 10:22, Ram Kumar Dwivedi wrote:
+> > This patch series enables Multi-Circular Queue (MCQ) support for the UFS
+> > host controller on Qualcomm SM8650 and SM8750 platforms. MCQ is a modern
+> > queuing model that improves performance and scalability by allowing
+> > multiple hardware queues.
+> > 
+> > Although MCQ support has been present in the UFS driver for several years,
+> > this is the first time it is being enabled via Device Tree for these
+> > platforms.
+> > 
+> > Patch 1 updates the device tree bindings to allow the additional register
+> > regions and reg-names required for MCQ operation.
+> > 
+> > Patches 2 and 3 update the device trees for SM8650 and SM8750 respectively
+> > to enable MCQ by adding the necessary register mappings and MSI parent.
+> > 
+> > Tested on internal hardware for both platforms.
+> > 
+> > Palash Kambar (1):
+> >    arm64: dts: qcom: sm8750: Enable MCQ support for UFS controller
+> > 
+> > Ram Kumar Dwivedi (2):
+> >    dt-bindings: ufs: qcom: Add MCQ support to reg and reg-names
+> >    arm64: dts: qcom: sm8650: Enable MCQ support for UFS controller
+> > 
+> >   .../devicetree/bindings/ufs/qcom,ufs.yaml     | 21 ++++++++++++-------
+> >   arch/arm64/boot/dts/qcom/sm8650.dtsi          |  9 +++++++-
+> >   arch/arm64/boot/dts/qcom/sm8750.dtsi          | 10 +++++++--
+> >   3 files changed, 29 insertions(+), 11 deletions(-)
+> > 
+> 
+> I ran some tests on the SM8650-QRD, and it works so please add my:
+> Tested-by: Neil Armstrong <neil.armstrong@linaro.org> # on SM8650-QRD
+> 
 
---cR1We4SHDwaNKjyM
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Thanks Neil for testing it out!
 
-Hello Linus,
+> I ran some fio tests, comparing the v6.15, v6.16 (with threaded irqs)
+> and next + mcq support, and here's the analysis on the results:
+> 
+> Significant Performance Gains in Write Operations with Multiple Jobs:
+> The "mcq" change shows a substantial improvement in both IOPS and bandwidth for write operations with 8 jobs.
+> Moderate Improvement in Single Job Operations (Read and Write):
+> For single job operations (read and write), the "mcq" change generally leads to positive, albeit less dramatic, improvements in IOPS and bandwidth.
+> Slight Decrease in Read Operations with Multiple Jobs:
+> Interestingly, for read operations with 8 jobs, there's a slight decrease in both IOPS and bandwidth with the "mcq" kernel.
+> 
+> The raw results are:
+> Board: sm8650-qrd
+> 
+> read / 1 job
+>                v6.15     v6.16  next+mcq
+> iops (min)  3,996.00  5,921.60  4,661.20
+> iops (max)  4,772.80  6,491.20  5,027.60
+> iops (avg)  4,526.25  6,295.31  4,979.81
+> cpu % usr       4.62      2.96      5.68
+> cpu % sys      21.45     17.88     25.58
+> bw (MB/s)      18.54     25.78     20.40
+> 
 
-Please pull to receive updates for dmaengine subsystem consisting of a
-new managed api, a new driver and couple of device support and few
-updates and cleanups to drivers.
+It is interesting to note the % of CPU time spent with MCQ in the 1 job case.
+Looks like it is spending more time here. I'm wondering if it is the ESI
+limitation/overhead.
 
-The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
+- Mani
 
-  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+> read / 8 job
+>                 v6.15      v6.16   next+mcq
+> iops (min)  51,867.60  51,575.40  56,818.40
+> iops (max)  67,513.60  64,456.40  65,379.60
+> iops (avg)  64,314.80  62,136.76  63,016.07
+> cpu % usr        3.98       3.72       3.85
+> cpu % sys       16.70      17.16      14.87
+> bw (MB/s)      263.60     254.40     258.20
+> 
+> write / 1 job
+>                v6.15     v6.16  next+mcq
+> iops (min)  5,654.80  8,060.00  7,117.20
+> iops (max)  6,720.40  8,852.00  7,706.80
+> iops (avg)  6,576.91  8,579.81  7,459.97
+> cpu % usr       7.48      3.79      6.73
+> cpu % sys      41.09     23.27     30.66
+> bw (MB/s)      26.96     35.16     30.56
+> 
+> write / 8 job
+>                  v6.15       v6.16    next+mcq
+> iops (min)   84,687.80   95,043.40  114,054.00
+> iops (max)  107,620.80  113,572.00  164,526.00
+> iops (avg)   97,910.86  105,927.38  149,071.43
+> cpu % usr         5.43        4.38        2.88
+> cpu % sys        21.73       20.29       16.09
+> bw (MB/s)       400.80      433.80      610.40
+> 
+> The test suite is:
+> for rw in read write ; do
+>     echo "rw: ${rw}"
+>     for jobs in 1 8 ; do
+>         echo "jobs: ${jobs}"
+>         for it in $(seq 1 5) ; do
+>             fio --name=rand${rw} --rw=rand${rw} \
+>                 --ioengine=libaio --direct=1 \
+>                 --bs=4k --numjobs=${jobs} --size=32m \
+>                 --runtime=30 --time_based --end_fsync=1 \
+>                 --group_reporting --filename=/dev/disk/by-partlabel/super \
+>             | grep -E '(iops|sys=|READ:|WRITE:)'
+>             sleep 5
+>         done
+>     done
+> done
+> 
+> Thanks,
+> Neil
 
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/vkoul/dmaengine.git tags/dm=
-aengine-6.17-rc1
-
-for you to fetch changes up to e3a9ccd21897a59d02cf2b7a95297086249306d6:
-
-  dt-bindings: dma: fsl-mxs-dma: allow interrupt-names for fsl,imx23-dma-ap=
-bx (2025-07-23 17:55:32 +0530)
-
-----------------------------------------------------------------
-dmaengine updates for v6.17
-
- Core:
-  - Managed API for dma channel request
-
- New support:
-  - Sophgo CV18XX/SG200X dmamux driver
-  - Qualcomm Milos GPI, sc8280xp GPI support
-
- Updates:
-  - Conversion of brcm,iproc-sba and marvell,orion-xor binding
-  - Unused code cleanup across drivers
-
-----------------------------------------------------------------
-Amelie Delaunay (1):
-      dmaengine: stm32-dma: configure next sg only if there are more than 2=
- sgs
-
-Anil S Keshavamurthy (1):
-      dmaengine: idxd: Fix warning for deadcode.deadstore
-
-Bence Cs=F3k=E1s (2):
-      dmaengine: sun4i: Simplify error handling in probe()
-      dmaengine: Add devm_dma_request_chan()
-
-Frank Li (1):
-      dt-bindings: dma: fsl-mxs-dma: allow interrupt-names for fsl,imx23-dm=
-a-apbx
-
-Inochi Amaoto (2):
-      dt-bindings: dmaengine: Add dma multiplexer for CV18XX/SG200X series =
-SoC
-      dmaengine: add driver for Sophgo CV18XX/SG200X dmamux
-
-Krzysztof Kozlowski (7):
-      dmaengine: dw-edma: Drop unused dchan2dev() and chan2dev()
-      dmaengine: fsl-dpaa2-qdma: Drop unused mc_enc()
-      dmaengine: qcom: gpi: Drop unused gpi_write_reg_field()
-      dmaengine: fsl-qdma: Add missing fsl_qdma_format kerneldoc
-      dmaengine: mmp: Fix again Wvoid-pointer-to-enum-cast warning
-      dmaengine: sh: Do not enable SH_DMAE_BASE by default during compile t=
-esting
-      dmaengine: ti: Do not enable by default during compile testing
-
-Luca Weiss (1):
-      dt-bindings: dma: qcom,gpi: document the Milos GPI DMA Engine
-
-Pengyu Luo (1):
-      dt-bindings: dma: qcom,gpi: Document the sc8280xp GPI DMA engine
-
-Rob Herring (Arm) (2):
-      dt-bindings: dma: Convert brcm,iproc-sba to DT schema
-      dt-bindings: dma: Convert marvell,orion-xor to DT schema
-
-Robert Marko (1):
-      dmaengine: xdmac: make it selectable for ARCH_MICROCHIP
-
-Sven Peter (1):
-      dmaengine: apple-admac: Drop default ARCH_APPLE in Kconfig
-
-Thomas Fourier (2):
-      dmaengine: mv_xor: Fix missing check after DMA map and missing unmap
-      dmaengine: nbpfaxi: Add missing check after DMA map
-
-Thomas Wei=DFschuh (1):
-      dmaengine: stm32: Don't use %pK through printk
-
-Vinod Koul (1):
-      Merge branch 'topic/dmaengine_devm' into next
-
-Yi Sun (1):
-      dmaengine: idxd: Remove __packed from structures
-
- .../devicetree/bindings/dma/brcm,iproc-sba.txt     |  29 ---
- .../devicetree/bindings/dma/brcm,iproc-sba.yaml    |  41 ++++
- .../devicetree/bindings/dma/fsl,mxs-dma.yaml       |  33 +++
- .../devicetree/bindings/dma/marvell,orion-xor.yaml |  84 +++++++
- Documentation/devicetree/bindings/dma/mv-xor.txt   |  40 ----
- .../devicetree/bindings/dma/qcom,gpi.yaml          |   2 +
- .../bindings/dma/sophgo,cv1800b-dmamux.yaml        |  51 ++++
- drivers/dma/Kconfig                                |  12 +-
- drivers/dma/Makefile                               |   1 +
- drivers/dma/cv1800b-dmamux.c                       | 259 +++++++++++++++++=
-++++
- drivers/dma/dmaengine.c                            |  30 +++
- drivers/dma/dw-edma/dw-edma-core.c                 |  12 -
- drivers/dma/fsl-dpaa2-qdma/dpdmai.c                |   5 -
- drivers/dma/fsl-qdma.c                             |   3 +
- drivers/dma/idxd/init.c                            |   1 -
- drivers/dma/idxd/registers.h                       |  60 ++---
- drivers/dma/mmp_tdma.c                             |   2 +-
- drivers/dma/mv_xor.c                               |  21 +-
- drivers/dma/nbpfaxi.c                              |  13 ++
- drivers/dma/qcom/gpi.c                             |  11 -
- drivers/dma/sh/Kconfig                             |   2 +-
- drivers/dma/stm32/stm32-dma.c                      |  12 +-
- drivers/dma/stm32/stm32-dma3.c                     |  10 +-
- drivers/dma/stm32/stm32-mdma.c                     |   8 +-
- drivers/dma/sun4i-dma.c                            |  46 ++--
- drivers/dma/ti/Kconfig                             |   4 +-
- include/linux/dmaengine.h                          |   7 +
- 27 files changed, 615 insertions(+), 184 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/dma/brcm,iproc-sba.txt
- create mode 100644 Documentation/devicetree/bindings/dma/brcm,iproc-sba.ya=
-ml
- create mode 100644 Documentation/devicetree/bindings/dma/marvell,orion-xor=
-=2Eyaml
- delete mode 100644 Documentation/devicetree/bindings/dma/mv-xor.txt
- create mode 100644 Documentation/devicetree/bindings/dma/sophgo,cv1800b-dm=
-amux.yaml
- create mode 100644 drivers/dma/cv1800b-dmamux.c
-
---=20
-~Vinod
-
---cR1We4SHDwaNKjyM
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEE+vs47OPLdNbVcHzyfBQHDyUjg0cFAmiMtgEACgkQfBQHDyUj
-g0dQ1A//V1Huf3Rs6MY0DXAc4JNT0QltO4ZCczLG5Su8N2yzoe1PU9JDlK+K6LP/
-DaFINY5F5O1TIkVbVY8K6XaaBri/Z2cRyH7NCh5i/SQbw7yVfwXqnuE4mfnXRaul
-CX9LRGqEiWA2q/JGczIMEg0Zk+Rz0K4PY0eBCsW5ehQzl71ERQOpPjRm0NQOnSzF
-HsQ2+grFUKU8AM2LPBRa/yuqTOG93uAOa8CWYBZq7lLXz5fBQLCsKMpERE4ZEa10
-9KpwzvT1D4PlhNnv7NQJC3NXTg/UFsUBN0j1njAZ691aieyJewsqj5FU2c7QZfIB
-XyWnoW6FzTlOIKlbfCIh2gK5XFd6EGEiKaTkdSJI+36fUVJ08jI/7Wvplt4g5oPw
-eNpsw5BVj/g9S0/fl2ScutrQKURX9AyPcH+4Z11dyT/7SV9eXHgIWAyEgoz0WtxC
-VUcutTjcYKNmfu9N+F9Haf0+UitIjsIo/bJk30R0FVDXNcSBfAzP99BxVDMUGatk
-tDEc7zU3PyMrytGaf5jyZlSg7vUs9sn1CF89QDT2VuPEJjJoo6bN7P93Wk5b/4cm
-ocP35C2C3rZRDqu77WKEPvKiYL58fhRhI2tSBr0EqE1/5+wv44DPfFn/zuvtgr0f
-mzSjQNCQJemkq+vlnJfziv+VSJwTPESV/BXRvVZKRvqFlcwo0W0=
-=DcHG
------END PGP SIGNATURE-----
-
---cR1We4SHDwaNKjyM--
+-- 
+மணிவண்ணன் சதாசிவம்
 
