@@ -1,124 +1,135 @@
-Return-Path: <linux-kernel+bounces-753749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1F84B1874D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:23:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9425EB1874C
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:23:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9B92E1C82FDC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:23:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DA281C82D48
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:23:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AC8B2797AF;
-	Fri,  1 Aug 2025 18:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BEA9028CF58;
+	Fri,  1 Aug 2025 18:23:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="S0oBfob2"
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="hShYNIy5"
 Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 190D917BA5;
-	Fri,  1 Aug 2025 18:23:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70E2A188CC9;
+	Fri,  1 Aug 2025 18:23:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754072598; cv=pass; b=DHMInATSMHu2mXI6/is6+gxjX6XYRw14VnAsigyAbOY9PxTOEnj0ktzKh+F/eBm1LgAD3j07Rx00wPMTFqZacnlhbuJWJGDUnZly/AruaGic3TSPfhQo86fBHnyoZmJoHPyQHa+jj6y88Z2lnNuJU79lT2gFLvZy14gdfPbHWxs=
+	t=1754072583; cv=pass; b=KD4D5nkKX3gSWZkHwn+bNZtPDWn404L/OwjMpMFPeIah2um4bhJbLCJ0ZwjrJSSjsopyF7e/59wDKtwdXg2NBJOz33sIdyT3TgunnKOhygS576xpVA1JSAiDWsGb+73cC1Kr1D48uf/HyKWtoszRlFSh/QCKG6/5+2zcBtSfa/k=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754072598; c=relaxed/simple;
-	bh=5VfOKq/BiAYCkesCvuK6rwc8orWBgVr/+Qao3m2gKRs=;
+	s=arc-20240116; t=1754072583; c=relaxed/simple;
+	bh=N0u5f7kywmoobUvfvaV9GxGqtJRaOTPYcha1RtJqso4=;
 	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=kI0S9XINBgWNWAIGnX/CZR/6askUiTXj2H8vxvs7Q/nvAlZksMdooXVHoM+aicmuoj8VbsKTUdfDslhBKrxfS33oRMPE3fofW+NwVvXk83aSkB16Rw5Uwl+/f3YbsPu4WedkJYP1Y78KBImN8lVU63Xox5wc5BANNhZ4/F4Hwik=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=S0oBfob2; arc=pass smtp.client-ip=136.143.188.112
+	 Message-Id:References:To; b=gFSSi3ZO4GNScyE6sYOCsnDjWiy1B8R+LsHhoZkshsP50u3qK0IxSI5YG2f88S2hSErraO1I40Pk+lk6plfhTCEEJPHRgSbzOQy8+k2ddeq+82iLyencETBB/XwH342ozJq2L4E/+1mQSvbLlxA8FVk49pIFUxxObhyyRTHittU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=hShYNIy5; arc=pass smtp.client-ip=136.143.188.112
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754072493; cv=none; 
+ARC-Seal: i=1; a=rsa-sha256; t=1754072562; cv=none; 
 	d=zohomail.com; s=zohoarc; 
-	b=f8pnnb43YIO0pPCotDgfMCLyx2/baHDMi/fG/qN6ToQ+fmVX9pOf1zjuHbjGOVYUdPeWSxyJLMvu1b1YmQilELSKuBvQVx+D+MsBZ/qg/lamRj2LljdrKF43bba8GqjeFRMv/z9Jo7Jl5PcvH/DebOfV32z/ZXA3Wi2icBFgwGU=
+	b=SGI5SBFIreyJVvQFlLuxwq5c3Lw+RNKf5bISz1hplzyD3CEo0vAJQH8+D+usYXyyJUStMqBhwyGH9pXyDHWpQ4t3kEPaO87zyS74LJ495v7ZxvP0JT/ZhGZicQkglas5nQ1qCckH7r9Pp3gtofd1XS46kJOF8Vi7GhiF1ufECJg=
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754072493; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=QI7+Fsnpi/tC3LsZUww26BnvDe2yssc8ivO/+cxs2xA=; 
-	b=S68hGea7FtsZ5NNiXtoJPjeW4uXILyHIKsyXzRIKeJoo4S8eZ0igCvdzE9ReNeUHCS1xybCtqI8YoOfamSyycQLh4oE13x2PhWSUzQy+HQL6xMHnRJv8ysz/wxnVJrSfhMan4sqwPnDFDkssNXE7GEoE2cTm8LBkybwJVc9s68o=
+	t=1754072562; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=rufzHIlOrILnFZqJtVdpasY2ZRGvC6jraxfocnHfUe8=; 
+	b=B41sD11ihG6Y4LCm2taddBdV5AAvG4qawutrk0yI5J5IaiCvhSv5WWF/cO2Cdx6fT42s1jxS37G0MeHfoFT6J+xhNeqkkOlJdLMqHOcX3ERa4w8+bWs/5+dvJ5ac/AMFJss8HhnNUuS0H8uBsUD3TjNuTMEVgmITpMHir1uVgPI=
 ARC-Authentication-Results: i=1; mx.zohomail.com;
 	dkim=pass  header.i=collabora.com;
 	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
 	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754072493;
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754072562;
 	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
 	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=QI7+Fsnpi/tC3LsZUww26BnvDe2yssc8ivO/+cxs2xA=;
-	b=S0oBfob28IAbr9THnP6LRXeMxOYGbKj0PV9deTW0uP5yJ4eVMPvrLYtDsSrQPmMa
-	TVB3V6f7a46ofXIoDwmwJc48Ik54ZVGmwJNoaqEKvmt8b8WorKRNCA2BN00y2bBI9Rc
-	Ml44rk3v+05Sq6g4/JQbFDphJInhanqtXCf0HqFA=
-Received: by mx.zohomail.com with SMTPS id 1754072489043310.1216853362323;
-	Fri, 1 Aug 2025 11:21:29 -0700 (PDT)
+	bh=rufzHIlOrILnFZqJtVdpasY2ZRGvC6jraxfocnHfUe8=;
+	b=hShYNIy5HDP28xS7IXS1sxaR+DCCg0fGHEyo/p4v0NJvRGuwXMtVPkIEti8l9ukU
+	wTHCxsQHlfWQTQrm8xYLtzPj7KA9PDS2DoWXwjuWvFZVW/kSd3ZqpoZm0fc6zuhJfKs
+	T9mIxYIXByrI/nhAPWyZV2de3jNctoT4n6kRpdlw=
+Received: by mx.zohomail.com with SMTPS id 1754072559074845.5866054817981;
+	Fri, 1 Aug 2025 11:22:39 -0700 (PDT)
 Content-Type: text/plain;
-	charset=utf-8
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v3 1/1] rust: update error.rs documentation
+Subject: Re: [PATCH] rust: prelude: re-export
+ `core::mem::{align,size}_of{,_val}`
 From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <20250731204115.13669-2-work@onurozkan.dev>
-Date: Fri, 1 Aug 2025 15:20:57 -0300
-Cc: rust-for-linux@vger.kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- boqun.feng@gmail.com,
- gary@garyguo.net,
- bjorn3_gh@protonmail.com,
- lossin@kernel.org,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- me@kloenk.dev,
- felipe_life@live.com,
- abdiel.janulgue@gmail.com,
- dirk.behme@de.bosch.com,
- daniel@sedlak.dev,
- linux-kernel@vger.kernel.org
+In-Reply-To: <20250801161752.443431-1-ojeda@kernel.org>
+Date: Fri, 1 Aug 2025 15:22:24 -0300
+Cc: Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ Alexandre Courbot <acourbot@nvidia.com>,
+ rust-for-linux@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ patches@lists.linux.dev
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <2B56FE7C-5DD3-4D28-864E-1A4457B66888@collabora.com>
-References: <20250731204115.13669-1-work@onurozkan.dev>
- <20250731204115.13669-2-work@onurozkan.dev>
-To: =?utf-8?Q?Onur_=C3=96zkan?= <work@onurozkan.dev>
+Message-Id: <5D95B1A1-E994-4E9F-AB31-3DC5E2E9CD0F@collabora.com>
+References: <20250801161752.443431-1-ojeda@kernel.org>
+To: Miguel Ojeda <ojeda@kernel.org>
 X-Mailer: Apple Mail (2.3826.600.51.1.1)
 X-ZohoMailClient: External
 
 
 
-> On 31 Jul 2025, at 17:41, Onur =C3=96zkan <work@onurozkan.dev> wrote:
+> On 1 Aug 2025, at 13:17, Miguel Ojeda <ojeda@kernel.org> wrote:
 >=20
-> Adds missing header links.
+> Rust 1.80.0 added:
 >=20
-> Signed-off-by: Onur =C3=96zkan <work@onurozkan.dev>
+>    align_of
+>    align_of_val
+>    size_of
+>    size_of_val
+>=20
+> from `core::mem` to the prelude [1].
+>=20
+> For similar reasons, and to minimize potential confusion when code may
+> work in later versions but not in our current minimum, add it to our
+> prelude too.
+>=20
+> Link: https://github.com/rust-lang/rust/pull/123168 [1]
+> Link: =
+https://lore.kernel.org/rust-for-linux/CANiq72kOLYR2A95o0ji2mDmEqOKh9e9_60=
+zZKmgF=3DvZmsW6DRg@mail.gmail.com/ [2]
+> Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
 > ---
-> rust/kernel/error.rs | 2 ++
-> 1 file changed, 2 insertions(+)
+> rust/kernel/prelude.rs | 5 ++++-
+> 1 file changed, 4 insertions(+), 1 deletion(-)
 >=20
-> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
-> index 3dee3139fcd4..7c5dac20c480 100644
-> --- a/rust/kernel/error.rs
-> +++ b/rust/kernel/error.rs
-> @@ -2,7 +2,9 @@
+> diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
+> index 25fe97aafd02..198d09a31449 100644
+> --- a/rust/kernel/prelude.rs
+> +++ b/rust/kernel/prelude.rs
+> @@ -12,7 +12,10 @@
+> //! ```
 >=20
-> //! Kernel errors.
-> //!
-> +//! C header: =
-[`include/linux/errno.h`](srctree/include/linux/errno.h)
-> //! C header: =
-[`include/uapi/asm-generic/errno-base.h`](srctree/include/uapi/asm-generic=
-/errno-base.h)
-> +//! C header: =
-[`include/uapi/asm-generic/errno.h`](srctree/include/uapi/asm-generic/errn=
-o.h)
+> #[doc(no_inline)]
+> -pub use core::pin::Pin;
+> +pub use core::{
+> +    mem::{align_of, align_of_val, size_of, size_of_val},
+> +    pin::Pin,
+> +};
 >=20
-> use crate::{
->     alloc::{layout::LayoutError, AllocError},
-> --
-> 2.50.0
+> pub use ::ffi::{
+>     c_char, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, =
+c_uint, c_ulong, c_ulonglong,
+>=20
+> base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
+> --=20
+> 2.50.1
 >=20
 >=20
 
