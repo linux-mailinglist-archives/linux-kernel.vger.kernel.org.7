@@ -1,123 +1,216 @@
-Return-Path: <linux-kernel+bounces-753887-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753888-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4F47B18985
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:33:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4795B1898A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF491C8552E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:33:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 729D71C2518D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:39:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49BCA2288EA;
-	Fri,  1 Aug 2025 23:33:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1268A22B8B0;
+	Fri,  1 Aug 2025 23:39:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b="Yr6cH3Lh"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Yit97oU8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDEDCB644
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 23:33:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754091213; cv=pass; b=A6jxVJyVUF/ea/jR/kgAejm/Bnn/m1ZdIN9x3BGxZ+Zp8FGYPKKQl60xndEymhcjZpG5V5LUf86fglK+UkmGjfcqbVOaeeOvWwCx2KAIUg+i7La9W3iyHx0pfwkM3rGl9vwt3qVe44SACAhfJOR0g/4uVhFxuN88KjYhHjXZH1k=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754091213; c=relaxed/simple;
-	bh=h2/iozN+Fgiw/quMaVvzKUxUSQOde9PzlsJ6mh3XX9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XZHTYTZixL/IsnpxZoucCs6AxPSECZQFe/+hVapPhBeX31U36RZOyf43ozCP3DBVfbraIThQsuAjKk51stJ0cfEbjNbZ/TcGT3n93lV02sqz90UoTX6GfnuNflA7r1qSvmoCnbxQpxqBNMXv6thAC2a8SeM7ewi4s7A3ev+Y+8M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=sebastian.reichel@collabora.com header.b=Yr6cH3Lh; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754091196; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=fRDpJONf2JERzF+xDRjDiRp3hdfkZjeJXIkTdZXG3sMXQN28hvbBdF6IMEGCXWQJMvScVJzB3DlrgRV5me5U+dse416gPm5igVtICCE/wDaqQjyisR6JEoQkgwd7VvT0CcfsqKplIEHWiUaSpKUVdQ3pJUkxPd5vRUseEo0rxP4=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754091196; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=7DAXmbrE8zqXTQAY6GkRCYerCmbin4dQaPstr9gxE8I=; 
-	b=CVchjrCW+0M8XwWIYaR+72cYjPwXapC1LrNJmeY2luRnJEMgQ2m5P3jGwTYr81FrXm85VkJj6b+5VKOagL+QoKnStu7h6bcGqb/cg3AbryrOp3QSJ3fQxC1C7vOmKuI8MKD/x38CPiHHKfyab4I6JPi0dONRJ2AujaHPpblBkSM=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=sebastian.reichel@collabora.com;
-	dmarc=pass header.from=<sebastian.reichel@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754091196;
-	s=zohomail; d=collabora.com; i=sebastian.reichel@collabora.com;
-	h=Date:Date:From:From:To:To:Cc:Cc:Subject:Subject:Message-ID:References:MIME-Version:Content-Type:In-Reply-To:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=7DAXmbrE8zqXTQAY6GkRCYerCmbin4dQaPstr9gxE8I=;
-	b=Yr6cH3Lhp8Pi4YRozFGQ1tK05GU8nrrXZvthLC0TzLV49md40KMBfDjpxpvie8iI
-	fnzxoqwWY46sYmwYsG+wvYhgVY40Fai/TgysxsORTlhRZ90AHmszbiy/b+v8/ziDB0e
-	CEnKK/lNdSWcf20kDIIHXYQTvMdLKz6QtT9WffGo=
-Received: by mx.zohomail.com with SMTPS id 1754091194526854.8990153374416;
-	Fri, 1 Aug 2025 16:33:14 -0700 (PDT)
-Received: by venus (Postfix, from userid 1000)
-	id 69ED9180B4F; Sat, 02 Aug 2025 01:33:11 +0200 (CEST)
-Date: Sat, 2 Aug 2025 01:33:11 +0200
-From: Sebastian Reichel <sebastian.reichel@collabora.com>
-To: Alexander Stein <alexander.stein@ew.tq-group.com>
-Cc: Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
-Message-ID: <havjh4auwxxnevxsfyepql4ovfivy36whldr6htlxo6akpen3d@qq535p6qbvmw>
-References: <20250506130940.2621554-1-alexander.stein@ew.tq-group.com>
- <4669830.LvFx2qVVIh@steina-w>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A83919D8AC;
+	Fri,  1 Aug 2025 23:39:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754091558; cv=none; b=YOANnnhZ7I2DcpF1fe2ZNAQnOzXUBjiZGhha0dl+83VEWqOVib4T6/WQFGPtuyG5BmfHs5+N2pf7Nf2tlbQ98Xn/s6IfrU7VJpVgXkwv7HJ66WseD/BVbP4s6MU1GUAj62XnyRGoe6xjMYrEOQZ+DGp7CrjK9sXYFTqTwlwm19A=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754091558; c=relaxed/simple;
+	bh=MnEEczPpbP4/NoVuZ+RGReSlbA6n00lVLaBy9fFX2Ok=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=QP2d04Pj0EnxxB/IhpbPCuM99CYhSHFypcHvMDQy7qHC9h2S5hsnG2sNCkh6I4UauGpU0wBcMSvQ4zEgdOA30ECTqwktNLSN5WntJkcXvOsZU+gbx7v1+SD+5zUAywXFc5bBkEhDDAmdKAgkgjMRg8oD69jIA6GyZdvq8nV14Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Yit97oU8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2DEDC4CEE7;
+	Fri,  1 Aug 2025 23:39:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754091558;
+	bh=MnEEczPpbP4/NoVuZ+RGReSlbA6n00lVLaBy9fFX2Ok=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=Yit97oU8o/aPbODWMoTlA86Rdvr8PwSZ/vBkVD7JqI8gSje7SsoPMqqkYLmuo1FUI
+	 7foTlQDXiXeCrz/5rGgbtSB5aYQaYOOkuNDSK5glcDLPiSU11I9p0ik5nvmNenP63c
+	 XqjJwfgdKUS9WTI2P80oq9NrUvO1A0JfFk4DK+gprYZsevZiiirhgo5CUwsMWclgth
+	 +oExuvyJaIo3eejodBZFnDuRw7mbGQs5yxTEdy1C/KAsp4dUrLaqIWIdadwenQexTq
+	 0BTE0KzWZYuJifphC85L4+6OwRA4ulX8pJhNkCB3pWrsJsWVHF3kzcR8L7bD3JrzoH
+	 FDRTzW8f8X9fw==
+From: SeongJae Park <sj@kernel.org>
+To: pyyjason@gmail.com
+Cc: SeongJae Park <sj@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Usama Arif <usamaarif642@gmail.com>,
+	damon@lists.linux.dev,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	kernel-team@meta.com
+Subject: Re: [PATCH v3 2/2] mm/damon: Add damos_stat support for vaddr
+Date: Fri,  1 Aug 2025 16:39:14 -0700
+Message-Id: <20250801233914.1530-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <88cc271642476fa6025f3789781dfc8c2f576eab.1754088635.git.pyyjason@gmail.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-In-Reply-To: <4669830.LvFx2qVVIh@steina-w>
-Content-Transfer-Encoding: quoted-printable
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi,
+On Fri,  1 Aug 2025 22:59:51 +0000 pyyjason@gmail.com wrote:
 
-On Thu, Jul 31, 2025 at 11:25:03AM +0200, Alexander Stein wrote:
-> Hi,
->=20
-> Am Dienstag, 6. Mai 2025, 15:09:39 CEST schrieb Alexander Stein:
-> > This driver is used on imx93-tqma9352-mba91xxca.dts.
+> From: Yueyang Pan <pyyjason@gmail.com>
+> 
+> This patch adds support for damos_stat in virtual address space.
 
-You need to send this to the i.MX maintainers.
+As mentioned on the cover letter, this is not very technically correct.  Could
+you please change the subject and above changelog, as suggested on the cover
+letter?
 
-Greetings,
+> It leverages the walk_page_range to walk the page table and gets
+> the folio from page table. The last folio scanned is stored in
+> damos->last_applied to prevent double counting.
+> 
+> Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
+> ---
+>  mm/damon/vaddr.c | 103 ++++++++++++++++++++++++++++++++++++++++++++++-
+>  1 file changed, 102 insertions(+), 1 deletion(-)
+> 
+> diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+> index 87e825349bdf..5960d5d36123 100644
+> --- a/mm/damon/vaddr.c
+> +++ b/mm/damon/vaddr.c
+> @@ -890,6 +890,107 @@ static unsigned long damos_va_migrate(struct damon_target *target,
+>  	return applied * PAGE_SIZE;
+>  }
+>  
+> +struct damos_va_stat_private {
+> +	struct damos *scheme;
+> +	unsigned long *sz_filter_passed;
+> +};
+> +
+> +static inline bool damos_va_invalid_folio(struct folio *folio,
+> +		struct damos *s)
+> +{
+> +	return !folio || folio == s->last_applied;
+> +}
+> +
+> +static int damos_va_stat_pmd_entry(pmd_t *pmd, unsigned long addr,
+> +		unsigned long next, struct mm_walk *walk)
+> +{
+> +	struct damos_va_stat_private *priv = walk->private;
+> +	struct damos *s = priv->scheme;
+> +	unsigned long *sz_filter_passed = priv->sz_filter_passed;
+> +	struct vm_area_struct *vma = walk->vma;
+> +	struct folio *folio;
+> +	spinlock_t *ptl;
+> +	pte_t *start_pte, *pte, ptent;
+> +	int nr;
+> +
+> +#ifdef CONFIG_TRANSPARENT_HUGEPAGE
+> +	if (pmd_trans_huge(*pmd)) {
+> +		pmd_t pmde;
+> +
+> +		ptl = pmd_trans_huge_lock(pmd, vma);
+> +		if (!ptl)
+> +			return 0;
+> +		pmde = pmdp_get(pmd);
+> +		if (!pmd_present(pmde))
+> +			goto huge_unlock;
+> +
+> +		folio = vm_normal_folio_pmd(vma, addr, pmde);
+> +
+> +		if (damos_va_invalid_folio(folio, s))
+> +			goto huge_unlock;
+> +
+> +		if (!damos_va_filter_out(s, folio, vma, addr, NULL, pmd))
+> +			*sz_filter_passed += folio_size(folio);
+> +		s->last_applied = folio;
+> +
+> +huge_unlock:
+> +		spin_unlock(ptl);
+> +		return 0;
+> +	}
+> +#endif
+> +	start_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
+> +	if (!start_pte)
+> +		return 0;
+> +
+> +	for (; addr < next; pte += nr, addr += nr * PAGE_SIZE) {
+> +		nr = 1;
+> +		ptent = ptep_get(pte);
+> +
+> +		if (pte_none(ptent) || !pte_present(ptent))
+> +			continue;
+> +
+> +		folio = vm_normal_folio(vma, addr, ptent);
+> +
+> +		if (damos_va_invalid_folio(folio, s))
+> +			continue;
+> +
+> +		if (!damos_va_filter_out(s, folio, vma, addr, pte, NULL))
+> +			*sz_filter_passed += folio_size(folio);
+> +		nr = folio_nr_pages(folio);
+> +		s->last_applied = folio;
+> +	}
+> +	pte_unmap_unlock(start_pte, ptl);
+> +	return 0;
+> +}
+> +
+> +static unsigned long damos_va_stat(struct damon_target *target,
+> +		struct damon_region *r, struct damos *s,
+> +		unsigned long *sz_filter_passed)
+> +{
+> +	struct damos_va_stat_private priv;
+> +	struct mm_struct *mm;
+> +	struct mm_walk_ops walk_ops = {
+> +		.pmd_entry = damos_va_stat_pmd_entry,
+> +		.walk_lock = PGWALK_RDLOCK,
+> +	};
+> +
+> +	priv.scheme = s;
+> +	priv.sz_filter_passed = sz_filter_passed;
+> +
+> +	if (!damon_ops_has_filter(s))
 
--- Sebastian
+I suggested to change this function's name to damos_ops_has_filter() on the
+previous patch of this series.  If it is accepted, this should also be updated.
 
->=20
-> > Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-> > ---
-> >  arch/arm64/configs/defconfig | 1 +
-> >  1 file changed, 1 insertion(+)
-> >=20
-> > diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defcon=
-fig
-> > index 8691f0ee44e66..550b2505b5658 100644
-> > --- a/arch/arm64/configs/defconfig
-> > +++ b/arch/arm64/configs/defconfig
-> > @@ -437,6 +437,7 @@ CONFIG_IWLMVM=3Dm
-> >  CONFIG_MWIFIEX=3Dm
-> >  CONFIG_MWIFIEX_SDIO=3Dm
-> >  CONFIG_MWIFIEX_PCIE=3Dm
-> > +CONFIG_MWIFIEX_USB=3Dm
-> >  CONFIG_MT7921E=3Dm
-> >  CONFIG_RSI_91X=3Dm
-> >  CONFIG_WL18XX=3Dm
-> >=20
->=20
->=20
-> --=20
-> TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, German=
-y
-> Amtsgericht M=FCnchen, HRB 105018
-> Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneide=
-r
-> http://www.tq-group.com/
->=20
->=20
->=20
+> +		return 0;
+> +
+> +	mm = damon_get_mm(target);
+> +	if (!mm)
+> +		return 0;
+> +
+> +	mmap_read_lock(mm);
+> +	walk_page_range(mm, r->ar.start, r->ar.end, &walk_ops, &priv);
+> +	mmap_read_unlock(mm);
+> +	mmput(mm);
+> +	return 0;
+> +}
+> +
+>  static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+>  		struct damon_target *t, struct damon_region *r,
+>  		struct damos *scheme, unsigned long *sz_filter_passed)
+> @@ -916,7 +1017,7 @@ static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+>  	case DAMOS_MIGRATE_COLD:
+>  		return damos_va_migrate(t, r, scheme, sz_filter_passed);
+>  	case DAMOS_STAT:
+> -		return 0;
+> +		return damos_va_stat(t, r, scheme, sz_filter_passed);
+>  	default:
+>  		/*
+>  		 * DAMOS actions that are not yet supported by 'vaddr'.
+> -- 
+> 2.43.0
+
+
+Thanks,
+SJ
 
