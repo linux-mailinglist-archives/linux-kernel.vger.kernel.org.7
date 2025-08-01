@@ -1,74 +1,86 @@
-Return-Path: <linux-kernel+bounces-753611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753610-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73B42B18542
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:49:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B856EB18540
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53C554E08C9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:49:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 177471887E7F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:49:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E1CC27AC3D;
-	Fri,  1 Aug 2025 15:49:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE31A27AC34;
+	Fri,  1 Aug 2025 15:49:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="guLTm5sF"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="KZ6bKTLA"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D00226E6FE;
-	Fri,  1 Aug 2025 15:49:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68B8027A906
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:49:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063376; cv=none; b=INAAB0aaQg8y9iddDaRUTPrjYHm4E0lnY8ujCa+u7Cbo75xIuYiH4svjBTVszZc9XENw+I3aikqATAihKfb6W/hpwZIrZe7LN3YB9RY3BRYkEraolbM5YOc1jDP9Dz7BCIGONxh58Ats7/uY+rX7fM77FrjR+hV7dwY5RWt4BzM=
+	t=1754063359; cv=none; b=DuLdEs6H7ZyyxTMKfztULynaMvpv4DRbiwV/dPiIqzEwekWkES5OuiCa2myU7lpIufLZzgPHzGxItwrtNn8RbR93c8QiQ7UrydLnpYGm5AZyMb7NXWW9pPkIPUQJQGDWrmpLTDu/MKkwcx3av+be/EBjzv2pxZTH4cLdHOxi6Ls=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063376; c=relaxed/simple;
-	bh=QCoPCjltl5sUkHOT3VzZASPBoUk/YTB/c3vKnEC8KYs=;
+	s=arc-20240116; t=1754063359; c=relaxed/simple;
+	bh=XU5p7WZyqh3uP1O0X5Eh4WB92edzlxU/5ueYZy2GNkU=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=KDF42q17jXswOKVmx6tbWwJyofw48VUag+sVrQOlgeKHDvAeopFyKbyQ08FEGbVB+o2qYcScCSe7Kum+hBcbOirMgGWi36eXfYzG9pwSNLz/xdjMtka6+ctCT0iCoNKaTHKPBoMazxxFONY9Zd1+ppyEjmlSgWAt+CIxHzIlSqE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=guLTm5sF; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571CBjeu027598;
-	Fri, 1 Aug 2025 15:49:15 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=F8PjZu
-	tGaWkAyc2XStkiJTfqdK/6vprYEQgpgAOqe0A=; b=guLTm5sFtB4N2LvFuGq795
-	9hkypR+OayLHHy8Qv88R/4FTG+Mc1n3nxW2D2c51gtzU/xQxG/xXV4oJK+gMwruV
-	uPyvKpazsCqQPW9UpYcwTUz0z7wBNQaiqOleChypRmzuMfgpfPeE+f6uvVBPW0vQ
-	IsN2sgALpcV+Z+LVjttj4TQCe7FMhqUDQaQJJWpxtOOxEq9NKe8Vg36WbbiXuYkk
-	9aKEhpSqzH1tRiNXzIFlGdICCqztsL8JS/haXC0UF5CNLIF2zuR9W9MYicf9+PXh
-	SGYChlecXVKni9SkUNKSxYvrCvOw9TEhfOp8GVue3TBqGnktWsUKVKwni1SWGdIA
-	==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 487bu0f35q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 15:49:15 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571DvM3C018312;
-	Fri, 1 Aug 2025 15:49:14 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485abpj08x-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 15:49:14 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571FnAJe53019096
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 15:49:10 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3BEBE20043;
-	Fri,  1 Aug 2025 15:49:10 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BBE6320040;
-	Fri,  1 Aug 2025 15:49:08 +0000 (GMT)
-Received: from [9.111.205.109] (unknown [9.111.205.109])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Fri,  1 Aug 2025 15:49:08 +0000 (GMT)
-Message-ID: <2b0d0133-3156-47d8-b046-f93ea6cd40fd@linux.ibm.com>
-Date: Fri, 1 Aug 2025 17:49:08 +0200
+	 In-Reply-To:Content-Type; b=L4Sz2RUFwb3ld/8+0/jAOzMF+RO4LQSzXq3i2OS07HmMD02fU1lQxvXRYCc1L70Utu0XHtkNTpU9F6j1oxXyrmpzfAjIA4btjpsQ2ffd2So6q2QeJq0Bn/HWMhuhbGzOPtHFfkJUwQIFETnV82Q+trAv/tBDcE195h3Bd8zS40Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=KZ6bKTLA; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754063356;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=Az/lcHresqK+moKhYaM464MNdTcCwiYM0QUDNB9aXcU=;
+	b=KZ6bKTLAnQV9yl8LCJA/Y/QnHaBwIIXdX9rSybYCHff26kyxBrnUA2OCZVWjMl7ivuLohe
+	/1m6cK7oRS7kxsS67oR3Q9eC7VMAlfYKCJI8Ulvs2rFpMtfpah7mnew3zhCFjiNSBakabb
+	N661wbrXFdmdReScYVEI3jGlRc0RKBo=
+Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
+ [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-628-B7FYVT3cPtO-nL2SNO13Cg-1; Fri, 01 Aug 2025 11:49:15 -0400
+X-MC-Unique: B7FYVT3cPtO-nL2SNO13Cg-1
+X-Mimecast-MFC-AGG-ID: B7FYVT3cPtO-nL2SNO13Cg_1754063354
+Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-3b7865dc367so1168032f8f.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:49:14 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754063354; x=1754668154;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Az/lcHresqK+moKhYaM464MNdTcCwiYM0QUDNB9aXcU=;
+        b=kPgzl110av/4OAE5hEQ6inH/BB0tx+gLHRUrG38cY5ElNbkSdv/7seFMvFK771I0dp
+         tBKJRZtvyRHBR9QUDIisLoPiQ0YbGP1SLdkD5bmjmGS8Po1LLeNDA5vhLIIJ5KG+HmDd
+         E4pVf9WwgvRAX1c5GZ/opbPHMvxCSkjIGN7g+74t+LKpLWPSNrAxFBUGdRSt9O9fxJuE
+         f0IyLK9H6cCErq9ydSMKE1CJD69R5A2/d5zxmfDb532WQ4L/3ikYSSxcsGpEhLeT7qJ/
+         zSFyc7GjTn4dmF06R1jlCbZgqjSKrfPULbJEIRT2Yllx5kral+4UQM3YbfAY7Q4CNm1s
+         AH7w==
+X-Gm-Message-State: AOJu0YziCMBZnkDqNX7bVu1LAii0D6cYDkkrQTt5MNd1ahcCeQFXIcTn
+	gA3PvFddB7qUUUOA+RLkzZB4x3WzHM/TOxw538dHd3HmDum41FkZNSIGe6ctI1lIyCc63eCB4M2
+	xMoe4akuFJpUOz6X8oxqPvYLUKlHYlhGdB5LpQr1434r50PcA5nLtBO7DtNVE3lRfbw==
+X-Gm-Gg: ASbGncvm5Js4Y+158uKB8bRupfFEIv46iKs9IhrW9yLl2hRlcsB7Gtfh0CUTkilgwz8
+	M/4Af4hLThXh6YU4NWGUfi6jBkNKv8+0viMKLNw9rkAmAK9Ad3Wg3wYh89BiMtvxds4LjaDFiW9
+	jt2rgDYZwYjqpEobKtv2iyuDJya9iYmGWtZjDus2hxSLv+DCcbA4NwXSoXssqic3WnyXC2eqGMO
+	NBI16xn/JHz/7apJcz7W0Z7SWb15tFoJpIb085gDlna6dvIIVXtZHfs0tWSEkEVoqkqB7iFf3+O
+	TsVqMxqGLkZAE88IErv98WNkkdInFSNroqOLLbIXF6sA9UTVhnvo2ngK+DFN/SblgduuSCNPtZb
+	XYuvGWQQXA2jMYca7qC6Dwjeb1mpyNsoqPUY1jcXAIgrZJMdGib1dwfctmdmDFc0j
+X-Received: by 2002:a5d:5d0e:0:b0:3b7:89c2:464b with SMTP id ffacd0b85a97d-3b8d946ac69mr243874f8f.5.1754063353692;
+        Fri, 01 Aug 2025 08:49:13 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH2DBedDYQ23+gwq7i61urTwz0CARF2LptKXy1Zi0AMl+j8e9WYtV69W+oHsDf1pQvk2OOq0w==
+X-Received: by 2002:a5d:5d0e:0:b0:3b7:89c2:464b with SMTP id ffacd0b85a97d-3b8d946ac69mr243821f8f.5.1754063353088;
+        Fri, 01 Aug 2025 08:49:13 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f20:7500:5f99:9633:990e:138? (p200300d82f2075005f999633990e0138.dip0.t-ipconnect.de. [2003:d8:2f20:7500:5f99:9633:990e:138])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4818c1sm6216272f8f.65.2025.08.01.08.49.11
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 08:49:12 -0700 (PDT)
+Message-ID: <d8899e72-5735-4779-9222-5f27f8c16b80@redhat.com>
+Date: Fri, 1 Aug 2025 17:49:10 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,96 +88,279 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 12/16] unwind_user/backchain: Introduce back chain
- user space unwinding
-To: Heiko Carstens <hca@linux.ibm.com>, Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        bpf@vger.kernel.org, x86@kernel.org,
-        Steven Rostedt <rostedt@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Thomas Gleixner <tglx@linutronix.de>,
-        Andrii Nakryiko <andrii@kernel.org>,
-        Indu Bhagat <indu.bhagat@oracle.com>,
-        "Jose E. Marchesi" <jemarch@gnu.org>,
-        Beau Belgrave <beaub@linux.microsoft.com>,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
-        Sam James <sam@gentoo.org>
-References: <20250710163522.3195293-1-jremus@linux.ibm.com>
- <20250710163522.3195293-13-jremus@linux.ibm.com>
- <a4dd5okskro2h45zmqgg3etj6uwici2hoop2uaf6iqrlaej7yh@xlduwjqke4ec>
- <63665c54-db44-452f-b321-1162ff6c3fe4@linux.ibm.com>
- <ddwondzj74rr3fgvsdnkch7trrcwltasb236hvvx5tnywf2lhu@vo47rcoyu2nc>
- <20250801123647.9905A43-hca@linux.ibm.com>
+Subject: Re: [RFC v2 2/4] mm: add static huge zero folio
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>,
+ Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>,
+ Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>,
+ Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>,
+ Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>,
+ Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes
+ <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>,
+ Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org,
+ x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+ "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org,
+ gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+References: <20250724145001.487878-1-kernel@pankajraghav.com>
+ <20250724145001.487878-3-kernel@pankajraghav.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Jens Remus <jremus@linux.ibm.com>
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <20250801123647.9905A43-hca@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=ZNPXmW7b c=1 sm=1 tr=0 ts=688ce1fb cx=c_pps
- a=GFwsV6G8L6GxiO2Y/PsHdQ==:117 a=GFwsV6G8L6GxiO2Y/PsHdQ==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=saB0obKPUKYBhUFmqKIA:9
- a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-ORIG-GUID: TfHxs6ezsH5a6J-EX8IXssNmsml7JaqA
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEyMSBTYWx0ZWRfXzTYt6I3J49MX
- 8bKiaxhUBy0wbPPaSCj0dMwdakpE/Mwo7cOqnnDjqUx9fqvwRxow/MhyN2W8XPyUGRQHwYPZOU4
- Mb1xs+K7iRCX6TymGTr5a3MnTevdSeIQk0izi6OM3THayyvdFvtkNSUPLsifAe0mtGw6x5nSW3/
- aFg9V3K+pM4XmBkOCFRAv22UEP9ibKCgY+ScwktqJVs1UOZXaMAX7LbfrAdSegwxxab/NBYuwwR
- fYBKkwMuRGsY2Oh6tQEgpDLX6P2kjclmoZekUnFB/mPuA1oXQNebVX1/BHeglKBZNu+Rs8Bh8lH
- mDASzmTtmJjF+/rSqpIYE8pvKiOD8QlwijypLU9wbRLfnZNE0r7PNZOF6lQIl7qiUO4lrFcA/VJ
- CqdL6r42pXpHNl+iKiZtLlCg+vYjfbI1wQ4vhzLqJwKXimFh6QkaoiKFNACHX1akPc/i53Tw
-X-Proofpoint-GUID: TfHxs6ezsH5a6J-EX8IXssNmsml7JaqA
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 clxscore=1015 mlxlogscore=968 adultscore=0 priorityscore=1501
- impostorscore=0 suspectscore=0 malwarescore=0 lowpriorityscore=0 spamscore=0
- phishscore=0 mlxscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010121
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <20250724145001.487878-3-kernel@pankajraghav.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 8/1/2025 2:36 PM, Heiko Carstens wrote:
-> On Thu, Jul 17, 2025 at 10:19:54PM -0700, Josh Poimboeuf wrote:
->> On Thu, Jul 17, 2025 at 02:20:12PM +0200, Jens Remus wrote:
-
->> I believe stack_trace_save_user() is only used by ftrace, and that will
->> no longer be needed once ftrace starts using unwind_user.
->>
->> Maybe Heiko knows if that backchain user stacktrace code has any users?
->>
->> If distros aren't building with -mbackchain, maybe backchain support can
->> be considered obsoleted by sframe, and we can get away with not
->> implementing it.
+On 24.07.25 16:49, Pankaj Raghav (Samsung) wrote:
+> From: Pankaj Raghav <p.raghav@samsung.com>
 > 
-> I guess that's a valid option. I know only of some special cases where
-> users compile everything on their own with -mbackchain to make this
-> work on a per-case basis. It shouldn't cause to much pain for them to
-> switch to sframe, as soon as that is available.
+> There are many places in the kernel where we need to zeroout larger
+> chunks but the maximum segment we can zeroout at a time by ZERO_PAGE
+> is limited by PAGE_SIZE.
+> 
+> This is especially annoying in block devices and filesystems where we
+> attach multiple ZERO_PAGEs to the bio in different bvecs. With multipage
+> bvec support in block layer, it is much more efficient to send out
+> larger zero pages as a part of single bvec.
+> 
+> This concern was raised during the review of adding LBS support to
+> XFS[1][2].
+> 
+> Usually huge_zero_folio is allocated on demand, and it will be
+> deallocated by the shrinker if there are no users of it left. At moment,
+> huge_zero_folio infrastructure refcount is tied to the process lifetime
+> that created it. This might not work for bio layer as the completions
+> can be async and the process that created the huge_zero_folio might no
+> longer be alive. And, one of the main point that came during discussion
+> is to have something bigger than zero page as a drop-in replacement.
+> 
+> Add a config option STATIC_HUGE_ZERO_FOLIO that will always allocate
 
-Let me have another stab at a cleaner implementation.  Shouldn't be too
-much effort.  We can then decide whether to leave it out or not.
+"... will result in allocating the huge zero folio on first request, if not already allocated, and turn it static such that it can never get freed."
 
-Will be away from keyboard for a few weeks.
+> the huge_zero_folio, and it will never drop the reference. This makes
+> using the huge_zero_folio without having to pass any mm struct and does
+> not tie the lifetime of the zero folio to anything, making it a drop-in
+> replacement for ZERO_PAGE.
+> 
+> If STATIC_HUGE_ZERO_FOLIO config option is enabled, then
+> mm_get_huge_zero_folio() will simply return this page instead of
+> dynamically allocating a new PMD page.
+> 
+> This option can waste memory in small systems or systems with 64k base
+> page size. So make it an opt-in and also add an option from individual
+> architecture so that we don't enable this feature for larger base page
+> size systems.
+> > [1] https://lore.kernel.org/linux-xfs/20231027051847.GA7885@lst.de/
+> [2] https://lore.kernel.org/linux-xfs/ZitIK5OnR7ZNY0IG@infradead.org/
+> 
+> Co-developed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
+> ---
+>   arch/x86/Kconfig        |  1 +
+>   include/linux/huge_mm.h | 18 ++++++++++++++++++
+>   mm/Kconfig              | 21 +++++++++++++++++++++
+>   mm/huge_memory.c        | 42 +++++++++++++++++++++++++++++++++++++++++
+>   4 files changed, 82 insertions(+)
+> 
+> diff --git a/arch/x86/Kconfig b/arch/x86/Kconfig
+> index 0ce86e14ab5e..8e2aa1887309 100644
+> --- a/arch/x86/Kconfig
+> +++ b/arch/x86/Kconfig
+> @@ -153,6 +153,7 @@ config X86
+>   	select ARCH_WANT_OPTIMIZE_HUGETLB_VMEMMAP	if X86_64
+>   	select ARCH_WANT_HUGETLB_VMEMMAP_PREINIT if X86_64
+>   	select ARCH_WANTS_THP_SWAP		if X86_64
+> +	select ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO if X86_64
+>   	select ARCH_HAS_PARANOID_L1D_FLUSH
+>   	select ARCH_WANT_IRQS_OFF_ACTIVATE_MM
+>   	select BUILDTIME_TABLE_SORT
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 7748489fde1b..78ebceb61d0e 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -476,6 +476,7 @@ vm_fault_t do_huge_pmd_numa_page(struct vm_fault *vmf);
+>   
+>   extern struct folio *huge_zero_folio;
+>   extern unsigned long huge_zero_pfn;
+> +extern atomic_t huge_zero_folio_is_static;
+>   
+>   static inline bool is_huge_zero_folio(const struct folio *folio)
+>   {
+> @@ -494,6 +495,18 @@ static inline bool is_huge_zero_pmd(pmd_t pmd)
+>   
+>   struct folio *mm_get_huge_zero_folio(struct mm_struct *mm);
+>   void mm_put_huge_zero_folio(struct mm_struct *mm);
+> +struct folio *__get_static_huge_zero_folio(void);
+> +
+> +static inline struct folio *get_static_huge_zero_folio(void)
+> +{
+> +	if (!IS_ENABLED(CONFIG_STATIC_HUGE_ZERO_FOLIO))
+> +		return NULL;
+> +
+> +	if (likely(atomic_read(&huge_zero_folio_is_static)))
+> +		return huge_zero_folio;
+> +
+> +	return __get_static_huge_zero_folio();
+> +}
+>   
+>   static inline bool thp_migration_supported(void)
+>   {
+> @@ -685,6 +698,11 @@ static inline int change_huge_pud(struct mmu_gather *tlb,
+>   {
+>   	return 0;
+>   }
+> +
+> +static inline struct folio *get_static_huge_zero_folio(void)
+> +{
+> +	return NULL;
+> +}
+>   #endif /* CONFIG_TRANSPARENT_HUGEPAGE */
+>   
+>   static inline int split_folio_to_list_to_order(struct folio *folio,
+> diff --git a/mm/Kconfig b/mm/Kconfig
+> index 0287e8d94aea..e2132fcf2ccb 100644
+> --- a/mm/Kconfig
+> +++ b/mm/Kconfig
+> @@ -835,6 +835,27 @@ config ARCH_WANT_GENERAL_HUGETLB
+>   config ARCH_WANTS_THP_SWAP
+>   	def_bool n
+>   
+> +config ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO
+> +	def_bool n
+> +
+> +config STATIC_HUGE_ZERO_FOLIO
+> +	bool "Allocate a PMD sized folio for zeroing"
+> +	depends on ARCH_WANTS_STATIC_HUGE_ZERO_FOLIO && TRANSPARENT_HUGEPAGE
+> +	help
+> +	  Without this config enabled, the huge zero folio is allocated on
+> +	  demand and freed under memory pressure once no longer in use.
+> +	  To detect remaining users reliably, references to the huge zero folio
+> +	  must be tracked precisely, so it is commonly only available for mapping
+> +	  it into user page tables.
+> +
+> +	  With this config enabled, the huge zero folio can also be used
+> +	  for other purposes that do not implement precise reference counting:
+> +	  it is still allocated on demand, but never freed, allowing for more
+> +	  wide-spread use, for example, when performing I/O similar to the
+> +	  traditional shared zeropage.
+> +
+> +	  Not suitable for memory constrained systems.
+> +
+>   config MM_ID
+>   	def_bool n
+>   
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 5d8365d1d3e9..c160c37f4d31 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -75,6 +75,7 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+>   static bool split_underused_thp = true;
+>   
+>   static atomic_t huge_zero_refcount;
+> +atomic_t huge_zero_folio_is_static __read_mostly;
+>   struct folio *huge_zero_folio __read_mostly;
+>   unsigned long huge_zero_pfn __read_mostly = ~0UL;
+>   unsigned long huge_anon_orders_always __read_mostly;
+> @@ -266,6 +267,47 @@ void mm_put_huge_zero_folio(struct mm_struct *mm)
+>   		put_huge_zero_page();
+>   }
+>   
+> +#ifdef CONFIG_STATIC_HUGE_ZERO_FOLIO
+> +#define FAIL_COUNT_LIMIT 2
+> +
+> +struct folio *__get_static_huge_zero_folio(void)
+> +{
+> +	static unsigned long fail_count_clear_timer;
+> +	static atomic_t huge_zero_static_fail_count __read_mostly;
+> +
+> +	if (unlikely(!slab_is_available()))
+> +		return NULL;
+> +
+> +	/*
+> +	 * If we failed to allocate a huge zero folio multiple times,
+> +	 * just refrain from trying for one minute before retrying to get
+> +	 * a reference again.
+> +	 */
 
-Regards,
-Jens
+Is this "try twice" really worth it? Just try once, and if it fails, try only again in the future.
+
+I guess we'll learn how that will behave in practice, and how we'll have to fine-tune it :)
+
+
+In shrink_huge_zero_page_scan(), should we probably warn if something buggy happens?
+
+Something like
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2b4ea5a2ce7d2..b1109f8699a24 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -277,7 +277,11 @@ static unsigned long shrink_huge_zero_page_scan(struct shrinker *shrink,
+                                        struct shrink_control *sc)
+  {
+         if (atomic_cmpxchg(&huge_zero_refcount, 1, 0) == 1) {
+-               struct folio *zero_folio = xchg(&huge_zero_folio, NULL);
++               struct folio *zero_folio;
++
++               if (WARN_ON_ONCE(atomic_read(&huge_zero_folio_is_static)))
++                       return 0;
++               zero_folio = xchg(&huge_zero_folio, NULL);
+                 BUG_ON(zero_folio == NULL);
+                 WRITE_ONCE(huge_zero_pfn, ~0UL);
+                 folio_put(zero_folio);
+
+
 -- 
-Jens Remus
-Linux on Z Development (D3303)
-+49-7031-16-1128 Office
-jremus@de.ibm.com
+Cheers,
 
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+David / dhildenb
 
 
