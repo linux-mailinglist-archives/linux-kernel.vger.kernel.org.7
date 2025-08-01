@@ -1,53 +1,53 @@
-Return-Path: <linux-kernel+bounces-753676-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E37B8B18644
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:07:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C433EB18646
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:07:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2B3D73B29B8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:07:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 32D5A586427
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0EE9828D83B;
-	Fri,  1 Aug 2025 17:05:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 204AB28D8CA;
+	Fri,  1 Aug 2025 17:05:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="pIEkt1tI"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="i5iwZ9Tf"
 Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B816128CF6F
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1E6928D832
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754067951; cv=none; b=OoN7ySja6sjNW92zXwZR9cteHv8qAYrw0/RjJ07J++lxy0Gwtf4pbEbk5HouaQ3IWaGlSAnD80MAqyrxfRdb+dUxtVOshQDr+uOaAbNQ6PBq1XCRGNvs7X1+bHm8Dn58wugulOEAWFJU8yz0nROo5oIQJjBXW63oxhPggDANF+g=
+	t=1754067953; cv=none; b=qrULoHgOkMWRiKGaqOTuYzMkyEmR5BjN6ZCNDh1F/Lw4gtwDTtJiFqWoSEw1Uto5wukXPg325LMqs5lmyH0YXrgFT30kpTufeppdAAMCmoq3pcuwCP8LF1ChmT609BzAQeAXk6GH9xQWvszFtIxYs73BBRAjZhs+yW2FsIMOEJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754067951; c=relaxed/simple;
-	bh=1wr4pY14Qj/rPk9kE44VPUFNzqhn6DC/DOgNWyn6Pag=;
+	s=arc-20240116; t=1754067953; c=relaxed/simple;
+	bh=w/BJ7fMVizV1QbXY10lbfVmcof6R6O3rgyWzpCe6JEY=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rAg61B8BLWF7N4qVji7ZeDtwi5yYtooscl5ypcwdvlAZiSz/HwjkoSxtnyxqxPzYMehUTpu4l/eaH2kUD9WetGFuuySHGPJ7G2q/eyzAkX6bs/VigKxTpEkqo+OmMJJFQ5tKhfofmNPkExEv922olivzAm7xL86ZETtcjqAtync=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=pIEkt1tI; arc=none smtp.client-ip=217.70.178.235
+	 In-Reply-To:To:Cc; b=Abum4H2RD2c/k4jc47Ydjtlj9Kd5j7wdww92cIClC8IZb6El55HzmXUUWYob/LhOawdIJvlIPZNMXjehgG/UVowHHDxDPun9WVT5bJ2kk5HjcKZGLmnuCPG6CMFBN4V1t9onfe32llyzsFkTvnnzwr98Qq4M85Ke6pmHI+9JD+4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=i5iwZ9Tf; arc=none smtp.client-ip=217.70.178.235
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 64C054422B;
-	Fri,  1 Aug 2025 17:05:46 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 825E544231;
+	Fri,  1 Aug 2025 17:05:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754067948;
+	t=1754067950;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=VUbWo+HM/+5fZzrD1h8tncqWns2kiFAltInydiNDyQw=;
-	b=pIEkt1tIgtIuAOV+uyZSK/B2X3qrnkAvkdgBR3hVAyjnHsg+2/bGz4iziO3mtGnVRWSzRb
-	SDjpiGli2i6K64kfsSl2Y8uQ0KgBATVJL0SGcwuhHKAUj1Hv5An/DWg2B3IHhSQ5V/Dbw+
-	MYrZ9MfQOGb8OitCySAf5FfKBLikr36cggWZ5/QOM3RjBBLBMrkBpQ+WnadxpSYKidX56H
-	MTjUbrSkoIm2S6M0wkNfVRQDcUs2J0EW5V4FPr5BeW1Phz6jb46sDQKMWJZsYMfkEYTVkF
-	tlAXVzM1whjJdZUcgMFa436TCsVEKqEGsNhvsY1qZCz7mZbGcRpwiGyPMWXnDA==
+	bh=sBfKkiRxGJz6Ks+/SsRe3F2lAIGHaziaErl0jK094+E=;
+	b=i5iwZ9Tfp2mKYtLO8ppoTgMNdkEZUPSZJot+5QWtJrJYUEqp43DCITprQOM0CzrX/w6VHw
+	gFGcitxFug7kStbIa6mIC+FNksvafOnSKYOYbYyYw1h2tQt5PIXxgi/VFkm/7odV4aPZ7N
+	YgAQRNIaYrJE/9YVGwyo6yaWgfCYdhXM7osvWO18ifKshDsPC/1ORtyQALOTPOoYyE+4Jz
+	NUkLOnGI4ySlq3fC88/Gx9hUPw7fTfCA7MmPqXtosTCz/SSxwCd1VCYDb8nkJfZPjiaxEj
+	9C1LOaji9BDsZLROedYpN9c7IWfzyK9xb01nuKA0WUFNczzbO9vEu0cha06eTA==
 From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 01 Aug 2025 19:05:28 +0200
-Subject: [PATCH v2 6/9] drm/display: bridge_connector: use
- drm_bridge_is_last()
+Date: Fri, 01 Aug 2025 19:05:29 +0200
+Subject: [PATCH v2 7/9] drm/bridge: get the bridge returned by
+ drm_bridge_get_next_bridge()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,7 +56,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-6-888912b0be13@bootlin.com>
+Message-Id: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-7-888912b0be13@bootlin.com>
 References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
 In-Reply-To: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>, 
@@ -83,34 +83,43 @@ X-GND-Score: -100
 X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdegvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpeehnecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphdriigrsggvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvl
  hdrohhrghdprhgtphhtthhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
 
-Simplify code to know whether a bridge is the last in the chain by using
-drm_bridge_is_last().
+drm_bridge_get_next_bridge() returns a bridge pointer that the
+caller could hold for a long time. Increment the refcount of the returned
+bridge and document it must be put by the caller.
 
 Reviewed-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
 ---
- drivers/gpu/drm/display/drm_bridge_connector.c | 5 ++---
- 1 file changed, 2 insertions(+), 3 deletions(-)
+ include/drm/drm_bridge.h | 9 ++++++++-
+ 1 file changed, 8 insertions(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/display/drm_bridge_connector.c b/drivers/gpu/drm/display/drm_bridge_connector.c
-index 51f30307d445e5ce1345d11cda391f72e7323533..16cef81d9e115f177fca19fbd9d2f1aaa043a84e 100644
---- a/drivers/gpu/drm/display/drm_bridge_connector.c
-+++ b/drivers/gpu/drm/display/drm_bridge_connector.c
-@@ -749,12 +749,11 @@ struct drm_connector *drm_bridge_connector_init(struct drm_device *drm,
- 				return ERR_PTR(-EINVAL);
- 		}
+diff --git a/include/drm/drm_bridge.h b/include/drm/drm_bridge.h
+index 7aeffb8bb3b2aeeae7a3a19435b6a1cf109a45cd..438885627401533591e15c12e7576c6b3be09e10 100644
+--- a/include/drm/drm_bridge.h
++++ b/include/drm/drm_bridge.h
+@@ -1310,6 +1310,13 @@ drm_bridge_get_current_state(struct drm_bridge *bridge)
+  * drm_bridge_get_next_bridge() - Get the next bridge in the chain
+  * @bridge: bridge object
+  *
++ * The caller is responsible of having a reference to @bridge via
++ * drm_bridge_get() or equivalent. This function leaves the refcount of
++ * @bridge unmodified.
++ *
++ * The refcount of the returned bridge is incremented. Use drm_bridge_put()
++ * when done with it.
++ *
+  * RETURNS:
+  * the next bridge in the chain after @bridge, or NULL if @bridge is the last.
+  */
+@@ -1319,7 +1326,7 @@ drm_bridge_get_next_bridge(struct drm_bridge *bridge)
+ 	if (list_is_last(&bridge->chain_node, &bridge->encoder->bridge_chain))
+ 		return NULL;
  
--		if (!drm_bridge_get_next_bridge(bridge))
-+		if (drm_bridge_is_last(bridge))
- 			connector_type = bridge->type;
+-	return list_next_entry(bridge, chain_node);
++	return drm_bridge_get(list_next_entry(bridge, chain_node));
+ }
  
- #ifdef CONFIG_OF
--		if (!drm_bridge_get_next_bridge(bridge) &&
--		    bridge->of_node)
-+		if (drm_bridge_is_last(bridge) && bridge->of_node)
- 			connector->fwnode = fwnode_handle_get(of_fwnode_handle(bridge->of_node));
- #endif
- 
+ /**
 
 -- 
 2.50.1
