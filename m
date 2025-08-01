@@ -1,56 +1,56 @@
-Return-Path: <linux-kernel+bounces-752915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752916-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1E8B17C55
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:28:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BC6CB17C57
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:29:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CD7717B5915
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:27:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6A497B06AC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 05:28:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F2C61E3DFE;
-	Fri,  1 Aug 2025 05:28:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 754151E3DFE;
+	Fri,  1 Aug 2025 05:29:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EIBgt/Jk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CebuOb0/"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54480139D;
-	Fri,  1 Aug 2025 05:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEB5E139D;
+	Fri,  1 Aug 2025 05:29:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754026125; cv=none; b=pmxmlLgXW80lKxDXHfd74MQIY85iB8vyEeqN8POgZXE6oY7PtuVNC156RnhqZiQQxASmyYhUOsHFc9zPBzVy33VdjU98jNMsn4xpwzx13H/S9h0yNrO+u0sJ4TSm4NFs27RZDWvgahkSLEkb7srjiBDo0Hd5OX+Vz3BuXGKxH5o=
+	t=1754026178; cv=none; b=AGz/Jy/mCA9FI6z7aPW+vkerSJQQJewztCAHJYzZGdIoESZx5eBo8ev5Lk6D4FVg1MAbHE8YBXKUfA9HXHeUM+V+LVrBQJIlH80ORYsCV3sw30Y6L6UkVqqz7Sh4HiEMsz6mdwjegLV5SqFZJBrN/GIA+SdQc54KEoKfYUjsktM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754026125; c=relaxed/simple;
-	bh=ZBHsAN0trNPzYZj8u/UJHqu3Nl7vtcqqbKPxj2t6sbE=;
+	s=arc-20240116; t=1754026178; c=relaxed/simple;
+	bh=8LYkwKyjmxsIeKP0hQS4WPwPD9VbFwotzw7iSKIRj1o=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hsLNNKw6Dub1WKM5u0twvmAbP/mccEaNLav8Lq6yfHhGaDRGhODh3O0EoR7RlT19n7DNX/zG/VKZP3cd2qKqe7fNKNrRLcrFeYm8fV+LX230mJX6jv7LJVozjqEmuyG9Ce88nWgZDdhzBzS2zqBTqgL6Gt3svXwTll8RgLYg4IE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EIBgt/Jk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D44D3C4CEE7;
-	Fri,  1 Aug 2025 05:28:43 +0000 (UTC)
+	 MIME-Version:Content-Type; b=RLV8cLdevi7DmqHpdqQe8DfE3tYhR77qyHhY1o7a0eron+mal+mKsO9jwEoXhn01GuPe4S4jO8rcysVdVnGEKGB7m8boKs8228cs1BPVCG8jOpqnXL0upE/ryTMrMYgzOnJHbMt0HqqZ462Y9LZ8F+B91yCK1GxKLmcbR1cujAg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CebuOb0/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EA6CC4CEE7;
+	Fri,  1 Aug 2025 05:29:37 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754026124;
-	bh=ZBHsAN0trNPzYZj8u/UJHqu3Nl7vtcqqbKPxj2t6sbE=;
+	s=k20201202; t=1754026178;
+	bh=8LYkwKyjmxsIeKP0hQS4WPwPD9VbFwotzw7iSKIRj1o=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EIBgt/Jky+7c6uMbLxNTDX4KmiVPT/F5bHHgCOxIDd7s9HZBSIZBcsGz4oAtBnm38
-	 tkPuH/2hW4yjeRP+qEYfSl1onOAajOifIe7BDtIXxn2/ZGOpZ2sTaXwxaKPp6XhpU8
-	 9N2J3cYcgjsBppMMXAAnsx2kT9yxbCtZ6JDcrcqwjxOva4YvJAJc3mXzNF+AXaEd3m
-	 7RDv9DQwN596JNNyIlbPtmKhy9XdsV0rMRh1M3kjav5ESAp6pCRNnPWMNg82henHkO
-	 krx+R3xtcKq/DW2yJzrFdNc0GX4YEwpUD6E3hweJzG8Z7k+FO+qBZc1eQCZknME3F8
-	 8xRO/RlqiAF2w==
-Date: Fri, 1 Aug 2025 07:28:41 +0200
+	b=CebuOb0/AZrk5+jjgrP9hSgD3wZVUVLfKqJkfZhSG8I/6SVQfCR10Fij7oMQyHCKY
+	 eU2X1vx/eNc++/JaTzI70UgYqfHrhMXZni8qpAfLLfjUGvDjXb5gUSW+HoP7QajPsR
+	 vfDny+bae3TKs6hPjvuxgE2mVkKx+VbOZadHVbZKQKwGGPkzxJghP58XZ2INBc6wb2
+	 1JJ0EDsZx4XPLkCbbYD2med1bEi9nfyCPV7fdwVJlVEMNhonC+dCxDiSzieiKkFeSi
+	 W+vUldAD6oDJ0ihM/I2+xVe+neXuNgW+Jl82sVu2ZgaQZh3Ul6LxFsB2a+FVFzL5f0
+	 bZjLJQfy+gN1g==
+Date: Fri, 1 Aug 2025 07:29:34 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>
-Subject: Re: [PATCH 04/12] docs: kdoc: move the prefix transforms out of
- dump_struct()
-Message-ID: <20250801072841.0246eeac@foz.lan>
-In-Reply-To: <20250801001326.924276-5-corbet@lwn.net>
+Subject: Re: [PATCH 01/12] docs: kdoc: consolidate the stripping of private
+ struct/union members
+Message-ID: <20250801072934.47963ad7@foz.lan>
+In-Reply-To: <20250801001326.924276-2-corbet@lwn.net>
 References: <20250801001326.924276-1-corbet@lwn.net>
-	<20250801001326.924276-5-corbet@lwn.net>
+	<20250801001326.924276-2-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,143 +61,112 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Thu, 31 Jul 2025 18:13:18 -0600
+Em Thu, 31 Jul 2025 18:13:15 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> dump_struct is one of the longest functions in the kdoc_parser class,
-> making it hard to read and reason about.  Move the definition of the prefix
-> transformations out of the function, join them with the definition of
-> "attribute" (which was defined at the top of the file but only used here),
-> and reformat the code slightly for shorter line widths.
+> There were two locations duplicating the logic of stripping private members
+> and associated comments; coalesce them into one, and add some comments
+> describing what's going on.
 > 
-> Just code movement in the end.
-
-This patch itself LGTM:
+> Output change: we now no longer add extraneous white space around macro
+> definitions.
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
-but see my notes below:
-
-> +struct_prefixes = [
-> +    # Strip attributes
-> +    (struct_attribute, ' '),
-> +    (KernRe(r'\s*__aligned\s*\([^;]*\)', re.S), ' '),
-> +    (KernRe(r'\s*__counted_by\s*\([^;]*\)', re.S), ' '),
-> +    (KernRe(r'\s*__counted_by_(le|be)\s*\([^;]*\)', re.S), ' '),
-> +    (KernRe(r'\s*__packed\s*', re.S), ' '),
-> +    (KernRe(r'\s*CRYPTO_MINALIGN_ATTR', re.S), ' '),
-> +    (KernRe(r'\s*____cacheline_aligned_in_smp', re.S), ' '),
-> +    (KernRe(r'\s*____cacheline_aligned', re.S), ' '),
+> ---
+>  scripts/lib/kdoc/kdoc_parser.py | 40 ++++++++++++++++++---------------
+>  1 file changed, 22 insertions(+), 18 deletions(-)
+> 
+> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
+> index c3fe4bd5eab4..93fcd8807aa8 100644
+> --- a/scripts/lib/kdoc/kdoc_parser.py
+> +++ b/scripts/lib/kdoc/kdoc_parser.py
+> @@ -81,6 +81,21 @@ multi_space = KernRe(r'\s\s+')
+>  def trim_whitespace(s):
+>      return multi_space.sub(' ', s.strip())
+>  
+> +#
+> +# Remove struct/enum members that have been marked "private".
+> +#
+> +def trim_private_members(text):
 > +    #
-> +    # Unwrap struct_group macros based on this definition:
-> +    # __struct_group(TAG, NAME, ATTRS, MEMBERS...)
-> +    # which has variants like: struct_group(NAME, MEMBERS...)
-> +    # Only MEMBERS arguments require documentation.
+> +    # First look for a "public:" block that ends a private region, then
+> +    # handle the "private until the end" case.
 > +    #
-> +    # Parsing them happens on two steps:
+> +    text = KernRe(r'/\*\s*private:.*?/\*\s*public:.*?\*/', flags=re.S).sub('', text)
+> +    text = KernRe(r'/\*\s*private:.*', flags=re.S).sub('', text)
 > +    #
-> +    # 1. drop struct group arguments that aren't at MEMBERS,
-> +    #    storing them as STRUCT_GROUP(MEMBERS)
+> +    # We needed the comments to do the above, but now we can take them out.
 > +    #
-> +    # 2. remove STRUCT_GROUP() ancillary macro.
-> +    #
-> +    # The original logic used to remove STRUCT_GROUP() using an
-> +    # advanced regex:
-> +    #
-> +    #   \bSTRUCT_GROUP(\(((?:(?>[^)(]+)|(?1))*)\))[^;]*;
-> +    #
-> +    # with two patterns that are incompatible with
-> +    # Python re module, as it has:
-> +    #
-> +    #   - a recursive pattern: (?1)
-> +    #   - an atomic grouping: (?>...)
-> +    #
-> +    # I tried a simpler version: but it didn't work either:
-> +    #   \bSTRUCT_GROUP\(([^\)]+)\)[^;]*;
-> +    #
-> +    # As it doesn't properly match the end parenthesis on some cases.
-> +    #
-> +    # So, a better solution was crafted: there's now a NestedMatch
-> +    # class that ensures that delimiters after a search are properly
-> +    # matched. So, the implementation to drop STRUCT_GROUP() will be
-> +    # handled in separate.
-> +    #
-> +    (KernRe(r'\bstruct_group\s*\(([^,]*,)', re.S), r'STRUCT_GROUP('),
-> +    (KernRe(r'\bstruct_group_attr\s*\(([^,]*,){2}', re.S), r'STRUCT_GROUP('),
-> +    (KernRe(r'\bstruct_group_tagged\s*\(([^,]*),([^,]*),', re.S), r'struct \1 \2; STRUCT_GROUP('),
-> +    (KernRe(r'\b__struct_group\s*\(([^,]*,){3}', re.S), r'STRUCT_GROUP('),
-> +    #
-> +    # Replace macros
-> +    #
-> +    # TODO: use NestedMatch for FOO($1, $2, ...) matches
+> +    return KernRe(r'\s*/\*.*?\*/\s*', flags=re.S).sub('', text).strip()
+> +
+>  class state:
+>      """
+>      State machine enums
+> @@ -568,12 +583,6 @@ class KernelDoc:
+>          args_pattern = r'([^,)]+)'
+>  
+>          sub_prefixes = [
+> -            (KernRe(r'\/\*\s*private:.*?\/\*\s*public:.*?\*\/', re.S | re.I), ''),
+> -            (KernRe(r'\/\*\s*private:.*', re.S | re.I), ''),
+> -
+> -            # Strip comments
+> -            (KernRe(r'\/\*.*?\*\/', re.S), ''),
+> -
+>              # Strip attributes
+>              (attribute, ' '),
+>              (KernRe(r'\s*__aligned\s*\([^;]*\)', re.S), ' '),
+> @@ -648,6 +657,7 @@ class KernelDoc:
+>              (re.compile(r'\bSTRUCT_GROUP\('), r'\1'),
+>          ]
+>  
+> +        members = trim_private_members(members)
+>          for search, sub in sub_prefixes:
+>              members = search.sub(sub, members)
+>  
+> @@ -797,24 +807,18 @@ class KernelDoc:
+>          """
+>          Stores an enum inside self.entries array.
+>          """
+> -
+> -        # Ignore members marked private
+> -        proto = KernRe(r'\/\*\s*private:.*?\/\*\s*public:.*?\*\/', flags=re.S).sub('', proto)
+> -        proto = KernRe(r'\/\*\s*private:.*}', flags=re.S).sub('}', proto)
+> -
+> -        # Strip comments
+> -        proto = KernRe(r'\/\*.*?\*\/', flags=re.S).sub('', proto)
+> -
+> -        # Strip #define macros inside enums
+> +        #
+> +        # Strip preprocessor directives.  Note that this depends on the
+> +        # trailing semicolon we added in process_proto_type().
+> +        #
+>          proto = KernRe(r'#\s*((define|ifdef|if)\s+|endif)[^;]*;', flags=re.S).sub('', proto)
+> -
+>          #
+>          # Parse out the name and members of the enum.  Typedef form first.
+>          #
+>          r = KernRe(r'typedef\s+enum\s*\{(.*)\}\s*(\w*)\s*;')
+>          if r.search(proto):
+>              declaration_name = r.group(2)
+> -            members = r.group(1).rstrip()
+> +            members = trim_private_members(r.group(1))
+>          #
+>          # Failing that, look for a straight enum
+>          #
+> @@ -822,7 +826,7 @@ class KernelDoc:
+>              r = KernRe(r'enum\s+(\w*)\s*\{(.*)\}')
+>              if r.match(proto):
+>                  declaration_name = r.group(1)
+> -                members = r.group(2).rstrip()
+> +                members = trim_private_members(r.group(2))
+>          #
+>          # OK, this isn't going to work.
+>          #
 
-This comment is actually related to patch 03/12: regex cleanups:
 
-If you want to simplify a lot the regular expressions here, the best
-is to take a look at the NestedMatch class and improve it. There are lots
-of regular expressions here that are very complex because they try
-to ensure that something like these:
-
-	1. function(<arg1>)
-	2. function(<arg1>, <arg2>,<arg3>,...)
-
-are properly parsed[1], but if we turn it into something that handle (2) as 
-well, we could use it like:
-
-	match = NestedMatch.search("function", string)
-	# or, alternatively:
-	# match = NestedMatch.search("function($1, $2, $3)", string)
-
-	if match:
-		arg1 = match.group(1)
-		arg2 = match.group(2)
-		arg3 = match.group(3)
-
-or even do more complex changes like:
-
-	NestedMatch.sub("foo($1, $2)", "new_name($2)", string)
-
-A class implementing that will help to transform all sorts of functions
-and simplify the more complex regexes on kernel-doc. Doing that will
-very likely simplify a lot the struct_prefixes, replacing it by something
-a lot more easier to understand:
-
-	# Nice and simpler set of replacement rules
-	struct_nested_matches = [
-		("__aligned", ""),
-		("__counted_by", ""),
-		("__counted_by_(be|le)", ""),
-	...
-		# Picked those from stddef.h macro replacement rules
-		("struct_group(NAME, MEMBERS...)", "__struct_group(, NAME, , MEMBERS)"),
-		("struct_group(TAG, NAME, ATTRS, MEMBERS...)",
-		 """	__struct_group(TAG, NAME, ATTRS, MEMBERS...)
-		        union {
-		                struct { MEMBERS } ATTRS;
-		                struct __struct_group_tag(TAG) { MEMBERS } ATTRS NAME;
-		        } ATTRS"""),
-	...
-	]
-
-	members = trim_private_members(members)
-	for from, to in struct_nested_matches:
-              members = NestedMatch.sub(from, to, members)
-		
-Granted, wiring this up takes some time and lots of testing - we should
-likely have some unit tests to catch issues there - but IMO it is
-worth the effort.
-
--
-
-[1] NestedMatch() is currently limited to match function(<args>), as it was
-    written to replace really complex regular expressions with 
-    recursive patterns and atomic grouping, that were used only to
-    capture macro calls for: 
-
-	STRUCT_GROUP(...)
-
-   I might have used instead "import regex", but I didn't want to add the
-   extra dependency of a non-standard Python library at the Kernel build.
 
 Thanks,
 Mauro
