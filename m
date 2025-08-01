@@ -1,122 +1,163 @@
-Return-Path: <linux-kernel+bounces-753679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3FF8B18647
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:07:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 026B9B18631
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:06:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B66416A6CC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:07:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625D11C25E14
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:06:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EE681E51EB;
-	Fri,  1 Aug 2025 17:05:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="ZVaSEqkL"
-Received: from relay15.mail.gandi.net (relay15.mail.gandi.net [217.70.178.235])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4DF1DF751;
+	Fri,  1 Aug 2025 17:05:39 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3818D28DB56
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.235
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD01D5CE8
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754067957; cv=none; b=QE1RC3zcCYGBxgA0ZOA/oUaW5fbiGoObthlU3s6ygiMmmt2kLuakYoDoof/lq0LVZ7RIWKsC+uagZ42YuwLyP/0oSToRZ/NvtpbsbNmThZnQM+ohh6dIqeFlzNg7RAv8uJJPg+qHoi1Fd1UaF8LxYnZ5NsTw7gatFo47na7c/WY=
+	t=1754067938; cv=none; b=MZmybK3XfI0J+3V7Guv+FV0X07XHzO7iAmjBw7BvfMuLnyacqoESXOM/y15gjDsQLlGvBl7j8sYumCTlHFPa+MaTGicgXSWfVNjOvAEzORV/LKbGALUTtE+B+uUTn3wVrhRC2jl7fpKpuzh7d2XjXDMuUf9AqQPavlE2+ZXIU7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754067957; c=relaxed/simple;
-	bh=gcFvo/JjrVKXXpPE8TUebPahDp9SOQ6p8i5ihc5whYE=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=lpKvwunVQI5fsn/4SsFYOfdeup4aVXV/WAny49e+yn0+YgzcO4FZz6j/Voh+Y7V3HEc6M1CfK6rt7Z11m5yFSoyBkScc1Jj1sJ0ycmJNUm0gq1rLQqmfOtd8mH3hJrqv1y7FpX9CCKhCbsrZm2hvViLcuowSwtPOuyXagzQf3ws=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=ZVaSEqkL; arc=none smtp.client-ip=217.70.178.235
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id BD64C4422B;
-	Fri,  1 Aug 2025 17:05:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754067954;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XcuTwTnp9hmUdkX4u4R4cvzducFsDjBGc7V31uTMxgU=;
-	b=ZVaSEqkLA5dCJMDkriICUJn0u/r70N0foxiL23r6a2Q4qlQea8L9rLuxIKdG3wapqBM0GV
-	Kk34eG8bb96YWznUrHv2xBHvNn/RBfwiIx1sJwNcRyUtGf0bTqq53y8z8rE00gYixWRGe9
-	axzPSwxEU3Fo6CfczAzJkobm84F3pF6oKjZIHTiqLiC6HVqaYr3qWJOTRu4i+yA57Jecq4
-	XVosTWbIgKaLmWDltp0xs/qm1nLHtMi3jsG74UfWx8ovISQsyIUj2b3ANa34rxkd0N25fk
-	PpNsYzYlOxJcWVnsda8o+ZDABxLOi/LISJJK7A+VEktYcKffUCLM6Zmq5tp5eQ==
-From: Luca Ceresoli <luca.ceresoli@bootlin.com>
-Date: Fri, 01 Aug 2025 19:05:31 +0200
-Subject: [PATCH v2 9/9] drm/imx: parallel-display: put the bridge returned
- by drm_bridge_get_next_bridge()
+	s=arc-20240116; t=1754067938; c=relaxed/simple;
+	bh=P/EWMU55Bbw22j9djSvCpDxyIpppaJ8q75soyuqUxP0=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HoLQ/EJLAyQTY9VGPPXth0Dwr2pkTm9+qJMq/toroMDPSlWWIBR7uL8okKa07vV2a6xeMFBmLRdT0txiUsHoN8oWbbu+4GjOLLPfo9f93pn/tMRZYaqwebnp/Z9paYDmxkE57eRQFrj+CAM2zvmu/ZG/3RSdO9iU+0xRBWIIjuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8815c09028cso75327739f.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:05:37 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754067936; x=1754672736;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=XKh/YQKlGzOI37lKmU7d8abAM5JFeACMI2cvGMEujOM=;
+        b=qojA9oXK8aflaNZRN5ZaMXXfiwIsgYtN/fzsIKeKf6YUK06wTs1C/wk3JjFBeu8TWt
+         PZI9TmtYvF6GSjxrq6VBofgW45RS1Nfimwjmdj5V3otjJujuZFj3B+1CIn9MqqVgzMxc
+         qGo24XqBWDIUZuOUr7HsUR6XGCyLral5ZchQv3AHG5nXES1UzrjoNU8byexcxAiQSlYr
+         JaMhbmNEssUWwkT6VMVXFKtve/dC2cJesQca3l8TIdB6vM4wuxKcupylj5xyzYht5ket
+         YSs6Yr8sf8tbV3YmqRVRiatuWoeqUR2I4rW6Gq0FYdJebT6e2dAMz1nhtWgDSz6Cgw+n
+         AuKw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFSScoK8U+FnmNbevUi4HeN2rI1X7HQy0oQoY2sRXAXgStDa2sXVNzVFUldzVNs85ozg3TZGyftYrpDZk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwXxHxMPpTP1NDvyN1tXrecAObpfJ4+e2cuxFd5s3eddhjqjuGy
+	t/yBiK7v6189dG4gXdWuLj39ojRgAsbeXcNZXozaoWj4exwfVwv5mLwidX/91Zv+8nHIj2I7Y0z
+	tbJ+BysUMmVmKN99cgvlAvUT71Lh4MVx8hRyy3uvYxpBSEnz3NtxVZnpMwjk=
+X-Google-Smtp-Source: AGHT+IGFxU2go7qrm/g+T40B6IlNKxMC8MHoIdK5CXWem1W0UsFB6XeS8sCDoJsztarB2VEgrjLYn/T/zW4Os8ztImRXKZuZufWc
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-9-888912b0be13@bootlin.com>
-References: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
-In-Reply-To: <20250801-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v2-0-888912b0be13@bootlin.com>
-To: Andrzej Hajda <andrzej.hajda@intel.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, 
- Laurent Pinchart <Laurent.pinchart@ideasonboard.com>, 
- Jonas Karlman <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
- Liu Ying <victor.liu@nxp.com>, Shawn Guo <shawnguo@kernel.org>, 
- Sascha Hauer <s.hauer@pengutronix.de>, 
- Pengutronix Kernel Team <kernel@pengutronix.de>, 
- Fabio Estevam <festevam@gmail.com>, 
- Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, 
- Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Hui Pu <Hui.Pu@gehealthcare.com>, 
- Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
- imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, 
- Luca Ceresoli <luca.ceresoli@bootlin.com>
-X-Mailer: b4 0.14.2
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdegvdegucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhfffugggtgffkfhgjvfevofesthejredtredtjeenucfhrhhomhepnfhutggrucevvghrvghsohhlihcuoehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeeiieeuvdfftefgueduleehueetgffgjeeitedtteetkeeuueeuueekveevvdeuveenucfkphepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgenucevlhhushhtvghrufhiiigvpeeknecurfgrrhgrmhepihhnvghtpedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvpdhhvghloheplgduledvrdduieekrddujeekrdduudekngdpmhgrihhlfhhrohhmpehluhgtrgdrtggvrhgvshholhhisegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedvhedprhgtphhtthhopehmrggrrhhtvghnrdhlrghnkhhhohhrshhtsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphdriigrsggvlhesphgvnhhguhhtrhhonhhigidruggvpdhrtghpthhtohepshhhrgifnhhguhhosehkvghrnhgvl
- hdrohhrghdprhgtphhtthhopefjuhhirdfruhesghgvhhgvrghlthhhtggrrhgvrdgtohhmpdhrtghpthhtohepughrihdquggvvhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopegrnhgurhiivghjrdhhrghjuggrsehinhhtvghlrdgtohhmpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhm
+X-Received: by 2002:a05:6602:1:b0:876:19b9:1aaa with SMTP id
+ ca18e2360f4ac-881683c9f9dmr29312639f.9.1754067936350; Fri, 01 Aug 2025
+ 10:05:36 -0700 (PDT)
+Date: Fri, 01 Aug 2025 10:05:36 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688cf3e0.a00a0220.26d0e1.0074.GAE@google.com>
+Subject: [syzbot] [usb?] upstream test error: BUG: sleeping function called
+ from invalid context in kcov_remote_start
+From: syzbot <syzbot+95069c82577357ff89d8@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, llvm@lists.linux.dev, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-The bridge returned by drm_bridge_get_next_bridge() is refcounted. Put it
-when done. We need to ensure it is not put before either next_bridge or
-next_bridge_state is in use, thus for simplicity use a cleanup action.
+Hello,
 
-Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+syzbot found the following issue on:
+
+HEAD commit:    89748acdf226 Merge tag 'drm-next-2025-08-01' of https://gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=164a9cf0580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=caba3b7d5edc3bd1
+dashboard link: https://syzkaller.appspot.com/bug?extid=95069c82577357ff89d8
+compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/7d6418d10fb8/disk-89748acd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/4608f748b818/vmlinux-89748acd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/92e2adcd74de/bzImage-89748acd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+95069c82577357ff89d8@syzkaller.appspotmail.com
+
+BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
+in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 30, name: ksoftirqd/1
+preempt_count: 0, expected: 0
+RCU nest depth: 2, expected: 2
+7 locks held by ksoftirqd/1/30:
+ #0: ffffffff8d64a6a0 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
+ #1: ffff8880b8923d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+ #1: ffff8880b8923d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
+ #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
+ #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
+ #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
+ #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1bb/0x2c0 kernel/locking/spinlock_rt.c:57
+ #3: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
+ #4: ffff88801989a138 ((wq_completion)events_bh){+...}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
+ #4: ffff88801989a138 ((wq_completion)events_bh){+...}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
+ #5: ffffc90000a4fa00 ((work_completion)(&bh->bh)){+...}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
+ #5: ffffc90000a4fa00 ((work_completion)(&bh->bh)){+...}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
+ #6: ffff8880b8928b50 ((lock)#3){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
+ #6: ffff8880b8928b50 ((lock)#3){+.+.}-{3:3}, at: kcov_remote_start+0x92/0x460 kernel/kcov.c:865
+irq event stamp: 58091
+hardirqs last  enabled at (58090): [<ffffffff8af459c5>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
+hardirqs last  enabled at (58090): [<ffffffff8af459c5>] _raw_spin_unlock_irqrestore+0x85/0x110 kernel/locking/spinlock.c:194
+hardirqs last disabled at (58091): [<ffffffff86a72b95>] kcov_remote_start_usb_softirq include/linux/kcov.h:88 [inline]
+hardirqs last disabled at (58091): [<ffffffff86a72b95>] __usb_hcd_giveback_urb+0x3f5/0x710 drivers/usb/core/hcd.c:1662
+softirqs last  enabled at (58074): [<ffffffff8184ff9e>] ksoftirqd_run_end kernel/softirq.c:282 [inline]
+softirqs last  enabled at (58074): [<ffffffff8184ff9e>] run_ksoftirqd+0xce/0x210 kernel/softirq.c:969
+softirqs last disabled at (58082): [<ffffffff818e7aff>] smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+CPU: 1 UID: 0 PID: 30 Comm: ksoftirqd/1 Tainted: G        W           6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT_{RT,(full)} 
+Tainted: [W]=WARN
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
+Call Trace:
+ <TASK>
+ dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
+ __might_resched+0x44b/0x5d0 kernel/sched/core.c:8957
+ __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
+ rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
+ spin_lock include/linux/spinlock_rt.h:44 [inline]
+ kcov_remote_start+0x92/0x460 kernel/kcov.c:865
+ kcov_remote_start_usb include/linux/kcov.h:55 [inline]
+ kcov_remote_start_usb_softirq include/linux/kcov.h:89 [inline]
+ __usb_hcd_giveback_urb+0x427/0x710 drivers/usb/core/hcd.c:1662
+ usb_giveback_urb_bh+0x296/0x420 drivers/usb/core/hcd.c:1697
+ process_one_work kernel/workqueue.c:3236 [inline]
+ process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
+ bh_worker+0x2b1/0x600 kernel/workqueue.c:3579
+ tasklet_action+0xc/0x70 kernel/softirq.c:854
+ handle_softirqs+0x22f/0x710 kernel/softirq.c:579
+ run_ksoftirqd+0xac/0x210 kernel/softirq.c:968
+ smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
+ kthread+0x70e/0x8a0 kernel/kthread.c:464
+ ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
+ </TASK>
+
 
 ---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-Changed in v2:
-- use cleanup action instead of explicit drm_bridge_put(), also fixing the
-  place where the ref is put
----
- drivers/gpu/drm/imx/ipuv3/parallel-display.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-diff --git a/drivers/gpu/drm/imx/ipuv3/parallel-display.c b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-index 6d8325c766979aa3ba98970f00806e99c139d3c3..dfdeb926fe9ca395c6843ec7976c8d00791dfbd2 100644
---- a/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-+++ b/drivers/gpu/drm/imx/ipuv3/parallel-display.c
-@@ -134,10 +134,10 @@ static int imx_pd_bridge_atomic_check(struct drm_bridge *bridge,
- 	struct imx_crtc_state *imx_crtc_state = to_imx_crtc_state(crtc_state);
- 	struct drm_display_info *di = &conn_state->connector->display_info;
- 	struct drm_bridge_state *next_bridge_state = NULL;
--	struct drm_bridge *next_bridge;
- 	u32 bus_flags, bus_fmt;
- 
--	next_bridge = drm_bridge_get_next_bridge(bridge);
-+	struct drm_bridge *next_bridge __free(drm_bridge_put) = drm_bridge_get_next_bridge(bridge);
-+
- 	if (next_bridge)
- 		next_bridge_state = drm_atomic_get_new_bridge_state(crtc_state->state,
- 								    next_bridge);
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
--- 
-2.50.1
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
 
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
