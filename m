@@ -1,137 +1,101 @@
-Return-Path: <linux-kernel+bounces-752803-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752806-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D63F7B17B1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:14:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D689B17B28
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 103E11691DA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:14:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B3906252E1
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:18:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1E9D8615A;
-	Fri,  1 Aug 2025 02:14:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 864B48528E;
+	Fri,  1 Aug 2025 02:18:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="RmJ5JaV4"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="BLlEkbJP"
+Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDEE72A8C1
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 02:14:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2842E23A6;
+	Fri,  1 Aug 2025 02:18:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754014458; cv=none; b=TLHA72k4pooxie2F4lFPag2xvrU/DQ54dgYezfEhNYseWwaj99mgOaKXo79B4Hvo9sEp1zZ6iJ5GfZaxzYRQuitAgOz6Wkk+Im8M7TjjWJVynueHRQwZyxfkHAMA8HZcPj70oMF6ZJgsB6sI13nqg88+eC8TYxgoPGk4nIwfCcw=
+	t=1754014703; cv=none; b=rKSkoHMnFKjVRyMcaMDp3zyTh5jzhmC9tbKvqoeip7wtzeNtjXKgufsVJdKA3bzDR5xPtVhSR1pEGHRJaMjo7FihIhwXDLlNeISIbVSTE+7yAXOu09D94hw+OdQQsX6pUUkIRLU8EBCaqDWn+smMRA/e9n1UdkTiZR7iG5UczXs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754014458; c=relaxed/simple;
-	bh=dGdzesUjLFEVzlQbZipjk40EVtyj/CBR1JgeHdoE1xk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GFkiLfDt2b0zk3ZYiD5MJiAvsk4Qq0kSg8tUcbv54SXPA+oJQgCuwKMKdDWoaNN/i+ONooRstjDTyzaRce0nVvvNc9/+bvPpXhR8pLN/GS55wFNsswLUOPrxmZC8uMCi3SK453/0bw1gqhDrIelpyOkdK64BDEGx4jMSu7v1Klc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=RmJ5JaV4; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=9Lgo
-	ZWBHB5DU+NfJH/hzoVfR/ri0ZYwSy5XsBwi6rUs=; b=RmJ5JaV4papSEg8CETVA
-	KWwkFcLIvf7E7ZnqYA0JBHqnradOBVmrGovX5YGcYY90Gttgdg6NfK9vOYicd8lE
-	bQk68gXPKsXplAOM2dG3mIiov5/j8Q9ip32jRB6M9TUDlnzSNLqdAreRmBOcCTDQ
-	p/8EATR1DSKnSXqZC0KKqs7chcU5hGxM4vPzH6Ji9d2Lg4j6AB3wkB/n57To7l7a
-	/NxxOAEackZvxNK7cwa5TEKQwpfUwpQhLgeuy9k0MpD3ciWtf1uBtIJkNBSUJmqp
-	TmEJv222OXJg39pMLPgLCIC5lWwKjHqjjgCUVY7QphDUHc2XoMVgsAQGDR+44LVM
-	Dw==
-Received: (qmail 573495 invoked from network); 1 Aug 2025 04:14:13 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 1 Aug 2025 04:14:13 +0200
-X-UD-Smtp-Session: l3s3148p1@fOFuUEQ7Tt8ujnum
-Date: Fri, 1 Aug 2025 04:14:13 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Wojciech Siudy <wojciech.siudy@nokia.com>
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org,
-	peda@axentia.se, andi.shyti@kernel.org, mariusz.madej@nokia.com
-Subject: Re: [PATCH v6 RESEND 2/2] i2c: muxes: pca954x: Reset if (de)select
- fails
-Message-ID: <aIwi9finiCDE4H0F@ninjato>
-References: <20250603124721.449739-1-wojciech.siudy@nokia.com>
- <20250603124721.449739-3-wojciech.siudy@nokia.com>
- <aIdTSrxDFSt98Tjl@shikoro>
+	s=arc-20240116; t=1754014703; c=relaxed/simple;
+	bh=Md2cpuXgZrKfMPSfIpHczNo6pyyNcUXjBUarsS6o3rM=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=o/Nd3gj8rglrxThayQeHFZr9vVCSN6DcxglnRMiuuGeTqe/0cnMcZM8twMpMAJmTQQ//q/jCSJ74NesCYZiHcZoOofRM9GkooFwnlvV5WYcyR4TEXhL2vTDvxZVtTOuq0T9qGCnsFMHZzApFXT66t2vf643yl4fb5hYOJPMhvhE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=BLlEkbJP; arc=none smtp.client-ip=198.47.23.234
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5712GngA3167522;
+	Thu, 31 Jul 2025 21:16:49 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754014609;
+	bh=NEf6+Wn7npPE6ubolcnCVOLm0CSG0zu38AOL8OQ/FiI=;
+	h=From:To:CC:Subject:Date;
+	b=BLlEkbJPqZUI7sQMqOAqciu1LyOSpGVaL8tKjdaefFgCMfsZvSMVgZa3bOBrOHTiT
+	 j1ulcX/nZGaFetgVFg2F2nzeennkW4jGbl6BLtuNBj7YMaQRunKKf5IjEd7IUW+sxY
+	 /4mKJV2vJZ+t0ASnpsDNoZZkjveN6O2J1ZcFIV3g=
+Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5712GniP204466
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Thu, 31 Jul 2025 21:16:49 -0500
+Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
+ (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Thu, 31
+ Jul 2025 21:16:48 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DFLE103.ent.ti.com
+ (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Thu, 31 Jul 2025 21:16:48 -0500
+Received: from lelvem-mr06.itg.ti.com ([10.250.165.138])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5712Gi6b3551650;
+	Thu, 31 Jul 2025 21:16:45 -0500
+From: Baojun Xu <baojun.xu@ti.com>
+To: <broonie@kernel.org>
+CC: <tiwai@suse.de>, <andriy.shevchenko@linux.intel.com>,
+        <13916275206@139.com>, <alsa-devel@alsa-project.org>,
+        <shenghao-ding@ti.com>, <baojun.xu@ti.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v1] ASoC: tas2781: Fix the wrong step for TLV on tas2781
+Date: Fri, 1 Aug 2025 10:16:18 +0800
+Message-ID: <20250801021618.64627-1-baojun.xu@ti.com>
+X-Mailer: git-send-email 2.43.0.windows.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="I+zIa8JerNr8QgU1"
-Content-Disposition: inline
-In-Reply-To: <aIdTSrxDFSt98Tjl@shikoro>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+The step for TLV on tas2781, should be 50 (-0.5dB).
 
---I+zIa8JerNr8QgU1
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Fixes: 678f38eba1f2 ("ASoC: tas2781: Add Header file for tas2781 driver")
+Signed-off-by: Baojun Xu <baojun.xu@ti.com>
+---
+ include/sound/tas2781-tlv.h | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
+diff --git a/include/sound/tas2781-tlv.h b/include/sound/tas2781-tlv.h
+index d87263e43fdb..ef9b9f19d212 100644
+--- a/include/sound/tas2781-tlv.h
++++ b/include/sound/tas2781-tlv.h
+@@ -15,7 +15,7 @@
+ #ifndef __TAS2781_TLV_H__
+ #define __TAS2781_TLV_H__
+ 
+-static const __maybe_unused DECLARE_TLV_DB_SCALE(dvc_tlv, -10000, 100, 0);
++static const __maybe_unused DECLARE_TLV_DB_SCALE(dvc_tlv, -10000, 50, 0);
+ static const __maybe_unused DECLARE_TLV_DB_SCALE(amp_vol_tlv, 1100, 50, 0);
+ 
+ #endif
+-- 
+2.43.0
 
-> > +static void pca954x_reset_mux(struct pca954x *data)
-> > +{
-> > +	dev_warn(&data->client->dev, "resetting the device\n");
->=20
-> To me, this is not the proper place for such a report. Can't the reset
-> framework be instrumented in some way?
-
-I removed it.
-
->=20
-> > +	pca954x_reset_assert(data);
-> > +	udelay(1);
-> > +	pca954x_reset_deassert(data);
-> > +}
-> > +
-> >  static int pca954x_select_chan(struct i2c_mux_core *muxc, u32 chan)
-> >  {
-> >  	struct pca954x *data =3D i2c_mux_priv(muxc);
-> > @@ -328,6 +348,8 @@ static int pca954x_select_chan(struct i2c_mux_core =
-*muxc, u32 chan)
-> >  		ret =3D pca954x_reg_write(muxc->parent, client, regval);
-> >  		data->last_chan =3D ret < 0 ? 0 : regval;
-> >  	}
-> > +	if (ret =3D=3D -ETIMEDOUT && (data->reset_cont))
->=20
-> Braces around 'data...' not needed. Use '--strict' with checkpatch to
-> get notified.
-
-Fixed this, too.
-
-> > -		return pca954x_reg_write(muxc->parent, client,
-> > +		ret =3D pca954x_reg_write(muxc->parent, client,
-> >  					 data->last_chan);
->=20
-> Indentation of the above line needs to be adapted.
-
-Ditto.
-
-Applied to for-next, thanks!
-
-
---I+zIa8JerNr8QgU1
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiMIvUACgkQFA3kzBSg
-KbYBIA/+MQS8GhYD1B2rl37wfc0qNp+8svv5KAVYLmYwNhTYYSxyXyONcwBe/mtX
-yiX+wWR2nmGAROzoMXidFEGrSk4JliRbJ1O3OzVXPbjbuhoe7MbKue8sLiNuH0EM
-FIvNZ1pDLBqY/0mjRyo0DJ6dyF4XP3sau3y2xbIC69oQbGWn+SWgGETg5HF0HWqU
-XNMhlOe/YMWWGmZNrFaBrdaRQXdGVY06A8843X0blnVgtT7q6LhUC44DSu0O569z
-W/COymdf2bbRp8M47lD1DpqwidEO8TL3mrgvmst0ItRKbbwmJ/boUShEFjzA25NR
-JhLGo7XnB2wSTKJEvK94X9Bw5VCroj9rrjVKiNPisuE1H8p0MlV/uoFpnWVqeRif
-JAkhi+W7jERwpQ9S+vW5ZUWRp+S+2Pf1n8OTA54dcd6Yrd0XuxjoJO4yNSgNdtvw
-xizjVonMiuKxvSEItWHd+c7w/kzYO3sBzQc6WLS0OEzxX5OjDubjNDyDF5I14afT
-FTmOESNfQwhtUlQGIB887D6hflLdowEy5kHHlE3hNRKnVgTXASqvoOhN9zc/0Wck
-4y0bWBRFcBJWl/6xhGo0ABhgIROG06YdZPaJKNzbXpbfnJfMBJYxlb7W5+0yjuT0
-vcRKUzS0QlcMUbVY9JL990ZFoBWpKKtIwuBN4NznbBqCGYf4Dr4=
-=rgnE
------END PGP SIGNATURE-----
-
---I+zIa8JerNr8QgU1--
 
