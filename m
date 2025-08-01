@@ -1,195 +1,174 @@
-Return-Path: <linux-kernel+bounces-753605-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753606-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BBACDB18535
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:46:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B828CB18538
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:47:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5ADB9A85EEC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:46:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF38B3BBF82
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:47:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04B1A27C854;
-	Fri,  1 Aug 2025 15:46:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C8EA27A91F;
+	Fri,  1 Aug 2025 15:47:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Mjbs6OA8"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ms6bNuvP"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E68527AC4D;
-	Fri,  1 Aug 2025 15:46:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AB671422DD;
+	Fri,  1 Aug 2025 15:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063167; cv=none; b=aPdRHC3NQ3R6Xv9yEEJmDFVtCWXlG6aAGXMEO5K+4j6Auon6A2NI6MrlVBOm9wYltc2RF+sIJtMxhDsloPJGE/sU/CBf2rD5rA3Zmcr44HimItICQB4FPqyNRnawRKkrENZK+61NNsCBmmEKP4l3jHg9rH++9lOBLVzi4OksMJU=
+	t=1754063228; cv=none; b=ui7f4/t/07chnIvPCRO21ctbmOWgaiKABQqQDWFVSc23orrtaMbhS/moarRK7XEkn62oDjWlkV7sb7PNA2OZuzpQXBUISlIi0sWLeV1OISLUfEg4ebV/9bQIwngOh8U1AyRGrYDxcGo5GCID3ISWp+58oZBgtyrJ8kk3zqw7lYw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063167; c=relaxed/simple;
-	bh=4u/ERZo4s3oLx9uWszOTt0WmSC82PHA4dPnPCmk6B9A=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=psokLcGpKZLA1snveLJMMq8/vPPG2mhEg3rd8F08rq/3/QvsVv2fDleY5akvWIZQxD19Na0OCFkEjaP+DIdns7sogC7NzFylvFCGqKVy6dpfeISlf85J2qeXLyR1qji9bMGWBO1+egoJThYFsA/ITQ0DEdeu57EkLdpw+60sW88=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Mjbs6OA8; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-458a84e2917so12405585e9.1;
-        Fri, 01 Aug 2025 08:46:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754063164; x=1754667964; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vPa5bQCjhcQssZJBxoWXb+FRc52wbSzCoxCNyn60iwU=;
-        b=Mjbs6OA8tbx8NHA3a42d/c0pw3RGYmY2xY0lWDIzEOeM1cb7xvwSy4AEFLe6/GfWJn
-         DPh0oyVO5IKRIkhsGYXTzOGW9SrgLdJhm4QRrrQYNKYPe8bhH1/KNMOxOBohoxN/coCT
-         NQWiHoLMOD1kvVjK5VBL2nKi/JOTRFvBVGO3jP1XmYReseZkAUIaMFebF+MMh64WgaeB
-         BjS7MT+gI469pymSkrFvxc2VhUyRF5waoR4G4AXPjQ4i8pyIi2EGKkAlHiKHAl2LDuX5
-         JcfqdpUf3NNy0V1hUbaZg/Xi3Z1eSzmULoeZAiH0ZfuP8AQBsvGVgqqYj2Wk0kxOJfqB
-         ltjQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754063164; x=1754667964;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vPa5bQCjhcQssZJBxoWXb+FRc52wbSzCoxCNyn60iwU=;
-        b=GG4tLZpjGHAZ27bDsaw2REamItMvse9j55QJlEplyhJ/QmMifrD5DrmAZUBNntehxN
-         qeqQb1GkRmy8lppbH+mqnxgvsX0FOxNfYfAhk/ZijaNc5UYUMNFK2vo5MVzptAx4NtgH
-         sdCb2b1D3zpAxgPspcpYXmPBzKW+aZT6veEV7YNPp8I8SY9Njraj8inbEaIn1Lb9JJwP
-         u0wAoxq7rMCRZfQ1zn9IR1z156P6mRdiPa+OepcRffMm6JweuFtuI48b3vPy+Oi4JsQ+
-         r+ALxiWkttVpPEW6MiPm3/tpDh03co8TWk9poOJf5OVYVIANNPxwjzJNizsnim9Axy57
-         cKDw==
-X-Forwarded-Encrypted: i=1; AJvYcCUcECUGRaXE58DSaB+dcF0xI8/yL56sHYuu79p00DWtAaeivcZgKpPWm9Bodqo8Nc8I7lKA+NYXrj5I@vger.kernel.org, AJvYcCVqQP2JsZCG/3zj9BWaImN7iJdOGEXluVGxw+bj7/j7TZ4bE3lX5/qzBOnq7Iyea3cr6O8K2tduudlvbXKS@vger.kernel.org, AJvYcCWc+CDbypJLvO7PM3MKcd1a3HkYjHTUtXId0fwKeMHvZQSzSpWkHp6avSFVj24N3yWL0r6TYaXGCTLuYQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx9lPPNudK5WLRRbisNrf8ys0JxB13S13IlQlL0o05u+d9P6peD
-	T/Cs9jdaQ9ROp/QnpRa07lAO+b2J6uJMBm3VZbKs6kBMI5fTv1wC4+IfyEXwZw==
-X-Gm-Gg: ASbGncsOGVblkKr4FY5yy3mKCN67UutepAYsdWvcUVkCJNDo6cHESzNplsAjqKkpLCt
-	n4TiXZAsIx/Yzljwt/hGgxjA/CTLHg71wXrML7tZsxD3RFWRZJPO5XK8UuecMrbNNLedOvjcWtT
-	dPaZCkZQIuKY6VSecWCZQP+/XYoYPKxAWbzNCFcGq4F6cXpcWGq53YnsHqmYdXVURx60nJMYZ7p
-	j8i2aOFDSnGlkzjbozII7hxT4NdKacNhtySwDfXV2VSH62Z2uFnzeCVLnaKD4Cq4TGF20p4Pu55
-	GSGYskLE5v+bCPXW5wUpOCEmnSRXWCdh7+5J+KKMclPYEWZzdlbka3kcnbAWuPwz+VRi1PKOmWb
-	JDBhIsoutmcYIsHSAyZPpF/qex8+t92CL5QHO3P4heKLqsvIdIM2bhyCkZPyQSVhHbpUQ4hraoL
-	VlH9NBX54=
-X-Google-Smtp-Source: AGHT+IEy1d0OjMb4ZEYvw+mMcSASJHq1ZBcUQZZYLP9JZltpwwHzGAjuBq72r9RUWMLB4u9IEdwKOA==
-X-Received: by 2002:a05:600c:1388:b0:456:25e7:bed with SMTP id 5b1f17b1804b1-4589af5ba2fmr105484575e9.14.1754063163618;
-        Fri, 01 Aug 2025 08:46:03 -0700 (PDT)
-Received: from iku.example.org (97e54365.skybroadband.com. [151.229.67.101])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c469582sm6194406f8f.52.2025.08.01.08.46.02
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 08:46:02 -0700 (PDT)
-From: Prabhakar <prabhakar.csengg@gmail.com>
-X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-To: Geert Uytterhoeven <geert+renesas@glider.be>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: linux-renesas-soc@vger.kernel.org,
-	linux-gpio@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Prabhakar <prabhakar.csengg@gmail.com>,
-	Biju Das <biju.das.jz@bp.renesas.com>,
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Subject: [PATCH v4 3/3] pinctrl: renesas: rzt2h: Add support for RZ/N2H SoC
-Date: Fri,  1 Aug 2025 16:45:50 +0100
-Message-ID: <20250801154550.3898494-4-prabhakar.mahadev-lad.rj@bp.renesas.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+	s=arc-20240116; t=1754063228; c=relaxed/simple;
+	bh=IZLE0uQ5DCz6jPq/q6fqEhZzNu7X7r+PRJ75Kyqp8Es=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WEiz2GBp96VZzF0pzSDbqk8XEsLZxn08ZDFPd4+RI5f3S7ZUlUa/6sLjU9w3s6lCVpKOdfye94EIh6YJXPcJUWRKEV9xnSW8VienUeA/REzU+aArT1ZHOXtdAhQfuQlSHfFkSUGkJs9WUcHx/ZHB2nZpRNe1cGmNR1mok/jZY7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ms6bNuvP; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571CFYNJ022189;
+	Fri, 1 Aug 2025 15:46:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=h59C4O
+	mJ3GTo2VYKRthh2qI8+QbWDWMyT568rgGhJS0=; b=ms6bNuvPEDr69E+TiXg18K
+	dXWxi8h+L42Ie9HkUchk9lKMm+K8caaqd1VoNryg0bIYKKISHrRnl9VCSmStUZCa
+	X8bQHkwmai4VSrziPTyL5kkdSERb85j1ebxoZDnfjy7nJoDwPGeLvjhxdpcdUQTM
+	8EINndKpnuL3f/I/GHZ7lV8HaSZPUE+vVs4BQA7hxxvsVwkGoKxYPFdsbFM00nyQ
+	hByjCVKXdh6BYwhLaKGDlUBuCV7efelAZOx7kChwW9kExyxkpv97jjlg7DiKgoWL
+	uESqkmLcYIZ1sr1QFBmh63/Ubgn8ch6pP6v3/GGpW6xzNrg6/GtiqpI+lCX5ElWw
+	==
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qen9k6u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 15:46:41 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571EVTXo016005;
+	Fri, 1 Aug 2025 15:46:40 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 485aun1vmn-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 15:46:40 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571FkaTo54657366
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 15:46:36 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 49CF72004B;
+	Fri,  1 Aug 2025 15:46:36 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 09A9320043;
+	Fri,  1 Aug 2025 15:46:34 +0000 (GMT)
+Received: from [9.111.205.109] (unknown [9.111.205.109])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Aug 2025 15:46:33 +0000 (GMT)
+Message-ID: <8b9a66b5-8b9f-410a-a072-7b9ba72ef7c3@linux.ibm.com>
+Date: Fri, 1 Aug 2025 17:46:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 11/16] s390/unwind_user/sframe: Enable
+ HAVE_UNWIND_USER_SFRAME
+To: Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+        bpf@vger.kernel.org, x86@kernel.org,
+        Steven Rostedt <rostedt@kernel.org>, Vasily Gorbik <gor@linux.ibm.com>,
+        Ilya Leoshkevich <iii@linux.ibm.com>,
+        Masami Hiramatsu <mhiramat@kernel.org>,
+        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+        Josh Poimboeuf <jpoimboe@kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
+        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
+        Thomas Gleixner <tglx@linutronix.de>,
+        Andrii Nakryiko <andrii@kernel.org>,
+        Indu Bhagat <indu.bhagat@oracle.com>,
+        "Jose E. Marchesi" <jemarch@gnu.org>,
+        Beau Belgrave <beaub@linux.microsoft.com>,
+        Linus Torvalds <torvalds@linux-foundation.org>,
+        Andrew Morton <akpm@linux-foundation.org>,
+        Jens Axboe <axboe@kernel.dk>, Florian Weimer <fweimer@redhat.com>,
+        Sam James <sam@gentoo.org>
+References: <20250710163522.3195293-1-jremus@linux.ibm.com>
+ <20250710163522.3195293-12-jremus@linux.ibm.com>
+ <20250801125350.9905B20-hca@linux.ibm.com>
+Content-Language: en-US
+From: Jens Remus <jremus@linux.ibm.com>
+Organization: IBM Deutschland Research & Development GmbH
+In-Reply-To: <20250801125350.9905B20-hca@linux.ibm.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: PMc1SC4fMrYhi_5iW0UoAeWPP3X40gNH
+X-Proofpoint-GUID: PMc1SC4fMrYhi_5iW0UoAeWPP3X40gNH
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEyMSBTYWx0ZWRfX3VR0bbPEi1/N
+ h9ITlUVbxcHye9ysJmGbCsP+TmQNQIMg16yR/922jfcPwXmPFi+19NfIzmRt5Ox+5/8zgHwkIqZ
+ IadH9XkRbhNqCiNSQnCjICrT7nhNEfaEgRE3doZwEau91e3Lhif42unwxkJDbkjZpt46TfAZhLf
+ bAbg56Dft/albpJY0o5L1uFIeKGSE7wHzgmqeS+zKrgDb+h81zU8i90mDj4Bvla+bQhDf6+xHr8
+ Ez06O/8DbvIietzNv09Tq4hPeWV6jOaTLjqztnM0Ks6IzRj0q3xBszjGluqiokwJOvCdMAOMZEl
+ yCmu6eW7M69iaMNHPBpJaD64n8ZC+BkvUsforkekh1rVSeWWpbOdA1wNfCbUQdCajWSHBqMCluW
+ mXEGBCz51tjRFgsUEaluwgeg91tjx+E1aMjJs72As5r4Qi0swKcB6XMoXdGO8dYhZIH6llFs
+X-Authority-Analysis: v=2.4 cv=BJOzrEQG c=1 sm=1 tr=0 ts=688ce162 cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=XDj3Yx29t083uedsr5QA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_05,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 phishscore=0 suspectscore=0 spamscore=0 lowpriorityscore=0
+ mlxlogscore=596 priorityscore=1501 malwarescore=0 mlxscore=0 bulkscore=0
+ adultscore=0 clxscore=1015 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010121
 
-From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+On 8/1/2025 2:53 PM, Heiko Carstens wrote:
+> On Thu, Jul 10, 2025 at 06:35:17PM +0200, Jens Remus wrote:
 
-The RZ/N2H (R9A09G087) SoC from Renesas shares a similar pin controller
-architecture with the RZ/T2H (R9A09G077) SoC, differing primarily in the
-number of supported pins-576 on RZ/N2H versus 729 on RZ/T2H.
+>> +static inline void __s390_get_dwarf_fpr(unsigned long *val, int regnum)
+>> +{
+>> +	switch (regnum) {
+>> +	case 16:
+>> +		fpu_std(0, (freg_t *)val);
+>> +		break;
+> 
+> ...
+> 
+>> +static inline int s390_unwind_user_get_reg(unsigned long *val, int regnum)
+>> +{
+>> +	if (0 <= regnum && regnum <= 15) {
+>> +		struct pt_regs *regs = task_pt_regs(current);
+>> +		*val = regs->gprs[regnum];
+>> +	} else if (16 <= regnum && regnum <= 31) {
+>> +		__s390_get_dwarf_fpr(val, regnum);
+> 
+> This won't work with other potential in-kernel fpu users. User space fpr
+> contents may have been written to the current task's fpu save area and fprs
+> may have been clobbered by in-kernel users; so you need to get register
+> contents from the correct location. See arch/s390/include/asm/fpu.h.
 
-Add the necessary pin configuration data and compatible string to enable
-support for the RZ/N2H SoC in the RZ/T2H pinctrl driver.
+Thanks!  Will implement all the review feedback and send a RFC V2 once I
+am back from vacation.  Will be away from keyboard for a few weeks.
 
-Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
----
-v3->v4:
-- No changes.
-
-v2->v3:
-- No changes.
-
-v1->v2:
-- New patch.
----
- drivers/pinctrl/renesas/Kconfig         |  3 ++-
- drivers/pinctrl/renesas/pinctrl-rzt2h.c | 17 +++++++++++++++++
- 2 files changed, 19 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/pinctrl/renesas/Kconfig b/drivers/pinctrl/renesas/Kconfig
-index 0d0920f4678b..8cbd79a13414 100644
---- a/drivers/pinctrl/renesas/Kconfig
-+++ b/drivers/pinctrl/renesas/Kconfig
-@@ -45,6 +45,7 @@ config PINCTRL_RENESAS
- 	select PINCTRL_RZG2L if ARCH_R9A09G056
- 	select PINCTRL_RZG2L if ARCH_R9A09G057
- 	select PINCTRL_RZT2H if ARCH_R9A09G077
-+	select PINCTRL_RZT2H if ARCH_R9A09G087
- 	select PINCTRL_PFC_SH7203 if CPU_SUBTYPE_SH7203
- 	select PINCTRL_PFC_SH7264 if CPU_SUBTYPE_SH7264
- 	select PINCTRL_PFC_SH7269 if CPU_SUBTYPE_SH7269
-@@ -304,7 +305,7 @@ config PINCTRL_RZN1
- 	  This selects pinctrl driver for Renesas RZ/N1 devices.
- 
- config PINCTRL_RZT2H
--	bool "pin control support for RZ/T2H" if COMPILE_TEST
-+	bool "pin control support for RZ/N2H and RZ/T2H" if COMPILE_TEST
- 	depends on 64BIT && OF
- 	select GPIOLIB
- 	select GENERIC_PINCTRL_GROUPS
-diff --git a/drivers/pinctrl/renesas/pinctrl-rzt2h.c b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-index 877f6d00830f..55c64d74cb54 100644
---- a/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-+++ b/drivers/pinctrl/renesas/pinctrl-rzt2h.c
-@@ -764,6 +764,12 @@ static const u8 r9a09g077_gpio_configs[] = {
- 	0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x7f,
- };
- 
-+static const u8 r9a09g087_gpio_configs[] = {
-+	0x1f, 0xff, 0xff, 0x1f, 0, 0xfe, 0xff, 0, 0x7e, 0xf0, 0xff, 0x1,
-+	0xff, 0xff, 0xff, 0, 0xe0, 0xff, 0xff, 0, 0xff, 0xff, 0xff, 0x1,
-+	0xe0, 0xff, 0xff, 0x7f, 0, 0xfe, 0xff, 0x7f, 0, 0xfc, 0x7f,
-+};
-+
- static struct rzt2h_pinctrl_data r9a09g077_data = {
- 	.port_pins = rzt2h_gpio_names,
- 	.n_port_pins = ARRAY_SIZE(r9a09g077_gpio_configs) * RZT2H_PINS_PER_PORT,
-@@ -771,11 +777,22 @@ static struct rzt2h_pinctrl_data r9a09g077_data = {
- 	.n_ports = ARRAY_SIZE(r9a09g077_gpio_configs),
- };
- 
-+static struct rzt2h_pinctrl_data r9a09g087_data = {
-+	.port_pins = rzt2h_gpio_names,
-+	.n_port_pins = ARRAY_SIZE(r9a09g087_gpio_configs) * RZT2H_PINS_PER_PORT,
-+	.port_pin_configs = r9a09g087_gpio_configs,
-+	.n_ports = ARRAY_SIZE(r9a09g087_gpio_configs),
-+};
-+
- static const struct of_device_id rzt2h_pinctrl_of_table[] = {
- 	{
- 		.compatible = "renesas,r9a09g077-pinctrl",
- 		.data = &r9a09g077_data,
- 	},
-+	{
-+		.compatible = "renesas,r9a09g087-pinctrl",
-+		.data = &r9a09g087_data,
-+	},
- 	{ /* sentinel */ }
- };
- 
+Regards,
+Jens
 -- 
-2.50.1
+Jens Remus
+Linux on Z Development (D3303)
++49-7031-16-1128 Office
+jremus@de.ibm.com
+
+IBM
+
+IBM Deutschland Research & Development GmbH; Vorsitzender des Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
+IBM Data Privacy Statement: https://www.ibm.com/privacy/
 
 
