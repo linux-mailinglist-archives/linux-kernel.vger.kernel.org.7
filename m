@@ -1,286 +1,138 @@
-Return-Path: <linux-kernel+bounces-752862-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752866-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA08FB17BCF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:27:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5161AB17BDB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9130D4E0D58
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:27:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8000B16A0D6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 04:34:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C71B61E7C12;
-	Fri,  1 Aug 2025 04:27:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484DF1EB5E1;
+	Fri,  1 Aug 2025 04:34:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GY2oBLBp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fpKwrCgj"
+Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E939B80B;
-	Fri,  1 Aug 2025 04:27:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F6F926ACB;
+	Fri,  1 Aug 2025 04:34:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754022435; cv=none; b=pYBrh+iMoiEynCDX7nlV6tG0E/9Gd29TVDYj4ZRSz6ygVbddYIQFumIL99MOgTBBgPikhSPtkBSwFO8yeJuYfv9s6Tstbyl8uyPQAyfco27XV8khPgALfbujeRUGA41BsawYJtuCfA3NwnpyQLemIULYQIfO2o+bSnfD87JQZxc=
+	t=1754022872; cv=none; b=huQ4uHfwMHSt4dwbIx5hHZGZKeSKmPkFrL+jS9ogLBaxQG4bwXwquaJOlkvRLKil+TnlVk7Fbqf63V0E/ISQOtt46OHMCm7+/U/pXrvmrhOTyVPSbVcnPlvRm2VTiDQ3v+kqIkfpF/RC0FSKtFqxV4EF5796Oxv+6GaBWATCMzI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754022435; c=relaxed/simple;
-	bh=uq+kpMSFanUZqXprllI7t2UiWSiMj8A4yFiG4lcfQaM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HWV4rlDaCVebGE838MLNe3WZKcMPBZPTM7BscgWoxkxZSY+O2qfXynydBLwOfeGPAip0mM+NCwE5ytXODA1KTc6xhWvDSJtzctnsfY9pJaA6lG3MAvFj6y84qTDLmjxAX+WDtGpFn1YS2QjWtLKmJWRoqwT7G1m9TGC4qFVY/Pc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GY2oBLBp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 71A31C4CEE7;
-	Fri,  1 Aug 2025 04:27:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754022434;
-	bh=uq+kpMSFanUZqXprllI7t2UiWSiMj8A4yFiG4lcfQaM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GY2oBLBpQcT1AD8Lawicv4Gwe8/iOjkFp0Yk556aCc0e/v3wFxCgipGTEH1TThYqO
-	 R4dOoX8U9dEMtQtft9FacSXJ6C9OKgfnUfMUEQ0qIhPHWHeiQnZxu9rvYZCn/kuYLp
-	 qrHW028OtYChbwNdm8fB2S7ssXDF+bxfdJ4qm42tBs4RtSrMJ1PjM4lbIXhLFBN/rc
-	 n7Ee3Qt+Qtquku61d5qr5jRXQ7lAUao33qQRe/83EcdfWWzv7vZ5BUGukdSgF7A5Rq
-	 hFN53MwdRlkh400JVEZBx0O/FXW5AkUAZxzPOFZNEOuL4/VW7kyiVmMGuqdc3u6NXs
-	 XdcNHTBJZMzsw==
-Date: Fri, 1 Aug 2025 06:27:10 +0200
-From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-To: Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
- <akiyks@gmail.com>
-Subject: Re: [PATCH 03/12] docs: kdoc: backslashectomy in kdoc_parser
-Message-ID: <20250801062710.552dac5a@foz.lan>
-In-Reply-To: <20250801001326.924276-4-corbet@lwn.net>
-References: <20250801001326.924276-1-corbet@lwn.net>
-	<20250801001326.924276-4-corbet@lwn.net>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754022872; c=relaxed/simple;
+	bh=g54viIUtOxVSs1aexxwT6KRtQkgjFfpt8K6GqFRJV3E=;
+	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:References; b=WX0Z2f789JF0PVugr0C0gYe9gn8OKCh5U0iJvRkgXrGM5nG1tqkpTZJXhQ2PonEwgVMPSzDYdboNBL3YrIddZBkNFy5g5+GxsSe4Fou0ugifsZxUFemL3D1vEUBuPsz/q8OyXdEouojYaFMG0owsr7J8hDFcUgOt0eJJgMP/rhY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fpKwrCgj; arc=none smtp.client-ip=209.85.215.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-b26f7d2c1f1so1258211a12.0;
+        Thu, 31 Jul 2025 21:34:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754022870; x=1754627670; darn=vger.kernel.org;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=Hvy1+S1s4fKJdVyggMwF0uoMUuYMvpNuWclsNDW3SSw=;
+        b=fpKwrCgjIl7+1FBNiFMScmYuQwACei0wX52ynPHnTUc45XWMsNZoDvvVI6sc+5eSfL
+         VVwu+nE1Fe0bA4eatyOvLVXtgP4MeusfZrK1nJGR4OIdptSPgm4bkWYSQcDtXF4+yEZ/
+         SCcBkqNeN3iKURKDHRCB/MNwRMpHwcU0DQ8Rv74UnCbqPNvfWEhIEp7J6LNY5H/bziLV
+         BVptHU9qvVHPU4WVKSE0yug/I7jWYYFp+LQg0z0+NC39E3CFwZ1IIXu/ZSXjjNxi/BCD
+         S7w1eO08TA+0GKJ/uWXLXWqFbzzoYAI1DmdMGxbZSAr7a+glFvBj4fhfdlyywOsVlG+D
+         f4Jw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754022870; x=1754627670;
+        h=references:message-id:date:in-reply-to:subject:cc:to:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Hvy1+S1s4fKJdVyggMwF0uoMUuYMvpNuWclsNDW3SSw=;
+        b=vcm2vt8MCSsGixajlZkOWbZOXvKVphGIsBk5T7EG8827ydMPRGBHb4X/TB8w9vAvjY
+         y/f5qnlU/9ZFesul97gRe3QbzkkfYoUmtsVf7Ue5fSKwZ3usm0a2zJiBxxeWuVGR6AfR
+         DO84/PQ7pTSaGnDSxldY4+daykhBakA/ozNCMwMucZ8ramXBj7y1SQJ/EJfBL8KpQqLT
+         pqSRLoBkVdOmxidWAjhfD3ZY/gzZafMNW6ASQdZNeozE21eAmvl+Bfc+UQX+mzRcOsty
+         9NOdo+eE7n1cJNNLPBmAsOPPOkVGUgxiXLlprbqYfuY3GbDESKIKGa+8afcGJrJToX4K
+         Fqvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUh1zM5ZWVDLuzM3vG3rDeT3NCtx12b84cG2W0f5VTx7llRCgVyHAKjvDUIABC6Uzw2IGXs5tY1F/1wGg==@vger.kernel.org, AJvYcCXAM+LsqhK9KbePRbdAEi/xTPxv6KPzN/7Qe3bky+P3TiDrIVswKhh91XUXpju5iD5tHfdv1IkMcQo7mSRkXA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzfkLF7uj1pD5ituBnGgDyze1ET3teT7JI4wI1sYOZRkXipR7JO
+	CfrdwdzDRYAWCflvNsUotC/7KqRckwIye+ydENNxoO8aJdqteYRWa0o0
+X-Gm-Gg: ASbGncsiOlhQeisXlTWeKHh7IS/4B3bqi+0GI77U/oFljGj2mET6JCuLuAO0AIbq57B
+	JdidF4Muy1CfZ/HW+rwPJvORJmNZBqfKhT3BGXKh/QB1oY+2aL9NBjlKW/W8E7Jek1qoMooGVc1
+	FMA5QC5gCZglvHCJ4w3W9HsnhFCQpZlK4J5+706X7GOoYkEGFal76Ao4mWwHM+w8Yq1M3LhGkyP
+	Lonw1RkB11tOZCf6KWm5F5NO7Gl8T09ikMX3j+JAav83xNaghq47bk8P3GZz29TrCvHS7KnYeKx
+	4xxYBCPJtm+C7sk7LazTGNWn0MOzlTiVBeYXGXA6cKcfsSIT6EHxdrzqncv3htG6ShEaPzLH77i
+	EC01QeRSMKivIigo=
+X-Google-Smtp-Source: AGHT+IH3hwA2OpRbr/zHoWNUCy0aIL06wDEuaRMcP/tc6VQhVRBB71zAOlOqZeisNVx6p6jZ1hMqIA==
+X-Received: by 2002:a17:902:ea12:b0:240:a8c8:5f6f with SMTP id d9443c01a7336-2422a6a7c11mr18344715ad.27.1754022870462;
+        Thu, 31 Jul 2025 21:34:30 -0700 (PDT)
+Received: from dw-tp ([49.205.218.89])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1f0e7d8sm31815305ad.42.2025.07.31.21.34.22
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 31 Jul 2025 21:34:29 -0700 (PDT)
+From: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
+To: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>, Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, "H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, gost.dev@samsung.com, kernel@pankajraghav.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
+Subject: Re: [RFC v2 3/4]  mm: add largest_zero_folio() routine
+In-Reply-To: <20250724145001.487878-4-kernel@pankajraghav.com>
+Date: Fri, 01 Aug 2025 10:00:27 +0530
+Message-ID: <87seibr7do.fsf@gmail.com>
+References: <20250724145001.487878-1-kernel@pankajraghav.com> <20250724145001.487878-4-kernel@pankajraghav.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-Em Thu, 31 Jul 2025 18:13:17 -0600
-Jonathan Corbet <corbet@lwn.net> escreveu:
+"Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
 
-> A lot of the regular expressions in this file have extraneous backslashes
+> From: Pankaj Raghav <p.raghav@samsung.com>
+>
+> Add largest_zero_folio() routine so that huge_zero_folio can be
 
-This one is a bit scary... It could actually cause issues somewhere.
-Also, IMHO, some expressions look worse on my eyes ;-)
+[largest]_zero_folio() can sound a bit confusing with largest in it's
+name. Maybe optimal_zero_folio()? 
 
-> that may have been needed in Perl, but aren't helpful here.  Take them out
-> to reduce slightly the visual noise.
+No hard opinion though. Will leave it upto you. 
 
-No idea if Perl actually requires, but, at least for me, I do prefer to
-see all special characters properly escaped with a backslash. This way,
-it is a lot clearer that what it is expecting is a string, instead of
-using something that may affect regex processing.
+-ritesh
 
-This is specially important for my eyes when expecting for dots,
-parenthesis and brackets.
-
-
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
+> used directly when CONFIG_STATIC_HUGE_ZERO_FOLIO is enabled. This will
+> return ZERO_PAGE folio if CONFIG_STATIC_HUGE_ZERO_FOLIO is disabled or
+> if we failed to allocate a huge_zero_folio.
+>
+> Co-developed-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> Signed-off-by: Pankaj Raghav <p.raghav@samsung.com>
 > ---
->  scripts/lib/kdoc/kdoc_parser.py | 40 ++++++++++++++++-----------------
->  1 file changed, 20 insertions(+), 20 deletions(-)
-> 
-> diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 9948ede739a5..e1efa65a3480 100644
-> --- a/scripts/lib/kdoc/kdoc_parser.py
-> +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -46,7 +46,7 @@ doc_decl = doc_com + KernRe(r'(\w+)', cache=False)
->  known_section_names = 'description|context|returns?|notes?|examples?'
->  known_sections = KernRe(known_section_names, flags = re.I)
->  doc_sect = doc_com + \
-> -    KernRe(r'\s*(\@[.\w]+|\@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
-> +    KernRe(r'\s*(@[.\w]+|@\.\.\.|' + known_section_names + r')\s*:([^:].*)?$',
->             flags=re.I, cache=False)
+>  include/linux/huge_mm.h | 17 +++++++++++++++++
+>  1 file changed, 17 insertions(+)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 78ebceb61d0e..c44a6736704b 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -716,4 +716,21 @@ static inline int split_folio_to_order(struct folio *folio, int new_order)
+>  	return split_folio_to_list_to_order(folio, NULL, new_order);
+>  }
 >  
->  doc_content = doc_com_body + KernRe(r'(.*)', cache=False)
-> @@ -60,7 +60,7 @@ attribute = KernRe(r"__attribute__\s*\(\([a-z0-9,_\*\s\(\)]*\)\)",
->  export_symbol = KernRe(r'^\s*EXPORT_SYMBOL(_GPL)?\s*\(\s*(\w+)\s*\)\s*', cache=False)
->  export_symbol_ns = KernRe(r'^\s*EXPORT_SYMBOL_NS(_GPL)?\s*\(\s*(\w+)\s*,\s*"\S+"\)\s*', cache=False)
->  
-> -type_param = KernRe(r"\@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
-> +type_param = KernRe(r"@(\w*((\.\w+)|(->\w+))*(\.\.\.)?)", cache=False)
->  
->  #
->  # Tests for the beginning of a kerneldoc block in its various forms.
-> @@ -331,7 +331,7 @@ class KernelDoc:
->  
->          self.entry.anon_struct_union = False
->  
-> -        param = KernRe(r'[\[\)].*').sub('', param, count=1)
-> +        param = KernRe(r'[)[].*').sub('', param, count=1)
-
-This one, for instance, IMHO looks a lot worse for my eyes to understand
-that there is a "[" that it is not an operator, but instead a string.
-The open close parenthesis also looks weird. My regex-trained eyes think
-that this would be part of a capture group.
-
->  
->          if dtype == "" and param.endswith("..."):
->              if KernRe(r'\w\.\.\.$').search(param):
-> @@ -405,7 +405,7 @@ class KernelDoc:
->  
->          for arg in args.split(splitter):
->              # Strip comments
-> -            arg = KernRe(r'\/\*.*\*\/').sub('', arg)
-> +            arg = KernRe(r'/\*.*\*/').sub('', arg)
-
-A pattern like /..../ is a standard way to pass search group with Regex
-on many languages and utils that accept regular expressions like the
-sed command. Dropping the backslash here IMHO makes it confusing ;-)
-
->  
->              # Ignore argument attributes
->              arg = KernRe(r'\sPOS0?\s').sub(' ', arg)
-> @@ -428,14 +428,14 @@ class KernelDoc:
->  
->                  arg = arg.replace('#', ',')
->  
-> -                r = KernRe(r'[^\(]+\(\*?\s*([\w\[\]\.]*)\s*\)')
-> +                r = KernRe(r'[^(]+\(\*?\s*([\w[\].]*)\s*\)')
-
-Here, [.] is also a lot more confusing for me than [\.]
-
-Ok, both works the same way on all implementations I know, but, as a doc
-means any character, I need to re-read this two or three times to understand
-that here it is waiting for a dot character instead of any character.
-
-
-----
-
-Here, I became too tired of reading regular expressions... better
-stop to avoid headaches ;-)
-
-Seriously, IMHO this patch makes a lot worse to understand what brackets,
-parenthesis and dots are strings, and which ones are part of the regex
-syntax. 
-
-
->                  if r.match(arg):
->                      param = r.group(1)
->                  else:
->                      self.emit_msg(ln, f"Invalid param: {arg}")
->                      param = arg
->  
-> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
-> +                dtype = KernRe(r'([^(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
->                  self.push_parameter(ln, decl_type, param, dtype,
->                                      arg, declaration_name)
->  
-> @@ -443,14 +443,14 @@ class KernelDoc:
->                  # Array-of-pointers
->  
->                  arg = arg.replace('#', ',')
-> -                r = KernRe(r'[^\(]+\(\s*\*\s*([\w\[\]\.]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
-> +                r = KernRe(r'[^(]+\(\s*\*\s*([\w[\].]*?)\s*(\s*\[\s*[\w]+\s*\]\s*)*\)')
->                  if r.match(arg):
->                      param = r.group(1)
->                  else:
->                      self.emit_msg(ln, f"Invalid param: {arg}")
->                      param = arg
->  
-> -                dtype = KernRe(r'([^\(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
-> +                dtype = KernRe(r'([^(]+\(\*?)\s*' + re.escape(param)).sub(r'\1', arg)
->  
->                  self.push_parameter(ln, decl_type, param, dtype,
->                                      arg, declaration_name)
-> @@ -637,8 +637,8 @@ class KernelDoc:
->              # it is better to also move those to the NestedMatch logic,
->              # to ensure that parenthesis will be properly matched.
->  
-> -            (KernRe(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
-> -            (KernRe(r'DECLARE_PHY_INTERFACE_MASK\s*\(([^\)]+)\)', re.S), r'DECLARE_BITMAP(\1, PHY_INTERFACE_MODE_MAX)'),
-> +            (KernRe(r'__ETHTOOL_DECLARE_LINK_MODE_MASK\s*\(([^)]+)\)', re.S), r'DECLARE_BITMAP(\1, __ETHTOOL_LINK_MODE_MASK_NBITS)'),
-> +            (KernRe(r'DECLARE_PHY_INTERFACE_MASK\s*\(([^)]+)\)', re.S), r'DECLARE_BITMAP(\1, PHY_INTERFACE_MODE_MAX)'),
->              (KernRe(r'DECLARE_BITMAP\s*\(' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'unsigned long \1[BITS_TO_LONGS(\2)]'),
->              (KernRe(r'DECLARE_HASHTABLE\s*\(' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'unsigned long \1[1 << ((\2) - 1)]'),
->              (KernRe(r'DECLARE_KFIFO\s*\(' + args_pattern + r',\s*' + args_pattern + r',\s*' + args_pattern + r'\)', re.S), r'\2 *\1'),
-> @@ -700,7 +700,7 @@ class KernelDoc:
->                      s_id = s_id.strip()
->  
->                      newmember += f"{maintype} {s_id}; "
-> -                    s_id = KernRe(r'[:\[].*').sub('', s_id)
-> +                    s_id = KernRe(r'[:[].*').sub('', s_id)
->                      s_id = KernRe(r'^\s*\**(\S+)\s*').sub(r'\1', s_id)
->  
->                      for arg in content.split(';'):
-> @@ -709,7 +709,7 @@ class KernelDoc:
->                          if not arg:
->                              continue
->  
-> -                        r = KernRe(r'^([^\(]+\(\*?\s*)([\w\.]*)(\s*\).*)')
-> +                        r = KernRe(r'^([^(]+\(\*?\s*)([\w.]*)(\s*\).*)')
->                          if r.match(arg):
->                              # Pointer-to-function
->                              dtype = r.group(1)
-> @@ -767,12 +767,12 @@ class KernelDoc:
->          self.check_sections(ln, declaration_name, decl_type)
->  
->          # Adjust declaration for better display
-> -        declaration = KernRe(r'([\{;])').sub(r'\1\n', declaration)
-> +        declaration = KernRe(r'([{;])').sub(r'\1\n', declaration)
->          declaration = KernRe(r'\}\s+;').sub('};', declaration)
->  
->          # Better handle inlined enums
->          while True:
-> -            r = KernRe(r'(enum\s+\{[^\}]+),([^\n])')
-> +            r = KernRe(r'(enum\s+\{[^}]+),([^\n])')
->              if not r.search(declaration):
->                  break
->  
-> @@ -969,8 +969,8 @@ class KernelDoc:
->          # - pci_match_device, __copy_to_user (long return type)
->  
->          name = r'[a-zA-Z0-9_~:]+'
-> -        prototype_end1 = r'[^\(]*'
-> -        prototype_end2 = r'[^\{]*'
-> +        prototype_end1 = r'[^(]*'
-> +        prototype_end2 = r'[^{]*'
->          prototype_end = fr'\(({prototype_end1}|{prototype_end2})\)'
->  
->          # Besides compiling, Perl qr{[\w\s]+} works as a non-capturing group.
-> @@ -1044,7 +1044,7 @@ class KernelDoc:
->          Stores a typedef inside self.entries array.
->          """
->  
-> -        typedef_type = r'((?:\s+[\w\*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
-> +        typedef_type = r'((?:\s+[\w*]+\b){0,7}\s+(?:\w+\b|\*+))\s*'
->          typedef_ident = r'\*?\s*(\w\S+)\s*'
->          typedef_args = r'\s*\((.*)\);'
->  
-> @@ -1265,7 +1265,7 @@ class KernelDoc:
->              self.dump_section()
->  
->              # Look for doc_com + <text> + doc_end:
-> -            r = KernRe(r'\s*\*\s*[a-zA-Z_0-9:\.]+\*/')
-> +            r = KernRe(r'\s*\*\s*[a-zA-Z_0-9:.]+\*/')
->              if r.match(line):
->                  self.emit_msg(ln, f"suspicious ending line: {line}")
->  
-> @@ -1476,14 +1476,14 @@ class KernelDoc:
->          """Ancillary routine to process a function prototype"""
->  
->          # strip C99-style comments to end of line
-> -        line = KernRe(r"\/\/.*$", re.S).sub('', line)
-> +        line = KernRe(r"//.*$", re.S).sub('', line)
->          #
->          # Soak up the line's worth of prototype text, stopping at { or ; if present.
->          #
->          if KernRe(r'\s*#\s*define').match(line):
->              self.entry.prototype = line
->          elif not line.startswith('#'):   # skip other preprocessor stuff
-> -            r = KernRe(r'([^\{]*)')
-> +            r = KernRe(r'([^{]*)')
->              if r.match(line):
->                  self.entry.prototype += r.group(1) + " "
->          #
-
-
-
-Thanks,
-Mauro
+> +/*
+> + * largest_zero_folio - Get the largest zero size folio available
+> + *
+> + * This function will return huge_zero_folio if CONFIG_STATIC_HUGE_ZERO_FOLIO
+> + * is enabled. Otherwise, a ZERO_PAGE folio is returned.
+> + *
+> + * Deduce the size of the folio with folio_size instead of assuming the
+> + * folio size.
+> + */
+> +static inline struct folio *largest_zero_folio(void)
+> +{
+> +	struct folio *folio = get_static_huge_zero_folio();
+> +
+> +	if (folio)
+> +		return folio;
+> +	return page_folio(ZERO_PAGE(0));
+> +}
+>  #endif /* _LINUX_HUGE_MM_H */
+> -- 
+> 2.49.0
 
