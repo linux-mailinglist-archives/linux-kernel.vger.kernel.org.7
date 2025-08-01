@@ -1,144 +1,125 @@
-Return-Path: <linux-kernel+bounces-753754-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753755-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09EA6B18763
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:34:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34D37B18765
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B2941A86EB8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:34:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1302216E583
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9F0428CF64;
-	Fri,  1 Aug 2025 18:34:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D805628D839;
+	Fri,  1 Aug 2025 18:35:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="HkOjFqde"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cpc0LNxB"
+Received: from mail-yw1-f176.google.com (mail-yw1-f176.google.com [209.85.128.176])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D8D11D5CE5
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:34:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE7381D5CE5;
+	Fri,  1 Aug 2025 18:35:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754073281; cv=none; b=bxDI014m5stEsC3Kz/j+cr9mDDKSCygE6uJBpxs8YR2CCfA9PJs60+Rq7vTyPH3QyVjpb/r3qYN6eblZEzZcZDg997RX5x1gOiWagw5W0c4bvBdYoPM14BqTWJEA6Gv9kAfzSS+5aFZCN2FBXSqlnIrrQNpGW5vFcwg6Y9XP94c=
+	t=1754073350; cv=none; b=PHtxwOp0ULf4fnTdozGwNtky79KgVA4nKRKGjsXxFkpceP0/S0VFmM9yV6qqTsac9Bd5T0iYzbXwDUxXhPg1H3ncj8cK1BlFEdItJJ+jbNkwMPrfKvJO7EvXdJPxQg1Qs+O1ENfQO55EzlYMfsfBgfr75pCTJqcvzeLQyc43yVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754073281; c=relaxed/simple;
-	bh=J9Uezt1KrvKt0VBMAu93Dhjj2nVy4+h2IC0utohZLA0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ck6vFlO4boD24938iN45ZiXHFtpDSP2xQmJL1qt1nGcOJeKsgw6C8/yJpuXCEbRF85W423S+z5WJrGQcVbfpwIs829tWRUdBW8B8WQ7n7ER4H4GOrFhez6B/O0Xj+vxy4qGDDS4R6L9ICIodZo7M9fSgl9Nxn/y6RuTIxXD0AA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=HkOjFqde; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-33243562752so8389021fa.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:34:39 -0700 (PDT)
+	s=arc-20240116; t=1754073350; c=relaxed/simple;
+	bh=B27OjJv8jOXqJdC/glwPPLA78Xh2lF+0QgwazJeHe98=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=DxiF2piZXkqVfzTPvIpJrHDUnV5gW+uazxgPfNCXD7blcFkni4xnJc+BuL/LvAewA9RDzPwbEOUCxUwuHs9d0pdn2JcqruwlLrTCRC2CRgfCOqjA3WKTxpJXyGWuwrUXsBfuLSFI3WcxDpjAINWlS/G6JlqnW2Cb1GoreSj3oCs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cpc0LNxB; arc=none smtp.client-ip=209.85.128.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f176.google.com with SMTP id 00721157ae682-708d90aa8f9so27100557b3.3;
+        Fri, 01 Aug 2025 11:35:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754073278; x=1754678078; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=CfmmilxacBNB3HQuUVitVRIgdZJYz2bsJ5WOyUMIET8=;
-        b=HkOjFqde3omlKJNrpmTKuXZbHAUhmGeVFYuxAw/FNUq/uo/a+ZalMREgwevRasWk/1
-         HOBLkT0KPx9sSQX/JnZe8YP1RJrvwf/m+sgzAWOJ9C+nwexfH3E2yoViwCNqpkBKEnnq
-         OeHEQ5Pc19NiKMONGXhYYuo3Z1XgF2wBlR92Lh5jWAFxEsacoRngKhU3io3vtr3Ehgwp
-         lfd/P1AINLIgZBEcLZWWl9V/Au4e2c12/l3voTlcQfKvc0+YUZSg00VV9FYh9b6WMNl6
-         MNtXicaIqUJzwuTHjrr1HR2IKhIAwOYGzUkBRi3IyEMjH0lcJ1XP7esLeCS7cSA1uglu
-         PEjA==
+        d=gmail.com; s=20230601; t=1754073348; x=1754678148; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=qfIH0tozfiW0Hsw51f6VO5Q0JxUmTtpKoc44LZzdrkU=;
+        b=cpc0LNxB/QFLh5U4hE/O8mLdEhsL2KhtxT2pLvni0Qcx+5UoRJGXRjmlNONqrxOCpP
+         +sN1pjbMe9S+UJrNRgYMxJmjKgmdwFo7/fVJwFu7xNkCMiDIt0iJ1SuMwXgLdPN6tKx5
+         sIiNlYef2BILRBPJkQL1izJBuz8QHiGe3PNLm/leFNDCTjCy0EK432EMWWcOB4sy3M3E
+         xXUqgCscV3P7JiUH84XmGT064ZA9GOVERY/eNo4PiLYF927yrCjMDwO7fq7ZrQDVRcVe
+         06+CEkGyyk05i8Bo6LZ51/QrtrB8RaadCApoIVxVk8ZvMUWzcsd+wJol64RCLB1BUnyg
+         ksnQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754073278; x=1754678078;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=CfmmilxacBNB3HQuUVitVRIgdZJYz2bsJ5WOyUMIET8=;
-        b=c2QtIPm9aw0rhl+/kAZVSDjfic8i2woQzFubM3wheYTOcs0arJf9+veVbuUwqM1v0h
-         liZbW9uJqZMEHRQFOb7lIiRKFDzq9j3EiHJOPexZParAY6zYhICT+aCHUxMe2vkx1+xz
-         p+HSLA+mfTqVXD/4KsC+AKdjetaZ1cxFPXqax0t6yxDdvsnt4PUME6/flE3RZCDItl47
-         Onco/vHCPQGUIajaBpn1+S7kbPp4+Z5EDWXs7xrVOySqQ15/t9KxLC60TSn+XzZOGyqb
-         BvA7nhmxmtYLlwa6ZVzEAhrWrK6LBmqI5cG7KifFluUNBPsLA0cNrWihoKgd7s7bqPHC
-         W1sg==
-X-Gm-Message-State: AOJu0YzNeGonTnjEAs2ARNo4omMqIh2gM+/KSH07d74puGiyZtpyAuQz
-	IJgT3CP1VOzzzXHQAfv0SopJR+Hzxqc2BIMGTq+6iPOjrEUFrxIxX6oexLC/qKAU9zQ5Y2kEtEa
-	Cv5aoc1xfasmBY3gFRqxGrJPllK1PIbGyL2WRv1M=
-X-Gm-Gg: ASbGncusqOPD2adgdhgLSQwTe/XIkrVqbs6qgKSIODdYqb+R+N3Gq8l7YxSx5n2Mdp4
-	z2UefSohyJmDtQvyx4N9Q7g7Mp7kki49VYN3Dwf4o8s1fwZbP9UiCluqIWM5Liu6hD8+xtDMHYD
-	if7OZn3V0Mc+9D9N30IdjelM6MG6hq//MFW2CWi2Qh2ZDnWa4odvx116tZ333szsKYOwevcCKvw
-	fb8qoY5A0XpVvevC6ZSdG1WKVnUr+ZgmnwE
-X-Google-Smtp-Source: AGHT+IFPrpz3YlLTmy9cZZYTjMyKs1oACsMLtHEmi8MsbB6UmvWxU3JCLYrnFV2pZYPjyaD5Q0TTQdIqF+07Z6GOzQQ=
-X-Received: by 2002:a05:651c:4003:b0:32c:a006:2a36 with SMTP id
- 38308e7fff4ca-332567a28fbmr658461fa.20.1754073277439; Fri, 01 Aug 2025
- 11:34:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754073348; x=1754678148;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=qfIH0tozfiW0Hsw51f6VO5Q0JxUmTtpKoc44LZzdrkU=;
+        b=uBcPG9sAz1qQE/r2OhQX55CdN3bJ85urEqeWspb2xgP1ZTd5Aycsl4pywM/yD/wXaM
+         q+2SllyQ8ftDJFJ8yEvOLmjv6YCvZCRDDUmHcxDa9vr1wBl0Jppn6EcmQ+f82EcNXggv
+         Ucvm+ZyaZkdwdQ7598G/980wG/lkb6ZzopPiCeXFpdoXYV/yxViSOUK2f2sTGZr5Yd5m
+         34YmRXB4HB55+zMGQNpL/iuwTHlNWsYh82NJQAVj46Sk4eNtTzebB5efVVPSpYXL3qZn
+         CiFPA214497KSCgKMZ3C2GFhOU993/LgBAZW5J8d+a3eb8xDF+dcyaVXvS+LuYRXgdqG
+         tw3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCV8mIvqu7MBB4hsGkwjPB6JaluAtrvy61PZuDelDWVFAR+2qo7yUXfF0wZBlWJRbhn9p/tlEQJ+792mO2c=@vger.kernel.org, AJvYcCXP3RgLjFRRwmIEEEhDirU5iuwmjQ+gcZWuQaGOl5JwaVi8NQ+m2r1zpYHQ34QHlwt+YsqRU+hzrSP57w==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxqKps/kpdBlX2QRqd+RPnmbgp/YpTs+Gc0/GvuiRxc8ZsaH0Do
+	LLctW+pv5i5tgG4ANBtgY39wXG1VPTqQPrbZ1SK11Uwy8k2dCRruNigD
+X-Gm-Gg: ASbGncsoQasEXWBINIvrino3gsV4pn4rslk33JqjG1j4gzgIhr38dLhPQUEhqhrXmjK
+	xKCK8Tl3GoqDPgmIxUzBQJLXTgbVdZVve3oPqAWVX21nKcQwUu5AoWlOpCpv/+D9lHc7nobSpkQ
+	CLrsRG9HUnAGxCiQi2CkYBzWdqUGL7Fih9WZ3st0Z+ga2bxyfnMY9ibCJZgk8+khDtDY/7g64n2
+	bTSErhsgsw2RdsRYsqSuO3t6jE3sb2nOcfevuTMMdxcKLk1U7O3Ta39wPJoieKv6QMY9FweGqr/
+	4WSZ3+g4TfxT932WiOZ6xw+Ce/F9NcAHrtlo1wV4kKqFHB7soCp+01ud5AmMW8aTkBHVHPbFWwj
+	qPBTL5lX/lHBsYYtCU7ySeEWnxUdHXh1OS4EihJ0FwF4/
+X-Google-Smtp-Source: AGHT+IG0Zy2onfPOCf3cQqr9oNwibRTwFlFoKRASJD+QGncsrGzGltXHMxWZXfPCP+kSB0ggJQ37AQ==
+X-Received: by 2002:a05:690c:6312:b0:71b:6635:df33 with SMTP id 00721157ae682-71b7f07fcb1mr10967007b3.30.1754073347587;
+        Fri, 01 Aug 2025 11:35:47 -0700 (PDT)
+Received: from newman.cs.purdue.edu ([128.10.127.250])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a42187esm11931567b3.41.2025.08.01.11.35.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 11:35:46 -0700 (PDT)
+From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+To: Kashyap Desai <kashyap.desai@broadcom.com>,
+	Sumit Saxena <sumit.saxena@broadcom.com>,
+	Shivasharan S <shivasharan.srikanteshwara@broadcom.com>,
+	Chandrakanth patil <chandrakanth.patil@broadcom.com>
+Cc: "James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
+	"Martin K . Petersen" <martin.petersen@oracle.com>,
+	Tomas Henzl <thenzl@redhat.com>,
+	Sasikumar Chandrasekaran <sasikumar.pc@broadcom.com>,
+	megaraidlinux.pdl@broadcom.com,
+	linux-scsi@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Jiasheng Jiang <jiashengjiangcool@gmail.com>
+Subject: [PATCH] scsi: megaraid_sas: Add check to avoid potential NULL pointer dereference
+Date: Fri,  1 Aug 2025 18:35:44 +0000
+Message-Id: <20250801183544.38154-1-jiashengjiangcool@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <68894443.a00a0220.26d0e1.0015.GAE@google.com> <20250731201337.274382-1-jstultz@google.com>
- <2812bdc6-8d7e-48a3-8f5b-a26cd5d18c32@amd.com>
-In-Reply-To: <2812bdc6-8d7e-48a3-8f5b-a26cd5d18c32@amd.com>
-From: John Stultz <jstultz@google.com>
-Date: Fri, 1 Aug 2025 11:34:26 -0700
-X-Gm-Features: Ac12FXyDY8rQ-T1hgnVdu7ufq1UAYgfIRJxqNSHSNJPV0SOE_5MSe4NCClZEdvM
-Message-ID: <CANDhNCrgxP+Ujvgpvd_0e5TM5Q-UTGfNmv=Lu3kn2MZ6wdS4Kw@mail.gmail.com>
-Subject: Re: [RFC][PATCH] locking: Fix __clear_task_blocked_on() warning from
- __ww_mutex_wound() path
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: LKML <linux-kernel@vger.kernel.org>, 
-	syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, 
-	Peter Zijlstra <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Valentin Schneider <valentin.schneider@arm.com>, Suleiman Souhlal <suleiman@google.com>, airlied@gmail.com, 
-	mripard@kernel.org, simona@ffwll.ch, tzimmermann@suse.de, 
-	dri-devel@lists.freedesktop.org, kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jul 31, 2025 at 10:09=E2=80=AFPM K Prateek Nayak <kprateek.nayak@am=
-d.com> wrote:
-> At the very least I think we should make a local copy of "p->blocked_on"
-> to see a consistent view throughout __clear_task_blocked_on() - task eith=
-er
-> sees it is blocked on the mutex and clear "p->blocked_on", or it sees it =
-is
-> blocked on nothing and still clears "p->blocked_on".
->
-> (Tested lightly with syzbot's C reproducer)
->
-> diff --git a/include/linux/sched.h b/include/linux/sched.h
-> index 02c340450469..f35d93cca64f 100644
-> --- a/include/linux/sched.h
-> +++ b/include/linux/sched.h
-> @@ -2165,6 +2165,8 @@ static inline void set_task_blocked_on(struct task_=
-struct *p, struct mutex *m)
->  static inline void __clear_task_blocked_on(struct task_struct *p, struct=
- mutex *m)
->  {
->         if (m) {
-> +               struct mutex *blocked_on =3D p->blocked_on;
-> +
->                 /* Currently we serialize blocked_on under the mutex::wai=
-t_lock */
->                 lockdep_assert_held_once(&m->wait_lock);
->                 /*
-> @@ -2172,7 +2174,7 @@ static inline void __clear_task_blocked_on(struct t=
-ask_struct *p, struct mutex *
->                  * blocked_on relationships, but make sure we are not
->                  * clearing the relationship with a different lock.
->                  */
-> -               WARN_ON_ONCE(m && p->blocked_on && p->blocked_on !=3D m);
-> +               WARN_ON_ONCE(m && blocked_on && blocked_on !=3D m);
->         }
->         p->blocked_on =3D NULL;
->  }
-> ---
->
-> End result is the same, only that we avoid an unnecessary splat in this
-> very unlikely case and save ourselves some head scratching later :)
+Add check for the return value of megasas_get_cmd_fusion() to avoid
+potential NULL pointer dereference in megasas_prepare_secondRaid1_IO()
+if r1_cmd is NULL.
 
-Good point. Thanks for suggesting this! I'll rework to include both
-this and Maarten's suggestions.
+Fixes: 69c337c0f8d7 ("scsi: megaraid_sas: SAS3.5 Generic Megaraid Controllers Fast Path for RAID 1/10 Writes")
+Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
+---
+ drivers/scsi/megaraid/megaraid_sas_fusion.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Thank you for the feedback!
--john
+diff --git a/drivers/scsi/megaraid/megaraid_sas_fusion.c b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+index a6794f49e9fa..4f1c1a5a71a8 100644
+--- a/drivers/scsi/megaraid/megaraid_sas_fusion.c
++++ b/drivers/scsi/megaraid/megaraid_sas_fusion.c
+@@ -3426,7 +3426,8 @@ megasas_build_and_issue_cmd_fusion(struct megasas_instance *instance,
+ 	if (cmd->r1_alt_dev_handle != MR_DEVHANDLE_INVALID) {
+ 		r1_cmd = megasas_get_cmd_fusion(instance,
+ 				scsi_cmd_to_rq(scmd)->tag + instance->max_fw_cmds);
+-		megasas_prepare_secondRaid1_IO(instance, cmd, r1_cmd);
++		if (r1_cmd)
++			megasas_prepare_secondRaid1_IO(instance, cmd, r1_cmd);
+ 	}
+ 
+ 
+-- 
+2.25.1
+
 
