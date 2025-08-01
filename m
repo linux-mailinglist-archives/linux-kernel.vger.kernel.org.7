@@ -1,121 +1,190 @@
-Return-Path: <linux-kernel+bounces-752765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C2FB17AA4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:36:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 48D24B17AA6
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 02:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AB5D17B3544
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:35:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43C907B5BCC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 00:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A88127735;
-	Fri,  1 Aug 2025 00:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 173B733987;
+	Fri,  1 Aug 2025 00:47:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="jkO5HSky"
-Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qRKo60MQ"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C69FB8C11;
-	Fri,  1 Aug 2025 00:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01E31360
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 00:47:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754008582; cv=none; b=qtL8mTuZaMjFzjueJIvdXf2436TlL/3S9paRn7w1tfN1oc2ZxbVT4MCV3baLPqV8wnuhUSuXKnp32ENUWoIMzNqHij6iU/kvSkR4OLtrEAC/SWUeigdRc7MCFeo1oT3+IDH/UdebfTa30A/odeh3dOWAkKfjrDFbMFo2SJAWKKs=
+	t=1754009244; cv=none; b=ih27GjchrSLAYJa+C2gDCpyLIMYEQnqpvrFDDCBs0x/IE9ZWL2j7la4ig+Bw37vg6CB9K0Dag2c/fzvqIfT7VJBHgksKe2OVeJI0fuVRTO4PWawOvrlelgIBaZ1vmCi/L1eqvyTUk3d81gbsNuVdjcW3+iTHdKwHlVC9d1BjoUU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754008582; c=relaxed/simple;
-	bh=NTl19locgjkpOHb1sevFzTM/gmsxCTxvN7Z+nyrlYbw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UEeWXEbTdYi/B7V06rsm4t/OTR1osvovF7335wlU3XnojfalfTj576gmwJMIBFk0gU9NtgNQnqpHzYMfZSk8cZRGfjeY1E/4Kj5p5uGQX6eXJg7nvgsFMuP6nwlMs1XgHNLwReFpV2qs0qg/YdJAf6jKAAhbvh2xYuN/dl3kajA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=jkO5HSky; arc=none smtp.client-ip=211.75.126.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
-X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5710a3lS52044039, This message is accepted by code: ctloc85258
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
-	t=1754008563; bh=NTl19locgjkpOHb1sevFzTM/gmsxCTxvN7Z+nyrlYbw=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:Content-Transfer-Encoding:MIME-Version;
-	b=jkO5HSkytm8jnDIBqvqtj0VAybAz5Ds4Skfm219u+ZFdOQiBH1PCV217wnhFvKmVg
-	 MyykVM1X+lseVfu/jbBgH9Vt9PtmuCmub66w7QX41RJxNzR2Kt7T6Dr8YDcM6sqi0L
-	 4MdaQBPDzHRw2WDtTqoBCt1tu6P3PzRQUR3nF/tBAaix8JXvwDhFmd5gT+ZZfzHQFJ
-	 rZmyh0WKxeBmDa6wIfsGcr3RdVFgy8ri3UNHzT2Yv+WouAAyGdyaaUP8gLowD1pIqQ
-	 dWKByuKYxNiDgjqh02zWD1cOkwX3bo6Jq3XYXt3KPfQhTsXp52IWkhSoHzkcfKL2oj
-	 793owHBtPHY/g==
-Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
-	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5710a3lS52044039
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Fri, 1 Aug 2025 08:36:03 +0800
-Received: from RTEXMBS03.realtek.com.tw (172.21.6.96) by
- RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Fri, 1 Aug 2025 08:36:04 +0800
-Received: from RTEXMBS04.realtek.com.tw (172.21.6.97) by
- RTEXMBS03.realtek.com.tw (172.21.6.96) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.35; Fri, 1 Aug 2025 08:36:03 +0800
-Received: from RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47]) by
- RTEXMBS04.realtek.com.tw ([fe80::81fc:50c6:85d5:cb47%5]) with mapi id
- 15.01.2507.035; Fri, 1 Aug 2025 08:36:03 +0800
-From: Ping-Ke Shih <pkshih@realtek.com>
-To: Sean Anderson <sean.anderson@linux.dev>,
-        "linux-wireless@vger.kernel.org"
-	<linux-wireless@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-        "Bitterblue
- Smith" <rtl8821cerfe2@gmail.com>
-Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
-Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
-Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeggAA2TWCAAiO5AIAAzSBg
-Date: Fri, 1 Aug 2025 00:36:03 +0000
-Message-ID: <3de4e7b1ff574e90bef6d670d0e941a4@realtek.com>
-References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
- <20250729204437.164320-1-sean.anderson@linux.dev>
- <e8e68a94bb9940509233153f9764c397@realtek.com>
- <b4a69a44-bb9d-4c1d-b628-9204ed8c623e@linux.dev>
-In-Reply-To: <b4a69a44-bb9d-4c1d-b628-9204ed8c623e@linux.dev>
-Accept-Language: en-US, zh-TW
-Content-Language: zh-TW
-x-kse-serverinfo: RTEXMBS03.realtek.com.tw, 9
-x-kse-antispam-interceptor-info: fallback
-x-kse-antivirus-interceptor-info: fallback
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	s=arc-20240116; t=1754009244; c=relaxed/simple;
+	bh=gR5Al1D4+reUnTE7Wgb+7b9ojBWrqnfN4+NskzNJwcI=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=kcl1otyuuz92hS4LHEEXqvfpcVX3pSUTIMq1xCmSEqDp69o4E5DeDC1QWN1J9Dx6FXrCA2Bz+VFYC6fJZgf74kG6kVhxSO6Ti+2rmzjhdc2fIljjEQzyVt/+3Zdx9/jbF/4MkOr/pDbzaD0H7R+MYpSAYCiGLP1ii2cAdpx1nBY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qRKo60MQ; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-3141f9ce4e2so468575a91.1
+        for <linux-kernel@vger.kernel.org>; Thu, 31 Jul 2025 17:47:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754009242; x=1754614042; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRXNszbxlUTyYnGSQYO+PKslDvhns5dMJJ1svuzzpJM=;
+        b=qRKo60MQIHwcbKWWwNc9DpzS1++nsKIJald+RTSmN4G3ExQTAHt/u5oAtFbnVGdJ8D
+         KPbbU0TcAULsT1WSrjZIrTsdoNBFUKAxTrm/5mydd/3yuOSIcMRmqMYpts+t5mS8FBvr
+         L3IPc4c7/510dzzd1O+2Fl4F90Sroz5T4kNKQUBzP3LRkphkcFAPHBbZa3bZgNxuigab
+         RKSNH4OmAI0H3PYCT/npB4FWKpC13QZv0S+RQ7kCflHad/AMQnoymJ5WfMneogUWQvws
+         NVfhpkrr92M9DNDJ/aMmfsRKGeAaVS3cZb16U8IVjDZ1V8JzZr7L2v8a69JtRAFSqEAY
+         8brQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754009242; x=1754614042;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=hRXNszbxlUTyYnGSQYO+PKslDvhns5dMJJ1svuzzpJM=;
+        b=bR9mfOMbbKsdk7YiYajl9YbnG6gDnMTbVoHDqpOB0n6dgSqaiMPNwBumFGgxf/01Pi
+         idMWPecLvpmjCcgXmwEXOkkO6R5eX1tkDLbRCDi2gEMYFmc8xr/sLKDx301Pb6JAPA6T
+         r1VCFKPZ96gvux6erDMS1yCu3zkqaCPsbRL1oy5BpyZmxGKKPFCk1XBNvq31SOS/VVhp
+         jMfsxVx/gL8G7Kp30ichJFGlf1V/blGDvSI8xZKOHvUyG1kr259nbxwndX0GLPqLRD9Q
+         CU/JHkhApIaBXUFXV0Nmmis3WyOgjDERmqWqxVSgJ5OJhbrLdVurrSaCHAn2jRVbLITp
+         olEw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFbIkBpph+5uNL31Zj5LqvQkomTRNSm3bbmuS/nUKqWig7tQSBvd1xlcDaUg9msRLrejZxCn/R6aHUdC0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEjrN9lXkpU+mH2ZrFa2ccq3lGiUFbeS3iNd4a/U9EbsODdhaD
+	tDzf4hKc4xBEsf1HSuhcyfmBc2DN9/mvG2Y750UxmuPRHmkvQM1/NGj5TAX/Er9Wrxs44wi6uvE
+	n6KNHUQ==
+X-Google-Smtp-Source: AGHT+IHab78F9llFKocoU6Zco0XzsmHDLGvQFwwdKJOwxALK9bUIf6goRjRbc/mZgc6P3+1lXC9qojGXeOI=
+X-Received: from pjbpd2.prod.google.com ([2002:a17:90b:1dc2:b0:312:187d:382d])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3d0a:b0:31f:42e8:a896
+ with SMTP id 98e67ed59e1d1-31f5ea4ca0bmr11613681a91.34.1754009242279; Thu, 31
+ Jul 2025 17:47:22 -0700 (PDT)
+Date: Thu, 31 Jul 2025 17:47:20 -0700
+In-Reply-To: <7af6dcf5-fbcd-4173-a588-38cf6c536282@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-KSE-AntiSpam-Interceptor-Info: fallback
+Mime-Version: 1.0
+References: <20250730174605.1614792-1-xin@zytor.com> <20250730174605.1614792-3-xin@zytor.com>
+ <aItGzjhpfzIbG+Op@intel.com> <7af6dcf5-fbcd-4173-a588-38cf6c536282@zytor.com>
+Message-ID: <aIwOmEzLgkP-9ZDE@google.com>
+Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation helpers
+From: Sean Christopherson <seanjc@google.com>
+To: Xin Li <xin@zytor.com>
+Cc: Chao Gao <chao.gao@intel.com>, linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
+	pbonzini@redhat.com, tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com
+Content-Type: text/plain; charset="us-ascii"
 
-U2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBsaW51eC5kZXY+IHdyb3RlOg0KPiBPbiA3LzI5
-LzI1IDIzOjQyLCBQaW5nLUtlIFNoaWggd3JvdGU6DQo+ID4gUGluZy1LZSBTaGloIDxwa3NoaWhA
-cmVhbHRlay5jb20+IHdyb3RlOg0KPiA+PiBTZWFuIEFuZGVyc29uIDxzZWFuLmFuZGVyc29uQGxp
-bnV4LmRldj4gd3JvdGU6DQo+ID4+ID4gVGhlcmUgYXJlIG1vcmUgdW5zdXBwb3J0ZWQgZnVuY3Rp
-b25zIHRoYW4ganVzdCBMT1dSVF9SVFkuIEltcHJvdmUgb24NCj4gPj4gPiBjb21taXQgM2I2NjUx
-OWIwMjNiICgid2lmaTogcnR3ODk6IHBoeTogYWRkIGR1bW15IGMyaCBoYW5kbGVyIHRvIGF2b2lk
-DQo+ID4+ID4gd2FybmluZyBtZXNzYWdlIikgYnkgcHJpbnRpbmcgYSBtZXNzYWdlIGp1c3Qgb25j
-ZSB3aGVuIHdlIGZpcnN0DQo+ID4+ID4gZW5jb3VudGVyIGFuIHVuc3VwcG9ydGVkIGNsYXNzLg0K
-PiA+Pg0KPiA+PiBPbmNlIEkgZW5jb3VudGVyIGFuIHVuc3VwcG9ydGVkIGNsYXNzL2Z1bmMsIEkn
-bGwgY2hlY2sgZmlybXdhcmUgdGVhbSBpZiB0aGUNCj4gPj4gQzJIIGV2ZW50cyBjYW4gYmUgaWdu
-b3JlZC4gSWYgc28sIEkgYWRkIGEgZHVtbXkgZnVuY3Rpb24gdG8gYXZvaWQgdGhlIG1lc3NhZ2Uu
-DQo+ID4+IElmIG5vdCwgSSBzaG91bGQgYWRkIGNvZGUgdG8gaGFuZGxlIHRoZSBldmVudC4NCj4g
-Pj4NCj4gPj4gRG8geW91IHdhbnQgdG8gc2VlIHRoZSBtZXNzYWdlIGV2ZW4gdGhvdWdoIGl0IG9u
-bHkgYXBwZWFycyBvbmNlPw0KPiA+Pg0KPiA+PiA+IERvIHRoZSBzYW1lIGZvciBlYWNoIHVuc3Vw
-cG9ydGVkIGZ1bmMgb2YNCj4gPj4gPiB0aGUgc3VwcG9ydGVkIGNsYXNzZXMuIFRoaXMgcHJldmVu
-dHMgbWVzc2FnZXMgbGlrZQ0KPiA+PiA+DQo+ID4+ID4gcnR3ODlfODkyMmFlIDAwMDA6ODE6MDAu
-MDogUEhZIGMyaCBjbGFzcyAyIG5vdCBzdXBwb3J0DQo+ID4NCj4gPiBJcyB0aGlzIGEgcmVhbCBl
-eGFtcGxlPw0KPiANCj4gVGhpcyBpcyBhIHJlYWwgZXhhbXBsZS4NCj4gDQo+ID4gV2UgaGF2ZSBo
-YW5kbGVkIGNsYXNzIDIgKFJUVzg5X1BIWV9DMkhfQ0xBU1NfRE0pLCBubz8NCj4gDQo+IElmIGZ1
-bmMgIT0gUlRXODlfUEhZX0MySF9ETV9GVU5DX0xPV1JUX1JUWSB0aGVuIHdlIGZhbGwgdGhyb3Vn
-aCB0byB0aGUNCj4gZGVmYXVsdCBjYXNlLg0KDQpPaC4gSSBzZWUuIA0KDQo+IA0KPiA+IFBsZWFz
-ZSBwb2ludCBvdXQgdGhlIGNsYXNzIC8gZnVuYyB5b3UgZW5jb3VudGVyZWQuIFRoZW4gSSBjYW4g
-bG9vayB1cCB2ZW5kb3INCj4gPiBkcml2ZXIgb3IgY29udGFjdCBpbnRlcm5hbCBmaXJtd2FyZSB0
-ZWFtIHRvIGtub3cgaWYgd2Ugc2hvdWxkIGltcGxlbWVudCBvcg0KPiA+IGp1c3QgYWRkIGEgZHVt
-bXkgZnVuY3Rpb24uDQo+ID4NCj4gPiBJZiB3ZSBkZWZlciBpdCwgSSBkb24ndCBrbm93IHdoZW4g
-d2UgY2FuIGRvIGl0Lg0KPiANCj4gcnR3ODlfODkyMmFlIDAwMDA6ODE6MDAuMDogUEhZIGMyaCBj
-bGFzcyAyIGZ1bmMgMTIgbm90IHN1cHBvcnRlZA0KPiANCg0KVGhlIEMySCBldmVudCBoYW5kbGVy
-IGhhcyBiZWVuIGFkZGVkIGJ5IFsxXS4NCg0KWzFdIGQzMWM0MjQ2NmIxYSAoIndpZmk6IHJ0dzg5
-OiBwaHk6IGFkZCBDMkggZXZlbnQgaGFuZGxlciBmb3IgcmVwb3J0IG9mIEZXIHNjYW4iKQ0KDQoN
-Cg==
+On Thu, Jul 31, 2025, Xin Li wrote:
+> On 7/31/2025 3:34 AM, Chao Gao wrote:
+> > > -fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+> > > +static fastpath_t handle_set_msr_irqoff(struct kvm_vcpu *vcpu, u32 msr, int reg)
+> > 
+> > How about __handle_fastpath_set_msr_irqoff()? It's better to keep
+> > "fastpath" in the function name to convey that this function is for
+> > fastpath only.
+> 
+> This is now a static function with return type fastpath_t, so I guess
+> it's okay to remove fastpath from its name (It looks that Sean prefers
+> shorter function names if they contains enough information).
+> 
+> But if the protocol is to have "fastpath" in all fast path function
+> names, I can change it.
+
+I'm also greedy and want it both ways :-)
+
+Spoiler alert, this is what I ended up with (completely untested at this point):
+
+static fastpath_t __handle_fastpath_wrmsr(struct kvm_vcpu *vcpu, u32 msr,
+					  u64 data)
+
+	switch (msr) {
+	case APIC_BASE_MSR + (APIC_ICR >> 4):
+		if (!lapic_in_kernel(vcpu) || !apic_x2apic_mode(vcpu->arch.apic) ||
+		    kvm_x2apic_icr_write_fast(vcpu->arch.apic, data))
+			return EXIT_FASTPATH_NONE;
+		break;
+	case MSR_IA32_TSC_DEADLINE:
+		if (!kvm_can_use_hv_timer(vcpu))
+			return EXIT_FASTPATH_NONE;
+
+		kvm_set_lapic_tscdeadline_msr(vcpu, data);
+		break;
+	default:
+		return EXIT_FASTPATH_NONE;
+	}
+
+	trace_kvm_msr_write(msr, data);
+
+	if (!kvm_skip_emulated_instruction(vcpu))
+		return EXIT_FASTPATH_EXIT_USERSPACE;
+
+	return EXIT_FASTPATH_REENTER_GUEST;
+}
+
+fastpath_t handle_fastpath_wrmsr(struct kvm_vcpu *vcpu)
+{
+	return __handle_fastpath_wrmsr(vcpu, kvm_rcx_read(vcpu),
+				       kvm_read_edx_eax(vcpu));
+}
+EXPORT_SYMBOL_GPL(handle_fastpath_set_msr_irqoff);
+
+fastpath_t handle_fastpath_wrmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
+{
+	return __handle_fastpath_wrmsr(vcpu, msr, kvm_register_read(vcpu, reg));
+}
+EXPORT_SYMBOL_GPL(handle_fastpath_set_msr_imm_irqoff);
+
+
+> > > {
+> > > -	u32 msr = kvm_rcx_read(vcpu);
+> > > 	u64 data;
+> > > 	fastpath_t ret;
+> > > 	bool handled;
+> > > @@ -2174,11 +2190,19 @@ fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+> > > 
+> > > 	switch (msr) {
+> > > 	case APIC_BASE_MSR + (APIC_ICR >> 4):
+> > > -		data = kvm_read_edx_eax(vcpu);
+> > > +		if (reg == VCPU_EXREG_EDX_EAX)
+> > > +			data = kvm_read_edx_eax(vcpu);
+> > > +		else
+> > > +			data = kvm_register_read(vcpu, reg);
+> > 
+> > ...
+> > 
+> > > +
+> > > 		handled = !handle_fastpath_set_x2apic_icr_irqoff(vcpu, data);
+> > > 		break;
+> > > 	case MSR_IA32_TSC_DEADLINE:
+> > > -		data = kvm_read_edx_eax(vcpu);
+> > > +		if (reg == VCPU_EXREG_EDX_EAX)
+> > > +			data = kvm_read_edx_eax(vcpu);
+> > > +		else
+> > > +			data = kvm_register_read(vcpu, reg);
+> > > +
+> > 
+> > Hoist this chunk out of the switch clause to avoid duplication.
+> 
+> I thought about it, but didn't do so because the original code doesn't read
+> the MSR data from registers when a MSR is not being handled in the
+> fast path, which saves some cycles in most cases.
+
+Can you hold off on doing anything with this series?  Mostly to save your time.
+
+Long story short, I unexpectedly dove into the fastpath code this week while sorting
+out an issue with the mediated PMU series, and I ended up with a series of patches
+to clean things up for both the mediated PMU series and for this series.
+
+With luck, I'll get the cleanups, the mediated PMU series, and a v2 of this series
+posted tomorrow (I also have some feedback on VCPU_EXREG_EDX_EAX; we can avoid it
+entirely without much fuss).
+
 
