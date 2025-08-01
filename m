@@ -1,101 +1,168 @@
-Return-Path: <linux-kernel+bounces-753019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFCFBB17DD6
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:56:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DEC8B17DD8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:58:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8E92054434E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:56:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BA683AC11A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:58:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7043208994;
-	Fri,  1 Aug 2025 07:56:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 719302063FD;
+	Fri,  1 Aug 2025 07:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Fa/4b+/0"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="uxVUQSQ8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="bg8ggV2A"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78F8A1FA272;
-	Fri,  1 Aug 2025 07:56:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B32A149DF0;
+	Fri,  1 Aug 2025 07:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754034977; cv=none; b=hK9LKtXsk17Hu+O8Th+mfIG9dyzxM3XZFhBzrH4g/v6zcnHaABsg5SuDDzPq65RTJ7A2FHoAlm5QL2fioaEg3wHg26OStSPSxWb/QkHZozbp0rW4j5/y2JvpqB+mt2RbKqxYbhZHLbR/XYHQ52QleYL02YFfA9q+spQLjGiAb/c=
+	t=1754035095; cv=none; b=LcBw2jyXszim4sv3Og8yVH2QG/9HMTUfjhnILJF9F6dZnCUN/BZufZ00M/HK9LixvYm68HUjIKrZfzTaDkTTq4vnxQJAxcscaJ3PCNALKZSjz8UpxtQt2F5HMrvBaHaB1OdsXqeUzpDySKmjHGP6Ya9Tt8urE8RLpg9Xg34pQxY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754034977; c=relaxed/simple;
-	bh=2UMcEhhoZlhjw6r12HgvrQgNjxVVNgnGO710rWLwQRU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=PB7YGiJM9foy2qCrDL0AMHEe0oB1tbC71PcenYCzMSufHh/9b++u47cdmhorPVVKgEsxrqzZ6+h/LY8oJoOevZYIdbACSjeMEq7u6GTxzj1fY7W2KZNT8S8Ix+i+oTd2Gnw3+J7fXFsY1W6tDs+VR0FLhiH2Lo3vPf4T35fjo8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Fa/4b+/0; arc=none smtp.client-ip=198.175.65.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754034976; x=1785570976;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=2UMcEhhoZlhjw6r12HgvrQgNjxVVNgnGO710rWLwQRU=;
-  b=Fa/4b+/0XRXzOWzoeVGixXkqzm4+Gn2d1/rjJlYYGKFDhf/E5AQWoPKk
-   9S+0QUWSX1J3uMPHNaOy0Lmml7FkmX9k5oFygM6lYEOcBRTabefMN5sng
-   ZGBbwgZTgNWcyXDP9DAO3+rZT6gwIXl5BYWtfGtVc0Q0CXa+j9uUchSho
-   ckuwccYO7uvF/6hzH4EyRTHXEUw64z6LXAqF/0dDD5zCgQiGQdBxjpD6b
-   fgfSEGy4Fm7Hj2HuEbd4PUA9XT0+/I74EJjH3wW9EDOXIUQr7hE1LYhG/
-   IjCjD5GtSv4kEoWi1uNJh/kDCVCsviflAJHuXg0LyoKsKIdKp+IGwsLik
-   Q==;
-X-CSE-ConnectionGUID: u1QJuk1QQqa3jS/CCMcmuQ==
-X-CSE-MsgGUID: Jaf5aQ3mRHSTTbCs8sPNCg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="60019011"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="60019011"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 00:56:15 -0700
-X-CSE-ConnectionGUID: LfvIxM39S6WdKa7/E14LSA==
-X-CSE-MsgGUID: 7BmRcL02RbS34FFYpdmvKA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="163942874"
-Received: from hrotuna-mobl2.ger.corp.intel.com (HELO localhost) ([10.245.246.164])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 00:56:01 -0700
-From: Jani Nikula <jani.nikula@intel.com>
-To: Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven
- <geert@linux-m68k.org>
-Cc: Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>,
- dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, joe@perches.com,
- corbet@lwn.net, apw@canonical.com, skhan@linuxfoundation.org,
- linux-kernel-mentees@lists.linux.dev, workflows@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin
- Ryabitsev <konstantin@linuxfoundation.org>
-Subject: Re: [PATCH] checkpatch: validate commit tag ordering
-In-Reply-To: <45f0995f-17ac-45a3-8bc0-3b276ee91a9d@kernel.org>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
- <53eb0068-008b-48e6-9b92-d92de2ed4fc9@kernel.org>
- <CAMuHMdU2e+5Hf3v=C=sE=+25f_A=2=Zzw5rxvcT=hb75VC=iFQ@mail.gmail.com>
- <45f0995f-17ac-45a3-8bc0-3b276ee91a9d@kernel.org>
-Date: Fri, 01 Aug 2025 10:55:55 +0300
-Message-ID: <3e9106d35d41a044adeadffeea32fa096c9e1370@intel.com>
+	s=arc-20240116; t=1754035095; c=relaxed/simple;
+	bh=4G8ZhZtodfCeiMf5Gp7tSbupjCoO3FbHLO5sWumn/QQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KnZyWVM7dQRc2ajvd40OnIP2OrzLqnY9C0fZ2ndkAEb5GuxNKdb2E/oskJ6FSwW5Z+P0JmkySYrNbBHCmiJ6xI2/01UbxCD7cpJL/16qvFW6pM6h4cKbVP/JnyNSxdesF8hThubLUXh9cP134VrEXdU2LK/n9GEnq6K7GFHdBzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=uxVUQSQ8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=bg8ggV2A; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Fri, 1 Aug 2025 09:58:10 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754035092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IjDlUcWpNJA19n2hFY8uNhKAuaKdKU6iYQHAetVcuVs=;
+	b=uxVUQSQ8+oOqJGHX17OobaEduDxX+Lv8wtSBKntZr8LmURRWJQusKP/0xVrzCW34wr7buu
+	u0uHhGgnjl59yQrU/r2xpmuPmvlJe8YvjKMfk80be1JFZGtqQUaFVC0Ms+jKceow/bszG3
+	fjAhM1YMGPeXuCPMo8Ze7ojF2aSbKDbQA01BNQ1HSkIqe92xD2n/cZzP5mfyPjsDViNQ1o
+	rndpG2rBQgqyevmASbKv9LQw7vK0Lk/kdlD+LsF/RpKVogCI0tsrTc48cYaBEHw1/KgvJ8
+	SVacCr7FcO79NfshzCBcHMfFbT9dokyquAAN3GObg4A0sZ65uvID8GhV2AMa5Q==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754035092;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=IjDlUcWpNJA19n2hFY8uNhKAuaKdKU6iYQHAetVcuVs=;
+	b=bg8ggV2AxmZDh2BiayN9HtaX+MQIpw4H7iDWBmssLO2PX8EsXolcJ5XH+6f2XefOAW/mip
+	VBebV1eR0RvpcUBw==
+From: Nam Cao <namcao@linutronix.de>
+To: Gabriele Monaco <gmonaco@redhat.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>,
+	Masami Hiramatsu <mhiramat@kernel.org>,
+	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Juri Lelli <juri.lelli@redhat.com>,
+	Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>,
+	Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>,
+	Valentin Schneider <vschneid@redhat.com>
+Subject: Re: [PATCH 5/5] rv: Add rts monitor
+Message-ID: <20250801075810._Ng7G1QT@linutronix.de>
+References: <cover.1753879295.git.namcao@linutronix.de>
+ <20834b8fcd4dfe75642cec2097e29f4c636a33fb.1753879295.git.namcao@linutronix.de>
+ <a78008bb05acae77f0572c3e5651cb2bceaaaf98.camel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a78008bb05acae77f0572c3e5651cb2bceaaaf98.camel@redhat.com>
 
-On Thu, 31 Jul 2025, Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> On 31/07/2025 13:55, Geert Uytterhoeven wrote:
->> B4 does not follow the proper order:
->
-> There is no "proper order" in terms of absolute facts.
+On Thu, Jul 31, 2025 at 09:47:10AM +0200, Gabriele Monaco wrote:
+> On Wed, 2025-07-30 at 14:45 +0200, Nam Cao wrote:
+> > Add "real-time scheduling" monitor, which validates that SCHED_RR and
+> > SCHED_FIFO tasks are scheduled before tasks with normal and
+> > extensible
+> > scheduling policies
+> > 
+> 
+> Looks a very interesting monitor!
+> A few questions:
+> 
+> I assume this works with rt-throttle because it implies a dequeue,
+> right?
+> And you probably won't see that without explicit tracepoints..
 
-Let's just decide whatever order b4 uses *is* the proper order, and save
-ourselves endless hours of debating! :p
+It does work properly with rt-throttling:
+	root@yellow:~# ./rt-loop
+	[   74.357730] sched: RT throttling activated
+	[   74.357745] rv: rts: 0: violation detected
 
-BR,
-Jani.
+Looking at rt-throlling code, it does not dequeue tasks, only does
+	rt_rq->rt_throttled = 1;
+	rt_rq->rt_queued = 0;
 
+so we are fine.
 
--- 
-Jani Nikula, Intel
+> > +	/*
+> > +	 * This may not be accurate, there may be enqueued RT tasks.
+> > But
+> > that's
+> > +	 * okay, the worst we get is a false negative. It will be
+> > accurate
+> > as
+> > +	 * soon as the CPU no longer has any queued RT task.
+> > +	 */
+> > +	ltl_atom_set(mon, LTL_RT_TASK_ENQUEUED, false);
+> > 
+> 
+> As far as I understand here the monitor would just miss RT tasks
+> already running but would perfectly enforce the ones starting after
+> initialisation, right?
+
+Not exactly. What could happen is that:
+
+ - RT task A already running
+
+ - monitor enabled. The monitor isn't aware of task A, therefore it allows
+   sched_switch to switch to non-RT task.
+
+ - RT task B is queued. The monitor now knows at least one RT task is
+   enqueued, so it disallows sched_switch to switch to non-RT.
+
+ - RT task A is dequeued. However, the monitor does not differentiate task
+   A and task B, therefore I thinks the only enqueued RT task is now gone.
+
+ - So now we have task B started after the monitor, but the monitor does
+   not check it.
+
+The monitor will become accurate once the CPU has no enqueued RT task,
+which should happen quite quickly on a sane setup where RT tasks do not
+monopoly the CPU.
+
+The monitor could be changed to be accurate from the get-go, by looking at
+how many enqueued RT tasks are present. I *think* rt_rq->rt_nr_running
+works. But I think the current implementation is fine, so not worth
+thinking too much about it.
+
+> > +RULE = always (RT_TASK_ENQUEUED imply SCHEDULE_RT_NEXT)
+> > +
+> > +SCHEDULE_RT_NEXT = (not SCHED_SWITCH) until (SCHED_SWITCH_RT or
+> > EXCEPTIONS)
+> > +
+> > +EXCEPTIONS = SCHED_SWITCH_DL or not RT_TASK_ENQUEUED
+> 
+> This monitor allows non-RT tasks to run indefinitely before the switch,
+> only when it happens, RT must run, right?
+
+Yes.
+
+> Not sure you can do much about it though. (without falling into the
+> need resched rabbithole I was trying to untangle)
+
+I would need to look into scheduler code, maybe we could check that the
+next scheduler tick implies a sched_switch. Another day.
+
+Nam
 
