@@ -1,217 +1,241 @@
-Return-Path: <linux-kernel+bounces-753524-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65D06B18427
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:46:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C681B18428
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:47:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7178F58341F
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:46:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33ECD3B8F38
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:47:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D3092641E3;
-	Fri,  1 Aug 2025 14:46:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E0382641E3;
+	Fri,  1 Aug 2025 14:47:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bkhjs190"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="o3TXQpoh"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2074.outbound.protection.outlook.com [40.107.223.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04F631B95B
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:46:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059595; cv=none; b=UvAEan8gvj1CcMMo08xVhnRi2lBumozT79MJ5kQxI9Pf7gAuwC5fn1ZA6NQsTU4ptBHC5/2oOu9rZfVTYSDBJHG0xkYyyrJ/xmZFmeZ6hpApd5o8Zzwqh3FoJU9F1H8kV8CfSS/wNI6NIxZmyKCmZkaIIneW76UgvhfcDeCy1jk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059595; c=relaxed/simple;
-	bh=+yoTY6yazGqtzU9wYBLRmdeuy6FQWG1zEpIB1hfnyos=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=D0UmzcOR3XxUAKS9vkZ/8l7d7PAMFkGy2T1ctz53wMXMcx50xu02RzDlTHIgnt3B466p5urkItGC2OhZcU2GRv7GusXyK0Hqd1KkLB/kZ9qGizcep/VYZoUVazyHYOcnD1cbMGEhv9NsXm6/69S/6g/xt7/vqPoGT6GfjNsSOtI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bkhjs190; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754059593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=wfKEuSvGNLIOEeuYVrCUQFDZLH95SE68FOENdwseoJM=;
-	b=bkhjs1900IxNeKtBXmf7DbHelyOS74LOSkSQQ4ZKVz0ajMO/BAMom4b9Pwyk8P3MTR6wLL
-	1zfW5fEC/4uCtD/AwouF2Jc+Sqk5z1MTNfzSUKJB6zCrXZjLmjGgFuMXSJKxrDEmv85gCG
-	HCCvH3iVLZsfj6PubTFcwpMhKKm3Imc=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-690-hDJKDKgmOLmW4U7Pabng0w-1; Fri, 01 Aug 2025 10:46:32 -0400
-X-MC-Unique: hDJKDKgmOLmW4U7Pabng0w-1
-X-Mimecast-MFC-AGG-ID: hDJKDKgmOLmW4U7Pabng0w_1754059589
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4562985ac6aso7073425e9.3
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:46:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754059589; x=1754664389;
-        h=mime-version:user-agent:content-transfer-encoding:autocrypt
-         :references:in-reply-to:date:cc:to:from:subject:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wfKEuSvGNLIOEeuYVrCUQFDZLH95SE68FOENdwseoJM=;
-        b=SkqevTXtN5+wJSDwbOzaGZnhIq/ePjwoFGRVfsJqODxiRwwMPEcCvvpn+9RbFC77OE
-         d0vvL+vQUk/GeSENs555JvowckIy+c2ohqo/aaa7qUMcBUMh09DeizbYDBT6szAkFgGI
-         nr8jt2ZbXPR2yKOWbv7CQsMm34XcnACjBMwUTCAMB9g0USaren2gmoKGJ1hW2FpGPda7
-         HAmFD2sBsuFp9Gb7gMwAGw+ToQqP9ZfkW8yoFoTaFQhlWaXKy7d8DjR90tmfMfJ6oU5k
-         4JRKbuOtGutX30rtgYZUix6kpRR3kDbbBppnApj9by9l0EODsSLWbBzmRkS5Wm7o419f
-         3wVA==
-X-Gm-Message-State: AOJu0YyAMH0bfRVkBbVwk7xxyBh5G1PLHechfysE5xrLAHPov9I2akPy
-	HXs8t7rUzAVBXTwALYezKg2OdOLLlk5lQR3wLNDZg7YCWQTJTp/MJ6iH93bwth4GhyDOZ966M4l
-	t1FAdRB0VdbOVo/E13GuItbEffHESZiZqo/ZHOiOG0fMEdkGHJ4gYl5jl5PC+9CWuvQ==
-X-Gm-Gg: ASbGncuQ6+YCeWKrEsya2BIMVN0STMfolXnQac9IkRHRyoDTMKgX7OMsxV0nMdfoe34
-	7sEVZLTO5vy8zXkFGokl41bhbGlsN5L2PikjmLZbq2ZrYkP9rE5sR+XAynuw7nFtMDSaXVl2/di
-	G/B7/1drK9eNwV3vzLOwoy6CsXshCCiiAFxfcEszBom/3+sF5Y/fZMpTJSYLpNQIY8GVRYYNxSt
-	56TS4tVIsgk9VkXzXwfSD4lwnONMLL6m7YqTPGcwvW9Nw/qb7O5M0IowewCPWeX67XuLio4G9ia
-	5Z/nc1mdamxhOYHC57H/2IYlRVOoxp39wsW5MT8yUbvGsbs0SxumJxQ0KpAyCCPx2w==
-X-Received: by 2002:a05:600c:64c7:b0:453:6b3a:6c06 with SMTP id 5b1f17b1804b1-45892bcfd4amr109720045e9.29.1754059589016;
-        Fri, 01 Aug 2025 07:46:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEvrL7M0VzLs8T6AWKtQGtQXKhcc1Z4XWhyHuRZxj/SjTgUZcgGuG7/yMqhFhfFAcNBhbkcsw==
-X-Received: by 2002:a05:600c:64c7:b0:453:6b3a:6c06 with SMTP id 5b1f17b1804b1-45892bcfd4amr109719735e9.29.1754059588511;
-        Fri, 01 Aug 2025 07:46:28 -0700 (PDT)
-Received: from gmonaco-thinkpadt14gen3.rmtit.csb ([185.107.56.30])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c453c80sm6088985f8f.43.2025.08.01.07.46.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 07:46:28 -0700 (PDT)
-Message-ID: <1d12942942150462f77ea87fec8f294f46c87b4f.camel@redhat.com>
-Subject: Re: [PATCH v9 6/8] sched/isolation: Force housekeeping if isolcpus
- and nohz_full don't leave any
-From: Gabriele Monaco <gmonaco@redhat.com>
-To: Waiman Long <llong@redhat.com>, Frederic Weisbecker <frederic@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Anna-Maria Behnsen
- <anna-maria@linutronix.de>,  Thomas Gleixner <tglx@linutronix.de>
-Date: Fri, 01 Aug 2025 16:46:26 +0200
-In-Reply-To: <a2ef7773-bec6-466f-81b3-e1d8f6cbe7b6@redhat.com>
-References: <20250730131158.101668-1-gmonaco@redhat.com>
-	 <20250730131158.101668-7-gmonaco@redhat.com>
-	 <a2ef7773-bec6-466f-81b3-e1d8f6cbe7b6@redhat.com>
-Autocrypt: addr=gmonaco@redhat.com; prefer-encrypt=mutual;
- keydata=mDMEZuK5YxYJKwYBBAHaRw8BAQdAmJ3dM9Sz6/Hodu33Qrf8QH2bNeNbOikqYtxWFLVm0
- 1a0JEdhYnJpZWxlIE1vbmFjbyA8Z21vbmFjb0ByZWRoYXQuY29tPoiZBBMWCgBBFiEEysoR+AuB3R
- Zwp6j270psSVh4TfIFAmbiuWMCGwMFCQWjmoAFCwkIBwICIgIGFQoJCAsCBBYCAwECHgcCF4AACgk
- Q70psSVh4TfJzZgD/TXjnqCyqaZH/Y2w+YVbvm93WX2eqBqiVZ6VEjTuGNs8A/iPrKbzdWC7AicnK
- xyhmqeUWOzFx5P43S1E1dhsrLWgP
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA83413E02A
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754059643; cv=fail; b=YZgbD42zTgRb5MMd1cteGBeVU1C+QA9CFpp2R7sKgI1CvQiNLlXRRPRS7mM4Go3i27neDC7KgkHfCBZmA9iaJfwx7SVy/jMgtgCYsLDSGZ3F+FlE3lzaRyroSSl5ugOFIOsfbQtOsrZHhhvOThi6KPE2OfZynYtl1wKgfcBiIj4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754059643; c=relaxed/simple;
+	bh=RCOTkbBDKqCBzTt5UM+8wlIwwZVh5MwnVoPhXfNDxTE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=bRzl3rf4WwnAWNJKE3zuhvSEIOYqV3c9UYi7hf2gkYJHmVvO+MAlnCrQGa3sCvGa2n+Qf2jJUKJ9gcul/Wafj4ijod9iZu2CuTw/7ex/j8W9Zf88WqlNVWXlZfy2IZNoqoveRG1TKDHfV3HhjeqPPwJ2SUJ0iXVpox7Mj2jveaE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=o3TXQpoh; arc=fail smtp.client-ip=40.107.223.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dxyzDDEP8e6LxEDYfhBJjc3zGglwheIG/jrmyVS4Rav5y5JDgkpb0fwboTZ2A8UoJOyqvZbeSEB876N7Je9V1wfVJnEV5B6p5Q1YeoIqxzpa/RxOmRAID+kEOPHXBZBOGHaSW9H3/eKligWtUkLVFpPpO77r+bRaJXzdsu2MRZic2mEI/G+uuhaEUvozWjFFDlqV6F9zPth+43loIdjagQFxaZCEk59N3VO7qxtYohlHxtbbL39NOohsrVyx+IdOFdAB8MVzIhasQWzKNsC3ceJIYqnLvwErsUUCNIbpg0MK7YXYnZK125+8Y07DPYmBsEZzoFvTbJBLBQ8B9TU+Ig==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=KsbDP2oGreYPCRK5mkrrPxyZIYMupJJZZ4Hh0SzIOFg=;
+ b=IBuvOCr3Ne5z+VS8zSH4q880KOexfFOLkmdyn2355HD7uDfbw3RtTuv7K1sL7xj7E3/V/w+/1b96NnppjRdbO0LmGTrv/zgkG3FmDApDRto9zTuszSDc3u6tvcM6zqL4QariYgkd0u/NnDX/nCK0HAWfP+VJSytps5ecFY9oAsRQzjJKrEhiIgM4uFjrGyelxI7L89JnBXcls5CfA1TYWxZT6boW0pQT4DBONPbd/5M58OELjxhRPChboXMAHSZQodHoJ+xUkY5zt3qogiRATrFSTvVYabudPqEIUQQWa2N2+/uD3Hc86Jje8qgI/FvO2bqkbPb8iT4xV9iC7ccbLA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=KsbDP2oGreYPCRK5mkrrPxyZIYMupJJZZ4Hh0SzIOFg=;
+ b=o3TXQpohgEcofk4SlEGvjmqFd5UmpaOSVJS/Fi2SooyIzSllCETkR//lGe8O6aGkZXKcpcxFo3NFJOtVMLz6Lr7V+L3+3kjfk3H7QjIP2dkXW9DALyr5ShTYFChfJQ9cd/3kGAiRA+QvGpGoGoYjy3guYQZxpDUuWak/gq1zesD6Hdz/EBnhjgRyeTx6iIaJNsLR1V3GIpXQHQRsVjtiL1/EZqgJl2pW5urC4fxRYzlLKZ4OMiduIDQ+hW1o922JkvvXbklKNHuDILhQz6Eic6sHl+JH6qk+ebS7vTZq4meEhYKmWbLt2XOKnOENPgFQU90F+BTeMGZH/xWW5vCMEA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by MW6PR12MB8960.namprd12.prod.outlook.com (2603:10b6:303:23e::22) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.11; Fri, 1 Aug
+ 2025 14:47:19 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.015; Fri, 1 Aug 2025
+ 14:47:18 +0000
+Date: Fri, 1 Aug 2025 16:47:15 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: linux-kernel@vger.kernel.org, sched-ext@lists.linux.dev, tj@kernel.org,
+	void@manifault.com, mingo@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH 2/3] sched_ext: Provide scx_bpf_remote_curr()
+Message-ID: <aIzTcxGC6_5Ntm18@gpd4>
+References: <20250801141741.355059-1-christian.loehle@arm.com>
+ <20250801141741.355059-3-christian.loehle@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801141741.355059-3-christian.loehle@arm.com>
+X-ClientProxiedBy: MI1P293CA0022.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::19) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|MW6PR12MB8960:EE_
+X-MS-Office365-Filtering-Correlation-Id: 360e038d-41e7-4eed-d347-08ddd10a504b
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vUn0Owt8co32mCLOFFT6APuZNyCv+Kq2eUYH6deIxR5iCV3mOogzEyRm5Oo9?=
+ =?us-ascii?Q?L/8mjlNkn7g/YpaDuXyVayj+/SGADdDIeiLdYfnNU/0lPqa7NwtI95vpQrEy?=
+ =?us-ascii?Q?f3RKpsgujXEH573NxO9fadW9XQ/tfr3NgZ2wR8oByQXzUmD3LHnaGt9iNQHg?=
+ =?us-ascii?Q?A+nbN/AjgnIf9zFXtK6RtXzUrqAXvmyTettndZO2vSLJaTfmnVCWlSRKoWk0?=
+ =?us-ascii?Q?OI7cSh6EElDm0CoHvFO9oYMhboBF13Zez8cXEky18trGaF4d7wcCKDzYrK6i?=
+ =?us-ascii?Q?t0y6CAa88EbyBf9qksth+10mcIEsPZ264qklNE5uBchcPJoGPX8QPo+5YySr?=
+ =?us-ascii?Q?rt2hjIF3kKioqNeDtvYPZ1q+mjfbP/OrdlsUSJX9Y0rLHpblhilz5VoywQzK?=
+ =?us-ascii?Q?CveEnAGKWF2XKDq5ZufvA7liuWDm5NA+aMj9wyTi1H5KIEGjhYDHTMStKo4K?=
+ =?us-ascii?Q?II4e5HncL2Bn6tqsQ/3yac9ik8kuTpArAwZujTbljmztYh8ehAR8rU9W636V?=
+ =?us-ascii?Q?ypzG/DQBGTEM7gB4CB2hzlsInWJRbT4s0Wx1O3Ar8VjsTYBfa/m9iAM9+d6d?=
+ =?us-ascii?Q?ALS32R+agRsBVPnjEEYUDL6PeIlspeuu9h0s10KBU3nhrLo+I838fUJlb0uG?=
+ =?us-ascii?Q?wDHZgh/kcB1hyqADKD701czoUss2eiKYRx9BDhwBNgPG3xXb3mjeBzNWyvbV?=
+ =?us-ascii?Q?Z39eamy5ZAqksHARv2ZihlEhakB2BlTln7Jn9GgiJz0CuQ3YPu0aKH8LgqP7?=
+ =?us-ascii?Q?hrIDqj4Pegg2bAUuiNdIYWFyLAb20X8Dc/VLwwM9gMax1JAS6dFOvNpJZ3nM?=
+ =?us-ascii?Q?goXfKy3/cSFbirbjCE2Y90wjEK2MjR8rxZ+6JWyHIXXk3ZfqD4AdIe+2aJH5?=
+ =?us-ascii?Q?ORt84C7/mQSHwqLJw4UxbzSJptYj4SGaCICMmU/aCGiXtlAll/OO+GI4bYFN?=
+ =?us-ascii?Q?iyxqEsjh9J/4lqUpNefUsJ//D9a3qaqJf0po9G2LmdqosUZJSfzgr4B4GDm5?=
+ =?us-ascii?Q?ikemjyGuS73PMPyymOGozeB3ERwD95ah1A+6XkSBxLWoIQ9J1iE+aSMbrLvP?=
+ =?us-ascii?Q?Mb+y6KbvnkjCDSBSOWXJDupBkA7CVgvpviKVyLG2GKPDJFdEHKapR1wOwvVt?=
+ =?us-ascii?Q?zpJzCdYh0ohR5FO2P15e3oTbqa2rHznyWwoxImDLFnZz+QRSx01o/eRrh8lz?=
+ =?us-ascii?Q?GXnJDHF1MceUPqRpJGW7Kq9aX4JaCcnmaC6jWIZQ7xRpS2nRJOafjavY5YIW?=
+ =?us-ascii?Q?SRBuDS4+yp+gtdjNY0MNYmHReU0/Ns+gE/C/c0Bq5rzxgNgrm5wS9rI8SL8p?=
+ =?us-ascii?Q?zAjCBguwVIPP1fyJujcafqdWlP/ZCwTZvmK8e+e80euwTZQYdnFAF5huZwcd?=
+ =?us-ascii?Q?lQqK+H/iqYsNB1GTYRW9B82EAgEs1WRnnVgtlb2sh5FhDwc9Fu4LOfT/Pzo9?=
+ =?us-ascii?Q?eoqQ2QI1m10=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?kHoto03zJquN7O8+UaqVkJC2xJlGWi7TxiIMbVJE/JzgMtbZS1bFHG8Te/nY?=
+ =?us-ascii?Q?8czC0GdruxRQLcVUwQ0jVveFJEe/imRC+WtXYqa2eY1eKMhaMwPnBGIz9Kll?=
+ =?us-ascii?Q?sPcAAXnHIBpy4KFrVeBa1FktS8zysofmTec++S5M45IbSzvaB7pOTto7FO0v?=
+ =?us-ascii?Q?LdijbxPiFxuJtQYVKIeWFh3HiIIC9uqijfBj3/hJkl+RS/AT9ZSJud+6Dfft?=
+ =?us-ascii?Q?HQdDuNFK0ZvWrxBHuHU0xGKLNora9i7z6MFFxU3Aef1mcuRQYPsWrlSIEI/p?=
+ =?us-ascii?Q?COcKittXIjKT/asThYpwhbvLKJ58TTYz64F57GKxJyTNTQx3kNxyG1nojYfR?=
+ =?us-ascii?Q?mtNLGkEdoGMFGRpSZmVLjsPJ36eRgcxw92IidX2YQCQNcijPJHi/RdbWoM+o?=
+ =?us-ascii?Q?LDfcwv0kvbLD9VN3Fuh0Wa46BmpMclFP2JoAgE6pi/MOXIHZgWMEiiVE68ex?=
+ =?us-ascii?Q?TeOkbMyfngJ9oWXMUkrjKOQdGewCmRoFJbgWnSs4gwPbXq9tvlxZf3TkgzdR?=
+ =?us-ascii?Q?sABkUUU+iiszPHKUgirWrPGCecyDBLdFRN2rxeM3a0DriYlUbtpsLptl2FD9?=
+ =?us-ascii?Q?eDkjxWYoH2LKTQsAJH1e8NaC+v3XOVFrtPmABnTKoTX9pv1nknzvmwZLrkl/?=
+ =?us-ascii?Q?oHfk9O+6Fa5W4w5uDn9lap5urrjkrCJvAJFM+FI6vw95EYhiMlY77zot+Ep+?=
+ =?us-ascii?Q?vhYo6EsXGjEPuB5up/5C9ID4qeeyMD59G8ej15ALesyVbXa5p0zM1Cg7VBu3?=
+ =?us-ascii?Q?yRhH6R/+xexrcRBJ9rEeqcG6IVR5CRhEo1zqCHC1oJW9jepTCvbH0MohnQS/?=
+ =?us-ascii?Q?9ObyGSkEKkQ0vD1bPGdCRG0ABE4HGD/V2JG7LdufbYEs9zPJMWnuhHBOziMe?=
+ =?us-ascii?Q?Qa3T/3BffzEdc+4KFMSeNMtco7sJBtp1Yw09H+JZzVJ5JOe5zl+hKHJGASLm?=
+ =?us-ascii?Q?txKhH6BmNOxZ8fnBrYQUONBOREi1JcURRdMM7g+Uz3C96l68VljI3aVdIPyo?=
+ =?us-ascii?Q?ynW2Z1qxSDS2vOki0Kqha1ZNCAYREqLZpYTzdd8VyzUJIlfY2lCfyJ3nrvKd?=
+ =?us-ascii?Q?GCUbiPLwQZ4czegrGC/v58myUtWKzmJZRlIhgFjU/bQaP5wm/4JJGV0U1eL1?=
+ =?us-ascii?Q?ckH4QkZOJhSCX24sMNkkBoLd6ea54wuPUBILzUEFlb2CuDjmNXd9e36ev8fs?=
+ =?us-ascii?Q?z/2hunz2Hp38+iNNWvI4Tz0CL9BZeMUaX/A1WednXQuvY4A8uqmLsre56Cnq?=
+ =?us-ascii?Q?tc0rCjNOIORsmuMhU3s9ixrf32BnQdP+2qObBNdI8zZwX0td9PsBTQ38J7KX?=
+ =?us-ascii?Q?BOwhDYbF1bA/h0EBY3nOXYk7uT6RXC+PeSoAxK1CsEyFINAXGdPwgxxfw4zY?=
+ =?us-ascii?Q?JyMzLhYXeGZCga+LzW37fOlaP5ecaYASUZ9l4ciwomFBRbJfb2+8u+Zmq6c1?=
+ =?us-ascii?Q?qHDZYml4+4Cm1D0gBUjPdYVdzN8wSaQA3jxHVaC9uN0Rd1hIIvko0mXpnLV2?=
+ =?us-ascii?Q?iwpZPKEuIP6X1eJnEQ9oXgdZZhdiUzGXdv5YqBtZLQEaN+Dz/LH35B+Ob3aY?=
+ =?us-ascii?Q?RtmpjD+X7fFIu+NG8MkPs39/Z7Drikg8mfeIlaf5?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 360e038d-41e7-4eed-d347-08ddd10a504b
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 14:47:18.6129
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: S480vzLn+o+xGlckKw0W6tMMRWXF2DBMhMQd8Sdup8BM9gmEwS0Fg4G4jMySoeu2S9nXGQPIN5UfAeVlRe+mcA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW6PR12MB8960
 
+On Fri, Aug 01, 2025 at 03:17:40PM +0100, Christian Loehle wrote:
+> Provide scx_bpf_remote_curr() as a way for scx schedulers to
+> check the curr task of a remote rq, without assuming its lock
+> or acquiring any.
+> 
+> Many scx schedulers make use of scx_bpf_cpu_rq() to check a
+> remote curr (e.g. to see if it should be preempted). This is
+> problematic because scx_bpf_cpu_rq() provides access to all
+> fields of struct rq, most of which aren't safe to use without
+> holding the associated rq lock.
+> 
+> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> ---
+>  kernel/sched/ext.c                       | 15 +++++++++++++++
+>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+>  2 files changed, 16 insertions(+)
+> 
+> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> index b734f55f3318..92e66bb0b5f2 100644
+> --- a/kernel/sched/ext.c
+> +++ b/kernel/sched/ext.c
+> @@ -7436,6 +7436,20 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+>  	return cpu_rq(cpu);
+>  }
+>  
+> +/**
+> + * scx_bpf_remote_curr - Fetch the curr of a rq without acquiring its rq lock
+> + * @cpu: CPU of the rq
+> + *
+> + * Neither a rq lock nor a task reference is acquired.
+> + */
+> +__bpf_kfunc struct task_struct *scx_bpf_remote_curr(s32 cpu)
+> +{
+> +	if (!kf_cpu_valid(cpu, NULL))
+> +		return NULL;
+> +
+> +	return cpu_rq(cpu)->curr;
+> +}
 
+As mentioned in my previou comment, this should be something like:
 
-On Thu, 2025-07-31 at 11:09 -0400, Waiman Long wrote:
->=20
-> On 7/30/25 9:11 AM, Gabriele Monaco wrote:
-> > Currently the user can set up isolcpus and nohz_full in such a way
-> > that
-> > leaves no housekeeping CPU (i.e. no CPU that is neither domain
-> > isolated
-> > nor nohz full). This can be a problem for other subsystems (e.g.
-> > the
-> > timer wheel imgration).
-> >=20
-> > Prevent this configuration by invalidating the last setting in case
-> > the
-> > union of isolcpus and nohz_full covers all CPUs.
-> >=20
-> > Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
-> > Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
-> > ---
-> > =C2=A0 kernel/sched/isolation.c | 12 ++++++++++++
-> > =C2=A0 1 file changed, 12 insertions(+)
-> >=20
-> > diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
-> > index 93b038d48900..0019d941de68 100644
-> > --- a/kernel/sched/isolation.c
-> > +++ b/kernel/sched/isolation.c
-> > @@ -165,6 +165,18 @@ static int __init housekeeping_setup(char
-> > *str, unsigned long flags)
-> > =C2=A0=C2=A0			}
-> > =C2=A0=C2=A0		}
-> > =C2=A0=20
-> > +		/* Check in combination with the previously set
-> > cpumask */
-> > +		type =3D find_first_bit(&housekeeping.flags,
-> > HK_TYPE_MAX);
-> > +		first_cpu =3D
-> > cpumask_first_and_and(cpu_present_mask,
-> > +						=C2=A0
-> > housekeeping_staging,
-> > +						=C2=A0
-> > housekeeping.cpumasks[type]);
-> > +		if (first_cpu >=3D nr_cpu_ids || first_cpu >=3D
-> > setup_max_cpus) {
-> > +			pr_warn("Housekeeping: must include one
-> > present CPU neither "
-> > +				"in nohz_full=3D nor in isolcpus=3D,
-> > ignoring setting %s\n",
-> > +				str);
-> > +			goto free_housekeeping_staging;
-> > +		}
-> > +
-> > =C2=A0=C2=A0		iter_flags =3D flags & ~housekeeping.flags;
-> > =C2=A0=20
-> > =C2=A0=C2=A0		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
->=20
-> I do have a question about this check. Currently isolcpus=3Ddomain is
-> bit 0, managed_irq is bit 1 and nohz_full is bit 2. If manage_irq
-> come first followed by nohz_full and then isolcpus=3Ddomain. By the
-> time, isolcpus=3Ddomain is being set, you are comparing its cpumask
-> with that of manage_irq, not nohz_full.
->=20
-> Perhaps you can reuse the non_housekeeping_mask for doing the check,
-> e.g.
->=20
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 cpumask_and(non_housekee=
-ping_mask, cpu_present_mask,=20
-> housekeeping_staging);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 iter_flags =3D housekeep=
-ing.flags & ~flags;
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 for_each_set_bit(type, &=
-iter_flags, HK_TYPE_MAX)
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 cpumask_and(non_housekeeping_mask,=20
-> non_housekeeping_mask, housekeeping.cpumasks[type]);
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 if (cpumask_empty(non_ho=
-usekeeping_mask)) {
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0 pr_warn(...
+ if (!kf_cpu_valid(cpu, NULL))
+ 	return NULL;
 
-Mmh right didn't think passing different masks in isocpus was possible.
+ rcu_read_lock();
+ p = cpu_rq(cpu)->curr;
+ if (p)
+ 	p = bpf_task_acquire(p);
+ rcu_read_unlock();
 
-You mean something like this right?
+ return p;
 
- isolcpus=3Dmanaged_irq,0-4 nohz_full=3D8-15 isolcpus=3Ddomain,0-7
+We may still race with CPU hotplugging, but I think it's not always
+possible to use cpus_read_lock/unlock() here. Also, most of the scx
+schedulers are restarted on CPU hotplugging events, so... one thing at a
+time. :)
 
-Which doesn't block the nohz_full because the first mask (managed_irq)
-leaves spaces.
+> +
+>  /**
+>   * scx_bpf_task_cgroup - Return the sched cgroup of a task
+>   * @p: task of interest
+> @@ -7600,6 +7614,7 @@ BTF_ID_FLAGS(func, scx_bpf_put_cpumask, KF_RELEASE)
+>  BTF_ID_FLAGS(func, scx_bpf_task_running, KF_RCU)
+>  BTF_ID_FLAGS(func, scx_bpf_task_cpu, KF_RCU)
+>  BTF_ID_FLAGS(func, scx_bpf_cpu_rq, KF_RET_NULL)
+> +BTF_ID_FLAGS(func, scx_bpf_remote_curr, KF_RET_NULL)
+>  #ifdef CONFIG_CGROUP_SCHED
+>  BTF_ID_FLAGS(func, scx_bpf_task_cgroup, KF_RCU | KF_ACQUIRE)
+>  #endif
+> diff --git a/tools/sched_ext/include/scx/common.bpf.h b/tools/sched_ext/include/scx/common.bpf.h
+> index d4e21558e982..e5d4ef124532 100644
+> --- a/tools/sched_ext/include/scx/common.bpf.h
+> +++ b/tools/sched_ext/include/scx/common.bpf.h
+> @@ -91,6 +91,7 @@ s32 scx_bpf_pick_any_cpu(const cpumask_t *cpus_allowed, u64 flags) __ksym;
+>  bool scx_bpf_task_running(const struct task_struct *p) __ksym;
+>  s32 scx_bpf_task_cpu(const struct task_struct *p) __ksym;
+>  struct rq *scx_bpf_cpu_rq(s32 cpu) __ksym;
+> +struct task_struct *scx_bpf_remote_curr(s32 cpu) __ksym;
+>  struct cgroup *scx_bpf_task_cgroup(struct task_struct *p) __ksym __weak;
+>  u64 scx_bpf_now(void) __ksym __weak;
+>  void scx_bpf_events(struct scx_event_stats *events, size_t events__sz) __ksym __weak;
+> -- 
+> 2.34.1
+> 
 
-Right now we block assignments like
-
- isolcpus=3Dmanaged_irq,0-7 nohz_full=3D8-15
-
-and=20
-
- isolcpus=3Dmanaged_irq,0-7 -a isolcpus=3Ddomain,8-15
-
-although this series doesn't really have problems with it.
-Shouldn't we just ignore these cases and just count domain + nohz_full?
-
-The solution you propose is to check all housekeeping, so it would also
-prevent the (safe?) assignments above, right?
-
-We could just check against the previously set domain/nohz_full and
-leave other flags alone, couldn't we?
-
-Thanks,
-Gabriele
-
+-Andrea
 
