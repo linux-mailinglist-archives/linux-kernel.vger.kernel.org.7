@@ -1,113 +1,120 @@
-Return-Path: <linux-kernel+bounces-753326-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 368D1B18193
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:20:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C551BB18191
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7FEB44E32B9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:20:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8498D4E0871
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:19:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABB14246793;
-	Fri,  1 Aug 2025 12:19:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F24AA246BCF;
+	Fri,  1 Aug 2025 12:19:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlUh9G0A"
-Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pMI+DzY9"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBC79246765;
-	Fri,  1 Aug 2025 12:19:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95F7E2356CB;
+	Fri,  1 Aug 2025 12:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754050784; cv=none; b=tuGiPNT9MHl2dRaJaPndM+h9qp+a7nJJ/0bXmef68wvM98p6yAfl/EjfY6YAwHnYRdAItw1+4bCE1wd83qbK91j3Bo1g9fvZuzuMWFUN7ss5tgToYAxCl+QNUkNGqJv5eH3+xMqd+FfIxQg40SjIjRZ2KmW37xQYrpU6Tl2V/7I=
+	t=1754050774; cv=none; b=QJaDZl6coancNFOdTyiR0o+y6tdW2z/rdB8Gi2ORRpJOqeAFpI4vc/anFAeO9OnDJcD7yBqxarHDBaTck01mh1LERK3KUVSnjtMy20LYhR265YlMj20tC1+hSP0DV4sFhFgIkq4pd88QS3PkJsE3P2qoEC9uYM8iRxWmczX5zhY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754050784; c=relaxed/simple;
-	bh=E5ucJWZK26CYGuCx0hTvlSgmID8FvE4hHQtohgaxYrQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sFsql7JxL28p+bGT/MLWUX057feuBib8YbJ33h9JZ0B4hXnsbN3W/1fEdZILUrfIRCZllwVZ0547NuUgV1bSgX1DVPlt1Z/RTjGhHhtMt9ox0QZKKrUhl0EEvRKhnictgS9HbJyJyroCn8FnbymBU5KNlgo/CbBzSjvy0O/3OAA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlUh9G0A; arc=none smtp.client-ip=209.85.214.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-240240f1478so3766365ad.1;
-        Fri, 01 Aug 2025 05:19:41 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754050781; x=1754655581; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=E5ucJWZK26CYGuCx0hTvlSgmID8FvE4hHQtohgaxYrQ=;
-        b=LlUh9G0AV3/740S+vnAhskzAtaorbAPZvH1PusLlzKXt21Teetj7plcqe2U9m0zUd2
-         aYwsUP6On8Txlj7pQ0+jWuscZlfPY3LWu4qC7Cs4gr5vPP7z0C+GZHBY0xFZL11yhwkX
-         YAenG6QC1+uH1pyprsHw6GrzXU/JW69Nz+bE103+VkmtY6q/WuxqiC+A07rT+5IIpXQe
-         nVyqDvwOyCpTO53Pi5kuiwhx0gPFe2/a9pS01JRdB1np2KxcC0U4sRWcMIkqU+tiQldY
-         DjcZbk8/lIyrDPQ1qGJuCFsd6AYNmfANKrq1gx7WJRIvu5NmfVJgwQEznLj+gaKTWxRk
-         llmg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754050781; x=1754655581;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E5ucJWZK26CYGuCx0hTvlSgmID8FvE4hHQtohgaxYrQ=;
-        b=chFWKkLY4Dg8TWS303jTBqwXx0dcOP8LazgBWrytxYxD+qMX1Hqk6Kv+QgP+1fxrRC
-         0wuSdWwX8nYbVD7fHMXVPtqTrVXWqV6ViRuBBgpmP9kcKc3sHIr8jX8rF+9rKWrarWey
-         gZzB0Xb9qKpAG1nuoQfPvURJSsTD3KfJDgG3mTrH0oooQVqWDHt+7t0b9nfAL6lF2w4H
-         p3csQ3MwDq40tWsuq9qRkmPJcCFWJronhuGXuQ0d1HzHI20QRZbVV+ffweHyICMEtMKq
-         4zAMK4DyP+4jVt5cgwvhPCom6EjpaOdnyV9iqOpZTHxZrreA4nqZ14zNF/GkMj/ucWcd
-         jx4Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVTN+/6iYcHjMD+COTfVqfAJb737uJpCvYajUVPBkVAnnnPpWSq12eypROXUde2iB40X7H5vavMRV+jQv20SK8=@vger.kernel.org, AJvYcCX6e8ia0xP3CMNtj5rYpFNqf/s69L+8Z8WABKq+qG/TTXaeLOsbFOzKttT3+cn1ZUHwmhc3WimpBrssQBI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YypTXeKf8frd/dTG9NOMfK6amiyCBRhrcToSDTLI20fkJNI+5ne
-	jzi6+1i8AjA+9o/ltQ3Qxa99L4OxqsxSxz8jZQJON0oHmKLmgJjP+vJlMDDzIb3+6G8scR3Oz8k
-	Pc9bECVRgiVs8vifyf0oYvA3VrzHkuko=
-X-Gm-Gg: ASbGnctPt0mqZOpzSjoqAThqe6rPbQILfCvFbf4abAu8EY6wgS5xWeeBkCgV8x3WMaL
-	fKmQ050Zk7tmJW9ZaYo2aOXJqvXBWjgblh624eimiWm7pRqSblPmLISvM9FKB/HctjCFQcwpwiM
-	Dbi+xg/N29ves+mYlH1EH3S5yHtUDXWwcck2qxyGq+CIC6k1LNBWI/eoiTFo/bwUM0NvNg300Cu
-	O/YAwrs9iaEFDYpEuI=
-X-Google-Smtp-Source: AGHT+IGSkEGAh8RQHooFN4XMx9mIZkhD9qsm/F7EHJWiI3Ihlyq0RCC6ip9r+ksfPtD9bqL/B/S4sPujooHDkDeGaj0=
-X-Received: by 2002:a17:903:3b46:b0:234:df51:d190 with SMTP id
- d9443c01a7336-24096a5d1fbmr46397345ad.4.1754050780912; Fri, 01 Aug 2025
- 05:19:40 -0700 (PDT)
+	s=arc-20240116; t=1754050774; c=relaxed/simple;
+	bh=WfYYyoKfLd1GrN54j6/DszN35nTkNYozIBoKIhtWy6I=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Bl+VM+HNwfL+KT9GJ0qCjxNccIUvepZMEbkf6cAbxjHHBHBvtJT4RdL0S8JodKJGv+XxsXEMRyWc3GkSDcoIAeRztarAHqj/1g9eHLfbsdBzMkMIWP6ht8pm1XKqzUNeg3YeYf3pUFAM9aVhFMFcE+Ra4PwP5JskJtd2faQxPJY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pMI+DzY9; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754050770;
+	bh=WfYYyoKfLd1GrN54j6/DszN35nTkNYozIBoKIhtWy6I=;
+	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
+	b=pMI+DzY9ztHmVosQdnbboXnEtP5pcNWzqnAwTEJol+5acVOp6OPoLWXf7wzf/ENl1
+	 Lfid+RQ70rYHZjzhhYl3z7pnqHakSL2JyjWzj3uDNGMAohxPJ5smG7IM1YQ7Ae0AX3
+	 4cR+ANeDFR75sIYtsEv9DpWmEI3ekbNBTF78cP+XL11dsqoj7IjVMk0mi8OCk5scgD
+	 b0qM4cZeUyBsBW//RFk8/DNFIYkdT8/HW3RZEZ5vb9zNbTm019jZI9im9glueW5wBF
+	 SY444wZD2xoyLaNMN5lw9UZl7fs0ewzsTflo0JkqXaCyVhFonvf+A1+j1VTHI7gIEJ
+	 iVvKW8N2soBEw==
+Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892F2D600c8F85cF092d4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: jmassot)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0BDF017E046D;
+	Fri,  1 Aug 2025 14:19:30 +0200 (CEST)
+Message-ID: <6949aa850fa75bc1f5ae0ae7f05f3d7bafeaddaf.camel@collabora.com>
+Subject: Re: [PATCH v6 03/24] dt-bindings: media: i2c: max96717: add support
+ for I2C ATR
+From: Julien Massot <julien.massot@collabora.com>
+To: Cosmin Tanislav <demonsingur@gmail.com>, Cosmin Tanislav	
+ <cosmin.tanislav@analog.com>, Tomi Valkeinen	
+ <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho Chehab	
+ <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Niklas
+ =?ISO-8859-1?Q?S=F6derlund?=	 <niklas.soderlund@ragnatech.se>, Sakari Ailus
+ <sakari.ailus@linux.intel.com>,  Laurent Pinchart
+ <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
+Date: Fri, 01 Aug 2025 14:19:29 +0200
+In-Reply-To: <20250716193111.942217-4-demonsingur@gmail.com>
+References: <20250716193111.942217-1-demonsingur@gmail.com>
+	 <20250716193111.942217-4-demonsingur@gmail.com>
+Organization: Collabora Ltd.
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: base64
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250724185700.557505-1-lyude@redhat.com> <20250724185700.557505-3-lyude@redhat.com>
- <aIXVzIwBDvY1ZVjL@google.com> <f92b5f82b3ad7bb8d5bf60b272aac8cf1e6ced24.camel@redhat.com>
- <aIi7ZycRtmOZNtcf@google.com> <ddea64af3b845d2c32d807c5aab6146a9ce3c2bf.camel@redhat.com>
- <CAH5fLgi63Avw2VYvaOEdZhw93Qb+1isuW-CsyaD-_ask62_tcA@mail.gmail.com>
-In-Reply-To: <CAH5fLgi63Avw2VYvaOEdZhw93Qb+1isuW-CsyaD-_ask62_tcA@mail.gmail.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Fri, 1 Aug 2025 14:19:28 +0200
-X-Gm-Features: Ac12FXyppiVOSM9kAdVVdNa7pzMQtgTjeEzv-BNsRkeIv9E1KjQqT9KtDUbHK8I
-Message-ID: <CANiq72=P0zXVOBgfWU7cec4wDiXoV_jUtVR8vANT0M5=pcaYRg@mail.gmail.com>
-Subject: Re: [PATCH 2/2] rust: time: Implement basic arithmetic operations for Delta
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
-	Andreas Hindborg <a.hindborg@kernel.org>, FUJITA Tomonori <fujita.tomonori@gmail.com>, 
-	Frederic Weisbecker <frederic@kernel.org>, Anna-Maria Behnsen <anna-maria@linutronix.de>, 
-	John Stultz <jstultz@google.com>, Stephen Boyd <sboyd@kernel.org>, Miguel Ojeda <ojeda@kernel.org>, 
-	Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 1, 2025 at 12:10=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> #[cfg(target_pointer_width =3D "32")]
-> or
-> #[cfg(target_pointer_width =3D "64")]
+T24gV2VkLCAyMDI1LTA3LTE2IGF0IDIyOjMwICswMzAwLCBDb3NtaW4gVGFuaXNsYXYgd3JvdGU6
+Cj4gTUFYOTY3MTcgaXMgY2FwYWJsZSBvZiBhZGRyZXNzIHRyYW5zbGF0aW9uIGZvciB0aGUgY29u
+bmVjdGVkIEkyQyBzbGF2ZXMuCj4gCj4gQWRkIHN1cHBvcnQgZm9yIEkyQyBBVFIgd2hpbGUga2Vl
+cGluZyBJMkMgZ2F0ZSBmb3IgY29tcGF0aWJpbGl0eSB0bwo+IHN1cHBvcnQgdGhpcyB1c2VjYXNl
+Lgo+IAo+IFNpZ25lZC1vZmYtYnk6IENvc21pbiBUYW5pc2xhdiA8ZGVtb25zaW5ndXJAZ21haWwu
+Y29tPgo+IEFja2VkLWJ5OiBSb2IgSGVycmluZyAoQXJtKSA8cm9iaEBrZXJuZWwub3JnPgo+IC0t
+LQo+IMKgLi4uL2JpbmRpbmdzL21lZGlhL2kyYy9tYXhpbSxtYXg5NjcxNy55YW1swqDCoMKgIHwg
+MzkgKysrKysrKysrKysrKysrKysrKwo+IMKgMSBmaWxlIGNoYW5nZWQsIDM5IGluc2VydGlvbnMo
+KykKPiAKPiBkaWZmIC0tZ2l0IGEvRG9jdW1lbnRhdGlvbi9kZXZpY2V0cmVlL2JpbmRpbmdzL21l
+ZGlhL2kyYy9tYXhpbSxtYXg5NjcxNy55YW1sCj4gYi9Eb2N1bWVudGF0aW9uL2RldmljZXRyZWUv
+YmluZGluZ3MvbWVkaWEvaTJjL21heGltLG1heDk2NzE3LnlhbWwKPiBpbmRleCAxNWFiMzc3MDJh
+OTI3Li4xNjdjM2RkNTA2ODNjIDEwMDY0NAo+IC0tLSBhL0RvY3VtZW50YXRpb24vZGV2aWNldHJl
+ZS9iaW5kaW5ncy9tZWRpYS9pMmMvbWF4aW0sbWF4OTY3MTcueWFtbAo+ICsrKyBiL0RvY3VtZW50
+YXRpb24vZGV2aWNldHJlZS9iaW5kaW5ncy9tZWRpYS9pMmMvbWF4aW0sbWF4OTY3MTcueWFtbAo+
+IEBAIC05Miw2ICs5MiwzMCBAQCBwcm9wZXJ0aWVzOgo+IMKgwqDCoMKgwqDCoCBpbmNvbWluZyBH
+TVNMMiBsaW5rLiBUaGVyZWZvcmUsIGl0IHN1cHBvcnRzIGFuIGkyYy1nYXRlCj4gwqDCoMKgwqDC
+oMKgIHN1Ym5vZGUgdG8gY29uZmlndXJlIGEgc2Vuc29yLgo+IMKgCj4gK8KgIGkyYy1hbGlhcy1w
+b29sOgo+ICvCoMKgwqAgbWF4SXRlbXM6IDIKPiArCj4gK8KgIGkyYy1hdHI6Cj4gK8KgwqDCoCB0
+eXBlOiBvYmplY3QKPiArwqDCoMKgIGFkZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQo+ICsKPiAr
+wqDCoMKgIHByb3BlcnRpZXM6Cj4gK8KgwqDCoMKgwqAgJyNhZGRyZXNzLWNlbGxzJzoKPiArwqDC
+oMKgwqDCoMKgwqAgY29uc3Q6IDEKPiArCj4gK8KgwqDCoMKgwqAgJyNzaXplLWNlbGxzJzoKPiAr
+wqDCoMKgwqDCoMKgwqAgY29uc3Q6IDAKPiArCj4gK8KgwqDCoCBwYXR0ZXJuUHJvcGVydGllczoK
+PiArwqDCoMKgwqDCoCAnXmkyY0BbMDFdJCc6Cj4gK8KgwqDCoMKgwqDCoMKgICRyZWY6IC9zY2hl
+bWFzL2kyYy9pMmMtY29udHJvbGxlci55YW1sIwo+ICvCoMKgwqDCoMKgwqDCoCB1bmV2YWx1YXRl
+ZFByb3BlcnRpZXM6IGZhbHNlCj4gK8KgwqDCoMKgwqDCoMKgIHByb3BlcnRpZXM6Cj4gK8KgwqDC
+oMKgwqDCoMKgwqDCoCByZWc6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoMKgwqAgaXRlbXM6Cj4gK8Kg
+wqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgIG1pbmltdW06IDAKPiArwqDCoMKgwqDCoMKgwqDCoMKg
+wqDCoMKgwqAgbWF4aW11bTogMQo+ICsKPiDCoHJlcXVpcmVkOgo+IMKgwqAgLSBjb21wYXRpYmxl
+Cj4gwqDCoCAtIHJlZwo+IEBAIC05OSw2ICsxMjMsMjEgQEAgcmVxdWlyZWQ6Cj4gwqAKPiDCoGFk
+ZGl0aW9uYWxQcm9wZXJ0aWVzOiBmYWxzZQo+IMKgCj4gK2FsbE9mOgo+ICvCoCAtICRyZWY6IC9z
+Y2hlbWFzL2kyYy9pMmMtYXRyLnlhbWwjCj4gKwo+ICvCoCAtIGFueU9mOgo+ICvCoMKgwqDCoMKg
+IC0gb25lT2Y6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCAtIHJlcXVpcmVkOiBbaTJjLWF0cl0KPiAr
+wqDCoMKgwqDCoMKgwqDCoMKgIC0gcmVxdWlyZWQ6IFtpMmMtZ2F0ZV0KPiArCj4gK8KgwqDCoMKg
+wqAgLSBub3Q6Cj4gK8KgwqDCoMKgwqDCoMKgwqDCoCByZXF1aXJlZDogW2kyYy1hdHIsIGkyYy1n
+YXRlXQo+ICsKPiArZGVwZW5kZW50UmVxdWlyZWQ6Cj4gK8KgIGkyYy1hdHI6IFtpMmMtYWxpYXMt
+cG9vbF0KPiArwqAgaTJjLWFsaWFzLXBvb2w6IFtpMmMtYXRyXQo+ICsKPiDCoGV4YW1wbGVzOgo+
+IMKgwqAgLSB8Cj4gwqDCoMKgwqAgI2luY2x1ZGUgPGR0LWJpbmRpbmdzL2dwaW8vZ3Bpby5oPgoK
+UmV2aWV3ZWQtYnk6IEp1bGllbiBNYXNzb3QgPGp1bGllbi5tYXNzb3RAY29sbGFib3JhLmNvbT4K
 
-These are in other proposed series, and in-tree we also have a couple
-`target_arch`s, but I keep wondering about the familiarity of using
-these vs. `CONFIG_*`s. I guess it is fine.
 
-Cheers,
-Miguel
 
