@@ -1,175 +1,145 @@
-Return-Path: <linux-kernel+bounces-752980-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752981-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 507BDB17D5D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:18:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B865DB17D5E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 83EBA7ADE26
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:17:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E7EBA587212
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:19:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 298AC1F3FC6;
-	Fri,  1 Aug 2025 07:18:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DF851F37D3;
+	Fri,  1 Aug 2025 07:19:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="mOCEVgP4"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Q/gE5Hqe"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3783F3C26;
-	Fri,  1 Aug 2025 07:18:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CCD3C26
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 07:19:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754032706; cv=none; b=H8cQkvPEcvAyieMiAH/srHUATVMf0pI3pt0PyApFtnDAVnNDFaPFwJxcc6cqc3HGxTwoOl4XR/laWP7R1JYWZ4UD2AbV8aXt9+XxUW0LHV2EXoKB0ZjEuHmS6OrnKWt/4ZtJ4dW0DiSCL/paJdrO2yuM2nB0B8kZoA8qZo0jPfU=
+	t=1754032747; cv=none; b=EQzEv2qDdGu3MlNbvag06fZOWakQG9/AWo5WUBloMaUAG5Mf83kpIyWQNpkE7AsI2ShATa92+BIqSnMLgo7PqUXBWs93nMfFSKViq19oIKVyh1I+aw99mvLaMXCcpYK021KCAst9bbDak9/ZQ2UyMB9pfulae06SSQS7vSNmwKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754032706; c=relaxed/simple;
-	bh=BOFyJw4ktBxPJF/jujwd4GVuA44Bxw4UBKAzqLYfmFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ohf5ocnSU1GEKOEqqaZPyJW8ZBSm27sK6cfL+RtL0g3twlo9R86Im5QJjY/i2q7TrP/IIk5rH8IMTMw1wtu0hmhu5E660q8BYub5t3h3Azyn3PdPwWRLMHpJ4YCfDJ+8FrFrudvXyQWlLgivq0BKdj/ZlhSYdYqQf7tjtbkYsSw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=mOCEVgP4; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754032466;
-	bh=P/wEHpx1naDCEcAHIdugG1tNSMJQxPoJ4fhM/JvwLug=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=mOCEVgP4D8NUoGMxs+CJC4wg2sDHE0LL0TyC+OciHTDZyDPahMVZh8zbIW6jpQu8Y
-	 wZmjEMowJq7VsOMBEOiLUE1vjrmgoLCp/3bddZeucNHJsdW8Pb/5jAd6QaqQD+eVr9
-	 fA8b31Gmw2q3R6q/OMIWZ5UtZJ4UWtouxTF+sd4M68jgBXpV0dByV2T0WXhy6RDITY
-	 DLtfRo21fedBSu+KpO5BnLBoCzJ4YLXo7qkPCKuJTjBqv/RZ6uVMdJPJg1k+XS7zD3
-	 0PPYclPz2+g8V9Z8pw//zqP+VMv0uGH2JcAH9S0RdGjNOd7thfntucfpu08Kb2ljOF
-	 LWbiE724S3ahA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4btcdZ32zsz4xQW;
-	Fri,  1 Aug 2025 17:14:26 +1000 (AEST)
-Date: Fri, 1 Aug 2025 17:18:16 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Danilo Krummrich <dakr@kernel.org>, Miguel Ojeda <ojeda@kernel.org>
-Cc: Andreas Hindborg <a.hindborg@kernel.org>, Alexandre Courbot
- <acourbot@nvidia.com>, FUJITA Tomonori <fujita.tomonori@gmail.com>, Linux
- Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust-timekeeping tree with the
- drm-nova tree
-Message-ID: <20250801171816.1af66375@canb.auug.org.au>
-In-Reply-To: <20250624195142.1050e147@canb.auug.org.au>
-References: <20250624195142.1050e147@canb.auug.org.au>
+	s=arc-20240116; t=1754032747; c=relaxed/simple;
+	bh=TYjLHC/Pp0ytAq/FGSdF8xCtocdkWfrMCnL4dVfmpek=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=pkNwxp8ntPwXnlOe/n2PTTTYDDsOQJaHSwZqPRqpt5MuWfjufaHrkPsicqUsVSgn3gPJSoPIsp0azn454ivb2QiYLbNxYsvG7i4n1xTUGkHIqx6oNOUkj80vys+/FgsRtdMyBC6ZiU6/jt7xnoJ9FK8ah02OsOjf8fPNdyvS5Ds=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Q/gE5Hqe; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-45555e3317aso2719005e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 00:19:05 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1754032744; x=1754637544; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=6yXoFBX87IgNPakRa1KKSp0Mi46FaeH8eAGWkq4o2TU=;
+        b=Q/gE5HqeJnWUs+tMwL+u2zW6Mncsjy1lfI6SGsW8pO389PAug8xln5jfj77TzNBE19
+         o+t39+oVhXePvu4iSPDFIkuHmHi8UDfjuTjUoNlsq90sYYx5/OcZ8o+CEPU4xAUkbxU7
+         qd45WPrCyLyt+pA7zs+r6c1OTlouXmdqzD9KW3PQdI0itiKmPMTpPN8qshjpps+SAW3P
+         N3p6ohgBAufI+lkd0FnQOPmhK0J9J9Ek1vUZiHBrVRZ+JhLfc37no7sjUYaIuGqdSUbg
+         eg+Yy53qCXprmmFkBtEFZhKMCZGm5oQaHPIxy/XttzXhBxBQcAjfw6yDGYj99gFUUNJ9
+         d3yw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754032744; x=1754637544;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=6yXoFBX87IgNPakRa1KKSp0Mi46FaeH8eAGWkq4o2TU=;
+        b=DNMcZLF1HXErBD1g9yLrlQDOuFgbrICti7Z6gX5LQmUX66lohjCGpBFayz9Xv8lYKW
+         rk3LoIUIQIJsZnrkeRP46Pr/bCCC0fge8Fg8rW3CCZ01T9mkjLMIQnMmEa9nV5UPH89f
+         y4xDSSvD+pTLVet3kJDlW4+PXg2hg3ue5NuZMtBl2KR3blTaEzX34PC+dUPq9r0fSU2r
+         EeGM96HBDxcuye1JJLNDipOT2Y3lSVf1LST92EdXqn9MBKbhdSQtfqL7myYQt6yxoTja
+         2aV3YVhBXhfN+LlmgTsmNmG2beZZ/gv+350BmaM0s1gHzAuo6wRdgJXGX40e0qvCV3sm
+         UizA==
+X-Forwarded-Encrypted: i=1; AJvYcCVeSVrNeDYNhLzuN6hy2nedYdbPWlWZeYU4ywST4NKNy6dzjMsYSqaYMk3waU7qybblovxJvuBi0HH5OmU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSijpcGdBI5NDn7DCE/8WVaoEp17TTX+pc2yDoSeGQKz3rzHON
+	mFKIAkz0fouE4owNgorkJcar2oiV2c3loZB+GU6LC2rz76q3FOfTDoMQc8tq5nnLV9Y=
+X-Gm-Gg: ASbGncu5HuFPIvmzz6yxozBiKhY3LQXIj2dgK5YETG1ZYzk+mL6mDOez0dNh9LtFSce
+	I7t2sg3Xw0IbsP2e6gYfXRMFag4APLf0XLBiq814GmX+6INnM+kk+zLFhh1VSKuw4FMiwVBdxs3
+	dO6Af6kevy8+MtRE5loY3365DyYrfK9NVE7nhThHDdbxoLwqZSrjqq3E0ILpK37K2wct8AZlOcJ
+	iWEq654chG6nJPGrKi2eNYfA6CxU44tW4FkwsT5LHfaknP+BR1DkoGDDciOyIYecbqe8UVlD3dW
+	7ypD5eb2RLNM/bDezt4kyBIVYmdIf8hfvbHaWsOQgDfCvegXHMQvEnQ3Yaa+F7AVjids4YBsSqh
+	NYnvHEWOyGmARiqA73ULVfPnT
+X-Google-Smtp-Source: AGHT+IFrM+1qPEm/v+IAgtQORrTytS39rb8W00LNW0JxurkZHcD7rv5qHPyt47qa17w0y5R6I+pY3g==
+X-Received: by 2002:a05:600c:4fcc:b0:456:1a87:a6cb with SMTP id 5b1f17b1804b1-458a963c968mr15328055e9.19.1754032743750;
+        Fri, 01 Aug 2025 00:19:03 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:a700:e8fb:ed3d:8380])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf5683sm54621895e9.7.2025.08.01.00.19.03
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 00:19:03 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Robert Jarzmik <robert.jarzmik@free.fr>,
+	Linus Walleij <linus.walleij@linaro.org>
+Cc: linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	=?UTF-8?q?Duje=20Mihanovi=C4=87?= <duje@dujemihanovic.xyz>
+Subject: [PATCH] Revert "gpio: pxa: Make irq_chip immutable"
+Date: Fri,  1 Aug 2025 09:18:58 +0200
+Message-ID: <20250801071858.7554-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/RQb=0kK9bxoKZr9_/R35wlL";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---Sig_/RQb=0kK9bxoKZr9_/R35wlL
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Hi all,
+This reverts commit 20117cf426b6 ("gpio: pxa: Make irq_chip immutableas")
+as it caused a regression on samsung coreprimevelte and we've not been
+able to fix it so far.
 
-On Tue, 24 Jun 2025 19:51:42 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the rust-timekeeping tree, today's linux-next build
-> (x86_64 allmodconfig) failed like this:
->=20
-> error[E0599]: no method named `as_nanos` found for struct `Delta` in the =
-current scope
->   --> drivers/gpu/nova-core/util.rs:45:33 =20
->    |
-> 45 |         if start_time.elapsed().as_nanos() > timeout.as_nanos() as i=
-64 {
->    |                                 ^^^^^^^^ method not found in `Delta`
->=20
-> error: aborting due to 1 previous error
->=20
-> For more information about this error, try `rustc --explain E0599`.
->=20
-> Caused by commits
->=20
->   2ed94606a0fe ("rust: time: Rename Delta's methods from as_* to into_*")
->   768dfbfc98e2 ("rust: time: Make Instant generic over ClockSource")
->=20
-> interacting with commit
->=20
->   a03c9bd953c2 ("gpu: nova-core: add helper function to wait on condition=
-")
->=20
-> from the drm-nova tree.
->=20
-> I tried to fix it up, but this lead down a rabbit hole and my rust
-> skills are poor, so I just dropped the rust-timekeeping tree for today.
-> A merge resolution would be appreciated.
-
-This is now a conflict between the rust tree and Linus' tree.
-
-The resolution being used is:
-
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-Date: Wed, 25 Jun 2025 16:00:14 +1000
-Subject: [PATCH] fix up for "rust: time: Make Instant generic over ClockSou=
-rce"
-
-interacting with "gpu: nova-core: add helper function to wait on
-condition" from the drm-nova tree
-
-Signed-off-by: Stephen Rothwell <sfr@canb.auug.org.au>
+Reported-by: Duje Mihanović <duje@dujemihanovic.xyz>
+Closes: https://lore.kernel.org/all/3367665.aeNJFYEL58@radijator/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 ---
- drivers/gpu/nova-core/util.rs | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+ drivers/gpio/gpio-pxa.c | 8 +-------
+ 1 file changed, 1 insertion(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/nova-core/util.rs b/drivers/gpu/nova-core/util.rs
-index 64fb13760764..76cedf3710d7 100644
---- a/drivers/gpu/nova-core/util.rs
-+++ b/drivers/gpu/nova-core/util.rs
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
-=20
- use kernel::prelude::*;
--use kernel::time::{Delta, Instant};
-+use kernel::time::{Delta, Instant, Monotonic};
-=20
- pub(crate) const fn to_lowercase_bytes<const N: usize>(s: &str) -> [u8; N]=
- {
-     let src =3D s.as_bytes();
-@@ -33,7 +33,7 @@ pub(crate) const fn const_bytes_to_str(bytes: &[u8]) -> &=
-str {
- /// TODO[DLAY]: replace with `read_poll_timeout` once it is available.
- /// (https://lore.kernel.org/lkml/20250220070611.214262-8-fujita.tomonori@=
-gmail.com/)
- pub(crate) fn wait_on<R, F: Fn() -> Option<R>>(timeout: Delta, cond: F) ->=
- Result<R> {
--    let start_time =3D Instant::now();
-+    let start_time =3D Instant::<Monotonic>::now();
-=20
-     loop {
-         if let Some(ret) =3D cond() {
+diff --git a/drivers/gpio/gpio-pxa.c b/drivers/gpio/gpio-pxa.c
+index 13f7da2a9486..cbcdd416f8b9 100644
+--- a/drivers/gpio/gpio-pxa.c
++++ b/drivers/gpio/gpio-pxa.c
+@@ -499,8 +499,6 @@ static void pxa_mask_muxed_gpio(struct irq_data *d)
+ 	gfer = readl_relaxed(base + GFER_OFFSET) & ~GPIO_bit(gpio);
+ 	writel_relaxed(grer, base + GRER_OFFSET);
+ 	writel_relaxed(gfer, base + GFER_OFFSET);
+-
+-	gpiochip_disable_irq(&pchip->chip, gpio);
+ }
+ 
+ static int pxa_gpio_set_wake(struct irq_data *d, unsigned int on)
+@@ -520,21 +518,17 @@ static void pxa_unmask_muxed_gpio(struct irq_data *d)
+ 	unsigned int gpio = irqd_to_hwirq(d);
+ 	struct pxa_gpio_bank *c = gpio_to_pxabank(&pchip->chip, gpio);
+ 
+-	gpiochip_enable_irq(&pchip->chip, gpio);
+-
+ 	c->irq_mask |= GPIO_bit(gpio);
+ 	update_edge_detect(c);
+ }
+ 
+-static const struct irq_chip pxa_muxed_gpio_chip = {
++static struct irq_chip pxa_muxed_gpio_chip = {
+ 	.name		= "GPIO",
+ 	.irq_ack	= pxa_ack_muxed_gpio,
+ 	.irq_mask	= pxa_mask_muxed_gpio,
+ 	.irq_unmask	= pxa_unmask_muxed_gpio,
+ 	.irq_set_type	= pxa_gpio_irq_type,
+ 	.irq_set_wake	= pxa_gpio_set_wake,
+-	.flags = IRQCHIP_IMMUTABLE,
+-	GPIOCHIP_IRQ_RESOURCE_HELPERS,
+ };
+ 
+ static int pxa_gpio_nums(struct platform_device *pdev)
+-- 
+2.48.1
 
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/RQb=0kK9bxoKZr9_/R35wlL
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiMajgACgkQAVBC80lX
-0GxSxQf+LKPXq/Zq7qSk/o+YCOlGPNZXPzHIdC5XgK1N5uSHsVvt6/hy7BgdJGMT
-s/m6TWc0NVefyOZqKkXp6ZdZ7TF0nmQ7k0cIrICrZjY/BaPjOmTTzztufTiYlaEU
-ZY2ZTWIQsoWa64rzZNcDmtC82bJRY3fQ943iGXJrnEuSl+4pp/4C/ZVeiSOqkRJZ
-dvCWseT9+eFcjTJtUpzJEpV+wnnmijeqMb+NA7bDSAlrN/ZY+rEXpi8yIztFrCnp
-X8CgztqMFX4NZHX68hEHHZQEqWo2osT/rounrzDC0+LrogRaLrN3TvRmEiyRDbHB
-Qdddc/+TZSkGWVd2vm5XOEhj7FxKlA==
-=b+am
------END PGP SIGNATURE-----
-
---Sig_/RQb=0kK9bxoKZr9_/R35wlL--
 
