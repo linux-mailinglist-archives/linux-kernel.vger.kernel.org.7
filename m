@@ -1,90 +1,137 @@
-Return-Path: <linux-kernel+bounces-753334-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753335-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 32640B181A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:22:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 19132B181AB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:22:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E644E3B88BB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:22:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5ADF3A6D2E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:22:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31A4F24679E;
-	Fri,  1 Aug 2025 12:22:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0593246774;
+	Fri,  1 Aug 2025 12:22:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="QWjdwY3+"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="abnwHNep"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00CD322F757;
-	Fri,  1 Aug 2025 12:22:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5EA22F757;
+	Fri,  1 Aug 2025 12:22:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754050929; cv=none; b=IAl9H8gxJtqoO7itrrS3Fh4BbWvChU1tk1iD4xAJZTSj3JRLYU7CDD2lhJCWV0/hbLqNYzXI3tx7ymj+ckPaTgnLwHTUvUqFLrzFcUCmAFr1w1hvT7+pTdvUzJFtoU3DUquhxSg8kR3h6QGsAA6+TGsBnmAXKCsCD+kLPrlMQho=
+	t=1754050970; cv=none; b=XROT2UXeEYzJVs7tlfQaHHqJUuasRbYCZwIGIvLo0XRj/1fOfo/VnAGkQHH08R6qLq7rHA8mgH1FgUT/hiOu2cxFXx/88d0lxZAx/DO8x2SyHeyUFRY7Btw3xXgrBoKNbzz7E0qzwNlqX9UQILVeqRw6N2MVV5SLhsaC3A/cqGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754050929; c=relaxed/simple;
-	bh=yQIN+GJox3PRR2AEDjZ0/YWRMM1FlvIBDxZzDOs5vbs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=aQ/lefVwX75cLKfwTVen7/WZ0uRcxokIxb/aBjs6im9OyyzFUDoCKa7v3jaaTtgeDPLJXWz5i3QlxSbhcdqYrTqk2v4j9S/tkZ/l9A8u5xNiQQ7eiyn6oukQO58QEElBkRC7fGZ8GqnrW6zusMyvHNmfBvfoJOJ2bpncqSILHgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=QWjdwY3+; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754050926;
-	bh=yQIN+GJox3PRR2AEDjZ0/YWRMM1FlvIBDxZzDOs5vbs=;
-	h=Subject:From:To:Cc:Date:In-Reply-To:References:From;
-	b=QWjdwY3+GTUmpfeaFszOitsj+G/Pttq5r+Ka4+gs6cJEVGt2nt0Z/L5lIpfew4QD6
-	 lIGCmAwDEeJ2aThVf2Yv6uZVBXrEClI4hi7pt+6OaYswiQv4PvMjUdG2LjXoDRMcdc
-	 u8rtlFMWI1zzSvJ621PQbCyWNQDmADDf64VZma4h0HkTle9vUFVsTHC7ynuGxJ/ylZ
-	 VF/DAtQ1fFS9okd3uix2gGC3ZH/F5yap0IZeY2GFuyv8N7/4LqmgL83WhDcw+WQOCk
-	 S20arNJiczCI956PIgEkROK/wVslGUZFo0BasCpu8mMs+dOS5qoYmbsIMv2P/1hSLQ
-	 chMQwzWUfYYkg==
-Received: from 2a01cb0892f2d600c8f85cf092d4af51.ipv6.abo.wanadoo.fr (2a01cb0892f2D600C8F85cf092D4AF51.ipv6.abo.wanadoo.fr [IPv6:2a01:cb08:92f2:d600:c8f8:5cf0:92d4:af51])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: jmassot)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9048117E0DD7;
-	Fri,  1 Aug 2025 14:22:05 +0200 (CEST)
-Message-ID: <7b8f2e03cb0f1477e352ac59da638a3cae83623b.camel@collabora.com>
-Subject: Re: [PATCH v6 12/24] dt-bindings: media: i2c: max96714: add myself
- as maintainer
-From: Julien Massot <julien.massot@collabora.com>
-To: Cosmin Tanislav <demonsingur@gmail.com>, Cosmin Tanislav	
- <cosmin.tanislav@analog.com>, Tomi Valkeinen	
- <tomi.valkeinen+renesas@ideasonboard.com>, Mauro Carvalho Chehab	
- <mchehab@kernel.org>, Rob Herring <robh@kernel.org>, Niklas
- =?ISO-8859-1?Q?S=F6derlund?=	 <niklas.soderlund@ragnatech.se>, Sakari Ailus
- <sakari.ailus@linux.intel.com>,  Laurent Pinchart
- <laurent.pinchart@ideasonboard.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-media@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-staging@lists.linux.dev, linux-gpio@vger.kernel.org
-Date: Fri, 01 Aug 2025 14:22:04 +0200
-In-Reply-To: <20250716193111.942217-13-demonsingur@gmail.com>
-References: <20250716193111.942217-1-demonsingur@gmail.com>
-	 <20250716193111.942217-13-demonsingur@gmail.com>
-Organization: Collabora Ltd.
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
+	s=arc-20240116; t=1754050970; c=relaxed/simple;
+	bh=bzERq35UflfY6eFmTKiax8WEQzsm3ZhIO0FuQsHY1ls=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Uj6NllZBHmYjfjTzCZd1U4Cp+liOPJT4B0npHDZiifKH1bwOGlN8ekRc+RgNUWeClKqZpKTwpKlqbdM62p5JUkQpCGV/Wo66Hn/ab21ggSsJDIt0/4wJdLvZKmyJXiupiSRHUV7q6K3Dag2mgAmWTgCnmK7jOunJlN1EZ3h9DUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=abnwHNep; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-4589b3e3820so20729145e9.3;
+        Fri, 01 Aug 2025 05:22:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754050967; x=1754655767; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=uaHWBaZYQ4tDXu404cnGU1aB7qZM3leXUgZjdKQM6fc=;
+        b=abnwHNepw8fHWtqBRsOdmKiN7wIfAyhtsE4E/hMPSN46IWexevqmp24tnHKEC0LMNU
+         5oSGLQtZNd6EPQ/Hqcc0WxKVkUgMN4oKKFCBkEOS4/5Sp1XzA+L/fpG0zKBvF4DC0o4O
+         pIS3fD7BfFBX/lA5O4WbJ8eT543tQYs4pP0m6VhLiEz1BSyucyIDsQYOcxy3U20+yC+w
+         Lc34UVNCXFQbwI1pQqIdK7WUYTkBzQ1boMD3Y2LXheXLo0Qjvf111zCrcGBUqVl2jFo6
+         bmpIEGKIlRBZKCaxG9N4CS77kjcDQuBxcC7AxrgZ3o5ALglEhowL0zyeAjs2mllIrzvn
+         hORw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754050967; x=1754655767;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=uaHWBaZYQ4tDXu404cnGU1aB7qZM3leXUgZjdKQM6fc=;
+        b=ZFk2u8QAwdx/FuQhaaxmsh8guno1U/OUQlmL2OOPxv26sjdw+dSRDGKRJnEW40XXHS
+         HAk4IblMusn4tEu3mpXKEQGr/ir3GFzwY6HzRrb0zf7faj9hc09XOqkGtFvtX39QnG2l
+         pYG0w08RMv1bbJQZEwGpuklYsZDX29JGPYk21IRbCAMRudAvj/g+pSQfwEGoNJGwTNJw
+         J3tF6xqLUfHQXlKCm/kVTIFczDsVmWmfKAVimcEqaNNvSOf6bKaYDCwSwl47Cr7e5iOO
+         LaVPMsxlxf7w3b/xFx2WSJCtZAB9o7tF9zvuvsMchA9M+IjqVYS1XWO+9mbuHu/0ocaE
+         +UWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYPGMAEhQLsZF/Nqn2JvKWm766xTwlyNbzqeNPBhzTebWDIxcUbk5hQoM67r9bEI2Z/NSCcJHEj0E=@vger.kernel.org, AJvYcCXR6sLTnW0V6OpWV/pN8X1fCD68Hg5ZTrA25hxPcZkvMPT2K+CoiVuWmNrl2DGGcNQZQIHoaaLYUUJmwH9+@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywfrk2B2G6QyY57AslPMv5+mtnOZNvZ99A83jcPdblsIO4FayUo
+	thHtmFjXTMw65NvUY5jyDkQr3+dQ6sd80utDGypBJput93GyyEt5WOWl
+X-Gm-Gg: ASbGncvhPqoLl+YeiP2pA2tiRkAzpLeok8kvIOvTf5+D/7Q1Cux73u07K01mUaHNAtl
+	dbli1u6R7mMWQR2pDXVf0+PwvwhVN6NReEIqBhuy49RnysXx9tgTc0qBDxx2vo/YqQLJqWjl30V
+	Md8xakdlv8udwEpDm99rLcAp4hhpHohDivckypt6bcgAmIPBTglRsf0nfJRwX7tiBHgpZKwoaPZ
+	EP47CpUMTFwRcpXFD18TaPCor+5s+f1i456FV+9bgialaSGqB+vkrYeSTFPC7hlnhg+wlLWPkdc
+	GD1RCX/Co4Mt3LexhRjSaPWpW7UOapSZ/u9sOXzm3PIsYgb+dvLae3z4Mzm0ZHY/RZyk1iLXpWa
+	6F8TpIGLsDI7PLA==
+X-Google-Smtp-Source: AGHT+IED8BJulIObk541IsosanJpfJDcnk5dH8KcWwUeIdpbK2upnGxpXsbJWzIpClT9wLRTPI0CUw==
+X-Received: by 2002:a05:600c:4f16:b0:455:ed0f:e8d4 with SMTP id 5b1f17b1804b1-458b302b518mr4955715e9.10.1754050966801;
+        Fri, 01 Aug 2025 05:22:46 -0700 (PDT)
+Received: from nsa ([161.230.67.253])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c48105csm5766710f8f.64.2025.08.01.05.22.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 05:22:46 -0700 (PDT)
+Date: Fri, 1 Aug 2025 13:23:02 +0100
+From: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, 
+	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] iio: adc: ad7476: Simplifications
+Message-ID: <nt4epgtqzptq3c35nz36qlpvkpzlabzpb7vd2jugbgg3gmman6@jipgkhkcfjr4>
+References: <cover.1754041258.git.mazziesaccount@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1754041258.git.mazziesaccount@gmail.com>
 
-On Wed, 2025-07-16 at 22:30 +0300, Cosmin Tanislav wrote:
-> Analog Devices is taking responsability for the maintenance of the Maxim
-> GMSL2/3 devices.
-> Add myself to the maintainers list and to the device tree bindings.
->=20
-> Signed-off-by: Cosmin Tanislav <demonsingur@gmail.com>
-> Acked-by: Rob Herring (Arm) <robh@kernel.org>
->=20
->=20
-Reviewed-by: Julien Massot <julien.massot@collabora.com>
+On Fri, Aug 01, 2025 at 01:06:46PM +0300, Matti Vaittinen wrote:
+> This series suggests some simplifications to the ad7476 ADC. It is
+> currently 100% untested, and shouldn't be merged as is. I'd like to hear
+> opinions on these changes before adding support to the ROHM BD79105 ADC.
+> 
+> Intention of the patch 1 is pretty trivial. I'd just like to hear if
+> people think the enum + ID table approach is preferred over direct
+> pointers to IC specific structs in SPI device's driver_data.
+> 
+> Real reason for the RFC version is the patch 2. It aims to clear the
+> supply handling logic. I did also an alternate version which requires
+> the names of the regulators to be provided in the chip_data:
+> https://github.com/M-Vaittinen/linux/commit/cf5b3078feb17f9a0069b2c7c86f6d980e879356
+> 
+> I believe the version in the link --^
+> is clearer, but it can potentially help people to add issues with supply
+> enable ordering.
+> 
+> I can't still say if the patch 2 contained in this series is better, or
+> if the one behind the link is better way to go. So, RFC it is :)
+> 
+> Matti Vaittinen (2):
+>   iio: adc: ad7476: Simplify chip type detection
+>   iio: adc: ad7476: Simplify scale handling
+> 
+>  drivers/iio/adc/ad7476.c | 376 +++++++++++++++++----------------------
+>  1 file changed, 164 insertions(+), 212 deletions(-)
+> 
+> -- 
+> 2.50.1
+> 
+
+With the suggestion given by Jonathan on the first patch:
+(I also dunno there's someone with variable voltages...)
+
+Reviewed-by: Nuno Sá <nuno.sa@analog.com>
+
+
+
 
