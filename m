@@ -1,220 +1,191 @@
-Return-Path: <linux-kernel+bounces-753618-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E66F5B18557
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:58:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D9F7B18555
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:58:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42E1C1C83101
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:58:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B56A41C81E37
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:58:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 316C22877CC;
-	Fri,  1 Aug 2025 15:58:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBDF6287501;
+	Fri,  1 Aug 2025 15:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bOX9F7fG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SuX8EzgW"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95042874ED;
-	Fri,  1 Aug 2025 15:57:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.8
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754063879; cv=fail; b=RiO0/Tcj9tEtnWG+QmUgneUw/mmGz1KWhcjGow0S1nX/tKuOTEtWaY8UhNErhU1MZujZ+1mT92ofiWkqnDthv2EKTbpQs0ReH+P79N25TjmPFOl8KMsZfi/JdYu4OJSBdns4N25WVU4vclyePImzuckdAgtzIT7nTOz2MEDfOVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754063879; c=relaxed/simple;
-	bh=6aWWz5y858VxhBINvmos2ylLpdTFv4YZ9pCGFvNUmi8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aYdgUBJS4loDfaHddrQuuHuC9K1hmDz+0gWBefzdRNIvw7KVJ3U5S+ZgYfyDa2gKqAMegpt+BC3l9kic0YSS3PWkFRtP8KpdRh1FIGMtBlP51wgyDCJXdtdzU4WQkQO8AbyhlzsHXTLxcx8Z2I2mAk2TTxZ6XwJm0hLkTWKAPNE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bOX9F7fG; arc=fail smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754063878; x=1785599878;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=6aWWz5y858VxhBINvmos2ylLpdTFv4YZ9pCGFvNUmi8=;
-  b=bOX9F7fGDlusoBNHPX3mKfDrGDwUegS2ykib99L7dd9vrE0h5Bbprlmt
-   58l+ruV/uodC0Pa15P3O4SFwGGC5FWe1ONQ4/6heHzzX+8v76G6nym++a
-   pbhs0u4P4gFwHJji7uIZ9Q1/5tWB31YqZzZ3YXCOOWzBf7LxYQY5afH69
-   20HxLMaJx/1k77yxA+DJSRZkX9FaNlHpCKRWZpRY95OjV/9NoYfi59+/7
-   Rk0q705T4ZR+TDo9hxJLSBoSY5U/RD/ZQGFLZVk+2w2UwTxpeZnzk2j11
-   TNXgX8cKaSHOJeJo1nwIk6/N8XxRxDyLhoz4vSdWGfmNJ5F4bMd0YYhQM
-   g==;
-X-CSE-ConnectionGUID: BeVy1ur4RG6B/vd9RZ/8XQ==
-X-CSE-MsgGUID: pEagihpBQwCs8K4zXjxrjw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="74004450"
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="74004450"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 08:57:39 -0700
-X-CSE-ConnectionGUID: V872Y3N2TzqT+ubSJvGeSA==
-X-CSE-MsgGUID: SK/ckhZ6THWAlk2wqO7Axw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
-   d="scan'208";a="168897015"
-Received: from orsmsx901.amr.corp.intel.com ([10.22.229.23])
-  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 08:57:39 -0700
-Received: from ORSMSX903.amr.corp.intel.com (10.22.229.25) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Fri, 1 Aug 2025 08:57:38 -0700
-Received: from ORSEDG902.ED.cps.intel.com (10.7.248.12) by
- ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Fri, 1 Aug 2025 08:57:38 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (40.107.92.47) by
- edgegateway.intel.com (134.134.137.112) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.25; Fri, 1 Aug 2025 08:57:38 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=urgw7QrfJotE6vmMdnwN6Qhj/dQMnZeBWK+TLXKP0p3kuCb6GHc0lAGi9pKs2J3OD0GVhD2bEHrXtaIUWv2eHEgxS+w5t1OVmSHzxBnq7fm4jbR3YuTNwohVsv/V3jZsBx8znhWfZKri2aTuwhud65qh9+LARofffiupfMxq1Tu6ghnFsY1sAWdcOKZCeIbx65NXS4vAQKRFPJAHpmmUAiEl1AlqwpavIoFsGSNqkAxMPjThHAd9ju6xH4r1eLC6Ezfc+YUy7MjheLTCCBj87C37k1zRNaRnMoBEO15kqfYImeC191OS7fVIVYKiWBG2o5LD/2pLuWcn0RykOnn4KA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=6aWWz5y858VxhBINvmos2ylLpdTFv4YZ9pCGFvNUmi8=;
- b=TkmHVDR28cuKC6Ong1jvPNcfyp5u3zzOcmJIe787BvLfN3WarlgS9asBlCLjL/ET1g90j7S7cjSX8EFqTRkLl90F4eY6XSC12nKX0uQx+ipWdpA8k9qDLiTbVzjyhrMYljc0W5ZleVx4yovfA3aThB9+gCu7uCkwQzc3VekRCNzi0v3D/lzWNzoC6MIZLIZ0adpoLOIlrYZrfF0vFU9O9qveh4TlEG1Jitk7sL3cOavZiYJAQH+qS5o/TKMBQd8gHd2vn/XYiXQAtHTrMLBuAXOAFk6AOQOSADo33Csjcrfl7lvJ8zHOb0nhl+3e1Tt6nHK30JZBCSnsu8SrxeZhuQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SA1PR11MB7130.namprd11.prod.outlook.com (2603:10b6:806:29f::10)
- by IA4PR11MB9203.namprd11.prod.outlook.com (2603:10b6:208:55d::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.25; Fri, 1 Aug
- 2025 15:57:35 +0000
-Received: from SA1PR11MB7130.namprd11.prod.outlook.com
- ([fe80::fc98:7fe:bac0:f2d4]) by SA1PR11MB7130.namprd11.prod.outlook.com
- ([fe80::fc98:7fe:bac0:f2d4%4]) with mapi id 15.20.8989.010; Fri, 1 Aug 2025
- 15:57:34 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: Kyle Manna <kyle@kylemanna.com>, "Luck, Tony" <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>, Jason Baron <jbaron@akamai.com>
-CC: James Jernigan <jameswestonjernigan@gmail.com>, James Morse
-	<james.morse@arm.com>, Mauro Carvalho Chehab <mchehab@kernel.org>, "Robert
- Richter" <rric@kernel.org>, "Lai, Yi1" <yi1.lai@intel.com>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
- for EDAC support
-Thread-Topic: [PATCH 1/1] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs
- for EDAC support
-Thread-Index: AQHb/GafXcVlZ3WZRkiBtd6ukhBRJbRBVQ7ggADIQoCAC9GeAIAAEGww
-Date: Fri, 1 Aug 2025 15:57:34 +0000
-Message-ID: <SA1PR11MB713005D6637EA857500D73198926A@SA1PR11MB7130.namprd11.prod.outlook.com>
-References: <20250724064415.1134574-1-kyle@kylemanna.com>
- <CY8PR11MB7134484D663C31DA1544945B895EA@CY8PR11MB7134.namprd11.prod.outlook.com>
- <e3bc0591-7ebf-4738-8848-599edd11c10d@app.fastmail.com>
- <f9c0fd21-591e-4fd0-a13e-35cdc1aa063d@app.fastmail.com>
-In-Reply-To: <f9c0fd21-591e-4fd0-a13e-35cdc1aa063d@app.fastmail.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SA1PR11MB7130:EE_|IA4PR11MB9203:EE_
-x-ms-office365-filtering-correlation-id: 89dc1aa6-4cab-424d-fbc5-08ddd1142186
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?/egfORdnQcsz6QzU/OQIu/pelihveWZ+MgwiXbh/foylEgGhDbSx0l8V4QJD?=
- =?us-ascii?Q?EIRzKZyaZBKjCwHVbvne01h7WHF1sAcWT7Hz/r6fsf0RFzjMhT9Wr3ZUfbZc?=
- =?us-ascii?Q?YJEfpQcQBpfoDwVaDNaj1P0/lovLsHaSkip4mq1szTwn/VUMHJvTxuQu3KyZ?=
- =?us-ascii?Q?2M6KQBPKEJF8w4ukiR6X6SQWVo+znGxfwIIVyCv1IVnYQfOYYqQQb1681hov?=
- =?us-ascii?Q?2B2IsB3LMG+wDPk1W0x6K2J0jUzNjmGkDyGKGn/PPqXoU9mt0RONV9esN0Lg?=
- =?us-ascii?Q?D+WsRs+XqQiLOYRWuPRYYo7fygsSQg7HruEsnYIT174iX7mf/Kn78f+zRdZV?=
- =?us-ascii?Q?e4cPnhutJtjrIL3BrV1f2bRPZxfsOSe90WznFoo4rrqKKsTyyqTgQFstdkVI?=
- =?us-ascii?Q?m0BWfYZV4NwG1Y/nov8mHQnR01u/TOoxSsCVasH5Iq04YnJuN6JaPzYu0qpm?=
- =?us-ascii?Q?ZGAV8T0yjv6OBCI0+DojM2knBh/gzy5n+SvFraJCJMf1zq32VDuGYnOyYpHd?=
- =?us-ascii?Q?V+ug2sEaOYi2Jx1nvB6FWtT8TsgR5dlpnTdVwh4Cm6ustDRZA+KEMFI3DmMU?=
- =?us-ascii?Q?4VU27lR5TL4JEOr4PUMemqAoG+l2OeYvTtaPuc+VHJwRMC/oGzgq0lfxZnCf?=
- =?us-ascii?Q?r3c/06uhC0lbH/wil9ekJUBULvurkb/g59P+fS2qpanCxzGhm5KCNJjwFhRv?=
- =?us-ascii?Q?VfFX8bPWhF4I5dZjXOMgaXONgywxeAq396co1+V7HGwKW8F8onJB6WfhTmgQ?=
- =?us-ascii?Q?ObnukqwjoevLHfeUwkrb5HweKdID4ISJ/DpCyLgPiqxty/Um4BLg12iN1sO2?=
- =?us-ascii?Q?pUpzkTsAzfL4Tc/bQdYLr5JNMu0nJSSSGf29x7Vy/AKEu2jPzeOpP+B7vRJW?=
- =?us-ascii?Q?nhy6fHb91WcSICCUBYDQoJiPR5w/xMxcTRY+z6KXQT9zaJxhZptdtRhyO/GS?=
- =?us-ascii?Q?gZK1SrOWdBlZrj+DWqSxRD2g1WGPXC47vtIX39EC9OHcX2fJpU/uS0a7xNQL?=
- =?us-ascii?Q?rPR9psWVRFfpJWHPPRyynpfRoonAd0G1c6w0s8ZO+R0TmzwljV1lDaI5LuNG?=
- =?us-ascii?Q?B85tAZBIENH4rPQMvgKeSiDBhxjw0fEKfykG8pWFKWtnkxxkHtK4CZcuH+Dw?=
- =?us-ascii?Q?RyY569Go6vEhJzECArLSdkghcQsPPgrSFAAtXmAoll2GZtPh6EEFjXyuVDCV?=
- =?us-ascii?Q?HQEpi3S3+UHvcKvnLemgwF4vpWPv4144NwKWRjBJjN5A42G6zlM/09nLwfLV?=
- =?us-ascii?Q?54cginqNQoXkSoL6yOtu9ocHl5j1dieiD608qgM0Rh/ovesQFrWoUr5PjW1+?=
- =?us-ascii?Q?FyW8j+0OgWJhd3VtKnN9mejan4/7YWwC2OqbJibJN8C/cQ7lvrNrnaEs+CR7?=
- =?us-ascii?Q?T3CFsMEW+KfIHG3/XRkkLfvFkE7jE28vxotQgSut/i5oG2zr+/8W8/1tYeDC?=
- =?us-ascii?Q?U46dfpvNxqpPUDgLPvf0ClYvvv5xcWXRlivx2uWDfgti1hwTov8GFDQW83/I?=
- =?us-ascii?Q?LTMro5dR5wQKmoM=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB7130.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?ne2hsvDR6IupqFxWDgBYpp8Fc2LirOv3YNyfGAJaGNh2kbdqvogG/mYCwO0C?=
- =?us-ascii?Q?dzzTjTFRa/581n+AdcWAzz3mziC3P1p3ycYJ3hHe/hSTRpx1zR3I5jEpTZ8b?=
- =?us-ascii?Q?3zA32r8MbV989jV9juHCuFmH4x02ifJDf9yQR3a9UsYsS/pX3ahY/w3uLjm5?=
- =?us-ascii?Q?DSxeKst/LggSARY8V8Da6NHaA7T6aZjSplq85KQqSLzequVrzDcNaTczC5t5?=
- =?us-ascii?Q?YQ0I8xW+J/dEITClVv3IZ1NQfIAe7pKs0isvI4eNHhx/UboeCYQY0sdXXSxo?=
- =?us-ascii?Q?RCVmMwGIGgxgzkO4NtGNIwKtUT6FnPN/U7pvOT+e9hS47Up/zs2BLY1hK3rQ?=
- =?us-ascii?Q?MGqmWWtk3B63ghDH7fpuBM1wgKxaWWChQJEFT5ejn8nwC71X1aObq34IvbtP?=
- =?us-ascii?Q?qAmppx8SdlwUO7i8pUfxhW3S3sO0le5ByLy3hqMiveJmoCgyEXggVzhdKM/x?=
- =?us-ascii?Q?Rz+tLqFtpHJMPmtC10ZPsoE8OqFi+DUeWRAHG3EsgFgvyKAdMknYf2Li5iMe?=
- =?us-ascii?Q?bTw7GfM6vN6SB7cllokvhFezu4MI12ZLG4Tmp3py5V5AfG0ewT7XtmiWZZ0e?=
- =?us-ascii?Q?qb5SSp4XR2ZZeRCvq2cCnbQn4BGZ837YLlDcAv3LGk0h2Eg6UafulgFaGVv5?=
- =?us-ascii?Q?xOv3j5hnJ76WP60iCVMZuM0k0wnF9k4KOt9hfcZO/RpA345m1A8SdOvR9rvm?=
- =?us-ascii?Q?MKF6xen7FaJl9dq2qRG3BOyzbeA4f3d0e++X9OiCbpmvAxzLIeipr6keLW2H?=
- =?us-ascii?Q?NbYVMCjGdtWqo79ct4sTDv+LL1b0KbS1aalr1xLmZUHmF7dPalBJ/y+Szs5l?=
- =?us-ascii?Q?wURYsmf8X7b6BBZfvK2PsuabChaXEone8TyB6vJBVHR003UbbcjTWt/8e6/W?=
- =?us-ascii?Q?kN34/1dhpc+AgNsishAfNvewg7W77SJOkMWKe+rV+CXpERxynywv67100o2g?=
- =?us-ascii?Q?aixs/21ohD+xl6ew4dZD1Ji6/J0yungcHOQR8qWQgq9O+/j1ExEuZqKiGS//?=
- =?us-ascii?Q?vBO8dxxX+lAXOLtrIMGxO9Q1BBYwdiGKCpAtPSwM8NIqUWANRRKnFlqkdJzV?=
- =?us-ascii?Q?pFAHrse17IYldqyVKt5QtEVzOwzKC+XBiWOxo3Iok1XVDH0is+gf/a478FlO?=
- =?us-ascii?Q?67LHxWUVRJXN8ZKVFtHknxuYnxiD9w85Hl78A1AL5Ctq4lQfibJqSZW06Amb?=
- =?us-ascii?Q?TrTIA5pH6s3edKfGRDTpcOzRNB4sNwUIpt/Y8FSQTNNLMf5RUy2iOVFrNF9K?=
- =?us-ascii?Q?6uEEbwbRWy/k2d6AQQU8ddcyWvEqSx+UhFXGqMcgl49HveVWXeAS2pyXrKvA?=
- =?us-ascii?Q?ke4Z5+88gMLC/0R+FQZnktSbeOkpjoOK9dRXcYDEFaP2Gy+7zCzfhPHtMHxS?=
- =?us-ascii?Q?519qo+uJQXqzu2YfmJA6CKCXYmYm+8mrXvgUj9LS97g0kRasiiSmhTGU2nPH?=
- =?us-ascii?Q?tYx9JTSBfsFZbJ2F9MEKYrDO37+8+Tykh9hdymvx5Aa+IyPxrNKaCYa7lX+9?=
- =?us-ascii?Q?QXvYXLHVdFmrYCGF6tKBR4szFaGdU42ynCcD0y935dvTUIXPN745l1BCWFrG?=
- =?us-ascii?Q?gAxfuQzBId+5diKbOGSv4sOuePoe39ztHL66KOHe?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B5B828727C;
+	Fri,  1 Aug 2025 15:57:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754063878; cv=none; b=n1RqGmPllPyrwoJV5Ph4rhWQdDtRS2AXVQvkUeirEgwRj640NYcCyzr7TRDp0VQBDBWLXqkk9DBcrOH5KCjrKN6INRW/u+XT2smkX441KCp9p8wIMuoMkPotqu0eMvEYu2ujxlBfeN9000SIVc2ULlMVeHREORTl8XaQ3l9lcZw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754063878; c=relaxed/simple;
+	bh=9hup+ts6H389VBPmzqObyPrifVRhy4TatN5AbeUY2iw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=IBLl/SKRfZjAUEjw8fy8ktTKIhjwnEB+p+lyfgqJ5LeF1FOuvwPwu6fu5EGgdv/ZeJ+pxsJxn0d2xs4sTi3tW98h4cXGaLTVSQqF0IpiU3/q48w1I1jAmMOsgsaoCWF3KjNzlZoSBn/4bGnpfrqcTezaUxgLboACIv6vJbt5MG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SuX8EzgW; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55b79ea50f8so1878545e87.0;
+        Fri, 01 Aug 2025 08:57:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754063875; x=1754668675; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/VvudzAIJzhH76ohIestnUnL2H/t2R/HphAlC3uM+pw=;
+        b=SuX8EzgWXzyPUXMW5wECgns5tyvszDD8aklEGVrkEH62wy2FvpVZRygDI5EMGLljLa
+         fe6r/elWHtFhch8UpqPHxE5KDHNg6d7ZifqCV4klGuxIMARHlgFxWO5YnkGuwBO7V2w4
+         YUL/ieJSI0pEKV/ZlNihu2prkqjtl7oUn4MrBhySqvakO3ofVwrB3K4TC87cKub4RJjR
+         Inha1wFVo+jFjWtlqSIkpWTLwxmJV3aDxyQhc1qbdy29/fNlSARHcSJ1ThWrFO/gFv1x
+         S5bAEEpEKSSnN2pDlG4jaZssjmslPp9kYM+2HCIJrZjJ9Yl6ygEXVXd8jhpdM3Uao3QR
+         lMbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754063875; x=1754668675;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/VvudzAIJzhH76ohIestnUnL2H/t2R/HphAlC3uM+pw=;
+        b=wBfVaOpFhY1I//TQ8k3D4TvmzBDK/rbmwCKoYyx/TeQp+p8B+QOlZRAFPNyOCvjaRX
+         WX3B1i/yTeny5vLlmcNIhpid8w4IyBHVopHio6TY3ZPsWWuf/ZGrnPFOL5W8M7SikIQe
+         f37neSIfk6IJi9eONC8acbKLy1NAWlRZHxGf9oMIMw4CKvT58dYvIolMxTsACGnHQLaX
+         OQ6x/fqnSsaD/t6/ixXJFBIC0JSbGnmBRKIRtdRsYfIdP7T+t2LW9NfzhNA5wbMnaU4t
+         bJkdko1V0nyAw9ql9sLP/uT/iJftqEvCe1wCjDt1WoF6pyqRnk0noxm25s7gXQfKjH8s
+         qFUQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHAjYEANkzdp7HgkrKdHIacUq2VyJpla1G1smj2gUV2+7HKjxUqcO9TpM2P42TXcumx8c8eyozSm5PIcqCHGc=@vger.kernel.org, AJvYcCVwnW7Uz7JEVUvyILOSJVNBwkm0mkpO8YfUU8O1KSUyuCli8m2x4tF8SG7RXWmFcJqDj6APIaU00al6uTzr@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDlUiAS80i10F1bybEaSgvpzqyYhw7tfMMOvarGWkZqTD1RKK0
+	TTJlZKsNo9KVY8T0P5inUvPGdp4COf3jiB7mIJ+P7oFqi9RAoArj+g0KAD7GBdBbJZaBLH+oRpZ
+	nYf33PDiQvG8Yv7ADJCTaLO/u/n6fhfQ=
+X-Gm-Gg: ASbGncvTmLbCiCJSUT4wOmD+jMGyYEmmlyqZ8Pr5dYh2dpKrbap97v1HM50CmRmC3rb
+	0OeUw4v9Ss+IdTJgiQNLNjBGO3/+RGVyMhxWDW9X2JyAsZL55kpRTr9sl6k3rAtauxIhKPSqtSO
+	x1Izo2boSD/zojXXVMBmRK/nX6sIZOVF+8yVPLlsQSlXh0Ml3bpnL8iz4TPghvch+0ieExXTYGq
+	49AWg==
+X-Google-Smtp-Source: AGHT+IE6Yt6iDgb+tRl+UfS4re9d01zMUis3JNGKoNWNHgJ48wF55I3TK9egBf1KUWQxvH8FLZaX3zJj97wX6V7FQxA=
+X-Received: by 2002:a2e:a884:0:b0:32b:b0f8:fe75 with SMTP id
+ 38308e7fff4ca-33224bd6915mr41280771fa.29.1754063874417; Fri, 01 Aug 2025
+ 08:57:54 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB7130.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 89dc1aa6-4cab-424d-fbc5-08ddd1142186
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 15:57:34.7746
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: DmCZGMfNpNnh6LQjx5GerlqMEsODCvUcFOlsbcaKOk5oSvkmIrpYB0FPEsmezqAePO+hpeo2aWJ3HIwE6/oR6Q==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR11MB9203
-X-OriginatorOrg: intel.com
+References: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
+In-Reply-To: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Fri, 1 Aug 2025 11:57:41 -0400
+X-Gm-Features: Ac12FXwRReFV8vyfVeX0pajTzXu9yIhVrZ-Mx5kkUr_Y5BachubzJ6BgD5OB7rs
+Message-ID: <CABBYNZJu3izq6ZhNRKjMz-mW1CcP2VAE7Xs5oq=NupnVD7aayg@mail.gmail.com>
+Subject: Re: [PATCH v3] Bluetooth: iso: fix socket matching ambiguity between
+ BIS and CIS
+To: yang.li@amlogic.com
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	linux-bluetooth@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Kyle,
+Hi Yang,
 
-> From: Kyle Manna <kyle@kylemanna.com>
-[...]
-> I've added the i7-12700k (0x4668) to assist future users.
->=20
-> Hi Qiuxu and Borislav,
->=20
-> I saw a pull request[0] for a 14th gen version of the same chips and woul=
-d
-> love to get these 12th gen chips included as well.
->=20
-> Anything I can do to help this along?
->=20
-> [0] https://lore.kernel.org/lkml/20250728141521.GAaIeF-
-> XYJVbfOQdT6@fat_crate.local/
+On Thu, Jul 31, 2025 at 4:00=E2=80=AFAM Yang Li via B4 Relay
+<devnull+yang.li.amlogic.com@kernel.org> wrote:
+>
+> From: Yang Li <yang.li@amlogic.com>
+>
+> When both BIS and CIS links exist, their sockets are in
+> the BT_LISTEN state.
 
-I've replied to you in your last e-mail with minor comments and provided my=
- "Reviewed-by" tag.=20
-Thanks for your detailed specs and verifications.=20
+We probably need to introduce tests to iso-test that setup both then
+to avoid reintroducing the problem.
 
--Qiuxu
+> dump sock:
+>   sk 000000001977ef51 state 6
+>   src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
+>   sk 0000000031d28700 state 7
+>   src 10:a5:62:31:05:cf dst00:00:00:00:00:00
+>   sk 00000000613af00e state 4   # listen sock of bis
+>   src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
+>   sk 000000001710468c state 9
+>   src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
+>   sk 000000005d97dfde state 4   #listen sock of cis
+>   src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
+>
+> To locate the CIS socket correctly, check both the BT_LISTEN
+> state and whether dst addr is BDADDR_ANY.
+>
+> Link: https://github.com/bluez/bluez/issues/1224
+>
+> Signed-off-by: Yang Li <yang.li@amlogic.com>
+> ---
+>  net/bluetooth/iso.c | 9 +++++++--
+>  1 file changed, 7 insertions(+), 2 deletions(-)
+>
+> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
+> index eaffd25570e3..9a4dea03af8c 100644
+> --- a/net/bluetooth/iso.c
+> +++ b/net/bluetooth/iso.c
+> @@ -1919,6 +1919,11 @@ static bool iso_match_pa_sync_flag(struct sock *sk=
+, void *data)
+>         return test_bit(BT_SK_PA_SYNC, &iso_pi(sk)->flags);
+>  }
+>
+> +static bool iso_match_dst(struct sock *sk, void *data)
+> +{
+> +       return !bacmp(&iso_pi(sk)->dst, (bdaddr_t *)data);
+> +}
+> +
+>  static void iso_conn_ready(struct iso_conn *conn)
+>  {
+>         struct sock *parent =3D NULL;
+> @@ -1981,7 +1986,7 @@ static void iso_conn_ready(struct iso_conn *conn)
+>
+>                 if (!parent)
+>                         parent =3D iso_get_sock(&hcon->src, BDADDR_ANY,
+> -                                             BT_LISTEN, NULL, NULL);
+> +                                             BT_LISTEN, iso_match_dst, B=
+DADDR_ANY);
+>
+>                 if (!parent)
+>                         return;
+> @@ -2220,7 +2225,7 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t =
+*bdaddr, __u8 *flags)
+>                 }
+>         } else {
+>                 sk =3D iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
+> -                                 BT_LISTEN, NULL, NULL);
+> +                                 BT_LISTEN, iso_match_dst, BDADDR_ANY);
+
+Perhaps we should add helper function that wrap the iso_get_sock (e.g.
+iso_get_sock_cis and iso_get_sock_bis) to make it clearer what is the
+expected socket type, also if the hcon has been set perhaps that
+should be matched as well with CIS_LINK/BIS_LINK, or perhaps we
+introduce a socket type to differentiate since the use of the address
+can make the logic a little confusing when the socket types are mixed
+together.
+
+Now looking at the source code perhaps we can have a separate list for
+cis and bis sockets instead of global iso_sk_list (e.g. cis_sk_list
+and bis_sk_list), that way we don't need a type and there is no risk
+of confusing the sockets since they would never be in the same list.
+
+>         }
+>
+>  done:
+>
+> ---
+> base-commit: 9c533991fe15be60ad9f9a7629c25dbc5b09788d
+> change-id: 20250731-bis_cis_coexist-717a442d5c42
+>
+> Best regards,
+> --
+> Yang Li <yang.li@amlogic.com>
+>
+>
+
+
+--=20
+Luiz Augusto von Dentz
 
