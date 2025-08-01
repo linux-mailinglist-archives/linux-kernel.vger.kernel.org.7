@@ -1,124 +1,195 @@
-Return-Path: <linux-kernel+bounces-752965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1179CB17D21
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:10:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70E9FB17D07
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:42:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C3FB7189E5DB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:10:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E6E83BE468
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:42:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AC220B801;
-	Fri,  1 Aug 2025 07:09:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44F681FBEB1;
+	Fri,  1 Aug 2025 06:42:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="Yx03isgu"
-Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KoeZyA6D"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E37CD1FF610;
-	Fri,  1 Aug 2025 07:09:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E53412F5E;
+	Fri,  1 Aug 2025 06:42:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754032169; cv=none; b=id209tmsT67DSFBWXp6k/fHFznz2y5Fqtwr0BIorg/i6oPAPhnxtjzZd79J50qXJAWAbyS/UBijx3HCDkGQeG/AUZCqHal0oXQ28yHyrDpREgLYqs/V3/EXiz3WqFrP1S7E/eYCQ3v/3KmCKk98tRohdsNO/sOBO8hxLDA+qtxw=
+	t=1754030531; cv=none; b=uogafly67eAXUK8G/0L/Z/ru6CC6BuYeC/EntYItNCq4zYPu5SXDKyEfUKk9IH4M8xJ3oSYGGYfkw+0+i0qIha44kDmX/m5LpNMeyYuSVECylOULqHRTNU3RdJ9qDIHjjxqgF/cpMDJcAjId7rxp09iJ2I76mYQtNXcCH+SGBOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754032169; c=relaxed/simple;
-	bh=fl6uSeYxRMWH3jKSu6Bok18lfxJuGijlT0DWX2EIMOY=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=J22dSGtaTxpGGbD3PC4Ftl/T3oYp6R7DAtZlc3+BfP0Kz8Y8eMSH+Y3bOxzAmJW8uGOo0hItGWdt7K3Iu3iNRLMRlrE9y/xO1YsVD/qA6NtPgHXC+aqVBZ4dHWAiEPuiwpABHOgToxzD8jtL1gY1ZgnrssqUkC86Ph1rPw6laDE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=Yx03isgu; arc=none smtp.client-ip=210.61.82.184
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 73a3e4486ea611f0b33aeb1e7f16c2b6-20250801
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=cn2RoAisMKaAgdwYwaUWd9l5blW+koqxiGIwZNbsspk=;
-	b=Yx03isguInoReYLzSgAx5TSR+1qmFNfoc9yY42tkd9X1L63CTAHZ0hEI3TUTNVd/k294V3LKOtlLkRtqvdsRjQDxvGtkmyGsUpdPMaPVx6f6l2adVDuEtS87j2UObsvSV1GxGyIrXRrbCdhIYqbGItSqx9F/NeTR4tpL1gJR1IA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:06aee1f3-832a-4c41-a0ee-1e4c0e87825d,IP:0,UR
-	L:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:-5
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:2c750209-aadc-4681-92d7-012627504691,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:81|82|102,TC:-5,Content:0|15|50,EDM:
-	-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,
-	AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 73a3e4486ea611f0b33aeb1e7f16c2b6-20250801
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
-	(envelope-from <niklaus.liu@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1640975403; Fri, 01 Aug 2025 15:09:23 +0800
-Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
- MTKMBS09N1.mediatek.inc (172.21.101.35) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 1 Aug 2025 15:09:21 +0800
-Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
- mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 1 Aug 2025 15:09:20 +0800
-From: niklaus.liu <niklaus.liu@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Stephen Boyd <sboyd@kernel.org>, Matthias
- Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, Liam Girdwood
-	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Flora Fu
-	<flora.fu@mediatek.com>, Alexandre Mergnat <amergnat@baylibre.com>,
-	Hsin-Hsiung Wang <hsin-hsiung.wang@mediatek.com>
-CC: <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>, niklaus.liu
-	<niklaus.liu@mediatek.com>
-Subject: [PATCH 3/3] regulator: Modify mt6315 regulator mode mask
-Date: Fri, 1 Aug 2025 14:39:37 +0800
-Message-ID: <20250801070913.3109-4-niklaus.liu@mediatek.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20250801070913.3109-1-niklaus.liu@mediatek.com>
-References: <20250801070913.3109-1-niklaus.liu@mediatek.com>
+	s=arc-20240116; t=1754030531; c=relaxed/simple;
+	bh=frrlrKtqdwD5OQoBkPzwdul3Cy1W8v3RYnJbGWdBHJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YN7OkngAJXz+R7KqhtaedeXUi5yKi+Zv54+grpqmvQl+4N8v8OuIcSyF4agwNn/3gGHlMp10Q1H6xIg5l2v2RcgRaE7XmkAYzVfUTIoMnatPPBPQFbW6zkDCP3LjinDu7JVYKigdz5MLml8bPI4LZSHZRgLQi5ZX9OAqT8SQMeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KoeZyA6D; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 56VIwYho009144;
+	Fri, 1 Aug 2025 06:42:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=dhfrWN/gBdiOvCn5FdF68LIDQQBqvh
+	yNFjdQuQTY0wo=; b=KoeZyA6DzEzkV4CjtPQ7Mosihjz/raPK9eeD8QQiDLFIwf
+	BfR1PAVazaT+Fk2dZmILmtqSFERYUdpJdnDuNspydsckm+6C//Lyz4kvaH84rvgH
+	wAnXSAgn9gxDj/43/xIhxbwkK3cvT9B4QPOMM1mr2BI7Eov/z/aR3O0Xdd6BU4uP
+	yu3HJ5CwRNXjV7gKQaP6837pNFdYUQ5+7pYhK3RxcbPzybLIyo0k0cTt7bhjP9Pa
+	VNqMgRl8SpYErao+7zeWcsxRUxEyjy0YNIEeQVo05jKZvflnLmiyOoHr+rdPQnrE
+	InDwpXuV1tnd4ZhNJohwTn7l6fxYaObGXUjW/kMA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcgf3r2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 06:42:01 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5716elpu029991;
+	Fri, 1 Aug 2025 06:42:00 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qcgf3qw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 06:42:00 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5715WKmd006242;
+	Fri, 1 Aug 2025 06:41:59 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjmg19u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 06:41:59 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5716fwtE28443210
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 06:41:58 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 0F0FC20043;
+	Fri,  1 Aug 2025 06:41:58 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DCF3620040;
+	Fri,  1 Aug 2025 06:41:55 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.215.60])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Fri,  1 Aug 2025 06:41:55 +0000 (GMT)
+Date: Fri, 1 Aug 2025 12:11:53 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Zorro Lang <zlang@redhat.com>,
+        fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aIxhsV8heTrSH537@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <aIMjrunlU04jI2lF@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <0af205d9-6093-4931-abe9-f236acae8d44@oracle.com>
+ <aIccCgrCuQ4Wf1OH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <2ae4bb04-fbf7-4a53-b498-ea6361cdab3e@oracle.com>
+ <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
+ <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20250729144526.GB2672049@frogsfrogsfrogs>
+ <aIrun9794W0eZA8d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <22ccfefc-1be8-4942-ac27-c01706ef843e@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <22ccfefc-1be8-4942-ac27-c01706ef843e@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA0MiBTYWx0ZWRfX004Y7eZqSmDu
+ omH0TWNk9s6giJ867lucDEer6OvyDjixqwPDVzNZGiP+2HBFtD7IgIdxiR7qZnhEphOZsHFs+8T
+ ARBWHbqNnuqUbUithCJhYyd1gWDprxu7ZMMfPsq9wJrcncYaUZMpSTFvABb2ySfHkcP0waHcMfb
+ K+s8+OnsjDLnZEHIcWSfNGUh0AxpqhpSl+qKD1/0QeBUaZyi0Pxug6xq1RWzz/1n6to59tWlYG5
+ wUA1tvGsZ7NaSOPiqHOxj1LbeqQ9/D0PUfPW6bH8DauKwDXcdBk9y6//YBAMHU/mchkJkK9QlvP
+ m3ieubPtaVxnNW9uQWCGQX3+YD20+xc3P8B+8uGfyB4wlm7gakSlpPoP6mLqbiDtGE7pKOtDJqv
+ ec+hsx3W6n9Pb67rTCVqkXijRpo1wlcttJWPx3NlurI7gd0YkDns9TPWZ/UqiIZ+am0kySlO
+X-Proofpoint-ORIG-GUID: BdbK9ue7CtH-EAjoBqXY5yfYc2PQYINo
+X-Authority-Analysis: v=2.4 cv=Lp2Symdc c=1 sm=1 tr=0 ts=688c61b9 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=f1YMtUmYJW-UuOPZwI4A:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-GUID: O86dMPyIQ6HF_u7apXJJt0Ti_JGtIbjZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_01,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 impostorscore=0 mlxscore=0 priorityscore=1501
+ adultscore=0 clxscore=1015 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ mlxlogscore=999 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010042
 
-Modify mt6315 regulator mode mask, compatible with all 6315 models
+On Thu, Jul 31, 2025 at 08:58:59AM +0100, John Garry wrote:
+> On 31/07/2025 05:18, Ojaswin Mujoo wrote:
+> > > Heh, here comes that feature naming confusing again.  This is my
+> > > definition:
+> > > 
+> > > RWF_ATOMIC means the system won't introduce new tearing when persisting
+> > > file writes.  The application is allowed to introduce tearing by writing
+> > > to overlapping ranges at the same time.  The system does not isolate
+> > > overlapping reads from writes.
+> > > 
+> > > --D
+> > Hey Darrick, John,
+> > 
+> > So seems like my expectations of RWF_ATOMIC were a bit misplaced. I
+> > understand now that we don't really guarantee much when there are
+> > overlapping parallel writes going on. Even 2 overlapping RWF_ATOMIC
+> > writes can get torn. Seems like there are some edge cases where this
+> > might happen with hardware atomic writes as well.
+> > 
+> > In that sense, if this fio test is doing overlapped atomic io and
+> > expecting them to be untorn, I don't think that's the correct way to
+> > test it since that is beyond what RWF_ATOMIC guarantees.
+> 
+> I think that this test has value, but can only be used for ext4 or any FS
+> which only relies on HW atomics only.
+> 
+> The value is that we prove that we don't get any bios being split in the
+> storage stack, which is essential for HW atomics support.
+> 
+> Both NVMe and SCSI guarantee serialization of atomic writes.
 
-Signed-off-by: niklaus.liu <niklaus.liu@mediatek.com>
----
- drivers/regulator/mt6315-regulator.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+Hi John,
 
-diff --git a/drivers/regulator/mt6315-regulator.c b/drivers/regulator/mt6315-regulator.c
-index 2608a6652d77..092ff748fe21 100644
---- a/drivers/regulator/mt6315-regulator.c
-+++ b/drivers/regulator/mt6315-regulator.c
-@@ -218,8 +218,10 @@ static int mt6315_regulator_probe(struct spmi_device *pdev)
- 	struct regmap *regmap;
- 	struct mt6315_chip *chip;
- 	struct mt_regulator_init_data *init_data;
-+	struct device_node *node = pdev->dev.of_node;
- 	struct regulator_config config = {};
- 	struct regulator_dev *rdev;
-+	unsigned int val = 0;
- 	int i;
- 
- 	regmap = devm_regmap_init_spmi_ext(pdev, &mt6315_regmap_config);
-@@ -247,6 +249,10 @@ static int mt6315_regulator_probe(struct spmi_device *pdev)
- 		init_data->modeset_mask[MT6315_VBUCK1] = BIT(MT6315_VBUCK1);
- 		break;
- 	}
-+
-+	if (!of_property_read_u32(node, "buck1-modeset-mask", &val))
-+		init_data->modeset_mask[MT6315_VBUCK1] = val;
-+
- 	for (i = MT6315_VBUCK2; i < MT6315_VBUCK_MAX; i++)
- 		init_data->modeset_mask[i] = BIT(i);
- 
--- 
-2.46.0
+Got it, I think I can make this test work for ext4 only but then it might 
+be more appropriate to run the fio tests directly on atomic blkdev and
+skip the FS, since we anyways want to focus on the storage stack.
 
+> 
+> > 
+> > I'll try to check if we can modify the tests to write on non-overlapping
+> > ranges in a file.
+> 
+> JFYI, for testing SW-based atomic writes on XFS, I do something like this. I
+> have multiple threads each writing to separate regions of a file or writing
+> to separate files. I use this for power-fail testing with my RPI. Indeed, I
+> have also being using this sort of test in qemu for shutting down the VM
+> when fio is running - I would like to automate this, but I am not sure how
+> yet.
+> 
+> Please let me know if you want further info on the fio script.
+
+Got it, thanks for the insights. I was thinking of something similar now
+where I can modify the fio files of this test to write on non
+overlapping ranges in the same file. The only doubt i have right now is
+that when I have eg, numjobs=10 filesize=1G, how do i ensure each job
+writes to its own separate range and not overlap with each other.
+
+I saw the offset_increment= fio options which might help, yet to try it
+out though. If you know any better way please do share.
+
+Thanks,
+Ojaswin
+> 
+> Thanks,
+> John
+> 
 
