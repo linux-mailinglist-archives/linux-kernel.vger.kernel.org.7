@@ -1,152 +1,208 @@
-Return-Path: <linux-kernel+bounces-753112-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB38B17ECD
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 306B1B17E71
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE63E7AC670
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:04:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4E4F8566D70
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:45:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673D9218584;
-	Fri,  1 Aug 2025 09:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D189217666;
+	Fri,  1 Aug 2025 08:44:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RXmYFlUy"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="UEqUyF5q"
+Received: from TYDPR03CU002.outbound.protection.outlook.com (mail-japaneastazon11013000.outbound.protection.outlook.com [52.101.127.0])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AE6D14F70
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039175; cv=none; b=BOk5MLOuQQxfQtINnv95AqdqCU0xXS1jBN/rvLpdKieIMJY/mbDPaxFWZccH7G/LqjrUfhG6N4IWMZTAQl+HIjld83LZnTf5fwKBJtvbMY+R5Pjy2eLQ3bbrB0d7ryMIiBVGoKLBiY2tFat44mxD0q6nmlqMVm7w2ituutjpTQI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039175; c=relaxed/simple;
-	bh=CoCj0hlnhxMtx48zaAGtk524FDJ1/DuDwggLxXvsSIg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=dus36S1L8Cgusl21TzWLp1tAEG6Dgjl44+G35nBiKLUY5lGpUdwyf8qsCPfyRrxqvuxihzyH9G/GC4EYWVi2e6XazLQzctwgFWoNysB16o8R2Mi0l5zfjlT874mvhllblS86r1gK4yZIin3MVNX7l9XUUOPGuSdtiVMHBUv+aYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RXmYFlUy; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754039173;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=w5CR5jl7F0fSUqZEm0AUvx7ezpEgL76Cth4F+ybafT8=;
-	b=RXmYFlUy7CEcss8K2oFJU6eN+q8eUIQxDJCh2OWvK3rzo4rkvORBaERX+6O1MsnkNFCcp5
-	Akxlekj12g86CDGpfh0nVV351snvMFzt+9NLRvv3rO193NzMqNMgK1srA8Gf7G8Mkq/7yN
-	0IOAdutFdl+IeTO/JMLuLyWv225mBYQ=
-Received: from mail-wr1-f69.google.com (mail-wr1-f69.google.com
- [209.85.221.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-653-YXxMXbvHO2uoWB1qtknM5w-1; Fri, 01 Aug 2025 05:06:11 -0400
-X-MC-Unique: YXxMXbvHO2uoWB1qtknM5w-1
-X-Mimecast-MFC-AGG-ID: YXxMXbvHO2uoWB1qtknM5w_1754039170
-Received: by mail-wr1-f69.google.com with SMTP id ffacd0b85a97d-3b7886bfc16so744129f8f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 02:06:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754039169; x=1754643969;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w5CR5jl7F0fSUqZEm0AUvx7ezpEgL76Cth4F+ybafT8=;
-        b=QnAK+y8fEhcs1+p8xehvGfZpRdvwMtrRGdmSWbUkAAM0HHmq4GdcJt+yafVAqS4k1R
-         G+f0MkOgVV+Hw7buq6lGWLNerdJnpXfOkDXszIXtCgDVZiHniyRA4Pi+0KPZQoSHOfdi
-         vpmHh0c4M5W6FBNZB2Fk3C06j6ic9w31hYOxH9QhBNSKNdXf68inQiFrq+TWP544yDu0
-         /22zHEfv9Q8n8nd5uYrAmfCLCG6rVqfNUEAcKMMn1blNcRGaW2+aKMle1Xj96SmXzP6y
-         d+kLXPEV2Rcpw0D/HUKanT89OH14wVuzbozfxgf0HVqWS/v3GmjP7WdX/GGt+sUS6J0o
-         JquA==
-X-Gm-Message-State: AOJu0YzvPEUPomSBL1DDNgDUloTw80aDbQ/unhJokPSzVUIvt4Pjfnhd
-	K3ZLJztUMLFqHqS3gLcxPcIVfv5AtOggMVcDsjk8K950fsjx+mcH2n22TTvH8TS44rpr9r+6B5/
-	/KlNxb8RWpvEi2OHI74SKJBMlEjxkx+C67qfkDZya38aLfWb06bY/ZkBI5r9fNgcw4ZSjgAFKiE
-	te
-X-Gm-Gg: ASbGncsIssqscqKBsDIIG+zmm4AbyPm2/LLqBFrOV/k3uadg/5+kbqJyOD0RIVWo1C4
-	cy8W9XApdtoJOWjivmqBhMquTRXmD7V300oj6SiDA6YWDG5NTxS2SezK2JxOwHMMwcnb67gcj4I
-	zMEuq8+q86Eu96WNUBWszBpxBaU7nmsz2qHl3e0QMvrwoQ6BDPrxAP3H1CrV3wL58gZwMYfGQBj
-	QPrZbWGGLAGCwzSawVtBdc1odQuu/K1u8aDe8MptZh54s0aZEKlhRxCKgFAToQwHNIHBcCpGLNm
-	5/bRUKV30fxlRjnhiHnYndq67rq1uhRiIytfAks0K2xOYWWYawb1HhunPnJ6r5y1BdpwHQ==
-X-Received: by 2002:a05:6000:24c6:b0:3b7:6828:5f78 with SMTP id ffacd0b85a97d-3b8d343afadmr1682726f8f.4.1754039169093;
-        Fri, 01 Aug 2025 02:06:09 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTi1Fa9TEH8nqKMEd+slRdcxzYt6awfrK20vVt4LCyIMlXwe2dJepCulZgCynDTlUyIzj2Eg==
-X-Received: by 2002:a05:6000:24c6:b0:3b7:6828:5f78 with SMTP id ffacd0b85a97d-3b8d343afadmr1682683f8f.4.1754039168597;
-        Fri, 01 Aug 2025 02:06:08 -0700 (PDT)
-Received: from jlelli-thinkpadt14gen4.remote.csb ([151.29.46.230])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6ff7sm5236741f8f.75.2025.08.01.02.06.07
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 02:06:07 -0700 (PDT)
-Date: Fri, 1 Aug 2025 11:06:06 +0200
-From: Juri Lelli <juri.lelli@redhat.com>
-To: David Haufe <dhaufe@simplextrading.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
- Interrupts on isolcpu/nohz_full cores, performance regression
-Message-ID: <aIyDfs1Dh0OGJEgM@jlelli-thinkpadt14gen4.remote.csb>
-References: <CAKJHwtOw_G67edzuHVtL1xC5Vyt6StcZzihtDd0yaKudW=rwVw@mail.gmail.com>
- <aIsUwT1Ai0zcMRpT@jlelli-thinkpadt14gen4.remote.csb>
- <CAKJHwtOZkrR9kEj+tffq=o0i1fPi3P+8BTHz3RyPDmn=uDOF7g@mail.gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3C6037160
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.127.0
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754037894; cv=fail; b=KNOBzwnnNpb9z2P3UxglPMefSwx5VfH/ndsQYDRnjFLppmN1aHci0PPoi6PpMQ0gOiqiRwTfJ5sxhQb8ZeTRj2p6prvQ8RR75pbGPYmyL5OyGQ2AMEh5qKofGeKmqaSu2HxIIxft8nqqWRGTzk3cBzlvrUThfHq8X7PL8bENeig=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754037894; c=relaxed/simple;
+	bh=yLmnt8ifP3ugHBw11TQlBhG6kmeyHZp+4ssljTrGptA=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=J/hBiNBOB8BnAn6hOBtX4Ps91Ku19DO/hVljwycBDLHGAjLKyg1o7z7oB7I0LwnVqjnZCR5MdGUOzvUhpiGK2aH9W2S3+FQGisvSsFEahqEWMma/415b33bQfTtjhojpH42q2D9f1FJp/V+3/S29ucr4G0+mM33qAeGpVkjalFA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=UEqUyF5q; arc=fail smtp.client-ip=52.101.127.0
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=FcZGKGXbwVfHMzY1z4ev7swyENCdz0K3m9ywvbF5COBiP1oG31E2Ep327GqnMoEu4bH+a5CyB//aWhN1X/gcpu/HPrI/R4mKZdG++feFoMX3bNCmq+Q3v/G4GU+ZiwcYhFF/fb79noRq1NcIsMgT8iMnVcv7C6MqbQ3IqzljC1cdn3GzM+TtEeBRgz2iJANuw4axchy/7tSEWw2f4ZLtvwrYkmRebmR8VeZQDLVwni+iKPbwUD3SDi5GrPXUZW+ApiqwNW7oVVgsEr4iWbdxDEpChIgVdOByrgwKLEaLdx20TGBiuyDkhV7ICrDzWL0S4jXJHlDw1O2AGUTQaGwhiA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XCObaerBx8Elh3O1ORhZUMVQWsbQpfcTGuBZaH139eU=;
+ b=UlaETHsyJvX/Ed6elt01zSJKBvwjEHcPnQgfuFCABClEJNyzv73vv+IC4MqY5XTTdKWfALi2PSgJtS9D4jXsc25S6fx8JnrAFGMHAmfZh++Mb7NCTnQHlg3ptRlTsSWZ8pi9Vm3rpIg3/Qocpz72VuDwOS+QoKpklTO1PRNrNVU0gxIrA7mXRf/1gcXoF42VtR1yqrp5EOTgwc5DzTI6Q6zkpkUURMG3ClveAZu8LzSwxGTYpon9/EcV74h9ja5KdfbPR60VswxO1wOmrjDKR4PHBNCj+JSgerDMKp7ZjMw4xjk3K0azKryHAUYLV99rZ7EPyO92Gt4nPsNBBjTx2A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XCObaerBx8Elh3O1ORhZUMVQWsbQpfcTGuBZaH139eU=;
+ b=UEqUyF5qyWHJfyTehtVEgh8BndhZqLS8w1s6FTtUdScnuIoKh4ZfiCee4Mb4k/G/V2r+voYcm+zioNRmI2ynEmE8F4NBScVmUvdkLPvG7w67MsesxMg972HttrH48hE8zcQWV+vN/Ih4BOPdYkmgivMEgAsDXalx+JKG5e1N97z0zBjyt7qmeYTRlhggIIt5JmUfxrOXbIt09Dx/qLapzGrNE325pH7N9yKN7Zedu4iNXgbR/LmKDZUGVKh6FVYaUEkQbHmGSPZROVXIXtVfazSj7C+L2fpiKZ7Mnfp1AG1jD8s4Zdwr30+Cf5J2PDpKKe6N6x94GHtGqxTm7b5s7w==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com (2603:1096:101:228::14)
+ by KUZPR06MB7987.apcprd06.prod.outlook.com (2603:1096:d10:2c::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
+ 2025 08:44:49 +0000
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0]) by SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0%5]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
+ 08:44:49 +0000
+From: Qi Han <hanqi@vivo.com>
+To: jaegeuk@kernel.org,
+	chao@kernel.org
+Cc: linux-f2fs-devel@lists.sourceforge.net,
+	linux-kernel@vger.kernel.org,
+	Qi Han <hanqi@vivo.com>
+Subject: [PATCH] f2fs: remove unnecessary error checks
+Date: Fri,  1 Aug 2025 03:06:47 -0600
+Message-Id: <20250801090647.2674590-1-hanqi@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TYCP286CA0049.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:2b5::7) To SEZPR06MB7140.apcprd06.prod.outlook.com
+ (2603:1096:101:228::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAKJHwtOZkrR9kEj+tffq=o0i1fPi3P+8BTHz3RyPDmn=uDOF7g@mail.gmail.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SEZPR06MB7140:EE_|KUZPR06MB7987:EE_
+X-MS-Office365-Filtering-Correlation-Id: 1fc4f4ad-9c29-463f-cbbb-08ddd0d7ac74
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|366016|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vuq1Jb2tw7LJDX6zGFu1dBSSCeuOUfCaCmAchrGV4UOo/qGiJ10iXC7T61S8?=
+ =?us-ascii?Q?clhKDB2X/NGOM0XNpGkTHqlrV7MC9pNCyLaNxCSxKQrsCRLJuOU8haG+byOI?=
+ =?us-ascii?Q?Vf28LVSzRlfg3eAgqeottfWXpPSqqgGsUVQfxaW0/CzpWWL5cRB1MxurDjD8?=
+ =?us-ascii?Q?KBngzG+sM8/W3jfJro2MYv7FNM7AMGl7cOW2bCmhSJcFS8q+ut7GwHRwkR1K?=
+ =?us-ascii?Q?lBdI11hXMuEvlh+PCwvG17Y9nYKCgQ9mCNruiYKE6kJtUMZ+yWRqB86XXSPV?=
+ =?us-ascii?Q?YFr5V+mJViaBlLxwZ7wHXbUYzD5VHVY/ABqwYgcso02eB8SzFrtORx/jZZjJ?=
+ =?us-ascii?Q?QhoF761QXnQ8Zev6+XGn9vsANV2kWLt8rDBBz9WBL985+6MMRw/LP/V5gzDQ?=
+ =?us-ascii?Q?d3O0GSa83iF4ouNtcUwkjwIhYZg9iz+RTW7+lUIPwrQVL3tYx3XEDkJ32U+k?=
+ =?us-ascii?Q?SCgTubeDjwXS5gh2NrPUtadppFOQ/gmUVgbb1KLKysooO03M35CWvMerEWcm?=
+ =?us-ascii?Q?+Bpt6y+ehOg1c4s8tND6efYRpNfWsv4TVCXtUFdhR8275oyjIVyNwejwSxJH?=
+ =?us-ascii?Q?rhgxm2tyWh14OMTAQPMp3VLtlqemzOdeCEQzsjsj4fDLv9Nd38Uc18Bib93I?=
+ =?us-ascii?Q?whUkpTugUrh+L+beVE35SVWdQwWDsj6n6+1QYpPT9UNokG7SSYQdob2MdiVa?=
+ =?us-ascii?Q?O4220T726NIYB2X3shgKj+6lMmlqCHAYxALozIhW4hHGVEEn15jcTPgiSQNA?=
+ =?us-ascii?Q?qNWNGWvj+ZibcIzKlI7eToLMGW8dqDOfJ5Y26mkVV//eOiCAJOEsOuowNR8g?=
+ =?us-ascii?Q?s7vwASDZ4M9n6khL/35Pch5XT9TjxGJsYBnnsMdWks3JX41XtzaVvCYNV5b5?=
+ =?us-ascii?Q?6GE5RFFg5YPzH9H6zuG62C7ilYxngnnuWq126putH39r3bwGPjY4UBwfeIGp?=
+ =?us-ascii?Q?wmUUHsSN0yBeXcoJa+MYrZAr/CofMP3eLqpEVPWSN0L5VQp8+itkmwCbTxIB?=
+ =?us-ascii?Q?0UgbRCKScf9q6Wymy88+3QsKhMkJV+kNi6Gt3d8dOQhV4kWlmSlsfE4b4zyr?=
+ =?us-ascii?Q?ziaKW32qb4GaDZDN26nxGFDKoaiTX60dAEKxRpdirPKW+UGsx8aTlWoRLaUD?=
+ =?us-ascii?Q?CbqHev+QDVZoa3z+4e1biRBJSnxzT8b3V/+OE8xU5UK0D3mb2yomMDfDyTjR?=
+ =?us-ascii?Q?VcnrIRxVBFIuDOyYZWr6ePVhFmaydzMdlY6W6y4i8cGRkeiiA86o6JI7nmBH?=
+ =?us-ascii?Q?ToH+5rXGUnabztX11728SSrvJLHOjq1Mo0BOpbVSfwVt1DDJbpwh8i2KnKqA?=
+ =?us-ascii?Q?5GVtKTHK9OGPqWC5WPa7IcwMSGPJO0iVz6Wzrbus0Xk257rQUZ3xojH1rb8j?=
+ =?us-ascii?Q?nT3gmfIeU1kAJOpxHIvKQuPmtgn03usOi75fp1uNViapIFHXjpRCFQsHfObg?=
+ =?us-ascii?Q?gGPLXj9NZh4f39UVltsZbL1TZ3szztL/yqYVCBLUpBzaDkDgLNyhmg=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB7140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(366016)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?+VzIKGa5qz+2kkYisZF0pmGaPTwSnOGTNGNfqvphtb40HpJYMpmgWMToqs2T?=
+ =?us-ascii?Q?dRX1kCB8lxkU4J4GXsoXYZHfofmkM+ImokgNW3aocVMX6wSyKqz4Fjg5DzML?=
+ =?us-ascii?Q?kYLpUy8tk2E3ym10/D7zcKg582Xr/G3c/jSMmLyJynvc+5uPRGVaPadMxM7K?=
+ =?us-ascii?Q?glB+QZ2BVRHc4LHiz1NXzFf9HoBoAfn9KUIkxInZOVJEJxkOhks1BGFmWQrl?=
+ =?us-ascii?Q?yASZJCcA+vPOggVp1trXImNq2UZ8CjJEfVYgHymtQ6Ddk6nxOOqKhEc83EB6?=
+ =?us-ascii?Q?utjDpCh+5gA0NNRTxAb6lckNH4eTQQhrTGUfeKs/VM/kg4gYeTxj+OmNLm9O?=
+ =?us-ascii?Q?/CzSSNKi/OeYtc5TOMZmWHDsreUz9coNGIFRRXh7sKZW35KX0kMPl54dWK+N?=
+ =?us-ascii?Q?6XjrwgcztGzrAI/mE6uxG0NgvltYHGRVGf7uV/dt18N1HVWWTnjNEwCQT5jX?=
+ =?us-ascii?Q?uxdrq8TDI91aZPKpn1sFYBG6uX29Jelc6Neu29RBt7LOBdebNl23hBnNfig9?=
+ =?us-ascii?Q?Ktn4XrNuXuc2doZKS9jAH/r/s5hS4YYUHyBlUCAklnSd658FhscKVNA+nKVi?=
+ =?us-ascii?Q?hLbXqPyA+A0/IohyWb4JhnsxTclwODGY1qBAFw8Vnv7kDcc/PGjvTzoA5b7K?=
+ =?us-ascii?Q?+UNfRkctRXm77vL/HaoXeoZZmh033AWwRIwTrUcxlDL4zp8HvV6EBzONQv4Y?=
+ =?us-ascii?Q?r577rflWxlkHJhyz9mQ+q1eVZd4/C0xcmGLAc0VNiFJxDng1sKMgAlGh9wlh?=
+ =?us-ascii?Q?Nz7JvwN6U6CRti2CjZxtX/qlArSL9PPan/HmNAA9yf/UEVRMILLQYI5bjyjx?=
+ =?us-ascii?Q?lFg8M86HYsC79SVJd/W8MKHSP9P6SI4eFxlSndjEnMwqrwF8UQGMax1GdCPI?=
+ =?us-ascii?Q?p7etSV7LLofQnXFfxMMWUbtUAxhxOCSJToAELjoz0w+y+iowQQpFKOXuorZM?=
+ =?us-ascii?Q?1Ho7GWUt359/nC6LpA8oM0uwFiHCvMHHaCKOQZbSJMHKoAo4hOpzPPwPnVtc?=
+ =?us-ascii?Q?c70Wp+dkMp1aCNZeMn7cVlt7QGTX1kfqkdpP43Cp/LDryzfXJE5co2kmdUK+?=
+ =?us-ascii?Q?M0W6bwXiUzyjjnt1xPSrCjUObo8D64GEIKmwkerTFAuZXd0szBRAKjZ7a4cR?=
+ =?us-ascii?Q?ka93QMDyeSSxLON510cy2gXTYgC/joTOTq9tgp0egfSmM87VKyD3gk2O4Qd8?=
+ =?us-ascii?Q?LEAAYPKayIxSSNa7WzkeyZ/709BD3ZegkF0GJCRr/q9rpoBhUiH0QbxPODg2?=
+ =?us-ascii?Q?Dj1N1pjh0ycb1qrbSCsNjPZWBX5XbV2gJQHmulliy/BTHTKFqiq5frhWTSX0?=
+ =?us-ascii?Q?yCh+AEbRRKA3CwvlBt2JwkgRLTilYgz1CpxZ9UD9hm821SAxNfnk7eiR9BkA?=
+ =?us-ascii?Q?x7QRAhXXQ77u1SryIqQ3jYBtYHM3ANew7A27svDHpgUXjXk24WktvU3US+OW?=
+ =?us-ascii?Q?wsiw/5Z3uOu0SXM2eLm5lt4xEyxMFpYQoB2D3XJ7DCf0RM9g30/2b9YVi6dU?=
+ =?us-ascii?Q?+ACm2/ifZXOu8gJ9bXaHNRFptZrqyOOj1mAv2uK00VQqQwYR5WxjwaSMBaz6?=
+ =?us-ascii?Q?J8zC7O+cAucivjQOnqusGjElb85g6DnyHV3K10GM?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1fc4f4ad-9c29-463f-cbbb-08ddd0d7ac74
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB7140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 08:44:48.9264
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: nDuVKjLifYc+Ms3MtwheWRL1+lrbUcZ+2mMPTgPwKV7kxxfp/WZZUsldBaYV/1NhigPIpzxbBhBodF66WMW+lA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: KUZPR06MB7987
 
-Hi,
+Commit 53333cdf5b03 ("f2fs: remove unnecessary null checking") removed
+the null pointer check for bio in f2fs_grab_read_bio(), meaning
+f2fs_grab_read_bio() will not return any errors. Therefore, let's remove
+the remaining error handling code.
 
-On 31/07/25 12:48, David Haufe wrote:
-> Kernel 6.16 shows the issue. /kernel/sched/fair.c calls dl_server_start()
-> and there is no assessment prior to that point or later of the
-> isolcpu/nohz_full+single-process condition of the core. Same function_graph
-> trace generated. Code is the same at tip+sched/core.
-> 
-> On Thu, Jul 31, 2025 at 2:02 AM Juri Lelli <juri.lelli@redhat.com> wrote:
-> 
-> > Hello,
-> >
-> > Thanks for the report.
-> >
-> > On 30/07/25 11:51, David Haufe wrote:
-> > > [1.] Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
-> > > Interrupts on isolcpu/nohz_full cores, performance regression
-> > > [2.] The code for dl_server_timer is causing new IPI/Function Call
-> > > Interrupts to fire on isolcpu/nohz_full cores which previously had no
-> > > interrupts. When there is a single, SCHED_OTHER process running on an
-> > > isolcpu/nohz_full core, dl_server_timer executes on a housekeeping
-> > > core. This ultimately invokes add_nr_running() and
-> > > sched_update_tick_dependency() and finally tick_nohz_dep_set_cpu().
-> > > Setting the single process running on an isolcpu/nohz_full core to
-> > > FIFO (rt priority) prevents this new interrupt, as it is not seen as a
-> > > fair schedule process anymore. Having to use rt priority is
-> > > unnecessary and a regression to prior kernels. Kernel function_graph
-> > > trace below showing core 0 (housekeeping) sending the IPI to core 19
-> > > (nohz_full, isolcpu, rcu_nocb_poll) which is running a single
-> > > SCHED_OTHER process. I believe this has been observed by others.
-> > >
-> > https://community.clearlinux.org/t/sysjitter-worse-in-kernel-6-12-than-6-6/10206
-> >
-> > Would you be able to check if the following branch, containing multiple
-> > fixes for dl-server, is still affected by the regression?
+Fixes: 53333cdf5b03 ("f2fs: remove unnecessary null checking")
+Signed-off-by: Qi Han <hanqi@vivo.com>
+---
+ fs/f2fs/data.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-Apologies, I forgot to share the actual branch. :-/
-
-Could you please test with
-
-https://github.com/jlelli/linux/commits/upstream/fix-dlserver-1/
-
-Among various other fixes, 219a63335b67 ("sched/deadline: Don't count
-nr_running twice for dl_server proxy tasks") is making sure we don't
-count fair tasks twice, so I am wondering if it can have an effect on
-entering nohz_full.
-
-Thanks,
-Juri
+diff --git a/fs/f2fs/data.c b/fs/f2fs/data.c
+index 711ad80b38d0..89cc5dc47c72 100644
+--- a/fs/f2fs/data.c
++++ b/fs/f2fs/data.c
+@@ -1095,9 +1095,6 @@ static int f2fs_submit_page_read(struct inode *inode, struct folio *folio,
+ 
+ 	bio = f2fs_grab_read_bio(inode, blkaddr, 1, op_flags,
+ 					folio->index, for_write);
+-	if (IS_ERR(bio))
+-		return PTR_ERR(bio);
+-
+ 	/* wait for GCed page writeback via META_MAPPING */
+ 	f2fs_wait_on_block_writeback(inode, blkaddr);
+ 
+@@ -2148,11 +2145,6 @@ static int f2fs_read_single_page(struct inode *inode, struct folio *folio,
+ 		bio = f2fs_grab_read_bio(inode, block_nr, nr_pages,
+ 				f2fs_ra_op_flags(rac), index,
+ 				false);
+-		if (IS_ERR(bio)) {
+-			ret = PTR_ERR(bio);
+-			bio = NULL;
+-			goto out;
+-		}
+ 	}
+ 
+ 	/*
+@@ -2306,13 +2298,6 @@ int f2fs_read_multi_pages(struct compress_ctx *cc, struct bio **bio_ret,
+ 			bio = f2fs_grab_read_bio(inode, blkaddr, nr_pages,
+ 					f2fs_ra_op_flags(rac),
+ 					folio->index, for_write);
+-			if (IS_ERR(bio)) {
+-				ret = PTR_ERR(bio);
+-				f2fs_decompress_end_io(dic, ret, true);
+-				f2fs_put_dnode(&dn);
+-				*bio_ret = NULL;
+-				return ret;
+-			}
+ 		}
+ 
+ 		if (!bio_add_folio(bio, folio, blocksize, 0))
+-- 
+2.48.1
 
 
