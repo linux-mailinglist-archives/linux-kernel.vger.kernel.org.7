@@ -1,352 +1,251 @@
-Return-Path: <linux-kernel+bounces-753390-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753352-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3BA5B18241
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:15:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF336B181D0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:31:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 547514E4B96
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:15:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CFB3189E2A0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 12:32:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B091D2561A2;
-	Fri,  1 Aug 2025 13:15:31 +0000 (UTC)
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CD4B23BCE3;
+	Fri,  1 Aug 2025 12:31:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nSeSw68+";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="E67CWSHZ";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="Y4hG6VcY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="NLfpmwiK"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 06E203FB1B;
-	Fri,  1 Aug 2025 13:15:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01F7B179A3
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 12:31:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754054131; cv=none; b=sWSCIacUFbQCIq9j+lY69GCEvO+LuC/qdmHd7urO4VxLKex4rieI8njrYIdar35DZXSOmC0p5C9t5HQB6Jul/zcsUufK3cjOfda49ScMUBuwP3vXx9GIV/6nUJZl5/YNDzrMFIhshdMXj0Dc1I5BBGn46g1HUlO0/3ieGflBFrs=
+	t=1754051509; cv=none; b=V4a1Fw/VYVfFoJlXmL0wu4mXZ+XcOLkBSV1PBkw1IPorc/vuwoHA1z2dvRjtc4KvTOAL88cHtuxvPHCS3MsmYDx2rNaDHu/1PiShFcqK7aOmgUomNKfBAly0DBS2BFbsL1W8N8mEJ98kcPomn8dc6hYqihP5UMr3xgTKpNPH+U8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754054131; c=relaxed/simple;
-	bh=6dpd9phay9ZxH4XuAj/67+dRY75lqSqOxuEaAlGrRn0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=D6jBuzMHJY7ZKVaF8SlxNzF+5NgLhkmfNi9wJ5dtqK9db8qt5iCFnzBWHImF7iOC2tXn22VdyYKyC9+jYmyguf5/Wyi+wLAy/aEzroPDjxMBDN0sm4715jJTPMJOcadqZYt5E73c85EOxVfewCGfv8hBFHCSITJGQ7HEg4z9H9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-604bff84741so2898566a12.2;
-        Fri, 01 Aug 2025 06:15:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754054127; x=1754658927;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=bPuL8T14V3X7lD1CGrwguzeqQdg4mYhlg7hqLHO0DYU=;
-        b=FqJ2Zn3Riqpv9UyFr+CJ3yCXJtIV0qa+BS91IDYmXDWyH+D1B9F5lWsa07Wvvbs10B
-         6bfYFnp6mpjQcIRa0Ct1plgEqUY743DGMtxdR0A+V1K/6FaRAx5qgSEauIQWZuU4qAQP
-         dCve7GGMklYT5vO6DxRUyHuPoB+aqX86mcf/dFV/CqMETxQ4hbLFPzQ0QJCZt46Udo2P
-         Ep/fqyPrKBgwrsvnkEHrP3T7cQjpNQOCixi5rgJon9nz7Akbm4XpqDBeC9X6nebB2Z2D
-         XIuMJH3Ln2drFa9nmHB2YPTeekXPC58mlMD92J3BuYDQXv418WcQ1o/uUFmHNTqOu/oj
-         bxMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUPPtf9jGSboQnlXIn99a+MRqP4yFdRgBkcNOXw+uV8F+dI50SC2deqhpkBoFhNUpGbvuaF35uJtcaOQ5RT@vger.kernel.org, AJvYcCUbFkR1f4J3W3MKVsNJyKxrE40705cWwcK8qRSzj+vapnjPIgI0/DeNwXEmKJOomdzmh8FwiffTekvB@vger.kernel.org, AJvYcCWe+SNsM64n2Dcz8d4F2rks+vtPFXeZjx1m502CwvhE8E77bJvd9YQqhSynDIKH1HsGNoJXOhvMcHDr@vger.kernel.org
-X-Gm-Message-State: AOJu0YygBPIFiosMC7ZU0xQ2+Nls0uXUw2nx8Tg78kpvf21xDQ+o2ojq
-	TwHYNqMJmJ3C7vY4EXcKxG8T7KvaUr1vk+jLVHz9u5puI3zmIzzuKpFs
-X-Gm-Gg: ASbGnctmeXK2DL7IPB/cdDZTEeZB2fsJc0sCRtDa3ixe+cFGneiTL1HqzSUJ3+HTN1O
-	nyY6Ui2QcRk37+VEM0pzAOJuCjJP1hj34jcAEa8f5MoIBMqjQI4V5PraNjnOo6BNV2+raYgH/Di
-	ZRWKidQ90EPeDcTKyIz8cE9bSYUYLrlXPsxfpWWJgZGTDi/YaEo4oD5ANXc6CdbvGJ9Hbf18MpK
-	YgKYJ1mnvYSQUQ+Lo7wb/zvuqCUsR4VsnVVOnJHiuDT3v0HoowFwm6nJ9elDJeSonN44/5LUJHl
-	moYM71RnkefMImqmUOpDGbMu5frjcke8htStpjc2fkExuTh78RFWqoPAxIS3ya2IHsjHZTHiqfO
-	ICcI/3dei0R3ijQ==
-X-Google-Smtp-Source: AGHT+IHFkYKv/rbhKiOnOJxUfULDIWQuOJVDDjNuIkW476Ceze0aVUEftZ7cwSl0d9WImjiKqgM1Wg==
-X-Received: by 2002:a17:907:1c8c:b0:af6:361e:bbbc with SMTP id a640c23a62f3a-af8fd58a063mr1326768266b.2.1754054126971;
-        Fri, 01 Aug 2025 06:15:26 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:74::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e82a5sm288266266b.82.2025.08.01.06.15.26
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 06:15:26 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Fri, 01 Aug 2025 05:31:22 -0700
-Subject: [PATCH v4] vmcoreinfo: Track and log recoverable hardware errors
+	s=arc-20240116; t=1754051509; c=relaxed/simple;
+	bh=NDVeyc3tco35ClOIogxmJkOF9LbPvncbPgIIHiyzVmw=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=cYywN2H3FrGm2W+DFWaYgvoY/l1KZpUlzcO01rZrZxyIo0vZZxMWUL0IvSxtnKttB9h+nrAkzJYSKxk84Z7bp8l+CbwviyBwf90p+sMbu7wQwCblE7W9zMH78KVNPkEx7TiqKCiDKkKqOTvcyb/PC81A8u437OCOseuzKfFAOBM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nSeSw68+; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=E67CWSHZ; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=Y4hG6VcY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=NLfpmwiK; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id E9B151F807;
+	Fri,  1 Aug 2025 12:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754051505; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
+	b=nSeSw68+7SPIi9J0KUcOhchWWLZOhY7HK7WL9Nu/66f6uVLoulN8bhaZNSg2GLfilL6EqI
+	PrxjOhJ5bN9og4r0kqlAQE0sjkmVNr2GufzMpzeQnignvrc+jG6hkKvE5drrUTbTHZj9ki
+	o7QMQ2RCf7sOW4pqssMfWWYzrS+cY2A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754051505;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
+	b=E67CWSHZSaTGkohghOtBjqi+Uzi4wa4rxka9dpk90DtfoaSSj28A70Cz1ssKSIqiHs4OAL
+	EpS5jvsvXsTUEkCA==
+Authentication-Results: smtp-out2.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754051503; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
+	b=Y4hG6VcYcgSl79FpkVgPRpFtnOnc7T+7Cu9MhnPmXCNb3i1JrCY3Qut91SqNn38ElY7rwe
+	ci4Pwc8vt8MwDMI2t4KDosd5uk530KQ38bl0snvlyoBN5QJLhu/oBKSKyYkY0bqUqTGYVL
+	v9gVR9EKQbpqS/pIHk8cyXrj9xE2C4o=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754051503;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=L5SKEQNOl2SVTD3JfIE6zNGYbtRK9DbUFFLfYl4ogCo=;
+	b=NLfpmwiKuLrmhOFIUe7FQprMx46Heh0V6qrxDisp3b+KeXEL9sieFWA+Bm2iFIv9zEYt4o
+	A4mTfGjUcpmahXAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id A03B0138A5;
+	Fri,  1 Aug 2025 12:31:43 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id ZWzhJa+zjGgedQAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Fri, 01 Aug 2025 12:31:43 +0000
+Date: Fri, 01 Aug 2025 14:31:43 +0200
+Message-ID: <87v7n72pg0.wl-tiwai@suse.de>
+From: Takashi Iwai <tiwai@suse.de>
+To: "Luca Weiss" <luca.weiss@fairphone.com>
+Cc: "Arnd Bergmann" <arnd@kernel.org>,
+	"Mark Brown" <broonie@kernel.org>,
+	"Wesley Cheng" <quic_wcheng@quicinc.com>,
+	"Arnd Bergmann" <arnd@arndb.de>,
+	"Jaroslav Kysela" <perex@perex.cz>,
+	"Takashi Iwai" <tiwai@suse.com>,
+	"Greg Kroah-Hartman"
+ <gregkh@linuxfoundation.org>,
+	"Dan Carpenter" <dan.carpenter@linaro.org>,
+	<linux-sound@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH 3/3] ALSA: qc_audio_offload: try to reduce address space confusion
+In-Reply-To: <DBR2363A95M1.L9XBNC003490@fairphone.com>
+References: <20250513123442.159936-1-arnd@kernel.org>
+	<20250513123442.159936-4-arnd@kernel.org>
+	<DBR2363A95M1.L9XBNC003490@fairphone.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-Message-Id: <20250801-vmcore_hw_error-v4-1-fa1fe65edb83@debian.org>
-X-B4-Tracking: v=1; b=H4sIAJmzjGgC/23PQWrDMBCF4auIWVvFM5Il16veI5QgyaNYi1pFD
- mpL8N2DQwou7nbgfT9zg4VL4gUGcYPCNS0pzzAI3QgIk5svLNMIgwBqqWtta2X9CLnwefo6cym
- 5SEWk6ZVNUGigEfBZOKbvh3h6bwRMabnm8vMIVNyuTwv1waooUfYh6o5Hb5TSbyP75OaXXC6wY
- ZX2gDkCJFFG7G20oyHn3R5ofr8g/H/ovOmc8VqFzh3KalcmOgJqK8fW9CoGjGj/AOu63gFZjFc
- eagEAAA==
-X-Change-ID: 20250707-vmcore_hw_error-322429e6c316
-To: "Rafael J. Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, 
- James Morse <james.morse@arm.com>, Tony Luck <tony.luck@intel.com>, 
- Borislav Petkov <bp@alien8.de>, Robert Moore <robert.moore@intel.com>, 
- Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, 
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org, 
- "H. Peter Anvin" <hpa@zytor.com>, Hanjun Guo <guohanjun@huawei.com>, 
- Mauro Carvalho Chehab <mchehab@kernel.org>, 
- Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>
-Cc: linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
- acpica-devel@lists.linux.dev, osandov@osandov.com, 
- xueshuai@linux.alibaba.com, konrad.wilk@oracle.com, 
- linux-edac@vger.kernel.org, linuxppc-dev@lists.ozlabs.org, 
- linux-pci@vger.kernel.org, kernel-team@meta.com, osandov@fb.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=8255; i=leitao@debian.org;
- h=from:subject:message-id; bh=6dpd9phay9ZxH4XuAj/67+dRY75lqSqOxuEaAlGrRn0=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBojL3ty8aeWsEjZnDFnn1Ba6dJoYJz35woUGATu
- OraNsExFciJAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaIy97QAKCRA1o5Of/Hh3
- bdTID/43KDd/Q1mSN4jZ1cULP9bNWwVt895nJKhKFHHHvnhK8VtOmfbsKb93CXzO5ysalRWeb8b
- Ek6IBb466wD7bQ/vLmrrgf4SmHvcjNszbwzgDMF9rblvSKCxhJkslV8eWRCYtQ13G8BET8qzDg5
- 6FoO6lEeLvNVEeNCSTPXJoWOA/5uZCjmP1LzrUrjgNVeBAtB6uidfMlqXcY3xx+Kp+03opbdtxJ
- cy5dF/MkHh07Nunn9GdNYvcVyYI5fcRTaRC6AUp5rYNyEyc3EEJ9tcTt0XpdVyQL1hLsMK+wU1q
- SSf972wC7g+Xb352VbBDVtGP675uOGtyv0VLBX9qTzB2ufa3e6Hob5sMHlu+xvTRfQOO9DfRy9X
- TXsJMESOAlka2NTK5juaw3oEWNB2vfaMb/T8GmrAJ2ildYLDCjS/hjqijifqtBR7RqZvkM5nj6O
- 4AjnrmedOxALeX/5sWV/xJS/sE/hVFWE0QuzOpb+CJ/s09AdYgNOjSt3eNmitD3bb6+768x0vCL
- s79AHjH1oaCSt4BcyzcCdZ2QWGBs1fAcgbhBECvtAb/xFtCLLUZq7acZGpLoyft9KokRkFhdEby
- Rtv7WAjj6oJ88TNjzZWS8S0xSNKfJMzU+7tzHrQixzYk79wud/zaKqCovubuVrYy9i96COLJiAO
- fUDzWkbxpPSOZKg==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	DBL_PROHIBIT(0.00)[0.0.0.4:email];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo,arndb.de:email]
+X-Spam-Flag: NO
+X-Spam-Score: -3.30
 
-Introduce a generic infrastructure for tracking recoverable hardware
-errors (HW errors that are visible to the OS but does not cause a panic)
-and record them for vmcore consumption. This aids post-mortem crash
-analysis tools by preserving a count and timestamp for the last
-occurrence of such errors. On the other side, correctable errors, which
-the OS typically remains unaware of because the underlying hardware
-handles them transparently, are less relevant for crash dump
-and therefore are NOT tracked in this infrastructure.
+On Fri, 01 Aug 2025 13:31:42 +0200,
+Luca Weiss wrote:
+> 
+> Hi Arnd,
+> 
+> On Tue May 13, 2025 at 2:34 PM CEST, Arnd Bergmann wrote:
+> > From: Arnd Bergmann <arnd@arndb.de>
+> >
+> > uaudio_transfer_buffer_setup() allocates a buffer for the subs->dev
+> > device, and the returned address for the buffer is a CPU local virtual
+> > address that may or may not be in the linear mapping, as well as a DMA
+> > address token that is accessible by the USB device, and this in turn
+> > may or may not correspond to the physical address.
+> >
+> > The use in the driver however assumes that these addresses are the
+> > linear map and the CPU physical address, respectively. Both are
+> > nonportable here, but in the end only the virtual address gets
+> > used by converting it to a physical address that gets mapped into
+> > a second iommu.
+> >
+> > Make this more explicit by pulling the conversion out first
+> > and warning if it is not part of the linear map, and using the
+> > actual physical address to map into the iommu in place of the
+> > dma address that may already be iommu-mapped into the usb host.
+> 
+> This patch is breaking USB audio offloading on Qualcomm devices on 6.16,
+> as tested on sm6350 and sc7280-based smartphones.
+> 
+> [  420.463176] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: AFE Port already open
+> [  420.472676] ------------[ cut here ]------------
+> [  420.472691] WARNING: CPU: 2 PID: 175 at sound/usb/qcom/qc_audio_offload.c:1056 handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
+> [  420.472726] Modules linked in: rfcomm zram zsmalloc zstd_compress algif_hash algif_skcipher bnep nft_reject_inet nf_reject_ipv4 nf_reject_ipv6 nft_reject nft_ct nf_conntrack nf_defrag_ipv6 nf_defrag_ipv4 nf_tables nfnetlink ipv6 fuse uhid uinput snd_usb_audio_qmi q6asm_dai q6routing q6afe_dai q6usb q6afe_clocks q6adm q6asm snd_q6dsp_common q6afe q6core apr pdr_interface snd_soc_sm8250 snd_soc_qcom
+> _common snd_soc_qcom_offload_utils snd_soc_qcom_sdw soundwire_bus soc_usb snd_soc_core snd_compress snd_usb_audio ath10k_snoc ath10k_core snd_hwdep snd_usbmidi_lib ath fastrpc snd_pcm mac80211 hci_uart qrtr_smd snd_timer btqca qcom_pd_mapper snd_rawmidi bluetooth libarc4 qcom_pdr_msg cfg80211 snd soundcore ecdh_generic ecc rfkill qrtr qcom_stats qcom_q6v5_pas ipa qcom_pil_info qcom_q6v5 qcom_common
+> [  420.473018] CPU: 2 UID: 0 PID: 175 Comm: kworker/u32:9 Tainted: G        W           6.16.0 #1-postmarketos-qcom-sm6350 NONE
+> [  420.473033] Tainted: [W]=WARN
+> [  420.473038] Hardware name: Fairphone 4 (DT)
+> [  420.473045] Workqueue: qmi_msg_handler qmi_data_ready_work
+> [  420.473065] pstate: 60400005 (nZCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [  420.473075] pc : handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi]
+> [  420.473091] lr : handle_uaudio_stream_req+0xc84/0x13f8 [snd_usb_audio_qmi]
+> [  420.473104] sp : ffff800082f939a0
+> [  420.473110] x29: ffff800082f93b10 x28: ffff0000cfb796b8 x27: 0000000000008000
+> [  420.473128] x26: ffff0000842afc80 x25: ffffa8e75a23b0e0 x24: 0000000000008000
+> [  420.473145] x23: ffffa8e75a23bcf0 x22: ffff800082f93bd0 x21: 0000000000000000
+> [  420.473161] x20: ffff800082f93c98 x19: ffff0000939bb740 x18: ffffa8e77925a4d0
+> [  420.473178] x17: ffffffffffffffff x16: ffffa8e777ef9728 x15: ffffa8e77925a000
+> [  420.473194] x14: 0000000000000000 x13: 0000000000000dc0 x12: ffff800080000000
+> [  420.473211] x11: 0000000000000cc0 x10: 0000000000000001 x9 : ffffa8e77944b880
+> [  420.473227] x8 : ffffd719b5f4d000 x7 : ffff00009033da18 x6 : 0000000000000000
+> [  420.473244] x5 : 0000000000000000 x4 : ffff800082f93938 x3 : 0000000000000000
+> [  420.473260] x2 : 0000000000000000 x1 : ffff0000857790c0 x0 : 0000000000000000
+> [  420.473277] Call trace:
+> [  420.473283]  handle_uaudio_stream_req+0xea8/0x13f8 [snd_usb_audio_qmi] (P)
+> [  420.473300]  qmi_invoke_handler+0xbc/0x108
+> [  420.473314]  qmi_handle_message+0x90/0x1a8
+> [  420.473326]  qmi_data_ready_work+0x210/0x390
+> [  420.473339]  process_one_work+0x150/0x3a0
+> [  420.473351]  worker_thread+0x288/0x480
+> [  420.473362]  kthread+0x118/0x1e0
+> [  420.473375]  ret_from_fork+0x10/0x20
+> [  420.473390] ---[ end trace 0000000000000000 ]---
+> [  420.479244] qcom-q6afe aprsvc:service:4:4: cmd = 0x100e5 returned error = 0x1
+> [  420.479540] qcom-q6afe aprsvc:service:4:4: DSP returned error[1]
+> [  420.479558] qcom-q6afe aprsvc:service:4:4: AFE enable for port 0x7000 failed -22
+> [  420.479572] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: fail to start AFE port 88
+> [  420.479583] q6afe-dai 3000000.remoteproc:glink-edge:apr:service@4:dais: ASoC error (-22): at snd_soc_dai_prepare() on USB_RX
+> 
+> Reverting this patch makes it work as expected on 6.16.0.
+> 
+> Let me know if I can be of any help to resolve this.
 
-Add centralized logging for sources of recoverable hardware
-errors based on the subsystem it has been notified.
+I guess just dropping WARN_ON() would help?
 
-hwerror_data is write-only at kernel runtime, and it is meant to be read
-from vmcore using tools like crash/drgn. For example, this is how it
-looks like when opening the crashdump from drgn.
+As far as I read the code, pa argument isn't used at all in
+uaudio_iommu_map() unless as sgt is NULL.  In this case, sgt is never
+NULL, hence the pa argument is just a placeholder.
+That said, the whole xfer_buf_pa (and its sanity check) can be dropped
+there.
 
-	>>> prog['hwerror_data']
-	(struct hwerror_info[1]){
-		{
-			.count = (int)844,
-			.timestamp = (time64_t)1752852018,
-		},
-		...
 
-This helps fleet operators quickly triage whether a crash may be
-influenced by hardware recoverable errors (which executes a uncommon
-code path in the kernel), especially when recoverable errors occurred
-shortly before a panic, such as the bug fixed by
-commit ee62ce7a1d90 ("page_pool: Track DMA-mapped pages and unmap them
-when destroying the pool")
+Takashi
 
-This is not intended to replace full hardware diagnostics but provides
-a fast way to correlate hardware events with kernel panics quickly.
-
-Rare machine check exceptions—like those indicated by mce_flags.p5 or
-mce_flags.winchip—are not accounted for in this method, as they fall
-outside the intended usage scope for this feature’s user base.
-
-Suggested-by: Tony Luck <tony.luck@intel.com>
-Suggested-by: Shuai Xue <xueshuai@linux.alibaba.com>
-Signed-off-by: Breno Leitao <leitao@debian.org>
----
-Changes in v4:
-- Split the error by hardware subsystem instead of kernel
-  subsystem/driver (Shuai)
-- Do not count the corrected errors, only focusing on recoverable errors (Shuai)
-- Link to v3: https://lore.kernel.org/r/20250722-vmcore_hw_error-v3-1-ff0683fc1f17@debian.org
-
-Changes in v3:
-- Add more information about this feature in the commit message
-  (Borislav Petkov)
-- Renamed the function to hwerr_log_error_type() and use hwerr as
-  suffix (Borislav Petkov)
-- Make the empty function static inline (kernel test robot)
-- Link to v2: https://lore.kernel.org/r/20250721-vmcore_hw_error-v2-1-ab65a6b43c5a@debian.org
-
-Changes in v2:
-- Split the counter by recoverable error (Tony Luck)
-- Link to v1: https://lore.kernel.org/r/20250714-vmcore_hw_error-v1-1-8cf45edb6334@debian.org
----
- arch/x86/kernel/cpu/mce/core.c |  4 ++++
- drivers/acpi/apei/ghes.c       | 36 ++++++++++++++++++++++++++++++++++++
- drivers/pci/pcie/aer.c         |  2 ++
- include/linux/vmcore_info.h    | 17 +++++++++++++++++
- kernel/vmcore_info.c           | 18 ++++++++++++++++++
- 5 files changed, 77 insertions(+)
-
-diff --git a/arch/x86/kernel/cpu/mce/core.c b/arch/x86/kernel/cpu/mce/core.c
-index 4da4eab56c81d..f85759453f89a 100644
---- a/arch/x86/kernel/cpu/mce/core.c
-+++ b/arch/x86/kernel/cpu/mce/core.c
-@@ -45,6 +45,7 @@
- #include <linux/task_work.h>
- #include <linux/hardirq.h>
- #include <linux/kexec.h>
-+#include <linux/vmcore_info.h>
+--- a/sound/usb/qcom/qc_audio_offload.c
++++ b/sound/usb/qcom/qc_audio_offload.c
+@@ -1020,7 +1020,6 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 	struct sg_table xfer_buf_sgt;
+ 	dma_addr_t xfer_buf_dma;
+ 	void *xfer_buf;
+-	phys_addr_t xfer_buf_pa;
+ 	u32 len = xfer_buf_len;
+ 	bool dma_coherent;
+ 	dma_addr_t xfer_buf_dma_sysdev;
+@@ -1051,18 +1050,13 @@ static int uaudio_transfer_buffer_setup(struct snd_usb_substream *subs,
+ 	if (!xfer_buf)
+ 		return -ENOMEM;
  
- #include <asm/fred.h>
- #include <asm/cpu_device_id.h>
-@@ -1690,6 +1691,9 @@ noinstr void do_machine_check(struct pt_regs *regs)
- 	}
+-	/* Remapping is not possible if xfer_buf is outside of linear map */
+-	xfer_buf_pa = virt_to_phys(xfer_buf);
+-	if (WARN_ON(!page_is_ram(PFN_DOWN(xfer_buf_pa)))) {
+-		ret = -ENXIO;
+-		goto unmap_sync;
+-	}
+ 	dma_get_sgtable(subs->dev->bus->sysdev, &xfer_buf_sgt, xfer_buf,
+ 			xfer_buf_dma, len);
  
- out:
-+	/* Given it didn't panic, mark it as recoverable */
-+	hwerr_log_error_type(HWERR_RECOV_MCE);
-+
- 	instrumentation_end();
- 
- clear:
-diff --git a/drivers/acpi/apei/ghes.c b/drivers/acpi/apei/ghes.c
-index a0d54993edb3b..562459e9d632e 100644
---- a/drivers/acpi/apei/ghes.c
-+++ b/drivers/acpi/apei/ghes.c
-@@ -43,6 +43,7 @@
- #include <linux/uuid.h>
- #include <linux/ras.h>
- #include <linux/task_work.h>
-+#include <linux/vmcore_info.h>
- 
- #include <acpi/actbl1.h>
- #include <acpi/ghes.h>
-@@ -867,6 +868,40 @@ int cxl_cper_kfifo_get(struct cxl_cper_work_data *wd)
- }
- EXPORT_SYMBOL_NS_GPL(cxl_cper_kfifo_get, "CXL");
- 
-+static void ghes_log_hwerr(int sev, guid_t *sec_type)
-+{
-+	if (sev != CPER_SEV_RECOVERABLE)
-+		return;
-+
-+	if (guid_equal(sec_type, &CPER_SEC_PROC_ARM) ||
-+	    guid_equal(sec_type, &CPER_SEC_PROC_GENERIC) ||
-+	    guid_equal(sec_type, &CPER_SEC_PROC_IA)) {
-+		hwerr_log_error_type(HWERR_RECOV_CPU);
-+		return;
-+	}
-+
-+	if (guid_equal(sec_type, &CPER_SEC_CXL_PROT_ERR) ||
-+	    guid_equal(sec_type, &CPER_SEC_CXL_GEN_MEDIA_GUID) ||
-+	    guid_equal(sec_type, &CPER_SEC_CXL_DRAM_GUID) ||
-+	    guid_equal(sec_type, &CPER_SEC_CXL_MEM_MODULE_GUID)) {
-+		hwerr_log_error_type(HWERR_RECOV_CXL);
-+		return;
-+	}
-+
-+	if (guid_equal(sec_type, &CPER_SEC_PCIE) ||
-+	    guid_equal(sec_type, &CPER_SEC_PCI_X_BUS)) {
-+		hwerr_log_error_type(HWERR_RECOV_PCI);
-+		return;
-+	}
-+
-+	if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
-+		hwerr_log_error_type(HWERR_RECOV_MEMORY);
-+		return;
-+	}
-+
-+	hwerr_log_error_type(HWERR_RECOV_OTHERS);
-+}
-+
- static void ghes_do_proc(struct ghes *ghes,
- 			 const struct acpi_hest_generic_status *estatus)
- {
-@@ -888,6 +923,7 @@ static void ghes_do_proc(struct ghes *ghes,
- 		if (gdata->validation_bits & CPER_SEC_VALID_FRU_TEXT)
- 			fru_text = gdata->fru_text;
- 
-+		ghes_log_hwerr(sev, sec_type);
- 		if (guid_equal(sec_type, &CPER_SEC_PLATFORM_MEM)) {
- 			struct cper_sec_mem_err *mem_err = acpi_hest_get_payload(gdata);
- 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 70ac661883672..fe0174b972a7b 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -30,6 +30,7 @@
- #include <linux/kfifo.h>
- #include <linux/ratelimit.h>
- #include <linux/slab.h>
-+#include <linux/vmcore_info.h>
- #include <acpi/apei.h>
- #include <acpi/ghes.h>
- #include <ras/ras_event.h>
-@@ -751,6 +752,7 @@ static void pci_dev_aer_stats_incr(struct pci_dev *pdev,
- 		break;
- 	case AER_NONFATAL:
- 		aer_info->dev_total_nonfatal_errs++;
-+		hwerr_log_error_type(HWERR_RECOV_PCI);
- 		counter = &aer_info->dev_nonfatal_errs[0];
- 		max = AER_MAX_TYPEOF_UNCOR_ERRS;
- 		break;
-diff --git a/include/linux/vmcore_info.h b/include/linux/vmcore_info.h
-index 37e003ae52626..538a3635fb1e5 100644
---- a/include/linux/vmcore_info.h
-+++ b/include/linux/vmcore_info.h
-@@ -77,4 +77,21 @@ extern u32 *vmcoreinfo_note;
- Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
- 			  void *data, size_t data_len);
- void final_note(Elf_Word *buf);
-+
-+enum hwerr_error_type {
-+	HWERR_RECOV_MCE,
-+	HWERR_RECOV_CPU,
-+	HWERR_RECOV_MEMORY,
-+	HWERR_RECOV_PCI,
-+	HWERR_RECOV_CXL,
-+	HWERR_RECOV_OTHERS,
-+	HWERR_RECOV_MAX,
-+};
-+
-+#ifdef CONFIG_VMCORE_INFO
-+noinstr void hwerr_log_error_type(enum hwerr_error_type src);
-+#else
-+static inline void hwerr_log_error_type(enum hwerr_error_type src) {};
-+#endif
-+
- #endif /* LINUX_VMCORE_INFO_H */
-diff --git a/kernel/vmcore_info.c b/kernel/vmcore_info.c
-index e066d31d08f89..4b5ab45d468f5 100644
---- a/kernel/vmcore_info.c
-+++ b/kernel/vmcore_info.c
-@@ -31,6 +31,13 @@ u32 *vmcoreinfo_note;
- /* trusted vmcoreinfo, e.g. we can make a copy in the crash memory */
- static unsigned char *vmcoreinfo_data_safecopy;
- 
-+struct hwerr_info {
-+	int __data_racy count;
-+	time64_t __data_racy timestamp;
-+};
-+
-+static struct hwerr_info hwerr_data[HWERR_RECOV_MAX];
-+
- Elf_Word *append_elf_note(Elf_Word *buf, char *name, unsigned int type,
- 			  void *data, size_t data_len)
- {
-@@ -118,6 +125,17 @@ phys_addr_t __weak paddr_vmcoreinfo_note(void)
- }
- EXPORT_SYMBOL(paddr_vmcoreinfo_note);
- 
-+void hwerr_log_error_type(enum hwerr_error_type src)
-+{
-+	if (src < 0 || src >= HWERR_RECOV_MAX)
-+		return;
-+
-+	/* No need to atomics/locks given the precision is not important */
-+	hwerr_data[src].count++;
-+	hwerr_data[src].timestamp = ktime_get_real_seconds();
-+}
-+EXPORT_SYMBOL_GPL(hwerr_log_error_type);
-+
- static int __init crash_save_vmcoreinfo_init(void)
- {
- 	vmcoreinfo_data = (unsigned char *)get_zeroed_page(GFP_KERNEL);
-
----
-base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
-change-id: 20250707-vmcore_hw_error-322429e6c316
-
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
-
+ 	/* map the physical buffer into sysdev as well */
++	/* note: NULL passed to pa argument as we use sgt */
+ 	xfer_buf_dma_sysdev = uaudio_iommu_map(MEM_XFER_BUF, dma_coherent,
+-					       xfer_buf_pa, len, &xfer_buf_sgt);
++					       NULL, len, &xfer_buf_sgt);
+ 	if (!xfer_buf_dma_sysdev) {
+ 		ret = -ENOMEM;
+ 		goto unmap_sync;
 
