@@ -1,75 +1,110 @@
-Return-Path: <linux-kernel+bounces-753437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D0B1AB182FB
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84FA5B182FF
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 42D5B1C834F2
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2BCF83AAFA9
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D20AD264A65;
-	Fri,  1 Aug 2025 13:53:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51E7F25743E;
+	Fri,  1 Aug 2025 13:56:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RxD1unUZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="o9uBs5Vm"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AB125743E;
-	Fri,  1 Aug 2025 13:53:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9522A8F49;
+	Fri,  1 Aug 2025 13:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754056422; cv=none; b=Wcl+l8wEdUksTH8I4ru+SMhnR6wq2iqPbCK+zsO4OFf6NfCb5rAGys0KPKBJS6iM2nDaFRF3zUKOkNMmhgD2712Kust5EBUJgl/xIYzsOlO2CZb+t3JsyGSIa8Kgla0m0vAXn1TInxIvVl4R+jduXQ7+Q6dihiNg5MsRVGVkUBM=
+	t=1754056597; cv=none; b=oWymYibRjfRB3FCEYwRtBTdBHSYrvFQxLDVSkTxCddXoBwOn2Jf96PBCpUNjE6hKnVin8HtsfdyfbC/BgjHSeIzDTq6J3kuhCI99C1pGn7t2p5LfX3LhbvfcCCY1Y3ksMOr864GjB2k9CrJIfzlPpCTisMoJhgDw+1Gw5T0NJ9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754056422; c=relaxed/simple;
-	bh=b7ygX6fWwlwQdIKjpdQKH7R9GKsbUErT1h3IkhEGH4g=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=m1U7+cdmdsDTTosltUgxULPmvf/zw4nIgXJ/GDQMsOwOtotW6IrtKxBrz385CUJdrJMLzOWHvd4L+z20g9zQczDyfWOgT/pynDUXpdR9OaECwIGnRDuhd0AEhvDkzmowtqYDr2BV/nOABOO8rNJDIyy/6dlbiBmFx59/B5XBDUI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RxD1unUZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6719FC4CEE7;
-	Fri,  1 Aug 2025 13:53:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754056421;
-	bh=b7ygX6fWwlwQdIKjpdQKH7R9GKsbUErT1h3IkhEGH4g=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=RxD1unUZAB8LYpWdEQisRXcII9uw2jI35fEvNsBhKs9M4PQ4VOyWS3Z+1ZWXdFvkN
-	 tjdKtYXjM/P/rKwwyW1sU+3kGZlcT6oIvKi+IE+jH5L4Sv354OwBDOATYU+KnPmPuc
-	 zaWTvf0AM9E+t1Kh6STn7bXeAaHkxQEJOWtMQSuW2brUOhGOCzqpQU4mZoUhDBXWvn
-	 S34V+pKiAPQamq+adn20HlFFGBd9FSyMsB2nkCdqiuyd0B0QLjZbeyFzeaosT56zz5
-	 sijeZwsjrCpY1E+yWowv0xXWauUi6ekgHQ9CUmdslXjWrxcoQQ+rypbKS5kiWx+L+8
-	 pEw2GxUcuj38A==
-Date: Fri, 1 Aug 2025 09:53:39 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Askar Safin <safinaskar@zohomail.com>
-Cc: linux-api@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, tools@kernel.org
-Subject: Re: [RFC v3 1/4] kernel/api: introduce kernel API specification
- framework
-Message-ID: <aIzG427WYt0_wonN@lappy>
-References: <20250711114248.2288591-2-sashal@kernel.org>
- <20250716072141.12-1-safinaskar@zohomail.com>
+	s=arc-20240116; t=1754056597; c=relaxed/simple;
+	bh=KNIYwYpHSf5WqHvEIcENvX6ddz10vIi+H1KyrmB5LsA=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=k4iFoowJY/sCBo7hfr9p/qsDPhlag2/DPlfbf5QnRWcM4hYKjTdBsBvDaqT8+gvBmXlJ+NfjKquYFPvC3Oqg/zUR/gW2pei0poSU4ixTIZfWaYsZHI6DGxjyReNF4+zaCHpkNA7Mzb5GLOWld0nDa19A1kiCz7A2EyWNa9e6Cws=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=o9uBs5Vm; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 3C14C42EF5;
+	Fri,  1 Aug 2025 13:56:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754056592;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=06yD9n9RnAQjnGDx6zdMOn3Brhc6UbZVbeYRQe2WZQk=;
+	b=o9uBs5VmlesEBu2nF/BPh2gYxg/9wlYpNxMdjKy1zxvRC3OCrUXefoy6rFbVKPRoNCXtFs
+	pWDYTRY4WsQP1WFPLDoCWwFy9zr0n2EjIef+bSmJmO0sxA7I38b/+mKZ4chHsoDDyYUP7Z
+	cO4goUl/W7MM9vRFLd5CJhidNGFX/j9bruBhg0gmSO2zQipq+D1Btt6XYR/akXFdiBuVs6
+	c/e3f0e0MMYmRJ7Egwy9pg0paBO+xys9TE7Tlh0RVQDsMO/2Ttx0nWh6ZjzZW1jflIYncP
+	P9sWrAJHvEwnt1O2ygaBjMLnt9qnC+94AZMikcHtviJc8StgzNLq7NDMAxKa1g==
+From: Miquel Raynal <miquel.raynal@bootlin.com>
+To: "Rob Herring (Arm)" <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>,  Daniel Lezcano
+ <daniel.lezcano@linaro.org>,  Zhang Rui <rui.zhang@intel.com>,  Lukasz
+ Luba <lukasz.luba@arm.com>,  Krzysztof Kozlowski <krzk+dt@kernel.org>,
+  Conor Dooley <conor+dt@kernel.org>,  linux-pm@vger.kernel.org,
+  devicetree@vger.kernel.org,  linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] dt-bindings: thermal: Convert marvell,armada370-thermal
+ to DT schema
+In-Reply-To: <20250702225530.2858649-1-robh@kernel.org> (Rob Herring's message
+	of "Wed, 2 Jul 2025 17:55:27 -0500")
+References: <20250702225530.2858649-1-robh@kernel.org>
+User-Agent: mu4e 1.12.7; emacs 30.1
+Date: Fri, 01 Aug 2025 15:56:31 +0200
+Message-ID: <87bjoz6t80.fsf@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <20250716072141.12-1-safinaskar@zohomail.com>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdefkeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpefhvfevufgjfhgffffkgggtgfesthhqredttderjeenucfhrhhomhepofhiqhhuvghlucftrgihnhgrlhcuoehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeffgefhjedtfeeigeduudekudejkedtiefhleelueeiueevheekvdeludehiedvfeenucfkphepledtrdekledrudeifedruddvjeenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeltddrkeelrdduieefrdduvdejpdhhvghloheplhhotggrlhhhohhsthdpmhgrihhlfhhrohhmpehmihhquhgvlhdrrhgrhihnrghlsegsohhothhlihhnrdgtohhmpdhnsggprhgtphhtthhopedutddprhgtphhtthhopehrohgshheskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprhgrfhgrvghlsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghnihgvlhdrlhgviigtrghnoheslhhinhgrrhhordhorhhgpdhrtghpthhtoheprhhuihdriihhrghnghesihhnthgvlhdrtghomhdprhgtphhtthhopehluhhkrghsiidrlhhusggrsegrrhhmrdgtohhmpdhrtghpthhtohepkhhriihkodgut
+ heskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheptghonhhorhdoughtsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhpmhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: miquel.raynal@bootlin.com
 
-On Wed, Jul 16, 2025 at 10:21:41AM +0300, Askar Safin wrote:
->> +   KAPI_PARAM_IN       = (1 << 0),
->> +   KAPI_PARAM_OUT      = (1 << 1),
->> +   KAPI_PARAM_INOUT    = (1 << 2),
+Hi Rob,
+
+On 02/07/2025 at 17:55:27 -05, "Rob Herring (Arm)" <robh@kernel.org> wrote:
+
+> Convert the Marvell Armada 3xx/XP thermal binding to schema.
 >
->There is no need for KAPI_PARAM_INOUT. It could be replaced by KAPI_PARAM_IN | KAPI_PARAM_OUT
+> Drop the AP80x and CP110 as they have long been deprecated and have
+> been replaced by a new binding.
 
-It could, but it's easier to write _INOUT :)
+Totally fine with that, but then I would go even further and also drop
+the legacy binding implying a size of 4 on the second reg range?
 
--- 
+> Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
+> ---
+
+...
+
+> +examples:
+> +  - |
+> +    thermal@d0018300 {
+> +        compatible =3D "marvell,armada370-thermal";
+> +        reg =3D <0xd0018300 0x4
+> +               0xd0018304 0x4>;
+> +    };
+
+This example is showing a legacy binding. Even if we decide to keep
+supporting it, I think you would prefer to replace the second line:
+
+           reg =3D <0xd0018300 0x4
+  -               0xd0018304 0x4>;
+  +               0xd0018304 0x8>;
+
 Thanks,
-Sasha
+Miqu=C3=A8l
 
