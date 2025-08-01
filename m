@@ -1,149 +1,96 @@
-Return-Path: <linux-kernel+bounces-753790-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753792-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4A6AB187F8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:08:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD1E6B187FE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 22:13:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDFA07B82B4
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:06:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9059C627EE7
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:13:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A2DD1F7910;
-	Fri,  1 Aug 2025 20:07:56 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00761204863;
+	Fri,  1 Aug 2025 20:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="W4canb2S"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 660BCDF71;
-	Fri,  1 Aug 2025 20:07:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F1CDF71
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 20:13:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754078875; cv=none; b=UPyoFzMJahB2cSqiFZr/cxcnDMK545YDUA52neVYqdaUYtIgFnJxDvLulv4E2E6IyDHhqiOH3U/Wkb3bneEWN0w7Z6lMQe+ZlrfCGV2QaPdlS3qZsMWPa4RV+2nkp7gEAOvAALNykqOasV79Ywp5ti95CzrzW38/ZShzqnG8zBQ=
+	t=1754079209; cv=none; b=BK8lKcW++DdPNv33cFKjj7pC82TE/sQUVj05I+94chOVZLmmTDscR3OapIQ0AJHDAAuzsdADdIOJLUikGgKGiO1e/Xmnp/heksfw9pIQzyv818lHUI86TSxThUCq7hRkv3kMnkO6ZfJibClrC9wyO7mR9F0DC6QRncY836VFj+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754078875; c=relaxed/simple;
-	bh=WCFqIN5IfkAoMew21HtVQNAsVVFH1PrcnYcR5a62H8Y=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=NRHFmiKl699V54ZUGegqgzPkAf2+hwNJ2dSSfqLYlNNANe2dk1EEK00e+ZitIt7W/sONm/Cd/QiXgECUocnhEOJnJ2xU2iWBW3jJpymAl4uCH6uCA44m7Dp5IthomKAiwrfyS4vMRY8nN3wmCpUr6kHVXFJUgk0nW4D/xZx7LHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay07.hostedemail.com (Postfix) with ESMTP id E41AF16031F;
-	Fri,  1 Aug 2025 20:07:51 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id 0B0D920024;
-	Fri,  1 Aug 2025 20:07:49 +0000 (UTC)
-Date: Fri, 1 Aug 2025 16:08:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Steven Rostedt <rostedt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, Masami
- Hiramatsu <mhiramat@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Andrew Morton
- <akpm@linux-foundation.org>
-Subject: Re: [PATCH 3/5] tracing: Add guard() around locks and mutexes in
- trace.c
-Message-ID: <20250801160811.1e3c63e1@gandalf.local.home>
-In-Reply-To: <20250801142526.649674199@kernel.org>
-References: <20250801142506.431659758@kernel.org>
-	<20250801142526.649674199@kernel.org>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754079209; c=relaxed/simple;
+	bh=Qg0kvxsXNNpQlr8Zn+FdmlEiWcpF6OIoZvDXUYGqrFg=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=HuLmPkpPV19VGkPOfRCwPvW77YfMIEUEWr+K2ZyNHDlwLy4X9ddgJcThVdTtaqx4HO2iDRyVw7/YTdOxrI8YfE3CyqN5KWD6ik01HxjYQ72Buw2j9rcw+h+iwo2nfup3UuC2Nad8Ey/R3PDamuOHBiO0PnMEiLjdVPHmv4E0TIs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=W4canb2S; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 348F2C4CEE7;
+	Fri,  1 Aug 2025 20:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1754079208;
+	bh=Qg0kvxsXNNpQlr8Zn+FdmlEiWcpF6OIoZvDXUYGqrFg=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=W4canb2SF5TnJOwxq82Fn+CSgL8a8vreR9ladXrIK9QT/uR42ZpwLxtto1soRZkt1
+	 MFi7dhpFK8Vrhxx7lo0QSpzhKWWGZrVqGPAmDvuDVpZlHuJ55EcSjbArnQLym4WYkv
+	 E8cngteSQ17Jk4ZPH81ClCD3K2q1Yc4wV8oFOHa0=
+Date: Fri, 1 Aug 2025 13:13:27 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Yeoreum Yun <yeoreum.yun@arm.com>
+Cc: thomas.weissschuh@linutronix.de, ryabinin.a.a@gmail.com,
+ glider@google.com, andreyknvl@gmail.com, dvyukov@google.com,
+ vincenzo.frascino@arm.com, kasan-dev@googlegroups.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3] kunit: kasan_test: disable fortify string checker on
+ kasan_strings() test
+Message-Id: <20250801131327.8627459bf3d94895d42b95b2@linux-foundation.org>
+In-Reply-To: <20250801120236.2962642-1-yeoreum.yun@arm.com>
+References: <20250801120236.2962642-1-yeoreum.yun@arm.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: 5fcsz7pqofjt1hmssnerkpsc8p8ixcmu
-X-Rspamd-Server: rspamout03
-X-Rspamd-Queue-Id: 0B0D920024
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/PlKa+6n0hUur+ERP9UvEHU12ArJUYfa4=
-X-HE-Tag: 1754078869-254513
-X-HE-Meta: U2FsdGVkX19k9gLyBv6c0UD9NKfZ4t2/KeY1yKHH2Qmc41HOk2Kzti+DBexiDQg/0zx1c7PUSbxKJa7QQZjnqpVzOhkfbpcfPXMpgy9/0PtQyWDdrvUF9yij3GybaoS94S086V9tDTZigfArhOEvf5HMb0zphwHT8RsUsesi/jKgvQoolVQGR/OS549nlJQwDx/7w5ku2S41PJdtRRnIhaHgjRnk0wFJgJKAdAvGzWDcO2aklOgQ+YHKqDpONYWm/WlKb1jiruDvS/26OKmxvvObuyG3Er43JXeZp4wdxvSA7AoI7JyC5FIYA+lwhW38V2ubkXGLoKTt9d0j5p8KvwbSXYEjp8hh
 
-On Fri, 01 Aug 2025 10:25:09 -0400
-Steven Rostedt <rostedt@kernel.org> wrote:
+On Fri,  1 Aug 2025 13:02:36 +0100 Yeoreum Yun <yeoreum.yun@arm.com> wrote:
 
-> @@ -2760,7 +2734,7 @@ trace_event_buffer_lock_reserve(struct trace_buffer **current_rb,
->  
->  	if (!tr->no_filter_buffering_ref &&
->  	    (trace_file->flags & (EVENT_FILE_FL_SOFT_DISABLED | EVENT_FILE_FL_FILTERED))) {
-> -		preempt_disable_notrace();
-> +		guard(preempt_notrace)();
->  		/*
->  		 * Filtering is on, so try to use the per cpu buffer first.
->  		 * This buffer will simulate a ring_buffer_event,
-> @@ -2809,7 +2783,6 @@ trace_event_buffer_lock_reserve(struct trace_buffer **current_rb,
->  			this_cpu_dec(trace_buffered_event_cnt);
->  		}
->  		/* __trace_buffer_lock_reserve() disables preemption */
-> -		preempt_enable_notrace();
->  	}
->  
->  	entry = __trace_buffer_lock_reserve(*current_rb, type, len,
+> Similar to commit 09c6304e38e4 ("kasan: test: fix compatibility with
+> FORTIFY_SOURCE") the kernel is panicing in kasan_string().
+> 
+> This is due to the `src` and `ptr` not being hidden from the optimizer
+> which would disable the runtime fortify string checker.
+> 
+> Call trace:
+>   __fortify_panic+0x10/0x20 (P)
+>   kasan_strings+0x980/0x9b0
+>   kunit_try_run_case+0x68/0x190
+>   kunit_generic_run_threadfn_adapter+0x34/0x68
+>   kthread+0x1c4/0x228
+>   ret_from_fork+0x10/0x20
+>  Code: d503233f a9bf7bfd 910003fd 9424b243 (d4210000)
+>  ---[ end trace 0000000000000000 ]---
+>  note: kunit_try_catch[128] exited with irqs disabled
+>  note: kunit_try_catch[128] exited with preempt_count 1
+>      # kasan_strings: try faulted: last
+> ** replaying previous printk message **
+>      # kasan_strings: try faulted: last line seen mm/kasan/kasan_test_c.c:1600
+>      # kasan_strings: internal error occurred preventing test case from running: -4
+> 
 
-Bah, this code is really this:
+We don't want -stable kernels to panic either.  I'm thinking
 
-		preempt_disable_notrace();
-		/*
-		 * Filtering is on, so try to use the per cpu buffer first.
-		 * This buffer will simulate a ring_buffer_event,
-		 * where the type_len is zero and the array[0] will
-		 * hold the full length.
-		 * (see include/linux/ring-buffer.h for details on
-		 *  how the ring_buffer_event is structured).
-		 *
-		 * Using a temp buffer during filtering and copying it
-		 * on a matched filter is quicker than writing directly
-		 * into the ring buffer and then discarding it when
-		 * it doesn't match. That is because the discard
-		 * requires several atomic operations to get right.
-		 * Copying on match and doing nothing on a failed match
-		 * is still quicker than no copy on match, but having
-		 * to discard out of the ring buffer on a failed match.
-		 */
-		if ((entry = __this_cpu_read(trace_buffered_event))) {
-			int max_len = PAGE_SIZE - struct_size(entry, array, 1);
+Fixes: 73228c7ecc5e ("KASAN: port KASAN Tests to KUnit")
+Cc: <stable@vger.kernel.org>
 
-			val = this_cpu_inc_return(trace_buffered_event_cnt);
+What do you think?
 
-			/*
-			 * Preemption is disabled, but interrupts and NMIs
-			 * can still come in now. If that happens after
-			 * the above increment, then it will have to go
-			 * back to the old method of allocating the event
-			 * on the ring buffer, and if the filter fails, it
-			 * will have to call ring_buffer_discard_commit()
-			 * to remove it.
-			 *
-			 * Need to also check the unlikely case that the
-			 * length is bigger than the temp buffer size.
-			 * If that happens, then the reserve is pretty much
-			 * guaranteed to fail, as the ring buffer currently
-			 * only allows events less than a page. But that may
-			 * change in the future, so let the ring buffer reserve
-			 * handle the failure in that case.
-			 */
-			if (val == 1 && likely(len <= max_len)) {
-				trace_event_setup(entry, type, trace_ctx);
-				entry->array[0] = len;
-
-				/* Return with preemption disabled */
-				return entry;
-				^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-So it must not be converted to a guard().
-
-Let me fix that.
-
--- Steve
-
-
-			}
-			this_cpu_dec(trace_buffered_event_cnt);
-		}
-		/* __trace_buffer_lock_reserve() disables preemption */
-		preempt_enable_notrace();
+We could perhaps go back earlier in time, but 73228c7ecc5e is 5 years
+old.
 
