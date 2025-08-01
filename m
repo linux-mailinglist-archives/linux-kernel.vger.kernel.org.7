@@ -1,154 +1,118 @@
-Return-Path: <linux-kernel+bounces-753138-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753139-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E47A5B17F1E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:19:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E7514B17F21
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 11:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A52DEA83CE3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B4B1188208D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:21:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B827B222587;
-	Fri,  1 Aug 2025 09:19:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC0EF221D9E;
+	Fri,  1 Aug 2025 09:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="m02Narbv"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZuVu5+OU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B32FF14F70;
-	Fri,  1 Aug 2025 09:19:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 91B92221723
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 09:21:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754039988; cv=none; b=s1/Jp9PaitrL7i5FxQ4B5hHpkLpjvticqLarL2B/BCPcZAzWyWD9bs94hqSQ4q2kvjGT0TpGoBia08oUfuj1Bda+/J/YD+2DNETvzX17JBrKhFi9yIHtpigpGWgj5Iqx2BUsl4K6Q28qsdcTsQGJ8/jHhYZ73WPs6db5aulIk4s=
+	t=1754040069; cv=none; b=sOQ+qSU8VVWlLskFalorrUAQYlPqnDUubUkQTljXVlIcYpXGb9RRKIAyl8ltNbVawghsiZ17TZthwcgUm1HE4SDQ1N/+Z6RuXlzBpZXewxZ6BboQV2VwoRuh2qjwniNiKNSpb6KBaxm5uIsKSOakxlcswzQIFL+Z6q8Ul164IZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754039988; c=relaxed/simple;
-	bh=KUslAaHshNiP9XtKMRFYG5/AAWdTBX8QI/ME/Hmi5s4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=TSyFOSsDF4EyY70QGx0N+UftMbnsMdTBFHEv+qWVXvDH1461Mhh+DT67oMJBx6Em1EIjO4yOeVjZwWf4RTcg64hlYIzVHA73OjJ6NSbrcyspbVcC7dtI0dON0mlK7so3QuH6MKmT53KZDpgjby7KWuA2t5KGurEW/jLnN2pwcTo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=m02Narbv; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5718mdn2001318;
-	Fri, 1 Aug 2025 09:19:26 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	wkDHzH8PytjlT3iOlVClw/v1tB31SfTOT8w7bQO5blg=; b=m02Narbvil9W4U44
-	Ar0h6sKWF22qWO1Cmjomemd6b83r1PyUBQ24rCS+/O7EiBau2l9Qr90Xv2QrYE7l
-	3qhLWJCkrrOFI1LLhgtal+KEwspl7mn/F7PaaMHeqbzfOErB2DKEA1OoN+YD+ROh
-	Odlz77RzyO8Sr+OBE0kWVn5TEDhvMw+q6JLSwdcj5eX+s4SWjT6KWoCyJPsvWgqX
-	s5aoen9qB+7F2cEOhNSK9byWflGVd+MiQO8n4HYavu3x2jGhGgFxl/uLmJdLc6Vq
-	Y8Q4aFNJZZ/0U6nv6CEEuGYZunApc1O4YfucTszxEYBxJ8fIi+wiDq3Jv9uc2/0N
-	+iN+Zw==
-Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 484nyubq01-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 01 Aug 2025 09:19:26 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5719JPlT012529
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Fri, 1 Aug 2025 09:19:25 GMT
-Received: from [10.216.46.165] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Fri, 1 Aug
- 2025 02:19:19 -0700
-Message-ID: <e8cc99e1-d117-42cb-8dec-47809f637934@quicinc.com>
-Date: Fri, 1 Aug 2025 14:49:16 +0530
+	s=arc-20240116; t=1754040069; c=relaxed/simple;
+	bh=cKEMaZ3xwUu+fSWQ2Hl9xASFWa0pTzYBZ3KKX3hjrm0=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=VaIBdTgmGBDmierr+JAIGLxqLnwFQ5PVWNu9ZLUXRYVZy4hKrzRvmRkrjlVBdmgD63u/YrS62mLf9ZO6K5+NncJEWozuo0W60+BiDEifs4JdCRqwgUJ9rvq4TiaMkp70gYhpHe6O4BSQqRNnIei0mhR4POi1edWbslm75ySSTzw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZuVu5+OU; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754040068; x=1785576068;
+  h=message-id:subject:from:to:date:in-reply-to:references:
+   content-transfer-encoding:mime-version;
+  bh=cKEMaZ3xwUu+fSWQ2Hl9xASFWa0pTzYBZ3KKX3hjrm0=;
+  b=ZuVu5+OUjkzkF0nunhHwIh1rmweLMdLO8m5Dm+Ng5eq8GCRxb7CEZnvn
+   anP9ku5PCBmztwt0CmsTPAZ32D/3PjOvn803LMiPzViCycDyTvdcZ/5/q
+   0bEqQdp10KoWG3My05mskmS7Jhu+aD9rYnAG4JQRUDVmSou9z8UFiNuDZ
+   S1+WDHpCPrjcjIoE5KemZ430CVEpgZ6yJ/LTTi0gVUA0/Sfvn5tWJDT+y
+   puKy41oLzsZTDkIy9jW2RkB4yeKi+eflaY1R0L79T2K3V1Ua+AdauLlf3
+   A/GIa/LumE/8ubiR92IY5XSAeb9+WZ76l2hAMP6wJnSHrCNOGr5k3ujBv
+   A==;
+X-CSE-ConnectionGUID: jbRO7FgTSBi+bpz44GCO3w==
+X-CSE-MsgGUID: o48dCQvlSh6V4e8YqSYazA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56252216"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="56252216"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 02:21:07 -0700
+X-CSE-ConnectionGUID: 63UaVF4bTeCXP614Ugu8xQ==
+X-CSE-MsgGUID: yBhDIk81QAqE2hjylSFGsw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163083171"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO [10.245.244.137]) ([10.245.244.137])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 02:21:05 -0700
+Message-ID: <460b95285cdf23dc6723972ba69ee726b3b3cfba.camel@linux.intel.com>
+Subject: Re: [PATCH v2 1/1] Mark xe driver as BROKEN if kernel page size is
+ not 4kB
+From: Thomas =?ISO-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>
+To: Simon Richter <Simon.Richter@hogyros.de>,
+ intel-xe@lists.freedesktop.org, 	dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+Date: Fri, 01 Aug 2025 11:20:40 +0200
+In-Reply-To: <20250727070413.9743-2-Simon.Richter@hogyros.de>
+References: <20250727070413.9743-1-Simon.Richter@hogyros.de>
+	 <20250727070413.9743-2-Simon.Richter@hogyros.de>
+Organization: Intel Sweden AB, Registration Number: 556189-6027
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.3 (3.54.3-1.fc41) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] arm64: dts: qcom: sa8155: Add gear and rate limit
- properties to UFS
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Manivannan Sadhasivam
-	<mani@kernel.org>
-CC: <alim.akhtar@samsung.com>, <avri.altman@wdc.com>, <bvanassche@acm.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <andersson@kernel.org>, <konradybcio@kernel.org>,
-        <James.Bottomley@hansenpartnership.com>, <martin.petersen@oracle.com>,
-        <agross@kernel.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-scsi@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250722161103.3938-1-quic_rdwivedi@quicinc.com>
- <20250722161103.3938-3-quic_rdwivedi@quicinc.com>
- <2a3c8867-7745-4f0a-8618-0f0f1bea1d14@kernel.org>
- <jpawj3pob2qqa47qgxcuyabiva3ync7zxnybrazqnfx3vbbevs@sgbegaucevzx>
- <03efb3dc-108e-453e-91e4-160a0500cff1@kernel.org>
-Content-Language: en-US
-From: Ram Kumar Dwivedi <quic_rdwivedi@quicinc.com>
-In-Reply-To: <03efb3dc-108e-453e-91e4-160a0500cff1@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: W9BHbRSc9VHVUMzzL9dDJakFIxci7FAv
-X-Proofpoint-ORIG-GUID: W9BHbRSc9VHVUMzzL9dDJakFIxci7FAv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2OCBTYWx0ZWRfX58DP2tsPUlNw
- TePdhd4wuy2/J0UYNDRJN5DJb31zhVAULG+lzdd/p79/SrFNuD0gRO2g+H9IPq8dE0VDSfhErlR
- khLbohR57n8y4TpvpDgUYGjCmTzuMqg0TjPQWSXJBVNWDg1Gzg5NorUzvOK9qq0Awtlmgo0+dYf
- tJYc5rAGI7/C/BSW5D16kfW1XXs+vyMFUPCGVH4OBIQLFNLZPqLrxokWJy1bHIlOe0S+NXh49Dv
- qUBSiQ2Md/OD/S/Ec/CQxW7eC7wOfvd5CIKghVnlHtKZT4WVfcoC+c0LIuDc9KsyPPFWvAHgVC1
- u83dVQEa/kQQR0aOCs//GmTRws03WKPjLQ0j0ySk339WPUT+U0KVx9lGZhTFHafOdYS+MyRaVz8
- PFGi4uc23bNV1AkHbyBAiPufKvvz03dWq2XqaU7AzrniNS+44IEvuPoi8kUL8XE8alaLUzNL
-X-Authority-Analysis: v=2.4 cv=CLoqXQrD c=1 sm=1 tr=0 ts=688c869e cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10
- a=l2YULQpEWTdrfJCYAS8A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_02,2025-07-31_03,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- priorityscore=1501 phishscore=0 lowpriorityscore=0 malwarescore=0 bulkscore=0
- clxscore=1015 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508010068
 
+On Sun, 2025-07-27 at 16:04 +0900, Simon Richter wrote:
+> This driver, for the time being, assumes that the kernel page size is
+> 4kB,
+> so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with
+> 64kB
+> pages.
+>=20
+> Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+> Cc: stable@vger.kernel.org
 
-
-On 01-Aug-25 2:34 PM, Krzysztof Kozlowski wrote:
-> On 01/08/2025 10:28, Manivannan Sadhasivam wrote:
->> On Thu, Jul 24, 2025 at 09:48:53AM GMT, Krzysztof Kozlowski wrote:
->>> On 22/07/2025 18:11, Ram Kumar Dwivedi wrote:
->>>> Add optional limit-hs-gear and limit-rate properties to the UFS node to
->>>> support automotive use cases that require limiting the maximum Tx/Rx HS
->>>> gear and rate due to hardware constraints.
->>>
->>> What hardware constraints? This needs to be clearly documented.
->>>
->>
->> Ram, both Krzysztof and I asked this question, but you never bothered to reply,
->> but keep on responding to other comments. This won't help you to get this series
->> merged in any form.
->>
->> Please address *all* review comments before posting next iteration.
-> 
-> There was enough of time to respond to this, so I assume this patchset
-> is abandoned and there will be no new version.
-
-
-
-Hi Krzysztof,
-
-I was waiting for your DT binding bifurcation patch to be merged before posting the next version, which is why I didn’t respond earlier. 
-I had planned to include the hardware constraints explanation in the next commit message.
-
-I’ll make sure to address all pending comments in the upcoming revision.
+This looks reasonable to me. During your testing, did you notice
+whether there were compilation errors on !4K as well? If not, what do
+you thing on allowing !4K also for COMPILE_TEST?
 
 Thanks,
-Ram.
+Thomas
 
-> 
-> Best regards,
-> Krzysztof
+
+> ---
+> =C2=A0drivers/gpu/drm/xe/Kconfig | 2 +-
+> =C2=A01 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+> index 2bb2bc052120..7c9f1de7b35f 100644
+> --- a/drivers/gpu/drm/xe/Kconfig
+> +++ b/drivers/gpu/drm/xe/Kconfig
+> @@ -1,7 +1,7 @@
+> =C2=A0# SPDX-License-Identifier: GPL-2.0-only
+> =C2=A0config DRM_XE
+> =C2=A0	tristate "Intel Xe2 Graphics"
+> -	depends on DRM && PCI
+> +	depends on DRM && PCI && (PAGE_SIZE_4KB || BROKEN)
+> =C2=A0	depends on KUNIT || !KUNIT
+> =C2=A0	depends on INTEL_VSEC || !INTEL_VSEC
+> =C2=A0	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
 
 
