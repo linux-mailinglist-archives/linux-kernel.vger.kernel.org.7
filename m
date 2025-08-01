@@ -1,202 +1,189 @@
-Return-Path: <linux-kernel+bounces-753588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33A63B184F7
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:29:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0424EB184FA
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:31:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5713A583F28
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:29:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2EDD717AAFC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:31:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3EDF272E70;
-	Fri,  1 Aug 2025 15:29:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F1822741BC;
+	Fri,  1 Aug 2025 15:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=simplextrading.com header.i=@simplextrading.com header.b="kP8m97uQ"
-Received: from mail-vs1-f44.google.com (mail-vs1-f44.google.com [209.85.217.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RhUwJaMD"
+Received: from mail-qt1-f174.google.com (mail-qt1-f174.google.com [209.85.160.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52751272E63
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:29:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246F51B7F4
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 15:30:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754062174; cv=none; b=aneTJ6nkiqooP5S3q8Tb26kkfdtAQZVuDdBmj8X74uhQocQWKYt7zrcnBI8QZg5gtTxZIQyzZcID/QrdpM9HQyn8lMrFgDU0baXMPQ3pu6J3bN/+T0KJYYJWLlvMKIKTQD7hN6hhV0xg4u5R0o/4wcAvsBtD7zKC2EjIvcW5/LI=
+	t=1754062260; cv=none; b=e1HlH+cTKBu6dJ3t0OgLEmDgE14IuMSWlX7ZQbqN2xL8A/O9WjjH8w4ipxoSe5tJk141/ow+n1vy9oCrsdXkJIzTi71cCSttWfX4lR6mjq3L4dyad5szOxniZO+bbZv5Q/9N3aElnW8oV7AYSWzj6ySVvEu0xAKdTxbRF/+h76s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754062174; c=relaxed/simple;
-	bh=aDrp6QTE3vQlufqkuk57uRNs4GKDCnFor8g6lBNfRG0=;
+	s=arc-20240116; t=1754062260; c=relaxed/simple;
+	bh=rlDK9hsGdlPtOD6/q8hfTJsFwoCL3v42DRpy5geh1H0=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HIh0OfK/Cs+fDnYluXD+K1SSMd6fw0jNImCZJWLg6vhmPqi6/yJhzs6r+bLZopim7ySyErPrhO2R7QhFS/2T25nVKrccGO0rrsxJ6oHapug5A4/BJo7LGf9+W1yX9G9CeX9Oj1pnKOWrY43RkEtnux+1ivpv69IjofUZlqaQjS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simplextrading.com; spf=pass smtp.mailfrom=simplextrading.com; dkim=pass (2048-bit key) header.d=simplextrading.com header.i=@simplextrading.com header.b=kP8m97uQ; arc=none smtp.client-ip=209.85.217.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=simplextrading.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=simplextrading.com
-Received: by mail-vs1-f44.google.com with SMTP id ada2fe7eead31-4fc18de8e1bso587671137.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:29:31 -0700 (PDT)
+	 To:Cc:Content-Type; b=BpN7VdCYqNQkJU2sxIrt4zQSCBFeRFbrx6LmLPFg0Ph9NknkZKFUknEOZ63pQpicz5tKrkkiGl9Dnxn6wYTfO2L6SBsv456vwHzN2bV54CenLZFbok9TlJMirw0Ksr5fY2WVZRsQfsLzRQpc1sptmqmFqpPlOV0KFo+GRZeqDaM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RhUwJaMD; arc=none smtp.client-ip=209.85.160.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f174.google.com with SMTP id d75a77b69052e-4ab3ad4c61fso480341cf.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 08:30:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=simplextrading.com; s=google; t=1754062171; x=1754666971; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754062258; x=1754667058; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=aDrp6QTE3vQlufqkuk57uRNs4GKDCnFor8g6lBNfRG0=;
-        b=kP8m97uQ+PhbHOhjPfUEnWD1rSq4BeEECHnB+0YsLBRYk8naosn02b0r6EmU3IIVGl
-         WnrnxjgiGnbwtFhujQluu9+pcW+4Z2IEcoOO84LYgaLY26M8oxWN1REtZDIfrI2U9J6u
-         2MhFewlyAm2l4vMOFXK2A3bDX241Wz0zcBIilm416zeWF0BBaYfj/Y2uWgPT7uc72inj
-         Y0cwmL4/kcGvFzWHyNGkYpAg8OxhJqbX9GJgIN/dAgCvHAPrQ/XUSSripfeUk16BZq1y
-         hgm9iGC5uITy+gAsYCJq3/1UtPkknmgTXmeZVsxTQVyDfyh3KUN/Q2BtQbz8Auqdq+29
-         Vjsw==
+        bh=nWjkM6aVGbDaelGi0ZenR2loBam6dBRshOdGKAXlyS8=;
+        b=RhUwJaMDZPlwqqoIkHytciegouwcIuwM/ouG86KqyIVy459b48E6tGFYLhmRUxKmQx
+         EQ7pCgNHv2fhYYO5BugICdeog5BDBkqn+nliSGMja5XEx0Wrl9RfxbHJJfNLHG5sDMvS
+         k4qGcnZBcGCOoZ8ueh0FczcweuP0j/tVwzo7DxNQfcF/9iQQLn9/VrQ5m+woGOirjQCN
+         aSIVarPYDAMChdAjgMO30oCV9xqCnF9I9sfi9TKcGuMtwbYsHWNN+W2orsV4ZaQoESvz
+         iUOztmPNMU++xdxXpyKURqnzCmTQTd+x0b8ER76fPpnRgeLQgnWIr96x2+ybhURsXwiX
+         gn5Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754062171; x=1754666971;
+        d=1e100.net; s=20230601; t=1754062258; x=1754667058;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=aDrp6QTE3vQlufqkuk57uRNs4GKDCnFor8g6lBNfRG0=;
-        b=J26YJ/vXieanoHK87W2SlbY/6tOZ2tfL/21YtlnV4hBRBN58B1EjoUk5NgXevg4p6H
-         4aIdMyQmzDYmX7RsIE5+t4PGmRsQu6xMtRADDnP0BdMxGuKxvgjAq2UP2qtF4ySl6nL7
-         bu1y2xyF9PFWaTUw91uDq1+1ao3pnsZTb2ZSQxdfthd1Y6UD0++2WLRpbVIFcWmaFETX
-         F22GDzQ0FN4lzMi3eOB+BL3vJ2heHUX9o9roxeHgUGFIQ46AUKT3zMUJ08CS18WTSFa7
-         9V5o7ywHcwdOkz19+gDL5T2BIBVup7sg4jFh392I9p2nlLzky++OctV0WUhlGtHsVICo
-         HHiQ==
-X-Gm-Message-State: AOJu0YxZkNeFhpj93VKmCymZqtDkYZrbLLIkvQdjx1Ma1j4RcgKIF87u
-	vzHbisj6fHn5TSil7cIAL2zyEsjmC7vJWp57eMZw67vxjQVIKEEIU6S60io6wWp7Zdu/4Us2d7W
-	VkJklQZfcsOqg1MpUbIVvVw4rnNJ7d+fJg3xDYQPjmyd0TUWUOWzX0ZLgk9odVN/iHPv+srwSUP
-	AcWSXbmyEjF6C2Zs7OydGo0Ono5L1CScA7rHFP9Ua4/C9RqGsCH1YMQ5rWH1JHHM6v++gqMIJZR
-	Y15bwy1szvmIgkGnpz2FpT2QlRw6t1jqXEhgU3pspTglR4BkZmv5fr8SJHRAQblq+PIcRV1l1jk
-	rLkLY7TzoQ6L8DF/1w==
-X-Gm-Gg: ASbGncvkt+sdRqQPcm0ESMlBOdyotw9XJMuvPkvL0vic9IfdLVGbl3zd2IuDgLLhlmv
-	O9yAjWq9QC8QEvVHJMBipAwx4Rl20wO2Is3H0ul5UshQcVBwpOcbX7P2FfRdUjn9uvHDF7/W3Is
-	v8GDHNgM9bplivxo+phzFkBKu614v7zUgDNwzwMGEQ4bSN+dHKv1h6f6boob+sFG9WEQ94pNN4O
-	Kp5XyGT
-X-Google-Smtp-Source: AGHT+IHCpIenQ+d0leh+aRK8PISBKfjJR6c+GO8lCaKqDNLGzkMhofT6mcfhPUYkkFemYcsDvUb7lsv+yyNRG64PBpc=
-X-Received: by 2002:a05:6102:5e96:b0:4fd:3b3:d4b0 with SMTP id
- ada2fe7eead31-4fd03b3dde9mr1395923137.20.1754062170753; Fri, 01 Aug 2025
- 08:29:30 -0700 (PDT)
+        bh=nWjkM6aVGbDaelGi0ZenR2loBam6dBRshOdGKAXlyS8=;
+        b=IEEywztAfj4N3g+ny7H5CKWUP6XDwXXlujzgWSgsIZ6oBYD8/4O31Qqv1Lyp2MW8wN
+         HnEgBmVgQ7i4ZGFhmK7XCr8oZN7z3lUldpoCY+mUjOsaokN8pO2sIVSE6HaZxutFX1+y
+         10BKUzvlFKIrq1TuuNcszmmK2D/xwPzXlKYWNHgfHV/XB5L743ACUwdT9e0omLoPTMN1
+         VMywRcp7Kvl+0BsWE7erFcElGMoFefwCRizlN5siW8rN8eOQlv+qlIyrQOnH7rtwzt6l
+         mCkEsuinSaiCARUB3wgWPiIkBKfmYzlq2yEJiMMOutmUpOB6QTLhLdysciY/uG62EzO7
+         O87w==
+X-Forwarded-Encrypted: i=1; AJvYcCX11r5W+Tdual0nqZlwtniNcXX67qFg+x+YrPaBMIA+SDFCflXB5IUZIoIAjg6LFt28U1DRISvF074ivKE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv21hZOeE0mnpoeUWOav43mA/KzxM15dpjBGmckHv8xuJHnptp
+	aIh1VAwSMlYPAlK83DFSuJQoZloAD56GiLiyIfSY+WRwLt/XtFW/sWigTVQ1sbI01GCYI3qoSqb
+	Chx+nmQ2DDaa4PhwPWop4XII00qN92rF1WLQgbP9/
+X-Gm-Gg: ASbGnctX/+krtm0vE6XCDMlpYW5Ha7gRye4+dlciCglqexZSC/T6Auwjqn6yzdQuZC1
+	QkxgEPUS90EZ5g9HC6ljPAPPWCrnj7yh6BizLQ94FyDnWZ8khcjn8kmrIrT250RoFJov+/oQquE
+	JK8wowyzfGFeYPXBxb0oYUaZaNTqYj+Y5ulexJeaTPjsjQglDp8KBybhWi9V4uuqppJ4JoUwyNP
+	p0AbCGH/kE1RgiHp4rU+TouO4aUYVAR+W+Jgw==
+X-Google-Smtp-Source: AGHT+IFP6oWJuEB+t8FqlHu4nrpKTJN8ggoRVw1wyBCG9QSsTFoeUzkMrBL9SWqFRe5Hi7JIvL+AIijCHTWQWxdq+8E=
+X-Received: by 2002:a05:622a:93:b0:4a9:e34a:58a1 with SMTP id
+ d75a77b69052e-4af0088e8c4mr4626841cf.21.1754062257422; Fri, 01 Aug 2025
+ 08:30:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAKJHwtOw_G67edzuHVtL1xC5Vyt6StcZzihtDd0yaKudW=rwVw@mail.gmail.com>
- <aIsUwT1Ai0zcMRpT@jlelli-thinkpadt14gen4.remote.csb> <CAKJHwtOZkrR9kEj+tffq=o0i1fPi3P+8BTHz3RyPDmn=uDOF7g@mail.gmail.com>
- <aIyDfs1Dh0OGJEgM@jlelli-thinkpadt14gen4.remote.csb>
-In-Reply-To: <aIyDfs1Dh0OGJEgM@jlelli-thinkpadt14gen4.remote.csb>
-From: David Haufe <dhaufe@simplextrading.com>
-Date: Fri, 1 Aug 2025 10:28:54 -0500
-X-Gm-Features: Ac12FXy0nrGk73i_OuIEFAEnl3DCOCv52P2061hHkuhC8lV1aT3J1AQ9X26LJaY
-Message-ID: <CAKJHwtOdiFTenF=zCL7_8c148Qs37r53k9uAKURLjq1JFJGeXg@mail.gmail.com>
-Subject: Re: Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
- Interrupts on isolcpu/nohz_full cores, performance regression
-To: Juri Lelli <juri.lelli@redhat.com>
-Cc: linux-kernel@vger.kernel.org
+References: <20250731151919.212829-1-surenb@google.com> <20250731151919.212829-2-surenb@google.com>
+ <a58759b9-2847-4ffc-914b-c96336385c81@suse.cz>
+In-Reply-To: <a58759b9-2847-4ffc-914b-c96336385c81@suse.cz>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Fri, 1 Aug 2025 08:30:45 -0700
+X-Gm-Features: Ac12FXydoPHt9DYmIUpoqeSH4RwHYO1K7tIS4LC4But0n7b4ZrC_qkGPggvaHZo
+Message-ID: <CAJuCfpHsdU5e7+f29ezDXus5-W7jT580YCY0LpErTfKJjeo8zQ@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] mm: change vma_start_read() to drop RCU lock on failure
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: akpm@linux-foundation.org, jannh@google.com, Liam.Howlett@oracle.com, 
+	lorenzo.stoakes@oracle.com, pfalcato@suse.de, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-I am sorry, but we cannot get this branch to boot on our hardware.
-Looking through the code of the branch, it will not address the issue.
-I believe the issue is more fundamental. In
-fair.c->enqueue_task_fair(), dl_server_start() is called when the
-single fair/SCHED_OTHER task is added to the isolcpu/nohz_full core.
-The check here is simply checking if there is 1 or more process and
-kicks off the dl_server_start() and the housekeeping timer in
-start_dl_timer(). Once this timer is running, it will invoke
-dl_server_timer() continuously. This timer calls __enqueue_dl_entity()
-and then inc_dl_tasks(). inc_dl_tasks() increments
-dl_rq->dl_nr_running++ and invokes add_nr_running(). This code will
-eventually call the sched_can_stop_tick() function but
-rq->dl.dl_nr_running now !=3D 0, so this function will always return
-false. Something needs to be done to prevent this timer from running
-in the first place, or maybe have some checks around single
-"fair/SCHED_OTHER/etc" process running on an isolcpu/nohz_full core
-which prevents the need for the deadline code to run for the core.
-
-On Fri, Aug 1, 2025 at 4:06=E2=80=AFAM Juri Lelli <juri.lelli@redhat.com> w=
-rote:
+On Fri, Aug 1, 2025 at 2:09=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wro=
+te:
 >
-> Hi,
->
-> On 31/07/25 12:48, David Haufe wrote:
-> > Kernel 6.16 shows the issue. /kernel/sched/fair.c calls dl_server_start=
-()
-> > and there is no assessment prior to that point or later of the
-> > isolcpu/nohz_full+single-process condition of the core. Same function_g=
-raph
-> > trace generated. Code is the same at tip+sched/core.
+> On 7/31/25 17:19, Suren Baghdasaryan wrote:
+> > vma_start_read() can drop and reacquire RCU lock in certain failure
+> > cases. It's not apparent that the RCU session started by the caller of
+> > this function might be interrupted when vma_start_read() fails to lock
+> > the vma. This might become a source of subtle bugs and to prevent that
+> > we change the locking rules for vma_start_read() to drop RCU read lock
+> > upon failure. This way it's more obvious that RCU-protected objects are
+> > unsafe after vma locking fails.
 > >
-> > On Thu, Jul 31, 2025 at 2:02=E2=80=AFAM Juri Lelli <juri.lelli@redhat.c=
-om> wrote:
+> > Suggested-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> IIRC you considered it yourself, I just convinced you to try :)
+>
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> I thought we didn't need the drop rcu lock for -EAGAIN, but that would ju=
+st
+> made it more complex for little gain, so this looks good to me.
+
+Yes, we technically don't but this way it's simpler to explain (drop
+RCU on any failure).
+
+>
+> Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+>
+> Nit:
+>
+> > @@ -223,11 +227,13 @@ struct vm_area_struct *lock_vma_under_rcu(struct =
+mm_struct *mm,
+> >       MA_STATE(mas, &mm->mm_mt, address, address);
+> >       struct vm_area_struct *vma;
 > >
-> > > Hello,
-> > >
-> > > Thanks for the report.
-> > >
-> > > On 30/07/25 11:51, David Haufe wrote:
-> > > > [1.] Kernel 6.14.11 dl_server_timer(...) causing IPI/Function Call
-> > > > Interrupts on isolcpu/nohz_full cores, performance regression
-> > > > [2.] The code for dl_server_timer is causing new IPI/Function Call
-> > > > Interrupts to fire on isolcpu/nohz_full cores which previously had =
-no
-> > > > interrupts. When there is a single, SCHED_OTHER process running on =
-an
-> > > > isolcpu/nohz_full core, dl_server_timer executes on a housekeeping
-> > > > core. This ultimately invokes add_nr_running() and
-> > > > sched_update_tick_dependency() and finally tick_nohz_dep_set_cpu().
-> > > > Setting the single process running on an isolcpu/nohz_full core to
-> > > > FIFO (rt priority) prevents this new interrupt, as it is not seen a=
-s a
-> > > > fair schedule process anymore. Having to use rt priority is
-> > > > unnecessary and a regression to prior kernels. Kernel function_grap=
-h
-> > > > trace below showing core 0 (housekeeping) sending the IPI to core 1=
-9
-> > > > (nohz_full, isolcpu, rcu_nocb_poll) which is running a single
-> > > > SCHED_OTHER process. I believe this has been observed by others.
-> > > >
-> > > https://community.clearlinux.org/t/sysjitter-worse-in-kernel-6-12-tha=
-n-6-6/10206
-> > >
-> > > Would you be able to check if the following branch, containing multip=
-le
-> > > fixes for dl-server, is still affected by the regression?
+> > -     rcu_read_lock();
+> >  retry:
+> > +     rcu_read_lock();
+> >       vma =3D mas_walk(&mas);
+> > -     if (!vma)
+> > +     if (!vma) {
+> > +             rcu_read_unlock();
+> >               goto inval;
+> > +     }
+> >
+> >       vma =3D vma_start_read(mm, vma);
+> >       if (IS_ERR_OR_NULL(vma)) {
+> > @@ -241,6 +247,9 @@ struct vm_area_struct *lock_vma_under_rcu(struct mm=
+_struct *mm,
+> >               /* Failed to lock the VMA */
+> >               goto inval;
+> >       }
+> > +
+> > +     rcu_read_unlock();
 >
-> Apologies, I forgot to share the actual branch. :-/
+> Would it make sense to put this under the comment below?
 >
-> Could you please test with
+> > +
+> >       /*
+> >        * At this point, we have a stable reference to a VMA: The VMA is
+> >        * locked and we know it hasn't already been isolated.
 >
-> https://github.com/jlelli/linux/commits/upstream/fix-dlserver-1/
+> Give it continues like this:
 >
-> Among various other fixes, 219a63335b67 ("sched/deadline: Don't count
-> nr_running twice for dl_server proxy tasks") is making sure we don't
-> count fair tasks twice, so I am wondering if it can have an effect on
-> entering nohz_full.
+>          * From here on, we can access the VMA without worrying about whi=
+ch
 >
-> Thanks,
-> Juri
->
+>          * fields are accessible for RCU readers.
 
---=20
-DISCLAIMER: NOTICE REGARDING PRIVACY AND CONFIDENTIALITY=C2=A0
+Yep, will change.
+Thanks!
 
-The information=20
-contained in and/or accompanying this communication is intended only for=20
-use by the addressee(s) named herein and may contain legally privileged=20
-and/or confidential information. If you are not the intended recipient of=
-=20
-this e-mail, you are hereby notified that any dissemination, distribution=
-=20
-or copying of this information, and any attachments thereto, is strictly=20
-prohibited. If you have received this e-mail in error, please immediately=
-=20
-notify the sender and permanently delete the original and any copy of any=
-=20
-e-mail and any printout thereof. Electronic transmissions cannot be=20
-guaranteed to be secure or error-free. The sender therefore does not accept=
-=20
-liability for any errors or omissions in the contents of this message which=
-=20
-arise as a result of e-mail transmission. Simplex Trading, LLC and its=20
-affiliates reserves the right to intercept, monitor, and retain electronic=
-=20
-communications to and from its system as permitted by law. Simplex Trading,=
-=20
-LLC is a registered Broker Dealer with CBOE and a Member of SIPC.
+>
+> > @@ -249,16 +258,14 @@ struct vm_area_struct *lock_vma_under_rcu(struct =
+mm_struct *mm,
+> >        */
+> >
+> >       /* Check if the vma we locked is the right one. */
+> > -     if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
+)
+> > -             goto inval_end_read;
+> > +     if (unlikely(address < vma->vm_start || address >=3D vma->vm_end)=
+) {
+> > +             vma_end_read(vma);
+> > +             goto inval;
+> > +     }
+> >
+> > -     rcu_read_unlock();
+> >       return vma;
+> >
+> > -inval_end_read:
+> > -     vma_end_read(vma);
+> >  inval:
+> > -     rcu_read_unlock();
+> >       count_vm_vma_lock_event(VMA_LOCK_ABORT);
+> >       return NULL;
+> >  }
 
