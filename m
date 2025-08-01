@@ -1,141 +1,139 @@
-Return-Path: <linux-kernel+bounces-753765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4B668B1878B
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 905AFB1878F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 21:03:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FA263B9426
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B1FA3A611A
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:03:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63FD128C5C0;
-	Fri,  1 Aug 2025 19:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394DE28DB5B;
+	Fri,  1 Aug 2025 19:03:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f/0q8wJx"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b="ElPJ10iS"
+Received: from server-vie001.gnuweeb.org (server-vie001.gnuweeb.org [89.58.62.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF53813A3ED;
-	Fri,  1 Aug 2025 19:02:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E8D913A3ED;
+	Fri,  1 Aug 2025 19:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=89.58.62.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754074930; cv=none; b=dKIroF/oQCsM2RTeHYzeojCRF/6khB/2hLvBtkCPh9IMN5nTbmhInlhZC7k31I3AAv69ATgCwLUU+XoFsNRZIOtfaI/ECuqbIUL/CTT9dS2UTdBHnm5mfcs7afoi52XeVHgeZMwCgNC20MdxWpzBwPG3ftywZ0lmNklBsKT20MQ=
+	t=1754075018; cv=none; b=QZbi3Mcq0QmScBjNqqilP2TxEde8uEPWmkcGt3NeGPxyAHpZPqAgGum7A3HA+PE02LQqjL24ztvUPIx96ZUetmmZnT7AWELKzaAdJk63gOYqrKA816D2jxFsMNlVcGMCiTKOMJZxoqJd2kqwgY28RqFykcp1XTdfHHwnhn2zxw0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754074930; c=relaxed/simple;
-	bh=D5JGXQ87XI8CeDienzkEHNGraxFQkdmB12vbBJbuw2c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZV5L6KF30cGP97vMxh3w4S0jBUQQ3xcM3olHH9QIlKpY8ZK2a71VJgE6KOfOfka2hW8QYP70WlsCtNmzv43v1mKM/Ls89FVIkWaBF4JA14642CuW97ZWA254KNG658qYwtsTJ9Ux1FryprJ6TAqzWklKQCfdWdCBo8LSKHaBjLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f/0q8wJx; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2945EC4CEE7;
-	Fri,  1 Aug 2025 19:02:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754074929;
-	bh=D5JGXQ87XI8CeDienzkEHNGraxFQkdmB12vbBJbuw2c=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=f/0q8wJx3IYPHEU6PHWjSp1kcqlZ1HEy1UGvpMEqPnMs7OyWiYS1F0ScVn3RHWg3m
-	 CDlmOQOX0z2AMjuQijCeRFW8WlU83IgxJfMjoAoIOrG3hJ21pyMH3T+9P698jOI+ZY
-	 tuAs4EvBNE8+2qwaznzr+gcFEThxVUO1/Y/lm+ZfOauqPts7mmm5SyDcU3wJxEl+j9
-	 KGbS9xfdAPW8gc7QcxNdsGbG1TtKUQOpPzddCXVx8b+KvslddXT/mbX9dCUWawP7KC
-	 +PLaB4ikFLXXCxzGT6SGH0fUNDnYu+fF3o7X82f8nmhYY4xW6HD+FOiK71QgvocAry
-	 p9C/SjMnX7Yvw==
-Date: Fri, 1 Aug 2025 12:02:03 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: dan.j.williams@intel.com
-Cc: Andy Shevchenko <andriy.shevchenko@intel.com>,
-	linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Alison Schofield <alison.schofield@intel.com>,
-	Dave Jiang <dave.jiang@intel.com>,
-	David Lechner <dlechner@baylibre.com>,
-	Davidlohr Bueso <dave@stgolabs.net>,
-	"Fabio M. De Francesco" <fabio.m.de.francesco@linux.intel.com>,
-	Ingo Molnar <mingo@kernel.org>, Ira Weiny <ira.weiny@intel.com>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Shiju Jose <shiju.jose@huawei.com>,
-	Vishal Verma <vishal.l.verma@intel.com>
-Subject: Re: [PATCH v3 0/8] cleanup: Introduce ACQUIRE(), a guard() for
- conditional locks
-Message-ID: <20250801190203.GA939298@ax162>
-References: <20250711234932.671292-1-dan.j.williams@intel.com>
- <aIo18KZpmKuR4hVZ@black.igk.intel.com>
- <688d0c322cdd6_55f091000@dwillia2-xfh.jf.intel.com.notmuch>
+	s=arc-20240116; t=1754075018; c=relaxed/simple;
+	bh=FaGTwrEKwK7M7Dbun3EZiMSSgUMwYY7IOVqXCmRjdBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CM9Ziyh8P/kXED1vNaz8lQ3AS8krtagQdxvifowfIG4U/2F5gyIVmMR5SYqavHkcyuH/pjfhnoPSlXGWMSrLLhnLfeQhQ6g+htiJL27gcwxm55hlNxpXQz3/297Blz6hqBSOSsjb4WxjHl0cSi1rd6MsSL1sEZWeFhiNhNPwNfw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org; spf=pass smtp.mailfrom=gnuweeb.org; dkim=pass (2048-bit key) header.d=gnuweeb.org header.i=@gnuweeb.org header.b=ElPJ10iS; arc=none smtp.client-ip=89.58.62.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gnuweeb.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gnuweeb.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gnuweeb.org;
+	s=new2025; t=1754075014;
+	bh=FaGTwrEKwK7M7Dbun3EZiMSSgUMwYY7IOVqXCmRjdBk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:
+	 Content-Transfer-Encoding:Message-ID:Date:From:Reply-To:Subject:To:
+	 Cc:In-Reply-To:References:Resent-Date:Resent-From:Resent-To:
+	 Resent-Cc:User-Agent:Content-Type:Content-Transfer-Encoding;
+	b=ElPJ10iSj97Mm8ptfHfOgnuRfC/eYEGLVJVMd6OtYmhBv3OooQar/4ZoBweiERzHS
+	 3TAiZpka87YfhMrUoYF105QxGXZNx4/1oTV29zRW8Bj7dfXT8JlKiLeU5GaL7XylR+
+	 oGrHRynOH1pBwW7oGHI7Kg9Bfxxko/r6tJ1dxxw3RxXs69jZ07AYz0BmcYOZSJNt0V
+	 mpRIcGgcV4TR0SvZLHGBwtXqKV/viucOknDlnwTCwoDuJddMiRFrkpmcImFSS2VZeR
+	 KJthfK8aUuMv5QAo4j4F+mMb97H8Rb9mm31itgX0I4VZWj9C2l6MKKxt1NfogrguLx
+	 N5yTD+wDicbNg==
+Received: from integral2.. (unknown [182.253.126.229])
+	by server-vie001.gnuweeb.org (Postfix) with ESMTPSA id E01813126FD2;
+	Fri,  1 Aug 2025 19:03:30 +0000 (UTC)
+From: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+To: Oliver Neukum <oneukum@suse.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Ammar Faizi <ammarfaizi2@gnuweeb.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Netdev Mailing List <netdev@vger.kernel.org>,
+	Linux USB Mailing List <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>,
+	gwml@vger.gnuweeb.org,
+	stable@vger.kernel.org
+Subject: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on() call placement
+X-Gw-Bpl: wU/cy49Bu1yAPm0bW2qiliFUIEVf+EkEatAboK6pk2H2LSy2bfWlPAiP3YIeQ5aElNkQEhTV9Q==
+Date: Sat,  2 Aug 2025 02:03:10 +0700
+Message-Id: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <688d0c322cdd6_55f091000@dwillia2-xfh.jf.intel.com.notmuch>
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 01, 2025 at 11:49:22AM -0700, dan.j.williams@intel.com wrote:
-> Andy Shevchenko wrote:
-> > This series broke `make W=1` build vor clang. +Cc Nathan.
-> > 
-> > Par exemple:
-> > 
-> > /kernel/time/posix-timers.c:89:1: error: unused function 'class_lock_timer_lock_err' [-Werror,-Wunused-function]
-> >    89 | DEFINE_CLASS_IS_COND_GUARD(lock_timer);
-> >       | ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > /include/linux/cleanup.h:376:2: note: expanded from macro 'DEFINE_CLASS_IS_COND_GUARD'
-> >   376 |         __DEFINE_GUARD_LOCK_PTR(_name, _T)
-> >       |         ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-> > /include/linux/cleanup.h:358:20: note: expanded from macro '__DEFINE_GUARD_LOCK_PTR'
-> >   358 |         static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
-> >       |                           ^~~~~~~~~~~~~~~~~~~~~~~~
-> > <scratch space>:24:1: note: expanded from here
-> >    24 | class_lock_timer_lock_err
-> >       | ^~~~~~~~~~~~~~~~~~~~~~~~~
-> > 1 error generated.
-> 
-> A few observations:
-> 
-> - This is odd, the inline should have been compiled away if not used.
-> - __always_inline does not help
-> - Seems to go away with __maybe_unused, but that seems more like a
->   compiler band-aid than a fix
+The commit in the Fixes tag breaks my laptop (found by git bisect).
+My home RJ45 LAN cable cannot connect after that commit.
 
-See commit 6863f5643dd7 ("kbuild: allow Clang to find unused static
-inline functions for W=1 build") for more information on the difference
-between GCC and Clang when it comes to how 'static inline' functions
-behave with -Wunused-function, namely that Clang will warn for functions
-defined in .c files (but not .h files), whereas GCC will not warn for
-either.
+The call to netif_carrier_on() should be done when netif_carrier_ok()
+is false. Not when it's true. Because calling netif_carrier_on() when
+__LINK_STATE_NOCARRIER is not set actually does nothing.
 
-> - This locking pattern is not immediately amenable to the ACQUIRE_ERR()
->   approach because the unlock object is the return code from the
->   constructor.
-> 
-> Given all that, and that an ACQUIRE_ERR() would end up being messier
-> than the scoped_timer_get_or_fail() approach, I think the best fix is to
-> quiet the warning, but maybe Peter and Nathan have other ideas?
+Cc: Armando Budianto <sprite@gnuweeb.org>
+Cc: stable@vger.kernel.org
+Closes: https://lore.kernel.org/netdev/0752dee6-43d6-4e1f-81d2-4248142cccd2@gnuweeb.org
+Fixes: 0d9cfc9b8cb1 ("net: usbnet: Avoid potential RCU stall on LINK_CHANGE event")
+Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+---
 
-Yes, this is what I would recommend, as we never care if this function
-is unused, right? You could probably outright substitute
-'__maybe_unused' for 'inline' in this case, since the compiler is
-already free to ignore it and the attribute takes care of any potential
-unused warnings, which I think 'inline' is primarily used for nowadays.
+v2:
+  - Rebase on top of the latest netdev/net tree. The previous patch was
+    based on 0d9cfc9b8cb1. Line numbers have changed since then.
 
-Cheers,
-Nathan
+ drivers/net/usb/usbnet.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-> -- 8< --
-> diff --git a/include/linux/cleanup.h b/include/linux/cleanup.h
-> index 4eb83dd71cfe..0dc7148d1b88 100644
-> --- a/include/linux/cleanup.h
-> +++ b/include/linux/cleanup.h
-> @@ -348,7 +348,8 @@ static __maybe_unused const bool class_##_name##_is_conditional = _is_cond
->  		}                                                           \
->  		return _ptr;                                                \
->  	}                                                                   \
-> -	static inline int class_##_name##_lock_err(class_##_name##_t *_T)   \
-> +	static __maybe_unused inline int class_##_name##_lock_err(          \
-> +		class_##_name##_t *_T)                                      \
->  	{                                                                   \
->  		long _rc = (__force unsigned long)*(_exp);                  \
->  		if (!_rc) {                                                 \
+diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+index a38ffbf4b3f0..a1827684b92c 100644
+--- a/drivers/net/usb/usbnet.c
++++ b/drivers/net/usb/usbnet.c
+@@ -1114,31 +1114,31 @@ static const struct ethtool_ops usbnet_ethtool_ops = {
+ };
+ 
+ /*-------------------------------------------------------------------------*/
+ 
+ static void __handle_link_change(struct usbnet *dev)
+ {
+ 	if (!test_bit(EVENT_DEV_OPEN, &dev->flags))
+ 		return;
+ 
+ 	if (!netif_carrier_ok(dev->net)) {
++		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
++			netif_carrier_on(dev->net);
++
+ 		/* kill URBs for reading packets to save bus bandwidth */
+ 		unlink_urbs(dev, &dev->rxq);
+ 
+ 		/*
+ 		 * tx_timeout will unlink URBs for sending packets and
+ 		 * tx queue is stopped by netcore after link becomes off
+ 		 */
+ 	} else {
+-		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+-			netif_carrier_on(dev->net);
+-
+ 		/* submitting URBs for reading packets */
+ 		queue_work(system_bh_wq, &dev->bh_work);
+ 	}
+ 
+ 	/* hard_mtu or rx_urb_size may change during link change */
+ 	usbnet_update_max_qlen(dev);
+ 
+ 	clear_bit(EVENT_LINK_CHANGE, &dev->flags);
+ }
+ 
+-- 
+Ammar Faizi
+
 
