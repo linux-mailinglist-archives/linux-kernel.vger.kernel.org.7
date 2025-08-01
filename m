@@ -1,269 +1,284 @@
-Return-Path: <linux-kernel+bounces-753098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753099-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 83941B17E9A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:50:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78DA5B17E9D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E28E11888AAE
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:50:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D87D31895303
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:52:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E70213E9F;
-	Fri,  1 Aug 2025 08:50:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E2C02147FB;
+	Fri,  1 Aug 2025 08:51:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VOT+N03L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="smzIWbB5";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="VOT+N03L";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="smzIWbB5"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UpxG3NQk";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="kroT2a4G"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DA38D2063FD
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:50:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754038215; cv=none; b=GSb9zoJWP+GXNcMqUWFevknKqdfwOSFqxDz95SFvm8TqtTGOx4N7OJq0jqz8cb6U6hzwcYcX+2GRDbeuKxfAzzJcyCfeyRYOGXJoPRX/K7+sndICooBAY/3TAiHlpSPuMYM7Tfv5L1MUPgFExLFoW0pbKWtYEw/L/i1hDhm2cmo=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754038215; c=relaxed/simple;
-	bh=7kFkcZ+uggSUszdMqMqGgSuSZPbh1bMMOwSvim53B2c=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=skCjXfIc9v6JBvWsapkq9olbZ35zKttKXa8naRxkm8vb3VBu/gxbmw8tcBbHcg45WMLZSBZUzrJmg7jClS3XSuPxtk7vuj8cnsgMnteLwH9rI5whRBeRD2a8xccokxngwhpPWlgz6cCHgAS78a8/+uuNu25yn9+hmsXknZl5z98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VOT+N03L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=smzIWbB5; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=VOT+N03L; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=smzIWbB5; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 0472C21B71;
-	Fri,  1 Aug 2025 08:50:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754038211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTJ+vQafVYqPXHFeijA46kRDC7+L4XKsCmqEb3f6nYI=;
-	b=VOT+N03LE3CXDtS+jW1VkUR8h+nIk+9h8HaScUlouc6dWsmsVdRyNsiRFPMqyfoFOMwUpf
-	nU7HL0nKRx9s7DyESCnbl0nQIkZTRScbt1VZsHo2EUnT9tMme2y1eC9H399J9fx6CvQj8T
-	ZmbVW1j9EsXE6Nt56ahXEQp9lTePIUE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754038211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTJ+vQafVYqPXHFeijA46kRDC7+L4XKsCmqEb3f6nYI=;
-	b=smzIWbB5wrfXn148CGbdGUCDBBzvQ+6DcdDSJt6n4BUfz8JuFQ3ZXX/vBRpvwpbgMOTpdP
-	HoRCHceiIrPznSCA==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=VOT+N03L;
-	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b=smzIWbB5
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1754038211; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTJ+vQafVYqPXHFeijA46kRDC7+L4XKsCmqEb3f6nYI=;
-	b=VOT+N03LE3CXDtS+jW1VkUR8h+nIk+9h8HaScUlouc6dWsmsVdRyNsiRFPMqyfoFOMwUpf
-	nU7HL0nKRx9s7DyESCnbl0nQIkZTRScbt1VZsHo2EUnT9tMme2y1eC9H399J9fx6CvQj8T
-	ZmbVW1j9EsXE6Nt56ahXEQp9lTePIUE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1754038211;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qTJ+vQafVYqPXHFeijA46kRDC7+L4XKsCmqEb3f6nYI=;
-	b=smzIWbB5wrfXn148CGbdGUCDBBzvQ+6DcdDSJt6n4BUfz8JuFQ3ZXX/vBRpvwpbgMOTpdP
-	HoRCHceiIrPznSCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id CF93D13876;
-	Fri,  1 Aug 2025 08:50:10 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id IsROMcJ/jGjDLgAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Fri, 01 Aug 2025 08:50:10 +0000
-Date: Fri, 01 Aug 2025 10:50:10 +0200
-Message-ID: <878qk34e9p.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Sean Anderson <sean.anderson@seco.com>
-Cc: Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Subject: Re: retire_capture_urb: Corrected urb data len
-In-Reply-To: <195fcbb0-37f6-4379-87c9-1ef75b07bf6f@seco.com>
-References: <68a97d61-21bf-b45e-f6ed-c0906dd4b197@seco.com>
-	<87ilmfj72j.wl-tiwai@suse.de>
-	<9d41eda1-1172-ea60-dd87-b3e38a529170@seco.com>
-	<87r110iz8w.wl-tiwai@suse.de>
-	<53306c0f-e5ef-44ee-b90c-a3ea61ca454c@seco.com>
-	<87v8q6wcf6.wl-tiwai@suse.de>
-	<195fcbb0-37f6-4379-87c9-1ef75b07bf6f@seco.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56A741B95B;
+	Fri,  1 Aug 2025 08:51:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754038311; cv=fail; b=kdDYyrbgNXkNd/rSskLtbK+BXeNH4kd2f+i2cTB+TfTN3NQ07xmfGoPqlLuw1j9D5D5HOGIHhPb+2vb49+XfyjQkQwQqsAoj6QuRDtVvtan5VFdex/VOxieRbqsKU0wVb5wCEYqDJ92eBsQl1RkplPl092/cHVzAkLHfkxMKqqw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754038311; c=relaxed/simple;
+	bh=eOA2ISKFAFjBYoFEdT6RJ/7Zu4HhMelkCIm2uwZI+mU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=h42V+6xhkFLn6uPQdWQWyl2ryFshrlpQU9WgesIkTSfSNRWEsrpit9fJ2jXzQkKbwVbCG45NJ8Et56mJrM+nb75o3jpb+eDIZOmIYNF5Mz+5WoYFwxz46O2c7cWlR1mK7rF4KGt+EdPSPp8M+E0+YFzhWOUVrbdUdUTkKnvc87k=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UpxG3NQk; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=kroT2a4G; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246630.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5717C4mC005758;
+	Fri, 1 Aug 2025 08:51:34 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=corp-2025-04-25; bh=2SDka9zHmNYTk23K3X
+	del+78DNP7oyfLglXJrTvKtd0=; b=UpxG3NQkke+hURgKuLAbSJLu4tFbwWesT6
+	hfCk/3lgnj2Ez6EsbrjRwVWIHvgIJnUFnExyeh3FtZtOaGg7GNIieRoHKDb8eM/m
+	TalD8Sp7ML+a/RHgcoZ3cs2G3D2QL8J24Qys1jmUhZgy9DOg6X8HyVgv+gPiz7kx
+	YCM6Y/LTNq1VkODDHWseQkhwjX+nUPHvYjZRprYo9Kjxqogdi8Y7M0T8CT92snS8
+	fTh9q8UUEaZ/LiXXw/wzcq6nkHMZor/UxxqvbI/MDb5TxwD2SLcD06ACpMe91SyQ
+	mR98w8TLzn7w+yRMGgMns2W7EYCHY8OSlAAUqk035p5kVmtNLJ/g==
+Received: from iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta01.appoci.oracle.com [130.35.100.223])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 487y2p2r6k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 01 Aug 2025 08:51:34 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 57173hpr016669;
+	Fri, 1 Aug 2025 08:51:04 GMT
+Received: from nam02-sn1-obe.outbound.protection.outlook.com (mail-sn1nam02on2045.outbound.protection.outlook.com [40.107.96.45])
+	by iadpaimrmta01.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 484nfkvuk3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 01 Aug 2025 08:51:04 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hh19Di+F6XyXrBVD2cN7Xq9z1S8Flfyai8YjwXVIQyzyP744xyZDEb5wpSmGszJYjST/OHd/PeWemumQICRbgvm3afahPEvXMQPNkHyB4SaGFri9xN1T0zYspw6Q+IKwZ1XHMeHsNWEvoNuon3BoIqua134xheAmvKo+YNQAN3iy/EFYXP+zl5rqrg5/ludAvVQorZ6p91k+gp4fTqUrWnw/rWwEkAR7KB8RhkIzHEz60NOt1MWr5tgUVAXF4j9eHWrVlflKR9Y8JtkrAqKHlDia02i3kxKd6fs3szvF+a0+fdLZES0pR1V4PJnYrjoUzaw6pCenAB7QK49MXxkISA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=2SDka9zHmNYTk23K3Xdel+78DNP7oyfLglXJrTvKtd0=;
+ b=oYSnJofTFFimsvduFe5ugQvlG1ExwnSCpTIuscHkupN670JQ5G0aOHZ1cHAHyVnZ/92ywe5Z6EnQkevLLX0pcC5kPFdET/ZRF7Fi4FUxohQiaZLuKYiMrYJXXRrps+LofgmS2b1N5NEWIRjAY60gnuXVmwAwmfN2DtGXxae8VcRMWPaa/4enGH6vROVfedNV2NY12gKlsbXvjRhG+JchnwtP8DoDLdZYiVh12FP5oQ0sy2OsBOHGPAK45fMvVkcJZj8sfvnVnOAe6pNG9o6loKtjQOEZSKEwqa513SJASkuG2dvEffYc4CFiXgW7e7eWrpIbQAD0Ui9sr0yz6x1Y4g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=2SDka9zHmNYTk23K3Xdel+78DNP7oyfLglXJrTvKtd0=;
+ b=kroT2a4GpRelUvsAc/+0ovZncbe1TwlsNb7u6SWyjLXhXVe16xb1vvN0lw913gel+HtZRo0p4oC3h+C+TJexMWhq2AFG/THbdY5WMjJoa1lQvWlzlwiILaJqckzU2arXhcVvUj1S0MvAHBnz4uRVTiku3LUAUhKKEeAjfFuy8uw=
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
+ by LV8PR10MB7822.namprd10.prod.outlook.com (2603:10b6:408:1e8::6) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8964.27; Fri, 1 Aug
+ 2025 08:51:02 +0000
+Received: from DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
+ ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.013; Fri, 1 Aug 2025
+ 08:51:02 +0000
+Date: Fri, 1 Aug 2025 09:50:58 +0100
+From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: WangYuli <wangyuli@uniontech.com>, akpm@linux-foundation.org,
+        Liam.Howlett@oracle.com, jannh@google.com, pfalcato@suse.de,
+        linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+        niecheng1@uniontech.com, guanwentao@uniontech.com,
+        Jun Zhan <zhanjun@uniontech.com>, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH] tools/testing/vma: Fix function parameter declarations
+ for GCC 8.3 compatibility
+Message-ID: <27488afa-1d53-43eb-bc68-8e950d804000@lucifer.local>
+References: <EFCEBE7E301589DE+20250729084700.208767-1-wangyuli@uniontech.com>
+ <e7554f93-03e8-4315-acb7-a55312354485@lucifer.local>
+ <CB890ABC56C2FA67+56b95783-ed70-4744-9fc5-f2d93ddf2c12@uniontech.com>
+ <37b606a7-17c6-4865-a78a-ddde1bc15649@lucifer.local>
+ <d31803bb-fb32-4a94-aa89-83b02757d650@suse.cz>
+ <12cba6b8-6853-477d-aa6d-23180c2fec75@lucifer.local>
+ <671CE9DD76801AE4+34f3e3b7-4684-4fe2-80a9-93de1dde9c31@uniontech.com>
+ <20baf9ac-9328-4110-97f1-91e9e76b8914@suse.cz>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20baf9ac-9328-4110-97f1-91e9e76b8914@suse.cz>
+X-ClientProxiedBy: MM0P280CA0031.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:b::19) To DM4PR10MB8218.namprd10.prod.outlook.com
+ (2603:10b6:8:1cc::16)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-Spam-Level: 
-X-Spam-Flag: NO
-X-Rspamd-Queue-Id: 0472C21B71
-X-Rspamd-Action: no action
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spamd-Result: default: False [-3.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	MID_CONTAINS_FROM(1.00)[];
-	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	FUZZY_RATELIMITED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	TO_DN_SOME(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCPT_COUNT_FIVE(0.00)[5];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	DWL_DNSWL_BLOCKED(0.00)[suse.de:dkim];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:dkim,suse.de:mid,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	DKIM_TRACE(0.00)[suse.de:+]
-X-Spam-Score: -3.51
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|LV8PR10MB7822:EE_
+X-MS-Office365-Filtering-Correlation-Id: 64899349-610a-4df6-a26d-08ddd0d88aee
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|7416014|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?QzMrAX6Mqp4Ck5bhkihjWRSDbPhSCy3r3Cy018COlJGLsi4GOJcqm8s6zm6d?=
+ =?us-ascii?Q?w96GbTx60eubHtafpXUqE/cTunink+NBohxXZiz+4KixA/5qxP7LOImz7Ueh?=
+ =?us-ascii?Q?7JCmn9avplD3q1gpWC+Ds8KRpOmdjpszlJcqPWE/Nt5x9wR1SgB+XrLoZhTf?=
+ =?us-ascii?Q?1pwK9lPd2rt1OZmbQVzALwcBlknPQvRGuBf9rFkAxv/DRegbw0ENMGKH7zOt?=
+ =?us-ascii?Q?AUN5GNgQOw8xJAtds3bs47z3V4bjox1jXoHyri+F50nO+PMqJTPJ2aVqJArU?=
+ =?us-ascii?Q?FQoeWC8b1chGdhpmuGfknLHrx/2GTSh9ZdS1kkRi5iPVJTm48HOkJdizrt8m?=
+ =?us-ascii?Q?EwRCjvtMXh6iIHG7HhhaD2blCveTFIRj57Y+HMw1HquS+ZL/UKi1yE1VRrEe?=
+ =?us-ascii?Q?5zooE92lciR7NvB4ke4Ryr+eIpzH1ct1a3zISZGtbavP+ruwpnge/R+FA5WI?=
+ =?us-ascii?Q?nve36xYlB26pUJxqyBIwkVhnC0vdC/ZYNXevjGeR5yRn1w9Zs03h4DWioEs3?=
+ =?us-ascii?Q?vbGjLjbvokqyij1GkCX+xGkUuMZECsjngYF5ah6lkQbCycVRmiqn5EJfjcYL?=
+ =?us-ascii?Q?AKsqlkoR1+HWETRDQvB/PPhKivQG7j+4vcUNk/AdGuPn3BoJcjhzVDE55fJb?=
+ =?us-ascii?Q?zbRHqyYi260pbYUr8c27EVe5SefPfsOlCFtUBqRjLWIPNbjGfxgxY8YZJDOd?=
+ =?us-ascii?Q?3EF5HfxtlEqeTN1coRAwz2YaCDVU+tqfELXhzkp3chIInmGu4mWOl1ooT8c/?=
+ =?us-ascii?Q?ufwYpQlxCfvR8he6ZOFWbOnDWMyivFKK/Uc5vVJZ9UlyqWqlVewthVjAY4aO?=
+ =?us-ascii?Q?Mwht4HoK7f8Dl78Wmi+fihjFrj063QVYUfhUOT1/sEb0/By98BCMsKciAPuC?=
+ =?us-ascii?Q?AlT5NOASaDMIw6RalztYWYFsPN2UdvJewo3+msEPW+ExzPnURbV/ui7+9dBS?=
+ =?us-ascii?Q?U5UHlqDDpI6EYT/cqBJ12zoxVS1QXLPpLydcduqEDlPRCj/1ByqPdz/dy3qq?=
+ =?us-ascii?Q?SESkx/+UhV9hV+A0pNtOOUT7kRroRqipqg4arLgraqnNaKDQs3zYkvQh7kC7?=
+ =?us-ascii?Q?51LCnOBBp+cyz4Xes6ebFETfkrAUcuWQZYrNAEypwfj45y/O07fykLtXIzPz?=
+ =?us-ascii?Q?NcXJL7mLyJR0UCMfFa5W3XDlo5Qd7WOP0RvKTfoS4hFuDqaUgY/yoj/Ap8/w?=
+ =?us-ascii?Q?Asr2M8pujQ5kHElH7/JJ0gDMo1eNr2FiEsVl+zuuQ6eCAeiTWAhVozPXSH9n?=
+ =?us-ascii?Q?+ex71XvSTr8nijidWBdiqS+yPJMCrUpDtVHgIY39IfXc/RCGgri7J1OhRSXZ?=
+ =?us-ascii?Q?ECME+rBHfPUEQ7iV4mx0evYIg365O4f5WyWsvZn47NO4zD4E2HVMAWvyVhGN?=
+ =?us-ascii?Q?LhP9WCs0y2TBfizp0xZfD749EUbQtxlzrFtXFkaZfCryGdWBJcso7oMEeQKP?=
+ =?us-ascii?Q?JaILQoUKR5I=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?xvmDQe2m3eRECtAYpBzUnfMZKLaBddRJ989FsjRKmfR6VAdG50c1RUo7wFUk?=
+ =?us-ascii?Q?aDLJyiacXRPLp982tnMIpZYHubwD91mp37ou41ZRY7dRcwOR00ZdbN2PH3xk?=
+ =?us-ascii?Q?c0zrJSJd34QeOESjUtT66pW2lqvSg2fZAR6/ho0VQEE8zdyg3HDwCqkx8fIB?=
+ =?us-ascii?Q?jrTleINtlwYfTkk9nc5NtwPZLS12xObSZoX38cAC7ChLud63OvrZpZ4l14OU?=
+ =?us-ascii?Q?ibAscreacP9vVkj3Pl+PybUmYSjIJHGVhSo5EUpvHJExglfUNSgSQd+jdgGa?=
+ =?us-ascii?Q?iQV4to1l8mcqTsbhbzDAefJ8SdQHo3C7xyF3UWz9TSC4As2aGl0Oy1LgsB+B?=
+ =?us-ascii?Q?XTWBdirSzYRXpHyRZ+vZ5wckUgoGR57adiuXHZ3PqMLCFRSk8YPrYH0tvBns?=
+ =?us-ascii?Q?CS3066gsMegPHAdwu1DCXG41FSW6RU72anmvC55Suvo808try08Kg6hrmWkt?=
+ =?us-ascii?Q?Fp/9ZvGicen8MacQLvomNbA1leF1xm6YC03MyLsIhbPyRbrBBy1kje2Mn/TJ?=
+ =?us-ascii?Q?BZWwoN1x1k0KefCEe2NAi+Lt7uwCcKAiZukmGEa4ijJyHAT1zQzhpr62u4S7?=
+ =?us-ascii?Q?DgRhRaDgmi2yH+LeRDQ96KT4RCUnv3ZVDQxehmLcDpeixsTMCRBmKzaoYSJf?=
+ =?us-ascii?Q?5znDgmgLT/TVzvdHFQWEBieKyUYm1I6yT40mlUYTRXZ59t7t0R/0IXp8zDMA?=
+ =?us-ascii?Q?5D6H8BfUJo0q2lxrLyP3+kHKmKyyKhBd/q0mgoBfhGnl1vQF/ttBo2jzNN96?=
+ =?us-ascii?Q?8eJgWx7iLxZ3IC55mAJvlTZ92h/uhJe+fDXFEx5sXVhhvWOAQKEYl1siFxRi?=
+ =?us-ascii?Q?2dYwhIOGSMbXyEpRmebpk04E0KwDvgsBsSi/X1Zv9Vodc7s4M7X3osWRjnii?=
+ =?us-ascii?Q?HsuguDx2vbtFCZJ7epBqNZkt9x0IV/U+5tb+Ej7HQ7yQw7mZfPSOuaHSNwlN?=
+ =?us-ascii?Q?7w/k38Krygit4Pop/YxQDuIs+79j9WFrO0I6itCzItO+MoCbPFqDfRzh/4ct?=
+ =?us-ascii?Q?dOr3MhmzHBslltjc3eswU1m0sYCkmmPHx+3gDiDy+4M8se/sGFbA6RqbcYpR?=
+ =?us-ascii?Q?MiCNWjXDdqYJgnuScxAPV+7o/nv5ppvAmvVyH55f0esB/BfeZNWX71qus35n?=
+ =?us-ascii?Q?SONQJsgMoQE/yziKs59UrPp2kNF1s0XaRkslhcj4rpQzxE0BaoYeLbM62Q2j?=
+ =?us-ascii?Q?geUyZzOxEvJ9dzpBL9ERUDkXRYAgt4Q8Ipw51wN/oqG4OTHgsnJM4c3a6w2n?=
+ =?us-ascii?Q?g0igYUSLraWEYxXTJd5eSspsZJ7+UU3YEwX5ZjTwC18DeLH4tiW6+7gxkgOm?=
+ =?us-ascii?Q?BGQApGAMJcYocZojp5pHly1vF0p8VwXGABHHnGxqw1lHcKK6V9giJyGf1i5T?=
+ =?us-ascii?Q?65z9PgLk/Ib1WYUZG6pY9tRpD4g8SSd0GOOFSTCsYcoeDmPkqA67OUf0oJcU?=
+ =?us-ascii?Q?1Tvx+7KLk3WzgahDhKXtLg9aP+WI3/UYoJrp6mFmwYNA+UKgQ2GY8dCSPDso?=
+ =?us-ascii?Q?qQ36hk9TReO2wIkF/HbX8llTqor7i0qHe3zeS7CxhEkF++LbSLfn/wB65PWL?=
+ =?us-ascii?Q?u6Oqg1cUQ7XA9IfT2F+7xTm8MTp8uvR19fR/eikGz5GV8XWmhmQR6wY4PyMu?=
+ =?us-ascii?Q?PA=3D=3D?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	wj3qYxsrEgRi93Tvw//HdiSicdP2tjdDn80liiX3LgU+s29/WMua8oMFtZwd21YMcNiU1OvcCh1I1Rx9Z7TkWQESxPcnH+fc5dO08P+dOkpcCocddqRSRysZXcq0ZY5UgmlVgXs9EPu+1uG2mqNSX6D0qLv7EF6dTFJcUqnjUzOgThVtSDvSq23dXN/O2I4dDHHOVp/xf2dXNzZHl2CcsQjPsdCviZuTCwMJ6t9d1gO+dwWYxKJioM7Lxo+89i8gaE8kAJhBs+i1SYv5FzH56LlYtEZgNgEVDGLJXSjwYwM83jF3Ho6K8C+XyVMvxT5I+zp+0eyUvk+t1eLe0yv8/tvEf484dSHiKo9r5OIyu+fOcNTId/CgZRMEdNEe0AS4T9+gZBMTl/ZxlISqmm0RsDN1GRwnn0fWuXNPPfqzQisJQDSH6Z6Mx+EDWNTz++DlzPIq+P77OwwcAReUSxJhDHyRUuVooqOVMLrLYEvGAfLidZbZpb26ltbjVzOp8mp3JaqatlFD6qyQbjrJgmTaCADK3OqZcRkPHbiM//FN22AJEiDPyQjg6ouezKZy+wqE1nOmRKacCvl/ox9hGebvP735k+3gCwNsojU48wZym/s=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 64899349-610a-4df6-a26d-08ddd0d88aee
+X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 08:51:01.9656
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3fgnDT5aqQiU7+Lk6bjVTzXs5JlzyZPPD5v8Qape2h/AofBX2NyY3YCpuZSvNvhizNwOensEylX2yroNDs+HIc8P4PToV9gflREezgzmPlI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV8PR10MB7822
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_02,2025-07-31_03,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 bulkscore=0 spamscore=0 mlxscore=0
+ phishscore=0 suspectscore=0 mlxlogscore=999 adultscore=0 malwarescore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2508010064
+X-Authority-Analysis: v=2.4 cv=COwqXQrD c=1 sm=1 tr=0 ts=688c8016 b=1 cx=c_pps
+ a=zPCbziy225d3KhSqZt3L1A==:117 a=zPCbziy225d3KhSqZt3L1A==:17
+ a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
+ a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
+ a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=GoEa3M9JfhUA:10 a=mDV3o1hIAAAA:8 a=cGBPJTywlIROhL6hUD4A:9
+ a=CjuIK1q_8ugA:10 cc=ntf awl=host:12070
+X-Proofpoint-ORIG-GUID: AevfMGcf01RVYcrkPJbLkOvqOAMIFrCs
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDA2NCBTYWx0ZWRfX7m9bfAQRsfLw
+ V+znsmlrkqP0r6INb/ad5JD/uNv9Ht3t4dxMkfX0JMWyEePMzSP7xtok8SunS8S2G8JHGHaWZCK
+ ezg3T589KAOD2Grdlt3gTLtI8RG7sFwnyZ2zvIBdtUnI/Sc16xcTcDIQhy8iGaNL1u0T5uPux8Y
+ jqMOZsoqAkP5TQzN6Wpi6lJMkkBlq8Pn44bchB0+86QRlsWZ8gB/q1P9aRVytOBG5Jhl1KLuBOY
+ nB2j3IX9rTRv0zKPIHYNwB0liIbw+RrxEDTerGg7/nsILIb2KgYwHudRSWZKx2VA2jKPSMfp3C8
+ pa+e6prS2WTEm5IT1O3cAmFYA/gT3inrtIu3rJHE5d5I0l8f9XFcj5PJojrV/aFXdZ2wt+rs2jv
+ jpNAExXcBEw5qW1DPPZZoIVtLnJhgEEfu+aLXjr+nJfPVz+v6+phtq+vuyRalF9KfnaBCIjt
+X-Proofpoint-GUID: AevfMGcf01RVYcrkPJbLkOvqOAMIFrCs
 
-On Thu, 31 Jul 2025 23:49:11 +0200,
-Sean Anderson wrote:
-> 
-> Hi,
-> 
-> On 9/2/22 01:52, Takashi Iwai wrote:
-> > On Thu, 01 Sep 2022 17:25:41 +0200,
-> > Sean Anderson wrote:
-> >> 
-> >> 
-> >> 
-> >> On 8/28/22 3:49 AM, Takashi Iwai wrote:
-> >> > On Fri, 26 Aug 2022 20:57:53 +0200,
-> >> > Sean Anderson wrote:
-> >> >> 
-> >> >> On 8/26/22 12:36 PM, Takashi Iwai wrote:
-> >> >> > On Fri, 26 Aug 2022 18:22:24 +0200,
-> >> >> > Sean Anderson wrote:
-> >> >> >> 
-> >> >> >> Hi all,
-> >> >> >> 
-> >> >> >> I have a "FiiO DigiHug USB Audio" sound card (1852:7022) [3]. I have had
-> >> >> >> no problems with the audio, but I did notice a large number of message
-> >> >> >> like 
-> >> >> >> 
-> >> >> >> retire_capture_urb: 4992 callbacks suppressed
-> >> >> >> 
-> >> >> >> in my dmesg [1]. This is caused by the "Corrected urb data len."
-> >> >> >> warning.
-> >> >> > 
-> >> >> > What exact values are shown there?
-> >> >> 
-> >> >> Unfortunately, as detailed below, I was unable to turn off ratelimiting.
-> >> >> 
-> >> >> > The problem is that your hardware
-> >> >> > (likely a buggy firmware) returns the unaligned size of bytes as the
-> >> >> > data.  Maybe it's worth to replace dev_warn_ratelimited() there with
-> >> >> > dev_warn() and take all warnings once.  Then we can see what kind of
-> >> >> > values are delivered from the hardware.
-> >> >> 
-> >> >> I'll have an attempt at that next week
-> >> >> 
-> >> >> >> The patch adding this warning [2] makes it seem like
-> >> >> >> this warning should be an uncommon occurance. However, based on the
-> >> >> >> number of suppressed callbacks, this seems to be happening at a rate of
-> >> >> >> around 500 Hz.
-> >> >> >> 
-> >> >> >> Is this buggy hardware? Or is this a bug in the driver? Does there need
-> >> >> >> to be a quirk? Or perhaps the warning above should be a debug instead?
-> >> >> > 
-> >> >> > There is no quirk for that.  As long as the device works with that
-> >> >> > workaround (except for messages), we can simply add a quirk to not
-> >> >> > warn but always apply the workaround silently for such devices.
-> >> >> 
-> >> >> OK. I wasn't sure what the correct resolution would be.
-> >> > 
-> >> > Actually I was wrong: the existing quirk QUIRK_FLAG_ALIGN_TRANSFER
-> >> > should cover that.
-> >> > 
-> >> > Could you try to pass quirk_flags=0x04 for the corresponding card slot
-> >> > (the option takes an array) to snd-usb-audio module?  Alternatively,
-> >> > try to pass quirk_alias=18557022:0e510408 to snd-usb-audio?
-> >> 
-> >> I tried both options, but neither worked.
-> > 
-> > I have no further idea.  You should try the latest kernel without
-> > modification before checking further.
-> > 
-> > And, looking at the code again, it's really strange that you get those
-> > messages.  Actually the transfer size *is* aligned to the audio frames
-> > as default *unless* QUIRK_FLAG_ALIGN_TRANSFER is passed.  And the
-> > check is done rather the audio sample size alignment -- which must fit
-> > within the audio frame alignment.
-> > 
-> > So, QUIRK_FLAG_ALIGN_TRANSFER is already set for your device by some
-> > reason incorrectly, or the code is doing wrong on your kernel.
-> > We need to check what values are shown there actually, then check
-> > whether the problem happens with the latest vanilla kernel.
-> 
-> Sorry for the very long hiatus. I have reproduced this issue on kernel
-> 6.15.8.
-> 
-> From closer inspection this message seems to be from the first print and
-> not the second one:
-> 
-> if (urb->iso_frame_desc[i].status && printk_ratelimit()) {
-> 	dev_dbg(&subs->dev->dev, "frame %d active: %d\n",
-> 		i, urb->iso_frame_desc[i].status);
-> 	// continue;
-> }
-> 
-> This probably be a dev_dbg_ratelimited. Indeed, that suppresses these
-> messages.
+On Fri, Aug 01, 2025 at 10:04:11AM +0200, Vlastimil Babka wrote:
+> On 8/1/25 07:57, WangYuli wrote:
+> > Hi all,
+> >
+> > On 2025/8/1 13:14, Lorenzo Stoakes wrote:
+> >> WangYuli - could you check? If it's as simple as this, feel free to send a patch
+> >> making this change.
+> >>
+> >> Thanks, Lorenzo
+> >>
+> > It's not that simple, of course... That didn't work.
+>
+> Yeah seems I can reproduce it with gcc-7.5 and it doesn't work.
 
-The use or printk_ratelimit() like the above is already discouraged,
-so it makes more sense to switch to dev_dbg_ratelimited() if it
-works.
+I think we should still add this though to make it consistent with the rest
+of the kernel.
 
-> The actual message that's being ratelimited is
-> 
-> usb 3-11.2: frame 0 active: -71
-> 
-> which is EPROTO. Looks like that comes from xhci_hcd. With debug enabled
-> I get a lot of
-> 
-> xhci_hcd 0000:80:14.0: Transfer error for slot 36 ep 4 on endpoint
-> 
-> The spec says this is 
-> 
-> | Asserted in the case where the host did not receive a valid response
-> | from the device (Timeout, CRC, Bad PID, unexpected NYET, etc.).
-> 
-> and I don't really know what to make of that. Should I send a patch to
-> convert that dev_dbg to dev_dbg_ratelimited? Or do you want to debug
-> this further?
+>
+> I think there is a difference with the other instances of omitted names
+> found by grep as Lorenzo suggested earlier - those seem to all be
+> declarations. But here in vma_internal.h they are (empty) static inline
+> definitions.
 
-Usually EPROTO means something the USB controller doesn't like :)
-It's often a device firmware problem, but can be other means, too.
-You can try to connect to a different port or a machine, and see
-whether the problem is seen consistently.
+Yep this seems to be the difference.
 
+>
+> Seems like newer gcc versions got more lenient. Haven't found why, but seems
+> they want it to stay like this:
+> https://gcc.gnu.org/bugzilla/show_bug.cgi?id=113825
+>
+> But I don't know if there's a way to make older gcc's lenient too.
+>
+> > I'll take another look.
+> >
+> > Thanks,
+> >
+>
 
-thanks,
+WangYuli - apologies - this is my fault entirely, I misunderstood things
+here.
 
-Takashi
+I was wrong to dismiss this out of hand, I guess not many headers are doing
+stubs like this, and I mistook this as being a general thing.
+
+Could you please do a v2 where you add back in parameter names (and add
+this compiler flag - I think we still should), but could you do me a favour
+and also fixup some horrid stuff here?
+
+I have functions like:
+
+static inline void vma_adjust_trans_huge(struct vm_area_struct *vma,
+					 unsigned long start,
+					 unsigned long end,
+					 struct vm_area_struct *next)
+{
+	(void)vma;
+	(void)start;
+	(void)end;
+	(void)next;
+}
+
+Where I am trying to avoid 'unused param' warnings which... won't actually
+arise.
+
+So could you eliminate all these horrid (void) things as well ass adding
+parameter names?
+
+That'd be really helpful, thanks!
+
+Cheers, Lorenzo
 
