@@ -1,238 +1,259 @@
-Return-Path: <linux-kernel+bounces-753510-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 306D7B183FF
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:37:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 450E2B18403
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:37:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FEE33AE77A
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:36:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54B81174D31
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:37:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5065226E6F0;
-	Fri,  1 Aug 2025 14:36:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7515126E6E3;
+	Fri,  1 Aug 2025 14:37:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b="XyXAj9j/"
-Received: from PA4PR04CU001.outbound.protection.outlook.com (mail-francecentralazon11013051.outbound.protection.outlook.com [40.107.162.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aA7VZBtG"
+Received: from mail-pl1-f201.google.com (mail-pl1-f201.google.com [209.85.214.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5370B246786;
-	Fri,  1 Aug 2025 14:36:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.162.51
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754059009; cv=fail; b=H5vVnkBes0HTFcuqiG+VL2lq4n2mfVHV46yWfMEnKRHnA8eVt1xnS8lteXtQ5toVHNSBZGcoBTJD81NdFU8SchFVMy+CZy6jxGzgqPwXlwcasVT/nCrK99Iq6aIs8FC1rwttWxsL9T5+2tZVixUcjT50kDTqKv4A4E7dzyp4RbQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754059009; c=relaxed/simple;
-	bh=/fFLfD+4HkSvXAdmPbJM75JCMBj2fDrkrv8NXcNHFQk=;
-	h=Message-ID:Date:Subject:From:To:Cc:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=W8XhYktmo/MfdcPxBkXaSqS9saaJ8S6s/tjIc99GEDkgs5Aom3yXqRY/zRFktx0jkTc2/0D9ztM/7ZpqmJm/xMCHCQAO5QEyLGqJAaDbd6FxaquLDmtoajSkGu9ZSnLCkamjaOqwP1i6/jfTBJEdAzLreQ9w9qhwLXxDi7DeLg4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com; spf=pass smtp.mailfrom=oss.nxp.com; dkim=pass (2048-bit key) header.d=NXP1.onmicrosoft.com header.i=@NXP1.onmicrosoft.com header.b=XyXAj9j/; arc=fail smtp.client-ip=40.107.162.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=oss.nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wlCN07OQJBaGLeKIXSXXf2wMg9HZ26IwVDvjZItOFw5V2DMcm0Nh0r11+RxGtbhEGOyJvdLrKQr6kGOAk6ceXBFNqmgO7ceR1EaySW6YXzRQsTAMUonfGTdEc2eWUIBzUt624XNYWwH1nJfrJxXnICOE/jQGTjgfZtowKKOlG/IFsb8P2RlH66St8szoaGbeiNU91kdL9+G7eNGtbEUJECX5KCbSQqTrC2hsc2wyYDSBik/VqBUpgliSUenAYt+HualyH++CTVE62D7iPxpfMwdDqOP2Ntaz/NQ7bybtQS9xilzwL3z01j+Pk/Gd6EQae0Ab3ttOBIDc921srR2fDw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=kAMkpd/2qISrxv2TFtqjME7AxTUyJ2mKquza7jf++W0=;
- b=CrxuMus6hehtVWvF40eY7WbJqtCn+EQj9IPNF+gWxNR+RpZZqB51uapigh+7EcdW/WT/FBaKYfRUrTAVCWx6WvcBffbSgmHQnEfKS65qQM7KdQ1qYlwhdazklMBUm9egK+ZufX2VPmMILNXqh0ug12luCbdoiM9Z0MYMPGFNQOiOafoeGRRLZVrW/zdezvuyWPvMF/vmzMD2t9kDIcFxGr30m4z+7tC5d9w9Wstym3ixoD/pdqChJGNTFo2W1y29UY+UNwpgwUsR6ftwaYDJhhRys7eiBzA6FVryDxV+JZdDoa5l7lxIGjw2O6/gIcvR6eg+1e679zt3aJIzs3cPWQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oss.nxp.com; dmarc=pass action=none header.from=oss.nxp.com;
- dkim=pass header.d=oss.nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=NXP1.onmicrosoft.com;
- s=selector1-NXP1-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=kAMkpd/2qISrxv2TFtqjME7AxTUyJ2mKquza7jf++W0=;
- b=XyXAj9j/zh4O3PFfWNWUk9meo4KulLaLQEjvj+T+OGdlNwhOjbbhddUdymEeC4LNOrOPPPXVtOyRf/AwF+u1PTTklty94SDZfHQ3xrLi84/cL/BBjB8gyK+9WQ0FlDW1veVIyrC5in+wMniGH5GC6QFfq2gSVeS3d9P5RlYlX0UQpfU2I/7sdcu/b/1JYqO550LbAIXwglI0CrqWaEhulwSGX3p0yNo+Q9PvPZ6jnNjc4qiANusj+cYlICpjdjSFg/qoWVe9Ksv1rapv8cZQMfbevP7XwLf0HaglMdOZGlFqa9clhRGT0pur1nN3CEyFed/7hKxl52cQW3qmBpc1hg==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=oss.nxp.com;
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com (2603:10a6:20b:41a::6)
- by DB9PR04MB8108.eurprd04.prod.outlook.com (2603:10a6:10:25e::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Fri, 1 Aug
- 2025 14:36:43 +0000
-Received: from AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455]) by AM9PR04MB8487.eurprd04.prod.outlook.com
- ([fe80::6d7a:8d2:f020:455%5]) with mapi id 15.20.8989.015; Fri, 1 Aug 2025
- 14:36:43 +0000
-Message-ID: <53bc13b9-365e-4212-84f9-85e67c23e067@oss.nxp.com>
-Date: Fri, 1 Aug 2025 17:36:40 +0300
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/12] nvmem: s32g2_siul2: add NVMEM driver for SoC
- information
-From: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>
-To: Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, aisheng.dong@nxp.com,
- Jacky Bai <ping.bai@nxp.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, echanude@redhat.com,
- Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
- <20250710142038.1986052-11-andrei.stefanescu@oss.nxp.com>
- <9d004ea4-0bb2-4a21-8501-82ecf3482c3e@app.fastmail.com>
- <fa24772b-0038-4f51-87c6-15b810d8d454@oss.nxp.com>
-Content-Language: en-US
-In-Reply-To: <fa24772b-0038-4f51-87c6-15b810d8d454@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: AM4PR07CA0031.eurprd07.prod.outlook.com
- (2603:10a6:205:1::44) To AM9PR04MB8487.eurprd04.prod.outlook.com
- (2603:10a6:20b:41a::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3017221ABAD
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 14:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754059069; cv=none; b=pOF7LyV/84u7xqByfbtp6v2NWm6fcRL5vBMaIDzoxyGJaoeryq1C8wLLn25U8xCwhVpGBBTZF/cyX4YCZ15e9h4hxoRZBxZjctXSYB55WXGn5C7JSXqKAMShRKWF5127B8XNSw6AAZPU6UG+a5R3xQ1+kBAG6SsFDk5qulVTYqs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754059069; c=relaxed/simple;
+	bh=NKKdjAQ3G5+Vd85KL39xBwn9YfuWKoWTVGqWY7DyZ1M=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=H3JyNvsGoQKPFqTzgKy6fbx93IeEB8KUV5gohT7EfRk5/9iW40Js2KXHVuqkg+DeAl5kMzv4TdNIaRmXnb57bpMTIYK1o1lgAQIM3lcPO/XPS8ntHEhUYcCUzCuMSHkDyAAirZlsEu4KVYANALS4AKPh0hXhjLUA8j2fgUHOSwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aA7VZBtG; arc=none smtp.client-ip=209.85.214.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pl1-f201.google.com with SMTP id d9443c01a7336-240012b74dfso8720305ad.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 07:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754059067; x=1754663867; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=yOlHgDPsy2Fr6zSw+wwR0RuNJNvFscDpq9lae4rfQXM=;
+        b=aA7VZBtGzkLAbKzMkrrFI59PH9HA5CA2PUAaMk5JjVwRptIUtKdT93YDCFk38I2px1
+         0MmOoKHZ32HpPZxN2e9xwb0xAhA6L8cPIWMVVjG51hD8cUhOBcHAJ2Xxr6l/d5X2vDxr
+         z6MCUQJp2eYXNaV7aCC9KnWoS5gkply8fRRq5a08INU3NuxWYN/qfeZvquMMMBVN7vM2
+         VqQz8E2X+zRlULbga34A4OvUUnHhO+3EfQ6hQa4pvDHrCexw8C5WsprWmw2J4C9kvYcT
+         TiYQ5CJ8txwTo3PXvWMBnaRu40790y3jz6DOT3++ghgcIozJ3Sq3rP7bEP2YVJ6r8Y7t
+         REdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754059067; x=1754663867;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yOlHgDPsy2Fr6zSw+wwR0RuNJNvFscDpq9lae4rfQXM=;
+        b=sBwQpeG8XwVZ+aUQyWhqRztS0GqF+O+uk5wXxyIsMIDeQAVPuvfXJZiSJ5jtz/BMKi
+         pX2c5seVI/35smkm7eZhBamFnic+iWtuyDsQe+3fKtaIIHEJCS13IJxkInN2sV6XDmQw
+         wMlU/qoaAr+8y6JJ1wgnsRJtFWGxBx5o/s4eW6H+GQIUmxslVZ07dSJfUmHhxPcv6KH+
+         uo3MAWtp9cO0qenPAFHUzcKV+t+VEdBvr/Gtpaahf/ehOHLjIWAupbjltEW0Oqp6+9UF
+         O5lhUZKbNwJ7mxZC7qNsFZWLTtRCg4vbm//KVJJrITbHAfGbL6UgvnqD3wWT9dz/JfFd
+         A53Q==
+X-Gm-Message-State: AOJu0Yykd45murFXPzuF8pQPJj8GElkKagB9Cb80Sb9M4j1TMnA8Im46
+	UEO/bixApCKie/Yej4lYVvnr3y9pE7qbhPTES1bsNs2ROyo3c57Ux0QRm8emL2P4hIFnut4Xlks
+	qRHyyKw==
+X-Google-Smtp-Source: AGHT+IF+kb+SCqqqR7Utl6JGMbB+gW9G8CEZFUWQpz5R/1cIPRw8iYhRBptocx8dAQFd0KF7iNgWRtYCR/g=
+X-Received: from pjbpw16.prod.google.com ([2002:a17:90b:2790:b0:311:f699:df0a])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:902:e550:b0:235:779:edf0
+ with SMTP id d9443c01a7336-24096c00a4dmr158408115ad.50.1754059067500; Fri, 01
+ Aug 2025 07:37:47 -0700 (PDT)
+Date: Fri, 1 Aug 2025 07:37:46 -0700
+In-Reply-To: <20250730174605.1614792-3-xin@zytor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-MS-Exchange-MessageSentRepresentingType: 1
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM9PR04MB8487:EE_|DB9PR04MB8108:EE_
-X-MS-Office365-Filtering-Correlation-Id: 53374aad-7abe-4229-4426-08ddd108d595
-X-MS-Exchange-SharedMailbox-RoutingAgent-Processed: True
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|376014|7416014|1800799024|366016|19092799006|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?NUcwNTJLaHk3Y0ZzcmE3Tm9BYnNCU0xiR1JoOFZHSHk3WkZoNmM1M1paMlIy?=
- =?utf-8?B?K2dIQTdkTzRQOUZ1NHRZNlUvT3Z2VFhwZUwxUG1vc3RrUEVyM3VZUGZqNEJu?=
- =?utf-8?B?OWNlS0NzNmJqdkFhNU1SOElkQS95NUlRZEVOMU5UVjMwRm1xWlJSTytMWkEv?=
- =?utf-8?B?MWhJMjUvcE5rd3hPV1VNRE1tZkc1V0RFSXJBd1l5RDllZllHaWxvd1dHSTNy?=
- =?utf-8?B?NEUzRFhva1prbTVKZEVwK2IxUFF2TFhXUFRmVFFXeEV5cjd6WitYUm84UWlz?=
- =?utf-8?B?R0JZQTZwNXE4ZlJ0QksrVnBkbTYvbndQd2ZPTWd2L29rZFhpRDJpQlFabkN3?=
- =?utf-8?B?akJXK0tYcEhrTjM3NlZIWWFJMjhwUjMydHJmS0VUR0Z3b1F1R0ZXL20vTkRB?=
- =?utf-8?B?OEczK0JWRWJVM3BpSmZqVFdkYnVQVkQrTWxyT0hyeWtXSG8yZGtJMjczbEJK?=
- =?utf-8?B?c2toOE9JTXREMTJzOVkvbFJQb3R2UVlVQ3FkVUJ5TzlpWG9Lb1F1WUNIdExQ?=
- =?utf-8?B?RUthZVVCekFCZEFXYWdPWSs1SzNWUWpsRkFWMThJYmhsYXMzd0h4RDZsTkhy?=
- =?utf-8?B?TkFKNVhHcDdnWnk0R0ZPN3lsS3FLVDJ0OCtZbW9NRERhb0Uwa3FVclR6WDJW?=
- =?utf-8?B?Y3E1anVTeFowNlVPczNOdkM1Tk1reUszcjdpTjJzVjJBMGl3b1gyTWhHL1U4?=
- =?utf-8?B?blZzMlI2OEQwWUcvWC9vZURHZ1lkaE4yTG9objBFMG00bFJ6VmllS0hVWXJK?=
- =?utf-8?B?Y24rVFZ6M3BzVm1seDVlUmhuL2grcUdmTTc4QVlPSTVBT0paVHZ5eFFsazJK?=
- =?utf-8?B?R2JLMGVNOTZaTmpxYkQ1RVFzK3lMckoySnBxcHhTNkF3eHovbzlCT01YQWVp?=
- =?utf-8?B?TGJia0psOSsrR2VsSlNpRGhEaGFBY3MwTStCaW5INnVHaEhPZXpLTllxdnFl?=
- =?utf-8?B?SytZUWErbThKY2ZSVlA5Uy8wUTRlRGQvVUh0Rk9qRVhtVU9WZmxaTnJYQmtl?=
- =?utf-8?B?K1ZOUWd0cVV3U2NUNXh0TG96bnVkNHUvd0RIM2l3ZnFTanp2SW1na2Z0Zmwv?=
- =?utf-8?B?YlIrUlBONmxQWC9KZXRNSVZFUjkrZS9CQnhCaU9KWW5oaDZPWU94a0EzeFhT?=
- =?utf-8?B?L3RiTGNGeDNQaTVTQVg3Z3R2Nmxmd0wyT1pvQUxLNzNycy95WGV6UHYzbkRy?=
- =?utf-8?B?UXRvSFEveWdPbFNja3JScEY3U09LejFsMXdtbHdlZng4Q2xDM2dFaklpOExh?=
- =?utf-8?B?UHlGOUFvRnA1Z3pVVW9WT3FOUzhkVmFaQzljQ1E4WjA4KzM4SXQvUFNhSTE4?=
- =?utf-8?B?di9hYkE5a2gxSmR2dU5zMlozK1ZpR2JFTzlEaGloMms5Ymd2VzlPSm9GMU83?=
- =?utf-8?B?M2tiRUxIeGxlUk13ZE9HQTh2ZzhoTDl1ZmZ0Ky84NDRWNlE3TjBiY1NJdUdv?=
- =?utf-8?B?aVRYQktOelpjSCtIcXNLbWlta1B3Um41MlI1cVZiTHRObWR6clJ3Y0VPNTVF?=
- =?utf-8?B?WUhwZVFvNFJDZllXbTNwamRDNjY4MzJTdzVZNUw5UW5paWExQURNTVdRbFIw?=
- =?utf-8?B?Um5hTHNnSHFIQVUydkp5VDEvVFlZbXhVVlcxVmErWTFDeVNZSSswTEFoU1k5?=
- =?utf-8?B?MHJRN0FXbnlmUUdqZm1NdWsvL0t5SmFlUXM3akloN2VjQWNJa1MwblZxVVRG?=
- =?utf-8?B?OUpGWTdiSDUza2RiaWNheVU3TVdwNlNJenY0YlNZOVY1MHBEZy9Fb1R2bHZP?=
- =?utf-8?B?N3laaFllelZUTGZHOFZaYTlEdWZnaTZtdldCN0NVQmRtRCtGQm4vTlVqT3FO?=
- =?utf-8?B?ME1nTmdOK1ZiekYxM1RkdTFrN2lQdWg1ZGtGUWVWRFQ0M0xiUjFVeTF0cGdx?=
- =?utf-8?B?QnBLTFdONUlOM2JSaVJIamNxcS83K05DN2pvazJVVUx2U1pqTGY3TDNvS1hJ?=
- =?utf-8?B?K2w1RXh5SnpQeTB6bTVCUjZlSThkc3NCa3VlSUxxS3NsSmJueHNkS2prSkNU?=
- =?utf-8?Q?OhsFDTnz3wnwNcz+Rf4g7OdesBB8v0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR04MB8487.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(1800799024)(366016)(19092799006)(921020);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?R1dsTGNtZmZiRVROdC9pMXViRUh0cDlzU2ZIUHhHbmhsVGN4TzN3RmVSbHBX?=
- =?utf-8?B?ZUZQVkpldXdWTmtaM0Vjd052ME8vb2JXWEpGaUNGWmF3ZkwwUmpIYW1pN2Vm?=
- =?utf-8?B?eUZOQTJKckZUR2o2SXRCRGVBYXFvRS9vZUtRc0JOZG9sSlNSYXJPMDg2dFB0?=
- =?utf-8?B?VHV2MW9FU0pFOEhGNGU5RzNwVDd6RlBLRTFKa05pSVBjOW5HbXowOS9vWVBL?=
- =?utf-8?B?eTRrZTNRVTNHR2l2VnhPaXNVYVFJTVVOS1ZJU1E1NHhDUXdUS3drOVVHWHU4?=
- =?utf-8?B?TUhNQXE0VmRDUTBGVnRLcGlhQzlWZHZ2RFNrMWhkQjFxTTFpVUhIbjlrRkRV?=
- =?utf-8?B?b0tSVjIvcDdXNG54aE55L05QNFhGai80Q1NocVNFNkF5M3M3d0dKNWZFWExY?=
- =?utf-8?B?WHpYbnFsQjNzaW93dy9XaE0xM01CSmFtOUorSWVNNGd6RU9TemxWdEgxL3Jj?=
- =?utf-8?B?akdabTU1WVlFaURjWkFXd1lUZzcxZEZ5VnpXK3hrWnJ5Rm9BUnBDVzZSOHFR?=
- =?utf-8?B?MWlmTXpiRUxuNDZ5TWlLdlNkWXJtellHQXB1ZFVVdG5SRXBabEtraTNzYWRU?=
- =?utf-8?B?ZnYyT0ptclpPaTZydnRheUp6RU80eXhHL2ZhZ0RvODR6dWFxUkQrMkcwL1N1?=
- =?utf-8?B?eDBoc3Y4eXJmVEcxQ3gyWHNia0xPVGhSY1lhR2V6UTR5N1VOSy9MUVZLNjZQ?=
- =?utf-8?B?elFGLzVDOFdBOGxpSGtLaCtjWkRFT2NRYmdYajIrVGxNYW9VMTExTFZsVXdy?=
- =?utf-8?B?WkZrT0ZsNkwxbjE2VExlM3lnVGcycThLYkpxQTRXNTVNK2Z5WGMxeGU5QmQ2?=
- =?utf-8?B?UE9jZGNjK0M1T1BmZWF3akRqYlBXcEY2ZDI3Y0c5dWIxajFreEVpeGdIT1hn?=
- =?utf-8?B?VFRGcE1mMzN0cWR1MTMwRnMwSlY0TW9icnhPNXRxdVNwYnJ6V1pxeU12dlMz?=
- =?utf-8?B?UUF0b2t4V0YrRmIvbnRpT3ZXMHd6OCthUmJJdWN0dWd5b01oc1k0RUxlRko2?=
- =?utf-8?B?T1JoaTFHK2Y1QWJkQkpYRXpnQVBOb25EWCtsWVQzb0ZySVVTWkVpbnlCbmNr?=
- =?utf-8?B?NnkwWWRkVTJoSHY5R0swdEFKelpWc3ZaSldQZUIwSy9MeFpPSkFGME11Wk5J?=
- =?utf-8?B?TG9XWnhvMSt3Q3BhQzZtc3BiUllpOGdXQjlKaFk5aEYxbnR3WEx1YVQ1SG4y?=
- =?utf-8?B?SkN6Uk1iaTF3TVdKRXZIdisrL2ZaMnl1MXdYTmFYcGNwUUt1UW9qdExqTjZW?=
- =?utf-8?B?aXhqY1o4TjlQa3JiTWhPaERIZkFzTlkrWjcwQTBtRmFJSWc1NFJiQysxZVE1?=
- =?utf-8?B?NEU0b0VKckR0aStvR0orekxyeWt4b1dsc0p1UTlVWmx1NEZFbXZ1ZGVnU3dS?=
- =?utf-8?B?VUdBR2NLQjBRWkdvUy90anFnTEIyeGE0a0pKSmdkZDNQRlNiaFg5cWRUY1VC?=
- =?utf-8?B?VGoraDBWb3hyQm9kV1J6ODNpMXhxYnNQRS90NlZRRnh1bEpDVVpwMk9JQ1hi?=
- =?utf-8?B?eWtaVFJUZFRNekx0TVY1TSs4TnhaTS81bGhNODhTU1NrWHAvVlVoZW5UYks3?=
- =?utf-8?B?TnEzYjRoMFFGYkgzSU8zRTUxZ1kxZUpoZGNteTU5cmhGMjRPSWQ0MkpZTEUr?=
- =?utf-8?B?OGl0WHVoUE1yOHUzbTVZZmcwSDNad20wMEdleS9kWXhxa04zdE9ibVFSclpa?=
- =?utf-8?B?MmJ2YmpYdHV0SnZKZGg3SXRiUzViTDdmVzdXQ0FabGxNVHZrempRTS9UVFkw?=
- =?utf-8?B?T016WFpBZ0hNNEtsRUs2M25ONzFGTWNqUytZaS9KaGJ1M2UvMlRmdGcvb3RN?=
- =?utf-8?B?UVhiekQzWFROQTdsdi9YZk9McHRhU2tIcUNoamJXZ2FQNVQ4N2d0cHRzdk1M?=
- =?utf-8?B?aTlpcldUSm9OaXcwd0pFR0ZCOE1yanlLVjJxQUI4cXlyTzJiQlYyL2JZT3or?=
- =?utf-8?B?V050cjVUSEdvcW5kWUIvRm92ZkJNWE9ZU2pCdDU0b2lQMm0ycStZVmRHb2Nq?=
- =?utf-8?B?UjlTUW9vVzR3N1NVVlhKaUJraXd3T0RFTVhWTWhjd2FEbmdHaEdUVFBzcWVz?=
- =?utf-8?B?UUZlNGY0eWRtMWRZV1ZvL2JVTVdoenpidmt0ZCtZVEVacFpHRzVnaUtEUlNK?=
- =?utf-8?B?bmR0KzRmOXJnVlIxYmUwRHFGSHNvOTIzZ09KTCtXSkxZa2VKZjRVS0QwdXVC?=
- =?utf-8?B?UlE9PQ==?=
-X-OriginatorOrg: oss.nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 53374aad-7abe-4229-4426-08ddd108d595
-X-MS-Exchange-CrossTenant-AuthSource: AM9PR04MB8487.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 01 Aug 2025 14:36:43.2109
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: JSEKggRWzFP+PfnIYKMuBhz0aXYh6HSp/znH4aT2lO/Mv97G1IvWco1pVYVT6TcCQMTBSCZR+4w/dxY5s2V2kTvWdhll6Hc88Ke/ht1WVeo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB8108
+Mime-Version: 1.0
+References: <20250730174605.1614792-1-xin@zytor.com> <20250730174605.1614792-3-xin@zytor.com>
+Message-ID: <aIzROnILlYuaE2FB@google.com>
+Subject: Re: [PATCH v1 2/4] KVM: x86: Introduce MSR read/write emulation helpers
+From: Sean Christopherson <seanjc@google.com>
+To: "Xin Li (Intel)" <xin@zytor.com>
+Cc: linux-kernel@vger.kernel.org, kvm@vger.kernel.org, pbonzini@redhat.com, 
+	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de, 
+	dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	chao.gao@intel.com
+Content-Type: text/plain; charset="us-ascii"
 
-
-> Thank you for the review! I've just taken a look over soc_device
-> and I agree, this driver should be a soc_device. I will convert
-> it in the next revision.
+On Wed, Jul 30, 2025, Xin Li (Intel) wrote:
+> Add helper functions to centralize guest MSR read and write emulation.
+> This change consolidates the MSR emulation logic and makes it easier
+> to extend support for new MSR-related VM exit reasons introduced with
+> the immediate form of MSR instructions.
 > 
+> Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+> ---
+>  arch/x86/include/asm/kvm_host.h |  1 +
+>  arch/x86/kvm/x86.c              | 67 +++++++++++++++++++++++----------
+>  2 files changed, 49 insertions(+), 19 deletions(-)
+> 
+> diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+> index f19a76d3ca0e..a854d9a166fe 100644
+> --- a/arch/x86/include/asm/kvm_host.h
+> +++ b/arch/x86/include/asm/kvm_host.h
+> @@ -201,6 +201,7 @@ enum kvm_reg {
+>  	VCPU_EXREG_SEGMENTS,
+>  	VCPU_EXREG_EXIT_INFO_1,
+>  	VCPU_EXREG_EXIT_INFO_2,
+> +	VCPU_EXREG_EDX_EAX,
 
-Hi Arnd,
+I really, really don't want to add a "reg" for this.  It's not an actual register,
+and bleeds details of one specific flow throughout KVM.
 
-I took a more in-depth look over soc_device and how to apply it to SIUL2
-and I have encountered an issue. Downstream [1], [2], [3] we use SIUL2
-nvmem-cells to set the PCIe vendor id partially based on the part number
-and also to ensure that the SerDes subsystem is present. I don't think we can
-achieve this with a soc_device driver. I saw that we could export a custom
-attribute but I don't think we can read it from the PCIe driver.
+The only path where KVM _needs_ to differentiate between the "legacy" instructions
+and the immediate variants instruction is in the inner RDMSR helper.
 
-Apart from the proposed NVMEM driver, there is also an option of exporting
-a syscon regmap for the registers which provide information about the SoC.
+For the WRMSR helper, KVM can and should simply pass in @data, not pass in a reg
+and then have the helper do an if-else on the reg:
 
-I have seen that typically NVMEM drivers export information read from fuses
-but I think having a NVMEM driver is nicer way to access the information
-instead of using a syscon regmap and manually extracting the needed bits. 
+  int kvm_emulate_wrmsr(struct kvm_vcpu *vcpu)
+  {
+  	return __kvm_emulate_wrmsr(vcpu, kvm_rcx_read(vcpu),
+  				   kvm_read_edx_eax(vcpu));
+  }
+  EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr);
+  
+  int kvm_emulate_wrmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
+  {
+  	return __kvm_emulate_wrmsr(vcpu, msr, kvm_register_read(vcpu, reg));
+  }
+  EXPORT_SYMBOL_GPL(kvm_emulate_wrmsr_imm);
 
-To provide a bit of context: the SIUL2 IP has two registers called
-SIUL2 MCU ID Register (MIDR1/2) which export information such as:
-the part number, major, minor, package, maximum frequency,
-flash size, SRAM size, SerDes susbsytem presence and so on.
+And for the RDMSR userspace completion, KVM is already eating an indirect function
+call, so the wrappers can simply pass in the appropriate completion helper.  It
+does mean having to duplicate the vcpu->run->msr.error check, but we'd have to
+duplicate the "r == VCPU_EXREG_EDX_EAX" by sharing a callback, *and* we'd also
+need to be very careful about setting the effective register in the other existing
+flows that utilize complete_fast_rdmsr.
 
-S32G2/3 SoCs have two SIUL2 blocks named SIUL2_0 and SIUL2_1. We need
-to export the MIDR1/2 registers of both SIUL2 hardware blocks.
+Then to communicate that the legacy form with implicit destination operands is
+being emulated, pass -1 for the register.  It's not the prettiest, but I do like
+using "reg invalid" to communicate that the destination is implicit.
 
-What do you think? Would it be ok to keep the existing NVMEM implementation?
-Do you have any other suggestions?
+  static int __kvm_emulate_rdmsr(struct kvm_vcpu *vcpu, u32 msr, int reg,
+  			       int (*complete_rdmsr)(struct kvm_vcpu *))
+  {
+  	u64 data;
+  	int r;
+  
+  	r = kvm_get_msr_with_filter(vcpu, msr, &data);
+  	if (!r) {
+  		trace_kvm_msr_read(msr, data);
+  
+  		if (reg < 0) {
+  			kvm_rax_write(vcpu, data & -1u);
+  			kvm_rdx_write(vcpu, (data >> 32) & -1u);
+  		} else {
+  			kvm_register_write(vcpu, reg, data);
+  		}
+  	} else {
+  		/* MSR read failed? See if we should ask user space */
+  		if (kvm_msr_user_space(vcpu, msr, KVM_EXIT_X86_RDMSR, 0,
+  				       complete_rdmsr, r))
+  			return 0;
+  		trace_kvm_msr_read_ex(msr);
+  	}
+  
+  	return kvm_x86_call(complete_emulated_msr)(vcpu, r);
+  }
+  
+  int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
+  {
+  	return __kvm_emulate_rdmsr(vcpu, kvm_rcx_read(vcpu), -1,
+  				   complete_fast_rdmsr);
+  }
+  EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr);
+  
+  int kvm_emulate_rdmsr_imm(struct kvm_vcpu *vcpu, u32 msr, int reg)
+  {
+  	vcpu->arch.cui_rdmsr_imm_reg = reg;
+  
+  	return __kvm_emulate_rdmsr(vcpu, msr, reg, complete_fast_rdmsr_imm);
+  }
+  EXPORT_SYMBOL_GPL(kvm_emulate_rdmsr_imm);
 
-Best regards,
-Andrei
+>  };
+>  
+>  enum {
+> diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+> index a1c49bc681c4..5086c3b30345 100644
+> --- a/arch/x86/kvm/x86.c
+> +++ b/arch/x86/kvm/x86.c
+> @@ -2024,54 +2024,71 @@ static int kvm_msr_user_space(struct kvm_vcpu *vcpu, u32 index,
+>  	return 1;
+>  }
+>  
+> -int kvm_emulate_rdmsr(struct kvm_vcpu *vcpu)
+> +static int kvm_emulate_get_msr(struct kvm_vcpu *vcpu, u32 msr, int reg)
 
-[1] - https://github.com/nxp-auto-linux/linux/blob/release/bsp44.0-6.6.85-rt/arch/arm64/boot/dts/freescale/s32cc.dtsi#L1036
-[2] - https://github.com/nxp-auto-linux/linux/blob/release/bsp44.0-6.6.85-rt/drivers/pci/controller/dwc/pci-s32cc.c#L832
-[3] - https://github.com/nxp-auto-linux/linux/blob/release/bsp44.0-6.6.85-rt/drivers/pci/controller/dwc/pci-s32cc.c#L163
+Please keep "rdmsr" and "wrmsr" when dealing emulation of those instructions to
+help differentiate from the many other MSR get/set paths.  (ignore the actual
+emulator hooks; that code is crusty, but not worth the churn to clean up).
 
+> @@ -2163,9 +2180,8 @@ static int handle_fastpath_set_tscdeadline(struct kvm_vcpu *vcpu, u64 data)
+>  	return 0;
+>  }
+>  
+> -fastpath_t handle_fastpath_set_msr_irqoff(struct kvm_vcpu *vcpu)
+> +static fastpath_t handle_set_msr_irqoff(struct kvm_vcpu *vcpu, u32 msr, int reg)
 
+I think it makes sense to (a) add the x86.c code and the vmx.c code in the same
+patch, and then (b) add fastpath support in a separate patch to make the initial
+(combined x86.c + vmx.c) patch easier to review.  Adding the x86.c plumbing/logic
+before the VMX support makes the x86.c change difficult to review, as there are
+no users of the new paths, and the VMX changes are quite tiny.  Ignoring the arch
+boilerplate, the VMX changes barely add anything relative to the x86.c changes.
+
+diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+index ae2c8c10e5d2..757e4bb89f36 100644
+--- a/arch/x86/kvm/vmx/vmx.c
++++ b/arch/x86/kvm/vmx/vmx.c
+@@ -6003,6 +6003,23 @@ static int handle_notify(struct kvm_vcpu *vcpu)
+        return 1;
+ }
+ 
++static int vmx_get_msr_imm_reg(struct kvm_vcpu *vcpu)
++{
++       return vmx_get_instr_info_reg(vmcs_read32(VMX_INSTRUCTION_INFO))
++}
++
++static int handle_rdmsr_imm(struct kvm_vcpu *vcpu)
++{
++       return kvm_emulate_rdmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
++                                    vmx_get_msr_imm_reg(vcpu));
++}
++
++static int handle_wrmsr_imm(struct kvm_vcpu *vcpu)
++{
++       return kvm_emulate_wrmsr_imm(vcpu, vmx_get_exit_qual(vcpu),
++                                    vmx_get_msr_imm_reg(vcpu));
++}
++
+ /*
+  * The exit handlers return 1 if the exit was handled fully and guest execution
+  * may resume.  Otherwise they set the kvm_run parameter to indicate what needs
+@@ -6061,6 +6078,8 @@ static int (*kvm_vmx_exit_handlers[])(struct kvm_vcpu *vcpu) = {
+        [EXIT_REASON_ENCLS]                   = handle_encls,
+        [EXIT_REASON_BUS_LOCK]                = handle_bus_lock_vmexit,
+        [EXIT_REASON_NOTIFY]                  = handle_notify,
++       [EXIT_REASON_MSR_READ_IMM]            = handle_rdmsr_imm,
++       [EXIT_REASON_MSR_WRITE_IMM]           = handle_wrmsr_imm,
+ };
+ 
+ static const int kvm_vmx_max_exit_handlers =
+@@ -6495,6 +6514,8 @@ static int __vmx_handle_exit(struct kvm_vcpu *vcpu, fastpath_t exit_fastpath)
+ #ifdef CONFIG_MITIGATION_RETPOLINE
+        if (exit_reason.basic == EXIT_REASON_MSR_WRITE)
+                return kvm_emulate_wrmsr(vcpu);
++       else if (exit_reason.basic == EXIT_REASON_MSR_WRITE_IMM)
++               return handle_wrmsr_imm(vcpu);
+        else if (exit_reason.basic == EXIT_REASON_PREEMPTION_TIMER)
+                return handle_preemption_timer(vcpu);
+        else if (exit_reason.basic == EXIT_REASON_INTERRUPT_WINDOW)
 
