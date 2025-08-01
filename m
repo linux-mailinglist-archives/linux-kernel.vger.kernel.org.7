@@ -1,252 +1,532 @@
-Return-Path: <linux-kernel+bounces-752999-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8ACD4B17DA1
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:32:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 54C90B17DA3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 09:33:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 946786239AC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 75A713A74D8
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:33:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4466F1FE47B;
-	Fri,  1 Aug 2025 07:31:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 43DA61F5619;
+	Fri,  1 Aug 2025 07:33:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P3vZtnLq";
-	dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b="vckMZVDt"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MiZ/uzOF"
+Received: from mail-yb1-f193.google.com (mail-yb1-f193.google.com [209.85.219.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A29CA2E36FF;
-	Fri,  1 Aug 2025 07:31:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=60.244.123.138
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754033512; cv=fail; b=lLvkpS6ydhVHsZHiDn4hcGeI1PQIcS3srMA9+j7cjds8WD6jDVejvaJoczX4pbmt7rYjqefxJTX0SVme3nPDHvt3mSBsPCv3a4jDluxDg7JO904vn1Xs5veFSAPzfllSesd3dTmFUac+eLTMnWQvZ6Hgyg3/mbyyjmMU2RuCilg=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754033512; c=relaxed/simple;
-	bh=JiMNzpwBSw+gwVZJCmHbnvEpjpWQYDNC4mY5XAGo1i8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=b2n6PeofCxhi/x5E4Xx9FxJ1F8pkgzBSaOcKErgcQX5AxFL9ubnt5Po5LwrTCdXqmEtirIoZuk1+89ipXR4AlmykbqCSF+ExMKnU4inZ9gsSiOvLaSAw1RG9B1yJUZV4tr3h+SDk+W7Xg7jzc/Ub4wAowvYT56YnKGG/dmhAa5A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=P3vZtnLq; dkim=pass (1024-bit key) header.d=mediateko365.onmicrosoft.com header.i=@mediateko365.onmicrosoft.com header.b=vckMZVDt; arc=fail smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 93c6fd3e6ea911f08871991801538c65-20250801
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=MIME-Version:Content-Transfer-Encoding:Content-ID:Content-Type:In-Reply-To:References:Message-ID:Date:Subject:CC:To:From; bh=JiMNzpwBSw+gwVZJCmHbnvEpjpWQYDNC4mY5XAGo1i8=;
-	b=P3vZtnLqTzpRRvEfFXuznBHmXak/GYOPy0psuaa0etb3YLPrpELz3Fg7QKKz5GunECfkHOY7Sb0cKCqpi3vghtmaqzfGJaLjZ1CTD58nlWJ1gIOy6K/trC+XbII18f7ohER/CTVaArW3PfUPy6fh1ze/LIUs91Xz67mcctT3gmA=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.3.2,REQID:b6b8881d-e6bd-49b2-80cd-e8b30671ee4e,IP:0,UR
-	L:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:0
-X-CID-META: VersionHash:9eb4ff7,CLOUDID:eef2660f-6968-429c-a74d-a1cce2b698bd,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:80|81|82|83|102|110|111,TC:-5,Conten
-	t:0|15|50,EDM:-3,IP:nil,URL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:
-	0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-CID-RHF: D41D8CD98F00B204E9800998ECF8427E
-X-UUID: 93c6fd3e6ea911f08871991801538c65-20250801
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <peter.wang@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 239165120; Fri, 01 Aug 2025 15:31:45 +0800
-Received: from mtkmbs10n2.mediatek.inc (172.21.101.183) by
- MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.39; Fri, 1 Aug 2025 15:31:44 +0800
-Received: from OS8PR02CU002.outbound.protection.outlook.com (172.21.101.237)
- by mtkmbs10n2.mediatek.inc (172.21.101.183) with Microsoft SMTP Server id
- 15.2.1258.39 via Frontend Transport; Fri, 1 Aug 2025 15:31:44 +0800
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=axLplhpgF4Vul2UcP4cZTxBxkkZsZmk6963HixdV8iL7oyr6c4BV080B67VIdER04gbiFyTNngiG5XNLYqsucZFSrNFk7tCuzMDPnFsFlDdnyqdaQnCowHtlQyHI5C253xJDLZdvd3+EL9WAO3MYSHb0dMwIH8j/kACRJNCMxYldgerlYNSJpM6LsQH6s4bBjf5Am0y7LYHJPl4NY96jSwvrgqqyTDAd7+gUmKbCgeRgmbSxR6XhYJbS7GY2D5iL0GaHLFxHXPl49OpRjPLXp+uwcYHWpNUhS7IV8dmgFyOVfbIOUEECA618RJor6U9qZYm+PzzC39sNvv8zLxPy6w==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JiMNzpwBSw+gwVZJCmHbnvEpjpWQYDNC4mY5XAGo1i8=;
- b=N9I8TbDMNl3KfDHuGMBENm+NfZ/nhzu6UF6KIYW5g3q9fjsKxI5xb64sroa22NBdPfUqsvbTVdQh5+fE+AskrMmogBn5CvUnhVc6dJ7GaI0PViFLGKsHKQnN7mOR4Men3g6y+JSgvYa1O+siivasn8ACjF+aY3Xx+pLNSCZYj/+S4rI4uRA4W0lPthK6YjTpXAnjyJ82aoFEu+ILd9dzZEhVtO7F95zKbOVEx8jEvGdDTL8W7j3tJ35xZiDrv2E5HUu6t53VgmmKmbJAYnMjc3XDOpAtrub/83VAhrz8eqI5/fWug8V6FkrFFXqdokjfRhLiQPGG4bo2g8YxaADj/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=mediatek.com; dmarc=pass action=none header.from=mediatek.com;
- dkim=pass header.d=mediatek.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58AA12A8C1;
+	Fri,  1 Aug 2025 07:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.193
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754033605; cv=none; b=JxjEl7GNWOUe4ARkN3H6Vh85V6Kxh5W1OwgQ86ECYvlAWiwRCLke/XTkbXZtOxWMyhxAW+TfzSHpX9w2HoGWn9YiPvBDtnp7wEMhKT8eoVhQsbI8/Yh16TNTZIbvkDTIlUqlcD//itBYNwDw4BxcSD305CHKxORrIn6zfm1HDpE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754033605; c=relaxed/simple;
+	bh=mV0ZXXgxZIeyFp/araM3WvFl/5l55Yf4J9gG6lChfv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CoRFW44NXcj7WqjInFZRVgH6MZIF0soskyZrJQo4Y7l6Weu1WShdt9SS9NNhYcd9qgeANyRV91ly1Q7ivWkojtSEmZOQD5ORfmyfgwHWVv5delLzjmWj7w173Ebkgoki9iGmc2b5F01n/7QOe8ShoJ1UbBUyfdBb5AbUPtiMQQU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MiZ/uzOF; arc=none smtp.client-ip=209.85.219.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f193.google.com with SMTP id 3f1490d57ef6-e8da9b7386dso2006094276.1;
+        Fri, 01 Aug 2025 00:33:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mediateko365.onmicrosoft.com; s=selector2-mediateko365-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JiMNzpwBSw+gwVZJCmHbnvEpjpWQYDNC4mY5XAGo1i8=;
- b=vckMZVDt8cUKwrgWE0bAx5WhhVRry91kg1gmA6tjryZojaF1l40qyzd+RnMAP2YDzoD3Trkp/dZiMAeddjsQgOPK9gVHEVxT9wsIEwzKet4T3yf37bSG9aLgsGVbjfcQdpI/v1aqvBCb7ZfjHJGv3jYhm39uWooYLRzqbAdJwYw=
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com (2603:1096:301:66::6)
- by SE3PR03MB9355.apcprd03.prod.outlook.com (2603:1096:101:2e5::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.12; Fri, 1 Aug
- 2025 07:31:40 +0000
-Received: from PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c]) by PSAPR03MB5605.apcprd03.prod.outlook.com
- ([fe80::3945:7dbc:62bd:c31c%7]) with mapi id 15.20.8989.011; Fri, 1 Aug 2025
- 07:31:40 +0000
-From: =?utf-8?B?UGV0ZXIgV2FuZyAo546L5L+h5Y+LKQ==?= <peter.wang@mediatek.com>
-To: "huobean@gmail.com" <huobean@gmail.com>, "avri.altman@wdc.com"
-	<avri.altman@wdc.com>, "beanhuo@micron.com" <beanhuo@micron.com>,
-	"quic_nitirawa@quicinc.com" <quic_nitirawa@quicinc.com>, "bvanassche@acm.org"
-	<bvanassche@acm.org>, "alim.akhtar@samsung.com" <alim.akhtar@samsung.com>,
-	"andre.draszik@linaro.org" <andre.draszik@linaro.org>,
-	"martin.petersen@oracle.com" <martin.petersen@oracle.com>, "mani@kernel.org"
-	<mani@kernel.org>, "James.Bottomley@HansenPartnership.com"
-	<James.Bottomley@HansenPartnership.com>
-CC: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
-	"linux-arm-msm@vger.kernel.org" <linux-arm-msm@vger.kernel.org>,
-	"quic_pkambar@quicinc.com" <quic_pkambar@quicinc.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH V1] ufs: core: Fix interrupt handling for MCQ Mode in
- ufshcd_intr
-Thread-Topic: [PATCH V1] ufs: core: Fix interrupt handling for MCQ Mode in
- ufshcd_intr
-Thread-Index: AQHcABMQk8XyzRGGh0CZRYgd32oCALRNbH2A
-Date: Fri, 1 Aug 2025 07:31:40 +0000
-Message-ID: <2e96a5843fe393537c3325dc2d5af5306686330c.camel@mediatek.com>
-References: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
-In-Reply-To: <20250728225711.29273-1-quic_nitirawa@quicinc.com>
-Accept-Language: zh-TW, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=mediatek.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: PSAPR03MB5605:EE_|SE3PR03MB9355:EE_
-x-ms-office365-filtering-correlation-id: c529a805-d834-41bd-68c1-08ddd0cd74f6
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024|38070700018|921020;
-x-microsoft-antispam-message-info: =?utf-8?B?OTdOQmlqTHJkUUxhNDJtZnJkejBCOHNzWmlzUCtEY1ZxdWZpTzdTR0I0TE9F?=
- =?utf-8?B?L3FiL3gxWjVSZkw2VWNuZEcrZDRlcS96OTJteDg3czYxR0RsSUxiMk9ESEUz?=
- =?utf-8?B?S0c3Rk5sb1R6N2loR2ZUYVdZWVN1eEZJRWFLNkt0RCtZRkpXb1RaR2d1UWM5?=
- =?utf-8?B?Yks2K2RiV1VJbXFtZWFIK3JkZnNyaFdLelRZQi80K0hFZ3ZuZi9pMVZ3V2Vo?=
- =?utf-8?B?NVFwWXNpNXdTalNjTldZbStyNUtSMVBLV2xCa1oxSkJzcFVYLy9ob3FVNXRt?=
- =?utf-8?B?SjVxNDlWa3lTUzJWSWFnd3EvRkwxbkxmenRaYTdZOUdUY3FKczlGZTN5cVJZ?=
- =?utf-8?B?KzNueVNxaDRsOUxqSWl4RlpmVlRCQjkwRDVkN1ZqZER1dDRVRVYxOThtUXZ4?=
- =?utf-8?B?MVBPazdtRmFQSTFWVm83L2w5MU5GS01JVDE0Ujc5dkFoTVFheVdkUGFGN3pv?=
- =?utf-8?B?akpEKy83SG05c2J2WERkTU81eUYvMUg0QjNaUkp2SGF0dTlTYXlmVWVkTU1x?=
- =?utf-8?B?VnZoSDBTdFBCaGRFeGttSXhZV3Y4MUdtdTZ5RlVCMWxIK3Rid1pIdHM2Yzcy?=
- =?utf-8?B?bUNTQ1h2ZUZKZ1NPdnBCL0xqaXF1ckFUdEtOVFR1UjFJaUZ0UWt0dGxjalhM?=
- =?utf-8?B?RlEzaDdteWZLNjM4Mi92SEJ0RVpEWHg5eFkvZHc2VWYrSWM4MFhnYy90am40?=
- =?utf-8?B?OVBvNmxTZk9yK0hJMU9KNkpNUTVVK0dYaTFtaEdSZ0Z5YTV1VXZCbWJKb2Jj?=
- =?utf-8?B?TDlscUl1MjdQdEwwVHBVaUNZOFBwUEdWb3JMckVLVUcrQkVzZ3lMaDkvZEFh?=
- =?utf-8?B?RkIxbnd1L3g4MUNFYUFxMzI0bGppRlptRVhGbTdqTEZKKzA5RXZxYWkxc1gx?=
- =?utf-8?B?aVRIQ2s0cW1RQkJEUXd4UVpZSHpKSWN5dldGMER4YjhjYitubTBrczNhTCtv?=
- =?utf-8?B?c2Zoek53RGFRZDZVMmlkRDE0YWdNMDZtMDlwTS9CRVgza3VaV1poZFBYVlVD?=
- =?utf-8?B?YWZJZ3gwSWtaOU5QeDRBRmtUSFlvOTdEeG9pQi82L0N5dG4vaVBtdGhtaDFj?=
- =?utf-8?B?NDdNOGQwTVBLVHVvcmR0K01LVitqd3JralZ2blRWcDBDcmxCeXBKWG9BQS9E?=
- =?utf-8?B?bkUva08yOVFXTWZ1enZodno4ZGkzWkUyeEVsS3ZLTWZFaTF1WWFMN1l3N2dJ?=
- =?utf-8?B?bnRzeXRxbVRyTFcwdHJjY2RFM1B6MGZqWlVrRXFKVGRCeXU4Wlo5cWVHZk1Z?=
- =?utf-8?B?V3dIaGVjRE5qblphb015YVBXdVUvMGlueWJyeEtVMndTMHc1bFNqQ2RlbXh0?=
- =?utf-8?B?K2JmOXNDMDdKaFdUUDhWLzFZRWlPaFNZNkxHSEhUb2xQUHBLRHVESEZEb1Y3?=
- =?utf-8?B?Z0RLeXo5NE5qMW1oVzBnZ3RDbE1oby9HSjlLcjErU3BHQzVRVWdHdVNhdVJk?=
- =?utf-8?B?VVhtU09HUWMwL2VTTFc2VVBXWXc1dlU3cUlPWUtMb2QrdlJJUUl2di9zbHd1?=
- =?utf-8?B?blZodG1kdk1RRm5WUVIrRFZxZG1pTmpkL29zT25ZOVdFVStuY1ZDS20rYzhS?=
- =?utf-8?B?LytTQkIwdFZxSitaRWZ4OTYwWG5INCtZb2lVVDdYSHV4NDFyaDFZWE51VU1a?=
- =?utf-8?B?WXh0VEZrbXFGcURrVE1DS0tKejVwV1hNek9qMlA1S2dSWVZNT0NqMXc3MWFZ?=
- =?utf-8?B?b1YyYndDbWlzaC8rZ2J6MUFYaFhqQVFEbDNvSEs5YSttaTFuR3JsZzNCUUgz?=
- =?utf-8?B?ZjhKcitKSGpWeHNaWDV1NSt6Ymh6dEJ4Z1hRREE4MUpZOWJLRnZ2MlNjRTRm?=
- =?utf-8?B?SUlDRUtFbSt3TGlBT09iK0E0SnVydm03SWFXMFVHQmZ4b25zdFd0VGFqYmhH?=
- =?utf-8?B?N1h0SUJ3bmNYMHJYak5DL0lUckh4RkVGYVJoUEFKdjdCeEF0a015QVNrWXBk?=
- =?utf-8?B?cWc2N0hUK2liaTZwUld4MzBYbmZlTnpZSHdwcVRkK1Y5dWU2bnlRcWJMTTNP?=
- =?utf-8?Q?JwgHbZgDHt/JcJYnrDQS71sntHV4oQ=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PSAPR03MB5605.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?dk05aUVad0ZXWm8rdkRubGU5dUFnNHpycjQyaUxIOEMvdzk1WTZwTzZ6VEh5?=
- =?utf-8?B?bk1kUHRsaTYxcDVSSm92NktjeFQyQmxrRTRiK2NWYnpkN0NIRWlwbldaZmZt?=
- =?utf-8?B?V2lNbU5IZlYrUHRRSlZueTk3L3IzaWZ4c3g2Y3B0UUlEOXloa0FndXc5bjQy?=
- =?utf-8?B?Q1owYnZlTS9jTkdObmxDRk4wb2pKdEY3T09wYUQ2bTJHNXFOcW1vQ3lKU2h6?=
- =?utf-8?B?eXdaSlFhRkxkOEtDNmxqZVFGN2lJTVo0ZHNzWXN3c29IcDBxZGZkRTdCY1ZQ?=
- =?utf-8?B?ZFZDN0NzYjVSWXJJVzZKcUtpUTRZRmtBbHNST2FrZWdDUGJtOW13eHRSd2xZ?=
- =?utf-8?B?dEdyanRHZmNJa3k2dUVoYzNPTHJUKzBENGpZY0RKT2IzalY1QlpCaG5qNm9E?=
- =?utf-8?B?cHJKbjFENXZaSC8vRytiSEtManZKZUw1NDUxVFZWM3ZQcFA0MkRQVTczMDgy?=
- =?utf-8?B?enphczJOWVpEOTdWL2VBUDNpVUwwY2JHbEFGS0Q1bG5uTit3V05WY3Y5STFC?=
- =?utf-8?B?cHRnNGFKejJEMVd4Z3lVdncvL1hKSiszOGNoSkZCbHNad1huT2lnU05kK2J2?=
- =?utf-8?B?a3RmSlFabDc1UHRsWEJPSjhYcVlOS0FJQlkyQ1U2Sm5IbHBzMVd3WG1iZWRR?=
- =?utf-8?B?eU84b0tqcmN0My9SdWxQZ2lUNzJHUkcwT1VQU0xKRTVWa25NanpDa0dCVzhu?=
- =?utf-8?B?QjY3MWtRMFdyNUhDS084aXFLVEhGWGxaT1UwNlVMTUp5cjhMNm1lM3NXYWJo?=
- =?utf-8?B?eHo1RzJwamVCTU9CZnBEQllWbkwzdzdJcnFlcFRIQldWT0RsaCs1WnJSMUFQ?=
- =?utf-8?B?K1dGL1NLWkpETVlDVVBmVEFFQlh5Wk1HbGMveGhBOG1CaWpRa2NGSWdycGla?=
- =?utf-8?B?WTJia2laVEVzMlFhcUtKZG9mOVZjWUl6VVp1aXpPVnlsUmM4OTM1cFlyeDBr?=
- =?utf-8?B?N0l5VU1XdE82eE90NVhyYmlNRWlRK1dISlNQaGtiUFlOdjk3QlNMZkoyMmVE?=
- =?utf-8?B?S1BnRmlvWVZtNUNOTUtaWnYyc0MvdUpXRXoxRVlXU2E2R0JzUForakVkcEI0?=
- =?utf-8?B?bnhPRVlpeEk2SW5xamFhNUp0QnpoYmt1Tng5elREZUVTNW9oVEYydUlSWGds?=
- =?utf-8?B?NThkYzdiVmdtcm5TZEhpcXh5NTJqZVJoQnNKbXh3c2R6ZEg0K2tpV1N0c1l0?=
- =?utf-8?B?dnZrMTc4dmF6b1haZ3BkcHpCSm9Sa2tVdk1ndWpqQVF0RllxMTBZeG8rQlIy?=
- =?utf-8?B?S0lpREJvQnpBcVFkR3VVN0IyV1ZmTzdLa3hJVGVlbTNSYkpPYVg5UFhVL0wx?=
- =?utf-8?B?amw4aUpzekY3Y0JwMC9TUW5hTXg0cnIxMVRkUVRjVmcxMTZWRm41K3ZIbkJX?=
- =?utf-8?B?SndIMjhWY2RjYVYwZDZRQTludkZmNkNwNkkxeU82SjYxd1lxVms5Y2JBcE1j?=
- =?utf-8?B?Qlo2SnY1QkNYLzd4ek8vSnhpVTJFSW4zLzJOVXdKblhqazFHRGw1RDZCTFFL?=
- =?utf-8?B?VUVsaWZud21VMjYvN2Q4T1FaQ1FmSWpjbXRWVDQ0eVIrQy9pTXRmNXVVTjRp?=
- =?utf-8?B?VjlocVZBd2taRVdTNTAzODJzd2M4dnVMYVA1NTczYmN0eGh1YkhPL201M3Jh?=
- =?utf-8?B?L1MwYVFBUU1DekZmYTVHYmlKWDVleGNFWDc4aVVudGlhRkxMRE0xR2VlaUtp?=
- =?utf-8?B?QmdrZUNqM1NKZHRobUtoME93U1djV1lNQ0drQmZPRER6Z0lFNENRNDZiVVUz?=
- =?utf-8?B?dDJvVHJFbWdDZDhaNlZCcDJyODF3OUpsRS9qeHM2cVBsdXVpdkd1NFRHQi9W?=
- =?utf-8?B?czN1akM2WG9hVy9YN1FyMVgwbjJzejFkY3NvN3htaUtKQnNGdFJDcEJDV25z?=
- =?utf-8?B?STFhTmVnVzVGb0k4bVN0cTJSNTBXcWVaVEpSdXAzaDBpS1BRSlIxSUxTZVVN?=
- =?utf-8?B?c3dzL1N2S1N3V2FCV1I0ZVppbHJLWDZIR3h0WEdhaGJEdTJ5ajk5UHB5ZGRq?=
- =?utf-8?B?N09uNG05V1QraFFRN0xtRXZRS21IRzZDVnRTTkd4eXE1a1Nvc2ZWZFoyUy9p?=
- =?utf-8?B?ZjdNNW5hdFVNK1JvUG9DbVRldmsyOThldlp0a3lsTTFnQVk5ZEtndFV4MFpI?=
- =?utf-8?B?bjczZ1U1cFpjbDh0RGUxOGdvSEJlSVJVZXlSUXFBQ0RpZ09YR2VrV01HR3ZO?=
- =?utf-8?B?blE9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <391918BD0D231F4BB76F69C9223E59D7@apcprd03.prod.outlook.com>
-Content-Transfer-Encoding: base64
+        d=gmail.com; s=20230601; t=1754033602; x=1754638402; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DuQdnRxoa4kTzJjnMFJOAhBD5j99W0Mpc2jJTSjDCWA=;
+        b=MiZ/uzOF7otXj2dMCl3Vv6HSbFua/bub5gNY7T9MYCprPAFEpIz76YEiJJ3mH6xJZg
+         LWIqj+zw0Apw0TyoVqlhDfgRe5FSSk4HffB3fMCBlEbLiaDhEDyWdeGV8DxWvFnVVHMW
+         j+wBvYdT5S8t49fowJKTSw11VU1BmIrJ0I9XOXn49cs7Ene+bkCLv6Z1YE1DFAw6f2XA
+         /CqddJfmwIo9RSh2eCmIbDF0StRpl6JLlmoa6n0Ma+3dKERC58ziPu9TEMbYeTA1X1zZ
+         rtGcwV2YjPZ/BVRatQl2y3oHEVuO/ufbrVrACqEPOxqyKUYAiPLwMYkx34hRpXQ7d61d
+         5rDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754033602; x=1754638402;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=DuQdnRxoa4kTzJjnMFJOAhBD5j99W0Mpc2jJTSjDCWA=;
+        b=bjEXO49/LFUQWpIxZ5La2MTHjd8XONRTsxLo0A+7TChe2ORQPDsymAaFM0uH34mN44
+         H1YMKxGJEwKwbkUCx6t3SmT1cZrZ4k8HvE+Me5q8dBXdWdC9UHRwAPF0XEl0B3TmpYci
+         PpAPE64fKeqMaZ2v3cM1MnMHeBmPnlFF8xL3uiM7U1XD/Q4Ssf+zFKVK922MLZ3aIPUi
+         vnDzJHJQ9yYw7rAnKD3GTOTf+UcxW69FuccGwff2kDUvbB1//Xk0m0xixmhwBQRZIEDa
+         GTM9uGTaOOAsHXFh1jBb+VEBCQi/rffHyOElc96Gstp1uhiW5/LK7wtnHHySnYX3QeI7
+         OPTQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWVz5645OXwSzsn0k1YPGaALo4Y2EToq/I5dfCIVCGk4M5h9O16IstzpP6h6Cj+g5W/WfhClRm@vger.kernel.org, AJvYcCV9ge3wFfejjle6ZctEguWK2qxsfW8jovxKWnhyz4KqMZx0fQdoxw5PGgkqeX83YHQTVUsx2fJh4reAKks=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwppRoKpbggwGF7DXqcmDC1C6isD46KsCrzQ4yrGnMdjDSqBBjF
+	y0T5QSPIsLhcWg/EvKmDHb2Wpa9Rsx9SR3qTKRl5wMX/YweEI/Elko/YKex640Y4iKRLZuSMMIr
+	mV/cSh8WKDHA9mKCR6THwXDMFbCNnkSw=
+X-Gm-Gg: ASbGncuH3osN68tR3gA4ujCo3lP+r1rxF8kDs4McFQWdzPfr/9u5CvmjfbPr3GI55xK
+	t0AEkEyHxFJ6xW7/uu7XJotkcB6xY1ojwIkAjjtSzIjVInjGfljRMH9whhSeY0Wt+NJVyIvfMqx
+	HLjURrRTcM6Fw03/JbhyhX8kSGDD1jkG/EJhnyyzabit4123CBvuyhM6vlMuAqy8ZQCskNk1zDc
+	8sgwxc=
+X-Google-Smtp-Source: AGHT+IElJlBpqcp+5heYrVN/m5BPv+TtmxDBQj5coSYbN0Gt8SPgIg2jveAOovjF+M1Kx8INkmNwi5LxSVVLMZPXUHw=
+X-Received: by 2002:a05:6902:288e:b0:e8e:c3d:db8b with SMTP id
+ 3f1490d57ef6-e8fd53a9df8mr6045621276.13.1754033601894; Fri, 01 Aug 2025
+ 00:33:21 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: PSAPR03MB5605.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c529a805-d834-41bd-68c1-08ddd0cd74f6
-X-MS-Exchange-CrossTenant-originalarrivaltime: 01 Aug 2025 07:31:40.5157
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: a7687ede-7a6b-4ef6-bace-642f677fbe31
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: wTPduNLahMx8L31jIJudC7ArGya629JaPHC1emUQKTbRLo5Etm2nTt5DnZKRqFshf8Mv5x6XSw31SqE+9AFTBA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SE3PR03MB9355
+References: <CADxym3YgyBpkEgDApyL4LXsLPBhO4r5DU+oX1pF_p6_BsvyVNw@mail.gmail.com>
+ <20250801040757.1599996-1-kuniyu@google.com>
+In-Reply-To: <20250801040757.1599996-1-kuniyu@google.com>
+From: Menglong Dong <menglong8.dong@gmail.com>
+Date: Fri, 1 Aug 2025 15:33:11 +0800
+X-Gm-Features: Ac12FXyk5OPdwqMZubM2oRqqOPwZXOxpbynjsvsGkPdnR2J9hmGIlh6mQSXsi_0
+Message-ID: <CADxym3bCWf3EHF+drDPntjcXAiU3XKOtCDuwp-hX+jj6LjD6wg@mail.gmail.com>
+Subject: Re: [PATCH net-next] net: ip: lookup the best matched listen socket
+To: Kuniyuki Iwashima <kuniyu@google.com>
+Cc: davem@davemloft.net, dsahern@kernel.org, edumazet@google.com, 
+	horms@kernel.org, kafai@fb.com, kraig@google.com, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, ncardwell@google.com, netdev@vger.kernel.org, 
+	pabeni@redhat.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-T24gVHVlLCAyMDI1LTA3LTI5IGF0IDA0OjI3ICswNTMwLCBOaXRpbiBSYXdhdCB3cm90ZToNCj4g
-Q29tbWl0IDNjN2FjNDBkNzMyMiAoInNjc2k6IHVmczogY29yZTogRGVsZWdhdGUgdGhlIGludGVy
-cnVwdCBzZXJ2aWNlDQo+IHJvdXRpbmUgdG8gYSB0aHJlYWRlZCBJUlEgaGFuZGxlciIpIGludHJv
-ZHVjZWQgYSByZWdyZXNzaW9uIHdoZXJlDQo+IHRoZSBVRlMgaW50ZXJydXB0IHN0YXR1cyByZWdp
-c3RlciAoSVMpIHdhcyBub3QgY2xlYXJlZCBpbg0KPiB1ZnNoY2RfaW50cigpIHdoZW4gb3BlcmF0
-aW5nIGluIE1DUSBtb2RlLiBBcyBhIHJlc3VsdCwgdGhlIElTDQo+IHJlZ2lzdGVyDQo+IHJlbWFp
-bmVkIHVuY2xlYXJlZC4NCj4gDQo+IFRoaXMgbGVkIHRvIGEgcGVyc2lzdGVudCBpc3N1ZSBkdXJp
-bmcgVUlDIGludGVycnVwdHM6DQo+IHVmc2hjZF9pc19hdXRvX2hpYmVybjhfZXJyb3IoKSBjb25z
-aXN0ZW50bHkgcmV0dXJuZWQgdHJ1ZSBiZWNhdXNlIHRoZQ0KPiBVRlNIQ0RfVUlDX0hJQkVSTjhf
-TUFTSyBiaXQgd2FzIHNldCwgd2hpbGUgdGhlIGFjdGl2ZSBjb21tYW5kIHdhcw0KPiBuZWl0aGVy
-IFVJQ19DTURfRE1FX0hJQkVSX0VOVEVSIG5vciBVSUNfQ01EX0RNRV9ISUJFUl9FWElULiBUaGlz
-DQo+IGNhdXNlZCBjb250aW51b3VzIGF1dG8gaGliZXJuOCBlbnRlciBlcnJvcnMgYW5kIGRldmlj
-ZSBmYWlsZWQgdG8NCj4gYm9vdC4NCj4gDQo+IFRvIGZpeCB0aGlzLCB0aGUgcGF0Y2ggZW5zdXJl
-cyB0aGF0IHRoZSBpbnRlcnJ1cHQgc3RhdHVzIHJlZ2lzdGVyIGlzDQo+IHByb3Blcmx5IGNsZWFy
-ZWQgaW4gdGhlIHVmc2hjZF9pbnRyKCkgZnVuY3Rpb24gZm9yIGJvdGggTUNRIG1vZGUgd2l0aA0K
-PiBFU0kgZW5hYmxlZC4NCj4gDQo+IFvCoMKgwqAgNC41NTMyMjZdIHVmc2hjZC1xY29tIDFkODQw
-MDAudWZzOiB1ZnNoY2RfY2hlY2tfZXJyb3JzOiBBdXRvDQo+IEhpYmVybjggRW50ZXIgZmFpbGVk
-IC0gc3RhdHVzOiAweDAwMDAwMDQwLCB1cG1jcnM6IDB4MDAwMDAwMDENCj4gW8KgwqDCoCA0LjU1
-MzIyOV0gdWZzaGNkLXFjb20gMWQ4NDAwMC51ZnM6IHVmc2hjZF9jaGVja19lcnJvcnM6DQo+IHNh
-dmVkX2Vycg0KPiAweDQwIHNhdmVkX3VpY19lcnIgMHgwDQo+IFvCoMKgwqAgNC41NTMzMTFdIGhv
-c3RfcmVnczogMDAwMDAwMDA6IGQ1YzcwMzNmIDIwZTAwNzFmIDAwMDAwNDAwDQo+IDAwMDAwMDAw
-DQo+IFvCoMKgwqAgNC41NTMzMTJdIGhvc3RfcmVnczogMDAwMDAwMTA6IDAxMDAwMDAwIDAwMDEw
-MjE3IDAwMDAwYzk2DQo+IDAwMDAwMDAwDQo+IFvCoMKgwqAgNC41NTMzMTRdIGhvc3RfcmVnczog
-MDAwMDAwMjA6IDAwMDAwNDQwIDAwMTcwZWY1IDAwMDAwMDAwDQo+IDAwMDAwMDAwDQo+IFvCoMKg
-wqAgNC41NTMzMTZdIGhvc3RfcmVnczogMDAwMDAwMzA6IDAwMDAwMTBmIDAwMDAwMDAxIDAwMDAw
-MDAwDQo+IDAwMDAwMDAwDQo+IFvCoMKgwqAgNC41NTMzMTddIGhvc3RfcmVnczogMDAwMDAwNDA6
-IDAwMDAwMDAwIDAwMDAwMDAwIDAwMDAwMDAwDQo+IDAwMDAwMDAwDQo+IFvCoMKgwqAgNC41NTMz
-MTldIGhvc3RfcmVnczogMDAwMDAwNTA6IGZmZmRmMDAwIDAwMDAwMDBmIDAwMDAwMDAwDQo+IDAw
-MDAwMDAwDQo+IFvCoMKgwqAgNC41NTMzMjBdIGhvc3RfcmVnczogMDAwMDAwNjA6IDAwMDAwMDAx
-IDgwMDAwMDAwIDAwMDAwMDAwDQo+IDAwMDAwMDAwDQo+IFvCoMKgwqAgNC41NTMzMjJdIGhvc3Rf
-cmVnczogMDAwMDAwNzA6IGZmZmRlMDAwIDAwMDAwMDBmIDAwMDAwMDAwDQo+IDAwMDAwMDAwDQo+
-IFvCoMKgwqAgNC41NTMzMjNdIGhvc3RfcmVnczogMDAwMDAwODA6IDAwMDAwMDAxIDAwMDAwMDAw
-IDAwMDAwMDAwDQo+IDAwMDAwMDAwDQo+IFvCoMKgwqAgNC41NTMzMjVdIGhvc3RfcmVnczogMDAw
-MDAwOTA6IDAwMDAwMDAyIGQwMDIwMDAwIDAwMDAwMDAwDQo+IDAxOTMwMjAwDQo+IA0KPiBGaXhl
-czogM2M3YWM0MGQ3MzIyICgic2NzaTogdWZzOiBjb3JlOiBEZWxlZ2F0ZSB0aGUgaW50ZXJydXB0
-IHNlcnZpY2UNCj4gcm91dGluZSB0byBhIHRocmVhZGVkIElSUSBoYW5kbGVyIikNCj4gU2lnbmVk
-LW9mZi1ieTogUGFsYXNoIEthbWJhciA8cXVpY19wa2FtYmFyQHF1aWNpbmMuY29tPg0KPiBTaWdu
-ZWQtb2ZmLWJ5OiBOaXRpbiBSYXdhdCA8cXVpY19uaXRpcmF3YUBxdWljaW5jLmNvbT4NCj4gDQoN
-ClJldmlld2VkLWJ5OiBQZXRlciBXYW5nIDxwZXRlci53YW5nQG1lZGlhdGVrLmNvbT4NCg0KDQo=
+On Fri, Aug 1, 2025 at 12:07=E2=80=AFPM Kuniyuki Iwashima <kuniyu@google.co=
+m> wrote:
+>
+> From: Menglong Dong <menglong8.dong@gmail.com>
+> Date: Fri, 1 Aug 2025 09:31:43 +0800
+> > On Fri, Aug 1, 2025 at 1:52=E2=80=AFAM Kuniyuki Iwashima <kuniyu@google=
+.com> wrote:
+> > >
+> > > On Thu, Jul 31, 2025 at 6:01=E2=80=AFAM Eric Dumazet <edumazet@google=
+.com> wrote:
+> > > >
+> > > > On Thu, Jul 31, 2025 at 5:33=E2=80=AFAM Menglong Dong <menglong8.do=
+ng@gmail.com> wrote:
+> > > > >
+> > > > > For now, the socket lookup will terminate if the socket is reuse =
+port in
+> > > > > inet_lhash2_lookup(), which makes the socket is not the best matc=
+h.
+> > > > >
+> > > > > For example, we have socket1 and socket2 both listen on "0.0.0.0:=
+1234",
+> > > > > but socket1 bind on "eth0". We create socket1 first, and then soc=
+ket2.
+> > > > > Then, all connections will goto socket2, which is not expected, a=
+s socket1
+> > > > > has higher priority.
+> > > > >
+> > > > > This can cause unexpected behavior if TCP MD5 keys is used, as de=
+scribed
+> > > > > in Documentation/networking/vrf.rst -> Applications.
+> > > > >
+> > > > > Therefor, we lookup the best matched socket first, and then do th=
+e reuse
+> > > > > port logic. This can increase some overhead if there are many reu=
+se port
+> > > > > socket :/
+> > >
+> > > This kills O(1) lookup for reuseport...
+> > >
+> > > Another option would be to try hard in __inet_hash() to sort
+> > > reuseport groups.
+> >
+> > Good idea. For the reuse port case, we can compute a score
+> > for the reuseport sockets and insert the high score to front of
+> > the list. I'll have a try this way.
+>
+> I remember you reported the same issue in Feburary and
+> I hacked up a patch below based on a draft diff in my stash.
+
+Yeah, I reported before in this link:
+https://lore.kernel.org/netdev/20250227123137.138778-1-dongml2@chinatelecom=
+.cn/
+
+And I made a wrong commit log in that patch, which made the
+patch you hacked up didn't solve the problem :/
+
+>
+> This fixes the issue, but we still have corner cases where
+> SO_REUSEPORT/SO_BINDTODEVICE are changed after listen(),
+> which should not be allowed given TCP does not have ->rehash()
+> and confuses/breaks the reuseport logic/rule.
+
+Do we need to save the score? Which will make the logic
+more complex :/
+
+I just wrote a similar patch, which should work too:
+
+---------------------------------------patch
+begin---------------------------------
+diff --git a/include/linux/rculist_nulls.h b/include/linux/rculist_nulls.h
+index 89186c499dd4..da500f4ae142 100644
+--- a/include/linux/rculist_nulls.h
++++ b/include/linux/rculist_nulls.h
+@@ -52,6 +52,13 @@ static inline void hlist_nulls_del_init_rcu(struct
+hlist_nulls_node *n)
+ #define hlist_nulls_next_rcu(node) \
+     (*((struct hlist_nulls_node __rcu __force **)&(node)->next))
+
++/**
++ * hlist_nulls_pprev_rcu - returns the element of the list after @node.
++ * @node: element of the list.
++ */
++#define hlist_nulls_pprev_rcu(node) \
++    (*((struct hlist_nulls_node __rcu __force **)&(node)->pprev))
++
+ /**
+  * hlist_nulls_del_rcu - deletes entry from hash list without re-initializ=
+ation
+  * @n: the element to delete from the hash list.
+@@ -145,6 +152,33 @@ static inline void
+hlist_nulls_add_tail_rcu(struct hlist_nulls_node *n,
+     }
+ }
+
++/**
++ * hlist_nulls_add_before_rcu
++ * @n: the new element to add to the hash list.
++ * @next: the existing element to add the new element before.
++ *
++ * Description:
++ * Adds the specified element to the specified hlist
++ * before the specified node while permitting racing traversals.
++ *
++ * The caller must take whatever precautions are necessary
++ * (such as holding appropriate locks) to avoid racing
++ * with another list-mutation primitive, such as hlist_nulls_add_head_rcu(=
+)
++ * or hlist_nulls_del_rcu(), running on this same list.
++ * However, it is perfectly legal to run concurrently with
++ * the _rcu list-traversal primitives, such as
++ * hlist_nulls_for_each_entry_rcu(), used to prevent memory-consistency
++ * problems on Alpha CPUs.
++ */
++static inline void hlist_nulls_add_before_rcu(struct hlist_nulls_node *n,
++                          struct hlist_nulls_node *next)
++{
++    WRITE_ONCE(n->pprev, next->pprev);
++    n->next =3D next;
++    rcu_assign_pointer(hlist_nulls_pprev_rcu(n), n);
++    WRITE_ONCE(next->pprev, &n->next);
++}
++
+ /* after that hlist_nulls_del will work */
+ static inline void hlist_nulls_add_fake(struct hlist_nulls_node *n)
+ {
+diff --git a/include/net/sock.h b/include/net/sock.h
+index c8a4b283df6f..42aa1919eeee 100644
+--- a/include/net/sock.h
++++ b/include/net/sock.h
+@@ -885,6 +885,11 @@ static inline void
+__sk_nulls_add_node_tail_rcu(struct sock *sk, struct hlist_nu
+     hlist_nulls_add_tail_rcu(&sk->sk_nulls_node, list);
+ }
+
++static inline void __sk_nulls_add_node_before_rcu(struct sock *sk,
+struct sock *next)
++{
++    hlist_nulls_add_before_rcu(&sk->sk_nulls_node, &next->sk_nulls_node);
++}
++
+ static inline void sk_nulls_add_node_rcu(struct sock *sk, struct
+hlist_nulls_head *list)
+ {
+     sock_hold(sk);
+diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+index ceeeec9b7290..53a72a8b6094 100644
+--- a/net/ipv4/inet_hashtables.c
++++ b/net/ipv4/inet_hashtables.c
+@@ -334,6 +334,21 @@ static inline int compute_score(struct sock *sk,
+const struct net *net,
+     return score;
+ }
+
++static inline int compute_reuseport_score(struct sock *sk)
++{
++    int score =3D 0;
++
++    if (sk->sk_bound_dev_if)
++        score++;
++
++    if (sk->sk_family =3D=3D PF_INET)
++        score +=3D 5;
++    if (READ_ONCE(sk->sk_incoming_cpu))
++        score++;
++
++    return score;
++}
++
+ /**
+  * inet_lookup_reuseport() - execute reuseport logic on AF_INET
+socket if necessary.
+  * @net: network namespace.
+@@ -739,6 +754,27 @@ static int inet_reuseport_add_sock(struct sock *sk,
+     return reuseport_alloc(sk, inet_rcv_saddr_any(sk));
+ }
+
++static void inet_hash_reuseport(struct sock *sk, struct hlist_nulls_head *=
+head)
++{
++    const struct hlist_nulls_node *node;
++    int score, curscore;
++    struct sock *sk2;
++
++    curscore =3D compute_reuseport_score(sk);
++    /* lookup the socket to insert before */
++    sk_nulls_for_each_rcu(sk2, node, head) {
++        if (!sk2->sk_reuseport)
++            continue;
++        score =3D compute_reuseport_score(sk2);
++        if (score <=3D curscore) {
++            __sk_nulls_add_node_before_rcu(sk, sk2);
++            return;
++        }
++    }
++
++    __sk_nulls_add_node_tail_rcu(sk, head);
++}
++
+ int __inet_hash(struct sock *sk, struct sock *osk)
+ {
+     struct inet_hashinfo *hashinfo =3D tcp_get_hashinfo(sk);
+@@ -761,11 +797,11 @@ int __inet_hash(struct sock *sk, struct sock *osk)
+             goto unlock;
+     }
+     sock_set_flag(sk, SOCK_RCU_FREE);
+-    if (IS_ENABLED(CONFIG_IPV6) && sk->sk_reuseport &&
+-        sk->sk_family =3D=3D AF_INET6)
+-        __sk_nulls_add_node_tail_rcu(sk, &ilb2->nulls_head);
+-    else
++    if (!sk->sk_reuseport)
+         __sk_nulls_add_node_rcu(sk, &ilb2->nulls_head);
++    else
++        inet_hash_reuseport(sk, &ilb2->nulls_head);
++
+     sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
+ unlock:
+     spin_unlock(&ilb2->lock);
+------------------------------patch end------------------------------------=
+--
+
+>
+> ---8<---
+> diff --git a/include/net/sock.h b/include/net/sock.h
+> index c8a4b283df6f..8436e352732f 100644
+> --- a/include/net/sock.h
+> +++ b/include/net/sock.h
+> @@ -885,6 +885,18 @@ static inline void __sk_nulls_add_node_tail_rcu(stru=
+ct sock *sk, struct hlist_nu
+>         hlist_nulls_add_tail_rcu(&sk->sk_nulls_node, list);
+>  }
+>
+> +static inline void __sk_nulls_insert_after_node_rcu(struct sock *sk,
+> +                                                   struct hlist_nulls_no=
+de *prev)
+> +{
+> +       struct hlist_nulls_node *n =3D &sk->sk_nulls_node;
+> +
+> +       n->next =3D prev->next;
+> +       n->pprev =3D &prev->next;
+> +       if (!is_a_nulls(n->next))
+> +               WRITE_ONCE(n->next->pprev, &n->next);
+> +       rcu_assign_pointer(hlist_nulls_next_rcu(prev), n);
+> +}
+> +
+>  static inline void sk_nulls_add_node_rcu(struct sock *sk, struct hlist_n=
+ulls_head *list)
+>  {
+>         sock_hold(sk);
+> diff --git a/include/net/sock_reuseport.h b/include/net/sock_reuseport.h
+> index 6e4faf3ee76f..4a3e9d6887a6 100644
+> --- a/include/net/sock_reuseport.h
+> +++ b/include/net/sock_reuseport.h
+> @@ -23,12 +23,14 @@ struct sock_reuseport {
+>         unsigned int            synq_overflow_ts;
+>         /* ID stays the same even after the size of socks[] grows. */
+>         unsigned int            reuseport_id;
+> -       unsigned int            bind_inany:1;
+> -       unsigned int            has_conns:1;
+> +       unsigned short          bind_inany:1;
+> +       unsigned short          has_conns:1;
+> +       unsigned short          score;
+>         struct bpf_prog __rcu   *prog;          /* optional BPF sock sele=
+ctor */
+>         struct sock             *socks[] __counted_by(max_socks);
+>  };
+>
+> +unsigned short reuseport_compute_score(struct sock *sk, bool bind_inany)=
+;
+>  extern int reuseport_alloc(struct sock *sk, bool bind_inany);
+>  extern int reuseport_add_sock(struct sock *sk, struct sock *sk2,
+>                               bool bind_inany);
+> diff --git a/net/core/sock_reuseport.c b/net/core/sock_reuseport.c
+> index 4211710393a8..df3d1a6f3178 100644
+> --- a/net/core/sock_reuseport.c
+> +++ b/net/core/sock_reuseport.c
+> @@ -6,6 +6,7 @@
+>   * selecting the socket index from the array of available sockets.
+>   */
+>
+> +#include <net/addrconf.h>
+>  #include <net/ip.h>
+>  #include <net/sock_reuseport.h>
+>  #include <linux/bpf.h>
+> @@ -185,6 +186,25 @@ static struct sock_reuseport *__reuseport_alloc(unsi=
+gned int max_socks)
+>         return reuse;
+>  }
+>
+> +unsigned short reuseport_compute_score(struct sock *sk, bool bind_inany)
+> +{
+> +       unsigned short score =3D 0;
+> +
+> +       if (sk->sk_family =3D=3D AF_INET)
+> +               score +=3D 10;
+> +
+> +       if (ipv6_only_sock(sk))
+> +               score++;
+> +
+> +       if (!bind_inany)
+> +               score++;
+> +
+> +       if (sk->sk_bound_dev_if)
+> +               score++;
+> +
+> +       return score;
+> +}
+> +
+>  int reuseport_alloc(struct sock *sk, bool bind_inany)
+>  {
+>         struct sock_reuseport *reuse;
+> @@ -233,6 +253,7 @@ int reuseport_alloc(struct sock *sk, bool bind_inany)
+>         reuse->bind_inany =3D bind_inany;
+>         reuse->socks[0] =3D sk;
+>         reuse->num_socks =3D 1;
+> +       reuse->score =3D reuseport_compute_score(sk, bind_inany);
+>         reuseport_get_incoming_cpu(sk, reuse);
+>         rcu_assign_pointer(sk->sk_reuseport_cb, reuse);
+>
+> @@ -278,6 +299,7 @@ static struct sock_reuseport *reuseport_grow(struct s=
+ock_reuseport *reuse)
+>         more_reuse->bind_inany =3D reuse->bind_inany;
+>         more_reuse->has_conns =3D reuse->has_conns;
+>         more_reuse->incoming_cpu =3D reuse->incoming_cpu;
+> +       more_reuse->score =3D reuse->score;
+>
+>         memcpy(more_reuse->socks, reuse->socks,
+>                reuse->num_socks * sizeof(struct sock *));
+> diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
+> index ceeeec9b7290..042a65372d00 100644
+> --- a/net/ipv4/inet_hashtables.c
+> +++ b/net/ipv4/inet_hashtables.c
+> @@ -739,6 +739,44 @@ static int inet_reuseport_add_sock(struct sock *sk,
+>         return reuseport_alloc(sk, inet_rcv_saddr_any(sk));
+>  }
+>
+> +static void inet_reuseport_hash_sock(struct sock *sk,
+> +                                    struct inet_listen_hashbucket *ilb2)
+> +{
+> +       struct inet_bind_bucket *tb =3D inet_csk(sk)->icsk_bind_hash;
+> +       const struct hlist_nulls_node *node;
+> +       struct sock *sk2, *sk_anchor =3D NULL;
+> +       unsigned short score, hiscore;
+> +       struct sock_reuseport *reuse;
+> +
+> +       reuse =3D rcu_dereference_protected(sk->sk_reuseport_cb, 1);
+> +       score =3D reuse->score;
+> +
+> +       sk_nulls_for_each_rcu(sk2, node, &ilb2->nulls_head) {
+> +               if (!sk2->sk_reuseport)
+> +                       continue;
+> +
+> +               if (inet_csk(sk2)->icsk_bind_hash !=3D tb)
+> +                       continue;
+> +
+> +               reuse =3D rcu_dereference_protected(sk2->sk_reuseport_cb,=
+ 1);
+> +               if (likely(reuse))
+> +                       hiscore =3D reuse->score;
+> +               else
+> +                       hiscore =3D reuseport_compute_score(sk2,
+> +                                                         inet_rcv_saddr_=
+any(sk2));
+> +
+> +               if (hiscore <=3D score)
+> +                       break;
+> +
+> +               sk_anchor =3D sk2;
+> +       }
+> +
+> +       if (sk_anchor)
+> +               __sk_nulls_insert_after_node_rcu(sk, &sk_anchor->sk_nulls=
+_node);
+> +       else
+> +               __sk_nulls_add_node_rcu(sk, &ilb2->nulls_head);
+> +}
+> +
+>  int __inet_hash(struct sock *sk, struct sock *osk)
+>  {
+>         struct inet_hashinfo *hashinfo =3D tcp_get_hashinfo(sk);
+> @@ -759,13 +797,14 @@ int __inet_hash(struct sock *sk, struct sock *osk)
+>                 err =3D inet_reuseport_add_sock(sk, ilb2);
+>                 if (err)
+>                         goto unlock;
+> -       }
+> -       sock_set_flag(sk, SOCK_RCU_FREE);
+> -       if (IS_ENABLED(CONFIG_IPV6) && sk->sk_reuseport &&
+> -               sk->sk_family =3D=3D AF_INET6)
+> -               __sk_nulls_add_node_tail_rcu(sk, &ilb2->nulls_head);
+> -       else
+> +
+> +               sock_set_flag(sk, SOCK_RCU_FREE);
+> +               inet_reuseport_hash_sock(sk, ilb2);
+> +       } else {
+> +               sock_set_flag(sk, SOCK_RCU_FREE);
+>                 __sk_nulls_add_node_rcu(sk, &ilb2->nulls_head);
+> +       }
+> +
+>         sock_prot_inuse_add(sock_net(sk), sk->sk_prot, 1);
+>  unlock:
+>         spin_unlock(&ilb2->lock);
+> ---8<---
+>
+>
+> Tested:
+>
+> ---8<---
+> [root@fedora ~]# cat a.py
+> from socket import *
+>
+> s1 =3D socket()
+> s1.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+> s1.setsockopt(SOL_SOCKET, SO_BINDTODEVICE, b'lo')
+> s1.listen()
+> s1.setblocking(False)
+>
+> s2 =3D socket()
+> s2.setsockopt(SOL_SOCKET, SO_REUSEPORT, 1)
+> s2.bind(s1.getsockname())
+> s2.listen()
+> s2.setblocking(False)
+>
+> for i in range(3):
+>     c =3D socket()
+>     c.connect(s1.getsockname())
+>     try:
+>         print("assigned properly:", s1.accept())
+>     except:
+>         print("wrong assignment")
+> [root@fedora ~]# python3 a.py
+> assigned properly: (<socket.socket fd=3D6, family=3D2, type=3D1, proto=3D=
+0, laddr=3D('127.0.0.1', 36733), raddr=3D('127.0.0.1', 39478)>, ('127.0.0.1=
+', 39478))
+> assigned properly: (<socket.socket fd=3D5, family=3D2, type=3D1, proto=3D=
+0, laddr=3D('127.0.0.1', 36733), raddr=3D('127.0.0.1', 39490)>, ('127.0.0.1=
+', 39490))
+> assigned properly: (<socket.socket fd=3D6, family=3D2, type=3D1, proto=3D=
+0, laddr=3D('127.0.0.1', 36733), raddr=3D('127.0.0.1', 39506)>, ('127.0.0.1=
+', 39506))
+> ---8<---
 
