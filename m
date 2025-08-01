@@ -1,109 +1,89 @@
-Return-Path: <linux-kernel+bounces-753634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C21B18594
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:18:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D74C3B1859E
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:20:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33BC7540713
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:18:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64185A87795
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:20:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59F5528C86D;
-	Fri,  1 Aug 2025 16:18:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A57228C878;
+	Fri,  1 Aug 2025 16:20:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LU94o7vT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="YR3llIkB"
+Received: from 004.mia.mailroute.net (004.mia.mailroute.net [199.89.3.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B283D1A0BF3;
-	Fri,  1 Aug 2025 16:18:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A0E628C86D
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:20:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754065091; cv=none; b=UwXqRa9uyM23MRfgCSoDPxrR5KbjXV19jqlS1k9rPt9kzscR2eoByKvrCoY4xSPDPACwsiDYgepYm9EI4QuICy2f1KgITGW509x2kVeKR4tc48Of00OndfJ4Qdw9qY10CLdfKsA1/T+UVg2MkmZH1ZA1iaqynJ68Bn63F7P4bBU=
+	t=1754065250; cv=none; b=Or582rftlNdVHcLB4+rJK3b3H/fyLqvu1s2uiZhkNRbqzW/2MpQMlyEZ3kzsvsclkG2idwnd9uVrifQlsGdtCrCLAgqmw3puK8LgLULyMy22CSJpB1Nwv0Lg2+8IX6dDSbhmzJFSlqbho8w/TuHEfa3HtUGXW7aJ2YkwQ31b6UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754065091; c=relaxed/simple;
-	bh=yFaqUizzdoWOiqGVh6MjpjtilluZGlU0Tj1trX0kkmo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JBQ6MfQjN02v1/JxcUSD8KKZIw+u4Gygv8cjz1BiuRnSaEC0rHQFktG4uIOAFFZUtBkWL/DLtkZpP7CbXzomSfqXZpznB9uEFD38tMwfNsExmzBeHGoPCsWCBM/bBeMOWwsKKY6SWk2zecF/U5AU+rvJF5f4T7rwoj5btxy9xvY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LU94o7vT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5E951C4CEE7;
-	Fri,  1 Aug 2025 16:18:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754065091;
-	bh=yFaqUizzdoWOiqGVh6MjpjtilluZGlU0Tj1trX0kkmo=;
-	h=From:To:Cc:Subject:Date:From;
-	b=LU94o7vT1m7ulhc3OmvYbaBqeFADggIKRkJBdwXHTuNt4iG8RQSsFU5bptUV6Rnu6
-	 +Yolqh6AVw2mxcmBAIxboDg5RWQUljwRGOSNA5OzIvitHJcjpAfKAaBSmtbthQUW22
-	 iLjXGixaEOKOh1857is6vyOsgV1XImr/AfUvZ8DAJ02j6OsRZfbj4/7h79lbUIbgYm
-	 J+WFGtgUAkzaUg13PtH5g2d2QVAazx+V3DngwAG3N8dASVykM5ChoadcL5T4qOnzNJ
-	 HHSnz5AuUTSXyzsG+SNAn4dXzVLF2GLEvY04o1N/JOYOL53Qxg6VNBbY5gZHqZeCq2
-	 YyUk+PArR1CcA==
-From: Miguel Ojeda <ojeda@kernel.org>
-To: Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>,
-	Gary Guo <gary@garyguo.net>,
-	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
-	Benno Lossin <lossin@kernel.org>,
-	Andreas Hindborg <a.hindborg@kernel.org>,
-	Alice Ryhl <aliceryhl@google.com>,
-	Trevor Gross <tmgross@umich.edu>,
-	Danilo Krummrich <dakr@kernel.org>,
-	Alexandre Courbot <acourbot@nvidia.com>,
-	rust-for-linux@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	patches@lists.linux.dev
-Subject: [PATCH] rust: prelude: re-export `core::mem::{align,size}_of{,_val}`
-Date: Fri,  1 Aug 2025 18:17:52 +0200
-Message-ID: <20250801161752.443431-1-ojeda@kernel.org>
+	s=arc-20240116; t=1754065250; c=relaxed/simple;
+	bh=RENC8vur61d94NKH9iHE1FnEmdUamEZEbKYNI5M7zM0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UOrzIg3ppLui8zKxSxqgCVXN0oD4a3Sul52BH5vtKB+v4fPUV2TAB0v6D2pNaXxqXpdau1r5uGMOOc+ky6vAgAZDXWWykkF0IVmAAKGudSU7DGoJiYhSoiUejFv89glXYTBODuup6Hy6OPgPFhnY/1y93DeCbrqrv+Po9+E/1Uc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=YR3llIkB; arc=none smtp.client-ip=199.89.3.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 004.mia.mailroute.net (Postfix) with ESMTP id 4btrlt3cVWzm0ytX;
+	Fri,  1 Aug 2025 16:20:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1754065241; x=1756657242; bh=RENC8vur61d94NKH9iHE1FnE
+	mdUamEZEbKYNI5M7zM0=; b=YR3llIkB+MCHCqpgwl0lfWSK/QeAsYQ52ruG01V4
+	IbHezGRDwHYdyVF3Z6YY9RMoTMynSvXU/lbeZfHCo2IM6sykPVMWNvjDJl3SgBXg
+	dp68WbQ7vQyQ1nOamE58ry2q2ImUZLxuBaaVW38fUnpzG4fvN1VLmx1K9DShglPf
+	Ze7qpnF5EH5DPBnktzsxdoscCoSXLAQn2y92Ih80DoGSn57wD/8GpfUGeEM3stli
+	iyiPKNPmOWvd02KLfYF20MBJypGJ7Lu/uc9Z0+ppNnx7kwHbWW6MeDChvntmxQSD
+	JK4EbzASWlRWXZYUXy546QQ8lut4M5jfZG+uCdQmR6r1Iw==
+X-Virus-Scanned: by MailRoute
+Received: from 004.mia.mailroute.net ([127.0.0.1])
+ by localhost (004.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id ORHgdQyybtM4; Fri,  1 Aug 2025 16:20:41 +0000 (UTC)
+Received: from [100.66.154.22] (unknown [104.135.204.82])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 004.mia.mailroute.net (Postfix) with ESMTPSA id 4btrln0ljwzm0c2s;
+	Fri,  1 Aug 2025 16:20:35 +0000 (UTC)
+Message-ID: <50e9b6dc-3ed7-4354-9aff-5da62268b036@acm.org>
+Date: Fri, 1 Aug 2025 09:20:34 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dm: sysfs: use sysfs_emit() in dm_attr_*_show()
+To: =?UTF-8?Q?Miguel_Garc=C3=ADa?= <miguelgarciaroman8@gmail.com>,
+ dm-devel@lists.linux.dev
+Cc: agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com,
+ linux-kernel@vger.kernel.org
+References: <20250801131907.371700-1-miguelgarciaroman8@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <20250801131907.371700-1-miguelgarciaroman8@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: quoted-printable
 
-Rust 1.80.0 added:
+On 8/1/25 6:19 AM, Miguel Garc=C3=ADa wrote:
+> This patch replaces the existing sprintf/strcat/strlen patterns in the
+> four dm-sysfs show() callbacks with the sysfs_emit() API, as recommende=
+d by
+> Documentation/filesystems/sysfs.rst.
 
-    align_of
-    align_of_val
-    size_of
-    size_of_val
+That recommendation only applies to new code. See also
+https://lore.kernel.org/all/20250724153449.2433395-1-bvanassche@acm.org/
 
-from `core::mem` to the prelude [1].
-
-For similar reasons, and to minimize potential confusion when code may
-work in later versions but not in our current minimum, add it to our
-prelude too.
-
-Link: https://github.com/rust-lang/rust/pull/123168 [1]
-Link: https://lore.kernel.org/rust-for-linux/CANiq72kOLYR2A95o0ji2mDmEqOKh9e9_60zZKmgF=vZmsW6DRg@mail.gmail.com/ [2]
-Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
----
- rust/kernel/prelude.rs | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
-
-diff --git a/rust/kernel/prelude.rs b/rust/kernel/prelude.rs
-index 25fe97aafd02..198d09a31449 100644
---- a/rust/kernel/prelude.rs
-+++ b/rust/kernel/prelude.rs
-@@ -12,7 +12,10 @@
- //! ```
- 
- #[doc(no_inline)]
--pub use core::pin::Pin;
-+pub use core::{
-+    mem::{align_of, align_of_val, size_of, size_of_val},
-+    pin::Pin,
-+};
- 
- pub use ::ffi::{
-     c_char, c_int, c_long, c_longlong, c_schar, c_short, c_uchar, c_uint, c_ulong, c_ulonglong,
-
-base-commit: dff64b072708ffef23c117fa1ee1ea59eb417807
--- 
-2.50.1
-
+Bart.
 
