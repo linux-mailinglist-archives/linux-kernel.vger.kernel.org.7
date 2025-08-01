@@ -1,163 +1,152 @@
-Return-Path: <linux-kernel+bounces-753669-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026B9B18631
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:06:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 35793B18648
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 19:07:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 625D11C25E14
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:06:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6419F1C28207
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 17:08:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5E4DF1DF751;
-	Fri,  1 Aug 2025 17:05:39 +0000 (UTC)
-Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C87A1F417B;
+	Fri,  1 Aug 2025 17:06:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kVsDcI8t"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49AD01D5CE8
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:05:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B17871DED4C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 17:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754067938; cv=none; b=MZmybK3XfI0J+3V7Guv+FV0X07XHzO7iAmjBw7BvfMuLnyacqoESXOM/y15gjDsQLlGvBl7j8sYumCTlHFPa+MaTGicgXSWfVNjOvAEzORV/LKbGALUTtE+B+uUTn3wVrhRC2jl7fpKpuzh7d2XjXDMuUf9AqQPavlE2+ZXIU7I=
+	t=1754068002; cv=none; b=fSyK0AJmAxye3J4jLxiV+j/YKz33CM4YOZPwv8Bq++rm5rpdDpbDdI/Qa/fRCLD+s9yTmQdvE8P6O9oH+0raC2uqAH4EBbxANg+Qy43d0ecPPNnFOPO7Sx47l6mtAi34f7HkSGcw+Ykuzs2i47Sfsy7+crfWhWkMdrMrCPq356Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754067938; c=relaxed/simple;
-	bh=P/EWMU55Bbw22j9djSvCpDxyIpppaJ8q75soyuqUxP0=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HoLQ/EJLAyQTY9VGPPXth0Dwr2pkTm9+qJMq/toroMDPSlWWIBR7uL8okKa07vV2a6xeMFBmLRdT0txiUsHoN8oWbbu+4GjOLLPfo9f93pn/tMRZYaqwebnp/Z9paYDmxkE57eRQFrj+CAM2zvmu/ZG/3RSdO9iU+0xRBWIIjuM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-8815c09028cso75327739f.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 10:05:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754067936; x=1754672736;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=XKh/YQKlGzOI37lKmU7d8abAM5JFeACMI2cvGMEujOM=;
-        b=qojA9oXK8aflaNZRN5ZaMXXfiwIsgYtN/fzsIKeKf6YUK06wTs1C/wk3JjFBeu8TWt
-         PZI9TmtYvF6GSjxrq6VBofgW45RS1Nfimwjmdj5V3otjJujuZFj3B+1CIn9MqqVgzMxc
-         qGo24XqBWDIUZuOUr7HsUR6XGCyLral5ZchQv3AHG5nXES1UzrjoNU8byexcxAiQSlYr
-         JaMhbmNEssUWwkT6VMVXFKtve/dC2cJesQca3l8TIdB6vM4wuxKcupylj5xyzYht5ket
-         YSs6Yr8sf8tbV3YmqRVRiatuWoeqUR2I4rW6Gq0FYdJebT6e2dAMz1nhtWgDSz6Cgw+n
-         AuKw==
-X-Forwarded-Encrypted: i=1; AJvYcCXFSScoK8U+FnmNbevUi4HeN2rI1X7HQy0oQoY2sRXAXgStDa2sXVNzVFUldzVNs85ozg3TZGyftYrpDZk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXxHxMPpTP1NDvyN1tXrecAObpfJ4+e2cuxFd5s3eddhjqjuGy
-	t/yBiK7v6189dG4gXdWuLj39ojRgAsbeXcNZXozaoWj4exwfVwv5mLwidX/91Zv+8nHIj2I7Y0z
-	tbJ+BysUMmVmKN99cgvlAvUT71Lh4MVx8hRyy3uvYxpBSEnz3NtxVZnpMwjk=
-X-Google-Smtp-Source: AGHT+IGFxU2go7qrm/g+T40B6IlNKxMC8MHoIdK5CXWem1W0UsFB6XeS8sCDoJsztarB2VEgrjLYn/T/zW4Os8ztImRXKZuZufWc
+	s=arc-20240116; t=1754068002; c=relaxed/simple;
+	bh=/ry80e1TzhBi4seREQPK0ZDEO5mEi4VXxq7163G7wco=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=TJw2rnRQmkd0aJo5ye1d3ObSzCfKa3BoVYEQ32U03e8LhY7inXUA/4+p97Hw5OtJqmrvo9kPY/wE/GYqaPrVddoxxxMb5oOGKsRRURX7fz4fUpdAb6fs/9ES2Er5oNfafoboAdtYE8jlbMZ2i74yFDXZPTTeoyCIfMxot5OGHrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kVsDcI8t; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 6B36341C7B;
+	Fri,  1 Aug 2025 17:06:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754067992;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=+DtLqWt0RH6iO3+9BYod+1Nz6NKvB/x/ipIsyCwJyeM=;
+	b=kVsDcI8tVIZ9az8Z9IFImwbP5Qu3o6qq2cTADnSkorOVDY4EngMnIk4bFJ2a9/spFrA5E0
+	+iC+/G8ADzx+FgI+CJTm+qRQ2GLSFSCjI3wR42jdEJwlrRFmhGI6ARYvaK+V+cN8Lhm4c6
+	RVqpldFYVspDn8ra5DPAh2rdDBr+IHifVzakXLZns3yAk/brFZEzbiN/4Rv94f/4DedQ66
+	CsRYU91YPB2tzxkfPpfbkNcyOU0wbONthpqD0gQ/yB1Xhqu0v8sE2V+wyCK/t6xRMsY2g5
+	Mc8kAZa1+1nIBviTXmz+nyv+Xyo5PCaZ7tmZYRzYBlIO+Lf89Jo8811+aeiziw==
+Date: Fri, 1 Aug 2025 19:06:25 +0200
+From: Luca Ceresoli <luca.ceresoli@bootlin.com>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>, Neil Armstrong
+ <neil.armstrong@linaro.org>, Robert Foss <rfoss@kernel.org>, Laurent
+ Pinchart <Laurent.pinchart@ideasonboard.com>, Jonas Karlman
+ <jonas@kwiboo.se>, Jernej Skrabec <jernej.skrabec@gmail.com>, Maarten
+ Lankhorst <maarten.lankhorst@linux.intel.com>, Thomas Zimmermann
+ <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter
+ <simona@ffwll.ch>, Liu Ying <victor.liu@nxp.com>, Shawn Guo
+ <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix
+ Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
+ Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Philipp Zabel
+ <p.zabel@pengutronix.de>, Hui Pu <Hui.Pu@gehealthcare.com>, Thomas
+ Petazzoni <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, imx@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 4/9] drm/omapdrm: use drm_bridge_chain_get_last_bridge()
+Message-ID: <20250801190625.7b9f5f50@booty>
+In-Reply-To: <20250725-holistic-ambrosial-jellyfish-f41f6b@houat>
+References: <20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-0-48920b9cf369@bootlin.com>
+	<20250709-drm-bridge-alloc-getput-drm_bridge_get_next_bridge-v1-4-48920b9cf369@bootlin.com>
+	<20250710-daffy-mini-booby-574fca@houat>
+	<20250714123240.16d8dcb1@booty>
+	<20250725-holistic-ambrosial-jellyfish-f41f6b@houat>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:1:b0:876:19b9:1aaa with SMTP id
- ca18e2360f4ac-881683c9f9dmr29312639f.9.1754067936350; Fri, 01 Aug 2025
- 10:05:36 -0700 (PDT)
-Date: Fri, 01 Aug 2025 10:05:36 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688cf3e0.a00a0220.26d0e1.0074.GAE@google.com>
-Subject: [syzbot] [usb?] upstream test error: BUG: sleeping function called
- from invalid context in kcov_remote_start
-From: syzbot <syzbot+95069c82577357ff89d8@syzkaller.appspotmail.com>
-To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
-	linux-usb@vger.kernel.org, llvm@lists.linux.dev, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdegvdehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpefnuhgtrgcuvegvrhgvshholhhiuceolhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeelffefgfehhfdtvdefueefieevkefggfelkeeiudetkeektedvhedukefgvddvnecuffhomhgrihhnpegsohhothhlihhnrdgtohhmnecukfhppedvrgdtvdemieejtdemvddtvddtmegvrgdtudemsggvgedumeelhegvjeemfeegfeemledufegvnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddvmeeijedtmedvtddvtdemvggrtddumegsvgegudemleehvgejmeefgeefmeeludefvgdphhgvlhhopegsohhothihpdhmrghilhhfrhhomheplhhutggrrdgtvghrvghsohhlihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepvdegpdhrtghpthhtohepmhhrihhprghrugeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoheprghnughriigvjhdrhhgrjhgurgesihhnthgvlhdrtghomhdprhgtphhtthhopehnvghilhdrrghrmhhsthhrohhngheslhhinhgrr
+ hhordhorhhgpdhrtghpthhtoheprhhfohhssheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepnfgruhhrvghnthdrphhinhgthhgrrhhtsehiuggvrghsohhnsghorghrugdrtghomhdprhgtphhtthhopehjohhnrghssehkfihisghoohdrshgvpdhrtghpthhtohepjhgvrhhnvghjrdhskhhrrggsvggtsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhgrrghrthgvnhdrlhgrnhhkhhhorhhstheslhhinhhugidrihhnthgvlhdrtghomh
+X-GND-Sasl: luca.ceresoli@bootlin.com
 
-Hello,
+Hi Maxime,
 
-syzbot found the following issue on:
+On Fri, 25 Jul 2025 16:15:23 +0200
+Maxime Ripard <mripard@kernel.org> wrote:
 
-HEAD commit:    89748acdf226 Merge tag 'drm-next-2025-08-01' of https://gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=164a9cf0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=caba3b7d5edc3bd1
-dashboard link: https://syzkaller.appspot.com/bug?extid=95069c82577357ff89d8
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
+> On Mon, Jul 14, 2025 at 12:32:40PM +0200, Luca Ceresoli wrote:
+> > Hi Maxime,
+> > 
+> > On Thu, 10 Jul 2025 09:13:46 +0200
+> > Maxime Ripard <mripard@kernel.org> wrote:
+> >   
+> > > On Wed, Jul 09, 2025 at 06:48:03PM +0200, Luca Ceresoli wrote:  
+> > > > Use drm_bridge_chain_get_last_bridge() instead of open coding a loop with
+> > > > two invocations of drm_bridge_get_next_bridge() per iteration.
+> > > > 
+> > > > Besides being cleaner and more efficient, this change is necessary in
+> > > > preparation for drm_bridge_get_next_bridge() to get a reference to the
+> > > > returned bridge.
+> > > > 
+> > > > Signed-off-by: Luca Ceresoli <luca.ceresoli@bootlin.com>
+> > > > ---
+> > > >  drivers/gpu/drm/omapdrm/omap_drv.c | 8 ++++----
+> > > >  1 file changed, 4 insertions(+), 4 deletions(-)
+> > > > 
+> > > > diff --git a/drivers/gpu/drm/omapdrm/omap_drv.c b/drivers/gpu/drm/omapdrm/omap_drv.c
+> > > > index 054b71dba6a75b8c42198c4b102a093f43a675a2..3bbcec01428a6f290afdfa40ef6f79629539a584 100644
+> > > > --- a/drivers/gpu/drm/omapdrm/omap_drv.c
+> > > > +++ b/drivers/gpu/drm/omapdrm/omap_drv.c
+> > > > @@ -378,12 +378,12 @@ static int omap_display_id(struct omap_dss_device *output)
+> > > >  	struct device_node *node = NULL;
+> > > >  
+> > > >  	if (output->bridge) {
+> > > > -		struct drm_bridge *bridge = output->bridge;
+> > > > -
+> > > > -		while (drm_bridge_get_next_bridge(bridge))
+> > > > -			bridge = drm_bridge_get_next_bridge(bridge);
+> > > > +		struct drm_bridge *bridge =
+> > > > +			drm_bridge_chain_get_last_bridge(output->bridge->encoder);
+> > > >  
+> > > >  		node = bridge->of_node;
+> > > > +
+> > > > +		drm_bridge_put(bridge);    
+> > > 
+> > > Any reason you're not using __free(drm_bridge_put) here?  
+> > 
+> > Just because the code is simple enough that an explicit
+> > drm_bridge_put() is clearly sufficient.
+> > 
+> > Do you think __free() should be used even in such trivial cases?  
+> 
+> It's a matter of opinion at this point :)
+> 
+> It' makes it a bit easier and consistent so that's why I raised it, but
+> if you feel like it's too much, that's fine by me as well.
 
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/7d6418d10fb8/disk-89748acd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/4608f748b818/vmlinux-89748acd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/92e2adcd74de/bzImage-89748acd.xz
+In the end I chose to use __free here as well for v2, for consistency
+over the series.
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+95069c82577357ff89d8@syzkaller.appspotmail.com
+Luca
 
-BUG: sleeping function called from invalid context at kernel/locking/spinlock_rt.c:48
-in_atomic(): 0, irqs_disabled(): 1, non_block: 0, pid: 30, name: ksoftirqd/1
-preempt_count: 0, expected: 0
-RCU nest depth: 2, expected: 2
-7 locks held by ksoftirqd/1/30:
- #0: ffffffff8d64a6a0 (local_bh){.+.+}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
- #1: ffff8880b8923d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
- #1: ffff8880b8923d90 ((softirq_ctrl.lock)){+.+.}-{3:3}, at: __local_bh_disable_ip+0x264/0x400 kernel/softirq.c:168
- #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rcu_lock_acquire include/linux/rcupdate.h:331 [inline]
- #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rcu_read_lock include/linux/rcupdate.h:841 [inline]
- #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: __rt_spin_lock kernel/locking/spinlock_rt.c:50 [inline]
- #2: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: rt_spin_lock+0x1bb/0x2c0 kernel/locking/spinlock_rt.c:57
- #3: ffffffff8d7a8b00 (rcu_read_lock){....}-{1:3}, at: __local_bh_disable_ip+0xa1/0x400 kernel/softirq.c:163
- #4: ffff88801989a138 ((wq_completion)events_bh){+...}-{0:0}, at: process_one_work kernel/workqueue.c:3211 [inline]
- #4: ffff88801989a138 ((wq_completion)events_bh){+...}-{0:0}, at: process_scheduled_works+0x9b4/0x17b0 kernel/workqueue.c:3319
- #5: ffffc90000a4fa00 ((work_completion)(&bh->bh)){+...}-{0:0}, at: process_one_work kernel/workqueue.c:3212 [inline]
- #5: ffffc90000a4fa00 ((work_completion)(&bh->bh)){+...}-{0:0}, at: process_scheduled_works+0x9ef/0x17b0 kernel/workqueue.c:3319
- #6: ffff8880b8928b50 ((lock)#3){+.+.}-{3:3}, at: spin_lock include/linux/spinlock_rt.h:44 [inline]
- #6: ffff8880b8928b50 ((lock)#3){+.+.}-{3:3}, at: kcov_remote_start+0x92/0x460 kernel/kcov.c:865
-irq event stamp: 58091
-hardirqs last  enabled at (58090): [<ffffffff8af459c5>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-hardirqs last  enabled at (58090): [<ffffffff8af459c5>] _raw_spin_unlock_irqrestore+0x85/0x110 kernel/locking/spinlock.c:194
-hardirqs last disabled at (58091): [<ffffffff86a72b95>] kcov_remote_start_usb_softirq include/linux/kcov.h:88 [inline]
-hardirqs last disabled at (58091): [<ffffffff86a72b95>] __usb_hcd_giveback_urb+0x3f5/0x710 drivers/usb/core/hcd.c:1662
-softirqs last  enabled at (58074): [<ffffffff8184ff9e>] ksoftirqd_run_end kernel/softirq.c:282 [inline]
-softirqs last  enabled at (58074): [<ffffffff8184ff9e>] run_ksoftirqd+0xce/0x210 kernel/softirq.c:969
-softirqs last disabled at (58082): [<ffffffff818e7aff>] smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
-CPU: 1 UID: 0 PID: 30 Comm: ksoftirqd/1 Tainted: G        W           6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT_{RT,(full)} 
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-Call Trace:
- <TASK>
- dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
- __might_resched+0x44b/0x5d0 kernel/sched/core.c:8957
- __rt_spin_lock kernel/locking/spinlock_rt.c:48 [inline]
- rt_spin_lock+0xc7/0x2c0 kernel/locking/spinlock_rt.c:57
- spin_lock include/linux/spinlock_rt.h:44 [inline]
- kcov_remote_start+0x92/0x460 kernel/kcov.c:865
- kcov_remote_start_usb include/linux/kcov.h:55 [inline]
- kcov_remote_start_usb_softirq include/linux/kcov.h:89 [inline]
- __usb_hcd_giveback_urb+0x427/0x710 drivers/usb/core/hcd.c:1662
- usb_giveback_urb_bh+0x296/0x420 drivers/usb/core/hcd.c:1697
- process_one_work kernel/workqueue.c:3236 [inline]
- process_scheduled_works+0xade/0x17b0 kernel/workqueue.c:3319
- bh_worker+0x2b1/0x600 kernel/workqueue.c:3579
- tasklet_action+0xc/0x70 kernel/softirq.c:854
- handle_softirqs+0x22f/0x710 kernel/softirq.c:579
- run_ksoftirqd+0xac/0x210 kernel/softirq.c:968
- smpboot_thread_fn+0x53f/0xa60 kernel/smpboot.c:160
- kthread+0x70e/0x8a0 kernel/kthread.c:464
- ret_from_fork+0x3f9/0x770 arch/x86/kernel/process.c:148
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:245
- </TASK>
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+-- 
+Luca Ceresoli, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
