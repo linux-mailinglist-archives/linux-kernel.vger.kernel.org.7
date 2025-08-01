@@ -1,56 +1,55 @@
-Return-Path: <linux-kernel+bounces-752941-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-752942-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F45CB17CC9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:10:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 836D6B17CCB
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:10:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 57F2F7A84A9
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:08:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDEF91C2567D
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 06:10:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C0831F3B8A;
-	Fri,  1 Aug 2025 06:09:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3431F1F3BAC;
+	Fri,  1 Aug 2025 06:10:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="d3vk68vk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZIYQ78y8"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 877B12E36EA;
-	Fri,  1 Aug 2025 06:09:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FC7B2E36EA;
+	Fri,  1 Aug 2025 06:10:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754028587; cv=none; b=L9yp53jcsNp1NNVnIMzleaApEZOwRnvP4zX6TavWhRc4+CgNJI9628lbvgTnk2sWboznXecNf9Uduybd4dlqaAyB23zKaTx5gJkJnsvRqpcfUW8rGtA2F1PKZIWjEnU+AJef7OsnPpGQNQugJAstnJ+NZP64cD05XiX0laZhRJI=
+	t=1754028615; cv=none; b=QuM18g0ofdIcbK0Algu5KxqD0bnz0FebARA4zBF5h1douFfWqvMjhHkL82M0krsJN/tvlCkIGRZFjimX1iIA/tT4kB2FSd4t0/y0kJ4VcQjbDmpGDqYUVHL/gSbFqp7QVZjOOXqJdtsg46UPSxZf5axekpRWYbr8moK0xM4xLJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754028587; c=relaxed/simple;
-	bh=w1Tw1x//ZViVcWHOCnR7IGO/WiJYwDrDDW5fFhsjRGU=;
+	s=arc-20240116; t=1754028615; c=relaxed/simple;
+	bh=CHhA//WK4DHzPYG5OpmIghiaCWDye+1yuEo1jGi9+dw=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WwBPrTBsMTKBlNjHdVf3ChsNaxOBXFVRtD1WcV0PiHq8v8S4++8kC4RrVHmgCq9aWnskkfM1Y50JHJmku9Xhva12b6AYBIMpYSbCDUQa3HzrmtNPTkxrbijrlkjJ9lkKlcCupEmvf6ldr1vEuu4L77m81DscLRZeU/W/dY005M4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=d3vk68vk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E02C2C4CEE7;
-	Fri,  1 Aug 2025 06:09:45 +0000 (UTC)
+	 MIME-Version:Content-Type; b=QLLWcrDjmv9MWB0vsleAvShdrSgiv73I9ar+FDaXrZwKcJYVNwO2q6B/yOzYbrv8m+nrZ1/7Q0/Z/9L48mS7yax9oQ1p+oMtfprt5FKVboYRjzQRVEDeUBvUcYHRzsmVmuB5ifhBbuJMOhn+7y83hbYuGFQtg249N9oFgpxcz2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZIYQ78y8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B2CBC4CEE7;
+	Fri,  1 Aug 2025 06:10:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754028587;
-	bh=w1Tw1x//ZViVcWHOCnR7IGO/WiJYwDrDDW5fFhsjRGU=;
+	s=k20201202; t=1754028615;
+	bh=CHhA//WK4DHzPYG5OpmIghiaCWDye+1yuEo1jGi9+dw=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=d3vk68vk5J8IbqsiFOSRchDgg4rgSEbIBCHJKeROdGZ9fwORMXG70GATIJLDFMgNc
-	 8Jz74dHlHTostNOYcxmNU8JTVr4vNEju1VM4+rby5yISHTU10PjO6+vbdS1INpIl2F
-	 opbRXIZ3iJxF74GqlmWmQnSC+1kgmcHpvsOOXiyNPXy0nGJtUavv4rqJAD1mYr+jnx
-	 e5CGJ1qbjjfqeEXzaMhV2ulgC82gVR/m3OZFvCgFicM/5pNZWNMXp2FdPUHzbox2b8
-	 aMcBa/gjf0kZF1AlS2RwhrPeGi3+Ay8Ij18Ko+tJrDdD2H5taDW8eKpOVFMc7xfGHT
-	 q72xI9WPBrT3Q==
-Date: Fri, 1 Aug 2025 08:09:43 +0200
+	b=ZIYQ78y8Hn8rWSoHDUmBF2kfQ/qzWyQ8hAvpEG131FzbC/6HGwsmw52q8PvrCPsDi
+	 2HbUDv2hxE8juu/wFOZ6Or3kLS37n8bb2ntMZB2BA55fTZg/X3P62hKGYKPCH2ZrvM
+	 FJP2ndAkQpfgno1BPD44rnCtvgtVRNYnuoCgmAESfKrBoY3/rvvFzITvvDJ2UaRMRI
+	 osZrAckJdAfAAQWHNnA63u3iIcLTi2y/b9s4dcPk52XpuSQzwuJshB6TrxIB/A+kDK
+	 QclFf3yYh/TokC8vKC4UaEUsqKecnZEfaZ8E8mboW6+nLcksA0lPv0JDE9GiTDHdAP
+	 z3qRXnwfzj1aw==
+Date: Fri, 1 Aug 2025 08:10:11 +0200
 From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 To: Jonathan Corbet <corbet@lwn.net>
 Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
  <akiyks@gmail.com>
-Subject: Re: [PATCH 11/12] docs: kdoc: extract output formatting from
- dump_struct()
-Message-ID: <20250801080943.63c64bc8@foz.lan>
-In-Reply-To: <20250801001326.924276-12-corbet@lwn.net>
+Subject: Re: [PATCH 12/12] docs: kdoc: a few final dump_struct() touches
+Message-ID: <20250801081011.41975240@foz.lan>
+In-Reply-To: <20250801001326.924276-13-corbet@lwn.net>
 References: <20250801001326.924276-1-corbet@lwn.net>
-	<20250801001326.924276-12-corbet@lwn.net>
+	<20250801001326.924276-13-corbet@lwn.net>
 X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,116 +60,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-Em Thu, 31 Jul 2025 18:13:25 -0600
+Em Thu, 31 Jul 2025 18:13:26 -0600
 Jonathan Corbet <corbet@lwn.net> escreveu:
 
-> The last thing done in dump_struct() is to format the structure for
-> printing.  That, too, is a separate activity; split it out into its own
-> function.
-> 
-> dump_struct() now fits in a single, full-hight editor screen.
-> 
-> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
-
-Splitting it on a separate function LGTM. 
+> Add a couple more comments so that each phase of the process is
+> now clearly marked.
 
 Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
 
+> 
+> Signed-off-by: Jonathan Corbet <corbet@lwn.net>
 > ---
->  scripts/lib/kdoc/kdoc_parser.py | 72 +++++++++++++++++----------------
->  1 file changed, 37 insertions(+), 35 deletions(-)
+>  scripts/lib/kdoc/kdoc_parser.py | 11 ++++++-----
+>  1 file changed, 6 insertions(+), 5 deletions(-)
 > 
 > diff --git a/scripts/lib/kdoc/kdoc_parser.py b/scripts/lib/kdoc/kdoc_parser.py
-> index 2b7d7e646367..131956d89f84 100644
+> index 131956d89f84..fa2041276f8c 100644
 > --- a/scripts/lib/kdoc/kdoc_parser.py
 > +++ b/scripts/lib/kdoc/kdoc_parser.py
-> @@ -738,6 +738,42 @@ class KernelDoc:
->              tuples = struct_members.findall(members)
->          return members
->  
-> +    #
-> +    # Format the struct declaration into a standard form for inclusion in the
-> +    # resulting docs.
-> +    #
-> +    def format_struct_decl(self, declaration):
+> @@ -801,14 +801,15 @@ class KernelDoc:
+>          nested = NestedMatch()
+>          for search, sub in struct_nested_prefixes:
+>              members = nested.sub(search, sub, members)
+> -
+> -        # Keeps the original declaration as-is
 > +        #
-> +        # Insert newlines, get rid of extra spaces.
+> +        # Deal with embedded struct and union members, and drop enums entirely.
 > +        #
-> +        declaration = KernRe(r'([{;])').sub(r'\1\n', declaration)
-> +        declaration = KernRe(r'\}\s+;').sub('};', declaration)
+>          declaration = members
+>          members = self.rewrite_struct_members(members)
+> -
+> -        # Ignore other nested elements, like enums
+>          members = re.sub(r'(\{[^\{\}]*\})', '', members)
+> -
 > +        #
-> +        # Format inline enums with each member on its own line.
+> +        # Output the result and we are done.
 > +        #
-> +        r = KernRe(r'(enum\s+\{[^}]+),([^\n])')
-> +        while r.search(declaration):
-> +            declaration = r.sub(r'\1,\n\2', declaration)
-> +        #
-> +        # Now go through and supply the right number of tabs
-> +        # for each line.
-> +        #
-> +        def_args = declaration.split('\n')
-> +        level = 1
-> +        declaration = ""
-> +        for clause in def_args:
-> +            clause = KernRe(r'\s+').sub(' ', clause.strip(), count=1)
-> +            if clause:
-> +                if '}' in clause and level > 1:
-> +                    level -= 1
-> +                if not clause.startswith('#'):
-> +                    declaration += "\t" * level
-> +                declaration += "\t" + clause + "\n"
-> +                if "{" in clause and "}" not in clause:
-> +                    level += 1
-> +        return declaration
-> +
-> +
->      def dump_struct(self, ln, proto):
->          """
->          Store an entry for an struct or union
-> @@ -776,42 +812,8 @@ class KernelDoc:
 >          self.create_parameter_list(ln, decl_type, members, ';',
 >                                     declaration_name)
 >          self.check_sections(ln, declaration_name, decl_type)
-> -
-> -        # Adjust declaration for better display
-> -        declaration = KernRe(r'([{;])').sub(r'\1\n', declaration)
-> -        declaration = KernRe(r'\}\s+;').sub('};', declaration)
-> -
-> -        # Better handle inlined enums
-> -        while True:
-> -            r = KernRe(r'(enum\s+\{[^}]+),([^\n])')
-> -            if not r.search(declaration):
-> -                break
-> -
-> -            declaration = r.sub(r'\1,\n\2', declaration)
-> -
-> -        def_args = declaration.split('\n')
-> -        level = 1
-> -        declaration = ""
-> -        for clause in def_args:
-> -
-> -            clause = clause.strip()
-> -            clause = KernRe(r'\s+').sub(' ', clause, count=1)
-> -
-> -            if not clause:
-> -                continue
-> -
-> -            if '}' in clause and level > 1:
-> -                level -= 1
-> -
-> -            if not KernRe(r'^\s*#').match(clause):
-> -                declaration += "\t" * level
-> -
-> -            declaration += "\t" + clause + "\n"
-> -            if "{" in clause and "}" not in clause:
-> -                level += 1
-> -
->          self.output_declaration(decl_type, declaration_name,
-> -                                definition=declaration,
-> +                                definition=self.format_struct_decl(declaration),
->                                  purpose=self.entry.declaration_purpose)
->  
->      def dump_enum(self, ln, proto):
 
 
 
