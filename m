@@ -1,129 +1,104 @@
-Return-Path: <linux-kernel+bounces-753621-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753620-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 605BBB1855D
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:01:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DBD2B1855B
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D62718938DC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:01:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 06420188CB55
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:01:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2449D28BA82;
-	Fri,  1 Aug 2025 16:01:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4172D288CBD;
+	Fri,  1 Aug 2025 16:00:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ADx08I9p"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g6QCCxpv"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D11B428B513;
-	Fri,  1 Aug 2025 16:01:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDFA4288C36
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 16:00:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754064062; cv=none; b=dTpLAlCrLgk64tuOxeiM0gjWwS1fSFd7O/hBEu8tPOcghvqAbjxrY+1XcijDclDFDZlLtjgA/bRTzhNIqJvdfh5wvvJ0inFzCXQxYCfhDgFe6tYkFGxIK+awwgjL2s2rcFrmLER+apCOZlP5c+cRaMYwo2omxkSaqUD7R8BjmIo=
+	t=1754064036; cv=none; b=KxTC3hpuCjFVDoH2QaOxNE46y74vuqxXcqU3ZFtc9BTseGHp0ioFa9ugHkvElu90lkx/K4k8ntPKgl7O0ApKg+6RNwWsASS97nNb5bP75vra1Chw6BeP6GipmH9f4AghFJSp+aXx5rK7QuZ4Pw1LwvllEODiJ0J/qmksApGZMik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754064062; c=relaxed/simple;
-	bh=gxbyO/nRf/1euIk2zGL39AVfBifO9dw5pC4STJtJJe4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V7wBh+NcqH+PD4y30mUsM8wv5bAAMS5K3MYPfSc6jexl169LAMYGPD+96/f9GctJuKK5MyXNy/M9Z8G872HlvTBsxTBG0N4U6/t98sMpkCtzWPXaMAgidT2s7In1sGoHYPWEfYrsO/rKRTBuTiKNu4KKEE/XK2Po8uDMZ5vmX5c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ADx08I9p; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b00283a5so9949555e9.0;
-        Fri, 01 Aug 2025 09:01:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754064059; x=1754668859; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u4xW5Buo0/4Bn0zJX3iGqHwSKxl50sPUyBxGezBYQu0=;
-        b=ADx08I9pKarnGT+WMkhfaQzgZ/XcbgtChjRvi0CJXU1tHrS40SCU0VzhCU13Dqd+Ho
-         +tp1/RLbmwv1WvSCAt4R1ESkVyj0fOMQH6O+0znkByjR7npmWxbJwTBSzd8wCBItSdpQ
-         WhS3AdW5VxgsIQEn+if+HDZy2FKTrqsY/4ezz1grXQNCMD0/JAk6bX7LdEaNxYe797E9
-         XY3Yh1U8EqXjKMqsr+mOywydscTMHhW/KhchLO9daDDiCaKQqwlhVA33N/u074s/WgrL
-         ONlcEnGdh5dGJeUobNzyxq7U6FT5s+yiOuHgV2IOlliwAYytDMMFAh7s/TouPPrNtw77
-         1Nug==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754064059; x=1754668859;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u4xW5Buo0/4Bn0zJX3iGqHwSKxl50sPUyBxGezBYQu0=;
-        b=YSuBKYXs4LEq43fxJ37/0GSq7hzCGL375h6xFnK/xMTcAs0PJ9ngZwyZWt3QnqVk9Q
-         QZNWK+flh1nV1s5/f6TldU59sBX6JAhk4mRJP65IU0HvFIkIlfiQyD1j/ZX0gA2FmLaE
-         5NyBjzmjjdEhSyL/LsvIKB4gxH3YxRBcmPrsaeqFK17VfE0NGqvZO9h3bLC2kgViTeEa
-         IjNsl/IXQ5BIhenkFHaxPJkNI1oIHy18GpP4+jtlaOajIT16w6IkxS/mUV2vxvCqIvxM
-         W8lj8RYO2DYycZLM4tkb+EkFCOPms2BKDDmprip3tNlWyuLAgtxTb2UucTGZz+lG6pEY
-         Ti4w==
-X-Forwarded-Encrypted: i=1; AJvYcCULWuEG//JgiN6Sfok5OXBc2QjZ+hqLCPqrHMh6g6oXjdPNZ3NVnWU1lYvDppnLYx5vRx0EGvCavSIPcyQ=@vger.kernel.org, AJvYcCXTYzTNx3j0tH5Xr5HaN76xemQEc4caV08l57FRyDnqxoDt9PfueoMEIFFAiFBFHObS26Rgn+WIV2HBnbU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzrb1z+/ug87Xc+dLcUdm/IMbjSOImPnjWFDX+Httgt6phxtVfW
-	IdEMURnHDeZUhjyfRPNx1rirCgnaIjq77YjFT+VJ1dbMzrdljdg9s0Ox
-X-Gm-Gg: ASbGnctVZWbgro9PrAXwxgRY//rTTCDaTkllVNqx/ZY5J9llNygGLcA0TnBCz/g/aRi
-	zjtzn2s0++3qxTgHOwM54C64cVpAM41db+o/1Pv7qpNWx0IhLg6m3dh2rqReQdsZQKjsdVBG0Ks
-	gtdzU4MBQnNqxv7gm3zfA89mPRAsgaKPWMPCywT8KybL8r/Yvxw7gxVrX2NpVOCCq3DRL/f2uYb
-	NBp5z+LO4AzBVFLtjwcvdoENmhWIQVny4ekHKFtirkbhtFXuq7bPwruJ2N+m73+E5R8P2jo7aFl
-	SaJ6H5UDdE+Ir0HJXiglDm740W+7NxYGr5/UkMgj0g59dagRADkNe932KAlOM0MNm+NsP9f83aL
-	skQWGtyQM3tXkoE4wUP9r
-X-Google-Smtp-Source: AGHT+IF9JwLpR1JPS1Ju0IJ8Bt8BrxT04aZO/d6OuQjLQr1C7i8RtgkGdUSbXUCIePYULDMObludzQ==
-X-Received: by 2002:a05:600c:8b63:b0:456:475b:7af6 with SMTP id 5b1f17b1804b1-45892b931ecmr101032855e9.7.1754064058758;
-        Fri, 01 Aug 2025 09:00:58 -0700 (PDT)
-Received: from localhost ([87.254.0.133])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4534b3sm6249748f8f.47.2025.08.01.09.00.58
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 09:00:58 -0700 (PDT)
-From: Colin Ian King <colin.i.king@gmail.com>
-To: Andy Shevchenko <andy@kernel.org>,
-	Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org,
-	linux-staging@lists.linux.dev
-Cc: kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH][next] media: atomisp: Fix incorrect snprintf format specifiers for signed integers
-Date: Fri,  1 Aug 2025 17:00:23 +0100
-Message-ID: <20250801160023.2434130-1-colin.i.king@gmail.com>
-X-Mailer: git-send-email 2.50.0
+	s=arc-20240116; t=1754064036; c=relaxed/simple;
+	bh=ZUY87GzRvFHQkF0nij+YKn4SpY1J6OfNu611Gs2XbSo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VrDYnuDIw/y4kal7WMQ5ufxGsDO8qvIuXVL2u4QdXTt3Ub4XZmmKA9H+jXtOthCVHgOJ6EOpyCzsPRDWzhbJrWG7N4sIg+YNXKmmKd1JTxousguv7LbuS5rI2hUzK9pDWem1DYsDN8zLwwvf6OKMor53GvxazvhECNjJDjYtPvY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g6QCCxpv; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754064035; x=1785600035;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=ZUY87GzRvFHQkF0nij+YKn4SpY1J6OfNu611Gs2XbSo=;
+  b=g6QCCxpv/BsKwyzUMnEXwSZwlCM3vTG8lD8E9WwA7qNIlIdSwKinoRTY
+   /dWWvDklgqRtL3/P6MxELnrXBKEN74hb4m4YhGuN/L/agKbZxXbpb2vqw
+   tLpP4Dg+9IoHggJXQfkbtnTW6gzlU9Fw63tbJioTzyQXSYYkYaJC6rOxS
+   4LSECOQSTyU9d4JQ09DYdZ270b2/oCTd9IxBXLtVMhetq2DKOgoKdFzER
+   FFmBF654pScYW8lkvjap64qlL9vH45SVpihu7bE+SJzAdvlIxqA7cCDGM
+   /OiUq8+dYlXywpoEVKUr4yXhZwpquZlDHzRn9U7lvWianTzC7ooJJY3uI
+   A==;
+X-CSE-ConnectionGUID: gyTzgJuVRui0iZyQXpGD1Q==
+X-CSE-MsgGUID: H8pLisDbTTuKdWsYOBQYyA==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="59036580"
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="59036580"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:00:34 -0700
+X-CSE-ConnectionGUID: qPoyF8sqQe2T1llBeQa1Jg==
+X-CSE-MsgGUID: 4xK55f8ASlOjs8PQqHvWMQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,255,1747724400"; 
+   d="scan'208";a="163610857"
+Received: from bjrankin-mobl3.amr.corp.intel.com (HELO agluck-desk3.home.arpa) ([10.124.222.217])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 09:00:34 -0700
+From: Tony Luck <tony.luck@intel.com>
+To: x86@kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	Tony Luck <tony.luck@intel.com>
+Subject: [PATCH] x86/cpu: Add CPU model numbers for Novalake
+Date: Fri,  1 Aug 2025 09:00:27 -0700
+Message-ID: <20250801160028.4799-1-tony.luck@intel.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 
-There are incorrect %u format specifiers being used to for signed integers,
-fix this by using %d instead.
+Novalake has both desktop and mobile versions.
 
-Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+Signed-off-by: Tony Luck <tony.luck@intel.com>
 ---
- drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c b/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
-index bda35614c862..0f0d16f4ce7c 100644
---- a/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
-+++ b/drivers/staging/media/atomisp/pci/runtime/bufq/src/bufq.c
-@@ -497,7 +497,7 @@ void ia_css_bufq_dump_queue_info(void)
- 	for (i = 0; i < SH_CSS_MAX_SP_THREADS; i++) {
- 		for (j = 0; j < SH_CSS_MAX_NUM_QUEUES; j++) {
- 			snprintf(prefix, BUFQ_DUMP_FILE_NAME_PREFIX_SIZE,
--				 "host2sp_buffer_queue[%u][%u]", i, j);
-+				 "host2sp_buffer_queue[%d][%d]", i, j);
- 			bufq_dump_queue_info(prefix,
- 					     &css_queues.host2sp_buffer_queue_handles[i][j]);
- 		}
-@@ -505,7 +505,7 @@ void ia_css_bufq_dump_queue_info(void)
+Note this patch is on top of earlier Wildcatlake patch:
+Link: https://lore.kernel.org/all/20250730150437.4701-1-tony.luck@intel.com/
+
+ arch/x86/include/asm/intel-family.h | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/arch/x86/include/asm/intel-family.h b/arch/x86/include/asm/intel-family.h
+index 5367dcbf5b30..e345dbdf933e 100644
+--- a/arch/x86/include/asm/intel-family.h
++++ b/arch/x86/include/asm/intel-family.h
+@@ -152,6 +152,9 @@
  
- 	for (i = 0; i < SH_CSS_MAX_NUM_QUEUES; i++) {
- 		snprintf(prefix, BUFQ_DUMP_FILE_NAME_PREFIX_SIZE,
--			 "sp2host_buffer_queue[%u]", i);
-+			 "sp2host_buffer_queue[%d]", i);
- 		bufq_dump_queue_info(prefix,
- 				     &css_queues.sp2host_buffer_queue_handles[i]);
- 	}
+ #define INTEL_WILDCATLAKE_L		IFM(6, 0xD5)
+ 
++#define INTEL_NOVALAKE			IFM(18, 0x01)
++#define INTEL_NOVALAKE_L		IFM(18, 0x03)
++
+ /* "Small Core" Processors (Atom/E-Core) */
+ 
+ #define INTEL_ATOM_BONNELL		IFM(6, 0x1C) /* Diamondville, Pineview */
 -- 
-2.50.0
+2.50.1
 
 
