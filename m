@@ -1,123 +1,182 @@
-Return-Path: <linux-kernel+bounces-753505-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753506-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CF9CB183E8
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:33:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9256AB183F2
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 16:35:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C3477B9ADC
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:31:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22B153AA763
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 14:35:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E963226E6E3;
-	Fri,  1 Aug 2025 14:33:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FFE226C3BC;
+	Fri,  1 Aug 2025 14:35:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cWaXzx9/"
-Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aENFPpjm"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE369256C83;
-	Fri,  1 Aug 2025 14:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E0EB21ABAD;
+	Fri,  1 Aug 2025 14:35:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754058795; cv=none; b=ZXuNvfNTjCHngfvaMH7KIchZbFkAgqw+2ido9WslLikrqOEBKrzAs8JppWkbVNNNyNCMDm7M+XQQsudKRTJeAoSNU5d4SJ2PdkNrPnJo7IkrP74WCuzRIu5iizcF7KDJ/1TKZvd1v9vg1KKXc0z/O6lyd+XkaTdVdQQbU3m1sV4=
+	t=1754058920; cv=none; b=qOqhUSuMmvcs8V9UdLhsgoEDwBKQkr4kYjrLlBIa59efv2YwM2kxX2BPlfnjGMVoj1yrNOpm44woc88I7Fmgk2+8TpxbXtWRtuilwKQRF4cq4n1gJb31FxJKLGEJWdYB1pqowBI8RsEgOt55/pJbTz7ecBevyVBR8xZq5XlqDjQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754058795; c=relaxed/simple;
-	bh=Vq/vnd3eA3hMcf+yl1GvhSBdqDUuf+bcB15BiNV+t6Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YuWolOuajaHF9SBwSC1DsYxjtOP0CEG82/q8HtwW1ALWMPzSmgm3pSXM8VdpCerM6YC9cQDmXmb5Po07LvffmRxc9VC4N75IsWdbCmfkRJmxfWH8MHMu3xRv9+Og2ENLDYnEuSTda0e5OVsqHerAdhqWlDhTBUAVFS/bmPrLjgM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cWaXzx9/; arc=none smtp.client-ip=209.85.219.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e8e22a585bdso1354852276.0;
-        Fri, 01 Aug 2025 07:33:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754058793; x=1754663593; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=1nO1ST/K08QxGlcTra09OvK8J8w/g/UOeppkfZ3CozY=;
-        b=cWaXzx9/AfZgpphrZG/+8pRuMMGGmts6EAotMJXaQsOUCkgbI7iLcKz+lBR/rlEysr
-         gkf2pNIZ9dwMYD5ET22ZswJooafEqQAPZw1Mrj1s5ogZmZnSLVzQuDnHF/ZvbaFS+XhZ
-         c4k2DwRZ3DenH2Gd3IHV2nWHQJ9Tl/Pl9k9HaXibwqN+tssafP/QPtcazyun1qDhmiLp
-         qyt0RyFi3+OhrxRriOrGCera9S4esCuTJNpY9PnnHRtGB3RM/Rln2fq81y/FPjFDT2uc
-         QMXdyMZJ3FqtC81hwrxNNBmjplg/f0MZ0dD0dS3qNGoBEQFhqbWb0+YQkG8Eat+gcJkg
-         oibQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754058793; x=1754663593;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=1nO1ST/K08QxGlcTra09OvK8J8w/g/UOeppkfZ3CozY=;
-        b=ZWj1Da6jzjq1lwSyuXF/4tB2ddnE8kqFoFvvI3GPULMt+FHNc1juWic7YdbqYTXw5x
-         oQXNQJOm3W3Qx6k1bTBlE25KzwBqt2/uAHbTuuZNuPWHHWs2fF7oKq1oZMPONPdU9oGY
-         1YN9+iifzVKCJqNEJD+d8ekyBaQ4N+S8pSN+0d1sm4TJVeIkgpxXe2GEoEHcbYuEdZ7S
-         y2320FmDk1gHd4LBycrgrzvZXBOagVQwKv79s6sPuHOqDRVMylygpp4cWKbOU0eH7EYk
-         IzVcfDL4wOagyzLS1GsFSXzKE5Yen3VsxM6ECFrfUpZFdEKSyDI7Ikd/VlUlhgGUyFuA
-         +eBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVn48QF+UF3GNJhnB0Gqy+p2/5WFtniSrYcjcw7B9zUyUnCfxvhC5xmKb6kHEQjrsAwvLGRllfDjWsDmTo=@vger.kernel.org, AJvYcCVvAmxmDC02VWPaO7vmTz+3WiEHABh6vRAdmeG7r5kpSGWrJBJ9UakpWGIAOXC3Yu04e+qHdZJhCGbA/w==@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKQns4q4iRjuhh7R6CeicY/wxDXTlM86VBYRvv8TnMfDucZfeW
-	dccR67DdXT62f89/SFM6pYxj+sqoNGkc6SJyQ31NNavIu703WU7g64f3
-X-Gm-Gg: ASbGncsuJuNqZ9OgO52cWzx/LjwQbb+n41y4eM22KShymQ1DMBvuPCUCQ6aPCYZvbQy
-	fY098Guvl5xLZinOBwxS4BqCIdK/xFFBjX3V5P2dkUbTceGerzYLxl1ytTk7ZSheVUMaLwxo13N
-	N9n0kY62tYFZw7OrpncavW2z9ryqWACWz/VQvB6nVs58JZ9D2BztAB3dkS4cy4UgTA8HP32qNwN
-	UrtLQ/sKyOJU5LvS6EvJE3Dcjfx94KccnbtqE1niZMRqdPomJ+NfuDMW224aW1s+CdR6PtUw5uX
-	TQFDFGer7BtyGZl+kwm5Gl1UdxYyR3sTYWS+CIH9odOCcse99aYjNa3HIek/wMYjLl2dPTQoGIQ
-	oNtAWRHnbMhF0XGSLFWw866PskAeaVthRMCTC2Wo4Wqdz6NWiqJ4wm9w=
-X-Google-Smtp-Source: AGHT+IEr9LkWjrat6RHcsmQVUi4xHy2fvuptaztGZMBoyLBptaeBk5OPICXTljIVl+GeZqgxwqZywA==
-X-Received: by 2002:a05:690c:6881:b0:71a:3da0:bc9b with SMTP id 00721157ae682-71a4665c887mr164561667b3.24.1754058792753;
-        Fri, 01 Aug 2025 07:33:12 -0700 (PDT)
-Received: from newman.cs.purdue.edu ([128.10.127.250])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-71b5a423f38sm10545717b3.40.2025.08.01.07.33.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 07:33:12 -0700 (PDT)
-From: Jiasheng Jiang <jiashengjiangcool@gmail.com>
-To: Nilesh Javali <njavali@marvell.com>,
-	Manish Rangankar <mrangankar@marvell.com>
-Cc: GR-QLogic-Storage-Upstream@marvell.com,
-	"James E . J . Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K . Petersen" <martin.petersen@oracle.com>,
-	Arun Easi <arun.easi@cavium.com>,
-	Hannes Reinecke <hare@suse.de>,
-	Saurav Kashyap <saurav.kashyap@cavium.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Jiasheng Jiang <jiashengjiangcool@gmail.com>
-Subject: [PATCH] scsi: qedi: Fix potential undefined behavior by replacing goto with return
-Date: Fri,  1 Aug 2025 14:33:08 +0000
-Message-Id: <20250801143308.14346-1-jiashengjiangcool@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754058920; c=relaxed/simple;
+	bh=iyvsQ18yYqj4fCp5SbE2v88eqM2TIGGqkzcLgNYgrC0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lOnOqw4NNrzOxkFBPyc6jOuc19ftUg/q71jd2TCLVnChS5pSjoxrYFsdTYqS/UDuViPP6Y/tLAbDIuvnIXf8HAjJgaa5BBZEsZ43sZsfulFpvW4vU1TOTyVQRXJOq2+efix4KQsN35B3vJJ1Tm/5kxxH+3i9z0VszZYfREXGLZ8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aENFPpjm; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5716IvOJ015303;
+	Fri, 1 Aug 2025 14:34:46 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=0Fh54U
+	wRV2BtBP8uMeZ/klACHAuZ+qlHEHSV5od96Mw=; b=aENFPpjmI6dFI7fwlcsV5G
+	5FTKYKVqlYru1SIt62pXoEPDXDJ9Va6pRmTie9F6ZXX2GO8yrBRFJ57P9HGXq3nu
+	E4w603Dnmsk7m6KRuP7L6xF5CjH+wQBVO/BCgBXB97YkCovMwSnWj595zPK5t8Cj
+	7h6PZoW3O9a76W9RMIMZSoYvdyw0aYPlphYo7inluGfLgHuQS/N5UUorUiPhbZI3
+	1uYnXLjUB8DCAF2jsfg7CpVx1xu77+8F4Yn1NOoHUtFH9tBGSRz64O0g0Pt9Atqm
+	csV5e6OaPyCqpHwnNE6rAAV0znAd8qbBB7klcc9Ce3yUr2X2ELazeWNYQUrKK18g
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr978n-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 14:34:46 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 571ENkjn023507;
+	Fri, 1 Aug 2025 14:34:45 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 484qfr978h-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 14:34:45 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 571EJQiM006269;
+	Fri, 1 Aug 2025 14:34:44 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 485bjmhk47-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Fri, 01 Aug 2025 14:34:44 +0000
+Received: from smtpav05.dal12v.mail.ibm.com (smtpav05.dal12v.mail.ibm.com [10.241.53.104])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 571EYZ2D8848086
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Fri, 1 Aug 2025 14:34:35 GMT
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 5A26C58056;
+	Fri,  1 Aug 2025 14:34:42 +0000 (GMT)
+Received: from smtpav05.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2852E58052;
+	Fri,  1 Aug 2025 14:34:41 +0000 (GMT)
+Received: from [9.61.166.13] (unknown [9.61.166.13])
+	by smtpav05.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Fri,  1 Aug 2025 14:34:41 +0000 (GMT)
+Message-ID: <48f22e9a-7212-49f1-8989-128bbc2d6d32@linux.ibm.com>
+Date: Fri, 1 Aug 2025 10:34:40 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] integrity: Extract secure boot enquiry function out of
+ IMA
+To: GONG Ruiqi <gongruiqi1@huawei.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>,
+        Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
+        Jarkko Sakkinen <jarkko@kernel.org>,
+        Madhavan Srinivasan <maddy@linux.ibm.com>,
+        Michael Ellerman <mpe@ellerman.id.au>,
+        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Eric Snowberg <eric.snowberg@oracle.com>,
+        Christophe Leroy <christophe.leroy@csgroup.eu>,
+        Nicholas Piggin <npiggin@gmail.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>, "Lee, Chun-Yi" <jlee@suse.com>,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, linux-integrity@vger.kernel.org,
+        keyrings@vger.kernel.org, Lu Jialin <lujialin4@huawei.com>
+References: <20250628063251.321370-1-gongruiqi1@huawei.com>
+ <eb91dcf034db28e457a4482faa397dd7632f00fd.camel@linux.ibm.com>
+ <4c59f417-86cc-4dec-ae45-8fcf8c7eb16a@huawei.com>
+ <e8aa7f94-3e52-488d-a858-564d3d1edd4b@linux.ibm.com>
+ <362b3e8a-0949-42d1-a1d0-90bd12d86b09@huawei.com>
+ <683380bb-ef1b-44ab-b7df-83c23dd76ff7@linux.ibm.com>
+ <a8bec841-149c-4349-b7a0-ffebe43dd671@huawei.com>
+Content-Language: en-US
+From: Nayna Jain <nayna@linux.ibm.com>
+In-Reply-To: <a8bec841-149c-4349-b7a0-ffebe43dd671@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDEwOSBTYWx0ZWRfX+WIeMAV0XBKN
+ RaWK1tzAuLZnSdyc9E70QdXieA9k3Jd59+L1Jg5pBMBa2Gm8L+jbYrgFd+OFE46ZuVvqW3TBC2J
+ cloJ9fwXRbT+MopZGRTx4sA2AYoAHRwo9ke9Io/O8NkDimxcPl+7CVTsMQB4hVFZqITcrs7qn0K
+ YhpEELuU5wPL4n2NULMyHcXz6HBsz4kX8dSJY+Fc9DwEsLWXnv0BdB/9PL2qCT0e11oGyWYMh7j
+ nZ6dHp1dZURen/ZYTtin4sirodAqzsYLaaKQArepNpABIvoZJO5jN/lO7q7lYiMFRJZ7Wxm3+Xv
+ ZeXodmZDoLaKPsIaMGNTppXcFmfrRmzNt/1AiLp0O0GnsVJ1CSX5Av9/xxtsn3s7yysz0vQ7mlX
+ G+XH6WNHilNnhMcgkF1SDCC9xJJ8DLj2S7Um+8e3c6Tb8nW+gIaPe1MGjJGDV9A/xAdEUbT4
+X-Authority-Analysis: v=2.4 cv=Je28rVKV c=1 sm=1 tr=0 ts=688cd086 cx=c_pps
+ a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=BvK2hnnmbDh7ilCDGIwA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+X-Proofpoint-GUID: OrGcTJJWHdqCDmgNhoqcU4YEqchGXRbd
+X-Proofpoint-ORIG-GUID: nLWSheMwDMjNSBon4kmqOoX4VrsiAC_G
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_04,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ mlxlogscore=999 clxscore=1015 lowpriorityscore=0 spamscore=0 adultscore=0
+ suspectscore=0 bulkscore=0 malwarescore=0 priorityscore=1501 phishscore=0
+ mlxscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508010109
 
-If "!qedi->p_cpuq" evaluates to true, qedi->global_queues will be freed
-without being initialized, potentially causing undefined behavior.
 
-Fixes: ace7f46ba5fd ("scsi: qedi: Add QLogic FastLinQ offload iSCSI driver framework.")
-Signed-off-by: Jiasheng Jiang <jiashengjiangcool@gmail.com>
----
- drivers/scsi/qedi/qedi_main.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
+On 7/28/25 8:17 AM, GONG Ruiqi wrote:
+> On 7/26/2025 2:29 AM, Nayna Jain wrote:
+>> On 7/17/25 8:29 AM, GONG Ruiqi wrote:
+>>> On 7/8/2025 4:35 AM, Nayna Jain wrote:
+>>>> On 7/2/25 10:07 PM, GONG Ruiqi wrote:
+>>>>> ...
+>>> Yes, IMA_ARCH_POLICY was not set. The testing was conducted on
+>>> openEuler[1], a Linux distro mainly for arm64 & x86, and the kernel was
+>>> compiled based on its own openeuler_defconfig[2], which set
+>>> IMA_ARCH_POLICY to N.
+>> Thanks Ruiqi for the response.
+>>
+>> It seems the main cause of the problem was that IMA_ARCH_POLICY config
+>> wasn't enabled; and it sounds like you don't need IMA arch policies but
+>> you do need the arch specific function to get the secure boot status.
+>>
+>> In that case, removing IMA_SECURE_AND_OR_TRUSTED_BOOT config dependency
+>> on IMA_ARCH_POLICY config and updating the corresponding help is all
+>> that is needed.
+> I think it doesn't solve the real problems, which are: 1. the implicit
+> dependency of LOAD_UEFI_KEYS to IMA_SECURE_AND_OR_TRUSTED_BOOT, which
+> surprises people, and 2. what arch_ima_get_secureboot() does is
+> essentially a stand-alone function and it's not necessarily be a part of
+> IMA, but it's still controlled by IMA_SECURE_AND_OR_TRUSTED_BOOT.
+>
+> I agree that adjusting Kconfig could be simpler, but breaking
+> IMA_SECURE_AND_OR_TRUSTED_BOOT's dependency to IMA_ARCH_POLICY doesn't
+> help on both. If that's gonna be the way we will take, what I would
+> propose is to let LOAD_UEFI_KEYS select IMA_SECURE_AND_OR_TRUSTED_BOOT,
+> which states the dependency explicitly so at least solves the problem 1.
 
-diff --git a/drivers/scsi/qedi/qedi_main.c b/drivers/scsi/qedi/qedi_main.c
-index b168bb2178e9..23e346a3e5fd 100644
---- a/drivers/scsi/qedi/qedi_main.c
-+++ b/drivers/scsi/qedi/qedi_main.c
-@@ -1639,8 +1639,7 @@ static int qedi_alloc_global_queues(struct qedi_ctx *qedi)
- 	 * addresses of our queues
- 	 */
- 	if (!qedi->p_cpuq) {
--		status = -EINVAL;
--		goto mem_alloc_failure;
-+		return -EINVAL;
- 	}
- 
- 	qedi->global_queues = kzalloc((sizeof(struct global_queue *) *
--- 
-2.25.1
+Hi Ruiqi,
+
+IMA_SECURE_AND_OR_TRUSTED_BOOT is already enabled by different 
+architectures. Having LOAD_UEFI_KEYS select it would help only if 
+IMA_ARCH_POLICY is also selected.
+
+Thanks & Regards,
+
+    - Nayna
 
 
