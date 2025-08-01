@@ -1,82 +1,87 @@
-Return-Path: <linux-kernel+bounces-753735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01971B1871E
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:04:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FE52B1871F
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 20:04:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D084C188EB22
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:04:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E916B3B07BC
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 18:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C9B528BAB1;
-	Fri,  1 Aug 2025 18:04:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 184722701C2;
+	Fri,  1 Aug 2025 18:04:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PuI8XG8X"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="U40oVmif"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7A3D1DC99C;
-	Fri,  1 Aug 2025 18:04:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A36B91DC99C
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 18:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754071465; cv=none; b=fLXlOPRKREOcd5C6yfHpDvCV0jcyU1j620aOlzjvr66BMt5A7phXu/gITXLN3yR160BC8lRAafn5vFnRi3xilgnEXA/1wCVmYMVlAbZsEI5759xv3lgxJqgHvrWwJiWBZIxcF1VRc4NSswCLVcbLOcA4jwU2Nqoiv8q6c4AbHcE=
+	t=1754071478; cv=none; b=jc3KOeCvhjbl5HKYgqxAMP+C1AlJVXWkdEBCYU50KGU4NQ1HyjWWrp5Bvy2k4+SziG1RO7aedIHgC0X819GqFVYanuK8H5g3/1K9b69tsGOL6B+cKpGOQHKeywBwVgW7MbOejnkYLdSP7DGP1WhY/Vx0wuM6ClUBmWXrom3MfmI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754071465; c=relaxed/simple;
-	bh=jtVs4YM3HugwAbhWrHuORF3i3AWrbmHy7uCsJ4n4FSc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=iVX/lkV2/6kyFUXu8yNZiNbxVDEnjX3m0nMvBX1/3AYNx3H2QANlk4cEN8BajE2pyhQRxrHgwMl83zaHoaFNnJIh1cxDDhkqiFNLV6TMHhz04hu6FkYQlXPaEAgz3cbXj26v1HcihNkeZZBA2rIGxZJ+Z9LhVU4D8NYWV7e4/0s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PuI8XG8X; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-31effad130bso964713a91.3;
-        Fri, 01 Aug 2025 11:04:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754071463; x=1754676263; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=gn8QwK2PIACuutr4KjQ3PXKlXST9xlDrnNTcVggzZy4=;
-        b=PuI8XG8XrGU7Z0iyQmJVT4KeCPiEmk/eYxy1J1x1tbpuIc3InqLMnGX68hcygwS1s9
-         joNw8c4U5gm6pwI38MyoMxiDLtraE4Z49FSrEbhTVT7s716l+a6nNfSwQzp4n1TSX5W3
-         7nBxOdL6+MdPbGqXxaFq4D7cQaaLM+bob/yEFm6YegPpNCjyITCTAGPZsFN1qt5VewVw
-         lZCOmU6cFjEwLWsLx8VyJIoWc763LfDvCA8qysplFHAB5UY4jk3qSgZAzF+p2H2DjVNv
-         EmhZjng46bomij984lHRDqYwJHFWF8O/QMrMeyug0CMbLzu/ittS/oUUMewen+UCyBlo
-         gtzw==
+	s=arc-20240116; t=1754071478; c=relaxed/simple;
+	bh=MVN+9Y9WU6rHYz8OKtAYacmxLn3RNiE5FyjN1AK4xmk=;
+	h=From:Message-ID:Date:MIME-Version:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=kvPsqdvj61BterQptCjL9J4SH2NW/adYXv8aanaUdTUnmFmmutP6g2iiPwLNUFknIBRltDwYCKxj1H946pDsfGn3PW011XrLINa1smQoJqudlbHRr/mMlHG0zmOdDu2peFbI2G3Td1ERTJBI3D5nCKH3RQ7VALaQ+aez2DvPb48=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=U40oVmif; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754071473;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=t7/qqI338bQSJTOv+hsVaSllrZbDxraAox8IEpQa7CE=;
+	b=U40oVmifcABS8e1krDr1AS/VSyOtCIw/mnBSbq3JGfLsl2KyazFe+rvLdLAGgicwgQ0t8o
+	LrnVppK+oZQtpxdd8GYLDl29Xz1GugAT/7CR/+dy0n3qnRu5kPZTNpNtkJI8BW3vniOQK5
+	XMZny102IYl1jBLi2uwSFHzYMBI1NAQ=
+Received: from mail-qt1-f197.google.com (mail-qt1-f197.google.com
+ [209.85.160.197]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-225-3yDDhatwMn2DCJfaZUDbTQ-1; Fri, 01 Aug 2025 14:04:32 -0400
+X-MC-Unique: 3yDDhatwMn2DCJfaZUDbTQ-1
+X-Mimecast-MFC-AGG-ID: 3yDDhatwMn2DCJfaZUDbTQ_1754071472
+Received: by mail-qt1-f197.google.com with SMTP id d75a77b69052e-4af0100c03fso22925561cf.2
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 11:04:32 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754071463; x=1754676263;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=gn8QwK2PIACuutr4KjQ3PXKlXST9xlDrnNTcVggzZy4=;
-        b=pB0FX+4hp0jCeBaCbJ5pVVKasA0LzBDVcYuZ0RuuwjdMV6w6XuGly3OOZDB9WrcRz8
-         PZfflpB2sB7mrAzC3nKAJrYvzwlFeZV0ievviZGJPU0iokt+No1ruIo7wLXxevo5U0qM
-         c337CByOed4Nhxucb/WQh8a1iTikmTRra917gAEsmKwMkc6jy/6TIu1vN3sDLKJAxsQR
-         TmJyueVJXvjj/dcOZFpas0IRh4q6amB/OZ/iIpEoRIuW+R0hZcxdsLYZEq4CrgDkSqAS
-         A07IrKQsuG+20ztjdn2Ow+yLcFPKx2HimnWTlmp68gzWa4mmSEdXWY+GHp4komApxTce
-         9hTQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV53KPhIY3rQhphn9McqpohEVyoCTcac8xfOWZ1YSlkMa7or1WxOddyxQE9wuZhOVmiSq5I2jwVPRYcvL9X@vger.kernel.org, AJvYcCW8SaihE1az9+1G63KolkLyENoUwoHApdL/UP27qxjVwBHsd5t4gIENv2YwFBK2SAZ9aM6plQo2pgePTTNcP5s=@vger.kernel.org, AJvYcCXDtqvbbObzOF65I1A9qYpGFmYVq8CHkVFbhtun2ZYaVpyvGyravMhp3g95RuKfHqeuYkW2dtkG6UrC/ILi+sIUnQ8=@vger.kernel.org, AJvYcCXdose+WxMYGXgqTZ0rl0YWVvaSdtgC3IP3wDVmgToCahZjM2jv1R1syy0MyBNdnSZlA2SVfy+AOOma@vger.kernel.org
-X-Gm-Message-State: AOJu0YzNAPMV+sQ2IQARzaJBLS/aj7XaS4fhkQ9sMGRAw4yE0taz44DR
-	JHlRRYhK+lp3KJNRPj4K2kbFEpX+uaWo8RgtrvYo+HNSll2LDJxVpI3i
-X-Gm-Gg: ASbGncuNHHUSvsBFCIKjON3hovIDjvqOOP9E7VHo/JKPYmraxzf45QUFXYW+nnY5V3P
-	JgjAqmUN79tDZP6+MQ2wWSVul7ajvNUZxE+RfEYF6NjvaalohgJG76YjFJ4IIdRhWb/ri5sIAVl
-	CU/nHFP+4AQrlskPMaAOJE3Iys9tBhuWVXIp4XRnDcSYJ1XqpSHQ5u3aOUsNt7ggMhn4huTaypT
-	rd/K+lqggBEEwVA4sMs4kXjH8+0/lFjRfvlzsDvEhfkM+QiPSK0JvcOSahDBQrH7PX1L1Qxo0S6
-	HQhJyZfetVw9DrrERGdTg50aukAyZN/EpKOJoM2dmgM6JZ88s8/10wKE36K34DtTPZNCtD4/oSg
-	T11dmpny9fkfrMj1z4lwj/CwEKSdmYMBDuy06IJBRneWhrihOI+AoSa4h171qb65UkB09mkygFj
-	QfuyN+ArnIjXR+pnF5
-X-Google-Smtp-Source: AGHT+IF/Q5VicR3q+/5Ioe/gArLWmCx1gbjfP7yi6cWvPwNAjxEGFO3teqYgxHOSgy3WnTbbVxouqw==
-X-Received: by 2002:a17:90b:38c9:b0:311:ea13:2e61 with SMTP id 98e67ed59e1d1-32116306ccbmr737677a91.34.1754071462801;
-        Fri, 01 Aug 2025 11:04:22 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32106bab5ecsm1734437a91.19.2025.08.01.11.04.20
+        d=1e100.net; s=20230601; t=1754071472; x=1754676272;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:subject:user-agent:mime-version:date:message-id:from
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=t7/qqI338bQSJTOv+hsVaSllrZbDxraAox8IEpQa7CE=;
+        b=ccsagXvhySVsTA5ipyKBNSFjjbebRS3uNZ5+Mhm/8Qq6ZOI8WkP0sbU5LwSnBbPdpZ
+         LffWVK7UIF5er7DQme4Ndm5n6l7YstKcyecsGNvfTs6hQErCIkTO0mQLpEHXqEyfaKob
+         gHPi/m/0P0qxehTOmqMr+Z6t1Dpd+TfB+0+/uh39N3GPQ0trGeVNqoLlKkwkk8Y0G+mj
+         oyrdJclhfENroa5pz93itAdxWzAjApAs3abV7/tZ8IXIkUgynurUQ9cxnhKdWkHPVbR5
+         zha3JpFiJM6x54gF1Z5xYsf4gI6m10PROwx9F2VlQIjljPhF17qgk/nIWRg6gPQElEV6
+         i70w==
+X-Gm-Message-State: AOJu0Yz6RH4lyMhWJfP/fLFr6QcemoHFmW6ET38zJvBlO5j0NmCrhADP
+	/lTOyoSZJmd8OBTlXLso1HPy9g5yuYIZwR20oItKpcUtrYGT42fFTrYFSOBOy8405CTgkjaE5ek
+	YKLyK+GZcngBcl2134nps2qQq7ZsIRnNsTuEUEY4jv2URyw2mwJtjGMNID8E6CC56aQ==
+X-Gm-Gg: ASbGnctaD1T/TUjx/E/OVXppm1I8iLGRXSf5ES08kRMnKsnwxB1peN2MzIpfSjEwH8m
+	24Fqv9qIhpVf6LIkqz7mRL3aEwGdf6Lp5w6IcIcadSfvNVw0gQA16+lnuNZt3PvFYMiX7sfCDH0
+	NP8fh8cSOcIb7OEnCjuY1VS+kNdLw3F/+KQi1Z1grNdXhc927PA/3YJeUOYCD3qmA5TuV74xxBA
+	EwjIYsTFBefwGDZxInLch9Zy6PFWQyEVmtdS1NVVomrnjUF2ArtajvWhv2FRb3EADcA6RaAEwON
+	iwLr5moOO/H8QhYukBkUQxJkweYCI0LPDEu7uZvTUet2jRqUMMrV0LkFmyO/KCqAWeUKLdNvwiM
+	xT7Sp0YA27A==
+X-Received: by 2002:a05:622a:105:b0:4ae:6d12:74b4 with SMTP id d75a77b69052e-4af10a789c6mr12000531cf.37.1754071471525;
+        Fri, 01 Aug 2025 11:04:31 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHQVWy+sQWPjp64481dMne3VCzVnxtSoiaEPSPuC4IqtkDwlBG4QKrN7KczcrWZtlJ0EaB9qQ==
+X-Received: by 2002:a05:622a:105:b0:4ae:6d12:74b4 with SMTP id d75a77b69052e-4af10a789c6mr12000041cf.37.1754071471096;
+        Fri, 01 Aug 2025 11:04:31 -0700 (PDT)
+Received: from ?IPV6:2601:188:c180:4250:ecbe:130d:668d:951d? ([2601:188:c180:4250:ecbe:130d:668d:951d])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-4aeeebdc99asm23506951cf.12.2025.08.01.11.04.29
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 11:04:22 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net>
-Date: Fri, 1 Aug 2025 11:04:20 -0700
+        Fri, 01 Aug 2025 11:04:30 -0700 (PDT)
+From: Waiman Long <llong@redhat.com>
+X-Google-Original-From: Waiman Long <longman@redhat.com>
+Message-ID: <1e1c575f-6e09-4f15-8c0f-1c23c6100ed9@redhat.com>
+Date: Fri, 1 Aug 2025 14:04:29 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,142 +89,128 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on
- max_hw_heartbeat_ms
-To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
-Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
- Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
- Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
- Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <aIw-P6zkQSOhvYJW@shikoro>
- <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
- <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
- <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+Subject: Re: [PATCH v9 6/8] sched/isolation: Force housekeeping if isolcpus
+ and nohz_full don't leave any
+To: Gabriele Monaco <gmonaco@redhat.com>, Waiman Long <llong@redhat.com>,
+ Frederic Weisbecker <frederic@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+ Anna-Maria Behnsen <anna-maria@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>
+References: <20250730131158.101668-1-gmonaco@redhat.com>
+ <20250730131158.101668-7-gmonaco@redhat.com>
+ <a2ef7773-bec6-466f-81b3-e1d8f6cbe7b6@redhat.com>
+ <1d12942942150462f77ea87fec8f294f46c87b4f.camel@redhat.com>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+In-Reply-To: <1d12942942150462f77ea87fec8f294f46c87b4f.camel@redhat.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On 8/1/25 08:30, Lad, Prabhakar wrote:
-> Hi Guenter,
-> 
-> On Fri, Aug 1, 2025 at 2:52 PM Guenter Roeck <linux@roeck-us.net> wrote:
+On 8/1/25 10:46 AM, Gabriele Monaco wrote:
+>
+> On Thu, 2025-07-31 at 11:09 -0400, Waiman Long wrote:
+>> On 7/30/25 9:11 AM, Gabriele Monaco wrote:
+>>> Currently the user can set up isolcpus and nohz_full in such a way
+>>> that
+>>> leaves no housekeeping CPU (i.e. no CPU that is neither domain
+>>> isolated
+>>> nor nohz full). This can be a problem for other subsystems (e.g.
+>>> the
+>>> timer wheel imgration).
+>>>
+>>> Prevent this configuration by invalidating the last setting in case
+>>> the
+>>> union of isolcpus and nohz_full covers all CPUs.
+>>>
+>>> Reviewed-by: Frederic Weisbecker <frederic@kernel.org>
+>>> Signed-off-by: Gabriele Monaco <gmonaco@redhat.com>
+>>> ---
+>>>    kernel/sched/isolation.c | 12 ++++++++++++
+>>>    1 file changed, 12 insertions(+)
+>>>
+>>> diff --git a/kernel/sched/isolation.c b/kernel/sched/isolation.c
+>>> index 93b038d48900..0019d941de68 100644
+>>> --- a/kernel/sched/isolation.c
+>>> +++ b/kernel/sched/isolation.c
+>>> @@ -165,6 +165,18 @@ static int __init housekeeping_setup(char
+>>> *str, unsigned long flags)
+>>>    			}
+>>>    		}
+>>>    
+>>> +		/* Check in combination with the previously set
+>>> cpumask */
+>>> +		type = find_first_bit(&housekeeping.flags,
+>>> HK_TYPE_MAX);
+>>> +		first_cpu =
+>>> cpumask_first_and_and(cpu_present_mask,
+>>> +						
+>>> housekeeping_staging,
+>>> +						
+>>> housekeeping.cpumasks[type]);
+>>> +		if (first_cpu >= nr_cpu_ids || first_cpu >=
+>>> setup_max_cpus) {
+>>> +			pr_warn("Housekeeping: must include one
+>>> present CPU neither "
+>>> +				"in nohz_full= nor in isolcpus=,
+>>> ignoring setting %s\n",
+>>> +				str);
+>>> +			goto free_housekeeping_staging;
+>>> +		}
+>>> +
+>>>    		iter_flags = flags & ~housekeeping.flags;
+>>>    
+>>>    		for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
+>> I do have a question about this check. Currently isolcpus=domain is
+>> bit 0, managed_irq is bit 1 and nohz_full is bit 2. If manage_irq
+>> come first followed by nohz_full and then isolcpus=domain. By the
+>> time, isolcpus=domain is being set, you are comparing its cpumask
+>> with that of manage_irq, not nohz_full.
 >>
->> On 8/1/25 04:05, Lad, Prabhakar wrote:
->>> Hi Wolfram,
->>>
->>> Thank you for the review.
->>>
->>> On Fri, Aug 1, 2025 at 5:10 AM Wolfram Sang
->>> <wsa+renesas@sang-engineering.com> wrote:
->>>>
->>>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
->>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
->>>>>
->>>>> Update the watchdog minimum timeout value to be derived from
->>>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
->>>>> consistent minimum timeout in seconds.
->>>>
->>>> I don't understand this change. Why is the _minimum_ timeout based on
->>>> the _maximum_ heartbeat?
->>>>
->>> The reason for deriving min_timeout from max_hw_heartbeat_ms is to
->>> ensure the minimum watchdog period (in seconds) is compatible with the
->>> underlying hardware.
->>>
->>> max_hw_heartbeat_ms is calculated as:
->>> max_hw_heartbeat_ms = (1000 * 16384 * cks_div) / clk_rate;
->>>
->>> This value varies by SoC:
->>>    RZ/T2H: cks_div = 8192, clk ≈ 62.5 MHz -> max_hw_heartbeat_ms ~ 2147ms
->>>    RZ/V2H: cks_div = 256, clk ≈ 240 MHz -> max_hw_heartbeat_ms ~ 174ms
->>>
->>> Since min_timeout is in seconds, setting it to:
->>> min_timeout = DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
->>>
->>> ensures:
->>> The minimum timeout period is never less than what the hardware can support.
->>> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
->>> - For V2H, it’s just 1s (174ms -> 1s).
->>>
+>> Perhaps you can reuse the non_housekeeping_mask for doing the check,
+>> e.g.
 >>
->> Sorry, I completely fail to understand the logic.
->>
->> If the maximum timeout is, say, 2 seconds, why would the hardware
->> not be able to support a timeout of 1 second ?
->>
-> The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter. On
-> initialization the down counters on the SoCs are configured to the max
-> down counter. On RZ/V2H down counter value 4194304 (which evaluates to
-> 174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). The
-> board will be reset when we get an underflow error.
-> 
-> So for example on T2H consider this example:
-> - down counter is 134217728
-> - min_timeout is set to 1 in the driver
-> - When set  WDIOC_SETTIMEOUT to 1
-> In this case the board will be reset after 2147ms, i.e. incorrect
-> behaviour as we expect the board to be reset after 1 sec. Hence the
-> min_timeout is set to 3s (2147ms -> 3s).
-> 
-> Please let me know if my understanding of min_timeout is incorrect here.
-> 
+>>           cpumask_and(non_housekeeping_mask, cpu_present_mask,
+>> housekeeping_staging);
+>>           iter_flags = housekeeping.flags & ~flags;
+>>           for_each_set_bit(type, &iter_flags, HK_TYPE_MAX)
+>>                   cpumask_and(non_housekeeping_mask,
+>> non_housekeeping_mask, housekeeping.cpumasks[type]);
+>>           if (cpumask_empty(non_housekeeping_mask)) {
+>>                   pr_warn(...
+> Mmh right didn't think passing different masks in isocpus was possible.
+>
+> You mean something like this right?
+>
+>   isolcpus=managed_irq,0-4 nohz_full=8-15 isolcpus=domain,0-7
+>
+> Which doesn't block the nohz_full because the first mask (managed_irq)
+> leaves spaces.
+Yes, that is what I am talking about.
+>
+> Right now we block assignments like
+>
+>   isolcpus=managed_irq,0-7 nohz_full=8-15
+>
+> and
+>
+>   isolcpus=managed_irq,0-7 -a isolcpus=domain,8-15
+>
+> although this series doesn't really have problems with it.
+> Shouldn't we just ignore these cases and just count domain + nohz_full?
 
-The driver is missing a set_timeout function. It should set RZ/T2H
-to 62514079 if a timeout of 1 second is configured.
+You could, but you have to explicitly exclude managed_irq in your logic.
 
-Guenter
+
+>
+> The solution you propose is to check all housekeeping, so it would also
+> prevent the (safe?) assignments above, right?
+>
+> We could just check against the previously set domain/nohz_full and
+> leave other flags alone, couldn't we?
+
+You will have to modify your logic and be explicit that managed_irq is 
+currently ignored.
+
+Cheers,
+Longman
 
 
