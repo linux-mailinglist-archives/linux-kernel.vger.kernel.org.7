@@ -1,202 +1,81 @@
-Return-Path: <linux-kernel+bounces-753030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4EFFDB17DEA
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:00:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C44F8B17DF0
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 10:00:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E2A0584D89
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 07:59:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7FC451897DAE
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 08:00:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDF58217F24;
-	Fri,  1 Aug 2025 07:59:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aX4aT2mt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2396C218584;
+	Fri,  1 Aug 2025 08:00:15 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D2D52147EF;
-	Fri,  1 Aug 2025 07:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E40411F91C5
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 08:00:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754035169; cv=none; b=a7CucPNyMFXanzbUPNEtkpNOHH+W40zLS8B+JNEanJKFECoK/PPtjQ8qzniw/fw71G5ilupqv2fduEDnkRPvSAPBfBPrSkZxVk6sH1vnE3ktOnmnaTfWwdq5dvg6as20XJwX2u6iU135LSUIoUy//UGp+bYGY8ViyOCIxfAYBoI=
+	t=1754035214; cv=none; b=WZXIgPzBSQg6KDuY3JN2q4SsmhcFlLMLMiCpHp0NRNVzRR8ujVnVUNxz35tMcBm86pVIoAfdthNirHY2hJDCkCNTDgYCokvkX1SiE9pyMW6/G3mH+xUGnO264zzFr4N+Akalj1X408dSGry4r3ymJ6w/aL5hdJPpz9CMFbniOiw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754035169; c=relaxed/simple;
-	bh=ZiH2+0ApCDD5Cy6uBvn/D2hA4NFJk84G69zqJgH2K3o=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=C9OzxIZcWK/43I2jjYufY345hVepGuvcTBAfMEmYSQhCyDMwZhxIksErBpnf4KoxAsmMDF80DFUcom1PXR+k68VCcrgh4Bxc074g2RLJBG2fwM4IzbIhPfzgi0+CN5Az3IN1dJnovVT0HPG26UDyAKDwm1pv0GnnQa5Hoq+9bCc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aX4aT2mt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id C31D8C4CEF4;
-	Fri,  1 Aug 2025 07:59:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754035168;
-	bh=ZiH2+0ApCDD5Cy6uBvn/D2hA4NFJk84G69zqJgH2K3o=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=aX4aT2mtxE0pyyqZi088jIgy+EVLGoCYqaODkhz7uMd+jJhBT4QPhk8CLP+U4sjMm
-	 zJexr48d6BwnH/7ESg3OvI/A7lGvMP3/zfEa+sXU8ApxHbTs/6Z0IVwSSICcXnTBLr
-	 eiy5FthSGi5vDCX5Cy60hDz4+pgCaZvs2YV+qSE7iPC0vsvCFECo1snSDGavSOfXfJ
-	 VpHj2GbDcClxjRPKw1bnptegcWNYfRn3YLSvK68g6mDFZh4q0O97lxob9C0DuRBzb7
-	 ox62DS+8t4Yuc5sicHoG7sTMomr53bY9O7vch9CdkYWWxsEz1tYjMvfSEyJFzHWa3v
-	 qHUiro1uOPKjg==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id B583AC87FDA;
-	Fri,  1 Aug 2025 07:59:28 +0000 (UTC)
-From: Cryolitia PukNgae via B4 Relay <devnull+cryolitia.uniontech.com@kernel.org>
-Date: Fri, 01 Aug 2025 15:59:21 +0800
-Subject: [PATCH v7 2/2] hwmon: document: add gpd-fan
+	s=arc-20240116; t=1754035214; c=relaxed/simple;
+	bh=RAjCt9uKDFbe+vPGvhUKJl5YUkwXiJb7/mDYpjF1tOI=;
+	h=Message-ID:Date:MIME-Version:To:CC:From:Subject:Content-Type; b=G2mSM2BYv/JKfWAKHERUF39oSdOAeKhgO3UkqzXj75x/hurzHOgMUxf2QFiakH0c1sa9pnlob9N8Sm8XvhR6eSK/OrW8iQz93UV/d9ytBH8MXy5zBIIr2e71g2pvgPqNMo0bE+SLppa/FADYUsHt9HxM/SMIm5C1g443CrkX9UU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.112])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4btdbX1sV8z2RVy4;
+	Fri,  1 Aug 2025 15:57:44 +0800 (CST)
+Received: from dggpemf500013.china.huawei.com (unknown [7.185.36.188])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0E48514027A;
+	Fri,  1 Aug 2025 16:00:09 +0800 (CST)
+Received: from [10.67.121.183] (10.67.121.183) by
+ dggpemf500013.china.huawei.com (7.185.36.188) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Fri, 1 Aug 2025 16:00:08 +0800
+Message-ID: <c7bc0979-3721-49ba-89bd-ebcaa5ce70d9@huawei.com>
+Date: Fri, 1 Aug 2025 16:00:07 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-gpd_fan-v7-2-548b9d8f57d7@uniontech.com>
-References: <20250801-gpd_fan-v7-0-548b9d8f57d7@uniontech.com>
-In-Reply-To: <20250801-gpd_fan-v7-0-548b9d8f57d7@uniontech.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Cryolitia PukNgae <cryolitia@uniontech.com>
-Cc: linux-kernel@vger.kernel.org, linux-hwmon@vger.kernel.org, 
- linux-doc@vger.kernel.org, Celeste Liu <CoelacanthusHex@gmail.com>, 
- Yao Zi <ziyao@disroot.org>, Derek John Clark <derekjohn.clark@gmail.com>, 
- WangYuli <wangyuli@uniontech.com>, Jun Zhan <zhanjun@uniontech.com>, 
- =?utf-8?q?Marcin_Str=C4=85gowski?= <marcin@stragowski.com>, 
- someone5678 <someone5678.dev@gmail.com>, 
- Justin Weiss <justin@justinweiss.com>, 
- Antheas Kapenekakis <lkml@antheas.dev>, command_block <mtf@ik.me>, 
- derjohn <himself@derjohn.de>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754035167; l=3233;
- i=cryolitia@uniontech.com; s=20250730; h=from:subject:message-id;
- bh=YeZ2S1Xd3SzI2j73X7MPaeHtszEUNsz3Uuv4BXy3AyA=;
- b=/HfULSeyuj1YoBPbO5SksgzxxgGNRcmuqH9se1nB6oBtbGdX4YbSJClAdd+s3Qd4yuGVabURr
- ggH/4bAvzfFA8HLcClUoeW4VmuFVs8KGRZccTp6LmtEYQsXd6KEPNbp
-X-Developer-Key: i=cryolitia@uniontech.com; a=ed25519;
- pk=tZ+U+kQkT45GRGewbMSB4VPmvpD+KkHC/Wv3rMOn/PU=
-X-Endpoint-Received: by B4 Relay for cryolitia@uniontech.com/20250730 with
- auth_id=474
-X-Original-From: Cryolitia PukNgae <cryolitia@uniontech.com>
-Reply-To: cryolitia@uniontech.com
+User-Agent: Mozilla Thunderbird
+To: <maz@kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>
+CC: Zhou Wang <wangzhou1@hisilicon.com>, jiangkunkun <jiangkunkun@huawei.com>,
+	Luchunhua <luchunhua@huawei.com>, liuyonglong <liuyonglong@huawei.com>,
+	"xuwei (O)" <xuwei5@huawei.com>, "Zengtao (B)" <prime.zeng@hisilicon.com>
+From: Jinqian Yang <yangjinqian1@huawei.com>
+Subject: Regarding the Issue of vNMI Not Supporting Live Migration
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ dggpemf500013.china.huawei.com (7.185.36.188)
 
-From: Cryolitia PukNgae <cryolitia@uniontech.com>
+Hi，marc
 
-Add GPD fan driver document
+https://git.kernel.org/pub/scm/linux/kernel/git/maz/arm-platforms.git/log/?h=arm64/nmi
 
-Signed-off-by: Cryolitia PukNgae <cryolitia@uniontech.com>
----
- Documentation/hwmon/gpd-fan.rst | 71 +++++++++++++++++++++++++++++++++++++++++
- Documentation/hwmon/index.rst   |  1 +
- MAINTAINERS                     |  1 +
- 3 files changed, 73 insertions(+)
+During the testing of this set of vNMI patches, it was discovered that 
+vNMI do not support live
+migration. The reason is that GICD_INMIR/GICR_INMIR0 have not been 
+migrated, causing
+irq->nmi to reset to 0 after migration. Therefore, to resolve this 
+issue, we need to complete the
+migration of GICD_INMIR/GICR_INMIR0. This set of patches does not seem 
+to have been uploaded
+to the mainline. I was wondering if these are scheduled for upload to 
+the mainline?
 
-diff --git a/Documentation/hwmon/gpd-fan.rst b/Documentation/hwmon/gpd-fan.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..82f064c80aac485348f7c5179a9c4104fd6a4745
---- /dev/null
-+++ b/Documentation/hwmon/gpd-fan.rst
-@@ -0,0 +1,71 @@
-+.. SPDX-License-Identifier: GPL-2.0-or-later
-+
-+Kernel driver gpd-fan
-+=========================
-+
-+Author:
-+    - Cryolitia PukNgae <cryolitia@uniontech.com>
-+
-+Description
-+------------
-+
-+Handheld devices from Shenzhen GPD Technology Co., Ltd. provide fan readings and fan control through
-+their embedded controllers.
-+
-+Supported devices
-+-----------------
-+
-+Currently the driver supports the following handhelds:
-+
-+ - GPD Win Mini (7840U)
-+ - GPD Win Mini (8840U)
-+ - GPD Win Mini (HX370)
-+ - GPD Pocket 4
-+ - GPD Duo
-+ - GPD Win Max 2 (6800U)
-+ - GPD Win Max 2 2023 (7840U)
-+ - GPD Win Max 2 2024 (8840U)
-+ - GPD Win Max 2 2025 (HX370)
-+ - GPD Win 4 (6800U)
-+ - GPD Win 4 (7840U)
-+
-+Module parameters
-+-----------------
-+
-+gpd_fan_board
-+  Force specific which module quirk should be used.
-+  Use it like "gpd_fan_board=wm2".
-+
-+   - wm2
-+       - GPD Win 4 (7840U)
-+       - GPD Win Max 2 (6800U)
-+       - GPD Win Max 2 2023 (7840U)
-+       - GPD Win Max 2 2024 (8840U)
-+       - GPD Win Max 2 2025 (HX370)
-+   - win4
-+       - GPD Win 4 (6800U)
-+   - win_mini
-+       - GPD Win Mini (7840U)
-+       - GPD Win Mini (8840U)
-+       - GPD Win Mini (HX370)
-+       - GPD Pocket 4
-+       - GPD Duo
-+
-+Sysfs entries
-+-------------
-+
-+The following attributes are supported:
-+
-+fan1_input
-+  Read Only. Reads current fan RPM.
-+
-+pwm1_enable
-+  Read/Write. Enable manual fan control. Write "0" to disable control and run at
-+  full speed. Write "1" to set to manual, write "2" to let the EC control decide
-+  fan speed. Read this attribute to see current status.
-+
-+pwm1
-+  Read/Write. Read this attribute to see current duty cycle in the range [0-255].
-+  When pwm1_enable is set to "1" (manual) write any value in the range [0-255]
-+  to set fan speed.
-+
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index d292a86ac5da902cad02c1965c90f5de530489df..ce4419f064e1368740387af70af38a85cadd952d 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -82,6 +82,7 @@ Hardware Monitoring Kernel Drivers
-    gigabyte_waterforce
-    gsc-hwmon
-    gl518sm
-+   gpd-fan
-    gxp-fan-ctrl
-    hih6130
-    hp-wmi-sensors
-diff --git a/MAINTAINERS b/MAINTAINERS
-index e81eeb61d49b282a5a2dc701f1c932c3a82d8b85..26da2b93173477716fe3abc525078eebeaed3f45 100644
---- a/MAINTAINERS
-+++ b/MAINTAINERS
-@@ -10338,6 +10338,7 @@ GPD FAN DRIVER
- M:	Cryolitia PukNgae <cryolitia@uniontech.com>
- L:	linux-hwmon@vger.kernel.org
- S:	Maintained
-+F:	Documentation/hwmon/gpd-fan.rst
- F:	drivers/hwmon/gpd-fan.c
- 
- GPD POCKET FAN DRIVER
 
--- 
-2.50.1
+Thanks,
+Jinqian
 
 
 
