@@ -1,102 +1,124 @@
-Return-Path: <linux-kernel+bounces-753409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753410-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 625CDB1827C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:31:49 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 900E2B18282
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 15:32:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0936189E2F3
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:32:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 930057AC6C3
+	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 13:31:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A85952571AC;
-	Fri,  1 Aug 2025 13:31:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE1A925A2C7;
+	Fri,  1 Aug 2025 13:32:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q53t7ZXP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="PR905xE/"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16E0A11CA0
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 79E7522759B
+	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 13:32:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754055104; cv=none; b=nfIcjlzlZpGjaVOGv+AE6aVRVhZqY6Hb/CUQGaZkFs9K4CNH+Nbg/qqrlqZpaYey8Kv7kdqNkxMe4JV80+GBBSwE3HxqcUCitnBve8a7FrhuNpr7cUsVcLHtUXlrmfTfegdH0Sw0roklO3VD8V4mU6KNtr1gpFemSf5G4UP0qzc=
+	t=1754055164; cv=none; b=kHtI9Iz4DFQsp1Ob0fC1QZLbK3TQCLKudeLqBVzG0gt5GoRgNi35ncXWz2IAOCEXscfGwAjhKCah59M0rck5DoTTbQ4qkK6KP4PuCT91k3XqfBtSkrBQY9gOJAzsl2Ip5eW0V7pqfq7FGaPa2yghNGMpYVhYNFQhI8X+6eSS2TA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754055104; c=relaxed/simple;
-	bh=f/o4P+Pp2v8VlkSNt1F64znTUTJCoWMXEp6OgqEsXCQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DzTniftCZHOizq1ouATsACxq2od8bzDzMoXo7xI02ryWNDtAeWqzQr7rW9ZDKzd5145FSn44hVnDhm5zt5oG0pvD6BDP9RDZyLC6U/Jvf5eVHNVNqtJNZmpKjnl+6NFUdkLhGB+Z9ghlyMzLLe+ogXpLUx6XVCtkk5mFn7vyRxI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q53t7ZXP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DD447C4CEE7;
-	Fri,  1 Aug 2025 13:31:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754055103;
-	bh=f/o4P+Pp2v8VlkSNt1F64znTUTJCoWMXEp6OgqEsXCQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q53t7ZXPKwnpd85dORAB/aspsKSr4JpUa2IYNWPtySLgFJKk5Cu/Rr2aUmAWGW8HN
-	 XtSo9op9M5fJBWpR/hdKPYAQoIjJLYgLrtIJ0K/SzPNH7+b/d2HMsq/1X/8hDQZJym
-	 GmFONcP4wXe51MzQoVx4YBiSI5cATVXYHlR3gch4UevjzpwtbyTpRHuAPsxAlB7Gu2
-	 peD0DuOLriBJvYhfdHZ0e2dINLyCzVBINvJA4P3quMb3UV8JXxcuSnt+pBStbX4EC/
-	 hqPeDF0CjJm1uDb2bcmHNEXsBZKXIdhJd+Slk75UsMlXAB31YRXtKnDBlJXKcIIJLK
-	 bbhrotRAIGGGw==
-Message-ID: <941cc16a-7599-4ae2-9d2b-2ebb4728196e@kernel.org>
-Date: Fri, 1 Aug 2025 22:31:40 +0900
+	s=arc-20240116; t=1754055164; c=relaxed/simple;
+	bh=D+PtGGPfj6WwPCQkvS3KxNql2PwDRVzIf9jNqijot6Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=uh/0ZZ5NpPMW+THOQNph6MraB3ph9NF+ZIWmgk1aUkuu3WHARNXmDIeDF+t1oSo/gtecAf0kzHnMYGSEZp2lIBesqQDxVEj0XIFFfwpBTN7un/rH5xzTxg/+loOb0PLy6G9RWKkwGL7OVZT23iZN1wQpeYW6VExA9TqiC0xyip0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=PR905xE/; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4589180b266so11555165e9.3
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 06:32:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754055160; x=1754659960; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
+        b=PR905xE/9YajnGFgMcpul6TkBibuo7B+Z1ptrMBga4iBqO/Ikp99TRcA5TdaESmLIP
+         9ocacALocWeyvW4PwplrCgtN+Nw/Ynz8wnrB0kfutrz9A4bjWqg4VETt66SA5JC8nLXb
+         O6KUUHftAmMiX+dSPHPy3BH5Zd92RmA5KlbQYM4eHowJ5E57ws8opBGdydcK6FGTpo9C
+         ENZx/ewvE/fK3KEO/ncAIxR4bFPdVrS//SwXJRcytmP6pfuMz7PTDPRal8SZdRJlDuY6
+         Plr0k53JsfDKIK1Prkeooz6e4GlTAtSLo5TNIjgptlghESE+VngXeGCxx3TgdB4ps7p+
+         BysQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754055160; x=1754659960;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2idx5QSV7SbSw8eO9muSjti0H6pMvCzwd4EGmVUbV4o=;
+        b=EaOgjLTcxTG8eZnFcIljO7aKPzbvUhyNIP/vY0aRemc0HNqMXKXqf27owHULIthoy/
+         WiW1LpAtlPqOFw4Ul9qGz7Wq0oADOB7XZj1UHA0wHswTEFtOJQOivn5HAMNGo/+UtXdO
+         TgBgO6rLGf2nV4hmLmD9/M4thh9CRHRXKMoCZvQmSH7hNReELcSoopKKWLI99A3q9a2f
+         UKIOYRSzWqPJjY/TCOcLrppxZOkBPHblKGcPqGz3er9sIb6or6s2YSehtYwGVxedTJWa
+         1zf0tIVSC6D5kAPNsHoAfxYseR5ljxdmpnvk0A8eJcEf3ZybnOzgOGLGiuOyYjRGmcG1
+         tahw==
+X-Forwarded-Encrypted: i=1; AJvYcCV1pNx3s6H7brYtC7hb5WRHf9hAHzZ/MO0Phs408C9w602IvI0wmAqjxyiSJgd7Vy3Se5t3aTgWVzmJXO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGYbV6ibyLxJUHQDxcUUsLgDkPkWiwkBxV+8z0rruq8TEGMZKm
+	eiCViEJzHCOCnResxfkWqGnqP8b/bO/4DBxO+0rdeqFkp10mNtLoELnpIEW3nBINKLM=
+X-Gm-Gg: ASbGnctPcR5PNnfojrxBJyuZ6ZVKXh1nSHyjKtklbz5J4TIhcKadm1k/Rj48B+YOrmG
+	OXTZRrEWhG7P1latni76Y5JaDRIzhEiKpGiCCHDm2aEMCR4ul1n16+qkGlFRClHTxlwTfcjn/sX
+	QUn5iMNhrdJ06CKD7m66oTciIWzZ2uNNxcz9u/4YPT320+rKh+2Z54TZONaBeUXZj6CXMAMToGw
+	RQwItClG9afNWiO0sXcf61VqWtiQK/i+4907VJ9/KoNyDLkhyv0DeAHNQdLEY+zmxeTZNiiFQjT
+	aGeCx4CYGZUGihmJ0ry53QW6r2HwXkgxjvJVAgPxdK2jG22kn2LNQdFey66YVkU5BiH6AHkmjEC
+	RwVax047kEXq4QLVvLDNrVmSSe/M=
+X-Google-Smtp-Source: AGHT+IFIP925vY6Yo9eRXJ5b38/MY0xKS/0uwFqRgqNx/TMNMJnubKb87tJwBNeV97YGf7Vh3ES1Gw==
+X-Received: by 2002:a05:600c:810c:b0:453:6424:48a2 with SMTP id 5b1f17b1804b1-45892b9e335mr130336025e9.10.1754055159772;
+        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-458a7dd8cdesm42494865e9.19.2025.08.01.06.32.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 06:32:39 -0700 (PDT)
+Date: Fri, 1 Aug 2025 16:32:35 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Satyanarayana K V P <satyanarayana.k.v.p@intel.com>
+Cc: Lucas De Marchi <lucas.demarchi@intel.com>,
+	Thomas =?iso-8859-1?Q?Hellstr=F6m?= <thomas.hellstrom@linux.intel.com>,
+	Rodrigo Vivi <rodrigo.vivi@intel.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Piotr =?iso-8859-1?Q?Pi=F3rkowski?= <piotr.piorkowski@intel.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	intel-xe@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: [PATCH next] drm/xe/vf: Fix IS_ERR() vs NULL check in
+ xe_sriov_vf_ccs_init()
+Message-ID: <aIzB8-Y6wtZvfNQT@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [GIT PULL] extcon next for 6.17
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Chanwoo Choi <cw00.choi@samsung.com>, MyungJoo Ham <myungjoo.ham@samsung.com>
-References: <15ca3763-45a5-40af-93a8-449a9f1f33a9@kernel.org>
- <2025072609-knapsack-drinking-c979@gregkh>
-From: Chanwoo Choi <chanwoo@kernel.org>
-Content-Language: en-US
-In-Reply-To: <2025072609-knapsack-drinking-c979@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
-25. 7. 26. 15:53에 Greg Kroah-Hartman 이(가) 쓴 글:
-> On Sat, Jul 26, 2025 at 09:34:47AM +0900, Chanwoo Choi wrote:
->> Dear Greg,
->>
->> This is extcon-next pull request. I add detailed description of
->> this pull request on below. Please pull extcon with following updates.
->>
->> Best Regards,
->> Chanwoo Choi
->>
->>
->> The following changes since commit 86731a2a651e58953fc949573895f2fa6d456841:
->>
->>   Linux 6.16-rc3 (2025-06-22 13:30:08 -0700)
->>
->> are available in the Git repository at:
->>
->>   git://git.kernel.org/pub/scm/linux/kernel/git/chanwoo/extcon.git tags/extcon-next-for-6.17
->>
->> for you to fetch changes up to 5f09caafc652bcee7a5247e40dd34d1de1ad7d7f:
->>
->>   extcon: fsa9480: Avoid buffer overflow in fsa9480_handle_change() (2025-07-19 12:39:13 +0900)
-> 
-> My tree is closed now, sorry.  Can you break this up into different pull
-> requests after -rc1 is out, one for bugfixes, and one for new features
-> for 6.18-rc1?
+The xe_migrate_alloc() function returns NULL on error.  It doesn't return
+error pointers.  Update the checking to match.
 
+Fixes: a843b9894705 ("drm/xe/vf: Fix VM crash during VF driver release")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/gpu/drm/xe/xe_sriov_vf_ccs.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-I'm sorry for late pull request. There are no new feature of extcon core.
-This pull request includes the new extcon driver.
-
-I'll send the separate pull request according to your comment.
-
+diff --git a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
+index bf9fa1238462..e363240a3455 100644
+--- a/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
++++ b/drivers/gpu/drm/xe/xe_sriov_vf_ccs.c
+@@ -271,8 +271,8 @@ int xe_sriov_vf_ccs_init(struct xe_device *xe)
+ 		ctx->ctx_id = ctx_id;
+ 
+ 		migrate = xe_migrate_alloc(tile);
+-		if (IS_ERR(migrate)) {
+-			err = PTR_ERR(migrate);
++		if (!migrate) {
++			err = -ENOMEM;
+ 			goto err_ret;
+ 		}
+ 
 -- 
-Best Regards,
-Samsung Electronics
-Chanwoo Choi
+2.47.2
 
 
