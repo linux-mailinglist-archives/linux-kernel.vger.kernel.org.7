@@ -1,167 +1,238 @@
-Return-Path: <linux-kernel+bounces-754148-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754149-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6F5B18EA7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:26:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 86C06B18EB0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:27:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE366189C5DE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:27:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF819189C430
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:27:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18ACB23C509;
-	Sat,  2 Aug 2025 13:26:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC3A23ED5B;
+	Sat,  2 Aug 2025 13:26:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KGTcxj85"
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="qqNUWLHW";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CLzPCjtS"
+Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D074F221FB6;
-	Sat,  2 Aug 2025 13:26:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA31239562;
+	Sat,  2 Aug 2025 13:26:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754141193; cv=none; b=d0lkEFbK5LMzxEWeLy/vDkww3ffdK+52QM7/A01QFCz4PoaGTU7uilbvR4ne+xacReZFApTn6OJLpw9A5K+g4Tv0cx6c1WiuJ++BVvb7ik4WFBZ2AuManPQmiy5liFxmOmjgQeiRliZ7GoO+PTXQrkJUJleJvbXVFRRYBkRHbTc=
+	t=1754141217; cv=none; b=IG0vgVIyuoW40jat9TEhLXVW51lb5uRGKPjDkU2zjfa69cAeQU58WNnn6xuHrBrRfAyVto901jZ05gA1rSPHlAIhUfh7BqwCpNP/qvNzVXtOKPbPsroP/VF7ZiZjYKcsWqz5QKTeqh4bSdnO8XuTivGIuY9WqKTb34HC7/EdWxQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754141193; c=relaxed/simple;
-	bh=/4crSiN30dSloJaXXqMGBV4r+CEX6tDvBU/QfCCKxP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A6p9ie+DbTtHVeM/FhhWea5YlZN4JDKgZEGeGsIINeHUAg9ffk6VdK7NDTHol7qJQArsiK127N85Qj4AtU7s+rzU6Mv6DRGJKbGMvu5uOjLQYqMMVS/Kw17ZKwcOENYP3nYBT8ezEbF7YwuG0B+10hRHEYGaw8wUKX4jUwQWzS4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KGTcxj85; arc=none smtp.client-ip=209.85.208.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6157c81ff9eso4005810a12.3;
-        Sat, 02 Aug 2025 06:26:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754141190; x=1754745990; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d2WPNw0I6XzWPDAp4qmeaw4Yfp83TAoP049VoC7bMVY=;
-        b=KGTcxj85KRybHywi4viRrmu8Vcx6HiTxlDcQ9xAIAJ2L2lyONQdJMuLIUmILgnAm+n
-         mIb87WA3ZTvrZrzsLBqSXrqPv3pSguAf1dFwJfoPyP2fszjEjDi1LRyDa9PWixQsKdhO
-         yhzG7205T4eMD/4pJ/ySv0OyBM9FDxWnkMW6/1x8x0DqBhtbXGdeWD7guknojxd1QCeC
-         NvoT04B0acgWEaAqxgKDw81Smn8IqZLCKYJL0+Hw6zVnUQoGLg+TRGMj6npH4BPJzgdm
-         UjyFbn4zi8bm7ECTIfF/IiIQaxodaDY9bjX0wPZQMLd/eM1+OIizbPWzlSg5wf95SdYb
-         GjvQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754141190; x=1754745990;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d2WPNw0I6XzWPDAp4qmeaw4Yfp83TAoP049VoC7bMVY=;
-        b=LYMMD7lD7bBIc5jrnKqYZhxEajDvV035fxCfFs4RsQnkc8ahfisapSoMu88pBGrRMm
-         ndxtNtMwMhd0gpodsiCl42ghcvono9OhghFnmP7nfsQUOtzZ0OMZYATBrFX922/ZvB8n
-         a4KtDTd58a2kDRgUwuKk7C29XCWbDu1ij2nWN4V3IIGYMFOrL0SOXEAD5BBHqK2890Dw
-         fTSmpz8LL05XVL9k2HouYj6g+NozMey7IslMXxpNhYdLdUDQmHkroKy4AQsIDTJYPwbA
-         z/vWovBTe8q8d4vHaoPx608tOr89CUz6PLo3XEsXj/urpfunletrd0Lwpl3h+KqGfXce
-         kdXA==
-X-Forwarded-Encrypted: i=1; AJvYcCWidOAR5KAqaHEmEoAqedtWbo/AMRYSIbfdBha/M1W/A8YLO6JG6LSxdeyQ88NFKejZ11A2/XsnNETx@vger.kernel.org, AJvYcCX7y/jWQtUOWtfBJMEUiwGy1c0H1gWS9Lsh/keiwZm53Vg5ZnR8nDEkO2YuDTfwY23VBokR6gS3UNffykcz@vger.kernel.org, AJvYcCXpuDlfUpcQz4EdrHbi2W6NepFzWn+ow1wvycumnW+UuCvX1mgg2rnUIOkBIaPUG6x4L6LpTMbKG0Rp@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKv0vTgqWHdSgPCbnxhusT/6r1+ZKuuHpd3DBaPJq/vzTyTC1x
-	nKhxLpxT4VUizJ0m9BY08PGKTPuwaUc+spxJR/Oh8hiLLy6Ce44vpwxV9Ys0URvzPym3JtteCs0
-	1HAGuqCI2VzWPAGL1aeNEJxo3/lhkdfw=
-X-Gm-Gg: ASbGncsqWmLWCguvz1sl+Ifopv1wq+rV8hy7h+/qd417MmP7uftbHAflLFJcV+c5TB4
-	z0dC25LDxxTWeZHQKalJU2zfEOYFJbq/yXbgPKhRUwjOU41GLnFJ68vaIWQg1f47MPlnHU957O/
-	wiwZo6MxfS1ikcJzERCL2UoVt3g5djNc897Zgpxz8qB8OI21HkD298o7+NtSzTHWnuvurgPf4UF
-	tmFnk1C2qFHJSno0sDd
-X-Google-Smtp-Source: AGHT+IGP26q7g//ODnOqXi+xOmeoNUM/WD+PpMklLSRMgcUDnCJrZddoH3kgwmSFWsYFz2GsetLXdaKRf7hQo+u4kL8=
-X-Received: by 2002:a17:907:72c2:b0:ae3:6ff6:1aad with SMTP id
- a640c23a62f3a-af940009783mr304916766b.14.1754141189961; Sat, 02 Aug 2025
- 06:26:29 -0700 (PDT)
+	s=arc-20240116; t=1754141217; c=relaxed/simple;
+	bh=RQcvlDgE9AaqghHzjivBTwci6wnSL8fk15KJ90oMijI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ecBA5JpXZKFsKSto4Wd7cZc9hg+ufJs+QXZp/+45TVRt1SxBSjdL5zRa7J3r1XsqAuRsWkcOGiooOxb4LX6lTMu15l6cGAG9ealaotRlvot2QvlsQf3alEjlzLc4B2pSmHQG4ZeCzwcSqdTHWULmqwwXntiK/KirVsiiRJM2s4g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=qqNUWLHW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CLzPCjtS; arc=none smtp.client-ip=103.168.172.140
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
+Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
+	by mailflow.phl.internal (Postfix) with ESMTP id A87BC1380608;
+	Sat,  2 Aug 2025 09:26:52 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-04.internal (MEProxy); Sat, 02 Aug 2025 09:26:52 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754141212;
+	 x=1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=
+	qqNUWLHW5NkgMWC7l9Ppuzcw0TRZVKBalVrpuNL2tWkSX16V+CaL/WD3GPRevH/3
+	cOaqYuZWVehBMlqwkuJTQ3+7ee7mvoCmm57l/9y3kSLOhYi/j9UZL0baYRp5JOQM
+	j4yp2XwkBPHkkHrQr9G2kPmFqob1bo+ge9yICVt/dsRrLU+xuJA6h9g8SW4qJPa0
+	AHQH8Vz64gEdgI7kQ+1DTmePAvNbJQJxnWkGkDSZF/paCkDAzfIwxTUg+JfaHIca
+	2uCTiijQTVgzLiuE6qwTC/es2iaY0ak3Q1yInsTplxnRcKjgCrvxpj+WvGFL/Gkm
+	HIx11r/lg4cei6lIenYP+g==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754141212; x=
+	1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=C
+	LzPCjtSlWjEpgC9nck7IIN+a6VWM2T9KzMBiWo4CFmbf/c8EsbwRuyBR6zo43jFD
+	hvyIbMP0zgOcLL+h4kub0bXZEqehHtgFY6sV9cwlFjffv+lGsEsKcJttU2+8fn3b
+	kRALXojkwbX6H2IOxV2soFJHVIcKk6LuRbHAbjPhMXvWGeT7KA2Mau0LJLy4HAji
+	lfgiUMmK9spCDs/oe1YGLozfqCHtXvx0XyirO7dloL77Fyd05IG6lp0ZwH1pUgeh
+	FNabC3mgBC+9qZ25Drxy58dz8xR3lKKGectSGWS0hTtARs2FRFJmAX2nfNB3fKxO
+	c360wFl1nKo7iNibIdOnQ==
+X-ME-Sender: <xms:FhKOaIqzIVCCzZqyPT8S-Kuyp75Ghz90bD-sNWC1Ynb1xWuDhB2fgA>
+    <xme:FhKOaAAM51hB_nYlCo1hgXLgPrXfAQsJTzEzSK29ONCez_BVzRWEnZ7YYfmVPVSd4
+    mYWvtLYdmS8g_-J1io>
+X-ME-Received: <xmr:FhKOaKNy3dovqvqjcZlMlmNulu_odOhDUh_OuI4TialffSqjpk1dXSXjcgxfsuv77hx6_icSG8wxq9Qphv3aDtPfT18v805RrQ>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdeiieelucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
+    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
+    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
+    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
+    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
+    rghtvggthhdrshgvpdhnsggprhgtphhtthhopedutdehpdhmohguvgepshhmthhpohhuth
+    dprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgurdgt
+    ohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
+    epuggvvhgrrhhshhhtsehtihdrtghomhdprhgtphhtthhopegsphgrrhhrohhtsehtihdr
+    tghomhdprhgtphhtthhopehhvhgvrhhkuhhilheskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htohepihhsvghlhiesphhosghogidrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhp
+    ihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohephhgrnh
+    hsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrrhhthhhisggrnhdrvhgvvghr
+    rghsohhorhgrnhesmhhitghrohgthhhiphdrtghomh
+X-ME-Proxy: <xmx:FhKOaHAoXiF7NV692VGvUlBtEKV8Ppc7HpktTEwZStXxvUIyFnrhjw>
+    <xmx:FhKOaIXbJEGFB6MyMI6SEvkY_tAqtZmQdwpF1CyYAg0cU-whIhajXA>
+    <xmx:FhKOaOXdPk75wbqe7BRIpcNiWjQWCtbKZe7Hw0Dw9yRuHK1wn0wJ9A>
+    <xmx:FhKOaA4w1OKh4y5m73fZ4TocrIIXqTtdAsWzkrmS8EjZZidpBDEFUw>
+    <xmx:HBKOaGfprgDP-C4pCZ_BqeXWMGw4oENfGJWvHSy-BbRaGSp473jMOr6M>
+Feedback-ID: i80c9496c:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
+ 2 Aug 2025 09:26:45 -0400 (EDT)
+Date: Sat, 2 Aug 2025 15:26:43 +0200
+From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,	Chen-Yu Tsai <wens@csie.org>,
+ Samuel Holland <samuel@sholland.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paulk@sys-base.io>,	Robert Foss <rfoss@kernel.org>,
+ Todor Tomov <todor.too@gmail.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,	linux-mediatek@lists.infradead.org,
+ linux-tegra@vger.kernel.org,	imx@lists.linux.dev,
+ linux-renesas-soc@vger.kernel.org,	linux-arm-msm@vger.kernel.org,
+ linux-samsung-soc@vger.kernel.org,	linux-sunxi@lists.linux.dev,
+ linux-usb@vger.kernel.org,	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 17/65] media: rcar-vin: Do not set file->private_data
+Message-ID: <20250802132643.GA1848717@ragnatech.se>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <20250802-tlv493d-sensor-v6_16-rc5-v2-1-e867df86ad93@gmail.com> <20250802124333.67f64863@jic23-huawei>
-In-Reply-To: <20250802124333.67f64863@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 2 Aug 2025 15:25:52 +0200
-X-Gm-Features: Ac12FXyUc20aph_0pV3bKsHUq9U5-euyrn8HhDdq8pCrFQbPz3ZVhsz1hDak-Xc
-Message-ID: <CAHp75Vd+D1RQC-pVQjsgkSMdmV=GXcRGkbD5hHgo-9+Tyy9Uzw@mail.gmail.com>
-Subject: Re: [PATCH v2 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Dixit Parmar <dixitparmar19@gmail.com>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
 
-On Sat, Aug 2, 2025 at 1:43=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
-> On Sat, 02 Aug 2025 12:14:27 +0530
-> Dixit Parmar <dixitparmar19@gmail.com> wrote:
+Hi Jacopo,
 
-...
+Thanks for your effort tidying things up!
 
-> > +/*
-> > + * Different mode has different measurement cycle time, this time is
-> > + * used in deriving the sleep and timemout while reading the data from
+On 2025-08-02 11:22:39 +0200, Jacopo Mondi wrote:
+> The R-Car VIN driver sets file->private_data to the driver-specific
+> structure, but the following call to v4l2_fh_open() overwrites it
+> with a pointer to the just allocated v4l2_fh.
+> 
+> Remove the mis-leading assignment in the driver.
+> 
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-timeout
+Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
 
-> > + * sensor in polling.
-> > + * Power-down mode: No measurement.
-> > + * Fast mode: Freq:3.3 KHz. Measurement time:305 usec.
-> > + * Low-power mode: Freq:100 Hz. Measurement time:10 msec.
-> > + * Ultra low-power mode: Freq:10 Hz. Measurement time:100 msec.
-> > + * Master controlled mode: Freq:3.3 Khz. Measurement time:305 usec.
-> > + */
+> ---
+>  drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c | 2 --
+>  1 file changed, 2 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> index 62eddf3a35fc91434cb2e584a01819380a7a6dd8..079dbaf016c25139e2ac82be63d8fce0d11fd208 100644
+> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
+> @@ -588,8 +588,6 @@ static int rvin_open(struct file *file)
+>  	if (ret)
+>  		goto err_pm;
+>  
+> -	file->private_data = vin;
+> -
+>  	ret = v4l2_fh_open(file);
+>  	if (ret)
+>  		goto err_unlock;
+> 
+> -- 
+> 2.49.0
+> 
 
-...
-
-> > +/*
-> > + * The datasheet mentions the sensor supports only direct byte-stream =
-write
-> > + * starting from register address 0x0. So for any modification to be m=
-ade to
-> > + * any write registers, it must be written starting from the register =
-address
-> > + * 0x0. I2C write operation should not contain register address in the=
- I2C
-> > + * frame, it should contains only raw byte stream for the write regist=
-ers.
-
-contain
-
-> > + * I2C Frame: |S|SlaveAddr Wr|Ack|Byte[0]|Ack|Byte[1]|Ack|.....|Sp|
-> > + */
-
-...
-
-> > +                     /*
-> > +                      * Magnetic field scale: 0.0098 mTesla (i.e. 9.8 =
-=C2=B5T)
-> > +                      * Magnetic filed in Guass: mT * 10 =3D 0.098.
-
-field
-Gauss
-
-> > +                      */
-
-...
-
-> > +static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops,
-> > +                     tlv493d_runtime_suspend, tlv493d_runtime_resume, =
-NULL);
-> Preferred wrapping here is
-> static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops, tlv493d_runtime_suspend,
->                                  tlv493d_runtime_resume, NULL);
->
-> So go nearer 80 chars on first line and align second line below the param=
-eters
-> on the first line.
-
-I prefer the original split as it's more logical.
-One can make use of 2x TAB indentation, however it might be a bit
-inconsistent with the rest of the code.
-
---=20
-With Best Regards,
-Andy Shevchenko
+-- 
+Kind Regards,
+Niklas Söderlund
 
