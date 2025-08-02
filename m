@@ -1,193 +1,245 @@
-Return-Path: <linux-kernel+bounces-754094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754095-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 58E37B18DFC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:40:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BB8BB18E00
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:42:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BAAC41AA1EA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:41:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03C41AA1EE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4731D221277;
-	Sat,  2 Aug 2025 10:40:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F741221555;
+	Sat,  2 Aug 2025 10:42:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Zsuangat"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UZ1D2NWw"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24ECB214209
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 10:40:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9C321146C;
+	Sat,  2 Aug 2025 10:42:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754131241; cv=none; b=amXBKrW6hw9Ucc6f+uZIKFcaCXO+mDNXfL1c/p3KLe2l9acLNBPAkXEOJ0MEjYcXQRdloZ/bk+W4AB3stkL25m3kKvrChFk3Bk7Uybgocs7ENZeRMIIEvpKhN4bnV7jPQWUnCOlS+Df0JCIk+8ewWgwOH6ocM5ehgCJHwp9F8kk=
+	t=1754131329; cv=none; b=JmRdoGjDLtbkau3jK351UeUd2X96+sEHvf/SrY3L8HyLcMdzVYWV/YfoUm7P8JAinUssNGjEpKDayhDhM58Vv0Yp+HvvRs9AE7KaZbVdfCDfaGRxpUVQBnwWZG7N6MjOsYNtyQjPchlHgnc4kwyCCthA1llOJhuJcMQlbavEsT8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754131241; c=relaxed/simple;
-	bh=V5fwEFSvd6iZX7vn1nOUGXoBQVgsda3sPWa8+8IxVEQ=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=gF8crcstBSPsmeeS4gIZrLW1atKzTEbfgBEd5O/NG1QVMJYSsK9DC1T1Ta0BwjSuF55oD6x9d0RONQ5xJ/+CPQ/4PszaSLBJJ6hdpfxBjeX5O2wVhMPJUntrB8t8A6hOOqtH7IT4adk/MG13Ht/J1zSm6D0Fg6/1NYK9voKV1SE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Zsuangat; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5725f2ep008607
-	for <linux-kernel@vger.kernel.org>; Sat, 2 Aug 2025 10:40:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=zu+wgBbmPg38lcKPkzJiVr
-	U6c5vcWfMV6SwJ1iTuKKQ=; b=ZsuangatO6qj+6HG4GpE4UDl2oB3KlcZ2GL6Pv
-	IRY9pcSj7d+ylN5BWf7CCSDZHCh2FuvTCH5n+nTcI1E5L94ZcFAR29KHhTo0eJsL
-	om+2TFYMbPWEvoaE8dBiL8wF8IkCyMyAMXJLfDu7+CDOpbGvssnWvC7tuE0yC/K7
-	M6+wv9LGBzChwxaZoNA5Q0usM7Td1e3kzfAh+p4L2SkxcMZpno00Il8UUiDlFRRk
-	XjvHJ4PRf/ml9WUCP8iYdtYB/xyF3lXErUaHcCVZuOpJti6/ZrxDiRCwZjh58kAf
-	7SmH+TT4jyTYcqFYKRHZnH6nM+6UNqx/HknWn4SOqj/xjWwg==
-Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4899mvrraq-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 10:40:38 +0000 (GMT)
-Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7c5cd0f8961so302071385a.1
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 03:40:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754131237; x=1754736037;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=zu+wgBbmPg38lcKPkzJiVrU6c5vcWfMV6SwJ1iTuKKQ=;
-        b=sNgUonyvnl4cSCL356hnFkopKvIlAxN+y/CUPp4Mpgdf++bNe+aSlkQPzWgFrRvKEd
-         vTSYGHlN74hYVSmS5MUYiprf2hD4bnBSsb7cdo8gTIYbXVgp3r3MIbKtcSkkcbSi9vH4
-         B9Lui6wI/rbQgnKWgxjD82iAD5dsm9alDFREJSIuW6mz7a9YTSme5lmsEfDej763x5qG
-         IB4JdDe2KBze5mwTOIVB7zdWbunccX5w4/IaM9K/QWB/ZGX3SOP337SESFQmR6vqAQPL
-         5Z4D8wtugQPOGAAFMwdn7QmSClNworBeVG9UQzpUpsYhsMG2BYG+D13ozyb8v0g2HrVc
-         TmGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUp4TE0SqbXdtuoUlW7H9smgiU1LHwf0cQhht4Xe2rfwvCfDpblrcFhOnbw2GzJQ2Ly7KqY3tlb7N/FTHg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyInccI9tqIffWWHNjiOB8J4GnC9v5OPSQCXlroCz/G0WOhBBxB
-	jaBZ/GaPcZYe/BDDj6cGJgnMSYf4vB3SRasZs3BuvRt2ihVKbr/8L1R+GCCmvxIhFOnOzzkka0I
-	GXmWyhC4e3E2mIZCMRucmExzphZi0rWENnO1Q2qHT+MPdKtwtLkbPj20TOaCqNMZYxN4=
-X-Gm-Gg: ASbGncvJmyP4sQnyMqplwOP8m/VfwIuzyO5xbUFhA7m/tfERaeJr+PkWtA0YyEN2Pik
-	89U19xGfgsVBFCjokZW8K4Z1tSD36eNhvG36Ln6c0udlaYKozWy6VAC7G9kn6+LD140jaNd5G8X
-	m5E4XKu5SRZA/j3DslVbpZUsU4LZLWuBi5U580D66kMRstW1d+2ZeEarh16bmviHPicfsEdaGpv
-	BhHQb/e5b+9f/mjHfqA4B+b6nJDg7PQvhSU3LaxOW6hVYc8YPbZwZniANnomywyMpIKRPC86uSp
-	m4thezTrV7G0Q91NR70mBzmRl0z9W95CpJfNHk+Qz1132Eo/tFbKni7n2UlANmCWIED7wLie5E9
-	LUa7/fz3MGeAv0auT4Hj39ZKANx3pR7fjov7dy9ghJI8+IyBgYyje
-X-Received: by 2002:a05:620a:8c3:b0:7d4:49fa:3c59 with SMTP id af79cd13be357-7e696290870mr383575585a.15.1754131237464;
-        Sat, 02 Aug 2025 03:40:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IFo5WUyWXxaVu371UhvAZx0Y/HJm6ZuA6t/pRnQ+dzL5rNQV5KuJVUOj53fEOxRGNJb2YAEHw==
-X-Received: by 2002:a05:620a:8c3:b0:7d4:49fa:3c59 with SMTP id af79cd13be357-7e696290870mr383572585a.15.1754131237029;
-        Sat, 02 Aug 2025 03:40:37 -0700 (PDT)
-Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b889ace49sm928030e87.71.2025.08.02.03.40.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 03:40:36 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Date: Sat, 02 Aug 2025 13:40:35 +0300
-Subject: [PATCH] drm/bridge: display-connector: don't set OP_DETECT for
- DisplayPorts
+	s=arc-20240116; t=1754131329; c=relaxed/simple;
+	bh=pcGk9y8DlmgUq1EcQLsz9u593YFGYmOv4O5/rbqbbOk=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=UwO3seyxVUxvZjsk0a+cFC29P+OVa5E3otkJ6oRCuiSrhgWEJvRXJn1cOs90WE1myXUubNcyIhesl1GYPOX2I8Pzi8Bm6BMFK8fCWlmJJXPFrcWANrVLKBPilRwfEtdCTfwPYIQM4gsw5EHrDm2IpxrwEIYqCnk7SbDiiezuRG0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UZ1D2NWw; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E7F56C4CEEF;
+	Sat,  2 Aug 2025 10:42:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754131328;
+	bh=pcGk9y8DlmgUq1EcQLsz9u593YFGYmOv4O5/rbqbbOk=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=UZ1D2NWwLxV7PESJmi7SL1Lz+F/usj2zFNAb49RbTzRTrxeauxTmekDoNyGpfsE2L
+	 R79o4gC3PKVyPtVAbpoIwH8zmdLrDmoHGRcJbllGnGLnRDKYC9eGniDL3JByuXXHDq
+	 nRjYngzEZn+cdWv0DXH+/89fitw2FVqq/fRfl4triPrBlyojwg5PMKNQT4EuThjSYb
+	 wCUvAlfeJDeZzBbqbs/LochT7hm44of71L9e1SPQctaIBqMv/0DPes+W3vfXfatJup
+	 LaFBy5JCfr338VLoioe4ZPbX2SC6Zi/Fi1bWudZqC/iBqJ4goCzZeaUyAzoKecUidG
+	 Bdx7Y8h6fn4wA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250802-dp-conn-no-detect-v1-1-2748c2b946da@oss.qualcomm.com>
-X-B4-Tracking: v=1; b=H4sIACLrjWgC/x3MPQqAMAxA4atIZgP9QVCvIg62jZolLa2IULy7x
- fEb3qtQKDMVmLsKmW4uHKVB9x34c5ODkEMzGGUGNSqDIaGPIigRA13kL3ST0uNk3UDWQ+tSpp2
- f/7ms7/sB/Uavb2MAAAA=
-X-Change-ID: 20250802-dp-conn-no-detect-b901893b5e3c
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Robert Foss <rfoss@kernel.org>,
-        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-        Jonas Karlman <jonas@kwiboo.se>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-        Maxime Ripard <mripard@kernel.org>,
-        Thomas Zimmermann <tzimmermann@suse.de>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1917;
- i=dmitry.baryshkov@oss.qualcomm.com; h=from:subject:message-id;
- bh=V5fwEFSvd6iZX7vn1nOUGXoBQVgsda3sPWa8+8IxVEQ=;
- b=owEBbQGS/pANAwAKAYs8ij4CKSjVAcsmYgBojesjxhI5LE1y0oeOUvU2pvk6ANdl/CkH4FaFn
- 0Ute45kT5KJATMEAAEKAB0WIQRMcISVXLJjVvC4lX+LPIo+Aiko1QUCaI3rIwAKCRCLPIo+Aiko
- 1cs+CACO7cAgyLFxQc0407yt4axfgDYItBSqQrrMOKTFTpXNQhcEIIfC90mhSmpoxc/38Fm3XHw
- fqowe6NMvNUzZwTXJ8KMUnWE1FvSmMHdMF5i5f4VgqmxAQn8zvzFjBnuHz2GmFdoZvthLG0QzLC
- Elz1LL+mzcAtxwoSMw5L35tIUhtCZuaQxDho3igakcyl5osd6VOYS/8vvbRslEL1RrDZR3iMTCK
- 79eHouHtIOvUwF/8zPOubPwnD4pYd15BlDrZWiWehoLxZP78AwVQhIlwNGp2Do78LWvzs3Wr7R3
- 6wZkKoLwjQmzQ9n5+uCslf7Ew0/0QnuyxPkIsbKqr1R/oWgc
-X-Developer-Key: i=dmitry.baryshkov@oss.qualcomm.com; a=openpgp;
- fpr=8F88381DD5C873E4AE487DA5199BF1243632046A
-X-Proofpoint-ORIG-GUID: JX6TUe55ZzYOVoax52DUz45viKU44BEv
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDA4OSBTYWx0ZWRfX7VMxcnUhdhfB
- 7e/VRsytglRRcJlKFZFo3ki4TbqhaadQAsoaPG2pemUPbPEEJsW7UD+D3LXY5DiL1QXT22Hgdbq
- xOQ+mvXo0mp0Ii6f+WLzkW+D9um56qYjBdB6o5Ab6f8P4eN9BeN0VqV/4m0gpKDFlpFJ7MXO1bo
- G954v8pbWHWHVQSIXaX3yER8K4+hv5kNvLcdnQjssNd19aE3H5LiivjR4H2b39Ej8hmhTPDY/2c
- iWUicSqnj3FAvyxXzGvIQb61mD2Wjhe+r6Qzm8nICQHwN4MqWHuNgrJxwmgvvPxD4g+nXFxm73P
- nYxcZ8d1QmJK2kjPdTjJKxvfbLxbaY6xMQHXiWGTsSoGlmTEcUghU18P/NjvpMh/SnnTRiHbZcH
- 6us602v1KSmymeZKkeGnSOqkdeCsqAIaK5rPrNqmUvX/HKboJE5Bsy6Bw0+1TkynMPx/eG8F
-X-Authority-Analysis: v=2.4 cv=duXbC0g4 c=1 sm=1 tr=0 ts=688deb26 cx=c_pps
- a=HLyN3IcIa5EE8TELMZ618Q==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8 a=jZDBt8FwwR466f3IuqAA:9
- a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
-X-Proofpoint-GUID: JX6TUe55ZzYOVoax52DUz45viKU44BEv
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 suspectscore=0 impostorscore=0 mlxlogscore=999
- priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 spamscore=0
- phishscore=0 clxscore=1015 malwarescore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508020089
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 02 Aug 2025 12:42:03 +0200
+Message-Id: <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
+Cc: "Onur" <work@onurozkan.dev>, "Boqun Feng" <boqun.feng@gmail.com>,
+ <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
+ <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <gary@garyguo.net>,
+ <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
+ <dakr@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
+ <will@kernel.org>, <longman@redhat.com>, <felipe_life@live.com>,
+ <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>
+Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>
+X-Mailer: aerc 0.20.1
+References: <20250621184454.8354-1-work@onurozkan.dev>
+ <20250621184454.8354-3-work@onurozkan.dev>
+ <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
+ <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
+ <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
+ <20250707163913.5ffc046d@nimda.home>
+ <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org>
+ <20250707210613.2fd5bb55@nimda.home>
+ <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
+ <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
+In-Reply-To: <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
 
-Detecting the monitor for DisplayPort targets is more complicated than
-just reading the HPD pin level: it requires reading the DPCD in order to
-check what kind of device is attached to the port and whether there is
-an actual display attached.
+On Fri Aug 1, 2025 at 11:22 PM CEST, Daniel Almeida wrote:
+> Hi Benno,
+>
+>> On 7 Jul 2025, at 16:48, Benno Lossin <lossin@kernel.org> wrote:
+>>=20
+>> On Mon Jul 7, 2025 at 8:06 PM CEST, Onur wrote:
+>>> On Mon, 07 Jul 2025 17:31:10 +0200
+>>> "Benno Lossin" <lossin@kernel.org> wrote:
+>>>=20
+>>>> On Mon Jul 7, 2025 at 3:39 PM CEST, Onur wrote:
+>>>>> On Mon, 23 Jun 2025 17:14:37 +0200
+>>>>> "Benno Lossin" <lossin@kernel.org> wrote:
+>>>>>=20
+>>>>>>> We also need to take into consideration that the user want to
+>>>>>>> drop any lock in the sequence? E.g. the user acquires a, b and
+>>>>>>> c, and then drop b, and then acquires d. Which I think is
+>>>>>>> possible for ww_mutex.
+>>>>>>=20
+>>>>>> Hmm what about adding this to the above idea?:
+>>>>>>=20
+>>>>>>    impl<'a, Locks> WwActiveCtx<'a, Locks>
+>>>>>>    where
+>>>>>>        Locks: Tuple
+>>>>>>    {
+>>>>>>        fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) ->
+>>>>>> WwActiveCtx<'a, L2>; }
+>>>>>>=20
+>>>>>> Then you can do:
+>>>>>>=20
+>>>>>>    let (a, c, d) =3D ctx.begin()
+>>>>>>        .lock(a)
+>>>>>>        .lock(b)
+>>>>>>        .lock(c)
+>>>>>>        .custom(|(a, _, c)| (a, c))
+>>>>>>        .lock(d)
+>>>>>>        .finish();
+>>>>>=20
+>>>>>=20
+>>>>> Instead of `begin` and `custom`, why not something like this:
+>>>>>=20
+>>>>> let (a, c, d) =3D ctx.init()
+>>>>>     .lock(a)
+>>>>>            .lock(b)
+>>>>>            .lock(c)
+>>>>>            .unlock(b)
+>>>>>            .lock(d)
+>>>>>            .finish();
+>>>>>=20
+>>>>> Instead of `begin`, `init` would be better naming to imply `fini`
+>>>>> on the C side, and `unlock` instead of `custom` would make the
+>>>>> intent clearer when dropping locks mid chain.
+>>=20
+>> Also, I'm not really fond of the name `init`, how about `enter`?
+>>=20
+>>>>=20
+>>>> I don't think that this `unlock` operation will work. How would you
+>>>> implement it?
+>>>=20
+>>>=20
+>>> We could link mutexes to locks using some unique value, so that we can
+>>> access locks by passing mutexes (though that sounds a bit odd).
+>>>=20
+>>> Another option would be to unlock by the index, e.g.,:
+>>>=20
+>>> let (a, c) =3D ctx.init()
+>>>     .lock(a)
+>>>            .lock(b)
+>>>            .unlock::<1>()
+>
+> Why do we need this random unlock() here? We usually want to lock everyth=
+ing
+> and proceed, or otherwise backoff completely so that someone else can pro=
+ceed.
 
-In order to let DRM framework handle such configurations, disable
-DRM_BRIDGE_OP_DETECT for dp-connector devices, letting the actual DP
-driver perform detection. This still keeps DRM_BRIDGE_OP_HPD enabled, so
-it is valid for the bridge to report HPD events.
+No the `unlock` was just to show that we could interleave locking and
+unlocking.
 
-Currently inside the kernel there are only two targets which list
-hpd-gpios for dp-connector devices: arm64/qcom/qcs6490-rb3gen2 and
-arm64/qcom/sa8295p-adp. Both should be fine with this change.
+> One thing I didn=E2=80=99t understand with your approach: is it amenable =
+to loops?
+> i.e.: are things like drm_exec() implementable?
 
-Cc: Bjorn Andersson <andersson@kernel.org>
-Cc: Konrad Dybcio <konradybcio@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org
-Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+I don't think so, see also my reply here:
+
+    https://lore.kernel.org/all/DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org
+
+The type-based approach with tuples doesn't handle dynamic number of
+locks.
+
+> /**
+>  * drm_exec_until_all_locked - loop until all GEM objects are locked
+>  * @exec: drm_exec object
+>  *
+>  * Core functionality of the drm_exec object. Loops until all GEM objects=
+ are
+>  * locked and no more contention exists. At the beginning of the loop it =
+is
+>  * guaranteed that no GEM object is locked.
+>  *
+>  * Since labels can't be defined local to the loops body we use a jump po=
+inter
+>  * to make sure that the retry is only used from within the loops body.
+>  */
+> #define drm_exec_until_all_locked(exec)					\
+> __PASTE(__drm_exec_, __LINE__):						\
+> 	for (void *__drm_exec_retry_ptr; ({				\
+> 		__drm_exec_retry_ptr =3D &&__PASTE(__drm_exec_, __LINE__);\
+> 		(void)__drm_exec_retry_ptr;				\
+> 		drm_exec_cleanup(exec);					\
+> 	});)
+
+My understanding of C preprocessor macros is not good enough to parse or
+understand this :( What is that `__PASTE` thing?
+
+> In fact, perhaps we can copy drm_exec, basically? i.e.:
+>
+> /**
+>  * struct drm_exec - Execution context
+>  */
+> struct drm_exec {
+> 	/**
+> 	 * @flags: Flags to control locking behavior
+> 	 */
+> 	u32                     flags;
+>
+> 	/**
+> 	 * @ticket: WW ticket used for acquiring locks
+> 	 */
+> 	struct ww_acquire_ctx	ticket;
+>
+> 	/**
+> 	 * @num_objects: number of objects locked
+> 	 */
+> 	unsigned int		num_objects;
+>
+> 	/**
+> 	 * @max_objects: maximum objects in array
+> 	 */
+> 	unsigned int		max_objects;
+>
+> 	/**
+> 	 * @objects: array of the locked objects
+> 	 */
+> 	struct drm_gem_object	**objects;
+>
+> 	/**
+> 	 * @contended: contended GEM object we backed off for
+> 	 */
+> 	struct drm_gem_object	*contended;
+>
+> 	/**
+> 	 * @prelocked: already locked GEM object due to contention
+> 	 */
+> 	struct drm_gem_object *prelocked;
+> };
+>
+> This is GEM-specific, but we could perhaps implement the same idea by
+> tracking ww_mutexes instead of GEM objects.
+
+But this would only work for `Vec<WwMutex<T>>`, right?
+
+> Also, I=E2=80=99d appreciate if the rollback logic could be automated, wh=
+ich is
+> what you=E2=80=99re trying to do, so +1 to your idea.
+
+Good to see that it seems useful to you :)
+
 ---
- drivers/gpu/drm/bridge/display-connector.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/bridge/display-connector.c b/drivers/gpu/drm/bridge/display-connector.c
-index d7e1c2f8f53cad514ec502d58c1b94d348515b42..e9f16dbc953533c2a2d329ee8fd50c1923a78aac 100644
---- a/drivers/gpu/drm/bridge/display-connector.c
-+++ b/drivers/gpu/drm/bridge/display-connector.c
-@@ -373,7 +373,8 @@ static int display_connector_probe(struct platform_device *pdev)
- 	if (conn->bridge.ddc)
- 		conn->bridge.ops |= DRM_BRIDGE_OP_EDID
- 				 |  DRM_BRIDGE_OP_DETECT;
--	if (conn->hpd_gpio)
-+	/* Detecting the monitor requires reading DPCD */
-+	if (conn->hpd_gpio && type != DRM_MODE_CONNECTOR_DisplayPort)
- 		conn->bridge.ops |= DRM_BRIDGE_OP_DETECT;
- 	if (conn->hpd_irq >= 0)
- 		conn->bridge.ops |= DRM_BRIDGE_OP_HPD;
-
----
-base-commit: 82928cc1c2b2be16ea6ee9e23799ca182e1cd37c
-change-id: 20250802-dp-conn-no-detect-b901893b5e3c
-
-Best regards,
--- 
-With best wishes
-Dmitry
-
+Cheers,
+Benno
 
