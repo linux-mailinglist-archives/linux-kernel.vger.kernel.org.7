@@ -1,121 +1,95 @@
-Return-Path: <linux-kernel+bounces-753925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 633C8B18A08
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:10:28 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 412F1B18A0B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:13:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F2C1C809B6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:10:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3DB1C8258A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:14:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7526D1C695;
-	Sat,  2 Aug 2025 01:10:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF27D35975;
+	Sat,  2 Aug 2025 01:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWh3/53r"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spktOSli"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38835A48;
-	Sat,  2 Aug 2025 01:10:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D837A48;
+	Sat,  2 Aug 2025 01:13:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754097021; cv=none; b=TTv5+87ivfgDxaeWMm0Bvpls6b6ZlWBeHHqKxfRA5AKWbFg0hX5WSYsWQSr7Ok43Bg7eG6feFF8dBSQBvi+Jfbs2taleb1397v+FHK+jKJgL8R8wB3w1vyQXwKuEbhFstp46Ys1uGd76oIvCdsJ3l8CRyGURXA1Eh0aHULuxTS4=
+	t=1754097229; cv=none; b=a/r0ZL4Kx8gZU9BqreuZqjO0I5b6IXcjttDmk9sWa1dNJF4zYJCk39nA0MXe4AMZE9X7FyuJg4agfSsrlL/pyMJE6HmpWlT4PlyEOnOAWg6dG87NoPbw8oc85jyWfr3zz9gQY3lNT5F0oT/JGXntHv9rWp3wgf5wstj4HCl9X3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754097021; c=relaxed/simple;
-	bh=nl6c4321NAKXX86GD7ps3OZQddqSonNEhTulv87fzzI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUBXPHFPRAJ378xAIuTCaXC1h66FF79RMs29i/H/8u7/6dbNegk/ojKF3SOK4h/rjRlIoZL0GdPmkUbXSzRfiXUdc40EBnMi7GSGGtNSSLBu1luBTgsaJ/FGH7lA7R2kQzJgrkdepZKk0nT0LwK/xgVaooG+Jke7Ughl5g/CrSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWh3/53r; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4589b3e3820so26790535e9.3;
-        Fri, 01 Aug 2025 18:10:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754097018; x=1754701818; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=/UmDeR2LiWPErRTtoBmri3CE2DBkF02ITaXjMtjgCX0=;
-        b=mWh3/53r4vuNQZ/2y98O7/OPuR7yey4BQ+PtkeL3XmorkIuNY33kRvx+G2sFjkfTEB
-         xSftsyIn/aWdm8gnsw6a4itFUlj3ZYS4KnY1gb1qOtx4d0iwh1rw1DyRgO9+YWkJ+nIf
-         qESPkkbFNd2rtBU7sn1/5nS5DgFk9QZEuPaGZRNhlCmwWmpSh4CkfBtvsPIJCDE5OWEq
-         EPJZWExGIk4TYRU/VoqgCyKJ5N35jE3QgVVJdHUPodGQGtMIKvlyCideb8EwZvLn7vY3
-         vtYs7WMkOWfDWK98K/xjYEjDGOPJpgn6vOSi1YDXTNHO95DCaO6+Bb9dCQHfo/mLuZxe
-         boiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754097018; x=1754701818;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=/UmDeR2LiWPErRTtoBmri3CE2DBkF02ITaXjMtjgCX0=;
-        b=e7rgZL/GgubzFG8avbUQS6BaixD1t713i6aEe8EX5fgZWRSnQdnx3kMjV+8/zAgAf9
-         hQzZxlacUOaNnBURUmxLpiIbD+cC1gIUpewyIP4Ys/CK78wvG32//QJPnRMqKkQPeRsS
-         LvQzUCNy8mA8wXkTL+/PoXDWcpuPgJc9czIJJd8sHbIADJSWkAwbom4kt34Y/O4nWfEg
-         ym5mc0zumvgCBTGnMV+IXpU/oc+vrnQWOCFRaHaNoVvOTWP/ZEAtugZOVrsPHwpN4LiQ
-         Qh3cIRBqHNhHsZxmkgMLPYmvP+JzJ4JM04dcmzPybZ0Q+2zXhUXOBjuqA5U54/JN8P2M
-         MfWw==
-X-Forwarded-Encrypted: i=1; AJvYcCUPZeB7HwQC7By5hAc6C/BC2Y76ZFOYC+EtbFiSLlTx+8yEYxWp7/fbqmOE8fvE6jjeSYISnJUAqpK2Zow=@vger.kernel.org, AJvYcCXO0sW8FUTWgLJdwSCQ7aVRoX9s4nSou/gAR9RO4nMXU0mXm1DmBCKiJUkLvyi2ZkbcclblNV9CmtJE5EQ5VuO3@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEhXCSszcH8nTNYBFmqm7NxwO3D4TPav+K3xtPfV8Am2bvw4U2
-	7YV9XPM8ysGik0lvC9GM+j8TON5RkKYI7MiAaPhB2PFf0ypz2K/GsCYWt8kfDxe/2WpIxzoIDZI
-	5ctAC2UUJhbBnGXxnRoyqlwLMO1He91A=
-X-Gm-Gg: ASbGnctPtTb1S2kiWM7Ld89o5XEaOs+bfPK+Rz6tXBxmiFKn05IXsINd7gjSLr1XSZE
-	PBZWM4xuI98x1iBGAOuw92qOj2O6jxYJk/MnfvXV1hgenfvxfHiJeutgb1lZSvcFtCAE0CzXJHm
-	2cf+RmGaDG2ybN/47BJBYmKonUQDgNAxYBvexJ2NqrpHyNCZDV3aP5N6ehNvmBJr21iJPoMZuim
-	XvHsV0i5eFqRr+PWIfrp4PX+CbmnYhnGAlD
-X-Google-Smtp-Source: AGHT+IHZvq/EhUufr5BA+LW3v8lbbDX76c/9s3iMTywwTb731Fkv6v3wzApUPrir+O780isCCB1t2MY8v0ONeQtUTpw=
-X-Received: by 2002:a05:6000:40ce:b0:3b7:9589:1fd1 with SMTP id
- ffacd0b85a97d-3b8d94c5820mr1274187f8f.44.1754097018283; Fri, 01 Aug 2025
- 18:10:18 -0700 (PDT)
+	s=arc-20240116; t=1754097229; c=relaxed/simple;
+	bh=PE68cSFAKKaVRfpYXHfgNAEF0uPDacyx4LW4OjSkhvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UWHx+D1yEQ5ASB4ATsR3qy7e34Y0wPA5B0n6TakME6Nn34M7USq2wya7P0LDZS+Slmwvpa0PXLBMBXyaMy+e+CF/3EEHiVpb8U99vZb2CRTpZTbWnFTrlrcV4P55qGAH9zBk0k25MJoSLq39GagcOv5E/gsv+fZ+HxJ5mPTHy9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spktOSli; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CEFEEC4CEE7;
+	Sat,  2 Aug 2025 01:13:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754097228;
+	bh=PE68cSFAKKaVRfpYXHfgNAEF0uPDacyx4LW4OjSkhvU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=spktOSliW4eJUdXiHJ+mlQYutvXrlmjEIJrdxCsqvMmHKSakRWYLhYsqLoXgdy5Mi
+	 HE3vher/oFLIHIFeEerbiZgPlgy9CvdJYNHsq7gM6cSnYh89DHlihad5mCoPEBtLps
+	 5LbBVicOCWuSGlTnROSjwfwKBvZlmWYaBRDdV5jSb3ujLUF7sBkEG2ZxnOHiY1H5fS
+	 8X0I0TwZz5dLZoLCr4kzCqThXkWYF7B+9V6GRBqki49013stNcDEICPwyTowRlnFj4
+	 j9BVVGX6dRXyTN6o2UYMBURUW52cXJiauihN9oFSBfFieflhi06qBs+zDgigrWeMV1
+	 ngysrxkGicVew==
+Date: Fri, 1 Aug 2025 18:13:44 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kbuild@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: Re-enable -Wunterminated-string-initialization
+Message-ID: <20250802011344.GA1736762@ax162>
+References: <20250802002733.work.941-kees@kernel.org>
+ <20250802004316.GA3910513@ax162>
+ <202508011754.BBDF043@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801161531.816845-1-phoenix500526@163.com> <20250801161531.816845-2-phoenix500526@163.com>
-In-Reply-To: <20250801161531.816845-2-phoenix500526@163.com>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Fri, 1 Aug 2025 18:10:07 -0700
-X-Gm-Features: Ac12FXx05DYYV4X1PxpLaLu85h4KWTcQ71kqdK8KN7JVSKkCCw3U78t-vFv2ors
-Message-ID: <CAADnVQKNGHGuu0GQR=HSCwvV9tm2dS6noKMcou=OEVp6T43NhQ@mail.gmail.com>
-Subject: Re: [PATCH v4 1/1] libbpf: fix USDT SIB argument handling causing
- unrecognized register error
-To: Jiawei Zhao <phoenix500526@163.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>, 
-	LKML <linux-kernel@vger.kernel.org>, 
-	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508011754.BBDF043@keescook>
 
-On Fri, Aug 1, 2025 at 9:16=E2=80=AFAM Jiawei Zhao <phoenix500526@163.com> =
-wrote:
->
-> From: Jiawei Zhao <Phoenix500526@163.com>
->
-> On x86-64, USDT arguments can be specified using Scale-Index-Base (SIB)
-> addressing, e.g. "1@-96(%rbp,%rax,8)". The current USDT implementation
-> in libbpf cannot parse this format, causing `bpf_program__attach_usdt()`
-> to fail with -ENOENT (unrecognized register).
->
-> This patch fixes this by implementing the necessary changes:
-> - add correct handling for SIB-addressed arguments in `bpf_usdt_arg`.
-> - add adaptive support to `__bpf_usdt_arg_type` and
-> `__bpf_usdt_arg_spec` to represent SIB addressing parameters.
->
-> Signed-off-by: Jiawei Zhao <Phoenix500526@163.com>
-> ---
->  tools/lib/bpf/usdt.bpf.h                      | 33 +++++++++++++-
->  tools/lib/bpf/usdt.c                          | 43 ++++++++++++++++---
->  tools/testing/selftests/bpf/Makefile          |  5 +++
->  tools/testing/selftests/bpf/prog_tests/usdt.c | 18 +++++---
->  4 files changed, 86 insertions(+), 13 deletions(-)
+On Fri, Aug 01, 2025 at 05:55:27PM -0700, Kees Cook wrote:
+> On Fri, Aug 01, 2025 at 05:43:16PM -0700, Nathan Chancellor wrote:
+> > On Fri, Aug 01, 2025 at 05:27:40PM -0700, Kees Cook wrote:
+> > > With the few remaining fixes now landed, we can re-enable the option
+> > > -Wunterminated-string-initialization for GCC. (Clang does not yet fully
+> > > understand the "nonstring" attribute.)
+> > > 
+> > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > 
+> > What else does Clang need? Are bugs filed? I had requested support for
+> > multidimensional arrays, which Aaron implemented pretty quickly (and the
+> > tests seem pretty expansive):
+> > 
+> > https://github.com/llvm/llvm-project/commit/e8ae77947154e10dbc05cbb95ec9e10d3b0be13e
+> 
+> Oh! I missed that commit. Did that end up in Clang 21? Let me try some
+> test builds with a more recent Clang...
 
-You didn't cc bpf@vger. It cannot land this way.
-Pls respin and split libbpf vs selftest into separate patches.
+Whoops, linked the wrong change (although that one is still good):
 
---
-pw-bot: cr
+https://github.com/llvm/llvm-project/commit/3d4f979e271d2a1fe0906f4d1b16db108838f98f
+
+But yes, both those changes are in 21.1.0-rc1. I uploaded -rc2 to
+kernel.org a couple of days ago: https://kernel.org/pub/tools/llvm/
+
+Cheers,
+Nathan
 
