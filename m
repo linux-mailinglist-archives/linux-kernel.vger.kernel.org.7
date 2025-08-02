@@ -1,119 +1,89 @@
-Return-Path: <linux-kernel+bounces-754127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9FB0EB18E64
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAA64B18E76
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:40:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CE00417EC6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:29:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7EE63189D2EE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:40:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2322248A5;
-	Sat,  2 Aug 2025 12:29:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZFUY+JVz";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="nboov3eH"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA4D6236A7C;
+	Sat,  2 Aug 2025 12:40:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5907B1FBEB9;
-	Sat,  2 Aug 2025 12:29:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A83AE227E80;
+	Sat,  2 Aug 2025 12:39:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754137781; cv=none; b=Z7kIzZpC2tynFMMtxpavMRsGZw/4P6u7pbuA2YVmhc+4akwoQ9AhCj/qoedbqsMsBQgYxBuZsnLhRzkYktOWS0BfVKUV5z4AZVFsiNhcMfXZjsBg0PqojMiycOlTPMC3giqNK4Dls63b6B0unPYxCkflnfNjTbOgPHiXll9gbuk=
+	t=1754138401; cv=none; b=JSlZyfGi3pD/UdGPjSvhQbAmPHFrr2AED1sCSknZQLA6XiWUi8o/AvfWpMUaQRTQzOWcAMmrT/a2y+n2b3wRTowB3PDfi0E+52usHu2lElp0fnow/MFbSpzu/x2wn8J3s9NeRjGAyJCBVlO5aKanjxXUeYPCVdemFJWf/30WpjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754137781; c=relaxed/simple;
-	bh=ZeFBDVcpT29plE+duOFwQPD/AL6PklGbywXVjly3zrs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=s3booXIMMWRKda5WTJJiXC64swhRNg1XC5UEooVFIQey2bPdMCdi8n9AoQ94pNhZwG2qO6pDviVMim3pvvzTHRHqwz84/6xvN65drC453V6+ra4InNNfSRkm0MqScnKvymiBoRLsovPFEM+gFfUJKHR2t0sAn1uBJacTDiOaz8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZFUY+JVz; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=nboov3eH; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Sat, 02 Aug 2025 12:29:36 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754137777;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fEfmFaJlG4CBe+h46p8wC/tfJYjWXpFLpSTd+ZuJqZg=;
-	b=ZFUY+JVzyZZ/2k8Bm/I2Q1x1/ZBrrhC6TwAMiwaDEuM44/9IxWpctplXSIrEVWyTOmAuth
-	F/9YcUv/fReDWybAcT3cqd/ztO37o0ZlqN1FKClzjUnETSFLmAByr6o2kBwDm8EtJYxFcb
-	ejH+W6cugADUeve898cNGngKp6E6RbTk/q5Yzr2NqDsM3q/DVSqBTmCQClxi9cY27qeMVk
-	m9ED8HwqLeNVsQNc7xJ2p1A0FZD3Z2AWWCHz3nc/qAPRy8jaqW9PisNOBGvB3fq3loSSiE
-	iHsk5bcI94Of2LLinzg9YcM1yF3xCJDzntm5Xwd1tzaU/VSz/yBrZn09/ULSFg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754137777;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fEfmFaJlG4CBe+h46p8wC/tfJYjWXpFLpSTd+ZuJqZg=;
-	b=nboov3eHOHVQHAdluTXCfEiy84p0mlqFV3dq8/UuJEwRrVEj+wXclWffvy527qFoafG4Yw
-	Z6ljqW1xeXu2bmAw==
-From: "tip-bot2 for Roman Kisel" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: smp/urgent] smp: Fix spelling in on_each_cpu_cond_mask()'s doc-comment
-Cc: Roman Kisel <romank@linux.microsoft.com>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20250722161818.6139-1-romank@linux.microsoft.com>
-References: <20250722161818.6139-1-romank@linux.microsoft.com>
+	s=arc-20240116; t=1754138401; c=relaxed/simple;
+	bh=Eg3zeCbFOh6SREIl5ejV6ktPPQzFQ+5dby6FlCRAjso=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=FNsTEGkpmF+mMZas7x7YqNNVXRoapYHtA0ijOjo4ttTqS7IZz+ThrxsRLzl9D715xMJdxlpRvogPazwTvXbpkQT3MYtAE8gYaqZlkhoSoJmJ1QcC7JX4hazKezXrdim0f5uyRVhMGcTV0B85uMtYaNlZRS6Gs8j6dciWf9/9xt8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.17])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4bvMjl2Tjwz2CfZh;
+	Sat,  2 Aug 2025 20:35:39 +0800 (CST)
+Received: from kwepemk100013.china.huawei.com (unknown [7.202.194.61])
+	by mail.maildlp.com (Postfix) with ESMTPS id 0B9621A0188;
+	Sat,  2 Aug 2025 20:39:54 +0800 (CST)
+Received: from localhost.localdomain (10.90.31.46) by
+ kwepemk100013.china.huawei.com (7.202.194.61) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Sat, 2 Aug 2025 20:39:53 +0800
+From: Jijie Shao <shaojijie@huawei.com>
+To: <davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <andrew+netdev@lunn.ch>, <horms@kernel.org>
+CC: <shenjian15@huawei.com>, <liuyonglong@huawei.com>,
+	<chenhao418@huawei.com>, <jonathan.cameron@huawei.com>,
+	<shameerali.kolothum.thodi@huawei.com>, <salil.mehta@huawei.com>,
+	<netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<shaojijie@huawei.com>
+Subject: [PATCH V2 net 0/3] There are some bugfix for hibmcge ethernet driver
+Date: Sat, 2 Aug 2025 20:32:23 +0800
+Message-ID: <20250802123226.3386231-1-shaojijie@huawei.com>
+X-Mailer: git-send-email 2.30.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175413777609.1420.16907938407623485683.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: kwepems200001.china.huawei.com (7.221.188.67) To
+ kwepemk100013.china.huawei.com (7.202.194.61)
 
-The following commit has been merged into the smp/urgent branch of tip:
-
-Commit-ID:     83e6384374bac8a9da3411fae7f24376a7dbd2a3
-Gitweb:        https://git.kernel.org/tip/83e6384374bac8a9da3411fae7f24376a7d=
-bd2a3
-Author:        Roman Kisel <romank@linux.microsoft.com>
-AuthorDate:    Tue, 22 Jul 2025 09:18:18 -07:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Sat, 02 Aug 2025 14:24:50 +02:00
-
-smp: Fix spelling in on_each_cpu_cond_mask()'s doc-comment
-
-"boolean" is spelt as "blooean". Fix that.
-
-Signed-off-by: Roman Kisel <romank@linux.microsoft.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250722161818.6139-1-romank@linux.microsof=
-t.com
+This patch set is intended to fix several issues for hibmcge driver:
+1. Holding the rtnl_lock in pci_error_handlers->reset_prepare()
+   may lead to a deadlock issue.
+2. A division by zero issue caused by debugfs when the port is down.
+3. A probabilistic false positive issue with np_link_fail.
 
 ---
- kernel/smp.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ChangeLog:
+v1 -> v2:
+  - Fix a concurrency issue for patch1, suggested by Simon Horman
+  v1: https://lore.kernel.org/all/20250731134749.4090041-1-shaojijie@huawei.com/
+---
 
-diff --git a/kernel/smp.c b/kernel/smp.c
-index 4649fa4..56f83aa 100644
---- a/kernel/smp.c
-+++ b/kernel/smp.c
-@@ -1018,7 +1018,7 @@ void __init smp_init(void)
-  * @cond_func:	A callback function that is passed a cpu id and
-  *		the info parameter. The function is called
-  *		with preemption disabled. The function should
-- *		return a blooean value indicating whether to IPI
-+ *		return a boolean value indicating whether to IPI
-  *		the specified CPU.
-  * @func:	The function to run on all applicable CPUs.
-  *		This must be fast and non-blocking.
+Jijie Shao (3):
+  net: hibmcge: fix rtnl deadlock issue
+  net: hibmcge: fix the division by zero issue
+  net: hibmcge: fix the np_link_fail error reporting issue
+
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_err.c  | 14 +++++---------
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_hw.c   | 15 +++++++++++++--
+ drivers/net/ethernet/hisilicon/hibmcge/hbg_txrx.h |  3 +++
+ 3 files changed, 21 insertions(+), 11 deletions(-)
+
+-- 
+2.33.0
+
 
