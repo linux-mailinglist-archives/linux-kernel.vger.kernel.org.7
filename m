@@ -1,134 +1,92 @@
-Return-Path: <linux-kernel+bounces-754233-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754234-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 629E1B1904B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:01:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB9FB1904F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:19:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BE8C168718
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:01:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8A1C117A50D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:19:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1217259CA3;
-	Sat,  2 Aug 2025 22:01:48 +0000 (UTC)
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D936327A92A;
+	Sat,  2 Aug 2025 22:19:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="oZyELAxe";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="F7l4SGYr"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2008B19AD90;
-	Sat,  2 Aug 2025 22:01:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C82672CCDB
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 22:19:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754172108; cv=none; b=oLG1TvlroDnS3ZQV1AFJnieUt8jOCCLepoiH0um+mi3BXlBSvqUiito7fzhK8u8jhrv5fi9qMb6uyTQXYdukIawy+sdtXAo1EV3m67fvLSWb+Lor/fEdKENcnFfxsTz7uYyakjV0XuBWtxc6GimCqyogn+ek6Tn8xtgNbV44hUs=
+	t=1754173169; cv=none; b=q0dpphPrIppP/S1PtNbvwRQunpfzvu7Pk7ouN3mhIMx0W6rBZtuN+WtvLPtb+U1yCP8FCH/az6Ka+daFuGwfg8uOXtjBNXWJhb2o+Mhf1wNQP0iKjlZ0QjWu8QDJQIduCE/IngzC7SG/yM3hpKqpFfLWajquYpMdK5tmi7v0Gkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754172108; c=relaxed/simple;
-	bh=h9dGsWgUYDzbbkTsgtBfXOsJHPWKtsMwDEyJ1+wQ6/w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JEbmiIB796ZggjEmMu9Uy10Az/kAunCMTpynzzy1aUO8jiI1GxSb5lROAVO8hOphjajmsNrjZg2errMhYo8i4Dfqhiw4zGjb1BdlC2lCfDMVYDpAFA5CA919XfoShp/e3CqnOAZK3IlKyaoRVlC/Q5EaroVCVug+r+gz/5HLuQs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b3f4ae9a367so424864a12.3;
-        Sat, 02 Aug 2025 15:01:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754172106; x=1754776906;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=n6iKlbJNv1rMzXvKJJrDKnOLYsLImNj0w08vdZLLiFg=;
-        b=qll5kcPnhrpyZOBejklzpM3/l1VfwGR1tzLixYz4Ki7rfxNctmTF3bzHs6lJ71FuzZ
-         GfUFZxXU4DuxiX0xBLE67E2KMUl+Y1c3yq+NfMeDQR0LtLG+GG96BEWTSnnTtgYx76l/
-         V3KZP2+2EkloWST4p4r4lmx8CRDCTzioGEKYevDoLldOOhpFFU3EaavYhL09tJWdd0uf
-         ibcUQYwjAPTN537ZVCeBl5Z9YZ30L9pIkFMKuSAfQl5rBxhyfiE49ma1cSYh/2HMmg5U
-         zXIozmyyHXU1yWYTgv1rfeYZRXWqDWAU697BbhQIsDe/HD4RRNlGLd47CaXU754pWdek
-         rw3A==
-X-Forwarded-Encrypted: i=1; AJvYcCU429AFF8NZQeYU5fpyfCbL1jl2GLyu2G3TSjknBk6YqhpBhHKe/k1mug4jNmFzpuENdilH3nS2gqMIz+M=@vger.kernel.org, AJvYcCVGH46vBC9/SzV7BLMcMMPrkOafAm53XjaqgWdyr/1F8K9NuEzMOZFWvSwZipu1grBHHTM4fcpJ@vger.kernel.org, AJvYcCVe3iGfX5s/mI1ovL7oWNB9EigGZVXXSTVCvrZPF4K82IDhBZ8NrTbc7KPYyAreqDAmp9HQgI9kdcNQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxD1319Sn30wE17tLXT5+b1KH+IyGwuImxCWOFIfmZfaGmhDWFC
-	3gpbAiPfNk4LU5I6uWTJ2kK/GxZJ4XjwhPq0c1bxaUqTN1kz6+m8QRg7
-X-Gm-Gg: ASbGncvp2F8L7za4lUiphujzfyi03eHW/DwDEfPJ5ksUkrlKfef2QONO9OlExOWnBw8
-	0zc5quOpoek/MUetFecuWbEr5/wH+2G3jicwfaOPSDy7Uo8dvoVTnyRepyQpNvLIjn6CcEIKxYe
-	d7PCbwn2EGQBSpxh1VSJFQt0k3c4zPrTqh+l0Tybcfjbbn+Jc4/Ayd1rycWrIrKVUdGmV+XRaSF
-	fstvU1YHhPG4Zh7UPNTv0aMzxmYaH6FrHUYVUw9aQDD3xi8gqWfX+SkOtj9NRvNXPz7YdbPIt+v
-	fza7zU2LLail7yiLxggkQMHja7Pr/6OfM8vIh+QFuRebgpTlSSrOm1562UOAMei88CdTvUmrMXb
-	VJZ78GXGpaeyvpx5yIgdCVGNchoQjzzWQ
-X-Google-Smtp-Source: AGHT+IHvFcjEaG3YxGtNa9QhNQdWOb0uhOSD/6FpInnGumGJtTNEwHNQrEi6gQ/F60yhksDGX4hFmQ==
-X-Received: by 2002:a05:6a00:4b52:b0:736:4d90:f9c0 with SMTP id d2e1a72fcca58-76bec2f5dd1mr2171800b3a.1.1754172106326;
-        Sat, 02 Aug 2025 15:01:46 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbcfb6sm7056787b3a.79.2025.08.02.15.01.42
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 15:01:45 -0700 (PDT)
-Message-ID: <4a505533-b725-4e3f-94db-3d261937ea25@kzalloc.com>
-Date: Sun, 3 Aug 2025 07:01:40 +0900
+	s=arc-20240116; t=1754173169; c=relaxed/simple;
+	bh=JMK52b/lb74S68maMysCoTDTMa9VFbbFcvHTMCK/q6s=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ISp71eL7vOnSC0wfiAOonmYJ6JpuQ67aVDujTjCSMME0/LxqJBth1tzVGLq4q+9MZXOBGvhQB1a0DlzZkOcYnn72LxXXaoj3sGk/qbr7VmQNwxSEwuGAO4fl9pNTyaGoYQm75jVw45goZbjOqWaGAObx3rZFRHnqarpFBshXB+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=oZyELAxe; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=F7l4SGYr; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754173165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYn4+AjuXVa10cV2piAdZD+Z/476ZDmv3ExwRX5MbZ0=;
+	b=oZyELAxeu2s8rN1OMEHcckNbKDTT3nx5fo9vgEJGiRpDCFD4QzRCFX4cqpDK1vxP+nvLIf
+	pABU5mzFGBvxBozMiPJJdSWvTeTZni07md/enETwncVAE4kBzBnive2/SvbJYhZHtlZnYm
+	udWj5FYHnPxUfW2wgf5E3f7PgXUDLlaESTSlINWu9GOOpwwSq7S3YB1Ih4Idtl5naLkPQT
+	isUiErFKChf3U0MA3vD8lFKc6CYlRRAKseZ7vnkGyTQ14XQjznWz0Db1Ieug2+pkQkWVy3
+	8TrkixNAKYktW9F9A5VkydRx+qYlqFiVqYuZefRi1HBexQvaIMT5EH9JhVFkjg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754173165;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wYn4+AjuXVa10cV2piAdZD+Z/476ZDmv3ExwRX5MbZ0=;
+	b=F7l4SGYrgWUt4RvEHbyLwattwfCgtV95skBBsvOQ2spHGUH75LT7qP62f6anPzcPE7N6zn
+	jne92jcSEaEuWlCg==
+To: Kuan-Wei Chiu <visitorckw@gmail.com>, anup@brainfault.org,
+ paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
+ alex@ghiti.fr, maz@kernel.org
+Cc: jserv@ccns.ncku.edu.tw, linux-riscv@lists.infradead.org,
+ linux-kernel@vger.kernel.org, Kuan-Wei Chiu <visitorckw@gmail.com>, kernel
+ test robot <lkp@intel.com>, Dan Carpenter <error27@gmail.com>
+Subject: Re: [PATCH] irqchip/riscv-imsic: Fix 'imsic' dereferenced before
+ NULL check
+In-Reply-To: <20250801172459.94708-1-visitorckw@gmail.com>
+References: <20250801172459.94708-1-visitorckw@gmail.com>
+Date: Sun, 03 Aug 2025 00:19:24 +0200
+Message-ID: <87ms8hgydv.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path
- on PREEMPT_RT
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, Byungchul Park <byungchul@sk.com>,
- max.byungchul.park@gmail.com, "ppbuk5246 @ gmail . com"
- <ppbuk5246@gmail.com>, linux-kernel@vger.kernel.org,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Alan Stern <stern@rowland.harvard.edu>, Thomas Gleixner
- <tglx@linutronix.de>, Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- stable@vger.kernel.org, kasan-dev@googlegroups.com,
- syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
- linux-rt-devel@lists.linux.dev
-References: <20250802142647.139186-3-ysk@kzalloc.com>
- <2025080212-expediter-sinless-4d9c@gregkh>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <2025080212-expediter-sinless-4d9c@gregkh>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Hi Greg,
+On Sat, Aug 02 2025 at 01:24, Kuan-Wei Chiu wrote:
+> Smatch reported a warning in imsic_irqdomain_init():
+>
+> drivers/irqchip/irq-riscv-imsic-platform.c:317 imsic_irqdomain_init() warn: variable dereferenced before check 'imsic' (see line 311)
+>
+> The variable imsic was dereferenced before being checked for NULL.
+> To fix this, move the initialization of struct irq_domain_info after
+> the NULL check to avoid accessing imsic prematurely.
 
-On 8/3/25 6:30 오전, Greg Kroah-Hartman wrote:
-> On Sat, Aug 02, 2025 at 02:26:49PM +0000, Yunseong Kim wrote:
->> The KCOV subsystem currently utilizes standard spinlock_t and local_lock_t
->> for synchronization. In PREEMPT_RT configurations, these locks can be
->> implemented via rtmutexes and may therefore sleep. This behavior is
->> problematic as kcov locks are sometimes used in atomic contexts or protect
->> data accessed during critical instrumentation paths where sleeping is not
->> permissible.
->>
->> Address these issues to make kcov PREEMPT_RT friendly:
->>
->> 1. Convert kcov->lock and kcov_remote_lock from spinlock_t to
->>    raw_spinlock_t. This ensures they remain true, non-sleeping
->>    spinlocks even on PREEMPT_RT kernels.
->>
->> 2. Refactor the KCOV_REMOTE_ENABLE path to move memory allocations
->>    out of the critical section. All necessary struct kcov_remote
->>    structures are now pre-allocated individually in kcov_ioctl()
->>    using GFP_KERNEL (allowing sleep) before acquiring the raw
->>    spinlocks.
->>
->> 3. Modify the ioctl handling logic to utilize these pre-allocated
->>    structures within the critical section. kcov_remote_add() is
->>    modified to accept a pre-allocated structure instead of allocating
->>    one internally.
->>
->> 4. Remove the local_lock_t protection for kcov_percpu_data in
->>    kcov_remote_start/stop(). Since local_lock_t can also sleep under
->>    RT, and the required protection is against local interrupts when
->>    accessing per-CPU data, it is replaced with explicit
->>    local_irq_save/restore().
-> 
-> why isn't this 4 different patches?
+It's fixed already w/o moving the struct into the middle of the code:
 
-Thank you for your feedback on the patch. I’ll split it into four separate
-patches for v3 to improve clarity.
+https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git/commit/?h=irq/urgent
 
-Best regards,
-Yunseong Kim
+But thanks a lot for caring!
+
+Thanks,
+
+        tglx
 
