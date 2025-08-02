@@ -1,159 +1,145 @@
-Return-Path: <linux-kernel+bounces-754235-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E92B19050
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:19:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6A8C9B19054
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:24:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A935F18934AA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:20:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8539A17ACC4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:24:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48B8627AC5A;
-	Sat,  2 Aug 2025 22:19:31 +0000 (UTC)
-Received: from mail-il1-f208.google.com (mail-il1-f208.google.com [209.85.166.208])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BBAE27AC3C;
+	Sat,  2 Aug 2025 22:24:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="aeMnVJPp"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3536227A47F
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 22:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.208
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 286DF2CCDB
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 22:24:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754173170; cv=none; b=Z3IUqEG1vzXZrcSOihog3A11lQI68bBoxMt6z4oC8vvFucSRA57FBOGdVsyzLYOBYFDTCAtC/XpA/aAHNydiZBer8QQYTEFDObhjXpy067OT0I98M5WIvQxVw8GM+jcrshgRMaCWbgJXQkJyiZmu+5jQClGznpzIeXTDxd0pTJY=
+	t=1754173443; cv=none; b=q5ER408Dn2I+BaPLpy6uyNOS76UabmByy9ep0ptOujLocQRJD5iFHg5nwhnifZcZYiRNZ0B6tuf0gkNuHjAp4Yy5UGIOPpenVB+hqFZWHPmYEyIHWcMJj8PFjzQhdXqVrtUt1mjyJR8GzuKFEduhCzoTgNcHyh3MfWAlnNriSzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754173170; c=relaxed/simple;
-	bh=ik20PhQNU3HAmeJCWDDz2I5g0wdvQSto3QBrL3pbE+U=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=sbaeJELdZ1DCDIexc8mwhDF06HBMlNAlO2dh5tYBm1qzfAK46l9qqsJcDpAQ/Q3aNM9B59GseSlDkCTp6tHuLawj46Gn9MXcHH5hN4HA+C00LRlu2pAxU5UIptPIhkf1XtB/F3GVTaE5S/K4bc3x+DMtWCOUb5UQom2LY83ijGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.208
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f208.google.com with SMTP id e9e14a558f8ab-3e3d23d2e66so32944045ab.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 15:19:29 -0700 (PDT)
+	s=arc-20240116; t=1754173443; c=relaxed/simple;
+	bh=m0iEYRjcdnU65R3FMXTSoPGOUxzRvVQB9ercshE0cqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dqnh5RCYUCSQ7WnPek8FUhsG92LtksCAachHWCMu2tgXNPqoy+VxaZwfYE3KeBjSA+VYiPQSD8OtEg5JPjjrUsarOh7W6CIV246sWXbEcAZn2ZRCv/ZLg1tMOUte9jraMujCD5C34a/JWaJ+OjeqeikoW6PrHk5pss+gX2yXVVs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=aeMnVJPp; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 572LCw6r022997
+	for <linux-kernel@vger.kernel.org>; Sat, 2 Aug 2025 22:24:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=xl0OxxNA7ca072iJm6M/zPG6
+	jGGT3ai/1U553419los=; b=aeMnVJPpOqTPR3I2WDmw51lqLpvUV2fYhyARPtzJ
+	SBY2x5WNIE57zCPGcVper6imusSo8jxDorgVgWeJX/aCGimBRqOdNIqF+WBI6uq2
+	6nHGncnFUryddtwt3fyA80U5I6LqtoW6pHJfOWSFjzspVoEbk2xGx1GPQgOxl4WY
+	fvF8d7J2RFihfDNHah1LU2RCO3LBGxZVFpnZ4OB7fu6ItVyTwTZnLt17G3F5BPe0
+	+rVzOdk9X/GFYA4poaOBg6Lrdk5V9Ism/2L0LX+2heAaaBLpTMa5zcFH6vKbCh3+
+	GU5sp+rKsLgR8ph1MVvu97s7OnDKIPp7fR1C9fHarRMeYg==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4898cjhkvj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 22:24:01 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4aeb8b6acd1so39653501cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 15:24:00 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754173168; x=1754777968;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Y7bQTpZXbu//7x+4wmyUFm6Wxctv7jk4X1m/pJIBHUI=;
-        b=iiHx2ad9W+6E7k3pP9G6CS7whnCWHNG/xWUkucu7krjACjjopIxC8Nw9kAZgg242ZX
-         AMT4054rX2M6kligSP4AbhntIgZq8XuDJ+gvoAlxB0bQVU5rfkhFnU29LxJMn01K9qmy
-         piEPOsKvL+x+EvhYve9pZSDSrzN1EA5RXdspyELKIP50VVo2tbZqpsXlYzBWmQDmqKRw
-         x7PS+f8uacPg/ooVagA7EGEmkQaRuso6MM31v6YSjHpahdX/gtGWc0yRf1QuSKsGMVw5
-         KPLun1/14yzJfZ82Jpxs0dQfAMrwRWFo0gg+jNqatLntwyDT1NXaE6Co3zvsuwbxOmOl
-         h2ng==
-X-Forwarded-Encrypted: i=1; AJvYcCXJCZk7rFfbNErF7tCsOkvcJgsngzQY7jVuymgksMtdcOmfM0VNtmRUtgLoQ4S69S6R+X19ZqQYruOejzI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmF07dSt689GAyIeF5TGEVJRfy/XlFiWHCSfkS9aQvststJcv5
-	sLO4C/8CSEjaAWDPLx9q1qwbnhA2YWHKg/2oxzp649S0Mu7ACKFvUMVRIE6uYl7IcfJAI1XIedR
-	zdQVThQDn2okpJO/Qyxdwhev0jj+Y/eJFHMQgRL1qukvXsnpZ+DTR4fFqf9I=
-X-Google-Smtp-Source: AGHT+IGaaJMxXme2sTcpZbIFu0BKFYMoVUrXJ5eurk6w/mAhehGptwgqJxhLB+qU8I3c+YoZenSYX8hIckkkzoe8WoPQW/jUql/x
+        d=1e100.net; s=20230601; t=1754173440; x=1754778240;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xl0OxxNA7ca072iJm6M/zPG6jGGT3ai/1U553419los=;
+        b=Z9UJ4Bqxx6vjDL4OkL22M/sz1QyS8AWXn38SWrHSSExcH56oZaUnD6wroPi62Biaoo
+         Fk/JVOEPgE2apB8aEtrvoQXwopbqinsiVO6dl6loaKDkQ9GVoQ8Cf6caHJ6gwYYeAQrT
+         e+WS3WDOOhyuJVbTcBdPJTDZbuJCXHsnMImPMb8pNnwueMvlInF2E1zo2CZjZnu79SUH
+         z3+uHlsxbccf5tvTITgVhTu+L6HQSAsUx8BZg08bwLMpQ+kFn8ClKU28vePnFGb2kb6Y
+         SlbB48L7ZaH/HyQx4PpImvaoURrlH3WQRAEiZtBzjvILPpMKoZpQ2fkeGekvq5hHILaz
+         ebdw==
+X-Forwarded-Encrypted: i=1; AJvYcCUlXmXZpC/uppSG2VNZ87x0+IdrryzpSymlr7gJgZt8J+4qujgGz7vGKnRkA29+t3T9Hw116Z7pmygWujM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxlTvMziOWTnE3hwB4nGF4Lb+eqk6CSICiovJs0xCz1Rf7NlVZ+
+	Odc4tOyU/Brmx413bRFqP4ZA1ZXZ/QlopMKFPbM/kCHSyM+w7Clzmt5/vUCL5J8R7XLAXGj+2sX
+	rbFYiM/hcVYjD1QMaFJJjyRrrK6dL773smHAEp4KXxUaTD6fKDGw3QrWbgk6F3KBPk2Y=
+X-Gm-Gg: ASbGncuvngqMfb6nBGFHPPUtMCuUew7mBKzb/PPn1t0QmTzncewPu4ZpHiNSaH7wMbL
+	pAoR3IoRMLKHYVA7LrLhfbJwU8ZHtvA0Lg7x+iDMM3ndr1cpHkjJryTL218ihAbJxBQqK+fLOJu
+	AElLK/IACRNsFny6X6IKL04616nljfxKfWjM0Qq6W/tZTF1oMaTDFfksHxsF6vyOUdQ93qZVLOB
+	Z9db+bO0bMhhTB9MdUssPrb7Q0zKGHKSnFHELy6UFfngJyLnXqb/csNOjoeM1eEkMzjyMX34yKV
+	Ghme6NL+QJvGYSEGV66Dpb87DsNYG8bD9c2XIW9go6voEQ4+mixu1hbZr/bnZOLqCZyLFeRNrIT
+	D2uYnbGYv/18Wh/Eh6nqmOBy8KeW4uHmgHewBUnYlw3IU7FPcLqqk
+X-Received: by 2002:a05:622a:2614:b0:4a4:2c4c:ccb3 with SMTP id d75a77b69052e-4af10a4a6f8mr71115881cf.38.1754173439768;
+        Sat, 02 Aug 2025 15:23:59 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGrRsxcmSymm/iOQUBWA1JUQnU1xwsXzPXR9p1T+dpkt3Av38hBwrNFCZmoKC0DXjNEzzqClg==
+X-Received: by 2002:a05:622a:2614:b0:4a4:2c4c:ccb3 with SMTP id d75a77b69052e-4af10a4a6f8mr71115661cf.38.1754173439390;
+        Sat, 02 Aug 2025 15:23:59 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca6776sm1105446e87.141.2025.08.02.15.23.58
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 15:23:58 -0700 (PDT)
+Date: Sun, 3 Aug 2025 01:23:56 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+        simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+        tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com,
+        jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+        dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+        dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com,
+        ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com,
+        jason-jh.lin@mediatek.com
+Subject: Re: [PATCH v9 00/23] Add support for MT8195/88 HDMIv2 and DDCv2
+Message-ID: <2eq5je6xk4ly5lxijit3ufor7pmm7mgivbuigzr35lrbe2ryvr@3axnsyabigm7>
+References: <20250415104321.51149-1-angelogioacchino.delregno@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2302:b0:3e2:91bb:c075 with SMTP id
- e9e14a558f8ab-3e4161990d4mr76743745ab.22.1754173168358; Sat, 02 Aug 2025
- 15:19:28 -0700 (PDT)
-Date: Sat, 02 Aug 2025 15:19:28 -0700
-In-Reply-To: <683e2b6d.a00a0220.d8eae.005b.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688e8ef0.050a0220.f0410.0144.GAE@google.com>
-Subject: Re: [syzbot] [gfs2?] kernel BUG in do_qc
-From: syzbot <syzbot+bad65435361712796381@syzkaller.appspotmail.com>
-To: agruenba@redhat.com, gfs2@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250415104321.51149-1-angelogioacchino.delregno@collabora.com>
+X-Authority-Analysis: v=2.4 cv=MNBgmNZl c=1 sm=1 tr=0 ts=688e9001 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=k3YYP44_YlkhweOvE2wA:9 a=CjuIK1q_8ugA:10
+ a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-ORIG-GUID: rJoV-H1Q0fDS_gh8Xvp6qtp8apAkcJd9
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDE4MyBTYWx0ZWRfX59tfrvXR+XOb
+ vG7y9GUd+UXDUDorjTFCXM+IIUX91Q5lTErwiCIsWhDgn+onMy5RVcvVlK8g4LAbx+l+wycKpJr
+ O6xKV/m4m58klgahPWrKXgVEKIX3bV+C4Jdv/ehvxrpd8HYJzAJC52r5hMKE7P5C4ud5SmILJeh
+ mOQ1ZlJhNmDEvLg7BhP/hIo//ZXrO51siJRreMEULM/f7miuJ/c3UUyvtpb8iutu1U85O9J/KYo
+ h9QOlSsquyO9TeLDdfg4ODbz0TVffMasKG1Em+UBLZXpov2eryr+q/XdDCXdlIqz/eQjchBZeZP
+ 7k+1BN2pR0tu894HSIlOFu7tVlyb8q6KRizZLHgtf7VOzzDKsABeg1vArLUaZ8wTGuIbXHIRPtF
+ ut1tT3tKPRjmBPNx6y2TgFzwjw/SGecKeKDP2shJb/g3/IWwsWCz15Jr156HvOeaDYpavJlY
+X-Proofpoint-GUID: rJoV-H1Q0fDS_gh8Xvp6qtp8apAkcJd9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-02_01,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=691 suspectscore=0
+ spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
+ lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508020183
 
-syzbot has found a reproducer for the following issue on:
+On Tue, Apr 15, 2025 at 12:42:58PM +0200, AngeloGioacchino Del Regno wrote:
+> 
+> This series adds support for the HDMI-TX v2 Encoder and DDCv2, and for
+> the direct connection DPI as found in MT8195, MT8188 and their variants.
 
-HEAD commit:    eacf91b0c78a Merge tag 'fbdev-for-6.17-rc1' of git://git.k..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=162a3834580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=bbdefbf39cb79f7e
-dashboard link: https://syzkaller.appspot.com/bug?extid=bad65435361712796381
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=10c03cf0580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=112a3834580000
+Angelo, just wanted to check, what is the fate of this series? I think
+it wasn't updated since April. It was a really good example of utilizing
+the HDMI framework(s). Wink.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-eacf91b0.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/51416a3bb992/vmlinux-eacf91b0.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/aa2684a00ab0/bzImage-eacf91b0.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d4ede27f2613/mount_1.gz
-  fsck result: failed (log: https://syzkaller.appspot.com/x/fsck.log?x=151c7f82580000)
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+bad65435361712796381@syzkaller.appspotmail.com
-
-gfs2: fsid=syz:syz.0: first mount done, others may mount
-gfs2: fsid=syz:syz.0: found 1 quota changes
-gfs2: fsid=syz:syz.0: fatal assertion failed
-------------[ cut here ]------------
-kernel BUG at fs/gfs2/quota.c:320!
-Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5780 Comm: syz.0.38 Not tainted 6.16.0-syzkaller-11129-geacf91b0c78a #0 PREEMPT(full) 
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:__qd_hold fs/gfs2/quota.c:320 [inline]
-RIP: 0010:do_qc+0x5c1/0x5e0 fs/gfs2/quota.c:705
-Code: 00 00 00 00 00 fc ff df 48 8b 0c 24 80 3c 01 00 74 0a 48 8b 7c 24 10 e8 bd fd 28 fe 48 8b 44 24 10 48 8b 38 e8 70 e2 2e fd 90 <0f> 0b e8 f8 2b c4 fd 48 8b 7c 24 10 e8 5e e2 2e fd 90 0f 0b 66 66
-RSP: 0018:ffffc9000d68f348 EFLAGS: 00010246
-RAX: 000000000000002c RBX: 1ffff1100860680e RCX: 05e99f5eed550400
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffc9000d68f067 R09: 1ffff92001ad1e0c
-R10: dffffc0000000000 R11: fffff52001ad1e0d R12: ffff888043034000
-R13: ffff888043034070 R14: ffff888043034090 R15: 0000000000000000
-FS:  00007faa59d406c0(0000) GS:ffff88808d21f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb33a2f7000 CR3: 000000003f713000 CR4: 0000000000352ef0
-Call Trace:
- <TASK>
- gfs2_quota_change+0x394/0x800 fs/gfs2/quota.c:1304
- gfs2_alloc_blocks+0x18bc/0x2080 fs/gfs2/rgrp.c:2494
- alloc_dinode+0x258/0x550 fs/gfs2/inode.c:422
- gfs2_create_inode+0xbbc/0x1560 fs/gfs2/inode.c:807
- gfs2_atomic_open+0xd2/0x220 fs/gfs2/inode.c:1395
- atomic_open fs/namei.c:3568 [inline]
- lookup_open fs/namei.c:3679 [inline]
- open_last_lookups fs/namei.c:3807 [inline]
- path_openat+0xf63/0x3830 fs/namei.c:4043
- do_filp_open+0x1fa/0x410 fs/namei.c:4073
- do_sys_openat2+0x121/0x1c0 fs/open.c:1435
- do_sys_open fs/open.c:1450 [inline]
- __do_sys_openat fs/open.c:1466 [inline]
- __se_sys_openat fs/open.c:1461 [inline]
- __x64_sys_openat+0x138/0x170 fs/open.c:1461
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7faa58f8eb69
-Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007faa59d40038 EFLAGS: 00000246 ORIG_RAX: 0000000000000101
-RAX: ffffffffffffffda RBX: 00007faa591b5fa0 RCX: 00007faa58f8eb69
-RDX: 0000000000105042 RSI: 0000200000000080 RDI: ffffffffffffff9c
-RBP: 00007faa59011df1 R08: 0000000000000000 R09: 0000000000000000
-R10: 00000000000001ff R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007faa591b5fa0 R15: 00007ffdf5ca1658
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:__qd_hold fs/gfs2/quota.c:320 [inline]
-RIP: 0010:do_qc+0x5c1/0x5e0 fs/gfs2/quota.c:705
-Code: 00 00 00 00 00 fc ff df 48 8b 0c 24 80 3c 01 00 74 0a 48 8b 7c 24 10 e8 bd fd 28 fe 48 8b 44 24 10 48 8b 38 e8 70 e2 2e fd 90 <0f> 0b e8 f8 2b c4 fd 48 8b 7c 24 10 e8 5e e2 2e fd 90 0f 0b 66 66
-RSP: 0018:ffffc9000d68f348 EFLAGS: 00010246
-RAX: 000000000000002c RBX: 1ffff1100860680e RCX: 05e99f5eed550400
-RDX: 0000000000000000 RSI: 0000000000000001 RDI: 0000000000000000
-RBP: 0000000000000001 R08: ffffc9000d68f067 R09: 1ffff92001ad1e0c
-R10: dffffc0000000000 R11: fffff52001ad1e0d R12: ffff888043034000
-R13: ffff888043034070 R14: ffff888043034090 R15: 0000000000000000
-FS:  00007faa59d406c0(0000) GS:ffff88808d21f000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007fb33a2f7000 CR3: 000000003f713000 CR4: 0000000000352ef0
-
-
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+-- 
+With best wishes
+Dmitry
 
