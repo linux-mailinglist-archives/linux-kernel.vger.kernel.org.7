@@ -1,403 +1,231 @@
-Return-Path: <linux-kernel+bounces-754155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 95BCBB18F15
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:16:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1A267B18F18
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:18:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D26E17329F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:16:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452AD170994
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:18:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9FF323A99F;
-	Sat,  2 Aug 2025 14:15:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D2F199223;
+	Sat,  2 Aug 2025 14:17:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="ijQ1uh7U"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="M7AKg10Q"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C85D25C96;
-	Sat,  2 Aug 2025 14:15:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754144158; cv=pass; b=ldoBSpl+A2xKlG07ZWKQGxv2BTAUq8/xQex42o5SG++Kizlq7Qf6Tsjc09aml9jRxZaDhDabJQ2sZbe3sohNJYTP0GM14s6eQMr8xvrbzANOE8pYR/g71kOcOoY2V39L4oe+OQ1KyuYcs8PGuJe9jQOM4APnWmXZ09Y5fckvEjU=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754144158; c=relaxed/simple;
-	bh=4OIUI3t9fkJP0ZlYDA582zYizsK3Yj6ZBggMwa99Nzs=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=bbI3f4OpVg1eMFq/8aFISw/fuXiboYcyE5kso35mRm3SmiivDdZa1MtkQSwG1uvbesXby07ZbULviuzD6xvCj3ZGQt/DdfX7uerKTE7VoJPCooQ63OPGlkQ3TPcfWnx/y4B05rtbS1G6EsTk7OuQ9mKIEfnkPBNmVq8yXRPKe/A=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=ijQ1uh7U; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754144126; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=QaVymuHxuvn3xpOhbmyZVvJbXF+0bSSURDIvXc1FpyaI/IhN3byBNvhNQyIdpuaF+cyksJ5RD/+hTmOqW/lbYzbRvz3ZkpvakQ+zC9tCETW/cI0amM5T9BJGOO0PVgrpfztcm1YCdTDxV+OJaD6mytVYeulLcTzk07UnTSFAsGA=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754144126; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EazKvct6W5hZA7aFxkpG2xwggdURKmc6pFVcBodVGJg=; 
-	b=O9TCIQJUWH/uUujkOGdyHcyJ+lG9qd9SYfQAOoijSK2ZYuMk6VZVa19Hi2NYaWTyB1qWtDND9ledv7wVHRsKbEPo+7OEtnENFmHwCTZVGgXWNaf/wlscsjM5Pt1wk/ZaU1rhPVUSoCNf3JWPJjvmRA3HS2WDcr7RlGW9ZpwfN2Y=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
-	dmarc=pass header.from=<daniel.almeida@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754144126;
-	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
-	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
-	bh=EazKvct6W5hZA7aFxkpG2xwggdURKmc6pFVcBodVGJg=;
-	b=ijQ1uh7UMh5s9Y+27pZ91XUmSW/5PU9sEFIoNxsKH4ltuJVU+D62lxpuuJZg21h/
-	g3dCv/tZ8yk9775Q+N/llPqhf74QyH9Xksw243/SWyWJSF4pFHkSSc270Ou9d3709J7
-	yDs8kQ5DuV80AETqLXLSrNAqbYHySE2DjNB2ijZ8=
-Received: by mx.zohomail.com with SMTPS id 1754144123849822.7763497824441;
-	Sat, 2 Aug 2025 07:15:23 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90567230BD5
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 14:17:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754144274; cv=none; b=hGMRXIECKb44FAQtlXQ1nIInD7AIZTH+bCCJJIptE2D5Wua3nXgcpLiZn26dxb/UIq8WtGLyvgAhLKiB2hWbM8zAAeUwNiTlBw5iq/0S/0B5oa86g7ArQ/sQRT09cPIRSyQt+U6V9q6QHeTSHZrQjiYph0IRaWheEn5/r+ZGmQs=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754144274; c=relaxed/simple;
+	bh=FQ39B9jERPUAW3pWSgAAeA1QG0tXEiueP0zJxCjCnZk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f1EVo9k4T/tWpKOp+oVIoOSAvChuZ+Fs2APOmiIMxzbhYL6PC4J/jU/VLYlqpwNYekpQrPb1dxyz/oei+rIud0U8QDTs+ecVKO+j02TwBS5RhQQKJdqUkAqnuG0sGGZ3orry4WPB+dBqQPBAMb3Ywbq1UBmT3xsHH9h5Q0k2OJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=M7AKg10Q; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e050bd078cso166657285a.3
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 07:17:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1754144271; x=1754749071; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=XAht3BlYnywuDydAQFgQqb1h2JGOGBLyurA+IzlOJa4=;
+        b=M7AKg10Q1tOBYnNb2uxAK4ffI5vKMUd6RvghGQZGCGrjBkk5h4rT4TFTkRmcBzd+Ka
+         suuYTRmyYA6amkQzUnJLi8T77RiGMSs7Maou9KfSRSbK+i/XfszVxRIWqVWZl0nLmYkW
+         wsoSOvGiyWHUs8koYze3rBeR7kuJZ2szUhpVq4hRz0pJoVbMi4WTwBr0+o4iXBYcuPKX
+         NTdBPYyvFAVWB9y4/aoZrDhkN6Klsb1ey5zXxjcIiRgwwi02lWtKWIjImBxKQiXFlMOZ
+         QKlJuyR9n4DQo5ISIQcEn1Uahvb4jAm0slD2hGnYKHeo1AT2VXJicQMxYIpWIERnhQAk
+         U7ig==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754144271; x=1754749071;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=XAht3BlYnywuDydAQFgQqb1h2JGOGBLyurA+IzlOJa4=;
+        b=McGXt/4kjYeGj8rJiRLWhTqwIUJu1WfFn9L3yW36xCzNlVkq3yO0S/KZ/DFmXCdw6Q
+         A6hPRgMAWZyKyNo55goqlREVCw/DDbJL0TtSP61b0UxVmW35+sf/xM0YmJdWNL3NKNpo
+         nhLnyq9Iol5dcs6l/dZAtX3b7NIM843Dw3gi78opCttOC4a2+Q7bP1vKR1jFdT2c9YS9
+         IQbkHO+Fyhbygqyd6Ao1Z3mKbyA/Skks0VtmLPSlNpEhXSMyqvYy63KShM0FhHCoLkHj
+         cCgt+3+7NT6Txqhp/xm8tHPQyIjAdrLeWJUHuef8bJyv+nAQeqcUwBJenmlcDUDjj+VM
+         AdxA==
+X-Forwarded-Encrypted: i=1; AJvYcCX/JI7r9nhZO0A3Ep9KlPM5HfPXyIjEwrGGzYRuE37sIdYnjSjuB9zmY5WKNRoVvRNZLCSa820IOEZf8J0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwZ5YN3eSa1VyVyKmPlnYUpPXEXC7IZliODsMxT0xEeSbtBOk3U
+	mGOyv9m5w3dVIpaukLw2/6I1HGARrjS++s+4Nr2c37SDbvlEm0DtYhTrvsCkL2FF0Oo=
+X-Gm-Gg: ASbGncuD/K7vSkh5qsHHeR4XTkEzRzeT1Xx87vWsAueWtNSUpNNI0gWWXE72Pg74Flq
+	zOu9o1Y2IyzndUKYc7QSYPPAElJkkka5vDJ+cXJ6eUsaaA0wBQPS/BPiq9V4UOdf6OWMVkVIr3k
+	wwkvW4xDVNZOMX78xhGz6HIOlkNUVwNZp9b88ydmjidoV3BO9y0EBHiQIxh8gO3uFNfGYdoBKhd
+	dTFyJAoVNMCOOhfnfFWW3pClEumPZ4Rgv5tLXS4YLpt+rwzSFLC+BLYBUdDyAAnrDPGeNfNbVYr
+	eFGyna2OawO9ws4gwRcKG+I9A5tJt4w02HLquXplqe3+1IpLyli+MlT/cMaSOPx5RhzuCOcDQ0g
+	5p4F6k9+TkZGMF2mPZIA2RwevbTkZ0WTZW8P6AldzW6Xm/dPYf1gAklwzdvBlAl4OSZGf
+X-Google-Smtp-Source: AGHT+IGdPAmPi73Qx9Dpc4yn7AJ3AWkRwpu/Z2rB1pE3w5ZLbSl1DPKWIHYygsiQ4vWMpbzVE9HS0A==
+X-Received: by 2002:a05:620a:1645:b0:7e3:39c2:9856 with SMTP id af79cd13be357-7e696268352mr406724785a.1.1754144271303;
+        Sat, 02 Aug 2025 07:17:51 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e681c8c727sm313508585a.78.2025.08.02.07.17.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 07:17:50 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1uiD3W-00000001AEi-0hrF;
+	Sat, 02 Aug 2025 11:17:50 -0300
+Date: Sat, 2 Aug 2025 11:17:50 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: dan.j.williams@intel.com
+Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
+	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
+Message-ID: <20250802141750.GL26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
+ <20250801155104.GC26511@ziepe.ca>
+ <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: Daniel Almeida <daniel.almeida@collabora.com>
-In-Reply-To: <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
-Date: Sat, 2 Aug 2025 11:15:07 -0300
-Cc: Onur <work@onurozkan.dev>,
- Boqun Feng <boqun.feng@gmail.com>,
- linux-kernel@vger.kernel.org,
- rust-for-linux@vger.kernel.org,
- ojeda@kernel.org,
- alex.gaynor@gmail.com,
- gary@garyguo.net,
- a.hindborg@kernel.org,
- aliceryhl@google.com,
- tmgross@umich.edu,
- dakr@kernel.org,
- peterz@infradead.org,
- mingo@redhat.com,
- will@kernel.org,
- longman@redhat.com,
- felipe_life@live.com,
- daniel@sedlak.dev,
- bjorn3_gh@protonmail.com,
- dri-devel <dri-devel@lists.freedesktop.org>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <E997DCAF-552F-4EF2-BF94-1385ECADF543@collabora.com>
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
- <DAU0ELV91E2Q.35FZOII18W44J@kernel.org> <20250707163913.5ffc046d@nimda.home>
- <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org> <20250707210613.2fd5bb55@nimda.home>
- <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
- <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
- <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
-To: Benno Lossin <lossin@kernel.org>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
-X-ZohoMailClient: External
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
 
+On Fri, Aug 01, 2025 at 02:19:54PM -0700, dan.j.williams@intel.com wrote:
 
+> On the host this establishes an SPDM session and sets up link encryption
+> (IDE) with the physical device. Leave VMs out of the picture, this
+> capability in isolation is a useful property. It addresses the similar
+> threat model that Intel Total Memory Encryption (TME) or AMD Secure
+> Memory Encryption (SME) go after, i.e. interposer on a physical link
+> capturing data in flight. 
 
-> On 2 Aug 2025, at 07:42, Benno Lossin <lossin@kernel.org> wrote:
->=20
-> On Fri Aug 1, 2025 at 11:22 PM CEST, Daniel Almeida wrote:
->> Hi Benno,
->>=20
->>> On 7 Jul 2025, at 16:48, Benno Lossin <lossin@kernel.org> wrote:
->>>=20
->>> On Mon Jul 7, 2025 at 8:06 PM CEST, Onur wrote:
->>>> On Mon, 07 Jul 2025 17:31:10 +0200
->>>> "Benno Lossin" <lossin@kernel.org> wrote:
->>>>=20
->>>>> On Mon Jul 7, 2025 at 3:39 PM CEST, Onur wrote:
->>>>>> On Mon, 23 Jun 2025 17:14:37 +0200
->>>>>> "Benno Lossin" <lossin@kernel.org> wrote:
->>>>>>=20
->>>>>>>> We also need to take into consideration that the user want to
->>>>>>>> drop any lock in the sequence? E.g. the user acquires a, b and
->>>>>>>> c, and then drop b, and then acquires d. Which I think is
->>>>>>>> possible for ww_mutex.
->>>>>>>=20
->>>>>>> Hmm what about adding this to the above idea?:
->>>>>>>=20
->>>>>>>   impl<'a, Locks> WwActiveCtx<'a, Locks>
->>>>>>>   where
->>>>>>>       Locks: Tuple
->>>>>>>   {
->>>>>>>       fn custom<L2>(self, action: impl FnOnce(Locks) -> L2) ->
->>>>>>> WwActiveCtx<'a, L2>; }
->>>>>>>=20
->>>>>>> Then you can do:
->>>>>>>=20
->>>>>>>   let (a, c, d) =3D ctx.begin()
->>>>>>>       .lock(a)
->>>>>>>       .lock(b)
->>>>>>>       .lock(c)
->>>>>>>       .custom(|(a, _, c)| (a, c))
->>>>>>>       .lock(d)
->>>>>>>       .finish();
->>>>>>=20
->>>>>>=20
->>>>>> Instead of `begin` and `custom`, why not something like this:
->>>>>>=20
->>>>>> let (a, c, d) =3D ctx.init()
->>>>>>    .lock(a)
->>>>>>           .lock(b)
->>>>>>           .lock(c)
->>>>>>           .unlock(b)
->>>>>>           .lock(d)
->>>>>>           .finish();
->>>>>>=20
->>>>>> Instead of `begin`, `init` would be better naming to imply `fini`
->>>>>> on the C side, and `unlock` instead of `custom` would make the
->>>>>> intent clearer when dropping locks mid chain.
->>>=20
->>> Also, I'm not really fond of the name `init`, how about `enter`?
->>>=20
->>>>>=20
->>>>> I don't think that this `unlock` operation will work. How would =
-you
->>>>> implement it?
->>>>=20
->>>>=20
->>>> We could link mutexes to locks using some unique value, so that we =
-can
->>>> access locks by passing mutexes (though that sounds a bit odd).
->>>>=20
->>>> Another option would be to unlock by the index, e.g.,:
->>>>=20
->>>> let (a, c) =3D ctx.init()
->>>>    .lock(a)
->>>>           .lock(b)
->>>>           .unlock::<1>()
->>=20
->> Why do we need this random unlock() here? We usually want to lock =
-everything
->> and proceed, or otherwise backoff completely so that someone else can =
-proceed.
->=20
-> No the `unlock` was just to show that we could interleave locking and
-> unlocking.
->=20
->> One thing I didn=E2=80=99t understand with your approach: is it =
-amenable to loops?
->> i.e.: are things like drm_exec() implementable?
->=20
-> I don't think so, see also my reply here:
->=20
->    https://lore.kernel.org/all/DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org
->=20
-> The type-based approach with tuples doesn't handle dynamic number of
-> locks.
->=20
+Okay, maybe connect is not an intuitive name for opening IDE
+sessions..
 
-This is probably the default use-case by the way.
+> I started this project with "all existing T=0 drivers 'just work'" as a
+> goal and a virtue. I have been begrudgingly pulled away from it from the
+> slow drip of complexity it appears to push into the PCI core.
 
->> /**
->> * drm_exec_until_all_locked - loop until all GEM objects are locked
->> * @exec: drm_exec object
->> *
->> * Core functionality of the drm_exec object. Loops until all GEM =
-objects are
->> * locked and no more contention exists. At the beginning of the loop =
-it is
->> * guaranteed that no GEM object is locked.
->> *
->> * Since labels can't be defined local to the loops body we use a jump =
-pointer
->> * to make sure that the retry is only used from within the loops =
-body.
->> */
->> #define drm_exec_until_all_locked(exec) \
->> __PASTE(__drm_exec_, __LINE__): \
->> for (void *__drm_exec_retry_ptr; ({ \
->> __drm_exec_retry_ptr =3D &&__PASTE(__drm_exec_, __LINE__);\
->> (void)__drm_exec_retry_ptr; \
->> drm_exec_cleanup(exec); \
->> });)
->=20
-> My understanding of C preprocessor macros is not good enough to parse =
-or
-> understand this :( What is that `__PASTE` thing?
+Do you have some examples? I don't really see what complexity there is
+if the solution it simply not auto bind any drivers to TDISP capable
+devices and userspace is responsible to manually bind a driver once it
+has reached T=1.
 
-This macro is very useful, but also cursed :)
+This seems like the minimum possible simplicitly for the kernel as
+simply everything is managed by userspace, and there is really no
+special kernel behavior beyond switching the DMA API of an unbound
+driver on the T=0/1 change.
 
-This declares a unique label before the loop, so you can jump back to it =
-on
-contention. It is usually used in conjunction with:
+> The concern is neither userspace nor the PCI core have everything it
+> needs to get the device to T=1. 
 
-/**
- * drm_exec_retry_on_contention - restart the loop to grap all locks
- * @exec: drm_exec object
- *
- * Control flow helper to continue when a contention was detected and we =
-need to
- * clean up and re-start the loop to prepare all GEM objects.
- */
-#define drm_exec_retry_on_contention(exec)			\
-	do {							\
-		if (unlikely(drm_exec_is_contended(exec)))	\
-			goto *__drm_exec_retry_ptr;		\
-	} while (0)
+Disagree, I think userspace can have everything. It may need some
+per-device userspace support in difficult cases, but userspace can
+deal with it..
 
+> PCI core knows that the device is T=1 capable, but does not know how
+> to preconfigure the device-specific lock state,
 
-The termination is handled by:
+Userspace can do this. Can we define exactly what is needed to do this
+"pre-configure the device specific lock state"? At the very worst, for
+the most poorly designed device, userspace would have to bind a T=0
+driver and then unbind it.
 
-/**
- * drm_exec_cleanup - cleanup when contention is detected
- * @exec: the drm_exec object to cleanup
- *
- * Cleanup the current state and return true if we should stay inside =
-the retry
- * loop, false if there wasn't any contention detected and we can keep =
-the
- * objects locked.
- */
-bool drm_exec_cleanup(struct drm_exec *exec)
-{
-	if (likely(!exec->contended)) {
-		ww_acquire_done(&exec->ticket);
-		return false;
-	}
+Again, I am trying to make something simple for the kernel that gets
+us to a working solution before we jump ahead to far more complex in
+the kernel models, like aware drivers that can toggle themselves
+between T=0/1.
 
-	if (likely(exec->contended =3D=3D DRM_EXEC_DUMMY)) {
-		exec->contended =3D NULL;
-		ww_acquire_init(&exec->ticket, &reservation_ww_class);
-		return true;
-	}
+> Userspace might be able to bind a new driver that leaves the device in a
+> lockable state on unbind, but that is not "just works" that is,
 
-	drm_exec_unlock_all(exec);
-	exec->num_objects =3D 0;
-	return true;
-}
-EXPORT_SYMBOL(drm_exec_cleanup);
+I wouldn't have the kernel leave the device in the locked state. That
+should always be userspace. The special driver may do whatever special
+setup is needed, then unbind and leave a normal unlocked device
+"prepped" for userspace locking without doing a FLR or
+something. Realistically I expect this to be a very rare requirement,
+I think this coming up just reflects the HW immaturity of some early
+TDISP devices.
 
-The third clause in the loop is empty.
+Sensible mature devices should have no need of a pre-locking step. I
+think we should design toward that goal as the stable future and only
+try to enable a hacky work around for the problematic early devices. I
+certainly am not keen on seeing significant permanent kernel
+complexity to support this device design defect.
 
-For example, in amdgpu:
+> driver that expects the device arrives already running. Also, that main
+> driver needs to be careful not to trigger typically benign actions like
+> touch the command register to trip the device into ERROR state, or any
+> device-specific actions that trip ERROR state but would otherwise be
+> benign outside of TDISP."
 
-/**
- * reserve_bo_and_vm - reserve a BO and a VM unconditionally.
- * @mem: KFD BO structure.
- * @vm: the VM to reserve.
- * @ctx: the struct that will be used in unreserve_bo_and_vms().
- */
-static int reserve_bo_and_vm(struct kgd_mem *mem,
-			      struct amdgpu_vm *vm,
-			      struct bo_vm_reservation_context *ctx)
-{
-	struct amdgpu_bo *bo =3D mem->bo;
-	int ret;
+As I said below, I disagree with this. You can't touch the *physical*
+command register but the cVM can certainly touch the *virtualized*
+command register. It up to the VMM To ensure this doesn't cause the
+device to fall out of RUN as part of virtualization.
 
-	WARN_ON(!vm);
+I'd also say that the VMM should be responsible to set pBME=1 even if
+vBME=0? Shouldn't it? That simplifies even more things for the guest.
 
-	ctx->n_vms =3D 1;
-	ctx->sync =3D &mem->sync;
-	drm_exec_init(&ctx->exec, DRM_EXEC_INTERRUPTIBLE_WAIT, 0);
-	drm_exec_until_all_locked(&ctx->exec) {
-		ret =3D amdgpu_vm_lock_pd(vm, &ctx->exec, 2);
-		drm_exec_retry_on_contention(&ctx->exec);
-		if (unlikely(ret))
-			goto error;
+> > From that principal the kernel should NOT auto probe drivers to T=0
+> > devices that can be made T=1. Userspace should handle attaching HW to
+> > such devices, and userspace can sequence whatever is required,
+> > including the attestation and verifying.
+> 
+> Agree, for PCI it would be simple to set a no-auto-probe policy for T=1
+> capable devices.
 
-		ret =3D drm_exec_prepare_obj(&ctx->exec, &bo->tbo.base, =
-1);
-		drm_exec_retry_on_contention(&ctx->exec);
-		if (unlikely(ret))
-			goto error;
-	}
-        // <=E2=80=94=E2=80=94 everything is locked at this point.
-	return 0;
+So then it is just a question of what does a userspace component need
+to do.
 
+> I do not want to burden the PCI core with TDISP compatibility hacks and
+> workarounds if it turns out only a small handful of devices ever deploy
+> a first generation TDISP Device Security Manager (DSM). L1 aiding L2, or
+> TDISP simplicity improvements to allow the PCI core to handle this in a
+> non-broken way, are what I expect if secure device assignment takes off.
 
-So, something like:
+Same feeling about pre-configuration :)
 
-some_unique_label:
-for(void *retry_ptr;
-    ({ retry_ptr =3D &some_unique_label; drm_exec_cleanup(); });
-    /* empty *) {
-     /* user code here, which potentially jumps back to =
-some_unique_label  */
-}
+> > The starting point must have the core code do this sequence
+> > for every driver. Once that is working we can talk about if other
+> > flows are needed.
+> 
+> Do you agree that "device-specific-prep+lock" is the problem to solve?
 
->=20
->> In fact, perhaps we can copy drm_exec, basically? i.e.:
->>=20
->> /**
->> * struct drm_exec - Execution context
->> */
->> struct drm_exec {
->> /**
->>  * @flags: Flags to control locking behavior
->>  */
->> u32                     flags;
->>=20
->> /**
->>  * @ticket: WW ticket used for acquiring locks
->>  */
->> struct ww_acquire_ctx ticket;
->>=20
->> /**
->>  * @num_objects: number of objects locked
->>  */
->> unsigned int num_objects;
->>=20
->> /**
->>  * @max_objects: maximum objects in array
->>  */
->> unsigned int max_objects;
->>=20
->> /**
->>  * @objects: array of the locked objects
->>  */
->> struct drm_gem_object **objects;
->>=20
->> /**
->>  * @contended: contended GEM object we backed off for
->>  */
->> struct drm_gem_object *contended;
->>=20
->> /**
->>  * @prelocked: already locked GEM object due to contention
->>  */
->> struct drm_gem_object *prelocked;
->> };
->>=20
->> This is GEM-specific, but we could perhaps implement the same idea by
->> tracking ww_mutexes instead of GEM objects.
->=20
-> But this would only work for `Vec<WwMutex<T>>`, right?
+Not "the" problem, but an design issue we need to accommodate but not
+endorse.
 
-I=E2=80=99m not sure if I understand your point here.
+> > But I think we can start with the idea that such RAS failures have to
+> > reload the driver too and work on improvements. Realistically few
+> > drivers have the sort of RAS features to consume this anyhow and maybe
+> > we introduce some "enhanced" driver mode to opt-into down the road.
+> 
+> Hmm, having trouble not reading that back supporting my argument above:
+> 
+> Realistically few devices support TDISP lets require enhanced drivers to
+> opt-into TDISP for the time being.
 
-The list of ww_mutexes that we've managed to currently lock would be =
-something
-that we'd keep track internally in our context. In what way is a KVec an =
-issue?
+I would be comfortable if hitless RAS recovery for TDISP devices
+requires some kernel opt-in. But also I'm not sure how this should
+work from a security perspective. Should userspace also have to
+re-attest before allowing back to RUN? Clearly this is complicated.
 
->=20
->> Also, I=E2=80=99d appreciate if the rollback logic could be =
-automated, which is
->> what you=E2=80=99re trying to do, so +1 to your idea.
->=20
-> Good to see that it seems useful to you :)
->=20
-> ---
-> Cheers,
-> Benno
+Also, I would be comfortable to support this only for devices that do
+not require pre-configuration.
 
-Btw, I can also try to implement a proof of concept, so long as people =
-agree that
-this approach makes sense.
-
-By the way, dri-devel seems to not be on cc? Added them now.
-
-Full context at [0].
-
-=E2=80=94 Daniel
-
-[0]: =
-https://lore.kernel.org/rust-for-linux/DBPC27REX4N1.3JA4SSHDYXAHJ@kernel.o=
-rg/T/#m17a1e3a913ead2648abdff0fc2d927c8323cb8c3
-
+Jason
 
