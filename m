@@ -1,200 +1,146 @@
-Return-Path: <linux-kernel+bounces-754122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9B7B18E4E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:54:18 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 43236B18E54
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:58:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3315FAA549A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:54:17 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 309AB4E0508
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:58:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AC68225779;
-	Sat,  2 Aug 2025 11:54:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05709225A38;
+	Sat,  2 Aug 2025 11:58:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="dZElYOlW";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="p1hv894c"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTo32lN4"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A85E8836;
-	Sat,  2 Aug 2025 11:54:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 620632E36FD;
+	Sat,  2 Aug 2025 11:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754135650; cv=none; b=UZ4E9rZl4ViL0+jJ/HrcS1d3sLeJYH2oYul+ShC3cEeQ7+dtmKy8hP8xHBlMM1iERlXzz5+e0l8dBzKzAB+aBrob8cmUn3Y4TUmbL6s2BELb0kQlst+0tb2aD7IKO1xXrx0jpw8j2ncE1PhrFI5oQVhSwy3rlENHAloMryRmSH4=
+	t=1754135909; cv=none; b=q/mBtrI+fNNARtPrSMigGLF4in2e0ur67J6mu92UzOcWqNdbKSZcr/5ddegIZiTzAXd6FfE/OSYN+OdPckZiV/QV/5afYUQFq0e6UB9fpJm3385XphmfFFJGXAGBCZxQrOstWUwoShiYtvXNkxtQAP7fAr+TGyV/dy9VoK+k5iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754135650; c=relaxed/simple;
-	bh=7JSK08gr5EMMwFTP+Nc18gtIcN61iXQJ4wSPoNhyA7o=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=tsUHAlmJKI9EFY1BD23x71Dp1RvdE5gE2tw/CipP4ZOZFTbMGUnDJ1Jpjp+vBt8U4ki0TYzXXsHPx/5LM9iSLiwhlitEMs94DArLC/CkZLzKKf/ZP7wNmGbnG8boEWRgW8vwB20ZAnOBPqFi0iQiI49S5RiN5VNsbgso5ISxxL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=dZElYOlW; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=p1hv894c; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754135646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1HpnpcljZv3Vcr0JYTBR7pupUbl6kk1J0tdkltSaCQs=;
-	b=dZElYOlWqZydsTiMiRF/GWFwajmqUZhV1PJrNaWfnpV18LmkLlIsi2pM9YcL1m3OAgVTGc
-	/LGDe+3yrAJs3+n3/vnByVEiungrF0g/2EVAyqURZuKsw5H7oTnrhJ7z/1rAY1WR7O4GI2
-	bERSGCW7J7xosEUz4ogT9V2OvbfvEC4lknXhjbfYoWzzLx4EDaKxgy6ONpJUEa0BWsVFps
-	7IWWgP2zEn3Bl/lXomztPjGvaPRK48Vk9/niPomnOFu88dHg0I3khwx7Y0fLQspUtdPIaV
-	qtE47TQErVakkAXWGY67ef7yj0F5ej+chVxfD4Ti3MqB1omLDI3A0I9l8wBTZg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754135646;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1HpnpcljZv3Vcr0JYTBR7pupUbl6kk1J0tdkltSaCQs=;
-	b=p1hv894c7n9YDQ6eOZ7HFk5r3LdKrJNdBVb4JuevvoiZ9IdJUFrzFZxma9uNfs5bk1+Wws
-	X5LlorFumjbOIiDQ==
-To: Hogan Wang <hogan.wang@huawei.com>, x86@kernel.org,
- dave.hansen@linux.intel.com, kvm@vger.kernel.org,
- alex.williamson@redhat.com
-Cc: weidong.huang@huawei.com, yechuan@huawei.com, hogan.wang@huawei.com,
- wangxinxin.wang@huawei.com, jianjay.zhou@huawei.com, wangjie88@huawei.com,
- maz@kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] x86/irq: Plug vector setup race
-In-Reply-To: <20250801145633.2412-1-hogan.wang@huawei.com>
-References: <87a54kil52.ffs@tglx> <20250801145633.2412-1-hogan.wang@huawei.com>
-Date: Sat, 02 Aug 2025 13:54:05 +0200
-Message-ID: <87v7n6gcrm.ffs@tglx>
+	s=arc-20240116; t=1754135909; c=relaxed/simple;
+	bh=Xc8SYXB/1ZyPNo7QZEwo91xM8O0MlYCL/z/O4oWx/dI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=lZKhmIcaTELEmTco0kNzJCXoER1HnPB+Rm694+8mWWDCDOqI/TSmzjrvYOobD7OsLMtEB+QkIJbMA6eXNOvq3d5spU+gvW2GKisUNQ94Bp2k/IXCXoL98ZC3G6E/hiehP83KhsT3pV4Y81bogLHd1wxC/4KJKgfYVxJ12AAHfFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTo32lN4; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 40750C4CEEF;
+	Sat,  2 Aug 2025 11:58:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754135908;
+	bh=Xc8SYXB/1ZyPNo7QZEwo91xM8O0MlYCL/z/O4oWx/dI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=pTo32lN495MtDyGc/Y5MPNZE/zh772B4v+dL7L/qFfJ3Tzrte01jWefQjFuHK0SVb
+	 Bh69gdO0PRH3cqxjCgH8QUDiTYtCtsn0iVGSGf7gjFAGAuxMNc1tKGaTaQkCUhh7wz
+	 QyUNM0JW135jAwXg+sOgHL13VSOddFKbmpJf+B/EnmsyJfMnftvw9fmrmvk12ufVUt
+	 9hTKyIA3KniMX1kQljpsnWNUQ1iqMtzllZy7z79ZMaH0YnZ9DvoWKgXZF9jHuo19p/
+	 gkimJFDPy3NBsiWYo8nY9MI9X3OgVwS9r0OipVWyzt9tvdumwIcw0J6gANTtoV4FlK
+	 0m/zbxKmgMXdw==
+Date: Sat, 2 Aug 2025 12:58:21 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Andy Shevchenko <andriy.shevchenko@intel.com>
+Cc: Gustavo Silva <gustavograzs@gmail.com>, Alex Lanzano
+ <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, Nuno
+ =?UTF-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, Lothar Rubusch
+ <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <20250802125821.2ae1b17b@jic23-huawei>
+In-Reply-To: <20250727164909.1833c4bc@jic23-huawei>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+	<20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+	<aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+	<aHYIBReTFqJMtiXW@smile.fi.intel.com>
+	<vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
+	<aHd2s987EMCdgdrJ@smile.fi.intel.com>
+	<20250724162227.065d20a0@jic23-huawei>
+	<aIKlC-HlP3nX-ERA@smile.fi.intel.com>
+	<20250727164909.1833c4bc@jic23-huawei>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Fri, Aug 01 2025 at 22:56, Hogan Wang wrote:
-> I believe an effective solution to the issue of lost interrupts
-> might be to modify the vifo module to avoid un-plug/plug irq,
-> and instead use a more lightweight method to switch interrupt
-> modes. Just like:
->
-> vfio_irq_handler()
-> 	if kvm_mode
-> 		vfio_send_eventfd(kvm_irq_fd);
-> 	else
-> 		vfio_send_eventfd(qemu_irq_fd);
->
-> However, this will bring about some troubles:
-> 1) The kvm_mode variable should be protected, leading to performance loss. 
-> 2) The VFIO interface requires the passing of two eventfds. 
-> 3) Add another interface to implement mode switching. 
->
-> Do you have a better solution to fix this interrupt loss issue?
+On Sun, 27 Jul 2025 16:49:09 +0100
+Jonathan Cameron <jic23@kernel.org> wrote:
 
-Interesting. I looked at vfio_irq_handler(), which is in the platform/
-part of VFIO. The corresponding vfio_set_trigger(), which switches eventfds
-does the right thing:
+> On Fri, 25 Jul 2025 00:26:35 +0300
+> Andy Shevchenko <andriy.shevchenko@intel.com> wrote:
+> 
+> > On Thu, Jul 24, 2025 at 04:22:27PM +0100, Jonathan Cameron wrote:  
+> > > On Wed, 16 Jul 2025 12:53:55 +0300
+> > > Andy Shevchenko <andriy.shevchenko@intel.com> wrote:    
+> > > > On Tue, Jul 15, 2025 at 08:55:35PM -0300, Gustavo Silva wrote:    
+> > > > > On Tue, Jul 15, 2025 at 10:49:25AM +0300, Andy Shevchenko wrote:      
+> > > > > > On Tue, Jul 15, 2025 at 10:37:22AM +0300, Andy Shevchenko wrote:      
+> > > > > > > On Fri, Jul 11, 2025 at 08:36:03PM -0300, Gustavo Silva wrote:      
+> > 
+> > ...
+> >   
+> > > > > > > > +/* 9.81 * 1000000 m/s^2 */
+> > > > > > > > +#define BMI270_G_MEGA_M_S_2				9810000      
+> > > > > > > 
+> > > > > > > I thought this is MICRO...      
+> > > > > > 
+> > > > > > Btw, what if we use the device on poles and on equator (or even on orbital
+> > > > > > station)? I'm wondering if this constant should be defined in units.h or
+> > > > > > even in uAPI that user space may add a correction if needed.
+> > > > > >       
+> > > > > I certainly hadn't thought about these scenarios.
+> > > > > FWIW, the accelerometer scale values also assume g = 9.81 m/s^2.
+> > > > > For example, 0.000598 = 2 * 9.81 / 32768      
+> > > > 
+> > > > Right, but this should be supplied to user space somehow. OTOH the measure error
+> > > > may be high enough (what is the precision of the measurements by the way?) that
+> > > > it will neglect the differences in the 'g' constant.
+> > > > 
+> > > > All the details are given in [1].
+> > > > 
+> > > > [1]: https://en.wikipedia.org/wiki/Gravity_of_Earth#:~:text=The%20precise%20strength%20of%20Earth's,/s2)%20by%20definition.    
+> > > 
+> > > These sensors don't measure relative to g.    
+> > 
+> > What do they measure? Any links for me to study?  
+> m/s^2 (well actually not, but they derive that from change in properties of a capacitor like structure as it bends under
+> the force generated by the acceleration.  Which in the vertical direction is g if the device isn't moving.
+> 
+> https://www.analog.com/en/resources/technical-articles/accelerometer-and-gyroscopes-sensors-operation-sensing-and-applications.html
+> looks good as an intro from a very quick glance.
+> 
+> >   
+> > > That's annoying marketing which is why I held firm for m/s^2 for IIO :)
+> > > So what they measure for a given acceleration does not change depending
+> > > on where we are on earth. You should use a 'fixed' standard value for
+> > > conversion from marketing values in g to m/s^2..    
+> > 
+> > Hmm... But shouldn't that marketing value be exposed to user space?  
+> 
+> yes, but its 9.81 where ever you are. Or whatever the datasheet says they use.
+> These things are rarely that well calibrated, so the exact value gets lost in the
+> errors!
+> 
+> Jonathan
+> 
+I got lost in this thread, so perhaps am assuming there is a v5 to come.
 
-     disable_irq();
-     update(trigger);
-     enable_irq();
+Maybe just send one anyway even if no changes as it'll jump up my list to look at.
 
-disable_irq() ensures that there is no interrupt handler in progress, so
-it becomes safe to switch the trigger in the data structure which is has
-been handed to request_irq() as @dev_id argument. For edge type
-interupts this ensures that a interrupt which arrives while disabled is
-retriggered on enable, so that no interrupt can get lost.
+Jonathan
 
-The PCI variant is using the trigger itself as the @dev_id argument and
-therefore has to do the free_irq()/request_irq() dance. It shouldn't be
-hard to convert the PCI implementation over to the disable/enable scheme.
+> 
+> 
+> > 
+> >   
+> 
+> 
 
-> There is a question that has been troubling me: Why are interrupts
-> still reported after they have been masked and the interrupt remapping
-> table entries have been disabled? Is this interrupt cached somewhere?
-
-Let me bring back the picture I used before:
-
-	 CPU0				CPU1
-	 vmenter(vCPU0)
-	 ....                           local_irq_disable()
-	  msi_set_affinity()
- #1	    mask(MSI-X)
-	      vmexit()                  
- #2      ...                             interrupt is raised in APIC
-                                         but not handled
-
- #3      really_mask(MSI-X)
-         free_irq()
- 	   mask();        
-
- #4	   __synchronize_irq()
-
-	   msi_domain_deactivate()
-	     write_msg(0);
-	   x86_vector_deactivate()
- #5          per_cpu(vector_irq, cpu)[vector] = VECTOR_SHUTDOWN;
-
- #6                                     local_irq_enable()
-                                         interrupt is handled and
-					 observes VECTOR_SHUTDOWN
-					 writes VECTOR_UNUSED
-	request_irq()
-	  x86_vector_activate()
-	     per_cpu(vector_irq, cpu)[vector] = desc;
-
-	   msi_domain_deactivate()
-	     write_msg(msg);
-	   unmask();
-
-#1 is the mask operation in the VM, which is trapped, i.e. the interrupt
-   is not yet masked at the MSIX level.
-
-#2 The device raises the interupt _before_ the host can mask the
-   interrupt at the PCI-MSIX level (#3).
-
-   The interrupt is sent to the APIC of the target CPU 1, which sets the
-   corresponding IRR bit in the APIC if the CPU cannot handle it at that
-   point, because it has interrupts disabled.
-
-#4 cannot observe the pending IRR bit on CPU1's APIC and therefore
-   concludes that there is no interrupt in flight.
-
-If the host side VMM manages to shut down the interrupt completely (#5)
-_before_ CPU1 reenables interrupts (#6), then CPU1 will observe
-VECTOR_SHUTDOWN and treats it as a spurious interrupt.
-
-The same problem exists on bare metal, when a driver leaves the device
-interrupts enabled and then does a free/request dance:
-
-	 CPU0				CPU1
-	 ....                           local_irq_disable()
- #1	 free_irq()
- #2      ...                             interrupt is raised in APIC
-                                         but not handled
-
- #3       really_mask(MSI-X)
-
- #4	   __synchronize_irq()
-
-	   msi_domain_deactivate()
-	     write_msg(0);
-	   x86_vector_deactivate()
- #5          per_cpu(vector_irq, cpu)[vector] = VECTOR_SHUTDOWN;
-
- #6                                     local_irq_enable()
-                                         interrupt is handled and
-					 observes VECTOR_SHUTDOWN
-					 writes VECTOR_UNUSED
-	request_irq()
-	  x86_vector_activate()
-	     per_cpu(vector_irq, cpu)[vector] = desc;
-
-	   msi_domain_deactivate()
-	     write_msg(msg);
-	   unmask();
-
-See?
-
-Thanks,
-
-        tglx
 
