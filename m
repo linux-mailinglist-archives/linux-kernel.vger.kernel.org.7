@@ -1,95 +1,123 @@
-Return-Path: <linux-kernel+bounces-754140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1902B18E8E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:54:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6344B18E91
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:58:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71C82189E846
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:54:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA30AA460E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:58:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC5A236437;
-	Sat,  2 Aug 2025 12:54:21 +0000 (UTC)
-Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 233492367AC;
+	Sat,  2 Aug 2025 12:58:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TnT+qXIh"
+Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5FAD1F099C
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:54:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA221E5729;
+	Sat,  2 Aug 2025 12:58:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754139261; cv=none; b=XWyMdLrQ1iFEfuQ9g7sYG/M5jvZVhTCWdTFWvAWg7mPL8Tn7cifxXtcRbm48u5wYufGN4LKRb/WOEH6wg1WJKQEWcrydw133SEYb/rdDki07NV4X4sxkABzHLyZKmwOcDxXxVoGfGZ/Kfdq7M/qdqNRDZkha8aPY3EaCVXOOdwY=
+	t=1754139507; cv=none; b=rf4+Vb+3Jmdoi9sxVJJvMBQGn08B/3ja4cCZnP8dqCo9qNzadhmxHh5rVAK2/NBEU6AzqY4/Fz8iyee53KOSOZtgzZbVpR7ggbKqX+UpX/2l8/bpu5fu3us9DNz7I/RsknvkWn4JKF21yMORcZ33MrYSDJ7Ef1oIRP8p4qmVPCM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754139261; c=relaxed/simple;
-	bh=sVoqlJeN0kH8f7+EMVAczPaQekri7zRIqXD0QihzrkI=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=MA1e1MOKmiepK4NI2m0SmCV3fFeg6G2/8Tf/eDE41KxKCbNmd4j/l7lo2gXmn1mC0jRvZqjIDsSCQpWH/medgZnSAzuZICNNRvEouAK5GprJFQqLOr1V4/DiEvzYwYPZ3Ee96LOGBZiOyah+rQL2rTTwjIFtpafarxBwrbzSSmU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c707bfeb6so168584339f.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:54:17 -0700 (PDT)
+	s=arc-20240116; t=1754139507; c=relaxed/simple;
+	bh=dzixnqijSaSmKm6FoEQyku7dfX6/WAiEOVQqa89Tx08=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=iS3w5XAlCYFXlt/pB//2DFWX3OCkRJpHThr3rAc4iBdQ4lHczgNxtRFbFx63H+ZyDWemktRwD9uh76Pso4Ej1inpW//8+kBtCRA1o7qQ9jnvIpIdFXz60IESYb9ZHMbjr1/eyDjp1PI+2tTwYY99EBWtjrupVoC/lYlzZVgjpDQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TnT+qXIh; arc=none smtp.client-ip=209.85.214.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-23fc5aedaf0so20031935ad.2;
+        Sat, 02 Aug 2025 05:58:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754139505; x=1754744305; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JeF05721YVJ5pBBmgxwBbsjT0X7NTUhpkjiEAnY+Z00=;
+        b=TnT+qXIhHv3nwEAqusBiB2ycPVFU3dVOX06xDzb85lSS+47eGKfWFLcCow58BOKY2q
+         gmUhu7fuz70vH9hk0v+idM6k4jn4bTWbFAqyj9J3BVeM9UzAEz0mQ4Um7BZQC4lFLiyf
+         32eLWY5RduiWxcwnhFYbIBnBx5XsSgU/ZNBqJNgkRqYV3pAYb6NCkvUbK5z8wPYpYSWn
+         LotSGH8oxqChVrckkKuKkgxvZsKPtT1wkN1hMF7cClMaFP3ernesNgbH7toBjZGTwdws
+         8/FxLSMP/4ePAjMidknL8goSLlkTyPa8W9uJN651sWMFviDL8LJj1kRcb6E+S28mQpy6
+         OeLQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754139257; x=1754744057;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=3OBecpoJJO70BCBu/HlWNXeJXFHw4YD4HRwva99qg84=;
-        b=Entm7qzWA+2cCxTiq+8VAwblOmrfYuQHxdV0cK/xQW68U+O0rPgZlchhlDYEJpDA5T
-         tJJwiansq5vztFZkDGpfUpCgPnDkLr+Hg04cxJxV8SdiD/PCSyqeUGQJdQzBM5WNWQ2q
-         Mr8tsMCziNL84JzCo7/60unrd2omM6NZdXCVDgsTQD60h3FKRane2E8QgQKGhYhCsrYQ
-         ESUxmWNyAkUuYo2zVx0O20jNW1YhiMV6rSaEQGEv+2a0FWgLpTjiJm/AHtYH3JHJqEZ4
-         f7IJ87QbxMVI8ODroxRM86S12tg7wT+9k8Skk4BP9rGOhVmZGtP6JrA8Z8h9clWR5Y1M
-         +c7A==
-X-Gm-Message-State: AOJu0Yxhad6JO2mJmkG0hXdQ5LXbcpQnPR/Ctp5gCVuP+Zg41z0lcNdh
-	q4ehwxDDr1TqwcHEPWFiEGKrIB8JbNt3x1gqEId8v3bcF9YiVEyADSLiD1Hjw7n5GvZt0AhlANF
-	t8Vyn9v2sh4kTQ+R4KHJNavL+Cs0kYtw5/Zc94lEheyoTAWSzBe3AGsKtDDs=
-X-Google-Smtp-Source: AGHT+IHE5CiqdAMUDsiU0Whh8ubStGnFDaAY1+n8tAeFL77I5W2dbAKi/pNs5NgSk3tbm+YIpfqkYTXuaFk4Y8wCH7eHTU0eNS21
+        d=1e100.net; s=20230601; t=1754139505; x=1754744305;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=JeF05721YVJ5pBBmgxwBbsjT0X7NTUhpkjiEAnY+Z00=;
+        b=Pr2o/jUJMrv0da/fLPFWrbce5Zd8MVH+FR5YhE6DDipdLIMKsEach+cUYOI2plT+wQ
+         R94++IgBebSwt1pNbhjaHjC0w6YgrWnOENnRUgFIxIEnAdmKCpOFyuNuppr17Mjl98u4
+         5bzhU06MVHBHnkUotKSTiOKMqbWB8y8Tcoj49WDoKUqPQeS42gN7apc4YILIwQ6ya0Xk
+         jZED0DCSTVDee8WjCw63iCFSDb6d4Ab1Exzu3ZjsGOaaTduSPH/rYeCEv6j12EznS7yo
+         NsQAerRWhtYuuuyz2XU3nAwsLlp3XL6SFbJXH5BjvDdC9d8slFJ8KRmhbv7RNxhG+HOV
+         fkrg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeWPLxsMx19mRl3ah+xs27ySF2qS/502cg35G8ApwS9R20Ix5So4v846iPQwm1ptc1Y/HN0MS9whEN5kq3@vger.kernel.org, AJvYcCXqlSkMEOxOmWGO7YgYaIsnXQNzUusgZj1JP/4ZSjnPkOMUB0M0B9JyJF8fURQncoO6ohUMD4I3g2g=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9owjmL+LYlwDOF1Wi2k0B7pLjXSuu/Vh8e5WuLhgX7As2u39+
+	e9jnt3rUZr4PsjkY1HBpUBH0ompdy9E/9scjTXp4vQoJ/QbHkM0akP42
+X-Gm-Gg: ASbGncvO58Md3divTNcApd1wU5hryBmtTEThST9VbP4wd/WAseHs0uD5+qD/z5VhobJ
+	lQL66Cn7jf525tag6rO5qTBmLzY9M2k/R3ATeP35abSUwOF/HN9wYdZWLui02VbyOtBhf9ASuDU
+	lHctuPChl3FE3OVR7hpWmnr+rKkNNQR3aOjDFE4EQA8DX15t0nQdsdvbT4o7azYJ14oCeu68USm
+	FZ7JDLD0G+Ab9rwyr1SPXgmK3rq66f459iQt0Y3thrO09mLVTumys59tgYJsfUfC53hsVWSamuI
+	4kVxDMEIIUyEyzprcMVXIS/yVstB8aMIE5kj4Ivn7oRU0XDCOmOiDwHpahLUWNZi1jM4c9kp54X
+	g0BXkoOdvwQVsS4bgB9UpWXAQuCvr0ciSmoHWy37ke0CFH8cDFA==
+X-Google-Smtp-Source: AGHT+IGui/tjwdKbWTwckNP2ApRA1WN/cOeq/iRXpzfKqpbgHt6m+WPc0tkdQsIm8M16mN6hmnfWcA==
+X-Received: by 2002:a17:902:dac3:b0:240:6ae4:3695 with SMTP id d9443c01a7336-24246f461e1mr44675175ad.4.1754139505405;
+        Sat, 02 Aug 2025 05:58:25 -0700 (PDT)
+Received: from localhost.localdomain ([220.88.57.158])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e89a077csm66788345ad.138.2025.08.02.05.58.20
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Sat, 02 Aug 2025 05:58:24 -0700 (PDT)
+From: Kim Tae Hyun <kimth0312@gmail.com>
+To: akpm@linux-foundation.org,
+	david@redhat.com,
+	corbet@lwn.net
+Cc: lorenzo.stoakes@oracle.com,
+	Liam.Howlett@oracle.com,
+	vbabka@suse.cz,
+	rppt@kernel.org,
+	surenb@google.com,
+	mhocko@suse.com,
+	linux-mm@kvack.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Kim Tae Hyun <kimth0312@gmail.com>
+Subject: [PATCH] [PATCH] docs: update physical memory documentation by adding N_GENERIC_INITIATOR to enum node_states
+Date: Sat,  2 Aug 2025 21:58:01 +0900
+Message-ID: <20250802125801.10068-1-kimth0312@gmail.com>
+X-Mailer: git-send-email 2.49.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:da:b0:874:e108:8e3a with SMTP id
- ca18e2360f4ac-881683e7e9dmr520022039f.12.1754139256821; Sat, 02 Aug 2025
- 05:54:16 -0700 (PDT)
-Date: Sat, 02 Aug 2025 05:54:16 -0700
-In-Reply-To: <6834671a.a70a0220.253bc2.0098.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688e0a78.a70a0220.249f57.0000.GAE@google.com>
-Subject: Forwarded: Re: Fix reported __del_gendisk deadlock
-From: syzbot <syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+While reading physical_memory.rst, I noticed that N_GENERIC_INITIATOR has not been update
+from the node_states list, even though it's already added in commit 894c26a1c274b8eafbb4b1dad67e70e51a106061.
 
-***
+Signed-off-by: Kim Tae Hyun <kimth0312@gmail.com>
+---
+ Documentation/mm/physical_memory.rst | 2 ++
+ 1 file changed, 2 insertions(+)
 
-Subject: Re: Fix reported __del_gendisk deadlock
-Author: ujwal.kundur@gmail.com
-
-#syz test
-
-diff --git a/block/genhd.c b/block/genhd.c
-index c26733f6324b..bad731186189 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -819,9 +819,11 @@ void del_gendisk(struct gendisk *disk)
-                disable_elv_switch(disk->queue);
-
-                memflags = memalloc_noio_save();
-+               mutex_lock(&set->tag_list_lock);
-                down_read(&set->update_nr_hwq_lock);
-                __del_gendisk(disk);
-                up_read(&set->update_nr_hwq_lock);
-+               mutex_unlock(&set->tag_list_lock);
-                memalloc_noio_restore(memflags);
-        }
- }
+diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+index 9af11b5bd145..b76183545e5b 100644
+--- a/Documentation/mm/physical_memory.rst
++++ b/Documentation/mm/physical_memory.rst
+@@ -171,6 +171,8 @@ nodes with particular properties as defined by ``enum node_states``:
+   The node has memory(regular, high, movable)
+ ``N_CPU``
+   The node has one or more CPUs
++``N_GENERIC_INITIATOR``
++  The node has one or more Generic Initiators
+ 
+ For each node that has a property described above, the bit corresponding to the
+ node ID in the ``node_states[<property>]`` bitmask is set.
 -- 
-2.30.2
+2.49.0
+
 
