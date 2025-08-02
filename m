@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-753983-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753984-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9920B18B53
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:25:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA90DB18B56
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09C3518930C8
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:25:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AA91F3B6B96
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CFE61F428F;
-	Sat,  2 Aug 2025 08:25:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5D71F4CB3;
+	Sat,  2 Aug 2025 08:28:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GHYqvWuV"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qF6pajB3"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFC6A347DD;
-	Sat,  2 Aug 2025 08:25:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74E2E482FF;
+	Sat,  2 Aug 2025 08:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754123117; cv=none; b=uIMRdyAU58KCCPDPLDw2p+7rqidXZMQ86IG+i3UUtnfG0PwjyVpSTFv1EtEZtOzwdaGQ7j7cJZI1eJOVezzFH9BmtuyQLkkeOl/qjRe0BskKu+t5NHFOj4HcQ/u456dhYhUR6MOa8ERqMBYFmhfxA1hqsb0S9k7n+mqINSi//oI=
+	t=1754123312; cv=none; b=hM+D5t93L92OB1DaVC9Mf2okxU6V5aa78tN175ln3EBzWa9e79qBR72GaFf1DsBCEuD1QkDZ7AgfNjlloHsNHS2zUgIWC/6l0u7Jku2KE4IHwcpsSdKROhjbVG1cj2t90mK9Nsyee5pW9thTwy+gspZz6gJ5WFizgaRbHeZhw8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754123117; c=relaxed/simple;
-	bh=MffUBgPkii/m0LOYqFXnsXwddGM9bwCjWLp57BEWPbo=;
+	s=arc-20240116; t=1754123312; c=relaxed/simple;
+	bh=llYTKSuol9RPYhKWm2gabhniwDxQUSufeYpHon5iO0A=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l1oKoWJBgVJUFDNEqOmonUuA9ncQH45Twm+4LEk05n0qXQQIKyED26lzgXeXIPcDbQXqVWpphKXAMPUxA/2eZWfwur+vwVppQkSgXnKFbGVps6TLNEU2cFAKXbjAs4HUFSNHUq1DPYwww7ZGb/joo+GjJhJBiBlvIyax02rDiEs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GHYqvWuV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75764C4CEEF;
-	Sat,  2 Aug 2025 08:25:13 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=CMG7vzutWpVBcG1Cp/pC+h8f3HWwK4IN+ky8zpaW46ddoLKHW1TO8uMoi0uGeNNAlIsaea8iLQBPrJDCF5SG1iFt3M6jKizpjxju0Ern31UsIZ/trJR6SG/+oVUftu79cBk5PLupm1ptGgAvCmETOC0liZvRGWbHk5J5MJUV23k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qF6pajB3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C31AC4CEEF;
+	Sat,  2 Aug 2025 08:28:24 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754123116;
-	bh=MffUBgPkii/m0LOYqFXnsXwddGM9bwCjWLp57BEWPbo=;
+	s=k20201202; t=1754123312;
+	bh=llYTKSuol9RPYhKWm2gabhniwDxQUSufeYpHon5iO0A=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GHYqvWuVPRaQ42Wpwv8/rSMaXI9M1C3OO/WOtGZu/DhK0oYeWYRfhBHiTs9vdHZqJ
-	 C8z05Zoe6sMwqMivAMjT7GQ1OeVtjWZgd3IGrBphLl+v9dNOYgatjuU4lgg3nFNTZt
-	 BLBNAhzJAUaY2lBYL7rPo0hLboLinOavTawx962vkdLFlPg+2md3voFV+SbzIZnbS+
-	 HwwS4v6D5uhBCp5I5ZnsvypqH8cUyblSBRU2Lo/VozwjSejlAvDxACNlNETI7JVL8X
-	 6iMZFdh2CpTxLkce9MHx0lMip/HOQIFEX09KFJMJnugcMvCt2qDDfFt3tD8c6oqS5u
-	 UasFLmZF847bQ==
-Message-ID: <5d0dd15b-3fbb-4a1f-a30f-ab4d7c3d01d0@kernel.org>
-Date: Sat, 2 Aug 2025 10:25:11 +0200
+	b=qF6pajB3MrNJiZsOnq6oAnkc8s/bi0CUVb5wi7SQ6Z/x7eWWQ7B7M2ylXNYn7jiTy
+	 ZWakT2ODs7l7yMHalxSFFPFeyWayFVu0svHp273gp4owgldnjzrTqs7gzRiU2k6gQn
+	 NqRAaaInTWfPvJxa5Do5J0bFB+LcIWbdXLCaImeGQF957PyM6SvLbc0oHC9DQ7UcNS
+	 3CJsh9+UXBmaOFiXv9eu67QmSiuitIXdckka515ZsJIw4xMABM41us4YopGa/UnYfV
+	 0l0x7RYhiLG7B5LNZD5JgsqY+rfDXVPskP7VeqQEzzDKv0F3WUw4EBNYgMN2/EfaAx
+	 MG5LVFyfNuecg==
+Message-ID: <ed072356-6881-4466-a0c2-0f55b72f92c8@kernel.org>
+Date: Sat, 2 Aug 2025 10:28:23 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,14 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4] dt-bindings: iio: pressure: add invensense,icp10100
-To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>, jic23@kernel.org,
- dlechner@baylibre.com, nuno.sa@analog.com, andy@kernel.org,
- conor+dt@kernel.org, krzk+dt@kernel.org, jean-baptiste.maneyrol@tdk.com,
- robh@kernel.org
-Cc: ~lkcamp/patches@lists.sr.ht, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250801221424.132305-1-rodrigo.gobbi.7@gmail.com>
+Subject: Re: [PATCH v7 10/12] nvmem: s32g2_siul2: add NVMEM driver for SoC
+ information
+To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
+ Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
+ Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
+ krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
+ Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
+ Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
+ Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
+ Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
+ Fabio Estevam <festevam@gmail.com>, aisheng.dong@nxp.com,
+ Jacky Bai <ping.bai@nxp.com>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
+ Srinivas Kandagatla <srini@kernel.org>
+Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>,
+ Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
+ Enric Balletbo <eballetb@redhat.com>, echanude@redhat.com,
+ Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
+ Vincent Guittot <vincent.guittot@linaro.org>
+References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
+ <20250710142038.1986052-11-andrei.stefanescu@oss.nxp.com>
+ <9d004ea4-0bb2-4a21-8501-82ecf3482c3e@app.fastmail.com>
+ <fa24772b-0038-4f51-87c6-15b810d8d454@oss.nxp.com>
+ <53bc13b9-365e-4212-84f9-85e67c23e067@oss.nxp.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -102,20 +120,21 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250801221424.132305-1-rodrigo.gobbi.7@gmail.com>
+In-Reply-To: <53bc13b9-365e-4212-84f9-85e67c23e067@oss.nxp.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2025 00:10, Rodrigo Gobbi wrote:
-> There is no txt file for it, add yaml for invensense,icp10100
-> which is already used in the driver. Also, document other compatibles
-> for ICP-101xx family and add invensense,icp10100 as a fallback.
+On 01/08/2025 16:36, Andrei Stefanescu wrote:
+> Apart from the proposed NVMEM driver, there is also an option of exporting
+> a syscon regmap for the registers which provide information about the SoC.
 > 
-> Acked-by: Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>
-> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
-> ---
+> I have seen that typically NVMEM drivers export information read from fuses
+> but I think having a NVMEM driver is nicer way to access the information
+> instead of using a syscon regmap and manually extracting the needed bits. 
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+
+nvmem is not a syscon. Mixing these two means device is something
+completely else.
 
 Best regards,
 Krzysztof
