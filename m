@@ -1,62 +1,74 @@
-Return-Path: <linux-kernel+bounces-753912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C02FCB189D4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:16:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A612B189DA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:23:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66A0F1885670
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:17:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A4D562824B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:23:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1AF4F13B58D;
-	Sat,  2 Aug 2025 00:16:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF8A817736;
+	Sat,  2 Aug 2025 00:23:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hV4sIAdy"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="WNFRdf49"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB6C8AD5A;
-	Sat,  2 Aug 2025 00:16:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B23D1AD5A;
+	Sat,  2 Aug 2025 00:23:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754093767; cv=none; b=Xy5mnjQ+RDnMs7o0Vo2BJTkVsQIOZDOtWTrrqKaLUMhnZ2wuFU0AbwkDs6hPPBnKV4gtqQRy/JG4XrqLYZWExn+kaMo+cdxLg+jk8ponrmrWazlbVMMSrPkTGcmpSxRTdWMRpzfXZg86Vx/ePv4innfKa/KpJp6lPec/7kGPsfI=
+	t=1754094203; cv=none; b=ZTul9+3PjSfwdDf/1HUecqQBCsmsbxG+Zu4EwkdqjwKyXxi4sylvS19WOEaIfQuNzv29Zu4SAb9iuhfA3twSPyaqMzBtf7Rhd+yrKGz8C+vAnhNtf9VXA+5ssY1BebQ0wCjrhtza0OfCza+dsHTVlOR7RNYeDJvkREnAuMnLw3k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754093767; c=relaxed/simple;
-	bh=m4mv9f3JoJDnlvqdbJAJf2RS/nXE7O/g/4cLPilXESQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=mFzYWWpnJoSC83Ot2/XROVDR7CK1m5UCwI9avm/2bvw2QAGs0Alb2t4yJb06S7un/DHEHkqxa57rTlejb+0FssugTb7ORdTUkScpE2NqwQVR00XED4J51h/SAFYE6sb1mHs2bXpAZsbjQVqBZYGGlifD+Nf4ZdsD8fg1DnWEUzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hV4sIAdy; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from terminus.zytor.com (terminus.zytor.com [IPv6:2607:7c80:54:3:0:0:0:136])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5720FKpJ3142596
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=NO);
-	Fri, 1 Aug 2025 17:15:30 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5720FKpJ3142596
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754093730;
-	bh=EwOm5ekFj/uGCcPOwfD3nwFQMgDOLAgJ2zHWQhQh4jY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hV4sIAdybuo8GZYSsFU0MlcVLOEivweake7C7rxCmJO1UgioiLmFfDgrDK8ldCs7t
-	 nXKOrIha/+lnIigXHhlSpg1cErOyX8SFIFWZNiTkzxIh0AkgYIubpxKkeAeeNTcxJ1
-	 Ez1pRPMWOXfhmooCJ8TuXkGeVfCl/OTP4zWaKRH6W98TqDe3+C+yP2JXztp3y4Ubta
-	 qBrMjWnboeqzu0fEg6m/IKD/CrahLqd/19VHiPjB71O1ihSrFbWyWtNyDOM6Qx7aho
-	 k1/t3RRbPm1Io9Sa7XxVrDI4px0B7ErXf7SeHCJmytcU/GKLnGYAhJeI2p5jAtiyK0
-	 offhogwa9EEjg==
-From: "Xin Li (Intel)" <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, xin@zytor.com, chao.gao@intel.com
-Subject: [PATCH v2 4/4] KVM: x86: Advertise support for the immediate form of MSR instructions
-Date: Fri,  1 Aug 2025 17:15:20 -0700
-Message-ID: <20250802001520.3142577-5-xin@zytor.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250802001520.3142577-1-xin@zytor.com>
-References: <20250802001520.3142577-1-xin@zytor.com>
+	s=arc-20240116; t=1754094203; c=relaxed/simple;
+	bh=qPr6XJteyUG7b/XqJ7b6KFN1JCYuhGTQkFlq7rLfCas=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=JZzOgT704kegpP6lwc49nSlHHJUenTQwppz92VYlZZxsCAhy8nxuvV1R0oxnwgdUN2U9BdytsT1eXLDPgX89yHm9FNQuWVU06cGpZmbKQQRX0tM3bM/WsdopE2VvauzNW5/6Z3NAoAf+OY3ZQuZ5NRaULH3AjDX8fVuX2yGLinA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=WNFRdf49; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1754094201; x=1785630201;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=qPr6XJteyUG7b/XqJ7b6KFN1JCYuhGTQkFlq7rLfCas=;
+  b=WNFRdf49IZbrwGivWX2jRqashwJLckx1oNve5VTyBVo0kmanzaEPpZoM
+   dUwg0SkPfs1fNLQtnRnSiZliCWMSkuMLDeIQNJhrSLr81Ausnca7YEfPo
+   NV982tHZAT996T8S0/1xGz+qatO8DROjFEMH+jHsj8UM657BiIGcMBg36
+   HgMU5gmtWuX5foMH32SJPOf/xLn4wvRVnSGfNzC/vkK7dmTe6TgxWT34V
+   ZNsEX3LxkVC8s1fwfcO8Mol0VcjaO/NKimiqpBnz14N5Wg9gQ5xYq8nsc
+   5y9btSO5AWNJ3Cg7BjYj1Gf7R8fHZeyYf3msA5oQGUdZZrpvo2yc2gAVF
+   Q==;
+X-CSE-ConnectionGUID: JuC/NCVjQ62LEWY/sgsqSQ==
+X-CSE-MsgGUID: HcKIG/VFTKiMJ+g0arhJwA==
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="212144311"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 01 Aug 2025 17:23:14 -0700
+Received: from chn-vm-ex01.mchp-main.com (10.10.85.143) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Fri, 1 Aug 2025 17:22:44 -0700
+Received: from pop-os.microchip.com (10.10.85.11) by chn-vm-ex01.mchp-main.com
+ (10.10.85.143) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Fri, 1 Aug 2025 17:22:44 -0700
+From: <Tristram.Ha@microchip.com>
+To: Oleksij Rempel <linux@rempel-privat.de>, Woojung Huh
+	<woojung.huh@microchip.com>, Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean
+	<olteanv@gmail.com>
+CC: Maxime Chevallier <maxime.chevallier@bootlin.com>, "David S. Miller"
+	<davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	<UNGLinuxDriver@microchip.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Tristram Ha <tristram.ha@microchip.com>
+Subject: [PATCH net] net: dsa: microchip: Fix KSZ8863 reset problem
+Date: Fri, 1 Aug 2025 17:22:53 -0700
+Message-ID: <20250802002253.5210-1-Tristram.Ha@microchip.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,117 +76,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-Advertise support for the immediate form of MSR instructions to userspace
-if the instructions are supported by the underlying CPU.
+From: Tristram Ha <tristram.ha@microchip.com>
 
-The immediate form of MSR access instructions are primarily motivated
-by performance, not code size: by having the MSR number in an immediate,
-it is available *much* earlier in the pipeline, which allows the
-hardware much more leeway about how a particular MSR is handled.
+ksz8873_valid_regs[] was added for register access for KSZ8863/KSZ8873
+switches, but the reset register is not in the list so
+ksz8_reset_switch() does not take any effect.
 
-Explicitly clear the capability in SVM, as its handling is only added for
-VMX.
+ksz_cfg() is updated to display an error so that there will be a future
+check for adding new register access code.
 
-Signed-off-by: Xin Li (Intel) <xin@zytor.com>
+A side effect of not resetting the switch is the static MAC table is not
+cleared.  Further additions to the table will show write error as there
+are only 8 entries in the table.
+
+Fixes: d0dec3333040 ("net: dsa: microchip: Add register access control for KSZ8873 chip")
+Signed-off-by: Tristram Ha <tristram.ha@microchip.com>
 ---
+ drivers/net/dsa/microchip/ksz8.c       | 7 ++++++-
+ drivers/net/dsa/microchip/ksz_common.c | 1 +
+ 2 files changed, 7 insertions(+), 1 deletion(-)
 
-Change in v2:
-*) Cleared the capability in SVM (Sean).
----
- arch/x86/include/asm/kvm_host.h | 1 +
- arch/x86/kvm/cpuid.c            | 6 +++++-
- arch/x86/kvm/reverse_cpuid.h    | 5 +++++
- arch/x86/kvm/svm/svm.c          | 6 +++++-
- 4 files changed, 16 insertions(+), 2 deletions(-)
-
-diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
-index c5d0082cf0a5..2a7d0dcc1d70 100644
---- a/arch/x86/include/asm/kvm_host.h
-+++ b/arch/x86/include/asm/kvm_host.h
-@@ -771,6 +771,7 @@ enum kvm_only_cpuid_leafs {
- 	CPUID_7_2_EDX,
- 	CPUID_24_0_EBX,
- 	CPUID_8000_0021_ECX,
-+	CPUID_7_1_ECX,
- 	NR_KVM_CPU_CAPS,
+diff --git a/drivers/net/dsa/microchip/ksz8.c b/drivers/net/dsa/microchip/ksz8.c
+index 76e490070e9c..6d282a8e3684 100644
+--- a/drivers/net/dsa/microchip/ksz8.c
++++ b/drivers/net/dsa/microchip/ksz8.c
+@@ -36,7 +36,12 @@
  
- 	NKVMCAPINTS = NR_KVM_CPU_CAPS - NCAPINTS,
-diff --git a/arch/x86/kvm/cpuid.c b/arch/x86/kvm/cpuid.c
-index e2836a255b16..eaaa9203d4d9 100644
---- a/arch/x86/kvm/cpuid.c
-+++ b/arch/x86/kvm/cpuid.c
-@@ -985,6 +985,10 @@ void kvm_set_cpu_caps(void)
- 		F(LAM),
- 	);
- 
-+	kvm_cpu_cap_init(CPUID_7_1_ECX,
-+		SCATTERED_F(MSR_IMM),
-+	);
+ static void ksz_cfg(struct ksz_device *dev, u32 addr, u8 bits, bool set)
+ {
+-	regmap_update_bits(ksz_regmap_8(dev), addr, bits, set ? bits : 0);
++	int ret;
 +
- 	kvm_cpu_cap_init(CPUID_7_1_EDX,
- 		F(AVX_VNNI_INT8),
- 		F(AVX_NE_CONVERT),
-@@ -1411,9 +1415,9 @@ static inline int __do_cpuid_func(struct kvm_cpuid_array *array, u32 function)
- 				goto out;
- 
- 			cpuid_entry_override(entry, CPUID_7_1_EAX);
-+			cpuid_entry_override(entry, CPUID_7_1_ECX);
- 			cpuid_entry_override(entry, CPUID_7_1_EDX);
- 			entry->ebx = 0;
--			entry->ecx = 0;
- 		}
- 		if (max_idx >= 2) {
- 			entry = do_host_cpuid(array, function, 2);
-diff --git a/arch/x86/kvm/reverse_cpuid.h b/arch/x86/kvm/reverse_cpuid.h
-index c53b92379e6e..743ab25ba787 100644
---- a/arch/x86/kvm/reverse_cpuid.h
-+++ b/arch/x86/kvm/reverse_cpuid.h
-@@ -25,6 +25,9 @@
- #define KVM_X86_FEATURE_SGX2		KVM_X86_FEATURE(CPUID_12_EAX, 1)
- #define KVM_X86_FEATURE_SGX_EDECCSSA	KVM_X86_FEATURE(CPUID_12_EAX, 11)
- 
-+/* Intel-defined sub-features, CPUID level 0x00000007:1 (ECX) */
-+#define KVM_X86_FEATURE_MSR_IMM		KVM_X86_FEATURE(CPUID_7_1_ECX, 5)
-+
- /* Intel-defined sub-features, CPUID level 0x00000007:1 (EDX) */
- #define X86_FEATURE_AVX_VNNI_INT8       KVM_X86_FEATURE(CPUID_7_1_EDX, 4)
- #define X86_FEATURE_AVX_NE_CONVERT      KVM_X86_FEATURE(CPUID_7_1_EDX, 5)
-@@ -87,6 +90,7 @@ static const struct cpuid_reg reverse_cpuid[] = {
- 	[CPUID_7_2_EDX]       = {         7, 2, CPUID_EDX},
- 	[CPUID_24_0_EBX]      = {      0x24, 0, CPUID_EBX},
- 	[CPUID_8000_0021_ECX] = {0x80000021, 0, CPUID_ECX},
-+	[CPUID_7_1_ECX]       = {         7, 1, CPUID_ECX},
- };
- 
- /*
-@@ -128,6 +132,7 @@ static __always_inline u32 __feature_translate(int x86_feature)
- 	KVM_X86_TRANSLATE_FEATURE(BHI_CTRL);
- 	KVM_X86_TRANSLATE_FEATURE(TSA_SQ_NO);
- 	KVM_X86_TRANSLATE_FEATURE(TSA_L1_NO);
-+	KVM_X86_TRANSLATE_FEATURE(MSR_IMM);
- 	default:
- 		return x86_feature;
- 	}
-diff --git a/arch/x86/kvm/svm/svm.c b/arch/x86/kvm/svm/svm.c
-index 4abc34b7c2c7..57bcd92125a3 100644
---- a/arch/x86/kvm/svm/svm.c
-+++ b/arch/x86/kvm/svm/svm.c
-@@ -5301,8 +5301,12 @@ static __init void svm_set_cpu_caps(void)
- 	/* CPUID 0x8000001F (SME/SEV features) */
- 	sev_set_cpu_caps();
- 
--	/* Don't advertise Bus Lock Detect to guest if SVM support is absent */
-+	/*
-+	 * Clear capabilities that are automatically configured by common code,
-+	 * but that require explicit SVM support (that isn't yet implemented).
-+	 */
- 	kvm_cpu_cap_clear(X86_FEATURE_BUS_LOCK_DETECT);
-+	kvm_cpu_cap_clear(X86_FEATURE_MSR_IMM);
++	ret = regmap_update_bits(ksz_regmap_8(dev), addr, bits, set ? bits : 0);
++	if (ret)
++		dev_err(dev->dev, "can't update reg 0x%x: %pe\n", addr,
++			ERR_PTR(ret));
  }
  
- static __init int svm_hardware_setup(void)
+ static void ksz_port_cfg(struct ksz_device *dev, int port, int offset, u8 bits,
+diff --git a/drivers/net/dsa/microchip/ksz_common.c b/drivers/net/dsa/microchip/ksz_common.c
+index 7292bfe2f7ca..4cb14288ff0f 100644
+--- a/drivers/net/dsa/microchip/ksz_common.c
++++ b/drivers/net/dsa/microchip/ksz_common.c
+@@ -1447,6 +1447,7 @@ static const struct regmap_range ksz8873_valid_regs[] = {
+ 	regmap_reg_range(0x3f, 0x3f),
+ 
+ 	/* advanced control registers */
++	regmap_reg_range(0x43, 0x43),
+ 	regmap_reg_range(0x60, 0x6f),
+ 	regmap_reg_range(0x70, 0x75),
+ 	regmap_reg_range(0x76, 0x78),
 -- 
-2.50.1
+2.34.1
 
 
