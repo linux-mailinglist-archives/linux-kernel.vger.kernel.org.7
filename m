@@ -1,265 +1,133 @@
-Return-Path: <linux-kernel+bounces-754173-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754174-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BE32B18F51
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:05:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E939B18F57
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:13:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 092C07B2092
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:03:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E9583B9CC7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D8A724EA80;
-	Sat,  2 Aug 2025 16:04:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 22D7C248897;
+	Sat,  2 Aug 2025 16:13:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b="V2U4lWFe"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="L9a4XyPv"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F0CE2222B4;
-	Sat,  2 Aug 2025 16:04:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754150689; cv=pass; b=sxMag2MbruIOnkLM3n/jKjQ6RQ/o1pJAmQ+kw6HTaITvkKRJZlR92F0RamDjLPkjCVKg3aGX2Tzm5+8boB6w7HP8hE26bvmn4J3DHkDTYDcrarzdRutp8jMbI/gSqfwV69k4mbHE6mo8bQgOP7Kf95T3bVwRsFMSfNN+fsvNL/c=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754150689; c=relaxed/simple;
-	bh=Vdg8jHA+16KK4kio/H2ZmPEJzKRxTHixv3V9j/VFf7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=UTsU+4Z8kpiOGtRwXXPLw7vU9vnfpQnimtK/SzOWzz6RQIa8illbVnbGKFllnnsBE6GMm2773m3HM5DEvaylJwFa/ZtvYdnYFAwueOT6hH+vhQZZPqkqul99TsewBn1hgy7xUeqOIdKAX6oXTGTFb/po1phy0l3BUsWxCbTFmxQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=detlev.casanova@collabora.com header.b=V2U4lWFe; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754150560; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=WQqpUkXPtrxzpxaZ2hYfl+XOPYKxR/yR0rcNvg04LRAV+Tsf44cBMfyRI8vwmTxp6gChLAQiPjGtlwy/K9/JX//NPyH7DHB8Ls9uEYjsC0dr6CE5dX7KPtJg9DFRaUhNEv2SbmQChbOmcjGtuyBrJWCXYi6NE//Lt6k/YcpSEVQ=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754150560; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xtf+dEyzkoelWC2Fx1wwuEkZQXXlAY749DZ4vNup7Cw=; 
-	b=hHHrzU5f++KJzrykhl5qlTExwl012A/zJUgHdgegKkwmNfKI8D3LZOgAROYses2JC1f6mU8skpwAGlagDmezWPJTkb+oc3sAmcoyg1tGLWs3PFHZAsPvG7EG9Z1xxAZTqJneL5PWuQ0spEMdUg74OA81m7ClHn9VORnJf/lBfuU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=detlev.casanova@collabora.com;
-	dmarc=pass header.from=<detlev.casanova@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754150560;
-	s=zohomail; d=collabora.com; i=detlev.casanova@collabora.com;
-	h=From:From:To:To:Cc:Cc:Subject:Subject:Date:Date:Message-ID:In-Reply-To:References:MIME-Version:Content-Transfer-Encoding:Content-Type:Message-Id:Reply-To;
-	bh=xtf+dEyzkoelWC2Fx1wwuEkZQXXlAY749DZ4vNup7Cw=;
-	b=V2U4lWFeUsKW1XUdY48JG6pxgTjVc/FBs9bOk6qZ6M6qlPk/usIQI2rIzHjaum91
-	Wvxe2kb/Bg9+AdRIIIXAhwCMTefshntu3rhhapqWQg1gEagHTxztLAzLCKJfhTyRN02
-	lQWJkogElFkvVK07iEt7bkp3i5NJH/xmkBJnBsA8=
-Received: by mx.zohomail.com with SMTPS id 1754150557071593.1499218812709;
-	Sat, 2 Aug 2025 09:02:37 -0700 (PDT)
-From: Detlev Casanova <detlev.casanova@collabora.com>
-To: Mauro Carvalho Chehab <mchehab@kernel.org>,
- Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
- Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
- Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
- Hans de Goede <hansg@kernel.org>,
- Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
- Christian Gromm <christian.gromm@microchip.com>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Alex Shi <alexs@kernel.org>,
- Yanteng Si <si.yanteng@linux.dev>, Dongliang Mu <dzm91@hust.edu.cn>,
- Jonathan Corbet <corbet@lwn.net>, Tomasz Figa <tfiga@chromium.org>,
- Marek Szyprowski <m.szyprowski@samsung.com>,
- Andy Walls <awalls@md.metrocast.net>,
- Michael Tretter <m.tretter@pengutronix.de>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Bin Liu <bin.liu@mediatek.com>, Matthias Brugger <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
- Dmitry Osipenko <digetx@gmail.com>,
- Thierry Reding <thierry.reding@gmail.com>,
- Jonathan Hunter <jonathanh@nvidia.com>,
- Mirela Rabulea <mirela.rabulea@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
- Sascha Hauer <s.hauer@pengutronix.de>, Fabio Estevam <festevam@gmail.com>,
- Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
- Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
- Zhou Peng <eagle.zhou@nxp.com>,
- Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Abhinav Kumar <abhinav.kumar@linux.dev>,
- Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
- Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
- Jernej Skrabec <jernej.skrabec@gmail.com>, Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
- Daniel Almeida <daniel.almeida@collabora.com>,
- Neil Armstrong <neil.armstrong@linaro.org>,
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>,
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
- Nas Chung <nas.chung@chipsnmedia.com>,
- Jackson Lee <jackson.lee@chipsnmedia.com>,
- Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
- Houlong Wei <houlong.wei@mediatek.com>,
- Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
- Tiffany Lin <tiffany.lin@mediatek.com>,
- Yunfei Dong <yunfei.dong@mediatek.com>,
- Geert Uytterhoeven <geert+renesas@glider.be>,
- Magnus Damm <magnus.damm@gmail.com>,
- Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
- Jacob Chen <jacob-chen@iotwrt.com>,
- Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
- Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski <krzk@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- =?UTF-8?B?xYF1a2Fzeg==?= Stelmach <l.stelmach@samsung.com>,
- Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
- Jacek Anaszewski <jacek.anaszewski@gmail.com>,
- Andrzej Hajda <andrzej.hajda@intel.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Hugues Fruchet <hugues.fruchet@foss.st.com>,
- Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
- Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Nicolas Dufresne <nicolas.dufresne@collabora.com>,
- Benjamin Gaignard <benjamin.gaignard@collabora.com>,
- Steve Longerbeam <slongerbeam@gmail.com>, Maxime Ripard <mripard@kernel.org>,
- Paul Kocialkowski <paulk@sys-base.io>,
- Niklas =?UTF-8?B?U8O2ZGVybHVuZA==?= <niklas.soderlund@ragnatech.se>,
- Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
- Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
- Corentin Labbe <clabbe@baylibre.com>,
- Sakari Ailus <sakari.ailus@linux.intel.com>,
- Bingbu Cao <bingbu.cao@intel.com>, Tianshu Qiu <tian.shu.qiu@intel.com>,
- Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org, imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org, linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org, linux-amlogic@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-stm32@st-md-mailman.stormreply.com,
- mjpeg-users@lists.sourceforge.net,
- Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Subject: Re: [PATCH 44/65] media: rockchip: rkvdec: Access v4l2_fh from file
-Date: Sat, 02 Aug 2025 12:02:27 -0400
-Message-ID: <12713603.O9o76ZdvQC@trenzalore>
-In-Reply-To: <20250802-media-private-data-v1-44-eb140ddd6a9d@ideasonboard.com>
-References:
- <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-44-eb140ddd6a9d@ideasonboard.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE06172612
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 16:13:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754151228; cv=none; b=VJ4UDpGshPSuJdjT0iG3l6iKj3dSMV4OI5mkilo/1tpSM0CJj7FfuPNOv3R3oTf0+dAfRTEUyL4BXXs6COoZQo4WD5elhawm22Oa57Q7K4ttJjXlBfdGH5T8y1pUZabfowUPUsnnvfbs4xr+euk46VflzeIY99vyy2agL31xuLw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754151228; c=relaxed/simple;
+	bh=626h5VedKAEDV7eF+j4gRWQ/EVh8EL1yFG4kycMiduA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dGdFfdrTpRJ/tLtPDtzlsWIGdtlCG3FVgw2RmLMR9zFhq9QF6umhiLabEV+ESitfy9qxnShuDZAq1oodGrIyU2NqkbE/S3F1vQsYMN80XYzRGmAUSOPggV4/FSANcq+k/v2zlV3y8KFrJChsO9XjvazUaHGztILRSzwCgBe3pXw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=L9a4XyPv; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-ae0bde4d5c9so631214266b.3
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 09:13:46 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754151225; x=1754756025; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=WrDtMtgXDAh4aQCn1amCHGAxD2IuoC9BaP8lJI8ilpU=;
+        b=L9a4XyPvXjkjZTZ5YfMPG2HeBGsuSkxiDv7fknba1ui8V2GrUT+dEBwR3sx0rtV8oT
+         zTy6cqBO9BVa2pi8mY60F6nCeC007A5ZIPTLfgfzljyfjmoJuTlq60wsvjqQftzBIN62
+         q3siGxKMbep9sXFR12ySQWwU9l/BZeeHG8fZ8SK0czp6hns2aYm1qAXoFipuTFaGO5RO
+         MiUD49RkLQO7SFvJTFKRwTwW6Vm7KkUHVKzwAGdN1cMkTF0xcfBi2rXJ7DVagKlLOkDG
+         4y+KTUxa9NOvVehCCIpGe0cu6UIcsV0XvD4LaaStlCmQVZg5C4SojXAPI2Ig99EDEfAo
+         dofg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754151225; x=1754756025;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WrDtMtgXDAh4aQCn1amCHGAxD2IuoC9BaP8lJI8ilpU=;
+        b=FUww2UD482LAFoE+vmdbn+H3iIUx7oxNDFtcFg8m3+3b0bBkVjmgaBVTS8xjgGtuJ1
+         M8VkkjNxH06tnkKdoLNeusqe/CpUZmkoHjzOCRaF5ihoOQt9xctmSMeUTbfU8hIluL7+
+         fK2e9Yw95WDVhZ/WmtlfUqPrJiT9yQhA3xsJ3aeBvOA2yVZwsdnjSqqvA/JJHOEclLmP
+         wxdBM4gTAkxriWjeo3RLLoVxVoS2YfJeAD5kFuMOLsIt1OqMUJxo9pDmHjVjl1EtwLEF
+         MHPyfM8BW/OQdScVy+g4tOBU+Wuj1d4WRxANK2Ie26fjukauaLUNB2/gBH6kXUgEqYJh
+         k9CA==
+X-Forwarded-Encrypted: i=1; AJvYcCVP7u9Nk63UNuVbZmYFuHHi4pbzrnbxD8zMn+QPwfxvmTlPiGy9CO+SyTfBiZxGp4u7Jhp7oQgBd33JVok=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzBSjbQn0Eby/8s2dnl1C2fG2DPxUrKosektOch2klrakuY+PBM
+	zmg4pvXsDKW4XTtpLmU3AMGI8ierCq0uTaul7qN8i0+/Hrh/55Pbcgvx
+X-Gm-Gg: ASbGncsL+7O597oz9PA/t/ClLRjODtCsLObne+B1U/aq3TNNeYjb4wIcUoghXM1f/iZ
+	hMBZqZSqJNkKT71YKGGJ5tyvAgxsuqXty/VP8RYOJ+QYHrIjqOTEK3j6uicW29lGHS7etkHoWJs
+	xcujEsNvFJ5uVIH7x9Z0Odhi1pWR3kCPEIX0Yo89N2TmsGUUjYINu/1xhk7bHKCrcPj+UoKjOpH
+	y+UiJ9PFBuSL1GlLQft5yS4kN+1H1CIWv6/vMAEtkm0Yz4CkCghXx3/qYEYks0nC2K03ZbVWEQN
+	QnqIyhABmGvECNEX+P7SHbDC/RN98h87Ji56jJwU10rlAkV0s7OJedxgrGtftfROP0iTpgWynE+
+	PqhjNGgp3w9r5kvdAALGqUbjhQ0seJi6R4XdTAq1moojffW3gVwM5N2iXo6TFCOTZ+bHjvx64Sz
+	rp1xql4Ce7jh+Ipqvk7gSBNI5Ll+eEst2wHuKM8tK2jA==
+X-Google-Smtp-Source: AGHT+IGJC2NvD6UQnMiSqb/7JcSyp9498E96SzuBdZPwGcfTuVGVWWGQmPas/UULbsiTpyd/ly6LoA==
+X-Received: by 2002:a17:907:6d0a:b0:ae3:e378:159e with SMTP id a640c23a62f3a-af940062f58mr365236066b.26.1754151224871;
+        Sat, 02 Aug 2025 09:13:44 -0700 (PDT)
+Received: from hsukr3.localdomain (dynamic-2a02-3100-3a10-5000-2839-9355-6f35-74dc.310.pool.telefonica.de. [2a02:3100:3a10:5000:2839:9355:6f35:74dc])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a24370asm455456766b.128.2025.08.02.09.13.42
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 09:13:44 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>,
+	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+	Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	dri-devel@lists.freedesktop.org (open list:DRM DRIVERS),
+	linux-kernel@vger.kernel.org (open list)
+Cc: skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com,
+	Sukrut Heroorkar <hsukrut3@gmail.com>
+Subject: [PATCH] drm/drm_bridge: Document 'connector' parameter in drm_bridge_detect()
+Date: Sat,  2 Aug 2025 18:13:05 +0200
+Message-ID: <20250802161309.1198855-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
 
-Hi Jacopo,
+drm: drm_bridge: fix missing parameter documentation
 
-Thanks for the cleanup !
+The function documentation was missing description for the
+parameter 'connector'.
 
-On Saturday, 2 August 2025 05:23:06 EDT Jacopo Mondi wrote:
-> The v4l2_fh associated with an open file handle is now guaranteed
-> to be available in file->private_data, initialised by v4l2_fh_add().
-> 
-> Access the v4l2_fh, and from there the driver-specific structure,
-> from the file * in all ioctl handlers.
-> 
-> While at it, remove the now unused fh_to_rkvdec_ctx() macro.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Add missing function parameter documentation for drm_bridge_detect()
+to fix kernel-doc warnings.
 
-Reviewed-by: Detlev Casanova <detlev.casanova@collabora.com>
+Warning: drivers/gpu/drm/drm_bridge.c:1241 function parameter 'connector' not described in 'drm_bridge_detect'
 
-> ---
->  drivers/media/platform/rockchip/rkvdec/rkvdec.c | 14 +++++++-------
->  drivers/media/platform/rockchip/rkvdec/rkvdec.h |  5 -----
->  2 files changed, 7 insertions(+), 12 deletions(-)
-> 
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.c index
-> 481c2488f9ac64e70869ed21e5053cfbc4ed6e0e..9fa80ab3c62b7753e6c992aefd106ee99
-> ed375e4 100644 --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.c
-> @@ -354,7 +354,7 @@ static int rkvdec_try_capture_fmt(struct file *file,
-> void *priv, struct v4l2_format *f)
->  {
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	const struct rkvdec_coded_fmt_desc *coded_desc;
-> 
->  	/*
-> @@ -387,7 +387,7 @@ static int rkvdec_try_output_fmt(struct file *file, void
-> *priv, struct v4l2_format *f)
->  {
->  	struct v4l2_pix_format_mplane *pix_mp = &f->fmt.pix_mp;
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	const struct rkvdec_coded_fmt_desc *desc;
-> 
->  	desc = rkvdec_find_coded_fmt_desc(pix_mp->pixelformat);
-> @@ -418,7 +418,7 @@ static int rkvdec_try_output_fmt(struct file *file, void
-> *priv, static int rkvdec_s_capture_fmt(struct file *file, void *priv,
->  				struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	struct vb2_queue *vq;
->  	int ret;
-> 
-> @@ -439,7 +439,7 @@ static int rkvdec_s_capture_fmt(struct file *file, void
-> *priv, static int rkvdec_s_output_fmt(struct file *file, void *priv,
->  			       struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	struct v4l2_m2m_ctx *m2m_ctx = ctx->fh.m2m_ctx;
->  	const struct rkvdec_coded_fmt_desc *desc;
->  	struct v4l2_format *cap_fmt;
-> @@ -504,7 +504,7 @@ static int rkvdec_s_output_fmt(struct file *file, void
-> *priv, static int rkvdec_g_output_fmt(struct file *file, void *priv,
->  			       struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
-> 
->  	*f = ctx->coded_fmt;
->  	return 0;
-> @@ -513,7 +513,7 @@ static int rkvdec_g_output_fmt(struct file *file, void
-> *priv, static int rkvdec_g_capture_fmt(struct file *file, void *priv,
->  				struct v4l2_format *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
-> 
->  	*f = ctx->decoded_fmt;
->  	return 0;
-> @@ -532,7 +532,7 @@ static int rkvdec_enum_output_fmt(struct file *file,
-> void *priv, static int rkvdec_enum_capture_fmt(struct file *file, void
-> *priv, struct v4l2_fmtdesc *f)
->  {
-> -	struct rkvdec_ctx *ctx = fh_to_rkvdec_ctx(priv);
-> +	struct rkvdec_ctx *ctx = file_to_rkvdec_ctx(file);
->  	u32 fourcc;
-> 
->  	fourcc = rkvdec_enum_decoded_fmt(ctx, f->index, ctx->image_fmt);
-> diff --git a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> b/drivers/media/platform/rockchip/rkvdec/rkvdec.h index
-> 35effe9467845fdfc4ffea432211d1d2e75a08b0..481aaa4bffe975fa106fb22e78bef90ad
-> e86a6cf 100644 --- a/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> +++ b/drivers/media/platform/rockchip/rkvdec/rkvdec.h
-> @@ -124,11 +124,6 @@ struct rkvdec_ctx {
->  	void *priv;
->  };
-> 
-> -static inline struct rkvdec_ctx *fh_to_rkvdec_ctx(struct v4l2_fh *fh)
-> -{
-> -	return container_of(fh, struct rkvdec_ctx, fh);
-> -}
-> -
->  static inline struct rkvdec_ctx *file_to_rkvdec_ctx(struct file *filp)
->  {
->  	return container_of(file_to_v4l2_fh(filp), struct rkvdec_ctx, fh);
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+---
+ drivers/gpu/drm/drm_bridge.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-
-
+diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+index dd45d9b504d8..387a3b6cda54 100644
+--- a/drivers/gpu/drm/drm_bridge.c
++++ b/drivers/gpu/drm/drm_bridge.c
+@@ -1227,6 +1227,7 @@ EXPORT_SYMBOL(drm_atomic_bridge_chain_check);
+ /**
+  * drm_bridge_detect - check if anything is attached to the bridge output
+  * @bridge: bridge control structure
++ * @connector: connector associated with the bridge
+  *
+  * If the bridge supports output detection, as reported by the
+  * DRM_BRIDGE_OP_DETECT bridge ops flag, call &drm_bridge_funcs.detect for the
+-- 
+2.43.0
 
 
