@@ -1,189 +1,180 @@
-Return-Path: <linux-kernel+bounces-753971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E56E2B18AED
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:45:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E9BDB18AF0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:49:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B7596273F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:45:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E102AA0F90
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F0E11EEA5D;
-	Sat,  2 Aug 2025 06:44:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9081E130F;
+	Sat,  2 Aug 2025 06:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fC/ArMwZ"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="n6m4bs4f"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 442AC1F3B8A;
-	Sat,  2 Aug 2025 06:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743CF17A30A;
+	Sat,  2 Aug 2025 06:49:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754117091; cv=none; b=qvJA9YhaaUqE+kys57xmv2Gie6CT5SSNs8cXumekQpg9ln2/Ao96DUisHuJXaLmTnPoixXjBEZYS4gXXbW+A7wEGleIeOnHg1GPLpWMpjbFj0NVNz3N8m9/I6lLJSZpGscBNej1oqX4Xay7PHndDBA8/V2S9Z8W7CYDsJbKMPF4=
+	t=1754117368; cv=none; b=DdWDSE4sBDpLrkH9rW86CyD0hnqA5P6a49EhSeqtqpKqgFZHCkTdbq+BmdlYAlDig1ulY755RgIwoKD+OhVK1hVo1fG2WmWck3DyWHB8LFRTvYuYeoPeBEsV0zujUrYYhOR1dX2hLS+7TPU21NcznLRYiVg2PkikE9J2QChP4yk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754117091; c=relaxed/simple;
-	bh=5hAiE8yc4J2ZieVatB39vSlcnUHlw+uPSENDsajjkAc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=Omjwb7K9fM3IT99rwQ5blsT/SCcZgRvIOdVKns1cej/+uKNVkZdz+JnlXzcAt25gplD6f3fKb/FUPU7RohvILs6GOis6pz6fUqVegynid9Bynx0G3iVee0FNiUjcRhSMpbUWfn8zE/Jeuj61uhaezDznLiZpPPhULtUXfm3Poys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fC/ArMwZ; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bc61152d8so2616447b3a.2;
-        Fri, 01 Aug 2025 23:44:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754117089; x=1754721889; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=sALIksJdZiO/I2QuUa/2yG42xlm2I2ciXwgUed1B/JM=;
-        b=fC/ArMwZyFzKJrrgozSGyRfT/qQozDXX2LjdlkJwg3vSCtTKal9Pw+7bhHnioHGgsD
-         HQa6MCuc9bKxzRsG0JWXMeR5ArgYMe2tBtklxOyzmd2tFtrL5LISv10539BfRqzHGF8N
-         QY3olMqFK8PUtlx3SMeETppuEACRi1w+W84iJ2Qgd5bcM0IsJ8PS+fLrSn2Mt8NEsJ2F
-         TsA+9vp3RMmLVZ1Vm2FMXyTbad7Y4ln+kaCQGv5CNU+sdkFHCo8+L3Zcd50WrI/HU7oV
-         Fvq0bcj4VZxQXpCdzmoXSxLzkeMPwu5Xdx30Ebb9nkq0K/H0d7R7PMBcwm3jC9FfNSbV
-         SZqg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754117089; x=1754721889;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sALIksJdZiO/I2QuUa/2yG42xlm2I2ciXwgUed1B/JM=;
-        b=C5BvKooOKDhtZMy3kjtw9BD9WXjjhj5RGphxPA99u/wCadU5cmFJ2ETC87Exo8zxH5
-         4octb1Ii6K5fqeAI99/k2BEaMHvEn69b6fcBgjYbdCYbf30LWEmA32lgW9H/C/X6BmyD
-         /M+UwQKFRmiP2EQuWO/Ekm/tiaw520nOjg0eKFFGc1p0nRDKKkvOt8bMKkMpjOog73Pf
-         t7et/af0poW/2qTAv++2xI+2xlNdhHsaXNi6oWywhVX/Un1if5yCMBcaI2r5HKtRTepF
-         oULBm3xH2Ux13Larwh3pzuSLpLI2gug20v1Gh2QZ2jrT2JiXAWhiF90fd5QIlQo4TfOj
-         MJdg==
-X-Forwarded-Encrypted: i=1; AJvYcCU4SKCMiiDITb+N2o9XJko4ICkVzHLVgahQ03m288FAph3hPLAaVEGfyByE9DV5V3vPhnGorcuiCMXQ@vger.kernel.org, AJvYcCWmzoo1jIQS/mzoqqorIHRK2Glpi5FGCF41v6ZSMqXDLw5wz6C0iYNtycSVbbopEjJesbBRvDOQwTzF@vger.kernel.org
-X-Gm-Message-State: AOJu0YzV9xJDCyjPVnPQaKDSELht7YjNGaGylgWCqRdVWJLjZ809/Kds
-	K6YmQXCQIFOf38SSp7oDKyZeyI00fHLqkAMgdxakLBPlUmobLCO7KunFB4FfJab3j5Q=
-X-Gm-Gg: ASbGnctzzbDdbjvbYbNy6Rw1T+JdsD+cRboTfM+d9ebSZItmu40qcBqYwcCmW9uH8IU
-	o3Pq/T1cyaOXrbu0zEu1uiWFkIX1NqwnCCjE63/bNusdzogJ/lHMpkCakHB6mSJ8My3x2O4wSI6
-	a6lsnY3o2o0CWKm416rR5e2RU3QdwiSbSr1AuRmGuZO3EBGuzK6S+2FziAWoMpqL2nTOGi+lyVm
-	vofv+LSEAfMsj051MvsCjd5FY6lbDGXmsC67sIc1YJjKTeXTY/vJ1GrWrtQtkgck/1/OTe88Jim
-	LCKe71XGk6WBsO4vL25zjPaAF56UGmnq1Qr8nlOuwcQOygmqN4mReNRKqy3jdzUBDJcGJ7Tz44H
-	wJFd+frAiuIro1D7IaFN31FJtCuoVuOw=
-X-Google-Smtp-Source: AGHT+IHUF2Py6OtHYf64+9507Sam91o2LQeeQYIoTEGq+P17Bvpek3mVB8CoNICmhxdUgySrnHJz8Q==
-X-Received: by 2002:a05:6a00:391d:b0:742:3fb4:f992 with SMTP id d2e1a72fcca58-76bec352e73mr2541416b3a.10.1754117089312;
-        Fri, 01 Aug 2025 23:44:49 -0700 (PDT)
-Received: from [127.0.1.1] ([2401:4900:1c43:2e47:cb90:ffcc:76af:a5b9])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfe9003sm5639676b3a.125.2025.08.01.23.44.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Fri, 01 Aug 2025 23:44:48 -0700 (PDT)
-From: Dixit Parmar <dixitparmar19@gmail.com>
-Date: Sat, 02 Aug 2025 12:14:28 +0530
-Subject: [PATCH v2 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
+	s=arc-20240116; t=1754117368; c=relaxed/simple;
+	bh=V1YpHzZqr/JZLEnYNM01rkbOEf3tC/T7wDWkpa1ppzQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=AoBRPH9Cq3BHw3m/Ugu5grecci9XyQxTl2q7wwl67rXojQaR7EJqVPrOK+AaZ8ExZCp4iixcf6DHn402hP6fcOOn/HYUUdJM1CTXgB0i+/dl9424+g2Aj8tHHCcPR8ZyrX/MPiApvqDEJ8DBUr1ULrlg8mmhdd683qxUat+0SsY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=n6m4bs4f; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5723k4JF022005;
+	Sat, 2 Aug 2025 06:49:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=iG8H/C1N4lMlgdeXB1lassnTUx/2rU
+	RASJICgpfdVp8=; b=n6m4bs4fWZxY6nJjJnQ0+oEW38liPCSG22dVni4IJCc3tA
+	F3z8peh5KQTlQcKY11lH+gsW3RSC2FdXPpur9Nl+J8j6/C/pUDWPGZ7yHvYBe4Ng
+	N2V/V/Ihdn+Vbn+Mut3DHd3f3t9Exkr9IUUvjoEimmOIaAPmgEAWJ6G372Vxznid
+	9ZPZzimYjkKJpWN/uYaL9lKrddIUo6VPDQfA6XICotwz9fDxv/OekepSJzsE2P0w
+	pWUI0ngh16Y/oeaZ9utnVjwMxajygZZ7wJivNEVsU3iwAWv6sLg6+z1N1Dhc36SQ
+	pVI/Qe6lODqNx0akjSn27G2B7FjN3cMbYeIpST6A==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983srve5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 02 Aug 2025 06:49:17 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5726nH3N015508;
+	Sat, 2 Aug 2025 06:49:17 GMT
+Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983srve3-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 02 Aug 2025 06:49:17 +0000 (GMT)
+Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5723g4dL032450;
+	Sat, 2 Aug 2025 06:49:16 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489b0j0eqk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sat, 02 Aug 2025 06:49:16 +0000
+Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 5726nENc52101410
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Sat, 2 Aug 2025 06:49:14 GMT
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 467B62004B;
+	Sat,  2 Aug 2025 06:49:14 +0000 (GMT)
+Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 42B0E20040;
+	Sat,  2 Aug 2025 06:49:12 +0000 (GMT)
+Received: from li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com (unknown [9.124.211.139])
+	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Sat,  2 Aug 2025 06:49:12 +0000 (GMT)
+Date: Sat, 2 Aug 2025 12:19:09 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: "Darrick J. Wong" <djwong@kernel.org>, Zorro Lang <zlang@redhat.com>,
+        fstests@vger.kernel.org, Ritesh Harjani <ritesh.list@gmail.com>,
+        tytso@mit.edu, linux-xfs@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-ext4@vger.kernel.org
+Subject: Re: [PATCH v3 05/13] generic/1226: Add atomic write test using fio
+ crc check verifier
+Message-ID: <aI205U8Afi7tALyr@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+References: <aIccCgrCuQ4Wf1OH@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <2ae4bb04-fbf7-4a53-b498-ea6361cdab3e@oracle.com>
+ <aId8oZGXSg5DW48X@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <3a4854ac-75ad-4783-acbd-048fe7c7fdb0@oracle.com>
+ <aIhmG-l4nWOAzz2I@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <20250729144526.GB2672049@frogsfrogsfrogs>
+ <aIrun9794W0eZA8d@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <22ccfefc-1be8-4942-ac27-c01706ef843e@oracle.com>
+ <aIxhsV8heTrSH537@li-dc0c254c-257c-11b2-a85c-98b6c1322444.ibm.com>
+ <76974111-88f6-4de8-96bc-9806c6317d19@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
-In-Reply-To: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
-To: Jonathan Cameron <jic23@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, 
- =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
- devicetree@vger.kernel.org, Dixit Parmar <dixitparmar19@gmail.com>
-X-Mailer: b4 0.13.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754117073; l=2677;
- i=dixitparmar19@gmail.com; s=20250726; h=from:subject:message-id;
- bh=5hAiE8yc4J2ZieVatB39vSlcnUHlw+uPSENDsajjkAc=;
- b=VfyY3L8EYvv1bAMGzL3h9UYCx0UOG7l/EAE1k5SNCiVym51nK1hMPbgJhNR0l5+IKQCI87Nhq
- 0HX8CZoW8bDBIF1etwwBoDTpM0+tMjcCdc1Gp9pdbtMIdj6otCZhwcT
-X-Developer-Key: i=dixitparmar19@gmail.com; a=ed25519;
- pk=TI6k8pjTuLFcYiHazsate3W8rZGU2lbOrSJ4IWNoQhI=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <76974111-88f6-4de8-96bc-9806c6317d19@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDA1MyBTYWx0ZWRfX8CMkxRSQv68l
+ 8XEMTs+ID43snzHJI/6rrIvXt7rMmB2n9mnP8/pPzZlr+x5weIqjS5+jXqt55ET6xZnJAG9Zd0E
+ WgCIzTeSv8om2ZeDsJQxc5b3uTSVP6ZB96+yt6ck8x4p3IjSXG826cEsv/W1qUy1mSJcrrS7ivb
+ xkZY/ci5Gjbq+b/7rRAiy7zq3YauM8D6ETIFdR/ko8CZBZMW043x9PnEvz8IzTERBrTYHav3vEd
+ 2nglOtyF1oIrGWOfXAh0N99IpYgIbeFn7urEfY6vaiTXB8SH2OdDRYRu42+PQhIGzaVdBhUm04m
+ DiLWp13ldjs6+hKPDVAqFuacPV97DJqKGS+H6zh9on2qEY7hPe0DnRSghd6jZnvZ19l0Y6/MRjP
+ UwEenxRBKyJ0AxRoN32ZPz+9KpGSqf42bavTpHJGcqwxoplvurNyTn7J7qHTcvaiimHfIUNo
+X-Proofpoint-GUID: 8FveycUg9qHZs-eZteskl3CHibgBl4BO
+X-Proofpoint-ORIG-GUID: eJ59yteqryUWi-nSwAY09znim4LOkcCw
+X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=688db4ed cx=c_pps
+ a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
+ a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=sVsNyQL_5Ag_R6nxsGUA:9
+ a=CjuIK1q_8ugA:10
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ clxscore=1015 priorityscore=1501 impostorscore=0 bulkscore=0
+ lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
+ suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508020053
 
-Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-controlled by I2C interface. Main applications includes joysticks, control
-elements (white goods, multifunction knops), or electric meters (anti-
-tampering).
-Drop duplicated entry for infineon,tlv493d from trivial-devices.yaml as
-its documented in infineon,tlv493d.yaml now.
+On Fri, Aug 01, 2025 at 09:23:46AM +0100, John Garry wrote:
+> On 01/08/2025 07:41, Ojaswin Mujoo wrote:
+> > Got it, I think I can make this test work for ext4 only but then it might
+> > be more appropriate to run the fio tests directly on atomic blkdev and
+> > skip the FS, since we anyways want to focus on the storage stack.
+> > 
+> 
+> testing on ext4 will prove also that the FS and iomap behave correctly in
+> that they generate a single bio per atomic write (as well as testing the
+> block stack and below).
 
-Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
----
- .../iio/magnetometer/infineon,tlv493d.yaml         | 45 ++++++++++++++++++++++
- .../devicetree/bindings/trivial-devices.yaml       |  2 -
- 2 files changed, 45 insertions(+), 2 deletions(-)
+Okay, I think we are already testing those in the ext4/061 ext4/062
+tests of this patchset. Just thought blkdev test might be useful to keep
+in generic. Do you see a value in that or shall I just drop the generic
+overlapping write tests?
 
-diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
-new file mode 100644
-index 000000000000..ebcf29067a16
---- /dev/null
-+++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
-@@ -0,0 +1,45 @@
-+# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
-+%YAML 1.2
-+---
-+$id: http://devicetree.org/schemas/iio/magnetometer/infineon,tlv493d.yaml#
-+$schema: http://devicetree.org/meta-schemas/core.yaml#
-+
-+title: Infineon Technologies TLV493D Low-Power 3D Magnetic Sensor
-+
-+maintainers:
-+  - Dixit Parmar <dixitparmar19@gmail.com>
-+
-+properties:
-+  $nodename:
-+    pattern: '^magnetometer@[0-9a-f]+$'
-+
-+  compatible:
-+    const: infineon,tlv493d-a1b6
-+
-+  reg:
-+    maxItems: 1
-+
-+  vdd:
-+    description: 2.8V to 3.5V VDD supply
-+
-+  interrupts:
-+    maxItems: 1
-+
-+required:
-+  - compatible
-+  - reg
-+  - vdd
-+
-+additionalProperties: false
-+
-+example:
-+  - |
-+    i2c {
-+      #address-cells = <1>;
-+      #size-cells = <0>;
-+      magnetometer@5e {
-+        compatible = "infineon,tlv493d-a1b6";
-+        reg = <0x5e>;
-+        vdd = <&hall_vcc>;
-+      };
-+    };
-diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
-index 27930708ccd5..9e0eb5c873d2 100644
---- a/Documentation/devicetree/bindings/trivial-devices.yaml
-+++ b/Documentation/devicetree/bindings/trivial-devices.yaml
-@@ -125,8 +125,6 @@ properties:
-           - infineon,ir36021
-             # Infineon IRPS5401 Voltage Regulator (PMIC)
-           - infineon,irps5401
--            # Infineon TLV493D-A1B6 I2C 3D Magnetic Sensor
--          - infineon,tlv493d-a1b6
-             # Infineon Hot-swap controller xdp710
-           - infineon,xdp710
-             # Infineon Multi-phase Digital VR Controller xdpe11280
+Also, just for the records, ext4 passes the fio tests ONLY because we use
+the same io size for all threads. If we happen to start overlapping
+RWF_ATOMIC writes with different sizes that can get torn due to racing
+unwritten conversion. 
 
--- 
-2.43.0
+> 
+> > > > I'll try to check if we can modify the tests to write on non-overlapping
+> > > > ranges in a file.
+> > > JFYI, for testing SW-based atomic writes on XFS, I do something like this. I
+> > > have multiple threads each writing to separate regions of a file or writing
+> > > to separate files. I use this for power-fail testing with my RPI. Indeed, I
+> > > have also being using this sort of test in qemu for shutting down the VM
+> > > when fio is running - I would like to automate this, but I am not sure how
+> > > yet.
+> > > 
+> > > Please let me know if you want further info on the fio script.
+> > Got it, thanks for the insights. I was thinking of something similar now
+> > where I can modify the fio files of this test to write on non
+> > overlapping ranges in the same file. The only doubt i have right now is
+> > that when I have eg, numjobs=10 filesize=1G, how do i ensure each job
+> > writes to its own separate range and not overlap with each other.
+> > 
+> > I saw the offset_increment= fio options which might help, yet to try it
+> > out though. If you know any better way please do share.
+> 
+> Yeah, so I use something like:
+> --numjobs=2 --offset_align=0 --offset_increment=1M --size=1M
 
+Got it, thanks!
+ojaswin
+
+> 
+> Thanks,
+> John
+> 
 
