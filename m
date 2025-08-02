@@ -1,116 +1,147 @@
-Return-Path: <linux-kernel+bounces-754005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A7E74B18BB1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:25:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFDBFB18BCD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:27:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 62D66623B43
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:25:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF79D172A80
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:27:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D847205AD7;
-	Sat,  2 Aug 2025 09:24:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D15C2397A4;
+	Sat,  2 Aug 2025 09:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RWE+sRhI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0/A75IE"
+Received: from mail-pf1-f193.google.com (mail-pf1-f193.google.com [209.85.210.193])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6E3E225779;
-	Sat,  2 Aug 2025 09:24:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C55220AF87;
+	Sat,  2 Aug 2025 09:24:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754126649; cv=none; b=rcTzWtuwBuklPd6kV5fi3KZAlehSrf4V+I229zuGAkdz5Hoddm0VYCGWp8cOXeJ9nT9SMCmS3Rjfep4GHfdDRFw1ojFxh/tWbRJzrAD33WvqsPOVBXbUxdXHJ68vf0FLWOYzbyXZvggJK51iWMvFPBUvEpXEkVkx4OnD70ICVDk=
+	t=1754126688; cv=none; b=PhS67p1NOyEeotYWnDllUhN9C2QMeIWjEwGCm8VZTjJUoJ98vOAjl8f3TSmPde4J/MLVfe1Rs5Zy59nXEmPDPi8Hh4QTpYiVAQiMp3kl6HBnzeQcUOvvwU9QzrUoIOEOQJ7kZONlKjbsMeTnUVo2Lph3wHidoHxvSNiVjpguH2g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754126649; c=relaxed/simple;
-	bh=q+3RdWiG0wEAxUWsm/7pnNd2Vk3OjWsGYVGoqzKzVOY=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=OZPQxGt427AnQxhIv4glR+jX6nerfJ5TPfEBgLaOmUiU6lDNCeBMtIOOUxRCptPHQtpR3y5d4LU/4rPj23vxADW4votF5ysyaDPH0DMpOvcW5yjo7vRGHdj2a9Hkfy98erucUBlRXFh+2SK0mQTXRQnB/raHB8ijEmA9+TRRzic=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RWE+sRhI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B2F2C4CEF6;
-	Sat,  2 Aug 2025 09:24:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754126649;
-	bh=q+3RdWiG0wEAxUWsm/7pnNd2Vk3OjWsGYVGoqzKzVOY=;
-	h=Date:From:To:Cc:Subject:From;
-	b=RWE+sRhIIzlPGSDXRhtI5Pui/Xz0BAxfUWFwS0BkrY/o4klxPOzSGfZ1bn/ccNFHo
-	 GpDIThDz+LL9v3jt6AGtlZjtUfVlGCQp+pklQNjOx14P3K5Ozi3QwrzuMaO7xHkza1
-	 uKCqjFl7f3Dq6uw+Ll0cl4z7GS2TZ91o9STm5jV3KeGZLQCxigQTzYGsAm2dPh4qPA
-	 3+i5HjK01TemokGH1UVCSuZOpq0HO18DHHaET3zpccQkfZR1V2t8LZx5LTbSpqyode
-	 Dh/x5JrWWqq+/6dY8JXykWIeTI/0jXo1ewF3H08O1OfEs7kpwNZ1shhRZ3j0M44rXX
-	 hSUYuIzhAyEGQ==
-Date: Sat, 2 Aug 2025 11:24:04 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: lkml <linux-kernel@vger.kernel.org>, 
-	linux-i2c <linux-i2c@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>
-Subject: [GIT PULL] i2c-host for v6.17, part 2
-Message-ID: <et2mpmxohgqclvaa47qbx3bdowp4usovgz4fptlm6zfxogzuwb@t3touqocg2w7>
+	s=arc-20240116; t=1754126688; c=relaxed/simple;
+	bh=h2teT3pd09OM+PIVXgepBlvaOtU0HtakDUYKutozKGg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Z1+DzCy31vkuG5v1kJQkbidTzFw35+p/GstCf9A4EXv9ClnTL0dnczXJUAn4aF0DAmMTjrPIQwq1zlKmbp1tcLDCAeuANWt0wzlaqCItt5Y38CKbavVXkLTa1RAR7Kh3e5VyxY3kCzfzGDOjvuCBvZm/cMHSEHEBdVIBDWRYkEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0/A75IE; arc=none smtp.client-ip=209.85.210.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f193.google.com with SMTP id d2e1a72fcca58-76aea119891so3681483b3a.1;
+        Sat, 02 Aug 2025 02:24:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754126684; x=1754731484; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=KF2s+yc2RxKLUVYHR8inXYwOSGhSIe86MFGDiyC5+rI=;
+        b=I0/A75IE7+ogIYXmGZxG6qQRbZ4AO9S8L2GJiOQzehy0hlAfOUbz2VQ1qlUsjAeSot
+         ATJ2BmHPLOaAcQuiS9YRDjeS60puvyNQ5eAdGaYB52SSMz8nvzHqE7P1h1rYWtrAb/QU
+         ulbn0CS4/yW6I6vZLZreqj/5fTMnVR0Zyp6XDuM4+/DW5TfVH7DddWiVVQzZIjfvocdR
+         nybTpUDqITaOW+Rfv2zHhnKLH2/wL2vFqT6TbDd9h5mf0UMAmITde/S85fWV6qViL5QJ
+         WHX6O+GSyvQ/NRm7t4XsmLwASc4MZEmU6V1lNR1+FeaKT8vcrmHvUSbjtXri8q+N4UWB
+         +Gcw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754126684; x=1754731484;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=KF2s+yc2RxKLUVYHR8inXYwOSGhSIe86MFGDiyC5+rI=;
+        b=pjim3xU1NNK+1zmUYeh0HDBCPCqV1xUCv/SVHZXNnpeMgf7fsGV+M57BBr566Dowbs
+         WLsqhdbnkC6lj2g3C+ID5TUwebRTo0/UqyjHKd9Vw8xpWsuCbpEG/lvhUkaagdLliOAc
+         Ex+DrQ47iBwZlSt1Yc2wLviiqX4/bDzDqqWdx/Sx8hoY0gvwNj9bSMtcHLqye8W+7udN
+         XjyarLMkz3PZQCrn453oJqLXGFjCz+NUNvMBiDkoxEoa++GcY6bWIDG4hoXbH1B844L0
+         36t4ZbC1BI5YRl6kkaFxy0LFZcQezLSsU/cF898hptyspxbhJmByLkEwZC66xwAB6YKR
+         Zc8A==
+X-Forwarded-Encrypted: i=1; AJvYcCVEoUWCENh92iagEKdwB14im46jUvMk01LqMNvRiiEQI8+elqXJQgtU7CIcfbMx4bG4PRsq11pw@vger.kernel.org, AJvYcCVXEfTbT85HAjV8JO/5V/5jCotKd1tAKu8f5FUSLlvK/8c0qXGbHkqlRjpxWSRCWm1GamGlPxfxFBG/fPA=@vger.kernel.org, AJvYcCVauZpqYGM43JUJBFfJ35+3J/XT6AQpWt3dxNxi0bF+mMdWuBicSaIFJ6K11CEe+fgvdJq+Ash41F0nMstDxdM4@vger.kernel.org
+X-Gm-Message-State: AOJu0YwWPdSpnGzJwlP5Xw8dYj35hG9ee9BPDYkjrYhwFj7QvDP0gdWd
+	G4HxgMM7mTBs2HOVCyDOJkAat/u7W8LerCq8/Zux060YsaT3OxmBnD7fdvLCfiyfE/U=
+X-Gm-Gg: ASbGncva+QaOWxGk1oL1N8BpJ/DdDkegP3TQlhd5SkFPIVeOKgh5onDPEl/i4LxpWLR
+	tYNLeCoTAoDYvv/SUwfi6Xt8S64/3xIrtXxBMy0BCOXSgoir24rLF/fFTarSbzWR3HskVOv9L6s
+	XPdlOiAHrlPKXdlDrCHsph/N5bmT7WMAU8ti6CwK7DgnRpTQOc5Ikwypzo5Yk0JDWeCw729mac2
+	DfAkXUx8nPwQD4hmvnzKnwQP3+Eu6xYQ3I4aBQqeXiKue4VPw0Hj5W5+PASKlZvD/af7WUkuIYD
+	V4lTdtDd4U98uMkBa58pmA2zCbk6f2TB12dDkzesX2RPIQnFbaBr7gyg2uxlfkwHpG3z3EC27d+
+	DzGnXvYg34QPFq0VARuM=
+X-Google-Smtp-Source: AGHT+IF9/s8KH5iC2ZE5PVK55qaK5lCRWkSkkYH9v3t3I5I73Z+TFu2uVgdqoAtzaa+67HA8+8vK8g==
+X-Received: by 2002:a05:6a20:7d8b:b0:222:ca3f:199 with SMTP id adf61e73a8af0-23df915254emr4190532637.18.1754126683708;
+        Sat, 02 Aug 2025 02:24:43 -0700 (PDT)
+Received: from 7950hx ([43.129.244.20])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bd7887522sm4799161b3a.20.2025.08.02.02.24.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 02:24:43 -0700 (PDT)
+From: Menglong Dong <menglong8.dong@gmail.com>
+X-Google-Original-From: Menglong Dong <dongml2@chinatelecom.cn>
+To: edumazet@google.com,
+	kuniyu@google.com
+Cc: ncardwell@google.com,
+	davem@davemloft.net,
+	dsahern@kernel.org,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	horms@kernel.org,
+	shuah@kernel.org,
+	kraig@google.com,
+	linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kselftest@vger.kernel.org
+Subject: [PATCH net v3 0/2] net: tcp: lookup the best matched listen socket
+Date: Sat,  2 Aug 2025 17:24:33 +0800
+Message-ID: <20250802092435.288714-1-dongml2@chinatelecom.cn>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
 
-Hi Wolfram,
+For now, the tcp socket lookup will terminate if the socket is reuse port
+in inet_lhash2_lookup(), which makes the socket is not the best match.
 
-Here is the second part of the pull request. It includes three
-follow-up patches (two from Akhil for Tegra and one from Clément
-for STM), the first patch from the Apple A7–A11 and T2 series,
-and a fix for the Qualcomm controller.
+For example, we have socket1 and socket2 both listen on "0.0.0.0:1234",
+but socket1 bind on "eth0". We create socket1 first, and then socket2.
+Then, all connections will goto socket2, which is not expected, as socket1
+has higher priority.
 
-Everything is rebased on top of Linus' merge commit for your
-pull request, 0ae982df6776 ("Merge tag 'i2c-for-6.17-rc1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux").
+The 1st patch fix this problem, and the 2nd patch is a selftests for this
+problem. Without the 1st patch, the selftests will fail with:
 
-I wish you a good weekend and a happy National Day to all the
-Swiss I2C developers (and non :-) ).
+$ ./tcp_reuseport.py
+TAP version 13
+1..1
+FAIL: wrong assignment
+not ok 1 tcp_reuseport.test_reuseport_select
+Totals: pass:0 fail:1 xfail:0 xpass:0 skip:0 error:0
 
-Andi
+With the 1st patch, it will success:
+$ ./tcp_reuseport.py
+TAP version 13
+1..1
+SUCCESS: assigned properly: (<socket.socket fd=6, family=2, type=1, proto=0, laddr=('127.0.0.1', 33787), raddr=('127.0.0.1', 43140)>, ('127.0.0.1', 43140))
+SUCCESS: assigned properly: (<socket.socket fd=5, family=2, type=1, proto=0, laddr=('127.0.0.1', 33787), raddr=('127.0.0.1', 43146)>, ('127.0.0.1', 43146))
+SUCCESS: assigned properly: (<socket.socket fd=6, family=2, type=1, proto=0, laddr=('127.0.0.1', 33787), raddr=('127.0.0.1', 43162)>, ('127.0.0.1', 43162))
+ok 1 tcp_reuseport.test_reuseport_select
+Totals: pass:1 fail:0 xfail:0 xpass:0 skip:0 error:0
 
-The following changes since commit 0ae982df67760cd08affa935c0fe86c8a9311797:
+Changes since V2:
+* use the approach in V1
+* add the Fixes tag in the 1st patch
+* introduce the selftests
 
-  Merge tag 'i2c-for-6.17-rc1' of git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux (2025-07-29 11:35:24 -0700)
+Menglong Dong (2):
+  net: tcp: lookup the best matched listen socket
+  selftests/net: test TCP reuseport socket selection
 
-are available in the Git repository at:
+ net/ipv4/inet_hashtables.c                   | 13 +++----
+ net/ipv6/inet6_hashtables.c                  | 13 +++----
+ tools/testing/selftests/net/Makefile         |  1 +
+ tools/testing/selftests/net/tcp_reuseport.py | 36 ++++++++++++++++++++
+ 4 files changed, 51 insertions(+), 12 deletions(-)
+ create mode 100755 tools/testing/selftests/net/tcp_reuseport.py
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git tags/i2c-host-6.17-pt2
+-- 
+2.50.1
 
-for you to fetch changes up to 85c34532849dae0fdcf880900ac9d7718a73fd1b:
-
-  i2c: qcom-geni: fix I2C frequency table to achieve accurate bus rates (2025-07-30 00:39:54 +0200)
-
-----------------------------------------------------------------
-i2c-host for v6.17, part 2
-
-- apple: add support for Apple A7–A11, T2 chips
-- qcom-geni: fix controller frequency mapping
-- stm32f7: add DMA-safe transfer support
-- tegra: use controller reset if device reset is missing
-- tegra: remove unnecessary dma_sync*() calls
-
-----------------------------------------------------------------
-Akhil R (2):
-      i2c: tegra: Use internal reset when reset property is not available
-      i2c: tegra: Remove dma_sync_*() calls
-
-Clément Le Goffic (1):
-      i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
-
-Kathiravan Thirumoorthy (1):
-      i2c: qcom-geni: fix I2C frequency table to achieve accurate bus rates
-
-Nick Chan (1):
-      dt-bindings: i2c: apple,i2c: Document Apple A7-A11, T2 compatibles
-
- Documentation/devicetree/bindings/i2c/apple,i2c.yaml |  5 +++++
- drivers/i2c/busses/i2c-qcom-geni.c                   |  6 +++---
- drivers/i2c/busses/i2c-stm32f7.c                     | 32 +++++++++++++++++++++-----------
- drivers/i2c/busses/i2c-tegra.c                       | 64 ++++++++++++++++++++++++++++++++++++++++++++--------------------
- 4 files changed, 73 insertions(+), 34 deletions(-)
 
