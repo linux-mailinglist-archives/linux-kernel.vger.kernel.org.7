@@ -1,78 +1,106 @@
-Return-Path: <linux-kernel+bounces-753918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 327B8B189F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:40:46 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7912B189F3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:43:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 63D115A1928
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:40:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 222781C8575C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:43:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 067872A1BB;
-	Sat,  2 Aug 2025 00:40:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77211347DD;
+	Sat,  2 Aug 2025 00:43:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RPmxS7Ph"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Dz2SFX0O"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 649D6E571;
-	Sat,  2 Aug 2025 00:40:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0EF912E5B;
+	Sat,  2 Aug 2025 00:43:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754095240; cv=none; b=d48hk3ZzkaBEnXlTNIR5JMEfm+AfWK8TVOjn3bLpF5hJjJElSkLLEszieLy2DiOfmYYdz4pVNJnFuljM4YbYHTxiROc8eHqBfGHwH9mBR12I3nkzYykxABYg/gG21lvzAOlrk4cRNe5IGz0hOAsqgmM4PmKGI4BYMTxV0ovyouA=
+	t=1754095401; cv=none; b=MvtM/seJRywG2rsQ7GomppZ16Z7euLvdd/ZZQduMoFwsMKhPui6udav72dstra3TUMUmiueqPjuK5AB3voMgPT3d49IOXjPXnH+eg+PQpxhnyp4LlOwzwgJgblK8APcw8eWVaoENk/LfpXkp8yNWYpgBATys9ZU5ZlqoJtLTRs0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754095240; c=relaxed/simple;
-	bh=7Hm8eFTIujiwgPQ0YTkSGkfHbBQRLnLJNPdADzxDQUw=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=bCpuxZ1ql5LKLagTTe+K7z87bYSKbIy7hk4csLSIVszMPoEVA3AP32c6FQ6S/nKDLGgnDzkJ4Hn0egzgO6XWsTiMsd0U1V77jRS3F78dsreAhw6ZxNGYjiv3r+ssaxb0wcZDIiL8JDYlaE2r5Ck/d/qTLG5fNnK7HSo4xjT72AA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RPmxS7Ph; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A344C4CEE7;
-	Sat,  2 Aug 2025 00:40:40 +0000 (UTC)
+	s=arc-20240116; t=1754095401; c=relaxed/simple;
+	bh=ZATFfLLKt+2VPYdNFgm2YjLw4ctpwjtE2yaOzH6dp3c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gbuMntxY7KoEgnRWBaxymH5LN4OU4kKgqGnjEqM2HNtazBJ6nSKuyRM738ULEx36mwFR9SwneoOqraMSsK4rgejLiRlh0bS0aRi4BP4x0TJYEjXMvtTkj9HdkGd4RTswOtHE97Y0h90j7TF/5YEi26W36fz/CG8gC2QZpngRbiY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Dz2SFX0O; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9D85EC4CEF8;
+	Sat,  2 Aug 2025 00:43:19 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754095240;
-	bh=7Hm8eFTIujiwgPQ0YTkSGkfHbBQRLnLJNPdADzxDQUw=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=RPmxS7PhEhrQETLs5kSJ/twvF28AANGxAo8I72h/cFoK+D4KC4Ta9+MkOYLzU0xro
-	 RNi+DqOeTC9Hrl8qs+RwBWh6nihH1Ix12Q6Ja2lvgc3kWumwIrQJbM/Cj7iNQ2W3lr
-	 v/OElZ1ylrK52aqaCR+i+m7zSDPw6gyITOh4hlB3b0p0oJrXoJP1UESUeznT15vNdA
-	 B8SXrmL/hdJL3Mz60dQ2fhpV9mvkg8f9Pja0bPMyuDoigUwCdJsTvyEhB6KUtr+mc3
-	 aGzWSlrRHGwLXUwKppm904oRamAatGM2xyXptmYSPNeAgRUsvFCHUJp3ljeTx9akEW
-	 wXBGqxO/JXe7A==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id ADD2A383BF56;
-	Sat,  2 Aug 2025 00:40:56 +0000 (UTC)
-Subject: Re: [GIT PULL] perf-tools updates for v6.17
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250801174527.1479322-1-namhyung@kernel.org>
-References: <20250801174527.1479322-1-namhyung@kernel.org>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250801174527.1479322-1-namhyung@kernel.org>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.17-2025-08-01
-X-PR-Tracked-Commit-Id: 6235ce77749f45cac27f630337e2fdf04e8a6c73
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: f4f346c3465949ebba80c6cc52cd8d2eeaa545fd
-Message-Id: <175409525520.4175294.17223039883253281872.pr-tracker-bot@kernel.org>
-Date: Sat, 02 Aug 2025 00:40:55 +0000
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Linus Torvalds <torvalds@linux-foundation.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Ian Rogers <irogers@google.com>, Kan Liang <kan.liang@linux.intel.com>, Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, LKML <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org
+	s=k20201202; t=1754095401;
+	bh=ZATFfLLKt+2VPYdNFgm2YjLw4ctpwjtE2yaOzH6dp3c=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Dz2SFX0OfKrNKQJMXT30s9CG/H5LEJltZ4OAaWx+C1AulKHrVgw/FXjnPSaOZUOcJ
+	 EICwmwDGBhlU+DUA0GSRio2HamwLahMj6tsxUJ1bW31f4zdbVCYz8yE7VSQ57+gOqp
+	 5x1cNpfN9fdcdL7KCtedNZKD46orEhhqaDq2ezUAaJlvyHwXBrRs91SQIdWDl41uOQ
+	 lWRppQdEDNlxe9xPx+0LOPv0na2YmBInOo/JlNG/N7hghTq/0z2VD7CuOd3XqCdes1
+	 NNohz/ZFTc3xzIwnB2/Xf15bT5Td3XTU/aiWLigyT0lpmDxnm0m7UhiVESlV9zQ2vU
+	 0RJVSJ7YPoO7w==
+Date: Fri, 1 Aug 2025 17:43:16 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kbuild@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: Re-enable -Wunterminated-string-initialization
+Message-ID: <20250802004316.GA3910513@ax162>
+References: <20250802002733.work.941-kees@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250802002733.work.941-kees@kernel.org>
 
-The pull request you sent on Fri,  1 Aug 2025 10:45:27 -0700:
+On Fri, Aug 01, 2025 at 05:27:40PM -0700, Kees Cook wrote:
+> With the few remaining fixes now landed, we can re-enable the option
+> -Wunterminated-string-initialization for GCC. (Clang does not yet fully
+> understand the "nonstring" attribute.)
+> 
+> Signed-off-by: Kees Cook <kees@kernel.org>
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/perf/perf-tools.git tags/perf-tools-for-v6.17-2025-08-01
+What else does Clang need? Are bugs filed? I had requested support for
+multidimensional arrays, which Aaron implemented pretty quickly (and the
+tests seem pretty expansive):
 
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/f4f346c3465949ebba80c6cc52cd8d2eeaa545fd
+https://github.com/llvm/llvm-project/commit/e8ae77947154e10dbc05cbb95ec9e10d3b0be13e
 
-Thank you!
-
--- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+> ---
+> Cc: Masahiro Yamada <masahiroy@kernel.org>
+> Cc: Nathan Chancellor <nathan@kernel.org>
+> Cc: Nicolas Schier <nicolas.schier@linux.dev>
+> Cc: <linux-kbuild@vger.kernel.org>
+> ---
+>  scripts/Makefile.extrawarn | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
+> index dca175fffcab..7ab8549485a4 100644
+> --- a/scripts/Makefile.extrawarn
+> +++ b/scripts/Makefile.extrawarn
+> @@ -78,8 +78,10 @@ KBUILD_CFLAGS += $(call cc-option, -Wcast-function-type)
+>  KBUILD_CFLAGS-$(CONFIG_CC_NO_STRINGOP_OVERFLOW) += $(call cc-option, -Wno-stringop-overflow)
+>  KBUILD_CFLAGS-$(CONFIG_CC_STRINGOP_OVERFLOW) += $(call cc-option, -Wstringop-overflow)
+>  
+> +ifdef CONFIG_CC_IS_CLANG
+>  # Currently, disable -Wunterminated-string-initialization as broken
+>  KBUILD_CFLAGS += $(call cc-option, -Wno-unterminated-string-initialization)
+> +endif
+>  
+>  # The allocators already balk at large sizes, so silence the compiler
+>  # warnings for bounds checks involving those possible values. While
+> -- 
+> 2.34.1
+> 
 
