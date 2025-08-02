@@ -1,87 +1,85 @@
-Return-Path: <linux-kernel+bounces-754124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754125-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4FE4CB18E5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:04:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AAE7B18E5F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06589AA52EE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B76DAA24B5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:13:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFF5D22B8CF;
-	Sat,  2 Aug 2025 12:04:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A841222259D;
+	Sat,  2 Aug 2025 12:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="UWM3ocOQ"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zi2E7PPd"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A49822172E
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:04:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56C914F70
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754136272; cv=none; b=EeXcrdz9NGhEIG96o55EDGmNY3Md78Op5fwl/OrWuYz/KD9ozeOzz33pLSvZ3f8Mg1zbM1mYPj6VS/sVvbfzrVd0VuxGshzBmVNxSCqRUR/ZriAYVPn2py56qB2gntYxKK6g2pDYB73m73dK+HCyTMn3Zh7y8xkSMNQsZpnsohQ=
+	t=1754136821; cv=none; b=sOa9AgsyYQ4gUd7NATpgPOKTvP8zCozrpSwEUsfT4fdzfVnPxxdn2e4c/iMSK6KVIVXT5cyUGrKWtUiyeB1jDC2wXHhDGlQsrYQgDtsctV9Wt/p29hjJZsGTk7b1sd6Gp/KD7SJemJ0qbEXwcHeLru2qpLc62mNitbCjCN2UGqQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754136272; c=relaxed/simple;
-	bh=1uzB9r6w4x1mX3RQ6Geex7yxzg322VObRaZu0yQ2zp4=;
+	s=arc-20240116; t=1754136821; c=relaxed/simple;
+	bh=t38Q7KWSoJwlT2wB4qszB1smAtX6InmdFzqQ9sOp9oc=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CaZwdcTuDt+ga8HOiwdYYGUHI1pYJjlnKffZFeo45o6DKmclW+exYbBMC0LGWqEFj9YpXg2V9SCyF4sbfiTVuGRU9Z0091ZjKr5zkaja+zib8igi2KmWKbAubyjVdIbXR5iT2Edq95ei8q/UuVGkWxFyQ21caYtK7wrnS7Jln2Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=UWM3ocOQ; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5725fw8V022835
-	for <linux-kernel@vger.kernel.org>; Sat, 2 Aug 2025 12:04:29 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vCSAiNPoWEksGD85Y1vvHR/fUZ2hueivl1eXMSvDOnU=; b=UWM3ocOQ+HzZFmFm
-	EKT7uAZPdG3p6+e087FTZgXEGhjyrCSdKk7LDW4Pv42XZmfEHQxCZMMlSK3XbcXF
-	YVpuA6dgKz/WpXdNItfqKFZmlKBBQoaIpTUOf9s4Stt+xm2RMfeH35+U0IindvQu
-	CWhMJHMadNrtObCKFOOxWHaJg/2Wi24kiqARnlFXIFUaO7mS6inwdsF7H6wUFCMx
-	qrlgFHC5Sfys/6s4Sb3FHp5A+d7j2mDomWaDCqkJW71gHT0UQFG5ggv73vSWX635
-	OagCwra1zd8P9lWqXZSNqHIcnW6Oy169cI6QRXPwIC8HoM3HQCrk6PIlnCX2bfSU
-	iDCZmQ==
-Received: from mail-qv1-f71.google.com (mail-qv1-f71.google.com [209.85.219.71])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489a0m0tk9-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 12:04:28 +0000 (GMT)
-Received: by mail-qv1-f71.google.com with SMTP id 6a1803df08f44-7073674bc2aso5519236d6.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:04:28 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=Mt1WKM9ehAU8N8Ydi15hJtmHHtGnV/241E68dCWpZkDUddyICFLG2QtgGcddZNFrEQzqYVDYT9oqhnJxE34MUGqwA86nbSFU2ISMCaO03f5iL5UtSojfGtbypAWWKdoYDQYV+2C5rmNnHs2dxeRL4pDBGmFuAZMLQa5czyOCIy0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zi2E7PPd; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754136818;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xyp8m8lS9VhgQmQLaOoHjEiaPk30EpYo8qfbtcybK1Q=;
+	b=Zi2E7PPdYmyy7hvEbDN43VvtF1JE5QMbAbDggBoIrisqtfGtXp90L9BReRtH6RTDUjU4ao
+	nTa6VyQZc1hKHqhQvJhHnkcBWuh7u4DfnZs2VMcMgQr8yBJjqkPQkMHxWL1sQP3aV+IKEG
+	srbzcq0WPBTxiMHBXeD2WqQHiQPIN9s=
+Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
+ [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-180-LU-mofRuM1q6eCIJ9NIDmw-1; Sat, 02 Aug 2025 08:13:37 -0400
+X-MC-Unique: LU-mofRuM1q6eCIJ9NIDmw-1
+X-Mimecast-MFC-AGG-ID: LU-mofRuM1q6eCIJ9NIDmw_1754136815
+Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-55b8bd4846aso1037668e87.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:13:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754136268; x=1754741068;
+        d=1e100.net; s=20230601; t=1754136815; x=1754741615;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vCSAiNPoWEksGD85Y1vvHR/fUZ2hueivl1eXMSvDOnU=;
-        b=psfyRHocm8smovPsF5/N8q0azx7DSq6mwoyeBdfL1rN0VFo15Bh8VGLhuLA+ihyiz/
-         5v/arLsXPDxkgRKNDtcqKiAEW+dE68DrNHtYnel9naQZyp+ep6drPFqgV7AVkUHeZaOx
-         c9U6u49B/G1C5/I4dlWtIlXM1qciMIJCgzHA3xpryMvyCqNyl6z3mPeyR86QhSghfrAX
-         B/d5AhmZQP3CallgbWV5VESqZLtkujwz8w+nkPoSpwo96GGI2FbjNFwWXG2u2F1UQR9A
-         nZN7UXkbUraFa+FQ4avsF0YJ0qkwqpJAQEaGGV+uwX6iaUv/X1o1VZJX59JSTtFhztXc
-         jrJA==
-X-Forwarded-Encrypted: i=1; AJvYcCWbnzbDvnTtepjs7ueLa+INui24XjD4YOy+laWbjh9KppdtAxgODML/qk2js8ghEILyKsNk80idwWrwWzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxhmJSMtTXP1LLA7lPDiMSlwCD4CURCPqSlIKrsPpbn9DW6sZAc
-	w7kxXm00lmuA/yeY1/9xA49jHoSwOfg2zeesgjX3oEQlam+HX3M98fHHB7H+Ui0ee4nG9N5lOS0
-	4RlNfdb9xLvIb+hrk0+OehMsy0m7KJkTHpXzwTPaOpoHqJRrl28U6uxYiyRQOD9JvYbA=
-X-Gm-Gg: ASbGncvJ0YOnU/9rg8KLokDZ76dI4iqaCK15fTl98PqBnUAU5g32fPF2dOLt/5Z5lMh
-	kyzX/23Uy+lBWUBGLBbX2dN2dsV0SLMUxbysFsE7nzLcOdXVkVh9BfXGiXwW6rp0fqIBq6R5lpn
-	guURlHzxY9IBkTjh6HuJDd0ADPaAcqQgf9N7wr6QeLI6SguD5jXh4RWC0XR/6SGrlrhnuWNJ6Nx
-	Zd+X4GWmoaC2dR8AegHCPIiug01IJExvb1/TtVpw8+eokVvSrTq4Dooqjr5SOxFnxRO3qVuVUlY
-	p2f1qPpcIR0UVyRrpjamvRgBwEkp5eXk2j5Mzx1v8NcP8E5FEocPXTM+u88pwtHyalFVYrtT6YH
-	CUsDPcLvVMYZZpz4BWQ==
-X-Received: by 2002:a05:622a:1a27:b0:4ae:f8d8:b0fb with SMTP id d75a77b69052e-4af10978640mr22589971cf.5.1754136267947;
-        Sat, 02 Aug 2025 05:04:27 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGHRqglWcLnh7BFuPTAQfd/4FrslPHxTGZAg9UU256erRSiEGc77z4U8yY2TghDqr4GcFIe7A==
-X-Received: by 2002:a05:622a:1a27:b0:4ae:f8d8:b0fb with SMTP id d75a77b69052e-4af10978640mr22589701cf.5.1754136267429;
-        Sat, 02 Aug 2025 05:04:27 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c099sm421786166b.108.2025.08.02.05.04.21
+        bh=xyp8m8lS9VhgQmQLaOoHjEiaPk30EpYo8qfbtcybK1Q=;
+        b=sWkAKmXAd656wR7CVbwGZS7QpXRx8sg4oP3zjjKmU5i++8p9d5G3kkU+JmNRAkakTe
+         FS/zXiqns/KFrpgYlhxxDXE9ZGyaGRKoYVm4ytUGIOGDIcVIPKOe3KTwbUrf5h0Z4592
+         gPBG+SIhsbrFNnaX8NLS6koIh7AQ+ejunejiga+eEbRkJOOEMkWkQ4dwG7oBMqaajyPQ
+         jrt3H2lSi92QgCaesu8YBxpnXmtvseOy+x6es05J8un+hlFOc89LcWLrVfmmSMb8wLbr
+         yvyIsHhq3g92J0ocZWhr59InvkqDNaAXNSMIHiPgBHF8FYfaGHEni7nQF3k2Zc2qaxDn
+         hLig==
+X-Forwarded-Encrypted: i=1; AJvYcCW5Wb1akFe9Edpx6yiQopLtbi5zsfO47KAp68MUAx/hrPv3p2ROvu/ssKqRYyUfYYt3DkuJpxY8psoG+T0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwP4Ob81EuKUwtv7Ibd+NhWPaaCSBw3UNCHg4zX0GR0/FxdAEUD
+	r7uGDzzEssW0zWekaf9E3if7SMOqVGH5MK5sr6obd8Isawyp8WpF600XLTT8ENLzFOW8y6WZuyy
+	0uFJGpIz4js6nvH5hut1W35JlRf4UyO8f6VuEoILpdy9nlpitstjCklcrhn6xkPGL
+X-Gm-Gg: ASbGncu348X9QU0PPSWdhO/1HqVZa/pYLV6GMpi7A+zZ4vMpwwciag4Lic+0K5tCTsI
+	s23sLLWJUf/KNLUaiJx2lrfF7N8V7Q4ZIvImjliS++pM0puW8gEAOozL2X3C9ry2u+L6Id2E+eR
+	8Ynhdo+iGn9xShuBY7HQ5hEp2e9sXQ6hvp7fYpopnzKWWiCd83OlAPSTwrntQ11QvSJbsAwvrrQ
+	ulsIZot6YfXx3jmCrBiU/pSZlEUkChflo8vkETCiEErwdfAlS7fNuCzfPKl37LZwTtD4/3EQZIh
+	+C5TwKuI9IeicV2yjJ98hW8bcO2q0YS8Vf3BfEE9L/VQEc55G4dQZD0cLdz6lhMKdQ==
+X-Received: by 2002:a05:6512:4012:b0:55b:90ec:6ed8 with SMTP id 2adb3069b0e04-55b97b985a5mr752760e87.56.1754136815205;
+        Sat, 02 Aug 2025 05:13:35 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHA7zdLNVZmeXzpW0GFByMMenAAShU9aB3wWw8n3CAeoSpzy34PgleHh6NJEtOiykr5mWWPvw==
+X-Received: by 2002:a05:6512:4012:b0:55b:90ec:6ed8 with SMTP id 2adb3069b0e04-55b97b985a5mr752730e87.56.1754136814671;
+        Sat, 02 Aug 2025 05:13:34 -0700 (PDT)
+Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bd28sm972518e87.19.2025.08.02.05.13.33
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 05:04:26 -0700 (PDT)
-Message-ID: <55420d89-fcd4-4cb5-a918-d8bbe2a03d19@oss.qualcomm.com>
-Date: Sat, 2 Aug 2025 14:04:20 +0200
+        Sat, 02 Aug 2025 05:13:33 -0700 (PDT)
+Message-ID: <920a4f98-a925-4bd6-ad2e-ae842f2f3d94@redhat.com>
+Date: Sat, 2 Aug 2025 15:13:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,155 +87,292 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 14/15] arm64: dts: qcom: Add initial Milos dtsi
-To: Luca Weiss <luca.weiss@fairphone.com>, Will Deacon <will@kernel.org>,
-        Robin Murphy <robin.murphy@arm.com>, Joerg Roedel <joro@8bytes.org>,
-        Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        "Rafael J. Wysocki" <rafael@kernel.org>,
-        Viresh Kumar <viresh.kumar@linaro.org>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Herbert Xu <herbert@gondor.apana.org.au>,
-        "David S. Miller" <davem@davemloft.net>, Vinod Koul <vkoul@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Robert Marko <robimarko@gmail.com>,
-        Das Srinagesh <quic_gurus@quicinc.com>,
-        Thomas Gleixner
- <tglx@linutronix.de>,
-        Jassi Brar <jassisinghbrar@gmail.com>,
-        Amit Kucheria <amitk@kernel.org>,
-        Thara Gopinath <thara.gopinath@gmail.com>,
-        Daniel Lezcano <daniel.lezcano@linaro.org>,
-        Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
-        Ulf Hansson <ulf.hansson@linaro.org>
-Cc: ~postmarketos/upstreaming@lists.sr.ht, phone-devel@vger.kernel.org,
-        linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        linux-pm@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-crypto@vger.kernel.org, dmaengine@vger.kernel.org,
-        linux-mmc@vger.kernel.org
-References: <20250713-sm7635-fp6-initial-v2-0-e8f9a789505b@fairphone.com>
- <20250713-sm7635-fp6-initial-v2-14-e8f9a789505b@fairphone.com>
- <3e0299ad-766a-4876-912e-438fe2cc856d@oss.qualcomm.com>
- <DBE6TK1KDOTP.IIT72I1LUN5M@fairphone.com>
- <DBE8G88CIQ53.2N51CABIBJOOO@fairphone.com>
- <DBOC7QBND54K.1SI5V9C2Z76BY@fairphone.com>
+Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
+To: Balbir Singh <balbirs@nvidia.com>, Zi Yan <ziy@nvidia.com>
+Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
+ Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
+ Shuah Khan <shuah@kernel.org>, Barry Song <baohua@kernel.org>,
+ Baolin Wang <baolin.wang@linux.alibaba.com>,
+ Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
+ Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
+ Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
+ Donet Tom <donettom@linux.ibm.com>, Matthew Brost <matthew.brost@intel.com>,
+ Francois Dugast <francois.dugast@intel.com>,
+ Ralph Campbell <rcampbell@nvidia.com>
+References: <20250730092139.3890844-1-balbirs@nvidia.com>
+ <6291D401-1A45-4203-B552-79FE26E151E4@nvidia.com>
+ <b62234fc-051f-4b2a-b7da-0c0959fb269b@redhat.com>
+ <8E2CE1DF-4C37-4690-B968-AEA180FF44A1@nvidia.com>
+ <2308291f-3afc-44b4-bfc9-c6cf0cdd6295@redhat.com>
+ <9FBDBFB9-8B27-459C-8047-055F90607D60@nvidia.com>
+ <11ee9c5e-3e74-4858-bf8d-94daf1530314@redhat.com>
+ <b5fa0989-a64a-4c91-ac34-6fb29ee6d132@redhat.com>
+ <EC99D49E-86FF-4A50-A1AA-FC43A7D3716C@nvidia.com>
+ <14aeaecc-c394-41bf-ae30-24537eb299d9@nvidia.com>
+ <e5dd3f46-c063-45ff-8be7-64ac92534985@redhat.com>
+ <71c736e9-eb77-4e8e-bd6a-965a1bbcbaa8@nvidia.com>
+ <edbe38d4-3489-4c83-80fb-dc96a7684294@redhat.com>
+ <e8f867cf-67f1-413a-a775-835a32861164@nvidia.com>
+ <ee06bd19-4831-493f-ae88-f1d8a2fe9fa4@redhat.com>
+ <47BC6D8B-7A78-4F2F-9D16-07D6C88C3661@nvidia.com>
+ <2406521e-f5be-474e-b653-e5ad38a1d7de@redhat.com>
+ <A813C8B0-325E-44F0-8E30-3D0CBACB6BE1@nvidia.com>
+ <ab46303e-a891-4f48-8a86-964155a1073d@nvidia.com>
 Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <DBOC7QBND54K.1SI5V9C2Z76BY@fairphone.com>
+From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
+In-Reply-To: <ab46303e-a891-4f48-8a86-964155a1073d@nvidia.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=JOM7s9Kb c=1 sm=1 tr=0 ts=688dfecd cx=c_pps
- a=UgVkIMxJMSkC9lv97toC5g==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=6H0WHjuAAAAA:8 a=GauJToF0qxMHlBv3vicA:9
- a=QEXdDO2ut3YA:10 a=1HOtulTD9v-eNWfpl4qZ:22 a=Soq9LBFxuPC4vsCAQt-j:22
-X-Proofpoint-GUID: HnNI_rJ81HkLUNTKrvFp7l5IcOOM7hf5
-X-Proofpoint-ORIG-GUID: HnNI_rJ81HkLUNTKrvFp7l5IcOOM7hf5
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDEwMiBTYWx0ZWRfX0aT39uQkgor9
- mQ1hehhU+2sVj6zXWnZod1IITxgTTGkHvntsK0x+/2305+funJfE06+7IimRQyBWN3Dyytf4yID
- ChNByTN0M9zmBo2mHYemg1jbA3U1AKR5hW+VR39D64d+oTRcrkx2ccyIMYCsUh0GcIQGryqTdpf
- DLfeymd8cXyS88jhhDMqT3ZUm6rzq79S0c7SJsUbgZ1T/DRIfgdXATiXIjCYStvdVZ4ct0g/4or
- lYAwSZzZHGCo9qsi6PYsz8Rq8SCcbxpRk6fnwaZGPHd/wa3mQjxoJxYlo7GcqXxsl8ITj7V8rV1
- gvY68sVU6FjIPUB3C2HgjUkp74LtHzfavoYDL3cKJgzwjy4H/sd5XjZCW/Iqqu8SZ74+rk5OLOW
- GSP8SLdyavQqWdlKY8q8nLJdZdfpYK5AXGCcGLkxgkiCoGmKJTjWYYhAnlviv24BBG0Hl7DY
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
- clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0 mlxscore=0
- impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508020102
 
-On 7/29/25 8:49 AM, Luca Weiss wrote:
-> Hi Konrad,
-> 
-> On Thu Jul 17, 2025 at 11:46 AM CEST, Luca Weiss wrote:
->> Hi Konrad,
->>
->> On Thu Jul 17, 2025 at 10:29 AM CEST, Luca Weiss wrote:
->>> On Mon Jul 14, 2025 at 1:06 PM CEST, Konrad Dybcio wrote:
->>>> On 7/13/25 10:05 AM, Luca Weiss wrote:
->>>>> Add a devicetree description for the Milos SoC, which is for example
->>>>> Snapdragon 7s Gen 3 (SM7635).
->>>>>
->>>>> Signed-off-by: Luca Weiss <luca.weiss@fairphone.com>
->>>>> ---
->>>>
->>>> [...]
->>>>> +
->>>>> +		spmi_bus: spmi@c400000 {
->>>>> +			compatible = "qcom,spmi-pmic-arb";
->>>>
->>>> There's two bus instances on this platform, check out the x1e binding
->>>
->>> Will do
->>
->> One problem: If we make the labels spmi_bus0 and spmi_bus1 then we can't
->> reuse the existing PMIC dtsi files since they all reference &spmi_bus.
->>
->> On FP6 everything's connected to PMIC_SPMI0_*, and PMIC_SPMI1_* is not
->> connected to anything so just adding the label spmi_bus on spmi_bus0
->> would be fine.
->>
->> Can I add this to the device dts? Not going to be pretty though...
->>
->> diff --git a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
->> index d12eaa585b31..69605c9ed344 100644
->> --- a/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
->> +++ b/arch/arm64/boot/dts/qcom/milos-fairphone-fp6.dts
->> @@ -11,6 +11,9 @@
->>  #include <dt-bindings/pinctrl/qcom,pmic-gpio.h>
->>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->>  #include "milos.dtsi"
->> +
->> +spmi_bus: &spmi_bus0 {};
->> +
->>  #include "pm7550.dtsi"
->>  #include "pm8550vs.dtsi"
->>  #include "pmiv0104.dtsi" /* PMIV0108 */
->>
->> Or I can add a second label for the spmi_bus0 as 'spmi_bus'. Not sure
->> other designs than SM7635 recommend using spmi_bus1 for some stuff.
->>
->> But I guess longer term we'd need to figure out a solution to this, how
->> to place a PMIC on a given SPMI bus, if reference designs start to
->> recommend putting different PMIC on the separate busses.
-> 
-> Any feedback on this regarding the spmi_bus label?
+Hi,
 
-I had an offline chat with Bjorn and we only came up with janky
-solutions :)
+On 8/2/25 13:37, Balbir Singh wrote:
+> FYI:
+>
+> I have the following patch on top of my series that seems to make it work
+> without requiring the helper to split device private folios
+>
+I think this looks much better!
 
-What you propose works well if the PMICs are all on bus0, which is
-not the case for the newest platforms. If some instances are on bus0
-and others are on bus1, things get ugly really quick and we're going
-to drown in #ifdefs.
+> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
+> ---
+>  include/linux/huge_mm.h |  1 -
+>  lib/test_hmm.c          | 11 +++++-
+>  mm/huge_memory.c        | 76 ++++-------------------------------------
+>  mm/migrate_device.c     | 51 +++++++++++++++++++++++++++
+>  4 files changed, 67 insertions(+), 72 deletions(-)
+>
+> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
+> index 19e7e3b7c2b7..52d8b435950b 100644
+> --- a/include/linux/huge_mm.h
+> +++ b/include/linux/huge_mm.h
+> @@ -343,7 +343,6 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
+>  		vm_flags_t vm_flags);
+>  
+>  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
+> -int split_device_private_folio(struct folio *folio);
+>  int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
+>  		unsigned int new_order, bool unmapped);
+>  int min_order_for_split(struct folio *folio);
+> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
+> index 341ae2af44ec..444477785882 100644
+> --- a/lib/test_hmm.c
+> +++ b/lib/test_hmm.c
+> @@ -1625,13 +1625,22 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
+>  	 * the mirror but here we use it to hold the page for the simulated
+>  	 * device memory and that page holds the pointer to the mirror.
+>  	 */
+> -	rpage = vmf->page->zone_device_data;
+> +	rpage = folio_page(page_folio(vmf->page), 0)->zone_device_data;
+>  	dmirror = rpage->zone_device_data;
+>  
+>  	/* FIXME demonstrate how we can adjust migrate range */
+>  	order = folio_order(page_folio(vmf->page));
+>  	nr = 1 << order;
+>  
+> +	/*
+> +	 * When folios are partially mapped, we can't rely on the folio
+> +	 * order of vmf->page as the folio might not be fully split yet
+> +	 */
+> +	if (vmf->pte) {
+> +		order = 0;
+> +		nr = 1;
+> +	}
+> +
+>  	/*
+>  	 * Consider a per-cpu cache of src and dst pfns, but with
+>  	 * large number of cpus that might not scale well.
+> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+> index 1fc1efa219c8..863393dec1f1 100644
+> --- a/mm/huge_memory.c
+> +++ b/mm/huge_memory.c
+> @@ -72,10 +72,6 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
+>  					  struct shrink_control *sc);
+>  static unsigned long deferred_split_scan(struct shrinker *shrink,
+>  					 struct shrink_control *sc);
+> -static int __split_unmapped_folio(struct folio *folio, int new_order,
+> -		struct page *split_at, struct xa_state *xas,
+> -		struct address_space *mapping, bool uniform_split);
+> -
+>  static bool split_underused_thp = true;
+>  
+>  static atomic_t huge_zero_refcount;
+> @@ -2924,51 +2920,6 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
+>  	pmd_populate(mm, pmd, pgtable);
+>  }
+>  
+> -/**
+> - * split_huge_device_private_folio - split a huge device private folio into
+> - * smaller pages (of order 0), currently used by migrate_device logic to
+> - * split folios for pages that are partially mapped
+> - *
+> - * @folio: the folio to split
+> - *
+> - * The caller has to hold the folio_lock and a reference via folio_get
+> - */
+> -int split_device_private_folio(struct folio *folio)
+> -{
+> -	struct folio *end_folio = folio_next(folio);
+> -	struct folio *new_folio;
+> -	int ret = 0;
+> -
+> -	/*
+> -	 * Split the folio now. In the case of device
+> -	 * private pages, this path is executed when
+> -	 * the pmd is split and since freeze is not true
+> -	 * it is likely the folio will be deferred_split.
+> -	 *
+> -	 * With device private pages, deferred splits of
+> -	 * folios should be handled here to prevent partial
+> -	 * unmaps from causing issues later on in migration
+> -	 * and fault handling flows.
+> -	 */
+> -	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
+> -	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
+> -	VM_WARN_ON(ret);
+> -	for (new_folio = folio_next(folio); new_folio != end_folio;
+> -					new_folio = folio_next(new_folio)) {
+> -		zone_device_private_split_cb(folio, new_folio);
+> -		folio_ref_unfreeze(new_folio, 1 + folio_expected_ref_count(
+> -								new_folio));
+> -	}
+> -
+> -	/*
+> -	 * Mark the end of the folio split for device private THP
+> -	 * split
+> -	 */
+> -	zone_device_private_split_cb(folio, NULL);
+> -	folio_ref_unfreeze(folio, 1 + folio_expected_ref_count(folio));
+> -	return ret;
+> -}
+> -
+>  static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>  		unsigned long haddr, bool freeze)
+>  {
+> @@ -3064,30 +3015,15 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
+>  				freeze = false;
+>  			if (!freeze) {
+>  				rmap_t rmap_flags = RMAP_NONE;
+> -				unsigned long addr = haddr;
+> -				struct folio *new_folio;
+> -				struct folio *end_folio = folio_next(folio);
+>  
+>  				if (anon_exclusive)
+>  					rmap_flags |= RMAP_EXCLUSIVE;
+>  
+> -				folio_lock(folio);
+> -				folio_get(folio);
+> -
+> -				split_device_private_folio(folio);
+> -
+> -				for (new_folio = folio_next(folio);
+> -					new_folio != end_folio;
+> -					new_folio = folio_next(new_folio)) {
+> -					addr += PAGE_SIZE;
+> -					folio_unlock(new_folio);
+> -					folio_add_anon_rmap_ptes(new_folio,
+> -						&new_folio->page, 1,
+> -						vma, addr, rmap_flags);
+> -				}
+> -				folio_unlock(folio);
+> -				folio_add_anon_rmap_ptes(folio, &folio->page,
+> -						1, vma, haddr, rmap_flags);
+> +				folio_ref_add(folio, HPAGE_PMD_NR - 1);
+> +				if (anon_exclusive)
+> +					rmap_flags |= RMAP_EXCLUSIVE;
+> +				folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
+> +						 vma, haddr, rmap_flags);
+>  			}
+>  		}
+>  
+> @@ -4065,7 +4001,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
+>  	if (nr_shmem_dropped)
+>  		shmem_uncharge(mapping->host, nr_shmem_dropped);
+>  
+> -	if (!ret && is_anon)
+> +	if (!ret && is_anon && !folio_is_device_private(folio))
+>  		remap_flags = RMP_USE_SHARED_ZEROPAGE;
+>  
+>  	remap_page(folio, 1 << order, remap_flags);
+> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
+> index 49962ea19109..4264c0290d08 100644
+> --- a/mm/migrate_device.c
+> +++ b/mm/migrate_device.c
+> @@ -248,6 +248,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>  			 * page table entry. Other special swap entries are not
+>  			 * migratable, and we ignore regular swapped page.
+>  			 */
+> +			struct folio *folio;
+> +
+>  			entry = pte_to_swp_entry(pte);
+>  			if (!is_device_private_entry(entry))
+>  				goto next;
+> @@ -259,6 +261,55 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
+>  			    pgmap->owner != migrate->pgmap_owner)
+>  				goto next;
+>  
+> +			folio = page_folio(page);
+> +			if (folio_test_large(folio)) {
+> +				struct folio *new_folio;
+> +				struct folio *new_fault_folio;
+> +
+> +				/*
+> +				 * The reason for finding pmd present with a
+> +				 * device private pte and a large folio for the
+> +				 * pte is partial unmaps. Split the folio now
+> +				 * for the migration to be handled correctly
+> +				 */
+> +				pte_unmap_unlock(ptep, ptl);
+> +
+> +				folio_get(folio);
+> +				if (folio != fault_folio)
+> +					folio_lock(folio);
+> +				if (split_folio(folio)) {
+> +					if (folio != fault_folio)
+> +						folio_unlock(folio);
+> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
+> +					goto next;
+> +				}
+> +
 
+The nouveau migrate_to_ram handler needs adjustment also if split happens.
 
-An alternative that I've seen downstream is to define PMIC nodes in
-the root of a dtsi file (not in the root of DT, i.e. NOT under / { })
-and do the following:
+> +				/*
+> +				 * After the split, get back the extra reference
+> +				 * on the fault_page, this reference is checked during
+> +				 * folio_migrate_mapping()
+> +				 */
+> +				if (migrate->fault_page) {
+> +					new_fault_folio = page_folio(migrate->fault_page);
+> +					folio_get(new_fault_folio);
+> +				}
+> +
+> +				new_folio = page_folio(page);
+> +				pfn = page_to_pfn(page);
+> +
+> +				/*
+> +				 * Ensure the lock is held on the correct
+> +				 * folio after the split
+> +				 */
+> +				if (folio != new_folio) {
+> +					folio_unlock(folio);
+> +					folio_lock(new_folio);
+> +				}
 
-&spmi_busN {
-	#include "pmABCDX.dtsi"
-};
+Maybe careful not to unlock fault_page ?
 
-Which is "okay", but has the visible downside of having to define the
-temp alarm thermal zone in each board's DT separately (and doing
-mid-file includes which is.. fine I guess, but also something we avoided
-upstream for the longest time)
+> +				folio_put(folio);
+> +				addr = start;
+> +				goto again;
+> +			}
+> +
+>  			mpfn = migrate_pfn(page_to_pfn(page)) |
+>  					MIGRATE_PFN_MIGRATE;
+>  			if (is_writable_device_private_entry(entry))
 
+--Mika
 
-Both are less than ideal when it comes to altering the SID under
-"interrupts", fixing that would help immensely. We were hoping to
-leverage something like Johan's work on drivers/mfd/qcom-pm8008.c,
-but that seems like a longer term project.
-
-Please voice your opinions
-
-Konrad
 
