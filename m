@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-753977-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753978-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 54738B18B23
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AAC56B18B26
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:46:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 103D8626D3D
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892EF562572
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9CF1EF09D;
-	Sat,  2 Aug 2025 07:45:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2678C1EF39F;
+	Sat,  2 Aug 2025 07:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eSFwOONn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZNQ+2xO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659D93D6D;
-	Sat,  2 Aug 2025 07:45:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EBEB672;
+	Sat,  2 Aug 2025 07:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754120734; cv=none; b=N6pgLWSj912KfCJXAhFmrGeuW0dTmHaZhG7aRjOflMGT9QUqjrySPNHS67udlAe89g2cXeS5Zb6XZuwpFALmIXrNxd6Klyruev9c9Ks1tth5fipVmAM9SGm978iTpmCIgmmmBde3tq93G+eE1d1Sg764Zp71AGbGu9YvT8/qrRQ=
+	t=1754120811; cv=none; b=YYd2auO1uOrNQe8LLIFHG0tg8NQSzbCIadM9O2NYfp6DJ1qkKzV6UoFGwt1glpbkkvF82NopFHeox66Mdfyrh/Q4aFSlns1dRUcTXvJuOopwSjT/qKwkUZsCZrrHXyq38lidgfUJyWnOrOwzAki+OGqXHKEnjz55H9d4yz19VF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754120734; c=relaxed/simple;
-	bh=G6+we1PKrmDbd3zHN872Zvex7W9IVk0rbs92WnI/8W4=;
+	s=arc-20240116; t=1754120811; c=relaxed/simple;
+	bh=1WJAinfeeDWEukuQDOnUiyWJh3UHki1kqjbMfoKbqY4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GGN/eQdfjy6vsAPyE+aH6/NF+p3hG/r+/dka1vBywPqHFfMHaPqtSgW+M3r+Tf0s4LwtnifsHZ1RbUo2e29qlf8isWaMmNA26aw2+PudBfl3WCzUtnptkO+HCt46t4B2lfOefQj1bQXmnIlI53s/EHq3/OEj9tLSFm+tYqpZCv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eSFwOONn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4A71BC4CEEF;
-	Sat,  2 Aug 2025 07:45:31 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=ZXx7VXHHq/XJCY2dmaWzipA+AZIozcPyJ7z/XLMtnxy49P2/VEMsJI0Koz4wcXBfR4xBS4C1sO3nNGXtqW7RzG2crUFIo/RJ41EqUXvDEaesyTHdoYVcRmrbPyyFiLrDqtwsfLIxYDWT5xcU1zUlHGgc/+O4tuv+UKorP5qjJdc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZNQ+2xO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2614C4CEEF;
+	Sat,  2 Aug 2025 07:46:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754120733;
-	bh=G6+we1PKrmDbd3zHN872Zvex7W9IVk0rbs92WnI/8W4=;
+	s=k20201202; t=1754120811;
+	bh=1WJAinfeeDWEukuQDOnUiyWJh3UHki1kqjbMfoKbqY4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=eSFwOONnkIuqgtmJBQI0+V2j6Bo0YSys28SXfNc7KPRM2OHhpTWD9zL3JFEnGa+wk
-	 zwfs46Omo89b7mbYAPzwJO287OvT9iNgdIgtY/iLKNUzQmYOeChjW7XY4cvVHGjMF8
-	 CpyL6feST5d1jZUPia3TLA6YdqAmOtesgR5kuMFhTR3zKMDtdwgXLLDaM3fRq55TUp
-	 /dMMev8OhweG9mK8skvq+8czmHk9TijyAPlw5k4rCh1oAncKxbvEbJUeo2+WTzNuqJ
-	 V90zGsmSOakxDhAE/b935tsyUPLRACDiipfPife0IUvhqtCWwKCIBAGBHduysBda1c
-	 lYtBRCV8Egi/w==
-Message-ID: <fc15279a-bf3e-4500-8dfc-651e6e2431d9@kernel.org>
-Date: Sat, 2 Aug 2025 09:45:29 +0200
+	b=GZNQ+2xO89E2dJYLDdweOaiYm0b6XiV5aF5ZURhubAaexu6g6JAIDm17MBgoA52H9
+	 xm9yW/ytukt5nuiDYA97Empn9eAcZwgkEVhoBd2GC5dvd470kMZWTh/3hpPPKTJ4Sa
+	 kh2b3JpfJ1OXp0JWf0yAY5DGuT16cS/AR+vEhRA/f1Pnp0neHBgyrw9a4mMyABce1g
+	 bDi7Ax/GBNp3534yMVJOWTetVpoDjH6/oy3Ka/f+Kl5Uxx76gFgdf/7IPYrkJlOA27
+	 6Ri7fhLXkf5+PSocPvIkyzZhtwX8J+F7b0Rb/Ag0rz+JMDYezQ/ShdGR7VTGfDFyPw
+	 oMYvZHx3zCZlA==
+Message-ID: <267b2d6c-468d-4bff-ac06-c6755706a398@kernel.org>
+Date: Sat, 2 Aug 2025 09:46:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,17 +49,16 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
+Subject: Re: [PATCH V2 1/2] dt-bindings: arm: qcom: Add bindings for Monaco
+ EVK
+To: Umang Chheda <umang.chheda@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
  Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
+ <20250801163607.1464037-2-umang.chheda@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -105,33 +104,28 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
+In-Reply-To: <20250801163607.1464037-2-umang.chheda@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2025 08:44, Dixit Parmar wrote:
-> Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-> controlled by I2C interface. Main applications includes joysticks, control
-> elements (white goods, multifunction knops), or electric meters (anti-
-> tampering).
-> Drop duplicated entry for infineon,tlv493d from trivial-devices.yaml as
-> its documented in infineon,tlv493d.yaml now.
+On 01/08/2025 18:36, Umang Chheda wrote:
+> From: Umang Chheda <uchheda.chheda@oss.qualcomm.com>
 > 
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> Introduce new bindings for the Monaco Evaluation Kit (EVK),
+> an IoT board based on the QCS8300 SoC.
+> 
+> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
 > ---
->  .../iio/magnetometer/infineon,tlv493d.yaml         | 45 ++++++++++++++++++++++
->  .../devicetree/bindings/trivial-devices.yaml       |  2 -
->  2 files changed, 45 insertions(+), 2 deletions(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
-> new file mode 100644
-> index 000000000000..ebcf29067a16
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
+>  1 file changed, 1 insertion(+)
+
+This is v2, so where is any changelog?
 
 
-Filename should match compatible. Otherwise a1b6 is just confusing.
+A nit, subject: drop second/last, redundant "bindings for". The
+"dt-bindings" prefix is already stating that these are bindings.
+See also:
+https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
 
 Best regards,
 Krzysztof
