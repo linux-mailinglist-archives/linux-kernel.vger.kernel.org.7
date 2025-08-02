@@ -1,555 +1,556 @@
-Return-Path: <linux-kernel+bounces-754114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 215D6B18E3C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:43:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF73EB18E3F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:44:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1BDAAA4035
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 86F76AA401F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:44:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45DE7223339;
-	Sat,  2 Aug 2025 11:43:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7288221FA0;
+	Sat,  2 Aug 2025 11:44:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1Twnu4k"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uyGR9ZQe"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33890256D;
-	Sat,  2 Aug 2025 11:43:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1FF256D;
+	Sat,  2 Aug 2025 11:44:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754135024; cv=none; b=nklYSLGRANl6oKTCBF6YoxmSmPPZIzyY2Sml1d08lV2cSSWmsVs9iWwctCO8TpnBSCQq6Fhay76EA6BVwPdH6AYuZYxsM0UcBwIDPRKX7R2LcaolI/0SiXQ12wupUUu93wa50xkG8YuGh0zzm8pZLG4l3pmOMUOqxRBi8GXUPMc=
+	t=1754135092; cv=none; b=e0oBNEG2/8pOd2iAnqP2CJ46ybjY5n04wFSlwvGf4/tANTRyiixUHmT06DwhkvlbQe/JRW1WPwuF90LMNgV46zegArBSCs6X5hE/Ha8Bpbg0bQFvWrb1VXjvZKcvNMJuGnNzCWYASZh3FRNTLZZJ06Ej+tMNGp4AAqrwUB0YfHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754135024; c=relaxed/simple;
-	bh=KN5mq0xSB8X9KKs/tm6snivXjWaEfNYoAHad5h2MKwc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=I4sgvQfBG8R96zqMqA5FVXwVqkCNpeYv9PaT6HXo8hWXIhyKaqdIupUkdUiKBd68Tgd42QxWs4HRjbP/Kz0l+7Y8N1NEYlUsrr+z3g+pi5kf3gHWeUDAtKq+cwR7u+x9JkGKJ0ScboJH/9kUlWxmgyqBetdSoZ6Xxw6oIX+kWmo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1Twnu4k; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42722C4CEEF;
-	Sat,  2 Aug 2025 11:43:38 +0000 (UTC)
+	s=arc-20240116; t=1754135092; c=relaxed/simple;
+	bh=XOKcrEu4OfAVcHRgTZHChdZFSVDpLasDM85Bx+xaXq8=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KRHnF8rEpuLNlQN9NqqmvFUy5p223GI2A8oOAqtqIIYyquFemkQ05b0LNpDp7Ahuat3V6zrll1ZRtwkfa2IITXQGhcwi5N6zJmpi2foucWvRj9fnBKG7b9JcxQnkcLP96StApE4zZvf7UfNfaNbrAVcli1XuaDNMxLYlijltGEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uyGR9ZQe; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1D1ADC4CEEF;
+	Sat,  2 Aug 2025 11:44:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754135023;
-	bh=KN5mq0xSB8X9KKs/tm6snivXjWaEfNYoAHad5h2MKwc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F1Twnu4k1FevZ17/ExKfO3nlPTXo8QJpCYDHqfIEU/W7CLcsqTIc7IQBDNCSiNj0k
-	 GI/5cYRAOh+jmLtO619fh3pf9wViH0aTUXbyTedap8gg+b1r/SLYCIntlmBxIhCen5
-	 1fyMLOHZqLM0f1bwMAnjiFkOakqYmRtPw5tdnzsgIvLneoY/kUjWA4ymudgZMv06Vz
-	 RRUTPZuc3t+/sXsM644s9ZELYGM2VD3Lw2/zr6+heLTxxCRLPa/yWRIFylAzrsawET
-	 3k96Nd0EfODNMMhIsrBaHJolFq3kgw6teeRHuVJgepvnvghlx5remmTaJqc1rqTXGP
-	 iPs6BisQdp0YQ==
-Date: Sat, 2 Aug 2025 12:43:33 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: David Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
- <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Rob Herring
- <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 1/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magentic sensor
-Message-ID: <20250802124333.67f64863@jic23-huawei>
-In-Reply-To: <20250802-tlv493d-sensor-v6_16-rc5-v2-1-e867df86ad93@gmail.com>
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
-	<20250802-tlv493d-sensor-v6_16-rc5-v2-1-e867df86ad93@gmail.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
+	s=k20201202; t=1754135092;
+	bh=XOKcrEu4OfAVcHRgTZHChdZFSVDpLasDM85Bx+xaXq8=;
+	h=From:Date:Subject:To:Cc:From;
+	b=uyGR9ZQe3yLOLSKHRgNO96lev+Emzn7uzqzCcwPYdZ1SWJKn4nbEDdm1URcgUXcOF
+	 XS5suTogxL6RLMOOpufkgahIJdBfapNel1pLv1UWJTngwGRdZjGvTFXOF24Av2JkLC
+	 833RZRQzRRg3vSp4P+toaRvceHSJIoaDOnrEsvC/goEielZdyavc1fifbOpLv11IJV
+	 Mv49KMNc6FhIjOElSBwr6ucENGJXm4onqOG5pFvEx+y1aPXttqLYKCdMdlqengJs9v
+	 1ZZpfi4LuDMYaDMYp6RgfLJfkMpD0QLIILE6i659I0dM65bf7aqSoZ+tzPqRbfVd65
+	 /fpayPW14piGg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Sat, 02 Aug 2025 13:44:44 +0200
+Subject: [PATCH] clk: qcom: Remove double-space after assignment operator
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250802-topic-clk_qc_doublespace-v1-1-2cae59ba7d59@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIACv6jWgC/x3M0QpAMBSA4VfRubaaoeRVJM3ZGSey2ZCSd7dcf
+ hf//0CkwBShzR4IdHFktyUUeQY4620iwSYZlFS1bKQSh/OMAtdl2HEw7hxXil4jCa2qQtq6NJZ
+ GSLkPZPn+113/vh9HUswIagAAAA==
+X-Change-ID: 20250802-topic-clk_qc_doublespace-a2410f53dfeb
+To: Bjorn Andersson <andersson@kernel.org>, 
+ Michael Turquette <mturquette@baylibre.com>, 
+ Stephen Boyd <sboyd@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754135087; l=18960;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=XQd1kCgHNqQSO54u2eQxwlF0bpqItFXkJIUhsAHL5BE=;
+ b=8NOZoluNETmqL4iKdm4Zf0QUGXGtRdgHgCGtdrhT7tPQ7QTiXxYP3o1cPSnQJIOOClRxQ8Yew
+ +aMmGcuzrn6AyKW5yngwi2Tpcg2MO4l8qJnILsCkAbynQL1wwJFQ4AC
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Sat, 02 Aug 2025 12:14:27 +0530
-Dixit Parmar <dixitparmar19@gmail.com> wrote:
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> applications includes joysticks, control elements (white goods,
-> multifunction knops), or electric meters (anti tampering) and any
-> other application that requires accurate angular measurements at
-> low power consumptions.
->=20
-> The Sensor is configured over I2C, and as part of Sensor measurement
-> data it provides 3-Axis magnetic fields and temperature core measurement.
->=20
-> The driver supports raw value read and buffered input via external trigger
-> to allow streaming values with the same sensing timestamp.
->=20
-> While sensor has interrupt pin multiplexed with I2C SCL pin. But for bus
-> configurations interrupt(INT) is not recommended, unless timing constrain=
-ts
-> between I2C data transfers and interrupt pulses are monitored and aligned.
->=20
-> The Sensor's I2C register map and mode information is described in product
-> User Manual[Link].
->=20
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/inf=
-ineon-tlv493d-a1b6-datasheet-en.pdf
-> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-Use=
-rManual-v01_03-EN.pdf
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+This is an oddly common hiccup across clk/qcom.. Remove it in hopes to
+reduce spread through copy-paste.
 
-Hi Dixit,
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/clk/qcom/a7-pll.c              |  2 +-
+ drivers/clk/qcom/clk-alpha-pll.c       | 26 +++++++++++++-------------
+ drivers/clk/qcom/clk-rcg.c             |  2 +-
+ drivers/clk/qcom/clk-rcg2.c            |  8 ++++----
+ drivers/clk/qcom/clk-rpmh.c            |  6 +++---
+ drivers/clk/qcom/clk-smd-rpm.c         |  8 ++++----
+ drivers/clk/qcom/gcc-qcs404.c          |  2 +-
+ drivers/clk/qcom/gpucc-sa8775p.c       |  6 +++---
+ drivers/clk/qcom/gpucc-sc7180.c        |  2 +-
+ drivers/clk/qcom/gpucc-sm6350.c        |  4 ++--
+ drivers/clk/qcom/gpucc-sm8150.c        |  2 +-
+ drivers/clk/qcom/gpucc-sm8250.c        |  2 +-
+ drivers/clk/qcom/lpassaudiocc-sc7280.c |  4 ++--
+ drivers/clk/qcom/lpasscc-sc8280xp.c    |  4 ++--
+ drivers/clk/qcom/lpasscc-sm6115.c      |  2 +-
+ drivers/clk/qcom/lpasscorecc-sc7180.c  |  2 +-
+ drivers/clk/qcom/mmcc-sdm660.c         |  2 +-
+ drivers/clk/qcom/nsscc-ipq9574.c       |  2 +-
+ 18 files changed, 43 insertions(+), 43 deletions(-)
 
-Some additional comments inline.
+diff --git a/drivers/clk/qcom/a7-pll.c b/drivers/clk/qcom/a7-pll.c
+index c4a53e5db229f24c8d6c75d398d595bb148af64b..bf7159f5b456a9d7e8ceef0fd89cd9e64b613a6c 100644
+--- a/drivers/clk/qcom/a7-pll.c
++++ b/drivers/clk/qcom/a7-pll.c
+@@ -27,7 +27,7 @@ static struct clk_alpha_pll a7pll = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "a7pll",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+diff --git a/drivers/clk/qcom/clk-alpha-pll.c b/drivers/clk/qcom/clk-alpha-pll.c
+index fec6eb376e2707deda11609fe5d0d45082048a0b..81a1ce42285f7eb19dba92cb7415c7e694a829dd 100644
+--- a/drivers/clk/qcom/clk-alpha-pll.c
++++ b/drivers/clk/qcom/clk-alpha-pll.c
+@@ -66,7 +66,7 @@
+ #define GET_PLL_TYPE(pll)	(((pll)->regs - clk_alpha_pll_regs[0]) / PLL_OFF_MAX_REGS)
+ 
+ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+-	[CLK_ALPHA_PLL_TYPE_DEFAULT] =  {
++	[CLK_ALPHA_PLL_TYPE_DEFAULT] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
+@@ -77,7 +77,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x20,
+ 		[PLL_OFF_STATUS] = 0x24,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_HUAYRA] =  {
++	[CLK_ALPHA_PLL_TYPE_HUAYRA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_USER_CTL] = 0x10,
+@@ -87,7 +87,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x20,
+ 		[PLL_OFF_STATUS] = 0x24,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_HUAYRA_APSS] =  {
++	[CLK_ALPHA_PLL_TYPE_HUAYRA_APSS] = {
+ 		[PLL_OFF_L_VAL] = 0x08,
+ 		[PLL_OFF_ALPHA_VAL] = 0x10,
+ 		[PLL_OFF_USER_CTL] = 0x18,
+@@ -97,7 +97,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL] = 0x30,
+ 		[PLL_OFF_TEST_CTL_U] = 0x34,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_HUAYRA_2290] =  {
++	[CLK_ALPHA_PLL_TYPE_HUAYRA_2290] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+@@ -110,7 +110,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_OPMODE] = 0x28,
+ 		[PLL_OFF_STATUS] = 0x38,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_BRAMMO] =  {
++	[CLK_ALPHA_PLL_TYPE_BRAMMO] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
+@@ -119,7 +119,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL] = 0x1c,
+ 		[PLL_OFF_STATUS] = 0x24,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_FABIA] =  {
++	[CLK_ALPHA_PLL_TYPE_FABIA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+ 		[PLL_OFF_USER_CTL_U] = 0x10,
+@@ -147,7 +147,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_OPMODE] = 0x38,
+ 		[PLL_OFF_ALPHA_VAL] = 0x40,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_AGERA] =  {
++	[CLK_ALPHA_PLL_TYPE_AGERA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+@@ -157,7 +157,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL_U] = 0x1c,
+ 		[PLL_OFF_STATUS] = 0x2c,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_ZONDA] =  {
++	[CLK_ALPHA_PLL_TYPE_ZONDA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+@@ -243,7 +243,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL] = 0x28,
+ 		[PLL_OFF_TEST_CTL_U] = 0x2c,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] =  {
++	[CLK_ALPHA_PLL_TYPE_DEFAULT_EVO] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
+@@ -254,7 +254,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_CONFIG_CTL] = 0x20,
+ 		[PLL_OFF_STATUS] = 0x24,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO] =  {
++	[CLK_ALPHA_PLL_TYPE_BRAMMO_EVO] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x0c,
+@@ -275,7 +275,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_TEST_CTL] = 0x30,
+ 		[PLL_OFF_TEST_CTL_U] = 0x34,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] =  {
++	[CLK_ALPHA_PLL_TYPE_STROMER_PLUS] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_USER_CTL] = 0x08,
+ 		[PLL_OFF_USER_CTL_U] = 0x0c,
+@@ -286,7 +286,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_ALPHA_VAL] = 0x24,
+ 		[PLL_OFF_ALPHA_VAL_U] = 0x28,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_ZONDA_OLE] =  {
++	[CLK_ALPHA_PLL_TYPE_ZONDA_OLE] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+@@ -301,7 +301,7 @@ const u8 clk_alpha_pll_regs[][PLL_OFF_MAX_REGS] = {
+ 		[PLL_OFF_OPMODE] = 0x30,
+ 		[PLL_OFF_STATUS] = 0x3c,
+ 	},
+-	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] =  {
++	[CLK_ALPHA_PLL_TYPE_NSS_HUAYRA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_ALPHA_VAL] = 0x08,
+ 		[PLL_OFF_TEST_CTL] = 0x0c,
+diff --git a/drivers/clk/qcom/clk-rcg.c b/drivers/clk/qcom/clk-rcg.c
+index 987141c91fe0bc323d84529afbf6c96d247a55a3..31f0650b48bac3ad0f56b719c9979cac5b2f1e4b 100644
+--- a/drivers/clk/qcom/clk-rcg.c
++++ b/drivers/clk/qcom/clk-rcg.c
+@@ -423,7 +423,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 			rate = tmp;
+ 		}
+ 	} else {
+-		rate =  clk_hw_get_rate(p);
++		rate = clk_hw_get_rate(p);
+ 	}
+ 	req->best_parent_hw = p;
+ 	req->best_parent_rate = rate;
+diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
+index 8001fd9faf9d1e642fae056b6e8cc9b24db9604b..e18cb8807d73534c6437c08aeb524353a2eab06f 100644
+--- a/drivers/clk/qcom/clk-rcg2.c
++++ b/drivers/clk/qcom/clk-rcg2.c
+@@ -201,7 +201,7 @@ __clk_rcg2_recalc_rate(struct clk_hw *hw, unsigned long parent_rate, u32 cfg)
+ 		regmap_read(rcg->clkr.regmap, RCG_M_OFFSET(rcg), &m);
+ 		m &= mask;
+ 		regmap_read(rcg->clkr.regmap, RCG_N_OFFSET(rcg), &n);
+-		n =  ~n;
++		n = ~n;
+ 		n &= mask;
+ 		n += m;
+ 		mode = cfg & CFG_MODE_MASK;
+@@ -274,7 +274,7 @@ static int _freq_tbl_determine_rate(struct clk_hw *hw, const struct freq_tbl *f,
+ 			rate = tmp;
+ 		}
+ 	} else {
+-		rate =  clk_hw_get_rate(p);
++		rate = clk_hw_get_rate(p);
+ 	}
+ 	req->best_parent_hw = p;
+ 	req->best_parent_rate = rate;
+@@ -311,7 +311,7 @@ __clk_rcg2_select_conf(struct clk_hw *hw, const struct freq_multi_tbl *f,
+ 		if (!p)
+ 			continue;
+ 
+-		parent_rate =  clk_hw_get_rate(p);
++		parent_rate = clk_hw_get_rate(p);
+ 		rate = calc_rate(parent_rate, conf->n, conf->m, conf->n, conf->pre_div);
+ 
+ 		if (rate == req_rate) {
+@@ -382,7 +382,7 @@ static int _freq_tbl_fm_determine_rate(struct clk_hw *hw, const struct freq_mult
+ 			rate = tmp;
+ 		}
+ 	} else {
+-		rate =  clk_hw_get_rate(p);
++		rate = clk_hw_get_rate(p);
+ 	}
+ 
+ 	req->best_parent_hw = p;
+diff --git a/drivers/clk/qcom/clk-rpmh.c b/drivers/clk/qcom/clk-rpmh.c
+index 1496fb3de4be8db0cae13e6358745660f286267a..5103a464d86d3cb4c0ce3ff68956178dd58b1864 100644
+--- a/drivers/clk/qcom/clk-rpmh.c
++++ b/drivers/clk/qcom/clk-rpmh.c
+@@ -87,7 +87,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+ 		.hw.init = &(struct clk_init_data){			\
+ 			.ops = &clk_rpmh_ops,				\
+ 			.name = #_name,					\
+-			.parent_data =  &(const struct clk_parent_data){ \
++			.parent_data = &(const struct clk_parent_data){ \
+ 					.fw_name = "xo",		\
+ 					.name = "xo_board",		\
+ 			},						\
+@@ -105,7 +105,7 @@ static DEFINE_MUTEX(rpmh_clk_lock);
+ 		.hw.init = &(struct clk_init_data){			\
+ 			.ops = &clk_rpmh_ops,				\
+ 			.name = #_name "_ao",				\
+-			.parent_data =  &(const struct clk_parent_data){ \
++			.parent_data = &(const struct clk_parent_data){ \
+ 					.fw_name = "xo",		\
+ 					.name = "xo_board",		\
+ 			},						\
+@@ -182,7 +182,7 @@ static int clk_rpmh_send_aggregate_command(struct clk_rpmh *c)
+ 	}
+ 
+ 	c->last_sent_aggr_state = c->aggr_state;
+-	c->peer->last_sent_aggr_state =  c->last_sent_aggr_state;
++	c->peer->last_sent_aggr_state = c->last_sent_aggr_state;
+ 
+ 	return 0;
+ }
+diff --git a/drivers/clk/qcom/clk-smd-rpm.c b/drivers/clk/qcom/clk-smd-rpm.c
+index 3bf6df3884a542e7be572f2319990c2bfa7bc642..103db984a40b950bd33fba668a292be46af6326e 100644
+--- a/drivers/clk/qcom/clk-smd-rpm.c
++++ b/drivers/clk/qcom/clk-smd-rpm.c
+@@ -30,7 +30,7 @@
+ 		.hw.init = &(struct clk_init_data){			      \
+ 			.ops = &clk_smd_rpm_ops,			      \
+ 			.name = #_name,					      \
+-			.parent_data =  &(const struct clk_parent_data){      \
++			.parent_data = &(const struct clk_parent_data){       \
+ 					.fw_name = "xo",		      \
+ 					.name = "xo_board",		      \
+ 			},						      \
+@@ -47,7 +47,7 @@
+ 		.hw.init = &(struct clk_init_data){			      \
+ 			.ops = &clk_smd_rpm_ops,			      \
+ 			.name = #_active,				      \
+-			.parent_data =  &(const struct clk_parent_data){      \
++			.parent_data = &(const struct clk_parent_data){       \
+ 					.fw_name = "xo",		      \
+ 					.name = "xo_board",		      \
+ 			},						      \
+@@ -74,7 +74,7 @@
+ 		.hw.init = &(struct clk_init_data){			      \
+ 			.ops = &clk_smd_rpm_branch_ops,			      \
+ 			.name = #_name,					      \
+-			.parent_data =  &(const struct clk_parent_data){      \
++			.parent_data = &(const struct clk_parent_data){       \
+ 					.fw_name = "xo",		      \
+ 					.name = "xo_board",		      \
+ 			},						      \
+@@ -92,7 +92,7 @@
+ 		.hw.init = &(struct clk_init_data){			      \
+ 			.ops = &clk_smd_rpm_branch_ops,			      \
+ 			.name = #_active,				      \
+-			.parent_data =  &(const struct clk_parent_data){      \
++			.parent_data = &(const struct clk_parent_data){       \
+ 					.fw_name = "xo",		      \
+ 					.name = "xo_board",		      \
+ 			},						      \
+diff --git a/drivers/clk/qcom/gcc-qcs404.c b/drivers/clk/qcom/gcc-qcs404.c
+index 5ca003c9bfba89bee2e626b3c35936452cc02765..efc75a3814ab690bc19251f49fcc598dc4033b17 100644
+--- a/drivers/clk/qcom/gcc-qcs404.c
++++ b/drivers/clk/qcom/gcc-qcs404.c
+@@ -2754,7 +2754,7 @@ static struct clk_regmap *gcc_qcs404_clocks[] = {
+ 	[GCC_DCC_CLK] = &gcc_dcc_clk.clkr,
+ 	[GCC_DCC_XO_CLK] = &gcc_dcc_xo_clk.clkr,
+ 	[GCC_WCSS_Q6_AHB_CLK] = &gcc_wdsp_q6ss_ahbs_clk.clkr,
+-	[GCC_WCSS_Q6_AXIM_CLK] =  &gcc_wdsp_q6ss_axim_clk.clkr,
++	[GCC_WCSS_Q6_AXIM_CLK] = &gcc_wdsp_q6ss_axim_clk.clkr,
+ 
+ };
+ 
+diff --git a/drivers/clk/qcom/gpucc-sa8775p.c b/drivers/clk/qcom/gpucc-sa8775p.c
+index 78cad622cb5a08bbde890dc6a33c2a24538901d9..25dcc5912f99530f72de98c4e5a9beb948628f6a 100644
+--- a/drivers/clk/qcom/gpucc-sa8775p.c
++++ b/drivers/clk/qcom/gpucc-sa8775p.c
+@@ -365,7 +365,7 @@ static struct clk_branch gpu_cc_cx_gmu_clk = {
+ 				&gpu_cc_gmu_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+-			.flags =  CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_aon_ops,
+ 		},
+ 	},
+@@ -414,7 +414,7 @@ static struct clk_branch gpu_cc_cxo_clk = {
+ 				&gpu_cc_xo_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+-			.flags =  CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_ops,
+ 		},
+ 	},
+@@ -499,7 +499,7 @@ static struct clk_branch gpu_cc_hub_cx_int_clk = {
+ 				&gpu_cc_hub_cx_int_div_clk_src.clkr.hw,
+ 			},
+ 			.num_parents = 1,
+-			.flags =  CLK_SET_RATE_PARENT,
++			.flags = CLK_SET_RATE_PARENT,
+ 			.ops = &clk_branch2_aon_ops,
+ 		},
+ 	},
+diff --git a/drivers/clk/qcom/gpucc-sc7180.c b/drivers/clk/qcom/gpucc-sc7180.c
+index a7bf44544b956db3dd476869177ba9858401e7ac..97287488e05a03d4342d2fa0699c57d4534c92ea 100644
+--- a/drivers/clk/qcom/gpucc-sc7180.c
++++ b/drivers/clk/qcom/gpucc-sc7180.c
+@@ -42,7 +42,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll1",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+diff --git a/drivers/clk/qcom/gpucc-sm6350.c b/drivers/clk/qcom/gpucc-sm6350.c
+index ee89c42413f885f21f1470b1f7887d052e52a75e..efbee1518dd333b08a7a71aa65d50181d9cbfaf2 100644
+--- a/drivers/clk/qcom/gpucc-sm6350.c
++++ b/drivers/clk/qcom/gpucc-sm6350.c
+@@ -67,7 +67,7 @@ static struct clk_alpha_pll gpu_cc_pll0 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll0",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.index = DT_BI_TCXO,
+ 				.fw_name = "bi_tcxo",
+ 			},
+@@ -111,7 +111,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll1",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.index = DT_BI_TCXO,
+ 				.fw_name = "bi_tcxo",
+ 			},
+diff --git a/drivers/clk/qcom/gpucc-sm8150.c b/drivers/clk/qcom/gpucc-sm8150.c
+index 7ce91208c0bc0fb0009e0974d7d45378d8df8427..5701031c17f39ce214bd5755190c4e671318da80 100644
+--- a/drivers/clk/qcom/gpucc-sm8150.c
++++ b/drivers/clk/qcom/gpucc-sm8150.c
+@@ -53,7 +53,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll1",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+diff --git a/drivers/clk/qcom/gpucc-sm8250.c b/drivers/clk/qcom/gpucc-sm8250.c
+index ca0a1681d352c41bf2dc4ef7746ad7e5ec1626e2..eee3208640cdc6c53114dad262d68454ce44685c 100644
+--- a/drivers/clk/qcom/gpucc-sm8250.c
++++ b/drivers/clk/qcom/gpucc-sm8250.c
+@@ -56,7 +56,7 @@ static struct clk_alpha_pll gpu_cc_pll1 = {
+ 	.clkr = {
+ 		.hw.init = &(struct clk_init_data){
+ 			.name = "gpu_cc_pll1",
+-			.parent_data =  &(const struct clk_parent_data){
++			.parent_data = &(const struct clk_parent_data){
+ 				.fw_name = "bi_tcxo",
+ 			},
+ 			.num_parents = 1,
+diff --git a/drivers/clk/qcom/lpassaudiocc-sc7280.c b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+index 3ff123bffa114de447c96a250862a533e82d6e64..7e217296928930c482184c712dcf5db6c0d45ea8 100644
+--- a/drivers/clk/qcom/lpassaudiocc-sc7280.c
++++ b/drivers/clk/qcom/lpassaudiocc-sc7280.c
+@@ -709,8 +709,8 @@ static const struct qcom_cc_desc lpass_audio_cc_sc7280_desc = {
+ };
+ 
+ static const struct qcom_reset_map lpass_audio_cc_sc7280_resets[] = {
+-	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
+-	[LPASS_AUDIO_SWR_TX_CGCR] =  { 0xa8, 1 },
++	[LPASS_AUDIO_SWR_RX_CGCR] = { 0xa0, 1 },
++	[LPASS_AUDIO_SWR_TX_CGCR] = { 0xa8, 1 },
+ 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+ };
+ 
+diff --git a/drivers/clk/qcom/lpasscc-sc8280xp.c b/drivers/clk/qcom/lpasscc-sc8280xp.c
+index 9fd9498d7dc8ac96c97ebe7b97d1c269090212a8..ff839788c40e4da9df934ba86740fa3b4851a2da 100644
+--- a/drivers/clk/qcom/lpasscc-sc8280xp.c
++++ b/drivers/clk/qcom/lpasscc-sc8280xp.c
+@@ -18,9 +18,9 @@
+ #include "reset.h"
+ 
+ static const struct qcom_reset_map lpass_audiocc_sc8280xp_resets[] = {
+-	[LPASS_AUDIO_SWR_RX_CGCR] =  { 0xa0, 1 },
++	[LPASS_AUDIO_SWR_RX_CGCR] = { 0xa0, 1 },
+ 	[LPASS_AUDIO_SWR_WSA_CGCR] = { 0xb0, 1 },
+-	[LPASS_AUDIO_SWR_WSA2_CGCR] =  { 0xd8, 1 },
++	[LPASS_AUDIO_SWR_WSA2_CGCR] = { 0xd8, 1 },
+ };
+ 
+ static const struct regmap_config lpass_audiocc_sc8280xp_regmap_config = {
+diff --git a/drivers/clk/qcom/lpasscc-sm6115.c b/drivers/clk/qcom/lpasscc-sm6115.c
+index 8ffdab71b94836f1a5e0aa5792baf4b41216a281..ac6d219233b4c3a39d882ac4826bf88307533b81 100644
+--- a/drivers/clk/qcom/lpasscc-sm6115.c
++++ b/drivers/clk/qcom/lpasscc-sm6115.c
+@@ -17,7 +17,7 @@
+ #include "reset.h"
+ 
+ static const struct qcom_reset_map lpass_audiocc_sm6115_resets[] = {
+-	[LPASS_AUDIO_SWR_RX_CGCR] =  { .reg = 0x98, .bit = 1, .udelay = 500 },
++	[LPASS_AUDIO_SWR_RX_CGCR] = { .reg = 0x98, .bit = 1, .udelay = 500 },
+ };
+ 
+ static struct regmap_config lpass_audiocc_sm6115_regmap_config = {
+diff --git a/drivers/clk/qcom/lpasscorecc-sc7180.c b/drivers/clk/qcom/lpasscorecc-sc7180.c
+index 5937b071533b68b7f5b4c9d5b8c23e3292ed212c..5174bd3dcdc571505b6a0c8f67d14cf9e5e22135 100644
+--- a/drivers/clk/qcom/lpasscorecc-sc7180.c
++++ b/drivers/clk/qcom/lpasscorecc-sc7180.c
+@@ -42,7 +42,7 @@ static const struct alpha_pll_config lpass_lpaaudio_dig_pll_config = {
+ };
+ 
+ static const u8 clk_alpha_pll_regs_offset[][PLL_OFF_MAX_REGS] = {
+-	[CLK_ALPHA_PLL_TYPE_FABIA] =  {
++	[CLK_ALPHA_PLL_TYPE_FABIA] = {
+ 		[PLL_OFF_L_VAL] = 0x04,
+ 		[PLL_OFF_CAL_L_VAL] = 0x8,
+ 		[PLL_OFF_USER_CTL] = 0x0c,
+diff --git a/drivers/clk/qcom/mmcc-sdm660.c b/drivers/clk/qcom/mmcc-sdm660.c
+index e69fc65b13da2b519af413137353693473ee258a..b723c536dfb6ce4ad0b9fc70345303ac2f691819 100644
+--- a/drivers/clk/qcom/mmcc-sdm660.c
++++ b/drivers/clk/qcom/mmcc-sdm660.c
+@@ -74,7 +74,7 @@ static struct clk_alpha_pll mmpll0 = {
+ 	},
+ };
+ 
+-static struct clk_alpha_pll mmpll6 =  {
++static struct clk_alpha_pll mmpll6 = {
+ 	.offset = 0xf0,
+ 	.regs = clk_alpha_pll_regs[CLK_ALPHA_PLL_TYPE_DEFAULT],
+ 	.clkr = {
+diff --git a/drivers/clk/qcom/nsscc-ipq9574.c b/drivers/clk/qcom/nsscc-ipq9574.c
+index 64c6b05ff066b4f148c0911318cb316fd96de907..c8b11b04a7c225c5a80a07ba21ba575d3e45015f 100644
+--- a/drivers/clk/qcom/nsscc-ipq9574.c
++++ b/drivers/clk/qcom/nsscc-ipq9574.c
+@@ -3016,7 +3016,7 @@ static const struct qcom_reset_map nss_cc_ipq9574_resets[] = {
+ 	[NSSPORT4_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(5, 4) },
+ 	[NSSPORT5_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(3, 2) },
+ 	[NSSPORT6_RESET] = { .reg = 0x28a24, .bitmask = GENMASK(1, 0) },
+-	[EDMA_HW_RESET] =  { .reg = 0x28a08, .bitmask = GENMASK(16, 15) },
++	[EDMA_HW_RESET] = { .reg = 0x28a08, .bitmask = GENMASK(16, 15) },
+ };
+ 
+ static const struct regmap_config nss_cc_ipq9574_regmap_config = {
 
-> diff --git a/drivers/iio/magnetometer/tlv493d.c b/drivers/iio/magnetomete=
-r/tlv493d.c
-> new file mode 100644
-> index 000000000000..da1569ae97bf
-> --- /dev/null
-> +++ b/drivers/iio/magnetometer/tlv493d.c
+---
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+change-id: 20250802-topic-clk_qc_doublespace-a2410f53dfeb
 
-> +enum tlv493d_op_mode {
-> +	TLV493D_OP_MODE_POWERDOWN =3D 0,
-> +	TLV493D_OP_MODE_FAST,
-> +	TLV493D_OP_MODE_LOWPOWER,
-> +	TLV493D_OP_MODE_ULTRA_LOWPOWER,
-> +	TLV493D_OP_MODE_MASTERCONTROLLED,
-> +	TLV493D_OP_MODE_MAX
-In order to be able to use this as the type for a parameter as suggested
-below, you'll need to drop MODE_MAX.  Comments on why you shouldn't
-need that anyway below.
-
-> +};
-> +
-> +struct tlv493d_mode {
-> +	u8 m;
-You have an enum type.  Much better to use it.
-
-> +	u32 sleep_us;
-> +};
-> +
-> +struct tlv493d_data {
-> +	struct device *dev;
-> +	struct i2c_client *client;
-> +	/* protects from simultaneous sensor access and register readings */
-> +	struct mutex lock;
-> +	u8 mode;
-> +	u8 wr_regs[TLV493D_WR_REG_MAX];
-> +};
-> +
-> +/*
-> + * Different mode has different measurement cycle time, this time is
-> + * used in deriving the sleep and timemout while reading the data from
-> + * sensor in polling.
-> + * Power-down mode: No measurement.
-> + * Fast mode: Freq:3.3 KHz. Measurement time:305 usec.
-> + * Low-power mode: Freq:100 Hz. Measurement time:10 msec.
-> + * Ultra low-power mode: Freq:10 Hz. Measurement time:100 msec.
-> + * Master controlled mode: Freq:3.3 Khz. Measurement time:305 usec.
-> + */
-> +static struct tlv493d_mode tlv493d_mode_info[TLV493D_OP_MODE_MAX] =3D {
-If you want to size it, do it using the enum values. [] is fine here
-	[TLV493D_OP_MODE_POWERDOWN] =3D { }
-
-I'm not sure why this should embed the index.  Can you just drop .m?
-
-> +	{ .m =3D TLV493D_OP_MODE_POWERDOWN, .sleep_us =3D 0 },
-> +	{ .m =3D TLV493D_OP_MODE_FAST, .sleep_us =3D 305 },
-> +	{ .m =3D TLV493D_OP_MODE_LOWPOWER, .sleep_us =3D 10 * USEC_PER_MSEC	},
-> +	{ .m =3D TLV493D_OP_MODE_ULTRA_LOWPOWER, .sleep_us =3D 100 * USEC_PER_M=
-SEC },
-> +	{ .m =3D TLV493D_OP_MODE_MASTERCONTROLLED, .sleep_us =3D 305 }
-> +};
-> +
-> +/*
-> + * The datasheet mentions the sensor supports only direct byte-stream wr=
-ite
-> + * starting from register address 0x0. So for any modification to be mad=
-e to
-> + * any write registers, it must be written starting from the register ad=
-dress
-> + * 0x0. I2C write operation should not contain register address in the I=
-2C
-> + * frame, it should contains only raw byte stream for the write register=
-s.
-> + * I2C Frame: |S|SlaveAddr Wr|Ack|Byte[0]|Ack|Byte[1]|Ack|.....|Sp|
-> + */
-> +static int tlv493d_write_all_regs(struct tlv493d_data *data)
-> +{
-> +	int ret;
-> +
-> +	if (!data || !data->client)
-If either of these happen, something went very very wrong.
-No need for the checks.  Remove all similar ones.
-
-> +		return -EINVAL;
-> +
-> +	ret =3D i2c_master_send(data->client, data->wr_regs, ARRAY_SIZE(data->w=
-r_regs));
-> +	if (ret < 0) {
-> +		dev_err(data->dev, "i2c write registers failed, error: %d\n", ret);
-> +		return ret;
-> +	}
-> +
-> +	return 0;
-> +}
-> +
-> +static int tlv493d_set_operating_mode(struct tlv493d_data *data, u8 mode)
-As below. Use the enum type.
-> +{
-> +	if (!data)
-> +		return -EINVAL;
-
-As above. Data is never going to be NULL, so don't check it.
-
-> +
-> +	u8 mode1_cfg, mode2_cfg;
-> +
-> +	switch (mode) {
-> +	case TLV493D_OP_MODE_POWERDOWN:
-> +		mode1_cfg =3D FIELD_PREP(TLV493D_MODE1_MOD_LOWFAST, 0);
-> +		mode2_cfg =3D FIELD_PREP(TLV493D_MODE2_LP_PERIOD, 0);
-> +		break;
-> +
-> +	case TLV493D_OP_MODE_FAST:
-> +		mode1_cfg =3D FIELD_PREP(TLV493D_MODE1_MOD_LOWFAST, 1);
-> +		mode2_cfg =3D FIELD_PREP(TLV493D_MODE2_LP_PERIOD, 0);
-> +		break;
-> +
-> +	case TLV493D_OP_MODE_LOWPOWER:
-> +		mode1_cfg =3D FIELD_PREP(TLV493D_MODE1_MOD_LOWFAST, 2);
-> +		mode2_cfg =3D FIELD_PREP(TLV493D_MODE2_LP_PERIOD, 1);
-> +		break;
-> +
-> +	case TLV493D_OP_MODE_ULTRA_LOWPOWER:
-> +		mode1_cfg =3D FIELD_PREP(TLV493D_MODE1_MOD_LOWFAST, 2);
-> +		mode2_cfg =3D FIELD_PREP(TLV493D_MODE2_LP_PERIOD, 0);
-> +		break;
-> +
-> +	case TLV493D_OP_MODE_MASTERCONTROLLED:
-> +		mode1_cfg =3D FIELD_PREP(TLV493D_MODE1_MOD_LOWFAST, 3);
-> +		mode2_cfg =3D FIELD_PREP(TLV493D_MODE2_LP_PERIOD, 0);
-> +		break;
-> +
-> +	default:
-> +		dev_err(data->dev, "invalid mode configuration\n");
-> +		return -EINVAL;
-And with the enum type you shouldn't need a default.
-
-> +	}
-> +
-> +	data->wr_regs[TLV493D_WR_REG_MODE1] |=3D mode1_cfg;
-> +	data->wr_regs[TLV493D_WR_REG_MODE2] |=3D mode2_cfg;
-> +
-> +	return tlv493d_write_all_regs(data);
-> +}
-> +
-> +static s16 tlv493d_get_channel_data(u8 *b, u8 ch)
-Use the enum.=20
-> +{
-> +	if (!b)
-> +		return -EINVAL;
-Unnecessary check
-> +
-> +	u16 val =3D 0;
-Variable declarations at the top of scope unless strong reason to do otherw=
-ise
-(only normally done for auto cleanup)
-> +
-> +	switch (ch) {
-> +	case TLV493D_AXIS_X:
-> +		val =3D FIELD_GET(TLV493D_BX_MAG_X_AXIS_MSB, b[TLV493D_RD_REG_BX]) << =
-4 |
-> +			FIELD_GET(TLV493D_BX2_MAG_X_AXIS_LSB, b[TLV493D_RD_REG_BX2]) >> 4;
-> +		break;
-> +	case TLV493D_AXIS_Y:
-> +		val =3D FIELD_GET(TLV493D_BY_MAG_Y_AXIS_MSB, b[TLV493D_RD_REG_BY]) << =
-4 |
-> +			FIELD_GET(TLV493D_BX2_MAG_Y_AXIS_LSB, b[TLV493D_RD_REG_BX2]);
-> +		break;
-> +	case TLV493D_AXIS_Z:
-> +		val =3D FIELD_GET(TLV493D_BZ_MAG_Z_AXIS_MSB, b[TLV493D_RD_REG_BZ]) << =
-4 |
-> +			FIELD_GET(TLV493D_BZ2_MAG_Z_AXIS_LSB, b[TLV493D_RD_REG_BZ2]);
-> +		break;
-> +	case TLV493D_TEMPERATURE:
-> +		val =3D FIELD_GET(TLV493D_TEMP_TEMP_MSB, b[TLV493D_RD_REG_TEMP]) << 8 |
-> +			FIELD_GET(TLV493D_TEMP2_TEMP_LSB, b[TLV493D_RD_REG_TEMP2]);
-> +		break;
-> +	default:
-> +		return -EINVAL;
-And with the enum, there will be no need to have a default.
-Not to mention passing -EINVAL through an s16 is unusual and I doubt wise.
-
-> +	}
-> +
-> +	return sign_extend32(val, 11);
-> +}
-> +
-> +static int tlv493d_get_measurements(struct tlv493d_data *data, s16 *x, s=
-16 *y,
-> +				s16 *z, s16 *t)
-> +{
-> +	u8 buff[7] =3D {};
-> +	int err, ret;
-> +	struct tlv493d_mode *mode;
-> +
-> +	if (!data)
-> +		return -EINVAL;
-> +
-> +	guard(mutex)(&data->lock);
-> +
-> +	ret =3D pm_runtime_resume_and_get(data->dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	mode =3D &tlv493d_mode_info[data->mode];
-> +
-> +	/*
-> +	 * Poll until data is valid,
-> +	 * For a valid data TLV493D_TEMP_CHANNEL bit of TLV493D_RD_REG_TEMP sho=
-uld be set to 0.
-> +	 * The sampling time depends on the sensor mode. poll 3x the time of th=
-e sampling time.
-> +	 */
-> +	ret =3D read_poll_timeout(i2c_master_recv, err, err ||
-> +			FIELD_GET(TLV493D_TEMP_CHANNEL, buff[TLV493D_RD_REG_TEMP]) =3D=3D 0,
-> +			mode->sleep_us, (3 * mode->sleep_us), false, data->client, buff,
-> +			ARRAY_SIZE(buff));
-> +	if (ret) {
-> +		dev_err(data->dev, "i2c read poll timeout, error:%d\n", ret);
-> +		goto out;
-> +	}
-> +	if (err < 0) {
-> +		dev_err(data->dev, "i2c read data failed, error:%d\n", err);
-> +		ret =3D err;
-> +		goto out;
-> +	}
-> +
-> +	*x =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_X);
-> +	*y =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_Y);
-> +	*z =3D tlv493d_get_channel_data(buff, TLV493D_AXIS_Z);
-> +	*t =3D tlv493d_get_channel_data(buff, TLV493D_TEMPERATURE);
-> +
-> +out:
-> +	pm_runtime_mark_last_busy(data->dev);
-I've just rebased (mid merge window so i'll do it again on rc1) and now
-have the version of pm_runtime_put_autosuspend() that internally calls
-pm_runtime_mark_last_busy().
-
-So please drop the line above if you need to do a v3.
-=20
-> +	pm_runtime_put_autosuspend(data->dev);
-> +	return ret;
-> +}
-
-> +static int tlv493d_read_raw(struct iio_dev *indio_dev,
-> +			const struct iio_chan_spec *chan, int *val,
-> +			int *val2, long mask)
-> +{
-> +	struct tlv493d_data *data =3D iio_priv(indio_dev);
-> +	s16 x, y, z, t;
-> +	int ret;
-> +
-> +	switch (mask) {
-> +	case IIO_CHAN_INFO_RAW:
-> +		ret =3D tlv493d_get_measurements(data, &x, &y, &z, &t);
-> +		if (ret)
-> +			return ret;
-> +
-> +		/* Return raw values for requested channel */
-> +		switch (chan->address) {
-> +		case TLV493D_AXIS_X:
-> +			*val =3D x;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_AXIS_Y:
-> +			*val =3D y;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_AXIS_Z:
-> +			*val =3D z;
-> +			return IIO_VAL_INT;
-> +		case TLV493D_TEMPERATURE:
-> +			*val =3D t;
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_SCALE:
-> +		switch (chan->type) {
-> +		case IIO_MAGN:
-> +			/*
-> +			 * Magnetic field scale: 0.0098 mTesla (i.e. 9.8 =C2=B5T)
-> +			 * Magnetic filed in Guass: mT * 10 =3D 0.098.
-> +			 */
-> +			*val =3D 98;
-> +			*val2 =3D 1000;
-> +			return IIO_VAL_FRACTIONAL;
-> +		case IIO_TEMP:
-> +			/*
-> +			 * Temperature scale: 1.1 =C2=B0C per LSB, expressed as 1100 m=C2=B0C
-> +			 * Returned as integer for IIO core to apply:
-> +			 * temp =3D (raw + offset) * scale
-> +			 */
-> +			*val =3D 1100;
-> +			return IIO_VAL_INT;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +	case IIO_CHAN_INFO_OFFSET:
-> +		switch (chan->type) {
-> +		case IIO_TEMP:
-> +			/*
-> +			 * Temperature offset includes sensor-specific raw offset
-> +			 * plus compensation for +25=C2=B0C bias in formula.
-> +			 * offset =3D -raw_offset + (25000 / 1100)
-> +			 * -340 + 22.72 =3D -317.28
-> +			 */
-> +			*val =3D -31728;
-> +			*val2 =3D 100;
-> +			return IIO_VAL_FRACTIONAL;
-> +		default:
-> +			return -EINVAL;
-> +		}
-> +
-> +	default:
-> +		return -EINVAL;
-> +	}
-> +
-> +	return 0;
-
-Can you get here? If not drop this.  Compilers are very good at complaining=
- if
-code changes later such that we should add this back.
-
-> +}
-
-> +static const struct iio_info tlv493d_info =3D {
-> +	.read_raw =3D tlv493d_read_raw,
-> +};
-> +
-> +static const struct iio_buffer_setup_ops tlv493d_setup_ops =3D { NULL };
-
-No need specify that NULL. Due to some odd quirks of compiler specific
-handling and C spec evolution (none of which apply to the kernel because
-we carefully choose build options) that is actually less likely to do what
-you want than =3D { };
-
-
-
-> +
-> +static const unsigned long tlv493d_scan_masks[] =3D { GENMASK(3, 0), 0 };
-> +
-> +static int tlv493d_probe(struct i2c_client *client)
-> +{
-> +	struct device *dev =3D &client->dev;
-> +	struct iio_dev *indio_dev;
-> +	struct tlv493d_data *data;
-> +	int ret;
-> +
-> +	indio_dev =3D devm_iio_device_alloc(dev, sizeof(*data));
-> +	if (!indio_dev)
-> +		return -ENOMEM;
-> +
-> +	data =3D iio_priv(indio_dev);
-> +	data->dev =3D dev;
-> +	data->client =3D client;
-> +	i2c_set_clientdata(client, indio_dev);
-> +
-> +	ret =3D devm_mutex_init(dev, &data->lock);
-> +	if (ret)
-> +		return ret;
-> +
-> +	ret =3D devm_regulator_get_enable(dev, "vdd");
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to enable regulator\n");
-> +
-> +	/*
-> +	 * Setting Sensor default operating mode as Master Controlled mode as
-> +	 * it performs measurement cycle on-request only and stays in Power-Down
-> +	 * mode until next cycle is initiated.
-> +	 */
-> +	data->mode =3D TLV493D_OP_MODE_MASTERCONTROLLED;
-> +	ret =3D tlv493d_init(data);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "failed to initialize\n");
-> +
-> +	indio_dev->info =3D &tlv493d_info;
-> +	indio_dev->modes =3D INDIO_DIRECT_MODE;
-> +	indio_dev->name =3D client->name;
-> +	indio_dev->channels =3D tlv493d_channels;
-> +	indio_dev->num_channels =3D ARRAY_SIZE(tlv493d_channels);
-> +	indio_dev->available_scan_masks =3D tlv493d_scan_masks;
-> +
-> +	ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
-> +			iio_pollfunc_store_time, tlv493d_trigger_handler,
-> +			&tlv493d_setup_ops);
-Similar to below no alignment. Something like;
-	ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
-					      iio_pollfunc_store_time,
-					      tlv493d_trigger_handler,
-					      &tlv493d_setup_ops);
-
-If you do have a case where the line ends up very long with this style, then
-indent only one tab more than line above. If that applied here it would be.
-
-	ret =3D devm_iio_triggered_buffer_setup(dev, indio_dev,
-		iio_pollfunc_store_time, tlv493d_trigger_handler,
-		&tlv493d_setup_ops);
-
-
-
-> +	if (ret < 0)
-> +		return dev_err_probe(dev, ret, "iio triggered buffer setup failed\n");
-> +
-> +	ret =3D pm_runtime_set_active(dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	ret =3D devm_pm_runtime_enable(dev);
-> +	if (ret < 0)
-> +		return ret;
-> +
-> +	pm_runtime_get_noresume(dev);
-> +	pm_runtime_set_autosuspend_delay(dev, 500);
-> +	pm_runtime_use_autosuspend(dev);
-> +
-> +	pm_runtime_mark_last_busy(dev);
-> +	pm_runtime_put_autosuspend(dev);
-> +
-> +	ret =3D devm_iio_device_register(dev, indio_dev);
-> +	if (ret)
-> +		return dev_err_probe(dev, ret, "iio device register failed\n");
-> +
-> +	return 0;
-> +}
-> +
-> +static int tlv493d_runtime_suspend(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct tlv493d_data *data =3D iio_priv(indio_dev);
-> +
-> +	return tlv493d_set_operating_mode(data, TLV493D_OP_MODE_POWERDOWN);
-> +}
-> +
-> +static int tlv493d_runtime_resume(struct device *dev)
-> +{
-> +	struct iio_dev *indio_dev =3D dev_get_drvdata(dev);
-> +	struct tlv493d_data *data =3D iio_priv(indio_dev);
-
-Trivial but you could do
-	struct tlv493d_data *data =3D iio_priv(dev_get_drvdata(dev));
-with no real loss of readability.
-
-> +
-> +	return tlv493d_set_operating_mode(data, data->mode);
-> +}
-> +
-> +static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops,
-> +			tlv493d_runtime_suspend, tlv493d_runtime_resume, NULL);
-Preferred wrapping here is
-static DEFINE_RUNTIME_DEV_PM_OPS(tlv493d_pm_ops, tlv493d_runtime_suspend,
-				 tlv493d_runtime_resume, NULL);
-
-So go nearer 80 chars on first line and align second line below the paramet=
-ers
-on the first line.
-
-Jonathan
+Best regards,
+-- 
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
