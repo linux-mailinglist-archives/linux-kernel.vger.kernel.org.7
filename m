@@ -1,378 +1,222 @@
-Return-Path: <linux-kernel+bounces-754125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AAE7B18E5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:13:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C0A2B18E62
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:19:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B76DAA24B5
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:13:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B95EA189D8F0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:19:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A841222259D;
-	Sat,  2 Aug 2025 12:13:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77AED222566;
+	Sat,  2 Aug 2025 12:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zi2E7PPd"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xLVncpV1";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="eQbvVwAN"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A56C914F70
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:13:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 930EC20298E;
+	Sat,  2 Aug 2025 12:18:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754136821; cv=none; b=sOa9AgsyYQ4gUd7NATpgPOKTvP8zCozrpSwEUsfT4fdzfVnPxxdn2e4c/iMSK6KVIVXT5cyUGrKWtUiyeB1jDC2wXHhDGlQsrYQgDtsctV9Wt/p29hjJZsGTk7b1sd6Gp/KD7SJemJ0qbEXwcHeLru2qpLc62mNitbCjCN2UGqQ=
+	t=1754137139; cv=none; b=krDgJojJCz/JJQa1/CdFGn7Y5z24UAIIzN7AJtzdXBcQ/WqOSKITXIhduhDcUYO9m7nV5YNmHZFJ3L9k4xMvtWiUWQRfEuazuYqvKWBRokxg4+dY8RwFmENqYqgyCH+suHgDLbmvVDrGMXONCORJYYVw7uvC4jZboOpifNQ4b04=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754136821; c=relaxed/simple;
-	bh=t38Q7KWSoJwlT2wB4qszB1smAtX6InmdFzqQ9sOp9oc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mt1WKM9ehAU8N8Ydi15hJtmHHtGnV/241E68dCWpZkDUddyICFLG2QtgGcddZNFrEQzqYVDYT9oqhnJxE34MUGqwA86nbSFU2ISMCaO03f5iL5UtSojfGtbypAWWKdoYDQYV+2C5rmNnHs2dxeRL4pDBGmFuAZMLQa5czyOCIy0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zi2E7PPd; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754136818;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1754137139; c=relaxed/simple;
+	bh=6DIUdeH3GipugXwPd9A8bUmRgY7x3wuy0vTMfsev7K4=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=GWjc6hU0bv9UdLBDd8pRqJKHyNsPAJDq/Geaj+hIwlHEgouNU+wbydFWSvyLmWEV3bJ4hhDLNlQCuLgicyMoMDZAo/7LcecPQdjvl+afi7W2S0G99agQd+5OoLHkeRY130eNpPI7iZofSnLgzR/ooFzwgHjPyP0i1QFDPhBWKz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xLVncpV1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=eQbvVwAN; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 02 Aug 2025 12:18:54 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754137135;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=xyp8m8lS9VhgQmQLaOoHjEiaPk30EpYo8qfbtcybK1Q=;
-	b=Zi2E7PPdYmyy7hvEbDN43VvtF1JE5QMbAbDggBoIrisqtfGtXp90L9BReRtH6RTDUjU4ao
-	nTa6VyQZc1hKHqhQvJhHnkcBWuh7u4DfnZs2VMcMgQr8yBJjqkPQkMHxWL1sQP3aV+IKEG
-	srbzcq0WPBTxiMHBXeD2WqQHiQPIN9s=
-Received: from mail-lf1-f72.google.com (mail-lf1-f72.google.com
- [209.85.167.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-180-LU-mofRuM1q6eCIJ9NIDmw-1; Sat, 02 Aug 2025 08:13:37 -0400
-X-MC-Unique: LU-mofRuM1q6eCIJ9NIDmw-1
-X-Mimecast-MFC-AGG-ID: LU-mofRuM1q6eCIJ9NIDmw_1754136815
-Received: by mail-lf1-f72.google.com with SMTP id 2adb3069b0e04-55b8bd4846aso1037668e87.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:13:36 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754136815; x=1754741615;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xyp8m8lS9VhgQmQLaOoHjEiaPk30EpYo8qfbtcybK1Q=;
-        b=sWkAKmXAd656wR7CVbwGZS7QpXRx8sg4oP3zjjKmU5i++8p9d5G3kkU+JmNRAkakTe
-         FS/zXiqns/KFrpgYlhxxDXE9ZGyaGRKoYVm4ytUGIOGDIcVIPKOe3KTwbUrf5h0Z4592
-         gPBG+SIhsbrFNnaX8NLS6koIh7AQ+ejunejiga+eEbRkJOOEMkWkQ4dwG7oBMqaajyPQ
-         jrt3H2lSi92QgCaesu8YBxpnXmtvseOy+x6es05J8un+hlFOc89LcWLrVfmmSMb8wLbr
-         yvyIsHhq3g92J0ocZWhr59InvkqDNaAXNSMIHiPgBHF8FYfaGHEni7nQF3k2Zc2qaxDn
-         hLig==
-X-Forwarded-Encrypted: i=1; AJvYcCW5Wb1akFe9Edpx6yiQopLtbi5zsfO47KAp68MUAx/hrPv3p2ROvu/ssKqRYyUfYYt3DkuJpxY8psoG+T0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwP4Ob81EuKUwtv7Ibd+NhWPaaCSBw3UNCHg4zX0GR0/FxdAEUD
-	r7uGDzzEssW0zWekaf9E3if7SMOqVGH5MK5sr6obd8Isawyp8WpF600XLTT8ENLzFOW8y6WZuyy
-	0uFJGpIz4js6nvH5hut1W35JlRf4UyO8f6VuEoILpdy9nlpitstjCklcrhn6xkPGL
-X-Gm-Gg: ASbGncu348X9QU0PPSWdhO/1HqVZa/pYLV6GMpi7A+zZ4vMpwwciag4Lic+0K5tCTsI
-	s23sLLWJUf/KNLUaiJx2lrfF7N8V7Q4ZIvImjliS++pM0puW8gEAOozL2X3C9ry2u+L6Id2E+eR
-	8Ynhdo+iGn9xShuBY7HQ5hEp2e9sXQ6hvp7fYpopnzKWWiCd83OlAPSTwrntQ11QvSJbsAwvrrQ
-	ulsIZot6YfXx3jmCrBiU/pSZlEUkChflo8vkETCiEErwdfAlS7fNuCzfPKl37LZwTtD4/3EQZIh
-	+C5TwKuI9IeicV2yjJ98hW8bcO2q0YS8Vf3BfEE9L/VQEc55G4dQZD0cLdz6lhMKdQ==
-X-Received: by 2002:a05:6512:4012:b0:55b:90ec:6ed8 with SMTP id 2adb3069b0e04-55b97b985a5mr752760e87.56.1754136815205;
-        Sat, 02 Aug 2025 05:13:35 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHA7zdLNVZmeXzpW0GFByMMenAAShU9aB3wWw8n3CAeoSpzy34PgleHh6NJEtOiykr5mWWPvw==
-X-Received: by 2002:a05:6512:4012:b0:55b:90ec:6ed8 with SMTP id 2adb3069b0e04-55b97b985a5mr752730e87.56.1754136814671;
-        Sat, 02 Aug 2025 05:13:34 -0700 (PDT)
-Received: from [192.168.1.86] (85-23-48-6.bb.dnainternet.fi. [85.23.48.6])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bd28sm972518e87.19.2025.08.02.05.13.33
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 05:13:33 -0700 (PDT)
-Message-ID: <920a4f98-a925-4bd6-ad2e-ae842f2f3d94@redhat.com>
-Date: Sat, 2 Aug 2025 15:13:33 +0300
+	bh=cSfzL0044dJYqJDgecNU2bg1SmEs9qIHmfQekYk0Luc=;
+	b=xLVncpV1PUxgmBYtxsBfc74RJ9441xYCadL9J0TIsK3dR/b+hV7y3ylPKFRWCqjf9DBf7u
+	DU05jxUJcLXDADUcWzo238MrrTkXp0/zfQuNftwOaw4k4+TXZAVD6x7hMX8QeWErTDMMEL
+	grwXdd80rU6SlknebB+H05eaht19+csasY7Ic8gGVD1CgfEvUGZ2DVqu3zMundi/W6w0OC
+	8JRjzvUIzppGcDo+y6OPDHDZTW5+tYsrrzzrvdDyr5XDF5Q/hO/hS08bwlb2C77wvFt7eT
+	Zc1TAbSOdOKFQ8Pqlhs7CMhNUzLLabtyfk1cFnyyf//2Z2dCLixHyrpc0Xj5ng==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754137135;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=cSfzL0044dJYqJDgecNU2bg1SmEs9qIHmfQekYk0Luc=;
+	b=eQbvVwANQ2phu2PHMWQePkY4IphWF1WGEtBpb6RGDXl5PmSIBhDoajtUOxhjc/fNS9TcfG
+	rJKHkQOaIe3HhbAQ==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/irq: Plug vector setup race
+Cc: Hogan Wang <hogan.wang@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <draft-87ikjhrhhh.ffs@tglx>
+References: <draft-87ikjhrhhh.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [v2 02/11] mm/thp: zone_device awareness in THP handling code
-To: Balbir Singh <balbirs@nvidia.com>, Zi Yan <ziy@nvidia.com>
-Cc: David Hildenbrand <david@redhat.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, Karol Herbst <kherbst@redhat.com>,
- Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- =?UTF-8?B?SsOpcsO0bWUgR2xpc3Nl?= <jglisse@redhat.com>,
- Shuah Khan <shuah@kernel.org>, Barry Song <baohua@kernel.org>,
- Baolin Wang <baolin.wang@linux.alibaba.com>,
- Ryan Roberts <ryan.roberts@arm.com>, Matthew Wilcox <willy@infradead.org>,
- Peter Xu <peterx@redhat.com>, Kefeng Wang <wangkefeng.wang@huawei.com>,
- Jane Chu <jane.chu@oracle.com>, Alistair Popple <apopple@nvidia.com>,
- Donet Tom <donettom@linux.ibm.com>, Matthew Brost <matthew.brost@intel.com>,
- Francois Dugast <francois.dugast@intel.com>,
- Ralph Campbell <rcampbell@nvidia.com>
-References: <20250730092139.3890844-1-balbirs@nvidia.com>
- <6291D401-1A45-4203-B552-79FE26E151E4@nvidia.com>
- <b62234fc-051f-4b2a-b7da-0c0959fb269b@redhat.com>
- <8E2CE1DF-4C37-4690-B968-AEA180FF44A1@nvidia.com>
- <2308291f-3afc-44b4-bfc9-c6cf0cdd6295@redhat.com>
- <9FBDBFB9-8B27-459C-8047-055F90607D60@nvidia.com>
- <11ee9c5e-3e74-4858-bf8d-94daf1530314@redhat.com>
- <b5fa0989-a64a-4c91-ac34-6fb29ee6d132@redhat.com>
- <EC99D49E-86FF-4A50-A1AA-FC43A7D3716C@nvidia.com>
- <14aeaecc-c394-41bf-ae30-24537eb299d9@nvidia.com>
- <e5dd3f46-c063-45ff-8be7-64ac92534985@redhat.com>
- <71c736e9-eb77-4e8e-bd6a-965a1bbcbaa8@nvidia.com>
- <edbe38d4-3489-4c83-80fb-dc96a7684294@redhat.com>
- <e8f867cf-67f1-413a-a775-835a32861164@nvidia.com>
- <ee06bd19-4831-493f-ae88-f1d8a2fe9fa4@redhat.com>
- <47BC6D8B-7A78-4F2F-9D16-07D6C88C3661@nvidia.com>
- <2406521e-f5be-474e-b653-e5ad38a1d7de@redhat.com>
- <A813C8B0-325E-44F0-8E30-3D0CBACB6BE1@nvidia.com>
- <ab46303e-a891-4f48-8a86-964155a1073d@nvidia.com>
-Content-Language: en-US
-From: =?UTF-8?Q?Mika_Penttil=C3=A4?= <mpenttil@redhat.com>
-In-Reply-To: <ab46303e-a891-4f48-8a86-964155a1073d@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Message-ID: <175413713418.1420.12184653889719341688.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+The following commit has been merged into the x86/urgent branch of tip:
 
-On 8/2/25 13:37, Balbir Singh wrote:
-> FYI:
->
-> I have the following patch on top of my series that seems to make it work
-> without requiring the helper to split device private folios
->
-I think this looks much better!
+Commit-ID:     69adc077da4c247dd39a8a0e3a898a25924e98d0
+Gitweb:        https://git.kernel.org/tip/69adc077da4c247dd39a8a0e3a898a25924=
+e98d0
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Thu, 24 Jul 2025 12:49:30 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 02 Aug 2025 14:09:38 +02:00
 
-> Signed-off-by: Balbir Singh <balbirs@nvidia.com>
-> ---
->  include/linux/huge_mm.h |  1 -
->  lib/test_hmm.c          | 11 +++++-
->  mm/huge_memory.c        | 76 ++++-------------------------------------
->  mm/migrate_device.c     | 51 +++++++++++++++++++++++++++
->  4 files changed, 67 insertions(+), 72 deletions(-)
->
-> diff --git a/include/linux/huge_mm.h b/include/linux/huge_mm.h
-> index 19e7e3b7c2b7..52d8b435950b 100644
-> --- a/include/linux/huge_mm.h
-> +++ b/include/linux/huge_mm.h
-> @@ -343,7 +343,6 @@ unsigned long thp_get_unmapped_area_vmflags(struct file *filp, unsigned long add
->  		vm_flags_t vm_flags);
->  
->  bool can_split_folio(struct folio *folio, int caller_pins, int *pextra_pins);
-> -int split_device_private_folio(struct folio *folio);
->  int __split_huge_page_to_list_to_order(struct page *page, struct list_head *list,
->  		unsigned int new_order, bool unmapped);
->  int min_order_for_split(struct folio *folio);
-> diff --git a/lib/test_hmm.c b/lib/test_hmm.c
-> index 341ae2af44ec..444477785882 100644
-> --- a/lib/test_hmm.c
-> +++ b/lib/test_hmm.c
-> @@ -1625,13 +1625,22 @@ static vm_fault_t dmirror_devmem_fault(struct vm_fault *vmf)
->  	 * the mirror but here we use it to hold the page for the simulated
->  	 * device memory and that page holds the pointer to the mirror.
->  	 */
-> -	rpage = vmf->page->zone_device_data;
-> +	rpage = folio_page(page_folio(vmf->page), 0)->zone_device_data;
->  	dmirror = rpage->zone_device_data;
->  
->  	/* FIXME demonstrate how we can adjust migrate range */
->  	order = folio_order(page_folio(vmf->page));
->  	nr = 1 << order;
->  
-> +	/*
-> +	 * When folios are partially mapped, we can't rely on the folio
-> +	 * order of vmf->page as the folio might not be fully split yet
-> +	 */
-> +	if (vmf->pte) {
-> +		order = 0;
-> +		nr = 1;
-> +	}
-> +
->  	/*
->  	 * Consider a per-cpu cache of src and dst pfns, but with
->  	 * large number of cpus that might not scale well.
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 1fc1efa219c8..863393dec1f1 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -72,10 +72,6 @@ static unsigned long deferred_split_count(struct shrinker *shrink,
->  					  struct shrink_control *sc);
->  static unsigned long deferred_split_scan(struct shrinker *shrink,
->  					 struct shrink_control *sc);
-> -static int __split_unmapped_folio(struct folio *folio, int new_order,
-> -		struct page *split_at, struct xa_state *xas,
-> -		struct address_space *mapping, bool uniform_split);
-> -
->  static bool split_underused_thp = true;
->  
->  static atomic_t huge_zero_refcount;
-> @@ -2924,51 +2920,6 @@ static void __split_huge_zero_page_pmd(struct vm_area_struct *vma,
->  	pmd_populate(mm, pmd, pgtable);
->  }
->  
-> -/**
-> - * split_huge_device_private_folio - split a huge device private folio into
-> - * smaller pages (of order 0), currently used by migrate_device logic to
-> - * split folios for pages that are partially mapped
-> - *
-> - * @folio: the folio to split
-> - *
-> - * The caller has to hold the folio_lock and a reference via folio_get
-> - */
-> -int split_device_private_folio(struct folio *folio)
-> -{
-> -	struct folio *end_folio = folio_next(folio);
-> -	struct folio *new_folio;
-> -	int ret = 0;
-> -
-> -	/*
-> -	 * Split the folio now. In the case of device
-> -	 * private pages, this path is executed when
-> -	 * the pmd is split and since freeze is not true
-> -	 * it is likely the folio will be deferred_split.
-> -	 *
-> -	 * With device private pages, deferred splits of
-> -	 * folios should be handled here to prevent partial
-> -	 * unmaps from causing issues later on in migration
-> -	 * and fault handling flows.
-> -	 */
-> -	folio_ref_freeze(folio, 1 + folio_expected_ref_count(folio));
-> -	ret = __split_unmapped_folio(folio, 0, &folio->page, NULL, NULL, true);
-> -	VM_WARN_ON(ret);
-> -	for (new_folio = folio_next(folio); new_folio != end_folio;
-> -					new_folio = folio_next(new_folio)) {
-> -		zone_device_private_split_cb(folio, new_folio);
-> -		folio_ref_unfreeze(new_folio, 1 + folio_expected_ref_count(
-> -								new_folio));
-> -	}
-> -
-> -	/*
-> -	 * Mark the end of the folio split for device private THP
-> -	 * split
-> -	 */
-> -	zone_device_private_split_cb(folio, NULL);
-> -	folio_ref_unfreeze(folio, 1 + folio_expected_ref_count(folio));
-> -	return ret;
-> -}
-> -
->  static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->  		unsigned long haddr, bool freeze)
->  {
-> @@ -3064,30 +3015,15 @@ static void __split_huge_pmd_locked(struct vm_area_struct *vma, pmd_t *pmd,
->  				freeze = false;
->  			if (!freeze) {
->  				rmap_t rmap_flags = RMAP_NONE;
-> -				unsigned long addr = haddr;
-> -				struct folio *new_folio;
-> -				struct folio *end_folio = folio_next(folio);
->  
->  				if (anon_exclusive)
->  					rmap_flags |= RMAP_EXCLUSIVE;
->  
-> -				folio_lock(folio);
-> -				folio_get(folio);
-> -
-> -				split_device_private_folio(folio);
-> -
-> -				for (new_folio = folio_next(folio);
-> -					new_folio != end_folio;
-> -					new_folio = folio_next(new_folio)) {
-> -					addr += PAGE_SIZE;
-> -					folio_unlock(new_folio);
-> -					folio_add_anon_rmap_ptes(new_folio,
-> -						&new_folio->page, 1,
-> -						vma, addr, rmap_flags);
-> -				}
-> -				folio_unlock(folio);
-> -				folio_add_anon_rmap_ptes(folio, &folio->page,
-> -						1, vma, haddr, rmap_flags);
-> +				folio_ref_add(folio, HPAGE_PMD_NR - 1);
-> +				if (anon_exclusive)
-> +					rmap_flags |= RMAP_EXCLUSIVE;
-> +				folio_add_anon_rmap_ptes(folio, page, HPAGE_PMD_NR,
-> +						 vma, haddr, rmap_flags);
->  			}
->  		}
->  
-> @@ -4065,7 +4001,7 @@ static int __folio_split(struct folio *folio, unsigned int new_order,
->  	if (nr_shmem_dropped)
->  		shmem_uncharge(mapping->host, nr_shmem_dropped);
->  
-> -	if (!ret && is_anon)
-> +	if (!ret && is_anon && !folio_is_device_private(folio))
->  		remap_flags = RMP_USE_SHARED_ZEROPAGE;
->  
->  	remap_page(folio, 1 << order, remap_flags);
-> diff --git a/mm/migrate_device.c b/mm/migrate_device.c
-> index 49962ea19109..4264c0290d08 100644
-> --- a/mm/migrate_device.c
-> +++ b/mm/migrate_device.c
-> @@ -248,6 +248,8 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			 * page table entry. Other special swap entries are not
->  			 * migratable, and we ignore regular swapped page.
->  			 */
-> +			struct folio *folio;
-> +
->  			entry = pte_to_swp_entry(pte);
->  			if (!is_device_private_entry(entry))
->  				goto next;
-> @@ -259,6 +261,55 @@ static int migrate_vma_collect_pmd(pmd_t *pmdp,
->  			    pgmap->owner != migrate->pgmap_owner)
->  				goto next;
->  
-> +			folio = page_folio(page);
-> +			if (folio_test_large(folio)) {
-> +				struct folio *new_folio;
-> +				struct folio *new_fault_folio;
-> +
-> +				/*
-> +				 * The reason for finding pmd present with a
-> +				 * device private pte and a large folio for the
-> +				 * pte is partial unmaps. Split the folio now
-> +				 * for the migration to be handled correctly
-> +				 */
-> +				pte_unmap_unlock(ptep, ptl);
-> +
-> +				folio_get(folio);
-> +				if (folio != fault_folio)
-> +					folio_lock(folio);
-> +				if (split_folio(folio)) {
-> +					if (folio != fault_folio)
-> +						folio_unlock(folio);
-> +					ptep = pte_offset_map_lock(mm, pmdp, addr, &ptl);
-> +					goto next;
-> +				}
-> +
+x86/irq: Plug vector setup race
 
-The nouveau migrate_to_ram handler needs adjustment also if split happens.
+Hogan reported a vector setup race, which overwrites the interrupt
+descriptor in the per CPU vector array resulting in a disfunctional device.
 
-> +				/*
-> +				 * After the split, get back the extra reference
-> +				 * on the fault_page, this reference is checked during
-> +				 * folio_migrate_mapping()
-> +				 */
-> +				if (migrate->fault_page) {
-> +					new_fault_folio = page_folio(migrate->fault_page);
-> +					folio_get(new_fault_folio);
-> +				}
-> +
-> +				new_folio = page_folio(page);
-> +				pfn = page_to_pfn(page);
-> +
-> +				/*
-> +				 * Ensure the lock is held on the correct
-> +				 * folio after the split
-> +				 */
-> +				if (folio != new_folio) {
-> +					folio_unlock(folio);
-> +					folio_lock(new_folio);
-> +				}
+CPU0				CPU1
+				interrupt is raised in APIC IRR
+				but not handled
+  free_irq()
+    per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
 
-Maybe careful not to unlock fault_page ?
+  request_irq()			common_interrupt()
+  				  d =3D this_cpu_read(vector_irq[vector]);
 
-> +				folio_put(folio);
-> +				addr = start;
-> +				goto again;
-> +			}
-> +
->  			mpfn = migrate_pfn(page_to_pfn(page)) |
->  					MIGRATE_PFN_MIGRATE;
->  			if (is_writable_device_private_entry(entry))
+    per_cpu(vector_irq, CPU1)[vector] =3D desc;
 
---Mika
+    				  if (d =3D=3D VECTOR_SHUTDOWN)
+				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
 
+free_irq() cannot observe the pending vector in the CPU1 APIC as there is
+no way to query the remote CPUs APIC IRR.
+
+This requires that request_irq() uses the same vector/CPU as the one which
+was freed, but this also can be triggered by a spurious interrupt.
+
+Prevent this by reevaluating vector_irq under the vector lock, which is
+held by the interrupt activation code when vector_irq is updated.
+
+Interestingly enough this problem managed to be hidden for more than a
+decade.
+
+Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug=
+ retriggered irqs")
+Reported-by: Hogan Wang <hogan.wang@huawei.com>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Hogan Wang <hogan.wang@huawei.com>
+Link: https://lore.kernel.org/all/draft-87ikjhrhhh.ffs@tglx
+---
+ arch/x86/kernel/irq.c | 63 ++++++++++++++++++++++++++++++++----------
+ 1 file changed, 48 insertions(+), 15 deletions(-)
+
+diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
+index 9ed29ff..10721a1 100644
+--- a/arch/x86/kernel/irq.c
++++ b/arch/x86/kernel/irq.c
+@@ -256,26 +256,59 @@ static __always_inline void handle_irq(struct irq_desc =
+*desc,
+ 		__handle_irq(desc, regs);
+ }
+=20
+-static __always_inline int call_irq_handler(int vector, struct pt_regs *regs)
++static struct irq_desc *reevaluate_vector(int vector)
+ {
+-	struct irq_desc *desc;
+-	int ret =3D 0;
++	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
++
++	if (!IS_ERR_OR_NULL(desc))
++		return desc;
++
++	if (desc =3D=3D VECTOR_UNUSED)
++		pr_emerg_ratelimited("No irq handler for %d.%u\n", smp_processor_id(), vec=
+tor);
++	else
++		__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
++	return NULL;
++}
++
++static __always_inline bool call_irq_handler(int vector, struct pt_regs *reg=
+s)
++{
++	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
+=20
+-	desc =3D __this_cpu_read(vector_irq[vector]);
+ 	if (likely(!IS_ERR_OR_NULL(desc))) {
+ 		handle_irq(desc, regs);
+-	} else {
+-		ret =3D -EINVAL;
+-		if (desc =3D=3D VECTOR_UNUSED) {
+-			pr_emerg_ratelimited("%s: %d.%u No irq handler for vector\n",
+-					     __func__, smp_processor_id(),
+-					     vector);
+-		} else {
+-			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+-		}
++		return true;
+ 	}
+=20
+-	return ret;
++	/*
++	 * Reevaluate with vector_lock held to prevent a race against
++	 * request_irq() setting up the vector:
++	 *
++	 * CPU0				CPU1
++	 *				interrupt is raised in APIC IRR
++	 *				but not handled
++	 * free_irq()
++	 *   per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
++	 *
++	 * request_irq()		common_interrupt()
++	 *				  d =3D this_cpu_read(vector_irq[vector]);
++	 *
++	 * per_cpu(vector_irq, CPU1)[vector] =3D desc;
++	 *
++	 *				  if (d =3D=3D VECTOR_SHUTDOWN)
++	 *				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
++	 *
++	 * This requires that the same vector on the same target CPU is
++	 * handed out or that a spurious interrupt hits that CPU/vector.
++	 */
++	lock_vector_lock();
++	desc =3D reevaluate_vector(vector);
++	unlock_vector_lock();
++
++	if (!desc)
++		return false;
++
++	handle_irq(desc, regs);
++	return true;
+ }
+=20
+ /*
+@@ -289,7 +322,7 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
+ 	/* entry code tells RCU that we're not quiescent.  Check it. */
+ 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
+=20
+-	if (unlikely(call_irq_handler(vector, regs)))
++	if (unlikely(!call_irq_handler(vector, regs)))
+ 		apic_eoi();
+=20
+ 	set_irq_regs(old_regs);
 
