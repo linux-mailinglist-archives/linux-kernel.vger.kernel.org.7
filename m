@@ -1,153 +1,138 @@
-Return-Path: <linux-kernel+bounces-754200-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754202-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACEF6B18FAA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:44:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CAC42B18FAD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:49:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 630CF3BC4DA
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:44:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 003013BEAF7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:49:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4097A24A057;
-	Sat,  2 Aug 2025 18:44:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E1821C862F;
+	Sat,  2 Aug 2025 18:49:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U9vMzmrx"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="wH0yv1Y8"
+Received: from out-183.mta0.migadu.com (out-183.mta0.migadu.com [91.218.175.183])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439DB1A5B86
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 18:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF96E248895
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 18:49:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754160242; cv=none; b=r2C0mcxyQpkPfgdcMUBIMcm1Phzhp2fS0Mz3XZ+CLeLQ4I/mEX0V8JW3z7pV/Sdc35g+RwR9YvK0z7rdtGhj3czbWqFmjmpEXipCspQJWxTvuSG1t8X9c7nUl+SbsEnO2gio6vaZkOavEM+OIxa7/fK6hg5CoZ5DoY/70hZLhho=
+	t=1754160567; cv=none; b=BNH+pSMY7/DVu/Zru3YVbHHlB1xI+yZ2Sqju5jXsJ6kTboof4XT7IAznczL786Dpfnf6wOSEzrct3wf7VG6rAUjvLzKjgyxg+PS+3+p3COgZjvPHXMrefUVeE68mc9FexzFoWdOmVeZgvvFu19jl17cAM7Ea4qW3mO4+oAcwR58=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754160242; c=relaxed/simple;
-	bh=MEDjJ6IZHbO/pLdz03Pt41wZbLNceAm9tgy1am66PoE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=evdypnr///ykYEs4hXekd4aph61ckM0HmS168mPimnM/8kXwdxtLmy41v6jArPCtG+GlzAibBT/klwlhZ7P8n/Thm4kO0H1Zort2dfFsNP+1e9ywq0nNtgu5Fp1RENOXW9gKIMbt9pavLxMP5Su2Nzj4YoZf16ZT7wubT9QzJtY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U9vMzmrx; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso5501863a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 11:43:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1754160238; x=1754765038; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=C0eFAYHftl+u3oj1hj6FjhN5WfviUosYL+n2VwWadx4=;
-        b=U9vMzmrxadgNdsnr2Du1uDZ69eD+uIFQoKO6Q1XuGQd1jd+LoruZ3Swzj1tSLbR14Y
-         auCHvaX/3ghGwC71u66r1qL/XH+XXlk5NAb2wIUz5Xpvhq3XWc5Vw/szttrwLVY/XJgN
-         t3bPQWfJdF3NjnxtHmTQU9FRLOpZp2doYeZRo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754160238; x=1754765038;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C0eFAYHftl+u3oj1hj6FjhN5WfviUosYL+n2VwWadx4=;
-        b=B1npD+Nv7czkxpnvXwytu8wpMJao6evZ85RqpLylpIRww695qHin8D4EGieH6TI62G
-         KlwmZ1vL0tHapf9TD9NsOxnwcLbn9HkTSX8si9SnqEBSiYuBTCR/XeAKoTqI/CMh4Z1d
-         e5B/PnC1IXNM6q+rssuCRWrNXJx3+qOMlijQNMl1bAXVYs83mJcLDFpxdpfuWE+zjCZk
-         dqCX3eiA2AbLiOOTxqEz9+SNMxJoSDiJ24teIb/EWK5G1ZJd5BYRq2qFZx1+otPuCmvy
-         +ui3arlE3/al+MEH/M8YrYKxukwX0K+4nyRxvqUFEMtt00iWGKDYHIxL5C8qNlDdLTU/
-         2YrQ==
-X-Gm-Message-State: AOJu0Yz8Fq0deS+I6/OEOxUcq0e6VXTsPR/9p6BEmREa3P0bNJY2wTuH
-	Geh03KR031l3y+CP0vUCx7mfTjUo0hYwv2scC1V7vqZ0M5RkiWopvJaAha42Kl6j0MHcpCCu3gQ
-	2+vVkIbDr0A==
-X-Gm-Gg: ASbGncuBv0cZkdCuCvw5LdEmeLxHQtxtbPmSz2QL3aSKyKxhO5Z1t5Lw1duj4xrGtvb
-	86qj7jlebthIG8t4kcQLHtefAhMhCfK7A9hh0E0wVSRQiX0EdbauUqBVRi+B18RX8Ok5p+9cQJ3
-	TiglYPGIzGI1yF462vg8ojw45e5T+wf49Sng0jo/A10MdlqLiLMU0akMJnueB8PQDUUtvETKJhs
-	2wC0+4JqqdWWKgKyTvlnmGSo8hWbom2xB+EClFRbE3A0We8Ch4ffjUE9yGLQRlYvVDeErjZwdKM
-	GNeNAdW21wU6jEQB7ceKskUhJZA5iTJa+1CVW2fgwZTHDSOBQh85s5gazJyd5tp6/bB5OPqba7D
-	L7ZBGWB+fHqYiSfZn7JuNXRztBzE15dPph+uex6PRGqyAKxa1Nj//b5t18ht0yOzyZ4h5mXSB
-X-Google-Smtp-Source: AGHT+IE0l7X3g3WWQ08CIYrOHedFWbFCQ01t9Ck40I1uMDqmeotqNnWTEtPPwUyMarcPArdEQXQqMg==
-X-Received: by 2002:a05:6402:520a:b0:617:41ce:6fa0 with SMTP id 4fb4d7f45d1cf-61741ce6ff1mr441217a12.23.1754160238110;
-        Sat, 02 Aug 2025 11:43:58 -0700 (PDT)
-Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a911a5afsm4387436a12.65.2025.08.02.11.43.56
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 11:43:57 -0700 (PDT)
-Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso5501847a12.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 11:43:56 -0700 (PDT)
-X-Received: by 2002:a05:6402:1d32:b0:615:7e5b:7a23 with SMTP id
- 4fb4d7f45d1cf-615e6edd617mr2858724a12.8.1754160236621; Sat, 02 Aug 2025
- 11:43:56 -0700 (PDT)
+	s=arc-20240116; t=1754160567; c=relaxed/simple;
+	bh=70R+Ka6GrFK794f4b+fNmSpA1dewhiiKHIRrnBGaVhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oBG747zkycNP1D/8s//N8Rsk0h0zzwcjzATPHTFVMRnefodqSVUBvUJ2iMqVJtc9U5y1iSml/8gQ/K27sr2cUjuGKhmy4NEyXFwK1AjkWGZQSOO+FCGOKYr+h8BYFTmOwXiWdXL50aENg0Otu1dRdkJDncP1Wf1mGdPYlclvt6g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=wH0yv1Y8; arc=none smtp.client-ip=91.218.175.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Sat, 2 Aug 2025 14:49:05 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754160549;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=tyPdelSk5Qx6vby/aVW1/XXVLxtYnkZXvvvyOwbik/0=;
+	b=wH0yv1Y81G2c+/M2PsisKwKlds+O1pnm0GVth4v6AgQh/jdnFgVz/6udAIUt32fWi1MmW5
+	odrhCi4RwDa6ktFxrZ2ZDqiss2oXVao49fHTaVeKKYd+UaWtRZ9x4Ztz78lJPzSdutmpu/
+	/SRJkZRJDqh+5cce7FPcgCSx8tnUpH8=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Coly Li <colyli@kernel.org>
+Cc: Zhou Jifeng <zhoujifeng@kylinos.com.cn>, 
+	linux-bcache <linux-bcache@vger.kernel.org>, linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+Message-ID: <dkrr6obybksiq6p2purht5tvhktau2l2syemnvmtrpxlwfxmir@vca5yahzvniu>
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+ <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
+ <tencent_656F159830BC538C2D26CD68@qq.com>
+ <zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
+ <tencent_22DE1AC52BA931BD442CE823@qq.com>
+ <wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
+ <tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
+ <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aIcdTI3e04W_RdM_@gmail.com> <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
-In-Reply-To: <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sat, 2 Aug 2025 11:43:40 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wg7Ad6zjs8QdgDkS-8oJD2EbLK2Ne-WRo36ZXVHa=hmWw@mail.gmail.com>
-X-Gm-Features: Ac12FXyvjziRl1ca9AAwZkZOSpY9EC0m8uPhlZ_x9NozSwq8eqozJnbLh9TyzoA
-Message-ID: <CAHk-=wg7Ad6zjs8QdgDkS-8oJD2EbLK2Ne-WRo36ZXVHa=hmWw@mail.gmail.com>
-Subject: Re: [GIT PULL] Scheduler updates for v6.17
-To: Ingo Molnar <mingo@kernel.org>
-Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>, 
-	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Tejun Heo <tj@kernel.org>, 
-	Valentin Schneider <vschneid@redhat.com>, Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, 30 Jul 2025 at 20:31, Linus Torvalds
-<torvalds@linux-foundation.org> wrote:
->
-> On Sun, 27 Jul 2025 at 23:48, Ingo Molnar <mingo@kernel.org> wrote:
+On Sun, Aug 03, 2025 at 01:29:55AM +0800, Coly Li wrote:
+> On Fri, Aug 01, 2025 at 02:10:12PM +0800, Zhou Jifeng wrote:
+> > On Fri, 1 Aug 2025 at 11:42, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > >
+> > > On Fri, Aug 01, 2025 at 11:30:43AM +0800, Zhou Jifeng wrote:
+> > > > On Fri, 1 Aug 2025 at 10:37, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > > >
+> > > > > On Fri, Aug 01, 2025 at 10:27:21AM +0800, Zhou Jifeng wrote:
+> > > > > > In the writeback mode, the current bcache code uses the
+> > > > > > REQ_OP_WRITE operation to handle dirty data, and clears the bkey
+> > > > > > dirty flag in the btree during the bio completion callback. I think
+> > > > > > there might be a potential risk: if in the event of an unexpected
+> > > > > > power outage, the data in the HDD hardware cache may not have
+> > > > > > had time to be persisted, then the data in the HDD hardware cache
+> > > > > > that is pending processing may be lost. Since at this time the bkey
+> > > > > > dirty flag in the btree has been cleared, the data status recorded
+> > > > > > by the bkey does not match the actual situation of the SSD and
+> > > > > > HDD.
+> > > > > > Am I understanding this correctly?
+> > > > >
+> > > > > For what you're describing, we need to make sure the backing device is
+> > > > > flushed when we're flushing the journal.
+> > > > >
+> > > > > It's possible that this isn't handled correctly in bcache; bcachefs
+> > > > > does, and I wrote that code after bcache - but the bcache version would
+> > > > > look quite different.
+> > > > >
+> > > > > You've read that code more recently than I have - have you checked for
+> > > > > that?
+> > > >
+> > > > In the `write_dirty_finish` function, there is an attempt to update the
+> > > > `bkey` status, but I did not observe any logging writing process. In the
+> > > > core function `journal_write_unlocked` of bcache for writing logs, I
+> > > > also couldn't find the code logic for sending a FLUSH command to the
+> > > > backend HDD.
+> > >
+> > > The right place for it would be in the journal code: before doing a
+> > > journal write, issue flushes to the backing devices.
+> > >
+> > > Can you check for that?
+> > >
+> > 
+> > I checked and found that there was no code for sending a flush request
+> > to the backend device before the execution log was written. Additionally,
+> > in the callback function after the dirty data was written back, when it
+> > updated the bkey, it did not insert this update into the log.
 > >
-> > PSI:
-> >
-> >  - Improve scalability by optimizing psi_group_change() cpu_clock() usage
-> >    (Peter Zijlstra)
->
-> I suspect this is buggy.
->
-> Maybe this is coincidence, but that sounds very unlikely:
->
->   watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [kworker/0:3:7996]
->   CPU#0 Utilization every 4s during lockup:
+> 
+> It doesn't have to. If the previous dirty version of the key is on cache device
+> already, and power off happens, even the clean version of the key is gone, the
+> dirty version and its data are all valid. If the LBA range of this key is
+> allocated to a new key, a GC must have alrady happened, and the dirty key is
+> invalid due to bucket generation increased. So don't worry, the clean key is
+> unncessary to go into journal in the writeback scenario.
+>  
+> IMHO, you may try to flush backing device in a kworker before calling
+> set_gc_sectors() in bch_gc_thread(). The disk cache can be flushed in time
+> before the still-dirty-on-disk keys are invalidated by increase bucket key
+> gen. And also flushing backing device after searched_full_index becomes
+> true in the writeback thread main loop (as you did now).
+> 
+> Flushing backing device after read_dirty() returns is too heavy, event with
+> the flush hint keys. And the flushing operations are unnecessary before the
+> keys are reclaimed by garbage collaction.
 
-Happened again this morning, and as far as I can tell the machine was
-just sitting there idle at the desktop.
+No, a flush is necessary.
 
-I've only seen this on my laptop, so maybe it's some hw dependency,
-but it *really* smells like commit 570c8efd5eb7 ("sched/psi: Optimize
-psi_group_change() cpu_clock() usage") from the symptoms. It's
-literally hanging on that psi_read_begin(), which is that
-read_seqcount_begin() on that new per-cpu psi_seq counter.
-
-Now, I'm not seeing how it could possibly trigger - I looked through
-all the psi_write_begin() users, and they all *seem* to be (a) under
-rq_lock_irq and (b) paired with a psi_write_end() with the same cpu.
-
-But the symptoms have been very consistent both times it happened: the
-RIP always a watchdog in collect_percpu_times(), always at that
-'pause' in the "wait for seqcount to be even".
-
-It's typically been in that psi_avgs_work kworker, but once it was
-systemd-oomd that apparently had done a "read()" on it, so it went
-through "psi_show()" instead.
-
-Now, the *writers* all take the proper locks, but the readers don't.
-And my laptop has CONFIG_PREMPT_VOLUNTARY in its config (random old
-setting).
-
-I'm not seeing why that would matter, since the seq count should
-become even at some point, but it does mean that the seqcount read
-loop looks like it's an endless kernel loop when it triggers. I don't
-see how that would make a difference, since the seqcount should become
-even on the writer side and the writers shouldn't be preempted and get
-some kind of priority inversion with a reader that doesn't go away,
-but *if* there is some bug in this area, maybe that config is why I'm
-seeing it and others aren't?
-
-Any ideas, people?
-
-              Linus
+And it's not after read_dirty, the flush just needs to happen before
+bcache does its journal commit.
 
