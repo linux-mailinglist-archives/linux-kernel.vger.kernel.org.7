@@ -1,165 +1,145 @@
-Return-Path: <linux-kernel+bounces-753960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 743FDB18AC1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:31:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E4A5AB18AD2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B5D564245
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:31:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 822C95659CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40E1D7E37;
-	Sat,  2 Aug 2025 05:31:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7825F1DF755;
+	Sat,  2 Aug 2025 05:45:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zl2DMW9D"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ok28SDrJ"
+Received: from lelvem-ot02.ext.ti.com (lelvem-ot02.ext.ti.com [198.47.23.235])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C7367;
-	Sat,  2 Aug 2025 05:31:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD70E1CAA7D;
+	Sat,  2 Aug 2025 05:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.235
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754112699; cv=none; b=C7oWightZfJ9keLSRvLz0l0ynGc89atgujaCFb1LExrZKCONhcRyK+O6ps9xjOcOlr8Xn0pdfX4Gfh4GBSDDt879NsDEWX0eqsigzVJFwQa+48w4Hev69tvFkXxBtTUSIN0kBWDiePWJDLSLPG64nHVcgYSvlbY97RMO2uN4+hY=
+	t=1754113505; cv=none; b=kagJMkeQZau/ggaD+EuK63Tvy1plg52P18uppyTKNsrAfwsKo9te1Weq3/bhEJ4+W3Wr7UAu7UVZ13AqPCy37wR63Dg1tbZqcsWDqcQk+zrA50KhMLjTQ3icJ8chFoPyjCs03j3O7LJuUvwbWqTb9p1dJnPda0faKEWwonxQeVU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754112699; c=relaxed/simple;
-	bh=ZRLdGwSqLnclEoXX/4J/rmkHU+mE/M/nSHHqiMZELEk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BFTeWi0z2WBuc77kOGNXlGMoW+l8Tdr99xlC0Kss4Am0JV8c4xT5IWTRHJ6nXX1JIdDp4F/TqRiHQ1QoTD2AoxGU/dMoF1VhH1nW9td/YA5Cy59ExW0xRH2lD4RLmMMj5AiHFS4n66X3/KHOaTqM6Gaxpd5b3gDId1un8IY7/r8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zl2DMW9D; arc=none smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754112697; x=1785648697;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=ZRLdGwSqLnclEoXX/4J/rmkHU+mE/M/nSHHqiMZELEk=;
-  b=Zl2DMW9DjQ5JJehFSx3fv7ypqkKVirCjz3caxU2fuif5HUOJnvPmfBnx
-   kcT9NP91mXn1KSGh/wtGgIW1yldbCfACt2+gHw/FUIb9cIfR+Lz/ZDCLp
-   +hICCFlYzSkN5S6TvmvkoibuSKAh7ZDI9tEkjSp9yvsxqZNbQUzP5VWH0
-   SoQOWeFrxkOm3bmF6rbqkOJNJcY7Y8yk6/IW6DENRVzzun03JP85tseA1
-   oaz6sKDq0er2aaS0HSXZ8LT48+jGVbY/4Un0LiRcp8X17gTOWIPQMhnL8
-   sTyU64yNHJ0YM1hV75awY2cTjN9I7QHxgy6oz3chbRtgUYH3ggaTM/z32
-   g==;
-X-CSE-ConnectionGUID: /lh2stC1QlKYhsC47FwXxg==
-X-CSE-MsgGUID: VuokqIvySgmDl85PXRZsOQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="59077185"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="59077185"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 22:31:36 -0700
-X-CSE-ConnectionGUID: 9lV5Yxb2S8+W5MRccSjssQ==
-X-CSE-MsgGUID: j4cU7ZYqSbShgDAsFQAmQg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="169106513"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa005.jf.intel.com with ESMTP; 01 Aug 2025 22:31:31 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ui4q9-0005C8-0k;
-	Sat, 02 Aug 2025 05:31:29 +0000
-Date: Sat, 2 Aug 2025 13:30:51 +0800
-From: kernel test robot <lkp@intel.com>
-To: Haotien Hsu <haotienh@nvidia.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mathias Nyman <mathias.nyman@intel.com>,
-	Brad Griffis <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
-	Vedant Deshpande <vedantd@nvidia.com>,
-	Akhil R <akhilrajeev@nvidia.com>,
-	Jinjie Ruan <ruanjinjie@huawei.com>, linux-usb@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
-	Haotien Hsu <haotienh@nvidia.com>, Henry Lin <henryl@nvidia.com>,
-	Jui Chang Kuo <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
-	WK Tsai <wtsai@nvidia.com>
-Subject: Re: [PATCH 4/4] usb: xhci: tegra: Support USB wakeup function for
- Tegra234
-Message-ID: <202508021305.3ENY5oQC-lkp@intel.com>
-References: <20250801095748.385437-5-haotienh@nvidia.com>
+	s=arc-20240116; t=1754113505; c=relaxed/simple;
+	bh=gQzI2gwKNmv9R97Gt9Jlthq8kskAwUNfnmi4KeSKs1g=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F66bH1I+C8/edrHI0sjNfVCx+KFnMVAOjf+YY+M7yI+a6iJk3K7L+WKIqMLMHZmY3G0LjmC5qNNMF93v/kk3MX0fQlFKWAb5sjCOMX0/g6+ncVikXKrA/MMxuS3j/C9/KOr/iEPZ5kN28c/clDzzAE6fecAvq5j5bdZdUQXozfA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ok28SDrJ; arc=none smtp.client-ip=198.47.23.235
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllvem-sh04.itg.ti.com ([10.64.41.54])
+	by lelvem-ot02.ext.ti.com (8.15.2/8.15.2) with ESMTP id 5725iQYO3876820;
+	Sat, 2 Aug 2025 00:44:26 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1754113466;
+	bh=eO+pNC2Kq3EhIuBpo+lO/zj40iLRQifl41nP1SpBuaM=;
+	h=Date:From:To:CC:Subject:References:In-Reply-To;
+	b=ok28SDrJe+vmG2O1YnTK/lD2ZDWMkvePlEA8ubal2tRQxdrOynzzkFKU62Y66zQsp
+	 OrNnubIN6f2BrKZYknXXrHfy274KBFvybrhvsjavpyQu/FfhB1wKhb5xVbJcTbwHGx
+	 jrpiIoEwtMLUcb1+9S9HjLDyN9wwECH6XMtBPCw8=
+Received: from DLEE103.ent.ti.com (dlee103.ent.ti.com [157.170.170.33])
+	by fllvem-sh04.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 5725iQkm1067612
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
+	Sat, 2 Aug 2025 00:44:26 -0500
+Received: from DLEE115.ent.ti.com (157.170.170.26) by DLEE103.ent.ti.com
+ (157.170.170.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sat, 2
+ Aug 2025 00:44:25 -0500
+Received: from lelvem-mr06.itg.ti.com (10.180.75.8) by DLEE115.ent.ti.com
+ (157.170.170.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
+ Frontend Transport; Sat, 2 Aug 2025 00:44:25 -0500
+Received: from localhost (uda0492258.dhcp.ti.com [172.24.231.84])
+	by lelvem-mr06.itg.ti.com (8.18.1/8.18.1) with ESMTP id 5725iOOf1162612;
+	Sat, 2 Aug 2025 00:44:24 -0500
+Date: Sat, 2 Aug 2025 11:14:23 +0530
+From: Siddharth Vadapalli <s-vadapalli@ti.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>,
+        Michael Walle
+	<mwalle@kernel.org>, Nishanth Menon <nm@ti.com>,
+        Vignesh Raghavendra
+	<vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Andrew Lunn
+	<andrew+netdev@lunn.ch>,
+        "David S . Miller" <davem@davemloft.net>,
+        Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
+        Paolo Abeni
+	<pabeni@redhat.com>, Roger Quadros <rogerq@kernel.org>,
+        Simon Horman
+	<horms@kernel.org>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>,
+        Maxime
+ Chevallier <maxime.chevallier@bootlin.com>,
+        <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <linux@ew.tq-group.com>
+Subject: Re: [PATCH net-next] Revert "net: ethernet: ti: am65-cpsw: fixup PHY
+ mode for fixed RGMII TX delay"
+Message-ID: <47b0406f-7980-422e-b63b-cc0f37d86b18@ti.com>
+References: <20250728064938.275304-1-mwalle@kernel.org>
+ <57823bd1-265c-4d01-92d9-9019a2635301@lunn.ch>
+ <DBOD5ICCVSL1.23R4QZPSFPVSM@kernel.org>
+ <d9b845498712e2372967e40e9e7b49ddb1f864c1.camel@ew.tq-group.com>
+ <DBOEPHG2V5WY.Q47MW1V5ZJZE@kernel.org>
+ <2269f445fb233a55e63460351ab983cf3a6a2ed6.camel@ew.tq-group.com>
+ <88972e3aa99d7b9f4dd1967fbb445892829a9b47.camel@ew.tq-group.com>
+ <84588371-ddae-453e-8de9-2527c5e15740@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset="us-ascii"
 Content-Disposition: inline
-In-Reply-To: <20250801095748.385437-5-haotienh@nvidia.com>
+In-Reply-To: <84588371-ddae-453e-8de9-2527c5e15740@lunn.ch>
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-Hi Haotien,
+On Wed, Jul 30, 2025 at 04:27:52PM +0200, Andrew Lunn wrote:
+> > I can confirm that the undocumented/reserved bit switches the MAC-side TX delay
+> > on and off on the J722S/AM67A.
+> 
+> Thanks.
+> 
+> > I have not checked if there is anything wrong with the undelayed
+> > mode that might explain why TI doesn't want to support it, but
+> > traffic appears to flow through the interface without issue if I
+> > disable the MAC-side and enable the PHY-side delay.
+> 
+> I cannot say this is true for TI, but i've often had vendors say that
+> they want the MAC to do the delay so you can use a PHY which does not
+> implement delays. However, every single RGMII PHY driver in Linux
+> supports all four RGMII modes. So it is a bit of a pointless argument.
+> 
+> And MAC vendors want to make full use of the hardware they have, so
+> naturally want to do the delay in the MAC because they can.
+> 
+> TI is a bit unusual in this, in that they force the delay on. So that
+> adds a little bit of weight towards maybe there being a design issue
+> with it turned off.
 
-kernel test robot noticed the following build warnings:
+Based on internal discussions with the SoC and Documentation teams,
+disabling TX delay in the MAC (CPSW) is not officially supported by
+TI. The RGMII switching characteristics have been validated only with
+the TX delay enabled - users are therefore expected not to disable it.
+Disabling the TX delay may or may not result in an operational system.
+This holds true for all SoCs with various CPSW instances that are
+programmed by the am65-cpsw-nuss.c driver along with the phy-gmii-sel.c
+driver.
 
-[auto build test WARNING on robh/for-next]
-[also build test WARNING on usb/usb-testing usb/usb-next usb/usb-linus tegra/for-next linus/master v6.16 next-20250801]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+In addition to the above, I would like to point out the source of
+confusion. When the am65-cpsw-nuss.c driver was written(2020), the
+documentation indicated that the internal delay could be disabled.
+Later on, the documentation was updated to indicate that internal
+delay cannot (should not) be disabled by marking the feature reserved.
+This was done to be consistent with the hardware validation performed.
+As a result, older documentation contains references to the possibility
+of disabling the internal delay whereas newer documentation doesn't.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Haotien-Hsu/dt-bindings-usb-Add-wake-up-support-for-Tegra234-XUSB-host-controller/20250801-180040
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
-patch link:    https://lore.kernel.org/r/20250801095748.385437-5-haotienh%40nvidia.com
-patch subject: [PATCH 4/4] usb: xhci: tegra: Support USB wakeup function for Tegra234
-config: arm-defconfig (https://download.01.org/0day-ci/archive/20250802/202508021305.3ENY5oQC-lkp@intel.com/config)
-compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250802/202508021305.3ENY5oQC-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508021305.3ENY5oQC-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/usb/host/xhci-tegra.c:1997:15: warning: unused variable 'i' [-Wunused-variable]
-    1997 |         unsigned int i;
-         |                      ^
-   1 warning generated.
-
-
-vim +/i +1997 drivers/usb/host/xhci-tegra.c
-
-  1992	
-  1993	static void tegra_xusb_remove(struct platform_device *pdev)
-  1994	{
-  1995		struct tegra_xusb *tegra = platform_get_drvdata(pdev);
-  1996		struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
-> 1997		unsigned int i;
-  1998	
-  1999		tegra_xusb_deinit_usb_phy(tegra);
-  2000	
-  2001		pm_runtime_get_sync(&pdev->dev);
-  2002		usb_remove_hcd(xhci->shared_hcd);
-  2003		usb_put_hcd(xhci->shared_hcd);
-  2004		xhci->shared_hcd = NULL;
-  2005		usb_remove_hcd(tegra->hcd);
-  2006		usb_put_hcd(tegra->hcd);
-  2007	
-  2008		dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
-  2009				  tegra->fw.phys);
-  2010	
-  2011		if (tegra->padctl_irq)
-  2012			pm_runtime_disable(&pdev->dev);
-  2013	
-  2014		tegra_xusb_dispose_wake(tegra);
-  2015	
-  2016		pm_runtime_put(&pdev->dev);
-  2017	
-  2018		tegra_xusb_disable(tegra);
-  2019		tegra_xusb_padctl_put(tegra->padctl);
-  2020	}
-  2021	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+Siddharth.
 
