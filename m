@@ -1,224 +1,118 @@
-Return-Path: <linux-kernel+bounces-753902-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753903-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CF2D9B189AE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:59:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABF76B189BC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 89603AA656C
-	for <lists+linux-kernel@lfdr.de>; Fri,  1 Aug 2025 23:59:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07C301C25ECA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 00:05:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82341241673;
-	Fri,  1 Aug 2025 23:59:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BC2929A5;
+	Sat,  2 Aug 2025 00:04:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="o07yc4Li"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RHikuFWg"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A8A622A4DA
-	for <linux-kernel@vger.kernel.org>; Fri,  1 Aug 2025 23:58:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FCE8367;
+	Sat,  2 Aug 2025 00:04:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754092740; cv=none; b=LnFvLJ+l+bvQbQz4Mflq7hOsJP8LCytSx7KQ1fG4Hz+FElqnUIhEjylwdk7t7gYkj7EuqWdIBEW3Lp9SCqaiVV+SGVX0zhod2jIuJsuvVxq0RBusGSxmC7UQkoK5EStEP6hzGJjR/0Rng/nq7TwhvP3NtuvET6MdyoMPA8TsWWE=
+	t=1754093076; cv=none; b=NLFA+agPqU6s+0Qtyb1dONwROmPWmcL5KQBuv4eIoQkuRtNUc/vnvbT+DHQuC9TWlr1Gujaj5NiXFqsX3ZHvczSIhQmGCQa5Xd5fTqFwVT7E1B2HL3opgWRweA6lcoWauyb6Z/OmVgYVp1zvKWFv7OoAiMbBzVKIelf3/QWwhjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754092740; c=relaxed/simple;
-	bh=+2n+5mKKJyn6pwbw4cuuyFzV70cIuy5ALlq5+ukAC24=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Y21QqvrwVBEYVJ8IqsNvcB97yo2hjsrWTSi8rScFo1oYK6JMjSIdh9/XHUaaqSG0s1L1QCUcucts573qVRZ3GKCP/9E4JCclM6yQZTvmZE3AJ2CavQ3qko04smabgp8CbkikJ1JISYh00f4eskm6919GK7enGFwZlfduTQP9uV4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=o07yc4Li; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 571LfaUX028250
-	for <linux-kernel@vger.kernel.org>; Fri, 1 Aug 2025 23:58:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	sJil9fuANTIpmKQE7cP4cPGJ+csBLlaXLdFVNl5IgEY=; b=o07yc4LiXSNMEQ0m
-	tPDQtTL9RKOocu7P/FqueYPSICyprAmwRxEO1PpDp3wZBie5R28tFQA/JcOhmbDi
-	Fl1a5SRYUKy8/7LKsBp35BZISo7WN7qQHh68eCQmOx/v9FDCf3uo8lhxObDy9spF
-	hMBTocTUEY4TIfIhvBayY9jAa/oHlow2IGFHABxhTWIl2/EfDVrOOXR9dzu2VUVf
-	/a+JfVVphcxWsIwUuSr577sD+CQthPSeXG1UdkYl/SrwMLzTEW79t7gHcnaK7hee
-	yPvuiWwmhH+qxzdU8kfDV4AVa2B2NFqZDB8f2cXIhAnRMpyrCU4/NdOvFUT8+Nmy
-	DAp7Pg==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 487jwgj0fb-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 23:58:58 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-76bd2543889so2629308b3a.0
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 16:58:58 -0700 (PDT)
+	s=arc-20240116; t=1754093076; c=relaxed/simple;
+	bh=93la5Nh5E/ARqUQFVgenbhdCEF0XnrujFCDwUJPPhwg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=brTimvYxZ2WhXzXS9iaJRj3f6ryNwf4w8BAjdq3kJ5LS80X5oEAxVpheeOmU2wlEe0+KFnCEFoGwLHhr3+f0vn6Bb6a1YrkaGgCNEy9kwxnkEmdkFNgTEm3IoW4976wK877fIwBaPGDNyzcCRKJgA2GGiC900A7hNG3MdzADBWw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RHikuFWg; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-31c4a546cc2so1364362a91.2;
+        Fri, 01 Aug 2025 17:04:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754093074; x=1754697874; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4IteazX0LOkoWRhxiLZppCFmfzXAsX9QvqoKdjEi90Q=;
+        b=RHikuFWgYXRqaJA9+FCiSH2Q3TDs1kKXckfNYupQCLd1gsG+MQptQ0PWIseIjqI1Mz
+         05yf5E9vy+06N2DDyXZK9bXUZO8P7Gm0dR2c8DFNAJ5jk37Pn9LFkDeQHqMjPz5xXmhG
+         OZJTPW4lCa9Vd3/+7qBgXzCb9MaoIqKA4S3zxHe/ojxZ0xUiu6Yw1YDrshi9/rFc6C7t
+         ViycvW+abuNNV295zPKtcY2mLPWbTS2m63ltj2SWFa/CRAgJNQqxa7z2FQ2te0IwMgK3
+         CKYE8LfaKvYQS3rOrCDmlNIJQWJqEFsfm4LA5voNsxo0HirIwMN47QXljzQqqPYc6Nx8
+         a8hQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754092737; x=1754697537;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sJil9fuANTIpmKQE7cP4cPGJ+csBLlaXLdFVNl5IgEY=;
-        b=vQXV7LI0HtgNmdA1LwIZHo3m1By2b7o7LKWGWDnmxGDndAw+HdlLR3Sm1pAdyq1aDI
-         vA2xzoLTP13L1wu2Jjzo06gbofTjrUlNTm4LX8dZwtpCd9DZ+J6ypEwSSPS9kWy+9Paq
-         KSPOhQ45Gm/V2wUnL/1kxWLh6mTFd8zXVHTASucuqst2VkZ6ZML9QcrEL+vcvGK8vmTy
-         hv40g7rTQD+o2BUltKc8SnnaoDB9Y5ru7jQfrMp/MGz9fzOMfl6OSJ64JYxd6/KUwSyh
-         cqmwYeNa46sX0jKqNuvttv1lFPvxRtyWQOxtat6GPIyLmzCxiyINMUeAK636cK+OtBx6
-         QdxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVDv7nyTiHQYdVmgkU5tJ95GmVUGmWCiHp7obGiRBzSYvUqVbdLRSDGelnCGKqmqT1r6kEaDbGD1iiPMvw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkJPU6obtm3lpt8q4ij7u4ny3hBT2uDiIWF2B8CsCu3q+lKP6v
-	Ih++QIUKcIny7FTz756H0yT1zUSoRZutQrAdFpqB6qm7VI8R/nNvRbfrIyBE+ApFTzDue5otq8y
-	KPzs3/ZoU6druhoimff2qifFinkxsUg9MRLmatYG6D4O0E43nJU217jztPrmGtmzgsTs=
-X-Gm-Gg: ASbGncu71j09iqQhaW2yYe0akWiMsvKDDBNpe0W5qEdb4yci4qrSE44AiF6nN9OTg7+
-	PrLIGcX0kEUxeyFRVI3R9X6//y2mj/CyicVB5bkEElYVHW4ZP0UAU5CRdHrDpFoiJqHfRJD0fce
-	HgFtQVf4ohGhzXFqAFSyMMrKXfwzV/+/8CunPOJXMYE9t1wTqEt5S61x5XdqJcC5h6w3sTNIo/Z
-	haRno3TPQ1dzb7PVD94X9Z9CJdigB9ew4Md7d0ONctEdIyvxOiyUTnS3AHBoPJAjY6hb+tgSlF0
-	6zlgEjrtGWP0+Q5bFEBOvYPCG9YiSNu84OWzLgEX6CmZtYyuvju7koLE9awZ7XCqK3uz/eoZyGm
-	MaF9aOCqE8A6UYUIgDUJxzQ==
-X-Received: by 2002:a05:6a00:2ea4:b0:76a:d724:d712 with SMTP id d2e1a72fcca58-76bec302327mr1651997b3a.3.1754092737422;
-        Fri, 01 Aug 2025 16:58:57 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGTfKbPm8IV20xoihIcyGu1iRejGkZ8MwdHaIanUdy4YR9la0eA1aJYMT5RSic/HhKvru8Tzg==
-X-Received: by 2002:a05:6a00:2ea4:b0:76a:d724:d712 with SMTP id d2e1a72fcca58-76bec302327mr1651981b3a.3.1754092736990;
-        Fri, 01 Aug 2025 16:58:56 -0700 (PDT)
-Received: from [10.134.71.99] (i-global254.qualcomm.com. [199.106.103.254])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfbd02csm4934867b3a.62.2025.08.01.16.58.55
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 16:58:56 -0700 (PDT)
-Message-ID: <a085fb45-91e2-4827-b8e9-8af90796cc49@oss.qualcomm.com>
-Date: Fri, 1 Aug 2025 16:58:55 -0700
+        d=1e100.net; s=20230601; t=1754093074; x=1754697874;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4IteazX0LOkoWRhxiLZppCFmfzXAsX9QvqoKdjEi90Q=;
+        b=oEv7xnQ/5KWg7R9Rw/krHdvpf0j9CBULgw2XTyyl76Mt4W4bs2SAjgttrKLI+BhRUI
+         4ZCeMF2EgQprlo6R1wi49kxbLbSBg28I7XVXjjf9iDBUmUudFyAb9h058TCG9xNzbyjO
+         4XNmC9Lqr6d+twCxgGwU/XQQ9AN3MzLRi/Jj1DthZ6xZ2F1qfeHHfJS1aSSBve+r4xM9
+         HWJmH4MqCm389oPJ4HAZ7YcfhCgg2XdTBXF6ax5NTbt/7woB6o09gJule4qECw/ALnmM
+         VteVv8kIvjGo0fBwScsW95ns3imEyAVwVRMt2hHpDOkLdjcDtWD4svK2Zm9cmk7CgLhW
+         m49w==
+X-Forwarded-Encrypted: i=1; AJvYcCUMaMjJQi8LT8qeD1dsTDSQk9AGtIfnyJ2r6sRo/qBtt7uS8h4o12zvAh9JM1fWp3CYGxl6/qHa1lyqpwE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcWmXtx4T/RTeElFStXiQNMC7o2swUcZPIVTt/irtt0MOmX4AX
+	lAAmS78W1hKdEQDEngYfCkMqCmdthKEZ+qRwTqEUo6xgnPZJp+BN27IKim/tfQSo
+X-Gm-Gg: ASbGncskYrRH2cj8tZkP035l6k7J7ZI9L5N+iRFsCue5/BKwsXukF6jQzdHzATZzOtk
+	7Z0hU1vuNUyb5bOtejgYVSZB7Ts7nq+ubdCzWrXg+DVYhJDjtDRrUKqfMlDCLBPNZi8gLlHwb/q
+	LhXanvTQGEL5x/dRK1C3ix13BgtV+zWLmx5Q/MY7DHymRW9jEU2wb0DiyZ5YVNdf5Y37e92cILR
+	xClolou2V/cNvngrfY6dMfATrkhPS74+Bl6PVxANxlh1zDiIe0P3tGwb9rRRZFhiJ9kJCEAsHnv
+	jYHsdSo/KONfKrdO4Hagvndhmlb5Z+R0g3fUX7tPmXYt+T2plWzkttXXA5Av3tCEUrQ+C0Ch5yy
+	lYOv57nAhuFsBfw==
+X-Google-Smtp-Source: AGHT+IGOAcBAh+rcT/zuSwxS1odjYxc7VWPPco+s48wMK52y6mb+tBIgKE1ReE6ez7zGMvmA5tWcOA==
+X-Received: by 2002:a17:90b:4acf:b0:31e:6f0a:6a1a with SMTP id 98e67ed59e1d1-321161e9d36mr1939627a91.3.1754093074058;
+        Fri, 01 Aug 2025 17:04:34 -0700 (PDT)
+Received: from archlinux.lan ([2601:644:8200:dab8::1f6])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63da602asm8474893a91.2.2025.08.01.17.04.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Fri, 01 Aug 2025 17:04:33 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: linux-wireless@vger.kernel.org
+Cc: =?UTF-8?q?Toke=20H=C3=B8iland-J=C3=B8rgensen?= <toke@toke.dk>,
+	Rosen Penev <rosenp@gmail.com>,
+	Jeff Johnson <jeff.johnson@oss.qualcomm.com>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCHv3 wireless-next] wifi: ath9k: add OF dependency to AHB
+Date: Fri,  1 Aug 2025 17:04:32 -0700
+Message-ID: <20250802000432.3079550-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 18/19] drm/msm/dp: Move link training to atomic_enable()
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Rob Clark <robin.clark@oss.qualcomm.com>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Dmitry Baryshkov
- <lumag@kernel.org>, Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-arm-msm@vger.kernel.org, dri-devel@lists.freedesktop.org,
-        freedreno@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-        Yongxing Mou <quic_yongmou@quicinc.com>
-References: <20250711-hpd-refactor-v1-0-33cbac823f34@oss.qualcomm.com>
- <20250711-hpd-refactor-v1-18-33cbac823f34@oss.qualcomm.com>
- <cofa377vptj7on637u3c3mnxndplcmaegsb5h6idinz5wrvm6s@toylno4uapq4>
-Content-Language: en-US
-From: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
-In-Reply-To: <cofa377vptj7on637u3c3mnxndplcmaegsb5h6idinz5wrvm6s@toylno4uapq4>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=WvgrMcfv c=1 sm=1 tr=0 ts=688d54c2 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=yJ1ceeCYH-zBWwCu-X0A:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-ORIG-GUID: yKIz58mHkUocPLhYchQeE5MCUC_2Py7g
-X-Proofpoint-GUID: yKIz58mHkUocPLhYchQeE5MCUC_2Py7g
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAxMDE5NCBTYWx0ZWRfX9un/7vC963GI
- UFnbJvVji3v+gPFho4kWoJDvuNwXm9c93v5SL03NIEk3PZUdKuf7pmdSCegsI4r04KkATpfX7xo
- J4l7CGlEpBHHdf3nIJjYd5VKVbwY7URLBS+WrnsdCK7SORjIoGS8m/hiwRVz8gxNVH8w3SkM6F7
- ehZcOUT88WiKQzoKgTPwxXZY574kAyI1r3p+6uz+a0bG3tClaI+6yrx4Wmbhh8pIhcuDVKZcVl/
- 7D/gwR8WB5KO3EjBy+veIla5dkLPnIdqkiU/CyNtqaVnKH0EsEo6JaC8qDgKSWVEllzk8Fq09z5
- sQq6UJF6Sr6Ax7jFUWCFWAIYnQ+HDcQjsTzPmaHwgp9sLdy9kUuDXxrISOImuPx7iOlfrvleYjH
- a0L3HrvCzBPusTqW/MRMam/e6KGKFOcpT66m41EUV17xoWoeGrvzKlmYs52ySmelrDWCk0eH
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- phishscore=0 bulkscore=0 clxscore=1015 suspectscore=0 lowpriorityscore=0
- spamscore=0 mlxscore=0 impostorscore=0 adultscore=0 malwarescore=0
- priorityscore=1501 mlxlogscore=999 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508010194
+Content-Transfer-Encoding: 8bit
 
+The conversion to OF missed adding a Kconfig dependency.
 
+Fixes: 2fa490c0d759 ("wifi: ath9k: ahb: replace id_table with of")
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ v2: Resend to satisfy bot as the commit is now present
+ v3: Add 2 characters to commit id
+ drivers/net/wireless/ath/ath9k/Kconfig | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-On 7/14/2025 4:54 AM, Dmitry Baryshkov wrote:
-> On Fri, Jul 11, 2025 at 05:58:23PM -0700, Jessica Zhang wrote:
->> Currently, the DP link training is being done during HPD. Move
->> link training to atomic_enable() in accordance with the atomic_enable()
->> documentation.
->>
->> In addition, don't disable the link until atomic_post_disable() (as part
->> of the dp_ctrl_off[_link_stream]() helpers).
->>
->> Since the link training is moved to a later part of the enable sequence,
->> change the bridge detect() to return true when the display is physically
->> connected instead of when the link is ready.
-> 
-> These two parts should be patch #2 in the series.
-> 
->>
->> Finally, call the plug/unplug handlers directly in hpd_notify() instead
->> of queueing them in the event thread so that they aren't preempted by
->> other events.
->>
->> Signed-off-by: Jessica Zhang <jessica.zhang@oss.qualcomm.com>
->> ---
->>   drivers/gpu/drm/msm/dp/dp_display.c | 15 ++++++++-------
->>   drivers/gpu/drm/msm/dp/dp_drm.c     |  6 +++---
->>   2 files changed, 11 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/gpu/drm/msm/dp/dp_display.c b/drivers/gpu/drm/msm/dp/dp_display.c
->> index 87f2750a99ca..32e1ee40c2c3 100644
->> --- a/drivers/gpu/drm/msm/dp/dp_display.c
->> +++ b/drivers/gpu/drm/msm/dp/dp_display.c
->> @@ -410,11 +410,6 @@ static int msm_dp_display_process_hpd_high(struct msm_dp_display_private *dp)
->>   	msm_dp_link_psm_config(dp->link, &dp->panel->link_info, false);
->>   
->>   	msm_dp_link_reset_phy_params_vx_px(dp->link);
->> -	rc = msm_dp_ctrl_on_link(dp->ctrl);
->> -	if (rc) {
->> -		DRM_ERROR("failed to complete DP link training\n");
->> -		goto end;
->> -	}
->>   
->>   	msm_dp_add_event(dp, EV_USER_NOTIFICATION, true, 0);
->>   
->> @@ -1561,6 +1556,12 @@ void msm_dp_bridge_atomic_enable(struct drm_bridge *drm_bridge,
->>   		force_link_train = true;
->>   	}
->>   
->> +	rc = msm_dp_ctrl_on_link(msm_dp_display->ctrl);
->> +	if (rc) {
->> +		DRM_ERROR("Failed link training (rc=%d)\n", rc);
->> +		dp->connector->state->link_status = DRM_LINK_STATUS_BAD;
->> +	}
->> +
->>   	msm_dp_display_enable(msm_dp_display, force_link_train);
->>   
->>   	rc = msm_dp_display_post_enable(dp);
->> @@ -1706,7 +1707,7 @@ void msm_dp_bridge_hpd_notify(struct drm_bridge *bridge,
->>   		return;
->>   
->>   	if (!msm_dp_display->link_ready && status == connector_status_connected)
->> -		msm_dp_add_event(dp, EV_HPD_PLUG_INT, 0, 0);
->> +		msm_dp_hpd_plug_handle(dp, 0);
->>   	else if (msm_dp_display->link_ready && status == connector_status_disconnected)
->> -		msm_dp_add_event(dp, EV_HPD_UNPLUG_INT, 0, 0);
->> +		msm_dp_hpd_unplug_handle(dp, 0);
-> 
-> This chunk should be separated from this patch. I'd ask to drop
-> EV_HPD_PLUG_INT / EV_HPD_UNPLUG_INT completely and call DRM functions
-> all over the place instead. You can do it in a single patch, which comes
-> after this one.
-
-Hi Dmitry,
-
-Sure I can split this into a separate patch.
-
-Is the goal here to remove the event queue entirely?
-
-I can drop EV_USER_NOTIFICATION, but I'm not sure if I can completely 
-drop EV_HPD_[UN]PLUG_INT entirely without major refactor of the 
-plug/unplug handlers since they are used for the HPD IRQ handling.
-
-Thanks,
-
-Jessica Zhang
-
-> 
->>   }
-> 
+diff --git a/drivers/net/wireless/ath/ath9k/Kconfig b/drivers/net/wireless/ath/ath9k/Kconfig
+index 0c47be06c153..47d570a5ca6a 100644
+--- a/drivers/net/wireless/ath/ath9k/Kconfig
++++ b/drivers/net/wireless/ath/ath9k/Kconfig
+@@ -47,7 +47,7 @@ config ATH9K_PCI
+ 
+ config ATH9K_AHB
+ 	bool "Atheros ath9k AHB bus support"
+-	depends on ATH9K
++	depends on ATH9K && OF
+ 	default n
+ 	help
+ 	  This option enables the AHB bus support in ath9k.
+-- 
+2.50.1
 
 
