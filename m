@@ -1,231 +1,114 @@
-Return-Path: <linux-kernel+bounces-754156-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A267B18F18
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:18:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEE04B18F19
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 452AD170994
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:18:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 366D3189E4C3
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:18:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14D2F199223;
-	Sat,  2 Aug 2025 14:17:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1822723A99F;
+	Sat,  2 Aug 2025 14:18:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="M7AKg10Q"
-Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SMUFMl65"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90567230BD5
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 14:17:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F2B5230D0A;
+	Sat,  2 Aug 2025 14:18:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754144274; cv=none; b=hGMRXIECKb44FAQtlXQ1nIInD7AIZTH+bCCJJIptE2D5Wua3nXgcpLiZn26dxb/UIq8WtGLyvgAhLKiB2hWbM8zAAeUwNiTlBw5iq/0S/0B5oa86g7ArQ/sQRT09cPIRSyQt+U6V9q6QHeTSHZrQjiYph0IRaWheEn5/r+ZGmQs=
+	t=1754144305; cv=none; b=KONghyZNV7Lk9x7lCTzXiNrcqLzlGU+jQ6HDXtKd8X6RyXZKWaQqJhA1eiKzesqJ7bEUcHkpUUTOflCxbENctEK/dAe1dCE5Mq6K6SSrCLD+hP2mMJvJBkuuRtsCdvBHMAU5QlIjjWNFXhAdScgLU4E7Mvy35aFrCGkEfOtXhl0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754144274; c=relaxed/simple;
-	bh=FQ39B9jERPUAW3pWSgAAeA1QG0tXEiueP0zJxCjCnZk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=f1EVo9k4T/tWpKOp+oVIoOSAvChuZ+Fs2APOmiIMxzbhYL6PC4J/jU/VLYlqpwNYekpQrPb1dxyz/oei+rIud0U8QDTs+ecVKO+j02TwBS5RhQQKJdqUkAqnuG0sGGZ3orry4WPB+dBqQPBAMb3Ywbq1UBmT3xsHH9h5Q0k2OJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=M7AKg10Q; arc=none smtp.client-ip=209.85.222.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
-Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7e050bd078cso166657285a.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 07:17:52 -0700 (PDT)
+	s=arc-20240116; t=1754144305; c=relaxed/simple;
+	bh=UZdj7s2Q6LJo42TazOB32nZEdZKxZSkQWC/CRy/5iMg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=NJ9bcO2pwoF3KauW7eaPbwFSKU+t1X9fyma25POmIlIBFwd1qSCEkR6ekrKGZEt9lKhwwUTjtH8M6DC8rr/5tydmQuaYiTvpHrCCyl+UjOCyO81VrI+eTlB2TisfmvdT9kRcpAX7fApGk3I8PaCfuK+7D+caGUXRXW8++ynUoBw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SMUFMl65; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-32116dd55dcso209606a91.3;
+        Sat, 02 Aug 2025 07:18:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=ziepe.ca; s=google; t=1754144271; x=1754749071; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=XAht3BlYnywuDydAQFgQqb1h2JGOGBLyurA+IzlOJa4=;
-        b=M7AKg10Q1tOBYnNb2uxAK4ffI5vKMUd6RvghGQZGCGrjBkk5h4rT4TFTkRmcBzd+Ka
-         suuYTRmyYA6amkQzUnJLi8T77RiGMSs7Maou9KfSRSbK+i/XfszVxRIWqVWZl0nLmYkW
-         wsoSOvGiyWHUs8koYze3rBeR7kuJZ2szUhpVq4hRz0pJoVbMi4WTwBr0+o4iXBYcuPKX
-         NTdBPYyvFAVWB9y4/aoZrDhkN6Klsb1ey5zXxjcIiRgwwi02lWtKWIjImBxKQiXFlMOZ
-         QKlJuyR9n4DQo5ISIQcEn1Uahvb4jAm0slD2hGnYKHeo1AT2VXJicQMxYIpWIERnhQAk
-         U7ig==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754144271; x=1754749071;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754144303; x=1754749103; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=XAht3BlYnywuDydAQFgQqb1h2JGOGBLyurA+IzlOJa4=;
-        b=McGXt/4kjYeGj8rJiRLWhTqwIUJu1WfFn9L3yW36xCzNlVkq3yO0S/KZ/DFmXCdw6Q
-         A6hPRgMAWZyKyNo55goqlREVCw/DDbJL0TtSP61b0UxVmW35+sf/xM0YmJdWNL3NKNpo
-         nhLnyq9Iol5dcs6l/dZAtX3b7NIM843Dw3gi78opCttOC4a2+Q7bP1vKR1jFdT2c9YS9
-         IQbkHO+Fyhbygqyd6Ao1Z3mKbyA/Skks0VtmLPSlNpEhXSMyqvYy63KShM0FhHCoLkHj
-         cCgt+3+7NT6Txqhp/xm8tHPQyIjAdrLeWJUHuef8bJyv+nAQeqcUwBJenmlcDUDjj+VM
-         AdxA==
-X-Forwarded-Encrypted: i=1; AJvYcCX/JI7r9nhZO0A3Ep9KlPM5HfPXyIjEwrGGzYRuE37sIdYnjSjuB9zmY5WKNRoVvRNZLCSa820IOEZf8J0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwZ5YN3eSa1VyVyKmPlnYUpPXEXC7IZliODsMxT0xEeSbtBOk3U
-	mGOyv9m5w3dVIpaukLw2/6I1HGARrjS++s+4Nr2c37SDbvlEm0DtYhTrvsCkL2FF0Oo=
-X-Gm-Gg: ASbGncuD/K7vSkh5qsHHeR4XTkEzRzeT1Xx87vWsAueWtNSUpNNI0gWWXE72Pg74Flq
-	zOu9o1Y2IyzndUKYc7QSYPPAElJkkka5vDJ+cXJ6eUsaaA0wBQPS/BPiq9V4UOdf6OWMVkVIr3k
-	wwkvW4xDVNZOMX78xhGz6HIOlkNUVwNZp9b88ydmjidoV3BO9y0EBHiQIxh8gO3uFNfGYdoBKhd
-	dTFyJAoVNMCOOhfnfFWW3pClEumPZ4Rgv5tLXS4YLpt+rwzSFLC+BLYBUdDyAAnrDPGeNfNbVYr
-	eFGyna2OawO9ws4gwRcKG+I9A5tJt4w02HLquXplqe3+1IpLyli+MlT/cMaSOPx5RhzuCOcDQ0g
-	5p4F6k9+TkZGMF2mPZIA2RwevbTkZ0WTZW8P6AldzW6Xm/dPYf1gAklwzdvBlAl4OSZGf
-X-Google-Smtp-Source: AGHT+IGdPAmPi73Qx9Dpc4yn7AJ3AWkRwpu/Z2rB1pE3w5ZLbSl1DPKWIHYygsiQ4vWMpbzVE9HS0A==
-X-Received: by 2002:a05:620a:1645:b0:7e3:39c2:9856 with SMTP id af79cd13be357-7e696268352mr406724785a.1.1754144271303;
-        Sat, 02 Aug 2025 07:17:51 -0700 (PDT)
-Received: from ziepe.ca (hlfxns017vw-47-55-120-4.dhcp-dynamic.fibreop.ns.bellaliant.net. [47.55.120.4])
-        by smtp.gmail.com with ESMTPSA id af79cd13be357-7e681c8c727sm313508585a.78.2025.08.02.07.17.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 07:17:50 -0700 (PDT)
-Received: from jgg by wakko with local (Exim 4.97)
-	(envelope-from <jgg@ziepe.ca>)
-	id 1uiD3W-00000001AEi-0hrF;
-	Sat, 02 Aug 2025 11:17:50 -0300
-Date: Sat, 2 Aug 2025 11:17:50 -0300
-From: Jason Gunthorpe <jgg@ziepe.ca>
-To: dan.j.williams@intel.com
-Cc: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
-Message-ID: <20250802141750.GL26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
- <20250801155104.GC26511@ziepe.ca>
- <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
+        bh=RL+4avU1H8oGKZXlNOwDFTlYSKmu/Vf7eqNV14tYb/M=;
+        b=SMUFMl65IvG8ISDbxluNKYK9A5STTUj2kqdGKCp14l9ycXWOEbb+Gkl+Mg97GZA1Og
+         v3Uxevs6Jb9T0vTLrApF/hDUyqR/4dpFSnvYUmV1FvSs82+gh7PA7BqitlHWfP4wzNUE
+         vWFvXGgrD7+a9Q/LAKTBjZgstJebiLJmoCJ3L9wh5x6x+E/l78qAJmhujnk8iLDvyUtX
+         PY7rtfi4qB/ADBxI1jJ8Y0qw9mVFLyp9bx6et2J3V56tQiEGzeSXlk1OtcYnHpJr+QgG
+         YmYov0IxSwRhzE4Q0VUskIk5neCl1VG24hGq6UXRsaB41k8pUwFnffkynjPIDowatRnY
+         UNZw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754144303; x=1754749103;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=RL+4avU1H8oGKZXlNOwDFTlYSKmu/Vf7eqNV14tYb/M=;
+        b=MNeqHSGNJ11m7PmMvh/dLFwpKN4rtA2GFi8nM4TXyeVf/rGOFpU1ET/yzxHXRVe8rQ
+         IG8mdiXP7zVWuAuQbpQDd4pWSX3P7FQYyIVZTqnYNEI15pqXukEh+O6EXqy5u1j5AtIn
+         JtYcYMMnDeDaOgMvBv8TJCZYE3gl8jhlGdQiL/zOSLDDcS+L976fjQTlea1pQ+mZv47r
+         rM9YRHvhyqvT3BkOnao48gC5cfBZOUjmoYsZlYdaw/4yKLpg9OATdhacBsmZNe+HjFFh
+         Jy3eTTYXI77P/Yh69+mYh9EjjqseL/IkAyOEUpzmY7dYXKzWkrNqPKML34LZvC8KlNeh
+         f6fQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWBmh1+WQR49E5TgNTzuGchzWvJvwsF4mzqk9a0Hkel+XjWN2mLtrgYbYh/JonGps5J0J1UAnY/TrWVHx8=@vger.kernel.org, AJvYcCXVIDc11WANsJgSSGkQWep7uXdbDBP3YacZcJeCGgIVlmEcVnm8bwGQDg+4Zbf78K93kF1FqKub4OLIRlKkUsM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzI17bCoN9SQsPPDoX2f2Rk42LuNNofFqpR2DYjxoTHfroVt5+4
+	oRYk7E8ep1E+LboL9G/uZLGMIoviBu2Lzs68nJv1svi0Y3eMQ1BI2SCLFNChkUgvivsls39ZvcS
+	f9Xwf0wchTqQ/BHfCYv3VvuD0AW/ExDA=
+X-Gm-Gg: ASbGncsJ3BmaUaA6idx7lhPh+SIcFJ+zZCLXk1LDDvW8MMk1cHEvsITsQldiTUc7BbN
+	nRY8yU9N3CAaXS6Uf2GMzUEboYnHfXNlXb18JcGNfbj3482frqwbNTeyW/CHP4vonw3GWqHX2Df
+	z9Ho7882ECJwNb9HrdCLVH3kUNw/nt472VRApGxawuSko30jpcIjziI3+lJe2CV67VH+F96X3YS
+	CPVhLhb
+X-Google-Smtp-Source: AGHT+IEYyK4FnrbzDvIfn4l13uARdRAi1BsUu+rKXOV0Jybw3LuyofhD64+Vp6yv6vQyxgpYLpFrKDkYAuq4rhRVUTw=
+X-Received: by 2002:a17:90b:38cf:b0:31f:3f2d:25ad with SMTP id
+ 98e67ed59e1d1-321162b5699mr1806962a91.3.1754144303280; Sat, 02 Aug 2025
+ 07:18:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
+References: <20250620-num-v1-0-7ec3d3fb06c9@nvidia.com> <20250620-num-v1-1-7ec3d3fb06c9@nvidia.com>
+ <CANiq72=BSnom-nQgzLvv-cqwSknK1uJ=CXGP51r0WRj1Y553Ew@mail.gmail.com>
+ <DAREXAUV51B6.7X7TPOJKK249@nvidia.com> <CAH5fLghRJ7QqGKJdUq5Nic542cJsHKX_C+EL+xma_rFJrHd2QQ@mail.gmail.com>
+ <DBRZX7EAK13R.LTIJJPA9CCSO@nvidia.com>
+In-Reply-To: <DBRZX7EAK13R.LTIJJPA9CCSO@nvidia.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 2 Aug 2025 16:18:11 +0200
+X-Gm-Features: Ac12FXzP6tbJ3FK59a8caJxtumpeBsG760k67kwwrIw1GCiks-gr_mjRWnNBb2Q
+Message-ID: <CANiq72mjT5jJiRG2J4KAL7pupv5WoCb-T+hXJ=H5NG_4n0HLOQ@mail.gmail.com>
+Subject: Re: [PATCH 1/3] rust: add `num` module with `PowerOfTwo` type
+To: Alexandre Courbot <acourbot@nvidia.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Miguel Ojeda <ojeda@kernel.org>, 
+	Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
+	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, nouveau@lists.freedesktop.org, 
+	Nouveau <nouveau-bounces@lists.freedesktop.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, Aug 01, 2025 at 02:19:54PM -0700, dan.j.williams@intel.com wrote:
+On Sat, Aug 2, 2025 at 4:02=E2=80=AFPM Alexandre Courbot <acourbot@nvidia.c=
+om> wrote:
+>
+> Belated thanks for the suggestion; I have finally opened an ACP for
+> `last_set_bit` (and `first_set_bit` while we are at it):
+> https://github.com/rust-lang/libs-team/issues/631
+>
+> I am still entangled with how to best leverage `Alignment` for our
+> purposes, but think I am getting close to a v2 of this patchset.
 
-> On the host this establishes an SPDM session and sets up link encryption
-> (IDE) with the physical device. Leave VMs out of the picture, this
-> capability in isolation is a useful property. It addresses the similar
-> threat model that Intel Total Memory Encryption (TME) or AMD Secure
-> Memory Encryption (SME) go after, i.e. interposer on a physical link
-> capturing data in flight. 
+Thanks for filling that one -- linked now from our usual lists :)
 
-Okay, maybe connect is not an intuitive name for opening IDE
-sessions..
+    https://github.com/Rust-for-Linux/linux/issues/514
 
-> I started this project with "all existing T=0 drivers 'just work'" as a
-> goal and a virtue. I have been begrudgingly pulled away from it from the
-> slow drip of complexity it appears to push into the PCI core.
-
-Do you have some examples? I don't really see what complexity there is
-if the solution it simply not auto bind any drivers to TDISP capable
-devices and userspace is responsible to manually bind a driver once it
-has reached T=1.
-
-This seems like the minimum possible simplicitly for the kernel as
-simply everything is managed by userspace, and there is really no
-special kernel behavior beyond switching the DMA API of an unbound
-driver on the T=0/1 change.
-
-> The concern is neither userspace nor the PCI core have everything it
-> needs to get the device to T=1. 
-
-Disagree, I think userspace can have everything. It may need some
-per-device userspace support in difficult cases, but userspace can
-deal with it..
-
-> PCI core knows that the device is T=1 capable, but does not know how
-> to preconfigure the device-specific lock state,
-
-Userspace can do this. Can we define exactly what is needed to do this
-"pre-configure the device specific lock state"? At the very worst, for
-the most poorly designed device, userspace would have to bind a T=0
-driver and then unbind it.
-
-Again, I am trying to make something simple for the kernel that gets
-us to a working solution before we jump ahead to far more complex in
-the kernel models, like aware drivers that can toggle themselves
-between T=0/1.
-
-> Userspace might be able to bind a new driver that leaves the device in a
-> lockable state on unbind, but that is not "just works" that is,
-
-I wouldn't have the kernel leave the device in the locked state. That
-should always be userspace. The special driver may do whatever special
-setup is needed, then unbind and leave a normal unlocked device
-"prepped" for userspace locking without doing a FLR or
-something. Realistically I expect this to be a very rare requirement,
-I think this coming up just reflects the HW immaturity of some early
-TDISP devices.
-
-Sensible mature devices should have no need of a pre-locking step. I
-think we should design toward that goal as the stable future and only
-try to enable a hacky work around for the problematic early devices. I
-certainly am not keen on seeing significant permanent kernel
-complexity to support this device design defect.
-
-> driver that expects the device arrives already running. Also, that main
-> driver needs to be careful not to trigger typically benign actions like
-> touch the command register to trip the device into ERROR state, or any
-> device-specific actions that trip ERROR state but would otherwise be
-> benign outside of TDISP."
-
-As I said below, I disagree with this. You can't touch the *physical*
-command register but the cVM can certainly touch the *virtualized*
-command register. It up to the VMM To ensure this doesn't cause the
-device to fall out of RUN as part of virtualization.
-
-I'd also say that the VMM should be responsible to set pBME=1 even if
-vBME=0? Shouldn't it? That simplifies even more things for the guest.
-
-> > From that principal the kernel should NOT auto probe drivers to T=0
-> > devices that can be made T=1. Userspace should handle attaching HW to
-> > such devices, and userspace can sequence whatever is required,
-> > including the attestation and verifying.
-> 
-> Agree, for PCI it would be simple to set a no-auto-probe policy for T=1
-> capable devices.
-
-So then it is just a question of what does a userspace component need
-to do.
-
-> I do not want to burden the PCI core with TDISP compatibility hacks and
-> workarounds if it turns out only a small handful of devices ever deploy
-> a first generation TDISP Device Security Manager (DSM). L1 aiding L2, or
-> TDISP simplicity improvements to allow the PCI core to handle this in a
-> non-broken way, are what I expect if secure device assignment takes off.
-
-Same feeling about pre-configuration :)
-
-> > The starting point must have the core code do this sequence
-> > for every driver. Once that is working we can talk about if other
-> > flows are needed.
-> 
-> Do you agree that "device-specific-prep+lock" is the problem to solve?
-
-Not "the" problem, but an design issue we need to accommodate but not
-endorse.
-
-> > But I think we can start with the idea that such RAS failures have to
-> > reload the driver too and work on improvements. Realistically few
-> > drivers have the sort of RAS features to consume this anyhow and maybe
-> > we introduce some "enhanced" driver mode to opt-into down the road.
-> 
-> Hmm, having trouble not reading that back supporting my argument above:
-> 
-> Realistically few devices support TDISP lets require enhanced drivers to
-> opt-into TDISP for the time being.
-
-I would be comfortable if hitless RAS recovery for TDISP devices
-requires some kernel opt-in. But also I'm not sure how this should
-work from a security perspective. Should userspace also have to
-re-attest before allowing back to RUN? Clearly this is complicated.
-
-Also, I would be comfortable to support this only for devices that do
-not require pre-configuration.
-
-Jason
+Cheers,
+Miguel
 
