@@ -1,85 +1,149 @@
-Return-Path: <linux-kernel+bounces-754238-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31AAFB19059
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:44:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 161FBB1907A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 01:10:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A2E4C3BE364
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:44:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 499E2176897
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 23:10:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39C027A935;
-	Sat,  2 Aug 2025 22:44:05 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 394742192F9;
+	Sat,  2 Aug 2025 23:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="0UH9qvM/"
+Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4F1C1E489
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 22:44:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7AC01519B4
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 23:10:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754174645; cv=none; b=ZU1jxWOy+BJC5kCtWdb6/b1jupxnaz1UTRNVHdeGI6g/4O285c8YcPoF6napcsWWQ+I5eBkDmdrfjLs47epwgsTnhres0493bNQq1HbAEtbbABSs4psDcOylsr5IL8ifPJxGhCCZiyMx04QF6qxHira5ym2pPWHO5pz2g/zl26Y=
+	t=1754176210; cv=none; b=AB64bPn8Dn/sp4utZFhYdGRxJ0l6rLIiT53SoAZX0ulQEiGFQtBBm07GKVItPK0Dl+ZYQQYuPKOM6tTWO5RAPInF/vfAEsHUD1qVXGM1ran/O8UABuK2OR+ULSJJCQepQrBfm0bLr+i5CWFXlU619ROW0Gk1qNNbTi2V3YsI5zc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754174645; c=relaxed/simple;
-	bh=Sdsw9E1XRGAvWF3elsZbtdS81z4vwi0idLl+UXzLOAQ=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=lAZ0HeOr+Uj0SSIjNORzwbuMrvunbCb5v6UObAaB4jC01PAqwTRk/lgsYcGf/7wD5ndlWEviNkpCBtZZR2ttn1/nlaEQ5VvMebaK799ZEYV+VwWW85BX6Fsad3DMk7G3ZDMbjwjMQoJj15bmvdNMuHsyyvTte5cyAuCkVkemF3Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-88174f2d224so36670639f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 15:44:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754174643; x=1754779443;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d48amM9oxd1O1snYXoj/VGL39FSgtfsTYsEq5Eum/3U=;
-        b=i8PT9f9iB/M5fZjX8kVu12Y3Ic0liO3oke6zPyB393dj3UwlDA/IYPAtVVvQhgexBk
-         GaM+dSNdOKXmXnfHqNXNH6fu1KMHVIVXi+EeTtK4hhg6bVTZryJdZ9dCB6hofY6Wn/tg
-         kim9akZB7UKyEgk3gOreP1c4GugZ31tHty6ZII63yUAu30USdsSIj7an8UkKPp/q0Dyn
-         UbOMl7yMowkyexlNC/uITxzzN38085kWXqsY5GrZA14lQntehSHsVqHY15FuAVtn52OL
-         J2RtCQ2jEkc7SjkEWMRSdyiKe5/tzwARqEH6rkKXFXjjddwuvAc/KkMSMH4Af9KwXNUh
-         lc5g==
-X-Gm-Message-State: AOJu0YzQG9umLJZFIY8VXTZ0gFAYQxIJ74GXcV7EdjdBAHrUyfUxzhRv
-	JXTzfjIlPiW3O4s+Z30qCNs8r0AfKsN3B8sqx5yevaA3MfocdAZeZZrYW+fuktq+IRvw89B7Ba0
-	Aug539TFa9pa0cDXVo/9SMQrKrS9SjTDPS1mOixCA4+jj29x9igaBFjxeU7Y=
-X-Google-Smtp-Source: AGHT+IFhMcyhS2wSFLXd6JJekXTOi/ahyC7dOBv6+vynWwJG/xvHmet1si6ciKDDfFwS7HmizFN2FW/OQwwvSwjNQwPi++NneurB
+	s=arc-20240116; t=1754176210; c=relaxed/simple;
+	bh=ecv75cz1vvUpvjRO/ENalaa8NUjMlT8WMeXj/uJWeck=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=AwxuLrhToqzRQbp7WPtn9S3iDJW6hGIhRzooNSBY+rCjJVbdso8XTTvCkWlUuiJDyE2yXeqI3Xx908j9nIK/SUo5efqEqkhUBxyVYs3yD0ByKlYBK3PrlCQ9YRf0xS/odep8AJ0XTf744eBThpZg/3SFx4gnfVIPavYe+k5o52M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=0UH9qvM/; arc=none smtp.client-ip=61.135.153.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754176201;
+	bh=aK6Co4MMS7+4PiAIzvtkvog2d4GcEH0tdVBjGvUG0Rs=;
+	h=From:Subject:Date:Message-ID;
+	b=0UH9qvM/Lr30/oart5+Oto4ptcbt4sUaxc7DR4355Irf+yH1ahFR956EdqjOtiI8i
+	 rOqvc7q+NOibT596uPTPdl3l/HhXKjsQCpEY+R7Zx+kuVR0VzlDdfsMHskPS/pBvGf
+	 eMijUg95PydReGfXPAGMgstIbXIlwjvIirrMYuJ8=
+X-SMAIL-HELO: localhost.localdomain
+Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
+	by sina.com (10.54.253.33) with ESMTP
+	id 688E9ABE00004CC5; Sat, 3 Aug 2025 07:09:51 +0800 (CST)
+X-Sender: hdanton@sina.com
+X-Auth-ID: hdanton@sina.com
+Authentication-Results: sina.com;
+	 spf=none smtp.mailfrom=hdanton@sina.com;
+	 dkim=none header.i=none;
+	 dmarc=none action=none header.from=hdanton@sina.com
+X-SMAIL-MID: 9403936685163
+X-SMAIL-UIID: 3ABA3BC4265A4D1D9197D97D80F9FFC1-20250803-070951-1
+From: Hillf Danton <hdanton@sina.com>
+To: syzbot <syzbot+b8c48ea38ca27d150063@syzkaller.appspotmail.com>
+Cc: linux-kernel@vger.kernel.org,
+	syzkaller-bugs@googlegroups.com
+Subject: Re: [syzbot] [net?] WARNING in __linkwatch_sync_dev (2)
+Date: Sun,  3 Aug 2025 07:09:39 +0800
+Message-ID: <20250802230940.3712-1-hdanton@sina.com>
+In-Reply-To: <684c8a60.050a0220.be214.02a6.GAE@google.com>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1f0d:b0:3e3:f1db:d352 with SMTP id
- e9e14a558f8ab-3e41616f18amr87745165ab.15.1754174643091; Sat, 02 Aug 2025
- 15:44:03 -0700 (PDT)
-Date: Sat, 02 Aug 2025 15:44:03 -0700
-In-Reply-To: <CALkFLL+WiKWCw1zOPhBJZ=wLQjZPYvhUhEoxDOmeO8F_w7Vmng@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688e94b3.050a0220.f0410.0146.GAE@google.com>
-Subject: Re: [syzbot] [block?] possible deadlock in __del_gendisk
-From: syzbot <syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com, 
-	ujwal.kundur@gmail.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+> Date: Fri, 1 Jun 2025 13:30:24 -0700	[thread overview]
+> syzbot has found a reproducer for the following issue on:
+> 
+> HEAD commit:    27605c8c0f69 Merge tag 'net-6.16-rc2' of git://git.kernel...
+> git tree:       upstream
+> console output: https://syzkaller.appspot.com/x/log.txt?x=17bb9d70580000
+> kernel config:  https://syzkaller.appspot.com/x/.config?x=8e5a54165d499a9
+> dashboard link: https://syzkaller.appspot.com/bug?extid=b8c48ea38ca27d150063
+> compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
+> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11a7b9d4580000
+> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=1421310c580000
 
-syzbot tried to test the proposed patch but the build/boot failed:
+#syz test upstream master
 
-block/genhd.c:743:19: error: use of undeclared identifier 'set'
-block/genhd.c:745:17: error: use of undeclared identifier 'set'
-
-
-Tested on:
-
-commit:         186f3edf Merge tag 'pinctrl-v6.17-1' of git://git.kern..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=921f306d77438390
-dashboard link: https://syzkaller.appspot.com/bug?extid=2e9e529ac0b319316453
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=10b2a2a2580000
-
+--- x/drivers/net/bonding/bond_main.c
++++ y/drivers/net/bonding/bond_main.c
+@@ -2968,7 +2968,6 @@ static void bond_mii_monitor(struct work
+ {
+ 	struct bonding *bond = container_of(work, struct bonding,
+ 					    mii_work.work);
+-	bool should_notify_peers = false;
+ 	bool commit;
+ 	unsigned long delay;
+ 	struct slave *slave;
+@@ -2978,46 +2977,29 @@ static void bond_mii_monitor(struct work
+ 
+ 	if (!bond_has_slaves(bond))
+ 		goto re_arm;
++	/* Race avoidance with bond_close cancel of workqueue */
++	if (!rtnl_trylock()) {
++		delay = 1;
++		goto re_arm;
++	}
+ 
+ 	rcu_read_lock();
+-	should_notify_peers = bond_should_notify_peers(bond);
+ 	commit = !!bond_miimon_inspect(bond);
+-	if (bond->send_peer_notif) {
+-		rcu_read_unlock();
+-		if (rtnl_trylock()) {
+-			bond->send_peer_notif--;
+-			rtnl_unlock();
+-		}
+-	} else {
+-		rcu_read_unlock();
+-	}
++	if (bond->send_peer_notif)
++		bond->send_peer_notif--;
++	rcu_read_unlock();
+ 
+ 	if (commit) {
+-		/* Race avoidance with bond_close cancel of workqueue */
+-		if (!rtnl_trylock()) {
+-			delay = 1;
+-			should_notify_peers = false;
+-			goto re_arm;
+-		}
+-
+ 		bond_for_each_slave(bond, slave, iter) {
+ 			bond_commit_link_state(slave, BOND_SLAVE_NOTIFY_LATER);
+ 		}
+ 		bond_miimon_commit(bond);
+-
+-		rtnl_unlock();	/* might sleep, hold no other locks */
+ 	}
++	rtnl_unlock();
+ 
+ re_arm:
+ 	if (bond->params.miimon)
+ 		queue_delayed_work(bond->wq, &bond->mii_work, delay);
+-
+-	if (should_notify_peers) {
+-		if (!rtnl_trylock())
+-			return;
+-		call_netdevice_notifiers(NETDEV_NOTIFY_PEERS, bond->dev);
+-		rtnl_unlock();
+-	}
+ }
+ 
+ static int bond_upper_dev_walk(struct net_device *upper,
+--
 
