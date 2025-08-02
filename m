@@ -1,132 +1,135 @@
-Return-Path: <linux-kernel+bounces-754161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2D0AB18F25
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:33:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D3604B18F27
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C361A177F9A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:33:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 94820AA212B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:39:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A857323FC49;
-	Sat,  2 Aug 2025 14:33:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="dbSs8A+h"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 271C62E3707;
-	Sat,  2 Aug 2025 14:33:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8F4F23F424;
+	Sat,  2 Aug 2025 14:39:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15F514964E;
+	Sat,  2 Aug 2025 14:39:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754145189; cv=none; b=XpRskGY1/5tHDxew/3xCGHiIF+Ex8yhJADQvp1/tm7pAkChcx7xQBciZQAdC4HtrOVgrZX8a6laLPYm9HZ/joeMl4BK/Y/lukAavDGbnimGQQUH0s8ThzXUtnp2c8nogSfBheelS3IV7F3Hv5EbTiUnX2Y1FuKSkAoZ5miCyPLU=
+	t=1754145548; cv=none; b=LTpZrjver68Okw3vYgdP+/GAY+Xqv4fh1zIRB3x+xxKwS607YzK+BPATRsWh+XD15KROhYRJhDawMH1ExKYCe6jlaQ7qcKurGtEung+H5gKfwpPmIei/ETG75DyFvk1xGZKaiLt2oZe0XPr3KKCf+ZLqHxry7fyz9xrPA+6o+RI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754145189; c=relaxed/simple;
-	bh=Jjp8ewlVQ8UJZ3EiVjyQoNU1FB74GM1ttSuUdlGwkRA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Kbp3yFYRF57lRnoSVXOxkKGfqjhA48k8HvKQpwX9RIj0OuXu0VdMA+RZJ9QVjdX0nkpRhiuOHUUA/6wJx5+pSOcP7Djmjbzo5uX1wXyiYtQG1VXDaPnjolztiT37JmZVYFIsKOqvbl8xnqbMb7PJwJ1DHdzUtspLeDGV+iJB3WY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=dbSs8A+h; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754145184;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=AiakosHY3BnvLYT/Wwq36OmWkSDY8QhgMTYb/KAsc9A=;
-	b=dbSs8A+hD8Vf/854UvSEOHqYPYNgrfvn+xHxDD6zoe1UlV7IPRw07honqQ44V3p9jgM0b1
-	n9nWZR3TFqhp9DXuzEShGdRESTNrxZra65XrB4a1kY1JHI55JG4H1groBvBhiWZZGYp1Ni
-	Cu1aiZgO9gvYkvk+3EKGvPuVrub348c=
-From: Sven Eckelmann <sven@narfation.org>
-To: linux-i2c@vger.kernel.org,
- Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Andi Shyti <andi.shyti@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonas Jelonek <jelonek.jonas@gmail.com>
-Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
- Jonas Jelonek <jelonek.jonas@gmail.com>
-Subject: Re: [PATCH v3 1/3] i2c: rework RTL9300 I2C controller driver
-Date: Sat, 02 Aug 2025 16:33:01 +0200
-Message-ID: <7182147.lOV4Wx5bFT@sven-desktop>
-In-Reply-To: <20250727114800.3046-2-jelonek.jonas@gmail.com>
-References:
- <20250727114800.3046-1-jelonek.jonas@gmail.com>
- <20250727114800.3046-2-jelonek.jonas@gmail.com>
+	s=arc-20240116; t=1754145548; c=relaxed/simple;
+	bh=prJVbS+16qGA/VnkiHc+1rLxYNvHramjrAFa4Rp8WQI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=e5wlQeyqBo81kMzqblVe82Q7xDqkawqS/sG78mUfOjFgWlklmEs0fvOuGdB7yV0RjNuy0qVT4WSpxLiWbgnk+DhUSkgYiLB8KrRq4K4eNCQu6sS27Cvc/9wGPdK5NUV9Qhkg62XWQq96XaGu5BdWqUvp8dzqgtOoVWO2BhGni6k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7F4461595;
+	Sat,  2 Aug 2025 07:38:51 -0700 (PDT)
+Received: from [192.168.0.16] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D810C3F673;
+	Sat,  2 Aug 2025 07:38:56 -0700 (PDT)
+Message-ID: <f682e782-ffea-48b2-997d-ddbaf7ea8a8f@arm.com>
+Date: Sat, 2 Aug 2025 15:38:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6031783.31r3eYUQgx";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 0/5] PM QoS: Add CPU affinity latency QoS support and
+ resctrl integration
+To: Zhongqiu Han <quic_zhonhan@quicinc.com>, rafael@kernel.org,
+ lenb@kernel.org, pavel@kernel.org, tony.luck@intel.com,
+ reinette.chatre@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
+ ulf.hansson@linaro.org, amit.kucheria@linaro.org
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250721124104.806120-1-quic_zhonhan@quicinc.com>
+ <2379088e-e5d0-4766-9968-756aad04f9a3@arm.com>
+ <819fb853-59f7-4296-8499-715c142487f5@quicinc.com>
+Content-Language: en-US
+From: Christian Loehle <christian.loehle@arm.com>
+In-Reply-To: <819fb853-59f7-4296-8499-715c142487f5@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---nextPart6031783.31r3eYUQgx
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Subject: Re: [PATCH v3 1/3] i2c: rework RTL9300 I2C controller driver
-Date: Sat, 02 Aug 2025 16:33:01 +0200
-Message-ID: <7182147.lOV4Wx5bFT@sven-desktop>
-In-Reply-To: <20250727114800.3046-2-jelonek.jonas@gmail.com>
-MIME-Version: 1.0
-
-On Sunday, 27 July 2025 13:47:58 CEST Jonas Jelonek wrote:
-> Rework the RTL9300 I2C controller driver to use more of the regmap
-> API, especially make use of reg_field and regmap_field to represent
-> registers instead of macros. Most register operations are performed
-> through regmap_field_* API then.
+On 7/28/25 11:40, Zhongqiu Han wrote:
+> On 7/28/2025 6:09 PM, Christian Loehle wrote:
+>> On 7/21/25 13:40, Zhongqiu Han wrote:
+>>> Hi all,
+>>>
+>>> This patch series introduces support for CPU affinity-based latency
+>>> constraints in the PM QoS framework. The motivation is to allow
+>>> finer-grained power management by enabling latency QoS requests to target
+>>> specific CPUs, rather than applying system-wide constraints.
+>>>
+>>> The current PM QoS framework supports global and per-device CPU latency
+>>> constraints. However, in many real-world scenarios, such as IRQ affinity
+>>> or CPU-bound kernel threads, only a subset of CPUs are
+>>> performance-critical. Applying global constraints in such cases
+>>> unnecessarily prevents other CPUs from entering deeper C-states, leading
+>>> to increased power consumption.
+>>>
+>>> This series addresses that limitation by introducing a new interface that
+>>> allows latency constraints to be applied to a CPU mask. This is
+>>> particularly useful on heterogeneous platforms (e.g., big.LITTLE) and
+>>> embedded systems where power efficiency is critical for example:
+>>>
+>>>                          driver A       rt kthread B      module C
+>>>    CPU IDs (mask):         0-3              2-5              6-7
+>>>    target latency(us):     20               30               100
+>>>                            |                |                |
+>>>                            v                v                v
+>>>                            +---------------------------------+
+>>>                            |        PM  QoS  Framework       |
+>>>                            +---------------------------------+
+>>>                            |                |                |
+>>>                            v                v                v
+>>>    CPU IDs (mask):        0-3            2-3,4-5            6-7
+>>>    runtime latency(us):   20             20, 30             100
+>>>
+>>> The current implementation includes only cpu_affinity_latency_qos_add()
+>>> and cpu_affinity_latency_qos_remove() interfaces. An update interface is
+>>> planned for future submission, along with PM QoS optimizations in the UFS
+>>> subsystem.
+>>
+>> So what's needed for the UFS use-case additionally?
+>> Would adding that here be too much?
+>>
 > 
-> Handle SCL selection using separate chip-specific functions since this
-> is already known to differ between the Realtek SoC families in such a
-> way that this cannot be properly handled using just a different
-> reg_field.
+> Hi Christian,
+> Thanks for your review and discussion~
 > 
-> These changes make it a lot easier to add support for newer generations
-> or to handle differences between specific revisions within a series.
-> Support can be added by defining a separate driver data structure with
-> the corresponding register field definitions and linking it to a new
-> compatible string.
-[...]
+> Currently my plan is only to move forward with the current patch series,
+> which includes only the below interfaces:
+> 
+> cpu_affinity_latency_qos_add()
+> cpu_affinity_latency_qos_remove()
+> cpu_affinity_latency_qos_active()
+> 
+> 
+> For most use-cases, seems these three interfaces already sufficient.
 
-Thank you for the patchset - used it to get the driver working on an RTL931x 
-device.
+Probably, but IMO there's no real user of the new extended interface yet,
+making review harder and lacking justification.
 
-[...]
->  
->  static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
->  				    int size, union i2c_smbus_data *data, int len)
->  {
-[...]
-> -	ret = regmap_read_poll_timeout(i2c->regmap, i2c->reg_base + RTL9300_I2C_MST_CTRL1,
-> -				       val, !(val & RTL9300_I2C_MST_CTRL1_I2C_TRIG), 100, 2000);
-> +	regmap_field_read_poll_timeout(i2c->fields[F_I2C_TRIG], val, !val, 100, 2000);
->  	if (ret)
->  		return ret;
+FWIW in 2014 Lina also pushed for something like $SUBJECT
+https://lore.kernel.org/all/1407945689-18494-5-git-send-email-lina.iyer@linaro.org/
+Lina made an interface to tie the PM QoS to the relevant irq, which I think
+was a great idea. Maybe that series is interesting for you, too?
 
-The "ret =" was lost here. As result, I get "corrupted" data after a timeout 
-instead of the expected error.
-
-Kind regards,
-	Sven
---nextPart6031783.31r3eYUQgx
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaI4hngAKCRBND3cr0xT1
-y8k2AQDJeyejALT7/o5Xm7rUo84pp63wYJbdw8QPpYL3XBJcZwEApdGHeFAL+K75
-w/4j2n1XOQfUOJbuDZ1sPWXO8gL7mg4=
-=+GHf
------END PGP SIGNATURE-----
-
---nextPart6031783.31r3eYUQgx--
-
-
+> 
+> 
+> The reason I mentioned UFS is to explain why the update
+> interface cpu_affinity_latency_qos_update()
+> 
+> is not included at this stage. The UFS use-case is planned to
+> use the cpu_affinity_latency_qos_update() interface in the future, which
+> is similar to the global CPU PM QoS interface
+> cpu_latency_qos_update_request().
 
 
