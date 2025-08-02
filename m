@@ -1,322 +1,152 @@
-Return-Path: <linux-kernel+bounces-754220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC04B19004
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 22:58:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CEA9B19005
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 23:00:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42218178C66
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:58:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82BA217749D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 21:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EDE32586CE;
-	Sat,  2 Aug 2025 20:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFA44248F7D;
+	Sat,  2 Aug 2025 21:00:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="koAI3Zbh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OJX1QcY1"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A32862E36EB;
-	Sat,  2 Aug 2025 20:58:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56CBC14B959
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 21:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754168294; cv=none; b=rS2oe6IZJs+uMJSPzS2eiy3zaBklJ5i4CFBrwagqICQs+27/CGD3AXt3GmvnTuO4BVso9RJ/lK3haPjp+Toqw7s8iw+68Xqphor4gtfR6/BGNlEvqDkMGDkee+jXjxXZ++JX9gONPuDFAty/+vnDpzIafXHS+QKF6QZVLrQX61M=
+	t=1754168421; cv=none; b=GAPuXkiN55VgaI00odheug8tyizP7Q6NuIiUCxj1MFtx9krbRa5FcZZ2Yb0/aNviAUiwRd+jrscBIXKNyMoobNQdH3upnNwAop2c1AS6rH3T2uc6Fc7INHguQqgF4c9Ies00r5/ml9p17j6zd89hwNdn5JRxc+KPGQ0cbYlMIp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754168294; c=relaxed/simple;
-	bh=jls7RI4UDsR9chSuQa2K32QuFY3fZP41M1jzeL+swwU=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=b1SNXhkK88XfMlLQiRGQ5/EPTvHdYvg7Aw5c3EXgWx51ohVf8lbcInYn7cbnt8E/jdzS+pFCwLOs+Tz8o0nr0USaehDjck/ISrHokT6qSGCa6GqFwcmo89M6yjsKs40ewKm38TEKxZxNkjEtWsFZXE8mCfoMv2wQ6LgLVwaxtco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=koAI3Zbh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7AC92C4CEEF;
-	Sat,  2 Aug 2025 20:58:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754168294;
-	bh=jls7RI4UDsR9chSuQa2K32QuFY3fZP41M1jzeL+swwU=;
-	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
-	b=koAI3ZbhWKyjZtdIXDToFdqaiZcJLDzoToPPsxNKCXwkje8tMAZhTKoNgSee7Fkz0
-	 dvyLCEA20NvwVFs7cghTlJ87K4PSR3BxIUlrPAh6VeQnO3f7/65VNmUytivaEvblea
-	 w0up9iFo41Vvh2qAPdWNrFAGdkeMTm5AnUJL+M37kPCxDxwpJqFxOU9/AJKu46u6Tj
-	 qv30n6sVhXiMiAL5QRnhhQOiOVD80TH8g/YY5hzCQaj8zEGA2ucG+DzujhpiRsyn+7
-	 5enrYAyHGKMegoOVh20fY/ynjJ4JTDVYjbXjZGE7/M7rlK3ppZnm4gGRiTgKUSFVsw
-	 8gcG2c6cBfwSw==
+	s=arc-20240116; t=1754168421; c=relaxed/simple;
+	bh=9liRjyy+k0N/Xr5gNi17GL3XB7VDEFFc+FY54aY9CWE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZBFyFpEYHGRnEdQBULtfe8i9doPHiftovOg+TBlfwrLulXbEFoee6wmXtvog5wZ2J7871GA4cszjs7Mo+ZYxGXYNUgLLH/5520chgTDzT/Oc/nG1BME9Ps6z4gE+VLOrVKacqfQncqc7sPa7MWWnJibUXtlzL6iHj9M2ur2wORY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OJX1QcY1; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-acb5ec407b1so437815866b.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 14:00:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754168416; x=1754773216; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=EqFvlTdkE/lLHwjCr384R3lKi7iIttlwXzx7wFAXJMg=;
+        b=OJX1QcY10kfO6RporXW/nYv4HVrA0CKgUfEJ7t2miOSb+u0XtWQDWNnIWbDhiLSjVM
+         VHbAnW4vpcSd8oHMBr5WHJv/9KMyH1dyhMncrwjWw6Xbpwut4nUCw57sUlEGlVCUNcE3
+         Ae4i0RAqQDdS+QYhiSU47F0NOqCcoT0tP+EiVtBkS+XJzYphrNwAgpp+hKA/dXPxYSzJ
+         azxNC2tr/bwL5jKSrruvhXQczIJkjzGnkbhS31sQKsey+KF2amYrF6O32vNZ/G8RkxIN
+         pUU/TBLeFBYibcG4W4PWCScjy57CCLB/kLUraQiwlI4uotzHEYtOCCELNU5LitJpKxSR
+         1DiA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754168416; x=1754773216;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=EqFvlTdkE/lLHwjCr384R3lKi7iIttlwXzx7wFAXJMg=;
+        b=KRS4ayJaJ+XgG9/24gD4aYWJGyx4pVKPJnx7MGth6yHP4Y8OfGSjvZ/xktV8juAnSK
+         zk839mdCcJz1lEAvQL+eRd/mb5Ub5+duanGixWji8ZO+1HYT4bUavBHw3ih/HiVYHLml
+         AJSnKHjbHANubRo82ui+kDd/moG3tXBl3Yu1ROv5oHutd23n43QFBbUDcmnfrvjGzCyK
+         FUEXf17jXzv4NfZdlgUo+PgA7I7VTmWUyRAkoiGGsfK7IVjpQvxV61bhyKOSJVRGuzu3
+         SiWxbdZTxDJDNIgmbI1JPEkRo3vkRZAR/57wnwYcNvsZLCIhVVs1DSVX3yl2CLPNTRba
+         Jifw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOvIxXjCzgSqsu7eZXwzW8NSPGj/xPgnEA+D7oaMWu3FdOHh34srG4Zwknt2Ly/BI+Kb8qQKmGUORCqAI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVf5fpCJ+c7s9imm/ObLFckjUsCPq0R9OZcSJ8hVyS4ZJArb7y
+	dsR00C9j7qwqVuqAwSPEMM6KTFZBvtdZazK4gj/ewTE/+7YadmU/jgchXUSIAA==
+X-Gm-Gg: ASbGncuVDzwthfORPFinyTvR3OOxTb0t4XaAtMaE5+R/D7vANGf/nL3aS1aVVPDtCbq
+	VxtPOM55nyJ8jFbkjDuhInGdIt1CTQ4SyWjvuBJ3T0pz08FTNEzT+vjquKvX/q0AmxJP0wp3YfA
+	7SbNnErHm7i1W2uFPaiXoq1Jyn00hUDSjqLXApEYKyIdK5m2+T5X5fLF+fKPB2nSVHh3rdNw0o5
+	AX6Fa8vAmvs9QUe4sGW+x91Qc9ChaI0dRt4FGWo61TNqL+KCRyj2tMfK0kKm8O7ycJM1gF54Kq+
+	mQV0EF8R8INzYNq0z3cVqoLWcSYIReVVMeN97ZNBSX4VKont34I2mMqk9TdqKKtVpNXmPYK8jfL
+	16hh4mIpj1xTvpEJn/IPM6aXexQBiaoa/yG2Qx1Nvtwjm
+X-Google-Smtp-Source: AGHT+IGTEl90wg4WrpQW0TdHrmGpxUVo//Z/YNxDsBB9jYyNI+4TaXABT4xWLIe39HheMQaiSSufyg==
+X-Received: by 2002:a17:907:6096:b0:ae3:74be:4998 with SMTP id a640c23a62f3a-af93ffc15ffmr397716466b.11.1754168416200;
+        Sat, 02 Aug 2025 14:00:16 -0700 (PDT)
+Received: from ws-linux01 ([2a02:2f0e:ca0d:f700:1210:b727:adc8:716])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c157sm476788366b.100.2025.08.02.14.00.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 14:00:15 -0700 (PDT)
+From: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+To: gshahrouzi@gmail.com,
+	gregkh@linuxfoundation.org,
+	linux-kernel@vger.kernel.org
+Cc: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
+Subject: [PATCH] staging: axis-fifo: fix maximum TX packet length check
+Date: Sat,  2 Aug 2025 23:59:43 +0300
+Message-ID: <20250802205943.958071-1-ovidiu.panait.oss@gmail.com>
+X-Mailer: git-send-email 2.50.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Date: Sat, 02 Aug 2025 22:58:08 +0200
-Message-Id: <DBS8REY5E82S.3937FAHS25ANA@kernel.org>
-Cc: "Onur" <work@onurozkan.dev>, "Boqun Feng" <boqun.feng@gmail.com>,
- <linux-kernel@vger.kernel.org>, <rust-for-linux@vger.kernel.org>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <gary@garyguo.net>,
- <a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
- <dakr@kernel.org>, <peterz@infradead.org>, <mingo@redhat.com>,
- <will@kernel.org>, <longman@redhat.com>, <felipe_life@live.com>,
- <daniel@sedlak.dev>, <bjorn3_gh@protonmail.com>, "dri-devel"
- <dri-devel@lists.freedesktop.org>
-Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
-From: "Benno Lossin" <lossin@kernel.org>
-To: "Daniel Almeida" <daniel.almeida@collabora.com>
-X-Mailer: aerc 0.20.1
-References: <20250621184454.8354-1-work@onurozkan.dev>
- <20250621184454.8354-3-work@onurozkan.dev>
- <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
- <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
- <DAU0ELV91E2Q.35FZOII18W44J@kernel.org>
- <20250707163913.5ffc046d@nimda.home>
- <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org>
- <20250707210613.2fd5bb55@nimda.home>
- <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org>
- <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
- <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
- <E997DCAF-552F-4EF2-BF94-1385ECADF543@collabora.com>
-In-Reply-To: <E997DCAF-552F-4EF2-BF94-1385ECADF543@collabora.com>
+Content-Transfer-Encoding: 8bit
 
-On Sat Aug 2, 2025 at 4:15 PM CEST, Daniel Almeida wrote:
-> On 2 Aug 2025, at 07:42, Benno Lossin <lossin@kernel.org> wrote:
->> On Fri Aug 1, 2025 at 11:22 PM CEST, Daniel Almeida wrote:
->>> One thing I didn=E2=80=99t understand with your approach: is it amenabl=
-e to loops?
->>> i.e.: are things like drm_exec() implementable?
->>=20
->> I don't think so, see also my reply here:
->>=20
->>    https://lore.kernel.org/all/DBOPIJHY9NZ7.2CU5XP7UY7ES3@kernel.org
->>=20
->> The type-based approach with tuples doesn't handle dynamic number of
->> locks.
->>=20
->
-> This is probably the default use-case by the way.
+Since commit 2ca34b508774 ("staging: axis-fifo: Correct handling of
+tx_fifo_depth for size validation"), write() operations with packets
+larger than 'tx_fifo_depth - 4' words are no longer rejected with -EINVAL.
 
-That's an important detail. In that case, a type state won't we a good
-idea. Unless it's also common to have a finite number of them, in which
-case we should have two API.
+Fortunately, the packets are not actually getting transmitted to hardware,
+otherwise they would be raising a 'Transmit Packet Overrun Error'
+interrupt, which requires a reset of the TX circuit to recover from.
 
->>> /**
->>> * drm_exec_until_all_locked - loop until all GEM objects are locked
->>> * @exec: drm_exec object
->>> *
->>> * Core functionality of the drm_exec object. Loops until all GEM object=
-s are
->>> * locked and no more contention exists. At the beginning of the loop it=
- is
->>> * guaranteed that no GEM object is locked.
->>> *
->>> * Since labels can't be defined local to the loops body we use a jump p=
-ointer
->>> * to make sure that the retry is only used from within the loops body.
->>> */
->>> #define drm_exec_until_all_locked(exec) \
->>> __PASTE(__drm_exec_, __LINE__): \
->>> for (void *__drm_exec_retry_ptr; ({ \
->>> __drm_exec_retry_ptr =3D &&__PASTE(__drm_exec_, __LINE__);\
->>> (void)__drm_exec_retry_ptr; \
->>> drm_exec_cleanup(exec); \
->>> });)
->>=20
->> My understanding of C preprocessor macros is not good enough to parse or
->> understand this :( What is that `__PASTE` thing?
->
-> This macro is very useful, but also cursed :)
->
-> This declares a unique label before the loop, so you can jump back to it =
-on
-> contention. It is usually used in conjunction with:
+Instead, the request times out inside wait_event_interruptible_timeout()
+and always returns -EAGAIN, since the wake up condition can never be true
+for these packets. But still, they unnecessarily block other tasks from
+writing to the FIFO and the EAGAIN return code signals userspace to retry
+the write() call, even though it will always fail and time out.
 
-Ahh, I missed the `:` at the end of the line. Thanks for explaining!
-(also Miguel in the other reply!) If you don't mind I'll ask some more
-basic C questions :)
+According to the AXI4-Stream FIFO reference manual (PG080), the maximum
+valid packet length is 'tx_fifo_depth - 4' words, so attempting to send
+larger packets is invalid and should not be happening in the first place:
 
-And yeah it's pretty cursed...
+> The maximum packet that can be transmitted is limited by the size of
+> the FIFO, which is (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
 
-> /**
->  * drm_exec_retry_on_contention - restart the loop to grap all locks
->  * @exec: drm_exec object
->  *
->  * Control flow helper to continue when a contention was detected and we =
-need to
->  * clean up and re-start the loop to prepare all GEM objects.
->  */
-> #define drm_exec_retry_on_contention(exec)			\
-> 	do {							\
-> 		if (unlikely(drm_exec_is_contended(exec)))	\
-> 			goto *__drm_exec_retry_ptr;		\
-> 	} while (0)
+Therefore, bring back the old behavior and outright reject packets larger
+than 'tx_fifo_depth - 4' with -EINVAL. Add a comment to explain why the
+check is necessary. The dev_err() message was removed to avoid cluttering
+the dmesg log if an invalid packet is received from userspace.
 
-The `do { ... } while(0)` is used because C doesn't have `{ ... }`
-scopes? (& because you want to be able to have this be called from an if
-without braces?)
-
-> The termination is handled by:
->
-> /**
->  * drm_exec_cleanup - cleanup when contention is detected
->  * @exec: the drm_exec object to cleanup
->  *
->  * Cleanup the current state and return true if we should stay inside the=
- retry
->  * loop, false if there wasn't any contention detected and we can keep th=
-e
->  * objects locked.
->  */
-> bool drm_exec_cleanup(struct drm_exec *exec)
-> {
-> 	if (likely(!exec->contended)) {
-> 		ww_acquire_done(&exec->ticket);
-> 		return false;
-> 	}
->
-> 	if (likely(exec->contended =3D=3D DRM_EXEC_DUMMY)) {
-> 		exec->contended =3D NULL;
-> 		ww_acquire_init(&exec->ticket, &reservation_ww_class);
-> 		return true;
-> 	}
->
-> 	drm_exec_unlock_all(exec);
-> 	exec->num_objects =3D 0;
-> 	return true;
-> }
-> EXPORT_SYMBOL(drm_exec_cleanup);
->
-> The third clause in the loop is empty.
->
-> For example, in amdgpu:
->
-> /**
->  * reserve_bo_and_vm - reserve a BO and a VM unconditionally.
->  * @mem: KFD BO structure.
->  * @vm: the VM to reserve.
->  * @ctx: the struct that will be used in unreserve_bo_and_vms().
->  */
-> static int reserve_bo_and_vm(struct kgd_mem *mem,
-> 			      struct amdgpu_vm *vm,
-> 			      struct bo_vm_reservation_context *ctx)
-> {
-> 	struct amdgpu_bo *bo =3D mem->bo;
-> 	int ret;
->
-> 	WARN_ON(!vm);
->
-> 	ctx->n_vms =3D 1;
-> 	ctx->sync =3D &mem->sync;
-> 	drm_exec_init(&ctx->exec, DRM_EXEC_INTERRUPTIBLE_WAIT, 0);
-> 	drm_exec_until_all_locked(&ctx->exec) {
-> 		ret =3D amdgpu_vm_lock_pd(vm, &ctx->exec, 2);
-> 		drm_exec_retry_on_contention(&ctx->exec);
-> 		if (unlikely(ret))
-> 			goto error;
->
-> 		ret =3D drm_exec_prepare_obj(&ctx->exec, &bo->tbo.base, 1);
-> 		drm_exec_retry_on_contention(&ctx->exec);
-> 		if (unlikely(ret))
-> 			goto error;
-> 	}
->         // <=E2=80=94=E2=80=94 everything is locked at this point.
-
-Which function call locks the mutexes?
-
-> 	return 0;
->
->
-> So, something like:
->
-> some_unique_label:
-> for(void *retry_ptr;
->     ({ retry_ptr =3D &some_unique_label; drm_exec_cleanup(); });
-
-Normally this should be a condition, or rather an expression evaluating
-to bool, why is this okay? Or does C just take the value of the last
-function call due to the `({})`?
-
-Why isn't `({})` used instead of `do { ... } while(0)` above?
-
->     /* empty *) {
->      /* user code here, which potentially jumps back to some_unique_label=
-  */
-> }
-
-Thanks for the example & the macro expansion. What I gather from this is
-that we'd probably want a closure that executes the code & reruns it
-when contention is detected.
-
->>> In fact, perhaps we can copy drm_exec, basically? i.e.:
->>>=20
->>> /**
->>> * struct drm_exec - Execution context
->>> */
->>> struct drm_exec {
->>> /**
->>>  * @flags: Flags to control locking behavior
->>>  */
->>> u32                     flags;
->>>=20
->>> /**
->>>  * @ticket: WW ticket used for acquiring locks
->>>  */
->>> struct ww_acquire_ctx ticket;
->>>=20
->>> /**
->>>  * @num_objects: number of objects locked
->>>  */
->>> unsigned int num_objects;
->>>=20
->>> /**
->>>  * @max_objects: maximum objects in array
->>>  */
->>> unsigned int max_objects;
->>>=20
->>> /**
->>>  * @objects: array of the locked objects
->>>  */
->>> struct drm_gem_object **objects;
->>>=20
->>> /**
->>>  * @contended: contended GEM object we backed off for
->>>  */
->>> struct drm_gem_object *contended;
->>>=20
->>> /**
->>>  * @prelocked: already locked GEM object due to contention
->>>  */
->>> struct drm_gem_object *prelocked;
->>> };
->>>=20
->>> This is GEM-specific, but we could perhaps implement the same idea by
->>> tracking ww_mutexes instead of GEM objects.
->>=20
->> But this would only work for `Vec<WwMutex<T>>`, right?
->
-> I=E2=80=99m not sure if I understand your point here.
->
-> The list of ww_mutexes that we've managed to currently lock would be some=
-thing
-> that we'd keep track internally in our context. In what way is a KVec an =
-issue?
-
-I saw "array of the locked objects" and thus thought so this must only
-work for an array of locks. Looking at the type a bit closer, it
-actually is an array of pointers, so it does work for arbitrary data
-structures storing the locks.
-
-So essentially it would amount to storing `Vec<WwMutexGuard<'_, T>>` in
-Rust IIUC. I was under the impression that we wanted to avoid that,
-because it's an extra allocation.
-
-But maybe that's actually what's done on the C side.
-
-> Btw, I can also try to implement a proof of concept, so long as people ag=
-ree that
-> this approach makes sense.
-
-I'm not sure I understand what you are proposing, so I can't give a
-recommendation yet.
-
+Fixes: 2ca34b508774 ("staging: axis-fifo: Correct handling of tx_fifo_depth for size validation")
+Signed-off-by: Ovidiu Panait <ovidiu.panait.oss@gmail.com>
 ---
-Cheers,
-Benno
+ drivers/staging/axis-fifo/axis-fifo.c | 14 ++++++++++----
+ 1 file changed, 10 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/staging/axis-fifo/axis-fifo.c b/drivers/staging/axis-fifo/axis-fifo.c
+index 25c0fa8c415d..0f244f80c368 100644
+--- a/drivers/staging/axis-fifo/axis-fifo.c
++++ b/drivers/staging/axis-fifo/axis-fifo.c
+@@ -322,11 +322,17 @@ static ssize_t axis_fifo_write(struct file *f, const char __user *buf,
+ 		return -EINVAL;
+ 	}
+ 
+-	if (words_to_write > fifo->tx_fifo_depth) {
+-		dev_err(fifo->dt_device, "tried to write more words [%u] than slots in the fifo buffer [%u]\n",
+-			words_to_write, fifo->tx_fifo_depth);
++	/*
++	 * In 'Store-and-Forward' mode, the maximum packet that can be
++	 * transmitted is limited by the size of the FIFO, which is
++	 * (C_TX_FIFO_DEPTH–4)*(data interface width/8) bytes.
++	 *
++	 * Do not attempt to send a packet larger than 'tx_fifo_depth - 4',
++	 * otherwise a 'Transmit Packet Overrun Error' interrupt will be
++	 * raised, which requires a reset of the TX circuit to recover.
++	 */
++	if (words_to_write > (fifo->tx_fifo_depth - 4))
+ 		return -EINVAL;
+-	}
+ 
+ 	if (fifo->write_flags & O_NONBLOCK) {
+ 		/*
+-- 
+2.50.0
+
 
