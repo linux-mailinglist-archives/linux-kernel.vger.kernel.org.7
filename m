@@ -1,94 +1,66 @@
-Return-Path: <linux-kernel+bounces-753998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4EEAB18B84
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:02:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C2F0B18B87
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:03:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ABA047B10CE
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:01:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 181A2622812
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C45842036FE;
-	Sat,  2 Aug 2025 09:02:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B034202C58;
+	Sat,  2 Aug 2025 09:03:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Fjeg2Ipm"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bSa/9iUd"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 757DA1F4165
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 09:02:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 825621E7C1B;
+	Sat,  2 Aug 2025 09:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754125362; cv=none; b=ugiaGTYVJitr37/ZOGB6LbQBpHuHMBSeQL9Zq3r0HLTO0TYJE9Y0Ou59SC9Nh5ZQVSrUvQ6DJYKrxzXpiw6ff6n7rbCRwIC3J2ZGJswuTHLC77LQ1P34t+6FikHYgdFzcQCFHKFCxOdyhaFvoZAuOegmK1oDrw4xs3mKYbmOpoA=
+	t=1754125415; cv=none; b=Uku/4MQqRYa1pKKlXrL+QIsKcasYsDCZD98cDUZlVBzoPCashVDTG6qcR+khldE7ubVg0IibdoNVJjcw79e2Crmkz+4Luh3C68pn7BXrnssRkAeCaeLy4C6RFBHWMIo6BbujTLOlTdSXL2oyb+ay81XVtnNgkciwZedMmXHqrEM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754125362; c=relaxed/simple;
-	bh=tE/ycKV78Xqu6awmy1vGaYwLfvEhozTkRG8Leg5kafA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M70YB0kSTynJalj08J9m4k1FTmu/ZiFsBlUTVz95VF/awKbbEXpTnJBDm/Qb1bO21rbmrb/Yv3w3x0GocgPsNp85Xy3uW+xA3uR3qArTGCDXmVEf4ccjSNItRc3+Zh+c9wh9CJmhtF4OZ/alMqrqWoSqH4DcfWonXRvdvaZzBiA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Fjeg2Ipm; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso9087985e9.3
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 02:02:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754125359; x=1754730159; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=U/dnL5CfASf7BSwg8zUGgo87QSvNoaNIJBZuuBOd20Y=;
-        b=Fjeg2Ipm1nAlUTzjt1e5NiFfCrabjd3DsGqN1oUa0hD+0spmCClkG+MZBoLSSDrhJo
-         eubaZlnwsB7qt9nRxG4eQ2fGG/eDRG/D709GNjZ8SC+8Pu80szPf+jyBbVt1/uTZJAYp
-         pfES1rgdIy+iTJZi5pbw/D1qfzRdKJJ+C3dcKQTnjl+e0n5ysDsIVaAxPYEBn0XSseVS
-         0jgEBV6+p+uqBtQ0Z6CPbgU8QCE6rZT9pK4xCdjVIq1Iidno2AlBfeK+78UyZ/H1v3AH
-         JqiJPGhBDMDCm4vmyvWpFvpEZk79csXEvKd50q0wpgPwj/9YDXP/XIc3ev8etpadDkqu
-         IA6w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754125359; x=1754730159;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U/dnL5CfASf7BSwg8zUGgo87QSvNoaNIJBZuuBOd20Y=;
-        b=MY5kZRvrXjRHTr+eZTFcliA/tRdiyZD/t2w0hziAWeeBIIjeRn8kqhfkxY0NXfel3Z
-         5tRxWJfYWrZiWr3qlVKG8kRGqfZCqwFqXutcuOXETYeOJAVWyPDCVFF0Jwx4W4kWUS2j
-         434IhctktgbFHS81EYyFompQrhMdQrx7qOIszgds0VQEaaikBoSCQ8sw/sTV8IImB3L3
-         TIZMDpmWH0U7lW6duyxe+glK781zoYfe/Mxpa+5Yt4HSwLSCwg4v+AaiCGX/xkOKpLax
-         oVHfXygDBentGnBPSp45iPKQAsl8g4U1zDzMgnxS3cvitcIGfLhHUqALKJhuW+LEvL4x
-         colw==
-X-Forwarded-Encrypted: i=1; AJvYcCVqKxH2/hvLyuxrqdJ7LGsFiu0o4rBhQqsVKytR6+39YmNQEObq14OPYGUccZAZ59cCpmd+OU4mYqvmX0U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxYO4yUwpFi6Cz6SwggMiIfukhFnzXEtm8svOubK9LX0xvSFJpN
-	qAPl6tsuxK1MM5oVizll8u4fDz/uhMM0WfvLC5W3cMK9XIFHSkTptJkWhp795b84Hg8=
-X-Gm-Gg: ASbGncvbrXAl0bL3AM54gCMduCECSRvNoY85Y5QJfXLa5N4fQ2m3t34RwSCsoUc4mXv
-	QPZtlPoxo/7P2FDIELMcahSicbW7Rh31FMP4tYFg6y4okf0fQJPEnybMrfObyVWiDdwKM7LZjci
-	+t8AU64ZnNn68gvaH+otCwClxDTvzOlX+3y0KZAISWSmksuRw92H1L5lxHK3nHSoZjjYbKJLo+4
-	S8wMNtk/6AoCeER9QDSkCN6/rk4xIMw1AExuf6UFn01TcJaMn4XeEmq+ztLUOTWyvKOfmXA3WDg
-	mQG8E9Unx/gPqpIBJnkfJtGY9t3C1+8nWexg3U0Z9PYxQ7DL3laOVDKfBML+SfToQkpQImX5rdw
-	3pDIoKJZjtGi0wswDyf5lPaafoXw=
-X-Google-Smtp-Source: AGHT+IGD1hqwEMqQ7r+1+t1Ud4D2Xaj0ub7nD4dO+TqiU68vja/VuwOkDoIJFNO3HEop6/QEYJVv+w==
-X-Received: by 2002:a05:600c:a46:b0:455:f380:32e2 with SMTP id 5b1f17b1804b1-458b6b30363mr15584125e9.18.1754125358709;
-        Sat, 02 Aug 2025 02:02:38 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458bd5a1148sm6429065e9.0.2025.08.02.02.02.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 02:02:38 -0700 (PDT)
-Date: Sat, 2 Aug 2025 12:02:35 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Colin Ian King <colin.i.king@gmail.com>,
-	Andy Shevchenko <andy@kernel.org>, Hans de Goede <hansg@kernel.org>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	linux-media@vger.kernel.org, linux-staging@lists.linux.dev,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH][next] media: atomisp: Fix incorrect snprintf format
- specifiers for signed integers
-Message-ID: <934c7ffa-1386-45a0-a4e7-f2b93cca6370@suswa.mountain>
-References: <20250801160023.2434130-1-colin.i.king@gmail.com>
- <CAHp75VeDt=1=9epJPQjzfyyph09bov9UWWwpaAXgu01Egf1hag@mail.gmail.com>
- <10626b28-9619-47ea-abad-db823c01bb96@suswa.mountain>
- <CAHp75VdfZwmRzGAeN7rLoab2oT8eKyUF1mUGj4d+y98jZS7EHA@mail.gmail.com>
+	s=arc-20240116; t=1754125415; c=relaxed/simple;
+	bh=B+sLSD/spXOHjS0PWTHttU03+WW1yULv9NwniNHJJPY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=sllCWRlD7Un1mpRc/IPpNjZIZaJhKWCmmoCxgffDUQER7rAw3T6n9Cv5hWj4HeFJ8wAbeK97eM6Fr140xCgYo4AJlcLVe4KIdUHlXzHMVASmApdsnA9+0JYF31Ydib684HaHg79DdEiJ/RfwE6uHurtHPgtP7YbQw3P+u4HGhMU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bSa/9iUd; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC25AC4CEEF;
+	Sat,  2 Aug 2025 09:03:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754125415;
+	bh=B+sLSD/spXOHjS0PWTHttU03+WW1yULv9NwniNHJJPY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=bSa/9iUdUGz5mSHzXuDyWCxOGL5I5Q7pp06nQjGP17OPVQ3mqE1TCsIaEggsH3iuf
+	 t6Q8O5c7hAUI7lRolFF88ap529irddphG1teWc0XaDzPsIrq2/7LoqDRY/U0w7Nn/a
+	 qjyUzM4zP/7/fOgT87W9BRIFgUoihaj84nn5W0Nq34srLhFrqPSMv/BBBzrpvW6lew
+	 ouOgQDMOCweSaSmThNFguvWXmUnyvUbMQniSM0+/Z+WQH7g2bk5bActe3XDoi1oXV9
+	 d9uGQkqsKXI+c5ETG+DCcIYgUrWwzI6VqRxK7VXQ+AfucnNZiIlTyiEC9NNrXwi53S
+	 U79LQX792ty5w==
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	linux-pci@vger.kernel.org
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-kernel@vger.kernel.org, aik@amd.com, lukas@wunner.de,
+	Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 08/38] iommufd/tsm: Add tsm_op iommufd ioctls
+In-Reply-To: <20250729173458.00003ca5@huawei.com>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-9-aneesh.kumar@kernel.org>
+ <20250729173458.00003ca5@huawei.com>
+Date: Sat, 02 Aug 2025 14:33:26 +0530
+Message-ID: <yq5afrea9jtt.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -96,46 +68,224 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAHp75VdfZwmRzGAeN7rLoab2oT8eKyUF1mUGj4d+y98jZS7EHA@mail.gmail.com>
+Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 02, 2025 at 10:45:49AM +0200, Andy Shevchenko wrote:
-> On Sat, Aug 2, 2025 at 9:32 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> > On Fri, Aug 01, 2025 at 11:57:43PM +0200, Andy Shevchenko wrote:
-> > > On Fri, Aug 1, 2025 at 6:01 PM Colin Ian King <colin.i.king@gmail.com> wrote:
-> > > >
-> > > > There are incorrect %u format specifiers being used to for signed integers,
-> > > > fix this by using %d instead.
-> > >
-> > > Both of them sound to me like the fix of the symptom and not the
-> > > cause. Can we simply make types of the iterators to be unsigned
-> > > instead?
-> >
-> > Making iterator unsigned by default only increases the rate of bugs.
-> 
-> How? Please, make sure this is relevant to this case.
+Jonathan Cameron <Jonathan.Cameron@huawei.com> writes:
 
-You're suggesting that he should change:
+> On Mon, 28 Jul 2025 19:21:45 +0530
+> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+>
+>> Add operations bind and unbind used to bind a TDI to the secure guest.
+>>=20
+>> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+>
+> Hi Aneesh,
+>
+> I'm mostly reading this to get head around it rather than fully review
+> at this point.
+>
+> A few things inline though that I noticed whilst doing so.
+>
+> Jonathan
+>
+>> ---
+>>  drivers/iommu/iommufd/iommufd_private.h |  1 +
+>>  drivers/iommu/iommufd/main.c            |  3 ++
+>>  drivers/iommu/iommufd/viommu.c          | 50 +++++++++++++++++++++++++
+>>  drivers/vfio/pci/vfio_pci_core.c        | 10 +++++
+>>  include/uapi/linux/iommufd.h            | 18 +++++++++
+>>  5 files changed, 82 insertions(+)
+>>=20
+>> diff --git a/drivers/iommu/iommufd/iommufd_private.h b/drivers/iommu/iom=
+mufd/iommufd_private.h
+>> index fce68714c80f..e08186f1d102 100644
+>> --- a/drivers/iommu/iommufd/iommufd_private.h
+>> +++ b/drivers/iommu/iommufd/iommufd_private.h
+>> @@ -697,6 +697,7 @@ void iommufd_vdevice_destroy(struct iommufd_object *=
+obj);
+>>  void iommufd_vdevice_abort(struct iommufd_object *obj);
+>>  int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucmd *ucmd);
+>>  void iommufd_hw_queue_destroy(struct iommufd_object *obj);
+>> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd);
+>>=20=20
+>>  static inline struct iommufd_vdevice *
+>>  iommufd_get_vdevice(struct iommufd_ctx *ictx, u32 id)
+>
+>> diff --git a/drivers/iommu/iommufd/viommu.c b/drivers/iommu/iommufd/viom=
+mu.c
+>> index 59f1e1176f7f..c934312e5397 100644
+>> --- a/drivers/iommu/iommufd/viommu.c
+>> +++ b/drivers/iommu/iommufd/viommu.c
+>> @@ -162,6 +162,9 @@ void iommufd_vdevice_abort(struct iommufd_object *ob=
+j)
+>>=20=20
+>>  	lockdep_assert_held(&idev->igroup->lock);
+>>=20=20
+>> +#ifdef CONFIG_TSM
+> Can we use stubs for some of this stuff so we don't need ifdefs in as many
+> places.
+>
+>> +	tsm_unbind(idev->dev);
+>> +#endif
+>>  	if (vdev->destroy)
+>>  		vdev->destroy(vdev);
+>>  	/* xa_cmpxchg is okay to fail if alloc failed xa_cmpxchg previously */
+>> @@ -471,3 +474,50 @@ int iommufd_hw_queue_alloc_ioctl(struct iommufd_ucm=
+d *ucmd)
+>>  	iommufd_put_object(ucmd->ictx, &viommu->obj);
+>>  	return rc;
+>>  }
+>> +
+>> +#ifdef CONFIG_TSM
+>> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd)
+>
+> Might want to split this out to a separate c file and use stubs in a head=
+er to
+> keep the code clean here.
+>
+>> +{
+>> +	struct iommu_vdevice_tsm_op *cmd =3D ucmd->cmd;
+>> +	struct iommufd_vdevice *vdev;
+>> +	struct kvm *kvm;
+>> +	int rc =3D -ENODEV;
+>> +
+>> +	if (cmd->flags)
+>> +		return -EOPNOTSUPP;
+>> +
+>> +	vdev =3D container_of(iommufd_get_object(ucmd->ictx, cmd->vdevice_id,
+>> +					       IOMMUFD_OBJ_VDEVICE),
+>> +			    struct iommufd_vdevice, obj);
+>> +	if (IS_ERR(vdev))
+>> +		return PTR_ERR(vdev);
+>> +
+>> +	kvm =3D vdev->viommu->kvm_filp->private_data;
+>> +	if (kvm) {
+>> +		/*
+>> +		 * tsm layer will make take care of parallel calls to tsm_bind/unbind
+>
+> Wrap comment to say under 80 chars. Or if file goes higher, use a single =
+line
+> comment.
+>
+> 		  tsm layer will take care ...
+>
+> (stray 'make')
+>
+>> +		 */
+>> +		if (cmd->op =3D=3D IOMMU_VDEICE_TSM_BIND)
+>> +			rc =3D tsm_bind(vdev->idev->dev, kvm, vdev->virt_id);
+>> +		else if (cmd->op =3D=3D IOMMU_VDEICE_TSM_UNBIND)
+>> +			rc =3D tsm_unbind(vdev->idev->dev);
+>> +
+>> +		if (rc) {
+>> +			rc =3D -ENODEV;
+>
+> If we want to eat an error code coming from elsewhere, maybe a comment on=
+ why?
+>
+>> +			goto out_put_vdev;
+>> +		}
+>> +	} else {
+>> +		goto out_put_vdev;
+>
+> If this always skips the next line, does that imply that line should
+> have been under if (kvm)?  Maybe this makes more sense in
+> later patches - if so ignore this comment.
+>
+>
+>> +	}
+>> +	rc =3D iommufd_ucmd_respond(ucmd, sizeof(*cmd));
+>> +
+>> +out_put_vdev:
+>> +	iommufd_put_object(ucmd->ictx, &vdev->obj);
+>> +	return rc;
+>> +}
+>> +#else /* !CONFIG_TSM */
+>> +int iommufd_vdevice_tsm_op_ioctl(struct iommufd_ucmd *ucmd)
+>> +{
+>> +	return -ENODEV;
+>> +}
+>> +#endif
+>> diff --git a/drivers/vfio/pci/vfio_pci_core.c b/drivers/vfio/pci/vfio_pc=
+i_core.c
+>> index bee3cf3226e9..afdb39c6aefd 100644
+>> --- a/drivers/vfio/pci/vfio_pci_core.c
+>> +++ b/drivers/vfio/pci/vfio_pci_core.c
+>> @@ -694,6 +694,16 @@ void vfio_pci_core_close_device(struct vfio_device =
+*core_vdev)
+>>  #if IS_ENABLED(CONFIG_EEH)
+>>  	eeh_dev_release(vdev->pdev);
+>>  #endif
+>> +
+>> +#if 0
+>
+> If you really need to do this, add a comment on why if 0
+>
+>> +	/*
+>> +	 * destroy vdevice which involves tsm unbind before we disable pci dis=
+able
+>> +	 * A MSE/BME clear will transition the device to error state.
+>> +	 */
+>> +	if (core_vdev->iommufd_device)
+>> +		iommufd_device_tombstone_vdevice(core_vdev->iommufd_device);
+>> +#endif
+>> +
+>>  	vfio_pci_core_disable(vdev);
+>>
 
--	int i, j;
-+	unsigned int i, j;
+This is something I=E2=80=99d like to get feedback on. According to the TSM
+specification, we=E2=80=99re required to unlock before clearing MSE/BME via=
+=20
+calling `vfio_pci_core_disable(vdev)`.
 
-It's just bad advice.  Making iterators unsigned makes the code less
-safe.  It leads underflow bugs when we do subtraction:
+However, in the current `iommufd` branch, we seem to call
+`vdevice_destroy` a bit too late in the sequence to meet this
+requirement.
 
-	for (i = num - 1; i < limit; i++) {
 
-Now i starts at UINT_MAX.  Which I guess is fine in this example...
+>>  	mutex_lock(&vdev->igate);
+>> diff --git a/include/uapi/linux/iommufd.h b/include/uapi/linux/iommufd.h
+>> index 9014c61a97d4..8b1fbf1ef25c 100644
+>> --- a/include/uapi/linux/iommufd.h
+>> +++ b/include/uapi/linux/iommufd.h
+>> @@ -57,6 +57,7 @@ enum {
+>
+>>  /**
+>> @@ -1127,6 +1128,23 @@ enum iommu_veventq_flag {
+>>  	IOMMU_VEVENTQ_FLAG_LOST_EVENTS =3D (1U << 0),
+>>  };
+>>=20=20
+>> +/**
+>> + * struct iommu_vdevice_tsm_OP - ioctl(IOMMU_VDEVICE_TSM_OP)
+>> + * @size: sizeof(struct iommu_vdevice_tsm_OP)
+>
+> _op I guess?
+>
+>> + * @op: Either TSM_BIND or TSM_UNBIMD
+>> + * @flags: Must be 0
+>> + * @vdevice_id: Object handle for the vDevice. Returned from IOMMU_VDEV=
+ICE_ALLOC
+>> + */
+>> +struct iommu_vdevice_tsm_op {
+>> +	__u32 size;
+>> +	__u32 op;
+>> +	__u32 flags;
+>> +	__u32 vdevice_id;
+>> +};
+>> +#define IOMMU_VDEVICE_TSM_OP	_IO(IOMMUFD_TYPE, IOMMUFD_CMD_VDEVICE_TSM_=
+OP)
+>> +#define IOMMU_VDEICE_TSM_BIND		0x1
+>> +#define IOMMU_VDEICE_TSM_UNBIND		0x2
+>> +
+>>  /**
+>>   * struct iommufd_vevent_header - Virtual Event Header for a vEVENTQ St=
+atus
+>>   * @flags: Combination of enum iommu_veventq_flag
 
-But it also leads to endless loops in the error handling:
 
-	while (i-- >= 0) {
+Thanks for the review comments. I'll update the patch with the suggested ch=
+anges.
 
-Making iterators unsigned is a bad habbit and it's bad advice in terms
-of the data that we have with regards to bugs.
 
-regards,
-dan carpenter
-
+-aneesh
 
