@@ -1,190 +1,108 @@
-Return-Path: <linux-kernel+bounces-754086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FD29B18DE6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:08:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A69AB18DE9
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:12:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B092717FC5C
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:08:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A0EA85605EB
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:12:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2498820E00B;
-	Sat,  2 Aug 2025 10:07:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C7E520E00B;
+	Sat,  2 Aug 2025 10:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="PHnWTylD"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kNyps3Sh"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 632461F4611;
-	Sat,  2 Aug 2025 10:07:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A02B9A55;
+	Sat,  2 Aug 2025 10:12:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754129278; cv=none; b=ZkuIwE+x47aD0vISHTOOgolyf3/I2b0EeITCJfnXRVHd9IE2rZLiN/XOacuyJYxOYtDeT1G+XqIL1nCebPXAnCPDrn1iTZBST8/Jn4YG4F/8fKDzyMz0LcgbKd7o4B3DUtlQS07+0QfRoTh4R/fzXZ4d7lZ1uBULVIZH66KzS+c=
+	t=1754129527; cv=none; b=A6Cgnek1CQ8h5zfVKAO4SfVUqCylAvhzF4r5iZvrH1evJaVpXs3oDPxlhDB6Rj9cd5BdNth183UvH4LMCWROXjOFQxmZKRBht3LVy1i6v4FNGwEAzYzzodsGVejpaTaXOawVFK4mpYDHpvqa7XAjAqGZYHBCuhwI5y95BFdBykw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754129278; c=relaxed/simple;
-	bh=WifwYiw+/VhG8MFuis/kqFt7PWc4yq0zX4DIOGOfrq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kJei37xANZyF4t+7Em23Sm0F1JhfECpJKzDASNFGTHDlXiE2qygTTN1PrGAGK3XPyVB10ybByqiOPf7tAcvv7oHSEXJMd1lQW8PiBxSEu7ICm1ebrE7swo5Y0A6nJ8G7zhmFCPCsE/6c4v4OZnAFoUohpJrTFhYCVdNKW+WaR7A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=PHnWTylD; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754129276; x=1785665276;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=WifwYiw+/VhG8MFuis/kqFt7PWc4yq0zX4DIOGOfrq8=;
-  b=PHnWTylD95THkNTtvO5zAAbEp3+0EDCIU8ddD++8O9umxSd64q3OBsoh
-   LExszsJu5QiEWehL2ol8wXxnak7n4hfFY+/Pu1eMXghnFFWNkSB4Rn7H5
-   4nM7KB4oYnCzK3CXJLuIUtPQ4QrVCmjSahD9rM1+ysjvJdVO2yvOTRKyS
-   GKn6F4vrCyN2uJUsqaLhgOnkfu8QqCKcGS3KeBrDpDxUzSN9BGN5I/uaa
-   IobbPCZGwfvNYivsq7Afhw9yU1mkjLJSUIUxO5E/0MQZTUUjndf0MZSO7
-   0YCCQUmcXio8lFjg8gn0HsRCP/TZUQrJm3RYfZ+mlCrZBNkAkOt14RVwf
-   w==;
-X-CSE-ConnectionGUID: apz/OxHKTr+u2xmUDTkRBw==
-X-CSE-MsgGUID: xte8IvcVTeyL+AI5zSRYcQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56548695"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="56548695"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2025 03:07:56 -0700
-X-CSE-ConnectionGUID: 3krxle8xTzCGPuWpLHetTw==
-X-CSE-MsgGUID: O/FXCyNQTSqPo6EQJGwuDg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163778078"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa007.jf.intel.com with ESMTP; 02 Aug 2025 03:07:53 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ui99a-0005IW-1u;
-	Sat, 02 Aug 2025 10:07:50 +0000
-Date: Sat, 2 Aug 2025 18:07:32 +0800
-From: kernel test robot <lkp@intel.com>
-To: Ethan Carter Edwards <ethan@ethancedwards.com>,
-	Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: oe-kbuild-all@lists.linux.dev, dri-devel@lists.freedesktop.org,
-	nouveau@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	kernel-janitors@vger.kernel.org,
-	Ethan Carter Edwards <ethan@ethancedwards.com>
-Subject: Re: [PATCH] drm/nouveau/gsp: remove always true if check
-Message-ID: <202508021705.k0nkiqga-lkp@intel.com>
-References: <20250801-nouveau-fifo-v1-1-25b9db5283bc@ethancedwards.com>
+	s=arc-20240116; t=1754129527; c=relaxed/simple;
+	bh=RcIxv8CNranSikYqIfYh6Wu6F4BH/n9VDoB+wiP/7uo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=fTOe13gLVaF9hQXSBIyY23SUBaHOmr3SduCY7qogS8SmmKR2ZNLzfbDhSWbUV4UHO/tQsd8uprwB/kF7qFN3CnTg5/SZTHa8EY8ufn83LqWAglkfLxilPWiOcBzOWw9YTN2TxHNG4Vomk377+m4c/4eIAkiljKXgQiPQP8b9opg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kNyps3Sh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BFFAC4CEEF;
+	Sat,  2 Aug 2025 10:12:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754129527;
+	bh=RcIxv8CNranSikYqIfYh6Wu6F4BH/n9VDoB+wiP/7uo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kNyps3ShYsIWdrdiIip+VBES7YtLPsL4ackBY330zHkCdbbkfgPh/m4Y+rdFZ+ju+
+	 UshLLaq2/xnvuAOnDCYqd9GFlMMMCi8Q///A30JmhIqA8HOGSUxDz+oSoK4jM9dzyx
+	 t3T7BKbSRkt5l9DEJ9q98DAp+4bpI0CvXrkNsLqhjJXz4AO0S4I3zd2L8Gv4ZSTEXd
+	 SjIqNpr5oFZZvCwwYNrIvwm8Qgmc+62xfsSFIJCtaVJSaQ+Ni/OasmUFgHJwWGOhv3
+	 oe4SgVl/7YfIX2+ktdbRabHJCr/aDZt12QY7JW8ZQhUyELbWmR0bt8Pinf1ecsA80y
+	 jL9E/wpl0LjHA==
+Date: Sat, 2 Aug 2025 12:12:00 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jani Nikula <jani.nikula@intel.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven
+ <geert@linux-m68k.org>, Hendrik Hamerlinck
+ <hendrik.hamerlinck@hammernet.be>, dwaipayanray1@gmail.com,
+ lukas.bulwahn@gmail.com, joe@perches.com, corbet@lwn.net,
+ apw@canonical.com, skhan@linuxfoundation.org,
+ linux-kernel-mentees@lists.linux.dev, workflows@vger.kernel.org,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Konstantin
+ Ryabitsev <konstantin@linuxfoundation.org>
+Subject: Re: [PATCH] checkpatch: validate commit tag ordering
+Message-ID: <20250802121200.665ea309@foz.lan>
+In-Reply-To: <3e9106d35d41a044adeadffeea32fa096c9e1370@intel.com>
+References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
+	<53eb0068-008b-48e6-9b92-d92de2ed4fc9@kernel.org>
+	<CAMuHMdU2e+5Hf3v=C=sE=+25f_A=2=Zzw5rxvcT=hb75VC=iFQ@mail.gmail.com>
+	<45f0995f-17ac-45a3-8bc0-3b276ee91a9d@kernel.org>
+	<3e9106d35d41a044adeadffeea32fa096c9e1370@intel.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801-nouveau-fifo-v1-1-25b9db5283bc@ethancedwards.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Ethan,
+Em Fri, 01 Aug 2025 10:55:55 +0300
+Jani Nikula <jani.nikula@intel.com> escreveu:
 
-kernel test robot noticed the following build errors:
+> On Thu, 31 Jul 2025, Krzysztof Kozlowski <krzk@kernel.org> wrote:
+> > On 31/07/2025 13:55, Geert Uytterhoeven wrote:  
+> >> B4 does not follow the proper order:  
+> >
+> > There is no "proper order" in terms of absolute facts.  
+> 
+> Let's just decide whatever order b4 uses *is* the proper order, and save
+> ourselves endless hours of debating! :p
 
-[auto build test ERROR on b9ddaa95fd283bce7041550ddbbe7e764c477110]
+I don't think it makes sense to have a "proper order" verified on
+checkpatch, as some tags may appear on different places.
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Ethan-Carter-Edwards/drm-nouveau-gsp-remove-always-true-if-check/20250802-095804
-base:   b9ddaa95fd283bce7041550ddbbe7e764c477110
-patch link:    https://lore.kernel.org/r/20250801-nouveau-fifo-v1-1-25b9db5283bc%40ethancedwards.com
-patch subject: [PATCH] drm/nouveau/gsp: remove always true if check
-config: i386-buildonly-randconfig-004-20250802 (https://download.01.org/0day-ci/archive/20250802/202508021705.k0nkiqga-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14+deb12u1) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250802/202508021705.k0nkiqga-lkp@intel.com/reproduce)
+For instance, the custody chain was designed to have SoBs appearing
+in different places:
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508021705.k0nkiqga-lkp@intel.com/
+- author(s) SoB together co-developed-by are usually the first ones;
+- then patches may have been reviewed, tested, acked or passed on some
+  other trees, gaining tags like tested-by, R-B, A-B, SoB, Cc;
+- the subsystem maintainer will add his SoB in the end.
 
-All errors (new ones prefixed by >>):
+non-custody chain tags, like fixes, closes, reported-by...
+usually comes first, but I don't think we need to enforce an specific
+order.
 
-   drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c: In function 'r535_chan_ramfc_write':
->> drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c:193:34: error: conflicting types for 'ctrl'; have 'NVA06F_CTRL_BIND_PARAMS *'
-     193 |         NVA06F_CTRL_BIND_PARAMS *ctrl;
-         |                                  ^~~~
-   drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c:191:45: note: previous declaration of 'ctrl' with type 'NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *'
-     191 |         NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
-         |                                             ^~~~
->> drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c:211:13: error: 'NVA06F_CTRL_BIND_PARAMS' has no member named 'bEnable'
-     211 |         ctrl->bEnable = 1;
-         |             ^~
+Link, for instance, could be used on different places, with different
+purposes.
 
+At least for me, the only part that shall really follow a proper
+order is the custody chain: It has to follow how the patch was handled,
+from the authors at the top up to the maintainers at the bottom.
 
-vim +193 drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  152  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  153  static int
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  154  r535_chan_ramfc_write(struct nvkm_chan *chan, u64 offset, u64 length, u32 devm, bool priv)
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  155  {
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  156  	struct nvkm_fifo *fifo = chan->cgrp->runl->fifo;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  157  	struct nvkm_engn *engn;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  158  	struct nvkm_device *device = fifo->engine.subdev.device;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  159  	const struct nvkm_rm_api *rmapi = device->gsp->rm->api;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  160  	u32 eT = ~0;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  161  	int ret;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  162  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  163  	if (unlikely(device->gr && !device->gr->engine.subdev.oneinit)) {
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  164  		ret = nvkm_subdev_oneinit(&device->gr->engine.subdev);
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  165  		if (ret)
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  166  			return ret;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  167  	}
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  168  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  169  	nvkm_runl_foreach_engn(engn, chan->cgrp->runl) {
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  170  		eT = engn->id;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  171  		break;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  172  	}
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  173  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  174  	if (WARN_ON(eT == ~0))
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  175  		return -EINVAL;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  176  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  177  	chan->rm.mthdbuf.ptr = dma_alloc_coherent(fifo->engine.subdev.device->dev,
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  178  						  fifo->rm.mthdbuf_size,
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  179  						  &chan->rm.mthdbuf.addr, GFP_KERNEL);
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  180  	if (!chan->rm.mthdbuf.ptr)
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  181  		return -ENOMEM;
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  182  
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  183  	ret = rmapi->fifo->chan.alloc(&chan->vmm->rm.device, NVKM_RM_CHAN(chan->id),
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  184  				      eT, chan->runq, priv, chan->id, chan->inst->addr,
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  185  				      nvkm_memory_addr(chan->userd.mem) + chan->userd.base,
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  186  				      chan->rm.mthdbuf.addr, chan->vmm, offset, length,
-27b13dc5d0515e drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c Ben Skeggs 2024-11-20  187  				      &chan->rm.object);
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  188  	if (ret)
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  189  		return ret;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  190  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  191  	NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  192  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19 @193  	NVA06F_CTRL_BIND_PARAMS *ctrl;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  194  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  195  	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  196  						NVA06F_CTRL_CMD_BIND, sizeof(*ctrl));
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  197  	if (WARN_ON(IS_ERR(ctrl)))
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  198  		return PTR_ERR(ctrl);
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  199  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  200  	ctrl->engineType = eT;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  201  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  202  	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  203  	if (ret)
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  204  		return ret;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  205  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  206  	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  207  					NVA06F_CTRL_CMD_GPFIFO_SCHEDULE, sizeof(*ctrl));
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  208  	if (WARN_ON(IS_ERR(ctrl)))
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  209  		return PTR_ERR(ctrl);
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  210  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19 @211  	ctrl->bEnable = 1;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  212  	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  213  
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  214  	return ret;
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  215  }
-2a77d015b53886 drivers/gpu/drm/nouveau/nvkm/engine/fifo/r535.c        Ben Skeggs 2023-09-19  216  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Thanks,
+Mauro
 
