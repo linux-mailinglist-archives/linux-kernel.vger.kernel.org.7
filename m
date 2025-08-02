@@ -1,98 +1,61 @@
-Return-Path: <linux-kernel+bounces-754226-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754227-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FAB4B19013
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 23:27:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F24BB1901D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 23:30:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E39BA189B618
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 21:27:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4D45C17CEE0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 21:30:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8710C258CFF;
-	Sat,  2 Aug 2025 21:26:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB9F62580CF;
+	Sat,  2 Aug 2025 21:30:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lWvYZ6jg"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="j7yjvp/T"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B021D173;
-	Sat,  2 Aug 2025 21:26:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 551B6242D96;
+	Sat,  2 Aug 2025 21:30:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754170013; cv=none; b=i4Gp78SdDNfvXNZegixGaslZOTfUmMxLPqmM+NcMUvme7iNHlmdywsA7rb53095oUfA5YwQHg3fS/T8ZUajVKY+njAB7zGrxPoVaSOqhUE1F0+b4y2K8rjYB4K5DjwziRNUffAQY2FQJIRHcOyP2vpN1R4bkj+PxBiDA6bcTl5U=
+	t=1754170208; cv=none; b=Ie7OxB2Lh23zwzCB/cVxSdLa74lOpBcXjpWK2ZvtXLNUywjpe7bi9/bOYvxxNLsgU1EULvxcKPvE5rwVa0dsfSxjw8G8V9VGwJX+7VGJqgCRtjJ29dl/1QF3+AAOP1kg0orChZxSH9o1sQ6Ac+E9TRJYcr6nSjJwk5MChmRvzBo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754170013; c=relaxed/simple;
-	bh=HPvlm+MU8154uonMWgqd/kNvG3AtoBRpagMdosBwhU8=;
-	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=UgV7qa8OrjXBwXF8ifJ/jayjSlGiyPos4hIC0fpBKx8+sJ/cE9uIQemaaxXa2snDs6k2elgYJXOuGX9GDywGJEBQSLpXCChwdZu3mmd65l84eLt1IwmzZsBwVMeLYr89Z6F7JHkicQAV4Pv7idWCmR+B2WjHT/B8rpNs9uBGayg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lWvYZ6jg; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-61571192ba5so4784939a12.2;
-        Sat, 02 Aug 2025 14:26:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754170010; x=1754774810; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=pZrs8jDfEbjMNmNeAziRVtz9TxOqXsijf2MFBwiUjZM=;
-        b=lWvYZ6jg13OJb9d+6SAsuCeZO2psUtDCFUTo79hhxLroeTaaN1O089+pt4LBaWvA0X
-         hOSMH/Yg1DONv7Hxpy5ujhKi+GmYSrqDsRaGIvhMHklhscjki5tAqbG/YbtLtRxpkCXA
-         bWbk9S6NqZY5hIhhdUbj0ZfrNNUYa2iKwE14q+NSWPJ74f6DSiYY9bQLmjoBi7ziJ2Hq
-         n/jS+VLksM22bRUj3nuhBEmd2QD0hYGdfR255TDm6WxciZTahr6ahSkR2DRR03QP+aRB
-         gttYsLsxubHOQjSU/nlv572/kqR8tY1CkIGzoacxHjWw34NuAVsRx+KR1bUhHKUMEKsc
-         PJkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754170010; x=1754774810;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=pZrs8jDfEbjMNmNeAziRVtz9TxOqXsijf2MFBwiUjZM=;
-        b=edu8dsUJ62yVlMOeK22yXHMI7YsP5kQQK+5HPMI0zBKlbu9SIO6KjtDWHS3CT0TY0U
-         igvOUm/WYb1n2lquk6/CMT+nXeIq3GN7QCavWb48oRvLLnsTmM35uIffFxQDCNkfiNLf
-         StJCqv5EdICKb9WXP7TxBhDFSU8Os5/YD7A8qtlN6gq5NiHfgZbeDyjjdMTmx6N3Ux55
-         1qB6GbxuA9SgdWFkkktxyYY8NC/3gAaFCLSa5tI88OlVVjlPpNEWqZzbj6UrKXgRwKX2
-         27mnrchpt6V+mM+3KsDYBqyhfX4bcYUWTS1u/jvn/EYpp+uPOhfqqNmdIbNZvCfoI+2P
-         VZ0g==
-X-Forwarded-Encrypted: i=1; AJvYcCUvq0+Ya1vJLo5qju/lzpQGrWDiKiub+ducufdgyGS8caXWGx2KFr+19Ghs6s9WQ+Cu6b3pOxe2AawaWG73pC1jcYmm@vger.kernel.org, AJvYcCV187Ml78ME1YIeM1QruROkrgm4Yjj0oq/F6naRgrH7XDvRj1+ilOC8UlPFB+UXBovsBlk=@vger.kernel.org, AJvYcCVr0fmM1a0j9CsM/markz7c+BQpAlnwV8XKn7PKJ+cHUNug93hK9OTyDU/fqTclU1szmxsNaanvWanWefdl@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyo8Qp7TDg9JnEeWAM+Jo5wonRHmCNIgt/EB0U1IsaoDoQfcmS/
-	DCL5GjCSCnfqB32bBzYXXEZZxvh/GK2QrzFTZvluELJCICW3UmyrFxnG
-X-Gm-Gg: ASbGnctkSV0UT6rWex7TfapB+sLC5hrn4GpFczTK6k7tz7hrQ6oB1G7FqBsh7XQs8Jg
-	4IPGhjC0GhW09zslWqMMlMm8kZ9kZZUUkVFm+hwR5qGnDxwbS5VQPiOUM77fvhzY2ovbZXrP4Zv
-	Jlr8BCNTa27IOwcmqRJpfw5TplyDk71JWgTQjOWkhWzBoyWeqjY9EIQXdiCr5JtLwXLK4gQ47Pf
-	MDZDub5qH7TROGzw+cPu7MVamdX2KjYWNkIcpkyGvgLEVNzEpCBGGWqsdwW8y8sZmvCVZ0X9FhB
-	rUHFm5ydMD3p2brkeE8hrJCGwg0Nr6OmiDCCEHHTGUskJJkXDkgn3nO+B47Ci+eymCgl9MdUSbn
-	Q/kofTpPErohzDpFBi8mw
-X-Google-Smtp-Source: AGHT+IGrzUJLWgGeTuOrnWlkUUqNZRgEZCAA+VlEXyyO1EHMZFsA2i4k/67dmU7d8k+YWRmSZ0RJ6Q==
-X-Received: by 2002:a17:906:f59f:b0:ade:bf32:b05a with SMTP id a640c23a62f3a-af93fd5bf3emr457001266b.0.1754170009582;
-        Sat, 02 Aug 2025 14:26:49 -0700 (PDT)
-Received: from krava ([176.74.159.170])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a37a8sm488968566b.40.2025.08.02.14.26.48
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 14:26:48 -0700 (PDT)
-From: Jiri Olsa <olsajiri@gmail.com>
-X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
-Date: Sat, 2 Aug 2025 23:26:46 +0200
-To: Mark Rutland <mark.rutland@arm.com>
-Cc: Jiri Olsa <olsajiri@gmail.com>, Steven Rostedt <rostedt@kernel.org>,
-	Florent Revest <revest@google.com>, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Menglong Dong <menglong8.dong@gmail.com>,
-	Naveen N Rao <naveen@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	=?iso-8859-1?Q?Bj=F6rn_T=F6pel?= <bjorn@rivosinc.com>,
-	Andy Chiu <andybnac@gmail.com>,
-	Alexandre Ghiti <alexghiti@rivosinc.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>
-Subject: Re: [RFC 00/10] ftrace,bpf: Use single direct ops for bpf trampolines
-Message-ID: <aI6CltnCRbVXwyfm@krava>
-References: <aIn_12KHz7ikF2t1@krava>
- <aIyNOd18TRLu8EpY@J2N7QTR9R3>
+	s=arc-20240116; t=1754170208; c=relaxed/simple;
+	bh=7Udt1ax++/M5gcZs+z8hGyzRg64Y+gxyNKYQqKEX3Gw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=DF+TB816bp0Sich02krpxxElDj6NfXo1WNEJnvlTdIsUEh75JAjaSbxZFsZzhmngWfvAggOSic3WkjpKVyt7ek8IpWOblY43lzTEW3Qqcp+jtmqCABjFTe1L7XLZ4t5zyIozD2jivgIA3WftQhHHxmjTkdSzCC8cGmqpo5srwqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=j7yjvp/T; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3659EC4CEEF;
+	Sat,  2 Aug 2025 21:30:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754170207;
+	bh=7Udt1ax++/M5gcZs+z8hGyzRg64Y+gxyNKYQqKEX3Gw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=j7yjvp/T3Y2Wx1FE2fblxXK1tPf7NKs7LnpDcCLeust9NZlOSrRIj0tImmJsIVSZQ
+	 hhGcCiBfwM69TRNzeFp8MwGH+f45CXZWRMOsyR0npsrV2zUhACeTMnydMAZhbIXwtD
+	 9wYNqPxN8icBlABeQxHfZvLKyqL1xOMJKY33hhm4=
+Date: Sat, 2 Aug 2025 22:30:03 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com,
+	"ppbuk5246 @ gmail . com" <ppbuk5246@gmail.com>,
+	linux-kernel@vger.kernel.org,
+	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+	Alan Stern <stern@rowland.harvard.edu>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+	stable@vger.kernel.org, kasan-dev@googlegroups.com,
+	syzkaller@googlegroups.com, linux-usb@vger.kernel.org,
+	linux-rt-devel@lists.linux.dev
+Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path
+ on PREEMPT_RT
+Message-ID: <2025080251-villain-subsoil-e28d@gregkh>
+References: <20250802142647.139186-3-ysk@kzalloc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,230 +64,571 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aIyNOd18TRLu8EpY@J2N7QTR9R3>
+In-Reply-To: <20250802142647.139186-3-ysk@kzalloc.com>
 
-On Fri, Aug 01, 2025 at 10:49:56AM +0100, Mark Rutland wrote:
-> On Wed, Jul 30, 2025 at 01:19:51PM +0200, Jiri Olsa wrote:
-> > On Tue, Jul 29, 2025 at 06:57:40PM +0100, Mark Rutland wrote:
-> > > Hi Jiri,
-> > > 
-> > > [adding some powerpc and riscv folk, see below]
-> > > 
-> > > On Tue, Jul 29, 2025 at 12:28:03PM +0200, Jiri Olsa wrote:
-> > > > hi,
-> > > > while poking the multi-tracing interface I ended up with just one
-> > > > ftrace_ops object to attach all trampolines.
-> > > > 
-> > > > This change allows to use less direct API calls during the attachment
-> > > > changes in the future code, so in effect speeding up the attachment.
-> > > 
-> > > How important is that, and what sort of speedup does this result in? I
-> > > ask due to potential performance hits noted below, and I'm lacking
-> > > context as to why we want to do this in the first place -- what is this
-> > > intended to enable/improve?
-> > 
-> > so it's all work on PoC stage, the idea is to be able to attach many
-> > (like 20,30,40k) functions to their trampolines quickly, which at the
-> > moment is slow because all the involved interfaces work with just single
-> > function/tracempoline relation
+On Sat, Aug 02, 2025 at 02:26:49PM +0000, Yunseong Kim wrote:
+> The KCOV subsystem currently utilizes standard spinlock_t and local_lock_t
+> for synchronization. In PREEMPT_RT configurations, these locks can be
+> implemented via rtmutexes and may therefore sleep. This behavior is
+> problematic as kcov locks are sometimes used in atomic contexts or protect
+> data accessed during critical instrumentation paths where sleeping is not
+> permissible.
 > 
-> Do you know which aspect of that is slow? e.g. is that becuase you have
-> to update each ftrace_ops independently, and pay the synchronization
-> overhead per-ops?
+> Address these issues to make kcov PREEMPT_RT friendly:
 > 
-> I ask because it might be possible to do some more batching there, at
-> least for architectures like arm64 that use the CALL_OPS approach.
+> 1. Convert kcov->lock and kcov_remote_lock from spinlock_t to
+>    raw_spinlock_t. This ensures they remain true, non-sleeping
+>    spinlocks even on PREEMPT_RT kernels.
+> 
+> 2. Refactor the KCOV_REMOTE_ENABLE path to move memory allocations
+>    out of the critical section. All necessary struct kcov_remote
+>    structures are now pre-allocated individually in kcov_ioctl()
+>    using GFP_KERNEL (allowing sleep) before acquiring the raw
+>    spinlocks.
+> 
+> 3. Modify the ioctl handling logic to utilize these pre-allocated
+>    structures within the critical section. kcov_remote_add() is
+>    modified to accept a pre-allocated structure instead of allocating
+>    one internally.
+> 
+> 4. Remove the local_lock_t protection for kcov_percpu_data in
+>    kcov_remote_start/stop(). Since local_lock_t can also sleep under
+>    RT, and the required protection is against local interrupts when
+>    accessing per-CPU data, it is replaced with explicit
+>    local_irq_save/restore().
+> 
+> Link: https://lore.kernel.org/all/20250725201400.1078395-2-ysk@kzalloc.com/t/#u
+> Fixes: f85d39dd7ed8 ("kcov, usb: disable interrupts in kcov_remote_start_usb_softirq")
+> Cc: Andrey Konovalov <andreyknvl@gmail.com>
+> Cc: Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>
+> Cc: Alan Stern <stern@rowland.harvard.edu>
+> Cc: Dmitry Vyukov <dvyukov@google.com>
+> Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+> Cc: Byungchul Park <byungchul@sk.com>
+> Cc: stable@vger.kernel.org
+> Cc: kasan-dev@googlegroups.com
+> Cc: syzkaller@googlegroups.com
+> Cc: linux-usb@vger.kernel.org
+> Cc: linux-rt-devel@lists.linux.dev
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
+> ---
+>  kernel/kcov.c | 243 +++++++++++++++++++++++++++-----------------------
+>  1 file changed, 130 insertions(+), 113 deletions(-)
+> 
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 187ba1b80bda..9c8e4325cff8 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -54,7 +54,7 @@ struct kcov {
+>  	 */
+>  	refcount_t		refcount;
+>  	/* The lock protects mode, size, area and t. */
+> -	spinlock_t		lock;
+> +	raw_spinlock_t		lock;
+>  	enum kcov_mode		mode;
+>  	/* Size of arena (in long's). */
+>  	unsigned int		size;
+> @@ -84,13 +84,12 @@ struct kcov_remote {
+>  	struct hlist_node	hnode;
+>  };
+>  
+> -static DEFINE_SPINLOCK(kcov_remote_lock);
+> +static DEFINE_RAW_SPINLOCK(kcov_remote_lock);
+>  static DEFINE_HASHTABLE(kcov_remote_map, 4);
+>  static struct list_head kcov_remote_areas = LIST_HEAD_INIT(kcov_remote_areas);
+>  
+>  struct kcov_percpu_data {
+>  	void			*irq_area;
+> -	local_lock_t		lock;
+>  
+>  	unsigned int		saved_mode;
+>  	unsigned int		saved_size;
+> @@ -99,9 +98,7 @@ struct kcov_percpu_data {
+>  	int			saved_sequence;
+>  };
+>  
+> -static DEFINE_PER_CPU(struct kcov_percpu_data, kcov_percpu_data) = {
+> -	.lock = INIT_LOCAL_LOCK(lock),
+> -};
+> +static DEFINE_PER_CPU(struct kcov_percpu_data, kcov_percpu_data);
+>  
+>  /* Must be called with kcov_remote_lock locked. */
+>  static struct kcov_remote *kcov_remote_find(u64 handle)
+> @@ -116,15 +113,9 @@ static struct kcov_remote *kcov_remote_find(u64 handle)
+>  }
+>  
+>  /* Must be called with kcov_remote_lock locked. */
+> -static struct kcov_remote *kcov_remote_add(struct kcov *kcov, u64 handle)
+> +static struct kcov_remote *kcov_remote_add(struct kcov *kcov, u64 handle,
+> +					   struct kcov_remote *remote)
+>  {
+> -	struct kcov_remote *remote;
+> -
+> -	if (kcov_remote_find(handle))
+> -		return ERR_PTR(-EEXIST);
+> -	remote = kmalloc(sizeof(*remote), GFP_ATOMIC);
+> -	if (!remote)
+> -		return ERR_PTR(-ENOMEM);
+>  	remote->handle = handle;
+>  	remote->kcov = kcov;
+>  	hash_add(kcov_remote_map, &remote->hnode, handle);
+> @@ -404,9 +395,8 @@ static void kcov_remote_reset(struct kcov *kcov)
+>  	int bkt;
+>  	struct kcov_remote *remote;
+>  	struct hlist_node *tmp;
+> -	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&kcov_remote_lock, flags);
+> +	raw_spin_lock(&kcov_remote_lock);
+>  	hash_for_each_safe(kcov_remote_map, bkt, tmp, remote, hnode) {
+>  		if (remote->kcov != kcov)
+>  			continue;
+> @@ -415,7 +405,7 @@ static void kcov_remote_reset(struct kcov *kcov)
+>  	}
+>  	/* Do reset before unlock to prevent races with kcov_remote_start(). */
+>  	kcov_reset(kcov);
+> -	spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> +	raw_spin_unlock(&kcov_remote_lock);
+>  }
+>  
+>  static void kcov_disable(struct task_struct *t, struct kcov *kcov)
+> @@ -450,7 +440,7 @@ void kcov_task_exit(struct task_struct *t)
+>  	if (kcov == NULL)
+>  		return;
+>  
+> -	spin_lock_irqsave(&kcov->lock, flags);
+> +	raw_spin_lock_irqsave(&kcov->lock, flags);
+>  	kcov_debug("t = %px, kcov->t = %px\n", t, kcov->t);
+>  	/*
+>  	 * For KCOV_ENABLE devices we want to make sure that t->kcov->t == t,
+> @@ -475,12 +465,12 @@ void kcov_task_exit(struct task_struct *t)
+>  	 * By combining all three checks into one we get:
+>  	 */
+>  	if (WARN_ON(kcov->t != t)) {
+> -		spin_unlock_irqrestore(&kcov->lock, flags);
+> +		raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  		return;
+>  	}
+>  	/* Just to not leave dangling references behind. */
+>  	kcov_disable(t, kcov);
+> -	spin_unlock_irqrestore(&kcov->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  	kcov_put(kcov);
+>  }
+>  
+> @@ -492,14 +482,14 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+>  	struct page *page;
+>  	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&kcov->lock, flags);
+> +	raw_spin_lock_irqsave(&kcov->lock, flags);
+>  	size = kcov->size * sizeof(unsigned long);
+>  	if (kcov->area == NULL || vma->vm_pgoff != 0 ||
+>  	    vma->vm_end - vma->vm_start != size) {
+>  		res = -EINVAL;
+>  		goto exit;
+>  	}
+> -	spin_unlock_irqrestore(&kcov->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  	vm_flags_set(vma, VM_DONTEXPAND);
+>  	for (off = 0; off < size; off += PAGE_SIZE) {
+>  		page = vmalloc_to_page(kcov->area + off);
+> @@ -511,7 +501,7 @@ static int kcov_mmap(struct file *filep, struct vm_area_struct *vma)
+>  	}
+>  	return 0;
+>  exit:
+> -	spin_unlock_irqrestore(&kcov->lock, flags);
+> +	raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  	return res;
+>  }
+>  
+> @@ -525,7 +515,7 @@ static int kcov_open(struct inode *inode, struct file *filep)
+>  	kcov->mode = KCOV_MODE_DISABLED;
+>  	kcov->sequence = 1;
+>  	refcount_set(&kcov->refcount, 1);
+> -	spin_lock_init(&kcov->lock);
+> +	raw_spin_lock_init(&kcov->lock);
+>  	filep->private_data = kcov;
+>  	return nonseekable_open(inode, filep);
+>  }
+> @@ -586,10 +576,8 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>  			     unsigned long arg)
+>  {
+>  	struct task_struct *t;
+> -	unsigned long flags, unused;
+> -	int mode, i;
+> -	struct kcov_remote_arg *remote_arg;
+> -	struct kcov_remote *remote;
+> +	unsigned long unused;
+> +	int mode;
+>  
+>  	switch (cmd) {
+>  	case KCOV_ENABLE:
+> @@ -627,69 +615,80 @@ static int kcov_ioctl_locked(struct kcov *kcov, unsigned int cmd,
+>  		kcov_disable(t, kcov);
+>  		kcov_put(kcov);
+>  		return 0;
+> -	case KCOV_REMOTE_ENABLE:
+> -		if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+> -			return -EINVAL;
+> -		t = current;
+> -		if (kcov->t != NULL || t->kcov != NULL)
+> -			return -EBUSY;
+> -		remote_arg = (struct kcov_remote_arg *)arg;
+> -		mode = kcov_get_mode(remote_arg->trace_mode);
+> -		if (mode < 0)
+> -			return mode;
+> -		if ((unsigned long)remote_arg->area_size >
+> -		    LONG_MAX / sizeof(unsigned long))
+> -			return -EINVAL;
+> -		kcov->mode = mode;
+> -		t->kcov = kcov;
+> -	        t->kcov_mode = KCOV_MODE_REMOTE;
+> -		kcov->t = t;
+> -		kcov->remote = true;
+> -		kcov->remote_size = remote_arg->area_size;
+> -		spin_lock_irqsave(&kcov_remote_lock, flags);
+> -		for (i = 0; i < remote_arg->num_handles; i++) {
+> -			if (!kcov_check_handle(remote_arg->handles[i],
+> -						false, true, false)) {
+> -				spin_unlock_irqrestore(&kcov_remote_lock,
+> -							flags);
+> -				kcov_disable(t, kcov);
+> -				return -EINVAL;
+> -			}
+> -			remote = kcov_remote_add(kcov, remote_arg->handles[i]);
+> -			if (IS_ERR(remote)) {
+> -				spin_unlock_irqrestore(&kcov_remote_lock,
+> -							flags);
+> -				kcov_disable(t, kcov);
+> -				return PTR_ERR(remote);
+> -			}
+> -		}
+> -		if (remote_arg->common_handle) {
+> -			if (!kcov_check_handle(remote_arg->common_handle,
+> -						true, false, false)) {
+> -				spin_unlock_irqrestore(&kcov_remote_lock,
+> -							flags);
+> -				kcov_disable(t, kcov);
+> -				return -EINVAL;
+> -			}
+> -			remote = kcov_remote_add(kcov,
+> -					remote_arg->common_handle);
+> -			if (IS_ERR(remote)) {
+> -				spin_unlock_irqrestore(&kcov_remote_lock,
+> -							flags);
+> -				kcov_disable(t, kcov);
+> -				return PTR_ERR(remote);
+> -			}
+> -			t->kcov_handle = remote_arg->common_handle;
+> -		}
+> -		spin_unlock_irqrestore(&kcov_remote_lock, flags);
+> -		/* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+> -		kcov_get(kcov);
+> -		return 0;
+>  	default:
+>  		return -ENOTTY;
+>  	}
+>  }
+>  
+> +static int kcov_ioctl_locked_remote_enabled(struct kcov *kcov,
+> +				 unsigned int cmd, unsigned long arg,
+> +				 struct kcov_remote *remote_handles,
+> +				 struct kcov_remote *remote_common_handle)
+> +{
+> +	struct task_struct *t;
+> +	int mode, i, ret;
+> +	struct kcov_remote_arg *remote_arg;
+> +
+> +	if (kcov->mode != KCOV_MODE_INIT || !kcov->area)
+> +		return -EINVAL;
+> +	t = current;
+> +	if (kcov->t != NULL || t->kcov != NULL)
+> +		return -EBUSY;
+> +	remote_arg = (struct kcov_remote_arg *)arg;
+> +	mode = kcov_get_mode(remote_arg->trace_mode);
+> +	if (mode < 0)
+> +		return mode;
+> +	if ((unsigned long)remote_arg->area_size >
+> +		LONG_MAX / sizeof(unsigned long))
+> +		return -EINVAL;
+> +	kcov->mode = mode;
+> +	t->kcov = kcov;
+> +	t->kcov_mode = KCOV_MODE_REMOTE;
+> +	kcov->t = t;
+> +	kcov->remote = true;
+> +	kcov->remote_size = remote_arg->area_size;
+> +	raw_spin_lock(&kcov_remote_lock);
+> +	for (i = 0; i < remote_arg->num_handles; i++) {
+> +		if (!kcov_check_handle(remote_arg->handles[i],
+> +					false, true, false)) {
+> +			ret = -EINVAL;
+> +			goto err;
+> +		}
+> +		if (kcov_remote_find(remote_arg->handles[i])) {
+> +			ret = -EEXIST;
+> +			goto err;
+> +		}
+> +		kcov_remote_add(kcov, remote_arg->handles[i],
+> +			&remote_handles[i]);
+> +	}
+> +	if (remote_arg->common_handle) {
+> +		if (!kcov_check_handle(remote_arg->common_handle,
+> +					true, false, false)) {
+> +			ret = -EINVAL;
+> +			goto err;
+> +		}
+> +		if (kcov_remote_find(remote_arg->common_handle)) {
+> +			ret = -EEXIST;
+> +			goto err;
+> +		}
+> +		kcov_remote_add(kcov,
+> +			remote_arg->common_handle, remote_common_handle);
+> +		t->kcov_handle = remote_arg->common_handle;
+> +	}
+> +	raw_spin_unlock(&kcov_remote_lock);
+> +	/* Put either in kcov_task_exit() or in KCOV_DISABLE. */
+> +	kcov_get(kcov);
+> +	return 0;
+> +
+> +err:
+> +	raw_spin_unlock(&kcov_remote_lock);
+> +	kcov_disable(t, kcov);
+> +	kfree(remote_common_handle);
+> +	kfree(remote_handles);
+> +
+> +	return ret;
+> +}
+> +
+>  static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  {
+>  	struct kcov *kcov;
+> @@ -697,6 +696,7 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  	struct kcov_remote_arg *remote_arg = NULL;
+>  	unsigned int remote_num_handles;
+>  	unsigned long remote_arg_size;
+> +	struct kcov_remote *remote_handles, *remote_common_handle;
+>  	unsigned long size, flags;
+>  	void *area;
+>  
+> @@ -716,16 +716,16 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  		area = vmalloc_user(size * sizeof(unsigned long));
+>  		if (area == NULL)
+>  			return -ENOMEM;
+> -		spin_lock_irqsave(&kcov->lock, flags);
+> +		raw_spin_lock_irqsave(&kcov->lock, flags);
+>  		if (kcov->mode != KCOV_MODE_DISABLED) {
+> -			spin_unlock_irqrestore(&kcov->lock, flags);
+> +			raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  			vfree(area);
+>  			return -EBUSY;
+>  		}
+>  		kcov->area = area;
+>  		kcov->size = size;
+>  		kcov->mode = KCOV_MODE_INIT;
+> -		spin_unlock_irqrestore(&kcov->lock, flags);
+> +		raw_spin_unlock_irqrestore(&kcov->lock, flags);
+>  		return 0;
+>  	case KCOV_REMOTE_ENABLE:
+>  		if (get_user(remote_num_handles, (unsigned __user *)(arg +
+> @@ -743,18 +743,35 @@ static long kcov_ioctl(struct file *filep, unsigned int cmd, unsigned long arg)
+>  			return -EINVAL;
+>  		}
+>  		arg = (unsigned long)remote_arg;
+> -		fallthrough;
+> +		remote_handles = kmalloc_array(remote_arg->num_handles,
+> +					sizeof(struct kcov_remote), GFP_KERNEL);
+> +		if (!remote_handles)
+> +			return -ENOMEM;
+> +		remote_common_handle = kmalloc(sizeof(struct kcov_remote), GFP_KERNEL);
+> +		if (!remote_common_handle) {
+> +			kfree(remote_handles);
+> +			return -ENOMEM;
+> +		}
+> +
+> +		raw_spin_lock_irqsave(&kcov->lock, flags);
+> +		res = kcov_ioctl_locked_remote_enabled(kcov, cmd, arg,
+> +				remote_handles, remote_common_handle);
+> +		raw_spin_unlock_irqrestore(&kcov->lock, flags);
+> +		kfree(remote_arg);
+> +		break;
+>  	default:
+>  		/*
+> +		 * KCOV_ENABLE, KCOV_DISABLE:
+>  		 * All other commands can be normally executed under a spin lock, so we
+>  		 * obtain and release it here in order to simplify kcov_ioctl_locked().
+>  		 */
+> -		spin_lock_irqsave(&kcov->lock, flags);
+> +		raw_spin_lock_irqsave(&kcov->lock, flags);
+>  		res = kcov_ioctl_locked(kcov, cmd, arg);
+> -		spin_unlock_irqrestore(&kcov->lock, flags);
+> -		kfree(remote_arg);
+> -		return res;
+> +		raw_spin_unlock_irqrestore(&kcov->lock, flags);
+> +		break;
+>  	}
+> +
+> +	return res;
+>  }
+>  
+>  static const struct file_operations kcov_fops = {
+> @@ -862,7 +879,7 @@ void kcov_remote_start(u64 handle)
+>  	if (!in_task() && !in_softirq_really())
+>  		return;
+>  
+> -	local_lock_irqsave(&kcov_percpu_data.lock, flags);
+> +	local_irq_save(flags);
+>  
+>  	/*
+>  	 * Check that kcov_remote_start() is not called twice in background
+> @@ -870,7 +887,7 @@ void kcov_remote_start(u64 handle)
+>  	 */
+>  	mode = READ_ONCE(t->kcov_mode);
+>  	if (WARN_ON(in_task() && kcov_mode_enabled(mode))) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  	/*
+> @@ -879,15 +896,15 @@ void kcov_remote_start(u64 handle)
+>  	 * happened while collecting coverage from a background thread.
+>  	 */
+>  	if (WARN_ON(in_serving_softirq() && t->kcov_softirq)) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  
+> -	spin_lock(&kcov_remote_lock);
+> +	raw_spin_lock(&kcov_remote_lock);
+>  	remote = kcov_remote_find(handle);
+>  	if (!remote) {
+> -		spin_unlock(&kcov_remote_lock);
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		raw_spin_unlock(&kcov_remote_lock);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  	kcov_debug("handle = %llx, context: %s\n", handle,
+> @@ -908,17 +925,17 @@ void kcov_remote_start(u64 handle)
+>  		size = CONFIG_KCOV_IRQ_AREA_SIZE;
+>  		area = this_cpu_ptr(&kcov_percpu_data)->irq_area;
+>  	}
+> -	spin_unlock(&kcov_remote_lock);
+> +	raw_spin_unlock(&kcov_remote_lock);
+>  
+>  	/* Can only happen when in_task(). */
+>  	if (!area) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		area = vmalloc(size * sizeof(unsigned long));
+>  		if (!area) {
+>  			kcov_put(kcov);
+>  			return;
+>  		}
+> -		local_lock_irqsave(&kcov_percpu_data.lock, flags);
+> +		local_irq_save(flags);
+>  	}
+>  
+>  	/* Reset coverage size. */
+> @@ -930,7 +947,7 @@ void kcov_remote_start(u64 handle)
+>  	}
+>  	kcov_start(t, kcov, size, area, mode, sequence);
+>  
+> -	local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +	local_irq_restore(flags);
+>  
+>  }
+>  EXPORT_SYMBOL(kcov_remote_start);
+> @@ -1004,12 +1021,12 @@ void kcov_remote_stop(void)
+>  	if (!in_task() && !in_softirq_really())
+>  		return;
+>  
+> -	local_lock_irqsave(&kcov_percpu_data.lock, flags);
+> +	local_irq_save(flags);
+>  
+>  	mode = READ_ONCE(t->kcov_mode);
+>  	barrier();
+>  	if (!kcov_mode_enabled(mode)) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  	/*
+> @@ -1017,12 +1034,12 @@ void kcov_remote_stop(void)
+>  	 * actually found the remote handle and started collecting coverage.
+>  	 */
+>  	if (in_serving_softirq() && !t->kcov_softirq) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  	/* Make sure that kcov_softirq is only set when in softirq. */
+>  	if (WARN_ON(!in_serving_softirq() && t->kcov_softirq)) {
+> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +		local_irq_restore(flags);
+>  		return;
+>  	}
+>  
+> @@ -1037,22 +1054,22 @@ void kcov_remote_stop(void)
+>  		kcov_remote_softirq_stop(t);
+>  	}
+>  
+> -	spin_lock(&kcov->lock);
+> +	raw_spin_lock(&kcov->lock);
+>  	/*
+>  	 * KCOV_DISABLE could have been called between kcov_remote_start()
+>  	 * and kcov_remote_stop(), hence the sequence check.
+>  	 */
+>  	if (sequence == kcov->sequence && kcov->remote)
+>  		kcov_move_area(kcov->mode, kcov->area, kcov->size, area);
+> -	spin_unlock(&kcov->lock);
+> +	raw_spin_unlock(&kcov->lock);
+>  
+>  	if (in_task()) {
+> -		spin_lock(&kcov_remote_lock);
+> +		raw_spin_lock(&kcov_remote_lock);
+>  		kcov_remote_area_put(area, size);
+> -		spin_unlock(&kcov_remote_lock);
+> +		raw_spin_unlock(&kcov_remote_lock);
+>  	}
+>  
+> -	local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
+> +	local_irq_restore(flags);
+>  
+>  	/* Get in kcov_remote_start(). */
+>  	kcov_put(kcov);
+> -- 
+> 2.50.0
+> 
 
-IIRC it's the rcu sync in register_ftrace_direct and ftrace_shutdown
-I'll try to profile that case again, there  might have been changes
-since the last time we did that
+Hi,
 
-> 
-> > there's ongoing development by Menglong [1] to organize such attachment
-> > for multiple functions and trampolines, but still at the end we have to use
-> > ftrace direct interface to do the attachment for each involved ftrace_ops 
-> > 
-> > so at the point of attachment it helps to have as few ftrace_ops objects
-> > as possible, in my test code I ended up with just single ftrace_ops object
-> > and I see attachment time for 20k functions to be around 3 seconds
-> > 
-> > IIUC Menglong's change needs 12 ftrace_ops objects so we need to do around
-> > 12 direct ftrace_ops direct calls .. so probably not that bad, but still
-> > it would be faster with just single ftrace_ops involved
-> > 
-> > [1] https://lore.kernel.org/bpf/20250703121521.1874196-1-dongml2@chinatelecom.cn/
-> > 
-> > > 
-> > > > However having just single ftrace_ops object removes direct_call
-> > > > field from direct_call, which is needed by arm, so I'm not sure
-> > > > it's the right path forward.
-> > > 
-> > > It's also needed by powerpc and riscv since commits:
-> > > 
-> > >   a52f6043a2238d65 ("powerpc/ftrace: Add support for DYNAMIC_FTRACE_WITH_DIRECT_CALLS")
-> > >   b21cdb9523e5561b ("riscv: ftrace: support direct call using call_ops")
-> > > 
-> > > > Mark, Florent,
-> > > > any idea how hard would it be to for arm to get rid of direct_call field?
-> > > 
-> > > For architectures which follow the arm64 style of implementation, it's
-> > > pretty hard to get rid of it without introducing a performance hit to
-> > > the call and/or a hit to attachment/detachment/modification. It would
-> > > also end up being a fair amount more complicated.
-> > > 
-> > > There's some historical rationale at:
-> > > 
-> > >   https://lore.kernel.org/lkml/ZfBbxPDd0rz6FN2T@FVFF77S0Q05N/
-> > > 
-> > > ... but the gist is that for several reasons we want the ops pointer in
-> > > the callsite, and for atomic modification of this to switch everything
-> > > dependent on that ops atomically, as this keeps the call logic and
-> > > attachment/detachment/modification logic simple and pretty fast.
-> > > 
-> > > If we remove the direct_call pointer from the ftrace_ops, then IIUC our
-> > > options include:
-> > > 
-> > > * Point the callsite pointer at some intermediate structure which points
-> > >   to the ops (e.g. the dyn_ftrace for the callsite). That introduces an
-> > >   additional dependent load per call that needs the ops, and introduces
-> > >   potential incoherency with other fields in that structure, requiring
-> > >   more synchronization overhead for attachment/detachment/modification.
-> > > 
-> > > * Point the callsite pointer at a trampoline which can generate the ops
-> > >   pointer. This requires that every ops has a trampoline even for
-> > >   non-direct usage, which then requires more memory / I$, has more
-> > >   potential failure points, and is generally more complicated. The
-> > >   performance here will vary by architecture and platform, on some this
-> > >   might be faster, on some it might be slower.
-> > > 
-> > >   Note that we probably still need to bounce through an intermediary
-> > >   trampoline here to actually load from the callsite pointer and
-> > >   indirectly branch to it.
-> > > 
-> > > ... but I'm not really keen on either unless we really have to remove 
-> > > the ftrace_ops::direct_call field, since they come with a substantial
-> > > jump in complexity.
-> > 
-> > ok, that sounds bad.. thanks for the details
-> > 
-> > Steven, please correct me if/when I'm wrong ;-)
-> > 
-> > IIUC in x86_64, IF there's just single ftrace_ops defined for the function,
-> > it will bypass ftrace trampoline and call directly the direct trampoline
-> > for the function, like:
-> > 
-> >    <foo>:
-> >      call direct_trampoline
-> >      ...
-> 
-> More details at the end of this reply; arm64 can sometimes do this, but
-> not always, and even when there's a single ftrace_ops we may need to
-> bounce through a common trampoline (which can still be cheap).
-> 
-> > IF there are other ftrace_ops 'users' on the same function, we execute
-> > each of them like:
-> > 
-> >   <foo>:
-> >     call ftrace_trampoline
-> >       call ftrace_ops_1->func
-> >       call ftrace_ops_2->func
-> >       ...
-> 
-> More details at the end of this reply; arm64 does essentially the same
-> thing via the ftrace_list_ops and ftrace_ops_list_func().
-> 
-> > with our direct ftrace_ops->func currently using ftrace_ops->direct_call
-> > to return direct trampoline for the function:
-> > 
-> > 	-static void call_direct_funcs(unsigned long ip, unsigned long pip,
-> > 	-                             struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> > 	-{
-> > 	-       unsigned long addr = READ_ONCE(ops->direct_call);
-> > 	-
-> > 	-       if (!addr)
-> > 	-               return;
-> > 	-
-> > 	-       arch_ftrace_set_direct_caller(fregs, addr);
-> > 	-}
-> 
-> More details at the end of this reply; at present, when an instrumented
-> function has a single ops, arm64 can call ops->direct_call directly from
-> the common trampoline, and only needs to fall back to
-> call_direct_funcs() when there are multiple ops.
-> 
-> > in the new changes it will do hash lookup (based on ip) for the direct
-> > trampoline we want to execute:
-> > 
-> > 	+static void call_direct_funcs_hash(unsigned long ip, unsigned long pip,
-> > 	+                                  struct ftrace_ops *ops, struct ftrace_regs *fregs)
-> > 	+{
-> > 	+       unsigned long addr;
-> > 	+
-> > 	+       addr = ftrace_find_rec_direct(ip);
-> > 	+       if (!addr)
-> > 	+               return;
-> > 	+
-> > 	+       arch_ftrace_set_direct_caller(fregs, addr);
-> > 	+}
-> > 
-> > still this is the slow path for the case where multiple ftrace_ops objects use
-> > same function.. for the fast path we have the direct attachment as described above
-> > 
-> > sorry I probably forgot/missed discussion on this, but doing the fast path like in
-> > x86_64 is not an option in arm, right?
-> 
-> On arm64 we have a fast path, BUT branch range limitations means that we
-> cannot always branch directly from the instrumented function to the
-> direct func with a single branch instruction. We use ops->direct_call to
-> handle that case within a common trampoline, which is significantly
-> cheaper that iterating over the ops and/or looking up the direct func
-> from a hash.
-> 
-> With CALL_OPS, we place a pointer to the ops immediately before the
-> instrumented function, and have the instrumented function branch to a
-> common trampoline which can load that pointer (and can then branch to
-> any direct func as necessary).
-> 
-> The instrumented function looks like:
-> 
-> 	# Aligned to 8 bytes
-> 	func - 8:
-> 		< pointer to ops >
+This is the friendly patch-bot of Greg Kroah-Hartman.  You have sent him
+a patch that has triggered this response.  He used to manually respond
+to these common problems, but in order to save his sanity (he kept
+writing the same thing over and over, yet to different people), I was
+created.  Hopefully you will not take offence and will fix the problem
+in your patch and resubmit it so that it can be accepted into the Linux
+kernel tree.
 
-stupid question.. so there's ftrace_ops pointer stored for each function at
-'func - 8` ?  why not store the func's direct trampoline address in there?
+You are receiving this message because of the following common error(s)
+as indicated below:
 
-> 	func:
-> 		BTI		// optional
-> 		MOV	X9, LR	// save original return address
-> 		NOP		// patched to `BL ftrace_caller`
-> 	func_body:
-> 
-> ... and then in ftrace_caller we can recover the 'ops' pointer with:
-> 
-> 	BIC	<tmp>, LR, 0x7					// align down (skips BTI)
-> 	LDR	<ops>, [<tmp>, #-16]				// load ops pointer
-> 
-> 	LDR	<direct>, [<ops>, #FTRACE_OPS_DIRECT_CALL]	// load ops->direct_call
-> 	CBNZ	<direct>, ftrace_caller_direct			// if !NULL, make direct call
-> 
-> 	< fall through to non-direct func case here >
-> 
-> Having the ops (and ops->direct_call) means that getting to the direct
-> func is significantly cheaper than having to lookup the direct func via
-> the hash.
-> 
-> Where an instrumented function has a single ops, this can get to the
-> direct func with a low constant overhead, significantly cheaper than
-> looking up the direct func via the hash.
-> 
-> Where an instrumented function has multiple ops, the ops pointer is
-> pointed at a common ftrace_list_ops, where ftrace_ops_list_func()
-> iterates over all the other relevant ops.
+- This looks like a new version of a previously submitted patch, but you
+  did not list below the --- line any changes from the previous version.
+  Please read the section entitled "The canonical patch format" in the
+  kernel file, Documentation/process/submitting-patches.rst for what
+  needs to be done here to properly describe this.
 
-thanks for all the details, I'll check if both the new change and ops->direct_call
-could live together for x86 and other arch, but it will probably complicate
-things a lot more
+If you wish to discuss this problem further, or you have questions about
+how to resolve this issue, please feel free to respond to this email and
+Greg will reply once he has dug out from the pending patches received
+from other developers.
 
-jirka
+thanks,
+
+greg k-h's patch email bot
 
