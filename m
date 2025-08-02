@@ -1,94 +1,113 @@
-Return-Path: <linux-kernel+bounces-754176-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754177-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73523B18F5F
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:26:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D8C7EB18F60
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 67F6D4E04AD
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:26:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 71652189BB9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 16:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1A5824A057;
-	Sat,  2 Aug 2025 16:26:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CF7624BBEC;
+	Sat,  2 Aug 2025 16:28:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="svcydBnD"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T0VTQfkY"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4E8DA48;
-	Sat,  2 Aug 2025 16:26:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD97FA48
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 16:28:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754151985; cv=none; b=sDwlYVEx5qG/2Y7OGsm5JfDKLtuE7y22jVwPFUybP4dPEjv6bzm8oMFhDUWSBl5+J2KOsQFC8Y1WaXod8mTydRcwVb/z+iHgA+S4ZuMWPScUlghq/kXWV5Zy6K5Vh8KvEHBT1Blr+2cUegBgnBi5k4RzP/Doyp04/0/dHkbxoH4=
+	t=1754152085; cv=none; b=m8XWPRIGav6r2dn2eGm2j2Y3Igfhq8sJb2KaMrvhWafkuE4+gKZvWxgKScUzFFay99XUjwrRQse/kkh6gQUlf12kdrHp0wGcyh00kCv3ccOIaCM5j5yGOAI7D+QJk44WVDJ42XEAid4pSOCRAUFtaDIerolm2sQjhTO4yBWYmJY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754151985; c=relaxed/simple;
-	bh=W0ZacJKxa8AZBkVMM8nSyCWTVkVdazHmu557pWLPoto=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jxJaj/PpDiqaM6fZ8VroH/cwNiMdfjIDrM2NAwNLSx4swSv6DUXYcywpflBkxekCVRwjKJjVuahUxCBE9TGNk2ffmwIPLVCscpmUa091kn9UHkeGCrgmnmAHcWLmNPxQLMtcxC0IrWFIpmQ3Czy9hsefZdwUAjHCSnN3D0IgQxk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=svcydBnD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16C48C4CEF4;
-	Sat,  2 Aug 2025 16:26:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1754151984;
-	bh=W0ZacJKxa8AZBkVMM8nSyCWTVkVdazHmu557pWLPoto=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=svcydBnDUxJF+sO6JuBzszDOfXYqJMWJKqWyq7wHYX+1JbaVZSfsalyxiHJcYJ/Ls
-	 c7FM0J+tb/n+iHJyDz4h1QAVgAjg5hzhqgTJGTO9EtNWy11KWSsEQwoE8jVYlb5uII
-	 SBkFIO5AZfqk9o4jl57pWzsBcBNq1sHFLGevEylY=
-Date: Sat, 2 Aug 2025 12:26:22 -0400
-From: Konstantin Ryabitsev <konstantin@linuxfoundation.org>
-To: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
-Cc: Jani Nikula <jani.nikula@intel.com>, 
-	Krzysztof Kozlowski <krzk@kernel.org>, Geert Uytterhoeven <geert@linux-m68k.org>, 
-	Hendrik Hamerlinck <hendrik.hamerlinck@hammernet.be>, dwaipayanray1@gmail.com, lukas.bulwahn@gmail.com, 
-	joe@perches.com, corbet@lwn.net, apw@canonical.com, skhan@linuxfoundation.org, 
-	linux-kernel-mentees@lists.linux.dev, workflows@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] checkpatch: validate commit tag ordering
-Message-ID: <20250802-hog-of-eternal-realization-a9ab6f@lemur>
-References: <20250724072032.118554-1-hendrik.hamerlinck@hammernet.be>
- <53eb0068-008b-48e6-9b92-d92de2ed4fc9@kernel.org>
- <CAMuHMdU2e+5Hf3v=C=sE=+25f_A=2=Zzw5rxvcT=hb75VC=iFQ@mail.gmail.com>
- <45f0995f-17ac-45a3-8bc0-3b276ee91a9d@kernel.org>
- <3e9106d35d41a044adeadffeea32fa096c9e1370@intel.com>
- <20250802121200.665ea309@foz.lan>
+	s=arc-20240116; t=1754152085; c=relaxed/simple;
+	bh=e/iWv+Zkrighj6UZ/h9GgpUxzTdc/gKY3p0sSNGO04M=;
+	h=Message-ID:Date:From:To:Cc:Subject; b=Ss/qcc7XsHRodbT7dgzzR/pRj0r5wh9du58bh6sg/SP0EWP96J9ra06aV+vwY2iU3Fq9FmqmT+SHMJ+f5KyU1xGlW1yjI5KUdY9TU7UXgorZq409RiDnV75y3ppMFVTDgZXJ6ZYz1qtm4I9BpRtdRDSV3iZIix4KTdtmsm+ZRHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T0VTQfkY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A4708C4CEEF;
+	Sat,  2 Aug 2025 16:28:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754152085;
+	bh=e/iWv+Zkrighj6UZ/h9GgpUxzTdc/gKY3p0sSNGO04M=;
+	h=Date:From:To:Cc:Subject:From;
+	b=T0VTQfkY9Z8MTT8hRh/usyD/XYt3ZH4wp9yD/cbUj1Di4aOmNt5Z9pZEUw1IAdmH2
+	 0caSUkyN2TJH2fO6jDIQnzRXPQ5eQZITr2enFSApKeZ/E8xbjI1bQ9k7VGw/lFettP
+	 xNTDucO0C6N+tIRL9ydFX9RuFwckxdgiyh2faTPvPltgAX08HI56PG5Q84jwz6rbxW
+	 4+YY73K1j3V1cZJUw444uHBKiyyV636sSxtXXsxdLc1uaLJMrdbtiP9qXKgXXc3uvR
+	 uRg9jgbDBKsjMjhV89fBcDUKZJQ/YUG9iILDIYRuCNCcf6Pm30K8QyGAt3aiqPiitQ
+	 HcKepypi2vA7Q==
+Received: from rostedt by gandalf with local (Exim 4.98.2)
+	(envelope-from <rostedt@kernel.org>)
+	id 1uiF5x-00000008SW5-00Bj;
+	Sat, 02 Aug 2025 12:28:29 -0400
+Message-ID: <20250802162734.529626660@kernel.org>
+User-Agent: quilt/0.68
+Date: Sat, 02 Aug 2025 12:27:34 -0400
+From: Steven Rostedt <rostedt@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: Tomas Glozar <tglozar@redhat.com>,
+ John Kacur <jkacur@redhat.com>
+Subject: [for-next][PATCH 0/6] tracing: Final clean ups for v6.17
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250802121200.665ea309@foz.lan>
 
-On Sat, Aug 02, 2025 at 12:12:00PM +0200, Mauro Carvalho Chehab wrote:
-> > Let's just decide whatever order b4 uses *is* the proper order, and save
-> > ourselves endless hours of debating! :p
-> 
-> I don't think it makes sense to have a "proper order" verified on
-> checkpatch, as some tags may appear on different places.
-> 
-> For instance, the custody chain was designed to have SoBs appearing
-> in different places:
-> 
-> - author(s) SoB together co-developed-by are usually the first ones;
-> - then patches may have been reviewed, tested, acked or passed on some
->   other trees, gaining tags like tested-by, R-B, A-B, SoB, Cc;
-> - the subsystem maintainer will add his SoB in the end.
-> 
-> non-custody chain tags, like fixes, closes, reported-by...
-> usually comes first, but I don't think we need to enforce an specific
-> order.
 
-I wholeheartedly agree -- it really doesn't matter the order the trailers are
-in, as long as it's clear who is the person who pulled the trailer in, which
-is why I stick to the chain of custody. I'm pretty sure nobody has ever looked
-at a commit and went "I can't believe they put the Link trailer above the
-Suggested-by trailer," so enforcing it in checkpatch seems like wasted effort
-to me.
+Last minute changes for v6.17
 
--K
+- Remove unneeded goto out statements
+
+  Over time, the logic was restructured but left a "goto out" where the
+  out label simply did a "return ret;". Instead of jumping to this out
+  label, simply return immediately and remove the out label.
+
+- Clean up the tracing code with guard() and __free() logic
+
+  There were several locations that were prime candidates for using guard()
+  and __free() helpers. Switch them over to use them.
+
+- Fix output of function argument traces for unsigned int values
+
+  The function tracer with "func-args" option set will record up to 6 argument
+  registers and then use BTF to format them for human consumption when the
+  trace file is read. There's several arguments that are "unsigned long" and
+  even "unsigned int" that are either and address or a mask. It is easier to
+  understand if they were printed using hexadecimal instead of decimal.
+  The old method just printed all non-pointer values as signed integers,
+  which made it even worse for unsigned integers.
+
+  For instance, instead of:
+
+    __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
+
+  Show:
+
+   __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
+trace/for-next
+
+Head SHA1: 3ca824369b71d4b441e1fdcdee8e66bcb05510a9
+
+
+Steven Rostedt (6):
+      tracing: Remove unneeded goto out logic
+      tracing: Add guard(ring_buffer_nest)
+      tracing: Add guard() around locks and mutexes in trace.c
+      tracing: Use __free(kfree) in trace.c to remove gotos
+      ring-buffer: Convert ring_buffer_write() to use guard(preempt_notrace)
+      tracing: Have unsigned int function args displayed as hexadecimal
+
+----
+ include/linux/ring_buffer.h       |   3 +
+ kernel/trace/ring_buffer.c        |  16 +--
+ kernel/trace/trace.c              | 287 ++++++++++++++------------------------
+ kernel/trace/trace_events_synth.c |   6 +-
+ kernel/trace/trace_output.c       |   8 +-
+ 5 files changed, 120 insertions(+), 200 deletions(-)
 
