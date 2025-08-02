@@ -1,173 +1,197 @@
-Return-Path: <linux-kernel+bounces-753955-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD2F1B18AA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:12:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F0180B18AA7
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 384B11AA482E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:12:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC791AA4A1B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:13:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6841A256E;
-	Sat,  2 Aug 2025 04:11:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BC51C84B2;
+	Sat,  2 Aug 2025 04:12:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CIjig7F3"
-Received: from mail-yw1-f179.google.com (mail-yw1-f179.google.com [209.85.128.179])
+	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="L+QSlnhy"
+Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5945915E5DC
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 04:11:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB51315C158
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 04:12:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754107919; cv=none; b=GMu2/I5+WED6EzpX+EhVRfLJ6xKMWUpTSPUIQLgNqxn+kzx9FlAvBJTIPo5vn3I2MEEKJKxetRMRtaN9oeWyc9GNvX7NJ0t8gDSaWbBwhJXePiKnCiDKZvpknDGB/pVb/ulwwfOaZPFmD/RyFZhaf2OZya4zin5Rjd9140wc96M=
+	t=1754107953; cv=none; b=cUjmUm2yTAN4fLaPlCFhYWTXQIYmdSVagTrehSjIYft+UOCzwbTRuHcORbF/2RMJsW9nloyRehNu02VhfSQLPg4EurEN2g73KXaS6RFKDzFKPyTRpC03kNwzKtM23kN1d+fEYiun/JdSumD52lsVS0lYvFv1VkMvv5evC06PK94=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754107919; c=relaxed/simple;
-	bh=lJKRnlysUD8MFDQfZoBVJQlFexCUCMcqAdy6vCaSzxU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AR/WY1+ZiJUsKPjeNq+US3s19lqaEQ6aen30jaJDvmGcS6l8NRB4AaLZfNvU7f4cOpM5C0XDlciCrTmhtwveuHHf8dzXOk+2Diw1IcCflgIyIemVXtNjeGTKJ6k+UFEFvgrI3bVfI43CIwhOzykhWvk0SRm3ky/7w8ieEeLOPaM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CIjig7F3; arc=none smtp.client-ip=209.85.128.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f179.google.com with SMTP id 00721157ae682-719f5a141a3so22925697b3.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 21:11:56 -0700 (PDT)
+	s=arc-20240116; t=1754107953; c=relaxed/simple;
+	bh=jiSy6EgaRG9Ud8aFoKJwA0IhJhNFA8CwUL0Sj/LVdWg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WyBlFvGrC4BIanj9gF1vGJ6c+boMHeQuuOev4H9iV2V4JOUey6iHcRuJ0WhAvIMqeglp9fjrhnWXAZhT6w6tIIlElmAHxJRR+P2qjpuQuHb5MTtSzU30sr1Wp/qSpZUYpWa/G0LAZKnnlOUwvd1mSzRERmsjo97mAJ4alcfUswA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=L+QSlnhy; arc=none smtp.client-ip=209.85.166.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
+Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e406ca2d22so7930155ab.1
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 21:12:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754107915; x=1754712715; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NYp4mXKhOVGUhhKWIugNhHcZ1ORze3B3p0bRipFlplY=;
-        b=CIjig7F3Dtlq4c5T9Ikl2c2bBjh6pJaMFyU+KImT8R2vXxu34MDFVmw9wZ0/V4qpgV
-         Uw4hAbe7w4SGCG5w3XEoJo1qHPr/u8VIj6/XyU/wWKcEJ2lCReYU7/7yn7bH7S0SzQIz
-         Y66CQ0YgDhaei344hRUh0FtFrp9g1MK0ufbWaDkdYJSBgk239J+HisOFE8Cqxv5/pHe5
-         YlZupAbzCtloL+4MszhCNYWt9yGI+QeVE9eK5PNMYkvhcplJQuobx1kupvBBiiZByPTp
-         hiY2xkV4d66md1913w4SxnRB1rqQXYSSPb8+4r3l07hHTXOWyH5sEafxZeinu/WKCBLB
-         IlAA==
+        d=sifive.com; s=google; t=1754107951; x=1754712751; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ip2rHPlCiGFGcr5YGyF7kmeRLuJtKeayor/PNig1fgE=;
+        b=L+QSlnhy6ypqQOWBUSQhU9qaWdi+P2lVkRTeDvbiXhEVh1j8gr3vZ4bo/wovMmrpkm
+         edSpm3fhBnetYfo+t4SKySHWSScwW6IFkj6AeE5KiuJ657Ibw9X37WWeuzJEiquet8Zx
+         osRZ8esPNb5PSu6npexUrUO7PzkNP8f5KsKNqNdp9Sd8a8lHmI1bgw5/aMddsSIy1q8i
+         gl2NuOHISk4Y4OSGu6GL1iIIYvJGNx3cDUTW9y8l6N1AHOBtJPOTg0/QDgDQ/88Ny/Vr
+         ARUvI1dtpBKGxiXUmBbtVOtGrauDCFUpTnG/jP1UE6fAIEmqwmQyy3YaWIX91H5aBaZA
+         tJaw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754107915; x=1754712715;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NYp4mXKhOVGUhhKWIugNhHcZ1ORze3B3p0bRipFlplY=;
-        b=bmZmhbD+S0k7NZ6JBYrJuMR9oW9+Vt7ZVVLsM3XHyMrYnr+oMqnaMPRQrcYX/LcuWn
-         0FEuAvQ44xy9qQS+vF0RTOBRiW/qEQ93Us4C8M2+rHcOluz2Qtz/+txMdxs9UoG3yAS9
-         PzolaVJLx9/QB0d6nwKLaSoc69Zd1hpfRsPFAk84btKdcExOrjUI3C7RjGtvHJXRzWMz
-         Va9/n77b9cKb4ksPLSpQM1qxVudisccnCcqWXyA5pBUJi7BhsgwUSiMaN8QOiQC73TAB
-         cxX9DQad6hOrcqpFNCpziG0My99UFc9NDprVStpqjGJYq8S4YD0sSvSJ9GGoUIMBjZiY
-         kywA==
-X-Forwarded-Encrypted: i=1; AJvYcCVDvngGNEu1PuQqHwI/0qn8yoDR+tbOOd3w0/gVUWC8OnhrKahwBVDiIfzIGZgVyMeGJoXZo2clUcFRAdM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQ43Sm6UQYjSd9XYWVCeele4b77I/MdvsATtD/1npx8QETnw8K
-	3pz7TaMqHmbT+rSoiMHoY/w9QtEp8Bf0f93shrTsgGqSpyKG56D4KNDSCGtIMeV1e2ujOy07xPu
-	n8Iiwn9bPbGDkoSMuGfHhCWQFGQ0ykZyelq1kt2HVAA==
-X-Gm-Gg: ASbGncv+DDDRneqoRKfKaDZxt4BCez/RPu7A7O40Am6KK2XrvWMLHacA9w2obYIQA6f
-	YCDzp10L2jqfJHa4jny6WAU8SxaLvDj04mjKhGaE7FHp1wxAPum8LdDwHk33L701MTnEdmRSYZo
-	t61BQIZFGzCxOOGdFzZ979W+n2po7cDJ/6381inKepQ6XA87wTO89uwVhXxzxkQISt9aOK0lArK
-	aR3ag==
-X-Google-Smtp-Source: AGHT+IF9ctIxKBr9nfRXs2qCE2fyDGDHNm3LJDq8aN0iByZsWyGIn7LQZuF9bXAq3rhtwRAuKAX7NxEh1CJ8dlCDFPo=
-X-Received: by 2002:a05:690c:55c8:10b0:71a:20aa:2265 with SMTP id
- 00721157ae682-71b5a71c1e8mr83900667b3.6.1754107915222; Fri, 01 Aug 2025
- 21:11:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754107951; x=1754712751;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ip2rHPlCiGFGcr5YGyF7kmeRLuJtKeayor/PNig1fgE=;
+        b=P+IEuvwt5SU2wvNp0FWKHz2QhFkHcqRJN7JJIhRDC011Fg244pE+sZrgKot5trCfK9
+         tQkdTpk6YAyDs9nwxcza+hqnLtzujrejiVt6s3oTfL1AE3yQ3ivq3Iw5fCWlsnK3F7AM
+         EtZfm/yFplNyZVDX1xLAOuRp9XGkQz7f6X+GX+9m9mvvHWXdVChkauxx2z/pkV1Z/sMu
+         zE8eU0WenMPrhbGAJfQaXab0XcBIBIWSll1kjynQf7xuqXkg/bVaJbxesRGNAajM7BTh
+         3Q8biW2EWtpePjDQ9SFBGVLbJKj4ECbwoCwT0R/nM2zfEvJL/qR0KTyiwfW4Wkk6hE4h
+         zzIg==
+X-Forwarded-Encrypted: i=1; AJvYcCWaZK0x8RgndSspF60b3/CDFTKjH00R3bAKuyzLw+xFr4gj7tRlo3FHYzc+0bmtFwFgwOLjYhXwW0gFyrg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDzMKfBdsdN4NKWTTqwzPxZs7GdnuQplqYTaywj5UfdTjOMUt6
+	bmOZ8Sh3c97AjHk4WbMaLstiTIuN4bpyTUNKwjUeKWEuMs4tHU9ACZHu88VcDmIQ2f8=
+X-Gm-Gg: ASbGncsgpV6uiHgRt0DdVH4DYTGFnEEdA++KgpwSE2pzZZ5pU9NbzxWMqlmddBWnFmV
+	xv8hh9p+94eabT3UwmBZIWARRPUp/ZclQXceEsGPNHZbvfntSk2774i4EexaaAZv2OXtSLhnpuI
+	2tMKQ4wiATFOi5iK84AT1QX20wRxHsCdjOcuySMVooL2jXvrY+P+vgs2ne8N7CafIUHYH3Qlwes
+	3JxJ37gdiaJjVRxgoSILHGGDDjWTQiFH2USuuEqonarlmOMVXo/OIPFRitHoP690F+xZhInquJX
+	DN2Q21cu1U+cvKjWE+Golwxb9bwsLisVfXtFSNk8GsroZGA8jk4JWJXckW4+P96cpVJ+mkp1E3M
+	UeUMXk3QY5cEZWT3C85WNyno8M39j1TrZ1ui+VfkiSq5QVF+b
+X-Google-Smtp-Source: AGHT+IFWXv/meUt6qnzrJTilZJBXyZAntv/HisFVx8CQALlAxTer9z3pL9Su5iQx9S/dGPdOHi5YGA==
+X-Received: by 2002:a05:6e02:2487:b0:3e3:b6ab:f869 with SMTP id e9e14a558f8ab-3e416191ba5mr36293525ab.13.1754107950776;
+        Fri, 01 Aug 2025 21:12:30 -0700 (PDT)
+Received: from [100.64.0.1] ([170.85.11.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55d5da1csm1652544173.65.2025.08.01.21.12.28
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Fri, 01 Aug 2025 21:12:30 -0700 (PDT)
+Message-ID: <612a13d3-d3a6-460b-90fd-c26e47b80711@sifive.com>
+Date: Fri, 1 Aug 2025 23:12:28 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CGME20250724081336epcas2p38e95932ddc5c702e05a6436f05582993@epcas2p3.samsung.com>
- <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-3-sw617.shin@samsung.com>
-In-Reply-To: <20250724080854.3866566-3-sw617.shin@samsung.com>
-From: Sam Protsenko <semen.protsenko@linaro.org>
-Date: Fri, 1 Aug 2025 23:11:44 -0500
-X-Gm-Features: Ac12FXy2WLL3xRYhDsxothu9WYIfOUZEaNDjOS1ze6he7jduUVYVbSmd09OsrAk
-Message-ID: <CAPLW+4nRh9DEnkhunG68xvGdaNJswC8fN4v4uBA1Aaao_5pxfw@mail.gmail.com>
-Subject: Re: [PATCH v4 2/4] watchdog: s3c2410_wdt: Fix max_timeout being
- calculated larger
-To: Sangwook Shin <sw617.shin@samsung.com>
-Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, khwan.seo@samsung.com, dongil01.park@samsung.com, 
-	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 02/24] dt-bindings: mailbox: Add bindings for RISC-V
+ SBI MPXY extension
+To: Anup Patel <apatel@ventanamicro.com>
+Cc: Palmer Dabbelt <palmer@dabbelt.com>,
+ Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
+ Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
+ Rahul Pathak <rpathak@ventanamicro.com>,
+ Leyfoon Tan <leyfoon.tan@starfivetech.com>,
+ Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>,
+ Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
+ linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Conor Dooley <conor.dooley@microchip.com>,
+ Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki"
+ <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
+ Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
+ <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+References: <20250728094032.63545-1-apatel@ventanamicro.com>
+ <20250728094032.63545-3-apatel@ventanamicro.com>
+From: Samuel Holland <samuel.holland@sifive.com>
+Content-Language: en-US
+In-Reply-To: <20250728094032.63545-3-apatel@ventanamicro.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Jul 24, 2025 at 3:13=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.c=
-om> wrote:
->
-> Fix the issue of max_timeout being calculated larger than actual value.
-> The calculation result of freq / (S3C2410_WTCON_PRESCALE_MAX + 1) /
-> S3C2410_WTCON_MAXDIV is smaller than the actual value because the remaind=
-er
-> is discarded during the calculation process. This leads to a larger
-> calculated value for max_timeout compared to the actual settable value.
-> A ceiling operation is applied in the calculation process to resolve this=
-.
->
-> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
-> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
+Hi Anup,
+
+On 2025-07-28 4:40 AM, Anup Patel wrote:
+> Add device tree bindings for the RISC-V SBI Message Proxy (MPXY)
+> extension as a mailbox controller.
+> 
+> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
+> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
 > ---
->  drivers/watchdog/s3c2410_wdt.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
->
-> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
-t.c
-> index 95f7207e390a..31f7e1ec779e 100644
-> --- a/drivers/watchdog/s3c2410_wdt.c
-> +++ b/drivers/watchdog/s3c2410_wdt.c
-> @@ -411,8 +411,8 @@ static inline unsigned int s3c2410wdt_max_timeout(str=
-uct s3c2410_wdt *wdt)
->  {
->         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
->
-> -       return S3C2410_WTCNT_MAXCNT / (freq / (S3C2410_WTCON_PRESCALE_MAX=
- + 1)
-> -                                      / S3C2410_WTCON_MAXDIV);
-> +       return S3C2410_WTCNT_MAXCNT / DIV_ROUND_UP(freq,
-> +               (S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV);
->  }
->
+>  .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml | 51 +++++++++++++++++++
+>  1 file changed, 51 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+> new file mode 100644
+> index 000000000000..061437a0b45a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
+> @@ -0,0 +1,51 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: RISC-V SBI Message Proxy (MPXY) extension based mailbox
+> +
+> +maintainers:
+> +  - Anup Patel <anup@brainfault.org>
+> +
+> +description: |
+> +  The RISC-V SBI Message Proxy (MPXY) extension [1] allows supervisor
+> +  software to send messages through the SBI implementation (M-mode
+> +  firmware or HS-mode hypervisor). The underlying message protocol
+> +  and message format used by the supervisor software could be some
+> +  other standard protocol compatible with the SBI MPXY extension
+> +  (such as RISC-V Platform Management Interface (RPMI) [2]).
+> +
+> +  ===========================================
+> +  References
+> +  ===========================================
+> +
+> +  [1] RISC-V Supervisor Binary Interface (SBI) v3.0 (or higher)
+> +      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
+> +
+> +  [2] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
+> +      https://github.com/riscv-non-isa/riscv-rpmi/releases
+> +
+> +properties:
+> +  compatible:
+> +    const: riscv,sbi-mpxy-mbox
+> +
+> +  "#mbox-cells":
+> +    const: 2
+> +    description:
+> +      The first cell specifies channel_id of the SBI MPXY channel,
+> +      the second cell specifies MSG_PROT_ID of the SBI MPXY channel
 
-How about something like this instead?
+What is the purpose of the second mailbox cell?
 
-8<--------------------------------------------------------------------->8
-static inline unsigned int s3c2410wdt_max_timeout(unsigned long freq)
-{
-    const u64 div_max =3D (S3C2410_WTCON_PRESCALE_MAX + 1) *
-                S3C2410_WTCON_MAXDIV; /* 32768 */
-    const u64 n_max =3D S3C2410_WTCNT_MAXCNT * div_max;
-    u64 t_max =3D n_max / freq;
+The client can probe the message protocol using a SBI call, if it doesn't just
+assume a protocol based on the kind of node that references this mailbox. The
+SBI implementation knows the message protocol from the kind of node that
+instantiates the channel (for example riscv,rpmi-mpxy-clock has
+riscv,sbi-mpxy-channel-id). So this cell looks redundant.
 
-    if (t_max > UINT_MAX)
-        t_max =3D UINT_MAX;
+Regards,
+Samuel
 
-    return (unsigned int)t_max;
-}
-8<--------------------------------------------------------------------->8
+> +
+> +required:
+> +  - compatible
+> +  - "#mbox-cells"
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    mailbox {
+> +          compatible = "riscv,sbi-mpxy-mbox";
+> +          #mbox-cells = <2>;
+> +    };
 
-This implementation's result:
-  - is never greater than real timeout, as it loses the decimal part
-after integer division in t_max
-  - much closer to the real timeout value, as it benefits from very
-big n_max in the numerator (this is the main trick here)
-  - prepared for using 32-bit max counter value in your next patch, as
-it uses u64 type for calculations
-
-For example, at the clock frequency of 33 kHz:
-  - real timeout is: 65074.269 sec
-  - old function returns: 65535 sec
-  - your function returns: 32767 sec
-  - the suggested function returns: 65074 sec
-
-I've prepared the test program you can run on your machine to play
-with all implementations: [1].
-
-Thanks!
-
-[1] https://gist.github.com/joe-skb7/c2b2290bb0b0572a4018d81fc4ba1f3e
-
->  static int s3c2410wdt_disable_wdt_reset(struct s3c2410_wdt *wdt, bool ma=
-sk)
-> --
-> 2.25.1
->
 
