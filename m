@@ -1,155 +1,76 @@
-Return-Path: <linux-kernel+bounces-754166-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754167-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9BA88B18F33
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:24:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40C02B18F34
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:26:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39551AA30B7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:24:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 612D87A97B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3A67248191;
-	Sat,  2 Aug 2025 15:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="Yok6GSQO"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 371FB15C158;
-	Sat,  2 Aug 2025 15:24:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56CE02472B7;
+	Sat,  2 Aug 2025 15:25:59 +0000 (UTC)
+Received: from mail-io1-f71.google.com (mail-io1-f71.google.com [209.85.166.71])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C3034C8F
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 15:25:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.71
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754148255; cv=none; b=L6wbDfvxukC4GSU6yN5//bcY2nTYtt7cgScDt4JTqA338YI/uREo7f/xXiWrElRz/GiM0drSSgs5S+ZLRNunpPrzR0nw9lpeHLg9uOgkEUrUf6TZ4+44sawGFRMUXvHFhoSbhM/YT7v59U4qd3KuB/UJuMS0ohqqJtIyTNSAmOA=
+	t=1754148359; cv=none; b=sme+nwibbeiAkA21dO0QJaQoCSQtgSbZHwsVg35g+8fL2qtTYNjIjiV30y+SgHpfcfgWlD0kpcjjo7wsMKNAxcNNkq5sKblr28mxkL+JRzAKtTS3IAuCSCBD/FY8RG7tyq35+tQ7NFYnwOxamVmz0NhjsxlCSuQiJ39N87hosDE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754148255; c=relaxed/simple;
-	bh=7SwuS0e5Mm7qBSNVIoorKKIp0KpAUiVnT7Ez9QhYRNM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=J5GNzxOydWkiT+LxacETc8K6H2QxlEG4a48UlS7wTaavMShSEVHBab+vmog9us8BsiJRIpRG4JnBo+4ne9t6uh1hNhAH6xn9QvVvtwsrK0iOVyFYybaIOaiH4iWj1DFLDQMlHbmiF9gOB0TWYS8JdIXpwZ71sSvf3CIs4DSHhLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=Yok6GSQO; arc=none smtp.client-ip=220.197.31.4
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=qo72/01PN/hdR6lvl9jgxOqtELAkEE3dNJ7kNf8Dy4s=;
-	b=Yok6GSQOtap/8Ngzi0apy2swWSbV1qpuj+qp3AdJdU4SAABisbK5frg3ZxuONE
-	nd5ZVFyeeI8YI7SCkXjOf630uRWc0CmXXbABArWQidGrC2H//ouJOjPrM9RulPvu
-	AK4EGTMJKi8FEgDNhPOflGYmmWhOJ+F3dbmikNzqIXYQg=
-Received: from [IPV6:240e:b8f:919b:3100:ecd9:c243:2a5f:12dd] (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wAXprp2LY5oEFSLJQ--.61565S2;
-	Sat, 02 Aug 2025 23:23:35 +0800 (CST)
-Message-ID: <d2240ab0-5d91-4b41-945f-e29b40f7b7f4@163.com>
-Date: Sat, 2 Aug 2025 23:23:34 +0800
+	s=arc-20240116; t=1754148359; c=relaxed/simple;
+	bh=seZIdjhEqK761PCns8qafAjkaYmK058tk1d0tISUzi4=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=iBvCwohI/FT5OSO+1Dz5TityYP1DZPg9duTuOIl+3YkRwsjjvdkMDTAE82qCbpL+Kffv9MUWITgxeLKDQAEaViTQf4r7IIsjQkEIXfR0SajI5YaCqNXhyxMvxOCKHSiTRfrcoCemv7DAVB/jSb2SKyzRzZeF9WLUmihYQzU00ms=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.71
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f71.google.com with SMTP id ca18e2360f4ac-87c583fcf77so212153839f.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 08:25:57 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754148356; x=1754753156;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=seZIdjhEqK761PCns8qafAjkaYmK058tk1d0tISUzi4=;
+        b=DJ5Pj/XkwLxM09rmtSATbQvD7hcxkSqK9XWUShtQPLBCy3W9nPMGTLRftNXC73bHsL
+         xjPyIGj1ontMPTHVlIkN4kEfQSzDomBZqxgtfMnov2zHOJfVo7yG66vtZVUPW9xHa2p8
+         r2598JmoqDQQevxwYVEkgQ+0w48poe1sVWmJDl4x8qtkEbp55ZuJR2dtXZem3uQ31Wgg
+         Sm01atcxo7NwayiXoUPenC//LRzrIVpsa+DQ3+jM0rkzgENqQO9QsXrxI3PImPfn5WnL
+         PGR5k5QJRI5KGdal4bOVXV74ppfSBfTeaih9N7xkrYbZagkPrE3sCcrq9ArqBm44//40
+         6SoA==
+X-Gm-Message-State: AOJu0Yzc2T4MhMYPApoAj6jVoof4Jiq9akc6+IuqsXYbMi8wn7G/Mn4Z
+	V7UN2dxSPDGLT/TiYDe6dXXh/5vmLiU5dfVN41M2usqhDTyt5zR4qCgzw5wEw7l9gNIYz8GwK/3
+	4Dq4pEANK5bKnYj5FEEatXz9MeHOMv3DFA/A7MBWF3SZy6+/qieur2XyXh+0=
+X-Google-Smtp-Source: AGHT+IFu+TTkIFsikRQ22rHDOU5ydKmEThR2n8RoBVJdZRvOfq03ym47jxqMOce7kxm6Rx/gbajYZoxnO3W5dbPK4KcLyxTaU8yf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-To: Keith Busch <kbusch@kernel.org>
-Cc: Gerd Bayer <gbayer@linux.ibm.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Hans Zhang <hans.zhang@cixtech.com>,
- Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
- bhelgaas@google.com, Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- jingoohan1@gmail.com, =?UTF-8?Q?Krzysztof_Wilczy=C2=B4nski?=
- <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
- linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Rob Herring <robh@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>,
- geert@linux-m68k.org
-References: <20250731183944.GA3424583@bhelgaas>
- <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
- <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
- <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
- <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
- <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
- <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
- <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
- <659b8389-16a7-423b-a231-5489c7cc0da9@163.com> <aI0CupiFvyOvgNQY@kbusch-mbp>
-Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <aI0CupiFvyOvgNQY@kbusch-mbp>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wAXprp2LY5oEFSLJQ--.61565S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW7WF4DGw1UuFy7KFWkXryrJFb_yoW8AFWrpF
-	y5ta18tF4kJrySvw1vq34vq3WSvanrKayDAr9xu3sIv3Z0yw1FvFyjgFy2qrWYga1kuF48
-	Zw43JFW3Cw1qyaUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UtuciUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiWw6do2iOJ0KXvAAAsD
+X-Received: by 2002:a05:6602:6306:b0:876:8cb1:a010 with SMTP id
+ ca18e2360f4ac-8816836228dmr592180839f.7.1754148356601; Sat, 02 Aug 2025
+ 08:25:56 -0700 (PDT)
+Date: Sat, 02 Aug 2025 08:25:56 -0700
+In-Reply-To: <6834671a.a70a0220.253bc2.0098.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688e2e04.050a0220.81582.0001.GAE@google.com>
+Subject: Forwarded: Re: [syzbot] [block?] possible deadlock in __del_gendisk
+From: syzbot <syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
+***
 
-On 2025/8/2 02:08, Keith Busch wrote:
-> On Sat, Aug 02, 2025 at 12:54:27AM +0800, Hans Zhang wrote:
->> As I mentioned in my reply to Mani's email, the data ultimately read here is
->> also a forced type conversion.
->>
->> #define PCI_OP_READ(size, type, len) \
->> int noinline pci_bus_read_config_##size \
->> 	(struct pci_bus *bus, unsigned int devfn, int pos, type *value)	\
->> {									\
->> 	unsigned long flags;						\
->> 	u32 data = 0;							\
->> 	int res;							\
->> 									\
->> 	if (PCI_##size##_BAD)						\
->> 		return PCIBIOS_BAD_REGISTER_NUMBER;			\
->> 									\
->> 	pci_lock_config(flags);						\
->> 	res = bus->ops->read(bus, devfn, pos, len, &data);		\
->> 	if (res)							\
->> 		PCI_SET_ERROR_RESPONSE(value);				\
->> 	else								\
->> 		*value = (type)data;					\
->> 	pci_unlock_config(flags);					\
->> 									\
->> 	return res;							\
->> }
->>
->> And this function. Could it be that I misunderstood something?
-> 
-> The above macro retains the caller's type for "value". If the caller
-> passes a "u8 *", the value is deferenced as a u8.
+Subject: Re: [syzbot] [block?] possible deadlock in __del_gendisk
+Author: ujwal.kundur@gmail.com
 
-Dear Keith,
-
-In this macro definition, bus->ops->read needs to ensure the byte order 
-of the read, as Lukas mentioned; otherwise, there is also a big-endian 
-issue at this location.
-
-> 
-> The function below promotes everything to a u32 pointer and deferences
-> it as such regardless of what type the user passed in.
-
-I searched and learned that readb/readw/readl automatically handle byte 
-order, so there is no big-endian order issue.
-
->   
->> int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
->> 			    int where, int size, u32 *val)
->> {
->> 	void __iomem *addr;
->>
->> 	addr = bus->ops->map_bus(bus, devfn, where);
->> 	if (!addr)
->> 		return PCIBIOS_DEVICE_NOT_FOUND;
->>
->> 	if (size == 1)
->> 		*val = readb(addr);
->> 	else if (size == 2)
->> 		*val = readw(addr);
->> 	else
->> 		*val = readl(addr);
->>
->> 	return PCIBIOS_SUCCESSFUL;
->> }
-
-
-Best regards,
-Hans
-
+#syz test
 
