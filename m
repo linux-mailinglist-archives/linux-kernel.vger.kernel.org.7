@@ -1,154 +1,219 @@
-Return-Path: <linux-kernel+bounces-753936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7328FB18A51
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:55:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C25A7B18A5C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:03:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4B72AA5720
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:55:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E63E27B6D03
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:01:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD54B19ABC3;
-	Sat,  2 Aug 2025 01:54:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAC7C154BF5;
+	Sat,  2 Aug 2025 02:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="P7gN6f4j"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 444EE143748;
-	Sat,  2 Aug 2025 01:54:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BySllj1F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BE032CA9;
+	Sat,  2 Aug 2025 02:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754099670; cv=none; b=gnBte+T7BN71wOJztrWjy46GVXSLmGjvo2sqjnuHpW5d23z/4zGPbkTqCsZFqw78L5Z9q3PLCBhQfK6tdla6NtUGpIV+VHlrFUmEjBydp7cSgN1NmAEcM/qwdKhJ4cYRo1A+JXJOxj8RwB+VAbZBzDQTmjbOk6xMwovOC4cKbPs=
+	t=1754100171; cv=none; b=qpa40518lqI2frFfRkam/yCtcFLOshlbDsxmjwZBBq/Nn9Ms+MjWFF6D/FvhLUp1dCs7cq0KOhmy/AdFe98PQq1qMLd3funq7tLOkTAFM+R0vaJozLlmRk1pTWE7QftlsA/UGs+M7Pixv1qfU2tOoUjW+Wm+pR4n55eTT7t9Vi0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754099670; c=relaxed/simple;
-	bh=ZzvXMMEd2VKZRyx2UGIotKUKMVqbiSAPuF9PKhhLeL8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=AvFWfWZYT+j5u4TxNsetD6pAowIQsCaJwgRPLnxQF6i69jD7KboSV6eSb8uurwo1obfqk2GbKDfbjP8sPGHAOdLmxiV+GDfr5RXIIUjOXPNAG+xqt6cGW3lCjbvdu54JEIFcV+rng1qwpN1sEG8pILF2cLmxdEbFz04CgMrWmlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=P7gN6f4j; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=b8
-	+eKxxlAXpU1PrZbIB9ESPWyVrT7xYsLsdYc4aRzr8=; b=P7gN6f4jTnBKA1pRbC
-	NWJReEgCawaRe+kO4YgEkDxp+/GEHWL25eNGMAyA8+2uqhdbNFH6oqvJDabBMYGL
-	JRj5i4hpgtEQUP1vBvEpGRHf08hdriIZtBbO+o6we+GhoCTQM5WWiSG/uB8+gtkz
-	w727LOHLWxgMcJWLKo4MobcMw=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAn9dGhb41owA7sJQ--.1054S4;
-	Sat, 02 Aug 2025 09:53:40 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v5 2/2] selftests/bpf: Force -O2 for USDT selftests to cover SIB handling logic
-Date: Sat,  2 Aug 2025 01:53:35 +0000
-Message-ID: <20250802015336.823054-3-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250802015336.823054-1-phoenix500526@163.com>
-References: <20250802015336.823054-1-phoenix500526@163.com>
+	s=arc-20240116; t=1754100171; c=relaxed/simple;
+	bh=6bITi9gvtbX7RAdnVVPYE2QrTPy+diCSRNMo8t0owvY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=b8rHpA5BGd49qcKlGZlzS8/zN61TS8vlTNnaNPwT6kKcaimYqMVrTaG/sLV0RfbwraGCpwIqpe3pNPn+O7KnfO4oVs2WSBTlZPXxaQ/GJAcEdy99fPho6OO9GP1h45pTBQiGnn/C+2ogLhD/wKs2XHSv/TTOftjSkFcnhRIn/T0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BySllj1F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF51C4CEE7;
+	Sat,  2 Aug 2025 02:02:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754100170;
+	bh=6bITi9gvtbX7RAdnVVPYE2QrTPy+diCSRNMo8t0owvY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BySllj1FubO0oyO0tHAr96uaOj4qO4A5jIQwliWhAJ+MYQboc8F6bjo+a4mDDl5s8
+	 vytkyV5rWN+Gb9VLglRtyPwRihX5XPLqJsa01osMw7D7w8FaMl34Am+p1N8hDuZbBE
+	 Zaj54jJyLrZ8nP1IkUUYX/+cVeezt0gNRKqL7A8bHdHztbBC9TvidGcPAyHkTzNqNl
+	 KNYxW3Vpp5rH6Cte8Idfp9ypvhJRWF1IEIbEaBXmkYbFdfVoUhOMqSS1xzsaYtPm/I
+	 WLSElLTTH4uqNDIuqPqD6rApaq56Bog93dKEY4nCl436AJxcYUnSUATRY/55mFq/+y
+	 QEBH9tOBXjljg==
+Date: Fri, 1 Aug 2025 22:02:49 -0400
+From: Mike Snitzer <snitzer@kernel.org>
+To: Keith Busch <kbusch@meta.com>
+Cc: linux-block@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org, Keith Busch <kbusch@kernel.org>,
+	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
+Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
+Message-ID: <aI1xySNUdQ2B0dbJ@kernel.org>
+References: <20250801234736.1913170-1-kbusch@meta.com>
+ <20250801234736.1913170-8-kbusch@meta.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wAn9dGhb41owA7sJQ--.1054S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4ktFy5WrWDCF4kGw48JFb_yoW5tr1kpa
-	ykWw1jyFySqa17tan7ZrnrXr45WFs7JFWFyr1UXryFvr4kJF97XFZ7t3yUKFnxW393Xaya
-	y392gry3GF4rAwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzUDJUUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgAydiGiNYdH42AAAss
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801234736.1913170-8-kbusch@meta.com>
 
-When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-optimization, the compiler will generate SIB addressing mode for global
-array and PC-relative addressing mode for global variable,
-e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> No more callers.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
 
-In this patch:
-- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
-  argument spec.
-- change the global variable t1 to a local variable, to avoid compiler
-  generating PC-relative addressing mode for it.
+You had me up until this last patch.
 
-Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
----
- tools/testing/selftests/bpf/Makefile          |  5 +++++
- tools/testing/selftests/bpf/prog_tests/usdt.c | 18 ++++++++++++------
- 2 files changed, 17 insertions(+), 6 deletions(-)
+I'm actually making use of iov_iter_is_aligned() in a series of
+changes for both NFS and NFSD.  Chuck has included some of the
+NFSD changes in his nfsd-testing branch, see:
+https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 910d8d6402ef..f53c86023334 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -759,6 +759,11 @@ TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
- $(eval $(call DEFINE_TEST_RUNNER,test_maps))
- 
-+# Force usdt.c to use -O2 optimization to generate SIB addressing
-+$(OUTPUT)/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/cpuv4/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/no_alu32/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+
- # Define test_verifier test runner.
- # It is much simpler than test_maps/test_progs and sufficiently different from
- # them (e.g., test.h is using completely pattern), that it's worth just
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 495d66414b57..86f354d25aef 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -14,10 +14,15 @@ static volatile int idx = 2;
- static volatile __u64 bla = 0xFEDCBA9876543210ULL;
- static volatile short nums[] = {-1, -2, -3, -4};
- 
--static volatile struct {
--	int x;
--	signed char y;
--} t1 = { 1, -127 };
-+/*
-+ * TODO:  At O2 optimization level, t1's USDT argument spec becomes -1@4+t1(%rip).
-+ * Since libbpf doesn't support RIP addressing mode yet, this causes "unrecognized register" errors.
-+ * This test will be re-enabled once libbpf supports RIP addressing mode.
-+ */
-+// static volatile struct {
-+//	int x;
-+//	signed char y;
-+// } t1 = { 1, -127 };
- 
- #define SEC(name) __attribute__((section(name), used))
- 
-@@ -27,6 +32,7 @@ unsigned short test_usdt12_semaphore SEC(".probes");
- 
- static void __always_inline trigger_func(int x) {
- 	long y = 42;
-+	signed char t1 = -127;
- 
- 	if (test_usdt0_semaphore)
- 		STAP_PROBE(test, usdt0);
-@@ -36,7 +42,7 @@ static void __always_inline trigger_func(int x) {
- 		STAP_PROBE12(test, usdt12,
- 			     x, x + 1, y, x + y, 5,
- 			     y / 7, bla, &bla, -9, nums[x],
--			     nums[idx], t1.y);
-+			     nums[idx], t1);
- 	}
- }
- 
-@@ -106,7 +112,7 @@ static void subtest_basic_usdt(void)
- 	ASSERT_EQ(bss->usdt12_args[8], -9, "usdt12_arg9");
- 	ASSERT_EQ(bss->usdt12_args[9], nums[1], "usdt12_arg10");
- 	ASSERT_EQ(bss->usdt12_args[10], nums[idx], "usdt12_arg11");
--	ASSERT_EQ(bss->usdt12_args[11], t1.y, "usdt12_arg12");
-+	ASSERT_EQ(bss->usdt12_args[11], -127, "usdt12_arg12");
- 
- 	int usdt12_expected_arg_sizes[12] = { 4, 4, 8, 8, 4, 8, 8, 8, 4, 2, 2, 1 };
- 
--- 
-2.43.0
+And the balance of my work that is pending review/inclusion is:
+https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
+https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
 
+I only need iov_iter_aligned_bvec, but recall I want to relax its
+checking with this patch:
+https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
+
+Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
+both NFS and NFSD can use it?
+
+Thanks,
+Mike
+
+> ---
+>  include/linux/uio.h |  2 -
+>  lib/iov_iter.c      | 95 ---------------------------------------------
+>  2 files changed, 97 deletions(-)
+> 
+> diff --git a/include/linux/uio.h b/include/linux/uio.h
+> index 2e86c653186c6..5b127043a1519 100644
+> --- a/include/linux/uio.h
+> +++ b/include/linux/uio.h
+> @@ -286,8 +286,6 @@ size_t _copy_mc_to_iter(const void *addr, size_t bytes, struct iov_iter *i);
+>  #endif
+>  
+>  size_t iov_iter_zero(size_t bytes, struct iov_iter *);
+> -bool iov_iter_is_aligned(const struct iov_iter *i, unsigned addr_mask,
+> -			unsigned len_mask);
+>  unsigned long iov_iter_alignment(const struct iov_iter *i);
+>  unsigned long iov_iter_gap_alignment(const struct iov_iter *i);
+>  void iov_iter_init(struct iov_iter *i, unsigned int direction, const struct iovec *iov,
+> diff --git a/lib/iov_iter.c b/lib/iov_iter.c
+> index f9193f952f499..2fe66a6b8789e 100644
+> --- a/lib/iov_iter.c
+> +++ b/lib/iov_iter.c
+> @@ -784,101 +784,6 @@ void iov_iter_discard(struct iov_iter *i, unsigned int direction, size_t count)
+>  }
+>  EXPORT_SYMBOL(iov_iter_discard);
+>  
+> -static bool iov_iter_aligned_iovec(const struct iov_iter *i, unsigned addr_mask,
+> -				   unsigned len_mask)
+> -{
+> -	const struct iovec *iov = iter_iov(i);
+> -	size_t size = i->count;
+> -	size_t skip = i->iov_offset;
+> -
+> -	do {
+> -		size_t len = iov->iov_len - skip;
+> -
+> -		if (len > size)
+> -			len = size;
+> -		if (len & len_mask)
+> -			return false;
+> -		if ((unsigned long)(iov->iov_base + skip) & addr_mask)
+> -			return false;
+> -
+> -		iov++;
+> -		size -= len;
+> -		skip = 0;
+> -	} while (size);
+> -
+> -	return true;
+> -}
+> -
+> -static bool iov_iter_aligned_bvec(const struct iov_iter *i, unsigned addr_mask,
+> -				  unsigned len_mask)
+> -{
+> -	const struct bio_vec *bvec = i->bvec;
+> -	unsigned skip = i->iov_offset;
+> -	size_t size = i->count;
+> -
+> -	do {
+> -		size_t len = bvec->bv_len - skip;
+> -
+> -		if (len > size)
+> -			len = size;
+> -		if (len & len_mask)
+> -			return false;
+> -		if ((unsigned long)(bvec->bv_offset + skip) & addr_mask)
+> -			return false;
+> -
+> -		bvec++;
+> -		size -= len;
+> -		skip = 0;
+> -	} while (size);
+> -
+> -	return true;
+> -}
+> -
+> -/**
+> - * iov_iter_is_aligned() - Check if the addresses and lengths of each segments
+> - * 	are aligned to the parameters.
+> - *
+> - * @i: &struct iov_iter to restore
+> - * @addr_mask: bit mask to check against the iov element's addresses
+> - * @len_mask: bit mask to check against the iov element's lengths
+> - *
+> - * Return: false if any addresses or lengths intersect with the provided masks
+> - */
+> -bool iov_iter_is_aligned(const struct iov_iter *i, unsigned addr_mask,
+> -			 unsigned len_mask)
+> -{
+> -	if (likely(iter_is_ubuf(i))) {
+> -		if (i->count & len_mask)
+> -			return false;
+> -		if ((unsigned long)(i->ubuf + i->iov_offset) & addr_mask)
+> -			return false;
+> -		return true;
+> -	}
+> -
+> -	if (likely(iter_is_iovec(i) || iov_iter_is_kvec(i)))
+> -		return iov_iter_aligned_iovec(i, addr_mask, len_mask);
+> -
+> -	if (iov_iter_is_bvec(i))
+> -		return iov_iter_aligned_bvec(i, addr_mask, len_mask);
+> -
+> -	/* With both xarray and folioq types, we're dealing with whole folios. */
+> -	if (iov_iter_is_xarray(i)) {
+> -		if (i->count & len_mask)
+> -			return false;
+> -		if ((i->xarray_start + i->iov_offset) & addr_mask)
+> -			return false;
+> -	}
+> -	if (iov_iter_is_folioq(i)) {
+> -		if (i->count & len_mask)
+> -			return false;
+> -		if (i->iov_offset & addr_mask)
+> -			return false;
+> -	}
+> -
+> -	return true;
+> -}
+> -EXPORT_SYMBOL_GPL(iov_iter_is_aligned);
+> -
+>  static unsigned long iov_iter_alignment_iovec(const struct iov_iter *i)
+>  {
+>  	const struct iovec *iov = iter_iov(i);
+> -- 
+> 2.47.3
+> 
 
