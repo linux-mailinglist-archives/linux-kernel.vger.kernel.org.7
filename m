@@ -1,142 +1,121 @@
-Return-Path: <linux-kernel+bounces-753924-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 385B2B18A05
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:03:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 633C8B18A08
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:10:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C03641C82F1E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:03:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2F2C1C809B6
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:10:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14115282E1;
-	Sat,  2 Aug 2025 01:03:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7526D1C695;
+	Sat,  2 Aug 2025 01:10:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="K2JaZVyq"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mWh3/53r"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08A05A48;
-	Sat,  2 Aug 2025 01:03:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38835A48;
+	Sat,  2 Aug 2025 01:10:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754096593; cv=none; b=qANotd8kaEXenlxEyN0IQ8kiD7ieQJSTXhM1K0Zx5TT7B65wogUSjdyUxPMu5WTKAgyyc7BmKRt6ADHpOf6/RKcQLwDMb0IUU/vjNCkU0BI8/x2NI6Nuo0oPimNi9BX0CwiN3IQ02IWs5Tu4GJqWbfE0VXkjksWOHb5GmAtSg3s=
+	t=1754097021; cv=none; b=TTv5+87ivfgDxaeWMm0Bvpls6b6ZlWBeHHqKxfRA5AKWbFg0hX5WSYsWQSr7Ok43Bg7eG6feFF8dBSQBvi+Jfbs2taleb1397v+FHK+jKJgL8R8wB3w1vyQXwKuEbhFstp46Ys1uGd76oIvCdsJ3l8CRyGURXA1Eh0aHULuxTS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754096593; c=relaxed/simple;
-	bh=AY7j+7mv2dE5hcJpd/tAvFtobFcD1mgqJgfqGiQynVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PfB49F//3rlDuToLmSqNUxYEpyERIRIkJlNaMaGjrgR7X0znHGt5+6EWqm1ms2SktiuTSekph/iySPUoomsbr8CYSpNOdwWE9KC2TWOJmSGrXH3xFwwfldOIEJU+kpdzn7MBKzoMfkbTuixvptR2a0z2Pq0Bl316c8kZSdniB5k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=K2JaZVyq; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754096592; x=1785632592;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=AY7j+7mv2dE5hcJpd/tAvFtobFcD1mgqJgfqGiQynVE=;
-  b=K2JaZVyq1etD/zfzt4vPgIBgHKKIr8CToFSZDH/Hr5elfUzuY4pXd6ZR
-   +uWDe40Xsp83xNdFRf7LaATQk8i4fHtvkR/wmsOw6TmT+g98DerLRwspk
-   bVM4ymctXowZhK609325X5c/E97jFLr1keakIIz7Xt19IP3vQ1tdOwU+C
-   seXszXSBCKi2WfiSqFet08Dcyjm8gAB5JwO+eWJ21rZGNc2DeXtSjrKDA
-   E17MQgIJqhahzy+OhtbxXmBX+JpKkDmH8cSRXjWkzndNF6l+Xh7BzrxhW
-   +DHMEmWtwSpQ0KSunNn/Cg7JbnvIAkD0IWg7NeMaS11Lf4abwDu3vLddt
-   Q==;
-X-CSE-ConnectionGUID: AURiZbY/RWi8kc0hH73cKQ==
-X-CSE-MsgGUID: xUY5J8TkSWOIplD3lz9BxA==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="56586896"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="56586896"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 18:03:12 -0700
-X-CSE-ConnectionGUID: k31tPsVwSPa+bMhbp3/FQA==
-X-CSE-MsgGUID: 5Bej1XubQpKWWuO99tKLyw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="168165493"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 01 Aug 2025 18:03:08 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ui0eQ-00053c-00;
-	Sat, 02 Aug 2025 01:03:06 +0000
-Date: Sat, 2 Aug 2025 09:02:10 +0800
-From: kernel test robot <lkp@intel.com>
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: oe-kbuild-all@lists.linux.dev, linux-input@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org, devicetree@vger.kernel.org,
-	Julien Massot <julien.massot@collabora.com>
-Subject: Re: [PATCH 1/3] Input: mtk-pmic-keys - MT6359 has a specific release
- irq
-Message-ID: <202508020802.nZBo2mGV-lkp@intel.com>
-References: <20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8@collabora.com>
+	s=arc-20240116; t=1754097021; c=relaxed/simple;
+	bh=nl6c4321NAKXX86GD7ps3OZQddqSonNEhTulv87fzzI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HUBXPHFPRAJ378xAIuTCaXC1h66FF79RMs29i/H/8u7/6dbNegk/ojKF3SOK4h/rjRlIoZL0GdPmkUbXSzRfiXUdc40EBnMi7GSGGtNSSLBu1luBTgsaJ/FGH7lA7R2kQzJgrkdepZKk0nT0LwK/xgVaooG+Jke7Ughl5g/CrSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mWh3/53r; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4589b3e3820so26790535e9.3;
+        Fri, 01 Aug 2025 18:10:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754097018; x=1754701818; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/UmDeR2LiWPErRTtoBmri3CE2DBkF02ITaXjMtjgCX0=;
+        b=mWh3/53r4vuNQZ/2y98O7/OPuR7yey4BQ+PtkeL3XmorkIuNY33kRvx+G2sFjkfTEB
+         xSftsyIn/aWdm8gnsw6a4itFUlj3ZYS4KnY1gb1qOtx4d0iwh1rw1DyRgO9+YWkJ+nIf
+         qESPkkbFNd2rtBU7sn1/5nS5DgFk9QZEuPaGZRNhlCmwWmpSh4CkfBtvsPIJCDE5OWEq
+         EPJZWExGIk4TYRU/VoqgCyKJ5N35jE3QgVVJdHUPodGQGtMIKvlyCideb8EwZvLn7vY3
+         vtYs7WMkOWfDWK98K/xjYEjDGOPJpgn6vOSi1YDXTNHO95DCaO6+Bb9dCQHfo/mLuZxe
+         boiw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754097018; x=1754701818;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/UmDeR2LiWPErRTtoBmri3CE2DBkF02ITaXjMtjgCX0=;
+        b=e7rgZL/GgubzFG8avbUQS6BaixD1t713i6aEe8EX5fgZWRSnQdnx3kMjV+8/zAgAf9
+         hQzZxlacUOaNnBURUmxLpiIbD+cC1gIUpewyIP4Ys/CK78wvG32//QJPnRMqKkQPeRsS
+         LvQzUCNy8mA8wXkTL+/PoXDWcpuPgJc9czIJJd8sHbIADJSWkAwbom4kt34Y/O4nWfEg
+         ym5mc0zumvgCBTGnMV+IXpU/oc+vrnQWOCFRaHaNoVvOTWP/ZEAtugZOVrsPHwpN4LiQ
+         Qh3cIRBqHNhHsZxmkgMLPYmvP+JzJ4JM04dcmzPybZ0Q+2zXhUXOBjuqA5U54/JN8P2M
+         MfWw==
+X-Forwarded-Encrypted: i=1; AJvYcCUPZeB7HwQC7By5hAc6C/BC2Y76ZFOYC+EtbFiSLlTx+8yEYxWp7/fbqmOE8fvE6jjeSYISnJUAqpK2Zow=@vger.kernel.org, AJvYcCXO0sW8FUTWgLJdwSCQ7aVRoX9s4nSou/gAR9RO4nMXU0mXm1DmBCKiJUkLvyi2ZkbcclblNV9CmtJE5EQ5VuO3@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEhXCSszcH8nTNYBFmqm7NxwO3D4TPav+K3xtPfV8Am2bvw4U2
+	7YV9XPM8ysGik0lvC9GM+j8TON5RkKYI7MiAaPhB2PFf0ypz2K/GsCYWt8kfDxe/2WpIxzoIDZI
+	5ctAC2UUJhbBnGXxnRoyqlwLMO1He91A=
+X-Gm-Gg: ASbGnctPtTb1S2kiWM7Ld89o5XEaOs+bfPK+Rz6tXBxmiFKn05IXsINd7gjSLr1XSZE
+	PBZWM4xuI98x1iBGAOuw92qOj2O6jxYJk/MnfvXV1hgenfvxfHiJeutgb1lZSvcFtCAE0CzXJHm
+	2cf+RmGaDG2ybN/47BJBYmKonUQDgNAxYBvexJ2NqrpHyNCZDV3aP5N6ehNvmBJr21iJPoMZuim
+	XvHsV0i5eFqRr+PWIfrp4PX+CbmnYhnGAlD
+X-Google-Smtp-Source: AGHT+IHZvq/EhUufr5BA+LW3v8lbbDX76c/9s3iMTywwTb731Fkv6v3wzApUPrir+O780isCCB1t2MY8v0ONeQtUTpw=
+X-Received: by 2002:a05:6000:40ce:b0:3b7:9589:1fd1 with SMTP id
+ ffacd0b85a97d-3b8d94c5820mr1274187f8f.44.1754097018283; Fri, 01 Aug 2025
+ 18:10:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8@collabora.com>
+References: <20250801161531.816845-1-phoenix500526@163.com> <20250801161531.816845-2-phoenix500526@163.com>
+In-Reply-To: <20250801161531.816845-2-phoenix500526@163.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Fri, 1 Aug 2025 18:10:07 -0700
+X-Gm-Features: Ac12FXx05DYYV4X1PxpLaLu85h4KWTcQ71kqdK8KN7JVSKkCCw3U78t-vFv2ors
+Message-ID: <CAADnVQKNGHGuu0GQR=HSCwvV9tm2dS6noKMcou=OEVp6T43NhQ@mail.gmail.com>
+Subject: Re: [PATCH v4 1/1] libbpf: fix USDT SIB argument handling causing
+ unrecognized register error
+To: Jiawei Zhao <phoenix500526@163.com>
+Cc: Andrii Nakryiko <andrii@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Daniel Borkmann <daniel@iogearbox.net>, Yonghong Song <yonghong.song@linux.dev>, 
+	LKML <linux-kernel@vger.kernel.org>, 
+	"open list:KERNEL SELFTEST FRAMEWORK" <linux-kselftest@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Julien,
+On Fri, Aug 1, 2025 at 9:16=E2=80=AFAM Jiawei Zhao <phoenix500526@163.com> =
+wrote:
+>
+> From: Jiawei Zhao <Phoenix500526@163.com>
+>
+> On x86-64, USDT arguments can be specified using Scale-Index-Base (SIB)
+> addressing, e.g. "1@-96(%rbp,%rax,8)". The current USDT implementation
+> in libbpf cannot parse this format, causing `bpf_program__attach_usdt()`
+> to fail with -ENOENT (unrecognized register).
+>
+> This patch fixes this by implementing the necessary changes:
+> - add correct handling for SIB-addressed arguments in `bpf_usdt_arg`.
+> - add adaptive support to `__bpf_usdt_arg_type` and
+> `__bpf_usdt_arg_spec` to represent SIB addressing parameters.
+>
+> Signed-off-by: Jiawei Zhao <Phoenix500526@163.com>
+> ---
+>  tools/lib/bpf/usdt.bpf.h                      | 33 +++++++++++++-
+>  tools/lib/bpf/usdt.c                          | 43 ++++++++++++++++---
+>  tools/testing/selftests/bpf/Makefile          |  5 +++
+>  tools/testing/selftests/bpf/prog_tests/usdt.c | 18 +++++---
+>  4 files changed, 86 insertions(+), 13 deletions(-)
 
-kernel test robot noticed the following build errors:
+You didn't cc bpf@vger. It cannot land this way.
+Pls respin and split libbpf vs selftest into separate patches.
 
-[auto build test ERROR on b9ddaa95fd283bce7041550ddbbe7e764c477110]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Julien-Massot/Input-mtk-pmic-keys-MT6359-has-a-specific-release-irq/20250801-211817
-base:   b9ddaa95fd283bce7041550ddbbe7e764c477110
-patch link:    https://lore.kernel.org/r/20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8%40collabora.com
-patch subject: [PATCH 1/3] Input: mtk-pmic-keys - MT6359 has a specific release irq
-config: arc-randconfig-002-20250802 (https://download.01.org/0day-ci/archive/20250802/202508020802.nZBo2mGV-lkp@intel.com/config)
-compiler: arc-linux-gcc (GCC) 14.3.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250802/202508020802.nZBo2mGV-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202508020802.nZBo2mGV-lkp@intel.com/
-
-All error/warnings (new ones prefixed by >>):
-
->> drivers/input/keyboard/mtk-pmic-keys.c:132:10: error: 'const struct mtk_pmic_regs' has no member named 'key_release_irq'
-     132 |         .key_release_irq = true,
-         |          ^~~~~~~~~~~~~~~
->> drivers/input/keyboard/mtk-pmic-keys.c:132:28: warning: excess elements in struct initializer
-     132 |         .key_release_irq = true,
-         |                            ^~~~
-   drivers/input/keyboard/mtk-pmic-keys.c:132:28: note: (near initialization for 'mt6359_regs')
-
-
-vim +132 drivers/input/keyboard/mtk-pmic-keys.c
-
-   120	
-   121	static const struct mtk_pmic_regs mt6359_regs = {
-   122		.keys_regs[MTK_PMIC_PWRKEY_INDEX] =
-   123			MTK_PMIC_KEYS_REGS(MT6359_TOPSTATUS,
-   124					   0x2, MT6359_PSC_TOP_INT_CON0, 0x5,
-   125					   MTK_PMIC_PWRKEY_RST),
-   126		.keys_regs[MTK_PMIC_HOMEKEY_INDEX] =
-   127			MTK_PMIC_KEYS_REGS(MT6359_TOPSTATUS,
-   128					   0x8, MT6359_PSC_TOP_INT_CON0, 0xa,
-   129					   MTK_PMIC_HOMEKEY_RST),
-   130		.pmic_rst_reg = MT6359_TOP_RST_MISC,
-   131		.rst_lprst_mask = MTK_PMIC_RST_DU_MASK,
- > 132		.key_release_irq = true,
-   133	};
-   134	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--
+pw-bot: cr
 
