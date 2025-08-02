@@ -1,108 +1,153 @@
-Return-Path: <linux-kernel+bounces-754199-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754200-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 441D0B18FA9
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ACEF6B18FAA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9D57189A340
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:44:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 630CF3BC4DA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:44:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84AB324DCEA;
-	Sat,  2 Aug 2025 18:43:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4097A24A057;
+	Sat,  2 Aug 2025 18:44:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HBn03Nz3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="U9vMzmrx"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C97E71A0730;
-	Sat,  2 Aug 2025 18:43:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439DB1A5B86
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 18:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754160220; cv=none; b=uenTdQ2E7eHtMJ/a5L2HCY5P6qrOq4mopTDtIvM0OxPluLoz6greqE1eFVDJgXazaDv0FfaDnBcyeBr96ZdJSHpUSL5bGVFgJ76iIuUGrs0UWsdFaQXMYn94hzzBkclJy9rSjWCNYuvpjZR35tqYEyxMnk/s2pPNC+dOgKl14ZI=
+	t=1754160242; cv=none; b=r2C0mcxyQpkPfgdcMUBIMcm1Phzhp2fS0Mz3XZ+CLeLQ4I/mEX0V8JW3z7pV/Sdc35g+RwR9YvK0z7rdtGhj3czbWqFmjmpEXipCspQJWxTvuSG1t8X9c7nUl+SbsEnO2gio6vaZkOavEM+OIxa7/fK6hg5CoZ5DoY/70hZLhho=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754160220; c=relaxed/simple;
-	bh=mQLT26HbDMezkOswB66ycYR6QML2I25qybJHR7DuV4Q=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=qTqUji6jxLZd18plPcLdiH0TdUp55mROOo9EkhKSVu9YHJjvkGGK3bP6Ai6C0N39mlvHBUjgIT6IemBDZmnvlWhQzyzmCi7QnGBPSVzjb5HAktj/uPeHOyZ0gHxvPdDA83EgZ1dsPI1/yQ16kRi21NHf3rNuLEQuQn0z5cPGFw8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HBn03Nz3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 294AAC4CEEF;
-	Sat,  2 Aug 2025 18:43:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754160219;
-	bh=mQLT26HbDMezkOswB66ycYR6QML2I25qybJHR7DuV4Q=;
-	h=From:To:Cc:Subject:Date:From;
-	b=HBn03Nz3KlhNTOG8MOWhYWKtuhMzeoYZfANlHXX501A00w09BATRyqpLUnPtvN/xx
-	 O9Y0zsaxh2rqHIuhb8fyExKko+uj+1BHICWUL6zNxbImTgGl1K5rA6NPPo4EYvrN9z
-	 d7qJqrEQdlwx4gsh74bWAMwlFClocBseTwISYLie0rHXuApIdL3TyR+7ke8XfNFM+T
-	 q574OCoYEADwMJU7ygcd1LSNNDu/IHAg1pKBTvnqsZGy74KCaWzWyp9jwAzxxdvDBe
-	 aZYtd9DDGrHUWEyJA6gW1ex/+OA4KUOPU6TiDEkHE9FPFWqijJTbpeThVLCaECAJsV
-	 Su2+YffOoLB0g==
-From: Kees Cook <kees@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Kees Cook <kees@kernel.org>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nicolas Schier <nicolas.schier@linux.dev>,
-	linux-kbuild@vger.kernel.org,
-	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>,
-	linux-kernel@vger.kernel.org,
-	llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: [PATCH v2] kbuild: Re-enable -Wunterminated-string-initialization
-Date: Sat,  2 Aug 2025 11:43:32 -0700
-Message-Id: <20250802184328.it.438-kees@kernel.org>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1754160242; c=relaxed/simple;
+	bh=MEDjJ6IZHbO/pLdz03Pt41wZbLNceAm9tgy1am66PoE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=evdypnr///ykYEs4hXekd4aph61ckM0HmS168mPimnM/8kXwdxtLmy41v6jArPCtG+GlzAibBT/klwlhZ7P8n/Thm4kO0H1Zort2dfFsNP+1e9ywq0nNtgu5Fp1RENOXW9gKIMbt9pavLxMP5Su2Nzj4YoZf16ZT7wubT9QzJtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=U9vMzmrx; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso5501863a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 11:43:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1754160238; x=1754765038; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=C0eFAYHftl+u3oj1hj6FjhN5WfviUosYL+n2VwWadx4=;
+        b=U9vMzmrxadgNdsnr2Du1uDZ69eD+uIFQoKO6Q1XuGQd1jd+LoruZ3Swzj1tSLbR14Y
+         auCHvaX/3ghGwC71u66r1qL/XH+XXlk5NAb2wIUz5Xpvhq3XWc5Vw/szttrwLVY/XJgN
+         t3bPQWfJdF3NjnxtHmTQU9FRLOpZp2doYeZRo=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754160238; x=1754765038;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=C0eFAYHftl+u3oj1hj6FjhN5WfviUosYL+n2VwWadx4=;
+        b=B1npD+Nv7czkxpnvXwytu8wpMJao6evZ85RqpLylpIRww695qHin8D4EGieH6TI62G
+         KlwmZ1vL0tHapf9TD9NsOxnwcLbn9HkTSX8si9SnqEBSiYuBTCR/XeAKoTqI/CMh4Z1d
+         e5B/PnC1IXNM6q+rssuCRWrNXJx3+qOMlijQNMl1bAXVYs83mJcLDFpxdpfuWE+zjCZk
+         dqCX3eiA2AbLiOOTxqEz9+SNMxJoSDiJ24teIb/EWK5G1ZJd5BYRq2qFZx1+otPuCmvy
+         +ui3arlE3/al+MEH/M8YrYKxukwX0K+4nyRxvqUFEMtt00iWGKDYHIxL5C8qNlDdLTU/
+         2YrQ==
+X-Gm-Message-State: AOJu0Yz8Fq0deS+I6/OEOxUcq0e6VXTsPR/9p6BEmREa3P0bNJY2wTuH
+	Geh03KR031l3y+CP0vUCx7mfTjUo0hYwv2scC1V7vqZ0M5RkiWopvJaAha42Kl6j0MHcpCCu3gQ
+	2+vVkIbDr0A==
+X-Gm-Gg: ASbGncuBv0cZkdCuCvw5LdEmeLxHQtxtbPmSz2QL3aSKyKxhO5Z1t5Lw1duj4xrGtvb
+	86qj7jlebthIG8t4kcQLHtefAhMhCfK7A9hh0E0wVSRQiX0EdbauUqBVRi+B18RX8Ok5p+9cQJ3
+	TiglYPGIzGI1yF462vg8ojw45e5T+wf49Sng0jo/A10MdlqLiLMU0akMJnueB8PQDUUtvETKJhs
+	2wC0+4JqqdWWKgKyTvlnmGSo8hWbom2xB+EClFRbE3A0We8Ch4ffjUE9yGLQRlYvVDeErjZwdKM
+	GNeNAdW21wU6jEQB7ceKskUhJZA5iTJa+1CVW2fgwZTHDSOBQh85s5gazJyd5tp6/bB5OPqba7D
+	L7ZBGWB+fHqYiSfZn7JuNXRztBzE15dPph+uex6PRGqyAKxa1Nj//b5t18ht0yOzyZ4h5mXSB
+X-Google-Smtp-Source: AGHT+IE0l7X3g3WWQ08CIYrOHedFWbFCQ01t9Ck40I1uMDqmeotqNnWTEtPPwUyMarcPArdEQXQqMg==
+X-Received: by 2002:a05:6402:520a:b0:617:41ce:6fa0 with SMTP id 4fb4d7f45d1cf-61741ce6ff1mr441217a12.23.1754160238110;
+        Sat, 02 Aug 2025 11:43:58 -0700 (PDT)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com. [209.85.208.49])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a911a5afsm4387436a12.65.2025.08.02.11.43.56
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Aug 2025 11:43:57 -0700 (PDT)
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-61592ff5ebbso5501847a12.3
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 11:43:56 -0700 (PDT)
+X-Received: by 2002:a05:6402:1d32:b0:615:7e5b:7a23 with SMTP id
+ 4fb4d7f45d1cf-615e6edd617mr2858724a12.8.1754160236621; Sat, 02 Aug 2025
+ 11:43:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1682; i=kees@kernel.org; h=from:subject:message-id; bh=mQLT26HbDMezkOswB66ycYR6QML2I25qybJHR7DuV4Q=; b=owGbwMvMwCVmps19z/KJym7G02pJDBl9MSGG1o/95nz0rb8Y4x+yl4Pz1tsZenMjJ/lyVpX+S 5676qhSRykLgxgXg6yYIkuQnXuci8fb9nD3uYowc1iZQIYwcHEKwESWczH8j/AM8tzhUupnUbD5 RXGJv/Wja/ode7a7brObX3hlIoPkI0aGXbs6iy3OWO+WPHKl4niphW9wXFPW+1nxN8Uc9kR4bzv IAwA=
-X-Developer-Key: i=kees@kernel.org; a=openpgp; fpr=A5C3F68F229DD60F723E6E138972F4DFDC6DC026
-Content-Transfer-Encoding: 8bit
+References: <aIcdTI3e04W_RdM_@gmail.com> <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
+In-Reply-To: <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Sat, 2 Aug 2025 11:43:40 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wg7Ad6zjs8QdgDkS-8oJD2EbLK2Ne-WRo36ZXVHa=hmWw@mail.gmail.com>
+X-Gm-Features: Ac12FXyvjziRl1ca9AAwZkZOSpY9EC0m8uPhlZ_x9NozSwq8eqozJnbLh9TyzoA
+Message-ID: <CAHk-=wg7Ad6zjs8QdgDkS-8oJD2EbLK2Ne-WRo36ZXVHa=hmWw@mail.gmail.com>
+Subject: Re: [GIT PULL] Scheduler updates for v6.17
+To: Ingo Molnar <mingo@kernel.org>
+Cc: linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Juri Lelli <juri.lelli@redhat.com>, 
+	Vincent Guittot <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>, 
+	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>, Tejun Heo <tj@kernel.org>, 
+	Valentin Schneider <vschneid@redhat.com>, Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Type: text/plain; charset="UTF-8"
 
-With the few remaining fixes now landed, we can re-enable the option
--Wunterminated-string-initialization (via -Wextra). Both GCC and Clang
-have the required multi-dimensional nonstring attribute support.
+On Wed, 30 Jul 2025 at 20:31, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> On Sun, 27 Jul 2025 at 23:48, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > PSI:
+> >
+> >  - Improve scalability by optimizing psi_group_change() cpu_clock() usage
+> >    (Peter Zijlstra)
+>
+> I suspect this is buggy.
+>
+> Maybe this is coincidence, but that sounds very unlikely:
+>
+>   watchdog: BUG: soft lockup - CPU#0 stuck for 22s! [kworker/0:3:7996]
+>   CPU#0 Utilization every 4s during lockup:
 
-Build tested allmodconfig with:
-	gcc (Ubuntu 14.2.0-19ubuntu2) 14.2.0
-	gcc (GCC) 15.1.1 20250521 (Red Hat 15.1.1-2)
-	clang version 20.1.8 (Fedora 20.1.8-1.fc42)
-	ClangBuiltLinux clang version 21.1.0-rc2
-	clang version 22.0.0git
+Happened again this morning, and as far as I can tell the machine was
+just sitting there idle at the desktop.
 
-Signed-off-by: Kees Cook <kees@kernel.org>
----
- v2: Clang is fixed too! :) (Nathan)
- v1: https://lore.kernel.org/lkml/20250802002733.work.941-kees@kernel.org/
-Cc: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Nathan Chancellor <nathan@kernel.org>
-Cc: Nicolas Schier <nicolas.schier@linux.dev>
-Cc: <linux-kbuild@vger.kernel.org>
----
- scripts/Makefile.extrawarn | 3 ---
- 1 file changed, 3 deletions(-)
+I've only seen this on my laptop, so maybe it's some hw dependency,
+but it *really* smells like commit 570c8efd5eb7 ("sched/psi: Optimize
+psi_group_change() cpu_clock() usage") from the symptoms. It's
+literally hanging on that psi_read_begin(), which is that
+read_seqcount_begin() on that new per-cpu psi_seq counter.
 
-diff --git a/scripts/Makefile.extrawarn b/scripts/Makefile.extrawarn
-index dca175fffcab..a1001377dcb2 100644
---- a/scripts/Makefile.extrawarn
-+++ b/scripts/Makefile.extrawarn
-@@ -78,9 +78,6 @@ KBUILD_CFLAGS += $(call cc-option, -Wcast-function-type)
- KBUILD_CFLAGS-$(CONFIG_CC_NO_STRINGOP_OVERFLOW) += $(call cc-option, -Wno-stringop-overflow)
- KBUILD_CFLAGS-$(CONFIG_CC_STRINGOP_OVERFLOW) += $(call cc-option, -Wstringop-overflow)
- 
--# Currently, disable -Wunterminated-string-initialization as broken
--KBUILD_CFLAGS += $(call cc-option, -Wno-unterminated-string-initialization)
--
- # The allocators already balk at large sizes, so silence the compiler
- # warnings for bounds checks involving those possible values. While
- # -Wno-alloc-size-larger-than would normally be used here, earlier versions
--- 
-2.34.1
+Now, I'm not seeing how it could possibly trigger - I looked through
+all the psi_write_begin() users, and they all *seem* to be (a) under
+rq_lock_irq and (b) paired with a psi_write_end() with the same cpu.
 
+But the symptoms have been very consistent both times it happened: the
+RIP always a watchdog in collect_percpu_times(), always at that
+'pause' in the "wait for seqcount to be even".
+
+It's typically been in that psi_avgs_work kworker, but once it was
+systemd-oomd that apparently had done a "read()" on it, so it went
+through "psi_show()" instead.
+
+Now, the *writers* all take the proper locks, but the readers don't.
+And my laptop has CONFIG_PREMPT_VOLUNTARY in its config (random old
+setting).
+
+I'm not seeing why that would matter, since the seq count should
+become even at some point, but it does mean that the seqcount read
+loop looks like it's an endless kernel loop when it triggers. I don't
+see how that would make a difference, since the seqcount should become
+even on the writer side and the writers shouldn't be preempted and get
+some kind of priority inversion with a reader that doesn't go away,
+but *if* there is some bug in this area, maybe that config is why I'm
+seeing it and others aren't?
+
+Any ideas, people?
+
+              Linus
 
