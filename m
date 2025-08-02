@@ -1,192 +1,129 @@
-Return-Path: <linux-kernel+bounces-754098-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88146B18E09
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:42:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 42C9CB18DF5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:35:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7B4091742F1
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:42:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67C316C508
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:35:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC905223DDA;
-	Sat,  2 Aug 2025 10:42:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC097219A95;
+	Sat,  2 Aug 2025 10:35:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="ZzaWYyn3"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ErExNi2l"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5316E2206B7;
-	Sat,  2 Aug 2025 10:42:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C244F20CCDC
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 10:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754131347; cv=none; b=JjAncsnK4X8QyACKN7sa07j4NUTIMcP8esSJBxEbSxyULdCw9GyhqKYBjWC8uf38SNZRkX+Tu3VAzfty0owhD+k5KhFrapMPu37xDLnJet55mlQfyzmwPuWhMUjD62vIF3hO6pMpWfzchpM6wanJ6O2hyIayUFwgsZppKgC606k=
+	t=1754130953; cv=none; b=qOCjs6elLufHmqyVNvTZEnh/InDo9GWXYHTxU6siooBua7q/p0qpYkR+JMI8RBDy5cc6T6X//DOKzMd8qwuH6QWRP2w08fUy8Wff7mnEYySgpu8BezfVqH3oZonx4da476ovmc+aJv90upIvpVoonbi1sAVcpeTGNKr4xbbrtx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754131347; c=relaxed/simple;
-	bh=29F1+RXPw1Dc/x/sjm2BkHuKggNrrD6bpYFT21Gu5Z8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=S1f0A9WjgtcjJHCxF4mbLfjhF+tB6oawEWFeT3zOWhpiH26wosw0jJNqdu/OYMY4Kdd/MMwgOBAWtW6P/o9MVbnwNKhOacikZRX9Ogg4YaMIQXPHLh+stPPpvjRtfFjUJjCWv99mQpEPT8N65AQj+4DSYYS3hQ050yMJNfSnMX0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=ZzaWYyn3; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1d86:99fc::8c24])
-	by dvalin.narfation.org (Postfix) with UTF8SMTPSA id A156421799;
-	Sat,  2 Aug 2025 10:32:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754130743;
+	s=arc-20240116; t=1754130953; c=relaxed/simple;
+	bh=1Uj13WzecZIDJ4INt1Rw447b+I7X9TTWD1JGhKjVzXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=n0zwX5ACHJzQoSri4uqEjlYgozZBOdowCU/NYq+ZhP+n3fjJPPVp7hpyBKihjG28yuvqJFNU9s8gS7hwoitGujGX/9hD2GXByR5scVatz8oq5iF68fHq9Vv8KorH1piDhoTEHmjpZu98KMbODxct/sFAl1c+YHN8A/y5l2VGCPo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ErExNi2l; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754130950;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=+5xOplr6ovXoGtviwtawCgHS3qIHk1mZlTK35oAHU/o=;
-	b=ZzaWYyn3Q5yQmOYY/vgRQEOcnnqL+lYQOJMqd7SvdnoNU6CwhMe3Il7NCVyrQcbkRN1O+h
-	JKcEWQKxlpuLZvdgy9n7txRgukiGmx9ZYzV2/igJZAMd48oFkHzJnDf1vHczIVQ2Fpm7rR
-	7nCDkcUwFd6vo1ECWcTUlvmGzjNHufI=
-From: Sven Eckelmann <sven@narfation.org>
-Date: Sat, 02 Aug 2025 12:32:03 +0200
-Subject: [PATCH 4/4] i2c: rtl9300: Implement I2C block read and write
+	bh=ZDacmucnw23kEnOX8217Q3tfUEPnn76onGyj7DcVKiI=;
+	b=ErExNi2lsT4s0d0+SFisyplFkGQe7PSdsnT3yakJo8qw7uER+E+O5/bUeHwIbqQ/7oPRLY
+	/F9DnEMIUcgCpPIun+kJja5SeR7kK51eL+U1GA870GaZix+SAPMrSjBQzau3chs7HanJSC
+	ng6VkxjW03CVL2Zo+WaeGLQ3pjRQ7x4=
+Received: from mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-189-QpngofaIPa6G3Qs7PgEIZA-1; Sat,
+ 02 Aug 2025 06:35:46 -0400
+X-MC-Unique: QpngofaIPa6G3Qs7PgEIZA-1
+X-Mimecast-MFC-AGG-ID: QpngofaIPa6G3Qs7PgEIZA_1754130944
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 643FB180045B;
+	Sat,  2 Aug 2025 10:35:43 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.25])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 38D8719373D9;
+	Sat,  2 Aug 2025 10:35:37 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Sat,  2 Aug 2025 12:34:33 +0200 (CEST)
+Date: Sat, 2 Aug 2025 12:34:27 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: Jiri Olsa <jolsa@kernel.org>
+Cc: Masami Hiramatsu <mhiramat@kernel.org>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
+	x86@kernel.org, Song Liu <songliubraving@fb.com>,
+	Yonghong Song <yhs@fb.com>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Hao Luo <haoluo@google.com>, Steven Rostedt <rostedt@goodmis.org>,
+	Ingo Molnar <mingo@kernel.org>
+Subject: Re: [RFC 1/4] uprobe: Do not emulate/sstep original instruction when
+ ip is changed
+Message-ID: <20250802103426.GC31711@redhat.com>
+References: <20250801210238.2207429-1-jolsa@kernel.org>
+ <20250801210238.2207429-2-jolsa@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250802-i2c-rtl9300-multi-byte-v1-4-5f687e0098e2@narfation.org>
-References: <20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org>
-In-Reply-To: <20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonas Jelonek <jelonek.jonas@gmail.com>, 
- Harshal Gohel <hg@simonwunderlich.de>, 
- Simon Wunderlich <sw@simonwunderlich.de>, 
- Sven Eckelmann <sven@narfation.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3814; i=sven@narfation.org;
- h=from:subject:message-id; bh=wU1p33zKAgTDAe62H5t47SqeyXmVfEZJanT+0snjcS8=;
- b=owGbwMvMwCXmy1+ufVnk62nG02pJDBm9L028ed3fBKmcz6uwPMJnligSNbXk6M5Fv2UETutyn
- FGdcXZVRykLgxgXg6yYIsueK/nnN7O/lf887eNRmDmsTCBDGLg4BWAith2MDNdfWSsLGno7Xw/m
- rnzawD9fcJXi8ozuL9K3QlnvPdKp9mb4zX6BtTDNZmdr1azU/u2XS8RfTypcvGZ/XOrhPzsTbwS
- 85AYA
-X-Developer-Key: i=sven@narfation.org; a=openpgp;
- fpr=522D7163831C73A635D12FE5EC371482956781AF
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801210238.2207429-2-jolsa@kernel.org>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-From: Harshal Gohel <hg@simonwunderlich.de>
+On 08/01, Jiri Olsa wrote:
+>
+> If uprobe handler changes instruction pointer we still execute single
+> step) or emulate the original instruction and increment the (new) ip
+> with its length.
 
-It was noticed that the original implementation of SMBus Block Write in the
-driver was actually an I2C Block Write. Both differ only in the Count byte
-before the actual data:
+Yes... but what if we there are multiple consumers? The 1st one changes
+instruction_pointer, the next is unaware. Or it may change regs->ip too...
 
-  S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
+Oleg.
 
-The I2C Block Write is just skipping this Count byte and starts directly
-with the data:
-
-  S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
-
-The I2C controller of RTL93xx doesn't handle this Count byte special and it
-is simply another one of (16 possible) data bytes. Adding support for the
-I2C Block Write therefore only requires to skip the count byte (0) in
-data->block.
-
-It is similar for reads. The SMBUS Block read is having a Count byte before
-the data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
-
-And the I2C Block Read is directly starting with the actual data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
-
-The I2C controller is also not handling this byte in a special way. It
-simply provides every byte after the Rd marker + Ack as part of the 16 byte
-receive buffer (registers). The content of this buffer just has to be
-copied to the right position in the receive data->block.
-
-Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
-Co-developed-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
----
- drivers/i2c/busses/i2c-rtl9300.c | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-index ed82e6c21aaf46000a263740123ffba833578cc2..e136f774fd1a6be03339a3c1b70c1a93a92ee55c 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -186,22 +186,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
- 		return -EIO;
- 
- 	if (read_write == I2C_SMBUS_READ) {
--		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
-+		switch (size) {
-+		case I2C_SMBUS_BYTE:
-+		case I2C_SMBUS_BYTE_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->byte = val & 0xff;
--		} else if (size == I2C_SMBUS_WORD_DATA) {
-+			break;
-+		case I2C_SMBUS_WORD_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->word = val & 0xffff;
--		} else {
-+			break;
-+		case I2C_SMBUS_I2C_BLOCK_DATA:
-+			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
-+			if (ret)
-+				return ret;
-+			break;
-+		default:
- 			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
- 			if (ret)
- 				return ret;
-+			break;
- 		}
- 	}
- 
-@@ -295,6 +305,21 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
- 		len = data->block[0];
- 		break;
- 
-+	case I2C_SMBUS_I2C_BLOCK_DATA:
-+		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
-+		if (ret)
-+			goto out_unlock;
-+		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
-+		if (ret)
-+			goto out_unlock;
-+		if (read_write == I2C_SMBUS_WRITE) {
-+			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		len = data->block[0];
-+		break;
-+
- 	default:
- 		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
- 		ret = -EOPNOTSUPP;
-@@ -313,6 +338,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
- {
- 	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
- 	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
-+	       I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
- 	       I2C_FUNC_SMBUS_BLOCK_DATA;
- }
- 
-
--- 
-2.47.2
+> This makes the new instruction pointer bogus and application will
+> likely crash on illegal instruction execution.
+> 
+> If user decided to take execution elsewhere, it makes little sense
+> to execute the original instruction, so let's skip it.
+> 
+> Signed-off-by: Jiri Olsa <jolsa@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index 4c965ba77f9f..dff5509cde67 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2742,6 +2742,9 @@ static void handle_swbp(struct pt_regs *regs)
+>  
+>  	handler_chain(uprobe, regs);
+>  
+> +	if (instruction_pointer(regs) != bp_vaddr)
+> +		goto out;
+> +
+>  	if (arch_uprobe_skip_sstep(&uprobe->arch, regs))
+>  		goto out;
+>  
+> -- 
+> 2.50.1
+> 
 
 
