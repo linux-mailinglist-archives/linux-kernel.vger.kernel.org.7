@@ -1,164 +1,109 @@
-Return-Path: <linux-kernel+bounces-754084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5E6B18DE0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:00:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 94ECCB18DE2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15656624840
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:00:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 54C003BA3D5
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3F020DD4D;
-	Sat,  2 Aug 2025 10:00:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 15E061F9F7A;
+	Sat,  2 Aug 2025 10:02:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCxxiIlb"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="kMF4lsM+"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7058A20C038;
-	Sat,  2 Aug 2025 10:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29C9018D;
+	Sat,  2 Aug 2025 10:02:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754128805; cv=none; b=UMBgz9RDfaZNdYUU8FoT8+BQrrbVo9lhR24cVPfSHASwwAOhZ/mwaTw7u7coaroonymiuLoSHUhjPNNFsMy3F4qzJDtmoD9kBCs5P7cc0tA23ZMr3Cpd+Kw8R6LbgrMDhuuaOtdtAXac/qfQayB2R8ILPuIGaK68DcbQy3DzsC0=
+	t=1754128939; cv=none; b=iNrDxxPV0kOFV+ot71B/dR3+e+12cgVPz91l3UlS63FEektqQ7MJEXwuFa3UnCFyyTaUV45wainsVxf1XZjMwt3E1K4MUt9nyciGGUGRQecXADStnskOtvSDkJLJlvElDGJtymxGQj5PWw0xLZcn9vtbhNryy0ZyS547LNoQLBE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754128805; c=relaxed/simple;
-	bh=WayQJUQgwbK9qbfQNWW80s1Tl3LPJMIe/oqlIJwmTLg=;
+	s=arc-20240116; t=1754128939; c=relaxed/simple;
+	bh=l85/MQ61VxNEbDkg0SYEIgrzuUJ3jO290jyf8eXl9lo=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jahGfFbRPMRy/vda09O3u6jaUnKBElHh1y425DELpsTSXfKhyqJsX+uEUKk9FN2QEdAcoY6Kiuf1x4umAr3yTAOpERu/Vu0YA19X5c6a9XmqhQ0ZSQ6OiB9UNmQVIcAiNLDllcAHaenaso0UyAaFbuV4k5UP/G/C2R3j7tp6aug=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCxxiIlb; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af93150f7c2so284941066b.3;
-        Sat, 02 Aug 2025 03:00:03 -0700 (PDT)
+	 To:Cc:Content-Type; b=Xf3uz5R5sNjSNpZyz3BmPhfxW2+D6J+3v3l5tlJP2dtDy6qN8SR9w3lxgpEpNr61JSDyU9bSrljg1e+/TBwTZrpacJdRJqYTuhWbC2es9+upYJH1WS4QX2CFyOS+Xq5x3LwDs2RcCvwZHJDHloYMX6Zw6p/m1DfRLU3/Fp2mkbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=kMF4lsM+; arc=none smtp.client-ip=209.85.214.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-2406fe901c4so18078215ad.1;
+        Sat, 02 Aug 2025 03:02:17 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754128802; x=1754733602; darn=vger.kernel.org;
+        d=googlemail.com; s=20230601; t=1754128937; x=1754733737; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=feWlU5UHKzv3UI0KTDbYapRv72T2kY/BmRcgf+kQTWU=;
-        b=NCxxiIlbIyNCor4dXKmQqz/qBF1nAdHlTdxNOb+M++TrqUC3Ll7KQtCL3PV4M27UvW
-         BTIA0t+fMen6yHXc73KlP9iC7UR3wmvRr+HLAGkqEetYt5OyQg+ObgjzFnxjpwun0ZRL
-         vFYUpK9hP5joREfWuFl89ItECL7/mFLGeslhMm+cmG0CSPRWgfrx6IuJZ25ZWmdfJ4uf
-         HvCXCImNdn3s7ZMB4kwI2eoZ5MrY539OiGNiIJYocesAOVMf8to33gwaahe6sHi/16Gs
-         Xq1fKbLWeSZGix71AGQlVk29/PPn0Lx20A/ElIl+AgUFbqrOID2hiBDb00PXL3lcpvYy
-         zPyw==
+        bh=SunfwaMKGIuht1NXta7qE72eMa+DmpHbef3GOE9+HT0=;
+        b=kMF4lsM+duP48qQC+AOINO3/ti+0yQKk1WaOJ/WbcwcojAM7Gdikb3R9IS9PUq2riz
+         eg7aRJ9xKtcaBIw3/2sy0Nlx42q+FUex4xMTNwxmwMeEWSrncZmpDfFAoSO+FrRda3vf
+         OTOZ1By5Ef3CwiPVI5De8m7KJed/zjkFZzG9//JpbmjPpP0BMbY6ns/sRoEztU4Jwos6
+         fz7MgVZ+Fm6Fr9EzzwZuuwfN4DaPV5miyW66aWsRG99Ru4dFSNnMasUfRFom9o/zvn5x
+         U2HNmuqPXund33HxGkwm537gaxGEqZmQClWYJRzF8ejalX8v9NMLXwPA4nLeXhbTNUB3
+         1y/A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754128802; x=1754733602;
+        d=1e100.net; s=20230601; t=1754128937; x=1754733737;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=feWlU5UHKzv3UI0KTDbYapRv72T2kY/BmRcgf+kQTWU=;
-        b=G1VMENM+r3oH7vQFnedYIw0z4VBBVN+deyYgq6vHGy9EGt/KEgxxbCPx8a61t9rjwp
-         jFtHgZzYtOLWPErPzL/obdyG3HWdiOTSIu0rdRi8yztm300g0JwyUtkeiajWZy1n/x5c
-         qaoHUzdJGsZYSIivTCfv1CkPPvkTAx//YUPx3DkyOhHOliVXVTdwf5a2wMUC8sWW3s1a
-         OBT0yxjZOk3413eb3LTBmB0QUAkiDTuzOj8p/xWoDGWqxZ1adIfCRxLoONuSVaFZkWEW
-         ZnZvVhvs3u+eoIKVT+t/OKXio2oRxRIBcp7Ko+/Z3jdibZgfyeGd0WzPJJ9mosAE9uCH
-         sTrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWFMfVOzByZYonLBh+yUTrt1NoOZ0Mv4LLOZJdoOb6zQkgdeW4lBbJmR0P59Y6yvCAtzPrZLBT1eKxJIiu+eSc=@vger.kernel.org, AJvYcCX5IjuaAmouadVLjwpBobJD25L6RFvijFAHjE8hLjMyxlMGBJw6aYJ05j4pJVNgDDRrjVZjzi25DBHtV1k=@vger.kernel.org, AJvYcCXXl8r2JsaklBXKkewkMaH0R7cnU+RjYQ7udH9CXXsQrI4QFkJb0PwrlDFT4BfEN6Htafbaz1nSSC9nBk2m@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+Tz3JGc8TyYIV7mgT/8JA6/Fw+Rx9i6G3JkROImSnAZ9TYF6E
-	DoFaHqoIyEZHXvSB8rbsNvb+xZwHUPVbShS/PYVyQoStglz8MTW38FnG2rfiYMtozeCn17GIExd
-	boMBF4KAjjTF4s2d8dHKDl25eGm0H5k8=
-X-Gm-Gg: ASbGnct5YIdk9ndiTBpSGvKL5AsrUs6QPYJLl45q4NM5cmoRegDKlNDIwZRdTc5tFfw
-	cVhZuz6WzltR4ndVqfvpIbNfFUEOGETbVlxotrd+c7ayydly7K6ztC+XFz9ZmgLglQSB+l0KMYU
-	grvz1CYbtnBQp5j8OHpuMCMH/vJI1yg4xTBJ4h+DrQh6Uz+TVkiARz7e50t0a1KN4GJT2IbndwZ
-	6r2VLlaF31DPOa5yALxsiJyrP3BbSZ6FKzjO6ne/A==
-X-Google-Smtp-Source: AGHT+IG5TgeuLHpNv7s/LemmQexDxqYMgoidrE7ZLMIA81vr/4HVCfPj3/Rb6/9ZIVHsjd2OS5ljDfBbdV7yoto0yPs=
-X-Received: by 2002:a17:907:3d9f:b0:ae3:d5f2:393a with SMTP id
- a640c23a62f3a-af9401a6d31mr287570266b.44.1754128801607; Sat, 02 Aug 2025
- 03:00:01 -0700 (PDT)
+        bh=SunfwaMKGIuht1NXta7qE72eMa+DmpHbef3GOE9+HT0=;
+        b=mAy1RaE5/ESyXBuwNOJTsuW87qO3QvZUHwXr9UCBXh6HLUfb5SqUVFJ1j26CIXVjcQ
+         9LbqnnfMuTIWVf/xg1YTXQudCqix2l9LIbzjren5VG0vFFiPFGwHu1MvtjYB1cORcsMM
+         w1g/4E39SD6m+u417++5rHveQyFQsjIwdZsz7Mhkitk1MGp9o/I/cHCcp/yTTBstVKEd
+         +OWpZecSOnO6C8BPqhvXtM/J7ViRQUGytgWFilFk34xMGQvMgyXkZPCrRmhpERzOfFkQ
+         pv+BhV+LvIF9p/u+xYlE8RW0lsZUudA1dIVjAKDk9oJGPnGO0jlf5q17M3fNycU75qwl
+         CJKQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUbPeTpOkbxbsyGRg7krkSqpIxUxR8N/injZwfuAtMuFm0+7u7QZEs2RdrNDm11sUOTUJWjrU9mlKH7H5w=@vger.kernel.org, AJvYcCVk8oqqjD1Rp63AgElyJoW7JS2TGou/kA3+KMtoNEeA3Bn5Wrs8fNpBT7ELsHUoVK8wHzlWTip/@vger.kernel.org
+X-Gm-Message-State: AOJu0YzixT8ndQJRPNMIYLyWeln0I2DU4F0gHSLEbST44T7AYx2mrK6Z
+	1TGmWKXGQaBraW/XpyNAIgDgDc3m3P3+nHKScASnCvBbi1M+cBzyyFEHgAP4TT02z5duULc0muS
+	wmmicc0QNVZ3WyaM5tyVy0EcnfqhI2/M=
+X-Gm-Gg: ASbGncsfmncBX9v3Y/HyofT5lsmxgLDdT2Ag23hbn7b3I4mz1G1io0PE//MYcTKi48B
+	bj7x5IDrHTg9HJr+NsmVlmsHYQGrYQ+rtjM4CYu4W3e8jfeFpx1tGhgSKAc268xJLp4e883t+LN
+	McRoM+AjtOQ1MwcvwCcDqy6zU/lSiq38eaJZ8Z4PRiTkqD94NueGWVAz2AncgugnEbhUReGQrtZ
+	pDzZpsqqNsNAC+iVY8CZxjYWUY/TAN4yZNXPbYhJkHGZgWCED4=
+X-Google-Smtp-Source: AGHT+IGOt/4l4J9IhYkjHTK2Oetd+MLMwWR2adcwj8NjCk/EXB2Sr+1dYWJ3QAEsHw4NizPwdZrM+iGTE7dwlj2oHms=
+X-Received: by 2002:a17:902:e810:b0:240:11be:4dd3 with SMTP id
+ d9443c01a7336-24246f46073mr31260365ad.3.1754128937389; Sat, 02 Aug 2025
+ 03:02:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801160023.2434130-1-colin.i.king@gmail.com>
- <CAHp75VeDt=1=9epJPQjzfyyph09bov9UWWwpaAXgu01Egf1hag@mail.gmail.com>
- <10626b28-9619-47ea-abad-db823c01bb96@suswa.mountain> <CAHp75VdfZwmRzGAeN7rLoab2oT8eKyUF1mUGj4d+y98jZS7EHA@mail.gmail.com>
- <934c7ffa-1386-45a0-a4e7-f2b93cca6370@suswa.mountain>
-In-Reply-To: <934c7ffa-1386-45a0-a4e7-f2b93cca6370@suswa.mountain>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 2 Aug 2025 11:59:25 +0200
-X-Gm-Features: Ac12FXydITqpLLTnCyxi2yPbs8KHbuNgdyPXStr15pFn8DAEsDgugG3s9wEt0rQ
-Message-ID: <CAHp75VeHvGkPf_OHDNfB3aQ-196HHP0hddnPS6DVJsBsiBAMdg@mail.gmail.com>
-Subject: Re: [PATCH][next] media: atomisp: Fix incorrect snprintf format
- specifiers for signed integers
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
+References: <20250725074019.8765-1-johan@kernel.org>
+In-Reply-To: <20250725074019.8765-1-johan@kernel.org>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Sat, 2 Aug 2025 12:02:05 +0200
+X-Gm-Features: Ac12FXwURosII2dlcOALSUn1if13dVdtjG5hnIKv2HjEhOB0uY5AXgIZbdV4pwY
+Message-ID: <CAFBinCALsUdn3fGh2e9qys4KKKT=mDnx5vtkyEz-ZGRmgvNs0A@mail.gmail.com>
+Subject: Re: [PATCH] firmware: meson_sm: fix device leak at probe
+To: Johan Hovold <johan@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>, Kevin Hilman <khilman@baylibre.com>, 
+	Jerome Brunet <jbrunet@baylibre.com>, Carlo Caione <ccaione@baylibre.com>, 
+	linux-amlogic@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 2, 2025 at 11:02=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro=
-.org> wrote:
+On Fri, Jul 25, 2025 at 9:41=E2=80=AFAM Johan Hovold <johan@kernel.org> wro=
+te:
 >
-> On Sat, Aug 02, 2025 at 10:45:49AM +0200, Andy Shevchenko wrote:
-> > On Sat, Aug 2, 2025 at 9:32=E2=80=AFAM Dan Carpenter <dan.carpenter@lin=
-aro.org> wrote:
-> > > On Fri, Aug 01, 2025 at 11:57:43PM +0200, Andy Shevchenko wrote:
-> > > > On Fri, Aug 1, 2025 at 6:01=E2=80=AFPM Colin Ian King <colin.i.king=
-@gmail.com> wrote:
-> > > > >
-> > > > > There are incorrect %u format specifiers being used to for signed=
- integers,
-> > > > > fix this by using %d instead.
-> > > >
-> > > > Both of them sound to me like the fix of the symptom and not the
-> > > > cause. Can we simply make types of the iterators to be unsigned
-> > > > instead?
-> > >
-> > > Making iterator unsigned by default only increases the rate of bugs.
-> >
-> > How? Please, make sure this is relevant to this case.
+> Make sure to drop the reference to the secure monitor device taken by
+> of_find_device_by_node() when looking up its driver data on behalf of
+> other drivers (e.g. during probe).
 >
-> You're suggesting that he should change:
+> Note that holding a reference to the platform device does not prevent
+> its driver data from going away so there is no point in keeping the
+> reference after the helper returns.
 >
-> -       int i, j;
-> +       unsigned int i, j;
->
-> It's just bad advice.
-
-I disagree with this statement. The code varies and in some cases it
-should be negative, but those cases are not these one, or you are
-talking about _this_ case? If you are talking in general, again I
-fully disagree with your statement. One needs to use a common sense.
-
->  Making iterators unsigned makes the code less
-> safe.  It leads underflow bugs when we do subtraction:
->
->         for (i =3D num - 1; i < limit; i++) {
->
-> Now i starts at UINT_MAX.  Which I guess is fine in this example...
-
-Depends on the num semantics. The main what one needs is a common sense.
-
-> But it also leads to endless loops in the error handling:
->
->         while (i-- >=3D 0) {
-
-How? Error handling usually takes i > 0. Bad example, try harder.
-
->
-> Making iterators unsigned is a bad habbit
-
-True when use in conjunction with the same statement for signed cases:
-"Making iterators signed is a bad habit"
-
-> and it's bad advice in terms
-> of the data that we have with regards to bugs.
-
-Disagree. Bugs are common because people do not understand the C
-language and its integer rules, wrap-arounds, etc. I believe in many
-cases using signed iterators "fix" the bugs due to other variables
-also being signed instead of both being unsigned.
-
---=20
-With Best Regards,
-Andy Shevchenko
+> Fixes: 8cde3c2153e8 ("firmware: meson_sm: Rework driver as a proper platf=
+orm driver")
+> Cc: stable@vger.kernel.org      # 5.5
+> Cc: Carlo Caione <ccaione@baylibre.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+Acked-by: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
 
