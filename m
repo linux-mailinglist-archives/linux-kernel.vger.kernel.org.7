@@ -1,157 +1,150 @@
-Return-Path: <linux-kernel+bounces-753993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753996-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02C94B18B71
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:48:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D20A9B18B7A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:54:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 66AFC189BF40
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:49:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E598626A84
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:54:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D062F1FDE09;
-	Sat,  2 Aug 2025 08:48:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5DE200BAE;
+	Sat,  2 Aug 2025 08:54:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PYhV47+l"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9652188CC9;
-	Sat,  2 Aug 2025 08:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="AAPLjFaE"
+Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C60F7188CC9;
+	Sat,  2 Aug 2025 08:54:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754124528; cv=none; b=mbwofYcNNgDcsyl7HJpn72X4fQXMyE65iWefl47rL5+LduBuvLCm52jNC6Wva5ABNCt2c4WtsUifjM2bm5Qd+Buw2pbArtuvjiA6dn5/8dB9+GfC90+gSrlbOqMDT5SEgO+tj4QZnAdxWRrQtTPBodcQl1QhFLE7NK+pPBgqjXs=
+	t=1754124850; cv=none; b=S8Pxk6EPz5y3cv56j86bK05MEAjGi+Lwvr3oQkZ6vE1+uc9eebV9A6hROw+fdG2ceKmp7mU45XFLtFCfT9Lm6eZvuFv5LfPgqD4rpUfTbLZ/qrZDyKwlZ1z09H9P4l/pXg3Ffh/SFzjMFrXjZfyA1V8kpowPdVwZNIGUn8kFW9Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754124528; c=relaxed/simple;
-	bh=5kxnT9Xzx93uaXYnSAt1yHdetnLLHCQ/S8LS14DVt7M=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=rUvc+pBWSkokDomEMfw+ypybN2K1zEYparaKFFnBMWRrPSq8NUzzPOY9nkrmRSKKztqu/gYZ1dlZxaxBjCZlIYwyF2+PeKVD8XOAJt3aLy63k4iX+bfahsUcbDi+EQGtGiTC41CMzRVYwNQ2VzpS4WNJIcfTji6Hc2/nEjkPu7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PYhV47+l; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=ht
-	j7auQ2DJotB/9/cDAg+sQhVrxsQ5LPGiEPy66on4E=; b=PYhV47+l2srGQVZ7af
-	ODjv5Ohf+U6IkOH8oMfPIWzAVWYe5xZhKE+AZtU9zA0r0wthjIDZy8V2kO+dnjcq
-	HSDL6kjCDpU0LqtGMPGlpHHw9V/ulN32UcRbQHmjljUqDA3RObLa378btRef4oBg
-	ZO/thLHaN3HkG6wdBzZmiOqec=
-Received: from phoenix.. (unknown [])
-	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX0bXE0I1oWsxLJQ--.56694S4;
-	Sat, 02 Aug 2025 16:48:07 +0800 (CST)
-From: Jiawei Zhao <phoenix500526@163.com>
-To: ast@kernel.org
-Cc: daniel@iogearbox.net,
-	andrii@kernel.org,
-	yonghong.song@linux.dev,
-	bpf@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v6 2/2] selftests/bpf: Force -O2 for USDT selftests to cover SIB handling logic
-Date: Sat,  2 Aug 2025 08:48:03 +0000
-Message-ID: <20250802084803.108777-3-phoenix500526@163.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20250802084803.108777-1-phoenix500526@163.com>
-References: <20250802084803.108777-1-phoenix500526@163.com>
+	s=arc-20240116; t=1754124850; c=relaxed/simple;
+	bh=DceKwVjihrPeNuYll4AYwUb826BrPhH9qlfynWqNUqM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=FrzXvQ7HINuKCuq4ioSoKCz4OPwbgm8ScJheOA7GsOMmjT3Ta/cp26jaKhtsC8reSP3vw5CC4JTmWC9CCWjq0H6mHL01LtzrYFoI+GmEUUmama2qIupNQqRNFj3TOQQW2hSiKNsLqO/qOFHNX8lei4JUNplg6bwtMpsctgrjjoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=AAPLjFaE; arc=none smtp.client-ip=209.85.218.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae3cd8fdd77so375994266b.1;
+        Sat, 02 Aug 2025 01:54:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754124847; x=1754729647; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=cU1HBrAjgvLCJiyBijqBt4BoY6iAZYa6lIWj6WSABpM=;
+        b=AAPLjFaEsZiMIBgBxUFMX28OspMENk3JHGCw+gHX4KA+5H/lNdWRi969qOaHTx7R5B
+         MrHvEeICqsw9YberH9EAy/3jxvwF+GNHsQLP7LcW7IfZKA1B3C0hTXz9amF6yF4jkXgv
+         V/miEds43QoQccdZA+P89l+XHbO5dI4zetQrrCd6tdYo5wsFkkvo2l05aGzV6Rw3Ga8i
+         R+UsmVT6Bf8nPIRlGtbUt5coJYhJx7dI9AUWXzcfEBz8glj0xXbeQGj9kwNNnSKLKCQL
+         zd2QkkPNzjGbTJD/8jF2a2KfGiwxDROaYmVlShokIpDl6/sjP0LG6isGip0fEI73b+ph
+         RFLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754124847; x=1754729647;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=cU1HBrAjgvLCJiyBijqBt4BoY6iAZYa6lIWj6WSABpM=;
+        b=S6+Jmuse9Rx21XygGldXiVPDbsa7dD7a5UfZJY6bEtlmqUyNPF4TND0z1hTQuX52hp
+         6WJrVGuuwpiDm6XVYGz3O5ckrKfYzrdk8qLW1FPwyQzeJUfyfh3M99r4cgml/KHKakid
+         ZCGlgOslReUwu7brlR5xznfdfNv5G9IZqAumQKD9JeNsEG9q0GxstA1l67DKA3jJOT6+
+         ejVrLyd13dkYTSz8i7VXByBbjL2hlM6WprhFAUoybY8RoRgAOss2DDbg464xY5QwVgZw
+         TUmLuNcoaN1aHoz7yvbsiENJ+YQWLYeEmIScEmDitNl9MQdIauZ3p3QhkrojurEZLffB
+         bF2Q==
+X-Forwarded-Encrypted: i=1; AJvYcCU3SL8Z973OmTBli+9itlVOIEyxjKZL2sYwlBOREi7wWBzdmIofuSaR4ks6zfAYzloW3rKY4LHcacmn@vger.kernel.org, AJvYcCUUMRx1druffZsykEymFzE/4VEihcfOFcQBijIAd2PMMezf0WXjB8bTFVJ/Ybe/Tf+hPUfWF+wjDdPv@vger.kernel.org, AJvYcCX8lPcWnzv3JOBLN8GvSm4B5+PY1zIGi4I0EF14hyBjGjwY6iDQ3ixDFU++h87ygRUvaOonvgzCXKdE0kYQ@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZI/Bp4eJTYaQJVeiJv5U7FTK3yTsWJ4uJcdeaD3g2VJKYlaT5
+	mbz60DY5+WziR2bhOSrE+rUovrv+9pQNEQa+6PhZhPLIaia2dMcHDaOozXOgI+cLQQ63Xw1woS/
+	q6oVeqIM0g+k/AhHfw9XHkW83an7mCQI=
+X-Gm-Gg: ASbGnctTnV0lVatwU/cVAxWDvkz9CxHzTHILuPim6jbeOHWC0UNFkq03dpBtic5Bb4+
+	uaFPDjh2vfBrOyd78qpz8tTf225OK+Q5sB70eW8wP+CcFRwaKDtUVUMDyOovpHwzpX3KoRIwaEw
+	8UkGSkbZQMSATYCaw9W+2lEUNMooEWHF16LWyZ7qhElhCBXfmA2zml5ypkxLt2JPbAwBiNkdYAu
+	DVyiJUAcw==
+X-Google-Smtp-Source: AGHT+IGRQIv8+UsCudF7XcTshc97KPBhqgCTBCwoi4BZGKhvyPN88Z8+rithDAp0yFIHck8losjT/A35Y6AftYjN1sI=
+X-Received: by 2002:a17:907:d8d:b0:ae0:dfa5:3520 with SMTP id
+ a640c23a62f3a-af9401ef899mr234980566b.31.1754124846997; Sat, 02 Aug 2025
+ 01:54:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wDX0bXE0I1oWsxLJQ--.56694S4
-X-Coremail-Antispam: 1Uf129KBjvJXoWxWw4ktFy5WrWDCF4kGw48JFb_yoW5tw45pa
-	95Ww1UtFySq3W7JFs3ZrnrXr45WFs7JFWFyr1UXryFvr4kJF97XFZ7t3yUKFnxW393Xaya
-	v392gry7GF45AwUanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jzUDJUUUUU=
-X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/1tbiFAGdiGiNynRtRQAAsz
+References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
+In-Reply-To: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Sat, 2 Aug 2025 10:53:30 +0200
+X-Gm-Features: Ac12FXx8NIF0XC58CyyLB8MuiGbhCHGpnva1k4JAFViKmoM8cv18zU3ke-gEGsM
+Message-ID: <CAHp75Vdc7RB8MG+jYcSxkvD2EY2weZJMnvkbgmqibYGLkcUEBQ@mail.gmail.com>
+Subject: Re: [PATCH v2 0/2] iio: magnetometer: add support for Infineon
+ TLV493D 3D Magnetic Sensor
+To: Dixit Parmar <dixitparmar19@gmail.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-When using GCC on x86-64 to compile an usdt prog with -O1 or higher
-optimization, the compiler will generate SIB addressing mode for global
-array and PC-relative addressing mode for global variable,
-e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
+On Sat, Aug 2, 2025 at 8:44=E2=80=AFAM Dixit Parmar <dixitparmar19@gmail.co=
+m> wrote:
+>
+> The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
+> applications includes joysticks, control elements (white goods,
+> multifunction knops), or electric meters (anti tampering) and any
+> other application that requires accurate angular measurements at
+> low power consumptions.
+>
+> The Sensor is configured over I2C, and as part of Sensor measurement
+> data it provides 3-Axis magnetic fields and temperature core measurement.
+>
+> The driver supports raw value read and buffered input via external trigge=
+r
+> to allow streaming values with the same sensing timestamp.
+>
+> While sensor has interrupt pin multiplexed with I2C SCL pin. But for bus
 
-In this patch:
-- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
-  argument spec.
-- change the global variable t1 to a local variable, to avoid compiler
-  generating PC-relative addressing mode for it.
+the sensor
+an interrupt
+an I2C
 
-Signed-off-by: Jiawei Zhao <phoenix500526@163.com>
----
- tools/testing/selftests/bpf/Makefile          |  8 ++++++++
- tools/testing/selftests/bpf/prog_tests/usdt.c | 18 ++++++++++++------
- 2 files changed, 20 insertions(+), 6 deletions(-)
+> configurations interrupt(INT) is not recommended, unless timing constrain=
+ts
+> between I2C data transfers and interrupt pulses are monitored and aligned=
+.
+>
+> The Sensor's I2C register map and mode information is described in produc=
+t
+> User Manual[Link].
 
-diff --git a/tools/testing/selftests/bpf/Makefile b/tools/testing/selftests/bpf/Makefile
-index 910d8d6402ef..4b77d06d5c42 100644
---- a/tools/testing/selftests/bpf/Makefile
-+++ b/tools/testing/selftests/bpf/Makefile
-@@ -759,6 +759,14 @@ TRUNNER_BPF_BUILD_RULE := $$(error no BPF objects should be built)
- TRUNNER_BPF_CFLAGS :=
- $(eval $(call DEFINE_TEST_RUNNER,test_maps))
- 
-+# Force usdt.c to use -O2 optimization to generate SIB addressing
-+# Only apply on x86 architecture where SIB addressing is relevant
-+ifeq ($(ARCH), x86)
-+$(OUTPUT)/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/cpuv4/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+$(OUTPUT)/no_alu32/usdt.test.o: CFLAGS:=$(subst O0,O2,$(CFLAGS))
-+endif
-+
- # Define test_verifier test runner.
- # It is much simpler than test_maps/test_progs and sufficiently different from
- # them (e.g., test.h is using completely pattern), that it's worth just
-diff --git a/tools/testing/selftests/bpf/prog_tests/usdt.c b/tools/testing/selftests/bpf/prog_tests/usdt.c
-index 495d66414b57..86f354d25aef 100644
---- a/tools/testing/selftests/bpf/prog_tests/usdt.c
-+++ b/tools/testing/selftests/bpf/prog_tests/usdt.c
-@@ -14,10 +14,15 @@ static volatile int idx = 2;
- static volatile __u64 bla = 0xFEDCBA9876543210ULL;
- static volatile short nums[] = {-1, -2, -3, -4};
- 
--static volatile struct {
--	int x;
--	signed char y;
--} t1 = { 1, -127 };
-+/*
-+ * TODO:  At O2 optimization level, t1's USDT argument spec becomes -1@4+t1(%rip).
-+ * Since libbpf doesn't support RIP addressing mode yet, this causes "unrecognized register" errors.
-+ * This test will be re-enabled once libbpf supports RIP addressing mode.
-+ */
-+// static volatile struct {
-+//	int x;
-+//	signed char y;
-+// } t1 = { 1, -127 };
- 
- #define SEC(name) __attribute__((section(name), used))
- 
-@@ -27,6 +32,7 @@ unsigned short test_usdt12_semaphore SEC(".probes");
- 
- static void __always_inline trigger_func(int x) {
- 	long y = 42;
-+	signed char t1 = -127;
- 
- 	if (test_usdt0_semaphore)
- 		STAP_PROBE(test, usdt0);
-@@ -36,7 +42,7 @@ static void __always_inline trigger_func(int x) {
- 		STAP_PROBE12(test, usdt12,
- 			     x, x + 1, y, x + y, 5,
- 			     y / 7, bla, &bla, -9, nums[x],
--			     nums[idx], t1.y);
-+			     nums[idx], t1);
- 	}
- }
- 
-@@ -106,7 +112,7 @@ static void subtest_basic_usdt(void)
- 	ASSERT_EQ(bss->usdt12_args[8], -9, "usdt12_arg9");
- 	ASSERT_EQ(bss->usdt12_args[9], nums[1], "usdt12_arg10");
- 	ASSERT_EQ(bss->usdt12_args[10], nums[idx], "usdt12_arg11");
--	ASSERT_EQ(bss->usdt12_args[11], t1.y, "usdt12_arg12");
-+	ASSERT_EQ(bss->usdt12_args[11], -127, "usdt12_arg12");
- 
- 	int usdt12_expected_arg_sizes[12] = { 4, 4, 8, 8, 4, 8, 8, 8, 4, 2, 2, 1 };
- 
--- 
-2.43.0
+Replace Link here with 1...
 
+> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/inf=
+ineon-tlv493d-a1b6-datasheet-en.pdf
+> Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic-Use=
+rManual-v01_03-EN.pdf
+
+...and add space followed by [1] here.
+
+...
+
+> Changes in v2:
+> - Drop regmap implementation in favor of using direct i2c APIs to
+>   have uniform communication APIs across the driver.
+
+This I don't understand. I mean the motivation behind this. Usually
+direct I2C communication is used to do some initial checks and
+configuration and rarely for the actuall run-time driver
+functionality. Otherwise it means that the regmap may be used with a
+customised read and write methods.
+
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
