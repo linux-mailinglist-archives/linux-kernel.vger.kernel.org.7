@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-753985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A4BB3B18B5E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:32:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DFE0B18B60
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:34:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F0DFBAA06C3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:32:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ADF911AA192A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:35:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC37A1F91E3;
-	Sat,  2 Aug 2025 08:32:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C646B1F91E3;
+	Sat,  2 Aug 2025 08:34:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lzIWHeN+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="npFom48E"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F086214AA9;
-	Sat,  2 Aug 2025 08:32:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 295A514AA9;
+	Sat,  2 Aug 2025 08:34:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754123560; cv=none; b=jdUZZDNOq924ELryMOkonexNUWUtmV0e4pTDeCg1YiPiIzRVpAfiby2OlaasqxtqiX5GBxcBKwmKgy35jnrtcJ1+vvigJ2xp+lEvvKZCJmT6TNrkY5N1DueYXrlXVg23aPCe3wKFia5l2VMgz6xXyo6BRa6bIIyOC0wWjQI6srQ=
+	t=1754123678; cv=none; b=QQhxoKKcRzWp+UoHJ8jIp7DT77AlYoa3CKc83MRn3vXlyvlKUXVC7IAM8sQG5AJg/v9uK5Iqo3bmb6rTu9YbRwqaS7Kz93JsaYSUY53Bm/oWnFoIRYONtmaxtuLdKVLcS5a/HIFA5MKzmhWLRlnRUz9vhAwRD/ioeJ+ahKdQeEc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754123560; c=relaxed/simple;
-	bh=O458uInlmvKV0nf853kQGeZrkBD30PxNgQKHkn2Pfaw=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=RRd+zcqMHARTYGnJM0fbFY29Dnok+sewFqctyW9njSE1vfhVbYJrWKwkfzDIJZUbOc07Jrz/KSgOaqw7Pu7o7UEjskoJ4V6zSq79ky4p/7g3T89Pl8HjoThpYwuApTg9csTD9hRsvFAARMIhC7QKHobaKBRoBeZ3YeFijnVpFSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lzIWHeN+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 167B6C4CEEF;
-	Sat,  2 Aug 2025 08:32:32 +0000 (UTC)
+	s=arc-20240116; t=1754123678; c=relaxed/simple;
+	bh=8n5+AqdUdY28X8CznmUJ0fAyb/8u1IojLNaux0FcXus=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=PANm1UUa4INyNBED1SdO3e45it2xaWoo9i6LymwJCF/xRunjJIAwK4Y/bZrB651L2jnM7WsWS0USnnXjaVKFalDknbKeccshv7aZpp0tZjTkzpGaI1CO+An/zPM9XcoycGASpMsXBUcoQ9jcuuOXm/RY9YJqTGr3ZTt6GFgS7+U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=npFom48E; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFEDAC4CEEF;
+	Sat,  2 Aug 2025 08:34:31 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754123559;
-	bh=O458uInlmvKV0nf853kQGeZrkBD30PxNgQKHkn2Pfaw=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=lzIWHeN+TKrMBV8pZq5Z/GWGyw6A6OyDbvJftSqx/nggvOf3kCLVSQTcu3bPLyJ3D
-	 HGmjEWNo9wtO7PhLPefDgwZaTbA8LS88FVh7cKRaljanhy+k7lUl4oaurAw8Ub7j41
-	 iyOoLLMEq07kfH7iVYrD3jN9UAz8YKWpAuUoRe7R4s0FOSrIfAdsniUSmdf61g6Sz6
-	 vF7/HINUyHFTIK2H1ah2OLcRp4r7hwFkDd0Z9AOvunWQwpWtbuhHtX4trQqpRX8h6+
-	 IsYa4NZO+8xj0GBxdq43XvkOh7VuXy9rZ8jLuvTGxakNmv72v493ELCwqALw5YHoBr
-	 s1199/lyQvG5A==
-Message-ID: <7902bac4-9f52-443c-995f-a15189102478@kernel.org>
-Date: Sat, 2 Aug 2025 10:32:31 +0200
+	s=k20201202; t=1754123677;
+	bh=8n5+AqdUdY28X8CznmUJ0fAyb/8u1IojLNaux0FcXus=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=npFom48ET+TO0bqEq3CeFG2yTKLO7ABfItt4n7nNfL3Pe9m7WARvlLvFS6o0l+rLD
+	 yNYETYpDzosdKpD5yH7apH2jhBgyouSjiB9FVvSmBUO/GeftFzBu0u/epgEcGA1SD0
+	 GqS0F/fpDuIDHrhj2aGMSMRimYeVmPBghLJZ/jUCyJ9tV2mb8tsz0saQZsWWocQ+rO
+	 wX5jhSAFM2STfvaN50JqiGnQ/Ws/cwnrBbiTYPmBRRHaU1/tTqf94wLnn9LKdlxdfq
+	 I2czUCqcNAPYyT8oF6MHk7j8WXtjHmdTy/yHCNoK/xjTtgS7HrMsqh0vhvHoL5Zhwa
+	 29YWAmKw1gK9w==
+Message-ID: <2ed69301-f787-4257-8d44-a8544c1a43c9@kernel.org>
+Date: Sat, 2 Aug 2025 10:34:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,34 +49,32 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/12] nvmem: s32g2_siul2: add NVMEM driver for SoC
- information
+Subject: Re: [PATCH v4 0/7] Basic device tree support for ESWIN EIC7700 RISC-V
+ SoC
+To: Pinkesh Vaghela <pinkesh.vaghela@einfochips.com>,
+ Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Thomas Gleixner <tglx@linutronix.de>
+Cc: Paul Walmsley <paul.walmsley@sifive.com>,
+ Samuel Holland <samuel.holland@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Daniel Lezcano <daniel.lezcano@linaro.org>,
+ Min Lin <linmin@eswincomputing.com>,
+ Pritesh Patel <pritesh.patel@einfochips.com>, Yangyu Chen
+ <cyy@cyyself.name>, Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+ Yu Chien Peter Lin <peterlin@andestech.com>,
+ Charlie Jenkins <charlie@rivosinc.com>,
+ Kanak Shilledar <kanakshilledar@gmail.com>,
+ Darshan Prajapati <darshan.prajapati@einfochips.com>,
+ Neil Armstrong <neil.armstrong@linaro.org>, Heiko Stuebner
+ <heiko@sntech.de>, Aradhya Bhatia <a-bhatia1@ti.com>,
+ "rafal@milecki.pl" <rafal@milecki.pl>, Anup Patel <anup@brainfault.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-riscv@lists.infradead.org" <linux-riscv@lists.infradead.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+References: <20250616112316.3833343-1-pinkesh.vaghela@einfochips.com>
+ <SA3PR04MB8931098CC4A73E8FDD481DA78326A@SA3PR04MB8931.namprd04.prod.outlook.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, aisheng.dong@nxp.com,
- Jacky Bai <ping.bai@nxp.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, echanude@redhat.com,
- Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
- <20250710142038.1986052-11-andrei.stefanescu@oss.nxp.com>
- <9d004ea4-0bb2-4a21-8501-82ecf3482c3e@app.fastmail.com>
- <fa24772b-0038-4f51-87c6-15b810d8d454@oss.nxp.com>
- <53bc13b9-365e-4212-84f9-85e67c23e067@oss.nxp.com>
- <ed072356-6881-4466-a0c2-0f55b72f92c8@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
  xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
@@ -121,28 +119,18 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <ed072356-6881-4466-a0c2-0f55b72f92c8@kernel.org>
+In-Reply-To: <SA3PR04MB8931098CC4A73E8FDD481DA78326A@SA3PR04MB8931.namprd04.prod.outlook.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 02/08/2025 10:28, Krzysztof Kozlowski wrote:
-> On 01/08/2025 16:36, Andrei Stefanescu wrote:
->> Apart from the proposed NVMEM driver, there is also an option of exporting
->> a syscon regmap for the registers which provide information about the SoC.
->>
->> I have seen that typically NVMEM drivers export information read from fuses
->> but I think having a NVMEM driver is nicer way to access the information
->> instead of using a syscon regmap and manually extracting the needed bits. 
+On 01/08/2025 12:34, Pinkesh Vaghela wrote:
+> Hello All,
 > 
-> 
-> nvmem is not a syscon. Mixing these two means device is something
-> completely else.
+> Gentle reminder to review DT patches.
 
 
-... and yes, I am aware that three FSL/NXP bindings use nvmem as syscon
-already. People are mixing hardware description (nvmem) with some
-purpose for drivers (syscon) forgetting that syscon are miscellaneous
-SoC internal registers, not non-volatile memory.
+You already received review. Don't ping needlessly. Otherwise it feels
+like our review was worthless and you ask for some other.
 
 Best regards,
 Krzysztof
