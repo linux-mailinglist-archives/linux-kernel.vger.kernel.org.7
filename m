@@ -1,151 +1,125 @@
-Return-Path: <linux-kernel+bounces-753937-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F2B8B18A55
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:57:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6EE6FB18A4E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 03:54:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7104A567C4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:57:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D8A3F188A292
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 01:55:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E0C213AA2F;
-	Sat,  2 Aug 2025 01:57:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4788D16F8E9;
+	Sat,  2 Aug 2025 01:54:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b="KBKETv+3"
-Received: from mout-p-101.mailbox.org (mout-p-101.mailbox.org [80.241.56.151])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC72E3701;
-	Sat,  2 Aug 2025 01:57:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.151
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="PtHKbAuy"
+Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4E9841C72;
+	Sat,  2 Aug 2025 01:54:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754099845; cv=none; b=CybBk8oIFCMv5r0Wx5+E8zzqVw4lR3CRJvo6PxkbR2Q67XFygEf/36VkKiVvLJDIN8VfZ81dGGQcdz5LP7FXiYyzhGEu98AylwiAClGpv04FtE1ZoDAVMOOH5Mo2tvtoHJIFOeDcGNbHAzo/VTIvL1jlY+xw6WMZj7D2MMN+eBY=
+	t=1754099667; cv=none; b=jT9KvBG5Xi4C5wM5JvxAma4dIxWUPbRy1Knalzp9Plx0lgXTRL4fmx1LegkIPJxrL8SqN+07c4PVBoOm4RnKivqNVk5U+u/d5KzEkbY4EM4yE/wPePtWeG6qzoDDadSSz0TWTJmx9+pqzWJ38Phqr6XzT3YitxaVCbYoQnkHavA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754099845; c=relaxed/simple;
-	bh=AyvojaMUL5GFQ+RGadkxrq01+rU8vIQIordppxfHfyk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=pCql5fGcpOWTRoqP0lUNvioUeLt6qWdxP3bvfqJj/CQTleDJgQgiqmR+SmvKjdpF5/lfWTara5ghB/ZJzVZHgox5oYdCPSZlTvQMy2VxoLxqVhxJ9DnGg8Wd57It0BKHzROfjheB2VbpgBcW8BJw1yX5a0OPDKrarQ7qeXLaDpA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com; spf=pass smtp.mailfrom=ethancedwards.com; dkim=pass (2048-bit key) header.d=ethancedwards.com header.i=@ethancedwards.com header.b=KBKETv+3; arc=none smtp.client-ip=80.241.56.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ethancedwards.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ethancedwards.com
-Received: from smtp1.mailbox.org (smtp1.mailbox.org [10.196.197.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-101.mailbox.org (Postfix) with ESMTPS id 4bv5NR3vbxz9sVv;
-	Sat,  2 Aug 2025 03:49:43 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ethancedwards.com;
-	s=MBO0001; t=1754099383;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EzGrUiyur0PDjcm61AO5Pdz6n1eUAx7WVBcJE1M5ghA=;
-	b=KBKETv+3sEn4+XGT9mbrJOg0yaagruc0IT5vaeqTj2YVlqYcjzsH7KjETLEXJxPsy1hVwE
-	E45fIwXmyhixaxPPKTeL/DQL6bp5OLr4Azj6DhyMTT6rlJ3heU8qh5P79xERxT8TQe++YA
-	iNRExyn3f7fEvskBrg6iU+rm1Sx4sXFDCakS97jTyWMoHXDRDvGmgHBJ0LXlGx5/I2KlEZ
-	z6fPO09U5Q0SoOtwMUFi8zaPTVSb/ub8uslLDqgfep7DvRr/O7Uzn5vKDOmNWkXa5ff22F
-	Kz1yXvRpDxY/NEolfMIqimb/+YntgGVp3FXXpTGjDD8+lTvYk/asjxYXY+l9RQ==
-From: Ethan Carter Edwards <ethan@ethancedwards.com>
-Date: Fri, 01 Aug 2025 21:49:26 -0400
-Subject: [PATCH] drm/nouveau/gsp: remove always true if check
+	s=arc-20240116; t=1754099667; c=relaxed/simple;
+	bh=YLHOKuGfZu3vREHo+0w4CEBCbzZhDkckOW2LcFryUUM=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=C1NTbcKK4SahHpoGyJMeT05jG0XuOtw6/0+5l0C8U0vd1A8XELK5yjYbP09c2KXNg/rgWR3NrQWF2XKC42ceJDSZEtox/KVcz2bCRL7y/wDai8j6wloVjLrok627qUzvLqux/KpJoPU0KBHGkHYI9TmVDmNZtd/GhmXr1VwB3JQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=PtHKbAuy; arc=none smtp.client-ip=117.135.210.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=3W
+	svc3m2ST0JMIIEnY4LvKx4YmcyVEzHJONNtMWgZZI=; b=PtHKbAuymPnb4nFECp
+	/H6G0snFv+bQh0CccH2s/Vc2iOQlwjj8+XO43r2v06DOIrJJOlWhbkBsVacI+4J/
+	2K5lQh8UR/3A65aQIYHzfwK66xnsyVgbr5NCSl+y0vDPlYLtLtZjn2g6WqorP6pH
+	myvb9Slnc0yfjcEPsA4VGKRxA=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g1-2 (Coremail) with SMTP id _____wAn9dGhb41owA7sJQ--.1054S2;
+	Sat, 02 Aug 2025 09:53:39 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v5 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Sat,  2 Aug 2025 01:53:33 +0000
+Message-ID: <20250802015336.823054-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250801-nouveau-fifo-v1-1-25b9db5283bc@ethancedwards.com>
-X-B4-Tracking: v=1; b=H4sIAKVujWgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDCwND3bz80rLUxFLdtMy0fF0zY9NkM+M0c/PkxFQloJaCotS0zAqwcdG
- xtbUAKUL4mV4AAAA=
-X-Change-ID: 20250801-nouveau-fifo-635c63f77cae
-To: Lyude Paul <lyude@redhat.com>, Danilo Krummrich <dakr@kernel.org>, 
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>
-Cc: dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org, 
- Ethan Carter Edwards <ethan@ethancedwards.com>
-X-Developer-Signature: v=1; a=openpgp-sha256; l=2182;
- i=ethan@ethancedwards.com; h=from:subject:message-id;
- bh=AyvojaMUL5GFQ+RGadkxrq01+rU8vIQIordppxfHfyk=;
- b=LS0tLS1CRUdJTiBQR1AgTUVTU0FHRS0tLS0tCgpvd0o0bkp2QXk4ekFKWGJEOXFoNThlVGp6e
- GhQcXlVeFpQVG1iZmtseEdmeHQ1Q0h3ZXllcWUyZFdjeHJsdmcvCkUrTFZ1dWprdGRyR3NvWHBW
- bjVIS1F1REdCZURySmdpeS84YzViU0htak1VZHY1MWFZS1p3OG9FTW9TQmkxTUEKSmhMNWlPRi9
- 4TzNMUW0vclp3Y0dpcC93RDNBU3FDdlU1UklxaUxHZGU5RFJZTWE4czB4bURQOXNWbjZ0MUZCTQ
- o3SlV1bmY1amJ1Q1U0SjZwRlp3TllsR1Jxcm9OT1FiL1ZaZ0JyYTlHV2c9PQo9a2RtRQotLS0tL
- UVORCBQR1AgTUVTU0FHRS0tLS0tCg==
-X-Developer-Key: i=ethan@ethancedwards.com; a=openpgp;
- fpr=2E51F61839D1FA947A7300C234C04305D581DBFE
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wAn9dGhb41owA7sJQ--.1054S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJrWxGr13ZF17Cw1UKr4xXrb_yoW8tr1xpF
+	WrKwn8KFWDKa43GFsxXrsFyrWfWFs5JF4UCF17Xw1YyF4rGFnrZrWxK3y3CF9xGas3Xay3
+	ZF12yF98G3WrA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jopBfUUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgAOdiGiNYdH4yQAAsy
 
-if (1) always evaluates to true. Remove the unneeded check.
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
 
-Signed-off-by: Ethan Carter Edwards <ethan@ethancedwards.com>
----
- .../gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c | 36 ++++++++++------------
- 1 file changed, 16 insertions(+), 20 deletions(-)
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
 
-diff --git a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-index 1ac5628c5140e66d306a1aadce10c810886afad3..104c72ec359a07a318ac99f5c217f0b07db2b784 100644
---- a/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-+++ b/drivers/gpu/drm/nouveau/nvkm/subdev/gsp/rm/r535/fifo.c
-@@ -188,32 +188,28 @@ r535_chan_ramfc_write(struct nvkm_chan *chan, u64 offset, u64 length, u32 devm,
- 	if (ret)
- 		return ret;
- 
--	if (1) {
--		NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
-+	NVA06F_CTRL_GPFIFO_SCHEDULE_PARAMS *ctrl;
- 
--		if (1) {
--			NVA06F_CTRL_BIND_PARAMS *ctrl;
-+	NVA06F_CTRL_BIND_PARAMS *ctrl;
- 
--			ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
--						    NVA06F_CTRL_CMD_BIND, sizeof(*ctrl));
--			if (WARN_ON(IS_ERR(ctrl)))
--				return PTR_ERR(ctrl);
-+	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-+						NVA06F_CTRL_CMD_BIND, sizeof(*ctrl));
-+	if (WARN_ON(IS_ERR(ctrl)))
-+		return PTR_ERR(ctrl);
- 
--			ctrl->engineType = eT;
-+	ctrl->engineType = eT;
- 
--			ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
--			if (ret)
--				return ret;
--		}
-+	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
-+	if (ret)
-+		return ret;
- 
--		ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
--					    NVA06F_CTRL_CMD_GPFIFO_SCHEDULE, sizeof(*ctrl));
--		if (WARN_ON(IS_ERR(ctrl)))
--			return PTR_ERR(ctrl);
-+	ctrl = nvkm_gsp_rm_ctrl_get(&chan->rm.object,
-+					NVA06F_CTRL_CMD_GPFIFO_SCHEDULE, sizeof(*ctrl));
-+	if (WARN_ON(IS_ERR(ctrl)))
-+		return PTR_ERR(ctrl);
- 
--		ctrl->bEnable = 1;
--		ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
--	}
-+	ctrl->bEnable = 1;
-+	ret = nvkm_gsp_rm_ctrl_wr(&chan->rm.object, ctrl);
- 
- 	return ret;
- }
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  argument spec.
+- change the global variable t1 to a local variable, to avoid compiler
+  generating PC-relative addressing mode for it.
 
----
-base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
-change-id: 20250801-nouveau-fifo-635c63f77cae
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
 
-Best regards,
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+
+Do we need to add support for PC-relative USDT argument spec handling in
+libbpf? I have some interest in this question, but currently have no 
+ideas. Getting offsets based on symbols requires dependency on the symbol
+table. However, once the binary file is stripped, the symtab will also be
+removed, which will cause this approach to fail. Does anyone have any
+thoughts on this?
+
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Force -O2 for USDT selftests to cover SIB handling
+    logic
+
+ tools/lib/bpf/usdt.bpf.h                      | 33 +++++++++++++-
+ tools/lib/bpf/usdt.c                          | 43 ++++++++++++++++---
+ tools/testing/selftests/bpf/Makefile          |  5 +++
+ tools/testing/selftests/bpf/prog_tests/usdt.c | 18 +++++---
+ 4 files changed, 86 insertions(+), 13 deletions(-)
+
 -- 
-Ethan Carter Edwards <ethan@ethancedwards.com>
+2.43.0
 
 
