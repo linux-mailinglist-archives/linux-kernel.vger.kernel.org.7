@@ -1,106 +1,133 @@
-Return-Path: <linux-kernel+bounces-753989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753988-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 00D8FB18B69
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:44:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9FA2FB18B68
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 842EF1897AB5
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:45:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6DA71751FE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1681FDA94;
-	Sat,  2 Aug 2025 08:44:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0B181FE474;
+	Sat,  2 Aug 2025 08:44:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="IJIl9GYL"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oUL6bTsC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A034C1FCFE7
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 08:44:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754124281; cv=none; b=EhlTk22yRJ4JZHTDp8YW+5HGzpKl2dW2eAHRXIs1OeuzsyAnMqKwPDHQNtucD34J/qaURL4mzI2PnLZ9oKzqyboYCkj1WmQo7EyKBLVEgFp8FYz1/M7Ai7InqMLTU4c0lf5NLiO0aJCFSmcvcREW5cDEF3Asl4PoQId8KGSv9Ek=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754124281; c=relaxed/simple;
-	bh=ItuvhfOs35uTIENVwyKdz4c2hH9SsfZ7M2hXM3LUQt8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TNp/4Lhz0U9jYzg/q4s5gjfFZOlSs66PVxvB5u6ICArbu0snZq8zheUa/xZWs/VtSt0r81l43DmlG0FRAgqpQAmtbgV5DSmTVvqKJj9vzG8UMtcAl0g642KUzqS+jTHgqEZU7RNvUyvwqfn7c5h83sbMHHF9LIT/6O2IJfZVp/c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=IJIl9GYL; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754124277;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=iheZ9AMJX+ksT97d62rdstW21f8FHMP+8lB4dgVffws=;
-	b=IJIl9GYL3dbTyWQFLFXpdI3H46WEOf9KkWpBL9WMhfQYyab+k9kLOwz0v8JFIeBsrHcC5k
-	N2l93J6a4+hsbDsnNAt7GJe6OoZ+KX0gCT/eQQFZXAu55zf/FhwoH6ExlzbWo/X0uWRHiv
-	PMcAc0yECy1yVxnsoq3wpAkU2KQkXBE=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-295-efaDcNWWOd25VbGqbZz4ig-1; Sat,
- 02 Aug 2025 04:44:33 -0400
-X-MC-Unique: efaDcNWWOd25VbGqbZz4ig-1
-X-Mimecast-MFC-AGG-ID: efaDcNWWOd25VbGqbZz4ig_1754124272
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 15CA119560AF;
-	Sat,  2 Aug 2025 08:44:32 +0000 (UTC)
-Received: from dhcp-27-174.brq.redhat.com (unknown [10.45.224.25])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id B8E1B1800B6A;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D59418D;
 	Sat,  2 Aug 2025 08:44:28 +0000 (UTC)
-Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
-	oleg@redhat.com; Sat,  2 Aug 2025 10:43:22 +0200 (CEST)
-Date: Sat, 2 Aug 2025 10:43:17 +0200
-From: Oleg Nesterov <oleg@redhat.com>
-To: Al Viro <viro@zeniv.linux.org.uk>
-Cc: Xiang Gao <gxxa03070307@gmail.com>, brauner@kernel.org,
-	mjguzik@gmail.com, Liam.Howlett@oracle.com,
-	joel.granados@kernel.org, lorenzo.stoakes@oracle.com,
-	linux-kernel@vger.kernel.org, gaoxiang17 <gaoxiang17@xiaomi.com>
-Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
-Message-ID: <20250802084316.GA31711@redhat.com>
-References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
- <20250802022550.GT222315@ZenIV>
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754124269; cv=none; b=ZwxzpUBHsBYTYN3eRgWkB74TZRne72ZyAI1uGLhqkgEUOQ49D96jWX656AXCtJ7iZcSHPzpckyk1ttcLrL0X9da3/2DrVOrN5pFqAEv+rpjVXxxXGyBbHyEphAkyE6AnT1fl+xnlwg7LQTfsyk7PUu3OIlyCDdhQmEipJdKp26g=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754124269; c=relaxed/simple;
+	bh=wBEtzqfOArmGIa6wBAiWTsUuLYnBTu+8vKyqUAylFH8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=UiBRbjDCnxa3axT+zNS/0Nz5Va3Rw5neWoNPNUyusr6zdkaypYyFloQkPGk7Eog3dZ82LnW+wcruF/FfoKKutKhq9o/NkWujbJQrFECVqrmh/5m5nI40IpW9OYrik3bXpMnbrfObpo5/nLNOD3EcS9B4SSjOv/YXw3ks9JbmYYE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oUL6bTsC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D79CBC4CEEF;
+	Sat,  2 Aug 2025 08:44:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754124268;
+	bh=wBEtzqfOArmGIa6wBAiWTsUuLYnBTu+8vKyqUAylFH8=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=oUL6bTsC3i2VUEIZLouAIm5ctnrSZMfafZE68/b4A8hEHKneyKAX11tfWuQuCTyiA
+	 nqyxxxIVEdyCJPsTJn7eBb1xzZJ2U1E28h2koAfWc4EHyuojT1gGrbne+YClTSdEjW
+	 nvQMYZfxdlMpsYT1nMJOTeauBTyeafGsPWTJ4vnKIFq4Yp9iId2Rge1Qtnnwn0ZJGy
+	 dRWdRJCHe1URNRrtCCupVhgtQwZ/mCLE6cmGYIjYg9bGviOPlYWSLVU10M1ncBk2lh
+	 ZIxJNO/qTMJGseBmp35ZVjL24epAXO4QyO4lcxS5fdA3WBLhTbN3XCY7Aa7cWTdWc8
+	 GGOV5l3LBApCA==
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jason Gunthorpe <jgg@ziepe.ca>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
+	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+In-Reply-To: <20250729143339.GH26511@ziepe.ca>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-5-aneesh.kumar@kernel.org>
+ <20250728143318.GD26511@ziepe.ca> <yq5a5xfbbe35.fsf@kernel.org>
+ <20250729143339.GH26511@ziepe.ca>
+Date: Sat, 02 Aug 2025 14:14:20 +0530
+Message-ID: <yq5aikj69kpn.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250802022550.GT222315@ZenIV>
-User-Agent: Mutt/1.5.24 (2015-08-30)
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Content-Type: text/plain
 
-On 08/02, Al Viro wrote:
+Jason Gunthorpe <jgg@ziepe.ca> writes:
+
+> On Tue, Jul 29, 2025 at 01:53:10PM +0530, Aneesh Kumar K.V wrote:
+>> Jason Gunthorpe <jgg@ziepe.ca> writes:
+>> 
+>> > On Mon, Jul 28, 2025 at 07:21:41PM +0530, Aneesh Kumar K.V (Arm) wrote:
+>> >> @@ -48,3 +49,12 @@ int set_memory_decrypted(unsigned long addr, int numpages)
+>> >>  	return crypt_ops->decrypt(addr, numpages);
+>> >>  }
+>> >>  EXPORT_SYMBOL_GPL(set_memory_decrypted);
+>> >> +
+>> >> +bool force_dma_unencrypted(struct device *dev)
+>> >> +{
+>> >> +	if (dev->tdi_enabled)
+>> >> +		return false;
+>> >
+>> > Is this OK? I see code like this:
+>> >
+>> > static inline dma_addr_t phys_to_dma_direct(struct device *dev,
+>> > 		phys_addr_t phys)
+>> > {
+>> > 	if (force_dma_unencrypted(dev))
+>> > 		return phys_to_dma_unencrypted(dev, phys);
+>> > 	return phys_to_dma(dev, phys);
+>> >
+>> > What are the ARM rules for generating dma addreses?
+>> >
+>> > 1) Device is T=0, memory is unencrypted, call dma_addr_unencrypted()
+>> >    and do "top bit IBA set"
+>> >
+>> > 2) Device is T=1, memory is encrypted, use the phys_to_dma() normally
+>> >
+>> > 3) Device it T=1, memory is uncrypted, use the phys_to_dma()
+>> >    normally??? Seems odd, I would have guessed the DMA address sould
+>> >    be the same as case #1?
+>> >
+>> > Can you document this in a comment?
+>> >
+>> 
+>> If a device is operating in secure mode (T=1), it is currently assumed
+>> that only access to private (encrypted) memory is supported.
 >
-> In which conditions does that happen?
+> No, this is no how the PCI specs were written as far as I
+> understand. The XT bit thing is supposed to add more fine grained
+> device side control over what memory the DMA can target. T alone does
+> not do that.
 >
-> > 	__task_pid_nr_ns+0x74/0xd0
-> > 	...
-> > 	__handle_irq_event_percpu+0xd4/0x284
-> > 	handle_irq_event+0x48/0xb0
+>> It is unclear whether devices would need to perform DMA to shared
+>> (unencrypted) memory while operating in this mode, as TLPs with T=1
+>> are generally expected to target private memory.
 >
-> 	Huh?  Just what is it doing inside an IRQ handler?
-> Hell, the notion of current process is not usable in those,
-> let alone any properties of such...
+> PCI SIG supports it, kernel should support it.
+>
 
-Well, at least get_curent() should work in this case...
+Would we also need a separate DMA allocation API for allocating
+addresses intended to be shared with the non-secure hypervisor?
 
-But we can forget about IRQ. I guess the problem is that if the exiting
-task has already passed exit_notify() and it was (auto)reaped, then, say,
-task_pid_vnr(&init_task) will crash.
+Are there any existing drivers in the kernel that already require such
+shared allocations, which I could use as a reference?
 
-Not that I think the exiting task should do anything like this...
-
-Oleg.
-
+-aneesh
 
