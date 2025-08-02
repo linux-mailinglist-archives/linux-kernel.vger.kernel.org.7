@@ -1,79 +1,79 @@
-Return-Path: <linux-kernel+bounces-754168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAC74B18F36
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:35:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D2E3CB18F39
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:37:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 17E427A7053
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:33:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F838189E2D2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:38:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51AB119CC3D;
-	Sat,  2 Aug 2025 15:35:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88501C3C08;
+	Sat,  2 Aug 2025 15:37:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="DtamsdDx"
-Received: from mail-il1-f178.google.com (mail-il1-f178.google.com [209.85.166.178])
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XAtq+/GB"
+Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1F732E36E9
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 15:35:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA519CC3D
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 15:37:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754148918; cv=none; b=uh1iccWpQ6gyQj44YwYZgtyhZk7HVJV9Fqya8kjh4VPK0MFmlMvAjHra5lPxw8a4UPA//+8vonRsRv9hPUsjQsEJOKuBeyrvTxA9uHMSLBkcW4ywZgqXCxEsznMHi6ogf4MJZUwaMrwicwxdCC3OdzBqF2nMFL21MQHFsuDcG/w=
+	t=1754149056; cv=none; b=Xtt4/iUGtXJ7UaR208X5AOUEFsEvTRDWrmMzp8UL+ZVby+3TkCGtxHXBpFsUZd1Z57PcPrzRnBy3ltCM1mVdesJBcjO+am6QLptxeuXE+DIdsnz2ggiXNHmy2S86qjtXZIM7xQwX4gVE0cJYMYm0lmQgVRVgaqe1AUf242SgajA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754148918; c=relaxed/simple;
-	bh=lc8w/Ym29qsFdEdq81lGaizNvY2MuTOR5ZDn8sD4U+Y=;
+	s=arc-20240116; t=1754149056; c=relaxed/simple;
+	bh=r5BclxiNA2oHNLLunK2Td77xpt9TQVXBaWGBfY2UqXo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jOPEb0i5HHuCRz0g26Mo3mmn5VcI+/dhwrF49v8nSFKNcXEhKOc+aOv/YtTq7LBw9qy43aTC3e+svHMmcYoP/WoJ0fFMYZD77swr9bCrUc8yir5jyOivM733MkhQ+fOGH8DfzxSxAztPCz6hfq1iOC3AlVA04KBqdYdEcrKJurM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=DtamsdDx; arc=none smtp.client-ip=209.85.166.178
+	 In-Reply-To:Content-Type; b=FTf2UGDBhKRBG0UOggtFnz+tpgiNPECAKDj1dtGJPVG4+63JOs139fxRCAqrKYhfnWUpZUtPzu30Sp2IE+vkw5zcrSVugtALjwUOiPpNNaMUcDN2lGp8FT4DdbWNySMizvjG+S79iMndSX52yLp6Me2cskkZPRX/GdLRm27DIJk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XAtq+/GB; arc=none smtp.client-ip=209.85.166.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f178.google.com with SMTP id e9e14a558f8ab-3e3ff43383fso19920805ab.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 08:35:15 -0700 (PDT)
+Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-87999c368e9so166611939f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 08:37:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754148915; x=1754753715; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754149053; x=1754753853; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=81Ijm86aL/7Eg8i2CREJKo2zaZRo19ClQ9+K+/XGJDY=;
-        b=DtamsdDxpIpUu+/468Qkmsc0I8itMgs3E2BkFJPQmNH783TDxlKs9a7jkOb0nEeMVc
-         kpHK0bRV3Yvsz31wua2Xevyaky+3Ld/8q8aaaZ6PT4LaEB4TCpHo076dJr1uQVWYaEvR
-         mnIDE7Yb9bskDj6Wv/zBxGzZzNWuYhk73uz8ShTRWy4d7/Y5mmkfHWlgRKOXsC1pOGLP
-         /tW0lq8jUv2yESYLLOirUWnZ2aLd3+hxJuNA6jA3EoIS7T/r3CumcJWj6Qn90lE6gTzJ
-         HdLiQncLzJIoc2rsHZHzwcF96JzuYTPVsFj2n18ey2NJlveMPJ/oJKAcm+2VY+6EntxU
-         y8ww==
+        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
+        b=XAtq+/GB1qOsAPi1C1uMNsjlNdZG0pY91Tuo705P0vGIeCQ2ulLYjILvL6u8an64XW
+         rF1c+hh6bg3MQp1hMdn5SUGZG/+h1TQUxrcGGbbxJdVbrlW46NNO55I+YkQQ/w4hORQt
+         qjVdHGYrbYwud7y2nlnTP2u5/pgvltTQaXSMDlvEvc2pmFZ20D9JNEfj3Okk3g0ib561
+         5H9q4VfwETJ3a8wgyMOjxv2U/CtiHeiNOAnAdzdAZKyRkeMvv3pQ+g74PKVIHPJSq/0L
+         NY8/Qt+8y+HWtwlCkTQu5HkKlO+Jltnv4DzKXi5T2QkrjwjfirlHberh3j4/ZUnwHVj5
+         2PkA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754148915; x=1754753715;
-        h=content-transfer-encoding:in-reply-to:content-language:from
+        d=1e100.net; s=20230601; t=1754149053; x=1754753853;
+        h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=81Ijm86aL/7Eg8i2CREJKo2zaZRo19ClQ9+K+/XGJDY=;
-        b=s4ZC24MwxeZR8jXWQit538ejYhtFGQ8oM0tPFF7IfAYJaHUBN++CofL8D7ZeaRWGDr
-         9BCt7Yld6OgVZyYLIVLp6okov6WKJH0DgxfwQcPV9fYu5ZZOxDEiNJ5Rk8leAK5mxHIX
-         oTWqNdWRHPNM5V1y/eV3FKNx35R5wLBt1N2ERxxvvO9z3IQLxzlag0hBEzxR51gjX0pD
-         5yox/dqimf1/MCNpvu6DDrFs9PmvJh+k0hUYKSeQjsKQtGoq0iR6ahaXbqyStlSJ415m
-         x+b8ZklERW5KNf5CGsFAVATuWcAEgFjatR48MB7X9lokyCqilvh16ZFIIxr6KtvyxX+2
-         tfZA==
-X-Forwarded-Encrypted: i=1; AJvYcCVd23eLPyRJAt/sSkgzfK79dXv/Br02V6arp07SiH6+g5alo9u1pSHrAsAoTkTPRy4T8zkCxI4yb0Ga304=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxqNqJAael2R0/4mYkMYO1m/QYkP2fkYc9beLDwHyRzfUhIBu3a
-	ZXsLjOiGxKg/BxieoO0D+RPwDl1tdxxVhe1C0EIpYPgFwIDDB3/XtQM0hx7QqmFFPMA=
-X-Gm-Gg: ASbGncuA+K+5sYk5AP4fJHpqzDhs1WVyhdTkPfn6zYZ2C5s+UbY8q4r2Ki8Tn7nhHwE
-	ZVkV+c1Fu7+bOUSdGC6BpPTuJX9LBG1TJYJsXh0riNmYIhlb26Gob/Ro8M1Upwz6AfiH2REvoQA
-	guJ/Pdxbl0QBGyKFRGlcqE7J+Ww2Zg4QeBynMgnpVyK2FuJ4Js5gLh2Bx4bizkwAFNrdcwyqtTH
-	lgHlYfDBC81nKpHXQvx5JXS5pFQzUqfzhQCPAtm08ocEqyPgPv4NODsX8T1XHkOe+zU6X7bH8cB
-	JzmBzOnFuVFSaU60cxzv2ensi+zxRhBoEL+ncurfPlLuU96IgQ8HgIu8sYhqxOJXEi3knV1PCdB
-	h8nv9JiYNJlQdO6t+Qts=
-X-Google-Smtp-Source: AGHT+IEzDMvKKG3HQnc6KQVfE3Sm8RA9MnEePBGjgtGWT3ISbraLvGrtT7nk5K+qI0TfYNvWTAxGAA==
-X-Received: by 2002:a05:6e02:351e:b0:3e3:e4b2:8a5f with SMTP id e9e14a558f8ab-3e416116edamr65460525ab.8.1754148915061;
-        Sat, 02 Aug 2025 08:35:15 -0700 (PDT)
+        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
+        b=F4M6fOxwMLAyKPNKU23tTq7UCYGvtK0PynVKhVsO/3C8SbaQTal7icyEDoQlHfSwMi
+         AKEjErR3GpzZs7e+BtxFboK6id0OWIMBYr5gWhC+Vl9jorXp+ShVxJu7a4nXUiSF8mvv
+         9dzhmfYBHbluCax+y0/opwhjNYS1kfpDqLMt+lRXke71QvRm5EoEM/3OwbgXaypMOhZZ
+         hkX6EzHVkAVKx1gjaQnMm6JFsAirtinK9kAgvrcumh7XYOt2fOzJmfOSCxlluVXnM/Pt
+         oj54tigeu/C9ENvaeyIxhWIEIQg42dgdBF8e8sQsbfxA/FY+RPFjc4A9jf8tDR51d3qD
+         Uy8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRNC0ltOJ1CD1JCziuEh7Rn7RaFhaixp8oYDJe3Zwvb1yRk3HNHJooRWbuCIuzpm2p5FF3Ms4xYPIHygM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSCFv/Qek3fkVXzhq63qyhE/mbz3vJ72zJTytiZGki8OrpbyuF
+	+WNf4CcK+6BJ+3obYtkpalcOCkcushJTKhW5oMTf+XWNuO874a4bNKZIp9ycq392cas=
+X-Gm-Gg: ASbGnctYwYSNoT2cAkT5MVBeC30SGdXOQoJRquRA3zc8dqfWpqLJJJTiLbucBplwx7T
+	EqywtYPVMW4gdYl7U4q1Dv17+Me3NMYNlYAmfXOORFw4e9D070lUhnYnS9FdSgirulRRgOllYkp
+	xYngmpriX1HpjP3TSyMtw+NFtLRm+O6VjwassSmPs4YtR3r4LmcpmCO6ciVmUBPyAsL36DFb5fO
+	5TE7KWQGZApE/qqreo7Sro4/yGYopkZNmwgf7YxBpzAPxxVOIR79w0sNByyrWAx4PhDwDLHJyiW
+	1o7MDCDJFPs/pXJaw79x47qysmPRYTGc7swtW1YbYfZGV9/ZdE4oOKn5WG52BtB90WhWwL7cPaR
+	LHmcTPSNe+p4vp/J1/yA=
+X-Google-Smtp-Source: AGHT+IFpKu7HslfN99lpIdPLZvZStogsGBrzGWqBfvd20JQpD1Wdf3nzDTTCR48VUkNyC7cVFYirug==
+X-Received: by 2002:a05:6e02:2382:b0:3df:347f:ff3e with SMTP id e9e14a558f8ab-3e416116d8bmr66728215ab.7.1754149053646;
+        Sat, 02 Aug 2025 08:37:33 -0700 (PDT)
 Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e40297c7dbsm25068145ab.7.2025.08.02.08.35.13
+        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e40297c3d3sm26117545ab.6.2025.08.02.08.37.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 08:35:14 -0700 (PDT)
-Message-ID: <e163bbcd-b4d7-4a76-a42f-950f3cb5a644@kernel.dk>
-Date: Sat, 2 Aug 2025 09:35:13 -0600
+        Sat, 02 Aug 2025 08:37:32 -0700 (PDT)
+Message-ID: <43716438-2fb9-4377-a4a0-6f803d7b8aec@kernel.dk>
+Date: Sat, 2 Aug 2025 09:37:32 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -81,90 +81,58 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] f2fs: f2fs supports uncached buffered I/O read
-To: Chao Yu <chao@kernel.org>, hanqi <hanqi@vivo.com>, jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org
-References: <20250725075310.1614614-1-hanqi@vivo.com>
- <d258ab6d-a97a-4232-bf90-5afedd5cccb2@kernel.org>
- <e1a1dbfe-165f-4cb3-9d5b-8ac4ba61265e@vivo.com>
- <087f7937-20b5-4151-8a3f-5b6b2b045b41@kernel.org>
- <b1cf56a6-d23d-40ca-acaa-07944140b1b5@vivo.com>
- <1b420389-d46b-48ef-aa49-585d84e2710f@kernel.dk>
- <68c061ad-cbb7-44e8-a905-c13b9ec81c62@kernel.org>
-From: Jens Axboe <axboe@kernel.dk>
+Subject: Re: [PATCH 0/7] direct-io: even more flexible io vectors
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: snitzer@kernel.org, dw@davidwei.uk, brauner@kernel.org,
+ Keith Busch <kbusch@kernel.org>
+References: <20250801234736.1913170-1-kbusch@meta.com>
 Content-Language: en-US
-In-Reply-To: <68c061ad-cbb7-44e8-a905-c13b9ec81c62@kernel.org>
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <20250801234736.1913170-1-kbusch@meta.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 7/30/25 8:35 PM, Chao Yu wrote:
-> On 7/30/25 23:20, Jens Axboe wrote:
->> On 7/28/25 2:28 AM, hanqi wrote:
->>> ? 2025/7/28 16:07, Chao Yu ??:
->>>> On 7/28/25 16:03, hanqi wrote:
->>>>> ? 2025/7/28 15:38, Chao Yu ??:
->>>>>
->>>>>> On 7/25/25 15:53, Qi Han wrote:
->>>>>>> Jens has already completed the development of uncached buffered I/O
->>>>>>> in git [1], and in f2fs, uncached buffered I/O read can be enabled
->>>>>>> simply by setting the FOP_DONTCACHE flag in f2fs_file_operations.
->>>>>> IIUC, we may suffer lock issue when we call pwritev(.. ,RWF_DONTCACHE)?
->>>>>> as Jen mentioned in below path, right?
->>>>>>
->>>>>> soft-irq
->>>>>> - folio_end_writeback()
->>>>>>    - filemap_end_dropbehind_write()
->>>>>>     - filemap_end_dropbehind()
->>>>>>      - folio_unmap_invalidate()
->>>>>>       - lock i_lock
->>>>>>
->>>>>> Thanks,
->>>>> That's how I understand it.
->>>> So I guess we need to wait for the support RWF_DONTCACHE on write path, unless
->>>> you can walk around for write path in this patch.
->>>>
->>>> Thanks,
->>>
->>> I think the read and write paths can be submitted separately.
->>> Currently, uncached buffered I/O write requires setting the
->>> FGP_DONTCACHE flag when the filesystem allocates a folio. In
->>> f2fs, this is done in the following path:
->>>
->>> - write_begin
->>>  - f2fs_write_begin
->>>   - __filemap_get_folio
->>>   As I understand it, if we don't set the FGP_DONTCACHE flag here, this
->>> issue shouldn't occur.
->>
->> It won't cause an issue, but it also won't work in the sense that the
->> intent is that if the file system doesn't support DONTCACHE, it would
->> get errored at submission time. Your approach would just ignore the flag
->> for writes, rather than return -EOPNOTSUPP as would be expected.
+On 8/1/25 5:47 PM, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
 > 
-> Jens,
-> 
-> Do you mean like what we have done in kiocb_set_rw_flags()?
-> 
-> 	if (flags & RWF_DONTCACHE) {
-> 		/* file system must support it */
-> 		if (!(ki->ki_filp->f_op->fop_flags & FOP_DONTCACHE))
-> 			return -EOPNOTSUPP;
-> ...
-> 	}
-> 
-> IIUC, it's better to have this in original patch, let me know if I'm
-> missing something.
+> In furthering direct IO use from user space buffers without bouncing to
+> align to unnecessary kernel software constraints, this series removes
+> the requirement that io vector lengths align to the logical block size.
+> The downside (if want to call it that) is that mis-aligned io vectors
+> are caught further down the block stack rather than closer to the
+> syscall.
 
-Right, that would certainly be required to have it functional on the
-read side but not yet on the write side. Still leaves a weirder gap
-where other file systems (like XFS and ext4) you can rely on if read or
-write support is there, then the other direction is supported too. f2fs
-would be the only one where the read side works, but you get -EOPNOTSUPP
-on the write side.
+That's not a downside imho, it's much nicer to have the correct/expected
+case be fast, and catch the unexpected error case down the line when we
+have to iterate the vecs anyway.
 
-Unless there's a rush on the read side for some reason, I think it'd be
-better to have with setting FOP_DONTCACHE until the write side has been
-completed too.
+IOW, I love this patchset. I'll spend some time going over the details.
+Did you write some test cases for this?
+
+> This change also removes one walking of the io vector, so that's nice
+> too.
+> 
+> Keith Busch (7):
+>   block: check for valid bio while splitting
+>   block: align the bio after building it
+>   block: simplify direct io validity check
+>   iomap: simplify direct io validity check
+>   block: remove bdev_iter_is_aligned
+>   blk-integrity: use simpler alignment check
+>   iov_iter: remove iov_iter_is_aligned
+> 
+>  block/bio-integrity.c  |  4 +-
+>  block/bio.c            | 58 +++++++++++++++++---------
+>  block/blk-merge.c      |  5 +++
+>  block/fops.c           |  4 +-
+>  fs/iomap/direct-io.c   |  3 +-
+>  include/linux/blkdev.h |  7 ----
+>  include/linux/uio.h    |  2 -
+>  lib/iov_iter.c         | 95 ------------------------------------------
+>  8 files changed, 49 insertions(+), 129 deletions(-)
+
+Now that's a beautiful diffstat.
 
 -- 
 Jens Axboe
