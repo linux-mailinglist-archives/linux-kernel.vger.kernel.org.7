@@ -1,171 +1,133 @@
-Return-Path: <linux-kernel+bounces-754146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B08E8B18EA2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:18:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BC6AB18EA4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:22:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 253471C20BF7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:18:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2DEF189949D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:22:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAFF23BD04;
-	Sat,  2 Aug 2025 13:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2E46023BD0F;
+	Sat,  2 Aug 2025 13:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="PS/Hx2vi"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="pW7akEpl";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="u2c2J0Am"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBAEA1E489;
-	Sat,  2 Aug 2025 13:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A0E3DF59;
+	Sat,  2 Aug 2025 13:22:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754140692; cv=none; b=ndSR4XL+qUNksh4WSBdEnvrhbqaV2dQFNKulVttbmM79nbuPrOPNYg5s8/8q0f+1oVHfgcg5ip4uknoAwAgxBhGilbRtiP8I5KIvmk3dUUOQwA1j8hg1Rkn2Q7S2sXDTiO7Xg2czteDicR3yMVOfOnrsPLGqP9YC3AJm4Hf1VPg=
+	t=1754140935; cv=none; b=e/kaVfsXx3gZCUUQxjbsFFFyKyw/STu55ZmuBb3nRlLpUHsXJyreVnfcjetReBsBAD6S4a67fHy3ZJvjecW9Vjvq+9OiwI/rS1UmOI8u8e46gi+0afd30snivLOHr1pQc2AM5556eLLENvAA+bG41z3KBpy1JcrOm5r6nV+CJhg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754140692; c=relaxed/simple;
-	bh=rwM7aZc0/79RFn/uBW4n1pV92J+gZDfBn551fgemfKQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=DDk6OJZGc2QcsZlEXoGSvWe9XQz/E0MXZu7BwsSK/wO4AxBjRbEhYTob9onx1PwnfOsTdqEkpDCHpe3vhmpuyWV89rW4ECts8IjRwPn59DQtKrGR37Zf3CTIVAqQn9qbkLV0wQWzfAGwumcas9GKCm32RsR2/hVnbxYMbU+MuSE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=PS/Hx2vi; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-60bfcada295so3071014a12.1;
-        Sat, 02 Aug 2025 06:18:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754140689; x=1754745489; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=851sI+0lSVYLOYz2PZ6RCpHKug8iuu20s6r18n52W5c=;
-        b=PS/Hx2vi/DgmzLpKLVuwfDw8jYNLCxyUYBsWAF+odA/oepGVlwZJoY6lfZYsyIfsP1
-         NpgHP3U0fllxSRUp4yZhqfkjzHwncVxS4h5j8HAyQAgUcpVz++d8pN0RZJ+POcGbO8Ly
-         8W7UdJpuKTDq+bNqX3Mw5vQxI/sdEQB1XayEU/dtJfxGHX0T2SeG43uUPipQFthP2AMw
-         QlSyIEpasLl93KaYgyfV5vpchIHclnxcSNbl2/7ruGm8xRzXcfbTQuJaOWM+8qaYzCyF
-         nyG1qTIvd3lNksD43t5P1Su3nEO0bWIUxXVCYXx2pCOUIGWAKWBDY5NcKCqTbESZDYwm
-         ghyw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754140689; x=1754745489;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=851sI+0lSVYLOYz2PZ6RCpHKug8iuu20s6r18n52W5c=;
-        b=kHR2PS7jR7CYi7pr9HVjWBiZ+ZidY2DFw1HF7cNviS6HH3PZfIHEv12KunHwnQ/teL
-         822apEQfwrVi3Y3o9pzIEkQrfMDh40rVF4/wCBQjK9umEqZ4M2cTzP1a1D4bxdvFLRzQ
-         RtMAShPPllA+UYnMzYQPCwycZSNyYq09HfnXMyraQyMDKc5xsdORQ5X1WoxtCa9Lj7i4
-         chE8GY2V9S8zqvfEs5B6UUS4AOcrs/Jfrg/SN5pTax+rmEtR5B+kSBdrYdr/TgXh0T5N
-         VdEeFEavpiDKi+nP9HBhWQ5TP7gms5ehDn3pn9nUSUxA/6ywRtLlxbbo5ekqm8UYSeBb
-         yKPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVeh3l3iKg7LijiJ76xYwvMcfnlD6vdBDnu0dEf8baRbI6ApOKsJ+aCCc4Y8iM/M4RzUL01ZlfhCp6N@vger.kernel.org, AJvYcCW0A2HOTFToR2ELn3KM7M9VK7GMd2FU0ar/rgX+EeHI+ncUNRP2Y1N0DIdNUrAD558k5xh7MV7DEKSk@vger.kernel.org, AJvYcCXIrs0s3NpZSsWNZa/1DzyivZNcKRlrZXaYgqctrnSh8tQfZHMyhQdLIliswEfeziNkv2gpHJtB614wjGKT@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGvu2irzQv3hr8EFnJKF77AcEZTaWKSCK3P9ymkQc9v+THaoko
-	5FRUgex82DNs5i2eKVyavArIV9TQXVxQGfkeUnB/YKLHY4CQW3D8ZGm5u7JMd8Ohdx469J4G0bB
-	IRJCfAjH+xmHRNFF9Io09AFniiB74gH8=
-X-Gm-Gg: ASbGncuI8HDIlq83ILu3pDdv6ul2ZiC91zMsFJUUcbdJu4cNU+YqGJ7l72lFsS3UAme
-	P5DmSTeAYhFZt/1hoa5IyxrWUJ5YMzygpesHi8jr3qQbPrd8VeBohjPdtB2lH4UmAhyjMzsBsL0
-	0t6eQdiVfLG/9p1lAGObcyXQ+xONBZJQGuFKJRTh17cDXzPdUcWOtIWuLuh8bI73ers1yj30Ucq
-	bVQMjlxHg==
-X-Google-Smtp-Source: AGHT+IEtMEI17hNXHe0GwF9SHO7tnCgjtyIkpF5rCMet+Hw8Mh2ic7Ic2pJQBAVoIyUv9fNGjcWO8xhTx5j6u7095eE=
-X-Received: by 2002:a17:906:6a0a:b0:ae3:6659:180b with SMTP id
- a640c23a62f3a-af9401ee944mr330584866b.29.1754140688962; Sat, 02 Aug 2025
- 06:18:08 -0700 (PDT)
+	s=arc-20240116; t=1754140935; c=relaxed/simple;
+	bh=hz/0gjecOptrI9UvUPaN9LhyE9IZyca85DU4M7ciD6I=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=tvu9Yw30vXVtdyWpJqFNmUpYAfYFg3bHa8bG4iA8sROCc5xWrqqTVJ9NZPNetTTZYbTg/IE3VK0kAvJQWTwtV8oEWNQJ9bEAVe+f1T3yr2qV3vbNvNdyOEKeJAcABCXzjrchrDBQNHKANwm9xPGuXfTD2aaRQNwlrGL8KUdLoHc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=pW7akEpl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=u2c2J0Am; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sat, 02 Aug 2025 13:22:10 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754140932;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/4D/4kLLTiRXkitxTv/Ie/vFzdnhCnVgUx5k18OMot0=;
+	b=pW7akEpl+eM+MEPVXndohY6KHHxK6mb2KH7dJgSt7iyDGJf6zowaPx14b+rT+uoBPeeal6
+	0Qd7nr5ETtqnbw7j5I9qJm/SL+BedFnrouN2Vq6PyTxE+h8eETAEeDgbHGFRh2ZahJiF5e
+	VbbXBH1PFu//LVjfktOvFUI4K6f826KEKsqnWHGXfZwpE1Z18b2m5iHDVTpSM3HyNms09A
+	daZHuhaZzBasYo6xDjUDhA0WHmD442c6hHbXONOJdb2AqEVSftQAMr2yDcCI0OiJzlLvG+
+	XQs8LAnpVlzr8vi7V6AxROwBOo4LbHxxTVoRSHhWf6L+uW3OrsqLW0/o5wheSg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754140932;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/4D/4kLLTiRXkitxTv/Ie/vFzdnhCnVgUx5k18OMot0=;
+	b=u2c2J0Amvk1qf4weGZkysQ++6LCjUF2oEwS6ohIhLKEYc/0pDE0bcadQ3LepQn4cg/CSCw
+	s+Su6wKYj4EqrWAA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: locking/urgent] futex: Move futex cleanup to __mmdrop()
+Cc: andre.draszik@linaro.org, Thomas Gleixner <tglx@linutronix.de>,
+ x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <87ldo5ihu0.ffs@tglx>
+References: <87ldo5ihu0.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <CAHp75Vdc7RB8MG+jYcSxkvD2EY2weZJMnvkbgmqibYGLkcUEBQ@mail.gmail.com> <20250802121556.36440419@jic23-huawei>
-In-Reply-To: <20250802121556.36440419@jic23-huawei>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 2 Aug 2025 15:17:32 +0200
-X-Gm-Features: Ac12FXy7X71a8oTk748EvwK_PRQ77GO746ailvjW076YYe5H9yN1b9iPNUJfg18
-Message-ID: <CAHp75Ve8GOGYLSYgWDncTJOE5_iJqzxQ4BYmvgQ0AO5YYF1K3A@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] iio: magnetometer: add support for Infineon
- TLV493D 3D Magnetic Sensor
-To: Jonathan Cameron <jic23@kernel.org>
-Cc: Dixit Parmar <dixitparmar19@gmail.com>, David Lechner <dlechner@baylibre.com>, 
-	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
-	Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-kernel@vger.kernel.org, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Message-ID: <175414093081.1420.8088049602488588887.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Sat, Aug 2, 2025 at 1:16=E2=80=AFPM Jonathan Cameron <jic23@kernel.org> =
-wrote:
->
-> On Sat, 2 Aug 2025 10:53:30 +0200
-> Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-> > On Sat, Aug 2, 2025 at 8:44=E2=80=AFAM Dixit Parmar <dixitparmar19@gmai=
-l.com> wrote:
-> > >
-> > > The Infineon TLV493D is a Low-Power 3D Magnetic Sensor. The Sensor
-> > > applications includes joysticks, control elements (white goods,
-> > > multifunction knops), or electric meters (anti tampering) and any
-> > > other application that requires accurate angular measurements at
-> > > low power consumptions.
-> > >
-> > > The Sensor is configured over I2C, and as part of Sensor measurement
-> > > data it provides 3-Axis magnetic fields and temperature core measurem=
-ent.
-> > >
-> > > The driver supports raw value read and buffered input via external tr=
-igger
-> > > to allow streaming values with the same sensing timestamp.
-> > >
-> > > While sensor has interrupt pin multiplexed with I2C SCL pin. But for =
-bus
-> >
-> > the sensor
-> > an interrupt
-> > an I2C
-> >
-> > > configurations interrupt(INT) is not recommended, unless timing const=
-raints
-> > > between I2C data transfers and interrupt pulses are monitored and ali=
-gned.
-> > >
-> > > The Sensor's I2C register map and mode information is described in pr=
-oduct
-> > > User Manual[Link].
-> >
-> > Replace Link here with 1...
-> >
-> > > Datasheet: https://www.infineon.com/assets/row/public/documents/24/49=
-/infineon-tlv493d-a1b6-datasheet-en.pdf
-> > > Link: https://www.mouser.com/pdfDocs/Infineon-TLV493D-A1B6_3DMagnetic=
--UserManual-v01_03-EN.pdf
-> >
-> > ...and add space followed by [1] here.
+The following commit has been merged into the locking/urgent branch of tip:
 
-Note, my above comment also applies to the actual patch.
+Commit-ID:     e703b7e247503b8bf87b62c02a4392749b09eca8
+Gitweb:        https://git.kernel.org/tip/e703b7e247503b8bf87b62c02a4392749b0=
+9eca8
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Wed, 30 Jul 2025 21:44:55 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Sat, 02 Aug 2025 15:11:52 +02:00
 
-...
+futex: Move futex cleanup to __mmdrop()
 
-> > > Changes in v2:
-> > > - Drop regmap implementation in favor of using direct i2c APIs to
-> > >   have uniform communication APIs across the driver.
-> >
-> > This I don't understand. I mean the motivation behind this. Usually
-> > direct I2C communication is used to do some initial checks and
-> > configuration and rarely for the actuall run-time driver
-> > functionality. Otherwise it means that the regmap may be used with a
-> > customised read and write methods.
->
-> This was my suggestion.  The device has very odd characteristics that
-> means writes really are not register based.  You have to write them all
-> every time with now addressing.
->
-> So to me regmap just wasn't a good choice here. You could do something
-> some nasty stuff to hammer it into a custom regmap, but to me it's just
-> not a good fit.
+Futex hash allocations are done in mm_init() and the cleanup happens in
+__mmput(). That works most of the time, but there are mm instances which
+are instantiated via mm_alloc() and freed via mmdrop(), which causes the
+futex hash to be leaked.
 
-I see, thanks for explaining this to me. Okay, let's leave for now
-with the direct use of I2C APIs.
+Move the cleanup to __mmdrop().
 
+Fixes: 56180dd20c19 ("futex: Use RCU-based per-CPU reference counting instead=
+ of rcuref_t")
+Reported-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Tested-by: Andr=C3=A9 Draszik <andre.draszik@linaro.org>
+Link: https://lore.kernel.org/all/87ldo5ihu0.ffs@tglx
+Closes: https://lore.kernel.org/all/0c8cc83bb73abf080faf584f319008b67d0931db.=
+camel@linaro.org
 
---=20
-With Best Regards,
-Andy Shevchenko
+---
+ kernel/fork.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/kernel/fork.c b/kernel/fork.c
+index f82b77e..1b0535e 100644
+--- a/kernel/fork.c
++++ b/kernel/fork.c
+@@ -686,6 +686,7 @@ void __mmdrop(struct mm_struct *mm)
+ 	mm_pasid_drop(mm);
+ 	mm_destroy_cid(mm);
+ 	percpu_counter_destroy_many(mm->rss_stat, NR_MM_COUNTERS);
++	futex_hash_free(mm);
+=20
+ 	free_mm(mm);
+ }
+@@ -1133,7 +1134,6 @@ static inline void __mmput(struct mm_struct *mm)
+ 	if (mm->binfmt)
+ 		module_put(mm->binfmt->module);
+ 	lru_gen_del_mm(mm);
+-	futex_hash_free(mm);
+ 	mmdrop(mm);
+ }
+=20
 
