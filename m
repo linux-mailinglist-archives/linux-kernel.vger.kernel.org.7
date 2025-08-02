@@ -1,238 +1,127 @@
-Return-Path: <linux-kernel+bounces-754149-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754150-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86C06B18EB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:27:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C3ECB18EB8
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:41:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF819189C430
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:27:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2647017D237
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DC3A23ED5B;
-	Sat,  2 Aug 2025 13:26:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7500223BD04;
+	Sat,  2 Aug 2025 13:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b="qqNUWLHW";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="CLzPCjtS"
-Received: from flow-a5-smtp.messagingengine.com (flow-a5-smtp.messagingengine.com [103.168.172.140])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HO7Zk3A3"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCA31239562;
-	Sat,  2 Aug 2025 13:26:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.140
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96D95149C41;
+	Sat,  2 Aug 2025 13:41:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754141217; cv=none; b=IG0vgVIyuoW40jat9TEhLXVW51lb5uRGKPjDkU2zjfa69cAeQU58WNnn6xuHrBrRfAyVto901jZ05gA1rSPHlAIhUfh7BqwCpNP/qvNzVXtOKPbPsroP/VF7ZiZjYKcsWqz5QKTeqh4bSdnO8XuTivGIuY9WqKTb34HC7/EdWxQ=
+	t=1754142101; cv=none; b=S7jA7E6DEDBcfvpm4cNYPQduAjXxI7LZtdiU5zKJ0WBjrx8b3SoScxl1xBaNnlo5PF855nXYxhteBbqEtEwqkya3ismCLPGxDoKbqXS5pk5v9Sr89k3hpu4VswbCuCOa6gg5EQbWObhpOSwnDJ4mKtykZNrTODN4EgvhMXsk7LE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754141217; c=relaxed/simple;
-	bh=RQcvlDgE9AaqghHzjivBTwci6wnSL8fk15KJ90oMijI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ecBA5JpXZKFsKSto4Wd7cZc9hg+ufJs+QXZp/+45TVRt1SxBSjdL5zRa7J3r1XsqAuRsWkcOGiooOxb4LX6lTMu15l6cGAG9ealaotRlvot2QvlsQf3alEjlzLc4B2pSmHQG4ZeCzwcSqdTHWULmqwwXntiK/KirVsiiRJM2s4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se; spf=pass smtp.mailfrom=ragnatech.se; dkim=pass (2048-bit key) header.d=ragnatech.se header.i=@ragnatech.se header.b=qqNUWLHW; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=CLzPCjtS; arc=none smtp.client-ip=103.168.172.140
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ragnatech.se
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ragnatech.se
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailflow.phl.internal (Postfix) with ESMTP id A87BC1380608;
-	Sat,  2 Aug 2025 09:26:52 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sat, 02 Aug 2025 09:26:52 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ragnatech.se; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1754141212;
-	 x=1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=
-	qqNUWLHW5NkgMWC7l9Ppuzcw0TRZVKBalVrpuNL2tWkSX16V+CaL/WD3GPRevH/3
-	cOaqYuZWVehBMlqwkuJTQ3+7ee7mvoCmm57l/9y3kSLOhYi/j9UZL0baYRp5JOQM
-	j4yp2XwkBPHkkHrQr9G2kPmFqob1bo+ge9yICVt/dsRrLU+xuJA6h9g8SW4qJPa0
-	AHQH8Vz64gEdgI7kQ+1DTmePAvNbJQJxnWkGkDSZF/paCkDAzfIwxTUg+JfaHIca
-	2uCTiijQTVgzLiuE6qwTC/es2iaY0ak3Q1yInsTplxnRcKjgCrvxpj+WvGFL/Gkm
-	HIx11r/lg4cei6lIenYP+g==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754141212; x=
-	1754148412; bh=bmI1hYqjksR+DRa8JSQk6MVH64W5+sLipA6UwCtocJY=; b=C
-	LzPCjtSlWjEpgC9nck7IIN+a6VWM2T9KzMBiWo4CFmbf/c8EsbwRuyBR6zo43jFD
-	hvyIbMP0zgOcLL+h4kub0bXZEqehHtgFY6sV9cwlFjffv+lGsEsKcJttU2+8fn3b
-	kRALXojkwbX6H2IOxV2soFJHVIcKk6LuRbHAbjPhMXvWGeT7KA2Mau0LJLy4HAji
-	lfgiUMmK9spCDs/oe1YGLozfqCHtXvx0XyirO7dloL77Fyd05IG6lp0ZwH1pUgeh
-	FNabC3mgBC+9qZ25Drxy58dz8xR3lKKGectSGWS0hTtARs2FRFJmAX2nfNB3fKxO
-	c360wFl1nKo7iNibIdOnQ==
-X-ME-Sender: <xms:FhKOaIqzIVCCzZqyPT8S-Kuyp75Ghz90bD-sNWC1Ynb1xWuDhB2fgA>
-    <xme:FhKOaAAM51hB_nYlCo1hgXLgPrXfAQsJTzEzSK29ONCez_BVzRWEnZ7YYfmVPVSd4
-    mYWvtLYdmS8g_-J1io>
-X-ME-Received: <xmr:FhKOaKNy3dovqvqjcZlMlmNulu_odOhDUh_OuI4TialffSqjpk1dXSXjcgxfsuv77hx6_icSG8wxq9Qphv3aDtPfT18v805RrQ>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdeiieelucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhepfffhvfevuffkfhggtggugfgjsehtkeertddttdejnecuhfhrohhmpefpihhklhgr
-    shcuufpnuggvrhhluhhnugcuoehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhnrg
-    htvggthhdrshgvqeenucggtffrrghtthgvrhhnpeevteegtddvvdfhtdekgefhfeefheet
-    heekkeegfeejudeiudeuleegtdehkeekteenucevlhhushhtvghrufhiiigvpedtnecurf
-    grrhgrmhepmhgrihhlfhhrohhmpehnihhklhgrshdrshhouggvrhhluhhnugesrhgrghhn
-    rghtvggthhdrshgvpdhnsggprhgtphhtthhopedutdehpdhmohguvgepshhmthhpohhuth
-    dprhgtphhtthhopehjrggtohhpohdrmhhonhguihesihguvggrshhonhgsohgrrhgurdgt
-    ohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtoh
-    epuggvvhgrrhhshhhtsehtihdrtghomhdprhgtphhtthhopegsphgrrhhrohhtsehtihdr
-    tghomhdprhgtphhtthhopehhvhgvrhhkuhhilheskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htohepihhsvghlhiesphhosghogidrtghomhdprhgtphhtthhopehlrghurhgvnhhtrdhp
-    ihhntghhrghrthesihguvggrshhonhgsohgrrhgurdgtohhmpdhrtghpthhtohephhgrnh
-    hsgheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepphgrrhhthhhisggrnhdrvhgvvghr
-    rghsohhorhgrnhesmhhitghrohgthhhiphdrtghomh
-X-ME-Proxy: <xmx:FhKOaHAoXiF7NV692VGvUlBtEKV8Ppc7HpktTEwZStXxvUIyFnrhjw>
-    <xmx:FhKOaIXbJEGFB6MyMI6SEvkY_tAqtZmQdwpF1CyYAg0cU-whIhajXA>
-    <xmx:FhKOaOXdPk75wbqe7BRIpcNiWjQWCtbKZe7Hw0Dw9yRuHK1wn0wJ9A>
-    <xmx:FhKOaA4w1OKh4y5m73fZ4TocrIIXqTtdAsWzkrmS8EjZZidpBDEFUw>
-    <xmx:HBKOaGfprgDP-C4pCZ_BqeXWMGw4oENfGJWvHSy-BbRaGSp473jMOr6M>
-Feedback-ID: i80c9496c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 2 Aug 2025 09:26:45 -0400 (EDT)
-Date: Sat, 2 Aug 2025 15:26:43 +0200
-From: Niklas =?utf-8?Q?S=C3=B6derlund?= <niklas.soderlund@ragnatech.se>
-To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
-Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
-	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
-	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-	Hans de Goede <hansg@kernel.org>,
-	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
-	Christian Gromm <christian.gromm@microchip.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
-	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
-	Tomasz Figa <tfiga@chromium.org>,
-	Marek Szyprowski <m.szyprowski@samsung.com>,
-	Andy Walls <awalls@md.metrocast.net>,
-	Michael Tretter <m.tretter@pengutronix.de>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Bin Liu <bin.liu@mediatek.com>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Dmitry Osipenko <digetx@gmail.com>,
-	Thierry Reding <thierry.reding@gmail.com>,
-	Jonathan Hunter <jonathanh@nvidia.com>,
-	Mirela Rabulea <mirela.rabulea@nxp.com>,	Shawn Guo <shawnguo@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Fabio Estevam <festevam@gmail.com>,
-	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
-	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
-	Zhou Peng <eagle.zhou@nxp.com>,
-	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	Dikshita Agarwal <quic_dikshita@quicinc.com>,
-	Abhinav Kumar <abhinav.kumar@linux.dev>,
-	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
-	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,	Chen-Yu Tsai <wens@csie.org>,
- Samuel Holland <samuel@sholland.org>,
-	Daniel Almeida <daniel.almeida@collabora.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Kevin Hilman <khilman@baylibre.com>,
-	Jerome Brunet <jbrunet@baylibre.com>,
-	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
-	Nas Chung <nas.chung@chipsnmedia.com>,
-	Jackson Lee <jackson.lee@chipsnmedia.com>,
-	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
-	Houlong Wei <houlong.wei@mediatek.com>,
-	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
-	Tiffany Lin <tiffany.lin@mediatek.com>,
-	Yunfei Dong <yunfei.dong@mediatek.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Magnus Damm <magnus.damm@gmail.com>,
-	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
-	Jacob Chen <jacob-chen@iotwrt.com>,
-	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
-	Heiko Stuebner <heiko@sntech.de>,
-	Detlev Casanova <detlev.casanova@collabora.com>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Alim Akhtar <alim.akhtar@samsung.com>,
-	Sylwester Nawrocki <s.nawrocki@samsung.com>,
-	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
-	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
-	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
-	Andrzej Hajda <andrzej.hajda@intel.com>,
-	Fabien Dessenne <fabien.dessenne@foss.st.com>,
-	Hugues Fruchet <hugues.fruchet@foss.st.com>,
-	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
-	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
-	Steve Longerbeam <slongerbeam@gmail.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Paul Kocialkowski <paulk@sys-base.io>,	Robert Foss <rfoss@kernel.org>,
- Todor Tomov <todor.too@gmail.com>,
-	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
-	Corentin Labbe <clabbe@baylibre.com>,
-	Sakari Ailus <sakari.ailus@linux.intel.com>,
-	Bingbu Cao <bingbu.cao@intel.com>,	Tianshu Qiu <tian.shu.qiu@intel.com>,
-	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,	linux-mediatek@lists.infradead.org,
- linux-tegra@vger.kernel.org,	imx@lists.linux.dev,
- linux-renesas-soc@vger.kernel.org,	linux-arm-msm@vger.kernel.org,
- linux-samsung-soc@vger.kernel.org,	linux-sunxi@lists.linux.dev,
- linux-usb@vger.kernel.org,	linux-amlogic@lists.infradead.org,
-	linux-rockchip@lists.infradead.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	mjpeg-users@lists.sourceforge.net
-Subject: Re: [PATCH 17/65] media: rcar-vin: Do not set file->private_data
-Message-ID: <20250802132643.GA1848717@ragnatech.se>
-References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
- <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
+	s=arc-20240116; t=1754142101; c=relaxed/simple;
+	bh=s5Adrm0DQ9KzMRIFpXc+ajYpj+gHS/XMsPLGkglG/wk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jADZVvZrsWgh4MRRPDLqxNF8kGYqKJCIp2B4JUXhWPcpePSOaVtPMGa0GXQrC57hZa697RYZ9hMdYSsncXFOCXpj0mhwwuJv1Q9trmESB7t+1H2W52wEna7IPjwHWaalgBErtayTwUU51PUbRat7JGy8hcV2Cvwp6YL+ZOJNT90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HO7Zk3A3; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-32127d5f63eso1951a91.0;
+        Sat, 02 Aug 2025 06:41:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754142100; x=1754746900; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PsxZESSbpSCiPFgh1RAgcx6H+uTAf/oM/QPaKZ2GOQk=;
+        b=HO7Zk3A3akRT83tLzvZwMxQBDJnDyrAejFkdapsG4KNVTRbGLsChJGEfwacY14L1lw
+         ab5/kxSg2WlmRAb1rZcxm48apKeCwlngnAxZN8knevMq7FBNSLiH/gMln2b4+uOY2e5T
+         4yb6j+PbfaHbp4Mr/zit7d9V4H1djjuRBJzsh/V06uNtgYO/ccrh+IbjmRvL5426kQ8l
+         LgIjkUMShhn9loGVEfBcEhczDXoI15phNqfZE+Ut2uLtvS6naVuW2MS+ezFx2qBLHf2S
+         YBR/rgIskjZuOW4zIrkDkciCcNU+iPyhW0CpXvSYZ4DmkXoWLF37aG21CS3NKZI0YLo+
+         Yu0A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754142100; x=1754746900;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PsxZESSbpSCiPFgh1RAgcx6H+uTAf/oM/QPaKZ2GOQk=;
+        b=FL1G+HqpA59lu2pX2SIWM733jWujWSYp93r2OnMp2sEv60kFaukTInujF0xdm3/WLV
+         DcEKxGQPDvBwXOkoGDXtgaNbWChmjz/oFKf/Hen8gBgsjb0wT4I0mvBXIyjO769PgYWe
+         hd26fUUMS4hWYLexTUAMpjL3mIUxNV8UsIe2C6gOeO/Yo1YwlV04C+rj11TVVIRIqd3w
+         jYuSQwBK+RRhq1xH9YyR3uGkUtkJLIo7czLqYHoV5VrRTxCf/AyQIRl165wRI2wUTKu8
+         JGAzCeYPY7lsLziB4fY624/H/tVFkQ0+3walxGg6BKfnQdwVszI7lA7Kw1dk8O2Lennl
+         htvw==
+X-Forwarded-Encrypted: i=1; AJvYcCVgQd25T15ucHbtNnFXn41+nzRcHfFDg9Qb3/RkZBw8ajZNLoCDKeVNqdq7PtMUkSgYXiMklq9XzJFBpe0=@vger.kernel.org, AJvYcCWgIi96zcjRzBBND1iFsEjNvkn6KDpYlxIzeBg+ZvoPTfXaKkd+iTO7AEFOJVn6OtyCxVNb5eeGqMvJpZY7T5Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8FzE5Wl1oX5BHhSYFgBI47AlsERsJdcyOMLimsPW5B3kA05ln
+	jYttwFeFvkNQC7ytdiqS8aFlVfl20oXedS2Ersdp4pNv4UA5N4vcCJLhJ0+AKPHpH8HUFXmah9I
+	T5c1r99sJSmny3QLj5J+A4u1xrHZ7T/w=
+X-Gm-Gg: ASbGnctUXJRCkqrswBCLIHq84YP/eA5uBDFGNTr2IDOZPaX6wFdhpcewpz0JbJOrCKb
+	9JLFdJTaeNTB3z7dJvDT+b+m+7stToLM5ep47T7U5vOiVB5PiELBwWjCOl1P8quPRxhhVrQnb6p
+	BtdOd1y40+nruJt5aXr+t3vQKPWM7pxOsV4g1BaUyMAh6FZJYk70BUZfAwzDCQMfp5fbb+Vq01x
+	vglpQx8FC7ODXxhZlI=
+X-Google-Smtp-Source: AGHT+IErFqc55TWByZ9qMI1Pagy8hH9TWRfQtk4fjo7jHF/OVaGon2/ksIFACwkNiYTtohBJgqVt73r2/Zl//XdGZrw=
+X-Received: by 2002:a17:90b:33d2:b0:31e:ec03:7fe4 with SMTP id
+ 98e67ed59e1d1-321162e4270mr1647853a91.8.1754142099761; Sat, 02 Aug 2025
+ 06:41:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250802-media-private-data-v1-17-eb140ddd6a9d@ideasonboard.com>
+References: <20250621184454.8354-1-work@onurozkan.dev> <20250621184454.8354-3-work@onurozkan.dev>
+ <DASY7BECFRCT.332X5ZHZMV2W@kernel.org> <aFlQ7K_mYYbrG8Cl@Mac.home>
+ <DATYHYJVPL3L.3NLMH7PPHYU9@kernel.org> <aFlpFQ4ivKw81d-y@Mac.home>
+ <DAU0ELV91E2Q.35FZOII18W44J@kernel.org> <20250707163913.5ffc046d@nimda.home>
+ <DB5XIWGZ8U36.1VB58YBJFL7OT@kernel.org> <20250707210613.2fd5bb55@nimda.home>
+ <DB62ZN1LTO31.1HVWDLAWJWVM8@kernel.org> <FF481535-86EF-41EB-830A-1DA2434AAEA0@collabora.com>
+ <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
+In-Reply-To: <DBRVNP4MM5KO.3IXLMXKGK4XTS@kernel.org>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Sat, 2 Aug 2025 15:41:28 +0200
+X-Gm-Features: Ac12FXxWIkPx3j64iIsxdsItUTgUAWyOwNJACurA9ndJljWW9o6QHgtjb8ehGfg
+Message-ID: <CANiq72=owOmGLi3Zh+7o5CRKU1_tNU-OsKskj35GXwkDCchwKQ@mail.gmail.com>
+Subject: Re: [PATCH v5 2/3] implement ww_mutex abstraction for the Rust tree
+To: Benno Lossin <lossin@kernel.org>
+Cc: Daniel Almeida <daniel.almeida@collabora.com>, Onur <work@onurozkan.dev>, 
+	Boqun Feng <boqun.feng@gmail.com>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org, ojeda@kernel.org, alex.gaynor@gmail.com, 
+	gary@garyguo.net, a.hindborg@kernel.org, aliceryhl@google.com, 
+	tmgross@umich.edu, dakr@kernel.org, peterz@infradead.org, mingo@redhat.com, 
+	will@kernel.org, longman@redhat.com, felipe_life@live.com, daniel@sedlak.dev, 
+	bjorn3_gh@protonmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Jacopo,
+On Sat, Aug 2, 2025 at 12:42=E2=80=AFPM Benno Lossin <lossin@kernel.org> wr=
+ote:
+>
+> My understanding of C preprocessor macros is not good enough to parse or
+> understand this :( What is that `__PASTE` thing?
 
-Thanks for your effort tidying things up!
+It allows you to paste the expansion of other macros, e.g. compare `A` and =
+`B`:
 
-On 2025-08-02 11:22:39 +0200, Jacopo Mondi wrote:
-> The R-Car VIN driver sets file->private_data to the driver-specific
-> structure, but the following call to v4l2_fh_open() overwrites it
-> with a pointer to the just allocated v4l2_fh.
-> 
-> Remove the mis-leading assignment in the driver.
-> 
-> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+    #define A(a,b) a##b
+    #define B(a,b) __PASTE(a,b)
 
-Reviewed-by: Niklas Söderlund <niklas.soderlund+renesas@ragnatech.se>
+    #define C 43
 
-> ---
->  drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c | 2 --
->  1 file changed, 2 deletions(-)
-> 
-> diff --git a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> index 62eddf3a35fc91434cb2e584a01819380a7a6dd8..079dbaf016c25139e2ac82be63d8fce0d11fd208 100644
-> --- a/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> +++ b/drivers/media/platform/renesas/rcar-vin/rcar-v4l2.c
-> @@ -588,8 +588,6 @@ static int rvin_open(struct file *file)
->  	if (ret)
->  		goto err_pm;
->  
-> -	file->private_data = vin;
-> -
->  	ret = v4l2_fh_open(file);
->  	if (ret)
->  		goto err_unlock;
-> 
-> -- 
-> 2.49.0
-> 
+    A(42, C)
+    B(42, C)
 
--- 
-Kind Regards,
-Niklas Söderlund
+would give:
+
+    42C
+    4243
+
+https://godbolt.org/z/Ms18oed1b
+
+Cheers,
+Miguel
 
