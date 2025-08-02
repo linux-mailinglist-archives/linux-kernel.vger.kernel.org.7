@@ -1,223 +1,154 @@
-Return-Path: <linux-kernel+bounces-754194-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754195-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9F0CB18F97
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 19:34:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE287B18F9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 19:45:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1D8E8189AE0D
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:34:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 919B0189BD3D
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:45:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86C2A2459F2;
-	Sat,  2 Aug 2025 17:34:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E9F224E4C6;
+	Sat,  2 Aug 2025 17:45:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="fGu2IbbO"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="CxBEt47R"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26DDF2E36EA;
-	Sat,  2 Aug 2025 17:34:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C07824DD15
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 17:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754156047; cv=none; b=jjDmaCy79WtaQDYmwylFAEwTebZZx7vpivGD40qTHRlK6oq2LLx2SdJ2ugXrmoH1Ra/ZygoiIzlUY2yOGbDe3xesS8P2tC8a+8NbLgvsXubv6PETzDDodtOfWW2UYk0sx04LYCevGjWxh8XorfgdvQobaC9wbpVO425fI3269EY=
+	t=1754156711; cv=none; b=lkGtL/mUFl7zfwxh9JGYxqgygkIo4CrZ9UaSeUP6j1TIcBooSwrK5lmZbfNoDlzgZTSulSD7YVxO/yO/6W89QZ9/bFWr/maRr0IyCeiNYqOZ6W7OZ7MvphTSayngk/jFER2/hcz6OKYHtnPxCJUzChjDUAwn2J/d1v5qpck/P7I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754156047; c=relaxed/simple;
-	bh=riIvVqDAcGY8QU+w6sjTBKD12HK5GR1jib3u5T3XB1Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fAdVzRz03ZD/ap9AvZW0r61/2Onny5P4XAKWeJh/daopB13ZNFoo+dn2FD3W77UH9hbJG9eYTKD2kSdeMA8Lajl5wryivmJdYsv1td3tw8Ob7A4gVATRGaQ6j9g0jZ+f81j6CFpDkCtj9hTvkLxPoUU0C1rVw8h33SeycA4auzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=fGu2IbbO; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 572HXbfG3686634
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sat, 2 Aug 2025 10:33:38 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 572HXbfG3686634
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754156020;
-	bh=+R4wObZkaFNXG30xKTEX89eM7VdUzI2d5uFve1iFUQM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=fGu2IbbOKXSqlb9vhNCVdqH1bavp3EIyJysRiWi4iVZPtFPWFqAmgdux/zSagijuZ
-	 jYusFA0jjkeyUyQk6L9BUsWuuym7/zv/mVyWh2czGhcz5riCWLsRebxapV9tKpYaYo
-	 50f4PkM2XQ3NwZlLnQZ7Mg5dgmlfpvtOZg0VNUqfqekNgTGjwV+pGhjR5/ChgmqQbA
-	 P2+jsJZ0srO/UAyTlK+lU+l/9myWp9UP9Y3/JtX5fPIuF8NLyQ7j5WejtnyGetXw0W
-	 6rVwXbtgkUgWxY0qHuvveToSx38IZVlaXlQmZjEv2BrQ7abtyINQXQmaFz0Sxokp+M
-	 mVmZD58uil+0Q==
-Message-ID: <aad3d385-5743-4f81-992a-22d1701c3611@zytor.com>
-Date: Sat, 2 Aug 2025 10:33:37 -0700
+	s=arc-20240116; t=1754156711; c=relaxed/simple;
+	bh=/BZ45ilZEXy2U9DBGekioZDIbHuKRJOt+fmpxyAzyXs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wmy1SAttgWJktphpfSKPhlAnYs0SJSrewGRxC2WYFw3C06YeybO3ETtdIfmkUTy7ZiduTX6Zsqu/wcrRMIk/3o7+UO8gWy19O3yqbu/436epoyIhv9P5chCdiEHbVieIgivOe2GuW9qw024ZK+xSfHtEnFWpxPxcEDDQJUtFgkM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=CxBEt47R; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 572HgOHU002720
+	for <linux-kernel@vger.kernel.org>; Sat, 2 Aug 2025 17:45:09 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=qcppdkim1; bh=0EbUAvWWQpPrO+h431DyWvyK
+	NZekIvD59gM98+lMufs=; b=CxBEt47RdTWU3Bkrzu8hTRDxdKAyTeDdJ+M94Fqk
+	aZZyWpjFaS/0zV8tYY4VxVqAZLiQKKqs6KTAUEolyo/E/uuelYKj0nZizyYhYtOZ
+	Q/lSP23WLsu8bXj1vPWYO4kFGwQhXcDhU4SchzzDbrZ1pgtHx6pdZmgHM7yIRh2x
+	6c6shGIb/o8B+qOCR8W/52htHsdip59GvITUuRx3cyxx/Sk7k9Thk4noE9mBuNcr
+	VSTmMu7h1y9c/gIyIJNmrWz8H7KPRKXy7H1uzDMu8NRXXFKrTxfaqAjGIrKS6yCo
+	oREGLh1YP22CdIWvBI/Z8WZttROA+aOnxZ21ux1Bh+nHbA==
+Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4899mvs7rx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 17:45:09 +0000 (GMT)
+Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab801d931cso64003291cf.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 10:45:09 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754156708; x=1754761508;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0EbUAvWWQpPrO+h431DyWvyKNZekIvD59gM98+lMufs=;
+        b=nJ2+hZD49wlCH4FA4TDO9c90HNsFLBDuR98OZ+iJ4H4MKl5MCPYTKjqjd6lsGmS/Np
+         cMSI4sNECsF8CZtSONXYcZ88poUw+nzbfc+3ZaGKOQYItw8kmBjgh8dvWxOAlmyKXBML
+         G8k5nIHj+Kju6mWb1aQiotYKJqsDXzNvjDwcKld5a/PqeNzCA6HEnztDb+AQgxhpeNut
+         GtZ67qinUJp7xDgwO1tlrKIu914UXZTi3PrcdyWo/wb8z6m7TBDHTZu7rkbODSeXtf+0
+         7gzAZOYsUNvZUkCS6IdbzN/icsY7ulHRldS9yDDblOLn79V2IgQuYI2QJTBE6eaLwIkg
+         JQfw==
+X-Forwarded-Encrypted: i=1; AJvYcCWCUyrLMijePmTalV4EOy6v7Y2fqEojDxyGzeTwpeAAuJ7o+iJBQdaU2FOP1YlnK3UnqM5aG5csFnonkEU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyhe9ty2gWCbKIqj+VLjwXxGwHrG15ITYMmLmxU2T3h2skIPsks
+	oEGbNgFew2ZUj5yt1TUrR0k6SpFbIlCOHEkC0JnAwUCYd6Ba+L2OaDbJa8VqPR3wI4aZFV7GyyO
+	fR5P6VRoYbOV+Awh2aPQYWx9eW8Deu12cFHpvU0dzm4r6wnBlce/24QzON1JJv2OFnLg=
+X-Gm-Gg: ASbGncsL2y7MHtO7OCszFADN7GYXLlkIn/C9e1YqwFLJsvLVnLP/UdCFTtOoAUVtVPQ
+	FTFxB546GhX0VsldMCN1vuZMj+O9eXSzCJpMY5dzgCELBHstY8ly6F+3bpxOBvi0ZejuoJ2KbY7
+	CaSgE94wA7JT/Mr8GEVSktBLo/4N56o7wS0GyMRJNqJ++lBRa6cX+UbYVCIoY0hvlXcEvT5+sZG
+	TZ9HATal5ZtJvE6W7tjXFlU4WCFwKppm2YkeGffcT2hPz0xoSeh2wMYbN68+FRxxj/8qFpeLLPn
+	EDuS2GJdGosx/obDmOW/x3YNMpKcN34VCxlYIbJ734mYIe6AjUl8mvt05+BWF/I0jdO0ob4QU7Y
+	sQhxZvBeeSFiiSHt04iqYDit7WPVipy+/Y+ziPywybmsu5CLZ7RoC
+X-Received: by 2002:a05:622a:6090:b0:4ab:95a7:71d2 with SMTP id d75a77b69052e-4af10d77e73mr60076321cf.56.1754156708018;
+        Sat, 02 Aug 2025 10:45:08 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHZFJ9ZncMv0GBgEG7PbQ/lsOlmBLqt5+Q9IM7PyWYnWZaynQup7F4KuR6kPQ1X6ByQ9G2Qog==
+X-Received: by 2002:a05:622a:6090:b0:4ab:95a7:71d2 with SMTP id d75a77b69052e-4af10d77e73mr60076051cf.56.1754156707629;
+        Sat, 02 Aug 2025 10:45:07 -0700 (PDT)
+Received: from umbar.lan (2001-14ba-a0c3-3a00-264b-feff-fe8b-be8a.rev.dnainternet.fi. [2001:14ba:a0c3:3a00:264b:feff:fe8b:be8a])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b8898bfdcsm1065014e87.1.2025.08.02.10.45.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 10:45:06 -0700 (PDT)
+Date: Sat, 2 Aug 2025 20:45:04 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+To: Johan Hovold <johan@kernel.org>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Robert Foss <rfoss@kernel.org>,
+        Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
+        Jonas Karlman <jonas@kwiboo.se>,
+        Jernej Skrabec <jernej.skrabec@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Douglas Anderson <dianders@chromium.org>,
+        dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] drm/bridge: fix OF node leak
+Message-ID: <n3pu5ninfmknkde5ntn6hrybshhkhd7iorehfj4pv5zj4lvsyd@6z7v2h3amvri>
+References: <20250708085124.15445-1-johan@kernel.org>
+ <20250708085124.15445-2-johan@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5A 20/23] KVM: nVMX: Add FRED VMCS fields to nested VMX
- context handling
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
-        andrew.cooper3@citrix.com, chao.gao@intel.com, hch@infradead.org
-References: <aIHXngnkcJIY0TUw@intel.com>
- <20250802171740.3677712-1-xin@zytor.com>
-Content-Language: en-US
-From: Xin Li <xin@zytor.com>
-Autocrypt: addr=xin@zytor.com; keydata=
- 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
- l75w1xInsg==
-In-Reply-To: <20250802171740.3677712-1-xin@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250708085124.15445-2-johan@kernel.org>
+X-Proofpoint-ORIG-GUID: nrj8kfT9aL5oV11TRq5Nyotzv2dVfTAk
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDE0NiBTYWx0ZWRfX/mxygJBZNmee
+ QjQXlDPr+KtKHRMiLII1M1Kq5/gnUQPuNiZ6rICaoFcb19DKTCw0P0AcTP+jYoD8i4+I//Fm2yq
+ TDow3Rv8Z7oY+8Y48MS/EFhmZLi2VXjIgo0XfSq0bcMUozvym07ss3INwL6jzJQCvaEuj7x+l4Q
+ bbeX5IhXbFk3O9VzZ1FQDXbTohdkz65UM7XM1r49D6a+d9yz2wjpZgpT5gtUPANTUbETnNA6PFQ
+ PYWdx0jwpzmXb7YAaWRTLpwwdKsL/5XKFx3CQv/nGqYsn16ATDgCPwgxLyE7YfY6ZgRWv5NYvOD
+ RqyYqr0FaruGysjrBpvOlvHPe5NOt8kRE9t+uXVxip6CgJfsdCAoSjp6JFeVlH0g9RkqiIGRCjh
+ isW+a9eEAKYksOqAKDZukk/sPjPBluaAlY9Geeb5bbI05UqfGBxnwfBTbZOIgG3sabDpgAUc
+X-Authority-Analysis: v=2.4 cv=duXbC0g4 c=1 sm=1 tr=0 ts=688e4ea5 cx=c_pps
+ a=WeENfcodrlLV9YRTxbY/uA==:117 a=xqWC_Br6kY4A:10 a=kj9zAlcOel0A:10
+ a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=VwQbUJbxAAAA:8 a=ZKwWdIalRbw524GBQUkA:9
+ a=CjuIK1q_8ugA:10 a=kacYvNCVWA4VmyqE58fU:22
+X-Proofpoint-GUID: nrj8kfT9aL5oV11TRq5Nyotzv2dVfTAk
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 suspectscore=0 impostorscore=0 mlxlogscore=974
+ priorityscore=1501 mlxscore=0 adultscore=0 bulkscore=0 spamscore=0
+ phishscore=0 clxscore=1015 malwarescore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508020146
 
-> @@ -4531,6 +4593,27 @@ static void sync_vmcs02_to_vmcs12_rare(struct kvm_vcpu *vcpu,
->   	vmcs12->guest_tr_base = vmcs_readl(GUEST_TR_BASE);
->   	vmcs12->guest_gdtr_base = vmcs_readl(GUEST_GDTR_BASE);
->   	vmcs12->guest_idtr_base = vmcs_readl(GUEST_IDTR_BASE);
-> +
-> +	vmx->nested.pre_vmexit_fred_config = vmcs_read64(GUEST_IA32_FRED_CONFIG);
-> +	vmx->nested.pre_vmexit_fred_rsp1 = vmcs_read64(GUEST_IA32_FRED_RSP1);
-> +	vmx->nested.pre_vmexit_fred_rsp2 = vmcs_read64(GUEST_IA32_FRED_RSP2);
-> +	vmx->nested.pre_vmexit_fred_rsp3 = vmcs_read64(GUEST_IA32_FRED_RSP3);
-> +	vmx->nested.pre_vmexit_fred_stklvls = vmcs_read64(GUEST_IA32_FRED_STKLVLS);
-> +	vmx->nested.pre_vmexit_fred_ssp1 = vmcs_read64(GUEST_IA32_FRED_SSP1);
-> +	vmx->nested.pre_vmexit_fred_ssp2 = vmcs_read64(GUEST_IA32_FRED_SSP2);
-> +	vmx->nested.pre_vmexit_fred_ssp3 = vmcs_read64(GUEST_IA32_FRED_SSP3);
+On Tue, Jul 08, 2025 at 10:51:23AM +0200, Johan Hovold wrote:
+> Make sure to drop the OF node reference taken when creating the aux
+> bridge device when the device is later released.
+> 
+> Fixes: 6914968a0b52 ("drm/bridge: properly refcount DT nodes in aux bridge drivers")
+> Cc: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+> Signed-off-by: Johan Hovold <johan@kernel.org>
+> ---
+>  drivers/gpu/drm/bridge/aux-bridge.c | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+PLease excuse me for the delay.
 
-This ...
+Reviewed-by: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
 
-> +
-> +	if (nested_cpu_save_guest_fred_state(vmcs12)) {
-> +		vmcs12->guest_ia32_fred_config = vmx->nested.pre_vmexit_fred_config;
-> +		vmcs12->guest_ia32_fred_rsp1 = vmx->nested.pre_vmexit_fred_rsp1;
-> +		vmcs12->guest_ia32_fred_rsp2 = vmx->nested.pre_vmexit_fred_rsp2;
-> +		vmcs12->guest_ia32_fred_rsp3 = vmx->nested.pre_vmexit_fred_rsp3;
-> +		vmcs12->guest_ia32_fred_stklvls = vmx->nested.pre_vmexit_fred_stklvls;
-> +		vmcs12->guest_ia32_fred_ssp1 = vmx->nested.pre_vmexit_fred_ssp1;
-> +		vmcs12->guest_ia32_fred_ssp2 = vmx->nested.pre_vmexit_fred_ssp2;
-> +		vmcs12->guest_ia32_fred_ssp3 = vmx->nested.pre_vmexit_fred_ssp3;
-> +	}
-> +
->   	vmcs12->guest_pending_dbg_exceptions =
->   		vmcs_readl(GUEST_PENDING_DBG_EXCEPTIONS);
->   
-> @@ -4761,6 +4860,26 @@ static void load_vmcs12_host_state(struct kvm_vcpu *vcpu,
->   	vmcs_write32(GUEST_IDTR_LIMIT, 0xFFFF);
->   	vmcs_write32(GUEST_GDTR_LIMIT, 0xFFFF);
->   
-> +	if (nested_cpu_load_host_fred_state(vmcs12)) {
-> +		vmcs_write64(GUEST_IA32_FRED_CONFIG, vmcs12->host_ia32_fred_config);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP1, vmcs12->host_ia32_fred_rsp1);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP2, vmcs12->host_ia32_fred_rsp2);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP3, vmcs12->host_ia32_fred_rsp3);
-> +		vmcs_write64(GUEST_IA32_FRED_STKLVLS, vmcs12->host_ia32_fred_stklvls);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP1, vmcs12->host_ia32_fred_ssp1);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP2, vmcs12->host_ia32_fred_ssp2);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP3, vmcs12->host_ia32_fred_ssp3);
-> +	} else {
-> +		vmcs_write64(GUEST_IA32_FRED_CONFIG, vmx->nested.pre_vmexit_fred_config);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP1, vmx->nested.pre_vmexit_fred_rsp1);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP2, vmx->nested.pre_vmexit_fred_rsp2);
-> +		vmcs_write64(GUEST_IA32_FRED_RSP3, vmx->nested.pre_vmexit_fred_rsp3);
-> +		vmcs_write64(GUEST_IA32_FRED_STKLVLS, vmx->nested.pre_vmexit_fred_stklvls);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP1, vmx->nested.pre_vmexit_fred_ssp1);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP2, vmx->nested.pre_vmexit_fred_ssp2);
-> +		vmcs_write64(GUEST_IA32_FRED_SSP3, vmx->nested.pre_vmexit_fred_ssp3);
 
-And this are actually nops. IOW, if I don't add this snippet of code,
-the CPU still retains the guest FRED MSRs, i.e., using guest FRED state 
-from vmcs02 as that of vmcs01.
 
-> +	}
-> +
->   	/* If not VM_EXIT_CLEAR_BNDCFGS, the L2 value propagates to L1.  */
->   	if (vmcs12->vm_exit_controls & VM_EXIT_CLEAR_BNDCFGS)
->   		vmcs_write64(GUEST_BNDCFGS, 0);
-> diff --git a/arch/x86/kvm/vmx/vmx.h b/arch/x86/kvm/vmx/vmx.h
-> index 617cbec5c9b3..885e48fe33c4 100644
-> --- a/arch/x86/kvm/vmx/vmx.h
-> +++ b/arch/x86/kvm/vmx/vmx.h
-> @@ -181,6 +181,39 @@ struct nested_vmx {
->   	 */
->   	u64 pre_vmenter_debugctl;
->   	u64 pre_vmenter_bndcfgs;
-> +	u64 pre_vmenter_fred_config;
-> +	u64 pre_vmenter_fred_rsp1;
-> +	u64 pre_vmenter_fred_rsp2;
-> +	u64 pre_vmenter_fred_rsp3;
-> +	u64 pre_vmenter_fred_stklvls;
-> +	u64 pre_vmenter_fred_ssp1;
-> +	u64 pre_vmenter_fred_ssp2;
-> +	u64 pre_vmenter_fred_ssp3;
-> +
-> +	/*
-> +	 * Used to snapshot MSRs that are conditionally saved on VM-Exit in
-> +	 * order to propagate the guest's pre-VM-Exit value into vmcs12.
-> +	 *
-> +	 * FRED MSRs are *always* saved to vmcs02 since KVM always sets
-> +	 * SECONDARY_VM_EXIT_SAVE_IA32_FRED.  However an L1 VMM, although
-> +	 * unlikely, might choose not to set this bit, resulting in FRED MSRs
-> +	 * not being saved to vmcs12.
-> +	 *
-> +	 * It's not a problem when SECONDARY_VM_EXIT_LOAD_IA32_FRED is set,
-> +	 * as the CPU immediately loads the host FRED state from vmcs12 into
-> +	 * the FRED MSRs.
-> +	 *
-> +	 * But an L1 VMM may clear SECONDARY_VM_EXIT_LOAD_IA32_FRED, causing
-> +	 * the CPU to retain the pre VM-Exit FRED MSRs.
-> +	 */
 
-However I want to make this logic explicit. So we might end up with
-adding the comment somewhere and removing all the pre_vmexit_fred_*
-changes?
-
-> +	u64 pre_vmexit_fred_config;
-> +	u64 pre_vmexit_fred_rsp1;
-> +	u64 pre_vmexit_fred_rsp2;
-> +	u64 pre_vmexit_fred_rsp3;
-> +	u64 pre_vmexit_fred_stklvls;
-> +	u64 pre_vmexit_fred_ssp1;
-> +	u64 pre_vmexit_fred_ssp2;
-> +	u64 pre_vmexit_fred_ssp3;
->   
->   	/* to migrate it to L1 if L2 writes to L1's CR8 directly */
->   	int l1_tpr_threshold;
-
-Thanks!
-     Xin
+-- 
+With best wishes
+Dmitry
 
