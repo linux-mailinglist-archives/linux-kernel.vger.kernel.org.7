@@ -1,55 +1,52 @@
-Return-Path: <linux-kernel+bounces-753945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61235B18A70
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:37:47 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8731FB18A77
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:42:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8643A5A058B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:37:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816245A061F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 02:42:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59E1E13B7AE;
-	Sat,  2 Aug 2025 02:37:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mXmhydbW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0A917332C;
+	Sat,  2 Aug 2025 02:42:10 +0000 (UTC)
+Received: from psionic.psi5.com (psionic.psi5.com [185.187.169.70])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBB0C372
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 02:37:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF5DA14AD20;
+	Sat,  2 Aug 2025 02:42:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.187.169.70
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754102261; cv=none; b=ZO9+BDT4B2fZxtXAAntuh7hIVkTR6mjlshOSnwuKZx6RXB9zCIOP6HRCu4T0vYvFwH1ZH2jLPT983tdANZTOUTKkhch0vhJqL2sDV1RpiioXekKZr9xA6tcQz8S1rIPBZ4d9zBytytjjaYQTTdij1LG3swNx6ynyj+N3VzzirIU=
+	t=1754102530; cv=none; b=ISK7AE/L+doXMMTSyy6f/A3kME4emlYSc0kLeApLqGztUQR0eQaz1YPnMyow8TIv6CQSBe3f7oLkHwc6bU1LzSCHS84hnVo4Ke3A/3kcn5JyiKMaocrJw6ebkxXhcA4tLa2PKVm/9AVuQcbn+88cNIPihK+sDdyPst7+W78XQ1Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754102261; c=relaxed/simple;
-	bh=SnMGNBU0WevBcEDt0U0KrwRwiB+AubWXiRuNhkpiDR0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=K6HV5AB3QReUW62QYZzIIfqNvWYoQ5hB/RqJZOyqlY+pjxqdQB9xq8DIwnQd2S69j5fzwOvSG3Zb74w1837t/3R9g+TprcKNyEPBjpdHtnrNSX8slpg4FLYObQC411qXL6+oC99h6B/J4hh2wWbdAEr057H7HbZHnGMSxs9koLI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mXmhydbW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E105AC4CEE7;
-	Sat,  2 Aug 2025 02:37:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754102261;
-	bh=SnMGNBU0WevBcEDt0U0KrwRwiB+AubWXiRuNhkpiDR0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=mXmhydbWdO5IiuKtmOjWtXxTEy6KJEAmvlSmKZ+6Pa7u1WtZT7IQ2cKpwK2k21484
-	 TZcTDbt8MzqhrRdexg9BNy6RinGzGdfcBOykVVLm19dfm1HqIIsOIceFHUHis9KQFu
-	 2+pO66zmKttEODPoSosqRFD6WLYovB8yoeizU5ABg08/OaJmVVr6KZRca2SnB2tltZ
-	 TTLTj86P+p7wKc9PhOsNGjaZWaRIQlvQshADiltr40iIuyA4z7+dMpwUGDBLi0Oxl1
-	 4nCqbgRNPOuHRWzt74vbKHWV1L/un0/bye/8p1kfioNky5+vDil334fPiCM7P3z4rv
-	 WWxa4id4mh1pg==
-From: Chao Yu <chao@kernel.org>
-To: jaegeuk@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	Qi Han <hanqi@vivo.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Chao Yu <chao@kernel.org>
-Subject: [PATCH] f2fs: fix to return -EOPNOTSUPP for uncached write
-Date: Sat,  2 Aug 2025 10:37:33 +0800
-Message-ID: <20250802023733.1890349-1-chao@kernel.org>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+	s=arc-20240116; t=1754102530; c=relaxed/simple;
+	bh=2r+KFlA1Ln/PLuPHeodGMNNpFLWlyaxjphnCHgaiOFQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=R/NQUS0HwqJ1YRUJ55LwxyacRkLMEzzYwqytClULweUC2okTqH8TOB4useUR9qPA7EPVakVxENN/qTN9Vdgp65EhNoit2ZSwZD8np+t5fA/c4a/qCstMyJ1M3jAMFCQ+eSp4Hz/uBWyqAmtUcm17Xoe2eT6Jb16hqlo10+8ILYk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de; spf=pass smtp.mailfrom=hogyros.de; arc=none smtp.client-ip=185.187.169.70
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hogyros.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hogyros.de
+Received: from localhost.localdomain (unknown [IPv6:2400:2410:b120:f200:2e09:4dff:fe00:2e9])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by psionic.psi5.com (Postfix) with ESMTPSA id C677E3F104;
+	Sat,  2 Aug 2025 04:42:00 +0200 (CEST)
+From: Simon Richter <Simon.Richter@hogyros.de>
+To: =?UTF-8?q?Thomas=20Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Cc: Simon Richter <Simon.Richter@hogyros.de>,
+	stable@vger.kernel.org
+Subject: [PATCH v4] Mark xe driver as BROKEN if kernel page size is not 4kB
+Date: Sat,  2 Aug 2025 11:40:36 +0900
+Message-ID: <20250802024152.3021-1-Simon.Richter@hogyros.de>
+X-Mailer: git-send-email 2.47.2
+In-Reply-To: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
+References: <37abb9a1a4fde174a54a9d7868d31b2615df0e47.camel@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,36 +55,29 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-From: Qi Han <hanqi@vivo.com>
+This driver, for the time being, assumes that the kernel page size is 4kB,
+so it fails on loong64 and aarch64 with 16kB pages, and ppc64el with 64kB
+pages.
 
-f2fs doesn't support uncached write yet, for write() w/ IOCB_DONTCACHE
-flag, let's return -EOPNOTSUPP instead of ignoring IOCB_DONTCACHE flag
-and write w/o uncached IO.
-
-Cc: Jens Axboe <axboe@kernel.dk>
-Cc: Qi Han <hanqi@vivo.com>
-Signed-off-by: Chao Yu <chao@kernel.org>
+Signed-off-by: Simon Richter <Simon.Richter@hogyros.de>
+Cc: stable@vger.kernel.org
 ---
- fs/f2fs/file.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/xe/Kconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
-index 9b8d24097b7a..7f09cad6b6d7 100644
---- a/fs/f2fs/file.c
-+++ b/fs/f2fs/file.c
-@@ -5185,6 +5185,11 @@ static ssize_t f2fs_file_write_iter(struct kiocb *iocb, struct iov_iter *from)
- 		goto out;
- 	}
- 
-+	if (iocb->ki_flags & IOCB_DONTCACHE) {
-+		ret = -EOPNOTSUPP;
-+		goto out;
-+	}
-+
- 	if (!f2fs_is_compress_backend_ready(inode)) {
- 		ret = -EOPNOTSUPP;
- 		goto out;
+diff --git a/drivers/gpu/drm/xe/Kconfig b/drivers/gpu/drm/xe/Kconfig
+index 2bb2bc052120..714d5702dfd7 100644
+--- a/drivers/gpu/drm/xe/Kconfig
++++ b/drivers/gpu/drm/xe/Kconfig
+@@ -5,6 +5,7 @@ config DRM_XE
+ 	depends on KUNIT || !KUNIT
+ 	depends on INTEL_VSEC || !INTEL_VSEC
+ 	depends on X86_PLATFORM_DEVICES || !(X86 && ACPI)
++	depends on PAGE_SIZE_4KB || COMPILE_TEST || BROKEN
+ 	select INTERVAL_TREE
+ 	# we need shmfs for the swappable backing store, and in particular
+ 	# the shmem_readpage() which depends upon tmpfs
 -- 
-2.49.0
+2.47.2
 
 
