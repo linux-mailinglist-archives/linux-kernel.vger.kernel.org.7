@@ -1,78 +1,77 @@
-Return-Path: <linux-kernel+bounces-754119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DA0B18E4A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:53:18 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B5FB3B18E4B
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:53:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E88A7173394
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:53:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6C6316E2DE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:53:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D0C722B5B8;
-	Sat,  2 Aug 2025 11:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5197222FAF8;
+	Sat,  2 Aug 2025 11:53:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EzooXUeq"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gebsI6PL"
+Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E11E3225779
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 11:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E873122A4E1
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 11:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754135586; cv=none; b=Cv/q9zCXLv9s3kUtGoxSUgFeo1C5xYWvQ5s3v57mGzCWlsXlqeUpzMPQ+CSSi5VngSEoRodz/ANnTsvKIsr9v/6Dz89lCSObnPh3dbu3TNB4x6FUcjSkpvl+NLx/5U4O5djH4B9bM8WTkjQisI+XsHh6UgUfUBui7jQ0XdX32cM=
+	t=1754135588; cv=none; b=CRm4MeLzSaJMrL0f/XsOF0FnM5A+BJdTkWKQ9Hpcy0rTxB32UMOkxFjf3oZGWg3clGMb5nux3Crus6deXQ71iurNI+ZfJwqsNa0yKhpkezyJeDa3DRoM96xKaOAV8bCtU2/ImCYq8u/g0gxsb6QmJKr5NwYtnxRy33h47etkMos=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754135586; c=relaxed/simple;
-	bh=kOvxzrWDC5K18/smBEMWYXLhT/zDo1nWowIrW1n8plA=;
+	s=arc-20240116; t=1754135588; c=relaxed/simple;
+	bh=OIhIEnmvXQYdWkNBzBDAuw6VY0qCIErnN1M9pziIRrY=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SyDVeUIuo5UHmOAelCc8p/8SEGp3vfxAS7bAYOfYlhCr57MOCm9Ky1N8h0eDPcGNsP8SHwvE+zyDm8xsnA/fdsENelyoZ6CXyL6XQhhQPWahA//hhhGt8NNqHsTw/cGgQAIF+UYYiVCcuYcF87BinIMq9kqWLY0CD5WoTB0oWN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EzooXUeq; arc=none smtp.client-ip=209.85.218.43
+	 MIME-Version; b=uR1lc6FvqKHn1XDwqLW+EE19sTi2NIvF9CmKZV50GrunSRfy8ivtXlpAZxEtu+hSPTYvc9UIj3lMnWvBpoBxrI5vhF7KC/CfhxBqcTvUP+cu3OEeUs46xLqJd9XQd6HZxREH/W77N1U/vF4zsO2j77tCXrrhvx1zgPfN6/T1o6o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gebsI6PL; arc=none smtp.client-ip=209.85.208.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae708b0e83eso491369866b.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 04:53:04 -0700 (PDT)
+Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-6154d14d6f6so3954106a12.2
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 04:53:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754135583; x=1754740383; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754135585; x=1754740385; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=P1uRbOaPx516qagC6F0FtjjMT3s1w0dSsaUvr5gAnQo=;
-        b=EzooXUeqO+M+By8q42q0SRQBxRfXhjuIAvCzmNT0xa/AIKuBcrnOhRD41Ym386kAAA
-         hENxuILS38Xgvkw9/rup141ukFD7IIKFc9DSaeOIevo96Wnt+qHxi6WNDg9NlejPt761
-         cs8wOKsXYPVALQ+ATMZYvufQ8zs1UWIs7j6ruWQRiqfhGsd4/Tkly1S3HojJVciKF2Bw
-         2+QBUgMfqu/boKwu+cyGQCb0jEE9iLJSPXU/ykYjPlL+ZbXjkysWo/k6ZDKXyx8hF1tB
-         GGh0FXiWSg74AfseXOvRPslZDOx2lJ+9yNLXtm2LVcDKSou5mu/xfPiVVgJLUVfUVGfx
-         //JQ==
+        bh=+l1QuFgekZN0Ih/n7UkLBKW9hzcvuL72STInIzLZ4ZY=;
+        b=gebsI6PLAIjB7sw2LyplE4Y3uLjFi/BB8XKow69bD/vDVJ8KKTO4e8TBPojVk36WZX
+         w1vroUq27HHfgweLT17CmQ29tOHYZMqw1Ab1/PeRDrz8NcqPRasv97OGgAKF5oEukGH7
+         7Y6LkbYwXwi+YxMwmLPJ0EXA3kWx8v1Z69SXVFJK3hMW32ZeHq8XgOYEpfSjp1lwnCjN
+         8H1ArKFFRhe/5jTCAGS0k7bfcJabEF8U55M9nb4ea+GFuVTPtlshM7qv26KcC7gWejsk
+         qzwMD3IZd/gkNnTsCGBqqXzECEMrRzUjZTZz0FnUtX17MtdsoTDhxyyY52UA82k/mvh4
+         jvWQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754135583; x=1754740383;
+        d=1e100.net; s=20230601; t=1754135585; x=1754740385;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=P1uRbOaPx516qagC6F0FtjjMT3s1w0dSsaUvr5gAnQo=;
-        b=SthOd7noBSYnwLBphQRtQ2P0cKKPPzqO8Wl4yOHRo9nwA3zV0KPRDwjG8VVrQ8hT9k
-         F4zO8l3uGoZtlojh+5WVxJ/+5cpofqI7IrTHt6fkTvhgnowNLEi7jZVjqj6ZAj0BI2bx
-         Yq+JEDO93OSeXzrOyxkyd2BxlRY9B1rTlqSSnfV2Y8SDwIxI76OD2r3aa7SkJoY4w53j
-         0I3qMaq/V5+y2OuaJBl7qp8txIuKk9Bb6AZZQDLmmmL9fplOZo7RZWLXg8YpgPbZUCsJ
-         8oBbC4UzUv5VAen1rEIRz2Y/OgnZuiHmCh4MgSEaGU3vg9A/QMIfB2LK57gVlbCbUw+a
-         k/SQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWaaH3ZvtfzjjLTQdyywJhoSuL3oc0fqMaDYNArs7EZHEkhudmVWC5uG1hVjxDPfLN2RHJ6FLTWqJBFz5w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWXuuRhOKcd8qR8cm/l8tFbWpKUhGc3feDwTzx6diCghYTbunF
-	MfMoQlXBzKlNgbR4YcsbyE4PSgTpcaUWhw8/Z9ikKGOr80AUBA34YNkX
-X-Gm-Gg: ASbGncu6KX6tJx/NMwuom+4MnJd9016jMkaGPL8CjypnZEbZqNTjsqA/vVf3nieBHR5
-	ummAPgA8Fr0LaMKFC6nL4xtDpk+pFDqXkI92A97vDa98uZXjfX2xN0b+sNp02oQtFzpBoxnNSJJ
-	J7ICWkk36R8MFaQ0kyzvPUZCEklq7PB0nftJFNI87s++S5njUkguylcjcG4XJHLkHmi+umWQPMN
-	copTtDvkucraYVkBF8nGoVs5VOvRRItyri65oHfz8AWTKCzQecveMGWT1iJf9PvD0BOYp7IhR0i
-	Huvy+EouRgRBzqkqjdjFhZOQPhoxS3IAQDtLlca5dDJHp3wDcrT+Kup4Mlrim53mvmJhrZ47MTR
-	/WuBQ0RvyGBXXItPxZm/pkHLSbd5Z64X1LAlSTGc65IMzz+3KG6nk4Nap8h8BrIjxvRPGBpEj0n
-	c8+faDEA==
-X-Google-Smtp-Source: AGHT+IEeolrbK8Ju/4UkPkf+Jnhr2B2vqnQWZUQZZTD5vJyKAaB8n/76N2YQeS6F2uTGQIcJUUPDEg==
-X-Received: by 2002:a17:907:86ac:b0:ae0:ac28:ec21 with SMTP id a640c23a62f3a-af94001468bmr267338866b.13.1754135582908;
-        Sat, 02 Aug 2025 04:53:02 -0700 (PDT)
+        bh=+l1QuFgekZN0Ih/n7UkLBKW9hzcvuL72STInIzLZ4ZY=;
+        b=DdDHy4l3Ua77BmbjxMNON/Vrfm1AHdErlytBHzYXXZdKxsrgy07pLNvxcWhw+GIJMy
+         KNLPF98S09GY/ddC6IisM5y3sMhuCYPSh87rxoHyNgX3L//bPzeHtsPFjxPbcxZILVKM
+         4SbgQK/A5Zu19OcMJDbNVc+fxFpR0KNoYCRFa3qv0ncEvUEWEpkj11agKKsG6v7bSw4F
+         FqzY3PB/lQKNMuKqqQ33x+vD/k0G37bw1dPTGSB7C4ADP3z9NKFVzwY0XeMtULUFKZmr
+         Gjf1xMePoE8RMaJR/hMf1uTNT/JvmPO7rkTD/lGd9HzLc7FGHE+GRMybaeGJ6WS9bZOI
+         jAzA==
+X-Forwarded-Encrypted: i=1; AJvYcCWQeEL62FqpzQoRBdpydohyhhTSDdCmjlxr7YBuCfdcmeNn80r0SFb1qGp3MbQQ2+ABSwvrZdyTMVqBZzk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzWw2Plcyi8n8HsLcqQCJup+cnDU0ViOO40JENiqCtJK96yqyv0
+	tnqYxNT/Cyyrc+NSPoU18VscltL0X4lz75QVECLzBTjxJikT70e70spC
+X-Gm-Gg: ASbGncvG/r8j2lo+yXfqpnozyviD7ygjKCNAHenuPkobsUcOJeVlm/0PAX4I1mqy9rU
+	dXjL4PjAPk21xoN7wEJ7xMqZtufrcN2GNFSVfjYJWu85mfjroRZ9qIAd+1CTZlpYvSEHkbMwx87
+	yQ/XiKZVbxupOj88lPBguTpCk/cAjZw+RnJq0FBYTPaEDCpNOw+trepKUYiiqVVpIu1C0BW9HZL
+	jn+NAalx8rGpFDWBHkAo2tMjdQ9WkeYuqsRy8oEBs4Gn384xAt0y/tFDPlqaFIbW87kwYt4ZsfW
+	zRNah12Y0QCuwGpD+MGr+ZYQAxd+cP0XTQSmvxwcl9eKxRbmKLkfp9LYAOElw1ia5UEr/rtIgvc
+	6/vKKrAlMdtu8G9eDOQMWMPTFfCEdV021DTzBXG7kHoxr/R8OX9ucRd+lTDZyNJkiZTQC9Q8=
+X-Google-Smtp-Source: AGHT+IEp2fGxaGZZ5CaBRX0BcTcZyFdhDrJCsMO6vtGysJGYlHpKp+oG0jgs4nIVGThUtInH3wGG+Q==
+X-Received: by 2002:a17:907:2d27:b0:ae0:a359:a95c with SMTP id a640c23a62f3a-af9401adbf6mr294558466b.34.1754135584954;
+        Sat, 02 Aug 2025 04:53:04 -0700 (PDT)
 Received: from rs3labsrv8.iccluster.epfl.ch (nat-icclus-192-26-29-9.epfl.ch. [192.26.29.9])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0753f9sm425028166b.20.2025.08.02.04.53.02
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0753f9sm425028166b.20.2025.08.02.04.53.04
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sat, 02 Aug 2025 04:53:02 -0700 (PDT)
+        Sat, 02 Aug 2025 04:53:04 -0700 (PDT)
 From: Yueyang Pan <pyyjason@gmail.com>
 To: SeongJae Park <sj@kernel.org>,
 	Andrew Morton <akpm@linux-foundation.org>,
@@ -82,9 +81,9 @@ Cc: damon@lists.linux.dev,
 	linux-kernel@vger.kernel.org,
 	kernel-team@meta.com,
 	Yueyang Pan <pyyjason@gmail.com>
-Subject: [PATCH v4 1/2] mm/damon/paddr: move filters existence check function to ops-common
-Date: Sat,  2 Aug 2025 11:52:45 +0000
-Message-ID: <cbe01740f7ac5ac7c9fd1ca367d297c3d7f2a69d.1754135312.git.pyyjason@gmail.com>
+Subject: [PATCH v4 2/2] mm/damon/vaddr: support stat-purpose DAMOS filters
+Date: Sat,  2 Aug 2025 11:52:46 +0000
+Message-ID: <264a4b5ea202fd73c01b349c9694d8bf9978c441.1754135312.git.pyyjason@gmail.com>
 X-Mailer: git-send-email 2.43.0
 In-Reply-To: <cover.1754135312.git.pyyjason@gmail.com>
 References: <cover.1754135312.git.pyyjason@gmail.com>
@@ -96,73 +95,138 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-This patch moves damon_pa_scheme_has_filter to ops-common. renaming
-to damos_ops_has_filter.
-Doing so allows us to reuse its logic in the vaddr version
-of DAMOS_STAT
+This patch extends DAMOS_STAT handling of the DAMON operations
+sets for virtual address spaces for ops-level DAMOS filters.
+It leverages the walk_page_range to walk the page table and gets
+the folio from page table. The last folio scanned is stored in
+damos->last_applied to prevent double counting.
 
 Signed-off-by: Yueyang Pan <pyyjason@gmail.com>
 ---
- mm/damon/ops-common.c |  9 +++++++++
- mm/damon/ops-common.h |  2 ++
- mm/damon/paddr.c      | 11 +----------
- 3 files changed, 12 insertions(+), 10 deletions(-)
+ mm/damon/vaddr.c | 103 ++++++++++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 102 insertions(+), 1 deletion(-)
 
-diff --git a/mm/damon/ops-common.c b/mm/damon/ops-common.c
-index 99321ff5cb92..2e3409a6c8a4 100644
---- a/mm/damon/ops-common.c
-+++ b/mm/damon/ops-common.c
-@@ -412,3 +412,12 @@ unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid)
- 
- 	return nr_migrated;
- }
-+
-+bool damos_ops_has_filter(struct damos *s)
-+{
-+	struct damos_filter *f;
-+
-+	damos_for_each_ops_filter(f, s)
-+		return true;
-+	return false;
-+}
-diff --git a/mm/damon/ops-common.h b/mm/damon/ops-common.h
-index 61ad54aaf256..5efa5b5970de 100644
---- a/mm/damon/ops-common.h
-+++ b/mm/damon/ops-common.h
-@@ -21,3 +21,5 @@ int damon_hot_score(struct damon_ctx *c, struct damon_region *r,
- 
- bool damos_folio_filter_match(struct damos_filter *filter, struct folio *folio);
- unsigned long damon_migrate_pages(struct list_head *folio_list, int target_nid);
-+
-+bool damos_ops_has_filter(struct damos *s);
-diff --git a/mm/damon/paddr.c b/mm/damon/paddr.c
-index 53a55c5114fb..0b67d9321460 100644
---- a/mm/damon/paddr.c
-+++ b/mm/damon/paddr.c
-@@ -262,22 +262,13 @@ static unsigned long damon_pa_migrate(struct damon_region *r, struct damos *s,
+diff --git a/mm/damon/vaddr.c b/mm/damon/vaddr.c
+index 87e825349bdf..66ef9869eafe 100644
+--- a/mm/damon/vaddr.c
++++ b/mm/damon/vaddr.c
+@@ -890,6 +890,107 @@ static unsigned long damos_va_migrate(struct damon_target *target,
  	return applied * PAGE_SIZE;
  }
  
--static bool damon_pa_scheme_has_filter(struct damos *s)
--{
--	struct damos_filter *f;
--
--	damos_for_each_ops_filter(f, s)
--		return true;
--	return false;
--}
--
- static unsigned long damon_pa_stat(struct damon_region *r, struct damos *s,
- 		unsigned long *sz_filter_passed)
- {
- 	unsigned long addr;
- 	struct folio *folio;
- 
--	if (!damon_pa_scheme_has_filter(s))
++struct damos_va_stat_private {
++	struct damos *scheme;
++	unsigned long *sz_filter_passed;
++};
++
++static inline bool damos_va_invalid_folio(struct folio *folio,
++		struct damos *s)
++{
++	return !folio || folio == s->last_applied;
++}
++
++static int damos_va_stat_pmd_entry(pmd_t *pmd, unsigned long addr,
++		unsigned long next, struct mm_walk *walk)
++{
++	struct damos_va_stat_private *priv = walk->private;
++	struct damos *s = priv->scheme;
++	unsigned long *sz_filter_passed = priv->sz_filter_passed;
++	struct vm_area_struct *vma = walk->vma;
++	struct folio *folio;
++	spinlock_t *ptl;
++	pte_t *start_pte, *pte, ptent;
++	int nr;
++
++#ifdef CONFIG_TRANSPARENT_HUGEPAGE
++	if (pmd_trans_huge(*pmd)) {
++		pmd_t pmde;
++
++		ptl = pmd_trans_huge_lock(pmd, vma);
++		if (!ptl)
++			return 0;
++		pmde = pmdp_get(pmd);
++		if (!pmd_present(pmde))
++			goto huge_unlock;
++
++		folio = vm_normal_folio_pmd(vma, addr, pmde);
++
++		if (damos_va_invalid_folio(folio, s))
++			goto huge_unlock;
++
++		if (!damos_va_filter_out(s, folio, vma, addr, NULL, pmd))
++			*sz_filter_passed += folio_size(folio);
++		s->last_applied = folio;
++
++huge_unlock:
++		spin_unlock(ptl);
++		return 0;
++	}
++#endif
++	start_pte = pte = pte_offset_map_lock(vma->vm_mm, pmd, addr, &ptl);
++	if (!start_pte)
++		return 0;
++
++	for (; addr < next; pte += nr, addr += nr * PAGE_SIZE) {
++		nr = 1;
++		ptent = ptep_get(pte);
++
++		if (pte_none(ptent) || !pte_present(ptent))
++			continue;
++
++		folio = vm_normal_folio(vma, addr, ptent);
++
++		if (damos_va_invalid_folio(folio, s))
++			continue;
++
++		if (!damos_va_filter_out(s, folio, vma, addr, pte, NULL))
++			*sz_filter_passed += folio_size(folio);
++		nr = folio_nr_pages(folio);
++		s->last_applied = folio;
++	}
++	pte_unmap_unlock(start_pte, ptl);
++	return 0;
++}
++
++static unsigned long damos_va_stat(struct damon_target *target,
++		struct damon_region *r, struct damos *s,
++		unsigned long *sz_filter_passed)
++{
++	struct damos_va_stat_private priv;
++	struct mm_struct *mm;
++	struct mm_walk_ops walk_ops = {
++		.pmd_entry = damos_va_stat_pmd_entry,
++		.walk_lock = PGWALK_RDLOCK,
++	};
++
++	priv.scheme = s;
++	priv.sz_filter_passed = sz_filter_passed;
++
 +	if (!damos_ops_has_filter(s))
- 		return 0;
- 
- 	addr = r->ar.start;
++		return 0;
++
++	mm = damon_get_mm(target);
++	if (!mm)
++		return 0;
++
++	mmap_read_lock(mm);
++	walk_page_range(mm, r->ar.start, r->ar.end, &walk_ops, &priv);
++	mmap_read_unlock(mm);
++	mmput(mm);
++	return 0;
++}
++
+ static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+ 		struct damon_target *t, struct damon_region *r,
+ 		struct damos *scheme, unsigned long *sz_filter_passed)
+@@ -916,7 +1017,7 @@ static unsigned long damon_va_apply_scheme(struct damon_ctx *ctx,
+ 	case DAMOS_MIGRATE_COLD:
+ 		return damos_va_migrate(t, r, scheme, sz_filter_passed);
+ 	case DAMOS_STAT:
+-		return 0;
++		return damos_va_stat(t, r, scheme, sz_filter_passed);
+ 	default:
+ 		/*
+ 		 * DAMOS actions that are not yet supported by 'vaddr'.
 -- 
 2.43.0
 
