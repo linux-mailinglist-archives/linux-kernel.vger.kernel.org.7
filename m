@@ -1,139 +1,143 @@
-Return-Path: <linux-kernel+bounces-754169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754170-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D2E3CB18F39
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:37:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 363B0B18F3E
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:41:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2F838189E2D2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:38:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9BB2177354
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:41:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88501C3C08;
-	Sat,  2 Aug 2025 15:37:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53EE81C3C08;
+	Sat,  2 Aug 2025 15:41:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="XAtq+/GB"
-Received: from mail-io1-f53.google.com (mail-io1-f53.google.com [209.85.166.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hvw+/6xR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CDA519CC3D
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 15:37:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EBF91A5BBE;
+	Sat,  2 Aug 2025 15:41:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754149056; cv=none; b=Xtt4/iUGtXJ7UaR208X5AOUEFsEvTRDWrmMzp8UL+ZVby+3TkCGtxHXBpFsUZd1Z57PcPrzRnBy3ltCM1mVdesJBcjO+am6QLptxeuXE+DIdsnz2ggiXNHmy2S86qjtXZIM7xQwX4gVE0cJYMYm0lmQgVRVgaqe1AUf242SgajA=
+	t=1754149271; cv=none; b=i5sXdnx0C+ePSW3tmHpsZ5Ebg8/3pDQ676nbMYHwUmNg0aOugSvyHxcX8NzpemEpO20bhNsKj4a3AhapTfwXNFBE+LZe6kljYtrzfriTuhaQQ2MfEAhTQ98WpfA1AZ+VoEplmvpOkyYB/LETevsQh5AcPUyJ2tBCHUq3Q/85weU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754149056; c=relaxed/simple;
-	bh=r5BclxiNA2oHNLLunK2Td77xpt9TQVXBaWGBfY2UqXo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FTf2UGDBhKRBG0UOggtFnz+tpgiNPECAKDj1dtGJPVG4+63JOs139fxRCAqrKYhfnWUpZUtPzu30Sp2IE+vkw5zcrSVugtALjwUOiPpNNaMUcDN2lGp8FT4DdbWNySMizvjG+S79iMndSX52yLp6Me2cskkZPRX/GdLRm27DIJk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=XAtq+/GB; arc=none smtp.client-ip=209.85.166.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f53.google.com with SMTP id ca18e2360f4ac-87999c368e9so166611939f.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 08:37:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1754149053; x=1754753853; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
-        b=XAtq+/GB1qOsAPi1C1uMNsjlNdZG0pY91Tuo705P0vGIeCQ2ulLYjILvL6u8an64XW
-         rF1c+hh6bg3MQp1hMdn5SUGZG/+h1TQUxrcGGbbxJdVbrlW46NNO55I+YkQQ/w4hORQt
-         qjVdHGYrbYwud7y2nlnTP2u5/pgvltTQaXSMDlvEvc2pmFZ20D9JNEfj3Okk3g0ib561
-         5H9q4VfwETJ3a8wgyMOjxv2U/CtiHeiNOAnAdzdAZKyRkeMvv3pQ+g74PKVIHPJSq/0L
-         NY8/Qt+8y+HWtwlCkTQu5HkKlO+Jltnv4DzKXi5T2QkrjwjfirlHberh3j4/ZUnwHVj5
-         2PkA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754149053; x=1754753853;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=04FKV/5jxBcAoTht60UjROgiF7iSlnQp8Ncc9Cilojs=;
-        b=F4M6fOxwMLAyKPNKU23tTq7UCYGvtK0PynVKhVsO/3C8SbaQTal7icyEDoQlHfSwMi
-         AKEjErR3GpzZs7e+BtxFboK6id0OWIMBYr5gWhC+Vl9jorXp+ShVxJu7a4nXUiSF8mvv
-         9dzhmfYBHbluCax+y0/opwhjNYS1kfpDqLMt+lRXke71QvRm5EoEM/3OwbgXaypMOhZZ
-         hkX6EzHVkAVKx1gjaQnMm6JFsAirtinK9kAgvrcumh7XYOt2fOzJmfOSCxlluVXnM/Pt
-         oj54tigeu/C9ENvaeyIxhWIEIQg42dgdBF8e8sQsbfxA/FY+RPFjc4A9jf8tDR51d3qD
-         Uy8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRNC0ltOJ1CD1JCziuEh7Rn7RaFhaixp8oYDJe3Zwvb1yRk3HNHJooRWbuCIuzpm2p5FF3Ms4xYPIHygM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSCFv/Qek3fkVXzhq63qyhE/mbz3vJ72zJTytiZGki8OrpbyuF
-	+WNf4CcK+6BJ+3obYtkpalcOCkcushJTKhW5oMTf+XWNuO874a4bNKZIp9ycq392cas=
-X-Gm-Gg: ASbGnctYwYSNoT2cAkT5MVBeC30SGdXOQoJRquRA3zc8dqfWpqLJJJTiLbucBplwx7T
-	EqywtYPVMW4gdYl7U4q1Dv17+Me3NMYNlYAmfXOORFw4e9D070lUhnYnS9FdSgirulRRgOllYkp
-	xYngmpriX1HpjP3TSyMtw+NFtLRm+O6VjwassSmPs4YtR3r4LmcpmCO6ciVmUBPyAsL36DFb5fO
-	5TE7KWQGZApE/qqreo7Sro4/yGYopkZNmwgf7YxBpzAPxxVOIR79w0sNByyrWAx4PhDwDLHJyiW
-	1o7MDCDJFPs/pXJaw79x47qysmPRYTGc7swtW1YbYfZGV9/ZdE4oOKn5WG52BtB90WhWwL7cPaR
-	LHmcTPSNe+p4vp/J1/yA=
-X-Google-Smtp-Source: AGHT+IFpKu7HslfN99lpIdPLZvZStogsGBrzGWqBfvd20JQpD1Wdf3nzDTTCR48VUkNyC7cVFYirug==
-X-Received: by 2002:a05:6e02:2382:b0:3df:347f:ff3e with SMTP id e9e14a558f8ab-3e416116d8bmr66728215ab.7.1754149053646;
-        Sat, 02 Aug 2025 08:37:33 -0700 (PDT)
-Received: from [192.168.1.150] ([198.8.77.157])
-        by smtp.gmail.com with ESMTPSA id e9e14a558f8ab-3e40297c3d3sm26117545ab.6.2025.08.02.08.37.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 08:37:32 -0700 (PDT)
-Message-ID: <43716438-2fb9-4377-a4a0-6f803d7b8aec@kernel.dk>
-Date: Sat, 2 Aug 2025 09:37:32 -0600
+	s=arc-20240116; t=1754149271; c=relaxed/simple;
+	bh=Y6YAQtLntvTlOEW+/be99fXZeJ/UoP5+1aG+orwrsxU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=Cq4a8bU9a0DRrhlKNO2Eq6FLZX2DufofmFiDK4h5W/Ixa6UdZoSMJPIomramvZiUy4jizJgrfxyrBwW811nbrUMnu2PG2ONtplp0vLyjdseGx2RnVGMXU8RxNXTXwof88QLUZLyJ1KCU2Zk+3jstFbeZi+zFX4TJD2Fosrt24fY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hvw+/6xR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 764B8C4CEEF;
+	Sat,  2 Aug 2025 15:41:10 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754149271;
+	bh=Y6YAQtLntvTlOEW+/be99fXZeJ/UoP5+1aG+orwrsxU=;
+	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
+	b=hvw+/6xR83WKTCHsOvvN8oU9MCS8cE1YHzb0k4qrITLley6T4I32jTBBX+qUt/fom
+	 XpoxSxIt0u2VLnw8n8Op7bGYv7FrVjTdIYcjdzdf3xiNT7wP8erbfsLjbnvWmg8MnD
+	 VzVc+rok24tglZVLDMjWGg3lO/ouNXbHhCqIdl4tCIx4NXw1Wnrye7AWHbryIib312
+	 bVf/FmggVyQ1sFP8G1L2vuyb19QiZHh40e0AaY/1jdp3fMrKWXmsPXgUkZaoWw4FQA
+	 tg0qRxlngk2RJf9sXyk807cUBqMHBrkUAjgKkR/pkF+kIx+0U3NTrd3sRmwSFvru7k
+	 fJQtEqEjFBW3A==
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 7EA9CF40066;
+	Sat,  2 Aug 2025 11:41:09 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Sat, 02 Aug 2025 11:41:09 -0400
+X-ME-Sender: <xms:lTGOaFnxO6zGR-02SXy5y_K6L2AR-xsQbj7PKcgwK69w9AzOdTfjiA>
+    <xme:lTGOaA3VXSSrjtx_QU_FeNp0-beF0HZW9Fj2b14cJmzVYCFdoTrgoJTsLvN1FGzTF
+    jZ38iWUG1MBQlpyQJY>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdeileeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusehkvghrnhgvlhdrohhrgheqnecuggftrfgrth
+    htvghrnhepjeejffetteefteekieejudeguedvgfeffeeitdduieekgeegfeekhfduhfel
+    hfevnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprg
+    hrnhguodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhithihqdduvdekhedujedtvdeg
+    qddvkeejtddtvdeigedqrghrnhgupeepkhgvrhhnvghlrdhorhhgsegrrhhnuggsrdguvg
+    dpnhgspghrtghpthhtohepvddtpdhmohguvgepshhmthhpohhuthdprhgtphhtthhopedu
+    kedvheehuddujeduheelseduieefrdgtohhmpdhrtghpthhtohephhgrnhhsrdiihhgrnh
+    hgsegtihigthgvtghhrdgtohhmpdhrtghpthhtohepjhhinhhgohhohhgrnhdusehgmhgr
+    ihhlrdgtohhmpdhrtghpthhtohepsghhvghlghgrrghssehgohhoghhlvgdrtghomhdprh
+    gtphhtthhopehhvghlghgrrghssehkvghrnhgvlhdrohhrghdprhgtphhtthhopehksghu
+    shgthheskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepkhifihhltgiihihnshhkiheskh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhpihgvrhgrlhhishhisehkvghrnhgvlhdr
+    ohhrghdprhgtphhtthhopehmrghniheskhgvrhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:lTGOaD-rPMyo0QjsQ2Jsx7KBLa1zkO1rgl-ASN-p4TIojJhsUUvThA>
+    <xmx:lTGOaGDHgcwiXpIFvc_YrLvA33cqumGwX0wbmy-ghhzuhYXZQOMW-A>
+    <xmx:lTGOaNt6Gs-9PAlOuzdoROiR3z2dUBMq6CnThjoLNWje4hZRbtTkVg>
+    <xmx:lTGOaOGJQhwMn1vyXAdNnS6dlv5nD12BpZasv7IKzb-F7Tj7D1hIzw>
+    <xmx:lTGOaA_iaR9QTsCx-qO_Gt6n5-LKs6Kl-ITUtr_DdBb2nZPiplQN-S-V>
+Feedback-ID: i36794607:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 4B0EE700069; Sat,  2 Aug 2025 11:41:09 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/7] direct-io: even more flexible io vectors
-To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
- linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: snitzer@kernel.org, dw@davidwei.uk, brauner@kernel.org,
- Keith Busch <kbusch@kernel.org>
-References: <20250801234736.1913170-1-kbusch@meta.com>
-Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <20250801234736.1913170-1-kbusch@meta.com>
-Content-Type: text/plain; charset=UTF-8
+X-ThreadId: Tea76caf5b1f73f76
+Date: Sat, 02 Aug 2025 17:40:28 +0200
+From: "Arnd Bergmann" <arnd@kernel.org>
+To: "Hans Zhang" <18255117159@163.com>, "Keith Busch" <kbusch@kernel.org>
+Cc: "Gerd Bayer" <gbayer@linux.ibm.com>,
+ "Manivannan Sadhasivam" <mani@kernel.org>,
+ "Hans Zhang" <hans.zhang@cixtech.com>, "Bjorn Helgaas" <helgaas@kernel.org>,
+ bhelgaas@google.com, "Alexander Gordeev" <agordeev@linux.ibm.com>,
+ "Christian Borntraeger" <borntraeger@linux.ibm.com>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ jingoohan1@gmail.com,
+ =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
+ linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+ linux-next <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org,
+ "Lorenzo Pieralisi" <lpieralisi@kernel.org>, "Rob Herring" <robh@kernel.org>,
+ "Niklas Schnelle" <schnelle@linux.ibm.com>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>
+Message-Id: <07739ab9-4e34-430c-ac1d-d1f370baccea@app.fastmail.com>
+In-Reply-To: <d2240ab0-5d91-4b41-945f-e29b40f7b7f4@163.com>
+References: <20250731183944.GA3424583@bhelgaas>
+ <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
+ <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
+ <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
+ <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
+ <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
+ <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
+ <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
+ <659b8389-16a7-423b-a231-5489c7cc0da9@163.com> <aI0CupiFvyOvgNQY@kbusch-mbp>
+ <d2240ab0-5d91-4b41-945f-e29b40f7b7f4@163.com>
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+Content-Type: text/plain
 Content-Transfer-Encoding: 7bit
 
-On 8/1/25 5:47 PM, Keith Busch wrote:
-> From: Keith Busch <kbusch@kernel.org>
-> 
-> In furthering direct IO use from user space buffers without bouncing to
-> align to unnecessary kernel software constraints, this series removes
-> the requirement that io vector lengths align to the logical block size.
-> The downside (if want to call it that) is that mis-aligned io vectors
-> are caught further down the block stack rather than closer to the
-> syscall.
+On Sat, Aug 2, 2025, at 17:23, Hans Zhang wrote:
+> On 2025/8/2 02:08, Keith Busch wrote:
+>> On Sat, Aug 02, 2025 at 12:54:27AM +0800, Hans Zhang wrote:
+>>>
+>>> 		*value = (type)data;					\
+>>>
+>>> And this function. Could it be that I misunderstood something?
+>> 
+>> The above macro retains the caller's type for "value". If the caller
+>> passes a "u8 *", the value is deferenced as a u8.
+>
+> In this macro definition, bus->ops->read needs to ensure the byte order 
+> of the read, as Lukas mentioned; otherwise, there is also a big-endian 
+> issue at this location.
 
-That's not a downside imho, it's much nicer to have the correct/expected
-case be fast, and catch the unexpected error case down the line when we
-have to iterate the vecs anyway.
+No, there is no endianness problem here, the problem with casting
+the pointer type like
 
-IOW, I love this patchset. I'll spend some time going over the details.
-Did you write some test cases for this?
+      u32 *value;
+      *(type *)value = data;
 
-> This change also removes one walking of the io vector, so that's nice
-> too.
-> 
-> Keith Busch (7):
->   block: check for valid bio while splitting
->   block: align the bio after building it
->   block: simplify direct io validity check
->   iomap: simplify direct io validity check
->   block: remove bdev_iter_is_aligned
->   blk-integrity: use simpler alignment check
->   iov_iter: remove iov_iter_is_aligned
-> 
->  block/bio-integrity.c  |  4 +-
->  block/bio.c            | 58 +++++++++++++++++---------
->  block/blk-merge.c      |  5 +++
->  block/fops.c           |  4 +-
->  fs/iomap/direct-io.c   |  3 +-
->  include/linux/blkdev.h |  7 ----
->  include/linux/uio.h    |  2 -
->  lib/iov_iter.c         | 95 ------------------------------------------
->  8 files changed, 49 insertions(+), 129 deletions(-)
+or any variation of that is is that it only writes to the first
+few bytes of *value, and that introduces both the observed endianess
+problem and possibly worse uninitialized data usage or out-of-bounds
+stack access.
 
-Now that's a beautiful diffstat.
-
--- 
-Jens Axboe
+      Arnd
 
