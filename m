@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-753978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AAC56B18B26
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:46:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164DBB18B2C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:49:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 892EF562572
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:46:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 80ED81AA28CA
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:49:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2678C1EF39F;
-	Sat,  2 Aug 2025 07:46:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EFE01F17EB;
+	Sat,  2 Aug 2025 07:49:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GZNQ+2xO"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="haxEe9CO"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78EBEB672;
-	Sat,  2 Aug 2025 07:46:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9924B672;
+	Sat,  2 Aug 2025 07:49:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754120811; cv=none; b=YYd2auO1uOrNQe8LLIFHG0tg8NQSzbCIadM9O2NYfp6DJ1qkKzV6UoFGwt1glpbkkvF82NopFHeox66Mdfyrh/Q4aFSlns1dRUcTXvJuOopwSjT/qKwkUZsCZrrHXyq38lidgfUJyWnOrOwzAki+OGqXHKEnjz55H9d4yz19VF0=
+	t=1754120957; cv=none; b=KZgfen9IMo2c0l9ImVzjvcLTMs++Gd9WSo1V0tvD44R+yTAViGPTrF2sBdnLIkZtkNBqDP2ID2AQzv02qJ2Bzyh5R09YcvA3U3SpPXZ4SoogRWdlMktuHh30iO2x/qWzTZ6hk/kWfOBwwcvE12peokP9X0XTxB/cMb8WQ9au5no=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754120811; c=relaxed/simple;
-	bh=1WJAinfeeDWEukuQDOnUiyWJh3UHki1kqjbMfoKbqY4=;
+	s=arc-20240116; t=1754120957; c=relaxed/simple;
+	bh=j/x0lvRC01nhS+mjeoGyX9G8P1Xp8IfgG3dxRtTDwx4=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZXx7VXHHq/XJCY2dmaWzipA+AZIozcPyJ7z/XLMtnxy49P2/VEMsJI0Koz4wcXBfR4xBS4C1sO3nNGXtqW7RzG2crUFIo/RJ41EqUXvDEaesyTHdoYVcRmrbPyyFiLrDqtwsfLIxYDWT5xcU1zUlHGgc/+O4tuv+UKorP5qjJdc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GZNQ+2xO; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B2614C4CEEF;
-	Sat,  2 Aug 2025 07:46:48 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=cywlgpN0DVdOO0tQbkxwD+Yqiflq8502UwHnAg84Kc5qsYEAIDrkoql1Gmt6hCg7EOA+wlOa0/zQ2TzsSRyyz26EamUT6OD+EBp1u6JXkpMHR+D9hGzP+mh4bg391JKkfDHx8rBvGL6704LUImRRvTW6RrFruzjk+VoYmWi9naI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=haxEe9CO; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFD1FC4CEF6;
+	Sat,  2 Aug 2025 07:49:14 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754120811;
-	bh=1WJAinfeeDWEukuQDOnUiyWJh3UHki1kqjbMfoKbqY4=;
+	s=k20201202; t=1754120957;
+	bh=j/x0lvRC01nhS+mjeoGyX9G8P1Xp8IfgG3dxRtTDwx4=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=GZNQ+2xO89E2dJYLDdweOaiYm0b6XiV5aF5ZURhubAaexu6g6JAIDm17MBgoA52H9
-	 xm9yW/ytukt5nuiDYA97Empn9eAcZwgkEVhoBd2GC5dvd470kMZWTh/3hpPPKTJ4Sa
-	 kh2b3JpfJ1OXp0JWf0yAY5DGuT16cS/AR+vEhRA/f1Pnp0neHBgyrw9a4mMyABce1g
-	 bDi7Ax/GBNp3534yMVJOWTetVpoDjH6/oy3Ka/f+Kl5Uxx76gFgdf/7IPYrkJlOA27
-	 6Ri7fhLXkf5+PSocPvIkyzZhtwX8J+F7b0Rb/Ag0rz+JMDYezQ/ShdGR7VTGfDFyPw
-	 oMYvZHx3zCZlA==
-Message-ID: <267b2d6c-468d-4bff-ac06-c6755706a398@kernel.org>
-Date: Sat, 2 Aug 2025 09:46:46 +0200
+	b=haxEe9COlIf+vjf0BXm4zJksjCjc58hu/geo+wadRXs+X+zDd7ZWRchB9KxTE2HKz
+	 a2tXWdUdQ0UbcC/lVaUc6kZ0Etvhcy8zx29vdRpkrNrmi3xXcvRuzkFDGArnDLMq6N
+	 kFcpc5bhBIndls27RCCAL27eoa7MDsMnjRzLoLD0PKgXFu+LlzLD/1RL1g7PQhKQ2+
+	 /OtObR9PqM82ooBLmKL0PvF8hoi0FLGQ/6JWrHyiffJ3YNxWN1qakJzkCloeEZRw4R
+	 XuApfzBQqHkE38N3Ors/No0NF/eoSRU6tI1g5a0JtP9ADgglUeEebxZum24XAXK6lE
+	 0n/0phuf2FWKA==
+Message-ID: <551e85b1-e0aa-4d0b-a532-ec670bd055a2@kernel.org>
+Date: Sat, 2 Aug 2025 09:49:13 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,8 +49,8 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 1/2] dt-bindings: arm: qcom: Add bindings for Monaco
- EVK
+Subject: Re: [PATCH V2 0/2] Introduce initial support for Monaco Evaluation
+ Kit
 To: Umang Chheda <umang.chheda@oss.qualcomm.com>,
  Bjorn Andersson <andersson@kernel.org>,
  Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
@@ -58,7 +58,6 @@ To: Umang Chheda <umang.chheda@oss.qualcomm.com>,
 Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
  linux-kernel@vger.kernel.org
 References: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
- <20250801163607.1464037-2-umang.chheda@oss.qualcomm.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -104,28 +103,33 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250801163607.1464037-2-umang.chheda@oss.qualcomm.com>
+In-Reply-To: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
 On 01/08/2025 18:36, Umang Chheda wrote:
-> From: Umang Chheda <uchheda.chheda@oss.qualcomm.com>
+> This series:
 > 
-> Introduce new bindings for the Monaco Evaluation Kit (EVK),
-> an IoT board based on the QCS8300 SoC.
+> Add support for Qualcomm's Monaco Evaluation Kit (EVK) without
+> safety monitoring feature of Safety Island(SAIL) subsystem.
+> This board is based on Qualcomm's QCS8300 SoC.
 > 
-> Signed-off-by: Umang Chheda <umang.chheda@oss.qualcomm.com>
-> ---
->  Documentation/devicetree/bindings/arm/qcom.yaml | 1 +
->  1 file changed, 1 insertion(+)
+> Monaco EVK board is a single board computer (SBC) that supports various
+> industrial applications, including factory automation, industrial
+> robots, drones, edge AI boxes, machine vision, autonomous mobile
+> robots (AMRs), and industrial gateways.
+> 
+> Below are detailed informations on monaco-evk HW:
+> ------------------------------------------------------
+> monaco-evk is single board supporting these peripherals:
+>   - Storage: 1 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
+>     eMMC on mezzanine card
+>   - Audio/Video, Camera & Display ports
+>   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
+>   - PCIe ports
+>   - USB & UART ports
 
-This is v2, so where is any changelog?
-
-
-A nit, subject: drop second/last, redundant "bindings for". The
-"dt-bindings" prefix is already stating that these are bindings.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+This belongs to one of the commit messages, not cover letter.
 
 Best regards,
 Krzysztof
