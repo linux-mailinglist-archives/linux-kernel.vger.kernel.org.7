@@ -1,197 +1,302 @@
-Return-Path: <linux-kernel+bounces-753956-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753957-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F0180B18AA7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90E8DB18AB4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:37:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5CC791AA4A1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:13:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D21093AF176
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 04:37:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87BC51C84B2;
-	Sat,  2 Aug 2025 04:12:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3CDF1DC198;
+	Sat,  2 Aug 2025 04:36:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b="L+QSlnhy"
-Received: from mail-il1-f174.google.com (mail-il1-f174.google.com [209.85.166.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="kU3NYI04"
+Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB51315C158
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 04:12:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42D7A182D0
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 04:36:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754107953; cv=none; b=cUjmUm2yTAN4fLaPlCFhYWTXQIYmdSVagTrehSjIYft+UOCzwbTRuHcORbF/2RMJsW9nloyRehNu02VhfSQLPg4EurEN2g73KXaS6RFKDzFKPyTRpC03kNwzKtM23kN1d+fEYiun/JdSumD52lsVS0lYvFv1VkMvv5evC06PK94=
+	t=1754109418; cv=none; b=e0u6q9NlsartJv0/QySkGd7NWfHneTnwF9XCVI0jGYhjKunvfOpZTzfcuW+e6EgeD9UzslEbC0EGtcm/W7vSrPexhT1bA44COE67yvNN2YSr9M7vigufHlHzdI8d4D26aaOZrmlFUbvef0R4Lbd9Xp5B0YiLVZwACmWmNtX1uNI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754107953; c=relaxed/simple;
-	bh=jiSy6EgaRG9Ud8aFoKJwA0IhJhNFA8CwUL0Sj/LVdWg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WyBlFvGrC4BIanj9gF1vGJ6c+boMHeQuuOev4H9iV2V4JOUey6iHcRuJ0WhAvIMqeglp9fjrhnWXAZhT6w6tIIlElmAHxJRR+P2qjpuQuHb5MTtSzU30sr1Wp/qSpZUYpWa/G0LAZKnnlOUwvd1mSzRERmsjo97mAJ4alcfUswA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com; spf=pass smtp.mailfrom=sifive.com; dkim=pass (2048-bit key) header.d=sifive.com header.i=@sifive.com header.b=L+QSlnhy; arc=none smtp.client-ip=209.85.166.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=sifive.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sifive.com
-Received: by mail-il1-f174.google.com with SMTP id e9e14a558f8ab-3e406ca2d22so7930155ab.1
-        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 21:12:31 -0700 (PDT)
+	s=arc-20240116; t=1754109418; c=relaxed/simple;
+	bh=elSBq3vYF2Q/YQxQOz0WjVMGlFbN3xmoIcx97Tm2TwI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cYEUnaUwei6eEza3K8N7R9TQ8m1t4sEn3YEYzvP5hwIMsmaqtv/Zu/Mc+Svxj2sp0WxxhrweZ8e3l9XBg6tnHBo+C7XNNSY760gyQdC6gTgyzbKysk4K5ePXFIhE38Bvcvc4RpnijuU5dGa9ESFuaCQxXqd4tgGjv/S3ce+7Wxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=kU3NYI04; arc=none smtp.client-ip=209.85.128.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-71a39f93879so39697397b3.0
+        for <linux-kernel@vger.kernel.org>; Fri, 01 Aug 2025 21:36:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=sifive.com; s=google; t=1754107951; x=1754712751; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ip2rHPlCiGFGcr5YGyF7kmeRLuJtKeayor/PNig1fgE=;
-        b=L+QSlnhy6ypqQOWBUSQhU9qaWdi+P2lVkRTeDvbiXhEVh1j8gr3vZ4bo/wovMmrpkm
-         edSpm3fhBnetYfo+t4SKySHWSScwW6IFkj6AeE5KiuJ657Ibw9X37WWeuzJEiquet8Zx
-         osRZ8esPNb5PSu6npexUrUO7PzkNP8f5KsKNqNdp9Sd8a8lHmI1bgw5/aMddsSIy1q8i
-         gl2NuOHISk4Y4OSGu6GL1iIIYvJGNx3cDUTW9y8l6N1AHOBtJPOTg0/QDgDQ/88Ny/Vr
-         ARUvI1dtpBKGxiXUmBbtVOtGrauDCFUpTnG/jP1UE6fAIEmqwmQyy3YaWIX91H5aBaZA
-         tJaw==
+        d=linaro.org; s=google; t=1754109415; x=1754714215; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dpxdVaZT3ggTcwknhmogVGgx1QkratO9Z6FQeGJw1EM=;
+        b=kU3NYI04ZD8g04FP1iCRAiM/A6mPL4tMCeSlwC4aVJGBSa/g6pXoBo6SqPmXfFz/CM
+         lo9g6v4kp4lDzd5R5wEGX6DPpt4ArMhPgKUVdlYm0KMcJcHjpsx13UkiemxeEzQKz64n
+         pZP19K6/bueoTlgdILqZmex3+rMlb170le1xmn9aQ+tDd84n6WQJ3eSAFrJMoKmMuZCm
+         /pq6pW9X8VBhcZfqhiGR06+fbzf+5mXo5Bn8/wsssHYDpTbWe71IN8gc6Xz6a9xKy35G
+         jS2WfcFl7qJKkXZ7fH3pj/9HZkYTNyV+aHFjTA3szv2bJs/q4r1fZjpVaOl9YbSmtYbp
+         n+4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754107951; x=1754712751;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=ip2rHPlCiGFGcr5YGyF7kmeRLuJtKeayor/PNig1fgE=;
-        b=P+IEuvwt5SU2wvNp0FWKHz2QhFkHcqRJN7JJIhRDC011Fg244pE+sZrgKot5trCfK9
-         tQkdTpk6YAyDs9nwxcza+hqnLtzujrejiVt6s3oTfL1AE3yQ3ivq3Iw5fCWlsnK3F7AM
-         EtZfm/yFplNyZVDX1xLAOuRp9XGkQz7f6X+GX+9m9mvvHWXdVChkauxx2z/pkV1Z/sMu
-         zE8eU0WenMPrhbGAJfQaXab0XcBIBIWSll1kjynQf7xuqXkg/bVaJbxesRGNAajM7BTh
-         3Q8biW2EWtpePjDQ9SFBGVLbJKj4ECbwoCwT0R/nM2zfEvJL/qR0KTyiwfW4Wkk6hE4h
-         zzIg==
-X-Forwarded-Encrypted: i=1; AJvYcCWaZK0x8RgndSspF60b3/CDFTKjH00R3bAKuyzLw+xFr4gj7tRlo3FHYzc+0bmtFwFgwOLjYhXwW0gFyrg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwDzMKfBdsdN4NKWTTqwzPxZs7GdnuQplqYTaywj5UfdTjOMUt6
-	bmOZ8Sh3c97AjHk4WbMaLstiTIuN4bpyTUNKwjUeKWEuMs4tHU9ACZHu88VcDmIQ2f8=
-X-Gm-Gg: ASbGncsgpV6uiHgRt0DdVH4DYTGFnEEdA++KgpwSE2pzZZ5pU9NbzxWMqlmddBWnFmV
-	xv8hh9p+94eabT3UwmBZIWARRPUp/ZclQXceEsGPNHZbvfntSk2774i4EexaaAZv2OXtSLhnpuI
-	2tMKQ4wiATFOi5iK84AT1QX20wRxHsCdjOcuySMVooL2jXvrY+P+vgs2ne8N7CafIUHYH3Qlwes
-	3JxJ37gdiaJjVRxgoSILHGGDDjWTQiFH2USuuEqonarlmOMVXo/OIPFRitHoP690F+xZhInquJX
-	DN2Q21cu1U+cvKjWE+Golwxb9bwsLisVfXtFSNk8GsroZGA8jk4JWJXckW4+P96cpVJ+mkp1E3M
-	UeUMXk3QY5cEZWT3C85WNyno8M39j1TrZ1ui+VfkiSq5QVF+b
-X-Google-Smtp-Source: AGHT+IFWXv/meUt6qnzrJTilZJBXyZAntv/HisFVx8CQALlAxTer9z3pL9Su5iQx9S/dGPdOHi5YGA==
-X-Received: by 2002:a05:6e02:2487:b0:3e3:b6ab:f869 with SMTP id e9e14a558f8ab-3e416191ba5mr36293525ab.13.1754107950776;
-        Fri, 01 Aug 2025 21:12:30 -0700 (PDT)
-Received: from [100.64.0.1] ([170.85.11.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55d5da1csm1652544173.65.2025.08.01.21.12.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Fri, 01 Aug 2025 21:12:30 -0700 (PDT)
-Message-ID: <612a13d3-d3a6-460b-90fd-c26e47b80711@sifive.com>
-Date: Fri, 1 Aug 2025 23:12:28 -0500
+        d=1e100.net; s=20230601; t=1754109415; x=1754714215;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dpxdVaZT3ggTcwknhmogVGgx1QkratO9Z6FQeGJw1EM=;
+        b=FZJ+9MlliV9Rh2R8GaOgmpr5r9LcSP1bZCESDsMq5aFOry5GlW4WxszCHI9dy+EsGV
+         U+r160MLpoqNj8a1h+mBnAM1RPOuVwpIGrOtIzuXMsNki/IJEYqYQdVTRLzaAYjaXlLu
+         ddPIpMDOviT9MZsZ+bAySsVFzHDp2rh1Hr8vWT4yS5ZFN7ym74a5MhieHNIqSaFqH/ib
+         BKgza156P+RK1Ol1n4rk79uKnkroRIRQuTrblwtkJ+1N47+pw/a/Rwx3+4WqW4Bt+vPd
+         7DbzhxO+oBv4wZ1STHvQry6DXECHxlncvXHH0T+4i1A1BzTqD7CEXPefcMcIWJlDRfIq
+         xUsw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRX/bKv40D55H8p0CPk6py4CPTz4aRfEs4VNaPnXxD7f3bjcbjsN7FOQwGlE2bv1UGwk24wjvicb8enBA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjlAeOAapEaRppBt/H+bkXQrcXEaNcmK0YOwVKh3uNbcSTFhGr
+	UWG5C6ZqviMK529v91axtBDc5z8Dm7tt5CmLiMQIhBflmjWZyL8aR/JCP+boU0T9yVBzlWLRlky
+	kC9E1gqi+DMUnO+kPz0U/FJPvVjre2mNbUdDndch8lQ==
+X-Gm-Gg: ASbGncvBa/sLbl3rf+FZj4kLPKlRxOvntfKJ/Wl2/Am7QsIuKCBlOA5JkFNGdLH0KZo
+	RoJVgbZkIXvMiKNKyXUBCrMmyKeUE5l100m5DhvW/ML+VApO07IdfxOIQs8PagGm8jG1+fM3nHK
+	/ruuCnAtbaH0pRGunp8yBIvolfkNnMY57bwI1CyTAy2mAlnGMu6uuK1RG/ly1lQd5scyB8u0KIT
+	dsxoA==
+X-Google-Smtp-Source: AGHT+IGvyU2/m5mcNXoIxo2H4bSkhxZ4X2l1B3N+OEYonJy6sNo7cQul9ylw34vrCJlg2gEXDNbyOXxChcvqz/OtoKE=
+X-Received: by 2002:a05:690c:a088:10b0:70e:404f:6714 with SMTP id
+ 00721157ae682-71b5a8d640fmr80202237b3.19.1754109415216; Fri, 01 Aug 2025
+ 21:36:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v9 02/24] dt-bindings: mailbox: Add bindings for RISC-V
- SBI MPXY extension
-To: Anup Patel <apatel@ventanamicro.com>
-Cc: Palmer Dabbelt <palmer@dabbelt.com>,
- Paul Walmsley <paul.walmsley@sifive.com>, Alexandre Ghiti <alex@ghiti.fr>,
- Len Brown <lenb@kernel.org>, Sunil V L <sunilvl@ventanamicro.com>,
- Rahul Pathak <rpathak@ventanamicro.com>,
- Leyfoon Tan <leyfoon.tan@starfivetech.com>,
- Atish Patra <atish.patra@linux.dev>, Andrew Jones <ajones@ventanamicro.com>,
- Anup Patel <anup@brainfault.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-acpi@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org,
- Conor Dooley <conor.dooley@microchip.com>,
- Michael Turquette <mturquette@baylibre.com>, Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Jassi Brar <jassisinghbrar@gmail.com>,
- Thomas Gleixner <tglx@linutronix.de>, "Rafael J . Wysocki"
- <rafael@kernel.org>, Mika Westerberg <mika.westerberg@linux.intel.com>,
- Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
- Linus Walleij <linus.walleij@linaro.org>, Bartosz Golaszewski
- <brgl@bgdev.pl>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-References: <20250728094032.63545-1-apatel@ventanamicro.com>
- <20250728094032.63545-3-apatel@ventanamicro.com>
-From: Samuel Holland <samuel.holland@sifive.com>
-Content-Language: en-US
-In-Reply-To: <20250728094032.63545-3-apatel@ventanamicro.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <CGME20250724081337epcas2p31f594b6e9ab87e24c94f11dea4070956@epcas2p3.samsung.com>
+ <20250724080854.3866566-1-sw617.shin@samsung.com> <20250724080854.3866566-4-sw617.shin@samsung.com>
+In-Reply-To: <20250724080854.3866566-4-sw617.shin@samsung.com>
+From: Sam Protsenko <semen.protsenko@linaro.org>
+Date: Fri, 1 Aug 2025 23:36:44 -0500
+X-Gm-Features: Ac12FXypoGhwaCr-zezDkh9lDEjeLpymS8fUEtxXp0UPR8OQmiwsykO4dBxTXtU
+Message-ID: <CAPLW+4mo-Fw5+KmwHdZGAM4uNpOWL6QakTgP-wMSxR=+dMGqsQ@mail.gmail.com>
+Subject: Re: [PATCH v4 3/4] watchdog: s3c2410_wdt: Increase max timeout value
+ of watchdog
+To: Sangwook Shin <sw617.shin@samsung.com>
+Cc: krzk@kernel.org, alim.akhtar@samsung.com, wim@linux-watchdog.org, 
+	linux@roeck-us.net, khwan.seo@samsung.com, dongil01.park@samsung.com, 
+	linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Anup,
-
-On 2025-07-28 4:40 AM, Anup Patel wrote:
-> Add device tree bindings for the RISC-V SBI Message Proxy (MPXY)
-> extension as a mailbox controller.
-> 
-> Reviewed-by: Conor Dooley <conor.dooley@microchip.com>
-> Signed-off-by: Anup Patel <apatel@ventanamicro.com>
+On Thu, Jul 24, 2025 at 3:13=E2=80=AFAM Sangwook Shin <sw617.shin@samsung.c=
+om> wrote:
+>
+> Increase max_timeout value from 55s to 3664647s (1017h 57min 27s) with
+> 38400000 frequency system if the system has 32-bit WTCNT register.
+>
+> cat /sys/devices/platform/10060000.watchdog_cl0/watchdog/watchdog0/max_ti=
+meout
+> 3664647
+>
+> [    0.302473] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: count=3D1099=
+394100000, timeout=3D3664647, freq=3D300000
+> [    0.302479] s3c2410-wdt 10060000.watchdog_cl0: Heartbeat: timeout=3D36=
+64647, divisor=3D256, count=3D1099394100000 (fff8feac)
+> [    0.302510] s3c2410-wdt 10060000.watchdog_cl0: starting watchdog timer
+> [    0.302722] s3c2410-wdt 10060000.watchdog_cl0: watchdog active, reset =
+enabled, irq disabled
+>
+> If system has 32-bit WTCNT, add QUIRK_HAS_32BIT_MAXCNT to its quirk flags=
+, then
+> it will operation with 32-bit counter. If not, with 16-bit counter like p=
+revious.
+>
+> Reviewed-by: Alim Akhtar <alim.akhtar@samsung.com>
+> Signed-off-by: Sangwook Shin <sw617.shin@samsung.com>
 > ---
->  .../bindings/mailbox/riscv,sbi-mpxy-mbox.yaml | 51 +++++++++++++++++++
->  1 file changed, 51 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-> new file mode 100644
-> index 000000000000..061437a0b45a
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/riscv,sbi-mpxy-mbox.yaml
-> @@ -0,0 +1,51 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/riscv,sbi-mpxy-mbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: RISC-V SBI Message Proxy (MPXY) extension based mailbox
-> +
-> +maintainers:
-> +  - Anup Patel <anup@brainfault.org>
-> +
-> +description: |
-> +  The RISC-V SBI Message Proxy (MPXY) extension [1] allows supervisor
-> +  software to send messages through the SBI implementation (M-mode
-> +  firmware or HS-mode hypervisor). The underlying message protocol
-> +  and message format used by the supervisor software could be some
-> +  other standard protocol compatible with the SBI MPXY extension
-> +  (such as RISC-V Platform Management Interface (RPMI) [2]).
-> +
-> +  ===========================================
-> +  References
-> +  ===========================================
-> +
-> +  [1] RISC-V Supervisor Binary Interface (SBI) v3.0 (or higher)
-> +      https://github.com/riscv-non-isa/riscv-sbi-doc/releases
-> +
-> +  [2] RISC-V Platform Management Interface (RPMI) v1.0 (or higher)
-> +      https://github.com/riscv-non-isa/riscv-rpmi/releases
-> +
-> +properties:
-> +  compatible:
-> +    const: riscv,sbi-mpxy-mbox
-> +
-> +  "#mbox-cells":
-> +    const: 2
-> +    description:
-> +      The first cell specifies channel_id of the SBI MPXY channel,
-> +      the second cell specifies MSG_PROT_ID of the SBI MPXY channel
 
-What is the purpose of the second mailbox cell?
+Not a strong point, but I'd break this patch into two:
+  1. Add 32-bit counter feature (without enabling it in exynosautov920
+implementation)
+  2. Enable 32-bit counter feature in exynosautov920
 
-The client can probe the message protocol using a SBI call, if it doesn't just
-assume a protocol based on the kind of node that references this mailbox. The
-SBI implementation knows the message protocol from the kind of node that
-instantiates the channel (for example riscv,rpmi-mpxy-clock has
-riscv,sbi-mpxy-channel-id). So this cell looks redundant.
+>  drivers/watchdog/s3c2410_wdt.c | 27 +++++++++++++++++++--------
+>  1 file changed, 19 insertions(+), 8 deletions(-)
+>
+> diff --git a/drivers/watchdog/s3c2410_wdt.c b/drivers/watchdog/s3c2410_wd=
+t.c
+> index 31f7e1ec779e..184b1ad46ca6 100644
+> --- a/drivers/watchdog/s3c2410_wdt.c
+> +++ b/drivers/watchdog/s3c2410_wdt.c
+> @@ -34,6 +34,7 @@
+>  #define S3C2410_WTCLRINT       0x0c
+>
+>  #define S3C2410_WTCNT_MAXCNT   0xffff
 
-Regards,
-Samuel
+Suggest renaming this to S3C2410_WTCNT_MAXCNT_16, to emphasize the
+fact this value is for 16-bit counters. And for consistency with the
+below one.
 
+> +#define S3C2410_WTCNT_MAXCNT_32        0xffffffff
+>
+>  #define S3C2410_WTCON_RSTEN            BIT(0)
+>  #define S3C2410_WTCON_INTEN            BIT(2)
+> @@ -123,6 +124,10 @@
+>   * %QUIRK_HAS_DBGACK_BIT: WTCON register has DBGACK_MASK bit. Setting th=
+e
+>   * DBGACK_MASK bit disables the watchdog outputs when the SoC is in debu=
+g mode.
+>   * Debug mode is determined by the DBGACK CPU signal.
+> + *
+> + * %QUIRK_HAS_32BIT_MAXCNT: WTDAT and WTCNT are 32-bit registers. With t=
+hese
+
+Why not name it like QUIRK_HAS_32BIT_CNT or QUIRK_HAS_32BIT_COUNTER?
+As I understand, the quirk means that the chip has 32-bit counter, so
+MAX bit is not really needed?
+
+> + * 32-bit registers, larger values to be set, which means that larger ti=
+meouts
+
+Spelling: "to be set" -> "will be set" (or "have to be set").
+
+> + * value can be set.
+>   */
+>  #define QUIRK_HAS_WTCLRINT_REG                 BIT(0)
+>  #define QUIRK_HAS_PMU_MASK_RESET               BIT(1)
+> @@ -130,6 +135,7 @@
+>  #define QUIRK_HAS_PMU_AUTO_DISABLE             BIT(3)
+>  #define QUIRK_HAS_PMU_CNT_EN                   BIT(4)
+>  #define QUIRK_HAS_DBGACK_BIT                   BIT(5)
+> +#define QUIRK_HAS_32BIT_MAXCNT                 BIT(6)
+>
+>  /* These quirks require that we have a PMU register map */
+>  #define QUIRKS_HAVE_PMUREG \
+> @@ -198,6 +204,7 @@ struct s3c2410_wdt {
+>         struct notifier_block   freq_transition;
+>         const struct s3c2410_wdt_variant *drv_data;
+>         struct regmap *pmureg;
+> +       unsigned int            max_cnt;
+
+Maybe make it u32? It definitely refers to a 32-bit register value, so
+will be more explicit that way. Not a strong opinion though.
+
+>  };
+>
+>  static const struct s3c2410_wdt_variant drv_data_s3c2410 =3D {
+> @@ -349,7 +356,7 @@ static const struct s3c2410_wdt_variant drv_data_exyn=
+osautov920_cl0 =3D {
+>         .cnt_en_bit =3D 8,
+>         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+>                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> -                 QUIRK_HAS_DBGACK_BIT,
+> +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
+>  };
+>
+>  static const struct s3c2410_wdt_variant drv_data_exynosautov920_cl1 =3D =
+{
+> @@ -362,7 +369,7 @@ static const struct s3c2410_wdt_variant drv_data_exyn=
+osautov920_cl1 =3D {
+>         .cnt_en_bit =3D 8,
+>         .quirks =3D QUIRK_HAS_WTCLRINT_REG | QUIRK_HAS_PMU_MASK_RESET |
+>                   QUIRK_HAS_PMU_RST_STAT | QUIRK_HAS_PMU_CNT_EN |
+> -                 QUIRK_HAS_DBGACK_BIT,
+> +                 QUIRK_HAS_DBGACK_BIT | QUIRK_HAS_32BIT_MAXCNT,
+
+Yeah, I think it would be easier to review and handle further if this
+exynosautov920 enablement is extracted into a separate patch.
+
+>  };
+>
+>  static const struct of_device_id s3c2410_wdt_match[] =3D {
+> @@ -411,7 +418,7 @@ static inline unsigned int s3c2410wdt_max_timeout(str=
+uct s3c2410_wdt *wdt)
+>  {
+>         const unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+>
+> -       return S3C2410_WTCNT_MAXCNT / DIV_ROUND_UP(freq,
+> +       return wdt->max_cnt / DIV_ROUND_UP(freq,
+>                 (S3C2410_WTCON_PRESCALE_MAX + 1) * S3C2410_WTCON_MAXDIV);
+>  }
+>
+> @@ -566,7 +573,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>  {
+>         struct s3c2410_wdt *wdt =3D watchdog_get_drvdata(wdd);
+>         unsigned long freq =3D s3c2410wdt_get_freq(wdt);
+> -       unsigned int count;
+> +       unsigned long count;
+>         unsigned int divisor =3D 1;
+>         unsigned long wtcon;
+>
+> @@ -576,7 +583,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>         freq =3D DIV_ROUND_UP(freq, 128);
+>         count =3D timeout * freq;
+>
+> -       dev_dbg(wdt->dev, "Heartbeat: count=3D%d, timeout=3D%d, freq=3D%l=
+u\n",
+> +       dev_dbg(wdt->dev, "Heartbeat: count=3D%lu, timeout=3D%d, freq=3D%=
+lu\n",
+>                 count, timeout, freq);
+>
+>         /* if the count is bigger than the watchdog register,
+> @@ -584,8 +591,8 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>            actually make this value
+>         */
+>
+> -       if (count >=3D 0x10000) {
+> -               divisor =3D DIV_ROUND_UP(count, 0xffff);
+> +       if (count > wdt->max_cnt) {
+
+wdt->max_cnt + 1?
+
+> +               divisor =3D DIV_ROUND_UP(count, wdt->max_cnt);
+>
+>                 if (divisor > S3C2410_WTCON_PRESCALE_MAX + 1) {
+>                         dev_err(wdt->dev, "timeout %d too big\n", timeout=
+);
+> @@ -593,7 +600,7 @@ static int s3c2410wdt_set_heartbeat(struct watchdog_d=
+evice *wdd,
+>                 }
+>         }
+>
+> -       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
+=3D%d (%08x)\n",
+> +       dev_dbg(wdt->dev, "Heartbeat: timeout=3D%d, divisor=3D%d, count=
+=3D%lu (%08lx)\n",
+>                 timeout, divisor, count, DIV_ROUND_UP(count, divisor));
+>
+>         count =3D DIV_ROUND_UP(count, divisor);
+> @@ -801,6 +808,10 @@ static int s3c2410wdt_probe(struct platform_device *=
+pdev)
+>         if (IS_ERR(wdt->src_clk))
+>                 return dev_err_probe(dev, PTR_ERR(wdt->src_clk), "failed =
+to get source clock\n");
+>
+> +       wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
+> +       if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
+
+Double braces don't seem to be needed.
+
+> +               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
 > +
-> +required:
-> +  - compatible
-> +  - "#mbox-cells"
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    mailbox {
-> +          compatible = "riscv,sbi-mpxy-mbox";
-> +          #mbox-cells = <2>;
-> +    };
 
+Style (minor nitpick): this block can be more explicit, i.e.:
+
+       if ((wdt->drv_data->quirks & QUIRK_HAS_32BIT_MAXCNT))
+               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT_32;
+       else
+               wdt->max_cnt =3D S3C2410_WTCNT_MAXCNT;
+
+>         wdt->wdt_device.min_timeout =3D 1;
+>         wdt->wdt_device.max_timeout =3D s3c2410wdt_max_timeout(wdt);
+>
+> --
+> 2.25.1
+>
 
