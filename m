@@ -1,204 +1,217 @@
-Return-Path: <linux-kernel+bounces-754109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68F43B18E22
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:06:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9915CB18E26
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:12:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6734FAA26AB
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:06:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B846117D83F
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:12:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AF0C2222B4;
-	Sat,  2 Aug 2025 11:06:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 79A10222590;
+	Sat,  2 Aug 2025 11:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JHgaNxMu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jS/xVOb9"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97A8751C5A;
-	Sat,  2 Aug 2025 11:06:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5A91E7C23;
+	Sat,  2 Aug 2025 11:12:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754132772; cv=none; b=Tb32sWVcYpKbXgWYzJ1LXu3ImtFbI/CENdZfn3PEPIGccSKOw32uHRPxcq6emRpbyqnPJeYSr6P3PXO42D607NWXPK7k2Lzol3sxSOTIEacsb8zw8VPm5BVpkbXwmZAmQCec+UdFUfAvwuVhUZHaCioOUryRHzHwDe8admpl2N4=
+	t=1754133168; cv=none; b=riRPuwN0xtQnIDcYwGXLTvHA6igtGPGpON7ECRgS1Ey3tRZ2OPVePygr+hGS6yNyZxijyNOnB95YKriSac+0Mj0P3BFAMf/UkBTnpuFtnK29jC55CSg7BO0zI1ehA29cZNtD+I42edODxB7DCvCu8zi3DJzoyQzCV/TwxyAJngU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754132772; c=relaxed/simple;
-	bh=wO/0xNKUbzTU56dEYazYrjq8PgdNLrb8k5XeUIBX4hY=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:To:From:Subject:
-	 References:In-Reply-To; b=dwKCVeASBq36kcSR4voh0tb8mz1LxI4alS35Kdy5Mm/bTpcGn6o1BzU2HLE7KNQgx/Nyy3gyupvs2xJphSBRky3A4R6kuIjv88Fn1SHXKLwi22j/JkU6zKis7Cx+jFiw40RqZ1vXID+R5buXQMnyHjHTowfwMGhCnyxTWe21et4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JHgaNxMu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A6DEBC4CEEF;
-	Sat,  2 Aug 2025 11:06:05 +0000 (UTC)
+	s=arc-20240116; t=1754133168; c=relaxed/simple;
+	bh=c755nBEa9bQXGf+BATDawtAt/ZtiYh8OMcGeTiO/fyQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bmS4he+C7SsOinb2Z7WEbbRAKB6J3TpFnw9ovzYjp+wVjFMqQsies/ly0oI3Sv0shY6hzM3UK7l+2weNUxjJC+46BIKyhm1qt6ne7q3LZpiDJSALRBxsGTNmK66FBzK5ftnTp9vBRUNTlJO7TUklb+cyc48oEtS3VWK6Z8NyHwc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jS/xVOb9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9C5BDC4CEEF;
+	Sat,  2 Aug 2025 11:12:43 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754132772;
-	bh=wO/0xNKUbzTU56dEYazYrjq8PgdNLrb8k5XeUIBX4hY=;
-	h=Date:Cc:To:From:Subject:References:In-Reply-To:From;
-	b=JHgaNxMu94KYlx63eWISHMJ9fTc80FBXI4EcixD4Q5AbLlyQtYdChZAaKvSPKtyVv
-	 fmboTehX2+jK8ClaYbjnMWno/80rEcG8WgXPkxjfCPWmgBWBkUhLIWOD5/n48Ptf9s
-	 p5OsqgX2VDUZ1/kqu6peMQx7IY64zk7Z4v3+MMRY0qPF1UX+4WIAc3BQH1La6uP2YX
-	 ioYJXqskS0SBeU3D0OygwxwSh5DRBEvee+RbkYduJ4NbVULdoggBg47hTINFyDmpJv
-	 y9dr/IdbBaYLvuuqdQ3kIheu7gXAKETqt7t20bPmei0OdJ+NEjXD8hT0/wrAEzWsIq
-	 lWJ47xKcFfXXw==
+	s=k20201202; t=1754133168;
+	bh=c755nBEa9bQXGf+BATDawtAt/ZtiYh8OMcGeTiO/fyQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=jS/xVOb9R41WZ9owNE3eIiX4LaNg88SS1n50SxPyK/lID/ZY9bu8pUtSmgTCmgDex
+	 2IkTUt+5IQeVJ2U805apBYwIZ3upPqkS18T1LKThaFLLEvH7qFqeAyp4Q3jYn0BuSY
+	 BY7HJAlaI6NngCsyWnHCrLRb6TPl2YG/xWgAyT5r9SyAKyI0hn9TUEK9xmdtcOGKtS
+	 IpV7XD1ODNw9l1uxgh4f7BAcdEW/zsf0/SZ62w+lKRt1xK/kVufrrk0dxahJmyTn50
+	 vDdmvmq9nDLnHGx5OqpaGcMV/wc767iAF4p/ezbq5l6XcbocjzZSNuWTlFdIPxBT6V
+	 KLF1ArNt5ANWA==
+Date: Sat, 2 Aug 2025 12:12:38 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, dlechner@baylibre.com,
+ nuno.sa@analog.com, andy@kernel.org, conor+dt@kernel.org,
+ mranostay@gmail.com, ~lkcamp/patches@lists.sr.ht,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ devicetree@vger.kernel.org, William Breathitt Gray <wbg@kernel.org>
+Subject: Re: [PATCH v2] dt-bindings: iio: proximity: Add Lidar-lite-v2
+Message-ID: <20250802121238.108ebfad@jic23-huawei>
+In-Reply-To: <20250801224112.135918-1-rodrigo.gobbi.7@gmail.com>
+References: <20250801224112.135918-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset=UTF-8
-Date: Sat, 02 Aug 2025 13:06:04 +0200
-Message-Id: <DBRW63AMB4D8.2HXGYM6FZRX3Z@kernel.org>
-Cc: <linux-kernel@vger.kernel.org>, <daniel.almeida@collabora.com>,
- <rust-for-linux@vger.kernel.org>, <netdev@vger.kernel.org>,
- <andrew@lunn.ch>, <hkallweit1@gmail.com>, <tmgross@umich.edu>,
- <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <gary@garyguo.net>,
- <bjorn3_gh@protonmail.com>, <benno.lossin@proton.me>,
- <a.hindborg@samsung.com>, <aliceryhl@google.com>,
- <anna-maria@linutronix.de>, <frederic@kernel.org>, <tglx@linutronix.de>,
- <arnd@arndb.de>, <jstultz@google.com>, <sboyd@kernel.org>,
- <mingo@redhat.com>, <peterz@infradead.org>, <juri.lelli@redhat.com>,
- <vincent.guittot@linaro.org>, <dietmar.eggemann@arm.com>,
- <rostedt@goodmis.org>, <bsegall@google.com>, <mgorman@suse.de>,
- <vschneid@redhat.com>, <tgunders@redhat.com>, <me@kloenk.dev>,
- <david.laight.linux@gmail.com>
-To: "FUJITA Tomonori" <fujita.tomonori@gmail.com>
-From: "Danilo Krummrich" <dakr@kernel.org>
-Subject: Re: [PATCH v11 7/8] rust: Add read_poll_timeout functions
-References: <20250220070611.214262-1-fujita.tomonori@gmail.com>
- <20250220070611.214262-8-fujita.tomonori@gmail.com>
- <DBNPR4KQZXY5.279JBMO315A12@kernel.org>
- <20250802.104249.1482605492526656971.fujita.tomonori@gmail.com>
-In-Reply-To: <20250802.104249.1482605492526656971.fujita.tomonori@gmail.com>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Sat Aug 2, 2025 at 3:42 AM CEST, FUJITA Tomonori wrote:
-> On Mon, 28 Jul 2025 15:13:45 +0200
-> "Danilo Krummrich" <dakr@kernel.org> wrote:
->> On Thu Feb 20, 2025 at 8:06 AM CET, FUJITA Tomonori wrote:
->>> +/// This process continues until either `cond` returns `true` or the t=
-imeout,
->>> +/// specified by `timeout_delta`, is reached. If `timeout_delta` is `N=
-one`,
->>> +/// polling continues indefinitely until `cond` evaluates to `true` or=
- an error occurs.
->>> +///
->>> +/// # Examples
->>> +///
->>> +/// ```rust,ignore
->>=20
->> Why ignore? This should be possible to compile test.
->
-> https://lore.kernel.org/rust-for-linux/CEF87294-8580-4C84-BEA3-EB72E63ED7=
-DF@collabora.com/
+On Fri,  1 Aug 2025 19:39:15 -0300
+Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com> wrote:
 
-I disagree with that. 'ignore' should only be used if we can't make it comp=
-ile.
+> Move existing ABI documentation from trivial to
+> a dedicated binding file since Lidar is not a trivial
+> device considering power-enable and mode control pin.
+> 
+> Also, add a fallback compatible for v3, which has the
+> same pinout and is already supported by the driver.
+> 
+> Fixes: b257c1a45e99 ("iio: pulsedlight-lidar-lite-v2: add lidar-lite-v3 property")
+> Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+> ---
+> I was unsure about sending a new v0 patch for this or send a v2. To avoid losing
+> the lore about this topic, I`m sending a v2. If this is not correct, I can send a
+> new patch later.
+> 
+> On 7/3/25 18:26, David Lechner wrote:
+> > On 7/1/25 5:30 PM, Rodrigo Gobbi wrote:  
+> >> The compatible grmn,lidar-lite-v3 is managed by the same
+> >> driver of pulsedlight,lidar-lite-v2, which is a trivial device.  
+> > 
+> > As a general rule of thumb, using the driver as justification for
+> > dt-bindings is never a good reason. The bindings describe the hardware,
+> > not the driver.
+> > 
+> > Assuming I found the correct datasheet [1], I see a power enable pin
+> > and a mode control pin, so I would say that this isn't a trivial device.
+> > Therefore this will need it's own new file. We could at least add
+> > power-gpios and power-supply properties. How to handle the mode pin
+> > isn't so clear to me though, so might omit that for now.  
+> About the mode control pin and the data being returned within PWM, it`s also
+> unclear to me how to describe that here. Looking other kind of existing iio
+> devices, couldn`t find a reference for it so I`ve not described that.
 
-In this case we can make it compile, we just can't run it, since there's no=
- real
-HW underneath that we can read registers from.
+So far we've never supported a sensor with a PWM output.  Needs some capture logic
+and whilst there is some supported in the kernel, I don't think we have the
+infrastructure to describe the sensor beyond it. It relies on an odd combination
+of triggering via a light pull low that the device then drives high.  To make
+that work with a standard capture unit is probably a case of wiring multiple pins
+or some external components.
 
-An example that isn't compiled will eventually be forgotten to be updated w=
-hen
-things are changed.
++CC counters subsystem maintainer William.
 
->>> +/// fn wait_for_hardware(dev: &mut Device) -> Result<()> {
->>=20
->> I think the parameter here can just be `&Io<SIZE>`.
->>=20
->>> +///     // The `op` closure reads the value of a specific status regis=
-ter.
->>> +///     let op =3D || -> Result<u16> { dev.read_ready_register() };
->>> +///
->>> +///     // The `cond` closure takes a reference to the value returned =
-by `op`
->>> +///     // and checks whether the hardware is ready.
->>> +///     let cond =3D |val: &u16| *val =3D=3D HW_READY;
->>> +///
->>> +///     match read_poll_timeout(op, cond, Delta::from_millis(50), Some=
-(Delta::from_secs(3))) {
->>> +///         Ok(_) =3D> {
->>> +///             // The hardware is ready. The returned value of the `o=
-p`` closure isn't used.
->>> +///             Ok(())
->>> +///         }
->>> +///         Err(e) =3D> Err(e),
->>> +///     }
->>> +/// }
->>> +/// ```
->>> +///
->>> +/// ```rust
->>> +/// use kernel::io::poll::read_poll_timeout;
->>> +/// use kernel::time::Delta;
->>> +/// use kernel::sync::{SpinLock, new_spinlock};
->>> +///
->>> +/// let lock =3D KBox::pin_init(new_spinlock!(()), kernel::alloc::flag=
-s::GFP_KERNEL)?;
->>> +/// let g =3D lock.lock();
->>> +/// read_poll_timeout(|| Ok(()), |()| true, Delta::from_micros(42), So=
-me(Delta::from_micros(42)));
->>> +/// drop(g);
->>> +///
->>> +/// # Ok::<(), Error>(())
->>> +/// ```
->>> +#[track_caller]
->>> +pub fn read_poll_timeout<Op, Cond, T>(
->>> +    mut op: Op,
->>> +    mut cond: Cond,
->>> +    sleep_delta: Delta,
->>> +    timeout_delta: Option<Delta>,
->>> +) -> Result<T>
->>> +where
->>> +    Op: FnMut() -> Result<T>,
->>> +    Cond: FnMut(&T) -> bool,
->>> +{
->>> +    let start =3D Instant::now();
->>> +    let sleep =3D !sleep_delta.is_zero();
->>> +
->>> +    if sleep {
->>> +        might_sleep();
->>> +    }
->>=20
->> I think a conditional might_sleep() is not great.
->>=20
->> I also think we can catch this at compile time, if we add two different =
-variants
->> of read_poll_timeout() instead and be explicit about it. We could get Kl=
-int to
->> catch such issues for us at compile time.
->
-> Your point is that functions which cannot be used in atomic context
-> should be clearly separated into different ones. Then Klint might be
-> able to detect such usage at compile time, right?
->
-> How about dropping the conditional might_sleep() and making
-> read_poll_timeout return an error with zero sleep_delta?
+https://static.garmin.com/pumac/LIDAR_Lite_v3_Operation_Manual_and_Technical_Specifications.pdf
+for reference
 
-Yes, let's always call might_sleep(), the conditional is very error prone. =
-We
-want to see the warning splat whenever someone calls read_poll_timeout() fr=
-om
-atomic context.
+However, I'm also in agreement with others that this is an unusual case where
+we are very likely to missdesign a DT-binding without having explored what the
+driver stack looks like and so are best just leaving a gap for now.
 
-Yes, with zero sleep_delta it could be called from atomic context technical=
-ly,
-but if drivers rely on this and wrap this into higher level helpers it's ve=
-ry
-easy to miss a subtle case and end up with non-zero sleep_delta within an a=
-tomic
-context for some rare condition that then is hard to debug.
+Even if we did describe the mode stuff it would be optional so not describing it
+for now should be fine.
 
-As for making read_poll_timeout() return a error with zero sleep_delta, I d=
-on't
-see a reason to do that. If a driver wraps read_poll_timeout() in its own
-function that sometimes sleeps and sometimes does not, based on some condit=
-ion,
-but is never called from atomic context, that's fine.
 
-> Drivers which need busy-loop (without even udelay) can
-> call read_poll_timeout_atomic() with zero delay.
+> 
+> Also, I`m quoting the driver author about this binding due the maintainer ref for it.
+> 
+> Dear @Matt Ranostay, I`ve noticed you were the original driver author.
+> During the discussion about adding lidar-v3 as trivial [1], we noticed that
+> this HW is not actually a trivial due other pins like power-enable
+> and mode control. We are considering moving v2 and v3 (which was not documented)
+> out of trivial and this is what this patch is trying to do. 
+> Also, we need a maintainer for the binding file and I`ve quoted you there.
+> I would appreciate your comments or suggestions over this topic.
+> 
+> Tks and regards to all.
+> 
+> Changelog:
+> v2: creating an initial binding for lidar v2 and v3 (fallback to v2)
+>     also, moving v2 out of trivial
+> v1: https://lore.kernel.org/all/20250701223341.36835-1-rodrigo.gobbi.7@gmail.com/#t
+> ---
+>  .../proximity/pulsedlight,lidar-lite-v2.yaml  | 54 +++++++++++++++++++
+>  .../devicetree/bindings/trivial-devices.yaml  |  2 -
+>  2 files changed, 54 insertions(+), 2 deletions(-)
+>  create mode 100644 Documentation/devicetree/bindings/iio/proximity/pulsedlight,lidar-lite-v2.yaml
+> 
+> diff --git a/Documentation/devicetree/bindings/iio/proximity/pulsedlight,lidar-lite-v2.yaml b/Documentation/devicetree/bindings/iio/proximity/pulsedlight,lidar-lite-v2.yaml
+> new file mode 100644
+> index 000000000000..f49a1c365f3a
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/iio/proximity/pulsedlight,lidar-lite-v2.yaml
+> @@ -0,0 +1,54 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/iio/proximity/pulsedlight,lidar-lite-v2.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Pulsedlight LIDAR-Lite v2 range-finding sensor
+> +
+> +maintainers:
+> +  - Matt Ranostay <mranostay@gmail.com>
+> +
+> +description: |
+> +  Support for LIDAR_Lite v2 and v3 laser rangefinders. These devices
+> +  can use a simple I2C communication bus or can operate in a PWM mode using a
+> +  mode control pin to trigger acquisitions and return the measured distance.
+> +  It also have a power enable pin, which can be used to shut off the device.
+> +
+> +properties:
+> +  compatible:
+> +    oneOf:
+> +      - items:
+> +          - enum:
+> +              - grmn,lidar-lite-v3
+> +          - const: pulsedlight,lidar-lite-v2
+> +      - const: pulsedlight,lidar-lite-v2
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  power-gpios:
+> +    description: GPIO that can be driven low to shut off power to the device.
+> +    maxItems: 1
+> +
+> +  vdd-supply: true
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - vdd-supply
+> +
+> +additionalProperties: false
+> +
+> +examples:
+> +  - |
+> +    i2c {
+> +        #address-cells = <1>;
+> +        #size-cells = <0>;
+> +        proximity@62 {
+> +            compatible = "grmn,lidar-lite-v3", "pulsedlight,lidar-lite-v2";
+> +            reg = <0x62>;
+> +            vdd-supply = <&vdd_5v0>;
+> +        };
+> +    };
+> +...
+> diff --git a/Documentation/devicetree/bindings/trivial-devices.yaml b/Documentation/devicetree/bindings/trivial-devices.yaml
+> index 8da408107e55..347897b999c9 100644
+> --- a/Documentation/devicetree/bindings/trivial-devices.yaml
+> +++ b/Documentation/devicetree/bindings/trivial-devices.yaml
+> @@ -313,8 +313,6 @@ properties:
+>            - onnn,adt7462
+>              # 48-Lane, 12-Port PCI Express Gen 2 (5.0 GT/s) Switch
+>            - plx,pex8648
+> -            # Pulsedlight LIDAR range-finding sensor
+> -          - pulsedlight,lidar-lite-v2
+>              # Renesas HS3001 Temperature and Relative Humidity Sensors
+>            - renesas,hs3001
+>              # Renesas ISL29501 time-of-flight sensor
 
-It's not the zero delay or zero sleep_delta that makes the difference  it's
-really the fact the one can be called from atomic context and one can't be.
 
