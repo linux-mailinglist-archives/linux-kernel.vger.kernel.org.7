@@ -1,112 +1,104 @@
-Return-Path: <linux-kernel+bounces-753963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FDD7B18AD7
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:50:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 63B41B18AD8
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:53:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C88A7627576
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:50:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 116286277A9
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:53:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6C2A199934;
-	Sat,  2 Aug 2025 05:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FF7F199934;
+	Sat,  2 Aug 2025 05:53:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="nylvcQYR"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="XtbbFQf6"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 654A6A59
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 05:50:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 220FCB672
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 05:52:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754113836; cv=none; b=ew9M4ONPSq3TCJhGvpLFIQqdmdcim077T7e+eGJ4J5wxSoo3IEld5hhkVDM6HqxJdPM1EChDZgdnAz+IkAvD/qdFw+DIGuWgnVMG4IlmPvAZR6ZKUp7egS/HpO18DDGe9QYO8N9ZR5mLjpRnl0ZsFs26XxA7S48TJ4FLpFM2bEg=
+	t=1754113980; cv=none; b=nNluK7lFSQ3Hz4+pfLY4G+oGPZWnKtv4NC/q/Mu+odHWV0gb6xDqhlpt9MYiReigzUyy59mP1ySCh8fump+GOW47zByqvrB899febqc8sX1upjHOJIYSwAJNKLrOv/8QCYmSGnMCtSE/ZciJxGZeF7UEn3nTS6u/DMpwKKz2YWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754113836; c=relaxed/simple;
-	bh=m9A4Vk1+IeAbEDE97k9QsTx7vr9hoJkkE7asjlvcQ/U=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=JCNe9RCVd5LtWn8jbtSb5/5tga7wxbkvcirEascw5ju2enxBWmWTeo/2b4sU90SwiLKzJqIfBzhJj/rKPIglFpvYtGRIlWGKn2H/leJWo0MSebgast7UUcHT/1K/AMa8u7MqUUkH1T8ZZHJ3f/Fokdmpb0swJ63N2TSInNzPtLQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=nylvcQYR; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754113834; x=1785649834;
-  h=date:from:to:cc:subject:message-id;
-  bh=m9A4Vk1+IeAbEDE97k9QsTx7vr9hoJkkE7asjlvcQ/U=;
-  b=nylvcQYR6M3lWt6Py2wVTj2dDr9lbB9HOduHhFcW0lA6pBl4cNCHZbLQ
-   NMS2QM18tBU8o3zL7lp/r4RLkStF4gyrhS21CVPMGW36Asw0rfwgY8kea
-   x+T+zVAGRfvzISpfIYyLUBPbSh6aVEgJFsvzsyk9Odo6WhV3LvxfSKnTp
-   6rE3/DeHZA0E6YpUOsa5yeFWpbHtEa5XL5hKOERdBri3fYqVKin6xE5Lu
-   hlo+M1Aq4Vs6gP6ce3yLLEvtklXffTzndD1CBT+KnQjveH/l3OJPsL8Bb
-   7YHk/7wbaCHNnViJHNwBytxEC/FMDnPy2VvCPewkMf2uWumU6VwjhYr6d
-   A==;
-X-CSE-ConnectionGUID: uWc77p3mStGEcJcfCRUtqA==
-X-CSE-MsgGUID: 1hccOxTwRASX8BgTVPoiXg==
-X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="67029027"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="67029027"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 22:50:34 -0700
-X-CSE-ConnectionGUID: pSsiIfHfTfG0+p60ljElpQ==
-X-CSE-MsgGUID: 0Ud1eyP8Q2+3mBLr+cwiUQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="168197973"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 01 Aug 2025 22:50:33 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1ui58Y-0005Ce-2T;
-	Sat, 02 Aug 2025 05:50:30 +0000
-Date: Sat, 02 Aug 2025 13:49:37 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:x86/urgent] BUILD SUCCESS
- 49f848788a4d157bb6648a57963cb060fed3d56e
-Message-ID: <202508021327.2Fctb2Yi-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1754113980; c=relaxed/simple;
+	bh=wNO3uLn2upUzq89T01Jao8P4GbWLlf6GDGAd0/xCyWQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9tfcqr3rnrpBkaWnlTj/KUGEyy1msWrzx97knICgc5BHgtTKWsZeZ5Dvb5fFZz4G+B8gQm1tBxs/kgeu6aTsyPMOeCwo49gvK4XMQ+6EmRijUabSL6YidWFFjuMueN83i2GIxsNTpxd5oLSyDYaox1YOaM4bxdTl5XrO1KXIvc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=XtbbFQf6; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description;
+	bh=HHCaNB52yuekIRwCCDC1USYuyWytAzs8P2QVsRxGOLY=; b=XtbbFQf6NE9NBvDMM4qJyHTled
+	GJ6YKJNpSj+K3CDEfZhSw2jJ6bwPPledS7gd3yyXnz9O6wqG0NIMu/xBkYJ/kLenGaiJFysMwdSEw
+	sJkamOaKUiN2H8fhVFMIL9CGgyNtcpYJUjImUhTITimKvitDCY6pzHumYhBMKeV/DRJmcVkTodwy8
+	P5FXgWGEpdnH6ijk3ekk1xlBjX6Wgd+rVJucsHeByn4KSnDn64hX/HfgrV15sIc7P1OIorD8TqSD7
+	QvuS8hWCKqRgyrPHilp5ZmKwEi3C+HI83YasWJQVNaFe6ySX6dgKD5EDCjXTSU1mYlyapKsbqqcO9
+	GbRK71WA==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1ui5Aq-00000005klp-24eO;
+	Sat, 02 Aug 2025 05:52:52 +0000
+Date: Sat, 2 Aug 2025 06:52:52 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
+Cc: Xiang Gao <gxxa03070307@gmail.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"oleg@redhat.com" <oleg@redhat.com>,
+	"mjguzik@gmail.com" <mjguzik@gmail.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"joel.granados@kernel.org" <joel.granados@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: =?utf-8?B?562U5aSNOiBbRXh0ZXJuYQ==?= =?utf-8?Q?l?= Mail]Re:
+ [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250802055252.GU222315@ZenIV>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250802022550.GT222315@ZenIV>
+ <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
-branch HEAD: 49f848788a4d157bb6648a57963cb060fed3d56e  x86/cpu: Add new Intel CPU model numbers for Wildcatlake and Novalake
+On Sat, Aug 02, 2025 at 04:32:39AM +0000, 高翔 wrote:
+> >       __task_pid_nr_ns+0x74/0xd0
+> >       ...
+> >       __handle_irq_event_percpu+0xd4/0x284
+> >       handle_irq_event+0x48/0xb0
+> 
+>         Huh?  Just what is it doing inside an IRQ handler?
+> Hell, the notion of current process is not usable in those,
+> let alone any properties of such...
+> 
+>         Details, please.
+> 
+> 
+> Obtain the current process pid in the ufs compl command. This scene is possible.
 
-elapsed time: 732m
+Nothing of that sort in the mainline (or -next, for that matter), but...
 
-configs tested: 20
-configs skipped: 127
+>  Call trace:
+>   __task_pid_nr_ns+0x74/0xd0
+>   get_common_info+0x9c/0x1c0 [io_xxx 39b55c95a0fe9416f7d7be396be0fd1d6f590f17]
+>   io_monitor_global_log+0x1a0/0x294 [io_xxx 39b55c95a0fe9416f7d7be396be0fd1d6f590f17]
+>   cb_android_vh_ufs_compl_command+0x304/0x578 [io_xxx 39b55c95a0fe9416f7d7be396be0fd1d6f590f17]
+>   __traceiter_android_vh_ufs_compl_command+0x54/0x78
+>   ...
+>   __handle_irq_event_percpu+0xd4/0x284
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
-
-tested configs:
-i386                         allmodconfig    gcc-12
-i386                          allnoconfig    gcc-12
-i386                         allyesconfig    gcc-12
-i386    buildonly-randconfig-001-20250802    gcc-12
-i386    buildonly-randconfig-002-20250802    gcc-12
-i386    buildonly-randconfig-003-20250802    clang-20
-i386    buildonly-randconfig-004-20250802    gcc-12
-i386    buildonly-randconfig-005-20250802    clang-20
-i386    buildonly-randconfig-006-20250802    clang-20
-i386                            defconfig    clang-20
-x86_64                        allnoconfig    clang-20
-x86_64                       allyesconfig    clang-20
-x86_64  buildonly-randconfig-001-20250802    gcc-12
-x86_64  buildonly-randconfig-002-20250802    clang-20
-x86_64  buildonly-randconfig-003-20250802    clang-20
-x86_64  buildonly-randconfig-004-20250802    clang-20
-x86_64  buildonly-randconfig-005-20250802    clang-20
-x86_64  buildonly-randconfig-006-20250802    clang-20
-x86_64                          defconfig    gcc-11
-x86_64                      rhel-9.4-rust    clang-20
-
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+... for asynchronous callbacks if that sort there is no such thing as the current
+process.  At all.  Using current, let alone looking for its PID, userns, etc. in
+such context is a bug.  Don't do it.  It's a bug in your module.
 
