@@ -1,101 +1,111 @@
-Return-Path: <linux-kernel+bounces-754106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754107-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79EB1B18E1B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:57:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12695B18E1C
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:59:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDE67AA149B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:57:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FE5C566080
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:59:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA2B1221723;
-	Sat,  2 Aug 2025 10:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F9E9214236;
+	Sat,  2 Aug 2025 10:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D9JPvheG"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JkEl6n1a"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B78DB672;
-	Sat,  2 Aug 2025 10:57:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA8171F09A8;
+	Sat,  2 Aug 2025 10:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754132257; cv=none; b=TSgZPJ3nFC66x5XMQO6bLB1Bmex0y7X7auPj2V3bK8WJY1lzkBR5JD4f1HTrYUh0biIjhk8H1MpDttqPQmN8H9uj/KzJIS3byX/5D7RM70NTpqGQqhzCPyDO0amBl5zTB4Lvc+jaBi/J/6xurQeCTavdW49VQc1dQcHULKw9Wd4=
+	t=1754132372; cv=none; b=UHk4HOE5TyHi6R3/lHlW0jUXtmgsKxph9Wadm/AIyrAqG6hKXrqTyLm65BBwhlHkb+E9tXXP6XVKofBcZPSqesQ4lUT9MPJJ6zTsrhKLj9PjwME4XQ642ETUedbgeHqSQA8PWk+LrLhDbm8w1R7u+44T1RPRnC2g0v32Vm0r52M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754132257; c=relaxed/simple;
-	bh=clbgbsMt3khlBh1zo7AWnZlnjKpIprNMau6o2C0vF4Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=jMk0yOYpy6jVQbXcJ0UL+M5y1Jp9NlrhLHKyqNLwoKoNLnO92y2LH9UiIzLbA1mc1YgGxR2a9ntzzrMc2YyhshEjCnHZYq3iqvQaU1/2oHkRTqbhJdkJrYEK8/0sA15aNpbx7NCf6wcbP8m5lQtVlUKWGwNjikDI4n1oMC2X8+Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D9JPvheG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4EC5CC4CEEF;
-	Sat,  2 Aug 2025 10:57:31 +0000 (UTC)
+	s=arc-20240116; t=1754132372; c=relaxed/simple;
+	bh=RrtQQ6UwHwagO32oz6DthVPaQLtuB22k5y7kjV/vClI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=t3JNeJtDUAo5vLbZQB37pJRexe/CB5Yn+HciOMQadk2aqo103PtNE3XyCQH9lKLp4evL3bdRozB6zjig7k0V/U1PbSMnKrSSV7wegiR8CV6LOo/SZgcux+gKpKH6xCzVnk0/NHvJScW/zF5Y8IAhn1EtMqX/co4e0mc/dK9jaxE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JkEl6n1a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4B3FC4CEEF;
+	Sat,  2 Aug 2025 10:59:27 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754132256;
-	bh=clbgbsMt3khlBh1zo7AWnZlnjKpIprNMau6o2C0vF4Y=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=D9JPvheG7cYRmX2iflebwiVrM21lynKOJviskGMzlLucWRDfGeY10kzCQ7Nb6yEA+
-	 ZH8dzz6i35WN6zHCA9znezlsmhk6UdR4xIehp0phMfu+n84kvPs+TbSJ2SyUI4rWfG
-	 eifAw1wagU2225fkXBdyjAEFhb8ala79rxxlzcUu4SGdFKBuIoh8eysZ7ninsOeQT+
-	 jWuZ5pBOvM/oKjKOd6Fcy0cxz926AAJLBqYgkv+QsYzxfCvsc/gLmT8GKLaU5e0oI5
-	 RVoPueIT6XmmO7UbYuxIuTY8ccwLtmSJ4kyRTu/UQdvaAYrrahsv8ov3AjtCcf8t2d
-	 jwK8vW3poNJHA==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Arto Merilainen <amerilainen@nvidia.com>
-Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
-	linux-coco@lists.linux.dev, lukas@wunner.de, kvmarm@lists.linux.dev,
-	Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 13/38] coco: host: arm64: Create a PDEV with rmm
-In-Reply-To: <69c1bd48-c55b-4af1-a48b-1669102af1be@nvidia.com>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-14-aneesh.kumar@kernel.org>
- <69c1bd48-c55b-4af1-a48b-1669102af1be@nvidia.com>
-Date: Sat, 02 Aug 2025 16:27:28 +0530
-Message-ID: <yq5a8qk29ejr.fsf@kernel.org>
+	s=k20201202; t=1754132371;
+	bh=RrtQQ6UwHwagO32oz6DthVPaQLtuB22k5y7kjV/vClI=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=JkEl6n1aqgSl5u4POZiYLef0IxjILnZtiyUi2MUq+7y5KATrbe0mhXDKRyAk7tjHy
+	 lIrn1ST7GC0gqSBZ0ca153MMT46AImMkP5aQYEC310+4dhmectqxN5qijqRm69DUWO
+	 27QPHQ7sL7uWXy+gXOYlUPYMsyO4uOUQUCPRVkaEloRULSli43/ObDi0xkQsfORIO7
+	 Q0dM9tj3DcWeZgmon2gL+r8U0qxtk5rZEyJ0yVVdyewVR6D6XdDXpaVscS+PYaaUVL
+	 XAbOet5IyCNkTQM45nXr9rMIgVfPOL8t0ZWaS2xTcXCyesAlfyXaH311u2+j/hkH52
+	 MeV149issU2Hg==
+Date: Sat, 2 Aug 2025 11:59:23 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Matti Vaittinen <mazziesaccount@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>, Lars-Peter Clausen
+ <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, David
+ Lechner <dlechner@baylibre.com>, Nuno =?UTF-8?B?U8Oh?=
+ <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, Liam Girdwood
+ <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC PATCH 0/2] iio: adc: ad7476: Simplifications
+Message-ID: <20250802115923.4521fa9d@jic23-huawei>
+In-Reply-To: <cover.1754041258.git.mazziesaccount@gmail.com>
+References: <cover.1754041258.git.mazziesaccount@gmail.com>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Arto Merilainen <amerilainen@nvidia.com> writes:
+On Fri, 1 Aug 2025 13:06:46 +0300
+Matti Vaittinen <mazziesaccount@gmail.com> wrote:
 
-> On 28.7.2025 16.51, Aneesh Kumar K.V (Arm) wrote:
->
->> +static int pci_res_to_pdev_addr(struct rmi_pdev_addr_range *pdev_addr,
->> +				unsigned int naddr, struct resource *res,
->> +				unsigned int nres)
->> +{
->> +	int i, j;
->> +
->> +	for (i = 0, j = 0; i < naddr && j < nres; j++) {
->> +		if (res[j].flags & IORESOURCE_MEM) {
->> +			pdev_addr[i].base = res[j].start;
->> +			pdev_addr[i].top  = res[j].end;
->
-> I think there is an off-by-one bug in res[j].end. As per the RMM 
-> specification the base address is inclusive and the top address is 
-> exclusive. Both res[j].start and res[j].end are inclusive, and hence
-> res[j].end seems wrong.
->
->> +	/* use the rid and MMIO resources of the epdev */
->> +	params->rid_top = params->rid_base = rid;
->
-> Similar issue here. As per the specification the rid_base is inclusive 
-> and the rid_top exclusive.
->
+> This series suggests some simplifications to the ad7476 ADC. It is
+> currently 100% untested, and shouldn't be merged as is. I'd like to hear
+> opinions on these changes before adding support to the ROHM BD79105 ADC.
+> 
+> Intention of the patch 1 is pretty trivial. I'd just like to hear if
+> people think the enum + ID table approach is preferred over direct
+> pointers to IC specific structs in SPI device's driver_data.
 
-Thanks for the review comments. I'll update the patch with the suggested changes.
+Definitely prefer direct pointers as you have here.
 
--aneesh
+> 
+> Real reason for the RFC version is the patch 2. It aims to clear the
+> supply handling logic. I did also an alternate version which requires
+> the names of the regulators to be provided in the chip_data:
+> https://github.com/M-Vaittinen/linux/commit/cf5b3078
+> 
+> I believe the version in the link --^
+> is clearer, but it can potentially help people to add issues with supply
+> enable ordering.
+> 
+> I can't still say if the patch 2 contained in this series is better, or
+> if the one behind the link is better way to go. So, RFC it is :)
+
+I missed this (who reads cover letters?) in first look.  Anyhow, having
+taken a quick look at that alternative I slightly prefer the one you have here.
+
+Even if we have supply ordering issues, it seems like they are unlikely to
+vary randomly across supported parts so should be easy to incorporate those
+rules with the approach here if needed.
+
+Jonathan
+
+
+> 
+> Matti Vaittinen (2):
+>   iio: adc: ad7476: Simplify chip type detection
+>   iio: adc: ad7476: Simplify scale handling
+> 
+>  drivers/iio/adc/ad7476.c | 376 +++++++++++++++++----------------------
+>  1 file changed, 164 insertions(+), 212 deletions(-)
+> 
+
 
