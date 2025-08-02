@@ -1,116 +1,165 @@
-Return-Path: <linux-kernel+bounces-753959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753960-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12D3BB18ABC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:08:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 743FDB18AC1
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 07:31:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE32EAA37A2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:08:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 94B5D564245
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 05:31:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D1B771DDC15;
-	Sat,  2 Aug 2025 05:08:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F40E1D7E37;
+	Sat,  2 Aug 2025 05:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="kLrI7spz"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Zl2DMW9D"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6DAE3A59;
-	Sat,  2 Aug 2025 05:08:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E2C7367;
+	Sat,  2 Aug 2025 05:31:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754111288; cv=none; b=oJN7ROyxEl5R9LAGurL08fB7v8soy+pwNVj9/Fuk2K7kmfLINHsu5tHIAeakiPLJumxUwGchjCh6H6+LwnzdpeYv62sAxPuluvDJzQkNilIFZMr+Sg4quAX9iDaKQb3G+Bz572W87w4nLsG4CSw0kKawLyFfj2+UwAWUFJdIPUs=
+	t=1754112699; cv=none; b=C7oWightZfJ9keLSRvLz0l0ynGc89atgujaCFb1LExrZKCONhcRyK+O6ps9xjOcOlr8Xn0pdfX4Gfh4GBSDDt879NsDEWX0eqsigzVJFwQa+48w4Hev69tvFkXxBtTUSIN0kBWDiePWJDLSLPG64nHVcgYSvlbY97RMO2uN4+hY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754111288; c=relaxed/simple;
-	bh=jruZhS7mCx8GQTSYRYMdVG/WMEW6NV2TbD6k6UtMdFA=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PBXExRNI7bnIWk5Ro1afH5D8xHI4NA4y8JvqgmrlaVkYf2mRKNGsCgPnykMn9I5pKWlYg97vZ0RC1A71SddiMkDDQ3fF048ySseUGV83djEitUlfyAO/aWYeZkobp0/rt4VyEjBiE+zPDTHdv1u2L0pHVXpNc8qLof4fJLE51to=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=kLrI7spz; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754111275;
-	bh=rwjvQEcgaDxeOlLgdTjlpv1NgjGhPHAakQTWLZ39Tx0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kLrI7spzu2rrq5UChQcgEIcNbrvjQ9diARVIoLlizdFNOTze5R7HffREm4cT8zfpN
-	 Yry0T4pxpdTN27Ed3oIl+n1wAY4ueqUnkPUJANYKfgZt+hdTFu/fHkuAy0mwVIAsJp
-	 gu3mlDtMRhBYd1HgCkx2t3Ixu8rFpAbJr8xBGov/oeb35Oa6SU48fq//zeSks5R8Tw
-	 vcvjxJcp7DX61z24rlq0DjbX4g6Kn49PZVG2c7ajMyoA/aXWOIC1iu5c/WTLx/Epkq
-	 8RUabLJb1Nz4Moy2cEUMoo04XuBkjHYk0xg9opOGX5pQUa8b7RCzz7C+XADy/HRMOb
-	 0oWU5nioFmJOw==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bv9n32Jh9z4xQV;
-	Sat,  2 Aug 2025 15:07:51 +1000 (AEST)
-Date: Sat, 2 Aug 2025 15:07:46 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Byungchul Park <byungchul@sk.com>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
- harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
- davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
- john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
- leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
- andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
- akpm@linux-foundation.org, david@redhat.com, lorenzo.stoakes@oracle.com,
- Liam.Howlett@oracle.com, vbabka@suse.cz, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, horms@kernel.org, jackmanb@google.com,
- hannes@cmpxchg.org, ziy@nvidia.com, ilias.apalodimas@linaro.org,
- willy@infradead.org, brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
- usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
- almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
- bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
- for page pool in page type
-Message-ID: <20250802150746.139a71be@canb.auug.org.au>
-In-Reply-To: <20250729110210.48313-1-byungchul@sk.com>
-References: <20250729110210.48313-1-byungchul@sk.com>
+	s=arc-20240116; t=1754112699; c=relaxed/simple;
+	bh=ZRLdGwSqLnclEoXX/4J/rmkHU+mE/M/nSHHqiMZELEk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BFTeWi0z2WBuc77kOGNXlGMoW+l8Tdr99xlC0Kss4Am0JV8c4xT5IWTRHJ6nXX1JIdDp4F/TqRiHQ1QoTD2AoxGU/dMoF1VhH1nW9td/YA5Cy59ExW0xRH2lD4RLmMMj5AiHFS4n66X3/KHOaTqM6Gaxpd5b3gDId1un8IY7/r8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Zl2DMW9D; arc=none smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754112697; x=1785648697;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=ZRLdGwSqLnclEoXX/4J/rmkHU+mE/M/nSHHqiMZELEk=;
+  b=Zl2DMW9DjQ5JJehFSx3fv7ypqkKVirCjz3caxU2fuif5HUOJnvPmfBnx
+   kcT9NP91mXn1KSGh/wtGgIW1yldbCfACt2+gHw/FUIb9cIfR+Lz/ZDCLp
+   +hICCFlYzSkN5S6TvmvkoibuSKAh7ZDI9tEkjSp9yvsxqZNbQUzP5VWH0
+   SoQOWeFrxkOm3bmF6rbqkOJNJcY7Y8yk6/IW6DENRVzzun03JP85tseA1
+   oaz6sKDq0er2aaS0HSXZ8LT48+jGVbY/4Un0LiRcp8X17gTOWIPQMhnL8
+   sTyU64yNHJ0YM1hV75awY2cTjN9I7QHxgy6oz3chbRtgUYH3ggaTM/z32
+   g==;
+X-CSE-ConnectionGUID: /lh2stC1QlKYhsC47FwXxg==
+X-CSE-MsgGUID: VuokqIvySgmDl85PXRZsOQ==
+X-IronPort-AV: E=McAfee;i="6800,10657,11508"; a="59077185"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="59077185"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 01 Aug 2025 22:31:36 -0700
+X-CSE-ConnectionGUID: 9lV5Yxb2S8+W5MRccSjssQ==
+X-CSE-MsgGUID: j4cU7ZYqSbShgDAsFQAmQg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="169106513"
+Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 01 Aug 2025 22:31:31 -0700
+Received: from kbuild by 160750d4a34c with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1ui4q9-0005C8-0k;
+	Sat, 02 Aug 2025 05:31:29 +0000
+Date: Sat, 2 Aug 2025 13:30:51 +0800
+From: kernel test robot <lkp@intel.com>
+To: Haotien Hsu <haotienh@nvidia.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mathias Nyman <mathias.nyman@intel.com>,
+	Brad Griffis <bgriffis@nvidia.com>, Sumit Gupta <sumitg@nvidia.com>,
+	Vedant Deshpande <vedantd@nvidia.com>,
+	Akhil R <akhilrajeev@nvidia.com>,
+	Jinjie Ruan <ruanjinjie@huawei.com>, linux-usb@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-tegra@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	Haotien Hsu <haotienh@nvidia.com>, Henry Lin <henryl@nvidia.com>,
+	Jui Chang Kuo <jckuo@nvidia.com>, Wayne Chang <waynec@nvidia.com>,
+	WK Tsai <wtsai@nvidia.com>
+Subject: Re: [PATCH 4/4] usb: xhci: tegra: Support USB wakeup function for
+ Tegra234
+Message-ID: <202508021305.3ENY5oQC-lkp@intel.com>
+References: <20250801095748.385437-5-haotienh@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/9yZ=dZN+zFc/Vgnr2iwwEfw";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801095748.385437-5-haotienh@nvidia.com>
 
---Sig_/9yZ=dZN+zFc/Vgnr2iwwEfw
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Hi Haotien,
 
-Hi,
+kernel test robot noticed the following build warnings:
 
-On Tue, 29 Jul 2025 20:02:10 +0900 Byungchul Park <byungchul@sk.com> wrote:
->
-> Changes from v2:
-> 	1. Rebase on linux-next as of Jul 29.
+[auto build test WARNING on robh/for-next]
+[also build test WARNING on usb/usb-testing usb/usb-next usb/usb-linus tegra/for-next linus/master v6.16 next-20250801]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-Why are you basing development work in linux-next.  That is a
-constantly rebasing tree.  Please base your work on some stable tree.
+url:    https://github.com/intel-lab-lkp/linux/commits/Haotien-Hsu/dt-bindings-usb-Add-wake-up-support-for-Tegra234-XUSB-host-controller/20250801-180040
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git for-next
+patch link:    https://lore.kernel.org/r/20250801095748.385437-5-haotienh%40nvidia.com
+patch subject: [PATCH 4/4] usb: xhci: tegra: Support USB wakeup function for Tegra234
+config: arm-defconfig (https://download.01.org/0day-ci/archive/20250802/202508021305.3ENY5oQC-lkp@intel.com/config)
+compiler: clang version 22.0.0git (https://github.com/llvm/llvm-project 8f09b03aebb71c154f3bbe725c29e3f47d37c26e)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20250802/202508021305.3ENY5oQC-lkp@intel.com/reproduce)
 
---=20
-Cheers,
-Stephen Rothwell
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202508021305.3ENY5oQC-lkp@intel.com/
 
---Sig_/9yZ=dZN+zFc/Vgnr2iwwEfw
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+All warnings (new ones prefixed by >>):
 
------BEGIN PGP SIGNATURE-----
+>> drivers/usb/host/xhci-tegra.c:1997:15: warning: unused variable 'i' [-Wunused-variable]
+    1997 |         unsigned int i;
+         |                      ^
+   1 warning generated.
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiNnSMACgkQAVBC80lX
-0Gwf5Af+OMS7P8r7BKoR4DA+yUDiA60JSyGPWh4mtpdZbMuKCEDcbw1mrTbju/Cz
-2Wab4zw/I/sx4WbpNZXspJMAdvxoGkzZZHQ7oq/B71pkdLgmP9SslfC6HLQNfmiI
-+Lmmf9g8ASSFp+zjEAW/aU6nUZPUvywvt8tu5K/CAY1wvZqeEgf7n8Plg/Ef3hoh
-3A0t3a1JRLbcqHxMAXeq+2DJ0twEP2QiC8nXxqOJSzq56jMFAvliO2vjZr0XHMBT
-4Rki4Rfin3TM2MNLPM+fmIbkmuUBlAMI3qzkbPPuSVVw/j6OyexXePk2cusGRtVI
-o2d7E7WZVhsEtKWo5PGb/NGaJqwnlw==
-=6CHZ
------END PGP SIGNATURE-----
 
---Sig_/9yZ=dZN+zFc/Vgnr2iwwEfw--
+vim +/i +1997 drivers/usb/host/xhci-tegra.c
+
+  1992	
+  1993	static void tegra_xusb_remove(struct platform_device *pdev)
+  1994	{
+  1995		struct tegra_xusb *tegra = platform_get_drvdata(pdev);
+  1996		struct xhci_hcd *xhci = hcd_to_xhci(tegra->hcd);
+> 1997		unsigned int i;
+  1998	
+  1999		tegra_xusb_deinit_usb_phy(tegra);
+  2000	
+  2001		pm_runtime_get_sync(&pdev->dev);
+  2002		usb_remove_hcd(xhci->shared_hcd);
+  2003		usb_put_hcd(xhci->shared_hcd);
+  2004		xhci->shared_hcd = NULL;
+  2005		usb_remove_hcd(tegra->hcd);
+  2006		usb_put_hcd(tegra->hcd);
+  2007	
+  2008		dma_free_coherent(&pdev->dev, tegra->fw.size, tegra->fw.virt,
+  2009				  tegra->fw.phys);
+  2010	
+  2011		if (tegra->padctl_irq)
+  2012			pm_runtime_disable(&pdev->dev);
+  2013	
+  2014		tegra_xusb_dispose_wake(tegra);
+  2015	
+  2016		pm_runtime_put(&pdev->dev);
+  2017	
+  2018		tegra_xusb_disable(tegra);
+  2019		tegra_xusb_padctl_put(tegra->padctl);
+  2020	}
+  2021	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
