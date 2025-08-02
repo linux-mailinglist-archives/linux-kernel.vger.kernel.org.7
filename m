@@ -1,98 +1,70 @@
-Return-Path: <linux-kernel+bounces-754203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D148BB18FB0
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:51:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2193EB18FB4
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 20:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 72A6D1893565
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:51:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D01CB3BF648
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 18:52:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424541EDA26;
-	Sat,  2 Aug 2025 18:51:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DA98254878;
+	Sat,  2 Aug 2025 18:52:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oyi1tKQE"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IYBwfnNt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8FDF415853B;
-	Sat,  2 Aug 2025 18:51:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB58CC13B;
+	Sat,  2 Aug 2025 18:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754160689; cv=none; b=WhjTs18lmN05cfBpEXqIMdJv3R1bkfNo9WnwxYbntNPn7Uc4wfTbykZ34SJ2HQifOok0vXJ4FuE5pD2HlbNf/ww6c0DGaqDmoiYn8zPm4h/Jt8IXhvwRMe8DIF+4m+gpqlE55ibKWuNjqmbCUC9i/tQnhSAffI6VdGHn01hl0b0=
+	t=1754160764; cv=none; b=DZneWyR/iBqCx7RiemHOP7y1wGNNZAwLifrPDfY6iX6rRo8Xyufo4LiXLdIczMdC7j4jxPe4W0788KXqEdMewRug1OMsUfDX/N8AJhEiJ1YcouC1eGZHUd4n+ZrHw3jPFEoKrGV0O/ngI+jtnjJKkeRmyW0012tp6J4VzZ9tEQM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754160689; c=relaxed/simple;
-	bh=RiGNiHqduvbyMJazTqCXPOWEO6VyqZFkOlYS73wNtV8=;
+	s=arc-20240116; t=1754160764; c=relaxed/simple;
+	bh=oKJ4o+84X2gZrWbVCPsj5JL/+cPPXG/1i+v6w3VXMC4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XxANFU1HyGv79ps74ebKGarfnGxGG2NkRebmv7usFRV+4yMIyzn8M0ELq0B+RiezD9YBkymWfxD6z0bFwaSnAx7AIGJmK58LiFhp50q3cdRSuLr6hPCFav5MAv2r3Zuxb1IVJaQ9Nou/CfbaLJzZY5f4x6v3GGvK19SmISPlGus=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oyi1tKQE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id EAF55C4CEEF;
-	Sat,  2 Aug 2025 18:51:28 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=G4OVXseBCKejkVH/nMIVkwDrc4kejYYddfQ9deF1SV3NevZSjkBa5UvP2ah7crOnyR3ZLsG/GRg+RXilQpSELqC4kzW/YiTGpr36yZMJrtmibtn0/tB8Dd/MOrfodA7LZfgRAePRMUSvHZSwHVKsdhNPh36g8BS3rSEDj8Z9IN0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IYBwfnNt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 482AEC4CEEF;
+	Sat,  2 Aug 2025 18:52:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754160689;
-	bh=RiGNiHqduvbyMJazTqCXPOWEO6VyqZFkOlYS73wNtV8=;
+	s=k20201202; t=1754160764;
+	bh=oKJ4o+84X2gZrWbVCPsj5JL/+cPPXG/1i+v6w3VXMC4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Oyi1tKQEVLy7nKAugvnwDQJY873SOMOmCWXgj1+OMxC1ktxOj29Txp12eod6mIKhJ
-	 hGjvqBszSSmM8HSOSCBRxpptYW8hquo6CbEHFq4KKfZBP9WCsPbIqhNYVD1i1W1HWM
-	 uf5zMixtyBlO+bB8qDrrzvZpbD5R9P9Wckkqoazai3TI3/tgwfhBW1nSriXqvEA2C6
-	 W0XR0PTQzwQN/VZN2SFu+W3qHihc1UqIy4z+KKy+F7lDLY4qx/MB4QeYVaVFgT1rlc
-	 bxRM/LYyUg5su5Uq1E7EToDT93T1PrS90jkf/jksSASUybVE3fXimvpCLXXNcPkMiP
-	 bUJmMtQ48VNaA==
-Date: Sat, 2 Aug 2025 11:51:28 -0700
+	b=IYBwfnNtT4MqM4tAxSAR/QjCr7jN/hWRSOJgtIEv0cqySxNbaTHzmL9697+/+clTy
+	 0lXodjB2ALTL7KFhGrf+dOPaEl9UbiFS54b7fa4RPCFJKSLnMw3+lHXIhVFcfql4tk
+	 EreD2tbkCoyLDzoRzkgqjrUMwcRQvCio3Ls6fBtqgVXJztGW2LWZASS2RrIBIkD7AT
+	 c0zVOsLH8KRoGneQL/KaueDbzCGBKwbg6bdBvo/bGvF4O2p2+F2sWmwdT4Kdop5vt5
+	 HrEf3c+GE+zleyRAtl8EMibSGfp7N92FZFvklyyggz/EWUz2WkS9klmheE01e7SxVA
+	 eneqE0XK/GfVg==
+Date: Sat, 2 Aug 2025 11:52:44 -0700
 From: Kees Cook <kees@kernel.org>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Sohil Mehta <sohil.mehta@intel.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
-	Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-	Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-	Kai Huang <kai.huang@intel.com>,
-	Sandipan Das <sandipan.das@amd.com>,
-	Breno Leitao <leitao@debian.org>,
-	Rick Edgecombe <rick.p.edgecombe@intel.com>,
-	Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-	Juergen Gross <jgross@suse.com>,
-	Vegard Nossum <vegard.nossum@oracle.com>,
-	Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	"Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Luis Chamberlain <mcgrof@kernel.org>,
-	Yuntao Wang <ytcoode@gmail.com>,
-	Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-	Christophe Leroy <christophe.leroy@csgroup.eu>,
-	Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-	Huang Shijie <shijie@os.amperecomputing.com>,
-	Geert Uytterhoeven <geert+renesas@glider.be>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Arnaldo Carvalho de Melo <acme@redhat.com>,
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-efi@vger.kernel.org, linux-mm@kvack.org,
-	"Kirill A. Shutemov" <kas@kernel.org>,
-	"Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-	Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>, "H. Peter Anvin" <hpa@zytor.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Xiongwei Song <xiongwei.song@windriver.com>,
-	Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Michael Roth <michael.roth@amd.com>,
-	Tony Luck <tony.luck@intel.com>, Alexey Kardashevskiy <aik@amd.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	X86-kernel <x86@kernel.org>
-Subject: Re: [PATCHv9 04/16] x86/cpu: Defer CR pinning setup until core
- initcall
-Message-ID: <202508021149.B4BFF8D1@keescook>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com>
- <20250707080317.3791624-5-kirill.shutemov@linux.intel.com>
- <6075af69-299f-43d2-a3c8-353a2a3b7ee7@intel.com>
- <98a7a91b-3b46-4407-82a7-5f80443b7e00@intel.com>
- <6e768f25-3a1c-48b9-bc53-56877a556a83@intel.com>
+To: Alexander Lobakin <aleksander.lobakin@intel.com>
+Cc: Simon Horman <horms@kernel.org>, intel-wired-lan@lists.osuosl.org,
+	Michal Kubiak <michal.kubiak@intel.com>,
+	Maciej Fijalkowski <maciej.fijalkowski@intel.com>,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	Przemek Kitszel <przemyslaw.kitszel@intel.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	nxne.cnse.osdt.itp.upstreaming@intel.com, bpf@vger.kernel.org,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-hardening@vger.kernel.org
+Subject: Re: [PATCH iwl-next v3 16/18] idpf: add support for XDP on Rx
+Message-ID: <202508021152.AD1850CD2@keescook>
+References: <20250730160717.28976-1-aleksander.lobakin@intel.com>
+ <20250730160717.28976-17-aleksander.lobakin@intel.com>
+ <20250731123734.GA8494@horms.kernel.org>
+ <202507310955.03E47CFA4@keescook>
+ <8c085ba0-29a3-492a-b9f1-e7d02b5fb558@intel.com>
+ <ff10e2a3-bd97-4c96-b7bd-f47289c9b0e4@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -101,39 +73,95 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <6e768f25-3a1c-48b9-bc53-56877a556a83@intel.com>
+In-Reply-To: <ff10e2a3-bd97-4c96-b7bd-f47289c9b0e4@intel.com>
 
-On Thu, Jul 31, 2025 at 05:01:37PM -0700, Dave Hansen wrote:
-> On 7/31/25 16:45, Sohil Mehta wrote:
-> > On 7/9/2025 10:00 AM, Dave Hansen wrote:
-> >> On 7/7/25 01:03, Kirill A. Shutemov wrote:
-> >>> Instead of moving setup_cr_pinning() below efi_enter_virtual_mode() in
-> >>> arch_cpu_finalize_init(), defer it until core initcall.
-> >> What are the side effects of this move? Are there other benefits? What
-> >> are the risks?
-> >>
-> > Picking this up from Kirill.. Reevaluating this, core_initcall() seems
-> > too late for setup_cr_pinning().
+On Fri, Aug 01, 2025 at 03:17:42PM +0200, Alexander Lobakin wrote:
+> From: Alexander Lobakin <aleksander.lobakin@intel.com>
+> Date: Fri, 1 Aug 2025 15:12:43 +0200
+> 
+> > From: Kees Cook <kees@kernel.org>
+> > Date: Thu, 31 Jul 2025 10:05:47 -0700
 > > 
-> > We need to have CR pinning completed, and the associated static key
-> > enabled before AP bring up. start_secondary()->cr4_init() depends on the
-> > cr_pinning static key to initialize CR4 for APs.
+> >> On Thu, Jul 31, 2025 at 01:37:34PM +0100, Simon Horman wrote:
+> >>> While I appreciate the desire for improved performance and nicer code
+> >>> generation. I think the idea of writing 64 bits of data to the
+> >>> address of a 32 bit member of a structure goes against the direction
+> >>> of hardening work by Kees and others.
+> >>
+> >> Agreed: it's better to avoid obscuring these details from the compiler
+> >> so it can have an "actual" view of the object sizes involved.
+> >>
+> >>> Indeed, it seems to me this is the kind of thing that struct_group()
+> >>> aims to avoid.
+> >>>
+> >>> In this case struct group() doesn't seem like the best option,
+> >>> because it would provide a 64-bit buffer that we can memcpy into.
+> >>> But it seems altogether better to simply assign u64 value to a u64 member.
+> >>
+> >> Agreed: with struct_group you get a sized pointer, and while you can
+> >> provide a struct tag to make it an assignable object, it doesn't make
+> >> too much sense here.
+> >>
+> >>> So I'm wondering if an approach along the following lines is appropriate
+> >>> (Very lightly compile tested only!).
+> >>>
+> >>> And yes, there is room for improvement of the wording of the comment
+> >>> I included below.
+> >>>
+> >>> diff --git a/include/net/libeth/xdp.h b/include/net/libeth/xdp.h
+> >>> index f4880b50e804..a7d3d8e44aa6 100644
+> >>> --- a/include/net/libeth/xdp.h
+> >>> +++ b/include/net/libeth/xdp.h
+> >>> @@ -1283,11 +1283,7 @@ static inline void libeth_xdp_prepare_buff(struct libeth_xdp_buff *xdp,
+> >>>  	const struct page *page = __netmem_to_page(fqe->netmem);
+> >>>  
+> >>>  #ifdef __LIBETH_WORD_ACCESS
+> >>> -	static_assert(offsetofend(typeof(xdp->base), flags) -
+> >>> -		      offsetof(typeof(xdp->base), frame_sz) ==
+> >>> -		      sizeof(u64));
+> >>> -
+> >>> -	*(u64 *)&xdp->base.frame_sz = fqe->truesize;
+> >>> +	xdp->base.frame_sz_le_qword = fqe->truesize;
+> >>>  #else
+> >>>  	xdp_init_buff(&xdp->base, fqe->truesize, xdp->base.rxq);
+> >>>  #endif
+> >>> diff --git a/include/net/xdp.h b/include/net/xdp.h
+> >>> index b40f1f96cb11..b5eedeb82c9b 100644
+> >>> --- a/include/net/xdp.h
+> >>> +++ b/include/net/xdp.h
+> >>> @@ -85,8 +85,19 @@ struct xdp_buff {
+> >>>  	void *data_hard_start;
+> >>>  	struct xdp_rxq_info *rxq;
+> >>>  	struct xdp_txq_info *txq;
+> >>> -	u32 frame_sz; /* frame size to deduce data_hard_end/reserved tailroom*/
+> >>> -	u32 flags; /* supported values defined in xdp_buff_flags */
+> >>> +	union {
+> >>> +		/* Allow setting frame_sz and flags as a single u64 on
+> >>> +		 * little endian systems. This may may give optimal
+> >>> +		 * performance. */
+> >>> +		u64 frame_sz_le_qword;
+> >>> +		struct {
+> >>> +			/* Frame size to deduce data_hard_end/reserved
+> >>> +			 * tailroom. */
+> >>> +			u32 frame_sz;
+> >>> +			/* Supported values defined in xdp_buff_flags. */
+> >>> +			u32 flags;
+> >>> +		};
+> >>> +	};
+> >>>  };
+> >>
+> >> Yeah, this looks like a nice way to express this, and is way more
+> >> descriptive than "(u64 *)&xdp->base.frame_sz" :)
+> > 
+> > Sounds good to me!
+> > 
+> > Let me send v4 where I'll fix this.
 > 
-> Sure, if you leave cr4_init() completely as-is.
-> 
-> 'cr4_pinned_bits' should be set by the boot CPU. Secondary CPUs should
-> also read 'cr4_pinned_bits' when setting up their own cr4's,
-> unconditionally, independent of 'cr_pinning'.
-> 
-> The thing I think we should change is the pinning _enforcement_. The
-> easiest way to do that is to remove the static_branch_likely() in
-> cr4_init() and then delay flipping the static branch until just before
-> userspace starts.
+> Note: would it be okay if I send v4 with this fix when the window opens,
+> while our validation will retest v3 from Tony's tree in meantine? It's a
+> cosmetic change anyway and does not involve any functional changes.
 
-Yeah, this is fine from my perspective. The goal with the pinning was
-about keeping things safe in the face of an attack from userspace that
-managed to get at MSR values and keeping them from being trivially
-changed.
+If this is directed at me, yeah, I don't see any high urgency here.
 
 -- 
 Kees Cook
