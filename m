@@ -1,162 +1,103 @@
-Return-Path: <linux-kernel+bounces-753966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A2D8B18ADC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:03:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9691DB18ADD
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9472E1AA0B4D
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:03:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 562D97A89B0
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 06:14:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F9881A0730;
-	Sat,  2 Aug 2025 06:03:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EE6C182D3;
+	Sat,  2 Aug 2025 06:15:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b="HS9KuVFn";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="bsW+X0GN"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IHctM0MM"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C1322EB10;
-	Sat,  2 Aug 2025 06:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57EAC182B4;
+	Sat,  2 Aug 2025 06:15:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754114588; cv=none; b=LFRACig9hrMiNN5SBFWELWMoEGz8EoCMIpubxx/SXk5EwuaSKIg1CZ7fEktbjA24EF9yMA3m7jUFV0jZMYxV+2rCwJ/9Pu6z9zUZJhwHF4uq8toNIl6Mm9mmlbShZGOCg+yYu7J8xwDMkks4gWezeKYY2OGK1tv8NJ5hCIkdQ5E=
+	t=1754115343; cv=none; b=nD+d1XpS/jJDaxVMK4IUH1B7enHukqfpYn/CExlJSEVzKeA52RIvSU5q8HnTHoRWhB5JTGpJWUlG5F2AZBlULIFqknSJhdcgz4K+F1p9+oIfxsW1rreP0g1LtLBsJZXPg209W2bplKhPSgZExtjK3XzqvFFP+K4lRWd8HGOslGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754114588; c=relaxed/simple;
-	bh=dqRzS3oNdNgYL1BbnRwJ8OxM6pqlbIxj70KJ4DeZB9c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HhHqJ2++3tFdOhAKFo1FIOvQIOr8WWzJNJDM+UJGfcsikNgpDKquose8m3q4h6rjihuRQPRkYrSKE+ZUUvg05MhnHeTt5RLZyPXox5xWJ2CpVu9CvW80ZoJNL01tKA/UyUGtgl+b4cVYk8adHCMpz0Neky4X85UrAcxo1kvKK3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com; spf=pass smtp.mailfrom=core.frozenliquid.net; dkim=pass (2048-bit key) header.d=kylemanna.com header.i=@kylemanna.com header.b=HS9KuVFn; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=bsW+X0GN; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=kylemanna.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=core.frozenliquid.net
-Received: from phl-compute-04.internal (phl-compute-04.phl.internal [10.202.2.44])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 7C0B21400265;
-	Sat,  2 Aug 2025 02:03:05 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-04.internal (MEProxy); Sat, 02 Aug 2025 02:03:05 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=kylemanna.com;
-	 h=cc:cc:content-transfer-encoding:content-type:content-type
-	:date:date:from:from:in-reply-to:message-id:mime-version
-	:reply-to:subject:subject:to:to; s=fm3; t=1754114585; x=
-	1754200985; bh=KUFRKa0NYaQdqs7+7Do5S63Eu3436TXA2zyqGc8Bu+Q=; b=H
-	S9KuVFnYV56buZDC6SBCRcPQheNK5Wd88QjwerhF1NeRUDmvDcdcVm2Dp+hWopI0
-	fIwkDYtCHUqSenUzWl/pQMPQrXB0CiASrapS2FjNvH1Tl8YvDR1OoRXHNvIXEacF
-	tt/YS7emRHDZoQ7pKE0HB4foLtnzqFZsDewrGOF7mg1QNGv8z1j2QHo27gRXWE9O
-	Tgoa6CgursVsZF2acZkW1WHOZBgWoTPX5x1dZQV0NndIkYercCqsRYnTZD5RFUwr
-	eTKlXXCaaY6b7oPLMJlJzvcRbtaNzjxuIhsdql67d0saZubMsnmvHJ7+OqUVpJHV
-	ZaSWzrfYl1DaMFmazB5GQ==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:message-id:mime-version:reply-to:subject
-	:subject:to:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1754114585; x=1754200985; bh=KUFRKa0NYaQdqs7+7Do5S63Eu343
-	6TXA2zyqGc8Bu+Q=; b=bsW+X0GNmE1UuDLQOMX6O79V/L40sMRRGSvE4m7O//Ez
-	IZaD3mwovDG2XqDH9Eg25+oTizB6KXshruh8OypTWpy0dsMG5sVkNXX+kjppZUzs
-	EeQ7/gfOB509YchAkvA1xOSkJZfaGDpye1BGtfNWM45YNKII1KaohUIIXRirq+mV
-	sC2PlE3WcOuoM2Qdjyj3XeYc7u9F8/fKywW3UUgbmz3cLQ2N2qNth3qvTa7BiabK
-	Bq5IcPrnmwd1DG1UraqJYH1PLD8vz7NUCO52+o0YJw1xhcMZnMmfX9vc1NYKaEF7
-	LdSBdmmysApt3nN6FTZEfLudtwckfCNXRIr88kJW3Q==
-X-ME-Sender: <xms:GKqNaJfXdBa2E9VUhz3csxzd97bMklCcpaGq8Egu9h8pSD6C-76ozA>
-    <xme:GKqNaMsLMIEAKAmCk0ToV0HdfH0--TcZvb-faxj8YrKLXeAZZd-et3CWrqa6FUWS1
-    CpORmKmskRcItL18g>
-X-ME-Received: <xmr:GKqNaBk5MED6UIGuMk0MMyPKMB2qRUxKnDVn0A89YdZP4z6OrYw3cVuVS3przITJonkHlhCKpT2VLZC1m6PlNufMtLKpIqO6MlnrmFEY8D3nPh6qIi8ofr9szvxuKRjBmgo>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdehkedtucetufdoteggodetrf
-    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
-    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
-    gurhephffvvefufffkofggtgfgsehtkeertdertdejnecuhfhrohhmpefmhihlvgcuofgr
-    nhhnrgcuoehkhihlvgeskhihlhgvmhgrnhhnrgdrtghomheqnecuggftrfgrthhtvghrnh
-    eptdfhhedvveegudettdejvdejudelleegtefgtdejtdelhefhvdejgfejvdevueefnecu
-    ffhomhgrihhnpehinhhtvghlrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrg
-    hrrghmpehmrghilhhfrhhomhepnhhithhrohestghorhgvrdhfrhhoiigvnhhlihhquhhi
-    ugdrnhgvthdpnhgspghrtghpthhtohepuddvpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopehjsggrrhhonhesrghkrghmrghirdgtohhmpdhrtghpthhtohepsghpsegrlhhi
-    vghnkedruggvpdhrtghpthhtohepjhgrmhgvshdrmhhorhhsvgesrghrmhdrtghomhdprh
-    gtphhtthhopehjrghmvghsfigvshhtohhnjhgvrhhnihhgrghnsehgmhgrihhlrdgtohhm
-    pdhrtghpthhtohepqhhiuhiguhdriihhuhhosehinhhtvghlrdgtohhmpdhrtghpthhtoh
-    epthhonhihrdhluhgtkhesihhnthgvlhdrtghomhdprhgtphhtthhopeihihdurdhlrghi
-    sehinhhtvghlrdgtohhmpdhrtghpthhtohepmhgthhgvhhgrsgeskhgvrhhnvghlrdhorh
-    hgpdhrtghpthhtoheprhhrihgtsehkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:GKqNaHTTecK6LqmzQLlj8kqNH4cHwYfP0QWJxM6bRoPyjvjpjY0g0A>
-    <xmx:GKqNaPK-MxvUF-SCiFDscr7KpUye5LQphK6WF2N93py8d56kha9aQQ>
-    <xmx:GKqNaJHanXK5T41cveU9lA2BOIaKbNChYDxY5OGHIu2QlDT3TaZnWw>
-    <xmx:GKqNaE31rUAlT1zvwgonGT_-_qXaTSaNAGRthng2STOXTag-ezJToA>
-    <xmx:GaqNaNdFWSDjZeNUwBxbZUUQdaSSfe2f3A3CDWM9Mzz5XqO4cGVNtneD>
-Feedback-ID: iac74403c:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sat,
- 2 Aug 2025 02:03:04 -0400 (EDT)
-Received: by core.frozenliquid.net (Postfix, from userid 1000)
-	id 98EF61ECB7E3; Fri, 01 Aug 2025 23:03:03 -0700 (PDT)
-From: Kyle Manna <kyle@kylemanna.com>
-To: Tony Luck <tony.luck@intel.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Jason Baron <jbaron@akamai.com>,
-	Qiuxu Zhuo <qiuxu.zhuo@intel.com>
-Cc: James Jernigan <jameswestonjernigan@gmail.com>,
-	James Morse <james.morse@arm.com>,
-	Mauro Carvalho Chehab <mchehab@kernel.org>,
-	Robert Richter <rric@kernel.org>,
-	Yi Lai <yi1.lai@intel.com>,
-	linux-edac@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Kyle Manna <kyle@kylemanna.com>
-Subject: [PATCH v2] EDAC/ie31200: Add two more Intel Alder Lake-S SoCs for EDAC support
-Date: Fri,  1 Aug 2025 23:01:12 -0700
-Message-ID: <20250802060112.363506-1-kyle@kylemanna.com>
-X-Mailer: git-send-email 2.50.1
+	s=arc-20240116; t=1754115343; c=relaxed/simple;
+	bh=cEoHIrGwI9Cmfy7uTxfy8BAPSlg9FflWFmdc6B7TtOQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kh+7GCq4xEneYg1bkN7xyUQ6Su7t5iNKHdDQfPGkS1Ow7oR7sg06GwsKgH3Pm05h/A94FX244aH1C+YaiJk2BK79NN+KscG+zcTVlg1Swrs+oS04GvSwSFdhccwRyjCetJJVvZBDJV8GD9YYF/5edS76wbwQOpCPKJ6mDZ2jfGs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IHctM0MM; arc=none smtp.client-ip=209.85.218.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-af0dc229478so240874766b.1;
+        Fri, 01 Aug 2025 23:15:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754115341; x=1754720141; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=cEoHIrGwI9Cmfy7uTxfy8BAPSlg9FflWFmdc6B7TtOQ=;
+        b=IHctM0MMDW9uwDYLi228KO2ISAn4KOduXvbqLR2gmQa6rnb/hfDpwc4PLOLar9IyAu
+         aWeW+35OONTIVzEBwqLZYGmVyeVweHJbC3qf90QdP3N9ADdaLBLCBNQd2e7jLR1CiEXp
+         1A3lA0wnYQSb1Pps0RxP4uzFdr4Bk8DvYoctZAZgjZRU6janxAK3z638UAmTUwddNEpW
+         1BTQlee2jLXnPfru/V47DOiwKyRpUCOtAWT+Z79/jOC54uA1NKxjNotpHJsYC/WPOT8D
+         HwnylLG6UaGxsJb0jju44q3OOt9cdiW+CBe0QSrbW/2WNYxKj3sBJTEOJL2DM8ANztHa
+         yKPA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754115341; x=1754720141;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cEoHIrGwI9Cmfy7uTxfy8BAPSlg9FflWFmdc6B7TtOQ=;
+        b=sNE8NRNVcDBAoDzSCJtx4zNmaBF7i2xq/gT0sIr1RS8cJEzJ0GOj0OIpwJy+r3YFU3
+         Yhp16h4G6MSBsngC/DVpuR5/6e4OdRgWF1CUujsFIlc9oyeKDpgG6wChaIqLZc6rZyjQ
+         bTT0AOQZSZQrqQxW3/MZYKWc+8VKF8jqXtr+iPpisKPAolqWTt3HVWXo2RaIszqq7i0x
+         8yRKR3tXugHyELtln2vr+Px0p5172tnxWuTy3J1ap+BFn10ZxL9cXC7jr38++PvEGX1B
+         L2x8Yt3lcg/40bXtnwODZcJUgzHUhnH4fGueWfK2DVf/KdUU38dyw1bLCsO9TzPFEFFr
+         W+Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCVRZQ0EOnDc2GHFSEPcTfLwoaprFumyetdlLtdV+CgV6XrylOeJW2EAJ9uoajC3xhzioQsHx9pySMKnd4c=@vger.kernel.org, AJvYcCVpKYHIxdQhSNQpJUZaQyoFrRtpu7RATjwoEs/VHuE7XGwEYD9cJBsAp3s4me3gvmDtFLwbl87E@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+2MXUE5w6DcJMH2c1AvnT2JmUZw9XgnEUJ/5ZgRjBTCQkyiw/
+	SjRenRZ7dz9RAnQPAlM2g7K0W20jr69UfT1OHYL85kNeZw/8y1LCTRn3DfGvb9CaVH7w41AvzRV
+	FcJpxSxq2l7HuQuCUOnWA9fvBEtgy7g==
+X-Gm-Gg: ASbGncvGrrje13jN2/ZxkwM3uboXNrmy4sweGGxy7uKBDTVduL3rl/K3I+z+YLAuDcV
+	FdCtcx08IQqRI9Bcgg+39HcLpkfD2696aoAkU4aqIg00vZWRrmYh3DVH/gkoP28Y173u5zcLv62
+	O1S48dSXvZsdNEOg9nXnopcluSo5yln4TXTQI8mfcN/LGzGpRNxeExITOX1EEbGfM+OsJGA95M5
+	MUXId0OuSMQ98AatGg=
+X-Google-Smtp-Source: AGHT+IHW9WdtFCyF+F81VNF8OEsDrE1uYicLpSEA/0VyxvhYP4Yby1e7IsG9Oskayq8UFDdTWgJzQoTiV+ShkV6XYVw=
+X-Received: by 2002:a17:906:6a03:b0:af9:1ee4:a30c with SMTP id
+ a640c23a62f3a-af940155f39mr269943566b.36.1754115340366; Fri, 01 Aug 2025
+ 23:15:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <68712acf.a00a0220.26a83e.0051.GAE@google.com> <20250727180921.360-1-ujwal.kundur@gmail.com>
+ <e89ca1c2-abb6-4030-9c52-f64c1ca15bf6@lunn.ch> <CALkFLL+qhX94cQfFhm7JFLE5s2JtEcgZnf_kfsaaE091xyzNvw@mail.gmail.com>
+ <df06dba7-f5bd-4ee1-b9af-c5dd4b5d4434@lunn.ch>
+In-Reply-To: <df06dba7-f5bd-4ee1-b9af-c5dd4b5d4434@lunn.ch>
+From: Ujwal Kundur <ujwal.kundur@gmail.com>
+Date: Sat, 2 Aug 2025 11:45:27 +0530
+X-Gm-Features: Ac12FXzpgl8ZaZQeWyE04wBaP_SNNPuPf_Yaw-jOHv_b-13WN2_K2Iit5eK-6tI
+Message-ID: <CALkFLLLYZBE=EztO_1Ws=G+URhBVaLfdvm0v2xRK6ZEEcNBsSg@mail.gmail.com>
+Subject: Re: [RFC PATCH] net: team: switch to spinlock in team_change_rx_flags
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: syzbot+8182574047912f805d59@syzkaller.appspotmail.com, davem@davemloft.net, 
+	edumazet@google.com, horms@kernel.org, kuba@kernel.org, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, pabeni@redhat.com, 
+	syzkaller-bugs@googlegroups.com, jiri@resnulli.us, andrew+netdev@lunn.ch
+Content-Type: text/plain; charset="UTF-8"
 
-Host Device IDs (DID0) correspond to:
-* Intel Core i7-12700K
-* Intel Core i5-12600K
+> This is already fixed by:
+> bfb4fb77f9a8 ("team: replace team lock with rtnl lock")
+Thanks for letting me know. I now understand ASSERT_RTNL() is a viable
+alternative.
 
-See documentation:
-* 12th Generation Intel® Core™ Processors Datasheet
-    * Volume 1 of 2, Doc. No.: 655258, Rev.: 011
-    * https://edc.intel.com/output/DownloadPdfDocument?id=8297 (PDF)
-
-Signed-off-by: Kyle Manna <kyle@kylemanna.com>
-Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
----
-Changes in v2:
-- Rebased on top of a6923c06a3b2e2c534ae28c53a7531e76cc95cfa
-- Added comments to Device ID definitions as requested
-- Added Reviewed-by tag from Qiuxu Zhuo
-
- drivers/edac/ie31200_edac.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/drivers/edac/ie31200_edac.c b/drivers/edac/ie31200_edac.c
-index 5c1fa1c0d12e..5a080ab65476 100644
---- a/drivers/edac/ie31200_edac.c
-+++ b/drivers/edac/ie31200_edac.c
-@@ -99,6 +99,8 @@
- 
- /* Alder Lake-S */
- #define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1	0x4660
-+#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2	0x4668	/* 8P+4E, e.g. i7-12700K */
-+#define PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3	0x4648	/* 6P+4E, e.g. i5-12600K */
- 
- /* Bartlett Lake-S */
- #define PCI_DEVICE_ID_INTEL_IE31200_BTL_S_1	0x4639
-@@ -761,6 +763,8 @@ static const struct pci_device_id ie31200_pci_tbl[] = {
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_S_6), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_RPL_HX_1), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_1), (kernel_ulong_t)&rpl_s_cfg},
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_2), (kernel_ulong_t)&rpl_s_cfg},
-+	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_ADL_S_3), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_BTL_S_1), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_BTL_S_2), (kernel_ulong_t)&rpl_s_cfg},
- 	{ PCI_VDEVICE(INTEL, PCI_DEVICE_ID_INTEL_IE31200_BTL_S_3), (kernel_ulong_t)&rpl_s_cfg},
--- 
-2.50.1
-
+> I'm guessing, but is this about passing ndo_set_rx_mode from the upper
+> device down to the lower devices? Maybe look at how this is
+> implemented for other stacked devices. A VLAN interface on a base
+> interface for example? A bridge interface on top of an interface.
+Oh this is about stacked devices, hence the references to "lower" and
+"upper". Thanks, I'll read more about them.
 
