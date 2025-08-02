@@ -1,232 +1,92 @@
-Return-Path: <linux-kernel+bounces-754132-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 88498B18E7E
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:41:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60AC1B18E82
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 14:43:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FE0316C83A
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:41:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 410C47A300A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:42:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A7C227E80;
-	Sat,  2 Aug 2025 12:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="DOQMtJD9"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19AF222FAF8;
+	Sat,  2 Aug 2025 12:43:23 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 486AE22D4F9
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:40:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A6BE273F9
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 12:43:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754138402; cv=none; b=jAaniAAMnaL1rmTSzBj+8iYdNlgwWXyFn/4gdBIgQk0RWoJTU5VbLOC9XRz35wy59PHM+4NdgG0atH2Rt6Z3TfOA4CHjFtTuiNsB64MWRrxR6XHGnn3F98iSLkOAm4wQuPy19jpjX79sHMlhCrU+jKldfuNZiijz1LlIc0HjY4o=
+	t=1754138602; cv=none; b=DF5DnLqVHJSfJoWdcCngRpEWpEyhgoiRdQqm9c00soC0YfAGGkADAU7rFxhp5sDJjDOxqVpUvRj3jz/Dm/dgqaAluTT6ZhuD/3Itkkul3DuPNMbqCz83/Iqo3LdUZQG4o6nATo5LPYvqLxIjL8mM0U7MEFgHWde2NxtB42g8IJI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754138402; c=relaxed/simple;
-	bh=20GZjV/9etu8Dh+QrGksTZEKnBLbOiAfPjovI45mWjE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PfvzpQQ7sgNg0kjkN4Vnrpr87/x1YQwBDsHLhcZJYxx6Ez5pAN78/7Vdy928ziq+hmioPj67WbV2hlmajQwumCNPhl39OGJx94h8ESelzfugzKaNWGxW4+6RaINjW5oyyGZ2UVJf4XBh+O+qJ0+rO6+ztWA7A8vH+h3kyv6lPds=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=DOQMtJD9; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5725fVaE008904
-	for <linux-kernel@vger.kernel.org>; Sat, 2 Aug 2025 12:39:59 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	r9VK3kXUy5TNVKQthyOGQ0SFCHNZ+dt1IH8nz2OWv34=; b=DOQMtJD9xjdE7K4H
-	vt+tAL+ijFCF/Ppx46PTq6wc0Tn4/X98XLLrGBLGuzMvbAxreC3RezQp8EyPZa0+
-	UzJW6dPZmAIDc6+9IQeviwcJmVcn12IlqcBecAfYSutXBJr+KyZvSqxFtgMMo9du
-	llmeNIzI2yHwmB8wloQBV8amiGbLg6kLeWquA++hJ11zyqHDF33b7slzh3B0tFYr
-	A1fOQ+7KHo3LhiJjF1ji/no0ao8zJy6eh31X7yiFpqa2FD+ip3SBTFBwj/8a5s4d
-	xvZZXb4ZGPo/7wRpiihVK7awCZ1GbbBUY6miBEig1e3yCvdFUp5HadPxMnra5b45
-	h8VRQw==
-Received: from mail-qt1-f199.google.com (mail-qt1-f199.google.com [209.85.160.199])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a0rsr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 12:39:59 +0000 (GMT)
-Received: by mail-qt1-f199.google.com with SMTP id d75a77b69052e-4ab65611676so7446461cf.0
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:39:59 -0700 (PDT)
+	s=arc-20240116; t=1754138602; c=relaxed/simple;
+	bh=0Yk62wa4IMU14NUjS6Y/+VV3X80TCau4Bk3WHih/Hf8=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=So0PEP+K/AZz5egF5c7WbKQt4MjBu7CxAbJbfLo2AgXHJWFU+GpP5WCltmYWsbyKuvyDNn1zM/OPd3vBCwOGrpvq7aRRczcfN0RMgYlcwP34GCtqASjqs+0c+INf1otB8EXLVitJNgNRYy7S93TLwYcnCSA3TU6rPB3udXtcA/k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c467931c1so631163639f.3
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 05:43:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754138398; x=1754743198;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1754138600; x=1754743400;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=r9VK3kXUy5TNVKQthyOGQ0SFCHNZ+dt1IH8nz2OWv34=;
-        b=d1TQ8ss+vj3h0iPsdI4vQqswBlo4hfNdeZnUWIibO4IKkTy2RAD2Q09RP0uJ1GInjJ
-         IoNxFdkAo1jeWvQJP0LTrQlajZfHLfuKmGiQ1+wrBenvXOSd9FSWRaQrJJwrzyDUu25h
-         wZWTS3Sg1a0hVOMMtRf4VPONFtXxI+L3LUTEk7A7oPKVYUry0i1VuAC1awRayrZgVsBS
-         4AT7yLFhuViNJvBajw/6mmY1F6uWnZfTJgAWOUa2RO34yu5hQpYUCcNkcKTpeWxXGtHp
-         Jf3k+ySTxoMcx8A8h1Vhb3P+8Fh2ompSztQmubSz0PDwomcXcZbKZkCdkbDeFS6+CjM8
-         jkcw==
-X-Forwarded-Encrypted: i=1; AJvYcCW3S1lobYxsq+DzZcAvfhLnLN8Wb5M1QL5gu5drDcsXovWVheY7hLhsJKdyWs/JxTVnX9fZYji0U9KoBNM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwzNYTC0rChyYDN6XvrEz4e5NkfZI6tzwYOjsIpUZmmlJlaPJ+R
-	dPC8uV5x67hWqa2Jx1Pf4g7kwXvF+ZtLcCI4JkhS9+NNAX0w/Mmi2ulr/xv2cP5DqmMKkwTAVY4
-	MHePNJKkRDxAZJQbDWqtE76B1IQIP4My3MDN8LgHYAaEc9AOLMolVutyp7qlypuHf7pc=
-X-Gm-Gg: ASbGncsxnfV9mrOB6DSzseeuSaY5FjZRTOusUI0PZg6y2n1Y2aejXJRSDz2vPGkeXLs
-	wZVoBveeTGOXv6RmMP0IHvcS9hrYTJYCnl7CiI2pOAyw3RyoQR2TC9HG3bi47D/DHvRTHuwM9d7
-	65oZBPYzn63YqOn+zSkJ9Z0CMKl9P/svb5Pi8FMBF1UnKtIKYm9qdNWa5dbBs9IJhp0hSkiDnSb
-	avXw8Cwk+SvNobmHvVTWXoBKI9Y8SfCV9IOHoLnfXxXFtrn0GLqgojr5O6L9c/XadiVuuVJfA8p
-	Vqy26fTr+3kiLE97yBmnWxqxhRyWuMKBdyLZ5TtsGbUCS/9IjWDpoUZKnHkuj/gmutfJsl0NBgj
-	sm75bXqcZXTNoPmGfoA==
-X-Received: by 2002:ac8:5f90:0:b0:4ab:5ac3:1347 with SMTP id d75a77b69052e-4af10a84c91mr23334241cf.13.1754138398264;
-        Sat, 02 Aug 2025 05:39:58 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEm4NEl6EUx3LCCGFmAhcLGEPc2/M/pvg1mmL0vg2ErLHKHgVKDYHB4PV/P/gfOCagScMPDYw==
-X-Received: by 2002:ac8:5f90:0:b0:4ab:5ac3:1347 with SMTP id d75a77b69052e-4af10a84c91mr23333291cf.13.1754138397693;
-        Sat, 02 Aug 2025 05:39:57 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe77cfsm4167407a12.42.2025.08.02.05.39.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 05:39:57 -0700 (PDT)
-Message-ID: <e0886f9e-bcc1-48dc-a175-2147d8d4fc3e@oss.qualcomm.com>
-Date: Sat, 2 Aug 2025 14:39:48 +0200
+        bh=pOp1KiJpscJreHkAk7UWsK8dLRPQ2YCkF1Ze1W2/zcY=;
+        b=FDlGzqaiyJ+OoL6n1WcnJc4kMSa8Z0VsGICGMF6Vn1Fc5zXzH006uWoXubmHkut5oC
+         bVUhc6acTJD3DcPJfd0ZLjsHcpuUBYfGVZWPB3E+a6I83lIFEcRhWJfM5xrwdnekqxvj
+         OwKZPHLGR2fA7rpU0ugRmAz9BUsCktELFdVhgRe+SMh/PnlyG2yhabiHU7Yo2aUiEauT
+         Q0mVI+bZ/D0FV1kLf0ACa/WecRf+URduOUJwoudrZzyAFNDyjxfhP+hYn+2zxxYclj5Q
+         yUs89JU9JjwpeH0hPTo4dqFNZA+mspdQUaL1Fijz8o33Ytrt8YeRyds6GA3VopNH3Suj
+         3UDg==
+X-Gm-Message-State: AOJu0YzhgUOvJsjgA+KobPpWc2TjdKNZqzS28e5o5y+yl4v/L6dN/PzP
+	xAzptDY26u8rE1A+Zt16fqAh6VIPCYZuJQfw3nGzBVvVFR9N8idA6f3rb0pitjtXQ0gSED3GQGo
+	4c7yAj+T4rg3o+DzKS3eiZywizjy0R1wtursWPcyv13ngxvEwZG/wSwatYM0=
+X-Google-Smtp-Source: AGHT+IHG/53U/RwvSXX0gvniMAgSbYjuTm2UIRNeRtGvuUUa6dU909jCRogamC65EY0jSx5zpvqAoFHO1k4DoNzLaH792I0xxIk+
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 3/6] dmaengine: qcom: gpi: Accept protocol ID hints
-To: Geert Uytterhoeven <geert@linux-m68k.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Vinod Koul <vkoul@kernel.org>, Sven Peter <sven@kernel.org>,
-        Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-        Neal Gompa <neal@gompa.dev>,
-        Ludovic Desroches <ludovic.desroches@microchip.com>,
-        Florian Fainelli <florian.fainelli@broadcom.com>,
-        Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>,
-        Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
-        Paul Cercueil <paul@crapouillou.net>,
-        Eugeniy Paltsev <Eugeniy.Paltsev@synopsys.com>,
-        Viresh Kumar <vireshk@kernel.org>,
-        Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-        Frank Li <Frank.Li@nxp.com>, Shawn Guo <shawnguo@kernel.org>,
-        Sascha Hauer <s.hauer@pengutronix.de>,
-        Pengutronix Kernel Team <kernel@pengutronix.de>,
-        Fabio Estevam <festevam@gmail.com>,
-        Taichi Sugaya <sugaya.taichi@socionext.com>,
-        Takao Orito <orito.takao@socionext.com>,
-        =?UTF-8?Q?Andreas_F=C3=A4rber?=
- <afaerber@suse.de>,
-        Manivannan Sadhasivam <mani@kernel.org>,
-        Daniel Mack <daniel@zonque.org>,
-        Haojian Zhuang <haojian.zhuang@gmail.com>,
-        Robert Jarzmik <robert.jarzmik@free.fr>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Magnus Damm <magnus.damm@gmail.com>,
-        Patrice Chotard <patrice.chotard@foss.st.com>,
-        Linus Walleij <linus.walleij@linaro.org>,
-        =?UTF-8?Q?Am=C3=A9lie_Delaunay?= <amelie.delaunay@foss.st.com>,
-        Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-        Alexandre Torgue <alexandre.torgue@foss.st.com>,
-        Chen-Yu Tsai
- <wens@csie.org>,
-        Jernej Skrabec <jernej.skrabec@gmail.com>,
-        Samuel Holland <samuel@sholland.org>,
-        Laxman Dewangan
- <ldewangan@nvidia.com>,
-        Jon Hunter <jonathanh@nvidia.com>,
-        Thierry Reding <thierry.reding@gmail.com>,
-        Peter Ujfalusi <peter.ujfalusi@gmail.com>,
-        Kunihiko Hayashi <hayashi.kunihiko@socionext.com>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Michal Simek <michal.simek@amd.com>,
-        Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
-        Rob Herring <robh@kernel.org>, Saravana Kannan <saravanak@google.com>,
-        =?UTF-8?Q?Martin_Povi=C5=A1er?= <povik+lin@cutebit.org>,
-        Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
-        Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
-        Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
-        Mukesh Kumar Savaliya <quic_msavaliy@quicinc.com>,
-        Viken Dadhaniya <quic_vdadhani@quicinc.com>,
-        Andi Shyti <andi.shyti@kernel.org>,
-        Krzysztof Kozlowski
- <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        dmaengine@vger.kernel.org, linux-kernel@vger.kernel.org,
-        asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-        linux-rpi-kernel@lists.infradead.org, linux-mips@vger.kernel.org,
-        imx@lists.linux.dev, linux-actions@lists.infradead.org,
-        linux-arm-msm@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
-        linux-stm32@st-md-mailman.stormreply.com, linux-sunxi@lists.linux.dev,
-        linux-tegra@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-sound@vger.kernel.org, linux-i2c@vger.kernel.org,
-        linux-spi@vger.kernel.org
-References: <20250730-topic-dma_genise_cookie-v1-0-b505c1238f9f@oss.qualcomm.com>
- <20250730-topic-dma_genise_cookie-v1-3-b505c1238f9f@oss.qualcomm.com>
- <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <CAMuHMdV0JO=qtregrrHsBZ-6tpNdPUj3G1_LWRfRsj0vBb+qyw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=688e071f cx=c_pps
- a=WeENfcodrlLV9YRTxbY/uA==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=EUspDBNiAAAA:8
- a=sidZTQT7lcrlHK7IIakA:9 a=QEXdDO2ut3YA:10 a=kacYvNCVWA4VmyqE58fU:22
-X-Proofpoint-ORIG-GUID: Zm__ZuMuN3y51ThNKbZ6EhImmldP6iRj
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAyMDEwNSBTYWx0ZWRfX8bvGqbEbNPcF
- gATaZIMxJQEfiEOx782iMlaNq8Zb6pPJUmP7dm/bE2Jv8SiLtTJmqgIS0eE69Cn7p++MhKBWszf
- ueScTI3DAz9Ef/vrY36GcFK+GrHbfJ2JYRctaH41IXEXrg7cPsk6Om/iWHtLWaXRMtEbLzBo9db
- gt1KtDBLrxpgVT2ZpY0lCksC5m3BBMKRs2FXRkdDEhdGoio1bZVoLEoRGSlppp70J5NDuzFn4QK
- FbGbockRcEqYz80Z2PLptCz72h82Ilqf9g+5O0XTHRYa/hNRvJNEq3+q4AFvTUdfiobAIUmgQYL
- YjVpQvB9a8DDINLPtjjRfFKUO376ES02OkJWxYipQAIkA8qeaHD7tx9Irtm95NTI4JBEZAOvqE1
- xgkJnUjQm4Ky7BQqIkxMuspNHSRZEe3ZskTovgbC9WKFvztTJw1UcsXNnXS50jsnwRwSGoC5
-X-Proofpoint-GUID: Zm__ZuMuN3y51ThNKbZ6EhImmldP6iRj
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-01_08,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=864 clxscore=1015
- phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508020105
+X-Received: by 2002:a92:c24f:0:b0:3e4:c4:f532 with SMTP id e9e14a558f8ab-3e4161f0cf2mr56993565ab.22.1754138600466;
+ Sat, 02 Aug 2025 05:43:20 -0700 (PDT)
+Date: Sat, 02 Aug 2025 05:43:20 -0700
+In-Reply-To: <6834671a.a70a0220.253bc2.0098.GAE@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <688e07e8.050a0220.f0410.013c.GAE@google.com>
+Subject: Forwarded: Fix reported __del_gendisk deadlock
+From: syzbot <syzbot+2e9e529ac0b319316453@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 7/30/25 1:32 PM, Geert Uytterhoeven wrote:
-> Hi Konrad,
-> 
-> On Wed, 30 Jul 2025 at 11:35, Konrad Dybcio <konradybcio@kernel.org> wrote:
->> From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
->>
->> Client drivers may now pass hints to dmaengine drivers. GPI DMA's only
->> consumers (GENI SEs) need to pass a protocol (I2C, I3C, SPI, etc.) ID
->> to the DMA engine driver, for it to take different actions.
->>
->> Currently, that's done through passing that ID through device tree,
->> with each Serial Engine expressed NUM_PROTOCOL times, resulting in
->> terrible dt-bindings that are full of useless copypasta.
->>
->> To help get rid of that, accept the driver cookie instead, while
->> keeping backwards compatibility.
->>
->> Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-> 
-> Thanks for your patch!
-> 
->> --- a/drivers/dma/qcom/gpi.c
->> +++ b/drivers/dma/qcom/gpi.c
->> @@ -2145,7 +2151,8 @@ static struct dma_chan *gpi_of_dma_xlate(struct of_phandle_args *args,
->>         }
->>
->>         gchan->seid = seid;
->> -       gchan->protocol = args->args[2];
->> +       /* The protocol ID is in the teens range, simply ignore the higher bits */
->> +       gchan->protocol = (u32)((u64)proto);
-> 
-> A single cast "(uintptr_t)" should be sufficient.
-> Casing the pointer to u64 on 32-bit may trigger:
-> 
->     warning: cast from pointer to integer of different size
-> [-Wpointer-to-int-cast]
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-Good point, not compiling for 32-bit always ends up biting.. thanks
+***
 
-Konrad
+Subject: Fix reported __del_gendisk deadlock
+Author: ujwal.kundur@gmail.com
+
+#syz test
+
+diff --git a/block/genhd.c b/block/genhd.c
+index c26733f6324b..bad731186189 100644
+--- a/block/genhd.c
++++ b/block/genhd.c
+@@ -819,9 +819,11 @@ void del_gendisk(struct gendisk *disk)
+                disable_elv_switch(disk->queue);
+
+                memflags = memalloc_noio_save();
++               mutex_lock(&set->tag_list_lock);
+                down_read(&set->update_nr_hwq_lock);
+                __del_gendisk(disk);
+                up_read(&set->update_nr_hwq_lock);
++               mutex_unlock(&set->tag_list_lock);
+                memalloc_noio_restore(memflags);
+        }
+ }
 
