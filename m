@@ -1,127 +1,129 @@
-Return-Path: <linux-kernel+bounces-753991-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-753995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE62CB18B6B
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:46:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7AD2BB18B76
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:49:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 62052189C6D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:46:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 09271189DF86
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 08:49:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8813F1FDA9E;
-	Sat,  2 Aug 2025 08:46:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0C0205AD7;
+	Sat,  2 Aug 2025 08:48:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TlxW2pNK"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BB68149DF0;
-	Sat,  2 Aug 2025 08:46:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="LtSECY5+"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.4])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 242961991DD;
+	Sat,  2 Aug 2025 08:48:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.4
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754124389; cv=none; b=tSa+bcu0hr+ni2jqd2iNHVc6g3jRhQxWNtBZCfTbWxDuT+AbXqjIJkj4/Wuv96MsB++xhiAwdxV7QXW2mG62vwaCeICHQffcrt/EL0Hlc3D78Xx2dYaYeG5V3YXD5Bp8BaR9LULkdTBtRjiJ7zIlAWFRCnQc55xPPcYCI8WtNfA=
+	t=1754124529; cv=none; b=ooTILDAEuLRkPcGXZm/Y7R+XR9sExcgWyo3QVRKgsL5FYLaiZsJQW7YRSLn55hgVczbM1C+2KCBuB5K1BXxB23JuL+UhCW7WvJVxm8GxSyWzI550n+9hDxjBRVGmYoCELTSYX24qkU52cm6m1KlPuTbXqjDWXyBxetY3MCxzfvg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754124389; c=relaxed/simple;
-	bh=W/seSpZTBVa7pglaInZylODcwe9zQfbQrQVk2UFXQJc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MeWPuDSVWK+1ziwLwnqOVC/1gF406y0mpoJ6dIQTbZOfvpmEc13//uq3vGG9d4GMyum4iuWXNIG1nL29xVhfq/lp2OMMeF2pRhh373ZAOhl4c9sKf02seqUQVHw9B0Mf8gmzFI/3Oo54Hasjre3vvg6xcZKyQIJNAHFeY7p17IQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TlxW2pNK; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-ae35f36da9dso510644366b.0;
-        Sat, 02 Aug 2025 01:46:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754124386; x=1754729186; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W/seSpZTBVa7pglaInZylODcwe9zQfbQrQVk2UFXQJc=;
-        b=TlxW2pNKxyQJl6fz8HfkBbrJfySaTWPwSf7u0sAH8TWR5dC8YUIf6uuyxQAJssssEG
-         sneqKvJFsLO1DYI+dlY//Zyyjw9YneBn0wNfWV2czz42PrwQJNDbbx41y70oWDMgY19d
-         v+PheB+TEXzIwQOoBmoezCPbUkz0nWuk0oBw9x+RqOK+PCrcfN/xn/RxZM23PT/9dcXs
-         IJtxxuP0cqW5YN7GCi1xcrjW0u65NIL1yizq4Wi97U48CAWABpE2XBUPj1RRZEPIl3Vb
-         5yk6VMFCvKy8P1IxFOaUhI69t8sy86P5Hp90LZlXjCw9MT/pvg0yeK+JNbq86hGc2tRI
-         ULcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754124386; x=1754729186;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W/seSpZTBVa7pglaInZylODcwe9zQfbQrQVk2UFXQJc=;
-        b=ew0E+dSszn0JG8srwmp9v1z5DJOpRntXnJ4ko3aDOQYFj5KlCYVRkt7jvHRNaMRHjy
-         ZPkQwusmiYJX4biEKfzmc8odzdkxoVR5/oj36GPaKBt1NMewc5iU3kePOTPjxrrHWlp1
-         Q5Bm1b8yofZHg3d/Xh/+mWAAvrJgqBPfALYesa0w151tfQV7AeF2nljHQC8AipKkotxd
-         SOjUUZXhLLi+8j7mgQjVZW5mRVj6NwEUOPOH2TDGNva1kddAs+DwkzbYZisv4n5+JEe0
-         y3QNcZucKl6wAeb/rlrvc10+JR2XHqsdxpnByPUXSK470m0VaLmOLk/9p7Ay8sZGC3lZ
-         KMng==
-X-Forwarded-Encrypted: i=1; AJvYcCUmQj/QKcOg0XudnJkZ0wMQYTsY/whmmRBLyOhNZxdiwQkph8MOQuuin046FvY46xm7f9B343cc1iFwiTw=@vger.kernel.org, AJvYcCVacURI4iOYrbU692luXJhsy1hHd4fpIccYPSU5gLMZpbvfrreHivLfNkrWf8YOIzYMQvW/zCVAjMkNa9No@vger.kernel.org, AJvYcCX7cuejKNgnKSyxWok4SL/UJIlDLpSOZzGeaCZ1JX89FTMMqaLgjYAQBA/5SP+ak2hCyqf00fZTWkKpMMxqln4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YylitXMlnHul8ZTekdZG7HmBmFqys/HJKRCvzWvofMh4xCfqsla
-	izx2I1l334074oyAXV+p/GFA/OsEDjDqCq+wZMi1byfUKP3NPKTb4LMGPsG4VyIxKng5DUHjJZ/
-	0KFWa/HaVW20G9hImW23Ku823P26HRXFjIDH+pSc=
-X-Gm-Gg: ASbGncu1aw6w2IYLgf3MeVX9x/eEpnin1HMx9glwlUDxnjKf4MKjEl5Edo/w2clQTld
-	gDfD/sWcZ7dWkiOfQTV/YlPUVNlxw+m8EGH6Ux+8FqpLE05OsUaoJfWsHKZVIw5FUkXdJa52oKW
-	k8Kyg0C9h68JT/ZTdj8Eg2eD3AFrmJcpK8MdA+cC+XxTWvPBNis0gBKP7i49UqgoEWHmxrovq7/
-	U9ozLD8+k4HcRxopOge
-X-Google-Smtp-Source: AGHT+IFu7ym4AUMZiJIN3syKPFo3cqCsRFpYw7GOJNxNkgh8WX2my/t+Xi67EUC0xDbQJXheV+tUvHXzsan6KbmLLn4=
-X-Received: by 2002:a17:906:c102:b0:af2:54db:4dfb with SMTP id
- a640c23a62f3a-af9402098c3mr282037866b.40.1754124385470; Sat, 02 Aug 2025
- 01:46:25 -0700 (PDT)
+	s=arc-20240116; t=1754124529; c=relaxed/simple;
+	bh=fREpQNUrtavxU8QayzqBdgeY5FpPd0Bho3ELIraYThQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=My0sDDTuWKYXT20V/jozyk4Z4AgVTo5rFPDpKYd7ZSRp+/cgcCn78TKkFB/JwB0xchhIoLPQvuvajN+ACLGxTEUolH1Wm9semglbjztzs1z4tD9t5jtERGIxojdEduZQfP7Eo5/EjmXFYHiJCKpYmvJEwsD0kIbLh+s0HQsV+CE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=LtSECY5+; arc=none smtp.client-ip=220.197.31.4
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=From:To:Subject:Date:Message-ID:MIME-Version; bh=zN
+	AXx6WfWyovDgYFNAy9sMXGfSUDt+d5QpqplK6q7dk=; b=LtSECY5+NurLN2YZ0X
+	ZcCNdigPQQ/TuxkwmMUFgKbenZbiIXjGVZy30P7zrj1gu92Twki9ocftJPevLro2
+	zb1IIwhWxWbyilx6XbkSfBE8+1fRYtI9tT0ppemuHm+1IUJqrKC1lAVnkAwLNrmr
+	NKEgamP62ONWy904XsX2sG/k0=
+Received: from phoenix.. (unknown [])
+	by gzga-smtp-mtada-g0-4 (Coremail) with SMTP id _____wDX0bXE0I1oWsxLJQ--.56694S2;
+	Sat, 02 Aug 2025 16:48:06 +0800 (CST)
+From: Jiawei Zhao <phoenix500526@163.com>
+To: ast@kernel.org
+Cc: daniel@iogearbox.net,
+	andrii@kernel.org,
+	yonghong.song@linux.dev,
+	bpf@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v6 0/2] libbpf: fix USDT SIB argument handling causing unrecognized register error
+Date: Sat,  2 Aug 2025 08:48:01 +0000
+Message-ID: <20250802084803.108777-1-phoenix500526@163.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801160023.2434130-1-colin.i.king@gmail.com>
- <CAHp75VeDt=1=9epJPQjzfyyph09bov9UWWwpaAXgu01Egf1hag@mail.gmail.com> <10626b28-9619-47ea-abad-db823c01bb96@suswa.mountain>
-In-Reply-To: <10626b28-9619-47ea-abad-db823c01bb96@suswa.mountain>
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-Date: Sat, 2 Aug 2025 10:45:49 +0200
-X-Gm-Features: Ac12FXyFGX3atCqQQpsJizBgqfX9oK5Ez4o3ld-fUNoQAxHXhH_DqHe0kOWLi7U
-Message-ID: <CAHp75VdfZwmRzGAeN7rLoab2oT8eKyUF1mUGj4d+y98jZS7EHA@mail.gmail.com>
-Subject: Re: [PATCH][next] media: atomisp: Fix incorrect snprintf format
- specifiers for signed integers
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Colin Ian King <colin.i.king@gmail.com>, Andy Shevchenko <andy@kernel.org>, 
-	Hans de Goede <hansg@kernel.org>, Mauro Carvalho Chehab <mchehab@kernel.org>, 
-	Sakari Ailus <sakari.ailus@linux.intel.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-media@vger.kernel.org, 
-	linux-staging@lists.linux.dev, kernel-janitors@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:_____wDX0bXE0I1oWsxLJQ--.56694S2
+X-Coremail-Antispam: 1Uf129KBjvJXoWxJrWxGr13ZF17Cw1UKr4xXrb_yoW8Kr18pF
+	WrKwn8KFWqka43GFsrXr42yrWfWFs5GF4UGF17Xw1YyF4rGFnrZrWxK347CF9xGas3Xaya
+	vF12yF98G3WrA3DanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07jopBfUUUUU=
+X-CM-SenderInfo: pskrv0dl0viiqvswqiywtou0bp/xtbBgBmdiGiNzPBAzwAAsa
 
-On Sat, Aug 2, 2025 at 9:32=E2=80=AFAM Dan Carpenter <dan.carpenter@linaro.=
-org> wrote:
-> On Fri, Aug 01, 2025 at 11:57:43PM +0200, Andy Shevchenko wrote:
-> > On Fri, Aug 1, 2025 at 6:01=E2=80=AFPM Colin Ian King <colin.i.king@gma=
-il.com> wrote:
-> > >
-> > > There are incorrect %u format specifiers being used to for signed int=
-egers,
-> > > fix this by using %d instead.
-> >
-> > Both of them sound to me like the fix of the symptom and not the
-> > cause. Can we simply make types of the iterators to be unsigned
-> > instead?
->
-> Making iterator unsigned by default only increases the rate of bugs.
 
-How? Please, make sure this is relevant to this case.
+When using GCC on x86-64 to compile an usdt prog with -O1 or higher
+optimization, the compiler will generate SIB addressing mode for global
+array and PC-relative addressing mode for global variable,
+e.g. "1@-96(%rbp,%rax,8)" and "-1@4+t1(%rip)".
 
-> (Although, my stats might be biased because I'm only looking at bugs I
-> can detect through static analysis).
+The current USDT implementation in libbpf cannot parse these two formats,
+causing `bpf_program__attach_usdt()` to fail with -ENOENT
+(unrecognized register).
 
-In general making a variable to be signed that is never negative at
-bare minimum is illogical.
+This patch series adds support for SIB addressing mode in USDT probes.
+The main changes include:
+- add correct handling logic for SIB-addressed arguments in
+  `parse_usdt_arg`.
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  argument spec.
+- change the global variable t1 to a local variable, to avoid compiler
+  generating PC-relative addressing mode for it.
 
-P.S.
-FWIW, it is a common approach in the media subsystem to require
-iterators to be unsigned when they are truly unsigned.
+Testing shows that the SIB probe correctly generates 8@(%rcx,%rax,8) 
+argument spec and passes all validation checks.
 
---=20
-With Best Regards,
-Andy Shevchenko
+The modification history of this patch series:
+Change since v1:
+- refactor the code to make it more readable
+- modify the commit message to explain why and how
+
+Change since v2:
+- fix the `scale` uninitialized error
+
+Change since v3:
+- force -O2 optimization for usdt.test.o to generate SIB addressing usdt
+  and pass all test cases.
+
+Change since v4:
+- split the patch into two parts, one for the fix and the other for the
+  test
+
+Change since v5:
+- Only enable optimization for x86 architecture to generate SIB addressing
+  usdt argument spec.
+
+Do we need to add support for PC-relative USDT argument spec handling in
+libbpf? I have some interest in this question, but currently have no 
+ideas. Getting offsets based on symbols requires dependency on the symbol
+table. However, once the binary file is stripped, the symtab will also be
+removed, which will cause this approach to fail. Does anyone have any
+thoughts on this?
+
+Jiawei Zhao (2):
+  libbpf: fix USDT SIB argument handling causing unrecognized register
+    error
+  selftests/bpf: Force -O2 for USDT selftests to cover SIB handling
+    logic
+
+ tools/lib/bpf/usdt.bpf.h                      | 33 +++++++++++++-
+ tools/lib/bpf/usdt.c                          | 43 ++++++++++++++++---
+ tools/testing/selftests/bpf/Makefile          |  8 ++++
+ tools/testing/selftests/bpf/prog_tests/usdt.c | 18 +++++---
+ 4 files changed, 89 insertions(+), 13 deletions(-)
+
+-- 
+2.43.0
+
 
