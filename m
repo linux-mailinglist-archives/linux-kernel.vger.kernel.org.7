@@ -1,85 +1,86 @@
-Return-Path: <linux-kernel+bounces-754077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4FF5B18DD4
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:56:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078C1B18DC9
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 11:53:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11C917B9EF6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:51:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 771A61AA46AC
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 09:53:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E60722FF22;
-	Sat,  2 Aug 2025 09:45:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7C6A242D96;
+	Sat,  2 Aug 2025 09:45:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CwMcdkc/"
-Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xMrp7IKa"
+Received: from mail-qv1-f46.google.com (mail-qv1-f46.google.com [209.85.219.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A00122248A4
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 09:45:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF1D423E32D
+	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 09:45:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754127904; cv=none; b=upiTr+oyYFkz+nyOq2aEZCrRLjTVT6YvsvT6k26LrKY8iZzGgP1cV6+cAMBMOIf7OEsKmZ3ofAH35SgGC1+btJo69eSVK+6EfDSudUAcc/E9F0oc0wkHJLYG+LRVulJSnvLNwNNY1jnGvPE88GHUqeeKAygZZUFnFfyus+DaFmA=
+	t=1754127907; cv=none; b=SNHEyPGtoMkYyh3y/xl0bCHTagUnEbzdMME6OIo8wqlR3PtZZi04Vszx2j6n2BhDz1KaS/arU+1HbkfpRK77VvMb/Mm47IulMkbbwS53y4/I3BhwdMrvJVhdwJUAre73IiHwC+5OdntTGanku41pPJrosCLOnDx5hA3zZnV+LtU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754127904; c=relaxed/simple;
-	bh=kRT+ByhvJrqhbsdS73a9Z5DpXNlxzwNa766NvekppQ0=;
+	s=arc-20240116; t=1754127907; c=relaxed/simple;
+	bh=2X7Jt0f72Q1yY7RmzYJAf7UCqlvaWLNeKDNiniyLTIE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IObKNMxoD40qQs0xuZpSMvVBz9trQruvNjq0ZHw/Qa3Fdb5Kt7E49+lAXnSSL2bGycPcBEg6CGBVy442GFIeNW3O44SCdEC3VllkbWr1bP/Ed1cZj8TYf8c+At7+PjsJVeAGmKYPcF918hwyamOFvreRdZI/xjCboFon01TUetg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CwMcdkc/; arc=none smtp.client-ip=209.85.160.182
+	 To:Cc:Content-Type; b=bxuv77ozBOUmb5oS5qJthuZxdDDAYkLsJRczQtCFPh0ikckhooYZLSZ0XIBc98NJxDIhlv5iYH/eTDy1ZqjKI38LDqJe7XW6RV+UKtiLwTQQ4Jw66Aj5nYQd5mMgCSDjSD6gbzx+SEeeIRuNflPk96o/eWKlONWdbtcjqF4o1K0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xMrp7IKa; arc=none smtp.client-ip=209.85.219.46
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4ab8403b6daso25928311cf.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 02:45:02 -0700 (PDT)
+Received: by mail-qv1-f46.google.com with SMTP id 6a1803df08f44-7072ed7094aso16063966d6.1
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 02:45:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754127901; x=1754732701; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754127905; x=1754732705; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=OS6DtDv4/82EogAX4fFT9HRQC1jtGaj8P6x17nLZKok=;
-        b=CwMcdkc/dPIeJoAIwhOX5hPj2y701c5fef/KMV8ry/Lr0EoVdrNnp1TzsIAhWrYCUl
-         fz/c1+3xWqRtQBDIw2h+MtohSplOc84oHgyPJtNzg78NPfQIJ7PJF2TiM3mwBth7Etvh
-         dEUoYPBrzqVUgl3dMitdJTeMJXu8muOhQ62bkUXOuQqf2OcVYSo/QwmD7JqG66KJyFYQ
-         yyVFfnnFw6Y5RMK+TeVgdeJyKV/nPpZOj5if+CiWLaaYS8tmYRemYXgdaBxV2DdurUat
-         9lp2QLtgowJTTj2tYyrnFiSPDaKcOSsnGoyQBbOeaJwb8faaxg+ZKKIDpaNA28wMJOoj
-         M56w==
+        bh=erqbpofeSp9Fk7S9kBnLcPod0MR1HKDQK3+eKWS5tZk=;
+        b=xMrp7IKa61QHUz5Btwtvz36Lp3GDLse9HW5lL+0TZTdKb15u6yTDRIomioyy7UhQ4+
+         EMpvbdVEHw2kMWUPkFyZdT1NkyVJwM67ntN/CfUwRJWbX4tqTGczFap2CWMMS6ivAoQg
+         oedR9f2sS8vvRHPP0Ta2XfkP1RhyY2F3a5ENtgod8AjbbeKLoQBC2w4uwzEWnP8kVuR4
+         CwKcABG/pyEC4rniSAboNM/xpOkls2hhZmgkYPYHuboj2i8P+vKaMH1Pazrj4NYxj4oR
+         P+yyc7RCCyyvhoz+OKnAL5GvsL+vKIoUbtCfcLvnAUI+trthPR80v50u6UaNO2JmVTRr
+         9dyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754127901; x=1754732701;
+        d=1e100.net; s=20230601; t=1754127905; x=1754732705;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=OS6DtDv4/82EogAX4fFT9HRQC1jtGaj8P6x17nLZKok=;
-        b=pe3F16d3TRfD07ui+Uv0uxbEeLr37nYKOTktrJ1y7Y4/B/mMKeubJEYT3txSlc5Su+
-         /E0asVB8AI+4BfJK1LyWKGCtGbiCYpNMeVpS2ErdQvi66ZJjwsrLhDdy+mKOTv0+KpCh
-         JDZJr3xdcjBW2GbPk/Xa4skaBmv7mXM7z5eTikwqhuicxP6M53lgiHPzFU2xHjoD6VwS
-         /PUsOKGZqbExAfAwPAGWh03qWo4VjS0Qn92MgbQDvc/vySvSg5OAMRdEPvS2HQiap+ir
-         iYPUpvQ1yCGC1Lf3hNuWrcwHzrJXMNNbJnHLG7hyQzRaXz/l3bZgwQ/JFsT6SYNeP8sD
-         ml+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCXoRd7ptnr7naTs0Spauh8kT4VOHFwJJmYXMBNxU5N7Qr5NIiSRhOMFWoJLtuzIc/Cb8X5VuZ8YRcfHEMg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxAf2MCwnuWi+LalEfnDZkVK9QoyCeTYR+tOAIH9/fTN4R1YIHY
-	CbeeL6fnrF/KZTYHGcOn9zK4P2cFVdrXhq2F6V/8B/nXGiH5fdbudhW3ysUEh1wISFPSdXoFfwj
-	f5EaVDPnkA4eUvWG2iQB1pQsTcTJMQ5ik5V04/K2a
-X-Gm-Gg: ASbGncsJH0PZ+XPmztHWHqheHhW+m1dKZJ4jCj90dyBbRM7j3zrqG3HU9yWtJpNsTap
-	jQEDcfXfU4iPPLr85qRRpgU19M6lJgY76ugMC9SYN2Kyhk1J1bs8YaX+tpPj3j9z8Uxu9Wl7BhA
-	Qxe+X/tDCVILnVfqWu4CXVSImUVv4PKhqNvQvNRA5IcTpT1bJe4m44s4rMLNjb0IracOReU53Ze
-	LWO09x3KV8C+L1G0aQ=
-X-Google-Smtp-Source: AGHT+IFKWTJQmvl1QWhMEQf6mucfuQgcYVwwffnxEbNhn585emjBkUjxIlURPitJRkMNHco2qPBG/rAyOOqPZ8b/j4k=
-X-Received: by 2002:ac8:5802:0:b0:4ab:6c75:620 with SMTP id
- d75a77b69052e-4af10954c19mr47286961cf.1.1754127901186; Sat, 02 Aug 2025
- 02:45:01 -0700 (PDT)
+        bh=erqbpofeSp9Fk7S9kBnLcPod0MR1HKDQK3+eKWS5tZk=;
+        b=IX6ewgCaWcWd4YlBvz4TrjrTp/zCaodTgRbjciUZpOzpRYMQX1V23VJguSm5Sl6+Jx
+         eWYanfDJhHZGqRCk6XkeUkvMWtGYFsIA1sXxUGVBm06RzWl091GjDXuGSrWMiV6TnMVN
+         3uoj0A2I5ZO8zWNhPQF5t45vmAVVA6hkrCXoQrz1Xhx93dyWaJxED8hNtYfHnTSvyOvZ
+         F6RIgP4jpsStPlt203hlAnZLVmf5Cxw6MBEoaJsXUn38872GXhPlIrQZ77d5dbhEfuoI
+         +gfExSzGFMarDrfST21Ux0ywvnuUlAbtYMTggA58Nk5eXWHj6UqjETA5smTZZab4DTjJ
+         IFPw==
+X-Forwarded-Encrypted: i=1; AJvYcCVFhZK7LZM/C/TzAz6WxI7zlygjqW7xQeM6ZRtRH2YZ2KIJ0DehWWFM0JcXPdDtP0j3rC+rxbtLKP2//Rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2qfCVSKMHwe6O9jnKRrPjuZ2V/yxBFqhFHgGHcDsW/eQdrQWs
+	PYTDFc7K5qGap6G2y3dbiWREvV8FOoKNQ0n0jt3TmdpIo6grOnQnOqVIUE9c6Fm738Pqs0cRjFh
+	6vZcMWj2m6SkjiV5f58W+FRKGpcnOOm6lSCX1Odzq
+X-Gm-Gg: ASbGncsFY2vtZX+wMPfvzopIxAPVpQohfT8QbM2GosbFM7FyrvPDhWVY3tUhjfGlpXr
+	41vuBkM9Lr1GmUv0AerttFQBHc3iBQC2xyy1gG4THAjFds0d3Pzj6PMmjVMo/O9QpJqfA46NTqq
+	lytujtxHREcZ5+DQL785IYrhSZ935NDGSMSw3jdNwibCzXrPQZGBboCAfqdLvXYS2ipB/ixNDI7
+	rUjW+Wm
+X-Google-Smtp-Source: AGHT+IEX7Cf3xtbGhmfofs8LqVXfxaC7zqyZ8bp/0FBgxWOoCL1ooCfk1kX3NaePRjp3fkaGKLpBNPKGUgmmMSyzsiE=
+X-Received: by 2002:ad4:5fc5:0:b0:707:228e:40b9 with SMTP id
+ 6a1803df08f44-70936287ad8mr45107586d6.23.1754127904429; Sat, 02 Aug 2025
+ 02:45:04 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-6-marievic@google.com>
-In-Reply-To: <20250729193647.3410634-6-marievic@google.com>
+References: <20250729193647.3410634-1-marievic@google.com> <20250729193647.3410634-8-marievic@google.com>
+In-Reply-To: <20250729193647.3410634-8-marievic@google.com>
 From: David Gow <davidgow@google.com>
-Date: Sat, 2 Aug 2025 17:44:48 +0800
-X-Gm-Features: Ac12FXxzj7NJuQfaw5YMY9Xgg-cu4_yvgrPf9Wxf5hDCWeBmCbl6q73Q5jmH-lY
-Message-ID: <CABVgOSmTNAOoLqLhsZq+RiBU3wj4s79hzV+WFEOS10sahZf6Mg@mail.gmail.com>
-Subject: Re: [PATCH 5/9] drm/xe: Update parameter generator to new signature
+Date: Sat, 2 Aug 2025 17:44:52 +0800
+X-Gm-Features: Ac12FXzokTljgoRE0qgMSt-yhLKe30tCy77nOkh0UcaQ2bdId83zWO9qV660R1w
+Message-ID: <CABVgOSmBssmMz3qQi+TdEoaGQJNXaSVBrsO8RSW0MjLUUHPakg@mail.gmail.com>
+Subject: Re: [PATCH 7/9] kunit: Add example parameterized test with shared
+ resources and direct static parameter array setup
 To: Marie Zhussupova <marievic@google.com>
 Cc: rmoar@google.com, shuah@kernel.org, brendan.higgins@linux.dev, 
 	elver@google.com, dvyukov@google.com, lucas.demarchi@intel.com, 
@@ -88,53 +89,192 @@ Cc: rmoar@google.com, shuah@kernel.org, brendan.higgins@linux.dev,
 	kasan-dev@googlegroups.com, intel-xe@lists.freedesktop.org, 
 	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
 Content-Type: multipart/signed; protocol="application/pkcs7-signature"; micalg=sha-256;
-	boundary="0000000000007a8984063b5ebade"
+	boundary="000000000000ac36ee063b5eba98"
 
---0000000000007a8984063b5ebade
+--000000000000ac36ee063b5eba98
 Content-Type: text/plain; charset="UTF-8"
 
 On Wed, 30 Jul 2025 at 03:37, Marie Zhussupova <marievic@google.com> wrote:
 >
-> This patch modifies `xe_pci_live_device_gen_param`
-> in xe_pci.c to accept an additional `struct kunit *test`
-> argument.
+> Add `example_params_test_with_init` to illustrate how to manage
+> shared resources across parameterized KUnit tests. This example
+> showcases the use of the new `param_init` function and its registration
+> to a test using the `KUNIT_CASE_PARAM_WITH_INIT` macro.
+>
+> Additionally, the test demonstrates:
+> - How to directly assign a static parameter array to a test via
+>   `kunit_register_params_array`.
+> - Leveraging the Resource API for test resource management.
 >
 > Signed-off-by: Marie Zhussupova <marievic@google.com>
 > ---
 
+Thanks for writing some examples! This is great, and makes the rest of
+the series much easier to understand.
 
-This is a pretty straightforward fix after patch 3. xe folks, would
-you prefer this kept as a separate patch, or squashed into patch 3
-(which changed the function signature)?
+(It also reminds me how much I hate the verbose parts of the resource
+API, but it's definitely out of scope to refactor that here. :-))
 
-Either way,
+It does seem like this is a lot of effort to go through for one shared
+integer, though. In the real world, I'd suggest using
+kunit->parent->priv here. As an example, though, it's fine (though
+maybe using a named resource or even kunit_kzalloc() or similar would
+give a better example of how convenient this could be.
+
+It's also not entirely clear why we're using
+kunit_register_params_array() for a static array, when
+KUNIT_ARRAY_PARAM() exists. (This is clearly because the latter
+doesn't support init functions; and I see why we don't necessarily
+want to make the number of macros explode through adding
+KUNIT_ARRAY_PARAM_WITH_INIT() et al, but maybe we should note that in
+the commit description, either here or before.)
+
+Actual test looks fine, though:
+
 Reviewed-by: David Gow <davidgow@google.com>
 
-
+Cheers,
 -- David
 
 
->  drivers/gpu/drm/xe/tests/xe_pci.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
+>  lib/kunit/kunit-example-test.c | 112 +++++++++++++++++++++++++++++++++
+>  1 file changed, 112 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/xe/tests/xe_pci.c b/drivers/gpu/drm/xe/tests/xe_pci.c
-> index 1d3e2e50c355..62c016e84227 100644
-> --- a/drivers/gpu/drm/xe/tests/xe_pci.c
-> +++ b/drivers/gpu/drm/xe/tests/xe_pci.c
-> @@ -129,7 +129,7 @@ EXPORT_SYMBOL_IF_KUNIT(xe_pci_fake_device_init);
->   * Return: pointer to the next &struct xe_device ready to be used as a parameter
->   *         or NULL if there are no more Xe devices on the system.
->   */
-> -const void *xe_pci_live_device_gen_param(const void *prev, char *desc)
-> +const void *xe_pci_live_device_gen_param(struct kunit *test, const void *prev, char *desc)
->  {
->         const struct xe_device *xe = prev;
->         struct device *dev = xe ? xe->drm.dev : NULL;
+> diff --git a/lib/kunit/kunit-example-test.c b/lib/kunit/kunit-example-test.c
+> index 3056d6bc705d..5bf559e243f6 100644
+> --- a/lib/kunit/kunit-example-test.c
+> +++ b/lib/kunit/kunit-example-test.c
+> @@ -277,6 +277,116 @@ static void example_slow_test(struct kunit *test)
+>         KUNIT_EXPECT_EQ(test, 1 + 1, 2);
+>  }
+>
+> +/*
+> + * This custom function allocates memory for the kunit_resource data field.
+> + * The function is passed to kunit_alloc_resource() and executed once
+> + * by the internal helper __kunit_add_resource().
+> + */
+> +static int example_resource_init(struct kunit_resource *res, void *context)
+> +{
+> +       int *info = kmalloc(sizeof(*info), GFP_KERNEL);
+> +
+> +       if (!info)
+> +               return -ENOMEM;
+> +       *info = *(int *)context;
+> +       res->data = info;
+> +       return 0;
+> +}
+> +
+> +/*
+> + * This function deallocates memory for the 'kunit_resource' data field.
+> + * The function is passed to kunit_alloc_resource() and automatically
+> + * executes within kunit_release_resource() when the resource's reference
+> + * count, via kunit_put_resource(), drops to zero. KUnit uses reference
+> + * counting to ensure that resources are not freed prematurely.
+> + */
+> +static void example_resource_free(struct kunit_resource *res)
+> +{
+> +       kfree(res->data);
+> +}
+> +
+> +/*
+> + * This match function is invoked by kunit_find_resource() to locate
+> + * a test resource based on defined criteria. The current example
+> + * uniquely identifies the resource by its free function; however,
+> + * alternative custom criteria can be implemented. Refer to
+> + * lib/kunit/platform.c and lib/kunit/static_stub.c for further examples.
+> + */
+> +static bool example_resource_alloc_match(struct kunit *test,
+> +                                        struct kunit_resource *res,
+> +                                        void *match_data)
+> +{
+> +       return res->data && res->free == example_resource_free;
+> +}
+> +
+> +/*
+> + * This is an example of a function that provides a description for each of the
+> + * parameters.
+> + */
+> +static void example_param_array_get_desc(const void *p, char *desc)
+> +{
+> +       const struct example_param *param = p;
+> +
+> +       snprintf(desc, KUNIT_PARAM_DESC_SIZE,
+> +                "example check if %d is less than or equal to 3", param->value);
+> +}
+> +
+> +/*
+> + * Initializes the parent kunit struct for parameterized KUnit tests.
+> + * This function enables sharing resources across all parameterized
+> + * tests by adding them to the `parent` kunit test struct. It also supports
+> + * registering either static or dynamic arrays of test parameters.
+> + */
+> +static int example_param_init(struct kunit *test)
+> +{
+> +       int ctx = 3; /* Data to be stored. */
+> +       int arr_size = ARRAY_SIZE(example_params_array);
+> +
+> +       /*
+> +        * This allocates a struct kunit_resource, sets its data field to
+> +        * ctx, and adds it to the kunit struct's resources list. Note that
+> +        * this is test managed so we don't need to have a custom exit function
+> +        * to free it.
+> +        */
+> +       void *data = kunit_alloc_resource(test, example_resource_init, example_resource_free,
+> +                                         GFP_KERNEL, &ctx);
+> +
+> +       if (!data)
+> +               return -ENOMEM;
+> +       /* Pass the static param array information to the parent struct kunit. */
+> +       kunit_register_params_array(test, example_params_array, arr_size,
+> +                                   example_param_array_get_desc);
+> +       return 0;
+> +}
+> +
+> +/*
+> + * This is an example of a parameterized test that uses shared resources
+> + * available from the struct kunit parent field of the kunit struct.
+> + */
+> +static void example_params_test_with_init(struct kunit *test)
+> +{
+> +       int threshold;
+> +       struct kunit_resource *res;
+> +       const struct example_param *param = test->param_value;
+> +
+> +       /* By design, param pointer will not be NULL. */
+> +       KUNIT_ASSERT_NOT_NULL(test, param);
+> +
+> +       /* Here we access the parent pointer of the test to find the shared resource. */
+> +       res = kunit_find_resource(test->parent, example_resource_alloc_match, NULL);
+> +
+> +       KUNIT_ASSERT_NOT_NULL(test, res);
+> +
+> +       /* Since the data field in kunit_resource is a void pointer we need to typecast it. */
+> +       threshold = *((int *)res->data);
+> +
+> +       /* Assert that the parameter is less than or equal to a certain threshold. */
+> +       KUNIT_ASSERT_LE(test, param->value, threshold);
+> +
+> +       /* This decreases the reference count after calling kunit_find_resource(). */
+> +       kunit_put_resource(res);
+> +}
+> +
+>  /*
+>   * Here we make a list of all the test cases we want to add to the test suite
+>   * below.
+> @@ -296,6 +406,8 @@ static struct kunit_case example_test_cases[] = {
+>         KUNIT_CASE(example_static_stub_using_fn_ptr_test),
+>         KUNIT_CASE(example_priv_test),
+>         KUNIT_CASE_PARAM(example_params_test, example_gen_params),
+> +       KUNIT_CASE_PARAM_WITH_INIT(example_params_test_with_init, NULL,
+> +                                  example_param_init, NULL),
+>         KUNIT_CASE_SLOW(example_slow_test),
+>         {}
+>  };
 > --
 > 2.50.1.552.g942d659e1b-goog
 >
 
---0000000000007a8984063b5ebade
+--000000000000ac36ee063b5eba98
 Content-Type: application/pkcs7-signature; name="smime.p7s"
 Content-Transfer-Encoding: base64
 Content-Disposition: attachment; filename="smime.p7s"
@@ -224,14 +364,14 @@ Vumvw5QTHe29TYxSiusovM6OD5y0I+4zaIaYDx/AtF0mMOFXb1MDyynf1CDxhtkgnrBUseHSOU2e
 MYs7IqzRap5xsgpJS+t7cp/P8fdlCNvsXss9zZa279tKwaxR0U2IzGxRGsWKGxDysn1HT6pqMDGC
 Al0wggJZAgEBMGgwVDELMAkGA1UEBhMCQkUxGTAXBgNVBAoTEEdsb2JhbFNpZ24gbnYtc2ExKjAo
 BgNVBAMTIUdsb2JhbFNpZ24gQXRsYXMgUjYgU01JTUUgQ0EgMjAyMwIQAUXA7LnOuRz2DvkWTeMc
-0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQgCW07HzC0aE661vW+3P7Bv0AG9Nbo
-KmvKergx6moXAzAwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
-ODAyMDk0NTAxWjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
+0TANBglghkgBZQMEAgEFAKCBxzAvBgkqhkiG9w0BCQQxIgQg0unXhsAh19CYxRmE09urK0VqVIjg
+URbRQrf6MUNFcKQwGAYJKoZIhvcNAQkDMQsGCSqGSIb3DQEHATAcBgkqhkiG9w0BCQUxDxcNMjUw
+ODAyMDk0NTA1WjBcBgkqhkiG9w0BCQ8xTzBNMAsGCWCGSAFlAwQBKjALBglghkgBZQMEARYwCwYJ
 YIZIAWUDBAECMAoGCCqGSIb3DQMHMAsGCSqGSIb3DQEBBzALBglghkgBZQMEAgEwDQYJKoZIhvcN
-AQEBBQAEggEAYWKXavasvHqVN7tILps3q0AelnwvSIP8Q4+OqW8nzGavNL4ngLkSY30gqlMHydBs
-lIX9FDZqZqVUDNIIHVq8EWcCRA77nHgy0WZoxfvO36LF0rAyuJYCxSmWryaxyen89bAEDecnMaEl
-zNldtXN/WY8jYbYy7D3qXDsCF2FKZUqJbXai/ccZZJb5ruxLdMVFh4S6LSzMWV0p4eV3aDgwwM4F
-42yZ6ZpjMpFxzk/yo90+d/29ZBZGXXYL9IDw3MGCvNrj8ht8x+zYIHBAfoGoxvoGHLInTUxBFDN0
-xQdRLeOvcFj0s/nMtda4xowTW0O+IP9RMxjt8jJERSj7LJJ1rg==
---0000000000007a8984063b5ebade--
+AQEBBQAEggEAY+/VExwHeYsdpbNF/3HLGuDNQwgKvrGAp8mSqssDtWYwBHpGx/z9yeWeqvi5Ky4L
+3TUZup6hFWhsquKAzBuJCwDbXcvWvdbFCX0Z91GUUL4I5/cUi4oGA3o7QaEjSauNWAPJZh9Xs/k9
+4teKVoIsnVrLnvW3IO87V52NDIajSY1uLBgVbAJNZeHc9PpgQEsgzorDPFogSMGA6kNL7u0GeZvj
+lr1B1kVwkSff5G3XCEdTKZ5Gepr9qZn1v70jMxuNMwMQW9b0Y2DgyvGvogjaiu7dLZ8MctzpomKh
+UVHNSvh9frTez0vj3aoivnKZaMI6QK1k8CWWoZwZP5aA5kS+5Q==
+--000000000000ac36ee063b5eba98--
 
