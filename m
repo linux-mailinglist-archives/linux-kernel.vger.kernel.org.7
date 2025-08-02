@@ -1,135 +1,113 @@
-Return-Path: <linux-kernel+bounces-754102-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754103-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47AA7B18E12
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:50:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 643BFB18E13
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 12:52:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 719BE565EC3
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:50:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B114C1AA4C43
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 10:53:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 738D0221280;
-	Sat,  2 Aug 2025 10:50:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6ECB6221729;
+	Sat,  2 Aug 2025 10:52:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="ZS8XKs7M"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cglgFRw1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6002DA920;
-	Sat,  2 Aug 2025 10:50:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4960A920;
+	Sat,  2 Aug 2025 10:52:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754131808; cv=none; b=gZ77QYLWyEEAuejvhVdDKP/Iup/0p9aQlfC6KGpaQ20Ez1GGCHfQlVdm8yG5+gzy9okMUg5K6+L3ovywiu6i4FQsDkmldJMhxu3EWx6MDvu+3uaSya/sfjnrUq58XYOjLxqEcF8FExbfInwqZ0TEo+n7lwFg4Gdt8CIXB6FLZfE=
+	t=1754131963; cv=none; b=OBY1s5CwYWHxZP115SLcy/xEcPgUjAvRlxc6ujS3Y3qx01t9CH3joKkMh8mICobwAHJlHIl1fUDK50nhPLpCTQI2nt0jzE+Rxmvpo3LDSnYwvGL30FVljRqxPCNF6HO3Y2+/mVx5bMVcka1EsTiwr7pTFyKc44r+bnXVMIJFCo8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754131808; c=relaxed/simple;
-	bh=YUUurxRGnIXQz3rjL/3WQEzUhPSVAVuFlF+NgvuRcs0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=dPNtW/ElxgU8nu279CC/HP1l4iY9xhXiyzUU+6JIdHlrvVuPypQP7v4YzfFtX6FLMvolG7Lz2BiIwHrG0n57t0oUUE8ROIDR3FP45A37keGHEDRuHAdygACb08CnlUMrxDIZMffcQf7ssV7WERcZ2T63SZ0/yyCAIHg3qFpOHlg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=ZS8XKs7M; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754131803;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1k0gDJLahhbU/2Jeb16TrYN9Lr3gc1KUY7T6EHQVKQQ=;
-	b=ZS8XKs7MW0Y2GwzYOOMYnVupKRlQXBFAnF3uqaK0Qwj+S2Ill803wLzwo83wluhlursvb6
-	PVi+QgS1u/EihO8Rg8CO9dbQLGueVi0zexhdzdg0Nmm805GuU9QTVN5cfg5gzkqdeTba3Z
-	HlJXN/Lg68mgocgvufudVjrVgAHDg7I=
-From: Sven Eckelmann <sven@narfation.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>,
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
- Jonas Jelonek <jelonek.jonas@gmail.com>,
- Harshal Gohel <hg@simonwunderlich.de>,
- Simon Wunderlich <sw@simonwunderlich.de>, stable@vger.kernel.org
-Subject:
- Re: [PATCH 3/4] i2c: rtl9300: Add missing count byte for SMBus Block Write
-Date: Sat, 02 Aug 2025 12:50:01 +0200
-Message-ID: <6287928.DvuYhMxLoT@sven-desktop>
-In-Reply-To: <20250802-i2c-rtl9300-multi-byte-v1-3-5f687e0098e2@narfation.org>
-References:
- <20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org>
- <20250802-i2c-rtl9300-multi-byte-v1-3-5f687e0098e2@narfation.org>
+	s=arc-20240116; t=1754131963; c=relaxed/simple;
+	bh=McDOCJ4a4SES7KPDnkL9sXicW14MZyBPA3AthU5BLwQ=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:From:To:Cc:
+	 References:In-Reply-To; b=DvMtwejkIuhHyveXdiT4UKAnw6nmVZj4J9yW6OyDKQHdJvAA1KiwETUSbTjokJsrOIutpC5dL/0ShhzJyNHpkjrraqTGnyUwOQCsJdqrZm3XCQc05PLg9/0q4/pJzyMjm2UE8xrNg8hgT3Xu5Yo3q7CaEHMv+ArJrmQHfid3dFQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cglgFRw1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E9F1C4CEEF;
+	Sat,  2 Aug 2025 10:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754131963;
+	bh=McDOCJ4a4SES7KPDnkL9sXicW14MZyBPA3AthU5BLwQ=;
+	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
+	b=cglgFRw1n+ZP/WSEAFGuvsxp6UkFoRchsbQuyBWm0Q4Yfn08fC5gLlBU2jrgMmetd
+	 2sEXQIsf8aSZPgKuA1lzS25bt/NjZw3iEb64gV16Dgi80ceB+bUapS5Ppcozg26Qwk
+	 jr70YQO35BC5OFDFA8EtSq7+fGCyteAMGfSIi5bKafYJkv3CIfRpMExtp+sAvDXqkG
+	 QvFtbFYW1qTrf5Ena86cGKGL0n74ghGKdKF0WnrnpyITLNRWG5hWTWta5/SlHJJLZv
+	 WhajmY/HMv2qdP12+ifn9Kq7ond0EL7DkldjpcIjpziy5hF8htiQz8lvlpuq9GXSRM
+	 ZTQ9rQfKCTByw==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart6558281.lOV4Wx5bFT";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Sat, 02 Aug 2025 12:52:39 +0200
+Message-Id: <DBRVVTJ5LDV2.2NHTJ4S490N8@kernel.org>
+Subject: Re: [RFC PATCH v2 2/4] rust: io_uring: introduce rust abstraction
+ for io-uring cmd
+From: "Benno Lossin" <lossin@kernel.org>
+To: "Daniel Almeida" <daniel.almeida@collabora.com>, "Sidong Yang"
+ <sidong.yang@furiosa.ai>
+Cc: "Caleb Sander Mateos" <csander@purestorage.com>, "Miguel Ojeda"
+ <ojeda@kernel.org>, "Arnd Bergmann" <arnd@arndb.de>, "Jens Axboe"
+ <axboe@kernel.dk>, "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ <rust-for-linux@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <io-uring@vger.kernel.org>
+X-Mailer: aerc 0.20.1
+References: <20250727150329.27433-1-sidong.yang@furiosa.ai>
+ <20250727150329.27433-3-sidong.yang@furiosa.ai>
+ <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
+In-Reply-To: <D6CDE1A5-879F-49B1-9E10-2998D04B678F@collabora.com>
 
---nextPart6558281.lOV4Wx5bFT
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Date: Sat, 02 Aug 2025 12:50:01 +0200
-Message-ID: <6287928.DvuYhMxLoT@sven-desktop>
-MIME-Version: 1.0
+On Fri Aug 1, 2025 at 3:48 PM CEST, Daniel Almeida wrote:
+>> On 27 Jul 2025, at 12:03, Sidong Yang <sidong.yang@furiosa.ai> wrote:
+>> +    #[inline]
+>> +    pub fn pdu(&mut self) -> &mut MaybeUninit<[u8; 32]> {
+>
+> Why MaybeUninit? Also, this is a question for others, but I don=E2=80=99t=
+ think
+> that `u8`s can ever be uninitialized as all byte values are valid for `u8=
+`.
 
-On Saturday, 2 August 2025 12:32:02 CEST Sven Eckelmann wrote:
-[...]
-> diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-> index a10e5e6e00075fabb8906d56f09f5b9141fbc06e..ed82e6c21aaf46000a263740123ffba833578cc2 100644
-> --- a/drivers/i2c/busses/i2c-rtl9300.c
-> +++ b/drivers/i2c/busses/i2c-rtl9300.c
-> @@ -288,7 +288,7 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
->  		if (ret)
->  			goto out_unlock;
->  		if (read_write == I2C_SMBUS_WRITE) {
-> -			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-> +			ret = rtl9300_i2c_write(i2c, &data->block[0], data->block[0] + 1);
->  			if (ret)
->  				goto out_unlock;
->  		}
-> 
-> 
+`u8` can be uninitialized. Uninitialized doesn't just mean "can take any
+bit pattern", but also "is known to the compiler as being
+uninitialized". The docs of `MaybeUninit` explain it like this:
 
-Yes, there is as always this "2 seconds" after the send "wtf. were did the 
-line go" situation:
+    Moreover, uninitialized memory is special in that it does not have a
+    fixed value (=E2=80=9Cfixed=E2=80=9D meaning =E2=80=9Cit won=E2=80=99t =
+change without being written
+    to=E2=80=9D). Reading the same uninitialized byte multiple times can gi=
+ve
+    different results.
 
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-index a10e5e6e00075fabb8906d56f09f5b9141fbc06e..4d109ebd02f0cad86f50e4e148966b3fa68b0196 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -284,11 +284,11 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
- 		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
- 		if (ret)
- 			goto out_unlock;
--		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
-+		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0] + 1);
- 		if (ret)
- 			goto out_unlock;
- 		if (read_write == I2C_SMBUS_WRITE) {
--			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-+			ret = rtl9300_i2c_write(i2c, &data->block[0], data->block[0] + 1);
- 			if (ret)
- 				goto out_unlock;
- 		}
+But the return type probably should be `&mut [MaybeUninit<u8>; 32]`
+instead.
 
-v2 will be send tomorrow. Sorry about the noise.
+>> +    #[inline]
+>> +    pub unsafe fn from_raw<'a>(ptr: *mut bindings::io_uring_cmd) -> Pin=
+<&'a mut IoUringCmd> {
+>> +        // SAFETY: The caller guarantees that the pointer is not dangli=
+ng and stays valid for the
+>> +        // duration of 'a. The cast is okay because `IoUringCmd` is `re=
+pr(transparent)` and has the
+>> +        // same memory layout as `bindings::io_uring_cmd`. The returned=
+ `Pin` ensures that the object
+>> +        // cannot be moved, which is required because the kernel may ho=
+ld pointers to this memory
+>> +        // location and moving it would invalidate those pointers.
+>
+> Please break this into multiple paragraphs.
 
-Kind regards,
-	Sven
---nextPart6558281.lOV4Wx5bFT
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
+We usually use bullet point lists for this.=20
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaI3tWQAKCRBND3cr0xT1
-y1yLAQDpHoACCNv9cmMdjqYAeo8BBjvDYrtvwry3IP9NcejEkwEAhCsZ0+C61yig
-pr8UY3vGFdjWR0VZn7apffv2bWPVKgs=
-=ndCS
------END PGP SIGNATURE-----
-
---nextPart6558281.lOV4Wx5bFT--
-
-
-
+---
+Cheers,
+Benno
 
