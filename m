@@ -1,171 +1,157 @@
-Return-Path: <linux-kernel+bounces-754142-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754144-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ED23B18E95
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:06:30 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F75FB18E9A
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 15:09:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39F4E189F7D6
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:06:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CF072AA59F2
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 13:09:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A4EC239570;
-	Sat,  2 Aug 2025 13:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2622323B631;
+	Sat,  2 Aug 2025 13:09:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LzDCcA0/"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZE/v2/Tc"
+Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com [209.85.208.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CF8520296C;
-	Sat,  2 Aug 2025 13:06:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C038022128B;
+	Sat,  2 Aug 2025 13:09:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754139976; cv=none; b=LYi9OK6grZ1fqkDrFHItHVNa8cNNRATvLc9Z9aNpQtoFyTnyNrvY1RnEWDIdkOuHRRGQFDM8D6AWk0Y4qZgTAOjWHLc16xmVnGvZZ/+bT25GpfxFoWnYHtHisEMztejp3lGcfk8XNBrU9FFDzMNpXYMixaJrXk472hqVCVeW/bc=
+	t=1754140159; cv=none; b=PjagQIqVCX8ZmAhGGii9DVoQd1KQh8+iHoqkqv7RwlUfMO7KExX19skdrfdfAk6MhSKoJ8vXAi/E/sOGFUhkWkrqsZzLhVQn7N4a1GbFiGhftRu+vD/PArwzSHvdFVR87aY8T5l0UHyBR3ZwWpr4bEBI2xsl7Xv8lkaK95PoYeg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754139976; c=relaxed/simple;
-	bh=4y4BBMpRTlGCIWdhx/iujTMekc86BpwM2Byf2EHcVwI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=YAN94vbjYwoau8ObtUD0z0STkEdK3x5EyO9ZA3Aj1Je5HledKxJF+0XL3Mj11yUseZpyR39L8Zyf99M3b2hun6As0Y4FXO7vZfiOUtbvx4WivL2rAsfusTPQqvxav8ujFNgiNq3cCLjpkuDpxFfW+Y5yFaESStj2g36vLUBSEQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LzDCcA0/; arc=none smtp.client-ip=209.85.166.176
+	s=arc-20240116; t=1754140159; c=relaxed/simple;
+	bh=bCB9IfmBe3GszsiUxXN5U8QTeY3yJiR+n3Dm+i6S8r4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=QwIe8ZUIsW7WQM+e9wFtQjk0ToQlLgV03/N8COk6cfNWECvhyhnf6w5VNeaSJ76coiOe4YxJ2bJc62NTJlg6YhMiOcNGu3bHcXLC4h0Os2vKJWAU/EMHwI+LM1ZZfrqwPRufS9YjciVO7c6CYBaTG8GrUR9PAjbJJwqZ0XDRXFE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZE/v2/Tc; arc=none smtp.client-ip=209.85.208.53
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3e40ac40940so10551465ab.0;
-        Sat, 02 Aug 2025 06:06:13 -0700 (PDT)
+Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-615460d9897so3247825a12.0;
+        Sat, 02 Aug 2025 06:09:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754139972; x=1754744772; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zmonmtKoAvELfCzQBfuBaiOtioQAYepmYG58Tt5t4Vk=;
-        b=LzDCcA0/fpMSlq9RWiSG+6iddiJsoy5Y/ej6mgeWlYFJTjCWOwr4L56cj4CRWGRr0x
-         UQIrR/9yIePCqY1LUx5dEOq/8qXjMC3jtkhyCTMm90P3E8OUt4Fv5I769/5qJDdW3vW6
-         V0O9W5I/stwlSCj5FUWn/IXRACNIYahvBiw4KbSa+76+n+FORs+FRmp/cHi6pui7xYHO
-         uKTAAmZm78Brx1HJbcrbWDidnZn/oGzQPGRt99+j5SOuu24uMjdfDZ1ww5gYmvXskLJf
-         lEnWSI87YLYIxBrmmtK+G+EEWpvmZNv/PDzhzzoaDuT3JvL74PdD/z4h8wKWjNcow0O4
-         uNoA==
+        d=gmail.com; s=20230601; t=1754140155; x=1754744955; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=LR6RtVeNg3Q+svUWV406Ui0fVcP9z9XbzX2f5A+PR1E=;
+        b=ZE/v2/TcP801EBrQJjmxaZrotkxZlnmwuAko4k9zYzlnffOLeFI1Un5D4Z6UrIqkMC
+         RFEPS+26QTFDefb9+wxbcHIIDpJdfpoohy3jfU/FuNrZ+MoBAVIXj77p2h7qV1DJIDMZ
+         tneAQ6C1Bsu0PuLdOpaVJOMl8+FsUKojNBoVHgFepYx8TFr8361OAa+Uj1R7bF9xiHv8
+         3HVATBQ62z+lA2ylE+TE+tqPubnIYK+moDUm0kFfB0CC25HVXpCuN+hCzlvYXn3PB8C+
+         fC33O2jUIlVsxQrg8GNND5AZy9Idq/FrJ/2T/1wWRQ2+oJHMkiLIIx7kNofRi4zXA3YT
+         65kQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754139972; x=1754744772;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zmonmtKoAvELfCzQBfuBaiOtioQAYepmYG58Tt5t4Vk=;
-        b=Nu2+zDc1WjJBcTqGiclXhVF2JtMKxprz03iIx6YavUON99UlN0QURGZ+04C/AjZtYK
-         3RSVkJqGZciFeBTXdZ8RvGb8hzlBk5HcdWUqa3N0ljmNQUOV/dpQy2RJmcLjGmDL0C4W
-         7Y46BMguizlz9E8h5v2w729ST9bkQiTgwbbSWCGMQ/bs6CFifMfhXgUJzLbNG7nwZj+F
-         SuDCm09ccmcfxLN6ptHH5NWFLtG/qycBdpjj2EaFk4nZO10AxxsGfFJiWeioOGwbJqY7
-         YDhkBdLhvEIUjedF/52hU8KxRaspLxAgHq59VmPadAA9FPSAdXA66mx8BAPXL9b5fOEY
-         390Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUq6FYqyRR+VtuOMlqcwmPyD7X7s/oOpaT/LIjbwkrz8AjCRm47MCV3AO+QSUICuFBwU+doPeHlMKAOx1o=@vger.kernel.org, AJvYcCUxR4UPvvEzaOc/b86Q3e9SyNo1bAcBw9BMuHPuq/OBvs3rc/T7WymTtiIvYMFukOkd7a1lhhKr@vger.kernel.org, AJvYcCXPyiswZASiLua80DT9JJa9rFRQn/FKQqXjhv9YsTMToIbUYMFCEvhLpcgkyyqyJyevpE74uCsj4xa1iJTJVr2T@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywk2DUCFble4cpbemOhoNJxOs/XWG+IVgjNXhPAZ94wOVV1zrg5
-	LW1GMJ9iubJUF3zoRMOuFmTNSlkLzv0QtqGo0iUN31N+c+l0/ulVAjhEjXKZgtl9JKdA0zwmENI
-	TTFj8TE77/PpCVwjZh7Vr9LiRaXmDLvY=
-X-Gm-Gg: ASbGnct0MGLUkF8Vovv2TObudf3fohr/4NKoy/kCI9lvn3vKqY/A39yfhsDa4OVS2G6
-	OrXH/+CKJVqebkiX2YO6YFFcTAw5p63J5SP3fqTMZMv/IdXpPfyIhOAQEjw7yiAJlRqBQ4uJS7h
-	CaXduy2zz+2oW4iKCWWnJVG07z4u4pjbBV8pdZ9Se7wPkqbwQgJDtXdWoR2iwN9SMIvYkNvgUNL
-	fZSq/Q60yF+oSQi
-X-Google-Smtp-Source: AGHT+IHpd35+kT9HdI5ApiKpoS8VgCg9bl6wjNctPoyEhnXzMQiFoSmDe+xgrsbVS76z0H4HD3/mJtYGgjbw29dVPsk=
-X-Received: by 2002:a05:6e02:2194:b0:3e3:d224:c652 with SMTP id
- e9e14a558f8ab-3e415e6cca8mr47665065ab.11.1754139972399; Sat, 02 Aug 2025
- 06:06:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754140155; x=1754744955;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=LR6RtVeNg3Q+svUWV406Ui0fVcP9z9XbzX2f5A+PR1E=;
+        b=m42ZY0t8jqnCNSBQpzBB8EpzI4i8+E5Sbek7HQyCqGRrvruPJ0rC4TnjbprcfwmTd3
+         B4nNYl7/jw1ewRhRgkq3RGaVhqhwgKgZ3CnXmCCeZpZzxJluYgBZBC0osisbe+pTs3hD
+         llkDCiNTk2DksTQZiUWXPKijaQXMew7z1u218T2TfJnuZhyJBqzZx+AUW3ok1LkG6D1c
+         SjoMD8JmyH/NfyD75a/XK65BxhjJHH8Q/8hC5FucxFGJSWX3lZy4GwHR5v1qSuizO+Gq
+         yTEZGrfrqTTVrE5ESYksqZYgvK23iQCyVo89DnuxV2AS01PPtiSak55a44gjSa3iNeog
+         DYpA==
+X-Forwarded-Encrypted: i=1; AJvYcCX1R6Y+ju0nM3C0iATa+ekPQ0a5fy9RuFiOhqKp3YkDZIv+IdhndzhJBJe3oIz3IBOlCHSg2yWbsxgsk2vl@vger.kernel.org, AJvYcCXJqDEzYY/RFoOIimLLBbBUTWQxxLA0NeoMtgT/WILU+3vPasPzUDIJiFu0vMcjSvSu4H8nUTY1/YAnqd0=@vger.kernel.org, AJvYcCXz1nCRb/oL4CcCs3v0WT2sD/4RCLRXrDtJu1Rld9EmIbAT9lWJ/XUufkHwcLgZzjibLcyhalDQJTs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWYwLNWcYoCqZxLuGRSlK0iNrckVz9NDgzpU1Fgl4WWtkr0JQy
+	ctenQ3/lr3ys+5zxetXspVGBhSzrN9p5FWuhOYO7hDsYIZin5pvJ7pxw
+X-Gm-Gg: ASbGncsvEXj5ZhdRkM0JYPCcRx6bD39KDLcNToD5cJifPuc7q+F0mV8XQvGOrgHxY5O
+	Fqaslgtmch4wFfT8jAfmchT3FuIZryy/LLEOGkNgkgDeqMJiCOABMROWCIJTa1TxRf3RqLN0VTc
+	ObgS2y81kgV8ye5e6uVlXpK/gi7D7vvWeVf/k//zstnnoAB6lqorEJl8iAmpuERbhbxqaVF6QGH
+	RWvI6zCPvWUUVwCuEk8+k0Sdx6Z5LOvII/8OAMgFYwFk1U/S+Gp735CM4L/ueh7Gj1+BlgOnIQZ
+	46lf2gWEzs6k0MKDRNoa2l/GZe5q/kZgubJqLDCumUxGqxG5XQNVhWlVr7RjXaWvtJUDXAVinXK
+	0Lw8cc5K6apiQO1m81omOuydaD3GLCjGexPoqVIiRaMkrdhBerXzYUBWJ0AaDI7UDgZ8z7s7QC+
+	mLrahUjU9nVRy0BfGUguCYuwbeYdgsw6s7Tww=
+X-Google-Smtp-Source: AGHT+IHSvulafVSZd46r7ifmQJL70hl/shPH7lVJn2yxde5U7XOVJ2haaLc5eeVbVy5VcRiwE9xbSQ==
+X-Received: by 2002:a05:6402:35c9:b0:615:4728:f14 with SMTP id 4fb4d7f45d1cf-615e6f57dcdmr2467966a12.16.1754140154718;
+        Sat, 02 Aug 2025 06:09:14 -0700 (PDT)
+Received: from puma.museclub.art (p200300cf9f013400cc194b80e1760d4a.dip0.t-ipconnect.de. [2003:cf:9f01:3400:cc19:4b80:e176:d4a])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe7a32sm4191858a12.37.2025.08.02.06.09.13
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 06:09:14 -0700 (PDT)
+From: Eugene Shalygin <eugene.shalygin@gmail.com>
+To: eugene.shalygin@gmail.com
+Cc: Jamie Vickery <j.a.d.mcmillan@gmail.com>,
+	Jean Delvare <jdelvare@suse.com>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-hwmon@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] hwmon: (asus-ec-sensors) add Z790-I GAMING WIFI
+Date: Sat,  2 Aug 2025 15:09:02 +0200
+Message-ID: <20250802130912.175543-1-eugene.shalygin@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802092435.288714-1-dongml2@chinatelecom.cn> <20250802092435.288714-2-dongml2@chinatelecom.cn>
-In-Reply-To: <20250802092435.288714-2-dongml2@chinatelecom.cn>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sat, 2 Aug 2025 21:05:36 +0800
-X-Gm-Features: Ac12FXyl1Z17710ZsvGZEcG3nKUw1BENEpT2KZPZWCpTbIBZTcW63ECEgxt-fVk
-Message-ID: <CAL+tcoA9Lvc4Cj9zjWVx1FzEQA=d=OnvZRDWA4nE_1GNbEDaRw@mail.gmail.com>
-Subject: Re: [PATCH net v3 1/2] net: tcp: lookup the best matched listen socket
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: edumazet@google.com, kuniyu@google.com, ncardwell@google.com, 
-	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, shuah@kernel.org, kraig@google.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Hi Menglong,
+From: Jamie Vickery <j.a.d.mcmillan@gmail.com>
 
-On Sat, Aug 2, 2025 at 5:28=E2=80=AFPM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> For now, the tcp socket lookup will terminate if the socket is reuse port
-> in inet_lhash2_lookup(), which makes the socket is not the best match.
->
-> For example, we have socket1 and socket2 both listen on "0.0.0.0:1234",
-> but socket1 bind on "eth0". We create socket1 first, and then socket2.
-> Then, all connections will goto socket2, which is not expected, as socket=
-1
-> has higher priority.
->
-> This can cause unexpected behavior if TCP MD5 keys is used, as described
-> in Documentation/networking/vrf.rst -> Applications.
->
-> Therefor, we lookup the best matched socket first, and then do the reuse
+Add support for the ROG STRIX Z790-I GAMING WIFI board
 
-s/Therefor/Therefore
+Signed-off-by: Jamie Vickery <j.a.d.mcmillan@gmail.com>
+Signed-off-by: Eugene Shalygin <eugene.shalygin@gmail.com>
+---
+ Documentation/hwmon/asus_ec_sensors.rst |  1 +
+ drivers/hwmon/asus-ec-sensors.c         | 11 +++++++++++
+ 2 files changed, 12 insertions(+)
 
-> port logic. This can increase some overhead if there are many reuse port
-> socket :/
->
-> Fixes: c125e80b8868 ("soreuseport: fast reuseport TCP socket selection")
-> Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> ---
-> v3:
-> * use the approach in V1
-> * add the Fixes tag
-> ---
->  net/ipv4/inet_hashtables.c  | 13 +++++++------
->  net/ipv6/inet6_hashtables.c | 13 +++++++------
->  2 files changed, 14 insertions(+), 12 deletions(-)
->
-> diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-> index ceeeec9b7290..51751337f394 100644
-> --- a/net/ipv4/inet_hashtables.c
-> +++ b/net/ipv4/inet_hashtables.c
-> @@ -389,17 +389,18 @@ static struct sock *inet_lhash2_lookup(const struct=
- net *net,
->         sk_nulls_for_each_rcu(sk, node, &ilb2->nulls_head) {
->                 score =3D compute_score(sk, net, hnum, daddr, dif, sdif);
->                 if (score > hiscore) {
-> -                       result =3D inet_lookup_reuseport(net, sk, skb, do=
-ff,
-> -                                                      saddr, sport, dadd=
-r, hnum, inet_ehashfn);
-> -                       if (result)
-> -                               return result;
-> -
->                         result =3D sk;
->                         hiscore =3D score;
->                 }
->         }
->
-> -       return result;
-> +       if (!result)
-> +               return NULL;
-> +
-> +       sk =3D inet_lookup_reuseport(net, result, skb, doff,
-> +                                  saddr, sport, daddr, hnum, inet_ehashf=
-n);
-> +
-> +       return sk ? sk : result;
->  }
+diff --git a/Documentation/hwmon/asus_ec_sensors.rst b/Documentation/hwmon/asus_ec_sensors.rst
+index 49f6cac63d19..bedddb6bf9e1 100644
+--- a/Documentation/hwmon/asus_ec_sensors.rst
++++ b/Documentation/hwmon/asus_ec_sensors.rst
+@@ -36,6 +36,7 @@ Supported boards:
+  * ROG STRIX Z490-F GAMING
+  * ROG STRIX Z690-A GAMING WIFI D4
+  * ROG STRIX Z790-E GAMING WIFI II
++ * ROG STRIX Z790-I GAMING WIFI
+  * ROG ZENITH II EXTREME
+  * ROG ZENITH II EXTREME ALPHA
+  * TUF GAMING X670E PLUS
+diff --git a/drivers/hwmon/asus-ec-sensors.c b/drivers/hwmon/asus-ec-sensors.c
+index 33c5fcb0a09e..e2f7b8705cb1 100644
+--- a/drivers/hwmon/asus-ec-sensors.c
++++ b/drivers/hwmon/asus-ec-sensors.c
+@@ -329,6 +329,8 @@ static const struct ec_sensor_info sensors_family_intel_600[] = {
+ static const struct ec_sensor_info sensors_family_intel_700[] = {
+ 	[ec_sensor_temp_t_sensor] =
+ 		EC_SENSOR("T_Sensor", hwmon_temp, 1, 0x01, 0x09),
++	[ec_sensor_temp_t_sensor_2] =
++		EC_SENSOR("T_Sensor 2", hwmon_temp, 1, 0x01, 0x05),
+ 	[ec_sensor_temp_vrm] = EC_SENSOR("VRM", hwmon_temp, 1, 0x00, 0x33),
+ 	[ec_sensor_fan_cpu_opt] =
+ 		EC_SENSOR("CPU_Opt", hwmon_fan, 2, 0x00, 0xb0),
+@@ -593,6 +595,13 @@ static const struct ec_board_info board_info_strix_z790_e_gaming_wifi_ii = {
+ 	.family = family_intel_700_series,
+ };
+ 
++static const struct ec_board_info board_info_strix_z790_i_gaming_wifi = {
++	.sensors = SENSOR_TEMP_T_SENSOR | SENSOR_TEMP_T_SENSOR_2 |
++		SENSOR_TEMP_VRM,
++	.mutex_path = ASUS_HW_ACCESS_MUTEX_SB_PC00_LPCB_SIO1_MUT0,
++	.family = family_intel_700_series,
++};
++
+ static const struct ec_board_info board_info_zenith_ii_extreme = {
+ 	.sensors = SENSOR_SET_TEMP_CHIPSET_CPU_MB | SENSOR_TEMP_T_SENSOR |
+ 		SENSOR_TEMP_VRM | SENSOR_SET_TEMP_WATER |
+@@ -689,6 +698,8 @@ static const struct dmi_system_id dmi_table[] = {
+ 					&board_info_strix_z690_a_gaming_wifi_d4),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z790-E GAMING WIFI II",
+ 					&board_info_strix_z790_e_gaming_wifi_ii),
++	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG STRIX Z790-I GAMING WIFI",
++					&board_info_strix_z790_i_gaming_wifi),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME",
+ 					&board_info_zenith_ii_extreme),
+ 	DMI_EXACT_MATCH_ASUS_BOARD_NAME("ROG ZENITH II EXTREME ALPHA",
+-- 
+2.50.1
 
-IMHO, I don't see it as a bugfix. So can you elaborate on what the exact
-side effect you're faced with is when the algorithm finally prefers
-socket2 (without
-this patch)?
-
-AFAIK, the current approach breaks the initial design and might make
-the whole lookup process take a longer time in certain cases like you menti=
-oned.
-
-Thanks,
-Jason
 
