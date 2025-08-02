@@ -1,78 +1,100 @@
-Return-Path: <linux-kernel+bounces-754189-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C88B18F84
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 19:03:00 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EC5EAB18F87
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 19:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4160B179CCC
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:03:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE0043BF9CE
+	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 17:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1FF81E25ED;
-	Sat,  2 Aug 2025 17:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29825244662;
+	Sat,  2 Aug 2025 17:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cIZjq0ke"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YgXGne1w"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6099B15530C
-	for <linux-kernel@vger.kernel.org>; Sat,  2 Aug 2025 17:02:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F683210FB;
+	Sat,  2 Aug 2025 17:08:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754154175; cv=none; b=gtq/DhWx+VcUiW+3AjyfDiHivHci0UBe5+XTm9WTRxoDnuBQisVGGtEMrXVdXGooyW2aWCohq8lRgMQOkfAydYTbzK7WLjEZN0FHymZVBwhltTjiJ0a3DgaSoFEoSC+cPIT3jGiBpGDgJq+maGg2/Exvn7NgjV8kSirq4Te3j24=
+	t=1754154486; cv=none; b=shxmJm1vrRB5P6Xu34q6+IgTpUYfdNLZGw4dhg5LavNZ8+B2H9bPAiIOVPDJiZYCoRd9HngxXzRPckXwKkTYWyeqMIJV1lDQvo/PPYRM1J3+MH0LfV+NlZkID+Y2/imXEp9LnbpiFC9sQneQcYREi5+MvhGhN2JARNJxdcXwxnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754154175; c=relaxed/simple;
-	bh=Gk4QRDew0mWO39IViY/XkwHEtw9H7KaEJkmZFV+E5cQ=;
-	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=EKh5PVD1Dl0A6GoonbMJC+ioGKv8tJWYSrUEh4JlCJKYWLwHEYjl8xRmLYzVGE7DOCFJ1+1p+HzWLQEqikGHSZxQuX9x4z5Ko+MvB5GwhmVFsfk+lqPY3C1mA86rplDJCjBZWw4k++CA3XWZ2miCz147KWrNwSEwPz5lEYV/Dhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cIZjq0ke; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8D79C4CEEF;
-	Sat,  2 Aug 2025 17:02:54 +0000 (UTC)
+	s=arc-20240116; t=1754154486; c=relaxed/simple;
+	bh=koY+wovV1Y+zqmUcBvYZi9Y5n5ThX1LuFvAQ6WMTQnk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tW2ZYVE10kPpS6zXCtOuw3FUN/7Ym8sqiK+QqCC7slJK2NuJ2IJ0YrAoQy/ESyHDNwlE8KNJKSBbkYR4GN3HQVU/TKLiYM9HbTXPEl0COwD+v74aSK6NU7gofZ0Azs3bDa49MAO52V9lalc3720UWR6W7KRRjOJ6EeJS536t6mg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YgXGne1w; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13803C4CEEF;
+	Sat,  2 Aug 2025 17:08:06 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754154174;
-	bh=Gk4QRDew0mWO39IViY/XkwHEtw9H7KaEJkmZFV+E5cQ=;
-	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
-	b=cIZjq0ketetZUBtZOFVaU8oKl/+BXpR+99MzMcU9I6/puPROyPU5VcbOByOiS3D54
-	 Jmbu52B3qwSr4IScwIH8FWnH2Ml28KNqhk8c2GIhwMz0ZLy17Si8GDFwJOV621k2KI
-	 cHceUhj+NT5+krk1gBtRBwJVL+UNiXC/kefuCd6uI6XfxeREDwI3Yq0II8ixvaYE2G
-	 dPVkJy1UoJy5Ll8wC9BqSWBE1m/SEkb/HBrHPLzk6mLvQtkbomTZUEZbNzwPATzcWg
-	 bBVThwKWN+WaDFdoRqNYoOCpOrOml5uP/RqGtE+Cmxy5IvmmoLH6z282hObom8UCVR
-	 m78kVLztOX+cQ==
-Received: from [10.30.226.235] (localhost [IPv6:::1])
-	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id 33CD6383BF57;
-	Sat,  2 Aug 2025 17:03:11 +0000 (UTC)
-Subject: Re: [GIT PULL] firewire updates for v6.17 kernel
-From: pr-tracker-bot@kernel.org
-In-Reply-To: <20250802054917.GA127374@workstation.local>
-References: <20250802054917.GA127374@workstation.local>
-X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
-X-PR-Tracked-Message-Id: <20250802054917.GA127374@workstation.local>
-X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.17
-X-PR-Tracked-Commit-Id: 95a042a0c8ecd3c1e886648f6f6ab9c7e4403db9
-X-PR-Merge-Tree: torvalds/linux.git
-X-PR-Merge-Refname: refs/heads/master
-X-PR-Merge-Commit-Id: 7061835997daba9e73c723c85bd70bc4c44aef77
-Message-Id: <175415418967.201848.16198036329889833063.pr-tracker-bot@kernel.org>
-Date: Sat, 02 Aug 2025 17:03:09 +0000
-To: Takashi Sakamoto <o-takashi@sakamocchi.jp>
-Cc: torvalds@linux-foundation.org, linux-kernel@vger.kernel.org, linux1394-devel@lists.sourceforge.net, edmund.raile@protonmail.com, apais@linux.microsoft.com
+	s=k20201202; t=1754154486;
+	bh=koY+wovV1Y+zqmUcBvYZi9Y5n5ThX1LuFvAQ6WMTQnk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YgXGne1whO0oUIzpVjPcP4pr/+Mip8taH/yYxcXYQhbovne9El4AZWADKIAW25H5V
+	 s+Ubpn68t2b6DS7BkmyI7pQjdpxnyw4yMidtwB0TfZgx3cUYowAH03t8LY2veA/msR
+	 PjZjWBcANQ4Rb/hzMHBEKfG3haCXZdkA4r34t1QvuBqd7BJhnGSZcwxtZjwc6aybYZ
+	 eoiWxEAY9pxSCvK/MJD8gqdSK/V38LOWjhkPvlQZMtl6lPR73T8HXDNr1cRTrmglau
+	 3tJjLVTl4ai9ajENAq1rWwSRTFpeMBYbHZ4emC3Wl179IxP0OzHJOGHrhELs6j9j2x
+	 caBFdnYytvxnw==
+Date: Sat, 2 Aug 2025 10:08:04 -0700
+From: Kees Cook <kees@kernel.org>
+To: Nathan Chancellor <nathan@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>,
+	Nicolas Schier <nicolas.schier@linux.dev>,
+	linux-kbuild@vger.kernel.org,
+	Nick Desaulniers <nick.desaulniers+lkml@gmail.com>,
+	Bill Wendling <morbo@google.com>,
+	Justin Stitt <justinstitt@google.com>, linux-kernel@vger.kernel.org,
+	llvm@lists.linux.dev, linux-hardening@vger.kernel.org
+Subject: Re: [PATCH] kbuild: Re-enable -Wunterminated-string-initialization
+Message-ID: <202508021005.B4BACEB735@keescook>
+References: <20250802002733.work.941-kees@kernel.org>
+ <20250802004316.GA3910513@ax162>
+ <202508011754.BBDF043@keescook>
+ <20250802011344.GA1736762@ax162>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250802011344.GA1736762@ax162>
 
-The pull request you sent on Sat, 2 Aug 2025 14:49:17 +0900:
+On Fri, Aug 01, 2025 at 06:13:44PM -0700, Nathan Chancellor wrote:
+> On Fri, Aug 01, 2025 at 05:55:27PM -0700, Kees Cook wrote:
+> > On Fri, Aug 01, 2025 at 05:43:16PM -0700, Nathan Chancellor wrote:
+> > > On Fri, Aug 01, 2025 at 05:27:40PM -0700, Kees Cook wrote:
+> > > > With the few remaining fixes now landed, we can re-enable the option
+> > > > -Wunterminated-string-initialization for GCC. (Clang does not yet fully
+> > > > understand the "nonstring" attribute.)
+> > > > 
+> > > > Signed-off-by: Kees Cook <kees@kernel.org>
+> > > 
+> > > What else does Clang need? Are bugs filed? I had requested support for
+> > > multidimensional arrays, which Aaron implemented pretty quickly (and the
+> > > tests seem pretty expansive):
+> > > 
+> > > https://github.com/llvm/llvm-project/commit/e8ae77947154e10dbc05cbb95ec9e10d3b0be13e
+> > 
+> > Oh! I missed that commit. Did that end up in Clang 21? Let me try some
+> > test builds with a more recent Clang...
+> 
+> Whoops, linked the wrong change (although that one is still good):
+> 
+> https://github.com/llvm/llvm-project/commit/3d4f979e271d2a1fe0906f4d1b16db108838f98f
+> 
+> But yes, both those changes are in 21.1.0-rc1. I uploaded -rc2 to
+> kernel.org a couple of days ago: https://kernel.org/pub/tools/llvm/
 
-> git://git.kernel.org/pub/scm/linux/kernel/git/ieee1394/linux1394.git tags/firewire-updates-6.17
-
-has been merged into torvalds/linux.git:
-https://git.kernel.org/torvalds/c/7061835997daba9e73c723c85bd70bc4c44aef77
-
-Thank you!
+Ah yeah! Let me get this retested with the 21.1 release. I think we
+don't need any special handling.
 
 -- 
-Deet-doot-dot, I am a bot.
-https://korg.docs.kernel.org/prtracker.html
+Kees Cook
 
