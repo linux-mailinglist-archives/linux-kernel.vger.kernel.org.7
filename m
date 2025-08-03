@@ -1,140 +1,195 @@
-Return-Path: <linux-kernel+bounces-754352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D710B19323
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:49:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FA02B1932E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:21:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1581C18969BB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:50:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 18FFB172FA7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:21:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2FAD283159;
-	Sun,  3 Aug 2025 08:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A58D2882A1;
+	Sun,  3 Aug 2025 09:21:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b="zQls5lpD"
-Received: from smtp153-168.sina.com.cn (smtp153-168.sina.com.cn [61.135.153.168])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aw/j3Oeq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674BE2561C2
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 08:49:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=61.135.153.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C85E2AD3D;
+	Sun,  3 Aug 2025 09:21:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754210986; cv=none; b=Cp459boNOUKogi6baTnizvdU9F0NrQUw9wyPiGDOsOtjcIEkE8DdXa3ZjbAc4XFQAo4fQXtkqYb8ux2oofrvcp6Y9UKqDKxTAfGME0JotM2W/fSbxCnO/gQfARrhKSFVlVNMqlPa3by4gw/ph0elRv6OZUlkV0pIlnXVV5+gOE0=
+	t=1754212865; cv=none; b=b2UybWkUNW/LXMFYQua08spj9gnSSkOyRhLPE66PSkkWRz7Yii1pUPuEF0WnkDCUKhTP5pouhHoIUF0X5t3rEGD4ESja6V/fQPIUafpIDG/vTQnjXXmvOPKPkQBqxcTo+bv1a8ggjBuBCi/1HrLsY2deZUd7aUn1OgJWZ6UhqvA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754210986; c=relaxed/simple;
-	bh=0wRQ7Vjd+waQXQUM5VP3gX8nP6aRoarWaQa8wq2dT2k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ZHHY01/fBhBHYEdYMM8kY6lWcTJh2qk3Ve6obXtSfyTFQwHJpnHd28fbef6V2UKLHcwlM9MCa6B36pshUc8O7kLwhB6nZy3wpFcKKSv9Nmyo9SSSZRoL3/2ssfLIhuG3qaIk1i7XG9DMn2qhPe+C6zM9oJrl2bl8XGihBwpStpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com; spf=pass smtp.mailfrom=sina.com; dkim=pass (1024-bit key) header.d=sina.com header.i=@sina.com header.b=zQls5lpD; arc=none smtp.client-ip=61.135.153.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sina.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sina.com; s=201208; t=1754210978;
-	bh=H9D1Yvgdf5YCIeKPmwvOIAGztLxkKKKtL44n/H71qio=;
-	h=From:Subject:Date:Message-ID;
-	b=zQls5lpD1DvQ3t75FrFFwdDoTteWfR9fFA5AufyzS2lNwpZzu1sipHqzwthNSHj0M
-	 4X7azsvMCs+YH7RNqEyDZ20NFw2o9DDMRqHVn8sS2UI+EFe75RJanlwutmPODwoGod
-	 osd77VBNzAU8df4xNgVtdF5A1U9zWkiMtgmxY0Wc=
-X-SMAIL-HELO: localhost.localdomain
-Received: from unknown (HELO localhost.localdomain)([114.249.58.236])
-	by sina.com (10.54.253.33) with ESMTP
-	id 688F229D00003E4C; Sun, 3 Aug 2025 16:49:35 +0800 (CST)
-X-Sender: hdanton@sina.com
-X-Auth-ID: hdanton@sina.com
-Authentication-Results: sina.com;
-	 spf=none smtp.mailfrom=hdanton@sina.com;
-	 dkim=none header.i=none;
-	 dmarc=none action=none header.from=hdanton@sina.com
-X-SMAIL-MID: 7101176685153
-X-SMAIL-UIID: F5609F38602A4B968F153207D8DDAC4A-20250803-164935-1
-From: Hillf Danton <hdanton@sina.com>
-To: Yunseong Kim <ysk@kzalloc.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	linux-kernel@vger.kernel.org,
-	Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Uladzislau Rezki <urezki@gmail.com>
-Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path on PREEMPT_RT
-Date: Sun,  3 Aug 2025 16:49:22 +0800
-Message-ID: <20250803084924.3785-1-hdanton@sina.com>
-In-Reply-To: <18003f21-f83a-4bad-93b2-70273c03974f@kzalloc.com>
-References: <20250802142647.139186-3-ysk@kzalloc.com> <20250803023439.3760-1-hdanton@sina.com>
+	s=arc-20240116; t=1754212865; c=relaxed/simple;
+	bh=6SiqmzgUPZiU3wRacVGyFYA2GVYo9ShBH5POmw4XLeQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=IDixJWpfR2O4hsV3/PC2VeXjiLatlu4cHPXuHyghAcrrT/e1SSMge6oarIz/Ij5xx5vAt4Y+ZXa1qUtPhFd2SOUOckxRMc9EnnNAdr6yO9SUjH5cr5bm4u8sgcpUnolWNoTxZsYpvOGkibE8BAFQ0fDyZ59CBzfiWBOZ0xF9Wfg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aw/j3Oeq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EBF17C4CEF8;
+	Sun,  3 Aug 2025 09:21:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754212864;
+	bh=6SiqmzgUPZiU3wRacVGyFYA2GVYo9ShBH5POmw4XLeQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=aw/j3OeqjQ/iFCgHi/RWGqYq7syYaTdWk/XyaeXaSWa/9B/gULAeCtn3X6d553UIT
+	 zis3vGT82aTx9/lCXCvzYcBu6UkuBARnGc3HWPN89gcd5+5AKhF/uOjCtMv7xIGNf+
+	 6nr3x9rSCH6NIZ4Zu9h/+pq+ejCwjM6eVVraXwfbPEkoX4ERw9PLA5qrzxuXeZId1k
+	 jizU6mOr5TVMPndjKUw94sL3dLiBKouEb3aDrUpApjcD3ItpNOso2S1yhNL+lSnWJr
+	 /QYUSABbIQBwuVFEwEhHlWDn0e8liZTWYDl0K1HOfCZA1XFM6u1z8TXQGIN2fS1Uec
+	 EZfHP5PhhuURA==
+Message-ID: <00f6d696-a8d2-41a5-819a-dc1ed87d35bb@kernel.org>
+Date: Sun, 3 Aug 2025 11:20:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next v2 1/3] dt-bindings: sram: qcom,imem: Allow
+ modem-tables
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Alex Elder <elder@kernel.org>
+Cc: Marijn Suijten <marijn.suijten@somainline.org>,
+ linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ Alex Elder <elder@riscstar.com>
+References: <20250527-topic-ipa_imem-v2-0-6d1aad91b841@oss.qualcomm.com>
+ <20250527-topic-ipa_imem-v2-1-6d1aad91b841@oss.qualcomm.com>
+ <97724a4d-fad5-4e98-b415-985e5f19f911@kernel.org>
+ <e7ee4653-194c-417a-9eda-2666e9f5244d@oss.qualcomm.com>
+ <68622599-02d0-45ca-82f5-cf321c153cde@kernel.org>
+ <bf78d681-723b-4372-86e0-c0643ecc2399@oss.qualcomm.com>
+ <62b0f514-a8a9-4147-a5c0-da9dbe13ce39@kernel.org>
+ <747e5221-0fb1-4081-9e98-94b330ebf8c7@oss.qualcomm.com>
+ <e4c5ecc3-fd97-4b13-a057-bb1a3b7f9207@kernel.org>
+ <f6b16d1d-3730-46d1-81aa-bfaf09c20754@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <f6b16d1d-3730-46d1-81aa-bfaf09c20754@oss.qualcomm.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On Sun, 3 Aug 2025 12:07:11 +0900 Yunseong Kim wrote:
-> On 8/3/25 11:34 오전, Hillf Danton wrote:
-> > On Sat,  2 Aug 2025 14:26:49 +0000 Yunseong Kim wrote:
-> >> +	raw_spin_unlock(&kcov_remote_lock);
-> >>  
-> >>  	/* Can only happen when in_task(). */
-> >>  	if (!area) {
+On 31/07/2025 11:47, Konrad Dybcio wrote:
+> On 7/30/25 3:14 PM, Krzysztof Kozlowski wrote:
+>> On 30/07/2025 14:07, Konrad Dybcio wrote:
+>>>>>>>>
+>>>>>>>> Missing additionalProperties: false, which would point you that this is
+>>>>>>>> incomplete (or useless because empty).
+>>>>>>>
+>>>>>>> How do I describe a 'stupid' node that is just a reg?
+>>>>>> With "reg" - similarly to many syscon bindings.
+>>>>>
+>>>>> Is this sort of inline style acceptable, or should I introduce
+>>>>> a separate file?
+>>>>
+>>>> It's fine, assuming that it is desired in general. We do not describe
+>>>> individual memory regions of syscon nodes and this is a syscon.
+>>>>
+>>>> If this is NVMEM (which it looks like), then could use NVMEM bindings to
+>>>> describe its cells - individual regions. But otherwise we just don't.
+>>>
+>>> It's volatile on-chip memory
+>>>
+>>>> There are many exceptions in other platforms, mostly old or even
+>>>> unreviewed by DT maintainers, so they are not a recommended example.
+>>>>
+>>>> This would need serious justification WHY you need to describe the
+>>>> child. Why phandle to the main node is not enough for consumers.
+>>>
+>>> It's simply a region of the SRAM, which needs to be IOMMU-mapped in a
+>>> specific manner (should IMEM move away from syscon+simple-mfd to
+>>> mmio-sram?). Describing slices is the DT way to pass them (like under
+>>> NVMEM providers).
+>>
+>>
+>> Then this might be not a syscon, IMO. I don't think mixing syscon and
+>> SRAM is appropriate, even though Linux could treat it very similar.
+>>
+>> syscon is for registers. mmio-sram is for SRAM or other parts of
+>> non-volatile RAM.
+>>
+>> Indeed you might need to move towards mmio-sram.
+>>
+>>>
+>>>>
+>>>> If the reason is - to instantiate child device driver - then as well no.
+>>>> This has been NAKed on the lists many times - you need resources if the
+>>>> child should be a separate node. Address space is one resource but not
+>>>> enough, because it can easily be obtained from the parent/main node.
+>>>
+>>> There is no additional driver for this
+>>
+>> Then it is not a simple-mfd...
 > 
-> 		/* 1. Interrupts are temporarily re-enabled here. */
+> Indeed it's really not
 > 
-> >> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
-> >> +		local_irq_restore(flags);
+> I found out however that the computer history museum (i.e.
+> qcom-apq8064-asus-nexus7-flo.dts and qcom-msm8974.dtsi) seems to
+> have used simple-mfd, so that the subnode (syscon-reboot-mode) is
+> matched against a driver
 > 
-> 		/* 2. vmalloc() is called safely in a non-atomic context. */
-> 
-> >>  		area = vmalloc(size * sizeof(unsigned long));
-> > 
-> > Given irq disabled for the duration of the coverage collection section [1],
-> > vmalloc does not work here [2].
-> 
-> 
-> Thank you for the detailed review and for pointing out this critical
-> interaction. You are absolutely correct that vmalloc() cannot be called
-> from an atomic context with interrupts disabled, as it is a sleeping function.
-> 
-> However, upon closer inspection of the kcov_remote_start() function's
-> control flow, it appears the original author anticipated this issue and
-> implemented a safeguard. The vmalloc() call is explicitly wrapped by
-> local_irq_restore() and local_irq_save():
-> 
-> >>  		if (!area) {
-> >>  			kcov_put(kcov);
-> >>  			return;
-> >>  		}
-> 
-> 		/* 3. Interrupts are disabled again to protect the rest of the function. */
-> 
-> >> -		local_lock_irqsave(&kcov_percpu_data.lock, flags);
-> >> +		local_irq_save(flags);
-> >>  	}
-> 
-> This sequence ensures that the vmalloc() call itself does not happen in an
-> IRQ-disabled context.
-> 
-> My patch reverts the per-CPU locking back to the local_irq_save/restore
-> primitives but preserves this essential bracketing around the vmalloc() call.
-> Therefore, the sleeping function bug should not occur.
-> 
-What you missed is the local_irq_save in kcov_remote_start_usb_softirq().
-See comment [1] for detail.
+> The same can be achieved if we stick an of_platform_populate() at
+> the end of mmio-sram probe - thoughts?
+You cannot (or should not) remove simple-mfd from existing binding. But
+the point is that the list should not grow.
 
-> > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/kcov.h#n73
-> > [2] Subject: [RFC 0/7] vmallloc and non-blocking GFPs
-> > https://lore.kernel.org/all/20250704152537.55724-1-urezki@gmail.com/
-> 
-> Additionally, I have tested this implementation by running syzkaller
-> for a full day, and no issues were reported.
-> 
-> Perhaps a comment could be added here (I can volunteer to do so) to
-> improve readability where the control flow isn’t obvious to future developers.
-> 
-> Thanks,
-> 
-> Yunseong Kim
-> 
-> 
+Maybe the binding should receive a comment next to compatible:
+" # Do not grow this, if you add here new compatible, you agree to buy
+round of drinks on next LPC to all upstream maintainers" ?
+
+Best regards,
+Krzysztof
 
