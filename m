@@ -1,110 +1,82 @@
-Return-Path: <linux-kernel+bounces-754456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13DAEB1947C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:20:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F0F3B19480
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:49:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B53203B47AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:20:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BAEC1715AF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F7841C54AF;
-	Sun,  3 Aug 2025 16:20:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDC631CDFAC;
+	Sun,  3 Aug 2025 16:49:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mvM4WN91"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="D+k8/WMG"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60310846F;
-	Sun,  3 Aug 2025 16:20:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19D7A1A2C0B;
+	Sun,  3 Aug 2025 16:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754238041; cv=none; b=DND+lf+jgeE1bylSJWJMxUFs0iKIl/XJmcBpY3nc2iwB21RD0xFDHNC/wfDnwxk3OHKObDEejuROovgtybWeJszbAT+Qx5c7VYnLzk/AqP6dVlPuBXJZtHWJxIdz70Aj1s2IMS6E182obiFP9U048LgxFiXhrffgE5j0Y1OADYw=
+	t=1754239780; cv=none; b=C1PJjeR4MLpS3enY6QU1Q6V6W/UYKR7u7KqY/9JKM2TMCrI5+m3HENhyZXZaU031yh/gF9+JW+JCx+4S5RjkACqE9j6QuL4QVM9LmeRGrofskwcBOAtJV4/fIupB8/B4HC6krBuZB0rZYREnxDb/N3P49B2XTpN9eOY2NOhJK9s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754238041; c=relaxed/simple;
-	bh=8mP9B31u/llko2MSJHuHMlix27uOYS85moCvfkTX4Ww=;
-	h=Date:Content-Type:MIME-Version:From:Cc:To:In-Reply-To:References:
-	 Message-Id:Subject; b=R7ZK800ToL0muUxw3QYqgX001QcLr2LLLk7GDo5zXCoFFwZON6prnSqfGjFsgzPGehlbkHW48O2AB+n/8m2dk0CIFxwxb7nsCUfq49S+DlCXqGPiVOUrD4w8Y9iORksPt6/m17HzqoNoTjCUMSMkE8mJTizwjrfT58o+LzJnr8g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mvM4WN91; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B98E7C4CEEB;
-	Sun,  3 Aug 2025 16:20:40 +0000 (UTC)
+	s=arc-20240116; t=1754239780; c=relaxed/simple;
+	bh=ukGOvHSLxM6DOts4OpuXE4dv5VI5mr9YJi8g6MkF0F8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=NG9Erp3We8SmEwR0zUeLBOQnF4WPIkBzeb+PMJOUjt20GAQtJJ1ZlBc1i4O8V3I80Jaqaa/NTeNmxWYL1bwthF5LcL/io5hNE2qngiy2tyLrFCpApHVou00jhUO/7xNEfhrfQdQd7J3hrulAmxvA3CvcchhGVi8KNzfW6uLMjmk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=D+k8/WMG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 696C9C4CEEB;
+	Sun,  3 Aug 2025 16:49:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754238040;
-	bh=8mP9B31u/llko2MSJHuHMlix27uOYS85moCvfkTX4Ww=;
-	h=Date:From:Cc:To:In-Reply-To:References:Subject:From;
-	b=mvM4WN91kznNQNiBP5/warwOsHkIFygM/iruY5ahvmX4Uoppb/MoNHdECDyUTj8hj
-	 PDRSrLHx7UIUxFQj+dy5lssBj4s9cShOrPoCb87MuYZUngHc+fFxPMrxyR0UefTagy
-	 aWtgAph53Ur5Isaf+T3pe2lSJ8JsCiLNaP2NeoiLbNt4K5CgWZXDZyDg8qP8H+TSta
-	 SFVCov1WHTIlktqM5Bn3gK21ysWldAr4TcxPHL5GA1FEd+P1sMBCuQndP/qOmPLzBG
-	 dweuhHougfBnqkSFdpqlWSiudKHYvwj2jiJqaSZDurZduAR1yxJvfYtv3LAVySvQvw
-	 hX6eW8KCRplvA==
-Date: Sun, 03 Aug 2025 11:20:40 -0500
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+	s=k20201202; t=1754239778;
+	bh=ukGOvHSLxM6DOts4OpuXE4dv5VI5mr9YJi8g6MkF0F8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=D+k8/WMG4E+UOPnYVLvs4p9NCXzqsIT4GD3eHe3wEFBCjFJPfeUkxeFgUwSUEm+mO
+	 KDlqeqVOfMSzaY4cTvPQ79TG8Ya5yHUFAwiZUp+SIRijb+oJEAokS9ca70iX3CXfeb
+	 qyXuPP67Mo5zAOB4AgdtByEw9E2AfVVzEHzGryH0JAcW8K/xdPwAnJvGEq3M1hI8HW
+	 cgyaP5eMt2RToJRQ6CSmvdviwj2A/Cs1KFqhxC/lkCRzui7dyNS68Z8OdhLrr0Sar8
+	 TFr/xrsCD+3rbZpYuLATYAUuGa365gkJCy/F+wQ+hX9AmSOuuw4A5aaEywp/mVVqET
+	 zvHnOH7tsztwg==
+Date: Sun, 3 Aug 2025 11:49:37 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Troy Mitchell <troy.mitchell@linux.spacemit.com>
+Cc: Alex Elder <elder@riscstar.com>, Yixun Lan <dlan@gentoo.org>,
+	devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>,
+	linux-riscv@lists.infradead.org,
+	Michael Turquette <mturquette@baylibre.com>,
+	spacemit@lists.linux.dev, Inochi Amaoto <inochiama@outlook.com>,
+	linux-kernel@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>,
+	linux-clk@vger.kernel.org, Haylen Chu <heylenay@4d2.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>
+Subject: Re: [PATCH RESEND v3 1/2] dt-bindings: clock: spacemit:
+ CLK_SSPA_I2S_BCLK for SSPA
+Message-ID: <175423977710.518524.17027664815968438984.robh@kernel.org>
+References: <20250731-k1-clk-i2s-v3-0-2f655ddb0c6f@linux.spacemit.com>
+ <20250731-k1-clk-i2s-v3-1-2f655ddb0c6f@linux.spacemit.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: "Rob Herring (Arm)" <robh@kernel.org>
-Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
- Jonathan Cameron <jic23@kernel.org>, 
- Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- David Lechner <dlechner@baylibre.com>, linux-iio@vger.kernel.org, 
- Conor Dooley <conor+dt@kernel.org>, Andy Shevchenko <andy@kernel.org>, 
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-To: Dixit Parmar <dixitparmar19@gmail.com>
-In-Reply-To: <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
-Message-Id: <175423802305.483875.12095436762674457962.robh@kernel.org>
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: magnetometer: document
- Infineon TLV493D 3D Magnetic sensor
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250731-k1-clk-i2s-v3-1-2f655ddb0c6f@linux.spacemit.com>
 
 
-On Sat, 02 Aug 2025 12:14:28 +0530, Dixit Parmar wrote:
-> Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
-> controlled by I2C interface. Main applications includes joysticks, control
-> elements (white goods, multifunction knops), or electric meters (anti-
-> tampering).
-> Drop duplicated entry for infineon,tlv493d from trivial-devices.yaml as
-> its documented in infineon,tlv493d.yaml now.
+On Thu, 31 Jul 2025 22:14:06 +0800, Troy Mitchell wrote:
+> In order to use the virtual clock SSPAx_I2S_BCLK in the device tree and
+> register it in the driver, this patch introduces the macro definition.
 > 
-> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
-> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
+> Signed-off-by: Troy Mitchell <troy.mitchell@linux.spacemit.com>
 > ---
->  .../iio/magnetometer/infineon,tlv493d.yaml         | 45 ++++++++++++++++++++++
->  .../devicetree/bindings/trivial-devices.yaml       |  2 -
->  2 files changed, 45 insertions(+), 2 deletions(-)
+>  include/dt-bindings/clock/spacemit,k1-syscon.h | 2 ++
+>  1 file changed, 2 insertions(+)
 > 
 
-My bot found errors running 'make dt_binding_check' on your patch:
-
-yamllint warnings/errors:
-
-dtschema/dtc warnings/errors:
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml: vdd: missing type definition
-/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml: 'example' is not one of ['$id', '$schema', 'title', 'description', 'examples', 'required', 'allOf', 'anyOf', 'oneOf', 'definitions', '$defs', 'additionalProperties', 'dependencies', 'dependentRequired', 'dependentSchemas', 'patternProperties', 'properties', 'not', 'if', 'then', 'else', 'unevaluatedProperties', 'deprecated', 'maintainers', 'select', '$ref']
-	from schema $id: http://devicetree.org/meta-schemas/base.yaml#
-
-doc reference errors (make refcheckdocs):
-
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com
-
-The base for the series is generally the latest rc1. A different dependency
-should be noted in *this* patch.
-
-If you already ran 'make dt_binding_check' and didn't see the above
-error(s), then make sure 'yamllint' is installed and dt-schema is up to
-date:
-
-pip3 install dtschema --upgrade
-
-Please check and re-submit after running the above command yourself. Note
-that DT_SCHEMA_FILES can be set to your schema file to speed up checking
-your schema. However, it must be unset to test all examples with your schema.
+Acked-by: Rob Herring (Arm) <robh@kernel.org>
 
 
