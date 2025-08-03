@@ -1,356 +1,152 @@
-Return-Path: <linux-kernel+bounces-754519-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5177FB19557
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:47:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFD03B1955E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 85D2516E81A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:47:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7CE0A1893284
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:49:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D675227BB5;
-	Sun,  3 Aug 2025 20:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 65F4D1FDE09;
+	Sun,  3 Aug 2025 20:48:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VUXiCPfP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c/Z7EFiX"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 359E9225417;
-	Sun,  3 Aug 2025 20:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 18CBE12BF24;
+	Sun,  3 Aug 2025 20:48:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754253938; cv=none; b=mdqILjX0k04+cfsUInUT9MzbSBX0V+eQuRJlQhZGF8n9KmMenKfGZX9Gal+KvTuSBuO2OO+dLl7YPHA4QC7X2dcrN3SkPBphPrtLGO3fdHKLzplGS9CyWBeXWIqX5YlBBWxiG/UPSWIuNLSLaXqKEFf5Cf4dEBdMpHI3ca8Q/hw=
+	t=1754254117; cv=none; b=gwyf9RZvfduXE6XVtoTc4FqMCPDAJYXlGkCc/t3Uh6cEnnJvBcgNnFet8AOD0YS854Jgw/WNt0S0FtFkeQs4PC2zqfORTVYGkDkZZgvr6hsY1kbMppFQF8uTHRGcry/20tulZLRTrO+UrccEOFcyHU7uibxycb8mnDk2qMIXByI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754253938; c=relaxed/simple;
-	bh=boThjt8cR7TxwRjjaFjdaDJhkGbA4kE6Mndg6Kr8QuE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=muaGbHJsp3sisTxFxqnm7en0E8y7vj1Esfx5YDk/pZg4t4G4hN6MAzRS8KaQ6mgbefHaswuVL/qeAzu9Fr5nv6P5IVZH1L4t3LKLY+XhwVZ/L84SaNdakMhFYN/lQIYuWmNdY2x6MnivYoRU428UR4eu8PD3RcjFCvz0nubHoGs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VUXiCPfP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0B487C4CEF9;
-	Sun,  3 Aug 2025 20:45:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754253935;
-	bh=boThjt8cR7TxwRjjaFjdaDJhkGbA4kE6Mndg6Kr8QuE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VUXiCPfPD93bd9FYKlJYo5VE1L3Vtp70mitexZQ/xQUiX7/AtdAwjmFCjnGZTeiLJ
-	 FtuWf2ZYSozY8l7BTOQGmwbiGVQcEfnArJcC2shQsXP7wH0zokAFQsk1RgXW7lGgJF
-	 RwhNNxnJwwJKIOHZPDASOV3WT8T5wBMTh1Z9lrQIXVQOg3Qa70nzP2Gq90KsS1YS/O
-	 iM0SC6XVat7wu1BPipPdk54QNT7NoUuaLFl+GIG64YGWymlKdAyZIe3u3CqmMVizuT
-	 v8zd44Bt8jio5UrS7+b5Cz3j0Azs6gY9mExSs9uMoHR+74UfJms1JZGmTti9DAVuwa
-	 8lV9f4HcEuFkA==
-From: Eric Biggers <ebiggers@kernel.org>
-To: linux-crypto@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>,
-	linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org,
-	sparclinux@vger.kernel.org,
-	Eric Biggers <ebiggers@kernel.org>
-Subject: [PATCH 7/7] lib/crypto: tests: Add KUnit tests for MD5 and HMAC-MD5
-Date: Sun,  3 Aug 2025 13:44:33 -0700
-Message-ID: <20250803204433.75703-8-ebiggers@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250803204433.75703-1-ebiggers@kernel.org>
-References: <20250803204433.75703-1-ebiggers@kernel.org>
+	s=arc-20240116; t=1754254117; c=relaxed/simple;
+	bh=zzC0veX4U38w95i1qqvR/sj3J+MM6e8Lc6c6kYzUZV8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=MBqAgzPOZ5QK6f1WOrahdIaypH42bO0zuoENs0OPJoKJ8kugA1/hhaWHZSUWTvPMcJpp32VByPh36/f7ERV2jCEj/nYrbMWpsJzWfi6Rz+m6NZJHq3J7Vsm6BYRjwG0431CcsXGhkFaq9py2r/HhmAQgPviJHh0nn/XUgDwv/6U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c/Z7EFiX; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-af95ecfbd5bso119580966b.1;
+        Sun, 03 Aug 2025 13:48:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754254114; x=1754858914; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Lwy9S+seQCh1gpHswr4BPXe5Cl0mTG2Hkawb//nlLoc=;
+        b=c/Z7EFiXTcw+kEczsToH6kKe0+64ggW4YwH6ZzlP19ZQxZ7UqV5oG+dr3HQQ91mFtd
+         Sgvz5WdmgnXezXHYY74NXWklJ6CWCTVFQngb+C3Lgs6fhedqooJsqNZuYdaBLrC/iRmZ
+         ZnlLOd30NkDrBbCHb21X1Ob4TnVuCJJDkXUui5tAPaIIRKmOh08K2segC7wKrn3O67/b
+         qMpDAw2laRtz6fUrHXBOcWbAzjL0NfNkEJzsvKpXwhPhWAzSgfU8qz6ZaMV7OINBo7+R
+         YyOw5SkLAYXp5O2YtvBhuz0myWzuBG/BUPBgEWHldrwtMwU6h+RNZmsN5qQ6USEjSaR8
+         YVsQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754254114; x=1754858914;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Lwy9S+seQCh1gpHswr4BPXe5Cl0mTG2Hkawb//nlLoc=;
+        b=LTf3wly5vt2ZrT/skQsMXWXlvauIyXlhgMq3sVI5GtmHsiQMa11GSbUVICcJ7m7GV7
+         fslAUzrOqNGFpiGuT0wiv0lGmO3YYJaB6i4XIZnvHV3DHlql9xv786drOD9e3Fn4H0Ah
+         7apbLOp9chC2Rl7R9qeEWofCwwTGhhaOWHc3Ww+fIabsZrX22XZsi+MAM8FtKQOoOIhH
+         3qV94ic4BeQKFy4/jQznRl8PARqUy9iU1JU7lgP5vfUIcyU3FU8vOLmlbbBb+iARmmfi
+         JtDxibRqfiuDGiLEH44IK5CJKYxNLt3GYE97GoavV2dsOc2VxtGcgu80QFJsckN02AT8
+         p2Zg==
+X-Forwarded-Encrypted: i=1; AJvYcCWHu/CJkJl8PgSCoedka4iFdHk1+366xbj4hhMFB1Nfo/RNmAYW5eOreyzGkQK81c6j4f+UVwgWjvZy9Llg@vger.kernel.org, AJvYcCWm3ELwEvfvZsw1vVfPcFjo3NwNvLBzdly9+aE07gH0aX0jn45XGTLOOVX+sPhdNGMt4rVd6E2mtLY4UW5Kc8Pp@vger.kernel.org, AJvYcCXeXGzwEK/P4Jwr/FEVq9epOOQL9X1+NPvDo9FQZNMRopWiAbfPIO4xn7fzSkZkeHs3kv9lU+dbmiJox0AR@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCMHM/wluDBvEk2tCKl1okAGVhMj+chCSomCesXizZl1hO1E2D
+	JqB4s768iyaZ0Gggzq/cC/PjhSaXWfmD8SqZa4uazNjrGDdkl3QeblNM
+X-Gm-Gg: ASbGncupAmpnhZ5EZMZQ1TBsOEfeEdaVX2OKhar/vcgZT7UeGrvVo214RQCSZ0ftlPs
+	Ld+/7p14PfsdNv9Eyut7bhmDXs2vyZ4H+U5rappL5AJBHQ4YuHW/8UHIyk/bDzbFr/TbeaLxsTP
+	Lfs77/W3O14izgKFloUXRtx6+k5nt3eAaIF+7cNVCeZkL47+Ti62zIV+i4MKQ7aCt/rUfhb4b8x
+	gtE9HmajUGXZBneHNhbKYo4nUTNRs1jGXNWOVsDprn/QBsKJYvkFqQCkjMgxbrqhDY3OizKOHoU
+	hmIY7qyXwG+94POpoXRHSJ9DwDueZN07Io42E8UIgyHPdGEAeI00Vcn9fUF29sNvZQhT8Vorxx9
+	LV/Mm1qS+Kh5wFeY=
+X-Google-Smtp-Source: AGHT+IED2U86NMVTRqP/XDEpeRpB+DYiVCnbANSQwHQ90TIg/gegMf7X5EOI193KklAwzpnqqt/v+Q==
+X-Received: by 2002:a17:906:f192:b0:af9:44fe:dea1 with SMTP id a640c23a62f3a-af944fee3b8mr478126866b.23.1754254113813;
+        Sun, 03 Aug 2025 13:48:33 -0700 (PDT)
+Received: from hsukr3.. ([141.70.88.200])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0761f2sm629695266b.11.2025.08.03.13.48.31
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Aug 2025 13:48:33 -0700 (PDT)
+From: Sukrut Heroorkar <hsukrut3@gmail.com>
+To: Shuah Khan <shuah@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sukrut Heroorkar <hsukrut3@gmail.com>,
+	linux-kernel@vger.kernel.org (open list:PROC FILESYSTEM),
+	linux-fsdevel@vger.kernel.org (open list:PROC FILESYSTEM),
+	linux-kselftest@vger.kernel.org (open list:KERNEL SELFTEST FRAMEWORK)
+Cc: skhar@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: [PATCH] selftests/proc: Fix string literal warning in proc-maps-race.c
+Date: Sun,  3 Aug 2025 22:47:26 +0200
+Message-ID: <20250803204746.1899942-1-hsukrut3@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Add a KUnit test suite for the MD5 library functions, including the
-corresponding HMAC support.  The core test logic is in the
-previously-added hash-test-template.h.  This commit just adds the actual
-KUnit suite, and it adds the generated test vectors to the tree so that
-gen-hash-testvecs.py won't have to be run at build time.
+This change resolves non literal string format warning invoked
+for proc-maps-race.c while compiling.
 
-Signed-off-by: Eric Biggers <ebiggers@kernel.org>
+proc-maps-race.c:205:17: warning: format not a string literal and no format arguments [-Wformat-security]
+  205 |                 printf(text);
+      |                 ^~~~~~
+proc-maps-race.c:209:17: warning: format not a string literal and no format arguments [-Wformat-security]
+  209 |                 printf(text);
+      |                 ^~~~~~
+proc-maps-race.c: In function ‘print_last_lines’:
+proc-maps-race.c:224:9: warning: format not a string literal and no format arguments [-Wformat-security]
+  224 |         printf(start);
+      |         ^~~~~~
+
+Added string format specifier %s for the printf calls
+in both print_first_lines() and print_last_lines() thus
+resolving the warnings invoked.
+
+The test executes fine after this change thus causing no
+affect to the functional behavior of the test.
+
+Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
 ---
- lib/crypto/tests/Kconfig        |  10 ++
- lib/crypto/tests/Makefile       |   1 +
- lib/crypto/tests/md5-testvecs.h | 186 ++++++++++++++++++++++++++++++++
- lib/crypto/tests/md5_kunit.c    |  39 +++++++
- 4 files changed, 236 insertions(+)
- create mode 100644 lib/crypto/tests/md5-testvecs.h
- create mode 100644 lib/crypto/tests/md5_kunit.c
+ tools/testing/selftests/proc/proc-maps-race.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/lib/crypto/tests/Kconfig b/lib/crypto/tests/Kconfig
-index de7e8babb6afc..c21d53fd4b0ce 100644
---- a/lib/crypto/tests/Kconfig
-+++ b/lib/crypto/tests/Kconfig
-@@ -1,7 +1,17 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
+diff --git a/tools/testing/selftests/proc/proc-maps-race.c b/tools/testing/selftests/proc/proc-maps-race.c
+index 66773685a047..94bba4553130 100644
+--- a/tools/testing/selftests/proc/proc-maps-race.c
++++ b/tools/testing/selftests/proc/proc-maps-race.c
+@@ -202,11 +202,11 @@ static void print_first_lines(char *text, int nr)
+ 		int offs = end - text;
  
-+config CRYPTO_LIB_MD5_KUNIT_TEST
-+	tristate "KUnit tests for MD5" if !KUNIT_ALL_TESTS
-+	depends on KUNIT
-+	default KUNIT_ALL_TESTS || CRYPTO_SELFTESTS
-+	select CRYPTO_LIB_BENCHMARK_VISIBLE
-+	select CRYPTO_LIB_MD5
-+	help
-+	  KUnit tests for the MD5 cryptographic hash function and its
-+	  corresponding HMAC.
-+
- config CRYPTO_LIB_POLY1305_KUNIT_TEST
- 	tristate "KUnit tests for Poly1305" if !KUNIT_ALL_TESTS
- 	depends on KUNIT
- 	default KUNIT_ALL_TESTS || CRYPTO_SELFTESTS
- 	select CRYPTO_LIB_BENCHMARK_VISIBLE
-diff --git a/lib/crypto/tests/Makefile b/lib/crypto/tests/Makefile
-index 8601dccd6fdda..f6f82c6f9cb5d 100644
---- a/lib/crypto/tests/Makefile
-+++ b/lib/crypto/tests/Makefile
-@@ -1,6 +1,7 @@
- # SPDX-License-Identifier: GPL-2.0-or-later
+ 		text[offs] = '\0';
+-		printf(text);
++		printf("%s", text);
+ 		text[offs] = '\n';
+ 		printf("\n");
+ 	} else {
+-		printf(text);
++		printf("%s", text);
+ 	}
+ }
  
-+obj-$(CONFIG_CRYPTO_LIB_MD5_KUNIT_TEST) += md5_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_POLY1305_KUNIT_TEST) += poly1305_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA1_KUNIT_TEST) += sha1_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA256_KUNIT_TEST) += sha224_kunit.o sha256_kunit.o
- obj-$(CONFIG_CRYPTO_LIB_SHA512_KUNIT_TEST) += sha384_kunit.o sha512_kunit.o
-diff --git a/lib/crypto/tests/md5-testvecs.h b/lib/crypto/tests/md5-testvecs.h
-new file mode 100644
-index 0000000000000..be6727feb2966
---- /dev/null
-+++ b/lib/crypto/tests/md5-testvecs.h
-@@ -0,0 +1,186 @@
-+/* SPDX-License-Identifier: GPL-2.0-or-later */
-+/* This file was generated by: ./scripts/crypto/gen-hash-testvecs.py md5 */
-+
-+static const struct {
-+	size_t data_len;
-+	u8 digest[MD5_DIGEST_SIZE];
-+} hash_testvecs[] = {
-+	{
-+		.data_len = 0,
-+		.digest = {
-+			0xd4, 0x1d, 0x8c, 0xd9, 0x8f, 0x00, 0xb2, 0x04,
-+			0xe9, 0x80, 0x09, 0x98, 0xec, 0xf8, 0x42, 0x7e,
-+		},
-+	},
-+	{
-+		.data_len = 1,
-+		.digest = {
-+			0x16, 0x7b, 0x86, 0xf2, 0x1d, 0xf3, 0x76, 0xc9,
-+			0x6f, 0x10, 0xa0, 0x61, 0x5b, 0x14, 0x20, 0x0b,
-+		},
-+	},
-+	{
-+		.data_len = 2,
-+		.digest = {
-+			0x2d, 0x30, 0x96, 0xc7, 0x43, 0x40, 0xed, 0xb2,
-+			0xfb, 0x84, 0x63, 0x9a, 0xec, 0xc7, 0x3c, 0x3c,
-+		},
-+	},
-+	{
-+		.data_len = 3,
-+		.digest = {
-+			0xe5, 0x0f, 0xce, 0xe0, 0xc8, 0xff, 0x4e, 0x08,
-+			0x5e, 0x19, 0xe5, 0xf2, 0x08, 0x11, 0x19, 0x16,
-+		},
-+	},
-+	{
-+		.data_len = 16,
-+		.digest = {
-+			0xe8, 0xca, 0x29, 0x05, 0x2f, 0xd1, 0xf3, 0x99,
-+			0x40, 0x71, 0xf5, 0xc2, 0xf7, 0xf8, 0x17, 0x3e,
-+		},
-+	},
-+	{
-+		.data_len = 32,
-+		.digest = {
-+			0xe3, 0x20, 0xc1, 0xd8, 0x21, 0x14, 0x44, 0x59,
-+			0x1a, 0xf5, 0x91, 0xaf, 0x69, 0xbe, 0x93, 0x9d,
-+		},
-+	},
-+	{
-+		.data_len = 48,
-+		.digest = {
-+			0xfb, 0x06, 0xb0, 0xf0, 0x00, 0x10, 0x4b, 0x68,
-+			0x3d, 0x75, 0xf9, 0x70, 0xde, 0xbb, 0x32, 0x16,
-+		},
-+	},
-+	{
-+		.data_len = 49,
-+		.digest = {
-+			0x52, 0x86, 0x48, 0x8b, 0xae, 0x91, 0x7c, 0x4e,
-+			0xc2, 0x2a, 0x69, 0x07, 0x35, 0xcc, 0xb2, 0x88,
-+		},
-+	},
-+	{
-+		.data_len = 63,
-+		.digest = {
-+			0xfa, 0xd3, 0xf6, 0xe6, 0x7b, 0x1a, 0xc6, 0x05,
-+			0x73, 0x35, 0x02, 0xab, 0xc7, 0xb3, 0x47, 0xcb,
-+		},
-+	},
-+	{
-+		.data_len = 64,
-+		.digest = {
-+			0xc5, 0x59, 0x29, 0xe9, 0x0a, 0x4a, 0x86, 0x43,
-+			0x7c, 0xaf, 0xdf, 0x83, 0xd3, 0xb8, 0x33, 0x5f,
-+		},
-+	},
-+	{
-+		.data_len = 65,
-+		.digest = {
-+			0x80, 0x05, 0x75, 0x39, 0xec, 0x44, 0x8a, 0x81,
-+			0xe7, 0x6e, 0x8d, 0xd1, 0xc6, 0xeb, 0xc2, 0xf0,
-+		},
-+	},
-+	{
-+		.data_len = 127,
-+		.digest = {
-+			0x3f, 0x02, 0xe8, 0xc6, 0xb8, 0x6a, 0x39, 0xc3,
-+			0xa4, 0x1c, 0xd9, 0x8f, 0x4a, 0x71, 0x40, 0x30,
-+		},
-+	},
-+	{
-+		.data_len = 128,
-+		.digest = {
-+			0x89, 0x4f, 0x79, 0x3e, 0xff, 0x0c, 0x22, 0x60,
-+			0xa2, 0xdc, 0x10, 0x5f, 0x23, 0x0a, 0xe7, 0xc6,
-+		},
-+	},
-+	{
-+		.data_len = 129,
-+		.digest = {
-+			0x06, 0x56, 0x61, 0xb8, 0x8a, 0x82, 0x77, 0x1b,
-+			0x2c, 0x35, 0xb8, 0x9f, 0xd6, 0xf7, 0xbd, 0x5a,
-+		},
-+	},
-+	{
-+		.data_len = 256,
-+		.digest = {
-+			0x5d, 0xdf, 0x7d, 0xc8, 0x43, 0x96, 0x3b, 0xdb,
-+			0xc7, 0x0e, 0x44, 0x42, 0x23, 0xf7, 0xed, 0xdf,
-+		},
-+	},
-+	{
-+		.data_len = 511,
-+		.digest = {
-+			0xf6, 0x5f, 0x26, 0x51, 0x8a, 0x5a, 0x46, 0x8f,
-+			0x48, 0x72, 0x90, 0x74, 0x9d, 0x87, 0xbd, 0xdf,
-+		},
-+	},
-+	{
-+		.data_len = 513,
-+		.digest = {
-+			0xd8, 0x2c, 0xc9, 0x76, 0xfa, 0x67, 0x2e, 0xa6,
-+			0xc8, 0x12, 0x4a, 0x64, 0xaa, 0x0b, 0x3d, 0xbd,
-+		},
-+	},
-+	{
-+		.data_len = 1000,
-+		.digest = {
-+			0xe2, 0x7e, 0xb4, 0x5f, 0xe1, 0x74, 0x51, 0xfc,
-+			0xe0, 0xc8, 0xd5, 0xe6, 0x8b, 0x40, 0xd2, 0x0e,
-+		},
-+	},
-+	{
-+		.data_len = 3333,
-+		.digest = {
-+			0xcd, 0x7d, 0x56, 0xa9, 0x4c, 0x47, 0xea, 0xc2,
-+			0x34, 0x0b, 0x84, 0x05, 0xf9, 0xad, 0xbb, 0x46,
-+		},
-+	},
-+	{
-+		.data_len = 4096,
-+		.digest = {
-+			0x63, 0x6e, 0x58, 0xb3, 0x94, 0x6b, 0x83, 0x5f,
-+			0x1f, 0x0e, 0xd3, 0x66, 0x78, 0x71, 0x98, 0x42,
-+		},
-+	},
-+	{
-+		.data_len = 4128,
-+		.digest = {
-+			0x9d, 0x68, 0xfc, 0x26, 0x8b, 0x4c, 0xa8, 0xe7,
-+			0x30, 0x0b, 0x19, 0x52, 0x6e, 0xa5, 0x65, 0x1c,
-+		},
-+	},
-+	{
-+		.data_len = 4160,
-+		.digest = {
-+			0x1c, 0xaa, 0x7d, 0xee, 0x91, 0x01, 0xe2, 0x5a,
-+			0xec, 0xe9, 0xde, 0x57, 0x0a, 0xb6, 0x4c, 0x2f,
-+		},
-+	},
-+	{
-+		.data_len = 4224,
-+		.digest = {
-+			0x1b, 0x31, 0xe3, 0x14, 0x07, 0x16, 0x17, 0xc6,
-+			0x98, 0x79, 0x88, 0x23, 0xb6, 0x3b, 0x25, 0xc4,
-+		},
-+	},
-+	{
-+		.data_len = 16384,
-+		.digest = {
-+			0xc6, 0x3d, 0x56, 0x90, 0xf0, 0xf6, 0xe6, 0x50,
-+			0xf4, 0x76, 0x78, 0x67, 0xa3, 0xdd, 0x62, 0x7b,
-+		},
-+	},
-+};
-+
-+static const u8 hash_testvec_consolidated[MD5_DIGEST_SIZE] = {
-+	0x70, 0x86, 0x9e, 0x6c, 0xa4, 0xc6, 0x71, 0x43,
-+	0x26, 0x02, 0x1b, 0x3f, 0xfd, 0x56, 0x9f, 0xa6,
-+};
-+
-+static const u8 hmac_testvec_consolidated[MD5_DIGEST_SIZE] = {
-+	0x10, 0x02, 0x74, 0xf6, 0x4d, 0xb3, 0x3c, 0xc7,
-+	0xa1, 0xf7, 0xe6, 0xd4, 0x32, 0x64, 0xfa, 0x6d,
-+};
-diff --git a/lib/crypto/tests/md5_kunit.c b/lib/crypto/tests/md5_kunit.c
-new file mode 100644
-index 0000000000000..38bd52c25ae3e
---- /dev/null
-+++ b/lib/crypto/tests/md5_kunit.c
-@@ -0,0 +1,39 @@
-+// SPDX-License-Identifier: GPL-2.0-or-later
-+/*
-+ * Copyright 2025 Google LLC
-+ */
-+#include <crypto/md5.h>
-+#include "md5-testvecs.h"
-+
-+#define HASH md5
-+#define HASH_CTX md5_ctx
-+#define HASH_SIZE MD5_DIGEST_SIZE
-+#define HASH_INIT md5_init
-+#define HASH_UPDATE md5_update
-+#define HASH_FINAL md5_final
-+#define HMAC_KEY hmac_md5_key
-+#define HMAC_CTX hmac_md5_ctx
-+#define HMAC_PREPAREKEY hmac_md5_preparekey
-+#define HMAC_INIT hmac_md5_init
-+#define HMAC_UPDATE hmac_md5_update
-+#define HMAC_FINAL hmac_md5_final
-+#define HMAC hmac_md5
-+#define HMAC_USINGRAWKEY hmac_md5_usingrawkey
-+#include "hash-test-template.h"
-+
-+static struct kunit_case hash_test_cases[] = {
-+	HASH_KUNIT_CASES,
-+	KUNIT_CASE(benchmark_hash),
-+	{},
-+};
-+
-+static struct kunit_suite hash_test_suite = {
-+	.name = "md5",
-+	.test_cases = hash_test_cases,
-+	.suite_init = hash_suite_init,
-+	.suite_exit = hash_suite_exit,
-+};
-+kunit_test_suite(hash_test_suite);
-+
-+MODULE_DESCRIPTION("KUnit tests and benchmark for MD5 and HMAC-MD5");
-+MODULE_LICENSE("GPL");
+@@ -221,7 +221,7 @@ static void print_last_lines(char *text, int nr)
+ 		nr--;
+ 		start--;
+ 	}
+-	printf(start);
++	printf("%s", start);
+ }
+ 
+ static void print_boundaries(const char *title, FIXTURE_DATA(proc_maps_race) *self)
 -- 
-2.50.1
+2.43.0
 
 
