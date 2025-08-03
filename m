@@ -1,275 +1,285 @@
-Return-Path: <linux-kernel+bounces-754387-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754388-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 982A8B193C5
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:09:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6345EB193C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:09:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B253B1753F3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:09:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D389F3B8D8F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:09:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58915464E;
-	Sun,  3 Aug 2025 11:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1380B244662;
+	Sun,  3 Aug 2025 11:09:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="gVJhpF9M"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="bX0Ss5qy"
+Received: from mail-qv1-f48.google.com (mail-qv1-f48.google.com [209.85.219.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EDEC74420
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:09:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF7055464E
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:09:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754219377; cv=none; b=T2CS852uOCtPynP0vAPdm61GDHrwSeO84m0tK56qvDMXrMavc+YWma94epVkbBMTaxFSMWLjC+AW86QM82a1v5XxxKi7iC5DJh1VsI+EGQMcSa5Q98pfkdIpaRyWWEeF/INCoZnVBH4s0mWsbgVAjaBl/yw2Y78sdKTPcHwNXx0=
+	t=1754219392; cv=none; b=KB7fn9Pu3YTtY4KeP20r5ZAykr6eWPYvELQzGzf/gDkA9bdtpkPB38LyWbBfxhmDJP3g43bKfRBqzonZsFkrYD6hcHnxitlfIay3yOHEU+oXcaZiPXugqfoskQTyB4R9osHYonTPSHbOFZPBpnsQVr55aD2Yos0RPm+IPhxMmNQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754219377; c=relaxed/simple;
-	bh=FlKWNDvWd369m0Ktzj+YoUteKp5L6uiyT93N7M4WWr8=;
-	h=Date:From:To:Cc:Subject:Message-ID; b=thZFDNS4oehlQj1jCXBRVj4VMD2V/U1a7mqB1rotsr5jrU8b5eX2pBJWrZ9RiudL1TPyeEqkZLJRUkUaCPQcNUJmd9Qv+1fFItYVWT64lhG+r9NEmivHk6d3utlffTWtN/9yROeBYomWyDh91cEq3qQBH9WyAJb+tqMRdYoghNY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=gVJhpF9M; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754219376; x=1785755376;
-  h=date:from:to:cc:subject:message-id;
-  bh=FlKWNDvWd369m0Ktzj+YoUteKp5L6uiyT93N7M4WWr8=;
-  b=gVJhpF9MRD/jVOrhJ/BMY2NzKRA1FriQeD3zWLzxEN+8b9SGjQaERmoB
-   HsIcVJ2YQ3aw7MgW+Km1qggkOSQ47BwaNfNz+EdcV7y3a4/wEmJCviaUy
-   LD3SphCeaH1xyLXdsldwj2+e9JZAQxn2eb1XOsaOWvQ//4eXXikNwSZGE
-   NA6GQxnNb066ldIBAixmfl0d8VAAn0ChWuhXzDmDGwUL88y2ttHEuyKbl
-   RcMsZyys7M3QTWttRJYzgMp1HKPei88YP07VBSB29cjze7lIsMhOKbPfG
-   lskvzFxYrh8NPOdtwEk7gEzvvmk2BvWhmH3wcbjpvukWG8IgNogt8Hu6w
-   A==;
-X-CSE-ConnectionGUID: qCapkE+PSmmlN67d6sGNnw==
-X-CSE-MsgGUID: LOKY+DRuQeiJvCwDluOxEQ==
-X-IronPort-AV: E=McAfee;i="6800,10657,11510"; a="55701578"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="55701578"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2025 04:09:35 -0700
-X-CSE-ConnectionGUID: N1GdbaPJQCOQPfpZNoFv/Q==
-X-CSE-MsgGUID: +JMuMJ3eSsWaY6idHdQGyQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="194880455"
-Received: from lkp-server01.sh.intel.com (HELO 160750d4a34c) ([10.239.97.150])
-  by orviesa002.jf.intel.com with ESMTP; 03 Aug 2025 04:09:34 -0700
-Received: from kbuild by 160750d4a34c with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1uiWap-0006RS-31;
-	Sun, 03 Aug 2025 11:09:31 +0000
-Date: Sun, 03 Aug 2025 19:09:03 +0800
-From: kernel test robot <lkp@intel.com>
-To: "x86-ml" <x86@kernel.org>
-Cc: linux-kernel@vger.kernel.org
-Subject: [tip:locking/urgent] BUILD SUCCESS
- e703b7e247503b8bf87b62c02a4392749b09eca8
-Message-ID: <202508031953.WAPZX6XW-lkp@intel.com>
-User-Agent: s-nail v14.9.24
+	s=arc-20240116; t=1754219392; c=relaxed/simple;
+	bh=umnoQPA6LtY/ct25HhtQ/YqOQKI2kbNOJBw5+65dlx8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=f1PONeqdJ6YvV3Wt47B2ytkviAYQNw+04DDFIe8Sc8x1fk+kUqTCZhVhSkKqnlKyKoO3ZIZfGM5+vkY3rhcN3eM0tMu6+La1aJzSB4HBTw8acwXPLGPRn/NvIw61XxzMj+WtMKpmb9tt8MUaNshkEt5fZn39K7Sagcw6Z7r+EB0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=bX0Ss5qy; arc=none smtp.client-ip=209.85.219.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinidat.com
+Received: by mail-qv1-f48.google.com with SMTP id 6a1803df08f44-70749d4c5b5so31518076d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 04:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=infinidat.com; s=google; t=1754219389; x=1754824189; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=kpZ0Pw1nPQOd+/0U6IoZuKEq0WcxQdvHRhbbA6toWQ4=;
+        b=bX0Ss5qy1zHjCyq9w3GXqWB+oMU5FIQuEN3Ct2+nTw5uW7oSqC2KmJ/DJE+BS3yk1O
+         fyM+9gpCCodul1x1U6rwYCsEhNq+dnwzjWeO+mg96pObfrSM2KQ6HspHYAvUKIiEwNnB
+         +uTmonL45DF8yp4OLIP462/R6AXf6Qf5y38d97lOI5CSmTzo3PHNAbAX+hMZJIDc5P+3
+         0A9g+On6L32Sedmj3ze/yIQV2Pnu6mtCAAgicce6PzSRDAK2dO98a6izwRzsz1uZJE0g
+         R63jHa7gh9L2f1nAOdQT+l/mKmzSM64XsU73IdRFYgL9r50xoUMeEeoYjYnzL+jACX2C
+         sJRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754219389; x=1754824189;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=kpZ0Pw1nPQOd+/0U6IoZuKEq0WcxQdvHRhbbA6toWQ4=;
+        b=S+oJ3YkLGKHtaE9MoESCplJxCo3XhhGneqCDUWFU84sGrQ4qtFcaNUZIaozpt9MfTB
+         EZwNPVPq1/clImss2av6mlWFs37FhkblNc6KcghwH0Qvj/W6R4v126yZjHC95LswciVe
+         rOzb8Ok1zq7c0FCKOEqXLZtRa/bbE/wjR6vM02Inz+W3Sq5S6KHkQ+3tf5o/vj3Fhbek
+         HzUDnuuBhaSPUFzCjn/G3S83hPs26p0JvmLy1AT4lpNQLW2Q6OXx4M88quGDe974+xEq
+         hwvTEszpuom8/XHFU+6yBT0JzaR8FJwt1iXEomvGdCtRygOjUBZS8ukRBzr9EtjhDKm4
+         cxRw==
+X-Gm-Message-State: AOJu0YxgnRbtCjrE0WioH1UcWzu3OOHiDuNM7Vry3ulge3eKEPTpnU77
+	I8TfKEV2zcIQDl30JeCWCJWcDaIzHIRngGBRJbN7k/tFJxU2Z2fb8xLOLfcFwnKMTMNfGmte/p/
+	HjQ4n46CpMj4l7DyHZAbnUU406eIC0CSK458iO6mzlFMHmN9VaTej4+A=
+X-Gm-Gg: ASbGnctKqpS9FflL5tdChBqx1TqnpaTYBstgxFdNevwWFwSBrEF0zrU2QDLxnqp2NJM
+	IEXgQ9QPl4ccUmoaJBilbibyLQIpf7OLekFY2vr0GwbtLY+czTSb8bJSEaO4LHFjviebxEoFdWx
+	zYdM06ImWrbQL5+d+f3JOmih7C4/vk/JxUaxb7ZCgBzgDKSoRtb6+wzLql8IMKGvR1GSvWPFPrF
+	Lcesh0Uuw==
+X-Google-Smtp-Source: AGHT+IGE4v11vfh/p98G0AG/vF2vC9cU6z5JShu0YvJhCEikzGPxtEmcHa0xRmO4KkK939iTeptMMaQHPY4nddfiyU4=
+X-Received: by 2002:a05:6214:262b:b0:707:4539:5183 with SMTP id
+ 6a1803df08f44-70935ea93cfmr80164306d6.5.1754219389258; Sun, 03 Aug 2025
+ 04:09:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
+MIME-Version: 1.0
+References: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
+ <CAEHaoC22NDpHUWovJChCx_XqchkEvUPYrFFe_L1PH9Mw2e386A@mail.gmail.com>
+ <CAEHaoC2bi3VUEuoWKgHbgUFfdxmACrhkjaQ9Jni-4-ByP5tYJg@mail.gmail.com> <CAEHaoC3ZMvHe7D-JX9bfM9hfSPs0QV-og=om5eKFFqSL=tpjcw@mail.gmail.com>
+In-Reply-To: <CAEHaoC3ZMvHe7D-JX9bfM9hfSPs0QV-og=om5eKFFqSL=tpjcw@mail.gmail.com>
+From: Constantine Gavrilov <cgavrilov@infinidat.com>
+Date: Sun, 3 Aug 2025 14:09:38 +0300
+X-Gm-Features: Ac12FXw6TPdY1mrvZH4xW6Is3NOum7wEeYjPg6bpbuTEJ7S6z3Br-xeYsxW2C_0
+Message-ID: <CAEHaoC0Au_0yLRKSnDg=_qjnmDMmbJ=Nff+W1feEBTib0Jb_gA@mail.gmail.com>
+Subject: [PATCH 3/8] Large DMA alloc/add busy_regions sysfs attribute
+To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git locking/urgent
-branch HEAD: e703b7e247503b8bf87b62c02a4392749b09eca8  futex: Move futex cleanup to __mmdrop()
+  This is the fourth patch from the set of patches that enable large IOMMU
+DMA registrations. Entire work is available at the master branch of the
+master branch of git@github.com:cgavrilov/linux.git repo.
 
-elapsed time: 1248m
+Add busy_regions SYSFS attribute to IOMMU group. This allows to see used
+addresses and debug failed allocations.
 
-configs tested: 183
-configs skipped: 6
+commit b01feb650dc080f268adb5ff26bda1b9bf2193a1
+Author: Constantine Gavrilov <cgavrilov@infinidat.com>
+Date:   Wed Jun 25 19:49:16 2025 +0300
 
-The following configs have been built successfully.
-More configs may be tested in the coming days.
+    Add busy_regions sysfs attribute to IOMMU group.
 
-tested configs:
-alpha                             allnoconfig    gcc-15.1.0
-alpha                            allyesconfig    gcc-15.1.0
-alpha                               defconfig    gcc-15.1.0
-arc                              allmodconfig    clang-19
-arc                              allmodconfig    gcc-15.1.0
-arc                               allnoconfig    gcc-15.1.0
-arc                              allyesconfig    clang-19
-arc                              allyesconfig    gcc-15.1.0
-arc                                 defconfig    gcc-15.1.0
-arc                   randconfig-001-20250802    gcc-11.5.0
-arc                   randconfig-002-20250802    gcc-14.3.0
-arm                              allmodconfig    clang-19
-arm                               allnoconfig    clang-22
-arm                              allyesconfig    clang-19
-arm                                 defconfig    clang-22
-arm                          ixp4xx_defconfig    gcc-15.1.0
-arm                        keystone_defconfig    gcc-15.1.0
-arm                         nhk8815_defconfig    clang-22
-arm                   randconfig-001-20250802    gcc-10.5.0
-arm                   randconfig-002-20250802    clang-22
-arm                   randconfig-003-20250802    clang-18
-arm                   randconfig-004-20250802    gcc-8.5.0
-arm                         s3c6400_defconfig    gcc-15.1.0
-arm                    vt8500_v6_v7_defconfig    gcc-15.1.0
-arm64                            allmodconfig    clang-19
-arm64                             allnoconfig    gcc-15.1.0
-arm64                               defconfig    gcc-15.1.0
-arm64                 randconfig-001-20250802    gcc-12.5.0
-arm64                 randconfig-002-20250802    gcc-8.5.0
-arm64                 randconfig-003-20250802    clang-22
-arm64                 randconfig-004-20250802    gcc-8.5.0
-csky                              allnoconfig    gcc-15.1.0
-csky                                defconfig    gcc-15.1.0
-csky                  randconfig-001-20250802    gcc-15.1.0
-csky                  randconfig-002-20250802    gcc-15.1.0
-hexagon                          allmodconfig    clang-17
-hexagon                           allnoconfig    clang-22
-hexagon                          allyesconfig    clang-22
-hexagon                             defconfig    clang-22
-hexagon               randconfig-001-20250802    clang-22
-hexagon               randconfig-002-20250802    clang-22
-i386                             allmodconfig    gcc-12
-i386                              allnoconfig    gcc-12
-i386                             allyesconfig    gcc-12
-i386        buildonly-randconfig-001-20250802    gcc-12
-i386        buildonly-randconfig-002-20250802    gcc-12
-i386        buildonly-randconfig-003-20250802    clang-20
-i386        buildonly-randconfig-004-20250802    gcc-12
-i386        buildonly-randconfig-005-20250802    clang-20
-i386        buildonly-randconfig-006-20250802    clang-20
-i386                                defconfig    clang-20
-i386                  randconfig-001-20250803    gcc-12
-i386                  randconfig-002-20250803    gcc-12
-i386                  randconfig-003-20250803    gcc-12
-i386                  randconfig-004-20250803    gcc-12
-i386                  randconfig-005-20250803    gcc-12
-i386                  randconfig-006-20250803    gcc-12
-i386                  randconfig-007-20250803    gcc-12
-i386                  randconfig-011-20250803    clang-20
-i386                  randconfig-012-20250803    clang-20
-i386                  randconfig-013-20250803    clang-20
-i386                  randconfig-014-20250803    clang-20
-i386                  randconfig-015-20250803    clang-20
-i386                  randconfig-016-20250803    clang-20
-i386                  randconfig-017-20250803    clang-20
-loongarch                        allmodconfig    clang-19
-loongarch                         allnoconfig    clang-22
-loongarch                           defconfig    clang-19
-loongarch             randconfig-001-20250802    clang-18
-loongarch             randconfig-002-20250802    clang-22
-m68k                             allmodconfig    gcc-15.1.0
-m68k                              allnoconfig    gcc-15.1.0
-m68k                             allyesconfig    gcc-15.1.0
-m68k                                defconfig    gcc-15.1.0
-m68k                          hp300_defconfig    gcc-15.1.0
-microblaze                       allmodconfig    gcc-15.1.0
-microblaze                        allnoconfig    gcc-15.1.0
-microblaze                       allyesconfig    gcc-15.1.0
-microblaze                          defconfig    gcc-15.1.0
-mips                              allnoconfig    gcc-15.1.0
-nios2                             allnoconfig    gcc-11.5.0
-nios2                             allnoconfig    gcc-15.1.0
-nios2                               defconfig    gcc-11.5.0
-nios2                               defconfig    gcc-15.1.0
-nios2                 randconfig-001-20250802    gcc-9.5.0
-nios2                 randconfig-002-20250802    gcc-8.5.0
-openrisc                          allnoconfig    gcc-15.1.0
-openrisc                         allyesconfig    gcc-15.1.0
-openrisc                            defconfig    gcc-15.1.0
-parisc                           allmodconfig    gcc-15.1.0
-parisc                            allnoconfig    gcc-15.1.0
-parisc                           allyesconfig    gcc-15.1.0
-parisc                              defconfig    gcc-15.1.0
-parisc                randconfig-001-20250802    gcc-8.5.0
-parisc                randconfig-002-20250802    gcc-15.1.0
-parisc64                            defconfig    gcc-15.1.0
-powerpc                          allmodconfig    gcc-15.1.0
-powerpc                           allnoconfig    gcc-15.1.0
-powerpc                          allyesconfig    clang-22
-powerpc                       ebony_defconfig    clang-22
-powerpc                       ebony_defconfig    gcc-15.1.0
-powerpc                       eiger_defconfig    gcc-15.1.0
-powerpc                     mpc5200_defconfig    clang-22
-powerpc                      ppc6xx_defconfig    gcc-15.1.0
-powerpc                         ps3_defconfig    gcc-15.1.0
-powerpc               randconfig-001-20250802    gcc-8.5.0
-powerpc               randconfig-002-20250802    clang-20
-powerpc               randconfig-003-20250802    gcc-10.5.0
-powerpc64             randconfig-001-20250802    clang-16
-powerpc64             randconfig-002-20250802    gcc-8.5.0
-riscv                            allmodconfig    clang-22
-riscv                             allnoconfig    gcc-15.1.0
-riscv                            allyesconfig    clang-16
-riscv                               defconfig    clang-22
-riscv                 randconfig-001-20250802    gcc-10.5.0
-riscv                 randconfig-002-20250802    gcc-9.5.0
-s390                             allmodconfig    clang-18
-s390                              allnoconfig    clang-22
-s390                             allyesconfig    gcc-15.1.0
-s390                                defconfig    clang-22
-s390                  randconfig-001-20250802    clang-22
-s390                  randconfig-002-20250802    gcc-15.1.0
-sh                               allmodconfig    gcc-15.1.0
-sh                                allnoconfig    gcc-15.1.0
-sh                               allyesconfig    gcc-15.1.0
-sh                                  defconfig    gcc-15.1.0
-sh                    randconfig-001-20250802    gcc-15.1.0
-sh                    randconfig-002-20250802    gcc-15.1.0
-sparc                            allmodconfig    gcc-15.1.0
-sparc                             allnoconfig    gcc-15.1.0
-sparc                               defconfig    gcc-15.1.0
-sparc                 randconfig-001-20250802    gcc-8.5.0
-sparc                 randconfig-002-20250802    gcc-8.5.0
-sparc64                          alldefconfig    gcc-15.1.0
-sparc64                             defconfig    clang-20
-sparc64               randconfig-001-20250802    gcc-8.5.0
-sparc64               randconfig-002-20250802    clang-20
-um                               allmodconfig    clang-19
-um                                allnoconfig    clang-22
-um                               allyesconfig    gcc-12
-um                                  defconfig    clang-22
-um                             i386_defconfig    gcc-12
-um                    randconfig-001-20250802    clang-22
-um                    randconfig-002-20250802    clang-22
-um                           x86_64_defconfig    clang-22
-x86_64                           alldefconfig    gcc-15.1.0
-x86_64                            allnoconfig    clang-20
-x86_64                           allyesconfig    clang-20
-x86_64      buildonly-randconfig-001-20250802    gcc-12
-x86_64      buildonly-randconfig-002-20250802    clang-20
-x86_64      buildonly-randconfig-003-20250802    clang-20
-x86_64      buildonly-randconfig-004-20250802    clang-20
-x86_64      buildonly-randconfig-005-20250802    clang-20
-x86_64      buildonly-randconfig-006-20250802    clang-20
-x86_64                              defconfig    gcc-11
-x86_64                                  kexec    clang-20
-x86_64                randconfig-001-20250803    clang-20
-x86_64                randconfig-002-20250803    clang-20
-x86_64                randconfig-003-20250803    clang-20
-x86_64                randconfig-004-20250803    clang-20
-x86_64                randconfig-005-20250803    clang-20
-x86_64                randconfig-006-20250803    clang-20
-x86_64                randconfig-007-20250803    clang-20
-x86_64                randconfig-008-20250803    clang-20
-x86_64                randconfig-071-20250803    clang-20
-x86_64                randconfig-072-20250803    clang-20
-x86_64                randconfig-073-20250803    clang-20
-x86_64                randconfig-074-20250803    clang-20
-x86_64                randconfig-075-20250803    clang-20
-x86_64                randconfig-076-20250803    clang-20
-x86_64                randconfig-077-20250803    clang-20
-x86_64                randconfig-078-20250803    clang-20
-x86_64                               rhel-9.4    clang-20
-x86_64                           rhel-9.4-bpf    gcc-12
-x86_64                          rhel-9.4-func    clang-20
-x86_64                    rhel-9.4-kselftests    clang-20
-x86_64                         rhel-9.4-kunit    gcc-12
-x86_64                           rhel-9.4-ltp    gcc-12
-x86_64                          rhel-9.4-rust    clang-20
-xtensa                            allnoconfig    gcc-15.1.0
-xtensa                randconfig-001-20250802    gcc-13.4.0
-xtensa                randconfig-002-20250802    gcc-9.5.0
-xtensa                         virt_defconfig    gcc-15.1.0
+    This attribute shows allocated DMA regions for the group.
 
---
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+    Add exported function iovad_show_busy_regions() to allow other
+implementations.
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 0b7537e9812f..6ba9be4fb64d 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -761,6 +761,14 @@ static iova_align_t
+dma_info_to_alignment(unsigned long attrs)
+     return align;
+ }
+
++ssize_t iommu_domain_show_busy_regions(struct iommu_domain *domain, char *buf)
++{
++    struct iommu_dma_cookie *cookie = domain->iova_cookie;
++    struct iova_domain *iovad = &cookie->iovad;
++
++    return iovad_show_busy_regions(iovad, buf);
++}
++
+ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+         size_t size, u64 dma_limit, struct device *dev, iova_align_t align)
+ {
+diff --git a/drivers/iommu/iommu.c b/drivers/iommu/iommu.c
+index a4b606c591da..5daeb86a4aef 100644
+--- a/drivers/iommu/iommu.c
++++ b/drivers/iommu/iommu.c
+@@ -34,7 +34,9 @@
+ #include <linux/sched/mm.h>
+ #include <linux/msi.h>
+ #include <uapi/linux/iommufd.h>
+-
++#ifdef CONFIG_IOMMU_DMA
++#include <linux/iommu-dma.h>
++#endif
+ #include "dma-iommu.h"
+ #include "iommu-priv.h"
+
+@@ -927,6 +929,19 @@ static ssize_t
+iommu_group_show_resv_regions(struct iommu_group *group,
+     return offset;
+ }
+
++#ifdef CONFIG_IOMMU_DMA
++static ssize_t iommu_group_show_busy_regions(struct iommu_group *group,
++                         char *buf)
++{
++    if (!group->domain)
++        return 0;
++
++    return iommu_domain_show_busy_regions(group->domain, buf);
++}    int off = 0;
++
++
++#endif
++
+ static ssize_t iommu_group_show_type(struct iommu_group *group,
+                      char *buf)
+ {
+@@ -962,6 +977,11 @@ static IOMMU_GROUP_ATTR(name, S_IRUGO,
+iommu_group_show_name, NULL);
+ static IOMMU_GROUP_ATTR(reserved_regions, 0444,
+             iommu_group_show_resv_regions, NULL);
+
++#ifdef CONFIG_IOMMU_DMA
++static IOMMU_GROUP_ATTR(busy_regions, 0444,
++            iommu_group_show_busy_regions, NULL);
++#endif
++
+ static IOMMU_GROUP_ATTR(type, 0644, iommu_group_show_type,
+             iommu_group_store_type);
+
+@@ -1049,6 +1069,15 @@ struct iommu_group *iommu_group_alloc(void)
+         return ERR_PTR(ret);
+     }
+
++#ifdef CONFIG_IOMMU_DMA
++    ret = iommu_group_create_file(group,
++                      &iommu_group_attr_busy_regions);
++    if (ret) {
++        kobject_put(group->devices_kobj);
++        return ERR_PTR(ret);
++    }
++#endif
++
+     ret = iommu_group_create_file(group, &iommu_group_attr_type);
+     if (ret) {
+         kobject_put(group->devices_kobj);
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 41d5d34fcc33..96144c58b386 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -280,6 +280,37 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
+ }
+ EXPORT_SYMBOL_GPL(alloc_iova);
+
++/*
++ * Helper function to output allocated regions to a buffer.
++ * Can be used as a show function for a sysfs attribute.
++ * buf is page aigned buffer of PAGE_SIZE.
++*/
++ssize_t iovad_show_busy_regions(struct iova_domain *iovad, char *buf)
++{
++    int off = 0;
++    struct rb_node *curr;
++    struct iova *curr_iova;
++    unsigned long flags;
++    unsigned long shift = iova_shift(iovad);
++
++    spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
++    curr = &iovad->anchor.node;
++    /* skip ancor node, it has pfn_hi = pfn_lo = IOVA_ANCHOR = -1LU */
++    curr = rb_prev(curr);
++    while(curr) {
++        curr_iova = rb_entry(curr, struct iova, node);
++        off += sysfs_emit_at(buf, off, "0x%016lx-0x%016lx\n",
+curr_iova->pfn_lo << shift,
++            ((curr_iova->pfn_hi + 1) << shift) - 1);
++        curr = rb_prev(curr);
++        /* do not iterate further if the page is full */
++        if (off >= (PAGE_SIZE - 38))
++            break;
++    }
++    spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
++    return off;
++}
++EXPORT_SYMBOL_GPL(iovad_show_busy_regions);
++
+ static struct iova *
+ private_find_iova(struct iova_domain *iovad, unsigned long pfn)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 156732807994..5fe92c00221d 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -1511,6 +1511,7 @@ static inline void iommu_debugfs_setup(void) {}
+
+ #ifdef CONFIG_IOMMU_DMA
+ int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base);
++ssize_t iommu_domain_show_busy_regions(struct iommu_domain *domain, char *buf);
+ #else /* CONFIG_IOMMU_DMA */
+ static inline int iommu_get_msi_cookie(struct iommu_domain *domain,
+dma_addr_t base)
+ {
+diff --git a/include/linux/iova.h b/include/linux/iova.h
+index e35762c0acdb..c09d224cce2b 100644
+--- a/include/linux/iova.h
++++ b/include/linux/iova.h
+@@ -91,8 +91,12 @@ void __free_iova(struct iova_domain *iovad, struct
+iova *iova);
+ struct iova *alloc_iova(struct iova_domain *iovad, unsigned long size,
+     unsigned long limit_pfn,
+     iova_align_t align);
++
+ void free_iova_fast(struct iova_domain *iovad, unsigned long pfn,
+             unsigned long size);
++
++ssize_t iovad_show_busy_regions(struct iova_domain *iovad, char *buf);
++
+ unsigned long alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+                   unsigned long limit_pfn, bool flush_rcache,
+iova_align_t align);
+ struct iova *reserve_iova(struct iova_domain *iovad, unsigned long pfn_lo,
+@@ -120,6 +124,11 @@ static inline void __free_iova(struct iova_domain
+*iovad, struct iova *iova)
+ {
+ }
+
++ssize_t iovad_show_busy_regions(struct iova_domain *iovad, char *buf)
++{
++    return -ENOTSUPP;
++}
++
+ static inline struct iova *alloc_iova(struct iova_domain *iovad,
+                       unsigned long size,
+                       unsigned long limit_pfn,
+
+-- 
+----------------------------------------
+Constantine Gavrilov
+System Architect and Platform Engineer
+Infinidat
+----------------------------------------
 
