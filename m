@@ -1,209 +1,127 @@
-Return-Path: <linux-kernel+bounces-754259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754264-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E13DAB19190
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 04:54:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F315CB1919E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 04:59:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5B2311897077
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 02:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E90A177D1A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 02:59:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A7B17ADF8;
-	Sun,  3 Aug 2025 02:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C84F1C84AB;
+	Sun,  3 Aug 2025 02:58:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CrBZGgck"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="f3oaib0s"
+Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788322E36FB;
-	Sun,  3 Aug 2025 02:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754189652; cv=none; b=RSs9Z6LonNrE1skcJNpMqJZWTJB2HzGYbrJNGBPLd35kdjSFHxPg01iWQAtq84g5RMEr6ax1fEjfF1KhK1ZQZLIL3dAu7DYamqT4B8rSN6IDiDvc97w6Av7diaie9Xq6+9Viiyw372bzFh+MPKctZYUTINygUU3AxbT6i1wHDmM=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754189652; c=relaxed/simple;
-	bh=i5zg9dp06My2AdumU4F4XvE57b+cADMB/udKTKb4Xm0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tKh2hJDPMw3sAvUq4myBN5BxJp8UzcdvLcDfGKqN7glbIfPXcd2dix5GnL16XQoWumBGdQEAuDy+rjNYZShXJgZ2r9L1EYYVlCdUFwLU7OYG9DzJQH+2hcnVnNyqei8M1UAXWJgmEgkcHfRTdfrDoyYmzgz/qdM7RgAtq38c9x0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CrBZGgck; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3e406ca2d22so10860245ab.1;
-        Sat, 02 Aug 2025 19:54:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754189649; x=1754794449; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qSBQOyO1YxxtrbgAFsvcnP5ub0DcWzX6cTsHlYRNPx0=;
-        b=CrBZGgckP7oVRlYpFHTFsqc4opURZiLJedCl0GKq/Budrcc4vsoCXOQPurkSAVH2zD
-         nODP95s5EaN1UiDTIKsC8CB91cvjdVBHqlmMrJD7WtcTJydLSFZgYC/DdtG85je2PlRg
-         ooqr7qDkTjZZAMjnxvOq79GgX7lb9XUHcL3U6tNk1EIMXo3f9W/mxoOw6zvkNzvdUvDs
-         Dg2wyfvLm6eV03y4LB0h+u2hx75rDaXkH7wIpjQta5Dkekmeyb4uyJq9X8QdwM84xfIU
-         iFL+W3p7zCF/X75C2kkBLnd3xvF8czuV9EaK78C0LfG32n70q1xWFI+NeKXSSZtqPWFL
-         n5mw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754189649; x=1754794449;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=qSBQOyO1YxxtrbgAFsvcnP5ub0DcWzX6cTsHlYRNPx0=;
-        b=LpIAV+gNgJypangHXsFBvhmmlaOCu8vm3irCf6lLhisTXATq9SDLtKiRdFRMzRGJS9
-         ikxDdKkCuCo7vBcwRbGZKzTZhSDbkQE8JCz2qiapFNt0yCCUdBeeRQCVYIrEbt9MSRDJ
-         h6Z40y3o3+O7wUVBkLn/bUpQ8lJnLmu+mCe7TIbieckB4g4zRHMYtwStnUF1aPgf+BhD
-         /Ru8mbj9ZuxxJ/d61OOGzZqhIdw6Ec49MdCi/21ecnQvFzzDbcLKs/MH1/L2+ZQYDen2
-         uzEud1kJiSF+CrH+pmwPS0UpW4fr3yLzs0+dtWoIv90wCjEV7JKLo1ZQD2oTguj53Wki
-         0Gyg==
-X-Forwarded-Encrypted: i=1; AJvYcCU45Ygpn+kzkVqhaFL0g7kgfLo3J/wAVshSyyZAx9YcsZcN8XkFAihF03d6PemFChxBjLV6shM4Jdu7PDY=@vger.kernel.org, AJvYcCX0doqY3jr4sYZFhTou7j+EmtNygh+Byr5YLKrbnOtbMp5ZKLHoQuMAUwjvOyNv9QjI12mwhurcyTDqoBrhfAKk@vger.kernel.org, AJvYcCXXrSZ+p7mZsYICC/QLyF4bTw6L+zd4JT7OmITpiQDsysrxcjPnZBIvp2woxLEiEr6Sij6RaiYU@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB1L2h8YynSLyfUP2G8mKhqJiZgCeoMc5zkD3Iy7oOPmE+6cT1
-	TKlpNlOhJ/PlaTKGuMuxoaxSFG/8NrhsX8hgSYJrqodbBLKEYYDs43Tfx8vTQbO7+hDADrXRZRQ
-	QPMQxPawSmiLBMxwz3hsXtebkjoZkueGesVbs
-X-Gm-Gg: ASbGncv6cnbczagOmcurMCTcVw7m0BzyPWGlWsVlGmnQ3C05McqoV8kZljX+RSzRt6b
-	Cnj0rf9abQriA2uXYs0Fg+FVcw7wuV5eROW6XiJxNC+rMho+rURem+aNStQiebGPHnNzlSi1nmh
-	pV4EoMD5eoC3RECLrp9QJ37R3fwYgwFAk6osEMpuS4rh40odC5hXptPMoHAgzOuiDmGNBpLeVGJ
-	KNAWg==
-X-Google-Smtp-Source: AGHT+IFhp+C7EyfavFfz8rdUoksgW1KPXqWD5YKXj39eGN6oolxyzraCkT7Z/Djngvasr2P+508yhg+AnJf2zXsYtZQ=
-X-Received: by 2002:a05:6e02:b:b0:3e2:aafc:a7f with SMTP id
- e9e14a558f8ab-3e416122d83mr105657555ab.7.1754189649367; Sat, 02 Aug 2025
- 19:54:09 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952CB1A2C11;
+	Sun,  3 Aug 2025 02:58:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754189905; cv=pass; b=s97D928w8Xaj2t93z5QiF5OWhlS3nxOq5nFPCNiGL0zqt1MIITp3+yeIbQ1Ez59U/yjn4wJ/tQ8r8CF3vkg3ZkwyMgA6nIi8ygqeHiBHy9hjEsm7HB6XS4gqVG6EY1THQkgA/Gwjk29SzgPtyPIR+zF9p+XwmwcXqgSd8XRJldI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754189905; c=relaxed/simple;
+	bh=xZKHgRz3uSqshLrdkkYFl9Qnm6/OL0+pgAadhN6KXW0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=usgHa5vzUHFv+EMIzEidyltmawWUTiwsYn1lsQfAJdsarsGvr2/qo2xuLY5QJoIQRXJ6e0GTZ+O5LdId0KvjZM055WbsGzaw+672xIwoRfI1F8TuTaCLKWQMadJa9Uie4vDjU8dEbOrL8ZWewvM2T4FQm0cVmBl4PNYAyYPEKw8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=f3oaib0s; arc=pass smtp.client-ip=136.143.188.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754189887; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=LkVdGpsewSq7EUoNkwSZFDq48TcI9YZ9dASr5aKolIkup9zpqRImu/LWAePVcXK1JheZfAtDHSRNNlMEQZGzxAqR4y3j+yaRPTlvhf0Zl0au3tKquKtQ+Sf1Rv5v5noeCI3CCJMe7e+GKIrqHPOs3aWBVNtLnqWrI03PtnDPyzY=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754189887; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=; 
+	b=kToYBY8sLrcxmNM+NeoNfHuK5XmkaeElmo60w+600pWaLxADpC3vG3BLOvPTM7zD89+Z13C03f1eEJNBXHo6iNS9SzWtOrY9e+Yq1D9itN/wkqZ3kSOlKAlC43eUu/OEedOGCdvVN//t8eZF+osIAx1Se62ZuYdrZoEkGtYh9l4=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=zohomail.com;
+	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
+	dmarc=pass header.from=<kingxukai@zohomail.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754189887;
+	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
+	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
+	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=;
+	b=f3oaib0sr5t8khGJjviKaV+9fuUvEnxpxVlM7HTtYPOHT0yoi2mD2j7aZdwd7OFA
+	3/sTyG5wQ8t9o1QU4epqE+HJzZzjHTx613da8X9x6NRHY8rAkXUh30QLNAxohmvuBJG
+	0C2JvkINc/i6YyIF3bli6UZEpd3wrJ7iJYwiuORQ=
+Received: by mx.zohomail.com with SMTPS id 1754189881012449.99415784449957;
+	Sat, 2 Aug 2025 19:58:01 -0700 (PDT)
+Message-ID: <757cf40c-a48f-4980-b638-35a29a91ecb3@zohomail.com>
+Date: Sun, 3 Aug 2025 10:57:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802092435.288714-1-dongml2@chinatelecom.cn>
- <20250802092435.288714-2-dongml2@chinatelecom.cn> <CAL+tcoA9Lvc4Cj9zjWVx1FzEQA=d=OnvZRDWA4nE_1GNbEDaRw@mail.gmail.com>
- <CADxym3bD17eL0U0sQkuSZZgNtg7gmvzt0YAA+CiHf9Lw5-+awA@mail.gmail.com>
-In-Reply-To: <CADxym3bD17eL0U0sQkuSZZgNtg7gmvzt0YAA+CiHf9Lw5-+awA@mail.gmail.com>
-From: Jason Xing <kerneljasonxing@gmail.com>
-Date: Sun, 3 Aug 2025 10:53:33 +0800
-X-Gm-Features: Ac12FXyIHYBP7ll4VLREKjgO55d1UkdYoUNfR9ZfWnmxTQ6Tr3iprTEPvEgFY9k
-Message-ID: <CAL+tcoD80feEhPA_1L7D55UqkRuLSnZ-Kmmdab5J2v9K6uCzTA@mail.gmail.com>
-Subject: Re: [PATCH net v3 1/2] net: tcp: lookup the best matched listen socket
-To: Menglong Dong <menglong8.dong@gmail.com>
-Cc: edumazet@google.com, kuniyu@google.com, ncardwell@google.com, 
-	davem@davemloft.net, dsahern@kernel.org, kuba@kernel.org, pabeni@redhat.com, 
-	horms@kernel.org, shuah@kernel.org, kraig@google.com, 
-	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 3/3] riscv: dts: canaan: Add clock definition for K230
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Michael Turquette <mturquette@baylibre.com>,
+ Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+ Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+ Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
+ Troy Mitchell <TroyMitchell988@gmail.com>
+References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
+ <20250730-b4-k230-clk-v7-3-c57d3bb593d3@zohomail.com>
+ <20250730-laughing-dancing-emu-5540d6@kuoka>
+From: Xukai Wang <kingxukai@zohomail.com>
+Content-Language: en-US
+In-Reply-To: <20250730-laughing-dancing-emu-5540d6@kuoka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+Feedback-ID: rr08011227eed8815bf276c5c4b75ffa5600006591fb6f11eb539136822dedc845eb4f784c06394fc0181388:zu080112278cb6ca04e82c2e93804d320600000b8ddb55721fc1512e19cc5620ff577603d30229fcb367ab14:rf0801122c266281f77e22f90ba2a807280000940c7b3693dc9be470390b6e4b350d435e079e35d9802a6494db8e13fbcf:ZohoMail
+X-ZohoMailClient: External
 
-On Sun, Aug 3, 2025 at 9:59=E2=80=AFAM Menglong Dong <menglong8.dong@gmail.=
-com> wrote:
->
-> On Sat, Aug 2, 2025 at 9:06=E2=80=AFPM Jason Xing <kerneljasonxing@gmail.=
-com> wrote:
-> >
-> > Hi Menglong,
-> >
-> > On Sat, Aug 2, 2025 at 5:28=E2=80=AFPM Menglong Dong <menglong8.dong@gm=
-ail.com> wrote:
-> > >
-> > > For now, the tcp socket lookup will terminate if the socket is reuse =
-port
-> > > in inet_lhash2_lookup(), which makes the socket is not the best match=
-.
-> > >
-> > > For example, we have socket1 and socket2 both listen on "0.0.0.0:1234=
-",
-> > > but socket1 bind on "eth0". We create socket1 first, and then socket2=
-.
-> > > Then, all connections will goto socket2, which is not expected, as so=
-cket1
-> > > has higher priority.
-> > >
-> > > This can cause unexpected behavior if TCP MD5 keys is used, as descri=
-bed
-> > > in Documentation/networking/vrf.rst -> Applications.
-> > >
-> > > Therefor, we lookup the best matched socket first, and then do the re=
-use
-> >
-> > s/Therefor/Therefore
-> >
-> > > port logic. This can increase some overhead if there are many reuse p=
-ort
-> > > socket :/
-> > >
-> > > Fixes: c125e80b8868 ("soreuseport: fast reuseport TCP socket selectio=
-n")
-> > > Signed-off-by: Menglong Dong <dongml2@chinatelecom.cn>
-> > > ---
-> > > v3:
-> > > * use the approach in V1
-> > > * add the Fixes tag
-> > > ---
-> > >  net/ipv4/inet_hashtables.c  | 13 +++++++------
-> > >  net/ipv6/inet6_hashtables.c | 13 +++++++------
-> > >  2 files changed, 14 insertions(+), 12 deletions(-)
-> > >
-> > > diff --git a/net/ipv4/inet_hashtables.c b/net/ipv4/inet_hashtables.c
-> > > index ceeeec9b7290..51751337f394 100644
-> > > --- a/net/ipv4/inet_hashtables.c
-> > > +++ b/net/ipv4/inet_hashtables.c
-> > > @@ -389,17 +389,18 @@ static struct sock *inet_lhash2_lookup(const st=
-ruct net *net,
-> > >         sk_nulls_for_each_rcu(sk, node, &ilb2->nulls_head) {
-> > >                 score =3D compute_score(sk, net, hnum, daddr, dif, sd=
-if);
-> > >                 if (score > hiscore) {
-> > > -                       result =3D inet_lookup_reuseport(net, sk, skb=
-, doff,
-> > > -                                                      saddr, sport, =
-daddr, hnum, inet_ehashfn);
-> > > -                       if (result)
-> > > -                               return result;
-> > > -
-> > >                         result =3D sk;
-> > >                         hiscore =3D score;
-> > >                 }
-> > >         }
-> > >
-> > > -       return result;
-> > > +       if (!result)
-> > > +               return NULL;
-> > > +
-> > > +       sk =3D inet_lookup_reuseport(net, result, skb, doff,
-> > > +                                  saddr, sport, daddr, hnum, inet_eh=
-ashfn);
-> > > +
-> > > +       return sk ? sk : result;
-> > >  }
-> >
-> > IMHO, I don't see it as a bugfix. So can you elaborate on what the exac=
-t
-> > side effect you're faced with is when the algorithm finally prefers
-> > socket2 (without
-> > this patch)?
->
-> Hi, Jason. The case is that the user has several NIC,
-> and there are some sockets that are binded to them,
-> who listen on TCP port 6666. And a global socket doesn't
-> bind any NIC and listens on TCP port 6666.
->
-> In theory, the connection request from the NIC will goto
-> the listen socket that is binded on it. When on socket
-> is binded on the NIC, it goto the global socket. However,
-> the connection request always goto the global socket, which
-> is not expected.
->
-> What's worse is that when TCP MD5 is used on the socket,
-> the connection will fail :/
 
-I'm trying to picture what the usage can be in the userland as you
-pointed out in the MD5 case. As to the client side, it seems weird
-since it cannot detect and know the priority of the other side where a
-few sockets listen on the same address and port.
+On 2025/7/30 15:06, Krzysztof Kozlowski wrote:
+> On Wed, Jul 30, 2025 at 02:43:53AM +0800, Xukai Wang wrote:
+>> This patch describes the clock controller integrated in K230 SoC
+>> and replace dummy clocks with the real ones for UARTs.
+>>
+>> For k230-canmv and k230-evb, they provide an additional external
+>> pulse input through a pin to serve as clock source.
+>>
+>> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
+>> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
+>> ---
+>>  arch/riscv/boot/dts/canaan/k230-canmv.dts | 11 +++++++++++
+>>  arch/riscv/boot/dts/canaan/k230-evb.dts   | 11 +++++++++++
+>>  arch/riscv/boot/dts/canaan/k230.dtsi      | 26 ++++++++++++++++++--------
+>>  3 files changed, 40 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+>> index 9565915cead6ad2381ea8249b616e79575feb896..6579d39e2c1690d9e9c2b9c884db528c37473204 100644
+>> --- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
+>> +++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
+>> @@ -17,8 +17,19 @@ ddr: memory@0 {
+>>  		device_type = "memory";
+>>  		reg = <0x0 0x0 0x0 0x20000000>;
+>>  	};
+>> +
+>> +	timerx_pulse_in: timer_pulse_in {
+> Follow DTS coding style.
+>
+> Please use name for all fixed clocks which matches current format
+> recommendation: 'clock-<freq>' (see also the pattern in the binding for
+> any other options).
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
 
-I'm not saying the priority problem doesn't exist, just not knowing
-how severe the case could be. It doesn't look that bad at least until
-now. Only the selection policy itself matters more to the server side
-than to the client side.
+Got it, I'll update it to clock-50m as recommended.
 
-Thanks,
-Jason
+Thanks for pointing it out.
+
+>
+> Best regards,
+> Krzysztof
+>
 
