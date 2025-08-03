@@ -1,121 +1,145 @@
-Return-Path: <linux-kernel+bounces-754382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4003BB193BA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:04:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DB4AB193BE
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:04:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 755E717652F
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:04:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE473B09AA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:04:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17B3425A2D2;
-	Sun,  3 Aug 2025 11:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8992B25F99B;
+	Sun,  3 Aug 2025 11:02:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="dRZxmvdy"
-Received: from mail-qv1-f42.google.com (mail-qv1-f42.google.com [209.85.219.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WskNmZiN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8AA02405ED
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5BFF25DCE0;
+	Sun,  3 Aug 2025 11:02:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754218927; cv=none; b=r/6pSer0GmsS1u49YEZrP3sKut/aW/zkvUBxSLPVjtMzJKOXV/xtWVBFjG8cINSEvTjEQu73xPztFhhhsLAmWesVWyG+W/DeHrfkvnhgOtecuAjg1IMedrNjt9h7k9qfW5Oayfs10gvuKu7RSiw8fkroFF470VqlCKZYWulVVNY=
+	t=1754218970; cv=none; b=EnTDHs8W8OqhLZSWBdval2sZzlvl1Nj1vl0beJJDli4C01WpdQYDgX8CWHPo/IZvY6LcifFeTvqvlQ4Z9931zcZ6SONNxEzOQIc5Puf7UOyr/glH0b24rwONWwk/EuFg/YpOfS29hMXjePTVy5ygHf+Jttg4qNmN6GPvFIAMlLo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754218927; c=relaxed/simple;
-	bh=C7Z58OC7OFNFczmgKyOLcQXgEOfSXmydWhhPa+vt0B4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=Pt6NLhWNoX+ptpbHEgA2mDeEnajenlzHPZlrFMsLbKhn3p9UdobvgiEgQn+5Yhw6mnSy/2IlYGkEbiHBY+/LEUD7De3x9KsFs63jF2wqBdS+lCPJmMEWbTPO5WU+BCQC/vguxmQUnoURD1wb9R3w9+y2uBwwPPgIcp/va5eRGro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=dRZxmvdy; arc=none smtp.client-ip=209.85.219.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinidat.com
-Received: by mail-qv1-f42.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso38260296d6.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 04:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=infinidat.com; s=google; t=1754218924; x=1754823724; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sHJHFI8hYd2LP/vvUObzJgvGzX/H7h58j8T4oERKROw=;
-        b=dRZxmvdypCDcxoA/THjPAC959YdXdwgjNUeMrkcWWsjLJWuSVje/pH8NG3p3Q8QfFM
-         x8XvOTOQFY7jCqBOHszam1Isn3OaoUWX9+z6Vv8sgRWiN8haA+sibOXVIwoei3ldof+e
-         3ER1mjivOjFzx8Cd0SGwRR7vzXQrflX3PTlQcfHA40M3jXj8Qz1iHKo5opgps9qpDdjA
-         HL/xmMyujxTWAiRg5R4EvfXiSolwO3noubtGbs3IB81MAkqWNsf/sGO/yzs+n3ULHlRn
-         Gbo+gtH8Lg5o5elmoDDKjCfGli8l/Dsc64eCsR6RyNmHlcfTgdNYCky45OXaeByxE59y
-         h25g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754218924; x=1754823724;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sHJHFI8hYd2LP/vvUObzJgvGzX/H7h58j8T4oERKROw=;
-        b=WbTOgJKC0GOOD5kFGM/G9S5Hb7SwIAxjyaOOAqDvRAjJp8NmwwLNsxKkOx4JlyuAE9
-         1cZUJzNR8pnsh82q+W30acm6yD1mN3lTtcnkrUbm9QXQ3xQoqf0NEnCnDhkQAxM8PO1R
-         ldKd338l91vU7Fe0kykBZ5Z+19HlP+8ieAuqRetdabg4qKFXwU9fQjCjkGCuNzTSCnkz
-         ipqF8bZ8am46f6knuqHqHB07Si95yrE2KnyNK4doiC7EJymUlMF5kZSduTxo0py5to2O
-         URSCRd5i9Up3cw48ahClmTZgxuNhgFqwWIY/57MYcE0Q7H0VhKpfcT0/hj+e7LprH6ZF
-         EPRw==
-X-Gm-Message-State: AOJu0Yz3mvU8S0Srbh1+4yUMev35c2QDkqNqFsFH7VcliZqJgQs/aAhY
-	f19Nlr5/k+s/FOcT+xSkmmbti63yVyTWVaKtmPLadTaMjR9Qc6kfgfIBBoWbcgsXQyvRH2wMIic
-	3ggzKuKC+ifxCJy4YGk71uyYLfLcbzxCDQo/ZiSYRAbKH/Xn+j6l0Ot4=
-X-Gm-Gg: ASbGnctCi5U5rJW03AUA+s4vak9KmqwTnMnCtQ3ONW/chiLjmACPIz+9ShCBa6s2Znb
-	T5cPeTLZwrr0S8dkvh4o5shMbb0Z1YfKBcuKJRWgw7sSq6S19dquUBWI+mn3S/rI+Y0M4cyRyit
-	YPxidGb5ePmCj8yYgeFyiHYqrdGJbwWPDEUG3zXcVXh2HecbUk5LwkJSzyFGfQzphamm9fq5iCt
-	Dj5mmhokQ==
-X-Google-Smtp-Source: AGHT+IGRy/xMzqtf4koj2JD4SaY51BoAsV5pFfiAe7ZJi9SAx8UHLoLsdUibItxHFatFC+CPQoG6khb8yDFziTpbfMc=
-X-Received: by 2002:a05:6214:f2e:b0:707:7695:eaa0 with SMTP id
- 6a1803df08f44-7093629a381mr85992156d6.32.1754218924413; Sun, 03 Aug 2025
- 04:02:04 -0700 (PDT)
+	s=arc-20240116; t=1754218970; c=relaxed/simple;
+	bh=1+ySFnvEiEj10KiNv6U4p85DKQjzXaK9j7ctTFGfI8c=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HDVX8oyal3N7MZtPW/ETKOtBInTidQshrcF3XZ+4lsq/mR8jMVCkme2IH+cf6t0dkNkrZsHKfdRjapFCYdv4AYRtcEBzrsrU2JyD2igemfbKUqzbJfCW8jUSqO5NVQshipexnHGqS3qpdCcYkbKQLRPY2JYcPGxkuAg4EpcaqoQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WskNmZiN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7F06C4CEEB;
+	Sun,  3 Aug 2025 11:02:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754218970;
+	bh=1+ySFnvEiEj10KiNv6U4p85DKQjzXaK9j7ctTFGfI8c=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=WskNmZiNWg2H0K2iaVH9y6OTv6cCowVHkz22V700zSwApyAcxIZbblveBC31L+KTp
+	 y3PSjjrc0vuC7gflpfOOIv8gWegg1rsUX9apkFrB/J18NebwfFjjdcFe6/Mgmi1aY9
+	 b1PCH+5qJfGrTUkO0U2xZeurShMsXGMmxjQlppa5fycSbzMvUEmb9KR+UoucfqWKs/
+	 Bw3FHgwHT44HXVEQol01+mDipQ9koEPpjGGgLW7o1U0gNBJNZYbqwZ7T4bYRgdxfWm
+	 6yTdDDDFwrMDNtl7jYO+S+InRwGhi29U2obHhaNPVTIkXKUHBioj1jh7Sb4TJy1bKx
+	 56JMdAim3/pdQ==
+Message-ID: <4df2a4c8-38be-402b-aa73-f72064e1d8ec@kernel.org>
+Date: Sun, 3 Aug 2025 13:02:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
-In-Reply-To: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
-From: Constantine Gavrilov <cgavrilov@infinidat.com>
-Date: Sun, 3 Aug 2025 14:01:53 +0300
-X-Gm-Features: Ac12FXxHIPP0kSwrKnrZ-6DQ9avAY_dlG0jN8mCC9KfQKZ-xZ_IbcCwwk9ACooQ
-Message-ID: <CAEHaoC22NDpHUWovJChCx_XqchkEvUPYrFFe_L1PH9Mw2e386A@mail.gmail.com>
-Subject: [PATCH 0/8] Large DMA alloc/skip 32-bit alloc if size > 32-bit
-To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 8/8] arm64: dts: qcom: Add lemans evaluation kit (EVK)
+ initial board support
+To: Wasim Nazir <wasim.nazir@oss.qualcomm.com>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ kernel@oss.qualcomm.com, Rakesh Kota <quic_kotarake@quicinc.com>,
+ Sayali Lokhande <quic_sayalil@quicinc.com>,
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+References: <20250803110113.401927-1-wasim.nazir@oss.qualcomm.com>
+ <20250803110113.401927-9-wasim.nazir@oss.qualcomm.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250803110113.401927-9-wasim.nazir@oss.qualcomm.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-This is the first patch from the set of patches that enable large IOMMU
-DMA registrations. Entire work is available at the master branch of the
-master branch of git@github.com:cgavrilov/linux.git repo.
+On 03/08/2025 13:01, Wasim Nazir wrote:
+> Lemans EVK is an IoT board without safety monitoring feature of
+> Safety Island(SAIL) subsystem.
+> 
+> Lemans EVK is single board supporting these peripherals:
+>   - Storage: 2 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
+>     eMMC on mezzanine card
+>   - Audio/Video, Camera & Display ports
+>   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
+>   - Sensors: IMU
+>   - PCIe ports
+>   - USB & UART ports
+> 
+> On top of lemans EVK board additional mezzanine boards can be stacked
+> in future.
+> 
+> Implement basic features like uart/ufs to enable 'boot to shell'.
+> 
+> Co-developed-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> Signed-off-by: Rakesh Kota <quic_kotarake@quicinc.com>
+> Co-developed-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Signed-off-by: Sayali Lokhande <quic_sayalil@quicinc.com>
+> Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+> Nacked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Do not consider 32-bit range allocation and skip iterating the rbtree,
-if the allocation size exceeds 32-bit.
+This patch is fine, so let's drop my tag.
 
-commit 1c21c64befe18d626855a828c721eb786dbb69b8
-Author: Constantine Gavrilov <cgavrilov@infinidat.com>
-Date:   Sun Jun 22 13:05:26 2025 +0300
-
-    iommu_dma_alloc_iova(): do not try to allocate 32-bit address if
-the size is above 32-bit.
-
-diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
-index ea2ef53bd4fe..8280e8864ef3 100644
---- a/drivers/iommu/dma-iommu.c
-+++ b/drivers/iommu/dma-iommu.c
-@@ -772,7 +772,7 @@ static dma_addr_t iommu_dma_alloc_iova(struct
-iommu_domain *domain,
-      * some inherent bug in handling >32-bit addresses, or not all the
-      * expected address bits are wired up between the device and the IOMMU.
-      */
--    if (dma_limit > DMA_BIT_MASK(32) && dev->iommu->pci_32bit_workaround) {
-+    if (dma_limit > DMA_BIT_MASK(32) && (size - 1) <=
-DMA_BIT_MASK(32) && dev->iommu->pci_32bit_workaround) {
-         iova = alloc_iova_fast(iovad, iova_len,
-                        DMA_BIT_MASK(32) >> shift, false);
-         if (iova)
-
--- 
-----------------------------------------
-Constantine Gavrilov
-System Architect and Platform Engineer
-Infinidat
-----------------------------------------
+Best regards,
+Krzysztof
 
