@@ -1,67 +1,65 @@
-Return-Path: <linux-kernel+bounces-754467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754468-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A0E9B1949D
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 19:02:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2201BB194A1
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 19:08:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 91F03173A30
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 17:02:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FE71894406
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 17:08:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C59B1D435F;
-	Sun,  3 Aug 2025 17:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DF3E1D61AA;
+	Sun,  3 Aug 2025 17:08:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="n/Df5T8M"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WDeZilT7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CEC8922EE5;
-	Sun,  3 Aug 2025 17:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6CB561A08A4;
+	Sun,  3 Aug 2025 17:08:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754240527; cv=none; b=PPYlIzcVbtPBJ24XiI7IhNByJz37vR4At7jo54hVGp0Nmh/i0KjqlrXbzNsUNPwH7d+L27ctvgnXuHQFGe6dIO24DM+SjNDKDBeiPXpApNrSV9obKQ30gr9jd0Snh0k1Iix0zdF5pqk5w9NKpRiJIWMETiRPqjmpqjGPR1FV0D4=
+	t=1754240913; cv=none; b=lS/YRT4yPHIGvWHlKqDiJdymwkxvaqvoDTBUPGF8rnLIAIu9mwmq1TssCQLytqGD2KvUyAYcH0xad7zijo1TzmdnEAxsSFbXOEceAG7Z0K0tV+DvrAfYY1aPU6IEvTsGoT29CFIRUBgETGU7zeEiBq6jlgYI7hHWjqpWhUILxPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754240527; c=relaxed/simple;
-	bh=yeMd9S61zQJBzdMgfsYSWmeH8iA/N3MjZcTgFm57cVE=;
+	s=arc-20240116; t=1754240913; c=relaxed/simple;
+	bh=/ZZtatKkLrPIKjN/Dctlo4xJJmel6AFn/3nBEM2/hvg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=idCOoiL8jCiixYJzkJHkx+MTP1tZWaRW0vMwe/4KW+C5bxzkV4OaO/z5HG5snoewpOlHiOnf7Fzi7M5utdee97B5+Jt2mBFPvHVcB5nDMdaQQ7Ox7tUPm387oFg8Diymc+lSY6giIx3d7LGv2LqJ0Vyrvt+oazOtgOdQuZX+oXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=n/Df5T8M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 13550C4CEEB;
-	Sun,  3 Aug 2025 17:02:07 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YAArtDXubk36UZX5HGVZ0yUDtULFeox9v3hiJxo+Vc2lri3U7iwKGhXoInkzqubQeu+BjV+8+1LVHzQtj3WlXTXv21BwRDhwRx1EeqsSy+Kqld4lk8ni1biDCH87wXachoM+xq1pBM3d2Mkz7ItxcT/x7LHEcyL3L3zquBG3v/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WDeZilT7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAF58C4CEEB;
+	Sun,  3 Aug 2025 17:08:32 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754240527;
-	bh=yeMd9S61zQJBzdMgfsYSWmeH8iA/N3MjZcTgFm57cVE=;
+	s=k20201202; t=1754240913;
+	bh=/ZZtatKkLrPIKjN/Dctlo4xJJmel6AFn/3nBEM2/hvg=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=n/Df5T8MFbtXlP/svzW+LiMDaNunwgHen4dZ+lQobRJLDTWFQP56YOYFoGu3zJGpu
-	 k26k+Zyh17a7lHe78llTk1oV9o8FhnghYz1D85DkY9wmrCFQkjitx7GwxQ9L0G8v2F
-	 UHuha7W8laInDknD2T7FlS7d/7sq/H3poduKHeZJj37K934kw8wQIo8DGcie2AyVpU
-	 bxOIIYv//jiptUr5gDINeNd3Ax8oMEVTKZmP1eOhcIOiyGGYuFOtBnQsfD8KCB8j9K
-	 iNtwWb1rDT9KWVDvTHl7pRznXwMbInPxHcUKnQZ/UIz6jJ0qjVTKxOuuQGjINOEIto
-	 uuwMy798nza+Q==
-Date: Sun, 3 Aug 2025 12:02:06 -0500
-From: Rob Herring <robh@kernel.org>
-To: Yao Zi <ziyao@disroot.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	b=WDeZilT7Sz7ehXlkGHJ7sVIixzH7xQFhJFCuR+ZUcbvlaANVa+jSeYcttAsrUg7o8
+	 4IGHgLgVz5r2EocKcer6JXv38SshWucqQQatOnW33pUWl3K6OoAvH8Er2DYp4O2FJK
+	 zOKOnxyYGGJrer05HHMktnK7T6y4BPM7tIs4qZwiCKxmQ6xkLWVFwkGFjHsY3xtEkg
+	 rydyhQgi0OCDiotyWJmt/dF7VulVEdvfqXVaGZp/AE1BCy0sT3Ykt4sLP/dCLEJTSF
+	 vDo2sDZU6HtQzPzp9f9jMd3QfWJj/Oix+MRmJfd3nPgD7pBl2u9Zx+AKm9YslsrI35
+	 e7XTChQ3tTAOg==
+Date: Sun, 3 Aug 2025 12:08:32 -0500
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: Prabhakar <prabhakar.csengg@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-renesas-soc@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
 	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 2/3] net: stmmac: thead: Get and enable APB clock
- on initialization
-Message-ID: <20250803170206.GA525144-robh@kernel.org>
-References: <20250801091240.46114-1-ziyao@disroot.org>
- <20250801091240.46114-3-ziyao@disroot.org>
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+Subject: Re: [PATCH v4 1/3] dt-bindings: pinctrl: renesas: document RZ/T2H
+ and RZ/N2H SoCs
+Message-ID: <175424091132.539145.9156019133375295764.robh@kernel.org>
+References: <20250801154550.3898494-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250801154550.3898494-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,48 +68,42 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20250801091240.46114-3-ziyao@disroot.org>
+In-Reply-To: <20250801154550.3898494-2-prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-On Fri, Aug 01, 2025 at 09:12:39AM +0000, Yao Zi wrote:
-> It's necessary to adjust the MAC TX clock when the linkspeed changes,
-> but it's noted such adjustment always fails on TH1520 SoC, and reading
-> back from APB glue registers that control clock generation results in
-> garbage, causing broken link.
+
+On Fri, 01 Aug 2025 16:45:48 +0100, Prabhakar wrote:
+> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > 
-> With some testing, it's found a clock must be ungated for access to APB
-> glue registers. Without any consumer, the clock is automatically
-> disabled during late kernel startup. Let's get and enable it if it's
-> described in devicetree.
+> Document the pin and GPIO controller IP for the Renesas RZ/T2H
+> (R9A09G077) and RZ/N2H (R9A09G087) SoCs, and add the shared DTSI
+> header file used by both the bindings and the driver.
 > 
-> Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
-> Signed-off-by: Yao Zi <ziyao@disroot.org>
-> Reviewed-by: Drew Fustini <fustini@kernel.org>
-> Tested-by: Drew Fustini <fustini@kernel.org>
+> The RZ/T2H SoC supports 729 pins, while the RZ/N2H supports 576 pins.
+> Both share the same controller architecture; separate compatible
+> strings are added for each SoC to distinguish them.
+> 
+> Co-developed-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Thierry Bultel <thierry.bultel.yh@bp.renesas.com>
+> Signed-off-by: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 > ---
->  drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 6 ++++++
->  1 file changed, 6 insertions(+)
+> v3->v4:
+> - Used patternProperties for pin configuration nodes
+> - Expanded example nodes
 > 
-> diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> index c72ee759aae5..95096244a846 100644
-> --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> @@ -211,6 +211,7 @@ static int thead_dwmac_probe(struct platform_device *pdev)
->  	struct stmmac_resources stmmac_res;
->  	struct plat_stmmacenet_data *plat;
->  	struct thead_dwmac *dwmac;
-> +	struct clk *apb_clk;
->  	void __iomem *apb;
->  	int ret;
->  
-> @@ -224,6 +225,11 @@ static int thead_dwmac_probe(struct platform_device *pdev)
->  		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
->  				     "dt configuration failed\n");
->  
-> +	apb_clk = devm_clk_get_optional_enabled(&pdev->dev, "apb");
+> v2->v3:
+> - Dropped refference to gpio.txt instead pointed to
+>   in include/dt-bindings/gpio/gpio.h.
+> 
+> v1->v2:
+> - Added a new DT binding file
+> ---
+>  .../pinctrl/renesas,rzt2h-pinctrl.yaml        | 177 ++++++++++++++++++
+>  .../pinctrl/renesas,r9a09g077-pinctrl.h       |  22 +++
+>  2 files changed, 199 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/pinctrl/renesas,rzt2h-pinctrl.yaml
+>  create mode 100644 include/dt-bindings/pinctrl/renesas,r9a09g077-pinctrl.h
+> 
 
-The description sounds like this should not be optional. The binding 
-change also makes it not optional.
-
-Rob
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
 
