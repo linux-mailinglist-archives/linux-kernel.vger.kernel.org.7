@@ -1,112 +1,99 @@
-Return-Path: <linux-kernel+bounces-754389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754358-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA862B193C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:11:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A453CB19360
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:15:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724303B8F5B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:11:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5BE33B8F72
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:15:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD0D244667;
-	Sun,  3 Aug 2025 11:11:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB0252877CA;
+	Sun,  3 Aug 2025 10:15:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="pCHdnDKS"
-Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="jsrJCngE"
+Received: from mx0b-0016f401.pphosted.com (mx0b-0016f401.pphosted.com [67.231.156.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93631EDA3C;
-	Sun,  3 Aug 2025 11:10:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A50901F4C98;
+	Sun,  3 Aug 2025 10:15:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.156.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754219464; cv=none; b=BTU27KMxYc9m4T6bK8dViqVTujeHB6BDYJmXxD+qL1WDVAK8VXUFf/1OoK9tEYitfD/kqYBgJ3MDeeVBV5ldPU5VcxdZp5DyN+bU8KPpABXxhTXk5o3xckVNUxB8jJZ6dYM48vE1M2g/8oNT7K6xrYMNxFQN92ZVFL7kfWLQFyg=
+	t=1754216130; cv=none; b=X+pPJEvUg7EfQw2XOxDghiOS2JDHbjzOFP7ggB9OlegnvqCUJiw+E+/hCX7omkAH8VhZPh9mkeCC57VjoUj8stHPwrmbtoYXnrhy/g0TI9YairDP7zBG9xVLWdpiYpw7vux51XYFALHC4h/IbeRNZx188MswUSKYxHdxJwf9DCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754219464; c=relaxed/simple;
-	bh=mH95pA4cftJ6NN9CFstldZceXxZhqt1S9l4BVHuUz3Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TtzTECtDAm54PHPSemKxXB7t5k3oESL177XDFMxb089+QEM71c+YwMl7WOZhGwf7/+fDTAbQEoaRPYPlTcKgepbJqGcKUcEM8QzFf3KcPTtR4Ax10hoS2eWjqem5v6Wn1gi2qBL+OWHkpxsOWllfismBwhz417qFG7fOTYApxaI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=pCHdnDKS; arc=none smtp.client-ip=185.226.149.38
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
-Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
-	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.93)
-	(envelope-from <mhal@rbox.co>)
-	id 1uiVWX-003vz3-8i; Sun, 03 Aug 2025 12:01:01 +0200
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
-	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
-	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
-	bh=EL2StWgKuIJqWqQKx+j/2xqZwCUiP1U+Ud26xxbj8xY=; b=pCHdnDKSQFO018x3pvWq6uST1m
-	zncPtEk6In+1fV6Fjc35EpfscsPPoMNvCXCU40E2qTqGzbg1XCtZhn+uxu6Ygx8P3kbIYeNUHWqly
-	hVCj1LxCgumxoXux0XHJ27BOFRFiMjnZqY+e9eX7as8IcEVaE4SJvYTL7TFCgubWvEnN/aR/EXVyJ
-	TVJ+yWjk5BJIUiFqGaII2YMfaEghgqi3uYg0CKpHhZk5Kfbvco0aXkMrYH8Bqw+DmZMnY2RDK7H4L
-	qRErh/h9O9riaJI82HUGl35NrbY8R9GbdrZ746REt9EBpHbScDXwqW/SsFk2CBzFmH1e2MvRPLvDo
-	4O4w/0mA==;
-Received: from [10.9.9.72] (helo=submission01.runbox)
-	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
-	(envelope-from <mhal@rbox.co>)
-	id 1uiVWW-000606-7S; Sun, 03 Aug 2025 12:01:00 +0200
-Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
-	(Exim 4.93)
-	id 1uiVWB-002JcU-1D; Sun, 03 Aug 2025 12:00:39 +0200
-Message-ID: <b6a2219b-32dd-4bb6-b848-45325e4e4ab9@rbox.co>
-Date: Sun, 3 Aug 2025 12:00:38 +0200
+	s=arc-20240116; t=1754216130; c=relaxed/simple;
+	bh=u0gYgcurvJvuxCJdL2kmVx6HaLs82eVJcckSFSd1/04=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Hq5WdvMpmkOoLAiVFFPAex2YBAXdoB0opDlq+Pdp1dG3OEbq2rqrJdQ5Bk/LLsyxlLfNvSFWr7ZuW9oN5HS9H7NxqXx+LJ0gldEgEo6QuR+KplLKwBWZ7YBfGcl+703UFczv9QmlGSPRJuA4eD7s6RS7BV8V6kZcpSjxVHcs1Kk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=jsrJCngE; arc=none smtp.client-ip=67.231.156.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045851.ppops.net [127.0.0.1])
+	by mx0b-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5739tnqr013472;
+	Sun, 3 Aug 2025 03:15:11 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pfpt0220; bh=KeLvK3uXQSBaJ/tZzR4sYTJ
+	YOmobQG0DA8wd5Lt3Rg4=; b=jsrJCngEivJJO+8s25ux4aXkiqh/yz0h/zrIrE2
+	hSESF9HOB3bvPL5csaxi2hU6FTrNwSOw9Tyz56mVd6h8Xe+fTk2D6EXNmagGQ9Zt
+	46wF5Gl0TyHBKyvV+laqYGsecyIWH+2+ma1Tuih3JUDVNy4lmE1BmfzfGYsSQ05q
+	JrF8XVRT1QPmjmFi+izVjp9uJpEysfhU7/yNOo8lgKeErWgAvv4zcR96PCn4AwgZ
+	pI6m3TGbXwRmSa+SfAZQsasR/2B8XTIgiZ8HyB7YgJW77l2ivJpZqodTJd1XGeVw
+	D9DzuceceRCzFhUzyP62xmJimCRdWWfQhof3gJ9kCJ6BlEw==
+Received: from dc5-exch05.marvell.com ([199.233.59.128])
+	by mx0b-0016f401.pphosted.com (PPS) with ESMTPS id 489j6kscv5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 03 Aug 2025 03:15:11 -0700 (PDT)
+Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
+ DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Sun, 3 Aug 2025 03:15:12 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
+ (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Sun, 3 Aug 2025 03:15:12 -0700
+Received: from c1illp-saixps-016.eng.marvell.com (c1illp-saixps-016.eng.marvell.com [10.205.40.247])
+	by maili.marvell.com (Postfix) with ESMTP id B631B3F70A5;
+	Sun,  3 Aug 2025 03:15:08 -0700 (PDT)
+From: <enachman@marvell.com>
+To: <gregory.clement@bootlin.com>, <andi.shyti@kernel.org>,
+        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <enachman@marvell.com>
+Subject: [PATCH v2 0/1] i2c: mv64xxx: prevent illegal pointer access
+Date: Sun, 3 Aug 2025 13:15:06 +0300
+Message-ID: <20250803101507.659984-1-enachman@marvell.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] kcm: Fix splice support
-To: Jakub Kicinski <kuba@kernel.org>
-Cc: "David S. Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
- Simon Horman <horms@kernel.org>, Cong Wang <cong.wang@bytedance.com>,
- Tom Herbert <tom@herbertland.com>, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250725-kcm-splice-v1-1-9a725ad2ee71@rbox.co>
- <20250730180215.2ad7df72@kernel.org>
-Content-Language: pl-PL, en-GB
-From: Michal Luczaj <mhal@rbox.co>
-In-Reply-To: <20250730180215.2ad7df72@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-Proofpoint-GUID: X1APkbDE_JAsnZ7b8zx1USf7go5zOMeD
+X-Proofpoint-ORIG-GUID: X1APkbDE_JAsnZ7b8zx1USf7go5zOMeD
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAzMDA3MCBTYWx0ZWRfX5lkW3+1GSdEr 3efexEmaXqtsVhkNIGZnbu49LZCKQGesCYu61cMffCuMkAT8d3/RNVXiUay3w+hnT7eenpKjoc/ H/70du66BuxKIYj9cThp/JIbIBSt4LC/lYYubu+g7+hYEs4qonU/POJNsp3NAUgQejZSgir7SSH
+ YvimZxE4svlt7ns2ezlaMpvhDaYAAADBaTktKzEicIXLvriBwDn9a9wLeGGZBJnZ3KRoAov/SJP vdgF5BmuWxb5K+EvfsgJ6ytmMEj8KTMYILKoKVXsNacNNfodUcSjr3Hu9FqzUVMtvFihOP3yBjj 80JkHaJv74v7118H50WSeQ8FAuKp21Lo2Gc1tKaUFhtX72WR6EUpsO8Q6q/IIeam6AgwFdn+FRr
+ ncKKbO6zmnTwrSLIoutLKW33CKsduJax8CjVXHTQamyrc7HRbgkYfCIuzfimusWwkmOZqtUr
+X-Authority-Analysis: v=2.4 cv=D4tHKuRj c=1 sm=1 tr=0 ts=688f36af cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=-R8kdXyaJbF8QKB8q54A:9 a=oYmgUABA0lAA:10 a=zZCYzV9kfG8A:10
+ a=OBjm3rFKGHvpk9ecZwUJ:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-03_03,2025-08-01_01,2025-03-28_01
 
-On 7/31/25 03:02, Jakub Kicinski wrote:
-> On Fri, 25 Jul 2025 12:33:04 +0200 Michal Luczaj wrote:
->> Flags passed in for splice() syscall should not end up in
->> skb_recv_datagram(). As SPLICE_F_NONBLOCK == MSG_PEEK, kernel gets
->> confused: skb isn't unlinked from a receive queue, while strp_msg::offset
->> and strp_msg::full_len are updated.
->>
->> Unbreak the logic a bit more by mapping both O_NONBLOCK and
->> SPLICE_F_NONBLOCK to MSG_DONTWAIT. This way we align with man splice(2) in
->> regard to errno EAGAIN:
->>
->>    SPLICE_F_NONBLOCK was specified in flags or one of the file descriptors
->>    had been marked as nonblocking (O_NONBLOCK), and the operation would
->>    block.
-> 
-> Coincidentally looks like we're not honoring
-> 
-> 	sock->file->f_flags & O_NONBLOCK 
-> 
-> in TLS..
+From: Elad Nachman <enachman@marvell.com>
 
-I'm a bit confused.
+v2:
+  1) rewrap commit message
 
-Comparing AF_UNIX and pure (non-TLS) TCP, I see two non-blocking-splice
-interpretations. Unix socket doesn't block on `f_flags & O_NONBLOCK ||
-flags & SPLICE_F_NONBLOCK` (which this patch follows), while TCP, after
-commit 42324c627043 ("net: splice() from tcp to pipe should take into
-account O_NONBLOCK"), honours O_NONBLOCK and ignores SPLICE_F_NONBLOCK.
+Elad Nachman (1):
+  i2c: mv64xxx: prevent illegal pointer access
 
-Should KCM (and TLS) follow TCP behaviour instead?
+ drivers/i2c/busses/i2c-mv64xxx.c | 10 +++++++---
+ 1 file changed, 7 insertions(+), 3 deletions(-)
 
-Thanks,
-Michal
+-- 
+2.25.1
 
 
