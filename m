@@ -1,149 +1,133 @@
-Return-Path: <linux-kernel+bounces-754355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91A19B19339
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:39:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95E9B1933B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:40:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 387A0173265
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:39:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757E77A447E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:39:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF7E287511;
-	Sun,  3 Aug 2025 09:39:32 +0000 (UTC)
-Received: from mail-io1-f80.google.com (mail-io1-f80.google.com [209.85.166.80])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01DC28724D;
+	Sun,  3 Aug 2025 09:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBEgLNrb"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C8B4242D79
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 09:39:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.80
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A5C19ABC3;
+	Sun,  3 Aug 2025 09:40:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754213971; cv=none; b=VVhInji5l/RPaaoYrhBU5+WEJ0RQImkCuq/daxBmwN36Pw0Ta4nerVVJCeFACecUZ71gxqOimrn46yqF67PYGFdKkLC9e1M4NbfpXhPF7/EiA1rMRZj6DBcsoH6JSMFTB9cpYBh6UNWmrZT7q7l9dyoeMo/wwrNcIr7q2SzwObU=
+	t=1754214033; cv=none; b=Q+pOiL02ExFtT5HMfblW2j7oQ37v5Xvha1yuJQGN1Kout3Uopb249i3f50XSkEo+7+l0lGG+gR943bk1XLaSRwOjHWvB1tdsoXTd+dEhRrpez9FWqs6HRbmlpsdPTvk5cCF051NEiIOnR8q2S+5mvprul2st1HgNMpHw4Xeplsc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754213971; c=relaxed/simple;
-	bh=me+MDMUhWRUOn6twry0ANbpGXGMjQncaO7/NSz6OS9k=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=jmKlPrCWquDayHWsUex3UdjApW89pF7EQyA1eA+lZNh0pF67L/vbulm9tee/rEL02CL6ueh+Gib+80zwtuGpyVMXfnT+1S9f04gQJlawSBWD1Li+ANQcz8emuh7COxVnvvYgY67heHarQNuYYHjyjBw8UsjrP28aKgCfF1YfCL0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.80
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f80.google.com with SMTP id ca18e2360f4ac-88177d99827so36972939f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 02:39:29 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754213969; x=1754818769;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=U0LWSoiEUjnDRuPcXhZsxJI/YVjUTAHuiFyMIyM36SQ=;
-        b=icDvEAKeCog/vLS/+Pwx7IM0KPiUaGH//Z0QSA8W3J3NeP7gB3E/v6OiRnOFTPzh0e
-         Qyc38xvtTwBni+b+298RSeVhKQ6IW38HFYzkdegRtuV4qGVPHYQ5yEIU9hsHD57wBEko
-         c8Bj06YU0QWt1XKPs90g1ouXGdwcal80s+VeRyPjn9/wUFcbKJOJflaga9TpmhdjTcY+
-         0Fbzxiz3ksm/Y3BLc+aApvTi1MH1N47Mw6QUEqxkGbbV/2QrpSKPgEEW2X89K+tuDgtu
-         eIKPeHmEv7tkgGl076hhSZtbk6nGxabN0+qpCGhiYHLKaVudBdKa7TBRhJndzKzvhowv
-         la2w==
-X-Forwarded-Encrypted: i=1; AJvYcCX0jiPWxJB8HtXmtjgXp+C0xmmciykt5SUurVeJ62iOJaSThuhvwpkdO+H60cIk5nFdKqpq8s4VfPpCFOc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzAa6igRBPIMjSE0HzCKCym6mdFMSFfVXcgs1LOtPpFDg189im1
-	EzrxlEyVn5Ms2ROJrdHujnCTrCsKiL2Tus90mRpix7+zEqkSHx5TPe46F7jL9Zuu2ul5qn2gdWM
-	lpdCErzkgrlv6kNmJ7N/ck0fs2a1H3YfR3tjbcwfz7Udw0LKtfUcV4z9Az74=
-X-Google-Smtp-Source: AGHT+IFlNsObHPzdzv2suMhd+3PPDPLZO8uF5MVEeqlO7lgZa0M6JGbqSTtaoNkHax1Z8ldtkc+MQUSdBwQDdEgHF+wtCm1FAJux
+	s=arc-20240116; t=1754214033; c=relaxed/simple;
+	bh=ODIssDCWRSr9TnlJPb01viPYTzGZAkJdTzspHFRCvwM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Yh1F9lfow1VEX2rLuQu2KDc75zVQtgu2+U38j7u7SKDT8mmD5KtjdEivXFean7/5zXmYoeRQXR/dCT2DE0xzU8MCfazq7/lDuhgS/3W6/kJxB0BAop7wYwqppnKUa9hZenJs9OWQ6HXoKUbu37qL2IuQnn5h8M5UUOoc3sCftX4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBEgLNrb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D4CC4CEEB;
+	Sun,  3 Aug 2025 09:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754214032;
+	bh=ODIssDCWRSr9TnlJPb01viPYTzGZAkJdTzspHFRCvwM=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=dBEgLNrb77iXFllsiUUXv+eI2ksmjgVk5bEB5NFuHtDB1EC2hVmkAN2u43hLfzkXq
+	 CIpvMtIWgPULmw7ZgvVFMkCwNuFNVZO6jDWlSGSAwpoaGryrtfuqxoXZ+Nva7I/Ugl
+	 REp4dgP0/PSeYiCjlAoR3TlgOQyXJaMo8PiZwDdfr+tlbpV5udZ/jI8pAGp8e4jkGO
+	 xSM3TQnOQEr3P6JJMjF+oq0BpMF3OiGKNP6q88rYoDBAvjdPuZ1X7IjqgmQd5Ctgd8
+	 pKvBkh93TLDlLsoAbPNRVx7G3cyH1JsIF7HgVBJAee7DMGsi0nx+84B6iiNaLBASOx
+	 0qmW0oXThhFmA==
+Message-ID: <0b4b8291-40cf-4faf-a79f-48c56677f9a2@kernel.org>
+Date: Sun, 3 Aug 2025 11:40:28 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:26ca:b0:87c:1d65:3aeb with SMTP id
- ca18e2360f4ac-88168318805mr1125317139f.2.1754213969260; Sun, 03 Aug 2025
- 02:39:29 -0700 (PDT)
-Date: Sun, 03 Aug 2025 02:39:29 -0700
-In-Reply-To: <6880f58e.050a0220.248954.0001.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688f2e51.050a0220.1fc43d.0002.GAE@google.com>
-Subject: Re: [syzbot] [tipc?] KMSAN: uninit-value in tipc_rcv (2)
-From: syzbot <syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	jmaloy@redhat.com, kuba@kernel.org, linux-kernel@vger.kernel.org, 
-	netdev@vger.kernel.org, pabeni@redhat.com, syzkaller-bugs@googlegroups.com, 
-	tipc-discussion@lists.sourceforge.net
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
+ transceiver
+To: Dimitri Fedrau <dima.fedrau@gmail.com>
+Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
+ Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com>
+ <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
+ <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
+ <20250731044824.GA3815@legfed1>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250731044824.GA3815@legfed1>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-syzbot has found a reproducer for the following issue on:
+On 31/07/2025 06:48, Dimitri Fedrau wrote:
+>>> +allOf:
+>>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
+>>
+>> Missing ref to transceiver properties. Look at other CAN bindings.
+>>
+> There is only one transceiver property(max-bitrate) which I don't need
+> because the max-bitrate is known for the device. So why should I add it
+> to the DT ?
+> I'm only aware of CAN controller bindings making use of the transceiver
+> property which I think is because the PHYs they are supporting with this
+> are very simple which need no or little configuration to operate and the
+> max-bitrate property is needed to limit the bitrate.
 
-HEAD commit:    89748acdf226 Merge tag 'drm-next-2025-08-01' of https://gi..
-git tree:       upstream
-console+strace: https://syzkaller.appspot.com/x/log.txt?x=1395bcf0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7ff65239b4835001
-dashboard link: https://syzkaller.appspot.com/bug?extid=9a4fbb77c9d4aacd3388
-compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1625ff82580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=131bb834580000
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/ce090dd92dc2/disk-89748acd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/32b5903a7759/vmlinux-89748acd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/dc68a867773d/bzImage-89748acd.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+9a4fbb77c9d4aacd3388@syzkaller.appspotmail.com
-
-tipc: Started in network mode
-tipc: Node identity 4689370d27fe, cluster identity 4711
-tipc: Enabled bearer <eth:syzkaller0>, priority 0
-=====================================================
-BUG: KMSAN: uninit-value in tipc_rcv+0x17fa/0x1ea0 net/tipc/node.c:2132
- tipc_rcv+0x17fa/0x1ea0 net/tipc/node.c:2132
- tipc_l2_rcv_msg+0x213/0x320 net/tipc/bearer.c:668
- __netif_receive_skb_list_ptype net/core/dev.c:6027 [inline]
- __netif_receive_skb_list_core+0x133b/0x16b0 net/core/dev.c:6069
- __netif_receive_skb_list net/core/dev.c:6121 [inline]
- netif_receive_skb_list_internal+0xee7/0x1530 net/core/dev.c:6212
- gro_normal_list include/net/gro.h:532 [inline]
- gro_flush_normal include/net/gro.h:540 [inline]
- napi_complete_done+0x3fb/0x7d0 net/core/dev.c:6581
- napi_complete include/linux/netdevice.h:589 [inline]
- tun_get_user+0x4c0d/0x6ca0 drivers/net/tun.c:1921
- tun_chr_write_iter+0x3e9/0x5c0 drivers/net/tun.c:1996
- do_iter_readv_writev+0x947/0xba0 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_writev+0x1b5/0x580 fs/read_write.c:1103
- __do_sys_writev fs/read_write.c:1171 [inline]
- __se_sys_writev fs/read_write.c:1168 [inline]
- __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
- x64_sys_call+0x24b1/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:21
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4186 [inline]
- slab_alloc_node mm/slub.c:4229 [inline]
- kmem_cache_alloc_node_noprof+0x818/0xf00 mm/slub.c:4281
- kmalloc_reserve+0x13c/0x4b0 net/core/skbuff.c:578
- __alloc_skb+0x347/0x7d0 net/core/skbuff.c:669
- napi_alloc_skb+0xc1/0x740 net/core/skbuff.c:811
- napi_get_frags+0xab/0x250 net/core/gro.c:673
- tun_napi_alloc_frags drivers/net/tun.c:1404 [inline]
- tun_get_user+0x134f/0x6ca0 drivers/net/tun.c:1784
- tun_chr_write_iter+0x3e9/0x5c0 drivers/net/tun.c:1996
- do_iter_readv_writev+0x947/0xba0 fs/read_write.c:-1
- vfs_writev+0x52a/0x1500 fs/read_write.c:1057
- do_writev+0x1b5/0x580 fs/read_write.c:1103
- __do_sys_writev fs/read_write.c:1171 [inline]
- __se_sys_writev fs/read_write.c:1168 [inline]
- __x64_sys_writev+0x99/0xf0 fs/read_write.c:1168
- x64_sys_call+0x24b1/0x3e20 arch/x86/include/generated/asm/syscalls_64.h:21
- do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
- do_syscall_64+0xd9/0x210 arch/x86/entry/syscall_64.c:94
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-
-CPU: 1 UID: 0 PID: 5808 Comm: syz-executor123 Not tainted 6.16.0-syzkaller-10499-g89748acdf226 #0 PREEMPT(none) 
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
-=====================================================
+It's fine then, I guess.
 
 
----
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
+
+Best regards,
+Krzysztof
 
