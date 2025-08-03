@@ -1,70 +1,70 @@
-Return-Path: <linux-kernel+bounces-754397-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754399-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1BFF3B193D2
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:15:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E1AAB193D8
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:17:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDCD93A91FB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:15:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFE447A45D0
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:16:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7321C257440;
-	Sun,  3 Aug 2025 11:15:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 963D02580CF;
+	Sun,  3 Aug 2025 11:17:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="ThuEQ3gQ"
-Received: from mail-qv1-f45.google.com (mail-qv1-f45.google.com [209.85.219.45])
+	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="GP5+AD4Y"
+Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A81DDA1E
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78AAB2E36F0
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:17:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754219747; cv=none; b=QtMxarZtNZe4cSBV34DBMnqo7KQWIAjus9EeYTYxqfcsw6DAteOyPaU1juOWlKhJ/N+TyFPg4vkaO1sCrnrPt74yrNJsK/WC5UTY5+abQwudLwA2uDaGEtT6Qrk14/ApmkzUZXI6RozpaZj1e6EtIXx+eW/pID2ps19IrAAgaAE=
+	t=1754219859; cv=none; b=ox16//uHZx/bZQTxqNu9Z8+Qmid1SUQ8FF66qtefZBa+OQKum7g1RfRrzXti/4bkVsk1918ycbUhPtsERanAzIm64TJakTascfJdRT2WWCIwpFVG/6X8NigBVB3E25otHvnKFoh2Am3uC1l402iT1ULm3trFkwOaJli4+TTWSAc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754219747; c=relaxed/simple;
-	bh=P1xihm6nYGBaA31Ku0RBITl7ToPMxIN0kgn3yguOXCM=;
+	s=arc-20240116; t=1754219859; c=relaxed/simple;
+	bh=d0R8EDhjUqnNngbOxjeKQcqua7pRcAMMnsTDsA+Ro8Q=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=S3jGn1IQHK9DcSAxsNj+UpUP94oThtZHUO9mQVgANTxr8s6wobMHpDg7PYP4AKpir10oq3SORxC0kAoVxI+megEJjM12uG7M7PhqXtK+BmH4ndYbwQrvTx9Mn5J9kfoaD65qizMf5FBHr0wKIR+oUC5PQDcMokrfKZOX8ns8WZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=ThuEQ3gQ; arc=none smtp.client-ip=209.85.219.45
+	 To:Content-Type; b=Vr/z1jB6oOhfUeli53TNghvx7fsNCg3kQkUFEtzt2KYhM/935ICglGhjfiKJjN2+3c0GV9olwbDxPkw+MO/12VWLs1ICb3yHP7nn1TPxQvB/O2msQYyy5+FOmG7/ecfoCUkHWWTu7NPBBYd8Sdwq/qqm03zH1TTWOKJX/xrQwEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=GP5+AD4Y; arc=none smtp.client-ip=209.85.219.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinidat.com
-Received: by mail-qv1-f45.google.com with SMTP id 6a1803df08f44-70740598a9dso22233176d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 04:15:44 -0700 (PDT)
+Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-6f8aa9e6ffdso38323436d6.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 04:17:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=infinidat.com; s=google; t=1754219744; x=1754824544; darn=vger.kernel.org;
+        d=infinidat.com; s=google; t=1754219856; x=1754824656; darn=vger.kernel.org;
         h=to:subject:message-id:date:from:in-reply-to:references:mime-version
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=RlAuN8Gw47ZBISll2i6eJ2pzlpQq1e20H9Pgw4gDQCE=;
-        b=ThuEQ3gQu2g7/ZD2QtkAfVB24PgVMECff/kTIBu2uXYpQmgbcXv57h8ONKlsgec6ny
-         V+fwFIkS6yhTWkru4Zpk8baWhvJ/HnqRrY8tMBOeH8nmh1V/IxQQ/Kish10ksTYv47o4
-         Ce5is6NNqNJF7hO6cyXe0T/gdLO2yH2n1sv1Zp4RfoA8jS0Mx4iCX8uhOt7ka2voorUN
-         tX8d1IDdBUmzWXW653gQ8qSpgnMu/wrIL0fv8yKdmfBcyCtxDzSgBYUKorQOiyYoUHN3
-         HPlICTDwcF9PDKnamH1ybK98OJdwNTOSxxKBo1+pyojm912YCWbyvjgmHt8zb8PUcpbR
-         nSjg==
+        bh=EJCABHFDmK9VaB5CwomNDJ9KGxLMOeQ+qHkRsJyn2yE=;
+        b=GP5+AD4Yzrw++UC9qKxgsedn5pl0XcYfYu3foMlG/+CK+em40pnDNBz2Ah6VmwkfXD
+         crO7w0uSthTumh6/n9JL6mruPavE2iQMD2Vo7hXzLwDBoc/MpOcExv6K6fdH41Pl4jYC
+         jLzAWtgNVClNIVAKTxbGhQM6zbAfkoCYzbke+nH5ljBll1E+YO8l+n5ek1/aqTrwWVgn
+         hVezgLEG74YHNC8w40ymWVxQ+O2J7DpGZFhzkkol0XCHPOzF+xFmHsEI0wpUOcaIwlGE
+         ieuk92cGBb2TrmiBKQKEUaWjpZRrCUbFrSuhuxcb2YuNP3nj8HrQRUdInvcDqed1g0yb
+         XCWg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754219744; x=1754824544;
+        d=1e100.net; s=20230601; t=1754219856; x=1754824656;
         h=to:subject:message-id:date:from:in-reply-to:references:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RlAuN8Gw47ZBISll2i6eJ2pzlpQq1e20H9Pgw4gDQCE=;
-        b=G5t6GcFV5XRsV/S8DKKkddhk28m0C15hS2B2mRycWrL64APdehm0R01DSY+Lkwh2bd
-         w8w0IQG584pLi6X7SHExJBfqLc+ild4sF5KwagsYBIsRmMdw9FFSQagdljK/sG8vQj34
-         V054/S44+ZP/lgAPVd5skUjX0JYPqh60KEJwEQD1cBRjVSTo65Bn/2nq/dBi8+M/BOUL
-         TzddVOYedIwb6/sPv+8ztENAaG0pYlzQAHWadYF+XR2w0zUHNzZ604APEaIutWkKOR+l
-         J5tOAGdqsYbZg6syhEX2z62NGjCRiSs2f18PBT3a4cFndB8L/438c4Sk+nVrNEZMimLT
-         vwAg==
-X-Gm-Message-State: AOJu0YzWFqOo3eFGyJE2GYNNimWdgA7M4SvH2rB4sUU8xI3dF2C2hqCG
-	3mqALpUdji8aeVLkYuDZJLn7KI/QfQzex1uftzYvSjFiSTKaLgKcv1+HerX04ujY5xDUrEUSj09
-	daqIZvEVtFkB04Xrz2POgkAxIeBuIoaWm1knmCdxMP+M0Wb9CCAHmWNw=
-X-Gm-Gg: ASbGncvfnTcYFsnC4G97sFj37HUvYck5ZN61ktfP1t2JDUZ+hK4G8oQBIawE2EmMFRC
-	uNBtEDzLEqp2iR159M5Nr/K+L3RsSy2O0zHY7l9SpjXNwN3MXN4emHTJdg8LqXUfidWJk0jJozd
-	cD6/Xox5E6Q0zu088mpny6LfYLB8Tr9XoKQs+QAKtp8Kbv7mbAj1eGzCOkYx3Swxh6WZHYr0ile
-	WVb4rJzmg==
-X-Google-Smtp-Source: AGHT+IHSRvS5Rc51kBhuWo/kXgLlKGxZEwmgjLiMqCPE6UtxHQooEtrwwfJHpqFFnA+fkUMdO46iBGn0rPqUj9LUuLA=
-X-Received: by 2002:a05:6214:5097:b0:6fb:59de:f8ab with SMTP id
- 6a1803df08f44-70935edc218mr96809796d6.10.1754219743635; Sun, 03 Aug 2025
- 04:15:43 -0700 (PDT)
+        bh=EJCABHFDmK9VaB5CwomNDJ9KGxLMOeQ+qHkRsJyn2yE=;
+        b=kbSANIw8dfQBQgpfKpaabfw9qEJRnuThVko5XZIBUqL4JHK9MVa96dpiz8nvPqUUSs
+         D6rEIbF/Mm4Ki2e+jC/bxhOZ76H+Pwl0aLwHhp6aYKUrOqlbleblj2D+CIw++Y9Kf17z
+         Lhe4mBczPLj++WbC/JZC9EWv8BU9+qaG0+DVQboybq1Za6D+HAf3KzJRzphZxuws/d3a
+         WorP9V56GJp3Sj+OloBG5ZJMKZp4bz6tHGZZkHK9ciebrC4wXJ5K/s+jpjcw45+ciBq/
+         o8ftL3hIjfIygC/hdVLZfqwzT20XhkWH7W0mEMhV/7FqdbZJ/jc4kdb55IJNmuRIpPqx
+         vR2A==
+X-Gm-Message-State: AOJu0YyOHvtEcjc5lMlRsecg/84r+3uPQBU40KMYIwtoMZAQbj9cakvH
+	AoustavG/cqJPCUZi8mcIfAmFmMivtki2nANCi/La2xJS7T12Nbkb88gyIiM3l8wn4Il7cczcvt
+	BC42lC0d8RxOX/UGvqXfzcZp11qo3TDwjeazRQtiGjoYFTF5c3ggRg4k=
+X-Gm-Gg: ASbGncsUIsY5CmBKrCzwv8sPm5EF8esEyu1Ci2CspItSivaRL7ig+K8n8R4RPd/YIYM
+	cyYCglKFOP0bZWOryo1NurKCCl2kUWIHJKMYhpbYbF1y0VvNg5LTeb2pTOrpP3ItLcn5QyTTw1H
+	RibvSXu/tLLGi1uR5lvOWaWYD26qgmyv4SuAx41Y1tRiNZHV0DvFqWK08G38SppHSyv/n5G13c4
+	BOeC31Iqw==
+X-Google-Smtp-Source: AGHT+IG14mFtyyy1YEATAQBgRu9BAPlOY7kV424JnOCcvL/poj5BPzG8AZQjttjIbOI22NVwqHm44HP6a7TVHzWt7oY=
+X-Received: by 2002:a05:6214:2626:b0:707:4b37:f6c5 with SMTP id
+ 6a1803df08f44-709362fdd09mr83856226d6.35.1754219856065; Sun, 03 Aug 2025
+ 04:17:36 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,251 +76,450 @@ References: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
  <CAEHaoC2bi3VUEuoWKgHbgUFfdxmACrhkjaQ9Jni-4-ByP5tYJg@mail.gmail.com>
  <CAEHaoC3ZMvHe7D-JX9bfM9hfSPs0QV-og=om5eKFFqSL=tpjcw@mail.gmail.com>
  <CAEHaoC0Au_0yLRKSnDg=_qjnmDMmbJ=Nff+W1feEBTib0Jb_gA@mail.gmail.com>
- <CAEHaoC2ZQAd+h=7mKPOuMfAMex-41soD8=kx2vR_em+i71oBRw@mail.gmail.com> <CAEHaoC3t8nFhR4MAYV1AaR5mjN4ndkkWrKUyBY_smbtpDykAEA@mail.gmail.com>
-In-Reply-To: <CAEHaoC3t8nFhR4MAYV1AaR5mjN4ndkkWrKUyBY_smbtpDykAEA@mail.gmail.com>
+ <CAEHaoC2ZQAd+h=7mKPOuMfAMex-41soD8=kx2vR_em+i71oBRw@mail.gmail.com>
+ <CAEHaoC3t8nFhR4MAYV1AaR5mjN4ndkkWrKUyBY_smbtpDykAEA@mail.gmail.com> <CAEHaoC1mHQp62GMBofGJwKBkjgf8rQr_tUxwESKa7Ehd6_3nWA@mail.gmail.com>
+In-Reply-To: <CAEHaoC1mHQp62GMBofGJwKBkjgf8rQr_tUxwESKa7Ehd6_3nWA@mail.gmail.com>
 From: Constantine Gavrilov <cgavrilov@infinidat.com>
-Date: Sun, 3 Aug 2025 14:15:32 +0300
-X-Gm-Features: Ac12FXwo3cEc8BChv_4H2DlsqyGf1kK8GuuMJrVYj5__fN-d73nDOsTDuW2BEKU
-Message-ID: <CAEHaoC1mHQp62GMBofGJwKBkjgf8rQr_tUxwESKa7Ehd6_3nWA@mail.gmail.com>
-Subject: [PATCH 6/8] Large DMA alloc/alloc DMA addresses from the top
+Date: Sun, 3 Aug 2025 14:17:24 +0300
+X-Gm-Features: Ac12FXyCe3Y0d1KY-hXOj8mMqH58OmiavVXy1bcYlNMPqSDWBNX521gS0SiBLvA
+Message-ID: <CAEHaoC2JjQ0k4B3T1eK=4OhwTE_JxwgZ5A=nBjheR5Ehspwj7Q@mail.gmail.com>
+Subject: [PATCH 7/8] Large DMA alloc/low address limit in alloc funcs
 To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
 	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
 Content-Type: text/plain; charset="UTF-8"
 
-This is the seventh patch from the set of patches that enable large IOMMU
+This is the eighth patch from the set of patches that enable large IOMMU
 DMA registrations. Entire work is available at the master branch of the
 master branch of git@github.com:cgavrilov/linux.git repo.
 
-This patch ensures that addresses in IOMMU group are allocated from the top
-to the bottom of the address space. It fixes some issues with the use of
-cached_node and cached32_node fields of the iova_domain structure that
-resulted in fragmentation of the address space. Fragmented address space can
-lead to failed allocations of DMA ranges.
+Some devices (like NTB or GPU) allow mapping of the system memory to PCIe bars,
+allowing to implement PCIe interconnects when devices are connected to more
+than one root complex. After one root complex does the mapping, an application
+on another root complex can access the memory using the PCIe bar of the device.
+Since a typical system memory mapping uses offset translation (between the
+device bar address and the DMA address), the device driver needs to know which
+contiguous DMA address range is available to satisfy the device needs before it
+can set up the mapping offset. After querying the available range, the device
+driver can set up the mapping translation and use the top and low DMA address
+constraints to ensure that future DMA allocation APIs will allocate DMA
+addresses within the selected range.
 
-commit d8bb3c731ff750afc568fa73d770eb1fa3e96c09
+This patch was developed before the 6.16 kernel that provides functions
+dma_iova_try_alloc() and and dma_iova_link() to help with this task. With
+dma_iova_try_alloc(), the device driver can reserve a DMA address range for its
+future use and use dma_iova_link() later to update IOMMU translations on the
+reserved range. However, we do not have APIs that would allow allocations of
+smaller regions from the reserve red area that would provide functionality
+similar to iommu_dma_alloc_iova(). This patch allows to query the available
+range, set up the offset, and use standard DMA allocation APIs, after enforcing
+the DMA mask constraints on the device.
+
+This patch does not change the existing behavior but extends some DMA address
+allocation APIs to use the low and top address constraints.
+
+commit 00de9ac3bdb6747fbe6b21de78ad11a32c67a71f
 Author: Constantine Gavrilov <cgavrilov@infinidat.com>
-Date:   Tue Jul 1 11:19:08 2025 +0300
+Date:   Tue Jul 1 14:12:27 2025 +0300
 
-    Allocate DMA addresses from top to bottom in IOVA domains.
+    Support low address limit in functions that allocate DMA address.
 
-    The cached_node and cached32_node fields of the iova_domain structure
-    are used as the starting point for the address search only if the cached
-    node starts at the DMA limit or below it, or if the DMA limit is 64 bit
-    or 32 bit respectively.
+    Devices that map memory windows to PCI bars (for example NTB devices)
+    may need this change. This is because such devices may use very large
+    memory windows (terabytes in size), and they cannot simply cap the top
+    DMA address to the size of the window, since the range [0-window size]
+    may not be available. Such devices can find an available DMA region, set
+    up the memory window, and request DMA address allocations in the found
+    range.
 
-    The cached_node and cached32_node are updated upon successful allocation
-    only if the search was performed from the node that does not lie below the
-    cached values and not above the DMA limit.
+    This is a preparation step, there is no change of behavior in this
+    change.
 
-    For clarity, cached_node field was renamed to cached_top_node.
+    The following public APIs add low_limit_pfn parameter:
+    * alloc_iova() - passes parameter
+    * alloc_iova_fast() - passes parameter
 
-    To enable the existing optimization for network stack behavior - where
-    network drivers can allocate above 250K DMA buffers for network pools
-    without using SG tables, we add cached_middle_node and middle_pfn_limit
-    fields. Without using those, the system locks up for minutes at boot
-    time trying to allocate network pools.
+    The following static functions that are called during DMA address
+    allocation add low_limit_pfn parameter:
 
-    This ensures contiguous allocations from top to the bottom, with holes
-    due to alignment or due to lower DMA address requirements for some devices
-    in the group. Altogether, this avoids fragmentation of DMA address space
-    and ensures that large DMA ranges are available.
+    * iova_rcache_get() - passes parameter
+    * __alloc_and_insert_iova_range() - uses parameter
+    * iova_magazine_pop() - uses parameter
+    * __iova_rcache_get() - uses parameter
+    * iova_rcache_get() - passes parameter
 
+diff --git a/drivers/gpu/drm/tegra/drm.c b/drivers/gpu/drm/tegra/drm.c
+index bf525d59e82e..f8b7eadeee05 100644
+--- a/drivers/gpu/drm/tegra/drm.c
++++ b/drivers/gpu/drm/tegra/drm.c
+@@ -1046,7 +1046,7 @@ void *tegra_drm_alloc(struct tegra_drm *tegra,
+size_t size, dma_addr_t *dma)
+
+     alloc = alloc_iova(&tegra->carveout.domain,
+                size >> tegra->carveout.shift,
+-               tegra->carveout.limit, ALLOC_IOVA_ALIGN_SIZE);
++               0, tegra->carveout.limit, ALLOC_IOVA_ALIGN_SIZE);
+     if (!alloc) {
+         err = -EBUSY;
+         goto free_pages;
+diff --git a/drivers/gpu/host1x/cdma.c b/drivers/gpu/host1x/cdma.c
+index fbd647fc031c..d49b238b1708 100644
+--- a/drivers/gpu/host1x/cdma.c
++++ b/drivers/gpu/host1x/cdma.c
+@@ -97,7 +97,7 @@ static int host1x_pushbuffer_init(struct push_buffer *pb)
+
+         shift = iova_shift(&host1x->iova);
+         alloc = alloc_iova(&host1x->iova, size >> shift,
+-                   host1x->iova_end >> shift, ALLOC_IOVA_ALIGN_SIZE);
++                   0, host1x->iova_end >> shift, ALLOC_IOVA_ALIGN_SIZE);
+         if (!alloc) {
+             err = -ENOMEM;
+             goto iommu_free_mem;
+diff --git a/drivers/gpu/host1x/job.c b/drivers/gpu/host1x/job.c
+index ff5325d21fe8..715585b6ec67 100644
+--- a/drivers/gpu/host1x/job.c
++++ b/drivers/gpu/host1x/job.c
+@@ -242,7 +242,7 @@ static unsigned int pin_job(struct host1x *host,
+struct host1x_job *job)
+
+             shift = iova_shift(&host->iova);
+             alloc = alloc_iova(&host->iova, gather_size >> shift,
+-                       host->iova_end >> shift, ALLOC_IOVA_ALIGN_SIZE);
++                       0, host->iova_end >> shift, ALLOC_IOVA_ALIGN_SIZE);
+             if (!alloc) {
+                 err = -ENOMEM;
+                 goto put;
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index e78d7f8a2d61..414d31347fc2 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -810,7 +810,7 @@ static dma_addr_t iommu_dma_alloc_iova(struct
+iommu_domain *domain,
+      * expected address bits are wired up between the device and the IOMMU.
+      */
+     if (dma_limit > DMA_BIT_MASK(32) && (size - 1) <=
+DMA_BIT_MASK(32) && dev->iommu->pci_32bit_workaround) {
+-        iova = alloc_iova_fast(iovad, iova_len,
++        iova = alloc_iova_fast(iovad, iova_len, 0,
+                        DMA_BIT_MASK(32) >> shift, false, align);
+         if (iova)
+             goto done;
+@@ -819,7 +819,7 @@ static dma_addr_t iommu_dma_alloc_iova(struct
+iommu_domain *domain,
+         dev_notice(dev, "Using %d-bit DMA addresses\n", bits_per(dma_limit));
+     }
+
+-    iova = alloc_iova_fast(iovad, iova_len, dma_limit >> shift, true, align);
++    iova = alloc_iova_fast(iovad, iova_len, 0, dma_limit >> shift,
+true, align);
+ done:
+     return (dma_addr_t)iova << shift;
+ }
 diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
-index 0c436dd35404..09356d6065ef 100644
+index 09356d6065ef..e599cfc66bff 100644
 --- a/drivers/iommu/iova.c
 +++ b/drivers/iommu/iova.c
-@@ -47,7 +47,9 @@ init_iova_domain(struct iova_domain *iovad, unsigned
-long granule,
-
-     spin_lock_init(&iovad->iova_rbtree_lock);
-     iovad->rbroot = RB_ROOT;
--    iovad->cached_node = &iovad->anchor.node;
-+    iovad->cached_top_node = &iovad->anchor.node;
-+    iovad->cached_middle_node = &iovad->anchor.node;
-+    iovad->middle_pfn_limit = IOVA_ANCHOR;
-     iovad->cached32_node = &iovad->anchor.node;
-     iovad->granule = granule;
-     iovad->start_pfn = start_pfn;
-@@ -58,22 +60,63 @@ init_iova_domain(struct iova_domain *iovad,
-unsigned long granule,
+@@ -24,6 +24,7 @@ static bool iova_rcache_insert(struct iova_domain *iovad,
+                    unsigned long size);
+ static unsigned long iova_rcache_get(struct iova_domain *iovad,
+                      unsigned long size,
++                     unsigned long low_limit_pfn,
+                      unsigned long limit_pfn);
+ static void free_iova_rcaches(struct iova_domain *iovad);
+ static void free_cpu_cached_iovas(unsigned int cpu, struct iova_domain *iovad);
+@@ -205,16 +206,18 @@ iova_insert_rbtree(struct rb_root *root, struct
+iova *iova,
  }
- EXPORT_SYMBOL_GPL(init_iova_domain);
 
-+static struct rb_node *iova_find_limit(struct iova_domain *iovad,
-unsigned long limit_pfn);
-+
- static struct rb_node *
--__get_cached_rbnode(struct iova_domain *iovad, unsigned long limit_pfn)
-+__get_start_rbnode(struct iova_domain *iovad, unsigned long limit_pfn)
+ static int __alloc_and_insert_iova_range(struct iova_domain *iovad,
+-        unsigned long size, unsigned long limit_pfn,
+-            struct iova *new, iova_align_t align)
++        unsigned long size, unsigned low_limit_pfn, unsigned long limit_pfn,
++        struct iova *new, iova_align_t align)
  {
--    if (limit_pfn <= iovad->dma_32bit_pfn)
-+    struct iova *cached = to_iova(iovad->cached32_node);
-+    if (limit_pfn == iovad->dma_32bit_pfn || (cached->pfn_hi + 1) >= limit_pfn)
-         return iovad->cached32_node;
-
--    return iovad->cached_node;
-+    cached = to_iova(iovad->cached_middle_node);
-+    if (limit_pfn == iovad->middle_pfn_limit || (cached->pfn_hi + 1)
->= limit_pfn)
-+        return iovad->cached_middle_node;
-+
-+    cached = to_iova(iovad->cached_top_node);
-+    if (limit_pfn == IOVA_ANCHOR || (cached->pfn_hi + 1) >= limit_pfn)
-+        return iovad->cached_top_node;
-+
-+    return iova_find_limit(iovad, limit_pfn);
- }
-
- static void
--__cached_rbnode_insert_update(struct iova_domain *iovad, struct iova *new)
-+__cached_rbnode_insert_update(struct iova_domain *iovad, struct iova
-*new, struct iova *start_search, unsigned long limit_pfn)
- {
--    if (new->pfn_hi < iovad->dma_32bit_pfn)
--        iovad->cached32_node = &new->node;
--    else
--        iovad->cached_node = &new->node;
-+    /* insert the update only if the search started from the cached
-node or above it
-+     * This way, we alttempt to allocate from top to the bottom, with
-holes due to alignment
-+     * or DMA address limit for individual devices in the group
-+     */
-+    struct iova *cached;
-+
-+    /* update top node */
-+    cached = to_iova(iovad->cached_top_node);
-+    if (limit_pfn >= start_search->pfn_lo &&
-+            start_search->pfn_lo >= cached->pfn_lo &&
-+            new->pfn_lo < cached->pfn_lo)
-+        iovad->cached_top_node = &new->node;
-+
-+    /* update middle node */
-+    cached = to_iova(iovad->cached_middle_node);
-+    if (limit_pfn >= start_search->pfn_lo &&
-+            start_search->pfn_lo >= cached->pfn_lo &&
-+             new->pfn_lo < cached->pfn_lo) {
-+        iovad->cached_middle_node = &new->node;
-+        if (limit_pfn != IOVA_ANCHOR && (limit_pfn > iovad->middle_pfn_limit ||
-+                iovad->middle_pfn_limit == IOVA_ANCHOR))
-+            iovad->middle_pfn_limit = limit_pfn;
-+    } else if (limit_pfn != IOVA_ANCHOR) {
-+        iovad->middle_pfn_limit = limit_pfn;
-+        iovad->cached_middle_node = &new->node;
-+    }
-+
-+    if (new->pfn_lo <= iovad->dma_32bit_pfn) {
-+        cached = to_iova(iovad->cached32_node);
-+        if (limit_pfn >= start_search->pfn_lo &&
-+            start_search->pfn_lo >= cached->pfn_lo &&
-+             new->pfn_lo < cached->pfn_lo)
-+            iovad->cached32_node = &new->node;
-+    }
- }
-
- static void
-@@ -87,9 +130,13 @@ __cached_rbnode_delete_update(struct iova_domain
-*iovad, struct iova *free)
-          free->pfn_lo >= cached_iova->pfn_lo))
-         iovad->cached32_node = rb_next(&free->node);
-
--    cached_iova = to_iova(iovad->cached_node);
-+    cached_iova = to_iova(iovad->cached_top_node);
-     if (free->pfn_lo >= cached_iova->pfn_lo)
--        iovad->cached_node = rb_next(&free->node);
-+        iovad->cached_top_node = rb_next(&free->node);
-+
-+    cached_iova = to_iova(iovad->cached_middle_node);
-+    if (free->pfn_lo >= cached_iova->pfn_lo && free->pfn_lo <
-iovad->middle_pfn_limit)
-+        iovad->cached_middle_node = rb_next(&free->node);
- }
-
- static struct rb_node *iova_find_limit(struct iova_domain *iovad,
-unsigned long limit_pfn)
-@@ -161,8 +208,8 @@ static int __alloc_and_insert_iova_range(struct
-iova_domain *iovad,
-         unsigned long size, unsigned long limit_pfn,
-             struct iova *new, iova_align_t align)
- {
--    struct rb_node *curr, *prev;
--    struct iova *curr_iova;
-+    struct rb_node *curr, *prev, *start_search;
-+    struct iova *curr_iova, *start_iova;
+     struct rb_node *curr, *prev, *start_search;
+     struct iova *curr_iova, *start_iova;
      unsigned long flags;
      unsigned long new_pfn, retry_pfn;
      unsigned long align_mask;
-@@ -179,8 +226,8 @@ static int __alloc_and_insert_iova_range(struct
+-    unsigned long high_pfn = limit_pfn, low_pfn = iovad->start_pfn;
++    unsigned long high_pfn = limit_pfn;
++    bool retried = false;
+
++    low_limit_pfn = max(low_limit_pfn, iovad->start_pfn);
+     switch (align) {
+         case ALLOC_IOVA_ALIGN_NONE: align_mask = ~0UL; break;
+         case ALLOC_IOVA_ALIGN_SIZE: align_mask = (~0UL) <<
+fls_long(size - 1); break;
+@@ -237,14 +240,15 @@ static int __alloc_and_insert_iova_range(struct
 iova_domain *iovad,
-     /* Walk the tree backwards */
-     spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
+         prev = curr;
+         curr = rb_prev(curr);
+         curr_iova = to_iova(curr);
+-    } while (curr && new_pfn <= curr_iova->pfn_hi && new_pfn >= low_pfn);
++    } while (curr && new_pfn <= curr_iova->pfn_hi && new_pfn >= low_limit_pfn);
 
--    curr = __get_cached_rbnode(iovad, limit_pfn);
--    curr_iova = to_iova(curr);
-+    curr = start_search = __get_start_rbnode(iovad, limit_pfn);
-+    curr_iova = start_iova = to_iova(curr);
-     retry_pfn = curr_iova->pfn_hi;
-
- retry:
-@@ -193,11 +240,11 @@ static int __alloc_and_insert_iova_range(struct
-iova_domain *iovad,
-     } while (curr && new_pfn <= curr_iova->pfn_hi && new_pfn >= low_pfn);
-
-     if (high_pfn < size || new_pfn < low_pfn) {
--        if (low_pfn == iovad->start_pfn && retry_pfn < limit_pfn) {
-+        if (start_search != &iovad->anchor.node && low_pfn ==
+-    if (high_pfn < size || new_pfn < low_pfn) {
+-        if (start_search != &iovad->anchor.node && low_pfn ==
 iovad->start_pfn && retry_pfn < limit_pfn) {
++    if (high_pfn < size || new_pfn < low_limit_pfn) {
++        if (start_search != &iovad->anchor.node && !retried &&
+retry_pfn < limit_pfn) {
              high_pfn = limit_pfn;
-             low_pfn = retry_pfn + 1;
--            curr = iova_find_limit(iovad, limit_pfn);
--            curr_iova = to_iova(curr);
-+            curr = start_search = iova_find_limit(iovad, limit_pfn);
-+            curr_iova = start_iova = to_iova(curr);
+-            low_pfn = retry_pfn + 1;
++            low_limit_pfn = retry_pfn + 1;
+             curr = start_search = iova_find_limit(iovad, limit_pfn);
+             curr_iova = start_iova = to_iova(curr);
++            retried = true;
              goto retry;
          }
          goto iova32_full;
-@@ -209,7 +256,7 @@ static int __alloc_and_insert_iova_range(struct
+@@ -297,6 +301,7 @@ static void free_iova_mem(struct iova *iova)
+  */
+ struct iova *
+ alloc_iova(struct iova_domain *iovad, unsigned long size,
++    unsigned long low_limit_pfn,
+     unsigned long limit_pfn,
+     iova_align_t align)
+ {
+@@ -307,7 +312,7 @@ alloc_iova(struct iova_domain *iovad, unsigned long size,
+     if (!new_iova)
+         return NULL;
+
+-    ret = __alloc_and_insert_iova_range(iovad, size, limit_pfn + 1,
++    ret = __alloc_and_insert_iova_range(iovad, size, low_limit_pfn,
+limit_pfn + 1,
+             new_iova, align);
+
+     if (ret) {
+@@ -507,7 +512,8 @@ EXPORT_SYMBOL_GPL(free_iova);
+ */
+ unsigned long
+ alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+-        unsigned long limit_pfn, bool flush_rcache, iova_align_t align)
++        unsigned long low_limit_pfn, unsigned long limit_pfn,
++        bool flush_rcache, iova_align_t align)
+ {
+     unsigned long iova_pfn;
+     struct iova *new_iova;
+@@ -521,12 +527,12 @@ alloc_iova_fast(struct iova_domain *iovad,
+unsigned long size,
+     if (size < (1 << (IOVA_RANGE_CACHE_MAX_SIZE - 1)))
+         size = roundup_pow_of_two(size);
+
+-    iova_pfn = iova_rcache_get(iovad, size, limit_pfn + 1);
++    iova_pfn = iova_rcache_get(iovad, size, low_limit_pfn, limit_pfn + 1);
+     if (iova_pfn)
+         return iova_pfn;
+
+ retry:
+-    new_iova = alloc_iova(iovad, size, limit_pfn, align);
++    new_iova = alloc_iova(iovad, size, low_limit_pfn, limit_pfn, align);
+     if (!new_iova) {
+         unsigned int cpu;
+
+@@ -780,13 +786,14 @@ static bool iova_magazine_empty(struct iova_magazine *mag)
+ }
+
+ static unsigned long iova_magazine_pop(struct iova_magazine *mag,
++                       unsigned long low_limit_pfn,
+                        unsigned long limit_pfn)
+ {
+     int i;
+     unsigned long pfn;
+
+     /* Only fall back to the rbtree if we have no suitable pfns at all */
+-    for (i = mag->size - 1; mag->pfns[i] > limit_pfn; i--)
++    for (i = mag->size - 1; (mag->pfns[i] > limit_pfn) ||
+(mag->pfns[i] < low_limit_pfn); i--)
+         if (i == 0)
+             return 0;
+
+@@ -953,6 +960,7 @@ static bool iova_rcache_insert(struct iova_domain
+*iovad, unsigned long pfn,
+  * it from the 'rcache'.
+  */
+ static unsigned long __iova_rcache_get(struct iova_rcache *rcache,
++                       unsigned long low_limit_pfn,
+                        unsigned long limit_pfn)
+ {
+     struct iova_cpu_rcache *cpu_rcache;
+@@ -979,7 +987,7 @@ static unsigned long __iova_rcache_get(struct
+iova_rcache *rcache,
+     }
+
+     if (has_pfn)
+-        iova_pfn = iova_magazine_pop(cpu_rcache->loaded, limit_pfn);
++        iova_pfn = iova_magazine_pop(cpu_rcache->loaded,
+low_limit_pfn, limit_pfn);
+
+     spin_unlock_irqrestore(&cpu_rcache->lock, flags);
+
+@@ -993,6 +1001,7 @@ static unsigned long __iova_rcache_get(struct
+iova_rcache *rcache,
+  */
+ static unsigned long iova_rcache_get(struct iova_domain *iovad,
+                      unsigned long size,
++                     unsigned long low_limit_pfn,
+                      unsigned long limit_pfn)
+ {
+     unsigned int log_size = order_base_2(size);
+@@ -1000,7 +1009,7 @@ static unsigned long iova_rcache_get(struct
 iova_domain *iovad,
+     if (log_size >= IOVA_RANGE_CACHE_MAX_SIZE)
+         return 0;
 
-     /* If we have 'prev', it's a valid place to start the insertion. */
-     iova_insert_rbtree(&iovad->rbroot, new, prev);
--    __cached_rbnode_insert_update(iovad, new);
-+    __cached_rbnode_insert_update(iovad, new, start_iova, limit_pfn);
+-    return __iova_rcache_get(&iovad->rcaches[log_size], limit_pfn - size);
++    return __iova_rcache_get(&iovad->rcaches[log_size],
+low_limit_pfn, limit_pfn - size);
+ }
 
-     spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
-     return 0;
+ /*
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-dma.c
+b/drivers/media/pci/intel/ipu6/ipu6-dma.c
+index 4e2b98c4f348..24b677f73992 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-dma.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-dma.c
+@@ -172,7 +172,7 @@ void *ipu6_dma_alloc(struct ipu6_bus_device *sys,
+size_t size,
+     count = PHYS_PFN(size);
+
+     iova = alloc_iova(&mmu->dmap->iovad, count,
+-              PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
++              0, PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
+     if (!iova)
+         goto out_kfree;
+
+@@ -398,7 +398,7 @@ int ipu6_dma_map_sg(struct ipu6_bus_device *sys,
+struct scatterlist *sglist,
+         nents, npages);
+
+     iova = alloc_iova(&mmu->dmap->iovad, npages,
+-              PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
++              0, PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
+     if (!iova)
+         return 0;
+
+diff --git a/drivers/media/pci/intel/ipu6/ipu6-mmu.c
+b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
+index 4d6f9b8d68bb..013d33a0f5dc 100644
+--- a/drivers/media/pci/intel/ipu6/ipu6-mmu.c
++++ b/drivers/media/pci/intel/ipu6/ipu6-mmu.c
+@@ -422,7 +422,7 @@ static int allocate_trash_buffer(struct ipu6_mmu *mmu)
+
+     /* Allocate 8MB in iova range */
+     iova = alloc_iova(&mmu->dmap->iovad, n_pages,
+-              PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
++              0, PHYS_PFN(mmu->dmap->mmu_info->aperture_end),
+ALLOC_IOVA_ALIGN_NONE);
+     if (!iova) {
+         dev_err(mmu->dev, "cannot allocate iova range for trash\n");
+         return -ENOMEM;
+diff --git a/drivers/media/platform/nvidia/tegra-vde/iommu.c
+b/drivers/media/platform/nvidia/tegra-vde/iommu.c
+index ad010ad65735..ec687165e150 100644
+--- a/drivers/media/platform/nvidia/tegra-vde/iommu.c
++++ b/drivers/media/platform/nvidia/tegra-vde/iommu.c
+@@ -30,7 +30,7 @@ int tegra_vde_iommu_map(struct tegra_vde *vde,
+     size = iova_align(&vde->iova, size);
+     shift = iova_shift(&vde->iova);
+
+-    iova = alloc_iova(&vde->iova, size >> shift, end >> shift,
+ALLOC_IOVA_ALIGN_SIZE);
++    iova = alloc_iova(&vde->iova, size >> shift, 0, end >> shift,
+ALLOC_IOVA_ALIGN_SIZE);
+     if (!iova)
+         return -ENOMEM;
+
+diff --git a/drivers/staging/media/ipu3/ipu3-dmamap.c
+b/drivers/staging/media/ipu3/ipu3-dmamap.c
+index 330314a3aa94..fb42a6740f0e 100644
+--- a/drivers/staging/media/ipu3/ipu3-dmamap.c
++++ b/drivers/staging/media/ipu3/ipu3-dmamap.c
+@@ -105,7 +105,7 @@ void *imgu_dmamap_alloc(struct imgu_device *imgu,
+struct imgu_css_map *map,
+     dev_dbg(dev, "%s: allocating %zu\n", __func__, size);
+
+     iova = alloc_iova(&imgu->iova_domain, size >> shift,
+-              imgu->mmu->aperture_end >> shift, ALLOC_IOVA_ALIGN_NONE);
++              0, imgu->mmu->aperture_end >> shift, ALLOC_IOVA_ALIGN_NONE);
+     if (!iova)
+         return NULL;
+
+@@ -205,7 +205,7 @@ int imgu_dmamap_map_sg(struct imgu_device *imgu,
+struct scatterlist *sglist,
+         nents, size >> shift);
+
+     iova = alloc_iova(&imgu->iova_domain, size >> shift,
+-              imgu->mmu->aperture_end >> shift, ALLOC_IOVA_ALIGN_NONE);
++              0, imgu->mmu->aperture_end >> shift, ALLOC_IOVA_ALIGN_NONE);
+     if (!iova)
+         return -ENOMEM;
+
+diff --git a/drivers/vdpa/vdpa_user/iova_domain.c
+b/drivers/vdpa/vdpa_user/iova_domain.c
+index 96ce209762f9..feb130648888 100644
+--- a/drivers/vdpa/vdpa_user/iova_domain.c
++++ b/drivers/vdpa/vdpa_user/iova_domain.c
+@@ -362,7 +362,7 @@ vduse_domain_alloc_iova(struct iova_domain *iovad,
+     unsigned long iova_len = iova_align(iovad, size) >> shift;
+     unsigned long iova_pfn;
+
+-    iova_pfn = alloc_iova_fast(iovad, iova_len, limit >> shift, true,
+ALLOC_IOVA_ALIGN_SIZE);
++    iova_pfn = alloc_iova_fast(iovad, iova_len, 0, limit >> shift,
+true, ALLOC_IOVA_ALIGN_SIZE);
+
+     return (dma_addr_t)iova_pfn << shift;
+ }
 diff --git a/include/linux/iova.h b/include/linux/iova.h
-index 2800bdc203b1..0780a64e1149 100644
+index 0780a64e1149..d17b4901effc 100644
 --- a/include/linux/iova.h
 +++ b/include/linux/iova.h
-@@ -26,14 +26,16 @@ struct iova_rcache;
+@@ -97,8 +97,7 @@ unsigned long iova_rcache_range(void);
+ void free_iova(struct iova_domain *iovad, unsigned long pfn);
+ void __free_iova(struct iova_domain *iovad, struct iova *iova);
+ struct iova *alloc_iova(struct iova_domain *iovad, unsigned long size,
+-    unsigned long limit_pfn,
+-    iova_align_t align);
++    unsigned long low_limit_pfn, unsigned long limit_pfn, iova_align_t align);
 
- /* holds all the iova translations for a domain */
- struct iova_domain {
--    spinlock_t    iova_rbtree_lock; /* Lock to protect update of rbtree */
--    struct rb_root    rbroot;        /* iova domain rbtree root */
--    struct rb_node    *cached_node;    /* Save last alloced node */
--    struct rb_node    *cached32_node; /* Save last 32-bit alloced node */
--    unsigned long    granule;    /* pfn granularity for this domain */
--    unsigned long    start_pfn;    /* Lower limit for this domain */
--    unsigned long    dma_32bit_pfn;
--    struct iova    anchor;        /* rbtree lookup anchor */
-+    spinlock_t    iova_rbtree_lock;    /* Lock to protect update of rbtree */
-+    struct rb_root    rbroot;              /* iova domain rbtree root */
-+    struct rb_node    *cached_top_node;    /* Save last alloced node
-from the top*/
-+    struct rb_node    *cached_middle_node; /* Saved last alloced node
-in the middle */
-+    struct rb_node    *cached32_node;      /* Save last 32-bit alloced node */
-+    unsigned long    granule;             /* pfn granularity for this domain */
-+    unsigned long    start_pfn;           /* Lower limit for this domain */
-+    unsigned long    dma_32bit_pfn;       /* 32-bit PFN limit, constant */
-+    unsigned long   middle_pfn_limit;    /* cached_middle_node is for
-this limit */
-+    struct iova    anchor;              /* rbtree lookup anchor */
+ void free_iova_fast(struct iova_domain *iovad, unsigned long pfn,
+             unsigned long size);
+@@ -109,7 +108,8 @@ ssize_t iovad_show_busy_regions(struct iova_domain
+*iovad, char *buf);
+ int iovad_get_lowest_free_address_range(struct iova_domain *iovad,
+struct addr_range_query *query, u64 *res);
 
-     struct iova_rcache    *rcaches;
-     struct hlist_node    cpuhp_dead;
+ unsigned long alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+-                  unsigned long limit_pfn, bool flush_rcache,
+iova_align_t align);
++                unsigned long low_limit_pfn, unsigned long limit_pfn,
++                bool flush_rcache, iova_align_t align);
+ struct iova *reserve_iova(struct iova_domain *iovad, unsigned long pfn_lo,
+     unsigned long pfn_hi);
+ void init_iova_domain(struct iova_domain *iovad, unsigned long granule,
+@@ -147,6 +147,7 @@ int iovad_get_lowest_free_address_range(struct
+iova_domain *iovad, struct addr_r
+
+ static inline struct iova *alloc_iova(struct iova_domain *iovad,
+                       unsigned long size,
++                      unsigned long low_limit_pfn,
+                       unsigned long limit_pfn,
+                       iova_align_t align)
+ {
+@@ -161,6 +162,7 @@ static inline void free_iova_fast(struct iova_domain *iovad,
+
+ static inline unsigned long alloc_iova_fast(struct iova_domain *iovad,
+                         unsigned long size,
++                        unsigned long low_limit_pfn,
+                         unsigned long limit_pfn,
+                         bool flush_rcache, iova_align_t align)
+ {
 
 
 -- 
