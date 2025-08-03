@@ -1,76 +1,128 @@
-Return-Path: <linux-kernel+bounces-754480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C47B194CB
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:30:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CC0B9B194CE
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:41:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4375B174281
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:30:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 06D0B16FFBD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E102D1ACECE;
-	Sun,  3 Aug 2025 18:30:27 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1E61EFF96;
+	Sun,  3 Aug 2025 18:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SCIvEGXx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 311C946B5
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 18:30:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B19142AA1;
+	Sun,  3 Aug 2025 18:41:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754245827; cv=none; b=hs0+jqes1ndGXxuZ2IE2Yzl2LTqnhV+IChY3IKdBo+IgdMVPoJATgWfOV6Ew9niBoixWDAxvWcWLKHEX9z9Mx3mjCASJDeSLGh50sobBdaDPVrw/OOEtdcrr771e0V1ibujo4BHNus23k0MqVe0BaRDXUJm9CQX7lOx0tzb7UY8=
+	t=1754246492; cv=none; b=DCPRoOixiKttL32UGdIhFdiO4tHTc7SDoGl01I2WkYG1etOFHBKiRdaVWpZv2C/h3O/Ba6G3OLEpcg3GDpT9ydXs7N4m3g+WWIfg6SVMQ1KQFeHEhJkGFihGwfvU2ig0Q6CiXYVH1/KSc2tnxaSkBkPQOjeprnkGdTrHfFUA06Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754245827; c=relaxed/simple;
-	bh=8j1dSPuKgblt3b8yHsDRBQzNUtBOlAzabEVba9yrofE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=S8xuxPsMCpDW88tCI20r/M2eGIblt1pXe1iwETMBwicQ6+vUG/S0G0QEGhdR3DeQys82A7omt7VAPoIUOmkXqHvNfxJ0MLIi4lHGfSFqoHt0m/3baM9//onKk/49oOmFTliDiSfE6fuB+aVfUZMw+2TKLHn1EnJxoQhUDKgNN2s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3e3c9a3f22aso65928805ab.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 11:30:25 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754245825; x=1754850625;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=w7PRdkaUP0vQN4vWEONyo41ykjYWoG+Do0IVGF/8tlw=;
-        b=OGkpY2blF53pBJQp4OcCAACGmq8nGcl54LdY6RPmlmdOnfFpA008KcH5SwbOp3qnQ+
-         ZLHnu6LEkh1OnZrCCdvuGCXRQ2loeqif++3PWbSaUDGucP2b+VrPcQWFH4Pv3gP9rlZE
-         H8+F0/YRVcVHu8EHEvfNtgrBtqnTQODl0pqydN/B977rQpy8luIiznQMtSN7V8qJ8G4k
-         pBzwFtB7uM2/mqj0ok/oHlIkfjThT87XS1VPHy3J61z5oTmpceT1r2xEUnerBnxuM2zR
-         3/XxvjvY+1uEzRiYpGvNlYrdaSyPAYOSTxH2zcoLF+prKNtNc5tRGO0CC3Gcc8N/i3Tr
-         6buA==
-X-Gm-Message-State: AOJu0Yxiw8QOF40KVS+wJUhr3tE3CFRjEI6V0m/65GMdQt883a+i5+SI
-	eXCxrnz4fXtC8YOHfMsi7W0Iem2SipqwRiStdmZZnjQRwMOc06HnZ2GLAMxkyKnySxdams46i2p
-	wRfOS8Hsk8JHJHu4kJIbGqtd/VjrT7UeA7xjJZ+TbCIr3zB3+ZO9SoDx/oik=
-X-Google-Smtp-Source: AGHT+IFQl/BXL3aZVeaNgbizbhu20QwePYTTEJgZKCbh/WRUP4MO6fyhmkW9T0l9TOsiM4zNE7G9+VMiTjw/aqbCci0T2MQ8XyOL
+	s=arc-20240116; t=1754246492; c=relaxed/simple;
+	bh=pJSchiabA1YRkiP0bPpnxJ359/pK8eXxW74NJWXuqas=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TRSGs3xSbKN5QqYXE0r+lgvi9ksiG6bkxt21qWiWnYeTUq4KemD7cd0acvF1K7in6pfvwDfRKxAdmMV71Kwo5u3zi3oow2XK3OweQVngWDcRQsVzFJoP0ixvhVkNEinixTfemHk0P00UuGMwzeM5ucIufN8uGxi1Um+YRbK0C1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SCIvEGXx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CE3DC4CEEB;
+	Sun,  3 Aug 2025 18:41:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754246491;
+	bh=pJSchiabA1YRkiP0bPpnxJ359/pK8eXxW74NJWXuqas=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SCIvEGXxXcaJO7lhp3U+LpgyENujnhMCxTpx6ocsZeW1drmbEMm4p4oYQIZTp8V/Q
+	 85IpAkiJem8EkFX+fPMj66W0/8QFgLr8O7T3AYpal4jC2NgoTZZWQ+cG1zYxZqKFmN
+	 KpJDKxFJdRtko9VgrbcjDVh8KaLrg3UDvTtyY9I8rxUPMQ6RXNZrTP+4i3OuOKL7Kh
+	 v3qd7fjIMPxeN2oVQLbM89wIkipSg+PCzkM25wGrHxfhAlbpNtDeo7pjVIpTQ4t7Aq
+	 0O7cxtRStpGSu26pbtUAgbuDEt4GPTvoqUnrI6+3ZJ/h5wCiexuxjNd/IyJ1gASew+
+	 SkC8ae8zIAJMA==
+Date: Sun, 3 Aug 2025 11:41:27 -0700
+From: Drew Fustini <fustini@kernel.org>
+To: Yao Zi <ziyao@disroot.org>
+Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 1/3] dt-bindings: net: thead,th1520-gmac: Describe
+ APB interface clock
+Message-ID: <aI-tV0qk6fGP7yJ-@gen8>
+References: <20250801091240.46114-1-ziyao@disroot.org>
+ <20250801091240.46114-2-ziyao@disroot.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:2219:b0:3e3:ff59:6906 with SMTP id
- e9e14a558f8ab-3e4161803admr109281565ab.11.1754245825344; Sun, 03 Aug 2025
- 11:30:25 -0700 (PDT)
-Date: Sun, 03 Aug 2025 11:30:25 -0700
-In-Reply-To: <688a8cdf.a00a0220.26d0e1.002f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688faac1.050a0220.13f73d.0004.GAE@google.com>
-Subject: Forwarded: 
-From: syzbot <syzbot+d3fa2fb715cfcc9d201d@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801091240.46114-2-ziyao@disroot.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
+On Fri, Aug 01, 2025 at 09:12:38AM +0000, Yao Zi wrote:
+> Besides ones for GMAC core and peripheral registers, the TH1520 GMAC
+> requires one more clock for configuring APB glue registers. Describe
+> it in the binding.
+> 
+> Fixes: f920ce04c399 ("dt-bindings: net: Add T-HEAD dwmac support")
+> Signed-off-by: Yao Zi <ziyao@disroot.org>
+> Tested-by: Drew Fustini <fustini@kernel.org>
+> ---
+>  .../devicetree/bindings/net/thead,th1520-gmac.yaml          | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
+> index 6d9de3303762..b3492a9aa4ef 100644
+> --- a/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
+> +++ b/Documentation/devicetree/bindings/net/thead,th1520-gmac.yaml
+> @@ -62,11 +62,13 @@ properties:
+>      items:
+>        - description: GMAC main clock
+>        - description: Peripheral registers interface clock
+> +      - description: APB glue registers interface clock
+>  
+>    clock-names:
+>      items:
+>        - const: stmmaceth
+>        - const: pclk
+> +      - const: apb
+>  
+>    interrupts:
+>      items:
+> @@ -88,8 +90,8 @@ examples:
+>          compatible = "thead,th1520-gmac", "snps,dwmac-3.70a";
+>          reg = <0xe7070000 0x2000>, <0xec003000 0x1000>;
+>          reg-names = "dwmac", "apb";
+> -        clocks = <&clk 1>, <&clk 2>;
+> -        clock-names = "stmmaceth", "pclk";
+> +        clocks = <&clk 1>, <&clk 2>, <&clk 3>;
+> +        clock-names = "stmmaceth", "pclk", "apb";
+>          interrupts = <66>;
+>          interrupt-names = "macirq";
+>          phy-mode = "rgmii-id";
+> -- 
+> 2.50.1
+> 
 
-***
+Reviewed-by: Drew Fustini <fustini@kernel.org>
 
-Subject: 
-Author: kent.overstreet@linux.dev
+Thank you for making all 3 clocks required.
 
-#syz fix: bcachefs: Fix incorrect transaction handling
+Drew
+
+
 
