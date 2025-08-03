@@ -1,147 +1,112 @@
-Return-Path: <linux-kernel+bounces-754357-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754389-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBFCB19347
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:48:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA862B193C8
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:11:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56FC1747C6
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:48:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 724303B8F5B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:11:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D91A2877EF;
-	Sun,  3 Aug 2025 09:48:37 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0BD0D244667;
+	Sun,  3 Aug 2025 11:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b="pCHdnDKS"
+Received: from mailtransmit05.runbox.com (mailtransmit05.runbox.com [185.226.149.38])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41171FDA94;
-	Sun,  3 Aug 2025 09:48:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B93631EDA3C;
+	Sun,  3 Aug 2025 11:10:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.226.149.38
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754214517; cv=none; b=AS1/XnZbdkZ6AZWsuDJjnNQohchQUftMsyDrncoYpGtXhNK/1NrXe+4NQMCQTwSm7hYonkhTgD3coCf+lM1p+b5OYsxpsWDI2TAFYCn+6ADSuRG2b4ADDKpWO7JlTnkqQ7Tq0ratA5MHt6wNwxCQhjh7J8PatcokDQAyoeDBQGc=
+	t=1754219464; cv=none; b=BTU27KMxYc9m4T6bK8dViqVTujeHB6BDYJmXxD+qL1WDVAK8VXUFf/1OoK9tEYitfD/kqYBgJ3MDeeVBV5ldPU5VcxdZp5DyN+bU8KPpABXxhTXk5o3xckVNUxB8jJZ6dYM48vE1M2g/8oNT7K6xrYMNxFQN92ZVFL7kfWLQFyg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754214517; c=relaxed/simple;
-	bh=vTysKUuBKhd077tpR0rQ9hN0FTl7dt5WqeUW5bPObSg=;
+	s=arc-20240116; t=1754219464; c=relaxed/simple;
+	bh=mH95pA4cftJ6NN9CFstldZceXxZhqt1S9l4BVHuUz3Y=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kR9Ja70wYCFS6Q+hMvAIvs/MMweRYSw3yVxiqYh2qMod8sFMWq+8gvUr71JQdp6XRd1RAo6r1JPnHKTSdPCCMpX7s1OACV30YGr8RCgaGlsnMT2vu3zaNhNcqIGYM4wdWHhwkpdi2KmcKKL+0keCwb4QGf3LG9IBp2M0Wl+Fr1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.216])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bvvyL6Z1xzYQtJP;
-	Sun,  3 Aug 2025 17:48:26 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id 8F42B1A018C;
-	Sun,  3 Aug 2025 17:48:25 +0800 (CST)
-Received: from [10.174.179.247] (unknown [10.174.179.247])
-	by APP4 (Coremail) with SMTP id gCh0CgBn4hJnMI9oajGuCQ--.3118S3;
-	Sun, 03 Aug 2025 17:48:25 +0800 (CST)
-Message-ID: <e6065ccf-4c74-52d3-9f06-7b7cb6499f4e@huaweicloud.com>
-Date: Sun, 3 Aug 2025 17:48:23 +0800
+	 In-Reply-To:Content-Type; b=TtzTECtDAm54PHPSemKxXB7t5k3oESL177XDFMxb089+QEM71c+YwMl7WOZhGwf7/+fDTAbQEoaRPYPlTcKgepbJqGcKUcEM8QzFf3KcPTtR4Ax10hoS2eWjqem5v6Wn1gi2qBL+OWHkpxsOWllfismBwhz417qFG7fOTYApxaI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co; spf=pass smtp.mailfrom=rbox.co; dkim=pass (2048-bit key) header.d=rbox.co header.i=@rbox.co header.b=pCHdnDKS; arc=none smtp.client-ip=185.226.149.38
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=rbox.co
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rbox.co
+Received: from mailtransmit03.runbox ([10.9.9.163] helo=aibo.runbox.com)
+	by mailtransmit05.runbox.com with esmtps  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.93)
+	(envelope-from <mhal@rbox.co>)
+	id 1uiVWX-003vz3-8i; Sun, 03 Aug 2025 12:01:01 +0200
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=rbox.co;
+	s=selector2; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:From:
+	References:Cc:To:Subject:MIME-Version:Date:Message-ID;
+	bh=EL2StWgKuIJqWqQKx+j/2xqZwCUiP1U+Ud26xxbj8xY=; b=pCHdnDKSQFO018x3pvWq6uST1m
+	zncPtEk6In+1fV6Fjc35EpfscsPPoMNvCXCU40E2qTqGzbg1XCtZhn+uxu6Ygx8P3kbIYeNUHWqly
+	hVCj1LxCgumxoXux0XHJ27BOFRFiMjnZqY+e9eX7as8IcEVaE4SJvYTL7TFCgubWvEnN/aR/EXVyJ
+	TVJ+yWjk5BJIUiFqGaII2YMfaEghgqi3uYg0CKpHhZk5Kfbvco0aXkMrYH8Bqw+DmZMnY2RDK7H4L
+	qRErh/h9O9riaJI82HUGl35NrbY8R9GbdrZ746REt9EBpHbScDXwqW/SsFk2CBzFmH1e2MvRPLvDo
+	4O4w/0mA==;
+Received: from [10.9.9.72] (helo=submission01.runbox)
+	by mailtransmit03.runbox with esmtp (Exim 4.86_2)
+	(envelope-from <mhal@rbox.co>)
+	id 1uiVWW-000606-7S; Sun, 03 Aug 2025 12:01:00 +0200
+Received: by submission01.runbox with esmtpsa  [Authenticated ID (604044)]  (TLS1.2:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
+	(Exim 4.93)
+	id 1uiVWB-002JcU-1D; Sun, 03 Aug 2025 12:00:39 +0200
+Message-ID: <b6a2219b-32dd-4bb6-b848-45325e4e4ab9@rbox.co>
+Date: Sun, 3 Aug 2025 12:00:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.10.0
-Subject: Re: [PATCH v5 11/11] md/md-llbitmap: introduce new lockless bitmap
-To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, corbet@lwn.net,
- song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org,
- mpatocka@redhat.com, xni@redhat.com, hare@suse.de
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com,
- yangerkun@huawei.com, johnny.chenyi@huawei.com
-References: <20250801070346.4127558-1-yukuai1@huaweicloud.com>
- <20250801070346.4127558-12-yukuai1@huaweicloud.com>
-From: Li Nan <linan666@huaweicloud.com>
-In-Reply-To: <20250801070346.4127558-12-yukuai1@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBn4hJnMI9oajGuCQ--.3118S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7KF48ZFyUuF1DuFykCFW7Arb_yoW8ZF4UpF
-	Z7Ar1rA398trs5Ww4UJrZ7Za40yrs8CFn2gr93Z345Jwn09rnakF1kKFs5W3s0g39rAF1k
-	Zrs8Kry3Wr95CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUP214x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
-	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
-	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
-	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
-	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
-	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
-	v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiSf
-	O3UUUUU==
-X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net] kcm: Fix splice support
+To: Jakub Kicinski <kuba@kernel.org>
+Cc: "David S. Miller" <davem@davemloft.net>,
+ Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>,
+ Simon Horman <horms@kernel.org>, Cong Wang <cong.wang@bytedance.com>,
+ Tom Herbert <tom@herbertland.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20250725-kcm-splice-v1-1-9a725ad2ee71@rbox.co>
+ <20250730180215.2ad7df72@kernel.org>
+Content-Language: pl-PL, en-GB
+From: Michal Luczaj <mhal@rbox.co>
+In-Reply-To: <20250730180215.2ad7df72@kernel.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-
-
-在 2025/8/1 15:03, Yu Kuai 写道:
-> From: Yu Kuai <yukuai3@huawei.com>
+On 7/31/25 03:02, Jakub Kicinski wrote:
+> On Fri, 25 Jul 2025 12:33:04 +0200 Michal Luczaj wrote:
+>> Flags passed in for splice() syscall should not end up in
+>> skb_recv_datagram(). As SPLICE_F_NONBLOCK == MSG_PEEK, kernel gets
+>> confused: skb isn't unlinked from a receive queue, while strp_msg::offset
+>> and strp_msg::full_len are updated.
+>>
+>> Unbreak the logic a bit more by mapping both O_NONBLOCK and
+>> SPLICE_F_NONBLOCK to MSG_DONTWAIT. This way we align with man splice(2) in
+>> regard to errno EAGAIN:
+>>
+>>    SPLICE_F_NONBLOCK was specified in flags or one of the file descriptors
+>>    had been marked as nonblocking (O_NONBLOCK), and the operation would
+>>    block.
 > 
-> Redundant data is used to enhance data fault tolerance, and the storage
-> method for redundant data vary depending on the RAID levels. And it's
-> important to maintain the consistency of redundant data.
+> Coincidentally looks like we're not honoring
 > 
-> Bitmap is used to record which data blocks have been synchronized and which
-> ones need to be resynchronized or recovered. Each bit in the bitmap
-> represents a segment of data in the array. When a bit is set, it indicates
-> that the multiple redundant copies of that data segment may not be
-> consistent. Data synchronization can be performed based on the bitmap after
-> power failure or readding a disk. If there is no bitmap, a full disk
-> synchronization is required.
+> 	sock->file->f_flags & O_NONBLOCK 
+> 
+> in TLS..
 
-This is a large patch, I've found a few minor issues so far.
-And I'm still working through it.
+I'm a bit confused.
 
-[...]
+Comparing AF_UNIX and pure (non-TLS) TCP, I see two non-blocking-splice
+interpretations. Unix socket doesn't block on `f_flags & O_NONBLOCK ||
+flags & SPLICE_F_NONBLOCK` (which this patch follows), while TCP, after
+commit 42324c627043 ("net: splice() from tcp to pipe should take into
+account O_NONBLOCK"), honours O_NONBLOCK and ignores SPLICE_F_NONBLOCK.
 
-> +	[BitDirty] = {
-> +		[BitmapActionStartwrite]	= BitNone,
-> +		[BitmapActionStartsync]		= BitNone,
-> +		[BitmapActionEndsync]		= BitNone,
-> +		[BitmapActionAbortsync]		= BitNone,
-> +		[BitmapActionReload]		= BitNeedSync,
-> +		[BitmapActionDaemon]		= BitClean,
-> +		[BitmapActionDiscard]		= BitUnwritten,
-> +		[BitmapActionStale]		= BitNeedSync,
-> +	},
+Should KCM (and TLS) follow TCP behaviour instead?
 
-Bits becomes BitDirt during degraded remains BitDirty even after recovery 
-and re-write. Should we consider adjusting this state transition, or maybe 
-trigger the daemon after the recovery is complete?
-
-[...]
-
-> +
-> +static int llbitmap_create(struct mddev *mddev)
-> +{
-> +	struct llbitmap *llbitmap;
-> +	int ret;
-> +
-> +	ret = llbitmap_check_support(mddev);
-> +	if (ret)
-> +		return ret;
-> +
-> +	llbitmap = kzalloc(sizeof(*llbitmap), GFP_KERNEL);
-> +	if (!llbitmap)
-> +		return -ENOMEM;
-> +
-> +	llbitmap->mddev = mddev;
-> +	llbitmap->io_size = bdev_logical_block_size(mddev->gendisk->part0);
-> +	llbitmap->blocks_per_page = PAGE_SIZE / llbitmap->io_size;
-
-logical_block_size can > PAGE_SIZE, blocks_per_page is set to 0 which can
-cause issues in later computations.
-
--- 
 Thanks,
-Nan
+Michal
 
 
