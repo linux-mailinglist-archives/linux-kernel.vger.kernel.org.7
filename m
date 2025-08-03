@@ -1,383 +1,270 @@
-Return-Path: <linux-kernel+bounces-754248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B4FDB1911B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 01:51:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C7CB1914A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 02:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3677F3AC2C2
-	for <lists+linux-kernel@lfdr.de>; Sat,  2 Aug 2025 23:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82585177E22
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 00:16:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4C4821FF4C;
-	Sat,  2 Aug 2025 23:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C699318027;
+	Sun,  3 Aug 2025 00:16:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="KIh1bnNs"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="a+LdmqHN"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9F3020012B;
-	Sat,  2 Aug 2025 23:50:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.14
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754178657; cv=fail; b=F6v3SCrs4IL//VZB/6zkfgVErqBM9SyeXlCCVwwvmgqLa7TAomcyRyEE03/DM/oDV2kVjtzR+4OtOZAjto8TEF7TWHY67sVjh6bQFVydBzJWTJyiynSsKAU7msBVe9y+vPwsxvlTlSs8wpOUwHfzNLA6oxhVPLC3bx7Eyw/eyCE=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754178657; c=relaxed/simple;
-	bh=OS9Z7aUiknHZA6BthOWis4wAkRrym+7tH520/L8tZmg=;
-	h=From:Date:To:CC:Message-ID:In-Reply-To:References:Subject:
-	 Content-Type:MIME-Version; b=U1OPQajsN0M5P0wbmgr7NKuh3NnbximdJh36mQheVunjSsMAvF8I5KgB8eYYv2axuh9G83I+NZRAp0wxoqHrBMMJlokr/dplJ0erIyXsI5EggBGwkunl+px4E0+Ca0K8tRnmzgkWMrMVlCtuT38w/MhyIAxNPJ6pS6CSkOHjGXU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=KIh1bnNs; arc=fail smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1754178656; x=1785714656;
-  h=from:date:to:cc:message-id:in-reply-to:references:
-   subject:content-transfer-encoding:mime-version;
-  bh=OS9Z7aUiknHZA6BthOWis4wAkRrym+7tH520/L8tZmg=;
-  b=KIh1bnNsUgd3IbOAlmiHEiY3SvS3f0B25uspLhErOHkqm2QajrawAGdT
-   Q9m/gQY25n/diW3CfG2TrFs22YEv3G6N2jYfNmNvAwQsqTgJAOBuFssqs
-   AvMDocacAl/CRU9UjaqKL2DsNJISMQ7vREv7HjWdxyG7O+lr8KeEw9ElP
-   BVuuCw/w5Tw9tf67f2Mh/b9wt2sBSBxYWzo2osLqlKncYSGFSsNp83C4E
-   fvVZZpAyX13VcSI8ZIPq4EKmGw4UJksq9gXp2y+NjyH3G4RNCH3PH4CsL
-   SkRlw+uJQ4R2a7Kd24vDO/eE/R/M5ZvkexW87JZaac3ITIO7vfr7IB8rF
-   A==;
-X-CSE-ConnectionGUID: EXfWMcsIQrKj1qhJz7an9w==
-X-CSE-MsgGUID: kcI28pa8QDe3AtnFHdI7aw==
-X-IronPort-AV: E=McAfee;i="6800,10657,11510"; a="60314912"
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="60314912"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2025 16:50:55 -0700
-X-CSE-ConnectionGUID: HH7QfqMcThyKvLv53A7hvg==
-X-CSE-MsgGUID: Ab/GixacQVGpfuO2USHUXQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
-   d="scan'208";a="163131755"
-Received: from orsmsx902.amr.corp.intel.com ([10.22.229.24])
-  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 02 Aug 2025 16:50:56 -0700
-Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
- ORSMSX902.amr.corp.intel.com (10.22.229.24) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 2 Aug 2025 16:50:54 -0700
-Received: from ORSEDG903.ED.cps.intel.com (10.7.248.13) by
- ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26 via Frontend Transport; Sat, 2 Aug 2025 16:50:54 -0700
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (40.107.243.53)
- by edgegateway.intel.com (134.134.137.113) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1748.26; Sat, 2 Aug 2025 16:50:54 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dpf19LBwpFX/8w2ViMBuONrSEVGPlhCV6/4RmBuG6Ni1t3kIbIXZo/1+GVFyjZWRzbAhcioIEOhpFm/3aTK5+Ade1MYQXK1netoArwKdgf+u5ByDN6gnhDjKSBVc1lA8IEgSSatwGEBfqhPnwTOI44WiRSdHPeFRiUI8jZ/XvndjpvRwlN3dUbR9Y0Gs3p+LBq4r5T9hvkBnR6lCBCq/t/ZFOi+WenYQrtKGaKksBbQK0nZXR9ekp3HyOB0xUWJO0u2yFV7p5JDYgD+GIiaGIA7jG9Z/JmMMDU0xhZ7Z81Rw+i7jSFpOtXzXh1oEUYsJEmE7ic3LQm5vH57p9jC7QQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=8tts63ruMAQW3j8+mBhjhDkViO9E+d5lDz1g2Rf/LhI=;
- b=gLHNP2y8wiV2duLdGgLNwgLIG2GyQ2F0wVMpjYili8znAk/GnDyS6gNQ65h2lTDUKuxEjTnll8lwf3HOPTU5KmuWn7EMvJEYOEOyV01MtPXqRZW20n45AUmA2K1yMzCnlGtoh6ooPrhYrFeccAAM0lGdxNiEcEyc848tIOuA6OofoBEvA0StwVQ+k8ENbaYLIDTP/gvFoYN2hNLtdYVqJa1v6jDe2NdUKnmUdgchGRQDcKNsDvUXGzgebT/h6QFLRjntkJHixJClVmMJFifKejqW33M8UQf8q3CKjFMm8MB4HCtadX4jBbOHoH2buqB+ZDMsurU1EXesGPet6D/Cpg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com (2603:10b6:510:256::6)
- by IA1PR11MB7385.namprd11.prod.outlook.com (2603:10b6:208:423::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Sat, 2 Aug
- 2025 23:50:52 +0000
-Received: from PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8]) by PH8PR11MB8107.namprd11.prod.outlook.com
- ([fe80::6b05:74cf:a304:ecd8%2]) with mapi id 15.20.8989.017; Sat, 2 Aug 2025
- 23:50:51 +0000
-From: <dan.j.williams@intel.com>
-Date: Sat, 2 Aug 2025 16:50:50 -0700
-To: Jason Gunthorpe <jgg@ziepe.ca>, <dan.j.williams@intel.com>
-CC: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>,
-	<linux-coco@lists.linux.dev>, <kvmarm@lists.linux.dev>,
-	<linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>, <aik@amd.com>,
-	<lukas@wunner.de>, Samuel Ortiz <sameo@rivosinc.com>, Xu Yilun
-	<yilun.xu@linux.intel.com>, Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	"Steven Price" <steven.price@arm.com>, Catalin Marinas
-	<catalin.marinas@arm.com>, "Marc Zyngier" <maz@kernel.org>, Will Deacon
-	<will@kernel.org>, Oliver Upton <oliver.upton@linux.dev>
-Message-ID: <688ea45a14015_17ee100cf@dwillia2-mobl4.notmuch>
-In-Reply-To: <20250802141750.GL26511@ziepe.ca>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <688c2155849a2_cff99100dd@dwillia2-xfh.jf.intel.com.notmuch>
- <20250801155104.GC26511@ziepe.ca>
- <688d2f7ac39ce_cff9910024@dwillia2-xfh.jf.intel.com.notmuch>
- <20250802141750.GL26511@ziepe.ca>
-Subject: Re: [RFC PATCH v1 00/38] ARM CCA Device Assignment support
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SJ0PR03CA0356.namprd03.prod.outlook.com
- (2603:10b6:a03:39c::31) To PH8PR11MB8107.namprd11.prod.outlook.com
- (2603:10b6:510:256::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D46F87494;
+	Sun,  3 Aug 2025 00:16:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754180188; cv=none; b=m2Zqk6qQSx35D0Mywz6IABasnGTorFTBs06Etn8lHh4m1+V5tIMtRY2K/l7tzxMFm7Xep+IK8ZSCFKHkYKK7xAdatI8etOqATzURgJYcSGhqL1r+jhGQGYANmE3T29XvnjYRXLjORANvEH4grKq3rC4Fk6cf3FkmCCVi2iZD6HI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754180188; c=relaxed/simple;
+	bh=IUvWGqpQ7Hhuylx1GyU5M5CpgvzLVzXTBfkN5Hye5PA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qRVeKSPX9lubd7h/BeTk5W3XJ2wbA7p7oI/1LJxF5UnVsPnjrdbEnsXuCL2C+11K3BeaVFSLW+c80fsG40M2ly7qaRGoty6XhdmEAKezbsyTck43uehB7S+mBWl5ZNe9LcARanE5CGqD+qlCvrH6h/AXQuor/uwlTVoGc/7IYRU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=a+LdmqHN; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-76bde897110so1424153b3a.3;
+        Sat, 02 Aug 2025 17:16:26 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754180186; x=1754784986; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=U4f6RGa1UKAKsttnf6xQ3CCtWWT/P+q0p71DgbB6kkI=;
+        b=a+LdmqHN5EfovmiRpsQcG0o+lC3wiEAU7DHUSDvCb26qaE7EjoCGw6D5tpSGstVfWm
+         6GZC/OZoBPcNHKXZA35RklYtokuERMDoa48i7NdpMIGisrz+by+jl4we1pHjzOE9glB6
+         TjZPwc+k/DLsw9nhsasRTJISeAZmzOuDffWW8+9Ut1+R99t6Gv5PFvuca7s1TeE5KzmB
+         wxFW68Jg47OXtvmjr8BX2qTfP4oey6LRUfJSqg7q7igAB2gkoJmlHQh05tpavDeuVH+b
+         Poe/K3sKgSAu8IQdBb/kDCgtx3NxXYHpHfPV6qHZV19XVLVDxxjn0/Ud3kY5I65yy0/u
+         ANyA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754180186; x=1754784986;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=U4f6RGa1UKAKsttnf6xQ3CCtWWT/P+q0p71DgbB6kkI=;
+        b=L3AZZekE7rkHqCeTI8d6qmDELittkNzCYm5AKrvckxZBHs6WtQXHAqeaHTOj7TnOsz
+         8mpJWOWUCxCe4zcT8VET3YUUgF4pdWehCyoWNmp0TpbqYVWncMdZ3xN7LIhwfDcZkF51
+         mJeUNjdeQaUdZkPuNAMgfZWPTFBIYr6J/OXdfaV5LFuvukd4lzf+Pzlf69wiTjBqX8zS
+         MQIGeMQVBEVc+J6FvNAlyubWAOQGH3cyslGaM3vSJoyuOSNKLbU/+ReXY7TNbGl5tl9f
+         XQ/vFY9IPN1bsDzCuRLPqByp5x0FzOBwOEdqzrioCe7tPlygBioZvaAj/EitjJg3PyRz
+         Wk+A==
+X-Forwarded-Encrypted: i=1; AJvYcCXIb62G/pOWAHrmHIXVreg2p4quor9+0tzKCCmjpa50zUxxnO4xR4VeQid6lhsKP1Ql/fG9BjMz8JhK3yBV@vger.kernel.org, AJvYcCXemIDh9oszl1zfxRNo2NUe+W6QoxuLYPnA/BXeLyTgY6Whn9A6Pi+kwVIhmzB6GX0j/lpwKFnTCKc9@vger.kernel.org, AJvYcCXfkImXflApbcqsiIWNy7+CnADqRZtFu/7N7SNzvLyAQTeUpEE7ZrEkvSIvTnikVtootxtWGJRYl0U72ebiTeTNYpM=@vger.kernel.org, AJvYcCXpTFSRfO+zwjl90fvKaK3iXHLoSdUpch3XS9KZx4n8gWM6Io6uOmxDKit+/acU9mQImnwUM3FWdr6rlhOC3dI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxsLZikpTdd07i++vYlrhFJD2lWSuqrl1f/deYjYN6Kbawtcp7Q
+	5yB4bPsyvvn6zIi7BKAdLvbu75+A4IiPc+k1gthSAYr+qStFB3e0L10+zxTA8w==
+X-Gm-Gg: ASbGncs+qQCOcCmB5AtFerC2ZUFJz63iXWeY5VJwlzCTXoD9oS//dGqKaWBSpmTrVRA
+	thf4m/OY7MolM837tl99D3v9esYRyUqv4LRG2ouzQO3cQhcTuaHhe5EQ9iVjQVLFgeRtVnfuI4z
+	iwDB+O3kZ8Jp8gFp9akDtp5kg5v+hUDyxZSneW95O+5wFpFWXPOzMkb+AlUT8EUplW6FSe9bAE0
+	ZE6Nb8c5eE/iA2PWbZ9YCgHi8hX8wN450ngGo5gCs2e80/2WtZfSNnrTsSk1eOe7JSzf0T/93QA
+	BHu8h8KQ1h6+6b2zyW7DKBk2hfRfb59tsHpeD7nDSaLGCBD0TIinMDwoOsz3WbGd9JHBu0WHCHn
+	NttruzJrLqGEzrRPG+RVUei/XcAoVLe6zhUQ8+NNIIVa/Nkdp6ZgeRWraKtN02wY/Z2MhzHy5MB
+	UcqtzBfg==
+X-Google-Smtp-Source: AGHT+IHGwdBChEU6kB5AUKVDtfXZrhh+zzuuoFML5LEF3V9noFxNXGaBxDw9rhim8mHtyvhB7TS5xQ==
+X-Received: by 2002:a05:6a20:6a1b:b0:23d:f6c4:f8f1 with SMTP id adf61e73a8af0-23df9083103mr7594454637.21.1754180185956;
+        Sat, 02 Aug 2025 17:16:25 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422baedf5csm6373359a12.47.2025.08.02.17.16.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sat, 02 Aug 2025 17:16:25 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <c5db278f-7fbf-45cf-8b6f-2f5604daf6ee@roeck-us.net>
+Date: Sat, 2 Aug 2025 17:16:22 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH8PR11MB8107:EE_|IA1PR11MB7385:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf2eb3ef-951c-4770-2ce4-08ddd21f69a9
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?dHUwVGswaSsrVE9oZFNBd1lBMXdOYzhJRTlFKzY3Sm0yUmxlOUVqdGFMaDdU?=
- =?utf-8?B?aGlDMHlQbmlramZBVitSdUdOOWU0czdKaEdRWVp2c05BMUFON3RBK2xRbklu?=
- =?utf-8?B?Y0Z6d2FqUVpnbDEyY2JrM3ZJKzFiNEFiVjc1WFFvSWdmRXMzb3c2dHRxZHRo?=
- =?utf-8?B?S1lyemdFcmlZUTVxKysrYWQ3S3Nyb3RxaHF2cHVlRUpBTWc5WmNTRjJQdTJC?=
- =?utf-8?B?MnBQeVZZMkpqWFJXZXA2Zi9GMk8walJBNHBaY2lscjV2bmNpN0Jvcm5EZlZH?=
- =?utf-8?B?c2QxVVVRUWJYYk5UNGRDV243QlRnV0ZOdFJZUWNXaWZPTnpEbndYcmtXc0NQ?=
- =?utf-8?B?cTlhU0tieG1WaDVmbWlKaTRYb1F1aXlicThYWjduZ3NqOWlzOC9EUDd2ckxs?=
- =?utf-8?B?ZUhEa1cwNjdSRzZ2K0E2aU1JSHE2SitQRVdXa1VKWnF6WHlwYjkreFFMSzc5?=
- =?utf-8?B?cVJSS2U3OHZPZ3JLdVNkeXNHQy9EdTFUd25tS3dXRjZXRlFiWU5vMGtndTBM?=
- =?utf-8?B?b3I1RUk0ck5WQWxVMjkxOFlwS0Z2bVN5UUNPbXRwTXFSSDVMTG9MWUszSVpW?=
- =?utf-8?B?RERXMDd1c3pNcXVYdGdRSUVpSS8yMXFNRUZKdGRzZWJJMzBxWHJOZC9SSDJr?=
- =?utf-8?B?dG9KNVBWNXBEWFd5VnpNQ2NnbyszaEdpeGxvZjF4QjNXNEg1SUtFeTh5Wm1L?=
- =?utf-8?B?b3dyK29QdUR3eldzYkVFSmhYa2xuOVlpSXdwSmwrOExLazFKYW9WMFVSdDU3?=
- =?utf-8?B?UC9PdTBQME1udzNCUktCbW82SHg3QmhralZTbWZVNnhIc0JKMWxVUlhqWFJ3?=
- =?utf-8?B?am9xWWJmQkc2OTM1RmYxc2FBemFHV2hLSm85Rjk5cDJaU29JRkhreit0cWFq?=
- =?utf-8?B?ZFZzdlM4YzVEbWZCOUZPcnFDTWJQcXArdk11N3h1UjRxbDd2czZMbkFuU2Z2?=
- =?utf-8?B?QVk3Z3VMWTZzYTlnR0ZQdkxmYko5WHFFZm1KaFR2N2pFeW9NVEl4bzVBSFVv?=
- =?utf-8?B?ZEFMUlZqWnZsbUNuY2NmTUg3TDhyREpCdlY2SkhMTmVNN0M4U2s1RkFHa24v?=
- =?utf-8?B?aXl6dWtWdHBiTWFLRHdKY2pKK1h1QXZPNTQvd0M5dURvcTR2MmNuWnNKSUJX?=
- =?utf-8?B?Z2NMVWxZeWRDaXpjMUFnZmwzdkR4OGpPTUUyb2V2ZUsxSW5ZOTJ5VU1JR1Nq?=
- =?utf-8?B?aFJBUGZ6WVpmakdyU0JyQVN5UnQvZk9pcnk2TVc0MG5BUXpXSUxyYnp1Uy9G?=
- =?utf-8?B?QldPckhQcUtvbFhYYXFaQWl1dnlTMEdNMVF3NVhRRFdpOEVuQXRTdWk2MVVr?=
- =?utf-8?B?UEYrRk1waXZuZmU1ZW5wSEMrZHRUUjNiWnVCeTVNMkdCdjZZbEo5OWlzYnhw?=
- =?utf-8?B?cU5ZS2FicUxCc1JnT3RUTStIVGVwMnpZaHpoUDlNc3ZneVlGbEJIcGlsbEZJ?=
- =?utf-8?B?WGF4SXJ2M1dnNHlpdTlaWlFlV1BKZGxmNEZpKytRSlJMMnRPVXBSTVE4cnZz?=
- =?utf-8?B?OFpLTzB6WlF3WnBpVVBKbjZUVXNHVFV2Zmp3dkoxcWU2VG5XSFBHSllTY2VM?=
- =?utf-8?B?MWFVNW1peVZVUkYzVVdmTEZqZFh6SzZMRnBkYVplYnFNWE9yWExsVCtsdkRB?=
- =?utf-8?B?aCtvRUluRFM3T0FOUTQ0Ti9DdnEvbDQzV2hUMGhnWTA4YzFTMUVPbk9UMTY2?=
- =?utf-8?B?cmJ0cGJqZSt0bk5oQlNKV0thdTJIZ1dLNERtNmN4V1BFME5yaGI5a2EzdndN?=
- =?utf-8?B?QWJiYTArRHJwMGNsVUROc2M3U3pRc3I0cmZjd3VNNlJrbUZTYU1TTEgwNW1F?=
- =?utf-8?B?dXpaamk3elowWEpWNnNsMkVVYXErcnJlK21tL1AySGVndWVSUUtjSUFKdzhB?=
- =?utf-8?B?MjBQNWw0SURlbENrZmVTdVYrbHF5SGlRUnNZTjNMNUM0Ti82OWxGKzcwcTBJ?=
- =?utf-8?Q?efxbILnWt+c=3D?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH8PR11MB8107.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?U1dYY2N3T2Nhb3pERzNOdFdxWkdvZUgrVURabzgyeVc1bjlWZTJjZmczdytk?=
- =?utf-8?B?d2hYQkhVUE5zcWs0dnYxVEdVd2pudVNIRHRacWJKY0k3Vm01MUN0cjRFeHlE?=
- =?utf-8?B?RDVuUFlOQ3pwNmphaGZtRFJhNWs0QktYZUtPam5uU0syWS9OSmQ1bnFwKzRV?=
- =?utf-8?B?SGl6MWVESTlIRUNjcmROYWN6Vk8wQXRLV0QrK0lHMVZ3NEcvTWRTWXBmVlIz?=
- =?utf-8?B?K3MyaVJoU0tnOC9vaWt1Rll1WkJXczkwRTJyNTd0NGhILzMyZ1g5QzhTQWVz?=
- =?utf-8?B?QWJIQmZ0dlBaT1hMdEZvV1VFaVcvQnB0NldSQ0dDUjVXU2ZBN29tTjk4ZUp0?=
- =?utf-8?B?VXkyVUw0NDEyTjd6di9TdTUwaFJoTUJ3dDdpdmxHOWk5cTJRU2ViTjJuMWtU?=
- =?utf-8?B?QW9YemU1emhTR1RSSXU1ODRHN2ZzVUNaWlpTQkZPeWJvb0IrYVhjVzBCakM5?=
- =?utf-8?B?OVFrQVVqUkJ2V3BPTFNjZjE4OXNpeWZNbk1QVFd0NUN6S2FobkFhOHhZU0R0?=
- =?utf-8?B?RFU1cGNkR21maHpUQ2wxTlJmbWNFZmdMd2lpNUxKb3lLUjBGLzMvWDJDTU45?=
- =?utf-8?B?ZGczeGEzR0NUcnFXbzU2SGRuS1pHTmlmUGJrcGJJNTZBTXQ4anJpdTNJL2NP?=
- =?utf-8?B?R0RELzZHMS94NDZPTFBmelFCOXZzSkQvSlJXWEdIc2tlazlwdUtIbVZGMVdl?=
- =?utf-8?B?SWdGYkJJM2RibHFQNnFLd2tDV05QblJFVEdLaGduK3pjMUxjVURVTS9zL29F?=
- =?utf-8?B?VndtdnFCemRueW1UaDZETTFRS1JkNm01ditQQmFBSXRHZktVZ2RUMFh6YWFO?=
- =?utf-8?B?U0dadnp4Sk5ZMzJqRkJZQ094L2lja21CMlJHWDZXODRnVmd6R0dKSm1GSEgv?=
- =?utf-8?B?djR5ZDRBNVU1UmxCanF4VG5qR2hBUkExcG5GazlXL010ODFONjdGREJobHFT?=
- =?utf-8?B?VjFDUzRCVEwvM0Q0WGw4S2lNdXBpcnFRMC9vb0JBa25US2xMOTdsVlgrQlBq?=
- =?utf-8?B?MG9QUHlVTlNxVTNEMHNTOWVFT2tYLzk3TWw3dnNqckRqcXdRMVd1anJBeThB?=
- =?utf-8?B?M29Pcm5VRWxjR1B4b0FkMlpLTDlDYXNEL0pidnZCMWczOVdNWFJTMGlzVU1S?=
- =?utf-8?B?SVh0RnhsZW1nUHIrMHY5dXhTbEF6Um9ubEc0R1R1UlNvdlRSaXE2eDh0RXZV?=
- =?utf-8?B?eUNCVXl6MFUrbGVXcjdEa1Q4WGQ4TDZoYXd1Y1RlQXllQytWMjh2MmI3N0Jp?=
- =?utf-8?B?bkhkNGxEaG9EMWVOdGhXV0V1WFFJOHF2Wlo5N1pBL05zT1hrVjZVcUw1OTRw?=
- =?utf-8?B?QU1yOVBUOVZNQ2VlMWo2b0g4elMvdFBZbUVEVG8wVFhhRGFTWEdLSVRlZlNs?=
- =?utf-8?B?Qmd3c0NVKzEwRHVDUzU4OC9kVFBseUdOVUtydDdHeVFzbHRJTXN6bStBL0lX?=
- =?utf-8?B?Y0R6bTB4ZXlkakNwY2ppdEZVOXhGelVwUnJlYTRBaXpLVVQ0c3VEV1FEVzZj?=
- =?utf-8?B?MXc1WHFkdXlBay9kbVVwd0RhZ3R2SDhHQUtOU2pLLzloc0R4NGdEQ0drSUdR?=
- =?utf-8?B?YjFReWtjNWoyNVN5czJVQ001Ri9BSTV1SmFiWTZKdGhjZWFPNXJLQnMvR3Yz?=
- =?utf-8?B?ZmVaWjZHSjhFa1BrRUpjUHhpS0NNa3o2NGk4bXE5NWtwMFI2SitHQ1lwU1VU?=
- =?utf-8?B?R0tqUENFbUFLbTg0Q0wxMEl4Nmt3ZVdWeFBPYlpPeHRXRXE1SWN6WXVJckdu?=
- =?utf-8?B?Y2dVbFU1TlpEQXBoOXFYNFlFL2F0ZE9pWEFmQ3l6YmlsY1FTSFJITjdIc0x4?=
- =?utf-8?B?TGd0QnZsYXhUSm12WmJEZTBWcEd4Z1Q5aFY3WmNlU1dzaDV0THdmYTNRUXlU?=
- =?utf-8?B?SmFjanNEclhBOVNkWE0wbEtXWUU4SC9CdDFlUnhIdm02d3poTnQ5Y0hHM3VO?=
- =?utf-8?B?M2xtK1ZTc2VneDJML3h1WnRMd0NieUlpaGNZZmpLMFRCY2F0OW0rSkZJeVVS?=
- =?utf-8?B?VjU1VjZRRXRvRnpKZmw2RWJOODdJYUIyVGlIRHJDamlhemd4L1dyMEVVTlBi?=
- =?utf-8?B?UnF5WlhlejN5RG00amNQUmR5S0h6UGJHVm5uWG9MTXJlemovMGg0aTRNRkxL?=
- =?utf-8?B?TnliR2pxdytnTDlqT1FDQW9BNy9KQ0t2bnhrMHJBeHNqL2NGdGhvU3VHK2JY?=
- =?utf-8?B?R1E9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf2eb3ef-951c-4770-2ce4-08ddd21f69a9
-X-MS-Exchange-CrossTenant-AuthSource: PH8PR11MB8107.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 02 Aug 2025 23:50:51.6572
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: ZuWT5zC0lwjLTNAD0R9j7v2viHSrN5Sz4Ygy2jua21tn+166wWw4Yr7fJLkB+RRW+X5cyXxHpjb278Ei+Z5yVlw+u4i9arD9P41VuKQ/Mn0=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB7385
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 7/9] watchdog: rzv2h: Set min_timeout based on
+ max_hw_heartbeat_ms
+To: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>
+Cc: Wolfram Sang <wsa+renesas@sang-engineering.com>,
+ Wim Van Sebroeck <wim@linux-watchdog.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>,
+ Geert Uytterhoeven <geert+renesas@glider.be>,
+ Magnus Damm <magnus.damm@gmail.com>, linux-watchdog@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-renesas-soc@vger.kernel.org, Biju Das <biju.das.jz@bp.renesas.com>,
+ Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+ Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+References: <20250729155915.67758-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <20250729155915.67758-8-prabhakar.mahadev-lad.rj@bp.renesas.com>
+ <aIw-P6zkQSOhvYJW@shikoro>
+ <CA+V-a8txrQoweVrd7uK4LLvDonqrEQGT_gV1r28RFhy8-m=9VQ@mail.gmail.com>
+ <c06bcde9-0aa5-46d1-a5bf-bae5a319565c@roeck-us.net>
+ <CA+V-a8sDP7iir-bPetbCw0fakPRxua5F-F1hVvXUD8bGAMdhFA@mail.gmail.com>
+ <cd0653d0-4a2f-4361-8eb2-c1937d988a8c@roeck-us.net>
+ <CA+V-a8v0KZaeJwJAmEpRRdS3F3vC_CYv7zGN_n9a+M6qhFDMHg@mail.gmail.com>
+ <6b9338c0-e333-47dd-a3e0-0446b346f008@roeck-us.net>
+ <CA+V-a8tJMfjVUNfA5wue0Zwpj=dDC9XypQ69L9SeZApRH8i1aA@mail.gmail.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
+In-Reply-To: <CA+V-a8tJMfjVUNfA5wue0Zwpj=dDC9XypQ69L9SeZApRH8i1aA@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Jason Gunthorpe wrote:
-> On Fri, Aug 01, 2025 at 02:19:54PM -0700, dan.j.williams@intel.com wrote:
+On 8/2/25 12:26, Lad, Prabhakar wrote:
+> Hi Guenter,
 > 
-> > On the host this establishes an SPDM session and sets up link encryption
-> > (IDE) with the physical device. Leave VMs out of the picture, this
-> > capability in isolation is a useful property. It addresses the similar
-> > threat model that Intel Total Memory Encryption (TME) or AMD Secure
-> > Memory Encryption (SME) go after, i.e. interposer on a physical link
-> > capturing data in flight. 
+> On Fri, Aug 1, 2025 at 10:04 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>
+>> On 8/1/25 13:51, Lad, Prabhakar wrote:
+>>> Hi Guenter,
+>>>
+>>> On Fri, Aug 1, 2025 at 7:04 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>
+>>>> On 8/1/25 08:30, Lad, Prabhakar wrote:
+>>>>> Hi Guenter,
+>>>>>
+>>>>> On Fri, Aug 1, 2025 at 2:52 PM Guenter Roeck <linux@roeck-us.net> wrote:
+>>>>>>
+>>>>>> On 8/1/25 04:05, Lad, Prabhakar wrote:
+>>>>>>> Hi Wolfram,
+>>>>>>>
+>>>>>>> Thank you for the review.
+>>>>>>>
+>>>>>>> On Fri, Aug 1, 2025 at 5:10 AM Wolfram Sang
+>>>>>>> <wsa+renesas@sang-engineering.com> wrote:
+>>>>>>>>
+>>>>>>>> On Tue, Jul 29, 2025 at 04:59:13PM +0100, Prabhakar wrote:
+>>>>>>>>> From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+>>>>>>>>>
+>>>>>>>>> Update the watchdog minimum timeout value to be derived from
+>>>>>>>>> `max_hw_heartbeat_ms` using `DIV_ROUND_UP()` to ensure a valid and
+>>>>>>>>> consistent minimum timeout in seconds.
+>>>>>>>>
+>>>>>>>> I don't understand this change. Why is the _minimum_ timeout based on
+>>>>>>>> the _maximum_ heartbeat?
+>>>>>>>>
+>>>>>>> The reason for deriving min_timeout from max_hw_heartbeat_ms is to
+>>>>>>> ensure the minimum watchdog period (in seconds) is compatible with the
+>>>>>>> underlying hardware.
+>>>>>>>
+>>>>>>> max_hw_heartbeat_ms is calculated as:
+>>>>>>> max_hw_heartbeat_ms = (1000 * 16384 * cks_div) / clk_rate;
+>>>>>>>
+>>>>>>> This value varies by SoC:
+>>>>>>>      RZ/T2H: cks_div = 8192, clk ≈ 62.5 MHz -> max_hw_heartbeat_ms ~ 2147ms
+>>>>>>>      RZ/V2H: cks_div = 256, clk ≈ 240 MHz -> max_hw_heartbeat_ms ~ 174ms
+>>>>>>>
+>>>>>>> Since min_timeout is in seconds, setting it to:
+>>>>>>> min_timeout = DIV_ROUND_UP(max_hw_heartbeat_ms, 1000);
+>>>>>>>
+>>>>>>> ensures:
+>>>>>>> The minimum timeout period is never less than what the hardware can support.
+>>>>>>> - For T2H, this results in a min_timeout of 3s (2147ms -> 3s).
+>>>>>>> - For V2H, it’s just 1s (174ms -> 1s).
+>>>>>>>
+>>>>>>
+>>>>>> Sorry, I completely fail to understand the logic.
+>>>>>>
+>>>>>> If the maximum timeout is, say, 2 seconds, why would the hardware
+>>>>>> not be able to support a timeout of 1 second ?
+>>>>>>
+>>>>> The watchdog timer on RZ/V2H (and RZ/T2H) is a 14 bit down counter. On
+>>>>> initialization the down counters on the SoCs are configured to the max
+>>>>> down counter. On RZ/V2H down counter value 4194304 (which evaluates to
+>>>>> 174ms) is and on RZ/T2H is 134217728 (which evaluates to 2147ms). The
+>>>>> board will be reset when we get an underflow error.
+>>>>>
+>>>>> So for example on T2H consider this example:
+>>>>> - down counter is 134217728
+>>>>> - min_timeout is set to 1 in the driver
+>>>>> - When set  WDIOC_SETTIMEOUT to 1
+>>>>> In this case the board will be reset after 2147ms, i.e. incorrect
+>>>>> behaviour as we expect the board to be reset after 1 sec. Hence the
+>>>>> min_timeout is set to 3s (2147ms -> 3s).
+>>>>>
+>>>>> Please let me know if my understanding of min_timeout is incorrect here.
+>>>>>
+>>>>
+>>>> The driver is missing a set_timeout function. It should set RZ/T2H
+>>>> to 62514079 if a timeout of 1 second is configured.
+>>>>
+>>> Ok, you mean to handle the 1sec case, introduce the set_timeout for RZ/T2H SoC.
+>>>
+>>> Although we cannot achieve the exact 1sec case as we can have only 4
+>>> timeout period options (number of cycles):
+>>>
+>>> 1] For TIMEOUT_CYCLES = 1024
+>>>    - (1000×1024×8192)/62500000 = 134.22 ms
+>>> 2] For TIMEOUT_CYCLES = 4096
+>>> - (1000×4096×8192)/62500000 = 536.87 ms
+>>> 3] For TIMEOUT_CYCLES = 8192
+>>> - (1000×8192×8192)/62500000 = 1,073.74 ms
+>>> 4] For TIMEOUT_CYCLES = 16384
+>>> - (1000×16384×8192)/62500000 = 2,147.48 ms
+>>>
+>>> So to handle the 1sec case I'll set the timeout period to 8192 with
+>>> which we get a timeout of 1,073.74 ms.
+>>>
+>>
+>> Just four possible values to set the hardware timeout ? That is an odd
+>> hardware. In that case, you could also set the period to 1024 or 4096
+>> and set max_hw_heartbeat_ms accordingly. That would avoid the rounding
+>> error.
+>>
+> Yes sadly we have four timeout periods only. To clarify, you mean to
+> set `max_hw_heartbeat_ms` in set_timeout?
 > 
-> Okay, maybe connect is not an intuitive name for opening IDE
-> sessions..
 
-Part of the rationale for a generic name is the TSM is free to assert
-that the link is secure without IDE. Think integrated devices where
-there is no expectation the link can be observed.
+No, during initialization, and have no set_timeout function. max_hw_heartbeat_ms
+is not supposed to change during runtime. If you do change it, the results
+are undefined.
 
-The host and guest side TSM operations are split into link/transport
-security and device/state security (private MMIO/DMA) concerns
-respectively. So maybe "secure_link" would be a better name for this
-host-side-only operation.
+Guenter
 
-> > I started this project with "all existing T=0 drivers 'just work'" as a
-> > goal and a virtue. I have been begrudgingly pulled away from it from the
-> > slow drip of complexity it appears to push into the PCI core.
-> 
-> Do you have some examples? I don't really see what complexity there is
-> if the solution it simply not auto bind any drivers to TDISP capable
-> devices and userspace is responsible to manually bind a driver once it
-> has reached T=1.
-
-The example I have front of mind (confirmed by 2 vendors) is deferring
-the loading of guest-side device/state security capable firmware to the
-guest driver when the full device is assigned. In that scenario default
-device power-on firmware is capable of link/transport security, enough
-to get the device assigned. Guest needs to get the device/state security
-firmware loaded before TDISP state transitions are possible.
-
-I do think RAS recovery needs it too, but like you say below that should
-come with conditions.
-
-> This seems like the minimum possible simplicitly for the kernel as
-> simply everything is managed by userspace, and there is really no
-> special kernel behavior beyond switching the DMA API of an unbound
-> driver on the T=0/1 change.
-> 
-> > The concern is neither userspace nor the PCI core have everything it
-> > needs to get the device to T=1. 
-> 
-> Disagree, I think userspace can have everything. It may need some
-> per-device userspace support in difficult cases, but userspace can
-> deal with it..
-
-I do think userspace can / must deal with it. Let me come back with
-actual patches and a sample test case. I see a potential path to support
-the above "prep" scenario without the mess of TDISP setup drivers, or
-the ugly complexity of driver toggles or a usermodehelper.
-
-> > PCI core knows that the device is T=1 capable, but does not know how
-> > to preconfigure the device-specific lock state,
-> 
-> Userspace can do this. Can we define exactly what is needed to do this
-> "pre-configure the device specific lock state"? At the very worst, for
-> the most poorly designed device, userspace would have to bind a T=0
-> driver and then unbind it.
-> 
-> Again, I am trying to make something simple for the kernel that gets
-> us to a working solution before we jump ahead to far more complex in
-> the kernel models, like aware drivers that can toggle themselves
-> between T=0/1.
-
-Agree. When I talked about wishing for the simple TDISP case that is
-userspace can always "just lock" and "driver bind" without needing to
-worry about "prep", i.e any "prep" is always implied by "lock". That
-should be the baseline.
-
-> > Userspace might be able to bind a new driver that leaves the device in a
-> > lockable state on unbind, but that is not "just works" that is,
-> 
-> I wouldn't have the kernel leave the device in the locked state. That
-> should always be userspace. The special driver may do whatever special
-> setup is needed, then unbind and leave a normal unlocked device
-> "prepped" for userspace locking without doing a FLR or
-> something. Realistically I expect this to be a very rare requirement,
-> I think this coming up just reflects the HW immaturity of some early
-> TDISP devices.
-> 
-> Sensible mature devices should have no need of a pre-locking step. I
-> think we should design toward that goal as the stable future and only
-> try to enable a hacky work around for the problematic early devices. I
-> certainly am not keen on seeing significant permanent kernel
-> complexity to support this device design defect.
-
-Yeah, that is the nightmare I had last night. I completed the thought
-exercise about driver toggle and said, "whoops, nope, Jason is right, we
-can't design for that without leaving a permanent mess to cleanup".
-The end goal needs to look like straight line typical driver probe path
-for TDISP capable devices.
-
-> > driver that expects the device arrives already running. Also, that main
-> > driver needs to be careful not to trigger typically benign actions like
-> > touch the command register to trip the device into ERROR state, or any
-> > device-specific actions that trip ERROR state but would otherwise be
-> > benign outside of TDISP."
-> 
-> As I said below, I disagree with this. You can't touch the *physical*
-> command register but the cVM can certainly touch the *virtualized*
-> command register. It up to the VMM To ensure this doesn't cause the
-> device to fall out of RUN as part of virtualization.
-> 
-> I'd also say that the VMM should be responsible to set pBME=1 even if
-> vBME=0? Shouldn't it? That simplifies even more things for the guest.
-
-True. Although, now I am going back on my PCI core burden concern to
-wonder if *it* should handle a vBME on behalf of the driver if only
-because it may want to force the device out of the RUN state on driver
-unbind to meet typical pci_disable_device() expectations.
-
-Alexey had this, I thought it was burdensome, now coming around.
-
-> > > From that principal the kernel should NOT auto probe drivers to T=0
-> > > devices that can be made T=1. Userspace should handle attaching HW to
-> > > such devices, and userspace can sequence whatever is required,
-> > > including the attestation and verifying.
-> > 
-> > Agree, for PCI it would be simple to set a no-auto-probe policy for T=1
-> > capable devices.
-> 
-> So then it is just a question of what does a userspace component need
-> to do.
-> 
-> > I do not want to burden the PCI core with TDISP compatibility hacks and
-> > workarounds if it turns out only a small handful of devices ever deploy
-> > a first generation TDISP Device Security Manager (DSM). L1 aiding L2, or
-> > TDISP simplicity improvements to allow the PCI core to handle this in a
-> > non-broken way, are what I expect if secure device assignment takes off.
-> 
-> Same feeling about pre-configuration :)
-> 
-> > > The starting point must have the core code do this sequence
-> > > for every driver. Once that is working we can talk about if other
-> > > flows are needed.
-> > 
-> > Do you agree that "device-specific-prep+lock" is the problem to solve?
-> 
-> Not "the" problem, but an design issue we need to accommodate but not
-> endorse.
-
-I hear you, let me walk back from the cliff with patches.
-
-> 
-> > > But I think we can start with the idea that such RAS failures have to
-> > > reload the driver too and work on improvements. Realistically few
-> > > drivers have the sort of RAS features to consume this anyhow and maybe
-> > > we introduce some "enhanced" driver mode to opt-into down the road.
-> > 
-> > Hmm, having trouble not reading that back supporting my argument above:
-> > 
-> > Realistically few devices support TDISP lets require enhanced drivers to
-> > opt-into TDISP for the time being.
-> 
-> I would be comfortable if hitless RAS recovery for TDISP devices
-> requires some kernel opt-in. But also I'm not sure how this should
-> work from a security perspective. Should userspace also have to
-> re-attest before allowing back to RUN? Clearly this is complicated.
-> 
-> Also, I would be comfortable to support this only for devices that do
-> not require pre-configuration.
-
-That seems reasonable. You want hitless RAS? Give us hitless init.
 
