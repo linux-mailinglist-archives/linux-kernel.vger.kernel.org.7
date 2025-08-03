@@ -1,79 +1,88 @@
-Return-Path: <linux-kernel+bounces-754520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754522-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4385BB1955A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:48:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AFB08B1955F
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:50:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E59D83A5974
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:48:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4A5511890F92
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:50:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1E161FF7B3;
-	Sun,  3 Aug 2025 20:48:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7861FDA9E;
+	Sun,  3 Aug 2025 20:49:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="Qh6FlLsJ"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="FbeipkHs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A4A112BF24
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 20:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4321C12BF24;
+	Sun,  3 Aug 2025 20:49:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754254110; cv=none; b=H07uPH+jPFHdH5PF11OS6qXJmQBXXdQt/B27RyqWftmWNDCgNWfcOZPPflUuzFGdJZpthoT641Hn7IlxHGqKXSyiECr+cjDDtbgsMwSM2w9QIxj+o/DQnLo6O97+yhdcGmYiFE64k3v4qO95nDCFgIpJMgtcJNl6xlrreYTlbWE=
+	t=1754254193; cv=none; b=T1LBRFM94zoLXTMOPU2+lqO4DapJFYjuemTZqoBPnYa117cAUQF4lQKMqC0MmjIN/uohfzZS8vvdCeVcsyADPGejWXXAHyiqII4JhFhEQxA6GHL09Pev2246PeXkqDs/AoQ0EUf9XVQ52y6osX2vXcpyIWs0b92kwhUgv2NVHjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754254110; c=relaxed/simple;
-	bh=R86UDJNzFtE514NSFGrePDVR3V4l4yC8q8IYyfFSx3g=;
+	s=arc-20240116; t=1754254193; c=relaxed/simple;
+	bh=+/0qRS6aQg0KQWft8omUpj97CimdWnULi88QIwZXViA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tl1aaFbhCBM6ecMItNvP8ZRXum0LgsU/pAEN7TEsa/qw/gfbntdo86z2xGL+IJXmCvQUbQCNzLsF1kXt+OM2cmy3OxjFu72asL/SP9uC150ww0eqg0XI/X8g8f82uXgaHQBlgJ15u8P4UZU00qrnsQ8coIOgRXwkNtBLIVtZONg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=Qh6FlLsJ; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=Ux+D
-	LqhEa+N6g72w9NCM8SJSd65hGlEnGKuqCAwAej4=; b=Qh6FlLsJFVANQqkrDBZ3
-	vCMxPIZSE0qrwGZCfHf2CU3aelKd8Z1kjZuZzca2Si/vB3KOlH1hiq4dgLg+FTbt
-	lA+QzujEaWCB34gb28Az+zFk7HkHk9QcERoZilKRnPPPzlorS6m9kwQ3ItG7c2ic
-	dQGt8mQxAJ5bG4NnfTBvrWjDCi3jcM/X8nYxy/G3uM2V7cFPjek75sRTkmxZthhr
-	O7uedQ5NSY+WjfVu8sGfhk9vQQNjbaAJlU6XeCxno4qNaFbr1k8nrzCsLKRVCEG3
-	YbtHVJqyxYXHbp/R29i/jAVfO7k0t77Q8eBdo7k3gsafXIz1pP+U8BARBDLQ30GM
-	Fw==
-Received: (qmail 1647447 invoked from network); 3 Aug 2025 22:48:26 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Aug 2025 22:48:26 +0200
-X-UD-Smtp-Session: l3s3148p1@t6jZHHw7LL4ujntd
-Date: Sun, 3 Aug 2025 22:48:26 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
-Cc: Peter Rosin <peda@axentia.se>, Andi Shyti <andi.shyti@kernel.org>,
-	Farouk Bouabid <farouk.bouabid@cherry.de>,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-i2c@vger.kernel.org
-Subject: Re: [PATCH] i2c: muxes: mule: Fix an error handling path in
- mule_i2c_mux_probe()
-Message-ID: <aI_LGrnls6X7TFT6@shikoro>
-References: <354bf00a245ec3bac9cdd197a06138dddda2f009.1753904271.git.christophe.jaillet@wanadoo.fr>
+	 Content-Type:Content-Disposition:In-Reply-To; b=gVQXaSwMqKdvF2Onv/8vHcdhHN8xzj62HFgp9KZwUQJtJqYg/QMnZBpjb7UYW5sJY6Ikgbwxef/uOlGZrXyIFM0ezEKz0HAckU5xI6HTOO+XwISD71sZ1F3Kb5aBGVBSMqMoIvjbj9llsHzvSsh/lfKrrDgipgA76AQLJHQo15M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=FbeipkHs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6065FC4CEEB;
+	Sun,  3 Aug 2025 20:49:51 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1754254191;
+	bh=+/0qRS6aQg0KQWft8omUpj97CimdWnULi88QIwZXViA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FbeipkHs8FzsaH5S735GzA+S78xnf1b+AV2LhK55zxwV2vDtXhJDcWAycKwN9Eo4K
+	 bFr9/Fz4FrlC4+zRsXNne4eAG2iVgD9y5K9k7py3eWXii4rEfy51jFL8akfY4nxJjy
+	 0BKefzHDZFzrEkyTuCDSuuWhLa6LdBKD4AbAp0Gs=
+Date: Sun, 3 Aug 2025 21:49:48 +0100
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: =?utf-8?B?xaBlcmlm?= Rami <ramiserifpersia@gmail.com>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>,
+	Mark Brown <broonie@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+	Wesley Cheng <quic_wcheng@quicinc.com>
+Subject: Re: [RFC PATCH v3] ALSA: usb-audio: Add support for TASCAM US-144MKII
+Message-ID: <2025080341-usher-tastiness-0507@gregkh>
+References: <20250803203409.17005-1-ramiserifpersia@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <354bf00a245ec3bac9cdd197a06138dddda2f009.1753904271.git.christophe.jaillet@wanadoo.fr>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250803203409.17005-1-ramiserifpersia@gmail.com>
 
-On Wed, Jul 30, 2025 at 09:38:02PM +0200, Christophe JAILLET wrote:
-> If an error occurs in the loop that creates the device adapters, then a
-> reference to 'dev' still needs to be released.
-> 
-> Use for_each_child_of_node_scoped() to both fix the issue and save one line
-> of code.
-> 
-> Fixes: d0f8e97866bf ("i2c: muxes: add support for tsd,mule-i2c multiplexer")
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+On Sun, Aug 03, 2025 at 10:34:09PM +0200, Šerif Rami wrote:
+> +/**
+> + * driver_version_show() - Sysfs attribute to display the driver version.
+> + * @dev: Pointer to the device structure.
+> + * @attr: Pointer to the device attribute structure.
+> + * @buf: Buffer to write the version string into.
+> + *
+> + * This function is a sysfs callback that provides the current driver version
+> + * string to user-space when the 'driver_version' attribute is read.
+> + *
+> + * Return: The number of bytes written to the buffer.
+> + */
+> +static ssize_t driver_version_show(struct device *dev,
+> +				   struct device_attribute *attr, char *buf)
+> +{
+> +	return sysfs_emit(buf, "%s\n", DRIVER_VERSION);
+> +}
+> +static DEVICE_ATTR_RO(driver_version);
 
-Applied to for-next (for 6.17 mergewindow), thanks!
+The driver version makes no sense when it is in the kernel tree, so this
+can be removed.
 
+Also, all sysfs files need to be documented in Documentation/ABI/
+
+thanks,
+
+greg k-h
 
