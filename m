@@ -1,122 +1,93 @@
-Return-Path: <linux-kernel+bounces-754534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 079BCB196A3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:14:15 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A39F7B196A8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:14:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A21983B2ACD
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:14:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6371F3B4DE6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C74411FCF7C;
-	Sun,  3 Aug 2025 22:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFC81E22E6;
+	Sun,  3 Aug 2025 22:14:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="W4YT42iS"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oi1RAm7F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC45114E2F2;
-	Sun,  3 Aug 2025 22:13:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8EE321E51EF;
+	Sun,  3 Aug 2025 22:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754259246; cv=none; b=fQKt06zidpdYtf6Ue9b0zf7QWm9u4XGr4biD1umHpdUb9j0f9gOAS1uGceO/vm79xUt5xdAxMNWkAB6b+C/bGnVlCZfegLaCTlLZfsH6Ql1g6s08mrGxzdxLCGi+rUnxptXa4h3h+U8Mv4GdlrcTtDIypLv6/loKQuBl/8sNOG0=
+	t=1754259281; cv=none; b=ZVMUUvmv7fok13LC2ttcm2WOIIttzfz1BcYz3ERi/6GLR+1n7DlDfBq8cGUwNaMC5BO7jJhbI7f8lOPJOdzqpl13zddTKq4Ww3vzgQ6Tj8VEr5cGWqu3bJMEuuznWLyuPI3XsAzZ4mL3BRpCY7XO/2TqXExsleoH0dEEvef6fnI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754259246; c=relaxed/simple;
-	bh=cw9aQ5Ay0xbMr3IDdij8YbFRhxLI119y8yW/gi58blk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Y+biF6yju/MpVhxXQwPLzn+kVrSy7aNlqAla34M6nZoS9Y78eUfyQoqtTLlnNInodHz9H7IDFBJjDe9kXh1L0T1tgUVjzvY5Ez0J0aaG7aA9+jBRWbYSNj4eIRp8n8LLfYptg5cWWQHMOlodB4qlJHEZTvvaWsI3wWkAlrkBkDM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=W4YT42iS; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754259231;
-	bh=dc8kuJ7RVaJcyWhK0Q76YQPZlR5HZGq8CtEYzCnzbN8=;
-	h=Date:From:To:Cc:Subject:From;
-	b=W4YT42iSTEPn1n84TV7YHDIocGAYBNNQoLF8XV8sHwFOh4MZ2RyZbBlGy9EgGqccA
-	 xMqdA5brev7XFAw+/Mp/ocxWabL6GfR6uvsbchPGFwlpdeXko5Gu1nLXELPOTRQcHW
-	 3wqWIr9VObBx8vzOnsM45AP/OaTQRsjv3bohx6mDjtClhwHfG9lgZDWHstlFJuPwKt
-	 qXAFtJzf/nNNxXyWDTOmjMYLqtXA2NDk7+dkAtygIjH7Uq+sCa6y6qy5Vb4u6UUGt4
-	 KLWdGI6j6/2SKOHEdarnREigzecyG7maYrpm2MgG7eNd7KIPpifVsfdfmjUAo/ErIz
-	 FY2hE8hg7Nc/g==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwDVR3rrHz4wbd;
-	Mon,  4 Aug 2025 08:13:51 +1000 (AEST)
-Date: Mon, 4 Aug 2025 08:13:37 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Fixes tags need some work in the bcachefs tree
-Message-ID: <20250804081337.7924a37e@canb.auug.org.au>
+	s=arc-20240116; t=1754259281; c=relaxed/simple;
+	bh=olBu8GPPnFxFEX4luPW3wJTVVnKXrQ1s0KYtdiIrtTo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bnwfwLPcWUv6EmjawNclTBC/CoIGUmRkKdsPzPS74dUiYS7W83Y5qB2WPbn6+wtSOE87cV85fhWZH1b+8Mw2FjGwFv6HpyoE+XK2O0hECqyPHwU0JRbeqpekdvbNxj3+lc6dNZCeKeE/qV9SYDBv4S3oN9pyIvkTXwhaOi8J/LU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oi1RAm7F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B4C19C4CEEB;
+	Sun,  3 Aug 2025 22:14:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754259281;
+	bh=olBu8GPPnFxFEX4luPW3wJTVVnKXrQ1s0KYtdiIrtTo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oi1RAm7FfD6VjSXeapdnG5lXDK7EnlVbGejmSeausFjUEs6WbuvR6W5xCq9f9xAuK
+	 fvPl4Xt+c4HdOfN360VF9KCTEhY4g+AcPgI01/ERRKWQH+Q/r22CfMVE7zMv2l80Aq
+	 ozbMOM7QnfbyAobaz2lWPSUrLqzzYT4mxa01h7UZi33nMcxjs8VTH7RllzpnCz9+oo
+	 fl4NtXZBBWKtMOhq/HD4o90xjV0ANn7ipqKKI5artQFunZhwqdAnm1my0zxiA8ZrT5
+	 eiIFPXT+hQSdRbqGrXkCWdIe8PobgwR06E3DMRLquXtw+dLHDcU/iVTFqVyJ3lYLeb
+	 ltEITkCxvbLoQ==
+Date: Sun, 3 Aug 2025 15:14:38 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Segher Boessenkool <segher@kernel.crashing.org>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH 3/7] crypto: powerpc/md5 - Remove PowerPC optimized MD5
+ code
+Message-ID: <20250803221438.GA119835@quark>
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-4-ebiggers@kernel.org>
+ <aI_djr4v-3nQqG9E@gate>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ztH0EKv3piW5m.gOP20CVMe";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <aI_djr4v-3nQqG9E@gate>
 
---Sig_/ztH0EKv3piW5m.gOP20CVMe
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Sun, Aug 03, 2025 at 05:07:10PM -0500, Segher Boessenkool wrote:
+> On Sun, Aug 03, 2025 at 01:44:29PM -0700, Eric Biggers wrote:
+> > MD5 is insecure,
+> 
+> Really?  Have you found an attack?  Can you explain it to the rest of
+> the world?
+> 
+> MD5 is not recommended for future cryptographic purposes, there have
+> been some collission "attacks" on it (quotes because such a thing is
+> never an attack at all, merely an indication that not all is well with
+> it, somewhere in the future an actual vulnerability might be found).
+> 
+> Since there are newer, better, *cheaper* alternatives available, of
+> course you should not use MD5 for anything new anymore.  But claiming it
+> is insecure is FUD.
 
-Hi all,
+Many attacks, including practical attacks, have been found on MD5 over
+the past few decades.  Check out https://en.wikipedia.org/wiki/MD5
 
-In commit
+> > This commit removes the PowerPC optimized MD5 code.
+> 
+> Why?  It would help to have real arguments for it!
 
-  7db3a4f235b2 ("bcachefs: peek_slot() now takes advantage of KEY_TYPE_exte=
-nt_whiteout")
+Sure, check out the commit message which mentioned multiple reasons why
+maintaining this code is not worthwhile.
 
-Fixes tag
-
-  Fixes: https://github.com/koverstreet/bcachefs/issues/912
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-In commit
-
-  1104b426be15 ("bcachefs: peek() now takes advantage of KEY_TYPE_extent_wh=
-iteout")
-
-Fixes tag
-
-  Fixes: https://github.com/koverstreet/bcachefs/issues/912
-
-has these problem(s):
-
-  - No SHA1 recognised
-
-Fixes: tags should be used to point to previous commits that are fixed
-by the current commit.  Closes: tags should be used to point to issues
-that are fixed by the current commit (use Link: tags if the issues are
-only partly resolved).
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ztH0EKv3piW5m.gOP20CVMe
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiP3xEACgkQAVBC80lX
-0Gw02wgAohv2XKN73eOhedEo41jKPIDjAU7FoOJG+YB10UFcpT6iwq6RYURBdGp7
-kgvRxpmVt0Mz4gPJUMQTcZ+BRC4H1idkMi0t9PTqW4a3ABFvu72Cn0fRTCYRqR5L
-Dq96HvGmE0wK4MM5Fl/HynjXNQem5hTWTamnBU7dwgqZZfFj9yNCLPQ2z80VYnu0
-mRhE0fC4mylVzylQ0GpdI7EZsKRT+uSzp3WZrhIgPAaBK8yN1jecQ1/ap/rPLoko
-6UVExCyzlrAXPah8jNQ3lWJoWPldsCf+5faYinJ/LhGgT/Zl3UeunaKUlQ2QoojA
-o7e7I4lFPpXjuFRfuAG12DK7TPTZcQ==
-=D+f9
------END PGP SIGNATURE-----
-
---Sig_/ztH0EKv3piW5m.gOP20CVMe--
+- Eric
 
