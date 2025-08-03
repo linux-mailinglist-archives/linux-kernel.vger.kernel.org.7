@@ -1,146 +1,96 @@
-Return-Path: <linux-kernel+bounces-754346-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754347-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ABB51B19311
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:17:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDD26B19314
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:18:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C6488170024
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:17:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 453BE7A6DCF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:16:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF1042874E7;
-	Sun,  3 Aug 2025 08:17:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9105B284669;
+	Sun,  3 Aug 2025 08:18:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KmaIPYrn"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UvYmjfgf"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 065C46ADD;
-	Sun,  3 Aug 2025 08:17:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F049A6ADD;
+	Sun,  3 Aug 2025 08:18:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754209048; cv=none; b=uO9kV0oCOeqbyRjHpYu9ibXKx48Dvl3ap8lKaZReipocBnxVt7Or0vPtsjMrsqod8svy3HyBxE6EdjK8qaRKwYlt/v9hbj9hSJf4hnKXF5RpVldcVv/EFW/Zu7EFG/5ZZKyOnW4DGl2BhhbpSoog4MKzCrGsRp3im48Il0IPik4=
+	t=1754209092; cv=none; b=X5JDPflhy7CgRxL7f95BVU8PD9lr9saOAFUeF7YYSnoK5ZUBxIVozIZKtNqZGnbLE2hkOIxUw+EXi99t8q0xzz9SGEdPbTs8VBEtb9mXNePPWLpWetdb+jWX7X1h7+cQbR4cA2m2Ev8hSsOjkYAvE0NmC1G6nt79sqMZ/k3pDtM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754209048; c=relaxed/simple;
-	bh=dG5Q14Vv2tG8ILJ0dE05rABknNd8Pl7HaZzDqnCNezo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NVcA2HZqsx1hkHvlsXfFchyqJw5vjrddyo8MLQbQPq+NzBUUih5T8VM/szrwBmintstFuYARkV4L8KaEB/7SCvyhVBbTY49YAKSUwQyIuaU2wiypK/o31ye2DZ7nIf+7Uk64qBk691qYFRLNNsUD0KUo1Iuy28Ol7VNILB8Xgp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KmaIPYrn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0D895C4CEF8;
-	Sun,  3 Aug 2025 08:17:22 +0000 (UTC)
+	s=arc-20240116; t=1754209092; c=relaxed/simple;
+	bh=ByXRHJAbOYgU0cIygd2V2UEXXynkeCaZrRIAnBlXViI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=G1ZXd/PkLT+ZaGrBT8q9Cas2ePRth5IryQeCI0jA+4Yh7OHzGrcPXFOrCWv6yyvb9nPcS23JmluhCuJ0jk9g2n4HCw3jjfn5hqVS7rpfWLy1qJfXKa9WhEhy2p522o/8GHg/J+XiChUS87rfa4D6Fo13Cbypj9hGRisJggu9bBA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UvYmjfgf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E203C4CEF4;
+	Sun,  3 Aug 2025 08:18:07 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754209047;
-	bh=dG5Q14Vv2tG8ILJ0dE05rABknNd8Pl7HaZzDqnCNezo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KmaIPYrn/8NwQLEGCvtM6+8llJX7vEXD820E83K7OaYX3+LF+MvRhDInEBUjAUF9l
-	 Nh3M9d3WwsKtr9oSZFqBuN2WPdAgnOV2J6VWT276fK3iHSSZYnyaObxp0G1JbAPMq2
-	 bYwmUHrXdurSc0kqW2R4BZlFeC/EX0+o/F2hRaXAK97TUwsoFjJ9wMG1ckJEpwF4Xg
-	 Zlf3GTusnBKNloEvNJAFPVY9s44pLpRhy6OAQ0fEDUMAbDyCwWscksyTLw3psO1PRe
-	 sgfP1C+KN++ZvilYyPucuG0V5Ni3RiEBQWFOl6sNg9sR1uh6SaO2VAqeP/8BHrHCcP
-	 20jsr6CI2zQSg==
-Message-ID: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
-Date: Sun, 3 Aug 2025 10:17:21 +0200
+	s=k20201202; t=1754209091;
+	bh=ByXRHJAbOYgU0cIygd2V2UEXXynkeCaZrRIAnBlXViI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=UvYmjfgf+a/Xn7Wx44t7M6g5DeO0hEZGLNLuPzB/vqm9VUq4UmkW/zfcg3fdLK/9B
+	 EcSQHhBOAyOmsXHKN1OZlcIEm5XOkJ+4PkLHE0tyxm4YmpwNrQRMZPi/uVw1AWYUFu
+	 UkoVV35jNQhXae8WVrhcKuLT7PAdDJN7PoAOouXL+/GUODMUHvvNSxngvG46ffiSxP
+	 hYoslzkIpX/kYctsYz+JSnsfml4fro5a8sTI8hB5OhXj4HEhf07Fj6KOG56zp0RoIT
+	 eOx+1etKR2lrj3d2rdG2KX/4ZTL95VQ7mu0uLe5CdRNtW8BBXPXQvCosg7+wk/hOdY
+	 tGyP9uDEt1VRg==
+Date: Sun, 3 Aug 2025 11:18:03 +0300
+From: Mike Rapoport <rppt@kernel.org>
+To: Kim Tae Hyun <kimth0312@gmail.com>
+Cc: akpm@linux-foundation.org, david@redhat.com, corbet@lwn.net,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	surenb@google.com, mhocko@suse.com, linux-mm@kvack.org,
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] [PATCH] docs: update physical memory documentation by
+ adding N_GENERIC_INITIATOR to enum node_states
+Message-ID: <aI8bO2n8RuhF0Zb5@kernel.org>
+References: <20250802125801.10068-1-kimth0312@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: Rob Herring <robh@kernel.org>, Laura Nao <laura.nao@collabora.com>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, matthias.bgg@gmail.com,
- angelogioacchino.delregno@collabora.com, p.zabel@pengutronix.de,
- richardcochran@gmail.com, guangjie.song@mediatek.com, wenst@chromium.org,
- linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
- kernel@collabora.com, =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?=
- <nfraprado@collabora.com>
-References: <20250730105653.64910-1-laura.nao@collabora.com>
- <20250730105653.64910-10-laura.nao@collabora.com>
- <20250801135604.GA3045005-robh@kernel.org>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250801135604.GA3045005-robh@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250802125801.10068-1-kimth0312@gmail.com>
 
-On 01/08/2025 15:57, Rob Herring wrote:
->> +  reg:
->> +    maxItems: 1
->> +
->> +  '#clock-cells':
->> +    const: 1
->> +
->> +  '#reset-cells':
->> +    const: 1
->> +    description:
->> +      Reset lines for PEXTP0/1 and UFS blocks.
->> +
->> +  mediatek,hardware-voter:
->> +    $ref: /schemas/types.yaml#/definitions/phandle
->> +    description:
->> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
->> +      MCU manages clock and power domain control across the AP and other
->> +      remote processors. By aggregating their votes, it ensures clocks are
->> +      safely enabled/disabled and power domains are active before register
->> +      access.
+On Sat, Aug 02, 2025 at 09:58:01PM +0900, Kim Tae Hyun wrote:
+> While reading physical_memory.rst, I noticed that N_GENERIC_INITIATOR has not been update
+> from the node_states list, even though it's already added in commit 894c26a1c274b8eafbb4b1dad67e70e51a106061.
 > 
-> I thought this was going away based on v2 discussion?
+> Signed-off-by: Kim Tae Hyun <kimth0312@gmail.com>
 
-Yes, I asked to drop it and do not include it in v3. There was also
-discussion clarifying review.
+Acked-by: Mike Rapoport (Microsoft) <rppt@kernel.org>
 
-I am really surprised that review meant nothing and code is still the same.
+> ---
+>  Documentation/mm/physical_memory.rst | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/Documentation/mm/physical_memory.rst b/Documentation/mm/physical_memory.rst
+> index 9af11b5bd145..b76183545e5b 100644
+> --- a/Documentation/mm/physical_memory.rst
+> +++ b/Documentation/mm/physical_memory.rst
+> @@ -171,6 +171,8 @@ nodes with particular properties as defined by ``enum node_states``:
+>    The node has memory(regular, high, movable)
+>  ``N_CPU``
+>    The node has one or more CPUs
+> +``N_GENERIC_INITIATOR``
+> +  The node has one or more Generic Initiators
+>  
+>  For each node that has a property described above, the bit corresponding to the
+>  node ID in the ``node_states[<property>]`` bitmask is set.
+> -- 
+> 2.49.0
+> 
 
-Best regards,
-Krzysztof
+-- 
+Sincerely yours,
+Mike.
 
