@@ -1,129 +1,130 @@
-Return-Path: <linux-kernel+bounces-754359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DA485B19362
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:15:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17507B19365
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:21:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9A19D3B8F2B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:15:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88BD83B995D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:21:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A984C2882C0;
-	Sun,  3 Aug 2025 10:15:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27E4427F73A;
+	Sun,  3 Aug 2025 10:21:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="NZglza77"
-Received: from mx0a-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="IdHeu8zF";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3Lm8SPJR"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B98CB2586EB;
-	Sun,  3 Aug 2025 10:15:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5B8E2222B4;
+	Sun,  3 Aug 2025 10:21:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754216131; cv=none; b=tsyb9inobRFH0IvxHcfz1qVejKBcqgXHPTlh5SQeR34fTZ1cmmG7tMyzGViUmGHIrFeXDj3nSWG1f4SgbKQI6xiqgtWWf8V/iPScWqpSl5wV2Ki78bKRU0Ov51dzk1Ex+ewFlU0LDdgRbHZ+DKTj3YX5GvXlEnwZ+utLjuoB3W8=
+	t=1754216486; cv=none; b=padiF7+VnKgaCT8bjBy3RVtW0brnMf2s+9tlkR7YSnNj+usx2tLYzgOPXQyiFejlxfqfA5P3FLhaN3bfdg7CX2WEMaI+tHb4O/vWgpAfVE8aHRUe7YWily+/ooadfEebRHvGbT7k1TPb5pD5q/FMJgz2p6aYhIjMgKKYZ2O1xZI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754216131; c=relaxed/simple;
-	bh=YkAIdA0wS6vvnDvoMgKi1ODLHsAtDofUEjVzPu9/D5M=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=FkWrD7sOgyOxCxWpr01XLIl8pwztI0UDzjgySZPixWto59AQCPAM8nDc98J1fnY94GR3VUTIq+t5f74CACGIDDjAz8M4T0t1SHVKF1CSOQ6G5S3fLnA77ysu4vQAJ17wr/FelAU9bMCqAivOTY812p9XzG/avUZJrPHjUbi3UM0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=NZglza77; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0431384.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5739uqbp006041;
-	Sun, 3 Aug 2025 03:15:13 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=Y
-	zUKtZavrf07QMFJuMBgP+p3PBmZTtlhpBLApN1p820=; b=NZglza77cQoHR88or
-	JI3+nM3ybL1GBXyNE0Lspo7z8oSlHCHMrpWNrN6ebPo7boByE/MQe9pvPPHaiBcZ
-	vhbIWodPBF63bAiUWduEjyX4yIwqGItJQ23siIotGte9htI0j+MxQZ6Mr6VttKkA
-	6DR79/L5iS1vtqQ99T62Fn7gPV8HXf3zJpCXBtmpq7kH042sCthE/K+Ak8Z6yfee
-	36uN0GgrHpBLsRXcSVE9fmUTpcp52XvhFUSLazWbwHitGZEIlDVOEeDw0jFjGhqZ
-	Axt+7rhLiMwBTvWx0ht5Ou2xpFRVAymlw7vVNig63CwPKADcCpvHM7ICVlwDki6p
-	tu+Pg==
-Received: from dc5-exch05.marvell.com ([199.233.59.128])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 489u22ru0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 03 Aug 2025 03:15:12 -0700 (PDT)
-Received: from DC5-EXCH05.marvell.com (10.69.176.209) by
- DC5-EXCH05.marvell.com (10.69.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 3 Aug 2025 03:15:14 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC5-EXCH05.marvell.com
- (10.69.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 3 Aug 2025 03:15:14 -0700
-Received: from c1illp-saixps-016.eng.marvell.com (c1illp-saixps-016.eng.marvell.com [10.205.40.247])
-	by maili.marvell.com (Postfix) with ESMTP id 944A23F70A5;
-	Sun,  3 Aug 2025 03:15:10 -0700 (PDT)
-From: <enachman@marvell.com>
-To: <gregory.clement@bootlin.com>, <andi.shyti@kernel.org>,
-        <linux-i2c@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: <enachman@marvell.com>
-Subject: [PATCH v2 1/1] i2c: mv64xxx: prevent illegal pointer access
-Date: Sun, 3 Aug 2025 13:15:07 +0300
-Message-ID: <20250803101507.659984-2-enachman@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250803101507.659984-1-enachman@marvell.com>
-References: <20250803101507.659984-1-enachman@marvell.com>
+	s=arc-20240116; t=1754216486; c=relaxed/simple;
+	bh=74gcckKZmoV8bGU0r1nWANoRA+z8bCDrNcoXEaDXpKc=;
+	h=Date:From:To:Subject:Cc:MIME-Version:Message-ID:Content-Type; b=nsN0IoX2hCEbVqTW4ixDMw4FEyEQnVkW5mChQg36RtQsYS5IRJKBpwwrmCCxi7lh5QpWkJYfC1/bhxYmqkAs5QlpxVyKxAQxqwiFoQk/gPXeFUjJc/GJw5ALJxItC/DIOh6V+USPljZSD/N3va9pbWwskVVvjD6nbqaz0AZfY1c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=IdHeu8zF; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3Lm8SPJR; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Sun, 03 Aug 2025 10:21:20 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754216482;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=0Xb7F4Ot/o7iJS2au9c7K359dFtNasf6/7J2A+iZqrQ=;
+	b=IdHeu8zFVFwhmiRrHQe2msvt4PcrNHe5T45aakTa4rLW1pFUDROh2x33VepvVfeb3AcKuy
+	DXHu95q70aGvkdaBoaGUWHOMflHjmiTFxJi0+DFMSSbyuxRCRbLCSflOGe7RPAwhAiC7BH
+	BCQyRYPerOEMi4sYivTvWzWiotLv1mJs9zIyKaljigR43FxITJm8x07vwuwm1omF76IJxb
+	dzJSoX0ivIKJxjVK/gOWCIJgbHSV184SIbQKdC+XPR7FlUCCYRcpdJ9htl59R7Rt+lolHS
+	YTeeS8Jwtf6Ny2JhxAM770Cnwjlz6SMoefVdol8nbbj79UxZnjhBCfvDO/CF7w==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754216482;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=0Xb7F4Ot/o7iJS2au9c7K359dFtNasf6/7J2A+iZqrQ=;
+	b=3Lm8SPJRmxyrnSlnf6nG6cZ+wqEMKVdpilg9cKlDAPgn2jtqBFEDKoYoPbfnK2v2L0hou4
+	H5hs4QxShKdqFkCA==
+From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: irq/urgent] irqchip/riscv-imsic: Don't dereference before NULL
+ pointer check
+Cc: kernel test robot <lkp@intel.com>,
+ Dan Carpenter <dan.carpenter@linaro.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>,
+ x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Authority-Analysis: v=2.4 cv=F7xXdrhN c=1 sm=1 tr=0 ts=688f36b0 cx=c_pps a=rEv8fa4AjpPjGxpoe8rlIQ==:117 a=rEv8fa4AjpPjGxpoe8rlIQ==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=mi5DaCqa8Q0MJUv9qP0A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: K6AA8XYq0or-8DpajKEfkp-m8Ts8RwSc
-X-Proofpoint-ORIG-GUID: K6AA8XYq0or-8DpajKEfkp-m8Ts8RwSc
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAzMDA3MCBTYWx0ZWRfX8e/RkC0v5tRZ 1MfUPvyxxY1cIdhYT01dS5uKgdbJaj+oPhcNq0GnEDFTqmvt0GVC/BBj907cUJpFxl0Pa6z3ROU E0crEIMW6iuOj9tVhzz/ZF0Ug/YVY4Ia39bfhgTVUg8QEYFlRfHtg1uJzXQ2meGvFNDWV/al39A
- 4pocXmwYF2dDgS9hznGB28Je9ZXZtEfIbgW2YUR6LD1V1TTJt1nDdnzUQtt6jCj+Xlc9aWgskTO xLXFHHORNEWrGtTedJBoajZJ9nA4NI7xvUxob3iXhprPfPFlhHhpDShWg10wqupKmNTYtjqifJt Na+nGxcjiMiGNInd98VdZG9nh67zOtN9l0SeSExRJj32UiMpIWw/7ZpFs/tgCeuT6EntGUvCmc8
- X5s2xxrw3SlP2qDIYa9xlF0JRNPuIC2K3fGfrnZqQX1KvAJAIhlLDMPVXXqjkZeh2Ud6GW6k
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-03_03,2025-08-01_01,2025-03-28_01
+Message-ID: <175421648067.1420.7724899351980545543.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Elad Nachman <enachman@marvell.com>
+The following commit has been merged into the irq/urgent branch of tip:
 
-Spurious interrupts left while i2c controller still at RX or TX state
-would try to access the RX or TX buffer pointer, which is NULL.
-Add check to verify buffer pointer is not NULL before reading or writing
-the buffer for additional TX or RX operations.
+Commit-ID:     8d260bf78488bd576e619fb53806290c2a195cba
+Gitweb:        https://git.kernel.org/tip/8d260bf78488bd576e619fb53806290c2a1=
+95cba
+Author:        Thomas Gleixner <tglx@linutronix.de>
+AuthorDate:    Sat, 02 Aug 2025 12:59:13 +02:00
+Committer:     Ingo Molnar <mingo@kernel.org>
+CommitterDate: Sun, 03 Aug 2025 12:12:17 +02:00
 
-Signed-off-by: Elad Nachman <enachman@marvell.com>
+irqchip/riscv-imsic: Don't dereference before NULL pointer check
+
+Smatch warns about a dereference before check:
+
+  drivers/irqchip/irq-riscv-imsic-platform.c:317 imsic_irqdomain_init() warn:=
+ variable dereferenced before check 'imsic' (see line 311)
+
+Cure it by moving the firmware node assignement after the checks.
+
+Fixes: 59422904dd98 ("irqchip/riscv-imsic: Convert to msi_create_parent_irq_d=
+omain() helper")
+Reported-by: kernel test robot <lkp@intel.com>
+Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Signed-off-by: Ingo Molnar <mingo@kernel.org>
+Closes: https://lore.kernel.org/r/202507311953.NFVZkr0a-lkp@intel.com/
 ---
- drivers/i2c/busses/i2c-mv64xxx.c | 10 +++++++---
- 1 file changed, 7 insertions(+), 3 deletions(-)
+ drivers/irqchip/irq-riscv-imsic-platform.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/i2c/busses/i2c-mv64xxx.c b/drivers/i2c/busses/i2c-mv64xxx.c
-index 8fc26a511320..e6baa9c520b4 100644
---- a/drivers/i2c/busses/i2c-mv64xxx.c
-+++ b/drivers/i2c/busses/i2c-mv64xxx.c
-@@ -390,14 +390,18 @@ mv64xxx_i2c_do_action(struct mv64xxx_i2c_data *drv_data)
- 		break;
- 
- 	case MV64XXX_I2C_ACTION_SEND_DATA:
--		writel(drv_data->msg->buf[drv_data->byte_posn++],
--			drv_data->reg_base + drv_data->reg_offsets.data);
-+		if (drv_data->msg && drv_data->msg->buf)
-+			writel(drv_data->msg->buf[drv_data->byte_posn++],
-+				drv_data->reg_base + drv_data->reg_offsets.data);
- 		writel(drv_data->cntl_bits,
- 			drv_data->reg_base + drv_data->reg_offsets.control);
- 		break;
- 
- 	case MV64XXX_I2C_ACTION_RCV_DATA:
--		drv_data->msg->buf[drv_data->byte_posn++] =
-+		if (drv_data->msg && drv_data->msg->buf)
-+			drv_data->msg->buf[drv_data->byte_posn++] =
-+				readl(drv_data->reg_base + drv_data->reg_offsets.data);
-+		else
- 			readl(drv_data->reg_base + drv_data->reg_offsets.data);
- 		writel(drv_data->cntl_bits,
- 			drv_data->reg_base + drv_data->reg_offsets.control);
--- 
-2.25.1
-
+diff --git a/drivers/irqchip/irq-riscv-imsic-platform.c b/drivers/irqchip/irq=
+-riscv-imsic-platform.c
+index 74a2a28..643c8e4 100644
+--- a/drivers/irqchip/irq-riscv-imsic-platform.c
++++ b/drivers/irqchip/irq-riscv-imsic-platform.c
+@@ -308,7 +308,6 @@ static const struct msi_parent_ops imsic_msi_parent_ops =
+=3D {
+ int imsic_irqdomain_init(void)
+ {
+ 	struct irq_domain_info info =3D {
+-		.fwnode		=3D imsic->fwnode,
+ 		.ops		=3D &imsic_base_domain_ops,
+ 		.host_data	=3D imsic,
+ 	};
+@@ -325,6 +324,7 @@ int imsic_irqdomain_init(void)
+ 	}
+=20
+ 	/* Create Base IRQ domain */
++	info.fwnode =3D imsic->fwnode,
+ 	imsic->base_domain =3D msi_create_parent_irq_domain(&info, &imsic_msi_paren=
+t_ops);
+ 	if (!imsic->base_domain) {
+ 		pr_err("%pfwP: failed to create IMSIC base domain\n", imsic->fwnode);
 
