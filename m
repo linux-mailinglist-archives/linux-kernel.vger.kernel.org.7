@@ -1,213 +1,313 @@
-Return-Path: <linux-kernel+bounces-754368-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24346B19375
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:27:53 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 164F8B19376
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:33:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69CE3B6C83
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:27:51 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id D57554E022E
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D3285CBB;
-	Sun,  3 Aug 2025 10:27:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D8D2222B4
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 10:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8498118786A;
+	Sun,  3 Aug 2025 10:33:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="W+/6aoKS"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0A8425776
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 10:33:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754216868; cv=none; b=d/F6DV81vgoMCGBaw8Kl+FbIvmYT1ZvzKU6qu7LxTUBVZL78j+cHPZKLO4S+Oqkal1+JPtKmwHa68aH0yQ/C9iTsqTUKJCBFuBNkcQ2e13YpkjM6+bwtlSD0abUbklXjlssPoAfATvJBJ7pMjt3NhHRKfJjd0QIhEZKUmqTvex8=
+	t=1754217190; cv=none; b=gvhb5oKEs31FhAIB3mCDKZiQdcT962A3JfMDYQLFuAdngL60O0HAVp6nGU6g10Q8PhzzomS/tqS8/G4tXsN9q/c5l0cJ6akFEZSjboFonksG82EZmPkG0mSpZVsRoGh8VUftPajMPQ0HBNY2yv0eqB+yrCgjjf8x7JoJ9Tz15MA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754216868; c=relaxed/simple;
-	bh=sTHNqmcaHvBBrrFg/EijFSf3ApAd+tbhxiGCv0tQiAw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YAXnIUqBDfao0ghLjIk5qzkx4CZHBqSEQMx9illMlJax24vRVoivq5O39e1usZn4qc0KzN4+pGMB6OLhgA+IiYrUkQMk/RofZcCYGLGJdYBQsvRqvIW86tJxCEqY57l6aPI6VINOjwiEzE6MglizonpLkIksEdQZvownxX/tTvU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DC85150C;
-	Sun,  3 Aug 2025 03:27:36 -0700 (PDT)
-Received: from [10.163.64.123] (unknown [10.163.64.123])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25AF43F5A1;
-	Sun,  3 Aug 2025 03:27:41 -0700 (PDT)
-Message-ID: <9cbc13bf-bfbf-4108-bbc0-d33d75fe7d18@arm.com>
-Date: Sun, 3 Aug 2025 15:57:38 +0530
+	s=arc-20240116; t=1754217190; c=relaxed/simple;
+	bh=wpLTRM4pv0Bwd4+EuEF//nrd2cM3Z6xIcUysX/wm9QQ=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=DGtyRUtTpDwwRirDbkj8yi2qRb4KhOxFUM6Uxj3Hi7uywYPF1CJighRdc6hKMfc0mvxixExMgBwexP37kTA0Uz/upf/1UlC+BR5+8l4IKN35MGd7uYUZlw0McwgbAsiO+4mli6WZsnqSGb5lFfv/iL5DclRkfyaf+f2+F9mfh94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=W+/6aoKS; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af66f444488so430204366b.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 03:33:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754217187; x=1754821987; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=4oRnuP4jSrdJzDgvqaR3lx1iHlupn4sHr1B/8K6MSts=;
+        b=W+/6aoKSBSqDRflydAzyQ3g38r1hFS3yqMwHF3V6U1spV1dQ/xW5NSaFtph5X8LL1B
+         4IGFLxM3RDVsSa/m4n4+wILwQOBZbfl3zGnVs3uboiP/0B2K+W+wRXXPFhcTVukOsvjH
+         gk1oLa7/q8cVUXJKnhZuDGXI1547xN8DaXCucgZ8/H7fshlgc8e1Pzyk92hyF7K9vlpz
+         oUy05T46f3tPBctQ+83mgcYUcKuZVAsF5m+TRO09vi6MaXsmwI2w8/jfwfN1Y3qo3LxZ
+         nbOqKi+ty3RzuvjTvuCDyqEwE4DvmIQskV7UQDr3nZn4q0XHHc9fDQoSxZSJ0f2W8OJf
+         Zp5g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754217187; x=1754821987;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4oRnuP4jSrdJzDgvqaR3lx1iHlupn4sHr1B/8K6MSts=;
+        b=oYM7NqM08VqcWUQr/3kz+bjRuAZkQX5bcGTw7y+LATxsRpBjw6pjUH9AlBOGPlTh0j
+         Z/MYpAR92V0ePAwe43D7Fz/zGHDHEXfzdk7iR0uEXMuPbBvfYVFTPuL12GBYMYz/YlHi
+         iSuBkqvGVSD0qved+3wpBGPs5fLWRKC8W5qwJCMGMc841wQr4zB6hOgzcpJFj2k4/Tth
+         luovaqCkQpzj8Ue7x6Ha9Uy6uBFzqSuuZa/VOlEavdBL2AIJQm0u5DdunJ35rxVAcjBZ
+         yZa9fB7ihXhcqpqMiBrn5qRajvj/DhWW6qhaFt+dGdojJ2LFl8qntm9nYssaX0Qwd9xW
+         ddPg==
+X-Forwarded-Encrypted: i=1; AJvYcCVeAk5y4WFs1soVKixV22EhYnMo8rOoCKYmlcLvnOID5krzJUKJYqtTdHxIVxBz2Bypeiau1CRUrGxkse0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaGsaNzNzfa0wihKUFL7f/+yFylaKQPA7HohAdWbuskuojAHP2
+	gyVHnUo6LYywW6Er+XxUw6vsOhbRbSBlCxlBpRYJkymG/dkaO2HKFZ+f/TOfoAgpV3soO0/YfVK
+	arVTkJX4D21YuUAkCpn0nafK5fDoEZas=
+X-Gm-Gg: ASbGncuH0fnr5ErG+ZiJ99LTTiSVZFRS94/NftQeLP56N+Wc+pRb2oj0VPNKb5hzNjm
+	xlncurWZyVYgJOy8bwijtWTZM0SzMZxATxgxQIxsTr/zAPFhD0rszzBBAk3gegWQdxOyuBTpkSb
+	CPDDCAZvYhnyrEqQrSf1tfr1GQISJUoFzH9w8FbxknANiLA0YV9yl9i1jRnoeadSycFKcfyxtTv
+	MbwtENwEE7Yjb+/HRItK2+Bc85G7F52EtYcj+v/Pw==
+X-Google-Smtp-Source: AGHT+IEsiLjMRyXYhncxuci92btZ+xh5rvmcRX5wKkTyopgH/WMz7bhDERZr/gb2/fxeD2QWq8Haa1xO8DxrAysRNyE=
+X-Received: by 2002:a17:907:7fa3:b0:af9:3d0a:f38f with SMTP id
+ a640c23a62f3a-af93fd64bf3mr624693166b.0.1754217186911; Sun, 03 Aug 2025
+ 03:33:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
- destroy_args()
-To: Andrew Morton <akpm@linux-foundation.org>,
- "Herton R. Krzesinski" <herton@redhat.com>
-Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Gavin Shan
- <gshan@redhat.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>
-References: <20250731214051.4115182-1-herton@redhat.com>
- <20250801135050.c9cc7226938f9f0f4fa3b83d@linux-foundation.org>
-Content-Language: en-US
-From: Anshuman Khandual <anshuman.khandual@arm.com>
-In-Reply-To: <20250801135050.c9cc7226938f9f0f4fa3b83d@linux-foundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Haru Zheng <towwy321@gmail.com>
+Date: Sun, 3 Aug 2025 18:32:55 +0800
+X-Gm-Features: Ac12FXzIOcl_0A4Ih1a8nY3gchgr3V34vE8-EiuwlXia7lYUBWk08DLPwS9N9FI
+Message-ID: <CACw2aoTa8KU-KkxqA10OeVK+yV7t-B94KDa4Odi1sbpY6qAENg@mail.gmail.com>
+Subject: [PATCH] drm/mediatek: dp: Fix suspend/resume training failure
+To: granquet@baylibre.com, "ck.hu@mediatek.com" <ck.hu@mediatek.com>, 
+	"msp@baylibre.com" <msp@baylibre.com>, 
+	"angelogioacchino.delregno@collabora.com" <angelogioacchino.delregno@collabora.com>, 
+	"matthias.bgg@gmail.com" <matthias.bgg@gmail.com>, "simona@ffwll.ch" <simona@ffwll.ch>, 
+	"airlied@gmail.com" <airlied@gmail.com>, "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>, chunkuang.hu@kernel.org
+Cc: linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	rex-bc.chen@mediatek.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 02/08/25 2:20 AM, Andrew Morton wrote:
-> On Thu, 31 Jul 2025 18:40:51 -0300 "Herton R. Krzesinski" <herton@redhat.com> wrote:
-> 
->> The mm/debug_vm_pagetable test allocates manually page table entries for the
->> tests it runs, using also its manually allocated mm_struct. That in itself is
->> ok, but when it exits, at destroy_args() it fails to clear those entries with
->> the *_clear functions.
->>
->> The problem is that leaves stale entries. If another process allocates
->> an mm_struct with a pgd at the same address, it may end up running into
->> the stale entry. This is happening in practice on a debug kernel with
->> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
->> extra debugging I added (it prints a warning trace if pgtables_bytes goes
->> negative, in addition to the warning at check_mm() function):
-> 
-> A quick shot with git-blame led me to include
-> 
-> Fixes: 3c9b84f044a9e ("mm/debug_vm_pgtable: introduce struct pgtable_debug_args")
-> Cc: <stable@vger.kernel.org>
+From 4919bd858cd9cba8e4aadba7c3d1fd434ef3b09e Mon Sep 17 00:00:00 2001
+From: Haru Zheng <towwy321@gmail.com>
+Date: Wed, 18 Jun 2025 11:28:37 +0800
+Subject: [PATCH] drm/mediatek: dp: Fix suspend/resume training failure
 
-Agreed.
+When suspending and resuming DisplayPort via Type-C,
+link training may fail.
 
-> 
-> And `git show 3c9b84f044a9e' tell me this email didn't have enough cc's
-> (added).
+This patch backports the software IRQ handling for DP,
+as eDP uses hardware IRQ while DP uses software IRQ.
+Additionally, cable_plugged_in is flipped in
+mtk_dp_hpd_event to ensure correct hotplug detection
+during resume.
 
-Sure, that makes sense.
+These changes fix the DP training failure after suspend/resume.
 
-> 
-> Thanks, I'll include this in mm.git's mm-hotfixes branch and I shall
-> await further review activity.
+Fixes: f70ac097a2cf ("drm/mediatek: Add MT8195 Embedded DisplayPort driver")
+Tested-on: Genio G700 EVK
+Signed-off-by: Haru Zheng <towwy321@gmail.com>
+---
+ drivers/gpu/drm/mediatek/mtk_dp.c     | 100 ++++++++++++++++++++++++--
+ drivers/gpu/drm/mediatek/mtk_dp_reg.h |   3 +
+ 2 files changed, 96 insertions(+), 7 deletions(-)
 
-Right - it will be great to have this tested across other supporting platforms.
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp.c
+b/drivers/gpu/drm/mediatek/mtk_dp.c
+index bef6eeb30d3e..0cfe792bc36d 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp.c
++++ b/drivers/gpu/drm/mediatek/mtk_dp.c
+@@ -1012,6 +1012,16 @@ static u32 mtk_dp_swirq_get_clear(struct mtk_dp *mtk_dp)
+  return irq_status;
+ }
 
-> 
-> 
->> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
->> [    2.539366] kmem_cache info
->> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
->> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
->> (...)
->> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
->> [    2.552816] Modules linked in:
->> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
->> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
->> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
->> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
->> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
->> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
->> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
->> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
->> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
->> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
->> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
->> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
->> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
->> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
->> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
->> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
->> [    2.553199] Call Trace:
->> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
->> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
->> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
->> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
->> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
->> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
->> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
->> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
->> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
->> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
->> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
->> (...)
->> [    2.558892] ---[ end trace 0000000000000000 ]---
->> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
->> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
->>
->> Here the modprobe process ended up with an allocated mm_struct from the
->> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
->> problem, since the mm_struct is initialized again etc., however, if it ends up
->> using the same pgd table, it bumps into the old stale entry when clearing/freeing
->> the page table entries, so it tries to free an entry already gone (that one
->> which was allocated by the debug_vm_pgtable test), which also explains the
->> negative pgtables_bytes since it's accounting for not allocated entries in the
->> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
->> and clearing of the entries is explicitly done in the free_pgtables->
->> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
->> free_pte_range path. However, the debug_vm_pgtable test does not call
->> free_pgtables, since it allocates mm_struct and entries manually for its test
->> and eg. not goes through page faults. So it also should clear manually the
->> entries before exit at destroy_args().
->>
->> This problem was noticed on a reboot X number of times test being done
->> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
->> enabled. Depends on the system, but on a 100 times reboot loop the
->> problem could manifest once or twice, if a process ends up getting the
->> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
->> After using this patch, I couldn't reproduce/experience the problems
->> anymore. I was able to reproduce the problem as well on latest upstream
->> kernel (6.16).
->>
->> I also modified destroy_args() to use mmput() instead of mmdrop(), there
->> is no reason to hold mm_users reference and not release the mm_struct
->> entirely, and in the output above with my debugging prints I already
->> had patched it to use mmput, it did not fix the problem, but helped
->> in the debugging as well.
->>
->> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
->> ---
->>  mm/debug_vm_pgtable.c | 9 +++++++--
->>  1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
->> index 7731b238b534..0f5ddefd128a 100644
->> --- a/mm/debug_vm_pgtable.c
->> +++ b/mm/debug_vm_pgtable.c
->> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
->>  
->>  	/* Free page table entries */
->>  	if (args->start_ptep) {
->> +		pmd_clear(args->pmdp);
->>  		pte_free(args->mm, args->start_ptep);
->>  		mm_dec_nr_ptes(args->mm);
->>  	}
->>  
->>  	if (args->start_pmdp) {
->> +		pud_clear(args->pudp);
->>  		pmd_free(args->mm, args->start_pmdp);
->>  		mm_dec_nr_pmds(args->mm);
->>  	}
->>  
->>  	if (args->start_pudp) {
->> +		p4d_clear(args->p4dp);
->>  		pud_free(args->mm, args->start_pudp);
->>  		mm_dec_nr_puds(args->mm);
->>  	}
->>  
->> -	if (args->start_p4dp)
->> +	if (args->start_p4dp) {
->> +		pgd_clear(args->pgdp);
->>  		p4d_free(args->mm, args->start_p4dp);
->> +	}
->>  
->>  	/* Free vma and mm struct */
->>  	if (args->vma)
->>  		vm_area_free(args->vma);
->>  
->>  	if (args->mm)
->> -		mmdrop(args->mm);
->> +		mmput(args->mm);
->>  }
->>  
->>  static struct page * __init
->> -- 
->> 2.47.1
++static void mtk_dp_swirq_enable(struct mtk_dp *mtk_dp, bool enable)
++{
++ if (enable)
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_35C4, 0,
++    SW_IRQ_FINAL_STATUS_DP_TRANS_P0_MASK);
++ else
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_35C4, 0xFFFF,
++    SW_IRQ_FINAL_STATUS_DP_TRANS_P0_MASK);
++}
++
+ static u32 mtk_dp_hwirq_get_clear(struct mtk_dp *mtk_dp)
+ {
+  u32 irq_status = (mtk_dp_read(mtk_dp, MTK_DP_TRANS_P0_3418) &
+@@ -1751,6 +1761,8 @@ static int mtk_dp_parse_capabilities(struct
+mtk_dp *mtk_dp)
+      mtk_dp->train_info.sink_ssc)
+  return 0;
+
++ memset(mtk_dp->rx_cap, 0, DP_RECEIVER_CAP_SIZE);
++
+  ret = drm_dp_read_dpcd_caps(&mtk_dp->aux, mtk_dp->rx_cap);
+  if (ret < 0)
+  return ret;
+@@ -2031,8 +2043,8 @@ static irqreturn_t mtk_dp_hpd_event(int hpd, void *dev)
+  spin_unlock_irqrestore(&mtk_dp->irq_thread_lock, flags);
+
+  if (cable_sta_chg) {
+- if (!!(mtk_dp_read(mtk_dp, MTK_DP_TRANS_P0_3414) &
+-        HPD_DB_DP_TRANS_P0_MASK))
++ if (!(mtk_dp_read(mtk_dp, MTK_DP_TRANS_P0_3414) &
++       HPD_DB_DP_TRANS_P0_MASK))
+  mtk_dp->train_info.cable_plugged_in = true;
+  else
+  mtk_dp->train_info.cable_plugged_in = false;
+@@ -2265,6 +2277,41 @@ static ssize_t mtk_dp_aux_transfer(struct
+drm_dp_aux *mtk_aux,
+  return ret;
+ }
+
++static void mtk_dp_swirq_hpd(struct mtk_dp *mtk_dp, u8 conn)
++{
++ u32 data;
++
++ data = mtk_dp_read(mtk_dp, MTK_DP_TRANS_P0_3414);
++
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_3414,
++    HPD_OVR_EN_DP_TRANS_P0_MASK,
++    HPD_OVR_EN_DP_TRANS_P0_MASK);
++
++ if (conn)
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_3414,
++    HPD_SET_DP_TRANS_P0_MASK,
++    HPD_SET_DP_TRANS_P0_MASK);
++ else
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_3414,
++    0,
++    HPD_SET_DP_TRANS_P0_MASK);
++}
++
++static void mtk_dp_swirq_hpd_interrupt_set(struct mtk_dp *mtk_dp, u8 status)
++{
++ dev_info(mtk_dp->dev, "[DPTX] status:%d [2:DISCONNECT, 4:CONNECT]\n", status);
++
++ if (status == MTK_DP_HPD_CONNECT) {
++ mtk_dp_init_port(mtk_dp);
++ mtk_dp_swirq_hpd(mtk_dp, TRUE);
++ } else {
++ mtk_dp_swirq_hpd(mtk_dp, FALSE);
++ }
++
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_35C0, status,
++    SW_IRQ_SET_DP_TRANS_P0_MASK);
++}
++
+ static int mtk_dp_poweron(struct mtk_dp *mtk_dp)
+ {
+  int ret;
+@@ -2534,7 +2581,7 @@ static int mtk_dp_bridge_atomic_check(struct
+drm_bridge *bridge,
+
+  dev_dbg(mtk_dp->dev, "input format 0x%04x, output format 0x%04x\n",
+  bridge_state->input_bus_cfg.format,
+- bridge_state->output_bus_cfg.format);
++ bridge_state->output_bus_cfg.format);
+
+  if (input_bus_format == MEDIA_BUS_FMT_YUYV8_1X16)
+  mtk_dp->info.format = DP_PIXELFORMAT_YUV422;
+@@ -2552,6 +2599,30 @@ static int mtk_dp_bridge_atomic_check(struct
+drm_bridge *bridge,
+  return 0;
+ }
+
++static void mtk_dp_bridge_hpd_notify(struct drm_bridge *bridge,
++      enum drm_connector_status status)
++{
++ struct mtk_dp *mtk_dp = mtk_dp_from_bridge(bridge);
++ struct mtk_dp_train_info *train_info = &mtk_dp->train_info;
++
++ if (mtk_dp->bridge.type != DRM_MODE_CONNECTOR_eDP) {
++ if (mtk_dp->hpd_state != status) {
++ if (status == connector_status_disconnected) {
++ train_info->cable_plugged_in = false;
++ } else {
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_3414,
++    HPD_OVR_EN_DP_TRANS_P0_MASK,
++    HPD_OVR_EN_DP_TRANS_P0_MASK);
++ mtk_dp_update_bits(mtk_dp, MTK_DP_TRANS_P0_3414,
++    HPD_SET_DP_TRANS_P0_MASK,
++    HPD_SET_DP_TRANS_P0_MASK);
++ train_info->cable_plugged_in = true;
++ }
++ mtk_dp->hpd_state = status;
++ }
++ }
++}
++
+ static const struct drm_bridge_funcs mtk_dp_bridge_funcs = {
+  .atomic_check = mtk_dp_bridge_atomic_check,
+  .atomic_duplicate_state = drm_atomic_helper_bridge_duplicate_state,
+@@ -2801,7 +2872,8 @@ static int mtk_dp_probe(struct platform_device *pdev)
+  mtk_dp_power_enable(mtk_dp);
+
+  /* Disable HW interrupts: we don't need any for eDP */
+- mtk_dp_hwirq_enable(mtk_dp, false);
++ mtk_dp_hwirq_enable(mtk_dp, true);
++ mtk_dp_swirq_enable(mtk_dp, false);
+
+  /*
+  * Power on the AUX to allow reading the EDID from aux-bus:
+@@ -2829,6 +2901,9 @@ static int mtk_dp_probe(struct platform_device *pdev)
+  }
+  }
+  } else {
++ mtk_dp_swirq_enable(mtk_dp, false);
++ mtk_dp_hwirq_enable(mtk_dp, false);
++ mtk_dp_swirq_enable(mtk_dp, true);
+  mtk_dp->bridge.ops = DRM_BRIDGE_OP_DETECT |
+       DRM_BRIDGE_OP_EDID | DRM_BRIDGE_OP_HPD;
+  ret = devm_drm_bridge_add(dev, &mtk_dp->bridge);
+@@ -2861,10 +2936,15 @@ static int mtk_dp_suspend(struct device *dev)
+  struct mtk_dp *mtk_dp = dev_get_drvdata(dev);
+
+  mtk_dp_power_disable(mtk_dp);
+- if (mtk_dp->bridge.type != DRM_MODE_CONNECTOR_eDP)
++
++ if (mtk_dp->bridge.type == DRM_MODE_CONNECTOR_eDP) {
+  mtk_dp_hwirq_enable(mtk_dp, false);
+- pm_runtime_put_sync(dev);
++ } else {
++ mtk_dp_swirq_hpd_interrupt_set(mtk_dp, MTK_DP_HPD_DISCONNECT);
++ mtk_dp_swirq_enable(mtk_dp, false);
++ }
+
++ pm_runtime_put_sync(dev);
+  return 0;
+ }
+
+@@ -2874,8 +2954,14 @@ static int mtk_dp_resume(struct device *dev)
+
+  pm_runtime_get_sync(dev);
+  mtk_dp_init_port(mtk_dp);
+- if (mtk_dp->bridge.type != DRM_MODE_CONNECTOR_eDP)
++
++ if (mtk_dp->bridge.type == DRM_MODE_CONNECTOR_eDP) {
+  mtk_dp_hwirq_enable(mtk_dp, true);
++ } else {
++ mtk_dp_swirq_hpd_interrupt_set(mtk_dp, MTK_DP_HPD_CONNECT);
++ mtk_dp_swirq_enable(mtk_dp, true);
++ }
++
+  mtk_dp_power_enable(mtk_dp);
+
+  return 0;
+diff --git a/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+index 8ad7a9cc259e..7c97e230be50 100644
+--- a/drivers/gpu/drm/mediatek/mtk_dp_reg.h
++++ b/drivers/gpu/drm/mediatek/mtk_dp_reg.h
+@@ -286,7 +286,10 @@
+ #define POST_MISC_DATA_LANE1_OV_DP_TRANS_P0_MASK BIT(9)
+ #define POST_MISC_DATA_LANE2_OV_DP_TRANS_P0_MASK BIT(10)
+ #define POST_MISC_DATA_LANE3_OV_DP_TRANS_P0_MASK BIT(11)
++#define MTK_DP_TRANS_P0_35C0 0x35c0
++#define MTK_DP_TRANS_P0_35C4 0x35c4
+ #define MTK_DP_TRANS_P0_35C8 0x35c8
++#define SW_IRQ_SET_DP_TRANS_P0_MASK GENMASK(15, 0)
+ #define SW_IRQ_CLR_DP_TRANS_P0_MASK GENMASK(15, 0)
+ #define SW_IRQ_STATUS_DP_TRANS_P0_MASK GENMASK(15, 0)
+ #define MTK_DP_TRANS_P0_35D0 0x35d0
+-- 
+2.45.2
 
