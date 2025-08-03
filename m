@@ -1,47 +1,47 @@
-Return-Path: <linux-kernel+bounces-754348-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754349-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10388B19318
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:18:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 106A1B1931B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7F273B8701
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:18:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AD71718931DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3E02877CB;
-	Sun,  3 Aug 2025 08:18:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CEBA3287511;
+	Sun,  3 Aug 2025 08:22:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gmYmuOQg"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PveAAsoB"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7800284669;
-	Sun,  3 Aug 2025 08:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A1318834;
+	Sun,  3 Aug 2025 08:22:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754209113; cv=none; b=b3d+5LQbKRPbyT+obqyuQBg89KVEx1VAwqw4lNdr627TfER76MybJQ8gDqhFvSETA/d0IBiFnLzO9Jf78ml96bUqNONLhgKxR4n6YO2UO6/CbrhUhhMcV+wEfjGUs4iU9xNS8SsJyBzmap96gtSHfxj4S/j5ohsegVm0aENZKdU=
+	t=1754209358; cv=none; b=ZAq4Qn9MqqZde6VkDpN78/TtBcOfrUKVGMxKca7K2ykBNHVUY7zijLtXLtGpFaep1b8lnePNQteLxtBwpEn6idHG0IyArZ1pKjxGqv+OEs9NzwuRlot9g8eAKbb0KI9ZizTI/NAyQUgxZ2bwC2wYcdfc17w52mMGu7qri1cOoxI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754209113; c=relaxed/simple;
-	bh=H3Qe7OOM+iEVU40OI4Jad68EOrknCQC876wU3kNEge0=;
+	s=arc-20240116; t=1754209358; c=relaxed/simple;
+	bh=ELG7zMAKHeSy4fPpy7ykVCCtCN0vHQ+obFd4AJX/FxM=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hkPa7CX2XC8PIsXwjDlYvS5/Nwn4oODEm/LC66Yapo9xUq5gHW5IS7rJ6HYVH4ubBvktPNnTZmh5eLgk2J6cHCO1Dvx4VBSO2oclMn+pH/UHD5khaS/O++AMbv870UufvBlEj4JCw3aZkjreiE/25fnbb8blRhG+PyWBfVGLreI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gmYmuOQg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 01C59C4CEEB;
-	Sun,  3 Aug 2025 08:18:26 +0000 (UTC)
+	 In-Reply-To:Content-Type; b=C8gmBsSnc49tuQISSFPQ1hdmoS2VKsual4IXshZk0kEA9Q1muBAQ7PkS8fEwJa9pwbBLkQHwcuOF1u0NNGURpgIV9Awgm06+uM68wPkf1CtQowzwqxQhJuWKXGI9UvyvL0uAgv2aBWzAFScLOpepWkNEt/VcC6ZHfBSnJ8NiD/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PveAAsoB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66A2AC4CEEB;
+	Sun,  3 Aug 2025 08:22:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754209112;
-	bh=H3Qe7OOM+iEVU40OI4Jad68EOrknCQC876wU3kNEge0=;
+	s=k20201202; t=1754209357;
+	bh=ELG7zMAKHeSy4fPpy7ykVCCtCN0vHQ+obFd4AJX/FxM=;
 	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=gmYmuOQglDHc8Dhub6N28oyK07r+M8hwy195nRQPR2a6MxstB3TmoI54lLCnm6E48
-	 vXOZTI3RxqQaoX1O3hxJSItiRyc9/tlSUn56pDi3BTODtmF390hnpZsF41ZcmAErhM
-	 JdB5aaCkE+8xzTD6eOMjKJXuNnnVV5CS9oI9xEq2j5gowBevj0udjY2tRmzi2NVB0d
-	 JzyJeG71sWBK2etj1XYQcir+ansxNEo0HjTwNz2zeYR72u7FrhgIiIzTHu8Gl2n5Ws
-	 mcyzv/zqYH43/L7V9imvR+/TMqrorE16HoX+RqJ0luNxb0UrRv2aRW6SG4+zJqa2ZS
-	 riSR+XOcziAug==
-Message-ID: <2889bb9d-8d0d-44a9-a224-0d04562b4a0f@kernel.org>
-Date: Sun, 3 Aug 2025 10:18:25 +0200
+	b=PveAAsoB0TGRYWQF+J34mpo1HHNlPCPN4F2fYv9loOLUIR0JXOCPDqKHqTXxKGBnd
+	 Gpf1cUv6/L9cQoDzTfZ0yE3JGppSa89IAUX0YazlWhaaK3NZBtZs3aYOh7nB6XlXrS
+	 2iTnY3adW+wEL6Osg7GPyQu0M0/08F1SKSK0dQ+vIbH+aa2U/qycmo9pneM0Pm9vHc
+	 jxUgrMXfGoGqJKp531QwqB1nHx2MFihS9fRspptj/yaaFdtCspNivFBZ4f0KKnr8CS
+	 p0qF3uKW+H6QqMg75f2OeFFEb3bVNOGh9DKtBhqs5iM/xxDO+ZT4exWSnXsny5ta33
+	 eNDYlhS3LzzJQ==
+Message-ID: <dc1482a7-a69e-40ec-83ee-98ecc2e57bf1@kernel.org>
+Date: Sun, 3 Aug 2025 10:22:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,20 +49,14 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 9/9] dt-bindings: nvmem: mediatek: efuse: Add support
- for MT8196
-To: Laura Nao <laura.nao@collabora.com>, robh@kernel.org
-Cc: andrew-ct.chen@mediatek.com, angelogioacchino.delregno@collabora.com,
- arnd@arndb.de, bchihi@baylibre.com, colin.i.king@gmail.com,
- conor+dt@kernel.org, daniel.lezcano@linaro.org, devicetree@vger.kernel.org,
- frank-w@public-files.de, kernel@collabora.com, krzk+dt@kernel.org,
- lala.lin@mediatek.com, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- linux-pm@vger.kernel.org, lukasz.luba@arm.com, matthias.bgg@gmail.com,
- nfraprado@collabora.com, rafael@kernel.org, rui.zhang@intel.com,
- srini@kernel.org, u.kleine-koenig@baylibre.com, wenst@chromium.org
-References: <20250730235451.GA1911689-robh@kernel.org>
- <20250731102650.145641-1-laura.nao@collabora.com>
+Subject: Re: [PATCH v7] regulator: add s2dos05 regulator support
+To: Dzmitry Sankouski <dsankouski@gmail.com>, Lee Jones <lee@kernel.org>,
+ Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+ Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+ =?UTF-8?Q?Andr=C3=A9_Draszik?= <andre.draszik@linaro.org>
+Cc: linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+ devicetree@vger.kernel.org
+References: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
 From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
 Autocrypt: addr=krzk@kernel.org; keydata=
@@ -108,24 +102,51 @@ Autocrypt: addr=krzk@kernel.org; keydata=
  jWt87ecuHlpL3uuQ0ZZNWqHgZoQLXoqC2ZV5KrtKWb/jyiFX/sxSrodALf0zf+tfHv0FZWT2
  zHjUqd0t4njD/UOsuIMOQn4Ig0SdivYPfZukb5cdasKJukG1NOpbW7yRNivaCnfZz6dTawXw
  XRIV/KDsHQiyVxKvN73bThKhONkcX2LWuD928tAR6XMM2G5ovxLe09vuOzzfTWQDsm++9UKF a/A=
-In-Reply-To: <20250731102650.145641-1-laura.nao@collabora.com>
+In-Reply-To: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 31/07/2025 12:26, Laura Nao wrote:
->>>        - items:
->>> +          - const: mediatek,mt8196-efuse
->>>            - const: mediatek,mt8188-efuse
->>>            - const: mediatek,mt8186-efuse
->>
->> You just broke mt8188 as it had 2 entries and now has 3. I think 
->> (based on the commit msg) you want to change 8188 entry to an enum with 
->> mediatek,mt8196-efuse and mediatek,mt8188-efuse.
->>
-> 
-> You're absolutely right, not sure how I missed that.
-Please test your bindings and DTS BEFORE you send. The testing would
-point you new warnings.
+On 02/08/2025 13:22, Dzmitry Sankouski wrote:
+> +
+> +	platform_set_drvdata(pdev, s2dos05);
+> +
+> +	rdata = devm_kcalloc(dev, rdev_num, sizeof(*rdata), GFP_KERNEL);
+> +	if (!rdata)
+> +		return -ENOMEM;
+> +
+> +	for (i = 0; i < rdev_num; i++)
+> +		rdata[i].name = regulators[i].name;
+> +
+> +	s2dos05->regmap = iodev->regmap_pmic;
+> +	s2dos05->dev = dev;
+> +	if (!dev->of_node)
+> +		dev->of_node = dev->parent->of_node;
+> +
+> +	for (i = 0; i < rdev_num; i++) {
+> +		struct regulator_dev *regulator;
+> +
+> +		config.init_data = rdata[i].init_data;
+> +		config.of_node = rdata[i].of_node;
+> +		config.dev = dev;
+> +		config.driver_data = s2dos05;
+> +		regulator = devm_regulator_register(&pdev->dev,
+> +						&regulators[i], &config);
+> +		if (IS_ERR(regulator)) {
+> +			ret = PTR_ERR(regulator);
+> +			dev_err(&pdev->dev, "regulator init failed for %d\n",
+> +				i);
+> +		}
+> +	}
+> +
+> +	return ret;
+
+I do not understand your logic here and I already commented on issues
+with 'ret'. If 1st regulator fails, but the last one succeeds, you
+return 0. If 1st succeeds, but the last one fails, you return failure
+failing the probe.
+
+Why only last regulator is important? I see it is a buck, so maybe there
+is a difference, but this should be clearly explained. Or fixed.
 
 Best regards,
 Krzysztof
