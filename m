@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-754431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F166B19439
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:22:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id D94F0B1943A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:22:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DD6201761E2
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:22:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DEBB176168
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:22:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3201D26A087;
-	Sun,  3 Aug 2025 14:21:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7B4726AAAB;
+	Sun,  3 Aug 2025 14:21:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HNLZm1fD"
-Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ky499cqD"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ABE3156CA;
-	Sun,  3 Aug 2025 14:21:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CB9326A0D5;
+	Sun,  3 Aug 2025 14:21:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754230905; cv=none; b=swkCQ3uKh0p1b2oe3mGL3zNq4dlsHZU8sTwVeT2bL0aNCxodG3Ao1CW063lfHaS7QBu9eFs1LlDKnGO9xLZlUHDOps5mPrWqUJ993J2xzR2wvRkKUGe5NQXdlvYg3DGksPxA4lK5H6DLWRR7jo059Cb9+HUbBlUad6tVxAVEM/w=
+	t=1754230910; cv=none; b=izrrpNUFFw0YNJbbgpA/kqUT+NmULlSiCgkE2kJPY8bRZlqWUYvikZSkvCmteY0XdCwX9W3rnCJsSt/K5Qeq8cih0bMiNMTH8kv3iPPI0tcqAeuIPG6IiLFTkFthsWT4k92ktFk0aYcC8rYrt4yHscMHy5aWK+Op8JiN9nklHAs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754230905; c=relaxed/simple;
-	bh=UW4NgyqkgvDyq/INEfqhRNlZQ1MrMBA5Nk73EGCcPak=;
+	s=arc-20240116; t=1754230910; c=relaxed/simple;
+	bh=4EgI0v2m+Yvuw7v12aV6d/bqVWoPc0XuNyB+NUvdbwQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LUw4tnCdVqYpr+7a1ARAu/z7DQzheafZouwg07YWcyQouLGHOIEKiE6YYMw3poG+5eBdn61c9HupStn58+/i8KEhO7trRatO/srDf7nbc5d0dcMYKoT6pmK/+ax+4elcVsz7SPTJ7OfZ5He8OzVAl2+sG377ZxXX6LwPaSnDQfI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HNLZm1fD; arc=none smtp.client-ip=209.85.210.178
+	 MIME-Version; b=FAS2nj+/2L2akMguku3GHy/LUV6q9oukt0SfizZ7PXJNCi5UxPRwejZEzQXBg2eqni95j2b9quddwOG5TlNkQ3ROs2nWHsvlW443+tbfJCUw0JU8P0iQqL2x2Ouzl0gldvymufPSKf0ls7L8ukTyOC6mgcXIeAVUuh2m5TJUMWQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ky499cqD; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-76bd202ef81so3862438b3a.3;
-        Sun, 03 Aug 2025 07:21:43 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76b36e6b9ddso2899087b3a.1;
+        Sun, 03 Aug 2025 07:21:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754230902; x=1754835702; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754230908; x=1754835708; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=fXGv88gAYzT87NJ3puOwVetFEtHU40d9kzRdaa9qaB8=;
-        b=HNLZm1fDZl3WVElM9I5hPZizVvh2UUIkWJBk919ZfdQ2ORYB5l35Jd1G7wE5LPI9Q2
-         b4OPWe+ZyzZlGiUdNsSZU1Mol3lOd3xNpRkGZ+fh/74YqcEq3RZS6aEELN1HCK9jqJ5s
-         Kn3oWUbJZGyqAmuV4Bhdfr99kSqPRCLbKjBkLzduEsS5FwHF+uvvJl7OjU5zj8DvJnaa
-         bDXQOgPji3K3IzjYTN1HPOC5tytnAfv6+ITxt6rFDXji1/gfPXxbQbAEJWcQiMvo56BK
-         HPMwVvCe0AcIHfxAwxKxNAS1LShe0Y2ZO2DmWxg9d/zjplWk1HIzYWH0P7iD4VbKpfp6
-         KQtQ==
+        bh=APj1c+UB2oHtQRNfZRsuIg6Lw5yFU6MmLLNl9Pq1JRU=;
+        b=Ky499cqDgPO0X11VhOow+d8toFPTLmhO+fNCxSdJYYS10/4zGKhP9lGqwx2qLFTXxN
+         CnvebVaMAR369cmB3ulrP0q+phdPBj044qSf33p5SsinSdq8/eLKpDBe3JrSADcePT8i
+         ldzz9vA5lZK2RH1vmEegQp7Lk/i+J+oX45DySAw6Tfp3dPCWUcpEffM7yHseL1oZX8f5
+         X1568y1KbNbkkN/YYSafOQaZ1x9xnxBLqg3IqSHdMpWc/4sLhWWiI3Uz2+rIc+A1N/bE
+         ye/1AxNKw5Gt+olwh+4I6lKjXho8GWa7oMeukG2z2GOk9Bn4aVDd1nwS4JrghoRloVGy
+         ImPQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754230902; x=1754835702;
+        d=1e100.net; s=20230601; t=1754230908; x=1754835708;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=fXGv88gAYzT87NJ3puOwVetFEtHU40d9kzRdaa9qaB8=;
-        b=BQTbjDsQFVgi4xtd54DbXSs//SGGEmY+5D8SNnDDyvUTqiBn2HbZYZ9SqQZHN8wWUg
-         RxO64KTLUYKmsAG8KqnD8px6SGUMbEwX9lEoqgeIIsy8Auw+QIFI+tl4NJ8d+F1/2NL9
-         nCwLRdjqc/2lXd67skZMuoTvOehqq5SI9Ao1LQ5CVLyfsHMAk+f4p70IMvYVxdf9M6iv
-         Ej94jaUyAAbF38Q3nG7zHk8+tDZWTYlCJNaOT1WnsC1jZAuFPhkUDlCsyjEa1Ex7Hl/k
-         +/dqm5T89Z/UlT2ANhXOr1g+uIkFb5CAeO5L3RmB2PL3HdHZ6xMnX/Vyy/TGfYD6UPK5
-         gR2g==
-X-Forwarded-Encrypted: i=1; AJvYcCXYu0iYbFKlz73MjAn2QbBFtmsDHk/9yNE9zCE2QqRPiilOqBjgQ8IMSpO6oUHnVBnMVExGAFmkvT1c1HJalQ==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyA8lRiOuZJRGK1Zk2KNFYKS2xlI7CyHiGNuRYGAAxIoCYZYfRt
-	eXCr0gF3AsRSKeVyHP0VVUFe7eM7nHavNR98TQkbZVFctTwa33h6wxvl
-X-Gm-Gg: ASbGnctpYUgL66zS+SNo/5rCsqANTTxeW4/lIzkYyTYBKzf+UbFZz/nE++JzSfyYAvI
-	zEsIclne0RQ/z7IX4wGRUHQ4prn3t0PQDk+os+n0B2bLTwPPgtFVlF70eBfkJzNQD7sm8tyO89c
-	GWFaiY98k0V9w80r5K6Mwkv1FNGaTotg0Yl5NN95D5k5DysD8B87yK0U+qavImglXURFCv39bx8
-	BQkgiPOzrxMhCpcKeeJpdp0rcf7IywqO9YBFkUQObiV6DmG/TBqGvvEpKsBaXdiiorjyW1n50mc
-	pez9EpcKSjoMtBwzlF47+tUauhQE0cDJscJxHSGg6dTtLHcMR7lHtcMcwp9XZVu/15R1TRvr00M
-	/K/xatSoTUn7YnelS/2eHnRycv6eS7QrddFPW/XH8VK1A
-X-Google-Smtp-Source: AGHT+IFDgKyZSfBrsaDU/Nae3URYZoGmkvcLbrkczRPqQQTRhdX+/81NmbjdbpX/nJj0Wo3Lv346RQ==
-X-Received: by 2002:a05:6a00:1495:b0:749:ad1:ac8a with SMTP id d2e1a72fcca58-76bec48f3e7mr7804931b3a.11.1754230902411;
-        Sun, 03 Aug 2025 07:21:42 -0700 (PDT)
+        bh=APj1c+UB2oHtQRNfZRsuIg6Lw5yFU6MmLLNl9Pq1JRU=;
+        b=UlN7gpqz3WZl450HZY4rT9nAhl1I4RMIRu1Trzv1v3rtFG1aGAR+wMLSQw5TFbvUu7
+         ReAb4PwG1Bc/FeiL6P3H5JTCQqOXvK8TSCo1E09TW00VFSx59BZZC638RuB0heKJyMml
+         Uot/NvlvXWWZv0bwyCRLLRxHrZC93Il417zW04U4+hRionFDHjEEu30M1uE50G5jsa4p
+         79THtN83JQ3W2Hwao8zzMO6iBRwOdi40K2JJJHBlp9/Wrst2hmXw42211F89sTUhkCEZ
+         TzLZ9q8cpWOrDBWXGKPOQKTgw+qKNwypQ+HBflts49apmgp1vGGCE7r6xO/sdqjoULcP
+         sPCw==
+X-Forwarded-Encrypted: i=1; AJvYcCUpU7kmlamPlnSVvQINbo7eblyY35z9tvJBloRMdTk1VCSW0keHi2fut2iJy2DA8m//mTs/pMTgmqf4eo3dyA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YzOWITuQXH5OTRaJGaa3mqauLLwpyEOurNEWzHglx5AwrjrY4pq
+	25eg+VXR3KJ61e2J1GKT//edF3Fb0RbBq0JcjlSpE5WZfSobENFc+0NW
+X-Gm-Gg: ASbGncsiHiE2J+3M5QLOCtuPWCyFRlpFwAvTUwGe9aKBSUKQ+pHcaS0EaV8w+yGa9kH
+	FYlts4sxPlQOXNY+p639iEsCGhZZTUNqkiVVwQiKp38PjvPl3jyr4Prfuy1HJAt7tRlBnKD2VuB
+	ItaJcehJ8QPUzw5kteyRB46hOTWqoMeau07gnXi+YHVFrAwWmV9koJBBuhqYOPODeWSDSXMix/m
+	qGgUseG6xAxQUAyktJXpUBlSGH2wfsy8cCO8DX/QUWhXFsUZNV1NVKO1KXfyJt0Ux3dz29oJ1eA
+	fuMBdqaZ9XTd6Kg+0jBKxkpkkDyKkYuAkUUmd4N0UV8W+aOnAiEjGwC9x+OdZsR2MD+rU6nh0GG
+	zNWnpZWgCk434jWZCCWOJI4Rxw5FLeOaelQ==
+X-Google-Smtp-Source: AGHT+IGyyGgtZEcS4DW/mmaf6MBx0aYT/R4DDHKjOPs9I2a1dvSC67wZ0LzCZPaKLpRqjYMvlWpcdQ==
+X-Received: by 2002:a05:6a20:3c8f:b0:220:9d82:a290 with SMTP id adf61e73a8af0-23df8f94a16mr8795243637.8.1754230908273;
+        Sun, 03 Aug 2025 07:21:48 -0700 (PDT)
 Received: from localhost.localdomain ([104.28.217.213])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd0279sm8431306b3a.98.2025.08.03.07.21.36
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd0279sm8431306b3a.98.2025.08.03.07.21.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 07:21:42 -0700 (PDT)
+        Sun, 03 Aug 2025 07:21:48 -0700 (PDT)
 From: Jesung Yang <y.j3ms.n@gmail.com>
 To: Miguel Ojeda <ojeda@kernel.org>,
 	Alex Gaynor <alex.gaynor@gmail.com>,
@@ -88,9 +88,9 @@ Cc: linux-kernel@vger.kernel.org,
 	rust-for-linux@vger.kernel.org,
 	nouveau@lists.freedesktop.org,
 	Jesung Yang <y.j3ms.n@gmail.com>
-Subject: [PATCH 3/4] rust: macro: add derive macro for `TryFrom`
-Date: Sun,  3 Aug 2025 14:20:53 +0000
-Message-Id: <58f312f85a30d1da0130b10735ddba89244241cb.1754228164.git.y.j3ms.n@gmail.com>
+Subject: [PATCH 4/4] rust: macro: add derive macro for `Into`
+Date: Sun,  3 Aug 2025 14:20:54 +0000
+Message-Id: <c7a1a9a872f206deb65b7e84a8ecc88c528ed50e.1754228164.git.y.j3ms.n@gmail.com>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <cover.1754228164.git.y.j3ms.n@gmail.com>
 References: <cover.1754228164.git.y.j3ms.n@gmail.com>
@@ -102,448 +102,160 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Introduce a procedural macro `TryFrom` to automatically implement the
-`TryFrom` trait for unit-only enums.
+Introduce a procedural macro `Into` to automatically implement the
+`Into` trait for unit-only enums.
 
-This reduces boilerplate in cases where numeric values need to be
-interpreted as relevant enum variants. This situation often arise when
-working with low-level data sources. A typical example is the `Chipset`
-enum in nova-core, where the value read from a GPU register should be
-mapped to a corresponding variant.
+This reduces boilerplate in cases where enum variants need to be
+interpreted as relevant numeric values. A concrete example can be
+found in nova-core, where the `register!()` macro requires enum types
+used within it to be convertible via `u32::from()` [1].
 
-Since a pending RFC [1] proposes adding the `syn` crate [2] as a
-dependency, keep the parsing logic minimal.
+Note that the macro actually generates `From<E> for T` implementations,
+where `E` is an enum identifier and `T` is an arbitrary integer type.
+This automatically provides the corresponding `Into<T> for E`
+implementations through the blanket implementation.
 
-Link: https://lore.kernel.org/rust-for-linux/20250304225536.2033853-1-benno.lossin@proton.me [1]
-Link: https://docs.rs/syn/latest/syn [2]
-
+Link: https://lore.kernel.org/rust-for-linux/20250624132337.2242-1-dakr@kernel.org/ [1]
 Signed-off-by: Jesung Yang <y.j3ms.n@gmail.com>
 ---
- rust/macros/convert.rs | 337 +++++++++++++++++++++++++++++++++++++++++
- rust/macros/lib.rs     | 124 +++++++++++++++
- 2 files changed, 461 insertions(+)
- create mode 100644 rust/macros/convert.rs
+ rust/macros/convert.rs |  36 ++++++++++---
+ rust/macros/lib.rs     | 115 +++++++++++++++++++++++++++++++++++++++++
+ 2 files changed, 145 insertions(+), 6 deletions(-)
 
 diff --git a/rust/macros/convert.rs b/rust/macros/convert.rs
-new file mode 100644
-index 000000000000..0084bc4308c1
---- /dev/null
+index 0084bc4308c1..a6ef67ba27c7 100644
+--- a/rust/macros/convert.rs
 +++ b/rust/macros/convert.rs
-@@ -0,0 +1,337 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+use proc_macro::{token_stream, Delimiter, Ident, Span, TokenStream, TokenTree};
-+use std::iter::Peekable;
-+
+@@ -3,6 +3,12 @@
+ use proc_macro::{token_stream, Delimiter, Ident, Span, TokenStream, TokenTree};
+ use std::iter::Peekable;
+ 
 +#[derive(Debug)]
-+struct TypeArgs {
-+    helper: Vec<Ident>,
-+    repr: Option<Ident>,
++enum DeriveTarget {
++    TryFrom,
++    Into,
 +}
 +
-+const VALID_TYPES: [&str; 12] = [
-+    "u8", "u16", "u32", "u64", "u128", "usize", "i8", "i16", "i32", "i64", "i128", "isize",
-+];
-+
-+pub(crate) fn derive_try_from(input: TokenStream) -> TokenStream {
-+    derive(input)
+ #[derive(Debug)]
+ struct TypeArgs {
+     helper: Vec<Ident>,
+@@ -13,13 +19,20 @@ struct TypeArgs {
+     "u8", "u16", "u32", "u64", "u128", "usize", "i8", "i16", "i32", "i64", "i128", "isize",
+ ];
+ 
++pub(crate) fn derive_into(input: TokenStream) -> TokenStream {
++    derive(input, DeriveTarget::Into)
 +}
 +
-+fn derive(input: TokenStream) -> TokenStream {
-+    let derive_target = "TryFrom";
-+    let derive_helper = "try_from";
-+
-+    let mut tokens = input.into_iter().peekable();
-+
-+    let type_args = match parse_types(&mut tokens, derive_helper) {
-+        Ok(type_args) => type_args,
-+        Err(errs) => return errs,
+ pub(crate) fn derive_try_from(input: TokenStream) -> TokenStream {
+-    derive(input)
++    derive(input, DeriveTarget::TryFrom)
+ }
+ 
+-fn derive(input: TokenStream) -> TokenStream {
+-    let derive_target = "TryFrom";
+-    let derive_helper = "try_from";
++fn derive(input: TokenStream, target: DeriveTarget) -> TokenStream {
++    type ImplFn = fn(&Ident, &Ident, &[Ident]) -> TokenStream;
++    let (derive_target, derive_helper, impl_trait) = match target {
++        DeriveTarget::TryFrom => ("TryFrom", "try_from", impl_try_from as ImplFn),
++        DeriveTarget::Into => ("Into", "into", impl_into as ImplFn),
 +    };
+ 
+     let mut tokens = input.into_iter().peekable();
+ 
+@@ -85,12 +98,12 @@ fn derive(input: TokenStream) -> TokenStream {
+         let ty = type_args
+             .repr
+             .unwrap_or_else(|| Ident::new("isize", Span::mixed_site()));
+-        impl_try_from(&ty, &enum_ident, &variants)
++        impl_trait(&ty, &enum_ident, &variants)
+     } else {
+         let impls = type_args
+             .helper
+             .iter()
+-            .map(|ty| impl_try_from(ty, &enum_ident, &variants));
++            .map(|ty| impl_trait(ty, &enum_ident, &variants));
+         quote! { #(#impls)* }
+     }
+ }
+@@ -335,3 +348,14 @@ fn try_from(#param: #ty) -> Result<Self, Self::Error> {
+         }
+     }
+ }
 +
-+    // Skip until the `enum` keyword, including the `enum` itself.
-+    for tt in tokens.by_ref() {
-+        if matches!(tt, TokenTree::Ident(ident) if ident.to_string() == "enum") {
-+            break;
-+        }
-+    }
-+
-+    let Some(TokenTree::Ident(enum_ident)) = tokens.next() else {
-+        return format!(
-+            "::core::compile_error!(\"`#[derive({derive_target})]` can only \
-+            be applied to an enum\");"
-+        )
-+        .parse::<TokenStream>()
-+        .unwrap();
-+    };
-+
-+    let mut errs = TokenStream::new();
-+
-+    if matches!(tokens.peek(), Some(TokenTree::Punct(p)) if p.as_char() == '<') {
-+        errs.extend(
-+            format!(
-+                "::core::compile_error!(\"`#[derive({derive_target})]` \
-+                does not support enums with generic parameters\");"
-+            )
-+            .parse::<TokenStream>()
-+            .unwrap(),
-+        );
-+    }
-+
-+    let Some(variants_group) = tokens.find_map(|tt| match tt {
-+        TokenTree::Group(g) if g.delimiter() == Delimiter::Brace => Some(g),
-+        _ => None,
-+    }) else {
-+        unreachable!("Enums have its corresponding body")
-+    };
-+
-+    let enum_body_tokens = variants_group.stream().into_iter().peekable();
-+    let variants = match parse_enum_variants(enum_body_tokens, &enum_ident, derive_target) {
-+        Ok(variants) => variants,
-+        Err(new_errs) => {
-+            errs.extend(new_errs);
-+            return errs;
-+        }
-+    };
-+
-+    if !errs.is_empty() {
-+        return errs;
-+    }
-+
-+    if type_args.helper.is_empty() {
-+        // Extract the representation passed by `#[repr(...)]` if present.
-+        // If nothing is specified, the default is `Rust` representation,
-+        // which uses `isize` for the discriminant type.
-+        // See: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.repr-rust
-+        let ty = type_args
-+            .repr
-+            .unwrap_or_else(|| Ident::new("isize", Span::mixed_site()));
-+        impl_try_from(&ty, &enum_ident, &variants)
-+    } else {
-+        let impls = type_args
-+            .helper
-+            .iter()
-+            .map(|ty| impl_try_from(ty, &enum_ident, &variants));
-+        quote! { #(#impls)* }
-+    }
-+}
-+
-+fn parse_types(
-+    attrs: &mut Peekable<token_stream::IntoIter>,
-+    helper: &str,
-+) -> Result<TypeArgs, TokenStream> {
-+    let mut helper_args = vec![];
-+    let mut repr_arg = None;
-+
-+    // Scan only the attributes. As soon as we see a token that is
-+    // not `#`, we know we have consumed all attributes.
-+    while let Some(TokenTree::Punct(p)) = attrs.peek() {
-+        if p.as_char() != '#' {
-+            unreachable!("Outer attributes start with `#`");
-+        }
-+        attrs.next();
-+
-+        // The next token should be a `Group` delimited by brackets.
-+        // (e.g., #[try_from(u8, u16)])
-+        //         ^^^^^^^^^^^^^^^^^^^
-+        let Some(TokenTree::Group(attr_group)) = attrs.next() else {
-+            unreachable!("Outer attributes are surrounded by `[` and `]`");
-+        };
-+
-+        let mut inner = attr_group.stream().into_iter();
-+
-+        // Extract the attribute identifier.
-+        // (e.g., #[try_from(u8, u16)])
-+        //          ^^^^^^^^
-+        let attr_name = match inner.next() {
-+            Some(TokenTree::Ident(ident)) => ident.to_string(),
-+            _ => unreachable!("Attributes have identifiers"),
-+        };
-+
-+        if attr_name == helper {
-+            match parse_helper_args(inner, helper) {
-+                Ok(v) => helper_args.extend_from_slice(&v),
-+                Err(errs) => return Err(errs),
-+            }
-+        } else if attr_name == "repr" {
-+            repr_arg = parse_repr_args(inner);
-+        }
-+    }
-+
-+    Ok(TypeArgs {
-+        helper: helper_args,
-+        repr: repr_arg,
-+    })
-+}
-+
-+fn parse_repr_args(mut tt_group: impl Iterator<Item = TokenTree>) -> Option<Ident> {
-+    // The next token should be a `Group` delimited by parentheses.
-+    // (e.g., #[repr(C, u8)])
-+    //              ^^^^^^^
-+    let Some(TokenTree::Group(args_group)) = tt_group.next() else {
-+        unreachable!("`repr` attribute has at least one argument")
-+    };
-+
-+    for arg in args_group.stream() {
-+        if let TokenTree::Ident(type_ident) = arg {
-+            if VALID_TYPES.contains(&type_ident.to_string().as_str()) {
-+                return Some(type_ident);
-+            }
-+        }
-+    }
-+
-+    None
-+}
-+
-+fn parse_helper_args(
-+    mut tt_group: impl Iterator<Item = TokenTree>,
-+    helper: &str,
-+) -> Result<Vec<Ident>, TokenStream> {
-+    let mut errs = TokenStream::new();
-+    let mut args = vec![];
-+
-+    // The next token should be a `Group`.
-+    // (e.g., #[try_from(u8, u16)])
-+    //                  ^^^^^^^^^
-+    let Some(TokenTree::Group(args_group)) = tt_group.next() else {
-+        return Err(format!(
-+            "::core::compile_error!(\"`{helper}` attribute expects at \
-+            least one integer type argument (e.g., `#[{helper}(u8)]`)\");"
-+        )
-+        .parse::<TokenStream>()
-+        .unwrap());
-+    };
-+
-+    let raw_args = args_group.stream();
-+    if raw_args.is_empty() {
-+        return Err(format!(
-+            "::core::compile_error!(\"`{helper}` attribute expects at \
-+            least one integer type argument (e.g., `#[{helper}(u8)]`)\");"
-+        )
-+        .parse::<TokenStream>()
-+        .unwrap());
-+    }
-+
-+    // Iterate over the attribute argument tokens to collect valid integer
-+    // type identifiers.
-+    let mut raw_args = raw_args.into_iter();
-+    while let Some(tt) = raw_args.next() {
-+        let TokenTree::Ident(type_ident) = tt else {
-+            errs.extend(
-+                format!(
-+                    "::core::compile_error!(\"`{helper}` attribute expects \
-+                    comma-separated integer type arguments \
-+                    (e.g., `#[{helper}(u8, u16)]`)\");"
-+                )
-+                .parse::<TokenStream>()
-+                .unwrap(),
-+            );
-+            return Err(errs);
-+        };
-+
-+        if VALID_TYPES.contains(&type_ident.to_string().as_str()) {
-+            args.push(type_ident);
-+        } else {
-+            errs.extend(
-+                format!(
-+                    "::core::compile_error!(\"`{type_ident}` in `{helper}` \
-+                    attribute is not an integer type\");"
-+                )
-+                .parse::<TokenStream>()
-+                .unwrap(),
-+            );
-+        }
-+
-+        match raw_args.next() {
-+            Some(TokenTree::Punct(p)) if p.as_char() == ',' => continue,
-+            None => break,
-+            Some(_) => {
-+                errs.extend(
-+                    format!(
-+                        "::core::compile_error!(\"`{helper}` attribute expects \
-+                        comma-separated integer type arguments \
-+                        (e.g., `#[{helper}(u8, u16)]`)\");"
-+                    )
-+                    .parse::<TokenStream>()
-+                    .unwrap(),
-+                );
-+                return Err(errs);
-+            }
-+        }
-+    }
-+
-+    if !errs.is_empty() {
-+        return Err(errs);
-+    }
-+
-+    Ok(args)
-+}
-+
-+fn parse_enum_variants(
-+    mut tokens: Peekable<token_stream::IntoIter>,
-+    enum_ident: &Ident,
-+    derive_target: &str,
-+) -> Result<Vec<Ident>, TokenStream> {
-+    let mut errs = TokenStream::new();
-+
-+    let mut variants = vec![];
-+
-+    if tokens.peek().is_none() {
-+        errs.extend(
-+            format!(
-+                "::core::compile_error!(\"`#[derive({derive_target})]` \
-+                does not support zero-variant enums\");"
-+            )
-+            .parse::<TokenStream>()
-+            .unwrap(),
-+        );
-+    }
-+
-+    while let Some(tt) = tokens.next() {
-+        // Skip attributes like `#[...]` if present.
-+        if matches!(&tt, TokenTree::Punct(p) if p.as_char() == '#') {
-+            tokens.next();
-+            continue;
-+        }
-+
-+        let TokenTree::Ident(ident) = tt else {
-+            unreachable!("Enum variants have its corresponding identifier");
-+        };
-+
-+        // Reject tuple-like or struct-like variants.
-+        if let Some(TokenTree::Group(g)) = tokens.peek() {
-+            let variant_kind = match g.delimiter() {
-+                Delimiter::Brace => "struct-like",
-+                Delimiter::Parenthesis => "tuple-like",
-+                _ => unreachable!("Invalid enum variant syntax"),
-+            };
-+            errs.extend(
-+                format!(
-+                    "::core::compile_error!(\"`#[derive({derive_target})]` does not \
-+                    support {variant_kind} variant `{enum_ident}::{ident}`; \
-+                    only unit variants are allowed\");"
-+                )
-+                .parse::<TokenStream>()
-+                .unwrap(),
-+            );
-+        }
-+
-+        // Skip through the comma.
-+        for tt in tokens.by_ref() {
-+            if matches!(tt, TokenTree::Punct(p) if p.as_char() == ',') {
-+                break;
-+            }
-+        }
-+
-+        variants.push(ident);
-+    }
-+
-+    if !errs.is_empty() {
-+        return Err(errs);
-+    }
-+
-+    Ok(variants)
-+}
-+
-+fn impl_try_from(ty: &Ident, enum_ident: &Ident, variants: &[Ident]) -> TokenStream {
-+    let param = Ident::new("value", Span::mixed_site());
-+
-+    let clauses = variants.iter().map(|variant| {
-+        quote! {
-+            if #param == Self::#variant as #ty {
-+                ::core::result::Result::Ok(Self::#variant)
-+            } else
-+        }
-+    });
-+
++fn impl_into(ty: &Ident, enum_ident: &Ident, _: &[Ident]) -> TokenStream {
 +    quote! {
 +        #[automatically_derived]
-+        impl ::core::convert::TryFrom<#ty> for #enum_ident {
-+            type Error = ::kernel::prelude::Error;
-+            fn try_from(#param: #ty) -> Result<Self, Self::Error> {
-+                #(#clauses)* {
-+                    ::core::result::Result::Err(::kernel::prelude::EINVAL)
-+                }
++        impl ::core::convert::From<#enum_ident> for #ty {
++            fn from(value: #enum_ident) -> #ty {
++                value as #ty
 +            }
 +        }
 +    }
 +}
 diff --git a/rust/macros/lib.rs b/rust/macros/lib.rs
-index fa847cf3a9b5..569198f188f7 100644
+index 569198f188f7..374c1bdb696a 100644
 --- a/rust/macros/lib.rs
 +++ b/rust/macros/lib.rs
-@@ -14,6 +14,7 @@
- #[macro_use]
- mod quote;
- mod concat_idents;
-+mod convert;
- mod export;
- mod helpers;
- mod kunit;
-@@ -425,3 +426,126 @@ pub fn paste(input: TokenStream) -> TokenStream {
- pub fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
+@@ -427,6 +427,121 @@ pub fn kunit_tests(attr: TokenStream, ts: TokenStream) -> TokenStream {
      kunit::kunit_tests(attr, ts)
  }
-+
-+/// A derive macro for generating an impl of the [`TryFrom`] trait.
+ 
++/// A derive macro for providing an impl of the [`Into`] trait.
 +///
-+/// This macro automatically derives [`TryFrom`] trait for a given enum. Currently,
-+/// it only supports [unit-only enum]s without generic parameters.
++/// This macro automatically derives [`Into`] trait for a given enum by generating
++/// the relevant [`From`] implementation. Currently, it only supports [unit-only enum]s
++/// without generic parameters.
 +///
 +/// [unit-only enum]: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.unit-only
 +///
 +/// # Notes
 +///
-+/// The macro generates [`TryFrom`] implementations that:
-+/// - Convert numeric values to enum variants by matching discriminant values.
-+/// - Return `Ok(VARIANT)` for valid matches.
-+/// - Return `Err(EINVAL)` for invalid matches (where `EINVAL` is from
-+///   [`kernel::error::code`]).
++/// Unlike its name suggests, the macro actually generates [`From`] implementations
++/// which automatically provide corresponding [`Into`] implementations.
 +///
-+/// The macro uses the `try_from` custom attribute or `repr` attribute to generate
-+/// corresponding [`TryFrom`] implementations. `try_from` always takes precedence
-+/// over `repr`.
-+///
-+/// [`kernel::error::code`]: ../kernel/error/code/index.html
++/// The macro uses the `into` custom attribute or `repr` attribute to generate [`From`]
++/// implementations. `into` always takes precedence over `repr`.
 +///
 +/// # Caveats
 +///
-+/// Ensure that every integer type specified in `#[try_from(...)]` is large enough
-+/// to cover all enum discriminants. Otherwise, the internal `as` casts may overflow.
++/// Ensure that every integer type specified in `#[into(...)]` is large enough to cover
++/// all enum discriminants. Otherwise, the internal `as` casts may overflow.
 +///
 +/// # Examples
 +///
 +/// ## Without Attributes
 +///
 +/// Since [the default `Rust` representation uses `isize` for the discriminant type][repr-rs],
-+/// the macro implements `TryFrom<isize>`:
++/// the macro implements `From<Foo>` for `isize`:
 +///
 +/// [repr-rs]: https://doc.rust-lang.org/reference/items/enumerations.html#r-items.enum.discriminant.repr-rust
 +///
 +/// ```rust
-+/// use kernel::macros::TryFrom;
++/// use kernel::macros::Into;
 +/// use kernel::prelude::*;
 +///
-+/// #[derive(Debug, Default, PartialEq, TryFrom)]
++/// #[derive(Debug, Default, Into)]
 +/// enum Foo {
 +///     #[default]
 +///     A,
 +///     B = 0x17,
 +/// }
 +///
-+/// assert_eq!(Foo::try_from(0isize), Ok(Foo::A));
-+/// assert_eq!(Foo::try_from(0x17isize), Ok(Foo::B));
-+/// assert_eq!(Foo::try_from(0x19isize), Err(EINVAL));
++/// assert_eq!(0isize, Foo::A.into());
++/// assert_eq!(0x17isize, Foo::B.into());
 +/// ```
 +///
 +/// ## With `#[repr(T)]`
 +///
-+/// The macro implements `TryFrom<T>`:
++/// The macro implements `From<Foo>` for `T`:
 +///
 +/// ```rust
-+/// use kernel::macros::TryFrom;
++/// use kernel::macros::Into;
 +/// use kernel::prelude::*;
 +///
-+/// #[derive(Debug, Default, PartialEq, TryFrom)]
++/// #[derive(Debug, Default, Into)]
 +/// #[repr(u8)]
 +/// enum Foo {
 +///     #[default]
@@ -551,22 +263,21 @@ index fa847cf3a9b5..569198f188f7 100644
 +///     B = 0x17,
 +/// }
 +///
-+/// assert_eq!(Foo::try_from(0u8), Ok(Foo::A));
-+/// assert_eq!(Foo::try_from(0x17u8), Ok(Foo::B));
-+/// assert_eq!(Foo::try_from(0x19u8), Err(EINVAL));
++/// assert_eq!(0u8, Foo::A.into());
++/// assert_eq!(0x17u8, Foo::B.into());
 +/// ```
 +///
-+/// ## With `#[try_from(...)]`
++/// ## With `#[into(...)]`
 +///
-+/// The macro implements `TryFrom<T>` for each `T` specified in `#[try_from(...)]`,
++/// The macro implements `From<Foo>` for each `T` specified in `#[into(...)]`,
 +/// which always overrides `#[repr(...)]`:
 +///
 +/// ```rust
-+/// use kernel::macros::TryFrom;
++/// use kernel::macros::Into;
 +/// use kernel::prelude::*;
 +///
-+/// #[derive(Debug, Default, PartialEq, TryFrom)]
-+/// #[try_from(u8, u16)]
++/// #[derive(Debug, Default, Into)]
++/// #[into(u8, u16)]
 +/// #[repr(u8)]
 +/// enum Foo {
 +///     #[default]
@@ -574,9 +285,8 @@ index fa847cf3a9b5..569198f188f7 100644
 +///     B = 0x17,
 +/// }
 +///
-+/// assert_eq!(Foo::try_from(0u16), Ok(Foo::A));
-+/// assert_eq!(Foo::try_from(0x17u16), Ok(Foo::B));
-+/// assert_eq!(Foo::try_from(0x19u16), Err(EINVAL));
++/// assert_eq!(0u16, Foo::A.into());
++/// assert_eq!(0x17u16, Foo::B.into());
 +/// ```
 +///
 +/// ## Unsupported Cases
@@ -584,28 +294,32 @@ index fa847cf3a9b5..569198f188f7 100644
 +/// The following examples do not compile:
 +///
 +/// ```compile_fail
-+/// # use kernel::macros::TryFrom;
++/// # use kernel::macros::Into;
 +/// // Generic parameters are not allowed.
-+/// #[derive(TryFrom)]
++/// #[derive(Into)]
 +/// enum Foo<T> {
 +///     A,
 +/// }
 +///
 +/// // Tuple-like enums or struct-like enums are not allowed.
-+/// #[derive(TryFrom)]
++/// #[derive(Into)]
 +/// enum Bar {
 +///     A(u8),
 +///     B { inner: u8 },
 +/// }
 +///
 +/// // Structs are not allowed.
-+/// #[derive(TryFrom)]
++/// #[derive(Into)]
 +/// struct Baz(u8);
 +/// ```
-+#[proc_macro_derive(TryFrom, attributes(try_from))]
-+pub fn derive_try_from(input: TokenStream) -> TokenStream {
-+    convert::derive_try_from(input)
++#[proc_macro_derive(Into, attributes(into))]
++pub fn derive_into(input: TokenStream) -> TokenStream {
++    convert::derive_into(input)
 +}
++
+ /// A derive macro for generating an impl of the [`TryFrom`] trait.
+ ///
+ /// This macro automatically derives [`TryFrom`] trait for a given enum. Currently,
 -- 
 2.39.5
 
