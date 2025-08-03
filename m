@@ -1,130 +1,154 @@
-Return-Path: <linux-kernel+bounces-754460-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754461-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7ACC9B1948A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:54:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 61897B1948C
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:56:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C7A4B7A5053
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CF6218925F4
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:56:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21FD51D9A5D;
-	Sun,  3 Aug 2025 16:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F731CEACB;
+	Sun,  3 Aug 2025 16:56:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9gmRP7Q"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="Mj2dIhY1"
+Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19C0E1D63DF;
-	Sun,  3 Aug 2025 16:54:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AFB23AD;
+	Sun,  3 Aug 2025 16:55:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754240082; cv=none; b=U5UiBLgnfMma7zdn6YnifPKtOclXfzGg8p/JosTssV2AThu22V6deg8YPRjAIM36XapZBQAMNOQ1TcgFahoduEDKG8RP9A425U9DTryjeuGjqTbPxD6bLDLVs3kuKVZPZFrojdjNpH6c27u8Z1HLDmyjUIMB3oLoWv8xJCkUZ1g=
+	t=1754240160; cv=none; b=YSNiG0ncvAiplnhgM4rMKBu1xu5aByQrUt5PjuD7li1gHu/H06pfyutWr8yxkD4pmLpLdWvKO7J38V1RVeMUj6BHN2MhPQeI4zmgA+BxFOf4i1bDCOvwBQwsOqgEw1qNUcW9kh+bDaqB+gfR+ITPAe9pZiHBX5BshVJqIocwbRc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754240082; c=relaxed/simple;
-	bh=013LWtY1z9ycHf9/jlJK5Gk4unBMj8NZDKNYsGQFV9Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=h6RJtmumOh0tchoMB7av84LAGbkeMDNFzkUrVuV2GybQNdJUiaZYB77mt1JgpHIX/a6fttJpU0ShvgU5vAlzvqmR/LvICZDT3nplH1c5S1vhcbguPhdPqE+g1BCq/+F5v4fCYo878wwcHEoa7ScRIudNh15FB4T83EsnHH6NyK8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9gmRP7Q; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd041c431so2929116b3a.2;
-        Sun, 03 Aug 2025 09:54:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754240080; x=1754844880; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=pV9w0CQoRcUYhHYMt23UhoOkZT5o/JoD/yUyCBLIk2k=;
-        b=N9gmRP7QGIgX2lrvrHz01ovDZjAts5z4PIoSzB5pk/qtCv8270K9GWRPfl2Pe/HU23
-         E/F3wKYKPOeMNLHkL0u84t44L2wWxENbwpj8HWD5xOOw0iMmRUekgwrDrMOsf71S4EuU
-         2WGH3za0XbJwF+rwFHkpVsKHqP7c5E+T69GHt8Xq+fgNv6fs9aP3Als0fKFJemlYbafK
-         +5AYwtOYABAYeJ1P7kDRY7e8OZ6woVpU0nOPwNZSOopyxMiovkOoZBualNHQulXcURC6
-         7bqL3P9eJR8awAXGrfB2ZlRiXKvP+9GKEFmm67IioAQcxDDTopTaN35T4PtAq5oJv/3m
-         amrw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754240080; x=1754844880;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=pV9w0CQoRcUYhHYMt23UhoOkZT5o/JoD/yUyCBLIk2k=;
-        b=Czjrsvt9eUoAN+nqV5WhDZbfU8dpj+oe1l/cMYayp5SDfDaY6/jDChnisR0/uaJNvu
-         5VXlrveQ+InPowmx5DNU/66MiMBPQyfGG/hJa6/CtNB54nYLpV3TDEGJO9ShC6OFC253
-         Q3i4gkYHoVdY5HQnuylzMQUbhaDPXnoRGvebtgIAReCBCwkQwpYwtW6uo+HvGGym6NY7
-         jFjOu/PM3KQUHYEvJhftmG61tdiQVnGoEGVy8tCp0vuQipvo9XDbUXwjUdtBEBIejCel
-         gP/kEMbdk3fuDyhQVqteV1G/MpJjtOFvH9j0wQYHDTW5+j5Sn3jch0xXg013FKRPGVdn
-         yPig==
-X-Forwarded-Encrypted: i=1; AJvYcCV5xt3fg1H6kFxnhIqauLvBz8u8bNKzfaUetoKW1CM5ku6jBfG8OPQgKZahFu2v3ggBZPISNtP2tKTS@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx78g7iQdhp5gxeCTzoZyMIoObD81xqfmxwuNBk0ihYBHnGbOHL
-	Qmo/B1tQiJ3Q5np+tWCDBLjIuWZ1RG9/IuZPQBAIqmSsvwi5jGH9HErz
-X-Gm-Gg: ASbGncsPuPs8oJCTlCNGyjvcaIzwKlRVLudd0bC5T8TS9idYZOcdCeKLHlpPddkH15C
-	Vi8XHMt+eCjiowCf+acGbHG4GtS7Xb3q93aMItuFX8iCVm6IvcxzjjRSYVdBt2rKS0JvzYkdYRj
-	+Jl3ctGYCQ9hKSAVnbqDTNudP/07vp4ByzFN61HjcL2qq1z+/RfHrT5C8nooHEb4feDiRzJP0Bb
-	Y6ILkeP1sAJXeBiXNRFjwnoudvP/fc9ovYRmTwZmXxXlVcLaCKaLnc21mTCCDRz38VytSeRCi2r
-	FVjf4P5Lm+ltZHsmcl+Yw2lEk90YxpFVaTrc3T3JRsWLeVMm0LHzkEJghReZ+wWah3AEJioyM4Y
-	N+w2nIytvgP5dbh0=
-X-Google-Smtp-Source: AGHT+IEo1gq33O5aUys0+8ALaihfteRTIBvMO85xRSUFfSJcipaf9qogGiVbnN9HwPKG58PZb99ALw==
-X-Received: by 2002:a05:6a20:734e:b0:238:3f54:78f2 with SMTP id adf61e73a8af0-23df91932cfmr10086332637.44.1754240080330;
-        Sun, 03 Aug 2025 09:54:40 -0700 (PDT)
-Received: from [192.168.79.25] ([49.207.53.32])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7841besm7475766a12.3.2025.08.03.09.54.37
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Aug 2025 09:54:40 -0700 (PDT)
-Message-ID: <b30ef694-56c2-4023-8d6e-de8f7b8e10e6@gmail.com>
-Date: Sun, 3 Aug 2025 22:24:34 +0530
+	s=arc-20240116; t=1754240160; c=relaxed/simple;
+	bh=Nlq3U7HDOUVhrJOZnty2PhlW+Gu4rePBDyOrl38KBPI=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=eMiziIJH3bxu+2x9wwesns4cvQwOcE1/Pn1+1I2LSt0f8Y0fWc6plXesTQefoF4edWTgNCdXQXN0pg2RwHccsSBDN3vJwI8ng6Be8rLG8lZhcPktHT3HucM86qxefrH6/8wlg3sKF1MQgOPtr1TJHwbrjIU2bkzun+EG8z3RAwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=Mj2dIhY1; arc=none smtp.client-ip=213.160.73.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
+Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1d86:99fc::8c24])
+	by dvalin.narfation.org (Postfix) with UTF8SMTPSA id D0B27203A5;
+	Sun,  3 Aug 2025 16:55:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
+	s=20121; t=1754240148;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=qNUJ5hqugrDrtghRvRRfnu87WCqAv2oX7EJc0/Q/6/w=;
+	b=Mj2dIhY1KqoxEiCxi8YIlYEsmbzXPCoz5JM+OHqNjTi+fqUrr+UnluH7EGuFShM6DD05iG
+	dUyloPPGKZwDkBC9SuAC6jR28GDhoAPVELxl2009+q4foo1FawnSm2L4mjdK8XVSGrwf0B
+	UBUpYOAeUrqRjN15Gw1YvAbpCVJR5So=
+From: Sven Eckelmann <sven@narfation.org>
+Subject: [PATCH v2 0/4] i2c: rtl9300: Fix multi-byte I2C operations
+Date: Sun, 03 Aug 2025 18:54:37 +0200
+Message-Id: <20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2] acpi: remove unnecessary parenthesis from return
- statement
-To: Markus Elfring <Markus.Elfring@web.de>,
- Diksha Kumari <dkdevgan@outlook.com>, linux-acpi@vger.kernel.org,
- acpica-devel@lists.linux.dev
-Cc: LKML <linux-kernel@vger.kernel.org>, Len Brown <lenb@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>,
- Robert Moore <robert.moore@intel.com>
-References: <20250803153829.6545-1-dikshakdevgan@gmail.com>
- <a62ff710-4216-4c4a-9ca1-b376a3703531@web.de>
-Content-Language: en-US
-From: Diksha Kumari <dikshakdevgan@gmail.com>
-In-Reply-To: <a62ff710-4216-4c4a-9ca1-b376a3703531@web.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAE2Uj2gC/4WOQQ6CMBBFr0K6dswwBimuvIdhUWAKkyCYaSUSw
+ t2tXMDl+8l//28msAoHc8s2o7xIkHlKQKfMtIObegbpEhtCKtAigVALGsfqggjP9xgFmjUycOd
+ c7hu0JbUmlV/KXj6H+FEnHiTEWddjZ8l/6V/lkgNC4a+2ZMTKMt0np97F9PA8a2/qfd+/lwxUP
+ MAAAAA=
+X-Change-ID: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
+To: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
+ Andi Shyti <andi.shyti@kernel.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Jonas Jelonek <jelonek.jonas@gmail.com>, 
+ Harshal Gohel <hg@simonwunderlich.de>, 
+ Simon Wunderlich <sw@simonwunderlich.de>, 
+ Sven Eckelmann <sven@narfation.org>, stable@vger.kernel.org
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3585; i=sven@narfation.org;
+ h=from:subject:message-id; bh=Nlq3U7HDOUVhrJOZnty2PhlW+Gu4rePBDyOrl38KBPI=;
+ b=owGbwMvMwCXmy1+ufVnk62nG02pJDBn9U/qSiyo2nd7zevWRkq2dunq5XGXT5E6wl1bUv07R5
+ hP78Du7o5SFQYyLQVZMkWXPlfzzm9nfyn+e9vEozBxWJpAhDFycAjARkUmMDIfrp1dwv3y5ZL6M
+ r8qWSL6FzyzCLZjjg2/knLgQXrbQfB3Df2fONsZLRv/sFghHvZw5bYOf9oe8rW4Tb+yLf/fDVkM
+ nihEA
+X-Developer-Key: i=sven@narfation.org; a=openpgp;
+ fpr=522D7163831C73A635D12FE5EC371482956781AF
 
+During the integration of the RTL8239 POE chip + its frontend MCU, it was
+noticed that multi-byte operations were basically broken in the current
+driver.
 
-On 03/08/25 21:38, Markus Elfring wrote:
->> checkpatch.pl is generating a warning when return value is enclosed
->> in parenthesis. Remove the parenthesis to improve code readability.
->                               parentheses?
-This is my first patch, so i am not sure what you mean by this.
->
-> You propose to omit also some curly brackets, don't you?
-ok, i will include this in the next version.
->
-> …> ---
->>   drivers/acpi/acpica/dbconvert.c | 43 +++++++++++++++------------------
-> …
->
-> Did you overlook the addition of patch version descriptions?
-> https://lore.kernel.org/all/?q=%22This+looks+like+a+new+version+of+a+previously+submitted+patch%22
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.16#n310
+Tests using SMBus Block Writes showed that the data (after the Wr + Ack
+marker) was mixed up on the wire. At first glance, it looked like an
+endianness problem. But for transfers were the number of count + data bytes
+was not divisible by 4, the last bytes were not looking like an endianness
+problem because they were were in the wrong order but not for example 0 -
+which would be the case for an endianness problem with 32 bit registers. At
+the end, it turned out to be a the way how i2c_write tried to add the bytes
+to the send registers.
 
-yes, went through the document, thanks for the information. I will add 
-the change log in next version.
+Each 32 bit register was used similar to a shift register - shifting the
+various bytes up the register while the next one is added to the least
+significant byte. But the I2C controller expects the first byte of the
+tranmission in the least significant byte of the first register. And the
+last byte (assuming it is a 16 byte transfer) in the most significant byte
+of the fourth register.
 
+While doing these tests, it was also observed that the count byte was
+missing from the SMBus Block Writes. The driver just removed them from the
+data->block (from the I2C subsystem). But the I2C controller DOES NOT
+automatically add this byte - for example by using the configured
+transmission length.
 
-Thanks for reviewing the patch and feedback.
+The RTL8239 MCU is not actually an SMBus compliant device. Instead, it
+expects I2C Block Reads + I2C Block Writes. But according to the already
+identified bugs in the driver, it was clear that the I2C controller can
+simply be modified to not send the count byte for I2C_SMBUS_I2C_BLOCK_DATA.
+The receive part, just needs to write the content of the receive buffer to
+the correct position in data->block.
 
-Regards,
+While the on-wire formwat was now correct, reads were still not possible
+against the MCU (for the RTL8239 POE chip). It was always timing out
+because the 2ms were not enough for sending the read request and then
+receiving the 12 byte answer.
 
-Diksha
+These changes were originally submitted to OpenWrt. But there are plans to
+migrate OpenWrt to the upstream Linux driver. As result, the pull request
+was stopped and the changes were redone against this driver.
 
-> Regards,
-> Markus
+For reasons of transparency: The work on I2C_SMBUS_I2C_BLOCK_DATA support
+for the RTL8239-MCU was done on RTL931xx. All problem were therefore
+detected with the patches from Jonas Jelonek [1] and not the vanilla Linux
+driver. But looking through the code, it seems like these are NOT
+regressions introduced by the RTL931x patchset.
+
+[1] https://patchwork.ozlabs.org/project/linux-i2c/cover/20250727114800.3046-1-jelonek.jonas@gmail.com/
+
+Signed-off-by: Sven Eckelmann <sven@narfation.org>
+---
+Changes in v2:
+- add the missing transfer width and read length increase for the SMBus
+  Write/Read
+- Link to v1: https://lore.kernel.org/r/20250802-i2c-rtl9300-multi-byte-v1-0-5f687e0098e2@narfation.org
+
+---
+Harshal Gohel (2):
+      i2c: rtl9300: Fix multi-byte I2C write
+      i2c: rtl9300: Implement I2C block read and write
+
+Sven Eckelmann (2):
+      i2c: rtl9300: Increase timeout for transfer polling
+      i2c: rtl9300: Add missing count byte for SMBus Block Ops
+
+ drivers/i2c/busses/i2c-rtl9300.c | 43 +++++++++++++++++++++++++++++++++-------
+ 1 file changed, 36 insertions(+), 7 deletions(-)
+---
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+change-id: 20250802-i2c-rtl9300-multi-byte-edaa1fb0872c
+
+Best regards,
+-- 
+Sven Eckelmann <sven@narfation.org>
+
 
