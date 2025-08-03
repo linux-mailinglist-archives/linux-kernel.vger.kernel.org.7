@@ -1,122 +1,226 @@
-Return-Path: <linux-kernel+bounces-754523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754525-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B319B19560
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:53:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C0F07B19569
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 23:03:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A03721893456
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:53:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1CA916F403
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 21:03:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92A5420102B;
-	Sun,  3 Aug 2025 20:53:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C29371F09A8;
+	Sun,  3 Aug 2025 21:02:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="RMCEs8M2"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="ao3fKCgA"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.20])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C3B935979
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 20:53:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C1B8C1EDA2B;
+	Sun,  3 Aug 2025 21:02:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.20
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754254405; cv=none; b=ir6UjiVOuFtkSOTQAR0h1NSlo91/0/ku150idDX8R70cNkYEbjzdNQipU+Xtdup+4WANboNJnq0CMkvQHcV4a/PUW8EHdQihdhjbF8f5LFGeKQbhcsp3kjkuWq6XjQiXB2HEEm7whGSxv+d4iK85Egv9RcXqiKgQPYo61mImDWo=
+	t=1754254976; cv=none; b=MSni08Fb/Z1QW/+t+CoblU6izuwqSMySO5xIJBYADFZwab9/s7OgvW5jwNu54Cew6p51Nfe8oV2SLkaML6OW7sNLKfgSrmqm5GhDEmgK8KWmbQLy5yLplgBT8AnQY77ufyZyZFsE8Oqi54jhHqdqCeZ8shq573znNVT2GMUP1LY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754254405; c=relaxed/simple;
-	bh=JY5x3SgVtiep2jP8UPpmtr06GtJ6WbHgPKYdAee2gXw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ec6/jF8/FBXHkxK7v70tyo87C4CK4sBA4MWMvMjlflvUbwWAafTePOGOhNHQ+CmxXSJWGxPoiyaLyvkDHlSO5ijMBNGWq+FRoSnEuuB3I/4DvcyaVX4Dlu1iI5FFav+LX0aCxYB0RByHIqD2F55UPLBN3r59eOC22Kq0+svY9NI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=RMCEs8M2; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af958127df5so190514266b.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 13:53:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1754254401; x=1754859201; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=9esa6sfZgyweLh1Ljo1EEi6nMuRSy+goaDjQDKyf7I8=;
-        b=RMCEs8M2ik/FjPc1FZdhGmBTbmhSKTpFrV0bTP8NfR1uxl40wReABGXj+39p1yYSYI
-         UzFkkqvujspmi8s0TpXkCLQ8QaNchWVbKdaCKeswF20H2Q7+cKN5C/So1PqRmGY4yLsz
-         DJZWqxWQcE2sIREyzavtLqQYNrzwbfrOwDqlI=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754254401; x=1754859201;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9esa6sfZgyweLh1Ljo1EEi6nMuRSy+goaDjQDKyf7I8=;
-        b=tbVOZ09Rd4z5kK50iHi3czQJK35TFur/xE0J+6BCeR/VMIJTuoRvExjFW0OwZY5XiP
-         HGgVUhSfsW051VMU+RoXNy18Sbph8qGd+KogY2+JOPdD88JLeuQ3FSHvfnvTj/95KiBe
-         FbS+P6MQ3VyDbIXh9MLEKADtIqQPJRvNtCOCgn9NOr7dN3vDRXPWfbz15WUzGOG5ydpz
-         Rm0wGEhZAgRdpryRF1xRElqH1p2pQNeQzQ8fSReA+7KipUbEU4g1/6off+jn86UeoNMC
-         oJ67RoM4CPXZt2zjabcwHyBYPmruk0vnjcjCxZCGB7lKL6bhLOCnALmcLkZAFBh0JMKz
-         OQZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUJMEBs0s0HHmvvm31V5zB1iU/J0eRpuivDEzboBc2qX3eTJWSEedUWtD1fUEPINUUNMb+6CknyLnAe4ww=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzw8qUceJ/+U7lht0VHFPsbB5Lob0/pxudHDg2Ays5hLvQgvBhR
-	/5k/1iMCJVSk59kWcdnr+JVyWma1drdwiDmopjbzFqnI2ld/xyI5fLHRhTM3mViiprXDNfjykB4
-	8jE+7L7M=
-X-Gm-Gg: ASbGncvuycy3k+MpczPy+Z8XI7EDAik4bTASs/94K4OQMRIEclzZFFj9uF9qDNGlSAA
-	LwJAccZM1Gnt8SXlGheoUwVbbWlOwkCEVh8cOCwL05HpuHtb7gJ9s/ZufT5YMPuFoLjybwNnmYs
-	pSQulBRewKKyDH19SCfu2FqXoIG9/6WxPQhssRU+MkmDrjr8bdNHEkd2v3+WUD/hMsGtI0FneJb
-	40sJU83Z17ON1IHlGB3tBZdVyU0wwfXgKP/6y20rc7rku5gkZBYPGRFCGkY9Z6p8cCi6Z/kBcxc
-	HCzYSlz0OOyCK0FBXOqWGp+UwAOQeQp7+1NMO/mGgJdfm5MHfmfOdb6kVLlyZ2i2O5C1JJ4ZZZw
-	qSwlEEnaWxEm/49J/ji4szd0yjLwKS8E2WFio2XPIS4RABy6ulT/vjeLnv4UtuMN6rf2BdnU4
-X-Google-Smtp-Source: AGHT+IFs9bdH+68LvmVHWeXe9zSkZTMOcffLwyyWvf9gbfWlG3fAzdqN/T5BDSho1vfKgrobXwZVUA==
-X-Received: by 2002:a17:907:97c5:b0:af9:3773:8232 with SMTP id a640c23a62f3a-af94001e6eamr836319866b.18.1754254401294;
-        Sun, 03 Aug 2025 13:53:21 -0700 (PDT)
-Received: from mail-ed1-f53.google.com (mail-ed1-f53.google.com. [209.85.208.53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21e44csm623608666b.113.2025.08.03.13.53.20
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Aug 2025 13:53:20 -0700 (PDT)
-Received: by mail-ed1-f53.google.com with SMTP id 4fb4d7f45d1cf-6156a162537so5367787a12.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 13:53:20 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVfLuD8gZrlY8T0JiQDAdeXFxmncZhUVSv//sPMriUMUF9QVjCRsfTh6HuMFX5M1EDwPIVPdMgH33W8B0Y=@vger.kernel.org
-X-Received: by 2002:a05:6402:278d:b0:615:59ea:f218 with SMTP id
- 4fb4d7f45d1cf-615e6f09ef2mr6692426a12.8.1754254399833; Sun, 03 Aug 2025
- 13:53:19 -0700 (PDT)
+	s=arc-20240116; t=1754254976; c=relaxed/simple;
+	bh=kWNagj9m1fzCCcXXm2QVXQ130x7VIZJJ17eCzntRPMs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=lTK0Dr1/WKmm3UXLVdjng0WWzXFq9Fb0Pez37j3aY7YawebiC8pXy79/Zio0k+8ecyfTMQPwp+xd98UlQnZYgFHFanhjDZeShYsQ8wY0ECd9x+ezUdi31RSDa2lSKn1yZgV2x18hOyvE8yKeDTPM7xwmwzL+kwVVIGJaB5KbOGM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=ao3fKCgA; arc=none smtp.client-ip=212.227.17.20
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1754254952; x=1754859752; i=w_armin@gmx.de;
+	bh=NHqfw4M5v9apnOizGK5arF+TB9/gXYF6CnCKXiUJ2VI=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=ao3fKCgAxzgKVXwuMd4NHcFdLEpGl2OzFCbFXsFkxMTqaeaSEOc7qFurZBuU6sOS
+	 qFzozvPoyV1JUSNB1X81eVIlw0uJl/RUqawDSDvGMD8iNiJegOwe6h/5a4B6aYu49
+	 JZb5/kudSKs6GnuOn2vr0CoVxCM4ltN59mVHh+oJNuz9UxL3bo3yAvsLDheYy+REb
+	 GD6YXWbN4KHlCXvrsqLkaZDybZe3a6xh5F0Jt3F0IQl/DH0zntgER6o5GeWE7qemS
+	 JszfkVOC+gVP2F8GB0ewbZfPGB1nIyB6ZtO5fFG9kcbDaQinU1dpz3dRYsXthXPlQ
+	 xBK2+zUKY2VSH37/Mg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from mx-amd-b650.fritz.box ([87.177.78.219]) by mail.gmx.net
+ (mrgmx105 [212.227.17.168]) with ESMTPSA (Nemesis) id
+ 1M5wLT-1uk3Z62jYx-001shw; Sun, 03 Aug 2025 23:02:31 +0200
+From: Armin Wolf <W_Armin@gmx.de>
+To: ilpo.jarvinen@linux.intel.com,
+	hdegoede@redhat.com,
+	chumuzero@gmail.com,
+	corbet@lwn.net,
+	cs@tuxedo.de,
+	wse@tuxedocomputers.com,
+	ggo@tuxedocomputers.com
+Cc: linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	platform-driver-x86@vger.kernel.org,
+	rdunlap@infradead.org,
+	alok.a.tiwari@oracle.com,
+	linux-leds@vger.kernel.org,
+	lee@kernel.org,
+	pobrn@protonmail.com
+Subject: [PATCH v2 0/3] Add support for Uniwill laptop features
+Date: Sun,  3 Aug 2025 23:01:54 +0200
+Message-Id: <20250803210157.8185-1-W_Armin@gmx.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250802211316.875761-1-ojeda@kernel.org>
-In-Reply-To: <20250802211316.875761-1-ojeda@kernel.org>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Sun, 3 Aug 2025 13:53:03 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wh4SfHyQAunGwspwO5wngSQTHqeNZ7Fo1Wub5BkDso4yA@mail.gmail.com>
-X-Gm-Features: Ac12FXzojhLEsGBw2wB7LU3rM7G257WjVgv2kKvwsEDAfjbTPYGQzu9bOiMxMLw
-Message-ID: <CAHk-=wh4SfHyQAunGwspwO5wngSQTHqeNZ7Fo1Wub5BkDso4yA@mail.gmail.com>
-Subject: Re: [GIT PULL] Rust for 6.17
-To: Miguel Ojeda <ojeda@kernel.org>
-Cc: Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
-	Danilo Krummrich <dakr@kernel.org>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:lE0n0FJRumwLUXn/Dk/4y1BASAFKt0FNTQ1qPrhMZ1bspTT7ja2
+ u2oXKlJORfJpBryVWtqlrbD8y2vyGba0UkChJcN0i9oGqYM097jCqy8/up4q03po26JcbxM
+ B4RPkarEb1oMeLzu8shcGytS5/BFcIAyQ0oy1aiaqfCO9bGLfWd3YQznjgVzUCc5xpiTCXi
+ J2ChWjTw/AJ1DGd6E348g==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:zLVw7o/9iY0=;GZJ1IFvS4GExKl+CX4yccmXpXWJ
+ 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
+ FyqrObyQbyQ==
 
-On Sat, 2 Aug 2025 at 14:16, Miguel Ojeda <ojeda@kernel.org> wrote:
->
-> There are a few conflicts, including a semantic one, but are all easy to
-> apply. The resolutions in the latest linux-next are fine -- I also did a
-> test merge with your state from a few hours ago:
+This patch series adds support for the various features found on
+laptops manufactured by Uniwill. Those features are:
 
-Ok, apart from the semantic one that I entirely missed (until my build
-failed and I checked your test merge), I got the same result as your
-merge.
+ - battery charge limiting
+ - RGB lightbar control
+ - hwmon support
+ - improved hotkey support
+ - keyboard-related settings
 
-Well, apart from rust/helpers/helpers.c, in which the conflict was
-from ordering things alphabetically, and then the new 'regulator.c'
-file was out of order anyway, so I fixed that one too.
+This patch series is based on the following out-of-tree drivers:
 
-And I have to say, if this had come in one day later, I might not have
-merged it at all. I'm about to fly away, and this was the kind of
-somewhat complex infrastructure thing that I *really* would want to
-see early, and not in the second week.
+ - https://github.com/pobrn/qc71_laptop
+ - https://gitlab.com/tuxedocomputers/development/packages/tuxedo-drivers
 
-             Linus
+Additionally the OEM software of the Intel Nuc x15 was
+reverse-engineered to have a better understanding about the underlying
+hardware interface.
+
+The first patch introduces the uniwill-wmi driver used for handling
+WMI events on Uniwill devices. Due to a grave design error inside the
+underlying WMI firmware interface (the WMI GUID was copied from the
+Windows driver samples and is thus not unique) the driver cannot be
+autoloaded. Instead drivers using this module will load it as an
+module dependency.
+
+The second patch introduces the uniwill-laptop driver that does the
+majority of the work. This driver talks to the embedded controller
+using yet another WMI interface to control the various features
+available on those devices. Sadly this WMI firmware interfaces suffers
+from the exact same issue (the WMI GUID is not unique) and thus a DMI
+whitelist has to be used for loading the driver.
+
+The last patch finally adds some documentation for configuring and
+using both drivers.
+
+Special thanks go to:
+
+ - github user cyear for bring up this topic on the lm-sensors issue
+   tracker and being the tester for various prototype versions
+ - github user dumingqiao for testing the battery, lightbar and
+   keyboard-related features
+ - Tuxedo computers for giving advice on how to design the userspace
+   interface
+
+NOTE: During testing it turned out that the touchpad_toggle sysfs
+attribute does not work. The reason for this is unknown, as the driver
+emulates the behaviour of the OEM application just fine. I suspect
+that this feature only controls some obscure key combination we dont
+know about, so i decided to send out this series regardless.
+
+Changes since v1:
+- spelling fixes
+- add missing error handling when reading PWM duty cycle
+- fix error when setting the super key lock sysfs attribute
+
+Changes since the RFC series:
+- spelling fixes
+- mention the INOU0000 ACPI device inside thew documentation
+- use MILLIDEGREE_PER_DEGREE instead of 1000
+- use power_supply_get_property_direct() to prevent deadlock
+- add support for KEY_KBDILLUMDOWN and KEY_KBDILLUMUP
+
+Armin Wolf (3):
+  platform/x86: Add Uniwill WMI driver
+  platform/x86: Add Uniwill laptop driver
+  Documentation: laptops: Add documentation for uniwill laptops
+
+ .../ABI/testing/sysfs-driver-uniwill-laptop   |   53 +
+ Documentation/admin-guide/laptops/index.rst   |    1 +
+ .../admin-guide/laptops/uniwill-laptop.rst    |   68 +
+ Documentation/wmi/devices/uniwill-laptop.rst  |  118 ++
+ Documentation/wmi/devices/uniwill-wmi.rst     |   52 +
+ MAINTAINERS                                   |   17 +
+ drivers/platform/x86/Kconfig                  |    2 +
+ drivers/platform/x86/Makefile                 |    3 +
+ drivers/platform/x86/uniwill/Kconfig          |   49 +
+ drivers/platform/x86/uniwill/Makefile         |    8 +
+ drivers/platform/x86/uniwill/uniwill-laptop.c | 1484 +++++++++++++++++
+ drivers/platform/x86/uniwill/uniwill-wmi.c    |  186 +++
+ drivers/platform/x86/uniwill/uniwill-wmi.h    |  122 ++
+ 13 files changed, 2163 insertions(+)
+ create mode 100644 Documentation/ABI/testing/sysfs-driver-uniwill-laptop
+ create mode 100644 Documentation/admin-guide/laptops/uniwill-laptop.rst
+ create mode 100644 Documentation/wmi/devices/uniwill-laptop.rst
+ create mode 100644 Documentation/wmi/devices/uniwill-wmi.rst
+ create mode 100644 drivers/platform/x86/uniwill/Kconfig
+ create mode 100644 drivers/platform/x86/uniwill/Makefile
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-laptop.c
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.c
+ create mode 100644 drivers/platform/x86/uniwill/uniwill-wmi.h
+
+=2D-=20
+2.39.5
+
 
