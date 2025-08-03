@@ -1,133 +1,147 @@
-Return-Path: <linux-kernel+bounces-754356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D95E9B1933B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:40:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CFBFCB19347
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:48:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 757E77A447E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:39:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B56FC1747C6
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 09:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F01DC28724D;
-	Sun,  3 Aug 2025 09:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dBEgLNrb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D91A2877EF;
+	Sun,  3 Aug 2025 09:48:37 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50A5C19ABC3;
-	Sun,  3 Aug 2025 09:40:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F41171FDA94;
+	Sun,  3 Aug 2025 09:48:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754214033; cv=none; b=Q+pOiL02ExFtT5HMfblW2j7oQ37v5Xvha1yuJQGN1Kout3Uopb249i3f50XSkEo+7+l0lGG+gR943bk1XLaSRwOjHWvB1tdsoXTd+dEhRrpez9FWqs6HRbmlpsdPTvk5cCF051NEiIOnR8q2S+5mvprul2st1HgNMpHw4Xeplsc=
+	t=1754214517; cv=none; b=AS1/XnZbdkZ6AZWsuDJjnNQohchQUftMsyDrncoYpGtXhNK/1NrXe+4NQMCQTwSm7hYonkhTgD3coCf+lM1p+b5OYsxpsWDI2TAFYCn+6ADSuRG2b4ADDKpWO7JlTnkqQ7Tq0ratA5MHt6wNwxCQhjh7J8PatcokDQAyoeDBQGc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754214033; c=relaxed/simple;
-	bh=ODIssDCWRSr9TnlJPb01viPYTzGZAkJdTzspHFRCvwM=;
+	s=arc-20240116; t=1754214517; c=relaxed/simple;
+	bh=vTysKUuBKhd077tpR0rQ9hN0FTl7dt5WqeUW5bPObSg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Yh1F9lfow1VEX2rLuQu2KDc75zVQtgu2+U38j7u7SKDT8mmD5KtjdEivXFean7/5zXmYoeRQXR/dCT2DE0xzU8MCfazq7/lDuhgS/3W6/kJxB0BAop7wYwqppnKUa9hZenJs9OWQ6HXoKUbu37qL2IuQnn5h8M5UUOoc3sCftX4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dBEgLNrb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93D4CC4CEEB;
-	Sun,  3 Aug 2025 09:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754214032;
-	bh=ODIssDCWRSr9TnlJPb01viPYTzGZAkJdTzspHFRCvwM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=dBEgLNrb77iXFllsiUUXv+eI2ksmjgVk5bEB5NFuHtDB1EC2hVmkAN2u43hLfzkXq
-	 CIpvMtIWgPULmw7ZgvVFMkCwNuFNVZO6jDWlSGSAwpoaGryrtfuqxoXZ+Nva7I/Ugl
-	 REp4dgP0/PSeYiCjlAoR3TlgOQyXJaMo8PiZwDdfr+tlbpV5udZ/jI8pAGp8e4jkGO
-	 xSM3TQnOQEr3P6JJMjF+oq0BpMF3OiGKNP6q88rYoDBAvjdPuZ1X7IjqgmQd5Ctgd8
-	 pKvBkh93TLDlLsoAbPNRVx7G3cyH1JsIF7HgVBJAee7DMGsi0nx+84B6iiNaLBASOx
-	 0qmW0oXThhFmA==
-Message-ID: <0b4b8291-40cf-4faf-a79f-48c56677f9a2@kernel.org>
-Date: Sun, 3 Aug 2025 11:40:28 +0200
+	 In-Reply-To:Content-Type; b=kR9Ja70wYCFS6Q+hMvAIvs/MMweRYSw3yVxiqYh2qMod8sFMWq+8gvUr71JQdp6XRd1RAo6r1JPnHKTSdPCCMpX7s1OACV30YGr8RCgaGlsnMT2vu3zaNhNcqIGYM4wdWHhwkpdi2KmcKKL+0keCwb4QGf3LG9IBp2M0Wl+Fr1I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTPS id 4bvvyL6Z1xzYQtJP;
+	Sun,  3 Aug 2025 17:48:26 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 8F42B1A018C;
+	Sun,  3 Aug 2025 17:48:25 +0800 (CST)
+Received: from [10.174.179.247] (unknown [10.174.179.247])
+	by APP4 (Coremail) with SMTP id gCh0CgBn4hJnMI9oajGuCQ--.3118S3;
+	Sun, 03 Aug 2025 17:48:25 +0800 (CST)
+Message-ID: <e6065ccf-4c74-52d3-9f06-7b7cb6499f4e@huaweicloud.com>
+Date: Sun, 3 Aug 2025 17:48:23 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: phy: add support for NXPs TJA1145 CAN
- transceiver
-To: Dimitri Fedrau <dima.fedrau@gmail.com>
-Cc: Dimitri Fedrau <dimitri.fedrau@liebherr.com>,
- Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, linux-phy@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20250728-tja1145-support-v1-0-ebd8494d545c@liebherr.com>
- <20250728-tja1145-support-v1-1-ebd8494d545c@liebherr.com>
- <20250730-aromatic-optimistic-hyena-f1db1a@kuoka>
- <20250731044824.GA3815@legfed1>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250731044824.GA3815@legfed1>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-
-On 31/07/2025 06:48, Dimitri Fedrau wrote:
->>> +allOf:
->>> +  - $ref: /schemas/spi/spi-peripheral-props.yaml#
->>
->> Missing ref to transceiver properties. Look at other CAN bindings.
->>
-> There is only one transceiver property(max-bitrate) which I don't need
-> because the max-bitrate is known for the device. So why should I add it
-> to the DT ?
-> I'm only aware of CAN controller bindings making use of the transceiver
-> property which I think is because the PHYs they are supporting with this
-> are very simple which need no or little configuration to operate and the
-> max-bitrate property is needed to limit the bitrate.
-
-It's fine then, I guess.
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
+ Thunderbird/91.10.0
+Subject: Re: [PATCH v5 11/11] md/md-llbitmap: introduce new lockless bitmap
+To: Yu Kuai <yukuai1@huaweicloud.com>, hch@lst.de, corbet@lwn.net,
+ song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org,
+ mpatocka@redhat.com, xni@redhat.com, hare@suse.de
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com,
+ yangerkun@huawei.com, johnny.chenyi@huawei.com
+References: <20250801070346.4127558-1-yukuai1@huaweicloud.com>
+ <20250801070346.4127558-12-yukuai1@huaweicloud.com>
+From: Li Nan <linan666@huaweicloud.com>
+In-Reply-To: <20250801070346.4127558-12-yukuai1@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBn4hJnMI9oajGuCQ--.3118S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7KF48ZFyUuF1DuFykCFW7Arb_yoW8ZF4UpF
+	Z7Ar1rA398trs5Ww4UJrZ7Za40yrs8CFn2gr93Z345Jwn09rnakF1kKFs5W3s0g39rAF1k
+	Zrs8Kry3Wr95CFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUP214x267AKxVW5JVWrJwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAac4AC62xK8xCEY4vEwIxC4wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC
+	0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr
+	1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIF
+	xwACI402YVCY1x02628vn2kIc2xKxwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14
+	v26r4a6rW5MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
+	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVW8ZVWrXw
+	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
+	67AKxVW8JVWxJwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
+	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7sRiSf
+	O3UUUUU==
+X-CM-SenderInfo: polqt0awwwqx5xdzvxpfor3voofrz/
 
 
 
-Best regards,
-Krzysztof
+在 2025/8/1 15:03, Yu Kuai 写道:
+> From: Yu Kuai <yukuai3@huawei.com>
+> 
+> Redundant data is used to enhance data fault tolerance, and the storage
+> method for redundant data vary depending on the RAID levels. And it's
+> important to maintain the consistency of redundant data.
+> 
+> Bitmap is used to record which data blocks have been synchronized and which
+> ones need to be resynchronized or recovered. Each bit in the bitmap
+> represents a segment of data in the array. When a bit is set, it indicates
+> that the multiple redundant copies of that data segment may not be
+> consistent. Data synchronization can be performed based on the bitmap after
+> power failure or readding a disk. If there is no bitmap, a full disk
+> synchronization is required.
+
+This is a large patch, I've found a few minor issues so far.
+And I'm still working through it.
+
+[...]
+
+> +	[BitDirty] = {
+> +		[BitmapActionStartwrite]	= BitNone,
+> +		[BitmapActionStartsync]		= BitNone,
+> +		[BitmapActionEndsync]		= BitNone,
+> +		[BitmapActionAbortsync]		= BitNone,
+> +		[BitmapActionReload]		= BitNeedSync,
+> +		[BitmapActionDaemon]		= BitClean,
+> +		[BitmapActionDiscard]		= BitUnwritten,
+> +		[BitmapActionStale]		= BitNeedSync,
+> +	},
+
+Bits becomes BitDirt during degraded remains BitDirty even after recovery 
+and re-write. Should we consider adjusting this state transition, or maybe 
+trigger the daemon after the recovery is complete?
+
+[...]
+
+> +
+> +static int llbitmap_create(struct mddev *mddev)
+> +{
+> +	struct llbitmap *llbitmap;
+> +	int ret;
+> +
+> +	ret = llbitmap_check_support(mddev);
+> +	if (ret)
+> +		return ret;
+> +
+> +	llbitmap = kzalloc(sizeof(*llbitmap), GFP_KERNEL);
+> +	if (!llbitmap)
+> +		return -ENOMEM;
+> +
+> +	llbitmap->mddev = mddev;
+> +	llbitmap->io_size = bdev_logical_block_size(mddev->gendisk->part0);
+> +	llbitmap->blocks_per_page = PAGE_SIZE / llbitmap->io_size;
+
+logical_block_size can > PAGE_SIZE, blocks_per_page is set to 0 which can
+cause issues in later computations.
+
+-- 
+Thanks,
+Nan
+
 
