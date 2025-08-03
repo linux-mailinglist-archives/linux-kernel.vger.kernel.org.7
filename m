@@ -1,133 +1,213 @@
-Return-Path: <linux-kernel+bounces-754367-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754368-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E089B19374
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:26:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 24346B19375
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:27:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD6523B9A11
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:26:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C69CE3B6C83
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:27:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B23D82877CF;
-	Sun,  3 Aug 2025 10:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="bLMCQc+4"
-Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA5B627F728
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 10:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7D3285CBB;
+	Sun,  3 Aug 2025 10:27:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D8D2222B4
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 10:27:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754216786; cv=none; b=IgV4Ji9XbdCjiGu6wzM8zRD7vHAeu3nvrnrRcnEBMynLjpYXDgVv+5uMW3/hbDGTLxu4wyJ9Vr284pt3P5zWVbr5nWZKumlvptehHBP8ZCaffBrOXdtyUfeh/J8JkOyFmiEc6ZWurjVY0E599GT3t9TSMS6zkKXMS75EPL43hmo=
+	t=1754216868; cv=none; b=d/F6DV81vgoMCGBaw8Kl+FbIvmYT1ZvzKU6qu7LxTUBVZL78j+cHPZKLO4S+Oqkal1+JPtKmwHa68aH0yQ/C9iTsqTUKJCBFuBNkcQ2e13YpkjM6+bwtlSD0abUbklXjlssPoAfATvJBJ7pMjt3NhHRKfJjd0QIhEZKUmqTvex8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754216786; c=relaxed/simple;
-	bh=0VUaVWEmLOFeXIxP/hHFYp09Rlao5S6vg1S16+Nxh/I=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=W3kQPfPTEdzurCFRSG+AEJpt3MChG2nE2ypDIK/o0ZyReDc9oxt5HDgad/8tLJbU9F0oy0NHcY5ZjsmjM88QMYsVfArnzBWwHa4dTdrK7bvoOV/aN4IpudInFWTqPeEz7IGzG70MadgXrgRLzjUR+BA8P5KCrMTGBF0OUXq/LWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=bLMCQc+4; arc=none smtp.client-ip=67.231.148.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
-Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
-	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5739pRHn014688;
-	Sun, 3 Aug 2025 03:25:56 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pfpt0220; bh=N
-	V7+xIO18a9mpzCCbiQiR3u2YyXIZWJy7PXkPvbwt/g=; b=bLMCQc+4Ql605/vw5
-	JAvQTXGo8T1O4Y+SfgghxRUQXu4a8NBVppEa/0yb2fFFXsiOqdkApYfJVqp+tHAG
-	x8OYVsx/hOtC8JIYcxvYBqnLmfkiNsCrAjXuZ6UEoiay4frE05lckelnvoPkpx/k
-	gRCN/MCwBorZV4YvzC17RbtGoWRDTxX2duzoM6SouTCBfBH3qlYNE+QQRc68DqBi
-	R90XMyblIwqP0/W89IxXi2GTHpMqQeYtwA1TdkPLUfOOTI11yOWqLQYv+yBb6ufN
-	8lcL4psFGKcFUEj8aMg+OmEhuyGdXrfDn5EjH+VHYZNjUWqnbQX4UFO2uZL6I8q2
-	J3dwA==
-Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
-	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 489g1qhhtj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Sun, 03 Aug 2025 03:25:56 -0700 (PDT)
-Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
- DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.4; Sun, 3 Aug 2025 03:25:57 -0700
-Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
- (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
- Transport; Sun, 3 Aug 2025 03:25:57 -0700
-Received: from c1illp-saixps-016.eng.marvell.com (c1illp-saixps-016.eng.marvell.com [10.205.40.247])
-	by maili.marvell.com (Postfix) with ESMTP id ED5863F70A5;
-	Sun,  3 Aug 2025 03:25:52 -0700 (PDT)
-From: <enachman@marvell.com>
-To: <andrew@lunn.ch>, <gregory.clement@bootlin.com>,
-        <sebastian.hesselbarth@gmail.com>, <tglx@linutronix.de>,
-        <linux-arm-kernel@lists.infradead.org>, <linux-kernel@vger.kernel.org>
-CC: <enachman@marvell.com>
-Subject: [PATCH v2 1/1] irqchip/mvebu-gicp: clear pending irqs on init
-Date: Sun, 3 Aug 2025 13:25:48 +0300
-Message-ID: <20250803102548.669682-2-enachman@marvell.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20250803102548.669682-1-enachman@marvell.com>
-References: <20250803102548.669682-1-enachman@marvell.com>
+	s=arc-20240116; t=1754216868; c=relaxed/simple;
+	bh=sTHNqmcaHvBBrrFg/EijFSf3ApAd+tbhxiGCv0tQiAw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=YAXnIUqBDfao0ghLjIk5qzkx4CZHBqSEQMx9illMlJax24vRVoivq5O39e1usZn4qc0KzN4+pGMB6OLhgA+IiYrUkQMk/RofZcCYGLGJdYBQsvRqvIW86tJxCEqY57l6aPI6VINOjwiEzE6MglizonpLkIksEdQZvownxX/tTvU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6DC85150C;
+	Sun,  3 Aug 2025 03:27:36 -0700 (PDT)
+Received: from [10.163.64.123] (unknown [10.163.64.123])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 25AF43F5A1;
+	Sun,  3 Aug 2025 03:27:41 -0700 (PDT)
+Message-ID: <9cbc13bf-bfbf-4108-bbc0-d33d75fe7d18@arm.com>
+Date: Sun, 3 Aug 2025 15:57:38 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAzMDA3MSBTYWx0ZWRfXzbftkW9BeKvO aHo7Uyq3G1tcNQ2x7+S4Zc+ZYSbPk5Vda2QgwM4nIaVuZPU3aceTPHSufO3ccH7XgP2CDn0DJ88 dobDQSYg5jNMGoVvobVK/7k0FTyJl4tkYsY0ivMcHXfCKkDLNMzqoiPRSrW+FmLhUdm9jPjOQDy
- BdIZjhm2hBBAfMvtgNvGyWtZ2iLM2kyaMuJ6B3IjKntVfTxxrQHFmF/6yyqkaKofATl01Xcd4JM dXiHfPHflDeUyI0HtJKImIde4Dhh1zIaIiWXTtMR9zuS9k+ZEOE+OEan4wJSEDuIWoUrO+tgJ6u d0Si4Qx3Any8vYXAXNs00xoezDcRVWdvwXcqfBWZxve7EbmJZBRxJ1Xp1rVeAnkM9v5Yx+/c54d
- pkMzXJdfmi1hZDMSrQKmMTdYtwdIxd+M6FWvt7OHviwIbDkmE1UnTwyJGb229dFdkCnooP1v
-X-Authority-Analysis: v=2.4 cv=PYD/hjhd c=1 sm=1 tr=0 ts=688f3934 cx=c_pps a=gIfcoYsirJbf48DBMSPrZA==:117 a=gIfcoYsirJbf48DBMSPrZA==:17 a=2OwXVqhp2XgA:10 a=M5GUcnROAAAA:8 a=2JhQ9zA4wheWbDJ3V88A:9 a=OBjm3rFKGHvpk9ecZwUJ:22
-X-Proofpoint-GUID: I7M_gXO2ez6mLly5jGVvd1cvMhjTEhX1
-X-Proofpoint-ORIG-GUID: I7M_gXO2ez6mLly5jGVvd1cvMhjTEhX1
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-03_03,2025-08-01_01,2025-03-28_01
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/debug_vm_pgtable: clear page table entries at
+ destroy_args()
+To: Andrew Morton <akpm@linux-foundation.org>,
+ "Herton R. Krzesinski" <herton@redhat.com>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Gavin Shan
+ <gshan@redhat.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>
+References: <20250731214051.4115182-1-herton@redhat.com>
+ <20250801135050.c9cc7226938f9f0f4fa3b83d@linux-foundation.org>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250801135050.c9cc7226938f9f0f4fa3b83d@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Elad Nachman <enachman@marvell.com>
+On 02/08/25 2:20 AM, Andrew Morton wrote:
+> On Thu, 31 Jul 2025 18:40:51 -0300 "Herton R. Krzesinski" <herton@redhat.com> wrote:
+> 
+>> The mm/debug_vm_pagetable test allocates manually page table entries for the
+>> tests it runs, using also its manually allocated mm_struct. That in itself is
+>> ok, but when it exits, at destroy_args() it fails to clear those entries with
+>> the *_clear functions.
+>>
+>> The problem is that leaves stale entries. If another process allocates
+>> an mm_struct with a pgd at the same address, it may end up running into
+>> the stale entry. This is happening in practice on a debug kernel with
+>> CONFIG_DEBUG_VM_PGTABLE=y, for example this is the output with some
+>> extra debugging I added (it prints a warning trace if pgtables_bytes goes
+>> negative, in addition to the warning at check_mm() function):
+> 
+> A quick shot with git-blame led me to include
+> 
+> Fixes: 3c9b84f044a9e ("mm/debug_vm_pgtable: introduce struct pgtable_debug_args")
+> Cc: <stable@vger.kernel.org>
 
-When a kexec'ed kernel boots up, there might be stale unhandled interrupts
-pending in the interrupt controller. These are delivered as spurious
-interrupts once the boot CPU enables interrupts.
-Clear all pending interrupts when the driver is initialized to prevent
-these spurious interrupts from locking the CPU in an endless loop.
+Agreed.
 
-Signed-off-by: Elad Nachman <enachman@marvell.com>
----
- drivers/irqchip/irq-mvebu-gicp.c | 10 ++++++++++
- 1 file changed, 10 insertions(+)
+> 
+> And `git show 3c9b84f044a9e' tell me this email didn't have enough cc's
+> (added).
 
-diff --git a/drivers/irqchip/irq-mvebu-gicp.c b/drivers/irqchip/irq-mvebu-gicp.c
-index d3232d6d8dce..4b2cad09bc71 100644
---- a/drivers/irqchip/irq-mvebu-gicp.c
-+++ b/drivers/irqchip/irq-mvebu-gicp.c
-@@ -178,6 +178,7 @@ static int mvebu_gicp_probe(struct platform_device *pdev)
- 	};
- 	struct mvebu_gicp *gicp;
- 	int ret, i;
-+	void __iomem *base;
- 
- 	gicp = devm_kzalloc(&pdev->dev, sizeof(*gicp), GFP_KERNEL);
- 	if (!gicp)
-@@ -236,6 +237,15 @@ static int mvebu_gicp_probe(struct platform_device *pdev)
- 		return -ENODEV;
- 	}
- 
-+	base = ioremap(gicp->res->start, gicp->res->end - gicp->res->start);
-+	if (IS_ERR(base)) {
-+		dev_err(&pdev->dev, "ioremap() failed. Unable to clear pending interrupts.\n");
-+	} else {
-+		for (i = 0; i < 64; i++)
-+			writel(i, base + GICP_CLRSPI_NSR_OFFSET);
-+		iounmap(base);
-+	}
-+
- 	return msi_create_parent_irq_domain(&info, &gicp_msi_parent_ops) ? 0 : -ENOMEM;
- }
- 
--- 
-2.25.1
+Sure, that makes sense.
 
+> 
+> Thanks, I'll include this in mm.git's mm-hotfixes branch and I shall
+> await further review activity.
+
+Right - it will be great to have this tested across other supporting platforms.
+
+> 
+> 
+>> [    2.539353] debug_vm_pgtable: [get_random_vaddr         ]: random_vaddr is 0x7ea247140000
+>> [    2.539366] kmem_cache info
+>> [    2.539374] kmem_cachep 0x000000002ce82385 - freelist 0x0000000000000000 - offset 0x508
+>> [    2.539447] debug_vm_pgtable: [init_args                ]: args->mm is 0x000000002267cc9e
+>> (...)
+>> [    2.552800] WARNING: CPU: 5 PID: 116 at include/linux/mm.h:2841 free_pud_range+0x8bc/0x8d0
+>> [    2.552816] Modules linked in:
+>> [    2.552843] CPU: 5 UID: 0 PID: 116 Comm: modprobe Not tainted 6.12.0-105.debug_vm2.el10.ppc64le+debug #1 VOLUNTARY
+>> [    2.552859] Hardware name: IBM,9009-41A POWER9 (architected) 0x4e0202 0xf000005 of:IBM,FW910.00 (VL910_062) hv:phyp pSeries
+>> [    2.552872] NIP:  c0000000007eef3c LR: c0000000007eef30 CTR: c0000000003d8c90
+>> [    2.552885] REGS: c0000000622e73b0 TRAP: 0700   Not tainted  (6.12.0-105.debug_vm2.el10.ppc64le+debug)
+>> [    2.552899] MSR:  800000000282b033 <SF,VEC,VSX,EE,FP,ME,IR,DR,RI,LE>  CR: 24002822  XER: 0000000a
+>> [    2.552954] CFAR: c0000000008f03f0 IRQMASK: 0
+>> [    2.552954] GPR00: c0000000007eef30 c0000000622e7650 c000000002b1ac00 0000000000000001
+>> [    2.552954] GPR04: 0000000000000008 0000000000000000 c0000000007eef30 ffffffffffffffff
+>> [    2.552954] GPR08: 00000000ffff00f5 0000000000000001 0000000000000048 0000000000004000
+>> [    2.552954] GPR12: 00000003fa440000 c000000017ffa300 c0000000051d9f80 ffffffffffffffdb
+>> [    2.552954] GPR16: 0000000000000000 0000000000000008 000000000000000a 60000000000000e0
+>> [    2.552954] GPR20: 4080000000000000 c0000000113af038 00007fffcf130000 0000700000000000
+>> [    2.552954] GPR24: c000000062a6a000 0000000000000001 8000000062a68000 0000000000000001
+>> [    2.552954] GPR28: 000000000000000a c000000062ebc600 0000000000002000 c000000062ebc760
+>> [    2.553170] NIP [c0000000007eef3c] free_pud_range+0x8bc/0x8d0
+>> [    2.553185] LR [c0000000007eef30] free_pud_range+0x8b0/0x8d0
+>> [    2.553199] Call Trace:
+>> [    2.553207] [c0000000622e7650] [c0000000007eef30] free_pud_range+0x8b0/0x8d0 (unreliable)
+>> [    2.553229] [c0000000622e7750] [c0000000007f40b4] free_pgd_range+0x284/0x3b0
+>> [    2.553248] [c0000000622e7800] [c0000000007f4630] free_pgtables+0x450/0x570
+>> [    2.553274] [c0000000622e78e0] [c0000000008161c0] exit_mmap+0x250/0x650
+>> [    2.553292] [c0000000622e7a30] [c0000000001b95b8] __mmput+0x98/0x290
+>> [    2.558344] [c0000000622e7a80] [c0000000001d1018] exit_mm+0x118/0x1b0
+>> [    2.558361] [c0000000622e7ac0] [c0000000001d141c] do_exit+0x2ec/0x870
+>> [    2.558376] [c0000000622e7b60] [c0000000001d1ca8] do_group_exit+0x88/0x150
+>> [    2.558391] [c0000000622e7bb0] [c0000000001d1db8] sys_exit_group+0x48/0x50
+>> [    2.558407] [c0000000622e7be0] [c00000000003d810] system_call_exception+0x1e0/0x4c0
+>> [    2.558423] [c0000000622e7e50] [c00000000000d05c] system_call_vectored_common+0x15c/0x2ec
+>> (...)
+>> [    2.558892] ---[ end trace 0000000000000000 ]---
+>> [    2.559022] BUG: Bad rss-counter state mm:000000002267cc9e type:MM_ANONPAGES val:1
+>> [    2.559037] BUG: non-zero pgtables_bytes on freeing mm: -6144
+>>
+>> Here the modprobe process ended up with an allocated mm_struct from the
+>> mm_struct slab that was used before by the debug_vm_pgtable test. That is not a
+>> problem, since the mm_struct is initialized again etc., however, if it ends up
+>> using the same pgd table, it bumps into the old stale entry when clearing/freeing
+>> the page table entries, so it tries to free an entry already gone (that one
+>> which was allocated by the debug_vm_pgtable test), which also explains the
+>> negative pgtables_bytes since it's accounting for not allocated entries in the
+>> current process. As far as I looked pgd_{alloc,free} etc. does not clear entries,
+>> and clearing of the entries is explicitly done in the free_pgtables->
+>> free_pgd_range->free_p4d_range->free_pud_range->free_pmd_range->
+>> free_pte_range path. However, the debug_vm_pgtable test does not call
+>> free_pgtables, since it allocates mm_struct and entries manually for its test
+>> and eg. not goes through page faults. So it also should clear manually the
+>> entries before exit at destroy_args().
+>>
+>> This problem was noticed on a reboot X number of times test being done
+>> on a powerpc host, with a debug kernel with CONFIG_DEBUG_VM_PGTABLE
+>> enabled. Depends on the system, but on a 100 times reboot loop the
+>> problem could manifest once or twice, if a process ends up getting the
+>> right mm->pgd entry with the stale entries used by mm/debug_vm_pagetable.
+>> After using this patch, I couldn't reproduce/experience the problems
+>> anymore. I was able to reproduce the problem as well on latest upstream
+>> kernel (6.16).
+>>
+>> I also modified destroy_args() to use mmput() instead of mmdrop(), there
+>> is no reason to hold mm_users reference and not release the mm_struct
+>> entirely, and in the output above with my debugging prints I already
+>> had patched it to use mmput, it did not fix the problem, but helped
+>> in the debugging as well.
+>>
+>> Signed-off-by: Herton R. Krzesinski <herton@redhat.com>
+>> ---
+>>  mm/debug_vm_pgtable.c | 9 +++++++--
+>>  1 file changed, 7 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/mm/debug_vm_pgtable.c b/mm/debug_vm_pgtable.c
+>> index 7731b238b534..0f5ddefd128a 100644
+>> --- a/mm/debug_vm_pgtable.c
+>> +++ b/mm/debug_vm_pgtable.c
+>> @@ -1041,29 +1041,34 @@ static void __init destroy_args(struct pgtable_debug_args *args)
+>>  
+>>  	/* Free page table entries */
+>>  	if (args->start_ptep) {
+>> +		pmd_clear(args->pmdp);
+>>  		pte_free(args->mm, args->start_ptep);
+>>  		mm_dec_nr_ptes(args->mm);
+>>  	}
+>>  
+>>  	if (args->start_pmdp) {
+>> +		pud_clear(args->pudp);
+>>  		pmd_free(args->mm, args->start_pmdp);
+>>  		mm_dec_nr_pmds(args->mm);
+>>  	}
+>>  
+>>  	if (args->start_pudp) {
+>> +		p4d_clear(args->p4dp);
+>>  		pud_free(args->mm, args->start_pudp);
+>>  		mm_dec_nr_puds(args->mm);
+>>  	}
+>>  
+>> -	if (args->start_p4dp)
+>> +	if (args->start_p4dp) {
+>> +		pgd_clear(args->pgdp);
+>>  		p4d_free(args->mm, args->start_p4dp);
+>> +	}
+>>  
+>>  	/* Free vma and mm struct */
+>>  	if (args->vma)
+>>  		vm_area_free(args->vma);
+>>  
+>>  	if (args->mm)
+>> -		mmdrop(args->mm);
+>> +		mmput(args->mm);
+>>  }
+>>  
+>>  static struct page * __init
+>> -- 
+>> 2.47.1
 
