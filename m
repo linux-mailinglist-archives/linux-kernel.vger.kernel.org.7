@@ -1,187 +1,234 @@
-Return-Path: <linux-kernel+bounces-754336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E219B192E7
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:43:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B5169B192EA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 08:47:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A669918981C8
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 06:43:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 15F143BBA24
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 06:47:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99CC9280CF1;
-	Sun,  3 Aug 2025 06:43:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECEA258CD4;
+	Sun,  3 Aug 2025 06:47:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="b6tLGnRZ"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2072.outbound.protection.outlook.com [40.107.237.72])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sulPqGIQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5043378F2B;
-	Sun,  3 Aug 2025 06:43:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.72
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754203403; cv=fail; b=JA6fuGWquPaKgWyWteAfuHJGBftiTiXtRgw4N6gz15cY+0U3h8WOvL07ns3U+ugE+CCZs5fVUlHTjqQylDeHPSHx/ZFvb7jX9RUpNuL2TK3UUCz0hJ24S49NLBMgQzyo42v10jWRdmU27PeSiLd9viuLz5aEm7pzcEkqRsjQvZw=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754203403; c=relaxed/simple;
-	bh=NmztBIeZp1glwlm8AxkwdXV1CbpANJAD58H8ielfuBE=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=WZib/v0+2xCLAo4e//8oJXohstd/rOGMmhYGBwtZy8oOMq2ufFbM5gDPC7l8ysM0si2QV6lbq+R/ChVIucXZKmOWTg+gSHZ/nei66gKwwA4laYgk+MmDnC3y8H8kJD+umRqfZ0UTnHbiEcNYS2v98ealpY11HinxKImmr1vdRUg=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=b6tLGnRZ; arc=fail smtp.client-ip=40.107.237.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=xhW4nHgrSzTMGbXIPQIl4MiKqj4Pxb3tOMlWMjljdrES/sQ6372P48SXLaDXZClQThSz946R/qAy4WggrmDIl557CJH6dK4CGXkSb/wio1iTMvkBMcO9Jm+RkQvAZDh460fFAquy3p0Vb/vt8is52ROLtpO/NkjsR/72FrsIJgGxWvZrC+RqclDMSSYhcCkDZshKlCjGydgb7F2IwWVpWanpOkWsI8Fjxl/Xh8huFJ4OXJAAdHvIQpLh08x1yPfBCMsW/RP0hGhRvf/PH82k6MUsBQ0+isfVxfQltPyqwVGYJ1IIKMBGjFKnnB3zUoGX+GdBsGkbylBCsZvLEFvo6A==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=NmztBIeZp1glwlm8AxkwdXV1CbpANJAD58H8ielfuBE=;
- b=I0S6sPKumG5Aqlt8YYJoSI3lOando6mzhK22f7KCwj7qr6YN5A0dl2pQHSRXLCnoM62do2veofWPXrvXKuE2vGbAJzSQIBZ8UZbURpdTwwsbGvHTIqmlMn/uRcsWVmAv6w3GVGeZyzgfAyrmGynEeaeywLDzajWYrRwzgcbpD3r12Ct+m8lTF3I49H3DlOiQJS6RnZc5Dt5GkyiRB6GGMfN5/RJ+dh3fi1r96VQp/dcH7VEqpv8GDY6EVBMlJSsW9U37WQTawj/SNGEsVz+PyIOeJ2cwtlORrnPOsKuobKI07dFpn03my8kOHgJffqDCp7WtqHFnHQ35WXBIS7IVng==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.117.161) smtp.rcpttodomain=gmail.com smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=NmztBIeZp1glwlm8AxkwdXV1CbpANJAD58H8ielfuBE=;
- b=b6tLGnRZWEoReoZlJB9XTavuBaJkuCPc9LFuPc71nchZa9hazKYilmpqJq976p/R8Zdhpg0ARzsQtttVbs7o2l/bd/7wQpOhfcCH0zo38KijfhojziCOk/8R/aCLO8Cyet271t2lVa+X2E8nsYrOLWsKUK1e6VrGhZUSW+O2MYObDg4hUZ48GDjca4tPnAEYYPJdQsFKhhf0A34J8McThJACUMxV97OWGOSLglonCpmyt+tzbSsJXYSChNaZbGqBLtPy8i50L/jpLC6fyY4Q3ydEfbfXIv8rQiyqCVptcPFaTmlgHrndunlB0+oPHRg+3CZkWVPOhbY7E0fHuo19QQ==
-Received: from DM6PR11CA0062.namprd11.prod.outlook.com (2603:10b6:5:14c::39)
- by CH3PR12MB9314.namprd12.prod.outlook.com (2603:10b6:610:1c5::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Sun, 3 Aug
- 2025 06:43:12 +0000
-Received: from CY4PEPF0000E9D8.namprd05.prod.outlook.com
- (2603:10b6:5:14c:cafe::3a) by DM6PR11CA0062.outlook.office365.com
- (2603:10b6:5:14c::39) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.18 via Frontend Transport; Sun,
- 3 Aug 2025 06:43:12 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.117.161)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.117.161 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.117.161; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.117.161) by
- CY4PEPF0000E9D8.mail.protection.outlook.com (10.167.241.71) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Sun, 3 Aug 2025 06:43:11 +0000
-Received: from rnnvmail204.nvidia.com (10.129.68.6) by mail.nvidia.com
- (10.129.200.67) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 2 Aug
- 2025 23:42:08 -0700
-Received: from rnnvmail203.nvidia.com (10.129.68.9) by rnnvmail204.nvidia.com
- (10.129.68.6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sat, 2 Aug
- 2025 23:42:08 -0700
-Received: from inno-thin-client (10.127.8.9) by mail.nvidia.com (10.129.68.9)
- with Microsoft SMTP Server id 15.2.1544.14 via Frontend Transport; Sat, 2 Aug
- 2025 23:42:04 -0700
-Date: Sun, 3 Aug 2025 09:42:02 +0300
-From: Zhi Wang <zhiw@nvidia.com>
-To: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-CC: <ojeda@kernel.org>, <alex.gaynor@gmail.com>, <boqun.feng@gmail.com>,
-	<gary@garyguo.net>, <bjorn3_gh@protonmail.com>, <lossin@kernel.org>,
-	<a.hindborg@kernel.org>, <aliceryhl@google.com>, <tmgross@umich.edu>,
-	<dakr@kernel.org>, <rust-for-linux@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] rust: list: remove nonexistent insert_at() from the
- comments
-Message-ID: <20250803094202.3bf0f38c.zhiw@nvidia.com>
-In-Reply-To: <CANiq72mT=Eee3NwxxmysBu4iP6LYuHA2NckrKKVY=qQSSK12=A@mail.gmail.com>
-References: <20250802210001.824022-1-zhiw@nvidia.com>
-	<CANiq72mT=Eee3NwxxmysBu4iP6LYuHA2NckrKKVY=qQSSK12=A@mail.gmail.com>
-Organization: NVIDIA
-X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E28F0163;
+	Sun,  3 Aug 2025 06:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754203656; cv=none; b=fvu7F2hIElU3sy6BOU4cFQygjhB48yRCT2yuhdgxIDmSfNIol0WiqpLBXqbYehOcZdUGfJE3WL6AijzjeqtWn5lPe3Z5kMNm+++HNvd5FIu39Zrmaa2QSdsiCImxp9qwgnPOcyvxDNx2yJhglW+TfgASRgVup8me/cmhQZAcXdM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754203656; c=relaxed/simple;
+	bh=d1CztXE2nxIStxY5iQfmoDrEvdtgUVV7MjZV4daxJbo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=StuB7lM1w/hzVmkUr9pFu8NNecUGWKVdTzuErKAcpEnL7dPaC8admYSTECqcaTII5ZZpm6wkkAxY+mBbEUpxyWoPcaBO6Dl/LQvIlSAwVVqhkFT4WnjA5G2019AKj21UKZOM86dwgCfpETPqJjkXOzSbzx8y1wIOxmbgSud7fVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sulPqGIQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6938AC4CEEB;
+	Sun,  3 Aug 2025 06:47:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754203654;
+	bh=d1CztXE2nxIStxY5iQfmoDrEvdtgUVV7MjZV4daxJbo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=sulPqGIQZvDPo/kxDy94EVz3bSUYuxoGHoJokqpytgVkXzoxIQg7kB+hrUBncxzO3
+	 RlVDThUlgZIkWbzcxYS5LqCJPnjwFFsbnJVq6D8iBq4mxSxs63f2KmDWR4xRdKm8iZ
+	 hbcR+TtWwM5JKECVUz75ery9pguse69UYjJNpV3hEjn28sFBtNua2Vj7iHhT7IJYe9
+	 +VSOwl20lS/yq62OpyLVLd60JQh+ZrYpC5mHFEWsm6txGt3xitn0yot6UGjInmENBw
+	 rSNQ1Ck68OommRgaaY4xvpXNN9qL2FEZV3qDtQzktOvCdd8YJe5UoGdTeyaGIQibM2
+	 Jy8oEGQPdYEXA==
+Date: Sun, 3 Aug 2025 08:47:28 +0200
+From: Alejandro Colomar <alx@kernel.org>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: linux-man@vger.kernel.org, Andrew Morton <akpm@linux-foundation.org>, 
+	Peter Xu <peterx@redhat.com>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, 
+	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, linux-api@vger.kernel.org
+Subject: Re: [PATCH v3 1/2] man/man2/mremap.2: describe multiple mapping move
+Message-ID: <ngytuoex4uvu5epsdqhvhypnhqidkr7cpwmmcxrml6kpftgusb@jo5ql6eko2ir>
+References: <cover.1753795807.git.lorenzo.stoakes@oracle.com>
+ <1fd0223a6f903ffdd8ba644d0b67820b1921671f.1753795807.git.lorenzo.stoakes@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D8:EE_|CH3PR12MB9314:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4cac8a9a-c01e-4c8d-30e2-08ddd2590454
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|82310400026|36860700013|1800799024|7416014|376014|7053199007;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K0l1bUVuTDg3cExzM1ltYXd2K3Y1ZmJoZWNhK0lkZm5DVWQwNndZN1VycFdK?=
- =?utf-8?B?OW1QWlF1cnVycUZ5ZmtxMG5ldFlCOFNFd1IvaEFUaW9PWndkL3lUSG1EMEkz?=
- =?utf-8?B?RTNmR2RsT040N3ZRUXlPM0gxc0tEaUpQN2ttNXJyd2pFZmV3NlV5NnZoRTNE?=
- =?utf-8?B?OTNNYjQ1RzJOdHVySXJNNDF4bGcxcVR0alZMV0NjcGNKRDNRcFJlL3phaGcx?=
- =?utf-8?B?Y3lpN3NqejU3aS9mdk12eUNITk5ZNDBGb21JOVg2K3pvdG11Uk9JeFlqT3NK?=
- =?utf-8?B?WmdCazlocDZyQmVMS2xxc21BNWhncGFRZ2ZPQWpOTmRCNVNGYThuTTIvWnFl?=
- =?utf-8?B?T3crVnV5NjVSSzdWYU9WZXNQTWFxWnNrL0tMS2JadVNHNE9mU290b2t6blQ1?=
- =?utf-8?B?eVhsZlpReS9oMklSVmhjZlFOMEt0SnpBUTUwV0tYM1ppQnhremxPZGZNeS9s?=
- =?utf-8?B?VHh6WldhK1hFWFJQTEp4cEJSZDl3SkgyRkJUWG5MbUU5T0hhcHJhTmV3VktR?=
- =?utf-8?B?UUxpZTREcUJDUk1pZ3VaendTdm14VDlUOFV1a3hzLzBCcFI4WitZTjVRT3Y1?=
- =?utf-8?B?azdpa293MXpETUlnUlFwTVF5QmxmWWF5akRsRVl1L2pHWmJVb0x3ajFHNXY2?=
- =?utf-8?B?WXFzVk1wcytwWHFoVXFJTkxTYVNGYlFnL256aVM0Q3ZDTmJ2ZCttdjQxZVJj?=
- =?utf-8?B?NjJCTDFHUnJ4SmpFZnBmeFNpcFAwaHdlRlJpR1R1NDUzbEtkNElrV0JsY1Yr?=
- =?utf-8?B?ZDJRdHNmaW5lTXFxQStHeGRCbUJRR1g4UGlKNFk0blpHRW5kNVBETUd2NXhL?=
- =?utf-8?B?ZGVpQ2lvUnlnTUF4SHZhUWtvZjZVSWtKSUJOYkVXcWRkWU41MW1YZWVPMFV4?=
- =?utf-8?B?NVd2bDQ0SjR2cm9RMEVPeC9USEVSTUtGMERJTkFlRC9Da2lrT0t4VGs0M0hX?=
- =?utf-8?B?VmIwYmwxK3V5K2IwNGhQZ00yd3BpaytqL2NSTFpmb25KZkNod0RjRnhWcEZT?=
- =?utf-8?B?QW9vc1Q4eUZFMkxiQ0NRK0JJQitNT2lDSzBEbUkxNjU2NGtsM1F0QlNGcXV0?=
- =?utf-8?B?VStZdlJheHRvZUdTYmFyVEpJSkE2TjlRRzhrcW5IS0xyWTZacjJ6ZkZpRklQ?=
- =?utf-8?B?VzU2d1UwUXZjMFZSOXUycy9SK1Z0WHNXVWlGczVBeTRiNjhBR3I3bUd3dWl2?=
- =?utf-8?B?Q1BRaE1PcFE3Z2Y4RXJpenNxUktGVWkvUTZJN1V2Q0tEdmkxaCt1MmxWeXdB?=
- =?utf-8?B?elZ6QUd2dllUTUNHL1k3M0FoWkVuWXZsdEQ0OUVvUFdjNjFKV1I5NVlWVWNQ?=
- =?utf-8?B?TGhBM0hEN3hFZWw2R2xSUDB3SC9qaXhzQ09GSHoxM0NwMndGbjJsa012SDFv?=
- =?utf-8?B?dWUzcXQvVWh2K1FGcDM3MzdzS0lBZ2Z2d2h3WnVsOFgyS0tUWmpaTzJOOUwy?=
- =?utf-8?B?SVBFQmQ0MlZUSkgrZVpzUmNDNy9LWkpxdkx4RkJjT0RWWnVOamZRemRiaHk4?=
- =?utf-8?B?bC8zRWlvZWhGcDd4eHBnZGtSUlVDMlRxWTUvMCtCaGN4VUNQeTdzTDVKNUly?=
- =?utf-8?B?bk5raFZrRGpvS3ZPZmQ5bjZlUlFaaStIUU1nZm9wV2RoVkdocjdvaFFZWWpi?=
- =?utf-8?B?N1VZRmozcmtHN0VQYjlUVTVxaGo0UlhJUGJTd3FSOXYzTVcvT2RobEpkYXNr?=
- =?utf-8?B?dGF5ZHg0RHptdkVaL0dzejJ0RHNnZCtQUHU4R2d0UkdSWTZ6VHh0VU84OTJD?=
- =?utf-8?B?ODFaekwxM29kUFlVd3o5VkExNFM5NjFDNTJhY0JydDBuUGxlUmozZll5NkZN?=
- =?utf-8?B?VEl3QWxpWXBzcEVTY2dzVVREcUdkMThQM1dJRlpQVkJNQUUrYmhXdGRPajJB?=
- =?utf-8?B?cUlYcGplb1Jvdm1LVjNXYWlPSUo4cm44L2d3YTgvU2pWZEtEeVRTWnV0UHEv?=
- =?utf-8?B?bHM5QmFRaEh0RHIrR0gzM2F4ZVZteGZwZEM3YWJEOU5ZUUFGUS9GVGZsRGxi?=
- =?utf-8?B?eEhNalZFalFsM3Rjbi9DeGM3K2thUnpkTXFhaFRjZ0pFS0QvUEwvQjkxVDln?=
- =?utf-8?Q?/ERIx0?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.117.161;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc6edge2.nvidia.com;CAT:NONE;SFS:(13230040)(82310400026)(36860700013)(1800799024)(7416014)(376014)(7053199007);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2025 06:43:11.9757
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4cac8a9a-c01e-4c8d-30e2-08ddd2590454
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.117.161];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000E9D8.namprd05.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB9314
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <1fd0223a6f903ffdd8ba644d0b67820b1921671f.1753795807.git.lorenzo.stoakes@oracle.com>
 
-On Sat, 2 Aug 2025 23:31:10 +0200
-Miguel Ojeda <miguel.ojeda.sandonis@gmail.com> wrote:
+Hi Lorenzo,
 
-> On Sat, Aug 2, 2025 at 11:00=E2=80=AFPM Zhi Wang <zhiw@nvidia.com> wrote:
-> >
-> > The insert_at() method was never introduced in the code. Remove it
-> > from the comments to avoid confusion.
->=20
-> Hmm... I am not sure what you mean -- `insert_at()` is an example
-> function, used in the example itself.
->=20
-> Why would we remove that one, and not the others in the example, e.g.
-> `remove_all`?
->=20
+On Tue, Jul 29, 2025 at 02:47:35PM +0100, Lorenzo Stoakes wrote:
+> Document the new behaviour introduced in Linux 6.17 whereby it is now
+> possible to move multiple mappings in a single operation, as long as the
+> operation is simply an MREMAP_FIXED move - that is old_size is equal to
+> new_size and MREMAP_FIXED is specified.
+> 
+> To make things clearer, also describe this kind of move operation, before
+> expanding upon it to describe the newly introduced behaviour.
+> 
+> This change also explains the limitations of of this method and the
+> possibility of partial failure.
+> 
+> Finally, we pluralise language where it makes sense to do so such that the
+> documentation does not contradict either this new capability nor the
+> pre-existing edge case.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-Oh, you are right, I lost the context when reading the code and
-hacking the list routines at late night.
+Would it be possible to write a small C program that uses this new
+feature?
 
-Please drop this.
 
-> Cheers,
-> Miguel
->=20
+Cheers,
+Alex
 
+> ---
+>  man/man2/mremap.2 | 84 ++++++++++++++++++++++++++++++++++++++++-------
+>  1 file changed, 73 insertions(+), 11 deletions(-)
+> 
+> diff --git a/man/man2/mremap.2 b/man/man2/mremap.2
+> index 2168ca728..6ba51310c 100644
+> --- a/man/man2/mremap.2
+> +++ b/man/man2/mremap.2
+> @@ -25,18 +25,47 @@ moving it at the same time (controlled by the
+>  argument and
+>  the available virtual address space).
+>  .P
+> +Mappings can also simply be moved
+> +(without any resizing)
+> +by specifying equal
+> +.I old_size
+> +and
+> +.I new_size
+> +and using the
+> +.B MREMAP_FIXED
+> +flag
+> +(see below).
+> +Since Linux 6.17,
+> +while
+> +.I old_address
+> +must reside within a mapping,
+> +.I old_size
+> +may span multiple mappings
+> +which do not have to be
+> +adjacent to one another when
+> +performing a move like this.
+> +The
+> +.B MREMAP_DONTUNMAP
+> +flag may be specified.
+> +.P
+> +If the operation is not
+> +simply moving mappings,
+> +then
+> +.I old_size
+> +must span only a single mapping.
+> +.P
+>  .I old_address
+> -is the old address of the virtual memory block that you
+> -want to expand (or shrink).
+> +is the old address of the first virtual memory block that you
+> +want to expand, shrink, and/or move.
+>  Note that
+>  .I old_address
+>  has to be page aligned.
+>  .I old_size
+> -is the old size of the
+> -virtual memory block.
+> +is the size of the range containing
+> +virtual memory blocks to be manipulated.
+>  .I new_size
+>  is the requested size of the
+> -virtual memory block after the resize.
+> +virtual memory blocks after the resize.
+>  An optional fifth argument,
+>  .IR new_address ,
+>  may be provided; see the description of
+> @@ -105,13 +134,43 @@ If
+>  is specified, then
+>  .B MREMAP_MAYMOVE
+>  must also be specified.
+> +.IP
+> +Since Linux 6.17,
+> +if
+> +.I old_size
+> +is equal to
+> +.I new_size
+> +and
+> +.B MREMAP_FIXED
+> +is specified, then
+> +.I old_size
+> +may span beyond the mapping in which
+> +.I old_address
+> +resides.
+> +In this case,
+> +gaps between mappings in the original range
+> +are maintained in the new range.
+> +The whole operation is performed atomically
+> +unless an error arises,
+> +in which case the operation may be partially
+> +completed,
+> +that is,
+> +some mappings may be moved and others not.
+> +.IP
+> +
+> +Moving multiple mappings is not permitted if
+> +any of those mappings have either
+> +been registered with
+> +.BR userfaultfd (2) ,
+> +or map drivers that
+> +specify their own custom address mapping logic.
+>  .TP
+>  .BR MREMAP_DONTUNMAP " (since Linux 5.7)"
+>  .\" commit e346b3813067d4b17383f975f197a9aa28a3b077
+>  This flag, which must be used in conjunction with
+>  .BR MREMAP_MAYMOVE ,
+> -remaps a mapping to a new address but does not unmap the mapping at
+> -.IR old_address .
+> +remaps mappings to a new address but does not unmap them
+> +from their original address.
+>  .IP
+>  The
+>  .B MREMAP_DONTUNMAP
+> @@ -149,13 +208,13 @@ mapped.
+>  See NOTES for some possible applications of
+>  .BR MREMAP_DONTUNMAP .
+>  .P
+> -If the memory segment specified by
+> +If the memory segments specified by
+>  .I old_address
+>  and
+>  .I old_size
+> -is locked (using
+> +are locked (using
+>  .BR mlock (2)
+> -or similar), then this lock is maintained when the segment is
+> +or similar), then this lock is maintained when the segments are
+>  resized and/or relocated.
+>  As a consequence, the amount of memory locked by the process may change.
+>  .SH RETURN VALUE
+> @@ -188,7 +247,10 @@ virtual memory address for this process.
+>  You can also get
+>  .B EFAULT
+>  even if there exist mappings that cover the
+> -whole address space requested, but those mappings are of different types.
+> +whole address space requested, but those mappings are of different types,
+> +and the
+> +.BR mremap ()
+> +operation being performed does not support this.
+>  .TP
+>  .B EINVAL
+>  An invalid argument was given.
+> --
+> 2.50.1
+
+-- 
+<https://www.alejandro-colomar.es/>
 
