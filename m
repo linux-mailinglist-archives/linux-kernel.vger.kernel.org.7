@@ -1,95 +1,132 @@
-Return-Path: <linux-kernel+bounces-754410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4387B193FC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:09:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 76B56B193FF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:20:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26C833B6A0A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:09:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CEF91895861
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C36C825B687;
-	Sun,  3 Aug 2025 12:09:04 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D82B259C98;
+	Sun,  3 Aug 2025 12:20:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="q3a4iBo3";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BfPlSP9I"
+Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0172CA48
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 12:09:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABCD6221280
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 12:20:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754222944; cv=none; b=av1Om5dUdBpnnnrsQD3q6aewt/N1tOeslPPZW20apO2Bdd2NIlOos25qvMgTSAx4bPqZFeRL4xOB2+B4OJYnFf9q80N6glp4orwkX+sON8drC2fhKVWwYTy8tN8OtRU8PR3lEgb40NtNisD5siS2+tHZtGmQ16sK80P6eX4lbC4=
+	t=1754223624; cv=none; b=eE9peUbeW8kB1knGEDUu1KTSHNhncnKSlTOYE2/ANlVMKoO+HdTHa6x0LUE10KahXd9cEhNbMtwdwf7szlzx4YMO/mKp3ZEaHd+MhTeyLLiBI6XspiLngyTy8pLBVMm7WOpT7GgNUOwAcTgfQYbj5dsWxy9djQmSj5iVbg9NS/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754222944; c=relaxed/simple;
-	bh=+BxCQVXtTe+xoz4eJ9sHAveL3+qt5++cybtEn1AaG/w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=l0UJweqXPXCuFM/k4G2gkuyOWVXchBElNuGT5JCm4FjiiQAmBoWa+08sRv3X8OB1aMMtUn2/NyWFkaF92Yy7PW/NzSSkN5j+L9SGGD7MvAiP8Bm6tugsZO7bLj+Lic0wFwvsBc058g1MxzqcTv02pNTrwy0pCuGkp8M/RgtmBuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3e3fcdbeb23so70022785ab.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 05:09:02 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754222942; x=1754827742;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v5+xCIY68eQod8HShjZie1OqXUWvIMyxZ5G/valhey4=;
-        b=AQMnWd3y6bkuRXbUjcYgP+bzKAmqPRtn6iY4E4CaoSiMjg2WxCDKJxwInszakr2rNo
-         3YcF3Na66k7MMLCdF+BLibGfDDDAt6lNlZBnVdR8B8cGIlvV3YdYXKbvU05vYqxQGzFX
-         gI1x+OABxQYepf6E/yfnBHUl1qAF33/rEB6B7GHDt2gk6BB89n3g6qAE2HutUfsFE7ZY
-         GefpI8yhC4p3Z2ca4mE+l1x1kCQYq7xuFYDE9i4sZxR4SnJGPqswPBtQ5H+kDpvlhqEj
-         W94Zwyax5ShE72qspC//MeZMSe8AzZ4qQ5V1liRg9yNDIE4ODRU85LlrNQOAkgMOquGg
-         3CDw==
-X-Forwarded-Encrypted: i=1; AJvYcCWOiSABgxzOrv6HPeGLM8v4HkW8in9rY98Bi9bMc49fMaX3G64MDIiHINlxVAATiOnVrdwp/vBYFxvt+CA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzBiVllQpE0E3ps2H7w6llzNWxNYrTJjNm+BgkcchRFhlF3LR0r
-	KsuTd740e1+E2KqFjfZTu6+S7onwGSgEv+mkpoTJre60YuVwSX+dNkNWRzOfIXb7j3sv46M06pT
-	yiu0Sz8zjlG+WGCY0SnK9gHsFsT3NFfvaIQGMlIYBEBKB1ebqQ7DnAyB06Yo=
-X-Google-Smtp-Source: AGHT+IEI73yOX7LuYSonRTZStd7VDhDxkqzJkzexmNHlJCJ1YhLhqOvcqAg6Qh64hhfeEztD7/M6cYE5zqbG4QmcfI8nTwAfsPR1
+	s=arc-20240116; t=1754223624; c=relaxed/simple;
+	bh=xnqTW00f/pTbVBz8AriC6QPMU0M+LRlehseaLTu/tLQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JnlgTF24p9mm1Vw76yhJE4UxbAogTmMFBRVRjMPY12V8sQEnzFzzhAcR7fVG5oC82qpu1ibUKDUnDVzh4/NUYpFPO+fNTfoXKAcLr6rM1LvDRzd+wLX3hoQctlbXlJh6uLGxYoDMpCqXiTRTU0uTb941GL1FaAxd9x1UifsL7q8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=q3a4iBo3; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BfPlSP9I; arc=none smtp.client-ip=202.12.124.154
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 74F0F7A0053;
+	Sun,  3 Aug 2025 08:20:20 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-03.internal (MEProxy); Sun, 03 Aug 2025 08:20:20 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
+	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
+	:from:in-reply-to:message-id:mime-version:reply-to:subject
+	:subject:to:to; s=fm3; t=1754223620; x=1754310020; bh=82arPFn44b
+	Fux6dZl+ncEfdiZPcXgbDKmVNiH8NTCo8=; b=q3a4iBo3D6NMMW5ZpqEBVuJ1kU
+	oMSfrx3ysT3uzq9WNp1DkHg9Qb7ZOwmwjHO5uI902Ri1zuzKpnMPCx3fT4v6qKYw
+	SEOdT0+7iXFjI9S5MefeMIzUdTIhLLUfDeqX50QQviXFhf+uC4UdUP+fKKriXfL7
+	cwZQaD4YGKXb1EEtFumiXYApOR0AomA/8mumdVBuOxFtheGnp4JkWMfmP/rrP5zZ
+	VlrZekyqUb2vbH5yjwpAWAtJKj40/OogmkJqQGiRdR9K86ZTTwbRage1EmuRYr2C
+	lFsaNWSaovEIQ4+Z0zNykW/HZCjnxGXbYyh8QC/EjnP5EgQzeRGUDPqw8sjg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:message-id:mime-version:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=
+	1754223620; x=1754310020; bh=82arPFn44bFux6dZl+ncEfdiZPcXgbDKmVN
+	iH8NTCo8=; b=BfPlSP9IrB7A/S+gA77j6LkzIOmt5xx7LdLvKAv7/g17KuFtKhc
+	S5LXkSs4n+YmrcOCpYJbAZv8wEbfDYCPnTlRWR3BhX0ZNUvMKsgbgFgORKq+LgIp
+	IEC4HF1zf3aiWFISR9QzhtzwpRIp8XZW6MXD0BmxI97dONVYlzrOdvO/J7A93wXE
+	dUx8NjKF4JsRTNUkfexYguXeHK4Zo3HPNZuIYkJ/56M7rYzHJkBub3KkicHoi88m
+	MZcwGxotpUpmYOmKjpe1f3Chd31Buhj8SNX56wc/gV/G7ABH3ErpzJ8IL92Uc8BI
+	xNYDxwZdF37Bl9Fk50sZcwi5ecU7UZndLJg==
+X-ME-Sender: <xms:BFSPaPegtwT-rfseVz1mrRi5stgLl_0SN44xsU7cLcXnnb_h2FIDJg>
+    <xme:BFSPaOLwR3xRaSbygRYnsBKLgkPQ_JDNPHM8y1uetmT7nIQEeybWrK57y2XSSeQmx
+    JoGwxWSJhSQggKA7VY>
+X-ME-Received: <xmr:BFSPaKeH_DYTALgSshNiLVImMZMWruPIjN6nEaHJZKWVi6HO3K02IKVIx91TjqbPDqN7g_4ZOmBARgZosU6sAKX72VkbMMW87U0yYDvst2Mb>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdelgeegucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffoggfgsedtkeertdertd
+    dtnecuhfhrohhmpefvrghkrghshhhiucfurghkrghmohhtohcuoehoqdhtrghkrghshhhi
+    sehsrghkrghmohgttghhihdrjhhpqeenucggtffrrghtthgvrhhnpeeggfehleehjeeile
+    ehveefkefhtdeffedtfeeghfekffetudevjeegkeevhfdvueenucffohhmrghinhepkhgv
+    rhhnvghlrdhorhhgnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilh
+    hfrhhomhepohdqthgrkhgrshhhihesshgrkhgrmhhotggthhhirdhjphdpnhgspghrtghp
+    thhtohepvddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheplhhinhhugidufeelge
+    dquggvvhgvlheslhhishhtshdrshhouhhrtggvfhhorhhgvgdrnhgvthdprhgtphhtthho
+    pehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:BFSPaN1-7gZJiZrEfuQcpvQYjTbYQJQJRAD4V95lmnzNn7ri9_kD2Q>
+    <xmx:BFSPaLiJFIXe6ZFT4vWUE9ldXMXtw51O5P0pvGVENr1-4NvWlxy8wA>
+    <xmx:BFSPaLT7l9dF2_JVqCppkazHq9G-X36IERU8D4w3NuQlyQG3xgGHOg>
+    <xmx:BFSPaEhnlGIpvJAjliLJOUFTPGjMGNgglp2S3NErooQOnW5evBk8kw>
+    <xmx:BFSPaCDzZfmb33KwVtSb1xUit9X8kt97Wja93HV_LPuLm3zmZARTfwNj>
+Feedback-ID: ie8e14432:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
+ 3 Aug 2025 08:20:19 -0400 (EDT)
+From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
+To: linux1394-devel@lists.sourceforge.net
+Cc: linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/4] firewire: core: call address handlers ouside RCU read-side critical section
+Date: Sun,  3 Aug 2025 21:20:11 +0900
+Message-ID: <20250803122015.236493-1-o-takashi@sakamocchi.jp>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3303:b0:3e2:81d9:cbbc with SMTP id
- e9e14a558f8ab-3e41611a082mr111370915ab.2.1754222942254; Sun, 03 Aug 2025
- 05:09:02 -0700 (PDT)
-Date: Sun, 03 Aug 2025 05:09:02 -0700
-In-Reply-To: <67dedd2f.050a0220.31a16b.003f.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <688f515e.050a0220.13f73d.0000.GAE@google.com>
-Subject: Re: [syzbot] [netfs?] INFO: task hung in netfs_unbuffered_write_iter
-From: syzbot <syzbot+62262fdc0e01d99573fc@syzkaller.appspotmail.com>
-To: asmadeus@codewreck.org, brauner@kernel.org, dhowells@redhat.com, 
-	eadavis@qq.com, ericvh@kernel.org, hdanton@sina.com, jack@suse.cz, 
-	jlayton@kernel.org, kprateek.nayak@amd.com, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux_oss@crudebyte.com, lucho@ionkov.net, 
-	mjguzik@gmail.com, netfs@lists.linux.dev, oleg@redhat.com, pc@manguebit.org, 
-	sfrench@samba.org, swapnil.sapkal@amd.com, syzkaller-bugs@googlegroups.com, 
-	v9fs@lists.linux.dev, viro@zeniv.linux.org.uk
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-syzbot suspects this issue was fixed by commit:
+Hi,
 
-commit da8cf4bd458722d090a788c6e581eeb72695c62f
-Author: David Howells <dhowells@redhat.com>
-Date:   Tue Jul 1 16:38:36 2025 +0000
+This is an updated version of my previous patchset[1].
 
-    netfs: Fix hang due to missing case in final DIO read result collection
+In the earlier version, XArray was used to collect FCP address handlers.
+However, in typical system, only a few handlers are registered, and
+using XArray for this purpose was unnecessarily complex and inefficient.
+A simpler and faster approach is more appropriate here.
 
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=14cfbcf0580000
-start commit:   66701750d556 Merge tag 'io_uring-6.16-20250630' of git://g..
-git tree:       upstream
-kernel config:  https://syzkaller.appspot.com/x/.config?x=e29b8115bf337f53
-dashboard link: https://syzkaller.appspot.com/bug?extid=62262fdc0e01d99573fc
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1400348c580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=17b2048c580000
+In this v2 patchset, the kernel stack is used initially to store up to 4
+handlers. If more than 4 handlers are registered in the system, a buffer
+is dynamically allocated from the kernel heap.
 
-If the result looks correct, please mark the issue as fixed by replying with:
+[1] https://lore.kernel.org/lkml/20250728015125.17825-1-o-takashi@sakamocchi.jp/
 
-#syz fix: netfs: Fix hang due to missing case in final DIO read result collection
+Takashi Sakamoto (4):
+  firewire: core: use reference counting to invoke address handlers
+    safely
+  firewire: core: call handler for exclusive regions outside RCU
+    read-side critical section
+  firewire: core: call FCP address handlers outside RCU read-side
+    critical section
+  firewire: core: reallocate buffer for FCP address handlers when more
+    than 4 are registered
 
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+ drivers/firewire/core-transaction.c | 91 +++++++++++++++++++++++++----
+ include/linux/firewire.h            |  4 ++
+ 2 files changed, 85 insertions(+), 10 deletions(-)
+
+
+base-commit: 7061835997daba9e73c723c85bd70bc4c44aef77
+-- 
+2.48.1
+
 
