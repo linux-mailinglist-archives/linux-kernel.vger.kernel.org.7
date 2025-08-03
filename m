@@ -1,77 +1,87 @@
-Return-Path: <linux-kernel+bounces-754477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754478-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25BF4B194B3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:03:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E8251B194B5
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:06:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 30C973B4C30
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:03:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A34E23AF20A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:06:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B0F1E1DFC;
-	Sun,  3 Aug 2025 18:03:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973411DF755;
+	Sun,  3 Aug 2025 18:06:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="vNhKEvAp"
-Received: from lelvem-ot01.ext.ti.com (lelvem-ot01.ext.ti.com [198.47.23.234])
+	dkim=pass (2048-bit key) header.d=utah.edu header.i=@utah.edu header.b="Gq2wAntk"
+Received: from ipo7.cc.utah.edu (ipo7.cc.utah.edu [155.97.144.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A3BD19343B;
-	Sun,  3 Aug 2025 18:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.234
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 921A6BE65;
+	Sun,  3 Aug 2025 18:06:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=155.97.144.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754244204; cv=none; b=SrwKKMqxjEqQYVYIUBry5cIBZSf/xXSqqaqHPd1qh1aKpHEY8kp7laz2XnAS+VDSsPIiKrUiVmVB9FI/p2jh1hNloLOEyKP+MWkmUtZ8wG2kidGcLWhe01K832ImH73FSpVpFCLX5KwEkFZ1m9UTjGL52trt2P9rmNkLurac14o=
+	t=1754244392; cv=none; b=De+1b9J1FC++gYV8ORlmtPz3JXmyuj9XI7JKXEQBO3SfVexpsAxy1ZlgZ00mcN3p+cnMYTK+JeRpiveIaWZU8Q/L3wAKI2H5kWyncToZF/KoIDDiacOCQQBoXQl3zyY5d3Ei3SjDQ+1ATtBW1RNtbeIHZLd8ax1Vu9dMXl0YnPI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754244204; c=relaxed/simple;
-	bh=oZGAmKfXTd6UkpeXB81oMb44tLp1mwkcCGK+lP31OSg=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=To77CstUZ/y+v/roRLR8/mSHKO38T0ttIYfChrRjNj9G8OODJFh8P61/rdLmaZZ929PlCc4kMHa8hXWto1KWDa6rQBo88gP5IFfelg4UDwulVKhmelBBkbeiPnAajyN6+H4wVxY6XT1wtGRa0Dc8PtgxvKwtkpZ7orAxaa/G7Gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=vNhKEvAp; arc=none smtp.client-ip=198.47.23.234
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh02.itg.ti.com ([10.180.78.226])
-	by lelvem-ot01.ext.ti.com (8.15.2/8.15.2) with ESMTP id 573I2NYB3665805;
-	Sun, 3 Aug 2025 13:02:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754244143;
-	bh=nAqOrU8mC0Z3rvF/se+5QTvub9P8PeKySL6x0gt1KT4=;
-	h=From:To:CC:Subject:Date;
-	b=vNhKEvApxFut0oTKQW0GFUaQpvUcq70BEJzyqpq+iAvtV0UTsLREnvYRWq7pyQZrA
-	 Gs1gW6iCLmbPh2/5osMbTkZGnDzKaEZngfI8GxIIxXQgatUVAEOYJbTygKJaOAowNl
-	 wt8jbmoqY/1oZje8oTMjhTM5Mk1hcSFHcXHS52lk=
-Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
-	by lelvem-sh02.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 573I2N3e2265990
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Sun, 3 Aug 2025 13:02:23 -0500
-Received: from DLEE113.ent.ti.com (157.170.170.24) by DLEE100.ent.ti.com
- (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Sun, 3
- Aug 2025 13:02:22 -0500
-Received: from fllvem-mr08.itg.ti.com (10.64.41.88) by DLEE113.ent.ti.com
- (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Sun, 3 Aug 2025 13:02:22 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvem-mr08.itg.ti.com (8.18.1/8.18.1) with ESMTP id 573I2MMp2180903;
-	Sun, 3 Aug 2025 13:02:22 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 573I2KpU005223;
-	Sun, 3 Aug 2025 13:02:21 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <namcao@linutronix.de>, <r-gunasekaran@ti.com>, <jacob.e.keller@intel.com>,
-        <m-malladi@ti.com>, <sdf@fomichev.me>, <john.fastabend@gmail.com>,
-        <hawk@kernel.org>, <daniel@iogearbox.net>, <ast@kernel.org>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <bpf@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v2] net: ti: icssg-prueth: Fix skb handling for XDP_PASS
-Date: Sun, 3 Aug 2025 23:32:16 +0530
-Message-ID: <20250803180216.3569139-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1754244392; c=relaxed/simple;
+	bh=1JwXp8STiCpheRabs2ETg1bUb76a8ltPNsCwVlxUIFw=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=RaNH/6dGd8UG+DDPEwc8Miv//dutJccntV0UfmIezRe/PJNKnWUPg3dNQ21pebUV1H/oTXZ0bT72eMRC9ZwmGQ2zKirveRlSL0+5dW7WF0S6F6/6VgSi+Rgk/JUUozA29fDhFmWBpzVqydSwbFOMgO/FlbCNfZnmQ4GWAudheUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utah.edu; spf=pass smtp.mailfrom=cs.utah.edu; dkim=pass (2048-bit key) header.d=utah.edu header.i=@utah.edu header.b=Gq2wAntk; arc=none smtp.client-ip=155.97.144.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=utah.edu
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cs.utah.edu
+DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
+  d=utah.edu; i=@utah.edu; q=dns/txt; s=UniversityOfUtah;
+  t=1754244390; x=1785780390;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=1JwXp8STiCpheRabs2ETg1bUb76a8ltPNsCwVlxUIFw=;
+  b=Gq2wAntk+gtekfTkyY3F0X4en6spBwLsjbryEAQi0ZAhFgzV24e9sS7/
+   eK2JEIXKrjJjrri9no2Jxm10Ya4nhJgHzgTxFcx3drs79rNsEfbxpaq/P
+   1ekedu1QiScA4uLftlUu1/dKhe48NUvcoAVtZbyy2MuQ0MoSNimg1tTwY
+   zYJlN7ZHNf2qmK0I72k6bJxAD4/RF3eBHMtoYJrz7ctKmWoRspuPYOBiZ
+   tmpV2/b/EnIae72HGmsSQ8WbJE43HoroWWRMHRtnu++4YICc0LHGZeAFp
+   66ynCAhAOF1X32SJlVqvsCGpnWnLSf3h9j47JUGewtoYbvh46pOkHjYwy
+   g==;
+X-CSE-ConnectionGUID: utDoHAfgT9SGo0rMuZyK5w==
+X-CSE-MsgGUID: NDOkl7e+TgG5+Tw5I7xwpw==
+X-IronPort-AV: E=Sophos;i="6.17,258,1747720800"; 
+   d="scan'208";a="399802573"
+Received: from rio.cs.utah.edu (HELO mail-svr1.cs.utah.edu) ([155.98.64.241])
+  by ipo7smtp.cc.utah.edu with ESMTP; 03 Aug 2025 12:06:15 -0600
+Received: from localhost (localhost [127.0.0.1])
+	by mail-svr1.cs.utah.edu (Postfix) with ESMTP id 251E230228C;
+	Sun,  3 Aug 2025 12:03:51 -0600 (MDT)
+X-Virus-Scanned: Debian amavisd-new at cs.utah.edu
+Received: from mail-svr1.cs.utah.edu ([127.0.0.1])
+	by localhost (rio.cs.utah.edu [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id unZkAccHvwO4; Sun,  3 Aug 2025 12:03:50 -0600 (MDT)
+Received: from thebes.cs.utah.edu (thebes.cs.utah.edu [155.98.65.57])
+	by mail-svr1.cs.utah.edu (Postfix) with ESMTP id BA7F03018A8;
+	Sun,  3 Aug 2025 12:03:50 -0600 (MDT)
+Received: by thebes.cs.utah.edu (Postfix, from userid 1628)
+	id DC8F115C2742; Sun,  3 Aug 2025 12:06:13 -0600 (MDT)
+From: Soham Bagchi <soham.bagchi@utah.edu>
+To: elver@google.com
+Cc: akpm@linux-foundation.org,
+	andreyknvl@gmail.com,
+	arnd@arndb.de,
+	corbet@lwn.net,
+	dvyukov@google.com,
+	glider@google.com,
+	kasan-dev@googlegroups.com,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	soham.bagchi@utah.edu,
+	sohambagchi@outlook.com,
+	tglx@linutronix.de,
+	workflows@vger.kernel.org
+Subject: [PATCH v2] kcov: load acquire coverage count in user-space code
+Date: Sun,  3 Aug 2025 12:05:58 -0600
+Message-Id: <20250803180558.2967962-1-soham.bagchi@utah.edu>
+X-Mailer: git-send-email 2.34.1
+In-Reply-To: <CANpmjNPWzJZrAFT3-013GJhksK0jkB6n0HmF+h0hdoQUwGuxfA@mail.gmail.com>
+References: <CANpmjNPWzJZrAFT3-013GJhksK0jkB6n0HmF+h0hdoQUwGuxfA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -79,76 +89,43 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-emac_rx_packet() is a common function for handling traffic
-for both xdp and non-xdp use cases. Use common logic for
-handling skb with or without xdp to prevent any incorrect
-packet processing. This patch fixes ping working with
-XDP_PASS for icssg driver.
+Updating the KCOV documentation to use a load-acquire
+operation for the first element of the shared memory
+buffer between kernel-space and user-space.
 
-Fixes: 62aa3246f4623 ("net: ti: icssg-prueth: Add XDP support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
+The load-acquire pairs with the write memory barrier
+used in kcov_move_area()
+
+Signed-off-by: Soham Bagchi <soham.bagchi@utah.edu>
 ---
 
-v2-v1:
-- Collected RB tag from Jacob Keller <jacob.e.keller@intel.com>
-- Populated headroom from xdp buffer instead of hardcoding as
-  pointed out by Jakub Kicinski <kuba@kernel.org>
+Changes in v2:
+- note for load-acquire shifted to block comment
+  in code rather than in the preceding paragraphs
+---
+ Documentation/dev-tools/kcov.rst | 7 ++++++-
+ 1 file changed, 6 insertions(+), 1 deletion(-)
 
- drivers/net/ethernet/ti/icssg/icssg_common.c | 15 ++++++++-------
- 1 file changed, 8 insertions(+), 7 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_common.c b/drivers/net/ethernet/ti/icssg/icssg_common.c
-index 12f25cec6255..57e5f1c88f50 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_common.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_common.c
-@@ -706,9 +706,9 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
- 	struct page_pool *pool;
- 	struct sk_buff *skb;
- 	struct xdp_buff xdp;
-+	int headroom, ret;
- 	u32 *psdata;
- 	void *pa;
--	int ret;
+diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
+index 6611434e2dd..40a4b500073 100644
+--- a/Documentation/dev-tools/kcov.rst
++++ b/Documentation/dev-tools/kcov.rst
+@@ -361,7 +361,12 @@ local tasks spawned by the process and the global task that handles USB bus #1:
+ 	 */
+ 	sleep(2);
  
- 	*xdp_state = 0;
- 	pool = rx_chn->pg_pool;
-@@ -757,22 +757,23 @@ static int emac_rx_packet(struct prueth_emac *emac, u32 flow_id, u32 *xdp_state)
- 		xdp_prepare_buff(&xdp, pa, PRUETH_HEADROOM, pkt_len, false);
- 
- 		*xdp_state = emac_run_xdp(emac, &xdp, page, &pkt_len);
--		if (*xdp_state == ICSSG_XDP_PASS)
--			skb = xdp_build_skb_from_buff(&xdp);
--		else
-+		if (*xdp_state != ICSSG_XDP_PASS)
- 			goto requeue;
-+		headroom = xdp.data - xdp.data_hard_start;
-+		pkt_len = xdp.data_end - xdp.data;
- 	} else {
--		/* prepare skb and send to n/w stack */
--		skb = napi_build_skb(pa, PAGE_SIZE);
-+		headroom = PRUETH_HEADROOM;
- 	}
- 
-+	/* prepare skb and send to n/w stack */
-+	skb = napi_build_skb(pa, PAGE_SIZE);
- 	if (!skb) {
- 		ndev->stats.rx_dropped++;
- 		page_pool_recycle_direct(pool, page);
- 		goto requeue;
- 	}
- 
--	skb_reserve(skb, PRUETH_HEADROOM);
-+	skb_reserve(skb, headroom);
- 	skb_put(skb, pkt_len);
- 	skb->dev = ndev;
- 
-
-base-commit: 759dfc7d04bab1b0b86113f1164dc1fec192b859
+-	n = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
++        /*
++         * The load to the coverage count should be an acquire to pair with 
++         * pair with the corresponding write memory barrier (smp_wmb()) on 
++         * the kernel-side in kcov_move_area().
++         */
++	n = __atomic_load_n(&cover[0], __ATOMIC_ACQUIRE);
+ 	for (i = 0; i < n; i++)
+ 		printf("0x%lx\n", cover[i + 1]);
+ 	if (ioctl(fd, KCOV_DISABLE, 0))
 -- 
-2.43.0
+2.34.1
 
 
