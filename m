@@ -1,118 +1,218 @@
-Return-Path: <linux-kernel+bounces-754372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 61497B19392
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:59:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7314CB193A8
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:02:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8BC2F171E13
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 10:59:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6BB1918947C7
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:02:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A0681256C76;
-	Sun,  3 Aug 2025 10:59:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E57A2652AF;
+	Sun,  3 Aug 2025 11:01:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="NDggLRkN"
-Received: from mail-qv1-f41.google.com (mail-qv1-f41.google.com [209.85.219.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="McnLcJt8"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3497354774
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 10:59:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAC971EDA3C;
+	Sun,  3 Aug 2025 11:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754218778; cv=none; b=pGeoMTsziOGbTpP5wWTDyCmersvrUJibwCeH1qK1SxuoPcAtFrfaF4XPycshQYXoY3dEgVAB/9TFcleXr2S5vPDWL4YCLeszhc94IiypvOW7c/053RTN3t2AF34AchcWkECLWysbp1oamJLfMpWFA1XVcGDEywH35BhcGG20ITI=
+	t=1754218896; cv=none; b=dF6yd6iiH31bB81dBQ7ppyoSm4VwuD1vwqOZatcfvISmtH18CSCo7NDVtirehL6CtVEjfWnpJyHEQ/0B2kFTL3EMY+p2zi5Kxp943S8aSEVlChsOC9TZH4eidIMQHoQSbW7L3Onb946xQh+WB0RS//+WO5xeJbtLZLQK3iBDysI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754218778; c=relaxed/simple;
-	bh=8qGh5+VS2OHUxroiuOZuE0lXrzfIziOPyv+nXa3cCA8=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=F2/wTHDqxIlgGtfmPrMYiryxqlE0uwoNE5fFF7a763q1IFtD+EcA9+yi8NMbf0ynBFS2Z58OX1oeU06WDpAA04XiAdtN2c9oLA0o/rK85TEFwHDe9x4WJW5poggFU9rwQg1HzGsAvdW+2z7lpz5IRmnX+Sf9cDiA1QR0B+n3Sgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=NDggLRkN; arc=none smtp.client-ip=209.85.219.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinidat.com
-Received: by mail-qv1-f41.google.com with SMTP id 6a1803df08f44-70740598a9dso22180046d6.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 03:59:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=infinidat.com; s=google; t=1754218775; x=1754823575; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=5d1Ty/OC9652uUgpaiAgn5uJnzmBBRdn461onxQuzqM=;
-        b=NDggLRkNaP4Nkyj39GbroeQIhvNeZ4ufaua7q8ULizRpAYfbqq19ttnjYKaQNx5EWQ
-         QCVb4jGmDjyelCBTaXcSlSqk8ZRmJCKuC89seays49brN02cO9H+qO8C0kMS8MGahtRA
-         ftyOa4VRNZfB+dtHdjdv5/m8SXobQffc9/wGv7hMApNJONbLMqLwb38eLluVyho+6j/u
-         0eqRb8fiCGdg9m7PimEKO9YLqNUFQ/0eWhLzuDdMv1oIUme4lEjq8duV0qF01VgJVLHq
-         5eopvj4ZSQS59md0HbKTr30875TfyZfeN4oL9O+vtR8Y+sNgYMMNSDgFgI+YhpDdLUgT
-         bP/g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754218775; x=1754823575;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=5d1Ty/OC9652uUgpaiAgn5uJnzmBBRdn461onxQuzqM=;
-        b=NsWSQm/UbPXYdDOFtsINQcJsOuTTYtEQZbsOxzomDzoZSwLPRKiEiLkmzhBaKR9ms0
-         5FL29XZjP7/AzZgJq6+A6Wzx6ItRlUKbkRYBJbXjv/e4wXBuKTbY9eyErOBYBbPppBnN
-         XtfVdQU6IegLvGvXCO3EvG5dXQTpH1IqlBWst4WO9VJlM5tZR+knAd+QQLgfQ9n45wCF
-         vWabQfyGa5a7TekcGBWRCKj70ped8uk9Qn7lzhfij7KroF5cT+DEFhKoEM2NczjfpXAV
-         vZbgBJIzndv948py14+Irh9xJEk5eoz4oOe7Mu77pQaz84nGPCvrVUe625U59jW4zkD0
-         5e4g==
-X-Gm-Message-State: AOJu0Yz+f4Dn/pGereuY9mY3L26VAgIZH+OxfXt0Cfaqyu7zUXGxafGM
-	Q1HQteSSQ9b/CAkBZyiXr0ye97IZSBrCWIiTcb1Ohvrq2lquhiDo76ivpaqvugLjU5qnQU3S5X0
-	t7n42fLPzVMhYbVMrihK5NurzPoHcHDxPDL1A+ChoRFggPHwmCqeBlaU=
-X-Gm-Gg: ASbGncuPxXJOzUanBjxRV9d6pgYtr9cxVZILAMLFuHEqqF138WsIXmwi/qo1SMrentE
-	KuiLozTNzB9D7GruzO3UT+XPaUfIgcbD/hfeccw07GuvHERIWKnNseBaqMduJz7ffRrXYRD0pw1
-	rO0goZoJRmVGAcJUeQrh6bCOJkBXhz5ql07CtHJrGp8x/FpcAFYwt7wD6XuFhPSbYbkTjVp+C1O
-	XLqMgDFpw==
-X-Google-Smtp-Source: AGHT+IGt6W1C3etzatTk+DvHHR29hoZFX+9vcXrQgy+SxsY4eo3JROncv3wBlR+V1hQ2RnTpJXWmFgE4U3qVLSQKcgs=
-X-Received: by 2002:ad4:5b8d:0:b0:707:75cb:60b4 with SMTP id
- 6a1803df08f44-7093631987dmr77957396d6.41.1754218774911; Sun, 03 Aug 2025
- 03:59:34 -0700 (PDT)
+	s=arc-20240116; t=1754218896; c=relaxed/simple;
+	bh=BdVTBhN250wTa71M7/gUoWp7//5kAG9/3AKLXJNIMB0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=szNvg82fKaa84vLQTQpoChID06nVmktXizZkblNUckWfAxHNl3WJJYbSm2xZiT7pHQjRzNDW5fFtPI8iEVhFhpv+6ZN4wjUiRg20JV7nh6K6kGTX+9MkNn7rl6hj0mEVwxymENh10m/PaKVCOwRnRtZYQTsxA7voIYfDlCnScbQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=McnLcJt8; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5738qlNi013051;
+	Sun, 3 Aug 2025 11:01:23 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=WO7SkMKcc1s18E6/eOurgl
+	qFs8lDS/zAgVaiETXpg2Y=; b=McnLcJt8JH+6PGH23LNJZNlVVGdUGPkczNgTc4
+	8JlA46hoAdi8/ik6nzYNzj+ZCWQWcIEk8JZ65wwg4aV0NzA77zqpte9FoPCItC2D
+	zQcXcfM9qMUoRLxZodcuqB1Fs93aiFZA6QDB/pt54YUQ9Efn/EqVCEPU9udeL9Qf
+	nCYLaEBOKVQ0B5iwRL1UDqMIGAuiUOVTyNQzVTbB7SmbHnVmAudsyjg8CJ0tfch0
+	txjQYiDnKpPncwlCuvbdibOdfhgaYukq0izwpTYCtMCBHr01VpH4nfIj6q/Gs0wk
+	Nu58aO7ys6dCcVVUpWccv9wSjZmQGKZJAb08pDW80x0izsqA==
+Received: from apblrppmta01.qualcomm.com (blr-bdr-fw-01_GlobalNAT_AllZones-Outside.qualcomm.com [103.229.18.19])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489a91t7rs-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 03 Aug 2025 11:01:23 +0000 (GMT)
+Received: from pps.filterd (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 573B1Jhg015300;
+	Sun, 3 Aug 2025 11:01:20 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 489brke03q-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 03 Aug 2025 11:01:19 +0000
+Received: from APBLRPPMTA01.qualcomm.com (APBLRPPMTA01.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 573B1JS2015273;
+	Sun, 3 Aug 2025 11:01:19 GMT
+Received: from hu-devc-hyd-u22-c.qualcomm.com (hu-wasimn-hyd.qualcomm.com [10.147.246.180])
+	by APBLRPPMTA01.qualcomm.com (PPS) with ESMTPS id 573B1JSc015269
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Sun, 03 Aug 2025 11:01:19 +0000
+Received: by hu-devc-hyd-u22-c.qualcomm.com (Postfix, from userid 3944840)
+	id 727FE5C1; Sun,  3 Aug 2025 16:31:18 +0530 (+0530)
+From: Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Richard Cochran <richardcochran@gmail.com>
+Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+        kernel@oss.qualcomm.com, Wasim Nazir <wasim.nazir@oss.qualcomm.com>
+Subject: [PATCH v2 0/8] arm64: dts: qcom: Lemans platform refactor and EVK support
+Date: Sun,  3 Aug 2025 16:31:04 +0530
+Message-ID: <20250803110113.401927-1-wasim.nazir@oss.qualcomm.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Constantine Gavrilov <cgavrilov@infinidat.com>
-Date: Sun, 3 Aug 2025 13:59:24 +0300
-X-Gm-Features: Ac12FXzclI2ppn0KBABkur-RWnTOIL3Ys4pDILyGyuz5uO41_4IKbSmQPo8juL0
-Message-ID: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
-Subject: Large DMA alloc
-To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
-	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: hteD-uGUueQJ3sEEvvH0aI_K92W6W2-m
+X-Proofpoint-GUID: hteD-uGUueQJ3sEEvvH0aI_K92W6W2-m
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAzMDA3MyBTYWx0ZWRfXzTOgNGwNu8Kp
+ GlKT5tP5vfvAzybzVPTFG2XUzPkGBEX5bSKz/sI0xIo9IDH8BrksB+Q23S5UBfgXTvuNLL8odYQ
+ 6JWOn7okrd1fuXocawG9JT0kXKZ8f0hLQ800v00PO1tlfAlPvjgkAHzn/jmL+arj1yP6RNUBOUh
+ 4V53qhZSCeiLXRU3FJ3RGN7rUfIyrNKJCAM73J6I0gJXnfGHRV5p0oyjQ0zA+0IuSL3f98YPj1w
+ 9E5atmOirg1fEJ1dwfShNvKOxLmn1MuAzX3jsQw5dMGtsMEZynel8/W9TEWSqXbwqDwROCJP3MP
+ S1EH6XuXSJN6PWx+A3YmUMZoIk9O/TzI0ntVMnLpZ8ICsnflIj5ZTq4fD6qYEOO3TtizPX37WzH
+ EGsWlNq8MEpGoikSjHLmxTODnZwPSSgAmafJVW6+dYMtxbtLISBvRWAKhbk8Bm3pvTnaVtMT
+X-Authority-Analysis: v=2.4 cv=UdpRSLSN c=1 sm=1 tr=0 ts=688f4183 cx=c_pps
+ a=Ou0eQOY4+eZoSc0qltEV5Q==:117 a=Ou0eQOY4+eZoSc0qltEV5Q==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=EUspDBNiAAAA:8 a=9VDwho1jAwe4TvJw1f4A:9 a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-03_03,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 phishscore=0 adultscore=0 spamscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 clxscore=1015
+ lowpriorityscore=0 malwarescore=0 mlxscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508030073
 
-I have been working on a set of kernel changes to facilitate IOMMU registrations
-of large memory regions. The context of this work is working with PCIe devices
-that have very large PCIe memory BARs (multi-terabyte sizes are possible) from
-user-space. Large memory registrations happen in this context when the PCIe
-memory BARs are registered for access by other devices (like DMA engines), and
-when the application memory buffers are registered for access by the
-PCIe devices.
-Working from user-space typically involves a single registration of large areas
-(application buffers and memory BARs) to avoid run-time performance penalty of
-dynamic small registrations per IO.
+This patch series introduces a comprehensive refactor and enhancement of
+the Qualcomm Lemans platform device tree files, aiming to improve
+clarity, modularity, and support for emerging IoT use cases. The
+motivation behind this work stems from the need to unify DTS naming
+conventions, streamline board support across multiple variants, and
+to detach from different product names for similar variants.
 
-The full list of patches is provided below:
+For example, qcs9100 and qcs9075 differ only in safety features provided by
+the Safety-Island (SAIL) subsystem but safety features are currently
+unsupported, so both can be categorized as the same chip today.
 
-[PATCH 0/8] Large DMA alloc/skip 32-bit alloc if size > 32-bit
-[PATCH 1/8] Large DMA alloc/extend alloc APIs to use alignment
-[PATCH 2/8] Large DMA alloc/do not align allocations to size
-[PATCH 3/8] Large DMA alloc/add busy_regions sysfs attribute
-[PATCH 4/8] Large DMA alloc/add APIs to query available range
-[PATCH 5/8] Large DMA alloc/remove max32_alloc_size field
-[PATCH 6/8] Large DMA alloc/alloc DMA addresses from the top
-[PATCH 7/8] Large DMA alloc/low address limit in alloc funcs
-[PATCH 8/8] Large DMA alloc/add min_dma_addr to device struct
+To better support IoT platforms, the memory map has been restructured.
+Previously, the automotive memory layout was applied universally, which
+introduced unnecessary carveouts and misaligned memory regions for IoT
+boards. By establishing the IoT memory map i.e lemans.dtsi as the baseline
+and introducing lemans-auto.dtsi for legacy automotive configurations, the
+series ensures that each platform inherits only what it needs.
+Accordingly:
+  - IoT platforms, qcs9100/qcs9075 are categorized as "lemans" with latest
+    memory-map as per IOT requirements.
+  - Automotive platform, sa8775p is categorized as "lemans-auto", that retains
+    the old automotive memory map to support legacy use cases.
+  - Both lemans & lemans-auto are serving as non-safe chip and if needed
+    additional dtsi can be appended in the future to enable safety features.
 
-Entire work is available at the master branch of the git repository
-git@github.com:cgavrilov/linux.git, with the purpose of sharing the code for a
-possible kernel merge.
+Additionally:
+  - Refactor common daughter cards used in Ride/Ride-R3 boards into a
+    common configuration. Also, introduce new files for different ethernet
+    capabilities in Ride/Ride-r3. Since Ethernet functionality in Ride/Ride-r3
+    is currently broken upstream, this patch focuses only on refactoring.
+  - Include support for qcs9075 EVK [1] board as lemans-evk. Currently,
+    basic features are enabled supporting 'boot to shell'.
 
-The following messages will provide individual patches.
+Funtional impact to current boards with refactoring:
+  - No functional change on automotive boards (i.e sa8775p ride/ride-r3)
+    and it is verified by comparing decompiled DTB (dtx_diff).
+  - qcs9100 ride/ride-r3 are having a new memory-map and rest other
+    functionalities are still same.
 
 
--- 
-----------------------------------------
-Constantine Gavrilov
-System Architect and Platform Engineer
-Infinidat
-----------------------------------------
+---
+Changelog
+
+v2:
+  - Update the subject of the series [2] to reflect both the Lemans EVK
+    addition and the broader Lemans refactoring. Also, revise the subject
+    format to align with Qualcomm’s convention for DTS submissions
+    (arm64: dts: qcom:).
+  - Refine the cover letter to emphasize how detaching from product-specific
+    names addresses previous limitations in supporting emerging IoT use cases.
+  - Improve the commit message for patch 2/8 based on Bjorn’s feedback.
+  - Remove board-renaming change to keep backward compatibility intact.
+  - Include separate patch to fix DTS inclusion for IoT boards.
+  - Change copyright format for patch 8/8 as per Krzysztof's feedback.
+  - Carrying Krzysztof's NAK from v1 to only those patches which were preset,
+    though tried to address the concern by retaining the DTB compatibility.
+  - v1-link: [2].
+
+[1] https://lore.kernel.org/all/20250612155437.146925-1-quic_wasimn@quicinc.com/
+[2] https://lore.kernel.org/all/20250722144926.995064-1-wasim.nazir@oss.qualcomm.com/
+
+---
+Wasim Nazir (8):
+  arm64: dts: qcom: Rename sa8775p SoC to "lemans"
+  arm64: dts: qcom: lemans: Update memory-map for IoT platforms
+  arm64: dts: qcom: lemans: Separate out ethernet card for ride &
+    ride-r3
+  arm64: dts: qcom: lemans: Refactor ride/ride-r3 boards based on
+    daughter cards
+  arm64: dts: qcom: lemans: Rename sa8775p-pmics.dtsi to
+    lemans-pmics.dtsi
+  arm64: dts: qcom: lemans: Fix dts inclusion for IoT boards and update
+    memory map
+  dt-bindings: arm: qcom: lemans: Add bindings for Lemans Evaluation Kit
+    (EVK)
+  arm64: dts: qcom: Add lemans evaluation kit (EVK) initial board
+    support
+
+ .../devicetree/bindings/arm/qcom.yaml         |   1 +
+ arch/arm64/boot/dts/qcom/Makefile             |   1 +
+ arch/arm64/boot/dts/qcom/lemans-auto.dtsi     | 104 +++++++
+ arch/arm64/boot/dts/qcom/lemans-evk.dts       | 291 ++++++++++++++++++
+ .../{sa8775p-pmics.dtsi => lemans-pmics.dtsi} |   0
+ ...775p-ride.dtsi => lemans-ride-common.dtsi} | 168 ----------
+ .../qcom/lemans-ride-ethernet-88ea1512.dtsi   | 205 ++++++++++++
+ .../qcom/lemans-ride-ethernet-aqr115c.dtsi    | 205 ++++++++++++
+ .../dts/qcom/{sa8775p.dtsi => lemans.dtsi}    |  75 +++--
+ arch/arm64/boot/dts/qcom/qcs9100-ride-r3.dts  |   9 +-
+ arch/arm64/boot/dts/qcom/qcs9100-ride.dts     |   9 +-
+ arch/arm64/boot/dts/qcom/sa8775p-ride-r3.dts  |  40 +--
+ arch/arm64/boot/dts/qcom/sa8775p-ride.dts     |  40 +--
+ 13 files changed, 875 insertions(+), 273 deletions(-)
+ create mode 100644 arch/arm64/boot/dts/qcom/lemans-auto.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/lemans-evk.dts
+ rename arch/arm64/boot/dts/qcom/{sa8775p-pmics.dtsi => lemans-pmics.dtsi} (100%)
+ rename arch/arm64/boot/dts/qcom/{sa8775p-ride.dtsi => lemans-ride-common.dtsi} (87%)
+ create mode 100644 arch/arm64/boot/dts/qcom/lemans-ride-ethernet-88ea1512.dtsi
+ create mode 100644 arch/arm64/boot/dts/qcom/lemans-ride-ethernet-aqr115c.dtsi
+ rename arch/arm64/boot/dts/qcom/{sa8775p.dtsi => lemans.dtsi} (99%)
+
+
+base-commit: 05adbee3ad528100ab0285c15c91100e19e10138
+--
+2.50.1
+
 
