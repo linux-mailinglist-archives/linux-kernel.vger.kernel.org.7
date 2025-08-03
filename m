@@ -1,127 +1,198 @@
-Return-Path: <linux-kernel+bounces-754264-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F315CB1919E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 04:59:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 462DBB19193
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 04:58:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2E90A177D1A
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 02:59:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E00793BA1FD
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 02:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C84F1C84AB;
-	Sun,  3 Aug 2025 02:58:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E27018DB1F;
+	Sun,  3 Aug 2025 02:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b="f3oaib0s"
-Received: from sender4-pp-o92.zoho.com (sender4-pp-o92.zoho.com [136.143.188.92])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b="pTDK7XUq"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 952CB1A2C11;
-	Sun,  3 Aug 2025 02:58:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.92
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754189905; cv=pass; b=s97D928w8Xaj2t93z5QiF5OWhlS3nxOq5nFPCNiGL0zqt1MIITp3+yeIbQ1Ez59U/yjn4wJ/tQ8r8CF3vkg3ZkwyMgA6nIi8ygqeHiBHy9hjEsm7HB6XS4gqVG6EY1THQkgA/Gwjk29SzgPtyPIR+zF9p+XwmwcXqgSd8XRJldI=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754189905; c=relaxed/simple;
-	bh=xZKHgRz3uSqshLrdkkYFl9Qnm6/OL0+pgAadhN6KXW0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=usgHa5vzUHFv+EMIzEidyltmawWUTiwsYn1lsQfAJdsarsGvr2/qo2xuLY5QJoIQRXJ6e0GTZ+O5LdId0KvjZM055WbsGzaw+672xIwoRfI1F8TuTaCLKWQMadJa9Uie4vDjU8dEbOrL8ZWewvM2T4FQm0cVmBl4PNYAyYPEKw8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com; spf=pass smtp.mailfrom=zohomail.com; dkim=pass (1024-bit key) header.d=zohomail.com header.i=kingxukai@zohomail.com header.b=f3oaib0s; arc=pass smtp.client-ip=136.143.188.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=zohomail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zohomail.com
-ARC-Seal: i=1; a=rsa-sha256; t=1754189887; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=LkVdGpsewSq7EUoNkwSZFDq48TcI9YZ9dASr5aKolIkup9zpqRImu/LWAePVcXK1JheZfAtDHSRNNlMEQZGzxAqR4y3j+yaRPTlvhf0Zl0au3tKquKtQ+Sf1Rv5v5noeCI3CCJMe7e+GKIrqHPOs3aWBVNtLnqWrI03PtnDPyzY=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1754189887; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=; 
-	b=kToYBY8sLrcxmNM+NeoNfHuK5XmkaeElmo60w+600pWaLxADpC3vG3BLOvPTM7zD89+Z13C03f1eEJNBXHo6iNS9SzWtOrY9e+Yq1D9itN/wkqZ3kSOlKAlC43eUu/OEedOGCdvVN//t8eZF+osIAx1Se62ZuYdrZoEkGtYh9l4=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=zohomail.com;
-	spf=pass  smtp.mailfrom=kingxukai@zohomail.com;
-	dmarc=pass header.from=<kingxukai@zohomail.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754189887;
-	s=zm2022; d=zohomail.com; i=kingxukai@zohomail.com;
-	h=Message-ID:Date:Date:MIME-Version:Subject:Subject:To:To:Cc:Cc:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Feedback-ID:Message-Id:Reply-To;
-	bh=i0Jx5wsPXVzHcNKwvNaiczllxlJAA25jxDOq/uaaaSM=;
-	b=f3oaib0sr5t8khGJjviKaV+9fuUvEnxpxVlM7HTtYPOHT0yoi2mD2j7aZdwd7OFA
-	3/sTyG5wQ8t9o1QU4epqE+HJzZzjHTx613da8X9x6NRHY8rAkXUh30QLNAxohmvuBJG
-	0C2JvkINc/i6YyIF3bli6UZEpd3wrJ7iJYwiuORQ=
-Received: by mx.zohomail.com with SMTPS id 1754189881012449.99415784449957;
-	Sat, 2 Aug 2025 19:58:01 -0700 (PDT)
-Message-ID: <757cf40c-a48f-4980-b638-35a29a91ecb3@zohomail.com>
-Date: Sun, 3 Aug 2025 10:57:55 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB3B813A258
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 02:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754189899; cv=none; b=DqI0pe8+3NYfubOhbuIfXNIcgtYU+2CqQJdMoGcgB58siilZ9QMOAI14I7ncaEhoNTw23ntKURSH3vpI2QI6P2E+qvXyxh8mXQO8CqqjV/2wNJc2HsAlN6WRjCe96W7r6fq3JVndT4QTsaURzk+NZdO0VaatXVMIwtrFGEHBwP4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754189899; c=relaxed/simple;
+	bh=xS0fwRHul3rDPIx1/b4zCW5Tgi8i7mAJOBcb7BgmG2U=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VeOSLExOaYSpHuFfduWI3OxIn8iLVLtiMfTL6/E30pEVKQGdFZI1WedpmjcYyShw6PjIhm/OmBmeRlS/G+6oKv0hE0IcNoYYd5CN+AULIVhbaa6RX+0i1nYGlF2uk1Xt9XIUhNwmnwPmMOxLPs0nxJaAD9XZwGWRur00JC35qRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com; spf=pass smtp.mailfrom=riscstar.com; dkim=pass (2048-bit key) header.d=riscstar-com.20230601.gappssmtp.com header.i=@riscstar-com.20230601.gappssmtp.com header.b=pTDK7XUq; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=riscstar.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=riscstar.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-86cdb330b48so249482139f.0
+        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 19:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=riscstar-com.20230601.gappssmtp.com; s=20230601; t=1754189896; x=1754794696; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=oY3Z8dtNrrf7QjfOHcFhMrLBNHKYAu0syOln9u3nSKA=;
+        b=pTDK7XUqc+7VoZesdR3SDjt2egxFL5BQDQ8gkdm2lZyWYlY14lvn9ttlgmBiRJCBOO
+         cSOj/o85l4i81we+y8P7c4kqGZWbpzbHSTpoell1NKXt/qTfRJQwa2eKqZrsIyyVIHXZ
+         x4EPTe28B2qIjkYCKczyUMzlIHAEx1NF/GsCgJtb1Za/SjkJKQCKOIG7drjNYhB1FjE1
+         2pj1XEbYG5zXMIOOosVtIIZtGkkvdQa/YI5xvnjTOsd15aTatEkiaCQCxpC33XchcWKm
+         ms9wznBGH8NecGkl0O59ufSZDwpbcEL1G6BDWmzQN6lFydweUufhMF9pvMR/q1OM/lzo
+         DyJg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754189896; x=1754794696;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=oY3Z8dtNrrf7QjfOHcFhMrLBNHKYAu0syOln9u3nSKA=;
+        b=U3swmhs7Md8XNKCjgr4T5xyxEhpSvTcoPvfkb1tvxAaf+EWTMo0+i5CT6HcY4pqUNY
+         WyNLvuTXOfMDqtK92LK+TIuJjqheuIzqthv2cNj/7+ygDIyiHsKKYMzCxKEpplkeU2t3
+         /8omoPki2UcjR3eDwJesFThE3tw898DodMFtt26zkKEPxd2ueC8FA7Amf2pkkzO1OqQF
+         XWQHl++SWJrW02bc3kDpTxZ1ROJlAH8r9GFbwuTvgOPs3uSzv2VKcIFAcKyRiNJV588t
+         den/ueuxxtXpa8wCW5Qm7W9LkaP69UICZr4c60jJ7l3812qu8YxM28cbpwZJfuOMXB/e
+         +qRg==
+X-Forwarded-Encrypted: i=1; AJvYcCVM14sq7emzWW5QiXODP5VEZPZBypce66fq9eDAQD0+GV6m4rOdBDwm7nibQhNcSl3w7a+v1N56P7RS5B4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuyHxLankjtlNEDBHbBvms7t5ZG21Bwxvi9r4BDjNwgwHHhRTn
+	n19GY2LPnfiR0Z2e1mKtvYzPpiBfKSiiWZdeKujP0/+9S18FwXJovZzv8aVoBjo2c/I=
+X-Gm-Gg: ASbGncsdtzyW41zL686/B7OqlCdVTdrdxUhcNwUOf+K2ARaWyRHt+IWjVgnE1yVEprI
+	0IsScalI7QH8InFoYMhei0F/5pva60xKp3SJglxP9Dl19tAORPVt2domgTNp1WAyD9lG3F776D2
+	f8doYXpz1kapOJpl7ZmgdyvbJNqP/DTQ35nZW9yYFaV7sn6uvXwYwMR6enOD5PW6klkehNscowS
+	Fd8FS1FgYO9izvlpoZAjqkcKokDABMFeMBB+bh1evaiSDt94EGnv6DFp2972wOGYP26fHF9lA/E
+	knoNCh/Y+k36Uo6KnWaiIfL8F2f31kvqTSiNnSWShyI2lzUJAIyN5PUfLuwTgoDAslEMqSJTvjf
+	BPcF8InsyATMVcpOUGRlLh1jq57FdWwxJIR7CPKuheAYsjRCH3enkwLp5c9pvRvxmHQ==
+X-Google-Smtp-Source: AGHT+IHt2PgWb9LhAIhITIOQeAiyN5sN4fCPbyKx7y0/fVbofgmpYs/9kxt/4dYcvv4SBxyTO04ktA==
+X-Received: by 2002:a05:6602:3f87:b0:87c:3d8:17aa with SMTP id ca18e2360f4ac-88168253fc7mr836026839f.0.1754189896369;
+        Sat, 02 Aug 2025 19:58:16 -0700 (PDT)
+Received: from zippy.localdomain (c-75-72-117-212.hsd1.mn.comcast.net. [75.72.117.212])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55b1ac2esm2251906173.1.2025.08.02.19.58.14
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sat, 02 Aug 2025 19:58:15 -0700 (PDT)
+From: Alex Elder <elder@riscstar.com>
+To: lee@kernel.org,
+	lgirdwood@gmail.com,
+	broonie@kernel.org,
+	alexandre.belloni@bootlin.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org
+Cc: mat.jonczyk@o2.pl,
+	dlan@gentoo.org,
+	paul.walmsley@sifive.com,
+	palmer@dabbelt.com,
+	aou@eecs.berkeley.edu,
+	alex@ghiti.fr,
+	linux.amoon@gmail.com,
+	troymitchell988@gmail.com,
+	guodong@riscstar.com,
+	linux-rtc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	spacemit@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v11 0/7] spacemit: introduce P1 PMIC support
+Date: Sat,  2 Aug 2025 21:58:04 -0500
+Message-ID: <20250803025812.373029-1-elder@riscstar.com>
+X-Mailer: git-send-email 2.48.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 3/3] riscv: dts: canaan: Add clock definition for K230
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Michael Turquette <mturquette@baylibre.com>,
- Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Conor Dooley <conor@kernel.org>, linux-clk@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>,
- Troy Mitchell <TroyMitchell988@gmail.com>
-References: <20250730-b4-k230-clk-v7-0-c57d3bb593d3@zohomail.com>
- <20250730-b4-k230-clk-v7-3-c57d3bb593d3@zohomail.com>
- <20250730-laughing-dancing-emu-5540d6@kuoka>
-From: Xukai Wang <kingxukai@zohomail.com>
-Content-Language: en-US
-In-Reply-To: <20250730-laughing-dancing-emu-5540d6@kuoka>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-Feedback-ID: rr08011227eed8815bf276c5c4b75ffa5600006591fb6f11eb539136822dedc845eb4f784c06394fc0181388:zu080112278cb6ca04e82c2e93804d320600000b8ddb55721fc1512e19cc5620ff577603d30229fcb367ab14:rf0801122c266281f77e22f90ba2a807280000940c7b3693dc9be470390b6e4b350d435e079e35d9802a6494db8e13fbcf:ZohoMail
-X-ZohoMailClient: External
+Content-Transfer-Encoding: 8bit
+
+The SpacemiT P1 is an I2C-controlled PMIC that implements 6 buck
+converters and 12 LDOs.  It contains a load switch, ADC channels,
+GPIOs, a real-time clock, and a watchdog timer.
+
+This series introduces a multifunction driver for the P1 PMIC as
+well as drivers for its regulators and RTC.
+
+After a sequence of attempts to add a new "max_register" value
+to the simple_mfd_data structure in a way that would hopefully
+be useful, we have reverted to the solution that was originally
+proposed, which simply defines a regmap_config containing that
+value along with reg_bits and val_bits (both 8).
+
+This version removes the second patch, which contained the added
+code to support the simple_mfd_data->max_register field.  It
+also addresses a dependency issue in patch 4 (now 3) that was
+pointed out by the Intel kernel test robot.
+
+Note:  Yixun Lan suggested privately that I ensure the I2C_K1
+config option gets enabled, but I'm going to do that as a
+follow-on patch.
+
+					-Alex
+
+This series is available here:
+  https://github.com/riscstar/linux/tree/outgoing/pmic-v11
+
+Between version 9 and version 10:
+  - Abandon trying to implement a simple_mfd_data->max_register field
+  - Fix a missing dependency pointed out by the kernel test robot
+
+Here is version 10 of this series:
+  https://lore.kernel.org/lkml/20250726131003.3137282-1-elder@riscstar.com/
+
+Between version 9 and version 10:
+  - The #address-cells and #size-cells for the i2c8 DTS node
+    were moved into its primary definition in "k1.dtsi".
+  - The interrupts property for the i2c8 DTS node was moved
+    below its clock-related properties.
+  - The status property in the pmic@41 DTS node was dropped.
+  - The function that provides the regmap_config structure
+    to use was reworked a bit.
+  - A new function was added to free the regmap_config
+    structure after it's no longer needed.
+
+Here is version 9 of this series:
+  https://lore.kernel.org/lkml/20250724202511.499288-1-elder@riscstar.com/
+
+Between version 8 and version 9:
+  - The max_config value is always used if it is provided with the
+    simple_mfd_data structure.
+  - The regmap_config structure used is allocated dynamically if
+    necessary; otherwise regmap_config_8r_8v is used.
+  - A small duplicated comment is removed
+
+Here is version 8 of this series:
+  https://lore.kernel.org/lkml/20250710175107.1280221-1-elder@riscstar.com/
+
+More complete history is available at that link.
+
+Alex Elder (7):
+  dt-bindings: mfd: add support the SpacemiT P1 PMIC
+  mfd: simple-mfd-i2c: add SpacemiT P1 support
+  regulator: spacemit: support SpacemiT P1 regulators
+  rtc: spacemit: support the SpacemiT P1 RTC
+  riscv: dts: spacemit: enable the i2c8 adapter
+  riscv: dts: spacemit: define fixed regulators
+  riscv: dts: spacemit: define regulator constraints
+
+ .../devicetree/bindings/mfd/spacemit,p1.yaml  |  86 +++++++++
+ .../boot/dts/spacemit/k1-bananapi-f3.dts      | 135 ++++++++++++++
+ arch/riscv/boot/dts/spacemit/k1-pinctrl.dtsi  |   7 +
+ arch/riscv/boot/dts/spacemit/k1.dtsi          |  13 ++
+ drivers/mfd/Kconfig                           |  11 ++
+ drivers/mfd/simple-mfd-i2c.c                  |  18 ++
+ drivers/regulator/Kconfig                     |  13 ++
+ drivers/regulator/Makefile                    |   1 +
+ drivers/regulator/spacemit-p1.c               | 157 ++++++++++++++++
+ drivers/rtc/Kconfig                           |  10 ++
+ drivers/rtc/Makefile                          |   1 +
+ drivers/rtc/rtc-spacemit-p1.c                 | 167 ++++++++++++++++++
+ 12 files changed, 619 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mfd/spacemit,p1.yaml
+ create mode 100644 drivers/regulator/spacemit-p1.c
+ create mode 100644 drivers/rtc/rtc-spacemit-p1.c
 
 
-On 2025/7/30 15:06, Krzysztof Kozlowski wrote:
-> On Wed, Jul 30, 2025 at 02:43:53AM +0800, Xukai Wang wrote:
->> This patch describes the clock controller integrated in K230 SoC
->> and replace dummy clocks with the real ones for UARTs.
->>
->> For k230-canmv and k230-evb, they provide an additional external
->> pulse input through a pin to serve as clock source.
->>
->> Co-developed-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Troy Mitchell <TroyMitchell988@gmail.com>
->> Signed-off-by: Xukai Wang <kingxukai@zohomail.com>
->> ---
->>  arch/riscv/boot/dts/canaan/k230-canmv.dts | 11 +++++++++++
->>  arch/riscv/boot/dts/canaan/k230-evb.dts   | 11 +++++++++++
->>  arch/riscv/boot/dts/canaan/k230.dtsi      | 26 ++++++++++++++++++--------
->>  3 files changed, 40 insertions(+), 8 deletions(-)
->>
->> diff --git a/arch/riscv/boot/dts/canaan/k230-canmv.dts b/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> index 9565915cead6ad2381ea8249b616e79575feb896..6579d39e2c1690d9e9c2b9c884db528c37473204 100644
->> --- a/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> +++ b/arch/riscv/boot/dts/canaan/k230-canmv.dts
->> @@ -17,8 +17,19 @@ ddr: memory@0 {
->>  		device_type = "memory";
->>  		reg = <0x0 0x0 0x0 0x20000000>;
->>  	};
->> +
->> +	timerx_pulse_in: timer_pulse_in {
-> Follow DTS coding style.
->
-> Please use name for all fixed clocks which matches current format
-> recommendation: 'clock-<freq>' (see also the pattern in the binding for
-> any other options).
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/devicetree/bindings/clock/fixed-clock.yaml?h=v6.11-rc1
+base-commit: b9ddaa95fd283bce7041550ddbbe7e764c477110
+-- 
+2.48.1
 
-Got it, I'll update it to clock-50m as recommended.
-
-Thanks for pointing it out.
-
->
-> Best regards,
-> Krzysztof
->
 
