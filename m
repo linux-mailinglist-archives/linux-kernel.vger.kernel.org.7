@@ -1,152 +1,176 @@
-Return-Path: <linux-kernel+bounces-754269-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48933B191AC
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 05:07:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 472AAB191B3
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 05:37:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F369F3B9CE3
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 03:07:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6431E176B0B
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 03:37:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D261023ABB6;
-	Sun,  3 Aug 2025 03:07:21 +0000 (UTC)
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D824823A99F;
+	Sun,  3 Aug 2025 03:37:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HZmL5PNs"
+Received: from mail-vk1-f172.google.com (mail-vk1-f172.google.com [209.85.221.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F37B115B135
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 03:07:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B31FD19F12A;
+	Sun,  3 Aug 2025 03:36:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754190441; cv=none; b=TSPsa/Co/uC1pqXJvLv+6cVDaTa83foMIxRS7d09Zf7jbYChmrsclZ3we9r3h8E1zIJHOBM3X3T2ipzwC0dqjxYGwrRXni/DZ/+8TtwrDjh1mxx5rrWyHeUCS9etaTxBI7vabqtcMfK2chIZLzZ27AqWSGB1Hta2P1/Yb9jy4wc=
+	t=1754192220; cv=none; b=DlV94g2NHmrWZc6zjC3l4yM/XU3p6eTMBAJv2fJzRQUaLX7nDVqSDVylRmogWQoe66yBSgNyELOXIVmdcfOAYxkqXQtLU5YVvsj9M8bEeB4x4qjdGSAwNeQdMxEnMouSOlFs5OVM+zOrhNrtJKk6GF4GYnZXnwYnTIR3p/GZubM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754190441; c=relaxed/simple;
-	bh=0LX5Gy0+3IA6CCwIv6yHz1ihgUJQC3qLijLYu/DrL84=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nb34TPNwCWGxMmWEEzoO0e+QEq0io0DEG2no165U93ycY+/heKJ3LMnjkyJ1PtWSftSTq+YEPzfeiKeR1tppfSqPJ0xTOppLbyECjcFbmqKVfwSD+vrAx+LCl0nG1dIl8atE25v7UrkP60QDlKqMYHkPwDY7X8PLwqEmugyXJdI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kzalloc.com
+	s=arc-20240116; t=1754192220; c=relaxed/simple;
+	bh=NBUzMqNLJI5hO+Q0ct5dTkWMq4OCLDRMJmxjTyC3ccY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Mmq2w9/ZdBDcaAwgvfoiO2HFEV7oB8tvH9tLv3KQ7Tkts6HNuHgoKYzobjEXg6Ku6pUPmlZi4E0Sb2vv+dDzMFz2/XhhFw0Uj7iairSiRvMOZX/T9Wdrm7geDDGS2lLNqKvxD7mfsCg5dcBscBkf5OokEyY8Py4EdHYXL+QRrAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HZmL5PNs; arc=none smtp.client-ip=209.85.221.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-2420c9e3445so4840645ad.2
-        for <linux-kernel@vger.kernel.org>; Sat, 02 Aug 2025 20:07:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754190438; x=1754795238;
-        h=content-transfer-encoding:in-reply-to:organization:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+Received: by mail-vk1-f172.google.com with SMTP id 71dfb90a1353d-539329de448so2500331e0c.1;
+        Sat, 02 Aug 2025 20:36:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754192216; x=1754797016; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=59b5hv+RKc5rwZqH19eYsmGMmjQ5iKIc+JZWIcc5f/E=;
-        b=CzJhixNNFBq1x8MpXOyYSOLj4hPmfzW2fhZOUnlilzniJubqZih9FMJCQdUTO8UEbX
-         2gGnwxQVkGcp7xD0xxje5tQg98A/RVuhCEMjS4h48z5OtFk4k2Kr2osxQWFk1k2OJ6E2
-         b2hJ0a5KYTUrv6Y4+K/X6AqxSuHBoTnSxdW+Fk9pOqPpJtUK2dh1c11cixnVwf5Jv/lY
-         zt1hZ+I7yt7pZOrQCtxUhpfnsaB5HDQkbGNGSSu1rXspmbyFky6B6Lx4p/bktFtjUhWL
-         sqMqwmrKnFvGXpiao9LLkv3Ko+byqCSSr7RCBGhr+2/Uvpdf+nvrYluKk9ONyRDu1DAx
-         7SKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU9por4DzWdXFdMKmNGBFAQA+pbmmDJbupDA+2pz3oNXtPnslkduoDBUxPI0oNHMMH1P+60ObCKY4Wx214=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz89YAIzi/c3LKZqLz44RUwHhOZ3PglivLKykyw7rAOolGXYyRP
-	yZHfVNM4L6j6sL743fRdbk0pUfhj1JKkmRDJr2BIrusZiKhVD2sRRRi4
-X-Gm-Gg: ASbGncvC9kP/ABoAHUcbLJremuptaunphjrgLDE0dYG4w+j1LthWDa0ItuXISBPFbG+
-	XW+ntZGDhiHNMv3mQgcY3TS/6Ju4uLI4UuNrGKh61IWZy9MMaWlPwli1sjU/JdOWnKUXlEwpzj+
-	gcY/vStWbQM1kqxFVjmmsd5IBPlZUX6TUO1PrY3iPujN99E5Yo3ZGy+FlD0XdI7wKxwLiuFzZ9T
-	ou6HEKRcoi5TNxOaFNgyWxBziRGkglTEIAzJsGnG5OjwtDRhuObettRpYnZl6eKzAvrqtVfky2y
-	EcsPyFWoKvPJK+U+LbRJYiHezltyc3W+qwFEz3t9YSrsNcJPWVO/+ATAO+UYK+kBFyP3aa74GKm
-	Y84CZgbwqGtDjaqh7FnDJUVfVinkrJzQY
-X-Google-Smtp-Source: AGHT+IE/gXN7bCxZ8zfcYuTQJcGqV/4JRv9Xuk4YzShwGvgBmA5H1/smA6JVFfTmmsq7Oquvs9qt4Q==
-X-Received: by 2002:a05:6a20:3d20:b0:1ee:d5fb:dff1 with SMTP id adf61e73a8af0-23df91e07cfmr3216251637.8.1754190438116;
-        Sat, 02 Aug 2025 20:07:18 -0700 (PDT)
-Received: from [192.168.50.136] ([118.32.98.101])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63ee49e0sm11108149a91.24.2025.08.02.20.07.15
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sat, 02 Aug 2025 20:07:17 -0700 (PDT)
-Message-ID: <18003f21-f83a-4bad-93b2-70273c03974f@kzalloc.com>
-Date: Sun, 3 Aug 2025 12:07:11 +0900
+        bh=goqU0AWS84aQxcO5Z7IrmPTxY4Ao6SZVD0LuCk91VlM=;
+        b=HZmL5PNsfIoVa7ZpwARoB6g0plcciTDK+COiBeiDFTBR8bW2FBIxiGpjj2dOG6QSh9
+         uEIuCCGlJnGIxqKByvKzBe9AOqMC46YAcL4I4iK5tlcd2rS2pSDqyUlaz6RqPbzcp3gp
+         yMBVhcEmX+MLhGxpWnUynz5iRRpZOSeLOg8bwM51QK5O+Z7o7PE+XKb+rrGPoOP17X0E
+         zy6494Mb6coGl7TC1TZqvzY8Xa7BY179XhnMSQrMESQRJQR3pkniGsScRRmQlWs+yYsd
+         GL+pTsNmKO9JxGikCztsnq40yTbJ/Nj2eUP45qOQClqJ+QS/XxfwJa0Bt8aJdvEZ5Xv7
+         MOIQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754192216; x=1754797016;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=goqU0AWS84aQxcO5Z7IrmPTxY4Ao6SZVD0LuCk91VlM=;
+        b=ajfpo27IIoeRlEv4LwcruSjXEWPBI7JUbJxislE0DoDNOl0yv9nQ0D0KMddftAwcr1
+         8xW1JliU4eFf6WPgiLtMyfyuj+6X6+JBb+LS0z7Ux7cc9nH6DG+ZPBoCsiKRns2rXctY
+         hXiN0e5XWA0AWvmHQzSUV9sjVrDBPHxISN+rWvz0EH/5U/N6bl4QWMlmZOqAEpwiv67r
+         YfUiv1mjKS7Dt8N8QYGdRXu+RfiQ7tsj5RMCUdXNVpepKEhs6KK8NQQf0RWwlQzNeSeM
+         CpLDw686UxCZWYNtxzpHuKpNXxIBJiGADovkrc7xsUmtfzxB88A9AO6QV66ZmmKcwkEx
+         g+yA==
+X-Forwarded-Encrypted: i=1; AJvYcCV5cZEWelGLAO9RNp6JXktutAoMk5vPlCpcpCBPeSA1lkuTPh1X0AmMbGVRy1QNXf4Bu/spSSQMgem0@vger.kernel.org, AJvYcCVrOq+OVQaEqJ4WkENz7AYh7m4sENZo3dtVoqgN6+Ld7oUCrhKZ6nfPIZPVU9hb3Zc+LL80LODOzVdi7A10QQ==@vger.kernel.org, AJvYcCWzEBfAsv0nvbr7nai8nxPM4xrcyHt39TcVBtpCk0s6sKzTj3lRcL6LiwuczyZEGAz+xOK88N6ou4l96iz4@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpW81HXkL8w7hIrvE+W5dmPwOML/9lqUAeEhWagegiOIroFsrz
+	CKBMibwOFbKLo4BpxBzrK4pjV3zyTHJ5g+GUFgwMBqh/iRtzpx8a/0uLmtgYrbyNVM6nMLdZCP5
+	JoXR+U7QrOWd0We8Ng7oe5tWb2rOND5CZzEG1SlryFeWt
+X-Gm-Gg: ASbGncsNPbKMdVcPQxHRnbVagEue2e7M7m7Dkkky/BqqAYaDJP76/YQocu4t+LH/RrY
+	NvxDkj8oKuAtAtoWeTW/ZESdmOuh0NzpsxsJX+iwm35n8vxTDckmMNN2xIrjGUst5MLeZUH8qoB
+	qwzRfpqyP/AK/CFbbhFnNYV7AnR0WpMrLUDzljJO7FiygEsW1zu8AuguvQvCsH04xJJ7dy/Iorn
+	Mbi4JrNRV5jX6ihykTSVZhQ4dubX8mzUFHS
+X-Google-Smtp-Source: AGHT+IFxQ680ymJ/Dgv7xkeonYThdx1143GJKD6h2r5rJw8UOZoVvBJazRmw8GPuTbvMfKS0K9RGNTfKP2uj0D8Q7jc=
+X-Received: by 2002:a05:6122:62ca:b0:538:e454:ea8e with SMTP id
+ 71dfb90a1353d-53938905a99mr6213579e0c.7.1754192216483; Sat, 02 Aug 2025
+ 20:36:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kcov, usb: Fix invalid context sleep in softirq path
- on PREEMPT_RT
-To: Hillf Danton <hdanton@sina.com>
-Cc: Dmitry Vyukov <dvyukov@google.com>,
- Andrey Konovalov <andreyknvl@gmail.com>, linux-kernel@vger.kernel.org,
- Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Uladzislau Rezki <urezki@gmail.com>
-References: <20250802142647.139186-3-ysk@kzalloc.com>
- <20250803023439.3760-1-hdanton@sina.com>
-Content-Language: en-US
-From: Yunseong Kim <ysk@kzalloc.com>
-Organization: kzalloc
-In-Reply-To: <20250803023439.3760-1-hdanton@sina.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <de111b27-9126-4c03-a7bb-8cce9ea2780e@oss.qualcomm.com>
+ <20250706034303.5404-1-mitltlatltl@gmail.com> <f2f0f25b-40b0-452c-ad9e-01b84b32e163@oss.qualcomm.com>
+ <CAH2e8h6XWAz-pqmuvzK8JqOb=ggiDGb2U3TvAR2+43D_zdsZpQ@mail.gmail.com>
+ <9efafa16-e6db-4227-9b47-5803f5933a7d@oss.qualcomm.com> <CAH2e8h5Eov+827X3W_EZSHRoaUHgP119fXJA+WEUdmdJ6f3gkg@mail.gmail.com>
+ <0cf8f99c-a64b-43c4-a747-d5dd6fe28996@oss.qualcomm.com> <CAH2e8h6m6q+fq==cVGA-=iUJC7qxZvomhCqm904AtH9CceL6ow@mail.gmail.com>
+ <t7fbgze3hnwbget5nkf3i2rd22pk5vufyimiiec5i7rblzb7x4@rtiuwnyfbmtb>
+In-Reply-To: <t7fbgze3hnwbget5nkf3i2rd22pk5vufyimiiec5i7rblzb7x4@rtiuwnyfbmtb>
+From: Pengyu Luo <mitltlatltl@gmail.com>
+Date: Sun, 3 Aug 2025 11:36:07 +0800
+X-Gm-Features: Ac12FXxaMPDjcFH_ikXFCpRLSv3WL_j4288oH9v5u20Jqo92XCOn2AM2pLeGTXs
+Message-ID: <CAH2e8h6oN1VYevLe1NPpvcAjDjUNBrGUtEWy9y3pDhboCjabMA@mail.gmail.com>
+Subject: Re: [PATCH 3/4] arm64: dts: qcom: sc8280xp: Add initial support for
+ Ntmer TW220
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+Cc: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>, aliceryhl@google.com, 
+	andersson@kernel.org, conor+dt@kernel.org, devicetree@vger.kernel.org, 
+	ebiggers@google.com, ilpo.jarvinen@linux.intel.com, joel.granados@kernel.org, 
+	konradybcio@kernel.org, krzk+dt@kernel.org, len.brown@intel.com, 
+	linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	lossin@kernel.org, mingo@kernel.org, ojeda@kernel.org, robh@kernel.org, 
+	sfr@canb.auug.org.au, vanyang@smail.nju.edu.cn, viro@zeniv.linux.org.uk
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Hillf,
+On Sat, Aug 2, 2025 at 1:27=E2=80=AFAM Dmitry Baryshkov
+<dmitry.baryshkov@oss.qualcomm.com> wrote:
+>
+> On Fri, Aug 01, 2025 at 10:27:33PM +0800, Pengyu Luo wrote:
+> > On Fri, Aug 1, 2025 at 8:29=E2=80=AFPM Konrad Dybcio
+> > <konrad.dybcio@oss.qualcomm.com> wrote:
+> > >
+> > > On 7/31/25 5:05 AM, Pengyu Luo wrote:
+> > > > Linux:
+> > > >> ae94000 20050001 000001f3 0000000b dddd1011
+> > > >> ae94010 00009130 31211101 3e2e1e0e 00001900
+> > > >> ae94020 00000000 05190019 064c000c 065f0528
+> > > >> ae94030 00060000 00000000 00040000 14000000
+> > > >> ae94040 06100006 00003c2c 00001000 00000008
+> > > > Windows:
+> > > >> ae94000 20050001 000001f7 00000008 00001010
+> > > >> ae94010 00009130 31211101 3e2e1e0e 00001900
+> > > >> ae94020 00000000 05320032 064c000c 065f0551
+> > > >> ae94030 000c0000 00000000 00040000 14000000
+> > > >> ae94040 00100008 00013c2c 9bb9b000 00000004
+> > >
+> > > 0xae94008 differs, bits 0 and 1 say that the cmd mode engine
+> > > is busy doing something (did you set MIPI_DSI_MODE_VIDEO?)
+> > >
+> >
+> > Yes. I can confirm MIPI_DSI_MODE_VIDEO is set.
+> >
+> > Speaking of cmd mode, I still have no idea why DSI_CTRL_CMD_MODE_EN
+> > (BIT(2) of 0xae94004) is enabled on Windows.
+> >
+> > > 0xae94024 says:
+> > > Linux:
+> > > ACTIVE_H_END=3D1305
+> > > ACTIVE_H_START=3D25
+> > > Windows:
+> > > ACTIVE_H_END=3D1330
+> > > ACTIVE_H_START=3D50
+> > >
+> > > 0xae9402c:
+> > > Linux:
+> > > VTOTAL=3D1631
+> > > HTOTAL=3D1320
+> > > Windows:
+> > > VTOTAL=3D1631
+> > > HTOTAL=3D1361
+> > >
+> > > 0xae94030:
+> > > Linux:
+> > > HS_END=3D6
+> > > Windows:
+> > > HS_END=3D12
+> > >
+> >
+> > I believe we can ignore them now, I found the final dump and verified
+> > it=E2=80=99s correct. Previously, I mistakenly halved the porch timings=
+:
+> >
+> > Incorrect:
+> > .hsync_total =3D (1280 + (32 + 12 + 38) / 2) * 2.
+>
+> If you halved the porches... Is this panel using a single DSI host or
+> two DSI hosts? In the latter case you need to assign parents for DSI
+> clocks (see how it's done on the sdm845-db845c)
+>
 
-On 8/3/25 11:34 오전, Hillf Danton wrote:
-> On Sat,  2 Aug 2025 14:26:49 +0000 Yunseong Kim wrote:
->> +	raw_spin_unlock(&kcov_remote_lock);
->>  
->>  	/* Can only happen when in_task(). */
->>  	if (!area) {
+Two dsi hosts. I was using your OOT patches for dual dsi cases until
+you upstreamed them. So I have set
 
-		/* 1. Interrupts are temporarily re-enabled here. */
+assigned-clock-parents =3D <&mdss_dsi0_phy DSI_BYTE_PLL_CLK>,
+                         <&mdss_dsi0_phy DSI_PIXEL_PLL_CLK>;
 
->> -		local_unlock_irqrestore(&kcov_percpu_data.lock, flags);
->> +		local_irq_restore(flags);
+as you did in your msm-next repo.
 
-		/* 2. vmalloc() is called safely in a non-atomic context. */
-
->>  		area = vmalloc(size * sizeof(unsigned long));
-> 
-> Given irq disabled for the duration of the coverage collection section [1],
-> vmalloc does not work here [2].
-
-
-Thank you for the detailed review and for pointing out this critical
-interaction. You are absolutely correct that vmalloc() cannot be called
-from an atomic context with interrupts disabled, as it is a sleeping function.
-
-However, upon closer inspection of the kcov_remote_start() function's
-control flow, it appears the original author anticipated this issue and
-implemented a safeguard. The vmalloc() call is explicitly wrapped by
-local_irq_restore() and local_irq_save():
-
->>  		if (!area) {
->>  			kcov_put(kcov);
->>  			return;
->>  		}
-
-		/* 3. Interrupts are disabled again to protect the rest of the function. */
-
->> -		local_lock_irqsave(&kcov_percpu_data.lock, flags);
->> +		local_irq_save(flags);
->>  	}
-
-This sequence ensures that the vmalloc() call itself does not happen in an
-IRQ-disabled context.
-
-My patch reverts the per-CPU locking back to the local_irq_save/restore
-primitives but preserves this essential bracketing around the vmalloc() call.
-Therefore, the sleeping function bug should not occur.
-
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/include/linux/kcov.h#n73
-> [2] Subject: [RFC 0/7] vmallloc and non-blocking GFPs
-> https://lore.kernel.org/all/20250704152537.55724-1-urezki@gmail.com/
-
-Additionally, I have tested this implementation by running syzkaller
-for a full day, and no issues were reported.
-
-Perhaps a comment could be added here (I can volunteer to do so) to
-improve readability where the control flow isn’t obvious to future developers.
-
-Thanks,
-
-Yunseong Kim
-
+Best wishes,
+Pengyu
 
