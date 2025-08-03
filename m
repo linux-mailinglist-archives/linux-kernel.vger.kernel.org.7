@@ -1,95 +1,137 @@
-Return-Path: <linux-kernel+bounces-754511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86A1CB1952E
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:40:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D08DB19535
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 22:45:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 7B7C74E0346
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:40:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0C817306A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 20:45:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B0E1FCF7C;
-	Sun,  3 Aug 2025 20:40:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33F841FCFEF;
+	Sun,  3 Aug 2025 20:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="KKRVs//S"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EWoNC4zj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 804B71FAC37
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 20:40:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 606AE12BF24;
+	Sun,  3 Aug 2025 20:45:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754253609; cv=none; b=LjoETSkm45oJKq/wycOt7FxEoksjHL0QUP+IvPlcDeNVIVUgFwH+3lGK5hQedc6XmrqwhvCJG0DK5ayvZPleIvXTut87Kl51y5fz5SdmR6GR6LQwz3gNXgEiCGd2r1MiID1QHoxQ4toiw9EJ5n1PCtspW/wQ8Tt9aBSlAeGynHg=
+	t=1754253930; cv=none; b=gB6PmcjVOEUHLkPhZWfDQXMXJcG+aTtAF+NqUzdfH7yHOe9KXj1+QW3IU6vJMr6GTLMOzMnFZ2KQ1yuI5sfrZqUqxjlwM63lwEyndLtNTlyis3c8VLOTMxwObkSlETOQUr4p/Iux8Y4QU078USFsqzP3mFirw6AGfcrn+nTohkk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754253609; c=relaxed/simple;
-	bh=tzLH/YUExqTegN4sI56xlZ8maB8KzJUjpOhBuVYG1JA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doVWx8iDHsNZANK2gl8wZQgrYtepHEiOz4VOO62mon2shjM4elVF159V/lOnncve6K6CiQjWmI0g+hOaUS6OLkHVtPKQiF03ALEWDyzhXrcjBnq86QzLo15czdFEGO6VlB0++UxTm1J344u5jIVGmaA7Hli5UDyRSUf3Hh9pvoE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=KKRVs//S; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=5vm0
-	SxJu7Lne/9TVu7ssZXea18OLLC2K5dYsygJBt9M=; b=KKRVs//S+sQ92DcZ4KMq
-	u8nsdEZ9MfJ8tF9+2mIEnMKa16OXkFhageH6Q3dusOQHzpClzDFxFhQ6DqxKIqyK
-	Uf3NBHVB0NKgalwxkup9TG+R7v+ahB5EFSvjt8WEnHBdbEx3SmTO6JltOg3rUBQV
-	kx30VnagDoDnl085prpZDQkQPhnx3BeetweZr9+itITcepP1ErvhOlEutMUVlCMu
-	oG5ZgggbyNfeSyrs5j7AHZYstpvrNGAfHGIR7jUIcMYCfycsPBiiImpXM45eWsM9
-	un0A3l69l+xmhVFCkT05XjGxeQNA+OXeTC4vAwJOBCeZl7ifxDL/zHPzY62FsRnj
-	qA==
-Received: (qmail 1644961 invoked from network); 3 Aug 2025 22:40:01 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 3 Aug 2025 22:40:01 +0200
-X-UD-Smtp-Session: l3s3148p1@0xPE/ns7QIoujntd
-Date: Sun, 3 Aug 2025 22:40:01 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sven Peter <sven@kernel.org>
-Cc: Janne Grunau <j@jannau.net>, Alyssa Rosenzweig <alyssa@rosenzweig.io>,
-	Neal Gompa <neal@gompa.dev>, Ulf Hansson <ulf.hansson@linaro.org>,
-	Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Srinivas Kandagatla <srini@kernel.org>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Viresh Kumar <viresh.kumar@linaro.org>,
-	Joerg Roedel <joro@8bytes.org>, Will Deacon <will@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	Vinod Koul <vkoul@kernel.org>,
-	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>, Arnd Bergmann <arnd@arndb.de>,
-	asahi@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-clk@vger.kernel.org, linux-i2c@vger.kernel.org,
-	iommu@lists.linux.dev, linux-input@vger.kernel.org,
-	dmaengine@vger.kernel.org, linux-sound@vger.kernel.org
-Subject: Re: [PATCH 05/11] i2c: apple: Drop default ARCH_APPLE in Kconfig
-Message-ID: <aI_JIZhHGg9GcD-D@shikoro>
-References: <20250612-apple-kconfig-defconfig-v1-0-0e6f9cb512c1@kernel.org>
- <20250612-apple-kconfig-defconfig-v1-5-0e6f9cb512c1@kernel.org>
+	s=arc-20240116; t=1754253930; c=relaxed/simple;
+	bh=fIsnggQ9bSogOYsC/oCooZJEKpFlIjgSJ+O2mM0ik/g=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=uebnB28695KfwXaBEGmi5QL8AtuAr8fmjU0kSDxqE5zj3GN0a9eRjlbFdQIlJr0rePxeJHNoVTlOtDK/lPybMNOBKr9mAvVfkqfb/7NPcJCwKmlzm10+WuMyPaoDf3uLqIJ2RZIg0zjVltVV2urlEWBBnn72teDzqO2xzMfYr3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EWoNC4zj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3AE1EC4CEEB;
+	Sun,  3 Aug 2025 20:45:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754253929;
+	bh=fIsnggQ9bSogOYsC/oCooZJEKpFlIjgSJ+O2mM0ik/g=;
+	h=From:To:Cc:Subject:Date:From;
+	b=EWoNC4zj60IkF748py5lD143qrk8WMoOpmcQeQ+NC5PoeQKL1jJgTiyyteh1M5MC8
+	 wJP/9/XZnmxbN+qq/oM/Wj7x4a/abxCh+2BVJ9o0n00s80/plMl1wskCZLsiaiV8ns
+	 qjc4p9Xg+1Pet7M1z7PhtLPl1cKyB0aL67v35awvlDuhmwNVoivOT1fSrmF8bl5lfv
+	 2rytBpIDtMTon6+n+XvB9kUJZkWk8tgr+W/D4pVPKzXHmMAJVHU84etSXr0T9oEdF0
+	 cS9P1E0SO+IKSzuujuWHHIftTgkZ+FvAwEn/tI6CZuNW59BGG/XWXa+sydGqZns+Qu
+	 m9hMGJf1qFtSQ==
+From: Eric Biggers <ebiggers@kernel.org>
+To: linux-crypto@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>,
+	linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	sparclinux@vger.kernel.org,
+	Eric Biggers <ebiggers@kernel.org>
+Subject: [PATCH 0/7] MD5 library functions
+Date: Sun,  3 Aug 2025 13:44:26 -0700
+Message-ID: <20250803204433.75703-1-ebiggers@kernel.org>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250612-apple-kconfig-defconfig-v1-5-0e6f9cb512c1@kernel.org>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Jun 12, 2025 at 09:11:29PM +0000, Sven Peter wrote:
-> When the first driver for Apple Silicon was upstreamed we accidentally
-> included `default ARCH_APPLE` in its Kconfig which then spread to almost
-> every subsequent driver. As soon as ARCH_APPLE is set to y this will
-> pull in many drivers as built-ins which is not what we want.
-> Thus, drop `default ARCH_APPLE` from Kconfig.
-> 
-> Signed-off-by: Sven Peter <sven@kernel.org>
+This series is targeting libcrypto-next and can also be retrieved from:
 
-Applied to for-next (for 6.17 mergewindow), thanks!
+    git fetch https://git.kernel.org/pub/scm/linux/kernel/git/ebiggers/linux.git md5-lib-v1
+
+Patches 1-4 remove the MD5 implementations for mips, powerpc, and sparc.
+These were the only architecture-optimized MD5 implementations and are
+not worth keeping around.
+
+Patches 5-7 introduce a library API for MD5 and HMAC-MD5 and reimplement
+the crypto_shash "md5" and "hmac(md5)" on top of it.
+
+The library API will also be usable directly by various in-kernel users
+that are stuck with MD5 due to having to implement legacy protocols.
+
+This should again look quite boring and familiar, as it mirrors the
+SHA-1 and SHA-2 changes closely.  The MD5 changes are quite a bit
+simpler, though, since we'll only be supporting the generic C MD5 code.
+Of course there's also only one variant of MD5, unlike e.g. SHA-2.
+
+Eric Biggers (7):
+  mips: cavium-octeon: Remove Octeon optimized MD5 code
+  mips: cavium-octeon: Move octeon-crypto.c into parent dir
+  crypto: powerpc/md5 - Remove PowerPC optimized MD5 code
+  crypto: sparc/md5 - Remove SPARC64 optimized MD5 code
+  lib/crypto: md5: Add MD5 and HMAC-MD5 library functions
+  crypto: md5 - Wrap library and add HMAC support
+  lib/crypto: tests: Add KUnit tests for MD5 and HMAC-MD5
+
+ arch/mips/cavium-octeon/Makefile              |   2 +-
+ arch/mips/cavium-octeon/crypto/Makefile       |   8 -
+ arch/mips/cavium-octeon/crypto/octeon-md5.c   | 214 -----------
+ .../{crypto => }/octeon-crypto.c              |   0
+ arch/mips/configs/cavium_octeon_defconfig     |   1 -
+ arch/mips/crypto/Kconfig                      |  10 -
+ arch/mips/include/asm/octeon/crypto.h         |  21 +-
+ arch/powerpc/configs/powernv_defconfig        |   1 -
+ arch/powerpc/configs/ppc64_defconfig          |   1 -
+ arch/powerpc/crypto/Kconfig                   |   8 -
+ arch/powerpc/crypto/Makefile                  |   2 -
+ arch/powerpc/crypto/md5-asm.S                 | 235 ------------
+ arch/powerpc/crypto/md5-glue.c                |  99 -----
+ arch/sparc/crypto/Kconfig                     |  10 -
+ arch/sparc/crypto/Makefile                    |   4 -
+ arch/sparc/crypto/md5_asm.S                   |  70 ----
+ arch/sparc/crypto/md5_glue.c                  | 174 ---------
+ crypto/Kconfig                                |   2 +-
+ crypto/md5.c                                  | 359 ++++++++----------
+ crypto/testmgr.c                              |   3 +
+ drivers/crypto/img-hash.c                     |   2 +-
+ include/crypto/md5.h                          | 181 ++++++++-
+ lib/crypto/Kconfig                            |   6 +
+ lib/crypto/Makefile                           |   3 +
+ lib/crypto/md5.c                              | 290 ++++++++++++++
+ lib/crypto/tests/Kconfig                      |  10 +
+ lib/crypto/tests/Makefile                     |   1 +
+ lib/crypto/tests/md5-testvecs.h               | 186 +++++++++
+ lib/crypto/tests/md5_kunit.c                  |  39 ++
+ 29 files changed, 891 insertions(+), 1051 deletions(-)
+ delete mode 100644 arch/mips/cavium-octeon/crypto/Makefile
+ delete mode 100644 arch/mips/cavium-octeon/crypto/octeon-md5.c
+ rename arch/mips/cavium-octeon/{crypto => }/octeon-crypto.c (100%)
+ delete mode 100644 arch/powerpc/crypto/md5-asm.S
+ delete mode 100644 arch/powerpc/crypto/md5-glue.c
+ delete mode 100644 arch/sparc/crypto/md5_asm.S
+ delete mode 100644 arch/sparc/crypto/md5_glue.c
+ create mode 100644 lib/crypto/md5.c
+ create mode 100644 lib/crypto/tests/md5-testvecs.h
+ create mode 100644 lib/crypto/tests/md5_kunit.c
+
+
+base-commit: 186f3edfdd41f2ae87fc40a9ccba52a3bf930994
+-- 
+2.50.1
 
 
