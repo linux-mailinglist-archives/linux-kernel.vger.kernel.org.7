@@ -1,192 +1,110 @@
-Return-Path: <linux-kernel+bounces-754465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F101FB19499
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:57:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B94AB1949A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 18:57:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 92C111894235
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:57:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F11C2189451D
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:57:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB2E1F582A;
-	Sun,  3 Aug 2025 16:56:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46BB01DDA0E;
+	Sun,  3 Aug 2025 16:56:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="ey4TcGwI"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="mVoJDvG3"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 83BD81F4CAC;
-	Sun,  3 Aug 2025 16:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 559C023AD
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 16:56:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754240171; cv=none; b=mMmfG+cW+CCB6abl4qHZpMALqgfiEYsnXbzM9qGUTLNkH2FTTM6G6L8HybH+RYHCqJiv3hnLK+99Lq8ND7gK6GrAy78tEwyDvh+eSTRC2kCh3rbeSv7QnHAdpHbXrcPErgtpOhC0UP9xprW+quq0eFDLwLVePLW1vXb2bylVoAI=
+	t=1754240195; cv=none; b=SbDIj9kwJVTEPHXZMe2spJRmfM87w2EEEUb7WWcXGq1weN2vje+wH4jz4mkbe/DcYMrxw7GnviLJxQV3uEraz68nKvFHoX6ZEBjfSslwbXzsfox+kaJxtNzS6zSSegk6ETBjTOkPnAIUIIuItb/nYCAXbMXfvmdjm4fU61VKbak=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754240171; c=relaxed/simple;
-	bh=6yddMlBi7WZ4YQVI11Ue6hMVOoR7aFNZkS1jLdkvbo4=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=BADWj5Q/a2uI6s3lf9gUm1eYAoDHSuRUs+wJivzZV9yaDmFOyHH8jqRic2MNu/4PMj4WQ037ZqGFgK1kpbm7NLKpdd0/G6B6WNd28gI3fFyWS3/ykq0FDyMaFXe1EQk4w+UNzddB7rewX1uBuxcZQZ20Px6OIPY83pZ+6cJds6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=ey4TcGwI; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-Received: from sven-desktop.home.narfation.org (unknown [IPv6:2a00:1ca0:1d86:99fc::8c24])
-	by dvalin.narfation.org (Postfix) with UTF8SMTPSA id A918D203A5;
-	Sun,  3 Aug 2025 16:56:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754240167;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cfKmvmHHO7KEEOi9sjrXNREYqdk1dnOlDxfndUQPLNo=;
-	b=ey4TcGwI8FXn9WYZTnbtD8XytvVxXsGMt1xR+lSTYGrCBQuKbonzPIs6Byc8QZmDWU+44w
-	sEHvRZ4lUYCCIOhEiQ/0XQtE8g4vHI16By0NZT6BVLaxU53B/xAHEvuYlzC87a8YwLHrTi
-	VDseOlMYu0KTAT5rWwy3AhhoQxBtYp8=
-From: Sven Eckelmann <sven@narfation.org>
-Date: Sun, 03 Aug 2025 18:54:41 +0200
-Subject: [PATCH v2 4/4] i2c: rtl9300: Implement I2C block read and write
+	s=arc-20240116; t=1754240195; c=relaxed/simple;
+	bh=x2IpmnMdAlqi/Ib8WWxe81cnXXbkIlq6U8CKXJRCfjE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GULx0kUbZV3fS9V50f4CH26UESsB/PPwSgwONRqrXVFSHfMHSqy5EvZ+6562GOBtIcecoepNBwSP1CwaLTUaccWsZ+fBqe12D/7ovw7DNE9tDAzFppXm7hN1/aUFTes8bb9p7ELCYhVPfpm90txjdQ1nhpaN+apUlRWT8gRrBzQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=mVoJDvG3; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 199D7446;
+	Sun,  3 Aug 2025 18:55:37 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754240138;
+	bh=x2IpmnMdAlqi/Ib8WWxe81cnXXbkIlq6U8CKXJRCfjE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mVoJDvG3QStRnCwLGYaJqUSGW4si6XnE+T4AcT1U7DVAOyVUSWebx5OB77G1EJZo2
+	 H3mU9MABRX2esNlFewaD+wUz5kxlh5riOXqOJwGmz4w4JCDNcPN5QYDhU21mkUoC+2
+	 oX3QcUjyBn/Nt+5nSF5W6LvjI0Fe/TTUeO+lq9QM=
+Date: Sun, 3 Aug 2025 19:56:11 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Sukrut Heroorkar <hsukrut3@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: Re: [PATCH] drm/drm_bridge: Document 'connector' parameter in
+ drm_bridge_detect()
+Message-ID: <20250803165611.GG4906@pendragon.ideasonboard.com>
+References: <20250802161309.1198855-1-hsukrut3@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250803-i2c-rtl9300-multi-byte-v2-4-9b7b759fe2b6@narfation.org>
-References: <20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org>
-In-Reply-To: <20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org>
-To: Chris Packham <chris.packham@alliedtelesis.co.nz>, 
- Andi Shyti <andi.shyti@kernel.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Jonas Jelonek <jelonek.jonas@gmail.com>, 
- Harshal Gohel <hg@simonwunderlich.de>, 
- Simon Wunderlich <sw@simonwunderlich.de>, 
- Sven Eckelmann <sven@narfation.org>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=3818; i=sven@narfation.org;
- h=from:subject:message-id; bh=r1VAKLSBt866jA1z22qnHzmaVllA4WduqthhQIIFd7E=;
- b=owGbwMvMwCXmy1+ufVnk62nG02pJDBn9U/o/aEaeVNliy/nggMpSgX+XhBNU7lxYI912ni/vj
- PL2p9FXO0pZGMS4GGTFFFn2XMk/v5n9rfznaR+PwsxhZQIZwsDFKQATidzO8N/dSOcmc0Gha5xH
- V0f1j93/vynniba9uJfc//J/WcnevuOMDE08a0U3t1w96+9eIXFTopxN6c3Sk0+vTFDpayoTP/0
- klREA
-X-Developer-Key: i=sven@narfation.org; a=openpgp;
- fpr=522D7163831C73A635D12FE5EC371482956781AF
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250802161309.1198855-1-hsukrut3@gmail.com>
 
-From: Harshal Gohel <hg@simonwunderlich.de>
+On Sat, Aug 02, 2025 at 06:13:05PM +0200, Sukrut Heroorkar wrote:
+> drm: drm_bridge: fix missing parameter documentation
+> 
+> The function documentation was missing description for the
+> parameter 'connector'.
+> 
+> Add missing function parameter documentation for drm_bridge_detect()
+> to fix kernel-doc warnings.
+> 
+> Warning: drivers/gpu/drm/drm_bridge.c:1241 function parameter 'connector' not described in 'drm_bridge_detect'
+> 
 
-It was noticed that the original implementation of SMBus Block Write in the
-driver was actually an I2C Block Write. Both differ only in the Count byte
-before the actual data:
+A Fixes: tag would be nice.
 
-  S Addr Wr [A] Comm [A] Count [A] Data [A] Data [A] ... [A] Data [A] P
+> Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+> ---
+>  drivers/gpu/drm/drm_bridge.c | 1 +
+>  1 file changed, 1 insertion(+)
+> 
+> diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> index dd45d9b504d8..387a3b6cda54 100644
+> --- a/drivers/gpu/drm/drm_bridge.c
+> +++ b/drivers/gpu/drm/drm_bridge.c
+> @@ -1227,6 +1227,7 @@ EXPORT_SYMBOL(drm_atomic_bridge_chain_check);
+>  /**
+>   * drm_bridge_detect - check if anything is attached to the bridge output
+>   * @bridge: bridge control structure
+> + * @connector: connector associated with the bridge
 
-The I2C Block Write is just skipping this Count byte and starts directly
-with the data:
+"associated with the bridge" isn't very clear.
 
-  S Addr Wr [A] Comm [A] Data [A] Data [A] ... [A] Data [A] P
-
-The I2C controller of RTL93xx doesn't handle this Count byte special and it
-is simply another one of (16 possible) data bytes. Adding support for the
-I2C Block Write therefore only requires to skip the count byte (0) in
-data->block.
-
-It is similar for reads. The SMBUS Block read is having a Count byte before
-the data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Count] A [Data] A [Data] A ... A [Data] NA P
-
-And the I2C Block Read is directly starting with the actual data:
-
-  S Addr Wr [A] Comm [A]
-            Sr Addr Rd [A] [Data] A [Data] A ... A [Data] NA P
-
-The I2C controller is also not handling this byte in a special way. It
-simply provides every byte after the Rd marker + Ack as part of the 16 byte
-receive buffer (registers). The content of this buffer just has to be
-copied to the right position in the receive data->block.
-
-Signed-off-by: Harshal Gohel <hg@simonwunderlich.de>
-Co-developed-by: Sven Eckelmann <sven@narfation.org>
-Signed-off-by: Sven Eckelmann <sven@narfation.org>
----
- drivers/i2c/busses/i2c-rtl9300.c | 32 +++++++++++++++++++++++++++++---
- 1 file changed, 29 insertions(+), 3 deletions(-)
-
-diff --git a/drivers/i2c/busses/i2c-rtl9300.c b/drivers/i2c/busses/i2c-rtl9300.c
-index 4e0844d97607f64386a6d7a7c4086a81fdd89d6c..cc8c6d680b41976164b494929976bd34d367d4de 100644
---- a/drivers/i2c/busses/i2c-rtl9300.c
-+++ b/drivers/i2c/busses/i2c-rtl9300.c
-@@ -186,22 +186,32 @@ static int rtl9300_i2c_execute_xfer(struct rtl9300_i2c *i2c, char read_write,
- 		return -EIO;
- 
- 	if (read_write == I2C_SMBUS_READ) {
--		if (size == I2C_SMBUS_BYTE || size == I2C_SMBUS_BYTE_DATA) {
-+		switch (size) {
-+		case I2C_SMBUS_BYTE:
-+		case I2C_SMBUS_BYTE_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->byte = val & 0xff;
--		} else if (size == I2C_SMBUS_WORD_DATA) {
-+			break;
-+		case I2C_SMBUS_WORD_DATA:
- 			ret = regmap_read(i2c->regmap,
- 					  i2c->reg_base + RTL9300_I2C_MST_DATA_WORD0, &val);
- 			if (ret)
- 				return ret;
- 			data->word = val & 0xffff;
--		} else {
-+			break;
-+		case I2C_SMBUS_I2C_BLOCK_DATA:
-+			ret = rtl9300_i2c_read(i2c, &data->block[1], len);
-+			if (ret)
-+				return ret;
-+			break;
-+		default:
- 			ret = rtl9300_i2c_read(i2c, &data->block[0], len);
- 			if (ret)
- 				return ret;
-+			break;
- 		}
- 	}
- 
-@@ -295,6 +305,21 @@ static int rtl9300_i2c_smbus_xfer(struct i2c_adapter *adap, u16 addr, unsigned s
- 		len = data->block[0] + 1;
- 		break;
- 
-+	case I2C_SMBUS_I2C_BLOCK_DATA:
-+		ret = rtl9300_i2c_reg_addr_set(i2c, command, 1);
-+		if (ret)
-+			goto out_unlock;
-+		ret = rtl9300_i2c_config_xfer(i2c, chan, addr, data->block[0]);
-+		if (ret)
-+			goto out_unlock;
-+		if (read_write == I2C_SMBUS_WRITE) {
-+			ret = rtl9300_i2c_write(i2c, &data->block[1], data->block[0]);
-+			if (ret)
-+				goto out_unlock;
-+		}
-+		len = data->block[0];
-+		break;
-+
- 	default:
- 		dev_err(&adap->dev, "Unsupported transaction %d\n", size);
- 		ret = -EOPNOTSUPP;
-@@ -313,6 +338,7 @@ static u32 rtl9300_i2c_func(struct i2c_adapter *a)
- {
- 	return I2C_FUNC_SMBUS_QUICK | I2C_FUNC_SMBUS_BYTE |
- 	       I2C_FUNC_SMBUS_BYTE_DATA | I2C_FUNC_SMBUS_WORD_DATA |
-+	       I2C_FUNC_SMBUS_READ_I2C_BLOCK | I2C_FUNC_SMBUS_WRITE_I2C_BLOCK |
- 	       I2C_FUNC_SMBUS_BLOCK_DATA;
- }
- 
+>   *
+>   * If the bridge supports output detection, as reported by the
+>   * DRM_BRIDGE_OP_DETECT bridge ops flag, call &drm_bridge_funcs.detect for the
 
 -- 
-2.47.2
+Regards,
 
+Laurent Pinchart
 
