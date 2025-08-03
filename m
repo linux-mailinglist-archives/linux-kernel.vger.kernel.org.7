@@ -1,557 +1,298 @@
-Return-Path: <linux-kernel+bounces-754394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4825AB193CD
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:12:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 85197B193C9
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:12:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51AD67AC25B
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:10:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40D573A7CA4
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 11:12:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B029E25EF98;
-	Sun,  3 Aug 2025 11:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47515244667;
+	Sun,  3 Aug 2025 11:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="NJO2iAUC";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="OoBK0TDw"
-Received: from mx0a-00069f02.pphosted.com (mx0a-00069f02.pphosted.com [205.220.165.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b="Yy9joaoA"
+Received: from mail-qv1-f49.google.com (mail-qv1-f49.google.com [209.85.219.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6FB24418F
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:12:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.165.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754219531; cv=fail; b=OSxquJOXS+X4yLkQsyAGTDGaOVLDFO8wya1B/hbeBUb/RcijyDDqI7XqyCQ40iGzR8QNSJv4hLTUC/vEL7ZYmor0Ecof1TRfkwvYauFh7kDl43I3hJfV+B0ju7uSRWAvqLnZK/bpBjc2XvcUjlzoivy0enJrU3+n9TFeQDQtJS4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754219531; c=relaxed/simple;
-	bh=uVytZ+uEmQ56l3c9yOvRJ/nhdPyWbpjwu/zJg4Z4dd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=h6UVbAkeaGJDI/1YFIxza/wZw12/5WCxKCYKmmGhZbbwB4mJxtdt4jYFBQc8SZyS2Fu+OXZR865ZfXmW4zhdz1ahpAMxYqmK+Y1tC39y9gkiE8FjC+XcIgNPQYVtgl95Xxd5+F72wK9j8gRL4wQLJnqrhDYcxnwr8k8JN5j2Hak=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=NJO2iAUC; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=OoBK0TDw; arc=fail smtp.client-ip=205.220.165.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0246617.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5734JMIU030417;
-	Sun, 3 Aug 2025 11:11:49 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	corp-2025-04-25; bh=UPOn95B/ziXDJRjjN1LiBoImQkcuvUnUe4uMyBf5nE8=; b=
-	NJO2iAUCE5JuxDlMLLASEIOJuhY2EsHag2N3UFPTWOU/jx56j0jOZNltP70WnwaH
-	KtUxqc88Y6cRVwMz6Ux+zNifrmpIbbEirYuen5v9G81gsT1gPwnXJZAgqev2fbZV
-	GPegON3aPvgUEsIO8vM5I7csBNb6mxjfQ2cfof7vrrViwiVChElNrLYw2GMTWUzh
-	n351vEVsRAodmlaBzmTtI19QyJJIklRItvbvtVdwBvpYSlKITr/UwJoY7EP8+JZn
-	dDI9xMKj+LaNdBzwxHr/LWbG/RCp1nf6pT9SYg3k9Y0x/dy3n/pS1Eqqsgxrh/nu
-	7U4wZx8alqooEvgrAq9Y6w==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 489b7xh8pk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 03 Aug 2025 11:11:48 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 5738CcJg020538;
-	Sun, 3 Aug 2025 11:11:48 GMT
-Received: from nam10-dm6-obe.outbound.protection.outlook.com (mail-dm6nam10on2057.outbound.protection.outlook.com [40.107.93.57])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48994741a2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Sun, 03 Aug 2025 11:11:48 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=XO1OXEdR5I7LRN/jBHe/4ngWRPAum0h5twOHuOxrOjwtAtxWXEFTnv43RHLWSJPy3cboRs5MwlYGuq+ptYrq+tmPXUklgR0+cyM8O7j1h76txSZGzQPhkB0nM/58tED9g85we0OKNgHiJnQS1pAa1lbe8eA3SJCj7xhxmUGhXTG5UXZAbvPFgfFp6oUAmi6zZaz9/tyxJvWpxnFavPJLGpaJIIfxxJGEMQtqFUhD23GuLLvjrJ3n0rWyhUD+gswGN35h7PDx2or0hh8TVqrEG3wL0ALfsjya/baTDH8OHYfnKPEHCp6s4A9ZPP5Dl5/vb7GIjhUajiHPxDttrHSBZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=UPOn95B/ziXDJRjjN1LiBoImQkcuvUnUe4uMyBf5nE8=;
- b=gmCBxAKYKz98cYwLBf/BYe6ZXspFtzQUuoNeQEIIaw3RZOWdbXLmdLFzqomekrpD4Dc761Sv8hbwypeFqh/xj0stOybBVBYCxpT6YP0TR59OkQ/4CINUxA20xTgOZoVMIKDkVmUROtncx/wWdW4NxnzZT1qn2w0vzfK7+0NhRQLx9smGkGlNUWQ81b39Ov4nTI8IoGfQPp2x/eJgSpsD9oSidKfNxhIGh6S5y9FzFO33htJJJltuujbTo/GOlvhaiJ96j+nLKJADwoimCDbD6uW41jXeaVBjX7lAfJ91kqN7kkk2tPLEuQp6NP78iLOJr+xIgbT02db7AJ3zs5wn8g==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D141D1EDA3C
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 11:11:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.49
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754219519; cv=none; b=u01QFmwLuZjMYGMD+zw9W9e7XF177SOY/cLLbBPsQ6HpfuOaYJHwol3ogBFTZN0SRSEEAkRiheN8eZhQ01nnZRxJhXvlqTAM4zcCevsDZE9AC8GMjAe1sMfFyujYZOwupgQhKeTH3m7Q9aXsODpNGy4Cn9SyN1XOzqZcpPQEMiM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754219519; c=relaxed/simple;
+	bh=RRajYJN1LduWEl0wJ54fdb+FhlarDjwLiRjIk5l20DM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=ODtVp9R4JvE7auNHKVd94mYNgFL/lTqIGP3veet/5xctz8x5/chIZ2zMWh4kz+IkGUCW+h7noBKvuG4QNd85dLOnHixrkVfkq7zQZoyrsVtw6eJ8JCM9hHeKDFR/z8SrAABSioDNj9FGM3lsfK9bix4lEm+4GzmAlqdA7ZxS/e0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com; spf=pass smtp.mailfrom=infinidat.com; dkim=pass (2048-bit key) header.d=infinidat.com header.i=@infinidat.com header.b=Yy9joaoA; arc=none smtp.client-ip=209.85.219.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=infinidat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=infinidat.com
+Received: by mail-qv1-f49.google.com with SMTP id 6a1803df08f44-70756dc2c00so40531006d6.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 04:11:57 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=UPOn95B/ziXDJRjjN1LiBoImQkcuvUnUe4uMyBf5nE8=;
- b=OoBK0TDwwB0ySQIu+P8cCp+wOToHCxq0q0S76352xHvds3u4xGM43mpi9I7PP0kVdGK8IXoKogm80QMq7eQlf8vNOUKeP29wyzC53xd92gQwCqFQJ4TPAS0sgCteuEaQ6mSDzie5DITZwX1/WBLSUubQEuWLCMOC/OYYOd5eG6o=
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com (2603:10b6:8:1cc::16)
- by IA4PR10MB8732.namprd10.prod.outlook.com (2603:10b6:208:565::6) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Sun, 3 Aug
- 2025 11:11:45 +0000
-Received: from DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2]) by DM4PR10MB8218.namprd10.prod.outlook.com
- ([fe80::2650:55cf:2816:5f2%5]) with mapi id 15.20.8989.017; Sun, 3 Aug 2025
- 11:11:45 +0000
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        Pedro Falcato <pfalcato@suse.de>, David Hildenbrand <david@redhat.com>,
-        Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>,
-        linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 6.17 3/3] selftests/mm: add test for invalid multi VMA operations
-Date: Sun,  3 Aug 2025 12:11:23 +0100
-Message-ID: <c4fb86dd5ba37610583ad5fc0e0c2306ddf318b9.1754218667.git.lorenzo.stoakes@oracle.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1754218667.git.lorenzo.stoakes@oracle.com>
-References: <cover.1754218667.git.lorenzo.stoakes@oracle.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: FR4P281CA0311.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:f6::18) To DM4PR10MB8218.namprd10.prod.outlook.com
- (2603:10b6:8:1cc::16)
+        d=infinidat.com; s=google; t=1754219516; x=1754824316; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=+id45dnaTLNIRW3VoBV8xxh9SFZvf++TrU2afn5V0Gk=;
+        b=Yy9joaoAT+NReQfccfrY/M84KNpDUw2XMeLTTcLYnNjhPlBVkPoyElnQC67C0Wv9h1
+         fuPVNXIp6XhYgYz3Jg3wTzejNQz6X9/MhV5ws3/Og17TzNwX8fpCFiqU79lhEQVMkWaf
+         u5dIvzgoNRPhjI/Duo5iT0wYdVDzjL2k/rk+XUCF8WlieD5HSd2A+sjlWnLpIVB38n9A
+         siQ433VVy1v8pJmwafABUwut9SHE4yx5R6u/v98cKXTswnsEM9bZ9Xml1LIH/jyCQbn6
+         v87FPgh07RSniXXiqWmcuUeTO7L2sgVL4VQPNWMtSQ+kOSbk5D1bSue6WbbtloiDYpBQ
+         mzHg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754219516; x=1754824316;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=+id45dnaTLNIRW3VoBV8xxh9SFZvf++TrU2afn5V0Gk=;
+        b=vtMRpqsBkRHKAIhRLyXApTOkbh157BTZ7Y3YO6tIxjdMZQA61lRGQUcCSPClI6gqbf
+         jQBgYt7JM3dhqiPtwQUHvByl3tKioosEcGQHhNnhq3o695I9kqa+S2fXxCYuOq/ms/Wi
+         0FcsrbQk8crY0dm36c/1YArbnQ5+2MesRc6s4gbzoFP5HGctA7q+dpiFL72pfcI082Hn
+         QvOv4XL/YezSzIKe57XxL+2bpfUHjxFmmZ/UdgfJjMDuEZsPT86KDvIhtBYF0X3eXXI6
+         RT01qhSH7OwDFDRhjuxuwzVbh3NMujl4BEXF3f63Vro9mAieFc4Vl2sYyHAXC9Xmb7L/
+         wbtg==
+X-Gm-Message-State: AOJu0Yzw8AU3vjcSAVNseE2t9ZrNYUxmNHL2qrIB0kmRstN1AH7N4M/T
+	gpufHm7wyzixmw6Gqywui9kZX3SW39bnHGSmyjwMHfQuHFNFkAFCYdqDG2e08cfxTASjnCZaSs1
+	fcmjdw2kP58WkaBjy+LgiQh7jD866Bhh8TWm50EYVieOe4gwob/UXBzk=
+X-Gm-Gg: ASbGnctYzg1K55AFxBAlcZqAFNYHwKJOVkHHabs9ExYhlsJAkZlNsjteu2ZBLaNwnqc
+	iP7z26O+Qk5hxxv8N/5tiSa5UdgXVj0M1MSZacLS2lC32LqujsxyzFG6JnJZ8uQIfN137VUKd4z
+	AfKPWgQ107Cn8WXzFS3/ellYUibEdw8Vqcqv1pv/CU4ziN+eiRLH5C54TZO191MmmuMn04I9NnD
+	eZrcFaXvQ==
+X-Google-Smtp-Source: AGHT+IH5DQSr8FMbfnTuka6OWMG+ejazqBN2XucJdEdtdfiy80nv0BV3+CLQH0eWTG6vKaNdqqeM+4D2I/8KkvX+vwU=
+X-Received: by 2002:a0c:e34c:0:b0:709:3ab5:b935 with SMTP id
+ 6a1803df08f44-7093ab5bd34mr50762556d6.3.1754219516532; Sun, 03 Aug 2025
+ 04:11:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DM4PR10MB8218:EE_|IA4PR10MB8732:EE_
-X-MS-Office365-Filtering-Correlation-Id: 885f75e6-7cab-4f92-d147-08ddd27e884e
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?hhcG+jRX1uwf+jdW4SV10yusIpPDb5BKIDlZl18zsCEforMSMjHL/2eZJc30?=
- =?us-ascii?Q?mCml5s4raQy/Wh6WbowAPLeWIs8CC0rfRcikVwmyGx2wKk6knztnVYzeTJau?=
- =?us-ascii?Q?DCm4+gyR0fpNZkJJVMlpDlL45UPpq8cNtIIVmwfHAPibN6ZtAalwZruMDhAC?=
- =?us-ascii?Q?GV/YGXZU9kx5eRooLGnyXxrFnsF1I+7WbMVKiRXT+qlHsGVuEIr6Bk5dZO/v?=
- =?us-ascii?Q?Ma3GRUFqYgYcm/jXLMaVUEMplyrR8mQSuDkCepFyNDGxnFezifxl/hquxUgf?=
- =?us-ascii?Q?o67hA6esdxEfemftgCBP/v5AOsvGAHHuVKaGHnK+dw+qm4vpl4B92e4SL11q?=
- =?us-ascii?Q?CuLsEKKql/KrPzE54Tun4uLhsX549H9b6dcxEUWtWJpnlkt/RgD+aC6RDKPQ?=
- =?us-ascii?Q?l2je+ooSpulTYRhwdcx2bXMLwfzhgXMdL2cZr2IzYLEJDkWgxXtDSaGY+H7O?=
- =?us-ascii?Q?mygWEGIQd7E76TkXCRmis/XEle8Y1OL8qRxA4EmR6CocRslBduK3EqBghd2B?=
- =?us-ascii?Q?Hug/PtpEGx8TSNH/b7wfaYNCkZfMmMZ8tDpcatxX/UeWL/CnJwcAhbHlN9Er?=
- =?us-ascii?Q?RsRYjAabo1zYor4Xy4pn6kIwjaZdQ+YTF28X2F6C2TDfCTS50y5Q5pbDwUgE?=
- =?us-ascii?Q?GJxSvJhtcwSE9cLOVNjVhv4d68dIFfssXN+/cfZY7dnsU1tb2G0EN+gdyrsg?=
- =?us-ascii?Q?XivgXn9OgoqrH2VB7I9STj2aqJsOvKxzM0vCKOqUd6ElVGYCUFJUtDpb+8dZ?=
- =?us-ascii?Q?JR/dZt6XU5jVbZ0ugj6RhuxjIn8N6K7NdOTFmNDCHrWK2CUlaCl3KUY0PvNM?=
- =?us-ascii?Q?O0FjgPuBbcedCUFYEaMyptH6bedjOg7HM9bSrRGBWZmUp7dfPzyewDtAnHbi?=
- =?us-ascii?Q?vjbQ2XpzbvGOs6o9vOGtPTKFDwvZGlKGt+rdv9xiviwAuSYL4byBxvFlGBaS?=
- =?us-ascii?Q?U7+0pABP2JDDFEy1Te7hKjlOg0D1Lu6LzSrAdUqor/MKXFdk6jd63jnQkRRD?=
- =?us-ascii?Q?USwZVzNs5YnDUPgqHXKZIs3fypFcQ68KCgPuq/z6+FqUbwB9VSK6rM0ZRJDF?=
- =?us-ascii?Q?i+ZEZDsyOD5WklaaptMDWqzDP7C+vCq1MUTLqfmIoh7ofTcmSfAx2kAD6Y6z?=
- =?us-ascii?Q?9n5bCM1sCqpzIJ9zVvHG6jAGQa/CqnMO64DRkUfQ2z5/y2+m6ChbvuD5lUSZ?=
- =?us-ascii?Q?4zkXpg8LsO0njWaO9rargK0UvE0dvP9zEWZgrjVTgGgkcjaYP7CqdgW0C35F?=
- =?us-ascii?Q?/jD+5RDNa4nMYWjga5IIQDwFvNFyzynASCAjDJJwdxU0aPmKfW4gstVoH6GQ?=
- =?us-ascii?Q?lcory69gyyiutLSHWW/4CUIpyo82pXHS7DnAM+xN61M9DaODdQ309j59xH+6?=
- =?us-ascii?Q?EhTl+JbPv2S4GXGVVzLCNQqfpzQV0jK/pUTfitFd88A2vK5/SMUU7c61FHvs?=
- =?us-ascii?Q?l/tVq8utZl0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM4PR10MB8218.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?OxV+8WR1+E9F76qTQml1NtQSmxa0XrQJ2i3leC+3XEDdJ7R7ICNJoyiHZBOS?=
- =?us-ascii?Q?cK84AdEyccf5QuM2MydFva2X3EYajyB6Vt0pBNmtH9gFqans4xEySgtJDBAQ?=
- =?us-ascii?Q?W5nV04mUhFc+ke2JsWjECcPhO/WTZejBuLHqJBzuh/d3wka8VxXXZ4N/BXsX?=
- =?us-ascii?Q?k4YO6UWdrewwdkDzeyDAM3Jx0jNmMVXG1b0yyvx8tbUtSEI2KWrZInP47nei?=
- =?us-ascii?Q?vJ+1X7iKJkmfrcYaBAXXCw1QK9vG3CQXwgz/tlSXUqse9FJ5ajZxTMGUkssU?=
- =?us-ascii?Q?exVyg9EZ4po9WnK08f1K/xBok5eOJM5wRs8F0YX4vHKP+VU8/gQLnh6pec+d?=
- =?us-ascii?Q?7YZEpF6up1qhrMC9gyrzxA+y149XsjVaFNsdA6coSLThy+Spqe4TEVtHD36j?=
- =?us-ascii?Q?kQcaGg2e38qqG1vromh/S5F5xvNglY/01uxa/Efth3CLhhaEC3qEJhlYP9lx?=
- =?us-ascii?Q?iUawxRVbejmTYNjbl1gif5UMokVf24wAKfJ4QIcEsAhZaaV3DLQeCj6k3zA1?=
- =?us-ascii?Q?dme4gJhJYmoQQB1OCXmzEYs+7H73e98Q0QJw2HsPFbn65P7+n4O4UfD0zdm6?=
- =?us-ascii?Q?NPxmKBfqn8y1e6E0LIKzFfgxmByBi6g3GzK1dXjepp7X0vVEINy6h8O1oFnq?=
- =?us-ascii?Q?vJdR45fj/2/LrJ44OZaGsvrgj3OIpVaGzypHiWkEA7wYrX6eJ3L9eJyMLQia?=
- =?us-ascii?Q?W1avnxgX0TAXzi7IcS1gnsfHY9Lwmd3DP0O4UVzvvVuJ/KWBYtINWWNckvta?=
- =?us-ascii?Q?l/dkmDN4FPLVTqpvg5faNLdKsmuU9yemDmj8WKkDDssyizR0C5thWqGSI2fl?=
- =?us-ascii?Q?Ns+u6JCUS9BD4e9043ZY2M7fBceu1tGHMTkELe5ARQK5qLX+a2zmolspoYrc?=
- =?us-ascii?Q?eBmJRdkYWSQbhYSvU1MVomOSVWFDIPPckzmyi8JV540LUo0TDkB9wCVu3gx9?=
- =?us-ascii?Q?9k1lyJlc2zUpjkmMLC50xEBlH6DwSqh/rySBhYPmbhg9onzefCHRZ6Ldt2RL?=
- =?us-ascii?Q?MVdKVn+GYUT5BVa01G3Cald73JAntSMh7We4pl8O4798ojE+RF/XCP4yFYA/?=
- =?us-ascii?Q?J//JFAHa8cji+sxReo/Vl3cHyfopnI3aKqb+gIWDjP1Ce13T27637I85JHHm?=
- =?us-ascii?Q?BAWYuHk/3nP05XTiTa5BHHmxCdj41287SyczXK/tBNNlkGGRZ173wcyr+cIR?=
- =?us-ascii?Q?Tq34kZBPphSYHICbJnygw1Rr0VvkQhA/VeiQQuhoE92tEhQzLOKgwy++t6iV?=
- =?us-ascii?Q?HbScAFunpecdcpEDH3Eh9rFf/EXnPcjkvpltX4uAs0QQUSglJ1LlRsMNo6IB?=
- =?us-ascii?Q?xXKJ9G4M911bK+1riNIOo9hQtRHjIcV/78KBJ4A0fYlEPy4INqqKHcUhUOze?=
- =?us-ascii?Q?dZ7loe/oW/xzJpn4nNbrj6RCT7zkhmc5yW3E0S+JfNPmQSeTFh2Z6v5rd3PE?=
- =?us-ascii?Q?S5MvyZPvWcRvts5lT5xDVma/mJU7Dsn/eTMxMJXesVpp5+iB+fmoz9ShTntP?=
- =?us-ascii?Q?znr2d0F+cLHxB2adwA6XtSqfd3nhPoXme6GhuX8kyQ6TWWfeTnBO3Kt2u4qU?=
- =?us-ascii?Q?vEKqaYgZalbOyMWZS48XyOa65pVdZxXZzZdvDPpCXE5aB3kcgIbYPSJ1X4Y5?=
- =?us-ascii?Q?PQ=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	qDenG66Oa89Ll3MB+ELdZ4BPwspKWkje52/C7t8MysgbCm0bjPlIPxrXzmZGx1n+E+rj9eFtLpUYnm6o5PkgpQzMbkCpnZMohw7mTkSArdFFIYWaXcqDGb6BEymEPtwbQgqzFioraAaBiy6pCS27bXac7W8xzaMof6tM0aoxTyaLBNRGJSdp/R9XEkLiRvBTT6oqyXBk5/6pp8wMdrSfHtcIa20eBEyTjQJn2ukaUrkQpHsw+kygb4d/39d54h49bTvilgEw3WCnqV0Ooct2yoknk/Qp0cc9F5cZtxvED1jhRdTt/8snLcFzk5+YvmHKcxNQ73a+Ek69FYGUojChk2pxNdkD0MVVm/jeSrw1SQkcnGd6qTGvqBFB6BRWgFicC5kQLNQlEh0Vjex6oWoh+AToB6kc8UWC3AjkLvsvZPNOeH3tiPy4pBCm5IZySU5hmTinlTVkq9EdfQhvYZOYaO0THbKFJO+ZGII1M4RbyXGgUu/rMbzNZigd2Hn43AdPVygzKkRMT2gQbTKu8XHCCxFbzIAfBa4mmIHRjJymSQfN3CqHWDMSgb367sli+0qZQK42XmbJ5ms8G/icUDj+AoXBeFNXbzLy8U/jCU7BIEo=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 885f75e6-7cab-4f92-d147-08ddd27e884e
-X-MS-Exchange-CrossTenant-AuthSource: DM4PR10MB8218.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 03 Aug 2025 11:11:45.2953
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wqSz6UE+86RWGxBMN4jEap2QX/gIUHuE/Db0dT1//Xi1o7TT5kynaVsUnDX66HeJTh2nWjNM2azEwVX4WlJUdy57lPei/m3I8zaF2m9xKBg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA4PR10MB8732
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-03_03,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 malwarescore=0 mlxscore=0
- suspectscore=0 adultscore=0 bulkscore=0 mlxlogscore=999 phishscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
- definitions=main-2508030076
-X-Authority-Analysis: v=2.4 cv=MdNsu4/f c=1 sm=1 tr=0 ts=688f43f4 cx=c_pps
- a=XiAAW1AwiKB2Y8Wsi+sD2Q==:117 a=XiAAW1AwiKB2Y8Wsi+sD2Q==:17
- a=6eWqkTHjU83fiwn7nKZWdM+Sl24=:19 a=z/mQ4Ysz8XfWz/Q5cLBRGdckG28=:19
- a=lCpzRmAYbLLaTzLvsPZ7Mbvzbb8=:19 a=wKuvFiaSGQ0qltdbU6+NXLB8nM8=:19
- a=Ol13hO9ccFRV9qXi2t6ftBPywas=:19 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=GoEa3M9JfhUA:10 a=yPCof4ZbAAAA:8 a=LpX3lQZTHYkSynK3PYcA:9
-X-Proofpoint-ORIG-GUID: kWEajBmM0QumUqCC0w3MMJ7pFtm3gUww
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODAzMDA3NiBTYWx0ZWRfX+rQrFGL1bXR0
- MfOX3Jtz/Tpjhx4+Oz+gNXIP16ItG6lh0+QRHFVg28gOcC75xZXen4aXFO27vnKJQSaI2wZSvAD
- HXafyYLdOMX0mOFKc/OJ19hJb0ocuFDWxwTFoHNfVHyf0pN0VLGvSgfLPlJCLexFyP8rqsJHDEU
- kOSoOe4GQNf37+bBfhf5xsRqqoBGIkgicSARmp25p+0wAednEndX0JzIAYWwzdSRxCP1S1AlG5U
- N59Y3/1gYkIkIYVB/rRBDpN/lBD4epHbEjC7ozBxKAN4c7K/BgdCXf/hgiqmuNxO2XwarrtrRkz
- aHY0JjIRd04iHnSPA95yLX40nj1Lyr+bS+KczBREDp5RFaNZaDHYjUrGvSoFo1EFqZXEUanh2id
- nCLnlta4ppr3+e4c46tWVsfmnNSmLjihAI4jeplKRjymxSaVO4QmCbwu5h85R8mHO+CqVp+J
-X-Proofpoint-GUID: kWEajBmM0QumUqCC0w3MMJ7pFtm3gUww
+References: <CAEHaoC2BWe+0Ps2oU-0xPDLFYYKG-o9+_ynFgh7u3qqyRDtrTg@mail.gmail.com>
+ <CAEHaoC22NDpHUWovJChCx_XqchkEvUPYrFFe_L1PH9Mw2e386A@mail.gmail.com>
+ <CAEHaoC2bi3VUEuoWKgHbgUFfdxmACrhkjaQ9Jni-4-ByP5tYJg@mail.gmail.com>
+ <CAEHaoC3ZMvHe7D-JX9bfM9hfSPs0QV-og=om5eKFFqSL=tpjcw@mail.gmail.com> <CAEHaoC0Au_0yLRKSnDg=_qjnmDMmbJ=Nff+W1feEBTib0Jb_gA@mail.gmail.com>
+In-Reply-To: <CAEHaoC0Au_0yLRKSnDg=_qjnmDMmbJ=Nff+W1feEBTib0Jb_gA@mail.gmail.com>
+From: Constantine Gavrilov <cgavrilov@infinidat.com>
+Date: Sun, 3 Aug 2025 14:11:45 +0300
+X-Gm-Features: Ac12FXxxWf_6xU9UxIxFQykDgpEUXFW9cF4UYV7q7HybOJWzp7BkzSX9SgJMMU4
+Message-ID: <CAEHaoC2ZQAd+h=7mKPOuMfAMex-41soD8=kx2vR_em+i71oBRw@mail.gmail.com>
+Subject: [PATCH 4/8] Large DMA alloc/add APIs to query available range
+To: linux-kernel@vger.kernel.org, Marek Szyprowski <m.szyprowski@samsung.com>, 
+	Robin Murphy <robin.murphy@arm.com>, iommu@lists.linux.dev
+Content-Type: text/plain; charset="UTF-8"
 
-We can use UFFD to easily assert invalid multi VMA moves, so do so,
-asserting expected behaviour when VMAs invalid for a multi VMA operation
-are encountered.
+This is the fifth patch from the set of patches that enable large IOMMU
+DMA registrations. Entire work is available at the master branch of the
+master branch of git@github.com:cgavrilov/linux.git repo.
 
-We assert both that such operations are not permitted, and that we do not
-even attempt to move the first VMA under these circumstances.
+Some devices (like NTB or GPU) allow mapping of the system memory to PCIe bars,
+allowing to implement PCIe interconnects when devices are connected to more
+that one root complex. After one root complex does the mapping, an application
+on another root complex can access the memory using the PCIe bar of the device.
+Since a typical system memory mapping uses offset translation (between the
+device bar address and the DMA address), the device driver needs to know which
+contiguous DMA address range is available to satisfy the device needs before it
+can set up the mapping offset. This patch provides APIs to do this.
 
-We also assert that we can still move a single VMA regardless.
+This patch was developed before the 6.16 kernel that provides functions
+dma_iova_try_alloc() and and dma_iova_link() to help with this task. With
+dma_iova_try_alloc(), the device driver can reserve a DMA address range for its
+future use and use dma_iova_link() later to update IOMMU translations on the
+reserved range. However, we do not have APIs that would allow allocations of
+smaller regions from the reserved area that would provide functionality
+similar to iommu_dma_alloc_iova(). This patch allows to query the available
+range, set up the offset, and use standard DMA allocation APIs, after enforcing
+the DMA mask constraint on the device.
 
-We then assert that a partial failure can occur if the invalid VMA appears
-later in the range of multiple VMAs, both at the very next VMA, and also at
-the end of the range.
+commit 31b8abf68f5114dc90c1d38bd70e505727383666
+Author: Constantine Gavrilov <cgavrilov@infinidat.com>
+Date:   Thu Jun 26 23:20:40 2025 +0300
 
-As part of this change, we are using the is_range_valid() helper more
-aggressively. Therefore, fix a bug where stale buffered data would hang
-around on success, causing subsequent calls to is_range_valid() to
-potentially give invalid results.
+    Add APIs to query available DMA address range.
 
-We simply have to fflush() the stream on success to resolve this issue.
+    This adds two exported functions:
+    * iommu_domain_get_lowest_free_address_range()
+    * iovad_get_lowest_free_address_range()
 
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
----
- tools/testing/selftests/mm/mremap_test.c | 264 ++++++++++++++++++++++-
- 1 file changed, 261 insertions(+), 3 deletions(-)
+    NTB drivers that implement translation by offset can query the
+availalble range
+    and set the first region offset to the returned value and also set
+the DMA max
+    address to returned value + window size. Since DMA address allocation is
+    from the top addresses, this allows the applications to request a large
+    IOMMU registration that matches the NTB windows size.
 
-diff --git a/tools/testing/selftests/mm/mremap_test.c b/tools/testing/selftests/mm/mremap_test.c
-index fccf9e797a0c..5bd52a951cbd 100644
---- a/tools/testing/selftests/mm/mremap_test.c
-+++ b/tools/testing/selftests/mm/mremap_test.c
-@@ -5,10 +5,14 @@
- #define _GNU_SOURCE
- 
- #include <errno.h>
-+#include <fcntl.h>
-+#include <linux/userfaultfd.h>
- #include <stdlib.h>
- #include <stdio.h>
- #include <string.h>
-+#include <sys/ioctl.h>
- #include <sys/mman.h>
-+#include <syscall.h>
- #include <time.h>
- #include <stdbool.h>
- 
-@@ -168,6 +172,7 @@ static bool is_range_mapped(FILE *maps_fp, unsigned long start,
- 
- 		if (first_val <= start && second_val >= end) {
- 			success = true;
-+			fflush(maps_fp);
- 			break;
- 		}
- 	}
-@@ -175,6 +180,15 @@ static bool is_range_mapped(FILE *maps_fp, unsigned long start,
- 	return success;
+    The prior query to iommu_domain_get_lowest_free_address_range() makes
+    sure that a required DMA range is available and not used by other devices.
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 6ba9be4fb64d..e78d7f8a2d61 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -769,6 +769,15 @@ ssize_t iommu_domain_show_busy_regions(struct
+iommu_domain *domain, char *buf)
+     return iovad_show_busy_regions(iovad, buf);
  }
- 
-+/* Check if [ptr, ptr + size) mapped in /proc/self/maps. */
-+static bool is_ptr_mapped(FILE *maps_fp, void *ptr, unsigned long size)
+
++int iommu_domain_get_lowest_free_address_range(struct iommu_domain
+*domain, struct addr_range_query *query, u64 *res)
 +{
-+	unsigned long start = (unsigned long)ptr;
-+	unsigned long end = start + size;
++    struct iommu_dma_cookie *cookie = domain->iova_cookie;
++    struct iova_domain *iovad = &cookie->iovad;
 +
-+	return is_range_mapped(maps_fp, start, end);
++    return iovad_get_lowest_free_address_range(iovad, query, res);
 +}
++EXPORT_SYMBOL(iommu_domain_get_lowest_free_address_range);
 +
- /*
-  * Returns the start address of the mapping on success, else returns
-  * NULL on failure.
-@@ -733,6 +747,249 @@ static void mremap_move_multiple_vmas_split(unsigned int pattern_seed,
- 				      dont_unmap ? " [dontunnmap]" : "");
+ static dma_addr_t iommu_dma_alloc_iova(struct iommu_domain *domain,
+         size_t size, u64 dma_limit, struct device *dev, iova_align_t align)
+ {
+diff --git a/drivers/iommu/iova.c b/drivers/iommu/iova.c
+index 96144c58b386..aba58630be12 100644
+--- a/drivers/iommu/iova.c
++++ b/drivers/iommu/iova.c
+@@ -311,6 +311,59 @@ ssize_t iovad_show_busy_regions(struct
+iova_domain *iovad, char *buf)
  }
- 
-+#ifdef __NR_userfaultfd
-+static void mremap_move_multi_invalid_vmas(FILE *maps_fp,
-+		unsigned long page_size)
+ EXPORT_SYMBOL_GPL(iovad_show_busy_regions);
+
++/*
++ * Get a hint for lowest available address range.
++*/
++int iovad_get_lowest_free_address_range(struct iova_domain *iovad,
+struct addr_range_query *query, u64 *res)
 +{
-+	char *test_name = "mremap move multiple invalid vmas";
-+	const size_t size = 10 * page_size;
-+	bool success = true;
-+	char *ptr, *tgt_ptr;
-+	int uffd, err, i;
-+	void *res;
-+	struct uffdio_api api = {
-+		.api = UFFD_API,
-+		.features = UFFD_EVENT_PAGEFAULT,
-+	};
++    struct rb_node *curr, *prev;
++    struct iova *curr_iova, *prev_iova;
++    unsigned long flags;
++    unsigned long shift = iova_shift(iovad);
++    int ret = -ENOMEM;
 +
-+	uffd = syscall(__NR_userfaultfd, O_NONBLOCK);
-+	if (uffd == -1) {
-+		err = errno;
-+		perror("userfaultfd");
-+		if (err == EPERM) {
-+			ksft_test_result_skip("%s - missing uffd", test_name);
-+			return;
-+		}
-+		success = false;
-+		goto out;
-+	}
-+	if (ioctl(uffd, UFFDIO_API, &api)) {
-+		perror("ioctl UFFDIO_API");
-+		success = false;
-+		goto out_close_uffd;
-+	}
++    if (query->align) {
++        if (!is_power_of_2(query->align))
++            return -EINVAL;
++    }
++    if (query->addr_min >= query->addr_max)
++        return -EINVAL;
 +
-+	ptr = mmap(NULL, size, PROT_READ | PROT_WRITE,
-+		   MAP_PRIVATE | MAP_ANON, -1, 0);
-+	if (ptr == MAP_FAILED) {
-+		perror("mmap");
-+		success = false;
-+		goto out_close_uffd;
-+	}
++    spin_lock_irqsave(&iovad->iova_rbtree_lock, flags);
++    curr = &iovad->anchor.node;
++    curr_iova = rb_entry(curr, struct iova, node);
++    while(curr) {
++        prev = rb_prev(curr);
++        curr = prev;
++        if (prev) {
++            u64 free_start;
++            u64 free_end;
++            u64 alloc_end;
++            prev_iova = rb_entry(prev, struct iova, node);
++            free_start = (prev_iova->pfn_hi + 1) << shift;
++            free_end = (curr_iova->pfn_lo) << shift;
++            curr_iova = prev_iova;
++            if (query->align)
++                free_start = ALIGN(free_start, query->align);
++            alloc_end = free_start + query->size;
 +
-+	tgt_ptr = mmap(NULL, size, PROT_NONE, MAP_PRIVATE | MAP_ANON, -1, 0);
-+	if (tgt_ptr == MAP_FAILED) {
-+		perror("mmap");
-+		success = false;
-+		goto out_close_uffd;
-+	}
-+	if (munmap(tgt_ptr, size)) {
-+		perror("munmap");
-+		success = false;
-+		goto out_unmap;
-+	}
++            if (free_start < query->addr_min)
++                break;
++            if (alloc_end > query->addr_max)
++                continue; //does not match address consraint
++            if (free_start > alloc_end || free_start >= free_end ||
+alloc_end > free_end)
++                continue; //overflow
 +
-+	/*
-+	 * Unmap so we end up with:
-+	 *
-+	 *  0   2   4   6   8   10 offset in buffer
-+	 * |*| |*| |*| |*| |*|
-+	 * |*| |*| |*| |*| |*|
-+	 *
-+	 * Additionally, register each with UFFD.
-+	 */
-+	for (i = 0; i < 10; i += 2) {
-+		void *unmap_ptr = &ptr[(i + 1) * page_size];
-+		unsigned long start = (unsigned long)&ptr[i * page_size];
-+		struct uffdio_register reg = {
-+			.range = {
-+				.start = start,
-+				.len = page_size,
-+			},
-+			.mode = UFFDIO_REGISTER_MODE_MISSING,
-+		};
++            ret = 0;
++            *res = free_start;
++        }
++    }
++    spin_unlock_irqrestore(&iovad->iova_rbtree_lock, flags);
 +
-+		if (ioctl(uffd, UFFDIO_REGISTER, &reg) == -1) {
-+			perror("ioctl UFFDIO_REGISTER");
-+			success = false;
-+			goto out_unmap;
-+		}
-+		if (munmap(unmap_ptr, page_size)) {
-+			perror("munmap");
-+			success = false;
-+			goto out_unmap;
-+		}
-+	}
-+
-+	/*
-+	 * Now try to move the entire range which is invalid for multi VMA move.
-+	 *
-+	 * This will fail, and no VMA should be moved, as we check this ahead of
-+	 * time.
-+	 */
-+	res = mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_FIXED, tgt_ptr);
-+	err = errno;
-+	if (res != MAP_FAILED) {
-+		fprintf(stderr, "mremap() succeeded for multi VMA uffd armed\n");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (err != EFAULT) {
-+		errno = err;
-+		perror("mrmeap() unexpected error");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (is_ptr_mapped(maps_fp, tgt_ptr, page_size)) {
-+		fprintf(stderr,
-+			"Invalid uffd-armed VMA at start of multi range moved\n");
-+		success = false;
-+		goto out_unmap;
-+	}
-+
-+	/*
-+	 * Now try to move a single VMA, this should succeed as not multi VMA
-+	 * move.
-+	 */
-+	res = mremap(ptr, page_size, page_size,
-+		     MREMAP_MAYMOVE | MREMAP_FIXED, tgt_ptr);
-+	if (res == MAP_FAILED) {
-+		perror("mremap single invalid-multi VMA");
-+		success = false;
-+		goto out_unmap;
-+	}
-+
-+	/*
-+	 * Unmap the VMA, and remap a non-uffd registered (therefore, multi VMA
-+	 * move valid) VMA at the start of ptr range.
-+	 */
-+	if (munmap(tgt_ptr, page_size)) {
-+		perror("munmap");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	res = mmap(ptr, page_size, PROT_READ | PROT_WRITE,
-+		   MAP_PRIVATE | MAP_ANON | MAP_FIXED, -1, 0);
-+	if (res == MAP_FAILED) {
-+		perror("mmap");
-+		success = false;
-+		goto out_unmap;
-+	}
-+
-+	/*
-+	 * Now try to move the entire range, we should succeed in moving the
-+	 * first VMA, but no others, and report a failure.
-+	 */
-+	res = mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_FIXED, tgt_ptr);
-+	err = errno;
-+	if (res != MAP_FAILED) {
-+		fprintf(stderr, "mremap() succeeded for multi VMA uffd armed\n");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (err != EFAULT) {
-+		errno = err;
-+		perror("mrmeap() unexpected error");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (!is_ptr_mapped(maps_fp, tgt_ptr, page_size)) {
-+		fprintf(stderr, "Valid VMA not moved\n");
-+		success = false;
-+		goto out_unmap;
-+	}
-+
-+	/*
-+	 * Unmap the VMA, and map valid VMA at start of ptr range, and replace
-+	 * all existing multi-move invalid VMAs, except the last, with valid
-+	 * multi-move VMAs.
-+	 */
-+	if (munmap(tgt_ptr, page_size)) {
-+		perror("munmap");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (munmap(ptr, size - 2 * page_size)) {
-+		perror("munmap");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	for (i = 0; i < 8; i += 2) {
-+		res = mmap(&ptr[i * page_size], page_size,
-+			   PROT_READ | PROT_WRITE,
-+			   MAP_PRIVATE | MAP_ANON | MAP_FIXED, -1, 0);
-+		if (res == MAP_FAILED) {
-+			perror("mmap");
-+			success = false;
-+			goto out_unmap;
-+		}
-+	}
-+
-+	/*
-+	 * Now try to move the entire range, we should succeed in moving all but
-+	 * the last VMA, and report a failure.
-+	 */
-+	res = mremap(ptr, size, size, MREMAP_MAYMOVE | MREMAP_FIXED, tgt_ptr);
-+	err = errno;
-+	if (res != MAP_FAILED) {
-+		fprintf(stderr, "mremap() succeeded for multi VMA uffd armed\n");
-+		success = false;
-+		goto out_unmap;
-+	}
-+	if (err != EFAULT) {
-+		errno = err;
-+		perror("mrmeap() unexpected error");
-+		success = false;
-+		goto out_unmap;
-+	}
-+
-+	for (i = 0; i < 10; i += 2) {
-+		bool is_mapped = is_ptr_mapped(maps_fp,
-+				&tgt_ptr[i * page_size], page_size);
-+
-+		if (i < 8 && !is_mapped) {
-+			fprintf(stderr, "Valid VMA not moved at %d\n", i);
-+			success = false;
-+			goto out_unmap;
-+		} else if (i == 8 && is_mapped) {
-+			fprintf(stderr, "Invalid VMA moved at %d\n", i);
-+			success = false;
-+			goto out_unmap;
-+		}
-+	}
-+
-+out_unmap:
-+	if (munmap(tgt_ptr, size))
-+		perror("munmap tgt");
-+	if (munmap(ptr, size))
-+		perror("munmap src");
-+out_close_uffd:
-+	close(uffd);
-+out:
-+	if (success)
-+		ksft_test_result_pass("%s\n", test_name);
-+	else
-+		ksft_test_result_fail("%s\n", test_name);
++    return ret;
 +}
-+#else
-+static void mremap_move_multi_invalid_vmas(FILE *maps_fp, unsigned long page_size)
++EXPORT_SYMBOL(iovad_get_lowest_free_address_range);
++
+ static struct iova *
+ private_find_iova(struct iova_domain *iovad, unsigned long pfn)
+ {
+diff --git a/include/linux/iommu.h b/include/linux/iommu.h
+index 5fe92c00221d..96ac4333f727 100644
+--- a/include/linux/iommu.h
++++ b/include/linux/iommu.h
+@@ -14,6 +14,7 @@
+ #include <linux/err.h>
+ #include <linux/of.h>
+ #include <linux/iova_bitmap.h>
++#include <linux/iova.h>
+
+ #define IOMMU_READ    (1 << 0)
+ #define IOMMU_WRITE    (1 << 1)
+@@ -1512,6 +1513,7 @@ static inline void iommu_debugfs_setup(void) {}
+ #ifdef CONFIG_IOMMU_DMA
+ int iommu_get_msi_cookie(struct iommu_domain *domain, dma_addr_t base);
+ ssize_t iommu_domain_show_busy_regions(struct iommu_domain *domain, char *buf);
++int iommu_domain_get_lowest_free_address_range(struct iommu_domain
+*domain, struct addr_range_query *query, u64 *res);
+ #else /* CONFIG_IOMMU_DMA */
+ static inline int iommu_get_msi_cookie(struct iommu_domain *domain,
+dma_addr_t base)
+ {
+diff --git a/include/linux/iova.h b/include/linux/iova.h
+index c09d224cce2b..30ce5ad499d2 100644
+--- a/include/linux/iova.h
++++ b/include/linux/iova.h
+@@ -80,6 +80,13 @@ static inline unsigned long iova_pfn(struct
+iova_domain *iovad, dma_addr_t iova)
+     return iova >> iova_shift(iovad);
+ }
+
++struct addr_range_query {
++    u64 size;
++    u64 addr_min;
++    u64 addr_max;
++    u64 align;
++};
++
+ #if IS_REACHABLE(CONFIG_IOMMU_IOVA)
+ int iova_cache_get(void);
+ void iova_cache_put(void);
+@@ -97,6 +104,9 @@ void free_iova_fast(struct iova_domain *iovad,
+unsigned long pfn,
+
+ ssize_t iovad_show_busy_regions(struct iova_domain *iovad, char *buf);
+
++#define IOVAD_HAS_FREE_ADDR_RANGE
++int iovad_get_lowest_free_address_range(struct iova_domain *iovad,
+struct addr_range_query *query, u64 *res);
++
+ unsigned long alloc_iova_fast(struct iova_domain *iovad, unsigned long size,
+                   unsigned long limit_pfn, bool flush_rcache,
+iova_align_t align);
+ struct iova *reserve_iova(struct iova_domain *iovad, unsigned long pfn_lo,
+@@ -129,6 +139,11 @@ ssize_t iovad_show_busy_regions(struct
+iova_domain *iovad, char *buf)
+     return -ENOTSUPP;
+ }
+
++int iovad_get_lowest_free_address_range(struct iova_domain *iovad,
+struct addr_range_query *query, u64 *res)
 +{
-+	char *test_name = "mremap move multiple invalid vmas";
-+
-+	ksft_test_result_skip("%s - missing uffd", test_name);
++    return -ENOTSUPP;
 +}
-+#endif /* __NR_userfaultfd */
 +
- /* Returns the time taken for the remap on success else returns -1. */
- static long long remap_region(struct config c, unsigned int threshold_mb,
- 			      char *rand_addr)
-@@ -1074,7 +1331,7 @@ int main(int argc, char **argv)
- 	char *rand_addr;
- 	size_t rand_size;
- 	int num_expand_tests = 2;
--	int num_misc_tests = 8;
-+	int num_misc_tests = 9;
- 	struct test test_cases[MAX_TEST] = {};
- 	struct test perf_test_cases[MAX_PERF_TEST];
- 	int page_size;
-@@ -1197,8 +1454,6 @@ int main(int argc, char **argv)
- 	mremap_expand_merge(maps_fp, page_size);
- 	mremap_expand_merge_offset(maps_fp, page_size);
- 
--	fclose(maps_fp);
--
- 	mremap_move_within_range(pattern_seed, rand_addr);
- 	mremap_move_1mb_from_start(pattern_seed, rand_addr);
- 	mremap_shrink_multiple_vmas(page_size, /* inplace= */true);
-@@ -1207,6 +1462,9 @@ int main(int argc, char **argv)
- 	mremap_move_multiple_vmas(pattern_seed, page_size, /* dontunmap= */ true);
- 	mremap_move_multiple_vmas_split(pattern_seed, page_size, /* dontunmap= */ false);
- 	mremap_move_multiple_vmas_split(pattern_seed, page_size, /* dontunmap= */ true);
-+	mremap_move_multi_invalid_vmas(maps_fp, page_size);
-+
-+	fclose(maps_fp);
- 
- 	if (run_perf_tests) {
- 		ksft_print_msg("\n%s\n",
+ static inline struct iova *alloc_iova(struct iova_domain *iovad,
+                       unsigned long size,
+                       unsigned long limit_pfn,
+
+
 -- 
-2.50.1
-
+----------------------------------------
+Constantine Gavrilov
+System Architect and Platform Engineer
+Infinidat
+Ha-Menofim 9, Hertzelia
+----------------------------------------
 
