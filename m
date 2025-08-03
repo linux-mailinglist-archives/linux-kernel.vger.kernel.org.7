@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-754473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67B71B194AA
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 19:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD192B194AB
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 19:47:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 81DA417264C
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 17:45:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 881D618920DA
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 17:48:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 807721DF258;
-	Sun,  3 Aug 2025 17:44:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D8A81D7E31;
+	Sun,  3 Aug 2025 17:47:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F6OclYV/"
-Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fSDB/Nm/"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9339E15C0;
-	Sun,  3 Aug 2025 17:44:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEB7E639;
+	Sun,  3 Aug 2025 17:47:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754243097; cv=none; b=KmT+dslLLAe+cBMGy64mcKNj40nLpATCPl/SC/XExkJD8UmYUyZkgwE0hVsInaQrE0cAOZWHnEDBaP9ScaB/pBfE8HNQeQ2T5gPE2J0jFvumHjb1j48pI73mNQqDOmriZiKl/ABXmZGdeIss1Ll2pPFUtoaVqgAHsPM6GQ9AUgA=
+	t=1754243265; cv=none; b=Go5PiHJmg1iRS8OVxw0wG0D1+dkQLiVyY/G+uaOjPqEd1ZKaRCNbQoa8upzB+jjaDBh1Ua1ZkVtSsuBI0Aif1n91JPRi3m7x9kYGlxQ0iqjssSmD6YdEymQ60ZHOAUOU2NFWCurM5+Dkyr2fuDG24vdv1v5ekKnqMO3DD6IT7hE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754243097; c=relaxed/simple;
-	bh=t3iLmLQ2HS7SYoAMndeVxC9knQL14a22W5wBZ1Kz7y8=;
+	s=arc-20240116; t=1754243265; c=relaxed/simple;
+	bh=INc8jwySb85s9FG8YbSNZOht10yjBA1GrvVOEGBzRnM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iN405e3GEsQ3snGzvhaRg9NGy3rRWaicXQ95wPjaGtRwu28DSadNTebxCrQ4DVvxijqsHSym2PRreDI67abRNHyzyksFgfg1bdMEWesO2L+bJO8K8Gvkc3K3fh6gGxYIumNdVDie0N3QFv4UADatLgCGcxy1pUlspOvZ3Yvj9Dk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F6OclYV/; arc=none smtp.client-ip=209.85.215.169
+	 To:Cc:Content-Type; b=Nfu2iqTMCTe2LuG5OHgJGnlVNlHWGwGMKpf/wOq7nHHXMnPlZb9DWuf32n3FGTDSJGbDwD6EOMJZ4rggPXekPLBfJw8Ugj6jZNGbmRe7mvOD1/5rMaq+N0jih6l00JukRE4WfamOrcqBSQxYN4hvbFp1ZQcbO2s8aa/e/vAjs7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fSDB/Nm/; arc=none smtp.client-ip=209.85.214.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-b3badf1afc0so577798a12.3;
-        Sun, 03 Aug 2025 10:44:56 -0700 (PDT)
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-2420c9e3445so5662795ad.2;
+        Sun, 03 Aug 2025 10:47:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754243096; x=1754847896; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754243263; x=1754848063; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=qe+uCBY7YFwaIdiDF6uReamScrBxl2mCeWpM0+YSCw0=;
-        b=F6OclYV/yi26YMp5x49DrvlOsSVemozFi7lFszkG8i/NFjB3AOA6EuipEPVKd7Fxjg
-         jKigaL4xmCX+Y9E53dela+hOxfRYdewqi88JvgL6DCERBRMcFR4txRtrXoJYjHOrihJs
-         LVWLFDvYScik48jqO4QkNm4kpuZOXjnlpvJIOq3o63u8haUNsdEoUiBGKJVPYTWLzycB
-         V68pT5rTbjw4wCVBzQzOw9lGS2CpQvV+JBGhhL0iR/mTD5qwXVayLZc4lx+21ygAn16M
-         xpn+ixzaUGDuRA8ZTEy0bHDKHAkA1qdid58bxbVfXjnPcDne1CRlFAYohvSWuuqFZmJK
-         Hdxw==
+        bh=INc8jwySb85s9FG8YbSNZOht10yjBA1GrvVOEGBzRnM=;
+        b=fSDB/Nm/ccTRcALW1RYJpmI4FRwcVC3Py2HRIAqFUIf5J8vEbb2hKDWfGAcJAeuIat
+         fmIuY+REZ0ky2fEjr1YOpC+gzFphV/ucVp+8YNy/nJCOEGzXkP6OJsIqd6bCpo3eq7W8
+         ElbSOtiUVlpEKYWCFHB4pwXVEcdZepQeVkXbdWeAdDEdboINR94bC9/27oTxX3iEE6mP
+         8caYWeYDfq4CZCL43Wg5TtCmMyY+IyH8KiyVdZ6IwrkfdI1whOLv31rxKfDKT3FV5OcQ
+         vNBSdW3BI+tBiSG6Lb/gPru280BGoLr7GNaDiI7z5fpXYRm/CHXNEyNH94W9Y/RikIrD
+         5pBA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754243096; x=1754847896;
+        d=1e100.net; s=20230601; t=1754243263; x=1754848063;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qe+uCBY7YFwaIdiDF6uReamScrBxl2mCeWpM0+YSCw0=;
-        b=VKgXxt8hNLAtJZAB6PEvkr3a7qLdqEjaPfka/qs6tO3bDT1kFSbgoOtZ4sU/tquQ6J
-         kgOSwENxDofO44NTPq0dZDc7fp4ixZnMDGMRjMKauFWNLg0oj4cX1sgyGJaXnUrQsy+A
-         r5uKEv7JvAoD84rosUaZ17Sh88zQzQRFC0TJqe8CIAYlRUvOMNeFXGMf15gg70rMuoPV
-         8PQmsmtMvHIRCt4t64Cl9ZNNLJklSO1qSQsEdvuJLCdMo0UCY0EchMXEIeI5JffRpw6J
-         z2REhRDCAYra0+dEneWO0JLUd5Bv+NK7sPq/PTfrOKmxsQGDCdk8zKpOfejN+Xuhtev4
-         E7kQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUbvzTlUMoIwhyM9km9yLFWeLFDOs8esKQCa2zS7kKPHOtoeCWhJAzwzBkkIfGrkoyMbkEWNq/MEGvDR2A=@vger.kernel.org, AJvYcCVfvWUJeuTPPImbqXmmNOFzauVlS0HZkXbd3A+6jxzisliBxLWKTX57sw1J85G8x7mww1JNxhPi+DJU71DR8o4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKLbKvzN0PJNqq6uWnTWgZiuF4KzgROA/eoKcWiPLkpfZopfLW
-	EYpIlZPpnsQVeFjSiVNngT0qp5FuKd/DSwRSAzAagFb4eALM1JywOxYivQb1EKmkBAFEacq4I4A
-	XiMxKowXD4DWeCIzv1HkoGyBr6TpW6RcK2b7QiYg=
-X-Gm-Gg: ASbGncv3piKWe8BPeJgupjfzt3cTEJ0jiXEG1jWoMAR2eDj60CDgLHfpkPcTfR5bf5P
-	XoYKycE0L0ylMWA9iAiK8SUY+2FTbelJ0LQ14NLr9itI/d3QKFEabLYrp6KQDU9WMY6UgMqPewn
-	XospKbXkRXNL6MUQBu4AUExLDy/ywqWKiag/SwEZKcmZNKiFrbedX4Lb2OQm7SKQFUH5LEECv8K
-	aMeQ8bO1IdPEp91Dlg=
-X-Google-Smtp-Source: AGHT+IFMx1InobcfVZog5AEyfwx4NS6Pc52HTcZFt8niNUWiTQz7qyELBrwE3tmk4N6Tb0AocdovUh+BFZgmPtu6ILQ=
-X-Received: by 2002:a17:902:c951:b0:23f:fd0e:e5c0 with SMTP id
- d9443c01a7336-24246fe91bemr40899865ad.9.1754243095604; Sun, 03 Aug 2025
- 10:44:55 -0700 (PDT)
+        bh=INc8jwySb85s9FG8YbSNZOht10yjBA1GrvVOEGBzRnM=;
+        b=QEsBn2ep9WAqxAJbHbYShIt9KAfINQaz8RNJ7Xc2pnkT6esIs2dXdjC7Ql2xZq6yYj
+         t7mmk9wpwUzDolHH83564ki1FvMDh7BbjIx3H7hIdCT67qqsLgMeo0Rr2U2A6XbwuSoS
+         XvgzDb5o2Pwd07zQA7i77BdbrkXe69v4574szLOR9NWk3hUF0XEPON9dt1Lp+akEXjQC
+         nLS3LONJtQJ0Tt/Cgek56FTtjAZmfXVZ7R1G/VZhiBJ3nY4gDCGe0rRdvDqCjIOcQIA4
+         uQNr6XFFCAeBkIeHGQP78LcfOn7hyq6jJbmvslWCodofS3YzF9ZLCU11guOQyEXQ36sl
+         aWsA==
+X-Forwarded-Encrypted: i=1; AJvYcCUrrC49ypXopYME4Phvt4JXgrnfUJUftpYhxR1BrvnMZp5ZtNjqGFGA7bWMkQfsPR+PEOMrxc6ah+NY78ikvSI=@vger.kernel.org, AJvYcCVsNps2oGjIkiGkxV9zm7y6gQ36PH9cNrSBzz0lp1v+kr/cy4+xDWUSXYmJ7DgGXl6u73qE6yrtuExeUDI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzxwYKZ4rQQmoK17yMUfLaBeDcYz5KMTYCoLlmU3/Ume+YA6yOI
+	ttbpftlkdJataOT42/gvYW/zPD+7nfghlYUvFFbCCkgZI3hTs1jV1ELkAaL+K8kqp+WRCMcP+fS
+	tzZTCxXD24/1MvrwTfEXbk0lTZmYRQwk=
+X-Gm-Gg: ASbGncs6TgnZe7PdYOoPEIQLfjB8ndRKvK9q+/Ikv4hDKVqgNPK4daVSk5okkman/3Q
+	6krqzqueBHJrzFd3Ts6SS69NL7wMuH982NDAB8jfxU1Ix0oXIaW2oHj/JpT+UyvN7Eztp4ZHSfz
+	PbcR9bSIaxhTGtNkOR4g35G354E4zFAZdS9SObmFWswqvJylmyDNafniLVIxdBI4wubJ8/9t0GH
+	4POCQ+V
+X-Google-Smtp-Source: AGHT+IGpA6bMml6aI6asSNOMZ0PYb7tB/+AWc8+rMWoKgSlOU/yKw34MED/OEpA0LXsIquK2ze2crfDVWsjIZnmMpQo=
+X-Received: by 2002:a17:902:d4cb:b0:240:2bc6:8ac4 with SMTP id
+ d9443c01a7336-24246f2d8a6mr43575605ad.1.1754243262965; Sun, 03 Aug 2025
+ 10:47:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,9 +77,9 @@ MIME-Version: 1.0
 References: <CA+TpbOLLATyTRtNxVEJ9Dz6=YSZHAyYOrt20TR8AAEfP+qm1Qw@mail.gmail.com>
 In-Reply-To: <CA+TpbOLLATyTRtNxVEJ9Dz6=YSZHAyYOrt20TR8AAEfP+qm1Qw@mail.gmail.com>
 From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Sun, 3 Aug 2025 19:44:44 +0200
-X-Gm-Features: Ac12FXwC0gy_FHaZhZG-_AB243dyP2UM-OWoBYP5q89TpWdAHRh-vduMDQT2fws
-Message-ID: <CANiq72kYBvx9Wb-jEGqfUrpbzy8SQvcbjTmAytHZ=2_qx7c1pA@mail.gmail.com>
+Date: Sun, 3 Aug 2025 19:47:31 +0200
+X-Gm-Features: Ac12FXxvqk2B4RSfsmnYWEzhJE3taK4KOdhlfPJX-EpyQQwslBWDUI4NnxG3LVI
+Message-ID: <CANiq72nuX7_b54yNVC8ksTsxd3baCqGoPFywLBaMsqLdNDYMew@mail.gmail.com>
 Subject: Re: [PATCH] rust: kernel: add missing safety comments
 To: Jinheng LI <ahengljh@gmail.com>
 Cc: ojeda@kernel.org, rust-for-linux@vger.kernel.org, 
@@ -92,47 +92,11 @@ Content-Transfer-Encoding: quoted-printable
 On Sun, Aug 3, 2025 at 7:10=E2=80=AFPM Jinheng LI <ahengljh@gmail.com> wrot=
 e:
 >
-> From 5cba005b59a032fc80f818b393b7e4c36a460710 Mon Sep 17 00:00:00 2001
-> From: Jinheng Li <ahengljh@gmail.com>
-> Date: Mon, 4 Aug 2025 00:56:11 +0800
-> Subject: [PATCH] rust: kernel: add missing safety comments
+> Signed-off-by: Jinheng Li <ahengljh@gmail.com>
 
-This is supposed to be used by e.g. Git `send-email` to craft the
-email, rather than being sent in the body.
+By the way, one more tag:
 
-> Add safety documentation for unsafe functions that were missing proper
-> SAFETY comments. This improves code maintainability and helps
-> developers understand the safety requirements.
->
-> - str.rs: Document safety requirements for as_str_unchecked()
-> - list.rs: Document safety requirements for remove() method
->
-> These functions had TODO markers for safety documentation that are
-> now properly filled in with clear explanations of the invariants
-> and caller responsibilities.
-
-These paragraphs all sound as if we are documenting the safety
-requirements of the outer function. However, `// SAFETY: ...` comments
-are meant to explain how we satisfy the safety requirements of the
-functions etc. used within the `unsafe` block that follows.
-
-Also, to avoid confusion, we normally use the word "documentation" for
-the `///` ones, i.e. things that are meant for users of APIs.
-
-So I think the commit message is a bit confusing.
-
-The contents are also a bit strange, e.g.:
-
-> +        // Since `CStr` is guaranteed to contain no interior null
-> bytes (by its invariants),
-> +        // and we're excluding the trailing null byte via
-> `as_bytes()`, the resulting slice
-> +        // is valid for `from_utf8_unchecked`.
-
-`from_utf8_unchecked`'s requirements are just that "The bytes passed
-in must be valid UTF-8.". Why does the NUL matter here?
-
-Thanks!
+Link: https://github.com/Rust-for-Linux/linux/issues/351
 
 Cheers,
 Miguel
