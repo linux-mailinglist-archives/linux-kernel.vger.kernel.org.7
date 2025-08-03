@@ -1,134 +1,93 @@
-Return-Path: <linux-kernel+bounces-754422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24577B19420
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 15:55:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73022B19424
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:03:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 48B1D1747A4
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 13:55:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EEC71892415
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:03:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6F111EB195;
-	Sun,  3 Aug 2025 13:54:59 +0000 (UTC)
-Received: from relay.hostedemail.com (smtprelay0010.hostedemail.com [216.40.44.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BCEC79F2
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 13:54:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53C5A13D521;
+	Sun,  3 Aug 2025 14:03:16 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E3C02E36FD
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 14:03:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754229299; cv=none; b=E2Jc7r7CxU+5vBKR4TBhnJvbCqDVbSsGyQVS3LZulR1yqrQnFUpOdf53gsVU1eqA1A7C7yVHwsei7oM/100hXzpPtgzXs6lrnOWcxJix5kB8KD9ct36VXEusLwQQFouSQipIeqWDGnPxbtsrHvebCJogE6iH30+FEdETI8U1KJU=
+	t=1754229796; cv=none; b=TMt+YqaqXggClPVhbdLq3GdfqbXQPGKlXk5n64RdRygQrfOMIHO4YGetNLfv6TxgnFOjDm8DhNnrrEk8e4hqfY3CSyB7xAG3h9z6lAuWDpAIEenZS+odXoHIKwmhr1pY7kLiUpAS/2gI6/3QpSjKK28ZmIgPl9E9SLnN8kpDxD4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754229299; c=relaxed/simple;
-	bh=Tf4rvlIVPI8tSe+zIKYlcgGYPdFAFrCuUUjDTzoppoE=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Sgo6Qtb1Zww6VgRnnvgIk1le9I2Xmlo+VQCBiqFxBQSetKtuAtQdX9w+xziPJCSAdKlWwgQKEULPz/RMgZrlLPYlElXQrhvxSobVKLGq2u3NAUAnmlT9bel2AMeFsT+pn0CFtGpoSrSK1F/bTfnZwdktLLfD+7S7nfNbfOKTVrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
-Received: from omf04.hostedemail.com (a10.router.float.18 [10.200.18.1])
-	by unirelay06.hostedemail.com (Postfix) with ESMTP id 8CAF41154D2;
-	Sun,  3 Aug 2025 13:54:48 +0000 (UTC)
-Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf04.hostedemail.com (Postfix) with ESMTPA id DEED420027;
-	Sun,  3 Aug 2025 13:54:46 +0000 (UTC)
-Date: Sun, 3 Aug 2025 09:55:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Subject: [GIT PULL] tracing: Cleanups for v6.17
-Message-ID: <20250803095511.6b59d10b@gandalf.local.home>
-X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754229796; c=relaxed/simple;
+	bh=tmWp+irwjEzca2oPejN1nGBiYMdPAZU4tSUzg1WZ3DA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pqGJe0lWA7fagGQNqfsBYCCpSKgXlYKgpzBV7NbaQ9PUqzECxrjh+cEjEtcQOotmmU90/UWSaFnfdjSvt3KklR5wN8YhpSOnc7/CYAh8yDaRd/mN60xo/bjcsbucIrTHVRQdwlgq2sAvk9lH4AZ42xr+tSISoNr+fA1foaQTqaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 2BDFB150C;
+	Sun,  3 Aug 2025 07:03:04 -0700 (PDT)
+Received: from [10.163.64.130] (unknown [10.163.64.130])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 190E63F5A1;
+	Sun,  3 Aug 2025 07:03:07 -0700 (PDT)
+Message-ID: <d72b7928-8646-4616-a8f0-96b9d9bbaf09@arm.com>
+Date: Sun, 3 Aug 2025 19:33:04 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: arm64: ptdump: Fix exec attribute printing
+To: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>,
+ linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+Cc: Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
+ Joey Gouly <joey.gouly@arm.com>, Sebastian Ene <sebastianene@google.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+References: <20250802104021.3076621-1-r09922117@csie.ntu.edu.tw>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <20250802104021.3076621-1-r09922117@csie.ntu.edu.tw>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-Stat-Signature: muhkabjw3sqode4c3kx6ahqdus8q7zzj
-X-Rspamd-Server: rspamout05
-X-Rspamd-Queue-Id: DEED420027
-X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
-X-Session-ID: U2FsdGVkX1/t+aNbi6fBFLVogyYST2vbGgfDvz0hwOc=
-X-HE-Tag: 1754229286-592368
-X-HE-Meta: U2FsdGVkX1/6q9nM7k5qqkNMLhSx6hQ/0kg8344yF/HqBwsE/hcoNt2qq0VokCYMZ8yNQwJd4qAVN0wt/BOsFNUtsA5YBHfJHrdrDlNDi9Hu2SvtYspTjaOmDo8gTfm5fofUrP+R4JxBjS7ZTXLPkI2K28rknIYPTGLaZbQGkQ+c4eXXANGMLg5oiYWB2q2HkwAjt9HtePFQjHeNdcgB2+gQ5K4al71fue//95s5yRpS075EwxRFDUc92YFjNS47L8DbtDnS3H1mK66DOgl72TBxy3LznPV+cApC41486LoHjVFc6LxPVs6rYaHoVqV/h2GkYx2Muel4Bb3xRbN7ePlMeSpzu2hd
 
 
 
-Linus,
+On 02/08/25 4:10 PM, Wei-Lin Chang wrote:
+> Currently the guest stage-2 page table dump has the executable attribute
+> printed in reverse, showing "X" for a non-executable region and showing
+> " " for an executable one. This is caused by misjudgement of which
+> string gets printed for the executable and non-executable case. Fix it
+> by swapping the two strings.
+> 
+> Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+> ---
+>  arch/arm64/kvm/ptdump.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+> index 098416d7e5c25..99fc13f1c11fb 100644
+> --- a/arch/arm64/kvm/ptdump.c
+> +++ b/arch/arm64/kvm/ptdump.c
+> @@ -44,8 +44,8 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
+>  	}, {
+>  		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+>  		.val	= PTE_VALID,
+> -		.set	= " ",
+> -		.clear	= "X",
+> +		.set	= "X",
+> +		.clear	= " ",
+>  	}, {
+>  		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+>  		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
 
-tracing cleanups for v6.17:
-
-- Remove unneeded goto out statements
-
-  Over time, the logic was restructured but left a "goto out" where the
-  out label simply did a "return ret;". Instead of jumping to this out
-  label, simply return immediately and remove the out label.
-
-- Add guard(ring_buffer_nest)
-
-  Some calls to the tracing ring buffer can happen when the ring buffer is
-  already being written to at the same context (for example, a
-  trace_printk() in between a ring_buffer_lock_reserve() and a
-  ring_buffer_unlock_commit()).
-
-  In order to not trigger the recursion detection, these functions use
-  ring_buffer_nest_start() and ring_buffer_nest_end(). Create a guard() for
-  these functions so that their use cases can be simplified and not need to
-  use goto for the release.
-
-- Clean up the tracing code with guard() and __free() logic
-
-  There were several locations that were prime candidates for using guard()
-  and __free() helpers. Switch them over to use them.
-
-- Fix output of function argument traces for unsigned int values
-
-  The function tracer with "func-args" option set will record up to 6 argument
-  registers and then use BTF to format them for human consumption when the
-  trace file is read. There's several arguments that are "unsigned long" and
-  even "unsigned int" that are either and address or a mask. It is easier to
-  understand if they were printed using hexadecimal instead of decimal.
-  The old method just printed all non-pointer values as signed integers,
-  which made it even worse for unsigned integers.
-
-  For instance, instead of:
-
-    __local_bh_disable_ip(ip=-2127311112, cnt=256) <-handle_softirqs
-
-  Show:
-
-   __local_bh_disable_ip(ip=0xffffffff8133cef8, cnt=0x100) <-handle_softirqs
-
-
-Please pull the latest trace-v6.17-2 tree, which can be found at:
-
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/trace/linux-trace.git
-trace-v6.17-2
-
-Tag SHA1: 9b49d74f0b5ded00a817117fcd389b253a94577f
-Head SHA1: 3ca824369b71d4b441e1fdcdee8e66bcb05510a9
-
-
-Steven Rostedt (6):
-      tracing: Remove unneeded goto out logic
-      tracing: Add guard(ring_buffer_nest)
-      tracing: Add guard() around locks and mutexes in trace.c
-      tracing: Use __free(kfree) in trace.c to remove gotos
-      ring-buffer: Convert ring_buffer_write() to use guard(preempt_notrace)
-      tracing: Have unsigned int function args displayed as hexadecimal
-
-----
- include/linux/ring_buffer.h       |   3 +
- kernel/trace/ring_buffer.c        |  16 +--
- kernel/trace/trace.c              | 287 ++++++++++++++------------------------
- kernel/trace/trace_events_synth.c |   6 +-
- kernel/trace/trace_output.c       |   8 +-
- 5 files changed, 120 insertions(+), 200 deletions(-)
----------------------------
+Is not KVM_PTE_LEAF_ATTR_HI_S2_XN already in the reverse semantics aka
+XN (Execute Never). Hence when KVM_PTE_LEAF_ATTR_HI_S2_XN macro is set
+that means the entry is not executable and vice versa.
 
