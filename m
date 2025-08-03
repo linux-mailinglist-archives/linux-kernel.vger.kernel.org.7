@@ -1,120 +1,135 @@
-Return-Path: <linux-kernel+bounces-754437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38B6DB19448
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:53:43 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F3C4B1944A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 17:05:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D267E18952EF
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:54:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 34A163A5468
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 15:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE5E263F5F;
-	Sun,  3 Aug 2025 14:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A21EF264A97;
+	Sun,  3 Aug 2025 15:05:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YP86U9vo"
-Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="T8psHE8Q"
+Received: from mout.web.de (mout.web.de [212.227.15.14])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2E8139D0A
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 14:53:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD44D2135D1;
+	Sun,  3 Aug 2025 15:05:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754232816; cv=none; b=DvcRl0QsRdtg+D6kITzJMeLy+MIQRIGtfNAQ4e8IssHdQswvYAND3w+3e5JiXBs/oLLRKRN9RkijPxfE2gXXFZcdRxmIe7UO+XiLPN2H74XxJazYnamxUyaRp7ia/wUPwuiKQNMPkJUu7iKMYD16IGhd24YaYK+QKf9Z/vDhPHc=
+	t=1754233508; cv=none; b=aFcKAqgz0kAnhi19thfn73zljFfMdWCWtq3nqOdQtLPWUmE3BSZ9m7jYKO02JAsF/bQHLNrU4S/78ov/rrlW++yq5GiVF8nCGOaVCiRkVa3plNZq+6YrIA7MmQCYMXwwqwB4W/d4ue5k1D9lYFKskteEnJdE6++uEYWXF7D0hgw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754232816; c=relaxed/simple;
-	bh=8LwxGs95ejTe7aecFJ9nEj38WiF6hQPSPReL5hDVI5c=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ZyBUFLQ/Y5WbY/0D/y6B/nSOUTiifO32dMx4u8g730diMtm5eIGFQlXZ59Qtn8kaLqg8e5Ixke21GNT/EyGT5RD8VewSAvyJJ6AjGYz/Sn+I4dF+N0m1+Jo3peeccbK0XaofNt4VHhCiX6+qUhGADir5kZdQWmgYU8k3JgO+Ozo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YP86U9vo; arc=none smtp.client-ip=209.85.215.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b3be5c0eb99so2542169a12.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 07:53:35 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754232814; x=1754837614; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=65e6t/SjYYD4CDwos6zfiw9BrumFhwHDyV3mHwUX8zs=;
-        b=YP86U9voWxW799g8sjGNf6vNqCstiTNDZbfccO8EZG1VJtcn9SxKTAWItMujRluOaI
-         gifsaxdu71dTSqZsyyREfP0vaxArrQQRZL4hw99TeWfltcTvWwFqtYDn6XC2KWx5E32B
-         5SWZVgtRWBO8zek1oteMZbNyNxQ3llRfgFT4vhJn/pvOay5lHYNkeMlPmYzQrU4hfQZ4
-         wanorQgpD/aMnELqoXyo+1OealbMiNwm7/CXlmP5hvYcp6VhE+SCozvMQ2/owZUqoyfq
-         I2tck1Hfzz3xrDWUMvaBGxhBw6usaql1KiBXbjSJGweA7daLQAy70o6hpsB+kKYUwlx0
-         9iLg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754232814; x=1754837614;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=65e6t/SjYYD4CDwos6zfiw9BrumFhwHDyV3mHwUX8zs=;
-        b=l6ddhvHd4hztNLJMX1xRyEXlcMQ7N++AK/LDTRmX8f4cTUcob0meVCMc8IgcsZbaZS
-         QqMXskI/2Vk5B9EentvtOxPwTfxJx8nu6QwbCT1ExcaonTslqUTqlIJNGr2k3bLIg8RZ
-         f/BUaIibBo5EbMGSkM0Ga9y/Kc6pxNjki+OTjITC9tRez/6z2L+ZotrL2qVJUDfpdht4
-         +YfNllTKkrdqBnS+u6xSVgeoMG3JrVjqbUPWvYren4da+4HOpagGMgXPFEfwfNrno9Mw
-         FjZChb8YAinqQjbDnzVkach0hz80SZz9MEeWfBlFP8S3rJLFyvH3W3XJSt3dxAauEFiU
-         Ypyg==
-X-Gm-Message-State: AOJu0YwAC9wS0Z0qNbdk563fUXkSxsHAf+3muR/+69ZvnBExzHBtVLlK
-	o+hgdbZWYOlWQJztjloGVGbTVWVtSqNLGBv7C8tx5QN+ujPHfRlpJ+O5so+wpao=
-X-Gm-Gg: ASbGncs28sqmBWsO9kWKxNuEpMKIIy5FZOQv8nlPbmSioxhHObnjbAzF0ulV0svolyg
-	v/HMj2wv9rR74Pkq8o9jQRCYB4vI9qUOo8EEd1Bb0rIU9KnGc+j823RGezHDVNSlHssuuD96s1j
-	L/5DxfCVvnbj4Nxp0BBmllxHNUcUGLGX/bQRfsPbK28n7Oa/W5Eu/ZClRH6BZx0OVovEoVFVUN6
-	OaH++WvIdsMIpAkuvfyX5rssSPtas6GKwSeWJTLH58iZaG3ZEZOYumBQ5l8tpXh23eHl9+eEfny
-	TIcLtpsRf+qn132F/5W5SgbYPkDLo0aVh2+C0pkS/9lwuAdC7L4JmNiU2CMqgaayQaUgJSvDXMy
-	ogZPfjrta0WqvcJwVF770uIZfQOH+xaLlOxOHWAA=
-X-Google-Smtp-Source: AGHT+IFQb9larIFLk6+H90OqacBuWDy0Jctt44C7ca3zqUgTd+KOFZ7uQX9hZmLd2WirXo4NUnVniA==
-X-Received: by 2002:a17:903:234c:b0:240:7f7d:2b74 with SMTP id d9443c01a7336-24246fcb700mr80066095ad.30.1754232814139;
-        Sun, 03 Aug 2025 07:53:34 -0700 (PDT)
-Received: from VSPRIME.. ([106.220.185.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977896sm88475825ad.79.2025.08.03.07.53.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 07:53:33 -0700 (PDT)
-From: vsshingne <vaibhavshingne66@gmail.com>
-To: linux-kernel@vger.kernel.org
-Cc: vsshingne <vaibhavshigne66@gmail.com>
-Subject: [PATCH 2/2] docs: drm/amd/display: Document 'mcm' and 'rmcm' in mpc_funcs struct
-Date: Sun,  3 Aug 2025 20:21:13 +0530
-Message-ID: <20250803145113.7149-3-vaibhavshingne66@gmail.com>
-X-Mailer: git-send-email 2.48.1
-In-Reply-To: <20250803145113.7149-1-vaibhavshingne66@gmail.com>
-References: <20250803145113.7149-1-vaibhavshingne66@gmail.com>
+	s=arc-20240116; t=1754233508; c=relaxed/simple;
+	bh=OH6YF8FiXmSYhvu7EJplLSIouAgtZdbCXGQqbyIxTM8=;
+	h=Message-ID:Date:MIME-Version:To:Cc:References:Subject:From:
+	 In-Reply-To:Content-Type; b=QXy2aO205ggxqlnt9l1dklfB4Kgqi17MAUj5zxHfOn0+vUEUURzDK8pBzuMrIoIHnnMCkiKe6iPWgWA8dJroIb8By4rqulfSqo59rnCyQMvvIILTKsPbde2xK+h0C/ns2NOr6iQFE2K10RaeXEyKeVRXRJCpa5auvpby9GCecVA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=T8psHE8Q; arc=none smtp.client-ip=212.227.15.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1754233497; x=1754838297; i=markus.elfring@web.de;
+	bh=/Kvbyo/sy5tf7ikvUPDsD/waiKMUGdAohotFADXAbEU=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:To:Cc:References:
+	 Subject:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:
+	 cc:content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=T8psHE8Q5yOJkQv/609Mzaatkb0qyW58foGRUD2txDlgd4FroP+3Nb0hGpJYPouf
+	 YLA/XDDpbqcQ//ZahNgmVjM9XkrAUJgeHYdk/nxRMEOxfaS21xFXHB50GQPrNyY17
+	 ma9uOtcB1QhecS8DA1/or9sBZy0daIHeg92YSpPr/Q4dVNzRuWSdcoxOPnSXxj+/Z
+	 Ir3dtNpQz326PBwIhfp9581xAyvUOaB19Urva8Y/cbdzJK5N6sDpCEgAaETaOkHMp
+	 10P+WoWo1FzowNOWwNLqwMAHNs7mr5a+XV41Kv5jfUlenyjLHNClattyevEoZpwfK
+	 JcC7VWsSSJdnsxuZrg==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.29] ([94.31.69.186]) by smtp.web.de (mrweb005
+ [213.165.67.108]) with ESMTPSA (Nemesis) id 1MT7aV-1v4kWk2CcR-00NcaC; Sun, 03
+ Aug 2025 17:04:57 +0200
+Message-ID: <4d23e99a-5795-4d1e-97eb-3b49e0a88970@web.de>
+Date: Sun, 3 Aug 2025 17:04:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+To: Elad Nachman <enachman@marvell.com>, linux-i2c@vger.kernel.org
+Cc: LKML <linux-kernel@vger.kernel.org>, Andi Shyti <andi.shyti@kernel.org>,
+ Gregory Clement <gregory.clement@bootlin.com>
+References: <20250803101507.659984-1-enachman@marvell.com>
+Subject: Re: [PATCH v2 0/1] i2c: mv64xxx: prevent illegal pointer access
+Content-Language: en-GB, de-DE
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <20250803101507.659984-1-enachman@marvell.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:Yg0c7TTyZYEbHnqEW5eOTmEZf+fXVeW9ooehmpOcPhADeRihZDK
+ r+q5Hby/1YajSXU1VsD4mVOYIQgSpkJbZawyFelySMLkOGaRIl/2NZ0/x5JTHcICfBys3p0
+ PyYq/tu5NISPu1S2cuA6SJjZvI8qWfKKoiAu7tayolB+rwqYfPeQuycmnBzMTpXLE1Iapqb
+ qJR+aEuFYJpNVQ4TaQ3fA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:T9AD6RvMmOk=;a2Y1UWdPC/E8zZBJsxJpVCjTUFD
+ 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
 
-From: vsshingne <vaibhavshigne66@gmail.com>
+=E2=80=A6
+> v2:
+>   1) rewrap commit message
+=E2=80=A6
 
-Fixes kernel-doc warnings by adding descriptions for the 'mcm' and 'rmcm'
-members of the 'struct mpc_funcs' in mpc.h. These members were previously
-undocumented, leading to Sphinx build warnings.
+You may omit a cover letter for a single patch,
+don't you?
 
-No functional changes; documentation only.
-
-Signed-off-by: vsshingne <vaibhavshigne66@gmail.com>
----
- drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h | 2 ++
- 1 file changed, 2 insertions(+)
-
-diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-index 6e303b81bfb0..d941aff89645 100644
---- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-+++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
-@@ -305,6 +305,8 @@ struct mpcc_state {
- 
- /**
-  * struct mpc_funcs - funcs
-+ * @mcm: Set of function pointers for programming MPC memory color module (3D LUTs, bias, bit depth, etc.)
-+ * @rmcm: Extended set of function pointers for redundant MPC memory color module (includes power and fast-load)
-  */
- struct mpc_funcs {
- 	/**
--- 
-2.48.1
-
+Regards,
+Markus
 
