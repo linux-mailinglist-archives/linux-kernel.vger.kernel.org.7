@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-754436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15316B19447
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:51:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38B6DB19448
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 16:53:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 49CB07AB1F5
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:50:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D267E18952EF
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:54:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 523C8265CBE;
-	Sun,  3 Aug 2025 14:51:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE5E263F5F;
+	Sun,  3 Aug 2025 14:53:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iFaC6D/R"
-Received: from mail-pl1-f178.google.com (mail-pl1-f178.google.com [209.85.214.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YP86U9vo"
+Received: from mail-pg1-f174.google.com (mail-pg1-f174.google.com [209.85.215.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFED156677
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 14:51:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E2E8139D0A
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 14:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754232695; cv=none; b=Qsz/ZzVXivZz29DEppIq3+GD12NPq4v4TuvolUiPNUC+VNJkotb1L4s+c8viYhyXZ7iZSnMT0o1IOi0IZpQuqfeeMw19bMHPrW0n4mw5NCJJymGXTx5XlDbvkglLLZ7hAjD5/C4DDaCDN/MWUqEvfwDvIv3cxqHPtyBWneHA06c=
+	t=1754232816; cv=none; b=DvcRl0QsRdtg+D6kITzJMeLy+MIQRIGtfNAQ4e8IssHdQswvYAND3w+3e5JiXBs/oLLRKRN9RkijPxfE2gXXFZcdRxmIe7UO+XiLPN2H74XxJazYnamxUyaRp7ia/wUPwuiKQNMPkJUu7iKMYD16IGhd24YaYK+QKf9Z/vDhPHc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754232695; c=relaxed/simple;
-	bh=R3jpjmKrJbQirI+2K5k/ptOXV20RY1coOunZ5bldD4g=;
+	s=arc-20240116; t=1754232816; c=relaxed/simple;
+	bh=8LwxGs95ejTe7aecFJ9nEj38WiF6hQPSPReL5hDVI5c=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=I+1zeRcEFa6ETuMeCUu2NBx8O7WCHCtu85XJFRATrR6w8ADnihkPrIXVYxipXR04NhwjDGnoQcbafIb8N1Lq9KBCo4hUJEQjD0Ntwb3tBhv0liuXop+FrecgVvQu5zCHUEeefYQ9mY8brkoNyXTp5RtvgssCP3yHSRI91KCbdpg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iFaC6D/R; arc=none smtp.client-ip=209.85.214.178
+	 MIME-Version; b=ZyBUFLQ/Y5WbY/0D/y6B/nSOUTiifO32dMx4u8g730diMtm5eIGFQlXZ59Qtn8kaLqg8e5Ixke21GNT/EyGT5RD8VewSAvyJJ6AjGYz/Sn+I4dF+N0m1+Jo3peeccbK0XaofNt4VHhCiX6+qUhGADir5kZdQWmgYU8k3JgO+Ozo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YP86U9vo; arc=none smtp.client-ip=209.85.215.174
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f178.google.com with SMTP id d9443c01a7336-23c8f179e1bso29092925ad.1
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 07:51:34 -0700 (PDT)
+Received: by mail-pg1-f174.google.com with SMTP id 41be03b00d2f7-b3be5c0eb99so2542169a12.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 07:53:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754232693; x=1754837493; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1754232814; x=1754837614; darn=vger.kernel.org;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=6Vkkz14oBDajFCh+KZnGbaaU8Qt9SjhfOB4COwpfGi4=;
-        b=iFaC6D/RJ/xrGFaYzfOmtiYEiOfzAXPt7R2IXuvPyAQLzWTuXb0u9xe0A7z3HJwttv
-         B65SKpz37lV/VrJuiDboBblD/s7IqRsx3k1uQKQIdFJHWuq2TGZRWtEL5M6xnsIXBE4c
-         r2pMetL9eM44ZgZWXQlYiReLnIALJHaJXXnqBPp20TT5Y7d5zDuoStC8/TqM8fczA7q9
-         /Lp5y4WjobeF/MWiPmFsvwhCDe2Kp4zjOWjqP9tWw6odYgg7wlH723Lz1+k0RCPeUW23
-         PApklNe0Gv8ezgL9aTUZw25BhIt1txcG45qfwMtfpvXVethGHyTWpJVcKX/Q9LUP9NsJ
-         wu3w==
+        bh=65e6t/SjYYD4CDwos6zfiw9BrumFhwHDyV3mHwUX8zs=;
+        b=YP86U9voWxW799g8sjGNf6vNqCstiTNDZbfccO8EZG1VJtcn9SxKTAWItMujRluOaI
+         gifsaxdu71dTSqZsyyREfP0vaxArrQQRZL4hw99TeWfltcTvWwFqtYDn6XC2KWx5E32B
+         5SWZVgtRWBO8zek1oteMZbNyNxQ3llRfgFT4vhJn/pvOay5lHYNkeMlPmYzQrU4hfQZ4
+         wanorQgpD/aMnELqoXyo+1OealbMiNwm7/CXlmP5hvYcp6VhE+SCozvMQ2/owZUqoyfq
+         I2tck1Hfzz3xrDWUMvaBGxhBw6usaql1KiBXbjSJGweA7daLQAy70o6hpsB+kKYUwlx0
+         9iLg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754232693; x=1754837493;
+        d=1e100.net; s=20230601; t=1754232814; x=1754837614;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6Vkkz14oBDajFCh+KZnGbaaU8Qt9SjhfOB4COwpfGi4=;
-        b=q31IYmXSmssf/cSzZ4lUVDVlhUJ6Q0U7zBlvDc1XVCjN+OP+ph3aGAYvi82KpaVj2d
-         FAmjPFR8h0LvV+QCN16+J6q96RijtiF62UOYBt78BKW+6PT9ibvx6woY8u3oohCYZNvC
-         UMyfOxOtpL2D47REsnPgL0nks2T7JaQLLGhdYgeWL/v7Vbu3uHO8s1z+yZNwI0nVc+FI
-         HOiH5F3NjHAycDiUOKceR509At/UkHJefEmnrMh5YdMF5Vm+XmvgnVY7D1xZnBf+afOy
-         JuZhFPX39WA2INR2ta9yUSYQq0ucgz6+WsNQnEDeMHqPUwErV7tOsK41Styeg0mnxizS
-         J3EA==
-X-Gm-Message-State: AOJu0YwVIGb+23cWjtN2Wb6xLedPap13vpeRcWFcnBf9m8PY/oUd4wRY
-	KpGW2B2EkU74F03pd9FKqiW8ViotH8fEU0MML7tS9DYdi+5H4PPNYdmj+aNGnOU=
-X-Gm-Gg: ASbGncvJ9HY1cYMMzL+Ii9aNgz3OqiTwGHu5LNlHsd8RBk+DsWaGSZrfatUcnVv0TMU
-	Ur2FORQEn2YsuECglIdlrvffBxDumD6KUkAVo9xIYvr0r30+BGA0nCy6W0iIkBHhZkVzb/Lg1Vr
-	IfzQbGjWA7VwWxZro0Gd43p4Wh0cXPJvrgbpZepYWS3Cj94YCwXhvvCpYyLIAE2RTIGDXC6oj2e
-	IpVygsvhWVFPaBfZl0mHg/N18ZltzfRl+Gc/CDOMwEBEEh8JF6e+zeNBYKrGYDfrR/nrj2mcmHd
-	s3fyA9jDwdRu7zD/+rDWUomrTYn/m5GjAesGwtBOUJlWnABZOjdmk5WdmiLtut1C8NWZWkSg9ul
-	69kDEidxFbSDyz7TNczgqN8fomyr8vNzVgokKA2I=
-X-Google-Smtp-Source: AGHT+IHaACvLIJbhyrNkE1Xr1pnl80KhAoISJ1CmCby1eqnice4TBxjONpHeIDTUY5UhfvxMryX8Tw==
-X-Received: by 2002:a17:903:2d1:b0:240:8cda:9ca1 with SMTP id d9443c01a7336-24247059772mr73691585ad.50.1754232693079;
-        Sun, 03 Aug 2025 07:51:33 -0700 (PDT)
+        bh=65e6t/SjYYD4CDwos6zfiw9BrumFhwHDyV3mHwUX8zs=;
+        b=l6ddhvHd4hztNLJMX1xRyEXlcMQ7N++AK/LDTRmX8f4cTUcob0meVCMc8IgcsZbaZS
+         QqMXskI/2Vk5B9EentvtOxPwTfxJx8nu6QwbCT1ExcaonTslqUTqlIJNGr2k3bLIg8RZ
+         f/BUaIibBo5EbMGSkM0Ga9y/Kc6pxNjki+OTjITC9tRez/6z2L+ZotrL2qVJUDfpdht4
+         +YfNllTKkrdqBnS+u6xSVgeoMG3JrVjqbUPWvYren4da+4HOpagGMgXPFEfwfNrno9Mw
+         FjZChb8YAinqQjbDnzVkach0hz80SZz9MEeWfBlFP8S3rJLFyvH3W3XJSt3dxAauEFiU
+         Ypyg==
+X-Gm-Message-State: AOJu0YwAC9wS0Z0qNbdk563fUXkSxsHAf+3muR/+69ZvnBExzHBtVLlK
+	o+hgdbZWYOlWQJztjloGVGbTVWVtSqNLGBv7C8tx5QN+ujPHfRlpJ+O5so+wpao=
+X-Gm-Gg: ASbGncs28sqmBWsO9kWKxNuEpMKIIy5FZOQv8nlPbmSioxhHObnjbAzF0ulV0svolyg
+	v/HMj2wv9rR74Pkq8o9jQRCYB4vI9qUOo8EEd1Bb0rIU9KnGc+j823RGezHDVNSlHssuuD96s1j
+	L/5DxfCVvnbj4Nxp0BBmllxHNUcUGLGX/bQRfsPbK28n7Oa/W5Eu/ZClRH6BZx0OVovEoVFVUN6
+	OaH++WvIdsMIpAkuvfyX5rssSPtas6GKwSeWJTLH58iZaG3ZEZOYumBQ5l8tpXh23eHl9+eEfny
+	TIcLtpsRf+qn132F/5W5SgbYPkDLo0aVh2+C0pkS/9lwuAdC7L4JmNiU2CMqgaayQaUgJSvDXMy
+	ogZPfjrta0WqvcJwVF770uIZfQOH+xaLlOxOHWAA=
+X-Google-Smtp-Source: AGHT+IFQb9larIFLk6+H90OqacBuWDy0Jctt44C7ca3zqUgTd+KOFZ7uQX9hZmLd2WirXo4NUnVniA==
+X-Received: by 2002:a17:903:234c:b0:240:7f7d:2b74 with SMTP id d9443c01a7336-24246fcb700mr80066095ad.30.1754232814139;
+        Sun, 03 Aug 2025 07:53:34 -0700 (PDT)
 Received: from VSPRIME.. ([106.220.185.138])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977896sm88475825ad.79.2025.08.03.07.51.31
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8977896sm88475825ad.79.2025.08.03.07.53.32
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 07:51:32 -0700 (PDT)
+        Sun, 03 Aug 2025 07:53:33 -0700 (PDT)
 From: vsshingne <vaibhavshingne66@gmail.com>
 To: linux-kernel@vger.kernel.org
 Cc: vsshingne <vaibhavshigne66@gmail.com>
-Subject: [PATCH 1/2] docs: powerpc: Add htm.rst to the toctree
-Date: Sun,  3 Aug 2025 20:21:12 +0530
-Message-ID: <20250803145113.7149-2-vaibhavshingne66@gmail.com>
+Subject: [PATCH 2/2] docs: drm/amd/display: Document 'mcm' and 'rmcm' in mpc_funcs struct
+Date: Sun,  3 Aug 2025 20:21:13 +0530
+Message-ID: <20250803145113.7149-3-vaibhavshingne66@gmail.com>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250803145113.7149-1-vaibhavshingne66@gmail.com>
 References: <20250803145113.7149-1-vaibhavshingne66@gmail.com>
@@ -90,40 +90,30 @@ Content-Transfer-Encoding: 8bit
 
 From: vsshingne <vaibhavshigne66@gmail.com>
 
+Fixes kernel-doc warnings by adding descriptions for the 'mcm' and 'rmcm'
+members of the 'struct mpc_funcs' in mpc.h. These members were previously
+undocumented, leading to Sphinx build warnings.
+
+No functional changes; documentation only.
+
 Signed-off-by: vsshingne <vaibhavshigne66@gmail.com>
 ---
- Documentation/arch/powerpc/index.rst | 1 +
- Documentation/virt/kvm/api.rst       | 5 +++--
- 2 files changed, 4 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h | 2 ++
+ 1 file changed, 2 insertions(+)
 
-diff --git a/Documentation/arch/powerpc/index.rst b/Documentation/arch/powerpc/index.rst
-index 0560cbae5fa1..173a787b6cc3 100644
---- a/Documentation/arch/powerpc/index.rst
-+++ b/Documentation/arch/powerpc/index.rst
-@@ -36,6 +36,7 @@ powerpc
-     vas-api
-     vcpudispatch_stats
-     vmemmap_dedup
-+    htm
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+index 6e303b81bfb0..d941aff89645 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/mpc.h
+@@ -305,6 +305,8 @@ struct mpcc_state {
  
-     features
- 
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 43ed57e048a8..41e1a72bd593 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -7230,8 +7230,9 @@ inputs and outputs of the TDVMCALL.  Currently the following values of
-    placed in fields from ``r11`` to ``r14`` of the ``get_tdvmcall_info``
-    field of the union.
- 
--* ``TDVMCALL_SETUP_EVENT_NOTIFY_INTERRUPT``: the guest has requested to
--set up a notification interrupt for vector ``vector``.
-+ * ``TDVMCALL_SETUP_EVENT_NOTIFY_INTERRUPT``: the guest has requested to
-+   set up a notification interrupt for vector ``vector``.
-+
- 
- KVM may add support for more values in the future that may cause a userspace
- exit, even without calls to ``KVM_ENABLE_CAP`` or similar.  In this case,
+ /**
+  * struct mpc_funcs - funcs
++ * @mcm: Set of function pointers for programming MPC memory color module (3D LUTs, bias, bit depth, etc.)
++ * @rmcm: Extended set of function pointers for redundant MPC memory color module (includes power and fast-load)
+  */
+ struct mpc_funcs {
+ 	/**
 -- 
 2.48.1
 
