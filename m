@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-754414-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754415-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC6BAB19407
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:20:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A7CC4B19408
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 14:21:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1878B3B8A26
-	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:20:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01EB73B8B6A
+	for <lists+linux-kernel@lfdr.de>; Sun,  3 Aug 2025 12:21:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDEFD265CBE;
-	Sun,  3 Aug 2025 12:20:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B88A26A087;
+	Sun,  3 Aug 2025 12:20:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="kxWMbMr4";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="NOsdxfbR"
-Received: from fhigh-b3-smtp.messagingengine.com (fhigh-b3-smtp.messagingengine.com [202.12.124.154])
+	dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b="SXZBtoE2";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="nc665JG+"
+Received: from fout-b6-smtp.messagingengine.com (fout-b6-smtp.messagingengine.com [202.12.124.149])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3353A25EFB6
-	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 12:20:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.154
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8896E2641C6
+	for <linux-kernel@vger.kernel.org>; Sun,  3 Aug 2025 12:20:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.149
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754223628; cv=none; b=TDY5cm597GHGENeV2HG96aSD96RY+nL3SslGP32CxZcOs0buezeIIeJAJ+liAXo5l99jciaDF+oFPQ77kqsCdFjmt3YuuI+Qxrl87bFvk1zfMO6LRWxrUgGjirdwPpGJvmdhhBtJ1hF/2Frj3HfIDdgy5oD23fZmSkiiFPwjE7k=
+	t=1754223629; cv=none; b=eKo1ozhXFgnLdRIXrn6VjmnOUjtRdvDjsMFY+ldOFz/0vHgWmgpWX5dm8IHMBdU7LgSic0DZq7f/uIIyjrZWnoI7QezPhOIA1IMzm4aY1o8UH7DYUKKo1Ipfl3t/AXYEYCu2WMpqppo+J/EyDuuO1h4M8rKgq7fwKPRhqmWzavY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754223628; c=relaxed/simple;
-	bh=N5GNr3BSkDRhNbjGVD7LY6BlO/NfsKqkpiVTw1h9o5c=;
+	s=arc-20240116; t=1754223629; c=relaxed/simple;
+	bh=4Mjl2grO/2bl1y5sh2vtEhDDO1Bj2z8wDS98ah5dKCo=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=uXtkZYlmQIWYSZn6z0Ug1R60RbXmr5KCvaM8AJh4JjwNNT4Wdq+SxYULFN2n3kINUaF/qqL+n/Ql01yl/yoquSmgi6tNBe7CkH/8jDkZ9kAqb1lHwzo+SJzo2QdFlY4x6obn2pWO1jhbTw6fTOuK2x2KWpHNdtCE9rZ72Hd2fyY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=kxWMbMr4; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=NOsdxfbR; arc=none smtp.client-ip=202.12.124.154
+	 MIME-Version; b=BUFdS5RRNCXb4VkS8gPzQZnXSPxk2r4WBPYho5/RnNvXepk3+1J26yhjmXkQNEngAvqPOBZcpNEyRY7x/MzLWPsGJUrfncauTyJBMKkuq4duofre9zI8rT1HpX7s5/2jGx/i+jy/tZYhzpzec50wyFWZSTKLEHAt+NG3jy0mrEs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp; spf=pass smtp.mailfrom=sakamocchi.jp; dkim=pass (2048-bit key) header.d=sakamocchi.jp header.i=@sakamocchi.jp header.b=SXZBtoE2; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=nc665JG+; arc=none smtp.client-ip=202.12.124.149
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sakamocchi.jp
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sakamocchi.jp
-Received: from phl-compute-06.internal (phl-compute-06.phl.internal [10.202.2.46])
-	by mailfhigh.stl.internal (Postfix) with ESMTP id 2DEE27A0065;
-	Sun,  3 Aug 2025 08:20:25 -0400 (EDT)
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfout.stl.internal (Postfix) with ESMTP id C70DD1D00051;
+	Sun,  3 Aug 2025 08:20:26 -0400 (EDT)
 Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-06.internal (MEProxy); Sun, 03 Aug 2025 08:20:25 -0400
+  by phl-compute-05.internal (MEProxy); Sun, 03 Aug 2025 08:20:26 -0400
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=sakamocchi.jp;
 	 h=cc:cc:content-transfer-encoding:content-type:date:date:from
 	:from:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm3; t=1754223625; x=
-	1754310025; bh=pp+pwOmICXcqQR9UclsW6KRuxHBE1pvoqo0FGtllvWg=; b=k
-	xWMbMr4WmqTmxbR+Qjd0fPSNzL52yXGFwkcd09RULOkrxFycZ/8mUvODcrEAiCHu
-	W7rNOPR4dLDiHPe3TBMBXmSJCcxhIExTzY9PN7X0Sq/Lnn3EINZ4t71w+2UfJ4qs
-	i123x1i3nG7liUbwzqBZvi2RcgTYnOlvIBovcZwUkehgKXhysWvPPDWPHtkgME6h
-	ZRdiUm3m/FGa97x4I7P+6T5bXBP8hT+OmuKevP7P3drMss6zZI1mnPyughWwhhrG
-	eBFi1ax5wAAUSUAJEhRmIdm+7YAVz6PVEJtUk5CMZcUkzEuInP/gxbZnAo9F2hEG
-	e5+w1ZvLvfuTAAX1rW2fA==
+	:reply-to:subject:subject:to:to; s=fm3; t=1754223626; x=
+	1754310026; bh=0wTs9lEFAXHwGLgW5F3fT9Ue6CFiDVXylrQSLEDJF5Q=; b=S
+	XZBtoE2P06n5pul5xgkbVgKzh346tEB0dNZwnU2gZXpBM4zKcolo+kAp0fW8rXuC
+	L+iu+wBFYzHxRebM3kEqCa0necdFU6q+X+7uz7kpGR4b9RTkKZeAh14z1BLNNAWa
+	stTacs/tBO1SMRLnYLNyS2RUoVtne7kidDSWqH6yYNGH9syKZF2N+gyGXmunnsac
+	SfFCPUFEEX+BuFn3fhEjFKwv4hsdfbWKrzPuJZRiFELCD0avUP7MkrhJ1VShCi8u
+	9bN/iK38oqs2Nf9fFsUafwKjFiEW52Zyj81Z1pQ0WgXlCcE2RDd2+r0gTwa/Rgz+
+	3B+9xX32pi0LwohDacxZg==
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
 	messagingengine.com; h=cc:cc:content-transfer-encoding
 	:content-type:date:date:feedback-id:feedback-id:from:from
 	:in-reply-to:in-reply-to:message-id:mime-version:references
 	:reply-to:subject:subject:to:to:x-me-proxy:x-me-sender
-	:x-me-sender:x-sasl-enc; s=fm3; t=1754223625; x=1754310025; bh=p
-	p+pwOmICXcqQR9UclsW6KRuxHBE1pvoqo0FGtllvWg=; b=NOsdxfbRuHiHu0Jhp
-	4slm2ARVjwwhDzA/SvZ29z720tH4s7r2uBtawORftzWKlK6NlWfP1cs7muUwRw8I
-	g+4Cf21XyPZoavKqPBgQl08gn2RIyg4hatTFdn2qecNJ6CN9d4Kzzt1fks0g03Zu
-	ZUqyzEq73S4F+AQnWmaYwNAQJquwYjOtYi3XPLLmzLAGfixTPREpISp2K0CyjNLU
-	NG1x41X8+eOuDHrdfRWf3Hnxls5oWJZ3vXWw0LknlBYmje3SBT7GMoEVvBOoqsr9
-	bk+/eGeO2Rw4pNqfX3iMH1YodfU/fi/7uqnapH8/WnWDhjnpnae4rLIHq960K96E
-	W+8aQ==
-X-ME-Sender: <xms:CFSPaIIGGk8Vr-mdxAGp4-ixh_YRItuhDn8UGNDU4x_b5KhMsAZOmg>
-    <xme:CFSPaBEPjLVJjD4xledXkcZq-OW60JTy3obAacgJqj5u4XGk6_Q37NaXwmIdt9Zdj
-    DLR7gpthNE38sshdvI>
-X-ME-Received: <xmr:CFSPaKqbb2FpO3uvQYCoL_D8GsyS5vU9rR0i7qD7xzQv7H7-pfYNL8eUsygcHbBzDAElVeBbbLjwwbKVBbJDSoIm8dQyS_kLX8XMmyzsbEme>
+	:x-me-sender:x-sasl-enc; s=fm3; t=1754223626; x=1754310026; bh=0
+	wTs9lEFAXHwGLgW5F3fT9Ue6CFiDVXylrQSLEDJF5Q=; b=nc665JG+ObNYJmP0m
+	rilqml+2lwXXx0RrPNn/lJZHvWwc6+glGBcnbAJnyPQoSZGCNHV0/dXPmdup/r5W
+	gHKywlzqRMVBq+YyUUSpDN5BjivrFS/i9x+tWlvxITF0ZzkeuFPvzM+yjTI9/3Lc
+	JgBix7SaZXIFgCnuhDCMXd1DQ5Gdr2wlBqtQtMo2QMLFjx0QimvFH/jK+Jl8BJHg
+	s/7OqnUI7BQecrFBANmU9zkjJFKmVEFBELme/I3CBOtZkeBoDLzDX4+ffWHQMXGJ
+	bWaQqr1dMwf7xysmQAVe8NCy1xbZXS/ZaTI2pj6c1qZv/4Mid0iv3AQmm1ZUoM3R
+	ZkVqA==
+X-ME-Sender: <xms:ClSPaMA1EwxBIo4bjo5F1us7Vf9bzdhc5tP6gQqBl_6WgBp8jl1dUw>
+    <xme:ClSPaHfgPl2-OKQ0Pm-g56hsXPfAj8PDtYSTHQQalkeRcRwBrbkdS7S0qReu81Xtm
+    Dj8wmsc-9K_t3I71V8>
+X-ME-Received: <xmr:ClSPaBhovO63JTATgfiNVre6CoB0hH1OeoyDxHIBuxPuFaQv2D26zPArBZ6Ctd8TGzgVlLzdZGtqfWmFwb5mQgqMyfoclXwyDVmxkhL3BK7C>
 X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdelgeegucetufdoteggodetrf
     dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
     rghilhhouhhtmecufedttdenucenucfjughrpefhvfevufffkffojghfggfgsedtkeertd
@@ -75,20 +75,20 @@ X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgddutdelgeegucetufdote
     thdprhgtphhtthhopehlihhnuhigudefleegqdguvghvvghlsehlihhsthhsrdhsohhurh
     gtvghfohhrghgvrdhnvghtpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgv
     rhdrkhgvrhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:CFSPaCS2rIrB9vF3N3I_9FPRTgLdUGFBWO6o_wolfltrbv48MHXEcQ>
-    <xmx:CFSPaPPcLwo9FhqpGeibpyMo5X-vHFhXiHjjx8JZR2zTuPo31sonFg>
-    <xmx:CFSPaNNtZfV2rHNpxAxnQEVI4XQ12tE-OP4653bM4TJgvW5cRUfKwA>
-    <xmx:CFSPaHvYKb7E5u4MJveR-dH2gbRp3VwjdJ4nyYSuz4gRzUnVC6aSnQ>
-    <xmx:CVSPaEODc3-JudJ1hAIjbUO_APDzdAnN0zdUTX_6UVV92hTVmcmSJww2>
+X-ME-Proxy: <xmx:ClSPaPqUco28fRggWyja7YC5xrdHBlZMPaWyi2Uc0RO2crhy4G3LcA>
+    <xmx:ClSPaBEC7P-uYNs1mMolY3ebUPBb3L0ChdfA-8Xf4I-ERvcVXP2NDA>
+    <xmx:ClSPaJkvgtuyWgEcTXvJn4mS6vxkk1sJlvCtI_v9MYfM7yzhaO71rA>
+    <xmx:ClSPaMk9COWv02RwotSiWMs7ZW-hCcVLP7pkIBW7DF20jzSgZVFZGw>
+    <xmx:ClSPaPGWkwb7DpigS2hW7pH_VWKzhcLDXRZxZy8rjQGN5f3HsQgP6BUR>
 Feedback-ID: ie8e14432:Fastmail
 Received: by mail.messagingengine.com (Postfix) with ESMTPA; Sun,
- 3 Aug 2025 08:20:23 -0400 (EDT)
+ 3 Aug 2025 08:20:25 -0400 (EDT)
 From: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 To: linux1394-devel@lists.sourceforge.net
 Cc: linux-kernel@vger.kernel.org
-Subject: [PATCH v2 3/4] firewire: core: call FCP address handlers outside RCU read-side critical section
-Date: Sun,  3 Aug 2025 21:20:14 +0900
-Message-ID: <20250803122015.236493-4-o-takashi@sakamocchi.jp>
+Subject: [PATCH v2 4/4] firewire: core: reallocate buffer for FCP address handlers when more than 4 are registered
+Date: Sun,  3 Aug 2025 21:20:15 +0900
+Message-ID: <20250803122015.236493-5-o-takashi@sakamocchi.jp>
 X-Mailer: git-send-email 2.48.1
 In-Reply-To: <20250803122015.236493-1-o-takashi@sakamocchi.jp>
 References: <20250803122015.236493-1-o-takashi@sakamocchi.jp>
@@ -100,75 +100,82 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The former commit added reference counting to ensure safe invocations of
-address handlers. Unlike the exclusive-region address handlers, all FCP
-address handlers should be called on receiving an FCP request.
+The former commit has a limitation that only up to 4 FCP address
+handlers could be processed per request. Although it suffices for most
+use cases, it is technically a regression.
 
-This commit uses the part of kernel stack to collect address handlers up
-to 4 within the section, then invoke them outside of the section.
-Reference counting ensures that each handler remains valid and safe to
-call.
-
-Lifting the limitation of supporting only 4 handlers is left for future
-work.
+This commit lifts the restriction by reallocating the buffer from kernel
+heap when more than 4 handlers are registered. The allocation is performed
+within RCU read-side critical section, thus it uses GCP_ATOMIC flag. The
+buffer size is rounded up to the next power of two to align with kmalloc
+allocation units.
 
 Signed-off-by: Takashi Sakamoto <o-takashi@sakamocchi.jp>
 ---
- drivers/firewire/core-transaction.c | 25 +++++++++++++++++++------
- 1 file changed, 19 insertions(+), 6 deletions(-)
+ drivers/firewire/core-transaction.c | 36 +++++++++++++++++++++++++----
+ 1 file changed, 32 insertions(+), 4 deletions(-)
 
 diff --git a/drivers/firewire/core-transaction.c b/drivers/firewire/core-transaction.c
-index a742971c65fa..7a62c660e912 100644
+index 7a62c660e912..1d1c2d8f85ae 100644
 --- a/drivers/firewire/core-transaction.c
 +++ b/drivers/firewire/core-transaction.c
-@@ -950,13 +950,17 @@ static void handle_exclusive_region_request(struct fw_card *card,
- 	put_address_handler(handler);
- }
- 
-+// To use kmalloc allocator efficiently, this should be power of two.
-+#define BUFFER_ON_KERNEL_STACK_SIZE	4
-+
- static void handle_fcp_region_request(struct fw_card *card,
- 				      struct fw_packet *p,
- 				      struct fw_request *request,
- 				      unsigned long long offset)
+@@ -960,7 +960,7 @@ static void handle_fcp_region_request(struct fw_card *card,
  {
--	struct fw_address_handler *handler;
--	int tcode, destination, source;
-+	struct fw_address_handler *buffer_on_kernel_stack[BUFFER_ON_KERNEL_STACK_SIZE];
-+	struct fw_address_handler *handler, **handlers;
-+	int tcode, destination, source, i, count;
+ 	struct fw_address_handler *buffer_on_kernel_stack[BUFFER_ON_KERNEL_STACK_SIZE];
+ 	struct fw_address_handler *handler, **handlers;
+-	int tcode, destination, source, i, count;
++	int tcode, destination, source, i, count, buffer_size;
  
  	if ((offset != (CSR_REGISTER_BASE | CSR_FCP_COMMAND) &&
  	     offset != (CSR_REGISTER_BASE | CSR_FCP_RESPONSE)) ||
-@@ -977,18 +981,27 @@ static void handle_fcp_region_request(struct fw_card *card,
- 		return;
- 	}
+@@ -983,13 +983,38 @@ static void handle_fcp_region_request(struct fw_card *card,
  
-+	count = 0;
-+	handlers = buffer_on_kernel_stack;
+ 	count = 0;
+ 	handlers = buffer_on_kernel_stack;
++	buffer_size = ARRAY_SIZE(buffer_on_kernel_stack);
  	scoped_guard(rcu) {
  		list_for_each_entry_rcu(handler, &address_handler_list, link) {
  			if (is_enclosing_handler(handler, offset, request->length)) {
++				if (count >= buffer_size) {
++					int next_size = buffer_size * 2;
++					struct fw_address_handler **buffer_on_kernel_heap;
++
++					if (handlers == buffer_on_kernel_stack)
++						buffer_on_kernel_heap = NULL;
++					else
++						buffer_on_kernel_heap = handlers;
++
++					buffer_on_kernel_heap =
++						krealloc_array(buffer_on_kernel_heap, next_size,
++							sizeof(*buffer_on_kernel_heap), GFP_ATOMIC);
++					// FCP is used for purposes unrelated to significant system
++					// resources (e.g. storage or networking), so allocation
++					// failures are not considered so critical.
++					if (!buffer_on_kernel_heap)
++						break;
++
++					if (handlers == buffer_on_kernel_stack) {
++						memcpy(buffer_on_kernel_heap, buffer_on_kernel_stack,
++						       sizeof(buffer_on_kernel_stack));
++					}
++
++					handlers = buffer_on_kernel_heap;
++					buffer_size = next_size;
++				}
  				get_address_handler(handler);
--				handler->address_callback(card, request, tcode, destination, source,
--							  p->generation, offset, request->data,
--							  request->length, handler->callback_data);
--				put_address_handler(handler);
-+				handlers[count] = handler;
-+				if (++count >= ARRAY_SIZE(buffer_on_kernel_stack))
-+					break;
+-				handlers[count] = handler;
+-				if (++count >= ARRAY_SIZE(buffer_on_kernel_stack))
+-					break;
++				handlers[count++] = handler;
  			}
  		}
  	}
+@@ -1002,6 +1027,9 @@ static void handle_fcp_region_request(struct fw_card *card,
+ 		put_address_handler(handler);
+ 	}
  
-+	for (i = 0; i < count; ++i) {
-+		handler = handlers[i];
-+		handler->address_callback(card, request, tcode, destination, source,
-+					  p->generation, offset, request->data,
-+					  request->length, handler->callback_data);
-+		put_address_handler(handler);
-+	}
++	if (handlers != buffer_on_kernel_stack)
++		kfree(handlers);
 +
  	fw_send_response(card, request, RCODE_COMPLETE);
  }
