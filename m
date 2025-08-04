@@ -1,226 +1,277 @@
-Return-Path: <linux-kernel+bounces-755688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01CD8B1AA66
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:35:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08FE3B1AA6B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:40:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D69C1881DAD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:36:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54B4621978
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:40:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD2239E92;
-	Mon,  4 Aug 2025 21:35:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CEF1239086;
+	Mon,  4 Aug 2025 21:40:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lUPoc7O6"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bW/SuZzv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905319C556;
-	Mon,  4 Aug 2025 21:35:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CFD319C556
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 21:40:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754343349; cv=none; b=TdKcPCl75+f2YbNg6erL/0jN+ZNNG0IXVzyEtVxMpJU+uZCVXmbvomb46K6JJywHJTp38PZI+/jUpg0Vism/u12fauWmHahaFRrMTz14USXaWZ9APJAzCpRPJR1Xm/is7jpGLnOfKvPNQXUcp0sJ7UilPPQX1DjUct3l5xkEhV4=
+	t=1754343604; cv=none; b=Y/mIjHQ1YJXXT4Np+igddPWQO976Lb/nXe1bvDh3VJSUB4MtkGvWGXNMSAD7eu5SNOFHW8fdpabcaWYWqNoILyVKWdsclfPTimMYLCx08YFnIMuo/J9WfGS/n125RZ9hQhw0oeszpga9cg+23iBZtgDgJKZup74vYqSggl1dWMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754343349; c=relaxed/simple;
-	bh=RD7w/8aIHn1ifCKTKAphGnkshouTa3cUYHBlHD2G2Dk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=OXs14pDkP9jJFGsHMWNnthJwHUnOdycv4JFbkd63nBo2yyx7CNxxA6r7VCp9v9IgwuhhrHFF9EsbwALorbo94k14OP37yep0s3yP3lWajGKPjJ14zcl0yHwYpDa1Nlv/tfbsTc71vnmTo3S/fq1t5b2S9qpxVUPbbUvm8tBaBNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lUPoc7O6; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2406fe901fcso36469295ad.3;
-        Mon, 04 Aug 2025 14:35:47 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=googlemail.com; s=20230601; t=1754343346; x=1754948146; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Cvo6vUqcyrnegdoTW6jNdQzV/1E/0vD/BmUkrhOfOMY=;
-        b=lUPoc7O6t185UGMvwkkZ4KNmK6R+3uXh4rLrK/2D0bW5fD5F5UHfcBGA+oTrHOIsM5
-         lhgXvupFYsyhMRqD1UruuirOOQW14vfqH3J8pfuWAQOLrtKTp1nMwEQ03E1BpDBTmH6/
-         53tIo0bLwvMjHtCLaEDEnrG57QGZHapGHgY59V/keiJpHkk7Ov8L/SVVwWdCN+WvFzRq
-         Hcmtp6xhomEj/JAowKu8UGSN+rtfGXmBryrT3xRdUsQ3cE1N8iLvvv03KNTQIRyF8mdE
-         pRzzvayHulZukkFOXPSS2gBR07XvzRLrjHpKhm7oUTrdXiws24af4d9SIx03oz+7XPRZ
-         4d8g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754343346; x=1754948146;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Cvo6vUqcyrnegdoTW6jNdQzV/1E/0vD/BmUkrhOfOMY=;
-        b=XnAraSP/bp6frsFrbMU/RM8ZFUM+SLd49KQ2Wc5DouZjDGVV0aSkdYQCRQdFCH3Z6T
-         YCv4TDqVuFaDTh3rvau6ZKaKnQx4twS9vlIeTNI8/jW9Q9A0NeYVu4cb9d2/l1D/ZCrz
-         yUg8kKyw0yw3yxdwS8mDkdcbMfp9Lt5/lAp9a59y74CJtG+mcLNLZbrf66BGpwA3NoWf
-         rlBDSYhliZb/f0+cyFbKHlSDAvFwjvUNMGBeNUpaBfrlqaO/uBlFY3vtpSgspSX2+rwl
-         INShElffJ6HgAZqju4l6AroWXmLhjAjQSgjacEcR2MrmMyLtJ1Vn0JGDvtFQOski3dII
-         8cxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUiMIUWL2rOp5gG4g0cxTeramtA2bRuztXtKtsAa+p+jf5uVzo1Yixwi9dH9bHoNSWcgHAXTOPHfb/nXb0=@vger.kernel.org, AJvYcCVawe9V9ZtBAdgqCjV7jrQBGsCCaCXNASvHlbzyFXHtg1hbQhlHESbqzt9pAvKmF+oUxrq3espzf4n9@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw6odaE+NcWwPOa+eF4DsqirwEfdE5zIZovdNQGDbymAmcvC1UW
-	Ro1hH0hbYnO9XxD43Bslky4c/FkKQCJmHLUj8HcDKTOsj6X9qx4Ds2xh2954QYzHivFVWFmUh9m
-	Lh+pLG7YNVXjxplw4k3KBkxiquxUE1HM=
-X-Gm-Gg: ASbGnct1kvzqekEOhjVbp+fHiqVQkEnH1XePcc4hF2cK1oAg7D22LxfNlaeJB0ciaiL
-	v7Tb1/+U1ulqj4RfngTNoOF98oX5zbXVIARpchuw1v0z//h4UrhyELOoqvGcuC/hunRn2cJOJL5
-	VkUdMSaanw+jxivF/JYkMZ7nJC2BCZ5EBnQVWSoPy+hKb9oR9AdSgYcca1tYeatHIqdZveXy5EW
-	+bNOAo1AJnWEzh+pAULSCGCWZtEHbwfWQVXntJm
-X-Google-Smtp-Source: AGHT+IGQ4h1PdEwAmwxxpRH/xuW+XGXcOYeRCGe5U8mroWOM6sMSqCmdibSpRsNPVa5PcWE9a6zJ66cC8PcfcArPagY=
-X-Received: by 2002:a17:902:f549:b0:234:d431:ec6e with SMTP id
- d9443c01a7336-24246f595dfmr140662145ad.3.1754343346482; Mon, 04 Aug 2025
- 14:35:46 -0700 (PDT)
+	s=arc-20240116; t=1754343604; c=relaxed/simple;
+	bh=wpCbMoYZl7wrgj40DCEWhKnt3Q9KlL4TAexMlaA+2XI=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=GZb6lm8pM4Lpo8qgTL1o84QnrnFydWV788aanRa4IifWDXSqg4KWzj1UkGQWCZLQ4rPBK2Q+1JnOpRyBuE/E8/IHL3R14qWEVoyztppAwtKsDpZ/z+LsEg/gRl0zofntfjYVtaIrSE7MeAfbx32VGkFL9embu8wXB4bZcDrGTLg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bW/SuZzv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BB6F3C4CEE7;
+	Mon,  4 Aug 2025 21:40:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754343603;
+	bh=wpCbMoYZl7wrgj40DCEWhKnt3Q9KlL4TAexMlaA+2XI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bW/SuZzv8XiBWdDRsskg/E9qifCDGTfTDkq7So1CJcpkV1gNUhO6OzmwHAaBkLiuM
+	 f6XdnUq7J1Vab2feuA5SXsYub0SS/yGqvb6gI0XPig9h3BJJmb1NJJE0gF9RJkl95W
+	 9q32CL0D+0v9esL9VxE8B1PH3mS3vZTUXH1i1dBp4qBYd54iQZtf4uEBygW9OIzYZS
+	 /Tf5YaCtTVbowYwhbme+h4kjntN2hp0N4aqUGuFA1BQMrzipqRmGsMiisbA4wsUEQQ
+	 /LTmlWfcQc4VJelgJ/Uo319PY1XXoXguDqxb8CR0JC9QD3QSPwiVL41kPioQYnbX5Q
+	 yLUbOdk+xsxNg==
+Date: Mon, 4 Aug 2025 21:40:02 +0000
+From: Jaegeuk Kim <jaegeuk@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+Subject: [GIT PULL] f2fs for 6.17-rc1
+Message-ID: <aJEosjoG_mD0OgwK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
- <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
- <aINXS813fmWNJh3A@hovoldconsulting.com> <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
- <aIiXyEuPmWU00hFf@hovoldconsulting.com> <CAFBinCBZhjs7DGEgxhz54Dg8aW3NX9_LdnoZeUZpm5ohaT_-oQ@mail.gmail.com>
- <aJCoRFe-RFW1MuDk@hovoldconsulting.com>
-In-Reply-To: <aJCoRFe-RFW1MuDk@hovoldconsulting.com>
-From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
-Date: Mon, 4 Aug 2025 23:35:35 +0200
-X-Gm-Features: Ac12FXxZAqA4cyvbrNHPrOIPUfKS-JVCCQbLvWMVrBSQIg1CsBV-T5pBhrunwJ8
-Message-ID: <CAFBinCCYsWHsNwi99kFqvLv+xOYtp9u3omhrPdV-hdH+5Cfyew@mail.gmail.com>
-Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
-To: Johan Hovold <johan@kernel.org>
-Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
-	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, david@ixit.cz
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On Mon, Aug 4, 2025 at 2:32=E2=80=AFPM Johan Hovold <johan@kernel.org> wrot=
-e:
->
-> On Tue, Jul 29, 2025 at 10:45:20PM +0200, Martin Blumenstingl wrote:
-> > On Tue, Jul 29, 2025 at 11:43=E2=80=AFAM Johan Hovold <johan@kernel.org=
-> wrote:
-> > > On Sat, Jul 26, 2025 at 04:54:17PM +0200, Martin Blumenstingl wrote:
->
-> > > > I managed to get it to work now without any unnecessary waiting.
-> > > > When I switched to just waiting for per-port THRE I accidentally
-> > > > re-used the same URB (along with its buffer) for all ports. This of
-> > > > course "corrupts" data, but it's my fault instead of the chip/firmw=
-are
-> > > > causing it.
-> > > > That's why I was referring to data corruption earlier.
-> > > > Thanks for your persistence and for making me look at my code again
-> > > > with a fresh mind.
-> > >
-> > > Glad to hear you got it working. Did you confirm that you really need=
- to
-> > > wait for THRE before submitting the next URB too? I don't see why the
-> > > vendor driver would be doing this otherwise, but perhaps it only affe=
-cts
-> > > older, broken firmware, or something.
->
-> > I'm using Corentin's test script [0] for sending data and by
-> > connecting RX6 to TX7 and TX6 to RX7.
->
-> May be better to use a second different device (rather than loopback)
-> for testing so that you can separate any tx issues from rx issues.
-I'll double-check it using a second device. The RX path has largely
-been unmodified since the original submission, so it's likely that the
-issue is indeed with the TX path.
+Hi Linus,
 
-> > For a 1024 byte buffer:
-> > [ 3029.068311] ch348 ttyUSB6: submitted 509 bytes for urb 0
-> > [ 3029.068827] ch348 ttyUSB6: submitted 509 bytes for urb 1
-> > [ 3029.069363] ch348 ttyUSB7: submitted 5 bytes for urb 0
-> > [ 3029.069902] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
-> > [ 3029.215272] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-> > [ 3029.215908] ch348 ttyUSB6: submitted 6 bytes for urb 0
-> > [ 3029.233628] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-> > -> data is received without corruption
-> >
-> > With a 2048 byte buffer the general flow seems fine:
-> > [ 3031.073101] ch348 ttyUSB6: submitted 509 bytes for urb 0
-> > [ 3031.073777] ch348 ttyUSB6: submitted 509 bytes for urb 1
-> > [ 3031.220068] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-> > [ 3031.220697] ch348 ttyUSB6: submitted 509 bytes for urb 0
-> > [ 3031.221342] ch348 ttyUSB6: submitted 509 bytes for urb 1
-> > [ 3031.512113] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-> > [ 3031.512795] ch348 ttyUSB6: submitted 12 bytes for urb 0
-> > [ 3031.513359] ch348 ttyUSB7: submitted 5 bytes for urb 0
-> > [ 3031.513859] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
-> > [ 3031.530476] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
-> > However, the receiving end sees different data (at around byte 513-518
-> > in my tests) than we wanted to send.
-> >
-> > My general flow is:
-> > - check if we have received THRE - if not: don't transmit more data on =
-this port
-> > - submit up to two URBs with up to 512 - 3 (CH348_TX_HDRSIZE) bytes to
-> > not exceed the HW TX FIFO size of 1024 bytes (page 1 in the datasheet)
-> > if the kfifo has enough data
->
-> If you're going to wait for the device fifo to clear completely you can
-> just use a single urb with larger (1k) buffer too.
-I set .bulk_out_size =3D 1024 in struct usb_serial_driver. Writing a 1k
-buffer immediately results in:
-   ch348 1-1:1.0: device disconnected
+Could you please consider this pull request?
 
-I don't know if I need to set some kind of flag on the URB to have it
-split or whether the kernel / USB controller does that automatically
-(as you can tell: I'm not familiar with USB).
-If not: 512 byte transfers at a time it is.
+Thanks,
 
-> > If you want me to test something else then please let me know and I'll =
-try it.
-> > Otherwise I'll not dig much deeper, given the fact that I don't know
-> > how the firmware works (e.g. in which order they send the status to
-> > the host and what kind of state they hold internally) and we can still
-> > optimize this later.
->
-> Yeah, as long as you are certain that the generic implementation does
-> not work and that you indeed need to track THRE per port.
-I'll give it one more round in the next few days. If I can't get the
-generic implementation to work then I'll call the current approach
-good.
+The following changes since commit 78f4e737a53e1163ded2687a922fce138aee73f5:
 
-[...]
-> > > > On my test board the CFG pin is HIGH. From how I understand you, RT=
-S
-> > > > should at least change (even if DTR is in TNOW mode).
-> > > > No matter what I do: both pins are always LOW (right after modprobe=
-,
-> > > > after opening the console, closing the console again, ...).
-> > > > I even set up the vendor driver to test this: it's the same situati=
-on there.
-> > >
-> > > I don't think the console code will assert DTR/RTS, you need to open =
-the
-> > > port as a regular tty.
->
-> Yes, even if the device is configured in hardware for TNOW mode (instead
-> of DTR function) you should still be able to control RTS (at least as
-> long as the device is not configured for automatic hardware flow control)=
-.
-I think I made it work, sort of.
-It's a bit annoying because of code I don't understand. It seems that
-R_4 has the following settings:
-0x00 DTR off
-0x01 DTR on
-0x10 RTS off
-0x11 RTS on
-0x08 activate (used during port initialization)
-0x50 HW flow on
-0x51 no RTS / HW flow off
+  Merge tag 'for-6.16/dm-fixes' of git://git.kernel.org/pub/scm/linux/kernel/git/device-mapper/linux-dm (2025-06-23 15:02:57 -0700)
 
-That said, poking 0x00, 0x01, 0x10 and 0x11 by themselves didn't do much.
-One also has to write 0x06 to the per-port VEN_R register.
-The vendor driver only does that in .set_termios, which I call
-questionable until someone calls me out on this and is willing to
-share a good reason why that's a good idea ;-)
+are available in the Git repository at:
 
-However, I'm unable to control the RTS line of port 1. It works for
-port 0, port 2 and 3 but not for port 1.
-Ports 4-7 don't have the TNOW/DTR and RTS lines routed outside the
-package, so I can't test these.
+  git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.17-rc1
 
+for you to fetch changes up to 078cad8212ce4f4ebbafcc0936475b8215e1ca2a:
 
-Best regards,
-Martin
+  f2fs: drop inode from the donation list when the last file is closed (2025-07-30 17:13:12 +0000)
+
+----------------------------------------------------------------
+f2fs-for-6.17-rc1
+
+In this round, we've mainly updated three parts: 1) folio conversion by Matthew,
+2) switch to a new mount API by Hongbo and Eric, and 3) several sysfs entries
+to tune GCs for ZUFS with finer granularity by Daeho. There are also patches
+to address bugs and issues in the existing features such as GCs, file pinning,
+write-while-dio-read, contingous block allocation, and memory access violations.
+
+Enhancement:
+ - switch to new mount API and folio conversion
+ - add sysfs nodes to controle F2FS GCs for ZUFS
+ - improve performance on the nat entry cache
+ - drop inode from the donation list when the last file is closed
+ - avoid splitting bio when reading multiple pages
+
+Bug fix:
+ - fix to trigger foreground gc during f2fs_map_blocks() in lfs mode
+ - make sure zoned device GC to use FG_GC in shortage of free section
+ - fix to calculate dirty data during has_not_enough_free_secs()
+ - fix to update upper_p in __get_secs_required() correctly
+ - wait for inflight dio completion, excluding pinned files read using dio
+ - don't break allocation when crossing contiguous sections
+ - vm_unmap_ram() may be called from an invalid context
+ - fix to avoid out-of-boundary access in dnode page
+ - fix to avoid panic in f2fs_evict_inode
+ - fix to avoid UAF in f2fs_sync_inode_meta()
+ - fix to use f2fs_is_valid_blkaddr_raw() in do_write_page()
+ - fix UAF of f2fs_inode_info in f2fs_free_dic
+ - fix to avoid invalid wait context issue
+ - fix bio memleak when committing super block
+ - handle nat.blkaddr corruption in f2fs_get_node_info()
+
+In addition, there are also clean-ups and minor bug fixes.
+
+----------------------------------------------------------------
+Abinash Singh (1):
+      f2fs: fix KMSAN uninit-value in extent_info usage
+
+Chao Yu (18):
+      f2fs: handle nat.blkaddr corruption in f2fs_get_node_info()
+      f2fs: do sanity check on fio.new_blkaddr in do_write_page()
+      f2fs: fix to avoid invalid wait context issue
+      f2fs: introduce reserved_pin_section sysfs entry
+      f2fs: account and print more stats during recovery
+      f2fs: fix to check upper boundary for gc_valid_thresh_ratio
+      f2fs: fix to check upper boundary for gc_no_zoned_gc_percent
+      f2fs: fix to use f2fs_is_valid_blkaddr_raw() in do_write_page()
+      f2fs: doc: fix wrong quota mount option description
+      f2fs: fix to avoid UAF in f2fs_sync_inode_meta()
+      f2fs: fix to avoid panic in f2fs_evict_inode
+      f2fs: introduce is_cur{seg,sec}()
+      f2fs: fix to avoid out-of-boundary access in devs.path
+      f2fs: fix to avoid out-of-boundary access in dnode page
+      f2fs: don't break allocation when crossing contiguous sections
+      f2fs: fix to update upper_p in __get_secs_required() correctly
+      f2fs: fix to calculate dirty data during has_not_enough_free_secs()
+      f2fs: fix to trigger foreground gc during f2fs_map_blocks() in lfs mode
+
+Daeho Jeong (5):
+      f2fs: make sure zoned device GC to use FG_GC in shortage of free section
+      f2fs: turn off one_time when forcibly set to foreground GC
+      f2fs: ignore valid ratio when free section count is low
+      f2fs: add gc_boost_gc_multiple sysfs node
+      f2fs: add gc_boost_gc_greedy sysfs node
+
+Hongbo Li (7):
+      f2fs: Add fs parameter specifications for mount options
+      f2fs: move the option parser into handle_mount_opt
+      f2fs: Allow sbi to be NULL in f2fs_printk
+      f2fs: Add f2fs_fs_context to record the mount options
+      f2fs: separate the options parsing and options checking
+      f2fs: introduce fs_context_operation structure
+      f2fs: switch to the new mount api
+
+Jaegeuk Kim (2):
+      f2fs: check the generic conditions first
+      f2fs: drop inode from the donation list when the last file is closed
+
+Jan Prusakowski (1):
+      f2fs: vm_unmap_ram() may be called from an invalid context
+
+Jianan Huang (1):
+      f2fs: avoid splitting bio when reading multiple pages
+
+Jiazi Li (1):
+      f2fs: use kfree() instead of kvfree() to free some memory
+
+Matthew Wilcox (Oracle) (60):
+      f2fs: Pass a folio to recover_dentry()
+      f2fs: Pass a folio to recover_inode()
+      f2fs: Pass a folio to recover_quota_data()
+      f2fs: Pass a folio to f2fs_recover_inode_page()
+      f2fs: Pass a folio to sanity_check_extent_cache()
+      f2fs: Pass a folio to sanity_check_inode()
+      f2fs: Pass a folio to f2fs_sanity_check_inline_data()
+      f2fs: Pass a folio to inode_has_blocks()
+      f2fs: Pass a folio to F2FS_INODE()
+      f2fs: Pass a folio to ino_of_node()
+      f2fs: Pass a folio to nid_of_node()
+      f2fs: Pass a folio to is_recoverable_dnode()
+      f2fs: Pass a folio to set_dentry_mark()
+      f2fs: Pass a folio to set_fsync_mark()
+      f2fs: Pass a folio to set_mark()
+      f2fs: Pass a folio to f2fs_allocate_data_block()
+      f2fs: Pass a folio to f2fs_inode_chksum_set()
+      f2fs: Pass a folio to f2fs_enable_inode_chksum()
+      f2fs: Pass a folio to f2fs_inode_chksum()
+      f2fs: Pass a folio to fill_node_footer_blkaddr()
+      f2fs: Pass a folio to get_nid()
+      f2fs: Pass a folio to set_cold_node()
+      f2fs: Pass folios to copy_node_footer()
+      f2fs: Pass a folio to fill_node_footer()
+      f2fs: Pass a folio to cpver_of_node()
+      f2fs: Pass a folio to f2fs_recover_xattr_data()
+      f2fs: Pass a folio to is_fsync_dnode()
+      f2fs: Pass a folio to is_dent_dnode()
+      f2fs: Add fio->folio
+      f2fs: Use folio_unlock() in f2fs_write_compressed_pages()
+      f2fs: Pass a folio to is_cold_node()
+      f2fs: Pass a folio to is_node()
+      f2fs: Pass a folio to IS_DNODE()
+      f2fs: Pass a folio to ofs_of_node()
+      f2fs: Pass a folio to get_dnode_base()
+      f2fs: Pass a folio to ADDRS_PER_PAGE()
+      f2fs: Pass a folio to IS_INODE()
+      f2fs: Add folio counterparts to page_private_flags functions
+      f2fs: Use a folio in f2fs_is_cp_guaranteed()
+      f2fs: Convert set_page_private_data() to folio_set_f2fs_data()
+      f2fs: Convert get_page_private_data() to folio_get_f2fs_data()
+      f2fs: Pass a folio to f2fs_compress_write_end_io()
+      f2fs: Use a folio in f2fs_merge_page_bio()
+      f2fs: Use a bio in f2fs_submit_page_write()
+      f2fs: Pass a folio to WB_DATA_TYPE() and f2fs_is_cp_guaranteed()
+      f2fs: Use a folio iterator in f2fs_handle_step_decompress()
+      f2fs: Pass a folio to f2fs_end_read_compressed_page()
+      f2fs: Use a folio iterator in f2fs_verify_bio()
+      f2fs: Pass a folio to f2fs_is_compressed_page()
+      f2fs: Convert get_next_nat_page() to get_next_nat_folio()
+      f2fs: Pass the nat_blk to __update_nat_bits()
+      f2fs: Pass a folio to F2FS_NODE()
+      f2fs: Pass a folio to f2fs_cache_compressed_page()
+      f2fs: Use a folio in f2fs_encrypted_get_link()
+      f2fs: Use F2FS_F_SB() in f2fs_read_end_io()
+      f2fs: Remove clear_page_private_all()
+      f2fs: Remove use of page from f2fs_write_single_data_page()
+      f2fs: Pass a folio to f2fs_submit_merged_write_cond()
+      f2fs: Pass a folio to __has_merged_page()
+      f2fs: Remove F2FS_P_SB()
+
+Sheng Yong (2):
+      f2fs: fix bio memleak when committing super block
+      f2fs: remove unnecessary tracepoint enabled check
+
+Swarna Prabhu (1):
+      f2fs: Fix the typos in comments
+
+Zhiguo Niu (2):
+      f2fs: compress: change the first parameter of page_array_{alloc,free} to sbi
+      f2fs: compress: fix UAF of f2fs_inode_info in f2fs_free_dic
+
+mason.zhang (1):
+      f2fs: merge the two conditions to avoid code duplication
+
+wangzijie (4):
+      f2fs: convert F2FS_I_SB to sbi in f2fs_setattr()
+      f2fs: don't allow unaligned truncation to smaller/equal size on pinned file
+      f2fs: avoid redundant clean nat entry move in lru list
+      f2fs: directly add newly allocated pre-dirty nat entry to dirty set list
+
+yohan.joung (3):
+      f2fs: fix to check upper boundary for value of gc_boost_zoned_gc_percent
+      f2fs: enable tuning of boost_zoned_gc_percent via sysfs
+      f2fs: zone: wait for inflight dio completion, excluding pinned files read using dio
+
+ Documentation/ABI/testing/sysfs-fs-f2fs |   22 +
+ Documentation/filesystems/f2fs.rst      |    6 +-
+ fs/f2fs/checkpoint.c                    |    8 +-
+ fs/f2fs/compress.c                      |  120 +-
+ fs/f2fs/data.c                          |  183 +--
+ fs/f2fs/debug.c                         |   21 +-
+ fs/f2fs/dir.c                           |    4 +-
+ fs/f2fs/extent_cache.c                  |   10 +-
+ fs/f2fs/f2fs.h                          |  151 ++-
+ fs/f2fs/file.c                          |  107 +-
+ fs/f2fs/gc.c                            |   54 +-
+ fs/f2fs/gc.h                            |    5 +-
+ fs/f2fs/inline.c                        |   20 +-
+ fs/f2fs/inode.c                         |   84 +-
+ fs/f2fs/namei.c                         |   12 +-
+ fs/f2fs/node.c                          |  261 ++--
+ fs/f2fs/node.h                          |   77 +-
+ fs/f2fs/recovery.c                      |  116 +-
+ fs/f2fs/segment.c                       |   62 +-
+ fs/f2fs/segment.h                       |   59 +-
+ fs/f2fs/super.c                         | 2111 ++++++++++++++++++-------------
+ fs/f2fs/sysfs.c                         |   48 +
+ include/linux/f2fs_fs.h                 |    2 +-
+ include/linux/fscrypt.h                 |   10 +-
+ 24 files changed, 2019 insertions(+), 1534 deletions(-)
 
