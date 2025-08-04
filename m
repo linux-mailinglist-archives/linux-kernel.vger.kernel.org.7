@@ -1,115 +1,183 @@
-Return-Path: <linux-kernel+bounces-755547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D12EB1A83A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:54:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF9FFB1A83C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:54:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F12691883D05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:54:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4993B4996
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3718F28AAE0;
-	Mon,  4 Aug 2025 16:54:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E26728AAEA;
+	Mon,  4 Aug 2025 16:54:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LWA+iEtb"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOHfjh2A"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BFBF28A71E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 16:54:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B216228A707;
+	Mon,  4 Aug 2025 16:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754326463; cv=none; b=a6GlP1C2cEMg47L9HpCo6IaKGY/vtG9Lq8I84M0Qyd7jXgZS99QfpgqnRhZXilxo4Q0zSu8z8EWfKgjvQEEZmYNqSb/X6m2TW/0zQGbY5dKuzMYuh0IBf/H3kqrcJSZ+zJoVx1y/kU85PN/47bBQ5vzqVClKYMgRuhmM0DWcwpo=
+	t=1754326478; cv=none; b=QZLCgg+IyY5BMhpF8UegY47xyjYNye7yvE2Fkj7B/9JJC0Wqq6UMMObCBBqJUl85bEzHceHoQr+vcl9j9hCWxbXvcq+VPYo3jNkvFJr44/sGDHzepIcHW2v39hjO3LHw8Y/9N5DL3SNJvLq032RdkkruDYuUHZcQ0wOgLdsvxto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754326463; c=relaxed/simple;
-	bh=pYdrVmuKfCYuHtP04Qcep2eMXDKNiDtgvNN2V0DypXk=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UtIkMZXEKrGhzao6jdFpCGiFV0GSOIJuQ0G/XPiJEgnoy+DqRwGTvxExz8mAKsDFTmerkKoIZb3UrXirL6oy8csRTk/+po91b7PXVxX2ZcJa5wvPhBN6T5OIHRlIGTG+et2SdflPUMXbKn7Fhym5XE5ftkUzg5+bi1yeTvELC/k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LWA+iEtb; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-24014cd385bso41794185ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:54:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754326461; x=1754931261; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ICfl/qoL04oE9UApJmf+6JtByCVhnGLy1JybjuiZ0gA=;
-        b=LWA+iEtbVq1PUzKbD1fqfRXDV6rgY9l7RRLiwxHvy8zdyIIbV7bsGFNvYgcI/aJKvi
-         yPbCV6CttyZioELCpoJNTuKj9ZS8ln9g82QnZRebiExTs88+Tk5PER3kTadmNZHH3gZS
-         fwu8dDoGrVu6p+1K8OQLwnNs+uJlPSQ5ACBO0BP1OePVdJ235XmaD6+CCLCUDkYLT+nq
-         YA++osmUzhCxQBT2IlUvyRScFAiXVb6f88091V+yFJiJwvW6cYA8uc+VbY+LIqM/BccN
-         X8lnkyKY8o0L5MWFBp4KQ/byS4DqGnn4uulB/DWHGOFt7VS7Uf0mbgu4kv3UcXAagwN8
-         eI4A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754326461; x=1754931261;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ICfl/qoL04oE9UApJmf+6JtByCVhnGLy1JybjuiZ0gA=;
-        b=OLx0ng7ALnwNZ6FscSzoVrKNLDnVJlU2dfVz1wh3NB/FfOUW2QKD6INJoGfotzosMH
-         c4uUFkOU99A45yptPwdtZMl5DaMvsan9hY5TTQZifd0m6RkhC5cLE763s+DTpNBooH2V
-         qltAUKiSlFE5swV/7pkOr/3bku1tsX9Z3tG+yxPch3I5nTwQXRBDcgPax8O+nwD0+QdZ
-         J11lbC1rR1kgg08FcndqXXL4cjCA9GOZ2noi8rK+Ep3cTBOaOrKdbCVqcK5MyZVpsD53
-         Hzu8q3JuBQvsOnOF7iCT1SIKqxTZJfsDwz2iOYfdsIo4HaW+1bEb0qB11CkknNYEsWcX
-         ES8Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWPCkd9XghcFnLRPsweCu7KtYll4LANLZwihxLuo1vfdWzliHk17ochWTBcTRA5e9Vxp7f2Limdd3AVxQI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyX0z2GMr6wyGboXzIhVHeTC2ew0G+Uv7/nszH3X9WikfPqNCIG
-	YtUoK0txsJ/ae5bUm5uYayh++/cfeNRm+j8cOSrhSd3B3s4ZLvWnGrLW
-X-Gm-Gg: ASbGncuVF3rvo79WASHci646CiF9KbodB5cut/e7dHV11Ois7k8Vd4ZsQ8zhwg0QoSg
-	XneNDiaQkdobidAh7MWCR4gx4YCiwuBInhUBz/ufYXoLxZ+kxSkknv94Jgc9rymSeaNq3b/lRXI
-	QyXVudKz69ZrLZ7RE4ZV78PchE+VB+eMoWV5bEtGyi4XL0gf6cLlaoTFlW/pj14uFkez2fcGC+5
-	6HysxWCmDMapySni9BubbtE0dWDYIkHxafe1Ju/0hIMr4/achf4NsKDCrIrSq26Pdb9czmmBi5h
-	OTf9WpK62sUqQIBiSz2MTd4kRumfz1bqq1lIUUxX1GY6xClVvLTd99w9MljE/RAxN22I1bSyApy
-	lfsJdIQfC/qy+4kWpM8+M04lvvpjgmg==
-X-Google-Smtp-Source: AGHT+IG0ibKqUSHM/8m3tlwLSbk0uFSxqJT9mds9uYVNFnRLIrRFD08YM9xM0Jup3KB0aP88r7ED/Q==
-X-Received: by 2002:a17:902:ce8c:b0:240:aa0:1584 with SMTP id d9443c01a7336-242470302ebmr155898125ad.38.1754326461470;
-        Mon, 04 Aug 2025 09:54:21 -0700 (PDT)
-Received: from localhost ([61.152.197.68])
-        by smtp.gmail.com with UTF8SMTPSA id d9443c01a7336-241d1ef66dfsm113523415ad.29.2025.08.04.09.54.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 09:54:21 -0700 (PDT)
-From: "mason.zhang" <masonzhang.linuxer@gmail.com>
-To: chao@kernel.org
-Cc: linux-f2fs-devel@lists.sourceforge.net,
-	linux-kernel@vger.kernel.org,
-	masonzhang.linuxer@gmail.com
-Subject: [PATCH] f2fs: fix CURSEG_HOT_DATA left space check
-Date: Tue,  5 Aug 2025 00:54:11 +0800
-Message-ID: <20250804165411.3441-1-masonzhang.linuxer@gmail.com>
-X-Mailer: git-send-email 2.48.1
+	s=arc-20240116; t=1754326478; c=relaxed/simple;
+	bh=d+XlqNAsTP1aZFEzzzw1zGerTeyCFUUm7vWEU3d2zmA=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=A8B2VbHKc66VAcnAEJ2KWxoE4tA0q8gRqwSRJEj8diwe925D1T5TzsFj3zZxsKERslIHIvPCsvwhyImqDpCcuHVnuNA+qGfFRNTgJ8H+Jc7iha1ebBJuofMvHJbMH8/yTIXd6TM6opCUEATITIM9MaiUqi+4wgJWu/edpGn/EVE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOHfjh2A; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31447C4CEE7;
+	Mon,  4 Aug 2025 16:54:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754326475;
+	bh=d+XlqNAsTP1aZFEzzzw1zGerTeyCFUUm7vWEU3d2zmA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=cOHfjh2AohfXyPVoX2YaEpfGzdr+X7AiTfo+cPeM0jwBNjq6KMwOiIo1bxO5vspXI
+	 hfhK2B5N9aTAT0EFuokAeGbp/JmvOUUWE57EaBuH9NFzoifgite9SuOv+E0dqaeAKJ
+	 d5DTJ+dkQDIHv+gNd8fM2LILh+mpTCB+i01fKwynAJPoUctQQPX4LIfETdkeI6fMKH
+	 gf+4cf9Nw/IDLNmklkqq3mxRY4ajLwHqwXCENvhRxJaQrWnhq3U0fyE898tQiQ+os4
+	 pPX/Z4X5MW8yWud3Hl0+oNE4/lBh485CuPIpmoNE0YSGst7vE4Z4Czj+XZgp4jfWwo
+	 fMF+OcjSDGbzw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1uiySG-003sNW-Br;
+	Mon, 04 Aug 2025 17:54:32 +0100
+Date: Mon, 04 Aug 2025 17:54:31 +0100
+Message-ID: <86o6sv6n94.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
+Cc: Linux PM <linux-pm@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Christian Loehle <christian.loehle@arm.com>,
+	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
+	Aboorva Devarajan <aboorvad@linux.ibm.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Mark Rutland <mark.rutland@arm.com>
+Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
+In-Reply-To: <7770672.EvYhyI6sBW@rjwysocki.net>
+References: <1916668.tdWV9SEqCh@rjwysocki.net>
+	<7770672.EvYhyI6sBW@rjwysocki.net>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: rjw@rjwysocki.net, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, christian.loehle@arm.com, artem.bityutskiy@linux.intel.com, aboorvad@linux.ibm.com, tglx@linutronix.de, mark.rutland@arm.com
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-This fix combines the space check for data_blocks and dent_blocks when
-verifying HOT_DATA segment capacity, preventing potential insufficient
-space issues during checkpoint.
+[+ Thomas, Mark]
 
-Signed-off-by: mason.zhang <masonzhang.linuxer@gmail.com>
----
- fs/f2fs/segment.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+On Thu, 06 Feb 2025 14:29:05 +0000,
+"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> 
+> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> 
+> When giving up on making a high-confidence prediction,
+> get_typical_interval() always returns UINT_MAX which means that the
+> next idle interval prediction will be based entirely on the time till
+> the next timer.  However, the information represented by the most
+> recent intervals may not be completely useless in those cases.
+> 
+> Namely, the largest recent idle interval is an upper bound on the
+> recently observed idle duration, so it is reasonable to assume that
+> the next idle duration is unlikely to exceed it.  Moreover, this is
+> still true after eliminating the suspected outliers if the sample
+> set still under consideration is at least as large as 50% of the
+> maximum sample set size.
+> 
+> Accordingly, make get_typical_interval() return the current maximum
+> recent interval value in that case instead of UINT_MAX.
+> 
+> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> ---
+>  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
+>  1 file changed, 12 insertions(+), 1 deletion(-)
+> 
+> --- a/drivers/cpuidle/governors/menu.c
+> +++ b/drivers/cpuidle/governors/menu.c
+> @@ -190,8 +190,19 @@
+>  	 * This can deal with workloads that have long pauses interspersed
+>  	 * with sporadic activity with a bunch of short pauses.
+>  	 */
+> -	if ((divisor * 4) <= INTERVALS * 3)
+> +	if (divisor * 4 <= INTERVALS * 3) {
+> +		/*
+> +		 * If there are sufficiently many data points still under
+> +		 * consideration after the outliers have been eliminated,
+> +		 * returning without a prediction would be a mistake because it
+> +		 * is likely that the next interval will not exceed the current
+> +		 * maximum, so return the latter in that case.
+> +		 */
+> +		if (divisor >= INTERVALS / 2)
+> +			return max;
+> +
+>  		return UINT_MAX;
+> +	}
+>  
+>  	/* Update the thresholds for the next round. */
+>  	if (avg - min > max - avg)
 
-diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
-index db619fd2f51a..d8dae0049b6a 100644
---- a/fs/f2fs/segment.h
-+++ b/fs/f2fs/segment.h
-@@ -649,7 +649,7 @@ static inline bool has_curseg_enough_space(struct f2fs_sb_info *sbi,
- 				get_ckpt_valid_blocks(sbi, segno, true);
- 	}
- 
--	if (dent_blocks > left_blocks)
-+	if (dent_blocks + data_blocks > left_blocks)
- 		return false;
- 	return true;
- }
+It appears that this patch, which made it in 6.15, results in *a lot*
+of extra interrupts on one of my arm64 test machines.
+
+* Without this patch:
+
+maz@big-leg-emma:~$ vmstat -y 1
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 1  0      0 65370828  29244 106088    0    0     0     0   66   26  0  0 100  0  0
+ 1  0      0 65370828  29244 106088    0    0     0     0  103   66  0  0 100  0  0
+ 1  0      0 65370828  29244 106088    0    0     0     0   34   12  0  0 100  0  0
+ 1  0      0 65370828  29244 106088    0    0     0     0   25   12  0  0 100  0  0
+ 1  0      0 65370828  29244 106088    0    0     0     0   28   14  0  0 100  0  0
+
+we're idling at only a few interrupts per second, which isn't bad for
+a 24 CPU toy.
+
+* With this patch:
+
+maz@big-leg-emma:~$ vmstat -y 1
+procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
+ r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
+ 1  0      0 65361024  28420 105388    0    0     0     0 3710   27  0  0 100  0  0
+ 1  0      0 65361024  28420 105388    0    0     0     0 3399   20  0  0 100  0  0
+ 1  0      0 65361024  28420 105388    0    0     0     0 4439   78  0  0 100  0  0
+ 1  0      0 65361024  28420 105388    0    0     0     0 5634   14  0  0 100  0  0
+ 1  0      0 65361024  28420 105388    0    0     0     0 5575   14  0  0 100  0  0
+
+we're idling at anywhere between 3k and 6k interrupts per second. Not
+exactly what you want. This appears to be caused by the broadcast
+timer IPI.
+
+Reverting this patch on top of 6.16 restores sanity on this machine.
+
+I suspect that we're entering some deep idle state in a much more
+aggressive way, leading to a global timer firing as a wake-up
+mechanism, and the broadcast IPI being used to kick everybody else
+back. This is further confirmed by seeing the broadcast IPI almost
+disappearing completely if I load the system a bit.
+
+Daniel, you should be able to reproduce this on a Synquacer box (this
+what I used here).
+
+I'm happy to test things that could help restore some sanity.
+
+Thanks,
+
+	M.
+
 -- 
-2.48.1
-
+Without deviation from the norm, progress is not possible.
 
