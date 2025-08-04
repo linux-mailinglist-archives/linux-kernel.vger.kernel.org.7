@@ -1,153 +1,152 @@
-Return-Path: <linux-kernel+bounces-755036-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755037-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CDEBB1A068
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:20:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3727B1A06E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:21:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A54CA3BE3DA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:20:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5415C7AC8C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:19:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C881424677E;
-	Mon,  4 Aug 2025 11:20:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6B1253F00;
+	Mon,  4 Aug 2025 11:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pwbzrV9r"
-Received: from mail-oo1-f47.google.com (mail-oo1-f47.google.com [209.85.161.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oP8HVySu"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E65915DBC1
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:20:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B591624677E;
+	Mon,  4 Aug 2025 11:21:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754306418; cv=none; b=lnMjMgaQ/KtL5tprDuFRf8k+BbW7gakK3TxeJz0o1gE5AiQsLu8CfvkkyL1BVbJ7obFc9n/upg06PPNVGbqI3aZ4pqA6mY1ilvVRsujGbU1mZ0QAWiLHUapZdsB/7rZX6GnWDeDbbDS+0g1P26Hw09OTKCcNB4GyW3Z48XnmPIM=
+	t=1754306468; cv=none; b=Go3xosUhyouoOJt6BR4tBLF/RzlDM9zr8S/wiA8L+4GkM6kI8XURkxOOa9LfJbGHMeDQDdwyf1MUcRCVUxT0f3nJqhTsYJ6x4v7MMLiN/6vLytStbI0J/UdBuiuGCjTjdHbACq2mSxzvtNdGLENSRXJlhfode2hgqtY2ZEkn3YE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754306418; c=relaxed/simple;
-	bh=0VWKHdm3BiWuqBGROS/u5ljJ7Xcg9yt975579aFM8/s=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sqW3bRQ5lXgC3OnDiRvNN/Mdco5nqOC85/de8DHp+g3kNuA+lhQEAe/7JmNkEzMK+Rk2GHVSRNrlOzo0hyrfYEl8UEgX9854zxzi1kmaixEKHOjkjHyAyxUWsY6VjBTuLXs9Wzbz5J9SNTmDjLtBMMIQK5DtioPQHkFNwam+a3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pwbzrV9r; arc=none smtp.client-ip=209.85.161.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f47.google.com with SMTP id 006d021491bc7-6197e7d225bso1074988eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:20:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754306415; x=1754911215; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=b93u56+uTgiRFAxnBL7fM25U7aghKeWgPbDUdKcg554=;
-        b=pwbzrV9rnXfcTSWwYekBS0zWqVhG6wu4T+EnBzHBPgz444u6+vRb6rvL+N+CFJoUDc
-         d7CnqhsckB4+kWJMP9Hg9s3xs41sIVYMY/pgl6tcvSngS6J3jc0DaHEEItEgxqgBUFdJ
-         RT32AK0UVzSCn4nuazdO9SGn5OhN89oLNeIXLV9Imn/P//gv6mJNlYs0rdairDVkYKjw
-         uBdjl+5TcNmHJzocOgcQhCOTB5mf+0YW2waj5Y1OgUa1Z8Eav9gX+SHwZ1TcwyEeRNey
-         hIQmvGcWqqvQ6dcnLhTx+GgcizssmrnyooOjNnbqXCeM41I7LI6ewTmaRzopd5YN1Ef8
-         9NmA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754306415; x=1754911215;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=b93u56+uTgiRFAxnBL7fM25U7aghKeWgPbDUdKcg554=;
-        b=pWJJYMghSXDPU+HFAjKuZbMVbGwc2ZwupvSx77Ya+MxlkfZjYDGI2huuzIoJonq8/5
-         lpSXxoshnLfIKvyXuFjXItcWkPUivtozKjaDR4bbQrdgSjeExoBEz5a00ALmi3qG8Bog
-         Z4dyz3lt3TP5VgAiTz3MH3nyxMjlMrp6ztvHogdS1u0Pi9+lzwQy0QpVicBeEIZYDa6g
-         qC5R4WAW/UyWAzlTiZpLvvtxWko1sYvPkyDvIgMFmkLeJucLbwQH/NJ97U3BFfX6gA73
-         oWOFP8tTZf3jEJ1lbMWKHab1yyGmRItz5QtlLy47/vfNsbP0chXTOmHfeCt8Gh6gDXfZ
-         O9/w==
-X-Forwarded-Encrypted: i=1; AJvYcCXS0/kzB7DvGPe6fqZTCG/dd9sTjYHmZ9nkdwnvOSd6NA5rQqUAZFhxXzNAAGVIRWwzT1uDcWXAI0kO+Sw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxiiF1SxRzEPsItGUfT4dMeABnOQAMyc9KWUsr2UPcVqUeyof0J
-	q3Vjq3wwYqmDKgX+xDig1Mk+10e09PDAPhGdOutftStw3p2CJJFrrsUBL46+Ufipaqw7cnOzAil
-	VT1nkDlM5XbpRpW7k+FP9BBk0Sh3BRAfctk1Y/W5hOg==
-X-Gm-Gg: ASbGncvN3fkh1Spp9fyakR8yQG8trpGOD1bsinvGTFczXPzhvUmozeeRwqrXM+THQ3h
-	gwCB+fsqn6CX85k0u8YnIFKS8gAuGYbCHxxCGnUh9Bva2+7pYGNS83KNjXf7yKp0enRnzlXEv0J
-	uz9EJAqggQZN/OvperBx6ftjEd0Yr78qlkZZboT9O3Yez1BgkxTTdh+OXtOSLiMcX7u7VTxKivw
-	eaaDGPDFatgUWtCJhY=
-X-Google-Smtp-Source: AGHT+IF1oQvSmC0DUw3ocA0Ng4DtG7XWJo3uEaTvvjJ9MizE2sKgbMBq3d8pzwjFzhJxVfr4akPhyv+PF3cPJSGc4jU=
-X-Received: by 2002:a05:6820:1e88:b0:619:a040:a61b with SMTP id
- 006d021491bc7-619a040a962mr2538659eaf.8.1754306415477; Mon, 04 Aug 2025
- 04:20:15 -0700 (PDT)
+	s=arc-20240116; t=1754306468; c=relaxed/simple;
+	bh=SAdLQJkP47dg//ubxixAgCH9dU/7dK2i43UHTUN+y/4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version:Content-Type; b=jyNXH62wR/j4Uy8nwdsol1aRxKRTaeXgYFjIDo/NdwnxVimFGgVFCKFMcdufPFu3cD7NsKllOJQveBaqgtWpWbMPBi2VwQg2NtbzEo2JmZX7tdh7jP/tB+unac44X1XVEvzalla4RTNTts2zQY2RLAy8dX71sZ2mtNtwdPjDuHY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oP8HVySu; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5746rIT9016967;
+	Mon, 4 Aug 2025 11:21:02 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Uk7BUdFrghiLA6PKoiX45Y
+	2FyI3R5r85ZEDxLTH0GtE=; b=oP8HVySu2c4BWKwsSkHRw6jsoc4lenR3qP37cp
+	MqrWSjd/S942G3olgX914LNUn0lb48Sy90SnVd2NMyJnv/lM+rz7OObPHtQPZEkR
+	fp2eOTOhXUUVNX1pT0AvZyPQqC5UK+tTWoWWtvHTt/eYFWOlCPgeIOxqlRWl94KJ
+	BrXEvfSgIH9clKyHxsyYOsqZ7Ph9TWCywaKjNIrG5e0s3kMB4qOAonA4qmvPii0q
+	9eOQv/JT+0l9Lqa6DsJClivDIFMZnjvN8erkqsfq+S0SVJhCGilDFl+ZfI6W9wqa
+	Xy9mZaptg8nDoXTU4uZ5iV1oezEcWFOYFMeuA79eS4tBNHIw==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48aqyv0xtb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 11:21:02 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 574BL1ju016842
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Aug 2025 11:21:01 GMT
+Received: from hu-varada-blr.qualcomm.com (10.80.80.8) by
+ nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.10; Mon, 4 Aug 2025 04:20:56 -0700
+From: Varadarajan Narayanan <quic_varada@quicinc.com>
+To: <andersson@kernel.org>, <mturquette@baylibre.com>, <sboyd@kernel.org>,
+        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
+        <konradybcio@kernel.org>, <rafael@kernel.org>,
+        <viresh.kumar@linaro.org>, <ilia.lin@kernel.org>, <djakov@kernel.org>,
+        <quic_varada@quicinc.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-clk@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-pm@vger.kernel.org>
+Subject: [PATCH v5 0/4] Enable cpufreq for IPQ5424
+Date: Mon, 4 Aug 2025 16:50:37 +0530
+Message-ID: <20250804112041.845135-1-quic_varada@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <aHpohUxxSH42w16U@bhairav-test.ee.iitb.ac.in> <aH4c-bAN28Gmq86k@sumit-X1>
-In-Reply-To: <aH4c-bAN28Gmq86k@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 4 Aug 2025 13:20:04 +0200
-X-Gm-Features: Ac12FXx1HcFo7kDJkLn1QiDBQXxv6qeoFbharkQhwFLpksbuBhKbTIPEmdzB5tk
-Message-ID: <CAHUa44Eht8TK52tH6WPwnEhLGR_aBB-UySnsPLf=+iD3qQqe_g@mail.gmail.com>
-Subject: Re: [PATCH] drivers: tee: improve sysfs interface by using sysfs_emit()
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, op-tee@lists.trustedfirmware.org, 
-	linux-kernel@vger.kernel.org, akhileshpatilvnit@gmail.com, 
-	skhan@linuxfoundation.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 6ObymlFvXV3M7SEa2m_-jqDM-xmYK-hw
+X-Authority-Analysis: v=2.4 cv=F/xXdrhN c=1 sm=1 tr=0 ts=6890979e cx=c_pps
+ a=JYp8KDb2vCoCEuGobkYCKw==:117 a=JYp8KDb2vCoCEuGobkYCKw==:17
+ a=GEpy-HfZoHoA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=COk6AnOGAAAA:8
+ a=hYIGFNv7twnpuLpzv7MA:9 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 6ObymlFvXV3M7SEa2m_-jqDM-xmYK-hw
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2MiBTYWx0ZWRfX0Q5HEuK3HpYl
+ 7Oq+7ApaGtcYMAddIa5/8uay+jXpCtyTZ5b7JGG1My8MLLFeq/PB/KOBkgvDMkLjErT4Ldt+/+x
+ D0EdqyPYi2MdQFQuKGU7Rnv8dBSfikWq3fNlEYFELyao7gRQyblBfupplsAvKP2dEMK4seWK7pp
+ ExyVa7Jq5B37vPCmBjFBg2hcO3EC4P0eZrYOYNeGnwcMPotL4MnNLDjgP2nHg922ei9EcMAZ3wa
+ BCnjgnhmOO8m8x1QhW7bM9gnyWsVxFxTCw66YyvW2XHavaKwJKitR2gFZqDZGslXKO6p1URHoZm
+ Am1N0qYmZMTfI2VX0HndFjz67S2tiGsA2qf/wqGLmztDOGj1bPJ5FQmQRkbIMVmVyhEkJOm6sWk
+ BOWQ1U4YqlHxccCQ0pjGon+UPrGZ0DO26/CatEg4T93cSKiIaQ6NhbkSPCrDmajfxlsb/9JL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ suspectscore=0 spamscore=0 mlxscore=0 phishscore=0 bulkscore=0 adultscore=0
+ clxscore=1015 mlxlogscore=770 priorityscore=1501 impostorscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508040062
 
-On Mon, Jul 21, 2025 at 12:57=E2=80=AFPM Sumit Garg <sumit.garg@kernel.org>=
- wrote:
->
-> On Fri, Jul 18, 2025 at 09:00:13PM +0530, Akhilesh Patil wrote:
-> > Replace scnprintf() with sysfs_emit() while formatting buffer that is
-> > passed to userspace as per the recommendation in
-> > Documentation/filesystems/sysfs.rst. sysfs _show() callbacks should use
-> > sysfs_emit() or sysfs_emit_at() while returning values to the userspace=
-.
-> > This change does not impact functionality, but aligns with sysfs
-> > interface usage guidelines for the tee driver.
-> >
-> > Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
-> > ---
-> >  drivers/tee/optee/core.c | 2 +-
-> >  drivers/tee/tee_core.c   | 2 +-
-> >  2 files changed, 2 insertions(+), 2 deletions(-)
->
-> Nice catch.
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+CPU on Qualcomm ipq5424 is clocked by huayra PLL with RCG support.
+Add support for the APSS PLL, RCG and clock enable for ipq5424.
+The PLL, RCG register space are clubbed. Hence adding new APSS driver
+for both PLL and RCG/CBC control. Also the L3 cache has a separate pll
+modeled as ICC clock. The L3 pll needs to be scaled along with the CPU.
 
-Looks good. I'm picking up this for v6.17.
+v5:	* Remove previous maintainers from bindings file
+	* Use enums instead of clock names in clock struct
+	* Add '.sync_state = icc_sync_state'
+	* Add opp-816000000
 
-Cheers,
-Jens
+v4: https://lore.kernel.org/linux-arm-msm/20250730081316.547796-1-quic_varada@quicinc.com/
+	* Address bindings related comments
 
->
-> -Sumit
->
-> >
-> > diff --git a/drivers/tee/optee/core.c b/drivers/tee/optee/core.c
-> > index c75fddc83576..ce44e3498d37 100644
-> > --- a/drivers/tee/optee/core.c
-> > +++ b/drivers/tee/optee/core.c
-> > @@ -72,7 +72,7 @@ static ssize_t rpmb_routing_model_show(struct device =
-*dev,
-> >       else
-> >               s =3D "user";
-> >
-> > -     return scnprintf(buf, PAGE_SIZE, "%s\n", s);
-> > +     return sysfs_emit(buf, "%s\n", s);
-> >  }
-> >  static DEVICE_ATTR_RO(rpmb_routing_model);
-> >
-> > diff --git a/drivers/tee/tee_core.c b/drivers/tee/tee_core.c
-> > index acc7998758ad..944f913f8592 100644
-> > --- a/drivers/tee/tee_core.c
-> > +++ b/drivers/tee/tee_core.c
-> > @@ -977,7 +977,7 @@ static ssize_t implementation_id_show(struct device=
- *dev,
-> >       struct tee_ioctl_version_data vers;
-> >
-> >       teedev->desc->ops->get_version(teedev, &vers);
-> > -     return scnprintf(buf, PAGE_SIZE, "%d\n", vers.impl_id);
-> > +     return sysfs_emit(buf, "%d\n", vers.impl_id);
-> >  }
-> >  static DEVICE_ATTR_RO(implementation_id);
-> >
-> > --
-> > 2.34.1
-> >
+v3: https://lore.kernel.org/linux-arm-msm/20250724102540.3762358-1-quic_varada@quicinc.com/
+	* Use the qcom_cc_driver_data framework to trim down apss_ipq5424_probe
+
+v2: https://lore.kernel.org/linux-arm-msm/20250723110815.2865403-1-quic_varada@quicinc.com/
+	* Use icc-clk framework for l3 pll
+
+v1: https://lore.kernel.org/linux-arm-msm/20250127093128.2611247-1-quic_srichara@quicinc.com/
+
+Md Sadre Alam (1):
+  cpufreq: qcom-nvmem: Enable cpufreq for ipq5424
+
+Sricharan Ramabadhran (3):
+  dt-bindings: clock: ipq5424-apss-clk: Add ipq5424 apss clock
+    controller
+  clk: qcom: apss-ipq5424: Add ipq5424 apss clock controller
+  arm64: dts: qcom: ipq5424: Enable cpufreq
+
+ .../bindings/clock/qcom,ipq5424-apss-clk.yaml |  63 +++++
+ arch/arm64/boot/dts/qcom/ipq5424.dtsi         |  71 +++++
+ drivers/clk/qcom/Kconfig                      |   7 +
+ drivers/clk/qcom/Makefile                     |   1 +
+ drivers/clk/qcom/apss-ipq5424.c               | 267 ++++++++++++++++++
+ drivers/cpufreq/cpufreq-dt-platdev.c          |   1 +
+ drivers/cpufreq/qcom-cpufreq-nvmem.c          |   5 +
+ include/dt-bindings/clock/qcom,apss-ipq.h     |   6 +
+ .../dt-bindings/interconnect/qcom,ipq5424.h   |   3 +
+ 9 files changed, 424 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/clock/qcom,ipq5424-apss-clk.yaml
+ create mode 100644 drivers/clk/qcom/apss-ipq5424.c
+
+
+base-commit: 5c5a10f0be967a8950a2309ea965bae54251b50e
+-- 
+2.34.1
+
 
