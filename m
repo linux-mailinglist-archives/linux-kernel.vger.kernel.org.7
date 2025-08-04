@@ -1,200 +1,164 @@
-Return-Path: <linux-kernel+bounces-755110-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755111-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C00E2B1A167
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:28:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBF22B1A16A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:29:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A4617A632
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:28:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FFF83B330A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:29:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83D32594AA;
-	Mon,  4 Aug 2025 12:28:30 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ABE052580FB;
+	Mon,  4 Aug 2025 12:29:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="vlVoQuAs"
+Received: from mail-ej1-f68.google.com (mail-ej1-f68.google.com [209.85.218.68])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B824E4C3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53F9C258CC4
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:29:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310510; cv=none; b=Wb9fqKEazegvwp2RRxJeQnxfANZL9yBkAuAa79jbTa3SMqg1h5Hx5WmtOdlot5nfLreZFvYF1A+eEm77jFXP6urCNoLW9dUZNbxTyTb1y96kHuynxgIHbt+FikwbicVnWvXKWmFpJoKtNeMwb4GdBW+z/oGkhs+dXjtv+m8Y4YE=
+	t=1754310564; cv=none; b=s6VXeH8jUbk9Kql6mc7LNs2qzFnzAMPpWYrCxO/NAyYU50X2FKMqCnoKGRdUrXszip7QSJRyM07LomNB9FBVRr97ApNKySE2KLOgs0Z8BZC1e8vCga+3d3DxKagV2lg5HtwhhsW4e1pCNRarBzJFYvcGi2YRUhSnuJyD/Icxmow=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310510; c=relaxed/simple;
-	bh=dg9MHfSL1mqm2jlem/FZ5DA6tExDDneAVHkzXPvORPM=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kDzZcoBNX1WOm6DTZxZeZnMdy3PDx1B9xe7Z8kn+8YC10h9ODypbyk3ab+NRuZqv3qkJoOPmyxc5H4DdrMDM83xochuMVzv6SUEPbU0wglhWZSUIgAR600G7FHG/qpnqN02RlEkJ7ry0X9SWdXAwjYQxrmFYc8+K88IqrguRv9g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e3f6ae4d0fso66749455ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:28:28 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754310508; x=1754915308;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+	s=arc-20240116; t=1754310564; c=relaxed/simple;
+	bh=U9cIk5nNOFMjn3FiFMd3fKsKPPWOiLNS76Io6aFJNBs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=davoKJ7iyhD12YKonbFqVw5OMGwHGgOutorLaV+fEo8z6xOFjb/5O1FgsqddQVhE5wkExFqxfn+K574aducPPhgIhfnRePVSx7Us/GVzMY6tOyV3kV/1riF9mJ2EDUVVokWw3rmmJVU22bGeHJ0BxGEQVrtToQk6DDJAambb7A0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=vlVoQuAs; arc=none smtp.client-ip=209.85.218.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ej1-f68.google.com with SMTP id a640c23a62f3a-af93c3bac8fso408362066b.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:29:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754310561; x=1754915361; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=bIv8jQfYkJ/obO9NaYRXD+nFUDYKwhETeJ/3UnKt9RU=;
-        b=Xt92sSdWczHD+OAHkkSjgaisCEhEWjMF3voLC7mQzKV1N6YfSv+647mDepCe3e29a4
-         ATbjnVQxr4chF30CGIfiKOTk7stv0LNx4J0tFr/bek92AprL0TSZwEi3nVtMErcEg84f
-         D2KQqgYbWq9bv4Oh756V2IYgdntE4b/plyJXGd63NrfHaWrLwoHff5FXj9tL+8bjbkEg
-         jjuNLLll8UhCOjo2Ni+OeEBjzYPZ6lOVAwsnA3Jis9V8quD3l2Pymt4wh5gN8DC1lBOP
-         +U1a55HpNjJLVDqjf9lbBrzfeHoAz8oCDqsVDTWhJm0NZrE4eWxe8yYheaODia2PEjj+
-         NRsw==
-X-Forwarded-Encrypted: i=1; AJvYcCXPNANNpVwJ/SKiKsqrvlgdTiFhN5zcB1fmyepz2rv5kXtaYlx0Ihh8eckJAG456O9Zgmn9WagAh1uH3/w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXakOQpaEit4o2C4RZjk3e0SGKBnoAyyuPILHKLET5TzJzZPxp
-	lf1ngzXWv9OqjnVjhnkzQs8186bFt81zKgmOFAoqZJy/d/ht6lnlDyO3CcAN1ZePFkuojQtQbRy
-	f1sxFznkg5TAuV0Wdot5wK4lf7NxNN17xcu3omorU6TmFmKI4sQBfb5IesX4=
-X-Google-Smtp-Source: AGHT+IFFweYJjxxi9b3tNr12OISP41q+OuF27ZU+oPT1vgViH2n67tV75P3e2mxiM9Ogyl2U0s6ESjT6hnz48c9uJwdfmZ541wos
+        bh=Bh2VbEr4+GPS+zCP6PyGLcsH4RZmjBkc+JIVLTQNkVU=;
+        b=vlVoQuAsD4eWwVR59xX98IhiaftMxzstKUi+ZO5aVLoZkM+qSu28A+UNKGnj7jWK3A
+         680Gc/kXxG76MSmYRjvP43pbRcaIsCaJZjTJzj1e8Clu1J8XkFKfsgVN23cv20oVXuCb
+         W94XdGoBc8I5x7eIQk4Ik/nREcRRS+E8+sEX9BbP1mZYalfSKs3svWp3qIYaRKR6xaDa
+         oKv5oEc5+OEsdU/bmoAw4QoH6gBC9a9t9vuTHRUtCYw69T0+bKYGSVreXwv+ri9+qIbD
+         3QdhpEzlNjLG1eFJg72CKMVGly187TGial8+G8OOZcmae12v4443afAEXLl/eoJi3gbD
+         XEnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754310561; x=1754915361;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Bh2VbEr4+GPS+zCP6PyGLcsH4RZmjBkc+JIVLTQNkVU=;
+        b=lvAq5pJ9Y3euFckA9GmORHr6CQsheSxqNL88d4dtsfuF4dqNih7+oE1GH9WEul+Xyy
+         iPXz/QddEewkQZg7S+jyV+ijsV1xHTq4lIMjJhDmJHljXKQ5jIYM0YQybZiezz+gXNHx
+         3sfOcAl1zOmkdYF7nr8l2kEeSRzJAyPyJHOMS6g0wnNfTEIfjfPX+UUUxlI+X8UTGnD7
+         wXo1i92Qur+OO5XuNCIaxXNe6JPHHPHZSR5W1u71UU4cSVZ65vXRSKy/VwLC6EPA0ENM
+         N726l1IFYgeEH230gAex1GkIjU6GMGHvt5hr6gu4Z9Tku1SPXwFexu2JJtaOJ5QSEly8
+         M8qw==
+X-Gm-Message-State: AOJu0YyXEJuYZsK01Vgo9nY5FwBxyY73GLC1MwBA0c8EcPd+LVuyQ8/k
+	D1+EvmYKhOg05GqfLp75uDleOdgZ3M37X1+fxK6HrhFzghngCfB3OtTTZogYpDN9JN0=
+X-Gm-Gg: ASbGncsS16r/WtouAECMkuapHSOfz/6DuN7z52MVcUIyabVMb/b+tTo6shr30MB5McZ
+	sQeXEP2mojTUOyfM8B8iMUD5ipq9pD+YYW2gaKDTOMLnMYGH8U5VrhFXFmDqdCX6JNy7Y4X9lz+
+	sRlr/BTVVcCctTNF6nOEo6Hy9XBwJvvZuy92rjzZpHDFAZSa3a7rQnwKhy16k9vEI1JAMRfqkhW
+	YZO63fyDXc/Nu2dudZkku+lhvUeO7bMI27RpcgHfZc0RKzJIoT2tf5+NPo87Yjl3msKc5nURFIF
+	0EdIiCuI4WQlelpec5kzrhpgu6Udl5z7qEd77E9Md6Ui2VRfEYFsAYl+hq2wu+ZvvoNZXRE6Cm/
+	D/ZWuuT2ZhF+DCylbWBBg3WVwBw0e+Q==
+X-Google-Smtp-Source: AGHT+IEosZgeKp1ejcWL+SBts1B/aCmksQ8kDwupILaEdVqhNGaIFVMrjj1IxUFnhsLruybLH3boPw==
+X-Received: by 2002:a17:906:298c:b0:af9:68d5:118d with SMTP id a640c23a62f3a-af968d534d9mr304131066b.58.1754310560610;
+        Mon, 04 Aug 2025 05:29:20 -0700 (PDT)
+Received: from [192.168.0.33] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a38aasm730599066b.37.2025.08.04.05.29.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 05:29:20 -0700 (PDT)
+Message-ID: <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
+Date: Mon, 4 Aug 2025 15:29:18 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:370c:b0:3e2:c21d:ea12 with SMTP id
- e9e14a558f8ab-3e415e1a2ffmr150916335ab.7.1754310507813; Mon, 04 Aug 2025
- 05:28:27 -0700 (PDT)
-Date: Mon, 04 Aug 2025 05:28:27 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6890a76b.050a0220.7f033.0009.GAE@google.com>
-Subject: [syzbot] [block?] INFO: rcu detected stall in blkdev_release (3)
-From: syzbot <syzbot+07d6f9c5d7633ed4a5c8@syzkaller.appspotmail.com>
-To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    a6923c06a3b2 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12cc9f82580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=6f81cd75c44834c1
-dashboard link: https://syzkaller.appspot.com/bug?extid=07d6f9c5d7633ed4a5c8
-compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/2a74fc5b80ca/disk-a6923c06.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9a2267e0785c/vmlinux-a6923c06.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4dbddcb2f621/bzImage-a6923c06.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+07d6f9c5d7633ed4a5c8@syzkaller.appspotmail.com
-
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
-rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6214/1:b..l
-rcu: 	(detected by 0, t=10503 jiffies, g=15065, q=4570 ncpus=2)
-task:syz.3.57        state:R  running task     stack:24424 pid:6214  tgid:6206  ppid:5858   task_flags:0x20400140 flags:0x00004006
-Call Trace:
- <TASK>
- context_switch kernel/sched/core.c:5357 [inline]
- __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
- preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
- irqentry_exit+0x36/0x90 kernel/entry/common.c:197
- asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-RIP: 0010:arch_stack_walk+0x85/0x100 arch/x86/kernel/stacktrace.c:27
-Code: c0 74 50 49 8b 8e 98 00 00 00 4c 89 f2 4c 89 fe 48 89 df e8 5d 20 09 00 8b 95 70 ff ff ff 85 d2 75 21 eb 2f 4c 89 ef 41 ff d4 <0f> 1f 00 84 c0 74 22 48 89 df e8 8c ff 08 00 8b 85 70 ff ff ff 85
-RSP: 0018:ffffc9000b376ac8 EFLAGS: 00000292
-RAX: 0000000000000001 RBX: ffffc9000b376ac8 RCX: ffffc9000b376a1c
-RDX: 1ffff9200166ed95 RSI: ffffffff81f4541a RDI: ffffc9000b376b94
-RBP: ffffc9000b376b58 R08: 0000000000000001 R09: 0000000000000000
-R10: 0000000000000001 R11: 000000000003b941 R12: ffffffff81a672b0
-R13: ffffc9000b376b88 R14: 0000000000000000 R15: ffff8880287c5a00
- stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
- kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
- kasan_record_aux_stack+0xa7/0xc0 mm/kasan/generic.c:548
- slab_free_hook mm/slub.c:2378 [inline]
- slab_free mm/slub.c:4680 [inline]
- kmem_cache_free+0x15a/0x4d0 mm/slub.c:4782
- mempool_free+0x102/0x710 mm/mempool.c:580
- bio_put_percpu_cache block/bio.c:801 [inline]
- bio_put+0x355/0x5b0 block/bio.c:820
- bio_endio+0x70d/0x850 block/bio.c:1651
- blk_update_request+0x93e/0x15f0 block/blk-mq.c:989
- blk_mq_end_request+0x5b/0x630 block/blk-mq.c:1151
- blk_mq_complete_request block/blk-mq.c:1329 [inline]
- blk_mq_complete_request+0x8b/0xb0 block/blk-mq.c:1326
- nullb_complete_cmd drivers/block/null_blk/main.c:1402 [inline]
- null_handle_cmd drivers/block/null_blk/main.c:1454 [inline]
- null_queue_rq+0xb69/0xfd0 drivers/block/null_blk/main.c:1693
- null_queue_rqs+0xe9/0x2f0 drivers/block/null_blk/main.c:1707
- __blk_mq_flush_list block/blk-mq.c:2828 [inline]
- __blk_mq_flush_list+0x97/0xc0 block/blk-mq.c:2824
- blk_mq_dispatch_queue_requests+0x184/0x7b0 block/blk-mq.c:2873
- blk_mq_flush_plug_list+0x1f2/0x600 block/blk-mq.c:2961
- blk_add_rq_to_plug+0x1ca/0x540 block/blk-mq.c:1390
- blk_mq_submit_bio+0x1a1c/0x2880 block/blk-mq.c:3212
- __submit_bio+0x3cf/0x690 block/blk-core.c:635
- __submit_bio_noacct_mq block/blk-core.c:722 [inline]
- submit_bio_noacct_nocheck+0x660/0xd30 block/blk-core.c:751
- submit_bio_noacct+0xb49/0x1eb0 block/blk-core.c:874
- __block_write_full_folio+0x735/0xe00 fs/buffer.c:1933
- block_write_full_folio+0x341/0x400 fs/buffer.c:2753
- blkdev_writepages+0xb8/0x140 block/fops.c:483
- do_writepages+0x27a/0x600 mm/page-writeback.c:2634
- filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
- filemap_fdatawrite_wbc+0x104/0x160 mm/filemap.c:376
- __filemap_fdatawrite_range+0xb9/0x100 mm/filemap.c:419
- filemap_write_and_wait_range mm/filemap.c:691 [inline]
- filemap_write_and_wait_range+0xa3/0x130 mm/filemap.c:682
- filemap_write_and_wait include/linux/pagemap.h:68 [inline]
- sync_blockdev block/bdev.c:260 [inline]
- sync_blockdev block/bdev.c:256 [inline]
- bdev_release+0x4d3/0x6d0 block/bdev.c:1126
- blkdev_release+0x15/0x20 block/fops.c:699
- __fput+0x3ff/0xb70 fs/file_table.c:468
- task_work_run+0x14d/0x240 kernel/task_work.c:227
- get_signal+0x1d1/0x26d0 kernel/signal.c:2807
- arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
- exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
- exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
- syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
- syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
- do_syscall_64+0x3f6/0x490 arch/x86/entry/syscall_64.c:100
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f9f23f8eb69
-RSP: 002b:00007f9f24d3e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
-RAX: 0000000000c00000 RBX: 00007f9f241b6080 RCX: 00007f9f23f8eb69
-RDX: 0000000080000000 RSI: 0000200000000000 RDI: 0000000000000008
-RBP: 00007f9f24011df1 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
-R13: 0000000000000000 R14: 00007f9f241b6080 R15: 00007ffd71e55dc8
- </TASK>
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
-bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
+To: David Hildenbrand <david@redhat.com>, Michal Hocko <mhocko@suse.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-23-eugen.hristev@linaro.org>
+ <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
+ <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
+ <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+ <aJCRgXYIjbJ01RsK@tiehlicka>
+ <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
+ <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 8/4/25 15:18, David Hildenbrand wrote:
+> On 04.08.25 13:06, Eugen Hristev wrote:
+>>
+>>
+>> On 8/4/25 13:54, Michal Hocko wrote:
+>>> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
+>>>> On 30.07.25 15:57, Eugen Hristev wrote:
+>>> [...]
+>>>>> Yes, registering after is also an option. Initially this is how I
+>>>>> designed the kmemdump API, I also had in mind to add a flag, but, after
+>>>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
+>>>>> here:
+>>>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
+>>>>> Do you think we can continue that discussion , or maybe start it here ?
+>>>>
+>>>> Yeah, I don't like that, but I can see how we ended up here.
+>>>>
+>>>> I also don't quite like the idea that we must encode here what to include in
+>>>> a dump and what not ...
+>>>>
+>>>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
+>>>> where we e.g., have
+>>>>
+>>>> VMCOREINFO_STRUCT_SIZE(pglist_data);
+>>>>
+>>>> Could we similar have some place where we construct what to dump similarly,
+>>>> just not using the current values, but the memory ranges?
+>>>
+>>> All those symbols are part of kallsyms, right? Can we just use kallsyms
+>>> infrastructure and a list of symbols to get what we need from there?
+>>>
+>>> In other words the list of symbols to be completely external to the code
+>>> that is defining them?
+>>
+>> Some static symbols are indeed part of kallsyms. But some symbols are
+>> not exported, for example patch 20/29, where printk related symbols are
+>> not to be exported. Another example is with static variables, like in
+>> patch 17/29 , not exported as symbols, but required for the dump.
+>> Dynamic memory regions are not have to also be considered, have a look
+>> for example at patch 23/29 , where dynamically allocated memory needs to
+>> be registered.
+>>
+>> Do you think that I should move all kallsyms related symbols annotation
+>> into a separate place and keep it for the static/dynamic regions in place ?
+> 
+> If you want to use a symbol from kmemdump, then make that symbol 
+> available to kmemdump.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+That's what I am doing, registering symbols with kmemdump.
+Maybe I do not understand what you mean, do you have any suggestion for
+the static variables case (symbols not exported) ?
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+> 
+> IOW, if we were to rip out kmemdump tomorrow, we wouldn't have to touch 
+> any non-kmemdump-specific files.
+> 
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
