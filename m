@@ -1,148 +1,120 @@
-Return-Path: <linux-kernel+bounces-754878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17DD7B19DE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:45:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65216B19DEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:47:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10B8D4E0454
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:45:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9529116572D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:47:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C14E23BD13;
-	Mon,  4 Aug 2025 08:45:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8ED223A989;
+	Mon,  4 Aug 2025 08:47:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MygY6za/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="SYtdfNLG"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005842F30;
-	Mon,  4 Aug 2025 08:45:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CEB02F30;
+	Mon,  4 Aug 2025 08:47:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754297149; cv=none; b=aDIwjPXBqTDLznv5IOhGE76TRZEqTRDahHormxMhPdhwd2r0JCnGql3bgDdEsPn23xLMyBeLNen8YmVwO2fCNcak02JyjwyhCdeIFmAp0abEXRT9DhslyNUdlr9dtR+8++rfaYDg4bF/KODWJEECMRmlDJtlKQ4hQvEAtUpfmlY=
+	t=1754297263; cv=none; b=kvs8vKpLW92f2XUIx7/zzT6rNA3ntEGLatUSR412K+cHAKOuF+BfF2GDo/n63tbQPq3sW5QQL8372JAnNl0JVcRKRWd5U5tS3nnRgK/i8p5bA5rSIIr9vySIVPINiJjbUvslvPSA+34X9jmBOluEax1mAvP/4E5FaEp8UfJa/5Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754297149; c=relaxed/simple;
-	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BpSqfzdTfAKZOpiWY50uzlY0QvuvJQRJSWWmURYGMTYwmZH/dUAiykKjTPx+PjVy7yJx2CknDCO2R11BQ/BlYMjruCPJnxCHGftNQmND5upM2+/RuojpCTzhMbhX/aedcd2ypKa9DTCl5eRfEJmZPjWTuagpf4BApd3yPrSmK3E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MygY6za/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29278C4CEE7;
-	Mon,  4 Aug 2025 08:45:46 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754297148;
-	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=MygY6za/7JQ8298Ydmi7env+67ti+AqAjBZTE1/buPxLIMF9zeHwqrdNLHfMaIJ6G
-	 PdofNwBgkHccLko+bFZh39rrqDof/vNLRRAn8XhNhV8K9g/5eIqgtXGw9h3ECLxtrQ
-	 OT/HWCPs1VpNCh6Dg/7/gbOurMduy0sAUP4cqdt9UoDiHDekMAQC8CNGlgcPjsrQFZ
-	 ZZQffZXSk785CvD2FFZPgGqTG8fDBHiwCh3A3JUW7IQnI9dF5DhpcsWVyk/2G8q7me
-	 7AEpRDoFDtfYetU3JaOXZ94Io42dvw2i+qLxEFQy9hgNRFs2ykQpUS7W7Cg/spaNCE
-	 +ZdBrDh5yrwVA==
-Date: Mon, 4 Aug 2025 10:45:44 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: "Darrick J. Wong" <djwong@kernel.org>
-Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
-	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [RFC] Another take at restarting FUSE servers
-Message-ID: <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
-References: <8734afp0ct.fsf@igalia.com>
- <20250729233854.GV2672029@frogsfrogsfrogs>
- <87freddbcf.fsf@igalia.com>
- <20250731-diamant-kringeln-7f16e5e96173@brauner>
- <20250731172946.GK2672070@frogsfrogsfrogs>
+	s=arc-20240116; t=1754297263; c=relaxed/simple;
+	bh=t3IQI/j/o1NuYJLYS+UfsaYguP9UFoif38C6HTtvXN0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=txIK7XHkhbZRZwjeJkhaZeVWS5eCe5K2TwpnFUPNQ72QDPl+OSMYsGoCANGTpxsPGso+AhRNbDs2boHGZsMI0sGHo+bwkUWakCWEfm0cbfVhSsezZJCNxcCjSyBO+qvoN/jFP0WJMyaMGQ4hfPCcqTSnjU8AaGk3zq7X9NWW89w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=SYtdfNLG; arc=none smtp.client-ip=209.85.208.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-615a115f0c0so6893113a12.0;
+        Mon, 04 Aug 2025 01:47:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754297260; x=1754902060; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PP95V0BUHP8GfpvVRHzFQCAfR5E80Z5oT/rWEPt87aE=;
+        b=SYtdfNLG2I7t5z6M4m/USlx4I2+pAm8yVvKAXTnAP6ESqc5TBnxypMOmSIR4c8H0qo
+         uqHWThSKi//ik/DZia0jaXXG5Zrw3PjPbi6y3drRbDoOqKsvILitd8VNrg2f1HuQPgzV
+         KA29URBiRvKq1+QsR9XCglBB453+4mDVxwr4reRFRl4NlsnCTQyQ/sTDVQnSVvQfUUwR
+         RYQ5YnIKykT0iGHp6LKm17G/B6jXNGe/bL7TlqfmbVeCuRHISPw3UAhxSTLuBQwMSn7C
+         uYIXebEP3sQIJoY5VTLvCNixuzW1l6C2z1fDE/N28UtQxroer9Y0eJo8XWuHWoy27nGc
+         TPdg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754297260; x=1754902060;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PP95V0BUHP8GfpvVRHzFQCAfR5E80Z5oT/rWEPt87aE=;
+        b=AOaoT1/XDAxotPuImPA02IhKTJJ9fNDANHIGf7RsfJv0AGSdUwFyqxZGBw6X33AuhN
+         e/982tvqVuzvt49Bk1aZ0NgLWYADXaHNZoflB082YIqsS5kVmccbv7bMmu+IYTOfOMfm
+         c3+LUxTxAfQ9dMYGwz9q7pbNqf2T9HU8puO7dbpGhFzoTtnHLEN13y/t5+b3qVtTjOIt
+         uB2cbpZBBMjnfkXdRsxuc18vg1QnrRm4U/5fyUrOYWuPuVOWgMxn7VbQX+YQQkm70muc
+         WXWUnxy5Fn/JzvUjKJro9Z8T7v0aPMZWQH90UwZOnaPi2paCzAr6cvUI+ozHFe/ll6ET
+         Da2w==
+X-Forwarded-Encrypted: i=1; AJvYcCU4DeYNY9wWCc9pv8+oQ0bhqhn53tHsvXqeDGSw0b4gzS7vq0wTfIa9Y2zgRJq5LyThJGp4SM1sj5J5+vE=@vger.kernel.org, AJvYcCWbfGxtBuyHr1huZwe+xjJ4+bpyfHC5b1Af7CHLmms5aAn/PkSbQcDM2of06HcI6Ix7yD9kbIF5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyo6xeoZqKWfMr/LzEv4LoDZSqSNwcyyXetwZiKc1u8ZkF2RfFp
+	RhOOuwdOy5Lnicgb8xCMDy082j8Mx1OqSzmcZNuYNMGiRTVtNL6fvvyB6ZDbnkCQLFFH3q7o/Yf
+	W4QqMt9lN1jVtGjyFMIL9KSOkQrxipl+oCH9qz3enDw==
+X-Gm-Gg: ASbGnctbPcVjjTn1PXmh6qwmaRjGgxx9c2/N4B4axk1LPb0IIfWmLsmYen846tfEVoi
+	+50/lGotal18MlRLnVsvOZU/pDPXICN2h7HkxnD0/VHbfeGUKtXHhQdmKiW1g1D/XXjmozoAUyt
+	tx2ka61z6l9QbiM1rIKhH9XIeeHPnV9bPUeuoglW8fdDAsXiisWhWyTY3p7z1R5Sq8kGWDQ1YXU
+	tvQvaU1Yg==
+X-Google-Smtp-Source: AGHT+IGSo5A8HLbtMhNfbOQB5qnNLea1x4Wudz3qo3h/lutbHGYrG0B/jwsDYyx+UZrGK4zTgzGxXUYgbgXUVQZm2pU=
+X-Received: by 2002:a17:907:7b85:b0:ad5:2e5b:d16b with SMTP id
+ a640c23a62f3a-af94005a96cmr1047044066b.27.1754297259615; Mon, 04 Aug 2025
+ 01:47:39 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20250731172946.GK2672070@frogsfrogsfrogs>
+References: <20250804083419.205892-1-hansg@kernel.org>
+In-Reply-To: <20250804083419.205892-1-hansg@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 4 Aug 2025 10:47:03 +0200
+X-Gm-Features: Ac12FXx9fXN05DYmz9AZYO2FBWPH5Tk6UiLhmrlSspr67q96BKF9Jn7FKX6z0M8
+Message-ID: <CAHp75VdfJvKb6VegNWCiiKoQkMBf0dQPs5yP3XfPM1icgtuyeg@mail.gmail.com>
+Subject: Re: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read
+ regmap_config flag
+To: Hans de Goede <hansg@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Jul 31, 2025 at 10:29:46AM -0700, Darrick J. Wong wrote:
-> On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
-> > On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
-> > > Hi Darrick,
-> > > 
-> > > On Tue, Jul 29 2025, Darrick J. Wong wrote:
-> > > 
-> > > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
-> > > >> Hi!
-> > > >> 
-> > > >> I know this has been discussed several times in several places, and the
-> > > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
-> > > >> able to restart a user-space FUSE server.
-> > > >> 
-> > > >> While looking at how to restart a server that uses the libfuse lowlevel
-> > > >> API, I've created an RFC pull request [1] to understand whether adding
-> > > >> support for this operation would be something acceptable in the project.
-> > > >
-> > > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
-> > > > could restart itself.  It's unclear if doing so will actually enable us
-> > > > to clear the condition that caused the failure in the first place, but I
-> > > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
-> > > > aren't totally crazy.
-> > > 
-> > > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
-> > > the restart itself.  Instead, it simply adds some visibility into the
-> > > opaque data structures so that a FUSE server could re-initialise a session
-> > > without having to go through a full remount.
-> > > 
-> > > But sure, there are other things that could be added to the library as
-> > > well.  For example, in my current experiments, the FUSE server needs start
-> > > some sort of "file descriptor server" to keep the fd alive for the
-> > > restart.  This daemon could be optionally provided in libfuse itself,
-> > > which could also be used to store all sorts of blobs needed by the file
-> > > system after recovery is done.
-> > 
-> > Fwiw, for most use-cases you really just want to use systemd's file
-> > descriptor store to persist the /dev/fuse connection:
-> > https://systemd.io/FILE_DESCRIPTOR_STORE/
-> 
-> Very nice!  This is exactly what I was looking for to handle the initial
-> setup, so I'm glad I don't have to go design a protocol around that.
-> 
-> > > 
-> > > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
-> > > >> libfuse data structures so that a server could set some of the sessions'
-> > > >> fields.
-> > > >> 
-> > > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
-> > > >> pass it to libfuse while recovering, after a restart or a crash.  The
-> > > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
-> > > >> course.  And there are probably other data structures that user-space file
-> > > >> systems will have to keep track as well, so that everything can be
-> > > >> restored.  (The parameters set in the INIT phase, for example.)
-> > > >
-> > > > Yeah, I don't know how that would work in practice.  Would the kernel
-> > > > send back the old connection flags and whatnot via some sort of
-> > > > FUSE_REINIT request, and the fuse server can either decide that it will
-> > > > try to recover, or just bail out?
-> > > 
-> > > That would be an option.  But my current idea would be that the server
-> > > would need to store those somewhere and simply assume they are still OK
-> > 
-> > The fdstore currently allows to associate a name with a file descriptor
-> > in the fdstore. That name would allow you to associate the options with
-> > the fuse connection. However, I would not rule it out that additional
-> > metadata could be attached to file descriptors in the fdstore if that's
-> > something that's needed.
-> 
-> Names are useful, I'd at least want "fusedev", "fsopen", and "device".
-> 
-> If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
-> be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
-> the store as 'journal_dev'?" Then it just has to wait until the fd shows
-> up, and it can continue with the mount process.
-> 
-> Though the "device" argument needn't be a path, so to be fully general
-> mountfsd and the fuse server would have to handshake that as well.
+On Mon, Aug 4, 2025 at 10:34=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
+ote:
+>
+> Testing has shown that reading multiple registers at once (for 10 bit
+> adc values) does not work. Set the use_single_read regmap_config flag
+> to make regmap split these for is.
+>
+> This should fix temperature opregion accesses done by
+> drivers/acpi/pmic/intel_pmic_chtdc_ti.c and is also necessary for
+> the upcoming drivers for the ADC and battery MFD cells.
 
-Fwiw, to attach arbitrary metadata to a file descriptor the easiest
-thing to do would be to stash both a (fuse server) file descriptor and
-then also a memfd via memfd_create() that e.g., can contain all the
-server options that you want to store.
+...
+
+> +       /* Reading multiple registers at once is not supported */
+> +       .use_single_read =3D true,
+
+By HW or by problem in regmap as being suggested here:
+https://lore.kernel.org/linux-gpio/CALNFmy1ZRqHz6_DD_2qamm-iLQ51AOFQH=3DahC=
+WRN7SAk3pfZ_A@mail.gmail.com/
+?
+(OTOH it mentioned cache init and you seems referring to run-time,
+however it might be well related)
+
+As a quick fix I am fine with this.
+Reviewed-by: Andy Shevchenko <andy@kernel.org>
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
