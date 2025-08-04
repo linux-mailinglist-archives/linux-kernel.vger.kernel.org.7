@@ -1,155 +1,146 @@
-Return-Path: <linux-kernel+bounces-755647-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755648-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA709B1A9CE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:50:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5090DB1A9DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:57:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5D47B189CDEB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:50:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C72393BC151
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:57:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 67D3D286D4D;
-	Mon,  4 Aug 2025 19:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81FB428A415;
+	Mon,  4 Aug 2025 19:57:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ezXsiYyn"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NCgQL3Ey"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29FDCA920;
-	Mon,  4 Aug 2025 19:49:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E598EEB2;
+	Mon,  4 Aug 2025 19:57:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754336998; cv=none; b=Px+b9deVzhw8myGxl6c1LXMgzg3vMWDDFxd/F7YG1ttcE+Z9RTwJo3jXdOk4QyepJfQuN7rAhmo2AsSutZAqO3IK20CNcs5aQd+NasqG7ALS0jbBB9ShFyDjwPm3vROyhBFKR9KtNFwKG21fmxqIbAVE/KwieeB5DubS9xL5gVI=
+	t=1754337451; cv=none; b=EFCKg+yf9nYcXgC5MfsCMyYPBwn9c/JRZkriCcJ943J6lJIYq55m6mqihFIjLM7MkpUHmPLrdXwtkvl89Mgxu9V3Pl0jSunSPMK+a9IqYoIMmmBp3p+YFrqoqJpyBthSN+f3qYJJYH6FaoX5nV5TXByC9/iIhKWJOd9Av/cCRAw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754336998; c=relaxed/simple;
-	bh=GNzexns6pcPBUTEkIeqnIu/h9x9Gke1nRAkCyAK2Td4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dR/XHasUTBV5aDIRs0u2vu6yKuYclOUGBiXxhlFSc6Ro4HMLl6/40pi/ux89LNy8RTJXknEHKhciV4t0iBqD0bF3Vu0fqQoAl2j4WXzOjQdNYPoK6zmX+scVdeBQbo8vk4bS0VEap5xf3/r3uakl/VgYdyYTK//nMnuBKZ9rEbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ezXsiYyn; arc=none smtp.client-ip=209.85.218.47
+	s=arc-20240116; t=1754337451; c=relaxed/simple;
+	bh=Ls1I6xnwjKB9nxx4YVwaD8SDpqVui6e9YgwpysNbbIA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=AtDPtB9T3Of/VOVGO8d0YNXpo5m4lbDqadtLGdH7oxK//uKblXsH1hXnN0Xt29lJHMaJXb5Ucb6/skJDto7kh4nwsZOyc4QQAgBT5WC9DoHsgsF1d2N/ITT0WzXmcU7/0DM9oXyiicNPtRAnU6bi6UXLFcnUM2zIUf3gFp87mrY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NCgQL3Ey; arc=none smtp.client-ip=209.85.221.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-af922ab4849so687049266b.3;
-        Mon, 04 Aug 2025 12:49:56 -0700 (PDT)
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b790dbb112so2632958f8f.3;
+        Mon, 04 Aug 2025 12:57:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754336995; x=1754941795; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=GNzexns6pcPBUTEkIeqnIu/h9x9Gke1nRAkCyAK2Td4=;
-        b=ezXsiYynU03TOXBCxB4z6tuoNoX/55qoqhLz7pxKiZKRx96Opni0fsZ1xTAgC3DBq/
-         Z94Mcf/QQQN2j7R0ESCKTIn9SOC+iE8bi9bovJZ5IHFpuLB/T8vESppsdGjHYvmpSn7w
-         6Xt4KtOCSJG0gzEgiu808ZpDoDvSRR8gj3PaTRPZbfOcH1CZcKNx1nE20062VAB+unU1
-         yjD3nZgv9bNpWtARXTtiwLML2NMhLeLVhJQR0noC/cznxgN8xzTYYoUxcwE6ndMrf+4+
-         kSrjxQSbB6IIuE+cAe10w7duUqm+7JAkN+pdNg1W2BvuMjCrZ2IhLjPIkpCRIbSQa7zr
-         FHsQ==
+        d=gmail.com; s=20230601; t=1754337448; x=1754942248; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=x/MyHblJ7uyowUrCYk/Yn8tFlGh2tU0BHZTDwTmz4Yc=;
+        b=NCgQL3EyYTwo+tuLqGwIBmZb02UqpF4YwZuNQLRCKsZ+Dze7j0i9EI0K0H8nGdryAI
+         FPjaUCrbGXkaNagosT2tB4fpZW5gbnjgo7yUkTWkXNHMgRouV/ostsTO2r2rdSh6sGpZ
+         jF8Lk5xo7Md3eXxY4uI2QsoJAsiF+CaTvUxbQwhQ6klw3jGFL82Xo/jjf6t+rcBoOQf3
+         DypswV5ZPesla3O6RkBpr0RU/o6tpPPTdywzIzObZKUlmudGpc/b1KQKKeD2lTJRSEhS
+         3fTd5iGm7+6C5uKz8t0xFAX1nqpB5ZBqq+kFqzirmARz3kb6c0W97Fmnl1zEPjB0x1Ae
+         U6jA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754336995; x=1754941795;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=GNzexns6pcPBUTEkIeqnIu/h9x9Gke1nRAkCyAK2Td4=;
-        b=f3uzRgCZ3HW1v0F9So/2/OAq9Y7T/TkHF+cit8FKSEYQ8XCIRKwsBsEJfJCfnmfraX
-         Jk39Wlw22vmm1sv9VoqmnwMSFcJ3la+rGwsBh/tm+Vlw6Do0YNbLuq/HVi3GGNeaystD
-         L2jOlWNFKtOYSy7pBevohw51CRICq4UAqNtre5nxXzjnlDRFpIqValPeHQH2o0m6ZBrD
-         C8CHTw7hhCGAtBtrJcxmyZDZY7IoqwAaug4sMngFlYe5CYvBAJfAMQdyqIHaKHl/4NFX
-         YP2vLY9kqm9UBnaxm38V18/xjYrJ0Dl37w1J9hYlOroVxs0T6HZRZCzW2afPBSlPm/xR
-         PzSw==
-X-Forwarded-Encrypted: i=1; AJvYcCVkVkeDP069LkG774qJwyfgH8YuiviNGZyjBPLhV5QeN80I/KqBZ04DfZKa7SELU6mYxTGgfnyZrMCD@vger.kernel.org, AJvYcCWYyx8nW8PxiTod469sM6613m63xaCZNrCudvRHSEVbIYcTjqIW8qI8O3Ph4tDWAnwRTwIBswxCjFM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmayEOcMWlUPuXNe3WTHJN7HktS05GocFfUKY6C2fwP8UkQDi2
-	GZKzG4+eZ7orneNelxvJKjkhXVGVz67WzdyIL328BykT1vOuPWeJ/ES0Zt9iWEFx0XOyBkd+gGy
-	DFebuYmhBfBDi462dP4sa8rMz3uO1mdg=
-X-Gm-Gg: ASbGncv2207x6rgYKWqKchi+w61H+IrVvbogufh5q7sgoe9AELV20MTN04IqRQydBxw
-	a/Vz27Mfz6S+s1pKxnarYF5fmV5gSPrz1cwo1WarOt5PoyI37Guqkgk3xCsGKJb68xXWUIxlfX7
-	bLKJwnVHDx2JQTu4gABWxwJMhXDi908dTc/uVaG+DQ3gQ5yB27r7cWmFAfeTn0uths8G3cYzJ1f
-	q7xa+w=
-X-Google-Smtp-Source: AGHT+IGcMq3bxCdaYN7JTYB4ZRdZj5ChB4GQUWGwwN1A04vvH51/5tRA4ycCUTXjUODp6yMy5vQnnC3OMmCbWz5atD4=
-X-Received: by 2002:a17:907:9407:b0:ae0:cc5f:88ef with SMTP id
- a640c23a62f3a-af9401af514mr1075474166b.32.1754336995289; Mon, 04 Aug 2025
- 12:49:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754337448; x=1754942248;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=x/MyHblJ7uyowUrCYk/Yn8tFlGh2tU0BHZTDwTmz4Yc=;
+        b=fjqANI+Prwgx8XSbLBt+dAiJty+w33M6CxTiK7xCQcvjUZTJ68Kd3+kENas5a0/zc8
+         AGg4HAwwN78QO104fpuSCDipGtOxGPuuerelm0VN+pXxUYoEU/r7wxmjMDHNTdippoCa
+         eQZBTHoR13QvmMHlBDDN9znVzm2PBPjmyWNYmKO029cU0WnEfD85V0ZQIVVtU0/Qa9VT
+         hrI2yx0v9ccg8z0515W9AlA1Fr52zDH42x55Ubl02TJWqcna8NUYDzfkwIW2vBo78thu
+         MQ5829LR6DRa1t5ha4ge6mZXF1VRToQZi5ZtO6Zn0vbFCnYuxqqSqbfdwX9zZO9zg6If
+         uQWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVf2XarO2V1xS2ClBOuI569ZCm6qRJx+LU5LLSWX6lPrA7bSOQTFZaMxQGxmZz5NuW7+CtmsayS6g73@vger.kernel.org, AJvYcCWzf7LsTuzlzWpwF5i/DW9eVbJ0HdqgdTsTaUEbV5VspcK3SrmAHoqCCVeJKkltT9w1yAmZEM+yajOVUagqlPncnk8=@vger.kernel.org, AJvYcCXIg6VYKZkEaKt2W2eUFVp7HOlNTCiOJMDZj1MMw4jeIQbrnZtT9vOYpnBXChTS18jBSHbr2QqdtWU0t7ec@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEB+EI7YaR6Q/EnvutjaE2Nmae1OSYE+IF+CE9qaDNv32pN8wr
+	P1eJOnR0TXGlAxiOajI+oG8+Cqk42K/0/jqSSmy1tdIGmb0DqfjN/Qnq
+X-Gm-Gg: ASbGncsh5B+2uB9BrC2ErbxoZKSteeLnI1+7x3Xk/TFlo3IMiGoo8hueJKTH86qT7y7
+	gCNNONFe8XxJBOK3pR17GKH085Dsf5UXqW70+lOblpvfI4ZbvZpuX7sRegRsJY23pSTTdgiS4OX
+	mJ14idC1zHCp+NyI2SDn9b1DRw1Qo6lU5jGG8uVMTiUQbQcTWz9iQXDjB72f90gLMG129sxWDr4
+	0Wyj3NMFFi8pYt0NXdTRriBNOIuwzu7tzwuCxios6ep7jFIOQaWcgDvLGr4fKOTH5/tZvfwl1RT
+	CJ+SF2bCs26/uIb7tV/0Wl3uBmKg6qQSq23p4vQKnYGEd0zrKacKplfaAiHnOWCg1Q7ee8SZmU8
+	pWHrRyWXjRGOAHTpmJXPmXznGZklTzjK1qOKctuduCaVv4fd1EUls7rizXO7okR9TgprVptQprQ
+	==
+X-Google-Smtp-Source: AGHT+IHKjHoSmJl6K3x29t/xHimifONWBZQqAL6qPDzkRebqVVmffzoLpnolqmH405PnzLib2DShvA==
+X-Received: by 2002:a05:6000:2388:b0:3b8:d15e:ed35 with SMTP id ffacd0b85a97d-3b8d947296emr6440136f8f.23.1754337448241;
+        Mon, 04 Aug 2025 12:57:28 -0700 (PDT)
+Received: from iku.Home (97e54365.skybroadband.com. [151.229.67.101])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c3b9074sm16293840f8f.17.2025.08.04.12.57.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 12:57:27 -0700 (PDT)
+From: Prabhakar <prabhakar.csengg@gmail.com>
+X-Google-Original-From: Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+To: Wim Van Sebroeck <wim@linux-watchdog.org>,
+	Guenter Roeck <linux@roeck-us.net>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Wolfram Sang <wsa+renesas@sang-engineering.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Magnus Damm <magnus.damm@gmail.com>
+Cc: linux-watchdog@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	Prabhakar <prabhakar.csengg@gmail.com>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Fabrizio Castro <fabrizio.castro.jz@renesas.com>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
+Subject: [PATCH v3 0/6] Add watchdog driver support for RZ/T2H and RZ/N2H SoCs
+Date: Mon,  4 Aug 2025 20:57:17 +0100
+Message-ID: <20250804195723.3963524-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
- <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
- <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com> <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
- <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com>
-In-Reply-To: <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com>
-From: Andy Mindful <andy.mindful@gmail.com>
-Date: Mon, 4 Aug 2025 22:49:43 +0300
-X-Gm-Features: Ac12FXwoncyyo3lMGdVFGmeOSercSw0CMzqTN4N7YKEyC89vLmt21SqpqVGopCE
-Message-ID: <CACTEcX7oa+Shj=uYiRMoWpng+RZXDeQrOa-VTRmzVVtXJMCgLQ@mail.gmail.com>
-Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
- 6.8+ on ThinkPad X1 Carbon Gen 10
-To: regressions@lists.linux.dev
-Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
-	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
-	linux-acpi@vger.kernel.org, rafael@kernel.org, ville.syrjala@linux.intel.com, 
-	tglx@linutronix.de, Christian Brauner <brauner@kernel.org>, 
-	Jani Nikula <jani.nikula@intel.com>, Paolo Bonzini <pbonzini@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-Can you please advise on how to bisect further?
+From: Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
 
-andy@lenovo:~/linux-stable$ git bisect bad
-The merge base 0dd3ee31125508cd67f7e7172247f05b7fd1753a is bad.
-This means the bug has been fixed between
-0dd3ee31125508cd67f7e7172247f05b7fd1753a and
-[6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1].
+Hi All,
 
-andy@DESKTOP-0R165CF:~/linux-stable$ git bisect log
-git bisect start
-# status: waiting for both good and bad commits
-# good: [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1] Linux 6.7.11
-git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-# status: waiting for bad commit, 1 good commit known
-# bad: [6613476e225e090cc9aad49be7fa504e290dd33d] Linux 6.8-rc1
-git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
-# bad: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
-git bisect bad 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+This patch series adds watchdog driver support for the Renesas RZ/T2H
+(R9A09G077) and RZ/N2H (R9A09G087) SoCs. The necessary device tree
+bindings and driver modifications are included.
 
-andy@lenovo:~/linux-stable$ git status
-HEAD detached at 0dd3ee311255
-You are currently bisecting, started from branch '6fc5460ed8dd'.
-(use "git bisect reset" to get back to the original branch)
+v2->v3:
+- Fixed commit header for the patches rzv2h_wdt->rzv2h
+- Added reviewed-by from Wolfram
+- Merged "watchdog: rzv2h_wdt: Make reset controller optional"
+  patch with "watchdog: rzv2h: Make "oscclk" and reset controller optional"
+- Dropped patch "watchdog: rzv2h: Set min_timeout based on
+  max_hw_heartbeat_ms" instead updated the period for RZ/T2H.
+- Updated rzv2h_of_data structure to include tops and timeout_cycles
+  for RZ/T2H.
 
-It is not moving further.
+v1->v2:
+- Dropped items from clock-names and instead added maxItems: 1.
+- Added reviewed-by from Rob.
 
-=D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 17:50=
- Paolo Bonzini <pbonzini@redhat.com> =D0=BF=D0=B8=D1=88=D0=B5:
->
-> On Mon, Aug 4, 2025 at 12:57=E2=80=AFPM Andy Mindful <andy.mindful@gmail.=
-com> wrote:
-> > Double-checked bisect, looks like I've have found broken commit:
-> >
-> > > > git bisect bad
-> > > > The merge base ba5afb9a84df2e6b26a1b6389b98849cd16ea757 is bad.
-> > > > This means the bug has been fixed between
-> > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757 and
-> > > > [1b1934dbbdcf9aa2d507932ff488cec47999cf3f
-> > > > 61da593f4458f25c59f65cfd9ba1bda570db5db7
-> > > > 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-> > > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757].
->
-> This skip is messing up the results:
->
-> # skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
-> git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
->
-> and there are still 3858 commits in
-> ba5afb9a84df2e6b26a1b6389b98849cd16ea757..{1b1934dbbdcf9aa2d507932ff488ce=
-c47999cf3f,61da593f4458f25c59f65cfd9ba1bda570db5db7,ba5afb9a84df2e6b26a1b63=
-89b98849cd16ea757}
->
-> Any chance you can get 6.7 to work and restrict the range further?
->
-> Thanks,
->
-> Paolo
->
+Cheers,
+Prabhakar
+
+Lad Prabhakar (6):
+  dt-bindings: watchdog: renesas,wdt: Add support for RZ/T2H and RZ/N2H
+  watchdog: rzv2h: Obtain clock-divider and timeout values from OF match
+    data
+  watchdog: rzv2h: Make "oscclk" and reset controller optional
+  watchdog: rzv2h: Add support for configurable count clock source
+  watchdog: rzv2h: Add support for RZ/T2H
+  watchdog: rzv2h: Improve error strings and add newlines
+
+ .../bindings/watchdog/renesas,wdt.yaml        |  36 ++++-
+ drivers/watchdog/rzv2h_wdt.c                  | 148 ++++++++++++++++--
+ 2 files changed, 164 insertions(+), 20 deletions(-)
+
+-- 
+2.50.1
+
 
