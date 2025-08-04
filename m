@@ -1,64 +1,53 @@
-Return-Path: <linux-kernel+bounces-755672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755673-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 156B1B1AA32
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:41:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2F34B1AA36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:43:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C9FE5189CD09
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:41:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 653CC621A03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:43:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF1A6238C11;
-	Mon,  4 Aug 2025 20:41:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5E4B23815F;
+	Mon,  4 Aug 2025 20:43:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RzI3PgT+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="Og0pv9Iy"
+Received: from mail-05.mail-europe.com (mail-05.mail-europe.com [85.9.206.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A3C8231842;
-	Mon,  4 Aug 2025 20:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 770BF21D5BC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 20:43:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.9.206.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754340063; cv=none; b=gKHBWh4oMCK9Acx2RUu+FzxmTFRh52WMAk+QAQQVevozd6NaHvlb1XmmflganaodIhxi8TMfRlGGQs1jeS9SnQ1Nx1HrDiRgO7FDOWx+5HPr0sKcE5oQFSCMsWcnfXyXQq+FxbPW776IJMbRYcieldJEIFt780kDuU0EuHshbOI=
+	t=1754340190; cv=none; b=cMTjWwr+wTLOPhv4dahj8ktebFk1fzUskuYWgDM4tjXo6gPirIJebL6tPa+36tQHxXlU24aXSm8aqrSRuGg9WG0bFL/puaoCaaCsUtpUSV06H6vIFiyjuGTWlcr1qGFwsr6mZnJfUOmw9UugSk7rg3KHMPeatZA9WktiXUzA2U4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754340063; c=relaxed/simple;
-	bh=9eAvV9+NQOhCQGj2xEDwZ+ZARU2tdDyFH3888WUmqVs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NvU0l0H8quxOci/G10kZhUBzncc2XRpgLuylFbxwhNPWvN9kk0//fTj1Ti9cXp0VxpIah/9+kv5yU1nNbEbLQsbQQfLizakv2nycq3/x13gfoT+v40qLyWwzcd8iftuI4PYkZqG04kY+oaxi3LYjxM8a6eLLY4pfyn4vQHXlyUQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RzI3PgT+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26153C4CEE7;
-	Mon,  4 Aug 2025 20:41:01 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754340062;
-	bh=9eAvV9+NQOhCQGj2xEDwZ+ZARU2tdDyFH3888WUmqVs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=RzI3PgT+EsQMvzjzNNKXZUi6v3EmOqmyIEPTb8hgjHPWM4AO/IErS8rEPTsKJ1skB
-	 1P6/3QC5d2v6szNCEBMhTw/MsmVlTzCBYI7/LkvX58gmMBWX1ASL1nl5TEfncVzhfF
-	 WbVMp4x401uBsqSiXikCfETtXYJ+vgX/nBYE+EiB61BUOsRXIyRPjXjrRPCR9HX2wY
-	 WUDYrNvBLakqetrk2wfaKxUIDgR0ZtQGmwyE666uItbC/9J04BeiIJmaj9iSVtUcm+
-	 N2pFdZwU5TlZJryNPospy2ah+Q9VlLG6MrQaL/52DEqw/03iu6UL/YBfsS72PMOsAP
-	 eSzpLAtS7+3fw==
-From: =?utf-8?B?QmrDtnJuIFTDtnBlbA==?= <bjorn@kernel.org>
-To: Pu Lehui <pulehui@huaweicloud.com>, bpf@vger.kernel.org,
- linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Cc: Puranjay Mohan <puranjay@kernel.org>, Palmer Dabbelt
- <palmer@dabbelt.com>, Alexandre Ghiti <alex@ghiti.fr>, Alexei Starovoitov
- <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, Andrii Nakryiko
- <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, Yonghong Song
- <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, KP
- Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo
- <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>, Pu Lehui
- <pulehui@huawei.com>
-Subject: Re: [PATCH bpf-next 07/10] riscv, bpf: Optimize cmpxchg insn with
- Zacas support
-In-Reply-To: <20250719091730.2660197-8-pulehui@huaweicloud.com>
-References: <20250719091730.2660197-1-pulehui@huaweicloud.com>
- <20250719091730.2660197-8-pulehui@huaweicloud.com>
-Date: Mon, 04 Aug 2025 22:41:00 +0200
-Message-ID: <87a54e3jmr.fsf@all.your.base.are.belong.to.us>
+	s=arc-20240116; t=1754340190; c=relaxed/simple;
+	bh=1q0AJSmYwpiwEBMDPBrAvoL7wGmF84F98gzMAFhHLOI=;
+	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=ak2zZTgUlJ0iQahaFnrXq8OarVnJ09lj/GjvEtozvkX8GgW8HBkLGnl/pm/w1bsmSA37OBh9zEEJFK/S40XEaCRR7zWHw0kVgdRTByUE1xpHVC6cC5y2jzHgAyT82cdx8pWnF78zAfs7fHE71sMPYYZljzK1mlhaqEhnJld17HY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=Og0pv9Iy; arc=none smtp.client-ip=85.9.206.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=qjuggcw4ufhxxknibr33maxmii.protonmail; t=1754340178; x=1754599378;
+	bh=10WUjNzk2HF2RaLox2mr9sq+QEXRMLLfRbsEMop6Otc=;
+	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
+	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
+	b=Og0pv9Iy17lNk2Hvuz3r78HIhRqYaj9Fhla93p6PF4g7i1T3h+8n+FuJ3ZCvUzahx
+	 efbdVkgGl/1aAexrMJ0qL1HHztn+GIxOKAF2NxeK2bWg/pMGku76EwWpIa+5Vu5u6s
+	 CX97OolQ28gPpuQMDQbLlq6gDwJklWSPqdqrLc5zibwccM4AO7zAHbdc7Y98nlzxuQ
+	 yq9WOfrVpzqlfqQRWumjBT5bBxgzzyw85Cr/fQ6BhMOHyyFHi92qKTPLjDDCH/EI6C
+	 qfMjBxuOlLtYVXJ1PCE9PLxGcyTD7o2XNQyHtz462zl9LK/WXAKibjatGMMFUxYB0i
+	 iBJodpsY1WzVw==
+Date: Mon, 04 Aug 2025 20:42:53 +0000
+To: davem@davemloft.net, dsahern@kernel.org
+From: Maksimilijan Marosevic <maksimilijan.marosevic@proton.me>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, linux-kernel-mentees@lists.linux.dev, Maksimilijan Marosevic <maksimilijan.marosevic@proton.me>, syzbot+a259a17220263c2d73fc@syzkaller.appspotmail.com
+Subject: [PATCH 1/1] ipv6: Check AF_UNSPEC in ip6_route_multipath_add()
+Message-ID: <20250804204233.1332529-1-maksimilijan.marosevic@proton.me>
+Feedback-ID: 97766065:user:proton
+X-Pm-Message-ID: 14d0a06c66484cfe47a197f02c06aca5859d00cf
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,14 +57,49 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
 
-Pu Lehui <pulehui@huaweicloud.com> writes:
+This check was removed in commit e6f497955fb6 ("ipv6: Check GATEWAY
+in rtm_to_fib6_multipath_config().") as part of rt6_qualify_for ecmp().
+The author correctly recognises that rt6_qualify_for_ecmp() returns
+false if fb_nh_gw_family is set to AF_UNSPEC, but then mistakes
+AF_UNSPEC for AF_INET6 when reasoning that the check is unnecessary.
+This means certain malformed entries don't get caught in
+ip6_route_multipath_add().
 
-> From: Pu Lehui <pulehui@huawei.com>
->
-> Optimize cmpxchg instruction with amocas.w and amocas.d
-> Zacas instructions.
->
-> Signed-off-by: Pu Lehui <pulehui@huawei.com>
+This patch reintroduces the AF_UNSPEC check while respecting changes
+of the initial patch.
 
-Reviewed-by: Bj=C3=B6rn T=C3=B6pel <bjorn@rivosinc.com>
+Reported-by: syzbot+a259a17220263c2d73fc@syzkaller.appspotmail.com
+Closes: https://syzkaller.appspot.com/bug?extid=3Da259a17220263c2d73fc
+Fixes: e6f497955fb6 ("ipv6: Check GATEWAY in rtm_to_fib6_multipath_config()=
+.")
+Signed-off-by: Maksimilijan Marosevic <maksimilijan.marosevic@proton.me>
+---
+ net/ipv6/route.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/net/ipv6/route.c b/net/ipv6/route.c
+index 3299cfa12e21..d4b988bed920 100644
+--- a/net/ipv6/route.c
++++ b/net/ipv6/route.c
+@@ -5456,6 +5456,14 @@ static int ip6_route_multipath_add(struct fib6_confi=
+g *cfg,
+ =09=09=09goto cleanup;
+ =09=09}
+=20
++=09=09if (rt->fib6_nh->fib_nh_gw_family =3D=3D AF_UNSPEC) {
++=09=09=09err =3D -EINVAL;
++=09=09=09NL_SET_ERR_MSG(extack,
++=09=09=09=09       "Device only routes can not be added for IPv6 using the=
+ multipath API.");
++=09=09=09fib6_info_release(rt);
++=09=09=09goto cleanup;
++=09=09}
++
+ =09=09rt->fib6_nh->fib_nh_weight =3D rtnh->rtnh_hops + 1;
+=20
+ =09=09err =3D ip6_route_info_append(&rt6_nh_list, rt, &r_cfg);
+--=20
+2.50.1
+
+
 
