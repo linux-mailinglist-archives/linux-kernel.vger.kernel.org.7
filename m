@@ -1,126 +1,137 @@
-Return-Path: <linux-kernel+bounces-754988-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754989-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C62DB19F98
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:18:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 995ACB19F9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:19:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 88D69179CEE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:18:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 46F693BD8AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:19:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2D5C2494F0;
-	Mon,  4 Aug 2025 10:18:52 +0000 (UTC)
-Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C972024DCE8;
+	Mon,  4 Aug 2025 10:18:59 +0000 (UTC)
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9D691F30BB;
-	Mon,  4 Aug 2025 10:18:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EAFE1F30BB;
+	Mon,  4 Aug 2025 10:18:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754302732; cv=none; b=iU6laKDbM7michA1cBffo0+TCWpHXbdw7jCaSmEUFqm0ZThimHWrUnzdmdTSyu9UTmOosCZ4CTv5Wjssm1712mURUJXrct+1wCNr/NW17YgsQocu2W/y5EN2aUQhqVg9/DIrdQtVR3WqGmoS/7Zb2tn07nPdkcVoYpWGsLNlktw=
+	t=1754302739; cv=none; b=YUWCMihIkqeyu8pNEyiZ8dqK0AnH0vqH/9aBs01+qJnw9Y3otVrGIJzO7HaMfQDKFkp9HXxWRPKCpmrqHYJ0LiA6CiBDs45HMl9NiR8TlzET+cCr5Vaoly+m7VGLfCnUPidJxfdzz0c7d02vwzFNxfjJJTOmLjlo9xiXJyOpuZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754302732; c=relaxed/simple;
-	bh=Edyu03zA6kX+GZ7JETsugqJG7N+ZD74ozJ+ugckD4MA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fcntZCT/XxrLRN6RqvVbWKt+OrOjG9F63Se0LksdZzKF4hJRHZPTyIzmURgTUWhHYq10sYozSJ/ykUBlDYi3khiSmt8egWZUapGxJsA4uzAyR11vNnZeFRW/AW4vhgAKhhtl6/ipbAPdKVOjvhlt1Gv+UITOizN5/D6XFFp1XWc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4fe7dd45935so653251137.1;
-        Mon, 04 Aug 2025 03:18:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754302729; x=1754907529;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=me5NB77V8+KG1kUND+GKU1clCy+piwMeUvhbeEFZ+hs=;
-        b=KRpBTfKl3W67siRJqerDXADsxd/NyHBwJqAL2wcI5IquAj1U9RAZaXKRKubhO4d7JK
-         rGStzLOCh8AhEJO4rvHdnCK2+aCy4gHdV3ao2aJaaCNSzboQaw4+p+x+ZNzDzxM/3aUd
-         xz7L5JOBcifZNYBtOFIeFAjBbytKQjlP/t09WjEVucd9XV6cUkvSF7NeuJoI9gDCixBN
-         5+QX+wwXo6jeCDl+7ZZr33dgViiKGITvN1vQeHvVz7WiwT/DlpZ7FeMHYB/LZXIbj9uK
-         Fx+ndVi+EU2pCI+ri4r6pNEyFZXgcN2DLIMvzyoYUDh1LMLQCuRX/3Z7GlJRrQ7PhpZa
-         Vi3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2Y9Ro17HM3gWUV6Y+vCp4/QkoYmQQf0yAfj2UKT823LdcmnbDQrJWyk0xkDxFfWPF7qbC8VWMzN9UdpQ8@vger.kernel.org, AJvYcCVUEM0ztFuUc4QXNy06HCJz7X49qIvpWY6Vm7/Fg0qGBmL4keRHrFYV4XwM7GtAiTM7ghxCopUZa08=@vger.kernel.org, AJvYcCVr9xyS3i+SSYXdtr919KTUL/Qs6sOxrcHLspXVy43sIDWWdTHxXB2cCY6YSC/+D/ueV7hA/dlGFEX1lXUbKghyVXE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxdy5xXdFPeAfi9j7dOpGTgFsUPc95KdK9dRPNpC49hneyYK+ln
-	tt5L4uSJfa5sGrAVLJL8qLDaWHSxVd1yU5PnD2v42BA9KZLqPCnEuVkn/msu1Yfz
-X-Gm-Gg: ASbGncvqyNyv/gk8JUkdRPLM3z3QIk1IyMKaZyya78p+eEcd0A/P2NTdh9q4nXGmF8K
-	uvvuPUxMLqJ5ZggThVtmKvrHjIIRREgCFKCoE33pNx2Xov7e6G9Xw02TGxROArC+zZnH3oqyk8D
-	lSerrJnwOm9xil6PxscUseEy2Oe1xPPeBRiL7hBM1sFKNhPAq37RBn9NoSBln3JoAXRnMi9HHM7
-	IfLBbXDAJmSRH/3DH5kybTFmv/cAKGYdAHQBCgfiAlnWKfmQD7LojlotLxKStTZb6YHVwjdOdhx
-	zETDDNpvcGsqqwxuwKSur0EMA/BQG/rrGAU4B+yRrWthgNcbDFjsxFtiww34X7apEdSMDDp189m
-	HvyrAxVzX8Iue2/DZj0x3Ati/bOaGSovaR3YJuld0dYn9F63yTecplRopdiVPzv32
-X-Google-Smtp-Source: AGHT+IFxKt0wgqrsY8GDR81DIOnEv/4vwImKHsGIHI+ClZ3eo1oqBBOkWtv/g+S7stILZap31OwqIQ==
-X-Received: by 2002:a05:6102:54aa:b0:4fd:3b67:4572 with SMTP id ada2fe7eead31-4fdc3638538mr3004472137.15.1754302729312;
-        Mon, 04 Aug 2025 03:18:49 -0700 (PDT)
-Received: from mail-vk1-f181.google.com (mail-vk1-f181.google.com. [209.85.221.181])
-        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4b98sm2226630137.3.2025.08.04.03.18.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 03:18:48 -0700 (PDT)
-Received: by mail-vk1-f181.google.com with SMTP id 71dfb90a1353d-53924027b19so748042e0c.1;
-        Mon, 04 Aug 2025 03:18:48 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUcM68aJZJrRWtnWoxIX9tctKbaMRveQA7vDJAxv4lObwk4YtXijK+0qk1B8WtOK8NFO0AhmaKIh3U=@vger.kernel.org, AJvYcCWLSX4lKjXy7y7SKmutablISxJM6c7C83uZOuSTF/UUv3verkrQZI1R0AaNCld9fPcxUtfO/J0PiT/wvXTxEKZUS/E=@vger.kernel.org, AJvYcCXAVABbfzEVklRhBIoy2RLxBZI/YbmLzGBjx5DNl+lODMTo5EUoGscbrXKzZCeSz8+49yYArLlI6Hk2diOM@vger.kernel.org
-X-Received: by 2002:a05:6122:1821:b0:538:dbd2:2ece with SMTP id
- 71dfb90a1353d-5395f37e06emr3171358e0c.11.1754302728529; Mon, 04 Aug 2025
- 03:18:48 -0700 (PDT)
+	s=arc-20240116; t=1754302739; c=relaxed/simple;
+	bh=RpkALcoGLRwBJjl0hl/Fi/oBXdRdQCOMhOlE0DE9UbY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VAVLmaxGg2t3PHy01Rduu/2dQ/beazmMW2TkZoQLhfCPewOJl2eo6oqb2oL/EBOV5m2zUaX7dupuzrJYptafozOZpuzo3v6TrWd3VUfX14Vp5KuY89Rqn02lRyUppHHRz1r5phZw87Swfx4xjvkKlsJwMLhLQOau5YhTd8sgm1w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=ozlabs.org; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
+Received: from mail.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
+	by gandalf.ozlabs.org (Postfix) with ESMTP id 4bwXb22bZyz4wcd;
+	Mon,  4 Aug 2025 20:18:54 +1000 (AEST)
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwXZz04tlz4wbp;
+	Mon,  4 Aug 2025 20:18:50 +1000 (AEST)
+Message-ID: <8028c596-d123-44f9-8ca4-5293d5436029@kaod.org>
+Date: Mon, 4 Aug 2025 12:18:47 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com> <20250704134328.3614317-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250704134328.3614317-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Aug 2025 12:18:36 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXfGg6KfKt4dGf8NrboEPXF7fnq+dcM=sppYcgcq3csvw@mail.gmail.com>
-X-Gm-Features: Ac12FXx7Vhm0XByKZa2yKekC1miTeBva5wEp_EGzUgpOPZHMtMsRux6QxliBBCY
-Message-ID: <CAMuHMdXfGg6KfKt4dGf8NrboEPXF7fnq+dcM=sppYcgcq3csvw@mail.gmail.com>
-Subject: Re: [PATCH 3/3] clk: renesas: r9a07g043: Add MSTOP for RZ/G2UL
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2] powerpc/pseries/msi: Fix potential underflow and leak
+ issue
+To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan
+ <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
+ Nicholas Piggin <npiggin@gmail.com>,
+ Christophe Leroy <christophe.leroy@csgroup.eu>,
+ Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
+ linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+References: <cover.1754300646.git.namcao@linutronix.de>
+ <a980067f2b256bf716b4cd713bc1095966eed8cd.1754300646.git.namcao@linutronix.de>
+From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
+Content-Language: en-US, fr
+Autocrypt: addr=clg@kaod.org; keydata=
+ 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
+In-Reply-To: <a980067f2b256bf716b4cd713bc1095966eed8cd.1754300646.git.namcao@linutronix.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Hi Claudiu,
+On 8/4/25 12:07, Nam Cao wrote:
+> pseries_irq_domain_alloc() allocates interrupts at parent's interrupt
+> domain. If it fails in the progress, all allocated interrupts are
+> freed.
+> 
+> The number of successfully allocated interrupts so far is stored
+> "i". However, "i - 1" interrupts are freed. This is broken:
+> 
+>    - One interrupt is not be freed
+> 
+>    - If "i" is zero, "i - 1" wraps around
+> 
+> Correct the number of freed interrupts to 'i'.
+> 
+> Fixes: a5f3d2c17b07 ("powerpc/pseries/pci: Add MSI domains")
+> Signed-off-by: Nam Cao <namcao@linutronix.de>
+> Cc: stable@vger.kernel.org
+> ---
+>   arch/powerpc/platforms/pseries/msi.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
 
-On Fri, 4 Jul 2025 at 15:43, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add MSTOP configuration for all the module clocks on the RZ/G2UL
-> based SoCs (RZ/G2UL, RZ/V2L, RZ/Five).
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-Thanks for your patch!
 
-> --- a/drivers/clk/renesas/r9a07g043-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g043-cpg.c
->         DEF_MOD("canfd",        R9A07G043_CANFD_PCLK, R9A07G043_CLK_P0,
-> -                               0x594, 0, 0),
-> +                               0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
->         DEF_MOD("gpio",         R9A07G043_GPIO_HCLK, R9A07G043_OSCCLK,
->                                 0x598, 0, 0),
+Reviewed-by: Cédric Le Goater <clg@redhat.com>
 
-MSTOP(BUS_PERI_CPU, BIT(6))?
+Thanks,
 
->         DEF_MOD("adc_adclk",    R9A07G043_ADC_ADCLK, R9A07G043_CLK_TSU,
-> -                               0x5a8, 0, 0),
-> +                               0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
+C.
 
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
 
