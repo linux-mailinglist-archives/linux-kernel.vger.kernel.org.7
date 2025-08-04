@@ -1,96 +1,141 @@
-Return-Path: <linux-kernel+bounces-755328-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755329-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 980B7B1A4FE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:33:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 823C7B1A502
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1318016A8F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:33:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2948E7A7955
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:32:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1860B271454;
-	Mon,  4 Aug 2025 14:33:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B489B273803;
+	Mon,  4 Aug 2025 14:33:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OiRQA4mT"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="ieC+jPHW"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690E420A5DD;
-	Mon,  4 Aug 2025 14:33:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5751F242D70;
+	Mon,  4 Aug 2025 14:33:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317997; cv=none; b=UDHkxU5bjoJdi4W36+W59KRzfJFYI28vHuFXh6Y1e1QDD6Db+1cB90MD4GoKTU2WlrZQ3sivbP5UqMwECTZFLebOQAYy8U3F+e6cnkCiiPqB5Cbb9340rdJnQXOON6V8ei7E2K69DLB8gb1WV8UvBKVxs7VGtNXW5GUMODvCGm0=
+	t=1754318005; cv=none; b=VeT0b03cxOnaxS7b/ZlJvY/335ZKPdS3jx1Rf+Vw4KwLQUa/fvIprvGltxTSWCmRggiYWHdtJC6TRj6ybRP/EcYSOP0jQaUe/QXbSJIAxO/oF4rM1HEESi5r9Y1UOEiEi2p1WNdxWYrw5+3vOoXP9fWD+841WgqaR+KaVtM9vxM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317997; c=relaxed/simple;
-	bh=lNCjlLpZFxD/PtdJOyoh2yFbwZHbOxdKdmNWlb/JcU8=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=YoyzKz1KUGPPf5mez2U7rQ+Cx3Agv/yNkTt8SEBDdNcZ9PtSpf8F1mzX30xy4j6ZkOfrnT29ZhORuDFU6q7orej+hzf0mSGw/PLFsFcOZvI4PNH7wmz/pJVEBRztErtx9wPnuBX0tSM3yRg2RKkdF7DJ+v/3VdafLPeBudB4oJg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OiRQA4mT; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D63AFC4CEE7;
-	Mon,  4 Aug 2025 14:33:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754317995;
-	bh=lNCjlLpZFxD/PtdJOyoh2yFbwZHbOxdKdmNWlb/JcU8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=OiRQA4mTxYetcheUguLMSUMOVIRCUWGIg4aRO4fzs0kLuIkHMwGfn06i9+1+6Ul7E
-	 QNhbx1KnQCx1iUHY1cLZ5EftNdpwdTJr0xyELWeaqvKT6PvHk7M5p5FgzlHzLesjGG
-	 u01wEj5GhS6Ev9XZnHV6jyUl76gpHZFtAMJHZtidH4lBllPn4xck6/ato3kj4onFIF
-	 cWhGu3bMJdzEpFRZFjoQJZiUqcFVyaEVkNBNcCiMRywHc27YV/q8MDtRM234jPzDJH
-	 y2mPuvWHFCqlbFd2rzjxYX3ktlCiq2gtzoWLvDcQGynztvwl3c/n8NNx7LhYrlqz3f
-	 0fSTdjqZQ2qBQ==
-Date: Mon, 4 Aug 2025 09:33:13 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Hans Zhang <18255117159@163.com>
-Cc: Gerd Bayer <gbayer@linux.ibm.com>,
-	Manivannan Sadhasivam <mani@kernel.org>,
-	Hans Zhang <hans.zhang@cixtech.com>,
-	Arnd Bergmann <arnd@kernel.org>, bhelgaas@google.com,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>,
-	jingoohan1@gmail.com,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kwilczynski@kernel.org>,
-	linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-	linux-next <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Niklas Schnelle <schnelle@linux.ibm.com>, geert@linux-m68k.org
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-Message-ID: <20250804143313.GA3624395@bhelgaas>
+	s=arc-20240116; t=1754318005; c=relaxed/simple;
+	bh=6Xq6lWAgsDQe8fpl2VHDMWoTzwPSyCoMukrEfer0HQo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KsuaukHfy7rk+jI/phSCPBIvDwvIbzVH0K4hrfVCmcmtEVl5Y/tXveectbTd7kEti81CSZqN82LKgbYQa1/9oSnCSDggta/XUFniqHwvVvGJlYFdZJKpTXAJ5GOpqbzHxGeucqLxOssU8d84Y3wzRBvDeX6uNlp5XThTHlsrSDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=ieC+jPHW; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754318001;
+	bh=6Xq6lWAgsDQe8fpl2VHDMWoTzwPSyCoMukrEfer0HQo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ieC+jPHWLIqpcxWfiCI5ZBZF3lrt/PH7DpOrmBy8SUmxy4WSdvO9+9kiobgrXV1tz
+	 tQCcYzC8rKK4R51vxyToNhsfOT/jp80c1fsSBVbhmorKH9DW6Yyc2dKJLAxYoSn2+y
+	 9D0VZfkrdcleIjglnbOI6hx9NshSa7RQpsbKOP0sGUTgDIBjOefS9yVi0fALn54Y14
+	 Cst3AeNQHTbRnQM47bwRLEQ93kLYBkSzB5sD302LkDVLPHgHRQGZVPQtqsbsLERtjZ
+	 UV3x9C+WKLvvIFYYrT1qIfXO6EcyTj2CcvdlkCzMWN8UImFXt59okWn/Im7I7RUcx/
+	 Pxa4l8u68V5Tw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id ABD2E17E154C;
+	Mon,  4 Aug 2025 16:33:20 +0200 (CEST)
+Message-ID: <061374da-fa6e-4074-9451-1b3722217188@collabora.com>
+Date: Mon, 4 Aug 2025 16:33:20 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 05/27] clk: mediatek: clk-mux: Add ops for mux gates
+ with HW voter and FENC
+To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
+ <laura.nao@collabora.com>, mturquette@baylibre.com, sboyd@kernel.org,
+ robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ matthias.bgg@gmail.com, p.zabel@pengutronix.de, richardcochran@gmail.com
+Cc: guangjie.song@mediatek.com, wenst@chromium.org,
+ linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+ kernel@collabora.com, =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?=
+ <nfraprado@collabora.com>
+References: <20250730105653.64910-1-laura.nao@collabora.com>
+ <20250730105653.64910-6-laura.nao@collabora.com>
+ <29ad5f60-6148-4e9b-8498-83a30a520536@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <29ad5f60-6148-4e9b-8498-83a30a520536@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 11:06:36AM +0800, Hans Zhang wrote:
-> ...
-
-> According to the issue mentioned by Lukas and Mani. Gerd has already been
-> tested on the s390. I have tested it on the RK3588 and it works fine. RK3588
-> uses Synopsys' PCIe IP, that is, the DWC driver. Our company's is based on
-> Cadence's PCIe 4.0 IP, and the test function is normal. All the platforms I
-> tested were based on ARM.
+Il 04/08/25 16:05, Krzysztof Kozlowski ha scritto:
+> On 30/07/2025 12:56, Laura Nao wrote:
+>>   
+>>   	clk_mux->regmap = regmap;
+>> +	clk_mux->regmap_hwv = regmap_hwv;
+>>   	clk_mux->data = mux;
+>>   	clk_mux->lock = lock;
+>>   	clk_mux->hw.init = &init;
+>> @@ -268,6 +329,7 @@ int mtk_clk_register_muxes(struct device *dev,
+>>   			   struct clk_hw_onecell_data *clk_data)
+>>   {
+>>   	struct regmap *regmap;
+>> +	struct regmap *regmap_hwv;
+>>   	struct clk_hw *hw;
+>>   	int i;
+>>   
+>> @@ -277,6 +339,13 @@ int mtk_clk_register_muxes(struct device *dev,
+>>   		return PTR_ERR(regmap);
+>>   	}
+>>   
+>> +	regmap_hwv = mtk_clk_get_hwv_regmap(node);
+>> +	if (IS_ERR(regmap_hwv)) {
 > 
-> The following is the patch based on the capability-search branch. May I ask
-> everyone, do you have any more questions?
+> This is either buggy or fragile. mtk_clk_get_hwv_regmap() returns NULL
+> or valid pointer... or error? IS_ERR_OR_NULL is not the wait to go.
 > 
-> Gerd, if there's no problem, I'll add your Tested-by label.
+> Choose one - IS_ERR or NULL, preferrably the first, since you must
+> handle deferred probe.
 > 
-> Branch: ttps://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=capability-search
 
-Since this series will now target v6.18, I'll watch for a complete v15
-series based on v6.17-rc1, with this fix and any typo or other fixes
-from pci/capability-search fully integrated.
+if regmap_hwv == NULL -> there is no HWV for *this* clock
+if regmap_hwv == -ERROR -> there is a HWV for *this* clock, but something
+                            went wrong, we have to return the error.
 
-Then that series can be tested and completely replace the current
-pci/capability-search branch.
+>> +		pr_err("Cannot find hardware voter regmap for %pOF: %pe\n",
+>> +		       node, regmap_hwv);
+>> +		return PTR_ERR(regmap_hwv);
+>> +	}
+>> +
+>>   	for (i = 0; i < num; i++) {
+>>   		const struct mtk_mux *mux = &muxes[i];
+>>   
+>> @@ -286,7 +355,7 @@ int mtk_clk_register_muxes(struct device *dev,
+>>   			continue;
+>>   		}
+>>   
+>> -		hw = mtk_clk_register_mux(dev, mux, regmap, lock);
+>> +		hw = mtk_clk_register_mux(dev, mux, regmap, regmap_hwv, lock);
+> 
+> So NULL is passed and stored... are you sure this is 100% backwards
+> compatible?
+> 
 
-Bjorn
+Yes, it is. This got tested on multiple legacy SoCs in our lab.
+
+> 
+> 
+> Best regards,
+> Krzysztof
+
+
 
