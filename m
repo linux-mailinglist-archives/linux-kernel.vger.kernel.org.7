@@ -1,212 +1,96 @@
-Return-Path: <linux-kernel+bounces-755096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755098-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 49B89B1A138
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:21:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53C8BB1A140
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:22:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 616BE17E4DC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:20:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C79C31889AEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:21:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4FE8258CF2;
-	Mon,  4 Aug 2025 12:19:10 +0000 (UTC)
-Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CA7025A2BC;
+	Mon,  4 Aug 2025 12:20:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="TItct/nj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1FA332571D4
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:19:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22F2259CB0;
+	Mon,  4 Aug 2025 12:20:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309950; cv=none; b=gE5PZSXyauc/4WN8hxp82j+BZM5oS5GTMxyjc4359uSh7w3oqW8TBWMfnqCDdxmmVdSI4MDPliEcXMzx6CBdG7t+H6Lk1ti/1DEyfq5TTfDREt9m+tkYtT+DagkYbql+9apfoFkyS5TaLws5vrsqJ0toc6TXjIKE368qMMGJzBU=
+	t=1754310013; cv=none; b=LV+104yPsUnJAAKDZ4gsKoHxbVPXm+N9FqPOIAEew19OQlUfLHKfERs3LqOwJk+zmuAUE6lh1sSJku313FtDSCEHhQyZekGLbd548palUfRrDLOT/5se9wJ+OoqPgCQ5VFe8ZUy6zhishLybBf+DCkm8frQd+Sd9BiNboPqEY3c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309950; c=relaxed/simple;
-	bh=ChDc5J+I6BOVgCWeZ+q7JgjE+UM97VG+eXv6Hlju3Dk=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=tjEuuiyBGGiFxQLMaGi6VspYMEz8rGr0kcAyzHFhH1elvPDyKIex+U6XRjA9gwJyfP8yEtYOnabfJ9N77NnPcbpqYp4VUs4hKBjOOq5C+E02ck9ChAdpNu0H/3fYUS1wEcWdVq6YovfIk5CNObCZXgEb3pjCunnTFktx0LPVbWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e40bc54f89so35381105ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:19:07 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754309947; x=1754914747;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z57i5H0WxvDf3+coeJXJ6pHhujcF0Ys9zSadkwnHR2Q=;
-        b=PD5jXTWJBMZo4xI5eTWGg/PYPoemkYgwXWHK7JlPa8SoEya8XnNdsKPNbYIBlDxBkh
-         vjjeBTFl6QdlKkmRIv/P8yu+ItLx+d8kGwQFZbr/ibpcDXJhaP/Aelha0laj5tZAZ1Ua
-         Sv5TLD8zqItlv4merWUtiJUrsHWOv7WaXUMKjMHIMLOqpaPw2AtuiWNWwxdxvIF6smMn
-         SjB2ycHIZgEh9Eij7aMKdAR4jYA1JVgcgeL+l6HbdkWKKhb2Rh9RuWtx1WzH06KXzY+9
-         ERqXF1vhAur2tjeYsJB/CZpCV2Hk7qeDCdtBvNq4eRGNp8JY0E00hVPK0st/cW+YVPP9
-         mQYg==
-X-Forwarded-Encrypted: i=1; AJvYcCUyf7qHfMZIIDwydSKjrHeeiq7Bk1j3PfTHnserPLlcfwqpJuEkUP+Kx5cbrKe6gMM/XN4cL9se4yDMHHw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOZTo5IRdUactnkqxrw5JB8QPTdcfj+qpd2M8tVvwS+mSoKtBi
-	jZmRDKTILsxAIIhSUu9S5CIqazT2MrrXIWoYl6bG0dMxzoc6as5on3zrihJM4DCvVQoCeM3X+l/
-	zP1BbqNScT+pBdZUvExk6Rwq5QMHG3ZHTHVlkiaybK4n/H1ltXMiKR2mubp0=
-X-Google-Smtp-Source: AGHT+IEJOBTdi2aNPO36e/O34CebS0gThXMn70P6CyO5XX9VuEUWtA2a4fDAVP7jMCWqUytLECF1mSSdJNugT0Zgv2eXLWGrJUe1
+	s=arc-20240116; t=1754310013; c=relaxed/simple;
+	bh=ljkWcbCfYxmIn2nHH8ujujMW2j4/BtdmkWsX5iCWtDo=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=nW1E/iK86FTGytCM5ox+1F3CX3OjPT1w0F23Hivpal+N6SOkxYnEg2mdu4zVuzXVbH3xX2iuFxEJxipJ05WbEUx49DCuFbf2s15M/K6j3KqRCr7rrbGgoNZFan9QqqMVoWxm16/2YvOiDFyymdTlbcqeC52XzQPudy+2VcDlVt4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=TItct/nj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33EB9C4CEF0;
+	Mon,  4 Aug 2025 12:20:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754310013;
+	bh=ljkWcbCfYxmIn2nHH8ujujMW2j4/BtdmkWsX5iCWtDo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=TItct/njGEtFLnMclwH5f/+tYsTAPjsLsnEJi9NWLYBm5zYcBBL4kDyECT/GovJrT
+	 G4e49Le1GfF7J0PqTYtZaeKzGT/lLwrZEwwaq4Z/fpDKnHQVARuSMDU9WFvT2wvzWy
+	 zLaKjKFPb0xblIeKfwq2epm2Mq9DpNkl15J0zVp64ktnzGG8YKG5LS5zf6YPkKLWEw
+	 9bPzOhtuyELLpAlw6qiw2UBrQxfOQYxhcQSbg6YsLbtcKgpdp2MPfO1SL4CKaEWqq3
+	 tXd/4w90MKwnclB8zo0kbNrLEQB5XyfNEAu9Yq9kkmHDzf1cigUo4mxlZf03XoAZCu
+	 0ZRD7um9dSwNw==
+Date: Mon, 4 Aug 2025 14:20:09 +0200
+From: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+To: Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, Akira Yokosawa
+ <akiyks@gmail.com>
+Subject: Re: [PATCH 05/12] docs: kdoc: split top-level prototype parsing out
+ of dump_struct()
+Message-ID: <20250804142009.0f1bb402@foz.lan>
+In-Reply-To: <87ldo3rv42.fsf@trenco.lwn.net>
+References: <20250801001326.924276-1-corbet@lwn.net>
+	<20250801001326.924276-6-corbet@lwn.net>
+	<20250801073411.06cb530e@foz.lan>
+	<87ldo3rv42.fsf@trenco.lwn.net>
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.49; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:3f12:b0:3e3:cfa2:c8f with SMTP id
- e9e14a558f8ab-3e41612a0e2mr163111445ab.9.1754309947301; Mon, 04 Aug 2025
- 05:19:07 -0700 (PDT)
-Date: Mon, 04 Aug 2025 05:19:07 -0700
-In-Reply-To: <C7C64869-A0CE-4C77-9838-E86A0C31C1C2@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6890a53b.050a0220.7f033.0008.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: array-index-out-of-bounds in bch2_accounting_validate
-From: syzbot <syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com>
-To: mmpgouride@gmail.com
-Cc: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, mmpgouride@gmail.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> On Aug 4, 2025, at 15:18, syzbot <syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com> wrote:
->> 
->> Hello,
->> 
->> syzbot found the following issue on:
->> 
->> HEAD commit:    352af6a011d5 Merge tag 'rust-6.17' of git://git.kernel.org..
->> git tree:       upstream
->> console+strace: https://syzkaller.appspot.com/x/log.txt?x=135d7aa2580000
->> kernel config:  https://syzkaller.appspot.com/x/.config?x=cae1291240e8962a
->> dashboard link: https://syzkaller.appspot.com/bug?extid=cd063f869beedf5b9cd7
->> compiler:       Debian clang version 20.1.7 (++20250616065708+6146a88f6049-1~exp1~20250616065826.132), Debian LLD 20.1.7
->> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14dcc6a2580000
->> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133e02f0580000
->> 
->> Downloadable assets:
->> disk image: https://storage.googleapis.com/syzbot-assets/a762497d1fce/disk-352af6a0.raw.xz
->> vmlinux: https://storage.googleapis.com/syzbot-assets/3055e1e47995/vmlinux-352af6a0.xz
->> kernel image: https://storage.googleapis.com/syzbot-assets/aa300ee98202/bzImage-352af6a0.xz
->> mounted in repro: https://storage.googleapis.com/syzbot-assets/de2a4b00a48a/mount_0.gz
->> 
->> IMPORTANT: if you fix the issue, please add the following tag to the commit:
->> Reported-by: syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com
->> 
->> bcachefs (loop0): error reading btree root btree=subvolumes level=0: btree_node_read_error, fixing
->> bcachefs (loop0): invalid bkey in btree_node btree=snapshot_trees level=0: u64s 6 type snapshot_tree POS_MIN len 0 ver 0: subvol 1 root snapshot 4294967295
->>  bad pos, deleting
->> bcachefs (loop0): error reading btree root btree=snapshot_trees level=0: btree_node_read_error, fixing
->> ------------[ cut here ]------------
->> UBSAN: array-index-out-of-bounds in fs/bcachefs/disk_accounting.c:238:2
->> index 175 is out of range for type 'const unsigned int[9]'
->> CPU: 0 UID: 0 PID: 5849 Comm: syz-executor427 Tainted: G        W           6.16.0-syzkaller-11322-g352af6a011d5 #0 PREEMPT_{RT,(full)} 
->> Tainted: [W]=WARN
->> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 07/12/2025
->> Call Trace:
->> <TASK>
->> dump_stack_lvl+0x189/0x250 lib/dump_stack.c:120
->> ubsan_epilogue+0xa/0x40 lib/ubsan.c:233
->> __ubsan_handle_out_of_bounds+0xe9/0xf0 lib/ubsan.c:455
->> bch2_accounting_validate+0x112f/0x1400 fs/bcachefs/disk_accounting.c:238
->> bch2_bkey_val_validate+0x202/0x3e0 fs/bcachefs/bkey_methods.c:143
->> btree_node_bkey_val_validate fs/bcachefs/btree_io.c:880 [inline]
->> bch2_btree_node_read_done+0x4051/0x5550 fs/bcachefs/btree_io.c:1303
->> btree_node_read_work+0x40e/0xe60 fs/bcachefs/btree_io.c:1440
->> bch2_btree_node_read+0x887/0x2a00 fs/bcachefs/btree_io.c:-1
->> __bch2_btree_root_read fs/bcachefs/btree_io.c:1906 [inline]
->> bch2_btree_root_read+0x5f0/0x760 fs/bcachefs/btree_io.c:1928
->> read_btree_roots+0x2c6/0x840 fs/bcachefs/recovery.c:615
->> bch2_fs_recovery+0x261f/0x3a50 fs/bcachefs/recovery.c:1006
->> bch2_fs_start+0xaaf/0xda0 fs/bcachefs/super.c:1213
->> bch2_fs_get_tree+0xb39/0x1520 fs/bcachefs/fs.c:2488
->> vfs_get_tree+0x92/0x2b0 fs/super.c:1815
->> do_new_mount+0x2a2/0x9e0 fs/namespace.c:3805
->> do_mount fs/namespace.c:4133 [inline]
->> __do_sys_mount fs/namespace.c:4344 [inline]
->> __se_sys_mount+0x317/0x410 fs/namespace.c:4321
->> do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
->> do_syscall_64+0xfa/0x3b0 arch/x86/entry/syscall_64.c:94
->> entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x7f5016bf5eaa
->> Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
->> RSP: 002b:00007ffd552f5c58 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
->> RAX: ffffffffffffffda RBX: 00007ffd552f5c70 RCX: 00007f5016bf5eaa
->> RDX: 0000200000001000 RSI: 0000200000000000 RDI: 00007ffd552f5c70
->> RBP: 0000200000000000 R08: 00007ffd552f5cb0 R09: 000000000000492c
->> R10: 0000000000000000 R11: 0000000000000282 R12: 0000200000001000
->> R13: 00007ffd552f5cb0 R14: 0000000000000003 R15: 0000000000000000
->> </TASK>
->> ---[ end trace ]---
->> 
->> 
->> ---
->> This report is generated by a bot. It may contain errors.
->> See https://goo.gl/tpsmEJ for more information about syzbot.
->> syzbot engineers can be reached at syzkaller@googlegroups.com.
->> 
->> syzbot will keep track of this issue. See:
->> https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
->> 
->> If the report is already addressed, let syzbot know by replying with:
->> #syz fix: exact-commit-title
->> 
->> If you want syzbot to run the reproducer, reply with:
->> #syz test: git://repo/address.git branch-or-commit-hash
->> If you attach or paste a git patch, syzbot will apply it before testing.
->> 
->> If you want to overwrite report's subsystems, reply with:
->> #syz set subsystems: new-subsystem
->> (See the list of subsystem names on the web dashboard)
->> 
->> If the report is a duplicate of another one, reply with:
->> #syz dup: exact-subject-of-another-report
->> 
->> If you want to undo deduplication, reply with:
->> #syz undup
->> 
->
->
-> #syz test:
+Em Fri, 01 Aug 2025 08:10:05 -0600
+Jonathan Corbet <corbet@lwn.net> escreveu:
 
-want either no args or 2 args (repo, branch), got 4
+> Mauro Carvalho Chehab <mchehab+huawei@kernel.org> writes:
+> 
+> > Em Thu, 31 Jul 2025 18:13:19 -0600
+> > Jonathan Corbet <corbet@lwn.net> escreveu:  
+> >>  
+> >> -        struct_members = KernRe(type_pattern + r'([^{};]+)(\{)([^{}]*)(\})([^{};]*)(;)')
+> >> +        struct_members = KernRe(r'(struct|union)([^{};]+)(\{)([^{}]*)(\})([^{};]*)(;)')  
+> >
+> > I would prefer keeping type_pattern here.   
+> 
+> The problem is that type_pattern no longer exists in that function.
 
->
-> diff --git a/fs/bcachefs/disk_accounting.c b/fs/bcachefs/disk_accounting.c
-> index f96530c70262..4f5b290dc8f1 100644
-> --- a/fs/bcachefs/disk_accounting.c
-> +++ b/fs/bcachefs/disk_accounting.c
-> @@ -184,6 +184,11 @@ int bch2_accounting_validate(struct bch_fs *c, struct bkey_s_c k,
->         void *end = &acc_k + 1;
->         int ret = 0;
->  
-> +       bkey_fsck_err_on(acc_k.type >= BCH_DISK_ACCOUNTING_TYPE_NR,
-> +                        c, accounting_key_type_invalid,
-> +                        "invalid accounting type (%u >= %u)",
-> +                        acc_k.type, BCH_DISK_ACCOUNTING_TYPE_NR);
-> +
->         bkey_fsck_err_on((from.flags & BCH_VALIDATE_commit) &&
->                          bversion_zero(k.k->bversion),
->                          c, accounting_key_version_0,
-> diff --git a/fs/bcachefs/sb-errors_format.h b/fs/bcachefs/sb-errors_format.h
-> index 5317b1bfe2e5..5ba28a684f51 100644
-> --- a/fs/bcachefs/sb-errors_format.h
-> +++ b/fs/bcachefs/sb-errors_format.h
-> @@ -328,6 +328,7 @@ enum bch_fsck_flags {
->         x(accounting_key_replicas_devs_unsorted,                280,    FSCK_AUTOFIX)   \
->         x(accounting_key_version_0,                             282,    FSCK_AUTOFIX)   \
->         x(accounting_key_nr_counters_wrong,                     307,    FSCK_AUTOFIX)   \
-> +       x(accounting_key_type_invalid,                          325,    FSCK_AUTOFIX)   \
->         x(logged_op_but_clean,                                  283,    FSCK_AUTOFIX)   \
->         x(compression_opt_not_marked_in_sb,                     295,    FSCK_AUTOFIX)   \
->         x(compression_type_not_marked_in_sb,                    296,    FSCK_AUTOFIX)   \
-> @@ -336,7 +337,7 @@ enum bch_fsck_flags {
->         x(dirent_stray_data_after_cf_name,                      305,    0)              \
->         x(rebalance_work_incorrectly_set,                       309,    FSCK_AUTOFIX)   \
->         x(rebalance_work_incorrectly_unset,                     310,    FSCK_AUTOFIX)   \
-> -       x(MAX,                                                  325,    0)
-> +       x(MAX,                                                  326,    0)
->  
->  enum bch_sb_error_id {
->  #define x(t, n, ...) BCH_FSCK_ERR_##t = n,
->
+Ah, I see. If this is the only place now where we have this, then it
+sounds OK to have it like that.
+
+Feel free to add my R-B:
+
+Reviewed-by: Mauro Carvalho Chehab <mchehab+huawei@kernel.org>
+
+> I'd
+> have to redefine it, or make it global.  It seems like a rather trivial
+> thing to make global (and, as a result, make people go to the top of the
+> file to figure out what it really is).
+
+
+Thanks,
+Mauro
 
