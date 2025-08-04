@@ -1,240 +1,153 @@
-Return-Path: <linux-kernel+bounces-754582-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2DC3B19983
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:43:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C4631B199BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0782217793B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:42:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8530E3ACBED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:47:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 852171EDA0E;
-	Mon,  4 Aug 2025 00:42:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MVoXIhPd"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA70719F424;
+	Mon,  4 Aug 2025 00:47:34 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE9FB4594A;
-	Mon,  4 Aug 2025 00:42:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5834C8F;
+	Mon,  4 Aug 2025 00:47:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754268159; cv=none; b=kXq6ZNYwRbY+sQCLHfLHs04vvmQmqWgluaPfwI0wMZxPYNEAlk9x3WDlA0Jj1T4/TjC+3XxPnFWCa60J/3u+o0y37/Eyqqrk9qMgGs7xQjwCtq8+fSNhkXwkSHVemdBZLWXOC72a6FZCUGbPlRIMuKeIq9sy1SKzbqw6SguNlY0=
+	t=1754268454; cv=none; b=XAPHzKklY5ohZGy3FKTbNK/5hXxdRG5a5m2Hf2PsFJ9KaKU+9gEw093eMnHSYigg5E5WI1ArdhZ1pbIW32/rnufBjA0P+nIkZS/jIjujW6JMLyTUo0UJ86fJgqCFagVu70xjbnS2+9iJ+QaY+d5kM30ok3Qj/J5kX8IJvaLPhUQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754268159; c=relaxed/simple;
-	bh=/DZGQuWsbeI+GRNeFoV9AaQ/69YZ7r5yAiZLobWhUr4=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=bgYszeB3XA32zjnFnvfGoDVIqSlmQMNMRAWCrPMjitPR4LUmG0mSuKOtv/mglpgZs7tqJrxGBRzWFg3VQU8bobRhTPmZKW3OyZnNxZzKYesp7bB6H4tp1ghohy5sFILqqTybPgDVpbz0fbjFXpriaG67LSgoyK5OoKPmVoJhIkg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MVoXIhPd; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F194C4CEF9;
-	Mon,  4 Aug 2025 00:42:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754268158;
-	bh=/DZGQuWsbeI+GRNeFoV9AaQ/69YZ7r5yAiZLobWhUr4=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=MVoXIhPd3Q1S8enYMFx33v3bV07tv2mYppeuI73Ws69SIOoTIkKo3yYwVW5if7s44
-	 8135OafPUn2fV8XDwWoHVmO2HDOZlexia1oH/03tnkCEyqp047h4SeMqr7+o2qAXLi
-	 RiqPh/HCW8gFNCbU9+iG7ovUK1225yT0ffqoSA1mpN4528BB6mfjet5JC/hqn+70gG
-	 q6faDIgs2qYE5ZetmRxn1VXW45q+XNm6VFESI6CgZbByBGei9UVrRhX/l4pBJ84dy1
-	 9baTsIsAf7mJ4VdLmn7IC6LuZlc/2I62rYw4OEYqOrxMDGk1fnp4UqUznGJgbHXbfn
-	 r+PQAjo9Ra+ww==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Romain Gantois <romain.gantois@bootlin.com>,
-	Mark Brown <broonie@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	lgirdwood@gmail.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 5.4 04/28] regulator: core: repeat voltage setting request for stepped regulators
-Date: Sun,  3 Aug 2025 20:42:03 -0400
-Message-Id: <20250804004227.3630243-4-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804004227.3630243-1-sashal@kernel.org>
-References: <20250804004227.3630243-1-sashal@kernel.org>
+	s=arc-20240116; t=1754268454; c=relaxed/simple;
+	bh=+/W9CYW0Yh+ewesGTTpIaOLJacb/3YZsvGB7zJPqPJ8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=sCvqyMM2rSLjqkK6VjKjOl87y1zuEnO05kkkNe4to+lLIvmmiNYe9VcErgv3fAdmRBLfZ/QSsSn8+AT8rONSeM/Ee1q2Ygy6hkAaK1yqE0oZOgLSNHv1TC8bhR2fbtM6HyS1zEsG3BKk+39jqFW8Znb21R8ARAevzRNSuHiUpTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bwHvZ5rHfzKHMrx;
+	Mon,  4 Aug 2025 08:47:22 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id C9B411A0A26;
+	Mon,  4 Aug 2025 08:47:21 +0800 (CST)
+Received: from [10.174.179.143] (unknown [10.174.179.143])
+	by APP4 (Coremail) with SMTP id gCh0CgBHERIYA5BouVP1CQ--.49366S3;
+	Mon, 04 Aug 2025 08:47:21 +0800 (CST)
+Subject: Re: [PATCH] block, bfq: Reorder struct bfq_iocq_bfqq_data
+To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
+ Jens Axboe <axboe@kernel.dk>
+Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+ linux-block@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
+References: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <ac0e993a-3e6d-6616-ce6c-03f0aa2429da@huaweicloud.com>
+Date: Mon, 4 Aug 2025 08:47:20 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.9.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 5.4.296
+In-Reply-To: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
+Content-Type: text/plain; charset=gbk; format=flowed
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgBHERIYA5BouVP1CQ--.49366S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7tr45XFy3uw1UXF15CFyUJrb_yoW8tr17pa
+	n3Kw4j9FW8tw13Kr18ua1DXr93twnxXry7KFsrXryYyw1UGFnF9rn0ka4FvFy29rWkCFnr
+	ZFyj9FyDWrsrKaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
+	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
+	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
+	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
+	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
+	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
+	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
+	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
+	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
+	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
+	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
+	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
+	UUUUU==
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Romain Gantois <romain.gantois@bootlin.com>
+ÔÚ 2025/08/02 15:25, Christophe JAILLET Ð´µÀ:
+> The size of struct bfq_iocq_bfqq_data can be reduced by moving a few fields
+> around.
+> 
+> On a x86_64, with allmodconfig, this shrinks the size from 144 to 128
+> bytes.
+> The main benefit is to reduce the size of struct bfq_io_cq from 1360 to
+> 1232.
+> 
+> This structure is stored in a dedicated slab cache. So reducing its size
+> improves cache usage.
+> 
+> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> ---
+> Compile tested only.
+> 
+> On my system, struct bfq_io_cq are stored in 8 pages slab. Each of these
+> slabs hold 24 entries.
+> 
+> $ sudo cat /proc/slabinfo | grep bfq_io
+> bfq_io_cq            378    384   1360   24    8 : tunables    0    0    0 : slabdata     16     16      0
+> 
+> With the new layout, we should store 26 entries.
+> (8 * 4096 / 1232 = 26.60)
+> ---
+>   block/bfq-iosched.h | 10 +++++-----
+>   1 file changed, 5 insertions(+), 5 deletions(-)
+> 
 
-[ Upstream commit d511206dc7443120637efd9cfa3ab06a26da33dd ]
+LGTM
+Reviewed-by: Yu Kuai <yukuai3@huawei.com>
 
-The regulator_set_voltage() function may exhibit unexpected behavior if the
-target regulator has a maximum voltage step constraint. With such a
-constraint, the regulator core may clamp the requested voltage to a lesser
-value, to ensure that the voltage delta stays under the specified limit.
-
-This means that the resulting regulator voltage depends on the current
-voltage, as well as the requested range, which invalidates the assumption
-that a repeated request for a specific voltage range will amount to a noop.
-
-Considering the case of a regulator with a maximum voltage step constraint
-of 1V:
-
-initial voltage: 2.5V
-
-consumer requests 4V
-expected result: 3.5V
-resulting voltage: 3.5V
-
-consumer requests 4V again
-expected result: 4V
-actual result: 3.5V
-
-Correct this by repeating attempts to balance the regulator voltage until
-the result converges.
-
-Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
-Link: https://patch.msgid.link/20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com
-Signed-off-by: Mark Brown <broonie@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
-
-LLM Generated explanations, may be completely bogus:
-
-**Backport Status: YES**
-
-This commit fixes a legitimate bug in the voltage regulator subsystem
-that affects users with stepped voltage regulators. Here's my extensive
-analysis:
-
-## Bug Description and Impact
-
-The commit addresses a bug where regulators with `max_uV_step`
-constraints fail to reach their target voltage when the same voltage
-range is requested multiple times. The bug manifests as follows:
-
-1. When a regulator has a maximum voltage step constraint (e.g., 1V),
-   the core limits each voltage change to stay within this step
-2. The optimization at line 3814 (`if (voltage->min_uV == min_uV &&
-   voltage->max_uV == max_uV) goto out;`) assumes repeated requests are
-   no-ops
-3. This creates a situation where requesting 4V twice from 2.5V only
-   reaches 3.5V, not the desired 4V
-
-## Code Analysis
-
-The fix adds a retry mechanism specifically for stepped regulators:
-
-1. **New helper function** `regulator_get_voltage_delta()` (lines
-   3800-3808): Calculates the absolute difference between current and
-   target voltage
-2. **Retry loop** (lines 3865-3893): After the initial voltage setting,
-   if `max_uV_step` is configured, it:
-   - Checks if we've reached the target voltage (delta > 0)
-   - Repeatedly calls `regulator_balance_voltage()` until convergence
-   - Includes convergence protection to avoid infinite loops (line 3888)
-
-## Why This Is a Good Backport Candidate
-
-1. **Fixes a real bug**: Users with stepped voltage regulators cannot
-   reach target voltages, potentially causing system instability or
-   device malfunction
-2. **Minimal invasive changes**: The fix is well-contained within
-   `regulator_set_voltage_unlocked()` and only affects regulators with
-   `max_uV_step` constraints
-3. **No API/ABI changes**: Only internal implementation changes, no
-   external interfaces modified
-4. **Clear regression potential**: Low risk as the new code only
-   executes for regulators with `max_uV_step` set
-5. **Safety checks included**: The convergence check prevents infinite
-   loops (`if (new_delta - delta > rdev->constraints->max_uV_step)`)
-
-## Specific Code References
-
-- The bug is in the optimization at drivers/regulator/core.c:3814-3815
-- The fix adds retry logic at drivers/regulator/core.c:3865-3893
-- Only affects regulators where `rdev->constraints->max_uV_step > 0`
-- The existing `regulator_limit_voltage_step()` function already handles
-  the step limiting logic
-
-This is exactly the type of fix that belongs in stable: it addresses a
-specific functional bug without introducing new features or
-architectural changes.
-
- drivers/regulator/core.c | 43 +++++++++++++++++++++++++++++++++++++++-
- 1 file changed, 42 insertions(+), 1 deletion(-)
-
-diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
-index a01a769b2f2d..8776dcc6737e 100644
---- a/drivers/regulator/core.c
-+++ b/drivers/regulator/core.c
-@@ -3486,6 +3486,16 @@ static int _regulator_do_set_suspend_voltage(struct regulator_dev *rdev,
- 	return 0;
- }
- 
-+static int regulator_get_voltage_delta(struct regulator_dev *rdev, int uV)
-+{
-+	int current_uV = regulator_get_voltage_rdev(rdev);
-+
-+	if (current_uV < 0)
-+		return current_uV;
-+
-+	return abs(current_uV - uV);
-+}
-+
- static int regulator_set_voltage_unlocked(struct regulator *regulator,
- 					  int min_uV, int max_uV,
- 					  suspend_state_t state)
-@@ -3493,8 +3503,8 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
- 	struct regulator_dev *rdev = regulator->rdev;
- 	struct regulator_voltage *voltage = &regulator->voltage[state];
- 	int ret = 0;
-+	int current_uV, delta, new_delta;
- 	int old_min_uV, old_max_uV;
--	int current_uV;
- 
- 	/* If we're setting the same range as last time the change
- 	 * should be a noop (some cpufreq implementations use the same
-@@ -3541,6 +3551,37 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
- 		voltage->max_uV = old_max_uV;
- 	}
- 
-+	if (rdev->constraints->max_uV_step > 0) {
-+		/* For regulators with a maximum voltage step, reaching the desired
-+		 * voltage might take a few retries.
-+		 */
-+		ret = regulator_get_voltage_delta(rdev, min_uV);
-+		if (ret < 0)
-+			goto out;
-+
-+		delta = ret;
-+
-+		while (delta > 0) {
-+			ret = regulator_balance_voltage(rdev, state);
-+			if (ret < 0)
-+				goto out;
-+
-+			ret = regulator_get_voltage_delta(rdev, min_uV);
-+			if (ret < 0)
-+				goto out;
-+
-+			new_delta = ret;
-+
-+			/* check that voltage is converging quickly enough */
-+			if (new_delta - delta > rdev->constraints->max_uV_step) {
-+				ret = -EWOULDBLOCK;
-+				goto out;
-+			}
-+
-+			delta = new_delta;
-+		}
-+	}
-+
- out:
- 	return ret;
- }
--- 
-2.39.5
+> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
+> index 687a3a7ba784..0b4704932d72 100644
+> --- a/block/bfq-iosched.h
+> +++ b/block/bfq-iosched.h
+> @@ -427,9 +427,6 @@ struct bfq_iocq_bfqq_data {
+>   	 */
+>   	bool saved_IO_bound;
+>   
+> -	u64 saved_io_start_time;
+> -	u64 saved_tot_idle_time;
+> -
+>   	/*
+>   	 * Same purpose as the previous fields for the values of the
+>   	 * field keeping the queue's belonging to a large burst
+> @@ -450,6 +447,9 @@ struct bfq_iocq_bfqq_data {
+>   	 */
+>   	unsigned int saved_weight;
+>   
+> +	u64 saved_io_start_time;
+> +	u64 saved_tot_idle_time;
+> +
+>   	/*
+>   	 * Similar to previous fields: save wr information.
+>   	 */
+> @@ -457,13 +457,13 @@ struct bfq_iocq_bfqq_data {
+>   	unsigned long saved_last_wr_start_finish;
+>   	unsigned long saved_service_from_wr;
+>   	unsigned long saved_wr_start_at_switch_to_srt;
+> -	unsigned int saved_wr_cur_max_time;
+>   	struct bfq_ttime saved_ttime;
+> +	unsigned int saved_wr_cur_max_time;
+>   
+>   	/* Save also injection state */
+> -	u64 saved_last_serv_time_ns;
+>   	unsigned int saved_inject_limit;
+>   	unsigned long saved_decrease_time_jif;
+> +	u64 saved_last_serv_time_ns;
+>   
+>   	/* candidate queue for a stable merge (due to close creation time) */
+>   	struct bfq_queue *stable_merge_bfqq;
+> 
 
 
