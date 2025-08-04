@@ -1,243 +1,235 @@
-Return-Path: <linux-kernel+bounces-755361-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755362-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5CF0CB1A567
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:59:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F061BB1A56D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:01:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A987A5EA4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:58:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA15A18A1A05
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:02:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 321922153EA;
-	Mon,  4 Aug 2025 14:59:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6980C218AAA;
+	Mon,  4 Aug 2025 15:01:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="pFVdMTG0";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Q+CSfJJG"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xgvZoSlj";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UEgz/aYI"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86D51202C48;
-	Mon,  4 Aug 2025 14:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92342C190;
+	Mon,  4 Aug 2025 15:01:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319586; cv=none; b=conUOY+ekhvfLaqUiXU9S3KAg1eqSrlqDLjGPLWGhiLnjg72SRMLXhr1u7LAja50GxraRvsYnGmUjxtHPNnCGOsYfERzH+lnlbKSBBSRLrUN9daAjFf0EHipDLBbTR/JBjqwR8csm30SBNFwpkf1CGnrrPCeYyYKOfhOKnxjgK4=
+	t=1754319699; cv=none; b=g1Epdk8Tb/bxRPAuip+00QGNtL98n9ULl8pKu5c6k5F8PyzxOjedkYVlCykPomsWzIhxkNBNqZ4qGhAMbT7D3aHaFd9CSk4QRiScOl+lnOCU6DcyQT2TsKT/9G9k9hBmmc4Xyu/kVp2CQ2JzDgBh47UC29Q6bzABj+YnRrjbz/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319586; c=relaxed/simple;
-	bh=qslvpgSPQVNPfES6FMAqcUkv0Ja3oSTYgdRkbFjlhig=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=d/OfzqklpErckhYEoOjHYDCXyt4WXigMlbXptfV7cWPxiCvX5cDJ1nUYSHoSR0zqDi1x4qqQJ3I+fLlGW7Pqz3Sd2HOgAxdK4PEGM5NbCOxwvXZKM8BB9NYArfXL+YhEgp2nNhAZM0i4bkqU49te4BXuJN76Y9r3hvy92PJzisg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=pFVdMTG0; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Q+CSfJJG reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1754319582; x=1785855582;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=MkfIX3ZMBulcVFVuwO2zoj4dBD5Ai/L7cAOlg+iF3Jk=;
-  b=pFVdMTG0UZVtIa2+fxfMUWpoBESd7E3GxAERl5n3B2mS/yGURnDpayds
-   8jWpZ4e4bzj0g5v+VKXQSaM7mPyaMpQ96ZkChsW/LJPXx5yVge/M1QGKy
-   NWF/ri+m5WB+JLOEKeGZw2Gb6oXAkp7T6KgmGhPbk4zMspcX0ghboVejZ
-   cDfofiQVC61BdjCqrCqFhsJKLp9DcuNjo/7PrZ5IH1hFYqoMHLWmYoUDP
-   +OTGwUznuZllZ1i82cOL9c+P+EYVdVC1731Pcz19uxy5gcFnu/aceoBWo
-   8vEQeY8MnOkh32ubAAe39PnuKsrtzf7dLypYsAsaalxnF9U8NvPZfzjKh
-   g==;
-X-CSE-ConnectionGUID: OsXyHa9zSmCC7MQXBA011Q==
-X-CSE-MsgGUID: NyNxjxqRST6VMUC5QDS0Xg==
-X-IronPort-AV: E=Sophos;i="6.17,258,1747692000"; 
-   d="scan'208";a="45574052"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 04 Aug 2025 16:59:38 +0200
-X-CheckPoint: {6890CAD9-17-B55D79DF-CE943F87}
-X-MAIL-CPID: 764733419859115D6BB5CFE5A12E32E5_5
-X-Control-Analysis: str=0001.0A00211C.6890CADC.0070,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id DF171163678;
-	Mon,  4 Aug 2025 16:59:32 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1754319573;
+	s=arc-20240116; t=1754319699; c=relaxed/simple;
+	bh=FwobIH4OyPCkUNduXkRWqzeDMqJVa1hQQJWmjZl8DeI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LjfGcBE5YVZGQchjG9CmWVajhfYvsRN+VLv4GKwUEGK4tIGgZw957XXPBtl9qkViM4VdwetAhAoDWha5eC+aCeB9OJCWU2MkjvPISmUgq53ZgTxJcBJhVna3XJsCOwObSgpaXjPSE/z+wp0rGcgLj4wB3UjzzoO7sozdPlqOAIE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xgvZoSlj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UEgz/aYI; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Mon, 4 Aug 2025 17:01:35 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1754319695;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=MkfIX3ZMBulcVFVuwO2zoj4dBD5Ai/L7cAOlg+iF3Jk=;
-	b=Q+CSfJJGcwfGOaPlXrjM/gru8Wml+0BCPZ/2ELxa7WqptbzZ5ihfXVeL/SSYiR3hcgYR9l
-	yEYuZ+C5IVyli+rmG7zSMhlK3nc1+tEyKPVeHJCxW/2KcaXvsgMFX84L2vCB0uaEfBRZmE
-	NOuykwvi0znao1i8GjhC3d3CjRAwqUnKZF6+pwCupRDDc6VR66TxPtmXU5bptlsLjzH8aY
-	MPOwf4B0nsEqJjO0gD3hcU3jHM/pqlplkvP7oAQ1MHtX1SORZuAFac4DXeIessSHfXKU4e
-	q0tFcG3B/JYy9+aVg5upRzsWZvIBP0wJax6H9O0m9ZmLKmmUIjIhHZAOnZVY2g==
-Message-ID: <b2c38da8e02b5d5de3f1a2c514e7e84f43ee2400.camel@ew.tq-group.com>
-Subject: Re: [PATCH] phy: ti: gmii-sel: Force RGMII TX delay
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Michael Walle <mwalle@kernel.org>
-Cc: Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Lunn <andrew@lunn.ch>, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- netdev@vger.kernel.org, nm@ti.com, vigneshr@ti.com, Vinod Koul
- <vkoul@kernel.org>,  Kishon Vijay Abraham I <kishon@kernel.org>
-Date: Mon, 04 Aug 2025 16:59:32 +0200
-In-Reply-To: <20250804140652.539589-1-mwalle@kernel.org>
-References: <20250804140652.539589-1-mwalle@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	bh=42vIk650U5Nu4ZZGP8OXuh4SGlMpsh3LVOR0xRo5c+A=;
+	b=xgvZoSljK55eUZl49pOIFNnrdHdyhB+EguZ3VtXjLlw1qYheHhyjn1dh+JM/CN0bP0mFZ/
+	tdTck748/5t0loLo7k3SOaQZq70ELh0QkFrVKXS9c26CQJCq0hx5AfknyV1PuI/aMXoxnK
+	3M2q9amGHrJB88UYc6FayJkazQiw7Zg9Jsn1BPY6MaCeTAdHxlzHh7KaQuZXxSCQnovSbx
+	+lwggG/J8XUl+sXnLhFX95K+3jDt6ym8zMY5Jz/qtkY2igFNCJ6jHt5rTEEjIphF0an7WZ
+	RHHxF8hSznbmiJep7jI2q5bXttGLltUikhYX0OKrqmgEV9SyNyEMZ58PEMorsQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1754319695;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=42vIk650U5Nu4ZZGP8OXuh4SGlMpsh3LVOR0xRo5c+A=;
+	b=UEgz/aYIXbU4AIWY7sRvA+X1Ixnt/rZ/UgnAHLyq1fS1UakxkmQZwtnfaPZS/Pv/yaQIJ3
+	sOxqBD62VUPvTODg==
+From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+To: Christoph Hellwig <hch@lst.de>, Shuah Khan <shuah@kernel.org>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, 
+	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
+	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
+	Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
+	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	workflows@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
+Subject: Re: [PATCH v5 00/15] kunit: Introduce UAPI testing framework
+Message-ID: <20250721100913-0c6d93d8-79d6-482b-9db4-7b0c06b604fa@linutronix.de>
+References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
+ <20250717132259.GA25835@lst.de>
+ <20250718073743-d4a1f713-f81b-4e89-b3f8-7eed838798e6@linutronix.de>
+ <20250721070958.GA29367@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250721070958.GA29367@lst.de>
 
-On Mon, 2025-08-04 at 16:06 +0200, Michael Walle wrote:
-> Some SoCs are just validated with the TX delay enabled. With commit
-> ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fixed
-> RGMII TX delay"), the network driver will patch the delay setting on the
-> fly assuming that the TX delay is fixed. In reality, the TX delay is
-> configurable and just skipped in the documentation. There are
-> bootloaders, which will disable the TX delay and this will lead to a
-> transmit path which doesn't add any delays at all. Fix that by always
-> forcing the TX delay to be enabled.
->=20
-> Fixes: ca13b249f291 ("net: ethernet: ti: am65-cpsw: fixup PHY mode for fi=
-xed RGMII TX delay")
-> Signed-off-by: Michael Walle <mwalle@kernel.org>
-> ---
->  drivers/phy/ti/phy-gmii-sel.c | 52 +++++++++++++++++++++++++++++------
->  1 file changed, 44 insertions(+), 8 deletions(-)
->=20
-> diff --git a/drivers/phy/ti/phy-gmii-sel.c b/drivers/phy/ti/phy-gmii-sel.=
-c
-> index ff5d5e29629f..a0c19d00ff3a 100644
-> --- a/drivers/phy/ti/phy-gmii-sel.c
-> +++ b/drivers/phy/ti/phy-gmii-sel.c
-> @@ -34,6 +34,7 @@ enum {
->  	PHY_GMII_SEL_PORT_MODE =3D 0,
->  	PHY_GMII_SEL_RGMII_ID_MODE,
->  	PHY_GMII_SEL_RMII_IO_CLK_EN,
-> +	PHY_GMII_SEL_FIXED_TX_DELAY,
->  	PHY_GMII_SEL_LAST,
->  };
-> =20
-> @@ -127,6 +128,16 @@ static int phy_gmii_sel_mode(struct phy *phy, enum p=
-hy_mode mode, int submode)
->  		goto unsupported;
->  	}
-> =20
-> +	/*
-> +	 * Some SoCs only support fixed MAC side TX delays. According to the
-> +	 * datasheet, they are always enabled, but that turns out not to be the
-> +	 * case and the delay is configurable. But according to the vendor that
-> +	 * mode is not validated and might not work. Some bootloaders disable
-> +	 * that bit. To work around that enable it again.
-> +	 */
-> +	if (soc_data->features & BIT(PHY_GMII_SEL_FIXED_TX_DELAY))
-> +		rgmii_id =3D 0;
+Hi Christoph,
 
-The mode passed to phy_gmii_sel_mode by am65-cpsw is the same value that is
-passed to the Ethernet PHY driver, so a case where rgmii_id =3D=3D 1 and wo=
-uld be
-reset to 0 is unreachable (PHY_INTERFACE_MODE_RGMII_ID and
-PHY_INTERFACE_MODE_RGMII_TXID can't occur with the fixup in am65-cpsw).
-Therefore we could return EINVAL here if PHY_GMII_SEL_FIXED_TX_DELAY is set=
- and
-rgmii_id =3D=3D 1 instead of effectively ignoring the mode, which seems a b=
-it more
-robust to me.
+On Mon, Jul 21, 2025 at 09:09:58AM +0200, Christoph Hellwig wrote:
+> On Fri, Jul 18, 2025 at 08:22:26AM +0200, Thomas Weißschuh wrote:
+> > > I had my own fair share of problems with kselftests,
+> > > mostly because of the lack of structure and automated way to run them,
+> > 
+> > How did you overcome these issues? Why does everbody need to reinvent the
+> > wheel here?
+> 
+> Told people to use everything remotely file system related to use
+> xfstests instead, and either ignore or suffer from the rest.
 
-Best,
-Matthias
+Suffering from the rest is what I am trying to avoid.
+(More on that below)
+
+> > KUnit already exists and provides a lot of structure and tooling.
+> 
+> That's great.  Let's reuse it without having to drive running userspace
+> programs from kernel code.
+
+Running in the kernel is the point behind KUnit. It could be done by putting
+all the userspace test into a initramfs and run them on boot from there.
+But that has other drawbacks:
+* The tests can't be run on an existing system.
+* All tests need to be loaded into memory together, and not on demand.
+* The tests can not be rerun.
+
+> > > but adding them to the kernel (or a module) is overshooting the target
+> > > by far.
+> > 
+> > That's a subjective statement without any reasoning I can engange with.
+> 
+> Well, then we're done here if you can't engage.
+
+This was a response to one specific statement. Could you be a bit more specific
+in your critique? I am not sure what exactly you mean in some cases, making it
+hard to respond properly. For example "bloat", it is bloaty
+* source code,
+* object code for users enabling the new kconfig options,
+* object code for other users *not* enabling the new kconfig options?
+ 
+> > I would be happy to do so, but for now I can only say that I disagree.
+> > The patches have been on the testing-related lists for
+> > some time and so far nobody had an issue with this aspect.
+> 
+> Has anyone actually chimed in and said "it's great that we bloat the
+> kernel to run userspace tests", or have people just mostly ignored it
+> like most things?
+
+That specific wording wasn't used. Obviously...
+So far nobody had any issues with the overall goal of the series.
+There was criticism around implementation details and I have been and will be
+working on resolving those.
+
+Some feedback I got:
+
+David [0]: "I've taken quite a liking to it: it'd definitely have made my
+life easier more than once."
+Benjamin is already playing with it, having built his own testcase [1].
+I asked Shuah about it before starting development and she gave a go-ahead.
+A collegue of mine is also using it to validate the PREEMPT_RT safety of
+various UAPIs by combining KUnit UAPI with a runtime validator [2].
+
+> > > > If the kernel toolchain is not fit to
+> > > > produce userspace because of a missing libc, the kernel's own nolibc can
+> > > > be used instead.
+> > > 
+> > > Is nolibc enough to run all the selftests?
+> > 
+> > It is not and most probably won't ever be. The maintainers of each testcase
+> > will decide which libc to use. Like it is in tools/testing/selftests/ today.
+> > Some use glibc, some nolibc and some can do both.
+> 
+> So why do you want to use it here?  And how is is related to the rest
+> of the series?
+
+To make it easier to test a wide range of architectures by not requiring a
+libc from the toolchain. It also avoids relying on a bunch of out-of-tree
+code (glibc) as part of the test. And there are existing kselftests which
+use it over glibc for their own reasons.
+
+But using nolibc in test code is not necessary and nobody is forced to do so.
+
+(Maybe a disclaimer that I'm one of the nolibc maintainers is in order)
+
+(...)
+
+> You present running pure userspace tests as the solution to a problem
+> you don't even explain, or rather just state very highlevel.
+
+To run kselftests we need the following things:
+a) A toolchain which can build userspace executables.
+b) Quite a bit of supporting userland, at least glibc, coreutils and bash.
+c) A rootfs assembled out of these.
+d) An efficient way to incrementally rebuild the test executables and rootfs.
+e) A way to put that rootfs into the system under test.
+f) A way to configure a kernel which
+   * is as small as possible and as fast as possible to build,
+   * can run on QEMU or a real machine,
+   * can run the functionality under test.
+g) A way to select the tests to run in the system under test.
+h) A way to communicate back the results.
+i) Something to interpret the results.
+j) Hook up everything into a CI system.
+
+And for all of this there should be good in-tree tooling.
+
+For a) and b) I am not aware of any toolchain provider or distribution which
+provides this for all necessary architectures. And the existing userspace test
+frameworks don't even try to address the points a) to e)/f) and let the user
+figure it out. This is the case for xfstests and LTP. virtme(-ng) provide most
+of it but don't support cross-architecture setups. On the other hand the tree
+already contains solutions for most of those points. a) and d) are solved by
+kbuild userprogs, e) to j) by KUnit and my new framework plugs b) and c).
+Moving to a pure userspace solution would preclude the usage of KUnit as far as
+I can see.
+
+This all started when I worked on the generic vDSO data storage patches [3].
+I needed to run the existing vDSO selftests against a bunch of architectures,
+including some esoteric ones [4]. With my framework, running the vDSO selftests
+for any architecture is now trivial and blazingly fast.
+
+Does this make more sense?
+
+> Yes, kselftests suck as most people will agree. But the answer is not
+> to add a lot of kernel bloat to treat userspace integration tests
+> like kernel units tests.
+
+I fail to understand how this test code is worse than the existing KUnit test
+code. This is not meant to test complex scenarios, but single system calls or
+specific UAPIs, which may depend on architecture features. For example timers,
+signals, vDSO, mm etc.
+
+> How about you just fix kselftests, preferably
+> by reusing well known and teststed userland code?
+
+Is "well known and tested userland code" referring to glibc or testing
+frameworks? As mentioned above, glibc can be used just fine and the frameworks
+I know about are lacking.
 
 
-> +
->  	if_phy->phy_if_mode =3D submode;
-> =20
->  	dev_dbg(dev, "%s id:%u mode:%u rgmii_id:%d rmii_clk_ext:%d\n",
-> @@ -210,25 +221,46 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_soc_dm814=
- =3D {
-> =20
->  static const
->  struct reg_field phy_gmii_sel_fields_am654[][PHY_GMII_SEL_LAST] =3D {
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x0, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x4, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x8, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0xC, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x10, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x14, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x18, 0, 2), },
-> -	{ [PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x1C, 0, 2), },
-> +	{
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x0, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x0, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x4, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x4, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x8, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x8, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0xC, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0xC, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x10, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x10, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x14, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x14, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x18, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x18, 4, 4),
-> +	}, {
-> +		[PHY_GMII_SEL_PORT_MODE] =3D REG_FIELD(0x1C, 0, 2),
-> +		[PHY_GMII_SEL_RGMII_ID_MODE] =3D REG_FIELD(0x1C, 4, 4),
-> +	},
->  };
-> =20
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_soc_am654 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  };
-> =20
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_j7200 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII) |
->  		       BIT(PHY_INTERFACE_MODE_USXGMII),
-> @@ -239,6 +271,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw5g_soc_=
-j7200 =3D {
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j721e =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII),
->  	.num_ports =3D 8,
-> @@ -248,6 +282,8 @@ struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_=
-j721e =3D {
->  static const
->  struct phy_gmii_sel_soc_data phy_gmii_sel_cpsw9g_soc_j784s4 =3D {
->  	.use_of_data =3D true,
-> +	.features =3D BIT(PHY_GMII_SEL_RGMII_ID_MODE) |
-> +		    BIT(PHY_GMII_SEL_FIXED_TX_DELAY),
->  	.regfields =3D phy_gmii_sel_fields_am654,
->  	.extra_modes =3D BIT(PHY_INTERFACE_MODE_QSGMII) | BIT(PHY_INTERFACE_MOD=
-E_SGMII) |
->  		       BIT(PHY_INTERFACE_MODE_USXGMII),
+Thomas
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+
+[0] https://lore.kernel.org/all/CABVgOSn+530YJ3OPNJQncLDQNbd9JEDtZ04Amyyxk57jOVYUyQ@mail.gmail.com/
+[1] https://lore.kernel.org/all/20250626195714.2123694-3-benjamin@sipsolutions.net/
+[2] https://lore.kernel.org/lkml/cover.1752088709.git.namcao@linutronix.de/
+[3] https://lore.kernel.org/lkml/20250204-vdso-store-rng-v3-0-13a4669dfc8c@linutronix.de/
+[4] https://lore.kernel.org/lkml/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de/
 
