@@ -1,154 +1,137 @@
-Return-Path: <linux-kernel+bounces-754690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754692-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EBFB19AFD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:08:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF05BB19B03
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 147701896C05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:09:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D29D1897219
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:13:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 285AB221F32;
-	Mon,  4 Aug 2025 05:08:35 +0000 (UTC)
-Received: from mail-io1-f79.google.com (mail-io1-f79.google.com [209.85.166.79])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD272264B9;
+	Mon,  4 Aug 2025 05:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KnFuzqsZ"
+Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39CF72F2E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 05:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.79
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE4225417;
+	Mon,  4 Aug 2025 05:13:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754284114; cv=none; b=LV9Qw6C0fDUobyex0kclF7EXJ1gnQF5x5ExqbuZqnCBxJM9n0bKN8xbTLlMW6FR2ZFUiMVwL7lTgCNUrtTHemVOIn9DNIFiB1d5bLs6Yvj0Ul5DPo12k46p1b2gYWM1FtiwtO2G9ncw8TUqjGLsIks8X0M83LFZEVxzpDjX4eQ8=
+	t=1754284385; cv=none; b=lZCpE5PaAKyFyF+gN55AYiyIEi122LhV4jBeQjSbzx90bygHybtrruweZlRyNEK6UTebQpdEi/E7CwKdi1iET3RUGk1bJ0tV91+zdlIvDYfBuuCSoL83HV19J8OkO3YuaEI98AP7+KQmvJWTKsdLmJ1t7YBc1JPLle/Tjxv8H9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754284114; c=relaxed/simple;
-	bh=ZLBP3RUIikByUa7KPtiF0g+jtRkXsaeIPURdK5TfryI=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=lzxvxr1csqqjpFepJyxdxxgXunBOpbwQnsd46EhVo3Tff3++fxbwQBRNp4iKyHwkfoJcuZvjbapT8nTBpD5vwkXga+35JNCD0509ItMzkAF4+Or/4JiKLlNCOUW4Ol15iZ8UAZkHxK9qVGXJCH62s4IUWWgBZ7bgEhFiZtwAPRQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.79
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f79.google.com with SMTP id ca18e2360f4ac-8816e763309so121047539f.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 22:08:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754284112; x=1754888912;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=hHDuSz8uOADbevwcrJx5h2+exfV1RPbCBux+vztrfZg=;
-        b=JQ0qMUMEksYoXCbxfQQTlGQBotb0NxV2Ari6CENEUci7b02T1/GWPfUHUyMZkjV4vN
-         wDPOkK5JQqe4n19BpbWrHGVBOu35yCSr4lEvyxp8os5UUxcsQ7wk4O0nXotGR5ngrLKm
-         EOumkyzNjnL1xhDOqSDk5eMveqFI3TSWI+lsrOr8MfYCQim4JXgcb0EEJ/bYtywb42hJ
-         ZzLYeHBZyMB+0/adWVikZSOUQaGF9OvH3klfLm0Z8HF2q71cTWLbOoWLWyDeBmvTNFSU
-         Od743fQay1lGSSl82Ioablb0ovSyEkggKvsbAjhlCxSPEXt1jrzzsjMNt/w2jDtSUDHu
-         pfBg==
-X-Forwarded-Encrypted: i=1; AJvYcCV3URC2V2i9KyRxahps+vXJTF8uHh30OoURZbhCcespNM+mVl6tkVbMZKvdu8tqphRC29BKTlhrCMWZYP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw9DAMrY9SC5qE00oZ3h6v75mY0fseRVtTyjGWWYpGe/ahs0CaT
-	Khl0HwctchaGBrftBL3ldmfj2ofq793Cud/QTDP7uX//MGKhAMUJyk/vOgxi3OkM/c+5GkDxL23
-	1BQhNq2yOVbyeNSo8oKTSMYZNuMfnoMIrvRcM96vzAN8j0IChwmbodUTx7ps=
-X-Google-Smtp-Source: AGHT+IEfhL5kxH+ViRn+tjSPehb7rvgtjFomaPJY2Ou1a+LpGpm0byaDKQUUxSxBQ91TiRJ+aGH7Z/6kNNBRvcF/PmYwOB1Je311
+	s=arc-20240116; t=1754284385; c=relaxed/simple;
+	bh=SUW5D5b5WsWlP0YMXjvvOTVOjakybqdppS5vTfywQuo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r8yb6GdTbx+T+AIFGWiSDyu8NIr+N+VjAcSBChlc0t/wzNUTiyTuO+7PyxzppXfW4nN9xMZsbzHfdfD+H2s3LOl139o2TPC3xd8TGQGsVXHWgcRTLdf1T6k2kpL7d8DYRaiPv5wthQVBv5VHYBARCQ/NMFAR6Xj2ba/AeDQTH/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KnFuzqsZ; arc=none smtp.client-ip=178.21.23.139
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
+Received: from mail01.disroot.lan (localhost [127.0.0.1])
+	by disroot.org (Postfix) with ESMTP id 5F48320A6A;
+	Mon,  4 Aug 2025 07:12:54 +0200 (CEST)
+X-Virus-Scanned: SPAM Filter at disroot.org
+Received: from layka.disroot.org ([127.0.0.1])
+ by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
+ id BJneWLsAwyEm; Mon,  4 Aug 2025 07:12:53 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
+	t=1754284373; bh=SUW5D5b5WsWlP0YMXjvvOTVOjakybqdppS5vTfywQuo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To;
+	b=KnFuzqsZn6Eu779yf9Zjp2zeH9TzXtH0ko/GWr/qkEkXclWSEbOcY7RI51Y3Q02tY
+	 v+YDuPEz3tihyNqYug7+rVri3pLwnVEmaImpCGBao2hWTPC/XTEZVfetkvLNYgbsp2
+	 Bm47ovlo1P9xSqxzVTabKRShhrSLx+oNtJzGY56dgdJQaPHT9lPR8yk1X49EXRqvK/
+	 b/kGzebPdI83cxvfkSHPJzCbuHPA3wJ6Y1ZdTHE51/2vmPoQK/1LhRwPDTXgs49qcP
+	 glOhiTuCkiv7ddJG7du/Wjd+a0pxoRfrGKUHvcz+N/k4Tf9SYfr2fmoRZIZgSVYmME
+	 mkS+if9wO21pA==
+Date: Mon, 4 Aug 2025 05:12:26 +0000
+From: Yao Zi <ziyao@disroot.org>
+To: Rob Herring <robh@kernel.org>
+Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
+	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
+	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
+	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
+	netdev@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH net v2 2/3] net: stmmac: thead: Get and enable APB clock
+ on initialization
+Message-ID: <aJBBOptU4IXilK3I@pie>
+References: <20250801091240.46114-1-ziyao@disroot.org>
+ <20250801091240.46114-3-ziyao@disroot.org>
+ <20250803170206.GA525144-robh@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6602:6b81:b0:881:419d:4a31 with SMTP id
- ca18e2360f4ac-8816830d61bmr1261736839f.3.1754284112354; Sun, 03 Aug 2025
- 22:08:32 -0700 (PDT)
-Date: Sun, 03 Aug 2025 22:08:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <68904050.050a0220.7f033.0001.GAE@google.com>
-Subject: [syzbot] [bpf?] WARNING in do_misc_fixups
-From: syzbot <syzbot+a9ed3d9132939852d0df@syzkaller.appspotmail.com>
-To: andrii@kernel.org, ast@kernel.org, bpf@vger.kernel.org, 
-	daniel@iogearbox.net, eddyz87@gmail.com, haoluo@google.com, 
-	john.fastabend@gmail.com, jolsa@kernel.org, kpsingh@kernel.org, 
-	linux-kernel@vger.kernel.org, martin.lau@linux.dev, sdf@fomichev.me, 
-	song@kernel.org, syzkaller-bugs@googlegroups.com, yonghong.song@linux.dev
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250803170206.GA525144-robh@kernel.org>
 
-Hello,
+On Sun, Aug 03, 2025 at 12:02:06PM -0500, Rob Herring wrote:
+> On Fri, Aug 01, 2025 at 09:12:39AM +0000, Yao Zi wrote:
+> > It's necessary to adjust the MAC TX clock when the linkspeed changes,
+> > but it's noted such adjustment always fails on TH1520 SoC, and reading
+> > back from APB glue registers that control clock generation results in
+> > garbage, causing broken link.
+> > 
+> > With some testing, it's found a clock must be ungated for access to APB
+> > glue registers. Without any consumer, the clock is automatically
+> > disabled during late kernel startup. Let's get and enable it if it's
+> > described in devicetree.
+> > 
+> > Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
+> > Signed-off-by: Yao Zi <ziyao@disroot.org>
+> > Reviewed-by: Drew Fustini <fustini@kernel.org>
+> > Tested-by: Drew Fustini <fustini@kernel.org>
+> > ---
+> >  drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 6 ++++++
+> >  1 file changed, 6 insertions(+)
+> > 
+> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> > index c72ee759aae5..95096244a846 100644
+> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
+> > @@ -211,6 +211,7 @@ static int thead_dwmac_probe(struct platform_device *pdev)
+> >  	struct stmmac_resources stmmac_res;
+> >  	struct plat_stmmacenet_data *plat;
+> >  	struct thead_dwmac *dwmac;
+> > +	struct clk *apb_clk;
+> >  	void __iomem *apb;
+> >  	int ret;
+> >  
+> > @@ -224,6 +225,11 @@ static int thead_dwmac_probe(struct platform_device *pdev)
+> >  		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
+> >  				     "dt configuration failed\n");
+> >  
+> > +	apb_clk = devm_clk_get_optional_enabled(&pdev->dev, "apb");
+> 
+> The description sounds like this should not be optional. The binding 
+> change also makes it not optional.
 
-syzbot found the following issue on:
+Yes, it shouldn't be. But using the non-optional API will cause the
+driver fails to probe with the old (problematic) devicetree, IOW, it
+breaks the ABI. Comparing to unusable ethernet, failing to adjust the
+link speed sounds a minor point to me.
 
-HEAD commit:    a6923c06a3b2 Merge tag 'bpf-fixes' of git://git.kernel.org..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1561dcf0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f89bb9497754f485
-dashboard link: https://syzkaller.appspot.com/bug?extid=a9ed3d9132939852d0df
-compiler:       aarch64-linux-gnu-gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
-userspace arch: arm64
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=165d0aa2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=117bd834580000
+Maybe we could add a comment to explain why optional API is used, or
+just use the non-optional one if such ABI breakages are acceptable --
+for which I'd like to wait for more opinions.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/fa3fbcfdac58/non_bootable_disk-a6923c06.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/9862ca8219e0/vmlinux-a6923c06.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/042ebe320cfd/Image-a6923c06.gz.xz
+> Rob
+> 
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a9ed3d9132939852d0df@syzkaller.appspotmail.com
-
-------------[ cut here ]------------
-verifier bug: not inlined functions bpf_probe_read_kernel_str#115 is missing func(1)
-WARNING: CPU: 1 PID: 3594 at kernel/bpf/verifier.c:22838 do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
-Modules linked in:
-CPU: 1 UID: 0 PID: 3594 Comm: syz.2.17 Not tainted 6.16.0-syzkaller-11105-ga6923c06a3b2 #0 PREEMPT 
-Hardware name: linux,dummy-virt (DT)
-pstate: 61402009 (nZCv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-pc : do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
-lr : do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838
-sp : ffff80008936b9a0
-x29: ffff80008936b9a0 x28: f5ff8000832f5000 x27: 000000000000000a
-x26: f8f0000007ba8000 x25: 0000000000000000 x24: f8f0000007bae200
-x23: 000000000000f0ff x22: 000000000000000a x21: f8f0000007bae128
-x20: f8f0000007ba8aa8 x19: ffff80008243e828 x18: 0000000000000000
-x17: 0000000000000000 x16: 0000000000000000 x15: ffff800081b73b80
-x14: 0000000000000342 x13: 0000000000000000 x12: 0000000000000002
-x11: 00000000000000c0 x10: 646e0773d90f24cc x9 : 73727a981a23afd7
-x8 : fcf0000007bb36f8 x7 : 0000000000000190 x6 : 0000003978391654
-x5 : 0000000000000001 x4 : fbffff3fffffffff x3 : 000000000000ffff
-x2 : 0000000000000000 x1 : 0000000000000000 x0 : fcf0000007bb2500
-Call trace:
- do_misc_fixups+0x1784/0x1ab4 kernel/bpf/verifier.c:22838 (P)
- bpf_check+0x1308/0x2a8c kernel/bpf/verifier.c:24739
- bpf_prog_load+0x634/0xb74 kernel/bpf/syscall.c:2979
- __sys_bpf+0x2e0/0x1a3c kernel/bpf/syscall.c:6029
- __do_sys_bpf kernel/bpf/syscall.c:6139 [inline]
- __se_sys_bpf kernel/bpf/syscall.c:6137 [inline]
- __arm64_sys_bpf+0x24/0x34 kernel/bpf/syscall.c:6137
- __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
- invoke_syscall+0x48/0x110 arch/arm64/kernel/syscall.c:49
- el0_svc_common.constprop.0+0x40/0xe0 arch/arm64/kernel/syscall.c:132
- do_el0_svc+0x1c/0x28 arch/arm64/kernel/syscall.c:151
- el0_svc+0x34/0x10c arch/arm64/kernel/entry-common.c:879
- el0t_64_sync_handler+0xa0/0xe4 arch/arm64/kernel/entry-common.c:898
- el0t_64_sync+0x1a4/0x1a8 arch/arm64/kernel/entry.S:596
----[ end trace 0000000000000000 ]---
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks,
+Yao Zi
 
