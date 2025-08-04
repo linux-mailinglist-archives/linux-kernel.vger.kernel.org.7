@@ -1,215 +1,214 @@
-Return-Path: <linux-kernel+bounces-755338-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755339-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CCA2B1A51E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:41:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB03B1A51F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:42:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29F8E16A17A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:41:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B3E23A8203
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:42:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B982D272E7E;
-	Mon,  4 Aug 2025 14:41:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02C59272E72;
+	Mon,  4 Aug 2025 14:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="y2riqgGC"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GJGG7w14";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ezTgJs7E";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="GJGG7w14";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="ezTgJs7E"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A26A2701DA
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D3642701DA
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:41:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318500; cv=none; b=c8tr1nLiG3AuK9R19yTTeimRg0AGwQ+nExddQNYJObMydTzFY5nJOCp9SyoXIqgMLn5TuifpH+Aelw3OfKX5CSvisa6p9vPDIMqDIgRVOq5byu9WtzSx080tzAgjXF6lbxbJNlE6LsaHRwyfUiSgq/6DCcaH3z0c/W41H2DnS/U=
+	t=1754318507; cv=none; b=RWl8y30fQQC3rCCd0KnJb8/ZebxeypLT61xhBODbeucKQ8EtBkzaw3Ftc5Mi+49rzrAyEC7d56Y96uP/wpWlECUFgN49ySSV2k35ynnU+nDY1vtSIbPZgduVG49etoizIQA2oWH4DloUFz4akeiNyLFiMYq+CllOFCVt80xC9VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318500; c=relaxed/simple;
-	bh=Th1GGzHEXSIXAEjGF2bwBj2++NDa6AYjz2/R1sVcQg0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=s9G2uTXTN3dXd5lATffcQfE6fhLs+UqjuDvMl6ZGVqSvbxzHtug2qqvt40nmcQLNWhWFCS3p5mY5xILKBq7cbh+YlEVeNpwyzGpgHpzBfenXc3VxX0gLrckr/lTupxtO3ofU32HQOTYWHRWgkK96bJPaW0gH6vMdYWo7TCMj0qE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=y2riqgGC; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-459b3904fdeso60745e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:41:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754318495; x=1754923295; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=7wNH0ejjUe8Lj8uB8nKw5WFsHsij9Aanrkc89iq3IGY=;
-        b=y2riqgGC+2KkOFiY3u9u99likdJIon29yIOtyxqO+BRZE08t+zygbDW78Y1dWktB8d
-         78Krow/sV2tpbAvDooRWEximYapspiJgGTRb65jptO2rkGbGbbRtCFnfqynTYSdmz5HD
-         K25k6R04Ml+iIFt0zlRGUUYSs/Z/Q8096YJ1St/TfSS07uoVMM0/dHmvBqDUGg/HL4lz
-         V7hXRowNXq/cooZ7jbS0BPYQ5Wk7RAXZaGm5zF/ZEPODhGyAW+41Qyn2AQx/6tB7Mqi4
-         6Wnq2H4ES6c6k27aamn0rMiOdsv/ZQkH7Xi6XY7HtzG8NDt/O/QwnIES6UsHLbi2d8Od
-         hC8A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754318495; x=1754923295;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7wNH0ejjUe8Lj8uB8nKw5WFsHsij9Aanrkc89iq3IGY=;
-        b=vn+Cx3GxW4M7+MKk7j5HqGzmCwUo4SrQWjtVR7NOMsy9J7g/Tjpu5Yz5IYsESZUnNn
-         DvD8Xh8plbllGuAkIBuv729wL482mLxWFdQ6dp7Z70RX9WVrjBLU2gBRpe3VkM5vsxH/
-         ax2nvIoDeWVzqETe4vwqjGW0RgdMEjgqI+PYCFqnVAxWaawlFKOwtr4pGN9c6X3Ao2Xk
-         YYQ8nShEnaJp/cDuTAaYACwgQq3P9kKf28303AHvOSl9UXaLn8fvdGVFSJKN8F7bTfwN
-         6hLKnaCB1jFA+WeZAD8hvdOsuQ9f4iJzF6bJzuv3jrEOSTmoqGhigUoWpFHex8udFJsw
-         lDHA==
-X-Gm-Message-State: AOJu0Yx+q4O/6TL6TCZ99VD0rIzGtimfW9qah1c1GhBILPtxvS5NnYDo
-	x1n2MInxJnAgTLSHUC9+goYh+BlKvTanFgA2UWlQpht+wRKXwEsdalNm5h3YhaLlYQ==
-X-Gm-Gg: ASbGnctPoGMpBRs62A8VaeYidQ7NF1bqm+UPx/XNOzpkwGSLzKfH+N+cZZol5bfIzhk
-	JxxiWsHjqu4CcPjg1BVVGzBcRVp33mhDKgbdBKuRbws7lvJJCwO9T6cOnp0K58T3cyi5prQ8pxz
-	OcqN07sYCxTtv/07MJ7zSl34ffeBGhYU3uJyr/oXW9OSCiDkXhhL3g61jNg1f8ns/LgytaJxmoe
-	eTNdFIdy8Jf9rZJBarrBKL1YYbUgY5qSWzp3LXs0iP7B/Whe3NfdathrrA5Q9QAWupSY6Wkw5GM
-	wZTyCm1xpfa5jTqxbRiXFEwWajy1uJWXBJdUZmzYi/GfN/jzMSdOsR+bdjcER1KM9AnRgHcGRwC
-	8Th7Q8Zn0nl25APaIgyjaJOuLmcD0OWYLyYQ4EUOUqQTXlPpBaX4HlDfPmJiMbLO+9Q==
-X-Google-Smtp-Source: AGHT+IGJiKUaLoknW9Epd8+LfOGYhki9ay4O/9N7wqTlXSABK7cHrsudr7MdE3msBmIPHpRZjQ9T/Q==
-X-Received: by 2002:a05:600c:4928:b0:453:6133:2e96 with SMTP id 5b1f17b1804b1-458b6c0e62cmr3626715e9.0.1754318495186;
-        Mon, 04 Aug 2025 07:41:35 -0700 (PDT)
-Received: from google.com (110.121.148.146.bc.googleusercontent.com. [146.148.121.110])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459ded356b9sm19744015e9.12.2025.08.04.07.41.34
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 07:41:34 -0700 (PDT)
-Date: Mon, 4 Aug 2025 14:41:31 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: linux-kernel@vger.kernel.org, kvmarm@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
-	maz@kernel.org, oliver.upton@linux.dev, joey.gouly@arm.com,
-	suzuki.poulose@arm.com, yuzenghui@huawei.com,
-	catalin.marinas@arm.com, will@kernel.org, robin.murphy@arm.com,
-	jean-philippe@linaro.org, qperret@google.com, tabba@google.com,
-	mark.rutland@arm.com, praan@google.com
-Subject: Re: [PATCH v3 29/29] iommu/arm-smmu-v3-kvm: Add IOMMU ops
-Message-ID: <aJDGm02ihZyrBalY@google.com>
-References: <20250728175316.3706196-1-smostafa@google.com>
- <20250728175316.3706196-30-smostafa@google.com>
- <20250730144253.GM26511@ziepe.ca>
- <aIo1ImP7R7VhRpVE@google.com>
- <20250730164752.GO26511@ziepe.ca>
- <aIt67bOzp6XS_yO-@google.com>
- <20250731165757.GZ26511@ziepe.ca>
- <aIurlx5QzEtjpFLd@google.com>
- <20250801185930.GH26511@ziepe.ca>
+	s=arc-20240116; t=1754318507; c=relaxed/simple;
+	bh=hD5sQ9IlCXhP4LbbOg4OezEonv19OqthhI5c8TZD6wU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KAnqdilKkU8YCFFQdkb+E0cRstwdy7i+6P7VyFA17N4Cw/gFZkdODXoyTMaLc34D4McjxP8c4idKZ7TG6u+ZX7YDyRwM5jPdqYDteJNi4awihBJ6dKuak0cWC/0e1uPeLmPHxk4s5QppBNMkM2yREXslej0pQOKhb94ou+yzHiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GJGG7w14; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ezTgJs7E; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=GJGG7w14; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=ezTgJs7E; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 9104521BC9;
+	Mon,  4 Aug 2025 14:41:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754318502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h0vqtEeN81u265nhnk/fwouCOEfWX9zFBh1zKn1thl8=;
+	b=GJGG7w14XBLpoAdBIXg4C5S8jEeieMRCsRgWX0S9r/ZPyb1vX1DQvUY3M1p79TGGfiD3gb
+	19Hk1DmX6n7odWygvK86hpb+gXIColSB6mW/9QcRBe6dB1OYGHE0fYb+voeRfMbkGahiSi
+	oUU9TQ0NEzE0LQG3J6QypivkY+W2oDA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754318502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h0vqtEeN81u265nhnk/fwouCOEfWX9zFBh1zKn1thl8=;
+	b=ezTgJs7EBlcMjlcbMvhDkTW09KQ4aRcFANct7H58tags1icpiAAFvZ8GldDYq6fG85QRR8
+	kltSeLCnzJUTkvAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754318502; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h0vqtEeN81u265nhnk/fwouCOEfWX9zFBh1zKn1thl8=;
+	b=GJGG7w14XBLpoAdBIXg4C5S8jEeieMRCsRgWX0S9r/ZPyb1vX1DQvUY3M1p79TGGfiD3gb
+	19Hk1DmX6n7odWygvK86hpb+gXIColSB6mW/9QcRBe6dB1OYGHE0fYb+voeRfMbkGahiSi
+	oUU9TQ0NEzE0LQG3J6QypivkY+W2oDA=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754318502;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=h0vqtEeN81u265nhnk/fwouCOEfWX9zFBh1zKn1thl8=;
+	b=ezTgJs7EBlcMjlcbMvhDkTW09KQ4aRcFANct7H58tags1icpiAAFvZ8GldDYq6fG85QRR8
+	kltSeLCnzJUTkvAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 6E0A2133D1;
+	Mon,  4 Aug 2025 14:41:42 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 12kHGqbGkGgKZwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 04 Aug 2025 14:41:42 +0000
+Message-ID: <805fb8a3-6f95-4f20-b5da-87dc3b1e3b60@suse.cz>
+Date: Mon, 4 Aug 2025 16:41:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801185930.GH26511@ziepe.ca>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
+ performance
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Li Qiang <liqiang01@kylinos.cn>
+Cc: akpm@linux-foundation.org, david@redhat.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, Liam.Howlett@oracle.com, rppt@kernel.org,
+ surenb@google.com, mhocko@suse.com
+References: <20250804123923.296230-1-liqiang01@kylinos.cn>
+ <ab22e314-63d1-46cf-a54c-b2af8db4d97a@lucifer.local>
+ <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ m6M14QORSWTLRg==
+In-Reply-To: <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On Fri, Aug 01, 2025 at 03:59:30PM -0300, Jason Gunthorpe wrote:
-> On Thu, Jul 31, 2025 at 05:44:55PM +0000, Mostafa Saleh wrote:
-> > > > They are not random, as part of this series the SMMUv3 driver is split
-> > > > where some of the code goes to “arm-smmu-v3-common.c” which is used by
-> > > > both drivers, this reduces a lot of duplication.
-> > > 
-> > > I find it very confusing.
-> > > 
-> > > It made sense to factor some of the code out so that pKVM can have
-> > > it's own smmv3 HW driver, sure.
-> > > 
-> > > But I don't understand why a paravirtualized iommu driver for pKVM has
-> > > any relation to smmuv3. Shouldn't it just be calling some hypercalls
-> > > to set IDENTITY/BLOCKING?
-> > 
-> > Well it’s not really “paravirtualized” as virtio-iommu, this is an SMMUv3
-> > driver (it uses the same binding a the smmu-v3)
+On 8/4/25 15:59, Lorenzo Stoakes wrote:
+> OK,
 > 
-> > It re-use the same probe code, fw/hw parsing and so on (inside the kernel),
-> > also re-use the same structs to make that possible. 
+> So I hacked -fopt-info-inline-all into the mm/ Makefile in a rather quick and
+> dirty way and it seems some stuff gets inlined locally, but we're mostly hitting
+> the '--param max-inline-insns-single limit reached' limit here.
 > 
-> I think this is not quite true, I think you have some part of the smmu driver
-> bootstrap the pkvm protected driver.
+> Which maybe is just a point where the compiler possibly arbitrarily gives up?
 > 
-> But then the pkvm takes over all the registers and the command queue.
+> Vlasta rightly pointed out off-list that given this appears to only be used in
+> one place you'd expect inlining as register spill isn't such a concern (we'll
+> spill saving the stack before function invocation anyway).
 > 
-> Are you saying the event queue is left behind for the kernel? How does
-> that work if it doesn't have access to the registers?
-
-The evtq itself will be owned by the kernel, However, MMIO access would be
-trapped and emulated, here the PoC for part-2 of this series (as mentioned in
-the cover letter) This is very close to how nesting will work.
-https://android-kvm.googlesource.com/linux/+/refs/heads/for-upstream/pkvm-smmu-v3-part-2/drivers/iommu/arm/arm-smmu-v3/pkvm/arm-smmu-v3.c#744
-
-
+> So there might actually be some validity here?
 > 
-> So what is left of the actual *iommu subsystem* driver is just some
-> pkvm hypercalls?
-
-Yes at the moment there are only 2 hypercalls and one hypervisor callback
-to shadow the page table, when we go to nesting, the hypercalls will be
-removed and there will be only data abort callback for MMIO emulation.
-
+> This is gcc 15.1.1 running on an x86-64 platform by the way.
 > 
-> It seems more sensible to me to have a pkvm HW driver for SMMUv3 that
-> is split between pkvm and kernel, that operates the HW - but is NOT an
-> iommu subsystem driver
-> 
-> Then an iommu subsystem driver that does the hypercalls, that is NOT
-> connected to SMMUv3 at all.
-> 
-> In other words you have two cleanly seperate concerns here, an "pkvm
-> iommu subsystem" that lets pkvm control iommu HW - and the current
-> "iommu subsystem" that lets the kernel control iommu HW. The same
-> driver should not register to both.
-> 
+> mm/memory.c:1871:10: optimized:  Inlined zap_p4d_range/6380 into unmap_page_range/6381 which now has time 1458.996712 and size 65, net change of -11.
+> mm/memory.c:1850:10: optimized:  Inlined zap_pud_range.isra/8017 into zap_p4d_range/6380 which now has time 10725.428482 and size 29, net change of -12.
+> mm/memory.c:1829:10: missed:   not inlinable: zap_pud_range.isra/8017 -> zap_pmd_range.isra/8018, --param max-inline-insns-single limit reached
+> mm/memory.c:1800:10: missed:   not inlinable: zap_pmd_range.isra/8018 -> zap_pte_range/6377, --param max-inline-insns-auto limit reached
+> mm/memory.c:1708:8: optimized:  Inlined do_zap_pte_range.constprop/7983 into zap_pte_range/6377 which now has time 4244.320854 and size 148, net change of -15.
+> mm/memory.c:1664:9: missed:   not inlinable: do_zap_pte_range.constprop/7983 -> zap_present_ptes.constprop/7985, --param max-inline-insns-single limit reached
 
-I am not sure how that would work exactly, for example how would probe_device
-work, xlate... in a generic way? same for other ops. We can make some of these
-functions (hypercalls wrappers) in a separate file. Also I am not sure how that
-looks from the kernel perspective (do we have 2 struct devices per SMMU?)
+I got some weird bloat-o-meter on this patch:
 
-But, tbh, i’d prefer to drop iommu_ops at all, check my answer below.
+add/remove: 1/0 grow/shrink: 2/2 up/down: 693/-31 (662)
+Function                                     old     new   delta
+__handle_mm_fault                           3817    4403    +586
+do_swap_page                                4497    4560     +63
+mksaveddirty_shift                             -      44     +44
+unmap_page_range                            4843    4828     -15
+copy_page_range                             6497    6481     -16
 
-> > As mentioned in the cover letter, we can also still build nesting on top of
-> > this driver, and I plan to post an RFC for that, once this one is sorted.
-> 
-> I would expect nesting to present an actual paravirtualized SMMUv3
-> though, with a proper normal SMMUv3 IOMMU subystem driver. This is how
-> ARM architecture is built to work, why mess it up?
-> 
-> So my advice above seems cleaner, you have the pkvm iommu HW driver
-> that turns around and presents a completely normal SMMUv3 HW API which
-> is bound by the ordinately SMMUv3 iommu subsystem driver.
-> 
+but even without this patch, "objdump -t mm/memory.o" shows no zap
+functions, so they are already inlined?
 
-I think we are on the same page about how that will look at the end.
-For nesting there will be a pKVM driver (as mentioned in the cover letter)
-to probe register the SMMUs, then it will unbind itself to let the current
-(ARM_SMMU_V3) driver probe the SMMUs and it can run unmodified. Which
-will be full transparent.
-
-Then the hypervisor driver will use trap and emulate to handle SMMU access
-to the MMIO, providing an architecturally accurate SMMUv3 emualation, and
-it will not register iommu_ops.
-Nor will it use any hypercalls, as the main reason I added those is to tell
-the hypervisor what SIDs are used in identity while others remain blocked, as
-enabling all the SID space doesn’t only require a lot of memory but also
-doesn't feel secure.
-With nesting, we don’t need those, as the hypervisor will trap CFGI and will
-know what SID to shadow.
-
-However, based on the feedback on my v2 series, it was better to split pKVM
-support, so the initial series only establishes DMA isolation. Then when we
-can enable full translating domains (either nesting or pv which is another
-discussion)
-
-So, I will happily drop the hypercalls and the iommu_ops from this series,
-if there is a better way to enlighten the hypervisor about the SIDs to be
-in identity.
-
-Otherwise I can’t see any other way to move forward other than going back to
-posting large serieses.
-
-Thanks,
-Mostafa
-
-
-> Jason
+gcc also 15.1.1 but maybe opensuse has some non-default tunings.
 
