@@ -1,114 +1,142 @@
-Return-Path: <linux-kernel+bounces-754653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC41AB19A72
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:15:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B971B19A74
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:16:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B04C3BA106
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:15:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CF1377A817B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:15:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 043AF224AE0;
-	Mon,  4 Aug 2025 03:14:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D889221F29;
+	Mon,  4 Aug 2025 03:16:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZM+1zd8p"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="C8vsTS6v"
+Received: from smtpbg154.qq.com (smtpbg154.qq.com [15.184.224.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B4D22236E3;
-	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F4FF2E3710;
+	Mon,  4 Aug 2025 03:16:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=15.184.224.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754277279; cv=none; b=MAsFQB0NBNrNGppPqPQPWTKfs7AJJAFuHoNGnHnWefudjWJAop1HR9BfGZ760i9VOqq5C2Ue8Smm0PBmov/yVeD1Eccf9xa/4lBqHSOc+o3C7Vc7DaooTSIdJLIlL3wbP/h2uVxZvAqQIJAwKKQzwNajRCComqTV3G4Zzartajo=
+	t=1754277402; cv=none; b=prDdHzR0edFt9WdPYOdo1CJ2BUOEILeo52XVXx3RE/iQ8sdOwBN+EpmkU4PUBX3Ro3PTh696Yit4M3Tjzwkp+rqHQXmo9mKb1K5Xw2rk4WpJI7NICKaIcuogtk8aUTLW3D/EGZ+ZUVPbA0wwlBMzcBebUadE2u3JG7N/okIm670=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754277279; c=relaxed/simple;
-	bh=6blx5Pta5wm6VaOJOfM8nH6FZqZiPA8Egow+M9tJ9z8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=rw+uq262181mQP/MtQA3NIO626d4us64DL30OcjKWHhXkJ/YIhF9bL1eQ7/lN8M5z/xphmmXTou9klagD+RVWvPx/a7iqwBDWuE7DHr4DLA2p2zht/d5kaZZFE6gaEBbqFLlv11gk5iwViwfpUS450yn9Er7OcQIkkLM5I+D+nY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZM+1zd8p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id ABD69C4CEF9;
-	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754277276;
-	bh=6blx5Pta5wm6VaOJOfM8nH6FZqZiPA8Egow+M9tJ9z8=;
-	h=From:Date:Subject:References:In-Reply-To:To:Cc:Reply-To:From;
-	b=ZM+1zd8p2PkvuUHd/8YbRazFJ4VP43WB9cLeQm2caNGj++byFwzx0zou8t7oovJkJ
-	 LwBR+IXchH16+BI4bjm5mZLKQw3qHnW7+yjDAYidKoJB6kASxsiFlekqfLb0vLUCaa
-	 76Ny6NE7N1qSF4FvsEuo1S/Y/dtfO8QEdeNPIWfS2Gwm0WyGDduqtPphZ7itQoUcNT
-	 ftqPMsTveahtA7HiwhCZLoupKtDlS29yRjTjQOOYa5sXmTOdeGxcl9pjAhJP3ryQdN
-	 0CIx+ckbOTh7uOJsphCzLHwbMJQa+GquqCAoC2zUnkcK6NVp4mVHmL1B6faNxlxjFj
-	 1I6cRL7lQHUng==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 97968C87FDB;
-	Mon,  4 Aug 2025 03:14:36 +0000 (UTC)
-From: Aaron Kling via B4 Relay <devnull+webgeek1234.gmail.com@kernel.org>
-Date: Sun, 03 Aug 2025 22:14:31 -0500
-Subject: [PATCH v2 2/2] arm64: tegra: Add reserved-memory node for P2180
+	s=arc-20240116; t=1754277402; c=relaxed/simple;
+	bh=KqPSsEAipp0FTBHpQ1gr9MqM8UbNzirmUIjEDZfuUzA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MUIMwOy1zDOiRKWIW7LaH62gqoIHAbwyusKGmiV+8012BH+kWo4fzi6JZBEM8U1bC2dUyugB+hw7wvRFKRS0FfSJTggrKd/OAODC5NTIjwbBtH5dIKK9Fhq2/cYJ24xE8AANZ3ngG1ChxrtLNJPt4nk5+kJpsDpcN5vVAe+6J5Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=C8vsTS6v; arc=none smtp.client-ip=15.184.224.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1754277368;
+	bh=yfXEkqEa/uISK0w4262atq7Tl4Mh0WUTkGxrLVIQDCk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=C8vsTS6vgrPgq/S6/t37BwfdCfv4pqCdqy8CjZ55JH/FbQNVPpQxCNONfqs+Jldah
+	 PgHRKBYXRfgiW3F/DCB1Idj+tWPMGNwZzXIky9a+cZffchfjgDUuNETYWWa5QzmNEB
+	 MG+xExLmSnSLVJxYEwu6HCt1IyFz9L2KGBBwL0Hw=
+X-QQ-mid: zesmtpip4t1754277360te817ce39
+X-QQ-Originating-IP: CsLbrNJfu0xmck4+IBUlfdUD9PJ6+4Ev/LU8dhC/Nsc=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 04 Aug 2025 11:15:58 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 10298245471260846125
+EX-QQ-RecipientCnt: 6
+From: tuhaowen <tuhaowen@uniontech.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tuhaowen@uniontech.com,
+	huangbibo@uniontech.com,
+	wangyuli@uniontech.com
+Subject: [PATCH v2] media: dvb-core: remove redundant new_node cleanup in dvb_register_device
+Date: Mon,  4 Aug 2025 11:15:53 +0800
+Message-Id: <20250804031553.4411-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250803-p3450-mts-bug-v2-2-6307125408c3@gmail.com>
-References: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
-In-Reply-To: <20250803-p3450-mts-bug-v2-0-6307125408c3@gmail.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, 
- Thierry Reding <thierry.reding@gmail.com>, 
- Jonathan Hunter <jonathanh@nvidia.com>
-Cc: devicetree@vger.kernel.org, linux-tegra@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Aaron Kling <webgeek1234@gmail.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754277275; l=1045;
- i=webgeek1234@gmail.com; s=20250217; h=from:subject:message-id;
- bh=iKGwJkv+2DaR9Ac3nn/wKFaNZ/LKBHDd/IXGJTxQu0c=;
- b=xg7Tonp4QiDC2xLgrdd+TxuC6mRXpiNHfSkLhB58/ThEwJI8z7lGPbUzpLRdW6Kv1nC04b0DQ
- 4CwJRzn5q3BDHxnECbOJ2FvKrEKEXpzYI5qF+c9NFbK+c24FUfhoQLw
-X-Developer-Key: i=webgeek1234@gmail.com; a=ed25519;
- pk=TQwd6q26txw7bkK7B8qtI/kcAohZc7bHHGSD7domdrU=
-X-Endpoint-Received: by B4 Relay for webgeek1234@gmail.com/20250217 with
- auth_id=342
-X-Original-From: Aaron Kling <webgeek1234@gmail.com>
-Reply-To: webgeek1234@gmail.com
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OdImatYx1y6xee80NRrQfSzJSATFpG38jwbM8scbLV0FZnVOc6zsv1vI
+	0bsHPxHJuLuoXUGKUF+W/foY3Av6SKPFPYXd7/hnTyqYrfevju7JG78WuDHD58ZSf2cCtHs
+	UhdkCexN4JlTvKVovunFhWKwGhKdb7M4NXZHm4jbKFRUxzw4Rl1/SD4IorxdrNwZsQMPnC8
+	PEvuHOyl93GYh9zdifGxKP4K+KYn7h+4UZ9OC/qVy8DOCaLkt0Q6MGL4ChwaANjW5NinkyE
+	b/6Cry2EDXSYdadCj2B+g+7wI02sFWwJ/wdLgvz4BhW0pT3q3nZhpE1gda8CQX6ua/Sqhf1
+	S89TZ7bk/cA08PGciBN7QBPqgV2ePPl5kulRrqULziTH7tbw19Y3zJrATdpYIkoDZ12TVFk
+	ld52aDxVI/bkJLaW1Mf/bjTa9Pg6iZTV/LY7n8rLcGDeK9s7sHhYleeThvUee55U+8BAjXr
+	QyNxN7x0T+6u+olPgsMKxxEkALbMaBd4/NzS/9Lk+0/ZaaqoPLwcqyktExOAnm++7YBXwiq
+	SoG1NVcQcVc1svujm5C7iTRWYhbHwt8svWT6ogFXkHKMkl7v/+AV0e+DBH3AG1XfnuBqVRW
+	OYQD7BLKbE451hUguTF6deIu8LYeX7ONKkRdVLRKQGZjMvRjt4s01Br2s/lDox4UVJBfk2c
+	4ESTOD9VyPmfrobwJ6isRD34HVcO1RaDJlTJIdVuf5A6R58bExXRjyFgAP0iPas0ptvrkMZ
+	bUzEAo/Ze6fqUbeEe1Kd+6W2hQqfWcvbkMdpNTlaBcE85SUlNJNZapiK9BnwWTwrCsVljiF
+	vri5/fOJmrwgSkUW1Xa7L62ZWSAI3bc5j4hBzZrKj8HgCB339SBMChCe2VVStFB2+DOkGQY
+	wPRXQELAbc/64UTOm5h8BIM2lY6NOSkmBywtAzcU/WmOq+uqG41WYEYOIC8SdLA9hbwYG87
+	cjSV0rA8I0mzrblOdKN2XF5BbyrMH9CEwC+5aU26ebaFxJttsiksR3xcceXR15HEV53zzEF
+	NpE47ZBPNHeS7OCmjgUuOzFygbvxiSSpBk6KRdYZeMWioqhvmB4lVzSoixP5Nu7NkXgwqHu
+	jQOyhnBQ4sFhChyrKee2KY=
+X-QQ-XMRINFO: NS+P29fieYNw95Bth2bWPxk=
+X-QQ-RECHKSPAM: 0
 
-From: Aaron Kling <webgeek1234@gmail.com>
+The error handling paths in dvb_register_device repeatedly check
+if (new_node) before cleanup. However, if new_node allocation fails,
+the function returns immediately and does not reach these branches.
+Thus, these conditionals are redundant and can be removed for code
+clarity and maintainability.
 
-The Tegra210 L4T bootloader ram training will corrupt the in-ram kernel
-dt if no reserved-memory node exists. This prevents said bootloader from
-being able to boot a kernel without this node, unless a chainloaded
-bootloader loads the dt. Add the node to eliminate the requirement for
-extra boot stages.
-
-Signed-off-by: Aaron Kling <webgeek1234@gmail.com>
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
 ---
- arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi | 6 ++++++
- 1 file changed, 6 insertions(+)
+ drivers/media/dvb-core/dvbdev.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-diff --git a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-index 9b9d1d15b0c7eafd3895f02db1bc747d7cc8923c..4a3ed10bde4f084477b10bb50be007da263088e9 100644
---- a/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-+++ b/arch/arm64/boot/dts/nvidia/tegra210-p2180.dtsi
-@@ -17,6 +17,12 @@ chosen {
- 		stdout-path = "serial0:115200n8";
- 	};
- 
-+	reserved-memory {
-+		#address-cells = <2>;
-+		#size-cells = <2>;
-+		ranges;
-+	};
-+
- 	memory@80000000 {
- 		device_type = "memory";
- 		reg = <0x0 0x80000000 0x1 0x0>;
-
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 9df7c213716a..2be0cc81bd47 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -534,11 +534,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	minor = nums2minor(adap->num, type, id);
+ #endif
+ 	if (minor >= MAX_DVB_MINORS) {
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+ 		*pdvbdev = NULL;
+@@ -554,11 +549,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (ret) {
+ 		pr_err("%s: dvb_register_media_device failed to create the mediagraph\n",
+ 		       __func__);
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+@@ -573,11 +563,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (IS_ERR(clsdev)) {
+ 		pr_err("%s: failed to create device dvb%d.%s%d (%ld)\n",
+ 		       __func__, adap->num, dnames[type], id, PTR_ERR(clsdev));
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
 -- 
-2.50.1
-
+2.20.1
 
 
