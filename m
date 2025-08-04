@@ -1,109 +1,179 @@
-Return-Path: <linux-kernel+bounces-755188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755191-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 663C1B1A2DB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:10:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 30D96B1A2E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:11:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 79C9B188B721
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4045918A3230
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:08:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 391B0253B67;
-	Mon,  4 Aug 2025 13:05:40 +0000 (UTC)
-Received: from mail-oa1-f44.google.com (mail-oa1-f44.google.com [209.85.160.44])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56C29265637;
+	Mon,  4 Aug 2025 13:06:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kr/GiFYd"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AA61236430;
-	Mon,  4 Aug 2025 13:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C71C925DB0D;
+	Mon,  4 Aug 2025 13:06:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754312739; cv=none; b=shG3vgPalfRY+dWEvSbbUrNgC4XeE+LDgDnqISDA/xVyMh+Dp5Bsug+I8uM1pRHwdSd9jncPwudleTkxiTUFmQyXizu7fzabePFNPyrkBl5ssx2FwbhuuK4iubITF2S5FwXYLfji2KozqS7HsMDzclZpWP345kxkbAjAMq61nDo=
+	t=1754312782; cv=none; b=FkcXHOOxGVxHP0aPZy+ZYKZugTnHKH07tMudd83AIQL6vbu4v9QJdcwV1ZbFahpUFnk1YVAOcGXAsck++lmju7RXTs8w1XOBd2rkBn06pawly+EPQeUH3qfLUK2YHYmpUV8MgQZKxHlpM/1vnv5pvZGqcZYppo+YCjyhRYePUL4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754312739; c=relaxed/simple;
-	bh=0P5M1kx65QaAhhe2nssk8eLJHgDw/J88Uq8PW5qMvs8=;
+	s=arc-20240116; t=1754312782; c=relaxed/simple;
+	bh=BZW1ZsIO9Hnt5qEUnhAI2ANB02CXuq6/ADxe8JFUJeE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VDVusXC38UShW4dTuJ+xM7UcsX1XXJYiUiJiCgs3cXj60BDjxQyKck8DK3XpQaRDSEwzIRNnfkzdcVT4E5VSm3byS8V6ciODNDelqEMpa7I9r5Ndmugui40h8r9+0srzZNj2yvfamxD77zFOQiukT53tJJRKwnEF4JxtT1U8M60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.160.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+	 To:Cc:Content-Type; b=gUfozTujd/Pb/pvOt1tACLd3s6p/cduDJzS5IXxvex3FG0TNdA8GMJsgYZxBPYsL6RcH9F1XmvUlKKD0U8l68qNuzMsg04kKXpteV15ENjFHM4qczBKw36LfaQ9PPfXrNMQ4yYKNexmGTnh2K7WEV471YjxuLY9K5pxuen3cjDo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kr/GiFYd; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-2ebb468cbb4so2133351fac.2;
-        Mon, 04 Aug 2025 06:05:38 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af9611d8ff7so235463966b.1;
+        Mon, 04 Aug 2025 06:06:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754312779; x=1754917579; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZXG9AGrFinYmMiROAAb115udLcWZgKrApUBxNgWLPeU=;
+        b=kr/GiFYdGsNP48aEv5W1ECjZV/5capYzB4b5QhGfIlQtV2o27fbzN79OG0Nmq5p3mL
+         3gxIOwnF5hoIMk0O+/Hxi03e/u8vlGuscNqmOYXAOwV2R8YxuvdX2BG8Ov3xH/8UUOC+
+         BXYGtzJKuGIL0zKBKPc/eTVCMyRPxpDEWe5lqapo0HfftbqRVMq0FOuBAM19nrSE6NjP
+         0nGOz7N2QTbnkjBZO2J+xarjgcZCvg1VxPByCd0snGMJzvaO7lrvFvNRK9nuVSdic61u
+         o5AylZsXqmcXzu+/1sFAphvQqh/NRaTFgcHYvGR7oqb8d9bWAqmYcNHFu3Ny5CQLGgB7
+         ejjA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754312737; x=1754917537;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7H2c83Dm5/3RiEg910uXwR0uEp2bBIYRUb95k5GL1u4=;
-        b=AoT7eAKThRbQfTBBVKDfVpHRCbr+G3bcTu2eugUxTN9TSIBI0VRONl90gjNdkGCFRH
-         XsffJUQLRachYh8A6lVqK1wLmTkxC8bJMuJHEw0iSwbxGMuS1cPm+JD7aBCNXcXkQddC
-         HCwB1xHIHfQGv+6/VLe2B6kG88HnItchFUnAHWldeLRVvK1inq9iN48p6jl6zXmTT0QK
-         s6UOtCkqg2jzrJZCAOY8PLuytyk8+DDBu5yS/UBNbH7X6HOiy4JdNCrY0Ia8xGTL4tvt
-         rMuVT8Yt8E9HjIKTu6GOwedcOCLsyzdJuxAF/ppS60NeKipzCUH+C43dn9KncMFlsbIY
-         2amw==
-X-Forwarded-Encrypted: i=1; AJvYcCU81oS/nFt6bvfx/TVC1zj+mjI4vj+BL3B+h6Aso/n2JlqJ+mGR8gui/niS9CkhlL01pFiiJhMy4n25Aafl@vger.kernel.org, AJvYcCUgeTN3WYPOV+6cQUEQT/7ZdqkglDWOSYrqIx0StC6U4ZmWoejh2r/KrTXlZz6UhIPwWN4IaKxWVSe2@vger.kernel.org, AJvYcCVYX13U9QwmSW52Q0/ntuKGtVSHtFfjqWmpuhhuEXUHNhRRJKB3g9QQxOPF2IxhBFtNg251QpV0XtYCJoZL5qGY+Ks=@vger.kernel.org, AJvYcCX2Dovk0sTXS2mGdqOgIwBrgEPXk08lvLCZK19z6LsakGFJ6Ce9Np0w2U/KfDM0GJYjCj3yAEDrQwvy@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUd7G3WOuRb+n3dR6S9iSk15ekjHK8do9N8tw9LVXNOgjKc4O9
-	pncYhMoPrJhYqNGaifuIXjJhjO0SIsBThwqQokRaw/ykLpyFfldIdtKJgjUk2Y1n
-X-Gm-Gg: ASbGncstlBBXjWq6uNP/lapZDNJym3JqVm1FUWfg/fytU9T9nR29JDaW5z+6bLEfCdp
-	wahCKJsKr5pofq6yXzEmpqMRCBVlp5jLoZ1O1rXjksPrbW083DcJBM2AiTJ1ugZI32nj5UPW/uP
-	I7QtBybaMPe61FJZrgrasMIu6bOv4y0LdPqLEXatuidsoYUVgSHIKfFRp15hvBap1ydkB5Ws5Zr
-	Z27I5oB7kAPHQaoiG4rJwF2TzT/umWONqpGIJh3P3PXsEfrrCF/o5R9+/BKuLwe4UdWpkVSx63l
-	ync6ESNMdwtE7I96hLxG6CWwzeEsq4jQUMGTM5pbHsdk6patNjs4WOZ0axRcdmaCtLmZuOtW8dj
-	0nSHviWeIXjdtVpRpsZNr4euQVsKdaq5L99r9GGt/jjw8A/cdKDp4kvrTqCbF
-X-Google-Smtp-Source: AGHT+IFM3sJzcM+7CHQjK5sWn0UXGNT5nb8OWoULRn9S8xA7r2VBlaE0vYAfnTxZbwouHPLt+u+9ig==
-X-Received: by 2002:a05:6870:b209:b0:2d5:4d2d:9525 with SMTP id 586e51a60fabf-30b675d8e0dmr4836914fac.8.1754312736936;
-        Mon, 04 Aug 2025 06:05:36 -0700 (PDT)
-Received: from mail-ot1-f53.google.com (mail-ot1-f53.google.com. [209.85.210.53])
-        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-307a7172ac6sm2702697fac.9.2025.08.04.06.05.36
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 06:05:36 -0700 (PDT)
-Received: by mail-ot1-f53.google.com with SMTP id 46e09a7af769-73e88bc38bbso1690601a34.3;
-        Mon, 04 Aug 2025 06:05:36 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUOcJhNXDRt8rmYpReGlamQBH5I3NwTKeV4h6Kv2h50sUtZ7DCjxr/U2KggJ5BAZaqf6p+EOQ6Qg58tbF2w@vger.kernel.org, AJvYcCW8nA7/a6pnkgIrueYFzO89+t8aaHEzJZUwmcaenAq8k6hH6xyGJiUT2r338VuuJA3EtNOVB5S/BhXG@vger.kernel.org, AJvYcCWJ7k1XbsS9OLQ2D7SlUe6c7cO6qlehH8t6SM0YgIFqCkd/JPbXqwaddLrQqoAXFc5QpQympt+Q++28H9T8dKcV8iE=@vger.kernel.org, AJvYcCXYOb2qxRv4X8wh3AivU0Kv5oQ2UFujjBBhnGaqAGx1yfTLFAUspmZd86gtmfSlFu/GaQqNYjworekM@vger.kernel.org
-X-Received: by 2002:a05:6830:2692:b0:741:9fb1:ad52 with SMTP id
- 46e09a7af769-7419fb1ae36mr5433566a34.5.1754312735742; Mon, 04 Aug 2025
- 06:05:35 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754312779; x=1754917579;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZXG9AGrFinYmMiROAAb115udLcWZgKrApUBxNgWLPeU=;
+        b=lQ+0RmyggLM77r6Hyl8pWopALPh7PWhXXkELbPNx0ZDOu058ZqLf+jRNHa6Ko1rEpS
+         8R6YDvDW0vC2h1C1N8gbHHRAPqOiUxCqS5KQKnVuv2rmMExISpQOL39tjJh74/UTsJyo
+         Pr9BEqlDBDynH8adNWdHtxTyOCmyed9KgiWKkOXeNJnIdy/fT6/d8Ex3D6KaO2ZIjHHA
+         7cYFCBRT+pLbIpXivdDNpX4iBrxhykCBYwgm2SoT0seXmOZtaQQez1PHBOuUu4/eqIgK
+         /j2uyz6WJyUBORGn/VX5i00YwuXspowMJJmreQ08n/9LBeuuVLXVsEtfzjZchIeej9tc
+         mg1A==
+X-Forwarded-Encrypted: i=1; AJvYcCWYHwxiKNtgKabkRS6D7O751/bA1z1vQqCCYuhcmHeHgEDck4cPtz6nO6xOF5pQUekWXfXvinPR60d7@vger.kernel.org, AJvYcCXLsnxhu8kU/3+gBU6o852B10GoFiDzJ7eeDg51pSzZ/cuGvnX6Mebjpom+cS7PNd0joPI0wXOMVmsR@vger.kernel.org, AJvYcCXqV7kLpTlebbyTaDEYaFy7rFNToIQqsqlbUc5jTluv9FDPQKinQpMXkDesdMlBnc6tC3LyzTpQsOR/A4pU@vger.kernel.org
+X-Gm-Message-State: AOJu0YxBSqlCyIqa+QR9uSrk4XS/Q8dc6S9JyCJmFcYpzVv4YcQUUhk2
+	hMfELG1Ohj5hcXM1UYtxum73Wu1SyNVcGxNwpCXJES1gEGhnbPjqb15ybUV8m46KL96OnayyNTB
+	AlYnVac9yqBA1ZLC1Rm6d70lsnNhU3ZI=
+X-Gm-Gg: ASbGncupq+4OTZiyHXgfLjk2K1mCxg0dP+YlVoo/3/6wwBrpKOy2inFzaQ+61VaC+u/
+	cI14QPbGeLoJKigiw1zLuSz3D56wwfZvJMraPqkBLXA/p6gATcpl0lHT/VABg9/DQw7mNimHYZf
+	fi+LhsQ9NfKltvEnL7GqwRhg3rWVo1UsqDTHUBvq36pgZBLHso1aAvR3SC80suyVJNBYnNreCBG
+	M4Ryp7Shg==
+X-Google-Smtp-Source: AGHT+IHaNA7ufYU5FGCTtMM+oPSCdoPGzfWaTkq5/1dcIXFW8X4peIybcOF0xM7Krq4hTjQcrGB4SCyrnLvydlfHGoI=
+X-Received: by 2002:a17:907:1b25:b0:ae7:73b6:19a5 with SMTP id
+ a640c23a62f3a-af91bc5f255mr1632375366b.10.1754312778465; Mon, 04 Aug 2025
+ 06:06:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com> <20250801084825.471011-4-tommaso.merciai.xr@bp.renesas.com>
-In-Reply-To: <20250801084825.471011-4-tommaso.merciai.xr@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Aug 2025 15:05:24 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUu5byJYcBq94ZHJCgXUy5CdeSxWsg9B2TB8XqeuNRKzg@mail.gmail.com>
-X-Gm-Features: Ac12FXzcbuyUbr2GhiCjz7Maf7fXxNgTpABFQdFEFxNlmMVWz3WSOHEZhuRDlNA
-Message-ID: <CAMuHMdUu5byJYcBq94ZHJCgXUy5CdeSxWsg9B2TB8XqeuNRKzg@mail.gmail.com>
-Subject: Re: [PATCH 3/3] arm64: dts: renesas: r9a09g047: Add DMAC nodes
-To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
-Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
-	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
-	Magnus Damm <magnus.damm@gmail.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-clk@vger.kernel.org
+References: <20250804100219.63325-1-varshini.rajendran@microchip.com> <20250804100219.63325-3-varshini.rajendran@microchip.com>
+In-Reply-To: <20250804100219.63325-3-varshini.rajendran@microchip.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 4 Aug 2025 15:05:42 +0200
+X-Gm-Features: Ac12FXwsws8uL2WACME0UJrimsaN3CYrhO21JJ9_MU4uMd-Fpc3BM8qrxFMwToo
+Message-ID: <CAHp75VffH+tpqP3J+x-ybiwe2O6Mqm6PkaxTrVBgByMpS4Q26w@mail.gmail.com>
+Subject: Re: [PATCH 02/15] nvmem: microchip-otpc: rework to access packets
+ based on tag
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, srini@kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Fri, 1 Aug 2025 at 10:49, Tommaso Merciai
-<tommaso.merciai.xr@bp.renesas.com> wrote:
-> Add nodes for the DMAC IPs found on the Renesas RZ/G3E SoC.
+On Mon, Aug 4, 2025 at 12:03=E2=80=AFPM Varshini Rajendran
+<varshini.rajendran@microchip.com> wrote:
 >
-> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+> Rework the driver to change the packet access technique based on the TAG
+> instead of the currently in use "id".
+>
+> Since there is no way of knowing the OTP memory mapping in advance or the
+> changes it can go through with time, the id based approach is not reliabl=
+e.
+> Accessing the packets based on the associated tags is a fail-proof
+> approach. This method is aided by adding a table of contents to store the
+> payload information which makes it easier to traverse through the OTP
+> memory and read the data of the intended packet. The stride of the nvmem
+> device is adjusted to 1 to support the TAG being treated as an offset.
+> The only reliable way to recognize a packet without being aware of the
+> flashed contents of the OTP memory is the TAG of the packet.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.18.
+...
 
-Gr{oetje,eeting}s,
+> +struct mchp_otpc_payload_info {
+> +       u32 id;
+> +       u32 packet_offset;
+> +       u32 payload_length;
+> +       u32 packet_type;
+> +       u32 packet_tag;
 
-                        Geert
+Just wondering if these are okay to be in CPU endianess, i.o.w. is
+this part of the protocol to HW, or is it simply Linux driver holding
+values?
 
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+> +};
 
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+...
+
+> +/**
+> + * mchp_otpc_read() - Read the OTP packets and fill the buffer based on =
+the TAG
+> + *                   of the packet treated as the offset.
+> + * @priv: Pointer to device structure.
+> + * @off: offset of the OTP packet to be read. In this case, the TAG of t=
+he
+> + *      corresponding packet.
+> + * @val: Pointer to data buffer
+> + * @bytes: length of the buffer
+> + *
+> + * A value of zero will be returned on success, a negative errno will be
+> + * returned in error cases.
+
+kernel-doc validator is not happy: Missing Return section.
+
+>   */
+
+...
+
+> -       packet =3D mchp_otpc_id_to_packet(otpc, off / 4);
+> +
+
+Seems like a stray change (adding a blank line).
+
+> +       packet =3D mchp_otpc_tag_to_packet(otpc, off);
+>         if (!packet)
+>                 return -EINVAL;
+
+...
+
+> +       writel_relaxed(0UL, otpc->base + MCHP_OTPC_AR);
+
+Does UL give any value  / make any sense here?
+
+...
+
+> +       if (size =3D=3D 0) {
+> +               dev_err(otpc->dev, "Cannot access OTP memory !\n");
+> +               if (!emul_enable)
+> +                       dev_err(otpc->dev, "Boot packet not configured & =
+Emulation mode not enabled !\n");
+
+Stray space before the exclamation mark in both messages.
+
+> +       }
+
+--=20
+With Best Regards,
+Andy Shevchenko
 
