@@ -1,44 +1,83 @@
-Return-Path: <linux-kernel+bounces-754648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AE98B19A64
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:07:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 06883B19A65
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:07:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBC9A18972AF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:07:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33B64177850
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:07:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E40422154F;
-	Mon,  4 Aug 2025 03:07:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3998221544;
+	Mon,  4 Aug 2025 03:07:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="NLaKte2x"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 159121C5489;
-	Mon,  4 Aug 2025 03:07:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754276830; cv=none; b=WsP8VDcrgIdCVmAwY9FpofjOIEqpbPBb/+8lL4XB0D+i3lIcE7za4eE+8zTWDJA2ZsA9DU72j2xtvdgcliF5AL8O8m/NamuCRFNmUnOMhTmXX+4GEhwnXZWigE1dqhpX9G+UVZPfOI8Y5xNiSFI1UQe3/IUZOzwpsu2idJkZIWg=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754276830; c=relaxed/simple;
-	bh=TwJoaDQgjVcBZ/Ds/fVDfTurh1evbR9XWagpeyFztPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oqzE4Msf8JO9Oa1rpPemMecjQIruNEWwit7Zw7zdqLEvT+tSlK1rcJ7hRTj/9S9Q93WE4pauOhnxaDLcXSnzUrpphanjPw7Dlk0lsH3Xzy9ATv548ZLAp9rw4cYYj3YYWHcm80uzfuCe2gsAo/a7zd+eRMpm98Qx7QNdKWd1CJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=NLaKte2x; arc=none smtp.client-ip=117.135.210.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Message-ID:Date:MIME-Version:Subject:To:From:
-	Content-Type; bh=WSRh6+t5rUrNqeI8tjL+kgapeu0a9X7Koe+QVVPQggw=;
-	b=NLaKte2xzIJfCoUol1muGvNPINJvPlmYrHdxHas/1L0GffTUoiolr+YuAATbTe
-	Lb3g+e/Zuq1zOz7OTYhjdeXQ0sJobj8hWeTC3l4TXXNNzOUIEZ7RRk1e2DvyxGDA
-	+m/WtQnVPPGSlK8y25HWhpSZpNlbfqcBirb9SVQjdLOY0=
-Received: from [192.168.106.52] (unknown [])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wD3fyq7I5BokTAbJw--.39897S2;
-	Mon, 04 Aug 2025 11:06:38 +0800 (CST)
-Message-ID: <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
-Date: Mon, 4 Aug 2025 11:06:36 +0800
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gC9jAncI"
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (mail-bn7nam10on2056.outbound.protection.outlook.com [40.107.92.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1331C5489;
+	Mon,  4 Aug 2025 03:07:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.92.56
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754276847; cv=fail; b=Sya/undOBMS0sUY95pleXuQcPFvCaOvvbo4gs39cpglusHExHFRj6BNBqGsiIONbkqS47cIQ1+K5AyBCNoOOclUy6XZU5YhLHX63BQ3sY3lvPkhs8ZIas7g1nsMCLXcfmEpllqnDL7V1Zf6uuqXdIHlu0LGrNqbVzcZwuYLpH4c=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754276847; c=relaxed/simple;
+	bh=nOD7bvsW2+3chYHKzQzWcVQWNT6aSarYKAWalMqcvyo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=eDAagm7JXkZTRKqwOU+RskuLSjz/Ov1im81yZNW8/zg1OIAAFTQdlVn/MAxOC9LcmqUgo5xPt8lyRmdwVDM3uA/bV6e/7KH3QALHJNNmtUmdfbvLyGJPOj5JBrEkTjZQzCf0bspIGztg5d0csOcJq3S9dSMLcVCWeWOi2bvvRZo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gC9jAncI; arc=fail smtp.client-ip=40.107.92.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XkAvryNCIAR7X4toE8L2wosshGXTV4PBvMXpCr1koxx7QRo443UI707fAwKmeIdhcs2hd3RCspaTQLpt5hGvevAe1ioYHMrxwQXERuyL9tGq+xdlZcFhlhH/Lxkw3n8fCgAPeYMiI9Dtbxh5MBGflby1byFWOSC5b+mhRAyef65ed/DV0jQivOtUIn3T2s3j4gs7/WV1N2esfymzJ1jUgmIZPJ06JHw9pFgy4FZkjVJyQ8G1HfytMUD5KJdsiN6pFDcLQCz5GjScgR1bpQlXHjCwhEfIB89xJVSguPJR6RNTqArJugivrgkNqPJFuWHhmfNFtwoLmVnSqwGY5vRCxQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XaYYisueZlMBXFIK7ibpUL3xhXSOEMvH2yZM58GGnEg=;
+ b=gasOvl1pRDfVpCvCCh3Kgrlzr/ROQHdoD0jDHS90aogDFRoj6Q3ZAOZb5BKuiSyOJkeQlDFetMEZI4a2mIsnJJqzw9TCW2HhHwOdiSPW1+2aWXNiv1V9i4+6UJF/hFw6ZC8k8KbK30vJkaZvZp9/r/Z3fn4o8q3lGzLsmGm3S3rdydfsoRuvpGZqXw+s74NjPtkNIFJouix//jFKx9lx0cdheSG4Vq5r20WK/4OQ/HwPKkaGHQR+R3/P+eYJwFRGUs0vRoLuYILhqCgtHBAqmbJKbYBlUnT7XzIxf0yay6jSBkjM3NJ0X7HdBXMI51tY5RPyTeaW8ss8JwyqFa2BuA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=redhat.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XaYYisueZlMBXFIK7ibpUL3xhXSOEMvH2yZM58GGnEg=;
+ b=gC9jAncI9J+ibD6kxcIu6IO/6RveRM+Es2ywb+arupFaQeHOi+cIDwQzkYWx86yuqW5tIBxjfeo0YKwjBeCG9qXxIa8V5Pd3YoFM7WToS/blh7i+J4y2bT/f7/T2V4XNdzBX/xKXSCvIy2SZCblPSVAGNRpJxVa/ISad1ZV6oGM=
+Received: from CYZPR05CA0039.namprd05.prod.outlook.com (2603:10b6:930:a3::9)
+ by SA0PR12MB4400.namprd12.prod.outlook.com (2603:10b6:806:95::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.16; Mon, 4 Aug
+ 2025 03:07:21 +0000
+Received: from CY4PEPF0000E9D3.namprd03.prod.outlook.com
+ (2603:10b6:930:a3:cafe::8e) by CYZPR05CA0039.outlook.office365.com
+ (2603:10b6:930:a3::9) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.13 via Frontend Transport; Mon,
+ 4 Aug 2025 03:07:21 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB03.amd.com; pr=C
+Received: from SATLEXMB03.amd.com (165.204.84.17) by
+ CY4PEPF0000E9D3.mail.protection.outlook.com (10.167.241.138) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9009.8 via Frontend Transport; Mon, 4 Aug 2025 03:07:21 +0000
+Received: from SATLEXMB05.amd.com (10.181.40.146) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 3 Aug
+ 2025 22:07:20 -0500
+Received: from SATLEXMB04.amd.com (10.181.40.145) by SATLEXMB05.amd.com
+ (10.181.40.146) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 3 Aug
+ 2025 22:07:20 -0500
+Received: from [10.85.42.135] (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sun, 3 Aug 2025 22:07:16 -0500
+Message-ID: <78775d05-b39e-4b8b-97dd-115f57582b50@amd.com>
+Date: Mon, 4 Aug 2025 08:37:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -46,387 +85,154 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
-To: Gerd Bayer <gbayer@linux.ibm.com>, Manivannan Sadhasivam
- <mani@kernel.org>, Hans Zhang <hans.zhang@cixtech.com>
-Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
- bhelgaas@google.com, Alexander Gordeev <agordeev@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- jingoohan1@gmail.com, =?UTF-8?Q?Krzysztof_Wilczy=C5=84ski?=
- <kwilczynski@kernel.org>, linux-kernel@vger.kernel.org,
- linux-s390@vger.kernel.org, linux-next <linux-next@vger.kernel.org>,
- linux-pci@vger.kernel.org, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Rob Herring <robh@kernel.org>, Niklas Schnelle <schnelle@linux.ibm.com>,
- geert@linux-m68k.org
-References: <20250731183944.GA3424583@bhelgaas>
- <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
- <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
- <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
- <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
- <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
- <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
- <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
+Subject: Re: [PATCH 4/5] sched: Add rt task enqueue/dequeue trace points
+To: Gabriele Monaco <gmonaco@redhat.com>, Nam Cao <namcao@linutronix.de>
+CC: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
+	<mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
+	<linux-trace-kernel@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Ingo
+ Molnar" <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri Lelli
+	<juri.lelli@redhat.com>, Vincent Guittot <vincent.guittot@linaro.org>,
+	Dietmar Eggemann <dietmar.eggemann@arm.com>, Ben Segall <bsegall@google.com>,
+	Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>
+References: <cover.1753879295.git.namcao@linutronix.de>
+ <8f83869a5040bd7cd3096bd12090c1ab110ae5c4.1753879295.git.namcao@linutronix.de>
+ <767a9d59081220594d21856f329fb35988ef7925.camel@redhat.com>
+ <20250730151818.7RemAREO@linutronix.de>
+ <5065c29035be39dee954f2b233a40ae15dcc5035.camel@redhat.com>
+ <20250731073520.ktIOaGts@linutronix.de>
+ <179674c6-f82a-4718-ace2-67b5e672fdee@amd.com>
+ <20250801072946.nTiUlMwS@linutronix.de>
+ <97c8a989-08b1-4233-8f5a-cb8b582b6c02@amd.com>
+ <c403aacc94dc09aa9ad4441be6095d00b2091f68.camel@redhat.com>
 Content-Language: en-US
-From: Hans Zhang <18255117159@163.com>
-In-Reply-To: <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-CM-TRANSID:_____wD3fyq7I5BokTAbJw--.39897S2
-X-Coremail-Antispam: 1Uf129KBjvJXoW3tFWkWrWUJry8ZFyktF18Krg_yoWDAF1xpF
-	W5JFWIyF48tF1avF1vva4DXw1YyF9IyFZrWa97Ca4IvFnakryUJFyYgFWagr1agw48Wr1a
-	vws8tFZrAws8AF7anT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDUYxBIdaVFxhVjvjDU0xZFpf9x07UNXocUUUUU=
-X-CM-SenderInfo: rpryjkyvrrlimvzbiqqrwthudrp/1tbiOhGfo2iQIIRxnAAAsm
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <c403aacc94dc09aa9ad4441be6095d00b2091f68.camel@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+Received-SPF: None (SATLEXMB05.amd.com: kprateek.nayak@amd.com does not
+ designate permitted sender hosts)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000E9D3:EE_|SA0PR12MB4400:EE_
+X-MS-Office365-Filtering-Correlation-Id: e5c98867-68a0-49d5-29ec-08ddd3040761
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|7416014|1800799024|376014|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L2NhSWZDMVNvbVRCc21SdG1nbG1XdkpVRFhOSzVzbjZJZ0l3VUpSSXNWTFY0?=
+ =?utf-8?B?cDMvMVVYV1NydDRXZ3ZHeVhiZmIzaUk5c21KNjczT2w0OVZITFp0UGc5dnFJ?=
+ =?utf-8?B?d0xhWkpjWndSc3psRkxwWDBMODNDL2ZWMFduekkyQmdwTzNXaXBDcUR0Y0sx?=
+ =?utf-8?B?M2lEeU9VenZTNk9QSjlwYTdTSGpHNmt6UlNiZ2JFdGw1Ly9URTdnUGFoak52?=
+ =?utf-8?B?RlhEb25SdGtpOW8yN3luOXBxUUdQM2FoeStRZUVPNU16R2F2NmFkci9HSnNm?=
+ =?utf-8?B?Wm5HbzRUNkZ0UUxMUVRPUlQrVjJpNGFFc2lwTFdjOERPSEVMZ2JtSlgwY0tB?=
+ =?utf-8?B?TFY5STdtWkExWFlPcnlJeXprVHlLekcxREVhYXd5S3Vud1h6WStQZkgySHQ4?=
+ =?utf-8?B?M2x3UnRETzhpVTk4cXl1OEc3T3hkajdNYlNVOEwvWFhQMENMRmUwYUZMcWRu?=
+ =?utf-8?B?MHdUbVkvVFdyenhHZmd6RmZhdUg5VGhadWw3SitQZWcyVUt5cGJjVGJwR0FY?=
+ =?utf-8?B?SGdvMThjRFBtRFhZV3R4cDZPY3J2dXgwT2xxTHg4YWFHWXVuNnVYV2d4TUVv?=
+ =?utf-8?B?UHgxT0hCQVdiVmlMRmV5R21Ua2FPMVcvK0MrVUxhbHl0VWYrQThtYXJLWU5Q?=
+ =?utf-8?B?cmFQc0FKdHlFcHh1RVlwRVVnYWd1YWxqRjY3cktXaEJ2ZWZvRXFwU3Q2ajZs?=
+ =?utf-8?B?U0tmaSt6UXlpSUd5VzNyWm5nejVpdEpMSE95ME9tYzEzcWdDTXlaanNJV3la?=
+ =?utf-8?B?RHdwSnZvRUZkWUpuZ2F5TjE5YlVIa0laeVRwejdaaFlrMExsZ05KbEN0b1cw?=
+ =?utf-8?B?Z1BKcHFoUFVCa1V4dzY5czdwY2hoTEVuZUVaTHhOdGFTZzZrbVdSYmtkdTc0?=
+ =?utf-8?B?L1FDTHRJWldvR2lqZ2crdGhXMitrazhFc3g0NVZPaEFldU1hcnBzMks3OEpN?=
+ =?utf-8?B?OGNvRHRjSm95OU52czVPVmY5WEc4NnJNeGtqQ0JQVGtUQ0tHeHRmN20zU3FQ?=
+ =?utf-8?B?ZEtQRU5QVUMzb1QzRk5yWE5yNU9KWlQzc0g1SVhJTXIzSzNNNnowTGwvUkxz?=
+ =?utf-8?B?WGl1TUVHMHE0NDBSYTJiUzJPb0JaWFlLNzUvdUhoSU1pSFhKbXVVRDkxTFNK?=
+ =?utf-8?B?TGNuQnpUOWs2N2pTbEV1dTcweHE3eEFrRVlzbU5vRE51TjJlQWFyd3hNbTJs?=
+ =?utf-8?B?My9vY3k5ZDhpNUpQQWZxa0luNWdXajh6Wm13SDhWZkdyV1pJNEJXRXFGUUh6?=
+ =?utf-8?B?NnI1V0JET0NzTDZXK1pWYVdqa1FNMWM2bGFGZDVPUUw5VnFjTGVwbGoxWG5j?=
+ =?utf-8?B?K2lOSTN5K0ZsZ2xCeVYwcDlNYkVPN2pYVE9zWlZKeXY0QkVYVmZmUTJCazZ2?=
+ =?utf-8?B?RTJuajFUdFNNZDRHYXZVNWltYlJ6MCt1ZjNjb2ZQLzErRjU0eFhpdU5pUG5S?=
+ =?utf-8?B?ZkltSnZKeWxwcjllNUp5MDNLWE5tQTFtY0h0bzQwMnBMelpHQTAwekxQay9I?=
+ =?utf-8?B?cmVndW1RNjZTNHlSUmFDcUUrdUtXUCtjU29mcS8vc292eit1UlRpbmFSU3Qy?=
+ =?utf-8?B?UENZcm1OdHlVYjNLQmgrWjhrR1hYb1BLUy9JUmt5QUxXM1g1Y0Z2ZUxMTFBH?=
+ =?utf-8?B?a0VYYkdkZU16bVU3cjFZSzJrNVVhRi9GeDVjeWkyUUhWQ2tDd3dCSTh1SWRQ?=
+ =?utf-8?B?dnltSlFOMmNFcmlIc0VPQ1ZjZC9FMVVJN0xMak14ekErQVhaTHBRUG5FbUtm?=
+ =?utf-8?B?ZlpFNVhJLzc3TzJyeGN3SkVkU0I4cEhuemxQckp3UUZDVFVyV3EwbkxzTHNs?=
+ =?utf-8?B?UjFvdkxZYStvZE44M0Fza0NmeUluOGZnRmxKZm5FcEZjc2NUYnhBQ3M2YVBw?=
+ =?utf-8?B?M3B5NUNDSkJtVzdKUVpGTFdGVWdlcHIxZExKaFhEbElGVmN1VWZ5M2U4czJX?=
+ =?utf-8?B?eHloMS9uSjlLMVc1eXhRVlhubGRXc0ZNVE52Ry9DUUFaMVJKcHBYRGpTd3ZL?=
+ =?utf-8?B?ZnNoTkVNbHFBMSt2VExRTkx5bnBVWXdtZHVnQ2hKMjVwT0ozMVNOL3VlZ2ZY?=
+ =?utf-8?Q?BS0XkA?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB03.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(7416014)(1800799024)(376014)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 03:07:21.2733
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: e5c98867-68a0-49d5-29ec-08ddd3040761
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB03.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000E9D3.namprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA0PR12MB4400
 
+Hello Gabriele,
 
-
-On 2025/8/1 19:30, Gerd Bayer wrote:
-> On Fri, 2025-08-01 at 16:24 +0530, Manivannan Sadhasivam wrote:
+On 8/1/2025 4:34 PM, Gabriele Monaco wrote:
+> On Fri, 2025-08-01 at 15:26 +0530, K Prateek Nayak wrote:
+>> There are a few more cases with delayed dequeue:
+>>
+>> 1. A delayed task can be reenqueued before it is completely dequeued
+>> and
+>>    will lead to a enqueue -> enqueue transition if we don't trace the
+>>    first dequeue.
+>>
+>> 2. There are cases in set_user_nice() and __sched_setscheduler()
+>> where
+>>    a delayed task is dequeued in delayed state and be put back in the
+>>    cfs_rq in delayed state - an attempt to handle 1. can trip this.
+>>
+>> Best I could think of is the below diff on top of your suggestion
+>> where
+>> a "delayed -> reenqueue" is skipped but the case 2. is captures in
+>> case
+>> one needs to inspect some properties from set_user_nice() /
+>> __sched_setscheduler():
+>>
+>> (only build tested on top of the diff you had pasted)
+>>
 > 
-> <--- snip --->
+> Hello Prateek,
 > 
->>>>>>> The pci_bus_read_config() interface itself may have been a
->>>>>>> mistake, can't the callers just use the underlying helpers
->>>>>>> directly?
->>>>>>>
->>>>>>
->>>>>> They can! Since the callers of this API is mostly the macros, we can easily
->>>>>> implement the logic to call relevant accessors based on the requested size.
->>>>>>
->>>>>> Hans, could you please respin the series based the feedback since the series is
->>>>>> dropped for 6.17.
->>>>>>
->>>>>
->>>>> Dear all,
->>>>>
->>>>> I am once again deeply sorry for the problems that occurred in this series.
->>>>> I only test pulling the ARM platform.
->>>>>
->>>>> Thank you very much, Gerd, for reporting the problem.
+> thanks for the comments, this looks much more convoluted than I would
+> have expected.
+> As Nam pointed out, currently RV is not going to rely on those events
+> for fair tasks (existing monitors are fine with tracepoints like
+> wakeup/set_state/switch).
 > 
-> no worries!
+> For the time being it might be better just add the tracepoints in the
+> RT enqueue/dequeue (the only needed for this series) and not complicate
+> things.
 > 
->>>>> Thank you all for your discussions and suggestions for revision.
->>>>>
->>>>> Hi Mani,
->>>>>
->>>>> Geert provided a solution. My patch based on this is as follows. Please
->>>>> check if there are any problems.
->>>>> https://lore.kernel.org/linux-pci/CAMuHMdVwFeV46oCid_sMHjXfP+yyGTpBfs9t3uaa=wRxNcSOAQ@mail.gmail.com/
->>>>>
->>>>> Also, please ask Gerd to help test whether it works properly. Thank you very
->>>>> much.
->>>>>
+> At most we may want to keep tracepoint names general, allowing the
+> tracing call to be added later to other locations (or moved to a
+> general one) without changing too much, besides existing users.
+> And perhaps a comment saying the tracepoints are currently only
+> supported on RT would do.
+
+Most of my comments was just thinking out loud around fair tasks being
+delayed on the dequeue path. If RV filters out RT tasks and the use-case
+one concerns them, then Nam's suggestion is good.
+
+I was just being cautious of folks expecting a "enqueued <--> dequeued"
+transition for *all* tasks and finding it doesn't hold after delayed
+dequeue. Since these are internal tracepoints, I'm sure folks using them
+with RV would do their due diligence when testing these monitors before
+deployment.
+
 > 
-> I found Geert's proposal intriguing for a quick resolution of the
-> issue. Yet, I have not tried that proposal, though.
-> 
-> Instead I spent some more cycles on Lukas' and Mani's question about
-> the value of the pci_bus_read_config() helper. So I changed
-> PCI_FIND_NEXT_CAP and PCI_FIND_NEXT_EXT_CAP to use size-aware versions
-> of read_cfg accessor functions like this:
-> 
-> diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-> index ac954584d991..9e2f75ede95f 100644
-> --- a/drivers/pci/pci.h
-> +++ b/drivers/pci/pci.h
-> @@ -109,17 +109,17 @@ int pci_bus_read_config(void *priv, unsigned int
-> devfn, int where, u32 size,
->   ({
-> \
->          int __ttl = PCI_FIND_CAP_TTL;
-> \
->          u8 __id, __found_pos = 0;
-> \
-> -       u32 __pos = (start);
-> \
-> -       u32 __ent;
-> \
-> +       u8 __pos = (start);
-> \
-> +       u16 __ent;
-> \
->                                                                        
-> \
-> -       read_cfg(args, __pos, 1, &__pos);
-> \
-> +       read_cfg##_byte(args, __pos, &__pos);
-> \
->                                                                        
-> \
->          while (__ttl--) {
-> \
->                  if (__pos < PCI_STD_HEADER_SIZEOF)
-> \
->                          break;
-> \
->                                                                        
-> \
->                  __pos = ALIGN_DOWN(__pos, 4);
-> \
-> -               read_cfg(args, __pos, 2, &__ent);
-> \
-> +               read_cfg##_word(args, __pos, &__ent);
-> \
->                                                                        
-> \
->                  __id = FIELD_GET(PCI_CAP_ID_MASK, __ent);
-> \
->                  if (__id == 0xff)
-> \
-> @@ -158,7 +158,7 @@ int pci_bus_read_config(void *priv, unsigned int
-> devfn, int where, u32 size,
->                                                                        
-> \
->          __ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;
-> \
->          while (__ttl-- > 0 && __pos >= PCI_CFG_SPACE_SIZE) {
-> \
-> -               __ret = read_cfg(args, __pos, 4, &__header);
-> \
-> +               __ret = read_cfg##_dword(args, __pos, &__header);
-> \
->                  if (__ret != PCIBIOS_SUCCESSFUL)
-> \
->                          break;
-> \
->                                                                        
-> \
-> 
-> 
-> This fixes the issue for s390's use-cases. With that
-> pci_bus_read_config() becomes unused - and could be removed in further
-> refinements.
->                                                                        
-> However, this probably breaks your dwc and cdns use-cases. I think,
-> with the accessor functions for dwc and cadence changed to follow the
-> {_byte|_word|_dword} naming pattern they could be used straight out of
-> PCI_FIND_NEXT_{EXT_}CAP, too. Then, dw_pcie_read_cfg() and
-> cdns_pcie_read_cfg become obsolete as well.
-> 
-> Thoughts?
+> Anyway, that's your call Nam, I'm fine with your initial proposal as
+> well, unless some scheduler guys complain.
 
-Dear all,
+I would be happy to help test alternate approaches if others have
+concerns around delayed dequeue but for all other cases, Nam's approach
+looks good. Sorry if my paranoia caused you folks any trouble!
 
-According to the issue mentioned by Lukas and Mani. Gerd has already 
-been tested on the s390. I have tested it on the RK3588 and it works 
-fine. RK3588 uses Synopsys' PCIe IP, that is, the DWC driver. Our 
-company's is based on Cadence's PCIe 4.0 IP, and the test function is 
-normal. All the platforms I tested were based on ARM.
-
-The following is the patch based on the capability-search branch. May I 
-ask everyone, do you have any more questions?
-
-Gerd, if there's no problem, I'll add your Tested-by label.
-
-Branch: 
-ttps://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=capability-search
-
-
-Patch:
-diff --git a/drivers/pci/access.c b/drivers/pci/access.c
-index ba66f55d2524..b123da16b63b 100644
---- a/drivers/pci/access.c
-+++ b/drivers/pci/access.c
-@@ -85,21 +85,6 @@ EXPORT_SYMBOL(pci_bus_write_config_byte);
-  EXPORT_SYMBOL(pci_bus_write_config_word);
-  EXPORT_SYMBOL(pci_bus_write_config_dword);
-
--int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 
-size,
--			u32 *val)
--{
--	struct pci_bus *bus = priv;
--
--	if (size == 1)
--		return pci_bus_read_config_byte(bus, devfn, where, (u8 *)val);
--	else if (size == 2)
--		return pci_bus_read_config_word(bus, devfn, where, (u16 *)val);
--	else if (size == 4)
--		return pci_bus_read_config_dword(bus, devfn, where, val);
--	else
--		return PCIBIOS_BAD_REGISTER_NUMBER;
--}
--
-  int pci_generic_config_read(struct pci_bus *bus, unsigned int devfn,
-  			    int where, int size, u32 *val)
-  {
-diff --git a/drivers/pci/controller/cadence/pcie-cadence.c 
-b/drivers/pci/controller/cadence/pcie-cadence.c
-index 7b2955e4fafb..c45585ae1746 100644
---- a/drivers/pci/controller/cadence/pcie-cadence.c
-+++ b/drivers/pci/controller/cadence/pcie-cadence.c
-@@ -10,22 +10,6 @@
-  #include "pcie-cadence.h"
-  #include "../../pci.h"
-
--static int cdns_pcie_read_cfg(void *priv, int where, int size, u32 *val)
--{
--	struct cdns_pcie *pcie = priv;
--
--	if (size == 4)
--		*val = cdns_pcie_readl(pcie, where);
--	else if (size == 2)
--		*val = cdns_pcie_readw(pcie, where);
--	else if (size == 1)
--		*val = cdns_pcie_readb(pcie, where);
--	else
--		return PCIBIOS_BAD_REGISTER_NUMBER;
--
--	return PCIBIOS_SUCCESSFUL;
--}
--
-  u8 cdns_pcie_find_capability(struct cdns_pcie *pcie, u8 cap)
-  {
-  	return PCI_FIND_NEXT_CAP(cdns_pcie_read_cfg, PCI_CAPABILITY_LIST,
-diff --git a/drivers/pci/controller/cadence/pcie-cadence.h 
-b/drivers/pci/controller/cadence/pcie-cadence.h
-index f0fdeb3863f1..4ad874e68783 100644
---- a/drivers/pci/controller/cadence/pcie-cadence.h
-+++ b/drivers/pci/controller/cadence/pcie-cadence.h
-@@ -392,6 +392,26 @@ static inline u8 cdns_pcie_readb(struct cdns_pcie 
-*pcie, u32 reg)
-  	return readb(pcie->reg_base + reg);
-  }
-
-+#define CDNS_PCI_OP_READ(size, type, len)		\
-+static inline int cdns_pcie_read_cfg_##size		\
-+	(struct cdns_pcie *pcie, int where, type *val)	\
-+{							\
-+	if (len == 4)					\
-+		*val = cdns_pcie_readl(pcie, where);	\
-+	else if (len == 2)				\
-+		*val = cdns_pcie_readw(pcie, where);	\
-+	else if (len == 1)				\
-+		*val = cdns_pcie_readb(pcie, where);	\
-+	else						\
-+		return PCIBIOS_BAD_REGISTER_NUMBER;	\
-+							\
-+	return PCIBIOS_SUCCESSFUL;			\
-+}
-+
-+CDNS_PCI_OP_READ(byte, u8, 1)
-+CDNS_PCI_OP_READ(word, u16, 2)
-+CDNS_PCI_OP_READ(dword, u32, 4)
-+
-  static inline u32 cdns_pcie_read_sz(void __iomem *addr, int size)
-  {
-  	void __iomem *aligned_addr = PTR_ALIGN_DOWN(addr, 0x4);
-diff --git a/drivers/pci/controller/dwc/pcie-designware.c 
-b/drivers/pci/controller/dwc/pcie-designware.c
-index b503cb4bcb28..befb9df3123f 100644
---- a/drivers/pci/controller/dwc/pcie-designware.c
-+++ b/drivers/pci/controller/dwc/pcie-designware.c
-@@ -213,22 +213,6 @@ void dw_pcie_version_detect(struct dw_pcie *pci)
-  		pci->type = ver;
-  }
-
--static int dw_pcie_read_cfg(void *priv, int where, int size, u32 *val)
--{
--	struct dw_pcie *pci = priv;
--
--	if (size == 4)
--		*val = dw_pcie_readl_dbi(pci, where);
--	else if (size == 2)
--		*val = dw_pcie_readw_dbi(pci, where);
--	else if (size == 1)
--		*val = dw_pcie_readb_dbi(pci, where);
--	else
--		return PCIBIOS_BAD_REGISTER_NUMBER;
--
--	return PCIBIOS_SUCCESSFUL;
--}
--
-  u8 dw_pcie_find_capability(struct dw_pcie *pci, u8 cap)
-  {
-  	return PCI_FIND_NEXT_CAP(dw_pcie_read_cfg, PCI_CAPABILITY_LIST, cap,
-diff --git a/drivers/pci/controller/dwc/pcie-designware.h 
-b/drivers/pci/controller/dwc/pcie-designware.h
-index ce9e18554e42..3b429a8ade70 100644
---- a/drivers/pci/controller/dwc/pcie-designware.h
-+++ b/drivers/pci/controller/dwc/pcie-designware.h
-@@ -614,6 +614,26 @@ static inline void dw_pcie_writel_dbi2(struct 
-dw_pcie *pci, u32 reg, u32 val)
-  	dw_pcie_write_dbi2(pci, reg, 0x4, val);
-  }
-
-+#define DW_PCI_OP_READ(size, type, len)			\
-+static inline int dw_pcie_read_cfg_##size		\
-+	(struct dw_pcie *pci, int where, type *val)	\
-+{							\
-+	if (len == 4)					\
-+		*val = dw_pcie_readl_dbi(pci, where);	\
-+	else if (len == 2)				\
-+		*val = dw_pcie_readw_dbi(pci, where);	\
-+	else if (len == 1)				\
-+		*val = dw_pcie_readb_dbi(pci, where);	\
-+	else						\
-+		return PCIBIOS_BAD_REGISTER_NUMBER;	\
-+							\
-+	return PCIBIOS_SUCCESSFUL;			\
-+}
-+
-+DW_PCI_OP_READ(byte, u8, 1)
-+DW_PCI_OP_READ(word, u16, 2)
-+DW_PCI_OP_READ(dword, u32, 4)
-+
-  static inline unsigned int dw_pcie_ep_get_dbi_offset(struct dw_pcie_ep 
-*ep,
-  						     u8 func_no)
-  {
-diff --git a/drivers/pci/pci.h b/drivers/pci/pci.h
-index e53706d1d806..9c410e47e19a 100644
---- a/drivers/pci/pci.h
-+++ b/drivers/pci/pci.h
-@@ -92,8 +92,6 @@ extern bool pci_early_dump;
-  bool pcie_cap_has_lnkctl(const struct pci_dev *dev);
-  bool pcie_cap_has_lnkctl2(const struct pci_dev *dev);
-  bool pcie_cap_has_rtctl(const struct pci_dev *dev);
--int pci_bus_read_config(void *priv, unsigned int devfn, int where, u32 
-size,
--			u32 *val);
-
-  /* Standard Capability finder */
-  /**
-@@ -112,17 +110,17 @@ int pci_bus_read_config(void *priv, unsigned int 
-devfn, int where, u32 size,
-  ({									\
-  	int __ttl = PCI_FIND_CAP_TTL;					\
-  	u8 __id, __found_pos = 0;					\
--	u32 __pos = (start);						\
--	u32 __ent;							\
-+	u8 __pos = (start);						\
-+	u16 __ent;							\
-  									\
--	read_cfg(args, __pos, 1, &__pos);				\
-+	read_cfg##_byte(args, __pos, &__pos);				\
-  									\
-  	while (__ttl--) {						\
-  		if (__pos < PCI_STD_HEADER_SIZEOF)			\
-  			break;						\
-  									\
-  		__pos = ALIGN_DOWN(__pos, 4);				\
--		read_cfg(args, __pos, 2, &__ent);			\
-+		read_cfg##_word(args, __pos, &__ent);			\
-  									\
-  		__id = FIELD_GET(PCI_CAP_ID_MASK, __ent);		\
-  		if (__id == 0xff)					\
-@@ -161,7 +159,7 @@ int pci_bus_read_config(void *priv, unsigned int 
-devfn, int where, u32 size,
-  									\
-  	__ttl = (PCI_CFG_SPACE_EXP_SIZE - PCI_CFG_SPACE_SIZE) / 8;	\
-  	while (__ttl-- > 0 && __pos >= PCI_CFG_SPACE_SIZE) {		\
--		__ret = read_cfg(args, __pos, 4, &__header);		\
-+		__ret = read_cfg##_dword(args, __pos, &__header);	\
-  		if (__ret != PCIBIOS_SUCCESSFUL)			\
-  			break;						\
-  									\
-
-
-
-Best regards,
-Hans
-
+-- 
+Thanks and Regards,
+Prateek
 
 
