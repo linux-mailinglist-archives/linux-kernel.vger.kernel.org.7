@@ -1,62 +1,83 @@
-Return-Path: <linux-kernel+bounces-754677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CF3AB19ACC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:40:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B1CF5B19ACE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:43:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 95B4F161CC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:40:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 346427A3268
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:41:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A84D9221F13;
-	Mon,  4 Aug 2025 04:40:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75BE021CA04;
+	Mon,  4 Aug 2025 04:43:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OXBIj0ra"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="3+r8ee1f"
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (mail-bn8nam11on2078.outbound.protection.outlook.com [40.107.236.78])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B8192E36ED;
-	Mon,  4 Aug 2025 04:40:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754282444; cv=none; b=k29AF6QIkimWGra1aieF5YC1ldkWjB7TR44iEbw0fSCnSEUeIDwpVOVMPsmQU5bXe/a6N8C44vFlhe9TUgoo0eegH2s9Ylh/oxh/c0+z1Aun0j0CgHNYxYoE9AEikdMkQrBdrOO6FpqYvlHai0B4mVKcGT2RXUdLa4l/PryAZlY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754282444; c=relaxed/simple;
-	bh=XNiMGbSrvclpuIXTLxGDz3BJB5n1polAumt6BxtqTT0=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A774A4A3E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 04:43:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.236.78
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754282593; cv=fail; b=cbEHIL0xP6l/PB6h5BHwWBY+tv7k4lXsFO0UJaLQ1fLtkLWaJF082J5JVOk0j+SNHS3wfiIUCua22xogj2Q8c+A7AyvWME3h7E19FXtObBwzaIiWyUhfXtrquI9iCreTzDQwXVTagRHBXFrvRJ5ATOVIiB08apFu/riQfKXaDLQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754282593; c=relaxed/simple;
+	bh=UahEizap+qNLCmmWo+J6gXba5uu3qU7Xo39Pmp8W9mk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=Dm5m9Cxhw3EcjH4CKCAYzXFp3eijVBBxfvXWDNo6Q+f5jettsNElSmoBszyuu/CuyTH4nH2xT+5VeIdN5I1qP4ZIrnie0o42rAOxH3zIEV1JNEUYfw2oIRi8X+YxRjQPf8DR7Q4WHLqT3DpPnuFvbD4xai9z4a/0HnXYKh7QAgs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OXBIj0ra; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573NpvX2004959;
-	Mon, 4 Aug 2025 04:40:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	BLY3M9ZSCAM6vJ7uD3SUluNEvxscQ3GCzJGrMmmnrDc=; b=OXBIj0ra7D0lI2HX
-	vKNrfyiKD2U3WKJUZEdJ7g9yXasvMqlABWVbwJMdG86SwkJ9TelpPBiMQI3ZSeqi
-	T6yBxF3cEe1Nxklp1Kbu3AVlb1++BCPqf4g+OArtL95bOcJmApYYF7jV3BH7JqR0
-	U/PIY4WpgD6LZnQ9/AZB9MGSVOiRymoLrKqe3NjSPe6zGen1JRVwKJkSz7/ausBb
-	mK/KScjL5uyUxxgMpT7Scfa1YX92klyIT11i2A3hBo6SSGo1XwzGdQacdO9qMdxM
-	ld/EDabm5XcQGR6HAbQ+Uvd/9uvymzSYupkzQ0+BHBmWAp8RwziJ/xi/bE4uZTX4
-	SOgxYQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489arwkg1f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 04:40:39 +0000 (GMT)
-Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5744ecuZ009933
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 4 Aug 2025 04:40:38 GMT
-Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
- (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Sun, 3 Aug
- 2025 21:40:35 -0700
-Message-ID: <6dc91174-7927-4918-b519-1fe806c184d3@quicinc.com>
-Date: Mon, 4 Aug 2025 12:40:32 +0800
+	 In-Reply-To:Content-Type; b=niPcVfaP5asncsQwlyZiLaiQN8kugUu3EP9lxjY1I/ZSxP7ehxPAsSeEmgzirQlRLWyF+M4k8krpFilSMJMAzhHWHxVQkwq7E3XZy+I4ef6smdjHfMA1xJbXIEjf+T67/MiP9wXGtWE6pQkdLX3RJ5/puGy540U2IFkoh5EVDWc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=3+r8ee1f; arc=fail smtp.client-ip=40.107.236.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=UG4D7Nd8TChdkJtP7pNBeo2R0wbgVeZ1t0E6EkNjLSWXTuJCFEzw7sfuJsC2XwmH6E8RdQ4NhzHSql7lPG6W895vcU6QCUitpPpvjwIMrvSRr56mhVtCRnSyWSZGVZ7xvFLsRX+Nn5CiICrKszfqgFwYk0s4IZgEvPxt36jD05vYIhZDe9+GyyoPU7Q9mCYSy6pBlfTkBvO+eCI8qVsd6CVkAnh6GTFeqDwwC6S6e4iMP9GOJp2zY5gcp2VBB2MO9/E0CuJpw1U2qvRaDErqNXsAwRECfViUxVaRGSbfAB1PD8vDKWOxVsVtJjckfMrR2WM4RlnTDhjS3F0LVyg6pQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=QKTW7+mtEV23nZqDXR/oPCYndwDALSfPYNOkUJHzfXI=;
+ b=j0icYVu6tAIiIsxmSM1guqt78T8sbozMeMXmGS1JYnwAe5kGYVLCIaJ+alwxAYcrlNoFqBbmFFd9zrXPFbrJ9EWdP9H6isZihjgIvCJpkM1VIj9LM6yFhx5TFHGexIlKYBgXbnZ61DqqYTElrCDWxeWSYJVlw59Fh4ajzCyXknWHmIc4dshf7lWk7vPh2I1IglSIUuPkxUY7o6qBP5FkGJuVVZ9ZUN64FDg1KfHeAUFNll+J19a3ODVqUJgXtKt4KKs2DpiJ0JIIIdShefslaQ5pSDkXpFsqwBwDLgynNl9kI6WYYYOzcw2XHLB217XJsU906bIJiDVCQriONjdPfw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=google.com smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=QKTW7+mtEV23nZqDXR/oPCYndwDALSfPYNOkUJHzfXI=;
+ b=3+r8ee1fEeMp8x8HdwtOTMbpObHspRC7jCBIDHJ3Sx0xjYoVC2Cm+kBOlM7D0trmEvD8LrVNbj9bWAwnUGNOR0H7bOg3pcKv3WNnNG9KHIpmKh05tfyI/IbCgxwutAm5lRmb7FyKmlqtmrMNOlWDpl9xgSFsdVLJGje/yQgxGEY=
+Received: from BL1PR13CA0204.namprd13.prod.outlook.com (2603:10b6:208:2be::29)
+ by DS0PR12MB9037.namprd12.prod.outlook.com (2603:10b6:8:f1::13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 04:43:04 +0000
+Received: from BN2PEPF000044A2.namprd02.prod.outlook.com
+ (2603:10b6:208:2be:cafe::a6) by BL1PR13CA0204.outlook.office365.com
+ (2603:10b6:208:2be::29) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.12 via Frontend Transport; Mon,
+ 4 Aug 2025 04:43:03 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ BN2PEPF000044A2.mail.protection.outlook.com (10.167.243.153) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9009.8 via Frontend Transport; Mon, 4 Aug 2025 04:43:03 +0000
+Received: from SATLEXMB06.amd.com (10.181.40.147) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 3 Aug
+ 2025 23:43:00 -0500
+Received: from SATLEXMB03.amd.com (10.181.40.144) by SATLEXMB06.amd.com
+ (10.181.40.147) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Sun, 3 Aug
+ 2025 23:43:00 -0500
+Received: from [10.85.42.135] (10.180.168.240) by SATLEXMB03.amd.com
+ (10.181.40.144) with Microsoft SMTP Server id 15.1.2507.39 via Frontend
+ Transport; Sun, 3 Aug 2025 23:42:56 -0500
+Message-ID: <6e82f186-e059-4535-a0f5-848a055058f3@amd.com>
+Date: Mon, 4 Aug 2025 10:12:50 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,76 +85,194 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/2] arm64: dts: qcom: qcs8300-ride: Enable Display
- Port
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20250730-dts_qcs8300-v4-0-5e2dd12ddf6d@quicinc.com>
- <20250730-dts_qcs8300-v4-2-5e2dd12ddf6d@quicinc.com>
- <2ca6af52-af35-4968-888f-390eee8b3bc3@oss.qualcomm.com>
+Subject: Re: [PATCH v2] locking: Fix __clear_task_blocked_on() warning from
+ __ww_mutex_wound() path
+To: John Stultz <jstultz@google.com>, LKML <linux-kernel@vger.kernel.org>
+CC: <syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com>, Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>, Ingo Molnar <mingo@redhat.com>, "Peter
+ Zijlstra" <peterz@infradead.org>, Juri Lelli <juri.lelli@redhat.com>,
+	"Vincent Guittot" <vincent.guittot@linaro.org>, Dietmar Eggemann
+	<dietmar.eggemann@arm.com>, Valentin Schneider <valentin.schneider@arm.com>,
+	Suleiman Souhlal <suleiman@google.com>, <airlied@gmail.com>,
+	<mripard@kernel.org>, <simona@ffwll.ch>, <tzimmermann@suse.de>,
+	<dri-devel@lists.freedesktop.org>, <kernel-team@android.com>
+References: <20250801192157.912805-1-jstultz@google.com>
 Content-Language: en-US
-From: Yongxing Mou <quic_yongmou@quicinc.com>
-In-Reply-To: <2ca6af52-af35-4968-888f-390eee8b3bc3@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+From: K Prateek Nayak <kprateek.nayak@amd.com>
+In-Reply-To: <20250801192157.912805-1-jstultz@google.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01c.na.qualcomm.com (10.47.97.35)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAyMSBTYWx0ZWRfX1FwUXvoe1GJh
- 9QEXWAM+GRtRHy8NeMxEh+CeoCcpO7EL91ewHyMUbSc8Gs+xqiAQBluWGcaRuFbC1qTbFH0Osx4
- oHo0YygdUSUmy8u0yA59R278m8gEPBoazeVj4FsGKlh2teJUB0ED7Jtg3ImEDb2HR89R1jLsn9L
- dfUgKLMS0NgWaoYSM2W8qk804ZuePKk2zedVbUffb6/ey1/zp8+e9m232S3U4nkthh0/8chG3lq
- cweMg7Lku3MovTGU5Iu+O+JereEghmRBgEP0WcM5n+UDwP6WhevcFjMcjBHEVur5t2+GCW2Puuu
- 5NzIXC6HpfIrGr/qcNF7/3oxDct1rDstyM6pyC7232eMql6tUMxwamHQ4HkujZ88FWqM276rAbJ
- UCnqrXuYv29+/joANVpMkteceSlkMosTm8EggcHfycsj/XPpfie24oWJTvLNxOpm+vyrJP30
-X-Authority-Analysis: v=2.4 cv=We8Ma1hX c=1 sm=1 tr=0 ts=689039c7 cx=c_pps
- a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
- a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8
- a=COk6AnOGAAAA:8 a=dJFXlG1jTBD6QyKDXXoA:9 a=QEXdDO2ut3YA:10 a=5XHQ0vS7sDUA:10
- a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-GUID: 6sbe6msXmRB6swE8xIoQDa78aLCek_2t
-X-Proofpoint-ORIG-GUID: 6sbe6msXmRB6swE8xIoQDa78aLCek_2t
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_02,2025-08-01_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- mlxlogscore=975 malwarescore=0 lowpriorityscore=0 impostorscore=0
- adultscore=0 clxscore=1015 bulkscore=0 phishscore=0 mlxscore=0 suspectscore=0
- priorityscore=1501 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040021
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BN2PEPF000044A2:EE_|DS0PR12MB9037:EE_
+X-MS-Office365-Filtering-Correlation-Id: eef1064b-3700-4328-6724-08ddd3116618
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|82310400026|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?WHhTL2ViZ3p2RllPOTVKNWwyVUpucjE5RUtsRUpEeUJ6S2JsOFE1bVZjbTkw?=
+ =?utf-8?B?NGJkd0RNbUlpVzlnRHE4bmQ5MDg2bC9wK1ZaMUJkZkpUODNFTGZuQU42akJK?=
+ =?utf-8?B?U2FSZzh1VlZjYjZncVp5TTV3SGtsQlRYVEJINWJMajRoSUhxc2hvencvMUd2?=
+ =?utf-8?B?eENWRmFtUzV2TElBRDFIa0RuTTVVTjVMZHpnbDF4Ykl6VTNoWlpYUmxRV0RV?=
+ =?utf-8?B?QjRwd0FsSmZOVXNpU3M1Zm82YVRFSUlzb0Y1VWRMVUYvL3FtNUNPNjhPczRI?=
+ =?utf-8?B?QWkveDZ1T2NtU3I1VllIcU5rMVBqY2pQKzdqbWZvQWtMeXd2Vk5iYjJVR2lF?=
+ =?utf-8?B?eWN2L1VvcG9tV01ZNW1mTTRMWlk5ZmRkWjJ2aDhyMnNnTFNLM3kremZ6S1lp?=
+ =?utf-8?B?ajBENTVzN0tWQ1I0SjhoS0lnakpON1BKMUJKQmFEL0lzbEpRSnNwcTNVcGF6?=
+ =?utf-8?B?MTQ0R24xWDg3aWhaMnZ6UGkva3dtbm96cjB3WmhObGZzcmRsOFZyYzQ4WWhT?=
+ =?utf-8?B?OGxTNmgwM3lwWHJoZm5sQlU1S2xDOExmcWlJbS9rS2ROc0QrcDViQldGdmNP?=
+ =?utf-8?B?d3JjdUVuYjlYTWptQ3o1RHNDVlBGbHhqbDlPRWN3dWx5MFhJT3JWam9remJ3?=
+ =?utf-8?B?NWowbU41Z3BLL3VPWVI2Q3kxajNybnVMRWVFL1FKMi8yZkxXRmRsWW5sQ3hI?=
+ =?utf-8?B?VnhDb0xBK251dlJzb0d4aDcrV0x2QXRuNERoamRhMnFYRGJtU3IyV2VJVDdr?=
+ =?utf-8?B?RzJYbUpZZ0pnVCt1UktCVnd1bCttdVJqZllSVXo2bDlXSkhzUDVFUzVzQm5J?=
+ =?utf-8?B?OFBQNytZTVM3NXI1NWl6WlMrM1AzUy9EazRoV1pRRWlQSGdNUktvTnpZckNI?=
+ =?utf-8?B?R3E0cjYzbVdsU2RteXVOcW44dDQ5dSs5SnY1UHlNYThpZU9GTURTbUlxbG5Y?=
+ =?utf-8?B?MVY5NDRUTFI4UU1ISUloMStFd3ZoRVROQ090UEh4b0N4RHVMOEpHekZxRUp0?=
+ =?utf-8?B?Ym81L1dSME4zUXpqRFVYUUd6Z291akZKeWEvUzd3dERhWHVWNXI4ZjFCRE9l?=
+ =?utf-8?B?SEFiR3ZkQ3R6SkVjMjBiTmx3RU9uNzRkam9tamtodnBwYUN5ZTFvSW9tT1V0?=
+ =?utf-8?B?Z3pOYkR2SEErMzI2ZHFLMGVUQnFvNXI5WkRVQXpZbm9RcEZTY0M3Z1FBYTUv?=
+ =?utf-8?B?ZnZ0SWpnSjdrbCtrNmoxK0lidldOeldhT1Zka1NpRC85aEpaZElxTW81Y3B4?=
+ =?utf-8?B?M3VIYVJneGtJYnFVZytCdTBiOXk2YjFxWjBiUERYWXdveEVTamJKVVBHSkEz?=
+ =?utf-8?B?YlR2REtQZVNrdi9IMmhISGhHWTNueW42NVVGNHNTSzZndjdGZFdXNk8rUVYz?=
+ =?utf-8?B?ZC92NngvVFVxQWJGMTRGL2ZybWFBSGpVbVhadFdMU01KOFM0d2VqNnpwV2RU?=
+ =?utf-8?B?SjZRekxkUEV6N0VRYUlXby9RanZwd0NtdlNwNDhNK0tmS3FPVml3aHhtSnpM?=
+ =?utf-8?B?RUNLUy8wM0RWeFBKRTlPMUNRZEphZm5NWVJZdFE5R3pwazBuMjFUVGRlYytC?=
+ =?utf-8?B?bS9CTy91RmE1bm5GTEJmanhQODd2UUh4R2hIalAxb2E2MDR5U3NtQnQyaktQ?=
+ =?utf-8?B?cmQrVG9wV2tCcmZHK0tSeEZCSHd6U21uV1RXVnpnSkU3VVBKQUUyaG4xaGp1?=
+ =?utf-8?B?eXJLWTIwWGtOY016L2Z1SXdpOXowWGFBZFE3Y28yK29hTEJUL2dhQTAycEZF?=
+ =?utf-8?B?R09XcVU0WExETWdVWWY1cmY0YzVobGVhRnZoSUVQdXFiSVBaRVlWdGYxU3ls?=
+ =?utf-8?B?RnJDVlVNYzQ5Q1BhT1lPQjBxekxsNkUyVC9CTzFTcExZLzl5T0Jjbk9FbEFt?=
+ =?utf-8?B?L2tVQmVDYkhwZmNXS2t0V3R5QWgrL3FzaXp6dE53R1BHZEtmTDM3elR4OFlG?=
+ =?utf-8?B?UVQ0bjkycWRUay9LZ3h0eTZ6UmVSV0VCYUtSTlJ2dHpQK2JOVGJrYWY0S3c2?=
+ =?utf-8?B?NzJ6U1UzeTFRPT0=?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(82310400026)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 04:43:03.6842
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: eef1064b-3700-4328-6724-08ddd3116618
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	BN2PEPF000044A2.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB9037
+
+Hello John,
+
+On 8/2/2025 12:51 AM, John Stultz wrote:
+> The __clear_task_blocked_on() helper added a number of sanity
+> checks ensuring we hold the mutex wait lock and that the task
+> we are clearing blocked_on pointer (if set) matches the mutex.
+> 
+> However, there is an edge case in the _ww_mutex_wound() logic
+> where we need to clear the blocked_on pointer for the task that
+> owns the mutex, not the task that is waiting on the mutex.
+> 
+> For this case the sanity checks aren't valid, so handle this
+> by allowing a NULL lock to skip the additional checks.
+> 
+> This was easier to miss, I realized, as the test-ww_mutex
+> driver only exercises the wait-die class of ww_mutexes.
+> 
+> I've got a follow up patch to extend the test so that it
+> will exercise both.
+> 
+> Fixes: a4f0b6fef4b0 ("locking/mutex: Add p->blocked_on wrappers for correctness checks")
+> Reported-by: syzbot+602c4720aed62576cd79@syzkaller.appspotmail.com
+> Reported-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Closes: https://lore.kernel.org/lkml/68894443.a00a0220.26d0e1.0015.GAE@google.com/
+> Signed-off-by: John Stultz <jstultz@google.com>
+
+I've been running this for a while and haven't seen any splats with
+syzbot's C reproducer.
+
+> ---
+> v2:
+> * Rewording of "lock" to "mutex" in commit and comment for
+>   clarity
+> * Rework __clear_task_blocked_on() to use READ_ONCE and WRITE_ONCE
+>   so we don't trip over the WARNING if two instances race, as suggested
+>   by K Prateek Nayak and Maarten Lankhorst
+> 
+> Cc: Ingo Molnar <mingo@redhat.com>
+> Cc: Peter Zijlstra <peterz@infradead.org>
+> Cc: Juri Lelli <juri.lelli@redhat.com>
+> Cc: Vincent Guittot <vincent.guittot@linaro.org>
+> Cc: Dietmar Eggemann <dietmar.eggemann@arm.com>
+> Cc: Valentin Schneider <valentin.schneider@arm.com>
+> Cc: K Prateek Nayak <kprateek.nayak@amd.com>
+> Cc: Suleiman Souhlal <suleiman@google.com>
+> Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Cc: airlied@gmail.com
+> Cc: mripard@kernel.org
+> Cc: simona@ffwll.ch
+> Cc: tzimmermann@suse.de
+> Cc: dri-devel@lists.freedesktop.org
+> Cc: kernel-team@android.com
+> ---
+>  include/linux/sched.h     | 23 +++++++++++++----------
+>  kernel/locking/ww_mutex.h |  6 +++++-
+>  2 files changed, 18 insertions(+), 11 deletions(-)
+> 
+> diff --git a/include/linux/sched.h b/include/linux/sched.h
+> index 40d2fa90df425..700b50d29f7fe 100644
+> --- a/include/linux/sched.h
+> +++ b/include/linux/sched.h
+> @@ -2166,16 +2166,19 @@ static inline void set_task_blocked_on(struct task_struct *p, struct mutex *m)
+
+Should we consider using WRITE_ONCE() in __set_task_blocked_on() and
+use a local copy of "blocked_on" there too?
+
+I think a set_task_blocked_on() on a separate ww_mutex can still race
+with a wound on the ww_ctx which indiscriminately writes NULL to
+"owner->blocked_on" and can possibly lead to a splat for:
+
+    WARN_ON_ONCE(p->blocked_on && p->blocked_on != m);
+
+                 ^^^^^^^^^^^^^    ^^^^^^^^^^^^^
+    Sees p is blocked on "m"      Turns NULL as a result
+            already.              of a concurrent wound.
+
+A READ_ONCE() and WRITE_ONCE() in __set_task_blocked_on() should help
+solve the splat in this very unlikely case too unless I'm mistaken.
+
+Apart from that, this fix looks good. Feel free to include:
+
+Reviewed-and-tested-by: K Prateek Nayak <kprateek.nayak@amd.com>
+
+-- 
+Thanks and Regards,
+Prateek
+
+>  
+>  static inline void __clear_task_blocked_on(struct task_struct *p, struct mutex *m)
+>  {
+> -	WARN_ON_ONCE(!m);
+> -	/* Currently we serialize blocked_on under the mutex::wait_lock */
+> -	lockdep_assert_held_once(&m->wait_lock);
+> -	/*
+> -	 * There may be cases where we re-clear already cleared
+> -	 * blocked_on relationships, but make sure we are not
+> -	 * clearing the relationship with a different lock.
+> -	 */
+> -	WARN_ON_ONCE(m && p->blocked_on && p->blocked_on != m);
+> -	p->blocked_on = NULL;
+> +	if (m) {
+> +		struct mutex *blocked_on = READ_ONCE(p->blocked_on);
+> +
+> +		/* Currently we serialize blocked_on under the mutex::wait_lock */
+> +		lockdep_assert_held_once(&m->wait_lock);
+> +		/*
+> +		 * There may be cases where we re-clear already cleared
+> +		 * blocked_on relationships, but make sure we are not
+> +		 * clearing the relationship with a different lock.
+> +		 */
+> +		WARN_ON_ONCE(blocked_on && blocked_on != m);
+> +	}
+> +	WRITE_ONCE(p->blocked_on, NULL);
+>  }
 
 
-
-On 2025/7/30 20:55, Konrad Dybcio wrote:
-> On 7/30/25 11:49 AM, Yongxing Mou wrote:
->> Enable DPTX0 along with their corresponding PHYs for
->> qcs8300-ride platform.
->>
->> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
->> ---
-> 
-> [...]
-> 
->>   &tlmm {
->> +	dp_hot_plug_det: dp-hot-plug-det-state {
->> +		pins = "gpio94";
-> 
-> Please sort TLMM entries by the pin index
-> 
-> https://docs.kernel.org/devicetree/bindings/dts-coding-style.html
-> 
-> lgtm otherwise
-> 
-> Konrad
-Acked, thanks.
 
