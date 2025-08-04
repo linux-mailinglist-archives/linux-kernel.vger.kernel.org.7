@@ -1,236 +1,180 @@
-Return-Path: <linux-kernel+bounces-754984-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754985-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F4A7B19F7A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:08:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0862AB19F7E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94ABD1884304
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:08:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 297141639FE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:10:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0C5246BBB;
-	Mon,  4 Aug 2025 10:08:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6302472B7;
+	Mon,  4 Aug 2025 10:10:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="e9ljZ6Ua"
-Received: from DUZPR83CU001.outbound.protection.outlook.com (mail-northeuropeazon11012056.outbound.protection.outlook.com [52.101.66.56])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="UY9Vi8HB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BCB71E833D;
-	Mon,  4 Aug 2025 10:08:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.66.56
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754302112; cv=fail; b=Xqs9eskZjWATU9J2h1qHny18WatPOPpVXeBFjU+karjKfW/mIZapRkRf+vmdBk9qvvolfze43peTb7ODb/OkyBkLvGQjSG9+gMhHHj/GtRCP1/3xkH8KA19BiDy6Jd+4lIlbfdiy1FhUnz9SYD02UzLj8t7z34ga3B0uLAwo2rs=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754302112; c=relaxed/simple;
-	bh=RclZzaEnAe1WRdOFUIgHWy3k4cj04gxWtJaZaN/w5W8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=PxSrHhCnaCllIpzEEqVAsyV1GoLrdjUnnznhpO00zSJuS+/e8xe5mydMhMDLLolFIcbDsEyXWeRN25/ER6W6IU3aTHnDCMVJcgtjEpzRGxEwY/LC4rBUKaqipxmO2sbr15fiRJlAWcqdiyUrzOh+fMPZkIWHzM6t45/rInP5ilc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=e9ljZ6Ua; arc=fail smtp.client-ip=52.101.66.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=kvxPwERpzzGMTH7x44bXqJ/eSe/lmZeD8ovHXlDP7UTe4f1X/hdMP6bvOsHnFO6krDLlCsOmacTNg2ZOGAi9r0DJFnY5aBNo51orr1EItPBV7vp9i+8fuYShTbak2hVxqdcHC2Pw00z6CuO9ebADdQ6AdEobIvfXkiGhPeqLFQIHcwAfR2Q91Utk66LozRKZKrxdKKVI6TS4QLINEZtFXgslQPsGXuB9FEBtonqYJybZ4uFNF3HjPI8ahDgQyOcf06xUaBjQqWpIV/s4gtacq4Nfix75wTmduViobMEahOeCci6F0mqupLHMXNnIUfRsBvFcBi/Q72gahEom5lCwPw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HXlZhc0lLVF+PIM/tEAlFZ2i9VkSn7ni3CVgnbzm9II=;
- b=dgHr7doTD9SROfJO6gPKbRj2pg9LQpf4WPcvMoVIs46C4qtc/VdoongA5GqUrsNm2JCSG/6s0gcghFZzqJnlbxYjxaeBQvF2+IsDWIDtCcxcCerTSBI8PMVE78NO2pd+qunJJo/JudgL/gCx36Q6patq+R6A9neyiHdNy1J8sEXkD8yqc1LfL8GpLxa0CMlM7BV843X+lkvhtuPsX8fr+N785BFQgwBzlvKmmYgXn0ADhH61tUZ6HeZEFplCnkGJ6huGQ1kmLa8XvqSkQUFPmzEXk/xQVjqPbdvIt6bbfzFfO3hUub7c6zjPNL1fXuWNCzs+fYQpMa6AlrcGu2mi+Q==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HXlZhc0lLVF+PIM/tEAlFZ2i9VkSn7ni3CVgnbzm9II=;
- b=e9ljZ6UawFBieTuf7kXfQA7xmxwixwGVpCE8ucGss3v+5VgQU4+iOg7KTufsr+0wb/JMnfqOU60COxEMveyC1sAXDhe1Jl8A/CE8VErG6lb4viB34pody/Mq4a0gJUrvjtLrhhAdTeoFhXsrVz80EJDv/525A9nf/7TnvKhE3vM+YJuy1cuNMUjps2ay4dezavzo6liOpgunsMesTfeJD5N2MM34EhL550futUCOEeKmB8lQFTQniPrp77zA7H8y9JR9rJ8+qbKWSef2KoTEKv6Yu0GVQHYG8F8siN1GrvM0bPS7aVZOuPZsBpIbVtDNTrBFWX1FnmJFFV81uRxokg==
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com (2603:10a6:10:242::19)
- by AM0PR04MB6833.eurprd04.prod.outlook.com (2603:10a6:208:17d::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 10:08:27 +0000
-Received: from DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37]) by DB9PR04MB8429.eurprd04.prod.outlook.com
- ([fe80::2edf:edc4:794f:4e37%5]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
- 10:08:27 +0000
-From: Sherry Sun <sherry.sun@nxp.com>
-To: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>, "marcel@holtmann.org"
-	<marcel@holtmann.org>, "luiz.dentz@gmail.com" <luiz.dentz@gmail.com>
-CC: "linux-bluetooth@vger.kernel.org" <linux-bluetooth@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, Amitkumar
- Karwar <amitkumar.karwar@nxp.com>
-Subject: RE: [PATCH v1] Bluetooth: btnxpuart: Uses threaded IRQ for host
- wakeup handling
-Thread-Topic: [PATCH v1] Bluetooth: btnxpuart: Uses threaded IRQ for host
- wakeup handling
-Thread-Index: AQHcBR2uO0hcPOfqbUefnk9/NhtW0rRSREYQ
-Date: Mon, 4 Aug 2025 10:08:27 +0000
-Message-ID:
- <DB9PR04MB84292FAC859A96ED5010BBB69223A@DB9PR04MB8429.eurprd04.prod.outlook.com>
-References: <20250804085630.1082251-1-neeraj.sanjaykale@nxp.com>
-In-Reply-To: <20250804085630.1082251-1-neeraj.sanjaykale@nxp.com>
-Accept-Language: zh-CN, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: DB9PR04MB8429:EE_|AM0PR04MB6833:EE_
-x-ms-office365-filtering-correlation-id: c2da1720-1705-4ee5-82fc-08ddd33edb3e
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|1800799024|366016|19092799006|376014|7053199007|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?1IGtaQs5I+xN7BibB7HMdXPT1q4GLrwimi4Z4hf5YndnVObz+ujCYS4zLa26?=
- =?us-ascii?Q?BrlM4/weLMAeCDL2xaqMO35ZBApzyLv9V0XzTNVTBnGz4+NgK+mqWsdjdai3?=
- =?us-ascii?Q?hbrYVF7xWT+gYFryvMOA7UsXMIERJIS0caVlWfGnDcjUeaHchU07n69QDgZz?=
- =?us-ascii?Q?4YLm11xzyOTvWrfMFtTpF+QSPnx4rZpsbFi0Hre4BYI6/x2m+cLmU9Roa4Lu?=
- =?us-ascii?Q?eTg6vfrhklR9aWjnakO4QGuTK5RtVSH9nuuSW9QyYJDmgSu7Rbc76xboIKpB?=
- =?us-ascii?Q?n0L6OH0pf8+JTIGd9pPnEk6rUpjQdRtuIcwCK4jeP3g6Lbgmi2/UU5c+O1I/?=
- =?us-ascii?Q?p6RTSlvbk2S/ea+r1Df6WovFWM5zN7GCZJpuMIxJ+M36HrjiyKgpXwDRVkPX?=
- =?us-ascii?Q?KMSeLnEeSmyLCJPy3CAE0j/xKijm2CcPQiUJukRiKQBy8hO3mLocij7y4NF9?=
- =?us-ascii?Q?4dkL4e9jRb82haAS8srhvRgHB/WxKHHkhNh88r+zSIMY1ySM7XImbM0PwOZ0?=
- =?us-ascii?Q?0t9aF36x9bwCWhGUQPjlnpEdCfvRTUqU4VHwn+oxuxReOAsokrLFqGrXgpR6?=
- =?us-ascii?Q?DKvYuv/Xce2tOUElH1npvyWRvScp9xPVzPvb7d2zRnAejAFiT8jnzs5YcwaS?=
- =?us-ascii?Q?MVzfxKQwuZAHw0PRloUA/o9wHIaWsSCu83jJxkkf1606XKlIKKH9W8Zua+ZN?=
- =?us-ascii?Q?/lRkLFC1ByU5MEpSVlBZ735zaaaUachF8ZUH2I0upavnK4b9RLmYRdV8NUtt?=
- =?us-ascii?Q?Sn54FjnNavhkHHyO3agL7wTU6U01PwT3De+lFrygFpKe5OKqFCBVA3rbTT5l?=
- =?us-ascii?Q?V3NRb+czhVbhA7Qsip/3CgLfL6LQHbdSPbqOgsP38JyoXlm8TWHUbki8pJtE?=
- =?us-ascii?Q?3FLbQOHRCJWw8JN2EAFa51A2vsh38IfV0NIN+YoC6RIkwO3qOAsPx0b3qQu0?=
- =?us-ascii?Q?vXum/r6ObwmIVEZUPlnOmvrPEZljbtn24+OfSm7IqJaAso88CkLYMwnvGdUr?=
- =?us-ascii?Q?1Drm3r0aYRIZssL2BlM7tqbrt/zMximRJwmfLX7JXsv0XyCe+eI0eD2C0/va?=
- =?us-ascii?Q?A/RcC5/7/c1546Gez+frfKdzGSpF9monFb5qAwt3ry/fKe7/SXLhMbVhrpeq?=
- =?us-ascii?Q?Y90IVI0fbKnUtMmlwptGByA79kZ3vzkEgm4sUcYN5VqGeNa0PIFK0Ml2xQ7a?=
- =?us-ascii?Q?fcrs/+wOYtLmZ+hWGP+ISUoEd+N1VK+m+BGimjBHXoP9KnxgaJ/aM6ciRY7t?=
- =?us-ascii?Q?3BcuN+8xvoD44FmNr6nXR1vYq0xe6sVwc3gf/p2JQiUkeu3kk6q2exWQBo8e?=
- =?us-ascii?Q?OI7ao5Gp9dUtdkmPphOsyQcDjmIXmfkWrnldXjfzRfv/FwhbKGUWR2SNXKw9?=
- =?us-ascii?Q?xL0ND8Y4arhyxYg6bTI/G7SLHDK8MQSKxTrVctJCBxTVp+w48kwlYb6UXUK2?=
- =?us-ascii?Q?HrJpkuOHrEqwxWLOZeiOtSoIFUgmvc3W/GhCh0uUIl7MF880bMDb8DcdD9DW?=
- =?us-ascii?Q?ZUWTftwDq0dKM/s=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DB9PR04MB8429.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(19092799006)(376014)(7053199007)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?LItrqNrLZRmPL97v5zEXFtWI7lwjr5uSVIkVbu/lcakm7obGvvg5ec8BPLat?=
- =?us-ascii?Q?Iu6Qe6nMT1cS3Xnb4gcwuxl7t0RuIGFbWpjS0ITJ+b31ojhJ7CqJijZCM90y?=
- =?us-ascii?Q?wp5SsgAxxTsKST/aawmFp5IXoaccZoPPdpzbsEMYyx5Pl88nnBrLvnSxIonc?=
- =?us-ascii?Q?ywB70CfDkhCLkNc3pe7MoUER8RiEjdyPXVgmjYMF4GfZI3oFxLa6ZYZqG/8n?=
- =?us-ascii?Q?GDpGB7teCBW/e7DpaCGXV1oPJYfg+AwgeCjf9Xf6xL26WM7cmPnHdOG6A1ma?=
- =?us-ascii?Q?nfz0zKylSxOe1R4PHbOv5TaVFHDeOVrlx5HnJNp7Z7M0atb78NDrmQ360C5Q?=
- =?us-ascii?Q?vWJfBzr3wB8pD+WH3HuZQSkXHeW9hZB/QdR0QKBR8Ju/fP09wQpukGEgP7R2?=
- =?us-ascii?Q?tJLyWX53hAFWlqA6UvNqIDYl0DiQ5U72wqa+Z7469UNLFuMKqH5aqGDK0mzS?=
- =?us-ascii?Q?WEWC0IJ/KIEHgiQPE6caCcKTLjLLcSNDAVwxEX4sONImtuMAOnqwQpGT12v6?=
- =?us-ascii?Q?44l/bX8rvDdGa3tXzXGUy+jpa+jY56KqpB6EuYnWzXva6r3vElywYcN1y1kY?=
- =?us-ascii?Q?JiMTxUfrJzkKSgIdeWKljZOGMcEtTx0ezf2gctXejuPmK2BmKUGmZWWgMVIN?=
- =?us-ascii?Q?pU6bA2nEyiQIJx9tyJ8qONo2arGUaG9A/2I/gyDKiXeiSep0URJDb6c9Ijh6?=
- =?us-ascii?Q?sUK1nMhlxoDrw4cZkv231AQHIi5dXAbR+NSpqNOZtqSFuU6hRBDxGaf5y/fs?=
- =?us-ascii?Q?SJw445Y7U+gNSyiOltCnS5PHediyYDPHj10EHIq2KgQGkqIfQUg9NHhdMH85?=
- =?us-ascii?Q?3Gxzz1LgmEuaPSyntU79cSwDyOzYXIYrMrq5Gqj+oEl0ycMsqX64/5PVLnEI?=
- =?us-ascii?Q?iR5fszuJ6/RI9Gx2d4Jhu95RgJP0hma86V3JDdTo2YOKUYV0Tt3OJpwyJZzC?=
- =?us-ascii?Q?YUlHoMQ04o1KYj0RkQiL62NtYyhw2Rv8D4s/HdMjfvd5knfZVkNcPW7pQ68c?=
- =?us-ascii?Q?ntsNptQqbfOc3jBz95qAI8J9RWrfN5xPJkWXwEbhFGSNORiZBS4Ue0LRcyIn?=
- =?us-ascii?Q?Jxic1BSlP4naUOuZijCgVpGdTawIkfIo8esRXdJpOK6vPcsiDMnrAqDtbsoV?=
- =?us-ascii?Q?tmYfiyKqPYz2G3i+oDTgK1H6OYVgadLs9l1nWWbpxsUZMYaP1wOgAsy0UuFq?=
- =?us-ascii?Q?e37KaE4g7o2Ap3+PzTIf46MxvDJ/QbIacw3KzOo0YzQqZsSlJV/cJUUfgTXg?=
- =?us-ascii?Q?GH7Ob0jFrLHZOxzLQbyWGqEY13GNbM7/3tH9QgF+HLP+iN3Svcw1MmUNXrk9?=
- =?us-ascii?Q?6BlbnYqQV7vmOsnyz9YJfEkmb5qtTq3myqMRbpqG5I5ZKBme9MSVpeHMm8Fs?=
- =?us-ascii?Q?lJKNbmfF07rXIj2Dvvg3/aKHs8sufxJ2uzzCkR6HV7HbD70aLo+T+0tdiF4e?=
- =?us-ascii?Q?rZaPoiEjZI8vqtIuhQviXJv7nzWjiBLcGUOewMNP7ed1DKAnSAiJonLtZ0E+?=
- =?us-ascii?Q?hz4Tx47EJHKeRvu86zNG48h7EG/ei3wTW6P2BTVXT+iDSryid6HIfsKbn92y?=
- =?us-ascii?Q?zndTq7Zs8YVuy5eBelU=3D?=
-Content-Type: text/plain; charset="us-ascii"
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E3882200113;
+	Mon,  4 Aug 2025 10:10:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754302208; cv=none; b=aq1i8MeNtoJVP/TksOQ3pdQWKCpIqPyOyJ3faaUMoFR+6Z2D2jjZ2i/qCcSLGmAeoW36ijG6UAZHHRiJ00AIFMgUHmJ325eeqeZYLFJgSE7Jlv7kNGoxT5PtM1s/zDFsgblrA7SCGsJlDQxv3wJ+93XXr0x8dOQi5yNDnI9VHu0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754302208; c=relaxed/simple;
+	bh=kCIchFC91452xWiDloGI6pBYIBOUJAAvwMrZE/NTCJE=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=F2jKOVpRZjbLNQP3MgN3A0NrHi+b+EAqamkpe8SizqDzUgplVJkKmAyQZOxevMSQVYw6SCz1AcP5KYE0HTJ5TAb3ymsPujtAHmrYyhGNDHLzpgj+EcETMd49VxO+7dcLf0nrlgLDX5QBsloEWC51ok/W+i98zr207dPG3XTK2wg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=UY9Vi8HB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5744Y4d7023414;
+	Mon, 4 Aug 2025 10:09:56 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=kCIchF
+	C91452xWiDloGI6pBYIBOUJAAvwMrZE/NTCJE=; b=UY9Vi8HB7cvg0CNVS4+YgH
+	QhZjl91sJ7RvUL0RFfLBiZ8XuqWC8AfkSh4hVRKGCbHTS3oJXv5EvWRTdxbQ7Vuh
+	lccBuFbJKTWZ4jPHLIp613jpW/v+4qT5ch87wS4womSGMtatY7n6EUjmwptaACxk
+	SQ+ENRAw0MsC3+wAsuTWS6dsiYP/S0IB5ZXDJwE6RW+mhIDqFR8vcKozmDFtNSm7
+	pp5r1ii+kyu5v+0ASyGNCtku4TCZix0kf0xNYrvobIuHEao4LgRlmM50k9Lpu4LT
+	+dvMwQUEz1zodHGVpcFmaUUfFjBkiLZ2LHf760lvVnQ3H7KVmJYZQkHksfbO7blg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48a4a9v802-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 10:09:56 +0000 (GMT)
+Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 5749vnmU011650;
+	Mon, 4 Aug 2025 10:09:55 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48a4a9v800-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 10:09:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 5749lLPB001893;
+	Mon, 4 Aug 2025 10:09:54 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489wcywc8y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 10:09:53 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 574A9o7I19333514
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Aug 2025 10:09:50 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 06A8A20091;
+	Mon,  4 Aug 2025 10:09:50 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 127F12009C;
+	Mon,  4 Aug 2025 10:09:49 +0000 (GMT)
+Received: from [9.111.44.231] (unknown [9.111.44.231])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Mon,  4 Aug 2025 10:09:48 +0000 (GMT)
+Message-ID: <6efa10219a41907ebdd7b75fc8d9249e115e8864.camel@linux.ibm.com>
+Subject: Re: [PATCH] PCI: Fix endianness issues in pci_bus_read_config()
+From: Gerd Bayer <gbayer@linux.ibm.com>
+To: Hans Zhang <18255117159@163.com>, Manivannan Sadhasivam
+ <mani@kernel.org>,
+        Hans Zhang <hans.zhang@cixtech.com>
+Cc: Arnd Bergmann <arnd@kernel.org>, Bjorn Helgaas <helgaas@kernel.org>,
+        bhelgaas@google.com, Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian
+ Borntraeger <borntraeger@linux.ibm.com>,
+        Ilpo =?ISO-8859-1?Q?J=E4rvinen?=
+ <ilpo.jarvinen@linux.intel.com>,
+        jingoohan1@gmail.com,
+        Krzysztof
+ =?UTF-8?Q?Wilczy=C5=84ski?=	 <kwilczynski@kernel.org>,
+        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
+        linux-next
+ <linux-next@vger.kernel.org>, linux-pci@vger.kernel.org,
+        Lorenzo Pieralisi
+ <lpieralisi@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Niklas Schnelle
+ <schnelle@linux.ibm.com>, geert@linux-m68k.org
+Date: Mon, 04 Aug 2025 12:09:48 +0200
+In-Reply-To: <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
+References: <20250731183944.GA3424583@bhelgaas>
+	 <6e34b4af-dff9-4360-b3da-c95ca7c740c9@app.fastmail.com>
+	 <vf65usnffqzlkgijm72nuaslxnflwrugc25vw6q6blbn2s2d2s@b35vjkowd6yc>
+	 <9a155e45-f723-4eec-81d3-2547bfe9a4e9@cixtech.com>
+	 <ofsbfhor5ah3yzvkc5g5kb4fpjlzoqkkzukctmr3f6ur4vl2e7@7zvudt63ucbk>
+	 <c8ffdd21-9000-40c2-9f4d-4d6318e730b5@cixtech.com>
+	 <cu7qdbwmnixqjce4aetr5ldwe3sqoixgq4fuzmzajzphjdywqq@yw6ojbgeqktm>
+	 <06f16b1a55eede3dc3e0bf31ff14eca89ab6f009.camel@linux.ibm.com>
+	 <06012cc6-824d-4a7d-85c9-9995ec915382@163.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 (3.56.2-1.fc42) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: DB9PR04MB8429.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: c2da1720-1705-4ee5-82fc-08ddd33edb3e
-X-MS-Exchange-CrossTenant-originalarrivaltime: 04 Aug 2025 10:08:27.5843
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: v+V5b6kPTx06saX6g/mP3br4sWmEXJ7I14m9nUoe47+UwJvegxL+dnU8mqRRpF6jGzZGFFJ8ypsOFAYOpLtKIA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM0PR04MB6833
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: OZzhOq8J5iZn496zPRbscm-5Hy0dBrtO
+X-Authority-Analysis: v=2.4 cv=dNummPZb c=1 sm=1 tr=0 ts=689086f4 cx=c_pps
+ a=5BHTudwdYE3Te8bg5FgnPg==:117 a=5BHTudwdYE3Te8bg5FgnPg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=KeptLckSEblKyysDGeUA:9
+ a=QEXdDO2ut3YA:10
+X-Proofpoint-ORIG-GUID: j6p5zJLpsip5j-2v6i90-PlIrzZuLfHR
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA1MyBTYWx0ZWRfX6aNNP/68Zpyr
+ 8lpqw2QcidMFKrCzDxDrKDKQtaQhnZnnhaW5MyvRF/wzvR1lklNLeZE53DsQwtU72NNYXxpo8O6
+ dpivStlLuL8nzhybh2j8vaXk+vN+pALHKh92OR9DzrnXXXaPVRPikwBjsR6rjOWfpjQto57Axo+
+ +41/yohAugkeJX6QlN0GyqdPqiNsUE/EvrQkBrQN8yEJt3+ixkFU8CqwOp8BfDKvfry2CFHqFFN
+ yEoB2fdweG1nsFm0naIhGOhKStSmoce5DX6EUN5urVkZNVfy5cLWX4GtRBgKeDlHEL43HPVJwZF
+ 4D/WXX37Uir8pTwm6hWFc+aen0fQ0X8eh0WZ8v5SCJZD3jkwKLIo+YdWANJBZNTl9hCLPBrItbY
+ TRnCuec3P3YVHPDFKC2qL7/Ihhq5NDELATMOcQ0mbEoFFEX0msYqYoToWq4tTBCw6x8N4qzP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 bulkscore=0 mlxscore=0 clxscore=1015 mlxlogscore=970
+ malwarescore=0 priorityscore=1501 adultscore=0 lowpriorityscore=0 spamscore=0
+ suspectscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040053
 
-
-
-> -----Original Message-----
-> From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> Sent: Monday, August 4, 2025 4:57 PM
-> To: marcel@holtmann.org; luiz.dentz@gmail.com
-> Cc: linux-bluetooth@vger.kernel.org; linux-kernel@vger.kernel.org;
-> Amitkumar Karwar <amitkumar.karwar@nxp.com>; Sherry Sun
-> <sherry.sun@nxp.com>; Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> Subject: [PATCH v1] Bluetooth: btnxpuart: Uses threaded IRQ for host wake=
-up
-> handling
+On Mon, 2025-08-04 at 11:06 +0800, Hans Zhang wrote:
 >=20
-> This replaces devm_request_irq() with devm_request_threaded_irq().
+> On 2025/8/1 19:30, Gerd Bayer wrote:
+> > On Fri, 2025-08-01 at 16:24 +0530, Manivannan Sadhasivam wrote:
+> >=20
+> > <--- snip --->
+> >=20
+> > > > >=20
 >=20
-> On iMX93 11x11 EVK platform, the BT chip's BT_WAKE_OUT pin is connected
-> to an I2C GPIO expander instead of directly been connected to iMX GPIO.
+> Dear all,
 >=20
-> When I2C GPIO expander's (PCAL6524) host driver receives an interrupt on
-> it's INTR line, the driver's interrupt handler needs to query the interru=
-pt
-> source with PCAL6524 first, and then call the actual interrupt handler, i=
-n this
-> case the IRQ handler in BTNXPUART.
+> According to the issue mentioned by Lukas and Mani. Gerd has already=20
+> been tested on the s390. I have tested it on the RK3588 and it works=20
+> fine. RK3588 uses Synopsys' PCIe IP, that is, the DWC driver. Our=20
+> company's is based on Cadence's PCIe 4.0 IP, and the test function is=20
+> normal. All the platforms I tested were based on ARM.
 >=20
-> In order to handle interrupts when such I2C GPIO expanders are between th=
-e
-> host and interrupt source, devm_request_threaded_irq() is needed.
+> The following is the patch based on the capability-search branch. May I=
+=20
+> ask everyone, do you have any more questions?
 >=20
-> Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
-> ---
->  drivers/bluetooth/btnxpuart.c | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
->=20
-> diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.=
-c
-> index 73a4a325c867..76e7f857fb7d 100644
-> --- a/drivers/bluetooth/btnxpuart.c
-> +++ b/drivers/bluetooth/btnxpuart.c
-> @@ -543,10 +543,10 @@ static int ps_setup(struct hci_dev *hdev)
->  	}
->=20
->  	if (psdata->wakeup_source) {
-> -		ret =3D devm_request_irq(&serdev->dev, psdata->irq_handler,
-> -					ps_host_wakeup_irq_handler,
-> -					IRQF_ONESHOT |
-> IRQF_TRIGGER_FALLING,
+> Gerd, if there's no problem, I'll add your Tested-by label.
 
-Hi Neeraj,
+Before you add that I'd like to re-test with the "final" patch.
 
-You can also add some comments in your commit message about why remove
-the IRQF_TRIGGER_FALLING flag, e.g. let's set the IRQ trigger type depends =
-on
-the device tree settings instead of hardcoding in the driver.
+> Branch:=20
+> https://git.kernel.org/pub/scm/linux/kernel/git/pci/pci.git/log/?h=3Dcapa=
+bility-search
+>=20
+> Patch:
 
-Best Regards
-Sherry
+<--- snip --->
 
-> -					dev_name(&serdev->dev), nxpdev);
-> +		ret =3D devm_request_threaded_irq(&serdev->dev, psdata-
-> >irq_handler,
-> +						NULL,
-> ps_host_wakeup_irq_handler,
-> +						IRQF_ONESHOT,
-> +						dev_name(&serdev->dev),
-> nxpdev);
->  		if (ret)
->  			bt_dev_info(hdev, "error setting wakeup IRQ handler,
-> ignoring\n");
->  		disable_irq(psdata->irq_handler);
-> --
-> 2.34.1
+Please bear with me while I'm working on that.
 
+Thanks, Gerd
 
