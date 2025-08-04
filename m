@@ -1,81 +1,81 @@
-Return-Path: <linux-kernel+bounces-755630-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755631-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CB03B1A983
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:20:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 35F7DB1A984
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:20:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CABBA623614
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:19:58 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DF71892C2F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:20:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A694B292906;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F882291C39;
 	Mon,  4 Aug 2025 19:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CPaNENT9"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Fj4bbU/Y"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 377A128B7C9
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 19:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 157C528B7EC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 19:18:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754335112; cv=none; b=aZBSQzNg8tL4okZohMtLWz+kr1ziVDmJCFHZ1DK4QpXyyBYuKIOW1y0gqrKTb9OrI0GYw5QD6ANAlpnNFTLug4Nt7QEelALN75Gx1ZwPE4Q+Vk3s0XsOzSDDxkPxLXSdvxvExqqfnMvjAqGrihlfKRQPO2N5PnrXo1OlF6dt+xc=
+	t=1754335112; cv=none; b=MO2Cl1Lpe2RgUzmx69iqAxeO+mzfLYHNDP9sjcWCwAyFftRCZUHCFKJL3N5W0tHQd2ke2/m7JWDe4H//bR+/lW7QvHELBZwqIHiiYnQDUo6LMprm6Sng//rwK+9Wea8yEda4/j9g8Ain2G7njH17t2k4J2yLmXhu340LqaRz4KY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754335112; c=relaxed/simple;
-	bh=y9lF2CD6zfkfZgvGaHoJ5qNs6uZl48FfUZ5qO9DoJ2o=;
+	bh=rDvA4L4QbNOZZHJ9ypWKaY7n7K/aeq1dGeCN1JjgQg4=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=ZRLsvXy1e/tPaP5Xmh43QzIE7YVxxzYIocIzXV4qJ04y7y4QXJwwjS+HJSD7q8uSbn+26JtwFBScBcpDm/lGEjv/5L3MOY2CYzKmZ8S4MktLW7veKp2P9bHLTFtrnGFe0sIBe04NEYwnQ5iAGbB2yWH92My2UUcYZL7NQBt2rl0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CPaNENT9; arc=none smtp.client-ip=209.85.128.45
+	 In-Reply-To:To:Cc; b=darxdbjaNTKpX2WYjstOdURv/cmKA3AEOflXIF9Po0IYfOY42e/Mvpl9AakWynspRTWKzKJ1e8sEVy20CgzpiebR7t7VJ0panBZ7pwIwzUdbNs27f45ywuylgNf0g4FMKGCSXTAXIzEJZg3qvNkqDefF8CwRsrf/P9Tz/9qdbe8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Fj4bbU/Y; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-459d5ab32d1so20055e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:18:29 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so10665e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:18:30 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754335108; x=1754939908; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754335109; x=1754939909; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=toe9nuO+2sDqStO+Lp3ssNFV6aT9Bxci34jiczavffM=;
-        b=CPaNENT9PU5tR3xLpHP57Oeef6DIOa3HnTSwx1DeMDfInukTydqCL61vaUT7dPhKVV
-         Q7g/NjyEdbUYGj9DhFKJs9edEMA4P/xzC35IRRe95UC8991T1bmekZ3VfVa3mYQw4xnt
-         t+PMgLIW5GS9LAFFzPZKjUEp/u2glddHWBi6NmBL3eWKU09HxRsjA2vDH6nrycln7N+B
-         1VI3tPrru2s4R2KTjcg5f2Ruvq1CA4iR+SYW/7dHoeWqrxqTmwnSVJaXFBOe5BfoSZQc
-         SNYJkRecq7xWx70pJwO1eHKEtTdGKRaY+/ddsPBBg+duqI94JL1eo9iwnVQsITcf3dOW
-         ZebQ==
+        bh=L+ElZLVKoAO1zlP8cjrF+LYIULpb9l5O5jbMVWAEu58=;
+        b=Fj4bbU/YrQ2Zm1E7EEN0ytfGJkkN15+XQjGKTuDDDZpbkaGqGRDPZuR4YrOfPGqzxp
+         RPFqo35LVNSswPvFkIZ6z3nVuHh89hoBhCvOggZpUiBVBGOLQR6q24eYwCc54IUvD8+h
+         yPA7KxJADY00XUacO5zDWuEfRkHkgA9tO/ToJlcXfJBGUS60UWgODizv1O4/vvK27dXL
+         zkwT0mS8vREN2/RRGUGCSWXKtzipWfRdCgtSCgG3RwVOdJ0cYKK95M/AmiFahXyAyK9R
+         wi0Bpqrs2eGs0r9DHRh4LXX+sBRBfLUARmX8sRqpXmYGu3F0VHqYSwsoDM11O2Q0gVL/
+         6Vhg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754335108; x=1754939908;
+        d=1e100.net; s=20230601; t=1754335109; x=1754939909;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=toe9nuO+2sDqStO+Lp3ssNFV6aT9Bxci34jiczavffM=;
-        b=kqQ2PU9lHpwopV1Nc/yN/GLO/JkylkpBe2Yb866+acAuLW5ErnNS3BfE+FWUuTfPzN
-         QCYoNXZKlP3Nc5uFTppO81dZSafmi/ejfX4dzB9tKD4+lmwzj3htzt14QsBu1SJK0rV0
-         kE0O/BDXZ8tPQrclQvB5XNGTcdau1EMmctvKD8PqgXVetTKC1Updjx9LHED7OOhIZ2wB
-         LR2JxKasgjfPnz+vdzMeU1AEuFjsmf2zXeTEKq8HC/1BdBf3zkbbB3WHHoYO11Lka3qr
-         HCmTCb+O8ZngQMSsklApOU4P2nKzAqZJMgEm3D3TNcNSOnIJRQjJxNHqfxviRdatXQEc
-         gapA==
-X-Forwarded-Encrypted: i=1; AJvYcCUCqgtrlSiwnyqSS66mCjkAX8urzGecAe24kZz2rxUMD9RmH4uvqMfs2XE//kbcTVYZ1FZu+nKDBNf8YCA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzoRLrnwYm77hhJTsHBxLdv5lc+BwTRaTzffTudbfI2NIQawQlN
-	CFDobWJwcBdYZb0U74KaqxOPlhkL3bdah40F5UFpT8Tv2UmwarEyrJ+kEAA0sLfscQ==
-X-Gm-Gg: ASbGnctD/k1FrFGI8LJFW6XDnT19hRh22oGsbX/sPgUWmL+PUK1PPxftrO1L4joL6NJ
-	GKezJCfg3cqiVAsq1aRWPa2XEcvYBkffpTUvAj3ZmYv333Ac2Ts+B61c66VoDFt4y4XGDFNETfR
-	AoAHjG/j6Kdap1s3gHbxyGtlhcxQ/kG5LT3l72GzZaL0u7vSrc6eK4vxle0sb0eIavb6pnyvSH5
-	ewsd5gJT5eyZivDkoPQT0zb1onE8c+Hnwz6c/nd37fykU48jo58ULT0zoVA0AJznPx1el6XVB6P
-	auC/1Ej4aFJ307ip95nlu3UWDoWV7oeY4sXRETcDRA+skIyhr5Ld819z/yWaout5qTNCRnt6Xb+
-	Cb3dAng3/Bg==
-X-Google-Smtp-Source: AGHT+IGAJUECbMrbVo4c54ajse1G4XDEXlZalnMUSUfJ5ZXLM1xpHCzJE1+uL/+URdEhqOpnIGDI3A==
-X-Received: by 2002:a05:600c:a212:b0:453:79c3:91d6 with SMTP id 5b1f17b1804b1-459e15e6259mr86595e9.1.1754335108155;
-        Mon, 04 Aug 2025 12:18:28 -0700 (PDT)
+        bh=L+ElZLVKoAO1zlP8cjrF+LYIULpb9l5O5jbMVWAEu58=;
+        b=s6B2OVwMdibjRaW4/NiPP6IVLKXLVvp1LUvCj+pLb5aL4b+YYLwwMiID0ozvXuhOzK
+         xQnCFhxcwS5EXB1CxnHY21qj/nEZZoqfWymyFOL/57V2C6XBgBjkAy2xiLQsmTIBRe5r
+         kYTcGLq1Xa2bEqhArmyTWUWDkMMUAfu5rcB9DWMTe0nMyOCXvORkfKkTqqWh009uhRKw
+         nAJgw/GYbiuxlaOpZX4pAtzFW4HYXD3Y39TyPAXl1pmInvGDLpnCMAGk8oJ4QCZqW8TH
+         p19hQnbwA7iHntommsoU490sfSudu9qbrORBDz53PA48ebbn60PNVrYE75OAJQNl8alA
+         p8FQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWipuPrZMzbjREGlgScuOh7S125os35WpjqXTkQctj3+25IFOya8rfZ1PfFIqyzteBCuMed2ChqgYU0BdU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz/7gyxcgAuvPs8kxg08oCyyBsfKxZINqa6hvlECcRmZjY499Ed
+	CRp/2gk80GlP4C1qVOK2NCnoWIs7dh7ZIsDR885ANZoMQ2kLLPK9LWKs9m0bDGLGYw==
+X-Gm-Gg: ASbGncvBlPMOQ/FyaEKN2TdfLNwqXoCDpD9GHiLpCsGADkp0eDk5jjt3VZ6SPWDNDTn
+	b0DgSWKH3FIW3qYXxGG0ftXfIYT2Ji37UwR6E6JnYedQv8ldi7aBwvm9we9ZJZUHU1UC2g/Fpy7
+	JNf+8CX0G+00zz8BAuOSKHF+n13rLYMTRF3ktb9R4cUAraGtF0BY7KJzB2YrD/abkRfxcNhO69k
+	LOXFgBxWNNVXjQsLepTVE0s+zZHt5oAlnRLjPSh5PUfzT/ORynyCF33tQa0re+GYK7JJZHbI2fH
+	dsN8e8bfPqn1crZ3B+pV3xydAOQRWJ7SB36E/wvSjZTlCMqw6wnU8NVefoE/ZVCyv9xmzhQIB6U
+	ca4yyuo8wlY8OinQ373wj1w==
+X-Google-Smtp-Source: AGHT+IFXIw0hETMOIcFdZZPj95d4g3PWYz9SZjzY0rqj09Zgdh9l/ptS5MqTJPdGntxa1C5rvhU2+w==
+X-Received: by 2002:a05:600c:4f0c:b0:456:e94:466c with SMTP id 5b1f17b1804b1-459e162c21bmr99265e9.3.1754335109094;
+        Mon, 04 Aug 2025 12:18:29 -0700 (PDT)
 Received: from localhost ([2a00:79e0:9d:4:2069:2f99:1a0c:3fdd])
-        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459dd85f423sm33348665e9.18.2025.08.04.12.18.27
+        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b8e0bfc79fsm6386856f8f.56.2025.08.04.12.18.28
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 12:18:27 -0700 (PDT)
+        Mon, 04 Aug 2025 12:18:28 -0700 (PDT)
 From: Jann Horn <jannh@google.com>
-Date: Mon, 04 Aug 2025 21:17:07 +0200
-Subject: [PATCH early RFC 3/4] kasan: add support for running via KCSAN
- hooks
+Date: Mon, 04 Aug 2025 21:17:08 +0200
+Subject: [PATCH early RFC 4/4] mm/slub: Defer KCSAN hook on free to KASAN
+ if available
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,7 +84,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250804-kasan-via-kcsan-v1-3-823a6d5b5f84@google.com>
+Message-Id: <20250804-kasan-via-kcsan-v1-4-823a6d5b5f84@google.com>
 References: <20250804-kasan-via-kcsan-v1-0-823a6d5b5f84@google.com>
 In-Reply-To: <20250804-kasan-via-kcsan-v1-0-823a6d5b5f84@google.com>
 To: Masahiro Yamada <masahiroy@kernel.org>, 
@@ -102,260 +102,67 @@ Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org,
  kasan-dev@googlegroups.com, linux-mm@kvack.org, 
  Jann Horn <jannh@google.com>
 X-Mailer: b4 0.15-dev
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754335100; l=10086;
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1754335100; l=2111;
  i=jannh@google.com; s=20240730; h=from:subject:message-id;
- bh=y9lF2CD6zfkfZgvGaHoJ5qNs6uZl48FfUZ5qO9DoJ2o=;
- b=YpEZ1lrDao+pTUdAML2s5r2iEEJOkeJ6f219/fzn6kEo/SpJLJ2GwRh4rGUp3e+41ekTkTWfp
- AJPeUtPm+r7BC3tfmqlv05iHKsUBIUTu9ax8GDhAWYWUtkm2aRP0kfA
+ bh=rDvA4L4QbNOZZHJ9ypWKaY7n7K/aeq1dGeCN1JjgQg4=;
+ b=BNMFpmS4euz1y5tN47fZ/MPB/oBGEwflQjmjyeX1N1RVfc1GB9ZCh7BojwIDDdkpsHaV00kuS
+ UgRf/ZcDTKmDULwqSbKBaJxSEXdp2iwg5oMuT9N60I9e/Fr6RrmgtHO
 X-Developer-Key: i=jannh@google.com; a=ed25519;
  pk=AljNtGOzXeF6khBXDJVVvwSEkVDGnnZZYqfWhP1V+C8=
 
-Inserting ASAN and TSAN instrumentation at the same time is not
-supported by gcc/clang, and so the kernel currently does not support
-enabling KASAN (which uses ASAN) and KCSAN (which uses TSAN) at the same
-time.
-But luckily, the TSAN hooks provide a large part of what we get from ASAN
-hooks; so it is possible to hook up KASAN indirectly through KCSAN.
+SLUB calls __kcsan_check_access() in slab_free_hook() so that KCSAN has
+an opportunity to detect racy use-after-free bugs, for example by
+delaying the freeing a bit and watching for any other accesses to the
+allocation.
 
-There are some trade-offs with this - in particular:
-
- - Since OOB detection for stack and globals relies on ASAN-specific
-   redzone creation in the compiler, it won't be available when using
-   TSAN instrumentation (because the compiler thinks we only want
-   instrumentation for catching UAF).
- - Unlike KASAN, KCSAN does not have instrumentation for functions like
-   memcpy(), and this KASAN mode inherits this issue from KCSAN.
- - It makes it impossible to selectively disable KCSAN without also
-   disabling KASAN, or the other way around. To be safe, this mode only
-   enables KCSAN instrumentation in files in which both KASAN and KCSAN
-   are allowed.
-   (There are currently some places in the kernel that disable KASAN
-   without disabling KCSAN - I think that's probably unintentional, and
-   we might want to refactor that at some point such that either KASAN
-   and KCSAN are enabled in the same files, or files covered by KCSAN
-   are a subset of files covered by KASAN if that's somehow problematic.
-   Opting out of every compiler instrumentation individually in makefiles
-   seems suboptimal to me.)
- - I expect its performance to be significantly worse than normal KASAN,
-   but have not tested that; performance is not really something I care
-   about for my usecase.
-
-NOTE: instrument_read() and such call both KASAN and KCSAN, so KASAN
-will see duplicate accesses from instrument_read().
+When KASAN and KCSAN are active at the same time, and such a racy
+use-after-free occurs that KCSAN can detect, it would be nice to also
+get a full KASAN report. To make that possible, move the KCSAN hook
+invocation after the point where KASAN has marked the object as freed in
+KASAN builds.
 
 Signed-off-by: Jann Horn <jannh@google.com>
 ---
- include/linux/kasan.h   | 14 ++++++++++++++
- kernel/kcsan/core.c     | 13 +++++++++++++
- lib/Kconfig.kasan       | 17 +++++++++++++++++
- lib/Kconfig.kcsan       |  2 +-
- mm/kasan/kasan.h        | 11 -----------
- mm/kasan/kasan_test_c.c |  4 ++++
- mm/kasan/shadow.c       |  3 ++-
- scripts/Makefile.lib    |  6 +++++-
- 8 files changed, 56 insertions(+), 14 deletions(-)
+ mm/kasan/common.c | 5 +++++
+ mm/slub.c         | 9 +++++++--
+ 2 files changed, 12 insertions(+), 2 deletions(-)
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 890011071f2b..818c53707e72 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -75,6 +75,20 @@ extern void kasan_enable_current(void);
- /* Disable reporting bugs for current task */
- extern void kasan_disable_current(void);
+diff --git a/mm/kasan/common.c b/mm/kasan/common.c
+index ed4873e18c75..3492a6db191e 100644
+--- a/mm/kasan/common.c
++++ b/mm/kasan/common.c
+@@ -263,6 +263,11 @@ bool __kasan_slab_free(struct kmem_cache *cache, void *object, bool init,
  
-+/**
-+ * kasan_check_range - Check memory region, and report if invalid access.
-+ * @addr: the accessed address
-+ * @size: the accessed size
-+ * @write: true if access is a write access
-+ * @ret_ip: return address
-+ * @return: true if access was valid, false if invalid
-+ *
-+ * This function is intended for KASAN-internal use and for integration with
-+ * KCSAN.
-+ */
-+bool kasan_check_range(const void *addr, size_t size, bool write,
-+				unsigned long ret_ip);
-+
- #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
+ 	poison_slab_object(cache, object, init, still_accessible);
  
- static inline int kasan_add_zero_shadow(void *start, unsigned long size)
-diff --git a/kernel/kcsan/core.c b/kernel/kcsan/core.c
-index 8a7baf4e332e..aaa9bf0141a8 100644
---- a/kernel/kcsan/core.c
-+++ b/kernel/kcsan/core.c
-@@ -728,6 +728,19 @@ check_access(const volatile void *ptr, size_t size, int type, unsigned long ip)
- 	if (unlikely(size == 0))
- 		return;
- 
-+#ifdef CONFIG_KASAN_KCSAN
-+	/*
-+	 * Use the KCSAN infrastructure to inform KASAN about memory accesses.
-+	 * Do this only for real memory access, not for KCSAN assertions - in
-+	 * particular, SLUB makes KCSAN assertions that can cross into ASAN
-+	 * redzones, which would KASAN think that an OOB access occurred.
-+	 */
-+	if ((type & KCSAN_ACCESS_ASSERT) == 0) {
-+		kasan_check_range((const void *)ptr, size,
-+				  (type & (KCSAN_ACCESS_WRITE|KCSAN_ACCESS_COMPOUND)) != 0, ip);
++	if (!still_accessible) {
++		__kcsan_check_access(object, cache->object_size,
++				     KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT);
 +	}
-+#endif
 +
- again:
  	/*
- 	 * Avoid user_access_save in fast-path: find_watchpoint is safe without
-diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
-index f82889a830fa..0ee9f2196448 100644
---- a/lib/Kconfig.kasan
-+++ b/lib/Kconfig.kasan
-@@ -133,6 +133,7 @@ choice
+ 	 * If the object is put into quarantine, do not let slab put the object
+ 	 * onto the freelist for now. The object's metadata is kept until the
+diff --git a/mm/slub.c b/mm/slub.c
+index 31e11ef256f9..144399aebdc6 100644
+--- a/mm/slub.c
++++ b/mm/slub.c
+@@ -2311,8 +2311,13 @@ bool slab_free_hook(struct kmem_cache *s, void *x, bool init,
+ 	if (!(s->flags & SLAB_DEBUG_OBJECTS))
+ 		debug_check_no_obj_freed(x, s->object_size);
  
- config KASAN_OUTLINE
- 	bool "Outline instrumentation"
-+	depends on !KCSAN
- 	help
- 	  Makes the compiler insert function calls that check whether the memory
- 	  is accessible before each memory access. Slower than KASAN_INLINE, but
-@@ -141,17 +142,33 @@ config KASAN_OUTLINE
- config KASAN_INLINE
- 	bool "Inline instrumentation"
- 	depends on !ARCH_DISABLE_KASAN_INLINE
-+	depends on !KCSAN
- 	help
- 	  Makes the compiler directly insert memory accessibility checks before
- 	  each memory access. Faster than KASAN_OUTLINE (gives ~x2 boost for
- 	  some workloads), but makes the kernel's .text size much bigger.
+-	/* Use KCSAN to help debug racy use-after-free. */
+-	if (!still_accessible)
++	/*
++	 * Use KCSAN to help debug racy use-after-free.
++	 * If KASAN is also enabled, this is instead done from KASAN when the
++	 * object has already been marked as free, so that KCSAN's race-window
++	 * widening can trigger a KASAN splat.
++	 */
++	if (!IS_ENABLED(CONFIG_KASAN) && !still_accessible)
+ 		__kcsan_check_access(x, s->object_size,
+ 				     KCSAN_ACCESS_WRITE | KCSAN_ACCESS_ASSERT);
  
-+config KASAN_KCSAN
-+	bool "Piggyback on KCSAN (EXPERIMENTAL)"
-+	depends on KASAN_GENERIC
-+	depends on KCSAN
-+	help
-+	  Let KASAN piggyback on KCSAN instrumentation callbacks instead of
-+	  using KASAN-specific compiler instrumentation.
-+
-+	  This limits coverage of KASAN and KCSAN to files that are supported by
-+	  *both* KASAN and KCSAN.
-+
-+	  This is only useful if you want to run both the KASAN and KCSAN
-+	  subsystems at the same time.
-+
- endchoice
- 
- config KASAN_STACK
- 	bool "Stack instrumentation (unsafe)" if CC_IS_CLANG && !COMPILE_TEST
- 	depends on KASAN_GENERIC || KASAN_SW_TAGS
- 	depends on !ARCH_DISABLE_KASAN_INLINE
-+	depends on !KASAN_KCSAN
- 	default y if CC_IS_GCC
- 	help
- 	  Disables stack instrumentation and thus KASAN's ability to detect
-diff --git a/lib/Kconfig.kcsan b/lib/Kconfig.kcsan
-index 609ddfc73de5..86bf8f2da0a8 100644
---- a/lib/Kconfig.kcsan
-+++ b/lib/Kconfig.kcsan
-@@ -13,7 +13,7 @@ config HAVE_KCSAN_COMPILER
- menuconfig KCSAN
- 	bool "KCSAN: dynamic data race detector"
- 	depends on HAVE_ARCH_KCSAN && HAVE_KCSAN_COMPILER
--	depends on DEBUG_KERNEL && !KASAN
-+	depends on DEBUG_KERNEL
- 	select CONSTRUCTORS
- 	select STACKTRACE
- 	help
-diff --git a/mm/kasan/kasan.h b/mm/kasan/kasan.h
-index 129178be5e64..ec191ff1fc83 100644
---- a/mm/kasan/kasan.h
-+++ b/mm/kasan/kasan.h
-@@ -335,17 +335,6 @@ static __always_inline bool addr_has_metadata(const void *addr)
- }
- #endif
- 
--/**
-- * kasan_check_range - Check memory region, and report if invalid access.
-- * @addr: the accessed address
-- * @size: the accessed size
-- * @write: true if access is a write access
-- * @ret_ip: return address
-- * @return: true if access was valid, false if invalid
-- */
--bool kasan_check_range(const void *addr, size_t size, bool write,
--				unsigned long ret_ip);
--
- #else /* CONFIG_KASAN_GENERIC || CONFIG_KASAN_SW_TAGS */
- 
- static __always_inline bool addr_has_metadata(const void *addr)
-diff --git a/mm/kasan/kasan_test_c.c b/mm/kasan/kasan_test_c.c
-index 5f922dd38ffa..c4826c67aa33 100644
---- a/mm/kasan/kasan_test_c.c
-+++ b/mm/kasan/kasan_test_c.c
-@@ -154,6 +154,8 @@ static void kasan_test_exit(struct kunit *test)
- #define KASAN_TEST_NEEDS_CHECKED_MEMINTRINSICS(test) do {		\
- 	if (IS_ENABLED(CONFIG_KASAN_HW_TAGS))				\
- 		break;  /* No compiler instrumentation. */		\
-+	if (IS_ENABLED(CONFIG_KASAN_KCSAN))				\
-+		kunit_skip((test), "No checked mem*() with KCSAN");	\
- 	if (IS_ENABLED(CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX))	\
- 		break;  /* Should always be instrumented! */		\
- 	if (IS_ENABLED(CONFIG_GENERIC_ENTRY))				\
-@@ -1453,6 +1455,7 @@ static void kasan_global_oob_right(struct kunit *test)
- 
- 	/* Only generic mode instruments globals. */
- 	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_KASAN_GENERIC);
-+	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_KCSAN);
- 
- 	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
- }
-@@ -1468,6 +1471,7 @@ static void kasan_global_oob_left(struct kunit *test)
- 	 */
- 	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_CC_IS_CLANG);
- 	KASAN_TEST_NEEDS_CONFIG_ON(test, CONFIG_KASAN_GENERIC);
-+	KASAN_TEST_NEEDS_CONFIG_OFF(test, CONFIG_KASAN_KCSAN);
- 	KUNIT_EXPECT_KASAN_FAIL(test, *(volatile char *)p);
- }
- 
-diff --git a/mm/kasan/shadow.c b/mm/kasan/shadow.c
-index d2c70cd2afb1..136be8e6c98d 100644
---- a/mm/kasan/shadow.c
-+++ b/mm/kasan/shadow.c
-@@ -38,7 +38,8 @@ bool __kasan_check_write(const volatile void *p, unsigned int size)
- }
- EXPORT_SYMBOL(__kasan_check_write);
- 
--#if !defined(CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX) && !defined(CONFIG_GENERIC_ENTRY)
-+#if !defined(CONFIG_CC_HAS_KASAN_MEMINTRINSIC_PREFIX) && \
-+		!defined(CONFIG_GENERIC_ENTRY) && !defined(CONFIG_KASAN_KCSAN)
- /*
-  * CONFIG_GENERIC_ENTRY relies on compiler emitted mem*() calls to not be
-  * instrumented. KASAN enabled toolchains should emit __asan_mem*() functions
-diff --git a/scripts/Makefile.lib b/scripts/Makefile.lib
-index 017c9801b6bb..2572fcc0bf50 100644
---- a/scripts/Makefile.lib
-+++ b/scripts/Makefile.lib
-@@ -56,10 +56,13 @@ is-kasan-compatible = $(patsubst n%,, \
- 	$(KASAN_SANITIZE_$(target-stem).o)$(KASAN_SANITIZE)$(is-kernel-object))
- ifeq ($(CONFIG_KASAN),y)
- ifneq ($(CONFIG_KASAN_HW_TAGS),y)
-+# Disable ASAN instrumentation if KASAN is running off the KCSAN hooks.
-+ifneq ($(CONFIG_KASAN_KCSAN),y)
- _c_flags += $(if $(is-kasan-compatible), $(CFLAGS_KASAN), $(CFLAGS_KASAN_NOSANITIZE))
- _rust_flags += $(if $(is-kasan-compatible), $(RUSTFLAGS_KASAN))
- endif
- endif
-+endif
- 
- ifeq ($(CONFIG_KMSAN),y)
- _c_flags += $(if $(patsubst n%,, \
-@@ -95,7 +98,8 @@ endif
- is-kcsan-compatible = $(patsubst n%,, \
- 	$(KCSAN_SANITIZE_$(target-stem).o)$(KCSAN_SANITIZE)$(is-kernel-object))
- ifeq ($(CONFIG_KCSAN),y)
--_c_flags += $(if $(is-kcsan-compatible), $(CFLAGS_KCSAN))
-+enable-kcsan-instr = $(and $(is-kcsan-compatible), $(if $(CONFIG_KASAN_KCSAN),$(is-kasan-compatible),y))
-+_c_flags += $(if $(enable-kcsan-instr), $(CFLAGS_KCSAN))
- # Some uninstrumented files provide implied barriers required to avoid false
- # positives: set KCSAN_INSTRUMENT_BARRIERS for barrier instrumentation only.
- _c_flags += $(if $(patsubst n%,, \
 
 -- 
 2.50.1.565.gc32cd1483b-goog
