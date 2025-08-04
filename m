@@ -1,197 +1,104 @@
-Return-Path: <linux-kernel+bounces-754579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9A253B198E0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:38:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2E4FB198C4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:38:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C7951897D73
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:39:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EDC6B1897A41
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:38:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0668C1DE3C3;
-	Mon,  4 Aug 2025 00:38:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DE2C1A08A4;
+	Mon,  4 Aug 2025 00:37:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oldID5e/"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="p3Cm9v5Y"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 596E42A1AA;
-	Mon,  4 Aug 2025 00:37:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1AB515A8;
+	Mon,  4 Aug 2025 00:37:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267879; cv=none; b=L0+jZlFiaPzEUEncnI1C+pfpiO2zPBg3FJiPdqKBinO0eO0Qxjm5+CN16CTxuxa3jaH+M9FoQ+WXU4YbpcEFUkQlKemJvjchNXOvT96XsJ3LLG6Yug+ADo5g6P8jO+a7ftHpF244cWLSgnItHM9mZC4Lc8RfKW2svrlT9nqe0W0=
+	t=1754267838; cv=none; b=hca3Y6G98i2wcq4EX8gSaYOfoRccxkbfzU5GszFjD2Fw9JMa/LYj4En1wwp+qayjpFTOUt847fdub1b13kIL+RnUFmYnMtbptRK2Pu1Xiruzzqqy7gs7bvA0fgu8oBiO2eno8ChufkYBdzsc0pERMZwAkJGlJnaMSIpVVKnz4wI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267879; c=relaxed/simple;
-	bh=S2dXQIPOUxGwvYYng3bTSOMrZzQRNxUgv8sFHz0qPBE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=C6PPg53BcH/IlLS03KDBlB9VMVrA9RJCK6ZafPXeSfJVwgc1o6bAXW/RymyABkrCjsGKTEwhc4yV8KhnrICwcqOdFZeICqNMMiC3Y154RsQfGhofuosseyltoDgfi060lxLVi61vkVZk/bFzw8F7wsyXhBAXn616nJLHhDISDcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oldID5e/; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02B03C4CEF8;
-	Mon,  4 Aug 2025 00:37:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267879;
-	bh=S2dXQIPOUxGwvYYng3bTSOMrZzQRNxUgv8sFHz0qPBE=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=oldID5e/BU4tai37wd+p1AbLvouVH7TCh/UnXItBLwMOpHtqW/ZNH0ZD21L+wzNAw
-	 VdTLKk2LRAOqx4PIfpEgMV7lf2cb4mUM+DIqJW4OugdYaKYfzU6w5CigwvR6Fqx1Co
-	 o7TouXZwDg82bSpgsIPj8ziB9L8u1yoKqRNbm9vbWxKDwK0hOyOTaoiK/mvYi8hvYv
-	 cUHX+cIQzcBWFMsStmvsy0sgQn1b01foFnZ0zyb1vH8jaifxsoUcPkXTqHwk91S1Ho
-	 GUI2h8hGPOwg6DVuOaRnzb5y7/DZL0q0CzpLoL7TO9Iwum79xIAF9SuRQ2vJE1yl53
-	 WyJtCpFRYjAOA==
-From: Sasha Levin <sashal@kernel.org>
-To: patches@lists.linux.dev,
-	stable@vger.kernel.org
-Cc: Hans de Goede <hansg@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Sasha Levin <sashal@kernel.org>,
-	alexander.usyskin@intel.com,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.1 33/51] mei: bus: Check for still connected devices in mei_cl_bus_dev_release()
-Date: Sun,  3 Aug 2025 20:36:25 -0400
-Message-Id: <20250804003643.3625204-33-sashal@kernel.org>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804003643.3625204-1-sashal@kernel.org>
-References: <20250804003643.3625204-1-sashal@kernel.org>
+	s=arc-20240116; t=1754267838; c=relaxed/simple;
+	bh=x83m7k4BWuSa0TpdMPWm3ES3lvww9G8TsN7v04VdvLY=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MaU/1iFAktxQRbSccSegIxSqrQeHeBnWoGpOrIMhhgWCfvw3oKxZl3OU+5mp0ubbnZ9gk5MUVKTdZ9dNiFGK14dUqqWtjrRpflcNy5jo4tmSTSqB/EXFEY3zzIEQNpgYytC8NQFkEuX94WAVacJBXmR+AydpHGrvwATjHA2b46o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=p3Cm9v5Y; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754267830;
+	bh=VBkYCUAHlBA600WuNGxF012bSpoq6yk+AD/XPesy31Y=;
+	h=Date:From:To:Cc:Subject:From;
+	b=p3Cm9v5YPGwY6xeX5JxWYKeKJNhvzRzboLm9ku4QmoAtbF3PHugLv5EVksqzjLfB7
+	 S3kVRg3ibkThX857Hk7eNM6DL6iI6CLBwJDiGFzlftdqxohGQqsRPhrjYg2MI4U94k
+	 5FT3hw6ceBrdnbXzVY8D2/zt+rgyzmE/TBJ2oxQDMtcwpXWCcEEX/E/HAH5/IxBN5r
+	 xZMjY/7LRHuZDpiyILAqPy/sTe/NuYnPZ35t09ONI7UF8Ofg0PDy6vqxGu/v8nPKKM
+	 RRxcbBIpVrcuFqB94ZNpsd47g7D+7tFRHalFySkKCdQRyK9Ijl9W5mutUybZz5XVCS
+	 qHoR4QPJ1VFcQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwHgp3WHGz4xfP;
+	Mon,  4 Aug 2025 10:37:10 +1000 (AEST)
+Date: Mon, 4 Aug 2025 10:37:09 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: duplicate patch in the spi-fixes tree
+Message-ID: <20250804103709.26ce4f17@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.147
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; boundary="Sig_/d8020waB21ODfy9x0zNm4S8";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-From: Hans de Goede <hansg@kernel.org>
+--Sig_/d8020waB21ODfy9x0zNm4S8
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-[ Upstream commit 35e8a426b16adbecae7a4e0e3c00fc8d0273db53 ]
+Hi all,
 
-mei_cl_bus_dev_release() also frees the mei-client (struct mei_cl)
-belonging to the device being released.
+The following commit is also in the sound-asoc-fixes tree as a different
+commit (but the same patch):
 
-If there are bugs like the just fixed bug in the ACE/CSI2 mei drivers,
-the mei-client being freed might still be part of the mei_device's
-file_list and iterating over this list after the freeing will then trigger
-a use-afer-free bug.
+  ffcfd071eec7 ("spi: cs42l43: Property entry should be a null-terminated a=
+rray")
 
-Add a check to mei_cl_bus_dev_release() to make sure that the to-be-freed
-mei-client is not on the mei_device's file_list.
+This is commit
 
-Signed-off-by: Hans de Goede <hansg@kernel.org>
-Link: https://lore.kernel.org/r/20250623085052.12347-11-hansg@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
+  a735ee58c0d6 ("spi: cs42l43: Property entry should be a null-terminated a=
+rray")
 
-LLM Generated explanations, may be completely bogus:
+in the sound-asoc-fixes tree.
 
-**YES**
+--=20
+Cheers,
+Stephen Rothwell
 
-This commit should be backported to stable kernel trees. Here's my
-extensive analysis:
+--Sig_/d8020waB21ODfy9x0zNm4S8
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-## Security Impact Analysis
+-----BEGIN PGP SIGNATURE-----
 
-The commit adds a defensive check to detect use-after-free
-vulnerabilities in the MEI (Management Engine Interface) subsystem. The
-code change is minimal but addresses a serious security issue:
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiQALUACgkQAVBC80lX
+0GydyAgAhdqDoHlboZ0Eg+wSOOmtm0+7fWXB6erK5lb+qZV0j+T5U99iKFVkpCzu
+5RzELyylu9wyqi7CQa1k5cFWK//WMQWQAlpd9TfGnwWBf3OdzOM+s6evP86eCiRE
+5vNF+mWqHtIR69zQ/Cd/39RtUVhJ5QyPK00r5h4MvyVERzTb+RfyoVFB1YzZKzWm
+LGjo3MjVrJLz1D0LwUcJERgi4xbnogXk/nmUC2VP8IpZ0DI5TbPWk0mSrjZwCC50
+6j/oXN9ouGgbZL5nTEAsYbHOazy6ho3PrrEquKUCWSKZKBLnnDwnlIMVt+thewXn
+Umt5dhq7k8FhqVohtmSx+2FHkQHr1w==
+=gTcd
+-----END PGP SIGNATURE-----
 
-```c
-+       struct mei_device *mdev = cldev->cl->dev;
-+       struct mei_cl *cl;
-+
-+       list_for_each_entry(cl, &mdev->file_list, link)
-+               WARN_ON(cl == cldev->cl);
-+
-        kfree(cldev->cl);
-```
-
-## Why This Is a Critical Backport Candidate
-
-1. **Use-After-Free Prevention**: The commit addresses a classic memory
-   corruption bug. When `mei_cl_bus_dev_release()` frees the mei-client
-   structure via `kfree(cldev->cl)`, if that client is still on the
-   `mei_device->file_list`, any subsequent iteration over that list will
-   access freed memory, potentially leading to:
-   - Kernel crashes
-   - Information disclosure
-   - Arbitrary code execution with kernel privileges
-
-2. **Widespread Hardware Impact**: MEI is present on virtually all
-   modern Intel systems with Management Engine, making this a broadly
-   applicable fix affecting millions of devices.
-
-3. **Low Risk, High Value**: The change adds only 6 lines of defensive
-   code that:
-   - Doesn't modify any existing logic flow
-   - Only adds a warning mechanism
-   - Has zero performance impact
-   - Cannot introduce regressions
-
-4. **Security Context**: The commit message references "just fixed bug
-   in the ACE/CSI2 mei drivers," indicating this is addressing real-
-   world vulnerabilities already discovered in MEI client drivers. This
-   suggests similar bugs may exist in other MEI drivers.
-
-5. **Stable Kernel Criteria Compliance**:
-   - ✓ Fixes a serious bug (security vulnerability)
-   - ✓ Minimal change (6 lines)
-   - ✓ No new features
-   - ✓ Obvious correctness
-   - ✓ Already tested (signed-off by maintainer Greg KH)
-
-## Technical Details
-
-The fix works by iterating through `mdev->file_list` before freeing
-`cldev->cl` and issuing a `WARN_ON()` if the to-be-freed client is still
-in the list. This serves as an early warning system to catch driver bugs
-before they cause memory corruption.
-
-## Recommendation
-
-This should be backported to all currently maintained stable kernel
-branches (6.1.x, 6.6.x, 6.12.x) with priority given to LTS kernels. The
-combination of:
-- Security impact (use-after-free in kernel space)
-- Wide hardware coverage (Intel MEI)
-- Minimal risk (detection-only change)
-- Real-world bug evidence (ACE/CSI2 drivers)
-
-Makes this an ideal stable backport candidate that meets all the
-criteria for inclusion in stable kernels.
-
- drivers/misc/mei/bus.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
-index 7b7f4190cd02..19bc1e9eeb7f 100644
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -1113,6 +1113,8 @@ static void mei_dev_bus_put(struct mei_device *bus)
- static void mei_cl_bus_dev_release(struct device *dev)
- {
- 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
-+	struct mei_device *mdev = cldev->cl->dev;
-+	struct mei_cl *cl;
- 
- 	if (!cldev)
- 		return;
-@@ -1120,6 +1122,10 @@ static void mei_cl_bus_dev_release(struct device *dev)
- 	mei_cl_flush_queues(cldev->cl, NULL);
- 	mei_me_cl_put(cldev->me_cl);
- 	mei_dev_bus_put(cldev->bus);
-+
-+	list_for_each_entry(cl, &mdev->file_list, link)
-+		WARN_ON(cl == cldev->cl);
-+
- 	kfree(cldev->cl);
- 	kfree(cldev);
- }
--- 
-2.39.5
-
+--Sig_/d8020waB21ODfy9x0zNm4S8--
 
