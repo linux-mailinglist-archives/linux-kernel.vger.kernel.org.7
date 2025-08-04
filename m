@@ -1,174 +1,175 @@
-Return-Path: <linux-kernel+bounces-754899-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754901-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42A16B19E32
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:04:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8D0CDB19E37
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:05:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C593BB44E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:04:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADBF31798EB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:05:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842BC244692;
-	Mon,  4 Aug 2025 09:04:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E4624503C;
+	Mon,  4 Aug 2025 09:04:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bg1a7Alg"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="H/j00l76"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A34242D6F;
-	Mon,  4 Aug 2025 09:04:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4398F246780
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:04:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298254; cv=none; b=tWVo5+JWvcSKSPw57fdPZ4Rznw0GoeqeBtuIyZliOkKUPJ+DDKczBNCxpGrobsdv/uR6DBVts1f4zH8UyQz3h5KrKJRqs5Zy9odexs4Q5GTo836uCVki83WCc0qcMnOEoVUGJb8B9ZUE6ioTajCEBSwQbBldSDid4wgvzLbo+vs=
+	t=1754298269; cv=none; b=foogMEJ/zWFwgMG8o8t1wAqiK4PDCT2oMYcpjcwmUt81+aL6FKJnZe+0YCZ1Uwq6hnbiNmTOnKfRGc+AuInoz6KUq414RrGSkkYIH5jaXdArZi1gXAlAnC5kbNe6aWnYuItTkF1/A8l6jO9f2N+607KtjGjn+FurxzMHMaw2j0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754298254; c=relaxed/simple;
-	bh=bQ6XJxrd3l0nExUNe/0IQi1uhBICMEx32FAEE1whfIY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ou18HOXR300F1TA7EJeikZML33H5FfOJiQRY6NOtUeDim3BCAJC+Ou7FkMvczOdTLURb5gdFqXjOxQpav1b9Y866rOJMNUNKnAwXIdwyhQQvmcPqAMnfLXpysN3r+wkECEPtegBEkPZ0C0TA+ad4sKbUnVfwSEXQfi37bXsYZis=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bg1a7Alg; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae401ebcbc4so714028966b.1;
-        Mon, 04 Aug 2025 02:04:12 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754298251; x=1754903051; darn=vger.kernel.org;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=acSH/YECNzPqrJpecMNECSlF0Ozf4k+b5plEpSVAioQ=;
-        b=Bg1a7AlgW1L0BkaXdtpAiKxMDnaMj1VwS6mL1/LxbIAZkR4DMbqmC5wpFbo2swFFyA
-         cPRJdrSFkXhxYB+4+qOKP8HDdd/31w65l4v8bwu32NPSSiIXG9PeGnDzYQ59XfBxTylo
-         KTuXt+JurcK/VTyIuDd73B6wm+cHLC8m1tNKBW0P+DW7ZryqfQ9MbawRFhtRocpEbM7L
-         6v6tJYVA8h8UojjDxbIwmlV7HtPwcRwOhbb1IsglaF1aj1ys13KOCdbs3CD7ipy9KSGC
-         Bf3zqbkB7CkB07RhXAqwHleoi7vy53PLDwUHZJFnjJFth4wZ5E4oPky2BHTk4b76Ng+G
-         wKQw==
+	s=arc-20240116; t=1754298269; c=relaxed/simple;
+	bh=3ynaIvsBNRVvZd577WmJObLTK8KxkOoTLbIepnKpTrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=nWUwbfGGMMkjKWV6Eyz58hfvZ0KRNfTSydcmfXUw2VJW/JVAK0tqZs1UFXyJMhUMlVmYnmGKps8+IWIYKRlt/HYNproAqBu+nLPYWqD6NZITD14vUhfMrtfC3YEDOkbkHGoP6rNsmn7IlCXcJvprTKIths/I9yQBQOgX15maXqU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=H/j00l76; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573NmrVF026828
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 09:04:26 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	yxj88AoDLPC4Xz7nvIZCrmjG+oBu2ULVQ7Y3/Wt0Pxc=; b=H/j00l76Mr+gYapm
+	+ZtxUX6bjTjpCIenYszeIdCS8nnZ+QQ7m5Ja34mr+hTJZ3N3w4ClQQnp7jW5sQEy
+	kB4zFodR5A65bMjtX0cI9EDDKEvW1WyOqCDZFthtLgb9exhVJ0CAGt42dgiCYQzU
+	WT0WmveQ62UM9ig64TDyxkD3he9zgjrl26+NSII0Ox0P6oc7So5KYV5de6y0KKto
+	wZqCavNdiTBD62Yww9JsFsuOVHeEmhUDBgyBMQIGq/K/3bbe/sQRV+BNPmCW27oN
+	oEQWD4hC/wcRxehaOfK5IIEkLhqh3OCMRXZJ6BThHhpBEoN+3nO4KJMvtdlA3dPw
+	a9QMGw==
+Received: from mail-qk1-f199.google.com (mail-qk1-f199.google.com [209.85.222.199])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48981rmhwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:04:25 +0000 (GMT)
+Received: by mail-qk1-f199.google.com with SMTP id af79cd13be357-7e48325048aso84983285a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:04:25 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754298251; x=1754903051;
-        h=user-agent:in-reply-to:content-disposition:mime-version:references
-         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=acSH/YECNzPqrJpecMNECSlF0Ozf4k+b5plEpSVAioQ=;
-        b=qxUAQsGBXlZNQkvH5EnIoKxN7DX/DkrKeHAsY8B8j0QLjlZzWxW7asdWBjNtEtxHyM
-         WUc2BDRol4DyrE230Sa3yDr2GszitzOD4I1cJ+mLs552IJWzY8xOeLaE6UcCtfG144H5
-         g3502JGxQH8i+IAOd/kNImpqHP+aMsTOG0ZOhSghSUwdZVaW7EF2V2WoguVGcgldBXRH
-         LH8UelLInuvg6m147YBYQCaPCJdM7LskcE5e9TYTQbeVJbRN4uK+z9e3qiLenGsZ3WiL
-         l9/YQYl0JqGqQEl152kz2gofTcwnnfBiGT+Rn7Nvk/8qAthDVvmSWi9eDYsVVNWtZVfB
-         Lqyg==
-X-Forwarded-Encrypted: i=1; AJvYcCUOSS/d9BDF99WAKm3+Lb3TFTTxJ7yDhCrBG0HBcIXUf/0MdZR/QwiqBzGcf3NlyUAkh4GZ0eSzXSkb+gc=@vger.kernel.org, AJvYcCXdJu52zHYNKU5biGdbDmH7vVzLNFiIXqwX6EFPtRzzjjrIKprcZE4zfXzG7DHZTdkixzCchb/aQr6MDeL2V0iH@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmXtAVHVLJyRsbGcga8rbcYGGPnDhIP//8C4aI3wh0hmUEZ8zv
-	/2lH578iMGmMmMwlRs6jGJD0YBUk2iVVfRhMqo17kWXkCpqXf8O2/CKy
-X-Gm-Gg: ASbGncun6a6aLrH6LOPqnjvbITcmDxHntAFvX4YpLuaqvx/0no3XV1ErIR1+59cz/1u
-	0A9C92wvAXesf5N0uVs6oyZRvXymlXLrjupu0izhPG8/FNVOjqrAjRtS6a4XngN8Z8pkR1USqdq
-	URBaFY+nFCfa0w6NorU1p7uRPnYM7bQElL9NirAVp1zi5efb2ekZ8yAHvOEc7qaIRDpiQnA4Xv3
-	Cd8cNl99xR5Zf3BydxSFYuScVdune/1ga8ejhv5rPWRR5Ykg/7/siMw4NzF0AznlmBn36VNpvgo
-	gwambBnUuDA9bog1Qeb4THv/mxpZoGvjQCpAf6temK84z8bSesJwoHOvOiWETucyvt2BUho9I7E
-	mY+1BL+Er6AnBWV4hjjJuqAiBUygO4XBX
-X-Google-Smtp-Source: AGHT+IFo1FiK09kxSqh9OOz66lLLPAg3rVm2WiND0BXkRJXNrtebIpCavH4jstjbD8rfqeuDjfzk3Q==
-X-Received: by 2002:a17:907:3fa2:b0:adb:2e9f:5d11 with SMTP id a640c23a62f3a-af940174eafmr807904766b.37.1754298250902;
-        Mon, 04 Aug 2025 02:04:10 -0700 (PDT)
-Received: from localhost ([185.92.221.13])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b77sm702303266b.51.2025.08.04.02.04.10
-        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
-        Mon, 04 Aug 2025 02:04:10 -0700 (PDT)
-Date: Mon, 4 Aug 2025 09:04:10 +0000
-From: Wei Yang <richard.weiyang@gmail.com>
-To: Aboorva Devarajan <aboorvad@linux.ibm.com>
-Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
-	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
-	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
-	baohua@kernel.org, linux-mm@kvack.org,
-	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
-	donettom@linux.ibm.com, ritesh.list@gmail.com
-Subject: Re: [PATCH v3 4/7] mm/selftests: Fix split_huge_page_test failure on
- systems with 64KB page size
-Message-ID: <20250804090410.of5xwrlker665bdp@master>
-Reply-To: Wei Yang <richard.weiyang@gmail.com>
-References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
- <20250729053403.1071807-5-aboorvad@linux.ibm.com>
+        d=1e100.net; s=20230601; t=1754298265; x=1754903065;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=yxj88AoDLPC4Xz7nvIZCrmjG+oBu2ULVQ7Y3/Wt0Pxc=;
+        b=HQSQo4ZR1jUE99NIT2FlQJE6ZNOgizghTZO5aWMFhZQ1c9fLe51eFetqAyGj78o8r4
+         TYGBtrWGxpZg3wkjQdtnCQYRK7ioTyNIJBrf8SKwk3z5722SDS1q7/cDq38KME7XaHab
+         PH/yyULYP9TE7P/gnQd47l15UwvI93rMRRQRCnDl8nVYNkzo7GbxbOb+ZOV8LJ/OoEHK
+         4KlYUlalojk/RENLB5AGQhcK85wNz0/KcdTqx30Aeyvu5mdCTmeeEnh1tr4zgywiZQS7
+         Z9nCaozwtR2HwewBlvAOH4XI1FYymFGWrJqHmbkt5A5MdOuVj5gy33l8+JHAO4ZhOQl2
+         G31g==
+X-Forwarded-Encrypted: i=1; AJvYcCWQIUXqlN7kFXA5W2a3Hf7hEuqhgsrj1TqoQWhWEVGgz3t+mY30LVX16rclKj1mu0nQUeTFEv/MxABHbmQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzNec4LG1tNKloWc/pkqXwmLKT9GmD8TJv/TUnc5Rcma24NuPO8
+	q0CGrKHrGg/T9Ywf3oPn24fmgGhNLpIfqkDdxSux2FG4kVINlcRTo1VlbPO1xJboBE4CROpYHl6
+	CSBknp+Nl92Zc1S4iOpMCQLK1TFEeWcRrRWp6Q5hyN+Yqd80nmxSXVl/mwhaA1T/vZrM=
+X-Gm-Gg: ASbGnctjLvIhulWgNQriIe8/Mv3sg8xd9lVtN6WgZ0ofWS7N4qIh7unXGRSVqQtsm4W
+	HdfDDAmaFcLFEVceMapBxf5ChaM1J3dwCdRhC0WcgkPYm/8DtlXQnFaQpTO+dtM/USMaFq4W1LM
+	fAMCetU7gZGbMq+uMxDbeKon4ZqaVjBhAl95KxhFWrTvk5fWWOwgoDLhhs0RHc/ZfKr92scwISu
+	FvgBv0lO4r+GYyOBMDnBjEYXLvPkZ4jz1I9i5q2MbyJXPqDXqNCiRBndPivf4esBRmDzTbTmhWa
+	Czrt0xkMOtxENBdvOvq4JtiFh0txx77tRAep1djvQlLp6T417rxa2bo7S4EqiH0r+B+Xsv7RyvP
+	psvd9XK24adwPsgZhQg==
+X-Received: by 2002:a05:620a:40c6:b0:7e8:5bb:b393 with SMTP id af79cd13be357-7e805bbb656mr66103685a.4.1754298265103;
+        Mon, 04 Aug 2025 02:04:25 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHT5U6nf7OFxjlAHz3AXwYcJmyL/ozw3xGtfssCSEsyIVFeEN+uSY6B0F2EWAEjbDHiy3UmaQ==
+X-Received: by 2002:a05:620a:40c6:b0:7e8:5bb:b393 with SMTP id af79cd13be357-7e805bbb656mr66101085a.4.1754298264504;
+        Mon, 04 Aug 2025 02:04:24 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91aad117dsm695375766b.77.2025.08.04.02.04.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 02:04:24 -0700 (PDT)
+Message-ID: <93403461-c0b2-4c0c-91b3-8cbd4c1c5ebe@oss.qualcomm.com>
+Date: Mon, 4 Aug 2025 11:04:22 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250729053403.1071807-5-aboorvad@linux.ibm.com>
-User-Agent: NeoMutt/20170113 (1.7.2)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] spi: spi-qpic-snand: fix calculating of ECC OOB regions'
+ properties
+To: Gabor Juhos <j4g8y7@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Varadarajan Narayanan <quic_varada@quicinc.com>,
+        Sricharan Ramabadhran <quic_srichara@quicinc.com>,
+        Md Sadre Alam <quic_mdalam@quicinc.com>
+Cc: linux-spi@vger.kernel.org, linux-mtd@lists.infradead.org,
+        linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20250731-qpic-snand-oob-ecc-fix-v1-1-29ba1c6f94e5@gmail.com>
+ <72d5f805-1637-4c82-af25-e78b978c5799@oss.qualcomm.com>
+ <8883471e-57b9-4492-8d4a-aca3b4538682@gmail.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <8883471e-57b9-4492-8d4a-aca3b4538682@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-ORIG-GUID: jVNPsGSobzUHdlAZtMOW5dpoDhC1tHzC
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA0OCBTYWx0ZWRfX0twx5xRsBMFZ
+ gVA6rd7E3PQS6FcA5e/hHkL1wXShpY72XAylERkuz9w9Z2YfL+nL+hEhurzhOQ/+6tbu4lIh9zg
+ +uK+WFUscYnrhlg24OZVZEbZMh7vX9fhM2K+wKI0n7IQLbh1uc/hjZzPPn9GHzygT1Frk4rZuXd
+ OTmvUYsFGXmtMT9O0eOSbGFwnvc7zn/G1rhTzSQNeZN8Iimpv2plfcxbcONm7AoOa9THQapqIlk
+ 5w7uS7gCmVctUFvgSjXFNBRn0hiNM6uKFQV7f+BexMruq2UNNVcab3479XWEbT7F7VKAQgUTVSJ
+ OBsleThVYBYK4MXQKqcXHCdt8o4TFp2GbDDsfJieIP1tib5OH+K1wI9twzMYrQyCmSPleo6m1VE
+ EHlYDZ70hqipXDaVqPFd0kcRnPo7o6uyqSP3BYpdeQ2MylzH3W5supFnTj0v8GJhYHIvF+FV
+X-Proofpoint-GUID: jVNPsGSobzUHdlAZtMOW5dpoDhC1tHzC
+X-Authority-Analysis: v=2.4 cv=a8Mw9VSF c=1 sm=1 tr=0 ts=68907799 cx=c_pps
+ a=HLyN3IcIa5EE8TELMZ618Q==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=sgHexgGcLWnyGziH-awA:9
+ a=3ZKOabzyN94A:10 a=QEXdDO2ut3YA:10 a=bTQJ7kPSJx9SKPbeHEYW:22
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ lowpriorityscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
+ spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 impostorscore=0
+ suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040048
 
-On Tue, Jul 29, 2025 at 11:04:00AM +0530, Aboorva Devarajan wrote:
->From: Donet Tom <donettom@linux.ibm.com>
->
->The split_huge_page_test fails on systems with a 64KB base page size.
->This is because the order of a 2MB huge page is different:
->
->On 64KB systems, the order is 5.
->
->On 4KB systems, it's 9.
->
->The test currently assumes a maximum huge page order of 9, which is only
->valid for 4KB base page systems. On systems with 64KB pages, attempting
->to split huge pages beyond their actual order (5) causes the test to fail.
->
->In this patch, we calculate the huge page order based on the system's base
->page size. With this change, the tests now run successfully on both 64KB
->and 4KB page size systems.
->
->Fixes: fa6c02315f745 ("mm: huge_memory: a new debugfs interface for splitting THP tests")
->Reviewed-by: Dev Jain <dev.jain@arm.com>
->Reviewed-by: Zi Yan <ziy@nvidia.com>
->Co-developed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
->Signed-off-by: Donet Tom <donettom@linux.ibm.com>
->---
-> .../selftests/mm/split_huge_page_test.c       | 23 ++++++++++++-------
-> 1 file changed, 15 insertions(+), 8 deletions(-)
->
->diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
->index 05de1fc0005b..718daceb5282 100644
->--- a/tools/testing/selftests/mm/split_huge_page_test.c
->+++ b/tools/testing/selftests/mm/split_huge_page_test.c
->@@ -36,6 +36,7 @@ uint64_t pmd_pagesize;
+On 8/4/25 9:22 AM, Gabor Juhos wrote:
+> Hi Konrad,
 > 
-> #define PFN_MASK     ((1UL<<55)-1)
-> #define KPF_THP      (1UL<<22)
->+#define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
+> 2025. 08. 01. 13:56 keltezéssel, Konrad Dybcio írta:
+>> On 7/31/25 8:11 PM, Gabor Juhos wrote:
 > 
-> int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
-> {
->@@ -522,6 +523,9 @@ int main(int argc, char **argv)
-> 	const char *fs_loc;
-> 	bool created_tmp;
-> 	int offset;
->+	unsigned int max_order;
->+	unsigned int nr_pages;
->+	unsigned int tests;
+> ...
 > 
-> 	ksft_print_header();
+>>> --- a/drivers/spi/spi-qpic-snand.c
+>>> +++ b/drivers/spi/spi-qpic-snand.c
+>>> @@ -213,8 +213,16 @@ static int qcom_spi_ooblayout_ecc(struct mtd_info *mtd, int section,
+>>>  	if (section > 1)
+>>>  		return -ERANGE;
+>>>  
+>>> -	oobregion->length = qecc->ecc_bytes_hw + qecc->spare_bytes;
+>>> -	oobregion->offset = mtd->oobsize - oobregion->length;
+>>> +	if (!section) {
+>>> +		oobregion->offset = 0;
+>>> +		oobregion->length = qecc->bytes * (qecc->steps - 1) +
+>>> +				    qecc->bbm_size;
+>>> +	} else {
+>>> +		oobregion->offset = qecc->bytes * (qecc->steps - 1) +
+>>> +				    qecc->bbm_size +
+>>> +				    qecc->steps * 4;
+>>> +		oobregion->length = mtd->oobsize - oobregion->offset;
+>>> +	}
+>>
+>> How about
+>>
+>> if (section == 0) {
+>> } else if (section == 1) {
+>> } else { return -ERANGE }
+>>
+>> ?
 > 
->@@ -533,35 +537,38 @@ int main(int argc, char **argv)
-> 	if (argc > 1)
-> 		optional_xfs_path = argv[1];
+> The current way follows the implementation in the qcom_nandc driver, so it makes
+> it easier to compare the two, but it can be changed of course.
 > 
->-	ksft_set_plan(1+8+1+9+9+8*4+2);
->-
-> 	pagesize = getpagesize();
-> 	pageshift = ffs(pagesize) - 1;
-> 	pmd_pagesize = read_pmd_pagesize();
-> 	if (!pmd_pagesize)
-> 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
-> 
->+	nr_pages = pmd_pagesize / pagesize;
->+	max_order = GET_ORDER(nr_pages);
+> However, since the 'section' parameter is an integer can we agree up on using a
+> switch statement instead of multiple ifs?
 
-There is a sz2ord() in cow.c and uffd-wp-mremap.c.
+That works too
 
-Maybe we can factor it into vm_util.h and use it here.
-
--- 
-Wei Yang
-Help you, Help me
+Konrad
 
