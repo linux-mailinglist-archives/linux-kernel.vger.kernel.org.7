@@ -1,115 +1,147 @@
-Return-Path: <linux-kernel+bounces-755324-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755325-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4CCBBB1A4F0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:30:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F18CB1A4F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 035871885654
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:31:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D12BC3BF214
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32A2026D4F6;
-	Mon,  4 Aug 2025 14:30:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE7AB271454;
+	Mon,  4 Aug 2025 14:31:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BARx+cGg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="U1/KmwBS"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FDA72701B4
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:30:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9351711713;
+	Mon,  4 Aug 2025 14:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317845; cv=none; b=UwtnT8cXXRroSjiclweL5nekOeY0uVDAROUCkDuDmd9SfouQOIyEqYlGFc0vZ6PXpzo5ewiDPPzGaqAc/dPnN/Tq+R7xSXAyTVWGen2qwZxgWSip7BBGA1qCp+tR3y1bVKgVkY2UPV2O54sMFSQjYzRKR3f7KxeypBkhnDDQGeA=
+	t=1754317871; cv=none; b=twsNDpPKAVK9N0Wcp5kT98c4V7m+a5tnxBdroq3Uges5x02Op8xGwdhsDj7AuCSd7FYRxG/oCyZL0FYI+p7iDEMkXIPEOQojM3bNjgtNyCMv9Dr3ZJPGnccC1a04H3y5+L1Wg8iuo3XLQ+jtnLpQtUeBBPUS8UzjzlyAEqMLiFw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317845; c=relaxed/simple;
-	bh=Ni8CSHpOhukdN/21kURJP+BanGjYorMPnmv5tP1P+3c=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=TSkwC+jPEh55z9qxzBk9g9Od5mLIRWe+YrahXWCAwANTCgLja1yj9anVNlJr98T8YrRX4AT1cXz/OZ6w7umxFjq1gtm63y/5cZZE5YW3v3PQ+1gmsZgEVqMYOD0nhAX5t6IhxiHUJblqE8UtHTmbKXNG9p/6j4PIqNOtHcZi93Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BARx+cGg; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754317841;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=oLfj4Z6OrcNJ/e8ghBxGUuYT9xlFmnM4pxqWJq7Kcow=;
-	b=BARx+cGgarKQdBaxrqYDYT09ygs0YJN9ueCfcV/zQnd9JkArH3ZDq/Oh7th2Q4VA3mcw5U
-	be/TXVOR8DKamJSD4sPXRQvR3xpDdr+AjBS+GNYBwbBlX2SbDdcuZpsPjgt/c+N+VrBHqb
-	LmkBqQgantjEmRhqkNNHjcZDGzNs440=
-Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-65-Q3G1GamQOFKpwVDVa7ykow-1; Mon,
- 04 Aug 2025 10:30:36 -0400
-X-MC-Unique: Q3G1GamQOFKpwVDVa7ykow-1
-X-Mimecast-MFC-AGG-ID: Q3G1GamQOFKpwVDVa7ykow_1754317835
-Received: from mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.93])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1754317871; c=relaxed/simple;
+	bh=4Ew1ywqUKPBO3FXPRYx2L2fqAw4faKlxhYE2ck+WihQ=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rbIHpEVPj8KSBPhbbieXFJs4i7rdgqTD2D9PfP0WGuUENkDOH79wgglw97RbkKC2O6zFo+kvpC0m02yUSKnVsRKkWhP2CuTr+9MpUDD8nKLL0AfxoSkbCp7R/h9VMlyAz7jx4o/vaaXpPeslzJCYhuyJPsks3pCteGc8pxeus90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=U1/KmwBS; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754317866;
+	bh=4Ew1ywqUKPBO3FXPRYx2L2fqAw4faKlxhYE2ck+WihQ=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=U1/KmwBSdPRaTX6WxZkf4hn47f/lTLATOi+gjmN8tRShdeQG6k1GbH645vXQpUQ1r
+	 F0O9OIFMeooX6WriLO7TGJ0Id/o7NYW3Nckzy9qFOMTKBVbUyhYrDvJLvPxlI/7SL1
+	 g8kJz86jAvMVSaQXsNV4e3+Ypk9YAR4unNFP/0vR+0cgfJBYv1k0YhZen6NRqFnIQY
+	 E1ujbFBjsob7s1cpBuEqgOQnf5nft3fiLvpj39ezlEKqbxzZLJsWPHeQRBwFDaRbt2
+	 6ChluzgqH6pXw4UGNDH1TS61z3WMm6twxNOO9LbsJbn7BPPxRWt5IjjWotbSe7OLy0
+	 0DcScdV7Pqr4w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
 	(No client certificate requested)
-	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 7C3F41800264;
-	Mon,  4 Aug 2025 14:30:34 +0000 (UTC)
-Received: from fweimer-oldenburg.csb.redhat.com (unknown [10.45.224.14])
-	by mx-prod-int-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1EDC11800EED;
-	Mon,  4 Aug 2025 14:30:31 +0000 (UTC)
-From: Florian Weimer <fweimer@redhat.com>
-To: Miklos Szeredi <miklos@szeredi.hu>
-Cc: fuse-devel@lists.sourceforge.net,  linux-api@vger.kernel.org,
-  linux-fsdevel@vger.kernel.org,  linux-kernel@vger.kernel.org
-Subject: Re: [fuse-devel] copy_file_range return value on FUSE
-In-Reply-To: <CAJfpegur9fUQ8MaOqrE-XrGUDK40+PGQeMZ+AzzpX6hNV_BKsw@mail.gmail.com>
-	(Miklos Szeredi's message of "Mon, 4 Aug 2025 15:30:27 +0200")
-References: <lhuh5ynl8z5.fsf@oldenburg.str.redhat.com>
-	<CAJfpegur9fUQ8MaOqrE-XrGUDK40+PGQeMZ+AzzpX6hNV_BKsw@mail.gmail.com>
-Date: Mon, 04 Aug 2025 16:30:43 +0200
-Message-ID: <lhu4iuni2gc.fsf@oldenburg.str.redhat.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id A729517E0DD0;
+	Mon,  4 Aug 2025 16:31:05 +0200 (CEST)
+Message-ID: <3a499702-ba75-4d8a-b38d-222a62bffb34@collabora.com>
+Date: Mon, 4 Aug 2025 16:31:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.93
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
+ clock controllers
+To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
+ <laura.nao@collabora.com>, wenst@chromium.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
+ guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
+ nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
+ robh@kernel.org, sboyd@kernel.org
+References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
+ <20250804083540.19099-1-laura.nao@collabora.com>
+ <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
+ <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
+ <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
+ <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
+ <2555e9fe-3bc0-4f89-9d0b-2f7f946632e7@kernel.org>
+ <ed0884fc-e43a-4f5b-8701-3645c406b37d@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <ed0884fc-e43a-4f5b-8701-3645c406b37d@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-* Miklos Szeredi:
-
-> On Mon, 4 Aug 2025 at 11:42, Florian Weimer via fuse-devel
-> <fuse-devel@lists.sourceforge.net> wrote:
+Il 04/08/25 16:19, Krzysztof Kozlowski ha scritto:
+> On 04/08/2025 15:58, Krzysztof Kozlowski wrote:
+>>>
+>>> So, what should we do then?
+>>>
+>>> Change it to "mediatek,clock-hw-refcounter", and adding a comment to the binding
+>>> saying that this is called "Hardware Voter (HWV)" in the datasheets?
+>>>
+>>> Or is using the "interconnect" property without any driver in the interconnect API
+>>> actually legit? - Because to me it doesn't look like being legit (and if it is, it
+>>> shouldn't be, as I'm sure that everyone would expect an interconnect API driver
+>>> when encountering an "interconnect" property in DT), and if so, we should just add
 >>
->> The FUSE protocol uses struct fuse_write_out to convey the return value
->> of copy_file_range, which is restricted to uint32_t.  But the
->> copy_file_range interface supports a 64-bit copy operation.  Given that
->> copy_file_range is expected to clone huge files, large copies are not
->> unexpected, so this appears to be a real limitation.
->
-> That's a nasty oversight.  Fixing with a new FUSE_COPY_FILE_RANGE_64
-> op, fallback to the legacy FUSE_COPY_FILE_RANGE.
+>> Why you would not add any interconnect driver for interconnect API?
+>> Look, the current phandle allows you to poke in some other MMIO space
+>> for the purpose of enabling the clock FOO? So interconnect or power
+>> domains or whatever allows you to have existing or new driver to receive
+>> xlate() and, when requested resources associated with clock FOO.
+> 
+> Something got here cut. Last sentence is supposed to be:
+> 
+> "So interconnect or power
+> domains or whatever allows you to have existing or new driver to receive
+> xlate() and, when requested, toggle the resources associated with clock
+> FOO."
+> 
+>>
+>> Instead of the FOO clock driver poking resources, you do
+>> clk_prepare_enable() or pm_domain or icc_enable().
+> 
+> I looked now at the driver and see your clock drivers poking via regmap
+> to other MMIO. That's exactly usecase of syscon and exactly the pattern
+> *we are usually discouraging*. It's limited, non-scalable and vendor-driven.
+> 
 
-Or adding a capability flag to switch from struct fuse_write_out to
-something that uses an uint64_t value.  One complication: The struct
-fuse_write_out layout is too close to a potential 64-bit version of it
-on little-endian systems, so that proper testing might be difficult with
-the obvious approach.
+If the HWV wasn't BROKEN, I'd be the first one to go for generic stuff, but
+since it is what it is, adding bloat to generic, non vendor-driven APIs would
+be bad.
 
->> There is another wrinkle: we'd need to check if the process runs in
->> 32-bit compat mode, and reject size_t arguments larger than INT_MAX in
->> this case (with EOVERFLOW presumably).  But perhaps this should be
->> handled on the kernel side?  Currently, this doesn't seem to happen, and
->> we can get copy_file_range results in the in-band error range.
->> Applications have no way to disambiguate this.
->
-> That's not fuse specific, right?
+> If this was a power domain provider then:
+> 1. Your clock drivers would only do runtime PM.
 
-In-kernel file systems can check if the request originated from a compat
-process, using in_compat_syscall.  I don't think that's possible over
-FUSE.
+The clock drivers would have to get a list of power domain that is *equal to*
+(in their amount) the list of clocks.
+But then those are not power domains, as those registers in the MCU are ONLY
+ungating a clock and nothing else in the current state of the hardware.
 
-Thanks,
-Florian
+> 2. Your MCU would be the power domain controller doing whatever is
+> necessary - toggling these set/clr bits - when given clock is enabled.
+
+That MCU does support power domain voting (for two power domains in the main
+PD Controller, and for all power domains in the multimedia PD controller), and
+this is something completely separated from the *clock* controllers.
+
+Just to make the picture complete for you: the power domains that this MCU can
+manage are not in any way related to the clocks that it can manage. At all.
+
+> And it really looks like what you described...
+> 
+> 
+> Best regards,
+> Krzysztof
 
 
