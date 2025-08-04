@@ -1,69 +1,69 @@
-Return-Path: <linux-kernel+bounces-755292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94CB4B1A431
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:12:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2692EB1A437
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:12:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6067D7AD912
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:10:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B75203B00BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:12:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F744272E7E;
-	Mon,  4 Aug 2025 14:11:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9889274646;
+	Mon,  4 Aug 2025 14:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="tHKzsDRz"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xhr/FzhQ"
 Received: from mail-il1-f202.google.com (mail-il1-f202.google.com [209.85.166.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DF172701DF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:11:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D9302727E9
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:11:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754316686; cv=none; b=Ft4poEbLArsrrqjVfjvye4Ql66FsD9Pm0e+s/n5wL61h+tqN/9UGVDOL80KAMGfDOEr6CVcHWG5p+7k2wvBtbNG0otG/mh4ZvslUGOB5Hl1nRPyvh+G3F12nXtLu+xehwIRG9uHdK0Bg52kOYEYuFPM2UkZhV97Azv3jfw4X7vY=
+	t=1754316688; cv=none; b=ruvS4LPTg8DzbPIlSKwlleJJmYdIXyGc+u12//9cBujgq3UDzBs87eJ102g7NprToelQ5+RsO6EI5XOHtAP0PskQIe5BGnQPGY/AqCD1uHLvXJEGghsuR/Bj7hqQfauOEDMpPTitm2rS/uwOr4wRSlTun1Whh0srJX2+/onfIOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754316686; c=relaxed/simple;
-	bh=iPB28TrEQ4MzyoHFPSBZfFSdBRfwDn75E/cHEkPI3WM=;
+	s=arc-20240116; t=1754316688; c=relaxed/simple;
+	bh=ISHeAtTbjF0ywlkUOrif2m9VMfiKjqLMLKPKTIJ0g2Q=;
 	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=T2A5xyswM9XAQ66234pP+gOf6KolC9Pbz3CbOgLuSBFOHnFsI67oEXabqvX7nwj1cpty9v+xU80lNjg96x2c6SGZjzKJaapk3XAyfrI876pusoPG40JSPVdTHQIbJ7N9CKuXTJ6pRlHJMzVwztgWt7zeYppC2ggPoF1TYrbHzvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=tHKzsDRz; arc=none smtp.client-ip=209.85.166.202
+	 To:Cc:Content-Type; b=i25LCzCP9LKwB/Eq00/m0jD7psemXW4z/OHgEOKk9Ntn/aZ/pCKsxQsuU0u2imFti7XfDy49mhnlWdvpvXtQh1H9FqbCpnAkHDG+p7C5XFN6uTwoaBmE0NlAgBzNHtcfw7fYOpoFlUB/xjBwprxOeYc8jQSdjx4k4NC+ktPVARo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xhr/FzhQ; arc=none smtp.client-ip=209.85.166.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jdenose.bounces.google.com
-Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3e3d462b81cso40931675ab.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:11:25 -0700 (PDT)
+Received: by mail-il1-f202.google.com with SMTP id e9e14a558f8ab-3e410d87893so31499345ab.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:11:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754316684; x=1754921484; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1754316685; x=1754921485; darn=vger.kernel.org;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=2XcyO4Be4c4JXobjE7cGf2J4UxRVRdyWKCOO7WXUW/0=;
-        b=tHKzsDRznyqF+49xYcriauuQh5hkkGMhguYP7PddHXjnP9tgeOepaGHoHKtzsPxZZ8
-         87B0JHZDH6Ppv5kHueKs5k/Yaf9FJ3+69E6mjtmQ9jSWYNgzxdc+IPzExs49bln2wdE9
-         XHlwMvj9MEbaJunsvD4pSkoWlqqlfIoLrN5ilHxVenn/LmZ611akmhzikSh/g2/NgNyP
-         bDfOY9cNEZOSmGZLpQ7m2FJeOaYZU/gHo91yC+T9NVgw5BqeEEjCdvAKlQtDnWkUXoY/
-         QIjyHJRC30IsgfXy70z8bsYJ4fbcD/WV+KH7V4F+1YmdFLghskaRIulceRSldpqLfeEn
-         G6bg==
+        bh=OevJq0hJai9axJfDLw2hBWWDZmvMq9ola6nPVBRyHUo=;
+        b=xhr/FzhQgltv6KR4PtK1Vbxp2Ftz8Dbd3FTEijUAZdTLu2/SuASIiY2lv3mRWVKTCs
+         QpQywGWY7le/4DBi55/fKYvYW0Pu17M5tcDrG+PpktPF8hZ3y45aS37Er8SY9bb6hgRS
+         RzGYPKZQGIf8FZh3D5zBIs4Fwq25tLQS1ZzezC6zNQbZbujEzVYMIvHWuJhLk9Dqt87b
+         qMxRD1coCr+TkpjooN7eiFekODcZqu7yx3Ie389vepR3HxPfnl+YXPeBcZzK2alsuaaa
+         BBGsBJcNMVlZAMnOjF27U9kY2eyvi2uZHxEFHVCELfHaG8LaGl6J6eGIpNHLpwlNmEAq
+         qk7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754316684; x=1754921484;
+        d=1e100.net; s=20230601; t=1754316685; x=1754921485;
         h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
          :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2XcyO4Be4c4JXobjE7cGf2J4UxRVRdyWKCOO7WXUW/0=;
-        b=WSaM8MYpvwxQNOxUm289jInQQ8pQNPZCRCC8xfqY6Dp2BCq1SszwKyWF4oxTS5l1F9
-         wmTrK+NNYCkvUJ1UpIJX0anjPseONLm1xB/XgJil03306MivHOW06rTQOqlOpx/+FC7z
-         RuJmIkQHfLiPDNiir0ikwMntNfk7hMZzkT0Sbf7W4CJ8VFo4tXkGzAUehRemUlVh2jUT
-         O3k9WJ0itJ7NDtuilbezQG8Od2TudQcyyLRQ4osgdEX+D3/l7ZO7nXkeLnatE3xFTQhS
-         NrtjQgv+dIrtda7MM64nDsgSyUMUFkFqx/WdsxeuVWZgGBiXieffsajjoVco4MFRnaTU
-         x7SA==
-X-Forwarded-Encrypted: i=1; AJvYcCXkn82mj888Nu4Au+C/WCHbDNDPHovHzXhwaxI2673Jjdh7rI85fPN0fn+a72PIMy4mKkudkmHbhTA2mC8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxrkd05YNIhKVgzTAQkPJSlvBB1smHhoAn1n5xJpQD07/U3bO9F
-	Wt31LSmTnhiCDmGDOdkZ4RZIeagG74d+H2mpxXN2KV/OmwLNUy0AINir4XbOm8z5vmp5LNO3pWu
-	gFLWyNNM6Lw==
-X-Google-Smtp-Source: AGHT+IGQi4BTJ2NRlvn9MIpnL6hO8RfWm/njfcBlrxUeB0NVxLukwkbFNqqbpuRQl0T8A20PSlKvv7sC5069
-X-Received: from ilbec19.prod.google.com ([2002:a05:6e02:4713:b0:3e4:90c:613a])
- (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:2789:b0:3e0:4564:4ef9
- with SMTP id e9e14a558f8ab-3e4160fb669mr165839005ab.4.1754316684472; Mon, 04
- Aug 2025 07:11:24 -0700 (PDT)
-Date: Mon, 04 Aug 2025 14:11:20 +0000
+        bh=OevJq0hJai9axJfDLw2hBWWDZmvMq9ola6nPVBRyHUo=;
+        b=iE+D7lqeV1s1tSYFmGwULxHX8XowooL9tMFQjiCutX9pFRn6FdGT3ytF8ilqjZQj9C
+         +wMhIInb5r4p3ju4kg9JDYRj98P/1bMlJ5/XZEFDK1fIu4tw7n7gB+fMoiFBNWOCIHaF
+         4DQpEhhRgFrYWV79pHz70ISR0ObVZHbHkaHmSVFmKVJboAO4kxmU5wFY5yctLyH8KYSP
+         5RyHtiSzR4BmESTB5y5uW/f1pL84ZFkLguNCOIHbzgu5TXX3mJhAi9u8/O69w9k++Zf8
+         Z5bP/OcuceuGFb/awQtft+8X1cfOH1lR20Taa96DTmLxuawRCfVKDf0SUJ4rGemsXWUm
+         rzqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUvkf0zigNXXfIUlQaxdSt+erYXQyDrB0gmT8HOPEnflGBOCb8QGznt8P7i7mlPBJr4JAevM8+RNaDjFKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMVQVSVinsxYoulTiI8WY2uqTIbRTtXMPbee/Axdb3oenu8T+b
+	E6BWqzwESbP06Wu0wzNbCumTLbnX0ZJkJCx9IS3mrcthFpT4vCt3z0QdogdIPihJYhRPCFQBIuA
+	2XMYaNbDE1Q==
+X-Google-Smtp-Source: AGHT+IF0g61JQWnl5M9kDiABM6+EyLM9pZdWtQpBCg803gvynVjbvv4u94/0W/gLLGjgBVOPVy0Iqv99X4XB
+X-Received: from ilbeb7.prod.google.com ([2002:a05:6e02:4607:b0:3e4:1397:9e87])
+ (user=jdenose job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6e02:1f06:b0:3df:2f47:dc21
+ with SMTP id e9e14a558f8ab-3e4161cf190mr189998615ab.22.1754316685453; Mon, 04
+ Aug 2025 07:11:25 -0700 (PDT)
+Date: Mon, 04 Aug 2025 14:11:21 +0000
 In-Reply-To: <20250804-support-forcepads-v2-0-138ca980261d@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -73,8 +73,8 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20250804-support-forcepads-v2-0-138ca980261d@google.com>
 X-Mailer: b4 0.14.2
-Message-ID: <20250804-support-forcepads-v2-5-138ca980261d@google.com>
-Subject: [PATCH v2 05/11] HID: input: allow mapping of haptic output
+Message-ID: <20250804-support-forcepads-v2-6-138ca980261d@google.com>
+Subject: [PATCH v2 06/11] HID: haptic: initialize haptic device
 From: Jonathan Denose <jdenose@google.com>
 To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
 	Dmitry Torokhov <dmitry.torokhov@gmail.com>, Jonathan Corbet <corbet@lwn.net>, 
@@ -86,33 +86,493 @@ Content-Type: text/plain; charset="utf-8"
 
 From: Angela Czubak <aczubak@google.com>
 
-This change makes it possible to parse output reports by input mapping
-functions by HID drivers.
+Add hid_haptic_init(). Parse autotrigger report to retrieve ordinals for
+press and release waveforms.
+Implement force feedback functions.
 
 Signed-off-by: Angela Czubak <aczubak@google.com>
 Co-developed-by: Jonathan Denose <jdenose@google.com>
 Signed-off-by: Jonathan Denose <jdenose@google.com>
 ---
- drivers/hid/hid-input.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
+ drivers/hid/hid-haptic.c | 438 +++++++++++++++++++++++++++++++++++++++++++++++
+ drivers/hid/hid-haptic.h |   1 +
+ 2 files changed, 439 insertions(+)
 
-diff --git a/drivers/hid/hid-input.c b/drivers/hid/hid-input.c
-index 9d80635a91ebd8d8bdafaac07b5f85693b179cb4..d42c1fbd20a1cc01c04f93cf10f1d1c18043929c 100644
---- a/drivers/hid/hid-input.c
-+++ b/drivers/hid/hid-input.c
-@@ -682,9 +682,10 @@ static void hidinput_configure_usage(struct hid_input *hidinput, struct hid_fiel
- 	if (field->report_count < 1)
- 		goto ignore;
+diff --git a/drivers/hid/hid-haptic.c b/drivers/hid/hid-haptic.c
+index d659a430c1a6b06ded31d49efe4bded909671cb6..923b685f0e1e81b7f95567b11209af264c522373 100644
+--- a/drivers/hid/hid-haptic.c
++++ b/drivers/hid/hid-haptic.c
+@@ -5,12 +5,16 @@
+  *  Copyright (c) 2021 Angela Czubak <acz@semihalf.com>
+  */
  
--	/* only LED usages are supported in output fields */
-+	/* only LED and HAPTIC usages are supported in output fields */
- 	if (field->report_type == HID_OUTPUT_REPORT &&
--			(usage->hid & HID_USAGE_PAGE) != HID_UP_LED) {
-+	    (usage->hid & HID_USAGE_PAGE) != HID_UP_LED &&
-+	    (usage->hid & HID_USAGE_PAGE) != HID_UP_HAPTIC) {
- 		goto ignore;
++#include <linux/module.h>
++
+ #include "hid-haptic.h"
+ 
+ void hid_haptic_feature_mapping(struct hid_device *hdev,
+ 				struct hid_haptic_device *haptic,
+ 				struct hid_field *field, struct hid_usage *usage)
+ {
++	u16 usage_hid;
++
+ 	if (usage->hid == HID_HP_AUTOTRIGGER) {
+ 		if (usage->usage_index >= field->report_count) {
+ 			dev_err(&hdev->dev,
+@@ -25,6 +29,20 @@ void hid_haptic_feature_mapping(struct hid_device *hdev,
+ 		haptic->default_auto_trigger =
+ 			field->value[usage->usage_index];
+ 		haptic->auto_trigger_report = field->report;
++	} else if ((usage->hid & HID_USAGE_PAGE) == HID_UP_ORDINAL) {
++		usage_hid = usage->hid & HID_USAGE;
++		switch (field->logical) {
++		case HID_HP_WAVEFORMLIST:
++			if (usage_hid > haptic->max_waveform_id)
++				haptic->max_waveform_id = usage_hid;
++			break;
++		case HID_HP_DURATIONLIST:
++			if (usage_hid > haptic->max_duration_id)
++				haptic->max_duration_id = usage_hid;
++			break;
++		default:
++			break;
++		}
  	}
- 
+ }
+ EXPORT_SYMBOL_GPL(hid_haptic_feature_mapping);
+@@ -70,3 +88,423 @@ int hid_haptic_input_configured(struct hid_device *hdev,
+ 	return -1;
+ }
+ EXPORT_SYMBOL_GPL(hid_haptic_input_configured);
++
++static void parse_auto_trigger_field(struct hid_haptic_device *haptic,
++				     struct hid_field *field)
++{
++	int count = field->report_count;
++	int n;
++	u16 usage_hid;
++
++	for (n = 0; n < count; n++) {
++		switch (field->usage[n].hid & HID_USAGE_PAGE) {
++		case HID_UP_ORDINAL:
++			usage_hid = field->usage[n].hid & HID_USAGE;
++			switch (field->logical) {
++			case HID_HP_WAVEFORMLIST:
++				haptic->hid_usage_map[usage_hid] = field->value[n];
++				if (field->value[n] ==
++				    (HID_HP_WAVEFORMPRESS & HID_USAGE)) {
++					haptic->press_ordinal = usage_hid;
++				} else if (field->value[n] ==
++					   (HID_HP_WAVEFORMRELEASE & HID_USAGE)) {
++					haptic->release_ordinal = usage_hid;
++				}
++				break;
++			case HID_HP_DURATIONLIST:
++				haptic->duration_map[usage_hid] =
++					field->value[n];
++				break;
++			default:
++				break;
++			}
++			break;
++		case HID_UP_HAPTIC:
++			switch (field->usage[n].hid) {
++			case HID_HP_WAVEFORMVENDORID:
++				haptic->vendor_id = field->value[n];
++				break;
++			case HID_HP_WAVEFORMVENDORPAGE:
++				haptic->vendor_page = field->value[n];
++				break;
++			default:
++				break;
++			}
++			break;
++		default:
++			/* Should not really happen */
++			break;
++		}
++	}
++}
++
++static void fill_effect_buf(struct hid_haptic_device *haptic,
++			    struct ff_hid_effect *effect,
++			    struct hid_haptic_effect *haptic_effect,
++			    int waveform_ordinal)
++{
++	struct hid_report *rep = haptic->manual_trigger_report;
++	struct hid_usage *usage;
++	struct hid_field *field;
++	s32 value;
++	int i, j;
++	u8 *buf = haptic_effect->report_buf;
++
++	mutex_lock(&haptic->manual_trigger_mutex);
++	for (i = 0; i < rep->maxfield; i++) {
++		field = rep->field[i];
++		/* Ignore if report count is out of bounds. */
++		if (field->report_count < 1)
++			continue;
++
++		for (j = 0; j < field->maxusage; j++) {
++			usage = &field->usage[j];
++
++			switch (usage->hid) {
++			case HID_HP_INTENSITY:
++				if (effect->intensity > 100) {
++					value = field->logical_maximum;
++				} else {
++					value = field->logical_minimum +
++						effect->intensity *
++						(field->logical_maximum -
++						 field->logical_minimum) / 100;
++				}
++				break;
++			case HID_HP_REPEATCOUNT:
++				value = effect->repeat_count;
++				break;
++			case HID_HP_RETRIGGERPERIOD:
++				value = effect->retrigger_period;
++				break;
++			case HID_HP_MANUALTRIGGER:
++				value = waveform_ordinal;
++				break;
++			default:
++				break;
++			}
++
++			field->value[j] = value;
++		}
++	}
++
++	hid_output_report(rep, buf);
++	mutex_unlock(&haptic->manual_trigger_mutex);
++}
++
++static int hid_haptic_upload_effect(struct input_dev *dev, struct ff_effect *effect,
++				    struct ff_effect *old)
++{
++	struct ff_device *ff = dev->ff;
++	struct hid_haptic_device *haptic = ff->private;
++	int i, ordinal = 0;
++
++	/* If vendor range, check vendor id and page */
++	if (effect->u.hid.hid_usage >= (HID_HP_VENDORWAVEFORMMIN & HID_USAGE) &&
++	    effect->u.hid.hid_usage <= (HID_HP_VENDORWAVEFORMMAX & HID_USAGE) &&
++	    (effect->u.hid.vendor_id != haptic->vendor_id ||
++	     effect->u.hid.vendor_waveform_page != haptic->vendor_page))
++		return -EINVAL;
++
++	/* Check hid_usage */
++	for (i = 1; i <= haptic->max_waveform_id; i++) {
++		if (haptic->hid_usage_map[i] == effect->u.hid.hid_usage) {
++			ordinal = i;
++			break;
++		}
++	}
++	if (ordinal < 1)
++		return -EINVAL;
++
++	/* Fill the buffer for the effect id */
++	fill_effect_buf(haptic, &effect->u.hid, &haptic->effect[effect->id],
++			ordinal);
++
++	return 0;
++}
++
++static int play_effect(struct hid_device *hdev, struct hid_haptic_device *haptic,
++		       struct hid_haptic_effect *effect)
++{
++	int ret;
++
++	ret = hid_hw_output_report(hdev, effect->report_buf,
++				   haptic->manual_trigger_report_len);
++	if (ret < 0) {
++		ret = hid_hw_raw_request(hdev,
++					 haptic->manual_trigger_report->id,
++					 effect->report_buf,
++					 haptic->manual_trigger_report_len,
++					 HID_OUTPUT_REPORT, HID_REQ_SET_REPORT);
++	}
++
++	return ret;
++}
++
++static void haptic_work_handler(struct work_struct *work)
++{
++
++	struct hid_haptic_effect *effect = container_of(work,
++							struct hid_haptic_effect,
++							work);
++	struct input_dev *dev = effect->input_dev;
++	struct hid_device *hdev = input_get_drvdata(dev);
++	struct hid_haptic_device *haptic = dev->ff->private;
++
++	mutex_lock(&haptic->manual_trigger_mutex);
++	if (effect != &haptic->stop_effect)
++		play_effect(hdev, haptic, &haptic->stop_effect);
++
++	play_effect(hdev, haptic, effect);
++	mutex_unlock(&haptic->manual_trigger_mutex);
++
++}
++
++static int hid_haptic_playback(struct input_dev *dev, int effect_id, int value)
++{
++	struct hid_haptic_device *haptic = dev->ff->private;
++
++	if (value)
++		queue_work(haptic->wq, &haptic->effect[effect_id].work);
++	else
++		queue_work(haptic->wq, &haptic->stop_effect.work);
++
++	return 0;
++}
++
++static void effect_set_default(struct ff_effect *effect)
++{
++	effect->type = FF_HID;
++	effect->id = -1;
++	effect->u.hid.hid_usage = HID_HP_WAVEFORMNONE & HID_USAGE;
++	effect->u.hid.intensity = 100;
++	effect->u.hid.retrigger_period = 0;
++	effect->u.hid.repeat_count = 0;
++}
++
++static int hid_haptic_erase(struct input_dev *dev, int effect_id)
++{
++	struct hid_haptic_device *haptic = dev->ff->private;
++	struct ff_effect effect;
++	int ordinal;
++
++	effect_set_default(&effect);
++
++	if (effect.u.hid.hid_usage == (HID_HP_WAVEFORMRELEASE & HID_USAGE)) {
++		ordinal = haptic->release_ordinal;
++		if (!ordinal)
++			ordinal = HID_HAPTIC_ORDINAL_WAVEFORMNONE;
++		else
++			effect.u.hid.hid_usage = HID_HP_WAVEFORMRELEASE &
++				HID_USAGE;
++		fill_effect_buf(haptic, &effect.u.hid, &haptic->effect[effect_id],
++				ordinal);
++	} else if (effect.u.hid.hid_usage == (HID_HP_WAVEFORMPRESS & HID_USAGE)) {
++		ordinal = haptic->press_ordinal;
++		if (!ordinal)
++			ordinal = HID_HAPTIC_ORDINAL_WAVEFORMNONE;
++		else
++			effect.u.hid.hid_usage = HID_HP_WAVEFORMPRESS &
++				HID_USAGE;
++		fill_effect_buf(haptic, &effect.u.hid, &haptic->effect[effect_id],
++				ordinal);
++	}
++
++	return 0;
++}
++
++static void hid_haptic_destroy(struct ff_device *ff)
++{
++	struct hid_haptic_device *haptic = ff->private;
++	struct hid_device *hdev = haptic->hdev;
++	int r;
++
++	if (hdev)
++		put_device(&hdev->dev);
++
++	kfree(haptic->stop_effect.report_buf);
++	haptic->stop_effect.report_buf = NULL;
++
++	if (haptic->effect) {
++		for (r = 0; r < ff->max_effects; r++)
++			kfree(haptic->effect[r].report_buf);
++		kfree(haptic->effect);
++	}
++	haptic->effect = NULL;
++
++	destroy_workqueue(haptic->wq);
++	haptic->wq = NULL;
++
++	kfree(haptic->duration_map);
++	haptic->duration_map = NULL;
++
++	kfree(haptic->hid_usage_map);
++	haptic->hid_usage_map = NULL;
++
++	module_put(THIS_MODULE);
++}
++
++int hid_haptic_init(struct hid_device *hdev,
++		    struct hid_haptic_device **haptic_ptr)
++{
++	struct hid_haptic_device *haptic = *haptic_ptr;
++	struct input_dev *dev = NULL;
++	struct hid_input *hidinput;
++	struct ff_device *ff;
++	int ret = 0, r;
++	struct ff_hid_effect stop_effect = {
++		.hid_usage = HID_HP_WAVEFORMSTOP & HID_USAGE,
++	};
++	const char *prefix = "hid-haptic";
++	char *name;
++	int (*flush)(struct input_dev *dev, struct file *file);
++	int (*event)(struct input_dev *dev, unsigned int type, unsigned int code, int value);
++
++	haptic->hdev = hdev;
++	haptic->max_waveform_id = max(2u, haptic->max_waveform_id);
++	haptic->max_duration_id = max(2u, haptic->max_duration_id);
++
++	haptic->hid_usage_map = kcalloc(haptic->max_waveform_id + 1,
++					sizeof(u16), GFP_KERNEL);
++	if (!haptic->hid_usage_map) {
++		ret = -ENOMEM;
++		goto exit;
++	}
++	haptic->duration_map = kcalloc(haptic->max_duration_id + 1,
++				       sizeof(u32), GFP_KERNEL);
++	if (!haptic->duration_map) {
++		ret = -ENOMEM;
++		goto usage_map;
++	}
++
++	if (haptic->max_waveform_id != haptic->max_duration_id)
++		dev_warn(&hdev->dev,
++			 "Haptic duration and waveform lists have different max id (%u and %u).\n",
++			 haptic->max_duration_id, haptic->max_waveform_id);
++
++	haptic->hid_usage_map[HID_HAPTIC_ORDINAL_WAVEFORMNONE] =
++		HID_HP_WAVEFORMNONE & HID_USAGE;
++	haptic->hid_usage_map[HID_HAPTIC_ORDINAL_WAVEFORMSTOP] =
++		HID_HP_WAVEFORMSTOP & HID_USAGE;
++
++	for (r = 0; r < haptic->auto_trigger_report->maxfield; r++)
++		parse_auto_trigger_field(haptic, haptic->auto_trigger_report->field[r]);
++
++	list_for_each_entry(hidinput, &hdev->inputs, list) {
++		if (hidinput->application == HID_DG_TOUCHPAD) {
++			dev = hidinput->input;
++			break;
++		}
++	}
++
++	if (!dev) {
++		dev_err(&hdev->dev, "Failed to find the input device\n");
++		ret = -ENODEV;
++		goto duration_map;
++	}
++
++	haptic->input_dev = dev;
++	haptic->manual_trigger_report_len =
++		hid_report_len(haptic->manual_trigger_report);
++	mutex_init(&haptic->manual_trigger_mutex);
++	name = kmalloc(strlen(prefix) + strlen(hdev->name) + 2, GFP_KERNEL);
++	if (name) {
++		sprintf(name, "%s %s", prefix, hdev->name);
++		haptic->wq = create_singlethread_workqueue(name);
++		kfree(name);
++	}
++	if (!haptic->wq) {
++		ret = -ENOMEM;
++		goto duration_map;
++	}
++	haptic->effect = kcalloc(FF_MAX_EFFECTS,
++				 sizeof(struct hid_haptic_effect), GFP_KERNEL);
++	if (!haptic->effect) {
++		ret = -ENOMEM;
++		goto output_queue;
++	}
++	for (r = 0; r < FF_MAX_EFFECTS; r++) {
++		haptic->effect[r].report_buf =
++			hid_alloc_report_buf(haptic->manual_trigger_report,
++					     GFP_KERNEL);
++		if (!haptic->effect[r].report_buf) {
++			dev_err(&hdev->dev,
++				"Failed to allocate a buffer for an effect.\n");
++			ret = -ENOMEM;
++			goto buffer_free;
++		}
++		haptic->effect[r].input_dev = dev;
++		INIT_WORK(&haptic->effect[r].work, haptic_work_handler);
++	}
++	haptic->stop_effect.report_buf =
++		hid_alloc_report_buf(haptic->manual_trigger_report,
++				     GFP_KERNEL);
++	if (!haptic->stop_effect.report_buf) {
++		dev_err(&hdev->dev,
++			"Failed to allocate a buffer for stop effect.\n");
++		ret = -ENOMEM;
++		goto buffer_free;
++	}
++	haptic->stop_effect.input_dev = dev;
++	INIT_WORK(&haptic->stop_effect.work, haptic_work_handler);
++	fill_effect_buf(haptic, &stop_effect, &haptic->stop_effect,
++			HID_HAPTIC_ORDINAL_WAVEFORMSTOP);
++
++	input_set_capability(dev, EV_FF, FF_HID);
++
++	flush = dev->flush;
++	event = dev->event;
++	ret = input_ff_create(dev, FF_MAX_EFFECTS);
++	if (ret) {
++		dev_err(&hdev->dev, "Failed to create ff device.\n");
++		goto stop_buffer_free;
++	}
++
++	ff = dev->ff;
++	ff->private = haptic;
++	ff->upload = hid_haptic_upload_effect;
++	ff->playback = hid_haptic_playback;
++	ff->erase = hid_haptic_erase;
++	ff->destroy = hid_haptic_destroy;
++	if (!try_module_get(THIS_MODULE)) {
++		dev_err(&hdev->dev, "Failed to increase module count.\n");
++		goto input_free;
++	}
++	if (!get_device(&hdev->dev)) {
++		dev_err(&hdev->dev, "Failed to get hdev device.\n");
++		module_put(THIS_MODULE);
++		goto input_free;
++	}
++	return 0;
++
++input_free:
++	input_ff_destroy(dev);
++	/* Do not let double free happen, input_ff_destroy will call
++	 * hid_haptic_destroy.
++	 */
++	*haptic_ptr = NULL;
++	/* Restore dev flush and event */
++	dev->flush = flush;
++	dev->event = event;
++	return ret;
++stop_buffer_free:
++	kfree(haptic->stop_effect.report_buf);
++	haptic->stop_effect.report_buf = NULL;
++buffer_free:
++	while (--r >= 0)
++		kfree(haptic->effect[r].report_buf);
++	kfree(haptic->effect);
++	haptic->effect = NULL;
++output_queue:
++	destroy_workqueue(haptic->wq);
++	haptic->wq = NULL;
++duration_map:
++	kfree(haptic->duration_map);
++	haptic->duration_map = NULL;
++usage_map:
++	kfree(haptic->hid_usage_map);
++	haptic->hid_usage_map = NULL;
++exit:
++	return ret;
++}
++EXPORT_SYMBOL_GPL(hid_haptic_init);
+diff --git a/drivers/hid/hid-haptic.h b/drivers/hid/hid-haptic.h
+index fc8979772d00e8b3238b26060c5541065a61811d..9aa910579d09206a2a882a5f708efd8620428f78 100644
+--- a/drivers/hid/hid-haptic.h
++++ b/drivers/hid/hid-haptic.h
+@@ -72,3 +72,4 @@ int hid_haptic_input_mapping(struct hid_device *hdev,
+ int hid_haptic_input_configured(struct hid_device *hdev,
+ 				struct hid_haptic_device *haptic,
+ 				struct hid_input *hi);
++int hid_haptic_init(struct hid_device *hdev, struct hid_haptic_device **haptic_ptr);
 
 -- 
 2.50.1.565.gc32cd1483b-goog
