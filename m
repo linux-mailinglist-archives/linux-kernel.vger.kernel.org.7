@@ -1,262 +1,71 @@
-Return-Path: <linux-kernel+bounces-755753-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C552B1AB59
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:16:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF664B1AB78
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:31:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 334534E1E9A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:16:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A99F1189F5F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:31:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44506292B4B;
-	Mon,  4 Aug 2025 23:16:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3197923815C;
+	Mon,  4 Aug 2025 23:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="E5VDgKCu"
-Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="K6492FbG"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 02AD5252286
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:16:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BEA12E36ED
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:31:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754349364; cv=none; b=UhxeWvvZlyKCEB9LaJbFNEocbtfUR0FYbi5z7qZ6CiN2KHIzW/HcskhQ9cbMUSE9N5s2wCQwNViI293wIBEaQ9qU+ShFI8W7fMLHCO42r4MmZh2rUBVIer+UrIPO+VonAslIh0VyaD5g95qaCc9X7oDPgw+t6nyjXf4uO/rNFZs=
+	t=1754350281; cv=none; b=hFUOvQ0I6HYf5xI49DFYvOUhRIvw9Xr3R9qE+BfehVuEbWSAPdYEXfzuRmk5iXtt6T1IIkTVu3s6qEiA0qS6Coc4e+WWmI2tHVVCeC9MbHYU4GovHPFYf16czjOkKugFk3Is2OvbSyPXMFeKBuhKn8xwKFAM0Gdue9HP80QOtNg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754349364; c=relaxed/simple;
-	bh=BdiowjuFZsdquH1v1qJ0l1K5TohHeQmAGtriPnbOYKY=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=lFU+bzWyXe0BEdvL+75xPKT/yc++nqCNLwIFXNiYfLzC5T2wdSuNn4bwyz7hfM2Kf6gB23O0hZT+opvfqZ8Rr9VU2Lstax2d+3b8cLGSJbLFHal8UFjYeFqxp6Yx8gDk/T5syBdbClWxdWs9KO/MphlACCXYshtBLFqR/u8vL6A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=E5VDgKCu; arc=none smtp.client-ip=209.85.210.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-74d15d90cdbso3486169b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 16:16:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754349362; x=1754954162; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nn/QlXxKr04lsk0BQprsWZ8fvAafoan6Kc4Ifd428WQ=;
-        b=E5VDgKCuzMlzcOS0yRUa7w4xr22v9RyPFr+ZvBv0mDMtfP959jmEUe7cZNC54RaYsZ
-         DkEByUH8FOmw4BShu7TtMaWFxy6vpDeuSxPw4BWw5D9NTLFMCxNCgyBEvLyPwpBtvxm6
-         7mkUqE9dXu0D7rUibyPddAhMu/1VNJloSmhzU2d9PvhQ/30wYFd/cZ6mRf+5bkDq+e54
-         m6dQXBC4eDCb0SIWZ3byJGB5DfnLg62SCHIxfVVa35SaoiLjcLiSF7750y4IlrxT0Rq9
-         dM3FpbtXQDeZPT2R7EyyQ7TkxlErxXODBQ5eZPgJWPsDS19/N8w2AoSfRcZAn2P+5SpL
-         +H7g==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754349362; x=1754954162;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Nn/QlXxKr04lsk0BQprsWZ8fvAafoan6Kc4Ifd428WQ=;
-        b=q+1sR9h7wS8mQiZl0KxYD7TbL/THBZ1uGwLXjGpGjgbv8R4x/RxqSQoa4M/fghy2Ma
-         0GKViTvpeZxEAAm52EQIuoDqqo6NtjmwaLlBzaUN1HBIz2ml47pXTHtn2tcbqYFULsSV
-         WaHPeetfN53HSC2S0LxiyQZnV+UGuqWF/k1xmKbqlHxqoupLI/+Z6vceQhLcOn3+iLOR
-         P+tTwkoXUyOSn4m7GGNqHuEFty6OYXlwZAkZdfHwdOWu9Upv+ZJv+GjeVA4h2V89+ulV
-         R+aJ+Q3SeJGVBiuiR82aFP69WGZ7y+BYHGDV8DgkDXcd84fgkjz+QVn+n8aO6fajXzEJ
-         B8Vg==
-X-Forwarded-Encrypted: i=1; AJvYcCUBQBB6qxIp73T5v5huu1UIy/mwtyojV4OCE+PzcpyNSPCtQdO6M8jw6LMhOkD+1Ka2zmop0E5R4BIw/Ek=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKBGP4RJuD45G8LuVfor1C5Vu+NHKKineAiiLLqxFjQtjGMpfj
-	ahXMbZ+7ievQcR5Szmi+pRWqhHKsPseN33mou/B13/JhMfbeXs+vAA6wKhL8Pd6LSFcI2sEBirb
-	msfqOVw==
-X-Google-Smtp-Source: AGHT+IHSKj2r68iHuJ6mz0Uqid6yqFPSiOF1csXgv0QqUAcL3Sg9DHhAyqp/y83a4PMGePmffR52Td+bl/E=
-X-Received: from pgnh8.prod.google.com ([2002:a63:3848:0:b0:b42:14da:59ac])
- (user=surenb job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6a20:244f:b0:240:d12:775c
- with SMTP id adf61e73a8af0-2400d12a143mr7876300637.36.1754349362131; Mon, 04
- Aug 2025 16:16:02 -0700 (PDT)
-Date: Mon,  4 Aug 2025 16:15:51 -0700
-In-Reply-To: <20250804231552.1217132-1-surenb@google.com>
+	s=arc-20240116; t=1754350281; c=relaxed/simple;
+	bh=pmVOSEsQ731UTS6S95FjRYGHWC6/pxuAi8DA4aZT314=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=KQzQZp/YTY0V2u0+OyMCMi/FtllJ3O5p29MzeWjQ5vifdPFnkE+cfbjq16Jn+P2gUkGlcEDd45M++Lmr1m323R/Fw8o25PwrftY3xKYFxnfI8ItPNf8zNq5WCLDbBQbY/swuy0HxW+mW89KoG87/Mq4j+CmLwimwfl+m9jJdXD8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=K6492FbG; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1754349636;
+	bh=pmVOSEsQ731UTS6S95FjRYGHWC6/pxuAi8DA4aZT314=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=K6492FbGGXJ2Sm+Rukrl58+yxjSnKWD7e94Y4RPWSsJdMHXRFjgYookZgShFyU0V8
+	 1zZLXPPVCdWfWh6J93XbPnnvqLhS6DH7dZofph7+6f06wxaVfmYznmzEd9c7sIS0va
+	 JZxvpBgx4zxssaMnAJSmitVneDrm2nsErDcYd+CI=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id BC5104038E; Mon,  4 Aug 2025 16:20:36 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id B82524010D;
+	Mon,  4 Aug 2025 16:20:36 -0700 (PDT)
+Date: Mon, 4 Aug 2025 16:20:36 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Yang Shi <yang@os.amperecomputing.com>
+cc: ryan.roberts@arm.com, will@kernel.org, catalin.marinas@arm.com, 
+    akpm@linux-foundation.org, Miko.Lenczewski@arm.com, dev.jain@arm.com, 
+    scott@os.amperecomputing.com, linux-arm-kernel@lists.infradead.org, 
+    linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] arm64: cpufeature: add AmpereOne to BBML2 allow
+ list
+In-Reply-To: <20250724221216.1998696-3-yang@os.amperecomputing.com>
+Message-ID: <a76994b0-88e4-da30-4524-c8450868763a@gentwo.org>
+References: <20250724221216.1998696-1-yang@os.amperecomputing.com> <20250724221216.1998696-3-yang@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20250804231552.1217132-1-surenb@google.com>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-Message-ID: <20250804231552.1217132-4-surenb@google.com>
-Subject: [PATCH v2 3/3] fs/proc/task_mmu: execute PROCMAP_QUERY ioctl under
- per-vma locks
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com, david@redhat.com, 
-	vbabka@suse.cz, peterx@redhat.com, jannh@google.com, hannes@cmpxchg.org, 
-	mhocko@kernel.org, paulmck@kernel.org, shuah@kernel.org, adobriyan@gmail.com, 
-	brauner@kernel.org, josef@toxicpanda.com, yebin10@huawei.com, 
-	linux@weissschuh.net, willy@infradead.org, osalvador@suse.de, 
-	andrii@kernel.org, ryan.roberts@arm.com, christophe.leroy@csgroup.eu, 
-	tjmercier@google.com, kaleshsingh@google.com, aha310510@gmail.com, 
-	linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	linux-mm@kvack.org, linux-kselftest@vger.kernel.org, surenb@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-Utilize per-vma locks to stabilize vma after lookup without taking
-mmap_lock during PROCMAP_QUERY ioctl execution. If vma lock is
-contended, we fall back to mmap_lock but take it only momentarily
-to lock the vma and release the mmap_lock. In a very unlikely case
-of vm_refcnt overflow, this fall back path will fail and ioctl is
-done under mmap_lock protection.
+On Thu, 24 Jul 2025, Yang Shi wrote:
 
-This change is designed to reduce mmap_lock contention and prevent
-PROCMAP_QUERY ioctl calls from blocking address space updates.
+> AmpereOne supports BBML2 without conflict abort, add to the allow list.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
----
- fs/proc/task_mmu.c | 81 +++++++++++++++++++++++++++++++++++++---------
- 1 file changed, 65 insertions(+), 16 deletions(-)
-
-diff --git a/fs/proc/task_mmu.c b/fs/proc/task_mmu.c
-index 843577aa7a32..1d06ecdbef6f 100644
---- a/fs/proc/task_mmu.c
-+++ b/fs/proc/task_mmu.c
-@@ -517,28 +517,78 @@ static int pid_maps_open(struct inode *inode, struct file *file)
- 		PROCMAP_QUERY_VMA_FLAGS				\
- )
- 
--static int query_vma_setup(struct mm_struct *mm)
-+#ifdef CONFIG_PER_VMA_LOCK
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
- {
--	return mmap_read_lock_killable(mm);
-+	lock_ctx->locked_vma = NULL;
-+	lock_ctx->mmap_locked = false;
-+
-+	return 0;
- }
- 
--static void query_vma_teardown(struct mm_struct *mm, struct vm_area_struct *vma)
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
- {
--	mmap_read_unlock(mm);
-+	if (lock_ctx->mmap_locked)
-+		mmap_read_unlock(lock_ctx->mm);
-+	else
-+		unlock_vma(lock_ctx);
- }
- 
--static struct vm_area_struct *query_vma_find_by_addr(struct mm_struct *mm, unsigned long addr)
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
- {
--	return find_vma(mm, addr);
-+	struct vm_area_struct *vma;
-+	struct vma_iterator vmi;
-+
-+	unlock_vma(lock_ctx);
-+	rcu_read_lock();
-+	vma_iter_init(&vmi, lock_ctx->mm, addr);
-+	vma = lock_next_vma(lock_ctx->mm, &vmi, addr);
-+	rcu_read_unlock();
-+
-+	if (!IS_ERR_OR_NULL(vma)) {
-+		lock_ctx->locked_vma = vma;
-+	} else if (PTR_ERR(vma) == -EAGAIN) {
-+		/* Fallback to mmap_lock on vma->vm_refcnt overflow */
-+		mmap_read_lock(lock_ctx->mm);
-+		vma = find_vma(lock_ctx->mm, addr);
-+		lock_ctx->mmap_locked = true;
-+	}
-+
-+	return vma;
- }
- 
--static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
-+#else /* CONFIG_PER_VMA_LOCK */
-+
-+static int query_vma_setup(struct proc_maps_locking_ctx *lock_ctx)
-+{
-+	return mmap_read_lock_killable(lock_ctx->mm);
-+}
-+
-+static void query_vma_teardown(struct proc_maps_locking_ctx *lock_ctx)
-+{
-+	mmap_read_unlock(lock_ctx->mm);
-+}
-+
-+static struct vm_area_struct *query_vma_find_by_addr(struct proc_maps_locking_ctx *lock_ctx,
-+						     unsigned long addr)
-+{
-+	return find_vma(lock_ctx->mm, addr);
-+}
-+
-+#endif  /* CONFIG_PER_VMA_LOCK */
-+
-+static struct vm_area_struct *query_matching_vma(struct proc_maps_locking_ctx *lock_ctx,
- 						 unsigned long addr, u32 flags)
- {
- 	struct vm_area_struct *vma;
- 
- next_vma:
--	vma = query_vma_find_by_addr(mm, addr);
-+	vma = query_vma_find_by_addr(lock_ctx, addr);
-+	if (IS_ERR(vma))
-+		return vma;
-+
- 	if (!vma)
- 		goto no_vma;
- 
-@@ -579,11 +629,11 @@ static struct vm_area_struct *query_matching_vma(struct mm_struct *mm,
- 	return ERR_PTR(-ENOENT);
- }
- 
--static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
-+static int do_procmap_query(struct mm_struct *mm, void __user *uarg)
- {
-+	struct proc_maps_locking_ctx lock_ctx = { .mm = mm };
- 	struct procmap_query karg;
- 	struct vm_area_struct *vma;
--	struct mm_struct *mm;
- 	const char *name = NULL;
- 	char build_id_buf[BUILD_ID_SIZE_MAX], *name_buf = NULL;
- 	__u64 usize;
-@@ -610,17 +660,16 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	if (!!karg.build_id_size != !!karg.build_id_addr)
- 		return -EINVAL;
- 
--	mm = priv->lock_ctx.mm;
- 	if (!mm || !mmget_not_zero(mm))
- 		return -ESRCH;
- 
--	err = query_vma_setup(mm);
-+	err = query_vma_setup(&lock_ctx);
- 	if (err) {
- 		mmput(mm);
- 		return err;
- 	}
- 
--	vma = query_matching_vma(mm, karg.query_addr, karg.query_flags);
-+	vma = query_matching_vma(&lock_ctx, karg.query_addr, karg.query_flags);
- 	if (IS_ERR(vma)) {
- 		err = PTR_ERR(vma);
- 		vma = NULL;
-@@ -705,7 +754,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	}
- 
- 	/* unlock vma or mmap_lock, and put mm_struct before copying data to user */
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 
- 	if (karg.vma_name_size && copy_to_user(u64_to_user_ptr(karg.vma_name_addr),
-@@ -725,7 +774,7 @@ static int do_procmap_query(struct proc_maps_private *priv, void __user *uarg)
- 	return 0;
- 
- out:
--	query_vma_teardown(mm, vma);
-+	query_vma_teardown(&lock_ctx);
- 	mmput(mm);
- 	kfree(name_buf);
- 	return err;
-@@ -738,7 +787,7 @@ static long procfs_procmap_ioctl(struct file *file, unsigned int cmd, unsigned l
- 
- 	switch (cmd) {
- 	case PROCMAP_QUERY:
--		return do_procmap_query(priv, (void __user *)arg);
-+		return do_procmap_query(priv->lock_ctx.mm, (void __user *)arg);
- 	default:
- 		return -ENOIOCTLCMD;
- 	}
--- 
-2.50.1.565.gc32cd1483b-goog
+Reviewed-by: Christoph Lameter (Ampere) <cl@gentwo.org>
 
 
