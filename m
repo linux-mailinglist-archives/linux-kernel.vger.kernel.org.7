@@ -1,410 +1,316 @@
-Return-Path: <linux-kernel+bounces-755640-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755641-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29922B1A9AE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:31:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 064EBB1A9B0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:32:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D886B621CC6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:31:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8DEC818A3E22
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:32:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3988721B8F2;
-	Mon,  4 Aug 2025 19:31:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33D71224B1F;
+	Mon,  4 Aug 2025 19:32:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mCCA6I2W"
-Received: from mail-pg1-f170.google.com (mail-pg1-f170.google.com [209.85.215.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="xoUHl2bq"
+Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2049.outbound.protection.outlook.com [40.107.93.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62ADBA920;
-	Mon,  4 Aug 2025 19:31:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.170
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754335891; cv=none; b=pDeB8c1tMmMHl7vz72D7W933Vor+0Ka2CaLC621TXyVpnTUAzzBYSkw9+nEXDXg1Q0tPAKSnH3hLG2SUnHRLhKy+JTIiDs/Z9Q7PTnBpJOHj+dBWAILLMElo5A0Fpz7Sv/V/BUzkuRPqpsS1C0t191ILASmV+8Qp0pKzmBvCHQ0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754335891; c=relaxed/simple;
-	bh=ZnQSbuZYkjItKORmRN9BnQG+sGURBevEX8zF7T9jgPg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mFhQNNA3JFDecq8U5I+bFZ097hJluWNgWr1xqWaE4JAHXdxQv4TqhqaMGMZ2ogzUqqjC2kZ668pVFBEqwxPnpNz2VfW6PpIwRiiKAUdqynyxUCIqIt0daa6aQvIOwZEeQ5m6sg8+LxVf1oQb8G2vYtXXIjmKeMqnSfsFwDDi9YU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mCCA6I2W; arc=none smtp.client-ip=209.85.215.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f170.google.com with SMTP id 41be03b00d2f7-b42099901baso3784812a12.2;
-        Mon, 04 Aug 2025 12:31:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754335889; x=1754940689; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=cg1LDhnZ90yh+XE2oPHgeCSiaPRO2zTnyN8aur7VHpM=;
-        b=mCCA6I2Wz+/oK4zvC269CE8WDckmkoP+8JIk2dXyXiwKqxZ6fzDyIvS7WHqj/d5Ugd
-         s8Lux9YH6NXiH3BvbzHa9Y4JzN9+3yXxVenqEwRL1Tc6e1nw6ooLbc0lWY5W1CvcB6el
-         dDnNcNQjZ0uaxo5oURUV7pkZoeNLvckCjbYN7+mU+w7WcGjCZgYv5HfDUxfQ+NgYaUHV
-         dFxhzNCbYniTZdfrOOu6KVww7tXz2YUf1S/+oMxH38sqz0dJUzZn6eHPMJT/i1Ak15BY
-         MMDcU7ziVBmJ5A4JgWr06AEAZ14dHLVei7LE7mDGikfTlDXv0Z7ppo29eEXnrcct6Fc+
-         4gLA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754335889; x=1754940689;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cg1LDhnZ90yh+XE2oPHgeCSiaPRO2zTnyN8aur7VHpM=;
-        b=KBL9Pd868nuXvLylppokZX8Mq0BbUtSjW8O09+t9NrPjuLcvnItp4c12VnzWkj1whX
-         Z9dwAM7Ww3EUkI132G7s7J+48wybsKHnlCTbG3hWRh0veeMfpo+btmnJJiu6mBNnFrMB
-         ACh4ZAaoB2rI3XklwFheJC55Dj5L71QJCKcqRkfFR7vrwVOEFQpfJ1KxBSR0v1ZRfWiq
-         i3UNK8IxU//V80FqdbW9fZcsa3cdQYsQVmwzWnGcvA6tCiXZ27RvG0G5/Tz4/l4mlSsD
-         Pn5xcwai5FXgkyFZ+E0vPWfu84uu/d1g2IInkLVA0hYymZWIgxXF0a9UC81Bpe1k7Qc/
-         Ru6g==
-X-Forwarded-Encrypted: i=1; AJvYcCUUzwhFhmrd0wStaCxT0+DFSGUyG1d48LO4+JKuLsWPyPF+dYznxjwkSqJ1WaXIZxL3zjIcJpSPPVQh4Cn9S8ZkiA==@vger.kernel.org, AJvYcCUh119ijG2orkanmPE9taLC/nWvXT5e9qZm1Vhe2fcKhj/511KwREYPqicWs40u5Rlm9AgDev528D0mTzo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxeEsbmaIgzgb1BLEz5dwYDkyW+ZKbQSIuFhPpMuh+2v1+MVBlZ
-	W80bCWXGaIQV/4twP34uc1Ld4kW/mdJOK1I4dZtJibxbhCyTntkpnKpk
-X-Gm-Gg: ASbGnctEGWB/dEdg2lz4yLOGcphCzt8NjVcNlNDI630QHpiUHNGa5PAl1kFkPDZqRIM
-	ZZY5r/apvnEvCVIbgZ+2pUPqLR9AdVkTxXRX7XywA3Ivpfkhgct5IkiGpmp+YaSxA1KSvOI8PeI
-	mC62XfXdN5cHC/0xQlgvHXGFskJq7L42OSXHkb6uupL/bSGIT7qs0j5GHfXJKlr9CPfcyXoXCro
-	YrnQlcalFyFp/bg6WA71SFwJelX2vxOoGm33jsgyA6ORGezuRNYP/YiWJc7Z+e1+3Zoa0Ar6BxR
-	2gNorv8G69FztZ/r5abePTQ2VEywsdZhcLm3aCBNBi3kB9s9+PBTAJowoYa8S8sidASdFrAvUnT
-	eXpa1+Mume6gYDw8q+6I=
-X-Google-Smtp-Source: AGHT+IGAC4mA0SjUVleHwP06QIOFdHV0sLOav/gFrKz9UJj/QtI4j3FJcq4tjR9/UICVzEItoBWM0w==
-X-Received: by 2002:a17:902:c409:b0:234:f580:9ed with SMTP id d9443c01a7336-24246f7db85mr145196635ad.21.1754335888390;
-        Mon, 04 Aug 2025 12:31:28 -0700 (PDT)
-Received: from hiagonb ([67.159.246.222])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e899a48esm116911585ad.114.2025.08.04.12.31.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 12:31:27 -0700 (PDT)
-Date: Mon, 4 Aug 2025 16:31:23 -0300
-From: Hiago De Franco <hiagofranco@gmail.com>
-To: Andrew Davis <afd@ti.com>
-Cc: Beleswar Prasad Padhi <b-padhi@ti.com>, 
-	linux-remoteproc@vger.kernel.org, Bjorn Andersson <andersson@kernel.org>, 
-	Mathieu Poirier <mathieu.poirier@linaro.org>, Suman Anna <s-anna@ti.com>, linux-kernel@vger.kernel.org, 
-	Hiago De Franco <hiago.franco@toradex.com>
-Subject: Re: System can not go into suspend when remoteproc is probed on AM62X
-Message-ID: <yz2x2ywvmms6xgdvefqwr6ioi5cateagf2egqjnug7ozkcatx6@f652ifqzrm33>
-References: <20250726143908.ayug6dedkmzulldx@hiagonb>
- <d6ac080c-9a13-49eb-9cf5-1723df613548@ti.com>
- <20250729180420.svxtcukjlgg5sv6p@hiagonb>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B456A920;
+	Mon,  4 Aug 2025 19:32:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.49
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754335939; cv=fail; b=VbIsOIQLeIqZFB/uVf7wwCe52gyT3j7990cGGkHPmxGKrGA530xItm/H0R/Cn4JE/2B4yg54h3R9MS8eEgovu0jd/ip64LVNZ9NWCpbQCbDDIl1Vtgq657s3loCmapZ0rdYlcUtkl2S50xq4KLOJkgK6CLOVnWpNWzqT9VC2LZc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754335939; c=relaxed/simple;
+	bh=toH5TZRYyp1dovgrrbQknMJtLasDAoKCCG8bAOvkVvc=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=LT6m9HenkCX0+FY1IOYswHPWtB1UEvkrd/YF4mOci6jelNRVcfiSlZ7eHML2BUCS2CAY5iMHFvPf0MiJpeUZpdqJUjX5bf+sD5ATsxnnE+SJV5Z5S26AO8OzLh0Gr0n+oAXH/cqvjJ0YnEXQ+qbh7OZm10292UkhkugBtKodGno=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=xoUHl2bq; arc=fail smtp.client-ip=40.107.93.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=YzfaKZnU8BnwhIJlnJIcCq83R2owYbmOBkdFG7gI9Wa/n+EL5vkCZYXoV/vEgxQtBkxU9WgDH8jTJg8OlDOgHsxLa6asIhl0b1D0oLR6KO8beqo4Nh5OOdWy0sX0JDpES8rdXlSIjpixO3aIVBIP/FZot6t9syBEKci7PkL3ve/EgVjNaqAwEmGFEXZjIZYsSW/3a0xOXKmpBPa8Gk51K5XmpSbDfSrEUqYs8+w0noQmuCuC8fiZ6Wivwd8fOx0RDI9XOWhDkSVzeg1YnwhdcsAmkhwAsO4LmPfjJ5mEFepfsHMkT+axun45zjTsyAGp8kWfFrYMZE5/yxx4tSCjgw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=YC1o9yN6gp7tTxAhJZrP96HbZtJLvwfTFUU3An6d0DA=;
+ b=rSg2gT0XWYVIo5CibnEp5MjAnqP4o22T16FhazN/afzPj1tTSF28ZGPQ+EZDIlXx2YCQq02+RVCSIUH5+zFp3Hyopr/tvqVk+QuM1jg8UJoLYsdL5r46Y1qqJQUwCjd9M9J8iysfG6iAIbCzG063Aa+o/BEWGp8xEv9VVXH7dx9woNqrUr7aRE+Wwx8rX0bB1Il7lMtituqfEUY5YZao+sSHrG+2IIUsGLhuW9HhS5g/xdviqS0nCLSrCvmUMeoVrZckoza6CuyM5H7MvQF+Z963z758cC4b99+LG9Bu2SB3gY+01NJEP5mx2a2ik4fvxmSW47BCaJ5d62c6T5zTkQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=YC1o9yN6gp7tTxAhJZrP96HbZtJLvwfTFUU3An6d0DA=;
+ b=xoUHl2bqzBOi67V0zPLlQKUXiK5pawA+fpy3AZU1HGcWdglWXIV6OFWIkEYg0FeQiEVq9FONl8r06pxKHZj+xFCKC2fNcmDpI9S9rv/4+qoXR823tr9CC/1igHxB2wdh2PAkpYARgUGpzuHygQy3l0JUvDmyx7hinaoTgNwXYlw=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc) by IA0PR12MB7749.namprd12.prod.outlook.com
+ (2603:10b6:208:432::22) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.17; Mon, 4 Aug
+ 2025 19:32:14 +0000
+Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Mon, 4 Aug 2025
+ 19:32:12 +0000
+Message-ID: <5bfb400a-948c-40d1-b509-affcc22341f0@amd.com>
+Date: Mon, 4 Aug 2025 14:32:08 -0500
+User-Agent: Mozilla Thunderbird
+Reply-To: babu.moger@amd.com
+Subject: Re: [PATCH v7 09/10] fs/resctrl: Modify rdt_parse_data to pass mode
+ and CLOSID
+To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
+ tony.luck@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
+ tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
+ dave.hansen@linux.intel.com
+Cc: x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
+ paulmck@kernel.org, rostedt@goodmis.org, Neeraj.Upadhyay@amd.com,
+ david@redhat.com, arnd@arndb.de, fvdl@google.com, seanjc@google.com,
+ thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
+ yosry.ahmed@linux.dev, sohil.mehta@intel.com, xin@zytor.com,
+ kai.huang@intel.com, xiaoyao.li@intel.com, peterz@infradead.org,
+ me@mixaill.net, mario.limonciello@amd.com, xin3.li@intel.com,
+ ebiggers@google.com, ak@linux.intel.com, chang.seok.bae@intel.com,
+ andrew.cooper3@citrix.com, perry.yuan@amd.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1752167718.git.babu.moger@amd.com>
+ <f52c579262bbbc8bda4dbbb7341ad7bf0add0379.1752167718.git.babu.moger@amd.com>
+ <798ba4db-3ac2-44a9-9e0d-e9cbb0dbff45@intel.com>
+Content-Language: en-US
+From: "Moger, Babu" <babu.moger@amd.com>
+In-Reply-To: <798ba4db-3ac2-44a9-9e0d-e9cbb0dbff45@intel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: DS7PR03CA0053.namprd03.prod.outlook.com
+ (2603:10b6:5:3b5::28) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+ (2603:10b6:20f:fc04::bdc)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250729180420.svxtcukjlgg5sv6p@hiagonb>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|IA0PR12MB7749:EE_
+X-MS-Office365-Filtering-Correlation-Id: e2d91686-691f-4b6e-c5f9-08ddd38d9c84
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?bEE2Q0dRbFN6VVBXd1RvR05rZjRwWWxobUhZZFZJTGRMd29qcG83cmM2QXdy?=
+ =?utf-8?B?WlhQMkxQOXNGbDNBWGJUL2hBNnFTcHRnZmtKNHNYVGlxcXQ4UjNFM3RHN0hm?=
+ =?utf-8?B?Q2doK0JQL1JNU1pBVGZ6NkpudUZtL3AwNUZkM3p6b1BLYVhMNlAxRHE4QXpZ?=
+ =?utf-8?B?QTlST2V5Ykw1NHIwU2FJQUlUbGlJNUtNemZNTUhHQjlFYldnOWwraFl2LzA2?=
+ =?utf-8?B?amp3U1o0aXEweS80VUc1Q05pQzVoVHQvN3VqVytKNTN0VW8wcjBEcDhreEFK?=
+ =?utf-8?B?dkR3czhTUFJzZXBMQkZNb2YwVHNOVXQzQmxoWnl1RzZTYU9NUmZqU0VIS3FM?=
+ =?utf-8?B?QWg2b1gybTczU3Y1V0FyWmRmUmtPQW9yWEhMYmlYM2hZY3RMRTlHcXZiQTVD?=
+ =?utf-8?B?N1NVTGIwKzBHeUF2VWpFVzRHbWQ1VVJqdmVCeDE2NlBmb1dzWVRqV1EzZnFo?=
+ =?utf-8?B?TTVmb3pNYUdORGZxZUZaNmhqNlBVU2ZKb2pqeFQzRUF6L2dDVUU3TmVibEti?=
+ =?utf-8?B?VDdnRGU3NzFuS1Q3eHdSNFhDZDNYK3FZSjhmd2RVeG9iL3F0Qm12RUJMRDNL?=
+ =?utf-8?B?YlhkN3Axb0xmeFlHdzJRL3F3Q3FzRjlhRVpVdld3cCtFM1grRkxNcUI4cisx?=
+ =?utf-8?B?b0NBcy9ZUjRZNG84R3I2QWhxdkpMWGR5dXdPMUowR2IvL3BhdmJrZHhaVXNp?=
+ =?utf-8?B?bFk1T3pPNytTdTh0QmJnMStHSVRCVU5FbElIYnJOMWlWbU1OT3FaMjRGY3Bi?=
+ =?utf-8?B?ZDUxYi8zd05zM0JZekU1Q1ZyVUZ6NWlmUWJncUpGS3dYTEpRRUZjcGhsQ2lv?=
+ =?utf-8?B?U1F5dFNkZk5tRFNFa0p0S1VscVgrSXowYUdXcTZkOXRQMUMrdnRoREtqSEZM?=
+ =?utf-8?B?UlVZSkR3c2ZndHd6M2ZSTW11a21CSTQ2RGdpMkdxdE5LQURkc21OWTdYa3hS?=
+ =?utf-8?B?cGpyU0VPMzJyenVVUGYzVmd2ODVtdlo2SVBvL2V5MU9hYWxRK1lMSVMxcWo4?=
+ =?utf-8?B?Skd2czNVTG9ERkdCdTJNRkZ3NzlHSHZqZGNrT25tM3drcW1DbU5aUU1MYXhK?=
+ =?utf-8?B?c0MzZEVnQ0lFOXpOSU00S3ZlYTFqN1A1ZjA1dE5nK2dURnl1OFhjZTRuS3Jo?=
+ =?utf-8?B?MDl3b3lFSVpoVHYwMnhQNWdzTlVHWnNOTVB4VFpvd0VleGY2aE9Bd3VwQ2Fo?=
+ =?utf-8?B?bXRSOTUyNHFhUVprNUZVbUpaTmJDcnQzMlIxRndubUFvUmdjTXZ2Q2owL2lB?=
+ =?utf-8?B?L0YyTlQvMWhYWWlCYWFpbnozWDBreVdOUzlMWWtnUm42QlJJaEZmOFRIajRO?=
+ =?utf-8?B?Sm45ZnJyYjE3MmtrRndxZ2MvdkFPU1JZUFd6QW9VdFNPNHdTcDNMUGlJZHYx?=
+ =?utf-8?B?Um5PcDJjVXAxcTUwQ01nSE1pL0I2T05EMmpYVEsxMkNTZmVBSU1aR0RKQUJF?=
+ =?utf-8?B?QTdBRXJkSEYwMzBrSkkwdnhESHNOQkxSZmp6T3locEd3QjRQcWFEOHBVNHZ1?=
+ =?utf-8?B?bTY5QlhQeWJaSWZEYVJLcllYZHdIZ2RkZitiamc5RUlCRzZLYmdQeWNyT3pi?=
+ =?utf-8?B?bzduMjZBaXVydWFiVzI2TmtVNFliS0Y1MlNkVFJBZkVYZVkrMCtyd2UwVjFL?=
+ =?utf-8?B?amZwVWx2NVhHZzRjeXJQZzFnSFlGS1IremhJZUFETURzYUNHdU0zMm1xbzJO?=
+ =?utf-8?B?STVmYnpuQjhBS3h5STU4c3RNQTV5bFZnRUN3NGtnR2RiRytWakcvSW80V3lD?=
+ =?utf-8?B?VHByeVFoRjlid0E2c3FhNWE4L2MvazFNeHVZU0IvQ21EbmVtSGNpYXlhYklD?=
+ =?utf-8?B?aHBDYkVyV3RuVzVMZS8xZGpHTXpnR3lPY2ZQZjVZS1dFSTZqYTJKWS8xREc4?=
+ =?utf-8?B?ZExlVUx6RGZIN2dIR3BzcnVDZ0NyYWNtWTVwcklOZi9MMXl5N2ovajZ5UVp2?=
+ =?utf-8?Q?DPAcVN9vyTc=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eXUwblJ3T3hrc1A5OXE2R2NtMFR2M3d5N1UxaGYzQ1ovRnFodlh2RGJmQjdI?=
+ =?utf-8?B?WTgxV0NZcng1dThWQkFxbG1STW1lZzFUcDZDRndMb0hIYmtZamdZTHVCNld0?=
+ =?utf-8?B?dmZXaWlobHZlRCtDUVM4SkpZNXRvU3AvazREc1l1K0JJRTZuanNISkttTDVU?=
+ =?utf-8?B?aGdZVmI5UElJUVpCcnRlckRqQ3lMR3RkRE81TEszMXBhNmQ1K1NPbVduNEht?=
+ =?utf-8?B?UURyYjczYlduTEJyU09ab243dnZ6WXlzUk9UV0plZ2x2c2wxbVdUWjZIUjAv?=
+ =?utf-8?B?QlZMQVVlWU8xS0tGd3lyVEM2Ty84Y3Y0Zm5NQWR0azQyM0pjTzhBbUsrZkpE?=
+ =?utf-8?B?dmpEVmI2QTRPUEJzNjUyeEU3anJLUm10emc2V3B6eTc5anlBVXRFVHVjemRK?=
+ =?utf-8?B?REVvblpTa04yanU1S1pHN3g1VzF1K0VuYUhtU3hVb09CMGVMYnpueFhmUW5M?=
+ =?utf-8?B?UmthcVVpY1RnWTBYVE96YkdmbmVxTzY2OEpZMVhvRldtRDJyaXY4TTcwVGts?=
+ =?utf-8?B?OGVDNzB6L0phRDhpYWVWUk1RR0xJOXM2Z3BFUWoyQ1Jibm1TSlpkYnVvd0FR?=
+ =?utf-8?B?UitQMEpMUXNsb25ac29JaGkyWnZiUE5sNTdrZEFRQTNFRUJCUUJsRm0zWWdY?=
+ =?utf-8?B?RHFLTWxwWTFRUm5kQnVrQ2VCeFc4cXdrTVVscHhTTnFpS0VYK1IxV0lBZUc4?=
+ =?utf-8?B?cU43VEliVjYxelJIM3dxTXl2UWdnWjVTSGYvUFRWbEduRDY3a3NwZFh0aTNz?=
+ =?utf-8?B?bU5OclBFN1loaDFKeGo4djZKcGJDZjNHMmMvbHdTZ25Lc081UUJ3UzN0QnFN?=
+ =?utf-8?B?Rml0YVN0TnFlMHNQOElrTEFEZmVNNHQ5SUdlenczWjQ3b1NCUzE3bXU5UFJE?=
+ =?utf-8?B?Z08rMy9NUFNVb2tSemNiT3pIQ0xiM2RnTGMvTndwZEdkRDBmOUZjK3B1NzVF?=
+ =?utf-8?B?OXZ0dlIraXBJRjdDdVkydER6Y1YzOXYxcFovU09Td2RsdTNTbHpvaDNwcm54?=
+ =?utf-8?B?TkdlQXh0WkY1dXJCM3c3c1NaOU42QVJUWHlyZUVUVkkwNEZuNEV3K1hxU0hR?=
+ =?utf-8?B?YnFaSzcxYXhYc3l2SWQ0TXB4NTV2ZTBBOFVVRXd2Uno1OVNVclVHczhKTTBO?=
+ =?utf-8?B?QjlVSWp6L2p0dSswRFMrV05sVWdqN0hkZDI1ZXByT3FBU3VmV2YxYTlmM1NM?=
+ =?utf-8?B?UTBpdnI2S2ZBTEluZHhicmRmaWdFSDRmMWFIemRIeGQ1aWk3dzdBQlF3L09j?=
+ =?utf-8?B?YVJhVnlnWVQrV3ZRaGxWU2xOVjhXRjVJNER1MTBzaCtuVXh5OVYvVDBMb2xn?=
+ =?utf-8?B?cmxhU1VDajBkTENHS2RiVEVORmczKzlucHdFbzRCWisxM3J1K0NOclBPbzd0?=
+ =?utf-8?B?TGJEQ05TNWRqYy9nUXc3VWNaVHg0cTdzODJCR0tlYmVHZkpNWkJZL1hUbWpW?=
+ =?utf-8?B?cEppL29wd0hZd1Z2OE5VYjJRZTd5UFN6RzRHMXVyRXl2M0l6T3ZaSzFFNFg2?=
+ =?utf-8?B?VjJ0SnVVa08xK2NhYXFBMFBSRUVpOWd2bnJ6d1piUGdqQTZxMWtYRHg3RmhP?=
+ =?utf-8?B?ZExtWUJ1ejYrVzFpZDlsK1RGaEZmSDduTlF0cGU1ejJ1bTNkc0ZYWlpKdGZV?=
+ =?utf-8?B?OTF2MHFCUEdJaVV5TkZzckZWMnZUdDBRaERDV3JYVkNKazh2U01HUDh2STVF?=
+ =?utf-8?B?T0NJcTV2TWV6bkVoR2RieWdBb3Z4QkNQVWRoRWEwcUJJZFFTL0ptZWpvTi9x?=
+ =?utf-8?B?VVFqOTQ5RUc5K3B6SC9NUUpQalRVcnFpeFBXMU9ZSTV0UGNNSWFCY3BGN09x?=
+ =?utf-8?B?Z3BQRU5zMmJBVUpWRW00aDVyamFoZ2F3NXl2RUFab1hsZVU5RDkzYlVWcmsr?=
+ =?utf-8?B?WHpRbjNiNThteEVrcG5hQkFFTVR2ZmtvUGh3cFZYQUZJak5IbGlwKzQ0UmFy?=
+ =?utf-8?B?NWROOUlRbDVxZUV2WUJva2JCMzlITU5WaUFvSXNIM1dNVDEvdTRNd0xIbUdL?=
+ =?utf-8?B?Wlh1NEJjaFhLTVNWNGkzWHgwNlhhelZTV3NncWNMMDlzczQ2VlhqRk5XbURZ?=
+ =?utf-8?B?WGNkL2R0c2FUU3RycmtyTnBVYlMvcng0UWhiNWljM1o5T25RMVB6SUhaY0dp?=
+ =?utf-8?Q?ryRo=3D?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e2d91686-691f-4b6e-c5f9-08ddd38d9c84
+X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 19:32:12.8134
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: yi+GEdV8gvkFl2xwB1YVIPkxkUnr5txAQ5Pyx2fEw6rwnhO5hFvpPA/5LyRtLnHk
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA0PR12MB7749
 
-Hi Andrew,
+Hi Reinette,
 
-On Tue, Jul 29, 2025 at 03:04:20PM -0300, Hiago De Franco wrote:
-> On Sat, Jul 26, 2025 at 12:48:14PM -0500, Andrew Davis wrote:
-> > On 7/26/25 9:39 AM, Hiago De Franco wrote:
-> > > Hi Andrew, Beleswar,
-> > > 
-> > > On Fri, Jul 25, 2025 at 02:29:22PM -0500, Andrew Davis wrote:
-> > > > 
-> > > > So the issue then looks to be this message we send here when we setup
-> > > > the mailbox[0]. This mailbox setup is done during probe() for the K3
-> > > > rproc drivers now (mailbox setup used to be done during
-> > > > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
-> > > > is correct, but we should have factored out the test message sending
-> > > > code out of mailbox setup so it could have been left in
-> > > > rproc_{start,attach}(). That way we only send this message if the
-> > > > core is going to be started, no sense in sending that message if
-> > > > we are not even going to run the core..
-> > > > 
-> > > > Fix might be as simple as [2] (not tested, if this works feel free
-> > > > to send as a fix)
-> > > 
-> > > I tested the patch and it works, thanks!
-> > > 
-> > > > 
-> > > > Andrew
-> > > > 
-> > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
-> > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
-> > > > [2]
-> > > > 
-> > > > diff --git a/drivers/remoteproc/ti_k3_common.c b/drivers/remoteproc/ti_k3_common.c
-> > > > index a70d4879a8bea..657a200fa9040 100644
-> > > > --- a/drivers/remoteproc/ti_k3_common.c
-> > > > +++ b/drivers/remoteproc/ti_k3_common.c
-> > > > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(k3_rproc_reset);
-> > > > +static int k3_rproc_ping(struct k3_rproc *kproc)
-> > > > +{
-> > > > +       /*
-> > > > +        * Ping the remote processor, this is only for sanity-sake for now;
-> > > > +        * there is no functional effect whatsoever.
-> > > > +        *
-> > > > +        * Note that the reply will _not_ arrive immediately: this message
-> > > > +        * will wait in the mailbox fifo until the remote processor is booted.
-> > > > +        */
-> > > > +       int ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-> > > > +       if (ret < 0)
-> > > > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
-> > > > +
-> > > > +       return ret;
-> > > > +}
-> > > > +
-> > > >   /* Release the remote processor from reset */
-> > > >   int k3_rproc_release(struct k3_rproc *kproc)
-> > > >   {
-> > > > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
-> > > >          if (ret)
-> > > >                  dev_err(dev, "module-reset deassert failed (%pe)\n", ERR_PTR(ret));
-> > > > +       k3_rproc_ping(kproc);
-> > > > +
-> > > >          return ret;
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(k3_rproc_release);
-> > > > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
-> > > >                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> > > >                                       "mbox_request_channel failed\n");
-> > > > -       /*
-> > > > -        * Ping the remote processor, this is only for sanity-sake for now;
-> > > > -        * there is no functional effect whatsoever.
-> > > > -        *
-> > > > -        * Note that the reply will _not_ arrive immediately: this message
-> > > > -        * will wait in the mailbox fifo until the remote processor is booted.
-> > > > -        */
-> > > > -       ret = mbox_send_message(kproc->mbox, (void *)RP_MBOX_ECHO_REQUEST);
-> > > > -       if (ret < 0) {
-> > > > -               dev_err(dev, "mbox_send_message failed (%pe)\n", ERR_PTR(ret));
-> > > > -               mbox_free_channel(kproc->mbox);
-> > > > -               return ret;
-> > > > -       }
-> > > > -
-> > > >          return 0;
-> > > >   }
-> > > >   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> > > > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
-> > > >    * remote core. This callback is invoked only in IPC-only mode and exists
-> > > >    * because rproc_validate() checks for its existence.
-> > > >    */
-> > > > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
-> > > > +int k3_rproc_attach(struct rproc *rproc)
-> > > > +{
-> > > > +       k3_rproc_ping(rproc->priv);
-> > > > +
-> > > > +       return 0;
-> > > > +}
-> > > >   EXPORT_SYMBOL_GPL(k3_rproc_attach);
-> > > >   /*
-> > > > 
-> > > 
-> > > On Sat, Jul 26, 2025 at 07:47:34PM +0530, Beleswar Prasad Padhi wrote:
-> > > > > 
-> > > > > So the issue then looks to be this message we send here when we setup
-> > > > > the mailbox[0]. This mailbox setup is done during probe() for the K3
-> > > > > rproc drivers now (mailbox setup used to be done during
-> > > > > rproc_{start,attach}() before [1]). Moving mailbox setup to probe
-> > > > > is correct, but we should have factored out the test message sending
-> > > > > code out of mailbox setup so it could have been left in
-> > > > > rproc_{start,attach}().
-> > > > 
-> > > > 
-> > > > Or, how about we don't send that test mbox message at all. It does not
-> > > > actually check if the remoteproc was able to receive and respond to the
-> > > > message. It only verifies if the write to the mbox queue was successful. And
-> > > > most firmwares anyways don't reply to that mailbox-level echo message.
-> > > 
-> > > I was thinking about the same.
-> > > 
-> > > I tested the patch and it indeed works, however when I boot the remote
-> > > core with a hello world firwmare from the TI MCU SDK (with IPC enabled
-> > > with the sysconfig), the ping is sent but M4 never replies to it, which
-> > > at the end causes an unread message to stay there. Later, if I stop the
-> > > remote processor, I can not got into suspend mode again because of this
-> > > message.
-> > > 
-> > > So I believe we should never send the message or clear the mailbox when
-> > > the remote processor is stopped, but I was not able to find a way to
-> > > clear the mailbox. So, is it ok if we never send the ping?
-> > > 
-> > 
-> > So right now it is okay to not send that ping, and in the past I've
-> > thought about removing it (it is a bit of a legacy hold-over from
-> > the OMAP RProc driver. Back then we would send other messages like
-> > suspend and shutdown requests, you can see the different messages
-> > here[0]. Actually using those messages never got upstream, only the
-> > ping message part did.
-> > 
-> > For K3 we want to start making use of all these other messages and
-> > upstream the support for the same. So removing the ping test message
-> > felt like a step backwards as it is a good placeholder for the more
-> > important messages we want to send later. But as said, removing it
-> > is probably fine for now.
-> > 
-> > The second thing on the roadmap is to better deal with messages left
-> > in the mailbox queue when we try to suspend. Basically on suspend the
-> > mailbox IP is powered down and all messages waiting will be lost, this
-> > can cause issues. Instead of blocking suspend, one other option would
-> > be to attempt to read out these messages and restore them on resume.
-> > This state saving would match what most other IP drivers. This would
-> > fix issues like the above were the firmware doesn't consume a message
-> > for whatever reason. But until we implement that, either we throw out
-> > messages on suspend, or we block suspend.
+On 7/21/25 22:30, Reinette Chatre wrote:
+> Hi Babu,
 > 
-> Got it, thanks for you explanation Andrew. I am out this week, so next
-> week I will propose a patch so we can turn around this issue.
+> On 7/10/25 10:16 AM, Babu Moger wrote:
+>> The functions parse_cbm() and parse_bw() require mode and CLOSID to
 > 
-> Thanks!
+> No need to say "function" when using (). Also, drop parse_bw(), since it
+> does not validate CBMs.
+
+Sure.
 > 
-> Hiago.
+>> validate the Capacity Bit Mask (CBM). It is passed through struct
+> 
+> "passed through" -> "passed via"?
+> 
 
-Sorry for the delay, I am back this week, I was testing the patches and
-removing the ping was not enough, there is one extra message being sent,
-which is the k3_rproc_kick() from ti_k3_common.c. This one is a callback
-from remoteproc_virtio.c.
+Sure.
 
-I belive this one is necessary to make the firmware works, but with the
-hello world demo, I still have the issue where I can not go into suspend
-mode. Removing both mbox_send_message() calls makes the suspend work
-again:
+>> rdtgroup in rdt_parse_data.
+> 
+> "rdt_parse_data" -> "struct rdt_parse_data"
+> 
 
-root@verdin-am62-15479173:~# dmesg | grep -i -E "remoteproc|rproc|omap-mailbox|hfranco"
-[    0.000000] Kernel command line: root=PARTUUID=096221e5-02 ro rootwait console=tty1 console=ttyS2,115200 dyndb
-g="file ti_k3_common.c +p; file remotecore_proc.c +p; file remoteproc_virtio.c +p"
-[   10.520920] omap-mailbox 29000000.mailbox: omap mailbox rev 0x66fc9100
-[   10.711357] k3-m4-rproc 5000000.m4fss: assigned reserved memory node m4f-dma-memory@9cb00000
-[   10.753040] k3-m4-rproc 5000000.m4fss: configured M4F for remoteproc mode
-[   10.793640] remoteproc remoteproc0: 5000000.m4fss is available
-[   10.856735] remoteproc remoteproc0: powering up 5000000.m4fss
-[   10.895961] remoteproc remoteproc0: Booting fw image am62-mcu-m4f0_0-fw, size 451080
-[   11.000752] rproc-virtio rproc-virtio.4.auto: assigned reserved memory node m4f-dma-memory@9cb00000
-[   11.101614] rproc-virtio rproc-virtio.4.auto: registered virtio0 (type 7)
-[   11.151665] remoteproc remoteproc0: remote processor 5000000.m4fss is now up
-[   12.123724] remoteproc remoteproc1: 30074000.pru is available
-[   12.171118] remoteproc remoteproc2: 30078000.pru is available
-[   12.337287] remoteproc remoteproc0: vring0: va 00000000cabe42be qsz 256 notifyid 0
-[   12.337337] remoteproc remoteproc0: vring1: va 00000000a651968a qsz 256 notifyid 1
-[   12.348543] remoteproc remoteproc0: kicking vq index: 0
-[   12.348559] hfranco: sending msg 0x0, name mbox-m4-0
-[ 2514.508396] remoteproc remoteproc0: stopped remote processor 5000000.m4fss
-[ 2518.010399] omap-mailbox 29000000.mailbox: fifo 1 has unexpected unread messages
-[ 2518.010433] omap-mailbox 29000000.mailbox: PM: dpm_run_callback(): platform_pm_suspend returns -16
-[ 2518.010461] omap-mailbox 29000000.mailbox: PM: failed to suspend: error -16
+Sure.
 
-In this case, I was wondering if we should drop the messages for now,
-until we have the routine to save the messages first. Any suggestion you
-might have?
+>>
+>> This can be simplified by passing the mode and closid directly, instead of
+> 
+> closid -> CLOSID
+> 
+Sure,
 
-Thanks for the help,
-Hiago.
+>> through the rdtgroup struct. Doing so also facilitates calling parse_cbm()
+>> to verify the CBM within the io_alloc feature, since io_alloc does not
+>> have rdtgroup context.
+> 
+> Above notes that "simplification" is the primary motivation but I do not think
+> this change qualifies as a "simplification". How about second paragraph changed
+> to something like:
+> 
+> 	The io_alloc feature also uses CBMs to indicate which portions of
+> 	cache are allocated for I/O traffic. The CBMs are provided by
+> 	user space and need to be validated the same as CBMs provided for
+> 	general (CPU) cache allocation. parse_cbm() cannot be used as-is
+> 	since io_alloc does not have rdtgroup context.
+> 
+> 	Pass the mode and CLOSID directly to parse_cbm() via struct rdt_parse_data
+> 	instead of through the rdtgroup struct to facilitate calling parse_cbm() to
+> 	verify the CBM of the io_alloc feature.
+> 
+> (please feel free to improve)
+> 
+
+Looks good.
+
+>>
+>> Signed-off-by: Babu Moger <babu.moger@amd.com>
+>> ---
+> 
+> 
+> 
+>> ---
+>>  fs/resctrl/ctrlmondata.c | 29 +++++++++++++----------------
+>>  fs/resctrl/internal.h    |  6 ++++++
+>>  2 files changed, 19 insertions(+), 16 deletions(-)
+>>
+>> diff --git a/fs/resctrl/ctrlmondata.c b/fs/resctrl/ctrlmondata.c
+>> index e78828b0408a..5c16557fb7a8 100644
+>> --- a/fs/resctrl/ctrlmondata.c
+>> +++ b/fs/resctrl/ctrlmondata.c
+>> @@ -23,11 +23,6 @@
+>>  
+>>  #include "internal.h"
+>>  
+>> -struct rdt_parse_data {
+>> -	struct rdtgroup		*rdtgrp;
+>> -	char			*buf;
+>> -};
+>> -
+> 
+> This patch is only about replacing rdtgroup with mode and CLOSID, there is no
+> motivation for relocating the structure declaration. This looks to be a change
+> needed by following patch but is another change that becomes unnecessary if
+> the io_alloc code, specifically resctrl_io_alloc_cbm_write() and
+> resctrl_io_alloc_parse_line() from next patch, are moved to ctrlmondata.c.
+> 
+
+Yes. Not required to move now.
+
+> ...
+> 
+>> @@ -171,7 +167,7 @@ static int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
+>>  	 * Cannot set up more than one pseudo-locked region in a cache
+>>  	 * hierarchy.
+>>  	 */
+>> -	if (rdtgrp->mode == RDT_MODE_PSEUDO_LOCKSETUP &&
+>> +	if (mode == RDT_MODE_PSEUDO_LOCKSETUP &&
+>>  	    rdtgroup_pseudo_locked_in_hierarchy(d)) {
+>>  		rdt_last_cmd_puts("Pseudo-locked region in hierarchy\n");
+>>  		return -EINVAL;
+>> @@ -180,9 +176,9 @@ static int parse_cbm(struct rdt_parse_data *data, struct resctrl_schema *s,
+>>  	if (!cbm_validate(data->buf, &cbm_val, r))
+>>  		return -EINVAL;
+>>  
+>> -	if ((rdtgrp->mode == RDT_MODE_EXCLUSIVE ||
+>> -	     rdtgrp->mode == RDT_MODE_SHAREABLE) &&
+>> -	    rdtgroup_cbm_overlaps_pseudo_locked(d, cbm_val)) {
+>> +	if ((mode == RDT_MODE_EXCLUSIVE ||
+>> +	     mode == RDT_MODE_SHAREABLE) &&
+>> +	     rdtgroup_cbm_overlaps_pseudo_locked(d, cbm_val)) {
+> 
+> Please fix alignment.
+
+Sure.
 
 > 
-> > 
-> > Andrew
-> > 
-> > [0] drivers/remoteproc/omap_remoteproc.h
-> > 
-> > > Best regards,
-> > > Hiago.
-> > > 
-> > > > 
-> > > > Thanks,
-> > > > Beleswar
-> > > > 
-> > > > > That way we only send this message if the
-> > > > > core is going to be started, no sense in sending that message if
-> > > > > we are not even going to run the core..
-> > > > > 
-> > > > > Fix might be as simple as [2] (not tested, if this works feel free
-> > > > > to send as a fix)
-> > > > > 
-> > > > > Andrew
-> > > > > 
-> > > > > [0] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/remoteproc/ti_k3_common.c#n176
-> > > > > [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=f3f11cfe890733373ddbb1ce8991ccd4ee5e79e1
-> > > > > [2]
-> > > > > 
-> > > > > diff --git a/drivers/remoteproc/ti_k3_common.c
-> > > > > b/drivers/remoteproc/ti_k3_common.c
-> > > > > index a70d4879a8bea..657a200fa9040 100644
-> > > > > --- a/drivers/remoteproc/ti_k3_common.c
-> > > > > +++ b/drivers/remoteproc/ti_k3_common.c
-> > > > > @@ -198,6 +198,22 @@ int k3_rproc_reset(struct k3_rproc *kproc)
-> > > > >   }
-> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_reset);
-> > > > > 
-> > > > > +static int k3_rproc_ping(struct k3_rproc *kproc)
-> > > > > +{
-> > > > > +       /*
-> > > > > +        * Ping the remote processor, this is only for sanity-sake for
-> > > > > now;
-> > > > > +        * there is no functional effect whatsoever.
-> > > > > +        *
-> > > > > +        * Note that the reply will _not_ arrive immediately: this
-> > > > > message
-> > > > > +        * will wait in the mailbox fifo until the remote processor is
-> > > > > booted.
-> > > > > +        */
-> > > > > +       int ret = mbox_send_message(kproc->mbox, (void
-> > > > > *)RP_MBOX_ECHO_REQUEST);
-> > > > > +       if (ret < 0)
-> > > > > +               dev_err(kproc->dev, "mbox_send_message failed (%pe)\n",
-> > > > > ERR_PTR(ret));
-> > > > > +
-> > > > > +       return ret;
-> > > > > +}
-> > > > > +
-> > > > >   /* Release the remote processor from reset */
-> > > > >   int k3_rproc_release(struct k3_rproc *kproc)
-> > > > >   {
-> > > > > @@ -221,6 +237,8 @@ int k3_rproc_release(struct k3_rproc *kproc)
-> > > > >          if (ret)
-> > > > >                  dev_err(dev, "module-reset deassert failed (%pe)\n",
-> > > > > ERR_PTR(ret));
-> > > > > 
-> > > > > +       k3_rproc_ping(kproc);
-> > > > > +
-> > > > >          return ret;
-> > > > >   }
-> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_release);
-> > > > > @@ -243,20 +261,6 @@ int k3_rproc_request_mbox(struct rproc *rproc)
-> > > > >                  return dev_err_probe(dev, PTR_ERR(kproc->mbox),
-> > > > >                                       "mbox_request_channel failed\n");
-> > > > > 
-> > > > > -       /*
-> > > > > -        * Ping the remote processor, this is only for sanity-sake for
-> > > > > now;
-> > > > > -        * there is no functional effect whatsoever.
-> > > > > -        *
-> > > > > -        * Note that the reply will _not_ arrive immediately: this
-> > > > > message
-> > > > > -        * will wait in the mailbox fifo until the remote processor is
-> > > > > booted.
-> > > > > -        */
-> > > > > -       ret = mbox_send_message(kproc->mbox, (void
-> > > > > *)RP_MBOX_ECHO_REQUEST);
-> > > > > -       if (ret < 0) {
-> > > > > -               dev_err(dev, "mbox_send_message failed (%pe)\n",
-> > > > > ERR_PTR(ret));
-> > > > > -               mbox_free_channel(kproc->mbox);
-> > > > > -               return ret;
-> > > > > -       }
-> > > > > -
-> > > > >          return 0;
-> > > > >   }
-> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_request_mbox);
-> > > > > @@ -397,7 +401,12 @@ EXPORT_SYMBOL_GPL(k3_rproc_stop);
-> > > > >    * remote core. This callback is invoked only in IPC-only mode and
-> > > > > exists
-> > > > >    * because rproc_validate() checks for its existence.
-> > > > >    */
-> > > > > -int k3_rproc_attach(struct rproc *rproc) { return 0; }
-> > > > > +int k3_rproc_attach(struct rproc *rproc)
-> > > > > +{
-> > > > > +       k3_rproc_ping(rproc->priv);
-> > > > > +
-> > > > > +       return 0;
-> > > > > +}
-> > > > >   EXPORT_SYMBOL_GPL(k3_rproc_attach);
-> > > > > 
-> > > > >   /*
-> > > > > 
-> > 
+>>  		rdt_last_cmd_puts("CBM overlaps with pseudo-locked region\n");
+>>  		return -EINVAL;
+>>  	}
+> 
+> Reinette
+> 
+
+-- 
+Thanks
+Babu Moger
+
 
