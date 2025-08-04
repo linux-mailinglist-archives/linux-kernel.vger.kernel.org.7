@@ -1,184 +1,141 @@
-Return-Path: <linux-kernel+bounces-754957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F06DDB19F27
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:00:35 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F295B19F2E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:01:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 271DA165298
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:00:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0103D7AA0CA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 461471FBCA7;
-	Mon,  4 Aug 2025 10:00:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="RVzJ+qqg"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B0824678C;
+	Mon,  4 Aug 2025 10:00:24 +0000 (UTC)
+Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BCB2475CF
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:59:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544B01ACECE;
+	Mon,  4 Aug 2025 10:00:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301600; cv=none; b=rIqYs68m8Ys96XkP6C23mt1ss7hJrJKJxfQSEhVmw8lReu2zkwqB1Lvl1SrLl/j5s+qJmQ7foHUj5wXOnyO6Fg6ALEKnVtIV5ZDCAL+XXH8rejBc/gBi9km8ng4JZYI9FTDrM9bzWBz0H6rwTzj27OPZC1a1r+t9ppZQid5prhg=
+	t=1754301624; cv=none; b=n7OB1k+7x0qTBxDpMKCwI4Y5kUn4vGCFKBs4BU0KRs/xtTPoi8giNxgt5vh603GGEYnydkSTw6XroX1TbBBewc/cBw2ThtUWTbzZ6xromJU3I4eFEhsEJwLYoJL6YoYlmR2D3fo/oyd4pu7ybo+q5PvklecsmNDVY9YQR6lbKOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301600; c=relaxed/simple;
-	bh=3ksWP6pfixZY81YtiYC+chRXxSOGQDzyt8L7OQfG2v0=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GSiszHDNhEzH2++HsbpDbZ01J7iUTYJmIZmrbfrFT6b0GcbpUhZz1ZwIwYj8SNMLGj5A707y93YAvbwGjLaK6Ks9WRzygek5C7tYD98wZm4jf3V1NG00inemDKn+A4TfPIDCjnWefuRcNPbu0Hj+jjvYS4EAr+I0sw7zGTphk4E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=RVzJ+qqg; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754301597;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4uotoFYubX4ZtXqSpgKHCX/SSQDrgaT9v955ZDKGWl4=;
-	b=RVzJ+qqgQ/vpYBVlq2hS3vrbiTmSo6RAQVMRAFeGZoXQzQa52guqomvk78+ezRZN/gbmJK
-	4/aOm9HF6I34VjNKMV5fTLL+ix51olXkJYe95oMXahnCh9kA8X2/u0KOr5M3YUtZkE6OzZ
-	bVLBLMmx+b7dw4nS9kn02JH+U1BdYyU=
-Received: from mail-ej1-f71.google.com (mail-ej1-f71.google.com
- [209.85.218.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-460-KCeLmYdMNvyDMZuwBVwAsg-1; Mon, 04 Aug 2025 05:59:55 -0400
-X-MC-Unique: KCeLmYdMNvyDMZuwBVwAsg-1
-X-Mimecast-MFC-AGG-ID: KCeLmYdMNvyDMZuwBVwAsg_1754301594
-Received: by mail-ej1-f71.google.com with SMTP id a640c23a62f3a-ade6db50b9cso349768366b.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:59:54 -0700 (PDT)
+	s=arc-20240116; t=1754301624; c=relaxed/simple;
+	bh=mpe7T74dmtR2fuAVUZ57VuLLcRGspxTnziRewsuDca8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HUuq7HHAYrfsRFmUdyOTeICW+RWNtu2UOPsitEfzUe5PL5vXKVuBQWMdGLVx0SYs/ztkM4bn85s4OIaUsyJb818u7wO0zxt92yMH2m70owgiW9ZR+QC9IaS+Itfm2suo8qtrEtmAAjTSW9lR0S/+TNeexk7eJkOxqVlqkLirRmA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53987d78f0bso93784e0c.2;
+        Mon, 04 Aug 2025 03:00:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754301593; x=1754906393;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=4uotoFYubX4ZtXqSpgKHCX/SSQDrgaT9v955ZDKGWl4=;
-        b=qT+L/VX5ymEpSoTJdOxYStMcwtXuGbDzpyas7GBBMVRFW0MhmgzLgUUPTqWYR6f4GY
-         qlVy1n/J43SYsuVRd/CU/xVulTZEO5a/VsDw7ktOT1Iw4f6IXLs8WNV5GUvJ+2MEGI3s
-         meDFKPXtYzCJxfQtpUXi+O9ewrGwg0UlVC86Ij4KFcMgd0IzEh9/EXYZi5lqFC2I1KLY
-         g0GbJo2jH5/hgdWY1QyPfGfWc5t+aSAGZTMyWIAmfABlZUbexVqsmxQc+DXxuNLfI4ec
-         KFPnvV3mLEaXeafof6hXUE2fAAYiejRCatMGZsEG1ibT8hcAJ3HohXePqUGvnVcrToJs
-         ni7A==
-X-Gm-Message-State: AOJu0Yyp++wOQNMvc4b3wEEQ9fIjJy5pKc4pIHHbQB4nsh5p0gV/5xVi
-	4QLr++tU8oKgiTHrl3LKceW0XpgSJ/91PJyVX2ROFtW77hHWGozax/4XV2PSA57anqqPRiECZ/o
-	CA/ianJjWDFXNSDsbeUvkxq/L3W8IW30bAK0lX9gManl5Za/l6AnK8YGX2AzM0NZXKBWSS4Xghp
-	kz
-X-Gm-Gg: ASbGncuniPZRG214faxyJPOkhOdaSXra7pZK+nLKU3Wrt5MwRP6ni2q9MvqZITMP/K2
-	x5zDfOI0/8KwxDXL8irRKRl8555g5VHjeWyWq4gONcqF4Httojuqo6OfggyoTXTdrRr6CP3Y40z
-	azyzxMU9G7A8S5j+BKtdlsqVY5DJBiGm6C2eQDpk5vt/k++VE3ce0NbkoViGr8GQLr6e+nKjlNj
-	ofwp16d61zxdezs0KFhcMZuKQZHQvqgaLkZ1dtK9SwTpHgkOOiagIUSjUMcpG8JuNEJZp6TkPcE
-	TNskkqsY1BER/eeuZmlYvIWS867HABSxXZkctfDhi7b9KoG47sLh9PKZpm1QCxBKoGB94k7+IQ=
-	=
-X-Received: by 2002:a17:907:3fa2:b0:ae0:ad5c:4185 with SMTP id a640c23a62f3a-af94024f22emr924327366b.57.1754301593483;
-        Mon, 04 Aug 2025 02:59:53 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH+nnHYbeFkYXBWGzroGgRCReKRjMsUUhkQES2+aUsPNuNZysvQn/YuZujog/jnwUM/EWJm9A==
-X-Received: by 2002:a17:907:3fa2:b0:ae0:ad5c:4185 with SMTP id a640c23a62f3a-af94024f22emr924324866b.57.1754301593017;
-        Mon, 04 Aug 2025 02:59:53 -0700 (PDT)
-Received: from cluster.. (4f.55.790d.ip4.static.sl-reverse.com. [13.121.85.79])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a078bcbsm715458766b.13.2025.08.04.02.59.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 02:59:52 -0700 (PDT)
-From: Alex Markuze <amarkuze@redhat.com>
-To: ceph-devel@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	Slava.Dubeyko@ibm.com,
-	idryomov@gmail.com,
-	Alex Markuze <amarkuze@redhat.com>
-Subject: [PATCH v2 2/2] ceph: fix client race condition where r_parent becomes stale before sending message
-Date: Mon,  4 Aug 2025 09:59:42 +0000
-Message-Id: <20250804095942.2167541-3-amarkuze@redhat.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250804095942.2167541-1-amarkuze@redhat.com>
-References: <20250804095942.2167541-1-amarkuze@redhat.com>
+        d=1e100.net; s=20230601; t=1754301620; x=1754906420;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=eS3bsjfBxf7Nb9K34UhVoW/iQd5gmVco36iifAHyUH4=;
+        b=QwKJaMQde2rW6Ch+bldUMckL7T7aXSLDQPe6hiXI+l2xlAm+olGXUvq0ZCISSci1sN
+         fW3IOwVKAkQlj1ZHNPuVrfz2PlUGjtwIMYXOhDivPpQmh5oKh/+oOIYAwGyzV/N+dVEi
+         pzHlHtfXRRnIyKtWEF4Fo+O5TtwCfdDFcVCQBMtt687EUYuQrR7iS3ywPrbe2xs5FaCi
+         JWde+CTA0wOYctBJ5yk2xqQLQ60z9d1Cmf9S9kTT61Eiemk5jAT/HQX1eCrj9O0oJyCS
+         75GkkwfxQAo6zDjbMkxaDBgbr6fq4PzuEZKfbT/RVTSgr+qN/NjkDZ5ZrjeYvwJSIq7H
+         yMiQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUhqqfCKS/ltYuR7Ah9u6Qh4UDi+X7pArNlyVROfB+9jQd2iaV462B+uQiyo2wXZEaFW4RdbBXKWHY=@vger.kernel.org, AJvYcCUslQhpbKtk3GNLWQHzic6l3GkHhSL1GovuFDGxx0fF8KOZ8qXUz225le7fBb+HdtmnQHcDZ0fP77eOACJ3@vger.kernel.org, AJvYcCW4fYvVrWzvEV3e2hpGK8Dc2c6TVpMx29xNjmn5MxDk8fn/UNzYkd91x/+SGoCZVFaJ9EW5FxU04b/z+Wr1MyqTGIk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzjabdmI2DCosl+2arMFPs+BCunXE9dSP4e232QHHYpjDF1BiG/
+	rLTOTqtyk6UMP/yLyPyVAFrF/Cg2m0/53GpUt5K1zfYttQcRiGtcCTG0u1377k8g
+X-Gm-Gg: ASbGncu8C/mVFJengRbCfkfnzQzsOAPMFiw24JKuRD6owEOK1A5dA/G+AxJfD4uDR1W
+	21gXO1NqFKQfpc5PErQxwy7qJAya71U4DbCHy5UyoDu72n2vOMHQbc8mkUPIkqMBwTbnXbvx3LS
+	USnsOKb3hYRmbrWiO/1rdEGHpjaogSz6y6MzV8M2OcCz8kBj2LEPktkk0cHy60abhbJsTrmV0f1
+	qLEnvoIdnDKwdDejfrIBOQ1C6YKP3rzBppBDDpwoPbtx9l5LfVDK09j2qDo2N40Wa1/ayfY0hAH
+	jVFpzGG8Yt9Uzxi1aSbiOVcQBN2ooDFMTEdI7y8JhYepXnwP1SJepzpToXJd9am3j2MIgr4PBvM
+	cQE6fcrODOg8scXWy6TIVnDE9k2jCDo4kw4cpO+0xxQ4ZmoJZbSvF6lpTw+vJ
+X-Google-Smtp-Source: AGHT+IENtw1Pl2XfXzdX5f/eq7kLU/oCjtOnKedw46nsNgdICvK8xN5ZPz+sxsbSSFUILJi8BcEYtQ==
+X-Received: by 2002:a05:6122:1697:b0:535:e789:6ccc with SMTP id 71dfb90a1353d-5395f1f80f0mr3360433e0c.3.1754301619863;
+        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
+Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
+        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d4f0bdsm2709173e0c.36.2025.08.04.03.00.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
+Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-88bbfe763ecso920708241.3;
+        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWWRpxZTJrV5fJo/e8kx/ldMqzPArUSCBsUCdwtKi4n0G3PqejQ1HfrfLspnTyI5gsLyWXa9Cp4HtfRzx2F@vger.kernel.org, AJvYcCWuqvVOvNhZjvog5m69Uoo+6PIIg/rDDcZWWxgCf/34g6AkP3LXiIavkiq1xxkNFwKXfT+nL/v/vYKiaFVkkAZDRWE=@vger.kernel.org, AJvYcCXr+tQSaaxvtbuIy1x1d2mYECxbXET0ML7sZq2kWMtgp5ZH9uziSooLc6Dx96HzXNMbpkc7/D7TG+4=@vger.kernel.org
+X-Received: by 2002:a05:6102:c4b:b0:4e7:bf03:cd79 with SMTP id
+ ada2fe7eead31-4fdc1f3ba82mr2731697137.5.1754301618843; Mon, 04 Aug 2025
+ 03:00:18 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com> <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
+In-Reply-To: <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Aug 2025 12:00:07 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
+X-Gm-Features: Ac12FXxP7Z5IRMS9eyyB2n6CzdU8SZtDG8X1mpfYCayxF7CUSCgAeogY_9GSFEo
+Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
+Subject: Re: [PATCH 2/3] clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
+To: Claudiu <claudiu.beznea@tuxon.dev>
+Cc: mturquette@baylibre.com, sboyd@kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
-When the parent directory's i_rwsem is not locked, req->r_parent may become
-stale due to concurrent operations (e.g. rename) between dentry lookup and
-message creation. Validate that r_parent matches the encoded parent inode
-and update to the correct inode if a mismatch is detected.
----
- fs/ceph/inode.c | 52 +++++++++++++++++++++++++++++++++++++++++++++++--
- 1 file changed, 50 insertions(+), 2 deletions(-)
+Hi Claudiu,
 
-diff --git a/fs/ceph/inode.c b/fs/ceph/inode.c
-index 814f9e9656a0..7da648b5e901 100644
---- a/fs/ceph/inode.c
-+++ b/fs/ceph/inode.c
-@@ -56,6 +56,51 @@ static int ceph_set_ino_cb(struct inode *inode, void *data)
- 	return 0;
- }
- 
-+/*
-+ * Check if the parent inode matches the vino from directory reply info
-+ */
-+static inline bool ceph_vino_matches_parent(struct inode *parent, struct ceph_vino vino)
-+{
-+	return ceph_ino(parent) == vino.ino && ceph_snap(parent) == vino.snap;
-+}
-+
-+/*
-+ * Validate that the directory inode referenced by @req->r_parent matches the
-+ * inode number and snapshot id contained in the reply's directory record.  If
-+ * they do not match – which can theoretically happen if the parent dentry was
-+ * moved between the time the request was issued and the reply arrived – fall
-+ * back to looking up the correct inode in the inode cache.
-+ *
-+ * A reference is *always* returned.  Callers that receive a different inode
-+ * than the original @parent are responsible for dropping the extra reference
-+ * once the reply has been processed.
-+ */
-+static struct inode *ceph_get_reply_dir(struct super_block *sb,
-+                                       struct inode *parent,
-+                                       struct ceph_mds_reply_info_parsed *rinfo)
-+{
-+    struct ceph_vino vino;
-+
-+    if (unlikely(!rinfo->diri.in))
-+        return parent; /* nothing to compare against */
-+
-+    /* If we didn't have a cached parent inode to begin with, just bail out. */
-+    if (!parent)
-+        return NULL;
-+
-+    vino.ino  = le64_to_cpu(rinfo->diri.in->ino);
-+    vino.snap = le64_to_cpu(rinfo->diri.in->snapid);
-+
-+    if (likely(ceph_vino_matches_parent(parent, vino)))
-+        return parent; /* matches – use the original reference */
-+
-+    /* Mismatch – this should be rare.  Emit a WARN and obtain the correct inode. */
-+    WARN(1, "ceph: reply dir mismatch (parent valid %llx.%llx reply %llx.%llx)\n",
-+         ceph_ino(parent), ceph_snap(parent), vino.ino, vino.snap);
-+
-+    return ceph_get_inode(sb, vino, NULL);
-+}
-+
- /**
-  * ceph_new_inode - allocate a new inode in advance of an expected create
-  * @dir: parent directory for new inode
-@@ -1548,8 +1593,11 @@ int ceph_fill_trace(struct super_block *sb, struct ceph_mds_request *req)
- 	}
- 
- 	if (rinfo->head->is_dentry) {
--		struct inode *dir = req->r_parent;
--
-+		/*
-+		 * r_parent may be stale, in cases when R_PARENT_LOCKED is not set,
-+		 * so we need to get the correct inode
-+		 */
-+		struct inode *dir = ceph_get_reply_dir(sb, req->r_parent, rinfo);
- 		if (dir) {
- 			err = ceph_fill_inode(dir, NULL, &rinfo->diri,
- 					      rinfo->dirfrag, session, -1,
+On Fri, 4 Jul 2025 at 15:43, Claudiu <claudiu.beznea@tuxon.dev> wrote:
+> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+>
+> Add MSTOP configuration for all the module clocks on the RZ/G2L
+> based SoCs (RZ/G2L, RZ/G2LC).
+>
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+
+Thanks for your patch!
+
+> --- a/drivers/clk/renesas/r9a07g044-cpg.c
+> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
+> @@ -242,163 +242,163 @@ static const struct {
+>  } mod_clks = {
+>         .common = {
+
+>                 DEF_MOD("gpu_clk",      R9A07G044_GPU_CLK, R9A07G044_CLK_G,
+> -                                       0x558, 0, 0),
+> +                                       0x558, 0, MSTOP(BUS_REG1, BIT(4))),
+>                 DEF_MOD("gpu_axi_clk",  R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
+>                                         0x558, 1, 0),
+>                 DEF_MOD("gpu_ace_clk",  R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
+>                                         0x558, 2, 0),
+
+Perhaps these two should have "MSTOP(BUS_REG1, BIT(4))", too?
+
+>                 DEF_MOD("canfd",        R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
+> -                                       0x594, 0, 0),
+> +                                       0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
+>                 DEF_MOD("gpio",         R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
+>                                         0x598, 0, 0),
+
+"MSTOP(BUS_PERI_CPU, BIT(6))"?
+
+>                 DEF_MOD("adc_adclk",    R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
+> -                                       0x5a8, 0, 0),
+> +                                       0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
+
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
 -- 
-2.34.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
