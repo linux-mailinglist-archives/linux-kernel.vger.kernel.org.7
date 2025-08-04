@@ -1,123 +1,131 @@
-Return-Path: <linux-kernel+bounces-754820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DB03B19D2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:01:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15120B19D30
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:01:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09CB43BB9C6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:01:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 01E7A163490
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:01:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B2E623D2B4;
-	Mon,  4 Aug 2025 07:59:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65A523C519;
+	Mon,  4 Aug 2025 08:01:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ska+oRYq"
-Received: from mail-pj1-f43.google.com (mail-pj1-f43.google.com [209.85.216.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="Ccnfia0z";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="ZAP95WYG"
+Received: from fhigh-b7-smtp.messagingengine.com (fhigh-b7-smtp.messagingengine.com [202.12.124.158])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919DD2F2D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:59:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 411C27DA6D;
+	Mon,  4 Aug 2025 08:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.12.124.158
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294398; cv=none; b=YfWHvRHvsBw2hpSRcVpwzFsqy2SU4LPOl26OtmhCnK+KxeoH92wJrIOKEB8O1c/zvr0exY+sLYsbD77zmB4DaI/L6lhlBC9I0GACPG8JCDHnVAs3HV4eUMWPTKL0XqH6Z4EpXcPjkYH6oa046TMZg+8sOb6nmFp00e25nFyyTBk=
+	t=1754294461; cv=none; b=DhR0A91nys0WJpZIYElUdCKHZx6X0m7mv0LDF6pSlsnXZ8cq3okqsgvJykCFC7z1S4h/9ei/2KJHZGsGkilX9Fxb6a5eZeb4GMwSd3aFByPj9OK+C6IGu0cxcO6Qnh4XLIFgA8zk55t/XdKrcUBHsRypoal1yJup77yCGy3O8Iw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294398; c=relaxed/simple;
-	bh=PA4Fi04XcbSSqBINhdlmikgc3t57oLyEd+cfx15ng2M=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=Uq/creQG1RIrcprd+wd+DyY2T5mtR15yZQ8BxGRn9fc583eu+mUDM/NbkaWGl03GEaLZ56a/4E/Jko3LaGilkpUAeasVKS+PefFMOrF5ruZDAelc1UTOsdrk9cdrMvY8cb0oMHPqDdXusN7APNOUmoWYcZ/cTXy4EcRBZB1OTJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ska+oRYq; arc=none smtp.client-ip=209.85.216.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f43.google.com with SMTP id 98e67ed59e1d1-31ecd1f0e71so3184168a91.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:59:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754294396; x=1754899196; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2j21EdQ9+BzhX5K3jWbsgABY3uftB7nrDoPZVb6R/s=;
-        b=Ska+oRYqkvg6Lxyp2CVBce2ttgdWYAVT4BwJBQBIxr9h3ztmNjhn4G5TjIWR7PKPDb
-         ydIFjvpR4IR5lAxV4bQQMPV3bgBg8zR4oOnNTm3e3BD0gMojGGW3EMLRQahrwA6rqLDI
-         F+KAuUrnX1lXKl3/T2hhfp2l5K0DpRQYA8Gj0JKDZEWFSVBm583A7xAjMQGTCXKMnn1r
-         8Cte5cai7+9NIW6acZb394Q26cLzft2/5Py25kh/A2ZLjMWXm2zxhXRh+92f8JcbFu9v
-         TsT7rQ9TJPdrxRSadMjWs0MYP5PrgAuHuxGqs0A6EPvsGBnso6KTYEukaX5gxTzgozhq
-         bvYA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754294396; x=1754899196;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=W2j21EdQ9+BzhX5K3jWbsgABY3uftB7nrDoPZVb6R/s=;
-        b=q4bi17+AF2Jh53h9gdkKAKcaVkCF3y/PK1JPTM2DkygsaHiAMTs7/iGTgiGEP923jV
-         Sw5vam9YLqZqo2R9ewb+1SX0wD4FLS8OL/1VA9AhaAposCbmUFu42JIxOqRIryhOj/MH
-         +IcYbuDEAhCTpbla3dwl9ggCmbM0ImVTyzAyxkNolaW1MXsI8JkdLWr5GKdYyxNFzfKA
-         BdqWJRCz7Dif35oK15wGae6XlNhvycVXXrccyNft5IQ4Ej/0u2Rc2zm1Lh0phl9mwwci
-         FT8AoQ1TQVo3rSKbV8qG4lPJsgvWjGWA5AQA+cdJXu6S7b1StcCF+HIItHO5/+9ni2WO
-         yZrw==
-X-Forwarded-Encrypted: i=1; AJvYcCU+9Uch7Ndyn991n2eylL5nv1gxpztR7KdcDYVMHX3VyIao6KAVoSw4HM87feb762+HULY8JNxPQB6ra4A=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw77LhHl3xMfNWRASkz7CHd8XszdnUiPBUFqCurhdV5psujJOHl
-	tPG4Q3dVSnN4o8nWmjtHqkCms7IwvOg06eMj0NE4b8QL+ZKaIRIY8odn
-X-Gm-Gg: ASbGnctsoN+9FKbBaJSpR907nPEgrUfnJYnymfPtya0TgDEaM7DYnWP7NALeNOOL5L+
-	O9srHPsBhwgmnA5S/lK3VXhRm3D9Czfuf4EBbN+dgZR6wx4zGdX/zCd38rLKB7Ym978W7pfu/iz
-	JvANuTKB+n+X+SikKVlbYsJSWtAHpvlCRNNXpd/uSyUfJ1eRSMicgCctP/0sbAFdm+kWA+DBVAj
-	KXvki847mjNwqjpiHGhzksOHbu6xCXUnl6Bh8yXMYK0ACYI6shb3vOax7oX13ErloHJCKap+8CM
-	nnS//VIGPUYD1tSi2AcEbDX5bqPPE2vT5fy5EMGKuYWuAyOK6o7HliOoe5TPrk4GRT+ug/Dh/wK
-	DIpSX1l6B2IVAymNdN1PWDc+PT8jOXTAvRRc=
-X-Google-Smtp-Source: AGHT+IF7alqB/6wZ98S0FEX+bkqM69+K+32EZW07YuWmetJ1TBK03m4jlJehXUkJP0iXJhxQOzaY0g==
-X-Received: by 2002:a17:90b:4c4d:b0:321:43b2:4743 with SMTP id 98e67ed59e1d1-32143b248demr1268396a91.23.1754294395745;
-        Mon, 04 Aug 2025 00:59:55 -0700 (PDT)
-Received: from c45b92c47440.. ([202.120.234.58])
-        by smtp.googlemail.com with ESMTPSA id 98e67ed59e1d1-31f63f0ba97sm13749540a91.29.2025.08.04.00.59.51
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 00:59:55 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: Richard Weinberger <richard@nod.at>,
-	Anton Ivanov <anton.ivanov@cambridgegreys.com>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	Benjamin Berg <benjamin.berg@intel.com>,
-	Tiwei Bie <tiwei.btw@antgroup.com>,
-	Miaoqian Lin <linmq006@gmail.com>,
-	linux-um@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] um: virtio_uml: Fix use-after-free after put_device in probe
-Date: Mon,  4 Aug 2025 11:59:42 +0400
-Message-Id: <20250804075944.3612712-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754294461; c=relaxed/simple;
+	bh=+FfqmW+qjndmQCeIgGkX4MsEM80n6CsPysku9Nq/9Y4=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=GPyZBWo+kTl5D0Osl1WfMRO1r9HsIgOzqc+aeAeLCugATXLz9lS3EKiEes4xNdlyFDx9b4Xap0w9zM9x60iLR3bXOhQ2CcW9vNIUutJVWjXWIny7aZK+c4JNPreWYgsMehy+dLkekcmERLhnF90XB6Z1bc040Ruh4y4XnM1K+D0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=Ccnfia0z; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=ZAP95WYG; arc=none smtp.client-ip=202.12.124.158
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
+Received: from phl-compute-05.internal (phl-compute-05.phl.internal [10.202.2.45])
+	by mailfhigh.stl.internal (Postfix) with ESMTP id 22AB07A00D1;
+	Mon,  4 Aug 2025 04:00:58 -0400 (EDT)
+Received: from phl-imap-02 ([10.202.2.81])
+  by phl-compute-05.internal (MEProxy); Mon, 04 Aug 2025 04:00:58 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
+	:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm2; t=1754294457;
+	 x=1754380857; bh=fveizswO0sH0RFOzitjHAxAu9/EZqisbQYkgXpX+m1k=; b=
+	Ccnfia0zv7FDTOlCsbMZ+0QsRaC9yrnXtc7wUK8AV0nEN6srStnQAab0TCQZmko7
+	2YkzoUsMtnoHz0WMadxczKqkCcJ9/jJ5MIkkK6pPVk4XgAXc5kaBE4vA56eBKY67
+	3+8S8xdcnithFHOTA6e3KwGZdq59GlxarOoGQbQQuzclK8eIgqIWYbp9zxEhHTET
+	JG4UYaoLvR4fcURWSq/uNnl10zO3eh8D8Ex4wpc9B6DIZ+cf8QYKEZ5aO7QbW/+y
+	dgjceUZH/GbkKbb2BpwJi1kYpK+TTd8hkY3RgWMdHfAh/3LJDX77fmzM1KcJSlLu
+	deQAD3bFoAhUnVS/mWGGJw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1754294457; x=
+	1754380857; bh=fveizswO0sH0RFOzitjHAxAu9/EZqisbQYkgXpX+m1k=; b=Z
+	AP95WYG/krxxLixZIwWbltM3IoE7uCBiDDQk1NqPLQjg0vol59IMjiVe/QW7rYtO
+	wESCqetrJ1N4rIthGS1kI+gsn6jDeXGZNCTzFhSZK4JKzaITu5Oi5eLurlFEASpV
+	G1M+wJIOnTTXhAZHzDTjWmXK+CJ1vgGCcN0xa/EvVmt08nhDOXT8natrn9LlZuwd
+	yOuiOlbgk1/QxfiAThXUV0UsVn4B5sL3QLrCIi6oZmqI9jZdBS7bfc2lZYdBMBPd
+	W078wXOsbrZ1KLm/1oor4Dg6EoUmw/+JN2u6a3IQ0k1TBYwchvN/CvoQZ9e5zYLM
+	LGiwXBq1Qp7gd3oVDvSbQ==
+X-ME-Sender: <xms:uWiQaFHh8XAqXDwC7NpXg9hyNvAu3d-e-Mp7DkB_5BQ12JMc0Iz8Dw>
+    <xme:uWiQaKXRDaSZTxadiKJ1cz5q_aOPZc1SiASEMcEs-MzCof8a8K_PcTT5xSUi8SHle
+    yJz6vLsH20I7rgCeak>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddujeeiucetufdoteggodetrf
+    dotffvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdfurfetoffkrfgpnffqhgenuceu
+    rghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnhhtshculddquddttddmnecujf
+    gurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddtnecuhfhrohhmpedftehrnhgu
+    uceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrdguvgeqnecuggftrfgrthhtvg
+    hrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefggfevudegudevledvkefhvdei
+    necuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehmrghilhhfrhhomheprghrnh
+    gusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepjedpmhhouggvpehsmhhtphhouhht
+    pdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhope
+    grnhgurhgvrghssehgrghishhlvghrrdgtohhmpdhrtghpthhtohepghhlrghusghithii
+    sehphhihshhikhdrfhhuqdgsvghrlhhinhdruggvpdhrtghpthhtohepthhhuhhthhesrh
+    gvughhrghtrdgtohhmpdhrtghpthhtoheplhhinhhugidqrghrtghhsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkh
+    gvrhhnvghlrdhorhhgpdhrtghpthhtohepshhprghrtghlihhnuhigsehvghgvrhdrkhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:uWiQaMXzing_BnyAvY_T0WhWknOOg-4pNW4anKJbCdBggJucY0MRpg>
+    <xmx:uWiQaFxXB-LlAb6NR9Yyg4tAR5K-cn5V_525XGUCJN39CH2jdmhw6Q>
+    <xmx:uWiQaBTYJAexkQ16s5DyYhikMBhrWhgcCZz111AHFV5KG3WXHlWm8Q>
+    <xmx:uWiQaBhJBTK7Y1f9CIcikH7eAUPpG_xPkBCTmbMruHQQDy9Vfn08eA>
+    <xmx:uWiQaLnl_wFi2ijD3-N1-Exr41ehFiqKVNck9LbEOy0aSi2QMWeuqi_n>
+Feedback-ID: i56a14606:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 6E673700068; Mon,  4 Aug 2025 04:00:57 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-ThreadId: T74f2f12fa7b53bdc
+Date: Mon, 04 Aug 2025 10:00:27 +0200
+From: "Arnd Bergmann" <arnd@arndb.de>
+To: "Thomas Huth" <thuth@redhat.com>,
+ "John Paul Adrian Glaubitz" <glaubitz@physik.fu-berlin.de>,
+ linux-kernel@vger.kernel.org
+Cc: Linux-Arch <linux-arch@vger.kernel.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Andreas Larsson" <andreas@gaisler.com>, sparclinux@vger.kernel.org
+Message-Id: <579ca73e-3b55-4e05-88ae-d7bc192f0023@app.fastmail.com>
+In-Reply-To: <810a8ec4-e416-42b6-97bf-8a56f41deea1@redhat.com>
+References: <20250314071013.1575167-1-thuth@redhat.com>
+ <20250314071013.1575167-35-thuth@redhat.com>
+ <5d9ab8b51a3281f249f514598c949d2c9ca6d194.camel@physik.fu-berlin.de>
+ <810a8ec4-e416-42b6-97bf-8a56f41deea1@redhat.com>
+Subject: Re: [PATCH 34/41] sparc: Replace __ASSEMBLY__ with __ASSEMBLER__ in non-uapi
+ headers
+Content-Type: text/plain
+Content-Transfer-Encoding: 7bit
 
-When register_virtio_device() fails in virtio_uml_probe(),
-the code sets vu_dev->registered = 1 even though
-the device was not successfully registered.
-This can lead to use-after-free or other issues.
+On Mon, Aug 4, 2025, at 08:01, Thomas Huth wrote:
+> On 03/08/2025 15.33, John Paul Adrian Glaubitz wrote:
 
-Fixes: 04e5b1fb0183 ("um: virtio: Remove device on disconnect")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- arch/um/drivers/virtio_uml.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+>
+> So using -ansi in the kernel sources nowadays sounds wrong to me ... could 
+> it be removed?
 
-diff --git a/arch/um/drivers/virtio_uml.c b/arch/um/drivers/virtio_uml.c
-index ad8d78fb1d9a..c402c4cc908a 100644
---- a/arch/um/drivers/virtio_uml.c
-+++ b/arch/um/drivers/virtio_uml.c
-@@ -1250,8 +1250,10 @@ static int virtio_uml_probe(struct platform_device *pdev)
- 	device_set_wakeup_capable(&vu_dev->vdev.dev, true);
- 
- 	rc = register_virtio_device(&vu_dev->vdev);
--	if (rc)
-+	if (rc) {
- 		put_device(&vu_dev->vdev.dev);
-+		return rc;
-+	}
- 	vu_dev->registered = 1;
- 	return rc;
- 
--- 
-2.25.1
+Probably: I see that sparc changed '-traditional' cpp flag to the '-ansi'
+gcc flag in linux-2.1.88, while the others were still using
+-traditional but just dropped it later.
 
+Most likely the idea at the time was to just no longer use pre-ansi
+preprocessing rather than to exclude gnu extensions.
+
+     Arnd
 
