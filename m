@@ -1,86 +1,91 @@
-Return-Path: <linux-kernel+bounces-755509-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755512-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71201B1A733
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:39:29 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8DABCB1A739
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:43:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0779218A329F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:39:48 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 673D94E11CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:43:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 100FC2853EA;
-	Mon,  4 Aug 2025 16:39:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 098BB28540E;
+	Mon,  4 Aug 2025 16:43:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HfghvHdR"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f/jGJpaz"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF44284B3C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 16:39:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC4CF13C8FF;
+	Mon,  4 Aug 2025 16:43:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754325562; cv=none; b=M+J9ggKZR0F7xPlupaQD/gTsg9N7bnKGm46DVlBvsRbY3rJQYZxGCbmOUeArFCxDZa3hJh53RjpcDo8Bf5qZMRM+lQ8HDXN7JGGDuKRcCIJrFVUSj5azxL4SMZMz+HK4hehEqas8N5kfcQBecp6m3Ctp2mDqa4JURjQB2Q9v8v0=
+	t=1754325818; cv=none; b=ud+Mh2MvJPGQ+8HnPRlpZNlDzKmgNQ1x+VeGFyKd5Gd2TYGe8TGMqagG9pxRVOiyl0nx245PbO2QESpE7jgJ2dbsc4gqSLUuFg+wa5v6Wh+hAUc+9/rRZ/Ts+j6cX4FlVJWUVy5Jm8iPPQFmpW0K55xStym5eocdu61GzOMq0s0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754325562; c=relaxed/simple;
-	bh=2JiMqECXBzZL4ZOZ/Aoaorck/DtLPL5CHdofOw3mxQo=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=C2BlYk2NzoZJZU7n08esAg2tC7tCFBO6hlxyaClABO0D7UChMVJmTik1IrHaHN3hJO4dohJvEwzjeng2Jm8DWcZPu5umvzk4zx8sPL2O16tbI5rTalK/8QKDOVlaDsD5/jaeDmIsel5Hws6CZHghZo0rFSj+39//yERA7jFLdzI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HfghvHdR; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1754325818; c=relaxed/simple;
+	bh=4ITM6xA+67Hl43Y85iCW60aPkjChOVjcGjhwytoyKDY=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NHHWreOwfSViL7LGGHdscbhhsDt4FO3lyNaOQ6jnRBzdZtrJ8uWE9QOnFLayUNU1mc4bxPkIf+VFiF+5hz64a4k1f9ugKsemmuqrUvxeDVHbmwWw2Ya4YWKEEjWYcko29EDpjYYqf5VseQikstmNaJJXt3+ElmzG0dBqDboSmo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f/jGJpaz; arc=none smtp.client-ip=209.85.210.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-76bdc73f363so2771155b3a.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:39:19 -0700 (PDT)
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-76bd7676e60so2488794b3a.0;
+        Mon, 04 Aug 2025 09:43:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754325559; x=1754930359; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=cVPrmbkZ73iVJwd3+ZUBlBPewKbjKO3MTkVJSkmJKWA=;
-        b=HfghvHdRlkfI8/EqjEtzYkWcY2Vzn5mSjd9nrK2MGPpch+mVFigHMLWIpoUB7nAMPM
-         +RIdtNZEdbvIelpAkVQcfjipeL6VJUNRh0s96BZsD+ADLIeFRWFpuGGsk/cL4AEPfhu+
-         sAzLToK0ETs75qQal8TKEj5DimTHeZ+7h3oCGvzL655nIp5tz9Nas2M5Zspyg9LgigbE
-         AlGEVe/u4qvF495HRDsK8mS8S33p5iYsQ8NbsJfT8N1k8v2ygNTa8n+ILobRCiJ23lY9
-         Eiyv2OrSxVg9HxKkXJoAMcdln8497LfN+iE6+ZD4d3tTxrXEnOvK7nVmF9LPsRIuvASp
-         Wj7g==
+        d=gmail.com; s=20230601; t=1754325814; x=1754930614; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=M9dB+qdwret/lv1adiHadYT9NK1p7670u8AwYnDe0r0=;
+        b=f/jGJpaz11vsilONbhIO7vPau9s8/06EnaEmdwn5ACjg6SS1NZplmMzKHprYGi/Gdo
+         r+lZ2LvkacGNXWIavHClCt2g7YdSdqu179S7LXE3t+7u8j4rpsqNG1O8FwwPZgmc32F4
+         GnlBlZCPDd3PLppygm5dVOZFsw/be1h01w+g8mokZ7H6JHAtKJt8AC6puzRjjCeiR0vj
+         zsmB5bfCxecG/heeOspolEOro0Uc7v/ZD/jxgPeRUAi67ohaZqhi3yNjiE6YNknC4uUa
+         qxz1wZIYKNL8QJUsvpuRXNSVlTU9IiOKvxDQScRAB1d/QzjaPPH8MikUqMRxYiVDZ1Ly
+         8kcQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754325559; x=1754930359;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=cVPrmbkZ73iVJwd3+ZUBlBPewKbjKO3MTkVJSkmJKWA=;
-        b=qRglFx8VXvV08hsLLv7YKsFWKRYTf2vWYtr8fdWluxiVzVHmd3cY2ZQGZR0Vy4xSdn
-         EK3mrkg4+Ud+e44loNXNqOcVXjz7MR9VZSH2qe+r3OaX/N1BxNpbZFgXBWhKT/XyfI7V
-         yuC+k9koYLfM704pM0etDzCkbjPLf9UajUiJlyEGARBVnNdqm1HIs73dKBdjODcdJUPw
-         VhEioQnwUM/yZanzbW3dnTe8hdpXcNyCGK7b5xz1jLLiYE2TYIbxpYz9PpDVTIuThWYd
-         8NYesBSA4uN1Gy8VGEmqna+QAH2KEvlSRiqYC8D8IKQl4PMqmaB3lsTsKbVfG7QxYGYJ
-         zo8A==
-X-Forwarded-Encrypted: i=1; AJvYcCVNQuLw6TUSfogc3Qj6BldnIp23dH1Q9dbWsmJgiDsIMliWthSOqKSu/OVunOyJKPPOOVSv3sdVeWTXv9w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykL1D6R95WfxA8/j7znREienvd+e/i97AHshwnd3BdH2DfwegH
-	EChGNBk7OZBAIMH7mRlGnuQ3Ofve0ULGSsN2XJT3ZAqWiZHt3YG4q22s
-X-Gm-Gg: ASbGnctvDHkEF9FPIJWM8aM9QA7fas1bUW5fShoHeHwuiz0a9HteZBYx1VyHyCTfZPw
-	lPl4dBaPKl1IrFSKqFzcCt/88M2Vh25PbC3BH3NUFNER3hq0nr7OofkMSh4pE/4MtdAwvHdWLVq
-	lkKWhev0AYZQZldT9hWf5JORS6Il+fLFUj9RskOtAUy/5zfD/9dxIiNxvPG9BLHbySRD2qkEbk3
-	0Ud0BCCue3DlfWkS28fg24sZ5ZUzHm1DKtS4FlKk2L8CV9tPYR1q5AJho2mbyrpMfW7PL/+SStJ
-	7RKNTr17zsRDF6vwxjrIytskGnmyOm4LXcFRsWwUmxVobWYp440frsJZd5JaegywdQWh9UZgbs2
-	xW08RxYLkkePLZ4lVNVeEeKDGvTHZnl5f
-X-Google-Smtp-Source: AGHT+IFi79lN/2bT4m6O+DU+KDLEB7fni7m9KzcUQy4aTZNiqS5EEpJ8WsqlPli1870xPayfoD6Bqw==
-X-Received: by 2002:a05:6a21:99a0:b0:240:aa7:ba66 with SMTP id adf61e73a8af0-2400aa7bb53mr5414989637.16.1754325559025;
-        Mon, 04 Aug 2025 09:39:19 -0700 (PDT)
-Received: from avinash ([2406:8800:9014:d938:f647:9d6a:9509:bc41])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bb0a4b0sm9500306a12.59.2025.08.04.09.39.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 09:39:18 -0700 (PDT)
-From: Abinash Singh <abinashsinghlalotra@gmail.com>
-To: min.ma@amd.com,
-	lizhi.hou@amd.com
-Cc: ogabbay@kernel.org,
-	dri-devel@lists.freedesktop.org,
+        d=1e100.net; s=20230601; t=1754325814; x=1754930614;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=M9dB+qdwret/lv1adiHadYT9NK1p7670u8AwYnDe0r0=;
+        b=n4iI6YyS3f3dtF502H9PRdhhFxTfkHliLfsIAgJIXxgL6hDeLsuk26SZrzgeCDsYab
+         0rp+ENXkaUTMZ9Vwntf4JqAWIbDEXQDJ/PpCTQgTawnRnTEmKkSAo55rIHRZYM30ZtXB
+         oAC7xLXNN/jezcm8spzxuaJz35uFmcun/LlYyl74Td9OppVECRykZ9F2mldfID+V4SCL
+         xT8GfbypugQwk+r4dol5YchGunyjcfG+i3smU6g+2fzj72k98CqziS38Ov1W8/TOsqMC
+         e0v5PkftYcKrVzdpf7CLbdzJY13gLcj+u+SaBYLR2GtPwL5maSlCIUNUsFLPQUTCm9zQ
+         1NoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWvSB9pyfBn+3OAQXlzLu1NoupPhrtIvR4PaTh54+eiJCRiRGvbx4hLCkqAUOZbSynl2ZPo3jtNGDo5S+w=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx8Rg7IygLijYV8KhnlJ6sYWDXB2sqmgXC8zB68iWmm/M/DnsfH
+	DB/AC4LjcKSUozaT6N/ihbeQ14qplw1zOGeknbPQOpwD2UWjgoG6MU+L
+X-Gm-Gg: ASbGncu2hz4ElacVPl7QMseaD12CadWx3Qxb/A1mTJrjRSGU573+vISJe48eUsPtSXa
+	e3Qy5ijS66g/oePtcv6ccTmzX8SJSAjG3FfkRkDstMU1O1KVYoL39AY5A2PP5tfMnutf74MkP4W
+	+ZhoP9rzr3+QGuguRQmcY07Cqb6aLK7uBVbidhfCcFf1LTzH7msIV/iBL3mcd8pDKNyji6h3YJp
+	3rqGzi0OEgAey44Ar4RcmdGIxRBbcgzSjRaS4qQ3EmnnwQCe08Gf8csDeSSxLTydow5aYpWmKPr
+	fwt1dAtqoJoad8YVEbE2C9YMNf4Sb5PJBzG5MJdyUU+jzxbq6YyyrumSGsy1UkkEPwDn0lSSw4e
+	RCd+8Ct2APpIE7vvMyFyLkfJEUskVQhYW/q8cudwOc5u1OGtlMFXHUiB8WfHjRDqZNgvyxCZAQi
+	jo2XqBwg==
+X-Google-Smtp-Source: AGHT+IHbvvaM8cLOGfE7/9Isrk/jW3M6iqhtWGp4tR+HAEvnFMuWJFZQLc+k611nhWiHWI7pxSrvIA==
+X-Received: by 2002:a05:6a00:3914:b0:736:3979:369e with SMTP id d2e1a72fcca58-76bec307ba7mr12922999b3a.9.1754325813753;
+        Mon, 04 Aug 2025 09:43:33 -0700 (PDT)
+Received: from localhost.localdomain (36-224-173-205.dynamic-ip.hinet.net. [36.224.173.205])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfe50c8sm10926937b3a.120.2025.08.04.09.43.32
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Mon, 04 Aug 2025 09:43:33 -0700 (PDT)
+From: Joonwon Kang <kjw1627@gmail.com>
+To: robh@kernel.org
+Cc: devicetree@vger.kernel.org,
+	kjw1627@gmail.com,
 	linux-kernel@vger.kernel.org,
-	Abinash Singh <abinashsinghlalotra@gmail.com>
-Subject: [RFC PATCH] drivers/accel/amdxdna : refactor resource cleanup in aie2_{ctx, error} to use scope-based helpers
-Date: Mon,  4 Aug 2025 22:09:46 +0530
-Message-ID: <20250804163947.630568-1-abinashsinghlalotra@gmail.com>
-X-Mailer: git-send-email 2.50.1
+	nsaenzjulienne@suse.de,
+	saravanak@google.com
+Subject: Re: [PATCH] of: address: Fix bug to get the highest cpu address of subtrees for dma
+Date: Tue,  5 Aug 2025 00:43:14 +0800
+Message-ID: <20250804164329.98971-1-kjw1627@gmail.com>
+X-Mailer: git-send-email 2.46.0
+In-Reply-To: <CAL_Jsq+J+6gxOzsXe9t9==GGJ721jrbNhaGMHZyfCTxkM8B0eA@mail.gmail.com>
+References: <CAL_Jsq+J+6gxOzsXe9t9==GGJ721jrbNhaGMHZyfCTxkM8B0eA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,119 +95,108 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-This refactors the `aie2_error_async_events_alloc` function in `aie2_ctx.c`
-And `aie2_hwctx_init` function in `aie2_error.c` to replace traditional
-goto-based error handling with scope-based cleanup helpers.
+On Sun, Jul 27, 2025 at 1:01 PM Joonwon Kang <kjw1627@gmail.com> wrote:
+> >
+> > The function of_dma_get_max_cpu_address() for a device node should choose
+> > the highest cpu address among the ones that nodes can access.
+> > However, there was a bug of choosing the lowest cpu address and this
+> > commit is to fix it.
+>
+> Please provide a test case in the DT unittests or at least details on
+> the DT that is affected by the bug.
 
-No functional changes intended.
+While working on the DT unittests, I got two questions to which I had failed to
+have clear answers. Let's assume that the device tree looks as follows.
 
-Signed-off-by: Abinash Singh <abinashsinghlalotra@gmail.com>
----
-Hi ,
-This patch will improve code quaility and will support
-using cleanup helpers in future.
+parent_bus@... {
+	#address-cells = <1>;
+	#size-cells = <1>;
+	dma-ranges = <0x0 0x0 0x1000>;
 
-Reference : https://docs.kernel.org/core-api/cleanup.html
-......
-The “goto error” pattern is notorious for introducing subtle resource leaks.
-It is tedious and error prone to add new resource acquisition constraints into 
-code paths that already have several unwind conditions. The “cleanup” helpers 
-enable the compiler to help with this tedium and can aid in maintaining
-LIFO (last in first out) unwind ordering to avoid unintentional leaks.
-...
+	child_bus@... {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		/* Note that the size part exceeds the `parent_bus`' dma size. */
+		dma-ranges = <0x0 0x0 0x2000>;
 
-I will look into other places where we can use this auto cleanup feature.
-If you have any suggestion/feedback I will be happy hearing that.
+		child_device_1@... {
+			/*
+			 * Note that the size part exceeds the `child_bus`' dma size and
+			 * also the `parent_bus`' dma size.
+			 */
+			reg = <0x0 0x3000>;
+		};
 
-Thank You!
-Have a great day..!!
----
- drivers/accel/amdxdna/aie2_ctx.c   | 9 +++------
- drivers/accel/amdxdna/aie2_error.c | 9 +++------
- 2 files changed, 6 insertions(+), 12 deletions(-)
+		child_device_2@... {
+			/*
+			 * Note that the address part transitively exceeds the
+			 *`parent_bus`' end address.
+			 */
+			reg = <0x1000 0x1000>
+		};
+	};
 
-diff --git a/drivers/accel/amdxdna/aie2_ctx.c b/drivers/accel/amdxdna/aie2_ctx.c
-index e04549f64d69..b860859c643d 100644
---- a/drivers/accel/amdxdna/aie2_ctx.c
-+++ b/drivers/accel/amdxdna/aie2_ctx.c
-@@ -13,7 +13,7 @@
- #include <linux/types.h>
- #include <linux/xarray.h>
- #include <trace/events/amdxdna.h>
--
-+#include <linux/cleanup.h>
- #include "aie2_msg_priv.h"
- #include "aie2_pci.h"
- #include "aie2_solver.h"
-@@ -528,7 +528,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
- 		.dev = xdna->ddev.dev,
- 	};
- 	struct drm_gpu_scheduler *sched;
--	struct amdxdna_hwctx_priv *priv;
-+	struct amdxdna_hwctx_priv *priv __free(kfree) = NULL;
- 	struct amdxdna_gem_obj *heap;
- 	struct amdxdna_dev_hdl *ndev;
- 	int i, ret;
-@@ -543,8 +543,7 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
- 	if (!heap) {
- 		XDNA_ERR(xdna, "The client dev heap object not exist");
- 		mutex_unlock(&client->mm_lock);
--		ret = -ENOENT;
--		goto free_priv;
-+		return -ENOENT;
- 	}
- 	drm_gem_object_get(to_gobj(heap));
- 	mutex_unlock(&client->mm_lock);
-@@ -648,8 +647,6 @@ int aie2_hwctx_init(struct amdxdna_hwctx *hwctx)
- 	amdxdna_gem_unpin(heap);
- put_heap:
- 	drm_gem_object_put(to_gobj(heap));
--free_priv:
--	kfree(priv);
- 	return ret;
- }
- 
-diff --git a/drivers/accel/amdxdna/aie2_error.c b/drivers/accel/amdxdna/aie2_error.c
-index 5ee905632a39..bea36e7fe14f 100644
---- a/drivers/accel/amdxdna/aie2_error.c
-+++ b/drivers/accel/amdxdna/aie2_error.c
-@@ -10,7 +10,7 @@
- #include <linux/dma-mapping.h>
- #include <linux/kthread.h>
- #include <linux/kernel.h>
--
-+#include <linux/cleanup.h>
- #include "aie2_msg_priv.h"
- #include "aie2_pci.h"
- #include "amdxdna_mailbox.h"
-@@ -308,7 +308,7 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
- 	struct amdxdna_dev *xdna = ndev->xdna;
- 	u32 total_col = ndev->total_col;
- 	u32 total_size = ASYNC_BUF_SIZE * total_col;
--	struct async_events *events;
-+	struct async_events *events __free(kfree) = NULL;
- 	int i, ret;
- 
- 	events = kzalloc(struct_size(events, event, total_col), GFP_KERNEL);
-@@ -318,8 +318,7 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
- 	events->buf = dma_alloc_noncoherent(xdna->ddev.dev, total_size, &events->addr,
- 					    DMA_FROM_DEVICE, GFP_KERNEL);
- 	if (!events->buf) {
--		ret = -ENOMEM;
--		goto free_events;
-+		return -ENOMEM;
- 	}
- 	events->size = total_size;
- 	events->event_cnt = total_col;
-@@ -352,7 +351,5 @@ int aie2_error_async_events_alloc(struct amdxdna_dev_hdl *ndev)
- free_buf:
- 	dma_free_noncoherent(xdna->ddev.dev, events->size, events->buf,
- 			     events->addr, DMA_FROM_DEVICE);
--free_events:
--	kfree(events);
- 	return ret;
- }
--- 
-2.50.1
+	another_child_bus@... {
+		#address-cells = <1>;
+		#size-cells = <1>;
+		dma-ranges = <0x0 0x0 0x300>;
+	};
+};
 
+Q1: What is the expected output of `of_dma_get_max_cpu_address(parent_bus)`?
+I think it should be 0xfff since the `dma-ranges` in the `child_bus` should be
+capped to the parent max cpu address instead of treating it as if the
+`dma-ranges` in the `child_bus` does not exist. The current expectation is
+0x2ff which is for `another_child_bus` based on the existing test case
+in drivers/of/unittest.c and drivers/of/tests-address.dtsi.
+
+Q2: `of_dma_get_max_cpu_address(child_device_1, reg_prop, &addr, &length)`
+returns a success with `addr` set to 0x0 and `length` set to 0x3000. Similarly,
+`of_translate_dma_address(child_device_1, reg_prop)` returns a success. On the
+other hand, both functions for `child_device_2` return a failure since the
+address is out of parent ranges. I think those functions should also fail
+for `child_device_1` since the dma "end" address of the `child_device_1` node
+is not valid in the first place. Are the current behaviors of both functions
+intended?
+
+> > Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+> > ---
+> >  drivers/of/address.c | 12 ++++++++++--
+> >  1 file changed, 10 insertions(+), 2 deletions(-)
+> >
+> > diff --git a/drivers/of/address.c b/drivers/of/address.c
+> > index f0f8f0dd191c..5e984e0d372b 100644
+> > --- a/drivers/of/address.c
+> > +++ b/drivers/of/address.c
+> > @@ -969,6 +969,7 @@ phys_addr_t __init of_dma_get_max_cpu_address(struct device_node *np)
+> >  {
+> >         phys_addr_t max_cpu_addr = PHYS_ADDR_MAX;
+> >         struct of_range_parser parser;
+> > +       phys_addr_t max_subtree_max_addr = PHYS_ADDR_MAX;
+> >         phys_addr_t subtree_max_addr;
+> >         struct device_node *child;
+> >         struct of_range range;
+> > @@ -992,10 +993,17 @@ phys_addr_t __init of_dma_get_max_cpu_address(struct device_node *np)
+> >
+> >         for_each_available_child_of_node(np, child) {
+> >                 subtree_max_addr = of_dma_get_max_cpu_address(child);
+> > -               if (max_cpu_addr > subtree_max_addr)
+> > -                       max_cpu_addr = subtree_max_addr;
+> > +               if (subtree_max_addr == PHYS_ADDR_MAX)
+> > +                       continue;
+> > +
+> > +               if (max_subtree_max_addr == PHYS_ADDR_MAX)
+> > +                       max_subtree_max_addr = subtree_max_addr;
+> > +               else
+> > +                       max_subtree_max_addr = max(max_subtree_max_addr, subtree_max_addr);
+> >         }
+> >
+> > +       max_cpu_addr = min(max_cpu_addr, max_subtree_max_addr);
+> > +
+> >         return max_cpu_addr;
+> >  }
+> >
+> > --
+> > 2.46.0
+> >
 
