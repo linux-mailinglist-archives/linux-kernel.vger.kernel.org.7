@@ -1,183 +1,103 @@
-Return-Path: <linux-kernel+bounces-755548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF9FFB1A83C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:54:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3BD0B1A843
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:57:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7D4993B4996
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:54:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 01BE43B7024
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:57:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E26728AAEA;
-	Mon,  4 Aug 2025 16:54:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE712868B8;
+	Mon,  4 Aug 2025 16:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cOHfjh2A"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RIkqJcqC"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B216228A707;
-	Mon,  4 Aug 2025 16:54:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 415E928852C;
+	Mon,  4 Aug 2025 16:57:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754326478; cv=none; b=QZLCgg+IyY5BMhpF8UegY47xyjYNye7yvE2Fkj7B/9JJC0Wqq6UMMObCBBqJUl85bEzHceHoQr+vcl9j9hCWxbXvcq+VPYo3jNkvFJr44/sGDHzepIcHW2v39hjO3LHw8Y/9N5DL3SNJvLq032RdkkruDYuUHZcQ0wOgLdsvxto=
+	t=1754326624; cv=none; b=iiJMOZZN07qFFoNttzTkq+CZNet8GRjowecmKHiwFrDgrNAmvbkX2gVIANd7J5EcyeMZBqcE7hTR2tvhNII9KKNDV5xKbcIIYD5Psr1bvgln0AGXamDoRrslTUCZyHKqfRx2PEs64aO2ZCFps8S1Ifcpz1/RlHWr+BDVWdBWnwM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754326478; c=relaxed/simple;
-	bh=d+XlqNAsTP1aZFEzzzw1zGerTeyCFUUm7vWEU3d2zmA=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A8B2VbHKc66VAcnAEJ2KWxoE4tA0q8gRqwSRJEj8diwe925D1T5TzsFj3zZxsKERslIHIvPCsvwhyImqDpCcuHVnuNA+qGfFRNTgJ8H+Jc7iha1ebBJuofMvHJbMH8/yTIXd6TM6opCUEATITIM9MaiUqi+4wgJWu/edpGn/EVE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cOHfjh2A; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31447C4CEE7;
-	Mon,  4 Aug 2025 16:54:35 +0000 (UTC)
+	s=arc-20240116; t=1754326624; c=relaxed/simple;
+	bh=KgrilMzrEhJRh14HSH0aWw+CjVXehntvFtCz3/m8aWg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Frq8aoUDl5uIFCD16mQauyA6xkE7/GRbjyXatUfKBzV6McJPREm5Vn1zvTmGSFMD4MroT7XsnNulZvmvRLbSqMsBEYz/nd0+5rvou01ujFflGSczkHpQA5cMD27/PZ9ioN9nbQJ1xNX3uzgW416D81hM+RYOP4h98wnrS7MFS+w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RIkqJcqC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6D6DC4CEE7;
+	Mon,  4 Aug 2025 16:57:03 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754326475;
-	bh=d+XlqNAsTP1aZFEzzzw1zGerTeyCFUUm7vWEU3d2zmA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=cOHfjh2AohfXyPVoX2YaEpfGzdr+X7AiTfo+cPeM0jwBNjq6KMwOiIo1bxO5vspXI
-	 hfhK2B5N9aTAT0EFuokAeGbp/JmvOUUWE57EaBuH9NFzoifgite9SuOv+E0dqaeAKJ
-	 d5DTJ+dkQDIHv+gNd8fM2LILh+mpTCB+i01fKwynAJPoUctQQPX4LIfETdkeI6fMKH
-	 gf+4cf9Nw/IDLNmklkqq3mxRY4ajLwHqwXCENvhRxJaQrWnhq3U0fyE898tQiQ+os4
-	 pPX/Z4X5MW8yWud3Hl0+oNE4/lBh485CuPIpmoNE0YSGst7vE4Z4Czj+XZgp4jfWwo
-	 fMF+OcjSDGbzw==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uiySG-003sNW-Br;
-	Mon, 04 Aug 2025 17:54:32 +0100
-Date: Mon, 04 Aug 2025 17:54:31 +0100
-Message-ID: <86o6sv6n94.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: Linux PM <linux-pm@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Daniel Lezcano <daniel.lezcano@linaro.org>,
-	Christian Loehle <christian.loehle@arm.com>,
-	Artem Bityutskiy <artem.bityutskiy@linux.intel.com>,
-	Aboorva Devarajan <aboorvad@linux.ibm.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Mark Rutland <mark.rutland@arm.com>
-Subject: Re: [RFT][PATCH v1 5/5] cpuidle: menu: Avoid discarding useful information
-In-Reply-To: <7770672.EvYhyI6sBW@rjwysocki.net>
-References: <1916668.tdWV9SEqCh@rjwysocki.net>
-	<7770672.EvYhyI6sBW@rjwysocki.net>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1754326624;
+	bh=KgrilMzrEhJRh14HSH0aWw+CjVXehntvFtCz3/m8aWg=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=RIkqJcqCoAt2/gW+CTzEp3bXhnHd7afe0dwZSB26D476vDZiWuRK7m5g2/ucoggUH
+	 G31C9l9D63v+UAge+qfOZzllcrneFutLtwI/NVCqvdklXLZfw61dBryhna9eWzJohz
+	 hQGsbVWKk98Mu4xgBg67zrKr9KZ+yV+wPv+e9IgyI4TN/jbnty0Gx/1vOuTbepQmzG
+	 ZeiSciyGBQUnI1WcZq6tMBWFGCelGiTBWSusCeVaWfrlkjjjmr9olYOqAorTDo7pv5
+	 DqK3zU5gVX2Zd1mgKdL25QWfnPImSx+XYi2398jYkS61PHfhXep4a6gAZJMMP5rgGN
+	 qu0vUCNNB1c7w==
+From: SeongJae Park <sj@kernel.org>
+To: Andrew Paniakin <apanyaki@amazon.com>
+Cc: SeongJae Park <sj@kernel.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	David Hildenbrand <david@redhat.com>,
+	Jann Horn <jannh@google.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Michal Hocko" <mhocko@suse.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Pedro Falcato <pfalcato@suse.de>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	damon@lists.linux.dev,
+	kernel-team@meta.com,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	amazon-linux-kernel@amazon.com
+Subject: Re: [RFC v2 0/7] mm/damon: extend for page faults reporting based access monitoring
+Date: Mon,  4 Aug 2025 09:57:01 -0700
+Message-Id: <20250804165701.55642-1-sj@kernel.org>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <aJAfTUh-49pYuhbg@3c06303d853a>
+References: 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: rjw@rjwysocki.net, linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, daniel.lezcano@linaro.org, christian.loehle@arm.com, artem.bityutskiy@linux.intel.com, aboorvad@linux.ibm.com, tglx@linutronix.de, mark.rutland@arm.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
 
-[+ Thomas, Mark]
+On Sun, 3 Aug 2025 19:47:41 -0700 Andrew Paniakin <apanyaki@amazon.com> wrote:
 
-On Thu, 06 Feb 2025 14:29:05 +0000,
-"Rafael J. Wysocki" <rjw@rjwysocki.net> wrote:
+> On 27/07/2025, SeongJae Park wrote:
+> > TL; DR: Extend DAMON interface between core and operation sets for
+> > operation set driven report-based monitoring such as per-CPU and
+> > write-only access monitoring.  Further introduce an example physical
+> > address space monitoring operation set that uses page faults as the
+> > source of the information.
 > 
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> When giving up on making a high-confidence prediction,
-> get_typical_interval() always returns UINT_MAX which means that the
-> next idle interval prediction will be based entirely on the time till
-> the next timer.  However, the information represented by the most
-> recent intervals may not be completely useless in those cases.
-> 
-> Namely, the largest recent idle interval is an upper bound on the
-> recently observed idle duration, so it is reasonable to assume that
-> the next idle duration is unlikely to exceed it.  Moreover, this is
-> still true after eliminating the suspected outliers if the sample
-> set still under consideration is at least as large as 50% of the
-> maximum sample set size.
-> 
-> Accordingly, make get_typical_interval() return the current maximum
-> recent interval value in that case instead of UINT_MAX.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->  drivers/cpuidle/governors/menu.c |   13 ++++++++++++-
->  1 file changed, 12 insertions(+), 1 deletion(-)
-> 
-> --- a/drivers/cpuidle/governors/menu.c
-> +++ b/drivers/cpuidle/governors/menu.c
-> @@ -190,8 +190,19 @@
->  	 * This can deal with workloads that have long pauses interspersed
->  	 * with sporadic activity with a bunch of short pauses.
->  	 */
-> -	if ((divisor * 4) <= INTERVALS * 3)
-> +	if (divisor * 4 <= INTERVALS * 3) {
-> +		/*
-> +		 * If there are sufficiently many data points still under
-> +		 * consideration after the outliers have been eliminated,
-> +		 * returning without a prediction would be a mistake because it
-> +		 * is likely that the next interval will not exceed the current
-> +		 * maximum, so return the latter in that case.
-> +		 */
-> +		if (divisor >= INTERVALS / 2)
-> +			return max;
-> +
->  		return UINT_MAX;
-> +	}
->  
->  	/* Update the thresholds for the next round. */
->  	if (avg - min > max - avg)
+> Thank you very much for starting this update. RFC mentions write-only
+> monitoring, this feature particularly would be really helpful in some of
+> our use cases such as lightweight live migration target selection, so we
+> are looking forward to collaborate in development and testing activity!
 
-It appears that this patch, which made it in 6.15, results in *a lot*
-of extra interrupts on one of my arm64 test machines.
+Thank you for letting us know your interest, Andrew.  This should be helpful at
+better prioritizations.
 
-* Without this patch:
+Now development trees of DAMON and DAMON user-space tool support[1] write-only
+monitoring.  The implementation is dirty and not upstreamable for now, but
+please feel free to test and let me know what you see if you don't mind.
 
-maz@big-leg-emma:~$ vmstat -y 1
-procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
- r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
- 1  0      0 65370828  29244 106088    0    0     0     0   66   26  0  0 100  0  0
- 1  0      0 65370828  29244 106088    0    0     0     0  103   66  0  0 100  0  0
- 1  0      0 65370828  29244 106088    0    0     0     0   34   12  0  0 100  0  0
- 1  0      0 65370828  29244 106088    0    0     0     0   25   12  0  0 100  0  0
- 1  0      0 65370828  29244 106088    0    0     0     0   28   14  0  0 100  0  0
+I will continue working on more testing and making it upstreamable.
 
-we're idling at only a few interrupts per second, which isn't bad for
-a 24 CPU toy.
+[1] https://damonitor.github.io/posts/write_only_cpus_only_monitoring/
 
-* With this patch:
-
-maz@big-leg-emma:~$ vmstat -y 1
-procs -----------memory---------- ---swap-- -----io---- -system-- ------cpu-----
- r  b   swpd   free   buff  cache   si   so    bi    bo   in   cs us sy id wa st
- 1  0      0 65361024  28420 105388    0    0     0     0 3710   27  0  0 100  0  0
- 1  0      0 65361024  28420 105388    0    0     0     0 3399   20  0  0 100  0  0
- 1  0      0 65361024  28420 105388    0    0     0     0 4439   78  0  0 100  0  0
- 1  0      0 65361024  28420 105388    0    0     0     0 5634   14  0  0 100  0  0
- 1  0      0 65361024  28420 105388    0    0     0     0 5575   14  0  0 100  0  0
-
-we're idling at anywhere between 3k and 6k interrupts per second. Not
-exactly what you want. This appears to be caused by the broadcast
-timer IPI.
-
-Reverting this patch on top of 6.16 restores sanity on this machine.
-
-I suspect that we're entering some deep idle state in a much more
-aggressive way, leading to a global timer firing as a wake-up
-mechanism, and the broadcast IPI being used to kick everybody else
-back. This is further confirmed by seeing the broadcast IPI almost
-disappearing completely if I load the system a bit.
-
-Daniel, you should be able to reproduce this on a Synquacer box (this
-what I used here).
-
-I'm happy to test things that could help restore some sanity.
 
 Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+SJ
 
