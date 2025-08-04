@@ -1,220 +1,248 @@
-Return-Path: <linux-kernel+bounces-755698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 16672B1AA89
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:49:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D35B1AA8E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:52:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B403C622225
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:49:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A283BC33C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:52:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 691B9239086;
-	Mon,  4 Aug 2025 21:49:21 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E105634;
-	Mon,  4 Aug 2025 21:49:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7BA23A99F;
+	Mon,  4 Aug 2025 21:52:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRkCIw47"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873E1634;
+	Mon,  4 Aug 2025 21:52:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754344160; cv=none; b=YY++ASgPF7B+k8FBz6VPq87vnaUdNbaFHkvqviJwOT2zqks5di65fH1ZRvrEF9+Z1ZqMC3CAbhMkcA4hd3UVbUtL2TQFqyGPAaM7dpPLWaxc31iwg9bUCIOeuLZJd4kJrYkuNA9O42BHXv4e0LfqL0NK2MpBiMb6IcB82hyCSQA=
+	t=1754344349; cv=none; b=d1IeqrUJNwqcOyAIAosvbI0fkW9Le0g8ENWfOfFzpaD3Qs6u4m5EzQx01k402nA9vVLm8bqyVbET1Hz74r1YePGNxfGlo+MHf1S9rppGFAn4qk2QU4kQRxTtAdyEiy86Q3b19W6eV7KBAu/xG1XdJjTRA1ST5JbApex9wa5d8dw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754344160; c=relaxed/simple;
-	bh=/bgaucFJ2r+oh0cKuDumKrWp7pFGy77fimGTNdxqC30=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WirfL8IjVIURUTgZ+3UuWs/YxZcnHFdUN2Z1JbpKFHQOygPiWx6hLjGiLIbFBu7r0myGhHqBFDTbmIOy54YDwcbpfzyNrLTXWIwscktTNxFoJ74sfEBCCx7cNpMr40XXm3KqysLOASOBZ5blkO9DDyxwICu21RUTtHMYcydk7r4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5AAD12574;
-	Mon,  4 Aug 2025 14:49:09 -0700 (PDT)
-Received: from [10.57.5.104] (unknown [10.57.5.104])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 591BE3F673;
-	Mon,  4 Aug 2025 14:49:15 -0700 (PDT)
-Message-ID: <e5193801-9160-4e05-8d02-eb129487437c@arm.com>
-Date: Mon, 4 Aug 2025 22:49:14 +0100
+	s=arc-20240116; t=1754344349; c=relaxed/simple;
+	bh=rLV4kTNP6xbv8+l9VQYq3ZMbQ7UGSERvE+LOo6qumgw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=JOYOT53YbKlNM0GOzU5/mQ9r7ZknrnfOQK2M6bSq/nVeYD7Ao+oQRX4DiOvSxX3gUQRgFXf0dTRHh4AouuRdS/ISPvxaJCLYHaQgP/bue1P26fgsSRzXtkj3XCqYm4T5DT6+ztj7wBtbh12OAD516XyVCxTf29NV/3yxMfwhgJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRkCIw47; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16CAC4CEE7;
+	Mon,  4 Aug 2025 21:52:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754344349;
+	bh=rLV4kTNP6xbv8+l9VQYq3ZMbQ7UGSERvE+LOo6qumgw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=sRkCIw47ngdZqhotgjMx0Hc3pct7iRy+6IBEsglcb1owbtPEzcDnfgmG9gMFqcJtE
+	 br3ebBqK4IaZ81FTfBcvluLir0RotKHxzvpk/rs28Es19/6ObovFSQtnFNLbEdvTmS
+	 2WpIfk7TbIwoXDTEZK2g/sh0keWzLflnYw5PE0RtweU4iGmNQ+whplYNsY2eKJDYKz
+	 t/dSAxhSJq1VvkkHiX0FSUTjldCkzNkgkSJq3AJWxVKKZJXabbrEV8FPCWxSxNlo7X
+	 oU+/Gh09jXjRjbAcxaznTPYVfsbU42mfIOfLxVU5MopScM67vTUyGo9fyggA0hb4DG
+	 UjLfgtf3hoHdQ==
+Date: Mon, 4 Aug 2025 16:52:27 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 03/38] tsm: Move dsm_dev from pci_tdi to pci_tsm
+Message-ID: <20250804215227.GA3643759@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/3] perf: arm_spe: Add support for SPE VM interface
-Content-Language: en-GB
-To: James Clark <james.clark@linaro.org>,
- Alexandru Elisei <alexandru.elisei@arm.com>
-Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>,
- Anshuman Khandual <Anshuman.Khandual@arm.com>,
- Rob Herring <Rob.Herring@arm.com>, Robin Murphy <Robin.Murphy@arm.com>,
- linux-arm-kernel@lists.infradead.org, linux-perf-users@vger.kernel.org,
- linux-kernel@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
- Arnaldo Carvalho de Melo <acme@kernel.org>,
- Namhyung Kim <namhyung@kernel.org>
-References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
- <aIzA632hiAldjJQQ@raptor> <a492ccbf-6442-44dc-82c8-d2c8b1d5c56b@linaro.org>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <a492ccbf-6442-44dc-82c8-d2c8b1d5c56b@linaro.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728135216.48084-4-aneesh.kumar@kernel.org>
 
-On 04/08/2025 17:00, James Clark wrote:
-> 
-> 
-> On 01/08/2025 2:28 pm, Alexandru Elisei wrote:
->> Hi,
->>
->> On Tue, Jul 01, 2025 at 04:31:56PM +0100, James Clark wrote:
->>> SPE can be used from within a guest as long as the driver adheres to the
->>> new VM interface spec [1]. Because the driver should behave correctly
->>> whether it's running in a guest or not, the first patches are marked as
->>> a fix. Furthermore, in future versions of the architecture the PE will
->>> be allowed to behave in the same way.
->>>
->>> The last patch adds new behavior to make it easier for guests to be
->>> able to reserve large buffers. It's not strictly necessary, so it's not
->>> marked as a fix.
->>
->> I had a look at the patches, and they all look ok to me, so for the 
->> series:
->>
->> Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
->>
->> I also tested the series by hacking SPE virtualization support in KVM:
->>
->> - without these changes, the SPE driver gets into an infinite loop 
->> because it
->>    clears PMBSR_EL1.S before clearing PMBLIMITR_EL.E, and the 
->> hypervisor is
->>    allowed to ignore the write to PMBSR_EL1.
->>
->> - with these changes, that doesn't happen.
->>
->> - ran perf for about a day in a loop in a virtual machine and didn't 
->> notice
->>    anything out of the ordinary.
->>
->> - ran perf for about a day in a loop on baremetal and similary 
->> everything looked
->>    alright.
->>
->> - checked that the SPE driver correctly decodes the maximum buffer 
->> size for
->>    sizes 4M, 2M (2M is right at the boundary between the two encoding 
->> schemes)
->>    and 1M; that's also correctly reflected in
->>    /sys/devices/platform/<spe>/arm_spe_0/caps/max_buffer_size.
->>
->> - checked that perf is not allowed to use a buffer larger than the 
->> maximum.
->>
->> - checked that the SPE driver correctly detects a buffer size 
->> management event.
->>
->> So:
->>
->> Tested-by: Alexandru Elisei <alexandru.elisei@arm.com>
->>
->> While testing I noticed two things:
->>
->> 1. When perf tries to use a buffer larger than the maximum, the error 
->> is EINVAL
->> (22):
->>
->> # cat /sys/devices/platform/spe/arm_spe_0/caps/max_buff_size
->> 4194304
->> # perf record -ae arm_spe// -m,16M -- sleep 10
->> failed to mmap with 22 (Invalid argument)
->>
->> (used 16M as the buffer size because what the driver ends up 
->> programming is half
->> that).
->>
->> I would have expected to get back ENOMEM (12), that seems less 
->> ambiguous to me.
->> I had to hack the driver to print an error message to dmesg when the 
->> max buffer
->> size is exceed to make sure that's why I was seeing the error message 
->> in perf,
->> and it wasn't because of something else. I get that that's 
->> because .setup_aux()
->> can only return NULL on error, but feels like there's room for 
->> improvement here.
->>
-> 
-> We could add an error code, rb_alloc_aux() already returns one and that 
-> calls setup_aux(). But the scenarios would be either EINVAL or ENOMEM 
-> and wouldn't give the user the exact reason ("need > 2 pages", "need 
-> even number of pages", etc). So I'm not sure it would be enough of an 
-> improvement over returning NULL to be worth it.
-> 
-> However I will add a warning into Perf if the user asks for more than 
-> caps/max_buffer_size. That would be a useful message and Perf can do it 
-> itself so it doesn't need to be in the driver changes.
-> 
->> 2. A hypervisor is allowed to inject a buffer size event even though 
->> the buffer
->> set by the guest is smaller than the maximum advertised. For example, 
->> this can
->> happen if there isn't enough memory to pin the buffer, or if the limit 
->> on pinned
->> memory is exceeded in the hypervisor (implementation specific 
->> behaviour, not
->> mandated in DEN0154, of course).
->>
->> In this situation, when the SPE driver gets a buffer size management 
->> event
->> injected by the hypervisor, there is no way for the driver to 
->> communicate it to
->> the perf instance, and the profiled process continues executing even 
->> though
->> profiling has stopped.
->>
->> That's not different from what happens today with buffer management 
->> events, but
->> unlike the other events, which aren't under the control of userspace, 
->> the buffer
->> size event is potentially recoverable if userspace restarts perf with 
->> a smaller
->> buffer.
->>
->> Do you think there's something that can be done to improve this 
->> situation?
->>
->> Thanks,
->> Alex
->>
-> 
-> It doesn't look like there's currently anything that can stop an event 
-> or signal to Perf that the event has gone bad.
-> 
-> We could add something like "__u32 error" to struct 
-> perf_event_mmap_page. But I'm not sure what you'd do with it. If Perf is 
-> the parent of the process you wouldn't want to kill it in case anything 
-> bad happens. So you're left with leaving it running anyway. If it's just 
-> an error message that you want then there's already one in dmesg for 
-> buffer management errors, and that string is a lot better than a single 
-> code. Unless these new codes were detailed PMU specific ones? Actually 
-> it's a whole page so why not make it a string...
-> 
-> It's not a case of the samples ending randomly somewhere though, you'll 
-> either get all of them or none of them. So it will be quite obvious to 
-> the user that something has gone wrong. Secondly I think the scenario of 
-> not being able to pin memory when asking for less than the limit would 
-> be very rare. It's probably fine to leave it like this for now and we 
-> can always add something later, maybe if people start to run into it for 
-> real.
+On Mon, Jul 28, 2025 at 07:21:40PM +0530, Aneesh Kumar K.V (Arm) wrote:
 
-Do we get EMPTY AUX records in this case where there was no profiling
-data ? If so, why not convey the error via AUX record header flags ?
+Subject line should include "PCI" prefix.
 
-Suzuk
+Needs a commit log, even if it repeats what's in the subject.  Would
+also be good to know *why* this is desirable.
 
+> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+> ---
+>  drivers/pci/tsm.c       | 72 ++++++++++++++++++++++++-----------------
+>  include/linux/pci-tsm.h |  4 +--
+>  2 files changed, 45 insertions(+), 31 deletions(-)
 > 
-> James
-> 
-> 
+> diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
+> index 794de2f258c3..e4a3b5b37939 100644
+> --- a/drivers/pci/tsm.c
+> +++ b/drivers/pci/tsm.c
+> @@ -415,15 +415,55 @@ static enum pci_tsm_type pci_tsm_type(struct pci_dev *pdev)
+>  	return PCI_TSM_INVALID;
+>  }
+>  
+> +/* lookup the Device Security Manager (DSM) pf0 for @pdev */
 
+s/lookup/Look up/ (it's a verb here)
+ 
+> +static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
+> +{
+> +	struct pci_dev *uport_pf0;
+> +
+
+Remove this blank line ...
+
+> +	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
+
+and add one here.
+
+> +	if (!pf0)
+> +		return NULL;
+> +
+> +	if (pf0 == pdev)
+> +		return no_free_ptr(pf0);
+> +
+> +	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
+> +	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
+> +		return no_free_ptr(pf0);
+> +
+> +	/*
+> +	 * For cases where a switch may be hosting TDISP services on
+> +	 * behalf of downstream devices, check the first usptream port
+> +	 * relative to this endpoint.
+
+s/usptream/upstream/
+
+> +	 */
+> +	if (!pdev->dev.parent || !pdev->dev.parent->parent)
+> +		return NULL;
+> +
+> +	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
+> +	if (!uport_pf0->tsm)
+> +		return NULL;
+> +	return pci_dev_get(uport_pf0);
+> +}
+> +
+>  /**
+>   * pci_tsm_initialize() - base 'struct pci_tsm' initialization
+>   * @pdev: The PCI device
+>   * @tsm: context to initialize
+>   */
+> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
+> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
+>  {
+> +	struct pci_dev *dsm_dev __free(pci_dev_put) = dsm_dev_get(pdev);
+> +	if (!dsm_dev)
+> +		return -EINVAL;
+> +
+>  	tsm->type = pci_tsm_type(pdev);
+>  	tsm->pdev = pdev;
+
+Add blank line before comment.
+
+> +	/*
+> +	 * No reference needed because when we destroy
+> +	 * dsm_dev all the tdis get destroyed before that.
+
+"tdi" looks like an initialism, which would normally be capitalized.
+
+> +	 */
+> +	tsm->dsm_dev = dsm_dev;
+> +	return 0;
+>  }
+>  EXPORT_SYMBOL_GPL(pci_tsm_initialize);
+>  
+> @@ -447,7 +487,8 @@ int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm)
+>  	}
+>  
+>  	tsm->state = PCI_TSM_INIT;
+> -	pci_tsm_initialize(pdev, &tsm->tsm);
+> +	if (pci_tsm_initialize(pdev, &tsm->tsm))
+> +		return -ENODEV;
+>  
+>  	return 0;
+>  }
+> @@ -612,32 +653,6 @@ int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
+>  }
+>  EXPORT_SYMBOL_GPL(pci_tsm_doe_transfer);
+>  
+> -/* lookup the Device Security Manager (DSM) pf0 for @pdev */
+> -static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
+> -{
+> -	struct pci_dev *uport_pf0;
+> -
+> -	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
+> -	if (!pf0)
+> -		return NULL;
+> -
+> -	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
+> -	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
+> -		return no_free_ptr(pf0);
+> -
+> -	/*
+> -	 * For cases where a switch may be hosting TDISP services on
+> -	 * behalf of downstream devices, check the first usptream port
+> -	 * relative to this endpoint.
+> -	 */
+> -	if (!pdev->dev.parent || !pdev->dev.parent->parent)
+> -		return NULL;
+> -
+> -	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
+> -	if (!uport_pf0->tsm)
+> -		return NULL;
+> -	return pci_dev_get(uport_pf0);
+> -}
+
+This code move looks like it could be a separate patch that only moves
+(and fixes the typos I mentioned).
+
+Then a second patch could do what the subject claims (moving dsm_dev
+from pci_tdi to pci_tsm) so it's not buried in the simple move.
+
+>  /* Only implement non-interruptible lock for now */
+>  static struct mutex *tdi_ops_lock(struct pci_dev *pf0_dev)
+> @@ -695,7 +710,6 @@ int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id)
+>  		return -ENXIO;
+>  
+>  	tdi->pdev = pdev;
+> -	tdi->dsm_dev = dsm_dev;
+>  	tdi->kvm = kvm;
+>  	pdev->tsm->tdi = tdi;
+>  
+> diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
+> index 1920ca591a42..0d4303726b25 100644
+> --- a/include/linux/pci-tsm.h
+> +++ b/include/linux/pci-tsm.h
+> @@ -38,7 +38,6 @@ enum pci_tsm_type {
+>   */
+>  struct pci_tdi {
+>  	struct pci_dev *pdev;
+> -	struct pci_dev *dsm_dev;
+>  	struct kvm *kvm;
+>  };
+>  
+> @@ -56,6 +55,7 @@ struct pci_tdi {
+>   */
+>  struct pci_tsm {
+>  	struct pci_dev *pdev;
+> +	struct pci_dev *dsm_dev;
+>  	enum pci_tsm_type type;
+>  	struct pci_tdi *tdi;
+>  };
+> @@ -173,7 +173,7 @@ void pci_tsm_core_unregister(const struct pci_tsm_ops *ops);
+>  int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
+>  			 const void *req, size_t req_sz, void *resp,
+>  			 size_t resp_sz);
+> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
+> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
+>  int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm);
+>  int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id);
+>  int pci_tsm_unbind(struct pci_dev *pdev);
+> -- 
+> 2.43.0
+> 
 
