@@ -1,82 +1,94 @@
-Return-Path: <linux-kernel+bounces-755383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4DC13B1A5B8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:19:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17E7EB1A5BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:20:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B61A03AB77F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:19:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 464E317F00E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:20:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACE520A5F3;
-	Mon,  4 Aug 2025 15:19:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 663A51078F;
+	Mon,  4 Aug 2025 15:20:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ne8IgZ+1"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cBZ59xBm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ebd2r8Jn";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="cBZ59xBm";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Ebd2r8Jn"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A583F1FDD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:19:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC6C91E5B9A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:20:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754320773; cv=none; b=N+Slc9n+2N5BqH5s9EJv1umM5GL4tjgkyP4YnsFYLOueIP/rfJRzh6CGE4LQXQ2VbcHHuQyHFBVQta+jGweBJVPZ6v/n3xn+1ONX31jpHjrlKb/cFRfX3DQO51Jm2Fi19yRKlnyCeCgKxU31pJ1BV/XnbG//PfLv7KAkHinEEV0=
+	t=1754320803; cv=none; b=XFgFUhZQoKyKiGBCDwfN24vnVbr9mdRZfu+ia1NOsfj2BQH5PhOTSt46Aj99BdBNUxYL4jON1/ErC7eEhMmMQgcgGXftax1txNsgzurmmsy2DglSXf7ndVlGPN8ZuqKKYdY2XpZhs0kEbymvnhininPgm/29fAyvo/404j03dSg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754320773; c=relaxed/simple;
-	bh=2ctkyVkCddw7J9ojtDdkwwbhNHUgXi3U5sJoES+5Eg8=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=fjFBCZNMiE9C80Yl0p1xmvVUTnRAOc1XpNxRuXF71eGREcKKUS7XEGB84m7A1KTF0/4yu444C7qTQmU8TSFHovS70sbLpZudE1omdnW6N1AVleF9dmK+/CkioZ2woDUegXO2UrpK1IEr/7rYQQ5gwC/mqysqKToQ5lxm4VKhicU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ne8IgZ+1; arc=none smtp.client-ip=209.85.221.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-3b78d729bb8so2966519f8f.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:19:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754320770; x=1754925570; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=EtfsrmeYAGdv6VNJegK9X7GXsxap8vbNDXlKO4YuuF0=;
-        b=ne8IgZ+1JpoMvARB6B4crhNMp6bVf3vUifBFCe28Kkng7XgecOK/qb1kafIwqFWuvz
-         I811xvwEy6L3vFR+SgNThrzwunK/TyMKiHzNtl+9IsJIxwlkD5b9e9LEl6j3vm89Brds
-         55xJajwuEquakMAVe5xdJzqo9TBiQD8wFWsgMc+yVqD76ReaaTT2j4YlfvgMotlO8QvH
-         vSzT+Tm1xR2lL09XSJOS0gg0lqk/0Hyp+tbMLg1QjHBmiYH4d3Z8KsKaI9e1BNxyllYC
-         vk3/h0TmDm1JXrGwy4bENcsBmPnlVC5XQ7UNpYREzoqUKEcL1Kw2z/hzoBF6MjOp6vf2
-         9A9Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754320770; x=1754925570;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=EtfsrmeYAGdv6VNJegK9X7GXsxap8vbNDXlKO4YuuF0=;
-        b=JvPDTmbIqyOSaHBsrwvJsPEkpdtS6dKJ9J7jqyntOxT8doXkPRKPdswRzwlNJddGLN
-         7khrvRWn9mm88cUaN6ixcahQHsDBYTZeXrQl4zqcT5+rDkIj7mw7NKu2x653jSN0knaH
-         PXXelVkAH+686Q71deGAkECpkZp8Nbw1hsoSE/uP1eNhj6BQyQ/87leX2+3wxlHtggAB
-         xnQGKAJqSkScIkRY71y5az3khQop8xLErBqF2A7cHlSCd+l5JQNNK+KaoQ9Pgs2bVS10
-         k5JszlMssUMWflS32faFAMxxEFsM34bGw1jb2iuyJL6tZdy9OOnxnFeP2VR/N1ZFHvrl
-         v9vQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUOyMOfPtx3t1vxg9++UDPU3C1mrvlzC9TKytgJnRiYF/e7W6zopc0BPEVmBWkifRbqWcfYEwxIwQdYung=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzT9tKPGr6rwshc7jRvNfiSoXdJYb7FSgCOIkEyKctI0JYvWfqE
-	SfAt5BHB8Ehtj05zgpot5wUgdzki0kfBq3RGylXV2sGvhznxl0Rz0M+6pE4zesFnfss=
-X-Gm-Gg: ASbGncu7OzO0hCh0qNjhF/MT+/DSePMM5R+Gq2SVkyzkipB6ay6A5nbH6Mtnwe8Yq80
-	rOLaSDt58xdQZOZBl8/nwxMWK/ZQKsXWJqWaYhrQEQnqIHowPE5zdM4he1TKzw0CdMw1R+0cp13
-	RutAc0bcJYfX0I6GW4bcnjRs5nwkgR6+YAACauN6LCiwLETXesUx2ZbC+RPVFsA8rQ3au6nQWqX
-	uZmnrMUXoa0507w2R5v1LTWR5yy+6umklStabDJyXRyUgWhzGbhbTuLOvCn8B/3aLo0yJgixEOF
-	YBSG1v4Mx6Oh2n5x7rBnKQAlZhAfVLZdF6A30x6IMnDxFDoveFwAtufPm/spZ/VEEJIi/ZERsoU
-	impH7iN0G/tM+VwFD+70PANXpT2GYDdM9I0YVr1wcMoiIb7vitIdcDNsV2Nq+n2Y1R3ORSu/mnc
-	M=
-X-Google-Smtp-Source: AGHT+IFVF1ODkUB1OdYXOWOHu0AspSQEel4BFpbUYVZ+7jd2xVYD2zN7DNDKT6oJnKJ7NlR9U11KQA==
-X-Received: by 2002:a05:6000:2882:b0:3b7:73b5:e96d with SMTP id ffacd0b85a97d-3b8d9470335mr6765893f8f.15.1754320769927;
-        Mon, 04 Aug 2025 08:19:29 -0700 (PDT)
-Received: from ?IPV6:2a01:e0a:3d9:2080:3030:f63e:fedd:700f? ([2a01:e0a:3d9:2080:3030:f63e:fedd:700f])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm15609805f8f.55.2025.08.04.08.19.28
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 08:19:29 -0700 (PDT)
-Message-ID: <ca6aa2e8-d15e-4d7a-a440-5ab814699390@linaro.org>
-Date: Mon, 4 Aug 2025 17:19:28 +0200
+	s=arc-20240116; t=1754320803; c=relaxed/simple;
+	bh=BWgEeAVg0fNkKifqZqgp9SoiOZmmrlTLrheRDX2YGGI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tf0kDPrh5nqpAaQs0ZqVb9l8wMfDmZ48Jf6WPUmCW8AuJopdAJiKhl7KnShAc5jswpLaYfeG24Sf7LZANBr4LqSRPffMPMcZWhmLhpVMCyiZz0ebiWmKq69vgCCb4GKEmRp8HhO4yq8A127s5jWYNfb9pnCFqP6GVwUTD7aHNGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cBZ59xBm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ebd2r8Jn; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=cBZ59xBm; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Ebd2r8Jn; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 1166421A63;
+	Mon,  4 Aug 2025 15:20:00 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754320800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lq0Y2U+mB6S4jVE9iEXQtQ6gO1VJJ4PROG8UK522xjM=;
+	b=cBZ59xBm7trdRqemCJuajnMGyOBqPEVYknyAjKBwKVK75BplXQa+wmA9sONaaXlq/DyXuj
+	IOdWWOEsGStpx8UqQ6w6356+q/PYZz4QjZHGMU9Xws37glXtJCH4wbeUmzQ822tUHCTVHw
+	R7McNubTzEW749DAzT+bbAVSN99yBqI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754320800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lq0Y2U+mB6S4jVE9iEXQtQ6gO1VJJ4PROG8UK522xjM=;
+	b=Ebd2r8JnO/900Alx45SS2afwIfdSgS9fu0M+jt8okR9Hod3nyAkrbqJng2K6gzw1YGGIhe
+	sqZRp5ucNjYFxRAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1754320800; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lq0Y2U+mB6S4jVE9iEXQtQ6gO1VJJ4PROG8UK522xjM=;
+	b=cBZ59xBm7trdRqemCJuajnMGyOBqPEVYknyAjKBwKVK75BplXQa+wmA9sONaaXlq/DyXuj
+	IOdWWOEsGStpx8UqQ6w6356+q/PYZz4QjZHGMU9Xws37glXtJCH4wbeUmzQ822tUHCTVHw
+	R7McNubTzEW749DAzT+bbAVSN99yBqI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1754320800;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=lq0Y2U+mB6S4jVE9iEXQtQ6gO1VJJ4PROG8UK522xjM=;
+	b=Ebd2r8JnO/900Alx45SS2afwIfdSgS9fu0M+jt8okR9Hod3nyAkrbqJng2K6gzw1YGGIhe
+	sqZRp5ucNjYFxRAw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id F169713695;
+	Mon,  4 Aug 2025 15:19:59 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id KmCHOp/PkGiscwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Mon, 04 Aug 2025 15:19:59 +0000
+Message-ID: <a5fb57c6-fc32-4014-a4ef-200b41ddd877@suse.cz>
+Date: Mon, 4 Aug 2025 17:19:59 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -84,77 +96,137 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-From: neil.armstrong@linaro.org
-Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH] drm: panel: orisetech: improve error handling during
- probe
-To: Akhilesh Patil <akhilesh@ee.iitb.ac.in>, quic_jesszhan@quicinc.com,
- maarten.lankhorst@linux.intel.com, mripard@kernel.org, tzimmermann@suse.de,
- airlied@gmail.com, simona@ffwll.ch, asrivats@redhat.com
-Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- akhileshpatilvnit@gmail.com, skhan@linuxfoundation.org
-References: <aIJagJ/RnhSCtb2t@bhairav-test.ee.iitb.ac.in>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <aIJagJ/RnhSCtb2t@bhairav-test.ee.iitb.ac.in>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Subject: Re: [PATCH v6] mm/slub: avoid accessing metadata when pointer is
+ invalid in object_err()
+Content-Language: en-US
+To: Li Qiong <liqiong@nfschina.com>, Christoph Lameter <cl@gentwo.org>,
+ David Rientjes <rientjes@google.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: Roman Gushchin <roman.gushchin@linux.dev>,
+ Harry Yoo <harry.yoo@oracle.com>, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org,
+ Matthew Wilcox <willy@infradead.org>
+References: <20250804025759.382343-1-liqiong@nfschina.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJnyBr8BQka0IFQAAoJECJPp+fMgqZkqmMQ
+ AIbGN95ptUMUvo6aAdhxaOCHXp1DfIBuIOK/zpx8ylY4pOwu3GRe4dQ8u4XS9gaZ96Gj4bC+
+ jwWcSmn+TjtKW3rH1dRKopvC07tSJIGGVyw7ieV/5cbFffA8NL0ILowzVg8w1ipnz1VTkWDr
+ 2zcfslxJsJ6vhXw5/npcY0ldeC1E8f6UUoa4eyoskd70vO0wOAoGd02ZkJoox3F5ODM0kjHu
+ Y97VLOa3GG66lh+ZEelVZEujHfKceCw9G3PMvEzyLFbXvSOigZQMdKzQ8D/OChwqig8wFBmV
+ QCPS4yDdmZP3oeDHRjJ9jvMUKoYODiNKsl2F+xXwyRM2qoKRqFlhCn4usVd1+wmv9iLV8nPs
+ 2Db1ZIa49fJet3Sk3PN4bV1rAPuWvtbuTBN39Q/6MgkLTYHb84HyFKw14Rqe5YorrBLbF3rl
+ M51Dpf6Egu1yTJDHCTEwePWug4XI11FT8lK0LNnHNpbhTCYRjX73iWOnFraJNcURld1jL1nV
+ r/LRD+/e2gNtSTPK0Qkon6HcOBZnxRoqtazTU6YQRmGlT0v+rukj/cn5sToYibWLn+RoV1CE
+ Qj6tApOiHBkpEsCzHGu+iDQ1WT0Idtdynst738f/uCeCMkdRu4WMZjteQaqvARFwCy3P/jpK
+ uvzMtves5HvZw33ZwOtMCgbpce00DaET4y/UzsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZ8gcVAUJFhTonwAKCRAiT6fnzIKmZLY8D/9uo3Ut9yi2YCuASWxr7QQZ
+ lJCViArjymbxYB5NdOeC50/0gnhK4pgdHlE2MdwF6o34x7TPFGpjNFvycZqccSQPJ/gibwNA
+ zx3q9vJT4Vw+YbiyS53iSBLXMweeVV1Jd9IjAoL+EqB0cbxoFXvnjkvP1foiiF5r73jCd4PR
+ rD+GoX5BZ7AZmFYmuJYBm28STM2NA6LhT0X+2su16f/HtummENKcMwom0hNu3MBNPUOrujtW
+ khQrWcJNAAsy4yMoJ2Lw51T/5X5Hc7jQ9da9fyqu+phqlVtn70qpPvgWy4HRhr25fCAEXZDp
+ xG4RNmTm+pqorHOqhBkI7wA7P/nyPo7ZEc3L+ZkQ37u0nlOyrjbNUniPGxPxv1imVq8IyycG
+ AN5FaFxtiELK22gvudghLJaDiRBhn8/AhXc642/Z/yIpizE2xG4KU4AXzb6C+o7LX/WmmsWP
+ Ly6jamSg6tvrdo4/e87lUedEqCtrp2o1xpn5zongf6cQkaLZKQcBQnPmgHO5OG8+50u88D9I
+ rywqgzTUhHFKKF6/9L/lYtrNcHU8Z6Y4Ju/MLUiNYkmtrGIMnkjKCiRqlRrZE/v5YFHbayRD
+ dJKXobXTtCBYpLJM4ZYRpGZXne/FAtWNe4KbNJJqxMvrTOrnIatPj8NhBVI0RSJRsbilh6TE
+ m6M14QORSWTLRg==
+In-Reply-To: <20250804025759.382343-1-liqiong@nfschina.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.997];
+	MIME_GOOD(-0.10)[text/plain];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	RCPT_COUNT_SEVEN(0.00)[10];
+	MID_RHS_MATCH_FROM(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On 24/07/2025 18:08, Akhilesh Patil wrote:
-> Use dev_err_probe() helper as directed by core driver model to handle
-> driver probe error. Use standard helper defined at drivers/base/core.c
-> to maintain code consistency.
+On 8/4/25 04:57, Li Qiong wrote:
+> object_err() reports details of an object for further debugging, such as
+> the freelist pointer, redzone, etc. However, if the pointer is invalid,
+> attempting to access object metadata can lead to a crash since it does
+> not point to a valid object.
 > 
-> Inspired by,
-> commit a787e5400a1ce ("driver core: add device probe log helper")
-> 
-> Signed-off-by: Akhilesh Patil <akhilesh@ee.iitb.ac.in>
+> In case the pointer is NULL or check_valid_pointer() returns false for
+> the pointer, only print the pointer value and skip accessing metadata.
+
+We should explain that this is not theoretical so justify the stable cc, so
+I would add:
+
+One known path to the crash is when alloc_consistency_checks() determines
+the pointer to the allocated object is invalid beause of a freelist
+corruption, and calls object_err() to report it. The debug code should
+report and handle the corruption gracefully and not crash in the process.
+
+If you agree, I can do this when picking up the patch after merge window, no
+need to resend.
+> Fixes: 81819f0fc828 ("SLUB core")
+> Cc: <stable@vger.kernel.org>
+> Signed-off-by: Li Qiong <liqiong@nfschina.com>
 > ---
->   drivers/gpu/drm/panel/panel-orisetech-ota5601a.c | 7 ++-----
->   1 file changed, 2 insertions(+), 5 deletions(-)
+> v2:
+> - rephrase the commit message, add comment for object_err().
+> v3:
+> - check object pointer in object_err().
+> v4:
+> - restore changes in alloc_consistency_checks().
+> v5:
+> - rephrase message, fix code style.
+> v6:
+> - add checking 'object' if NULL.
+> ---
+>  mm/slub.c | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
 > 
-> diff --git a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-> index fc87f61d4400..e971d1536654 100644
-> --- a/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-> +++ b/drivers/gpu/drm/panel/panel-orisetech-ota5601a.c
-> @@ -277,11 +277,8 @@ static int ota5601a_probe(struct spi_device *spi)
->   		       DRM_MODE_CONNECTOR_DPI);
->   
->   	err = drm_panel_of_backlight(&panel->drm_panel);
-> -	if (err) {
-> -		if (err != -EPROBE_DEFER)
-> -			dev_err(dev, "Failed to get backlight handle\n");
-> -		return err;
-> -	}
-> +	if (err)
-> +		return dev_err_probe(dev, err, "Failed to get backlight handle\n");
->   
->   	drm_panel_add(&panel->drm_panel);
->   
+> diff --git a/mm/slub.c b/mm/slub.c
+> index 31e11ef256f9..972cf2bb2ee6 100644
+> --- a/mm/slub.c
+> +++ b/mm/slub.c
+> @@ -1104,7 +1104,12 @@ static void object_err(struct kmem_cache *s, struct slab *slab,
+>  		return;
+>  
+>  	slab_bug(s, reason);
+> -	print_trailer(s, slab, object);
+> +	if (!object || !check_valid_pointer(s, slab, object)) {
+> +		print_slab_info(slab);
+> +		pr_err("Invalid pointer 0x%p\n", object);
+> +	} else {
+> +		print_trailer(s, slab, object);
+> +	}
+>  	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
+>  
+>  	WARN_ON(1);
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
