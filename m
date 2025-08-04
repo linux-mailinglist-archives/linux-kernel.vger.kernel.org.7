@@ -1,87 +1,63 @@
-Return-Path: <linux-kernel+bounces-755610-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755611-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A2DBB1A927
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:23:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7DCF7B1A92A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:27:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9A247177783
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:23:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A00189F975
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:27:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 354DB286D49;
-	Mon,  4 Aug 2025 18:23:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C87D28B417;
+	Mon,  4 Aug 2025 18:27:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Iw6gbHDx"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LX9Jmsj3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4702321A44C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:23:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABF428642B
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:26:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754331812; cv=none; b=GXVFNuLv9ik1T77HGH/3C3p1qg0IkxP9pDaZcfj6P11d8pQ/Xy9XuKisNfOWfkXfTwe4bl6FBzKWdItcbIxN3FNSQAxnRcAXrXmwZeV2HEnbj8mlmWVseBLNFOa2fMKHWbqooMZ5rS95+7ABLBMxeyod5NRddNsy2Hu6teP/Fas=
+	t=1754332021; cv=none; b=UZLHbC1lulonTWjdJCDsBBobZSZSbwMmh7zHgyWktc5CMCichPm22PfRXNldxGSTOuuyC05quC2ATxNHXw6z9x7h4E4kNjzon0Bqdv+eOnAl2+XqrIE8Het+JY4WYm2elZz5bg2HRLgEYxgmPIERuLAm3Gn4SsPFkXp7mnJggg4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754331812; c=relaxed/simple;
-	bh=7ltBgKMR/FXKtfkI/2GQriZny8l37rhY6/xi4aaQris=;
+	s=arc-20240116; t=1754332021; c=relaxed/simple;
+	bh=dB9SnGy7bDjV2ukIb32k+gbxItWjYYZUz3Fv/HhcaQ8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TCn8zNISwCfyyVye5syFZKJLTQ5NXti+mz9vRGea4O0+dmQyFSNJ5IoHkyz8ciwZD79vMK3DbMwNELH4PViUBQcmXXSpUXM9dp3nx69bL4xIITs7L8SAypQx8Ddl1a3UPk/RZsleyqESw2IZwBJSx0yTLC1TOgRRiTETg2SQcdk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Iw6gbHDx; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574GDkwP000777
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 18:23:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	vwAUZbzwPdudDNVv/ZAIuba9HHKqAhFmjC3T88l2J4A=; b=Iw6gbHDxCHYU36ep
-	Z1ih82wqrLcJ60Jx1jMfihgJ4t260bvWB8/w+H9aP9rjZdGp16cY3NOYYKeqHlvF
-	VbcOA4x34lvTegp2sP3eUPDpuCsLj29f0BmVO8EM0QrZlL/V7yrTuqG4uapeLk+C
-	CnW3ZpFgkPfqu4ekxqER7fX5Z912SEEuCYfHVuqHkMd4nPlRNKnCoM8b2DVUgxNF
-	vAunVdMw8N6khbL+2wuOvnJZLos6WCVsWAEnRdjNywwCOuIQJhRD/yBv+sPVJR4u
-	4+NYvZeE2PTr0kvAvNCWkt39ETdfK97iKa0OWo+gdkrFThGZPMAuzn1nEEijKi2U
-	zfCGVg==
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com [209.85.216.70])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4898cjp74r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:23:30 +0000 (GMT)
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-31eb0116716so1458687a91.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:23:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754331810; x=1754936610;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=vwAUZbzwPdudDNVv/ZAIuba9HHKqAhFmjC3T88l2J4A=;
-        b=ApuH9CZ6r1qb8qIMZYcxjYV1xIOU6jhscQFd4DRLCM1M193eZwWRaughfffxzvu7jA
-         iwikHDYku6bkL81TYwRvycIJYuMSr8HqxrlZIU1M0GJAzclGp5aP/SolkEzgzKUzR3rq
-         xN+jq3cNH/AroC9jfpsBxMqeeLpjHBcX/j/kyrhs3rZk9DxRSuTIttoDiPwZEXgGTeBM
-         nJXythH9T5yv+Pk/PvdRGxersf/Lu95CxgFRFNo5lQOQcFFB8d7QXdqpiNxuZZUjnR2/
-         Th5vsiRrgsxGLkFJ21TZdN/W8KvDyMf/8LqtCOvb+jNMHXue1pDF4N/SX206sKcFNbNO
-         6bfg==
-X-Forwarded-Encrypted: i=1; AJvYcCXEpcQ0+TOdjlROLE34B4mKGWDbl1q/uJtEDdhez0UzeYvEMDXCnu69E3THVsRuElFtPK+a0VbzTT9Iz+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz26hrCXhfweceGDOCmBxXkny8eUbfqNfJ2emIUnhW2cJ/KHbvp
-	JzaAvIoJnAULo69B5+LE7ZcdJFad8QO86dPxhhkZGyRRRGJdxDFewVTXOPqKhgjAmle2Ob2N4XI
-	ws6yzUmA9OzV0oCg/BvnxaajkAYAKXAStDz4usa+AGC3daJedmcICqFIPC404IBSkuPQ=
-X-Gm-Gg: ASbGnctoSHkhhM82G/7/kWV82cn67Ap22lnjj0tIL2kZjRfNmSK91GPri1NvFOD9Emi
-	LYj4pszPk3vWJRgkj1q6UZ3PbPARRUDd//YGgGV31KXGNvNnVYX62IGsKcoj7tQriMXi8lzSeLl
-	W/gLyWwvHEktNWiMOnXcWdkXBnAwMW+q4DXV8NZYE4dDGimWn6ouv1Mcmo7ZZ33Zdoy+eYyP1uP
-	gIrLDeGwaWoOrAPmp4c1tVvlpJfeJNGTgPuG+ZpCMs97GaqMFpTW43X+S8e1JRrdOehW8x4BqZo
-	YhfiiinbS/QYgezhmR6nvS5kP0mfWhSUwZykBMD1aVjYj098d6tnZXfqp1Hqjj3u3rienU/Tn0j
-	bo4BROxZxWf2iijD2/UYnnVj5rPdf5ljL
-X-Received: by 2002:a05:6a20:1583:b0:233:38b4:7996 with SMTP id adf61e73a8af0-23df9129b4cmr7083564637.4.1754331809653;
-        Mon, 04 Aug 2025 11:23:29 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGSo4CpGz8MsdmAlTt6d4liC0i3VrBf4Var3mZ6vsWib4H2hyKGAUuPhG5lrgaiiFcSl4jckw==
-X-Received: by 2002:a05:6a20:1583:b0:233:38b4:7996 with SMTP id adf61e73a8af0-23df9129b4cmr7083543637.4.1754331809193;
-        Mon, 04 Aug 2025 11:23:29 -0700 (PDT)
-Received: from ?IPV6:2401:4900:1cb5:a9d1:15b3:77df:1800:1497? ([2401:4900:1cb5:a9d1:15b3:77df:1800:1497])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bac0d14sm9521529a12.41.2025.08.04.11.23.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 11:23:28 -0700 (PDT)
-Message-ID: <b376d130-2816-42b1-a8c1-1962ee0c2cd7@oss.qualcomm.com>
-Date: Mon, 4 Aug 2025 23:53:24 +0530
+	 In-Reply-To:Content-Type; b=smC/f6uRp25049Xve62hEuRlKC0AQzl+EnMg9Lb6jsafUH49OYsNdRxrFX3NNj2gg/Obzy0ZFAreKSRKqGjIeNm8E7/ylNdsfF2xftguOL6hNbTbUOm/Uwixgm6rF39VdZqTzZIR2JawFMP7nSQLDIYrC7WnY7xIN8+ji5EQCWY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LX9Jmsj3; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754332019;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CRg0w6RoadxtqQ8+K/tTfwdX8XjnbEQ9DKQbLi7rpJA=;
+	b=LX9Jmsj3JdIlW7aynBXIRnESLr73gN9qF3QUtDkrkWhHB48HBpIqbiLnqI+aCzYyfz2k2T
+	T+4/TV/af/Pil0+0cb1FgZNYYkT0HFB93sPwNMdxi8QAVb0+CpDERHLo+DJZA8UWrmU0xO
+	ZMQ/c1IiHtaTkWIC9otQ73i/cfUBGUs=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-108-WQP9F4q9NT6s0R0sbCLD8A-1; Mon,
+ 04 Aug 2025 14:26:53 -0400
+X-MC-Unique: WQP9F4q9NT6s0R0sbCLD8A-1
+X-Mimecast-MFC-AGG-ID: WQP9F4q9NT6s0R0sbCLD8A_1754332012
+Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE36219560AE;
+	Mon,  4 Aug 2025 18:26:51 +0000 (UTC)
+Received: from [10.44.33.21] (unknown [10.44.33.21])
+	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 86312180035E;
+	Mon,  4 Aug 2025 18:26:46 +0000 (UTC)
+Message-ID: <f96b3236-f8e6-40c1-afb2-7e76894462f9@redhat.com>
+Date: Mon, 4 Aug 2025 20:26:45 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,78 +65,167 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 0/2] Introduce initial support for Monaco Evaluation
- Kit
-To: Krzysztof Kozlowski <krzk@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250801163607.1464037-1-umang.chheda@oss.qualcomm.com>
- <551e85b1-e0aa-4d0b-a532-ec670bd055a2@kernel.org>
+Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
+To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
+Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
+ Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
+ Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
+References: <20250717171100.2245998-1-ivecera@redhat.com>
+ <20250717171100.2245998-2-ivecera@redhat.com>
+ <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
+ <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
+ <20250721-lean-strong-sponge-7ab0be@kuoka>
+ <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
+ <9220f776-8c82-474b-93fc-ad6b84faf5cc@kernel.org>
+ <466e293c-122f-4e11-97d2-6f2611a5178e@redhat.com>
+ <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
 Content-Language: en-US
-From: Umang Chheda <umang.chheda@oss.qualcomm.com>
-In-Reply-To: <551e85b1-e0aa-4d0b-a532-ec670bd055a2@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=MNBgmNZl c=1 sm=1 tr=0 ts=6890faa2 cx=c_pps
- a=0uOsjrqzRL749jD1oC5vDA==:117 a=xqWC_Br6kY4A:10 a=IkcTkHD0fZMA:10
- a=2OwXVqhp2XgA:10 a=HCkk8rKoL5zF92MEZlsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=mQ_c8vxmzFEMiUWkPHU9:22
-X-Proofpoint-ORIG-GUID: WzMse5slcsaS4P-XlsrxWtNpZYIEspkK
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDEwNCBTYWx0ZWRfX22NJYZAprSz2
- ts3DMmPW/eEUDFrm1XA+OLlHc4DuOLA0QnHPvS9bJK2/+N4tIGGgND6WtyM5hTQF1MRZg/dA+CD
- 0PRRDq2jMye9mKe6SFm8c5XyaM0CRMIT2A18udqbljMoxxSgAVDvsq7DP8YgX02SJ8iXZyQCj/7
- LNqkrD3k/9/3sBjXm0n1gjgB/91LRM4uvgtCbglpiWAj3rCRXzsIhvd7rPs8+AbCPAmlZewtdOW
- fZYAyyFf2lP514exRkKidqTeVOIt2hKqUxKt6GNPEu02qgJYtJ+F/CvXp78lu4cdDNhbD3qEd8a
- ykif+M+tras1ujFuhBAhQ0kQPKuIm1jxQTl+EnydJDqwB4GZC660VxBXP6+rulEPsIm1CQ6yZ/d
- SJ5/6zjH7a5JGeFQ98s6/dfjN4F+AFecFpsgKrvuqSxlyLkF8l54ajkGy4P7d1CCjNo12MRv
-X-Proofpoint-GUID: WzMse5slcsaS4P-XlsrxWtNpZYIEspkK
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_08,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 suspectscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040104
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
 
-
-
-On 8/2/2025 1:19 PM, Krzysztof Kozlowski wrote:
-> On 01/08/2025 18:36, Umang Chheda wrote:
->> This series:
+On 03. 08. 25 1:12 odp., Krzysztof Kozlowski wrote:
+> On 23/07/2025 09:23, Ivan Vecera wrote:
 >>
->> Add support for Qualcomm's Monaco Evaluation Kit (EVK) without
->> safety monitoring feature of Safety Island(SAIL) subsystem.
->> This board is based on Qualcomm's QCS8300 SoC.
 >>
->> Monaco EVK board is a single board computer (SBC) that supports various
->> industrial applications, including factory automation, industrial
->> robots, drones, edge AI boxes, machine vision, autonomous mobile
->> robots (AMRs), and industrial gateways.
+>> On 23. 07. 25 8:25 dop., Krzysztof Kozlowski wrote:
+>>> On 21/07/2025 14:54, Ivan Vecera wrote:
+>>>> On 21. 07. 25 11:23 dop., Krzysztof Kozlowski wrote:
+>>>>> On Fri, Jul 18, 2025 at 02:16:41PM +0200, Ivan Vecera wrote:
+>>>>>> Hi Krzysztof,
+>>>>>>
+>>>>>> ...
+>>>>>>
+>>>>>> The clock-id property name may have been poorly chosen. This ID is used by
+>>>>>> the DPLL subsystem during the registration of a DPLL channel, along with its
+>>>>>> channel ID. A driver that provides DPLL functionality can compute this
+>>>>>> clock-id from any unique chip information, such as a serial number.
+>>>>>>
+>>>>>> Currently, other drivers that implement DPLL functionality are network
+>>>>>> drivers, and they generate the clock-id from one of their MAC addresses by
+>>>>>> extending it to an EUI-64.
+>>>>>>
+>>>>>> A standalone DPLL device, like the zl3073x, could use a unique property such
+>>>>>> as its serial number, but the zl3073x does not have one. This patch-set is
+>>>>>> motivated by the need to support such devices by allowing the DPLL device ID
+>>>>>> to be passed via the Device Tree (DT), which is similar to how NICs without
+>>>>>> an assigned MAC address are handled.
+>>>>>
+>>>>> You use words like "unique" and MAC, thus I fail to see how one fixed
+>>>>> string for all boards matches this. MACs are unique. Property value set
+>>>>> in DTS for all devices is not.
+>>>>>> You also need to explain who assigns this value (MACs are assigned) or
+>>>>> if no one, then why you cannot use random? I also do not see how this
+>>>>> property solves this...  One person would set it to value "1", other to
+>>>>> "2" but third decide to reuse "1"? How do you solve it for all projects
+>>>>> in the upstream?
+>>>>
+>>>> Some background: Any DPLL driver has to use a unique number during the
+>>>> DPLL device/channel registration. The number must be unique for the
+>>>> device across a clock domain (e.g., a single PTP network).
+>>>>
+>>>> NIC drivers that expose DPLL functionality usually use their MAC address
+>>>> to generate such a unique ID. A standalone DPLL driver does not have
+>>>> this option, as there are no NIC ports and therefore no MAC addresses.
+>>>> Such a driver can use any other source for the ID (e.g., the chip's
+>>>> serial number). Unfortunately, this is not the case for zl3073x-based
+>>>> hardware, as its current firmware revisions do not expose information
+>>>> that could be used to generate the clock ID (this may change in the
+>>>> future).
+>>>>
+>>>> There is no authority that assigns clock ID value ranges similarly to
+>>>> MAC addresses (OUIs, etc.), but as mentioned above, uniqueness is
+>>>> required across a single PTP network so duplicates outside this
+>>>> single network are not a problem.
+>>>
+>>> You did not address main concern. You will configure the same value for
+>>> all boards, so how do you solve uniqueness within PTP network?
 >>
->> Below are detailed informations on monaco-evk HW:
->> ------------------------------------------------------
->> monaco-evk is single board supporting these peripherals:
->>   - Storage: 1 × 128 GB UFS, micro-SD card, EEPROMs for MACs,
->>     eMMC on mezzanine card
->>   - Audio/Video, Camera & Display ports
->>   - Connectivity: RJ45 2.5GbE, WLAN/Bluetooth, CAN/CAN-FD
->>   - PCIe ports
->>   - USB & UART ports
+>> This value differs across boards, similar to the local-mac-address. The
+>> device tree specifies the entry, and the bootloader or system firmware
+>> (like U-Boot) provides the actual value.
+> This should be clearly explained in commit msg or pull request to dtschema.
 > 
-> This belongs to one of the commit messages, not cover letter.
-Ack
+> Where are patches for U-Boot? lore gives me 0 results.
 
-> 
-> Best regards,
-> Krzysztof
+Hi Krzysztof,
+
+This was just an idea how to provide such information. But...
+
+We had a upstream meeting regarding this issue, how to deal with this
+issue in situations where a DPLL device is used to drive a PHC present
+in a network controller.
+
+Let's say we have a SyncE setup with two network controllers where each
+of them feeds a DPLL channel with recovered clock received from some of
+its PHY. The DPLL channel cleans/stabilizes this input signal (generates
+phase aligned signal locked to the same frequency as the input one) and
+routes it back to the network controller.
+
+     +-----------+
+  +--|   NIC 1   |<-+
+  |  +-----------+  |
+  |                 |
+  | RxCLK     TxCLK |
+  |                 |
+  |  +-----------+  |
+  +->| channel 1 |--+
+     |-- DPLL ---|
+  +->| channel 2 |--+
+  |  +-----------+  |
+  |                 |
+  | RxCLK     TxCLK |
+  |                 |
+  |  +-----------+  |
+  +--|   NIC 2   |<-+
+     +-----------+
+
+The PHCs implemented by the NICs have associated the ClockIdentity
+(according IEEE 1588-2008) whose value is typically derived from
+the NIC's MAC address using EUI-64. The DPLL channel should be
+registered to DPLL subsystem using the same ClockIdentity as the PHC
+it drives. In above example DPLL channel 1 should have the same clock ID
+as NIC1 PHC and channel 2 as NIC2 PHC.
+
+During the discussion, Andrew had the idea to provide NIC phandles
+instead of clock ID values.
+
+Something like this:
+
+diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml 
+b/Documenta
+tion/devicetree/bindings/dpll/dpll-device.yaml
+index fb8d7a9a3693f..159d9253bc8ae 100644
+--- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
++++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
+@@ -33,6 +33,13 @@ properties:
+      items:
+        enum: [pps, eec]
+
++  ethernet-handles:
++    description:
++      List of phandles to Ethernet devices, one per DPLL instance. Each of
++      these handles identifies Ethernet device that uses particular DPLL
++      instance to synchronize its hardware clock.
++    $ref: /schemas/types.yaml#/definitions/phandle-array
++
+    input-pins:
+      type: object
+      description: DPLL input pins
+
+A DPLL driver can then use this property to identify a network
+controller, use fwnode_get_mac_address() to get assigned MAC address and
+generate the ClockIdentity for registration from this MAC.
+
+WDYT about it?
 
 Thanks,
-Umang
+Ivan
 
 
