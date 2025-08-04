@@ -1,132 +1,107 @@
-Return-Path: <linux-kernel+bounces-755121-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755122-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5044B1A188
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:37:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FD84B1A18C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:38:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3791F7ACE57
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:36:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 394161895379
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:39:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6DED2550D0;
-	Mon,  4 Aug 2025 12:37:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PCftZlo7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52A6625A350;
+	Mon,  4 Aug 2025 12:38:53 +0000 (UTC)
+Received: from mail-vs1-f43.google.com (mail-vs1-f43.google.com [209.85.217.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24A7324DCE5;
-	Mon,  4 Aug 2025 12:37:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9A3024DD11;
+	Mon,  4 Aug 2025 12:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754311048; cv=none; b=oCJVJWi+dcmoqWaGI7RWu7FV9dep7yesuREmwL7feU9clzOwTj5+oJOqnRGp9Y97/ZnxLF4Xy7KNrqzmqCfvRnNFb2wfRLlOrCP3jUkEmzeU/ffjoxGfJkKhkGZ0JktdedH1fEDhJPVTYsld9W+JfPKIcy+ARRF5s+PfWh6j1oU=
+	t=1754311133; cv=none; b=d44pxnapAffz5jc74uk2Ox3g9aQNyBwtrMJd1zqZMYUKH/vaOTcLrw+B1Sus2CE2K9MZRkTquOWGj/1+h+h9+SyAEyYFi3AMqavyztczYW8NeVr/dWYevrK4C3PbTBcpK6+I/G+1PGNS136UyvrJQuotje1lJ0M4djgdP9Ygl1A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754311048; c=relaxed/simple;
-	bh=8364lKVjSLoE/C4yuz2dcYUZ0SL1p8n0c26MfIf5a78=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=OBqK+MgYJZWP7RYoQzjaRMG//aipyrj/OP9rJ4SnunRRr+eSoHeY7VaCbqgPx4jGWp1kMigu6eymVr9ogPHSrXoOQG8XWaxK9VTJikJkafoAUPguikZNFx2LXQA+hWPa5rCRUeiFRvgeJXfZ0z3L2VyhD552/9kda6Wdboo8E3I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PCftZlo7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 94521C4CEE7;
-	Mon,  4 Aug 2025 12:37:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754311047;
-	bh=8364lKVjSLoE/C4yuz2dcYUZ0SL1p8n0c26MfIf5a78=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=PCftZlo7iQ3hCmDco0y44Mw8TLIDghTi1MRqE3nS9mdUNuzwmQQ5Zg2hh96m/VUA1
-	 u9WkrQGn8SVWhZwMuBnV6T1qgpU7W2LXbMgiqY+/406oLEwdSB5iOlJMfY+ZtKZnd+
-	 KbZ9jMqZiLZMW/78ARACB/lYGX4T5wN+kpjW/W/J1lZMJtm9pgh0vzTmw+n01R7QD1
-	 xT8THOp7AxnRcBJASHIRePnWFTFqT7N6jns4vOnMZS4FZrsQB7kapbFncF6wBetHXe
-	 h2lxPkJ5N2O16hgbWL+Kh8cdpwwVIPoy+NDyuIKddrkZbkjCPui6317a1xaKVJajbs
-	 gGkUGDB7BYvVQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uiuRQ-003nlf-Th;
-	Mon, 04 Aug 2025 13:37:24 +0100
-Date: Mon, 04 Aug 2025 13:37:23 +0100
-Message-ID: <86qzxr6z5o.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	anshuman.khandual@arm.com,
-	robh@kernel.org,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	ry111@xry111.site,
-	Dave.Martin@arm.com,
-	ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	mbenes@suse.cz,
-	james.clark@linaro.org,
-	frederic@kernel.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 00/11] support SCTLR2_ELx
-In-Reply-To: <20250804121724.3681531-1-yeoreum.yun@arm.com>
-References: <20250804121724.3681531-1-yeoreum.yun@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754311133; c=relaxed/simple;
+	bh=IL5fPLC3Pk0hoIBYQYmcxQ4TFVhH95HWl8gvZ3MV+nc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HfaXb7/BwucWipGdojTazhIRCxH97eI61/hhGTAQHxURTZ8WCSBla/TMnc8KpHYKL/KRskUrvHcrhwGtSqYl1D8cXvabtorrH00qsJom2vctlKr3IYsMouOI5c+1Zf0Kwm9ULpbw5Xf9H3psuOXLhp1blUi6KnxEfKIUP4YjAZQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f43.google.com with SMTP id ada2fe7eead31-4fc1094c24eso2584153137.0;
+        Mon, 04 Aug 2025 05:38:50 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754311129; x=1754915929;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=OP7crYCBUfvlVVEMFYC8Qh4lOutHMfe5J2vx8pbxfr4=;
+        b=DDsd+OEJJvMMPhSvOngI+elVysYo5Gn58kF15j9lyTbMCEFYdKTIlwzy5JiU877M/3
+         +ixmE0CJJF8JhWoKZGyh+AztPvEyo6FVfJG/nosog347QlqR2ts82S5fwJ0GQmMljJiK
+         dBIqNl5zjOQFdGBPQJa1gnDI6qCFhFJ53kmFr5OX8kMvx0qwtkwuGW4LwPqbLxhYveut
+         sZe7s/yxBtLKvX4GKuKtkiC6dKaQKvFaD7OI+UVci7E1EonfJKJQPrn8emCKsUgnDUE2
+         mW1sDRr9Bo6cH8XNstjqE9wd7pKjrJJn5+bPRnFUPvb9lwCQf1dxOBO8y9rjs0OqN3FH
+         agNg==
+X-Forwarded-Encrypted: i=1; AJvYcCVSETZWkTpzPwmaOsYXsLpRfjQpv8KSFPWgIhmr/cV96oIcFhiYGjqjAvKNvS5Bucw5c7MY2wR/787UJ6yw@vger.kernel.org, AJvYcCWuunckdcOaVe8r/paDNgy3CkUT8F/IOYdxS+rMsY9Vl0+h6FLqqSEiEml1m9cHGNoHPWoO1n2t496HImtUhJw5ch4=@vger.kernel.org, AJvYcCXrRMIfMrd7fHBu18NcakQIH/6Tcn7VdpUYzI6pejo8Jnf4LhuO6eSh5u6lZxU3pKqRlSRAiqKmfB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1S9XZZM3jDB0DcePxPrlsT8om3QZjudrMIsHgF98lZJ36E9jW
+	g7sLh8vLnLGxOobUE9AKOc43h0EwlHhbsdeNn/frmlI8aC6Hs3Zi6bCsawgIilx/
+X-Gm-Gg: ASbGncux8JCCWFYVoAjv8TkQWAsU44/wVhuWB40XYSG+o7uSKe35kiwkzZ1JuhCX9dK
+	v1HmhShr0lBmG8m2VeORGY5huUGNhnM09Gvg77fAixij6PYPorxATfv7pb0IwgdW+N+kX/T8hlK
+	ld2/vQ380I6XWIGFOTNgt3c52S0GORHNN4wRpFgKnWg0qNAVID6DQAX26pSlpJUx2YZ0EcXo8Nw
+	/OMHoQNy1IF6L1dL6EAuOx4FFOjPVmBRhEzZI++c9ugkYFU3UkLvFzPixYMz90sNqyFo9aIfpJm
+	q82hve3aGQsiybp+zFPHrPDbX7HXfkD+1Y049jY1ekEANTEfeAWedshFztU7/BFyzRiUIZITzFf
+	N/CgR7tC8XJerelUQgh+VNx3xS58naSc9kJEkO/k+5PKRX8VdhHUwduHO1Wu3TWog7uEqZ1o=
+X-Google-Smtp-Source: AGHT+IERovn1WpkCgp2RnRIKiHoSBcPgM+jDgXCMmojYzvNv7pJbG9y/wT4mAPjmmdF2ovwXuaOKSA==
+X-Received: by 2002:a05:6102:162a:b0:4fb:de9e:6d87 with SMTP id ada2fe7eead31-4fdc2135299mr3310731137.11.1754311129345;
+        Mon, 04 Aug 2025 05:38:49 -0700 (PDT)
+Received: from mail-ua1-f46.google.com (mail-ua1-f46.google.com. [209.85.222.46])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d1c4b98sm2263164137.3.2025.08.04.05.38.48
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 05:38:48 -0700 (PDT)
+Received: by mail-ua1-f46.google.com with SMTP id a1e0cc1a2514c-87f04817bf6so3010392241.0;
+        Mon, 04 Aug 2025 05:38:48 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUAd6Y3gbIwv52TBPDPgIuHglx+c9fU+N61HErY9M+xCPq2KBXkELLvNsXzzSUps+pCzsSv2CV3RBE=@vger.kernel.org, AJvYcCUGTcbGHVEQOIwKglPiGE73TajHcdrP0J4PZFIhJXbv/G1yrA6PAhA27EdQ6epzs3JMCenD1HbAf62BD85S@vger.kernel.org, AJvYcCUsYhqEvlZAQmiCu6ZfJPbPhKku9XxhG1Mv6IVaqA42aDiLZapetg7ygCRfhwqLLOyn54qF32vpjMSLzllrN3rtzls=@vger.kernel.org
+X-Received: by 2002:a05:6102:358d:b0:4df:4a04:8d5e with SMTP id
+ ada2fe7eead31-4fdc203e703mr3232319137.8.1754311128643; Mon, 04 Aug 2025
+ 05:38:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com, ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com, kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz, james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org, pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com> <20250801084825.471011-2-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250801084825.471011-2-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Aug 2025 14:38:36 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVQWL_3R9D0-oB1Ke0xSDWsA_=tXaFN14N=iGGDx9QO7w@mail.gmail.com>
+X-Gm-Features: Ac12FXxFI7NGW6mc7-0lLglNRzDoBUvWdnin04p7KWDuqU98UcQ_A3M9ztvkdFc
+Message-ID: <CAMuHMdVQWL_3R9D0-oB1Ke0xSDWsA_=tXaFN14N=iGGDx9QO7w@mail.gmail.com>
+Subject: Re: [PATCH 1/3] clk: renesas: r9a09g047: Add entries for the DMACs
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, linux-clk@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Mon, 04 Aug 2025 13:17:13 +0100,
-Yeoreum Yun <yeoreum.yun@arm.com> wrote:
->=20
-> This series introduces initial support for the SCTLR2_ELx registers in Li=
-nux.
-> The feature is optional starting from ARMv8.8/ARMv9.3,
-> and becomes mandatory from ARMv8.9/ARMv9.4.
->=20
-> Currently, Linux has no strict need to modify SCTLR2_ELx=E2=80=94
-> at least assuming that firmware initializes
-> these registers to reasonable defaults.
->=20
-> However, several upcoming architectural features will require configuring
-> control bits in these registers.
-> Notable examples include FEAT_PAuth_LR and FEAT_CPA2.
->=20
-> This series is based on v6.16 and probably KVM-safe but
-> Not tested yet:
->   - nVHE boot.
+On Fri, 1 Aug 2025 at 10:48, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> Add clock and reset entries for the Renesas RZ/G3E DMAC IPs
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-"Probably" and "Not tested yet" are not exactly what we are looking
-for when looking at a series that adds support for a new architectural
-feature.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+i.e. will queue in renesas-clk for v6.18.
 
-Also, a lot of the KVM patches are redundant now that we do have
-FEAT_SCTLR2 support in KVM (see what has been merged for 6.17). You
-probably want to rebase on -rc1 once it is released, which should cut
-the series by half.
+Gr{oetje,eeting}s,
 
-Thanks,
+                        Geert
 
-	M.
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
---=20
-Without deviation from the norm, progress is not possible.
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
