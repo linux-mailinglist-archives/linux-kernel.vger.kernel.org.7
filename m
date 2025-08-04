@@ -1,151 +1,291 @@
-Return-Path: <linux-kernel+bounces-754713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D714B19B47
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA6FDB19B49
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 49C574E057D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:04:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB8BF1770AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:04:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E76230BE4;
-	Mon,  4 Aug 2025 06:03:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B46E92288C6;
+	Mon,  4 Aug 2025 06:04:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i67NM+P3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="FPj/Jepz"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742522264A1;
-	Mon,  4 Aug 2025 06:03:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8659C1F3FDC
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:04:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754287425; cv=none; b=hRMk1j5Y8qMRWJ326KHubyPVmKbJ66hA07YmHXoLnitvJhH4H/jZgq+mubZgtj4lwvBAc21yXzNKMm0M6LZZXcfUi3rBrP+SBtZjWuTvVLCs2klE60OB3nfWNIDCsnSlmH7eXu9Zf9P5ofGf9EEXZEvZKDPjg9InLOUU50863Pw=
+	t=1754287476; cv=none; b=u77tAIU/YyyQ79vbQtJs8862VCf3loARaKPyJMjafA0snBEizVEfT1bsGVNqt6C8P8MtAnPHWdUQwKL9aHlkZuoBR0ejJwMcm7DL5WiiNMAyC9QbyYdmGFXLCXq0MYcRunhfA+6egKXIJ1eZ3AZFgDC8OJ/vEEJG3fmwGwhymoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754287425; c=relaxed/simple;
-	bh=4g0So/KscdPaJ/4ZDhKbcEVg37nP7IyjIZTcN8FOlYs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eSuQywTNQhhWCQ/iZYFilLuR3MjK2fgbbDwEckRWiQqz7+QhTHX7XNWOs1web2CBY6kYBfignfquQ2l1A6YCxvhHwMQTKSIolqldEWY7jA5hyiGCzRyTi1diyhGzjNveZka3f22rKCaicgPzDNZkE8fXEkQs4tt4SbWcf2nQnyE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i67NM+P3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70421C4CEE7;
-	Mon,  4 Aug 2025 06:03:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754287425;
-	bh=4g0So/KscdPaJ/4ZDhKbcEVg37nP7IyjIZTcN8FOlYs=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=i67NM+P3Ta4ThzfaAcgW5tK0WgueBOE2EW4GG9PgHkN7LGr2TnLR+VbkEfe1vSjkK
-	 sjRn7Z08taHIDt+mHIT+sQ0I5QzZm4UlZ5+qYKJjah5rQ8oYCIU29Pn+0KQlrIiP6p
-	 7XdDLjRlemUis7rZmkc5Br8SwONtsutn29+6Eu6NoSo7VvwhEe1O3/Y0Usb9M/jy//
-	 oR4ZqKYRzheTrnjsvc+9WTGBtpx6T2SuwlhCkuy6vwXJ/ypnTDpqdmWjp0KZRU65Qj
-	 bcVlr4dGPSrq9D6F3bDu7jskVr2aEsaLlCQ0mjn0MIXOchD93Ljph6DkHpVKQUcHan
-	 6rNw8ku4ZTJiA==
-Message-ID: <6b691092-f931-4140-8097-0ad67d02bde9@kernel.org>
-Date: Mon, 4 Aug 2025 08:03:40 +0200
+	s=arc-20240116; t=1754287476; c=relaxed/simple;
+	bh=z6RXGnJic0GWtivBVWdbyc91Vd/9cmLtkNlRA9pWXVM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VUirRNWRI4Vrkr5m269cjOWfCwkHoh07S4Fa0jvK/P0+7C/oF0IF8z7ivmqIhLsAwksxOGGzGAu+ipCNNhOEBUdIpDz4lBocO/wx2ngE6aIyJ3VlbgSDzwTAt99EIqS0cdvpzNf4MT0sr9TVihWZp7ulkvJWUHo4JcSBz5TS3Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=FPj/Jepz; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-458aee6e86aso15956515e9.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 23:04:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1754287472; x=1754892272; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=zSRLbZH+ywoLvwHXORH5c+0524CP0mry4togVdem3jU=;
+        b=FPj/JepzdnEn6elh2+0fGXCQrScmOQTQz9P4WYYowRIABaAm6rcPVCxofzqQbF1ZpC
+         P7WNJbpwMgD/fmeRspZHq38A4E5RWxhcI8nn8UKsaJQ8myRAxZcIcP+4HTZOyDhmwoUw
+         dZfO74woNghye0d1U6BfCAhAUa81wRfS7Bpbo8zpcIGVCotoDOT/9GvPouUPEyXmHEH7
+         3XlOrJ0Ah6KKJjgkCNDyE1UNO/9TJAQUKPWr9jFBS0KWKuoDZnPzRcSdv9JoFZFY6iLJ
+         kiN/mrtzHSGtJtPok0AuyYFSPAoZnDvzceHkkOty7x4QRxGb9IX6R/GJEluDOhiDTyjM
+         aP5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754287472; x=1754892272;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zSRLbZH+ywoLvwHXORH5c+0524CP0mry4togVdem3jU=;
+        b=VCYwJvwSUly2OElQ9O2YW5C/8vK8nQPhq/qF42EygSbjHb5i7yNjY1E1ppe+U8aa+W
+         JrpDi3vxJFqItLcERY2yUhWFQR7CPTrxd+9dzCyLE8vLB4Yl+IGlf+acIrrgYY32zizE
+         f6ueM5TloVs0PKApjxfEG3D5Io6wkSIMP6pozlPIOnNWvkw64/RWtPJYV9WHnQoK0GaM
+         Iypr3vRezFaEyS8Vr1Eu2whBVBEv/mHjro6RFrs3kOzm9gQn4LBnJzKyvvymbLKHjDXb
+         sPz/gYMdXYCpy47T++zF1SzLDYte2eq6B3mM2a9iD76fEdK1wRLl+FFwsTipH1hxqOHr
+         RiIA==
+X-Forwarded-Encrypted: i=1; AJvYcCWviEFBvSOJCrDFIOChB6eFE/un+W1OEV3GMZZUlwJ+WRk+kgd48msLqIBC2XmDOw2pN1Dr75aqVRNQUOM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxYwOFpxVR4q2M5itV8cghQI8kh82bvnCLbhl1n7DLridixhAly
+	TjI5osXxHWkOyXzC5KoKowkBfk9aGUtbfVSesWOi6OUoii+W2Dn1QJegBDDQZjgobq0=
+X-Gm-Gg: ASbGnctdoMsC+ults0ydsRaHxef3yq+U/1BYxKSlCvPb4mPp7G0mbnbwWJqyQp0ZInJ
+	eTx1GX3syXFs7EGVih7/tyBW8NJJ7Rastode0ZRFX8IW5swzqPFH9ZO7X6nasE4OVYt/TwXNa5x
+	fkA5z8Yq6viS5l96+fkaunAowXPJ2dD1xjb+TQXTJIpWMmvS378aGnnHauXDS7WfE1lIAWt0xA4
+	gROP3w86+5Di0rMuueK5GN0AyRIPF/FlyYc4Gml6j7vGeAWTTXzUwOYYJw6mnnYr1x6f+NuZ9b/
+	9RJfeSSxhGOgn/P2qOEfaXQpeEd2X6GtJoCCAa05BDBMbeI8r5LHqFtPwmIm3euS8n6agT5jm/u
+	wdKsgSiUh/0bo7H0UwKqFOhFJ+pVmLlycfzjfaizz9CA=
+X-Google-Smtp-Source: AGHT+IGV4z76ItAlYSJtArOu2dhPWvUpQD//brr8fTRiDvDErvYBsQksalTenrcg8flqyPReDXASDw==
+X-Received: by 2002:a05:600c:35c6:b0:459:d709:e5cf with SMTP id 5b1f17b1804b1-459d709e8b1mr24094045e9.3.1754287471695;
+        Sun, 03 Aug 2025 23:04:31 -0700 (PDT)
+Received: from localhost (109-81-86-79.rct.o2.cz. [109.81.86.79])
+        by smtp.gmail.com with UTF8SMTPSA id 5b1f17b1804b1-459de91ea4csm2379665e9.10.2025.08.03.23.04.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Sun, 03 Aug 2025 23:04:31 -0700 (PDT)
+Date: Mon, 4 Aug 2025 08:04:30 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: zhongjinji@honor.com
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, rientjes@google.com,
+	shakeel.butt@linux.dev, npache@redhat.com,
+	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
+	andrealmeid@igalia.com, liulu.liu@honor.com, feng.han@honor.com
+Subject: Re: [PATCH v3 2/2] mm/oom_kill: Only delay OOM reaper for processes
+ using robust futex
+Message-ID: <aJBNbnNWa5KLciOq@tiehlicka>
+References: <20250804030341.18619-1-zhongjinji@honor.com>
+ <20250804030341.18619-2-zhongjinji@honor.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] dt-bindings: iio: magnetometer: document Infineon
- TLV493D 3D Magnetic sensor
-To: Dixit Parmar <dixitparmar19@gmail.com>
-Cc: Jonathan Cameron <jic23@kernel.org>, David Lechner
- <dlechner@baylibre.com>, =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, devicetree@vger.kernel.org
-References: <20250802-tlv493d-sensor-v6_16-rc5-v2-0-e867df86ad93@gmail.com>
- <20250802-tlv493d-sensor-v6_16-rc5-v2-2-e867df86ad93@gmail.com>
- <fc15279a-bf3e-4500-8dfc-651e6e2431d9@kernel.org> <aJAeoI4Iz_U06Wmo@dixit>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <aJAeoI4Iz_U06Wmo@dixit>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804030341.18619-2-zhongjinji@honor.com>
 
-On 04/08/2025 04:44, Dixit Parmar wrote:
-> On Sat, Aug 02, 2025 at 09:45:29AM +0200, Krzysztof Kozlowski wrote:
->> On 02/08/2025 08:44, Dixit Parmar wrote:
->>> Document the bindings for Infineon TLV493D Low-Power 3D Magnetic Sensor
->>> controlled by I2C interface. Main applications includes joysticks, control
->>> elements (white goods, multifunction knops), or electric meters (anti-
->>> tampering).
->>> Drop duplicated entry for infineon,tlv493d from trivial-devices.yaml as
->>> its documented in infineon,tlv493d.yaml now.
->>>
->>> Datasheet: https://www.infineon.com/assets/row/public/documents/24/49/infineon-tlv493d-a1b6-datasheet-en.pdf
->>> Signed-off-by: Dixit Parmar <dixitparmar19@gmail.com>
->>> ---
->>>  .../iio/magnetometer/infineon,tlv493d.yaml         | 45 ++++++++++++++++++++++
->>>  .../devicetree/bindings/trivial-devices.yaml       |  2 -
->>>  2 files changed, 45 insertions(+), 2 deletions(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
->>> new file mode 100644
->>> index 000000000000..ebcf29067a16
->>> --- /dev/null
->>> +++ b/Documentation/devicetree/bindings/iio/magnetometer/infineon,tlv493d.yaml
->>
->>
->> Filename should match compatible. Otherwise a1b6 is just confusing.
->>
-> Idea behind having a1b6 is that the TLV493D is sensor series and this
-> a1b6 is one of the models. As this driver is intended, developed and
-> validated on a1b6 I kept it in compatible, though the file name contains
-> only the sensor series. In my undertanding, this same file & driver can
-> be reused for other drivers from same family with new compatible fields.
-> Does that make sense?
+I have only noticed this now. Did you have any reason to repost v3
+without any prior feedback on v2 and without any changelog from v2?
 
-No, because I did not speak about drivers at all. Please follow
-kernel/DT conventions.
+On Mon 04-08-25 11:03:41, zhongjinji@honor.com wrote:
+> From: zhongjinji <zhongjinji@honor.com>
+> 
+> After merging the patch
+> https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u,
+> the OOM reaper runs less frequently because many processes exit within 2 seconds.
+> 
+> However, when a process is killed, timely handling by the OOM reaper allows
+> its memory to be freed faster.
+> 
+> Since relatively few processes use robust futex, delaying the OOM reaper for
+> all processes is undesirable, as many killed processes cannot release memory
+> more quickly.
+> 
+> This patch modifies the behavior so that only processes using robust futex
+> are delayed by the OOM reaper, allowing the OOM reaper to handle more
+> processes in a timely manner.
+> 
+> Signed-off-by: zhongjinji <zhongjinji@honor.com>
+> ---
+>  mm/oom_kill.c | 41 +++++++++++++++++++++++++++++++----------
+>  1 file changed, 31 insertions(+), 10 deletions(-)
+> 
+> diff --git a/mm/oom_kill.c b/mm/oom_kill.c
+> index 25923cfec9c6..c558ac93ae7d 100644
+> --- a/mm/oom_kill.c
+> +++ b/mm/oom_kill.c
+> @@ -30,6 +30,7 @@
+>  #include <linux/syscalls.h>
+>  #include <linux/timex.h>
+>  #include <linux/jiffies.h>
+> +#include <linux/futex.h>
+>  #include <linux/cpuset.h>
+>  #include <linux/export.h>
+>  #include <linux/notifier.h>
+> @@ -692,7 +693,7 @@ static void wake_oom_reaper(struct timer_list *timer)
+>   * before the exit path is able to wake the futex waiters.
+>   */
+>  #define OOM_REAPER_DELAY (2*HZ)
+> -static void queue_oom_reaper(struct task_struct *tsk)
+> +static void queue_oom_reaper(struct task_struct *tsk, bool delay)
+>  {
+>  	/* mm is already queued? */
+>  	if (test_and_set_bit(MMF_OOM_REAP_QUEUED, &tsk->signal->oom_mm->flags))
+> @@ -700,7 +701,7 @@ static void queue_oom_reaper(struct task_struct *tsk)
+>  
+>  	get_task_struct(tsk);
+>  	timer_setup(&tsk->oom_reaper_timer, wake_oom_reaper, 0);
+> -	tsk->oom_reaper_timer.expires = jiffies + OOM_REAPER_DELAY;
+> +	tsk->oom_reaper_timer.expires = jiffies + (delay ? OOM_REAPER_DELAY : 0);
+>  	add_timer(&tsk->oom_reaper_timer);
+>  }
+>  
+> @@ -742,7 +743,7 @@ static int __init oom_init(void)
+>  }
+>  subsys_initcall(oom_init)
+>  #else
+> -static inline void queue_oom_reaper(struct task_struct *tsk)
+> +static inline void queue_oom_reaper(struct task_struct *tsk, bool delay)
+>  {
+>  }
+>  #endif /* CONFIG_MMU */
+> @@ -871,11 +872,12 @@ static inline bool __task_will_free_mem(struct task_struct *task)
+>   * Caller has to make sure that task->mm is stable (hold task_lock or
+>   * it operates on the current).
+>   */
+> -static bool task_will_free_mem(struct task_struct *task)
+> +static bool task_will_free_mem(struct task_struct *task, bool *delay_reap)
+>  {
+>  	struct mm_struct *mm = task->mm;
+>  	struct task_struct *p;
+>  	bool ret = true;
+> +	bool has_robust = !delay_reap;
+>  
+>  	/*
+>  	 * Skip tasks without mm because it might have passed its exit_mm and
+> @@ -888,6 +890,15 @@ static bool task_will_free_mem(struct task_struct *task)
+>  	if (!__task_will_free_mem(task))
+>  		return false;
+>  
+> +	/*
+> +	 * Check if a process is using robust futexes. If so, delay its handling by the
+> +	 * OOM reaper. The reason is that if the owner of a robust futex lock is killed
+> +	 * while waiters are still alive, the OOM reaper might free the robust futex
+> +	 * resources before futex_cleanup runs, causing the waiters to wait indefinitely.
+> +	 */
+> +	if (!has_robust)
+> +		has_robust = check_robust_futex_rcu(task);
+> +
+>  	/*
+>  	 * This task has already been drained by the oom reaper so there are
+>  	 * only small chances it will free some more
+> @@ -912,8 +923,12 @@ static bool task_will_free_mem(struct task_struct *task)
+>  		ret = __task_will_free_mem(p);
+>  		if (!ret)
+>  			break;
+> +		if (!has_robust)
+> +			has_robust = check_robust_futex(p);
+>  	}
+>  	rcu_read_unlock();
+> +	if (delay_reap)
+> +		*delay_reap = has_robust;
+>  
+>  	return ret;
+>  }
+> @@ -923,6 +938,7 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+>  	struct task_struct *p;
+>  	struct mm_struct *mm;
+>  	bool can_oom_reap = true;
+> +	bool delay_reap;
+>  
+>  	p = find_lock_task_mm(victim);
+>  	if (!p) {
+> @@ -950,6 +966,7 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+>  	 * reserves from the user space under its control.
+>  	 */
+>  	do_send_sig_info(SIGKILL, SEND_SIG_PRIV, victim, PIDTYPE_TGID);
+> +	delay_reap = check_robust_futex_rcu(victim);
+>  	mark_oom_victim(victim);
+>  	pr_err("%s: Killed process %d (%s) total-vm:%lukB, anon-rss:%lukB, file-rss:%lukB, shmem-rss:%lukB, UID:%u pgtables:%lukB oom_score_adj:%hd\n",
+>  		message, task_pid_nr(victim), victim->comm, K(mm->total_vm),
+> @@ -990,11 +1007,13 @@ static void __oom_kill_process(struct task_struct *victim, const char *message)
+>  		if (unlikely(p->flags & PF_KTHREAD))
+>  			continue;
+>  		do_send_sig_info(SIGKILL, SEND_SIG_PRIV, p, PIDTYPE_TGID);
+> +		if (!delay_reap)
+> +			delay_reap = check_robust_futex(p);
+>  	}
+>  	rcu_read_unlock();
+>  
+>  	if (can_oom_reap)
+> -		queue_oom_reaper(victim);
+> +		queue_oom_reaper(victim, delay_reap);
+>  
+>  	mmdrop(mm);
+>  	put_task_struct(victim);
+> @@ -1020,6 +1039,7 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>  	struct mem_cgroup *oom_group;
+>  	static DEFINE_RATELIMIT_STATE(oom_rs, DEFAULT_RATELIMIT_INTERVAL,
+>  					      DEFAULT_RATELIMIT_BURST);
+> +	bool delay_reap = false;
+>  
+>  	/*
+>  	 * If the task is already exiting, don't alarm the sysadmin or kill
+> @@ -1027,9 +1047,9 @@ static void oom_kill_process(struct oom_control *oc, const char *message)
+>  	 * so it can die quickly
+>  	 */
+>  	task_lock(victim);
+> -	if (task_will_free_mem(victim)) {
+> +	if (task_will_free_mem(victim, &delay_reap)) {
+>  		mark_oom_victim(victim);
+> -		queue_oom_reaper(victim);
+> +		queue_oom_reaper(victim, delay_reap);
+>  		task_unlock(victim);
+>  		put_task_struct(victim);
+>  		return;
+> @@ -1112,6 +1132,7 @@ EXPORT_SYMBOL_GPL(unregister_oom_notifier);
+>  bool out_of_memory(struct oom_control *oc)
+>  {
+>  	unsigned long freed = 0;
+> +	bool delay_reap = false;
+>  
+>  	if (oom_killer_disabled)
+>  		return false;
+> @@ -1128,9 +1149,9 @@ bool out_of_memory(struct oom_control *oc)
+>  	 * select it.  The goal is to allow it to allocate so that it may
+>  	 * quickly exit and free its memory.
+>  	 */
+> -	if (task_will_free_mem(current)) {
+> +	if (task_will_free_mem(current, &delay_reap)) {
+>  		mark_oom_victim(current);
+> -		queue_oom_reaper(current);
+> +		queue_oom_reaper(current, delay_reap);
+>  		return true;
+>  	}
+>  
+> @@ -1231,7 +1252,7 @@ SYSCALL_DEFINE2(process_mrelease, int, pidfd, unsigned int, flags)
+>  	mm = p->mm;
+>  	mmgrab(mm);
+>  
+> -	if (task_will_free_mem(p))
+> +	if (task_will_free_mem(p, NULL))
+>  		reap = true;
+>  	else {
+>  		/* Error only if the work has not been done already */
+> -- 
+> 2.17.1
 
-Best regards,
-Krzysztof
+-- 
+Michal Hocko
+SUSE Labs
 
