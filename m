@@ -1,107 +1,102 @@
-Return-Path: <linux-kernel+bounces-755070-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC3DCB1A0E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:11:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B34CB1A0E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:11:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184491890F31
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:11:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9950617882C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:11:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160B257AC6;
-	Mon,  4 Aug 2025 12:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="JTWZJXoX"
-Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 974DB257AEC;
+	Mon,  4 Aug 2025 12:11:46 +0000 (UTC)
+Received: from neil.brown.name (neil.brown.name [103.29.64.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1D914EC62;
-	Mon,  4 Aug 2025 12:11:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DBDD15DBC1;
+	Mon,  4 Aug 2025 12:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.29.64.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309488; cv=none; b=MNg9PT2pOVZ64cRQV2X/XBdKnxxa5mXrX04lTN8NkGIiDLjyf5Y5893itXSwJhLUYD7fvYu22cfASZtAh8KryxFXVa53QxQm7zHyCu0i/uqPIyQ3b3ULz5/USrb9rSfAohH8wMcPUDAvSbinIoyM7COZYFd7xdfv3im+2N9G2q4=
+	t=1754309506; cv=none; b=LPQPH42MGXmqn7W9f51wGoZA5RQcBDN7DaFy1ZWXFEm6kbDlburY+aywWw8XFaT9nNQn77ONZrs9wGB3mj67mAGqeUou1a5Uy6E64kUcaH3rv/uJTnBmcrUkfE6nud1KPAqYO5hf7TY+ZC1PkJYxlNX+yLZE9rW2auGnAYsKnrU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309488; c=relaxed/simple;
-	bh=YozG6mEOkKlwR8zGGPhdu3m0vp2+uyk6f8GTDTU8/1Y=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=ggNm8MTgKb5GDew6wCc3Ax8T89y0qmYVVayG5GoqaD4sF4Zl5/5WbAiudv92Od0NySQE+Ee8fLLEP0LZdJEUQHb2rPNpRPgCfaORRNuTRbDMsgT/iatgT8M2hIZgCptxuVug1nDP5DhD+zt4XNmRoE5BUNR3ESu6hiToEaBnJ1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=JTWZJXoX; arc=none smtp.client-ip=192.134.164.83
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=inria.fr; s=dc;
-  h=date:from:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=r+sFWZsYp3owZfeTAxKfIpJrMKc9GV8YM3WJhCJkKiY=;
-  b=JTWZJXoXcBi8Sxht9tS03XL6m0k1Kz5NiBp6IYO6BlFe42Zfsb9CF6hF
-   vSNRs6XxY9auBooSV4TempgWPbtZsO3t4SoPe0wilRRLKuXJGkXDsePtQ
-   sQb81BI5Eht6EJurhuUa9r+AInLetw/cyvG+PcMheRESvjBU/cm8e4/mS
-   s=;
-X-CSE-ConnectionGUID: FCqmenQoSmuYigrwtWF8Lg==
-X-CSE-MsgGUID: WQWXpB40QBCjo9Ax58RjoQ==
-Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
-X-IronPort-AV: E=Sophos;i="6.17,258,1747692000"; 
-   d="scan'208";a="234106081"
-Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
-  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 14:10:15 +0200
-Date: Mon, 4 Aug 2025 14:10:15 +0200 (CEST)
-From: Julia Lawall <julia.lawall@inria.fr>
-To: Jakub Kicinski <kuba@kernel.org>
-cc: MD Danish Anwar <danishanwar@ti.com>, 
-    "David S. Miller" <davem@davemloft.net>, 
-    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
-    Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
-    Andrew Lunn <andrew+netdev@lunn.ch>, 
-    Mengyuan Lou <mengyuanlou@net-swift.com>, 
-    Michael Ellerman <mpe@ellerman.id.au>, 
-    Madhavan Srinivasan <maddy@linux.ibm.com>, Fan Gong <gongfan1@huawei.com>, 
-    Lee Trager <lee@trager.us>, Lorenzo Bianconi <lorenzo@kernel.org>, 
-    Geert Uytterhoeven <geert+renesas@glider.be>, 
-    Lukas Bulwahn <lukas.bulwahn@redhat.com>, 
-    Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>, 
-    netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
-    linux-kernel@vger.kernel.org, cocci@inria.fr, 
-    Nicolas Palix <nicolas.palix@imag.fr>
-Subject: Re: [cocci] [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation
- for RPMSG-ETH Driver
-In-Reply-To: <20250723064901.0b7ec997@kernel.org>
-Message-ID: <1bf7c9-d394-7519-795b-c8d455ee9d0@inria.fr>
-References: <20250723080322.3047826-1-danishanwar@ti.com> <20250723080322.3047826-2-danishanwar@ti.com> <20250723064901.0b7ec997@kernel.org>
+	s=arc-20240116; t=1754309506; c=relaxed/simple;
+	bh=HZYJYovbap4LZlUOMuPXEpnsAzBda5MmeXAe7HICO2A=;
+	h=Content-Type:MIME-Version:From:To:Cc:Subject:In-reply-to:
+	 References:Date:Message-id; b=KXmk9hnxeWyZryFBJZnLeKj9v0STJgDGLHuQaLHQQTpiX95X+bBdyd5UsAhNzuphKmOP8vbIRKfCSc73JzR795xVPsDYtHCSP1dAWqo2wA1qvlC80ZinmG7RI7Up1n2Mcu8UptnWhebtioE8O5jZz7a+4LZmzZqSxVqBbWdq0Us=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name; spf=pass smtp.mailfrom=neil.brown.name; arc=none smtp.client-ip=103.29.64.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brown.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=neil.brown.name
+Received: from 196.186.233.220.static.exetel.com.au ([220.233.186.196] helo=home.neil.brown.name)
+	by neil.brown.name with esmtp (Exim 4.95)
+	(envelope-from <mr@neil.brown.name>)
+	id 1uiu2K-004SOk-Tr;
+	Mon, 04 Aug 2025 12:11:30 +0000
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+From: "NeilBrown" <neil@brown.name>
+To: "Amir Goldstein" <amir73il@gmail.com>, "Al Viro" <viro@zeniv.linux.org.uk>,
+ "Miklos Szeredi"  <miklos@szeredi.hu>,
+ "Christian Brauner" <brauner@kernel.org>
+Cc: Alan Huang <mmpgouride@gmail.com>,
+ syzbot <syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com>,
+ linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzkaller-bugs@googlegroups.com, linux-unionfs@vger.kernel.org
+Subject:
+ [PATCH] ovl: use I_MUTEX_PARENT when locking parent in ovl_create_temp()
+In-reply-to:
+ <CAOQ4uxi=bHN+UuTGHF8AH=GwJcED94KAPE0GAgB5zmv3PEhU8g@mail.gmail.com>
+References:
+ <CAOQ4uxi=bHN+UuTGHF8AH=GwJcED94KAPE0GAgB5zmv3PEhU8g@mail.gmail.com>
+Date: Mon, 04 Aug 2025 22:11:28 +1000
+Message-id: <175430948898.2234665.11303643314523472166@noble.neil.brown.name>
 
 
+ovl_create_temp() treats "workdir" as a parent in which it creates an
+object so it should use I_MUTEX_PARENT.
 
-On Wed, 23 Jul 2025, Jakub Kicinski wrote:
+Prior to the commit identified below the lock was taken by the caller
+which sometimes used I_MUTEX_PARENT and sometimes used I_MUTEX_NORMAL.
+The use of I_MUTEX_NORMAL was incorrect but unfortunately copied into
+ovl_create_temp().
 
-> On Wed, 23 Jul 2025 13:33:18 +0530 MD Danish Anwar wrote:
-> > +   - Vendors must ensure the magic number matches the value expected by the
-> > +     Linux driver (see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
-> > +     source).
->
-> For some reason this trips up make coccicheck:
->
-> EXN: Failure("unexpected paren order") in /home/cocci/testing/Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
->
-> If I replace the brackets with a comma it works:
->
->    - Vendors must ensure the magic number matches the value expected by the
->      Linux driver, see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
->      source.
->
-> Could you make that change in the next revision to avoid the problem?
->
-> Julia, is there an easy way to make coccinelle ignore files which
-> don't end with .c or .h when using --use-patch-diff ?
+Note to backporters: This patch only applies after the last Fixes given
+below (post v6.16).  To fix the bug in v6.7 and later the
+inode_lock() call in ovl_copy_up_workdir() needs to nest using
+I_MUTEX_PARENT.
 
-Perhaps not.  I can adjust it.
+Link: https://lore.kernel.org/all/67a72070.050a0220.3d72c.0022.GAE@google.com/
+Cc: stable@vger.kernel.org
+Reported-by: syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com
+Fixes: c63e56a4a652 ("ovl: do not open/llseek lower file with upper sb_writer=
+s held")
+Fixes: d2c995581c7c ("ovl: Call ovl_create_temp() without lock held.")
+Signed-off-by: NeilBrown <neil@brown.name>
+---
+ fs/overlayfs/dir.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-julia
+diff --git a/fs/overlayfs/dir.c b/fs/overlayfs/dir.c
+index 70b8687dc45e..dbd63a74df4b 100644
+--- a/fs/overlayfs/dir.c
++++ b/fs/overlayfs/dir.c
+@@ -225,7 +225,7 @@ struct dentry *ovl_create_temp(struct ovl_fs *ofs, struct=
+ dentry *workdir,
+ 			       struct ovl_cattr *attr)
+ {
+ 	struct dentry *ret;
+-	inode_lock(workdir->d_inode);
++	inode_lock_nested(workdir->d_inode, I_MUTEX_PARENT);
+ 	ret =3D ovl_create_real(ofs, workdir,
+ 			      ovl_lookup_temp(ofs, workdir), attr);
+ 	inode_unlock(workdir->d_inode);
+
+
 
