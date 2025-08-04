@@ -1,258 +1,237 @@
-Return-Path: <linux-kernel+bounces-754674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59864B19ABE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:30:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDBCEB19AC3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:32:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D707B1896CA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:30:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CCBAE17557C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CAFD4223339;
-	Mon,  4 Aug 2025 04:30:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35AEA21A44C;
+	Mon,  4 Aug 2025 04:32:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MfgKrFeX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fkurjv3v"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FA9322259F;
-	Mon,  4 Aug 2025 04:30:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F39752E36F0;
+	Mon,  4 Aug 2025 04:31:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754281804; cv=none; b=H4t6OFJagacDlbQSJRJSXru/BwwQW84V/KWR9hAPhBE78m6o7TQOVFIoGfWUGNu0boEWw7/TsDjseIeiiBlWKRFdo172q7Gq/oxFqQZJUhjEsyqwvH1Qxoy9TqakOGLeslJbtSjQtVguqmfaDvlaq6lgtY03OMwmo30s+8YJgfg=
+	t=1754281921; cv=none; b=gfSDgXF2OBToGOwoGbClYJaHVhf+cnkjoSHd81Kb60C8hUgyNz4FmtsCzU7okHmJ1QnpUxEe220H90mcQ3hFzdN5p2JXD4o5ZN4x+SBmM5/05/fQ4CeWmFNwGUuaB1u2jQXIcBLzog/tRlL7RVVuNfykFloNdOewvnekfGgPeQE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754281804; c=relaxed/simple;
-	bh=IGSh0oJgi2WZV5bDKKJ/1KF8tFT3gDnsr/BIyaICoew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=RsjnFkSk4TYodtHUCXkxgvmI+UeXLi9H7KEZEZzNT+D3rxkXr45X1EPhXpOqw6sGMIh0G5w8qU0llj+GZ9pqeq1R4VrrrsrxjO0v1u/GwcAF/Qvza3pA1T+FhISR4KiEyRZy+obJ0P3lcklnQojXCEhtDY85dDdyQsuNDsmsqxg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MfgKrFeX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD1A6C4CEE7;
-	Mon,  4 Aug 2025 04:29:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754281803;
-	bh=IGSh0oJgi2WZV5bDKKJ/1KF8tFT3gDnsr/BIyaICoew=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=MfgKrFeX0TeYdhdft6l+RtBiUmJPDSyBEb8h+ac06xFoLYNHxBCZu86b/W9KGViyz
-	 ptdslEtPWmI/NT1LszZDmaefsiOOMnMXff1L6NIi3kjc79cFM5Dax8zqfT0SwHPJmo
-	 tmEEEmyOnWeg1SsFetoV08W0HZL600gVlP/SOfsZu6/DIPWEsCEXN0PxM9uZVxD8Ie
-	 N/VdvCc5lMsT+LjbIQFG0kpOMufNIDRS1B0/gsHucgWQ8D496JpPTfmtiEcOCqIc05
-	 sLRhNMzjoO6XJxQimJ4Tki7/Uqf+Pvy8N2Tgj0mRoxYetxPz9qK9lvapEuPvlEuyuJ
-	 yJiiEhFPi0l4A==
-X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
-	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 19/38] coco: host: arm64: set_pubkey support
-In-Reply-To: <20250730150800.0000246c@huawei.com>
-References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
- <20250728135216.48084-20-aneesh.kumar@kernel.org>
- <20250730150800.0000246c@huawei.com>
-Date: Mon, 04 Aug 2025 09:59:57 +0530
-Message-ID: <yq5azfcf90ai.fsf@kernel.org>
+	s=arc-20240116; t=1754281921; c=relaxed/simple;
+	bh=1PlWvVgQG/AtM4TFsh9OSKM/2jMOCP3QDi1J/SDF3O4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=tli5h9V3tRbIWYKdDPHbWATQAXSNHiwSYj20h298bJIfApX+FiqnrIx8hDVOIUF4y4n3RoEdXZqpNeuiBegT1NbOQp5dYZGfYLuyG+vOBCLpcFnYo0EI7qnUf/LDUldgJRbQAk9T/Xxv5M0ljWKoqXWBwqQWfGwIPha4d5Pbl18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fkurjv3v; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573No1f3011168;
+	Mon, 4 Aug 2025 04:31:41 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	vssEbq0+ZIxOehsdS4FA8hybmmmRjis7q0tY5Oxpr/s=; b=fkurjv3vyIeeS8Eg
+	jnGGX0ijMXRBKcqizFKUfx4akpuBKoOr9A+s+hM3QqsO4AJVtloomxlEGfCUmcU9
+	o59l8HiQJr1mMeOHlswnvTe7PAwYxBljQ0Gf/cdjHTAQRkvj0l9bMO3fLWroaaR8
+	9hh+Tq45G1N5YoWKcEPwopBwbVUUqmaXLSyxZYyZGlPrcAnzRAqTyJsNS4G74k94
+	fJHHAeIWY8r24/brYl2D4a5b9Aqb5Mhkx6zRp3yeT7SDc5483UTU8SRW1LzmrIvo
+	YfXpQl3MFbGjVjGhmvFwLm3jdt1HeuDoKQnxo4StyxNMNVOVqmzOa6xidTso5km4
+	/dDOfQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a3dqw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 04:31:41 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5744Ve7x010663
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Aug 2025 04:31:40 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Sun, 3 Aug
+ 2025 21:31:34 -0700
+Message-ID: <477bebcc-2d1a-4183-8e3d-d792e876c63a@quicinc.com>
+Date: Mon, 4 Aug 2025 12:31:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] dt-bindings: display/msm: Document MDSS on QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: Rob Clark <robin.clark@oss.qualcomm.com>,
+        Dmitry Baryshkov
+	<lumag@kernel.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Sean Paul <sean@poorly.run>,
+        Marijn Suijten
+	<marijn.suijten@somainline.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Rob Herring <robh@kernel.org>,
+        "Krzysztof
+ Kozlowski" <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>,
+        Kuogee Hsieh
+	<quic_khsieh@quicinc.com>,
+        Bjorn Andersson <andersson@kernel.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>, <dri-devel@lists.freedesktop.org>,
+        <freedreno@lists.freedesktop.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com>
+ <20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com>
+ <deefg7w3ot6cd3woexfwagetmkg4nvu37f66h4ulbdqegdgi3u@plj6puxcsil4>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <deefg7w3ot6cd3woexfwagetmkg4nvu37f66h4ulbdqegdgi3u@plj6puxcsil4>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=689037ad cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8
+ a=COk6AnOGAAAA:8 a=bNVB-QMxkSv05INpNXEA:9 a=QEXdDO2ut3YA:10
+ a=sptkURWiP4Gy88Gu7hUp:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: kMsO4wlwWm10GvYRcOrHi36Gavl3yD2N
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAyMCBTYWx0ZWRfX6tB76TrhnJEn
+ sP5HiVh0Zks8N8JMcAKLf6pLtUNFXBx1Y3Z6KuE3HFkYDl0Hlm2NXohu+uA+eWcXtTzAQPqecpL
+ RFYCSO8qae40tx61epe/qeDiQ1rMzazejCfCExOAdQNChhpflGHGzTlqP0Nf5eiWlqrxSJwz/3L
+ Yve62LFi9i2tcpY0N3oI6ueioyAvmEHmdrzSRq6nPG1FKtfBblTHqYzrVax5P2o3jQq0upqJVJi
+ ToP8sVv0gxT/MSxcIXoHzF0hTpVG/va6K5TWboe6ovkDKJkVRE0LN+IDNZev13hgfhxpSn3pBiW
+ 9/925dJo1wEPlMmzwbtrJnNQ1+hqER5fE9erk/e9y2LHsdG0OvvXfu8bag662imA32Q8OL8kYcT
+ q0nUaX8kelQYsUs+4k14v0sx6qrvxcI12qm+lcHl6Y2COlmYjjDVh9cZO5kEQykTDv+QA6bw
+X-Proofpoint-GUID: kMsO4wlwWm10GvYRcOrHi36Gavl3yD2N
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_02,2025-08-01_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508040020
 
-Jonathan Cameron <Jonathan.Cameron@huawei.com> writes:
 
-> On Mon, 28 Jul 2025 19:21:56 +0530
-> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
->
->> Add changes to share the device's public key with the RMM.
->> 
->> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
->
-> A few minor comments inline.
->
->> diff --git a/drivers/virt/coco/arm-cca-host/rmm-da.c b/drivers/virt/coco/arm-cca-host/rmm-da.c
->> index ec8c5bfcee35..3715e6d58c83 100644
->> --- a/drivers/virt/coco/arm-cca-host/rmm-da.c
->> +++ b/drivers/virt/coco/arm-cca-host/rmm-da.c
->> @@ -6,6 +6,9 @@
->>  #include <linux/pci.h>
->>  #include <linux/pci-ecam.h>
->>  #include <asm/rmi_cmds.h>
->> +#include <crypto/internal/rsa.h>
->> +#include <keys/asymmetric-type.h>
->> +#include <keys/x509-parser.h>
->>  
->>  #include "rmm-da.h"
->>  
->> @@ -311,6 +314,136 @@ static int do_pdev_communicate(struct pci_tsm *tsm, int target_state)
->>  	return do_dev_communicate(PDEV_COMMUNICATE, tsm, target_state);
->>  }
->>  
->> +static int parse_certificate_chain(struct pci_tsm *tsm)
->> +{
->> +	struct cca_host_dsc_pf0 *dsc_pf0;
->> +	unsigned int chain_size;
->> +	unsigned int offset = 0;
->> +	u8 *chain_data;
->> +	int ret = 0;
->> +
->> +	dsc_pf0 = to_cca_dsc_pf0(tsm->pdev);
->> +	chain_size = dsc_pf0->cert_chain.cache.size;
->> +	chain_data = dsc_pf0->cert_chain.cache.buf;
->> +
->> +	while (offset < chain_size) {
->> +		unsigned int cert_len =
->> +			x509_get_certificate_length(chain_data + offset,
->> +						    chain_size - offset);
->> +		struct x509_certificate *cert =
->> +			x509_cert_parse(chain_data + offset, cert_len);
->> +
->> +		if (IS_ERR(cert)) {
->> +			pr_warn("%s(): parsing of certificate chain not successful\n", __func__);
->> +			ret = PTR_ERR(cert);
->
-> Direct return looks fine here.  Maybe add a DEFINE_FREE(x509_cert,...)
-> as then can use direct returns throughout.
->
->
->> +			break;
->> +		}
->> +
->> +		if (offset + cert_len == chain_size) {
->> +			dsc_pf0->cert_chain.public_key = kzalloc(cert->pub->keylen, GFP_KERNEL);
->> +			if (!dsc_pf0->cert_chain.public_key) {
->> +				ret = -ENOMEM;
->> +				x509_free_certificate(cert);
->> +				break;
->> +			}
->> +
->> +			if (!strcmp("ecdsa-nist-p256", cert->pub->pkey_algo)) {
->> +				dsc_pf0->rmi_signature_algorithm = RMI_SIG_ECDSA_P256;
->> +			} else if (!strcmp("ecdsa-nist-p384", cert->pub->pkey_algo)) {
->> +				dsc_pf0->rmi_signature_algorithm = RMI_SIG_ECDSA_P384;
->> +			} else if (!strcmp("rsa", cert->pub->pkey_algo)) {
->> +				dsc_pf0->rmi_signature_algorithm = RMI_SIG_RSASSA_3072;
->> +			} else {
->> +				ret = -ENXIO;
->> +				x509_free_certificate(cert);
->> +				break;
->> +			}
->> +			memcpy(dsc_pf0->cert_chain.public_key, cert->pub->key, cert->pub->keylen);
->> +			dsc_pf0->cert_chain.public_key_size = cert->pub->keylen;
->> +		}
->> +
->> +		x509_free_certificate(cert);
->> +
->> +		offset += cert_len;
->> +	}
->> +
->> +	if (ret == 0)
->> +		dsc_pf0->cert_chain.valid = true;
-> 	if (ret)
-> 		return ret;
->
-> 	dsc_pf0->cert_chain.valid = true;
->
-> 	return 0;
->
-> would be my preference for style here but others may disagree.
->> +
->> +	return ret;
->> +}
->> +
->> +static int pdev_set_public_key(struct pci_tsm *tsm)
->> +{
->> +	struct rmi_public_key_params *key_shared;
->> +	unsigned long expected_key_len = 0;
->
-> Don't set this. It's only used in places where it is explicitly set and
-> if it is used anywhere else we want the compiler to tell us.
->
->> +	struct cca_host_dsc_pf0 *dsc_pf0;
->> +	int ret;
->> +
->> +	dsc_pf0 = to_cca_dsc_pf0(tsm->pdev);
->> +	/* Check that all the necessary information was captured from communication */
->> +	if (!dsc_pf0->cert_chain.valid)
->> +		return -EINVAL;
->> +
->> +	key_shared = (struct rmi_public_key_params *)get_zeroed_page(GFP_KERNEL);
->> +	if (!key_shared)
->> +		return -ENOMEM;
->> +
->> +	key_shared->rmi_signature_algorithm = dsc_pf0->rmi_signature_algorithm;
->> +
->> +	switch (key_shared->rmi_signature_algorithm) {
->> +	case RMI_SIG_ECDSA_P384:
->> +		expected_key_len = 97;
->> +
->> +		if (dsc_pf0->cert_chain.public_key_size != expected_key_len)
->> +			return -EINVAL;
->> +		key_shared->public_key_len = dsc_pf0->cert_chain.public_key_size;
->> +		memcpy(key_shared->public_key,
->> +		       dsc_pf0->cert_chain.public_key,
->> +		       dsc_pf0->cert_chain.public_key_size);
->> +		key_shared->metadata_len = 0;
->> +		break;
->> +	case RMI_SIG_ECDSA_P256:
->> +		expected_key_len = 65;
->> +
->> +		if (dsc_pf0->cert_chain.public_key_size != expected_key_len)
->> +			return -EINVAL;
->> +		key_shared->public_key_len = dsc_pf0->cert_chain.public_key_size;
->> +		memcpy(key_shared->public_key,
->> +		       dsc_pf0->cert_chain.public_key,
->> +		       dsc_pf0->cert_chain.public_key_size);
->> +		key_shared->metadata_len = 0;
->> +		break;
->> +	case RMI_SIG_RSASSA_3072:
->> +		expected_key_len = 385;
->> +		struct rsa_key rsa_key = {0};
->
-> Shouldn't define this inline.  Maybe move up a line and add some {}
-> to set the scope to this case statement.
->
->> +		int ret_rsa_parse = rsa_parse_pub_key(&rsa_key,
->> +						      dsc_pf0->cert_chain.public_key,
->> +						      dsc_pf0->cert_chain.public_key_size);
->> +		/* This also checks the key_len */
->> +		if (ret_rsa_parse)
->> +			return ret_rsa_parse;
->> +		/*
->> +		 * exponent is usally 65537 (size = 24bits) but in rare cases
->> +		 * it size can be as large as the modulus
->> +		 */
->> +		if (rsa_key.e_sz > expected_key_len)
->> +			return -EINVAL;
->> +		key_shared->public_key_len = rsa_key.n_sz;
->> +		key_shared->metadata_len = rsa_key.e_sz;
->> +		memcpy(key_shared->public_key, (unsigned char *)rsa_key.n, rsa_key.n_sz);
->
-> Why is the cast needed?
->
->
->> +		memcpy(key_shared->metadata, (unsigned char *)rsa_key.e, rsa_key.e_sz);
->> +		break;
->> +	default:
->> +		return -EINVAL;
->> +	}
->> +
->> +	ret = rmi_pdev_set_pubkey(virt_to_phys(dsc_pf0->rmm_pdev),
->> +				  virt_to_phys(key_shared));
->> +	free_page((unsigned long)key_shared);
->> +	return ret;
->> +}
 
-Thanks for the review comments. I'll update the patch with the suggested changes.
+On 2025/8/2 17:56, Dmitry Baryshkov wrote:
+> On Wed, Jul 30, 2025 at 05:42:28PM +0800, Yongxing Mou wrote:
+>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+>>
+>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>> ---
+>>   .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 284 +++++++++++++++++++++
+>>   1 file changed, 284 insertions(+)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml b/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml
+>> new file mode 100644
+>> index 0000000000000000000000000000000000000000..ae4bc16395326bffd6c9eff92778d9f207209526
+>> --- /dev/null
+>> +++ b/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.yaml
+>> @@ -0,0 +1,284 @@
+>> +# SPDX-License-Identifier: GPL-2.0-only OR BSD-2-Clause
+>> +%YAML 1.2
+>> +---
+>> +$id: http://devicetree.org/schemas/display/msm/qcom,qcs8300-mdss.yaml#
+>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>> +
+>> +title: Qualcomm Technologies, Inc. QCS8300 Display MDSS
+>> +
+>> +maintainers:
+>> +  - Yongxing Mou <quic_yongmou@quicinc.com>
+>> +
+>> +description:
+>> +  QCS8300 MSM Mobile Display Subsystem(MDSS), which encapsulates sub-blocks like
+>> +  DPU display controller, DP interfaces and EDP etc.
+>> +
+>> +$ref: /schemas/display/msm/mdss-common.yaml#
+>> +
+>> +properties:
+>> +  compatible:
+>> +    const: qcom,qcs8300-mdss
+>> +
+>> +  clocks:
+>> +    items:
+>> +      - description: Display AHB
+>> +      - description: Display hf AXI
+>> +      - description: Display core
+>> +
+>> +  iommus:
+>> +    maxItems: 1
+>> +
+>> +  interconnects:
+>> +    maxItems: 3
+>> +
+>> +  interconnect-names:
+>> +    maxItems: 3
+>> +
+>> +patternProperties:
+>> +  "^display-controller@[0-9a-f]+$":
+>> +    type: object
+>> +    additionalProperties: true
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        items:
+>> +          - const: qcom,qcs8300-dpu
+>> +          - const: qcom,sa8775p-dpu
+> 
+> Use contains: instead of listing both of them
+> 
+Got it, thanks~ here we want to fallback qcs8300 to sa8775p.
+Should we update it to :
++        contains:
++          enum:
++            - qcom,qcs8300-dpu
++            - qcom,sa8775p-dpu
 
--aneesh
+  above method can be validated using dt_binding_check.
+>> +
+>> +  "^displayport-controller@[0-9a-f]+$":
+>> +    type: object
+>> +    additionalProperties: true
+>> +
+>> +    properties:
+>> +      compatible:
+>> +        items:
+>> +          - const: qcom,qcs8300-dp
+>> +
+>> +  "^phy@[0-9a-f]+$":
+>> +    type: object
+>> +    additionalProperties: true
+>> +    properties:
+>> +      compatible:
+>> +        items:
+>> +          - const: qcom,qcs8300-edp-phy
+>> +          - const: qcom,sa8775p-edp-phy
+> 
+> Use contains: instead of listing both of them
+> 
+Same as above
+>> +
+>> +required:
+>> +  - compatible
+>> +
+>> +unevaluatedProperties: false
+>> +
+> 
+
 
