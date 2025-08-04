@@ -1,78 +1,166 @@
-Return-Path: <linux-kernel+bounces-754960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754961-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41744B19F30
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:02:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1889CB19F37
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:03:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37D837AA173
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:00:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C8A303BDF1B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:03:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C58FE24502D;
-	Mon,  4 Aug 2025 10:01:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB0D9247297;
+	Mon,  4 Aug 2025 10:02:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RWSU1Lou"
-Received: from OSPPR02CU001.outbound.protection.outlook.com (mail-norwayeastazon11013041.outbound.protection.outlook.com [40.107.159.41])
+	dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b="KVe4Ltf6"
+Received: from TYVP286CU001.outbound.protection.outlook.com (mail-japaneastazon11011012.outbound.protection.outlook.com [52.101.125.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58D512566;
-	Mon,  4 Aug 2025 10:01:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.159.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B2FD1F4617;
+	Mon,  4 Aug 2025 10:02:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.125.12
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301707; cv=fail; b=TraoJIC9ObqhQ+PVXPb5Wr7MZDjSsrUXaeuNAAEoHN/JSTLiXPxcJYycd9qcjkZ3BZvx2pF5ECZDKv6z15ZyLHzck9bXB2TMHmqWny6FBCOYoK21/2kCiOF2Fug7MDxeBpSkVI0EMIZPWjWaqYWPjEuA34fiSAK0jmyhda2P04w=
+	t=1754301763; cv=fail; b=SN//PIGvRui28esBLPjmGzLdQJMKCg+4NQmEezb6D//9WQb1IBYyFBk5TGILrdgUWSFPETPBgjOjz/SR7goXILfWUdnpBpl5uW8B5VtkUbKGP+wcBZXfmujWWHBwrm9o6uHmUUGqcRQhicX47iwTAn6RrOJ1cNI8lq4kCna4mUo=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301707; c=relaxed/simple;
-	bh=jzQdSSTRaBaGZ+mvPxc62oDpm1WiJRU6/Ykx2tBzN6g=;
-	h=Date:From:To:Cc:Subject:Message-ID:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=LhBkwlZcPmkF/JI1hrIO2jpPpJfCC7FIwaENlC1A7VSajmCZvuF5ojXrozuX+LooNF5TRcRjsaLdizmNkmJp4Xv8wK0RENktOjDIQ5d/Ee845VCzNltyq3aZGqFnlBewOK5iouUS0Sks2PtqDEPvtpYCK2Twi2UGp0e7AD/kTHw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RWSU1Lou; arc=fail smtp.client-ip=40.107.159.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+	s=arc-20240116; t=1754301763; c=relaxed/simple;
+	bh=9XKGpgBmERDlkL9z2XZ1h2iCr/LllBgDFS9GFiymk0k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=F//6DLkoGfv3JGnZWZFaFcnIzk/ik0SKXfCUDh6K+3zqPoFrJkQxY+yjRVZ1vZ4bVlj7UQO/CUwPm6xWO4q4bwi67Xfjv98zCGDYLyuQ3tdu92iKDYkyhI/lVagV1JcKtUwfwg1LU189GJA7Z29x5bECEV/pOltGRTy7GhuSpAQ=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com; spf=pass smtp.mailfrom=bp.renesas.com; dkim=pass (1024-bit key) header.d=bp.renesas.com header.i=@bp.renesas.com header.b=KVe4Ltf6; arc=fail smtp.client-ip=52.101.125.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=bp.renesas.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bp.renesas.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KoF9fV/8/CwApRKRjr0GZv8tUP7eBjq2vBrQq00Dl+yhAT9NAuBuTL31EQ4FJx11cbR+LuyvKgqqgzIHYOJDH85Fa9xHQiT2/eg6eVFHTBkpGmcDE7DqoNCt1wJ5LxWAtEnHgr0La2sTNKfCl9wh4luL2WuqhwCa+KuMcpoZG9VELlTpicPorjxhqsXJqg9+mX4BKQ0UBLZzMVGDCeYrYxAFLYIUoZC2Ihm+G6YyDHgxwT1j3pzGAgvA8pwCbw8rQ/Vk1/cYqH5ygyYazD4HTWFqHFQH6heZC/7/vGyiBlfeHEhtYg8syNr5QzKq6E6qLnqsCU78yqOf1ielExHnCA==
+ b=pv3vIsGWq8Cds6UA9NxxrO2u4MS5eneXoYWQ7mpHKC599ToKQI6mMAwLWKx1WNRSqHviLN3BUwt4UcILkIrBvsKpOnma/VbFYTQG0vHw7IY7NHvThMKPk3gw6aK3XErSabs+x2ZzvSm18dNvGnQyCkGefWGSyEBmk9dM0dyoWkDJgIy1+BDIKsG/5oWk3h6ErD7RWHQiCmNUn2fXNevRO98O4b5u8bxx2aqRcl9VcRRGT3dQCLfra5XepLrSJ2N5i8p6ixaVcUwo4R0XmwbZoqw9tsO09L4ReiqB2bYT6b9fYcSbuKAygyNno0jNPUN3+D+BHzTQBPe5GIU8BlshRw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=p4nT1qdoeeNYJr1jANL3Sm6OH1ZOAI3O66l8yEfqLmE=;
- b=KNyCrSx2KssP/kpuhzgiUT92Cenuyt7K1DOSEXb/+KzEOUuQwo5bNce5Pb2o00rYu/p8gT39oZREIDl3iGMRpA8gv+lH0oAqoHfeO5//D6WmvWwHVeSXFmQEsf7oqLVBuRIZG+I733RVSBXKdGXi5bwv/kLDgPdEePF0RiD4/WbTYt7q918aeQkwM2hgbL2ut4GEsYAU7/K8fR2fc6L8ghxB1MCqCoeWrRj2x+2wjcvMoojlmcNZyARm9thI2BMikvubko5rgBAZKojTwuI1Lx+DOcEs+5ayQwKYqwYQzPHnN+9mA0mTWpit9COrDYbtKwNqh0eXqKB9wsvNH9xskg==
+ bh=LahB2slSphuLvkWzngb3sjn8vTJACjVcm2Z5KzBk35w=;
+ b=WqSzWt4PB1Z1c8EuXxg/+7QM9s+LdptSVdP87mLLzeeRQpFPmyYoeGKKnhGXYzSeTRdchNwhq77NT6PNEMIasyKAHcDJCWsLG5hsiVfSg2XO7F9+/uYqA6UfOcs76C4Mrt7b3UIUoN16d55QGVB20T5roajlVYRbXkC25yyDqoKhP9GvBRSR3j1Ryv6nqfsctjudzDFGe9ORlifZHOrXBqwnLlHXl8/JxNnjiskOVaF5UFfwpsbGwIpH8twmdIzx1UMUjBeYV7IB+mB9ztGpgUuGAOyf8uu7yjYt8onvxYO1B+wbDyJFzm41wHNdB6/gm8h/HTxem0Q/Uwiht3RU+w==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ smtp.mailfrom=bp.renesas.com; dmarc=pass action=none
+ header.from=bp.renesas.com; dkim=pass header.d=bp.renesas.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bp.renesas.com;
+ s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=p4nT1qdoeeNYJr1jANL3Sm6OH1ZOAI3O66l8yEfqLmE=;
- b=RWSU1LouuCu/ivyTb3ipnRUT+1/EvqU50ZNf0CTopTjASL6C767Pjk0B/eEh/JUgyyD/PsrufjcmaA1fM9TrRs3GVSC8T5Q265PZGRjVcqofR6XBux/lUT9dXur/IA8b6CltUIbTwlnnb+xFPnz1KHB9KEKxdQ7NAg4XYV5ijde7Eq7aIX57k1sE/emJuIWwuspV0xmsK5uUBgqpDxOS7cfysijeab70UPJbpCPgNHrvEPHtZELNT6qnVuBEzSO15T+zDJylQPLPUl5o5Kg5ob7STxZHCloEbSfIklIpTqP4UqboGCD/LQIjVjnHwB4Zv0V++q3ILed0ZuzbT39FDg==
+ bh=LahB2slSphuLvkWzngb3sjn8vTJACjVcm2Z5KzBk35w=;
+ b=KVe4Ltf6kbSs60KbSfjSMnIXdw43+XNmTn+FOJA0CPtplOB60KtvthdJWCBVoxsieGxxDDM+n+urJ4yrjwty93+I15SF64TM8vaCd+6/P/LIDFzEdi+lRHDtyjfBilExY71QNS+M1qA7bbANF8geTwoD4Jb/4D7OLe9pjh0Z77o=
 Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
- by PA1PR04MB11033.eurprd04.prod.outlook.com (2603:10a6:102:484::13) with
+ header.d=none;dmarc=none action=none header.from=bp.renesas.com;
+Received: from OS3PR01MB6657.jpnprd01.prod.outlook.com (2603:1096:604:10b::10)
+ by TYYPR01MB10592.jpnprd01.prod.outlook.com (2603:1096:400:30e::12) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.18; Mon, 4 Aug
- 2025 10:01:42 +0000
-Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
- ([fe80::7417:d17f:8d97:44d2%7]) with mapi id 15.20.8989.020; Mon, 4 Aug 2025
- 10:01:42 +0000
-Date: Mon, 4 Aug 2025 13:01:39 +0300
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>,
-	Andrew Lunn <andrew@lunn.ch>,
-	Heiner Kallweit <hkallweit1@gmail.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Aquantia PHY in OCSGMII mode?
-Message-ID: <20250804100139.7frwykbaue7cckfk@skbuf>
-Content-Type: multipart/mixed; boundary="4tj3nzivy3sqjajf"
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 10:02:35 +0000
+Received: from OS3PR01MB6657.jpnprd01.prod.outlook.com
+ ([fe80::8575:e22a:3c44:76f0]) by OS3PR01MB6657.jpnprd01.prod.outlook.com
+ ([fe80::8575:e22a:3c44:76f0%5]) with mapi id 15.20.8989.017; Mon, 4 Aug 2025
+ 10:02:30 +0000
+Date: Mon, 4 Aug 2025 12:01:47 +0200
+From: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+To: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Devarsh Thakkar <devarsht@ti.com>, Benoit Parrot <bparrot@ti.com>,
+	Hans Verkuil <hverkuil@kernel.org>, Mike Isely <isely@pobox.com>,
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+	Hans de Goede <hansg@kernel.org>,
+	Parthiban Veerasooran <parthiban.veerasooran@microchip.com>,
+	Christian Gromm <christian.gromm@microchip.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alex Shi <alexs@kernel.org>, Yanteng Si <si.yanteng@linux.dev>,
+	Dongliang Mu <dzm91@hust.edu.cn>, Jonathan Corbet <corbet@lwn.net>,
+	Tomasz Figa <tfiga@chromium.org>,
+	Marek Szyprowski <m.szyprowski@samsung.com>,
+	Andy Walls <awalls@md.metrocast.net>,
+	Michael Tretter <m.tretter@pengutronix.de>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Bin Liu <bin.liu@mediatek.com>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	Dmitry Osipenko <digetx@gmail.com>,
+	Thierry Reding <thierry.reding@gmail.com>,
+	Jonathan Hunter <jonathanh@nvidia.com>,
+	Mirela Rabulea <mirela.rabulea@nxp.com>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Fabio Estevam <festevam@gmail.com>,
+	Kieran Bingham <kieran.bingham+renesas@ideasonboard.com>,
+	Michal Simek <michal.simek@amd.com>, Ming Qian <ming.qian@nxp.com>,
+	Zhou Peng <eagle.zhou@nxp.com>,
+	Xavier Roumegue <xavier.roumegue@oss.nxp.com>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Dikshita Agarwal <quic_dikshita@quicinc.com>,
+	Abhinav Kumar <abhinav.kumar@linux.dev>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	Sylwester Nawrocki <sylvester.nawrocki@gmail.com>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Chen-Yu Tsai <wens@csie.org>, Samuel Holland <samuel@sholland.org>,
+	Daniel Almeida <daniel.almeida@collabora.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Kevin Hilman <khilman@baylibre.com>,
+	Jerome Brunet <jbrunet@baylibre.com>,
+	Martin Blumenstingl <martin.blumenstingl@googlemail.com>,
+	Nas Chung <nas.chung@chipsnmedia.com>,
+	Jackson Lee <jackson.lee@chipsnmedia.com>,
+	Minghsiu Tsai <minghsiu.tsai@mediatek.com>,
+	Houlong Wei <houlong.wei@mediatek.com>,
+	Andrew-CT Chen <andrew-ct.chen@mediatek.com>,
+	Tiffany Lin <tiffany.lin@mediatek.com>,
+	Yunfei Dong <yunfei.dong@mediatek.com>,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	Magnus Damm <magnus.damm@gmail.com>,
+	Mikhail Ulyanov <mikhail.ulyanov@cogentembedded.com>,
+	Jacob Chen <jacob-chen@iotwrt.com>,
+	Ezequiel Garcia <ezequiel@vanguardiasur.com.ar>,
+	Heiko Stuebner <heiko@sntech.de>,
+	Detlev Casanova <detlev.casanova@collabora.com>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Sylwester Nawrocki <s.nawrocki@samsung.com>,
+	=?utf-8?Q?=C5=81ukasz?= Stelmach <l.stelmach@samsung.com>,
+	Andrzej Pietrasiewicz <andrzejtp2010@gmail.com>,
+	Jacek Anaszewski <jacek.anaszewski@gmail.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	Fabien Dessenne <fabien.dessenne@foss.st.com>,
+	Hugues Fruchet <hugues.fruchet@foss.st.com>,
+	Jean-Christophe Trotin <jean-christophe.trotin@foss.st.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Nicolas Dufresne <nicolas.dufresne@collabora.com>,
+	Benjamin Gaignard <benjamin.gaignard@collabora.com>,
+	Steve Longerbeam <slongerbeam@gmail.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Paul Kocialkowski <paulk@sys-base.io>,
+	Niklas =?iso-8859-1?Q?S=F6derlund?= <niklas.soderlund@ragnatech.se>,
+	Robert Foss <rfoss@kernel.org>, Todor Tomov <todor.too@gmail.com>,
+	Vladimir Zapolskiy <vladimir.zapolskiy@linaro.org>,
+	Corentin Labbe <clabbe@baylibre.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Bingbu Cao <bingbu.cao@intel.com>,
+	Tianshu Qiu <tian.shu.qiu@intel.com>,
+	Stanislaw Gruszka <stanislaw.gruszka@linux.intel.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-staging@lists.linux.dev, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, linux-tegra@vger.kernel.org,
+	imx@lists.linux.dev, linux-renesas-soc@vger.kernel.org,
+	linux-arm-msm@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	linux-sunxi@lists.linux.dev, linux-usb@vger.kernel.org,
+	linux-amlogic@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	mjpeg-users@lists.sourceforge.net
+Subject: Re: [PATCH 18/65] media: rzg2l-cru: Do not set file->private_data
+Message-ID: <aJCFC-_F6l7Z40A2@tom-desktop>
+References: <20250802-media-private-data-v1-0-eb140ddd6a9d@ideasonboard.com>
+ <20250802-media-private-data-v1-18-eb140ddd6a9d@ideasonboard.com>
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJBQiyubjwFe1h27@FUE-ALEWI-WINX>
-X-ClientProxiedBy: VI1PR08CA0211.eurprd08.prod.outlook.com
- (2603:10a6:802:15::20) To AM8PR04MB7779.eurprd04.prod.outlook.com
- (2603:10a6:20b:24b::14)
+In-Reply-To: <20250802-media-private-data-v1-18-eb140ddd6a9d@ideasonboard.com>
+X-ClientProxiedBy: FR0P281CA0211.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:d10:ac::6) To OS3PR01MB6657.jpnprd01.prod.outlook.com
+ (2603:1096:604:10b::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,228 +168,125 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PA1PR04MB11033:EE_
-X-MS-Office365-Filtering-Correlation-Id: f065a6c8-5660-4fec-dad7-08ddd33de963
+X-MS-TrafficTypeDiagnostic: OS3PR01MB6657:EE_|TYYPR01MB10592:EE_
+X-MS-Office365-Filtering-Correlation-Id: 307728cb-3ea2-46b9-e7e6-08ddd33e058c
+X-LD-Processed: 53d82571-da19-47e4-9cb4-625a166a4a2a,ExtAddr
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|19092799006|7416014|376014|366016|10070799003|4053099003;
+ BCL:0;ARA:13230040|1800799024|366016|52116014|376014|7416014|7053199007|38350700014;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?gadCvG4xBfdBZNooA0dcCN/zw+3wGRnb6R6d5dxc1tgWpmYiUuJ/fQB9pjj4?=
- =?us-ascii?Q?tSrtZCfhnCdZmWGtlFLm626zuREuAkclu/ov3B3jPJgQ2FKlDcpKDyRapAZ8?=
- =?us-ascii?Q?Ekn5bJ9cMDJi6kX1G4VeH7JRfJZ8GaPS1PKbIhl1fOxQQwIUw4pGcMpHK4pf?=
- =?us-ascii?Q?6kis+xc7d7vopvdi46IXeN56COY8sgcd6C/FwkPactE5OyrlOIo1SfF8EpvW?=
- =?us-ascii?Q?+at2hFADvarel/QXufZxWJb+uMgpkJqGdCWXg0auhjH3om1cxhNzYw6T2pCP?=
- =?us-ascii?Q?PuuNypOWyZzAx7LjDMBSwSl8ufwlXnTfKdsWZ5uLl7LK/sj/uWAVm5moOCe0?=
- =?us-ascii?Q?lKmxGQefOlwGG2MLfzEqE9ebioXL5NhDNhAaxwg3qTbf8BloxBhn5oTX9mZ8?=
- =?us-ascii?Q?xOF8Z1J1nF9noPGDY3h2zuQfI/J5yK4w97fVWV4dX0/909bemlJF0pTfAWi/?=
- =?us-ascii?Q?fnFAS9uf5ABC2VfZXwjehh+ejhszbwXDt1ur15lXDDfnEh+A85QGHC3wC1Nu?=
- =?us-ascii?Q?wG6oRdNQNUpSkpP4v6rnEMLGFAJfR3GgXfqBw7t4EiyxTaBrC/WlWMFhSlFJ?=
- =?us-ascii?Q?OzwXRy0Ev6yl7qbgm8YH9ETle5yd8drGO21zevHquib4GeKDw1GM86tdVQFO?=
- =?us-ascii?Q?k0fDkhMhTv0/wKHIfRSBL0AtqGdTC6pSJfQjovD96HgPkIrpIKcoi7PYIKUZ?=
- =?us-ascii?Q?51tdmL0lxnNfnwhWff0GhFGgEp5nfRkvgfrMfIPURod2/RrBjXixKsFncHtK?=
- =?us-ascii?Q?iXMQ0MFQDBafR/Ka7BelsOT2IjWs7pBRbWQ9VaTP9jXNah/eZg0I51mPqeo1?=
- =?us-ascii?Q?m0oMpfpu0spYDKrk7TVFQQtEAUJUk6o8wLzbEqshpW+ob8lzlQRthDa7ctVp?=
- =?us-ascii?Q?uPYSUgoG3PTq3JnmDw8YF91A5CvC9zh4fJvYGahYfjRvvzYN9IGjprJnkdU4?=
- =?us-ascii?Q?xnqNA+EbGr3ee7jgZK7jglJgosxlndQn+rB1OtWhPBDdALKOzYzCZk4w8Yqh?=
- =?us-ascii?Q?UeITEpBYVrguuKRQGO6Tf2n5DRSDkrMOQIduG4mEBfPI00goS2imFLZWRd84?=
- =?us-ascii?Q?9NsCRuicqpAuxA4/2BDSx1Ek+m6UdaoMjq5JT0JQqyVyA2Yc4yEVANtPvSiF?=
- =?us-ascii?Q?yvLkLNPmFyUpCR1MzZ93ZpkGikRxM7vrWcz2wax9WRIRo1BdsedJFL/6bi4c?=
- =?us-ascii?Q?d7496aoXd3YNFSq/YTrgQxyS7yG6JV5yFjQxST48ATggfgCuS+Ht4L9X+7z7?=
- =?us-ascii?Q?9RdtLNoS+s5ctktQrtbYnEzIkX8U872yU8r95YaDU+F5HqF6OMASinlOheGl?=
- =?us-ascii?Q?4OV//aB8aDO1lxozBq+x1bcV9NDb1beHWoa/4x0rQlySk49xSJsEH+xIVnAl?=
- =?us-ascii?Q?npVtnCKIloEcjtrI0nztvCnVFBtAwGq5vpUiTUrOG/S+OqpRa4GqHLwbvKpe?=
- =?us-ascii?Q?8ASM0GjzEDo=3D?=
+ =?us-ascii?Q?4Dx7cqXSiPRwV//Bkm4NvhTALZy+WVjuKm+Pm8V7LAVPPNryn2VtFRizi56C?=
+ =?us-ascii?Q?fKUDZnARKg8UBkemz+AzfGjyRf0HYRsL6iepBv++wz6d7eMLQU3k/3JAwLOO?=
+ =?us-ascii?Q?7NE8W8iiwLXczmM8yTkuIoVtBLAULOvsnT6CNNKlsr8f0+L4JH+gwJSSubrT?=
+ =?us-ascii?Q?tVj4KkD4ZXbMDHhTgwoI44yxWcAg1FxscqBsNs7Rr7yvkv6/OM0xluPkzwNU?=
+ =?us-ascii?Q?zF4zF9Je2MEJgI8susgGqa31ugP8cKseg8Uy1bnj3ILqww6frv423Gb3ldKK?=
+ =?us-ascii?Q?0tWV/5/8qzD6sbfo+P7pGf+Rer0n/Aeva+Nl93YorqpKlS+nToE2o64l6qnF?=
+ =?us-ascii?Q?2Rp8bYlMwrNIQA1J02PjBW/9OkmaiOCtJeTt4q7oH4D4bJcTyfWAEjjLzLX3?=
+ =?us-ascii?Q?BLL5U4zwC3iTwFz8yWb3DUcpOp7RbGIw8HFFzcw1BGxRhXQat/SUJb/+oNKt?=
+ =?us-ascii?Q?tCvo5dqg9u4UorRuOHBGnvBfIp0kyRYgXKq7Try8WxuY9mJCDlzxb745acVk?=
+ =?us-ascii?Q?i1zLkeGlfhU5wtbmRFqMTH08ZIh7fEdZrqe6rfgDkByx4I79dKslqrQN1iNV?=
+ =?us-ascii?Q?3FPDwuPvrDOF/H0xIyhw9h7OfAAMZPtRm4dALm2lY9hBr98Rkymm+Sj+Dw2V?=
+ =?us-ascii?Q?51WjlXslO8eLzcQNECkY3gLTFpzlYQjIgBRvzwWqqdmkdp24xPz2O4USAOSU?=
+ =?us-ascii?Q?fDN0YYnrn6Jc9DsPl4qeHKTJrHSuYruGIrfhf0LmDtuPQaXrUrPpejPhwTyv?=
+ =?us-ascii?Q?atahvHYztWdBQ/beoPI1aeM6NcyGgI/JpH5gCGnUDQlmIYLTeGinDzJRAAVH?=
+ =?us-ascii?Q?6aObM2X+BKkUwPXj99/QjSjF2K3+MDQbJsfgYdXnuwfzP7YwOgmYrWyqT+44?=
+ =?us-ascii?Q?of2faiJcqTNOELt8uvLg80btrnavoCKYDyIevSKL3/jkcuY0sbTFdAP4CEAl?=
+ =?us-ascii?Q?QZKJ6K7+h620ssWcY1b56p8tLdDGyGp49J4vQspTJRIpN/zNLLV6vUhVBmaT?=
+ =?us-ascii?Q?emOqL1qaXQ0jcxEC4xNAcBcZZTPoEQni/Q05JyUjgKaXIZ04AZ/4OUU7Pl92?=
+ =?us-ascii?Q?yRLA9DwSZ+Ng2/LpkSV0PtBKkS6PmUFHUldGxafBdlcOL5yZoD/Z49UyGcxX?=
+ =?us-ascii?Q?A1K+nXOrFPLu1eqpKqfictpv1224UtnBUC0O7bgGJZPhy2ekVoqtNrhSFmTY?=
+ =?us-ascii?Q?DTCaYb+PTyEZ22v3/xVXX3JhXSpuaeyOBx59lnq56dK8Y3pFfw7owUxsEq+m?=
+ =?us-ascii?Q?BkBYoWgKFVbtc60gb1BLei5M15tPo6ZdmQSzVxclUYOjoT1jRXygviniyhSV?=
+ =?us-ascii?Q?8JiEOwrO0lmotPtseztgHCY1ZseTzzrcMn156rjcZf1AEnm5ofQ0apOd2Q2o?=
+ =?us-ascii?Q?ToXhaf2x4zEpS5SrUte34nGFrw1aW7mDc7bosO5H4cxzSiggyYUTu3HyiLyA?=
+ =?us-ascii?Q?+6QuLX8j5bjvl434bzJnhSpRgrLYVMSu9IC+cUGOo8rzUcFag6fzfA=3D=3D?=
 X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(19092799006)(7416014)(376014)(366016)(10070799003)(4053099003);DIR:OUT;SFP:1101;
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:OS3PR01MB6657.jpnprd01.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(52116014)(376014)(7416014)(7053199007)(38350700014);DIR:OUT;SFP:1101;
 X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
 X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?KFahWN4jj/IlfMXmpA1F9hF8CdXQTmhmT0cxMjcfTzDs705LWkZQbYs9bA3O?=
- =?us-ascii?Q?F+4RLZA3qQjNI6sVb5Dqw6xeHBa3EMcbKXzqYDL9C05Q6K/RVIzeloMmTxlb?=
- =?us-ascii?Q?pLIDavY1SdafjN5eelwI3FT2jdi7+y6ZaaC2IGDhSjNbLCJjg3WM7EQwEQ1I?=
- =?us-ascii?Q?Wn2XPn+W9cR7LyIVhBqbUNGRhmL8KCJAQ022kM2Mo2H8pHNYwsu/wvsrkdWQ?=
- =?us-ascii?Q?f/Lk7birwzrUyKrzFU7lK1NRPPjyjjjtnl4YIRAgDut9SI8UzbOP12cw3wqB?=
- =?us-ascii?Q?LP/QstkLY/G7qvmBgXxblSriwPgO8UjsVjzM5IDeABHCxaUE3JMnK9JPIMNo?=
- =?us-ascii?Q?x1MNpALNv412O5sexQ/QVjj8rxszcwnY1GgJm8ZUGogdLDuA6yLjL0R1Gb86?=
- =?us-ascii?Q?LMSuFHYOW2mUGriCG8Ef7AwXNHuMTLrR3D/5cOYIATznxxwOhT4iGhTB+RkB?=
- =?us-ascii?Q?a+k1+coYKmxAINrqw593Z1orzd1TOrpACve4AvZho/UXsNvba7nZ4cY5bN/i?=
- =?us-ascii?Q?y663BUhE/s5S+1mGMMLR0AaG7J5uoKSnmHThW0Bfm2KS9Oxki8D4Y+hR5sD8?=
- =?us-ascii?Q?g1QCS6ihtYi1Q/nQtHB7ZF76YTD2ia16A2U4Mo1mrbMIN5mo9K0N+dQaWtxn?=
- =?us-ascii?Q?WGDyzM78XO8ybaBVwqfJMg1LO/5WIgXafxsbUKauMan+0q3NkrdiUDpzGfK9?=
- =?us-ascii?Q?ab53PSrYK7DQ+n9/LZI7W/YtLuZcS/7R3a2usce+qJKYsXoN/mYO1rS1hXsD?=
- =?us-ascii?Q?RTSqf/bzX0LLxKxrwDdQuAhfMt/8TWFkMHa/wLmDGX4RGMTRJLLD1PofBrrJ?=
- =?us-ascii?Q?/8MIc0o8CRtWIc9S+dSccz6RNqijced5tY5xvAEHKarZEDwTp4ydUS3r0p1s?=
- =?us-ascii?Q?D/KByfoI2SjbaTS3Gm5gxA4AXx7wrbpTW6iCmQP5lYFYa1/bFqUA9AYzFwZM?=
- =?us-ascii?Q?uZ6gYo5iGAETAjiiU/IEIgtaRDP//il7+sCpHSNiK87Bh+x8uE1uPEJCWkpG?=
- =?us-ascii?Q?9gJYbYW6gA8jkDIhSyh/EiYM0wJU8bzku/zPOJaEtFraN/qFdLuJhIgJEQnt?=
- =?us-ascii?Q?vtS0O5c9gYe2iRZf75WsL3q/ORoID3f0H6MaMiBQaT4o+OmycFZlxmysydKM?=
- =?us-ascii?Q?tN8dJOIBPaIWv3DT1ehBs/hQmw6SZkplGedAyi6xUrKiikEl5oj9F9HQZfbz?=
- =?us-ascii?Q?dL2DpRAtyYWLCVPovPjou8ZoYq/T5EMORQkdUqZqIorxwgn3ii/xTTMV8HUt?=
- =?us-ascii?Q?7NmXBTtUA4i7oADOKKRZwTrzy+0M3xqELkRI2sB3kXzYnLkSSBHEuqF1/mQE?=
- =?us-ascii?Q?Z/fwFuYr2Eq/j+3csmMg5u9nCyBfVoqGqH54h4D/h7oGDjCEHdbsjzFbjxGs?=
- =?us-ascii?Q?uUKNAFIhUwYLUT50BUw1vicUF1tZHc6sg7pcSZuvlh5spMZPB5QFZ8UTRJ/m?=
- =?us-ascii?Q?/TxOB5qpQMpLmNrRUTRngilO0OHBfRSI6LgvhpCNGaFPG7w2NMQuzb6t2OeN?=
- =?us-ascii?Q?z7HIblXb1V/mAdK++zcocWqvOVX/gT5XL41Y916BATFmZKb+LQph1Dy12oK9?=
- =?us-ascii?Q?7PuJ6lKwf4YzMnI96vGCVmvkQf6jkJSWyxmzExK0deEMwiz+8I+42dqpn5kh?=
- =?us-ascii?Q?Xz0kYLPMyHDmjgjWehlBQkQI1zvOggabcfCclbQWCrdrcrtwYMpOfWYsBYls?=
- =?us-ascii?Q?lqssEg=3D=3D?=
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: f065a6c8-5660-4fec-dad7-08ddd33de963
-X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+ =?us-ascii?Q?zA8P+PgdMNbUjR1PxzpoQ6auR+oZd8Bjlg1yrwVN/IVj4Jgl15N46MS2iwXr?=
+ =?us-ascii?Q?TqzH+FZHcmwmkiVLhQC4xdhwbw/Unlj7A+A7PcUT2t/EmVkFRJjyy0//GpvZ?=
+ =?us-ascii?Q?koY/WyvT189BXwRp5pik/o1kGJPxboL2FkQHCYTZeJWTqYLBfAkZ+RFQWhCu?=
+ =?us-ascii?Q?SsyYD5ilxkGVX4Vej4P4P+TbEJ2Zlb5EraO1ErtDqtBCjR/al3X1AgPV3mSk?=
+ =?us-ascii?Q?OVnwRuDsamRr4o++x3s57Aglky7L5xAmp3Vu305Q7y52i1NlWL7L5Jm/w1Rs?=
+ =?us-ascii?Q?qdmGju62JPqo4mgMPN2vNdF9jaqt+PUlcJD0X6i/kpP/BDxbBMSJJY3AEwba?=
+ =?us-ascii?Q?vXYxy+4OtvokyPKJtFZ3gnQTP1b67ghjwAYMNzyGl4DeeFnhLgnJlq2yQRnO?=
+ =?us-ascii?Q?nFYx7SplQe6lIWOWsNYB/TUKF/A37I8bkN2dorEH6xv1gpFKyyhlepz+c0/J?=
+ =?us-ascii?Q?dfYTPoOeXXrtPSM2GcNO4Av7HizTSUCsC4Sft09JvoiL8/A4+tKy33lcouii?=
+ =?us-ascii?Q?fOjIelK5W4UgMb4mnblR/5pYIhq/ePgiitPPF1USCA0BqayW5PUCngBxAH1U?=
+ =?us-ascii?Q?/LMIjZaTnUsBuv1edppIirCxayLjXFCyUDlfM3KRjJUVKLo8hNsCY0nSjgQ9?=
+ =?us-ascii?Q?DpNEyJlpVf+YBYKLcpekWZOS19QjnAuiV6BlLxAtJhy/OYk6t5vvYUlYnHTg?=
+ =?us-ascii?Q?cyAN3K0tdgf+cPuYzBDSoq8GpiiSlUgDnyAc1e5v0sEAVkDFUdQ4vWIpV1j/?=
+ =?us-ascii?Q?Xw1k/52fbEDMAY8gIjds7wwNf7pRfsuJiPDdj4mBBETeXLNfPIoxFDo0x8wO?=
+ =?us-ascii?Q?r+1HNpno/4BwAYqfxTcfmVHc3Br5VDHjRDj6LQdVbV2lI5O9qukNxiwdEgnF?=
+ =?us-ascii?Q?gl6a3CZtXF3JdXIRGBkVlDCciLEqj836AtVwRtl6UVB9vL8436rvoLDXW7yF?=
+ =?us-ascii?Q?c5Cq+pfQWJ5QxAgPSi4SPkIUOlYwynNyuMKfs6ItsxpllHKcxzAxbxw0Ki5m?=
+ =?us-ascii?Q?6wiN7YNEpP3KXl+A1alepUJbevqozjVB9jikPeX808l4ENPEBi9tsd3RlyU9?=
+ =?us-ascii?Q?ADBNqeQVPV4vEPxOKze2FiNErpvaE6kJtmh4ixBZCvcl9XuX7Utear62Z5dC?=
+ =?us-ascii?Q?fXEQFGlc3o4beZBJVfSMtcUCXGK5Wgrcl6REC6SUIjnQCo8c/wZgymbwoQ4W?=
+ =?us-ascii?Q?FD8I0LOXj+gFMr4ss2acB+4NNNYGiClSGuF4OimWVTfzddqpyeIeypIy/Ic1?=
+ =?us-ascii?Q?Lx3uT2Z6u3wKAIdfCH7LiHDT/pIz+Ltc7o2RYohvWRPaedKd//A5j/pOOHpN?=
+ =?us-ascii?Q?trhJq7E0CMFa9iGU/FUDzx1Vci59XRb5RqwZGrQlSE0D+0I7SU/korkAl2UJ?=
+ =?us-ascii?Q?hn2WTjXjNQaciOx/BsiWJADeZ31++Mf+dWAlMrOj7dohoX+BkYiMTRWprbcV?=
+ =?us-ascii?Q?weXYJCbPT+Rv7WxeihliK9/XdnlPl2UmyyUAFIaWF9l7L18wpOgDRrO3tMfb?=
+ =?us-ascii?Q?IF+jTYK+Lf28lh2bzl4KIn1XiCBkbhlx7ZW5EN+9JbQWj6JKywYQ1+tnG2wh?=
+ =?us-ascii?Q?pfxb/vgcGxb/3KLaoRfqL9MgL2CW+QdevK6uIBg1zxISthw2T2VKwrSTxkLs?=
+ =?us-ascii?Q?iAH/rgv0Xv4LSd0MslrrAX4=3D?=
+X-OriginatorOrg: bp.renesas.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 307728cb-3ea2-46b9-e7e6-08ddd33e058c
+X-MS-Exchange-CrossTenant-AuthSource: OS3PR01MB6657.jpnprd01.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 10:01:42.3624
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 10:02:29.8933
  (UTC)
 X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-Id: 53d82571-da19-47e4-9cb4-625a166a4a2a
 X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: CODVQWMnXCepIuVVu1ei6q7y8RIUaV+c7jhVOTkkcHe32cul9MGkblJKi2aov1Ui0cBiH5bT2nsF0Sgos6b4Xw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA1PR04MB11033
+X-MS-Exchange-CrossTenant-UserPrincipalName: 3pSRknQ0n8XPfQ4gqt0vPrscjvGNKuxE8mB/ymud16XA4kfBKrXtSpN/6U6jIYPOL8jwNWXGziPjIOtPI9pbTzbOE9KPk3W/a6rHqSTf2Q/NavODphSN7cpOtpdJelvW
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYYPR01MB10592
 
---4tj3nzivy3sqjajf
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Hi Jacopo,
+Thank you for the patch!
 
-On Mon, Aug 04, 2025 at 08:17:47AM +0200, Alexander Wilhelm wrote:
-> Am Fri, Aug 01, 2025 at 04:04:20PM +0300 schrieb Vladimir Oltean:
-> > On Fri, Aug 01, 2025 at 01:23:44PM +0100, Russell King (Oracle) wrote:
-> > > It looks like memac_select_pcs() and memac_prepare() fail to
-> > > handle 2500BASEX despite memac_initialization() suggesting the
-> > > SGMII PCS supports 2500BASEX.
-> > 
-> > Thanks for pointing this out, it seems to be a regression introduced by
-> > commit 5d93cfcf7360 ("net: dpaa: Convert to phylink").
-> > 
-> > If there are no other volunteers, I can offer to submit a patch if
-> > Alexander confirms this fixes his setup.
+On Sat, Aug 02, 2025 at 11:22:40AM +0200, Jacopo Mondi wrote:
+> The RZ G2/L CRU driver sets file->private_data to the driver-specific
+
+The RZ/G2L
+
+> structure, but the following call to v4l2_fh_open() overwrites it
+> with a pointer to the just allocated v4l2_fh.
 > 
-> I'd be happy to help by applying the patch on my system and running some tests.
-> Please let me know if there are any specific steps or scenarios you'd like me to
-> focus on.
+> Remove the mis-leading assignment in the driver.
 > 
-> Best regards
-> Alexander Wilhelm
+> Signed-off-by: Jacopo Mondi <jacopo.mondi@ideasonboard.com>
 
-Please find the attached patch.
+Apart from that:
 
-You should only need something like below (assuming LS1046A fm1-mac9,
-may be different in your case) in your board device tree:
+Tested-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Reviewed-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-	ethernet@f0000 { /* 10GEC1 */
-		phy-handle = <&aqr115_phy>;
-		phy-connection-type = "2500base-x";
-	};
+> ---
+>  drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c | 1 -
+>  1 file changed, 1 deletion(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index a8817a7066b22f8a8dd1fdab50efabc486e4dfdb..941badc90ff55c5225644f88de1d70239eb3a247 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -1078,7 +1078,6 @@ static int rzg2l_cru_open(struct file *file)
+>  	if (ret)
+>  		return ret;
+>  
+> -	file->private_data = cru;
+>  	ret = v4l2_fh_open(file);
+>  	if (ret)
+>  		goto err_unlock;
+> 
+> -- 
+> 2.49.0
+> 
 
-because the pcsphy-handle should have already been added by qoriq-fman3-0-10g-0.dtsi
-or fsl-ls1046-post.dtsi.
+Thanks & Regards,
+Tommaso
 
-For debugging, I recommend dumping /proc/device-tree/soc/fman@1a00000/ethernet@f0000/
-(node may change for different MAC) to make sure that all the required
-properties are there, i.e. phy-handle, phy-connection-type, pcsphy-handle.
-Either inspect the device tree through the filesystem, or save it to a
-text file using "dtc -I fs -O dts -o running.dts /proc/device-tree/".
-
-I especially recommend instrumenting the live device tree, because I
-don't know what bootloader version you are using, and whether it has
-device tree fixups enabled (which mainly add status = "disabled" to
-unused FMan ports, but also change the phy-connection-type in some cases).
-
-managed = "in-band-status" is not needed and should not be added. The
-PCS only supports LINK_INBAND_DISABLE for 2500base-x.
-
---4tj3nzivy3sqjajf
-Content-Type: text/x-diff; charset=us-ascii
-Content-Disposition: attachment;
-	filename="0001-net-dpaa-fman_memac-complete-phylink-support-with-25.patch"
-
-From 2b4d48c93d317cccafc8128e33f18fab244d5bce Mon Sep 17 00:00:00 2001
-From: Vladimir Oltean <vladimir.oltean@nxp.com>
-Date: Mon, 4 Aug 2025 11:15:26 +0300
-Subject: [PATCH] net: dpaa: fman_memac: complete phylink support with
- 2500base-x
-
-The DPAA phylink conversion in the following commits partially developed
-code for handling the 2500base-x host interface mode (called "2.5G
-SGMII" in LS1043A/LS1046A reference manuals).
-
-- 0fc83bd79589 ("net: fman: memac: Add serdes support")
-- 5d93cfcf7360 ("net: dpaa: Convert to phylink")
-
-In principle, having phy-interface-mode = "2500base-x" and a pcsphy-handle
-(unnamed or with pcs-handle-names = "sgmii") in the MAC device tree node
-results in PHY_INTERFACE_MODE_2500BASEX being set in phylink_config ::
-supported_interfaces, but this isn't sufficient.
-
-Because memac_select_pcs() returns no PCS for PHY_INTERFACE_MODE_2500BASEX,
-the Lynx PCS code never engages. There's a chance the PCS driver doesn't
-have any configuration to change for 2500base-x fixed-link (based on
-bootloader pre-initialization), but there's an even higher chance that
-this is not the case, and the PCS remains misconfigured.
-
-More importantly, memac_if_mode() does not handle
-PHY_INTERFACE_MODE_2500BASEX, and it should be telling the mEMAC to
-configure itself in GMII mode (which is upclocked by the PCS). Currently
-it prints a WARN_ON() and returns zero, aka IF_MODE_10G (incorrect).
-
-The additional case statement in memac_prepare() for calling
-phy_set_mode_ext() does not make any difference, because there is no
-generic PHY driver for the Lynx 10G SerDes from LS1043A/LS1046A. But we
-add it nonetheless, for consistency.
-
-Regarding the question "did 2500base-x ever work with the FMan mEMAC
-mainline code prior to the phylink conversion?" - the answer is more
-nuanced.
-
-For context, the previous phylib-based implementation was unable to
-describe the fixed-link speed as 2500, because the software PHY
-implementation is limited to 1G. However, improperly describing the link
-as an sgmii fixed-link with speed = <1000> would have resulted in a
-functional 2.5G speed, because there is no other difference than the
-SerDes lane clock net frequency (3.125 GHz for 2500base-x) - all the
-other higher-level settings are the same, and the SerDes lane frequency
-is currently handled by the RCW.
-
-But this hack cannot be extended towards a phylib PHY such as Aquantia
-operating in OCSGMII, because the latter requires phy-mode = "2500base-x",
-which the mEMAC driver did not support prior to the phylink conversion.
-So I do not really consider this a regression, just completing support
-for a missing feature.
-
-Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
----
- drivers/net/ethernet/freescale/fman/fman_memac.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/drivers/net/ethernet/freescale/fman/fman_memac.c b/drivers/net/ethernet/freescale/fman/fman_memac.c
-index 0291093f2e4e..b3e25234512e 100644
---- a/drivers/net/ethernet/freescale/fman/fman_memac.c
-+++ b/drivers/net/ethernet/freescale/fman/fman_memac.c
-@@ -649,6 +649,7 @@ static u32 memac_if_mode(phy_interface_t interface)
- 		return IF_MODE_GMII | IF_MODE_RGMII;
- 	case PHY_INTERFACE_MODE_SGMII:
- 	case PHY_INTERFACE_MODE_1000BASEX:
-+	case PHY_INTERFACE_MODE_2500BASEX:
- 	case PHY_INTERFACE_MODE_QSGMII:
- 		return IF_MODE_GMII;
- 	case PHY_INTERFACE_MODE_10GBASER:
-@@ -667,6 +668,7 @@ static struct phylink_pcs *memac_select_pcs(struct phylink_config *config,
- 	switch (iface) {
- 	case PHY_INTERFACE_MODE_SGMII:
- 	case PHY_INTERFACE_MODE_1000BASEX:
-+	case PHY_INTERFACE_MODE_2500BASEX:
- 		return memac->sgmii_pcs;
- 	case PHY_INTERFACE_MODE_QSGMII:
- 		return memac->qsgmii_pcs;
-@@ -685,6 +687,7 @@ static int memac_prepare(struct phylink_config *config, unsigned int mode,
- 	switch (iface) {
- 	case PHY_INTERFACE_MODE_SGMII:
- 	case PHY_INTERFACE_MODE_1000BASEX:
-+	case PHY_INTERFACE_MODE_2500BASEX:
- 	case PHY_INTERFACE_MODE_QSGMII:
- 	case PHY_INTERFACE_MODE_10GBASER:
- 		return phy_set_mode_ext(memac->serdes, PHY_MODE_ETHERNET,
--- 
-2.43.0
-
-
---4tj3nzivy3sqjajf--
 
