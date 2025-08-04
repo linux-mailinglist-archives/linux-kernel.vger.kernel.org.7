@@ -1,212 +1,200 @@
-Return-Path: <linux-kernel+bounces-755109-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755110-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78CCEB1A165
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:28:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C00E2B1A167
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:28:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A9317AEDE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:28:00 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7A4617A632
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:28:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC5259CA0;
-	Mon,  4 Aug 2025 12:27:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ozHlFHMM"
-Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012028.outbound.protection.outlook.com [52.101.126.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83D32594AA;
+	Mon,  4 Aug 2025 12:28:30 +0000 (UTC)
+Received: from mail-il1-f205.google.com (mail-il1-f205.google.com [209.85.166.205])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2612580FB;
-	Mon,  4 Aug 2025 12:27:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.28
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310469; cv=fail; b=NlMHrPFz+5jhlT+TSVK2eeOhLvisJAl9la6+XYmqoc+dJzrEbZoLF3QZxe8Bg+V5G/5EOGaEgNlx8bJFyHlZkSOS2eqaC72q9wB5sA94KW8fobvurBn4g500tzoqf1WR8nJfK9guAFpaKvAcHxNF4I4g0f1ShZm+9WqrnFL1AIA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310469; c=relaxed/simple;
-	bh=iT5OfO1HmnmjdePkIv8Ir/9h6ZgUaEgQIR7LC1/JfBU=;
-	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nW7/txXzh1hcqNarWgrDVdtgMyPQ3RKqt2xKPCoV9hE6GYUEsWoVprJ9ouLCGN9WKGVa0lZMCEx5gQBi/2NFqYedh9n8bLNqnIi5Vq3SGziCwD7brRL0S4WG/GVAgjeSU0JberUI64X7CkLZufU3+k7wtiYhyINm9+8YmI8H5NE=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ozHlFHMM; arc=fail smtp.client-ip=52.101.126.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=tB6fJOohREy/kbuE0nl+7BPAICzEjVEwT9Y/ZDRk+XQ65tEJ3+yugksAp/U66t6HdxWk6xS29bX0ntcbDzFgIJGH6srPBf0wXga/ahMIqEDEYlZKLdbQq7OjrreciBVdNpNb2Zogvb31Zw2qRwQJCORcuw+BFyPqIuQdEtzcr6G0/KF3wa9FklFNOYDryZaDwRTTPbCLfMoGgYaD/CVDL9uRqMP34s/BrhWHqXOAAtP5MAZmkLqoa3yNlYQGUrxjnMkjnX283gkdxpZJfZsG2545qDI1HzS++UrSrxbrxs4Rs1aSSwouxtj5lN6UwSObts37Jcbr1rbp0EgFFo5zBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=HxIHh8ACv8r+2FUxhwnGJEy4IJ0RJ9qF+MsPIGuGNtE=;
- b=aSAyWEPgJBJxBQDJCK4JvldvBIB0503rYvb8n0Vhcs05bRquOY8PUppthxKCOYY1L4ml7NvfcR68VeGNJxA/ZozpkfdbVWgg84yeKy0YTue82Mx4V2MVeR107o4Qq2RuG4DBOmTdBEUKro48RRIsy58RFeveyqiao5NuH5/gSBhjlYr1mFFHY/UVN0H7AZcPTHyQZ3d0FX3neh6sqqd6/QlyRboL5r55fGniwVcQzfASJGDk3qdeDmOXr9CMWSeo21t3LEs0dHhOZCBeeAnZjxdYkAssOEN9wkQmLVNOfDSOCCucDurZol4g+tFPw0d09NE3xRLdr9JtmRyYrQ3Y7A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
- dkim=pass header.d=vivo.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=HxIHh8ACv8r+2FUxhwnGJEy4IJ0RJ9qF+MsPIGuGNtE=;
- b=ozHlFHMMwmhnzy0l/VHcpXUUPilD8XwzLRmD0z+msmT89jrtOjp9l1mptj2mMQyG78y8S9RjOzx7IgYhIzPPYR+mSGc/OWIMbgJKwBD0ms5w/2akEfpDCZNJfRcgByyImy0CbWX1GQXj+QP/vwAD023pOjO9c/C4GiWu/L1UOhvyxhcK/5Srth/bWdWq/nOgiMXKjkuY8OpGMst3qwRoqkItxCiTYk8wba72PA5GpiyTVA5LVGy1nXrnovqDLz90BEe0Djz2V8O46OkH1OuNZbwZytFeO1zNh03kksahK6kukP/2aI0yiWcNCixsPxkUwnzQfsC24KYzQ751XDF5eQ==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=vivo.com;
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
- SEZPR06MB5296.apcprd06.prod.outlook.com (2603:1096:101:7c::9) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8989.20; Mon, 4 Aug 2025 12:27:44 +0000
-Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
- ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
- 12:27:44 +0000
-From: Qianfeng Rong <rongqianfeng@vivo.com>
-To: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Stanislav Fomichev <sdf@fomichev.me>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	KP Singh <kpsingh@kernel.org>,
-	Hao Luo <haoluo@google.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	netdev@vger.kernel.org,
-	bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Qianfeng Rong <rongqianfeng@vivo.com>
-Subject: [PATCH] bpf: Remove redundant __GFP_NOWARN
-Date: Mon,  4 Aug 2025 20:27:30 +0800
-Message-Id: <20250804122731.460158-1-rongqianfeng@vivo.com>
-X-Mailer: git-send-email 2.34.1
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: TY2PR04CA0018.apcprd04.prod.outlook.com
- (2603:1096:404:f6::30) To SI2PR06MB5140.apcprd06.prod.outlook.com
- (2603:1096:4:1af::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A68B824E4C3
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.205
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754310510; cv=none; b=Wb9fqKEazegvwp2RRxJeQnxfANZL9yBkAuAa79jbTa3SMqg1h5Hx5WmtOdlot5nfLreZFvYF1A+eEm77jFXP6urCNoLW9dUZNbxTyTb1y96kHuynxgIHbt+FikwbicVnWvXKWmFpJoKtNeMwb4GdBW+z/oGkhs+dXjtv+m8Y4YE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754310510; c=relaxed/simple;
+	bh=dg9MHfSL1mqm2jlem/FZ5DA6tExDDneAVHkzXPvORPM=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=kDzZcoBNX1WOm6DTZxZeZnMdy3PDx1B9xe7Z8kn+8YC10h9ODypbyk3ab+NRuZqv3qkJoOPmyxc5H4DdrMDM83xochuMVzv6SUEPbU0wglhWZSUIgAR600G7FHG/qpnqN02RlEkJ7ry0X9SWdXAwjYQxrmFYc8+K88IqrguRv9g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.205
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f205.google.com with SMTP id e9e14a558f8ab-3e3f6ae4d0fso66749455ab.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:28:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754310508; x=1754915308;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=bIv8jQfYkJ/obO9NaYRXD+nFUDYKwhETeJ/3UnKt9RU=;
+        b=Xt92sSdWczHD+OAHkkSjgaisCEhEWjMF3voLC7mQzKV1N6YfSv+647mDepCe3e29a4
+         ATbjnVQxr4chF30CGIfiKOTk7stv0LNx4J0tFr/bek92AprL0TSZwEi3nVtMErcEg84f
+         D2KQqgYbWq9bv4Oh756V2IYgdntE4b/plyJXGd63NrfHaWrLwoHff5FXj9tL+8bjbkEg
+         jjuNLLll8UhCOjo2Ni+OeEBjzYPZ6lOVAwsnA3Jis9V8quD3l2Pymt4wh5gN8DC1lBOP
+         +U1a55HpNjJLVDqjf9lbBrzfeHoAz8oCDqsVDTWhJm0NZrE4eWxe8yYheaODia2PEjj+
+         NRsw==
+X-Forwarded-Encrypted: i=1; AJvYcCXPNANNpVwJ/SKiKsqrvlgdTiFhN5zcB1fmyepz2rv5kXtaYlx0Ihh8eckJAG456O9Zgmn9WagAh1uH3/w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyXakOQpaEit4o2C4RZjk3e0SGKBnoAyyuPILHKLET5TzJzZPxp
+	lf1ngzXWv9OqjnVjhnkzQs8186bFt81zKgmOFAoqZJy/d/ht6lnlDyO3CcAN1ZePFkuojQtQbRy
+	f1sxFznkg5TAuV0Wdot5wK4lf7NxNN17xcu3omorU6TmFmKI4sQBfb5IesX4=
+X-Google-Smtp-Source: AGHT+IFFweYJjxxi9b3tNr12OISP41q+OuF27ZU+oPT1vgViH2n67tV75P3e2mxiM9Ogyl2U0s6ESjT6hnz48c9uJwdfmZ541wos
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB5296:EE_
-X-MS-Office365-Filtering-Correlation-Id: 05c39632-73c8-4e1d-6b38-08ddd3524feb
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|366016|1800799024|7416014|52116014|376014|921020|38350700014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?pZcQ2UHQYM0jTdJ+FQv0/wqUol/8rfvAYN2mbwveKBVMhXRoE0vzJJ8UJkHC?=
- =?us-ascii?Q?+FNU9vsEYNcoR37ksgVhWvfIrC5jihFoJHmY1DHm/4sdgqsuQM9zCw6O8U7+?=
- =?us-ascii?Q?eFb482jKTp76R4b/Q0sm36nPKBT31l1DhDkgGmJGugWTCqE/747KWeugKHFS?=
- =?us-ascii?Q?yKYR1fWjug4rjpjBqYoftNpnZgdkOEUjVRXuTeOBCa5SNXyQDgRPrpnWuxRU?=
- =?us-ascii?Q?DltOtVKrLA4q3OCH3m9VSbE77HJY14qbGmUVbOTVZjTE6h8Ulx+knbmkPqnf?=
- =?us-ascii?Q?+P353spfl2ZazPQ1FRCiSNqbtWAf0+xnPn5X9QJuDPCmGOSeEWJpEgevGe4U?=
- =?us-ascii?Q?Mv1e96SOTFGhrMojKblRbu3YuI3o+pT38rL0aIaXQkpCuBJ7XcSyPI5Dl8YG?=
- =?us-ascii?Q?2V5qODgk0v/mO+qcH68d3qYk9RwiUMuTbZH7gDIE69xfHfpZ++6lD/9JGeKC?=
- =?us-ascii?Q?mJUf8BuhLvGHAx4oGhBc0qF7vOjdJ8JMOu7zfvoQI2BSnyrrD7gt7F0hSlYr?=
- =?us-ascii?Q?uQDMpmLQ1QvAA52MEbUBeTURt0bLJNVvsicgc+9aieYjnuE8nGgWAeZNUQ01?=
- =?us-ascii?Q?JniBvvDymJyIn+pTYKnpbXp4uzpzcoiA/2uGjc0/xowfPjI+ZEaVdrnzFsbQ?=
- =?us-ascii?Q?dp0o5mH/9gw0DewZ6H02JAXjaWMZ64YkhiSqt3K5eDskLOp1zBtmWDjYFvDl?=
- =?us-ascii?Q?wcF+PB+6+Qow/va/uPnp+fJBo1Px3pGoYcG9O9R3G3Qp/4Q5YoxzGBGhzqBp?=
- =?us-ascii?Q?cYoqSyKJUdMZMxh6P23fTvLHczypQ81OH57sK4DslohhtDGZ8Qcl7UjKvqPT?=
- =?us-ascii?Q?yDwUZUrxjItocCs1IFfRGHAruwgt8KheM6grPUVvpUHoxHqBeXD6Gycma3ib?=
- =?us-ascii?Q?VQ0L8gBFVubdL19fV4n4R9L9R982Q8bsDOahQYGT0I8FzPGV3t0Edkwq4Cw0?=
- =?us-ascii?Q?SU4Jrjde59uSmVsEIT5BtOiMQsWFUSOwHsuqDhrUcbf8H4TTPwaYi27AlUt1?=
- =?us-ascii?Q?kSNTQfihHpkVPdHGP+kAxfVM5FPVtQz9MUoosCPDxMymW2HDlVg/S106cFwM?=
- =?us-ascii?Q?ZSrOYUH1VaxJIxiqg9fEiU/q52ZBO478CYf1D20g1E+NLLsvSklmjDEr7nYH?=
- =?us-ascii?Q?LFTp90cunzeKWzfuIJab/ZgWG+EpvBg2tSges6xfSZSlwThj0k+VusNG2L2N?=
- =?us-ascii?Q?Yz32e23LPdrmvK5/I9EwLPDLPy9j9XmxFLNLQ9EEGHHyAwpW9mtkCTloZJ84?=
- =?us-ascii?Q?oPPlEAXGTj+1BLFcZEL1fQw/Ec7BeD2h6FQwA+PWl9ZnO4phEX1+NDsCf8Aj?=
- =?us-ascii?Q?Pz2aQGIQOdaisjpjN1i0bWecs6n6gCPZNzm7yNSXemvDjTQxTUdiHGkB23KS?=
- =?us-ascii?Q?7OOQKTua+I7A6MQl6wfztwQ8B57b8q7mXzwzTAVLsTIVTmGpW3VaVc3sayHF?=
- =?us-ascii?Q?686SQiPgUYyakZftxsRohb/cdCgG8Y1AgagrIzlrnxiTbwd2KWKcpjejDyz+?=
- =?us-ascii?Q?+Pr3drcN6Kbf5Y0=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?Jwj2fhStjTXmgqoWOre8gjJ/YtgJ4eUYqD9RWCJvtz4ul+Gmk7TSleTHIowF?=
- =?us-ascii?Q?/KvXEv9aTq9cOiAnmvfIq5Ov0Fn43Cv5OYjs1Ti4mTrkUM6ATLdqhpWLjKae?=
- =?us-ascii?Q?Cg63erm0Hbzbj7LONTrYOCGlt5OpWah+obHhwcin9snnyX1FfJsdv6o9nwbr?=
- =?us-ascii?Q?sPcWL9NSGgac3g/kbb36RDSo4oRnbmZcEJl1/YMpQpn1ko2V/8ejFltrQa7w?=
- =?us-ascii?Q?ttLhNs7IJtteItBaWQu5rILY83yYt3C/clnZDBafS6Flkcl/ExfWBYxwzlWf?=
- =?us-ascii?Q?CJqBFYmS6fsKd1uVhuYlmtofZQ5eERymDkgHPB5FMxk0SSCbSbvRmufVCwqC?=
- =?us-ascii?Q?WBlbVjIV+XLndWmvQ3EAjuW/ED1I0CABvZg/zwsm9/MhBa2LgD876hhQv2xx?=
- =?us-ascii?Q?EyzZy22xOakf9k/xUHF64qDq2WjRVtBgvtUmXdZmkHYt/XnodeX/dx5FpHCe?=
- =?us-ascii?Q?xzs1WUi2lPHE4RI2cpZFZqWzZ5qAC60BK/Y8fXehmYp+8doQ5p5oDrcnuZNy?=
- =?us-ascii?Q?alq5LPpwtzt0TY7hcfsDYD3iqsZdgFNDWYMax+G0os2mlC123Kyh6k0lnWY9?=
- =?us-ascii?Q?V3+0UCq0g7Jd56d8nCZZFGEhcwXmd5oMCCPeOrj8lRrr8Ova/z2m1AQzUWc7?=
- =?us-ascii?Q?LvlPWLetjzaqBcxrhTEJaR5IUFasGw6S+GCWtOsUgpTVv3GTrLXpRbgBjJzm?=
- =?us-ascii?Q?B4vk168Af6HPikKho2YMJ+7g33T+J6EEKTzSH9TpG2wepTYA3jlCEud9rKL4?=
- =?us-ascii?Q?5AzX7OVS7mmZeS/Cf94w/De+S87w60YXxtfCDCvVx0JaEp4V8uFFdB3waRxS?=
- =?us-ascii?Q?SGH0h+p1LHApESy+9lJ51YLHTYNH7wFPS2cuCkHO/CT6DtkD3ZIzLcCD7WXX?=
- =?us-ascii?Q?al2LondVYs5venefZ2jAOaE4fB7QdIMkN7XCM2i+aWdDD1tU8RYZG1WBdb7A?=
- =?us-ascii?Q?LBWB7u8mySEWqqsoadELq6pFzhIGH8dloxQ/I6WabFYwLywVxSusvgUSLvF7?=
- =?us-ascii?Q?mxM1WdEepDBK05L22w64YQTdENBerrgFa7g7fVSJb1jG4vEFMeMlPi16lpSV?=
- =?us-ascii?Q?6tvWs0l9z/nQE7HFPoAz45OrTfeSRWZcF7hX/Ie46yh4kk39/ITGKgxaskOs?=
- =?us-ascii?Q?1PEdE+exeGFw8O4Y0BiYmqCFglvLWlBa1xktFzuQ+U34Ptyh/Hp2ovKlzQvI?=
- =?us-ascii?Q?48+9AIMkZTBNGjDo9O1z1QlMiNX0V+ca83x8pDd1q/I4vGNVBiTiXO/DfY3D?=
- =?us-ascii?Q?6Qz53bGpNmaQsvyv5WBDvlQuK3fexS7MBNyuPm+3ijeY5F8G7A4Z0s8UeR2Q?=
- =?us-ascii?Q?pLWmMTwmfGEOFNk9pkmANQ4+5PA4Ni9kzFaaFkWhdtYhcnsBHwG876EvOKE+?=
- =?us-ascii?Q?2aaCV8N1YTEb3FXul3Ab7tb6Sl+2gtuzmddU9cAlI2c2g8Vhd+8V94bo4svp?=
- =?us-ascii?Q?PaSCg9qWhWeRNW0ql/ZtTEAb0AKGs+Bkagwj61a/0DAtoB03UgbaV+okh0zZ?=
- =?us-ascii?Q?j2Em4BSN3LbPu1qhmLwVYKew1U+qzMHER3TtV+I7tyalR3IdE3u1+GLSHzb2?=
- =?us-ascii?Q?rN75rAR26Be/8QJjemxfPPbeyuwS2H9ZeOSZuKKm?=
-X-OriginatorOrg: vivo.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 05c39632-73c8-4e1d-6b38-08ddd3524feb
-X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 12:27:44.0399
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: Z3woWYfErvhLVIuqwxyrV6Ix6icGgINtLMSORdkWzykNfgDvOXeu8zCh6iLgWOKxdw6L9HJpggfsaSJ3ju/+HA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5296
+X-Received: by 2002:a05:6e02:370c:b0:3e2:c21d:ea12 with SMTP id
+ e9e14a558f8ab-3e415e1a2ffmr150916335ab.7.1754310507813; Mon, 04 Aug 2025
+ 05:28:27 -0700 (PDT)
+Date: Mon, 04 Aug 2025 05:28:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6890a76b.050a0220.7f033.0009.GAE@google.com>
+Subject: [syzbot] [block?] INFO: rcu detected stall in blkdev_release (3)
+From: syzbot <syzbot+07d6f9c5d7633ed4a5c8@syzkaller.appspotmail.com>
+To: axboe@kernel.dk, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
-made GFP_NOWAIT implicitly include __GFP_NOWARN.
+Hello,
 
-Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
-(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
-up these redundant flags across subsystems.
+syzbot found the following issue on:
 
-No functional changes.
+HEAD commit:    a6923c06a3b2 Merge tag 'bpf-fixes' of git://git.kernel.org..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=12cc9f82580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=6f81cd75c44834c1
+dashboard link: https://syzkaller.appspot.com/bug?extid=07d6f9c5d7633ed4a5c8
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
-Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/2a74fc5b80ca/disk-a6923c06.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/9a2267e0785c/vmlinux-a6923c06.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/4dbddcb2f621/bzImage-a6923c06.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+07d6f9c5d7633ed4a5c8@syzkaller.appspotmail.com
+
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+rcu: INFO: rcu_preempt detected stalls on CPUs/tasks:
+rcu: 	Tasks blocked on level-0 rcu_node (CPUs 0-1): P6214/1:b..l
+rcu: 	(detected by 0, t=10503 jiffies, g=15065, q=4570 ncpus=2)
+task:syz.3.57        state:R  running task     stack:24424 pid:6214  tgid:6206  ppid:5858   task_flags:0x20400140 flags:0x00004006
+Call Trace:
+ <TASK>
+ context_switch kernel/sched/core.c:5357 [inline]
+ __schedule+0x1190/0x5de0 kernel/sched/core.c:6961
+ preempt_schedule_irq+0x51/0x90 kernel/sched/core.c:7288
+ irqentry_exit+0x36/0x90 kernel/entry/common.c:197
+ asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
+RIP: 0010:arch_stack_walk+0x85/0x100 arch/x86/kernel/stacktrace.c:27
+Code: c0 74 50 49 8b 8e 98 00 00 00 4c 89 f2 4c 89 fe 48 89 df e8 5d 20 09 00 8b 95 70 ff ff ff 85 d2 75 21 eb 2f 4c 89 ef 41 ff d4 <0f> 1f 00 84 c0 74 22 48 89 df e8 8c ff 08 00 8b 85 70 ff ff ff 85
+RSP: 0018:ffffc9000b376ac8 EFLAGS: 00000292
+RAX: 0000000000000001 RBX: ffffc9000b376ac8 RCX: ffffc9000b376a1c
+RDX: 1ffff9200166ed95 RSI: ffffffff81f4541a RDI: ffffc9000b376b94
+RBP: ffffc9000b376b58 R08: 0000000000000001 R09: 0000000000000000
+R10: 0000000000000001 R11: 000000000003b941 R12: ffffffff81a672b0
+R13: ffffc9000b376b88 R14: 0000000000000000 R15: ffff8880287c5a00
+ stack_trace_save+0x8e/0xc0 kernel/stacktrace.c:122
+ kasan_save_stack+0x33/0x60 mm/kasan/common.c:47
+ kasan_record_aux_stack+0xa7/0xc0 mm/kasan/generic.c:548
+ slab_free_hook mm/slub.c:2378 [inline]
+ slab_free mm/slub.c:4680 [inline]
+ kmem_cache_free+0x15a/0x4d0 mm/slub.c:4782
+ mempool_free+0x102/0x710 mm/mempool.c:580
+ bio_put_percpu_cache block/bio.c:801 [inline]
+ bio_put+0x355/0x5b0 block/bio.c:820
+ bio_endio+0x70d/0x850 block/bio.c:1651
+ blk_update_request+0x93e/0x15f0 block/blk-mq.c:989
+ blk_mq_end_request+0x5b/0x630 block/blk-mq.c:1151
+ blk_mq_complete_request block/blk-mq.c:1329 [inline]
+ blk_mq_complete_request+0x8b/0xb0 block/blk-mq.c:1326
+ nullb_complete_cmd drivers/block/null_blk/main.c:1402 [inline]
+ null_handle_cmd drivers/block/null_blk/main.c:1454 [inline]
+ null_queue_rq+0xb69/0xfd0 drivers/block/null_blk/main.c:1693
+ null_queue_rqs+0xe9/0x2f0 drivers/block/null_blk/main.c:1707
+ __blk_mq_flush_list block/blk-mq.c:2828 [inline]
+ __blk_mq_flush_list+0x97/0xc0 block/blk-mq.c:2824
+ blk_mq_dispatch_queue_requests+0x184/0x7b0 block/blk-mq.c:2873
+ blk_mq_flush_plug_list+0x1f2/0x600 block/blk-mq.c:2961
+ blk_add_rq_to_plug+0x1ca/0x540 block/blk-mq.c:1390
+ blk_mq_submit_bio+0x1a1c/0x2880 block/blk-mq.c:3212
+ __submit_bio+0x3cf/0x690 block/blk-core.c:635
+ __submit_bio_noacct_mq block/blk-core.c:722 [inline]
+ submit_bio_noacct_nocheck+0x660/0xd30 block/blk-core.c:751
+ submit_bio_noacct+0xb49/0x1eb0 block/blk-core.c:874
+ __block_write_full_folio+0x735/0xe00 fs/buffer.c:1933
+ block_write_full_folio+0x341/0x400 fs/buffer.c:2753
+ blkdev_writepages+0xb8/0x140 block/fops.c:483
+ do_writepages+0x27a/0x600 mm/page-writeback.c:2634
+ filemap_fdatawrite_wbc mm/filemap.c:386 [inline]
+ filemap_fdatawrite_wbc+0x104/0x160 mm/filemap.c:376
+ __filemap_fdatawrite_range+0xb9/0x100 mm/filemap.c:419
+ filemap_write_and_wait_range mm/filemap.c:691 [inline]
+ filemap_write_and_wait_range+0xa3/0x130 mm/filemap.c:682
+ filemap_write_and_wait include/linux/pagemap.h:68 [inline]
+ sync_blockdev block/bdev.c:260 [inline]
+ sync_blockdev block/bdev.c:256 [inline]
+ bdev_release+0x4d3/0x6d0 block/bdev.c:1126
+ blkdev_release+0x15/0x20 block/fops.c:699
+ __fput+0x3ff/0xb70 fs/file_table.c:468
+ task_work_run+0x14d/0x240 kernel/task_work.c:227
+ get_signal+0x1d1/0x26d0 kernel/signal.c:2807
+ arch_do_signal_or_restart+0x8f/0x790 arch/x86/kernel/signal.c:337
+ exit_to_user_mode_loop+0x84/0x110 kernel/entry/common.c:40
+ exit_to_user_mode_prepare include/linux/irq-entry-common.h:225 [inline]
+ syscall_exit_to_user_mode_work include/linux/entry-common.h:175 [inline]
+ syscall_exit_to_user_mode include/linux/entry-common.h:210 [inline]
+ do_syscall_64+0x3f6/0x490 arch/x86/entry/syscall_64.c:100
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f9f23f8eb69
+RSP: 002b:00007f9f24d3e038 EFLAGS: 00000246 ORIG_RAX: 0000000000000001
+RAX: 0000000000c00000 RBX: 00007f9f241b6080 RCX: 00007f9f23f8eb69
+RDX: 0000000080000000 RSI: 0000200000000000 RDI: 0000000000000008
+RBP: 00007f9f24011df1 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f9f241b6080 R15: 00007ffd71e55dc8
+ </TASK>
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+bridge0: received packet on veth0_to_bridge with own address as source address (addr:aa:ee:f7:1c:32:6f, vlan:0)
+
+
 ---
- kernel/bpf/devmap.c        | 2 +-
- kernel/bpf/local_storage.c | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
-index 482d284a1553..2625601de76e 100644
---- a/kernel/bpf/devmap.c
-+++ b/kernel/bpf/devmap.c
-@@ -865,7 +865,7 @@ static struct bpf_dtab_netdev *__dev_map_alloc_node(struct net *net,
- 	struct bpf_dtab_netdev *dev;
- 
- 	dev = bpf_map_kmalloc_node(&dtab->map, sizeof(*dev),
--				   GFP_NOWAIT | __GFP_NOWARN,
-+				   GFP_NOWAIT,
- 				   dtab->map.numa_node);
- 	if (!dev)
- 		return ERR_PTR(-ENOMEM);
-diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
-index 632d51b05fe9..c93a756e035c 100644
---- a/kernel/bpf/local_storage.c
-+++ b/kernel/bpf/local_storage.c
-@@ -165,7 +165,7 @@ static long cgroup_storage_update_elem(struct bpf_map *map, void *key,
- 	}
- 
- 	new = bpf_map_kmalloc_node(map, struct_size(new, data, map->value_size),
--				   __GFP_ZERO | GFP_NOWAIT | __GFP_NOWARN,
-+				   __GFP_ZERO | GFP_NOWAIT,
- 				   map->numa_node);
- 	if (!new)
- 		return -ENOMEM;
--- 
-2.34.1
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
