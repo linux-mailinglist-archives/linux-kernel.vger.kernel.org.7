@@ -1,131 +1,164 @@
-Return-Path: <linux-kernel+bounces-755350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DE34B1A544
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:51:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F2FF9B1A545
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:51:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB143179108
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:51:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A4020188C6BA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:52:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FA01FFC48;
-	Mon,  4 Aug 2025 14:51:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 021CC1FE45A;
+	Mon,  4 Aug 2025 14:51:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcKUtV+y"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="ZYNUHHRI"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964DD1F582E
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:51:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA0631F4612
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:51:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.177.32
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319072; cv=none; b=mbH/YC1CeCxkusEgXcI/7HSNqVOZ/kNP8DYjkzqvI++DvrwP3Z///AkjXXTXpZEU+CVZZfHCGGZU8ijMK+fqTMN4J+UCh2Qx7HKMQgRbVVJgDTikrHc8aAFQqRDg+JrgmjxufJ+0MDHOv+TQAEYqgOUHxzqaBahU2l6IZiXsF60=
+	t=1754319099; cv=none; b=KBz5FbFhoi317OlR7WjejVCp0ZvssHnpX+HKRyi+ZkzUVXkXxXGwz71iNLWJc3A/FbLHmuKQGFQ3IqBlmAlqQQonWMUyIIh/RQ6ue35RzTAPnbNLB5o5ju55ZqMPE8xnTB+oXVPAVFwChdIcC5KH3/borKlmoNHzmnXNipKiaEY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319072; c=relaxed/simple;
-	bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=d8wkls1zM9/TuXF0vuhKF8vjpNgivh5y2PJj8k4aQ/iUnMnJcTETBpgtIMDxlGlW2Uj08k5hmOYI13gbyFiJdUMwTyvBXIUtz4qIXxvfqf19nqJoJNhO1uj1c110hnvG4AVwRn5B3GqcEO5a5S8MwCCxgk1DcBYp5yibnyj8tps=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcKUtV+y; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458bece40fcso9880255e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:51:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754319069; x=1754923869; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
-        b=kcKUtV+yfAXDiYEUsnv7Mp6D8klMp2aoLQd0Gx18yJWj4sUPUIH1tf+80xBwqEjdGX
-         ZNWJp3aP3My13rb6y2VyoftHR5mZREV6w4+bY5F0g1E1dU2tv86mHYvsBtvWIgohpIG6
-         QZvGwynQhk0v44yUyYXCdaoTvZQLboM1HEHlBPuFViYcz6jV3GWs4ccREDYbKj58sr52
-         XgHPSgoc3AdjzJ7wxkprRMLtksxVsOrdjekjubtg+wmk5ZiWAm/O7JY85FWhczRV0xms
-         +j088ck56RQ1g2+RxgZU2kgeqsvmcT5Eday1TPkg0y1oKou7yx/73fBAKXPUdMxswdHK
-         HDzQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754319069; x=1754923869;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
-        b=SEQMpZ4UGMDjVjFKe6Jgp9sI34rtat8wJk13oqsP3+YoO3lU6o3XURF65WcI8P1vVt
-         HC5pzMAXTP2Sct5svSBgBSTCmXBmzSMLCIlCatzdtz2gvLIybCf5jB1XwbTwJmcFqWAL
-         Y1PYYe9sCbjNls0mhy9MtiZUbhpCPm4WrZ5kTz/q2boUNvnDEBTyoGC5Xop8T22rsYwR
-         WxtfI4madyEvZP6JkVc7kA2odj7AKEHPm3ipDZTcSvy69Z/I8KTZ9/SvKSBtVTUGNWdr
-         t65r1EuM9XPXK64PnVNKVdgBmKg9W8MoexVy9lG4YwGterWatg9IlZLgBKoo2/NfIk53
-         vG3Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWO6oQP8LqSC3VRzbWuV3K6Q/DhQnx583H0pyEYpnR1UUbAGPYBbenGL1GFnTWXUAG06X2KezmQvIe8IWg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOA/JuMeZj5mwtUNi+Wwo5VYTqYuHkLiAMJl9CK6uz+vl4YDQj
-	lSYAbzj7GCeELvDVYJ1xMgWC1hfQ1CkymKEJ1PR/Z5oKrp41HATZ+a4gI+ax1C0D0x8=
-X-Gm-Gg: ASbGnct5KKABoaJSroOGy0vnwNUblnWWf4e6YORqkKbvW5IEiBi2z7SKC/NMAAGM8GA
-	Y79ohc7MrPCvWmCj+56U8/xXl6cCqbAGd/tWJn4FZHtUtaGOygDDxEnRryesbzAd22zip2rGagw
-	272wVkV+iafUGqByV4eW/CWoJWPU7b3t9ORem2LyXN3DwE0FvfVJ3W/LjNzy3KDPRYmZYhfiuRf
-	hkD/cVw25WjTbzrKm3zazvFgplkQlpySWQVajuyJZ9YpXyJUUpU/a2cSq4zUcueWBVpWTpomzrs
-	yHVVMEtkB8Tb/1DyLuNwlqode+EJYxAR9BdWiMGFv5i0i0Oo2cb68n6q2BV7/BGOTEFBE7THx4+
-	0Um38FnS2cE2PWmtsIhFfDtXYnGQRyCMDVZjKnA==
-X-Google-Smtp-Source: AGHT+IEk/XsbxMajLX0zrOWwGT5yoALOK+d2YnoUE0SWEpt7Bdw+f5idlnSsn8XeUpvU2PaNJyVvng==
-X-Received: by 2002:a05:600c:3113:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-458b6b32b36mr78981895e9.16.1754319068717;
-        Mon, 04 Aug 2025 07:51:08 -0700 (PDT)
-Received: from smtpclient.apple ([132.68.46.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459db13fc9fsm39629925e9.7.2025.08.04.07.51.07
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Aug 2025 07:51:08 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1754319099; c=relaxed/simple;
+	bh=qyhQcT1N7iutVu9yNBwXOVTCFQcxGs1+cBdoVoBdSzk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Shfl26kCQsfEt7++5hAD35sEbWOlX/mGKKI8A7rt33mQyFgx4+fo6zcwsOyaYRXPRrbOKxS/DHA3Y1JRRsjS+9jAXCssU4wpHsy20gKng6iaZY/lHeP01t/MNvNP7tUtt2zjnh7aKJSo0JNyMNGUlehsXjiuS82sc1xUwpzencU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=ZYNUHHRI; arc=none smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574D6Wjm018172;
+	Mon, 4 Aug 2025 14:51:22 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=corp-2025-04-25; bh=17C7FOSF4nv5DZMX7LJVuuFlGZvxq
+	CMZkETDXsXXfKQ=; b=ZYNUHHRINx01eTzaQ+TA2cGENV/DdCwCQjhmI8aNldiJr
+	YF+KSCV9t5cFfZD2M+yViESw56wdHriJPfszwYjguol86CkDEGu+UmbI5jGydQ6K
+	Bd15sepWcs3bzKWVhqy5t4BemB94Z8XIYJJtnhGwsdUJiAKXV0X4PPek35U2D1C+
+	EQ3uztjIl7b/2c2ldhElAnkr2rN2q1sEjqubZUnIq6NpHVFPGGvYwJbQKKzr7n36
+	zIjJZDp3fnTBIqrwLV5yirh8XhUodXr3BVETGQ4jHKbGNJSsC7qlwuv6+sdC0z4/
+	32+rpbHwGCKgbJOmumQjrDL1Yoo040MVcI/TnXy9w==
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.appoci.oracle.com [147.154.114.232])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 489aqfjs89-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Aug 2025 14:51:22 +0000 (GMT)
+Received: from pps.filterd (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 574EURXT028937;
+	Mon, 4 Aug 2025 14:51:21 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 48a7qcqhtp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 04 Aug 2025 14:51:21 +0000
+Received: from phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 574EpKi3018772;
+	Mon, 4 Aug 2025 14:51:20 GMT
+Received: from sidhakum-ubuntu.osdevelopmeniad.oraclevcn.com (sidhakum-ubuntu.allregionaliads.osdevelopmeniad.oraclevcn.com [100.100.250.108])
+	by phxpaimrmta02.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTP id 48a7qcqhsx-1;
+	Mon, 04 Aug 2025 14:51:20 +0000
+From: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-mm@kvack.org, akpm@linux-foundation.org, willy@infradead.org,
+        vbabka@suse.cz, jannh@google.com, pfalcato@suse.de,
+        lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
+        Sidhartha Kumar <sidhartha.kumar@oracle.com>,
+        SeongJae Park <sj@kernel.org>
+Subject: [PATCH v2] mm/nommu: convert kobjsize() to folios
+Date: Mon,  4 Aug 2025 14:51:17 +0000
+Message-ID: <20250804145117.3857308-1-sidhartha.kumar@oracle.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
-Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
- performance
-From: Nadav Amit <nadav.amit@gmail.com>
-In-Reply-To: <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
-Date: Mon, 4 Aug 2025 17:50:56 +0300
-Cc: Li Qiang <liqiang01@kylinos.cn>,
- Andrew Morton <akpm@linux-foundation.org>,
- David Hildenbrand <david@redhat.com>,
- "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- "Liam R . Howlett" <Liam.Howlett@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>,
- Mike Rapoport <rppt@kernel.org>,
- Suren Baghdasarya <surenb@google.com>,
- Michal Hocko <mhocko@suse.com>
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <0F715281-1754-4D81-A71D-4AC20BC13095@gmail.com>
-References: <20250804123923.296230-1-liqiang01@kylinos.cn>
- <ab22e314-63d1-46cf-a54c-b2af8db4d97a@lucifer.local>
- <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-X-Mailer: Apple Mail (2.3826.600.51.1.1)
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_06,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 phishscore=0 suspectscore=0 spamscore=0
+ mlxlogscore=999 malwarescore=0 adultscore=0 mlxscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2505160000
+ definitions=main-2508040081
+X-Authority-Analysis: v=2.4 cv=TrvmhCXh c=1 sm=1 tr=0 ts=6890c8ea cx=c_pps
+ a=OOZaFjgC48PWsiFpTAqLcw==:117 a=OOZaFjgC48PWsiFpTAqLcw==:17
+ a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=yPCof4ZbAAAA:8 a=C5nWjwYK2z89P-DFk5UA:9
+X-Proofpoint-GUID: KnLydMSgKGKV-E2Ab43IUgMOPHA-Y8WY
+X-Proofpoint-ORIG-GUID: KnLydMSgKGKV-E2Ab43IUgMOPHA-Y8WY
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA4MSBTYWx0ZWRfXyGh9MOuz/m/7
+ mJqqyTyxT3nXL1PGuqzqmSKyzxf826aHtu1xMNCRQJWXSS1PuwqlWoQaiHcsTsIAJ5dPJPvble6
+ 4/WfkZH2W72Afon+imOVVw545pQLpIAdOHH4rV0MG6UptHIUnZY89pBeAVWrgEVqynjInhIqee4
+ 64GIDyXkndZJ69KKmpsIvzkAj39wpSx+r+6u9VJP4lB1X//HUZW9RUxN1AB2GwI79YTC+b4nq6L
+ AEqDEokiddajfndpUyVwUz3iaPiNUxAs+j8muORk6JjoDGlCtlDgQBHHYOZmSOVuIOD5p2V21GQ
+ kSPf7hzJPDo2kPAntuvPsMk96oocojRXzBuVXHcORZFmUw9A8dxWUqFVb013qPoSvvB4AC2cejL
+ tym7qmX+E0UKnV2RZND3dTB4tMoMB5VqmxpkF1khmdt1hlnyH2ER7D4EVztQy4oVPF2Pakju
 
+Simple folio conversion to remove a user of PageSlab() and
+PageCompound().
 
+Reviewed-by: SeongJae Park <sj@kernel.org>
+Signed-off-by: Sidhartha Kumar <sidhartha.kumar@oracle.com>
+---
+v1 -> v2:
+	change "compound folio" to "large folio" in comment per SJ
 
-> On 4 Aug 2025, at 16:59, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> =
-wrote:
->=20
-> OK,
->=20
-> So I hacked -fopt-info-inline-all into the mm/ Makefile in a rather =
-quick and
-> dirty way and it seems some stuff gets inlined locally, but we're =
-mostly hitting
-> the '--param max-inline-insns-single limit reached' limit here.
+ mm/nommu.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Yes, it does require further investigation. My point is that sprinkling
-__always_inline is a slippery slope. You start with putting =
-__always_inline on
-zap_present_folio_ptes (as currently done), and then the caller becomes =
-expensive.
-
-Now you noticed that the caller to zap_present_folio_ptes is not getting =
-inlined,
-which is not surprising because it got the cost of the always-inlined =
-callee,
-so you put __always_inline there, and so on.
+diff --git a/mm/nommu.c b/mm/nommu.c
+index 07504d666d6a..75548fae28f7 100644
+--- a/mm/nommu.c
++++ b/mm/nommu.c
+@@ -64,7 +64,7 @@ const struct vm_operations_struct generic_file_vm_ops = {
+  */
+ unsigned int kobjsize(const void *objp)
+ {
+-	struct page *page;
++	struct folio *folio;
+ 
+ 	/*
+ 	 * If the object we have should not have ksize performed on it,
+@@ -73,22 +73,22 @@ unsigned int kobjsize(const void *objp)
+ 	if (!objp || !virt_addr_valid(objp))
+ 		return 0;
+ 
+-	page = virt_to_head_page(objp);
++	folio = virt_to_folio(objp);
+ 
+ 	/*
+ 	 * If the allocator sets PageSlab, we know the pointer came from
+ 	 * kmalloc().
+ 	 */
+-	if (PageSlab(page))
++	if (folio_test_slab(folio))
+ 		return ksize(objp);
+ 
+ 	/*
+-	 * If it's not a compound page, see if we have a matching VMA
++	 * If it's not a large folio, see if we have a matching VMA
+ 	 * region. This test is intentionally done in reverse order,
+ 	 * so if there's no VMA, we still fall through and hand back
+-	 * PAGE_SIZE for 0-order pages.
++	 * PAGE_SIZE for 0-order folios.
+ 	 */
+-	if (!PageCompound(page)) {
++	if (!folio_test_large(folio)) {
+ 		struct vm_area_struct *vma;
+ 
+ 		vma = find_vma(current->mm, (unsigned long)objp);
+@@ -100,7 +100,7 @@ unsigned int kobjsize(const void *objp)
+ 	 * The ksize() function is only guaranteed to work for pointers
+ 	 * returned by kmalloc(). So handle arbitrary pointers here.
+ 	 */
+-	return page_size(page);
++	return folio_size(folio);
+ }
+ 
+ void vfree(const void *addr)
+-- 
+2.43.0
 
 
