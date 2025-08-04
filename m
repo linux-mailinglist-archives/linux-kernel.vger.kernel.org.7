@@ -1,158 +1,142 @@
-Return-Path: <linux-kernel+bounces-755267-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755270-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22B5AB1A3D3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:50:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87056B1A3DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:52:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE6583A62AB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:50:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6567178AC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:52:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAF0526B2AC;
-	Mon,  4 Aug 2025 13:49:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1DE7F26D4EE;
+	Mon,  4 Aug 2025 13:51:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LVsw/QWm"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="b+xRMoLx"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DE4914A4CC;
-	Mon,  4 Aug 2025 13:49:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3C926CE10;
+	Mon,  4 Aug 2025 13:51:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754315396; cv=none; b=rFm2idlVehfpyXVaQFhjNcmWuZnDm3GJS5ALcMK2JnFT7vmTHS1pmRH2R915hVYpPCBMTKKZ++Sw5wDgNWCCQrt13fQmGfsjLXa45bFEYah0aJFClAEhY0PKIpoqr+0vWoWjKE3MIX7Lq71+/ga5HExpcUbSt5LwsGvv07fPOic=
+	t=1754315509; cv=none; b=aIUAnZEMfgz2EkxDtPIwwAD91TN7oLYtsa5OrpaT5wllWHjCxSJbgwOARH6EmWlwnusRyx6I9WnK3WqxtWBLXWM75ysw86OGuLj/bq8CIQx2i8wxiP1yYaiv5A+VKYxlFVcrcdOPW3+mEle2K1xzi0j9BnvgYdw3H4GKIAx3ov4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754315396; c=relaxed/simple;
-	bh=srs53v0xLtntg6cfrqV4BsYGkqhos5XR/fUU7n2qfLM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M5b6ATw8ci0sv1f7JqjlJnRKwAatGxCtkdtziiJXo6RdA9hRLahXFF/whGfsHBV5/DCUPloH1V/crM4OypRQkSXuRUPdAAsczXCWzwkIOXhq2Gid3q4ppqbOfb0VJ7inKI4e/pOjakKh0YfxUPiN7ipqEYaq1fLTVCOI9TMkY6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LVsw/QWm; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 3FBCE205AF;
-	Mon,  4 Aug 2025 13:49:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754315391;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=33C/cbbkFmBZEeMpAPusxnbTMNnhzWiivF3NeeXbwaQ=;
-	b=LVsw/QWmBTRTbTaooY8OnHQGNxXtUmmo6v2YWzKw31V5RczfmrOkRZ4Bg5AzK69ZJPP3CO
-	efWANVtXHkcvmFzA/L/2olQwkjVVP1tLcZw2oHRlQH3VPKcgcMhQYkTSikD7sqHIPvWjAf
-	YbVouWp4BlIgk+vhlCPc5jfGlziUsNos286bNNxObY+TQlhqQf4lD5egqj+lFZiuAuq2dt
-	cSFFUhV25DvgSfFyIvXUHd0lACUzOUMcOjHV697dDEwF9IiiI92KjwGreFuTULR0eP3BiP
-	iC4H8DOXMbvHrk6/Ly803rdONV25L/DPTPpgv3WDaIgC9UDqrEJwEGea4GfueQ==
-Date: Mon, 4 Aug 2025 15:49:49 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
- King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v10 07/15] net: phy: Introduce generic SFP
- handling for PHY drivers
-Message-ID: <20250804154949.49cbed6f@fedora.home>
-In-Reply-To: <762dd1dd-0170-4f7d-b418-1997c48e7f95@lunn.ch>
-References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
-	<20250722121623.609732-8-maxime.chevallier@bootlin.com>
-	<762dd1dd-0170-4f7d-b418-1997c48e7f95@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754315509; c=relaxed/simple;
+	bh=wAwo3NXJtK1iLZDeAPP1KYlXNSvm8s8ML4jwwp6cXKs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I2ZtPBTLU4lbH0mlVA8eGPuehU8qGWswa35UiO8xMLQQO4AetKSLHVp4OZCwqCJzQrD5dXDz9jkyoVqxBZgPx1WBLSnz9cGNCTMBoAfg/P2pJEFsuS3Hvuzw8rjGumWjzvwP9CMuT7r13tjGmjS2YoqQ3D8FAwr8wrYHeF+U5Wc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=b+xRMoLx; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754315508; x=1785851508;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=wAwo3NXJtK1iLZDeAPP1KYlXNSvm8s8ML4jwwp6cXKs=;
+  b=b+xRMoLxAaTr6iCY/T+4PNxwtEO1rbrwRhPY6Yf+PueavWZHtCcXBrui
+   z46dSKj/Q0c5w6g9ozLCFgC2h10tOaDg4KxZUzDh20qyBTjcGZIpJzGjg
+   f1FighVKjTMd5fp2kW5QhtEGnHrhhl9A2kY5u1GTE/sQvx4JBFvFjkO65
+   V1wfl+1M0bKCzg1VdgD/ml9j/6NZzdAyO8xjhCoAyM3UATnTSQDZ9hei7
+   +rbfLGzeNbJEyBW2gJlmzSB58k7TY9Kn76bxveflqjmKkN22iC1efrl/q
+   w7P6j7378l2HSlpmXCjZTQV9+Ii5tcf7sbNnNxNe/FBq2QEiEokHz44Vq
+   w==;
+X-CSE-ConnectionGUID: p7ztlKNJTTK2aD9UmE3y3g==
+X-CSE-MsgGUID: 8iDxkyQSRxixRPHq6zPqXw==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="56448966"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="56448966"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 06:50:50 -0700
+X-CSE-ConnectionGUID: DcabsRD4Tm63MNlw66PDaQ==
+X-CSE-MsgGUID: rjakUT2wQfqFDVRFT7qd+Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="164494502"
+Received: from linux.intel.com ([10.54.29.200])
+  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 06:50:48 -0700
+Received: from [10.124.223.90] (unknown [10.124.223.90])
+	by linux.intel.com (Postfix) with ESMTP id 02EB520B571C;
+	Mon,  4 Aug 2025 06:50:30 -0700 (PDT)
+Message-ID: <9cd9f4cf-72ab-40f1-9ead-3e6807b4d474@linux.intel.com>
+Date: Mon, 4 Aug 2025 06:50:30 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
+ pci_print_aer()
+To: Breno Leitao <leitao@debian.org>,
+ Mahesh J Salgaonkar <mahesh@linux.ibm.com>,
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>,
+ Jon Pan-Doh <pandoh@google.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org,
+ linux-kernel@vger.kernel.org, kernel-team@meta.com
+References: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
+Content-Language: en-US
+From: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+In-Reply-To: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddvgeehucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
- hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
-X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Sat, 26 Jul 2025 23:05:33 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
 
-> On Tue, Jul 22, 2025 at 02:16:12PM +0200, Maxime Chevallier wrote:
-> > There are currently 4 PHY drivers that can drive downstream SFPs:
-> > marvell.c, marvell10g.c, at803x.c and marvell-88x2222.c. Most of the
-> > logic is boilerplate, either calling into generic phylib helpers (for
-> > SFP PHY attach, bus attach, etc.) or performing the same tasks with a
-> > bit of validation :
-> >  - Getting the module's expected interface mode
-> >  - Making sure the PHY supports it
-> >  - Optionnaly perform some configuration to make sure the PHY outputs  
-> 
-> Too man n's.
-> 
-> > +static int phy_sfp_module_insert(void *upstream, const struct sfp_eeprom_id *id)
-> > +{
-> > +	struct phy_device *phydev = upstream;
-> > +	struct phy_port *port = phy_get_sfp_port(phydev);  
-> 
-> Strictly speeding, this is not allowed, reverse Christmas tree...
-> 
-> The assignment needs to move into the body of the function.
-> 
-> > +	if (linkmode_empty(sfp_support)) {
-> > +		dev_err(&phydev->mdio.dev, "incompatible SFP module inserted\n");
-> > +		return -EINVAL;
-> > +	}
-> > +
-> > +	iface = sfp_select_interface(phydev->sfp_bus, sfp_support);
-> > +
-> > +	/* Check that this interface is supported */
-> > +	if (!test_bit(iface, port->interfaces)) {
-> > +		dev_err(&phydev->mdio.dev, "incompatible SFP module inserted\n");  
-> 
-> Maybe make this string different to the previous one, so somebody
-> debugging issues knows which happened?
-> 
-> > +/**
-> > + * phy_get_sfp_port() - Returns the first valid SFP port of a PHY
-> > + * @phydev: pointer to the PHY device to get the SFP port from
-> > + *
-> > + * Returns: The first active SFP (serdes) port of a PHY device, NULL if none
-> > + * exist.
-> > + */
-> > +struct phy_port *phy_get_sfp_port(struct phy_device *phydev)
-> > +{
-> > +	struct phy_port *port;
-> > +
-> > +	list_for_each_entry(port, &phydev->ports, head)
-> > +		if (port->active && port->is_mii)  
-> 
-> Naming is hard, but this actually returns the first mii port.  Is
-> there a clear 1:1 mapping? I don't think i've ever seen it, but such a
-> SERDES port could be connected to a Ethernet switch? And when you get
-> further, add support for a MUX, could it be connected to a MUX?
+On 8/4/25 2:17 AM, Breno Leitao wrote:
+> Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
+> when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
+> calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
+> does not rate limit, given this is fatal.
 
-Hmmm correct, that's a bit fragile. With a mux or a switch that could
-be different indeed. There may even be PHYs with 2 MII interfaces one
-day ?
+Why not add it to pci_print_aer() ?
 
-So yes it's most of a time a 1:1 mapping but it doesn't have to, I'll
-see how I can make that more reliable...
+>
+> This prevents a kernel crash triggered by dereferencing a NULL pointer
+> in aer_ratelimit(), ensuring safer handling of PCI devices that lack
+> AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
+> which already performs this NULL check.
 
-Thanks for the review,
+Is this happening during the kernel boot ? What is the frequency and steps
+to reproduce? I am curious about why pci_print_aer() is called for a PCI device
+without aer_info. Not aer_info means, that particular device is already released
+or in the process of release (pci_release_dev()). Is this triggered by using a stale
+pci_dev pointer?
 
-Maxim
+>
+> Signed-off-by: Breno Leitao <leitao@debian.org>
+> Fixes: a57f2bfb4a5863 ("PCI/AER: Ratelimit correctable and non-fatal error logging")
+> ---
+>   drivers/pci/pcie/aer.c | 3 +++
+>   1 file changed, 3 insertions(+)
+>
+> diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+> index 70ac661883672..b5f96fde4dcda 100644
+> --- a/drivers/pci/pcie/aer.c
+> +++ b/drivers/pci/pcie/aer.c
+> @@ -786,6 +786,9 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
+>   
+>   static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
+>   {
+> +	if (!dev->aer_info)
+> +		return 1;
+> +
+>   	switch (severity) {
+>   	case AER_NONFATAL:
+>   		return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
+>
+> ---
+> base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
+> change-id: 20250801-aer_crash_2-b21cc2ef0d00
+>
+> Best regards,
+> --
+> Breno Leitao <leitao@debian.org>
+>
+-- 
+Sathyanarayanan Kuppuswamy
+Linux Kernel Developer
 
 
