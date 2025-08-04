@@ -1,140 +1,115 @@
-Return-Path: <linux-kernel+bounces-754792-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8423DB19CCE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:39:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92A56B19CDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:44:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AE6F517823C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:39:34 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F2387A4198
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:42:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECE9823A9B3;
-	Mon,  4 Aug 2025 07:39:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2832E23A989;
+	Mon,  4 Aug 2025 07:44:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="jyBXwr88"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="xXVHwg+Q"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05F442E3705
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6EBC2E3705;
+	Mon,  4 Aug 2025 07:44:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754293152; cv=none; b=Hib8b2ASehgYN4J0C54gUh2pr1VS7QSWo21p+xxYQk0PUX/0oBrAPTH+/+18mTwi5Ggq3Ao3RBrg3AJtt/IZ5pms85Sfk1vQLI3zK/dYcwhVECtdjK3xI/yLHFe7E9yxZxVH7slHeL4qOXV1RCyVEk+U/+yJD8BfJ9BqTXkyVwQ=
+	t=1754293454; cv=none; b=h+RRgNzsEPOhA5nx4LShP5dzuVOeWQBHR/HeDCWVXDu5BW84+ZVQeP0qBcCLjExvMFTyuAB78JnFM0cC1WuEdyYgDmOQjZZllOEnIBdBVtWf9WspcimFEmHprtojHXYmaqDeMhanNnivMMuFrwdAqEN842Welu3a2nIu4BBg52E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754293152; c=relaxed/simple;
-	bh=raGA8lnbIPGmvURhE76kqB4Q7juXLPvbjYFbs0DAzjQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=c5xWEncm41z0BykSfhquHxoCyPMnrDDyyqEIzni72qUUierhhsio28SPv0m6GL+nQpwD8BhJsiq57J/iQH+S70hQAulJ7qPn0LObQ32LTdSedAe6CojK2iNVwU539LmAaZ1jiEnjmMNf9gM7MN4SwqJOWwwI3xYNeKAtdGXEOzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=jyBXwr88; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1754293141; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=VLUQ2YmpOeF4iBTFxFURlyjSpp1p8WA2sdCUCNZyHcw=;
-	b=jyBXwr884ScuBitJHxzRlF7WeFLpW3erzhp9OSR/urs0Al506uJuOajo0hM8fPa1knHTU2u4tJmpVF8vEeVyOMdhuvT8ewsX48zW4ZbJWw0SaSB00jfOGuGxGQRqXC2MHws6LbmuC8xF/chLFAXBq/nc7ixT61lkhwQlGqGXDLw=
-Received: from 30.21.176.60(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0Wkwpm7d_1754293140 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Mon, 04 Aug 2025 15:39:00 +0800
-Message-ID: <4c035c88-c268-40fc-9930-b5cc73fd49fb@linux.alibaba.com>
-Date: Mon, 4 Aug 2025 15:38:59 +0800
+	s=arc-20240116; t=1754293454; c=relaxed/simple;
+	bh=2t/0ocP7d5snl03JgkYcYu14oN2fOrarqYky++kXOoc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=RDbzebpk9EbPExW44wW3ylzRaxQNksfGxSa5jbiUDEVphUpL/eV2TITE8Vctjs8fLbjZfF3yu6IqUokdZNfC2zWiRTWJr+suKQMv+ZugAaJ20ACpDzt15zaCxM2Tcf66RV0tK5h6h8jd1JvhgW5UQ05kNRhHWV7l3es/MX5yoEM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=xXVHwg+Q; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1754293453; x=1785829453;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2t/0ocP7d5snl03JgkYcYu14oN2fOrarqYky++kXOoc=;
+  b=xXVHwg+Qn1Go+6JcS9eE+Wvg+XW3h7yobqQHaHBv/JLqNxmREX7aZRBr
+   0w3NDnGev3MKsJYWzL5aNqCxyNP30+FxZdab+hy4lPm3VNbIoR33fRMbT
+   O8OX7TsZz8eZS6wNWJS5ddfV76oaGIepE06mts1Pnxg1ISOrX3+zNCi1/
+   C72HwmkD1K88/VTCXCLNKKlD8tGxMgiR/3eqpy0VUfSXraOms8YR8huqc
+   zHo/+W341OkxGYKbFyUgPF2P1GsY4hs2qnBhd/xR1peq11AW3ibRRUdiU
+   fv0ZvB1NWkORPeSbnEhChpEI2xvM5lfPYNcz7T+WcWp5m27R6pbyu/erD
+   w==;
+X-CSE-ConnectionGUID: Msm8Gc5CRDqR4bZJ2S2GaQ==
+X-CSE-MsgGUID: rQtYiwLVRueamVPBUlEJNg==
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="44241110"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa4.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 04 Aug 2025 00:43:02 -0700
+Received: from chn-vm-ex04.mchp-main.com (10.10.85.152) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.44; Mon, 4 Aug 2025 00:42:45 -0700
+Received: from localhost (10.10.85.11) by chn-vm-ex04.mchp-main.com
+ (10.10.85.152) with Microsoft SMTP Server id 15.1.2507.44 via Frontend
+ Transport; Mon, 4 Aug 2025 00:42:45 -0700
+Date: Mon, 4 Aug 2025 09:39:40 +0200
+From: Horatiu Vultur <horatiu.vultur@microchip.com>
+To: Vladimir Oltean <olteanv@gmail.com>
+CC: <andrew@lunn.ch>, <hkallweit1@gmail.com>, <linux@armlinux.org.uk>,
+	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
+	<pabeni@redhat.com>, <richardcochran@gmail.com>, <viro@zeniv.linux.org.uk>,
+	<quentin.schulz@bootlin.com>, <atenart@kernel.org>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net] phy: mscc: Fix timestamping for vsc8584
+Message-ID: <20250804073940.4wgpstdm53atrbbq@DEN-DL-M31836.microchip.com>
+References: <20250731121920.2358292-1-horatiu.vultur@microchip.com>
+ <20250731121920.2358292-1-horatiu.vultur@microchip.com>
+ <20250801112648.4hm2h6n3b64guagi@skbuf>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] binfmt_elf: remove the 4k limitation of program header
- size
-To: Ismael Luceno <ismael@iodev.co.uk>
-Cc: Kees Cook <kees@kernel.org>, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, zhourundong.zrd@linux.alibaba.com
-References: <xd6zp5ytq6iakxkqoqqtseomgu5oohau4ynj3xbo7ejohpv7dv@skp2v7awzab4>
- <aI2KQaWpPLSAqdXg@pirotess> <202508021029.7CC8B334@keescook>
- <aI7zDXb2VpuaHHYi@pirotess>
- <6653242a-5b08-48ff-a126-9e9367633420@linux.alibaba.com>
- <aJBfDKr1-7L7GGgH@pirotess>
-From: Yin Fengwei <fengwei_yin@linux.alibaba.com>
-In-Reply-To: <aJBfDKr1-7L7GGgH@pirotess>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Disposition: inline
+In-Reply-To: <20250801112648.4hm2h6n3b64guagi@skbuf>
 
-
-
-在 2025/8/4 15:19, Ismael Luceno 写道:
-> On 04/Aug/2025 10:12, Yin Fengwei wrote:
->>
->>
->> 在 2025/8/3 13:28, Ismael Luceno 写道:
->>> On 02/Aug/2025 10:29, Kees Cook wrote:
->>>> On Sat, Aug 02, 2025 at 05:47:13AM +0200, Ismael Luceno wrote:
->>>>> On Sat, Jul 19, 2025 at 17:17:09 +0800, YinFengwei wrote:
->>>>>> On Thu, Jul 17, 2025 at 04:31:50PM +0800, Kees Cook wrote:
->>>>>>> On Thu, 17 Jul 2025 19:01:08 +0800, fengwei_yin@linux.alibaba.com wrote:
->>>>>>>> We have assembly code generated by a script. GCC successfully compiles
->>>>>>>> it. However, the kernel cannot load it on an ARM64 platform with a 4K
->>>>>>>> page size. In contrast, the same ELF file loads correctly on the same
->>>>>>>> platform with a 64K page size.
->>>>>>>>
->>>>>>>> The root cause is the Linux kernel's ELF_MIN_ALIGN limitation on the
->>>>>>>> program headers of ELF files. The ELF file contains 78 program headers
->>>>>>>> (the script inserts many holes when generating the assembly code). On
->>>>>>>> ARM64 with a 4K page size, the ELF_MIN_ALLIGN enforces a maximum of 74
->>>>>>>> program headers, causing the ELF file to fail. However, with a 64K page
->>>>>>>> size, the ELF_MIN_ALIGN is relaxed to over 1,184 program headers, allowing
->>>>>>>> the file to run correctly.
->>>>>>>>
->>>>>>>> [...]
->>>>>>>
->>>>>>> Applied to for-next/execve, thanks!
->>>>>> Cook, thanks a lot.
->>>>>>
->>>>>> Regards
->>>>>> Yin, Fengwei
->>>>>>
->>>>>>>
->>>>>>> [1/1] binfmt_elf: remove the 4k limitation of program header size
->>>>>>>         https://git.kernel.org/kees/c/8030790477e8
->>>>>>>
->>>>>>> Take care,
->>>>>
->>>>> Hi,
->>>>>
->>>>> I noticed this removal and wonder whether it could be a problem on
->>>>> smaller platforms.
->>>>>
->>>>> IIRC that code has been there since ELF support was added in one
->>>>> form or another; and the idea behind it was to simplify the code
->>>>> by ensuring no cross-page reads could happen, as these could cause
->>>>> undefined behaviours or read abort exceptions.
->>>>
->>>> I didn't see a place where that would happen -- the reads aren't done on
->>>> a single page. If you see something that I missed, please let me know!
->>>
->>> The offset to the phdrs can point anywhere and the entries are
->>> arbitrarily sized, thus it can be unaligned, so we can be potentially
->>> reading at an entry right between two pages.
->>
->> The read buffer are managed in kernel. Why cross-page read can cause
->> undefined behaviors or read abort?
->>
->> Does smaller platforms have special behavior in this situation? Like
->> can't do cross-page read against the buffer allocated by kmalloc?
+The 08/01/2025 14:26, Vladimir Oltean wrote:
+> EXTERNAL EMAIL: Do not click links or open attachments unless you know the content is safe
 > 
-> Pretty much anything MMU-less will fault at cross-page multi-byte reads.
-OK.
+> Hi Horatiu,
+
+Hi Vladimir,
 
 > 
-> I'm not aware of any system with an MMU doing that but, I think on
-> RISC-V it's implementation-defined.
-But resitriction of 4K can NOT prevent cross-page multi-byte reads as
-well. Say if the phdrs is on 2K offset, the size of entries is
-larger than 2K. Right?
+> On Thu, Jul 31, 2025 at 02:19:20PM +0200, Horatiu Vultur wrote:
+> > diff --git a/drivers/net/phy/mscc/mscc.h b/drivers/net/phy/mscc/mscc.h
+> > index 6a3d8a754eb8d..7281eea2395bd 100644
+> > --- a/drivers/net/phy/mscc/mscc.h
+> > +++ b/drivers/net/phy/mscc/mscc.h
+> > @@ -362,6 +362,13 @@ struct vsc85xx_hw_stat {
+> >       u16 mask;
+> >  };
+> >
+> > +struct vsc8531_skb {
+> > +     struct list_head list;
+> > +
+> > +     struct sk_buff *skb;
+> > +     u32 ns;
+> > +};
+> 
+> Can you map a typed structure over the skb->cb area to avoid allocating
+> this encapsulating structure over the sk_buff?
 
-Regards
-Yin, Fengwei
+I think it is a great idea. I can map struct vsc8531_skb directly on
+skb->cb and then drop the allocation.
 
+-- 
+/Horatiu
 
