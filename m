@@ -1,96 +1,390 @@
-Return-Path: <linux-kernel+bounces-755467-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755470-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38269B1A6A5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:54:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2C4B1A6A4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DA529624ADF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EE8918A1FDA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80D8627E7E1;
-	Mon,  4 Aug 2025 15:47:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1433326F44D;
+	Mon,  4 Aug 2025 15:48:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="BrJZy/f2"
-Received: from 003.mia.mailroute.net (003.mia.mailroute.net [199.89.3.6])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="XgijLtNN"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2679327464F;
-	Mon,  4 Aug 2025 15:47:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.3.6
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754322441; cv=none; b=EpYZP7waknsa77Bd1oKbyUpVpYJPcVryuToYjtXRsHY4XJCxZjMu/FQMbce0ArmQZS3KB0f/xRh8HGYJ1+t6luGsj+XEwGSYSLTx5SHlnU6+8Izov/Af03vkondfrebTMRnNuQFlUrbRTg8AZCRzSon0PvVko650/bVnJCqElBE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754322441; c=relaxed/simple;
-	bh=7ITKNxyhyM+XiYJjTDaSLuVW+z1B1zw/mgNG+UlmUm0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AoF7XzWBmGat9QKroVtXnZ7DkGAONsE1F0QXCNTaJnjWB3pvdj3SVaHHio14kPPBik3xDEgambOPewLyc/TK6XDf+6csmZdAl6o7TYNdjURfRGZoSrcNxCqNQVVzNGEqb3FerTPU39pozsbuGI660vzratA5Mim58r9G5UzZ91w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=BrJZy/f2; arc=none smtp.client-ip=199.89.3.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 003.mia.mailroute.net (Postfix) with ESMTP id 4bwgsr6XPCzlgqyC;
-	Mon,  4 Aug 2025 15:47:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1754322430; x=1756914431; bh=8h6LkW+9Y/F+yA58YI9n4Cyy
-	7CwoIORIsoVtJY8sZck=; b=BrJZy/f2W9S26puuWGJtOc0S4JT7gYpTpbz6LQFw
-	EzsuBjc1Ad1y8wJ9+m2q9kRhY15Wpu54KFhO7zDm0s8Jc/HZMmvw3MYIRdq4QEED
-	hHCQkCJPVlrJPgCukoqbkJ8c5J2KUAIoQQ4e+Y2QAPjOKWo+1zGq1dHBiMd2vBQI
-	SAZg+JqslaJn9aQaXLF49D66+S3pveubkxVF7/cAlkYNAHHilqHtYIy+6gCTgN/J
-	tfDMw9mCGnQ1R33LS+DCmYagtNsb7rsWUhWaqYmFZNgES/Aye3nzUdyhCFlr05k1
-	JCerje6hTVyhU0d5ZtKzz5F38HwRFRZGA5/zno+vAFsc+g==
-X-Virus-Scanned: by MailRoute
-Received: from 003.mia.mailroute.net ([127.0.0.1])
- by localhost (003.mia [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id DstBBlAYGuUv; Mon,  4 Aug 2025 15:47:10 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 003.mia.mailroute.net (Postfix) with ESMTPSA id 4bwgsd3GVpzlgqy6;
-	Mon,  4 Aug 2025 15:46:59 +0000 (UTC)
-Message-ID: <c9cd3d39-37ec-42cf-9458-e3242fe1f302@acm.org>
-Date: Mon, 4 Aug 2025 08:46:58 -0700
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3B6EC2749CF;
+	Mon,  4 Aug 2025 15:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754322489; cv=pass; b=UJY4CRLOrbtCDzBfLlmE7dRTPxyzuwyYMOrotygxDShYBG2QPPQS0I63M6lol0ywIHUrjOQ+bXn8wZqbWr6YGQipYtyPuv9JE2rcSOl9p0I16sPndbTIMT+aneTbjhCnmg8FiTUOhrlsAq7ATR3IrVF4qda41yiHPTMel0m7hHA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754322489; c=relaxed/simple;
+	bh=p4d041FgfgU94ezFid9ShjSvosK8Jjvw/YWL9Msvrz8=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=QE4xmkAgyQtY8nZ3J9J5Q2cmJ9tF1a1riJo0v5E6XT0MuYz+VbLDsBsINhjwAL3i4OBjySKUn/TZp9meNWR66IDDY902GtyH4mIA4ifXTQ5qeoj34HUIjzP9lVdFx7EqakwNiKjQApUAgRXfkN+8V3I/Qe+BbWPLf2WODcUXhdc=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=XgijLtNN; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1754322468; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=R9bQUDhJuw93pt2lYWV7zKW73ZaECvForTb7nHCT/m+ui8reGDK3124eYUwnO+RMilRpyz1KLja8exZcA6Nkob4DV2NZ7b50uSbIcYyKuYUGc3IqI4hgmM5br2CVzR89vw1SbPh9YcI72/Keb5HkZyZRk52Z3QzH7ZB7IbZG9GU=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1754322468; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=0T/RWsewXHZeN+3s5jOGwdrn4Ucl16ES56csWxcyca0=; 
+	b=PHmEfV98ITLTwaj2bGYFM2stFz09+amaLLFKE4kFsZu7g8OwKszNy3KzYcYfIgm39jomDD3Y93shqnNmAs+hYmr8gKC54CMelQCbi+J14y1CRDtVf7lQl6PlnuxK2otqWxEHY2Sz6dKkmkoaaFSMHq3yKGAjtY0FMqhpNqGU248=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1754322468;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=Content-Type:Mime-Version:Subject:Subject:From:From:In-Reply-To:Date:Date:Cc:Cc:Content-Transfer-Encoding:Message-Id:Message-Id:References:To:To:Reply-To;
+	bh=0T/RWsewXHZeN+3s5jOGwdrn4Ucl16ES56csWxcyca0=;
+	b=XgijLtNNP2Nt9IVKCCn92JukTCCm66TrUmjwBxHDWqvN4GPjWhrOIkcwFVcwiav1
+	qFponwBv8RndLLOveFHwxWkmGBb5HnPbZZz4zlXoxAtfsOb5jv1Rb0SxZtEKU3XATUc
+	QABD4hrXkez2yT+gMJvIy/dAEuI9iCxLupEjKMsM=
+Received: by mx.zohomail.com with SMTPS id 1754322463977676.6869364729142;
+	Mon, 4 Aug 2025 08:47:43 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device
- in reset on suspend
-To: Bharat Uppal <bharat.uppal@samsung.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, James.Bottomley@HansenPartnership.com,
- martin.petersen@oracle.com, alim.akhtar@samsung.com, avri.altman@wdc.com,
- linux-samsung-soc@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com,
- Nimesh Sati <nimesh.sati@samsung.com>
-References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
- <20250804113643.75140-1-bharat.uppal@samsung.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20250804113643.75140-1-bharat.uppal@samsung.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH v2 2/4] rust: add `Alignment` type
+From: Daniel Almeida <daniel.almeida@collabora.com>
+In-Reply-To: <20250804-num-v2-2-a96b9ca6eb02@nvidia.com>
+Date: Mon, 4 Aug 2025 12:47:27 -0300
+Cc: Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>,
+ Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>,
+ =?utf-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>,
+ Benno Lossin <lossin@kernel.org>,
+ Andreas Hindborg <a.hindborg@kernel.org>,
+ Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>,
+ Danilo Krummrich <dakr@kernel.org>,
+ linux-kernel@vger.kernel.org,
+ rust-for-linux@vger.kernel.org,
+ nouveau@lists.freedesktop.org
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <4A13D612-F5A6-4D7C-A2FC-2FF54646D4E4@collabora.com>
+References: <20250804-num-v2-0-a96b9ca6eb02@nvidia.com>
+ <20250804-num-v2-2-a96b9ca6eb02@nvidia.com>
+To: Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
+X-ZohoMailClient: External
 
-On 8/4/25 4:36 AM, Bharat Uppal wrote:
-> +static int fsd_ufs_suspend(struct exynos_ufs *ufs)
-> +{
-> +	exynos_ufs_gate_clks(ufs);
-> +	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-> +	return 0;
+Hi Alex,
+
+> On 4 Aug 2025, at 08:45, Alexandre Courbot <acourbot@nvidia.com> =
+wrote:
+>=20
+> Alignment operations are very common in the kernel. Since they are
+> always performed using a power of two value, enforcing this invariant
+> through a dedicated type leads to less bugs and can lead to improved
+> generated code.
+>=20
+> Introduce the `Alignment` type, inspired by the nightly Rust feature =
+of
+> the same name. It provides the same interface as its upstream =
+namesake,
+> while extending it with `align_up` and `align_down` operations that =
+are
+> usable on any integer type.
+>=20
+> Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
+> ---
+> rust/kernel/lib.rs |   1 +
+> rust/kernel/ptr.rs | 213 =
++++++++++++++++++++++++++++++++++++++++++++++++++++++
+> 2 files changed, 214 insertions(+)
+>=20
+> diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> index =
+2955f65da1278dd4cba1e4272ff178b8211a892c..0e66b55cde66ee1b274862cd78ad465a=
+572dc5d9 100644
+> --- a/rust/kernel/lib.rs
+> +++ b/rust/kernel/lib.rs
+> @@ -100,6 +100,7 @@
+> pub mod platform;
+> pub mod prelude;
+> pub mod print;
+> +pub mod ptr;
+> pub mod rbtree;
+> pub mod revocable;
+> pub mod security;
+> diff --git a/rust/kernel/ptr.rs b/rust/kernel/ptr.rs
+> new file mode 100644
+> index =
+0000000000000000000000000000000000000000..6d941db58944619ea5b05676af06981a=
+3ceaaca8
+> --- /dev/null
+> +++ b/rust/kernel/ptr.rs
+> @@ -0,0 +1,213 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +
+> +//! Types and functions to work with pointers and addresses.
+> +
+> +use core::fmt::Debug;
+> +use core::num::NonZero;
+> +use core::ops::{BitAnd, Not};
+> +
+> +use crate::build_assert;
+> +use crate::num::CheckedAdd;
+> +
+> +/// Type representing an alignment, which is always a power of two.
+> +///
+> +/// It be used to validate that a given value is a valid alignment, =
+and to perform masking and
+> +/// align down/up operations. The alignment operations are done using =
+the [`align_up!`] and
+
+Nit: I=E2=80=99d go with =E2=80=9Calign up or align down operations=E2=80=9D=
+ instead of using a slash.
+
+> +/// [`align_down!`] macros.
+> +///
+> +/// Heavily inspired by the [`Alignment`] nightly feature from the =
+Rust standard library, and
+> +/// hopefully to be eventually replaced by it.
+
+It=E2=80=99s a bit hard to parse this.
+
+Also, I wonder if we should standardize some syntax for TODOs so we can =
+parse
+them using a script? This way we can actually keep track and perhaps =
+pipe them
+to our GitHub page as =E2=80=9Cgood first issues=E2=80=9D or just =
+regular issues.
+
+I guess a simple "// TODO: =E2=80=9C here will do, for example.
+
+> +///
+> +/// [`Alignment`]: https://github.com/rust-lang/rust/issues/102070
+> +///
+> +/// # Invariants
+> +///
+> +/// An alignment is always a power of two.
+> +#[repr(transparent)]
+> +#[derive(Debug, Clone, Copy, PartialEq, Eq, PartialOrd, Ord, Hash)]
+> +pub struct Alignment(NonZero<usize>);
+> +
+> +impl Alignment {
+> +    /// Validates that `align` is a power of two at build-time, and =
+returns an [`Alignment`] of the
+> +    /// same value.
+> +    ///
+> +    /// A build error is triggered if `align` cannot be asserted to =
+be a power of two.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// let v =3D Alignment::new(16);
+> +    /// assert_eq!(v.as_usize(), 16);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn new(align: usize) -> Self {
+> +        build_assert!(align.is_power_of_two());
+> +
+> +        // INVARIANT: `align` is a power of two.
+> +        // SAFETY: `align` is a power of two, and thus non-zero.
+> +        Self(unsafe { NonZero::new_unchecked(align) })
+> +    }
+> +
+> +    /// Validates that `align` is a power of two at runtime, and =
+returns an
+> +    /// [`Alignment`] of the same value.
+> +    ///
+> +    /// [`None`] is returned if `align` was not a power of two.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new_checked(16), =
+Some(Alignment::new(16)));
+> +    /// assert_eq!(Alignment::new_checked(15), None);
+> +    /// assert_eq!(Alignment::new_checked(1), =
+Some(Alignment::new(1)));
+> +    /// assert_eq!(Alignment::new_checked(0), None);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn new_checked(align: usize) -> Option<Self> {
+> +        if align.is_power_of_two() {
+> +            // INVARIANT: `align` is a power of two.
+> +            // SAFETY: `align` is a power of two, and thus non-zero.
+> +            Some(Self(unsafe { NonZero::new_unchecked(align) }))
+> +        } else {
+> +            None
+> +        }
+> +    }
+> +
+> +    /// Returns the alignment of `T`.
+> +    #[inline(always)]
+> +    pub const fn of<T>() -> Self {
+> +        // INVARIANT: `align_of` always returns a power of 2.
+> +        Self(unsafe { NonZero::new_unchecked(align_of::<T>()) })
+> +    }
+
+> +
+> +    /// Returns the base-2 logarithm of the alignment.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::of::<u8>().log2(), 0);
+> +    /// assert_eq!(Alignment::new(16).log2(), 4);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn log2(self) -> u32 {
+> +        self.0.ilog2()
+> +    }
+> +
+> +    /// Returns this alignment as a [`NonZero`].
+> +    ///
+> +    /// It is guaranteed to be a power of two.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new(16).as_nonzero().get(), 16);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn as_nonzero(self) -> NonZero<usize> {
+> +        if !self.0.is_power_of_two() {
+> +            // SAFETY: per the invariants, `self.0` is always a power =
+of two so this block will
+> +            // never be reached.
+> +            unsafe { core::hint::unreachable_unchecked() }
+> +        }
+> +        self.0
+> +    }
+> +
+> +    /// Returns this alignment as a `usize`.
+> +    ///
+> +    /// It is guaranteed to be a power of two.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new(16).as_usize(), 16);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn as_usize(self) -> usize {
+> +        self.as_nonzero().get()
+> +    }
+> +
+> +    /// Returns the mask corresponding to `self.as_usize() - 1`.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new(0x10).mask(), 0xf);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub const fn mask(self) -> usize {
+> +        // INVARIANT: `self.as_usize()` is guaranteed to be a power =
+of two (i.e. non-zero), thus
+> +        // `1` can safely be substracted from it.
+> +        self.as_usize() - 1
+> +    }
+> +
+> +    /// Aligns `value` down to this alignment.
+> +    ///
+> +    /// If the alignment contained in `self` is too large for `T`, =
+then `0` is returned, which
+> +    /// is correct as it is also the result that would have been =
+returned if it did.
+
+I half get this, but still: If it did what?
+
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new(0x10).align_down(0x2f), 0x20);
+> +    /// assert_eq!(Alignment::new(0x10).align_down(0x30), 0x30);
+> +    /// assert_eq!(Alignment::new(0x1000).align_down(0xf0u8), 0x0);
+> +    /// ```
+> +    #[inline(always)]
+> +    pub fn align_down<T>(self, value: T) -> T
+> +    where
+> +        T: TryFrom<usize> + BitAnd<Output =3D T> + Not<Output =3D T> =
++ Default,
+> +    {
+> +        T::try_from(self.mask())
+> +            .map(|mask| value & !mask)
+> +            .unwrap_or(T::default())
+> +    }
+> +
+> +    /// Aligns `value` up to this alignment, returning `None` if =
+aligning pushes the result above
+> +    /// the limits of `value`'s type.
+> +    ///
+> +    /// # Examples
+> +    ///
+> +    /// ```
+> +    /// use kernel::ptr::Alignment;
+> +    ///
+> +    /// assert_eq!(Alignment::new(0x10).align_up(0x4f), Some(0x50));
+> +    /// assert_eq!(Alignment::new(0x10).align_up(0x40), Some(0x40));
+> +    /// assert_eq!(Alignment::new(0x10).align_up(0x0), Some(0x0));
+> +    /// assert_eq!(Alignment::new(0x10).align_up(u8::MAX), None);
+> +    /// assert_eq!(Alignment::new(0x100).align_up(0x10u8), None);
+> +    /// assert_eq!(Alignment::new(0x100).align_up(0x0u8), Some(0x0));
+> +    /// ```
+> +    #[inline(always)]
+> +    pub fn align_up<T>(self, value: T) -> Option<T>
+> +    where
+> +        T: TryFrom<usize>
+> +            + BitAnd<Output =3D T>
+> +            + Not<Output =3D T>
+> +            + Default
+> +            + PartialEq
+> +            + Copy
+> +            + CheckedAdd,
+> +    {
+> +        let aligned_down =3D self.align_down(value);
+> +        if value =3D=3D aligned_down {
+> +            Some(aligned_down)
+> +        } else {
+> +            T::try_from(self.as_usize())
+> +                .ok()
+> +                .and_then(|align| aligned_down.checked_add(align))
+> +        }
+> +    }
 > +}
+>=20
+> --=20
+> 2.50.1
+>=20
+>=20
 
-Why '0 << 0' instead of just '0'? Isn't the latter easier to read?
+Everything else looks fine, IMHO.
 
-Thanks,
+=E2=80=94 Daniel
 
-Bart.
 
