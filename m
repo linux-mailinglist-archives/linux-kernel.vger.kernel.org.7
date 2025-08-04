@@ -1,103 +1,191 @@
-Return-Path: <linux-kernel+bounces-754637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9D884B19A51
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:58:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66698B19A53
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:01:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D60CB176553
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:58:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 86E021750FC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:01:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9A3821C195;
-	Mon,  4 Aug 2025 02:58:11 +0000 (UTC)
-Received: from mail.nfschina.com (unknown [42.101.60.213])
-	by smtp.subspace.kernel.org (Postfix) with SMTP id 1D22A2E371F;
-	Mon,  4 Aug 2025 02:58:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=42.101.60.213
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35CFF1F03D5;
+	Mon,  4 Aug 2025 03:01:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="Yde1X/Np"
+Received: from relay5-d.mail.gandi.net (relay5-d.mail.gandi.net [217.70.183.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0455A4C8F;
+	Mon,  4 Aug 2025 03:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754276291; cv=none; b=EUfjJHERTPtV392jd21TkYGv7JUA4ncUUaOcdx/LP2OdgEr21Fv4WzF2d4JKEK4hREqgnIYfTVYg12zrGzfWd7Sz5nScDJyVezTzww67fXXJ8Bv/a4akHwSJgWhUZo03DGUQdfh+06LmvUU1Wo4UdFvio2Lsi2OeaH+EC8EYoVY=
+	t=1754276468; cv=none; b=jfgHdf3970/EM43RDuR8L5e/XNt4g0WyfZ0cfBXNOxSbJWhKBuvY1HjL5xZfuC5y4mb9/7iIZCWvOZrGBXc2k0s/enrOrA5X1auSmjw+YUTMwSyTTQim7VNzv7uG0IN+p9jjw8glphUsFlww6ExCof3ACuXtKVfy8lCq6adpmwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754276291; c=relaxed/simple;
-	bh=o1QnEsSp+T6ymD88En6qwH1YK+2Y/eNVievk3YbYMWo=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aGCf9sq03tUsXzGCkMbbM+LkWC4PkBk4DGpWXwCYS7c1i3zeSPF9XRq3eD7BiTK3A7JZSvGwBpLl+yvEhoDI2Horl5mk8f3Q9vJriosHdZBq6cVdQpyuLxswXHom8Lf0NoG/Q6FBHJsjC62DPTPbInYP7rQMlRQeUkRbUj3DshM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com; spf=pass smtp.mailfrom=nfschina.com; arc=none smtp.client-ip=42.101.60.213
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nfschina.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nfschina.com
-Received: from liqiong-suma.shanghai.nfschina.local (unknown [180.167.10.98])
-	by mail.nfschina.com (MailData Gateway V2.8.8) with ESMTPSA id 648A860109958;
-	Mon,  4 Aug 2025 10:58:04 +0800 (CST)
-X-MD-Sfrom: liqiong@nfschina.com
-X-MD-SrcIP: 180.167.10.98
-From: Li Qiong <liqiong@nfschina.com>
-To: Christoph Lameter <cl@gentwo.org>,
-	David Rientjes <rientjes@google.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>
-Cc: Roman Gushchin <roman.gushchin@linux.dev>,
-	Harry Yoo <harry.yoo@oracle.com>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org,
-	Li Qiong <liqiong@nfschina.com>
-Subject: [PATCH v6] mm/slub: avoid accessing metadata when pointer is invalid in object_err()
-Date: Mon,  4 Aug 2025 10:57:59 +0800
-Message-Id: <20250804025759.382343-1-liqiong@nfschina.com>
-X-Mailer: git-send-email 2.30.2
+	s=arc-20240116; t=1754276468; c=relaxed/simple;
+	bh=KbXuGp+o3iQV1KR2nynvGwT1ah0FjEzcmCIzypka7Y0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=TO6s1C/zSWIZ/1ipkkdx4yF07Z1itvZB3zYyJ7VRXTz9jLLutPXBFnPFIzBFNUMDDajxGxd3u/SrVwsPKb3Bj+u5GKcaKG2tfWZYiBWPKRyUrShNMKLu2NSnUwvRfoXjp46nfe4gUcm5Wg71PoAl4fen1Z9G4QbPhEm5sOPTtok=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=Yde1X/Np; arc=none smtp.client-ip=217.70.183.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 611CD41D02;
+	Mon,  4 Aug 2025 03:00:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754276454;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=XuoBJZWqqGbWfAbO/dHUfksA0fqwsbTP5ag7248b4Ck=;
+	b=Yde1X/NpBQfMgIO33WbsyH41HKsO3qPnPm8anpU7EfchFJ1cTCWx0sV3i1y1sCwSOiOEN0
+	XNIOC6LK1Q89ic9oAxAFk6vnuKV4sreSd62mn4exiQMrrg7wU2v9VSuUOPNI/BBw1vB/H+
+	DAvC7L8iR2QVxeJ2ittX0/Ho6xBCdU419wULr1x9FWDNLzKtYRT3loohzeNAIa9wCqvd68
+	7eHfOEWLlLvj3oLwE40tmJD3NdneJvvaWCZKOJazOPEw0XxqJnfopZxtCmoO+5BIcP0LK5
+	X5VDQ9LwcQ6qoxcSSMnCgNWEDmedbHw9zvb6Tw3h/rohgP/n2FdTAMr9mbSA6g==
+Date: Mon, 4 Aug 2025 05:00:54 +0200
+From: Alexandre Belloni <alexandre.belloni@bootlin.com>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [GIT PULL] RTC for 6.17
+Message-ID: <20250804030054453a11b9@mail.local>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudduvddtucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfggtggugfesthekredttddtudenucfhrhhomheptehlvgigrghnughrvgcuuegvlhhlohhnihcuoegrlhgvgigrnhgurhgvrdgsvghllhhonhhisegsohhothhlihhnrdgtohhmqeenucggtffrrghtthgvrhhnpeegueffgfdvhefggefgieehffeikefhfeffudelvdetheffheefffelhfelgefhkeenucffohhmrghinhepkhgvrhhnvghlrdhorhhgpdgsohhothhlihhnrdgtohhmnecukfhppedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpedvrgdtudemvgdtrgemvdgumeeifeejtdemjeekvgdtmegttdgvkeemvdektdeimeekrggtiedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedprhgtphhtthhopehtohhrvhgrlhgusheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpthhtoheplhhinhhugidqrhhttgesvhhgvghrrdhkvghrn
+ hgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-GND-Sasl: alexandre.belloni@bootlin.com
 
-object_err() reports details of an object for further debugging, such as
-the freelist pointer, redzone, etc. However, if the pointer is invalid,
-attempting to access object metadata can lead to a crash since it does
-not point to a valid object.
+Hello Linus,
 
-In case the pointer is NULL or check_valid_pointer() returns false for
-the pointer, only print the pointer value and skip accessing metadata.
+Here is the RTC subsystem pull request for 6.17. This time, we get
+support for a new RTC in an existing driver and all the drivers exposing
+clocks using the common clock framework have been converted to
+determine_rate().
 
-Fixes: 81819f0fc828 ("SLUB core")
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Li Qiong <liqiong@nfschina.com>
----
-v2:
-- rephrase the commit message, add comment for object_err().
-v3:
-- check object pointer in object_err().
-v4:
-- restore changes in alloc_consistency_checks().
-v5:
-- rephrase message, fix code style.
-v6:
-- add checking 'object' if NULL.
----
- mm/slub.c | 7 ++++++-
- 1 file changed, 6 insertions(+), 1 deletion(-)
+The following changes since commit 19272b37aa4f83ca52bdf9c16d5d81bdd1354494:
 
-diff --git a/mm/slub.c b/mm/slub.c
-index 31e11ef256f9..972cf2bb2ee6 100644
---- a/mm/slub.c
-+++ b/mm/slub.c
-@@ -1104,7 +1104,12 @@ static void object_err(struct kmem_cache *s, struct slab *slab,
- 		return;
- 
- 	slab_bug(s, reason);
--	print_trailer(s, slab, object);
-+	if (!object || !check_valid_pointer(s, slab, object)) {
-+		print_slab_info(slab);
-+		pr_err("Invalid pointer 0x%p\n", object);
-+	} else {
-+		print_trailer(s, slab, object);
-+	}
- 	add_taint(TAINT_BAD_PAGE, LOCKDEP_NOW_UNRELIABLE);
- 
- 	WARN_ON(1);
+  Linux 6.16-rc1 (2025-06-08 13:44:43 -0700)
+
+are available in the Git repository at:
+
+  git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-6.17
+
+for you to fetch changes up to bb5b0b4317c9516bdc5e9a4235e3b5f1a73b7e48:
+
+  rtc: ds1685: Update Joshua Kinard's email address. (2025-08-03 03:28:52 +0200)
+
+----------------------------------------------------------------
+RTC for 6.17
+
+Subsystem:
+ - Convert drivers exposing a clock from round_rate() to determine_rate()
+
+Drivers:
+ - ds1307: oscillator stop flag handling for ds1341
+ - pcf85063: add support for RV8063
+
+----------------------------------------------------------------
+Alexander Shiyan (1):
+      rtc: m41t80: remove HT feature for m41t65
+
+Alexandre Belloni (1):
+      rtc: pcf85063: scope pcf85063_config structures
+
+Andy Shevchenko (3):
+      rtc: sysfs: Use sysfs_emit() to instead of s*printf()
+      rtc: sysfs: Bail out earlier if no new groups provided
+      rtc: sysfs: use __ATTRIBUTE_GROUPS()
+
+Antoni Pokusinski (3):
+      dt-bindings: rtc: pcf85063: add binding for RV8063
+      rtc: pcf85063: create pcf85063_i2c_probe
+      rtc: pcf85063: add support for RV8063
+
+Brian Masney (15):
+      rtc: ds1307: fix incorrect maximum clock rate handling
+      rtc: hym8563: fix incorrect maximum clock rate handling
+      rtc: nct3018y: fix incorrect maximum clock rate handling
+      rtc: pcf85063: fix incorrect maximum clock rate handling
+      rtc: pcf8563: fix incorrect maximum clock rate handling
+      rtc: rv3028: fix incorrect maximum clock rate handling
+      rtc: ds1307: convert from round_rate() to determine_rate()
+      rtc: hym8563: convert from round_rate() to determine_rate()
+      rtc: m41t80: convert from round_rate() to determine_rate()
+      rtc: max31335: convert from round_rate() to determine_rate()
+      rtc: nct3018y: convert from round_rate() to determine_rate()
+      rtc: pcf85063: convert from round_rate() to determine_rate()
+      rtc: pcf8563: convert from round_rate() to determine_rate()
+      rtc: rv3028: convert from round_rate() to determine_rate()
+      rtc: rv3032: convert from round_rate() to determine_rate()
+
+Frank Li (2):
+      dt-bindings: rtc: move nxp,lpc3220-rtc to separated file from trivial-rtc.yaml
+      dt-bindings: rtc: nxp,lpc1788-rtc: add compatible string nxp,lpc1850-rtc
+
+Geert Uytterhoeven (2):
+      rtc: Rename lib_test to test_rtc_lib
+      rtc: sh: Convert to DEFINE_SIMPLE_DEV_PM_OPS()
+
+Joshua Kinard (1):
+      rtc: ds1685: Update Joshua Kinard's email address.
+
+Krzysztof Kozlowski (1):
+      rtc: s3c: Put 'const' just after 'static' keyword for data
+
+Meagan Lloyd (2):
+      rtc: ds1307: remove clear of oscillator stop flag (OSF) in probe
+      rtc: ds1307: handle oscillator stop flag (OSF) for ds1341
+
+Rob Herring (Arm) (1):
+      dt-bindings: Move sophgo,cv1800b-rtc to rtc directory
+
+Uwe Kleine-König (1):
+      rtc: Optimize calculations in rtc_time64_to_tm()
+
+Xianwei Zhao (1):
+      dt-bindings: rtc: amlogic,a4-rtc: Add compatible string for C3
+
+ .../devicetree/bindings/rtc/amlogic,a4-rtc.yaml    |  11 +-
+ .../devicetree/bindings/rtc/nxp,lpc1788-rtc.yaml   |   7 +-
+ .../devicetree/bindings/rtc/nxp,lpc3220-rtc.yaml   |  49 +++
+ .../devicetree/bindings/rtc/nxp,pcf85063.yaml      |  33 +-
+ .../{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml    |   2 +-
+ .../devicetree/bindings/rtc/trivial-rtc.yaml       |   2 -
+ MAINTAINERS                                        |   2 +-
+ drivers/rtc/Kconfig                                |  21 +-
+ drivers/rtc/Makefile                               |   2 +-
+ drivers/rtc/lib.c                                  |  40 ++-
+ drivers/rtc/rtc-ds1307.c                           |  30 +-
+ drivers/rtc/rtc-ds1685.c                           |   4 +-
+ drivers/rtc/rtc-hym8563.c                          |  15 +-
+ drivers/rtc/rtc-m41t80.c                           |  25 +-
+ drivers/rtc/rtc-max31335.c                         |  12 +-
+ drivers/rtc/rtc-nct3018y.c                         |  15 +-
+ drivers/rtc/rtc-pcf85063.c                         | 351 ++++++++++++++-------
+ drivers/rtc/rtc-pcf8563.c                          |  15 +-
+ drivers/rtc/rtc-rv3028.c                           |  15 +-
+ drivers/rtc/rtc-rv3032.c                           |  21 +-
+ drivers/rtc/rtc-s3c.c                              |   8 +-
+ drivers/rtc/rtc-sh.c                               |   8 +-
+ drivers/rtc/sysfs.c                                |  64 ++--
+ drivers/rtc/{lib_test.c => test_rtc_lib.c}         |   0
+ include/linux/rtc/ds1685.h                         |   2 +-
+ 25 files changed, 507 insertions(+), 247 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/rtc/nxp,lpc3220-rtc.yaml
+ rename Documentation/devicetree/bindings/{soc/sophgo => rtc}/sophgo,cv1800b-rtc.yaml (96%)
+ rename drivers/rtc/{lib_test.c => test_rtc_lib.c} (100%)
+
 -- 
-2.30.2
-
+Alexandre Belloni, co-owner and COO, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
 
