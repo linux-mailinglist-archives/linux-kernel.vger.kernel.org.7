@@ -1,95 +1,66 @@
-Return-Path: <linux-kernel+bounces-754667-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8EB18B19AAB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:17:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B9CDB19AB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:17:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5C9817649E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:17:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EC1327AAFA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:16:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80C84221F32;
-	Mon,  4 Aug 2025 04:17:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E089B1A5BA0;
+	Mon,  4 Aug 2025 04:17:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="gv+LoM5a"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2042.outbound.protection.outlook.com [40.107.94.42])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q0uYI2MN"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0770D3207;
-	Mon,  4 Aug 2025 04:17:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.42
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754281038; cv=fail; b=PzBdjYGUL6MGx4TuhuQ9JICe+ii1NmRZcFirUfpUYEB/SNbkK+v1qOk1ceLF+hyU4iln5m4tgADVsfZrmz8jXaWtHncDzg8txYU+MnqrWiXMOCDK6UtWqPPuoO6YGlZCg36V3YYGrgDlaiB4AXEnrTm9fhC7gXZkZktsobic5c4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754281038; c=relaxed/simple;
-	bh=jwcFhOrJOtjR4H5S7sm3AwHwiPYiA0VhNNDjqXRp2yw=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=hLa0Hs/jLJfhtja9WQoAm+OG9nlskWEL1uL05ypt5QMTTr7fSzAW+GcsXV3GFX7wQ8hYrnC0S3ptoCxm/lImaVcb35VJBVY8Ph2pKx3884ZTipcpn6xgvgNIHdij6PRgobfXRielvAmJDLmZdUbbPJPt6xNled18nNiclw71GvQ=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=gv+LoM5a; arc=fail smtp.client-ip=40.107.94.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=nSprck8qsrhIELq1GH2MiTil0JsSX4w5E9TnPmizgmHqXSVLxdSX81CmPZsJZxloD/OyZ39PbHbX2zK4DyMmxMpZRdhKl+xlmBggvm6nbXeArfjEr9wn5b/KfwrikWRiztvn2IkMtKmKrGBWNRTG4BcXi2PGd1j/nKoS34YeEynxtohT+bf5X8kjhg1hGnQp0cVZJRxRHevotDij6TcryhdmvRStGq2qeeUoETIxrP91xTzh010U4/P2+uR0kb7iTy9tu6VucNf1n6VCX81mwEIAjFrCQSG7DZ2R6oZkIhIdhhEp2ObYp0mcBmg+bBga2lBvj586bgAwLBRBn9eCBA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=LRFtEDDDr5LFBv37grq+a9Y5PB3aj2HWMCkeDWrff78=;
- b=tWpoIbLbFliN2GIIAI/kkMysG+JWlNq6kgPH6/NLw7L32hgBw3A6C6jGgHjMgZWONAtBuQ8BNsjF3AOy1X3TXo0Qf6iXTZGkyM7lFjwS/YtMIyfBALyo+SqDGjfXvNmmxH2qywhsAe43mahpzWGNJmZAsQpYkrZBGBmPyPHm+3Ac1eTqFtvIi5XLpcXIFRxh6BOqtoLGB1HyD8HND7ZocivkqELKStrLpp9yl1LXH9hRnospyRCj7lyleZ6y469mCbg8jbt5cQ4fh57k3R9PEduu5COtrt9dbTU7/HWe/JCx3w6GDDEMpqSni4a0W5IJJOr7EPxoYhQsKfLkopziow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
- 216.228.118.232) smtp.rcpttodomain=linaro.org smtp.mailfrom=nvidia.com;
- dmarc=pass (p=reject sp=reject pct=100) action=none header.from=nvidia.com;
- dkim=none (message not signed); arc=none (0)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=LRFtEDDDr5LFBv37grq+a9Y5PB3aj2HWMCkeDWrff78=;
- b=gv+LoM5a8HB/GuumWOVAc9pF5JnZaBrYxjYruX6mjhgUqc4+T5JWhGF6O6yvia3OnE7Knx6sjMDfyXqR0xR67sCgoyVbQF7WXbAEUBFTDGKUyTRQJ7iUMJPmXFJ74kROzGfXCtKPKFsoFRGAIECw4rc7szvDXWwnK4fbO0h8neNr9AKZb1LOrFRufYG47uzflv5Jnj8K3FG7ai98MlhJv6By1wmapqVdmxIwRI+JZD0c7k44aYrBdUGkVzs2cqRHSDc5CKKK/9E7yvK9wGqqvZzkENH4PjZTT8WkMuwPS3JIvySRtg0wBz7cnopdw+4e25IVs2fnS6ahRqT5hK+qYw==
-Received: from SN1PR12CA0070.namprd12.prod.outlook.com (2603:10b6:802:20::41)
- by MN2PR12MB4109.namprd12.prod.outlook.com (2603:10b6:208:1d9::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 04:17:11 +0000
-Received: from SA2PEPF00001505.namprd04.prod.outlook.com
- (2603:10b6:802:20:cafe::1e) by SN1PR12CA0070.outlook.office365.com
- (2603:10b6:802:20::41) with Microsoft SMTP Server (version=TLS1_3,
- cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Mon,
- 4 Aug 2025 04:17:11 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 216.228.118.232)
- smtp.mailfrom=nvidia.com; dkim=none (message not signed)
- header.d=none;dmarc=pass action=none header.from=nvidia.com;
-Received-SPF: Pass (protection.outlook.com: domain of nvidia.com designates
- 216.228.118.232 as permitted sender) receiver=protection.outlook.com;
- client-ip=216.228.118.232; helo=mail.nvidia.com; pr=C
-Received: from mail.nvidia.com (216.228.118.232) by
- SA2PEPF00001505.mail.protection.outlook.com (10.167.242.37) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.9009.8 via Frontend Transport; Mon, 4 Aug 2025 04:17:11 +0000
-Received: from drhqmail203.nvidia.com (10.126.190.182) by mail.nvidia.com
- (10.127.129.5) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.14; Sun, 3 Aug
- 2025 21:17:07 -0700
-Received: from drhqmail201.nvidia.com (10.126.190.180) by
- drhqmail203.nvidia.com (10.126.190.182) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.14; Sun, 3 Aug 2025 21:17:07 -0700
-Received: from pshete-ubuntu.nvidia.com (10.127.8.12) by mail.nvidia.com
- (10.126.190.180) with Microsoft SMTP Server id 15.2.1544.14 via Frontend
- Transport; Sun, 3 Aug 2025 21:17:04 -0700
-From: Prathamesh Shete <pshete@nvidia.com>
-To: <linus.walleij@linaro.org>, <brgl@bgdev.pl>, <thierry.reding@gmail.com>,
-	<jonathanh@nvidia.com>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-	<conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-gpio@vger.kernel.org>, <linux-tegra@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <pshete@nvidia.com>
-Subject: [PATCH 2/2] gpio: tegra186: Add support for Tegra256
-Date: Mon, 4 Aug 2025 09:46:57 +0530
-Message-ID: <20250804041657.27688-2-pshete@nvidia.com>
-X-Mailer: git-send-email 2.17.1
-In-Reply-To: <20250804041657.27688-1-pshete@nvidia.com>
-References: <20250804041657.27688-1-pshete@nvidia.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1DC02248B5;
+	Mon,  4 Aug 2025 04:17:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754281043; cv=none; b=lHsDiy3nS5TCmwdMqE7JKT2GQmnpQy+5aTvPkdK0vzau5hecKnd/zJqAmXB5YGI7OcuYtio7vy7sjU6lpzTfpOYWLaoXhAB52sJ6Z7Kza32M23mJUy79GqCeDTFl311I7Gn6vzkcGWO+Mpna6IT9RFKUfVMcfhzYXaCFcWLv1vA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754281043; c=relaxed/simple;
+	bh=o4IjvNMM7tJSWXRpMT61RxOAfr06yTVYXSmWzPGeq5E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=pvLG8H6mz+Om75BNQpRU49i617HMLoCLUFlx4w+m/mpfimY9lTdyDRXxMde8PqSe88XyTh38UYJKdS0IxofTjtRGGgyLt02oYWrK9YhB7Mw97B2FhINvbgevmotDoseuPZXKObEkA5DAoC4HmxiH1uLMxtOz4DzqU/4cYOE0PV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q0uYI2MN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E545FC4CEE7;
+	Mon,  4 Aug 2025 04:17:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754281043;
+	bh=o4IjvNMM7tJSWXRpMT61RxOAfr06yTVYXSmWzPGeq5E=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=Q0uYI2MNm064dZdIdBMbbnWunRdGqSmvx7Q9JYfxNPxLRPxmM3TpUYlUpsn8lCx62
+	 sqzTNicDXez5JXf+0uRyfZ5nConaxuWF0dLNJeYhT7XZaY8tthh1iOLcfT/Ku7kVg0
+	 HACQ5Glf5g825toQ5JR4TzvJEok5fWnFn254Owcw048/OyGAIimwlHiS5xOR6pGlwM
+	 Lw3Fqx0uD6A6yYDAFBWDWDx6rcLihug2K5IJla8lSQo8yNOWUgfS5FtxeQWfYnEfV2
+	 6hMY8NVkzGgv+Z78sBGwDAgDV5Aw7KcOFecAbxz9177DGhaZbFdWpEB3EWQWv1D5X9
+	 pfyn1YQk9iVUA==
+X-Mailer: emacs 30.1 (via feedmail 11-beta-1 I)
+From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
+To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, aik@amd.com,
+	lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 14/38] coco: host: arm64: Device communication
+ support
+In-Reply-To: <20250730145248.000043be@huawei.com>
+References: <20250728135216.48084-1-aneesh.kumar@kernel.org>
+ <20250728135216.48084-15-aneesh.kumar@kernel.org>
+ <20250730145248.000043be@huawei.com>
+Date: Mon, 04 Aug 2025 09:47:16 +0530
+Message-ID: <yq5a5xf3afg3.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -97,120 +68,356 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain
-X-NV-OnPremToCloud: AnonymousSubmission
-X-EOPAttributedMessage: 0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: SA2PEPF00001505:EE_|MN2PR12MB4109:EE_
-X-MS-Office365-Filtering-Correlation-Id: e10e1a76-8d1c-4aa5-7d33-08ddd30dc8c0
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|1800799024|36860700013|7416014|376014|82310400026|921020;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?/SQlaf/kUHldfTcVoRMU+BhXnXAEY839/TqmDJpBeyrUuK0lpjvTLSwM0QIY?=
- =?us-ascii?Q?Y1anZThi75a2xSt79BCnCavh2io4TJTsSaASLVS3cnl/Fz+dMx6K5H0GaL2Q?=
- =?us-ascii?Q?F7d4ODkTnrRz7ZWoz0Hft+bGXJDjLjpbJ48Ks8c3vUEwph2DtfdeS1O6J7kb?=
- =?us-ascii?Q?RE01gFqEurQTzsvAM0wB8rL20XNP2RiqJDKZmQd6n1H/ljkFTqvQPMXtdIrc?=
- =?us-ascii?Q?W/4jcyVpK4f+l+kSZ9K+O7/mwWok6KhCy5nOMhHi5HoJL4V7d+NKQOA1miSJ?=
- =?us-ascii?Q?bVZm0KBEaPrVFiToJ0FIk6AxB8wH5csayf9m1IU36Ac1rN3i/68hX5YFMnP4?=
- =?us-ascii?Q?9rwlMAPBISlEGH5m/ZsC/a1rxizHV3pP7GeGnBWRQeJtbOJKogYicMOEYTTQ?=
- =?us-ascii?Q?KnWKCCw83CUgLRb9Hj7UOR9e1lQLqeQPzG11LM2nHrxcoNHa7cMXpbbHuMd2?=
- =?us-ascii?Q?BBAywKz4mVhhxbMFPDUfaDcd+ZR3SL+UlnYKkH0trXM+HCHFsJUhCPTkbMz0?=
- =?us-ascii?Q?ZR8bSDYIQ7s5WgzRxu4nwCl5R/JEKlM5aN9cx/JmJ3YpD36rd3gfJBIPzjDz?=
- =?us-ascii?Q?pxnhwx8JSKYSBQmRBkI9oouuDPlI+/z26lDfgdM1FUQlLtQxzv5VDGcSofYW?=
- =?us-ascii?Q?6cv5PldSt92sHCP2s810M6QQqy4DkWEKgvRMiSpeRtG5GVKjuYYqzDMkD9YC?=
- =?us-ascii?Q?H6hfgGCCs6ABgxm4BE6LJjzWfWk2jLykpQqfOiVWA5K0B/OKLGqYRxPYBDZW?=
- =?us-ascii?Q?gWStdm8eQZsbLKErcf02TpHuRGnQRxreTUU4v/7FPwWcjks4ZNldXYp3V+5X?=
- =?us-ascii?Q?FLXpaF/3ITFTSZbyqUgH0AdyKafBjeHdzcDhgpopTPwMofOYp2+oEcFnubRH?=
- =?us-ascii?Q?2s7v9Mcq6yBXbFwXhFcn42DAWK0SykpI1p/ZU6OWTswkIBGAuxim0lvsEecI?=
- =?us-ascii?Q?SDkSsLPJJhleMwJFwSxvDDDgOfNElSFS6/EAjrG0OKKI/kR7FsR6gLFF6swe?=
- =?us-ascii?Q?jM9BOZSGC76LKNm4Ye1zLNTbGEG02w1GRlb3eB4dbJyTEFZdCyFdjo4ylNuA?=
- =?us-ascii?Q?ftzskQPRHmrGmyLYYlkJT/ekTqUDMyNL8j7hhizRAiyaZIvPf1F6Xx+bgrtX?=
- =?us-ascii?Q?uV1KbsesJ5MwYa5cSFjvO4RxN1hWPlsfdoORVRzGl3mHs0K7EjCHH5FPS6QZ?=
- =?us-ascii?Q?kYdTJgYmurL4IX1w1jgcdu4oR2NtPkxuFv9m9vpRoHAMAYdApU75DVF840M/?=
- =?us-ascii?Q?f+5JEVoWkoSM6P8bLrBlnm0IcroWp/uwlqn9VtD2qEZ+9Y07rSBip8FvnLW5?=
- =?us-ascii?Q?1Ulf57r9zp+9rHbz7ykR38CQ96nMrFK0tRwTjugjkNMd0/Y3aDL5CU8xGrGN?=
- =?us-ascii?Q?1JrBr1tCniG6taCmHaNqqQXjQlgOnResJW/L8Wa696OzPpa9UVhEiEqPPMsc?=
- =?us-ascii?Q?1YHf5OFlknrVcpj5Y1arDTPSd4h8BfqBWMTB+h86u4+Eu7AVZQeCFxGFMvp0?=
- =?us-ascii?Q?ZD3yI/Pq9HrysDfNXZCrLyjr8zCrNOiXIdyHFEhF9nT5nWbmGCcgDzCPyg?=
- =?us-ascii?Q?=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:216.228.118.232;CTRY:US;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:mail.nvidia.com;PTR:dc7edge1.nvidia.com;CAT:NONE;SFS:(13230040)(1800799024)(36860700013)(7416014)(376014)(82310400026)(921020);DIR:OUT;SFP:1101;
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 04:17:11.1600
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: e10e1a76-8d1c-4aa5-7d33-08ddd30dc8c0
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=43083d15-7273-40c1-b7db-39efd9ccc17a;Ip=[216.228.118.232];Helo=[mail.nvidia.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	SA2PEPF00001505.namprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN2PR12MB4109
 
-Extend the existing Tegra186 GPIO controller driver with support for the
-GPIO controller found on Tegra256. While the programming model remains
-the same, the number of pins has slightly changed.
+Jonathan Cameron <Jonathan.Cameron@huawei.com> writes:
 
-Signed-off-by: Prathamesh Shete <pshete@nvidia.com>
----
- drivers/gpio/gpio-tegra186.c | 28 ++++++++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+> On Mon, 28 Jul 2025 19:21:51 +0530
+> "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org> wrote:
+>
+>> Add helpers for device communication from RMM
+>> 
+>> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
+>> ---
+>>  arch/arm64/include/asm/rmi_cmds.h        |  11 ++
+>>  arch/arm64/include/asm/rmi_smc.h         |  49 ++++++
+>>  drivers/virt/coco/arm-cca-host/arm-cca.c |  45 ++++++
+>>  drivers/virt/coco/arm-cca-host/rmm-da.c  | 198 +++++++++++++++++++++++
+>>  drivers/virt/coco/arm-cca-host/rmm-da.h  |  41 +++++
+>>  5 files changed, 344 insertions(+)
+>> 
+>
+>>  #endif /* __ASM_RMI_CMDS_H */
+>> diff --git a/arch/arm64/include/asm/rmi_smc.h b/arch/arm64/include/asm/rmi_smc.h
+>> index a84ed61e5001..8bece465b670 100644
+>> --- a/arch/arm64/include/asm/rmi_smc.h
+>> +++ b/arch/arm64/include/asm/rmi_smc.h
+>> @@ -47,6 +47,7 @@
+>
+>>  
+>> +#define RMI_DEV_COMM_EXIT_CACHE_REQ	BIT(0)
+>> +#define RMI_DEV_COMM_EXIT_CACHE_RSP	BIT(1)
+>> +#define RMI_DEV_COMM_EXIT_SEND		BIT(2)
+>> +#define RMI_DEV_COMM_EXIT_WAIT		BIT(3)
+>> +#define RMI_DEV_COMM_EXIT_MULTI		BIT(4)
+>> +
+>> +#define RMI_DEV_COMM_NONE	0
+>> +#define RMI_DEV_COMM_RESPONSE	1
+>> +#define RMI_DEV_COMM_ERROR	2
+>> +
+>> +#define RMI_PROTOCOL_SPDM		0
+>> +#define RMI_PROTOCOL_SECURE_SPDM	1
+>> +
+>> +#define RMI_DEV_VCA			0
+>> +#define RMI_DEV_CERTIFICATE		1
+>> +#define RMI_DEV_MEASUREMENTS		2
+>> +#define RMI_DEV_INTERFACE_REPORT	3
+>> +
+>> +struct rmi_dev_comm_enter {
+>> +	u64 status;
+>> +	u64 req_addr;
+>> +	u64 resp_addr;
+>> +	u64 resp_len;
+>> +};
+>> +
+>> +struct rmi_dev_comm_exit {
+>> +	u64 flags;
+>> +	u64 cache_req_offset;
+>> +	u64 cache_req_len;
+>> +	u64 cache_rsp_offset;
+>> +	u64 cache_rsp_len;
+>> +	u64 cache_obj_id;
+>> +	u64 protocol;
+>> +	u64 req_len;
+>> +	u64 timeout;
+> In latest spec called rsp_timeout.
+> Not sure we care that much but if no strong reason otherwise, should
+> aim to match the spec text. (Maybe this got renamed?)
+>> +};
+>
+>> diff --git a/drivers/virt/coco/arm-cca-host/arm-cca.c b/drivers/virt/coco/arm-cca-host/arm-cca.c
+>> index 84d97dd41191..294a6ef60d5f 100644
+>> --- a/drivers/virt/coco/arm-cca-host/arm-cca.c
+>> +++ b/drivers/virt/coco/arm-cca-host/arm-cca.c
+>> @@ -85,6 +85,45 @@ static void cca_tsm_pci_remove(struct pci_tsm *tsm)
+>>  	vfree(dsc_pf0);
+>>  }
+>>  
+>> +static int init_dev_communication_buffers(struct cca_host_comm_data *comm_data)
+>> +{
+>> +	int ret = -ENOMEM;
+>> +
+>> +	comm_data->io_params = (struct rmi_dev_comm_data *)get_zeroed_page(GFP_KERNEL);
+>
+> Hmm. There isn't a DEFINE_FREE() yet for free_page().  Maybe time to add one.
+> If we did then we'd use local variables until all allocations succeed then
+> assign with no_free_ptr()
+>
+>
+>> +	if (!comm_data->io_params)
+>> +		goto err_out;
+>> +
+>> +	comm_data->resp_buff = (void *)__get_free_page(GFP_KERNEL);
+>> +	if (!comm_data->resp_buff)
+>> +		goto err_res_buff;
+>> +
+>> +	comm_data->req_buff = (void *)__get_free_page(GFP_KERNEL);
+>> +	if (!comm_data->req_buff)
+>> +		goto err_req_buff;
+>> +
+>> +
+>> +	comm_data->io_params->enter.status = RMI_DEV_COMM_NONE;
+>> +	comm_data->io_params->enter.resp_addr = virt_to_phys(comm_data->resp_buff);
+>> +	comm_data->io_params->enter.req_addr  = virt_to_phys((void *)comm_data->req_buff);
+> I think it's already a a void * and even if it were some other pointer type
+> no cast would be necessary.
+>
+>> +	comm_data->io_params->enter.resp_len = 0;
+>> +
+>> +	return 0;
+>> +
+>> +err_req_buff:
+>> +	free_page((unsigned long)comm_data->resp_buff);
+>> +err_res_buff:
+>> +	free_page((unsigned long)comm_data->io_params);
+>> +err_out:
+>> +	return ret;
+>> +}
+>> +
+>
+>> +
+>>  /* per root port unique with multiple restrictions. For now global */
+>>  static DECLARE_BITMAP(cca_stream_ids, MAX_STREAM_ID);
+>>  
+>> @@ -124,6 +163,7 @@ static int cca_tsm_connect(struct pci_dev *pdev)
+>>  	rc = tsm_ide_stream_register(pdev, ide);
+>>  	if (rc)
+>>  		goto err_tsm;
+>> +	init_dev_communication_buffers(&dsc_pf0->comm_data);
+>>  	/*
+>>  	 * Take a module reference so that we won't call unregister
+>>  	 * without rme_unasign_device
+>> @@ -133,6 +173,11 @@ static int cca_tsm_connect(struct pci_dev *pdev)
+>>  		goto err_tsm;
+>>  	}
+>>  	rme_asign_device(pdev);
+> 	rme_assign_device() - I obviously missed this earlier!
+>
+>> +	/*
+>> +	 * Schedule a work to fetch device certificate and setup IDE
+> Single line comment probably fine here.  Though it perhaps doesn't add
+> much over the function name.
+>> +	 */
+>> +	schedule_rme_ide_setup(pdev);
+>> +
+>>  	/*
+>>  	 * Once ide is setup enable the stream at endpoint
+>>  	 * Root port will be done by RMM
+>> diff --git a/drivers/virt/coco/arm-cca-host/rmm-da.c b/drivers/virt/coco/arm-cca-host/rmm-da.c
+>> index 426e530ac182..d123940ce82e 100644
+>> --- a/drivers/virt/coco/arm-cca-host/rmm-da.c
+>> +++ b/drivers/virt/coco/arm-cca-host/rmm-da.c
+>> @@ -148,3 +148,201 @@ int rme_asign_device(struct pci_dev *pci_dev)
+>>  err_out:
+>>  	return ret;
+>>  }
+>> +
+>> +static int doe_send_req_resp(struct pci_tsm *tsm)
+>> +{
+>> +	u8 protocol;
+>> +	int ret, data_obj_type;
+>> +	struct cca_host_comm_data *comm_data;
+>> +	struct rmi_dev_comm_exit *io_exit;
+>> +
+>> +	comm_data = to_cca_comm_data(tsm->pdev);
+>> +
+>> +	io_exit = &comm_data->io_params->exit;
+>> +	protocol = io_exit->protocol;
+>
+> For all these I'd combine with the declarations.
+>
+>> +
+>> +	pr_debug("doe_req size:%lld doe_io_type=%d\n", io_exit->req_len, (int)protocol);
+>> +
+>> +	if (protocol == RMI_PROTOCOL_SPDM)
+>> +		data_obj_type = PCI_DOE_PROTO_CMA;
+>> +	else if (protocol == RMI_PROTOCOL_SECURE_SPDM)
+>> +		data_obj_type = PCI_DOE_PROTO_SSESSION;
+>> +	else
+>> +		return -EINVAL;
+>> +
+>> +	ret = pci_tsm_doe_transfer(tsm->dsm_dev, data_obj_type,
+>> +				   comm_data->req_buff, io_exit->req_len,
+>> +				   comm_data->resp_buff, PAGE_SIZE);
+>> +	pr_debug("doe returned:%d\n", ret);
+>> +	return ret;
+>> +}
+>> +
+>> +/* Parallel update for cca_dsc contents FIXME!! */
+>> +static int __do_dev_communicate(int type, struct pci_tsm *tsm)
+>> +{
+>> +	int ret;
+>> +	bool is_multi;
+>> +	u8 *cache_buf;
+>> +	int *cache_offset;
+>> +	int nbytes, cache_remaining;
+>> +	struct cca_host_dsc_pf0 *dsc_pf0;
+>> +	struct rmi_dev_comm_exit *io_exit;
+>> +	struct rmi_dev_comm_enter *io_enter;
+>> +	struct cca_host_comm_data *comm_data;
+>> +
+>> +
+>> +	comm_data = to_cca_comm_data(tsm->pdev);
+>> +	io_enter = &comm_data->io_params->enter;
+>> +	io_exit = &comm_data->io_params->exit;
+>
+> Might as well set these local variables as the declaration point
+> above.  None of them will be very long lines.
+>
+>> +
+>> +	dsc_pf0 = to_cca_dsc_pf0(tsm->dsm_dev);
+>> +redo_communicate:
+>> +	is_multi = false;
+>> +
+>> +	if (type == PDEV_COMMUNICATE)
+>> +		ret = rmi_pdev_communicate(virt_to_phys(dsc_pf0->rmm_pdev),
+>> +					   virt_to_phys(comm_data->io_params));
+>> +	else
+>> +		ret = RMI_ERROR_INPUT;
+>
+> I'd split this case out and return here farther than using the match below
+> as it feels like the error message auto to be more specific. Something
+> about type not matching.
+>
 
-diff --git a/drivers/gpio/gpio-tegra186.c b/drivers/gpio/gpio-tegra186.c
-index d27bfac6c9f5..c9f1441a7b30 100644
---- a/drivers/gpio/gpio-tegra186.c
-+++ b/drivers/gpio/gpio-tegra186.c
-@@ -20,6 +20,7 @@
- #include <dt-bindings/gpio/tegra194-gpio.h>
- #include <dt-bindings/gpio/tegra234-gpio.h>
- #include <dt-bindings/gpio/tegra241-gpio.h>
-+#include <dt-bindings/gpio/tegra256-gpio.h>
- 
- /* security registers */
- #define TEGRA186_GPIO_CTL_SCR 0x0c
-@@ -1274,6 +1275,30 @@ static const struct tegra_gpio_soc tegra241_aon_soc = {
- 	.has_vm_support = false,
- };
- 
-+#define TEGRA256_MAIN_GPIO_PORT(_name, _bank, _port, _pins)	\
-+	[TEGRA256_MAIN_GPIO_PORT_##_name] = {			\
-+		.name = #_name,					\
-+		.bank = _bank,					\
-+		.port = _port,					\
-+		.pins = _pins,					\
-+	}
-+
-+static const struct tegra_gpio_port tegra256_main_ports[] = {
-+	TEGRA256_MAIN_GPIO_PORT(A, 0, 0, 8),
-+	TEGRA256_MAIN_GPIO_PORT(B, 0, 1, 8),
-+	TEGRA256_MAIN_GPIO_PORT(C, 0, 2, 8),
-+	TEGRA256_MAIN_GPIO_PORT(D, 0, 3, 8),
-+};
-+
-+static const struct tegra_gpio_soc tegra256_main_soc = {
-+	.num_ports = ARRAY_SIZE(tegra256_main_ports),
-+	.ports = tegra256_main_ports,
-+	.name = "tegra256-gpio-main",
-+	.instance = 1,
-+	.num_irqs_per_bank = 8,
-+	.has_vm_support = true,
-+};
-+
- static const struct of_device_id tegra186_gpio_of_match[] = {
- 	{
- 		.compatible = "nvidia,tegra186-gpio",
-@@ -1293,6 +1318,9 @@ static const struct of_device_id tegra186_gpio_of_match[] = {
- 	}, {
- 		.compatible = "nvidia,tegra234-gpio-aon",
- 		.data = &tegra234_aon_soc
-+	}, {
-+		.compatible = "nvidia,tegra256-gpio",
-+		.data = &tegra256_main_soc
- 	}, {
- 		/* sentinel */
- 	}
--- 
-2.17.1
+This get updated in the follow up patch as below.
 
+	if (type == PDEV_COMMUNICATE)
+		ret = rmi_pdev_communicate(virt_to_phys(dsc_pf0->rmm_pdev),
+					   virt_to_phys(comm_data->io_params));
+	else {
+		struct cca_host_tdi *host_tdi = container_of(tsm->tdi, struct cca_host_tdi, tdi);
+
+		ret = rmi_vdev_communicate(virt_to_phys(dsc_pf0->rmm_pdev),
+					   virt_to_phys(host_tdi->rmm_vdev),
+					   virt_to_phys(comm_data->io_params));
+	}
+
+
+>
+>> +	if (ret != RMI_SUCCESS) {
+>> +		pr_err("pdev communicate error\n");
+>> +		return ret;
+>> +	}
+>> +
+>> +	/* caching request from RMM */
+>> +	if (io_exit->flags & RMI_DEV_COMM_EXIT_CACHE_RSP) {
+>> +		switch (io_exit->cache_obj_id) {
+>> +		case RMI_DEV_VCA:
+>> +			cache_buf = dsc_pf0->vca.buf;
+>> +			cache_offset = &dsc_pf0->vca.size;
+>> +			cache_remaining = sizeof(dsc_pf0->vca.buf) - *cache_offset;
+>> +			break;
+>> +		case RMI_DEV_CERTIFICATE:
+>> +			cache_buf = dsc_pf0->cert_chain.cache.buf;
+>> +			cache_offset = &dsc_pf0->cert_chain.cache.size;
+>> +			cache_remaining = sizeof(dsc_pf0->cert_chain.cache.buf) - *cache_offset;
+>> +			break;
+>> +		default:
+>> +			/* FIXME!! depending on the DevComms status,
+>> +			 * it might require to ABORT the communcation.
+>> +			 */
+>> +			return -EINVAL;
+>> +		}
+>> +
+>> +		if (io_exit->cache_rsp_len > cache_remaining)
+>> +			return -EINVAL;
+>> +
+>> +		memcpy(cache_buf + *cache_offset,
+>> +		       (comm_data->resp_buff + io_exit->cache_rsp_offset), io_exit->cache_rsp_len);
+>> +		*cache_offset += io_exit->cache_rsp_len;
+>> +	}
+>> +
+>> +	/*
+>> +	 * wait for last packet request from RMM.
+>> +	 * We should not find this because our device communication in synchronous
+>> +	 */
+>> +	if (io_exit->flags & RMI_DEV_COMM_EXIT_WAIT)
+>> +		return -ENXIO;
+>> +
+>> +	is_multi = !!(io_exit->flags & RMI_DEV_COMM_EXIT_MULTI);
+>
+> !! doesn't add anything here that I can see over
+>
+> 	is_multi = io_exit->flags & RMI_DEV_COMM_EXIT_MULTI;
+>
+>
+>> +
+>> +	/* next packet to send */
+>> +	if (io_exit->flags & RMI_DEV_COMM_EXIT_SEND) {
+>> +		nbytes = doe_send_req_resp(tsm);
+>> +		if (nbytes < 0) {
+>> +			/* report error back to RMM */
+>> +			io_enter->status = RMI_DEV_COMM_ERROR;
+>> +		} else {
+>> +			/* send response back to RMM */
+>> +			io_enter->resp_len = nbytes;
+>> +			io_enter->status = RMI_DEV_COMM_RESPONSE;
+>> +		}
+>> +	} else {
+>> +		/* no data transmitted => no data received */
+>> +		io_enter->resp_len = 0;
+>> +	}
+>> +
+>> +	/* The call need to do multiple request/respnse */
+>> +	if (is_multi)
+>> +		goto redo_communicate;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int do_dev_communicate(int type, struct pci_tsm *tsm, int target_state)
+>> +{
+>> +	int ret;
+>> +	unsigned long state;
+>> +	unsigned long error_state;
+>> +	struct cca_host_dsc_pf0 *dsc_pf0;
+>> +	struct rmi_dev_comm_enter *io_enter;
+>> +
+>> +	dsc_pf0 = to_cca_dsc_pf0(tsm->dsm_dev);
+>> +	io_enter = &dsc_pf0->comm_data.io_params->enter;
+>> +	io_enter->resp_len = 0;
+>> +	io_enter->status = RMI_DEV_COMM_NONE;
+>> +
+>> +	state = -1;
+>> +	do {
+>> +		ret = __do_dev_communicate(type, tsm);
+>> +		if (ret != 0) {
+> 		if (ret)
+>
+>> +			pr_err("dev communication error\n");
+>> +			break;
+>
+> I'd just return in error cases.
+>
+>> +		}
+>> +
+>> +		if (type == PDEV_COMMUNICATE) {
+>> +			ret = rmi_pdev_get_state(virt_to_phys(dsc_pf0->rmm_pdev),
+>> +						 &state);
+>> +			error_state = RMI_PDEV_ERROR;
+>> +		}
+>> +		if (ret != 0) {
+>> +			pr_err("Get dev state error\n");
+>> +			break;
+>> +		}
+>> +	} while (state != target_state && state != error_state);
+>> +
+>> +	pr_info("dev_io_complete: status: %d state:%ld\n", ret, state);
+>> +
+>> +	return state;
+>> +}
+
+Thanks for the review comments. I'll update the patch with the suggested changes.
+
+-aneesh
 
