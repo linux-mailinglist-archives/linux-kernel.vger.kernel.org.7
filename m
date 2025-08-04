@@ -1,94 +1,133 @@
-Return-Path: <linux-kernel+bounces-755415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3493FB1A606
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:32:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 03E60B1A619
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:34:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7FFF3B1956
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:32:32 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BEFEA188A9BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D08042192E4;
-	Mon,  4 Aug 2025 15:32:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53E97270ECF;
+	Mon,  4 Aug 2025 15:33:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hXXg/unU"
-Received: from mail-oa1-f69.google.com (mail-oa1-f69.google.com [209.85.160.69])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="APiwv87u"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B8826AD9
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:32:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.69
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 625E32222AA
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754321547; cv=none; b=DcyaMZJKx/c8F3ijUtCSDTPODiUjZgdbeFvb6FhmHnRORmjsCAm7X/prsoHZXtB1qzzwrzupDkQc4/sISkyFEvCv3ZRkS2wy3VI+AqP/z4T9tEH5xTw6rjNhoKm7+jxFF6MDDNl93zH581/qrzeEZViwIbkR6abf3LlxsdRigzs=
+	t=1754321585; cv=none; b=ctUL1y3lsCccuCpNR/dwPGHD/A8pp77CpSTiD+hUDfsTYrcvIJGMOAUmA8SaulAnkKMLZSQ0nYzbseLOs/lpoBl/ig1fLcDG5+qQMw5jhe4m2vhyvHkGIbe8HS4YDxF78gE/xuNKKk6fst0PSYbguvflYL89kxl/+TrthDYjjy8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754321547; c=relaxed/simple;
-	bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-	h=MIME-Version:Message-ID:Date:Subject:From:To:Content-Type; b=kVIVBCtobQxNAlyyEigOgwmaa9LPG8quwJ15nmr8bpRhdw1+BZ9BDcxrfprAmdgqWDi+E/DN4DcbDaM9W1K0jHMuOvZLWD2HfPuKklsNWwySrVGK2jUWBYbmeUs6mAoNst7MmHm5kISdxPZoX9kN929iKUB7cMzxLj3Arw0p1iI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hXXg/unU; arc=none smtp.client-ip=209.85.160.69
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f69.google.com with SMTP id 586e51a60fabf-2ea03d4f78cso1504656fac.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:32:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754321545; x=1754926345; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:from:subject:date:message-id
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-        b=hXXg/unU+FMskjr+/oD2M00CB/LXQDui07Gm5oJs1zjen4VX7J5Y3W7HJHwx/SzmCY
-         ot6Ec1CDYjdvYAj1OKpj/mgyL7KaIHpiFhMqgW8MvDPj67U5jfJ8NQgoAxEy1H3Klhl4
-         SObu7G0XE88HmqIzUJFD6X0BwQKOi8ku15vmVcSO8OqhNMoMvTOMtYWmJCA/xHCSrPkC
-         BZ45Y8TYFya7gunEXI1zMGPxnQAPiNHEzpdliEah7ZeNXzo0/EYu1H/DPInerJY4GIz0
-         X3qBsww3P1ow56L0IazGf14wIs3Enybrfz4xybW76/+Bx2sqNnIaZeimHotARv4EwYlG
-         L5iw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754321545; x=1754926345;
-        h=content-transfer-encoding:to:from:subject:date:message-id
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=2vpXEaurrZuepM/zf5ULQrdCsg83MzNcbDDxN3LM3Mo=;
-        b=IJvH+uLdZ1RHK4u0Y8LjU+Tt2BU4+aBN9bLzhuty4f6Z/3vt9JaBAHFWMYG9rMcIYi
-         TX7J68E5DJq8vCUX2g7IxRs8816Y9hq0SbtV+Qg1Xz38ojK8FhZtSj9/MJ2iZ5aVHSv+
-         w5lD5UCpYL+yBy+RpRxSBSBgevC3bdHvgvPdPZYhQk2zj93xLdHObYm9n8oLy3FbF8J1
-         yt3tnajXQdhNysFyjEPA3Cro6tzZeTOTNLdE3wsodUioQmFUN5BzewTK1Wa5HUZP8bGS
-         eP5QNCzBytsv8wNzOL/+JEXpr8eUsY1weARyk8NY12CySf1NYztv4KTpQeO6AOIf19wO
-         B8nA==
-X-Gm-Message-State: AOJu0Yx5gHfxfWqTMbiRo4lguSH3Zc32vTpvavL7+zPGFfihn7+IyBPF
-	3ku/JkMzgx49MQa0vlhSMXqemviHKsG9qWifuUWTqPd7/4hLj+kG56gX/aLNbvpyMrsjsoAHgli
-	pon4=
-X-Google-Smtp-Source: AGHT+IHl7dppyR4INmSpU1UdwJ32iQKSiYu6qMwMi2kWgyxHI4yOfmLQbFoPHo9mSeNHtfLiP+HE7rRpvQ==
+	s=arc-20240116; t=1754321585; c=relaxed/simple;
+	bh=QDeHFxryAw+kOvwGclbqMi3F2Oo2l3BaoPtG5AGVJYM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aqkb8ThsaMfC7FdpYf44fdlkvRQNg3Afd7GOwy/Lrmjk2SpK5oavWZRtJxk8ZzPmJGJSAXmZ+GIYB2/D3bEJw9wxBYAtffM/uWYmRyIgvafLgz3CDHvc7PEL4GTbYDn0lEooIRGosXyLpTv+yyGZE2W40uIi7YII4TWzkuxhm+M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=APiwv87u; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754321582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=HQP8afUfq4m9UVe65VetJLFF+40HVliKo1U+2ATcqOk=;
+	b=APiwv87uxXUZt+2tZ3oztTVBdd5kx8NMapXLDX+XImyQjblNXrd072hNEqjrK9GRwOVB5S
+	tQuCxNzW1L/du2oDy2whlrC/RQpdp/ODqILZeR+IFoIcJ9T0VYETACaPufvDYG7yx72MBP
+	10YM9i5m7UrxWjyI3BPi1NuJPbL2ViI=
+Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-217-W8sblUz4MUaTXOzaPpFNjw-1; Mon,
+ 04 Aug 2025 11:32:59 -0400
+X-MC-Unique: W8sblUz4MUaTXOzaPpFNjw-1
+X-Mimecast-MFC-AGG-ID: W8sblUz4MUaTXOzaPpFNjw_1754321577
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id ADB7F1956094;
+	Mon,  4 Aug 2025 15:32:57 +0000 (UTC)
+Received: from [10.44.33.21] (unknown [10.44.33.21])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 662F51956094;
+	Mon,  4 Aug 2025 15:32:55 +0000 (UTC)
+Message-ID: <a5c159e6-75d0-433d-92b4-f5be3fc0c1c2@redhat.com>
+Date: Mon, 4 Aug 2025 17:32:54 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6870:239b:b0:2d8:957a:5176 with SMTP id
- 586e51a60fabf-30b67555fd5mr6077027fac.5.1754321545028; Mon, 04 Aug 2025
- 08:32:25 -0700 (PDT)
-Message-ID: <autogen-java-440c184e-707a-4066-8aab-d9bccb92d063@google.com>
-Date: Mon, 04 Aug 2025 15:32:25 +0000
-Subject: Reliable Review Service for Your Business.
-From: alberthawkins666@gmail.com
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"; format=flowed; delsp=yes
-Content-Transfer-Encoding: base64
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dpll: zl3073x: ZL3073X_I2C and ZL3073X_SPI should depend
+ on NET
+To: Geert Uytterhoeven <geert+renesas@glider.be>,
+ Prathosh Satish <Prathosh.Satish@microchip.com>,
+ Jakub Kicinski <kuba@kernel.org>, Arnd Bergmann <arnd@kernel.org>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
+ kernel test robot <lkp@intel.com>
+References: <20250802155302.3673457-1-geert+renesas@glider.be>
+Content-Language: en-US
+From: Ivan Vecera <ivecera@redhat.com>
+In-Reply-To: <20250802155302.3673457-1-geert+renesas@glider.be>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-SGksDQoNCkkgaG9wZSB5b3UncmUgZG9pbmcgd2VsbC4gSSB3YW50ZWQgdG8gcmVhY2ggb3V0IGFu
-ZCBvZmZlciBzdXBwb3J0IHdpdGggIA0Kc29tZXRoaW5nIG1hbnkgYnVzaW5lc3NlcyBvdmVybG9v
-ayBidXQgdGhhdCBtYWtlcyBhIGh1Z2UgZGlmZmVyZW5jZTogIA0KcmV2aWV3cy4NCg0KSSBwcm92
-aWRlIHJlYWwsIGhpZ2gtcXVhbGl0eSByZXZpZXdzIG9uIHBsYXRmb3JtcyBsaWtlIEdvb2dsZSwg
-VHJ1c3RwaWxvdCwgIA0KRmFjZWJvb2ssIFNpdGVqYWJiZXIsIEJCQiwgYW5kIG90aGVycy4gVGhl
-c2UgcmV2aWV3cyBhcmUgd3JpdHRlbiB0byBzb3VuZCAgDQpnZW51aW5lIGFuZCByZWZsZWN0IHJl
-YWwgY3VzdG9tZXIgZXhwZXJpZW5jZXMsIGhlbHBpbmcgdG8gYnVpbGQgdHJ1c3QsICANCmltcHJv
-dmUgdmlzaWJpbGl0eSwgYW5kIHN0cmVuZ3RoZW4geW91ciBicmFuZOKAmXMgcmVwdXRhdGlvbi4N
-Cg0K4pyFIE5vbi1kcm9wLCB2ZXJpZmllZCBwb3N0cyB0aGF0IHN0YXkgdXANCuKchSBGbGV4aWJs
-ZSBkZWxpdmVyeeKAlGRhaWx5LCB3ZWVrbHksIG9yIGhvd2V2ZXIgc3VpdHMgeW91DQoNCkV2ZXJ5
-dGhpbmcgaXMgaGFuZGxlZCB3aXRoIGNhcmUgYW5kIGRpc2NyZXRpb24uIEkgZG9u4oCZdCB1c2Ug
-dGVtcGxhdGVzIG9yICANCnNob3J0Y3V0cy4gRWFjaCByZXZpZXcgaXMgdW5pcXVlIGFuZCB3cml0
-dGVuIHdpdGggeW91ciBicmFuZCBvciBzZXJ2aWNlcyBpbiAgDQptaW5kLg0KDQpMb29raW5nIGZv
-cndhcmQgdG8gaGVhcmluZyBmcm9tIHlvdS4NCg0KQmVzdCByZWdhcmRzLA0KUmV2aWV3IFByb3Zp
-ZGVycw0KDQpUbyBvcHQgb3V0IG9mIGZ1dHVyZSBlbWFpbHMsIGp1c3QgcmVwbHkgd2l0aCAiTm8g
-bW9yZSBlbWFpbC4iIFRoYW5rIHlvdSENCg==
+On 02. 08. 25 5:53 odp., Geert Uytterhoeven wrote:
+> When making ZL3073X invisible, it was overlooked that ZL3073X depends on
+> NET, while ZL3073X_I2C and ZL3073X_SPI do not, causing:
+> 
+>      WARNING: unmet direct dependencies detected for ZL3073X when selected by ZL3073X_I2C
+>      WARNING: unmet direct dependencies detected for ZL3073X when selected by ZL3073X_SPI
+>      WARNING: unmet direct dependencies detected for ZL3073X
+> 	Depends on [n]: NET [=n]
+> 	Selected by [y]:
+> 	- ZL3073X_I2C [=y] && I2C [=y]
+> 	Selected by [y]:
+> 	- ZL3073X_SPI [=y] && SPI [=y]
+> 
+> Fix this by adding the missing dependencies to ZL3073X_I2C and
+> ZL3073X_SPI.
+> 
+> Reported-by: kernel test robot <lkp@intel.com>
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508022110.nTqZ5Ylu-lkp@intel.com/
+> Closes: https://lore.kernel.org/oe-kbuild-all/202508022351.NHIxPF8j-lkp@intel.com/
+> Fixes: a4f0866e3dbbf3fe ("dpll: Make ZL3073X invisible")
+> Signed-off-by: Geert Uytterhoeven <geert+renesas@glider.be>
+> ---
+>   drivers/dpll/zl3073x/Kconfig | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/dpll/zl3073x/Kconfig b/drivers/dpll/zl3073x/Kconfig
+> index 9915f7423dea370c..5bbca14005813134 100644
+> --- a/drivers/dpll/zl3073x/Kconfig
+> +++ b/drivers/dpll/zl3073x/Kconfig
+> @@ -16,7 +16,7 @@ config ZL3073X
+>   
+>   config ZL3073X_I2C
+>   	tristate "I2C bus implementation for Microchip Azurite devices"
+> -	depends on I2C
+> +	depends on I2C && NET
+>   	select REGMAP_I2C
+>   	select ZL3073X
+>   	help
+> @@ -28,7 +28,7 @@ config ZL3073X_I2C
+>   
+>   config ZL3073X_SPI
+>   	tristate "SPI bus implementation for Microchip Azurite devices"
+> -	depends on SPI
+> +	depends on NET && SPI
+>   	select REGMAP_SPI
+>   	select ZL3073X
+>   	help
+
+Acked-by: Ivan Vecera <ivecera@redhat.com>
+
 
