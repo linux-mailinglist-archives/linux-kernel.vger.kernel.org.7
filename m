@@ -1,75 +1,77 @@
-Return-Path: <linux-kernel+bounces-755570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73E7EB1A896
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:24:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADDC6B1A897
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:25:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EB17F7A2313
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:23:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D660617F5E2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F3EC28B514;
-	Mon,  4 Aug 2025 17:24:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D823928B7F9;
+	Mon,  4 Aug 2025 17:24:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mlD56zNd"
-Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y0uowsUf"
+Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90A9028B4F0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:24:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9303428B7E2
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:24:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328290; cv=none; b=CGHM703W75m4DXHfPLsmtHPoXM3Vxcx/1BPFu5Hv5/zmkZGOio9h+xVIS/mtfAFlbqTL+3NchBL2aaNCiMbl8dX9ccozLGgeMbL3uxOcX/Q1fkGHNL2YdLlJk7xchwSzPLlS50enPXZxA1VPPmPuHuxY6eiErAMbF0H/ovsqHj8=
+	t=1754328294; cv=none; b=XQ1L2VXlpOy8fUyqL7qiCPpzBFkUxj7jr6+zxw+fat/rXdWJqhPNmG+4k7SGMNNspt1uuCSK7x7u0mfA3CncLZ5vYZ7HHjJCgHjjIG40099DZjKvy/vkBbBwdSvi/xDy8L3WUhHgSqTz3QiGK0dtfXMC4TpXUfIvxeX9V8mpz9c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328290; c=relaxed/simple;
-	bh=KFo/GmS3vcCmlUIVE5RuEXl9t5xeH9nCBJxDQKd4grE=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NWdZHisWM81kpmDSRIjOCAbVdtOjL9LCfksU0XyAgcNWVvmQYnatGumnTXHCS2YDlpDZ8hC1sX0cth7TF8SWtvZpTVQFhPxXPeQGKJs/vJV8r2f1Go/jCzRfIzCD9erBIw6KxY6wU8BeHZGBX3eJwOnzIILuH1KNQZawNnuGVlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mlD56zNd; arc=none smtp.client-ip=209.85.210.176
+	s=arc-20240116; t=1754328294; c=relaxed/simple;
+	bh=D0j65UqNmlMIxf+Evr42Bqzpf4M4hsTguikwzCdh9SE=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=iamwUWAeqqkODnUfLWBOcZ9mZBylsYLzguZUqMW6Ad4y0geGM5flf0yIC6hfVpiGPKvmNery1d7rOW92BJp4gcCjLWmkJdK/Mom4rl56cT9GmYKz/L8/yuHLJ6u0GSvwOliDh7xBglKP5+XoI2L25ADZKaSJgo4Rafhd8THaucI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y0uowsUf; arc=none smtp.client-ip=209.85.210.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-76bdea88e12so2769035b3a.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:24:48 -0700 (PDT)
+Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-76bd202ef81so5063554b3a.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:24:52 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754328288; x=1754933088; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=PHVh+bW0oX3+8yP14fW/aJudQEbUBGW3A6TL5UtPTPQ=;
-        b=mlD56zNdfgXN8El8zqYR5RjD6mifIf/2XDMnedRy7L8+xMSTSkFyM7yoNXPR4LLDmp
-         OoNgNQ6pFlNB2/0eqD+BCXMK0PK4ayjqS4G7/DYOvIRr8TPKNuJrb4QVK+PMmwPb88sw
-         6W4hpUMdkK60VhafqcFkqlgzLU2W/cCL9SyKmYE3xES+Y4dhaLeyhDmHmVUQwKrCldYo
-         By0x8XfKUsNmdNwfJvSaNQhwJW2ODsaqOWzdE42lXBjUtbGdiAaNNmfM9Eg6J9FVFS8k
-         KEGJ4iZbBy8rPuvBwhoywxgjauxBRwm4WJC1Ghr9LP1SaBCNR+ckn08sZ3CdrJ+ndC06
-         +zMw==
+        d=gmail.com; s=20230601; t=1754328292; x=1754933092; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=vVDJaCuMrELPMFvvynT19e8hRXhozD/bO9trI2Q8I4s=;
+        b=Y0uowsUftozLz8dRmYjIfjGr7bnmXL+BPcXFfZ4wFyUlc9RaloapegIKOS/nWX+Paq
+         RNwj5tOZaM7DcgryOmbph+wmzEbUvucXEaOxm9rLk9/iJMhrJhAX8bRsY6cbhT4h0XxR
+         DDwLixhsenP78h57S4DngPkJa7SqjnopwPbOsKIVyYD0iq+k8JSJwDZg1feaNbU+lpPK
+         d5eGRYkK1TE/qWNoQG7Pd9N2g/RlW+pk0VZkEKkeOBYzQZaz4xWU5FrTftFEsBLIfyXk
+         CS0wHYQ4DTnKc9/S4RN7RyE3eupMsbAi7v23zBmzN2+rAT9cXxROPReMzPTseUyD08BL
+         xkNQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328288; x=1754933088;
-        h=content-transfer-encoding:mime-version:reply-to:message-id:date
-         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PHVh+bW0oX3+8yP14fW/aJudQEbUBGW3A6TL5UtPTPQ=;
-        b=QE9shoWU5pnbwA+A02x7sPQlJ0jBFobeRs4PjRuF5yi0kZuagbhZATQ6gfiFOXtuls
-         PWiuqWNXHveozNOytkM1FAq0Fiu6NjYNR1gXbDoyzTSNuv5r6JvgCxz3u/++/65uDdmi
-         DARIKLesxq02Wnkj7pPrZT1Ae6/Uc6WLAWhEOCJF4WSG4342OgKMYWf4SoRB/YLP+P0e
-         MVDMCHUDSut6/tjVqpSegScetvL3SW+aes5LUC5AL1xOeZh3e1+w/6lNibjKRbRrLMTW
-         +4czuO8NKVDrO7OImHBLa62hkCemMZOSsO3fHwV4mDyAdZEm0CZRWjSalbgKcuBBVHxk
-         llWA==
-X-Forwarded-Encrypted: i=1; AJvYcCUXgPL/CSIzShIcilpvGbkYaIkyDGl+N7cp+moP4y7kMvL3pGuB7RBBwS3MXYBNkc+8o+di6AQynXWrpAk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEVHgemYzrzzE/EHzcHhP2oVhNL+wH72/AAX8TNNi1sudGbRoB
-	JS5ce6Y06RhTwyowAIlmpE8VITp+pbHVpUacFTDQ7xXRNJDf8cKU667C
-X-Gm-Gg: ASbGnctcS9kEombCDDqF59xlX/+rXxwfynsJjf95IWZsIIoXU1NRJjmchx0nMEcT/ew
-	B7qRZLBmLOJnPiO+Z4RaEO3XeeBjZq5UZbDg6ozs48zifvcx+BSI3d/Vt8EqdFctG3r1xzbS86A
-	BuAEaHImTmEIM5/9Ke7PhxvchJMPEWH0e7C8LPC+eGhVGd2nwmpSOs/TLXB/jBNb1qoJYcOWksE
-	R19rhhZ14ViPDlI5ALpVhdgxT7Dj6hBUloO35tfu63kCLPjrmC/GFhCo3ANITF4sHvgXwtVkPp6
-	Uwm68dHtISokrwHypsEc04heNQp3Jg6IugNR72fDMSoTR0LpuWmaQrtZJY9c0aQjy6zYPKVK1ZK
-	fuV+pvNevdfkTvqVITz+oo50NvCRbVGaj7nwRPw==
-X-Google-Smtp-Source: AGHT+IHSC7TNTjwpqx44F8YGDvODHfInTOBsE13N4kab2tXYxlMKJ6P5FKRoHxc8idI1nYgb7Ht+Sg==
-X-Received: by 2002:a05:6300:218a:b0:233:b51a:8597 with SMTP id adf61e73a8af0-23df9127c29mr17231404637.35.1754328287752;
-        Mon, 04 Aug 2025 10:24:47 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754328292; x=1754933092;
+        h=content-transfer-encoding:mime-version:reply-to:references
+         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=vVDJaCuMrELPMFvvynT19e8hRXhozD/bO9trI2Q8I4s=;
+        b=W9uv5FZdEfIMZKzHe1X20ohZ7lj1cI7SohydztnNpPhsZMAJJ1JkcGFMjcskVyyqgU
+         aVyx1wFfitz9hXIc9oZzfPNsnE6tzIaMwHuP5qxHHBuTGRk43RXA191xeP8YatNoUtII
+         b74BRKTtjH6WUZ5BnGSig7lUnCYNeZhAKa5rYqRqcQQzu2O1siZBGaRXydofh+8VgvM+
+         SnCos4azUmwWudE6TmGvtaZMI743R9cypoRAMnpsn1GL476Zq2xRmF2cTNA1x1PX2uWS
+         K7QAkARtysbSKOWROLCn1jeVeHBfWSv1XvhrEZ+sUYit/IliSWmJ9/e2/cZl6r5nONlB
+         AeyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCV75E6GcIMiAzgClCcb9uigMc3kzZ5vhkZ+My7KwIk9l+Acddr82fw3ZC79O4CRDjDPaXAeBCrdfB7yWpg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwJ4vlbZ56/E9Nbqm9ywajZI/qXt3dGOT2HbaVgxqQNOtL6PM52
+	ZJvGOpwbRTam/glAJPcL6cjS8QQuxTLs6koTfsAc7nVotukZ3qyKQuv/
+X-Gm-Gg: ASbGncu745+LG5ztBUmyzd27j5enDiJiWAVXp1idpdak2jrmfo8h17QQaG30ZQ0FuOW
+	yHKfejnjFca6xYtYllb248ofs1Y7FhEGLWQXx8TfyMRcm5VqaBxSPeg0kgG84X7zl76h6IYIWtb
+	2NHwJyMohTxJ3O9SJSIbCAk7oAsZeW0ITlZ1RwVBPweMNn3X1S1GE0Gs7Z+/6HqY5LHNMEXzOTj
+	eYyTe49pBAYVMchiU8TTSwFohafj+YSuFpQuL+QOq5vST5KNyRRnmu9/ctX9JbFvQ5z40oY7WIu
+	bhHYdaiCCSYOlkOroUlKXVFL0UHLBomER3/bEZB5jrSFFtgE0r77i+i9ZFCNbSbPJ6XKtTE8oqV
+	CozqtZXPyFVXb7baFp/fRoPaOvbc=
+X-Google-Smtp-Source: AGHT+IGniJ0lx0Qlax8eOfu84RbBgv9hJ3X1mPcI10TaxeI90rF9axLNnX5byim17EjKyI1ryfWq7Q==
+X-Received: by 2002:a05:6a00:3a10:b0:76b:e144:1d91 with SMTP id d2e1a72fcca58-76bec4be949mr12302420b3a.16.1754328291655;
+        Mon, 04 Aug 2025 10:24:51 -0700 (PDT)
 Received: from KASONG-MC4 ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bfcb26905sm4194530b3a.123.2025.08.04.10.24.44
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bfcb26905sm4194530b3a.123.2025.08.04.10.24.48
         (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 04 Aug 2025 10:24:46 -0700 (PDT)
+        Mon, 04 Aug 2025 10:24:51 -0700 (PDT)
 From: Kairui Song <ryncsn@gmail.com>
 To: linux-mm@kvack.org
 Cc: Andrew Morton <akpm@linux-foundation.org>,
@@ -81,10 +83,12 @@ Cc: Andrew Morton <akpm@linux-foundation.org>,
 	"Huang, Ying" <ying.huang@linux.alibaba.com>,
 	linux-kernel@vger.kernel.org,
 	Kairui Song <kasong@tencent.com>
-Subject: [PATCH 0/2] mm, swap: improve cluster scan strategy
-Date: Tue,  5 Aug 2025 01:24:37 +0800
-Message-ID: <20250804172439.2331-1-ryncsn@gmail.com>
+Subject: [PATCH 1/2] mm, swap: don't scan every fragment cluster
+Date: Tue,  5 Aug 2025 01:24:38 +0800
+Message-ID: <20250804172439.2331-2-ryncsn@gmail.com>
 X-Mailer: git-send-email 2.50.1
+In-Reply-To: <20250804172439.2331-1-ryncsn@gmail.com>
+References: <20250804172439.2331-1-ryncsn@gmail.com>
 Reply-To: Kairui Song <kasong@tencent.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -96,35 +100,154 @@ Content-Transfer-Encoding: 8bit
 
 From: Kairui Song <kasong@tencent.com>
 
-This series improves the large allocation performance and reduces
-the failure rate. Some design of the cluster alloactor was later
-found to be improvable after thorough testing.
+Fragment clusters were mostly failing high order allocation already.
+The reason we scan it now is that a swap slot may get freed without
+releasing the swap cache, so a swap map entry will end up in HAS_CACHE
+only status, and the cluster won't be moved back to non-full or free
+cluster list.
 
-For example, build kernel test with make -j96 and 10G ZRAM with 64kB
-mTHP enabled shows better performance and a lower failure rate:
+Usually this only happens for !SWP_SYNCHRONOUS_IO devices when the swap
+device usage is low (!vm_swap_full()) since swap will try to lazy free
+the swap cache.
+
+It's unlikely to cause any real issue. Fragmentation is only an issue
+when the device is getting full, and by  that time, swap will already
+be releasing the swap cache aggressively. And swap cache reclaim happens
+when the allocator scans a cluster too. Scanning one fragment cluster
+should be good enough to reclaim these pinned slots.
+
+And besides, only high order allocation requires iterating over a
+cluster list, order 0 allocation will succeed on the first attempt.
+And high order allocation failure isn't a serious problem.
+
+So the iteration of fragment clusters is trivial, but it will slow down
+mTHP allocation by a lot when the fragment cluster list is long.
+So it's better to drop this fragment cluster iteration design. Only
+scanning one fragment cluster is good enough in case any cluster is
+stuck in the fragment list; this ensures order 0 allocation never
+falls, and large allocations still have an acceptable success rate.
+
+Test on a 48c96t system, build linux kernel using 10G ZRAM, make -j48,
+defconfig with 768M cgroup memory limit, on top of tmpfs, 4K folio
+only:
+
+Before: sys time: 4407.28s
+After:  sys time: 4425.22s
+
+Change to make -j96, 2G memory limit, 64kB mTHP enabled, and 10G ZRAM:
 
 Before: sys time: 10230.22s  64kB/swpout: 1793044  64kB/swpout_fallback: 17653
-After:  sys time: 5538.3s    64kB/swpout: 1813133  64kB/swpout_fallback: 0
+After:  sys time: 5527.90s   64kB/swpout: 1789358  64kB/swpout_fallback: 17813
 
-System time is cut in half, and the failure rate drops to zero. Larger
-allocations in a hybrid workload also showed a major improvement:
+Change to 8G ZRAM:
 
-512kB swap failure rate:
-Before: swpout:11971  swpout_fallback:2218
-After:  swpout:14606  swpout_fallback:4
+Before: sys time: 21929.17s  64kB/swpout: 1634681  64kB/swpout_fallback: 173056
+After:  sys time: 6121.01s   64kB/swpout: 1638155  64kB/swpout_fallback: 189562
 
-2M swap failure rate:
-Before: swpout:12     swpout_fallback:1578
-After:  swpout:1253   swpout_fallback:15
+Change to use 10G brd device with SWP_SYNCHRONOUS_IO flag removed:
 
-Kairui Song (2):
-  mm, swap: don't scan every fragment cluster
-  mm, swap: prefer nonfull over free clusters
+Before: sys time: 7368.41s  64kB/swpout:1787599  swpout_fallback: 0
+After:  sys time: 7338.27s  64kB/swpout:1783106  swpout_fallback: 0
 
+Change to use 8G brd device with SWP_SYNCHRONOUS_IO flag removed:
+
+Before: sys time: 28139.60s 64kB/swpout:1645421  swpout_fallback: 148408
+After:  sys time: 8941.90s  64kB/swpout:1592973  swpout_fallback: 265010
+
+The performance is a lot better and large order allocation failure rate
+is only very slightly higher or unchanged.
+
+Signed-off-by: Kairui Song <kasong@tencent.com>
+---
  include/linux/swap.h |  1 -
- mm/swapfile.c        | 68 +++++++++++++++++++++++---------------------
- 2 files changed, 36 insertions(+), 33 deletions(-)
+ mm/swapfile.c        | 30 ++++++++----------------------
+ 2 files changed, 8 insertions(+), 23 deletions(-)
 
+diff --git a/include/linux/swap.h b/include/linux/swap.h
+index 2fe6ed2cc3fd..a060d102e0d1 100644
+--- a/include/linux/swap.h
++++ b/include/linux/swap.h
+@@ -310,7 +310,6 @@ struct swap_info_struct {
+ 					/* list of cluster that contains at least one free slot */
+ 	struct list_head frag_clusters[SWAP_NR_ORDERS];
+ 					/* list of cluster that are fragmented or contented */
+-	atomic_long_t frag_cluster_nr[SWAP_NR_ORDERS];
+ 	unsigned int pages;		/* total of usable pages of swap */
+ 	atomic_long_t inuse_pages;	/* number of those currently in use */
+ 	struct swap_sequential_cluster *global_cluster; /* Use one global cluster for rotating device */
+diff --git a/mm/swapfile.c b/mm/swapfile.c
+index b4f3cc712580..5fdb3cb2b8b7 100644
+--- a/mm/swapfile.c
++++ b/mm/swapfile.c
+@@ -470,11 +470,6 @@ static void move_cluster(struct swap_info_struct *si,
+ 	else
+ 		list_move_tail(&ci->list, list);
+ 	spin_unlock(&si->lock);
+-
+-	if (ci->flags == CLUSTER_FLAG_FRAG)
+-		atomic_long_dec(&si->frag_cluster_nr[ci->order]);
+-	else if (new_flags == CLUSTER_FLAG_FRAG)
+-		atomic_long_inc(&si->frag_cluster_nr[ci->order]);
+ 	ci->flags = new_flags;
+ }
+ 
+@@ -926,32 +921,25 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		swap_reclaim_full_clusters(si, false);
+ 
+ 	if (order < PMD_ORDER) {
+-		unsigned int frags = 0, frags_existing;
+-
+ 		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
+ 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+ 							order, usage);
+ 			if (found)
+ 				goto done;
+-			/* Clusters failed to allocate are moved to frag_clusters */
+-			frags++;
+ 		}
+ 
+-		frags_existing = atomic_long_read(&si->frag_cluster_nr[order]);
+-		while (frags < frags_existing &&
+-		       (ci = isolate_lock_cluster(si, &si->frag_clusters[order]))) {
+-			atomic_long_dec(&si->frag_cluster_nr[order]);
+-			/*
+-			 * Rotate the frag list to iterate, they were all
+-			 * failing high order allocation or moved here due to
+-			 * per-CPU usage, but they could contain newly released
+-			 * reclaimable (eg. lazy-freed swap cache) slots.
+-			 */
++		/*
++		 * Scan only one fragment cluster is good enough. Order 0
++		 * allocation will surely success, and large allocation
++		 * failure is not critical. Scanning one cluster still
++		 * keeps the list rotated and reclaimed (for HAS_CACHE).
++		 */
++		ci = isolate_lock_cluster(si, &si->frag_clusters[order]);
++		if (ci) {
+ 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+ 							order, usage);
+ 			if (found)
+ 				goto done;
+-			frags++;
+ 		}
+ 	}
+ 
+@@ -972,7 +960,6 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
+ 		 * allocation, but reclaim may drop si->lock and race with another user.
+ 		 */
+ 		while ((ci = isolate_lock_cluster(si, &si->frag_clusters[o]))) {
+-			atomic_long_dec(&si->frag_cluster_nr[o]);
+ 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
+ 							0, usage);
+ 			if (found)
+@@ -3224,7 +3211,6 @@ static struct swap_cluster_info *setup_clusters(struct swap_info_struct *si,
+ 	for (i = 0; i < SWAP_NR_ORDERS; i++) {
+ 		INIT_LIST_HEAD(&si->nonfull_clusters[i]);
+ 		INIT_LIST_HEAD(&si->frag_clusters[i]);
+-		atomic_long_set(&si->frag_cluster_nr[i], 0);
+ 	}
+ 
+ 	/*
 -- 
 2.50.1
 
