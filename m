@@ -1,128 +1,286 @@
-Return-Path: <linux-kernel+bounces-754634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 182EBB19A4B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:51:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3D0ECB19A4F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:53:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C020318959D1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:52:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F1D417449D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:53:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC3A3218ACA;
-	Mon,  4 Aug 2025 02:51:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="dxmg5WkD"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 35764EC2
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 02:51:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 951B321C182;
+	Mon,  4 Aug 2025 02:53:17 +0000 (UTC)
+Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D9B020A5EB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 02:53:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754275901; cv=none; b=eyLttss4BlA7kUFh/hOmMnGFax5KUPHikeb8R38Yj8BEN/zpZyK03bWMxJIZSkL+nwxeCh5cayqMJRVvyn36GTCCpKbg3ufhQIY6JcvYAo0y3kZy3R1qyqQ4FKy3F0tqsL0Iq7Uvw7HD5tyrWE+F8Vj1qAgH/fSZ9QuWd97pSRM=
+	t=1754275997; cv=none; b=AtDsteABToe/messNSCV73KHkEIkGpvboJS8mzrabFXNDJQlGmFebqeK8NrtvzFpFGbFoIsAGXiTkReuSFP6w6+kA9WqGzIM+KbU3ee9qmeMALI4DdsBq/hyMje5HVPTtzmodWsWgI/BEKdCZ7dHCazgGcrNnrejg6a8O9dWVro=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754275901; c=relaxed/simple;
-	bh=EhGd6gIenyb/JLJh5qNleIbNoKz8jaEu4G9DhpC1VTE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=YXNG5liUZfEiCwyh2tsf8vqskEKXEAoyGpsww9JnkjnK86zh4cnmC6KTGP54AZ63cWWQBpWKRiK757vR0QiO1urZz+3QpmNS921VGDaBgF9/qJzvmvITwHPlnhav6wlecJ1e8n25gPIf0TgT3lIsLe0qivY5p+JA6jm+cbjOfwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=dxmg5WkD; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-7426c44e014so3507420b3a.3
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 19:51:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1754275898; x=1754880698; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kppyljle9MoC1RO3HWHQlYBE2gQj+CD/61kPvhIKZUU=;
-        b=dxmg5WkD1sdsnaR1J5zK5oXIQoSeZ4+a6UYlvECyUGEsUE+s1nTtnzjtiLk/gG8VKN
-         ueq3nA6Z/xUa50Ro/XRgGaq3te166LDcYv+HE2jiPH8i4v3R1f6tljp5H84RvbkXAkda
-         D87d82nfqj/OPhknz1TIhxpEAdbSlzYTo0ETqddKZ/tTYBokNXlpaQwqYN7p1oOwqzTq
-         yDhQ3hKCUXQ040pMgGa6ioiqrKDt9i2CUR/j/57aIjuInTKrOrHKWsmVpcb6m19EDcPP
-         Qp7UcB2cR2j1sUOSIE13daIMgd9/DXaVJJYLuinbonvJtuiNFDluNsUFad2QJJG2o8As
-         /ZNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754275898; x=1754880698;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Kppyljle9MoC1RO3HWHQlYBE2gQj+CD/61kPvhIKZUU=;
-        b=giDj1ryUy2Ica1HsR2C1QQks4kJwruVdij9jhSiVp70POZ5XEAt3T/juk4b/dbV7yi
-         avDdf6lVAF7Kr78ZYCUeMHmChQpBSr2izeqDS2s674CzTQsJMmJHGBJrGpLFgC0NIpll
-         z+uqvLNlfuJfI07IgbjDUC21ibOqGQN2ih1dIKDicN1tS0vQ+AkPiTdutu8sYH+sOEoX
-         9BDW1wUAVIwNvfOTXC+WacH6Eoxi1NcyHzKJSz7fMxZUg/WV3EB81Zb7JQ0RYJoQLJf2
-         rS4z6P8cUb50Wz6xOPqi/fqucodDTooQZbee9kiu53cfG6lrpVI5jlViOP1v/luav9sY
-         V4KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8f4lAchzJMmm+CG6C86dKBDetLCCrMqaq3ej+m0MdysTGNPjpNs/Euhrr9c8Wjr9mSzkLf2pBCqeaTKs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxr9xvctCdKJ9RR/RikUWbYkTQGr4p9j6pdfjM2TvIhI56sk/NV
-	1+VHXjHesLwo7x4IQt4Gl0g17dfJ7lPOZQ6xQaAdsANTGsI9lP5SXegGBrFhXhsdJa5nNPe3QrJ
-	No9NNqq0=
-X-Gm-Gg: ASbGncvj/kjYznXmosjfJDI1b28VuEmcVbyIxveMw675StAMwjSrEnmW0K6rVqT0N98
-	BwdvWFurTWtkLylaxXAM/zWC6YcvjX7fODQC1GY3S/5JaWm+Syp2Brk6JtthpxIXcQjpZinsjuB
-	wm/nFMgwV/HUOadTQ5mBnFeLO3M2qR+Xj7Q+i0Ls2kUi7F+Q9wCBCyHucl1Ej8yTugJ3/a5tJzw
-	llY2GZk+JrufXHSgXOibO9fEap5iJzcq0gx+9/QDLRdn+mWbuKkkDPhBZ2nSNqqd8qJ1CVHP2a0
-	7DIdVVGeMr/f/k4HJ/scHjXKzaX4xKmJQ51aUmogjrDsRIkOZeDZmc3ptPUIbEpsCOQgnzA82ZZ
-	F+4fKF7NOUIQtFMq+Y7bYU1cd/N+3QYvtJfRhTG2pWPHgyvSvElb2WF+FEjRLHw==
-X-Google-Smtp-Source: AGHT+IGnAJTT+IrbnsWZCRCk+YCd+3FYDN3fJPd3vuAU12BnpRFJPFCkmur1SehfCljyn2rk7N6/hA==
-X-Received: by 2002:a05:6a00:9a5:b0:76b:c882:e0a with SMTP id d2e1a72fcca58-76bec30d23dmr8835977b3a.5.1754275898337;
-        Sun, 03 Aug 2025 19:51:38 -0700 (PDT)
-Received: from L6YN4KR4K9.bytedance.net ([139.177.225.246])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76be9143983sm5181960b3a.1.2025.08.03.19.51.33
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Sun, 03 Aug 2025 19:51:37 -0700 (PDT)
-From: Yunhui Cui <cuiyunhui@bytedance.com>
-To: atish.patra@linux.dev,
-	anup@brainfault.org,
-	will@kernel.org,
-	mark.rutland@arm.com,
-	paul.walmsley@sifive.com,
-	palmer@dabbelt.com,
-	aou@eecs.berkeley.edu,
-	alex@ghiti.fr,
-	linux-riscv@lists.infradead.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-perf-users@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Yunhui Cui <cuiyunhui@bytedance.com>
-Subject: [PATCH] perf: riscv: skip empty batches in counter start
-Date: Mon,  4 Aug 2025 10:51:10 +0800
-Message-Id: <20250804025110.11088-1-cuiyunhui@bytedance.com>
-X-Mailer: git-send-email 2.39.2 (Apple Git-143)
+	s=arc-20240116; t=1754275997; c=relaxed/simple;
+	bh=l5B4lJwk8CEdP9mZBAa5j1SigN5pFdanxaMinONd+p8=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=PdIe6OXkqIqdDorOtcz0h9qn99xAfj9gSSvzBkmijHp5IGmzxwY3v2XGO1Wsb5HKELT3lmgKUlx8PuTXXRLBRO2921Pe30KWYpfCSS3znj6Fu0RMG++yS01kbyEzMziSwMg39myIy/0qDZM5OIeH835q/1BENuinzdchPAYP/XQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
+Received: from loongson.cn (unknown [10.20.42.62])
+	by gateway (Coremail) with SMTP id _____8CxNHCQIJBo1xc4AQ--.44755S3;
+	Mon, 04 Aug 2025 10:53:04 +0800 (CST)
+Received: from [10.20.42.62] (unknown [10.20.42.62])
+	by front1 (Coremail) with SMTP id qMiowJAxvsGMIJBoiuo0AA--.22459S3;
+	Mon, 04 Aug 2025 10:53:02 +0800 (CST)
+Subject: Re: [PATCH v3] LoongArch: Implement physical address with ELF program
+ header
+To: Jiaxun Yang <jiaxun.yang@flygoat.com>
+Cc: Huacai Chen <chenhuacai@kernel.org>, Xuerui Wang <kernel@xen0n.name>,
+ Xi Ruoyao <xry111@xry111.site>, loongarch@lists.linux.dev,
+ linux-kernel@vger.kernel.org
+References: <20250723080640.442339-1-maobibo@loongson.cn>
+ <00651F3A-6649-4C69-B365-352C8D323902@flygoat.com>
+From: Bibo Mao <maobibo@loongson.cn>
+Message-ID: <bc680815-b67b-638f-a920-03a0ac65540d@loongson.cn>
+Date: Mon, 4 Aug 2025 10:51:17 +0800
+User-Agent: Mozilla/5.0 (X11; Linux loongarch64; rv:68.0) Gecko/20100101
+ Thunderbird/68.7.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+In-Reply-To: <00651F3A-6649-4C69-B365-352C8D323902@flygoat.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Language: en-US
 Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:qMiowJAxvsGMIJBoiuo0AA--.22459S3
+X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
+X-Coremail-Antispam: 1Uk129KBj93XoW3Ar18ZFyxCr17uF18Ar1UJwc_yoW7Kryrpr
+	Wqya18CF4rGr1rZwnIqFn09FyUtrnak3Wjgr45Ja48AF1agr1DKw47Gr1DGF90vw4kZr4I
+	vFykJ3y2v3Z3KagCm3ZEXasCq-sJn29KB7ZKAUJUUUUr529EdanIXcx71UUUUU7KY7ZEXa
+	sCq-sGcSsGvfJ3Ic02F40EFcxC0VAKzVAqx4xG6I80ebIjqfuFe4nvWSU5nxnvy29KBjDU
+	0xBIdaVrnRJUUUBFb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k26cxKx2
+	IYs7xG6rWj6s0DM7CIcVAFz4kK6r1Y6r17M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48v
+	e4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Gr0_Xr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI
+	0_Gr0_Cr1l84ACjcxK6I8E87Iv67AKxVW8Jr0_Cr1UM28EF7xvwVC2z280aVCY1x0267AK
+	xVW8Jr0_Cr1UM2kKe7AKxVWUXVWUAwAS0I0E0xvYzxvE52x082IY62kv0487Mc804VCY07
+	AIYIkI8VC2zVCFFI0UMc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0I7IYx2IY67AKxVWU
+	XVWUAwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI4
+	8JMxk0xIA0c2IEe2xFo4CEbIxvr21l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
+	Jr0_Gr1l4IxYO2xFxVAFwI0_Jrv_JF1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8Gjc
+	xK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1DMIIYrxkI7VAKI48JMIIF0xvE2Ix0
+	cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14v26r1j6r4UMIIF0xvE42xK8V
+	AvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8JwCI42IY6I8E87Iv6xkF7I0E
+	14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jepB-UUUUU=
 
-Avoid unnecessary SBI calls when starting non-overflowed counters
-in pmu_sbi_start_ovf_ctrs_sbi() by checking ctr_start_mask.
 
-Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
----
- drivers/perf/riscv_pmu_sbi.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/perf/riscv_pmu_sbi.c b/drivers/perf/riscv_pmu_sbi.c
-index 698de8ddf895b..3977f7488e4ef 100644
---- a/drivers/perf/riscv_pmu_sbi.c
-+++ b/drivers/perf/riscv_pmu_sbi.c
-@@ -877,8 +877,10 @@ static inline void pmu_sbi_start_ovf_ctrs_sbi(struct cpu_hw_events *cpu_hw_evt,
- 	for (i = 0; i < BITS_TO_LONGS(RISCV_MAX_COUNTERS); i++) {
- 		ctr_start_mask = cpu_hw_evt->used_hw_ctrs[i] & ~ctr_ovf_mask;
- 		/* Start all the counters that did not overflow in a single shot */
--		sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, i * BITS_PER_LONG, ctr_start_mask,
--			0, 0, 0, 0);
-+		if (ctr_start_mask) {
-+			sbi_ecall(SBI_EXT_PMU, SBI_EXT_PMU_COUNTER_START, i * BITS_PER_LONG,
-+				  ctr_start_mask, 0, 0, 0, 0);
-+		}
- 	}
- 
- 	/* Reinitialize and start all the counter that overflowed */
--- 
-2.39.5
+On 2025/8/1 下午4:57, Jiaxun Yang wrote:
+> 
+> 
+>> 2025年7月23日 16:06，Bibo Mao <maobibo@loongson.cn> 写道：
+>>
+>> With structure elf64_phdr, field p_paddr is physical address of the
+>> segment. And it is convenient for qemu to calculate the physical
+>> address when directly boot ELF kernel image.
+>>
+>> Otherwise QEMU needs convert virtual address p_vaddr into physical
+>> address, the conversion logic assumes that DMW method is used where
+>> 48 bit physical address is supported. However with direct MMU mapping
+>> method with start address from 0xFFFF800000000000, only 47 bit physical
+>> address is supported. QEMU cannot assume the kernel behavior at kernel
+>> loading stage.
+>>
+>> Here add physical address indication in ELF program header, it is
+>> convenient to get physical kernel loading address.
+> 
+> Hi Bibo,
+> 
+> Thanks for your patch. Unfortunately it breaks PMON’s DWARF debugging
+> Feature, causing exception on list symbols.
+> 
+> I’ll try to investigate.
+Hi Jiaxun.
+
+Thanks for reporting it. Could you describe the problem with more 
+detailed information? such as which command of PMON etc.
+
+Regards
+Bibo Mao
+> 
+> Thanks
+> Jiaxun
+> 
+> 
+> 
+>>
+>> Here is output with command readelf -l vmlinux with patch:
+>> Elf file type is EXEC (Executable file)
+>> Entry point 0x90000000015f5000
+>> There are 2 program headers, starting at offset 64
+>> Program Headers:
+>>    Type           Offset             VirtAddr           PhysAddr
+>>                   FileSiz            MemSiz              Flags  Align
+>>    LOAD           0x0000000000010000 0x9000000000200000 0x0000000000200000
+>>                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
+>>
+>> And output with command readelf -l vmlinux without the patch:
+>> Elf file type is EXEC (Executable file)
+>> Entry point 0x90000000015f5000
+>> There are 2 program headers, starting at offset 64
+>> Program Headers:
+>>    Type           Offset             VirtAddr           PhysAddr
+>>                   FileSiz            MemSiz              Flags  Align
+>>    LOAD           0x0000000000010000 0x9000000000200000 0x9000000000200000
+>>                   0x000000000293b000 0x0000000002a79b98  RWE    0x10000
+>>
+>> Signed-off-by: Bibo Mao <maobibo@loongson.cn>
+>> ---
+>> v2 ... v3:
+>> 1. Fix compile issue where macro PHYS_OFFSET is not defined with assemble
+>>     code.
+>> v1 ... v2:
+>> 1. Set LOAD_OFFSET with PAGE_OFFSET rather than CACHE_BASE, since it
+>>     is generic with PAGE_OFFSET.
+>> 2. Add AT information with missing edata_padding section.
+>> ---
+>> arch/loongarch/include/asm/addrspace.h |  2 +-
+>> arch/loongarch/kernel/vmlinux.lds.S    | 36 +++++++++++++++++---------
+>> 2 files changed, 25 insertions(+), 13 deletions(-)
+>>
+>> diff --git a/arch/loongarch/include/asm/addrspace.h b/arch/loongarch/include/asm/addrspace.h
+>> index e739dbc6329d..18f6c2b469bb 100644
+>> --- a/arch/loongarch/include/asm/addrspace.h
+>> +++ b/arch/loongarch/include/asm/addrspace.h
+>> @@ -18,10 +18,10 @@
+>> /*
+>> * This gives the physical RAM offset.
+>> */
+>> -#ifndef __ASSEMBLER__
+>> #ifndef PHYS_OFFSET
+>> #define PHYS_OFFSET	_UL(0)
+>> #endif
+>> +#ifndef __ASSEMBLER__
+>> extern unsigned long vm_map_base;
+>> #endif /* __ASSEMBLER__ */
+>>
+>> diff --git a/arch/loongarch/kernel/vmlinux.lds.S b/arch/loongarch/kernel/vmlinux.lds.S
+>> index 08ea921cdec1..8ce6b0d948f4 100644
+>> --- a/arch/loongarch/kernel/vmlinux.lds.S
+>> +++ b/arch/loongarch/kernel/vmlinux.lds.S
+>> @@ -3,10 +3,12 @@
+>> #include <asm/asm-offsets.h>
+>> #include <asm/thread_info.h>
+>> #include <asm/orc_lookup.h>
+>> +#include <asm/addrspace.h>
+>>
+>> #define PAGE_SIZE _PAGE_SIZE
+>> #define RO_EXCEPTION_TABLE_ALIGN	4
+>> #define PHYSADDR_MASK			0xffffffffffff /* 48-bit */
+>> +#define LOAD_OFFSET			PAGE_OFFSET
+>>
+>> /*
+>> * Put .bss..swapper_pg_dir as the first thing in .bss. This will
+>> @@ -42,7 +44,7 @@ SECTIONS
+>>
+>> 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+>> 	_stext = .;
+>> -	.text : {
+>> +	.text : AT(ADDR(.text) - LOAD_OFFSET) {
+>> 		TEXT_TEXT
+>> 		SCHED_TEXT
+>> 		LOCK_TEXT
+>> @@ -60,7 +62,7 @@ SECTIONS
+>> 	__inittext_begin = .;
+>>
+>> 	INIT_TEXT_SECTION(PAGE_SIZE)
+>> -	.exit.text : {
+>> +	.exit.text : AT(ADDR(.exit.text) - LOAD_OFFSET) {
+>> 		EXIT_TEXT
+>> 	}
+>>
+>> @@ -82,7 +84,7 @@ SECTIONS
+>> 	}
+>>
+>> 	INIT_DATA_SECTION(16)
+>> -	.exit.data : {
+>> +	.exit.data : AT(ADDR(.exit.data) - LOAD_OFFSET) {
+>> 		EXIT_DATA
+>> 	}
+>>
+>> @@ -90,7 +92,7 @@ SECTIONS
+>> 	PERCPU_SECTION(1 << CONFIG_L1_CACHE_SHIFT)
+>> #endif
+>>
+>> -	.init.bss : {
+>> +	.init.bss : AT(ADDR(.init.bss) - LOAD_OFFSET) {
+>> 		*(.init.bss)
+>> 	}
+>> 	. = ALIGN(PECOFF_SEGMENT_ALIGN);
+>> @@ -101,27 +103,34 @@ SECTIONS
+>> 	_sdata = .;
+>> 	RO_DATA(4096)
+>>
+>> -	.got : ALIGN(16) { *(.got) }
+>> -	.plt : ALIGN(16) { *(.plt) }
+>> -	.got.plt : ALIGN(16) { *(.got.plt) }
+>> +	. =  ALIGN(16);
+>> +	.got : AT(ADDR(.got) - LOAD_OFFSET) { *(.got) }
+>> +	. =  ALIGN(16);
+>> +	.plt : AT(ADDR(.plt) - LOAD_OFFSET) { *(.plt) }
+>> +	. =  ALIGN(16);
+>> +	.got.plt : AT(ADDR(.got.plt) - LOAD_OFFSET) { *(.got.plt) }
+>>
+>> 	RW_DATA(1 << CONFIG_L1_CACHE_SHIFT, PAGE_SIZE, THREAD_SIZE)
+>>
+>> -	.rela.dyn : ALIGN(8) {
+>> +	. = ALIGN(8);
+>> +	.rela.dyn : AT(ADDR(.rela.dyn) - LOAD_OFFSET) {
+>> 		__rela_dyn_begin = .;
+>> 		 *(.rela.dyn) *(.rela*)
+>> 		__rela_dyn_end = .;
+>> 	}
+>>
+>> #ifdef CONFIG_RELR
+>> -	.relr.dyn : ALIGN(8) {
+>> +	. = ALIGN(8);
+>> +	.relr.dyn : AT(ADDR(.relr.dyn) - LOAD_OFFSET) {
+>> 		__relr_dyn_begin = .;
+>> 		 *(.relr.dyn)
+>> 		__relr_dyn_end = .;
+>> 	}
+>> #endif
+>>
+>> -	.data.rel : { *(.data.rel*) }
+>> +	.data.rel : AT(ADDR(.data.rel) - LOAD_OFFSET) {
+>> +		*(.data.rel*)
+>> +	}
+>>
+>> #ifdef CONFIG_RELOCATABLE
+>> 	. = ALIGN(8);
+>> @@ -134,10 +143,13 @@ SECTIONS
+>>
+>> 	ORC_UNWIND_TABLE
+>>
+>> -	.sdata : {
+>> +	.sdata : AT(ADDR(.sdata) - LOAD_OFFSET) {
+>> 		*(.sdata)
+>> 	}
+>> -	.edata_padding : { BYTE(0); . = ALIGN(PECOFF_FILE_ALIGN); }
+>> +	.edata_padding : AT(ADDR(.edata_padding) - LOAD_OFFSET) {
+>> +		BYTE(0);
+>> +		. = ALIGN(PECOFF_FILE_ALIGN);
+>> +	}
+>> 	_edata =  .;
+>>
+>> 	BSS_SECTION(0, SZ_64K, 8)
+>>
+>> base-commit: 89be9a83ccf1f88522317ce02f854f30d6115c41
+>> -- 
+>> 2.39.3
+>>
+>>
 
 
