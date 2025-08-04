@@ -1,81 +1,79 @@
-Return-Path: <linux-kernel+bounces-755487-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755488-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DB10B1A6E8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:59:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1178B1A6ED
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:00:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86A021882322
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:59:41 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 203BF7A13A7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ECCB238C08;
-	Mon,  4 Aug 2025 15:59:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E57A21883F;
+	Mon,  4 Aug 2025 16:00:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="DZeOAckk"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CFeNpLQB"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0085C2040BF;
-	Mon,  4 Aug 2025 15:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94F2C262FE5
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 16:00:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754323154; cv=none; b=r2ziU3K2+CxY1BBA4ldTJXfFcJCOqzdvZkD3gO1uss7+Tq2Z23ecEFhsIy8cucFHItvgRTSSxe4MCBPVB20Ukfv5y/TqHTxTFSIhMg70U8nf2a8vkbodGN1jbMyCCKJeCShIxjcOep9gVzhur8t+zyGZ/FohlmHg+3S3tNOZEcw=
+	t=1754323218; cv=none; b=WJKVb/J07NLM6LmT0UyADLK5Y/DdAVsB9aUBshy6yz0djzkYZ3yNUNQZOe/unvIfo4JpYk9pkNbFGKZ872JzEO7tQn4Vh4qubTyeCaSavTni+a0uLipErob+8Yx+HkPVOs3ieQSlr2FOajB9kAoBH+XmKTFey2LYFj4dlA6o5zQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754323154; c=relaxed/simple;
-	bh=sd1DyY6a3415VkW6baLPe78I+RH8CXZI1Y8mTPQ+22M=;
+	s=arc-20240116; t=1754323218; c=relaxed/simple;
+	bh=sO30oNJNat2gEn/DA4kZKK55EVzR2yM7U8PKO9ntHlo=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qurcWxcjAZTTU0MCoO0rcQ0ia3ndH5unRL0qntsktohfUEmOhLdCSiJ5GdhdwhHmQBgqzTGzA1j5H6Sb0R9jYGG2uH1uR77aAtlGOr/qqezR/hqP/iBvvBsA5ZiKkpF16lS6y5P/jKdPTCGRWa+6MYOVpLC4PuHhktNR86uZcQA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=DZeOAckk; arc=none smtp.client-ip=209.85.210.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bd6e84eddso4396863b3a.0;
-        Mon, 04 Aug 2025 08:59:12 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=WZbvLLmE35bDumicgroWoytngLKvZZnnMtnQY3OxIBz954Q15zSUTn8i0+olqtuuICC/v6M6nSlIGd02pYNZfLPflWNHIe3+IYHD72U0cPFmRbUwFOQRjH6tqaUDa0SG89fR+HI8sojvX0TYrEyn1N+zE5yY6VxhBZlT07SG8jU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CFeNpLQB; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-3b78a034f17so3064288f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:00:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754323152; x=1754927952; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=3D7R9Rrhve+hM9PUIlOpvhIjLJ/daYnHplpqSry3RH0=;
-        b=DZeOAckkqx54sPj2QecnVdkeWOoNT/uf9s0J+j1cL8zdYtRlu4wtvMCT+sjZdM4pBK
-         lENSR1XkY9xXLku3eyAVjva5jgUoyPButjzfhDJ64Ek4uqNcmYE18Jk2nvYXZRlgXlAs
-         /GB729PNT48IgIk7hT6xqQzS9UQGkVfjJW9nz5sYu7Us98HKSCFStu4nnmEnikdcAsiQ
-         nvihj0fxLGYOJfBoq3BMApiuWFqx/Q7fBMJgo+CIqYzfFXdydf93cGr5pGRd4Fsg0tLj
-         B+hEEOQLxf12z+sbtTQ803PVPMtBdKZOk/BcHlZVHUGLqmlGIHAUr/EAs51AsVM0ySFP
-         Enpg==
+        d=linaro.org; s=google; t=1754323215; x=1754928015; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=83y9HCM1NErNHhoDJvLNstKn3l9elWApgqOnhqoLDjY=;
+        b=CFeNpLQBfQy/dHPdDA+f04e7ncarAxq2rRPp/w8gqPMiZqYLzovam0CFUYVSavmMMm
+         7RdVNhM1eD0/f5x6MymYgCyPVGAKpUGH6poEhckfFreY3VvP0nHaw/lHX/Ny7RY6OfFu
+         K4C9h/B4qrWmval+pY372oHX+vWoBbnFFCynriEJwmUq8oDcb/LPwrj/sfAkskJL73Yc
+         NZsIcoI0ZlOW55HNfnkth+J61Xh/ejeOdcpEGzl9zIhj9X0vhKQmx5LTERE7gtmBNiZ3
+         +gdsz2xNi5+OOZu/TyxoU96rZfWrZxe/F5Jloki1IBCXxps9KhWFd+sA2sGX//NFTpCp
+         vMlQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754323152; x=1754927952;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3D7R9Rrhve+hM9PUIlOpvhIjLJ/daYnHplpqSry3RH0=;
-        b=o1wlqCpCmZ8oYOZDfJ1E47Po6svZdpgVQM9uu8fvjwdKx3DPQRnYOsWezk5VqJXrEL
-         nAyFXKQEw6a81AehbArHTPeMMHUZoe6imFwOiIeR6E2G3JySLOZ8704kyKhmLyTKrnt8
-         wahMmjQZwOsjwNL/8qlCkyAISiWq4xSrW9HkicousGMZeIGbwrOABjPXK+4+hBc2C5bO
-         c9AKprZezYwrz5UTWNl7An0ipCediO2lwPikIcisJGtE1iZMesOqtzJ9B0q3j2LekGH5
-         vXmY3n7n7V+eVC7tmWXAF+/ZEYlDEBBz+c0ywkcDzkf+IdKZILLbjTLmNIw8dSSN62Y2
-         OB8A==
-X-Forwarded-Encrypted: i=1; AJvYcCV2bF1qEyxvfS9rZwdO3y5rlGXQeyHf9LtnPryU57PfnderUv+Pqsm19wWIPXKj9qETQ8Yy0yASDzYQ@vger.kernel.org, AJvYcCWU61isSw0g+mnUKWoGVUQKNAG/kZZ2VIzOAMN6VJ6DJmDvnw/KPy/kjQn01RT8z9NcJSK61VDg+WFkuE57@vger.kernel.org, AJvYcCX8283uotJHtbl2rwHiZuCi1y/iFCvHFk7/q3pwnYEB+LVUezHbgG3QuX0wTNExXBOOtXV8M/O6Pj9XitM=@vger.kernel.org, AJvYcCXp0uoCaVa4O+Zgn5G0hwuL9COGqUjJ9f/HrD4bdkUVgf52s1QihodAaCx25tz2dl3hGSHgmt98qZey@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbOPbX5omS4VptUGJurtTtXDC+dIxgRk2FC8TIVWy2u2OBkKKa
-	LjGFpb1MbdmWlyWCs01apq46WTKUALRMERXPU/luODevGbeMC2iCII5Q
-X-Gm-Gg: ASbGncufoMiLhfi4dKvIEqJhCezPJnMwlLV3XhOz3ejzYJ4dW9WSC7JvlwJCSVBv64T
-	IPIybvOZlq5PPVjrPE7PI0hhB2ctne4eRgmSJrPgYOZfkhI9YeESwHvpzhpXyfDY2fe4FygUsaO
-	2MA2l4ICbiUMA6HH+RYEaX2qJHI7OX/qefS1IGfnOl+txB0ZCQ1myu36dML9sgGta5kBQbER4dI
-	mM8S/Qx/QMkZWAoFwYUNK5xcJALdMIKNaDxSWzFrK9tr2LBKsiyjHVnkBjAHYsk0OFbmRht8xJ/
-	kP0GrPFlqAfQg+cQvoaF7uZiPMEcGzRSkPYJuWOf9EvD5T+mngfCxeHb3u20Cy+4uCsqAKlEf9Z
-	qj+yyGRuCByIg2rqklabpgtjYg6q2w8ydZ6KHlIpWVgN/qErXvkq8N+Xw3SDHLU+sKUPNZ8Y=
-X-Google-Smtp-Source: AGHT+IFIjfh7+B5gIa+W7wBeAos+g9NcG4vkouxm4nYWg0auWlvWAzh5TCtv529Y+kQX/Tuai8CTqw==
-X-Received: by 2002:a05:6a20:b598:b0:23f:fd87:427c with SMTP id adf61e73a8af0-23ffd875051mr8683696637.18.1754323152281;
-        Mon, 04 Aug 2025 08:59:12 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:da43:aeff:fecc:bfd5? ([2600:1700:e321:62f0:da43:aeff:fecc:bfd5])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422b7ceb3fsm9293138a12.22.2025.08.04.08.59.10
+        d=1e100.net; s=20230601; t=1754323215; x=1754928015;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=83y9HCM1NErNHhoDJvLNstKn3l9elWApgqOnhqoLDjY=;
+        b=D9FKe3X7i+D8MtCbjbHZmKrtIIAs4p5wf8eHrmpTYfY/ZD9uIoXg+G7zw9X82xiw+D
+         LOidK0YvxdYjGX7/rG2F7ly6kUHG/s3vyoZ1C4iYc8Yyl3SliGw0Ty4ESBETc0nn1Ojk
+         VzFrTNKoScSuztOmwqDZcToISFnc4NjlxBsa7QKcIPijco3SELAK/p00+Pp0JBoRyUno
+         FJqQmJ4B4s9PohlMAz7i8qInd/pqIgrMd/T2qDIIDUIGVBU6BBMDht0WUl6oo0MOBHzV
+         IN2DMAYoQAZQkRvxfTNCBElIQ8s24UxSeDUoKUvalhoWCnXKsyd8RhX2VcwVTSIOh2ci
+         gAsg==
+X-Forwarded-Encrypted: i=1; AJvYcCX88jMzKFM1BzdLGaim6EFkNn1Ib1fgKcopR+yteuUuBH274KbQiAJ6/3CryLSlVzDLBQ9BlR3Yi9Yehvc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwEKCfEb4IzClaoR/c3DjAeL/WYKaJtVxYx4N0nhnCocIXVV2Uk
+	pv2RAdLQJRaM5cTVhOLqPp+MswhJu7lxgooy6TMvhldZ2o3UpjOL0wCy71K25AcQj0k=
+X-Gm-Gg: ASbGncsnHWYCAQzxdEUnV+0deQihL+Hfc4Hr9R1PQEu+0ViZk8ih6WWDptE7/NtXeY7
+	oTGxZULvNmqO6+0E1K3eyUwfgkhc5KRJ+f9oFxr+V9GGwhYoVkIhcdmETh4R1Vh4dDtJV8ae0dG
+	TABujyfYQBvtEqJ+htSdGkin0DMFAL8yaoM85+MjuSLV7JjYbAkyxR0Oqb7U+WaHGn0g+G+1C/y
+	LMrcFANJz4Rm5wSzFFDbP9qOuijHcI8FK4uCK0OuDa+Rkkdzl0JtYn5+nxivnqvHUgOF+wfIvkx
+	1DspMox/LQFK1tv/fkoir2/btma/XfJoSw1L01xExY9H+saeiEjZI4Uj0ELAdTn3KE7tfMI0zt0
+	myI5hyTBDvynNgVhNpx5bTygY849zvVLUelq14w==
+X-Google-Smtp-Source: AGHT+IEauvx9FJ2JC6u71NHBH4w0cTSo3NvU8GY9XFshSKS1MeESuBlXTRuD0jWRGjF7fGT+6taYMQ==
+X-Received: by 2002:a05:6000:188f:b0:3b7:81a6:45c1 with SMTP id ffacd0b85a97d-3b8d946afacmr6958510f8f.6.1754323214722;
+        Mon, 04 Aug 2025 09:00:14 -0700 (PDT)
+Received: from [192.168.1.3] ([185.48.76.109])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b8e9464f46sm1848019f8f.19.2025.08.04.09.00.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 08:59:11 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <48996ed0-8d5f-4bb0-ab66-8be71c0a59e4@roeck-us.net>
-Date: Mon, 4 Aug 2025 08:59:09 -0700
+        Mon, 04 Aug 2025 09:00:14 -0700 (PDT)
+Message-ID: <a492ccbf-6442-44dc-82c8-d2c8b1d5c56b@linaro.org>
+Date: Mon, 4 Aug 2025 17:00:13 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,133 +81,145 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: hwmon: adm1275: add sq24905c support
-To: ChiShih Tsai <tomtsai764@gmail.com>, linux-hwmon@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-Cc: jdelvare@suse.com, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, corbet@lwn.net, t630619@gmail.com
-References: <20250804124806.540-1-tomtsai764@gmail.com>
- <20250804124806.540-2-tomtsai764@gmail.com>
+Subject: Re: [PATCH 0/3] perf: arm_spe: Add support for SPE VM interface
+To: Alexandru Elisei <alexandru.elisei@arm.com>
+Cc: Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>,
+ Anshuman Khandual <Anshuman.Khandual@arm.com>,
+ Rob Herring <Rob.Herring@arm.com>, Suzuki Poulose <Suzuki.Poulose@arm.com>,
+ Robin Murphy <Robin.Murphy@arm.com>, linux-arm-kernel@lists.infradead.org,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Peter Zijlstra <peterz@infradead.org>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>
+References: <20250701-james-spe-vm-interface-v1-0-52a2cd223d00@linaro.org>
+ <aIzA632hiAldjJQQ@raptor>
 Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- np3900V20aS7eD9K8GTU0TGC1pyz6IVJwIE=
-In-Reply-To: <20250804124806.540-2-tomtsai764@gmail.com>
+From: James Clark <james.clark@linaro.org>
+In-Reply-To: <aIzA632hiAldjJQQ@raptor>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 8/4/25 05:48, ChiShih Tsai wrote:
-> Add support for sq24905c Hot-Swap Controller and Digital Power Monitor.
+
+
+On 01/08/2025 2:28 pm, Alexandru Elisei wrote:
+> Hi,
 > 
-> Signed-off-by: ChiShih Tsai <tomtsai764@gmail.com>
-> ---
->   .../bindings/hwmon/adi,adm1275.yaml           | 20 +++++++++++++++++++
->   1 file changed, 20 insertions(+)
+> On Tue, Jul 01, 2025 at 04:31:56PM +0100, James Clark wrote:
+>> SPE can be used from within a guest as long as the driver adheres to the
+>> new VM interface spec [1]. Because the driver should behave correctly
+>> whether it's running in a guest or not, the first patches are marked as
+>> a fix. Furthermore, in future versions of the architecture the PE will
+>> be allowed to behave in the same way.
+>>
+>> The last patch adds new behavior to make it easier for guests to be
+>> able to reserve large buffers. It's not strictly necessary, so it's not
+>> marked as a fix.
 > 
-> diff --git a/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml b/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-> index ddb72857c846..6aa300086c84 100644
-> --- a/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/adi,adm1275.yaml
-> @@ -30,6 +30,7 @@ properties:
->         - adi,adm1281
->         - adi,adm1293
->         - adi,adm1294
-> +      - silergy,sq24905c
->   
->     reg:
->       maxItems: 1
-> @@ -46,6 +47,18 @@ properties:
->       $ref: /schemas/types.yaml#/definitions/uint32
->       enum: [1, 2, 4, 8, 16, 32, 64, 128]
->   
-> +  silergy,volt-curr-sample-average:
-> +    description: |
-> +      Number of samples to be used to report voltage and current values.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8, 16, 32, 64, 128]
-> +
-> +  silergy,power-sample-average:
-> +    description: |
-> +      Number of samples to be used to report power values.
-> +    $ref: /schemas/types.yaml#/definitions/uint32
-> +    enum: [1, 2, 4, 8, 16, 32, 64, 128]
-> +
->   allOf:
->     - $ref: hwmon-common.yaml#
->     - if:
-> @@ -96,12 +109,17 @@ allOf:
->                 - adi,adm1281
->                 - adi,adm1293
->                 - adi,adm1294
-> +              - silergy,sq24905c
->       then:
->         properties:
->           adi,volt-curr-sample-average:
->             default: 128
->           adi,power-sample-average:
->             default: 1
-> +        silergy,volt-curr-sample-average:
-> +          default: 128
-> +        silergy,power-sample-average:
-> +          default: 1
->   
+> I had a look at the patches, and they all look ok to me, so for the series:
+> 
+> Reviewed-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> 
+> I also tested the series by hacking SPE virtualization support in KVM:
+> 
+> - without these changes, the SPE driver gets into an infinite loop because it
+>    clears PMBSR_EL1.S before clearing PMBLIMITR_EL.E, and the hypervisor is
+>    allowed to ignore the write to PMBSR_EL1.
+> 
+> - with these changes, that doesn't happen.
+> 
+> - ran perf for about a day in a loop in a virtual machine and didn't notice
+>    anything out of the ordinary.
+> 
+> - ran perf for about a day in a loop on baremetal and similary everything looked
+>    alright.
+> 
+> - checked that the SPE driver correctly decodes the maximum buffer size for
+>    sizes 4M, 2M (2M is right at the boundary between the two encoding schemes)
+>    and 1M; that's also correctly reflected in
+>    /sys/devices/platform/<spe>/arm_spe_0/caps/max_buffer_size.
+> 
+> - checked that perf is not allowed to use a buffer larger than the maximum.
+> 
+> - checked that the SPE driver correctly detects a buffer size management event.
+> 
+> So:
+> 
+> Tested-by: Alexandru Elisei <alexandru.elisei@arm.com>
+> 
+> While testing I noticed two things:
+> 
+> 1. When perf tries to use a buffer larger than the maximum, the error is EINVAL
+> (22):
+> 
+> # cat /sys/devices/platform/spe/arm_spe_0/caps/max_buff_size
+> 4194304
+> # perf record -ae arm_spe// -m,16M -- sleep 10
+> failed to mmap with 22 (Invalid argument)
+> 
+> (used 16M as the buffer size because what the driver ends up programming is half
+> that).
+> 
+> I would have expected to get back ENOMEM (12), that seems less ambiguous to me.
+> I had to hack the driver to print an error message to dmesg when the max buffer
+> size is exceed to make sure that's why I was seeing the error message in perf,
+> and it wasn't because of something else. I get that that's because .setup_aux()
+> can only return NULL on error, but feels like there's room for improvement here.
+> 
 
-I personally don't think this warrants new properties. However, if warranted,
-this needs to be qualified to only apply for the Silergy parts.
+We could add an error code, rb_alloc_aux() already returns one and that 
+calls setup_aux(). But the scenarios would be either EINVAL or ENOMEM 
+and wouldn't give the user the exact reason ("need > 2 pages", "need 
+even number of pages", etc). So I'm not sure it would be enough of an 
+improvement over returning NULL to be worth it.
 
-Guenter
+However I will add a warning into Perf if the user asks for more than 
+caps/max_buffer_size. That would be a useful message and Perf can do it 
+itself so it doesn't need to be in the driver changes.
 
->   required:
->     - compatible
-> @@ -121,5 +139,7 @@ examples:
->               shunt-resistor-micro-ohms = <500>;
->               adi,volt-curr-sample-average = <128>;
->               adi,power-sample-average = <128>;
-> +            silergy,volt-curr-sample-average = <128>;
-> +            silergy,power-sample-average = <1>;
->           };
->       };
+> 2. A hypervisor is allowed to inject a buffer size event even though the buffer
+> set by the guest is smaller than the maximum advertised. For example, this can
+> happen if there isn't enough memory to pin the buffer, or if the limit on pinned
+> memory is exceeded in the hypervisor (implementation specific behaviour, not
+> mandated in DEN0154, of course).
+> 
+> In this situation, when the SPE driver gets a buffer size management event
+> injected by the hypervisor, there is no way for the driver to communicate it to
+> the perf instance, and the profiled process continues executing even though
+> profiling has stopped.
+> 
+> That's not different from what happens today with buffer management events, but
+> unlike the other events, which aren't under the control of userspace, the buffer
+> size event is potentially recoverable if userspace restarts perf with a smaller
+> buffer.
+> 
+> Do you think there's something that can be done to improve this situation?
+> 
+> Thanks,
+> Alex
+> 
+
+It doesn't look like there's currently anything that can stop an event 
+or signal to Perf that the event has gone bad.
+
+We could add something like "__u32 error" to struct 
+perf_event_mmap_page. But I'm not sure what you'd do with it. If Perf is 
+the parent of the process you wouldn't want to kill it in case anything 
+bad happens. So you're left with leaving it running anyway. If it's just 
+an error message that you want then there's already one in dmesg for 
+buffer management errors, and that string is a lot better than a single 
+code. Unless these new codes were detailed PMU specific ones? Actually 
+it's a whole page so why not make it a string...
+
+It's not a case of the samples ending randomly somewhere though, you'll 
+either get all of them or none of them. So it will be quite obvious to 
+the user that something has gone wrong. Secondly I think the scenario of 
+not being able to pin memory when asking for less than the limit would 
+be very rare. It's probably fine to leave it like this for now and we 
+can always add something later, maybe if people start to run into it for 
+real.
+
+James
+
 
 
