@@ -1,142 +1,115 @@
-Return-Path: <linux-kernel+bounces-755201-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755204-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD0D2B1A2F8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:14:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 97FB4B1A2F2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:14:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 348961887627
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:12:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14D313A3722
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ACA9625E479;
-	Mon,  4 Aug 2025 13:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1F1B260565;
+	Mon,  4 Aug 2025 13:14:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FWnA14Zr"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="A8WqNx0D"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E97138D;
-	Mon,  4 Aug 2025 13:11:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81F252459F3;
+	Mon,  4 Aug 2025 13:14:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754313102; cv=none; b=C15+HzKd39RFFo0P+qw/jZ0CKCdNRKAu1pKY7aT5q/NUu6s5NmoCXHugpFkBcHbW/WP88ytc8z2Bd9eEFQ0LzSlbL7cbciu1YuDGd8yYAjIUxBovP1Jz9ERlcJnwnhO87wFQknIStt+so3EBjc/HFZ/EIktyTDXEk/eNKwjkNv4=
+	t=1754313245; cv=none; b=BiORGWrk9U/oIKmgrOUps8ca1tL8IDSGMy5/6b48QCU9CJXhcsRgNMrlOLptwPwuKnRHdeLtB/JvU9JQ9vw3c/jMTvs48P5teeaXB5xERRZrDFdu2B7We0fRN2hjkHYvSHx65VQ2JmDQRPlu5xEUYbYmHzLlG/HWzNqoe1lmTCE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754313102; c=relaxed/simple;
-	bh=TR4IynGlqh3xuGAPqNvGejeGuOim0a/t/2+l2ojuG3M=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JaJGSMTtS87IIePzDP3HeIX3OqBlAq/4rqzDcSeY5KystyjTiqY0vPG6moIy+sgYE7T5m6aCudx0datV2GIS6pjWZxRAeTwjUhFPNex6lQSSYT0k3HEKDRi+ysyK6mmKp8kl/b9/64Tp/wWL0axAjEUkNXXOUUFvzLmE3sLq3rs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FWnA14Zr; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8A357C4CEE7;
-	Mon,  4 Aug 2025 13:11:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754313101;
-	bh=TR4IynGlqh3xuGAPqNvGejeGuOim0a/t/2+l2ojuG3M=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=FWnA14Zr+PO8Dc7S1vSMyr5HSOBsd3ONJedoyeUL31soQ4u+qdF5zlJ1L+KssxKyX
-	 LGYOymZPSgU8XUqapDrdI4ABN9R2cYEl/PQn019vZhYuOfz7cXmJIKIQaMZrOKifAT
-	 QKWf3bPnPaG275SPQkSHQfbIr5kEkAMeHnsjdSS+Q7dd3fzzEpGS3zEJ19xdhuUjDk
-	 v+Qukmu9YNkJJ8hujmpT3ASfyqbFY3ilbA7GbhcFcgKJh/bbCkUx9ZiryFzE1FzBS7
-	 X/hZIXq32mN7o9PtTTdeSuSKeoA/6QTgn4e2nvO12g1nU5CsZTv1QgKffDNJZYMjcu
-	 Kq9udbFUKHq/g==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1uiuyY-003oWR-Ss;
-	Mon, 04 Aug 2025 14:11:39 +0100
-Date: Mon, 04 Aug 2025 14:11:38 +0100
-Message-ID: <86pldb6xkl.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Yeoreum Yun <yeoreum.yun@arm.com>
-Cc: catalin.marinas@arm.com,
-	will@kernel.org,
-	broonie@kernel.org,
-	oliver.upton@linux.dev,
-	anshuman.khandual@arm.com,
-	robh@kernel.org,
-	james.morse@arm.com,
-	mark.rutland@arm.com,
-	joey.gouly@arm.com,
-	ry111@xry111.site,
-	Dave.Martin@arm.com,
-	ahmed.genidi@arm.com,
-	kevin.brodsky@arm.com,
-	scott@os.amperecomputing.com,
-	mbenes@suse.cz,
-	james.clark@linaro.org,
-	frederic@kernel.org,
-	rafael@kernel.org,
-	pavel@kernel.org,
-	ryan.roberts@arm.com,
-	suzuki.poulose@arm.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Subject: Re: [PATCH 10/11] KVM: arm64: nv: support SCTLR2_ELx on nv
-In-Reply-To: <20250804121724.3681531-11-yeoreum.yun@arm.com>
-References: <20250804121724.3681531-1-yeoreum.yun@arm.com>
-	<20250804121724.3681531-11-yeoreum.yun@arm.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/30.1
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1754313245; c=relaxed/simple;
+	bh=q3CUHsU8F2952jCSX7QP7ftAC7i66p+G21KBCduYZNU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=eAUzXpJKKJLSyy1UtjVNFMbLodZBsaLpO/zUF9Z1CLK6sxgraMKGObdH6ENKaZ/yOdpcNCEFpzp2vrzI+qdiT8/CIKDIFNXcKpTHIw0WZ8lFkaeV8Po5fxQ469SE8fQAoUFC5oFyQpqf9a1F/tQtPigv+hZVWs+eyFeKwiJ7Cn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=A8WqNx0D; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-af96fba3b37so132592066b.3;
+        Mon, 04 Aug 2025 06:14:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754313242; x=1754918042; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ftN/XcZ/dByaEVn0cn0BMSamQ3LUIZlb3wXtmtnhPG8=;
+        b=A8WqNx0DMYlWumUMzDV4eF1b6+mMH9KUcxEw10gl4rl/kw2bAyMq1PltKPIEnWu56U
+         /aVfipd9LnfZRTQdQZsXu4LsS1w4KHkl6E/QPCarcsjG0P1MryD/92Ei4dFGnEni+Eou
+         Hm2bgvmDF2oWJMKPM/z8/pYxigSL1a7DvnCUGpODJaGoTBhciBPj6MMvf/COrmJmlGCt
+         Jf7zsxVNmIci4mdzWsUqW0fklWRokRqlrdO4ucI/iSN1F1xgrWFZ06ZJihmmC2xqFp38
+         hxw9bTbUk8bFPVxwbgFi3/ptQpwO9TolH9TeB6j23fkaMIwrdXpmaMx8Z7cKw/4XLMP+
+         JA8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754313242; x=1754918042;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ftN/XcZ/dByaEVn0cn0BMSamQ3LUIZlb3wXtmtnhPG8=;
+        b=G439KzzsMDfpylZ5mLZ36FrYNTMu/g6VlMH9epEVEDRt1pLManJq+AnI9HpgRlnEZr
+         lQZNOomCxmoPiRktkVFgS7vh7lqWh9q6jZH6Lwvnjhynarll6I7x8bcsvFNLQN0xD2eP
+         QMrAg0WyH9fETNXs7oVtrc/XTFGpJIdyCJ9Qr/4JKn51IOkJAX12MZSJkxvdMlcSzEb9
+         eGFGSa7cqjcjX4/7HYlB86Yaj9hLQEdlrbEipaGVuZxWr5Aw37dFDVrbvbScWJ89mu4z
+         8xlWPwxnqYrMPPPY/JYvAEM4YjXShW1nuDoN1VDD+rHTvNy6nq3K0404VLbAsmLuWJV9
+         nwiw==
+X-Forwarded-Encrypted: i=1; AJvYcCU0AluZ51tBa9Yb4UmOcdsPBbAxxAksnHgSELoJfJFnwVqq8ZrSRdVzBTIbPW1QQz4NkyyU4M8DpRqqaoxL@vger.kernel.org, AJvYcCWM7USOqGAwZtzj0s0Bw/dnQvzgvB9xw7sxEhQhft3XZOAINZd+c1j3ijj1KBPBjcRyet+8F7438vp7@vger.kernel.org, AJvYcCXlQfqCDhPYTOpIfXdfBVpqv+g6DqJMaf7nrJjus+/9fdBCzB/PpGajIoXiCypzTmr7lXm8rWJo57BG@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxvKXFubfohqQkK0Fld3L0O2faXdh/rGTdMd2qV1RwdQBejEOe
+	xhOrZn8ZA4WhHDcmQTtk/mJRRG5lePbBgCKIKAKJ2jOMQZytnbxROJ+GuyodTV8fDhH7/Gukz0p
+	TH1VgEq+VdIhQutlWFISuN6CE80mVFBo=
+X-Gm-Gg: ASbGnctuV1ZKr6dBzV9nx9s79P9DEwRK1OukCEPGXnbQK9Zmpbcn2mW+8bUsYYQPE3n
+	Drry4AkDNWDsA9bGNmVOwn+4Fkxr5J89nIM64VttxaCsNVyzWvS5/S9+PAfmonIXmipZiRe/VzT
+	gi3rjhRyMxqMBgmu3842g7MTepeA03GbtF0+yAah/NT/qSWwyCwLJWRg51zQATAox2f4bRTurCg
+	uDx1d2wSg==
+X-Google-Smtp-Source: AGHT+IGBeqfw3fvLlvAcAw3BpTqiuPXA4J2h3pDCZNywn5w7ddqZQES72AmoaGsmtljDcMeac00/ZeSQ68zvdeoNgFE=
+X-Received: by 2002:a17:907:1c12:b0:ad8:a04e:dbd9 with SMTP id
+ a640c23a62f3a-af940187873mr985057066b.31.1754313241498; Mon, 04 Aug 2025
+ 06:14:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yeoreum.yun@arm.com, catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org, oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org, james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com, ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com, kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz, james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org, pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com, linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20250804100219.63325-1-varshini.rajendran@microchip.com> <20250804100219.63325-8-varshini.rajendran@microchip.com>
+In-Reply-To: <20250804100219.63325-8-varshini.rajendran@microchip.com>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 4 Aug 2025 15:13:24 +0200
+X-Gm-Features: Ac12FXyCmSYVvYJxjx9xn913aCGsLi-yBSTMjwEVe7Qv7e6k9dvmsncWqL8ALhk
+Message-ID: <CAHp75VeGbB6kJF879LmDu9X1kcNydhSZo=h4wyUeVHw_WWKBew@mail.gmail.com>
+Subject: Re: [PATCH 07/15] iio: adc: at91-sama5d2_adc: add temp init function
+ as callback
+To: Varshini Rajendran <varshini.rajendran@microchip.com>
+Cc: eugen.hristev@linaro.org, jic23@kernel.org, dlechner@baylibre.com, 
+	nuno.sa@analog.com, andy@kernel.org, robh@kernel.org, krzk+dt@kernel.org, 
+	conor+dt@kernel.org, nicolas.ferre@microchip.com, 
+	alexandre.belloni@bootlin.com, claudiu.beznea@tuxon.dev, srini@kernel.org, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, 04 Aug 2025 13:17:23 +0100,
-Yeoreum Yun <yeoreum.yun@arm.com> wrote:
+On Mon, Aug 4, 2025 at 12:03=E2=80=AFPM Varshini Rajendran
+<varshini.rajendran@microchip.com> wrote:
+>
+> Adding the temperature sensor init function as a callback function.
+> The temperature sensor initialisation sequence is handled differently
+> for each platform. The same is added to the platform data of the
+> corresponding device. This allows us to handle new devices like
+> sama7d65.
 
-[...]
+...
 
-> diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
-> index dc1d26559bfa..a4d3b2d2fd80 100644
-> --- a/arch/arm64/kvm/nested.c
-> +++ b/arch/arm64/kvm/nested.c
-> @@ -1704,6 +1704,19 @@ int kvm_init_nv_sysregs(struct kvm_vcpu *vcpu)
->  			 TCR2_EL2_AMEC1 | TCR2_EL2_DisCH0 | TCR2_EL2_DisCH1);
->  	set_sysreg_masks(kvm, TCR2_EL2, res0, res1);
-> 
-> +	/*
-> +	 * SCTLR2_EL2 - until explicit support for each feature, set all as RES0.
-> +	 */
-> +	res0 = SCTLR2_EL2_RES0 | SCTLR2_EL2_EMEC;
-> +	res0 |= SCTLR2_EL2_EASE;
-> +	res0 |= SCTLR2_EL2_NMEA;
-> +	res0 |= (SCTLR2_EL2_EnADERR | SCTLR2_EL2_EnANERR);
-> +	res0 |= SCTLR2_EL2_EnIDCP128;
-> +	res0 |= (SCTLR2_EL2_CPTA | SCTLR2_EL2_CPTA0 |
-> +		 SCTLR2_EL2_CPTM | SCTLR2_EL2_CPTM0);
-> +	res1 = SCTLR2_EL2_RES1;
-> +	set_sysreg_masks(kvm, SCTLR2_EL2, res0, res1);
+> +struct at91_adc_state;
+> +static int at91_adc_temp_sensor_init(struct at91_adc_state *st,
+> +                                    struct device *dev);
 
-This patch is obsolete, but I'd like to point out that this is not the
-way we describe these things. Each bit of the register needs to be
-tracked against the feature it is part of, and not blindly added to
-the RES0 set. See
+Isn't it possible to avoid forward declaration for the function?
 
-https://lore.kernel.org/all/20250708172532.1699409-15-oliver.upton@linux.dev/
-
-for the equivalent change.
-
-You should *NEVER* describe a functional bit as RESx without
-considering whether the feature is exposed to the guest, irrespective
-of what the kernel supports.
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+--=20
+With Best Regards,
+Andy Shevchenko
 
