@@ -1,120 +1,92 @@
-Return-Path: <linux-kernel+bounces-755536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D98A1B1A81D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:49:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C816B1A824
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:50:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6D5CD18A412A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:49:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 23CE61890356
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:50:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C83D28642F;
-	Mon,  4 Aug 2025 16:49:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="TQ5hNFWs"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A62D72472B7;
+	Mon,  4 Aug 2025 16:50:09 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0015.hostedemail.com [216.40.44.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 020F017736;
-	Mon,  4 Aug 2025 16:49:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC5EA17736
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 16:50:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754326151; cv=none; b=r2BjDLY3pIn5JKy3om4AJR9XbunmvBHtjWEpkq23HBIixSh9ggF9j2wfQk4MrWWRymtUiMkb92YH+Hw5pdWZEIoNPKb9FhRPYXxg0FA8bNYrx6yXWRy1T2nc4oSGdbu5bXchB5t7ZLtDHKmsiJ08zpOeSL92QmlsEtLQhCnZmyU=
+	t=1754326209; cv=none; b=giYCqrA0144+tFpdEsz4AzIZVWxCUUAlRZ2OU1WSlcPz8XTSwlgirNSTog9okktFNK8KaGLek06B38jqjh35E5hmjY2LwCNJ6zbrKK68ExOBqILJaR+cKKQXGMeZF2ouyzxQ7g3C9/nC0rTrkdtRG74/ATECjHkJzXQzZaHiQ8w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754326151; c=relaxed/simple;
-	bh=+mYVK5PD3Chpbfe99IJyA1KNNQYnDPyxM6vFQOsMCio=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=K3pAqhhR/kMmCbmjk1s3EHI4rVeYt4w3XheWWS3QZ0DocX8X+tbnGOiHdVzq7H2m2tHx+LVjhzVMuYgC3XzIER92EHHT3pZuAdtByZYH1g1mXaxngpjIx/Zrv/PQLzmcRlnD1593W4TDIvID9Lb2b7EfrX1Q0HrvhaB4EsLAE58=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=TQ5hNFWs; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=y5jNatzr9iPOY+macrl5h9nkF1ONt/HKYGdcJTwX8Mw=; b=TQ5hNFWsQAIW1i2Bm5bN3/y9nF
-	uPhfKJ8TLeiAZ+FGWplQvWoCRvjDfWuq3dH96ECeYolilN0VDNIzEaaPRxSgFXbafytvwTyY7JXp0
-	J5qpapKFZ9R0zv8TkWZDUYUXv5Ch85Xye9a8xoiZ4+zvhRSZXOGW4oxmW1sDZDy0oKUg=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1uiyMw-003jFL-QO; Mon, 04 Aug 2025 18:49:02 +0200
-Date: Mon, 4 Aug 2025 18:49:02 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: MD Danish Anwar <danishanwar@ti.com>
-Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Meghana Malladi <m-malladi@ti.com>,
-	Himanshu Mittal <h-mittal1@ti.com>,
-	linux-arm-kernel@lists.infradead.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, srk@ti.com,
-	Vignesh Raghavendra <vigneshr@ti.com>,
-	Roger Quadros <rogerq@kernel.org>
-Subject: Re: [PATCH net v2] net: ti: icssg-prueth: Fix emac link speed
- handling
-Message-ID: <be848373-4b7f-4205-b1e4-b08fe161d689@lunn.ch>
-References: <20250801121948.1492261-1-danishanwar@ti.com>
+	s=arc-20240116; t=1754326209; c=relaxed/simple;
+	bh=r6VRaWdG2El15IEHhPAu8O3bVwzPE5/USyg3Gi8waEs=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=kC0ja4DZmMVqMmoK4yGk+sAuacuI+m7Ti6HvoJ7U7FSMhn2La9agjX2/D0CIzSlI59fkJXIwbviBpL3ojaYqAf8DnOxR3vIb6eJP30OlHJWBcqEgeq3Ri5xqMCz+ZTWGl/LRcsU6v/yzC4o2uB4y6M8pJOK2n6g2E5jbPW/gWk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf10.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay03.hostedemail.com (Postfix) with ESMTP id A12F6B66DB;
+	Mon,  4 Aug 2025 16:50:03 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf10.hostedemail.com (Postfix) with ESMTPA id C05603D;
+	Mon,  4 Aug 2025 16:50:00 +0000 (UTC)
+Date: Mon, 4 Aug 2025 12:50:28 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: Ingo Molnar <mingo@kernel.org>, linux-kernel@vger.kernel.org, Peter
+ Zijlstra <peterz@infradead.org>, Thomas Gleixner <tglx@linutronix.de>, Juri
+ Lelli <juri.lelli@redhat.com>, Vincent Guittot
+ <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Mel Gorman <mgorman@suse.de>, Tejun Heo <tj@kernel.org>, Valentin Schneider
+ <vschneid@redhat.com>, Shrikanth Hegde <sshegde@linux.ibm.com>, Johannes
+ Weiner <hannes@cmpxchg.org>, Chris Bainbridge <chris.bainbridge@gmail.com>
+Subject: Re: [GIT PULL] Scheduler updates for v6.17
+Message-ID: <20250804125028.0676d201@gandalf.local.home>
+In-Reply-To: <CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
+References: <aIcdTI3e04W_RdM_@gmail.com>
+	<CAHk-=whgqmXgL_toAQWF793WuYMCNsBhvTW8B0xAD360eXX8-A@mail.gmail.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801121948.1492261-1-danishanwar@ti.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-Stat-Signature: se95msc3fkt34w3jbygqrze5zfydzs8c
+X-Rspamd-Server: rspamout05
+X-Rspamd-Queue-Id: C05603D
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18mYfjkhSGjcdUo189c+851q8nlw1IXmOU=
+X-HE-Tag: 1754326200-631162
+X-HE-Meta: U2FsdGVkX1+aCYL/mqSOWJ4R/vOhPiKopnexKH6eWbv90M+zlBc67hoeKw3VHmZ2Qr8u6gkqMT7rpgyqSKVZ3/I0UZX72B3ZyaHO2DG3oXG4zTxZM80cSb97Qzy0OCoyk7G5ZY/RLS/IjeWe8rbnLRphHwYps9+O49miHes6KBm0j7NY5GVzuoWTGy37liXRy4s1P1cCLbiGNxETNOiL5/RVz8oVWHY3w1J9eqaQaFVFftDCRcbESt9PjPWG0R88vkxid8O/wzzQT3N1P44rbtFFvez4t4g1yDPFV6rxF0IiLLTVbvx06bkaTSYt+jYZT5OH3rFM+LwKp1m4S5ya0ud6nLOLCCN/knGmkY2+SswkhmyBmj3lgpk/CpnTXZAF4TjfzyZ+ITGnQCHmdc3iSjFV/zuWTAnJyTHt9LennJIrT8O3FouTcYGxbp2BGQp4gtmZm0FgvT3EPVxarezw32+uBLVfd/F1a5oatgtlw8cFcawkYS9sky9c7552j57mphvXHl1rEZU=
 
-On Fri, Aug 01, 2025 at 05:49:48PM +0530, MD Danish Anwar wrote:
-> When link settings are changed emac->speed is populated by
-> emac_adjust_link(). The link speed and other settings are then written into
-> the DRAM. However if both ports are brought down after this and brought up
-> again or if the operating mode is changed and a firmware reload is needed,
-> the DRAM is cleared by icssg_config(). As a result the link settings are
-> lost.
-> 
-> Fix this by calling emac_adjust_link() after icssg_config(). This re
-> populates the settings in the DRAM after a new firmware load.
-> 
-> Fixes: 9facce84f406 ("net: ti: icssg-prueth: Fix firmware load sequence.")
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
-> v1 - v2: Added phydev lock before calling emac_adjust_link() as suggested
-> by Andrew Lunn <andrew@lunn.ch>
-> v1 https://lore.kernel.org/all/20250731120812.1606839-1-danishanwar@ti.com/
-> 
->  drivers/net/ethernet/ti/icssg/icssg_prueth.c | 8 ++++++++
->  1 file changed, 8 insertions(+)
-> 
-> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> index 2b973d6e2341..58aec94b7771 100644
-> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-> @@ -50,6 +50,8 @@
->  /* CTRLMMR_ICSSG_RGMII_CTRL register bits */
->  #define ICSSG_CTRL_RGMII_ID_MODE                BIT(24)
->  
-> +static void emac_adjust_link(struct net_device *ndev);
-> +
->  static int emac_get_tx_ts(struct prueth_emac *emac,
->  			  struct emac_tx_ts_response *rsp)
->  {
-> @@ -229,6 +231,12 @@ static int prueth_emac_common_start(struct prueth *prueth)
->  		ret = icssg_config(prueth, emac, slice);
->  		if (ret)
->  			goto disable_class;
-> +
-> +		if (emac->ndev->phydev) {
-> +			mutex_lock(&emac->ndev->phydev->lock);
-> +			emac_adjust_link(emac->ndev);
-> +			mutex_unlock(&emac->ndev->phydev->lock);
-> +		}
+On Wed, 30 Jul 2025 20:31:44 -0700
+Linus Torvalds <torvalds@linux-foundation.org> wrote:
 
-What about the else case? The link settings are lost, and the MAC does
-not work?
+> On Sun, 27 Jul 2025 at 23:48, Ingo Molnar <mingo@kernel.org> wrote:
+> >
+> > PSI:
+> >
+> >  - Improve scalability by optimizing psi_group_change() cpu_clock() usage
+> >    (Peter Zijlstra)  
+> 
+> I suspect this is buggy.
+> 
 
-	Andrew
+I forgot about this change, thinking it was added, until I saw this email:
+
+  https://lore.kernel.org/all/20250804133240.GA1303466@cmpxchg.org/
+
+It appears that Peter never sent in the change of:
+
+  https://lore.kernel.org/lkml/20250716104050.GR1613200@noisy.programming.kicks-ass.net/
+
+Looks like this could be your issue.
+
+-- Steve
 
