@@ -1,93 +1,107 @@
-Return-Path: <linux-kernel+bounces-755574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755575-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 17962B1A89D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:26:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 52765B1A8A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:27:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D1A7118A2F5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:26:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D19767A9470
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:26:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92BA428B51F;
-	Mon,  4 Aug 2025 17:26:07 +0000 (UTC)
-Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA3828B7D6;
+	Mon,  4 Aug 2025 17:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="tQM26qnJ"
+Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C95C9266568
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:26:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 803981E51EF;
+	Mon,  4 Aug 2025 17:27:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328367; cv=none; b=RWU1XBB921L+M0Ig8xRqTmplVjH4KdpmcIDz+hxd7oy51Dun1hCEt1wzhTbYDrOCP2qdrTpUWgqkzVQzlbB5irqrUKEORQMaqw3gJU2uns6wpTRm0uky2QF4xrAL40rMyAj2t5+ZB1htd6d20pc49vJ+1MQPFMgvRmFSzjmNW4s=
+	t=1754328466; cv=none; b=ib3xvmwJ+Rk/fSA/XhaHlKxsv4Bcb35RB+LA8iYJDnsZafm3CXKoDguEfPxTlJslM4JZblDXabpW6DuW4azvacSocI0oU2uNt5kRae0TPefxiK5B54pMH4p08rOpp0LKwRDqfHKD+jDJOdcykYQecKR1CYc88Oq7pPZOcs0CB5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328367; c=relaxed/simple;
-	bh=Qezuv9NuVZOhWaySQtgzOxHiO1L4SfJn5ghYTPVBw1s=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=qKghOoaHCb81gp3LmhI3PKAHNBsO0efdihIyL1oDeonK6WoJjEvv8vupZ27Pz7yjxOf2o5gpLgh3q1q2oHTvVjoZCfS2KHJri9jiHq0R8NyP1wnI7mJSXWiuMEmJs8ZcDY2a7W0hZGl298Xebn+uTbXwIO5F/JFFhOJyuIkKsts=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-87c306a1b38so246062639f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:26:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328365; x=1754933165;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=oGNXSO7IuhXm4UYEUpJyIzcI75ucxzQehTEB7opvPpw=;
-        b=tY/cVGlp8XvsDuRLQWmnSLcwkHv0uOh9yNtsYVSSH/z1AoziQqITBHwMk4cThhkDHw
-         F7TRdEvzxz7FsZ2CYD5wsUeTh+oRbohbuf1LA50QYCuqbQecsxHle0H90CvcVpTJZFmq
-         UNNrvaHSo/NOoY6hrt8S5RL9JXzvdcOg9UjuR1RBhUjXtl1LyO11+AtIyX4nsvVNoNBb
-         9c3fUPG0LtEtWNLktfOYTov/8hvccM74UXHW0KAgIopKvUQhkW4Hfm3dwmWAa7QH4Rey
-         3vRLkgg5OZhAz4bMK/9dDN97yhAIRlg9xmJbnIYl0OpLQjATGY2JJ8J6fC+FOp8ELE8b
-         9n7A==
-X-Forwarded-Encrypted: i=1; AJvYcCUqBFvsMUzJSItj75/2JLpctWQcENMH6VrQt6svAgIh15fOePiKMHZOQQ4P2Agt35Q7mXcljYs0jiPkr1A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxC8kukAbE2D4ynLSUH+zLBCo7XueDZ2PZ92X8zlwOG9VCQoteG
-	YbGLz5mVF6ToFNQPB8a6Nb9zVZXV2htINQJVgc2YU5orgLRhajuyJTdElvMh2u1MzTjJ2jHs3dU
-	YNKe8xdIDncuaRYvYJnDBmjig0HrTQBipn2K4mEJ3hrp7MKmNQYOqmmH6qRo=
-X-Google-Smtp-Source: AGHT+IHWWgSdVCva3mVOA0w0tIxfsrZTdnaw0rPAlY9oMSyW/c4V4pnoepcwuBQ4hg/IMmjMvGyhsI5JTGGAPIiHPM5SIYrUpnqT
+	s=arc-20240116; t=1754328466; c=relaxed/simple;
+	bh=ctfsacsK2Fl1aDVbBdpkGAYL0DhKf6KDkMkitlncA0Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PfYXMiSN9DQf6FgH9T8lat2AGBGhdxWww5WzjNY+inRWnESvTOG+fCeGpRyteUBW/EGVJTD19SnFHzexdW4wc6S9b/UeTrVxOfVjHKVbrNFZVNFspOMSJtT960lycMBEUVZkBwyWZjxUZzqUi+CHzIMd3ygWi4eA2QSr8MKzK04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=tQM26qnJ; arc=none smtp.client-ip=62.89.141.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
+	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=67sic9kDkYzicepXGm+7JEs5NBMq9PIdJXSJlsR3EcY=; b=tQM26qnJmZk9l3AHOjQKFeP6TG
+	LQYo3vg58KT3u2IQlf4GNt+YYG6MJDz6sX3AhHdcnPdw0tmRihRJhQesl1HIL8YLrtFKh7NwRJbXx
+	YD/K9I1Wulj2ViAgt+O+0kHVR4rzT5Y2xwZugxvql0ytEq9rWHIk503O9auciTZl0/ULirrN5s2GX
+	KxwmE87dLWIYVDj0CkuTXPbgacicKWp38/IEcgQ1gO5eGw2FU9ith+eZLh4CO9nyqYJR1Wxyty2Vq
+	LpjBwdRM/s/ejo5i/klJHvUES2FJRrjuQ0kik7yKpKjwmqtoTcJvfo8VpxK0DFR5S0t8ERZp7WEJE
+	go793xoQ==;
+Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
+	id 1uiyyL-0000000D8Am-1uCv;
+	Mon, 04 Aug 2025 17:27:41 +0000
+Date: Mon, 4 Aug 2025 18:27:41 +0100
+From: Al Viro <viro@zeniv.linux.org.uk>
+To: Christian Brauner <brauner@kernel.org>
+Cc: Thomas =?iso-8859-1?Q?Wei=DFschuh?= <thomas.weissschuh@linutronix.de>,
+	Jan Kara <jack@suse.cz>, Sargun Dhillon <sargun@sargun.me>,
+	Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
+Message-ID: <20250804172741.GZ222315@ZenIV>
+References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
+ <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
+ <20250804155229.GY222315@ZenIV>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a5d:85d1:0:b0:864:68b0:60b3 with SMTP id
- ca18e2360f4ac-881683d6ba6mr1589110039f.12.1754328364766; Mon, 04 Aug 2025
- 10:26:04 -0700 (PDT)
-Date: Mon, 04 Aug 2025 10:26:04 -0700
-In-Reply-To: <68905ecc.050a0220.7f033.0004.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6890ed2c.050a0220.1fc43d.0010.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: array-index-out-of-bounds in bch2_accounting_validate
-From: syzbot <syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com>
-To: bfoster@redhat.com, elver@google.com, justinstitt@google.com, 
-	keescook@chromium.org, kent.overstreet@linux.dev, 
-	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	mmpgouride@gmail.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804155229.GY222315@ZenIV>
+Sender: Al Viro <viro@ftp.linux.org.uk>
 
-syzbot has bisected this issue to:
+On Mon, Aug 04, 2025 at 04:52:29PM +0100, Al Viro wrote:
+> On Mon, Aug 04, 2025 at 02:33:13PM +0200, Christian Brauner wrote:
+> 
+> > +       guard(spinlock)(&files->file_lock);
+> >         err = expand_files(files, fd);
+> >         if (unlikely(err < 0))
+> > -               goto out_unlock;
+> > -       return do_dup2(files, file, fd, flags);
+> > +               return err;
+> > +       err = do_dup2(files, file, fd, flags);
+> > +       if (err < 0)
+> > +               return err;
+> > 
+> > -out_unlock:
+> > -       spin_unlock(&files->file_lock);
+> > -       return err;
+> > +       return 0;
+> >  }
+> 
+> NAK.  This is broken - do_dup2() drops ->file_lock.  And that's why I
+> loathe the guard() - it's too easy to get confused *and* assume that
+> it will DTRT, no need to check carefully.
 
-commit 557f8c582a9ba8abe6aa0fd734b6f342af106b26
-Author: Kees Cook <keescook@chromium.org>
-Date:   Thu Jan 18 23:06:05 2024 +0000
+Note, BTW, that in actual replacing case do_dup2() has blocking
+operations (closing the replaced reference) after dropping ->file_lock,
+so making it locking-neutral would not be easy; doable (have it
+return the old reference in the replacing case and adjust the callers
+accordingly), but it's seriously not pretty (NULL/address of old file/ERR_PTR()
+for return value, boilerplate in callers, etc.).  Having do_dup2() called
+without ->file_lock and taking it inside is not an option - we could pull
+expand_files() in there, but lookup of oldfd in actual dup2(2)/dup3(2) has
+to be done within the same ->file_lock scope where it is inserted into the
+table.
 
-    ubsan: Reintroduce signed overflow sanitizer
-
-bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=161982f0580000
-start commit:   352af6a011d5 Merge tag 'rust-6.17' of git://git.kernel.org..
-git tree:       upstream
-final oops:     https://syzkaller.appspot.com/x/report.txt?x=151982f0580000
-console output: https://syzkaller.appspot.com/x/log.txt?x=111982f0580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cae1291240e8962a
-dashboard link: https://syzkaller.appspot.com/bug?extid=cd063f869beedf5b9cd7
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=14dcc6a2580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=133e02f0580000
-
-Reported-by: syzbot+cd063f869beedf5b9cd7@syzkaller.appspotmail.com
-Fixes: 557f8c582a9b ("ubsan: Reintroduce signed overflow sanitizer")
-
-For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+Sure, all things equal it's better to have functions locking-neutral, but
+it's not always the best approach.  And while __free() allows for "we'd
+passed the object to somebody else, it's not ours to consume anymore",
+guard() does not.
 
