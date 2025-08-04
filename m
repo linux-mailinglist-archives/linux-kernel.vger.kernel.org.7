@@ -1,127 +1,120 @@
-Return-Path: <linux-kernel+bounces-755119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EE53B1A184
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:36:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C62EB1A186
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:37:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8830117654C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:36:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5F9CA17D31E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:37:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0B57259CA1;
-	Mon,  4 Aug 2025 12:36:46 +0000 (UTC)
-Received: from mail-m32117.qiye.163.com (mail-m32117.qiye.163.com [220.197.32.117])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFFD225B309;
+	Mon,  4 Aug 2025 12:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NXZ+TWQ/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59AA345C14;
-	Mon,  4 Aug 2025 12:36:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.32.117
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5556D45C14;
+	Mon,  4 Aug 2025 12:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754311006; cv=none; b=U09Bi/uFcu81kJOClxXkSyORgtNDOxFm0+51o/3ySsDcUWtBosJP2xpibTn1CK78RpPOGQkHOzGsr3KnT2dieV1S3Y6OvJ6bw8hxg7nNveSmU8BEFCYaUYJERT/Lj7KfAEEztpv1P2TIAOc8nZy2aVoDXDzczCFbxXxtVGO81LU=
+	t=1754311008; cv=none; b=dmJIvQzcLoBUHnVfTjXpPBU5aNleZCREtjbgoCL1IaDXkIPPnk/XO/N5RZKnJCrHMrb8LE5Lv92cpHnTbjvchyuhD874dcxqJtLmCC9c4tpDP4z6o3xE8BtgiSP1CZxqC0LJwzn5FxLQRM9xJrfjR2pKN65m/5qQYRfZGC/8PIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754311006; c=relaxed/simple;
-	bh=qGyygczCg41ZUcV0z7jc2+EQ+Zlec5k5fqNrB423pIw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ElAOofa4D5zPTyc3Z49dP2rFOFefhuf6Knkg5Ukrd8psbtXQbQuu23YrVURuPLyXyTEUofPqHfg594e4LEz2Yth8UiqPueL7uCoTL60J3rLE6GAj6cIpbtGosU7S2aM3ZII7j+Trj8RkE6y8Av5Zf3jP6byzhylRJryeKbMupN4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn; spf=pass smtp.mailfrom=easystack.cn; arc=none smtp.client-ip=220.197.32.117
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=easystack.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=easystack.cn
-Received: from localhost.localdomain (unknown [218.94.118.90])
-	by smtp.qiye.163.com (Hmail) with ESMTP id e1e7cbda;
-	Mon, 4 Aug 2025 20:36:29 +0800 (GMT+08:00)
-From: Zhen Ni <zhen.ni@easystack.cn>
-To: Markus.Elfring@web.de,
-	daniel.lezcano@linaro.org,
-	tglx@linutronix.de
-Cc: linux-kernel@vger.kernel.org,
-	Zhen Ni <zhen.ni@easystack.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] clocksource: clps711x: Fix resource leaks in error paths
-Date: Mon,  4 Aug 2025 20:36:19 +0800
-Message-Id: <20250804123619.78282-1-zhen.ni@easystack.cn>
-X-Mailer: git-send-email 2.20.1
-In-Reply-To: <20250731062331.1041773-1-zhen.ni@easystack.cn>
-References: <20250731062331.1041773-1-zhen.ni@easystack.cn>
+	s=arc-20240116; t=1754311008; c=relaxed/simple;
+	bh=pzlCwWnn3o5vFXHTupjp1TmlOp0v5jeNK85Nzj184ns=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=V5066v/5iAcjWqHB62amAHI4/oADU+zZCEuIqqPtjxMcTetHw3PkQ6+h0CsfecvpOhzcUkt2QaJ0FbIVJDX4Ji6JUpe6Q3HrD/wzE6yEbO0lbKvut7TFnWWQPFUuRghI7f3rr39N34ToixXMA57lFwRPunvSxSkCujNHBDZeFwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NXZ+TWQ/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F1D50C4CEE7;
+	Mon,  4 Aug 2025 12:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754311008;
+	bh=pzlCwWnn3o5vFXHTupjp1TmlOp0v5jeNK85Nzj184ns=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=NXZ+TWQ/oWKeDnl+HwXouGAOm/rWemZktPmaxmrnrLoIAWISMo2FNba4efuicV1KS
+	 JhHSVbx+mqcD+dQ4B9ca4NRljZ/XqHieVdhHd2FcZXs/QIk2LBoaeyhrKxQNpCkyTI
+	 vLz/uvXxOvmFBSe7ly22EaYQFJaxqAty+zZ463gks7dZFc+ZXRlODJGEufRIj8EZSw
+	 W3V/jpbKEpvP3OAbHFoA09xP+FxLNneWgw6IeAY0byHFGuuIrWgJJ+p5r/4dkEWlAl
+	 7GYkZ0RHdFiCrHAGFHO/rrWbfhBiIil1cW1EkGlbFga/uwjKYVtJE1cDn2OnpyzwC0
+	 1cM7Y4x6ldu2A==
+Date: Mon, 4 Aug 2025 13:36:43 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Dzmitry Sankouski <dsankouski@gmail.com>, Lee Jones <lee@kernel.org>,
+	Rob Herring <robh@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Liam Girdwood <lgirdwood@gmail.com>,
+	=?iso-8859-1?Q?Andr=E9?= Draszik <andre.draszik@linaro.org>,
+	linux-kernel@vger.kernel.org, linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org
+Subject: Re: [PATCH v7] regulator: add s2dos05 regulator support
+Message-ID: <489609c7-3f11-4254-b5e3-6df5ec75b043@sirena.org.uk>
+References: <20250802-starqltechn_integration_upstream-v7-1-98ed0e1e1185@gmail.com>
+ <dc1482a7-a69e-40ec-83ee-98ecc2e57bf1@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-HM-Tid: 0a98751555df0229kunm7e8d234449bfa6
-X-HM-MType: 1
-X-HM-Spam-Status: e1kfGhgUHx5ZQUpXWQgPGg8OCBgUHx5ZQUlOS1dZFg8aDwILHllBWSg2Ly
-	tZV1koWUFJQjdXWS1ZQUlXWQ8JGhUIEh9ZQVlDTksfVk1DTEpJSkxPTUNPQlYVFAkWGhdVGRETFh
-	oSFyQUDg9ZV1kYEgtZQVlJSkNVQk9VSkpDVUJLWVdZFhoPEhUdFFlBWU9LSFVKS0lPT09IVUpLS1
-	VKQktLWQY+
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="GyhI1YsioTt8RPbf"
+Content-Disposition: inline
+In-Reply-To: <dc1482a7-a69e-40ec-83ee-98ecc2e57bf1@kernel.org>
+X-Cookie: Shading within a garment may occur.
 
-The current implementation of clps711x_timer_init() has multiple error
-paths that directly return without releasing the base I/O memory mapped
-via of_iomap(). Fix of_iomap leaks in err paths.
 
-Fixes: 04410efbb6bc ("clocksource/drivers/clps711x: Convert init function to return error")
-Fixes: 2a6a8e2d9004 ("clocksource/drivers/clps711x: Remove board support")
-Cc: stable@vger.kernel.org
-Signed-off-by: Zhen Ni <zhen.ni@easystack.cn>
----
-changes in v2:
-- Add tags of 'Fixes' and 'Cc'
-- Reduce detailed enumeration of err paths
-- Omit a pointer check before iounmap()
-- Change goto target from out to unmap_io
----
- drivers/clocksource/clps711x-timer.c | 23 ++++++++++++++++-------
- 1 file changed, 16 insertions(+), 7 deletions(-)
+--GyhI1YsioTt8RPbf
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-diff --git a/drivers/clocksource/clps711x-timer.c b/drivers/clocksource/clps711x-timer.c
-index e95fdc49c226..bbceb0289d45 100644
---- a/drivers/clocksource/clps711x-timer.c
-+++ b/drivers/clocksource/clps711x-timer.c
-@@ -78,24 +78,33 @@ static int __init clps711x_timer_init(struct device_node *np)
- 	unsigned int irq = irq_of_parse_and_map(np, 0);
- 	struct clk *clock = of_clk_get(np, 0);
- 	void __iomem *base = of_iomap(np, 0);
-+	int ret = 0;
- 
- 	if (!base)
- 		return -ENOMEM;
--	if (!irq)
--		return -EINVAL;
--	if (IS_ERR(clock))
--		return PTR_ERR(clock);
-+	if (!irq) {
-+		ret = -EINVAL;
-+		goto unmap_io;
-+	}
-+	if (IS_ERR(clock)) {
-+		ret = PTR_ERR(clock);
-+		goto unmap_io;
-+	}
- 
- 	switch (of_alias_get_id(np, "timer")) {
- 	case CLPS711X_CLKSRC_CLOCKSOURCE:
- 		clps711x_clksrc_init(clock, base);
- 		break;
- 	case CLPS711X_CLKSRC_CLOCKEVENT:
--		return _clps711x_clkevt_init(clock, base, irq);
-+		ret =  _clps711x_clkevt_init(clock, base, irq);
-+		break;
- 	default:
--		return -EINVAL;
-+		ret = -EINVAL;
-+		break;
- 	}
- 
--	return 0;
-+unmap_io:
-+	iounmap(base);
-+	return ret;
- }
- TIMER_OF_DECLARE(clps711x, "cirrus,ep7209-timer", clps711x_timer_init);
--- 
-2.20.1
+On Sun, Aug 03, 2025 at 10:22:33AM +0200, Krzysztof Kozlowski wrote:
+> On 02/08/2025 13:22, Dzmitry Sankouski wrote:
 
+> > +	for (i = 0; i < rdev_num; i++) {
+> > +		struct regulator_dev *regulator;
+> > +
+> > +		regulator = devm_regulator_register(&pdev->dev,
+> > +						&regulators[i], &config);
+> > +		if (IS_ERR(regulator)) {
+> > +			ret = PTR_ERR(regulator);
+> > +                     dev_err(&pdev->dev, "regulator init failed for %d\n",
+> > +                             i);
+> > +             }
+> > +     }
+> > +
+> > +	return ret;
+
+> I do not understand your logic here and I already commented on issues
+> with 'ret'. If 1st regulator fails, but the last one succeeds, you
+> return 0. If 1st succeeds, but the last one fails, you return failure
+> failing the probe.
+
+No, ret is assigned within the IS_ERR() check so it only records
+failures - it'll take the return value from the last regulator that
+failed, or otherwise return 0 if they all registered OK.  It'd be as
+well to just return immediately and save the bother of winding and
+unwinding the later regulator setups but the error reporting should
+work.
+
+Should be a dev_err_probe() though.
+
+--GyhI1YsioTt8RPbf
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiQqVoACgkQJNaLcl1U
+h9C/Qwf9EZ8/lNClhCJENr7YQRiLfxAkVXu8VXIYLdwXe3WwMv/DpmgvFlk1vIxO
+tURo7sQdQBFIBERnRysAOXBvtEXxfwTv5TgRjFJM5480ywDKJmlPUvd82xV2JEMp
+CCJjjrvrw+P3LQXzHUGohQEmaHe5GhTt+crlGTKacEmeQl7q3kK6vi8eI0bcvNe8
+MXbBC+JYhf2z0sWCSgvV5fQ3owzXhR4cJC0cj/0Rsxu6rGgt0wB3CH6tkXRi6hKv
+Pi+DNj9WQdR/zc+yuqhuwBRRo+wBExMDnM2/Gc/zarh+Yc2XcoE5jKkv5aQQnQno
+n7iSXKCUa6FhF9mCny99t51Gc0mBmQ==
+=RUG8
+-----END PGP SIGNATURE-----
+
+--GyhI1YsioTt8RPbf--
 
