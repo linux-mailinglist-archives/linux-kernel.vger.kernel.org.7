@@ -1,125 +1,116 @@
-Return-Path: <linux-kernel+bounces-754797-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754798-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AD7BB19CDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:44:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A713CB19CE2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:47:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 66742170031
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:44:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69FEE188BA0E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:47:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BE1E239E77;
-	Mon,  4 Aug 2025 07:44:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5584A239581;
+	Mon,  4 Aug 2025 07:47:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="YmCZicYT"
-Received: from mailout1.w1.samsung.com (mailout1.w1.samsung.com [210.118.77.11])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="ZUIYz1XZ";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="ecKANMWN"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F96E23958A
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:44:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A794548EE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:46:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754293479; cv=none; b=DIxPvmuQHQX/SBYWpgbHCSAxdA+hKexFPhon48h93IGcNnZc7ZsAopzTntdk7amE5oHBGoG7EikJwEThOCxzp/9TZYAmuyNfyWKPzPrIR99+BI2uTRjIKli23qh0IQqW9NNqk0To0yLwOoEgnFHHNB7rzzEhx6vP1Oo6e20ypfE=
+	t=1754293621; cv=none; b=Cz5P9AxotFGAEcyo5D9f+KDki5vS0T+6WOz5n7IW69diTRmuc8iCrw8lQWbqTnqMW45q6+9kDutYfMq/3EtlKcxDWDQQiJKFCEt6Ko1ZnbH187E5VZ/TEuUAJyyKHic+7wOB9a8gxjuoPuDenyHme20zPIyboHCFiMK10SkTl3o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754293479; c=relaxed/simple;
-	bh=+IRGfQCHeM/mGInYuNiU7PP2ZDK4EP2t6bt1SHrDN4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
-	 Content-Type:References; b=uvVvlJXSsD43KitGqrsoLFH+0xsCACzK08NYfVLzBFvt+8F7iQ7zOWqjtGtA4FPeIaIgWn6+NddhwpgLPvmQlj1LhakFAI4n+HGn0BfoSJI9ofbkDZvx1U2ZLaA/664kjbanTtPrAC8WdrWeUXazHgZW6GJDbEcOS4Y1bN49EW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=YmCZicYT; arc=none smtp.client-ip=210.118.77.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
-	by mailout1.w1.samsung.com (KnoxPortal) with ESMTP id 20250804074430euoutp01e96bdeddb1e56896fdb001f0fa59ec5a~YgJ3VY9sf2954129541euoutp01p
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:44:30 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.w1.samsung.com 20250804074430euoutp01e96bdeddb1e56896fdb001f0fa59ec5a~YgJ3VY9sf2954129541euoutp01p
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754293470;
-	bh=XCJ4mUS0Zqljxl+0xsR/Xtr1rtJVfd83zF4hgcLgcl0=;
-	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
-	b=YmCZicYT5HoZX3M1/LaR+Jmyyq2lLLXBPgiL3pXa9gYoHic8us3f1wyxeFENatqcb
-	 KAOKZqN3yiBn66HXbYLOQ+FS6Cs75FPrI+uwYu6gwNYKvezeOxWjtWyTWTXZfuWfNr
-	 SbZ8uE4egR1Rj07WFZGDnQAz9P+zYuyDRtuAqGZ4=
-Received: from eusmtip1.samsung.com (unknown [203.254.199.221]) by
-	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
-	20250804074429eucas1p2e907080fb8c5fb239004bcc0a2bcd7e6~YgJ2oZ12f1992219922eucas1p2x;
-	Mon,  4 Aug 2025 07:44:29 +0000 (GMT)
-Received: from [192.168.1.44] (unknown [106.210.136.40]) by
-	eusmtip1.samsung.com (KnoxPortal) with ESMTPA id
-	20250804074428eusmtip16818df9316fcfbaa64df92efe7047970~YgJ1kJHR50614106141eusmtip1O;
-	Mon,  4 Aug 2025 07:44:28 +0000 (GMT)
-Message-ID: <6caeecdd-cf9a-41af-a744-40831c81fb96@samsung.com>
-Date: Mon, 4 Aug 2025 09:44:28 +0200
+	s=arc-20240116; t=1754293621; c=relaxed/simple;
+	bh=w2FQsejIW9tGu/d12dVCX72xaJq4TZ/tWsq4IMGd5/M=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JGqlj1yY98b8c4v8cliO9Nki0NFb9kDFHIsyrPto3rQNFdyYoVaz1L8lf56EqTROH+lh7YXzaS49PdLbtdPJquNlqT2r9jr1AQYUhsqdLSPQOtsa2ml9SSR06iGrRppb/WQdRoUOID91tZmROLbPOPJUjYCZYgw/xX+IjlsAMTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=ZUIYz1XZ; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=ecKANMWN reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1754293618; x=1785829618;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=CdSfNikpGH6BscsmZd/Rx5luzG62PFHqKEcL/imgz3o=;
+  b=ZUIYz1XZsvElIzniBhj04Zm5wLjMlyexuzD225MC+aq3Zs34DigroWyd
+   EdLD7eT9JwkzU90uEG9D3vL2eyLYsyK/xagR1qFT1Csgy/MQObPPxrL2R
+   r33d2/bPhx04vVoYAbRT/ioazj6RsSL/yT+AKZs80p7Mjr3etkGlo+uEu
+   zy9CZk0pwqfE9W1fPZ1fxjWtnu/Ai0n/NovTN4xEpw6bu1ZsFO59Vz13l
+   2R6cOX2Hs1CJaDU3V5njuPW/XgN0/3R+IpvCwW0PBpJwCEJjvYHofEmzU
+   nykP7/A4HQL9VmYMeS+M92jxNaCAA5RYcUYtti6o/1mYLr2XPNRYT9WZi
+   Q==;
+X-CSE-ConnectionGUID: HpCTta7TRG6yj4QOSCB+Lw==
+X-CSE-MsgGUID: Aeglv0tvTyugj3tAdvpArw==
+X-IronPort-AV: E=Sophos;i="6.17,258,1747692000"; 
+   d="scan'208";a="45562890"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 04 Aug 2025 09:46:50 +0200
+X-CheckPoint: {6890656A-1C-BC5CDED5-F054443F}
+X-MAIL-CPID: 4AC64EF87B1BE66EB7BD5C8C8A82D21A_3
+X-Control-Analysis: str=0001.0A00210D.6890651C.0090,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id B04091617E1;
+	Mon,  4 Aug 2025 09:46:44 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1754293606;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=CdSfNikpGH6BscsmZd/Rx5luzG62PFHqKEcL/imgz3o=;
+	b=ecKANMWNDiOVfAMTmVMafSHm/DT+1YcSONM7nAJtnCxEO+Ziaf5xmwr7oQZbcP/FdHjQZg
+	c9ItJju72cOUClS8/+/I1KwLI6Mx+6sRV/eDMCLIxGgiHGjd9s8h+vVlbt6f5IDiEfhNag
+	hobttP7S4HZq6MYU5tMCWE+d1yVUgWdDYi2dyd/yDI341E/PzSpE+DttX7gYALtPMihhFX
+	HqF0S1rfCDNd+Qb1CKFuITUKGft2Ml4cKgH+TCeFZ40mc21dbV+99v0bDJNYMFB1wI2CNk
+	jGOHyQsuc6l8ivt3B0btn6LjKlWBiKlyxzaMRqUqvV8IP/+P0AudxGNX6UgbPQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Fabio Estevam <festevam@gmail.com>,
+	Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Alexander Stein <alexander.stein@ew.tq-group.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	imx@lists.linux.dev,
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Subject: [Resend 1/1] arm64: defconfig: Enable Marvell WiFi-Ex USB driver
+Date: Mon,  4 Aug 2025 09:46:41 +0200
+Message-ID: <20250804074642.75072-1-alexander.stein@ew.tq-group.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v10 0/4] Add TH1520 GPU support with power sequencing
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Bartosz Golaszewski <brgl@bgdev.pl>, Philipp Zabel
-	<p.zabel@pengutronix.de>, Frank Binns <frank.binns@imgtec.com>, Matt Coster
-	<matt.coster@imgtec.com>, Maarten Lankhorst
-	<maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>, Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
-	Alexandre Ghiti <alex@ghiti.fr>, Ulf Hansson <ulf.hansson@linaro.org>, Marek
-	Szyprowski <m.szyprowski@samsung.com>, Drew Fustini <fustini@kernel.org>,
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Bartosz Golaszewski
-	<bartosz.golaszewski@linaro.org>
-Content-Language: en-US
-From: Michal Wilczynski <m.wilczynski@samsung.com>
-In-Reply-To: <20250804-sociable-sceptical-snake-f5ac8d@kuoka>
-Content-Transfer-Encoding: 7bit
-X-CMS-MailID: 20250804074429eucas1p2e907080fb8c5fb239004bcc0a2bcd7e6
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-RootMTR: 20250801103104eucas1p1dae57601c48faae879b154f11af8a4f1
-X-EPHeader: CA
-X-CMS-RootMailID: 20250801103104eucas1p1dae57601c48faae879b154f11af8a4f1
-References: <CGME20250801103104eucas1p1dae57601c48faae879b154f11af8a4f1@eucas1p1.samsung.com>
-	<20250801-apr_14_for_sending-v10-0-e85802902a29@samsung.com>
-	<20250804-sociable-sceptical-snake-f5ac8d@kuoka>
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
+This driver is used on imx93-tqma9352-mba91xxca.dts.
 
+Signed-off-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+---
+Added IMX Maintainers
 
-On 8/4/25 08:13, Krzysztof Kozlowski wrote:
-> On Fri, Aug 01, 2025 at 12:31:00PM +0200, Michal Wilczynski wrote:
->>
->> v10:
->>  - Squashed the two dt-binding patches back into a single commit.
->>  - Simplified the B-series GPU rule by removing the not clause.
->>  - Reverted the removal of the items definition from the top-level
->>    power-domain-names property, per maintainer feedback.
->>
-> 
-> You are using b4, so where are all the lore links for each previous
-> version? b4 creates proper changelog, so why are you removing them?
+ arch/arm64/configs/defconfig | 1 +
+ 1 file changed, 1 insertion(+)
 
-Hi,
-When I started this series, I was also just beginning to use b4 and
-wasn't aware of that feature. I didn't think it was appropriate to
-rework the changelog later, so I continued with the manual method. For
-newer series, like the Rust support for PWM, I am doing it as you
-suggested.
-
-> 
->> v9:
-> 
-> Best regards,
-> Krzysztof
-> 
-> 
-
-Best regards,
+diff --git a/arch/arm64/configs/defconfig b/arch/arm64/configs/defconfig
+index c7520e78b6a11..2271ce6079bbb 100644
+--- a/arch/arm64/configs/defconfig
++++ b/arch/arm64/configs/defconfig
+@@ -441,6 +441,7 @@ CONFIG_IWLMVM=m
+ CONFIG_MWIFIEX=m
+ CONFIG_MWIFIEX_SDIO=m
+ CONFIG_MWIFIEX_PCIE=m
++CONFIG_MWIFIEX_USB=m
+ CONFIG_MT7921E=m
+ CONFIG_RSI_91X=m
+ CONFIG_WL18XX=m
 -- 
-Michal Wilczynski <m.wilczynski@samsung.com>
+2.43.0
+
 
