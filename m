@@ -1,77 +1,121 @@
-Return-Path: <linux-kernel+bounces-755718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41696B1AADC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68761B1AADE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:26:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A1A116ABD9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:26:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1937E3AFE88
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:26:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5929028FFCD;
-	Mon,  4 Aug 2025 22:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E3F528FFEE;
+	Mon,  4 Aug 2025 22:26:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Pp0Fu428"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lOojAZIk"
+Received: from mail-pf1-f175.google.com (mail-pf1-f175.google.com [209.85.210.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC8AB238C07;
-	Mon,  4 Aug 2025 22:25:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E0E238C07;
+	Mon,  4 Aug 2025 22:26:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754346351; cv=none; b=TXumgqjRCqs0zczvC+2c/5Nc68skvXW20BFZbNcpXuNi29gc7s4Hj8LkhPMjoh1HjXSYoYjIRtw8BqWkQDjFsS1iItcyINC7nI3MPqI83X8WzzIA5x52OdGfSVnBLpytwTPalQGgn2d34K5AehtQAPEWHGVSEJYbS1n9lp8GiG4=
+	t=1754346368; cv=none; b=ToR3OsR32x6BqxOg/wytwyCNR9d9YmWwoQp0fWRJrKrYV5u5lJniVGuX8SWWM2Bv1H1LN860j4ZcHDlVPFeQD7xOGRdU701M2BTjuQHh2+VMiPjmb3+Nuy56l8PyQRyYsxx2Tz1hTTA3QYbpQpJgWe5yu41fXftSGKiRDPDGBWQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754346351; c=relaxed/simple;
-	bh=enMaGTMAABbWaOPEGi4GPcRf3wbgYEldr1JGJGzL5m0=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=d5lNCKU05+lwnX4Y7vOZfjYB0zN2cwh5uUv/+7gIt4lnNWM25KMTh1lx6kgDrHJ+KtBwDjr+rzLqGt+ZAfT3dLUWkxGIMiYWNM707KQE4i6mT+Z0L3aOBjyaGNmB3sAuUUU1cAYTv9HW6FwnTs5f0sJO8p2UldYUPrnByp5xQW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Pp0Fu428; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 12F3AC4CEE7;
-	Mon,  4 Aug 2025 22:25:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754346351;
-	bh=enMaGTMAABbWaOPEGi4GPcRf3wbgYEldr1JGJGzL5m0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=Pp0Fu428NDuVpNiSRNjvByoTRFtmuOHLiyeTEej7y/QmQQD2UoHTtSOLyLJOOuOVD
-	 UhjlBwVcNfCms6iqzxm/r6qHjrqcBgjOiSPIQ9ZKBShVl5tbiFFqpuOzxcIfddWytx
-	 j3MUpoEwOy3o0Nirnyiroh427CdZfqchpCMINfF8Z7bF1Qb0GuYehdYb2CWK3Cbxzx
-	 G/B+cxa+EEFf7qgzDnV5QDb+kSFLkpT5Gw3Y5XlCOeXwBxrvggaPD2dLvMfRac3w9t
-	 5faLPOdixH6tKJPhVGF/7SIDOZE96eNjrpLLm1a2wJuE/Pc9uUcB0rBowZYXmcoiAN
-	 R+jE28AaKdMaw==
-Date: Mon, 4 Aug 2025 17:25:49 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 08/38] iommufd/tsm: Add tsm_op iommufd ioctls
-Message-ID: <20250804222549.GA3645807@bhelgaas>
+	s=arc-20240116; t=1754346368; c=relaxed/simple;
+	bh=kVJ24A/+EOTmI95tP9xa83xvhY8dX4CrI8wTpeNdBFY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=lkVyAmmZNCBhuWiGkm55AnvNKCPS0bBA+6Y842CHFrnUjtymD6ThfMaUJnCJbw/57rnj4sJbcOH5qSZzt7ahpRf6u9FuxR8nUuk7z7husyL5JqQ9gfCuIaZrQz0k31ylowII7ZnNkAwcrxGqSNX9Qlb8znszyUUudUZauA833/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lOojAZIk; arc=none smtp.client-ip=209.85.210.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f175.google.com with SMTP id d2e1a72fcca58-76bdc73f363so3040136b3a.3;
+        Mon, 04 Aug 2025 15:26:06 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754346366; x=1754951166; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=T6BVFrBwbS56dQYxtGm8nysX8Qp9r4lFOJoA7FIQG3E=;
+        b=lOojAZIkc8wN9YviEei6QYcKG9Bmw1Lzu1G0FhH5QSvgt2pglHAbtf2XkKNx+ypYWG
+         bIW6yCTwmHv1j4gs1YglcqCKsio8VfclXVWI4Ki7KRJWCl/17tRPvSGbARAv3U4kpIbx
+         5GF4VZaHpelSVoHQ4TyorCm5HtkFHOW+LNdSt5aOsnPhK2idnmgMNPPpEz/C1DWDyFeL
+         hTZzS07cEvdtgQ0LQf9yzFqqCRXGudlQxZfvQ8fiJzQ6RPcj6N55eT2NYfj5hj9kbIPb
+         SJJeoQrCzL9ceEeHN9YHdaOvKnAq5D+AmQi8yndVnskq6byn+hFHELqTXHzap6wQTJ3p
+         mYag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754346366; x=1754951166;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=T6BVFrBwbS56dQYxtGm8nysX8Qp9r4lFOJoA7FIQG3E=;
+        b=f5EzW0Eg/248nirQG6izzL2Icy5HG/rHml5Rc/Z/2UwoSkrf7pY+TRwohmRPK2bv7N
+         R1AN1F2p75b7nHc5coT1jCDyWRYQmRHuRqQQpFQnWQEQFednXtjgEfS2tiaYo46mZOn7
+         mGqnq+rGreSMernpDlIK7EaKC4MnPdo9VcJj6co9nW/EW/sXofDaFuPXS69t6wTzG4GE
+         4YBcv9ozPkfHNJMgp0sDyomGfRyLM9N6B1SRdTeq1VeLnIdxQWT+7L7DiVnZlHnG54H3
+         dIYoaIMfuaMXsWvWHz0+Y1Pz3H7Z3o5XVNLUgSbcYnOawDwa8Dt8Nxl6lsoQmRYYax/O
+         RyiA==
+X-Forwarded-Encrypted: i=1; AJvYcCUZumFnFDTU7pLcoRtS5MhHOm87aI34OqhwZC817kPKz1u5pmYdo1Ebwd5d4CrnfNGly3dbU/LqE8o=@vger.kernel.org, AJvYcCWcTMLUDaAvrDL6SpTztxOqQSGc494YbYiM4+g93RG3GzqoLCTJXb3KxTk6kZNOspQ8zUarpgTrNWWOzDR8@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuYqhl9RC+TvNAL7jw9LHLtNKoFwYc8ABcz/UcbsjkHKEE40uU
+	oAXCNbasqGWpM+iJ1LoRV4QzWtILdhOeXyRmISd0EJKyrB7K+TJCKWS4
+X-Gm-Gg: ASbGncuHzFIaCIDum47T8wWAxV5KQ6jWQzWEQAFqVxZwR3Yko0vpu0b72L5crq/2tOt
+	iAtrwlFyrwodOFFPsi2IulcMOoziCt4ZFG7NKCdDIuPppyuJG4upM4ezCo3RADjrwnqJkZBX9z6
+	EpmrMoaHUn/HM7I7Ig9B3b0xyow48ogwhW1iM/mI+g+TPPK5/XZD79fM//xPhR35a4qfA7yCD4q
+	jFU7IG0DR5wm/tEOJ78ZSmV8Kgvg68cVGC2xgR3tyqDi3IbWF18kGSH32MzHS2kGfTniFQUdRHw
+	HLcvQBVdnMLvNIQOUOlLi/j7qqHNguu1UpEMKEVj+hSSFlLiCpgh/0Lo2e3UP4ZM55Q8VA+vvSS
+	H9co3Mg==
+X-Google-Smtp-Source: AGHT+IHfUmglXfHbkwX9hQG0wXyNcOTcSKyPNK6ScJGbjgKlV63OlHoCXSfuiZaJIC9tTuOdXI3jhg==
+X-Received: by 2002:a05:6a00:2195:b0:736:a8db:93bb with SMTP id d2e1a72fcca58-76bec311038mr13783835b3a.5.1754346365903;
+        Mon, 04 Aug 2025 15:26:05 -0700 (PDT)
+Received: from archlinux ([2804:14d:90a8:4498::6b2])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bccfd88dbsm11400458b3a.103.2025.08.04.15.26.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 15:26:05 -0700 (PDT)
+Date: Mon, 4 Aug 2025 19:26:03 -0300
+From: Gustavo Silva <gustavograzs@gmail.com>
+To: Jonathan Cameron <jic23@kernel.org>
+Cc: Andy Shevchenko <andriy.shevchenko@intel.com>, 
+	Alex Lanzano <lanzano.alex@gmail.com>, David Lechner <dlechner@baylibre.com>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Andy Shevchenko <andy@kernel.org>, linux-iio@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Lothar Rubusch <l.rubusch@gmail.com>
+Subject: Re: [PATCH v4 3/3] iio: imu: bmi270: add support for motion events
+Message-ID: <raapwni4cn2lmazn7n2yvmjocmgntwram4wj2guvo5vwslhjbl@ni3elcf4ptn7>
+References: <20250711-bmi270-events-v4-0-53ec7da35046@gmail.com>
+ <20250711-bmi270-events-v4-3-53ec7da35046@gmail.com>
+ <aHYFMf8QGDNt-5Nf@smile.fi.intel.com>
+ <aHYIBReTFqJMtiXW@smile.fi.intel.com>
+ <vlpqd3jeszhgpcob7qyzp5vljdowwu26my7xuwuvfftf54zg35@czxhsjejgdkm>
+ <aHd2s987EMCdgdrJ@smile.fi.intel.com>
+ <20250724162227.065d20a0@jic23-huawei>
+ <aIKlC-HlP3nX-ERA@smile.fi.intel.com>
+ <20250727164909.1833c4bc@jic23-huawei>
+ <20250802125821.2ae1b17b@jic23-huawei>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250728135216.48084-9-aneesh.kumar@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250802125821.2ae1b17b@jic23-huawei>
 
-On Mon, Jul 28, 2025 at 07:21:45PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> Add operations bind and unbind used to bind a TDI to the secure guest.
+On Sat, Aug 02, 2025 at 12:58:21PM +0100, Jonathan Cameron wrote:
+> > 
+> I got lost in this thread, so perhaps am assuming there is a v5 to come.
+> 
+> Maybe just send one anyway even if no changes as it'll jump up my list to look at.
+> 
+> Jonathan
+> 
 
-> +++ b/include/uapi/linux/iommufd.h
+Hi Jonathan,
 
-> +#define IOMMU_VDEVICE_TSM_OP	_IO(IOMMUFD_TYPE, IOMMUFD_CMD_VDEVICE_TSM_OP)
-> +#define IOMMU_VDEICE_TSM_BIND		0x1
-> +#define IOMMU_VDEICE_TSM_UNBIND		0x2
+Yes, I’ve yet to send v5. Just a quick reminder: patches 1 and 2 from
+this series were already accepted as of v3.
 
-s/VDEICE/VDEVICE/
+Regarding v5, would it make sense to split it into two separate patches:
+one for the motion events and another for the ABI documentation?
 
