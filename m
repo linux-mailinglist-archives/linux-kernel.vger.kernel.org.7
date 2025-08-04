@@ -1,86 +1,87 @@
-Return-Path: <linux-kernel+bounces-755158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33DBAB1A233
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:52:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92028B1A255
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:55:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7F79C3A757B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:52:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8237B17789F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:52:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E226925F973;
-	Mon,  4 Aug 2025 12:50:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD294238C36;
+	Mon,  4 Aug 2025 12:51:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="TgV00bXK"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="S1l/1bIo"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F44925A350
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:49:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99645212D83
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:51:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754311801; cv=none; b=M20aD9N3N2eqxrW1tIAbiXdooM+8WHqg5WgzJkzOeIRyekUG5k0mwL23w+fgzOcWf0HQdlZvoGLI0Lys/yjXFpo5lte3Y+8J0p5SmlkzFhdgedCKzETT09RvZYAyc2TrWp3yrvYhnVkieyvYa8uQPDki4AhNm5QhLjsZplKlrcw=
+	t=1754311868; cv=none; b=EBZTsRfurbdS5iYWtMBP7dmGBaROQu7oQ03nzDlBFYokUloG6e1JV4IzUIaV/q78JKORjGFeMWIRsw3jjeTwESiuL4gHOaI0ghRYHFrjuTKyUcWKb7BNESlnLWdJ9nmtZpRAlpD8TnEaf11a3WWJM4xfvPveYN4M8cIHIDnHyDk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754311801; c=relaxed/simple;
-	bh=cc9bDQvvEzApY/ZAQ1QmRe/Rk3TKihq9tFViG1dVIrU=;
+	s=arc-20240116; t=1754311868; c=relaxed/simple;
+	bh=QrZ/VJcwRA8tZCkld1LRzh5hnQix6prJIhvLAdHSt4M=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YbIPosN17jKVVNBtyIIQeOaOzEBI129CmFYZ+++KbQGCb/HWMt3tMWh7gWkMctzTUS4PqhKoqknlIvi/izUHA+ZC9JCCo2JiuHwePts9h1WAE6JrxTKmUWYzxqPgLbRe5sd26pnEe6rlopDlPmriaWjMQQrWuQNor2232c6qo8E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=TgV00bXK; arc=none smtp.client-ip=170.10.129.124
+	 In-Reply-To:Content-Type; b=OCBI9SZBaF6YiWKrn7U60TFvfFiX8BieW649+0RAmFXDIyexcrHejBhS/Amyb6g79dHHiXC5bkrDXNwC0iXgW06dLfU1ESSXdG72HgSxezM9Kx+MaW2EScxTvPwAFUjwDQNkirD1YXdFlzn+ndmB1fE8e800UE7YU15yK/GcA/U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=S1l/1bIo; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754311798;
+	s=mimecast20190719; t=1754311865;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=+Xhhf7HOlGHP/+Ew73mE+84gy9qClegxqAGKGx6kZAE=;
-	b=TgV00bXK9aPS6j5TcKnUxRcbB7nBAcRAjkKTQd2BqJpTh1z1Qv70ogjpKF5RyUFN5XjD7/
-	kfW13qm+qBCIstnIHh7uvoqutw+4IWoW96asL3mi+Hd1xJraHD13rEM0wu1FAP5V21Vcul
-	m0GeU1BUSLVlj+dLf7hcf5YTZvjM1tQ=
-Received: from mail-wr1-f70.google.com (mail-wr1-f70.google.com
- [209.85.221.70]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=zBRal4xsaOEmUS6ItHYz2leZIyIcjbTf23K2YmGrEKk=;
+	b=S1l/1bIoGPDAhrMiIWzVH3X8cG3Icp9I8fyktt2WbSMfBd6H7Ue/PWTiSqNMQYdCbC2N8w
+	71wWN838qBljTZsvS3MOyia8qiLVE6zMOEd2SYK6B7Gs5lkE5C1LBSivEQWn7TXOdqit+/
+	rfLebtB5VIxE9spZxnSZXVhDSbgwk+0=
+Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
+ [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-93-u3yc8n41PZqOufqwarZj9A-1; Mon, 04 Aug 2025 08:49:56 -0400
-X-MC-Unique: u3yc8n41PZqOufqwarZj9A-1
-X-Mimecast-MFC-AGG-ID: u3yc8n41PZqOufqwarZj9A_1754311796
-Received: by mail-wr1-f70.google.com with SMTP id ffacd0b85a97d-3b7931d3d76so1676175f8f.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:49:56 -0700 (PDT)
+ us-mta-351-Y4VW_m8SOfOjKbTfqRMKiQ-1; Mon, 04 Aug 2025 08:51:04 -0400
+X-MC-Unique: Y4VW_m8SOfOjKbTfqRMKiQ-1
+X-Mimecast-MFC-AGG-ID: Y4VW_m8SOfOjKbTfqRMKiQ_1754311863
+Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-458c0845b34so8066745e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:51:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754311795; x=1754916595;
+        d=1e100.net; s=20230601; t=1754311863; x=1754916663;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:from:references:cc:to:subject:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=+Xhhf7HOlGHP/+Ew73mE+84gy9qClegxqAGKGx6kZAE=;
-        b=Lv6fIgOvHzGJyUn02QxpRu09YkJM/GIZoxh9s/k9XlhIONYJ8bHxrSFoyoqE6Vi/U4
-         PYtKj4lKVAAB29SjYQnE31RS41UKSS2bOyif1outkKySCRHqQAjCgEK3VPuQYX1P1fJA
-         c859IC9phleuGmBX574Wwyv03cNabiYTduhGI0J3QEz48+e7JW4/lnP/cP8nPJUqMUEP
-         AFbyb3PZixVOlGpu+kdtGIx3tZrjrDXQLULzwAjv8WGKOMscrc175kZOb+aWywWKEAMI
-         FSNnwxdnGuR4PgSCpwNMIymdxbfWdFWdIBrLiB2nrlk2PGphADCEQFhrZ6fGEu4ZfN5Z
-         0DQw==
-X-Gm-Message-State: AOJu0Yxp2nbddTi6gtHy8oSzF+5UckycgPEFu7PYPvR3fDG8ggqKi90j
-	LNRkC6hZo4ugLtCJotLPLxlBJrTNAaILBg+jPNroeMZLuRhffb1faesRODQge3OGatlfuQjGW4A
-	Oe+afbKCqDrdFaQS/xQdO+f6XgIjL6CZVuPvH/Wb98PB7Z30XdRrhV2sDtD7JOJP2zw==
-X-Gm-Gg: ASbGncsyv6AW3gUtqj3cqDUet/roZR8EBrEFdjCJ/ZmD+GAAN1/A7UTCR23RbbOEh5z
-	mASQevAcgwiWix75B0ujr2Q4UHA8QIt+4qRgFDDvQsAWjneOJFRoj4MR9kbOrT7XTUL2CFzoVJU
-	TFdDpNfkYFzbz6VpZRF8ehcC0w7bVdQOSHDeU+jjfklfRTbAWpBKdFHQZdtub5Ygfy50yvQQlvk
-	qeh21/uynAdJExNywULx6SgIkKkJuyxcX/6cV45YIStuuy9J1k25GU4NfF1HS1sZ68vUUMeoi9B
-	yDyFhH7c99brwYAAiUVcalxRpQ6cx45WN6gxjw4N8Sd+/KWCws3h7Mi7wuNGFBTlcV2qONA1wUf
-	iNRrqFTbF5vEbMxRGG2sjeRi73AQCQNdZiO76HbBnzH55NqxpvDlbNocBRuKhLVdSj3Y=
-X-Received: by 2002:a5d:584c:0:b0:3a6:ec1d:1cba with SMTP id ffacd0b85a97d-3b8d947083emr7216531f8f.20.1754311795536;
-        Mon, 04 Aug 2025 05:49:55 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHFXgDt/YpWGgP2V8sWDg7uI7r5JelqiIRnbxs/Y/QppAtTZ4vWQf600coJVI3Z9N9Z5dRAbg==
-X-Received: by 2002:a5d:584c:0:b0:3a6:ec1d:1cba with SMTP id ffacd0b85a97d-3b8d947083emr7216499f8f.20.1754311795008;
-        Mon, 04 Aug 2025 05:49:55 -0700 (PDT)
+        bh=zBRal4xsaOEmUS6ItHYz2leZIyIcjbTf23K2YmGrEKk=;
+        b=QQdF2VofnJxYe32rlHbTStUD04wGSgeW9jkAZAOf7b4hz61Ml+fJr/GQ8sTW/5dv2D
+         sRNaabqCXaFWsiavvHYPEETbMa7kWlcMKHlnAsmirDaU7ze7wdrhlWer4KwiPhqy49aq
+         nRVzq7XQ+PSWFO7yrfdC/QoRFVM2HDyXGjSz4skBsLHzc+OnZaMoXRSRcZDz01h7d0VI
+         Xp68JylxFF6OQgih+cMw4/hzvl0EjH32q6GhYxCRMq3UR25NiGlm+BobWrnEn2dIczkk
+         BncSnM56//1DnlkX2n2w+/SMDavKaKBYuprXbpN5jv8XXTyOSGMrKXmjd3TwnHwKpiaf
+         +Pyg==
+X-Forwarded-Encrypted: i=1; AJvYcCVePMnb6aDv9t6kkn9lo8yk59VFPndMhw1MJwEOznTb7kKJPtNVI+n38pyRPYo74fGZANh0Th0s9Mj3XRY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFM8ggD2ftoZIUBb85a7+uuWwCk2qgSF6p5rdcdxhAPeou+RCj
+	tCmX2xJyAUyyTsKqXSGy2YNcF2yjVJe1WDuuYZgZFfm9dDQxa7hjCkySEZoHq07+F3HNOPJkTqe
+	kQcrTnkZpPivZBV4BnqzX5lLPTMfhm70Tw61uuG045ECoLqUakFCpzBrY08uZHIbDpw==
+X-Gm-Gg: ASbGnct4P5i8SPL0uA8dmrdCIaOkXhSHpW9CyY7Ub1FGeKtihrsqousAfiouLn9o7yB
+	zOvnju6LEf0H1chl2Q/SJ52XY6vAbiiNoKgNTzZJtRcoultCqiYa0WNdC8nNOqyJe/K/wGf8XuA
+	CJc5G+HII2Z2GFaxtPtRQI20UZ6oQK+VkicLQ9Y0m6lNM6rknsIKirGKYMfXSib78aoXtlJ78Ir
+	0BbgP7Sb2gwZXBzDk/wYtnhsG55dQUCiMdRREIA4fyoMPb+sWL0Equ4w8zZ/R7Dev/KjmFNpLJr
+	jQvCpfsJVFJI/nslj9cKklRy/YLsL+7Q/NZlNUrF8SbVrZp/vqUXTPgWNAcq1wvRyLNbQEzE2UB
+	pHlHmtC+FB9KXtE03FRnrN9uoRDSeRb2xrSon5pao7yYOpNEeOk4hnxJf4AgVd3LbYms=
+X-Received: by 2002:a05:600c:4f09:b0:459:dbb5:399d with SMTP id 5b1f17b1804b1-459dbb53b86mr21230815e9.19.1754311862850;
+        Mon, 04 Aug 2025 05:51:02 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFDwnvqBfRM2yRafjOhR501WHdQ2r5zqZ1KQJbaHPA2Nh5YiknfB5iBnnN61Wrk91/G2qbSTg==
+X-Received: by 2002:a05:600c:4f09:b0:459:dbb5:399d with SMTP id 5b1f17b1804b1-459dbb53b86mr21230675e9.19.1754311862436;
+        Mon, 04 Aug 2025 05:51:02 -0700 (PDT)
 Received: from ?IPV6:2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9? (p200300d82f0e2c00d6bb8859fbbcb8a9.dip0.t-ipconnect.de. [2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf56e0sm169284285e9.1.2025.08.04.05.49.53
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458be70c5f7sm80911985e9.26.2025.08.04.05.51.01
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 05:49:54 -0700 (PDT)
-Message-ID: <77d17dbf-1609-41b1-9244-488d2ce75b33@redhat.com>
-Date: Mon, 4 Aug 2025 14:49:53 +0200
+        Mon, 04 Aug 2025 05:51:01 -0700 (PDT)
+Message-ID: <c441e6ee-3118-4603-8c77-c5b2ef40982b@redhat.com>
+Date: Mon, 4 Aug 2025 14:51:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -88,23 +89,13 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
-To: Eugen Hristev <eugen.hristev@linaro.org>, Michal Hocko <mhocko@suse.com>
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
- andersson@kernel.org, pmladek@suse.com,
- linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
- corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
- jonechou@google.com, tudor.ambarus@linaro.org
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-23-eugen.hristev@linaro.org>
- <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
- <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
- <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
- <aJCRgXYIjbJ01RsK@tiehlicka>
- <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
- <23e7ec80-622e-4d33-a766-312c1213e56b@redhat.com>
- <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
+Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
+ performance
+To: Li Qiang <liqiang01@kylinos.cn>, akpm@linux-foundation.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+ rppt@kernel.org, surenb@google.com, mhocko@suse.com
+References: <20250804123923.296230-1-liqiang01@kylinos.cn>
 From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
 Autocrypt: addr=david@redhat.com; keydata=
@@ -152,84 +143,31 @@ Autocrypt: addr=david@redhat.com; keydata=
  WBe5lqcozu9LpNDH/brVSzHCSb7vjNGvvSVESDuoiHK8gNlf0v+epy5WYd7CGAgODPvDShGN
  g3eXuA==
 Organization: Red Hat
-In-Reply-To: <f43a61b4-d302-4009-96ff-88eea6651e16@linaro.org>
+In-Reply-To: <20250804123923.296230-1-liqiang01@kylinos.cn>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04.08.25 14:29, Eugen Hristev wrote:
+On 04.08.25 14:39, Li Qiang wrote:
+> This change converts several critical page table zapping functions from
+> `inline` to `__always_inline`, resulting in measurable performance
+> improvements in process spawning workloads.
 > 
+> Performance Impact (Intel Xeon Gold 6430 2.1GHz):
+> - UnixBench 'context1' test shows ~6% improvement (single-core)
+> - UnixBench  shows ~0.6% improvement (single-core)
+> - mm/memory.o size reduced by 2.49% (70190 -> 68445 bytes)
+> - Net code reduction of 1745 bytes (add/remove: 211/166)
 > 
-> On 8/4/25 15:18, David Hildenbrand wrote:
->> On 04.08.25 13:06, Eugen Hristev wrote:
->>>
->>>
->>> On 8/4/25 13:54, Michal Hocko wrote:
->>>> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
->>>>> On 30.07.25 15:57, Eugen Hristev wrote:
->>>> [...]
->>>>>> Yes, registering after is also an option. Initially this is how I
->>>>>> designed the kmemdump API, I also had in mind to add a flag, but, after
->>>>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
->>>>>> here:
->>>>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
->>>>>> Do you think we can continue that discussion , or maybe start it here ?
->>>>>
->>>>> Yeah, I don't like that, but I can see how we ended up here.
->>>>>
->>>>> I also don't quite like the idea that we must encode here what to include in
->>>>> a dump and what not ...
->>>>>
->>>>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
->>>>> where we e.g., have
->>>>>
->>>>> VMCOREINFO_STRUCT_SIZE(pglist_data);
->>>>>
->>>>> Could we similar have some place where we construct what to dump similarly,
->>>>> just not using the current values, but the memory ranges?
->>>>
->>>> All those symbols are part of kallsyms, right? Can we just use kallsyms
->>>> infrastructure and a list of symbols to get what we need from there?
->>>>
->>>> In other words the list of symbols to be completely external to the code
->>>> that is defining them?
->>>
->>> Some static symbols are indeed part of kallsyms. But some symbols are
->>> not exported, for example patch 20/29, where printk related symbols are
->>> not to be exported. Another example is with static variables, like in
->>> patch 17/29 , not exported as symbols, but required for the dump.
->>> Dynamic memory regions are not have to also be considered, have a look
->>> for example at patch 23/29 , where dynamically allocated memory needs to
->>> be registered.
->>>
->>> Do you think that I should move all kallsyms related symbols annotation
->>> into a separate place and keep it for the static/dynamic regions in place ?
->>
->> If you want to use a symbol from kmemdump, then make that symbol
->> available to kmemdump.
+> The modified functions form a hot path during process teardown:
+> 1. zap_present_ptes()
+> 2. do_zap_pte_range()
+> 3. zap_pte_range()
+> 4. zap_pmd_range()
 > 
-> That's what I am doing, registering symbols with kmemdump.
-> Maybe I do not understand what you mean, do you have any suggestion for
-> the static variables case (symbols not exported) ?
+> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+> ---
 
-Let's use patch #20 as example:
-
-What I am thinking is that you would not include "linux/kmemdump.h" and 
-not leak all of that KMEMDUMP_ stuff in all these files/subsystems that 
-couldn't less about kmemdump.
-
-Instead of doing
-
-static struct printk_ringbuffer printk_rb_dynamic;
-
-You'd do
-
-struct printk_ringbuffer printk_rb_dynamic;
-
-and have it in some header file, from where kmemdump could lookup the 
-address.
-
-So you move the logic of what goes into a dump from the subsystems to
-the kmemdump core.
+What's the object file size change?
 
 -- 
 Cheers,
