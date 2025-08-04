@@ -1,47 +1,79 @@
-Return-Path: <linux-kernel+bounces-754779-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754780-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A24AB19C6F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:27:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19C1EB19CAE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:30:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 00F57176A00
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:27:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28158177CD7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:30:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB9E523814C;
-	Mon,  4 Aug 2025 07:27:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76FA122D4C0;
+	Mon,  4 Aug 2025 07:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OjPij6bW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b="hUioNLTX"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0842D22A4FE;
-	Mon,  4 Aug 2025 07:27:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 865AA235354
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:30:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754292425; cv=none; b=VhYHl6M+x5lDPHIy28yukQgmXngoQH/7I6BGt3vYIeIbxlgfdQcVi4WYuchdRSioTYnJ1NixxnccRiIAiM4l6J03i5hsyw5QO2OHGVmDxOkx+XpWORCuHt+fE5rYiiJSvGFSgmaPicsErPsxkGeKnEHZoKMK6Moh4l4EGgnx22o=
+	t=1754292639; cv=none; b=t9/dBZY2viv+20haF+9OT5UQnpK0NmKUgEkm4E1xkwrN8VUT1ftZH6r3Z9SbfImONpP9jol6VMziiTgC8r/6s7PaEtMKmtqLMykzCm+oCxvh7yvl39axJr4bDR0v6rMhBYiFbBCSMn2aFplClyIyJ/scLp2rdP/uIBCIV7S4J5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754292425; c=relaxed/simple;
-	bh=fbeMNsknj1jfMdMlUI3wgsG87na3shk5ZcyK+AxPEUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=TVbl57gk3sFA3gk/Ohb3nUGP6SkIrfomdvPJGE0jIbQWSGvOMjuMVqU1YWl9EtYz2AIc2vbWPg0Vta6OHQ9hnYLEmjnPhhZu9+wZizuLxdyayJIHh/wynh1N7KdfI4lb0qX+fY3BMdQL3BG0coV1WRUyg64ju2xN7uVupfjzn2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OjPij6bW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B49DFC4CEE7;
-	Mon,  4 Aug 2025 07:26:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754292424;
-	bh=fbeMNsknj1jfMdMlUI3wgsG87na3shk5ZcyK+AxPEUQ=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=OjPij6bWmzP0LitMnDkrFzaaGn/cbOohwvU/4ZlF0cQ+i3b/jKxiDDRR4NHr/muzx
-	 a/7CnvlsggRtq1eBFysjnqUpBK6V+rCeyvFsT4xCC7bRwo0E4HvIcKWSbUFAxE/LQV
-	 5O4yt7bk7CyEpDSi3hvwoF0zyTT1312B3C/JFWuukVB4rbvQH2BlPdXSuIa/4ctFDB
-	 Eq+p4YDB9x+E6vYpQMj+eFXDpgvfHdWORFQBnras3qxGRYrYWAuDBuqzmpWIMPaTpH
-	 Kq/FjynfBBGvv2g5uGlaGH3IaCu9j0v+nlTl8cNP/YU70fNIDt/YuTUKhxS10NorlU
-	 DQm9AzjxdTSVg==
-Message-ID: <b5775270-5306-4eb7-9fe5-44b087b20c40@kernel.org>
-Date: Mon, 4 Aug 2025 09:26:55 +0200
+	s=arc-20240116; t=1754292639; c=relaxed/simple;
+	bh=ZfF8KXnZqTsQpG9TeCfG/W/L8FiAW6ilMlUScXzXyC4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=Azh/GSTAYA42D+Hn0rxmRHzrUntKko09fDRDtHEX+Hr38UmTuBVNmXP1zgr+MlXPeds/jclp3xmT0rK2Iorh/z9vel/Mejk/PSH09JgopNfxt7nhjMFNA0OAuXwIEuL8IF6d5M/Lbz5qUVX9DZLDiO+56DJ+dMHhfqFWR0QOoqk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at; spf=pass smtp.mailfrom=sigma-star.at; dkim=pass (2048-bit key) header.d=sigma-star.at header.i=@sigma-star.at header.b=hUioNLTX; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sigma-star.at
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sigma-star.at
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458b2d9dba5so14107785e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:30:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=sigma-star.at; s=google; t=1754292635; x=1754897435; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=qYEoYYxDw1+do/dWl1i2qeNhKyKoyKkuuBdx/RYptEM=;
+        b=hUioNLTXuogphQzWHHl65J7/Qm8gaUTnXMUDOjpPGEq8NpDNSc091NtO01BDhMkwm3
+         8fIZiFZXC4MWHYtR4fg0eyO6J9sDElNeLHJUULyp8iYid5YwSvmYPs/w+PIELEC+3rw4
+         WC3tGVXAGSeXjwKLYXA4kelQNUk7jOVeMllHB6YeOhetiIWQPxsNNR3rRXSYq5joI1b/
+         rpiTOxQMwO3E4Ff2z4sViocZZ7ALYnw+v10UUogJV23tyCpTI/jkxjHSkAAvHZekVyUF
+         bqbLH/UjLD67JJpUktq3AAGkkQlxLsdaohJxEBKl8hjQGFp6HhW01XGmaxVBel9ywLbz
+         dV6A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754292635; x=1754897435;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=qYEoYYxDw1+do/dWl1i2qeNhKyKoyKkuuBdx/RYptEM=;
+        b=JuWuZJKsmVzFOVNRhWkbdWo+ybhy4E6qnyIt2BwYmU1U4DjiI0kXzTLpc5sgAA4e/D
+         0kROcPquWMJjCu+DpC8783V82gpYeu1oMthSSjinRlD15Bg2Fa4kqMPSkHAdw16ZCSOL
+         aP+1Pvqt5v0gVDx/njYOqE5/mlABB8CHbmyhi1jxCXdIzpsg3ICqRnVEJeuF1QbNs3r8
+         n/odKBjT7zZCM8N8QlDxsaQa2Ggnxrrp/1QAmsbvsNSgHqxo4OekpCl/6b3MlUuVsgJt
+         D7tbuJnrYpX+Q4jqB/WQI8obI9spNOA2PV4yu3jUPbkre21M2u/qR6VzD6ztHGos8I9a
+         e52w==
+X-Forwarded-Encrypted: i=1; AJvYcCWK2F6X4OzlvAdg7tbt7k4pg3siAeqxddxOzlUxVaq8pgv1bLxP1GSNCXrTvUlYmx7sj7qDh7EUMFypwwA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyjmkVfP7nViWaEQxHCf4T9soWOlA8h1kZYUF6nwWJwovAfzZ/Z
+	zHon34Uk3mqbbfTtMgd5qHiWuPs4Bs96OTfBuUU+Ozmc07e/iSok1jFhVSWgXLoKmBo=
+X-Gm-Gg: ASbGnctoAhoOQ3bYzEmqD7z2jzjKMVj64zsCMQAFLmT/Wdv9rJIqknW9fIEQJxD90Yq
+	ChnY6LHSuTXY99Cznkn2zqSVPEIFBAvFwDyH5BqXuS42d0FBCFE0MWSW2hX6DajcZlo0i6ZStf0
+	RE5pB8IdCMGEYRfJ/OEEr+XUl05D7kWI5rabOqouBHnsCrhRrZcz03KYA7v24aujzKmG70dXdVj
+	9YzovVlIswR9LmDWYJCluyk3mz/ActBsgW0v24yH1p3zbCikZpbDw9rYQaUnKagHcs7CbJQXJwV
+	9OaChySf76eMxmhSZJrr6ffy4dhN/rxfEoRCbbceJfYQnf4JLU+N3PoQizUHzxpqzKOLSpSPtOG
+	G751OsyTic+mwiuN94D6MXdVb+sOcpaPDzk2NfeSfQ4RYrKZ86vfMXHg=
+X-Google-Smtp-Source: AGHT+IEmWBuNi3LA07Xk8K9TgjMG4h792OkgcNY8un3jy16qvwG56ZKmK+6DiUdn+hjsybokaIqwwQ==
+X-Received: by 2002:a05:600c:35c6:b0:459:d709:e5cf with SMTP id 5b1f17b1804b1-459d709e8b1mr26603715e9.3.1754292634673;
+        Mon, 04 Aug 2025 00:30:34 -0700 (PDT)
+Received: from [10.115.255.165] ([82.150.214.1])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4818c1sm14361820f8f.65.2025.08.04.00.30.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 00:30:34 -0700 (PDT)
+Message-ID: <8114ae51-a238-40d3-9ecd-70e23abae28b@sigma-star.at>
+Date: Mon, 4 Aug 2025 09:30:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,115 +81,37 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 10/12] nvmem: s32g2_siul2: add NVMEM driver for SoC
- information
-To: Andrei Stefanescu <andrei.stefanescu@oss.nxp.com>,
- Arnd Bergmann <arnd@arndb.de>, Linus Walleij <linus.walleij@linaro.org>,
- Bartosz Golaszewski <brgl@bgdev.pl>, Rob Herring <robh@kernel.org>,
- krzk+dt@kernel.org, Conor Dooley <conor+dt@kernel.org>,
- Chester Lin <chester62515@gmail.com>, Matthias Brugger <mbrugger@suse.com>,
- Ghennadi Procopciuc <Ghennadi.Procopciuc@nxp.com>,
- Larisa Grigore <larisa.grigore@nxp.com>, Lee Jones <lee@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Fabio Estevam <festevam@gmail.com>, aisheng.dong@nxp.com,
- Jacky Bai <ping.bai@nxp.com>, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>,
- Srinivas Kandagatla <srini@kernel.org>
-Cc: "open list:GPIO SUBSYSTEM" <linux-gpio@vger.kernel.org>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, NXP S32 Linux Team <s32@nxp.com>,
- Christophe Lizzi <clizzi@redhat.com>, Alberto Ruiz <aruizrui@redhat.com>,
- Enric Balletbo <eballetb@redhat.com>, echanude@redhat.com,
- Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <20250710142038.1986052-1-andrei.stefanescu@oss.nxp.com>
- <20250710142038.1986052-11-andrei.stefanescu@oss.nxp.com>
- <9d004ea4-0bb2-4a21-8501-82ecf3482c3e@app.fastmail.com>
- <fa24772b-0038-4f51-87c6-15b810d8d454@oss.nxp.com>
- <53bc13b9-365e-4212-84f9-85e67c23e067@oss.nxp.com>
- <ed072356-6881-4466-a0c2-0f55b72f92c8@kernel.org>
- <7902bac4-9f52-443c-995f-a15189102478@kernel.org>
- <0973e6d1-2823-4bfb-be73-b532c6f86784@oss.nxp.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: linux-6.16/fs/jffs2/readinode.c:189: loop can never finish
+To: Zhihao Cheng <chengzhihao1@huawei.com>,
+ David Binderman <dcb314@hotmail.com>,
+ "dwmw2@infradead.org" <dwmw2@infradead.org>, "richard@nod.at"
+ <richard@nod.at>,
+ "linux-mtd@lists.infradead.org" <linux-mtd@lists.infradead.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
+References: <AS8PR02MB10217F68E5D37ECD491495E669C23A@AS8PR02MB10217.eurprd02.prod.outlook.com>
+ <df923d94-92ee-f824-01e2-21e6ed3d593c@huawei.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <0973e6d1-2823-4bfb-be73-b532c6f86784@oss.nxp.com>
-Content-Type: text/plain; charset=UTF-8
+From: David Oberhollenzer <david.oberhollenzer@sigma-star.at>
+In-Reply-To: <df923d94-92ee-f824-01e2-21e6ed3d593c@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 04/08/2025 09:12, Andrei Stefanescu wrote:
-> Hi Krzysztof,
+Hi,
+
+On 8/4/25 9:10 AM, Zhihao Cheng wrote:
 > 
-> Thank you for the quick response!
-> On 02/08/2025 11:32, Krzysztof Kozlowski wrote:
->> On 02/08/2025 10:28, Krzysztof Kozlowski wrote:
->>> On 01/08/2025 16:36, Andrei Stefanescu wrote:
->>>> Apart from the proposed NVMEM driver, there is also an option of exporting
->>>> a syscon regmap for the registers which provide information about the SoC.
->>>>
->>>> I have seen that typically NVMEM drivers export information read from fuses
->>>> but I think having a NVMEM driver is nicer way to access the information
->>>> instead of using a syscon regmap and manually extracting the needed bits. 
->>>
->>>
->>> nvmem is not a syscon. Mixing these two means device is something
->>> completely else.
-> 
-> Yes, I don't want to mix them. The driver will either be a NVMEM driver or
-> a syscon. These registers are read-only. I suggested NVMEM because it's a
+> The 'next != NULL' is also a condition for the loop, this snippet of code finds a leaf node in 'tn_root'.
 
-We do not talk about drivers here, but hardware.
+Yes, this is a classic tree traversal. Assuming the tree isn't
+broken, the loop eventually terminates when it runs of a leaf.
 
-> an abstraction layer which makes it easier for drivers which want to use
-> that information without knowing where to actually read it i.e. reg address,
-> bit mask.
+The real issue with this code is that this is the *only* exit
+condition of the loop. The traversal loop always branches until
+it hits a leaf and the function then returns NULL. I'm pretty
+sure this might not be the intended behavior.
 
-Sorry, but no. You design it for drivers, that's not the way. Describe
-properly the hardware.
+Greetings,
 
+David
 
-Best regards,
-Krzysztof
 
