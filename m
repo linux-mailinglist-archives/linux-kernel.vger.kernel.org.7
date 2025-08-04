@@ -1,154 +1,114 @@
-Return-Path: <linux-kernel+bounces-755147-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755134-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3A26FB1A218
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:51:16 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 74C5AB1A1E1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:45:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D11061808D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:49:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A438D1891701
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:45:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A07F1275100;
-	Mon,  4 Aug 2025 12:44:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrNeSbr2"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3890926B2A5;
+	Mon,  4 Aug 2025 12:43:32 +0000 (UTC)
+Received: from mail-vs1-f46.google.com (mail-vs1-f46.google.com [209.85.217.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD1125CC58;
-	Mon,  4 Aug 2025 12:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3A6F2673B0;
+	Mon,  4 Aug 2025 12:43:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754311469; cv=none; b=ssf1xU20eXZ/EyIf+tML0B3okiXfWvPYIWNJD4Srb0Kvc7rMwbsYs76qHW6+J11xxKJaZPnkbqh5PK7TCXfX6Nm31Qvhx+T9gyEQ8VV4DF/lzzDemuaJ3Xst3FkMdt1cLZ0ejMe2osajbeGnq4QIV94Ckn/rQfcJgrpo3bMTx+Q=
+	t=1754311411; cv=none; b=XBXIVslJyMislR7nYZoVgMOmBRNh0dX7p9QIg7DxRqlLQdnd6fye9Xo3G9D10aUNfrOhiFz4L+ydPYpwbEmFooNf9VXbPupzyhLRMPr94u2pXi4SiacxtBRTAtW2SO2x0SmE7Ev3pFhFDNsdAUZ2PNrqH7dCN99AgCO6won19Mg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754311469; c=relaxed/simple;
-	bh=6qGcHzBt0dZoqM7CuRvm64zWhofh7owUAL+fgH12bgM=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=IDOmv/gRoD7j7UwgsWDom7rajLxKUggAAYBzJaZes6eHV+OFMjNa7CtmqKnVd5OjxL1jZxq8lP3WOukGI5/RnRUhppqrZ1SCKR5LRncmLNaUXrGIUvcurAlZyoEqfLuvu0bQbRs/PyyRI4uGlzcPxXQbGZ9sQmB8NskdiBCIdVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrNeSbr2; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16A0CC4CEE7;
-	Mon,  4 Aug 2025 12:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754311468;
-	bh=6qGcHzBt0dZoqM7CuRvm64zWhofh7owUAL+fgH12bgM=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QrNeSbr2ETjZG5USk2ip6Q5L+o73xniNPTNqJfZmeQ0KuyCuSNG0LJiusWyclzjKr
-	 cFFoKUr822PG8QqKCLTd5BeFqtuT5Wy83EgwLas9lgxaOVGp8D6uZ1DZl2tq1dbKx/
-	 L+omTL0ofNOzbXoE9fyZGuqE2CSvotiwsuOKLhXV08+L7k2MaQEDPsb6OddrmQRn4z
-	 PSjtn3F5+SFZ4HUEL0cLcskl4nbzTgDtlLNFq79lO3atdeVNqKCn/0JzVgj9R/u+Y+
-	 m0zCkfJHRbZiqlPJoau9al8Hd9lK5yTnnQg10fAI/hDh0sKrsDMMIbG+18uzswU+JQ
-	 8ketKVA4tFFWQ==
-From: Leon Romanovsky <leon@kernel.org>
-To: Marek Szyprowski <m.szyprowski@samsung.com>
-Cc: Leon Romanovsky <leonro@nvidia.com>,
-	Jason Gunthorpe <jgg@nvidia.com>,
-	Abdiel Janulgue <abdiel.janulgue@gmail.com>,
-	Alexander Potapenko <glider@google.com>,
-	Alex Gaynor <alex.gaynor@gmail.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Hellwig <hch@lst.de>,
-	Danilo Krummrich <dakr@kernel.org>,
-	iommu@lists.linux.dev,
-	Jason Wang <jasowang@redhat.com>,
-	Jens Axboe <axboe@kernel.dk>,
-	Joerg Roedel <joro@8bytes.org>,
-	Jonathan Corbet <corbet@lwn.net>,
-	Juergen Gross <jgross@suse.com>,
-	kasan-dev@googlegroups.com,
-	Keith Busch <kbusch@kernel.org>,
-	linux-block@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-nvme@lists.infradead.org,
-	linuxppc-dev@lists.ozlabs.org,
-	linux-trace-kernel@vger.kernel.org,
-	Madhavan Srinivasan <maddy@linux.ibm.com>,
-	Masami Hiramatsu <mhiramat@kernel.org>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	"Michael S. Tsirkin" <mst@redhat.com>,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Robin Murphy <robin.murphy@arm.com>,
-	rust-for-linux@vger.kernel.org,
-	Sagi Grimberg <sagi@grimberg.me>,
-	Stefano Stabellini <sstabellini@kernel.org>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	virtualization@lists.linux.dev,
-	Will Deacon <will@kernel.org>,
-	xen-devel@lists.xenproject.org
-Subject: [PATCH v1 16/16] nvme-pci: unmap MMIO pages with appropriate interface
-Date: Mon,  4 Aug 2025 15:42:50 +0300
-Message-ID: <5b0131f82a3d14acaa85f0d1dd608d2913af84e2.1754292567.git.leon@kernel.org>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <cover.1754292567.git.leon@kernel.org>
-References: <cover.1754292567.git.leon@kernel.org>
+	s=arc-20240116; t=1754311411; c=relaxed/simple;
+	bh=AwIB8d/q3k4NIHWqWxhwujek8W+jlfHNccY7uEjmU7A=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cJDagDkZZoHuJEa5+V6fyqvVYiyyrCh8e4AMGmkNUsiGqadZ8y/t9HKUhJjXhULAi/ysFKmUYS4JEmTv7ivrRxEVC1RguQqYWqaer077u8RmMkUINM4Lw7PG1IiSvLGxwVC/tdaZ92Tt/Zt1nveUoRgS0ExvAKUfxAnfbwRPAS8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.217.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vs1-f46.google.com with SMTP id ada2fe7eead31-4fc042790f1so2154870137.1;
+        Mon, 04 Aug 2025 05:43:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754311408; x=1754916208;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=q+ksWIFzKcuowT/35PUUtmV4Ltd0ZzS0T02cXh+GQLo=;
+        b=DIDUELFWNsaVhqwTdyshBp6adSMvAATYCF60nfBZPM0Zc8Po1l1b36nSUdVWaM00QT
+         Epb7JIMMIkOTC7ZWwZoqKzOqT9QrMZlEZqT/sJ8Zx9Gh0OVg3PCqI955G8UIFl3WXTZV
+         JH+aU68yFa6pDR7Vcb7LICiztrbmt4x+YPqRgGNtSE0fp10eLtO9Si1rXmSVErHQ3enx
+         ahvg3blq5GfrYuq8ihjTyBNH0fMcAGkycPfZD0CyFwJ5qQttTIa9fJ7BzmTP0/5DJq+a
+         GMvQpRxT/P9QQXmgAqGUzT71Ug5O9t7eILbb655hUCDzmngBRYrId58WiGG/TBZziXiX
+         RV7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVkU8A7JpOj/2z1Iy4vpQE2qoFHiuiZcx86XMylKX9kDRyeUhZdOe3sOXSXxoDK96LTwvXbRop+erKE8XVBn/a7q04=@vger.kernel.org, AJvYcCVljvQ7r1D3LeFUZ0bo0st8fPdZjslSOeLp0J3/qoRgY0OvzadIFGMqsMBCoqmnqYKHg74rOUl8zJtv@vger.kernel.org, AJvYcCWMB5OoICEFwctVVj8FdQFPHMN6nsVNzgfGQvBsXpFvKVNi/AWFi1BW8Qqfc4+Zk9DthZuEaL7K1FWf@vger.kernel.org, AJvYcCWyQW6EGVLD+mL/TGAVaPJT13ukzfU0D9uT7RIutY6Wd3OBvd4h1DuTj1dTw41+xtcnVygt7VHy1+w2@vger.kernel.org, AJvYcCXzmUGCyEgus5k9JxN4O+NmufDFYr/Oec5toOvGudg6Mr81sTeo+r/olLrVEzEz9v+pEiDtiGjUhi/iEKnh@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywux3B4ZjpAcQT5a9bgLm7hIQ2/y6B7y3eYSusveBt5V4bvQdyY
+	VDpZ6USy3b8Rr9gCl4bxMVbnI2zTMrMh3XYXEWSixfAN3MX25/zSDoq/4nT4M+iN
+X-Gm-Gg: ASbGncuOgqtQOe/EOPYrr5WFocKP7FYRuRFPUyGQZ1KPE7nxMaplOtn2M2dIjBNBoxS
+	TmiWUSmGnCQfJDbpDEoEoYsowUuLulK50puo8tBb/pSZfRMxx3d85WHsb4joifuWpQm2uvIX0SD
+	QlkwEj0N2L2pXXtS195C2VvuTJsCRUpTDBu4Cemu49c11LICQzMVweXq/eg0DYjDaM4n6It7C72
+	jc0OMry7dQGRePCtHD0k0GfG5pqnrLiOUAsmGq5igSCy4tBtQX+LHqNOhqQOxFGXZRIZ8btC6TM
+	gmLVJyZLsR8uaSE29+IhkS8cyc17yPgz8oarQsnTvJSRTjSJobZYTuuWl7Yg+H2aRFzzI8B/vR3
+	Jlh/gLUn97v3DBP50bsLZDFpKw7dqAfJf4w+odiL2Gqj2ZceY+eH+eYN4zV2l
+X-Google-Smtp-Source: AGHT+IGTgxWsBjpTpbgCKbt0cM8L7Gwal/1XJCom1WhuwcIKr8hxJtHYSss+lZ8MbqSqJlVUZFZKbA==
+X-Received: by 2002:a05:6102:54a1:b0:4e5:ade7:eb7c with SMTP id ada2fe7eead31-4fdc2957724mr3200743137.12.1754311408155;
+        Mon, 04 Aug 2025 05:43:28 -0700 (PDT)
+Received: from mail-vs1-f52.google.com (mail-vs1-f52.google.com. [209.85.217.52])
+        by smtp.gmail.com with ESMTPSA id a1e0cc1a2514c-88d8f3263d6sm2209773241.5.2025.08.04.05.43.27
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 05:43:27 -0700 (PDT)
+Received: by mail-vs1-f52.google.com with SMTP id ada2fe7eead31-4fc10abc179so1958281137.3;
+        Mon, 04 Aug 2025 05:43:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgJpfT3qTASCAUSdTNo5b1BsU95MckWRTqMZ0kNg2+zM/E2Hjn3VDgzxbtSGmNMKeUH/GMARXNTDAk@vger.kernel.org, AJvYcCV6CHctLjJ0g9PQw7GdwB615pAc1liny4npjS4f/4HXjXUB17+awAjfhiiXE6LjeszxkkhYEQfuMcSz@vger.kernel.org, AJvYcCVJ2mBBfPZv2Z3NUwyPIV6DhiGaDBVcJAoyupYEguGLD4btG2DkAi6T9rhFzt/ywd0/9uENQPjU0bB5q+UyrmtkyK8=@vger.kernel.org, AJvYcCVtfq9AdnDHdocCTjXxD2wVutr3Bll/OINC9BoQPlknW+OFgJ03oTMBLD43XumeDGtAD0So3vzDygLYFBRy@vger.kernel.org, AJvYcCXjimYLQP+0NvQkw81Y4Zfyw8Y0PB00Tl0vWVvJlSf7qonRqbVxRPuR8BvLnbhpgaMAFICj40qk3h+I@vger.kernel.org
+X-Received: by 2002:a05:6102:dcb:b0:4e4:5df7:a10a with SMTP id
+ ada2fe7eead31-4fdc3e179d8mr3547288137.16.1754311407222; Mon, 04 Aug 2025
+ 05:43:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250801084825.471011-1-tommaso.merciai.xr@bp.renesas.com> <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
+In-Reply-To: <20250801084825.471011-3-tommaso.merciai.xr@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Aug 2025 14:43:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdUoqSJEzEZsNkOtpDwCytQHGWxS4WBfTiJNOdC3v3ACEw@mail.gmail.com>
+X-Gm-Features: Ac12FXxmuJu7VAAwl5EVX-3cOsTXnZkIIiE3nPUF6WDs0EYHBcEOAFk9RR_CHsc
+Message-ID: <CAMuHMdUoqSJEzEZsNkOtpDwCytQHGWxS4WBfTiJNOdC3v3ACEw@mail.gmail.com>
+Subject: Re: [PATCH 2/3] dt-bindings: dma: rz-dmac: Document RZ/G3E family of SoCs
+To: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
+Cc: tomm.merciai@gmail.com, linux-renesas-soc@vger.kernel.org, 
+	biju.das.jz@bp.renesas.com, prabhakar.mahadev-lad.rj@bp.renesas.com, 
+	Vinod Koul <vkoul@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Michael Turquette <mturquette@baylibre.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Magnus Damm <magnus.damm@gmail.com>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-clk@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-From: Leon Romanovsky <leonro@nvidia.com>
+On Fri, 1 Aug 2025 at 10:49, Tommaso Merciai
+<tommaso.merciai.xr@bp.renesas.com> wrote:
+> The DMAC block on the RZ/G3E SoC is identical to the one found on the
+> RZ/V2H(P) SoC.
+>
+> No driver changes are required, as `renesas,r9a09g057-dmac` will be used
+> as a fallback compatible string on the RZ/G3E SoC.
+>
+> Signed-off-by: Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>
 
-Block layer maps MMIO memory through dma_map_phys() interface
-with help of DMA_ATTR_MMIO attribute. There is a need to unmap
-that memory with the appropriate unmap function.
+Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
 
-Signed-off-by: Leon Romanovsky <leonro@nvidia.com>
----
- drivers/nvme/host/pci.c | 18 +++++++++++++-----
- 1 file changed, 13 insertions(+), 5 deletions(-)
+Gr{oetje,eeting}s,
 
-diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
-index 071efec25346f..0b624247948c5 100644
---- a/drivers/nvme/host/pci.c
-+++ b/drivers/nvme/host/pci.c
-@@ -682,11 +682,15 @@ static void nvme_free_prps(struct request *req)
- {
- 	struct nvme_iod *iod = blk_mq_rq_to_pdu(req);
- 	struct nvme_queue *nvmeq = req->mq_hctx->driver_data;
-+	unsigned int attrs = 0;
- 	unsigned int i;
- 
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
-+
- 	for (i = 0; i < iod->nr_dma_vecs; i++)
--		dma_unmap_page(nvmeq->dev->dev, iod->dma_vecs[i].addr,
--				iod->dma_vecs[i].len, rq_dma_dir(req));
-+		dma_unmap_phys(nvmeq->dev->dev, iod->dma_vecs[i].addr,
-+				iod->dma_vecs[i].len, rq_dma_dir(req), attrs);
- 	mempool_free(iod->dma_vecs, nvmeq->dev->dmavec_mempool);
- }
- 
-@@ -699,15 +703,19 @@ static void nvme_free_sgls(struct request *req)
- 	unsigned int sqe_dma_len = le32_to_cpu(iod->cmd.common.dptr.sgl.length);
- 	struct nvme_sgl_desc *sg_list = iod->descriptors[0];
- 	enum dma_data_direction dir = rq_dma_dir(req);
-+	unsigned int attrs = 0;
-+
-+	if (req->cmd_flags & REQ_MMIO)
-+		attrs = DMA_ATTR_MMIO;
- 
- 	if (iod->nr_descriptors) {
- 		unsigned int nr_entries = sqe_dma_len / sizeof(*sg_list), i;
- 
- 		for (i = 0; i < nr_entries; i++)
--			dma_unmap_page(dma_dev, le64_to_cpu(sg_list[i].addr),
--				le32_to_cpu(sg_list[i].length), dir);
-+			dma_unmap_phys(dma_dev, le64_to_cpu(sg_list[i].addr),
-+				le32_to_cpu(sg_list[i].length), dir, attrs);
- 	} else {
--		dma_unmap_page(dma_dev, sqe_dma_addr, sqe_dma_len, dir);
-+		dma_unmap_phys(dma_dev, sqe_dma_addr, sqe_dma_len, dir, attrs);
- 	}
- }
- 
+                        Geert
+
 -- 
-2.50.1
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
 
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
