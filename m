@@ -1,126 +1,148 @@
-Return-Path: <linux-kernel+bounces-754877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 203F4B19DE7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:44:30 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17DD7B19DE8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:45:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D003A3B4B9E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:44:28 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 10B8D4E0454
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:45:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDFA0242925;
-	Mon,  4 Aug 2025 08:44:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C14E23BD13;
+	Mon,  4 Aug 2025 08:45:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T2oC6PDY"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MygY6za/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDFC12F2D
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:44:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 005842F30;
+	Mon,  4 Aug 2025 08:45:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754297064; cv=none; b=p004v48C3zNk3Sn1UN22CrjpLVjXZZzmj9M7KO1xLhR4lWA8Yn0dF4upKKxCIwaNGTC+CFIBGpnburqimk4YFMM1EYO5BW7/Utk/21WpedxD92dDRRAGB7VOJjIhUpCNhMcXe4G28NRj/Cldjq3ab9gEDWQe4j+RBOeKnxIvqiI=
+	t=1754297149; cv=none; b=aDIwjPXBqTDLznv5IOhGE76TRZEqTRDahHormxMhPdhwd2r0JCnGql3bgDdEsPn23xLMyBeLNen8YmVwO2fCNcak02JyjwyhCdeIFmAp0abEXRT9DhslyNUdlr9dtR+8++rfaYDg4bF/KODWJEECMRmlDJtlKQ4hQvEAtUpfmlY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754297064; c=relaxed/simple;
-	bh=OQwV5bmZgsyIodUOnXaMt77DHO9HRxq4ALffDwjwojE=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=CU+Q3HvCrIqerwfV/FM1bGczl9gFIj6m7Ny/ebducARPhU02UMlnPFMQfU/AvwW3dlKBuofhLTHoGAxRxjGYAm5Y8euiAt/9pD402aakMuY/PLJtvbDYhspXGeGZz8JiIyTvB0fK7CJuofVTFst4L40cTTxiYIFG0F7pzYgEWeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T2oC6PDY; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-240763b322fso37158785ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:44:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754297062; x=1754901862; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=7weEBtXNu6O3OU3+Ic285vjIwi08+prtGPyxCf9KkS0=;
-        b=T2oC6PDYXUzH3z1pwotsr39oTfU1XTEmG21rKTOVRdwdN/Z2GO0mzJd7+CxDeEyBsf
-         fdsoiWxRAueBA+ctwaIqzG0XjOP8oeoyuisW1BeCzypBLu+CSJRj9OGYtWCDLnIMywA2
-         FRPzw+4XCk846DR7ab9/QnEpOR2wBKDu4axoKD7NnBJFZKupI/QW0ZJRMUGzL+iS9rAX
-         BuYY89Sn0liQxm5h47EHRIiIcDKWD9egF3k6HeHMpWDXsKzhjIcnwPjeQjzeU6/OJwIU
-         2oMZHJ798sKyj7VmiQuzs0pzE/pBRc/xg41b3Gk/lNjLfI7b3VE/eauVHQ/GJP6UYDdW
-         cI+w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754297062; x=1754901862;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=7weEBtXNu6O3OU3+Ic285vjIwi08+prtGPyxCf9KkS0=;
-        b=qlF5K5h5lKCsDQ9NRz83CMF9ADoh8srCs+uQ49MTRa0h51e3DV6qGNH1ZeZKD6l6wg
-         xgsxEd1LSAIvkuewCcb9ovACgmtYX0mr6cqRwjoxk5POl40T2+wm2Fq1cDBhKmky6QWh
-         HKuJV9esjEEgqbgg92Ct46qroR+HczphrQGIKLNVhfRsUGRl71rXP2OtsjS1mj8LGWMZ
-         feS+cnevpwrfsu65eNB2I+/qDGWYpk/rUqvzaN/zszY6j+Ja0D5KV7N9rV5ZBb6ZanYW
-         ojz82qBGgAz98J9hMArkRJF/Z9j/ZoehT/fccWlL04e7JDlX/nxaJIXnWaLZGh0kD9Jq
-         JCaA==
-X-Forwarded-Encrypted: i=1; AJvYcCUNRIxlygUTlda7Ig1FQ5DFI3gpdGedxaNI1FDCSr0xp0xhKHKVgeqwQW08sv9vLUIPJZ8akwuK5baQ4Ko=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzJucRX/qGRDL+/hcTQDj7Qg/soW8hH7uiUthV5fhbnm9oWVxlK
-	U/IrKAvsfvJZa/LcQCpPWJx/30m2VSSpX8UahjKwLI7xc3v8vpN4Lx2U
-X-Gm-Gg: ASbGncumKjBxrxMRUUtCY+eg+D36pP0mJyvWgCZEWynm7kIe3OS1aKCAdjyfnCcDc5W
-	dfB1S380wXRLmCQo/hmjZqpd3Au0YA7EZphJUtMUJK+QyWympqpdohpzmPEnuv7S0Zy/ogw25zL
-	yCf1LsxCBPmyvoKeCgwc3IKrrqvld2yztVwZgdKHIOgVMyOw6n+awhg6ONK0eLVyqIZkPkl1NVA
-	iFYEw19whPRq7AHng2j3hzX2/0/hPIGZiyMUK2UK5kpBeAM2v+yz17kJgpkKcb6Zwe57hLI25YU
-	/nnPCkP4nBJmFBOZpG1srIL+vTF9sGjpJRZIMt95jFOkSUqGBYBRzBhXInrBXDnxJnkm8gzLxKg
-	8FvU0OUk1ISLliCJDkXHX
-X-Google-Smtp-Source: AGHT+IHbpi6lB61KVNgUupM53gjsKp3nANik+LeK6AxHjCEZdLwoL524Z+8ZPz52r/mw5Lm6YeX5Hg==
-X-Received: by 2002:a17:902:f0cc:b0:235:e76c:4362 with SMTP id d9443c01a7336-24246f3b2f6mr78754155ad.18.1754297061953;
-        Mon, 04 Aug 2025 01:44:21 -0700 (PDT)
-Received: from c45b92c47440.. ([202.120.234.58])
-        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-241e899b4b8sm103742855ad.137.2025.08.04.01.44.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 01:44:21 -0700 (PDT)
-From: Miaoqian Lin <linmq006@gmail.com>
-To: David Howells <dhowells@redhat.com>,
-	Marc Dionne <marc.dionne@auristor.com>,
-	linux-afs@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Cc: linmq006@gmail.com
-Subject: [PATCH] afs: Fix missing error pointer check after rxrpc_kernel_lookup_peer()
-Date: Mon,  4 Aug 2025 12:44:13 +0400
-Message-Id: <20250804084413.3627337-1-linmq006@gmail.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1754297149; c=relaxed/simple;
+	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=BpSqfzdTfAKZOpiWY50uzlY0QvuvJQRJSWWmURYGMTYwmZH/dUAiykKjTPx+PjVy7yJx2CknDCO2R11BQ/BlYMjruCPJnxCHGftNQmND5upM2+/RuojpCTzhMbhX/aedcd2ypKa9DTCl5eRfEJmZPjWTuagpf4BApd3yPrSmK3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MygY6za/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29278C4CEE7;
+	Mon,  4 Aug 2025 08:45:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754297148;
+	bh=uuDHiYwQIffCG6IrU7+9PPyyyGEjkOwbsx1qo2fJD2I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MygY6za/7JQ8298Ydmi7env+67ti+AqAjBZTE1/buPxLIMF9zeHwqrdNLHfMaIJ6G
+	 PdofNwBgkHccLko+bFZh39rrqDof/vNLRRAn8XhNhV8K9g/5eIqgtXGw9h3ECLxtrQ
+	 OT/HWCPs1VpNCh6Dg/7/gbOurMduy0sAUP4cqdt9UoDiHDekMAQC8CNGlgcPjsrQFZ
+	 ZZQffZXSk785CvD2FFZPgGqTG8fDBHiwCh3A3JUW7IQnI9dF5DhpcsWVyk/2G8q7me
+	 7AEpRDoFDtfYetU3JaOXZ94Io42dvw2i+qLxEFQy9hgNRFs2ykQpUS7W7Cg/spaNCE
+	 +ZdBrDh5yrwVA==
+Date: Mon, 4 Aug 2025 10:45:44 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: "Darrick J. Wong" <djwong@kernel.org>
+Cc: Luis Henriques <luis@igalia.com>, Miklos Szeredi <miklos@szeredi.hu>, 
+	Bernd Schubert <bschubert@ddn.com>, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [RFC] Another take at restarting FUSE servers
+Message-ID: <20250804-lesezeichen-kugel-7a8b7053d236@brauner>
+References: <8734afp0ct.fsf@igalia.com>
+ <20250729233854.GV2672029@frogsfrogsfrogs>
+ <87freddbcf.fsf@igalia.com>
+ <20250731-diamant-kringeln-7f16e5e96173@brauner>
+ <20250731172946.GK2672070@frogsfrogsfrogs>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250731172946.GK2672070@frogsfrogsfrogs>
 
-rxrpc_kernel_lookup_peer() can also return error pointers.
-Add an IS_ERR_OR_NULL() check to handle both error and NULL returns.
-This prevents possible crashes from invalid pointer dereference.
+On Thu, Jul 31, 2025 at 10:29:46AM -0700, Darrick J. Wong wrote:
+> On Thu, Jul 31, 2025 at 01:33:09PM +0200, Christian Brauner wrote:
+> > On Wed, Jul 30, 2025 at 03:04:00PM +0100, Luis Henriques wrote:
+> > > Hi Darrick,
+> > > 
+> > > On Tue, Jul 29 2025, Darrick J. Wong wrote:
+> > > 
+> > > > On Tue, Jul 29, 2025 at 02:56:02PM +0100, Luis Henriques wrote:
+> > > >> Hi!
+> > > >> 
+> > > >> I know this has been discussed several times in several places, and the
+> > > >> recent(ish) addition of NOTIFY_RESEND is an important step towards being
+> > > >> able to restart a user-space FUSE server.
+> > > >> 
+> > > >> While looking at how to restart a server that uses the libfuse lowlevel
+> > > >> API, I've created an RFC pull request [1] to understand whether adding
+> > > >> support for this operation would be something acceptable in the project.
+> > > >
+> > > > Just speaking for fuse2fs here -- that would be kinda nifty if libfuse
+> > > > could restart itself.  It's unclear if doing so will actually enable us
+> > > > to clear the condition that caused the failure in the first place, but I
+> > > > suppose fuse2fs /does/ have e2fsck -fy at hand.  So maybe restarts
+> > > > aren't totally crazy.
+> > > 
+> > > Maybe my PR lacks a bit of ambition -- it's goal wasn't to have libfuse do
+> > > the restart itself.  Instead, it simply adds some visibility into the
+> > > opaque data structures so that a FUSE server could re-initialise a session
+> > > without having to go through a full remount.
+> > > 
+> > > But sure, there are other things that could be added to the library as
+> > > well.  For example, in my current experiments, the FUSE server needs start
+> > > some sort of "file descriptor server" to keep the fd alive for the
+> > > restart.  This daemon could be optionally provided in libfuse itself,
+> > > which could also be used to store all sorts of blobs needed by the file
+> > > system after recovery is done.
+> > 
+> > Fwiw, for most use-cases you really just want to use systemd's file
+> > descriptor store to persist the /dev/fuse connection:
+> > https://systemd.io/FILE_DESCRIPTOR_STORE/
+> 
+> Very nice!  This is exactly what I was looking for to handle the initial
+> setup, so I'm glad I don't have to go design a protocol around that.
+> 
+> > > 
+> > > >> The PR doesn't do anything sophisticated, it simply hacks into the opaque
+> > > >> libfuse data structures so that a server could set some of the sessions'
+> > > >> fields.
+> > > >> 
+> > > >> So, a FUSE server simply has to save the /dev/fuse file descriptor and
+> > > >> pass it to libfuse while recovering, after a restart or a crash.  The
+> > > >> mentioned NOTIFY_RESEND should be used so that no requests are lost, of
+> > > >> course.  And there are probably other data structures that user-space file
+> > > >> systems will have to keep track as well, so that everything can be
+> > > >> restored.  (The parameters set in the INIT phase, for example.)
+> > > >
+> > > > Yeah, I don't know how that would work in practice.  Would the kernel
+> > > > send back the old connection flags and whatnot via some sort of
+> > > > FUSE_REINIT request, and the fuse server can either decide that it will
+> > > > try to recover, or just bail out?
+> > > 
+> > > That would be an option.  But my current idea would be that the server
+> > > would need to store those somewhere and simply assume they are still OK
+> > 
+> > The fdstore currently allows to associate a name with a file descriptor
+> > in the fdstore. That name would allow you to associate the options with
+> > the fuse connection. However, I would not rule it out that additional
+> > metadata could be attached to file descriptors in the fdstore if that's
+> > something that's needed.
+> 
+> Names are useful, I'd at least want "fusedev", "fsopen", and "device".
+> 
+> If someone passed "journal_dev=/dev/sdaX" to fuse2fs then I'd want it to
+> be able to tell mountfsd "Hey, can you also open /dev/sdaX and put it in
+> the store as 'journal_dev'?" Then it just has to wait until the fd shows
+> up, and it can continue with the mount process.
+> 
+> Though the "device" argument needn't be a path, so to be fully general
+> mountfsd and the fuse server would have to handshake that as well.
 
-Fixes: 72904d7b9bfb ("rxrpc, afs: Allow afs to pin rxrpc_peer objects")
-Signed-off-by: Miaoqian Lin <linmq006@gmail.com>
----
- fs/afs/addr_list.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/fs/afs/addr_list.c b/fs/afs/addr_list.c
-index e941da5b6dd9..1f8d1a8a92c3 100644
---- a/fs/afs/addr_list.c
-+++ b/fs/afs/addr_list.c
-@@ -298,7 +298,7 @@ int afs_merge_fs_addr4(struct afs_net *net, struct afs_addr_list *alist,
- 	srx.transport.sin.sin_addr.s_addr = xdr;
- 
- 	peer = rxrpc_kernel_lookup_peer(net->socket, &srx, GFP_KERNEL);
--	if (!peer)
-+	if (IS_ERR_OR_NULL(peer))
- 		return -ENOMEM;
- 
- 	for (i = 0; i < alist->nr_ipv4; i++) {
-@@ -342,7 +342,7 @@ int afs_merge_fs_addr6(struct afs_net *net, struct afs_addr_list *alist,
- 	memcpy(&srx.transport.sin6.sin6_addr, xdr, 16);
- 
- 	peer = rxrpc_kernel_lookup_peer(net->socket, &srx, GFP_KERNEL);
--	if (!peer)
-+	if (IS_ERR_OR_NULL(peer))
- 		return -ENOMEM;
- 
- 	for (i = alist->nr_ipv4; i < alist->nr_addrs; i++) {
--- 
-2.25.1
-
+Fwiw, to attach arbitrary metadata to a file descriptor the easiest
+thing to do would be to stash both a (fuse server) file descriptor and
+then also a memfd via memfd_create() that e.g., can contain all the
+server options that you want to store.
 
