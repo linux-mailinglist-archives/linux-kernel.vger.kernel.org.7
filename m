@@ -1,308 +1,118 @@
-Return-Path: <linux-kernel+bounces-755077-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755081-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FA24B1A102
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:15:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6909BB1A117
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:17:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD08F3BEEF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:15:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76CFE17DDDD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E7D32580F7;
-	Mon,  4 Aug 2025 12:14:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 252DF25744D;
+	Mon,  4 Aug 2025 12:17:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="ULjTUi6Z"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="bDYto4Y8"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C636A2571DE;
-	Mon,  4 Aug 2025 12:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFE2254873
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:16:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309682; cv=none; b=RU1U6kdnzB876nqn7jbMP36Adj5u/GsK4Zk+1TWaqRWT/IRiL2bMgFPwh4U1ZoQvqjY2teghpH3g/oV3ESFB6a08PB/5hXHAUJqfAStdCBTZh0QvnGBHBpn46gNzysdf9dSshv3tJZ5LqwSepT747qWjZJY3h2ZtTkbbqdaHnZ0=
+	t=1754309819; cv=none; b=Q/brRlKjk9RSQ5Gj/vkrf/cDwdFjKXLGobIYdIQroy/87eUmM7HXN8JRCdF5o2ReEpFgA+yVJ1qqfslmdP8WzSpA2krt6OQcAZLlQjTLyeyJxHrtrIJ90XY4VL+E1zegHhqClGdtjpkrxcOTeCBT5ypKoqoseAzNaPOcqD7kneE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309682; c=relaxed/simple;
-	bh=QKoi+q0TxJXRPQGNUZKQfMFzEBf4eJaAFlYad9mpAiA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=qvAub45c0mHYfVMMCqKspHstqo82y+/6eswGjAoyjV2ID1Pj94Bg95a0w3rGJ6lz2V7mCWN0PTKSPz4DmIa9O4BbZ1787TGnWC+8W4MmqH7q2JB7XCqPp2W9FDZiOj45BWZuBIVQdpOFl4Dr1cdqstI8qpjLqSxseFf7gq3ZLzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=ULjTUi6Z; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574BWg2M014721;
-	Mon, 4 Aug 2025 12:14:25 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bkCali
-	Aq08k6pthvg5cnXDYw9hW8fQnGbzG6ffz5kQw=; b=ULjTUi6ZfTRV+fckyGtK3O
-	qfhFlVexaHIAvlW2iN6+prIMqYcGPxtg07ROxzIXXBau8h0Y2rt1butGbKhLTqQI
-	5FppwdxR4GitCGXs8GuhQ8I9ttU5hAnsFl6r2/HEBMmw2kfd00Q9z3KjJ803fnrm
-	7/j+Ts3ote5mMLqQ2MJTB83rEOHlVntozq7rHpQTCylCVMmSpvJvAdbSl85q1W1c
-	eozm4ltAD//pd1c5OhMalBu9SJhhwWmfEnANYDk4cxQ9lOJK0NyB06ZYjsrYh/sb
-	BElM+AsJGIBBuhUUtsM9TzGBJQQgD4jBGgsCF1fpfg3Z2yKu9J1LQWQmU/LRro/A
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t16w2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 12:14:24 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 574CAJY4011078;
-	Mon, 4 Aug 2025 12:14:24 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48983t16vx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 12:14:24 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 574AXJsY006836;
-	Mon, 4 Aug 2025 12:14:23 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmdpkr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 12:14:23 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 574CEJa252494670
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Aug 2025 12:14:19 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D43F2004B;
-	Mon,  4 Aug 2025 12:14:19 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A1E020040;
-	Mon,  4 Aug 2025 12:14:17 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.124.212.175])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  4 Aug 2025 12:14:16 +0000 (GMT)
-Date: Mon, 4 Aug 2025 17:44:11 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Donet Tom <donettom@linux.ibm.com>
-Cc: Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        linuxppc-dev@lists.ozlabs.org, Ritesh Harjani <ritesh.list@gmail.com>,
-        linux-kernel@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin <npiggin@gmail.com>, stable@vger.kernel.org
-Subject: Re: [PATCH v2] powerpc/mm: Fix SLB multihit issue during SLB preload
-Message-ID: <aJCkE_80YfYUWIzZ@linux.ibm.com>
-References: <20250801103747.21864-1-donettom@linux.ibm.com>
+	s=arc-20240116; t=1754309819; c=relaxed/simple;
+	bh=+QbjGDEaHCUYMo3kIkI0nfYav4d+Fau99j5zD5gp8V4=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Lkx6aSItTrPedTaRrq9iKE24inyArySpsgznPogVcVBizRQpJmGCcdZ6ZG8PnSh3NmOUm9Zdz1ies79/by2EUaj0U79e5POIqYNlhCZS52zhNT1xWjBG4lRCCvCiNvdEIs4i0KfJ862gIggu6JfzDghLizeNtOMkJgg3kjGi/hY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=bDYto4Y8; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754309805;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=dsCCYJVf50voJUlyGqf8P6lX4sGjnQ9vneNNYICjjks=;
+	b=bDYto4Y8g2xjYdtZVG3OTKbd3cmcOZypPFOvFyrXQXHxnFIJLmJI6J+RKHaiIHMnC00E5z
+	vrYbHW7Mg4Bka9kugv7cj2t3GZQOtiYdsVFXpicPViR8i6limBYoXOcp80tE6F3bYUZaCn
+	lNz+r1nJW7DNHzUggAtcjaRb1+gVDSw=
+From: Tao Chen <chen.dylane@linux.dev>
+To: ast@kernel.org,
+	daniel@iogearbox.net,
+	andrii@kernel.org,
+	martin.lau@linux.dev,
+	eddyz87@gmail.com,
+	song@kernel.org,
+	yonghong.song@linux.dev,
+	john.fastabend@gmail.com,
+	kpsingh@kernel.org,
+	sdf@fomichev.me,
+	haoluo@google.com,
+	jolsa@kernel.org,
+	mattbobrowski@google.com,
+	rostedt@goodmis.org,
+	mhiramat@kernel.org,
+	mathieu.desnoyers@efficios.com
+Cc: bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-trace-kernel@vger.kernel.org,
+	Tao Chen <chen.dylane@linux.dev>
+Subject: [PATCH bpf-next] bpf: Disable migrate when kprobe_multi attach to access bpf_prog_active
+Date: Mon,  4 Aug 2025 20:16:15 +0800
+Message-ID: <20250804121615.1843956-1-chen.dylane@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801103747.21864-1-donettom@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2NSBTYWx0ZWRfXzplmM8FaVGkJ
- BGW95B9VBj0mvQuehAtnAQHOfa2WQo0xB2q44cXXF44P/8AXPKY/88dLektrfkmY6Jxg/FXdmRZ
- f/+UvKxnOUD8gGmMrmN2MA6cnczzHPNzyqWVD1zuJ26KGutFznwnI7jEMnqMI8T+iMhkHgVJ9hl
- h60nUBzpqcmvJOKiS9fetaa1hA6jXafxoTBoYEwyRtUpiaIxQkUMHOQ8HAJFBVx/b1JOu4J3p1+
- aukbtgwpOHfeYFvxQYy9Kgmj6eQcVLFdLeyvYEaY0ITKvWhQ1DfSba2irPM/0tKwSLeix9HoZzm
- PLYv+iO4J/HsBAMTSarz09MwdgEpP6Jv7i0liB1BdB36I7ACw8YPisL0veTTSZiybIjI43XjTHR
- R+05bYI0XcWrStucQmHVpzqZcRU3yk/RQSI7zG7Jz/z2hJ/caZMOITeFV45KYei9qOkKm3DS
-X-Proofpoint-GUID: Xi1C_RZ5eyuRNvg804c77mtb1ljWn-zF
-X-Proofpoint-ORIG-GUID: 2ff2BdISzjA-CTAzgsIgqvjC26p_SUqW
-X-Authority-Analysis: v=2.4 cv=AZSxH2XG c=1 sm=1 tr=0 ts=6890a420 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=1UX6Do5GAAAA:8 a=pGLkceISAAAA:8 a=xPUkudSxAZQojQN1IlsA:9 a=3ZKOabzyN94A:10
- a=QEXdDO2ut3YA:10 a=Et2XPkok5AAZYJIKzHr1:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- clxscore=1011 priorityscore=1501 impostorscore=0 bulkscore=0
- lowpriorityscore=0 mlxscore=0 spamscore=0 malwarescore=0 phishscore=0
- suspectscore=0 mlxlogscore=999 adultscore=0 classifier=spam authscore=0
- authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508040065
+X-Migadu-Flow: FLOW_OUT
 
-On Fri, Aug 01, 2025 at 04:07:47PM +0530, Donet Tom wrote:
-> On systems using the hash MMU, there is a software SLB preload cache that
-> mirrors the entries loaded into the hardware SLB buffer. This preload
-> cache is subject to periodic eviction — typically after every 256 context
-> switches — to remove old entry.
-> 
-> To optimize performance, the kernel skips switch_mmu_context() in
-> switch_mm_irqs_off() when the prev and next mm_struct are the same.
-> However, on hash MMU systems, this can lead to inconsistencies between
-> the hardware SLB and the software preload cache.
-> 
-> If an SLB entry for a process is evicted from the software cache on one
-> CPU, and the same process later runs on another CPU without executing
-> switch_mmu_context(), the hardware SLB may retain stale entries. If the
-> kernel then attempts to reload that entry, it can trigger an SLB
-> multi-hit error.
-> 
-> The following timeline shows how stale SLB entries are created and can
-> cause a multi-hit error when a process moves between CPUs without a
-> MMU context switch.
-> 
-> CPU 0                                   CPU 1
-> -----                                    -----
-> Process P
-> exec                                    swapper/1
->  load_elf_binary
->   begin_new_exc
->     activate_mm
->      switch_mm_irqs_off
->       switch_mmu_context
->        switch_slb
->        /*
->         * This invalidates all
->         * the entries in the HW
->         * and setup the new HW
->         * SLB entries as per the
->         * preload cache.
->         */
-> context_switch
-> sched_migrate_task migrates process P to cpu-1
-> 
-> Process swapper/0                       context switch (to process P)
-> (uses mm_struct of Process P)           switch_mm_irqs_off()
->                                          switch_slb
->                                            load_slb++
->                                             /*
->                                             * load_slb becomes 0 here
->                                             * and we evict an entry from
->                                             * the preload cache with
->                                             * preload_age(). We still
->                                             * keep HW SLB and preload
->                                             * cache in sync, that is
->                                             * because all HW SLB entries
->                                             * anyways gets evicted in
->                                             * switch_slb during SLBIA.
->                                             * We then only add those
->                                             * entries back in HW SLB,
->                                             * which are currently
->                                             * present in preload_cache
->                                             * (after eviction).
->                                             */
->                                         load_elf_binary continues...
->                                          setup_new_exec()
->                                           slb_setup_new_exec()
-> 
->                                         sched_switch event
->                                         sched_migrate_task migrates
->                                         process P to cpu-0
-> 
-> context_switch from swapper/0 to Process P
->  switch_mm_irqs_off()
->   /*
->    * Since both prev and next mm struct are same we don't call
->    * switch_mmu_context(). This will cause the HW SLB and SW preload
->    * cache to go out of sync in preload_new_slb_context. Because there
->    * was an SLB entry which was evicted from both HW and preload cache
->    * on cpu-1. Now later in preload_new_slb_context(), when we will try
->    * to add the same preload entry again, we will add this to the SW
->    * preload cache and then will add it to the HW SLB. Since on cpu-0
->    * this entry was never invalidated, hence adding this entry to the HW
->    * SLB will cause a SLB multi-hit error.
->    */
-> load_elf_binary continues...
->  START_THREAD
->   start_thread
->    preload_new_slb_context
->    /*
->     * This tries to add a new EA to preload cache which was earlier
->     * evicted from both cpu-1 HW SLB and preload cache. This caused the
->     * HW SLB of cpu-0 to go out of sync with the SW preload cache. The
->     * reason for this was, that when we context switched back on CPU-0,
->     * we should have ideally called switch_mmu_context() which will
->     * bring the HW SLB entries on CPU-0 in sync with SW preload cache
->     * entries by setting up the mmu context properly. But we didn't do
->     * that since the prev mm_struct running on cpu-0 was same as the
->     * next mm_struct (which is true for swapper / kernel threads). So
->     * now when we try to add this new entry into the HW SLB of cpu-0,
->     * we hit a SLB multi-hit error.
->     */
-> 
-> WARNING: CPU: 0 PID: 1810970 at arch/powerpc/mm/book3s64/slb.c:62
-> assert_slb_presence+0x2c/0x50(48 results) 02:47:29 [20157/42149]
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 1810970 Comm: dd Not tainted 6.16.0-rc3-dirty #12
-> VOLUNTARY
-> Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected)
-> 0x4d0200 0xf000004 of:SLOF,HEAD hv:linux,kvm pSeries
-> NIP:  c00000000015426c LR: c0000000001543b4 CTR: 0000000000000000
-> REGS: c0000000497c77e0 TRAP: 0700   Not tainted  (6.16.0-rc3-dirty)
-> MSR:  8000000002823033 <SF,VEC,VSX,FP,ME,IR,DR,RI,LE>  CR: 28888482  XER: 00000000
-> CFAR: c0000000001543b0 IRQMASK: 3
-> <...>
-> NIP [c00000000015426c] assert_slb_presence+0x2c/0x50
-> LR [c0000000001543b4] slb_insert_entry+0x124/0x390
-> Call Trace:
->   0x7fffceb5ffff (unreliable)
->   preload_new_slb_context+0x100/0x1a0
->   start_thread+0x26c/0x420
->   load_elf_binary+0x1b04/0x1c40
->   bprm_execve+0x358/0x680
->   do_execveat_common+0x1f8/0x240
->   sys_execve+0x58/0x70
->   system_call_exception+0x114/0x300
->   system_call_common+0x160/0x2c4
-> 
-> To fix this issue, we add a code change to always switch the MMU context on
-> hash MMU if the SLB preload cache has aged. With this change, the
-> SLB multi-hit error no longer occurs.
-> 
-> cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> cc: Michael Ellerman <mpe@ellerman.id.au>
-> cc: Nicholas Piggin <npiggin@gmail.com>
-> Fixes: 5434ae74629a ("powerpc/64s/hash: Add a SLB preload cache")
-> cc: stable@vger.kernel.org
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
-> ---
-> 
-> v1 -> v2 : Changed commit message and added a comment in
-> switch_mm_irqs_off()
-> 
-> v1 - https://lore.kernel.org/all/20250731161027.966196-1-donettom@linux.ibm.com/
-> ---
->  arch/powerpc/mm/book3s64/slb.c | 2 +-
->  arch/powerpc/mm/mmu_context.c  | 7 +++++--
->  2 files changed, 6 insertions(+), 3 deletions(-)
-> 
-> diff --git a/arch/powerpc/mm/book3s64/slb.c b/arch/powerpc/mm/book3s64/slb.c
-> index 6b783552403c..08daac3f978c 100644
-> --- a/arch/powerpc/mm/book3s64/slb.c
-> +++ b/arch/powerpc/mm/book3s64/slb.c
-> @@ -509,7 +509,7 @@ void switch_slb(struct task_struct *tsk, struct mm_struct *mm)
->  	 * SLB preload cache.
->  	 */
->  	tsk->thread.load_slb++;
-> -	if (!tsk->thread.load_slb) {
-> +	if (tsk->thread.load_slb == U8_MAX) {
->  		unsigned long pc = KSTK_EIP(tsk);
->  
->  		preload_age(ti);
-> diff --git a/arch/powerpc/mm/mmu_context.c b/arch/powerpc/mm/mmu_context.c
-> index 3e3af29b4523..95455d787288 100644
-> --- a/arch/powerpc/mm/mmu_context.c
-> +++ b/arch/powerpc/mm/mmu_context.c
-> @@ -83,8 +83,11 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct mm_struct *next,
->  	/* Some subarchs need to track the PGD elsewhere */
->  	switch_mm_pgdir(tsk, next);
->  
-> -	/* Nothing else to do if we aren't actually switching */
-> -	if (prev == next)
-> +	/*
-> +	 * Nothing else to do if we aren't actually switching and
-> +	 * the preload slb cache has not aged
-> +	 */
-> +	if ((prev == next) && (tsk->thread.load_slb != U8_MAX))
->  		return;
->  
->  	/*
-> -- 
-> 2.50.1
-> 
-LGTM.
+The syscall link_create not protected by bpf_disable_instrumentation,
+accessing percpu data bpf_prog_active should use cpu local_lock when
+kprobe_multi program attach.
 
-Reviewed-by: Vishal Chourasia <vishalc@linux.ibm.com>
+Fixes: 0dcac2725406 ("bpf: Add multi kprobe link")
+Signed-off-by: Tao Chen <chen.dylane@linux.dev>
+---
+ kernel/trace/bpf_trace.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/trace/bpf_trace.c b/kernel/trace/bpf_trace.c
+index 3ae52978cae..f6762552e8e 100644
+--- a/kernel/trace/bpf_trace.c
++++ b/kernel/trace/bpf_trace.c
+@@ -2728,23 +2728,23 @@ kprobe_multi_link_prog_run(struct bpf_kprobe_multi_link *link,
+ 	struct pt_regs *regs;
+ 	int err;
+ 
++	migrate_disable();
+ 	if (unlikely(__this_cpu_inc_return(bpf_prog_active) != 1)) {
+ 		bpf_prog_inc_misses_counter(link->link.prog);
+ 		err = 1;
+ 		goto out;
+ 	}
+ 
+-	migrate_disable();
+ 	rcu_read_lock();
+ 	regs = ftrace_partial_regs(fregs, bpf_kprobe_multi_pt_regs_ptr());
+ 	old_run_ctx = bpf_set_run_ctx(&run_ctx.session_ctx.run_ctx);
+ 	err = bpf_prog_run(link->link.prog, regs);
+ 	bpf_reset_run_ctx(old_run_ctx);
+ 	rcu_read_unlock();
+-	migrate_enable();
+ 
+  out:
+ 	__this_cpu_dec(bpf_prog_active);
++	migrate_enable();
+ 	return err;
+ }
+ 
+-- 
+2.48.1
+
 
