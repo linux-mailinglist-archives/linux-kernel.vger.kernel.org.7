@@ -1,80 +1,41 @@
-Return-Path: <linux-kernel+bounces-755449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [IPv6:2605:f480:58:1:0:1994:3:14])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C326B1A664
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:47:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7DF6B1A676
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:49:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 3AE044E196D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:47:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 082D516D475
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:49:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A06C0274B3B;
-	Mon,  4 Aug 2025 15:46:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OFb+hotc"
-Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60057277C82;
+	Mon,  4 Aug 2025 15:46:33 +0000 (UTC)
+Received: from plesk.hostmyservers.fr (plesk.hostmyservers.fr [45.145.164.37])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4692749F2;
-	Mon,  4 Aug 2025 15:46:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE6DA277020;
+	Mon,  4 Aug 2025 15:46:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.145.164.37
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754322369; cv=none; b=sidFGsHdvDrQ34MdOdAugDj3yle7mZwkRgYgdN0LR6Cqis/VqYt+QRb2K0NFnQ2rzjR8YiH2HyHfOs4o5QQkIFtPY+84ETP4zbUNmtxlu9FdAVXhztmyuUTHjUSHwLpcKNAuY1faR3Q5CJInnM5Sak9bB8hYKOw/rOMqH9qVfgU=
+	t=1754322392; cv=none; b=Ss0yxB2xgpXFJ2ci5R3CZWAn0lMvtPP3PkE6mfC6DqiOoTBA7vCIe7uehTKOC/0Yt14OSSgT9vKd+T2NdYUmDxt+KtcRhGckds4pAZ/VqSaxobjvPh9mP2YuFyU4Pnuo2cmypaQ+NFIeMsuVPGdHA/oBQGNQrsfXluxrtXbyC+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754322369; c=relaxed/simple;
-	bh=mZ9fH9xdv+Jrv5Yn99fEL8SH6zdGrz0G5e+vPVt9iKE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ac/0NFWrkBf68AfmC9bxHFUJMOCfv5FqPwgFOWaXjlLaCGkdXCDLrItToMBvRfnPNgh8Ppl9chwHzl86i9bEJenSyJkeECu8iMY+X0dzg95Ao8jwOOaVNLQZZNPS1ykA5ejnUKHxCMmCHR+DtYYb/NZmwgcFCUxyHvnMfZVmAto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OFb+hotc; arc=none smtp.client-ip=209.85.128.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-458bf6d69e4so19081015e9.2;
-        Mon, 04 Aug 2025 08:46:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754322365; x=1754927165; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=LSPs+xmcRpXzGAfInjNfwF6qcuUqjylfctStx4mmHhY=;
-        b=OFb+hotc9Su0kyf1HapKi3hmpDRJBKyPpfcXPMS+eaDLhDmQOTEZmqY95G701X4Cf2
-         lULKHiNsq9UvcvDvDB1ehiuzTiDXAI+y/cE627qWjtXUlYSi4+HKvuGuIhYz7DMU32gh
-         49bnlm/Kxf1mZT776+2YDCe0/wYuftNafGhdvrN9aBdIXxj9BqanDTt7yQUQRW+s4qF3
-         phdnDs/zvLoEQb1+yjAo8Fzq0hLz6reOTl6GcoJ0Bzonbv38Jr2ZDLCIOAUTQwzuZV4T
-         ewcEF0HZrdJM8EfsbknOhM/lPvyKfRfRmey2MAl6JIKPO7O2hsMUtsJBLyed+d4sKy+4
-         x3GQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754322365; x=1754927165;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=LSPs+xmcRpXzGAfInjNfwF6qcuUqjylfctStx4mmHhY=;
-        b=XSvFbH8dlrtCzRARHFyHeC9Lqv1lyAnJrlygUdb3NMmdefWJZBrjW52DDyuvrlHHNY
-         /XFbdlWG+c/g9cPAvH20YWgJS5enG+p1C202SMJPIj2L4uRCcKff0rzTDuhWi/QHv0Ll
-         wzXyEecudZKt8Fdw0llfnlrIK9U+fJeCsfMLP7yBFkcbfJX9+qIcS6vTrFfWpehlG5cu
-         deZaQTd7USzFiS409cNCVWvwlyEmTDvW7+cN5fCeHQHJHFUNGtzl7cgZo7r3Tk0T9FlG
-         usssNo0+9efsRQPUg2jw4M5OApuTnTO8FZPNskSYGDE7FWmbgg2t2LqLmQ/bQGeLat30
-         Nz4g==
-X-Forwarded-Encrypted: i=1; AJvYcCUco4I3Aw4tkiLK69Tesv7UwSGOwCi7I0vnTn0kDF13P31/YtAiZ2nKc0HgVI7m9VqcZoPf/Tw0iHMyRS6x@vger.kernel.org, AJvYcCVw4zDczTFjX1JbL87zdYAa24qE+N+BUrjAO8GmLWbM78UpbOs7m5gR5hV+C29gfJraK8YguEkucPo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUWJeGpW9ML65G9hiR021jEOmcTVViHrM4oIxC1/Opu7FxH4y3
-	yus1UToeEctiMhp17gd+8Bf19UU2uF1T29N0y9GeTa/k5sHw6joMkHOs
-X-Gm-Gg: ASbGncvWcwfQ0QnmcHg1IBAYCKeF2zU2jwBBlMC+CktNxzQ3m80yC5PCtZzFujxCRrH
-	KYcLa4HgNKpzOBGl39fV6cSRKv/A5xAiA4d8R30+Xp1OmBQQqNbwP+feyAhP41RV1Sr029QV4wk
-	UliWejnU2QcZPA/qv0xdpkE8YNDfIBqWHjAz+dr+tQAwQiago3HWClEicEWkzlwyWBhTxMS4roT
-	vLxr1KcF/jOaiIWaDo1NCT+d1tlB08xHj2btnQb+WHSGj5En/hgaf+9+3InEpRKjyHkYmm86sBK
-	YTz2j1y62kKlBCcTYx3CQF6u3/qetzpiVnW7TQMw0zw+BE/oPhIlWvX2YGofa0PSMxRbhVlqWcu
-	XDyeMcHIkmGYsaA10V5lGiI5D5ZHBNtp8MQx0kUwtvCy1AY8V/5cTTOuJijShGSXYgMz1YZbXeh
-	TjgVn3+Q==
-X-Google-Smtp-Source: AGHT+IH3mTcbBsftpdea/bfQ68d+fnRjUnK7Qbl1Z7kxY+gw6GFtjqZKvLEbxRDEUPNLOcHUPMEsYQ==
-X-Received: by 2002:a05:600c:138d:b0:43c:f44c:72a6 with SMTP id 5b1f17b1804b1-458b69f2c1fmr90559905e9.2.1754322364805;
-        Mon, 04 Aug 2025 08:46:04 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:14f1:c189:9748:5e5a? ([2620:10d:c092:500::7:64f3])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458bd5a1148sm57008995e9.0.2025.08.04.08.46.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 08:46:04 -0700 (PDT)
-Message-ID: <58a3317d-96e0-4836-a4c3-cb02c5c55095@gmail.com>
-Date: Mon, 4 Aug 2025 16:46:00 +0100
+	s=arc-20240116; t=1754322392; c=relaxed/simple;
+	bh=dVzN75QKDlsF7eCY1XR+PTiDmqIMlJB7su1UVUOLEMk=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=tJJqafjpSMNwNEwetmKzsp6Gi0IbKZkEF+sN4l0vlBP1JLLP5aljJ7elvcR14HxYkza2JPDTU/d7U/tL6dhNpebaUPIYa/p55YduqJh4kEmkXYWH+T9D32RfQqWrAFKDMm1ltmETEAxKxrGNvt2C2M4Upy1pbw0M4XXoA8SObuM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com; spf=pass smtp.mailfrom=arnaud-lcm.com; arc=none smtp.client-ip=45.145.164.37
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=arnaud-lcm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arnaud-lcm.com
+Received: from [IPV6:2a02:8084:255b:aa00:8620:1316:5a17:1036] (unknown [IPv6:2a02:8084:255b:aa00:8620:1316:5a17:1036])
+	by plesk.hostmyservers.fr (Postfix) with ESMTPSA id E167040ABA;
+	Mon,  4 Aug 2025 15:46:21 +0000 (UTC)
+Authentication-Results: Plesk;
+        spf=pass (sender IP is 2a02:8084:255b:aa00:8620:1316:5a17:1036) smtp.mailfrom=contact@arnaud-lcm.com smtp.helo=[IPV6:2a02:8084:255b:aa00:8620:1316:5a17:1036]
+Received-SPF: pass (Plesk: connection is authenticated)
+Message-ID: <921523bd-da2e-4ca6-b207-59668985657b@arnaud-lcm.com>
+Date: Mon, 4 Aug 2025 16:46:20 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,30 +43,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 0/6] prctl: extend PR_SET_THP_DISABLE to only provide
- THPs when advised
-To: Andrew Morton <akpm@linux-foundation.org>, david@redhat.com,
- linux-mm@kvack.org
-Cc: linux-fsdevel@vger.kernel.org, corbet@lwn.net, rppt@kernel.org,
- surenb@google.com, mhocko@suse.com, hannes@cmpxchg.org, baohua@kernel.org,
- shakeel.butt@linux.dev, riel@surriel.com, ziy@nvidia.com,
- laoar.shao@gmail.com, dev.jain@arm.com, baolin.wang@linux.alibaba.com,
- npache@redhat.com, lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com,
- ryan.roberts@arm.com, vbabka@suse.cz, jannh@google.com,
- Arnd Bergmann <arnd@arndb.de>, sj@kernel.org, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org, kernel-team@meta.com
-References: <20250804154317.1648084-1-usamaarif642@gmail.com>
+Subject: Re: [PATCH 2/2] media: dvb-usbv2: ensure safe USB transfers on
+ disconnect in i2c_xfer
+From: Arnaud Lecomte <contact@arnaud-lcm.com>
+To: mchehab+huawei@kernel.org
+Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+ syzbot+0192952caa411a3be209@syzkaller.appspotmail.com,
+ skhan@linuxfoundation.org
+References: <20250421-ubsan-out-of-sub-v1-0-4fdeca76b906@arnaud-lcm.com>
+ <20250421-ubsan-out-of-sub-v1-2-4fdeca76b906@arnaud-lcm.com>
+ <c1666572-7a9b-4f25-a61a-08c96fad7a58@arnaud-lcm.com>
 Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20250804154317.1648084-1-usamaarif642@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+In-Reply-To: <c1666572-7a9b-4f25-a61a-08c96fad7a58@arnaud-lcm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-PPP-Message-ID: <175432238238.25538.3774062881455175270@Plesk>
+X-PPP-Vhost: arnaud-lcm.com
 
+I am forwarding this as I believe this is your correct new mail address.
+Please let me know if this is incorrect, apologies in advance for any 
+inconvenience.
+Arnaud
 
-
-On 04/08/2025 16:40, Usama Arif wrote:
-> (Resending this as forgot to include PATCH v2 in subject prefix)
-
-Not a resend, this is v3, just forgot to remove the above line from the
-previous cover letter :) 
+On 29/07/2025 18:14, Arnaud Lecomte wrote:
+> Hi Mauro, I am bumping this as you may didn't had the chance to have a 
+> look.
+> Cheers,
+> Arnaud
+>
+> On 21/04/2025 17:31, Arnaud Lecomte wrote:
+>> Previously, there was a potential race condition where a USB transfer 
+>> could
+>> access inconsistent data if a disconnect occurred mid-transfer.
+>> When this scenario happens (i.e when there is an USB disconnect during
+>> the transfer), we would encounter an error related to the corruption of
+>> st:
+>> [   66.967387][T10787]  slab kmalloc-8k start ffff88804f5b4000 
+>> pointer offset 80 size 8192
+>> [   66.968252][T10787] list_del corruption. prev->next should be 
+>> ffffc9000d18f7e0, but was ffff88804f5b4050. (prev=ffff88804f5b4050)
+>> [   66.969443][T10787] ------------[ cut here ]------------
+>> [   66.969973][T10787] kernel BUG at lib/list_debug.c:64!
+>> [   66.970491][T10787] Oops: invalid opcode: 0000 [#1] SMP KASAN NOPTI
+>> [   66.971104][T10787] CPU: 0 UID: 0 PID: 10787 Comm: repro Not 
+>> tainted 6.15.0-rc3-00004-gcd75cc176092-dirty #28 PREEMPT(full)
+>> [   66.972204][T10787] Hardware name: QEMU Ubuntu 24.04 PC (i440FX + 
+>> PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
+>> [   66.973236][T10787] RIP: 
+>> 0010:__list_del_entry_valid_or_report+0x15c/0x190
+>> [   66.973896][T10787] Code: ca da fb fc 42 80 3c 2b 00 74 08 4c 89 
+>> e7 e8 fb 29 1f fd 49 8b 14 24 48 c7 c7 a0 09 a2 8c 4c 89 fe 4c 89 e1 
+>> e8 55 43 18 fc 90 <0f> 0b 4c 89 f7 e8 9a da fb fc 42 80 3c 2b 00 74 
+>> 08 4c 89 e7 e8 cb
+>>
+>> Signed-off-by: Arnaud Lecomte <contact@arnaud-lcm.com>
+>> ---
+>>   drivers/media/usb/dvb-usb-v2/az6007.c | 8 +++++++-
+>>   1 file changed, 7 insertions(+), 1 deletion(-)
+>>
+>> diff --git a/drivers/media/usb/dvb-usb-v2/az6007.c 
+>> b/drivers/media/usb/dvb-usb-v2/az6007.c
+>> index e8ee18010346..f6b8e29d19de 100644
+>> --- a/drivers/media/usb/dvb-usb-v2/az6007.c
+>> +++ b/drivers/media/usb/dvb-usb-v2/az6007.c
+>> @@ -752,8 +752,13 @@ static int az6007_i2c_xfer(struct i2c_adapter 
+>> *adap, struct i2c_msg msgs[],
+>>       int length;
+>>       u8 req, addr;
+>>   -    if (mutex_lock_interruptible(&st->mutex) < 0)
+>> +    if (!usb_trylock_device(d->udev))
+>> +        return -EBUSY;
+>> +
+>> +    if (mutex_lock_interruptible(&st->mutex) < 0) {
+>> +        usb_unlock_device(d->udev);
+>>           return -EAGAIN;
+>> +    }
+>>         for (i = 0; i < num; i++) {
+>>           addr = msgs[i].addr << 1;
+>> @@ -821,6 +826,7 @@ static int az6007_i2c_xfer(struct i2c_adapter 
+>> *adap, struct i2c_msg msgs[],
+>>       }
+>>   err:
+>>       mutex_unlock(&st->mutex);
+>> +    usb_unlock_device(d->udev);
+>>       if (ret < 0) {
+>>           pr_info("%s ERROR: %i\n", __func__, ret);
+>>           return ret;
+>>
 
