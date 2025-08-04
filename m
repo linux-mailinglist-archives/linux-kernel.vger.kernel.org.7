@@ -1,135 +1,117 @@
-Return-Path: <linux-kernel+bounces-755707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E13BB1AABC
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:03:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9CD5B1AABE
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:04:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D80053BC721
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:03:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EA51E1647B7
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:04:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E07623ABAB;
-	Mon,  4 Aug 2025 22:03:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 213FB23BCEE;
+	Mon,  4 Aug 2025 22:03:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UJKfCdKI"
-Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uf92592r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1117B4430;
-	Mon,  4 Aug 2025 22:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 659D02264CC;
+	Mon,  4 Aug 2025 22:03:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754345014; cv=none; b=k4C6M3XOoetVN+eXJ0KtySPD8sd/5hdTrA0SdYDKgHloTpHxerojHdSFy5g+9JI1jmXyCJpJzWEmt4JxZl2hwPsQW9AQY2ya1yFzjXg8xsCOkFmy8otyNSJ3l6a1v2zLaKxOC5uMSv85SCZ+LQoeoE8V2hI70RPlHfjpCjirxvk=
+	t=1754345034; cv=none; b=Ypnc8yXVPaJDOAwyH+G5Ydbdt2NuVT2QFKWaAoGCKWkb9ejTIlpmmvEy8Mm+p2WGdXD0HD3hEdxatnHKz+vxVFXFd7Up9gQdboMOvvNQgqcbcbuFJ/M2Fp7J20ILoodhbFDsCYRfIK8haaktH1B/q1ie5QBpyrLR7pM5H6xFyzQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754345014; c=relaxed/simple;
-	bh=p2nBXXxlTFA2GEEJ3s1EKIPnbNXOdk9tfoQuodXc/HQ=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=b8IvXv3mryLkH1Gog5GnJPuHC2OrMw4b9M94ZYQhXJtezcluP+aHXMrJcokuQbK5nEjb2+M+0mjBz3Y32Q5KhQp2UmzMGA8OGM2OmFvvqtVqt8MP/X9LHB8RQpeS0TJgt9yWPThX0iZyVQ+9UafM5Bzn/NOLgcZGOG8yAZmYcTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UJKfCdKI; arc=none smtp.client-ip=209.85.208.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-6157b5d0cc2so4999910a12.1;
-        Mon, 04 Aug 2025 15:03:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754345011; x=1754949811; darn=vger.kernel.org;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vV+l/AoIQmjTiJkoSmnJ7PZO37+auBZ0CAATYzrLrwo=;
-        b=UJKfCdKIVFPUeCwSVe/uYgYBGrQD0PScj+yFM2FmhOoY57881+0nbLl/SKZFML2pN6
-         murPMOBoLkZqvmN5FRRfff1TspW9ZK4RPfD2gVHt/+u4LrR0RBgqR+xlyFUAOnj7ulF6
-         3leb5vyDb7MeTEipJVHqHwlSZ0bgfV8uIDEwL60RRNr3GGWna0vaXqx8t4JP3cI+mJEI
-         wRikSAM90fKABDvgxUtam/6ACICTgDq/2GhBVkpHsIJqDbV8V+tAZbVtIGLkv/UjuusK
-         kU0LB6A2Ess4VJAew6wy6I57whvH0Aoi/SXGne0d1bO+EzcPKECrdIc8GB/PKWD0dWaG
-         ob2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754345011; x=1754949811;
-        h=mime-version:user-agent:references:message-id:in-reply-to:subject
-         :cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=vV+l/AoIQmjTiJkoSmnJ7PZO37+auBZ0CAATYzrLrwo=;
-        b=oR1COCsqkxEpWrYSulbCB8Erb+leWh7LypHSV2gfaexijfwDSL6tfnquvx6k6d2Fw5
-         FiWkrnZkDz2gCph83C/j+LDIgTMIs7kpkPm7bDU3seTBgYSmYBEP3TzvsGikjr0sbbiZ
-         sHwRFGf9y1msTJ1LnfLmqZo9XClWPgcWum37R2Px2tKafJoxYoh8RCYR0e8XSB7OXUbH
-         k/O2UnDjgQUNERrwk/A+g0OgshkIh6uWl7GztM8WVze/dwSICl4eE475upYcD7YGCEcA
-         DmDmw46aECljscf64q58vuj3UJXh56s8WEjcSwijx9iRzNNi+/1l+dqScrxA0Y/0ahHY
-         DtfQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUcn6QJGSrPC+70a8XT/0fh7vV1QiMsuYwkDAkPIgNKf9ubbisgxJUO+gbCM/OVsg1HxxoMwsv1CGEf@vger.kernel.org, AJvYcCV86pIgRX2wf5lpNdvc3AthQTHr7dQdcY2Pl+de0fKLAxatkWxBYtZtH9ApskwG+cWocn7w4179Vck=@vger.kernel.org, AJvYcCXVSvDb15SISCgEGRvlM2oViQMKIr+Zr54vN39vyVZS5i0J4MvICYURftkJaLbVgZIzXeSjPxnu6UF51PbH@vger.kernel.org
-X-Gm-Message-State: AOJu0YxZv3WI8LvflgG8SMlpkxi6crCgLJ4AKA4WVifu+gk344j+9YhY
-	ECqdGsaOr3ssuBMVte6C/DX/zM5ui8BrFsHrNPsxKN21RuNlF1Z4mUzP
-X-Gm-Gg: ASbGncsf5rebdzHEpPsT0a0SQzi0MYEndwMbcRxYxKtxvlCE0VAhrNHiW7euMzElHuS
-	0Lbkr05SDpd6M4kRq3GL2h7tUa+3plqX6XWxjMTHzVirI1nWihgnuTl+FhlpsRIJS/etTTgfDoK
-	mTagXqzNnYNcgge61TabQwh4UXF+9AD5zOEiAUP//jW5thbo9LW2q/uQ2tx27hWHxz9FyqjQciD
-	5Wo6IIqSnJDEA55n/7U8+SSct8pfq9tx/D/1HkLH1Y3GaLv6qWWZlfmOBsv29ow82IozLcMDJu9
-	b+4gPD41mJtL0ONdOGhdy/UXFFPOPgr05e0rKfAYdc8uJW86Re4tMp/J9yfZGutvGvzEgvb8oN/
-	0eI/aog==
-X-Google-Smtp-Source: AGHT+IFNnPbgloatd/bauAsrBdwIztzDNxa/G9LyVYPHGTRJkfeh0ibtHkV1YCGfc/jdUx5xC6oJJQ==
-X-Received: by 2002:a05:6402:51cb:b0:612:dd26:9fab with SMTP id 4fb4d7f45d1cf-615e6ebc44fmr9414129a12.7.1754345011002;
-        Mon, 04 Aug 2025 15:03:31 -0700 (PDT)
-Received: from localhost (twin.jikos.cz. [91.219.245.39])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a9113e40sm7368688a12.57.2025.08.04.15.03.30
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Mon, 04 Aug 2025 15:03:30 -0700 (PDT)
-From: Jiri Kosina <kosina@gmail.com>
-X-Google-Original-From: Jiri Kosina <jikos@kernel.org>
-Date: Tue, 5 Aug 2025 00:03:29 +0200 (CEST)
-To: Sasha Levin <sashal@kernel.org>
-cc: Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>, 
-    Greg KH <gregkh@linuxfoundation.org>, Vlastimil Babka <vbabka@suse.cz>, 
-    corbet@lwn.net, linux-doc@vger.kernel.org, workflows@vger.kernel.org, 
-    josh@joshtriplett.org, kees@kernel.org, konstantin@linuxfoundation.org, 
-    linux-kernel@vger.kernel.org, rostedt@goodmis.org
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-In-Reply-To: <aJC0ssMzX0KWnTkG@lappy>
-Message-ID: <alpine.LRH.2.00.2508050000580.22517@gjva.wvxbf.pm>
-References: <20250727195802.2222764-1-sashal@kernel.org> <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz> <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com> <2025072832-enrich-pampers-54b9@gregkh> <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com> <aId1oZn_KFaa0R_Q@lappy>
- <aJB8CdXqCEuitnQj@tiehlicka> <aJC0ssMzX0KWnTkG@lappy>
-User-Agent: Alpine 2.00 (LRH 1167 2008-08-23)
+	s=arc-20240116; t=1754345034; c=relaxed/simple;
+	bh=UAR/BA3+g2BfEvK1wW5/YdEy81GLQUdnAhGQq5KtqDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=duvEtDM8DhNfdqPSStJ0JTWdw3WZvFpx47J54ztEBWAmiZCL8tY09tx6MldnNPh8MiEjzev1dNmX0McLnjpxqaCbR5H66ZgUjlOuUSybmMTOAOgzAU9qmlaRsllXZko28l8pSgqIPNxeBthZgBJv2KsueVu/qXxw6Vkj//rtAig=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uf92592r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BC0EDC4CEE7;
+	Mon,  4 Aug 2025 22:03:53 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754345033;
+	bh=UAR/BA3+g2BfEvK1wW5/YdEy81GLQUdnAhGQq5KtqDA=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=uf92592rClnEy+UaD4xHpbIZfXFcUmEcODX6xrQ2jTsBZPb4z2rzILvh7rGVBNnG9
+	 iK+E9AQGco/4qlp6fGZJrg1jtGxgAyMNspWVIOd/tsPqWXhZx1PzqB8V5tm7E5jLlL
+	 WE3J/tjbyweHiH7N8GCqRr1hCwmNERrA9B1/5CuaKKqJYxosY5zzqg+AP1TM4xS28k
+	 V/9y2LLV7jlThcsyapgk/A1J/48Z32f6VbXzBo3OFU6d0zSFHTRCMDhA9p8Y2R4cHv
+	 2aOhzf33s4JjCJe40xgBToGycCi3vthj0Wx13uRIR96+YrVUNSbg+6ayAhLZr8zVtp
+	 K7YnS71Ba6WUA==
+Date: Mon, 4 Aug 2025 17:03:52 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 09/38] iommufd/vdevice: Add TSM Guest request uAPI
+Message-ID: <20250804220352.GA3644611@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: TEXT/PLAIN; charset=US-ASCII
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250728135216.48084-10-aneesh.kumar@kernel.org>
 
-On Mon, 4 Aug 2025, Sasha Levin wrote:
-
-> > The above guidance is quite vague. How me as a maintainer should know
-> > that whatever AI tool has been used is meeting those two conditions
+On Mon, Jul 28, 2025 at 07:21:46PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> Add TSM Guest request uAPI against iommufd_vdevice to forward various
+> TSM attestation & acceptance requests from guest to TSM driver/secure
+> firmware. This uAPI takes function only after TSM Bind.
 > 
-> In exactly the same way you know that a human contributor didn't copy
-> code with an incompatible license.
+> After a vPCI device is locked down by TSM Bind, CoCo VM should attest
+> and accept the device in its TEE. These operations needs interaction
+> with secure firmware and the device, but doesn't impact the device
+> management from host's POV. It doesn't change the fact that host should
+> not touch some part of the device (see TDISP spec) to keep the trusted
+> assignment, and host could exit trusted assignment and roll back
+> everything by TSM Unbind.
 > 
-> Quoting from Documentation/process/5.Posting.rst :
-> 
-> 	 - Signed-off-by: this is a developer's certification that he or
-> 	   she has the right to submit the patch for inclusion into the
-> 	   kernel.  It is an agreement to the Developer's Certificate of
-> 	   Origin, the full text of which can be found in
-> 	   :ref:`Documentation/process/submitting-patches.rst
-> 	   <submittingpatches>` Code without a proper signoff cannot be
-> 	   merged into the mainline.
-> 
-> The Signed-off-by tag doesn't mean that a commit was reviewed, it
-> doesn't mean that someone tested it, nor does it indicate that the
-> person who signed off belives it is correct.
-> 
-> It only means that the person has legally certified to you what is
-> stated in the DCO.
+> So the TSM Guest request becomes a passthrough channel for CoCo VM to
+> exchange request/response blobs with TSM driver/secure firmware. The
+> definition of this IOCTL illustates this idea.
 
-Al made a very important point somewhere earlier in this thread.
+s/illustates/illustrates/
 
-The most important (from the code quality POV) thing is -- is there a 
-person that understands the patch enough to be able to answer questions 
-(coming from some other human -- most likely reviewer/maintainer)?
+> +++ b/drivers/pci/tsm.c
+> @@ -861,7 +861,7 @@ int pci_tsm_unbind(struct pci_dev *pdev)
+>  EXPORT_SYMBOL_GPL(pci_tsm_unbind);
+>  
+>  /**
+> - * pci_tsm_guest_req - VFIO/IOMMUFD helper to handle guest requests
+> + * pci_tsm_guest_req - IOMMUFD helper to handle guest requests
+>   * @pdev: @pdev representing a bound tdi
 
-That's not something that'd be reflected in DCO, but it's very important 
-fact for the maintainer's decision process.
+I dunno where this got added (not this patch), but "TDI" might be an
+initialism that should be capitalized?
 
--- 
-Jiri Kosina
-SUSE Labs
+>   * @info: envelope for the request
+>   *
+> @@ -871,11 +871,12 @@ EXPORT_SYMBOL_GPL(pci_tsm_unbind);
+>   * posts to userspace (e.g. QEMU) that holds the host-to-guest RID
+>   * mapping.
+>   */
+> -int pci_tsm_guest_req(struct pci_dev *pdev, struct pci_tsm_guest_req_info *info)
+> +static int __pci_tsm_guest_req(struct pci_dev *pdev, struct tsm_guest_req_info *info)
+>  {
+>  	struct pci_tdi *tdi;
+>  	int rc;
+>  
+> +
+
+Spurious diff.
+
+>  	lockdep_assert_held_read(&pci_tsm_rwsem);
+>  
+>  	if (!pdev->tsm)
 
