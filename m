@@ -1,99 +1,173 @@
-Return-Path: <linux-kernel+bounces-755237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755240-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D3F0B1A364
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:35:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 373F2B1A36E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:36:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33C2C3BDD7C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:34:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB8E23BEFEC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:35:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD242737EF;
-	Mon,  4 Aug 2025 13:32:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7115579F2;
+	Mon,  4 Aug 2025 13:33:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rxNc3TSu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="ppQCFwc2"
+Received: from out-180.mta1.migadu.com (out-180.mta1.migadu.com [95.215.58.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4217A272E6B;
-	Mon,  4 Aug 2025 13:32:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5D9226058D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:33:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314372; cv=none; b=qVOHwyygorAzut0W8Lkln2HIa5IysKTwQ0KsRqNyfKXzmBo9ZvvW0LOQHMtrltSazlKp7OOdhZ+XCFZ+1wApQwXarxeulB816Uk5cC3YoQ1FPje8k9PXV+ZWZl7IJ9QE0+npYQJDDSjttfcrLpFTisCzEobx+MOIKjaia0Hs6BQ=
+	t=1754314438; cv=none; b=GefwKST0cF8sNerdTbud+1ECUemZ+1eUD4nCtKpfroG8VqydLpyORJaAEpZnm3tKk09CJ/9iUWX7KaWFW/g81YCqy0cQAZA7s4YtTwgDdnVO2n1V//bD4WpFEec0NqvHl5L/23AIdc9lta0XyLrZYrWPGGo1E0lHbF31DmfbP9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314372; c=relaxed/simple;
-	bh=hepMtxgdFJ9YFlSp+iRnoF0WpKwXLtv+dU1RIxscwqY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Yl5djWIlooK6Yb97MGlBd52pa9VmwEY392fhmS1ATa3MNETg2uZw8Ets4BIk4KXhRYE3DeYF7qSftr2VlDaQk7EUpHZE2ZJz/nBoVWgtG2cuoWQzqe6mqiUFZwX5lmLY0F+qIfKpyVAxEiaYMDsUesRsjOpK87gHEgSzPULcu44=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rxNc3TSu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8419EC4CEFB;
-	Mon,  4 Aug 2025 13:32:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754314371;
-	bh=hepMtxgdFJ9YFlSp+iRnoF0WpKwXLtv+dU1RIxscwqY=;
-	h=From:To:Cc:Subject:Date:From;
-	b=rxNc3TSuABB8OsG5HsEgxHMyZJybEXlOBJdiJ8wbKzywEr38S2INFArKjVVH5gVn6
-	 JE9XYOf6ssGvkzU2+JKWRRQkGuDacTZM+7234H+CFr/m8uCQSiWLYcop1ZumgNrqaA
-	 tuxSHm4KRe5SYw4ENm265whxk5PUZaCrW2o3ZbbbtbvH/a+4n7Q7hLvEp4/7xpYIYd
-	 PU6LeKGBOQW+f8tqjxBidYNdJEdMnAzaxXC5BZOZZf3mQTZL+47Gah6Et+MCeR5rHy
-	 fr+BgL2UlR65j/MYkS8I/4JPifQnG3ijVk3ohES/ZR3FdYtAqKYmJorddlkc+0tIXT
-	 +orlH2gaHSk+w==
-From: Hans de Goede <hansg@kernel.org>
-To: Lee Jones <lee@kernel.org>,
-	Andy Shevchenko <andy@kernel.org>
-Cc: Hans de Goede <hansg@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Subject: [PATCH v3] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read regmap_config flag
-Date: Mon,  4 Aug 2025 15:32:40 +0200
-Message-ID: <20250804133240.312383-1-hansg@kernel.org>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1754314438; c=relaxed/simple;
+	bh=/hIQLH3dJF9uGlrh29QZ9uHswy0UcZ7HlGpLhUVP2nk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=f+EV6/EYCrokfCYwlKI7hor0wdtYs0kykh74WdqZc/kUSUcWEdYiDrtU0VSNRJNLXZA80TaLS1f3hbJEvhooKHT/Q94bZIMZiJgiB9z9xTgx3klz3fHnF1FxG0aEQU+KlzvFc0krd/hIhnqqeXHvCob1LDh/DW9GyFVjDoQeSSE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=ppQCFwc2; arc=none smtp.client-ip=95.215.58.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Mon, 4 Aug 2025 15:33:34 +0200
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1754314423;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=p6zUScv7t4BYjICsI+KfZuOQ3Fxl+Scl3BphxUq+iJs=;
+	b=ppQCFwc28Q7d/Vu7yHRY9FEPc7Jvg+s5N8ipa9Qap1miej2gq33B8gf+XbjVCWSyCmiRsl
+	7KCmCBIEfLyyb8goRn4XtMw7tWB9cXYonTFTjzHYsG3IIGe6e1d5nGabc/3x2JALpu/Iok
+	Yl+Z8X7T+spm9HoKXBLyo8OhW9A+eTU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Richard Leitner <richard.leitner@linux.dev>
+To: Sakari Ailus <sakari.ailus@linux.intel.com>
+Cc: Dave Stevenson <dave.stevenson@raspberrypi.com>, 
+	Mauro Carvalho Chehab <mchehab@kernel.org>, Lee Jones <lee@kernel.org>, Pavel Machek <pavel@kernel.org>, 
+	Laurent Pinchart <laurent.pinchart@ideasonboard.com>, Hans Verkuil <hverkuil@xs4all.nl>, linux-media@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org
+Subject: Re: [PATCH v5 06/10] media: i2c: ov9282: add led_mode v4l2 control
+Message-ID: <v2p627nliqi55pk3w6pjckj5ddozkbgfcam2qbvdjo2w5b6rqx@si5pxcdmt2yr>
+References: <20250617-ov9282-flash-strobe-v5-0-9762da74d065@linux.dev>
+ <20250617-ov9282-flash-strobe-v5-6-9762da74d065@linux.dev>
+ <aG7bWXpz5sxYcLKI@kekkonen.localdomain>
+ <5i6a77wbggmjjxfridurbq5mrdjksse236vwucawbi43fjv2ae@umy4fe7six5p>
+ <aG92TxxIRdRES5cs@kekkonen.localdomain>
+ <f4owcdddwjar6lg5f2urpaynykks4yrttto7h7qfnodmqg22ll@xl45pbhuyhmx>
+ <aIqDEgrAoSkozxA3@kekkonen.localdomain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <aIqDEgrAoSkozxA3@kekkonen.localdomain>
+X-Migadu-Flow: FLOW_OUT
 
-Testing has shown that reading multiple registers at once (for 10-bit
-ADC values) does not work. Set the use_single_read regmap_config flag
-to make regmap split these for us.
+On Wed, Jul 30, 2025 at 08:39:46PM +0000, Sakari Ailus wrote:
+> Hi Richard,
+> 
+> On Fri, Jul 11, 2025 at 09:41:52AM +0200, Richard Leitner wrote:
+> > Hi Sakari,
+> > 
+> > On Thu, Jul 10, 2025 at 08:14:07AM +0000, Sakari Ailus wrote:
+> > > Hi Richard,
+> > > 
+> > > On Thu, Jul 10, 2025 at 08:50:24AM +0200, Richard Leitner wrote:
+> > > > Hi Sakari,
+> > > > 
+> > > > thanks for the feedback :)
+> > > > 
+> > > > On Wed, Jul 09, 2025 at 09:12:57PM +0000, Sakari Ailus wrote:
+> > > > > Hi Richard,
+> > > > > 
+> > > > > Thanks for the update.
+> > > > > 
+> > > > > On Tue, Jun 17, 2025 at 09:31:40AM +0200, Richard Leitner wrote:
+> > > > > > Add V4L2_CID_FLASH_LED_MODE support using the "strobe output enable"
+> > > > > > feature of the sensor. This implements following modes:
+> > > > > > 
+> > > > > >  - V4L2_FLASH_LED_MODE_NONE, which disables the strobe output
+> > > > > >  - V4L2_FLASH_LED_MODE_FLASH, which enables the strobe output
+> > > > > 
+> > > > > I really think you should use a different control for this. The sensor can
+> > > > > strobe the flash but it won't control its mode.
+> > > > > 
+> > > > > How about calling it V4L2_FLASH_STROBE_ENABLE?
+> > > > 
+> > > > I agree on that. But tbh V4L2_FLASH_STROBE_ENABLE somehow sounds wrong
+> > > > to me. As the strobe output in the ov9282 case goes high for the strobe
+> > > > duration, what do you think about calling it V4L2_FLASH_STROBE_PULSE?
+> > > 
+> > > That's how the hardware strobe is supposed to work, there's nothing unusual
+> > > in that. How about V4L2_FLASH_HW_STROBE_ENABLE?
+> > 
+> > Ah. Sorry. I believe I completely misunderstood your previous point.
+> > You're not referring to a new menu entry in V4L2_CID_FLASH_LED_MODE,
+> > but rather proposing a completely new boolean control, correct?
+> 
+> Correct.
+> 
+> > 
+> > As this would be separating the V4L2_CID's of "strobe signal source"
+> > (aka sensor) and "strobe signal consumer" (aka flash device/LEDs), that
+> > makes perfect sense to me now! :)
+> > 
+> > What are your thoughts on naming it V4L2_FLASH_HW_STROBE_SIGNAL?
+> 
+> Seems reasonable.
 
-This should fix temperature opregion accesses done by
-drivers/acpi/pmic/intel_pmic_chtdc_ti.c and is also necessary for
-the upcoming drivers for the ADC and battery MFD cells.
+Thanks again for your response. I already sent out a v6 with that
+control name. I hope that's fine.
 
-Fixes: 6bac0606fdba ("mfd: Add support for Cherry Trail Dollar Cove TI PMIC")
-Cc: stable@vger.kernel.org
-Reviewed-by: Andy Shevchenko <andy@kernel.org>
-Signed-off-by: Hans de Goede <hansg@kernel.org>
----
-Changes in v3:
-- Fix a few typos in the commit message
+> 
+> In order to use the control, the user space would need to know when to use
+> it, i.e. when the latching point would be in order to hit a particular
+> frame. If the strobe can start before the exposure (and presumably it needs
+> to), the latching point is before that point of time. I wonder if pixels
+> (as in the pixel array) would be reasonable unit for this as well.
+> 
+> Does the sensor datasheet shed any light on this? It might be good to add a
+> control for that as well.
 
-Changes in v2:
-- Update comment to: "The hardware does not support reading multiple
-  registers at once"
----
- drivers/mfd/intel_soc_pmic_chtdc_ti.c | 2 ++
- 1 file changed, 2 insertions(+)
+I'm not sure if pixels is a good unit for that. The strobe duration and
+strobe timeout are both defined as µs. Therefore I would prefer to also
+use µs for the strobe shift/offset.
 
-diff --git a/drivers/mfd/intel_soc_pmic_chtdc_ti.c b/drivers/mfd/intel_soc_pmic_chtdc_ti.c
-index 4c1a68c9f575..6daf33e07ea0 100644
---- a/drivers/mfd/intel_soc_pmic_chtdc_ti.c
-+++ b/drivers/mfd/intel_soc_pmic_chtdc_ti.c
-@@ -82,6 +82,8 @@ static const struct regmap_config chtdc_ti_regmap_config = {
- 	.reg_bits = 8,
- 	.val_bits = 8,
- 	.max_register = 0xff,
-+	/* The hardware does not support reading multiple registers at once */
-+	.use_single_read = true,
- };
- 
- static const struct regmap_irq chtdc_ti_irqs[] = {
--- 
-2.49.0
+The sensor features a control named "strobe shift" which allows to move the
+point of time when the strobe starts before/after the start of the exposure.
 
+I've named it V4L2_FLASH_HW_STROBE_SIGNAL_SHIFT in my downstream tree.
+What do you think about it?
+
+I have had planned to submit support for the strobe shift/offset control
+as soon as this series got accepted. Mainly to keept the series smaller
+and easier to handle (at least for me). Tbh I still want to stick to that
+approach. Is that fine with you? Or should I include those patches
+in this series?
+
+> 
+> > 
+> > The main reason behind removing the "ENABLE" suffix is that none of
+> > the V4L2_CID_FLASH_* controls currently include "ENABLE" in their
+> > names. Altough, for example, V4L2_CID_FLASH_CHARGE performs a
+> > similar function (en-/disabling the charging of the capacitor).
+> > 
+> > On the other hand, adding "SIGNAL" to the control name, in my opinion,
+> > makes it clearer that it only enables a signal and not some kind of
+> > flash device or LED.
+> 
+> -- 
+> Kind regards,
+> 
+> Sakari Ailus
+
+Thanks again for reviewing the series!
+
+regards;rl
 
