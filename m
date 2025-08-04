@@ -1,95 +1,56 @@
-Return-Path: <linux-kernel+bounces-755504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5424B1A720
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EDBDB1A727
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:27:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DC173B6234
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:26:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 78C0117F3F1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:27:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8CAE26562D;
-	Mon,  4 Aug 2025 16:26:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Z9GcrFAx"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A50225F78F;
+	Mon,  4 Aug 2025 16:27:44 +0000 (UTC)
+Received: from relay.hostedemail.com (smtprelay0012.hostedemail.com [216.40.44.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A583D22333B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 16:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09200205E2F;
+	Mon,  4 Aug 2025 16:27:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=216.40.44.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754324768; cv=none; b=RPaPzXuTsncehirQp7vfst+BfK47f9lin79YiqLe8OuTkk8iDo3bX9YRVIEYXTXpJkYxLyPjPo0abx6EJ7ROiEevFrUw/j49o9LcbjtujwLseAON4Hz4J8ophHZ40CqtxFdsAHK1B/Uz2yXj6aJ0QNjddOi/w+fXP5gfpd9pVgc=
+	t=1754324863; cv=none; b=KsYw6UH850zVMGiQw1p4r0GCyZwKt+oaHLzLyoFqN0heTuxUtPVhFoEy2Pp3c6DIYmEQvPhgdLpQzExr0jWeeUQz5Jc9gcHBiRYamjw4AVUKyBnsaQZaLjdm9tEP9cqJ5ze8ODocnuAFhY8UKEZY/vR96KiyG/AH+a8M2620GwQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754324768; c=relaxed/simple;
-	bh=R218sPVSXYnFCGqZb+b/cH4HzZ5xrpQ7AYZGd9GOFz4=;
+	s=arc-20240116; t=1754324863; c=relaxed/simple;
+	bh=EF09fqtP01LeW6goBVIqhT4DR98n7hzKN17fkaVAe2Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=l8/XaKJCyhq1JhW7iVbZmMWvgGZKMRpGik9ZvD5dLinESy1q18PgGbum/12qQfOihzW4FoKkEQmNfrmUeqsWpvFFJpxtn16Sx9wIHwmI3PihDKQBa4vc4zv4ISmVH9av7W7kfBuFVl0VrDzY1+MHD2jWpaOVOC8kSiNS8NuDR7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Z9GcrFAx; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754324765;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=sn5uts2CJYwTpLEONTKxRvUqhKZom385WAkIxWVvqP8=;
-	b=Z9GcrFAxtJXuj8FUuIPR5L+UkiXHz/G4GENpbDZndWm29MrXP0uObyAEqwPJ1q8RrbU6dQ
-	HEJvjKspjnfb6tWoGuLoPjrehaHLnehUqt41H2nkPHuZwPBtlO8UB7O+LmVsvWyOdsjPK1
-	z2T99IfvsgcQGRxJTvxEdu/vcjkFUJA=
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com
- [209.85.166.197]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-214-leLcmhW1OkKQM9lsrSnZyA-1; Mon, 04 Aug 2025 12:26:04 -0400
-X-MC-Unique: leLcmhW1OkKQM9lsrSnZyA-1
-X-Mimecast-MFC-AGG-ID: leLcmhW1OkKQM9lsrSnZyA_1754324763
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e40d266505so5600625ab.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 09:26:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754324763; x=1754929563;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sn5uts2CJYwTpLEONTKxRvUqhKZom385WAkIxWVvqP8=;
-        b=RzT+aKp4lYTCveYo3M8r+sXsw5fwdYmrFutibJptqy4n2MK975AycgyZk9VUmKji2m
-         J9NqwH7iJG8eN4mfjOqkJ2U9KIdcGwYnMQvTFfRJVBUG2FRHt0MSRcI3FlXnOaaVAp+N
-         8szJnpGMM8YJaVdwTzoLjJaA4pTMGI/pHdBBKkBzNSAE60+KzsRIm5mg120pY0arv8HY
-         GtrkNnGfjqM75D29CWX+NM7sEwycza9jOKCeIwxSD4VMaAhaBCXRIsckCy6cwEefOuni
-         YwpeJFRHeqN+c7vCd/Yf6olBITNTvZlL9E8vYy4TQJKkiGI+k6V/cb5GR+v1kMxZc1tK
-         u+pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXDnIRlKWYEkkVDAlc7gGaYCRostNVwWZjxgMhECepFb0Me8XXSEPgsYQgsJ7/jjxKmIoMYxmeoYONNGno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwetozZykM5f6TMK0cwp9Hc2iQUaZPwTxzD8us9otflbDRs0Kb2
-	JLYsH9qb8UdCT7DtQKp2oqjWm+n7P0Sbq6Ln7Da0tCeaR3WoKy/uckIC2dp9sWItjcZdNGin/CM
-	DlgadSZDH2BZEZXRcEr42NZiVHNAJKrVkLt4bdJJm6qFV3+jN+EY1vpH4v/LSSl6kFg==
-X-Gm-Gg: ASbGncs0Rcnq401mC8i/lVAXbdXrgdAKPNlK6qzGzIYyt1sn2ukfyYFCAH6Xj3kkISP
-	oK9zUawoy+35tpplhSfZQ/fVWbjHHTjGdMR9XX78LxCP0kYp+MM9vcpPSVVxjRLcDBdWpIY2fHO
-	AIgZhqJcNWgYMUIn/Kadp6K12e4TXxHJRj9cb3bztjmSEsTbUdwVFDhP3acUneDNNlvN9Qw9QWt
-	ZJ39cbX33+p4UzmdAc9AwVWkPzPGucqZYjYyLSNiy1d4++rmNHn+f+8l463C6Pj+T/uB+sFYqvH
-	BBF8Ty2QkxMeyT6p5P6SmTyLWcFM4Ftdi4hNfQQBys0=
-X-Received: by 2002:a05:6e02:3084:b0:3dd:ce1c:f1bc with SMTP id e9e14a558f8ab-3e4161f8ab9mr48406505ab.7.1754324762657;
-        Mon, 04 Aug 2025 09:26:02 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH/PktnFn38IcDhPnUKHUSzBQWRLjAnmL+eMF8KeCeGRLPNsN/Ln/N48PmpMDQmWQ53TzUUGA==
-X-Received: by 2002:a05:6e02:3084:b0:3dd:ce1c:f1bc with SMTP id e9e14a558f8ab-3e4161f8ab9mr48406315ab.7.1754324762188;
-        Mon, 04 Aug 2025 09:26:02 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-50a55b4cfa1sm3276936173.29.2025.08.04.09.26.00
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 09:26:01 -0700 (PDT)
-Date: Mon, 4 Aug 2025 10:25:59 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Alex Mastro <amastro@fb.com>
-Cc: Jonathan Corbet <corbet@lwn.net>, Jason Gunthorpe <jgg@ziepe.ca>, Keith
- Busch <kbusch@kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-fsdevel@vger.kernel.org>, <linux-doc@vger.kernel.org>,
- <kvm@vger.kernel.org>
-Subject: Re: [PATCH v3] vfio/pci: print vfio-device syspath to fdinfo
-Message-ID: <20250804102559.5f1e8bcf.alex.williamson@redhat.com>
-In-Reply-To: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
-References: <20250801-show-fdinfo-v3-1-165dfcab89b9@fb.com>
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	 MIME-Version:Content-Type; b=J/au3iWZiwRnCNxUHyVJ1989gA+JWq3ZSryEDm2c94yJbSbuq91wNL5tDrorIVcZu4EF1HLQIwXX6wrheGR7kksrLNP9dBgWfsPY+8Ynd2XG9cN9A8kQmh3iAmr/hlc15gOF1v3F6WW/HSIXOFO8cX+vpUT+RAKSySuVb87bbME=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org; spf=pass smtp.mailfrom=goodmis.org; arc=none smtp.client-ip=216.40.44.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=goodmis.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=goodmis.org
+Received: from omf03.hostedemail.com (a10.router.float.18 [10.200.18.1])
+	by unirelay04.hostedemail.com (Postfix) with ESMTP id E66C21A06F1;
+	Mon,  4 Aug 2025 16:27:33 +0000 (UTC)
+Received: from [HIDDEN] (Authenticated sender: rostedt@goodmis.org) by omf03.hostedemail.com (Postfix) with ESMTPA id 836BE60012;
+	Mon,  4 Aug 2025 16:27:30 +0000 (UTC)
+Date: Mon, 4 Aug 2025 12:27:58 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Yunseong Kim <ysk@kzalloc.com>
+Cc: Dmitry Vyukov <dvyukov@google.com>, Andrey Konovalov
+ <andreyknvl@gmail.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+ Thomas Gleixner <tglx@linutronix.de>, Sebastian Andrzej Siewior
+ <bigeasy@linutronix.de>, Tetsuo Handa <penguin-kernel@i-love.sakura.ne.jp>,
+ Byungchul Park <byungchul@sk.com>, max.byungchul.park@gmail.com, Yeoreum
+ Yun <yeoreum.yun@arm.com>, ppbuk5246@gmail.com, linux-usb@vger.kernel.org,
+ linux-rt-devel@lists.linux.dev, syzkaller@googlegroups.com,
+ linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH 1/4] kcov: Use raw_spinlock_t for kcov->lock and
+ kcov_remote_lock
+Message-ID: <20250804122758.620f934a@gandalf.local.home>
+In-Reply-To: <20250803072044.572733-4-ysk@kzalloc.com>
+References: <20250803072044.572733-2-ysk@kzalloc.com>
+	<20250803072044.572733-4-ysk@kzalloc.com>
+X-Mailer: Claws Mail 3.20.0git84 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -98,129 +59,75 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
+X-Stat-Signature: awj7kic64tjaaeuy96udt5wcrekxqp1n
+X-Rspamd-Server: rspamout01
+X-Rspamd-Queue-Id: 836BE60012
+X-Session-Marker: 726F737465647440676F6F646D69732E6F7267
+X-Session-ID: U2FsdGVkX18PSZ92Sd1YlrqLCFU63zjNf9bl2PXkapU=
+X-HE-Tag: 1754324850-727609
+X-HE-Meta: U2FsdGVkX1+vUUB7h3a3bGTgNnCqcmk2Qtx+7UcqwCVcaEmLf2Q4d3FzOPbUiIcHrn2i+X+1vDoObYWGRvWNNhFgNt3nQTg1cPELoJywUZXIGLd3VQ6kBqzS8vFGscTyCbKTCyuSvqk/K9OEi5p9V6+B36nSVsRmn6jDfaCOjMumEgQctBYNd2hj3xPTPJzZuODvSNwfT/IsYP+EJ0K7exCBWKdnrjVy17bf093Ldvw0HDZeLRWkqV0l4xbfuUViwwdANJL9fgN5IrtiI6Fn4yqWJpPtnq+NFvs8v1C2n6rltOMPdccAVS5vL1wtofR5fBdDPDAqD7ItYnHIRrZWsfMzLbmr6REsi2uQgYtg2fQaA+Mlx1QxxbcPEy3VhieVnGnR66GDGhAf+ngI0YvGfy7VIUx+glasb+E1x4i3PnfSIJ/mq84UdYCeJkUcEeKf
 
-On Fri, 1 Aug 2025 13:50:56 -0700
-Alex Mastro <amastro@fb.com> wrote:
+On Sun,  3 Aug 2025 07:20:43 +0000
+Yunseong Kim <ysk@kzalloc.com> wrote:
 
-> Print the PCI device syspath to a vfio device's fdinfo. This enables tools
-> to query which device is associated with a given vfio device fd.
+> The locks kcov->lock and kcov_remote_lock can be acquired from
+> atomic contexts, such as instrumentation hooks invoked from interrupt
+> handlers.
 > 
-> This results in output like below:
+> On PREEMPT_RT-enabled kernels, spinlock_t is typically implemented
+
+On PREEMPT_RT is implemented as a sleeping lock. You don't need to say
+"typically".
+
+> as a sleeping lock (e.g., mapped to an rt_mutex). Acquiring such a
+> lock in atomic context, where sleeping is not allowed, can lead to
+> system hangs or crashes.
 > 
-> $ cat /proc/"$SOME_PID"/fdinfo/"$VFIO_FD" | grep vfio
-> vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
+> To avoid this, convert both locks to raw_spinlock_t, which always
+> provides non-sleeping spinlock semantics regardless of preemption model.
 > 
-> Signed-off-by: Alex Mastro <amastro@fb.com>
+> Signed-off-by: Yunseong Kim <ysk@kzalloc.com>
 > ---
-> Changes in v3:
-> - Remove changes to vfio_pci.c
-> - Add section to Documentation/filesystems/proc.rst
-> - Link to v2: https://lore.kernel.org/all/20250724-show-fdinfo-v2-1-2952115edc10@fb.com
-> Changes in v2:
-> - Instead of PCI bdf, print the fully-qualified syspath (prefixed by
->   /sys) to fdinfo.
-> - Rename the field to "vfio-device-syspath". The term "syspath" was
->   chosen for consistency e.g. libudev's usage of the term.
-> - Link to v1: https://lore.kernel.org/r/20250623-vfio-fdinfo-v1-1-c9cec65a2922@fb.com
-> ---
->  Documentation/filesystems/proc.rst | 14 ++++++++++++++
->  drivers/vfio/vfio_main.c           | 20 ++++++++++++++++++++
->  include/linux/vfio.h               |  2 ++
->  3 files changed, 36 insertions(+)
+>  kernel/kcov.c | 58 +++++++++++++++++++++++++--------------------------
+>  1 file changed, 29 insertions(+), 29 deletions(-)
 > 
-> diff --git a/Documentation/filesystems/proc.rst b/Documentation/filesystems/proc.rst
-> index 2a17865dfe39..fc5ed3117834 100644
-> --- a/Documentation/filesystems/proc.rst
-> +++ b/Documentation/filesystems/proc.rst
-> @@ -2162,6 +2162,20 @@ DMA Buffer files
->  where 'size' is the size of the DMA buffer in bytes. 'count' is the file count of
->  the DMA buffer file. 'exp_name' is the name of the DMA buffer exporter.
->  
-> +VFIO Device files
-> +~~~~~~~~~~~~~~~~
-> +
-> +::
-> +
-> +	pos:    0
-> +	flags:  02000002
-> +	mnt_id: 17
-> +	ino:    5122
-> +	vfio-device-syspath: /sys/devices/pci0000:e0/0000:e0:01.1/0000:e1:00.0/0000:e2:05.0/0000:e8:00.0
-> +
-> +where 'vfio-device-syspath' is the sysfs path corresponding to the VFIO device
-> +file.
-> +
->  3.9	/proc/<pid>/map_files - Information about memory mapped files
->  ---------------------------------------------------------------------
->  This directory contains symbolic links which represent memory mapped files
-> diff --git a/drivers/vfio/vfio_main.c b/drivers/vfio/vfio_main.c
-> index 1fd261efc582..37a39cee10ed 100644
-> --- a/drivers/vfio/vfio_main.c
-> +++ b/drivers/vfio/vfio_main.c
-> @@ -28,6 +28,7 @@
->  #include <linux/pseudo_fs.h>
->  #include <linux/rwsem.h>
->  #include <linux/sched.h>
-> +#include <linux/seq_file.h>
->  #include <linux/slab.h>
->  #include <linux/stat.h>
->  #include <linux/string.h>
-> @@ -1354,6 +1355,22 @@ static int vfio_device_fops_mmap(struct file *filep, struct vm_area_struct *vma)
->  	return device->ops->mmap(device, vma);
->  }
->  
-> +#ifdef CONFIG_PROC_FS
-> +static void vfio_device_show_fdinfo(struct seq_file *m, struct file *filep)
-> +{
-> +	char *path;
-> +	struct vfio_device_file *df = filep->private_data;
-> +	struct vfio_device *device = df->device;
-> +
-> +	path = kobject_get_path(&device->dev->kobj, GFP_KERNEL);
-> +	if (!path)
-> +		return;
-> +
-> +	seq_printf(m, "vfio-device-syspath: /sys%s\n", path);
-> +	kfree(path);
-> +}
-> +#endif
-> +
->  const struct file_operations vfio_device_fops = {
->  	.owner		= THIS_MODULE,
->  	.open		= vfio_device_fops_cdev_open,
-> @@ -1363,6 +1380,9 @@ const struct file_operations vfio_device_fops = {
->  	.unlocked_ioctl	= vfio_device_fops_unl_ioctl,
->  	.compat_ioctl	= compat_ptr_ioctl,
->  	.mmap		= vfio_device_fops_mmap,
-> +#ifdef CONFIG_PROC_FS
-> +	.show_fdinfo	= vfio_device_show_fdinfo,
-> +#endif
+> diff --git a/kernel/kcov.c b/kernel/kcov.c
+> index 187ba1b80bda..7d9b53385d81 100644
+> --- a/kernel/kcov.c
+> +++ b/kernel/kcov.c
+> @@ -54,7 +54,7 @@ struct kcov {
+>  	 */
+>  	refcount_t		refcount;
+>  	/* The lock protects mode, size, area and t. */
+> -	spinlock_t		lock;
+> +	raw_spinlock_t		lock;
+>  	enum kcov_mode		mode;
+>  	/* Size of arena (in long's). */
+>  	unsigned int		size;
+> @@ -84,7 +84,7 @@ struct kcov_remote {
+>  	struct hlist_node	hnode;
 >  };
 >  
->  static struct vfio_device *vfio_device_from_file(struct file *file)
-> diff --git a/include/linux/vfio.h b/include/linux/vfio.h
-> index 707b00772ce1..54076045a44f 100644
-> --- a/include/linux/vfio.h
-> +++ b/include/linux/vfio.h
-> @@ -16,6 +16,7 @@
->  #include <linux/cdev.h>
->  #include <uapi/linux/vfio.h>
->  #include <linux/iova_bitmap.h>
-> +#include <linux/seq_file.h>
+> -static DEFINE_SPINLOCK(kcov_remote_lock);
+> +static DEFINE_RAW_SPINLOCK(kcov_remote_lock);
+>  static DEFINE_HASHTABLE(kcov_remote_map, 4);
+>  static struct list_head kcov_remote_areas = LIST_HEAD_INIT(kcov_remote_areas);
 >  
->  struct kvm;
->  struct iommufd_ctx;
-> @@ -135,6 +136,7 @@ struct vfio_device_ops {
->  	void	(*dma_unmap)(struct vfio_device *vdev, u64 iova, u64 length);
->  	int	(*device_feature)(struct vfio_device *device, u32 flags,
->  				  void __user *arg, size_t argsz);
-> +	void	(*show_fdinfo)(struct vfio_device *device, struct seq_file *m);
->  };
+> @@ -406,7 +406,7 @@ static void kcov_remote_reset(struct kcov *kcov)
+>  	struct hlist_node *tmp;
+>  	unsigned long flags;
+>  
+> -	spin_lock_irqsave(&kcov_remote_lock, flags);
+> +	raw_spin_lock_irqsave(&kcov_remote_lock, flags);
 
-Changes in this file look spurious, vfio_device_ops vs
-vfio_device_fops?  Nothing implements or consumes the vfio_device_ops
-callback here.  Thanks,
+Not related to these patches, but have you thought about converting some of
+these locks over to the "guard()" infrastructure provided by cleanup.h?
 
-Alex
+>  	hash_for_each_safe(kcov_remote_map, bkt, tmp, remote, hnode) {
+>  		if (remote->kcov != kcov)
+>  			continue;
 
+Reviewed-by: Steven Rostedt (Google) <rostedt@goodmis.org>
+
+-- Steve
 
