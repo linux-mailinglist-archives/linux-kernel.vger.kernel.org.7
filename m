@@ -1,285 +1,218 @@
-Return-Path: <linux-kernel+bounces-754587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA66AB199C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:07:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F012FB199C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:12:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBF441766CC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:07:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B03F1896A3C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:12:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37A031DE4E5;
-	Mon,  4 Aug 2025 01:07:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A91A4E70;
+	Mon,  4 Aug 2025 01:12:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b="koKWei4q"
-Received: from OS8PR02CU002.outbound.protection.outlook.com (mail-japanwestazon11022139.outbound.protection.outlook.com [40.107.75.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="RM4OiQGk"
+Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3445614E2F2;
-	Mon,  4 Aug 2025 01:07:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.75.139
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754269650; cv=fail; b=j+wY+N07oiWl4g1wzl6oT2srLgplH4g6tQx5soWL6B+gBhMG8Hb3H4ouBEPFXpIhnwiiahdI6ZGWpKlgtX63Xf71Qqkzz4DQ4O6fljpEFgohQKbMvGI2pDgezWQQvmE6QYhbBljY7QIHl258r+n6CV2+93FpUKaU1FFv9Q7F4QA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754269650; c=relaxed/simple;
-	bh=Zlzlefx8/hOVGATW2gZFwW7t+c7+sVlGIQSFlJZ7jPs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=D2Wp0T8Swdnv9+35r44GfAZZ6jLFM/wjDCYSZQK6f17siVjncuzOKAZNvvm3Zr8/EDC8KJgcPTkcTa+F7kVM/Q0yoxXd2Rs4HpLd3wbysu0R8jUhtt8DPVa/By7o2KEaX4W0GqkkQ0kYD28DdZd1lwhpo0mdWC5/tTYjCykkX9k=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com; spf=pass smtp.mailfrom=amlogic.com; dkim=pass (2048-bit key) header.d=amlogic.com header.i=@amlogic.com header.b=koKWei4q; arc=fail smtp.client-ip=40.107.75.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amlogic.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amlogic.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=U6HXAcpZ8PUOeXxrybaxg81N7AQJDIHzJIGficr7Aw5mSeik2R5/+BqBOTFJ1BX9CD3/ktb9+9llH6+BYmuiu4nOnedB/GOnw8kxmmxjh8Ck8a7FZglXuLJReJ/FkxRc3EkLFPchfxqz3xpX6RvyXXOHAXLAcyAZIEy5Q+ijhBj8kz8hWqwBVQkSiF4hMsaKWbSC3efOF7gnZQSFnTP2CeBftAjhbl059S1hl1bVrlHSQuAHm0xnGlDB5moUgwuCGZeRJlpXe1t4mKMhIOnnsZQhtTR47hAJv0lIh+hc9uRl8BxkcU7K+TzAktBMGs6/rN7ig9sm8NiNrXbClOsnZw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=rxCHdHYnsEAGABZ/e7mcDjbZGhVlrmL/FIxQBcyvFWo=;
- b=NfHdNdCT6SJgrhyD+e+jY5PhoN5Q++6Setb9fmh8mu8VuNl0zjjm5R4GLkspIuUPTLpzcNO0G5SIT7oExl/6YaawbslM8Ie+P1VC3/UHymgCuKNGM2gQ+CeaUjVwMMgEd00FdaAy/LX/8kokzya9DdGPmlPaBiHuNqsQnKCP6U1+RCppB+I95VkfPxyjuiZ63ylX5A1erjU/Gvc1Xcx6eWPgQIU5qHL7XwLsGFTSram8ShF3gHbvsbFObVvn4zujThlEOFG0pq3rqWMqOVBRb9XIlaSTsj5BQslCiP/nmneZmFXV6dqYf78istsUxZD/Gh7kNpdi7EXBcBTTLrTaow==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amlogic.com; dmarc=pass action=none header.from=amlogic.com;
- dkim=pass header.d=amlogic.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amlogic.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=rxCHdHYnsEAGABZ/e7mcDjbZGhVlrmL/FIxQBcyvFWo=;
- b=koKWei4qgDJ8Bz4KIKgyt//wHxk2wIeTKHIzp2NXrlf48hFFCXMzqM0W+g5JPM1b3gAq/KvjCbiBl4HhZS487d1ANOg4VaMi58V7H+NWtz9KV3YSmwr9uVwmVGt80g1F+kk9OlVMcZcRO5JYc3eAac1Y0EzlkdQO41t0IiJ7HNEYQkX6rdFM42fHKNaSIyemjQDsyvb2fr+yDLeGHZqwtibK9xKvIMzshp58I5UPjBlUDE3lWsHXqCdz/XXmvxIjQCRraYJlXs91HY57VljrfGYqRe/OzUqh5px9XFDF3UhJTioN1EqfMyTd6aaIXAkAlzxunzgGIOAl38/8X7l6Jw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amlogic.com;
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com (2603:1096:990:16::12)
- by KL1PR03MB8009.apcprd03.prod.outlook.com (2603:1096:820:100::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 01:07:24 +0000
-Received: from JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd]) by JH0PR03MB7468.apcprd03.prod.outlook.com
- ([fe80::4128:9446:1a0f:11fd%4]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
- 01:07:24 +0000
-Message-ID: <4e0b2df6-1139-49df-b03b-a2f31925d52f@amlogic.com>
-Date: Mon, 4 Aug 2025 09:06:50 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] Bluetooth: iso: fix socket matching ambiguity between
- BIS and CIS
-To: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>,
- Johan Hedberg <johan.hedberg@gmail.com>, linux-bluetooth@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20250731-bis_cis_coexist-v3-1-1f9bd60ef712@amlogic.com>
- <CABBYNZJu3izq6ZhNRKjMz-mW1CcP2VAE7Xs5oq=NupnVD7aayg@mail.gmail.com>
-Content-Language: en-US
-From: Yang Li <yang.li@amlogic.com>
-In-Reply-To: <CABBYNZJu3izq6ZhNRKjMz-mW1CcP2VAE7Xs5oq=NupnVD7aayg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: SI1PR02CA0008.apcprd02.prod.outlook.com
- (2603:1096:4:1f7::14) To JH0PR03MB7468.apcprd03.prod.outlook.com
- (2603:1096:990:16::12)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D991CEAA3
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 01:11:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754269920; cv=none; b=bKT682VtQdice9pqJ5JXGpaElZpZQe1PG4z35WmaK0G/MUl2SxWfuJTpnZzzBH5VvI5nmUCsuqn6MAO1ULp/YXkIbpfc7eddfPmUzwsYTBSrXDEaMq/Q2/HY2ro3eJj6ifx+b8NjL5hFBolEqL+rTMbCNqVr6iQXxG8M5j8QDOw=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754269920; c=relaxed/simple;
+	bh=dwYOkfkrLuTx/MFAcxiCoQ08IEU73UxalscP4C3rAnE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ez0xwf0EAbIDAw9EBkt+9aMmB/yNwmnWaDIEzZxLruBOQ9BHqk0WYxEDDyzG7vWK9VBKhpeije9z/k08S1sbm95KlA3tongq+xs0Xa5dAde3UdnYRX4arNZ4X4vZfyliD2WNrRNHo1kFUt3EtO1jq2fq5osRMR0mbqb8yWFwY90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=RM4OiQGk; arc=none smtp.client-ip=209.85.160.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
+Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4abd3627e7eso50687381cf.0
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 18:11:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=soleen.com; s=google; t=1754269918; x=1754874718; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=5EHC7Bo4Tna4lRMiPBPdxLTjpzf5j4XSXmXAx1SxHbs=;
+        b=RM4OiQGkIFLaS5UHwycJ1TQqhDuJoacjpK+jIkUC0neJ8FM+vKsE49UK0vRWbSsfrn
+         XqcT62qc2J/Op99KMTZ/Rm514MwEb2KDhZkQbFzrh6Z8sW3KtCWgREvkDxFta2drPXej
+         6cgHdJF03EOzSgbtOePjfobl7gPlBWSfkesM7OjjkM9wZzNKg80qpuuPOFdMoGqgqr1L
+         bD+XD1xPgQtQu3KXqFnPJPD0rGl3S6SCB3/9GVtXAYR8hxapPY9wOaM3Pl42ewbL0Fev
+         E08IUIXbjjz7A/js+pPh2jkAMviABuaDXp6llzD/cwF0WudDjub+YPXMEOrAcjggMN++
+         8sGA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754269918; x=1754874718;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=5EHC7Bo4Tna4lRMiPBPdxLTjpzf5j4XSXmXAx1SxHbs=;
+        b=YHJUhz2tgqT4FRD11eRXykI+LjLNq7CwDl0hJatiTn0E0Tv91QBPGUSKhOsG+G0H+x
+         uBzFLoGAscuWLeDBN/WFRL7NviMp3VPprjET0e9q5l+7dr8l7Qp+mpnchwGmqKRtMwr8
+         kWGyNMoKyurQuMcak8aaz4spj28CSf6RJXdh9QfPc8Bj7bv8Zj7arN2ZlEdt+AmznoVS
+         ip4IW/PVfPN+DLwcPWQNdm3oxTA7/FFD4xEjH1o57E+hHxxt53OT/cZRdI3+gusPPWsX
+         2aAYX87Ho1F5KaBE+85od0PsL0/CrJFcWi/PDvzDVkUcpO0etJ+nG2KdPhHhPeQsGE6a
+         hKAQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8WZYu8yv3cfZl+8cS3lZR1zyHxFYHKmFb0XGi6IY8pCki5du5/8oZqC42s+pxU6a0HtHejMXmdOaV3V4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1H7NB9WL/7K+Rfqk2Ot/Mcd2ufOl7/euTnMS1SXYd5hg7U8/w
+	LjlyaJSos7UBnDJyEdUkkLsTR5WMKgeBnFh2Y6wSMMmFuxt1zxcbTDTvaD/vMys7PcNhzeHisKz
+	lWCQYMqwfAK3skfFf414tHjTzWBANv0f4zQUx1rpc/w==
+X-Gm-Gg: ASbGncuSAPP5yakl9dBVnYEQPx8QLRnDKFa6S91RjmCVGBD7kyBoxLLloREzdZO51VT
+	FZpMYr/yuAUxWSlhVMwUncR4mKoF0P3czZCEZLqQ/dsv5yt6jS1BLQU2oWgELfhfDDr9kxr5zz8
+	KcdsUaOpzCZRTvDPRBgs7MZllTV2ZCehxryI+qnvdYqqZAVJ5DgGXNymy3g31eNyrsXW9CswC9n
+	4w2FuU09c4bWe8=
+X-Google-Smtp-Source: AGHT+IElK+avqeyYUn54//o2iNNGJM5V66RJUxPCF/JnBBNYlvcJkU9/zn67Ob/Mjz52DPZ282PLlisDVXGG6S/YoQU=
+X-Received: by 2002:ac8:5a12:0:b0:4ab:7d96:bbca with SMTP id
+ d75a77b69052e-4af1098b133mr128405741cf.24.1754269917325; Sun, 03 Aug 2025
+ 18:11:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: JH0PR03MB7468:EE_|KL1PR03MB8009:EE_
-X-MS-Office365-Filtering-Correlation-Id: d025abec-f359-4e87-4268-08ddd2f34550
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WVdCUjIzelNkQ1kzalB4VE9rSkdkVGw4UjcwYjJjcEtvdFhqVUZ6ak5iZ0k3?=
- =?utf-8?B?RWFFb3JjYnhIZWF5eUY3d05UR29yZytqV1p6QW1VTGVOQUNGN0RvelBvaGdq?=
- =?utf-8?B?ZmErRXMrbDJkeThaalV6bkZYUUpaRVBobXNxUUdQVDZSTG5wY3pQcTRQRHZB?=
- =?utf-8?B?NTB6OVJFZ2p2cDRKTUVOMTAxci9oN1I5WFJ0bmJKZEl0OVl4eUFIejJxMlEw?=
- =?utf-8?B?RERRSzFVbnQ4OEpiaEZVNzJRM3MwcTNwZjRDMHBxQXRxMDF4cVU5UWZoTHFT?=
- =?utf-8?B?ejFxdEZ4bDhnN1V1MU9wNlRBTUZwMGVsZjBObFRaU0NYZ2k5WlRyRjdPZkxn?=
- =?utf-8?B?UDNPdndncFZFbDIwbjJ0MWhjVUNHaHV4UzBVemk1VUw4NFZSVzVVUXpoMkpi?=
- =?utf-8?B?Skc5Q0o3WklrNktmNlM5NlRwZFRFa2RXd0pKRW8zdVR1cDZENnZwaXpIMmd4?=
- =?utf-8?B?b21jcTRVQVJEL052cUEyVFVIbGZpcUFMZVBXNE0xUmU3cm9wdUE3WE50WGRR?=
- =?utf-8?B?SEZFM3djekZOMGY5U3pLbUZxK0RISkdzeWNHblg4VUhvKy9uc2FDVHg4OTVi?=
- =?utf-8?B?clZ6bVMrUHRXL2pBSkhwek1ZemhybnAwa1drVEpoRHNBbytNTEVJT0xsS3hn?=
- =?utf-8?B?MGVsNmFCaERuZ1U0SnhCSHpjb2JXTGxiZGxuTWhiMnY5aTByZGhTaDJsVzM0?=
- =?utf-8?B?MEs3MVFjL25md012anU0RkVxUzJLM3J2OEUyZWpWRDFrcklmUFMrbW9QcUJI?=
- =?utf-8?B?dWFXSnd0MHgzY29BZVd0c3YraElUMi8vTGlvWk9wanpqNCtxdlNSOC96bk8y?=
- =?utf-8?B?anYwV2Y4Vlp1bzRHd3BNTHBjL1ZCVlpBWXYxU1lXaE13QVNnQ0RzTEx6UUh3?=
- =?utf-8?B?THk2Qy9yQTIxQWd5OENCVXY0cjJmNjhjcUkxOVM0b1FrRUd2WEp5RnQzTk9W?=
- =?utf-8?B?TS85RXZ1eDZONFJHWVZsbDFtWVhMYkdkR2JVbnBnMkdCWWVGKzJibWdJN3pM?=
- =?utf-8?B?czM0MGJheUgwbmJJWVA0UzR3dXloQ0VwNDVmdURBeUNEVFRjaTJyTG44VEJR?=
- =?utf-8?B?STcxNnlVUjFSR3BtMmNzaStkYXc1QTYyR2tZRXgzd1k3bUJJemdvZG1MdUxw?=
- =?utf-8?B?M3RVVEp5TW42R21JVTB2QUhGMVZtMEpjVG1ySUh4T3lFYVpLQncvYnZPVzZw?=
- =?utf-8?B?ZmkxN2s2NlAyQTJiWm5JcnplKy9pZFFNOTJVSUQyZDY4UFZNbitQL0g3dmh1?=
- =?utf-8?B?T0ZUT0hCSzVYb1ZWejYwMkdRalNDQnNPdVJPY00xNk5HdU8vby9IL2xta011?=
- =?utf-8?B?T0xFVGtIbkk1YnVOOXU5MVpJLzFMSmxSSjZmUWVKSkdEMGh0b29kdEk2N3pS?=
- =?utf-8?B?MHhhMEY1TXlvcHUzajRGaHhlaEVQSnlrbUdGeUZ2alNKYTN0c1FqNnZxeVRu?=
- =?utf-8?B?dktIWWhhVGd3WjNWTkJUMEdpSEZXRFdQenZEZ1JyUUJNZTBXejU1aGJ5TU16?=
- =?utf-8?B?VXM0Wm95aXFSUXBYNmZYcEowVnlFNUE3OEFlT2xSbWthOWRNNFhhSUhVdWwr?=
- =?utf-8?B?dGJsdW5JMzVqb0JGUEdNWnJQa3dMYk5nbC9DZWpxY1lrb2pRYWM0M3pCMUZm?=
- =?utf-8?B?SWRhQkV5N0VxMHFITU1zQzR3MHRHUmNXNGJaMFd3dy9NbFNXTytYbjg4S1BL?=
- =?utf-8?B?aWtyNGMwb1p2cWFtRjJDNnExT2FjMGdIaDRMempIWUI2QXdPUVVTMndKeHlX?=
- =?utf-8?B?eDA5a2lpN2ozNGFhQ0FhOGhTNG0yRHpKSlhxZjBMdWJpR3dsNHB0OEJmdWhN?=
- =?utf-8?B?bnB5MkxWR2g0VHJCQjdnbTJMMjBsK3hEWldDaTZiTWJ4WGtILzVlc1BMZEZR?=
- =?utf-8?B?c1NMQkxvTWZZZWVDVUhQVEZrblhmWUh6dU9jbzF3R2FaTGE1bGNXdDN1RElE?=
- =?utf-8?Q?2iJF9AW5hEo=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:JH0PR03MB7468.apcprd03.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?bDlTU3cyT0tzWC9OUjlnaVZNdVFkY3pVZEJUejVtVnBNamZDMlhURTh0YlRH?=
- =?utf-8?B?N2hUMTk2RWZyZmxYSjQ2ZDBreUVDR09ZSHlWUDJ4YUFzb3Z6TDFOcjJUNXpL?=
- =?utf-8?B?MkRVd0FwNXlnK1NNUTJzTHNKejc4MG5uZmJiczVWcGZTei9LUVorQUhtRHJV?=
- =?utf-8?B?enl3MTdkRmUyUlR6SDR6ZXd3MXFiUEpIVG44ZVhJcXhwODFxOFMyZDF0NWhQ?=
- =?utf-8?B?Zm1pdUR4NHppQjYrOCt2SnA1bmVyUm1QcnNZRzBmLzB1SXlyNjdaU0tkaDZs?=
- =?utf-8?B?YVFOQ0wwRWxyOGh5S3FsZXViTDExaTUzM3FhSmw2bGdLV2V6YzJ0WllSdDYw?=
- =?utf-8?B?bi9NMm9WK09BMUxQcHVvRmZxalBRektpM0hpcHNMYnpkZXRWd1NlZGxOOTJF?=
- =?utf-8?B?ZWtSRVJ3dmxuRU9iSDByM3o0OEk2V0xSZlI3NzZ4VUVGc2I3dElzWDg5UGwx?=
- =?utf-8?B?U3Z0N2lUZXlSVWdkTCtqbWJ2R1VOeU5NT3F4NDU0WGp3MTE3OXcyeG5WbHUx?=
- =?utf-8?B?bGtyYWxjemF5NzNKbVNYQkYwTCtTNWtRTzhSUFdOY2NsK0YrakxkbnZpU1Zo?=
- =?utf-8?B?N3VnZXVHUWFVeDY1VWN6T1ljSXBDT3FhZXp5WGI5NGRQVFZEVE84d1NsSENi?=
- =?utf-8?B?YS84a3p2d0JtcS94YkNDWnRLYkc5U1VNNzFpeUdMODBySHZ3enhJV3dxVFd4?=
- =?utf-8?B?MGcwOVk1Q3RQWE5kdzdxMlB6Zmh3Y3VlUnB1a3NPbVpleTkxYTlObk5sWlFk?=
- =?utf-8?B?bHdKSlN2c1NPdzFZQ1ovNmFzZHZaS2I4THRHV1Rxei9TbzhpKytkY1BpeFlT?=
- =?utf-8?B?bkg2aEFEU0NRK2JzOWFhdXBGZ2YwUVBzM1BnNndORFlpSHZEZ2hoWE8yNkhF?=
- =?utf-8?B?L2FIalIrWlJrdHh4NnUxZ2d0SjRqM1krNnFxNlYwMzF5cVVyVWpYQXRVWUo0?=
- =?utf-8?B?ZUp1OHJ3bTd5eDZWZkRUaU9sbi9BUWhaVlhEZU51NktGc3NPbWFXSERqRFdE?=
- =?utf-8?B?ejIweXRrNDQzbTZwMUhwODNGUGlDL0RkekFVQXdnNFVJZDZCczRJekp3NjAz?=
- =?utf-8?B?RHp5bk1FdnlBQjZ6K21DaXBWQ3o2ZkVxL3QvZkZmUWtWdFVjbWtSczNmdlBF?=
- =?utf-8?B?Nm5KWWN6Um1QTjkvZnJyUEJrc3V4UkprcTFsMlltRWJPOFBwQm1iQ250OWdB?=
- =?utf-8?B?Q0dEMU5KbG5xS2IrY0NST0lrY3dZN0NvcHFMQURsZGtUcjd4dnVxQW5YOUYz?=
- =?utf-8?B?dXhqMDRHVWdFUXBnd2U3aFppY2Y4VjE1OHFpdWFacUdLaEorOXVFR1N6WnNY?=
- =?utf-8?B?ZjVWY0JlZFdESDhwUHhBcHpRZFRTa3NXN3pxbUhTVlRaMHZpZThadU1SVEFB?=
- =?utf-8?B?dHdBNGJnM0syUzhRSkczbVpzVTYvaGhRS0FKcnVESGg3djV2cEwrZXF6aFFr?=
- =?utf-8?B?S0p3ZmR4VlV5enRKZW9abFh1MW1ReGZWaC8vQmhVaEQrQVk0UGkyeVJLYmVP?=
- =?utf-8?B?RVBEL3MweTZwMzBBSlNybmRDdm1rcnA5cFhBL2xtT3FpRHdnWlVGZWcvTy9n?=
- =?utf-8?B?WDVjRG1DSWdOUGJFWEFQUi9lUFBOeDk0eU1MS0kxVmdzVE1qbk93RmgvSkJs?=
- =?utf-8?B?UXJLZk1mcTUreDNtN1NDSGlpb05kWDBuWE9rK1N5YmgrOTF2alBvdFRtU29X?=
- =?utf-8?B?Zks3ZGRHNUIyRjFWdEowSDZoOUd5U3BpWVpIbFhveWg3aDB3b0xjdVFRS0NY?=
- =?utf-8?B?SXU5VVNXYnJwdGRjYlJneUIrYmVsRVhReDhGRHJOeDlORzFnb2Z5eVI3UjN5?=
- =?utf-8?B?L0JLbTZ4Sko2ck41Z0x4aGd3eWJoTUVaOFg5U1JRKzc4SGY1eVZpUFVGMHR4?=
- =?utf-8?B?YjFxbC9aczE5WmxiNVJBVzU4Nnl1S21jZzgrOGtHSXd4N09aZHFENWRINk5v?=
- =?utf-8?B?OHN6SVVoaElVbENiRVRYUGlieFVJM3QxODJDL1djWUQvcE02R1k0N3NpZ00w?=
- =?utf-8?B?Ty9ub1c2dlE5VHdodWVRUU5kQUNkbWVzTDJoU1pzbndVTDAraTRIZDV4NmFs?=
- =?utf-8?B?NkhPeXdSSmh6OE1SZG11b1dJQ1VsWW05Ukx6TEtBQndoQWkreDlFb3dXc0pN?=
- =?utf-8?Q?2cylP/upBdY6S5hjFdNwgx9hb?=
-X-OriginatorOrg: amlogic.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d025abec-f359-4e87-4268-08ddd2f34550
-X-MS-Exchange-CrossTenant-AuthSource: JH0PR03MB7468.apcprd03.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 01:07:23.9705
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 0df2add9-25ca-4b3a-acb4-c99ddf0b1114
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 3PXMXUddq2CrTs5Q9xwZWYZlEgaA7cVR9PcaXktooeUXX3EtB78jBX51LeO3IY/xBl7PgS+bdFcJTBOir6jXLg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: KL1PR03MB8009
+References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
+ <20250723144649.1696299-11-pasha.tatashin@soleen.com> <20250729172812.GP36037@nvidia.com>
+In-Reply-To: <20250729172812.GP36037@nvidia.com>
+From: Pasha Tatashin <pasha.tatashin@soleen.com>
+Date: Sun, 3 Aug 2025 21:11:20 -0400
+X-Gm-Features: Ac12FXyfTkQo6Oo5aMdGv4BzhEny3uN9Ow76q668n06TlX48YEn8zjMHGbMDq6Q
+Message-ID: <CA+CK2bCrfVef_sFWCQpdwe9N_go8F_pU4O-w+XBJZ6yEuXRj9g@mail.gmail.com>
+Subject: Re: [PATCH v2 10/32] liveupdate: luo_core: Live Update Orchestrator
+To: Jason Gunthorpe <jgg@nvidia.com>
+Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
+	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
+	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
+	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
+	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
+	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
+	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
+	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
+	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
+	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
+	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
+	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
+	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
+	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
+	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
+	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
+	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
+	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
+	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
+	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
+	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
+	leonro@nvidia.com, witu@nvidia.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Luiz,
-> [ EXTERNAL EMAIL ]
+> > +enum liveupdate_event {
+> > +     LIVEUPDATE_PREPARE,
+> > +     LIVEUPDATE_FREEZE,
+> > +     LIVEUPDATE_FINISH,
+> > +     LIVEUPDATE_CANCEL,
+> > +};
 >
-> Hi Yang,
+> I saw a later patch moves these hunks, that is poor patch planning.
+
+Yes, you're right. I have since moved this to uapi/linux/liveupdate.h
+in the introductory patch to improve the structure of the patch
+series.
+
+> Ideally an ioctl subsystem should start out with the first patch
+> introducing the basic cdev, file open, ioctl dispatch, ioctl uapi
+> header and related simple infrastructure.
+
+I have modified the patch series as follows: The rudimentary parts of
+the cdev, including the uapi/liveupdate.h header, are now in this
+introductory patch. The rest of the ioctl interface is added in the
+old patch that introduced luo_ioctl.c.
+
+> Then you'd go basically ioctl by ioctl adding the new ioctls and
+> explaining what they do in the patch commit messages.
 >
-> On Thu, Jul 31, 2025 at 4:00 AM Yang Li via B4 Relay
-> <devnull+yang.li.amlogic.com@kernel.org> wrote:
->> From: Yang Li <yang.li@amlogic.com>
->>
->> When both BIS and CIS links exist, their sockets are in
->> the BT_LISTEN state.
-> We probably need to introduce tests to iso-test that setup both then
-> to avoid reintroducing the problem.
-
-
-Since the coexistence of BIS sink and CIS sink is determined by 
-application-level logic, it may be difficult to reproduce this scenario 
-using iso-test.
-
-Do you have any suggestions on how to simulate or test this case more 
-effectively?
-
+> > +/**
+> > + * liveupdate_state_updated - Check if the system is in the live update
+> > + * 'updated' state.
+> > + *
+> > + * This function checks if the live update orchestrator is in the
+> > + * ``LIVEUPDATE_STATE_UPDATED`` state. This state indicates that the system has
+> > + * successfully rebooted into a new kernel as part of a live update, and the
+> > + * preserved devices are expected to be in the process of being reclaimed.
+> > + *
+> > + * This is typically used by subsystems during early boot of the new kernel
+> > + * to determine if they need to attempt to restore state from a previous
+> > + * live update.
+> > + *
+> > + * @return true if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state,
+> > + * false otherwise.
+> > + */
+> > +bool liveupdate_state_updated(void)
+> > +{
+> > +     return is_current_luo_state(LIVEUPDATE_STATE_UPDATED);
+> > +}
+> > +EXPORT_SYMBOL_GPL(liveupdate_state_updated);
 >
->> dump sock:
->>    sk 000000001977ef51 state 6
->>    src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
->>    sk 0000000031d28700 state 7
->>    src 10:a5:62:31:05:cf dst00:00:00:00:00:00
->>    sk 00000000613af00e state 4   # listen sock of bis
->>    src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
->>    sk 000000001710468c state 9
->>    src 10:a5:62:31:05:cf dst 54:00:00:d4:99:30
->>    sk 000000005d97dfde state 4   #listen sock of cis
->>    src 10:a5:62:31:05:cf dst 00:00:00:00:00:00
->>
->> To locate the CIS socket correctly, check both the BT_LISTEN
->> state and whether dst addr is BDADDR_ANY.
->>
->> Link: https://github.com/bluez/bluez/issues/1224
->>
->> Signed-off-by: Yang Li <yang.li@amlogic.com>
->> ---
->>   net/bluetooth/iso.c | 9 +++++++--
->>   1 file changed, 7 insertions(+), 2 deletions(-)
->>
->> diff --git a/net/bluetooth/iso.c b/net/bluetooth/iso.c
->> index eaffd25570e3..9a4dea03af8c 100644
->> --- a/net/bluetooth/iso.c
->> +++ b/net/bluetooth/iso.c
->> @@ -1919,6 +1919,11 @@ static bool iso_match_pa_sync_flag(struct sock *sk, void *data)
->>          return test_bit(BT_SK_PA_SYNC, &iso_pi(sk)->flags);
->>   }
->>
->> +static bool iso_match_dst(struct sock *sk, void *data)
->> +{
->> +       return !bacmp(&iso_pi(sk)->dst, (bdaddr_t *)data);
->> +}
->> +
->>   static void iso_conn_ready(struct iso_conn *conn)
->>   {
->>          struct sock *parent = NULL;
->> @@ -1981,7 +1986,7 @@ static void iso_conn_ready(struct iso_conn *conn)
->>
->>                  if (!parent)
->>                          parent = iso_get_sock(&hcon->src, BDADDR_ANY,
->> -                                             BT_LISTEN, NULL, NULL);
->> +                                             BT_LISTEN, iso_match_dst, BDADDR_ANY);
->>
->>                  if (!parent)
->>                          return;
->> @@ -2220,7 +2225,7 @@ int iso_connect_ind(struct hci_dev *hdev, bdaddr_t *bdaddr, __u8 *flags)
->>                  }
->>          } else {
->>                  sk = iso_get_sock(&hdev->bdaddr, BDADDR_ANY,
->> -                                 BT_LISTEN, NULL, NULL);
->> +                                 BT_LISTEN, iso_match_dst, BDADDR_ANY);
-> Perhaps we should add helper function that wrap the iso_get_sock (e.g.
-> iso_get_sock_cis and iso_get_sock_bis) to make it clearer what is the
-> expected socket type, also if the hcon has been set perhaps that
-> should be matched as well with CIS_LINK/BIS_LINK, or perhaps we
-> introduce a socket type to differentiate since the use of the address
-> can make the logic a little confusing when the socket types are mixed
-> together.
->
-> Now looking at the source code perhaps we can have a separate list for
-> cis and bis sockets instead of global iso_sk_list (e.g. cis_sk_list
-> and bis_sk_list), that way we don't need a type and there is no risk
-> of confusing the sockets since they would never be in the same list.
+> Unless there are existing in tree users there should not be exports.
 
+Thank you, I have removed the exports from this patch and all others
+in the series.
 
-Alright, I will give it a try.
+> I'm also not really sure why there is global state, I would expect the
+> fd and session objects to record what kind of things they are, not
+> having weird globals.
 
+Having a global state is necessary for performance optimizations. This
+is similar to why we export the state to userspace via sysfs: it
+allows other subsystems to behave differently during a
+performance-optimized live update versus a normal boot.
+
+For example, in our code base we have a driver that doesn't
+participate in the live update itself (it has no state to preserve).
+However, during boot, it checks this global state. If it's a live
+update boot, the driver skips certain steps, like loading firmware, to
+accelerate the overall boot time.
+
+In other words, even before userspace starts, this global awareness
+enables optimizations that aren't necessary during a cold boot or a
+regular kexec.
+
+> Like liveupdate_register_subsystem() stuff, it already has a lock,
+> &luo_subsystem_list_mutex, if you want to block mutation of the list
+> then, IMHO, it makes more sense to stick a specific variable
+> 'luo_subsystems_list_immutable' under that lock and make it very
+> obvious.
 >
->>          }
->>
->>   done:
->>
->> ---
->> base-commit: 9c533991fe15be60ad9f9a7629c25dbc5b09788d
->> change-id: 20250731-bis_cis_coexist-717a442d5c42
->>
->> Best regards,
->> --
->> Yang Li <yang.li@amlogic.com>
->>
->>
+> Stuff like luo_files_startup() feels clunky to me:
 >
-> --
-> Luiz Augusto von Dentz
+> +       ret = liveupdate_register_subsystem(&luo_file_subsys);
+> +       if (ret) {
+> +               pr_warn("Failed to register luo_file subsystem [%d]\n", ret);
+> +               return ret;
+> +       }
+> +
+> +       if (liveupdate_state_updated()) {
+>
+> Thats going to be a standard pattern - I would expect that
+> liveupdate_register_subsystem() would do the check for updated and
+> then arrange to call back something like
+> liveupdate_subsystem.ops.post_update()
+>
+> And then post_update() would get the info that is currently under
+> liveupdate_get_subsystem_data() as arguments instead of having to make
+> more functions calls.
+>
+> Maybe even the fdt_node_check_compatible() can be hoisted.
+>
+> That would remove a bunch more liveupdate_state_updated() calls.
+
+That's a good suggestion for a potential refactor. For now, the
+state-check call is inexpensive and is not in a performance-critical
+path. We can certainly implement this optimization later if it becomes
+necessary.
+
+Thank you,
+Pasha
 
