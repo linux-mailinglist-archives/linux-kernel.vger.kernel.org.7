@@ -1,248 +1,181 @@
-Return-Path: <linux-kernel+bounces-755699-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755700-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D35B1AA8E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:52:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01D0DB1AA90
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:53:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 70A283BC33C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:52:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12AF189D12E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:53:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A7BA23A99F;
-	Mon,  4 Aug 2025 21:52:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EAC231853;
+	Mon,  4 Aug 2025 21:53:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sRkCIw47"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhVX7RrR"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 873E1634;
-	Mon,  4 Aug 2025 21:52:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D96634;
+	Mon,  4 Aug 2025 21:53:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754344349; cv=none; b=d1IeqrUJNwqcOyAIAosvbI0fkW9Le0g8ENWfOfFzpaD3Qs6u4m5EzQx01k402nA9vVLm8bqyVbET1Hz74r1YePGNxfGlo+MHf1S9rppGFAn4qk2QU4kQRxTtAdyEiy86Q3b19W6eV7KBAu/xG1XdJjTRA1ST5JbApex9wa5d8dw=
+	t=1754344396; cv=none; b=JY19WJMP0P8uXWPh1I0suPRA1ZR6rn9bOGDgwaN03TBMLgw0O7LkDZCa2hf55MQ7IY1SlNdEV6nADaCD+1SZVUaoYN/e8vmRD1JLBGFBeXflbrVy3XipAzo1qhghxTsZ+8wZa/60jIYKrz4g8NjkpXuNTXQ8yh5OCnmdP319Cpw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754344349; c=relaxed/simple;
-	bh=rLV4kTNP6xbv8+l9VQYq3ZMbQ7UGSERvE+LOo6qumgw=;
+	s=arc-20240116; t=1754344396; c=relaxed/simple;
+	bh=DqQc52n1vg12mNdpcx30L6XUIeLteBpaJofEOQYBDuo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=JOYOT53YbKlNM0GOzU5/mQ9r7ZknrnfOQK2M6bSq/nVeYD7Ao+oQRX4DiOvSxX3gUQRgFXf0dTRHh4AouuRdS/ISPvxaJCLYHaQgP/bue1P26fgsSRzXtkj3XCqYm4T5DT6+ztj7wBtbh12OAD516XyVCxTf29NV/3yxMfwhgJA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sRkCIw47; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E16CAC4CEE7;
-	Mon,  4 Aug 2025 21:52:28 +0000 (UTC)
+	 Content-Disposition; b=uPu7RjLu5hLP5rX8T+PkmQFoBb/PFhqlpGLnS8q8W5GrdObVk66+7XAMGssiMfxTh7Zgt8gwlflrEVLoDOY4w8Grp7OWhYZAfEoEnfiApzIUkeOhCLfnHk8+Eru5wJhaqqgqhpgSaMGsgpfOQxDIvmxBuEQ8JRUFQe6nbhzj8PA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhVX7RrR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BDDC4CEF7;
+	Mon,  4 Aug 2025 21:53:15 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754344349;
-	bh=rLV4kTNP6xbv8+l9VQYq3ZMbQ7UGSERvE+LOo6qumgw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=sRkCIw47ngdZqhotgjMx0Hc3pct7iRy+6IBEsglcb1owbtPEzcDnfgmG9gMFqcJtE
-	 br3ebBqK4IaZ81FTfBcvluLir0RotKHxzvpk/rs28Es19/6ObovFSQtnFNLbEdvTmS
-	 2WpIfk7TbIwoXDTEZK2g/sh0keWzLflnYw5PE0RtweU4iGmNQ+whplYNsY2eKJDYKz
-	 t/dSAxhSJq1VvkkHiX0FSUTjldCkzNkgkSJq3AJWxVKKZJXabbrEV8FPCWxSxNlo7X
-	 oU+/Gh09jXjRjbAcxaznTPYVfsbU42mfIOfLxVU5MopScM67vTUyGo9fyggA0hb4DG
-	 UjLfgtf3hoHdQ==
-Date: Mon, 4 Aug 2025 16:52:27 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 03/38] tsm: Move dsm_dev from pci_tdi to pci_tsm
-Message-ID: <20250804215227.GA3643759@bhelgaas>
+	s=k20201202; t=1754344395;
+	bh=DqQc52n1vg12mNdpcx30L6XUIeLteBpaJofEOQYBDuo=;
+	h=Date:From:To:Cc:Subject:From;
+	b=bhVX7RrR4SPuL3stL7G94KLhdYbnjBjosKFkrRDmPXlZMyj+uyMNccvFp5mLl4ZEi
+	 yoYMFBFrikcdocVvwKvFGonZ0cN1PsEVjL4QW11xCkvBRQN1rD1u8iiUKsbweoNSyO
+	 +kZy4QrmlveOwS67ZvnDZVNOBuKFKUm17Wb5Wobu9/JjVbD0ETvHwlWusy20KhPixA
+	 LO5kbbefPW5TdyGRPxEwl9t/mcyTi6o+lzi6R0jyQsEt6GdEz0SyZYJNNYuCWrz5Eh
+	 zBAi5TxbOGuYLldPN43My9DgcGsoUl8Bm9N7KqBrGwt+wOuYylcHYEAqQpWusvxa6y
+	 3OVSY3FAK1xVg==
+Date: Mon, 4 Aug 2025 23:53:12 +0200
+From: Wolfram Sang <wsa@kernel.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	Andi Shyti <andi.shyti@kernel.org>
+Subject: [PULL REQUEST] i2c-for-6.17-rc1-part2
+Message-ID: <aJEryLi_zEByKKd0@shikoro>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="jJLZI14B3zJ4wR5a"
 Content-Disposition: inline
-In-Reply-To: <20250728135216.48084-4-aneesh.kumar@kernel.org>
 
-On Mon, Jul 28, 2025 at 07:21:40PM +0530, Aneesh Kumar K.V (Arm) wrote:
 
-Subject line should include "PCI" prefix.
+--jJLZI14B3zJ4wR5a
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Needs a commit log, even if it repeats what's in the subject.  Would
-also be good to know *why* this is desirable.
+Linus,
 
-> Signed-off-by: Aneesh Kumar K.V (Arm) <aneesh.kumar@kernel.org>
-> ---
->  drivers/pci/tsm.c       | 72 ++++++++++++++++++++++++-----------------
->  include/linux/pci-tsm.h |  4 +--
->  2 files changed, 45 insertions(+), 31 deletions(-)
-> 
-> diff --git a/drivers/pci/tsm.c b/drivers/pci/tsm.c
-> index 794de2f258c3..e4a3b5b37939 100644
-> --- a/drivers/pci/tsm.c
-> +++ b/drivers/pci/tsm.c
-> @@ -415,15 +415,55 @@ static enum pci_tsm_type pci_tsm_type(struct pci_dev *pdev)
->  	return PCI_TSM_INVALID;
->  }
->  
-> +/* lookup the Device Security Manager (DSM) pf0 for @pdev */
+a few more patches from I2C. Some are fixes which would be nice to have
+in rc1 already, some patches have nearly been fallen through the cracks,
+some just needed a bit more testing.
 
-s/lookup/Look up/ (it's a verb here)
- 
-> +static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
-> +{
-> +	struct pci_dev *uport_pf0;
-> +
+Please pull.
 
-Remove this blank line ...
+   Wolfram
 
-> +	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
 
-and add one here.
+The following changes since commit 186f3edfdd41f2ae87fc40a9ccba52a3bf930994:
 
-> +	if (!pf0)
-> +		return NULL;
-> +
-> +	if (pf0 == pdev)
-> +		return no_free_ptr(pf0);
-> +
-> +	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
-> +	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
-> +		return no_free_ptr(pf0);
-> +
-> +	/*
-> +	 * For cases where a switch may be hosting TDISP services on
-> +	 * behalf of downstream devices, check the first usptream port
-> +	 * relative to this endpoint.
+  Merge tag 'pinctrl-v6.17-1' of git://git.kernel.org/pub/scm/linux/kernel/=
+git/linusw/linux-pinctrl (2025-08-02 12:07:09 -0700)
 
-s/usptream/upstream/
+are available in the Git repository at:
 
-> +	 */
-> +	if (!pdev->dev.parent || !pdev->dev.parent->parent)
-> +		return NULL;
-> +
-> +	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
-> +	if (!uport_pf0->tsm)
-> +		return NULL;
-> +	return pci_dev_get(uport_pf0);
-> +}
-> +
->  /**
->   * pci_tsm_initialize() - base 'struct pci_tsm' initialization
->   * @pdev: The PCI device
->   * @tsm: context to initialize
->   */
-> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
-> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm)
->  {
-> +	struct pci_dev *dsm_dev __free(pci_dev_put) = dsm_dev_get(pdev);
-> +	if (!dsm_dev)
-> +		return -EINVAL;
-> +
->  	tsm->type = pci_tsm_type(pdev);
->  	tsm->pdev = pdev;
+  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
+6.17-rc1-part2
 
-Add blank line before comment.
+for you to fetch changes up to 33ac5155891cab165c93b51b0e22e153eacc2ee7:
 
-> +	/*
-> +	 * No reference needed because when we destroy
-> +	 * dsm_dev all the tdis get destroyed before that.
+  i2c: muxes: mule: Fix an error handling path in mule_i2c_mux_probe() (202=
+5-08-03 22:47:57 +0200)
 
-"tdi" looks like an initialism, which would normally be capitalized.
+----------------------------------------------------------------
+i2c-for-6.17-rc1-part2
 
-> +	 */
-> +	tsm->dsm_dev = dsm_dev;
-> +	return 0;
->  }
->  EXPORT_SYMBOL_GPL(pci_tsm_initialize);
->  
-> @@ -447,7 +487,8 @@ int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm)
->  	}
->  
->  	tsm->state = PCI_TSM_INIT;
-> -	pci_tsm_initialize(pdev, &tsm->tsm);
-> +	if (pci_tsm_initialize(pdev, &tsm->tsm))
-> +		return -ENODEV;
->  
->  	return 0;
->  }
-> @@ -612,32 +653,6 @@ int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
->  }
->  EXPORT_SYMBOL_GPL(pci_tsm_doe_transfer);
->  
-> -/* lookup the Device Security Manager (DSM) pf0 for @pdev */
-> -static struct pci_dev *dsm_dev_get(struct pci_dev *pdev)
-> -{
-> -	struct pci_dev *uport_pf0;
-> -
-> -	struct pci_dev *pf0 __free(pci_dev_put) = pf0_dev_get(pdev);
-> -	if (!pf0)
-> -		return NULL;
-> -
-> -	/* Check that @pf0 was not initialized as PCI_TSM_DOWNSTREAM */
-> -	if (pf0->tsm && pf0->tsm->type == PCI_TSM_PF0)
-> -		return no_free_ptr(pf0);
-> -
-> -	/*
-> -	 * For cases where a switch may be hosting TDISP services on
-> -	 * behalf of downstream devices, check the first usptream port
-> -	 * relative to this endpoint.
-> -	 */
-> -	if (!pdev->dev.parent || !pdev->dev.parent->parent)
-> -		return NULL;
-> -
-> -	uport_pf0 = to_pci_dev(pdev->dev.parent->parent);
-> -	if (!uport_pf0->tsm)
-> -		return NULL;
-> -	return pci_dev_get(uport_pf0);
-> -}
+- acpi: enable 100kHz workaround for DLL0945
+- apple: add support for Apple A7=E2=80=93A11, T2 chips; Kconfig update
+- mux: mule: fix error handling path
+- qcom-geni: fix controller frequency mapping
+- stm32f7: add DMA-safe transfer support
+- tegra: use controller reset if device reset is missing
+- tegra: remove unnecessary dma_sync*() calls
 
-This code move looks like it could be a separate patch that only moves
-(and fixes the typos I mentioned).
+----------------------------------------------------------------
+Akhil R (2):
+      i2c: tegra: Use internal reset when reset property is not available
+      i2c: tegra: Remove dma_sync_*() calls
 
-Then a second patch could do what the subject claims (moving dsm_dev
-from pci_tdi to pci_tsm) so it's not buried in the simple move.
+Christophe JAILLET (1):
+      i2c: muxes: mule: Fix an error handling path in mule_i2c_mux_probe()
 
->  /* Only implement non-interruptible lock for now */
->  static struct mutex *tdi_ops_lock(struct pci_dev *pf0_dev)
-> @@ -695,7 +710,6 @@ int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id)
->  		return -ENXIO;
->  
->  	tdi->pdev = pdev;
-> -	tdi->dsm_dev = dsm_dev;
->  	tdi->kvm = kvm;
->  	pdev->tsm->tdi = tdi;
->  
-> diff --git a/include/linux/pci-tsm.h b/include/linux/pci-tsm.h
-> index 1920ca591a42..0d4303726b25 100644
-> --- a/include/linux/pci-tsm.h
-> +++ b/include/linux/pci-tsm.h
-> @@ -38,7 +38,6 @@ enum pci_tsm_type {
->   */
->  struct pci_tdi {
->  	struct pci_dev *pdev;
-> -	struct pci_dev *dsm_dev;
->  	struct kvm *kvm;
->  };
->  
-> @@ -56,6 +55,7 @@ struct pci_tdi {
->   */
->  struct pci_tsm {
->  	struct pci_dev *pdev;
-> +	struct pci_dev *dsm_dev;
->  	enum pci_tsm_type type;
->  	struct pci_tdi *tdi;
->  };
-> @@ -173,7 +173,7 @@ void pci_tsm_core_unregister(const struct pci_tsm_ops *ops);
->  int pci_tsm_doe_transfer(struct pci_dev *pdev, enum pci_doe_proto type,
->  			 const void *req, size_t req_sz, void *resp,
->  			 size_t resp_sz);
-> -void pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
-> +int pci_tsm_initialize(struct pci_dev *pdev, struct pci_tsm *tsm);
->  int pci_tsm_pf0_initialize(struct pci_dev *pdev, struct pci_tsm_pf0 *tsm);
->  int pci_tsm_bind(struct pci_dev *pdev, struct kvm *kvm, u64 tdi_id);
->  int pci_tsm_unbind(struct pci_dev *pdev);
-> -- 
-> 2.43.0
-> 
+Cl=C3=A9ment Le Goffic (1):
+      i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
+
+Kathiravan Thirumoorthy (1):
+      i2c: qcom-geni: fix I2C frequency table to achieve accurate bus rates
+
+Nick Chan (1):
+      dt-bindings: i2c: apple,i2c: Document Apple A7-A11, T2 compatibles
+
+Sven Peter (1):
+      i2c: apple: Drop default ARCH_APPLE in Kconfig
+
+Wolfram Sang (1):
+      Merge tag 'i2c-host-6.17-pt2' of git://git.kernel.org/pub/scm/linux/k=
+ernel/git/andi.shyti/linux into i2c/for-mergewindow
+
+fangzhong.zhou (1):
+      i2c: Force DLL0945 touchpad i2c freq to 100khz
+
+
+with much appreciated quality assurance from
+----------------------------------------------------------------
+Andy Shevchenko (2):
+      (Rev.) i2c: tegra: Remove dma_sync_*() calls
+      (Rev.) i2c: tegra: Use internal reset when reset property is not avai=
+lable
+
+Mukesh Kumar Savaliya (1):
+      (Rev.) i2c: qcom-geni: fix I2C frequency table to achieve accurate bu=
+s rates
+
+Sven Peter (1):
+      (Rev.) dt-bindings: i2c: apple,i2c: Document Apple A7-A11, T2 compati=
+bles
+
+Thierry Reding (1):
+      (Rev.) i2c: tegra: Remove dma_sync_*() calls
+
+ .../devicetree/bindings/i2c/apple,i2c.yaml         |  5 ++
+ drivers/i2c/busses/Kconfig                         |  1 -
+ drivers/i2c/busses/i2c-qcom-geni.c                 |  6 +-
+ drivers/i2c/busses/i2c-stm32f7.c                   | 32 +++++++----
+ drivers/i2c/busses/i2c-tegra.c                     | 64 +++++++++++++++---=
+----
+ drivers/i2c/i2c-core-acpi.c                        |  1 +
+ drivers/i2c/muxes/i2c-mux-mule.c                   |  3 +-
+ 7 files changed, 75 insertions(+), 37 deletions(-)
+
+--jJLZI14B3zJ4wR5a
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiRK8gACgkQFA3kzBSg
+KbZj4RAAsIwyTKszhDH16MLwwloFNtbwG3t1xzGk5NXTLWl9WqlT7q5WOJxWoPyU
+vnpgiE7RKZcy1o4nqFzn+12sn+gZ3ZWcBAI1oKu4CK2/X6wQcGXsjOQ0Pm8EvjUj
++ptmeMrhdpGuaZa5WvA0xUa0QD5OdrMG9y4T0jCXUDELoSTbx6OepLWWLjShNWPO
+7c3YyUE6r85GGCnnHfIZi2Uq2kgJPIQX0wCIUQ7JeSMnvZ/5AHLcvqVSJqhxXKH1
+SRl1uar/w7ithy7yWsI7ZhdiHRH3zmTtzUidVbCcn0emEsbRkWtfidOEj4t37lua
+RLsh5acJFbG9Wd2mZ+mROPHlrsEba9z0k3Xoz/o9+d0spnGpK5/Q26iKKfWGehzD
+9W/3n/UTPX2Az0smibMmRVflYCZjZPjOKrCWfD1pEi4lKqtq4GWDwUWnY17A8Vf7
+EuOSgeKDwsf7Xve5h/qx5VORtuK0HpK7x1lJu0E/KgvI/IAxXfo2VNOKdDP7SFEZ
+/jwBRrSIyu9hJRdPpIi3cf+1Sv/lF9ptATBJDSV7avfDZ6DWw2XYTqv5oGHbxjGt
+dRFSKLyj+2jhtXSQa3nZxxFsTEG6yNsjfhi2qhhllj9KQvPZhfoz7lL1sbo0WCXG
+fvLr6OwMCKm1vwUjzsiJKoB5iOkST9NvkhYAY+9BJm985MLtS5s=
+=PZVd
+-----END PGP SIGNATURE-----
+
+--jJLZI14B3zJ4wR5a--
 
