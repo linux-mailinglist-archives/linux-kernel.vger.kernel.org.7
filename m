@@ -1,112 +1,162 @@
-Return-Path: <linux-kernel+bounces-755748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755747-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3C5C6B1AB45
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:10:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D213B1AB41
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:10:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32421895EC5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:10:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D223BEC87
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:10:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FC1291C15;
-	Mon,  4 Aug 2025 23:10:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8788E290BA2;
+	Mon,  4 Aug 2025 23:10:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emQpYAhD"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X7EiZ6El"
+Received: from mail-pj1-f74.google.com (mail-pj1-f74.google.com [209.85.216.74])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947C8221FA0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:10:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648D3221FA0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:10:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.74
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754349008; cv=none; b=Yot2mMn4xevgmWAVinACqKjq0PW7QYuLEABvIjQ7IhmlTfeL1GYnBFD64tkEjWzPiyNAFw5VvvseHJIQ5e3NP6wp6RkOfIJ6sFHsMpD2uyDVitMVEoP5HKulsVr1/fqFGIPLVUHiyjv7Lth0AaIoxw6MjfPVoQJP1zDRM+0HihQ=
+	t=1754349002; cv=none; b=YI1cvm3ZZlfk3kJ5XSvZYBlCb04XR4bpaWa/EI5dthE107ZNZgsYTNP0GohiEs2k1TLydXAC0VeR55SEACJnKW44Hz65+iBWNgYw2jTHq0PDEH3mo6R2vLcR9Z6CjwPNddVzx+HPSltzMxEZWGBIGbRjVFklpWNIb/KP7w+iuIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754349008; c=relaxed/simple;
-	bh=OqU7HKlaaB+/yr85e8O0qFFV2mhIIMzXHyes2/pyXiM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=W5Qr8mvISk5yYftXYSuqXOGxEhrH6s3qcjCWZY04s9MTRRH8dYGJ0tdH4e+QcOpjlPl14anU6CfsK/izTSVYYdFFTE5WFRrzg6qx4EJZfrPICmaflNbc4MDF/HiC5x9zYTKOUZ71eVEGnAAlBVTz3PmST9KA7Dgxd+g3nP7y48U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emQpYAhD; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CB7C4CEF0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:10:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754349008;
-	bh=OqU7HKlaaB+/yr85e8O0qFFV2mhIIMzXHyes2/pyXiM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=emQpYAhD7UcEV34gva/+Tj2Gk9HQNqUdMMzPJsgGAVXqLM/GSpEW0RmrusIHZTWSQ
-	 mEV05f0QR6bajRjLIlWSa4IZkibAVyg4gSoG1hESJs7QfWJCgW+96Fhmr1oQfTfwpl
-	 nIHxlfFJvZrseS1hYf6Q3mjx8ENyoaIVdtOIGJqNpVL1n4lK0bFMm8V4jnzkU3vH/b
-	 tLPlNK/xDGtMOmbSsd4E8WBwGr4Ke0RfftUuh7rvJZlwnP4K1Ju/4GTwr2NXN4YQri
-	 iuNdj9ZHC2K+Angv3b50xnFEgKLlXyjSAR/TYKmgNbMrw2C3xzIYlYhcs3/lPMPl6x
-	 gBj8HPi9LxthA==
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so19335e9.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 16:10:08 -0700 (PDT)
-X-Gm-Message-State: AOJu0YzAspDWIdx73T2xw0IAK3D9YNKEMFdfVNvvuhpipbKia1yfHfj0
-	huuJP9EV6TM25AsbmtnsCK1dqZjuQ98Xx1L0yQ2j4fmu1dymNM440OKPCyFNPEoIykpPfNBmUin
-	BHkjZZ8xHizVoDgT7EAvBiuDlKytBlAEtzrEOPSI3
-X-Google-Smtp-Source: AGHT+IHKpk+HdsX+UkmoGsNTrjTyAvv+GZeP3pJG7v7GzWXQDB8HcuYU8JvYjjZGY3fLVdxWGYKFXeKl60hxqHiBoUI=
-X-Received: by 2002:a05:600c:3b8c:b0:43d:409c:6142 with SMTP id
- 5b1f17b1804b1-459e13212bamr553835e9.0.1754349006808; Mon, 04 Aug 2025
- 16:10:06 -0700 (PDT)
+	s=arc-20240116; t=1754349002; c=relaxed/simple;
+	bh=jGEm0DtgPk8+RabZ/v6woIGn/2BhjebzCgIbNh+Ac80=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=ZSr1ONF10NX/8uBHBaRs6R3lfDci67EpZEAf5gFBD/LGtouVm65gzGn7hA7zoNDDekCXeTCsmCfiya5PH/FYC9YsY1sybKDgoTBvYIAiEhLVwUIJK69L4wRgytl8rdzgaenVdaEolDK3RDA5nwFzGI5wYBEA+vDIS+FmGwh6FeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X7EiZ6El; arc=none smtp.client-ip=209.85.216.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
+Received: by mail-pj1-f74.google.com with SMTP id 98e67ed59e1d1-31f030b1cb9so7785749a91.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 16:10:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754349001; x=1754953801; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=tG0zFdwSMEPj6TjvMjIhSWrku59KtpikLJvWaNvieXY=;
+        b=X7EiZ6Elq84ytvAMYbzXAelu/Uvw/oj6a7ydvZlyA2EqZc4Y58MfQ1XFQmZ+w9vrrd
+         AZdSknweCxEO79fSpO0EoFlmEFQAYSCQhjoQFyh+tYr1jbxw4qHF7ejF40jgXKCo0lAH
+         09OmkyQt8RHDP3t57HZ17t25t224yfdOIHULtkuECNsqg44pBW6sEYA7XPAUSwzz5FVO
+         U7ulk5RGtcIIfdYnNXPkRH2hsk0ORyQUWLla1pdrB0HKMVKx7bT6IUTKwBmXHZp32+UF
+         BtoQ9Ve7JvXu7pF6X6WgzkTcnG0vt0uzjgIVq69pf1zg3VPwmbX3Ow4RROtz+yVEYCfR
+         PDPw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754349001; x=1754953801;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=tG0zFdwSMEPj6TjvMjIhSWrku59KtpikLJvWaNvieXY=;
+        b=fMr8vn98FFasVlWgGD5gtZDHxdNq5gaALvsvsx+VkINTDnTb7Lz0LiV7ilslDf1bpx
+         OT312LKTqorviM0DOP57pfgTzR5kp5ZsN7B8Ns9JYLZp+KmPJDpqT6p9D8tWXyfd9A1G
+         CAlxKDUzFbSmxUafcnjDOvLKDCeeMXIkRaZeMYcYrPRiNu/aHq9nRqFjnQ6gbnlZYqtU
+         Chlt5gQa75+TATwA2ZgMVdTh5eNOjFwERjJJbGWHdwAkSiBvDh61VEDINpvNYyMb5N4r
+         N47aG+9F7C7X7JWkBWk7eBsdB223/LbAIw6AtASfRYpgUH+OGXUDgwJ2VEzXvd/u8Pg8
+         +R2A==
+X-Forwarded-Encrypted: i=1; AJvYcCV3rITsWiRDgPCZa0W42DVpIL9pF2iONJU2zMwly+c71NcG4VWFqCzE47rnDkHhZronFW9CeJCamqNxkuM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YySy+Q4RE3SLWVH7dBOBjS1Jx/08wALUqFmOMf0iU2jUYwHHRYL
+	VDvdLKhc1Qqe8y9ksjcbGOCNF9HW6yShlEce8hVxE1igdQSqa/1HkGSjhMktTG4lIHS3OTKyHDe
+	8O6DOpQ==
+X-Google-Smtp-Source: AGHT+IE2NsYRZGLMA0DfVkuf5vaTZrSFR4fZkpJO3aIRBFjVMmkA+JR/oFWBMzx7rkrijiPT3c3wcqzhSlk=
+X-Received: from pjyf7.prod.google.com ([2002:a17:90a:ec87:b0:31f:1707:80f6])
+ (user=seanjc job=prod-delivery.src-stubby-dispatcher) by 2002:a17:90b:3886:b0:31e:f3b7:49d2
+ with SMTP id 98e67ed59e1d1-3211611bdf3mr16662659a91.0.1754349000710; Mon, 04
+ Aug 2025 16:10:00 -0700 (PDT)
+Date: Mon, 4 Aug 2025 16:09:59 -0700
+In-Reply-To: <87tt2nm6ie.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CALzav=d_Bjfy=6if+rPmxgGJfUV8ijnQ5hf40HoH6Yozg_H6Ew@mail.gmail.com>
-In-Reply-To: <CALzav=d_Bjfy=6if+rPmxgGJfUV8ijnQ5hf40HoH6Yozg_H6Ew@mail.gmail.com>
-From: Chris Li <chrisl@kernel.org>
-Date: Mon, 4 Aug 2025 16:09:54 -0700
-X-Gmail-Original-Message-ID: <CAF8kJuP09jvpB--fLy6Ju6rRuKFS5r8vyq1ne7ragbv0suWzLQ@mail.gmail.com>
-X-Gm-Features: Ac12FXy7avNazRoYmbC_NeBMrj_2tPBaCG8ggpo_BqxQQnqN6_SKMsJk-VIeXn4
-Message-ID: <CAF8kJuP09jvpB--fLy6Ju6rRuKFS5r8vyq1ne7ragbv0suWzLQ@mail.gmail.com>
-Subject: Re: Live Update MC (LPC): Call for Presentations
-To: David Matlack <dmatlack@google.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>, kexec@lists.infradead.org, 
-	Linux MM Mailing List <linux-mm@kvack.org>, linux-pci@vger.kernel.org, X86 ML <x86@kernel.org>, 
-	"pasha.tatashin@soleen.com" <pasha.tatashin@soleen.com>, David Rientjes <rientjes@google.com>, 
-	Bjorn Helgaas <bhelgaas@google.com>, Samiullah Khawaja <skhawaja@google.com>, 
-	Vipin Sharma <vipinsh@google.com>, Josh Hilke <jrhilke@google.com>, 
-	Changyuan Lyu <changyuanl@google.com>, "graf@amazon.com" <graf@amazon.com>, 
-	"dwmw2@infradead.org" <dwmw2@infradead.org>, "jgowans@amazon.com" <jgowans@amazon.com>, 
-	"ptyadav@amazon.de" <ptyadav@amazon.de>, "jgg@nvidia.com" <jgg@nvidia.com>, "rppt@kernel.org" <rppt@kernel.org>, 
-	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, Saeed Mahameed <saeedm@nvidia.com>, 
-	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
-	Leon Romanovsky <leonro@nvidia.com>, William Tu US <witu@nvidia.com>, 
-	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, dave.hansen@intel.com, 
-	David Hildenbrand <david@redhat.com>, Frank van der Linden <fvdl@google.com>, jork.loeser@microsoft.com, 
-	Junaid Shahid <junaids@google.com>, pankaj.gupta.linux@gmail.com, 
-	Pratyush Yadav <pratyush@kernel.org>, kpraveen.lkml@gmail.com, 
-	Vishal Annapurve <vannapurve@google.com>, Steve Sistare <steven.sistare@oracle.com>, 
-	Zhu Yanjun <yanjun.zhu@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Mime-Version: 1.0
+References: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <4266fc8f76c152a3ffcbb2d2ebafd608aa0fb949.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <875xghoaac.fsf@redhat.com> <ca26fba1-c2bb-40a1-bb5e-92811c4a6fc6@linux.microsoft.com>
+ <87o6tttliq.fsf@redhat.com> <aHWjPSIdp5B-2UBl@google.com> <87tt2nm6ie.fsf@redhat.com>
+Message-ID: <aJE9x_pjBVIdiEJN@google.com>
+Subject: Re: [RFC PATCH 1/1] KVM: VMX: Use Hyper-V EPT flush for local TLB flushes
+From: Sean Christopherson <seanjc@google.com>
+To: Vitaly Kuznetsov <vkuznets@redhat.com>
+Cc: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	alanjiang@microsoft.com, chinang.ma@microsoft.com, 
+	andrea.pellegrini@microsoft.com, Kevin Tian <kevin.tian@intel.com>, 
+	"K. Y. Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>, Wei Liu <wei.liu@kernel.org>, 
+	Dexuan Cui <decui@microsoft.com>, linux-hyperv@vger.kernel.org, 
+	Paolo Bonzini <pbonzini@redhat.com>, kvm@vger.kernel.org
+Content-Type: text/plain; charset="us-ascii"
 
-Hi David,
+On Mon, Aug 04, 2025, Vitaly Kuznetsov wrote:
+> Sean Christopherson <seanjc@google.com> writes:
+> > It'll take more work than the below, e.g. to have VMX's construct_eptp() pull the
+> > level and A/D bits from kvm_mmu_page (vendor code can get at the kvm_mmu_page with
+> > root_to_sp()), but for the core concept/skeleton, I think this is it?
+> >
+> > diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> > index 6e838cb6c9e1..298130445182 100644
+> > --- a/arch/x86/kvm/mmu/mmu.c
+> > +++ b/arch/x86/kvm/mmu/mmu.c
+> > @@ -3839,6 +3839,37 @@ void kvm_mmu_free_guest_mode_roots(struct kvm *kvm, struct kvm_mmu *mmu)
+> >  }
+> >  EXPORT_SYMBOL_GPL(kvm_mmu_free_guest_mode_roots);
+> >  
+> > +struct kvm_tlb_flush_root {
+> > +       struct kvm *kvm;
+> > +       hpa_t root;
+> > +};
+> > +
+> > +static void kvm_flush_tlb_root(void *__data)
+> > +{
+> > +       struct kvm_tlb_flush_root *data = __data;
+> > +
+> > +       kvm_x86_call(flush_tlb_root)(data->kvm, data->root);
+> > +}
+> > +
+> > +void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root)
+> > +{
+> > +       struct kvm_tlb_flush_root data = {
+> > +               .kvm = kvm,
+> > +               .root = __pa(root->spt),
+> > +       };
+> > +
+> > +       /*
+> > +        * Flush any TLB entries for the new root, the provenance of the root
+> > +        * is unknown.  Even if KVM ensures there are no stale TLB entries
+> > +        * for a freed root, in theory another hypervisor could have left
+> > +        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
+> > +        * flush when freeing a root (see kvm_tdp_mmu_put_root()), and flushing
+> > +        * TLBs on all CPUs allows KVM to elide TLB flushes when a vCPU is
+> > +        * migrated to a different pCPU.
+> > +        */
+> > +       on_each_cpu(kvm_flush_tlb_root, &data, 1);
+> 
+> Would it make sense to complement this with e.g. a CPU mask tracking all
+> the pCPUs where the VM has ever been seen running (+ a flush when a new
+> one is added to it)?
+> 
+> I'm worried about the potential performance impact for a case when a
+> huge host is running a lot of small VMs in 'partitioning' mode
+> (i.e. when all vCPUs are pinned). Additionally, this may have a negative
+> impact on RT use-cases where each unnecessary interruption can be seen
+> problematic. 
 
-Thanks for organizing this.
+Oof, right.  And it's not even a VM-to-VM noisy neighbor problem, e.g. a few
+vCPUs using nested TDP could generate a lot of noist IRQs through a VM.  Hrm.
 
-On Fri, Aug 1, 2025 at 8:33=E2=80=AFAM David Matlack <dmatlack@google.com> =
-wrote:
-> Topics to be discussed at the microconference include:
->   - Live Update Orchestrator (state machine, userspace API, implementatio=
-n)
->   - Generic infrastructure for preserving file descriptors across Live Up=
-dates
->   - Live Update support for specific files (memfd, iommufd, VFIO cdev, et=
-c.)
->   - Integration of Live Update with the PCI subsystem and Linux device mo=
-del
+So I think the basic idea is so flawed/garbage that even enhancing it with per-VM
+pCPU tracking wouldn't work.  I do think you've got the right idea with a pCPU mask
+though, but instead of using a mask to scope IPIs, use it to elide TLB flushes.
 
-I will submit a topic proposal for the Live Update with PCI subsystems.
-The PCI RFC V1 discussion thread is here:
-https://lore.kernel.org/lkml/20250728-luo-pci-v1-0-955b078dd653@kernel.org
+With the TDP MMU, KVM can have at most 6 non-nested roots active at any given time:
+SMM vs. non-SMM, 4-level vs. 5-level, L1 vs. L2.  Allocating a cpumask for each
+TDP MMU root seems reasonable.  Then on task migration, instead of doing a global
+INVEPT, only INVEPT the current and prev_roots (because getting a new root will
+trigger a flush in kvm_mmu_load()), and skip INVEPT on TDP MMU roots if the pCPU
+has already done a flush for the root.
 
-Thanks
-
-Chris
+Or we could do the optimized tracking for all roots.  x86 supports at most 8192
+CPUs, which means 1KiB per root.  That doesn't seem at all painful given that
+each shadow pages consumes 4KiB...
 
