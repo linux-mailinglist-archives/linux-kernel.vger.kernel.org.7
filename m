@@ -1,55 +1,58 @@
-Return-Path: <linux-kernel+bounces-754981-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754982-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15C20B19F76
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:08:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id C9F4BB19F75
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 835DF16519E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:08:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84045188C9D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19D092288EE;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80FB424C077;
 	Mon,  4 Aug 2025 10:07:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1YOH862l";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="R/iaxWir"
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="cueDMIy8";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="aE+VyAuq"
 Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAB4A2494F0
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 10:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66DA0242D87;
+	Mon,  4 Aug 2025 10:07:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754302060; cv=none; b=SB1wTIyZt9VECbx26bz8v0QjjYpNst+eLoKO6uRTOI+MAGvfT7ucFjfAKAvDNWHBpPS7QgKKvBv2r3jpb3567TRp/tCJ/jQxEm0YVvta49vr7KY8zh9pBOTwAnHAgOkx8WC/kuxxtwqLvn5QSr5XGpRyLvHu8mexQxa7zl9Gc7w=
+	t=1754302061; cv=none; b=Tmy6RBhVubOTVzkWn3YHLPy5eByoq8gZm13r4+VbYWE+i/lykz12fqoBDC7Zfrl0ZErRLJvenXwaz1HAcfTlSaKEQIGvbqkSrxbVR/fiCGRBx/F9oMyZ1XctjubN6Gvs4M5N/BW3Gc/6wQcT8lo0Irn2JdWUALe8ytjByWNlkaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754302060; c=relaxed/simple;
-	bh=vSgKx6mry72PGKxDCvJuvSIjcR2nBuNj/0WbY3ni2uk=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=POexo6txqL4BZr88KOXwvxJY8Sfug6JhbQ6Mqgqf0LROd5WMqBwet0QDzvOJoRDiuT5Zkcc4JUzETu9L8ubGevILk54ErFj0/Ie4ktDsp9dABmtJt5Bs2asMWCV3u9VQctr9rWwxClpwxA0dSTf6iNqZJvMhpdmOjuDThfq+DIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1YOH862l; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=R/iaxWir; arc=none smtp.client-ip=193.142.43.55
+	s=arc-20240116; t=1754302061; c=relaxed/simple;
+	bh=oiQMlkrXcO+aPEChRoO64pS6g7V1XkVmPaeAn8eRcc0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=VadhiJ8m+8PWuqa99/7g7VfcKhAdXStyV0utSlgKBjAQt4vPWlX+F89stF4i3Pua2JcrPX3pdN6rmH7/vauEIe/uuuPFuf1WejddoD9onJ0jZiqLvwePqsTAfSdFLhfK8O4HnbIMYwrPEtDh4jeeQcNfom/ImzCTo4xTg4K3Ls4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=cueDMIy8; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=aE+VyAuq; arc=none smtp.client-ip=193.142.43.55
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
 From: Nam Cao <namcao@linutronix.de>
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754302056;
+	s=2020; t=1754302057;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZTnQxU/+fvPQHh07xXw/q8Ljo18bwpIP+5p0y/uzJuQ=;
-	b=1YOH862lXgJ6Yzd9uzj36Y2Y0n4NQKFOjKq5h9CQIYcl/wYh/PpUr04G3RwN6C6JujYU3S
-	yf8Xp3T++slKeXJCIZJb1PC21DQk2yc6TlNfu9c5T9nColNoo4WfaZD/Ekou31yXxsPteG
-	fpuvp3SAiJyNYvyo+6IT289R6udGLubncd4Jean0DWqQZ3SNH5yPj2BGo1E3HKJ98LIOpm
-	eSgN2qgMUrgb8/kdh+Mi3MJ/K7FyWHz7mpdOvQY4KYuJUHfvUQ/A6qalkjOVcrRwXmN4l8
-	NuxI2s6kAZ/13tZ7kHBlJFGLWp/+c9QsAQLhZcOegmZ9RGMtNlm/6czALLFcSQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjChbKi0Rx93+Tu2sjL4XTOUdNd3zTW9vbhD+j3CVZ8=;
+	b=cueDMIy8Ro5gB+R96xllpBtDUM3dcrqgXK1eWLGoTc32TJde0nm+5uCv4QV15DEf6rw7AN
+	uPs8MfcLhLB4KZeyb+wrt9XjlwQ06jl1Wwx75j7rO0q4KLuoQEReOEfJauBonnBwo2JIaH
+	HkFBwQhbnVn1aPMpt5RLieH3ICpXp+0p1gyweMpjjSTB07SL9VNfzH1weAChE2UPdGjhzs
+	8EEAL+F/wXQ9N3tGAt5h+S7mjxP9SF8Jo9NwdX4QXZS1B1vcpJ3ArlWk1hF1GyOdZxaDQf
+	V054yG6dj87ds1abhK3LOdwhMKVjXWBMhufJw98rMRJ+Xp3n1LgJ1oPqtMykBw==
 DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754302056;
+	s=2020e; t=1754302057;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=ZTnQxU/+fvPQHh07xXw/q8Ljo18bwpIP+5p0y/uzJuQ=;
-	b=R/iaxWirDxFx2wC6QCKPGIhK9e7WNMAb+vv/5GOz0izYZcCnxH2kgdaDG94iHyZBNfe9vV
-	n2ZUTX8XceR4dLAQ==
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JjChbKi0Rx93+Tu2sjL4XTOUdNd3zTW9vbhD+j3CVZ8=;
+	b=aE+VyAuqBsX0dOcnYOYHE7uJKfAO3KB/0ng80qh9CmmL6D/7lmf9bpCRHMYm2VrgyMzAMa
+	y+OkvktQhtj3XBAw==
 To: Madhavan Srinivasan <maddy@linux.ibm.com>,
 	Michael Ellerman <mpe@ellerman.id.au>,
 	Nicholas Piggin <npiggin@gmail.com>,
@@ -58,10 +61,13 @@ To: Madhavan Srinivasan <maddy@linux.ibm.com>,
 	=?UTF-8?q?C=C3=A9dric=20Le=20Goater?= <clg@kaod.org>,
 	linuxppc-dev@lists.ozlabs.org,
 	linux-kernel@vger.kernel.org
-Cc: Nam Cao <namcao@linutronix.de>
-Subject: [PATCH 0/2] powerpc: Fix integer underflow & leak
-Date: Mon,  4 Aug 2025 12:07:26 +0200
-Message-Id: <cover.1754300646.git.namcao@linutronix.de>
+Cc: Nam Cao <namcao@linutronix.de>,
+	stable@vger.kernel.org
+Subject: [PATCH 1/2] powerpc/pseries/msi: Fix potential underflow and leak issue
+Date: Mon,  4 Aug 2025 12:07:27 +0200
+Message-Id: <a980067f2b256bf716b4cd713bc1095966eed8cd.1754300646.git.namcao@linutronix.de>
+In-Reply-To: <cover.1754300646.git.namcao@linutronix.de>
+References: <cover.1754300646.git.namcao@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,24 +76,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: quoted-printable
 
-Hi,
+pseries_irq_domain_alloc() allocates interrupts at parent's interrupt
+domain. If it fails in the progress, all allocated interrupts are
+freed.
 
-This series fixes integer overflow & leak problem. I noticed this problem
-when Gautam reported a kernel bug with another patch series of mine:
-https://lore.kernel.org/linuxppc-dev/aH9Na8ZqrI0jPhtl@li-c6426e4c-27cf-11b2=
--a85c-95d65bc0de0e.ibm.com/
+The number of successfully allocated interrupts so far is stored
+"i". However, "i - 1" interrupts are freed. This is broken:
 
-The root cause of that report is a bug in that series. However, that bug
-triggered another existing bug, causing the reported end results.
+  - One interrupt is not be freed
 
-Nam Cao (2):
-  powerpc/pseries/msi: Fix potential underflow and leak issue
-  powerpc/powernv/pci: Fix underflow and leak issue
+  - If "i" is zero, "i - 1" wraps around
 
- arch/powerpc/platforms/powernv/pci-ioda.c | 2 +-
- arch/powerpc/platforms/pseries/msi.c      | 2 +-
- 2 files changed, 2 insertions(+), 2 deletions(-)
+Correct the number of freed interrupts to 'i'.
 
+Fixes: a5f3d2c17b07 ("powerpc/pseries/pci: Add MSI domains")
+Signed-off-by: Nam Cao <namcao@linutronix.de>
+Cc: stable@vger.kernel.org
+---
+ arch/powerpc/platforms/pseries/msi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/arch/powerpc/platforms/pseries/msi.c b/arch/powerpc/platforms/=
+pseries/msi.c
+index ee1c8c6898a3..9dc294de631f 100644
+--- a/arch/powerpc/platforms/pseries/msi.c
++++ b/arch/powerpc/platforms/pseries/msi.c
+@@ -593,7 +593,7 @@ static int pseries_irq_domain_alloc(struct irq_domain *=
+domain, unsigned int virq
+=20
+ out:
+ 	/* TODO: handle RTAS cleanup in ->msi_finish() ? */
+-	irq_domain_free_irqs_parent(domain, virq, i - 1);
++	irq_domain_free_irqs_parent(domain, virq, i);
+ 	return ret;
+ }
+=20
 --=20
 2.39.5
 
