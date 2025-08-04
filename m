@@ -1,136 +1,134 @@
-Return-Path: <linux-kernel+bounces-754868-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754869-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 973D6B19DB7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:35:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D060DB19DBE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:36:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 21B123BB039
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:35:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F40FA178F55
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:36:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59BE424291A;
-	Mon,  4 Aug 2025 08:35:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0439242D6F;
+	Mon,  4 Aug 2025 08:36:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b="jB+7rTtY"
-Received: from dvalin.narfation.org (dvalin.narfation.org [213.160.73.56])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="GEWJMHXX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CBB1D1A727D;
-	Mon,  4 Aug 2025 08:35:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.160.73.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32A7917D346;
+	Mon,  4 Aug 2025 08:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296542; cv=none; b=VL0iNz8aUYhs2YvAMO0xA2vjaFZRX/CfBnXyZjW/+aFG4XRqQrVnZErLJH3diZOiprznL0fHqaybpxYaZXEjerW5kqMTEhcMZT119DQBTtv3sL8zf3nivMlno3oLLa5j0pJiNwuVi1dZ1QIDK47tfivvtH2oRx9CLXXNYwVmpyY=
+	t=1754296594; cv=none; b=s9NXQqHacf+oxBpMCrhN544kYLlS4OUtTPf4aMtX4wxHhEwG+zala8YZiLvz/jtguJed6iwUDVlfKrqIhYmt6pyvnkUJHvicTCVQsuor3GasunC48rLiVzkK2lLa52UKWq0eTwLeySM55Y7u3iIsJSung05feNKtm/KudNdIYbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296542; c=relaxed/simple;
-	bh=KJeshaXOoAQplubsSIpUpYLy4IncQrHXn8wz9Seb5WE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P8wTjh7SIou0bkxP46t0afn9sxe5B/qqZ5OC9xy7OqOAc4nHra/kNE0AvSobljKl7xKwCcGiy10/oE+cBZbAVL5Y91Q4K93YldyXN5Gb/W9c304VOsqvthNIOvjmCqPuvbFJe/MO0ZhscY0lqRyO+qF94Ibl0mF8EO3FmvbGd2M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org; spf=pass smtp.mailfrom=narfation.org; dkim=pass (1024-bit key) header.d=narfation.org header.i=@narfation.org header.b=jB+7rTtY; arc=none smtp.client-ip=213.160.73.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=narfation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=narfation.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=narfation.org;
-	s=20121; t=1754296538;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qXpu2T5TC0A7tI6IVx2VQOvPx18dKgYJpmJq26AzfwQ=;
-	b=jB+7rTtY9a+nNAhZ9xUtRD+4UiSyqCKNI74/YUb5OkKbWr1zRm3o3whQe6eZbpenKM6IsU
-	uqpHyp6+mcehVgOnJL4gUNFO6Et8ULSqIY8U7t4zTMGMiCDmgTdxhruHXYfzD8yed6PewA
-	5RdNyq/PKmQwELHMl8fx30bVoM60iNg=
-From: Sven Eckelmann <sven@narfation.org>
-To: Andi Shyti <andi.shyti@kernel.org>,
- Chris Packham <Chris.Packham@alliedtelesis.co.nz>
-Cc: "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Jonas Jelonek <jelonek.jonas@gmail.com>,
- Harshal Gohel <hg@simonwunderlich.de>,
- Simon Wunderlich <sw@simonwunderlich.de>,
- "stable@vger.kernel.org" <stable@vger.kernel.org>
-Subject: Re: [PATCH v2 0/4] i2c: rtl9300: Fix multi-byte I2C operations
-Date: Mon, 04 Aug 2025 10:35:35 +0200
-Message-ID: <10701742.nUPlyArG6x@ripper>
-In-Reply-To: <4152a424-13ea-4437-b9e9-f1b5561cca9e@alliedtelesis.co.nz>
-References:
- <20250803-i2c-rtl9300-multi-byte-v2-0-9b7b759fe2b6@narfation.org>
- <4152a424-13ea-4437-b9e9-f1b5561cca9e@alliedtelesis.co.nz>
+	s=arc-20240116; t=1754296594; c=relaxed/simple;
+	bh=q5NIFYfPGBPjvoRsywWnULzZC4/llLvrlCsM4PPmad8=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=KUgj0kdI15kLWuhBXOII0nuO0sK0tBI/NHLCyIshqIO0KIX/lFJFnUlPPrEN8Kyrj705GsCaD/BFKsGNvXx8uCjhiR/KKgxQkpykfVI9WTeH0dbHByPudTcLikd8DrvVj3UfXljeovimIyWLuCTZFeZ/7Ko9pcEerpw47g8+4bQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=GEWJMHXX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754296589;
+	bh=q5NIFYfPGBPjvoRsywWnULzZC4/llLvrlCsM4PPmad8=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=GEWJMHXX5RsnmTOJN70LagzbEdSWbWeG4Gm61w/fGPuV9/F2aWcIOTOKQ7vzDwUyN
+	 OkenWlIlBSnw9Tv6NaFVkxYARemn6szzVyFYaTjo5LWRmmRwvElFOoEDQLZ4e7uR6v
+	 XXeCXGjhOr0eUfI56Cv8Ca62P7gl4EJ1YuCCOW41LGr3PbvaZI1DjnARAP02ZgAgxR
+	 1fm88wpkzejL8TBWl0wcpl1Yxz9Pgf0lAC2MAJ2ACjY+qOFmbnP9+y2CA9p+F7co5W
+	 cR1Ah377dwBdY/0CVgJzYZ4zDm2DJlbVoSdh/NJDYcbIrtNhKBQNPPe3LPLwiV4FU1
+	 aErpIcMLRVAww==
+Received: from laura.lan (unknown [IPv6:2001:b07:646b:e2:169:2004:39f0:9afe])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: laura.nao)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 38AC217E0B8C;
+	Mon,  4 Aug 2025 10:36:28 +0200 (CEST)
+From: Laura Nao <laura.nao@collabora.com>
+To: krzk@kernel.org
+Cc: angelogioacchino.delregno@collabora.com,
+	conor+dt@kernel.org,
+	devicetree@vger.kernel.org,
+	guangjie.song@mediatek.com,
+	kernel@collabora.com,
+	krzk+dt@kernel.org,
+	laura.nao@collabora.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-clk@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mediatek@lists.infradead.org,
+	matthias.bgg@gmail.com,
+	mturquette@baylibre.com,
+	netdev@vger.kernel.org,
+	nfraprado@collabora.com,
+	p.zabel@pengutronix.de,
+	richardcochran@gmail.com,
+	robh@kernel.org,
+	sboyd@kernel.org,
+	wenst@chromium.org
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196 clock controllers
+Date: Mon,  4 Aug 2025 10:35:40 +0200
+Message-Id: <20250804083540.19099-1-laura.nao@collabora.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
+References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart2319187.iZASKD2KPV";
- micalg="pgp-sha512"; protocol="application/pgp-signature"
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
---nextPart2319187.iZASKD2KPV
-Content-Transfer-Encoding: 7Bit
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Sven Eckelmann <sven@narfation.org>
-Date: Mon, 04 Aug 2025 10:35:35 +0200
-Message-ID: <10701742.nUPlyArG6x@ripper>
-MIME-Version: 1.0
+Hi,
 
-On Monday, 4 August 2025 00:39:40 CEST Chris Packham wrote:
-> For the series
-> 
-> Reviewed-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
-> Tested-by: Chris Packham <chris.packham@alliedtelesis.co.nz>
+On 8/3/25 10:17, Krzysztof Kozlowski wrote:
+> On 01/08/2025 15:57, Rob Herring wrote:
+>>> +  reg:
+>>> +    maxItems: 1
+>>> +
+>>> +  '#clock-cells':
+>>> +    const: 1
+>>> +
+>>> +  '#reset-cells':
+>>> +    const: 1
+>>> +    description:
+>>> +      Reset lines for PEXTP0/1 and UFS blocks.
+>>> +
+>>> +  mediatek,hardware-voter:
+>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>> +    description:
+>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+>>> +      MCU manages clock and power domain control across the AP and other
+>>> +      remote processors. By aggregating their votes, it ensures clocks are
+>>> +      safely enabled/disabled and power domains are active before register
+>>> +      access.
+>>
+>> I thought this was going away based on v2 discussion?
+>
+> Yes, I asked to drop it and do not include it in v3. There was also
+> discussion clarifying review.
+>
+> I am really surprised that review meant nothing and code is still the same.
+>
 
-Thank you.
+This has been re-submitted as-is, following the outcome of the discussion 
+here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
 
-> Note that I've only got the same simple eeprom devices that I did the 
-> initial development on so I don't think I've really exercised the block 
-> data paths but I can say the changes don't appear to have regressed 
-> anything.
+We haven't found a viable alternative to the current approach so far, and
+the thread outlines why other options don’t apply. I'm happy to continue 
+the discussion there if anyone has further suggestions or ideas on how 
+to address this.
 
-I can understand this problem quite well. We can all only try our best and 
-then hope that someone with the actual HW can figure out the specific parts 
-which we didn't had access to.
+Thanks,
 
+Laura
 
-> Is you series intended to apply on top of Jonas's? I'm trying to apply 
-> yours alone (for various reasons happens to be on top of net-next/main) 
-> and I'm getting conflicts.
-
-
-No, I prepare something for downstream testing (with Jonas' patch): 
-https://github.com/openwrt/openwrt/pull/19577#discussion_r2248520949
-
-> Conflict appears to be with 
-> https://lore.kernel.org/all/20250615235248.529019-1-alexguo1023@gmail.com/
-
-Thanks, I was not aware of this specific one. I don't exactly know the repo 
-structure for I2C Host drivers. But 
-git://git.kernel.org/pub/scm/linux/kernel/git/andi.shyti/linux.git
-i2c/i2c-host-fixes or i2c/i2c-host-next didn't had this patch. I've also 
-checked linux-next and couldn't find the patch at the moment. 
-
-I am guessing it is the best when I resent this patch as part of my patchset 
-and modify my patches accordingly. The resent will then be done this evening 
-(GMT+2). Preview can be found at
-https://git.open-mesh.org/linux-merge.git/log/?h=b4/i2c-rtl9300-multi-byte
-
-I've also checked linux-next and couldn't find the patch at the moment.
-
-Kind regards,
-	Sven
---nextPart2319187.iZASKD2KPV
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQS81G/PswftH/OW8cVND3cr0xT1ywUCaJBw1wAKCRBND3cr0xT1
-yy6oAP9hBdk7tfOPnA9EvlD4gzBeRBG+RUSnHvWWMyzmNxAhawEA7E9Yn6hsRlWA
-ke+xS8IzJ0C11K6ritkLelvCob0tigk=
-=oXed
------END PGP SIGNATURE-----
-
---nextPart2319187.iZASKD2KPV--
-
-
+> Best regards,
+> Krzysztof
 
 
