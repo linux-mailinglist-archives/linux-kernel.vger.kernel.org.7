@@ -1,99 +1,78 @@
-Return-Path: <linux-kernel+bounces-755769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2E55B1AB8E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:52:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A841B1AB98
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:53:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 87923189DC73
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:52:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25752180EC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:53:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CF128B7EA;
-	Mon,  4 Aug 2025 23:51:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEDF524A07C;
+	Mon,  4 Aug 2025 23:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KXCd7ISh"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWUR/4nt"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E663143C69;
-	Mon,  4 Aug 2025 23:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CE842264B8
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:53:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754351518; cv=none; b=WlmwqmnbRE7P3eRwEFnNyaHmciZHTAYNP/zo4j/BtcTlX+8P0doqfRC91LpuG1OMLCSFzh/oQBv5ru3qdBJp/GoG45TPjvpcYXLSJeJNEuEQPN6uCe2w6fiPg1tSQqm2Bz4j5vFmi06HSWu4dEgf67RLa354kHrUsRtvSqEmXe4=
+	t=1754351615; cv=none; b=s4ENmjZOaUYVaRqQBKHyG+EtmOdVIoGUxSTFCGFCcqWunecl+0kEwX3zNhhVCh/T/MFhwG9MPy80TuLIei78q0C8eYzPo8kCe5iZLnsWLMWUj03OrH2NH/OODLQQDsR5TxSgXV0qgFKKCFpuLCKCTu3EaRNACiHx9ow4J0Sdqdo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754351518; c=relaxed/simple;
-	bh=+Qd7Fdt/l1rSR28D0sLlYxSACJKkxlhjTi7Fv9O2uFE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=M1VC+0QMRfwz4e/BcvXoevE12AgEdYJ1peZY5OKgjYDlJXpahn0rJzxZoFyJNdnuD+BqGQXxc4jhLpfghrswcTb0rCMJKTxvw3/kLAR/mQzG25TPqTDg8B5i56V5ZSrb4nApHsiI4555oATz+g1PQHk2rYX3EHVljuewi1A7TuU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KXCd7ISh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CE45C4CEE7;
-	Mon,  4 Aug 2025 23:51:56 +0000 (UTC)
+	s=arc-20240116; t=1754351615; c=relaxed/simple;
+	bh=mYMLftyAT8QXp0pXfjxxCAHPluo5qRTQ7BK2PGulMz4=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=Kd7NaEF5/kI2CSNklXZSvxpTehcrWDFtIpRX7v67RVjBgsON0GHJ2qBHnSGmKN3G6WhYNPcel5g+6/BnGNiYTg2O4iTv+kGboSQlv7XeOrZdosjHnOkpqGdUomNm2b8xvV9JiVzekXNku1ir5DTKSuur8K6O1tT5sw+FL6Ax62c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWUR/4nt; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3050CC4CEE7;
+	Mon,  4 Aug 2025 23:53:35 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754351516;
-	bh=+Qd7Fdt/l1rSR28D0sLlYxSACJKkxlhjTi7Fv9O2uFE=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KXCd7IShem+Z24ebKf2Zs0iF+XjNzIhkIh2/UXVNmGWt4nYTrOYq+vqHmLp6neMq6
-	 kmfpnljs4grcGGefs1B06Z9UJ/CCBSEtdnj7U0U7FhrU4u0w69qQxa+gxqBOLmOUwJ
-	 c9SyxIrbtT9bdMMZTw0Pg2VFwXkm7UuYobUgdA3RTMSLlL80O98N4musJgQakhgB6N
-	 d0YpA+HBHBFGfcuazROyP9/fIJ/hPz3wAEASvJSuzLjhkvG0ImIbmByqjGA5/tu97I
-	 PO58SmmmvdhGm+jPdVsvDYOgtHIFoi/QqG3NqwaHvy2S4GuXq2T98h4Y7OKqtMgs0x
-	 ekQ4E4Im/6RKA==
-Date: Mon, 4 Aug 2025 16:51:55 -0700
-From: Jakub Kicinski <kuba@kernel.org>
-To: Michal Luczaj <mhal@rbox.co>
-Cc: "David S. Miller" <davem@davemloft.net>, Eric Dumazet
- <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Simon Horman
- <horms@kernel.org>, Cong Wang <cong.wang@bytedance.com>, Tom Herbert
- <tom@herbertland.com>, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] kcm: Fix splice support
-Message-ID: <20250804165155.44a32242@kernel.org>
-In-Reply-To: <b6a2219b-32dd-4bb6-b848-45325e4e4ab9@rbox.co>
-References: <20250725-kcm-splice-v1-1-9a725ad2ee71@rbox.co>
-	<20250730180215.2ad7df72@kernel.org>
-	<b6a2219b-32dd-4bb6-b848-45325e4e4ab9@rbox.co>
+	s=k20201202; t=1754351615;
+	bh=mYMLftyAT8QXp0pXfjxxCAHPluo5qRTQ7BK2PGulMz4=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=pWUR/4ntzrt6aPvlJU/A+kV02XbL06YkOXCFeip1pO2r5EUlZtBfbYzGW3Vl26ynl
+	 Wa0IzrzM7ZWNkusbsSNJVNlOLYwK7ZDxmtoYSGOZe/qUkiCVG8Bq4KA6sUP4YbTP/T
+	 /Q8B8q2U2Uks1t470+aHmQhDhHGx0B5z2bESefhFozpEGRD2l1Xbz4H6RJyGN758f1
+	 FamAGY2z9pYWhYVce4Wl7KPj7Eg+Xw7B4eXAbYp53m4OGETwPl55g4iuHma3KkZZO3
+	 r63AATYAzaZ3Ls3QEzsrjBrBBtxcNP2HfQoYYXENEqx7Y0doVuZc6+DOqZsPushyW4
+	 n3VCEhwKkeo3A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE189383BF62;
+	Mon,  4 Aug 2025 23:53:50 +0000 (UTC)
+Subject: Re: [GIT PULL] f2fs for 6.17-rc1
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <aJEosjoG_mD0OgwK@google.com>
+References: <aJEosjoG_mD0OgwK@google.com>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <aJEosjoG_mD0OgwK@google.com>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.17-rc1
+X-PR-Tracked-Commit-Id: 078cad8212ce4f4ebbafcc0936475b8215e1ca2a
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: 0974f486f3dde9df1ad979d4ff341dc9c2d545f5
+Message-Id: <175435162930.1391353.4549206550965638397.pr-tracker-bot@kernel.org>
+Date: Mon, 04 Aug 2025 23:53:49 +0000
+To: Jaegeuk Kim <jaegeuk@kernel.org>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, Linux F2FS Dev Mailing List <linux-f2fs-devel@lists.sourceforge.net>, Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
 
-On Sun, 3 Aug 2025 12:00:38 +0200 Michal Luczaj wrote:
-> On 7/31/25 03:02, Jakub Kicinski wrote:
-> > On Fri, 25 Jul 2025 12:33:04 +0200 Michal Luczaj wrote:  
-> >> Flags passed in for splice() syscall should not end up in
-> >> skb_recv_datagram(). As SPLICE_F_NONBLOCK == MSG_PEEK, kernel gets
-> >> confused: skb isn't unlinked from a receive queue, while strp_msg::offset
-> >> and strp_msg::full_len are updated.
-> >>
-> >> Unbreak the logic a bit more by mapping both O_NONBLOCK and
-> >> SPLICE_F_NONBLOCK to MSG_DONTWAIT. This way we align with man splice(2) in
-> >> regard to errno EAGAIN:
-> >>
-> >>    SPLICE_F_NONBLOCK was specified in flags or one of the file descriptors
-> >>    had been marked as nonblocking (O_NONBLOCK), and the operation would
-> >>    block.  
-> > 
-> > Coincidentally looks like we're not honoring
-> > 
-> > 	sock->file->f_flags & O_NONBLOCK 
-> > 
-> > in TLS..  
-> 
-> I'm a bit confused.
-> 
-> Comparing AF_UNIX and pure (non-TLS) TCP, I see two non-blocking-splice
-> interpretations. Unix socket doesn't block on `f_flags & O_NONBLOCK ||
-> flags & SPLICE_F_NONBLOCK` (which this patch follows), while TCP, after
-> commit 42324c627043 ("net: splice() from tcp to pipe should take into
-> account O_NONBLOCK"), honours O_NONBLOCK and ignores SPLICE_F_NONBLOCK.
-> 
-> Should KCM (and TLS) follow TCP behaviour instead?
+The pull request you sent on Mon, 4 Aug 2025 21:40:02 +0000:
 
-I didn't look closely, but FWIW - yes, in principle KCM and TLS should
-copy TCP.
+> git://git.kernel.org/pub/scm/linux/kernel/git/jaegeuk/f2fs.git tags/f2fs-for-6.17-rc1
+
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/0974f486f3dde9df1ad979d4ff341dc9c2d545f5
+
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
