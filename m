@@ -1,108 +1,201 @@
-Return-Path: <linux-kernel+bounces-754870-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754871-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 237BAB19DC2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:37:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3FB6BB19DC6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:38:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3FAC317913D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:37:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A8EBE7A1917
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:37:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DF9242D6E;
-	Mon,  4 Aug 2025 08:37:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b="tQIosnnf"
-Received: from mout-p-202.mailbox.org (mout-p-202.mailbox.org [80.241.56.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E042417C2;
+	Mon,  4 Aug 2025 08:38:30 +0000 (UTC)
+Received: from mail-io1-f78.google.com (mail-io1-f78.google.com [209.85.166.78])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D4A1E9B22;
-	Mon,  4 Aug 2025 08:37:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.241.56.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C900D1E412A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:38:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.78
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296642; cv=none; b=IY0zYLsQ5KBb07qcjMuqexfzr6eUpEZaKLbrlp1lwUvZRGuMPBFGVDAxB6+i93wOlCLEZ4G1sTruJie1mXePZ8a83K2likRaqY5oRJ5Nic3PMrDcsthns7z2gnOXdIFkDn77x8krJEPyLRE11ye1aqeONTfJd9BP3LSYUfHML7I=
+	t=1754296710; cv=none; b=Ck0oCRmNKRn4lMM/ScPNzNKlmVshIH1JGC5RQ9RTOhCLRzFVt+JvBiF+k694uy7wN0acgaOZqkb8AAdYWKNzhfUtV1STE/jxNgIIr5PhxKZ4/IABl5+qGJ7yGrxqe9oPw5WfRp0xYJ1rUbh/lXBl3R9kz3gCtpnE5LWUvM3T0fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296642; c=relaxed/simple;
-	bh=HIXk4+TAbrKiQuY/qIcBcH+nKJgvbBjd1RaFeR0UKwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=alW1VrhioigaEm2fAFVjVn9j6CGmvYYdZA4UdmU/ltKqUvCbKLh3vIfhiL+2E4ONXxo1U/jxN9zn3L7QChitM063am6L0Z83JHkC355+GprJ0DSlRlt3FhzguMnzDwmskaolpfZ7Mc/JBtF3CMNn2qccSnmzheM5ODEWknL5RP4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com; spf=pass smtp.mailfrom=pankajraghav.com; dkim=pass (2048-bit key) header.d=pankajraghav.com header.i=@pankajraghav.com header.b=tQIosnnf; arc=none smtp.client-ip=80.241.56.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=pankajraghav.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pankajraghav.com
-Received: from smtp2.mailbox.org (smtp2.mailbox.org [IPv6:2001:67c:2050:b231:465::2])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mout-p-202.mailbox.org (Postfix) with ESMTPS id 4bwVKf31nCz9sxm;
-	Mon,  4 Aug 2025 10:37:10 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=pankajraghav.com;
-	s=MBO0001; t=1754296630;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=4wPJnPv1bn5Li9I/0MOxjuiNX4rqaManwCgRKuRDtlQ=;
-	b=tQIosnnfJQ37NBK6nScKmwmL/r2DsnOlMH8NmKwU/1J+eiAE8TIF/z/4vRRMBiXWL9OhAs
-	Ev3sNf1iILxDYEV27e320oPn8umOlMIt6ywe0tFVSMBmakfOSZkEOotKPLOxsWsnsDZ1VB
-	CsQshtiJmUg9dq7RvfYFsVH9rZMVlC3u15dB1eolZJrLOASd2fFncxcTgJrGAfigKokZDo
-	gys9bNHNBOlK+176OkV886HR7vQF2uqIrJVNyLf8ECIQfGBcJgg1kQOo9Ok5CKz6z/C8Iu
-	xVAa/fv1eyE1jqdOng8qoE26TuCp4oqzCYXRIIWObZ+G/nyeN54b8uJufuVUmw==
-Authentication-Results: outgoing_mbo_mout;
-	dkim=none;
-	spf=pass (outgoing_mbo_mout: domain of kernel@pankajraghav.com designates 2001:67c:2050:b231:465::2 as permitted sender) smtp.mailfrom=kernel@pankajraghav.com
-Date: Mon, 4 Aug 2025 10:36:57 +0200
-From: "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: "Ritesh Harjani (IBM)" <ritesh.list@gmail.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Ryan Roberts <ryan.roberts@arm.com>, 
-	Baolin Wang <baolin.wang@linux.alibaba.com>, Borislav Petkov <bp@alien8.de>, Ingo Molnar <mingo@redhat.com>, 
-	"H . Peter Anvin" <hpa@zytor.com>, Vlastimil Babka <vbabka@suse.cz>, Zi Yan <ziy@nvidia.com>, 
-	Mike Rapoport <rppt@kernel.org>, Dave Hansen <dave.hansen@linux.intel.com>, 
-	Michal Hocko <mhocko@suse.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Thomas Gleixner <tglx@linutronix.de>, 
-	Nico Pache <npache@redhat.com>, Dev Jain <dev.jain@arm.com>, 
-	"Liam R . Howlett" <Liam.Howlett@oracle.com>, Jens Axboe <axboe@kernel.dk>, linux-kernel@vger.kernel.org, 
-	willy@infradead.org, linux-mm@kvack.org, x86@kernel.org, linux-block@vger.kernel.org, 
-	linux-fsdevel@vger.kernel.org, "Darrick J . Wong" <djwong@kernel.org>, mcgrof@kernel.org, 
-	gost.dev@samsung.com, hch@lst.de, Pankaj Raghav <p.raghav@samsung.com>
-Subject: Re: [RFC v2 1/4] mm: rename huge_zero_page_shrinker to
- huge_zero_folio_shrinker
-Message-ID: <arhm7vlux7xl627zvlexwziq6gpgxueeslxvjrzhofld7xgvul@uvlyngrizze3>
-References: <20250724145001.487878-1-kernel@pankajraghav.com>
- <20250724145001.487878-2-kernel@pankajraghav.com>
- <87v7n7r7xx.fsf@gmail.com>
- <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
+	s=arc-20240116; t=1754296710; c=relaxed/simple;
+	bh=B6D2Jw1a192dM7cWkBfIpMYBxQk3UyYgMDjSpBTOVhc=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=AZSskn24OkvBNpmMe0VojHl2Vq4a4Fdtuko2G1NJeUmkeo9rtf6hc+DG1fAeS6fPwdtd7SuekDOenCFqaWf/xF9WxVxA2PpOcFd1jzG7RB1uQTQ467ShlQT8v9ILNmNAvcaeuJWiLGt8aoM/gqwrcFzVWNEHGelbWui6TofowHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.78
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f78.google.com with SMTP id ca18e2360f4ac-88183648765so126530739f.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:38:28 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754296708; x=1754901508;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=z/vPotG2b9l+KXw1WBVaiCqdoATqnmE0DFANnuH3Swo=;
+        b=k+uNCH9IcsfY7F5og5T+WCaj5Kwsvdbb62Sbrkxi3HLgZMtyOBdWkGZI1eguZZAws3
+         9wzsssY81EN27RnACIVsh6Xuu1aBjMgGkhs7M/Czdeb41UfD+gipTJl4LhB/YBzVD8qT
+         4NqHPZ3mHOm7DAgVmL46LdSh0uVrXPXe004Jb9+04i6HJ06HQEDYe/bhF4rEH5Q3K1NY
+         8exdIFoNaA+TqQ4w+rvm/a6vfiB2eqK6idHqZpWTfQQTTmmLpLf6ZTyr4o55EwRUlN4S
+         4mBsvlLQH3ekHU3XGrJWf+A9qlAbCVRIr05rUkqFBhlAFRZdM434g7Lsc1kMj7Gc332Y
+         IL6g==
+X-Forwarded-Encrypted: i=1; AJvYcCU4eIVt0XyvSv4ehLf7uZAuCrU7gwuwybgMmdHVFNUbdc+ONft3G2XvOz68iQECT1fdW+MWp6iiK5Qjkhw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIGC2vjXxfGvzHgNo7cx+31AllvyvqyHXJFu8h+iQ9UV9j5mok
+	KC7WBnIukW0d1qulvWcsvsLUvAST4Z6SMnGYAzegaqYWyWWfIZQkVE6Do8giyUkPTXAsN6/sg+H
+	c8Xs7v/EkcMp17JQRn4JPBk4DCtagJzJQaKqSUIu6xcpY6XI+rOPs0d8feUc=
+X-Google-Smtp-Source: AGHT+IGUm+uhzIKU9z4ovg6nzr4nztSLk2f/Rcbc6TrXvn35RUC8GeBfHCkdEYcA7YKIXhja9q4AfknYD5HtsErDE+RPOFMIpOK9
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <88296851-3bbe-44fc-a507-70964c0bea8c@redhat.com>
-X-Rspamd-Queue-Id: 4bwVKf31nCz9sxm
+X-Received: by 2002:a05:6602:14c7:b0:87c:3417:cc11 with SMTP id
+ ca18e2360f4ac-881683361a5mr1386552039f.1.1754296707841; Mon, 04 Aug 2025
+ 01:38:27 -0700 (PDT)
+Date: Mon, 04 Aug 2025 01:38:27 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <68907183.050a0220.7f033.0006.GAE@google.com>
+Subject: [syzbot] [kernfs?] BUG: unable to handle kernel paging request in kernfs_remove_by_name_ns
+From: syzbot <syzbot+4faa3fd832279bd35a81@syzkaller.appspotmail.com>
+To: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com, tj@kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On Fri, Aug 01, 2025 at 05:30:46PM +0200, David Hildenbrand wrote:
-> On 01.08.25 06:18, Ritesh Harjani (IBM) wrote:
-> > "Pankaj Raghav (Samsung)" <kernel@pankajraghav.com> writes:
-> > 
-> > > From: Pankaj Raghav <p.raghav@samsung.com>
-> > > 
-> > > As we already moved from exposing huge_zero_page to huge_zero_folio,
-> > > change the name of the shrinker to reflect that.
-> > > 
-> > 
-> > Why not change get_huge_zero_page() to get_huge_zero_folio() too, for
-> > consistent naming?
-> 
-> Then we should also rename put_huge_zero_folio(). Renaming
-> MMF_HUGE_ZERO_PAGE should probably be done separately.
+Hello,
 
-Thanks Ritesh and David.
+syzbot found the following issue on:
 
-I will change them in the next version! :)
+HEAD commit:    5f33ebd2018c Merge tag 'drm-fixes-2025-07-26' of https://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=10908034580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=186272c644ef9aa3
+dashboard link: https://syzkaller.appspot.com/bug?extid=4faa3fd832279bd35a81
+compiler:       gcc (Debian 12.2.0-14) 12.2.0, GNU ld (GNU Binutils for Debian) 2.40
 
---
-Pankaj
+Unfortunately, I don't have any reproducer for this issue yet.
+
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/d900f083ada3/non_bootable_disk-5f33ebd2.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/582eb02b72dc/vmlinux-5f33ebd2.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/ce6a4956089e/bzImage-5f33ebd2.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+4faa3fd832279bd35a81@syzkaller.appspotmail.com
+
+comedi comedi3: c6xdigio: I/O port conflict (0xcf7,3)
+BUG: unable to handle page fault for address: ffffffff9ee57158
+#PF: supervisor read access in kernel mode
+#PF: error_code(0x0000) - not-present page
+PGD e387067 P4D e387067 PUD e388063 PMD 0 
+Oops: Oops: 0000 [#1] SMP KASAN NOPTI
+CPU: 1 UID: 0 PID: 8309 Comm: syz.5.701 Not tainted 6.16.0-rc7-syzkaller-00120-g5f33ebd2018c #0 PREEMPT(full) 
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:variable_test_bit arch/x86/include/asm/bitops.h:227 [inline]
+RIP: 0010:arch_test_bit arch/x86/include/asm/bitops.h:239 [inline]
+RIP: 0010:_test_bit include/asm-generic/bitops/instrumented-non-atomic.h:142 [inline]
+RIP: 0010:__lock_acquire+0x46e/0x1c90 kernel/locking/lockdep.c:5210
+Code: 78 5d 3f 03 0f b6 54 24 28 85 c0 74 10 44 8b 1d 48 0b 11 0f 45 85 db 0f 84 db 05 00 00 90 31 c9 e9 8a fe ff ff 48 63 44 24 10 <48> 0f a3 05 0a 5c 3e 14 0f 82 7b ff ff ff 90 e8 3e 5d 3f 03 85 c0
+RSP: 0018:ffffc9000336f7a0 EFLAGS: 00010046
+RAX: 00000000487561e4 RBX: 0000000000000003 RCX: 0000000000000008
+RDX: 0000000000000000 RSI: ffff888029e02fa8 RDI: ffff888029e02440
+RBP: ffff888029e02440 R08: ffffffff95d842a8 R09: 0000000000000001
+R10: 0000000000000010 R11: 0000000000000005 R12: ffff888029e02f30
+R13: ffff888029e02fa8 R14: 0000000000000003 R15: 0000000000000003
+FS:  00007f603693a6c0(0000) GS:ffff8880d6820000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff9ee57158 CR3: 000000006039a000 CR4: 0000000000352ef0
+Call Trace:
+ <TASK>
+ lock_acquire kernel/locking/lockdep.c:5871 [inline]
+ lock_acquire+0x179/0x350 kernel/locking/lockdep.c:5828
+ down_write+0x92/0x200 kernel/locking/rwsem.c:1577
+ kernfs_remove_by_name_ns+0x3d/0x110 fs/kernfs/dir.c:1712
+ sysfs_remove_file include/linux/sysfs.h:777 [inline]
+ driver_remove_file drivers/base/driver.c:201 [inline]
+ driver_remove_file+0x4a/0x60 drivers/base/driver.c:197
+ remove_bind_files drivers/base/bus.c:605 [inline]
+ bus_remove_driver+0x224/0x2c0 drivers/base/bus.c:743
+ driver_unregister+0x76/0xb0 drivers/base/driver.c:277
+ comedi_device_detach+0x13d/0x9e0 drivers/comedi/drivers.c:207
+ comedi_device_attach+0x43d/0x900 drivers/comedi/drivers.c:1003
+ do_devconfig_ioctl+0x1a7/0x580 drivers/comedi/comedi_fops.c:855
+ comedi_unlocked_ioctl+0x165d/0x2f00 drivers/comedi/comedi_fops.c:2156
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl fs/ioctl.c:893 [inline]
+ __x64_sys_ioctl+0x18e/0x210 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/syscall_64.c:63 [inline]
+ do_syscall_64+0xcd/0x4c0 arch/x86/entry/syscall_64.c:94
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f6035b8e9a9
+Code: ff ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f603693a038 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 00007f6035db5fa0 RCX: 00007f6035b8e9a9
+RDX: 00002000000000c0 RSI: 0000000040946400 RDI: 0000000000000003
+RBP: 00007f6035c10d69 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
+R13: 0000000000000000 R14: 00007f6035db5fa0 R15: 00007ffe08e77888
+ </TASK>
+Modules linked in:
+CR2: ffffffff9ee57158
+---[ end trace 0000000000000000 ]---
+RIP: 0010:variable_test_bit arch/x86/include/asm/bitops.h:227 [inline]
+RIP: 0010:arch_test_bit arch/x86/include/asm/bitops.h:239 [inline]
+RIP: 0010:_test_bit include/asm-generic/bitops/instrumented-non-atomic.h:142 [inline]
+RIP: 0010:__lock_acquire+0x46e/0x1c90 kernel/locking/lockdep.c:5210
+Code: 78 5d 3f 03 0f b6 54 24 28 85 c0 74 10 44 8b 1d 48 0b 11 0f 45 85 db 0f 84 db 05 00 00 90 31 c9 e9 8a fe ff ff 48 63 44 24 10 <48> 0f a3 05 0a 5c 3e 14 0f 82 7b ff ff ff 90 e8 3e 5d 3f 03 85 c0
+RSP: 0018:ffffc9000336f7a0 EFLAGS: 00010046
+RAX: 00000000487561e4 RBX: 0000000000000003 RCX: 0000000000000008
+RDX: 0000000000000000 RSI: ffff888029e02fa8 RDI: ffff888029e02440
+RBP: ffff888029e02440 R08: ffffffff95d842a8 R09: 0000000000000001
+R10: 0000000000000010 R11: 0000000000000005 R12: ffff888029e02f30
+R13: ffff888029e02fa8 R14: 0000000000000003 R15: 0000000000000003
+FS:  00007f603693a6c0(0000) GS:ffff8880d6820000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: ffffffff9ee57158 CR3: 000000006039a000 CR4: 0000000000352ef0
+----------------
+Code disassembly (best guess), 3 bytes skipped:
+   0:	03 0f                	add    (%rdi),%ecx
+   2:	b6 54                	mov    $0x54,%dh
+   4:	24 28                	and    $0x28,%al
+   6:	85 c0                	test   %eax,%eax
+   8:	74 10                	je     0x1a
+   a:	44 8b 1d 48 0b 11 0f 	mov    0xf110b48(%rip),%r11d        # 0xf110b59
+  11:	45 85 db             	test   %r11d,%r11d
+  14:	0f 84 db 05 00 00    	je     0x5f5
+  1a:	90                   	nop
+  1b:	31 c9                	xor    %ecx,%ecx
+  1d:	e9 8a fe ff ff       	jmp    0xfffffeac
+  22:	48 63 44 24 10       	movslq 0x10(%rsp),%rax
+* 27:	48 0f a3 05 0a 5c 3e 	bt     %rax,0x143e5c0a(%rip)        # 0x143e5c39 <-- trapping instruction
+  2e:	14
+  2f:	0f 82 7b ff ff ff    	jb     0xffffffb0
+  35:	90                   	nop
+  36:	e8 3e 5d 3f 03       	call   0x33f5d79
+  3b:	85 c0                	test   %eax,%eax
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
