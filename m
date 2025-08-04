@@ -1,218 +1,125 @@
-Return-Path: <linux-kernel+bounces-754588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F012FB199C9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:12:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A5FB7B199CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:17:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B03F1896A3C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:12:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FA01892CB5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:18:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 640A91A4E70;
-	Mon,  4 Aug 2025 01:12:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b="RM4OiQGk"
-Received: from mail-qt1-f173.google.com (mail-qt1-f173.google.com [209.85.160.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 21D991CEAA3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 01:11:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E21E521D;
+	Mon,  4 Aug 2025 01:17:45 +0000 (UTC)
+Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19E94A28;
+	Mon,  4 Aug 2025 01:17:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754269920; cv=none; b=bKT682VtQdice9pqJ5JXGpaElZpZQe1PG4z35WmaK0G/MUl2SxWfuJTpnZzzBH5VvI5nmUCsuqn6MAO1ULp/YXkIbpfc7eddfPmUzwsYTBSrXDEaMq/Q2/HY2ro3eJj6ifx+b8NjL5hFBolEqL+rTMbCNqVr6iQXxG8M5j8QDOw=
+	t=1754270265; cv=none; b=c6oYN7bWqSRhoM0GSTdxibFyvb920h0MCa09n4HINdu5GcZtDo77TWtagmOGen+CHrd/++SiJSbk2Urk0+TzUxAwt1ZUJLR8CoryoLTVOdiuNeRUl7aFdnZus4jJNo1doCdko0qWoAxXlDpIhEFyEhK9LszRRCOtd0Cs24OI0so=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754269920; c=relaxed/simple;
-	bh=dwYOkfkrLuTx/MFAcxiCoQ08IEU73UxalscP4C3rAnE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ez0xwf0EAbIDAw9EBkt+9aMmB/yNwmnWaDIEzZxLruBOQ9BHqk0WYxEDDyzG7vWK9VBKhpeije9z/k08S1sbm95KlA3tongq+xs0Xa5dAde3UdnYRX4arNZ4X4vZfyliD2WNrRNHo1kFUt3EtO1jq2fq5osRMR0mbqb8yWFwY90=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com; spf=pass smtp.mailfrom=soleen.com; dkim=pass (2048-bit key) header.d=soleen.com header.i=@soleen.com header.b=RM4OiQGk; arc=none smtp.client-ip=209.85.160.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=soleen.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=soleen.com
-Received: by mail-qt1-f173.google.com with SMTP id d75a77b69052e-4abd3627e7eso50687381cf.0
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 18:11:58 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=soleen.com; s=google; t=1754269918; x=1754874718; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5EHC7Bo4Tna4lRMiPBPdxLTjpzf5j4XSXmXAx1SxHbs=;
-        b=RM4OiQGkIFLaS5UHwycJ1TQqhDuJoacjpK+jIkUC0neJ8FM+vKsE49UK0vRWbSsfrn
-         XqcT62qc2J/Op99KMTZ/Rm514MwEb2KDhZkQbFzrh6Z8sW3KtCWgREvkDxFta2drPXej
-         6cgHdJF03EOzSgbtOePjfobl7gPlBWSfkesM7OjjkM9wZzNKg80qpuuPOFdMoGqgqr1L
-         bD+XD1xPgQtQu3KXqFnPJPD0rGl3S6SCB3/9GVtXAYR8hxapPY9wOaM3Pl42ewbL0Fev
-         E08IUIXbjjz7A/js+pPh2jkAMviABuaDXp6llzD/cwF0WudDjub+YPXMEOrAcjggMN++
-         8sGA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754269918; x=1754874718;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5EHC7Bo4Tna4lRMiPBPdxLTjpzf5j4XSXmXAx1SxHbs=;
-        b=YHJUhz2tgqT4FRD11eRXykI+LjLNq7CwDl0hJatiTn0E0Tv91QBPGUSKhOsG+G0H+x
-         uBzFLoGAscuWLeDBN/WFRL7NviMp3VPprjET0e9q5l+7dr8l7Qp+mpnchwGmqKRtMwr8
-         kWGyNMoKyurQuMcak8aaz4spj28CSf6RJXdh9QfPc8Bj7bv8Zj7arN2ZlEdt+AmznoVS
-         ip4IW/PVfPN+DLwcPWQNdm3oxTA7/FFD4xEjH1o57E+hHxxt53OT/cZRdI3+gusPPWsX
-         2aAYX87Ho1F5KaBE+85od0PsL0/CrJFcWi/PDvzDVkUcpO0etJ+nG2KdPhHhPeQsGE6a
-         hKAQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU8WZYu8yv3cfZl+8cS3lZR1zyHxFYHKmFb0XGi6IY8pCki5du5/8oZqC42s+pxU6a0HtHejMXmdOaV3V4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1H7NB9WL/7K+Rfqk2Ot/Mcd2ufOl7/euTnMS1SXYd5hg7U8/w
-	LjlyaJSos7UBnDJyEdUkkLsTR5WMKgeBnFh2Y6wSMMmFuxt1zxcbTDTvaD/vMys7PcNhzeHisKz
-	lWCQYMqwfAK3skfFf414tHjTzWBANv0f4zQUx1rpc/w==
-X-Gm-Gg: ASbGncuSAPP5yakl9dBVnYEQPx8QLRnDKFa6S91RjmCVGBD7kyBoxLLloREzdZO51VT
-	FZpMYr/yuAUxWSlhVMwUncR4mKoF0P3czZCEZLqQ/dsv5yt6jS1BLQU2oWgELfhfDDr9kxr5zz8
-	KcdsUaOpzCZRTvDPRBgs7MZllTV2ZCehxryI+qnvdYqqZAVJ5DgGXNymy3g31eNyrsXW9CswC9n
-	4w2FuU09c4bWe8=
-X-Google-Smtp-Source: AGHT+IElK+avqeyYUn54//o2iNNGJM5V66RJUxPCF/JnBBNYlvcJkU9/zn67Ob/Mjz52DPZ282PLlisDVXGG6S/YoQU=
-X-Received: by 2002:ac8:5a12:0:b0:4ab:7d96:bbca with SMTP id
- d75a77b69052e-4af1098b133mr128405741cf.24.1754269917325; Sun, 03 Aug 2025
- 18:11:57 -0700 (PDT)
+	s=arc-20240116; t=1754270265; c=relaxed/simple;
+	bh=ZaZhQqQIxHFirOaw7xjj8DtF5xa8nwZa6KWHSiUQ7aQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cgb4h1ejNE8Br313RoiF//inFltqpUOzAWqFRrS5R8YoHji+TxXhdxGYq9ep2Z1w7N8MhDgwDJyNk3r+HEGtJOPxuqqWGy+nKB7oZTXHiUfq36b1/RlPfAcxjrB2TRgzse0bI0tXQVq2rozcjzBE5CTyucz4MyBWJonF9BcKZWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
+X-AuditID: a67dfc5b-669ff7000002311f-35-68900a2f40c4
+Date: Mon, 4 Aug 2025 10:17:30 +0900
+From: Byungchul Park <byungchul@sk.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
+	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
+	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
+	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
+	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
+	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
+	akpm@linux-foundation.org, david@redhat.com,
+	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
+	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
+	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
+	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
+	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
+	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
+	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
+	bpf@vger.kernel.org, linux-rdma@vger.kernel.org
+Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
+ for page pool in page type
+Message-ID: <20250804011730.GB39461@system.software.com>
+References: <20250729110210.48313-1-byungchul@sk.com>
+ <20250802150746.139a71be@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250723144649.1696299-1-pasha.tatashin@soleen.com>
- <20250723144649.1696299-11-pasha.tatashin@soleen.com> <20250729172812.GP36037@nvidia.com>
-In-Reply-To: <20250729172812.GP36037@nvidia.com>
-From: Pasha Tatashin <pasha.tatashin@soleen.com>
-Date: Sun, 3 Aug 2025 21:11:20 -0400
-X-Gm-Features: Ac12FXyfTkQo6Oo5aMdGv4BzhEny3uN9Ow76q668n06TlX48YEn8zjMHGbMDq6Q
-Message-ID: <CA+CK2bCrfVef_sFWCQpdwe9N_go8F_pU4O-w+XBJZ6yEuXRj9g@mail.gmail.com>
-Subject: Re: [PATCH v2 10/32] liveupdate: luo_core: Live Update Orchestrator
-To: Jason Gunthorpe <jgg@nvidia.com>
-Cc: pratyush@kernel.org, jasonmiu@google.com, graf@amazon.com, 
-	changyuanl@google.com, rppt@kernel.org, dmatlack@google.com, 
-	rientjes@google.com, corbet@lwn.net, rdunlap@infradead.org, 
-	ilpo.jarvinen@linux.intel.com, kanie@linux.alibaba.com, ojeda@kernel.org, 
-	aliceryhl@google.com, masahiroy@kernel.org, akpm@linux-foundation.org, 
-	tj@kernel.org, yoann.congal@smile.fr, mmaurer@google.com, 
-	roman.gushchin@linux.dev, chenridong@huawei.com, axboe@kernel.dk, 
-	mark.rutland@arm.com, jannh@google.com, vincent.guittot@linaro.org, 
-	hannes@cmpxchg.org, dan.j.williams@intel.com, david@redhat.com, 
-	joel.granados@kernel.org, rostedt@goodmis.org, anna.schumaker@oracle.com, 
-	song@kernel.org, zhangguopeng@kylinos.cn, linux@weissschuh.net, 
-	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-mm@kvack.org, 
-	gregkh@linuxfoundation.org, tglx@linutronix.de, mingo@redhat.com, 
-	bp@alien8.de, dave.hansen@linux.intel.com, x86@kernel.org, hpa@zytor.com, 
-	rafael@kernel.org, dakr@kernel.org, bartosz.golaszewski@linaro.org, 
-	cw00.choi@samsung.com, myungjoo.ham@samsung.com, yesanishhere@gmail.com, 
-	Jonathan.Cameron@huawei.com, quic_zijuhu@quicinc.com, 
-	aleksander.lobakin@intel.com, ira.weiny@intel.com, 
-	andriy.shevchenko@linux.intel.com, leon@kernel.org, lukas@wunner.de, 
-	bhelgaas@google.com, wagi@kernel.org, djeffery@redhat.com, 
-	stuart.w.hayes@gmail.com, ptyadav@amazon.de, lennart@poettering.net, 
-	brauner@kernel.org, linux-api@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
-	saeedm@nvidia.com, ajayachandra@nvidia.com, parav@nvidia.com, 
-	leonro@nvidia.com, witu@nvidia.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250802150746.139a71be@canb.auug.org.au>
+User-Agent: Mutt/1.9.4 (2018-02-28)
+X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTVxjHc97z3mhodqwwj5AsWE0w1BvOhMdIFrNk8fWDiUFjzLZEuvXN
+	2ghoCkVwoqBdtjVCmZeopWqRDBGI1aLcJlIKFnAzGDa0IgLjGkVQKzaFEpVilvntl//zP7/n
+	+XBErGrkYkRDRpZszNCmqXkFq5iMvLR6raJYv+5xMBbszmoeqoI5cHmwngN7ZS2C6ZnHArxr
+	8iJ43dbOw0SrH0FZaQCDvcvMwhvnLIZR75AAVa5tMFA+xsKtn+swDFk7eCg0hzA0zUwJcLS+
+	ggF7Tb4A92uLODg1+zuGuvxBAf5utPPQX/2OgzFPIQudtissvDzdhmGgaDN4HZ9C4M/nCNqc
+	dQwEjp/noedcIwM3m3oEONnt4GHYPICgu3WIhdNzv/BQUlCEIBScV04VT3NQcqdf2KyRCnw+
+	Xmp9/gJLN648YiTf7buM1GB7IkgOl0mqqUiQLL5uLLkqf+Ull/+EIPU9uMVLHWdDrNTw70ap
+	of41IxUem+KlV6O97PaorxXJOjnNkC0b136RqtB7zVZhv5PPcdzrw/mogLMgUaRkAx2Z/NKC
+	Ihaw/dUcG2aWrKDBaTcXZp7EU59vBofrUURD3SFiQQoRk6sCHXwSEMKdxURPay4MM2FWEqBd
+	E5MLb1XkO1rWUMd/yBfRznMjC35MEqjv7VMm7MQkll5+K4bjCJJEWx4+W6hHk+XUXdvOhHdR
+	MijS3uvt3Ic7l9KWCh9bjIjtI63tI63tf60D4UqkMmRkp2sNaRvW6HMzDDlrvt+X7kLzP6o8
+	b+6beuS/v8ODiIjUkcrdOqtexWmzM3PTPYiKWB2l/PbIfKTUaXMPysZ9e4ymNDnTg2JFVr1E
+	uT5wQKciP2iz5L2yvF82/jdlxIiYfIRjK9078sY1Ly8uWhbqMievKv3xyAFh+bjoLtn0JvGE
+	nv3KZB/i+nbHm/5J/qvZZDnaZ7T0bi35xHZwa/nOiN+u+SOvefY6/Ss1W+LYM6nNKRd0+LM/
+	NDGzEx1xiaPVW1KSDnVnWdff/WksSRcXHTyccq/5WWmZd5eup/Nz60zC2LiazdRrExOwMVP7
+	HnS0DcVNAwAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH932+zz3P4+rmIepZ/ru0mkq1Mp/GSuuPntW0/qtZW648dVdH
+	upPRT2L9uOFIVi7a6afUsk5xJxp3IpmEVU/icGITIa6bw8hpLf+9P6/P5/X+68Ng30LJSkYV
+	lyBo4hRqOSUlpfvC0jZslGYrNw2KEigofUbB08kkeNxjnp9KyhE43d9omKuuRzBR10DBkG0c
+	wf0iF4aClnQSfpdOYeivd9Dw1BQJ3Y8GSKi6WoHBoX9HQWb6NIZq9wgNl83FBBSUpdBgK2yU
+	wMfyLAncnHqIoSKlh4b2ygIK7M/mJDBgzSSh0fCEhLG8OgzdWRFQb1wOrqZhBHWlFQS4Mgop
+	+JRfScCr6k805LYZKehL70bQZnOQkDdzjYI7qVkIpifnK0eynRK489ZOR6znU0WR4m3Do5h/
+	+eQrwYtv3hO8xdBF80bTGb6sOIjXiW2YN5Vcp3jT+A2a7/xcRfHvbk+TvKV3G28xTxB8ZtoI
+	xf/q7yD3+0dJw2MEtSpR0GzcHi1V1qfr6fhSKsnY3IlTUKpEh7wYjt3KNfyaIT2ZZAO5SWfN
+	AqfYNZwourEOMYwfu46rmWZ1SMpg9jnN9XS5aM/NMlbJld3tIzxZxgLXMvRzwfVlj3D3LRXU
+	X+7DNeZ/X+jHbBAnzg4Snk7MBnCPZxkP9mJDudovPxbO/dlVXE15A5GNZIZFtmGRbfhvGxEu
+	QX6quMRYhUodEqw9qUyOUyUFHz0Va0LzT/PowkyOGTnbd1sRyyD5UtnBGL3SV6JI1CbHWhHH
+	YLmf7NCleSSLUSSfFTSnDmvOqAWtFQUwpHyFbM8BIdqXPa5IEE4KQryg+bclGK+VKah2ruZ5
+	bmSr9z0yweeDXd87l9NbWdtfvmtHYJGPVYzvsJ94mZcZpba8GNKX7Z1h/I/eszV27bzoOh9p
+	tW7x1g2eC3e03q6+9aAyzC1vfm1ekjrkMxpxDE2tXtbVXnWa9u9zQ2jAlTHN9hHK4jwW67hV
+	1bRmYunltUmo5GNGiD1YTmqVis1BWKNV/AFarF8GMAMAAA==
+X-CFilter-Loop: Reflected
 
-> > +enum liveupdate_event {
-> > +     LIVEUPDATE_PREPARE,
-> > +     LIVEUPDATE_FREEZE,
-> > +     LIVEUPDATE_FINISH,
-> > +     LIVEUPDATE_CANCEL,
-> > +};
->
-> I saw a later patch moves these hunks, that is poor patch planning.
+On Sat, Aug 02, 2025 at 03:07:46PM +1000, Stephen Rothwell wrote:
+> Hi,
+> 
+> On Tue, 29 Jul 2025 20:02:10 +0900 Byungchul Park <byungchul@sk.com> wrote:
+> >
+> > Changes from v2:
+> > 	1. Rebase on linux-next as of Jul 29.
+> 
+> Why are you basing development work in linux-next.  That is a
+> constantly rebasing tree.  Please base your work on some stable tree.
 
-Yes, you're right. I have since moved this to uapi/linux/liveupdate.h
-in the introductory patch to improve the structure of the patch
-series.
+Sorry about the confusing.  I misunderstood how to work for patches
+based on linux-next.
 
-> Ideally an ioctl subsystem should start out with the first patch
-> introducing the basic cdev, file open, ioctl dispatch, ioctl uapi
-> header and related simple infrastructure.
+However, basing on linux-next is still required for this work since more
+than one subsystem is involved, and asked by David Hildenbrand:
 
-I have modified the patch series as follows: The rudimentary parts of
-the cdev, including the uapi/liveupdate.h header, are now in this
-introductory patch. The rest of the ioctl interface is added in the
-old patch that introduced luo_ioctl.c.
+   https://lore.kernel.org/all/20250728105701.GA21732@system.software.com/
 
-> Then you'd go basically ioctl by ioctl adding the new ioctls and
-> explaining what they do in the patch commit messages.
->
-> > +/**
-> > + * liveupdate_state_updated - Check if the system is in the live update
-> > + * 'updated' state.
-> > + *
-> > + * This function checks if the live update orchestrator is in the
-> > + * ``LIVEUPDATE_STATE_UPDATED`` state. This state indicates that the system has
-> > + * successfully rebooted into a new kernel as part of a live update, and the
-> > + * preserved devices are expected to be in the process of being reclaimed.
-> > + *
-> > + * This is typically used by subsystems during early boot of the new kernel
-> > + * to determine if they need to attempt to restore state from a previous
-> > + * live update.
-> > + *
-> > + * @return true if the system is in the ``LIVEUPDATE_STATE_UPDATED`` state,
-> > + * false otherwise.
-> > + */
-> > +bool liveupdate_state_updated(void)
-> > +{
-> > +     return is_current_luo_state(LIVEUPDATE_STATE_UPDATED);
-> > +}
-> > +EXPORT_SYMBOL_GPL(liveupdate_state_updated);
->
-> Unless there are existing in tree users there should not be exports.
+I will base on linux-next and work aiming at either network or mm tree.
 
-Thank you, I have removed the exports from this patch and all others
-in the series.
+	Byungchul
 
-> I'm also not really sure why there is global state, I would expect the
-> fd and session objects to record what kind of things they are, not
-> having weird globals.
+> -- 
+> Cheers,
+> Stephen Rothwell
 
-Having a global state is necessary for performance optimizations. This
-is similar to why we export the state to userspace via sysfs: it
-allows other subsystems to behave differently during a
-performance-optimized live update versus a normal boot.
 
-For example, in our code base we have a driver that doesn't
-participate in the live update itself (it has no state to preserve).
-However, during boot, it checks this global state. If it's a live
-update boot, the driver skips certain steps, like loading firmware, to
-accelerate the overall boot time.
-
-In other words, even before userspace starts, this global awareness
-enables optimizations that aren't necessary during a cold boot or a
-regular kexec.
-
-> Like liveupdate_register_subsystem() stuff, it already has a lock,
-> &luo_subsystem_list_mutex, if you want to block mutation of the list
-> then, IMHO, it makes more sense to stick a specific variable
-> 'luo_subsystems_list_immutable' under that lock and make it very
-> obvious.
->
-> Stuff like luo_files_startup() feels clunky to me:
->
-> +       ret = liveupdate_register_subsystem(&luo_file_subsys);
-> +       if (ret) {
-> +               pr_warn("Failed to register luo_file subsystem [%d]\n", ret);
-> +               return ret;
-> +       }
-> +
-> +       if (liveupdate_state_updated()) {
->
-> Thats going to be a standard pattern - I would expect that
-> liveupdate_register_subsystem() would do the check for updated and
-> then arrange to call back something like
-> liveupdate_subsystem.ops.post_update()
->
-> And then post_update() would get the info that is currently under
-> liveupdate_get_subsystem_data() as arguments instead of having to make
-> more functions calls.
->
-> Maybe even the fdt_node_check_compatible() can be hoisted.
->
-> That would remove a bunch more liveupdate_state_updated() calls.
-
-That's a good suggestion for a potential refactor. For now, the
-state-check call is inexpensive and is not in a performance-critical
-path. We can certainly implement this optimization later if it becomes
-necessary.
-
-Thank you,
-Pasha
 
