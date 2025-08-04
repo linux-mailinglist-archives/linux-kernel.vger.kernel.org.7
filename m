@@ -1,212 +1,176 @@
-Return-Path: <linux-kernel+bounces-755572-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755573-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F42CB1A898
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:25:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36A1DB1A89C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:25:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 61187189E3E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C38203B2AB1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:25:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63E1428C2D2;
-	Mon,  4 Aug 2025 17:24:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4614528B7D4;
+	Mon,  4 Aug 2025 17:25:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lLy5W/PR"
-Received: from mail-pf1-f170.google.com (mail-pf1-f170.google.com [209.85.210.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tqs9UMqT"
+Received: from mail-pg1-f182.google.com (mail-pg1-f182.google.com [209.85.215.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E9E28B4FC
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:24:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A9328A71D;
+	Mon,  4 Aug 2025 17:25:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754328297; cv=none; b=OR/vlTlIBOZHzdlEWnaLHQV2c8Sbhz0WA1jB6bN1t+MzvAU/J5t6597epWgCFfXB6vRwKhz1WGUHAQxW317m/2RGI0FYSCwvdFMB6bogNBt6AjxkWselad9aDUIJRMHZEjdEgrjY0LPG9XvguPP701yAlK0GaqxJMU4wTXGKnR4=
+	t=1754328336; cv=none; b=bxmALK8ZwrnBGE18fwLG/HSuyli5rl6Ng9fCHdUErsILlbL15iXiN/P4brb7jdA2YPPqdXWkFE6sNaplMD6lQu4E1E8lrSiFSFxy9hVhJuh9fStru6OLEza7mK6WSm1b9gf+W62A6sRifZKvAxFiL2QOmOL2+cqpV2Wb0c3peWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754328297; c=relaxed/simple;
-	bh=qO5Ew7xotEf+LSjx9i7tRW9PtT+V4Seu5gf4adD9WvQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dt0nCF8/h0TEPHTM6Rx9F/jd66C6mkk8PSmMl5BR+N9bzr+jdPNATKjTdbC64RN6goK2r2aeNgrrVK9bmiNuV6aaHtrHIB8ZnyPK7+K99AJIUBGuBiRqsqhXycHlNGtt2B+prKLh2CXNJVZpDVglPl8oweUcWW4k4s6Afx2AZ+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lLy5W/PR; arc=none smtp.client-ip=209.85.210.170
+	s=arc-20240116; t=1754328336; c=relaxed/simple;
+	bh=7V9qc+lSDHqzl5x/p+toLHwpMFanml2MvTsoFwPK2Jg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=K5xCGDzALxMA9GaPn5Jk5AwPvKI2DKuw8pWJgLJLrf5DwSqUf6duDSBjqQ3AGyIwDQREWaXfc6LkMPEySbrzWiOd7vgZo112LdymBX+MJ56GWkWu8JYe5PI0Sk6Mevz94GzTj5BgzZC0lS0DHQee7MJQo/5Ex36MjOCFuSAgyTo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tqs9UMqT; arc=none smtp.client-ip=209.85.215.182
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f170.google.com with SMTP id d2e1a72fcca58-76bd9d723bfso2845139b3a.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:24:56 -0700 (PDT)
+Received: by mail-pg1-f182.google.com with SMTP id 41be03b00d2f7-b426d4c27d6so51664a12.3;
+        Mon, 04 Aug 2025 10:25:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754328295; x=1754933095; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=PZR0jWbWu/lG5CSlpgwY9+3+NvurMoK+b/pH3fKR8CI=;
-        b=lLy5W/PRbT/GSa7DX2lX4KP9nqw1p2/sOGnayQRLII894Hjo4PkEiUBn5bQw6aRjHw
-         nM8a4ISD8JwDa4A8PkU/NxJXCzzxDLW3yMc+Xss0lqgGYtsdAIZaGVBoOzJtJE74PN/s
-         Mt9emuODF/dSGoF9JncTrr9kxcl2vm2T6A9RXej9B6TrTO+yxfgd4sLUXRZ/mLr5Jf2x
-         zk4AB6nX7my9njbdJz1IX0tLtlSSnGKEYRZ6x1t1v4kurnwVeVL29Id+tZ6oS4AZooAW
-         110kIseJi9QkrTO/0PAXzMCLRc/kR6SqOR1y/Hy1eYuZkQEA5i1dvzm8WuSkASGnzEo2
-         8d0w==
+        d=gmail.com; s=20230601; t=1754328334; x=1754933134; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=g690U9pQgSxTEWE6ATDJuvl7Gc0JomLmYetcHpxeY3M=;
+        b=Tqs9UMqT+bDIAKbzVAafzdY4Zm6yQTmn++i1EV9rI/o4CQlLR05AIFp9ss6w612KZA
+         uW7X92KTKoqdXA5qmkpdl8bzF+KEnQDFmO8564DraXgLWUTBxlMnYSkLM4T8pUXphC0Y
+         x6B9Kjrd109s7xK++QepVqXWX0s8VG8CteS0+i1FvtUDfzL4Wz6Sdju9DLXEemZ44v1i
+         SAzv1x0vDhXaFFkJrfGnyAMr7F45lmXviZp0kcrjOf31rzOfb3nVXEkzeILs4h5htU4U
+         xaypy9Z6G56iHUlx/YAM2iZdUlhcnr9vYcSqpXWAXiJaVOK+KiECczbFb6JTuMHFmssL
+         AT7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754328295; x=1754933095;
-        h=content-transfer-encoding:mime-version:reply-to:references
-         :in-reply-to:message-id:date:subject:cc:to:from:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=PZR0jWbWu/lG5CSlpgwY9+3+NvurMoK+b/pH3fKR8CI=;
-        b=ppq0zpQA0pGuyWipURJQNqGUsRnESqlJ2SK0keaPkaheuNO70NXlGK7mqhE3hYJ4+x
-         IQvbGfx17cUCjzyPtxS8tWxaEM4aMQspjeaieSYMlzn9p1P39ebp/qzV71GviHRrHSJ0
-         puvhJJRYEug2KlsG/v+8bBbIt4hTM1ZuRusMfWn3McUHmmbn8Mcaq+WDxe2QzcbVTZjO
-         vVkX67GjgMGiO9ms2wFDNSQfVMywH0I6/ni7xr6mK4nzWuCuxZzAhG60nm5LA2Sfuqjz
-         F/f/XXt+nHuUy5v0OfajKpcO3Kj4DsdGLB679VYHpGBAC782rMwnS7eUEGVH9sqDnybw
-         6osg==
-X-Forwarded-Encrypted: i=1; AJvYcCXzifH9kTr03E0n3+JOMUPbbXckde+fzoDx5xNNLJH14NLnNLTEwCps5O6EFMTTcHQt2gz7fRnIkxOHoR4=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7aZvjBhiLTBNkzElHPOX/oXJpahlmgm45H4yjyIEu/h0rTyp5
-	cxWrM57w2rACAlcp2Z5PD1srMWW1lrF2Vn2lPYH4ONgeXaVgMLtzNQC6b3lP+E+Cn+Q=
-X-Gm-Gg: ASbGncvilovlnIzXgHnq7VorE04R4DFqMBwDp2kMeAkablVyVqB5aB78sj/b0jF8UMr
-	/Dn1U+qCqkPkbdGrphgZEVE6dhAaPn1gpStsVxfqXUoICNHWb5hsvMbrkqcBmz9sQJ+/7/s1zY0
-	L1M/Zjga9IRSwputjy8yAIR0ApsNQoPws5TrQsRk8eGSeButflNmFaB+lUsopW2JfSRgU2io5Sj
-	hnlPRHGc/I+xB4yNhLBOCv8MJJ84DbcjaLT9sFlwazJaARi5asHXDPW/vbi3ZpzQevzvUu6XwHx
-	BJkbSWRzx/PkFZoHizyALEEDrtp1su0RLPunCZ7MW0DCXfY3dEDorWRlxCFw4F2OIDvMVtm0tqh
-	w6hzFfszWSiw48/i8sdzmNscteCc=
-X-Google-Smtp-Source: AGHT+IGHdiNC7GNzQLwpVWRh03+lnLLmoCulHv8RNEfhsU1tU00VgfdWrwm2VCOx+cO0qpIIb4oOtg==
-X-Received: by 2002:a05:6a00:1701:b0:76b:f5c3:2af9 with SMTP id d2e1a72fcca58-76bf5c337ecmr9874395b3a.24.1754328295484;
-        Mon, 04 Aug 2025 10:24:55 -0700 (PDT)
-Received: from KASONG-MC4 ([101.32.222.185])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76bfcb26905sm4194530b3a.123.2025.08.04.10.24.51
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Mon, 04 Aug 2025 10:24:54 -0700 (PDT)
-From: Kairui Song <ryncsn@gmail.com>
-To: linux-mm@kvack.org
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-	Kemeng Shi <shikemeng@huaweicloud.com>,
-	Chris Li <chrisl@kernel.org>,
-	Nhat Pham <nphamcs@gmail.com>,
-	Baoquan He <bhe@redhat.com>,
-	Barry Song <baohua@kernel.org>,
-	"Huang, Ying" <ying.huang@linux.alibaba.com>,
-	linux-kernel@vger.kernel.org,
-	Kairui Song <kasong@tencent.com>
-Subject: [PATCH 2/2] mm, swap: prefer nonfull over free clusters
-Date: Tue,  5 Aug 2025 01:24:39 +0800
-Message-ID: <20250804172439.2331-3-ryncsn@gmail.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250804172439.2331-1-ryncsn@gmail.com>
-References: <20250804172439.2331-1-ryncsn@gmail.com>
-Reply-To: Kairui Song <kasong@tencent.com>
+        d=1e100.net; s=20230601; t=1754328334; x=1754933134;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=g690U9pQgSxTEWE6ATDJuvl7Gc0JomLmYetcHpxeY3M=;
+        b=N5z5dvik+xBKthKDJWQre0QhDdUhT5RU0njjkfxBMyrRMZ+fkOQsnTKMGlIdPb4GsL
+         Z9qo/1lhr2ace7Ieb0dbpn9WFejTck+p+bur8Yw+PjGAK4z3l1Nw3JRUGQjXS6Q+Ke2W
+         L801kye8izCDTMLmeR0MzDMVj2gT4kKrrPgXH1mA2ek5Xjw0mpo5dvtsaoyEOevYnD91
+         ZmP9zcncdZlUiuNYLhsIKu2u4D63JGHUI+bpKeuyfxpMxjpsL45dk+4MK0jtK+gYDsqc
+         y+OjDynlkzS8oBssyba7E1zRkBi7hFQ+E4DAK6y0n37YFuZs0dwOu0zKNjG4InMeGfeq
+         sxew==
+X-Forwarded-Encrypted: i=1; AJvYcCVBdmym59kHwTFv1w0HwbTTWfRUrbNBPz1qa0bLohPUcZKePvVQHbkRN5GugJ4VTBS4Yc+G62DwfTZkT9I9bMM=@vger.kernel.org, AJvYcCXScc/1vCO86gv51xblD7IVn70P24d0yk+Ki4kTsQhf5snPgaP7ZWVRU0xYrv8AulsAhXEhY5d8NGNX1GB8@vger.kernel.org
+X-Gm-Message-State: AOJu0YysP0RtKNYoOsoBJIdd2KBnamFb7ZXxy+gJOD7Zyo3k0nKX7bmS
+	w2Ts5BymgRVBPqILl60j5+GR+w0x89zNMkalss7LIAbNwBDRj6+PbOSATUYPaMbK3nmKRLxVhbV
+	tFd6oWWL1sZyjo06bSff4dix7rWkTvUw=
+X-Gm-Gg: ASbGncsPuoxOhBB56lSSjJroAoEBoUQGZ9jbyroI9sy1B6Tfl/sqDnno9iongiTJCFP
+	IdNZZRBcR29m9NkjChlEzE1TRZE+L0zqK7DOI5i5Na90XICo8joY1hPmoHVt7n8lQv7hx11awoy
+	2aBJaNYONJja5zOS4/kTEuXLRwbCYzClPWdpbEx8JuEOY/21kJbZo25tzE2HzOllJ73/GTQtP+C
+	0iE1ovOUJ8B3SkqAw4=
+X-Google-Smtp-Source: AGHT+IEajlMeD6NqO5b1/eXYB83OKLA2Za5F+Hq1oKtZSBKe86RBYLYjaIscUGuv7UBB/vwGN7icLu9m0Gh4yj7DzII=
+X-Received: by 2002:a17:90b:1d03:b0:31f:ea:ca84 with SMTP id
+ 98e67ed59e1d1-321161e12c3mr6481614a91.2.1754328334511; Mon, 04 Aug 2025
+ 10:25:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+ <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+ <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain> <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
+ <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
+In-Reply-To: <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Mon, 4 Aug 2025 13:25:23 -0400
+X-Gm-Features: Ac12FXy5S9_TzHUM3Kpfu9ojzbDCloPuhMA2gBarDK5IhPP2L8syh5vot1HwA9Y
+Message-ID: <CADnq5_PdgH7yPZ9UNw3iXvuQAAUmuKpMh-E8NLri_q5Zn8deWQ@mail.gmail.com>
+Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
+To: Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>, Alex Deucher <alexander.deucher@amd.com>, 
+	=?UTF-8?Q?Christian_K=C3=B6nig?= <christian.koenig@amd.com>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, amd-gfx@lists.freedesktop.org, 
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Kairui Song <kasong@tencent.com>
+On Mon, Aug 4, 2025 at 1:15=E2=80=AFPM Dan Carpenter <dan.carpenter@linaro.=
+org> wrote:
+>
+> On Mon, Aug 04, 2025 at 11:08:57AM -0400, Alex Deucher wrote:
+> > On Mon, Aug 4, 2025 at 10:49=E2=80=AFAM Dan Carpenter <dan.carpenter@li=
+naro.org> wrote:
+> > >
+> > > On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
+> > > > On Sat, Aug 2, 2025 at 4:22=E2=80=AFAM Ethan Carter Edwards
+> > > > <ethan@ethancedwards.com> wrote:
+> > > > >
+> > > > > The repeated checks on grbm_soft_reset are unnecessary. Remove th=
+em.
+> > > > >
+> > > >
+> > > > These are not NULL checks and they are necessary.  The code is
+> > > > checking if any bits are set in that register.  If not, then we can
+> > > > skip that code as there is nothing to do.
+> > > >
+> > >
+> > > It's not a null check, but it is a nested check and it's a local
+> > > variable so the patch is correct enough.  At this point we know that
+> > > grbm_soft_reset can't be zero.
+> >
+> > It can be 0 as far as I can see.  If none of the GRBM_STATUS bits are
+> > set, then we never set any of the bits in grbm_soft_reset.
+> >
+>
+> You're missing the first check...
+>
+> drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+>   7657          if (grbm_soft_reset) {
+>                     ^^^^^^^^^^^^^^^
+> Checked.
+>
+>   7658                  /* stop the rlc */
+>   7659                  gfx_v10_0_rlc_stop(adev);
+>   7660
+>   7661                  /* Disable GFX parsing/prefetching */
+>   7662                  gfx_v10_0_cp_gfx_enable(adev, false);
+>   7663
+>   7664                  /* Disable MEC parsing/prefetching */
+>   7665                  gfx_v10_0_cp_compute_enable(adev, false);
+>   7666
+>   7667                  if (grbm_soft_reset) {
+>                             ^^^^^^^^^^^^^^^
+> Unnecessary.
 
-We prefer a free cluster over a nonfull cluster whenever a CPU local
-cluster is drained to respect the SSD discard behavior [1]. It's not
-a best practice for non-discarding devices. And this is causing a
-chigher fragmentation rate.
+Yes, sorry, my brain processed this as the first check.
 
-So for a non-discarding device, prefer nonfull over free clusters. This
-reduces the fragmentation issue by a lot.
+Alex
 
-Testing with make -j96, defconfig, using 64k mTHP, 8G ZRAM:
-
-Before: sys time: 6121.0s  64kB/swpout: 1638155  64kB/swpout_fallback: 189562
-After:  sys time: 6145.3s  64kB/swpout: 1761110  64kB/swpout_fallback: 66071
-
-Testing with make -j96, defconfig, using 64k mTHP, 10G ZRAM:
-
-Before: sys time 5527.9s  64kB/swpout: 1789358  64kB/swpout_fallback: 17813
-After:  sys time 5538.3s  64kB/swpout: 1813133  64kB/swpout_fallback: 0
-
-Performance is basically unchanged, and the large allocation failure rate
-is lower. Enabling all mTHP sizes showed a more significant result:
-
-Using the same test setup with 10G ZRAM and enabling all mTHP sizes:
-
-128kB swap failure rate:
-Before: swpout:449548 swpout_fallback:55894
-After:  swpout:497519 swpout_fallback:3204
-
-256kB swap failure rate:
-Before: swpout:63938  swpout_fallback:2154
-After:  swpout:65698  swpout_fallback:324
-
-512kB swap failure rate:
-Before: swpout:11971  swpout_fallback:2218
-After:  swpout:14606  swpout_fallback:4
-
-2M swap failure rate:
-Before: swpout:12     swpout_fallback:1578
-After:  swpout:1253   swpout_fallback:15
-
-The success rate of large allocations is much higher.
-
-Link: https://lore.kernel.org/linux-mm/87v8242vng.fsf@yhuang6-desk2.ccr.corp.intel.com/ [1]
-Signed-off-by: Kairui Song <kasong@tencent.com>
----
- mm/swapfile.c | 38 ++++++++++++++++++++++++++++----------
- 1 file changed, 28 insertions(+), 10 deletions(-)
-
-diff --git a/mm/swapfile.c b/mm/swapfile.c
-index 5fdb3cb2b8b7..4a0cf4fb348d 100644
---- a/mm/swapfile.c
-+++ b/mm/swapfile.c
-@@ -908,18 +908,20 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 	}
- 
- new_cluster:
--	ci = isolate_lock_cluster(si, &si->free_clusters);
--	if (ci) {
--		found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
--						order, usage);
--		if (found)
--			goto done;
-+	/*
-+	 * If the device need discard, prefer new cluster over nonfull
-+	 * to spread out the writes.
-+	 */
-+	if (si->flags & SWP_PAGE_DISCARD) {
-+		ci = isolate_lock_cluster(si, &si->free_clusters);
-+		if (ci) {
-+			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
-+							order, usage);
-+			if (found)
-+				goto done;
-+		}
- 	}
- 
--	/* Try reclaim from full clusters if free clusters list is drained */
--	if (vm_swap_full())
--		swap_reclaim_full_clusters(si, false);
--
- 	if (order < PMD_ORDER) {
- 		while ((ci = isolate_lock_cluster(si, &si->nonfull_clusters[order]))) {
- 			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
-@@ -927,7 +929,23 @@ static unsigned long cluster_alloc_swap_entry(struct swap_info_struct *si, int o
- 			if (found)
- 				goto done;
- 		}
-+	}
- 
-+	if (!(si->flags & SWP_PAGE_DISCARD)) {
-+		ci = isolate_lock_cluster(si, &si->free_clusters);
-+		if (ci) {
-+			found = alloc_swap_scan_cluster(si, ci, cluster_offset(si, ci),
-+							order, usage);
-+			if (found)
-+				goto done;
-+		}
-+	}
-+
-+	/* Try reclaim full clusters if free and nonfull lists are drained */
-+	if (vm_swap_full())
-+		swap_reclaim_full_clusters(si, false);
-+
-+	if (order < PMD_ORDER) {
- 		/*
- 		 * Scan only one fragment cluster is good enough. Order 0
- 		 * allocation will surely success, and large allocation
--- 
-2.50.1
-
+>
+>   7668                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
+ESET);
+>   7669                          tmp |=3D grbm_soft_reset;
+>   7670                          dev_info(adev->dev, "GRBM_SOFT_RESET=3D0x=
+%08X\n", tmp);
+>   7671                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tm=
+p);
+>   7672                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
+ESET);
+>   7673
+>   7674                          udelay(50);
+>   7675
+>   7676                          tmp &=3D ~grbm_soft_reset;
+>   7677                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tm=
+p);
+>   7678                          tmp =3D RREG32_SOC15(GC, 0, mmGRBM_SOFT_R=
+ESET);
+>   7679                  }
+>   7680
+>   7681                  /* Wait a little for things to settle down */
+>   7682                  udelay(50);
+>   7683          }
+>   7684          return 0;
+>
+> regards,
+> dan carpenter
+>
 
