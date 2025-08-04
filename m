@@ -1,189 +1,165 @@
-Return-Path: <linux-kernel+bounces-755566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68371B1A884
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:15:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA866B1A887
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:15:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E8BF618A09BB
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:15:39 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6987D18A2CB4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:16:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4489B28A706;
-	Mon,  4 Aug 2025 17:15:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8FE928B4E7;
+	Mon,  4 Aug 2025 17:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="aQT4A0HX"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ICOctBeU"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9DFC28B7C8;
-	Mon,  4 Aug 2025 17:15:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E2EC4430
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754327712; cv=none; b=O+LBmYOwjj9aSYvnOZTYb9I9orkJ3EH45nBAVsJD8O7FeikOIbgw00AJGc8WnWdZ0PDE/5DwOUzE9AjLIUFtuO5OP0CR3yfypl7CUU7w8e1TDLH2fkkUfWg7Dnq7KxUxVArLDduxeq6dWcYwNGLZsw21zvUQVimqRcz4wZy12R0=
+	t=1754327737; cv=none; b=C+oURobS+S6IqayeDoftW10geSuyPSBzGmTaGXkLlFaDE6hkaDWjcHERvoyEqT9DwgRyIO8Up8I7nv3U374VxVDrb4IwOABekeARWCW2w23HZVb4fD4U4RE6ZIC865FlTWgwGpdTICi9wCfINV9rP1p/ihf5mL68pUE1k4qBsCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754327712; c=relaxed/simple;
-	bh=BSv3IA5IuUJhTBGL3xkgYTrQYKCsOpXUGxp4B+QDShQ=;
+	s=arc-20240116; t=1754327737; c=relaxed/simple;
+	bh=SECVmWzh/lpnaSJsDkOaHPyjcg2dlaYHEw0Mowtnw4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WBA55IBiITPf/AMu87R4ToESOJiXDhPDT4y321e/t/MUk13vEq03Acz5p4QcqR9qYg4f8C6oRu/bJ7rcXi5g2Li8XLHDwrRbII33Re3JiQj2mSFNLhfq/OW2XRhyqHCzXtEwfNN5dlhnhe3IE1YH+GXmb1FmunTDEf4+Z7OLCfA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=aQT4A0HX; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-3b78d13bf10so4270019f8f.1;
-        Mon, 04 Aug 2025 10:15:10 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=SV6lHl73uy0PIZLA8LdbRQgefGgK4Ta8vJQIUSIlQCWZ1VtgcCi6MIAVpr0UK9tACC3pS9ORWQ/u3s5KSai3xuqmxTwXcZiayWF0NCvepKphlrI2VVMzS4qwd1OkL9XPtZ5hwzZQ3ZmmWKFOH0qY9yvmvflSL4KoEYGf2FI4p04=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ICOctBeU; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-458a84e2917so39659785e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:15:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754327709; x=1754932509; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=1ES2rPSb96ZRcMua/upicMCXBbX2m2hK2sP3TCwY9yY=;
-        b=aQT4A0HX7Yhe1QBPudZ9z6uA6g2ztMghILxkwoHdJl/54YUKpZojtXTC5I/wtjJtGU
-         eY9Ng8t4fmknUy8U+h2UWX7bQtS3zIjC+Yo9QQ8V4Xxn5VPov2dksZyHAsOvFVR28Vdp
-         T6M0Gtm/svrAPvVXR+Wl5IXMfnTlGThNgzUsVE6HxDNIdDQN7QWh7pb+2VFp1aQ4PiJV
-         pnpNYEhVD73HjIVAv028uFTbyECOiM3zuk8JyC85r3JesH82ANcfW1xHJ8are/0jPF5w
-         IZ0T1iP+C1ZMDC0nAiXpwAPjaMXWHXmZkF+Vikjwy8Q37mWcYaGKD/nxIOlReFwjy+jZ
-         LCHQ==
+        d=linaro.org; s=google; t=1754327733; x=1754932533; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=NrTKl9K4+8vI5BzLuQ0RcuyJtwiyeqQNxpuwyBCjmjM=;
+        b=ICOctBeUWFabBVRTi3EVh83U8YAl0Jwq0cqoiFUFjVednWTnBD4yKyRHPdUvZlmWL8
+         +GDg5I9U4ctjd23Ea8aKECIIsP5xUiQ1Mw0+HvZuqb6NqwVxPlSJJwDuBclzIpnEf21Y
+         d9ag5c2Glr/Qz+JukaOMSQn+DQc+zeg+ztlbm1drcNZYDb9Nk6yKI9upQK0ZOMwriDIo
+         IqdYfgxrLjCUBYLQJhkW77vty1we6rqlEzdONWvP+EPFRjUS2ftxb1y7vJzy3X25OFFr
+         +CV354SMlbxrvPeXnbKEfByciNbqThT3uA8zhVHJDrnVmLb2c+FHL638FshK2w3hQLZD
+         eAyQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754327709; x=1754932509;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1ES2rPSb96ZRcMua/upicMCXBbX2m2hK2sP3TCwY9yY=;
-        b=omukHCyz4xk1ks8H13qLBn7ty/jKr0Qo//WUnOv+IH8ywflJDK8vHXMjkEHpzSp/BF
-         XYF7OzrZkfMFfemMeeQ75KYwXV3FFboBmUfa9SqGKPm9sRz/dDrUUkItGKxrgt+Vd0My
-         EbuJrj5jFRaiUsiZk9/k6+V3/+qaNowhEZY8ZbELEeRPcXXU68Jt018wseY6Ne4IW1km
-         YxioMr9YgJcHv6niUqtej7pZYnYsjeCLpOA/UhLffkrDewhgeRnylW2jJv9GAxr7SB83
-         o3t8n5tge4dqUegmOu8WmbvRsPtbTNESMp47n0HVJi3hNcmM1m+Z3sZXEmS/fxUtpkCz
-         tU/w==
-X-Forwarded-Encrypted: i=1; AJvYcCU0m7XEwmuCDoco97peZpaqHf8G5a6dj/nD45RzpcvVLr5iX+/y6oXD9l1g5xFBk1NEXt5z96sDFkWo4a54@vger.kernel.org, AJvYcCU6wiwswe/SFszy5DPELgnWKrKtB7q2CsPrXO76c2e/g2TSM+Bt44NFBCkVEDs6USigNmlNDbQhBiXtDQ==@vger.kernel.org, AJvYcCU9y181hioliuSVTVDHkSCzk+rOAGKmgTIjfzNqyYjMyFxEiEtIWWotj9xbDd+uW1eq6HwBd4uxdZSkFw==@vger.kernel.org, AJvYcCUStDhvxK4Ig3Zm45fMmtK48iWAXscbPgi0CFUWkSmYSHFcdEt121iaHPDOuWLv7BfwVvZo0lA9acKGZci3jI0=@vger.kernel.org, AJvYcCUvVPI+QtAGnF/VhH+UN2EyVYmKrKJyPMXyXhL2qw8EzZyhGmhQrNIBvN82s9evm67KYWuoK2vxfQufwH65@vger.kernel.org, AJvYcCVOB0e69P8qEcTCa+sOUdny+p7bBvU+zMpUou2pdzjOM+4nn+qD9LJZq+Kw1WDBtxfgcBXgF703j50DBg==@vger.kernel.org, AJvYcCVjOp7T1phVp4iwX9aX8kpnoNKba4Uz5HGFZhtslYbU7tqveRprbPJjNvbz9Ek34GDgAOzEk4UJHJVgKg==@vger.kernel.org, AJvYcCVuvw/MDrysBxm5oJt0KoUVDTLYdwpEMtftMbiKBRruzLh93bk47bdyD15hItTG0lxISGtUY+wcSgE=@vger.kernel.org, AJvYcCXZLc/13w3/DRkSo/3Cr/rOyzjtVgTUM7QWo/pEdJGfLUwmUvat9vNRlhR7PXl0wWHT/qYsCaXV+PDte7Hurg==@vger.kernel.org, AJvYcCXsxJ06
- 5lm171omKaw2tRnEnd0I1onVVA+hqPv0IELRu4wix2qjo2x6x2Mop1fHb3/1AfyDzHvPlIYl6w==@vger.kernel.org, AJvYcCXtdfsqaQ+FpAnFhCE/bJ0qXeS2fQSxIYgBURCzFwCzTWD4psiO4sj9XGvRPG9abLiecxyPGi2nU5AKrw0gJMNC@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVwWwpzuZb+B9KHJnVGuPuywheglaAXnJiAQdDdxu343INxFyz
-	FF6WY7/o+GOHKT6aTQ2RYk8Ko3Z1ii30jahS9Ki4nGla1CdpVcv3cnJ/
-X-Gm-Gg: ASbGncsU+6cT5FumNdZ0u2Z7MwadyQVEjX2tEPse7/jHRPgAcL/iRcCgYWH4zTjh3Tt
-	2Viy9sFxr50sNXNYUuEovZqvXZNQMra+51IimSlUMFvRCuwfhtS9jprgr7hEiZXujOE//1uUI+r
-	C+364z1WxDXI1sR2zVtBc8ILj9vM50hqtYWOfQPjAa7DwVKiN9Vk1sj7bj6zucr5lkUTGQIGx9W
-	TDp7pqtzNFF947djSNLCS5hmQ2+w8Ou15hPhx7ArEzVYHCAAKddgVI8yg+ic0izYbhZnxEOBEm8
-	57Hcuhkk24bvUfEFjCxmW81Us4q+CCq4Axxld6+FZjtO+Rcr7GEjSs33eWCrycqfGUPwLFHep4P
-	eoywWp64SmfLkMO0v0Nb7gakdEE0ZdMNomPjNzQNNXtJC3Ih7EAXinQBdlpvrWA==
-X-Google-Smtp-Source: AGHT+IEpNawQWUPhZIXoNWLCtN2+qaXCsKArzNXCXzW1yE3i7/WUxeM9GsxIUXvlWMi666W2l82q6Q==
-X-Received: by 2002:a05:6000:40c9:b0:3b8:893f:a185 with SMTP id ffacd0b85a97d-3b8d94cf20dmr7323692f8f.53.1754327708754;
-        Mon, 04 Aug 2025 10:15:08 -0700 (PDT)
-Received: from localhost (cpc1-brnt4-2-0-cust862.4-2.cable.virginm.net. [86.9.131.95])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c47ae8esm16051546f8f.61.2025.08.04.10.15.07
+        d=1e100.net; s=20230601; t=1754327733; x=1754932533;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NrTKl9K4+8vI5BzLuQ0RcuyJtwiyeqQNxpuwyBCjmjM=;
+        b=EfcKLwisRpwpQGEy+xcvkz3BzfkvfB/l1/pSFGUf9UYy26XDT0+4zza2AkaDGatW8W
+         DXFWFqe1x7Q8l7XnRv8oQamAkPkqoKpIm1dsmxAAguCoMm6kP7w1ANgjQ/+XfljiRAj7
+         eozDEby7wObOjzsMaV8GdIzryjSQ7nXV/CaZrj1Zs9cjR4aAKAi1ZAVZH9MRWLK50O2U
+         tEFyHc99NUY0V7d2otKfskCBn7zLmQHkf7ATv6TVhdXz9UDm3YmyIZxBPmDLBvYQfxuo
+         QHNyYYge0LLZXNmq905+H16TKBFQsBAZbCuC6IarKKbCQAhohs3LWIavuGxwb0+RDHEF
+         L/XQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWyC4ATaAkELBAW4pLobBofSARHt5bOLI0N1CxpuMN9wC//R4Qn2yU8u4l0RgPPGeLU8ylMWMAO1twsR+c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPgcMpU8eCOosdyZbHJ1T5sfsZlOmxiNxoEp3Ms84VlyODffcK
+	UJy9jedj+tN6j86JTcvKyxiwUlvSeVX1cwuNmpOSwt2KaRydFMUute7/sK56XIGKuCI=
+X-Gm-Gg: ASbGncubY+egUQ9jwEL/vWvtT9cWSD6ofVSLj2axiXCw6M4cEwy/gStPrOj/Hsw0CcK
+	pfDr9VMLyksPuwLP55I6kfuvMksTLyQUU4ftX+67JBLNzLH8j98RZXGcXk74PQabsM59M6uJLTB
+	VAi1JDihZv3OzpbSBZk5+oi6Z8GixtvAIyVQDtrjbab20/e3RlTYALX3VOWLBcdn4oGIysCDiST
+	9TIaFikYwK8SHE/GJl7O3cwfUw89AX0SYuJTBV2W4pud/gcAK8H3wbYLuH/15GkTdRgrEyKX/0m
+	IDg0hGl6aPt7Tm0bVuMqftjmOUvYJ9v5u2Z71g69KoDVM547n/R0KiObj+PmacC7E2SRskCgC7o
+	3uhZ6S7PLTWCZbkmHxlLWNRZ10dCyElw6AlKupQ==
+X-Google-Smtp-Source: AGHT+IFGyZV3Lnqkd/Us0kr0C9bu01zWEPsZjgPddB7McgPHFiYC5RrBkxKNSmpQutG9nl15DFY5XA==
+X-Received: by 2002:a05:6000:1ac6:b0:3b7:8af8:b90f with SMTP id ffacd0b85a97d-3b8d94c3f5dmr6949009f8f.40.1754327732649;
+        Mon, 04 Aug 2025 10:15:32 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4a6f62sm15897981f8f.73.2025.08.04.10.15.31
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 10:15:07 -0700 (PDT)
-Date: Mon, 4 Aug 2025 18:15:06 +0100
-From: Stafford Horne <shorne@gmail.com>
-To: Kees Cook <kees@kernel.org>
-Cc: linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
-	x86@kernel.org, linux-alpha@vger.kernel.org,
-	linux-csky@vger.kernel.org, linux-hexagon@vger.kernel.org,
-	linux-m68k@lists.linux-m68k.org, linux-mips@vger.kernel.org,
-	linux-openrisc@vger.kernel.org, linux-parisc@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, linux-riscv@lists.infradead.org,
-	linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
-	sparclinux@vger.kernel.org, llvm@lists.linux.dev,
-	linux-hardening@vger.kernel.org
-Subject: Re: [PATCH 10/17] openrisc: Add __attribute_const__ to ffs()-family
- implementations
-Message-ID: <aJDqmoUNhwWeAlpa@antec>
-References: <20250804163910.work.929-kees@kernel.org>
- <20250804164417.1612371-10-kees@kernel.org>
+        Mon, 04 Aug 2025 10:15:32 -0700 (PDT)
+Date: Mon, 4 Aug 2025 20:15:29 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Alex Deucher <alexdeucher@gmail.com>
+Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
+Message-ID: <fda8103d-cac8-4c00-a78e-6eb27141d9ea@suswa.mountain>
+References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
+ <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+ <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain>
+ <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250804164417.1612371-10-kees@kernel.org>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CADnq5_Mk3FO_tvxFo+fJgqskVc7qtGv74VM6EStx_BcVpahXEQ@mail.gmail.com>
 
-On Mon, Aug 04, 2025 at 09:44:06AM -0700, Kees Cook wrote:
-> While tracking down a problem where constant expressions used by
-> BUILD_BUG_ON() suddenly stopped working[1], we found that an added static
-> initializer was convincing the compiler that it couldn't track the state
-> of the prior statically initialized value. Tracing this down found that
-> ffs() was used in the initializer macro, but since it wasn't marked with
-> __attribute__const__, the compiler had to assume the function might
-> change variable states as a side-effect (which is not true for ffs(),
-> which provides deterministic math results).
+On Mon, Aug 04, 2025 at 11:08:57AM -0400, Alex Deucher wrote:
+> On Mon, Aug 4, 2025 at 10:49 AM Dan Carpenter <dan.carpenter@linaro.org> wrote:
+> >
+> > On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
+> > > On Sat, Aug 2, 2025 at 4:22 AM Ethan Carter Edwards
+> > > <ethan@ethancedwards.com> wrote:
+> > > >
+> > > > The repeated checks on grbm_soft_reset are unnecessary. Remove them.
+> > > >
+> > >
+> > > These are not NULL checks and they are necessary.  The code is
+> > > checking if any bits are set in that register.  If not, then we can
+> > > skip that code as there is nothing to do.
+> > >
+> >
+> > It's not a null check, but it is a nested check and it's a local
+> > variable so the patch is correct enough.  At this point we know that
+> > grbm_soft_reset can't be zero.
 > 
-> Add missing __attribute_const__ annotations to OpenRISC's implementations of
-> ffs(), __ffs(), fls(), and __fls() functions. These are pure mathematical
-> functions that always return the same result for the same input with no
-> side effects, making them eligible for compiler optimization.
+> It can be 0 as far as I can see.  If none of the GRBM_STATUS bits are
+> set, then we never set any of the bits in grbm_soft_reset.
 > 
-> Build tested ARCH=openrisc defconfig with GCC or1k-linux 15.1.0.
 
-THis looks ok to me.
+You're missing the first check...
 
-> Link: https://github.com/KSPP/linux/issues/364 [1]
-> Signed-off-by: Kees Cook <kees@kernel.org>
+drivers/gpu/drm/amd/amdgpu/gfx_v10_0.c
+  7657          if (grbm_soft_reset) {
+                    ^^^^^^^^^^^^^^^
+Checked.
 
-Acked-by: Stafford Horne <shorne@gmail.com>
+  7658                  /* stop the rlc */
+  7659                  gfx_v10_0_rlc_stop(adev);
+  7660  
+  7661                  /* Disable GFX parsing/prefetching */
+  7662                  gfx_v10_0_cp_gfx_enable(adev, false);
+  7663  
+  7664                  /* Disable MEC parsing/prefetching */
+  7665                  gfx_v10_0_cp_compute_enable(adev, false);
+  7666  
+  7667                  if (grbm_soft_reset) {
+                            ^^^^^^^^^^^^^^^
+Unnecessary.
 
-> ---
->  arch/openrisc/include/asm/bitops/__ffs.h | 2 +-
->  arch/openrisc/include/asm/bitops/__fls.h | 2 +-
->  arch/openrisc/include/asm/bitops/ffs.h   | 2 +-
->  arch/openrisc/include/asm/bitops/fls.h   | 2 +-
->  4 files changed, 4 insertions(+), 4 deletions(-)
-> 
-> diff --git a/arch/openrisc/include/asm/bitops/__ffs.h b/arch/openrisc/include/asm/bitops/__ffs.h
-> index 1e224b616fdf..4827b66530b2 100644
-> --- a/arch/openrisc/include/asm/bitops/__ffs.h
-> +++ b/arch/openrisc/include/asm/bitops/__ffs.h
-> @@ -11,7 +11,7 @@
->  
->  #ifdef CONFIG_OPENRISC_HAVE_INST_FF1
->  
-> -static inline unsigned long __ffs(unsigned long x)
-> +static inline __attribute_const__ unsigned long __ffs(unsigned long x)
->  {
->  	int ret;
->  
-> diff --git a/arch/openrisc/include/asm/bitops/__fls.h b/arch/openrisc/include/asm/bitops/__fls.h
-> index 9658446ad141..637cc76fe4b7 100644
-> --- a/arch/openrisc/include/asm/bitops/__fls.h
-> +++ b/arch/openrisc/include/asm/bitops/__fls.h
-> @@ -11,7 +11,7 @@
->  
->  #ifdef CONFIG_OPENRISC_HAVE_INST_FL1
->  
-> -static inline unsigned long __fls(unsigned long x)
-> +static inline __attribute_const__ unsigned long __fls(unsigned long x)
->  {
->  	int ret;
->  
-> diff --git a/arch/openrisc/include/asm/bitops/ffs.h b/arch/openrisc/include/asm/bitops/ffs.h
-> index b4c835d6bc84..536a60ab9cc3 100644
-> --- a/arch/openrisc/include/asm/bitops/ffs.h
-> +++ b/arch/openrisc/include/asm/bitops/ffs.h
-> @@ -10,7 +10,7 @@
->  
->  #ifdef CONFIG_OPENRISC_HAVE_INST_FF1
->  
-> -static inline int ffs(int x)
-> +static inline __attribute_const__ int ffs(int x)
->  {
->  	int ret;
->  
-> diff --git a/arch/openrisc/include/asm/bitops/fls.h b/arch/openrisc/include/asm/bitops/fls.h
-> index 6b77f6556fb9..77da7639bb3e 100644
-> --- a/arch/openrisc/include/asm/bitops/fls.h
-> +++ b/arch/openrisc/include/asm/bitops/fls.h
-> @@ -11,7 +11,7 @@
->  
->  #ifdef CONFIG_OPENRISC_HAVE_INST_FL1
->  
-> -static inline int fls(unsigned int x)
-> +static inline __attribute_const__ int fls(unsigned int x)
->  {
->  	int ret;
->  
-> -- 
-> 2.34.1
-> 
-> 
+  7668                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7669                          tmp |= grbm_soft_reset;
+  7670                          dev_info(adev->dev, "GRBM_SOFT_RESET=0x%08X\n", tmp);
+  7671                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+  7672                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7673  
+  7674                          udelay(50);
+  7675  
+  7676                          tmp &= ~grbm_soft_reset;
+  7677                          WREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET, tmp);
+  7678                          tmp = RREG32_SOC15(GC, 0, mmGRBM_SOFT_RESET);
+  7679                  }
+  7680  
+  7681                  /* Wait a little for things to settle down */
+  7682                  udelay(50);
+  7683          }
+  7684          return 0;
+
+regards,
+dan carpenter
+
 
