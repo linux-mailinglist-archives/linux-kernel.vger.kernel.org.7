@@ -1,100 +1,107 @@
-Return-Path: <linux-kernel+bounces-755068-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755070-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE1E8B1A0DE
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:09:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BC3DCB1A0E4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:11:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7472189CE8C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:09:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 184491890F31
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:11:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8FC3256C9F;
-	Mon,  4 Aug 2025 12:08:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3160B257AC6;
+	Mon,  4 Aug 2025 12:11:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R8cGWlwl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b="JTWZJXoX"
+Received: from mail2-relais-roc.national.inria.fr (mail2-relais-roc.national.inria.fr [192.134.164.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 103B21EF39E;
-	Mon,  4 Aug 2025 12:08:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B1D914EC62;
+	Mon,  4 Aug 2025 12:11:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.134.164.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754309331; cv=none; b=uHHu3aW0zUZ1FGgV3DVXGCx4M0YRljFyaA4QxJrj6jRolp6vMuXr2i/SUPKk1TzjWiXyAwMj/r6Ht60rYEoxIABWI3QIXQvwfAEhgsoPRSrbyzL3jpFdqRuuTz30ss5BrT5V1f0/0XO+6xA3vnIAy3lJN67Vks3hP7hLc4/4t/U=
+	t=1754309488; cv=none; b=MNg9PT2pOVZ64cRQV2X/XBdKnxxa5mXrX04lTN8NkGIiDLjyf5Y5893itXSwJhLUYD7fvYu22cfASZtAh8KryxFXVa53QxQm7zHyCu0i/uqPIyQ3b3ULz5/USrb9rSfAohH8wMcPUDAvSbinIoyM7COZYFd7xdfv3im+2N9G2q4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754309331; c=relaxed/simple;
-	bh=YGSO5X0nuiZ854QyAUDIn8QwdSxWBr3sO5oQ1hm84MM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FAUkO2KhoHarDSJeeqQB2PlVlqwqVRSsBTlqmywkhNX9KvvPmh8UL5cYv3Ffp74a71kXzIzidCeE71JhabLsauK4BzWjBkQJMME9rlieh5o12mFKMh948CirK5b3lOiAAEk0zANXfXP/GQ0s0R7jXQrMNGP5S1270Syiwig1r4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R8cGWlwl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78D7AC4CEE7;
-	Mon,  4 Aug 2025 12:08:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754309330;
-	bh=YGSO5X0nuiZ854QyAUDIn8QwdSxWBr3sO5oQ1hm84MM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R8cGWlwl6UdZ8ilRCYMUYr7w8mQdlzDEpoBjja8FLQydOchJb/o067FBSrWIq2Ze5
-	 Vx0hntCRE/WhhDa8iF10Og1KygSbXlEKDHGgl+SYpc/2f2Mmzp8pblyH0ONLVTlNRM
-	 uuE/jsgpQoASDsqfk0zkxSBcRcCaxPmQexZfPhCC4xrmaZWh52coeYIDfAPorUS9Nn
-	 pKrdc1DG1adlugShSNyuWlJB4hNREYwuQamCVST4LZOBRkAIHzriZt64z/Oi6Luos3
-	 U0Jh95N6cCh24444V/efQO8hogpweb0WdgkKPwOrOO58SEKKbkETkGfjqU8ADWHMHU
-	 gmTq6VC2PoQrA==
-Message-ID: <7e144b7f-8bc5-45f2-87af-acc1d7a70fb1@kernel.org>
-Date: Mon, 4 Aug 2025 14:08:47 +0200
+	s=arc-20240116; t=1754309488; c=relaxed/simple;
+	bh=YozG6mEOkKlwR8zGGPhdu3m0vp2+uyk6f8GTDTU8/1Y=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=ggNm8MTgKb5GDew6wCc3Ax8T89y0qmYVVayG5GoqaD4sF4Zl5/5WbAiudv92Od0NySQE+Ee8fLLEP0LZdJEUQHb2rPNpRPgCfaORRNuTRbDMsgT/iatgT8M2hIZgCptxuVug1nDP5DhD+zt4XNmRoE5BUNR3ESu6hiToEaBnJ1A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr; spf=pass smtp.mailfrom=inria.fr; dkim=pass (1024-bit key) header.d=inria.fr header.i=@inria.fr header.b=JTWZJXoX; arc=none smtp.client-ip=192.134.164.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=inria.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=inria.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=inria.fr; s=dc;
+  h=date:from:to:cc:subject:in-reply-to:message-id:
+   references:mime-version;
+  bh=r+sFWZsYp3owZfeTAxKfIpJrMKc9GV8YM3WJhCJkKiY=;
+  b=JTWZJXoXcBi8Sxht9tS03XL6m0k1Kz5NiBp6IYO6BlFe42Zfsb9CF6hF
+   vSNRs6XxY9auBooSV4TempgWPbtZsO3t4SoPe0wilRRLKuXJGkXDsePtQ
+   sQb81BI5Eht6EJurhuUa9r+AInLetw/cyvG+PcMheRESvjBU/cm8e4/mS
+   s=;
+X-CSE-ConnectionGUID: FCqmenQoSmuYigrwtWF8Lg==
+X-CSE-MsgGUID: WQWXpB40QBCjo9Ax58RjoQ==
+Authentication-Results: mail2-relais-roc.national.inria.fr; dkim=none (message not signed) header.i=none; spf=SoftFail smtp.mailfrom=julia.lawall@inria.fr; dmarc=fail (p=none dis=none) d=inria.fr
+X-IronPort-AV: E=Sophos;i="6.17,258,1747692000"; 
+   d="scan'208";a="234106081"
+Received: from dt-lawall.paris.inria.fr ([128.93.67.65])
+  by mail2-relais-roc.national.inria.fr with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 14:10:15 +0200
+Date: Mon, 4 Aug 2025 14:10:15 +0200 (CEST)
+From: Julia Lawall <julia.lawall@inria.fr>
+To: Jakub Kicinski <kuba@kernel.org>
+cc: MD Danish Anwar <danishanwar@ti.com>, 
+    "David S. Miller" <davem@davemloft.net>, 
+    Eric Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, 
+    Simon Horman <horms@kernel.org>, Jonathan Corbet <corbet@lwn.net>, 
+    Andrew Lunn <andrew+netdev@lunn.ch>, 
+    Mengyuan Lou <mengyuanlou@net-swift.com>, 
+    Michael Ellerman <mpe@ellerman.id.au>, 
+    Madhavan Srinivasan <maddy@linux.ibm.com>, Fan Gong <gongfan1@huawei.com>, 
+    Lee Trager <lee@trager.us>, Lorenzo Bianconi <lorenzo@kernel.org>, 
+    Geert Uytterhoeven <geert+renesas@glider.be>, 
+    Lukas Bulwahn <lukas.bulwahn@redhat.com>, 
+    Parthiban Veerasooran <Parthiban.Veerasooran@microchip.com>, 
+    netdev@vger.kernel.org, linux-doc@vger.kernel.org, 
+    linux-kernel@vger.kernel.org, cocci@inria.fr, 
+    Nicolas Palix <nicolas.palix@imag.fr>
+Subject: Re: [cocci] [PATCH net-next 1/5] net: rpmsg-eth: Add Documentation
+ for RPMSG-ETH Driver
+In-Reply-To: <20250723064901.0b7ec997@kernel.org>
+Message-ID: <1bf7c9-d394-7519-795b-c8d455ee9d0@inria.fr>
+References: <20250723080322.3047826-1-danishanwar@ti.com> <20250723080322.3047826-2-danishanwar@ti.com> <20250723064901.0b7ec997@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read
- regmap_config flag
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-References: <20250804083419.205892-1-hansg@kernel.org>
- <CAHp75VdfJvKb6VegNWCiiKoQkMBf0dQPs5yP3XfPM1icgtuyeg@mail.gmail.com>
- <592e9a1e-a58f-435d-aff7-13c13fe0598a@kernel.org>
- <CAHp75VcxZXk7N3F4f=edSTHXQO9reF2kvF3JUNxNu_J6VOuoRA@mail.gmail.com>
-From: Hans de Goede <hansg@kernel.org>
-Content-Language: en-US, nl
-In-Reply-To: <CAHp75VcxZXk7N3F4f=edSTHXQO9reF2kvF3JUNxNu_J6VOuoRA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-
-Hi,
-
-On 4-Aug-25 10:57 AM, Andy Shevchenko wrote:
-> On Mon, Aug 4, 2025 at 10:51 AM Hans de Goede <hansg@kernel.org> wrote:
->> On 4-Aug-25 10:47 AM, Andy Shevchenko wrote:
->>> On Mon, Aug 4, 2025 at 10:34 AM Hans de Goede <hansg@kernel.org> wrote:
-> 
-> ...
-> 
->>>> +       /* Reading multiple registers at once is not supported */
->>>> +       .use_single_read = true,
->>>
->>> By HW or by problem in regmap as being suggested here:
->>> https://lore.kernel.org/linux-gpio/CALNFmy1ZRqHz6_DD_2qamm-iLQ51AOFQH=ahCWRN7SAk3pfZ_A@mail.gmail.com/
->>> ?
->>
->> This is a hw limitation. I tried with i2ctransfer to directly
->> access the chip and it returns invalid values (1) after
->> the first byte read.
-> 
->> 1) I don't remember if it was 0, 0xff or repeating
->> of the first byte. But it definitely did not work.
-> 
-> Perhaps elaborate the above in the comment, by at least putting
-> keyword HW there?
-
-Ok, I've just send out a v2 clarifying the comment.
-
-Regards,
-
-Hans
+Content-Type: text/plain; charset=US-ASCII
 
 
+
+On Wed, 23 Jul 2025, Jakub Kicinski wrote:
+
+> On Wed, 23 Jul 2025 13:33:18 +0530 MD Danish Anwar wrote:
+> > +   - Vendors must ensure the magic number matches the value expected by the
+> > +     Linux driver (see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
+> > +     source).
+>
+> For some reason this trips up make coccicheck:
+>
+> EXN: Failure("unexpected paren order") in /home/cocci/testing/Documentation/networking/device_drivers/ethernet/rpmsg_eth.rst
+>
+> If I replace the brackets with a comma it works:
+>
+>    - Vendors must ensure the magic number matches the value expected by the
+>      Linux driver, see the `RPMSG_ETH_SHM_MAGIC_NUM` macro in the driver
+>      source.
+>
+> Could you make that change in the next revision to avoid the problem?
+>
+> Julia, is there an easy way to make coccinelle ignore files which
+> don't end with .c or .h when using --use-patch-diff ?
+
+Perhaps not.  I can adjust it.
+
+julia
 
