@@ -1,125 +1,128 @@
-Return-Path: <linux-kernel+bounces-754592-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754593-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2CD4FB199D6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:25:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF353B199DD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:31:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CE65C7A95F4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:24:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1447A188E922
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:32:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18F391EB5D6;
-	Mon,  4 Aug 2025 01:25:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFD711EA7DF;
+	Mon,  4 Aug 2025 01:31:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Q76UD000"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b="YEtBxdH/"
+Received: from rtits2.realtek.com.tw (rtits2.realtek.com [211.75.126.72])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E85429A1;
-	Mon,  4 Aug 2025 01:25:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5559B2E36EB;
+	Mon,  4 Aug 2025 01:31:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=211.75.126.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754270744; cv=none; b=LeZEOrFmYG21z+WiYdCBBmAI0vRp2Pd0adr08onjPdZ+BVwguM//u674Ngpg5PNiu5VJJNLUYUIzNLFO5QjgP2sreJnpbL1Tspi+mSHX/2TY0OlJM45F9PhXZfkqn21vE+2PWQKmhDTjYyQUymFgCZZ6NnfT+85EcZSVtfaoSvg=
+	t=1754271102; cv=none; b=Xzic4PEj7DmukAXFCNvAAiJ4Kw4t10/j0I7BpyFbLIU3Jxz5yVhO6WPFcRHOhvSutRmuyAKo014I7US5KWnXqhe9IycNBPoY+hmAnJ3d/1C9ze3/7KJn1CocRSSWupnHauJSEbEADfvaZVAiOG8kgdEgoFjsEqW2eXnEJwJUEJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754270744; c=relaxed/simple;
-	bh=CTOoSNavDPNe0/kE+A0n+AOfb1d3h5xV6lZHbqYaTJc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=e+DdKGp9VIkC+WqnODStttryfhczbi7dJmL+NSNCAzq5A8LfY168+R6wbSXwHTO5947NlJdNR4TV2rv+wDqHhJNGuaOGJF80yfnJXox4jnm5JbdXr71mB0jcEimlNeoZxqGw6qfxvyNp1FiOcYo/luCBSObhbjaocQ6aUHSZKVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Q76UD000; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754270740;
-	bh=jBZdkOsb/xZN8sCpF660Oe7sczVXc58fhkHo5Im8OUY=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Q76UD000a9cvo3+8auLqWgUAlRKGgLToVn1UDJReDtns+A6v4o6d21d9U7w5Va/0b
-	 0Jr0dYuM+6WB9Yr3Eqf1fLOFQ7B7vFEKSJK7eBE+tPfE1HE7CGNV23IiAlsIwi7RQd
-	 zbjdfKQet6rknDgPoxbGgmCCfJAHhsxTq+uEGNS8gg8xN/5RSWu2WFLtrE+5rOZyNz
-	 xOIncTDwUHndXfVz7p2lJQ33T3rpO4blLCwf3wIhKtCAIaCVLxnFeJ+nUn8caVi8YE
-	 uvGUvifIBdKIX5LFE8oWGz3+Af+rxGNcsExY0Dg/i1QXpE1YNdUKMJWdmrd7JZcHS8
-	 8Gf5P90LuEjrA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwJlm5cr0z4wbY;
-	Mon,  4 Aug 2025 11:25:40 +1000 (AEST)
-Date: Mon, 4 Aug 2025 11:25:40 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Alexey Gladkov <legion@kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: build failure after merge of the kbuild tree
-Message-ID: <20250804112540.6b8ed4b9@canb.auug.org.au>
-In-Reply-To: <20250730161223.63783458@canb.auug.org.au>
-References: <20250730161223.63783458@canb.auug.org.au>
+	s=arc-20240116; t=1754271102; c=relaxed/simple;
+	bh=2fJypLNpuBGCefgA+I2qla/IoTGIEsxZufI5buVScBw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=D1vt0LHZiY9lTVeyFBy8L6qcL1pbQ/khD1jx/ZNozaQSccc+IWRD/Y7jXl4afKLIn+vBVS1oiLZKbUkrmC5OxEUJ9FRIudQzSjMPBRrUMb9DNbOyqv6OQM6sTgktpJiQKREhebDR5p3b+l3HPO21LZKrF71PH3d0DAPpBrcll7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com; spf=pass smtp.mailfrom=realtek.com; dkim=pass (2048-bit key) header.d=realtek.com header.i=@realtek.com header.b=YEtBxdH/; arc=none smtp.client-ip=211.75.126.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=realtek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=realtek.com
+X-SpamFilter-By: ArmorX SpamTrap 5.80 with qID 5741VVFT03195138, This message is accepted by code: ctloc85258
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=realtek.com; s=dkim;
+	t=1754271091; bh=2fJypLNpuBGCefgA+I2qla/IoTGIEsxZufI5buVScBw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:Content-Transfer-Encoding:MIME-Version;
+	b=YEtBxdH/XLmguBMg5pZYUqGxjtsX+PK4pft7AU1GDctGJbUfGYrBfHlQKT5wW2ufV
+	 Ke+XVmUpTi1/4j5QnM5g0Yb+/tNljd6tvM662jnOkGWUEkkPsyf/N/82ve9rKCCWvO
+	 ou8PgSaUkw5cZzZGtKQ/K4hOX5hwAvmrev9SHN5ubzbYvRZH+nCFtYZfGfIKBEfy5E
+	 kGECWs1tGq8Oh79MaEy24DvI/LSjQlyrpUmDDzXrQkX3DXzMimhkA3A6TU/PK4iBlZ
+	 vXrkHSYTXGLf5zzqI66jVMSb4R1oW2m8K8VI3GkaCU6Jp91Y7tYHWb4JA4DS5ujxj2
+	 0s+LYInl+G2vA==
+Received: from mail.realtek.com (rtkexhmbs03.realtek.com.tw[10.21.1.53])
+	by rtits2.realtek.com.tw (8.15.2/3.13/5.93) with ESMTPS id 5741VVFT03195138
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Mon, 4 Aug 2025 09:31:31 +0800
+Received: from RTKEXHMBS01.realtek.com.tw (172.21.6.40) by
+ RTKEXHMBS03.realtek.com.tw (10.21.1.53) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 4 Aug 2025 09:31:32 +0800
+Received: from RTKEXHMBS06.realtek.com.tw (10.21.1.56) by
+ RTKEXHMBS01.realtek.com.tw (172.21.6.40) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Mon, 4 Aug 2025 09:31:31 +0800
+Received: from RTKEXHMBS06.realtek.com.tw ([fe80::9617:3fd6:3830:25cc]) by
+ RTKEXHMBS06.realtek.com.tw ([fe80::9617:3fd6:3830:25cc%10]) with mapi id
+ 15.02.1544.011; Mon, 4 Aug 2025 09:31:31 +0800
+From: Ping-Ke Shih <pkshih@realtek.com>
+To: Sean Anderson <sean.anderson@linux.dev>,
+        "linux-wireless@vger.kernel.org"
+	<linux-wireless@vger.kernel.org>
+CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+        "Bitterblue
+ Smith" <rtl8821cerfe2@gmail.com>
+Subject: RE: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Topic: [PATCH v2] wifi: rtw89: Print just once for unknown C2H classes
+Thread-Index: AQHcANxb3F/NWj2ltUS/9AXHQ44SQ7RJzkeggAJapQCAAMhRwIAAayaAgARfuIA=
+Date: Mon, 4 Aug 2025 01:31:31 +0000
+Message-ID: <639b56c577a0433cb49c85ce0abd5dca@realtek.com>
+References: <d2d62793-046c-4b55-93ed-1d1f43cff7f2@gmail.com>
+ <20250729204437.164320-1-sean.anderson@linux.dev>
+ <c034d5cc40784bfa859f918806c567de@realtek.com>
+ <7865d95f-a92e-405d-bc71-f1e1382ad24c@linux.dev>
+ <d0f6162ab34440cab0c11667be092609@realtek.com>
+ <198e2e23-5e75-4223-8d85-fba255bc7fd2@linux.dev>
+In-Reply-To: <198e2e23-5e75-4223-8d85-fba255bc7fd2@linux.dev>
+Accept-Language: en-US, zh-TW
+Content-Language: zh-TW
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/qYqlHPDibEQVcTVn.ijODbv";
- protocol="application/pgp-signature"; micalg=pgp-sha256
 
---Sig_/qYqlHPDibEQVcTVn.ijODbv
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-
-Hi all,
-
-On Wed, 30 Jul 2025 16:12:23 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->
-> After merging the kbuild tree, today's linux-next build (i386 defconfig)
-> failed like this:
->=20
-> ld: .vmlinux.export.o: in function `__ksymtab___builtin_memcmp':
-> .vmlinux.export.c:(___ksymtab+__builtin_memcmp+0x0): undefined reference =
-to `__builtin_memcmp'
->=20
-> Caused by commit
->=20
->   c4b487ddc51f ("modpost: Create modalias for builtin modules")
->=20
-> I have reverted that commit, along with its parent and child, for
-> today.  It's parent commit
->=20
->   66ef3890c628 ("modpost: Add modname to mod_device_table alias")
->=20
-> generated this warning in the i386 defconfig build:
->=20
-> scripts/mod/file2alias.c: In function =E2=80=98handle_moddevtable=E2=80=
-=99:
-> scripts/mod/file2alias.c:1480:25: warning: variable =E2=80=98modnamelen=
-=E2=80=99 set but not used [-Wunused-but-set-variable]
->  1480 |         size_t typelen, modnamelen;
->       |                         ^~~~~~~~~~
-
-I am still reverting those commits.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/qYqlHPDibEQVcTVn.ijODbv
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiQDBQACgkQAVBC80lX
-0GwU4Qf9FzvN6cHDOLiFCXUT9csNPoiyrUXRt9u9iyGLxsTnYgNegQEKL18Ou8Yz
-YJr0NIqkuKHuLWx7V5vuZfWXRG9pjrdSV6E8bjaIt05XrEIkX1hODlZDM36M9ES9
-A2NnI78sISQPGhaNWdYXJ/3ukZIfPnB2aHZ5xCb93bqFRfbP78TukktCdImcuSwA
-S/VCvx7Dpm0ZjIdOn5t/gzCCuTv9gHF88rY0X9Cc2CZYiKVdKBHEZtNbdJOCYdH6
-M1GX0cshj8ygblLN7d7D8hdVpeNz5YtTpv5ZP9ab3wQ4DUHYknLt1ewm24OR45/R
-hu0DC9T6wg1VcJtazYdjMAekdf/pFg==
-=eBwl
------END PGP SIGNATURE-----
-
---Sig_/qYqlHPDibEQVcTVn.ijODbv--
+U2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBsaW51eC5kZXY+IHdyb3RlOg0KPiBPbiA3LzMx
+LzI1IDIwOjMwLCBQaW5nLUtlIFNoaWggd3JvdGU6DQo+ID4gU2VhbiBBbmRlcnNvbiA8c2Vhbi5h
+bmRlcnNvbkBsaW51eC5kZXY+IHdyb3RlOg0KPiA+PiBPbiA3LzI5LzI1IDIwOjM2LCBQaW5nLUtl
+IFNoaWggd3JvdGU6DQo+ID4+ID4gU2VhbiBBbmRlcnNvbiA8c2Vhbi5hbmRlcnNvbkBsaW51eC5k
+ZXY+IHdyb3RlOg0KPiA+PiA+PiBUaGVyZSBhcmUgbW9yZSB1bnN1cHBvcnRlZCBmdW5jdGlvbnMg
+dGhhbiBqdXN0IExPV1JUX1JUWS4gSW1wcm92ZSBvbg0KPiA+PiA+PiBjb21taXQgM2I2NjUxOWIw
+MjNiICgid2lmaTogcnR3ODk6IHBoeTogYWRkIGR1bW15IGMyaCBoYW5kbGVyIHRvIGF2b2lkDQo+
+ID4+ID4+IHdhcm5pbmcgbWVzc2FnZSIpIGJ5IHByaW50aW5nIGEgbWVzc2FnZSBqdXN0IG9uY2Ug
+d2hlbiB3ZSBmaXJzdA0KPiA+PiA+PiBlbmNvdW50ZXIgYW4gdW5zdXBwb3J0ZWQgY2xhc3MuDQo+
+ID4+ID4NCj4gPj4gPiBPbmNlIEkgZW5jb3VudGVyIGFuIHVuc3VwcG9ydGVkIGNsYXNzL2Z1bmMs
+IEknbGwgY2hlY2sgZmlybXdhcmUgdGVhbSBpZiB0aGUNCj4gPj4gPiBDMkggZXZlbnRzIGNhbiBi
+ZSBpZ25vcmVkLiBJZiBzbywgSSBhZGQgYSBkdW1teSBmdW5jdGlvbiB0byBhdm9pZCB0aGUgbWVz
+c2FnZS4NCj4gPj4gPiBJZiBub3QsIEkgc2hvdWxkIGFkZCBjb2RlIHRvIGhhbmRsZSB0aGUgZXZl
+bnQuDQo+ID4+ID4NCj4gPj4gPiBEbyB5b3Ugd2FudCB0byBzZWUgdGhlIG1lc3NhZ2UgZXZlbiB0
+aG91Z2ggaXQgb25seSBhcHBlYXJzIG9uY2U/DQo+ID4+DQo+ID4+IEkgbWVhbiwgbWF5YmUgaXQg
+c2hvdWxkIGp1c3QgYmUgYSBkZWJ1Zz8gQXJlIHRoZXNlIG1lc3NhZ2VzIHVzZWZ1bCBmb3IgYW55
+b25lDQo+ID4+IG90aGVyIHRoYW4gdGhlIGRldmVsb3BlcnM/DQo+ID4NCj4gPiBZZXMsIHRoaXMg
+Y291bGQganVzdCBiZSBhIGRlYnVnLiBIb3dldmVyLCBkZXZlbG9wZXJzIG5vcm1hbGx5IGRvbid0
+IHR1cm4gb24NCj4gPiBkZWJ1ZyBtYXNrLCBzbyB1c2luZyBydHc4OV9pbmZvIGlzIHRvIGNsZWFy
+bHkgcmVtaW5kIGRldmVsb3BlcnMgdG8gcGF5DQo+ID4gYXR0ZW50aW9uIG9uIHRoaXMgbGFjayBv
+ZiBDMkggaGFuZGxlci4gQW5kLCBJIHN1cHBvc2UgZGV2ZWxvcGVycyBtdXN0IGhhbmRsZQ0KPiA+
+IHRoaXMgd2hlbiB0aGV5IHNlZSBmbG9vZGluZyBtZXNzYWdlcy4NCj4gDQo+IFdlbGwsIHJlZ3Vs
+YXIgdXNlcnMgZ2V0IHRoaXMgdG9vLiBJdCBpcyByZWFsbHkgdW5uZWNlc3NhcnkgdG8gcHJpbnQN
+Cj4gdGhvdXNhbmRzIG9mIG1lc3NhZ2VzIHdoZW4gdGhleSBhcmUgY29tcGxldGVseSBiZW5pZ24u
+DQo+IA0KPiA+Pg0KPiA+PiBNYXliZSB3ZSBzaG91bGQganVzdCBwcmludCBvbmx5IHRoZSB2ZXJ5
+IGZpcnN0IHVuc3VwcG9ydGVkIG1lc3NhZ2UgYXQgaW5mbyBsZXZlbA0KPiA+PiBhbmQgcHJpbnQg
+dGhlIHJlc3QgYXQgZGVidWcuDQo+ID4NCj4gPiBJJ20gYWZyYWlkIGRldmVsb3BlcnMgd2lsbCBp
+Z25vcmUgb3IgbWlzcyB0aGUgbWVzc2FnZXMuIFRvIHJlZHVjZSBtZXNzYWdlcw0KPiA+IGlzIGZp
+bmUgdG8gbWUgLCBidXQgbW9yZSBpbXBvcnRhbnQgaXMgdG8gbG9vayB1cCB2ZW5kb3IgZHJpdmVy
+IHRvIHNlZSBpZg0KPiA+IHRoZSBDMkggaGFuZGxlciBpcyBuZWNlc3NhcnkuDQo+IA0KPiBPSywg
+c28gd2Ugc2hvdWxkIHByaW50IGV4YWN0bHkgb25jZSBmb3IgZWFjaCBjbGFzcy9mdW5jLg0KPiAN
+Cg0KSSBzZW50IGEgcGF0Y2hzZXQgWzFdIHRvIHByaW50IGV4YWN0bHkgb25jZSwgYnV0IEkgZG9u
+J3QgYWRkIGJpdG1hcCBmb3IgZXZlcnkNCnByaW50ZWQgY2xhc3MvZnVuYywgYmVjYXVzZSBpdCBz
+ZWVtcyB0byBiZSB1bm5lY2Vzc2FyeSB0byBhZGQgbXVjaCBjb2RlIHRvIA0KaGFuZGxlIHRoZSBj
+YXNlIHdoaWNoIHNob3VsZCBiZSBoYW5kbGVkIGR1cmluZyBkZXZlbG9wbWVudC4gDQoNClBsZWFz
+ZSBoZWxwIHRvIHRyeSBpZiB0aGlzIHBhdGNoc2V0IGNhbiByZXNvbHZlIHRob3VzYW5kcyBvZiBt
+ZXNzYWdlIGluIHlvdXINCnNpZGUuIA0KDQpbMV0gaHR0cHM6Ly9sb3JlLmtlcm5lbC5vcmcvbGlu
+dXgtd2lyZWxlc3MvMjAyNTA4MDQwMTIyMzQuODkxMy0xLXBrc2hpaEByZWFsdGVrLmNvbS9ULyN0
+DQoNCg==
 
