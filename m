@@ -1,107 +1,97 @@
-Return-Path: <linux-kernel+bounces-755585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755586-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A3129B1A8CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:53:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 566B8B1A8CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:53:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0FFA63A91C5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:53:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7CE23B9BD0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:53:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4510214209;
-	Mon,  4 Aug 2025 17:53:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EB4722A808;
+	Mon,  4 Aug 2025 17:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ozMIoOBI"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vQZHTNIq"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FBB51CDFAC;
-	Mon,  4 Aug 2025 17:53:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9DED9EEAB;
+	Mon,  4 Aug 2025 17:53:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754329991; cv=none; b=ivS8S1JvsTrsPkHA+Wn/NY8WL9CB1lwi02lv/C5Z8ywyq53XWDsudIuQvv0VYRyDdkq/yzlx+kPuw0tOo6AyJx1YoQOdxfOFf06gal5LbQiuJlFqV/JPzrWSaMxXwm4/oKMD5z4UNQuE7igiGcSsMABANKoNXNmC55sY4pZUtNY=
+	t=1754330025; cv=none; b=oWeDceUR2Ic9nummd1Va5tbfZeYysNXzGbwWhzWUJmd+SVbPosXrD+wNKZdDIAgz/lSKziMVJW6XMctR94eLyxAj3Ofm/2hk048Ae1zEEgsAlkvD/IKuBsQWVQSiTJzERDeZbJ2C1ERoxRtsDoHAIuv09yDRsJdXrt39y11VDqM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754329991; c=relaxed/simple;
-	bh=4ZUewZb/IJjlaLFe+A4oMDhAWXkvNOXghdEp4eD0OD0=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nlOosR3K5sYfT8Pd2KnuVGjS/ZZvUgfdNaIcgKCiOSTZv5xTZCYN4KGZPB1cy6NOFWMU66gBRf2csosKLf1pDiDhTDB8P2btq8zvFFlCjzrNnsk9gZc4QEXyd5cqXOinquWY9KVx3vV7OLCWsM8rvtSKBMR2qe5vBBYovo1U5Z4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ozMIoOBI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 923A6C4CEF0;
-	Mon,  4 Aug 2025 17:53:10 +0000 (UTC)
+	s=arc-20240116; t=1754330025; c=relaxed/simple;
+	bh=yjujFdtJVfhRPrbL8qX039W0JOqy6MHmd3vLs93bEWw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Kg30DwZGXU3fiyuzthSx/JbElSbr8h9LvGD4YF9IcyurR0HGgI1GZesr0iKrJpmOSbNAhHztiPF9uC6wwdCyf5SjHssijhyWWqYcAIY6NeZ/gkX7+JZDUvd5nP2nunQOm2vEcS3PZSuHT8Vd9H/QGOO3zh2H6OrTL0Tlggyt3JM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vQZHTNIq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AF190C4CEE7;
+	Mon,  4 Aug 2025 17:53:41 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754329990;
-	bh=4ZUewZb/IJjlaLFe+A4oMDhAWXkvNOXghdEp4eD0OD0=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ozMIoOBISKwr2JV3D/sMGQTxDbcQn5xF/tQlODetA23NvpZGP8LMuvLc+cEeJRc28
-	 ACgeI93TefDs4JXwcrBOc0k9igzee94mxxiEhrj+K8q6b6NDgmQTVdHxVCc6LOUlMJ
-	 HHDUVvHJG7p1HIWcvClKESErC6Py2lgoAL91eNyG0SEKlsDptM1ly3CJXHZR0XwcKf
-	 bDp7kXbB6nfShwQoeUx6vk4rwsoI97CNw6sLdoQyVh/Il5xdtDXfDcSfy6UVvgNLI1
-	 kHmwRrSr5MSmyqnSgnLfl9jLx5sqTcw/G20oVt3yRFw4dM8QMGzYmf9FDu7E33/+QH
-	 MI0iLW/kbmnEQ==
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Michael Turquette <mturquette@baylibre.com>,
-	Stephen Boyd <sboyd@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>
-Cc: linux-clk@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] dt-bindings: clock: Remove unused fujitsu,mb86s70-crg11 binding
-Date: Mon,  4 Aug 2025 12:53:03 -0500
-Message-ID: <20250804175304.3423965-1-robh@kernel.org>
-X-Mailer: git-send-email 2.47.2
+	s=k20201202; t=1754330024;
+	bh=yjujFdtJVfhRPrbL8qX039W0JOqy6MHmd3vLs93bEWw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=vQZHTNIqQrFZPM6PL/wYMLbJZnx65b7K+HVzmB9D5VlY9svB5TYoSKr+6GQyo/H0q
+	 sCTGGsNmKncsOqQQc3vBIV6gx4aMC5WDSNESHkJf9qrUt+vNqcVijG3yEyxhhG84/K
+	 LwgX8KMBojWV8SzvGVmYq7dv6nK7OLxYYXID2424IkU5TvEpttC5MaIwJO/JoIDU/p
+	 v6zg6JVPFgo5lcPlOm7+V2Hx8u7GEKhiOuWlw2rlJZDWlrsfnoUKVDFMsT0wNXxbEb
+	 +EZsPJqhVgVGedJxsIBU8PQBl6EXQC3kTa6vWqfHe6TKK6c4HZqB06lG2EXNsaZDjz
+	 V5D1ynOEa8dLA==
+Date: Mon, 4 Aug 2025 10:53:38 -0700
+From: Nathan Chancellor <nathan@kernel.org>
+To: Kees Cook <kees@kernel.org>
+Cc: Naresh Kamboju <naresh.kamboju@linaro.org>,
+	clang-built-linux <llvm@lists.linux.dev>,
+	open list <linux-kernel@vger.kernel.org>,
+	lkft-triage@lists.linaro.org,
+	Linux Regressions <regressions@lists.linux.dev>,
+	linux-hardening@vger.kernel.org,
+	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>,
+	Dan Carpenter <dan.carpenter@linaro.org>,
+	Anders Roxell <anders.roxell@linaro.org>,
+	Ben Copeland <benjamin.copeland@linaro.org>
+Subject: Re: next-20250804: clang-nightly hardening.config boot failed on
+ arm64 rock-pi-4b
+Message-ID: <20250804175338.GA2197404@ax162>
+References: <CA+G9fYuDtzPpJOX7wdWAf2QmHyc-5v0cZ2Wood8cRwCttuyRmA@mail.gmail.com>
+ <202508040843.CCEFEF9ED@keescook>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <202508040843.CCEFEF9ED@keescook>
 
-The fujitsu,mb86s70-crg11 binding is unused. The driver for it was removed
-in 2017. It's not used for Synquacer DT either like some other mb86s70
-bindings are.
+On Mon, Aug 04, 2025 at 08:44:16AM -0700, Kees Cook wrote:
+> On Mon, Aug 04, 2025 at 03:41:51PM +0530, Naresh Kamboju wrote:
+> > Regressions found while booting the Linux next-20250804 on the
+> > qemu-arm64, dragonboard-410c, rock-pi-4b due to following kernel log.
+> > 
+> > Regression Analysis:
+> > - New regression? Yes
+> > - Reproducibility? yes
+> > 
+> > First seen on the next-20250804
+> > Good: next-20250801
+> > Bad: next-20250804
+> 
+> Are you able to bisect this by any chance?
 
-Signed-off-by: Rob Herring (Arm) <robh@kernel.org>
----
- .../bindings/clock/fujitsu,mb86s70-crg11.txt  | 26 -------------------
- 1 file changed, 26 deletions(-)
- delete mode 100644 Documentation/devicetree/bindings/clock/fujitsu,mb86s70-crg11.txt
+I think this is the runtime manifestation of
+https://github.com/ClangBuiltLinux/linux/issues/2116 when built with a
+version of LLVM without assertions (when assertions are enabled, the
+build just fails). I can reproduce this with a version of LLVM that
+contains the broken change and it is resolved with a version of LLVM
+that contains Fangrui's fixes. I assume this should hit LKFT in the next
+couple of days via apt.llvm.org.
 
-diff --git a/Documentation/devicetree/bindings/clock/fujitsu,mb86s70-crg11.txt b/Documentation/devicetree/bindings/clock/fujitsu,mb86s70-crg11.txt
-deleted file mode 100644
-index 332396265689..000000000000
---- a/Documentation/devicetree/bindings/clock/fujitsu,mb86s70-crg11.txt
-+++ /dev/null
-@@ -1,26 +0,0 @@
--Fujitsu CRG11 clock driver bindings
-------------------------------------
--
--Required properties :
--- compatible : Shall contain "fujitsu,mb86s70-crg11"
--- #clock-cells : Shall be 3 {cntrlr domain port}
--
--The consumer specifies the desired clock pointing to its phandle.
--
--Example:
--
--	clock: crg11 {
--		compatible = "fujitsu,mb86s70-crg11";
--		#clock-cells = <3>;
--	};
--
--	mhu: mhu0@2b1f0000 {
--		#mbox-cells = <1>;
--		compatible = "arm,mhu";
--		reg = <0 0x2B1F0000 0x1000>;
--		interrupts = <0 36 4>, /* LP Non-Sec */
--			     <0 35 4>, /* HP Non-Sec */
--			     <0 37 4>; /* Secure */
--		clocks = <&clock 0 2 1>; /* Cntrlr:0 Domain:2 Port:1 */
--		clock-names = "clk";
--	};
--- 
-2.47.2
-
+Cheers,
+Nathan
 
