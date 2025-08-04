@@ -1,121 +1,116 @@
-Return-Path: <linux-kernel+bounces-754717-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754718-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD3DB19B4F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:05:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DB36B19B56
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:09:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BDA413B9E38
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:05:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EF21898021
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:09:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EFE422A1D4;
-	Mon,  4 Aug 2025 06:05:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F66222A808;
+	Mon,  4 Aug 2025 06:08:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ZuumebY1";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="TAaLddOd"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WB5Ojvzz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58A60223DDE;
-	Mon,  4 Aug 2025 06:05:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA72E36F4;
+	Mon,  4 Aug 2025 06:08:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754287544; cv=none; b=sCfuXaJ7O7Sfhlfa+FoCs6xqxUvP5cFfs+q4hgGb4qTvKwXj1O2z7W9O1Wjxa4VHad8gqk8lFdClWBNrq0pY2PBcg8htp8na9IrH2C0+QxUmDKBfQVUBC9wOJvXXB+Ect8eJU2O/Nu4lUPiUEzCCXZfzojfy6Njqs1E1DmGiv98=
+	t=1754287735; cv=none; b=G4RNQv2jXKfx4DT+kZvKfpTtM45YkK0NNtTvasemcsEyqtF0u0xJtQYLJVddB1YevEXPX9lxeYz/sHIgYp/FnTYfAoTeNzqysKyi6ZZkH/mSWwmM9xpa6uz11XseNTAvhnNNFqZdA6e6libqSH52xdmrxsXst+p9OVCMGJxlrSI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754287544; c=relaxed/simple;
-	bh=f2UO1Xfipf3cy27q87nSBY3PLFb81udKPt37Waz6k40=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=QPrZdZWRdS7thzutNLUQ7ODdhijLCfz5gAyWZtJ8Sk8QXkwwhoHQY3aueaJ4Z7X1QAL+XbuKYiJKahZNCd8U6kmVCM+wtsPB0GeEiZsqy5LAs9tS37nVrYFCNZ6jn3fQcEPK0zTSG9e6osjAP/yE48E+edSf8jp0uQaxUGp3zTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ZuumebY1; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=TAaLddOd; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Nam Cao <namcao@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754287541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2UO1Xfipf3cy27q87nSBY3PLFb81udKPt37Waz6k40=;
-	b=ZuumebY1fiKoCwj+m8PUnbjAB70bQ9fB1PYJ1eHxmZ5+rHpQvNL+n/Ev08Psq7bNtVnXtY
-	mL6HcAQhO1MZdXJoEVNlks8XQ9GKr6Y0g+cQ551ybOjb8vGBuBfoyka2DyGjDW1DrlP1QR
-	k4L8fAA7Im4NwBsUcxmDUFRzeq/NJx8n3jT7RcGk6koPFo8X142DRMVOO50MVhkxgdV+X2
-	C5DPrrLH1nmfaLcW/RU3R2MSBvEj0jmHzG4vSBxed1KRu8Iu2hR9Jj5eU352nIySGkeVzx
-	UOuU20bgBIfaOV12/fm6ma2SAxYLikKeIZtApNs5x6EqJj9x8QH6gwwyy48eVQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754287541;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=f2UO1Xfipf3cy27q87nSBY3PLFb81udKPt37Waz6k40=;
-	b=TAaLddOd89dst2OGZVze4VvpYlF3PJtqU+Zc8EJNCgkPobtmumICXd39NMEHaUBIMi4kPC
-	B5BE1kzzn8Tzh9Dg==
-To: Gabriele Monaco <gmonaco@redhat.com>
-Cc: Steven Rostedt <rostedt@goodmis.org>, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- linux-trace-kernel@vger.kernel.org, linux-kernel@vger.kernel.org, Ingo
- Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>, Juri
- Lelli <juri.lelli@redhat.com>, Vincent Guittot
- <vincent.guittot@linaro.org>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Ben Segall <bsegall@google.com>, Mel Gorman <mgorman@suse.de>, Valentin
- Schneider <vschneid@redhat.com>
-Subject: Re: [PATCH 5/5] rv: Add rts monitor
-In-Reply-To: <c1635857f735aa91679c153f785e09beed9b5b2f.camel@redhat.com>
-References: <cover.1753879295.git.namcao@linutronix.de>
- <20834b8fcd4dfe75642cec2097e29f4c636a33fb.1753879295.git.namcao@linutronix.de>
- <a78008bb05acae77f0572c3e5651cb2bceaaaf98.camel@redhat.com>
- <20250801075810._Ng7G1QT@linutronix.de>
- <c1635857f735aa91679c153f785e09beed9b5b2f.camel@redhat.com>
-Date: Mon, 04 Aug 2025 08:05:39 +0200
-Message-ID: <8734a7vcy4.fsf@yellow.woof>
+	s=arc-20240116; t=1754287735; c=relaxed/simple;
+	bh=ipRZKPKGvZYye+NbUN1kZp7BEdItabd5U7NljxzHgfU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=F0Hi5BuYN2toJLIzGd6t3p+614XozpVMlPU+4uKB93NGOrG52oBAx/tWSBl34sVgruWb1VM7FvFAS+mRk+Cqel6MeLb698S+dFWZfxJTJJ8iBg/RdUc5R+iWcGiieMGyIoxW5ruwi4vnLEaAbVlB96NTlRVohTRmRXwOTVnybrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WB5Ojvzz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F8CC4CEE7;
+	Mon,  4 Aug 2025 06:08:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754287734;
+	bh=ipRZKPKGvZYye+NbUN1kZp7BEdItabd5U7NljxzHgfU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WB5OjvzzZ9vAddGUmIgd58d+GXAOhK71sgg1sPjKZ2V4EdqoOJbqAVclrdZTG/XGi
+	 Rv4OLHjfwhr7v2ooiI/Y5m0mdTZlLU2yegwzf+bUDcd7s6iwcEdBh06+6nVz8/Wa/O
+	 +nBnfaXt4XJKLaoT1RHqMmETX8rjF2Kmy/dnJIcDEMFfT32WMoSpIh/T72/QhtzayO
+	 wodMKqYXABzuIYri2XMu2dcy12w6CtEODa+LxF9rvgQZnWzVvzu9RJJN6NHZ3iDIfB
+	 stPKSSjzPiUTU8EaLaIBQafQgp2iiOYNb0jxbpJZIqI9VBJDNEZXHdhqUN4pmoXW8a
+	 x2CW/8wn0ESAQ==
+Date: Sun, 3 Aug 2025 23:07:58 -0700
+From: Eric Biggers <ebiggers@kernel.org>
+To: Simon Richter <Simon.Richter@hogyros.de>
+Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Ard Biesheuvel <ardb@kernel.org>,
+	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
+Subject: Re: [PATCH 4/7] crypto: sparc/md5 - Remove SPARC64 optimized MD5 code
+Message-ID: <20250804060758.GA108924@sol>
+References: <20250803204433.75703-1-ebiggers@kernel.org>
+ <20250803204433.75703-5-ebiggers@kernel.org>
+ <3de7cc4d-cb88-4107-9265-066cbedd4561@hogyros.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3de7cc4d-cb88-4107-9265-066cbedd4561@hogyros.de>
 
-Gabriele Monaco <gmonaco@redhat.com> writes:
-> Wait, by /works properly/ you mean it reports a violation. I just
-> noticed you mention it in the description.
->
-> It's reasonable to request RT throttling disabled on sanely configured
-> RT systems. But throttling is a /valid/ kernel feature, I get you mark
-> it as /unwanted/ though.
+On Mon, Aug 04, 2025 at 01:44:21PM +0900, Simon Richter wrote:
+> Hi,
+> 
+> On 8/4/25 05:44, Eric Biggers wrote:
+> 
+> > Taken together, it's clear that it's time to retire these additional MD5
+> > implementations, and focus maintenance on the MD5 generic C code.
+> 
+> [...]
+> 
+> > -	ldd	[%o1 + 0x00], %f8
+> > -	ldd	[%o1 + 0x08], %f10
+> > -	ldd	[%o1 + 0x10], %f12
+> > -	ldd	[%o1 + 0x18], %f14
+> > -	ldd	[%o1 + 0x20], %f16
+> > -	ldd	[%o1 + 0x28], %f18
+> > -	ldd	[%o1 + 0x30], %f20
+> > -	ldd	[%o1 + 0x38], %f22
+> > -
+> > -	MD5
+> 
+> This is a literal CPU instruction that ingests sixteen registers (f8 to f23)
+> and updates the hash state in f0 to f3.
 
-True.
+Note that QEMU doesn't support this instruction.  I don't actually know
+whether the SPARC64 MD5 code even works, especially after (presumably
+untested) refactoring like commit cc1f5bbe428c91.  I don't think anyone
+does, TBH.  No one seems to be running the crypto tests on SPARC64.
 
-> I guess if that's the case, this monitor doesn't belong in the sched
-> collection because it's meant to validate the kernel behaviour, not its
-> configuration for a specific purpose (RT).
-> Isn't it better off with the rtapp ones (which validate the system
-> configuration to run in an RT scenario).
->
-> Does it make sense to you?
+> I can see the point of removing hand-optimized assembler code when a
+> compiler can generate something that runs just as well from generic code,
+> but this here is using CPU extensions that were made for this specific
+> purpose.
 
-Yeah I was a bit unsure where to put this monitor. But under rtapp makes
-sense, if you prefer it there.
+You do realize this is MD5, right?  And also SPARC64?
 
-> I still want to give it a run when I have a bit more time, besides with
-> RT throttle, can the monitor really fail on a working system?
+I'm confused why people are so attached to still having MD5 assembly
+code in 2025, and *only for rare platforms*.  It's illogical.
 
-RT throttling and fair deadline server are the only two known mechanisms
-which would fail the monitor.
+We should just treat MD5 like the other legacy algorithms MD4 and RC4,
+for which the kernel just has generic C code.  That works perfectly fine
+for the few users that still need those algorithms for compatibility
+reasons.
 
-In the future, there may also be sched_ext deadline server:
-https://lore.kernel.org/all/20250702232944.3221001-1-joelagnelf@nvidia.com/#t
+> This is exactly the kind of thing you would point to as an argument why
+> asynchronous hardware offload support is unnecessary.
 
-They exist for good reasons, but they are also a problem to real-time
-tasks. I am posting this monitor because we did a cyclic test the other
-day and observed some big latencies, and we had no idea why. It turned
-out it was the fair deadline server. So we need this monitor to tell us
-if some similar mechanisms exist or will appear in the future.
+For an algorithm that is actually worthwhile to accelerate, sure.  For
+MD5, it's not worthwhile anyway.
 
-If you try the monitor and see problems, let me know. Most likely it
-would be a flaw in the monitor, but there is also a chance there is
-another throttling mechanism we are not yet aware of.
-
-Nam
+- Eric
 
