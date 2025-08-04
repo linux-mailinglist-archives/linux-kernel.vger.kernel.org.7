@@ -1,89 +1,118 @@
-Return-Path: <linux-kernel+bounces-755562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 643DDB1A86F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:12:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 675D3B1A876
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:13:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2DC5E18A205F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:12:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82A7E17562C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB8AE28B4F0;
-	Mon,  4 Aug 2025 17:12:07 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F63E28B418;
+	Mon,  4 Aug 2025 17:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="f2PxFW+J"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39961E5B9A
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 17:12:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B67FB3AC1C;
+	Mon,  4 Aug 2025 17:13:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754327527; cv=none; b=dwfoFraFiMDnRJtXjvMH/ROgj8qzrwPcJwF1SYGkExw2iOc2dc/pAEbsH9CJMWz8gWQh34wqJNDlyFvNnovQ7xt70zgDXjCLpTel+c9X/CXQ8Pp4cCqPVP0ury7rN54xFtsHzdi+4EVHtmd+oNmVLy0n+OBO0Nj2vFZvMV61AS4=
+	t=1754327614; cv=none; b=Alr+3PROaLGUzpEWtTlCXceadFt8jHKUDnTg0ccvEJ0J83bSO0K1yNBgH8HnEksIrKYCh6bsN6iy81OuFAxkDgsps6oH83zPhdrWdlzR2pGlqedVfUM5mBmpCbD/pYX9Q5325CDx/mqKjqblX1LoA2X8dtwUM/oLs0qz2WtFNmg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754327527; c=relaxed/simple;
-	bh=jDpBEoLfJLg9TqVGHMxqi8W/lOa5wlDa+Cxrc0dThmM=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=FnLoVi5gMiw8ZZ0teeDFbUuNJ9SzQR5ygrOuaSjqbseMtPYpJrwC6d6WZXvI7BORdkZqxHE5kX5ZYT6sqOWHQ6K0WkkXRCyZslKeVtQnksw/SUfjfaDxJ5WxJ9ZJkW/DXdpTkKPdtWh0xU9chvq3i/38YiXO76bDwHpfCVdE4QU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3e3e69b2951so42400025ab.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 10:12:05 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754327525; x=1754932325;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hhBvl7iz+VJC4CiSokTX2+c4voXR8HDcpdVyTYId1Fc=;
-        b=NG+1icixp1byBySpy9zRGhHIHV039qM4Ee+oWJuYGs977EWHnm369Hfjp055XdMCDy
-         1CqWs0n4xPzCau1VcUVx421TFwZw8OP3u8/ljewnych44y5SC3zNMHLW9DNTaVNPj047
-         hLOTKX3GYXcBujZnB35QxWT5DagA4K4Zsc7yHJ+wrbsKW5IlKavgNMcdwAna+BxiIA8Y
-         xiBZq7hc62HxXR2Pg7zJvjd5yggPcT60zZuYQKScKUTmsuWNSHLRIvRqeJiUBR9GZ5AE
-         l/EH8I97hS4DFVuT4GbTpNH3MM8yMeLFAoFLElBePUhubWa/SnWpBAA1fA5JM04nHZhf
-         jkOw==
-X-Forwarded-Encrypted: i=1; AJvYcCUrI8Cn4v5qz27LjLVL7g314b4afaK6O8278l91UQGzNFjGLHq/LUj0M+LJiTicFvtZGsCinrFhqRW+TRU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycsIdVr0PYrn2Ojf6sOdutUXZSqEW1MMcFfWVadH6sVXGmbQYC
-	EozIU6Uw25ixPe3YLBkZExdslxYeYpM7uM7eSNwmc8TKFPpJYlxpsgECLGmbJyX10MeWaOAPXiB
-	Gx0gVsFOA6R/gdYAk4qa6jmhJ0IZR6mrN9uw194XssoI1AAZR3txnBlJ13kY=
-X-Google-Smtp-Source: AGHT+IE+SKpu/FvgBMpn8lo33FeTbVK/4xovIuT1L4gu42wiX5R6DCpseuD8a6Ely9yqVRdx8660/OJX9ocSrZq2PfpBNyc15cZC
+	s=arc-20240116; t=1754327614; c=relaxed/simple;
+	bh=7E1lY8jxWW3f7BiTEDhPp5QNAEv+WgKZsbaaNANDdAg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=BLktqUFmirsFQyFY1zFXN+NSAj/00OF/gX6vU53QVNPmKhuWbDdhvi5acsLDJ/Td4TKNmXe53uOQNxO60IzPZ4KNYpzNYn2XK678pO7qOcBccTDObOCJNJ0gSEXWyzs2D7QNUV/iI1vUjyAAnQRcmOTQ0xqFgPoV0fynzwHwWhU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=f2PxFW+J; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 39E75C4CEE7;
+	Mon,  4 Aug 2025 17:13:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754327614;
+	bh=7E1lY8jxWW3f7BiTEDhPp5QNAEv+WgKZsbaaNANDdAg=;
+	h=From:To:Cc:Subject:Date:From;
+	b=f2PxFW+JAlum/Xf0ViNxMPvlP0p1YuzO0nTd7i4M5MvIfwW40L0Y6ijajAYSl0o3n
+	 8ukO1tV77iIcaowbl9YckrKEKdPVoVj3xRO2kcTDH+pTVdbP/uCjjoxLW7YZIlfwkA
+	 cfsEbSavtVnMez51N1b6TKaS9EGdq3dv9ttgW0u/6e5MEy9uKotaYYhg30TBP++Z/1
+	 6NohQhYSusxq8xWUL1himR5i65OB17jw7I7osjco2vNmsw1WMzzQAW9Y06/aQ0xSQt
+	 ZrDfLpvgbsLZbxXXegmusihRR3ipmGlwCKOHUc4u+CAv5pDpy3WtfSAjPIu4CwZOQw
+	 IiYYAbsUYvZjA==
+From: Miguel Ojeda <ojeda@kernel.org>
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Danilo Krummrich <dakr@kernel.org>,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>
+Cc: Boqun Feng <boqun.feng@gmail.com>,
+	Gary Guo <gary@garyguo.net>,
+	=?UTF-8?q?Bj=C3=B6rn=20Roy=20Baron?= <bjorn3_gh@protonmail.com>,
+	Benno Lossin <lossin@kernel.org>,
+	Andreas Hindborg <a.hindborg@kernel.org>,
+	Alice Ryhl <aliceryhl@google.com>,
+	Trevor Gross <tmgross@umich.edu>,
+	rust-for-linux@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	patches@lists.linux.dev,
+	stable@vger.kernel.org
+Subject: [PATCH] rust: faux: fix C header link
+Date: Mon,  4 Aug 2025 19:13:11 +0200
+Message-ID: <20250804171311.1186538-1-ojeda@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:c266:0:b0:3e2:9f5c:520f with SMTP id
- e9e14a558f8ab-3e51037e02dmr6379235ab.3.1754327524968; Mon, 04 Aug 2025
- 10:12:04 -0700 (PDT)
-Date: Mon, 04 Aug 2025 10:12:04 -0700
-In-Reply-To: <CANn89iJusO-iDNtUYQKKy6mmrZVqkJ=20_w+RavDup8bmTJ=pw@mail.gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6890e9e4.050a0220.7f033.000f.GAE@google.com>
-Subject: Re: [syzbot] [net?] KASAN: null-ptr-deref Write in rcuref_put (4)
-From: syzbot <syzbot+27d7cfbc93457e472e00@syzkaller.appspotmail.com>
-To: davem@davemloft.net, edumazet@google.com, horms@kernel.org, 
-	kuba@kernel.org, linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
-	pabeni@redhat.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Starting with Rust 1.91.0 (expected 2025-10-30), `rustdoc` has improved
+some false negatives around intra-doc links [1], and it found a broken
+intra-doc link we currently have:
 
-syzbot tried to test the proposed patch but the build/boot failed:
+    error: unresolved link to `include/linux/device/faux.h`
+     --> rust/kernel/faux.rs:7:17
+      |
+    7 | //! C header: [`include/linux/device/faux.h`]
+      |                 ^^^^^^^^^^^^^^^^^^^^^^^^^^^ no item named `include/linux/device/faux.h` in scope
+      |
+      = help: to escape `[` and `]` characters, add '\' before them like `\[` or `\]`
+      = note: `-D rustdoc::broken-intra-doc-links` implied by `-D warnings`
+      = help: to override `-D warnings` add `#[allow(rustdoc::broken_intra_doc_links)]`
 
-failed to apply patch:
-checking file drivers/net/ppp/pptp.c
-patch: **** unexpected end of file in patch
+Our `srctree/` C header links are not intra-doc links, thus they need
+the link destination.
 
+Thus fix it.
 
+Cc: stable@vger.kernel.org
+Link: https://github.com/rust-lang/rust/pull/132748 [1]
+Fixes: 78418f300d39 ("rust/kernel: Add faux device bindings")
+Signed-off-by: Miguel Ojeda <ojeda@kernel.org>
+---
+It may have been in 1.90, but the beta branch does not have it, and the
+rollup PR says 1.91, unlike the PR itself, so I picked 1.91. It happened
+just after the version bump to 1.91, so it may have to do with that.
 
-Tested on:
+ rust/kernel/faux.rs | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-commit:         5c5a10f0 Add linux-next specific files for 20250804
-git tree:       linux-next
-kernel config:  https://syzkaller.appspot.com/x/.config?x=f4ccbd076877954b
-dashboard link: https://syzkaller.appspot.com/bug?extid=27d7cfbc93457e472e00
-compiler:       
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=151dc6a2580000
+diff --git a/rust/kernel/faux.rs b/rust/kernel/faux.rs
+index 7a906099993f..7fe2dd197e37 100644
+--- a/rust/kernel/faux.rs
++++ b/rust/kernel/faux.rs
+@@ -4,7 +4,7 @@
+ //!
+ //! This module provides bindings for working with faux devices in kernel modules.
+ //!
+-//! C header: [`include/linux/device/faux.h`]
++//! C header: [`include/linux/device/faux.h`](srctree/include/linux/device/faux.h)
 
+ use crate::{bindings, device, error::code::*, prelude::*};
+ use core::ptr::{addr_of_mut, null, null_mut, NonNull};
+
+base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+--
+2.50.1
 
