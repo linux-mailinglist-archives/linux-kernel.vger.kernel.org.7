@@ -1,149 +1,173 @@
-Return-Path: <linux-kernel+bounces-754750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A1EFBB19BC8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:56:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AB1CB19BC4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:55:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 395B518965E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:57:08 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D3A223B7B46
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FEB5233D88;
-	Mon,  4 Aug 2025 06:56:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 685F9233D9E;
+	Mon,  4 Aug 2025 06:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="hFmN5bIr"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nuY15u1Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kOmhScM6";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="nuY15u1Q";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="kOmhScM6"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2E0C21E9B2A;
-	Mon,  4 Aug 2025 06:56:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648CA230BD5
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:55:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754290601; cv=none; b=mlDU128bsZpWu8kYQ+R61rJyiYV3co9qnhqm48FNfze3/yJeAJUzguVAgEU+HKDq3j/JH06+yvQ6+tKhQ9MxpbKhEjlsw8NYrJZt4P8piJoTFFjAROG4UWS0mh4AQyPej/cWFTAtjP3Lzzx5LUrs/KgqbzT+r01keXDudTrWBVY=
+	t=1754290539; cv=none; b=oj6glOWihzqJcxviO6lSQ4fCixk7qvQDZBUJRYJ/8IeXcpy1kDslBzcWbZAID3jDCOQtN26VOLNjvc/r746IPN10rSN8zXnDxEG/nnGQd/g9Eo/rHTXp7xKhZGiXkchctayCM12BZxJks1dREAENW28pwEOy6oXkDTQrpkyBdx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754290601; c=relaxed/simple;
-	bh=6Uxfo/n+FmHLvR+WWWhh+s7r7X3EBAjRA421qiR6QUs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=gHa4ewb3tfnYBJvcpe3uTHtko2+n4VKu4NJ6EX7dCodvTccejv2Q1OiBuRZih/BMhhtM8O14HO4vPym0+Inh9cyslw+HfyyfL7GL+AhuT3r8JZ2OLPhjWcF0muJ5jByu0zLIOfoNv8LZZusb9Xh8SHJ9/YstgCdbJIn2Znisd4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=hFmN5bIr; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [127.0.0.1] (c-76-133-66-138.hsd1.ca.comcast.net [76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 5746tNXj718207
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 3 Aug 2025 23:55:23 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 5746tNXj718207
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754290530;
-	bh=6Uxfo/n+FmHLvR+WWWhh+s7r7X3EBAjRA421qiR6QUs=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:From;
-	b=hFmN5bIrGhwAqRzowBAQP+K7JKfkTZmxrPVOSbJS31LX45O5bseelsScA7k2yDAPP
-	 mUWGJ9cRkp3wnCfLfOCOdLrCRaSejeDQvKQhqYD0KFFqPhWPi9VD5ehD5kwjJBQj2t
-	 EglMcvwE5YmBnva0NyndOecbfVvrxckhlbHsKMMsbeWG/mVa+QaqaWu1UUe5ZAxFnL
-	 1mZ5QW73IgNc+sHyKKBk2/Gt9h16K/EL0SMXj0hZdrOO0sLOUeqwekZA4MobIa0aa3
-	 oUKY2QoT7lwUsXmsn2UM5m5MzP1sYfQoYlcAvGmOUImszdjO9LWUNNL4GiLRQ7btCZ
-	 G/wBKmENMoORA==
-Date: Sun, 03 Aug 2025 23:55:21 -0700
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Kees Cook <kees@kernel.org>, Dave Hansen <dave.hansen@intel.com>
-CC: Sohil Mehta <sohil.mehta@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
-        Dave Hansen <dave.hansen@linux.intel.com>,
-        Jonathan Corbet <corbet@lwn.net>, Ingo Molnar <mingo@kernel.org>,
-        Pawan Gupta <pawan.kumar.gupta@linux.intel.com>,
-        Daniel Sneddon <daniel.sneddon@linux.intel.com>,
-        Kai Huang <kai.huang@intel.com>, Sandipan Das <sandipan.das@amd.com>,
-        Breno Leitao <leitao@debian.org>,
-        Rick Edgecombe <rick.p.edgecombe@intel.com>,
-        Alexei Starovoitov <ast@kernel.org>, Hou Tao <houtao1@huawei.com>,
-        Juergen Gross <jgross@suse.com>,
-        Vegard Nossum <vegard.nossum@oracle.com>,
-        Eric Biggers <ebiggers@google.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-        "Masami Hiramatsu (Google)" <mhiramat@kernel.org>,
-        Andrew Morton <akpm@linux-foundation.org>,
-        Luis Chamberlain <mcgrof@kernel.org>, Yuntao Wang <ytcoode@gmail.com>,
-        Rasmus Villemoes <linux@rasmusvillemoes.dk>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Tejun Heo <tj@kernel.org>, Changbin Du <changbin.du@huawei.com>,
-        Huang Shijie <shijie@os.amperecomputing.com>,
-        Geert Uytterhoeven <geert+renesas@glider.be>,
-        Namhyung Kim <namhyung@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@redhat.com>, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-efi@vger.kernel.org,
-        linux-mm@kvack.org, "Kirill A. Shutemov" <kas@kernel.org>,
-        "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>,
-        Andy Lutomirski <luto@kernel.org>, Ingo Molnar <mingo@redhat.com>,
-        Borislav Petkov <bp@alien8.de>, Peter Zijlstra <peterz@infradead.org>,
-        Ard Biesheuvel <ardb@kernel.org>,
-        "Paul E. McKenney" <paulmck@kernel.org>,
-        Josh Poimboeuf <jpoimboe@kernel.org>,
-        Xiongwei Song <xiongwei.song@windriver.com>,
-        Xin Li <xin3.li@intel.com>, "Mike Rapoport (IBM)" <rppt@kernel.org>,
-        Brijesh Singh <brijesh.singh@amd.com>,
-        Michael Roth <michael.roth@amd.com>, Tony Luck <tony.luck@intel.com>,
-        Alexey Kardashevskiy <aik@amd.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        X86-kernel <x86@kernel.org>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCHv9_04/16=5D_x86/cpu=3A_Defer_?=
- =?US-ASCII?Q?CR_pinning_setup_until_core_initcall?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <202508021149.B4BFF8D1@keescook>
-References: <20250707080317.3791624-1-kirill.shutemov@linux.intel.com> <20250707080317.3791624-5-kirill.shutemov@linux.intel.com> <6075af69-299f-43d2-a3c8-353a2a3b7ee7@intel.com> <98a7a91b-3b46-4407-82a7-5f80443b7e00@intel.com> <6e768f25-3a1c-48b9-bc53-56877a556a83@intel.com> <202508021149.B4BFF8D1@keescook>
-Message-ID: <5BC99441-D69E-4B23-9485-6802F8ED8A42@zytor.com>
+	s=arc-20240116; t=1754290539; c=relaxed/simple;
+	bh=Ct3jNBBThk50ZJdJbUD3vzhuai/eG6JlXBH/SWctZh8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=KDSpSyvKNVzprGyv/KZaZ957whD6oXH/geOs2Hweid+6OSzWm9v1KyxHOlZnQXnF0NH89Hpr+KRJ6eSCTW6eOj6HwO/0QM/+uTV1UZxNktyl94Vn33GjS/u7oqqz84EU3vJYLvpYiu/5yX3SgFVfU+f78zhLpNHWFSpVlkJ236s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nuY15u1Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kOmhScM6; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=nuY15u1Q; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=kOmhScM6; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id B3D75219A7;
+	Mon,  4 Aug 2025 06:55:36 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754290536; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVFftAvBOhL7ZrrJRYuM8mD94HM8PtnBRYuCxscK5Rc=;
+	b=nuY15u1QOey4X4pl6Jr6HYmk/ZbnFHxRasMmK+L4H0J9njulsDZs9EDRjHVJqVjdPelQ+/
+	9NTtNETfd2328pqotHfnTgiaWeh++DgZz1XUwQQH+l2nPHvshbDTNzdXWs6IxmUeWNgNtU
+	TpLYGObv6oB1w78scMD4+WmB1LexCIQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754290536;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVFftAvBOhL7ZrrJRYuM8mD94HM8PtnBRYuCxscK5Rc=;
+	b=kOmhScM6VY610ObYA8AADHIqVAVvak5R69NtNCUuyDBT+mkHB+F/TsHyoxl0kqHrHJHrNz
+	XDe2idxpNLpsG9Bw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1754290536; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVFftAvBOhL7ZrrJRYuM8mD94HM8PtnBRYuCxscK5Rc=;
+	b=nuY15u1QOey4X4pl6Jr6HYmk/ZbnFHxRasMmK+L4H0J9njulsDZs9EDRjHVJqVjdPelQ+/
+	9NTtNETfd2328pqotHfnTgiaWeh++DgZz1XUwQQH+l2nPHvshbDTNzdXWs6IxmUeWNgNtU
+	TpLYGObv6oB1w78scMD4+WmB1LexCIQ=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1754290536;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=SVFftAvBOhL7ZrrJRYuM8mD94HM8PtnBRYuCxscK5Rc=;
+	b=kOmhScM6VY610ObYA8AADHIqVAVvak5R69NtNCUuyDBT+mkHB+F/TsHyoxl0kqHrHJHrNz
+	XDe2idxpNLpsG9Bw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 607BE133D1;
+	Mon,  4 Aug 2025 06:55:36 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id Ltj6FWhZkGgdUAAAD6G6ig
+	(envelope-from <hare@suse.de>); Mon, 04 Aug 2025 06:55:36 +0000
+Message-ID: <065d699a-1edb-4712-9857-021c58c5e5c2@suse.de>
+Date: Mon, 4 Aug 2025 08:55:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 3/7] block: simplify direct io validity check
+To: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+ linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
+Cc: snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
+ Keith Busch <kbusch@kernel.org>
+References: <20250801234736.1913170-1-kbusch@meta.com>
+ <20250801234736.1913170-4-kbusch@meta.com>
+Content-Language: en-US
+From: Hannes Reinecke <hare@suse.de>
+In-Reply-To: <20250801234736.1913170-4-kbusch@meta.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FUZZY_RATELIMITED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,suse.de:email,imap1.dmz-prg2.suse.org:helo]
+X-Spam-Flag: NO
+X-Spam-Level: 
+X-Spam-Score: -4.30
 
-On August 2, 2025 11:51:28 AM PDT, Kees Cook <kees@kernel=2Eorg> wrote:
->On Thu, Jul 31, 2025 at 05:01:37PM -0700, Dave Hansen wrote:
->> On 7/31/25 16:45, Sohil Mehta wrote:
->> > On 7/9/2025 10:00 AM, Dave Hansen wrote:
->> >> On 7/7/25 01:03, Kirill A=2E Shutemov wrote:
->> >>> Instead of moving setup_cr_pinning() below efi_enter_virtual_mode()=
- in
->> >>> arch_cpu_finalize_init(), defer it until core initcall=2E
->> >> What are the side effects of this move? Are there other benefits? Wh=
-at
->> >> are the risks?
->> >>
->> > Picking this up from Kirill=2E=2E Reevaluating this, core_initcall() =
-seems
->> > too late for setup_cr_pinning()=2E
->> >=20
->> > We need to have CR pinning completed, and the associated static key
->> > enabled before AP bring up=2E start_secondary()->cr4_init() depends o=
-n the
->> > cr_pinning static key to initialize CR4 for APs=2E
->>=20
->> Sure, if you leave cr4_init() completely as-is=2E
->>=20
->> 'cr4_pinned_bits' should be set by the boot CPU=2E Secondary CPUs shoul=
-d
->> also read 'cr4_pinned_bits' when setting up their own cr4's,
->> unconditionally, independent of 'cr_pinning'=2E
->>=20
->> The thing I think we should change is the pinning _enforcement_=2E The
->> easiest way to do that is to remove the static_branch_likely() in
->> cr4_init() and then delay flipping the static branch until just before
->> userspace starts=2E
->
->Yeah, this is fine from my perspective=2E The goal with the pinning was
->about keeping things safe in the face of an attack from userspace that
->managed to get at MSR values and keeping them from being trivially
->changed=2E
->
+On 8/2/25 01:47, Keith Busch wrote:
+> From: Keith Busch <kbusch@kernel.org>
+> 
+> The block layer checks all the segments for validity later, so no need
+> for an early check. Just reduce it to a simple position and total length
+> and defer the segment checks to the block layer.
+> 
+> Signed-off-by: Keith Busch <kbusch@kernel.org>
+> ---
+>   block/fops.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/block/fops.c b/block/fops.c
+> index 82451ac8ff25d..820902cf10730 100644
+> --- a/block/fops.c
+> +++ b/block/fops.c
+> @@ -38,8 +38,8 @@ static blk_opf_t dio_bio_write_op(struct kiocb *iocb)
+>   static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
+>   				struct iov_iter *iter)
+>   {
+> -	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
+> -		!bdev_iter_is_aligned(bdev, iter);
+> +	return (iocb->ki_pos | iov_iter_count(iter)) &
+> +			(bdev_logical_block_size(bdev) - 1);
 
-I have mentioned this before: I would like to see CR4-pinning use a patcha=
-ble immediate to make it harder to manipulate=2E If the mask is final when =
-alternatives are run, that would be a good time to install it; the code can=
- just contain a zero immediate (no pinning) or a very limited set of bits t=
-hat must never be changed at all up to that point=2E
+Bitwise or? Sure?
+
+>   }
+>   
+>   #define DIO_INLINE_BIO_VECS 4
+
+Cheers,
+
+Hannes
+-- 
+Dr. Hannes Reinecke                  Kernel Storage Architect
+hare@suse.de                                +49 911 74053 688
+SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
+HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
 
