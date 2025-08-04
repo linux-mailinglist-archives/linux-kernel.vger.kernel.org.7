@@ -1,102 +1,135 @@
-Return-Path: <linux-kernel+bounces-754834-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754835-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8FC92B19D52
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:05:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B810AB19D56
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F1FD3BBBE0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:05:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7678A3BBB26
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:06:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F3F024166D;
-	Mon,  4 Aug 2025 08:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E2DB23AB8D;
+	Mon,  4 Aug 2025 08:06:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="CbCTfOD5"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WwrJapm8"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD4AF17D346;
-	Mon,  4 Aug 2025 08:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5D147DA6D;
+	Mon,  4 Aug 2025 08:06:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294725; cv=none; b=vCQERDOtehehSm5sVJVhHO6YoDvTFtH6Q8wIy+0/JvkUhipubU9cSiXbov77BzrWHoFjVHVGglleQO1rdr2ESleJKqGaXsoGOXq6cq/z12rubhrdWFfXGolFpPkL4a9Vny9MPtCH+j7eLoBV96IlKe2dzwbMAah0DY3SGHp/L9o=
+	t=1754294800; cv=none; b=VuO9My4gPushdmPXUP8USKkDI0bHbQeUPd27g1r0djZjRxTh2xRuq66CWpk/kBwFiWsB00IqT5T/cWlVmXBLLKOa7NDKLhse43H4vRLC+nstph8iuwthrFfPoqDqZvCnTHVmpPCkgR/x4pvC6FpOaqQ81hIQ+5OqMbKymZ9pioM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294725; c=relaxed/simple;
-	bh=FYLnhdEGvKvTuON4KAML6Oi2n8qm37XovUco3wVoE8Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qA/i0H3acS/2sSeCXZAfgdDcEbcDTfu20oFD5k8h53BqR3XaGrym6vpkxC6KSU/jjoXmMHzjxXDfuzLMeRyQDg4+f8SKoK+3AOBONxV3JYRubaOktkIbiUR9m5XcMv6hr53ToxoRZ1YgJysn0TJ8I+9qAP19mUpflnHwng076tc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=CbCTfOD5; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754294722;
-	bh=FYLnhdEGvKvTuON4KAML6Oi2n8qm37XovUco3wVoE8Y=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=CbCTfOD5k19H11a4u8Q/Woseup+CwmLYRS5HHnfKWg7HCiwgwh6as3K7nqjqmhFKi
-	 dixMcCmrIFnvDHVlV+ldfXa8C031R8gxmtAJYO6rfOkedswPQC9lBXxzUSAyBHfocn
-	 Y76UqLKPidiEh447HlFNPsj4Cz4VB2gI/5G5Ego6L6X77jBTNp0fdn5uLQ0E9A4utF
-	 xuqj/T9V2FN1w4VGto2+U+/FYRHFRPRXE7IbBl/b284iCjrdMxALFF2WqSXlaBJMzC
-	 SNySu9agllgUfSfCEoDG9fNGjIqNJp/aOXSukvimp4CZCJ03io549A8zlEkvE+NLQT
-	 gyaYO7/ct9n3w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 8410217E0DB9;
-	Mon,  4 Aug 2025 10:05:21 +0200 (CEST)
-Message-ID: <a9cd33f5-cc37-4a1d-b1fd-094761a146ed@collabora.com>
-Date: Mon, 4 Aug 2025 10:05:21 +0200
+	s=arc-20240116; t=1754294800; c=relaxed/simple;
+	bh=LJsP3POugebwTfDcQDDyey0X+IAXbHHrUgRPsb8MIDA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y+zdZ6guXnYgP3p/CO+IPDW0zIiE2a7/UbE5UWbLawCMXeRI39r4rIJcYR9J13pJbhjGkRaIZcEXAc6qVSSk1XwvBYyb/PmnvvzAAtdOOP5B7iR0nV3Le8/5K27wowkuL6j21k2SEUfLt8qxvSu6bUB7j22Yb7gtSHlbC5oQ1JE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WwrJapm8; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9675CC4CEE7;
+	Mon,  4 Aug 2025 08:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754294800;
+	bh=LJsP3POugebwTfDcQDDyey0X+IAXbHHrUgRPsb8MIDA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WwrJapm8clxrbORWct74JESkw++nKBRizntME8+LH/8scwh8qPZGh+oXekE2a/hNq
+	 SC3dSBFesoKAwNeaW8ZYadGbrIor3viKN9Bh4vxmLItcbN/ELSJ7d9UHWKqE8TvI/C
+	 9SFH8AcFibn24rFyfIkxiKqIuwVLhghG7Eq7jsifJZpTG8pfs8jUq853vMf5ACThK7
+	 pGNJI/I8osPmv8XtGBvr+qB/GoyRn/no/CSJnTuHk7F8wwFKBdkGIGOtMra7vTxqA8
+	 cICuFZ9Gww8udA9nGwQBME2mWs2lul3h86ztNqtwjDP1DppAs1TiwefeTWlDjHfcKc
+	 SB2rP3vFLiPNw==
+Date: Mon, 4 Aug 2025 10:06:37 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Louis Chauvet <louis.chauvet@bootlin.com>
+Cc: Jyri Sarha <jyri.sarha@iki.fi>, 
+	Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Sam Ravnborg <sam@ravnborg.org>, Benoit Parrot <bparrot@ti.com>, Lee Jones <lee@kernel.org>, 
+	Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>, 
+	Tero Kristo <kristo@kernel.org>, thomas.petazzoni@bootlin.com, Jyri Sarha <jsarha@ti.com>, 
+	Tomi Valkeinen <tomi.valkeinen@ti.com>, dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, stable@vger.kernel.org
+Subject: Re: [PATCH 4/4] drm/tidss: Fix sampling edge configuration
+Message-ID: <20250804-tuscan-woodpecker-from-jupiter-9d290f@kuoka>
+References: <20250730-fix-edge-handling-v1-0-1bdfb3fe7922@bootlin.com>
+ <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] Input: mtk-pmic-keys - MT6359 has a specific release
- irq
-To: Julien Massot <julien.massot@collabora.com>, kernel@collabora.com,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>,
- Matthias Brugger <matthias.bgg@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
-Cc: linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org
-References: <20250801-radxa-nio-12-l-gpio-v1-0-d0840f85d2c8@collabora.com>
- <20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8@collabora.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250801-radxa-nio-12-l-gpio-v1-1-d0840f85d2c8@collabora.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250730-fix-edge-handling-v1-4-1bdfb3fe7922@bootlin.com>
 
-Il 01/08/25 15:16, Julien Massot ha scritto:
-> A recent commit in linux-next added support for key events.
-> However, the key release event is not properly handled: only key press events
-> are generated, leaving key states stuck in "pressed".
+On Wed, Jul 30, 2025 at 07:02:47PM +0200, Louis Chauvet wrote:
+> As stated in the AM62x Technical Reference Manual (SPRUIV7B), the data
+> sampling edge needs to be configured in two distinct registers: one in the
+> TIDSS IP and another in the memory-mapped control register modules. Since
+> the latter is not within the same address range, a phandle to a syscon
+> device is used to access the regmap.
 > 
-> This patch ensures that both key press and key release events are properly
-> emitted by handling the release logic correctly.
+> Fixes: 32a1795f57ee ("drm/tidss: New driver for TI Keystone platform Display SubSystem")
+> Signed-off-by: Louis Chauvet <louis.chauvet@bootlin.com>
 > 
-> Note: the code was introduced in linux-next by commit
-> bc25e6bf032e ("Input: mtk-pmic-keys - add support for MT6359 PMIC keys")
-> and is not yet present in mainline.
+> ---
 > 
-> Signed-off-by: Julien Massot <julien.massot@collabora.com>
+> Cc: stable@vger.kernel.org
 
-Well, you are effectively fixing the commit that you pointed out, so this needs
+Please read docs how to add stable tags.
 
-Fixes: bc25e6bf032e ("Input: mtk-pmic-keys - add support for MT6359 PMIC keys")
+> ---
+>  drivers/gpu/drm/tidss/tidss_dispc.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/gpu/drm/tidss/tidss_dispc.c b/drivers/gpu/drm/tidss/tidss_dispc.c
+> index c0277fa36425ee1f966dccecf2b69a2d01794899..65ca7629a2e75437023bf58f8a1bddc24db5e3da 100644
+> --- a/drivers/gpu/drm/tidss/tidss_dispc.c
+> +++ b/drivers/gpu/drm/tidss/tidss_dispc.c
+> @@ -498,6 +498,7 @@ struct dispc_device {
+>  	const struct dispc_features *feat;
+>  
+>  	struct clk *fclk;
+> +	struct regmap *clk_ctrl;
+>  
+>  	bool is_enabled;
+>  
+> @@ -1267,6 +1268,11 @@ void dispc_vp_enable(struct dispc_device *dispc, u32 hw_videoport,
+>  		       FLD_VAL(mode->vdisplay - 1, 27, 16));
+>  
+>  	VP_REG_FLD_MOD(dispc, hw_videoport, DISPC_VP_CONTROL, 1, 0, 0);
+> +
+> +	if (dispc->clk_ctrl) {
+> +		regmap_update_bits(dispc->clk_ctrl, 0, 0x100, ipc ? 0x100 : 0x000);
+> +		regmap_update_bits(dispc->clk_ctrl, 0, 0x200, rf ? 0x200 : 0x000);
+> +	}
+>  }
+>  
+>  void dispc_vp_disable(struct dispc_device *dispc, u32 hw_videoport)
+> @@ -3012,6 +3018,14 @@ int dispc_init(struct tidss_device *tidss)
+>  
+>  	dispc_init_errata(dispc);
+>  
+> +	dispc->clk_ctrl = syscon_regmap_lookup_by_phandle_optional(tidss->dev->of_node,
+> +								   "ti,clk-ctrl");
+> +	if (IS_ERR(dispc->clk_ctrl)) {
+> +		r = dev_err_probe(dispc->dev, PTR_ERR(dispc->clk_ctrl),
+> +				  "DISPC: syscon_regmap_lookup_by_phandle failed.\n");
+> +		return r;
 
-and
+This breaks ABI. Commit msg mentions the reason but without
+justification - was everything broken? Nothing was working? Was it ever
+tested?
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+And anyway ABI impact must be clearly documented.
 
-Cheers,
-Angelo
 
+Best regards,
+Krzysztof
 
 
