@@ -1,58 +1,77 @@
-Return-Path: <linux-kernel+bounces-755532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 02765B1A823
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:50:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9D2E6B1A827
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72EF0627167
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 645113ADBFA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A90E228FFF3;
-	Mon,  4 Aug 2025 16:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H0vRISbG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DEE7528A72B;
+	Mon,  4 Aug 2025 16:47:28 +0000 (UTC)
+Received: from mail-ed1-f49.google.com (mail-ed1-f49.google.com [209.85.208.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E6D228FAA7;
-	Mon,  4 Aug 2025 16:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AEA7284B3C;
+	Mon,  4 Aug 2025 16:47:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754326027; cv=none; b=qw8qr4v5wyTZ4YabbgOxQwTWQuGbdmgaTEa0GRwlW2lOoypjKbv2/nYVEAox5mW0t4WHYq9j8k5V1sRnhAHAoxjuYhuZBlCyeJ4soKtenGEZ1tjQa4f5i+qpXSGSZUUpLh5AZ8XdyXR9/QYTX4FcR3JmZYh4jLFyygpgLuPXHlg=
+	t=1754326048; cv=none; b=me2O/wCc3fDuCvVwBD6wEfm+FtRKzOPITqTaFPZHPnwTWxvDUMAa5EQ9Eu+d0aImpyYtIg2jzLC4xZFmCCtlltY0L/afBs6AjYpJGimelO9UuZrqLZRdCQBz9MB/iikmVYpsY1YCXszd6EvOoa+j/rAU5l3dnsavV3AMlN8Ozhk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754326027; c=relaxed/simple;
-	bh=OKq2dTGP+5GNlAoPPGOC8X5a10FeXgFZlc9s1MF8JN8=;
+	s=arc-20240116; t=1754326048; c=relaxed/simple;
+	bh=7Q7JSVkgsm4Y6V36SG2FJd6hUepIqcWTF57dZNOHpL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KaPhgAE1FhX/lwnW8ovJ2nPhDOAKpzHL49/uUyA91NrVvdya5i5gKOIlclIRD9qU315/PIThzlfSph/32/R8DQiPxKOio14jwHJA2g2s+I43VdJt2a9l6Ul3prNpbspY7QHWKo9tOdmAJnaiQPhrN9pf3XgjaGEQ/dl31uCdI40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H0vRISbG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A305C4CEE7;
-	Mon,  4 Aug 2025 16:47:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754326026;
-	bh=OKq2dTGP+5GNlAoPPGOC8X5a10FeXgFZlc9s1MF8JN8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=H0vRISbGTuu9rB4ulTGYwp6KXekGZOa3/rZlRZeVHjZtwcpOXXCUH3y4JQlMYeNr2
-	 WbnGtFY/x/m8T4cxQudyxDMz6oJZY2m2LXLiX4jGGjqKThwsEpdDV1tWmhaB+35ENX
-	 zy2EYrr59Y9tFfv9zMoXwTdH5IjIvdwFSg1n2OrNpk0SGOXU3pLtMaibGaag+qAiCe
-	 uqYeeJtdrO8qXpL31FrB2bioq66rxh4Zj46LM2QcyAFaXyGEbeipccDD3MEKUf7q6U
-	 eCb/72TxkoNLxdKW95KfpQGlGYdV4gCEHclhr9unZKh1CI3a6XjIW9FZKvSHf64cTB
-	 TU3GmoF5zXs9Q==
-Date: Mon, 4 Aug 2025 10:47:03 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Hannes Reinecke <hare@suse.de>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
-	brauner@kernel.org
-Subject: Re: [PATCH 2/7] block: align the bio after building it
-Message-ID: <aJDkB8veXI4Znl8o@kbusch-mbp>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-3-kbusch@meta.com>
- <14c5a629-2169-4271-97b8-a1aba45a6e54@suse.de>
- <aJC-5qTTVDNjp0uk@kbusch-mbp>
+	 Content-Type:Content-Disposition:In-Reply-To; b=ASRuEWhzZd4h0QWn8Q/hDDwYuabK9+PSce8zIpPvXUunRZd70J/UMqOvOjMhP2M79ymRnMysUGshz2/acbGSIMh6W5Ad+CDRz+dtWguwR+ejONWjqZJ6nm/Uq+iMDPZUI7MEPvewnuEpaGOsPFMf/3QLTV3CjWo1fhO7bZFB0OM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.208.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f49.google.com with SMTP id 4fb4d7f45d1cf-6156a162537so7160505a12.2;
+        Mon, 04 Aug 2025 09:47:26 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754326045; x=1754930845;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=+Mxo2ut3zRoMEZ0uIbzFNClsKHal7Spr1Oet4n2Jkkg=;
+        b=EyPxcGX/qrCMfBS0y00EEKB1RGt8uoVltSETbvgMNYHdfKOufQpCITW/SZkLJUV01o
+         3P2C/Q3n0sS//dyIErRYskVLIh5vwefx3404XEEzzjW4FQ8VhtyHN9nbs+17Kyuvpoap
+         14zIWvdYXH2j/i3MnHMi6MG1OTO2WaCN181m8llVvh9KqRa3kftAN/N4HmTiV3t+ihrR
+         wEZpQ8oZy22+RCzqwt1bSEjQRHFy/Ml026opVOSDee4Ncvi18j4Lbx0nZhHS5ZyKgP6V
+         7wbsUrNZLs/jeu18ONoi8xG0uPkVogGf393MKfMXAdiDn5AGEwCnn7FiT12g+SDYzon2
+         ksOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUMbyUJ8ahwe1R6pVEjOLwHdNN4PN7+csi9Rs24gxGr+m60PttfAZQKLW3F/oD91g3fvqeEodhlYhuPQTE=@vger.kernel.org, AJvYcCUh72NoLz71lBdembsliWedeNKIvG3nSMfOIOEZXuA9cGrti/dnp9re0DOoiJ5zrEYShF8tJ1B4qmed@vger.kernel.org
+X-Gm-Message-State: AOJu0YxNvatFi3d84VCbxUdIAzyDic4/Q7lgEVce3MNwr/iSpE62Xzq8
+	PQ+Qhizq1rT5ixafTGYiYMjX++pb47hs2Wa0/YTRsLitPh+rmAMcYDsr
+X-Gm-Gg: ASbGncvzP6gA5pNab5tszHP57mU71o8jZtb4jgBbUjCLBCWIUAD7AIUI61o6c5Lx93O
+	Wj5SAMDA1Xjx4Lu3VEiFNeQcDYlHhflm1mSGYkmQK0SPZlGSnlgyTdy1pZS9usQt6V+9hngqx32
+	5G9yQDGb4noto6cKEyPmFgEmJMKlTZL9db3upa78bfSMTI1Ps0N75qoiU9PZ88yFko4zGtWUoxF
+	EZxkVQ0dQnhtPD9CVbaolWV3hmWzeXQZwCsE3eDfPzaZzi0bBey9GoZ1t340yA+MJHlZgUpbSlY
+	uYDkMjeh7kTIUnHE2T/jW/NVR8PjItEJyqzCItvNxSArnWYbzBCoV2FSCYe8mmcOC9CjfQ3cK+F
+	F991L7R093thUbrqqmiHM+qka
+X-Google-Smtp-Source: AGHT+IE7J7XFqe2CWLwCuaGh0pIpjtaB3ZsoUi1fPUXC1a9sKKnxkU+tAZa8TjMkc7Xp0J+XSrRIDA==
+X-Received: by 2002:a17:907:948c:b0:ae6:abe9:4daa with SMTP id a640c23a62f3a-af940079146mr1138489066b.27.1754326044549;
+        Mon, 04 Aug 2025 09:47:24 -0700 (PDT)
+Received: from gmail.com ([2a03:2880:30ff:71::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0753f9sm753604866b.20.2025.08.04.09.47.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 09:47:24 -0700 (PDT)
+Date: Mon, 4 Aug 2025 09:47:21 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Sathyanarayanan Kuppuswamy <sathyanarayanan.kuppuswamy@linux.intel.com>
+Cc: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+	Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Jon Pan-Doh <pandoh@google.com>, linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, kernel-team@meta.com
+Subject: Re: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
+ pci_print_aer()
+Message-ID: <cv67hkaimtzsok7ryrzup3ql7unsizw2vix5nanx252pqblifv@42d6eibemsvx>
+References: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
+ <9cd9f4cf-72ab-40f1-9ead-3e6807b4d474@linux.intel.com>
+ <3kpkazpe4j4pws7rean5kelwmpfp5ij62psvdzvimcr37do47a@y2pvypskynno>
+ <48e24c23-67d4-4d09-a5f5-2a458a47e2e2@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,47 +80,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <aJC-5qTTVDNjp0uk@kbusch-mbp>
+In-Reply-To: <48e24c23-67d4-4d09-a5f5-2a458a47e2e2@linux.intel.com>
 
-On Mon, Aug 04, 2025 at 08:08:38AM -0600, Keith Busch wrote:
-> On Mon, Aug 04, 2025 at 08:54:00AM +0200, Hannes Reinecke wrote:
-> > On 8/2/25 01:47, Keith Busch wrote:
-> > > +static int bio_align_to_lbs(struct bio *bio, struct iov_iter *iter)
-> > > +{
-> > > +	struct block_device *bdev = bio->bi_bdev;
-> > > +	size_t nbytes;
-> > > +
-> > > +	if (!bdev)
-> > > +		return 0;
-> > > +
-> > > +	nbytes = bio->bi_iter.bi_size & (bdev_logical_block_size(bdev) - 1);
-> > > +	if (!nbytes)
-> > > +		return 0;
-> > > +
-> > > +	bio_revert(bio, nbytes);
-> > > +	iov_iter_revert(iter, nbytes);
-> > > +	if (!bio->bi_iter.bi_size)
-> > > +		return -EFAULT;
-> > > +
-> > > +	return 0;
-> > > +}
-> > > +
-> > >   /**
-> > >    * bio_iov_iter_get_pages - add user or kernel pages to a bio
-> > >    * @bio: bio to add pages to
-> > > @@ -1336,6 +1355,7 @@ int bio_iov_iter_get_pages(struct bio *bio, struct iov_iter *iter)
-> > >   		ret = __bio_iov_iter_get_pages(bio, iter);
-> > >   	} while (!ret && iov_iter_count(iter) && !bio_full(bio, 0));
-> > > +	ret = bio_align_to_lbs(bio, iter);
-> > >   	return bio->bi_vcnt ? 0 : ret;
-> > 
-> > Wouldn't that cause the error from bio_align_to_lba() to be ignored
-> > if bio->bi_vcnt is greater than 0?
+Hello Sathyanarayanan
+
+On Mon, Aug 04, 2025 at 09:11:27AM -0700, Sathyanarayanan Kuppuswamy wrote:
 > 
-> That returns an error only if the alignment reduces the size to 0, so
-> there would be a bug somewhere if bi_vcnt is not also 0 in that case.
+> On 8/4/25 8:35 AM, Breno Leitao wrote:
+> > Hello Sathyanarayanan,
+> > 
+> > On Mon, Aug 04, 2025 at 06:50:30AM -0700, Sathyanarayanan Kuppuswamy wrote:
+> > > On 8/4/25 2:17 AM, Breno Leitao wrote:
+> > > > Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
+> > > > when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
+> > > > calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
+> > > > does not rate limit, given this is fatal.
+> > > Why not add it to pci_print_aer() ?
+> > > 
+> > > > This prevents a kernel crash triggered by dereferencing a NULL pointer
+> > > > in aer_ratelimit(), ensuring safer handling of PCI devices that lack
+> > > > AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
+> > > > which already performs this NULL check.
+> > > Is this happening during the kernel boot ? What is the frequency and steps
+> > > to reproduce? I am curious about why pci_print_aer() is called for a PCI device
+> > > without aer_info. Not aer_info means, that particular device is already released
+> > > or in the process of release (pci_release_dev()). Is this triggered by using a stale
+> > > pci_dev pointer?
+> > I've reported some of these investigations in here:
+> > 
+> > https://lore.kernel.org/all/buduna6darbvwfg3aogl5kimyxkggu3n4romnmq6sozut6axeu@clnx7sfsy457/
+> 
+> It has some details. But you did not mention details like your environment, steps to
+> reproduce and how often you see it. I just want to understand in what scenario
+> pci_print_aer() is triggered, when releasing the device. I am wondering whether we
+> are missing proper locking some where.
 
-But there is definitely a problem the other-way-around: if bi_vcnt is
-already 0 because the first vector was a bad address, then my patch here
-is mistakenly overriding 'ret' to indicate success when it wasn't.
+Oh, unfortunately I don't have these details.
+
+I have a bunch of machine in "prod" running 6.16, and they crash from
+time to time, and then I have the crashdumps.
+
+I can get anything that crashdump provices, but, I don't have
+a reproducer or the exacty steps that are triggering it.
+
+If I can get this information from a crashdump, I am more than happy to
+investigate. Can we get these information from crashdump?
+
+Thanks,
+--breno
 
