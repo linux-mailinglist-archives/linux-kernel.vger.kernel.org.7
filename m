@@ -1,180 +1,127 @@
-Return-Path: <linux-kernel+bounces-754804-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754805-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 222C6B19CF7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:52:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F07A3B19CF9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:52:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 152BA175751
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:52:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E583D3A81AD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:52:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 658D123ABB2;
-	Mon,  4 Aug 2025 07:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF94623BF91;
+	Mon,  4 Aug 2025 07:52:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="U1zUGqPk"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EtMaenSt"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964E323ABAB
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F7223B63B;
+	Mon,  4 Aug 2025 07:52:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754293945; cv=none; b=XLErYFfVAoUgiF94Hzy0wwAX+/LdGJ8Tj+/NcNF5YzlPn3eLeYbsmXukdVIVpRlMBOkXNVBdlOVhXX1Kp2ZFIui+o9D2HE8xh00aRMYf5YFAooYi9gJWDu/JQBi8BhDi7lgAReMWs+SitGO6wMhjfsu/ARJtR7WPM8DYgcOhy1o=
+	t=1754293949; cv=none; b=HZJRjbjUglo78+bWJPfibv5HBnz9nAOsplHlH1bC82tU/3pauL6HnA6V1cTJevZG1u7oFbLKKyRFJPhnmLUM9w6iRmtQ5bME80505AM/u3XNQ+8ynSMTAxg+e0nR+4axCrKRpx39Ruig+6+4908XEN2PQhmI/RGV1NoAMiNHmx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754293945; c=relaxed/simple;
-	bh=1eIG8X/E9oyNSR7uva+xqzgKObhITSgSrbvhbP6sB8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=jdNOQc5t6wx5LqiS3a0cnp4wtCod2/yG4tc2u3fmMiFRs4aYYeC9VAlB/q5W3L0a6PfMzqvQat5EvDBUIO0D3AGkJNBh1zaJssxMZm5KT4XFvDRGN2+c9JeGmNO41/y1/s2nDKBCc9MBRG/mtEDLgwMo99lulmVFpmtVBHwmicg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=U1zUGqPk; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-31eb744f568so2799090a91.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:52:23 -0700 (PDT)
+	s=arc-20240116; t=1754293949; c=relaxed/simple;
+	bh=qu6si2MBvuWPKV70MwLcTTL5+7tw6JBmpuMGkRPsigc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=sTcHxpEwvKYgH2kFLCiIn0LHMmxaezYurtzFDFUv8WVTBdcdNi0Uyd6ATsur+9m+HY7dw4tqVaFR0Nh30OOADd04uCFqjTiDAPOaS12UeRak0tqWsChhh1XLo3IL2+JxQXBX4qE/b0KUX/rTj550+u2I4Xq1zxWI1LexNPsBWs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EtMaenSt; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-3b786421e36so2314912f8f.3;
+        Mon, 04 Aug 2025 00:52:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1754293943; x=1754898743; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VlA85X6ooRUor3EsVJhQwjajZUg2+o0W6AFWPlQlIm4=;
-        b=U1zUGqPkPtxd+OKwooQYyUmkjHhriHwVAX5C0WV/Bux04Zg7TVL3ud/Obw1vxPVcaP
-         36KfWGcGoXdA1aCo0oBfD5XPezjmAI29pMbR90NZFIBY6XKZp2piBpNYyUw9udS/XMSH
-         ayzc2WsvpTvBFwWVCu0gBEplQLKKu4MC4sVsS+6qDlQzznnO0NxmZVa/D0ind1BI6kC8
-         EyIJZum5iTydS8/zGM6QNNNFYcYAiWQVCDG6BmUxLVxyCyHe2nt3e88RS33fBe7e5F/O
-         ZgRL58VelnieNOEK1e8xZ1lTamGJmlPSlQu1CM/cYfFcxXqdaB/vDKzOiZbQKmoG88Hv
-         Ep6g==
+        d=gmail.com; s=20230601; t=1754293946; x=1754898746; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=/y97YE4Z88r4sQq9EZmsRXsWOa4drDMwiWCqOFeRfRw=;
+        b=EtMaenSt6qkEexo9s4Jl0i2O2QSoctSjMBP1JicQ4ldzF9AX9LJf1CaYgCDt3S9cjJ
+         aopuPacARC8722x6YPppK+FgGZvkhxaimzdPnt93OWzSxmip9nDxJ8CuHq0NQgLhasi0
+         nw3AiMcWtxPqE3lvio9lzGHfrMjkrl76Swd1hLBopFqyNZLRX+uSpxRa9nnIqxvwVJWJ
+         oYESbTz/Qrscwdpw0q1CdTe6xnwDP2us5UfHOvdBR2ILfL4tf47aFANzMF492rAIxb9m
+         BkOlaR7heNfG+YneCl3ywxE3D49lV5BsVsUXjnMm4j+qB6jMOIqO/5rGDrCp3GCiT+a8
+         M6ww==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754293943; x=1754898743;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VlA85X6ooRUor3EsVJhQwjajZUg2+o0W6AFWPlQlIm4=;
-        b=J/Od+t5gSwpIuVczvAISCQGbdFISoHeLUoMLEKIf0xgl2Ib4pPyL+rFQFqQsvOZL/I
-         TAtJLMN3mPsNAbRQwK+6v749VDBoLZTF9ud2KNT6F4G0xRTQx7wZmzsjqR1AWnCLSgaV
-         vB4/TTDT0GBmnrrC/QV28BB7SqLIpG82pAWNsnz/qSUwVR0ad/kMrRJtPAqFWoZrx3t7
-         I/Xn2H54yFjiw2sP7IHvhassj7vmJE5xNh1g1QZ85fR865QjDbFG3RYwMDffZPMp7laf
-         Lyj/Qu3OXls4zTLvctqa3GxYP3ijLI4hVPbJSQS1kfWfK+JkaWfJBWXv0X7hthJRJHJq
-         CAyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUVrwrw9sVS4JiXBVirtXEQKgjVOeHosf/dD6XTpXlZ+Enqj5YDhmZYdhWLxML1RCWN41kUItq4IY8UHR8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOiuM8VS9iUHBPmRbUxOa6358bxuf0ZC4GYVPhwZX16To7MUFj
-	MBuOCUQ70NJlpFIUxl8gTEcOuLx5NxxEwwXBLQB4DQqFl+fRubgTpops5GAjmyEarA==
-X-Gm-Gg: ASbGnct+j/oi8ta5n/L5Jhrqe8PhsJX67rcbwzloRgsHNXsnJDJJsN1dCttaRKO4pJm
-	yuL3nODel224iHpLYIZnmUlPB8wy/11KXpgssG3eMIljSF27aiGamvYAvzojJKwGraOb9CKZYHA
-	qUR4B7iPX9P8JnlehJ6e9+bewgPd2/9c7z5C0EAETElQmi4p/C7eMhbTFioXpubC6qtumcKlazK
-	RgVG/MmcZpfPZ5GlJaBhvhbhjLiBpGRE8BHxLfEL9OT/fjXCl6jIK8xaoUYY9KzFSrKIPQKGNwS
-	S6CgYREW1dXV++8b9mIH8LHEe0qOaK71wPgg+Q1rLh4/FNBkyvpx7fzAsCQlfAnMeUlbzXpSdpG
-	/v71wsZ/j/3AcKuK1B+itrR4DKKTt5TfmS4iu/wQnWEICuPWsZcpZiQ==
-X-Google-Smtp-Source: AGHT+IGVN/pE1P1Dxy08WIOHEHhVvU+/YjYl482uW+2AsvekquqgXiIYF8Cdn2tTFHzWdedYqm4feQ==
-X-Received: by 2002:a17:90b:1d02:b0:312:26d9:d5b2 with SMTP id 98e67ed59e1d1-3211611b075mr13277085a91.0.1754293942663;
-        Mon, 04 Aug 2025 00:52:22 -0700 (PDT)
-Received: from bytedance ([61.213.176.57])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-31f63f35f90sm13751448a91.35.2025.08.04.00.52.15
+        d=1e100.net; s=20230601; t=1754293946; x=1754898746;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=/y97YE4Z88r4sQq9EZmsRXsWOa4drDMwiWCqOFeRfRw=;
+        b=HUjvzYhsqayQK5QVXusFhtrLcWofUS9ZusWYg+O7VuyKsWx5HsR+Q1bEpVhK0lf4pl
+         93K9jX7R7t3WMfGPdxlgwkLPaG+7lV11grpeBCHLW0UefP1k2ckFJ1L13MJ1xpM6n+dF
+         Mlfpubjyyx8aPI1R/kOqg/8vlDarJG7rfLVe+JLbPsGGcfaAvZV58hFTODMy5TlA4ZL6
+         RpOFpI3JJU6EqnpUY2OsK91I122xqXo3KZjP//QiJMW8G/KXm6Jn3dJnz82gUtmVZw1k
+         DP4O80ELk70LSPpqZkkgPshgOGbzlW9Dx1Bbmy3igbYOIVlpF5UKjD5SvGJIW7+vOriG
+         cfwA==
+X-Forwarded-Encrypted: i=1; AJvYcCXj/SpAnumW8OszYsQ8VFSp05T9KoZBu2NcsLegog1iOMD5UncgGiUagdAXXoF5FhpC7Y5HGuDqzJaLZbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZLyUyFvbkkmRYT1T2yN3eOd6qQ6HvZwaugcm3+yh+5hPKjP2J
+	sbg61961+EDeETtuOB7NwM7LyZsHiPWAUExwyJMMf3QUQdvqa+DLK5ujWH6lqw==
+X-Gm-Gg: ASbGncvd/NTNt99I/R/MTBUAu8BQxnqopCq/npMrnzCPdoLutV7mnkujWXSn9mwhWNq
+	+owup1RYRFyj9IX7p1o7FYw289WHsaS/7K8zqDCZy0MlBK6UfocUbXzSWSYjTExitQO5baskAAx
+	tVNclvHfiYix+o9YBrT9c9ne5e9wYlLIh2Qre6jH8sF/zXW9gmeIfnzeycsPpDkjINXlTNQEZOP
+	49iuif/aGXsenb1N8SHW/NsT5OdUlb7rCgTZM3maP2bzluN9bfz9H7wHlEVIgk+OoeI/P+d9pSW
+	sJg8EhFY8w7eh7csiCxu9zbNM5HjLuW8/lRzxjhRwejG7qErQ9nBs/+HMazAmqvQsvYRuZw7Q4/
+	KsOfx2SQFThYDJJAS4+Frq2H+Th0gAnCEQw5UQddjQgg7s4QMo8U=
+X-Google-Smtp-Source: AGHT+IGyAEVrLxfufX2fDTueUGPVDyx/ukGxs4pigBLinabStHozhN33tpo9nqKMZsvR47SEQPUOZw==
+X-Received: by 2002:a05:6000:288b:b0:3b7:92ec:68ec with SMTP id ffacd0b85a97d-3b8d947288dmr7519869f8f.14.1754293945911;
+        Mon, 04 Aug 2025 00:52:25 -0700 (PDT)
+Received: from [192.168.0.253] (5D59A51C.catv.pool.telekom.hu. [93.89.165.28])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-3b79c47c516sm14650906f8f.62.2025.08.04.00.52.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 00:52:22 -0700 (PDT)
-Date: Mon, 4 Aug 2025 15:52:04 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: Matteo Martelli <matteo.martelli@codethink.co.uk>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	K Prateek Nayak <kprateek.nayak@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>
-Subject: Re: [PATCH v3 0/5] Defer throttle when task exits to user
-Message-ID: <20250804075204.GA496@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <a3b3eefb208f06b0c55f889495376248@codethink.co.uk>
+        Mon, 04 Aug 2025 00:52:25 -0700 (PDT)
+From: Gabor Juhos <j4g8y7@gmail.com>
+Date: Mon, 04 Aug 2025 09:52:12 +0200
+Subject: [PATCH] spi: spi-qpic-snand: avoid double assignment in
+ qcom_spi_probe()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a3b3eefb208f06b0c55f889495376248@codethink.co.uk>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250804-qpic-snand-double-assign-fix-v1-1-9f4970107859@gmail.com>
+X-B4-Tracking: v=1; b=H4sIAKtmkGgC/x3MSwqAMAwA0atI1gaqKH6uIi5qGzUgURsUoXh3i
+ 8s3i4mgFJgU+ixCoJuVd0ko8gzcamUhZJ8MpSlr05oCz4Mdqljx6Pdr2gitKi+CMz/o5so37dR
+ 1prKQFkeglP/9ML7vBz8Vdi1uAAAA
+X-Change-ID: 20250801-qpic-snand-double-assign-fix-cf4d78b9904a
+To: Mark Brown <broonie@kernel.org>
+Cc: linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Gabor Juhos <j4g8y7@gmail.com>
+X-Mailer: b4 0.14.2
 
-Hi Matteo,
+The snandc->dev poninter is being assigned twice in the qcom_spi_probe()
+function. Remove the second assignment as that uses the same pointer
+value than the first one.
 
-On Fri, Aug 01, 2025 at 04:31:25PM +0200, Matteo Martelli wrote:
-... ... 
-> I encountered this issue on a test image with both PREEMPT_RT and
-> CFS_BANDWIDTH kernel options enabled. The test image is based on
-> freedesktop-sdk (v24.08.10) [1] with custom system configurations on
-> top, and it was being run on qemu x86_64 with 4 virtual CPU cores. One
-> notable system configuration is having most of system services running
-> on a systemd slice, restricted on a single CPU core (with AllowedCPUs
-> systemd option) and using CFS throttling (with CPUQuota systemd option).
-> With this configuration I encountered RCU stalls during boots, I think
-> because of the increased probability given by multiple processes being
-> spawned simultaneously on the same core. After the first RCU stall, the
-> system becomes unresponsive and successive RCU stalls are detected
-> periodically. This seems to match with the deadlock situation described
-> in your cover letter. I could only reproduce RCU stalls with the
-> combination of both PREEMPT_RT and CFS_BANDWIDTH enabled.
-> 
-> I previously already tested this patch set at v2 (RFC) [2] on top of
-> kernel v6.14 and v6.15. I've now retested it at v3 on top of kernel
-> v6.16-rc7. I could no longer reproduce RCU stalls in all cases with the
-> patch set applied. More specifically, in the last test I ran, without
-> patch set applied, I could reproduce 32 RCU stalls in 24 hours, about 1
-> or 2 every hour. In this test the system was rebooting just after the
-> first RCU stall occurrence (through panic_on_rcu_stall=1 and panic=5
-> kernel cmdline arguments) or after 100 seconds if no RCU stall occurred.
-> This means the system rebooted 854 times in 24 hours (about 3.7%
-> reproducibility). You can see below two RCU stall instances. I could not
-> reproduce any RCU stall with the same test after applying the patch set.
-> I obtained similar results while testing the patch set at v2 (RFC)[1].
-> Another possibly interesting note is that the original custom
-> configuration was with the slice CPUQuota=150%, then I retested it with
-> CPUQuota=80%. The issue was reproducible in both configurations, notably
-> even with CPUQuota=150% that to my understanding should correspond to no
-> CFS throttling due to the CPU affinity set to 1 core only.
+No functional changes.
 
-Agree. With cpu affinity set to 1 core, 150% quota should never hit. But
-from the test results, it seems quota is hit somehow because if quota is
-not hit, this series should make no difference.
+Signed-off-by: Gabor Juhos <j4g8y7@gmail.com>
+---
+ drivers/spi/spi-qpic-snand.c | 1 -
+ 1 file changed, 1 deletion(-)
 
-Maybe fire a bpftrace script and see if quota is actually hit? A
-reference script is here:
-https://lore.kernel.org/lkml/20250521115115.GB24746@bytedance/
+diff --git a/drivers/spi/spi-qpic-snand.c b/drivers/spi/spi-qpic-snand.c
+index 0cfa0d960fd3c245c2bbf4f5e02d0fc0b13e7696..f6acf095fe196c3f778ba1c16157fc4bf273b66d 100644
+--- a/drivers/spi/spi-qpic-snand.c
++++ b/drivers/spi/spi-qpic-snand.c
+@@ -1541,7 +1541,6 @@ static int qcom_spi_probe(struct platform_device *pdev)
+ 	}
+ 
+ 	snandc->props = dev_data;
+-	snandc->dev = &pdev->dev;
+ 
+ 	snandc->core_clk = devm_clk_get(dev, "core");
+ 	if (IS_ERR(snandc->core_clk))
 
-> 
-> I also ran some quick tests with stress-ng and systemd CPUQuota parameter to
-> verify that CFS throttling was behaving as expected. See details below after
-> RCU stall logs.
-
-Thanks for all these tests. If I read them correctly, in all these
-tests, CFS throttling worked as expected. Right?
-
-> 
-> I hope this is helpful information and I can provide additional details if
-> needed.
-> 
-
-Yes it's very helpful.
-
-> Tested-by: Matteo Martelli <matteo.martelli@codethink.co.uk>
-> 
-
-Thanks!
-
-> [1]: https://gitlab.com/freedesktop-sdk/freedesktop-sdk/-/releases/freedesktop-sdk-24.08.10
-> [2]: https://lore.kernel.org/all/20250409120746.635476-1-ziqianlu@bytedance.com/
-> 
-
-I'll rebase this series after merge window for v6.17 is closed and
-hopefully it's in good shape and maintainer will pick it up :)
+---
+base-commit: ffcfd071eec7973e58c4ffff7da4cb0e9ca7b667
+change-id: 20250801-qpic-snand-double-assign-fix-cf4d78b9904a
 
 Best regards,
-Aaron
+-- 
+Gabor Juhos <j4g8y7@gmail.com>
+
 
