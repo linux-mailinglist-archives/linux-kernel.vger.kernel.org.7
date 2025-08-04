@@ -1,80 +1,78 @@
-Return-Path: <linux-kernel+bounces-754656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754657-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id D87C9B19A7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:23:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB289B19A7D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:24:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C88D1897368
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:23:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D68C0177BEF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:24:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50B1221FB6;
-	Mon,  4 Aug 2025 03:23:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E46F9221FB2;
+	Mon,  4 Aug 2025 03:24:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b="BnrkU7QJ"
-Received: from zeniv.linux.org.uk (zeniv.linux.org.uk [62.89.141.173])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RrdoJzR9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C83811FB3;
-	Mon,  4 Aug 2025 03:23:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.89.141.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5082C21CC4B;
+	Mon,  4 Aug 2025 03:24:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754277799; cv=none; b=edl+ONeseaRpS67c8Pjheo2RnnGVOTGh/HXOEdpFMVOn6wtq4qXOmOrKnA5CEz0aWYVoBVWCAHQDnO6Ls3hZCKmTGau8TlP/T0CKQEsm1XAGV7WaY5B09w3wokvAwuuJTkD7+bX5x1G/w2l99TK2vn8ijQmbuZIefwvpP5JYMv8=
+	t=1754277877; cv=none; b=p1PbYrZxk6R4GUk8XVeGt9C8w/2Y9Jc5tIRZcNZVbaCn14HtPd5gkmUOmMhMoPo4dkdyxNePFkSemRz3y8u43iaX14dCPaWzUh1zZPkJXdNl0cVjBAj9cJul2rstyhrJ+uOPdQKak1N59J3WYfjPBB75TXZXUMh3F9YbKu+7tGM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754277799; c=relaxed/simple;
-	bh=rkHrsiltpyorC3JdIlb1s8D1l44/yq7sco9JKsORU8w=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MzU1mEGRF/dGP/BH92wcsruSCohzqs8MLwAelHPaTlZQ44rTy1EYVSBzMF7ouVQpjD+WvsC2lr1KP7igbaAvyeblAXufho93i48NTJXXZJWzyPmEY/W7mO1gjj5ZK2tmb5H/NMNRraNI+e0ElOICHY7u0LbxSXXY/wiS0frO35w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk; spf=none smtp.mailfrom=ftp.linux.org.uk; dkim=pass (2048-bit key) header.d=linux.org.uk header.i=@linux.org.uk header.b=BnrkU7QJ; arc=none smtp.client-ip=62.89.141.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zeniv.linux.org.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ftp.linux.org.uk
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=linux.org.uk; s=zeniv-20220401; h=Sender:In-Reply-To:Content-Type:
-	MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rkHrsiltpyorC3JdIlb1s8D1l44/yq7sco9JKsORU8w=; b=BnrkU7QJRevf9K0bcxD2TMqUgm
-	LANvzmptr0416EUlmWmkx05xjNi2B9yAg9K+AFeFLQ/3I/SVx46NVd/CWVo/Yk3HNRvnPYVpVd4zW
-	jDgdFwXHmqSW+DIHKQl+GHaHB/6IJvTDTpxoX2zr6giR0QI0KjTiAOy821Nkuy0R7Yp8D6LqM8P8d
-	WXuUXfzeAKwAywDeWeBvU+G3bPR2RXjFQLPwBt4lCBtTQecb+8V8nwByjHUis/6b9GwDZmFpUtrqw
-	yvtiEyYsVYOn/nOPol3Y0tSsWmwp2uI0C2HCzu+yEodmdL/ooPfq4iQBzbk5eMhkt+Vxc7+va+rsJ
-	dVcC9rrQ==;
-Received: from viro by zeniv.linux.org.uk with local (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uiln6-00000006nWu-12W2;
-	Mon, 04 Aug 2025 03:23:12 +0000
-Date: Mon, 4 Aug 2025 04:23:12 +0100
-From: Al Viro <viro@zeniv.linux.org.uk>
-To: Alan Huang <mmpgouride@gmail.com>
-Cc: syzbot <syzbot+7836a68852a10ec3d790@syzkaller.appspotmail.com>,
-	kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com,
-	miklos@szeredi.hu, amir73il@gmail.com,
-	linux-unionfs@vger.kernel.org
-Subject: Re: [syzbot] [bcachefs?] possible deadlock in bch2_symlink
-Message-ID: <20250804032312.GX222315@ZenIV>
-References: <67a72070.050a0220.3d72c.0022.GAE@google.com>
- <2F4A26BA-821F-4916-A8F6-71EDBA89A701@gmail.com>
+	s=arc-20240116; t=1754277877; c=relaxed/simple;
+	bh=CVIT2zdnRgh4I4EbqTYsozwCJB/xGSDXxw64KQvsYEw=;
+	h=Subject:From:In-Reply-To:References:Message-Id:Date:To:Cc; b=uVcJZeLQmtawPgN3J/R7gnQ52VS9EYlZjxBlcy1Aaoej+Vts6HF7ih+cQHaKOX2BCEQLoZxXuCOPNjLM2L8zOY9grWKLR5wPFEFbpSEjDsMArTkFs/cWmp4vmn/2UMl/sBguczqa677z5Z9Zo3edyQicrt+mVd2Lvd/wAquLcFc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RrdoJzR9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 32AB2C4CEEB;
+	Mon,  4 Aug 2025 03:24:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754277877;
+	bh=CVIT2zdnRgh4I4EbqTYsozwCJB/xGSDXxw64KQvsYEw=;
+	h=Subject:From:In-Reply-To:References:Date:To:Cc:From;
+	b=RrdoJzR9OJiZcL6/fbsJz2IM/HtgRAmVQV+UuiGOnwTbFyR6OgJhi1PVzbo72pI0k
+	 K9Fxs9rJmnU2uoArhQeWWlRWUyYq5ZvVK0+dA4QbVejo3ioqlivHul6y6jEVgoV5y5
+	 BISYwD1kyjRntwZYNPx/SUvcCUUDil+yt5V31IFGSUvwsE+8CFxGv0rvGFphXI5beV
+	 SGG5sUlVyjLf5OVRu7ZplKUemVUOtRAx/VS2Np5FYHuFKOlbQx0z2BSVTmMWYtIYvr
+	 BP3xVojrlh0NMEf6M+Cwex9MKKqorOfe4y1Iez+zN3tI6DQJsy9k3gKRxkkpXaNkcb
+	 kSGA0pdEQixWA==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id EAF9C383BF56;
+	Mon,  4 Aug 2025 03:24:52 +0000 (UTC)
+Subject: Re: [GIT PULL] RTC for 6.17
+From: pr-tracker-bot@kernel.org
+In-Reply-To: <20250804030054453a11b9@mail.local>
+References: <20250804030054453a11b9@mail.local>
+X-PR-Tracked-List-Id: <linux-kernel.vger.kernel.org>
+X-PR-Tracked-Message-Id: <20250804030054453a11b9@mail.local>
+X-PR-Tracked-Remote: git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-6.17
+X-PR-Tracked-Commit-Id: bb5b0b4317c9516bdc5e9a4235e3b5f1a73b7e48
+X-PR-Merge-Tree: torvalds/linux.git
+X-PR-Merge-Refname: refs/heads/master
+X-PR-Merge-Commit-Id: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+Message-Id: <175427789157.630740.13149863476906562323.pr-tracker-bot@kernel.org>
+Date: Mon, 04 Aug 2025 03:24:51 +0000
+To: Alexandre Belloni <alexandre.belloni@bootlin.com>
+Cc: Linus Torvalds <torvalds@linux-foundation.org>, linux-rtc@vger.kernel.org, linux-kernel@vger.kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2F4A26BA-821F-4916-A8F6-71EDBA89A701@gmail.com>
-Sender: Al Viro <viro@ftp.linux.org.uk>
 
-On Mon, Aug 04, 2025 at 11:02:54AM +0800, Alan Huang wrote:
-> +cc overlayfs
+The pull request you sent on Mon, 4 Aug 2025 05:00:54 +0200:
 
-Sigh...
+> git://git.kernel.org/pub/scm/linux/kernel/git/abelloni/linux.git tags/rtc-6.17
 
-1) ovl_copy_up_workdir() should lock wdir with I_MUTEX_PARENT, same
-as filename_create().
+has been merged into torvalds/linux.git:
+https://git.kernel.org/torvalds/c/d2eedaa3909be9102d648a4a0a50ccf64f96c54f
 
-2) what the hell is bch2_symlink() need to lock the new inode for?
-page_symlink() doesn't need that; are there any bcachefs-specific reasons
-to bother with that?
+Thank you!
+
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/prtracker.html
 
