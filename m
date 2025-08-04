@@ -1,170 +1,101 @@
-Return-Path: <linux-kernel+bounces-755049-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755050-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8871EB1A09D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:35:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 081C6B1A0A1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:36:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D16A3B0856
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:35:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 021B71713AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:36:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CED822F74D;
-	Mon,  4 Aug 2025 11:35:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55D4253B52;
+	Mon,  4 Aug 2025 11:36:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="Hmx16A+J"
-Received: from m16.mail.163.com (m16.mail.163.com [117.135.210.3])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 875AB2046A9
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:35:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=117.135.210.3
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FNZX1GHY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 246BD1482E8;
+	Mon,  4 Aug 2025 11:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754307336; cv=none; b=JGxAZyb3KdorukcvgfSwHTLQTOogY6r0lSHV075czzNOMfmj3I6Pd9RBjhflcGovNF721/pt9gIYzsovaNuXMeMuv670L6MAuRwTxtqYSSx0Rwi2zObwAx4biJt9xgaAnc3lUiC4iQE7U/JqjUi1vl82B7x8eSrc/93bXdA9JWo=
+	t=1754307374; cv=none; b=hlG7fKrrsVmP9jDihj8fWGBpAWF4FdrEjs5JY8YpB4dWneY5oPDfMg5l+YlAEZ7dlnxy2Ottg9G16jTpIivP9dREWOYNrMXzwzfK6bBDngXc5s62oZ5yDbya7LuD9maaW5Mv0tndnhI2PHsDuerOtfQVsZV65j4QeNiZo68eZYs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754307336; c=relaxed/simple;
-	bh=HGQNomtGOesGgIIHRbW4x4wWKYevlYrPh+0rDwHvzW0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
-	 MIME-Version:Message-ID; b=UnSz+i4dr8SoUSUC/mpLvl4LxkqkTD/TEo0kXdQ6WfCQUfieBFe/2oWveQyecQqH1cW4+1AXc2U615NSgW2j2YbmU3uEzEukmKDzgGPDvJwXajJrDxgN/Kj/CmNscApSTd8qwIY/JHm0tq8kmbMrkm+1VlQwL9+jfpxHH2jlYtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=Hmx16A+J reason="signature verification failed"; arc=none smtp.client-ip=117.135.210.3
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=Date:From:To:Subject:Content-Type:MIME-Version:
-	Message-ID; bh=dCdYFHPE7oKrqzCSJ4MiVnmI0lh+eDPPvSYh0EHWH94=; b=H
-	mx16A+Ji+mlMWQnAEIBfbO3CycVTccoE/foxQl0nykxG8QIb4fEQd0HARJCKPRyj
-	0mIMKuR1WEq8JxSBbndcs8EnMA1XQEO2huuLHZuQP1uNMOPkHqjaERhGXGgnGbdH
-	thA3HcaM4NIx1548atNGbQZhAwjfEIgaHYsD/dxUjs=
-Received: from yangshiguang1011$163.com ( [1.202.162.48] ) by
- ajax-webmail-wmsvr-40-102 (Coremail) ; Mon, 4 Aug 2025 19:34:23 +0800 (CST)
-Date: Mon, 4 Aug 2025 19:34:23 +0800 (CST)
-From: yangshiguang  <yangshiguang1011@163.com>
-To: "Harry Yoo" <harry.yoo@oracle.com>
-Cc: vbabka@suse.cz, akpm@linux-foundation.org, cl@gentwo.org,
-	rientjes@google.com, roman.gushchin@linux.dev, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, alexei.starovoitov@gmail.com
-Subject: Re:Re: [PATCH] mm:slub:avoid wake up kswapd in set_track_prepare
-X-Priority: 3
-X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20250519(9504565a)
- Copyright (c) 2002-2025 www.mailtech.cn 163com
-In-Reply-To: <aI_zLqBtvp3gHk29@hyeyoo>
-References: <20250801065121.876793-1-yangshiguang1011@163.com>
- <aIyJzh2-0YLydvlB@hyeyoo>
- <366fbd5f.2240.19869f49914.Coremail.yangshiguang1011@163.com>
- <aI_zLqBtvp3gHk29@hyeyoo>
-X-NTES-SC: AL_Qu2eBv+buEot5SiQbOkfmUkbg+k2X8K1u/Uv2IBTOZx+jCzp3zk6RH1TA2Lt0cWDMw2jkAiHVyRM9NpZb4lbQr8MYDe+AwQtaiD8QT68iEu3KA==
-Content-Transfer-Encoding: base64
-Content-Type: text/plain; charset=GBK
+	s=arc-20240116; t=1754307374; c=relaxed/simple;
+	bh=ORG0wB/M4qMPDcT6cKOR1scPbgPHW2A9accXiG563rw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JLbuYqDzTVy2JZ3hfHS7hmZgiLIQB8wzGJ7/u9wxSvoHe2er5aVMznKWi0DFTfooZeQZ+jxW1dD9oNyeR46kwcwVwZWl/aJgKXptmZ12kHwqj7RM3/cLxngy1FkAnNUZVdKbbrkVJyC8YroWTOgYIRx4r74CJLQaqZfrj+jTLEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FNZX1GHY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1118BC4CEE7;
+	Mon,  4 Aug 2025 11:36:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754307373;
+	bh=ORG0wB/M4qMPDcT6cKOR1scPbgPHW2A9accXiG563rw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=FNZX1GHYkBkAHJyRfdcYtr2JK8aAVzMAuMZ4YDnMEz2mpkqa2+wYQSm/WwW+BnZQV
+	 riqmS99JoZr+TZh2mmbidswQPpH8V+lqsiCHx50R4ZgJ3hcbF0JPyWMEEM7DmX3UNA
+	 bYivMIkd++IfQQbmg/yUtXOPMQaKPrtPuqDqx9yGLO3zdzrnex/mFN1CsTeBIi2/gJ
+	 NIIMP9BCjvLEtGSYAmnTrIEqgLfLaUVRwiPjhu+EenUeAx8MHllYKVqn88JUywdsb7
+	 0ObusQVi8A4Q/oC2Po9584ydQxJ7Kkw75gmk9UEmDar+916p+sYHmgOrJdavRoqQXi
+	 m93GQ1UP2C0aA==
+Date: Mon, 4 Aug 2025 12:36:08 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Sasha Levin <sashal@kernel.org>
+Cc: patches@lists.linux.dev, stable@vger.kernel.org,
+	Romain Gantois <romain.gantois@bootlin.com>, lgirdwood@gmail.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH AUTOSEL 6.16 09/85] regulator: core: repeat voltage
+ setting request for stepped regulators
+Message-ID: <38852b6e-20b3-43fc-90d7-29d10fd90abe@sirena.org.uk>
+References: <20250804002335.3613254-1-sashal@kernel.org>
+ <20250804002335.3613254-9-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <78aa834b.9b3e.19874dc7d9d.Coremail.yangshiguang1011@163.com>
-X-Coremail-Locale: zh_CN
-X-CM-TRANSID:ZigvCgDHLyq_mpBoamESAA--.13069W
-X-CM-SenderInfo: 51dqw25klj3ttqjriiqr6rljoofrz/1tbiSAWe5WiP8McaigADs1
-X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="urprXkXJYhHv3HO9"
+Content-Disposition: inline
+In-Reply-To: <20250804002335.3613254-9-sashal@kernel.org>
+X-Cookie: Shading within a garment may occur.
 
-CgpBdCAyMDI1LTA4LTA0IDA3OjM5OjI2LCAiSGFycnkgWW9vIiA8aGFycnkueW9vQG9yYWNsZS5j
-b20+IHdyb3RlOgo+T24gU2F0LCBBdWcgMDIsIDIwMjUgYXQgMDQ6NDQ6NTRQTSArMDgwMCwgeWFu
-Z3NoaWd1YW5nIHdyb3RlOgo+PiAKPj4gCj4+IEF0IDIwMjUtMDgtMDEgMTc6MzM6MzEsICJIYXJy
-eSBZb28iIDxoYXJyeS55b29Ab3JhY2xlLmNvbT4gd3JvdGU6Cj4+ID5uaXQ6IHRoZSBzdWJqZWN0
-IG5lZWRzIGEgd2hpdGVzcGFjZSBiZXR3ZWVuIHN1YnN5c3RlbXMgYW5kIHRoZSBoZWFkZXIuCj4+
-ID4ibW06IHNsdWI6IGF2b2lkIHdha2luZyB1cCBrc3dhcGQgaW4gc2V0X3RyYWNrX3ByZXBhcmUo
-KSI/Cj4+ID4KPj4gCj4+IFRoYW5rcyBmb3IgdGhlIHJlbWluZGVyLgo+PiAKPj4gPk9uIEZyaSwg
-QXVnIDAxLCAyMDI1IGF0IDAyOjUxOjIxUE0gKzA4MDAsIHlhbmdzaGlndWFuZzEwMTFAMTYzLmNv
-bSB3cm90ZToKPj4gPj4gRnJvbTogeWFuZ3NoaWd1YW5nIDx5YW5nc2hpZ3VhbmcxMDExQDE2My5j
-b20+Cj4+ID4+IAo+PiA+PiBzZXRfdHJhY2tfcHJlcGFyZSgpIGNhbiBpbmN1ciBsb2NrIHJlY3Vy
-c2lvbi4KPj4gPj4gVGhlIGlzc3VlIGlzIHRoYXQgaXQgaXMgY2FsbGVkIGZyb20gaHJ0aW1lcl9z
-dGFydF9yYW5nZV9ucwo+PiA+PiBob2xkaW5nIHRoZSBwZXJfY3B1KGhydGltZXJfYmFzZXMpW25d
-LmxvY2ssIGJ1dCB3aGVuIGVuYWJsZWQKPj4gPj4gQ09ORklHX0RFQlVHX09CSkVDVFNfVElNRVJT
-LCBtYXkgd2FrZSB1cCBrc3dhcGQgaW4gc2V0X3RyYWNrX3ByZXBhcmUsCj4+ID4+IGFuZCB0cnkg
-dG8gaG9sZCB0aGUgcGVyX2NwdShocnRpbWVyX2Jhc2VzKVtuXS5sb2NrLgo+PiA+PiAKPj4gPj4g
-U28gYXZvaWQgd2FraW5nIHVwIGtzd2FwZC5UaGUgb29wcyBsb29rcyBzb21ldGhpbmcgbGlrZToK
-Pj4gPj4gCj4+ID4+IEJVRzogc3BpbmxvY2sgcmVjdXJzaW9uIG9uIENQVSMzLCBzd2FwcGVyLzMv
-MAo+PiA+PiAgbG9jazogMHhmZmZmZmY4YTRiZjI5YzgwLCAubWFnaWM6IGRlYWQ0ZWFkLCAub3du
-ZXI6IHN3YXBwZXIvMy8wLCAub3duZXJfY3B1OiAzCj4+ID4+IEhhcmR3YXJlIG5hbWU6IFF1YWxj
-b21tIFRlY2hub2xvZ2llcywgSW5jLiBQb3BzaWNsZSBiYXNlZCBvbiBTTTg4NTAgKERUKQo+PiA+
-PiBDYWxsIHRyYWNlOgo+PiA+PiBzcGluX2J1ZysweDAKPj4gPj4gX3Jhd19zcGluX2xvY2tfaXJx
-c2F2ZSsweDgwCj4+ID4+IGhydGltZXJfdHJ5X3RvX2NhbmNlbCsweDk0Cj4+ID4+IHRhc2tfY29u
-dGVuZGluZysweDEwYwo+PiA+PiBlbnF1ZXVlX2RsX2VudGl0eSsweDJhNAo+PiA+PiBkbF9zZXJ2
-ZXJfc3RhcnQrMHg3NAo+PiA+PiBlbnF1ZXVlX3Rhc2tfZmFpcisweDU2OAo+PiA+PiBlbnF1ZXVl
-X3Rhc2srMHhhYwo+PiA+PiBkb19hY3RpdmF0ZV90YXNrKzB4MTRjCj4+ID4+IHR0d3VfZG9fYWN0
-aXZhdGUrMHhjYwo+PiA+PiB0cnlfdG9fd2FrZV91cCsweDZjOAo+PiA+PiBkZWZhdWx0X3dha2Vf
-ZnVuY3Rpb24rMHgyMAo+PiA+PiBhdXRvcmVtb3ZlX3dha2VfZnVuY3Rpb24rMHgxYwo+PiA+PiBf
-X3dha2VfdXArMHhhYwo+PiA+PiB3YWtldXBfa3N3YXBkKzB4MTljCj4+ID4+IHdha2VfYWxsX2tz
-d2FwZHMrMHg3OAo+PiA+PiBfX2FsbG9jX3BhZ2VzX3Nsb3dwYXRoKzB4MWFjCj4+ID4+IF9fYWxs
-b2NfcGFnZXNfbm9wcm9mKzB4Mjk4Cj4+ID4+IHN0YWNrX2RlcG90X3NhdmVfZmxhZ3MrMHg2YjAK
-Pj4gPj4gc3RhY2tfZGVwb3Rfc2F2ZSsweDE0Cj4+ID4+IHNldF90cmFja19wcmVwYXJlKzB4NWMK
-Pj4gPj4gX19fc2xhYl9hbGxvYysweGNjYwo+PiA+PiBfX2ttYWxsb2NfY2FjaGVfbm9wcm9mKzB4
-NDcwCj4+ID4+IF9fc2V0X3BhZ2Vfb3duZXIrMHgyYmMKPj4gPj4gcG9zdF9hbGxvY19ob29rW2p0
-XSsweDFiOAo+PiA+PiBwcmVwX25ld19wYWdlKzB4MjgKPj4gPj4gZ2V0X3BhZ2VfZnJvbV9mcmVl
-bGlzdCsweDFlZGMKPj4gPj4gX19hbGxvY19wYWdlc19ub3Byb2YrMHgxM2MKPj4gPj4gYWxsb2Nf
-c2xhYl9wYWdlKzB4MjQ0Cj4+ID4+IGFsbG9jYXRlX3NsYWIrMHg3Ywo+PiA+PiBfX19zbGFiX2Fs
-bG9jKzB4OGU4Cj4+ID4+IGttZW1fY2FjaGVfYWxsb2Nfbm9wcm9mKzB4NDUwCj4+ID4+IGRlYnVn
-X29iamVjdHNfZmlsbF9wb29sKzB4MjJjCj4+ID4+IGRlYnVnX29iamVjdF9hY3RpdmF0ZSsweDQw
-Cj4+ID4+IGVucXVldWVfaHJ0aW1lcltqdF0rMHhkYwo+PiA+PiBocnRpbWVyX3N0YXJ0X3Jhbmdl
-X25zKzB4NWY4Cj4+ID4+IC4uLgo+PiA+Cj4+ID5TbyBzb21lIGFsbG9jYXRpb25zIGNhbid0IGV2
-ZW4gdXNlIF9fR0ZQX0tTV0FQRF9SRUNMQUlNIChlLmcuLCBlYjc5OTI3OWZiMQo+PiA+KCJkZWJ1
-Z29iamVjdHM6IERvbid0IHdha2UgdXAga3N3YXBkIGZyb20gZmlsbF9wb29sKCkiKSkgYW5kCj4+
-ID5zdGFja19kZXBvdF9zYXZlKCkgZG9lcyBub3QgcmVzcGVjdCB0aGF0Lgo+PiA+Cj4+Cj4+IHll
-cyx5b3UgYXJlIHJpZ2h0Lgo+Pgo+PiA+PiBTaWduZWQtb2ZmLWJ5OiB5YW5nc2hpZ3VhbmcgPHlh
-bmdzaGlndWFuZzEwMTFAMTYzLmNvbT4KPj4gPj4gLS0tCj4+ID4KPj4gPkluIGdlbmVyYWwsCj4+
-ID5SZXZpZXdlZC1ieTogSGFycnkgWW9vIDxoYXJyeS55b29Ab3JhY2xlLmNvbT4KPj4gPgo+PiAK
-Pj4gVGhhbmtzLgo+PiAKPj4gPkxldCdzIGFkZCBGaXhlczogNWNmOTA5YzU1M2U5ICgibW0vc2x1
-YjogdXNlIHN0YWNrZGVwb3QgdG8gc2F2ZSBzdGFjawo+PiA+dHJhY2UgaW4gb2JqZWN0cyIpIGFu
-ZCBwb3RlbnRpYWxseSBDYzogc3RhYmxlQHZnZXIua2VybmVsLm9yZyB0b28/Cj4+ID4oSXQncyBo
-YXJkIHRvIGltYWdpbmUgdXNlIGJvdGggY29uZmlncyBpbiBwcm9kdWN0aW9uLCB0aG91Z2gpCj4+
-ID4KPj4gT2ssaXQgaXMgbmVjZXNzYXJ5Lgo+PiA+PiAgbW0vc2x1Yi5jIHwgMiArLQo+PiA+PiAg
-MSBmaWxlIGNoYW5nZWQsIDEgaW5zZXJ0aW9uKCspLCAxIGRlbGV0aW9uKC0pCj4+ID4+IAo+PiA+
-PiBkaWZmIC0tZ2l0IGEvbW0vc2x1Yi5jIGIvbW0vc2x1Yi5jCj4+ID4+IGluZGV4IGNmN2M2MDMy
-ZDVmZC4uMTRlM2JhYzBjNmFkIDEwMDY0NAo+PiA+PiAtLS0gYS9tbS9zbHViLmMKPj4gPj4gKysr
-IGIvbW0vc2x1Yi5jCj4+ID4+IEBAIC05NjksNyArOTY5LDcgQEAgc3RhdGljIG5vaW5saW5lIGRl
-cG90X3N0YWNrX2hhbmRsZV90IHNldF90cmFja19wcmVwYXJlKHZvaWQpCj4+ID4+ICAJdW5zaWdu
-ZWQgaW50IG5yX2VudHJpZXM7Cj4+ID4+ICAKPj4gPj4gIAlucl9lbnRyaWVzID0gc3RhY2tfdHJh
-Y2Vfc2F2ZShlbnRyaWVzLCBBUlJBWV9TSVpFKGVudHJpZXMpLCAzKTsKPj4gPj4gLQloYW5kbGUg
-PSBzdGFja19kZXBvdF9zYXZlKGVudHJpZXMsIG5yX2VudHJpZXMsIEdGUF9OT1dBSVQpOwo+PiA+
-PiArCWhhbmRsZSA9IHN0YWNrX2RlcG90X3NhdmUoZW50cmllcywgbnJfZW50cmllcywgX19HRlBf
-Tk9XQVJOKTsKPj4gPgo+PiA+SW4gdGhlIGZ1dHVyZSwgcGVyaGFwcyBpdCBtaWdodCBiZSBiZXR0
-ZXIgdG8gcHJvcGFnYXRlIGdmcCBmbGFncyB0bwo+PiA+c2V0X3RyYWNrX3ByZXBhcmUoKSBhbmQg
-cGFzcyBpdCB0byBzdGFja19kZXBvdF9zYXZlKCk/IFRoYXQncyB3aGF0IEtBU0FOCj4+ID5kb2Vz
-Lgo+PiA+Cj4+IAo+PiBUaGFua3MgZm9yIHlvdXIgYWR2aWNlLlRoaXMgbWlnaHQgYmUgYSBnb29k
-IGlkZWEuCj4+IElmIG9ubHkgQ09ORklHX0RFQlVHX09CSkVDVFNfVElNRVJTIGlzIGVuYWJsZWQs
-IHRoZXJlIGlzIGEKPj4gcmlzayBvZiByZWN1cnNpdmUgbG9jay4gQ2FuIF9fR0ZQX0tTV0FQRF9S
-RUNMQUlNIGJlIHJlbW92ZWQKPj4gaW4gdGhpcyBjYXNlPyBKdXN0IGxpa2U6Cj4+IAo+PiBkaWZm
-IC0tZ2l0IGEvbW0vc2x1Yi5jIGIvbW0vc2x1Yi5jCj4+IGluZGV4IGNmN2M2MDMyZDVmZC4uM2Iz
-NWI2Y2JkZDQwIDEwMDY0NAo+PiAtLS0gYS9tbS9zbHViLmMKPj4gKysrIGIvbW0vc2x1Yi5jCj4+
-IEBAIC05NjcsOSArOTY3LDE3IEBAIHN0YXRpYyBub2lubGluZSBkZXBvdF9zdGFja19oYW5kbGVf
-dCBzZXRfdHJhY2tfcHJlcGFyZSh2b2lkKQo+PiAgICAgICAgIGRlcG90X3N0YWNrX2hhbmRsZV90
-IGhhbmRsZTsKPj4gICAgICAgICB1bnNpZ25lZCBsb25nIGVudHJpZXNbVFJBQ0tfQUREUlNfQ09V
-TlRdOwo+PiAgICAgICAgIHVuc2lnbmVkIGludCBucl9lbnRyaWVzOwo+PiArICAgICAgIGdmcF90
-IGZsYWdzID0gR0ZQX05PV0FJVDsKPj4gKwo+PiArI2lmZGVmIENPTkZJR19ERUJVR19PQkpFQ1RT
-X1RJTUVSUwo+PiArICAgICAgIC8qCj4+ICsgICAgICAgICogRG9uJ3Qgd2FrZSB1cCBrc3dhcGQs
-IHRvIGF2b2lkIHBvdGVudGlhbCByZWN1cnNpdmUgbG9jay4KPj4gKyAgICAgICAgKi8KPj4gKyAg
-ICAgICBmbGFncyAmPSB+X19HRlBfS1NXQVBEX1JFQ0xBSU07Cj4+ICsjZW5kaWYKPj4gIAo+PiAg
-ICAgICAgIG5yX2VudHJpZXMgPSBzdGFja190cmFjZV9zYXZlKGVudHJpZXMsIEFSUkFZX1NJWkUo
-ZW50cmllcyksIDMpOwo+PiAtICAgICAgIGhhbmRsZSA9IHN0YWNrX2RlcG90X3NhdmUoZW50cmll
-cywgbnJfZW50cmllcywgR0ZQX05PV0FJVCk7Cj4+ICsgICAgICAgaGFuZGxlID0gc3RhY2tfZGVw
-b3Rfc2F2ZShlbnRyaWVzLCBucl9lbnRyaWVzLCBmbGFncyk7Cj4+ICAKPj4gICAgICAgICByZXR1
-cm4gaGFuZGxlOwo+PiAgfQo+PiAKPj4gV2hhdCBkbyB5b3UgdGhpbmsgb2Y/Cj4KPk9oLCBJIHNo
-b3VsZCBoYXZlIGJlZW4gbW9yZSBjbGVhci4KPgo+SSBtZWFudCBwcm9wYWdhdGluZyBnZnAgZmxh
-Z3MgdGhhdCdzIHBhc3NlZCB0byB0aGUga21hbGxvYygpIG9yCj5rbWVtX2NhY2hlX2FsbG9jKCkg
-aW50ZXJmYWNlIHRvIHN0YWNrX2RlcG90X3NhdmUoKSwgc29tZXRoaW5nIGxpa2U6Cj4KPl9fc2xh
-Yl9hbGxvYyhnZnBmbGFncykKPi0+IHNldF90cmFjayhnZnBmbGFncykKPi0+IHNldF90cmFja19w
-cmVwYXJlKGdmcGZsYWdzKQo+LT4gc3RhY2tfZGVwb3Rfc2F2ZShnZnBmbGFncykKPgo+Q3VycmVu
-dCBjb2RlIGFzc3VtZXMgdGhhdCBHRlBfTk9XQUlUIGlzIHNhZmUgdG8gdXNlIHJlZ2FyZGxlc3Mg
-b2YKPmNvbnRleHQuIFRoaXMgaXMgYWxyZWFkeSBwcm9ibGVtIGFzIGl0IHR1cm5zIG91dCB0aGF0
-IGFzc3VtcHRpb24KPmRvZXMgbm90IGhvbGQgd2hlbiB3ZSB1c2UgQ09ORklHX0RFQlVHX09CSkVD
-VFNfVElNRVJTLgo+Cj5BbHNvLCBpbiB0aGUgbmVhciBmdXR1cmUgd2Ugc2hvdWxkbid0IGV2ZW4g
-YXNzdW1lIHRoYXQgY3VycmVudCBjb250ZXh0IGNhbgo+dXNlIHRoZSBfX0dGUF9LU1dBUERfUkVD
-TEFJTSBmbGFnLCBiZWNhdXNlIHRoZSBmbGFnIG1lYW5zIHdlIGNhbiBzcGluIG9uIGxvY2tzCj5h
-bmQga21hbGxvY19ub2xvY2soKSBbMV0gdXNlcnMgY2FuJ3Qgc3Bpbi4gKHNlZSBnZnBmbGFnc19h
-bGxvd19zcGlubmluZygpKS4KPgo+SSB0aGluayBpdCdkIGJlIGJldHRlciB0byB1c2UgdGhlIGdm
-cCBmbGFnIHBhc3NlZCBieSB0aGUgdXNlciBpbnN0ZWFkIG9mCj5yZWx5aW5nIG9uIHRoZSBhc3N1
-bXB0aW9uIHRoYXQgR0ZQX05PV0FJVCBpcyBzYWZlIHRvIHVzZSBpbiBhbnkgY29udGV4dC4gCj4K
-PlsxXSBodHRwczovL2xvcmUua2VybmVsLm9yZy9saW51eC1tbS8yMDI1MDcxODAyMTY0Ni43MzM1
-My0xLWFsZXhlaS5zdGFyb3ZvaXRvdkBnbWFpbC5jb20KPgoKVGhhbmsgeW91IGZvciB5b3VyIGRl
-dGFpbGVkIGV4cGxhbmF0aW9uLgpJIHdpbGwgdXBkYXRlIGFzYXAuIFRoYW5rcyBhZ2FpbiBmb3Ig
-dGhlIHJldmlldy4KCj4tLSAKPkNoZWVycywKPkhhcnJ5IC8gSHllb25nZ29uCg==
+
+--urprXkXJYhHv3HO9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Sun, Aug 03, 2025 at 08:22:18PM -0400, Sasha Levin wrote:
+> From: Romain Gantois <romain.gantois@bootlin.com>
+>=20
+> [ Upstream commit d511206dc7443120637efd9cfa3ab06a26da33dd ]
+>=20
+> The regulator_set_voltage() function may exhibit unexpected behavior if t=
+he
+> target regulator has a maximum voltage step constraint. With such a
+> constraint, the regulator core may clamp the requested voltage to a lesser
+> value, to ensure that the voltage delta stays under the specified limit.
+
+This needs a followup fix which isn't in mainline yet.
+
+--urprXkXJYhHv3HO9
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmiQmygACgkQJNaLcl1U
+h9BMIgf9HW0/kKMoykG2Dbv3Ea4j6lUxwMpw8a8fBsijjTqQTmBJgTCgleg9K0bJ
+mM5xErzQ8SgnxHI31KehY075h87gotpTsIavVahhjtaaLrNbHlbNymPK7uupw5Ot
+IekJw+pP2PyhOabVg5jPMEJVJ2XxN0Np5PVvLWr4Fk7tMdLOQtrA40/y7XptOG2u
+Mf4PzY2RXSIV9gvS3LUJmV7sT+IBSYGKXMCzIytu0b4sIgCQJsXURdtZa77JmhR6
+9K8/KWPgjDPIXhIVFzffJvuA/8IGMeQczrrZ5720tfwx2J9TK86q9qnMNjsd3byh
+WSTm2EpDgyNflhRA26O4DYCeQ53KKA==
+=DqHh
+-----END PGP SIGNATURE-----
+
+--urprXkXJYhHv3HO9--
 
