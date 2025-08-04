@@ -1,116 +1,191 @@
-Return-Path: <linux-kernel+bounces-754718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3DB36B19B56
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:09:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0467EB19B5C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E7EF21898021
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:09:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B6BD176BBB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:11:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F66222A808;
-	Mon,  4 Aug 2025 06:08:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3975D22E3FA;
+	Mon,  4 Aug 2025 06:11:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WB5Ojvzz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="GQKD5j3Y"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDCA72E36F4;
-	Mon,  4 Aug 2025 06:08:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4D0454F81;
+	Mon,  4 Aug 2025 06:11:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754287735; cv=none; b=G4RNQv2jXKfx4DT+kZvKfpTtM45YkK0NNtTvasemcsEyqtF0u0xJtQYLJVddB1YevEXPX9lxeYz/sHIgYp/FnTYfAoTeNzqysKyi6ZZkH/mSWwmM9xpa6uz11XseNTAvhnNNFqZdA6e6libqSH52xdmrxsXst+p9OVCMGJxlrSI=
+	t=1754287891; cv=none; b=hlFCzAWRqnNN87OD3tqoTSYgyrqbWnFoJPjdRz0aJQIktJlJFAG8/LjJNQnwYlxoTEAnxY3gvVe36si5v6+elJViTW7/HFWz9XL3cS+C06+Z+//YeqdXkII3qNP/r5r3Mo7K5+NsFgwObwLcswLnhF7lwWh3KR/x1WDG/BZouq0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754287735; c=relaxed/simple;
-	bh=ipRZKPKGvZYye+NbUN1kZp7BEdItabd5U7NljxzHgfU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=F0Hi5BuYN2toJLIzGd6t3p+614XozpVMlPU+4uKB93NGOrG52oBAx/tWSBl34sVgruWb1VM7FvFAS+mRk+Cqel6MeLb698S+dFWZfxJTJJ8iBg/RdUc5R+iWcGiieMGyIoxW5ruwi4vnLEaAbVlB96NTlRVohTRmRXwOTVnybrM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WB5Ojvzz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30F8CC4CEE7;
-	Mon,  4 Aug 2025 06:08:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754287734;
-	bh=ipRZKPKGvZYye+NbUN1kZp7BEdItabd5U7NljxzHgfU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WB5OjvzzZ9vAddGUmIgd58d+GXAOhK71sgg1sPjKZ2V4EdqoOJbqAVclrdZTG/XGi
-	 Rv4OLHjfwhr7v2ooiI/Y5m0mdTZlLU2yegwzf+bUDcd7s6iwcEdBh06+6nVz8/Wa/O
-	 +nBnfaXt4XJKLaoT1RHqMmETX8rjF2Kmy/dnJIcDEMFfT32WMoSpIh/T72/QhtzayO
-	 wodMKqYXABzuIYri2XMu2dcy12w6CtEODa+LxF9rvgQZnWzVvzu9RJJN6NHZ3iDIfB
-	 stPKSSjzPiUTU8EaLaIBQafQgp2iiOYNb0jxbpJZIqI9VBJDNEZXHdhqUN4pmoXW8a
-	 x2CW/8wn0ESAQ==
-Date: Sun, 3 Aug 2025 23:07:58 -0700
-From: Eric Biggers <ebiggers@kernel.org>
-To: Simon Richter <Simon.Richter@hogyros.de>
-Cc: linux-crypto@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Ard Biesheuvel <ardb@kernel.org>,
-	"Jason A . Donenfeld" <Jason@zx2c4.com>, linux-mips@vger.kernel.org,
-	linuxppc-dev@lists.ozlabs.org, sparclinux@vger.kernel.org
-Subject: Re: [PATCH 4/7] crypto: sparc/md5 - Remove SPARC64 optimized MD5 code
-Message-ID: <20250804060758.GA108924@sol>
-References: <20250803204433.75703-1-ebiggers@kernel.org>
- <20250803204433.75703-5-ebiggers@kernel.org>
- <3de7cc4d-cb88-4107-9265-066cbedd4561@hogyros.de>
+	s=arc-20240116; t=1754287891; c=relaxed/simple;
+	bh=uQY/mq4UMeRv9N60i383cw+G/wb0vCB+53PXjDLBfTY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=gBKRiCOM5Q0m9eJ1+lAD/4TD9lZil6FZVvHwcsNJmcN8YNmm8CSI4iR/lAsxDfxZHqvyIfROlnKJ8Am7dQMl6uQXy72yXYD8hRGkdgcmMerGsDS7ZHOQKSJQxlqYfGWPi4kRN0WtKVA7vFu2Awsq4p4hdxhf6pQLJcKCSP7nJ/M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=GQKD5j3Y; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 573NmQcu023642;
+	Mon, 4 Aug 2025 06:11:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	TLVvWx7auwW1Ppo2fq0JsGCh3Ktn/Y3PWgh+pjCBlt4=; b=GQKD5j3Ywim0MOLP
+	oDRk0EvyE5Hlbz9uN4yTMppUrnsxF42FeyxVWSQvZFxUnzNVLwJ2h8HeTedIzX6M
+	mzx9TYqgfXyY4A58J568xtYLOND+tYeXadfDLLkMZ15SxsUoSIRHU5JsD9Y3ZdnE
+	9GbhhsTdHGJc05XrPF0uhifq+YMgl2rdTbhd5YzJSAGEcNeipdEChUl4tdB7m3Kz
+	iwOHskMVOZFyKOW2fyAA/ywZcidlxW/+XS1epgPlYXyV4UdaE5wu4QFpjLA/fDV5
+	s4ENACyK7yoffIwl3CQiSl4eYIj4lRmH1qEjnUerMizzRJX704IZuayBPJjGm0HN
+	REQlnQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489a0m3pff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 04 Aug 2025 06:11:06 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 5746B4Om021188
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Mon, 4 Aug 2025 06:11:04 GMT
+Received: from [10.64.68.119] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1748.10; Sun, 3 Aug
+ 2025 23:10:58 -0700
+Message-ID: <a3ee95ab-79ba-443d-9b40-35531da48cc6@quicinc.com>
+Date: Mon, 4 Aug 2025 14:10:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3de7cc4d-cb88-4107-9265-066cbedd4561@hogyros.de>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 3/5] dt-bindings: display/msm: Document MDSS on QCS8300
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
+CC: "Rob Herring (Arm)" <robh@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Kuogee Hsieh <quic_khsieh@quicinc.com>,
+        Conor Dooley <conor+dt@kernel.org>, <devicetree@vger.kernel.org>,
+        Maarten Lankhorst
+	<maarten.lankhorst@linux.intel.com>,
+        Rob Clark
+	<robin.clark@oss.qualcomm.com>, Sean Paul <sean@poorly.run>,
+        "Thomas
+ Zimmermann" <tzimmermann@suse.de>,
+        Jessica Zhang
+	<jessica.zhang@oss.qualcomm.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Marijn Suijten <marijn.suijten@somainline.org>,
+        <freedreno@lists.freedesktop.org>,
+        Abhinav Kumar <abhinav.kumar@linux.dev>,
+        <linux-kernel@vger.kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Dmitry Baryshkov <lumag@kernel.org>,
+        Neil Armstrong
+	<neil.armstrong@linaro.org>,
+        <dri-devel@lists.freedesktop.org>, Simona Vetter
+	<simona@ffwll.ch>,
+        Maxime Ripard <mripard@kernel.org>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        David Airlie <airlied@gmail.com>
+References: <20250730-mdssdt_qcs8300-v5-0-bc8ea35bbed6@quicinc.com>
+ <20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com>
+ <175390746243.1660386.11206814214268936734.robh@kernel.org>
+ <cdbe1013-4f15-4638-870b-151292920ce7@quicinc.com>
+ <aiaonlbxwzbpuvnzijzp7btf2oxvtseq7zoylopllooeqshmux@unhoejkdyl6v>
+Content-Language: en-US
+From: Yongxing Mou <quic_yongmou@quicinc.com>
+In-Reply-To: <aiaonlbxwzbpuvnzijzp7btf2oxvtseq7zoylopllooeqshmux@unhoejkdyl6v>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Authority-Analysis: v=2.4 cv=JOM7s9Kb c=1 sm=1 tr=0 ts=68904efa cx=c_pps
+ a=ouPCqIW2jiPt+lZRy3xVPw==:117 a=ouPCqIW2jiPt+lZRy3xVPw==:17
+ a=GEpy-HfZoHoA:10 a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=gEfo2CItAAAA:8
+ a=voM4FWlXAAAA:8 a=COk6AnOGAAAA:8 a=VwQbUJbxAAAA:8 a=zHEVz4YWXsmZ1JJS7FsA:9
+ a=QEXdDO2ut3YA:10 a=sptkURWiP4Gy88Gu7hUp:22 a=IC2XNlieTeVoXbcui8wp:22
+ a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-GUID: _ofudS0BzEGoMe8LuQozfjuUYp788ZHx
+X-Proofpoint-ORIG-GUID: _ofudS0BzEGoMe8LuQozfjuUYp788ZHx
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDAzMCBTYWx0ZWRfX2w/lF8tt8WzP
+ FWApmrkUiilEHE6bBjP5vVVcs2OcRGohFDiBfQ7xvTPoTjR4LhW+Ngk5zd6Ow22uLV4KlFNZdJD
+ RHRgU7jcjms3kJqMorw4OcTLl/17NA1WLEDxT1AgmUqfJs206P7hjbEupIVOLPmIV6VorqlX5ib
+ yPg99wungEwBYIqG7aMENMV9KBRODRyEmKCGON28uPAUAfjhw62ZEE2CAC4wCyTP2z4N9HofVrn
+ dePbl8o8VQePfuSxf43Jb2WU1Nj+a5m1iuL7e1c1PqDeUHA6/BOJSTGNIcUcjIkKCgFbkwqsDM9
+ GlkhhBEEnmIVGOl1Yvb32EoScHK+qYFTnTx38YT9WRmU1AdypWj4FADfyK66MiO2stWE9ONE1SI
+ q0d4KQyKN3C/B7t8oe56QsWywQzJXhGAxd16AS6K1cg01s3ZrI9G8ejqBbCsbbxk+jzIAE7C
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_02,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ phishscore=0 adultscore=0 suspectscore=0 mlxlogscore=999 spamscore=0
+ clxscore=1015 priorityscore=1501 malwarescore=0 lowpriorityscore=0 mlxscore=0
+ impostorscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
+ route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
+ definitions=main-2508040030
 
-On Mon, Aug 04, 2025 at 01:44:21PM +0900, Simon Richter wrote:
-> Hi,
+
+
+On 2025/8/4 12:49, Dmitry Baryshkov wrote:
+> WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
 > 
-> On 8/4/25 05:44, Eric Biggers wrote:
+> On Mon, Aug 04, 2025 at 12:00:39PM +0800, Yongxing Mou wrote:
+>>
+>>
+>> On 2025/7/31 4:31, Rob Herring (Arm) wrote:
+>>> WARNING: This email originated from outside of Qualcomm. Please be wary of any links or attachments, and do not enable macros.
+>>>
+>>> On Wed, 30 Jul 2025 17:42:28 +0800, Yongxing Mou wrote:
+>>>> Document the MDSS hardware found on the Qualcomm QCS8300 platform.
+>>>>
+>>>> Signed-off-by: Yongxing Mou <quic_yongmou@quicinc.com>
+>>>> ---
+>>>>    .../bindings/display/msm/qcom,qcs8300-mdss.yaml    | 284 +++++++++++++++++++++
+>>>>    1 file changed, 284 insertions(+)
+>>>>
+>>>
+>>> My bot found errors running 'make dt_binding_check' on your patch:
+>>>
+>>> yamllint warnings/errors:
+>>>
+>>> dtschema/dtc warnings/errors:
+>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible:0: 'qcom,qcs8300-edp-phy' is not one of ['qcom,sa8775p-edp-phy', 'qcom,sc7280-edp-phy', 'qcom,sc8180x-edp-phy', 'qcom,sc8280xp-dp-phy', 'qcom,sc8280xp-edp-phy', 'qcom,x1e80100-dp-phy']
+>>>           from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+>>> /builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/display/msm/qcom,qcs8300-mdss.example.dtb: phy@aec2a00 (qcom,qcs8300-edp-phy): compatible: ['qcom,qcs8300-edp-phy', 'qcom,sa8775p-edp-phy'] is too long
+>>>           from schema $id: http://devicetree.org/schemas/phy/qcom,edp-phy.yaml#
+>>>
+>>> doc reference errors (make refcheckdocs):
+>>>
+>>> See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20250730-mdssdt_qcs8300-v5-3-bc8ea35bbed6@quicinc.com
+>>>
+>>> The base for the series is generally the latest rc1. A different dependency
+>>> should be noted in *this* patch.
+>>>
+>>> If you already ran 'make dt_binding_check' and didn't see the above
+>>> error(s), then make sure 'yamllint' is installed and dt-schema is up to
+>>> date:
+>>>
+>>> pip3 install dtschema --upgrade
+>>>
+>>> Please check and re-submit after running the above command yourself. Note
+>>> that DT_SCHEMA_FILES can be set to your schema file to speed up checking
+>>> your schema. However, it must be unset to test all examples with your schema.
+>>>
+>> This warning need to apply this patch..
+>> https://lore.kernel.org/all/20250730072725.1433360-1-quic_yongmou@quicinc.com/
+>> thanks, link in the cover-letter seem wrong. and there is an unnecessary ~
 > 
-> > Taken together, it's clear that it's time to retire these additional MD5
-> > implementations, and focus maintenance on the MD5 generic C code.
+> It's not listed in b4 dependencies.
 > 
-> [...]
-> 
-> > -	ldd	[%o1 + 0x00], %f8
-> > -	ldd	[%o1 + 0x08], %f10
-> > -	ldd	[%o1 + 0x10], %f12
-> > -	ldd	[%o1 + 0x18], %f14
-> > -	ldd	[%o1 + 0x20], %f16
-> > -	ldd	[%o1 + 0x28], %f18
-> > -	ldd	[%o1 + 0x30], %f20
-> > -	ldd	[%o1 + 0x38], %f22
-> > -
-> > -	MD5
-> 
-> This is a literal CPU instruction that ingests sixteen registers (f8 to f23)
-> and updates the hash state in f0 to f3.
-
-Note that QEMU doesn't support this instruction.  I don't actually know
-whether the SPARC64 MD5 code even works, especially after (presumably
-untested) refactoring like commit cc1f5bbe428c91.  I don't think anyone
-does, TBH.  No one seems to be running the crypto tests on SPARC64.
-
-> I can see the point of removing hand-optimized assembler code when a
-> compiler can generate something that runs just as well from generic code,
-> but this here is using CPU extensions that were made for this specific
-> purpose.
-
-You do realize this is MD5, right?  And also SPARC64?
-
-I'm confused why people are so attached to still having MD5 assembly
-code in 2025, and *only for rare platforms*.  It's illogical.
-
-We should just treat MD5 like the other legacy algorithms MD4 and RC4,
-for which the kernel just has generic C code.  That works perfectly fine
-for the few users that still need those algorithms for compatibility
-reasons.
-
-> This is exactly the kind of thing you would point to as an argument why
-> asynchronous hardware offload support is unnecessary.
-
-For an algorithm that is actually worthwhile to accelerate, sure.  For
-MD5, it's not worthwhile anyway.
-
-- Eric
+> --
+> With best wishes
+> Dmitry
+Ohh, sorry.. will update it in next version...
 
