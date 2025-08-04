@@ -1,243 +1,166 @@
-Return-Path: <linux-kernel+bounces-755015-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755017-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22271B1A011
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:55:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 22D48B1A014
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 52F33188DD13
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:55:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0B8DF18901D1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:55:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 495B023ABB9;
-	Mon,  4 Aug 2025 10:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F30E255F52;
+	Mon,  4 Aug 2025 10:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="rjPS2mn6"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b="n3VGFg6u"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2133.outbound.protection.outlook.com [40.107.20.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46A4D24DCEC
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 10:54:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754304900; cv=none; b=VOnCO0XXXCYqRypuJMBR+pEH+r+NULM8UYyE9K+EeBN2+K1hM0i2zthZ71qD1+79FilQO+MAiqwoJzrFXgIdst/CFwmf6ZhQ0aG+OJy/hNXwIk1/wtwqR/ER1CvHsqL3EIwRtSPkvYJHLLlIGXSvDoJxQqzxAd3xMD4vMVbdSuY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754304900; c=relaxed/simple;
-	bh=GXUy9xrvJ71oXMX/QfVyvXOKSOpHMBuEGMnEaca3m/0=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=XaPvG3tieWgCuq42UL8FPXbZJ0VAivtYWEC4PvZm2KsOTVW+/OuGYd10tjzZUx/IiE/stm5wr2+QhXurpwlpTMx9Fo0xgyQDImC3p4/6G1HJaiQANuIjKLamXXlM2sg6B2Y/zR4sTJKAbPxXaz4sNeQ9AU9U5Y1o1whd5DC9zvc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=casper.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=rjPS2mn6; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=casper.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=MIME-Version:Content-Type:References:
-	In-Reply-To:Date:To:From:Subject:Message-ID:Sender:Reply-To:Cc:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=MXqH0ZjaSRycPKWc1JM2YcXmdmYh5Ohuz9GwdwoWnDs=; b=rjPS2mn6BzFmIBLdpsEPa3b9gS
-	GGJWl9essQgbO3UKh9tkfSXw7jZOGglcvAodwJ64f/93Ov91o6+YpGXcsHp/QIH9PX2E7XgYA2pA1
-	mFPVdUNiD6f9JJVSgM/LOlpq/iKLbdFgTF9YU2/in/q+mhDjMZDzZm680PpCe81dXuosdzN1xxphr
-	WOfmEsC5yiggs4T05FaG0yfr7CZkvZt5OcjEQW7QAi+z/csiJIfbVISyvajwGmwZfngBHNRx7MQ9t
-	Cy3HX1uzTIcJgy/RgRa6lh+88zDZVIcsFN6wv5fTUEOttoA5qyWzVZ7BHWhs+JQZiGT3QQfg1FxUR
-	U0K4N52w==;
-Received: from 54-240-197-226.amazon.com ([54.240.197.226] helo=u09cd745991455d.ant.amazon.com)
-	by casper.infradead.org with esmtpsa (Exim 4.98.2 #2 (Red Hat Linux))
-	id 1uisq8-0000000F4Vi-0IiN;
-	Mon, 04 Aug 2025 10:54:48 +0000
-Message-ID: <6f3dbdc7368ba5d1bcc7bcf4e31a53b8b71904a4.camel@infradead.org>
-Subject: Re: linux-6.16/fs/jffs2/readinode.c:189: loop can never finish
-From: David Woodhouse <dwmw2@infradead.org>
-To: David Oberhollenzer <david.oberhollenzer@sigma-star.at>, Zhihao Cheng
-	 <chengzhihao1@huawei.com>, David Binderman <dcb314@hotmail.com>, 
- "richard@nod.at"
-	 <richard@nod.at>, "linux-mtd@lists.infradead.org"
-	 <linux-mtd@lists.infradead.org>, Linux Kernel Mailing List
-	 <linux-kernel@vger.kernel.org>
-Date: Mon, 04 Aug 2025 11:54:47 +0100
-In-Reply-To: <8114ae51-a238-40d3-9ecd-70e23abae28b@sigma-star.at>
-References: 
-	<AS8PR02MB10217F68E5D37ECD491495E669C23A@AS8PR02MB10217.eurprd02.prod.outlook.com>
-	 <df923d94-92ee-f824-01e2-21e6ed3d593c@huawei.com>
-	 <8114ae51-a238-40d3-9ecd-70e23abae28b@sigma-star.at>
-Content-Type: multipart/signed; micalg="sha-256"; protocol="application/pkcs7-signature";
-	boundary="=-PY8X9KgAkwZG+EkHqeHX"
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20EB6253B5C;
+	Mon,  4 Aug 2025 10:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.133
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754304907; cv=fail; b=nTizchWIYhh4STxzAM3x/7vxDDv2UDbLRfV9AaWGtmnlVO5/ssY+wHp9Vl+Jj0CSHTNPgPV9l96bwOrBvYVjZ1+DgwjT58nfsmtQ7ilMeOiLTZ7KwPwUvMUxiTQ+y4FprxENweQoooHjI4wFWeatEPDBXvnPb0tvCv7mcKA2C9E=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754304907; c=relaxed/simple;
+	bh=wQdX+o1mxRdt0Inft8SYgqDekvygqIgZ6I1KYbdYx3Q=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=n9zb8Gedg6wWnCIQB61NZ55W8AsWRiLuVH4kP0uaOQoS4HTwF2QkNeCjVSZ8212xLlHVgVJSKveV+qN7nu45HwqwBAUQfk0mVH0z0X5nGrUfKIj8aYanXHtn/UuaW9TelxpEk3Dkh2VaQATSkwlkeqKWYrUtoZPNaXk+zRSH9t0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de; spf=pass smtp.mailfrom=phytec.de; dkim=pass (2048-bit key) header.d=phytec.de header.i=@phytec.de header.b=n3VGFg6u; arc=fail smtp.client-ip=40.107.20.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=phytec.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=phytec.de
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=T2mx01KxlLL8KxlhWQIuE6VmdMMZzdzB81K0lYSERv9Lv8nh493voi14k6OZ451nOPtgoPxI+O8cEavj0ZqLMWzU5y8ZFp06fDZCFIv9Ld+jb1/aXcScyMdCXXkSC1vDzMRUSfkOq112nbzYL/BagvgogDzBzJtjegV15MixKaVt+HYyMqnmbeztalbC+UB9+PNdS/eTQagSaAsMUB5sU+n5p8UtGAEuDQt5YjgS8WbOpwh4cfDHNjGMUD/sQGViEHtmty1DXcUOyJsK6K75W4O61gDY08rlRMexuDYOU73gQn2VcR6QzqAnuJZRM6a/gV5jF7BMapn4gnuQ2xfx7A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Jmqe/ZBEBlrP1T1bepn+6W97vg9czKOMLOLDcitW/Fc=;
+ b=iBAP6Uw932UZkCDFrzRj0Hqmku05a7pqHrGBceL8OUR7EUwISa67DVRVeBjLMnMUPcO2yEVDwfkjkMS5YlJcjI2rNPl1XL2Lh+bPNQbYNTNqFZpVB+lXc602kYqB5IYY4xUlKW2DCTawh41oaovV0UIK5m3SMZQNG8qhySXlv9zgKGskY75H0Un5UP6WmNQNIkHP18zj93H6I+UyWxlsOmdb+e6uQmK0p6T48O2+acPhC/eALjQWSQBip0KX7ksb9yEz9/RrEG6DLjw4q5vyn1ILbgl1grg7pH3Yb41NbePtno5W1O59vnFje/DUNSJWIvimlHfxuxP3izO66RfNVg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=softfail (sender ip
+ is 91.26.50.189) smtp.rcpttodomain=ti.com smtp.mailfrom=phytec.de; dmarc=fail
+ (p=quarantine sp=quarantine pct=100) action=quarantine header.from=phytec.de;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=phytec.de;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Jmqe/ZBEBlrP1T1bepn+6W97vg9czKOMLOLDcitW/Fc=;
+ b=n3VGFg6uYXtFEhxh1/KU//xqskR62Yz4Ksp/0Pmg0RI3cb+j63NU4N40j+seeAFE1SRd5JPA3UwLvpOQNPDX18Wi/43142eZ0Oc3vLffizBC9hNai4LSNT/Gx2hpwVvxYGxthp2I6nVRYwRQ0HFTFYP2so4RgTbBA2Y18eQaEyY//H4LrFLZuVSd8BLjALoA17ND26jsuM7Ho1jler1aEUUgWTtWbAvjesu0+DYHomKPo27SQR+UL4x2nSKOzSF5vkQi9B27Nq2QSXzU4ar8m9v13P4QromYMqJw9e5IttWiDgMTPHtIOEwfLCzM5wNlAiilssU6l+/mag7dw4VIvw==
+Received: from AM0PR02CA0156.eurprd02.prod.outlook.com (2603:10a6:20b:28d::23)
+ by PR3P195MB0713.EURP195.PROD.OUTLOOK.COM (2603:10a6:102:32::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 10:54:59 +0000
+Received: from AM3PEPF0000A78D.eurprd04.prod.outlook.com
+ (2603:10a6:20b:28d:cafe::5e) by AM0PR02CA0156.outlook.office365.com
+ (2603:10a6:20b:28d::23) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Mon,
+ 4 Aug 2025 10:54:59 +0000
+X-MS-Exchange-Authentication-Results: spf=softfail (sender IP is 91.26.50.189)
+ smtp.mailfrom=phytec.de; dkim=none (message not signed)
+ header.d=none;dmarc=fail action=quarantine header.from=phytec.de;
+Received-SPF: SoftFail (protection.outlook.com: domain of transitioning
+ phytec.de discourages use of 91.26.50.189 as permitted sender)
+Received: from Diagnostix.phytec.de (91.26.50.189) by
+ AM3PEPF0000A78D.mail.protection.outlook.com (10.167.16.116) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.9009.8 via Frontend Transport; Mon, 4 Aug 2025 10:54:58 +0000
+Received: from Florix.phytec.de (172.25.0.13) by Diagnostix.phytec.de
+ (172.25.0.14) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Mon, 4 Aug
+ 2025 12:54:57 +0200
+Received: from phytec.de (172.25.0.51) by Florix.phytec.de (172.25.0.13) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.57; Mon, 4 Aug
+ 2025 12:54:57 +0200
+From: Wadim Egorov <w.egorov@phytec.de>
+To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <obh@kernel.org>,
+	<krzk+dt@kernel.org>, <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <upstream@lists.phytec.de>
+Subject: [PATCH] arm64: dts: ti: k3-am642-phyboard-electra: Add ti,pa-stats property
+Date: Mon, 4 Aug 2025 12:54:50 +0200
+Message-ID: <20250804105450.2322647-1-w.egorov@phytec.de>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by casper.infradead.org. See http://www.infradead.org/rpr.html
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: Diagnostix.phytec.de (172.25.0.14) To Florix.phytec.de
+ (172.25.0.13)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM3PEPF0000A78D:EE_|PR3P195MB0713:EE_
+X-MS-Office365-Filtering-Correlation-Id: 142400f5-0165-43f7-73c7-08ddd3455a78
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|82310400026|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?rGT3A+KcKY/9zC6sz8zJlQ9nfmAhDiUiPCq2irx8R00kKThgXyfXt1D/oP9K?=
+ =?us-ascii?Q?Id++C/sO56pS8sKQuoVzfWT3TxQNsozo8epI5WeVfuelHlScXUeIcVL5nrEA?=
+ =?us-ascii?Q?9uT69MEOmpgx/a68mMhv2Kjrq/kePpbKMx9ZtMwyQ0NCoIMf3YRUkmF06Xow?=
+ =?us-ascii?Q?L7rctow0A/7U97pXNo4ceHCZNniQve08EpXSBmcMtNQMvPB/rC/Vh/Lo4ZUu?=
+ =?us-ascii?Q?RK6Ttm1kerze+dAe4t90ZVWujbQttRwrq+b52/N2VCqQYAQfirLjm0Inv28v?=
+ =?us-ascii?Q?4mtI47U25QYsSebch1EgmoAHnbHVumLVRp4VHEaA2NxrD8Xos5kCkuqkXFhD?=
+ =?us-ascii?Q?1pi+38np/7tyli+ZnVR/s93jfoqFZ5KWZcu0yeg7BKlnC71AwqHKGAB4xhhJ?=
+ =?us-ascii?Q?1ez/Q5iWm2WiWrarueadgoRlJYtooHucdBehyJbrduT+yxgXL+1JE6ZEN3fI?=
+ =?us-ascii?Q?/qcnEEcWz4Rn+pwo9nFoynaSwxEXFpunZSnDIrCgu1aYnazJYBLxTm2FnUu+?=
+ =?us-ascii?Q?Eo78bYujZfZPc+U+GvoBMbKSxxTsuJbzsLRyOUyJnoT+XjXjWMbLEHCD26yf?=
+ =?us-ascii?Q?eVOyBX4DI0b0STdz8BZ1MnnIDiqwHYZwmBR5qoclfAH446SifmePG2Dxo2Kk?=
+ =?us-ascii?Q?ZdfgvnL5mAZ+OTLsAFLAy6YKpgZ+XxTLoLMDD9UVDm9KZUaeF4MtzAih6Zt3?=
+ =?us-ascii?Q?QGaUMcl0RmqDvoojNthkQjXtAH5czCONrFBgpCI/y0onwfL/gtShyLJShCdi?=
+ =?us-ascii?Q?EQIwjv0UeIeF7DMcBvAVu0dVZOma3EaaAK1bx2Tvyz8+7hCbXG9t3VASEVgW?=
+ =?us-ascii?Q?tM36gvqReqbV8SAAjOCJkt8nd5ENdaZ/A+JTKmZTmm/BO8/M+uNCvxew+PNc?=
+ =?us-ascii?Q?eEpGpdXWjw05rQfw4/UD1jxpXmwYrwfNuSUIVtTUgIkLYeM9vISTevugmNVR?=
+ =?us-ascii?Q?mOB37EXEM/lnHUyZ+m/6kI9Zx9M9XWEGB0Y2TD5Vdh18vNlcn+Tk1yWK7pw6?=
+ =?us-ascii?Q?DLjpofOq8Z2Ifcx5wODe5Pw2vr+NJVk5L76FSM92kVo17JB1if9XA0wcD/3k?=
+ =?us-ascii?Q?LEWZE/R0kEjIo7grc3+wSTsQ1mz3ZDrzUGCLBImbGlWp7r36Xjbhu8VICY94?=
+ =?us-ascii?Q?YChyiRxKLEb+TsOg6nidJ/315adKp/ZCZ+lnrbqnFwoNyPTlxnZO3h0jv80L?=
+ =?us-ascii?Q?ypWUSUpz+NakbZ7YT3myWhVCZW7NN8IHtWGyIQ/Qs4CSZmiPKzP/O/x/9e8k?=
+ =?us-ascii?Q?eKo+XTRuvFrXTefEDRIDeSuFfIGfyQpciTYeSsrj/Ajgf14ow5IDOA/cVcv5?=
+ =?us-ascii?Q?h/WraSfBo8JUItS8WXsr5KD8+SLkwyyqm1jxKsU74uefni5Ym21fRunID4mC?=
+ =?us-ascii?Q?8j6bNMAyo+gSovOTjWLq/3AvzvGlcczUGvQ+DX77PYc1/QKF853mJgEmi9SH?=
+ =?us-ascii?Q?4BTFdTDnNnXpMq/2NLm7s/LpP+WoFeGznbB08ekUiyXG51X3kbPKe6nYLW3C?=
+ =?us-ascii?Q?YZxNzhaAxPTMu3yuEs3XHRucvhVekd2ZR5P/?=
+X-Forefront-Antispam-Report:
+	CIP:91.26.50.189;CTRY:DE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:Diagnostix.phytec.de;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(82310400026)(376014);DIR:OUT;SFP:1102;
+X-OriginatorOrg: phytec.de
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 10:54:58.0094
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: 142400f5-0165-43f7-73c7-08ddd3455a78
+X-MS-Exchange-CrossTenant-Id: e609157c-80e2-446d-9be3-9c99c2399d29
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=e609157c-80e2-446d-9be3-9c99c2399d29;Ip=[91.26.50.189];Helo=[Diagnostix.phytec.de]
+X-MS-Exchange-CrossTenant-AuthSource:
+	AM3PEPF0000A78D.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3P195MB0713
 
+Add ti,pa-stats phandles. This is a phandle to PA_STATS syscon regmap
+and will be used to dump IET related statistics for ICSSG Driver.
 
---=-PY8X9KgAkwZG+EkHqeHX
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Wadim Egorov <w.egorov@phytec.de>
+---
+ arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts | 1 +
+ 1 file changed, 1 insertion(+)
 
-On Mon, 2025-08-04 at 09:30 +0200, David Oberhollenzer wrote:
-> Hi,
->=20
-> On 8/4/25 9:10 AM, Zhihao Cheng wrote:
-> >=20
-> > The 'next !=3D NULL' is also a condition for the loop, this snippet
-> > of code finds a leaf node in 'tn_root'.
->=20
-> Yes, this is a classic tree traversal. Assuming the tree isn't
-> broken, the loop eventually terminates when it runs of a leaf.
->=20
-> The real issue with this code is that this is the *only* exit
-> condition of the loop. The traversal loop always branches until
-> it hits a leaf and the function then returns NULL. I'm pretty
-> sure this might not be the intended behavior.
+diff --git a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+index 129524eb5b91..e4afa8c0a8ca 100644
+--- a/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
++++ b/arch/arm64/boot/dts/ti/k3-am642-phyboard-electra-rdk.dts
+@@ -100,6 +100,7 @@ ethernet {
+ 		ti,mii-g-rt = <&icssg0_mii_g_rt>;
+ 		ti,mii-rt = <&icssg0_mii_rt>;
+ 		ti,iep = <&icssg0_iep0>, <&icssg0_iep1>;
++		ti,pa-stats = <&icssg0_pa_stats>;
+ 
+ 		ethernet-ports {
+ 			#address-cells = <1>;
+-- 
+2.48.1
 
-It's going back almost two decades now but...
-
-This function is used only during the file system scan, when we scan
-the whole medium and initially fill a big bucket of data nodes to be
-subsequently processed and (mostly) eliminated due to overlap. It's
-allows for early elimination of completely overlapped nodes, to reduce
-memory usage. See https://git.kernel.org/torvalds/c/df8e96f39103a for
-more details.
-
-The jffs2_add_tn_to_tree() function calls jffs2_lookup_tn() to get a
-*starting* point, and then it backs up with rb_prev() until it finds
-the *first* node which is part of the overlapping set.
-
-Then, jffs2_add_tn_to_tree() iterates forward from that node until it
-has passed the end point of the node being added, looking for nodes
-which have been completely obsoleted and can be discarded early.
-
-If jffs2_lookup_tn() *did* always return NULL, that wouldn't actually
-cause a correctness problem, as all this is only an optimisation
-anyway. But I don't believe it does =E2=80=94 it iterates until 'next' is N=
-ULL,
-but then returns the 'tn' whose left or right child was that 'next'.
-
-I think there might be a missed optimisation here though. Instead of
-using only the *starting* offset of the newly-added node, I think the
-jffs2_lookup_fn() function should also use the *end* offset of the
-newly-added node. And should only follow the tree down tn->rb.rb_right
-if the current tn->fn->ofs is lower than *that*.
-
-Otherwise I think we miss out on immediately discarding a newly-
-discovered node which is already completely obsoleted by a node that
-starts *earlier* than it.
-
-There's absolutely no good reason why this tmp_dnode code couldn't have
-fairly comprehensive unit and torture tests, and I think I'd want to
-have those before trying to do something like this to improve the
-optimisation...
-
---- a/fs/jffs2/readinode.c
-+++ b/fs/jffs2/readinode.c
-@@ -184,7 +184,7 @@ static struct jffs2_tmp_dnode_info
-*jffs2_lookup_tn(struct rb_root *tn_root, uin
-        while (next) {
-                tn =3D rb_entry(next, struct jffs2_tmp_dnode_info, rb);
-=20
--               if (tn->fn->ofs < offset)
-+               if (tn->fn->ofs + tn->fn->size < offset)
-                        next =3D tn->rb.rb_right;
-                else if (tn->fn->ofs >=3D offset)
-                        next =3D tn->rb.rb_left;
-
-
---=-PY8X9KgAkwZG+EkHqeHX
-Content-Type: application/pkcs7-signature; name="smime.p7s"
-Content-Disposition: attachment; filename="smime.p7s"
-Content-Transfer-Encoding: base64
-
-MIAGCSqGSIb3DQEHAqCAMIACAQExDzANBglghkgBZQMEAgEFADCABgkqhkiG9w0BBwEAAKCCD9Aw
-ggSOMIIDdqADAgECAhAOmiw0ECVD4cWj5DqVrT9PMA0GCSqGSIb3DQEBCwUAMGUxCzAJBgNVBAYT
-AlVTMRUwEwYDVQQKEwxEaWdpQ2VydCBJbmMxGTAXBgNVBAsTEHd3dy5kaWdpY2VydC5jb20xJDAi
-BgNVBAMTG0RpZ2lDZXJ0IEFzc3VyZWQgSUQgUm9vdCBDQTAeFw0yNDAxMzAwMDAwMDBaFw0zMTEx
-MDkyMzU5NTlaMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYDVQQDExdWZXJv
-a2V5IFNlY3VyZSBFbWFpbCBHMjCCASIwDQYJKoZIhvcNAQEBBQADggEPADCCAQoCggEBAMjvgLKj
-jfhCFqxYyRiW8g3cNFAvltDbK5AzcOaR7yVzVGadr4YcCVxjKrEJOgi7WEOH8rUgCNB5cTD8N/Et
-GfZI+LGqSv0YtNa54T9D1AWJy08ZKkWvfGGIXN9UFAPMJ6OLLH/UUEgFa+7KlrEvMUupDFGnnR06
-aDJAwtycb8yXtILj+TvfhLFhafxroXrflspavejQkEiHjNjtHnwbZ+o43g0/yxjwnarGI3kgcak7
-nnI9/8Lqpq79tLHYwLajotwLiGTB71AGN5xK+tzB+D4eN9lXayrjcszgbOv2ZCgzExQUAIt98mre
-8EggKs9mwtEuKAhYBIP/0K6WsoMnQCcCAwEAAaOCAVwwggFYMBIGA1UdEwEB/wQIMAYBAf8CAQAw
-HQYDVR0OBBYEFIlICOogTndrhuWByNfhjWSEf/xwMB8GA1UdIwQYMBaAFEXroq/0ksuCMS1Ri6en
-IZ3zbcgPMA4GA1UdDwEB/wQEAwIBhjAdBgNVHSUEFjAUBggrBgEFBQcDBAYIKwYBBQUHAwIweQYI
-KwYBBQUHAQEEbTBrMCQGCCsGAQUFBzABhhhodHRwOi8vb2NzcC5kaWdpY2VydC5jb20wQwYIKwYB
-BQUHMAKGN2h0dHA6Ly9jYWNlcnRzLmRpZ2ljZXJ0LmNvbS9EaWdpQ2VydEFzc3VyZWRJRFJvb3RD
-QS5jcnQwRQYDVR0fBD4wPDA6oDigNoY0aHR0cDovL2NybDMuZGlnaWNlcnQuY29tL0RpZ2lDZXJ0
-QXNzdXJlZElEUm9vdENBLmNybDARBgNVHSAECjAIMAYGBFUdIAAwDQYJKoZIhvcNAQELBQADggEB
-ACiagCqvNVxOfSd0uYfJMiZsOEBXAKIR/kpqRp2YCfrP4Tz7fJogYN4fxNAw7iy/bPZcvpVCfe/H
-/CCcp3alXL0I8M/rnEnRlv8ItY4MEF+2T/MkdXI3u1vHy3ua8SxBM8eT9LBQokHZxGUX51cE0kwa
-uEOZ+PonVIOnMjuLp29kcNOVnzf8DGKiek+cT51FvGRjV6LbaxXOm2P47/aiaXrDD5O0RF5SiPo6
-xD1/ClkCETyyEAE5LRJlXtx288R598koyFcwCSXijeVcRvBB1cNOLEbg7RMSw1AGq14fNe2cH1HG
-W7xyduY/ydQt6gv5r21mDOQ5SaZSWC/ZRfLDuEYwggWbMIIEg6ADAgECAhAH5JEPagNRXYDiRPdl
-c1vgMA0GCSqGSIb3DQEBCwUAMEExCzAJBgNVBAYTAkFVMRAwDgYDVQQKEwdWZXJva2V5MSAwHgYD
-VQQDExdWZXJva2V5IFNlY3VyZSBFbWFpbCBHMjAeFw0yNDEyMzAwMDAwMDBaFw0yODAxMDQyMzU5
-NTlaMB4xHDAaBgNVBAMME2R3bXcyQGluZnJhZGVhZC5vcmcwggIiMA0GCSqGSIb3DQEBAQUAA4IC
-DwAwggIKAoICAQDali7HveR1thexYXx/W7oMk/3Wpyppl62zJ8+RmTQH4yZeYAS/SRV6zmfXlXaZ
-sNOE6emg8WXLRS6BA70liot+u0O0oPnIvnx+CsMH0PD4tCKSCsdp+XphIJ2zkC9S7/yHDYnqegqt
-w4smkqUqf0WX/ggH1Dckh0vHlpoS1OoxqUg+ocU6WCsnuz5q5rzFsHxhD1qGpgFdZEk2/c//ZvUN
-i12vPWipk8TcJwHw9zoZ/ZrVNybpMCC0THsJ/UEVyuyszPtNYeYZAhOJ41vav1RhZJzYan4a1gU0
-kKBPQklcpQEhq48woEu15isvwWh9/+5jjh0L+YNaN0I//nHSp6U9COUG9Z0cvnO8FM6PTqsnSbcc
-0j+GchwOHRC7aP2t5v2stVx3KbptaYEzi4MQHxm/0+HQpMEVLLUiizJqS4PWPU6zfQTOMZ9uLQRR
-ci+c5xhtMEBszlQDOvEQcyEG+hc++fH47K+MmZz21bFNfoBxLP6bjR6xtPXtREF5lLXxp+CJ6KKS
-blPKeVRg/UtyJHeFKAZXO8Zeco7TZUMVHmK0ZZ1EpnZbnAhKE19Z+FJrQPQrlR0gO3lBzuyPPArV
-hvWxjlO7S4DmaEhLzarWi/ze7EGwWSuI2eEa/8zU0INUsGI4ywe7vepQz7IqaAovAX0d+f1YjbmC
-VsAwjhLmveFjNwIDAQABo4IBsDCCAawwHwYDVR0jBBgwFoAUiUgI6iBOd2uG5YHI1+GNZIR//HAw
-HQYDVR0OBBYEFFxiGptwbOfWOtMk5loHw7uqWUOnMDAGA1UdEQQpMCeBE2R3bXcyQGluZnJhZGVh
-ZC5vcmeBEGRhdmlkQHdvb2Rob3Uuc2UwFAYDVR0gBA0wCzAJBgdngQwBBQEBMA4GA1UdDwEB/wQE
-AwIF4DAdBgNVHSUEFjAUBggrBgEFBQcDAgYIKwYBBQUHAwQwewYDVR0fBHQwcjA3oDWgM4YxaHR0
-cDovL2NybDMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDA3oDWgM4YxaHR0
-cDovL2NybDQuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNybDB2BggrBgEFBQcB
-AQRqMGgwJAYIKwYBBQUHMAGGGGh0dHA6Ly9vY3NwLmRpZ2ljZXJ0LmNvbTBABggrBgEFBQcwAoY0
-aHR0cDovL2NhY2VydHMuZGlnaWNlcnQuY29tL1Zlcm9rZXlTZWN1cmVFbWFpbEcyLmNydDANBgkq
-hkiG9w0BAQsFAAOCAQEAQXc4FPiPLRnTDvmOABEzkIumojfZAe5SlnuQoeFUfi+LsWCKiB8Uextv
-iBAvboKhLuN6eG/NC6WOzOCppn4mkQxRkOdLNThwMHW0d19jrZFEKtEG/epZ/hw/DdScTuZ2m7im
-8ppItAT6GXD3aPhXkXnJpC/zTs85uNSQR64cEcBFjjoQDuSsTeJ5DAWf8EMyhMuD8pcbqx5kRvyt
-JPsWBQzv1Dsdv2LDPLNd/JUKhHSgr7nbUr4+aAP2PHTXGcEBh8lTeYea9p4d5k969pe0OHYMV5aL
-xERqTagmSetuIwolkAuBCzA9vulg8Y49Nz2zrpUGfKGOD0FMqenYxdJHgDCCBZswggSDoAMCAQIC
-EAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQELBQAwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoT
-B1Zlcm9rZXkxIDAeBgNVBAMTF1Zlcm9rZXkgU2VjdXJlIEVtYWlsIEcyMB4XDTI0MTIzMDAwMDAw
-MFoXDTI4MDEwNDIzNTk1OVowHjEcMBoGA1UEAwwTZHdtdzJAaW5mcmFkZWFkLm9yZzCCAiIwDQYJ
-KoZIhvcNAQEBBQADggIPADCCAgoCggIBANqWLse95HW2F7FhfH9bugyT/danKmmXrbMnz5GZNAfj
-Jl5gBL9JFXrOZ9eVdpmw04Tp6aDxZctFLoEDvSWKi367Q7Sg+ci+fH4KwwfQ8Pi0IpIKx2n5emEg
-nbOQL1Lv/IcNiep6Cq3DiyaSpSp/RZf+CAfUNySHS8eWmhLU6jGpSD6hxTpYKye7PmrmvMWwfGEP
-WoamAV1kSTb9z/9m9Q2LXa89aKmTxNwnAfD3Ohn9mtU3JukwILRMewn9QRXK7KzM+01h5hkCE4nj
-W9q/VGFknNhqfhrWBTSQoE9CSVylASGrjzCgS7XmKy/BaH3/7mOOHQv5g1o3Qj/+cdKnpT0I5Qb1
-nRy+c7wUzo9OqydJtxzSP4ZyHA4dELto/a3m/ay1XHcpum1pgTOLgxAfGb/T4dCkwRUstSKLMmpL
-g9Y9TrN9BM4xn24tBFFyL5znGG0wQGzOVAM68RBzIQb6Fz758fjsr4yZnPbVsU1+gHEs/puNHrG0
-9e1EQXmUtfGn4InoopJuU8p5VGD9S3Ikd4UoBlc7xl5yjtNlQxUeYrRlnUSmdlucCEoTX1n4UmtA
-9CuVHSA7eUHO7I88CtWG9bGOU7tLgOZoSEvNqtaL/N7sQbBZK4jZ4Rr/zNTQg1SwYjjLB7u96lDP
-sipoCi8BfR35/ViNuYJWwDCOEua94WM3AgMBAAGjggGwMIIBrDAfBgNVHSMEGDAWgBSJSAjqIE53
-a4blgcjX4Y1khH/8cDAdBgNVHQ4EFgQUXGIam3Bs59Y60yTmWgfDu6pZQ6cwMAYDVR0RBCkwJ4ET
-ZHdtdzJAaW5mcmFkZWFkLm9yZ4EQZGF2aWRAd29vZGhvdS5zZTAUBgNVHSAEDTALMAkGB2eBDAEF
-AQEwDgYDVR0PAQH/BAQDAgXgMB0GA1UdJQQWMBQGCCsGAQUFBwMCBggrBgEFBQcDBDB7BgNVHR8E
-dDByMDegNaAzhjFodHRwOi8vY3JsMy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMDegNaAzhjFodHRwOi8vY3JsNC5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVtYWlsRzIu
-Y3JsMHYGCCsGAQUFBwEBBGowaDAkBggrBgEFBQcwAYYYaHR0cDovL29jc3AuZGlnaWNlcnQuY29t
-MEAGCCsGAQUFBzAChjRodHRwOi8vY2FjZXJ0cy5kaWdpY2VydC5jb20vVmVyb2tleVNlY3VyZUVt
-YWlsRzIuY3J0MA0GCSqGSIb3DQEBCwUAA4IBAQBBdzgU+I8tGdMO+Y4AETOQi6aiN9kB7lKWe5Ch
-4VR+L4uxYIqIHxR7G2+IEC9ugqEu43p4b80LpY7M4KmmfiaRDFGQ50s1OHAwdbR3X2OtkUQq0Qb9
-6ln+HD8N1JxO5nabuKbymki0BPoZcPdo+FeRecmkL/NOzzm41JBHrhwRwEWOOhAO5KxN4nkMBZ/w
-QzKEy4PylxurHmRG/K0k+xYFDO/UOx2/YsM8s138lQqEdKCvudtSvj5oA/Y8dNcZwQGHyVN5h5r2
-nh3mT3r2l7Q4dgxXlovERGpNqCZJ624jCiWQC4ELMD2+6WDxjj03PbOulQZ8oY4PQUyp6djF0keA
-MYIDuzCCA7cCAQEwVTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMX
-VmVyb2tleSBTZWN1cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJYIZIAWUDBAIBBQCg
-ggE3MBgGCSqGSIb3DQEJAzELBgkqhkiG9w0BBwEwHAYJKoZIhvcNAQkFMQ8XDTI1MDgwNDEwNTQ0
-N1owLwYJKoZIhvcNAQkEMSIEIIdkMV5tQRz1/XWe+N/lZ8stVkBjeojN4wjFWhfKX6ryMGQGCSsG
-AQQBgjcQBDFXMFUwQTELMAkGA1UEBhMCQVUxEDAOBgNVBAoTB1Zlcm9rZXkxIDAeBgNVBAMTF1Zl
-cm9rZXkgU2VjdXJlIEVtYWlsIEcyAhAH5JEPagNRXYDiRPdlc1vgMGYGCyqGSIb3DQEJEAILMVeg
-VTBBMQswCQYDVQQGEwJBVTEQMA4GA1UEChMHVmVyb2tleTEgMB4GA1UEAxMXVmVyb2tleSBTZWN1
-cmUgRW1haWwgRzICEAfkkQ9qA1FdgOJE92VzW+AwDQYJKoZIhvcNAQEBBQAEggIAAIAd/gLZdGtZ
-AQBFx/eFimNMCx8ffD7cxwojjdAtgTVaB7Sa973a6ypT3WLlQKxIhpTUKBnxkb5A1rSJqmUzjmHl
-n/okHlLs0bycc2MB9rvCi3b4MdjxAT9YvCbiAkXIELhQfOz0cIl2fY5lctuCFyB7/ebsgAFohWnB
-e0TpuMfjqOwMST/Wsljrbgqw8sOj6cScLPcdvM9/MlbhZTjEQPPw5v0dpdq2lVaDkFq+wKFsPgPT
-xAmjol/2mRLnUoiYn1S17nqOk7rb0WHi9gIsM1YwTbKRLwcvml9aFzdOytt0ICDzleNw58Rp86UO
-Z1lh31RSDNXIynYIOV21sIHZCwA8P02tKBatRbS5RXZbP8s1JxsBbAZWoTu4b7zf6+quP6fBuHNW
-py7ExDsQg0DgPdfnmfgei/z1silX3qT+J1Qri1/zSRgCkgXhpS1s8CzjLE1fOXfrY2SHF19X8DU9
-ChlGeSBDx8Y0ey95QaDL+2fjRWBFS12mBplrHUzlh1a8MNAfs6LkzpM24NZ7YOak1/VTvgu1Vhiu
-8JylozFjEivO29xsTDgy8wqNjc/p8KCiVHGqOD8RCeqKdsgJJjYK9hWlhDtxB+cZuABFG8NFsAja
-EigHywYvUc63THFoIfTMOff9GHETs+kakAlmI1q8AtoYWDAyhrg4ZJQ9eLBvjFAAAAAAAAA=
-
-
---=-PY8X9KgAkwZG+EkHqeHX--
 
