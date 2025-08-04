@@ -1,164 +1,149 @@
-Return-Path: <linux-kernel+bounces-755217-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755218-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB214B1A328
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:22:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD2D8B1A32A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:25:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6DD91889FE6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:22:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A3627A7CAA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:23:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94213266EEA;
-	Mon,  4 Aug 2025 13:22:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E040266B6F;
+	Mon,  4 Aug 2025 13:25:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tTSbDpVF"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lIDoqjle"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1D591D6187;
-	Mon,  4 Aug 2025 13:22:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D428217B418;
+	Mon,  4 Aug 2025 13:25:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754313754; cv=none; b=fbxB+7xbMMm5msGfU/mV8xXRltTolrK6Jpm8ZeG3XOo6XRqadJCx2s/FY9lFLT3y08D0XdFBdMWf1UNsv1v08/I7O6fQooZw0RdS8j53EjFrrfcC7Kdfxwpid1HGa3LZIKfnALpJyNBna6ujduv9hZKiJWuhRyV3ElqIICgoKDc=
+	t=1754313908; cv=none; b=hBNaK2/DIlN4tGH8Hks005vbcSA0YPDwMxaZO/l+JVdsnVh4UIPWntGxyPRs8ytpQrsF4m6f8fN2SCJn2TN7BJuAq2UeuzP1b7/M4tTJRr4HawTTSrTiSe0TqrzXcY+PwrgR+ZlThTK740l0pMirB8zBZpqXyXE8Bm1w62W2QlM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754313754; c=relaxed/simple;
-	bh=RJusp7M7fVBPRc3I6RnHKaJXw2APU1eUnneoAuCHfTU=;
+	s=arc-20240116; t=1754313908; c=relaxed/simple;
+	bh=NTs4IL1Kwd8g0bmY4dYuUQcArWu0IxUvlGbhxSQ476E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JGqIR8n3udYUbxSubWMh4+yqSj0xh/R50Jm3R/IS1Nw6Ysx5gT0I/3c/E6A7lS8aHq+Zq+FbzSMHNN8LIqa5fzA0oYV2rXZZ4SXeKvIDNHE19b/e5Jweym30XnQW/HqEa7vU3EfODO2rAyrrAbRqC9F60cxjBUcGQMJXWoK+Nq4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tTSbDpVF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BF3DC4CEE7;
-	Mon,  4 Aug 2025 13:22:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TFZOXJJ3PrhsKeRat4DUyjruMi4DYDzZb5h/EEDDV2Rj/vhFnNKbiGZZoEUNo8rOR9vxW/H9R2CjX4/+ZATQXK5PLocwSBedKicRFLinD5J5fHGClNtTlE7Md/tGYPPn3JNNu9qIS0jjQ3HOb7vBf69zSxW6XyM3N+AvAXKkjN4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lIDoqjle; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30718C4CEE7;
+	Mon,  4 Aug 2025 13:25:08 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754313753;
-	bh=RJusp7M7fVBPRc3I6RnHKaJXw2APU1eUnneoAuCHfTU=;
+	s=k20201202; t=1754313908;
+	bh=NTs4IL1Kwd8g0bmY4dYuUQcArWu0IxUvlGbhxSQ476E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tTSbDpVFfyQverdP5h6h+L/eARv7PgwHA1fPzEb+1sfYSFtDQ6apJ4zv9gtBR/ZD+
-	 iAXTaokpGPIBrbsRz/tgSPxBpBcpaRPF8Ep6xyiq6+w7I8kqyHu3f1XzyI78CifDkF
-	 f1TyH/QMKsmcwOvD6gaivtBCQgmHat7OJGHyLHHmLrY1FTwk2kddOJ2k6MeFugQorf
-	 tkACtzNTQMi5tldHlmvdKcEoQ5uzlEBRDZ3e92Obedr4IWMITEWljISZ3ieJ1FY3OO
-	 Vp8Craa26o5RqsOlXGBaU+oTUz9EwxphAr8amlkmGSokE3eJdMtkw24qEk1NX//JDb
-	 MydMg/hvqSHjw==
-Received: from johan by xi.lan with local (Exim 4.98.2)
-	(envelope-from <johan@kernel.org>)
-	id 1uiv96-000000000wS-3LJ6;
-	Mon, 04 Aug 2025 15:22:32 +0200
-Date: Mon, 4 Aug 2025 15:22:32 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>
-Cc: Neil Armstrong <neil.armstrong@linaro.org>,
-	Christopher Obbard <christopher.obbard@linaro.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	Rui Miguel Silva <rui.silva@linaro.org>,
-	Abel Vesa <abel.vesa@linaro.org>
-Subject: Re: [PATCH v6] drm/dp: clamp PWM bit count to advertised MIN and MAX
- capabilities
-Message-ID: <aJC0GLAeGneb3WFR@hovoldconsulting.com>
-References: <20250330-wip-obbardc-qcom-t14s-oled-panel-brightness-v6-1-84ad1cd1078a@linaro.org>
- <Z-pTcB0L33bozxjl@hovoldconsulting.com>
- <CACr-zFAiKRTHyRAF5HkM2drCMD7Q_Z3ZUFAsSnevy38yD8XMwg@mail.gmail.com>
- <Z--eRHaYw_vbgK2f@hovoldconsulting.com>
- <CACr-zFA77ogDSNEOGd32Rdh3geqkL25T0BKtNdKzUdjrL0+9RA@mail.gmail.com>
- <aCw4EK_8C1KLb6MD@hovoldconsulting.com>
- <6612cd14-8353-4d3a-a248-5d32e0d3ca23@linaro.org>
- <CAO9ioeWeQ++qSaD5ukooqBg997=1pwwS80NHD_xiHz25ABmtXg@mail.gmail.com>
- <a9df2561-95d4-47a5-b5df-5874b71937a6@linaro.org>
- <5d86adfd-e16d-4072-b5a8-4f128a2c9adb@oss.qualcomm.com>
+	b=lIDoqjleeck4npbrxv3OkmfBzGnFEjjIdKjHNcZb58LOnO/ITcpfW7JabRH8VSXmk
+	 6O5ESCqUuHsvRDdAzsyfaWjuEYEwvRpBKCvuVKz66CbPRny/vz3UV9E6fKEtVBagEt
+	 EXDK/p1KbfN9kCRCsArU4NhVfL8AykP8dShRfCzihfvVfcFDKrEcxDX93tMmqaPFVD
+	 BvKqYmZ9/t6sZn84vLsvP9D3ZZY7SAgyfKagsMYj38xMZLcgLuWZFlF9xF8KwXYLRq
+	 0ukcZNdxqRFMBgSD53CFS1BRNWmPNlkXpBQiJNdefQYdNsYlUNKLVMR3SbUS9k7w4Y
+	 GpfbrLlb26mNQ==
+Date: Mon, 4 Aug 2025 09:25:06 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Michal Hocko <mhocko@suse.com>
+Cc: David Hildenbrand <david@redhat.com>,
+	Greg KH <gregkh@linuxfoundation.org>,
+	Vlastimil Babka <vbabka@suse.cz>, corbet@lwn.net,
+	linux-doc@vger.kernel.org, workflows@vger.kernel.org,
+	josh@joshtriplett.org, kees@kernel.org,
+	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org,
+	rostedt@goodmis.org
+Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
+ kernel
+Message-ID: <aJC0ssMzX0KWnTkG@lappy>
+References: <20250727195802.2222764-1-sashal@kernel.org>
+ <75d86e96-cb18-4996-998c-da7ac0e97468@suse.cz>
+ <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com>
+ <2025072832-enrich-pampers-54b9@gregkh>
+ <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
+ <aId1oZn_KFaa0R_Q@lappy>
+ <aJB8CdXqCEuitnQj@tiehlicka>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <5d86adfd-e16d-4072-b5a8-4f128a2c9adb@oss.qualcomm.com>
+In-Reply-To: <aJB8CdXqCEuitnQj@tiehlicka>
 
-On Thu, Jul 24, 2025 at 02:09:10PM +0300, Dmitry Baryshkov wrote:
-> On 24/07/2025 12:42, Neil Armstrong wrote:
-> > On 24/07/2025 11:32, Dmitry Baryshkov wrote:
-> >> On Thu, 24 Jul 2025 at 12:08, <neil.armstrong@linaro.org> wrote:
-> >>> On 20/05/2025 10:06, Johan Hovold wrote:
-> >>>> On Fri, Apr 04, 2025 at 02:24:32PM +0100, Christopher Obbard wrote:
-> >>>>> On Fri, 4 Apr 2025 at 09:54, Johan Hovold <johan@kernel.org> wrote:
-> >>>>>> On Fri, Apr 04, 2025 at 08:54:29AM +0100, Christopher Obbard wrote:
-> >>>>>>> On Mon, 31 Mar 2025 at 09:33, Johan Hovold <johan@kernel.org> wrote:
-> >>>>>>>>> @@ -4035,6 +4036,32 @@ drm_edp_backlight_probe_max(struct 
+On Mon, Aug 04, 2025 at 11:23:21AM +0200, Michal Hocko wrote:
+>On Mon 28-07-25 09:05:37, Sasha Levin wrote:
+>> On Mon, Jul 28, 2025 at 12:47:55PM +0200, David Hildenbrand wrote:
+>> > We cannot keep complaining about maintainer overload and, at the same
+>> > time, encourage people to bombard us with even more of that stuff.
+>> >
+>> > Clearly flagging stuff as AI-generated can maybe help. But really, what
+>> > we need is a proper AI policy. I think QEMU did a good job (again, maybe
+>> > too strict, not sure).
+>>
+>> So I've sent this series because I thought it's a parallel effort to the
+>> effort of creating an "AI Policy".
+>>
+>> Right now we already (implicitly) have a policy as far as these
+>> contributions go, based on
+>> https://www.linuxfoundation.org/legal/generative-ai and the lack of
+>> other guidelines in our codebase, we effectively welcome AI generated
+>> contributions without any other requirements beyond the ones that affect
+>> a regular human.
+>>
+>> This series of patches attempts to clarify that point to AI: it has to
+>> follow the same requirements and rules that humans do.
+>
+>The above guidance is quite vague. How me as a maintainer should know
+>that whatever AI tool has been used is meeting those two conditions
 
-> >>>>>>>>> drm_dp_aux *aux, struct drm_edp_backlight_inf
-> >>>>>>>>>         }
-> >>>>>>>>>
-> >>>>>>>>>         pn &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> >>>>>>>>> +
-> >>>>>>>>> +     ret = drm_dp_dpcd_read_byte(aux, 
-> >>>>>>>>> DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN, &pn_min);
-> >>>>>>>>> +     if (ret < 0) {
-> >>>>>>>>> +             drm_dbg_kms(aux->drm_dev, "%s: Failed to read 
-> >>>>>>>>> pwmgen bit count cap min: %d\n",
-> >>>>>>>>> +                         aux->name, ret);
-> >>>>>>>>> +             return -ENODEV;
-> >>>>>>>>> +     }
-> >>>>>>>>> +     pn_min &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> >>>>>>>>> +
-> >>>>>>>>> +     ret = drm_dp_dpcd_read_byte(aux, 
-> >>>>>>>>> DP_EDP_PWMGEN_BIT_COUNT_CAP_MAX, &pn_max);
-> >>>>>>>>> +     if (ret < 0) {
-> >>>>>>>>> +             drm_dbg_kms(aux->drm_dev, "%s: Failed to read 
-> >>>>>>>>> pwmgen bit count cap max: %d\n",
-> >>>>>>>>> +                         aux->name, ret);
-> >>>>>>>>> +             return -ENODEV;
-> >>>>>>>>> +     }
-> >>>>>>>>> +     pn_max &= DP_EDP_PWMGEN_BIT_COUNT_MASK;
-> >>>>>>>>> +
-> >>>>>>>>> +     /*
-> >>>>>>>>> +      * Per VESA eDP Spec v1.4b, section 3.3.10.2:
-> >>>>>>>>> +      * If DP_EDP_PWMGEN_BIT_COUNT is less than 
-> >>>>>>>>> DP_EDP_PWMGEN_BIT_COUNT_CAP_MIN,
-> >>>>>>>>> +      * the sink must use the MIN value as the effective PWM 
-> >>>>>>>>> bit count.
-> >>>>>>>>> +      * Clamp the reported value to the [MIN, MAX] capability 
-> >>>>>>>>> range to ensure
-> >>>>>>>>> +      * correct brightness scaling on compliant eDP panels.
-> >>>>>>>>> +      */
-> >>>>>>>>> +     pn = clamp(pn, pn_min, pn_max);
-> >>>>>>>>
-> >>>>>>>> You never make sure that pn_min <= pn_max so you could end up with
-> >>>>>>>> pn < pn_min on broken hardware here. Not sure if it's something 
-> >>>>>>>> you need
-> >>>>>>>> to worry about at this point.
-> >>>
-> >>> I'm trying to figure out what would be the behavior in this case ?
-> >>>
-> >>> - Warn ?
-> >>> - pn_max = pn_min ?
-> >>> - use BIT_COUNT as-is and ignore MIN/MAX ?
-> >>> - pm_max = max(pn_min, pn_max); pm_min = min(pn_min, pn_max); ?
-> >>> - reverse clamp? clamp(pn, pn_max, pn_min); ?
-> >>> - generic clamp? clamp(pn, min(pn_min, pn_max), max(pn_min, pn_max)); ?
-> >>
-> >> Per the standard, the min >= 1 and max >= min. We don't need to bother
-> >> about anything here.
-> > 
-> > Yeah, I agree. But I think a:
-> > if (likely(pn_min <= pn_max))
-> > is simple and doesn't cost much..
-> 
-> Really, no need to.
+In exactly the same way you know that a human contributor didn't copy
+code with an incompatible license.
 
-It doesn't matter what the spec says, what matters is what may happen if
-a device violates the spec (e.g. if a driver triggers a division by
-zero).
+Quoting from Documentation/process/5.Posting.rst :
 
-Always sanitise your input.
+	 - Signed-off-by: this is a developer's certification that he or
+	   she has the right to submit the patch for inclusion into the
+	   kernel.  It is an agreement to the Developer's Certificate of
+	   Origin, the full text of which can be found in
+	   :ref:`Documentation/process/submitting-patches.rst
+	   <submittingpatches>` Code without a proper signoff cannot be
+	   merged into the mainline.
 
-(But there is no need for likely() as this is not a hot path.)
+The Signed-off-by tag doesn't mean that a commit was reviewed, it
+doesn't mean that someone tested it, nor does it indicate that the
+person who signed off belives it is correct.
 
-Johan
+It only means that the person has legally certified to you what is
+stated in the DCO.
+
+>: 1. Contributors should ensure that the terms and conditions of the
+>: generative AI tool do not place any contractual restrictions on how the
+>: tool’s output can be used that are inconsistent with the project’s open
+>: source software license, the project’s intellectual property policies,
+>: or the Open Source Definition.
+>:
+>: 2. If any pre-existing copyrighted materials (including pre-existing
+>: open source code) authored or owned by third parties are included in the
+>: AI tool’s output, prior to contributing such output to the project, the
+>: Contributor should confirm that they have have permission from the third
+>: party owners–such as the form of an open source license or public domain
+>: declaration that complies with the project’s licensing policies–to use
+>: and modify such pre-existing materials and contribute them to the
+>: project. Additionally, the contributor should provide notice and
+>: attribution of such third party rights, along with information about the
+>: applicable license terms, with their contribution.
+>
+>Is that my responsibility?
+
+As far as making sure that all patches you take come with a
+Signed-off-by tag, yes, it's your responsibility to make sure that such
+tag exists.
+
+Otherwise, this series doesn't add any new requirements on you as a
+maintainer.
+
+-- 
+Thanks,
+Sasha
 
