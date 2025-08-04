@@ -1,313 +1,197 @@
-Return-Path: <linux-kernel+bounces-754837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754838-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 645D2B19D5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:08:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12424B19D5E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:09:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E56E9189160C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:08:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D8CF1881261
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:09:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B43C23ABA0;
-	Mon,  4 Aug 2025 08:08:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD08823504D;
+	Mon,  4 Aug 2025 08:09:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NHEBBC0P"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cRMTjT8J"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5CB923504D;
-	Mon,  4 Aug 2025 08:08:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E9D915539A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:09:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294909; cv=none; b=mAvSWEhySMZUhjsEESPrFoFY5x4X6JzoF3QruXhYbE7o9/Mt/+VDYd3tAvD1c54BqXPJN2XfVpkQX8FGlgMXpTMKCpEYngWQLPsWr5r5OOnz5KGq/IogW769fUf4CndlgsUyxAGAiw8zgReaKcc+yugyqVfU8Wag601OBWkwSak=
+	t=1754294967; cv=none; b=PJk++J2BHEXdZGz8Resd9wNi54a5KN0OjrDeVevWpy/0CoKNheVE6D7Hy42dNbkMH+TVJbCPUvMQ8vWSupKe90nRV6aYK1/0vOWy1Tr1g5j6wMgY/GXYNIntxVu5gOJ0xCa2vO7PA6kDWANH+Dul227Yr5lsYRfqAEq7ZnkFHYo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294909; c=relaxed/simple;
-	bh=lpMnSBw5eXCFVEZ77Jf4N2uMk6YKZK4ppHKLrkinK64=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=C+eKxgUJMmgOsolRgouIZsOyCZENW4wM2iIa96tsBBmXVaDrd0ESYvi5M5UOhLN6zaWjXU8FsYr4hY3XDrw0dmCI3vkBFTBwWdhEVxmlJytIDTuDOHGuoqoUyXzSiNStVifUQBB59L9x/yD0y3FgViTiyIUTu1bGXSOG4ENwSSU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NHEBBC0P; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPS id 1944BC4CEE7;
-	Mon,  4 Aug 2025 08:08:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754294909;
-	bh=lpMnSBw5eXCFVEZ77Jf4N2uMk6YKZK4ppHKLrkinK64=;
-	h=From:Date:Subject:To:Cc:Reply-To:From;
-	b=NHEBBC0PhuMqHUT4z3zhOU8n5GSfIe7Bc1sbw9xgcguxIeP6n9ioJvn9ErK0G1Ffp
-	 X+XR9ITRy7HF7Qw7ebDkREj95pfoGYQHNP6S6f/p9ul9lo6NoR6iwRwPnAoEF9hO/z
-	 0tGtfZ2brjWfXxy1nZGGmoXT0nWmhxJszbuvF33cQiWM+OmuHcj+KkUkQcFa/DHoOC
-	 U9GfwBuezTiB0FZ+yc9jNHqSDsSeGVaR7WDISaeJF29EfQCkX8OYp8XOclPkVyyinh
-	 2kKy+5jcNhXeYyMKPPMBs/30JNsq5mptNb4U427tYsQ83g9Yz4GJITvVUKMces2MkV
-	 kw9KLsRj1nQ7g==
-Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
-	by smtp.lore.kernel.org (Postfix) with ESMTP id 06CAEC87FCB;
-	Mon,  4 Aug 2025 08:08:29 +0000 (UTC)
-From: Keke Li via B4 Relay <devnull+keke.li.amlogic.com@kernel.org>
-Date: Mon, 04 Aug 2025 16:08:26 +0800
-Subject: [PATCH] dts: arm64: amlogic: Add ISP related nodes for C3
+	s=arc-20240116; t=1754294967; c=relaxed/simple;
+	bh=c8eDqPazIychO3je57U8Kb9JYtLGc5puWSeZgnMHbzY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oR98qO0aRr/aS/30mj/OsqPptqIVq12Yn4LYevV0J74NAVKxKQiVNQHe5M5jCboWT2HnuSGagC5OpWrAv3FsL3n2TG/agz4w5qOJSXOXQb7rUWeYRI+8hJ8LWqkkX2zFeLe1AmPF2teb5iySq4ifj40XSIxy4xe64Z4bqEkiAp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cRMTjT8J; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754294964;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=FeBzew9EjpLsssWR/x3cK3CyNtLtRunP4eu5LSewXBw=;
+	b=cRMTjT8JNl7Sf1TOVS0atQVnvZIYiLzaU+fh2tuvYGJuO6TIkDbOy+4EvauzjkJs0o/x56
+	KKjV/lhN9kMnV7430Y4GxhyBnO++GefNZPqBJnHNz7VYxNe+q7ArcMxf9oabUl91g63SrY
+	brIosH0A6G8gYd+N5z+m6sXUvvNPiH8=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-189-PfcK_-a6PVm3-gpUHWhuOA-1; Mon, 04 Aug 2025 04:09:21 -0400
+X-MC-Unique: PfcK_-a6PVm3-gpUHWhuOA-1
+X-Mimecast-MFC-AGG-ID: PfcK_-a6PVm3-gpUHWhuOA_1754294961
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-45867ac308dso13356025e9.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:09:21 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754294961; x=1754899761;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=FeBzew9EjpLsssWR/x3cK3CyNtLtRunP4eu5LSewXBw=;
+        b=DB0SFsFIzQ5gHLqoNq4QgYgdqf8r9SRJhzWJYPuWmcJH18NRDERiY2W/dYNV0nHFR5
+         UI5DTcAJIzlYh2yXDrGzGn8frI35N9uDSCoPYYmhbjFyjVcOIlJZOfI69z0abQPyy+X9
+         380tJU6Dh/sbUyXXBBp8MJBr32Zn/4gcleQf6mM3kv824dx1hmNxCySdRqzq1idvZv7E
+         HBbTjafdGBHWHvFZcuM5yrnlSoCwdShsenzwtpYmDNJb6VWuOVP1/dnOeTbj2gdIAfHP
+         LIKK3A6Hd4p/Mkhu2fHfOLA8xe9wnLSM9qDoRSMTztRXb6+AbjwuGHUaxsYOieOPlUXG
+         spqQ==
+X-Forwarded-Encrypted: i=1; AJvYcCX0OLMkeg+VwnqBct/sQ+oCLfOud2YVNHWI/YA5DaQkFijsvwBdeJlqQ5goqcFNilLi2+di7rWNoGSXx1s=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3mkRt0sw1GrZPj4/W/6Is2RhHpkvydMFGOaQ6aeHfrMMMpsUF
+	4KQIJkr1TS27rTlQFJPmaf/wDQui+EVLXnTafSSxrnhP7QIiyWeShPK2OGqoRMEucHzyG/jwgUw
+	TZJCS+76tFPlKNVtek0USiWxNQ8xrdTdOUzM9A2UIqpbvexKf40jYRKLGDJt5Ck7vCQ==
+X-Gm-Gg: ASbGnctIr9Xi7EIT+rHoju1nWS1fVIa92+jJiOXB3QfHUqWvx2Af74Hf1+/RObUm3wt
+	iABOK/FJGU4XbV6lcdBn0GfDOsGUbS5jktg/WeE2LloByaIfhwpO9Icc50SxzSzMUkMz5Y+yfWd
+	qtIW1SKp4nAK0Lxu9VQ7qeoZe8cZI8FDKxnTMlNK8x+ZnHmSuv5G3in1ChsbU/d375htaOhjhKB
+	SCP8gDKM6SHlqe2HLy6x/dvhdfO2hdDYB2ExxMMaij74rhfe78uEp0nW3yBlr+5HEhH+IZgkrkG
+	CjNbwbowp7zQL6weebOJvv6IvmTzHq9E9jn72pXtR5i+nVERivU5Rhytse8Zr7B1keheBQPnrWk
+	b8G3HxMJYwuE+S5EsPrH4Yp+788C0cgdMGagqjlySlJeQuBqD8E959HqxGDWo7r+ghQg=
+X-Received: by 2002:a05:600c:a43:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-458b69cbdd9mr59436355e9.4.1754294960630;
+        Mon, 04 Aug 2025 01:09:20 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHb1/hcPJTdy6j2wd+h4JIDrwPdLrVhFCdL8k5R5TQqequE53RFilWzQbkiLFan+5oyRU6hfg==
+X-Received: by 2002:a05:600c:a43:b0:456:1b93:76b with SMTP id 5b1f17b1804b1-458b69cbdd9mr59436005e9.4.1754294960183;
+        Mon, 04 Aug 2025 01:09:20 -0700 (PDT)
+Received: from ?IPV6:2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9? (p200300d82f0e2c00d6bb8859fbbcb8a9.dip0.t-ipconnect.de. [2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a7c91c0esm136644785e9.11.2025.08.04.01.09.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 01:09:19 -0700 (PDT)
+Message-ID: <56331143-0532-4b6d-b23c-d15ca82f17c6@redhat.com>
+Date: Mon, 4 Aug 2025 10:09:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm/userfaultfd: fix kmap_local LIFO ordering for
+ CONFIG_HIGHPTE
+To: Sasha Levin <sashal@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: surenb@google.com, aarcange@redhat.com, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+References: <20250731144431.773923-1-sashal@kernel.org>
+ <20250801141101.9f3555a172609cb64fde7f71@linux-foundation.org>
+ <aI04CQZZzgCDO2A5@lappy>
+From: David Hildenbrand <david@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ g3eXuA==
+Organization: Red Hat
+In-Reply-To: <aI04CQZZzgCDO2A5@lappy>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20250804-b4-c3isp-v1-1-adb39bd3b0d9@amlogic.com>
-X-B4-Tracking: v=1; b=H4sIAHlqkGgC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDI1MDc2ND3SQT3WTjzOICXUMzU2NDY0vDRMPkJCWg8oKi1LTMCrBR0bG1tQB
- OizK4WgAAAA==
-To: Neil Armstrong <neil.armstrong@linaro.org>, 
- Kevin Hilman <khilman@baylibre.com>, Jerome Brunet <jbrunet@baylibre.com>, 
- Martin Blumenstingl <martin.blumenstingl@googlemail.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>
-Cc: linux-arm-kernel@lists.infradead.org, linux-amlogic@lists.infradead.org, 
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
- Keke Li <keke.li@amlogic.com>
-X-Mailer: b4 0.14.1
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1754294908; l=5995;
- i=keke.li@amlogic.com; s=20240902; h=from:subject:message-id;
- bh=UmVS1PU/90tdLntCDKm08KbbQoIVC5jklVv6ZZ2RpE0=;
- b=CvaC63kuttoGnMbyky21IYl3jG9Guba6QMeoAelHvvIp0BG+sfdGPKvnArm8bjK3hM8FrSTmt
- KPoQEpgIYRZAYamkC2ngCW/PV8qn6YUkkaZPtZ+en+sx374PACLBJ4w
-X-Developer-Key: i=keke.li@amlogic.com; a=ed25519;
- pk=XxNPTsQ0YqMJLLekV456eoKV5gbSlxnViB1k1DhfRmU=
-X-Endpoint-Received: by B4 Relay for keke.li@amlogic.com/20240902 with
- auth_id=204
-X-Original-From: Keke Li <keke.li@amlogic.com>
-Reply-To: keke.li@amlogic.com
 
-From: Keke Li <keke.li@amlogic.com>
+On 01.08.25 23:56, Sasha Levin wrote:
+> On Fri, Aug 01, 2025 at 02:11:01PM -0700, Andrew Morton wrote:
+>> On Thu, 31 Jul 2025 10:44:31 -0400 Sasha Levin <sashal@kernel.org> wrote:
+>>
+>>> With CONFIG_HIGHPTE on 32-bit ARM, move_pages_pte() maps PTE pages using
+>>> kmap_local_page(), which requires unmapping in Last-In-First-Out order.
+>>>
+>>> The current code maps dst_pte first, then src_pte, but unmaps them in
+>>> the same order (dst_pte, src_pte), violating the LIFO requirement.
+>>> This causes the warning in kunmap_local_indexed():
+>>>
+>>>    WARNING: CPU: 0 PID: 604 at mm/highmem.c:622 kunmap_local_indexed+0x178/0x17c
+>>>    addr \!= __fix_to_virt(FIX_KMAP_BEGIN + idx)
+>>>
+>>> Fix this by reversing the unmap order to respect LIFO ordering.
+>>>
+>>> This issue follows the same pattern as similar fixes:
+>>> - commit eca6828403b8 ("crypto: skcipher - fix mismatch between mapping and unmapping order")
+>>> - commit 8cf57c6df818 ("nilfs2: eliminate staggered calls to kunmap in nilfs_rename")
+>>>
+>>> Both of which addressed the same fundamental requirement that kmap_local
+>>> operations must follow LIFO ordering.
+>>>
+>>> Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
+>>> Co-developed-by: Claude claude-opus-4-20250514
+>>
+>> Well this is innovative.  I doubt if Co-developed-by: is appropriate
+>> for this (where's Claude's Signed-off-by:?)
+> 
+> Claude (or any other AI) can't legally sign off on code :)
 
-Add the IMX290 sensor node description to the device tree file,
-which will be controlled via I2C bus with image data transmission
-through MIPI CSI-2 interface.
+I think we need a different tag than Co-developed-by. Avocado [1] seems 
+to use
 
-Add CSI-2, adapter and ISP nodes for C3 family.
+	Assisted-by:
 
-Signed-off-by: Keke Li <keke.li@amlogic.com>
----
-The C3 ISP driver and device-tree bindings have been
-submitted. To facilitate using the C3 ISP driver, the
-related device nodes need to be added.
----
- .../boot/dts/amlogic/amlogic-c3-c308l-aw419.dts    | 84 +++++++++++++++++++++
- arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi        | 88 ++++++++++++++++++++++
- 2 files changed, 172 insertions(+)
+Which I prefer over things like Generated-by o co-developed-by:
 
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-index 45f8631f9feb..e026604c55e6 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3-c308l-aw419.dts
-@@ -17,6 +17,7 @@ / {
- 	aliases {
- 		serial0 = &uart_b;
- 		spi0 = &spifc;
-+		i2c2 = &i2c2;
- 	};
- 
- 	memory@0 {
-@@ -146,6 +147,36 @@ sdcard: regulator-sdcard {
- 		regulator-boot-on;
- 		regulator-always-on;
- 	};
-+
-+	camera_vdddo_1v8: regulator-camera-1v8 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAMERA_VDDDO";
-+		regulator-min-microvolt = <1800000>;
-+		regulator-max-microvolt = <1800000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	camera_vdda_2v9: regulator-camera-2v9 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAMERA_VDDA";
-+		regulator-min-microvolt = <2900000>;
-+		regulator-max-microvolt = <2900000>;
-+		vin-supply = <&vcc_5v>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
-+
-+	camera_vddd_1v2: regulator-camera-1v2 {
-+		compatible = "regulator-fixed";
-+		regulator-name = "CAMERA_VDDD";
-+		regulator-min-microvolt = <1200000>;
-+		regulator-max-microvolt = <1200000>;
-+		vin-supply = <&vcc_3v3>;
-+		regulator-boot-on;
-+		regulator-always-on;
-+	};
- };
- 
- &uart_b {
-@@ -258,3 +289,56 @@ &sd {
- 	vmmc-supply = <&sdcard>;
- 	vqmmc-supply = <&sdcard>;
- };
-+
-+&i2c2 {
-+	status = "okay";
-+	pinctrl-names = "default";
-+	pinctrl-0 = <&i2c2_pins1>;
-+	clock-frequency = <100000>; /* default 100k */
-+
-+	imx290: sensor0@1a {
-+		compatible = "sony,imx290";
-+		reg = <0x1a>;
-+		clocks = <&clkc_pll CLKID_MCLK0>;
-+		clock-names = "xclk";
-+		clock-frequency = <37125000>;
-+		assigned-clocks = <&clkc_pll CLKID_MCLK_PLL>,
-+				  <&clkc_pll CLKID_MCLK0>;
-+		assigned-clock-rates = <74250000>, <37125000>;
-+
-+		vdddo-supply = <&camera_vdddo_1v8>;
-+		vdda-supply = <&camera_vdda_2v9>;
-+		vddd-supply = <&camera_vddd_1v2>;
-+
-+		reset-gpios = <&gpio GPIOE_4 GPIO_ACTIVE_LOW>;
-+
-+		port {
-+			imx290_out: endpoint {
-+				data-lanes = <1 2 3 4>;
-+				link-frequencies = /bits/ 64 <222750000 148500000>;
-+				remote-endpoint = <&c3_mipi_csi_in>;
-+			};
-+		};
-+	};
-+};
-+
-+&csi2 {
-+	status = "okay";
-+
-+	ports {
-+		port@0 {
-+			c3_mipi_csi_in: endpoint {
-+				remote-endpoint = <&imx290_out>;
-+				data-lanes = <1 2 3 4>;
-+			};
-+		};
-+	};
-+};
-+
-+&adap {
-+	status = "okay";
-+};
-+
-+&isp {
-+	status = "okay";
-+};
-diff --git a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-index cb9ea3ca6ee0..a62fd8534209 100644
---- a/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-+++ b/arch/arm64/boot/dts/amlogic/amlogic-c3.dtsi
-@@ -992,5 +992,93 @@ mdio0: mdio {
- 				#size-cells = <0>;
- 			};
- 		};
-+
-+		csi2: csi2@ff018000 {
-+			compatible = "amlogic,c3-mipi-csi2";
-+			reg = <0x0 0xff018000 0x0 0x100>,
-+			      <0x0 0xff019000 0x0 0x300>,
-+			      <0x0 0xff01a000 0x0 0x100>;
-+			reg-names = "aphy", "dphy", "host";
-+			power-domains = <&pwrc PWRC_C3_MIPI_ISP_WRAP_ID>;
-+			clocks = <&clkc_periphs CLKID_VAPB>,
-+				 <&clkc_periphs CLKID_CSI_PHY0>;
-+			clock-names = "vapb", "phy0";
-+			assigned-clocks = <&clkc_periphs CLKID_VAPB>,
-+					  <&clkc_periphs CLKID_CSI_PHY0>;
-+			assigned-clock-rates = <0>, <200000000>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					c3_mipi_csi_out: endpoint {
-+						remote-endpoint = <&c3_adap_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		adap: adap@ff010000 {
-+			compatible = "amlogic,c3-mipi-adapter";
-+			reg = <0x0 0xff010000 0x0 0x100>,
-+			      <0x0 0xff01b000 0x0 0x100>,
-+			      <0x0 0xff01d000 0x0 0x200>;
-+			reg-names = "top", "fd", "rd";
-+			power-domains = <&pwrc PWRC_C3_ISP_TOP_ID>;
-+			clocks = <&clkc_periphs CLKID_VAPB>,
-+				 <&clkc_periphs CLKID_ISP0>;
-+			clock-names = "vapb", "isp0";
-+			assigned-clocks = <&clkc_periphs CLKID_VAPB>,
-+					  <&clkc_periphs CLKID_ISP0>;
-+			assigned-clock-rates = <0>, <400000000>;
-+			status = "disabled";
-+
-+			ports {
-+				#address-cells = <1>;
-+				#size-cells = <0>;
-+
-+				port@0 {
-+					reg = <0>;
-+					c3_adap_in: endpoint {
-+						remote-endpoint = <&c3_mipi_csi_out>;
-+					};
-+				};
-+
-+				port@1 {
-+					reg = <1>;
-+					c3_adap_out: endpoint {
-+						remote-endpoint = <&c3_isp_in>;
-+					};
-+				};
-+			};
-+		};
-+
-+		isp: isp@ff000000 {
-+			compatible = "amlogic,c3-isp";
-+			reg = <0x0 0xff000000 0x0 0xf000>;
-+			reg-names = "isp";
-+			power-domains = <&pwrc PWRC_C3_ISP_TOP_ID>;
-+			clocks = <&clkc_periphs CLKID_VAPB>,
-+				 <&clkc_periphs CLKID_ISP0>;
-+			clock-names = "vapb", "isp0";
-+			assigned-clocks = <&clkc_periphs CLKID_VAPB>,
-+					  <&clkc_periphs CLKID_ISP0>;
-+			assigned-clock-rates = <0>, <400000000>;
-+			interrupts = <GIC_SPI 145 IRQ_TYPE_EDGE_RISING>;
-+			status = "disabled";
-+
-+			port {
-+				c3_isp_in: endpoint {
-+					remote-endpoint = <&c3_adap_out>;
-+				};
-+			};
-+		};
- 	};
- };
+[1] 
+https://avocado-framework.readthedocs.io/en/latest/guides/contributor/chapters/ai_policy.html
 
----
-base-commit: 84b92a499e7eca54ba1df6f6c6e01766025943f1
-change-id: 20250731-b4-c3isp-16531391a1cb
-
-Best regards,
 -- 
-Keke Li <keke.li@amlogic.com>
+Cheers,
 
+David / dhildenb
 
 
