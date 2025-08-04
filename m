@@ -1,309 +1,158 @@
-Return-Path: <linux-kernel+bounces-755114-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27C12B1A172
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:32:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929A4B1A179
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:33:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5183C18865B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:32:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3EE217C57A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:33:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E38625A631;
-	Mon,  4 Aug 2025 12:32:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1643825BEF3;
+	Mon,  4 Aug 2025 12:33:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Z4evbz4+"
-Received: from mail-pg1-f176.google.com (mail-pg1-f176.google.com [209.85.215.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WqxekJlN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9496825A340;
-	Mon,  4 Aug 2025 12:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BF125A633
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:33:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310744; cv=none; b=lU3bUNM4/iZmLECS7yHxBnQX9LR2kdYwUvcURq0H1hr4t78Frgb06xaXJxrGbTQdJL/BMS2aJekAcQhHgKEDkBCLedWDSkEo192onKFgpdINf9/1mGTwQLchKd7TugG4HVg1fDRjOzfsRBDZwzNZBaAZenfBl8QCZudOU8C8Uwg=
+	t=1754310800; cv=none; b=f9JfgIEC/Sku04tNOa2mJc62ejY49h0SuOgiXrbzsWNrz4zDDDNab31DpMCUxCnesNaLglhc1KNtj36WGrACWlf3qm3l37BqX/B/QBrbRSUoZh8POth/j/7AIaVgmc7+F46cxKnee1j8D00BZbZyL03iXf0T0EXSw7ZUgGtzqOU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310744; c=relaxed/simple;
-	bh=yvVCpYCSSpG3QD5gfhJuG34tQDBVyUgQjXi6RzTx/9M=;
-	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
-	 References:In-Reply-To; b=DtGc/12kB29jC7BN0p1gnxkDd8hYI7/Ddh2UCGXsLzDWIFd2J2kSJ6AqfGcRjSatLpzuRCT+eOBeyR5Gg6bKCde3m2DkE25MDiigKi3UaULENnyhFSHzFo3CbpNXwZ5mhnkRIVE83eBntGcYMn8tu0YXIERggrT42sfUetWX1nw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Z4evbz4+; arc=none smtp.client-ip=209.85.215.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f176.google.com with SMTP id 41be03b00d2f7-b3f80661991so3759328a12.0;
-        Mon, 04 Aug 2025 05:32:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754310741; x=1754915541; darn=vger.kernel.org;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sz81oS+khM9qasQTVZz4MiZgKna2JCQJHFNcckb6X6E=;
-        b=Z4evbz4+ANuekToPaD5t1Pk10CXblyrO1RQbGIsv0hZABmx8s6fZRS+S44hbOA8iml
-         WbjQeLOz6Wdt9bAPfZobFSsigO9vkE9KkjEM6uWZcQ7r9oP/en2POe6RnytWF6IaK1LG
-         XIWiqjvwyYyvVwzs7m7pDMCA0BDfIl37qBwUWVQRVgIrhIvDPcTSb6uos6E6DMvpDpfR
-         EXutn6Hj+GkkH3v7JVQMX8LGBqe6JirHlVmoIarE/SebER7qUnaf9dihxPOJ3GtG9DHx
-         TQwfX9WAzM4+YtjyLmWAoanjvIyQnO/AYAUYopr4v/3EQeYsjx+NaaP3ag7gETqFoYI2
-         jLbA==
+	s=arc-20240116; t=1754310800; c=relaxed/simple;
+	bh=ANVmw6AeR0GHHCK/HKaHO5w+extSI4H+i3GF9Iz3jdY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=RmOE+87QDvRGpDkSRw+RMfi4//N2IisgmTV9ZjBbAKhfsrD8fzi60gSXwxXecLWnxoP5qTBvAHPbmMcvyFYK2Hl6/MBlXujiqjlWDAWDQD98XvmxjI7PXAlm92rnQ0G4qlZzTLK+om83u0jbL8LrcyBFnE8tUA3zic/4nRXDh+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WqxekJlN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57499VOM009778
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 12:33:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	46HAWgvv2MxgQgdpENwkPzAKGo1621//AEpZFMkCwFU=; b=WqxekJlNtED++Z3q
+	iLHSuYwBGbF7pe7KzYohu6uNqSSJYYbYzafcZWS9UQXLPbpqIRg/Tc7xsa26i3zr
+	MArzxNX5otzPpYwrdZu0CvGzPCra9Nwghji3mVvVBlfxXtXjL+t55zNZT2TrVavr
+	7hkdUuvOfjDPaml7shA/N1BaOvBzIfFD0zB9uKVUHHM37RuJmvR13MOFzPhnGYAT
+	Nhkj8XB1hA09ET1Cs+55oeJA6o01LO0mgWTFqIjSxwbp6wqKOd0N9x11cNoRTrti
+	X/26e3/xsywbzRjx0lUTi51IKv80JSGs9d8/j+7LSu1NLeO0OeDFzQdsUEcaD6Tq
+	oRkp1w==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a4uyj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:33:17 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e800094c82so9152685a.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:33:17 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754310741; x=1754915541;
-        h=in-reply-to:references:to:from:subject:cc:message-id:date
-         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=sz81oS+khM9qasQTVZz4MiZgKna2JCQJHFNcckb6X6E=;
-        b=qChrGc7Jzu14lwYelRAtiR98sx3J6JUF9utheopRni9tTSVdUYqS6MhLk7gq5MM5KB
-         aQXi+QeQlavaVLzRoPAQNJ9eDnhBpBj0JWU4npkR/9HQN7TQEqWGIB02sZvjYesvhfVg
-         jOHKe0Glj6kSKvWelF5D3jd5wtEzd2WlsnAjINTyyvJx02iezwl+a8liOw/rpWae5p7d
-         mvuc8ZRhJHpvu1urWlBueQ8ZN6j+y9Fw7GpEyIlaTTTRm9sQ5AHc9RWusCyqHFmVZkWG
-         yM0L9cZ9OYCkNQp+9IpH/mdOB9fW48llYnlu+8m7CALKKgT+mIbeu9JQRkk11p/9Mkbv
-         1PVw==
-X-Forwarded-Encrypted: i=1; AJvYcCULtEX8IWsAA6YJfWnRYwcEEOtBS6SkbMthOdaKOIoK1siFHsXbDyQmEXsbrnFTrLUodpvsWhE/@vger.kernel.org, AJvYcCWmZtY63IC9Xcff/VJ8/oX7RnLBcHJRZlVlfdUH5+N3Kasq3WcK3hdwLipfN7BO5DW/rURIq5g7ip5Gz9g=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy30a08OBuXNfrXLrFa/xuxNzIPw9k2/M/dGCrQSg4goaBFd4Bp
-	DG4dVm0GZ22/ZXqBzndtwRQnuYrvIWor+Qqx881hdjBh7mBoTisDIEsf
-X-Gm-Gg: ASbGncuwivr5RjrtdE+ouV56x0h74fRBPXtfDgCSu/YmQ3g0pt1kZYxCrx9RnFrmeFG
-	oTKPfaxEkBEEJs9d/Hz1Xa/moUy4I+GYVtQz1rqJ3Kc7FFOyYQtmRRHCFDdZg+17S1c2be7somB
-	rtAIX12BguSYwnGNlrLkFYcAGXhqZIh8W1g7tGLbLt94VUVDTDbamgCBuxALZ0kGap3iQaXmn2B
-	fHD9NCfexFPyIwq9wo+yvh9bQOyB2O9nHzhsrlFEzgHeiyw9q34VPUld6kDMmil3/EUt86q3wUy
-	C0SN+DBavdKvyZ3/dUriPZ7lPeiTEfJtSjZymCUkSBjMugHfH0Yg90vAoE3ebA0FuK63BTyYNjJ
-	Utd9RqGt/yWtbkR+DGzFZXQKRBtG6I6mEPKy/icxq7Bp5mAUh8m4crA==
-X-Google-Smtp-Source: AGHT+IEe2A8axB/3Y14iPkh2FI0QHWMcwcqvzGaU/WwLKwhmaCDZ0BvYQraBItJoSJLtr0gTXUl2IQ==
-X-Received: by 2002:a17:90b:2b84:b0:31f:35f:96a1 with SMTP id 98e67ed59e1d1-32116ad3520mr9953044a91.15.1754310740620;
-        Mon, 04 Aug 2025 05:32:20 -0700 (PDT)
-Received: from localhost (123.253.189.97.qld.leaptel.network. [123.253.189.97])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-32102a5b2cdsm4417443a91.1.2025.08.04.05.32.15
+        d=1e100.net; s=20230601; t=1754310797; x=1754915597;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=46HAWgvv2MxgQgdpENwkPzAKGo1621//AEpZFMkCwFU=;
+        b=mH5Mvm1boINvqzfEGbXpAgEXILovi20AJZEd/1TkInSGvD4GYmmKYkgSSm0yJl9HGr
+         DpCI/vIJPAx5AUT2+3b3i/JqNn2sVGK/pG0QH4tDNBivQ8MQNvSIfWPUkAqdTnwpqyxZ
+         z3KE2KYVrS9Kxk2TmEp1OPIjYva6/cZn4kdLJBzcLlFVM6lhtLuI9suZfnAiKAmhl4yS
+         ueZPXsP8db/lXO5FQ77Jp1OqNYaHRY8+G0j85jdqFNvg/d9AJOwZP5d9rCI/L0vdqDVo
+         AmnLmVSyCl2RisMEfUumAfvO9VkET760xTscLJrhZSBKMc3fCmZe611JPUEhOZra8kD0
+         JgvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWMrg5c/Mwa0MRIeSy8pBDUA30wVXQ8QMrpZIbWuSH3QWpVY+1m0j1s8EHcleAquNRNgc9ftX4AAGZTP7k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YymnWBle5ylNrvj5HgFElgi6oVYPSmZD5YTGQSQjMbFhYzb2U/D
+	Dmv2RVTLetnJ8udT5PDNCPXFLAN3tjvHfvddJJUfFYabOjEGTW5RUVTaUkT+foim5rfTgBdb5lD
+	VT/6fHbkywwmp8boMvuOIBSJX1Mnu9cmEZdbm4IsARtesoPgztzptxLetZY7GCVDaYWI=
+X-Gm-Gg: ASbGncu5GUWK48IAFD51tD70yj4jqR8YecFU2Py1W+PuMDSxc68NxrCam+1pQdXYr7M
+	Rwp5/5hk9slbdv0uKw/vKLlHaWLjZRP3D0y0ypuPLgxc0b/ijKbiyK9OFrAB3M+xq+FVx1+gM4+
+	YSVKv0Bai87LzMWnMlgx2hDVjP9sr9KNEHcrPnFVWJurYO/JoetP320XU0q3olbBx7RwuWBsJ3N
+	6kJm4AspmxwmgSvI97HxTmFJlSWoxptmQ5N+6piZgmaz+WkA7x2LPVO4s7zB1lsvW7uYHmzP4tR
+	TFmJYJG5vqZBQMktFX0+ns6UPa0EapCHczkvhynyobVDxqW1EutkYMPwxcCn2P0OG9L7Slw+ecc
+	ZqHHYXc2kTYsxNVrorw==
+X-Received: by 2002:a05:620a:6087:b0:7e6:9e1a:1d with SMTP id af79cd13be357-7e69e1a0795mr468467085a.0.1754310796930;
+        Mon, 04 Aug 2025 05:33:16 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IEIA4r05fZXfrH3ID5bH6u1l2Cc6ps0sG9WuleJWFvPFQHdK+8Dza/BZE8ttrEeY9KjyY/9Qg==
+X-Received: by 2002:a05:620a:6087:b0:7e6:9e1a:1d with SMTP id af79cd13be357-7e69e1a0795mr468464085a.0.1754310796438;
+        Mon, 04 Aug 2025 05:33:16 -0700 (PDT)
+Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af919e96050sm731035466b.0.2025.08.04.05.33.13
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 05:32:20 -0700 (PDT)
+        Mon, 04 Aug 2025 05:33:15 -0700 (PDT)
+Message-ID: <4890c832-3b78-4294-aaba-b62735f7934e@oss.qualcomm.com>
+Date: Mon, 4 Aug 2025 14:33:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: ipq5424: Enable cpufreq
+To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
+        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
+        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
+        rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
+        djakov@kernel.org, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
+Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+References: <20250804112041.845135-1-quic_varada@quicinc.com>
+ <20250804112041.845135-5-quic_varada@quicinc.com>
+Content-Language: en-US
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20250804112041.845135-5-quic_varada@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Date: Mon, 04 Aug 2025 22:32:11 +1000
-Message-Id: <DBTN94725QGF.9OV4JD5UDTHL@gmail.com>
-Cc: "Ritesh Harjani" <ritesh.list@gmail.com>,
- <linux-kernel@vger.kernel.org>, "Michael Ellerman" <mpe@ellerman.id.au>,
- "Vishal Chourasia" <vishalc@linux.ibm.com>, <stable@vger.kernel.org>
-Subject: Re: [PATCH v2] powerpc/mm: Fix SLB multihit issue during SLB
- preload
-From: "Nicholas Piggin" <npiggin@gmail.com>
-To: "Donet Tom" <donettom@linux.ibm.com>, "Madhavan Srinivasan"
- <maddy@linux.ibm.com>, "Christophe Leroy" <christophe.leroy@csgroup.eu>,
- <linuxppc-dev@lists.ozlabs.org>
-X-Mailer: aerc 0.20.0
-References: <20250801103747.21864-1-donettom@linux.ibm.com>
-In-Reply-To: <20250801103747.21864-1-donettom@linux.ibm.com>
+Content-Transfer-Encoding: 7bit
+X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=6890a88d cx=c_pps
+ a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=vuI4R3Do2uEHNfh2jzQA:9
+ a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
+X-Proofpoint-ORIG-GUID: 06Ha40mkUbPba7Gdr3rcQjhV_iWMjM5X
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2OCBTYWx0ZWRfX4uAygf2p5VXv
+ NEBFNqND9PKmDK3BHJ+4EW++S0+P3uy35faRpSrrkEtXArI03YOm06AeCXQ1ru7rYbaw5hWehRK
+ hbSR5N+TNn4xl5qkpuM3ssE021kXovkptefhXrzSO+Wo9lyb7DMmAUzg8gC6mnZfXZdUANpOiRv
+ 7uuRxVCTjEWib8dEBRYE2TmzVXzCxxDQL22GYjtKDjhujUUOAfQbe5u6kyTiDE+79npdoBsmdKt
+ d+txVQzZLp7suFfDpwlhYp1hAaGd6abVsTKxhivW3HvCxoXpHvEckKr4galgkJNLRRHA7zg/+zu
+ ZZVFGPFOWB3+8q2l+E4RJ2OpzpGoskB63fE21BbTkvaGOYti1494bP/LYPmQEFu9+jlfdQUkfYj
+ LtuEadI9m4MKAg1K87Ebcqde7G5RwdZp2Iz5a5XhCt5Fp+LheAru+8DLTc8Xf4zcjBC71yft
+X-Proofpoint-GUID: 06Ha40mkUbPba7Gdr3rcQjhV_iWMjM5X
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
+ phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
+ malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
+ authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508040068
 
-Hmm, interesting bug. Impressive work to track it down.
-
-On Fri Aug 1, 2025 at 8:37 PM AEST, Donet Tom wrote:
-> On systems using the hash MMU, there is a software SLB preload cache that
-> mirrors the entries loaded into the hardware SLB buffer. This preload
-> cache is subject to periodic eviction =E2=80=94 typically after every 256=
- context
-> switches =E2=80=94 to remove old entry.
->
-> To optimize performance, the kernel skips switch_mmu_context() in
-> switch_mm_irqs_off() when the prev and next mm_struct are the same.
-> However, on hash MMU systems, this can lead to inconsistencies between
-> the hardware SLB and the software preload cache.
->
-> If an SLB entry for a process is evicted from the software cache on one
-> CPU, and the same process later runs on another CPU without executing
-> switch_mmu_context(), the hardware SLB may retain stale entries. If the
-> kernel then attempts to reload that entry, it can trigger an SLB
-> multi-hit error.
->
-> The following timeline shows how stale SLB entries are created and can
-> cause a multi-hit error when a process moves between CPUs without a
-> MMU context switch.
->
-> CPU 0                                   CPU 1
-> -----                                    -----
-> Process P
-> exec                                    swapper/1
->  load_elf_binary
->   begin_new_exc
->     activate_mm
->      switch_mm_irqs_off
->       switch_mmu_context
->        switch_slb
->        /*
->         * This invalidates all
->         * the entries in the HW
->         * and setup the new HW
->         * SLB entries as per the
->         * preload cache.
->         */
-> context_switch
-> sched_migrate_task migrates process P to cpu-1
->
-> Process swapper/0                       context switch (to process P)
-> (uses mm_struct of Process P)           switch_mm_irqs_off()
->                                          switch_slb
->                                            load_slb++
->                                             /*
->                                             * load_slb becomes 0 here
->                                             * and we evict an entry from
->                                             * the preload cache with
->                                             * preload_age(). We still
->                                             * keep HW SLB and preload
->                                             * cache in sync, that is
->                                             * because all HW SLB entries
->                                             * anyways gets evicted in
->                                             * switch_slb during SLBIA.
->                                             * We then only add those
->                                             * entries back in HW SLB,
->                                             * which are currently
->                                             * present in preload_cache
->                                             * (after eviction).
->                                             */
->                                         load_elf_binary continues...
->                                          setup_new_exec()
->                                           slb_setup_new_exec()
->
->                                         sched_switch event
->                                         sched_migrate_task migrates
->                                         process P to cpu-0
->
-> context_switch from swapper/0 to Process P
->  switch_mm_irqs_off()
->   /*
->    * Since both prev and next mm struct are same we don't call
->    * switch_mmu_context(). This will cause the HW SLB and SW preload
->    * cache to go out of sync in preload_new_slb_context. Because there
->    * was an SLB entry which was evicted from both HW and preload cache
->    * on cpu-1. Now later in preload_new_slb_context(), when we will try
->    * to add the same preload entry again, we will add this to the SW
->    * preload cache and then will add it to the HW SLB. Since on cpu-0
->    * this entry was never invalidated, hence adding this entry to the HW
->    * SLB will cause a SLB multi-hit error.
->    */
-> load_elf_binary continues...
->  START_THREAD
->   start_thread
->    preload_new_slb_context
->    /*
->     * This tries to add a new EA to preload cache which was earlier
->     * evicted from both cpu-1 HW SLB and preload cache. This caused the
->     * HW SLB of cpu-0 to go out of sync with the SW preload cache. The
->     * reason for this was, that when we context switched back on CPU-0,
->     * we should have ideally called switch_mmu_context() which will
->     * bring the HW SLB entries on CPU-0 in sync with SW preload cache
->     * entries by setting up the mmu context properly. But we didn't do
->     * that since the prev mm_struct running on cpu-0 was same as the
->     * next mm_struct (which is true for swapper / kernel threads). So
->     * now when we try to add this new entry into the HW SLB of cpu-0,
->     * we hit a SLB multi-hit error.
->     */
-
-Okay, so what happens is CPU0 has SLB entries remaining from when
-P last ran on there, and the preload aging happens on CPU1 at a
-time when that CPU does clear its SLB. That slb aging step doesn't
-account for the fact CPU0 SLB entries still exist.
->
-> WARNING: CPU: 0 PID: 1810970 at arch/powerpc/mm/book3s64/slb.c:62
-> assert_slb_presence+0x2c/0x50(48 results) 02:47:29 [20157/42149]
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 1810970 Comm: dd Not tainted 6.16.0-rc3-dirty #12
-> VOLUNTARY
-> Hardware name: IBM pSeries (emulated by qemu) POWER8 (architected)
-> 0x4d0200 0xf000004 of:SLOF,HEAD hv:linux,kvm pSeries
-> NIP:  c00000000015426c LR: c0000000001543b4 CTR: 0000000000000000
-> REGS: c0000000497c77e0 TRAP: 0700   Not tainted  (6.16.0-rc3-dirty)
-> MSR:  8000000002823033 <SF,VEC,VSX,FP,ME,IR,DR,RI,LE>  CR: 28888482  XER:=
- 00000000
-> CFAR: c0000000001543b0 IRQMASK: 3
-> <...>
-> NIP [c00000000015426c] assert_slb_presence+0x2c/0x50
-> LR [c0000000001543b4] slb_insert_entry+0x124/0x390
-> Call Trace:
->   0x7fffceb5ffff (unreliable)
->   preload_new_slb_context+0x100/0x1a0
->   start_thread+0x26c/0x420
->   load_elf_binary+0x1b04/0x1c40
->   bprm_execve+0x358/0x680
->   do_execveat_common+0x1f8/0x240
->   sys_execve+0x58/0x70
->   system_call_exception+0x114/0x300
->   system_call_common+0x160/0x2c4
->
-> To fix this issue, we add a code change to always switch the MMU context =
-on
-> hash MMU if the SLB preload cache has aged. With this change, the
-> SLB multi-hit error no longer occurs.
->
-> cc: Christophe Leroy <christophe.leroy@csgroup.eu>
-> cc: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> cc: Michael Ellerman <mpe@ellerman.id.au>
-> cc: Nicholas Piggin <npiggin@gmail.com>
-> Fixes: 5434ae74629a ("powerpc/64s/hash: Add a SLB preload cache")
-> cc: stable@vger.kernel.org
-> Suggested-by: Ritesh Harjani (IBM) <ritesh.list@gmail.com>
-> Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+On 8/4/25 1:20 PM, Varadarajan Narayanan wrote:
+> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> 
+> Add the qfprom, cpu clocks, A53 PLL and cpu-opp-table required for
+> CPU clock scaling.
+> 
+> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+> [ Added interconnect related entries, fix dt-bindings errors ]
+> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
 > ---
->
-> v1 -> v2 : Changed commit message and added a comment in
-> switch_mm_irqs_off()
->
-> v1 - https://lore.kernel.org/all/20250731161027.966196-1-donettom@linux.i=
-bm.com/
-> ---
->  arch/powerpc/mm/book3s64/slb.c | 2 +-
->  arch/powerpc/mm/mmu_context.c  | 7 +++++--
->  2 files changed, 6 insertions(+), 3 deletions(-)
->
-> diff --git a/arch/powerpc/mm/book3s64/slb.c b/arch/powerpc/mm/book3s64/sl=
-b.c
-> index 6b783552403c..08daac3f978c 100644
-> --- a/arch/powerpc/mm/book3s64/slb.c
-> +++ b/arch/powerpc/mm/book3s64/slb.c
-> @@ -509,7 +509,7 @@ void switch_slb(struct task_struct *tsk, struct mm_st=
-ruct *mm)
->  	 * SLB preload cache.
->  	 */
->  	tsk->thread.load_slb++;
-> -	if (!tsk->thread.load_slb) {
-> +	if (tsk->thread.load_slb =3D=3D U8_MAX) {
->  		unsigned long pc =3D KSTK_EIP(tsk);
-> =20
->  		preload_age(ti);
-> diff --git a/arch/powerpc/mm/mmu_context.c b/arch/powerpc/mm/mmu_context.=
-c
-> index 3e3af29b4523..95455d787288 100644
-> --- a/arch/powerpc/mm/mmu_context.c
-> +++ b/arch/powerpc/mm/mmu_context.c
-> @@ -83,8 +83,11 @@ void switch_mm_irqs_off(struct mm_struct *prev, struct=
- mm_struct *next,
->  	/* Some subarchs need to track the PGD elsewhere */
->  	switch_mm_pgdir(tsk, next);
-> =20
-> -	/* Nothing else to do if we aren't actually switching */
-> -	if (prev =3D=3D next)
-> +	/*
-> +	 * Nothing else to do if we aren't actually switching and
-> +	 * the preload slb cache has not aged
-> +	 */
-> +	if ((prev =3D=3D next) && (tsk->thread.load_slb !=3D U8_MAX))
->  		return;
-> =20
->  	/*
 
-I see couple of issues with this fix. First of all, it's a bit wrong to
-call switch subsequent switch_mm functions if prev =3D=3D next, they are no=
-t
-all powerpc specific. We could work around that somehow with some hash
-specific knowledge. But worse I think is that load_slb could be
-incremented again if we context switched P again before migrating back
-here, then we would miss it.
+[...]
 
-How about removing preload_new_slb_context() and slb_setup_new_exec()
-entirely? Then slb preload is a much simpler thing that is only loaded
-after the SLB has been cleared. Those functions were always a bit
-janky and for performance, context switch is the most improtant I think,
-new thread/proc creation less so.
+> +	cpu_opp_table: opp-table-cpu {
+> +		compatible = "operating-points-v2-kryo-cpu";
+> +		opp-shared;
+> +		nvmem-cells = <&cpu_speed_bin>;
+> +
+> +		opp-816000000 {
+> +			opp-hz = /bits/ 64 <816000000>;
+> +			opp-microvolt = <1>;
 
-Thanks,
-Nick
+I just noticed this.. I don't think we have CPUs this efficient just yet
+
+Do we know some real values for these?
+
+Konrad
 
