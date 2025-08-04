@@ -1,96 +1,111 @@
-Return-Path: <linux-kernel+bounces-755302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755304-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D69AB1A452
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:17:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6890AB1A45B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:17:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 45D134E18E4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:17:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2447B18A2296
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:17:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 673FF2727E9;
-	Mon,  4 Aug 2025 14:16:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ygvauovz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8878C271A94;
+	Mon,  4 Aug 2025 14:17:17 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AA09F1DED4A;
-	Mon,  4 Aug 2025 14:16:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3645271460
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:17:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317004; cv=none; b=Vqdtw3DAt9zYNaCS7mrm1UbpNLr0+mvpbHlh6KqV3DfI4fY/5YSjmRsH9m26NrPAayHapnNVCL20GFku+H7M869YZ6/Ly+21vMDXe/1Z6KEnSqDYjOKtBxe49yDTgv1qZIiN2KSVLLkhFqa8ILmi8buUm1mTfSsdkAndv3WAZ8U=
+	t=1754317037; cv=none; b=qiYiKtTxFzKuxtHAaOF8RqtKa86sE28pxf/Upaj6aNCBhFyGsa8MW4xetDtP2Ir3VGjep5RjOYfMXUvqflFxeIWaF373tpMnFYdsqjQDQQ9ciP6x6qp1t/BQpK3UYDEtp0MGlypkS7OLVIEDfuryYxviSmK+gRn4X/8VpMYy/MY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317004; c=relaxed/simple;
-	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rQ/L4sweUVDVgkMXTxOZsCm64ZgKjkQGcKVgAD6kaZ/DJMYJgTJvnE8EeDH1kh8Mnyz9KMbLzFigl/cQvLCnA8LMrlUTjKUP4ZCjWr2+p8JeeX1PD2rulQON1iyN6oDKUShwtZ2COG0YcSan6Rq2D4IV6BgmNs8XoqXvMHavwME=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ygvauovz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 79EE0C4CEF6;
-	Mon,  4 Aug 2025 14:16:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754317002;
-	bh=xZ4/OtTou0bjCOMvQJOdhc2IhhVGQdK8WBFg49SVbYc=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YgvauovzR3vOKKvaFyT3pCHc7GSPQP3+yYpYdpyLxL9xvghi9ot/OQ+21Xi+LAWh0
-	 D44/J9HtNTqzyYUX1ys3dez6fpZSTU+M+1ErNU8GiyrJR/QyrQAIjpyd3eJjWV3TIg
-	 udaADm/VfRwUUZCqN1cCDX0TkQvR6Bv9t1h/gpyzxCxnf9LVOQVwwIkJwJk7lQkzPn
-	 JptGtZFQC/5+MmjAZopvHN7UmN0VUUulSYKXW7E/EWZJruEZ3QiY38MOAWXW5oin//
-	 XSiG4zNCghlX1ydzSHy5Bbtq/Dr53L6JS+TuesL0wBPIGiqQrE2a0AkS/hNEdoP0FA
-	 5Fh5vDjafLsKg==
-Date: Mon, 4 Aug 2025 08:16:39 -0600
-From: Keith Busch <kbusch@kernel.org>
-To: Mike Snitzer <snitzer@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
-Message-ID: <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-8-kbusch@meta.com>
- <aI1xySNUdQ2B0dbJ@kernel.org>
+	s=arc-20240116; t=1754317037; c=relaxed/simple;
+	bh=u4q8HPwsuSE8tz9eydzR0P+TNkXExevUoYIkX+4TgoY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=r4TZ4qIklm6qHUjh5OnKAgGFl3K+g6SNISyaO6GZ9GOwSVfKgcj6im2wXvL7VhGMOMDsVw5MogdV6hpbnDd9CYJL4wGrG8DHIJhwfniJQ/94k0YMHUDP2829sftz4/HbgqcpiZSWqgzWzf7XhkhDude1LuTPVH1fqGmaJcXCs3w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivzz-00071D-Ux; Mon, 04 Aug 2025 16:17:11 +0200
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivzy-00Bt6V-1z;
+	Mon, 04 Aug 2025 16:17:10 +0200
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivzy-009N7b-1l;
+	Mon, 04 Aug 2025 16:17:10 +0200
+From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Date: Mon, 04 Aug 2025 16:16:59 +0200
+Subject: [PATCH] wifi: mwifiex: send world regulatory domain to driver
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aI1xySNUdQ2B0dbJ@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250804-fix-mwifiex-regulatory-domain-v1-1-e4715c770c4d@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIANrAkGgC/x3MTQqDMBBA4avIrB1IxJ/oVaSLYCY6oIlMtLWId
+ 2/o8lu8d0MiYUowFDcIvTlxDBm6LGBabJgJ2WVDpapGGVWj5wu3D3umC4Xmc7VHlC+6uFkO2Ot
+ Wd87U3pge8mMXysH/P76e5wdvfb60bwAAAA==
+X-Change-ID: 20250804-fix-mwifiex-regulatory-domain-91617d84f889
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>, Bing Zhao <bzhao@marvell.com>, 
+ "John W. Linville" <linville@tuxdriver.com>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, s.hauer@pengutronix.de, 
+ Stefan Kerkmann <s.kerkmann@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Fri, Aug 01, 2025 at 10:02:49PM -0400, Mike Snitzer wrote:
-> On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
-> > From: Keith Busch <kbusch@kernel.org>
-> > 
-> > No more callers.
-> > 
-> > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> 
-> You had me up until this last patch.
-> 
-> I'm actually making use of iov_iter_is_aligned() in a series of
-> changes for both NFS and NFSD.  Chuck has included some of the
-> NFSD changes in his nfsd-testing branch, see:
-> https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
-> 
-> And the balance of my work that is pending review/inclusion is:
-> https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
-> https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
-> 
-> I only need iov_iter_aligned_bvec, but recall I want to relax its
-> checking with this patch:
-> https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
-> 
-> Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
-> both NFS and NFSD can use it?
+The world regulatory domain is a restrictive subset of channel
+configurations which allows legal operation of the adapter all over the
+world. Changing to this domain should not be prevented.
 
-If at all possible, I recommend finding a place that already walks the
-vectors and do an opprotunistic check for the alignments there. This
-will save CPU cycles. For example, nfsd_iter_read already iterates the
-bvec while setting each page. Could you check the alignment while doing
-that instead of iterating a second time immediately after?
+Fixes: dd4a9ac05c8e1 ("mwifiex: send regulatory domain info to firmware only if alpha2 changed") changed
+Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+---
+ drivers/net/wireless/marvell/mwifiex/cfg80211.c | 7 +++----
+ 1 file changed, 3 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/net/wireless/marvell/mwifiex/cfg80211.c b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+index 3498743d5ec05719bbfa3982d646d8eb9802a06e..2090c99d9e9e025625154b23af46a275c398d20e 100644
+--- a/drivers/net/wireless/marvell/mwifiex/cfg80211.c
++++ b/drivers/net/wireless/marvell/mwifiex/cfg80211.c
+@@ -686,10 +686,9 @@ static void mwifiex_reg_notifier(struct wiphy *wiphy,
+ 		return;
+ 	}
+ 
+-	/* Don't send world or same regdom info to firmware */
+-	if (strncmp(request->alpha2, "00", 2) &&
+-	    strncmp(request->alpha2, adapter->country_code,
+-		    sizeof(request->alpha2))) {
++	/* Don't send same regdom info to firmware */
++	if (strncmp(request->alpha2, adapter->country_code,
++		    sizeof(request->alpha2)) != 0) {
+ 		memcpy(adapter->country_code, request->alpha2,
+ 		       sizeof(request->alpha2));
+ 		mwifiex_send_domain_info_cmd_fw(wiphy);
+
+---
+base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+change-id: 20250804-fix-mwifiex-regulatory-domain-91617d84f889
+
+Best regards,
+-- 
+Stefan Kerkmann <s.kerkmann@pengutronix.de>
+
 
