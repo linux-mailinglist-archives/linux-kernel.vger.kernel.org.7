@@ -1,56 +1,58 @@
-Return-Path: <linux-kernel+bounces-754563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 29B41B1974C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:26:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA672B19762
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:27:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF00A189509B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:27:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51ADD3ABE71
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:27:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3AA1191F6A;
-	Mon,  4 Aug 2025 00:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09EF19307F;
+	Mon,  4 Aug 2025 00:26:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qzwEcHxP"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z03sz03V"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 46660153BE9;
-	Mon,  4 Aug 2025 00:26:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6521953BB;
+	Mon,  4 Aug 2025 00:26:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267190; cv=none; b=Ps4iCLpaGsp+vygBL0snAypxn3u2Y3yglP1y/s0QZ9CSIeajyqgtkGsfdd3rmQ5R/H0SlU0EdYLlMRkOlUHawhZ0w+BNqSv4+6qOj0/WBelQTovqeQPRgtTDcY7MUTzaHjfgS9i79GiveKKDPdGxy30jIQBi7bRFEd7IBL+SxoA=
+	t=1754267217; cv=none; b=SU8XsZlnzTBj/asvHjQINyID/QYL0gU+hJa8uzXVxsDT8EMPltb3utEIU+uQOPGcWSL7Lv4rlXWrIp7ZJ36t/PYSd1jV56aP2TW6nIBYtzX4TpU+Z5Hsd9aSGeiWJdawU/Bk3iSFI2Coi9hGrVlwK9Hb2xOjIou03OjPjQAQ1aU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267190; c=relaxed/simple;
-	bh=l++NzT+L73KJiXsB6a0IVmXP/DGoaq7UgZ4RRVsp0CA=;
+	s=arc-20240116; t=1754267217; c=relaxed/simple;
+	bh=ILa5ZfgqrPlkncC8c94V2KPQ9zh6+csI8lmsrBllFis=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ix0Sej/lJEig84lGa17TP5J1SegPCxoT0L7L0DxpaYbzAnTWFmMYY/7f5vkOfNlpIMFvueS5FPH8CNXTq/ra/kmAjyA9g/PzuK03S1Fck8fxN+YCx+az0HL3VKIDXkMZJ98In34yZQkFy97xQN8lhXGu9VrsBHUw3rmwMjvX4gI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qzwEcHxP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E96B4C4CEF8;
-	Mon,  4 Aug 2025 00:26:28 +0000 (UTC)
+	 MIME-Version; b=VHrnQN6w1VIGWmFQFTkVWOuKM8Nf69ITSkeRbqxxKwC4EFfMcocrbPWQp4LuiUL1MZfIdwEb67upafYHkUxX79vcTfgvdtS0vZIQylfoBuVGavW3XmWYuq/hsLPEPYs6OHItyjm92Maf9REnGwuxXW0oOKBwYaQZX4Hci8+0LOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z03sz03V; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5C1CCC4CEEB;
+	Mon,  4 Aug 2025 00:26:55 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267190;
-	bh=l++NzT+L73KJiXsB6a0IVmXP/DGoaq7UgZ4RRVsp0CA=;
+	s=k20201202; t=1754267216;
+	bh=ILa5ZfgqrPlkncC8c94V2KPQ9zh6+csI8lmsrBllFis=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=qzwEcHxP48q3Uk/3aUtNgvndI8buyWGHXi5QPCBCNPCycftD7af+9AyKIjvCsRTzj
-	 rOirwkQoH9Msql/YuNTmVEGfCsj8M6kpP71NBjQVtoVqYW5sLYG6Atlkz4V0hcC0j2
-	 B/4RdrkrmnLIDV45yPaODXWvMeEGR5ivtQH+VZ6T0XPJQ1uhd0kXXSitEncDq9vlG/
-	 LvJk1WhBD3GAUeM3IIKLoK59M4v+GCjBrD/OxCHcsu69vVrJ8pM6KqAEOtpq4LRrBV
-	 nhBPr0lcfa2u3bKAVPQK49i5ZwS0itOs+KNljt3WAM/Mlb8AodSW+ld5Egw7XKIrcr
-	 KBLBx+gKaRdpQ==
+	b=Z03sz03V/EYVh60dSYp/XNYxy4AJq4s7kNeuGLR+p5yurZ56sHXvxkntTUBT6ZVcG
+	 2yVEP0fhofc0xgZhpaL9Kl6A+KGwggOdLk5xmRkvqnKgtpR+tUtbZ8cT3hyR75k/zV
+	 locBTe79gSS5mXlnVyIndqIlE6fH7j+TK+EYcyp3HSTaMULBc3kp0VKcr2oqv4tRC/
+	 cv0JWWWuLalyTnKV/G+xGufMs6KY2atHldndsRmar7R6r66u//b2mlrD5o9EeC0P2R
+	 D1/HgtjRhZJRvs0D2iaQpBXdrVB/bHbxw/ssFvDLkFr/yrwhKw3fgtI746F50Lrgg3
+	 Qq3yURs1j+jrQ==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Hans de Goede <hansg@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
+	Sebastian Gottschall <s.gottschall@dd-wrt.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
 	Sasha Levin <sashal@kernel.org>,
-	alexander.usyskin@intel.com,
+	tsbogend@alpha.franken.de,
+	linux-mips@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.16 56/85] mei: bus: Check for still connected devices in mei_cl_bus_dev_release()
-Date: Sun,  3 Aug 2025 20:23:05 -0400
-Message-Id: <20250804002335.3613254-56-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.16 67/85] irqchip/mips-gic: Allow forced affinity
+Date: Sun,  3 Aug 2025 20:23:16 -0400
+Message-Id: <20250804002335.3613254-67-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
 In-Reply-To: <20250804002335.3613254-1-sashal@kernel.org>
 References: <20250804002335.3613254-1-sashal@kernel.org>
@@ -63,131 +65,115 @@ MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
 X-stable-base: Linux 6.16
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Hans de Goede <hansg@kernel.org>
+From: Markus Stockhausen <markus.stockhausen@gmx.de>
 
-[ Upstream commit 35e8a426b16adbecae7a4e0e3c00fc8d0273db53 ]
+[ Upstream commit 2250db8628a0d8293ad2e0671138b848a185fba1 ]
 
-mei_cl_bus_dev_release() also frees the mei-client (struct mei_cl)
-belonging to the device being released.
+Devices of the Realtek MIPS Otto platform use the official rtl-otto-timer
+as clock event generator and CPU clocksource. It is registered for each CPU
+startup via cpuhp_setup_state() and forces the affinity of the clockevent
+interrupts to the appropriate CPU via irq_force_affinity().
 
-If there are bugs like the just fixed bug in the ACE/CSI2 mei drivers,
-the mei-client being freed might still be part of the mei_device's
-file_list and iterating over this list after the freeing will then trigger
-a use-afer-free bug.
+On the "smaller" devices with a vendor specific interrupt controller
+(supported by irq-realtek-rtl) the registration works fine. The "larger"
+RTL931x series is based on a MIPS interAptiv dual core with a MIPS GIC
+controller. Interrupt routing setup is cancelled because gic_set_affinity()
+does not accept the current (not yet online) CPU as a target.
 
-Add a check to mei_cl_bus_dev_release() to make sure that the to-be-freed
-mei-client is not on the mei_device's file_list.
+Relax the checks by evaluating the force parameter that is provided for
+exactly this purpose like in other drivers. With this the affinity can be
+set as follows:
 
-Signed-off-by: Hans de Goede <hansg@kernel.org>
-Link: https://lore.kernel.org/r/20250623085052.12347-11-hansg@kernel.org
-Signed-off-by: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+ - force = false: allow to set affinity to any online cpu
+ - force = true:  allow to set affinity to any cpu
+
+Co-developed-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
+Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20250621054952.380374-1-markus.stockhausen@gmx.de
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-**YES**
+Based on my analysis of the commit, here is my assessment:
 
-This commit should be backported to stable kernel trees. Here's my
-extensive analysis:
+**Backport Status: YES**
 
-## Security Impact Analysis
+This commit should be backported to stable kernel trees for the
+following reasons:
 
-The commit adds a defensive check to detect use-after-free
-vulnerabilities in the MEI (Management Engine Interface) subsystem. The
-code change is minimal but addresses a serious security issue:
+1. **Fixes a real bug affecting users**: The commit fixes a specific
+   issue where clockevent interrupt affinity setup fails on Realtek
+   RTL931x devices with MIPS GIC controllers. Without this fix, the
+   timer registration during CPU hotplug fails because
+   `gic_set_affinity()` rejects setting affinity to CPUs that are not
+   yet online.
 
-```c
-+       struct mei_device *mdev = cldev->cl->dev;
-+       struct mei_cl *cl;
+2. **Small and contained fix**: The change is minimal - it only adds 4
+   lines of code to properly handle the `force` parameter that was
+   already being passed but ignored. The logic change is
+   straightforward:
+   - When `force=false`: Use existing behavior (only allow online CPUs)
+   - When `force=true`: Allow any CPU in the mask
+
+3. **Follows established patterns**: The commit shows that multiple
+   other timer drivers (`timer-rtl-otto.c`, `timer-tegra.c`,
+   `exynos_mct.c`, etc.) use `irq_force_affinity()` during CPU hotplug,
+   which eventually calls the chip's `set_affinity` handler with
+   `force=true`. The MIPS GIC driver was incorrectly ignoring this
+   parameter.
+
+4. **No architectural changes**: This is purely a bug fix that makes the
+   MIPS GIC driver honor the existing `force` parameter semantics. It
+   doesn't introduce new features or change any architecture.
+
+5. **Clear use case**: The commit message clearly explains that this
+   affects real hardware (Realtek RTL931x series) and prevents proper
+   timer initialization during CPU hotplug, which is a fundamental
+   kernel operation.
+
+6. **Low regression risk**: The change only affects behavior when
+   `force=true` is explicitly passed, which is specifically for CPU
+   hotplug scenarios. Normal interrupt affinity operations (with
+   `force=false`) remain unchanged.
+
+7. **Aligns with kernel conventions**: The kernel documentation for
+   `irq_force_affinity()` explicitly states it's "Solely for low level
+   cpu hotplug code, where we need to make per cpu interrupts affine
+   before the cpu becomes online." This commit makes the MIPS GIC driver
+   comply with this intended behavior.
+
+The fix is essential for proper operation of affected hardware and
+follows the stable kernel criteria of being a important bugfix with
+minimal risk.
+
+ drivers/irqchip/irq-mips-gic.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
+index 34e8d09c12a0..19a57c5e2b2e 100644
+--- a/drivers/irqchip/irq-mips-gic.c
++++ b/drivers/irqchip/irq-mips-gic.c
+@@ -375,9 +375,13 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *cpumask,
+ 	/*
+ 	 * The GIC specifies that we can only route an interrupt to one VP(E),
+ 	 * ie. CPU in Linux parlance, at a time. Therefore we always route to
+-	 * the first online CPU in the mask.
++	 * the first forced or online CPU in the mask.
+ 	 */
+-	cpu = cpumask_first_and(cpumask, cpu_online_mask);
++	if (force)
++		cpu = cpumask_first(cpumask);
++	else
++		cpu = cpumask_first_and(cpumask, cpu_online_mask);
 +
-+       list_for_each_entry(cl, &mdev->file_list, link)
-+               WARN_ON(cl == cldev->cl);
-+
-        kfree(cldev->cl);
-```
-
-## Why This Is a Critical Backport Candidate
-
-1. **Use-After-Free Prevention**: The commit addresses a classic memory
-   corruption bug. When `mei_cl_bus_dev_release()` frees the mei-client
-   structure via `kfree(cldev->cl)`, if that client is still on the
-   `mei_device->file_list`, any subsequent iteration over that list will
-   access freed memory, potentially leading to:
-   - Kernel crashes
-   - Information disclosure
-   - Arbitrary code execution with kernel privileges
-
-2. **Widespread Hardware Impact**: MEI is present on virtually all
-   modern Intel systems with Management Engine, making this a broadly
-   applicable fix affecting millions of devices.
-
-3. **Low Risk, High Value**: The change adds only 6 lines of defensive
-   code that:
-   - Doesn't modify any existing logic flow
-   - Only adds a warning mechanism
-   - Has zero performance impact
-   - Cannot introduce regressions
-
-4. **Security Context**: The commit message references "just fixed bug
-   in the ACE/CSI2 mei drivers," indicating this is addressing real-
-   world vulnerabilities already discovered in MEI client drivers. This
-   suggests similar bugs may exist in other MEI drivers.
-
-5. **Stable Kernel Criteria Compliance**:
-   - ✓ Fixes a serious bug (security vulnerability)
-   - ✓ Minimal change (6 lines)
-   - ✓ No new features
-   - ✓ Obvious correctness
-   - ✓ Already tested (signed-off by maintainer Greg KH)
-
-## Technical Details
-
-The fix works by iterating through `mdev->file_list` before freeing
-`cldev->cl` and issuing a `WARN_ON()` if the to-be-freed client is still
-in the list. This serves as an early warning system to catch driver bugs
-before they cause memory corruption.
-
-## Recommendation
-
-This should be backported to all currently maintained stable kernel
-branches (6.1.x, 6.6.x, 6.12.x) with priority given to LTS kernels. The
-combination of:
-- Security impact (use-after-free in kernel space)
-- Wide hardware coverage (Intel MEI)
-- Minimal risk (detection-only change)
-- Real-world bug evidence (ACE/CSI2 drivers)
-
-Makes this an ideal stable backport candidate that meets all the
-criteria for inclusion in stable kernels.
-
- drivers/misc/mei/bus.c | 6 ++++++
- 1 file changed, 6 insertions(+)
-
-diff --git a/drivers/misc/mei/bus.c b/drivers/misc/mei/bus.c
-index 67176caf5416..1958c043ac14 100644
---- a/drivers/misc/mei/bus.c
-+++ b/drivers/misc/mei/bus.c
-@@ -1301,10 +1301,16 @@ static void mei_dev_bus_put(struct mei_device *bus)
- static void mei_cl_bus_dev_release(struct device *dev)
- {
- 	struct mei_cl_device *cldev = to_mei_cl_device(dev);
-+	struct mei_device *mdev = cldev->cl->dev;
-+	struct mei_cl *cl;
+ 	if (cpu >= NR_CPUS)
+ 		return -EINVAL;
  
- 	mei_cl_flush_queues(cldev->cl, NULL);
- 	mei_me_cl_put(cldev->me_cl);
- 	mei_dev_bus_put(cldev->bus);
-+
-+	list_for_each_entry(cl, &mdev->file_list, link)
-+		WARN_ON(cl == cldev->cl);
-+
- 	kfree(cldev->cl);
- 	kfree(cldev);
- }
 -- 
 2.39.5
 
