@@ -1,149 +1,171 @@
-Return-Path: <linux-kernel+bounces-754942-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754925-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD666B19EE4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:41:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6C969B19EA3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:17:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D447189B168
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:42:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2676D3A923B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:17:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9054B244694;
-	Mon,  4 Aug 2025 09:41:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E0B244662;
+	Mon,  4 Aug 2025 09:17:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b="Qo9K6/RH"
-Received: from mx0b-00364e01.pphosted.com (mx0b-00364e01.pphosted.com [148.163.139.74])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osMPqxSo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64D1223C8C7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:41:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.139.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE681E25ED;
+	Mon,  4 Aug 2025 09:17:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754300482; cv=none; b=R/Ej/0rgpxQ1jARJQBcKAF4iKUS9pHJO9X5zgMUrc44T5rkLn1EwzOI20LBRh7mzCOy352QJmyTi2dEl6Y3CJkoZLgyPBYgdMnM/yZShqabhE3q5YdMS1Y/oyIXJpKOIpl0EarUlxbm7tY7POP0j7EFsgHk4bqExzn2qQ/ZtYoo=
+	t=1754299023; cv=none; b=u5Ax7P2GO08lUk14VnPAovxcgQycgNIUBtUuMBZDo5n8r+rB/HaVh33elnFQeNMcaeSogznBW1MVTF9ZzOzpZzKHosuqDDMbjLuDB5GAkiAr00oMFvqsGqlqkVwPLzlz8UfJ73zedNH9bIBMP4hU+sl1ZpJpLlgAUwmA3/crFPA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754300482; c=relaxed/simple;
-	bh=JjbB3Jm5B9RQihNCMKSK+B8I5hhLMbxQKcU07xlJc6o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ox8UN7agxePdE1vcNmCZhukD8tuXKsAl4tyoClf266dh6dpFspL4/THlyx9rbjnUxVLKgS1HlJZeQV+WviC1vKcnyL8bVGpE12+Lism2sTDaP22tBwYb74h3xGLFeWrxf1HC437vX26Zc+yfszI3ii5jnnVLPRs9qCSHuAFezFc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu; spf=pass smtp.mailfrom=columbia.edu; dkim=pass (2048-bit key) header.d=columbia.edu header.i=@columbia.edu header.b=Qo9K6/RH; arc=none smtp.client-ip=148.163.139.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=columbia.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=columbia.edu
-Received: from pps.filterd (m0167077.ppops.net [127.0.0.1])
-	by mx0b-00364e01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5748c9qm011871
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 05:15:45 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=columbia.edu; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pps01; bh=JjbB
-	3Jm5B9RQihNCMKSK+B8I5hhLMbxQKcU07xlJc6o=; b=Qo9K6/RHGpbdoHXEsTCC
-	4lgHR38vJx6A/fYq+9r70zqU8KQ5BWR4s8qkP5owJN1Rzx2AGT81eNV7YmuXKB2Z
-	NFkCuuDF/AuBdAnf6/d2LyWRtzjsvZVVUp1ukSItfRwYe2wWSqzJDUsUL3toXqj+
-	xaS2jVayqJ2lMP1lZKJ+8bwaLcbKjwOXoYkQR1Wax3Zd7RTcAxMZrk1D0Ule9e8B
-	6qf072uYGmDZ9kWtdbJ7vB7d0WV4iFeSuDhEKcm8wSdtCdSfUfwDaSxIDEkF9Mlp
-	YNnsEgk5XoFKttCFX8i9vob5+gMVKBB4z24F3leGupjciyntk6mbnWqpJBsFDPA3
-	LQ==
-Received: from mail-yw1-f197.google.com (mail-yw1-f197.google.com [209.85.128.197])
-	by mx0b-00364e01.pphosted.com (PPS) with ESMTPS id 489c8thfys-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:15:45 -0400 (EDT)
-Received: by mail-yw1-f197.google.com with SMTP id 00721157ae682-71838151744so54185407b3.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:15:45 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754298944; x=1754903744;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=JjbB3Jm5B9RQihNCMKSK+B8I5hhLMbxQKcU07xlJc6o=;
-        b=TGURk/rAhIyw5uS4n6IZ7X2zFOR/6Gxd61QfqJ5Y2UXl8FqDpbNTlmYxquJ4TrZh79
-         fGm4nMBBWkAHLEy9Nv+mzpbmDrQLxrwpmrHjMmlUC6EC+83UalO2unCTNWQhRqP6jD9u
-         HiY+zKt6rmhQNAiFkcGpHBHEYfO46m+WmxaNViTBmzO0CrR9gnqUS619SaCLrRzQEkYC
-         FfFO7fCf0UT+QF4BPeErdExkSxWaWsrenL26nv4E9OW9FnvaJ/uhpLI76pVLinUgGX3c
-         fnzY8ctE9NGN2g2GsBNG+olwHt9bYcX4O+irwYDhAFywudEQnesAej/Z3y0wUv4srZ9N
-         cIVg==
-X-Gm-Message-State: AOJu0YznewjfFmc7Fe2Vm22BAwSerw9b6R6SXyOQ7ToqekP4/Sethbp3
-	O5W1MMh4+QtzEyB1lBYHXV34MtOnjcPqSN8F9Cs1kLnlQZedXkRX1OaknWvPT3f6pZwmv/IWO2H
-	e/lOaff6r1lMohUOA58wlVGFffGfGaTmlpdlm29ATCJG0KR13X48LQxgFLFG2XiHpOGMTV3tZCG
-	8hSwwaJiMiudrPJqxWTomh2q3mFeZPw48EaztJu0TZnvOIsAM=
-X-Gm-Gg: ASbGnctLsUq04ipnGwB3jkz/lol5fqZ9rtcpEmmDzJbxKovoQxfFRsPY3VIS60l/vbl
-	Mey+UJ1AWHV9KIvJgwTUrahrz+j4I4KJ1dWHw4LSxKaTSYF4EfKUspFiMF+DuyAdP/3TfUBU3An
-	D3xbCCgMYKAAKklR4bYb7s
-X-Received: by 2002:a05:690c:4609:b0:719:53fd:79aa with SMTP id 00721157ae682-71b7f84a212mr77213037b3.22.1754298943833;
-        Mon, 04 Aug 2025 02:15:43 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF+UZiZI74WScdHweh6AGanV37GHLhD9Nzf23TmEE2bGp8nqgrqm6GaV8J3VbW+KzNd4CNom3Wtj+ghqdeWtRM=
-X-Received: by 2002:a05:690c:4609:b0:719:53fd:79aa with SMTP id
- 00721157ae682-71b7f84a212mr77212667b3.22.1754298943210; Mon, 04 Aug 2025
- 02:15:43 -0700 (PDT)
+	s=arc-20240116; t=1754299023; c=relaxed/simple;
+	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=REtUDmZpQkqmmoD5nYkRS1vVxeDSvfLPph/2R9joi52EFQ31NoL23DDq/ZAyTDVEq5rBUZTzCBcsBnQhzqmufB7Nb1tUqAlsGHmiSPaGw9eZJaSjtpe/0NDGlfewolVRxiTSsmkqvt04EzmuhT1nXMmzclr8OMmbQFwP12zfONk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osMPqxSo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B3AC4CEE7;
+	Mon,  4 Aug 2025 09:16:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754299023;
+	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=osMPqxSoJzNl3bn01WpryG1a0u/BHDAg9w4pIEkbtevWpxJxtf2+VjPb7lAl7BLBU
+	 Qs/AIkmK94xLthtXzHJJ4Z+KQAW4ZM8tcEBFTup56paTzwnG3RJmOxZmq5wco+WXv6
+	 YIWLmSAuv0xtVJQSSWBN+gyVyesB4eAGWzug/ehK3qJiTZ8miE3IZ/VgAY52FM2DLw
+	 JN/hiX+XFF2P8uOqQeHNV9IMhqCB7sn8KGd/f/gWJvRCxTbiKoUzzGoY8EEOuGe6Lx
+	 UW4THIK1X1qmKlpBdeVs5zOtCzBnccha6rNfXq6hxBjlVlTOVz5dRUIFqJmWinIQvj
+	 SM+p0QWiJFQKA==
+Message-ID: <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
+Date: Mon, 4 Aug 2025 11:16:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250528-tlb-trace-fix-v1-0-2e94c58f450d@columbia.edu> <CAKha_srZTXfQkizBzvrdpWs6Txw2PSgRAqT6QC8gom=PaitYNg@mail.gmail.com>
-In-Reply-To: <CAKha_srZTXfQkizBzvrdpWs6Txw2PSgRAqT6QC8gom=PaitYNg@mail.gmail.com>
-From: Tal Zussman <tz2294@columbia.edu>
-Date: Mon, 4 Aug 2025 12:15:32 +0300
-X-Gm-Features: Ac12FXwhQmrmOOkID7nOJYCapFm0MAKFQQ0J4rVnNl_CTjL5U175u7m4uf07P64
-Message-ID: <CAKha_soQ7VUvHk7cz0SmX8_GYdWS3nrPm-e2NyU=AH1qXiKqgQ@mail.gmail.com>
-Subject: Re: [PATCH 0/2] x86, mm: minor tlb_flush tracepoint adjustments
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org,
-        linux-mm@kvack.org, Steven Rostedt <rostedt@goodmis.org>,
-        Masami Hiramatsu <mhiramat@kernel.org>,
-        Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
-        Ingo Molnar <mingo@kernel.org>, Rik van Riel <riel@surriel.com>,
-        David Hildenbrand <david@redhat.com>, x86@kernel.org,
-        Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
-        "Liam R. Howlett" <liam.howlett@oracle.com>,
-        Vlastimil Babka <vbabka@suse.cz>, Mike Rapoport <rppt@kernel.org>,
-        Suren Baghdasaryan <surenb@google.com>, Michal Hocko <mhocko@suse.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-X-Proofpoint-GUID: 9qYjdt_tbBRtPoXG6lksVh4TjZv2sZ5_
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA0OSBTYWx0ZWRfX+QWwfXPOAWrD
- UARcZdZ128oIBiFoJCKn6G5SBHBa/eKrqE/HNNxpJfWi8y2nsV+/e0SOM+32EKUsbMm4OU1x/iv
- FeAMZ3ZH54yBGAHRUB4AKQPoUKJuz3pk+7u2O60c3cWbga9xr+OT8TMRKPIv7hTTseWwVx5lQJe
- RV4SpYPzqgfjhzlNXIULjz3xJgbypSAH35y4mmRLOxLuxikLjjw29lZMgKTXv7p8Sf+MO7PhkMa
- ibDqxI911ZQSwcSVmMdOch0ls7R3sPK24kBzYHCAfnCcqJeAJYMU/mKns5AYDB8KyXol/zevRNE
- WnMfS5lbTYwQp9Cn4cHt76P4at177lo98T7e07QL69P32GsZhffEjf6PX5aK71H6DqA6NxutDQc
- ygE7ugFn
-X-Proofpoint-ORIG-GUID: 9qYjdt_tbBRtPoXG6lksVh4TjZv2sZ5_
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- spamscore=0 bulkscore=10 priorityscore=1501 clxscore=1015 mlxlogscore=767
- malwarescore=0 suspectscore=0 lowpriorityscore=10 phishscore=0 adultscore=0
- mlxscore=0 impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508040049
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
+ clock controllers
+To: Laura Nao <laura.nao@collabora.com>
+Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
+ devicetree@vger.kernel.org, guangjie.song@mediatek.com,
+ kernel@collabora.com, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
+ nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
+ robh@kernel.org, sboyd@kernel.org, wenst@chromium.org
+References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
+ <20250804083540.19099-1-laura.nao@collabora.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 a/A=
+In-Reply-To: <20250804083540.19099-1-laura.nao@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Andrew,
+On 04/08/2025 10:35, Laura Nao wrote:
+> Hi,
+> 
+> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
+>> On 01/08/2025 15:57, Rob Herring wrote:
+>>>> +  reg:
+>>>> +    maxItems: 1
+>>>> +
+>>>> +  '#clock-cells':
+>>>> +    const: 1
+>>>> +
+>>>> +  '#reset-cells':
+>>>> +    const: 1
+>>>> +    description:
+>>>> +      Reset lines for PEXTP0/1 and UFS blocks.
+>>>> +
+>>>> +  mediatek,hardware-voter:
+>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>> +    description:
+>>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+>>>> +      MCU manages clock and power domain control across the AP and other
+>>>> +      remote processors. By aggregating their votes, it ensures clocks are
+>>>> +      safely enabled/disabled and power domains are active before register
+>>>> +      access.
+>>>
+>>> I thought this was going away based on v2 discussion?
+>>
+>> Yes, I asked to drop it and do not include it in v3. There was also
+>> discussion clarifying review.
+>>
+>> I am really surprised that review meant nothing and code is still the same.
+>>
+> 
+> This has been re-submitted as-is, following the outcome of the discussion 
+> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
+> 
+> We haven't found a viable alternative to the current approach so far, and
+> the thread outlines why other options don’t apply. I'm happy to continue 
+> the discussion there if anyone has further suggestions or ideas on how 
+> to address this.
+> 
 
-On Tue, Jun 17, 2025 at 11:43=E2=80=AFPM Tal Zussman <tz2294@columbia.edu> =
-wrote:
->
-> On Wed, May 28, 2025 at 1:35=E2=80=AFAM Tal Zussman <tz2294@columbia.edu>=
- wrote:
-> >
-> > One minor fix and one minor cleanup related to the tlb_flush tracepoint=
-.
-> >
-> > As an aside, include/trace/events/tlb.h isn't covered by MAINTAINERS,
-> > along with other mm related files under include/trace/events/. Flagging
-> > this since I see there's a recent effort to overhaul the mm MAINTAINERS
-> > entries.
-> >
-> > It's been a while since I've submitted patches to the mailing list --
-> > please let me know if anything looks off. Thanks!
->
-> I don't see this series in any of the mm trees -- anything else that need=
-s to be
-> done to get this in?
+And where is any of that resolution/new facts in the commit msg? You
+must clearly reflect long discussions like that in the commit msg.
 
-Just wanted to follow up on this, as it seems like this series missed the
--mm branches for 6.17.
+There was no objection from Chen to use clocks or power domains as I
+requested. The objection was about DUPLICATING interfaces or nodes.
 
-Thanks,
-Tal
+And what was the resolution:
+
+"Regarding that to be a single clock controller,"
+
+So where is the clock controller? I still see HW voter!
+
+
+Best regards,
+Krzysztof
 
