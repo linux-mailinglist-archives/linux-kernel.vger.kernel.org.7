@@ -1,75 +1,113 @@
-Return-Path: <linux-kernel+bounces-755272-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6648EB1A3E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E25EFB1A3E8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:53:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AA1BF7AC0B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:51:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 90E143AFDA2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:53:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E36E26B748;
-	Mon,  4 Aug 2025 13:53:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8CC226D4C7;
+	Mon,  4 Aug 2025 13:53:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pZsqodiv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="H7Ys0e/Y"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC0781DD9AC;
-	Mon,  4 Aug 2025 13:53:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 39B6C2620E4;
+	Mon,  4 Aug 2025 13:53:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754315585; cv=none; b=iJfY8bdWhOdvbCdj5lqdyt4Ru42/l1BxbI5j9qk4m1EAm77ico97zFuoAEHidXgNpgIGw2je7F77HERiiqs4lYtR14gXXDymy66bzg441n00qvNJQg1emA8ifKRJMhwLtHFbjBCaqwlekvSOmq+c2VZTLRbospsn+Qguj9J8ARU=
+	t=1754315626; cv=none; b=Ms/9ZZGGkpZ3lTlTalBwNncX+pehjOBimEnKZqguDlW6al8T5dM927k/F1Ev5wKBlSsqspqyXgjJ6eDZx6MZUcbgERfvxiCoKyQoS0aC4/MPM2xr3TDPj42Xgjou8zP7e0E0C0LcQuyLtQo747okmYEKRyRdwBTiU1dyuL47X/o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754315585; c=relaxed/simple;
-	bh=5rc6chq3h2xmwl7+CIBxfykl13rJlNajYi69c8oWQf8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HaDHxzxa62o5CjaG+xCM9wq8qAbaAYPQh4etX84ooUDy7ZHJYm0kZriXKJ0yOXxxRhb1S/B4d22bPx9jXFTwZ5NhA7up+npRZTss/ARybDf9ynRLzYtV8nfT4V4rAtsdNmqDBWBZQjr+Bbs9/eC4UuiY4GXEpJ9E6hYkA9g/BYc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pZsqodiv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0C793C4CEE7;
-	Mon,  4 Aug 2025 13:53:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754315585;
-	bh=5rc6chq3h2xmwl7+CIBxfykl13rJlNajYi69c8oWQf8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pZsqodivm+P4sALfbGHhv+MPQEBsR1hk8+XFGlspkAXYyQ/dxJ08h9OG5w1fYmy61
-	 1seqaQMHVVEIwEPLoopGPeIP2v7gWH9Hz6w4/NnagGerYa81JNT0nH/qSS+mLpef0F
-	 NjWH/uW4eWOpZuJYu7RQ5eLz/M41QFcN5YbPI0YDyiplXZ0Aody6HagKCUsbEJsKdf
-	 BggRkcRSRDnpnOs9Zuj4PIUl5iPqVRDsyxsfOcsj8YCwnlBtfto6l87b9kRAKgrG/c
-	 tf/EWKz1g7u1hgNING7W6MR+8jtwsvfZ7zb/dH7F56MNHcVnhST3zeQa+hW82y//YK
-	 V3nZLY/9JfntA==
-Date: Mon, 4 Aug 2025 15:53:01 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Beibei Yang <13738176232@163.com>
-Cc: viro@zeniv.linux.org.uk, jack@suse.cz, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH trivial] init: Fix comment typo in do_mounts_initrd.c
-Message-ID: <20250804-raben-einwickeln-b778686442a7@brauner>
-References: <1754231358-3544-1-git-send-email-13738176232@163.com>
+	s=arc-20240116; t=1754315626; c=relaxed/simple;
+	bh=twyzRfmzI//wKteUJMzWoln7EhJT1JhPF0VT3AjnJkI=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=e5qkCDPVOp/9XrJbt88JeYCot5r5kruC+zggDvh8mf4ZLpHN4mVXFm6L9EJWu3IZNQhxi+yJcebExZqbauK+d19aL0l8WkrFq8Q+/3VOMRMhyaU78CdYl6yaV1SIBHKvjssu1iHQLPdZxXR279qXwLOWVH6sdRlsWNNhBOoP1Fs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=H7Ys0e/Y; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 88439438D2;
+	Mon,  4 Aug 2025 13:53:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1754315622;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vK03/ClP3Z1gJdh/kyt8u3OXDFk4NFNUdrwFRyRxZZQ=;
+	b=H7Ys0e/Y9qB93J31DMjdL6CVpmejuWfKnqIYDFFM/51zT1PsPsdPIiRsXYwVGKJDMXPesD
+	DnQrJs1TiwGoQA2q5IcYOaHe0XQuRI7lSiyx0JWVL6NqtLvpyU2dPBBvGRpImVu4D+vjzA
+	ydoGpHtb4lD9vqSQ/TVG7SbWHRc395TrZNCgNlxv7mrrVJwT8OYQbRYiPKewh0orJ8UNhx
+	YgW/9HyUPP0VVuVkd48W2S00XUUhMAp9chYG25BiHGqjQT2YXcDu9RTd/nImFDCjcXrVJT
+	Gk85eps7Z7Jxa96ejGV5w6+QHjrd1YT5soXryUYxdQdiTxBka9h+a3M+Yc3qMw==
+Date: Mon, 4 Aug 2025 15:53:39 +0200
+From: Maxime Chevallier <maxime.chevallier@bootlin.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: davem@davemloft.net, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
+ Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
+ King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
+ Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
+ <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
+ Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
+ =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
+ =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
+ <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
+ <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
+ mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
+ devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
+ Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
+ Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
+ Dimitri Fedrau <dimitri.fedrau@liebherr.com>
+Subject: Re: [PATCH net-next v10 10/15] net: phy: marvell10g: Support SFP
+ through phy_port
+Message-ID: <20250804155339.1131365f@fedora.home>
+In-Reply-To: <b6498944-0d06-459f-9668-26813f037166@lunn.ch>
+References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
+	<20250722121623.609732-11-maxime.chevallier@bootlin.com>
+	<b6498944-0d06-459f-9668-26813f037166@lunn.ch>
+Organization: Bootlin
+X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <1754231358-3544-1-git-send-email-13738176232@163.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
+X-GND-State: clean
+X-GND-Score: -100
+X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddvgeeiucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
+ hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+X-GND-Sasl: maxime.chevallier@bootlin.com
 
-On Sun, Aug 03, 2025 at 07:29:18AM -0700, Beibei Yang wrote:
-> From: root <root@192.168.220.227>
-> 
-> The original comment incorrectly used "cwd" (current working directory)
-> when referring to the root change operation. The correct term should be
-> "pwd" (present working directory) as per process context semantics.
-> 
-> This is a pure comment correction with no functional impact.
-> 
-> Signed-off-by: Beibei Yang <13738176232@163.com>
-> ---
+On Sat, 26 Jul 2025 23:17:11 +0200
+Andrew Lunn <andrew@lunn.ch> wrote:
 
-Didn't I reply to the same thing just a few weeks ago?
-Not worth it imho. cwd is equally well understood as pwd.
+> > +	} else if (port->not_described) {
+> > +		/* This PHY can do combo-ports, i.e. 2 MDI outputs, usually one
+> > +		 * of them going to an SFP and the other one to a RJ45
+> > +		 * connector. If we don't have any representation for the port
+> > +		 * in DT, and we are dealing with a non-SFP port, then we
+> > +		 * mask the port's capabilities to report BaseT-only modes
+> > +		 */
+> > +		port->mediums = BIT(ETHTOOL_LINK_MEDIUM_BASET);
+> > +
+> > +		phy_port_filter_supported(port);  
+> 
+> That seems a little bit error prone. Maybe add a helper to set
+> port->mediums, which also makes the phy_port_filter_supported() call?
+
+Good point, as this will always have to be done in similar situations
+for other drivers.
+
+I'll add that, thanks !
+
+Maxime
 
