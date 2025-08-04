@@ -1,176 +1,190 @@
-Return-Path: <linux-kernel+bounces-755693-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BD56B1AA7D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:43:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71617B1AA81
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:44:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A48F3BBCC0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:43:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 98D5C177583
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0E223E347;
-	Mon,  4 Aug 2025 21:43:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA7923BD05;
+	Mon,  4 Aug 2025 21:43:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="J+YzSNwr"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="rr0lT31f"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 40E1823B638
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 21:43:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9575239E92;
+	Mon,  4 Aug 2025 21:43:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754343805; cv=none; b=L9z507ZRhIJydN2v7dtm0mkM7RGVh1j0fIuPrtsNgz6jAgKw5e3M5wrUJx02mDdla+Vb2pI8J2+B746C9Za+EgM957MtLhsRuCB96NYCgtnH+9OXfwZ2QAOCtC5l3ILDTcQxW21dpVABJChZGvC6/tM/uQAca4Rr5EqhwZbB/B0=
+	t=1754343830; cv=none; b=Mvbg1yG2wPYGVU6Hsx5HURN7dgSn/ATwh7+7SHN3ue4qCcTC09WTJO6Ts2U84FN2ZkqkwC7S5SgUY5hpRTQK3SSSsPWHko5BoF69Fa7nxjAUpLp0AycNX9aoHNx2zNWUIBOvl1+br0+2aSrNFpErnT2X1RHwrFdVkMEzN1HRR64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754343805; c=relaxed/simple;
-	bh=MHO/qp+UAkFUDV1KW+FRY1st72hVPxPQhofJO3khj6k=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dw7e8eSDz67yBxQLk6eAhvRs0/XCiOPNyYBly2+5IqeEDLFn/k8rLPMiCpj//Dbz0Nm7GMEV/c2jGuSFpKm0Mdq7A1nJcAVPatlofxpyQglJ5h7hZAXsa2q00RsBxK2S+2Z47zHoeWfJvhCT3iJ6K6sppkIRwPpiug4yOguLNxU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=J+YzSNwr; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574GDD3O001390
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 21:43:23 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=qcppdkim1; bh=nwBcV4Oemt5
-	w740AAje6mIColtrmwRWXKq31FSAZZI4=; b=J+YzSNwrVx5QkBv3++Hw3EluqR1
-	qWxOSWwL9oqpkBTSOLSuhyMAVAiSqYlze1z29tUONI+9grkO9n9vVIy5wHLNaPBL
-	cFx7xN3QSwN4nJDjBppse3DrOLfn0S8lKBpceSQwJI/9V0n3dd1PG56TgfT5KDe4
-	7j1uHhvQB2VcvcYeBzo8KrlbxFvdJDUqcObF1s2WHWiOOUkDTvkcvTou4uHWx39R
-	uuMpxbt4YId8LIROoJSwDiaEQDxrFnA0bKserOJ2WggiK3MHIau8jX2OYumKmPDN
-	gOV8f30JLwQYwAov1Rl9rAYQZgkSDFErp1j4acnbHX56KAvOuzDdgg3jxEQ==
-Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 4898cjpkws-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 21:43:23 +0000 (GMT)
-Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23fd8f85dd2so37793945ad.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 14:43:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754343803; x=1754948603;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=nwBcV4Oemt5w740AAje6mIColtrmwRWXKq31FSAZZI4=;
-        b=s6Hxtk7m9/o3mwYnhFqfep5JLF9mvVy+GL+k2PbxacSkF4xedQKiNthXDKoylIpPYT
-         KyzUNAXoDylqxCBL9Qbd9ot17gJOrI2q6TY/l/lwkHTuX0MhBh7U/TRkLA1QVWCzksNz
-         WiCQe2fHrPdvVjwdqmWTD1NgPJh+oL6sJUSU3I971/2xWDTO1jCva2VYohOUAyogbOqK
-         0lYfbtRVmB8UYX4FS48SGLdnAELaeDibewUiHMJpxwPoYR5fLjRbNaQvUXFhgaOTC4ZC
-         uYyugCPADcaApwy2XN4GHmFcUNd/t6EXnXx0CJGqypFKlcj1MuvybToUxmNHNKX8mCKI
-         nhSQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWYPo/lLSnqfPeQr7ad/ecL/SFGa/CAzZqOJTUh084u/LLR2lZlwerYZvutbjdS7rcgAtfNSuua370Mifo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqIaCyy4adMAsbhTj7q+9dmKc+yrovh3IfAfNUfv+CxGjSZKIn
-	SlbhK6DHVINlxV6lXOukJedFGE99pKgPVEeXosdlmEyY1hyRwvR9QpuIMwGmPlm2fTK4GuFZ6HD
-	VBbhOJcvxrYev+4WZlgzXwpWZffYnJqcZhrbkjR9Pm4Xr5EUo1jiXyennaHi4VR4HbbY=
-X-Gm-Gg: ASbGncv0QMK3cFF4oHvR6xUqoSjODXgMfr4wiu+GjE0BeCrH4UJ1bG0fHSql3Fxefvf
-	bBU/Tv7jUY45yhyG14KUGYYKny917vdGT6vnDSWbrYYmYdwoBsOTLwL7MqMvQVmdiFasZ9LPR6m
-	Xie1MRAYfcwNlVxga0F/KRkF+StdZZqJdTs66nJA5mmZ+kCEW0Mv7AmGBshhC+U3xvGdgqNTAFS
-	scL7Hj93eha/W1P1nouLsiYdoB2ROB5N83KoGj2SbElSQ8rOBQ46H+AasIBUbYRzKgJv7r/5dBi
-	8V/HFZYgqVD9UogYPhBMnEzNiqiS8hLsK67bE2lyOU0DaI93s7Q=
-X-Received: by 2002:a17:902:e0d2:b0:240:49e8:1d3c with SMTP id d9443c01a7336-24246fef44cmr85653325ad.35.1754343802675;
-        Mon, 04 Aug 2025 14:43:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IE6a9/8RPndKLMzz5ytDiVTCVnElsJWsamSeHzO2/TAvn6vk7dklmlUiRe8K/yjPhIcb3dkYg==
-X-Received: by 2002:a17:902:e0d2:b0:240:49e8:1d3c with SMTP id d9443c01a7336-24246fef44cmr85653175ad.35.1754343802269;
-        Mon, 04 Aug 2025 14:43:22 -0700 (PDT)
-Received: from localhost ([2601:1c0:5000:d5c:5b3e:de60:4fda:e7b1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241d1ef5fbdsm116628865ad.27.2025.08.04.14.43.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 14:43:21 -0700 (PDT)
-From: Rob Clark <robin.clark@oss.qualcomm.com>
-To: dri-devel@lists.freedesktop.org
-Cc: freedreno@lists.freedesktop.org, linux-arm-msm@vger.kernel.org,
-        Danilo Krummrich <dakr@redhat.com>,
-        Connor Abbott <cwabbott0@gmail.com>,
-        Rob Clark <robin.clark@oss.qualcomm.com>,
-        Dmitry Baryshkov <lumag@kernel.org>,
-        Abhinav Kumar <abhinav.kumar@linux.dev>,
-        Jessica Zhang <jessica.zhang@oss.qualcomm.com>,
-        Sean Paul <sean@poorly.run>,
-        Marijn Suijten <marijn.suijten@somainline.org>,
-        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-        linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH RESEND 2/2] drm/msm: Handle in-place remaps
-Date: Mon,  4 Aug 2025 14:43:16 -0700
-Message-ID: <20250804214317.658704-3-robin.clark@oss.qualcomm.com>
-X-Mailer: git-send-email 2.50.1
-In-Reply-To: <20250804214317.658704-1-robin.clark@oss.qualcomm.com>
-References: <20250804214317.658704-1-robin.clark@oss.qualcomm.com>
+	s=arc-20240116; t=1754343830; c=relaxed/simple;
+	bh=B+SaZI06oSJyMlQ7Xu1qgZ9Eh1frt62lJ3XhCYR1zGk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Afk1mDsO4EGWV9U3iQABAjZMD5hdEb/ty3EE7JjaYGNJVnYbNQVqtsyB2cXrtIvOArvMYHmO0T+Sj1stMD/GlwvwJY0QQ08ET1yjHwzsyvlAwSGGpr+bHRYj5Bz0vpzhHG/+WoJTswzxnq6H6rWSMP5zGYVMR2VPCzKn0UM1Im0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=rr0lT31f; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 5ABE59CE;
+	Mon,  4 Aug 2025 23:43:00 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754343780;
+	bh=B+SaZI06oSJyMlQ7Xu1qgZ9Eh1frt62lJ3XhCYR1zGk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rr0lT31fwwUwFnV8y/LyfSauIcUSUKtSyqIwXUnQ5mAYB8QOUe+Tyn8NlB3/e8Hd3
+	 +yzJOtnBUa3FxCeGNQ2StqKUo2Tg97N3/A32MWT9FX242wKVJxNOWFKwchBh65X4xA
+	 HnSkGRrMnWx3uBMcKkcehIHrasmFrlqCh6qyonS4=
+Date: Tue, 5 Aug 2025 00:43:34 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: Biju <biju.das.au@gmail.com>
+Cc: Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Biju Das <biju.das.jz@bp.renesas.com>,
+	Hans Verkuil <hverkuil@kernel.org>,
+	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>,
+	Tommaso Merciai <tommaso.merciai.xr@bp.renesas.com>,
+	Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>,
+	Daniel Scally <dan.scally+renesas@ideasonboard.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
+	Geert Uytterhoeven <geert+renesas@glider.be>,
+	linux-renesas-soc@vger.kernel.org
+Subject: Re: [PATCH] media: rzg2l-cru: Drop function pointer to configure CSI
+Message-ID: <20250804214334.GJ30355@pendragon.ideasonboard.com>
+References: <20250801053426.4273-1-biju.das.jz@bp.renesas.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Authority-Analysis: v=2.4 cv=MNBgmNZl c=1 sm=1 tr=0 ts=6891297b cx=c_pps
- a=IZJwPbhc+fLeJZngyXXI0A==:117 a=xqWC_Br6kY4A:10 a=2OwXVqhp2XgA:10
- a=EUspDBNiAAAA:8 a=kCfvZJGldO2mi53t-5YA:9 a=uG9DUKGECoFWVXl0Dc02:22
-X-Proofpoint-ORIG-GUID: qj-KIEStNK0wEgJdjxRDDdtBPHvYXwUy
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDEzMSBTYWx0ZWRfX9Bfz8Zi8lCiA
- lI+gqQuQXH/uc52rP0FwPzEH/JbbBbkV0BCqovgSm+hcnSElHsluaTL4XW+R4apydmPiAPX187O
- 12cJs0RMgTLsBfwZEjUiFGQ1+q+uaPO2PUZgXclQYop0Dis8fyuqdC1q99KYrnZxxUPk/S9+1YA
- 2luimD2w2+Wupw2mGa7b/aaTsIozz6v1N/UsUe65KZH9kBSeUwgdSv3XAC19Ejw23IdMkxLaEKr
- cvNx78PoHJkBrvFu240RiC0yRIcEwCJZrZHbjhnV2xquqBNfzEvg3V1d8p7RQ739xXjZ0Txa+Yy
- F/jKyNGMCbnFosvcWxY2IE+xBwPC2e1tgtPGt8dVAkW6ASRkRwajiSJyPpsMUTZdHxguc+l3nFx
- 8hM4FkWBn1iM6zUqdo7gAlQsceef+6Wq6dO4tKhNKpIAda10g8q4aloitIarcMd4ILVf727n
-X-Proofpoint-GUID: qj-KIEStNK0wEgJdjxRDDdtBPHvYXwUy
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_09,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- impostorscore=0 malwarescore=0 phishscore=0 mlxlogscore=999 suspectscore=0
- spamscore=0 mlxscore=0 priorityscore=1501 clxscore=1015 adultscore=0
- lowpriorityscore=0 bulkscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040131
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20250801053426.4273-1-biju.das.jz@bp.renesas.com>
 
-Handle the special case of a MAP op simply updating the va flags by
-detecting the special case, and skip pgtable updates.
+On Fri, Aug 01, 2025 at 06:34:22AM +0100, Biju wrote:
+> From: Biju Das <biju.das.jz@bp.renesas.com>
+> 
+> Drop function pointer to configure CSI to avoid code duplication
+> by checking the presence of vc select register in rzg2l_cru_info.
+> After this change, limit the scope of the rzg2l_cru_csi2_setup()
+> to static.
+> 
+> Signed-off-by: Biju Das <biju.das.jz@bp.renesas.com>
 
-Signed-off-by: Rob Clark <robin.clark@oss.qualcomm.com>
----
- drivers/gpu/drm/msm/msm_gem_vma.c | 17 +++++++++++++++--
- 1 file changed, 15 insertions(+), 2 deletions(-)
+Reviewed-by: Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>
 
-diff --git a/drivers/gpu/drm/msm/msm_gem_vma.c b/drivers/gpu/drm/msm/msm_gem_vma.c
-index dc54c693b28d..d4b1cfb3aa03 100644
---- a/drivers/gpu/drm/msm/msm_gem_vma.c
-+++ b/drivers/gpu/drm/msm/msm_gem_vma.c
-@@ -519,9 +519,10 @@ msm_gem_vm_sm_step_map(struct drm_gpuva_op *op, void *arg)
- }
- 
- static int
--msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg)
-+msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *_arg)
- {
--	struct msm_vm_bind_job *job = ((struct op_arg *)arg)->job;
-+	struct op_arg *arg = _arg;
-+	struct msm_vm_bind_job *job = arg->job;
- 	struct drm_gpuvm *vm = job->vm;
- 	struct drm_gpuva *orig_vma = op->remap.unmap->va;
- 	struct drm_gpuva *prev_vma = NULL, *next_vma = NULL;
-@@ -529,6 +530,18 @@ msm_gem_vm_sm_step_remap(struct drm_gpuva_op *op, void *arg)
- 	bool mapped = to_msm_vma(orig_vma)->mapped;
- 	unsigned flags;
- 
-+	/* Special case for in-place updates: */
-+	if (op->remap.unmap->keep && arg->flags &&
-+	    op->remap.next && !op->remap.prev &&
-+	    (orig_vma->gem.obj == op->remap.next->gem.obj) &&
-+	    (orig_vma->gem.offset == op->remap.next->gem.offset) &&
-+	    (orig_vma->va.addr == op->remap.next->va.addr) &&
-+	    (orig_vma->va.range == op->remap.next->va.range)) {
-+		/* Only flags are changing, so update that in-place: */
-+		unsigned orig_flags = orig_vma->flags & (DRM_GPUVA_USERBITS - 1);
-+		orig_vma->flags |= orig_flags | arg->flags;
-+	}
-+
- 	vm_dbg("orig_vma: %p:%p:%p: %016llx %016llx", vm, orig_vma,
- 	       orig_vma->gem.obj, orig_vma->va.addr, orig_vma->va.range);
- 
+> ---
+>  .../platform/renesas/rzg2l-cru/rzg2l-core.c   |  2 --
+>  .../platform/renesas/rzg2l-cru/rzg2l-cru.h    |  9 ------
+>  .../platform/renesas/rzg2l-cru/rzg2l-video.c  | 30 ++++++-------------
+>  3 files changed, 9 insertions(+), 32 deletions(-)
+> 
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> index 806acc8f9728..3c5fbd857371 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-core.c
+> @@ -367,7 +367,6 @@ static const struct rzg2l_cru_info rzg3e_cru_info = {
+>  	.enable_interrupts = rzg3e_cru_enable_interrupts,
+>  	.disable_interrupts = rzg3e_cru_disable_interrupts,
+>  	.fifo_empty = rzg3e_fifo_empty,
+> -	.csi_setup = rzg3e_cru_csi2_setup,
+>  };
+>  
+>  static const u16 rzg2l_cru_regs[] = {
+> @@ -412,7 +411,6 @@ static const struct rzg2l_cru_info rzg2l_cru_info = {
+>  	.enable_interrupts = rzg2l_cru_enable_interrupts,
+>  	.disable_interrupts = rzg2l_cru_disable_interrupts,
+>  	.fifo_empty = rzg2l_fifo_empty,
+> -	.csi_setup = rzg2l_cru_csi2_setup,
+>  };
+>  
+>  static const struct of_device_id rzg2l_cru_of_id_table[] = {
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> index be95b41c37df..3a200db15730 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-cru.h
+> @@ -92,9 +92,6 @@ struct rzg2l_cru_info {
+>  	void (*enable_interrupts)(struct rzg2l_cru_dev *cru);
+>  	void (*disable_interrupts)(struct rzg2l_cru_dev *cru);
+>  	bool (*fifo_empty)(struct rzg2l_cru_dev *cru);
+> -	void (*csi_setup)(struct rzg2l_cru_dev *cru,
+> -			  const struct rzg2l_cru_ip_format *ip_fmt,
+> -			  u8 csi_vc);
+>  };
+>  
+>  /**
+> @@ -204,11 +201,5 @@ void rzg3e_cru_disable_interrupts(struct rzg2l_cru_dev *cru);
+>  
+>  bool rzg2l_fifo_empty(struct rzg2l_cru_dev *cru);
+>  bool rzg3e_fifo_empty(struct rzg2l_cru_dev *cru);
+> -void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> -			  const struct rzg2l_cru_ip_format *ip_fmt,
+> -			  u8 csi_vc);
+> -void rzg3e_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> -			  const struct rzg2l_cru_ip_format *ip_fmt,
+> -			  u8 csi_vc);
+>  
+>  #endif
+> diff --git a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> index a8817a7066b2..d75cd5fa9f7c 100644
+> --- a/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> +++ b/drivers/media/platform/renesas/rzg2l-cru/rzg2l-video.c
+> @@ -257,30 +257,18 @@ static void rzg2l_cru_initialize_axi(struct rzg2l_cru_dev *cru)
+>  	rzg2l_cru_write(cru, AMnAXIATTR, amnaxiattr);
+>  }
+>  
+> -void rzg3e_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> -			  const struct rzg2l_cru_ip_format *ip_fmt,
+> -			  u8 csi_vc)
+> +static void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> +				 const struct rzg2l_cru_ip_format *ip_fmt,
+> +				 u8 csi_vc)
+>  {
+>  	const struct rzg2l_cru_info *info = cru->info;
+>  	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
+>  
+> -	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
+> -
+> -	/* Set virtual channel CSI2 */
+> -	icnmc |= ICnMC_VCSEL(csi_vc);
+> -
+> -	rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
+> -	rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
+> -			ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
+> -	rzg2l_cru_write(cru, info->image_conv, icnmc);
+> -}
+> -
+> -void rzg2l_cru_csi2_setup(struct rzg2l_cru_dev *cru,
+> -			  const struct rzg2l_cru_ip_format *ip_fmt,
+> -			  u8 csi_vc)
+> -{
+> -	const struct rzg2l_cru_info *info = cru->info;
+> -	u32 icnmc = ICnMC_INF(ip_fmt->datatype);
+> +	if (cru->info->regs[ICnSVC]) {
+> +		rzg2l_cru_write(cru, ICnSVCNUM, csi_vc);
+> +		rzg2l_cru_write(cru, ICnSVC, ICnSVC_SVC0(0) | ICnSVC_SVC1(1) |
+> +				ICnSVC_SVC2(2) | ICnSVC_SVC3(3));
+> +	}
+>  
+>  	icnmc |= rzg2l_cru_read(cru, info->image_conv) & ~ICnMC_INF_MASK;
+>  
+> @@ -299,7 +287,7 @@ static int rzg2l_cru_initialize_image_conv(struct rzg2l_cru_dev *cru,
+>  	const struct rzg2l_cru_ip_format *cru_ip_fmt;
+>  
+>  	cru_ip_fmt = rzg2l_cru_ip_code_to_fmt(ip_sd_fmt->code);
+> -	info->csi_setup(cru, cru_ip_fmt, csi_vc);
+> +	rzg2l_cru_csi2_setup(cru, cru_ip_fmt, csi_vc);
+>  
+>  	/* Output format */
+>  	cru_video_fmt = rzg2l_cru_ip_format_to_fmt(cru->format.pixelformat);
+
 -- 
-2.50.1
+Regards,
 
+Laurent Pinchart
 
