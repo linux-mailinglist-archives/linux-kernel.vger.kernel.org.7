@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-754828-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754827-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 56E38B19D3F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:04:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 681EBB19D3E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:04:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71731899920
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 97DA7164ACD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45D23BF9C;
-	Mon,  4 Aug 2025 08:04:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F126B23A58B;
+	Mon,  4 Aug 2025 08:04:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="LhIcN+jo"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="IGhs0aG2"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA5823A9BE
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212E4235045
 	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:04:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294645; cv=none; b=uO+xnx/en7W2m3LhLmkhOHNijem5UvX4Y8qykdvaxt9qW4QJyaJ46QCHou4myJYVRr/R71JlLRgPvfqAeSTcwoHgkKB4SeUFF1AfVrc1uRzB0yhuPepsFFWo/WkJmKSoEaqU8PY8oiOvZFxSclztgaajE66q/hQBegch9L44nSs=
+	t=1754294645; cv=none; b=PYst5mFAks41avi9wwxCmtXfNItGCHwkR7jyYC154WupnJHUA69dxYdKFafajIEpl4PtUIoFXp0LJ99RfRDePDme2mTmL/2dYXzP8j42fmTqMylURtH8jIpRsRDNBtO4Mf2AIFxS7SGVfOMsQOvWBnzSDn+yfwqBzVHupSCmAz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754294645; c=relaxed/simple;
-	bh=vzFx82vV0vr6mMz1Z6IT0Dd2ubmzk/i7rSdHVE0NwHo=;
+	bh=vM/64Xm9BoHSIklScFHYPjkxIx0tlfo7hzjJbLJM3CA=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=pBXiau/OA3V7pur+2ERE5QXeI9CZMc0aqqLtKZv+BeUjFchq8JgHBaw2ZYivMivwBEkNFktHpX8/tJ0uQBPe6l4tYGeTuFJdO0usTXh+shHKexOV6ch4NMMOofnMlM+lH9YTkJ/Ii+vFCIpEAJHtC4VR61HA3qJ7Jya7kheEnX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=LhIcN+jo; arc=none smtp.client-ip=212.227.15.18
+	 MIME-Version; b=Z44ga9/KXnala1/ywRIOB3fbz2re5t/uR07EJ00wOJsjQwhlhoMe5KvIFw0JlGQ3fLY5Oxvfup9X3pV0+0KQOsz7WYtt5KnMG9Yql3m/NjhnlmiXqVLNaGnsbDvxrCS1P86KBvNNuSK9CDEeiIqU7Nnp+ZW1fuzp0EU84f19ndo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=IGhs0aG2; arc=none smtp.client-ip=212.227.15.19
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1754294623; x=1754899423;
+	s=s31663417; t=1754294624; x=1754899424;
 	i=markus.stockhausen@gmx.de;
-	bh=HzVaQGDPIYSbSHCUX8mZ7P1G+XecZ/J/O7wLLc8uSwA=;
+	bh=g1rzoG9f0oHQcMo7RkUNLvEibz7XkPzWojlZocSeReI=;
 	h=X-UI-Sender-Class:From:To:Subject:Date:Message-ID:In-Reply-To:
-	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 References:MIME-Version:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=LhIcN+jo4hmBSS9oHtYZ256k6C9tkQ7MVn7c/HDIPvbeLb/o72i94EfWE5r2u63I
-	 CVBpn3BPWEqqXquAdgtghwMUE2Wz+AjmmHsFzHx9V/uvRFg+dEMEpNgeYeaCZHdvN
-	 1k5TSp5oEUMqCShtxYa9YKa6sjkyHW3EZERL7i8HIMLGH0x1SvUjIpZzgvr3xz4Bo
-	 6K03szUNEAnees7rTIzJLT6EGmzIc96fysOl7uW1YC6ITmUn9czhtpTL1OKM1xCVF
-	 CNL3Z8hYsv+3+yj3IibLzqXD+Tbgz7LhB0ajmtFoXydEH8hwfKhVJqtc+c2DvHh9U
-	 oPFV0tr82OZOchFAcg==
+	b=IGhs0aG2JRTSgPoI3iGeDdm5ddcdcMyWF7eoXFgn5GU4OmdNPS+oFmdbFQBP4TzS
+	 BUTMaoznHQou3pujlXslhSHlXcACScN/yhZGkXmT8CNHBC2sjGOylXjoFI4SCHGX7
+	 YYeMpIpgJdVS1I0hJW37Glcp0UqBeW6aSFYRZmgEgv1tWNByjOqLfwEqORiH+nnfP
+	 Kb6jM/C2i5fraMbhOmT23Rd3A4vS8mzujErYVvS+4TLOrb9Oi59uduYMSQ+8MjMYH
+	 sqMowSVtpxWDG3A9/qXPd65xnWx3dH2AFadR7/EGmmW2sPS9+xwqLyClurNIBAalI
+	 Gma2e5sgnDOZx+5oBw==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from openwrt ([94.31.70.55]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1M26vL-1ulJ0Y1vTd-00G78G; Mon, 04
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1MEUzA-1upxyf2cJO-002ejv; Mon, 04
  Aug 2025 10:03:43 +0200
 From: Markus Stockhausen <markus.stockhausen@gmx.de>
 To: markus.stockhausen@gmx.de,
@@ -55,9 +55,9 @@ To: markus.stockhausen@gmx.de,
 	linux-kernel@vger.kernel.org,
 	howels@allthatwemight.be,
 	bjorn@mork.no
-Subject: [PATCH 3/4] clocksource/drivers/timer-rtl-otto: do not interfere with interrupts
-Date: Mon,  4 Aug 2025 04:03:27 -0400
-Message-ID: <20250804080328.2609287-4-markus.stockhausen@gmx.de>
+Subject: [PATCH 4/4] clocksource/drivers/timer-rtl-otto: simplify documentation
+Date: Mon,  4 Aug 2025 04:03:28 -0400
+Message-ID: <20250804080328.2609287-5-markus.stockhausen@gmx.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
 References: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
@@ -67,121 +67,103 @@ List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:0hXl94sGqeDwUOgo8GUI8UIukLFVGquOsqvgXAWbRnjUUnJxaRC
- bV1OV8DdhoJKertvLtIKs0Zaee4786ewbjzBb2v1CA7yESvw7PE7W3S5QP2NidPMp+pOr41
- 2f7G1l6ambU4u5zMudvPJWpyOnDtXgg0aLTILl8/kKYuopcu191FqW5uLqKT0nQtcgFNT2a
- 7F37VZfKAtkLOnH7ICcfQ==
+X-Provags-ID: V03:K1:mcAzbTgXMmIRzGD6D4AVBX5ajz08F82s1hYcUTqdf+7ffLgpMxP
+ g1wYZ1Mo9PtaaygkXfRJaHlCilM9tELAwRhgKXZhyIrhn78vax4zO/Y/CmDr3AbFh/o1CZi
+ 1UqbSwrvcPCKVmoehQJZhl5RILLDZ//LWI3t1YTKqzoBf5haG47iqxTS19xWRuPQ2dAphtC
+ M/ib9mRoHbjai7APdgJMw==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:9WRsymVBm54=;2bEXltqR3YDJsgulS+pspUa3YFQ
- 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
- aA==
+UI-OutboundReport: notjunk:1;M01:P0:y2cf+GR8dAQ=;jAJ/UduJdY6DTrU/sBLQl+jktAH
+ IDjFpyfbnc8qSewnsC0RlAEDwombOMmMkoWZCDbZYpJmmn0q9iPXuGw7BRcAZj788Qa63dg93
+ ipmsdL70fVsXWdpEYrXIpd9zXkEu9C/7UYmya5a0/6zYhFx+GztMFkWXcMNaL/kx5JMGWLTPc
+ hnt5keoEFd5sf1XpfcNOUE2r1Y7az+D/xc0q+boWF1e+lRyXVNzyUKDD2tW8BvDTML3il65ap
+ sDpKjamMPkfkLcr1td7hdxLgt8rJo11Sjk8qzuiRYQl0kbM0T36sIHdTo9leG83rMx+ewdtiN
+ M11Oy29a/YPz41Vn5cQJyxC/kOAXzmuoL8W9mVw9/SRwbVR9LR2yg+J6sa7rLhLe/ABLHJhZu
+ Zg+1RfLQ+6t90kVGqlr/k/2AyHnODq3vE5g7VaxZ/qAWgs0sOVHNZT1VSwZseSL3qp2oNKrhH
+ TbMvH8CpLbLeAro1lG/AI93JQd5i9jRutUQUI4F+NFKc5cMDmD/dfUV3Y6VrjExmMQjVqVu6f
+ bxPorFck43Djniqxv8fnp8x6Q5+lA/j1YLqe+bI9bnxq8Riudr9GXQdytM91ROlYMaBjUx0PO
+ EJCqoHN4SpAftyQAoNf2MFr+E5HO9XqT1eFyOxZJ2Sy0aSMP6Uk1u1SC0R7Q6QPSKaYqLo0zW
+ azuW/CaBr9R01aFUmB0Gnf1TueWbzeoSDr2e/m9Fc29WLS4wY8mwzHl3RL7m18fk8ET6XTaf1
+ Y0GDnOkKi651mgzHM21EnR0LzW0pO1DudAea2ExbNim8XhJ6mAjDudFxdC3TlVodnQiuE3+xx
+ ZCFvnFVfvRmIkOm1vOQh5MwNCa01r3GQeMU+At2hZvgqHF2by1Gt8AyhF65MjQmdZBMQv4sGo
+ 2Y0WtSu4oXqIMh8VZ2By4WaY2kiiwNEprmRISWCGVwG4r4x1GMUJ3hXz9g+B9tPzTf8M83poG
+ VGV94vUKR5lknkQyJquHTkBGaBG4RZwceFzDxYVjSMP1FiL8Tmb+IuuF3GDy2pshLKEe4MFCX
+ S7Cwk2IxIdehE67XG7DgtP4czGedM1Yzxqs1rGXTfROvvYHf9eOKcusVjwi9WV5yvtguAbDGS
+ r31F9D6FPq73leMQFzWlyk6IDk0wdWPL1vkOGLyYIQ6sJujwLvTNAzU/9uzFkb2JAQaHo25fy
+ nbZ5iiBR7i12Fgv2/UFjCnGlc2njE1f9fHeENmuAzaHVAQZUsC6/WlpWvdGqk/pqKJnGR9TN6
+ 3vtN3vbWBUqSY5g8CKmBc2vR9BVF/mFg361V07Rehf4J6QV+7bdkGvOCE5Rj+KGbZh+3X7rY8
+ o1e4KqEVKLMSxo8V6RlnJNRSeS99cQfCCoGSWMdnU1j2w3paNO3L5TBkL3jOdw+4zZibw+AMQ
+ mhqzjjGTXHfybaKqs861aOPQW/sw/xiM5pae23f6HeCTWMUs1wV7oto9TM9HfAzmL/1lOvz/+
+ 2OiFU1fTrG6dwlFVRlNjr14mG8lwY2Vmx51RIpOUUwIOWLd54h7VvRyZ4W42Xaa6cXPLeX2Px
+ U1DDFibgq/7bINeqSZsGpvEF7iSkgJIBcn7cL9KGgjS2bx1Liy5l6wRvblamHuY6eSnx0d69j
+ 9/A/LT1M1FZnTRmRVWZxpK51tyOp0h+1fEMgrvT+FjPuPeZa0Ev+HRh3Nc+CMq+xfMxi+GCEE
+ HHXDip0Jt2JBC12TlMcrDVL357Wtky5H9Br3EhHATV3lcZzvQbsob9271RSRGOXImYpEt+KnM
+ R8dBIi484NT+x8SoPQegw2J40xkgOA+nTNb7wJhALkeM4734be8b7bbqC2JJYg8gZKO/fuUIm
+ T8k87BJc4uZf+RtM9L3gnTa4JxKhRi3ZwPCNeh3c8zG6Z3rQ5APIWf8+kEiiCTMZEGQ5buR9Y
+ QH11H4rwV8IWDpikMPvXVYvB8YK5Hjt921VNhZOkux8uoJaQfZ+E+rOp9dUi6mRa1Q0VRNcOz
+ vKpDvQ3P8PHPgMZhoSR+C/91TQbeaJT7irrfMgSjV4z5WyWZrhR6QlBSHIUaqIg0Ub1YmzeGn
+ rzAzV6RKRFzxtTkG93UpVEw1UuOef5inzaOVQD7LyygR6kwCGRlFX/xGeAk9KORM9hNBgxHRj
+ CeJl6B/RgPIsVU2LkL/P1stWkajDqZf4NJAfs3T3was6V1pcyZXsQD8zQ/yrQqBpsHx068B/r
+ Ky9PfX2aKz4J23o0FF++/n+fQH2xaWEi8UUzA8BCRxhnzr0nt2TfwPKWAt9GXPxmBSXRHzzgv
+ mWv5KOmyh4FiJvuzrRu73rNgDpYWrgTvWkUpv2XXWg7A+v3sWlAYa4BH2ZcNis1/CQR7ab5Z/
+ NODvTSaroudTycxc2NhPNB1oPShqKik2ezTBqNyoif3BZlUy7GMp4nRwIocf0VrTrp1dcNhbV
+ vhQ9otTtK708JeOF7g+2TK1moFVvCOXExv0riuA/sEee/7E315wkMa/7fAz7ikS+/Khsgjxuh
+ t129C3WQ828OH1k82Yttj+GnTQOJv+LRsCWkNIOdXks2JTW2TJS9ZrGvXE/cZmiQcrVAHUGJW
+ oLyoh9V4KjI0ezq2w76w0+bI/oTPac0EBJd44ceens5LGrcsNyuX6z1cAsm1tffiK6VkrxSDx
+ Xb02NFCMgb/FWKMnAVfhx4vUjmnkUtlA4pKtehLKcF2NS9l3wHkbv5oZ9zerg6OB+8QJsHChy
+ JSUtUo7d/UxLYgyZQ+JJ7+EpjugCoezAscZi8YqvRs4L+0kZfp8FfjWfjx/XMf4qjKm9zu+k5
+ 5wPnHZNWoyAQwC/G1Rg1hZcyOlB9MPSLb9sEA7OTKwhmLy03UDciJH2stkor6xsJnIvCvSPOV
+ s7HaOY//KFQ9Mjk3ofgvVa9dOorhxaI8NHS0xsE0fXrvwj1TcikWRzSbAwYnyW03l75GN839r
+ d5a9YwDCOtAdVDA40tGUpDxQtvP2zBrDRg+SjusB+w0oGJwpA6uWZ/MBaneNOEx8fT+iYU5Wk
+ OhL2nqO1w4jcjsrxelpB9GeqRQ+VNpva1T6E03Fiee5ZQjxQxn6VRHurGq8CRx36lCMtj3XgN
+ 4syP41N7JldCfkrTe/q3VrQv2w43VxMCkPNmFNgrfbnq4I5fFj3CGKxiI5KGf21xlVGmEk9EU
+ z1VegCRq69CqBtZxmXdm6wfnWMcV0IJVN8ElxUFRwS2fzxuReKIVsw1NGceekYPb+ZSnL8Oau
+ nnPe1LBLlzl0AXeGR/UfAAjmWl5/g/9jIoPYd//UwCXRbmQmHP5csGGD09qdj6Ek8m+Lzb8/4
+ r4PBmeqNB+fjPYdQWIkNDBE64azSMo22s+7d3r+8OzDRtBewApdRwf+ol87fxoEYZnCovOb21
+ GCTsBzOLpA+SMq447taDn16a/l0Fqc1W3qnZqYYfUkCBMA/3a3jyw7mO/Za+lRaDYUYjxSAfa
+ mR3wLCqCr5lUIis/GtnwpKKzBNcpQg5sjUnyfQh/DdcXg9bGHO+StiNW0t7yLGPe/yheo2azu
+ N7l0s34Q0k68jC9nn75zteb5cS3ouGNKWn/2MN1S7ii0XtuocwUnY+AYV5ula8nox4cjsK5Z+
+ GCM+TYEwIqH8jLae2qJ1x7ZaHKww17ILuNY/BZiCD/34
 
-During normal operation the timers are reprogrammed including an
-interrupt acknowledgement. This has no effect as the whole timer
-is setup from scratch afterwards. Especially in an interrupt this
-has already been done by rttm_timer_interrupt().
+While the main SoC PLL is responsible for the lexra bus frequency
+it has no implications on the the timer divisior. Update the
+comments accordingly.
 
-Change the behaviour as follows:
-
-- Use rttm_disable_timer() during reprogramming
-- Keep rttm_stop_timer() for all other use cases.
-
-Downstream has already tested and confirmed a patch. See
-https://github.com/openwrt/openwrt/pull/19468
-https://forum.openwrt.org/t/support-for-rtl838x-based-managed-switches/578=
-75/3788
-
-Tested-by: Stephen Howell <howels@allthatwemight.be>
-Tested-by: Bj=C3=B8rn Mork <bjorn@mork.no>
 Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
 =2D--
- drivers/clocksource/timer-rtl-otto.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+ drivers/clocksource/timer-rtl-otto.c | 10 ++++------
+ 1 file changed, 4 insertions(+), 6 deletions(-)
 
 diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/ti=
 mer-rtl-otto.c
-index 48ba1164f3fb..42f702aca689 100644
+index 42f702aca689..6113d2fdd4de 100644
 =2D-- a/drivers/clocksource/timer-rtl-otto.c
 +++ b/drivers/clocksource/timer-rtl-otto.c
-@@ -141,7 +141,7 @@ static int rttm_next_event(unsigned long delta, struct=
- clock_event_device *clkev
+@@ -41,12 +41,10 @@
+ #define RTTM_MAX_DIVISOR	GENMASK(15, 0)
 =20
- 	RTTM_DEBUG(to->of_base.base);
- 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
--	rttm_stop_timer(to->of_base.base);
-+	rttm_disable_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, delta);
- 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-=20
-@@ -154,7 +154,7 @@ static int rttm_state_oneshot(struct clock_event_devic=
-e *clkevt)
-=20
- 	RTTM_DEBUG(to->of_base.base);
- 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
--	rttm_stop_timer(to->of_base.base);
-+	rttm_disable_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
- 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
-=20
-@@ -167,7 +167,7 @@ static int rttm_state_periodic(struct clock_event_devi=
-ce *clkevt)
-=20
- 	RTTM_DEBUG(to->of_base.base);
- 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_TIMER);
--	rttm_stop_timer(to->of_base.base);
-+	rttm_disable_timer(to->of_base.base);
- 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
- 	rttm_start_timer(to, RTTM_CTRL_TIMER);
+ /*
+- * Timers are derived from the LXB clock frequency. Usually this is a fix=
+ed
+- * multiple of the 25 MHz oscillator. The 930X SOC is an exception from t=
+hat.
+- * Its LXB clock has only dividers and uses the switch PLL of 2.45 GHz as=
+ its
+- * base. The only meaningful frequencies we can achieve from that are 175=
+.000
+- * MHz and 153.125 MHz. The greatest common divisor of all explained poss=
+ible
+- * speeds is 3125000. Pin the timers to this 3.125 MHz reference frequenc=
+y.
++ * Timers are derived from the lexra bus (LXB) clock frequency. This is 1=
+75 MHz
++ * on RTL930x and 200 MHz on the other platforms. With 3.125 MHz choose a=
+ common
++ * divisor to have enough range and detail. This provides comparability b=
+etween
++ * the different platforms.
+  */
+ #define RTTM_TICKS_PER_SEC	3125000
 =20
 =2D-=20
 2.47.0
