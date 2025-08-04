@@ -1,112 +1,167 @@
-Return-Path: <linux-kernel+bounces-755413-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755414-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 742C0B1A602
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:30:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B75D9B1A605
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B03871885FCC
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:29:53 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 49E2518864CC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:32:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D305F221FDC;
-	Mon,  4 Aug 2025 15:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B249218AA0;
+	Mon,  4 Aug 2025 15:31:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O2Cpt20n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cqbrqj56"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2765F203710;
-	Mon,  4 Aug 2025 15:27:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6042E36E7;
+	Mon,  4 Aug 2025 15:31:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754321274; cv=none; b=r/I09MAtkNIAJRFU7YMOPprxd6AiD1hv5KMfnc6OJq/Z91nv1Km2WRUei9qsgCkZQQN9pB5Z35GdrGAAPrVjdlz3oc4D7uBNbDxrK4Ihqelak61PmJDDba7SDIBkEyej+MDNLjapSX2pexTJijCEU393J9YuCGV3MzTyC+ahR3Q=
+	t=1754321498; cv=none; b=RjYfsfwtKtmCoScPB08hpLcz2ef7GuQloh51l3QxP4m1VoXtplM9OzTX9R4703xdBj9dlfM7G2/e+BbLjdY+lrJT8eqRCRyfo688r0FjiqrpvcGnGyIfinLq4jmYY5zSGkKtnNvXib3DcIMa6jAMzTt02CJpRmLLsOOpGmCXUs8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754321274; c=relaxed/simple;
-	bh=1SI2hREQhkWq1ojwFfeqLsp+KLaUqr1qhk4/a9t8bKc=;
+	s=arc-20240116; t=1754321498; c=relaxed/simple;
+	bh=BEG/Ye1JQt5JRZ7HueqxAHrGd3QNs1d8bzKhyitng5c=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LN+T4jjYuo1PPjFxCVmbSnau7x1TAvo92vPgLSjTFdRD9gwLkL6jTUbgjsoeZx/Y5wEg4dPikGEOLYhkaWKeSETh/Zm7FXVB6BPwg5P1NI8kA0cZxNBB0j4FuJo4q+XHOgftvOcCFBNPHY5BGKXMagE2XccZEsd4vp0AjGRlP0c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O2Cpt20n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DCD8C4CEE7;
-	Mon,  4 Aug 2025 15:27:53 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=di7QXbSKU+MFcyDPmgP3M36YdinECq+izsJBM5LqH7JwNS56LBcbfRASZB01VVgdmyF5Qn+iy2reBJ3fX/KJjr2VT3F0cn+b2Mxa7+Xw9iZriml4yCoByg66NDZQ6wblldM2OU8XZjzbr/kJr9PPYKFksQd2D8S7nRsYnkeqF+o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cqbrqj56; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 81CBAC4CEE7;
+	Mon,  4 Aug 2025 15:31:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754321273;
-	bh=1SI2hREQhkWq1ojwFfeqLsp+KLaUqr1qhk4/a9t8bKc=;
+	s=k20201202; t=1754321495;
+	bh=BEG/Ye1JQt5JRZ7HueqxAHrGd3QNs1d8bzKhyitng5c=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=O2Cpt20n/L8s7jJW2IRHiXg75njY5wXYZl53YCDgwTIul/Yr5/RWFMwYFjjP7IsWD
-	 MlwcehWUuw2etEB7sh0VRF9hOsTYOBWW0e/zGt6ivk5fNP+a3dEjZyc7+YL6fS16Jo
-	 K7yISx6Erv1pLsLu7k2OPrUqJVioDffCn/EkiGcNFMjoAgi/ofY/KVTzQ8k1aG1pYc
-	 NcOKxHVl0eTdfhsqQS8dnVbfO+g44/BPHiIsLs2ScwbxdhfG1gVvcslZNnNMeQCEVQ
-	 D7aiYf35VyDsjIW9vJGutklDy7uJi4eh7/1DlYTgpf0Hu4eSi4bCvLPjhWvHDUvmlx
-	 XF6u3+ZK4G3JQ==
-Date: Mon, 4 Aug 2025 11:27:52 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
-Message-ID: <aJDReEEeiVBWEYLy@kernel.org>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-8-kbusch@meta.com>
- <aI1xySNUdQ2B0dbJ@kernel.org>
- <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
- <aJDQ1GPV5F5MB1kP@kernel.org>
+	b=Cqbrqj56mQx6uQ90El8twgFggL/Ej/JJwRdZocf5UACMCxVZjz8hvT3I7jqZbq8v1
+	 y1X3juwYLjjVrFoce4b3BbVeVl+tEFWmmlJbMfA+PDV/6k8h3hRMn0bJxAsvENwE+h
+	 NgOYifE3mwFdN6f4odbcSnHGMz1x8dCiwvm0Mab+0LkynMFU9LAvt3lyp1rBc6U7XV
+	 xnL+HMqXF4InCV3FgrumpWSO7cZFLaw3FFb8SUPlpdqhwhP2rHyLgwSiIh3E7KNFgf
+	 q4GV4SsF6vFvJLzWuZIh6wTRyt4FbruWt+H0Kx7uyCdxFZsSDq6+cfUuAeWmelFwlp
+	 Lq1tZpeQpFt7Q==
+Date: Mon, 4 Aug 2025 23:31:30 +0800
+From: Coly Li <colyli@kernel.org>
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: Zhou Jifeng <zhoujifeng@kylinos.com.cn>,
+	linux-bcache <linux-bcache@vger.kernel.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bcache: enhancing the security of dirty data writeback
+Message-ID: <20250804153130.igwkb6baf3vtjhzu@P16.>
+References: <20250731062140.25734-1-zhoujifeng@kylinos.com.cn>
+ <etlu4r6gxbe2jc3eemj3n4slg6xraxtxxydvxvmhv77xv42uss@7aw3yxbdgrdl>
+ <tencent_656F159830BC538C2D26CD68@qq.com>
+ <zcxdklyr2ugq7cfbed4olcsfcboy3nksxtpjs2g76bauvef5cq@4akbspw3ydiw>
+ <tencent_22DE1AC52BA931BD442CE823@qq.com>
+ <wxyamy7fkf7of4olnvqju2ldflnpj3k5u6qsufvesb3mtoaxwb@fuu5brsbgjwf>
+ <tencent_6FE47FFD5A5D8EF818ACD926@qq.com>
+ <p4uhjrka2rdj67ph5puvaixxhstcyfitzq63pwrafdwtabtjwn@fbie2x77lqee>
+ <tencent_31215CC45AD29EC835D34AD8@qq.com>
+ <c2awlgl4ih23npqa3k2ilbrbhciv3nfd7wg5xnsjjxikcmednb@nwn3qc7aqhou>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <aJDQ1GPV5F5MB1kP@kernel.org>
+In-Reply-To: <c2awlgl4ih23npqa3k2ilbrbhciv3nfd7wg5xnsjjxikcmednb@nwn3qc7aqhou>
 
-On Mon, Aug 04, 2025 at 11:25:08AM -0400, Mike Snitzer wrote:
-> On Mon, Aug 04, 2025 at 08:16:39AM -0600, Keith Busch wrote:
-> > On Fri, Aug 01, 2025 at 10:02:49PM -0400, Mike Snitzer wrote:
-> > > On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
-> > > > From: Keith Busch <kbusch@kernel.org>
-> > > > 
-> > > > No more callers.
-> > > > 
-> > > > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> > > 
-> > > You had me up until this last patch.
-> > > 
-> > > I'm actually making use of iov_iter_is_aligned() in a series of
-> > > changes for both NFS and NFSD.  Chuck has included some of the
-> > > NFSD changes in his nfsd-testing branch, see:
-> > > https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
-> > > 
-> > > And the balance of my work that is pending review/inclusion is:
-> > > https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
-> > > https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
-> > > 
-> > > I only need iov_iter_aligned_bvec, but recall I want to relax its
-> > > checking with this patch:
-> > > https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
-> > > 
-> > > Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
-> > > both NFS and NFSD can use it?
+On Mon, Aug 04, 2025 at 12:17:28AM -0400, Kent Overstreet wrote:
+> On Mon, Aug 04, 2025 at 11:47:57AM +0800, Zhou Jifeng wrote:
+> > On Sun, 3 Aug 2025 at 01:30, Coly Li <colyli@kernel.org> wrote:
+> > >
+> > > On Fri, Aug 01, 2025 at 02:10:12PM +0800, Zhou Jifeng wrote:
+> > > > On Fri, 1 Aug 2025 at 11:42, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > > >
+> > > > > On Fri, Aug 01, 2025 at 11:30:43AM +0800, Zhou Jifeng wrote:
+> > > > > > On Fri, 1 Aug 2025 at 10:37, Kent Overstreet <kent.overstreet@linux.dev> wrote:
+> > > > > > >
+> > > > > > > On Fri, Aug 01, 2025 at 10:27:21AM +0800, Zhou Jifeng wrote:
+> > > > > > > > In the writeback mode, the current bcache code uses the
+> > > > > > > > REQ_OP_WRITE operation to handle dirty data, and clears the bkey
+> > > > > > > > dirty flag in the btree during the bio completion callback. I think
+> > > > > > > > there might be a potential risk: if in the event of an unexpected
+> > > > > > > > power outage, the data in the HDD hardware cache may not have
+> > > > > > > > had time to be persisted, then the data in the HDD hardware cache
+> > > > > > > > that is pending processing may be lost. Since at this time the bkey
+> > > > > > > > dirty flag in the btree has been cleared, the data status recorded
+> > > > > > > > by the bkey does not match the actual situation of the SSD and
+> > > > > > > > HDD.
+> > > > > > > > Am I understanding this correctly?
+> > > > > > >
+> > > > > > > For what you're describing, we need to make sure the backing device is
+> > > > > > > flushed when we're flushing the journal.
+> > > > > > >
+> > > > > > > It's possible that this isn't handled correctly in bcache; bcachefs
+> > > > > > > does, and I wrote that code after bcache - but the bcache version would
+> > > > > > > look quite different.
+> > > > > > >
+> > > > > > > You've read that code more recently than I have - have you checked for
+> > > > > > > that?
+> > > > > >
+> > > > > > In the `write_dirty_finish` function, there is an attempt to update the
+> > > > > > `bkey` status, but I did not observe any logging writing process. In the
+> > > > > > core function `journal_write_unlocked` of bcache for writing logs, I
+> > > > > > also couldn't find the code logic for sending a FLUSH command to the
+> > > > > > backend HDD.
+> > > > >
+> > > > > The right place for it would be in the journal code: before doing a
+> > > > > journal write, issue flushes to the backing devices.
+> > > > >
+> > > > > Can you check for that?
+> > > > >
+> > > >
+> > > > I checked and found that there was no code for sending a flush request
+> > > > to the backend device before the execution log was written. Additionally,
+> > > > in the callback function after the dirty data was written back, when it
+> > > > updated the bkey, it did not insert this update into the log.
+> > > >
+> > >
+> > > It doesn't have to. If the previous dirty version of the key is on cache device
+> > > already, and power off happens, even the clean version of the key is gone, the
+> > > dirty version and its data are all valid. If the LBA range of this key is
+> > > allocated to a new key, a GC must have alrady happened, and the dirty key is
+> > > invalid due to bucket generation increased. So don't worry, the clean key is
+> > > unncessary to go into journal in the writeback scenario.
+> > >
+> > > IMHO, you may try to flush backing device in a kworker before calling
+> > > set_gc_sectors() in bch_gc_thread(). The disk cache can be flushed in time
+> > > before the still-dirty-on-disk keys are invalidated by increase bucket key
+> > > gen. And also flushing backing device after searched_full_index becomes
+> > > true in the writeback thread main loop (as you did now).
+> > >
 > > 
-> > If at all possible, I recommend finding a place that already walks the
-> > vectors and do an opprotunistic check for the alignments there. This
-> > will save CPU cycles. For example, nfsd_iter_read already iterates the
-> > bvec while setting each page. Could you check the alignment while doing
-> > that instead of iterating a second time immediately after?
+> > The "flush" command previously issued by GC was supposed to alleviate
+> > the problems in some scenarios. However, I thought of a situation where
+> > this "flush" command issued before GC might not be sufficient to solve
+> > the issue.
+> > 
+> > Suppose such a scenario: after a power failure, some hardware cache data
+> > in the HDD is lost, while the corresponding bkey(with the dirty flag cleared)
+> > update in the SSD has been persisted. After the power is restored, if
+> > bcache sends a flush before GC, will this cause data loss?
 > 
-> Nice goal, I'll see if I can pull it off.
-> 
-> I'm currently using iov_iter_is_aligned() in 3 new call sites (for
-> READ and WRITE) in both NFS and NFSD: nfs_local_iter_init,
-> nfsd_iter_read, nfsd_vfs_write
-> 
-> nfsd_vfs_write is the only one that doesn't iterate the bvec as-is,
-> but it does work that _should_ obviate the need to doable check the
-> alignment.
+> Yes.
 
-Freudian typo: s/doable/double/ :)
+The cleared key is updated in-place within the in-memory btree node,
+flushing backing devices before committing journal doesn't help.
+
+I try to avoid adding the cleared key into journal, in high write pressure,
+such synchronized link between writeback, gc and journal makes me really
+uncomfortable.
+
+Another choice might be adding a tag in struct btree, and set the tag when
+the cleared key in-place updated in the btree node. When writing a bset and
+the tag is set, then flush corresponding backing devcie before writing the
+btree node. Maybe hurts less performance than flushing backing device before
+committing journal set.
+
+How do you think of it, Kent?
+
+Thanks.
+
+Coly Li
+
 
