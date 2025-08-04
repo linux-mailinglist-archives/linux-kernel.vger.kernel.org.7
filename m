@@ -1,163 +1,363 @@
-Return-Path: <linux-kernel+bounces-755250-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755251-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 33BD6B1A398
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:39:48 +0200 (CEST)
+Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
+	by mail.lfdr.de (Postfix) with ESMTPS id A7B65B1A39B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:39:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1259F188580B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:40:03 +0000 (UTC)
+	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 997C74E1880
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:39:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 64CB126A1A4;
-	Mon,  4 Aug 2025 13:39:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 959BA26CE30;
+	Mon,  4 Aug 2025 13:39:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="aAVFTlNd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cDQTkz2K"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A5AF2673B0;
-	Mon,  4 Aug 2025 13:39:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314778; cv=none; b=ImolvXPnvAx9FIRqxdAnpvHsEsZnKCJp1gwt/yH8Dz1u+8JhuPAK7mDxcdkA0dSWihWcy0z8ls5Gb8SJRf/EsAP6r5yNJeY3nbb5QMtYSGsSEJqWfg0MOByrmxhutNKyPO9jrNeCPCSyd4rLiYXxbh23uriFXgOQfGS4oZ84WvA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314778; c=relaxed/simple;
-	bh=OlWUAh7GICilysLofknMhfwrPXknwLkZAIquSsD6ayA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hlf1MnqEzsm2Tw5FO04EezluZgn/2FTKtI+IxmvYgLv97YVcEoBumtToqtAZkpgmPh/NoqfUkZrFpHM63zDfMTSVOramKSAfka1K/Bf0eRCpij64d/TPpGUc85e0rPlOlAlwIvj8sqUR1IAH82PEuJjUlI9p+soQHX9CPHePo2c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=aAVFTlNd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5745u2Lr023854;
-	Mon, 4 Aug 2025 13:39:30 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=EUyTG6aS9q1a0tmKCUOqPG42vT1QYZ
-	vjXAgeWspdS+8=; b=aAVFTlNdwg83cVTP9cyUcgJo+T5AfpXbWqCsamUqpIfMWY
-	I7l9jRF2F6Pc/lcGoy1a2bFgFqRK25Kjg7EVtqGWu0+LwhEShUYtXGqBD1lpdce/
-	AhBQcUERnEESEk1fshzPCMViZlooexDfy3YbE7IDOVZyTpMnMPneYPe8xslrm0yN
-	auxRLobt4r4FJcFYhz2HonlsX6h9QM+iBh7AIOgFYMyEVCHJkCMBFZJ6wBbT4Ds2
-	tXip7bovQr/t/JUBLZW8zQEOCukQvT5VN+Ido0kaSxtJP9pTvzGvB/LLveRB68Ca
-	SbBKAkZl+8YSgv/P9VSN/2HcVB9BtZNQFHRH+JqA==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 489ab3h7qm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 13:39:30 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 574ASL6V006876;
-	Mon, 4 Aug 2025 13:39:29 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 489xgmdys8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 13:39:29 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 574DdP7h20447534
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Aug 2025 13:39:25 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C3DD320049;
-	Mon,  4 Aug 2025 13:39:25 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 4CED820040;
-	Mon,  4 Aug 2025 13:39:25 +0000 (GMT)
-Received: from li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com (unknown [9.111.65.243])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Mon,  4 Aug 2025 13:39:25 +0000 (GMT)
-Date: Mon, 4 Aug 2025 15:39:23 +0200
-From: Sumanth Korikkar <sumanthk@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        linux-s390 <linux-s390@vger.kernel.org>
-Subject: Re: [PATCH] mm: fix accounting of memmap pages for early sections
-Message-ID: <aJC4C7PndXlcDIro@li-2b55cdcc-350b-11b2-a85c-a78bff51fc11.ibm.com>
-References: <20250804090859.727207-1-sumanthk@linux.ibm.com>
- <1e259390-67b1-4d08-8174-a65f1fc9eccc@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30CD426B747;
+	Mon,  4 Aug 2025 13:39:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.12
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754314782; cv=fail; b=THqmy2YPYVR4b5AMrTWinCalS5yBYUvsIyIAWyGYc4Ql8md5E6EzRFECCfsyFSljPlRuzMrORXLjV6ejJZcptYk2huBu2HTmMobej2NbdO8hGOK53Q1FsusjtkvO1WyxsiOAuITAXfRhoqg7yiG8MEbZrsDl9NtJqEOoBS8uX4g=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754314782; c=relaxed/simple;
+	bh=R0/zIVCpiEvMWM28UgpNlt4bt+czQIi6xgvuDC3q3gY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=DfkmhpB3sZ0poxwu/xaRY2XWEkPAYh9Nl39/6JfgE78Q2Z1stsGh+60uEBTQIvNwifuCqVoQb3Uvlznvq3Dp2wPgzoXmx89ms6eZRctz6NEF06oXty+BjfVvhRp5iPVyGwkmrONHXQWNtVHfHk8ETOWoD1nmkgjexf1rwLmLKl8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cDQTkz2K; arc=fail smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754314779; x=1785850779;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=R0/zIVCpiEvMWM28UgpNlt4bt+czQIi6xgvuDC3q3gY=;
+  b=cDQTkz2KvWnqfcg8lEUT0T9ZoEt06kgNLclZFFEFBmG3e9XY4n2CsFl5
+   cO155On51iAEXf7t+ic+s8dkg96A4YM/QM69wR6TzrxlLLceZn2CHs4Np
+   PxtsTg3ReR3WCV7NPM1SJtwkeD+csaEOIzFDvLAG3ROwSCfskFi7JBRgY
+   jKDp1VeXm/33Gyhd/KW906cyUo1/dp5CLP9Tb/WSEPFDBp8hucmrSCA+z
+   j/ZKxzMxKyn4lR2R72AIB/UXoAC8ATHzuocF2+fLQcS3cYuWZzXlUy/Ff
+   qwrIdoX31PMAPWh+kMoWJ5x52GzqaofThAhar/l9yxgVQV0aF0iVisZgW
+   g==;
+X-CSE-ConnectionGUID: fZ476WUyQr+pzbmHsrZM9Q==
+X-CSE-MsgGUID: m5/jj27xQOST6mH2HKPm1A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11512"; a="60387888"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="60387888"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 06:39:38 -0700
+X-CSE-ConnectionGUID: pZ47YZD7SDSf2KGab4zh3w==
+X-CSE-MsgGUID: l+BKQdegQw+7f16QJq17fw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="163427300"
+Received: from orsmsx903.amr.corp.intel.com ([10.22.229.25])
+  by orviesa006.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 06:39:39 -0700
+Received: from ORSMSX901.amr.corp.intel.com (10.22.229.23) by
+ ORSMSX903.amr.corp.intel.com (10.22.229.25) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 4 Aug 2025 06:39:38 -0700
+Received: from ORSEDG901.ED.cps.intel.com (10.7.248.11) by
+ ORSMSX901.amr.corp.intel.com (10.22.229.23) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26 via Frontend Transport; Mon, 4 Aug 2025 06:39:37 -0700
+Received: from NAM11-BN8-obe.outbound.protection.outlook.com (40.107.236.84)
+ by edgegateway.intel.com (134.134.137.111) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1748.26; Mon, 4 Aug 2025 06:39:37 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=PQEDx0+hAvF7pL2j02BVdtUoQnmlGLTLPWzzClcl9LxfpnRKtz6rsf4RkF1oSR/a+ZhlZMUy6c0lcRF72q7dfOSnA7cvPUquh9EE3HOfCZ/42xIepyW3VS5GqM7J7It18OXdN6HVRXEuPWLA7KtoPSwYFb0Aduw4ZKyLlJ/Oe79shDFK4RhJHeg/d7sdYA3kn46i/nDkWbeUa+BYWyV1hKokGIo1+NriYz7TpjRRZvamCOmVpdzmJL7JaNKs0aknOzOi5x8oRl0NqlOCPqW2jT0m0iGXmy/7M6HoGFG3+vIUco2G2z2FIFOP5owxEhPGfddhVttTpEfqbUuVHZsMiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SPz7k4+R3hiBi1jE6bTqtsxUYChRekOYe3+xMUUP+9M=;
+ b=rXfRfJO9jJHk7h7BWdzjZFwqaGOZX4nRmpJe0QICVkdZGfs5BiHZEJF6Q3DaUy0Sg7wsS9Li6Nt/Bxp7qUA0Sxsb+r5uzreaqpl//kmrAtBUqOSjdFc06x2aK9zFDAzFGS7xVF1/MsCRh69RUMXo8HbCeOQmmh4WEuJ6we+9D7iUgrd7egYC3UlJvcapvc43hyOUhvsJZifSdy+FC3Jc4wrQnAteHFG+TAEL7E1vZJ/SvzXAj83jnra+mEGuzIdNlYpTQG8xoBCa0c3ckQ3FyJHfZQV6mWF+Bra4lwTzIMZLhhLbVwaBZcGq7rONWO9e5JmCGMvbdzaSeKxxrAOgnw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com (2603:10b6:208:419::15)
+ by SA1PR11MB6991.namprd11.prod.outlook.com (2603:10b6:806:2b8::21) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 13:39:35 +0000
+Received: from IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905]) by IA1PR11MB7198.namprd11.prod.outlook.com
+ ([fe80::eeac:69b0:1990:4905%5]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 13:39:35 +0000
+Message-ID: <b863c8f0-1a2f-43b7-a89e-5e0801ef7815@intel.com>
+Date: Mon, 4 Aug 2025 16:39:29 +0300
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v2 2/2] mmc: sdhci-pxav3: add state_uhs pinctrl
+ setting
+To: =?UTF-8?Q?Duje_Mihanovi=C4=87?= <duje@dujemihanovic.xyz>, Ulf Hansson
+	<ulf.hansson@linaro.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+	<krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+CC: Karel Balej <balejk@matfyz.cz>, David Wronek <david@mainlining.org>,
+	<linux-mmc@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <phone-devel@vger.kernel.org>,
+	<~postmarketos/upstreaming@lists.sr.ht>
+References: <20250801-pxav3-uhs-v2-0-afc1c428c776@dujemihanovic.xyz>
+ <20250801-pxav3-uhs-v2-2-afc1c428c776@dujemihanovic.xyz>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: c/o Alberga Business Park,
+ 6 krs, Bertel Jungin Aukio 5, 02600 Espoo, Business Identity Code: 0357606 -
+ 4, Domiciled in Helsinki
+In-Reply-To: <20250801-pxav3-uhs-v2-2-afc1c428c776@dujemihanovic.xyz>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: DU7P191CA0008.EURP191.PROD.OUTLOOK.COM
+ (2603:10a6:10:54e::12) To IA1PR11MB7198.namprd11.prod.outlook.com
+ (2603:10b6:208:419::15)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <1e259390-67b1-4d08-8174-a65f1fc9eccc@redhat.com>
-X-TM-AS-GCONF: 00
-X-Authority-Analysis: v=2.4 cv=Z+jsHGRA c=1 sm=1 tr=0 ts=6890b812 cx=c_pps
- a=3Bg1Hr4SwmMryq2xdFQyZA==:117 a=3Bg1Hr4SwmMryq2xdFQyZA==:17
- a=kj9zAlcOel0A:10 a=2OwXVqhp2XgA:10 a=VwQbUJbxAAAA:8 a=VnNF1IyMAAAA:8
- a=4jqXR_ZrKcS0ey4vrCcA:9 a=CjuIK1q_8ugA:10
-X-Proofpoint-ORIG-GUID: fqmc2F5T_vGsYwpUnWewDSxqDOJSo7wI
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA3NCBTYWx0ZWRfX/l/TpmOTZmIm
- fhyX1WzCXwwIbAcCAAwAPrqVAfkoA7IPz6Llhi5sMoft1TRt6gJS6Ji8EiAomJpPC8ByHAcvmWx
- k54nFeZJoxo8In1Xm6SuU8sbHlINDV5lgRna3e0fBnjawqcj8u7dQBEnrAE/Z32X/3h4PfBOn19
- w5r3cn9YkiwFaU7aI+JIhLW4j+Vmx1yUjSMa0zwQ7cJA+UuNZYO4gE0EvFxgVqNWkIFdMXxqMDd
- 3D3xHKyWSn7jrTLqQnxs1Yjmv+T5bhoDazuyjCIeo5fGkPYNlgQ0sF3zn7gFyvoUHiLwuECT2Yb
- mFWd6i7ResyKIYH4W8ww7onRkiRcNJbXAV0sUFsgQgMGHUx+04E2mP2oX/um4q7IB0uyjfkksFG
- PVsQRUv3nh0LWjv1sZAbNvMPlXvewB1OhUd2a2a45EbuPeiR4TtbY6rms74jdjypgXx2XXg7
-X-Proofpoint-GUID: fqmc2F5T_vGsYwpUnWewDSxqDOJSo7wI
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 spamscore=0 malwarescore=0 clxscore=1015 suspectscore=0
- priorityscore=1501 mlxlogscore=409 adultscore=0 phishscore=0 mlxscore=0
- bulkscore=0 impostorscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040074
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: IA1PR11MB7198:EE_|SA1PR11MB6991:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4017822-5881-4a8e-a484-08ddd35c5960
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014|7053199007;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?THVOMDdYN1JWeEJodm9uWDFkUXMrYmFvTG9VcFoxeU9pdjM1V2lSelZCTU9T?=
+ =?utf-8?B?dWt4R2FmUVRheXBEaGYwUGxGc2RuRlQ4b004ckJMbEMzR2JGcXNuRTUrVUNq?=
+ =?utf-8?B?M1BSUnIxUXpjeWsrTzdjTVRIOS9kajB4RlhDck5lRWJLd2dBR1o2dlcrZWRn?=
+ =?utf-8?B?SlZmcEgxMUUwV0FpMmJ6Vi94N0FBTGFQNXQwKzA5eEVKODZwcEdCc2VsRzdQ?=
+ =?utf-8?B?ZEZzNThmY1Z3ZWhwY3VrQlZwQ0JDbENwZXYvWHVFRHNQQTBjN29TQjFHZlFk?=
+ =?utf-8?B?QVU5a013eFRKQlFXK1RpWXlTV0NUK050Mnk4MHpNK05zNE02RjZLVFNKei9E?=
+ =?utf-8?B?RmtOcEcyQmFQZ1pQRmNHUEZsYUcwaWxrdnVNWm45RkhHUG9GWmpVVUZqUWJi?=
+ =?utf-8?B?WFZLMlJzWjMzL04rWkd2KzN3dlIxVDRzcUhyMXd5MWs5eFY1MFl2U1MxbSty?=
+ =?utf-8?B?Szc0aXRZM3AwVWU3K3NMbVJBUnVIbVpJUnk3YWFjR0k2UW1BeWNLQ0lTRWoz?=
+ =?utf-8?B?YVMrQVp5QkN4Tkp3TlZJNUFla0dTOTJJTmxLU2ZDalpldWc2M0pWUnRKbnJE?=
+ =?utf-8?B?SlpsV0FNSm90UDhISTRRR1lzUzViMkFPY29tc3B4UlBvSGtlTUI2Rk9JKzFS?=
+ =?utf-8?B?N3pWTHEwRFh6eDE3YS9vaVcrbDhkTGNPczMzTlpUcm5ZdG5US3RjSllFUkdy?=
+ =?utf-8?B?cm5OL3RadGRBbUgwbjNLVUgzTTl5ODB6aFJIMFl3Rnd0MUJNN3o3bytXYy9y?=
+ =?utf-8?B?UFJkOTQ4MVhhWmh5QUlWeDI5azdkSGtVeitLdFg3dm9EcWxqTzZVY2dGTzB4?=
+ =?utf-8?B?dzNqVlV0ZU9DOGdjcktVcEVPNGhObGpIMnFPZUNQT3crS2xDTGREbnVvNWEy?=
+ =?utf-8?B?aHdNRVNPSXp6dVVIUjUvaGkwOTVseVN4ZElyRE1wcW1ERjFyRVhGRUVEVUZY?=
+ =?utf-8?B?QVVxQml5RC9kOEs0NUtzSlJlWXdIM0IvOTYxTGVUTTF4K3MrZmtGZTAvUVA5?=
+ =?utf-8?B?TTcwNVl2WFB3QjRiRGlrM1dRek1YMkZ3a2p2WGNmaGNseEs1WXk3SWxYdGpT?=
+ =?utf-8?B?RW1HOUlNREJydjNlR2pGY21Jamxtc1hJeEZoNFVKWElZdlAwdmxOSzhSaXY1?=
+ =?utf-8?B?ZEZQWVROeG1zbGhNN3d0R1NVa3JRTEVSbzFmSTVJTFMxdXZiQkJkcTIvVzRn?=
+ =?utf-8?B?L2R0OFRxS3JUeVk2SExwcmlHVGExcC9UNDRoQ3lCd1FieEUxYlN5UUZ6TzhK?=
+ =?utf-8?B?eXJqRzYzeDVMWmFpSFA3SHNDU2YvL3RVTWNwU3dQbnZkZGIrKy9hWGp5dVVo?=
+ =?utf-8?B?cXZ2WHIwOXAwcGplMFVtN1Y0ZUM2U0k1SVV4TUhhN0FIZnZFdSs3NnY1NXZO?=
+ =?utf-8?B?V1Jid3FTRStTM0lWcG9lSlpVRzhVNTZVNkRDZGkyMWtOenJWbGlGaGpYYXQz?=
+ =?utf-8?B?NHl2ekdDdG44dXFXcmRiVXkvSXZSanh0QkxiMFBCa1NmVE1pdzIvRnB2djRw?=
+ =?utf-8?B?SjRwa3RQRXFIdzBnZkx1eVQvODNlMUhnNHB0ZFE3KzJJYjF5M3lKckNGTGth?=
+ =?utf-8?B?OEg2VTJmbENMSUlPaEFRUlEvSzQybHBUYjBVV1pmUkMvdjFFYUltYTE4SkZO?=
+ =?utf-8?B?MU5mZld0RzVRa0FDK1hWbDJmcDlmUC9KdzBFY0JhS0psb1BkWFFPTE5Sc3dm?=
+ =?utf-8?B?MG1TZXA4SzZ6Nlpjc0tzdm4zb3pPWTJhdEJpejkxTCtoZWgrYmd2ZkJFczNv?=
+ =?utf-8?B?VzZabXNUVURtRnBZYU9KMVNzaVlMWU5RcjEvRTBVZllRZ1lVRnk0TmsvL2ZV?=
+ =?utf-8?B?NHVFcUtITXJ1eDVoMmxqMGt3S3ErVmlneGlYQmxCZjUyM1h3aTJ4ZVMwcHg2?=
+ =?utf-8?B?NkhPSVhQeVEraTBMZnNpcWhEOU9yMWJnbWlLRW1kRUlGZW5UTGxSUExoRUta?=
+ =?utf-8?Q?HmIKsPBsBQU=3D?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA1PR11MB7198.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?T2RONEpUa0FwRjcxOHpEYkkvRXNaYi9jOHlrclpQZXpVREZYa1pzOEI3bkZQ?=
+ =?utf-8?B?azFQOHVjMm1ZZGNVNE9vZWhCV3lncEJ6T1ZDdEhYSERmVHBhcXo2Sk5HbVZV?=
+ =?utf-8?B?Z3JHL2RVTDBmK3Eyc0VEUUdYOVFCYTRtRVpBY3BSUVZ5YStOeXNUUHNnZmZU?=
+ =?utf-8?B?Y3lmTWR5elV4MDMzUzdMdlZKWmhUNlU3eFNFQlFOR0lqRG1CMm9oaXh3dHdS?=
+ =?utf-8?B?Z0lRUjZxeS95Y3JnNVp6aGloOUh6SUNkbkZJelM2TlNMVUR4WkFxUHRtWmln?=
+ =?utf-8?B?YlZhbUJOQS9rcy8wcU54SE84Zk9FR2dPUFY5Q2lSVjBNaEZrZHJXejkzMTU4?=
+ =?utf-8?B?K3dWbENjWXpjRG9XUlFlSDFnZmloVEdFOEExM2xINFcxa1hOV2pQTFhKUlNq?=
+ =?utf-8?B?MDhzVWZ3bGRySGE3K1ozcHdwK0NoY2ZhNVU3cVBzeFdObEhPQmVJSFVuSmp5?=
+ =?utf-8?B?c0Z0c21aQ0JFSE5wWHo1MzdmSnVSL1hrZVNpRndBSFZOVmdFWXZ2ZHpkZGtl?=
+ =?utf-8?B?N2ZqUGUySTE4THpZL2haUXBBZ0JUMXdHRS9BVENIZWlkVGhITXl6c01MSXNw?=
+ =?utf-8?B?NnpteTVZMlVySVpKeEIwN3JXRTdtNFhneG9VUFFRQ1M3a1BnVTZMRWp2YlhY?=
+ =?utf-8?B?YlM4ZndNMkxtWGhtWnZzVTU1enBKcERTeW5BWmROQTUwTVpiYTZIVUFxOUVn?=
+ =?utf-8?B?MzErcDdjTkNUYWpBaEd5cy9tdm9RMytqMXRqY2pXKzZvS2MxcWxjOFVNYlhp?=
+ =?utf-8?B?M3JyVXA0bjVqR2h4WGh1a1lHb0cwb1ZYV01jNW13VHFETWpFcmNUVTNsK0k4?=
+ =?utf-8?B?czNBSVVFMWRlYmRFRi9vYXl4bThiWVJqTGpTazlFRmlXOUxZcFNuckYzbWtX?=
+ =?utf-8?B?MkpjMWhJZ2JkUHFLZlUvb0VpejZGRnJMOGxQdzloenVrSTN6Vk9LUVNWR3Fo?=
+ =?utf-8?B?QUxQeTAyUzlBTUZDY3NVeTcvN1ZsSUZ6bENMcHdXVzZrdVVhTDhESTFRT3ZF?=
+ =?utf-8?B?Sm5mY1lsY1NLQlRGbDF5OTBILzhZQVhHOFU3L1NuWWFDODMyZFdublF5MGM3?=
+ =?utf-8?B?RVR3blVQcWd5YlBPQzFsWS81TW5SK1pTMHFrZzI2SnQ2M3l5NFhZZ0RtWWxZ?=
+ =?utf-8?B?bFBBc3BaZ1RBT01BRWtDdkpqZUppNjhha2ExaHZkaXhJTDB2MnYraGlDT3R1?=
+ =?utf-8?B?OUJVc2xWb3NVVVdVRXJqSkVwVXNYQ1VWSzZBaXZyVzR2MnRETTBnbFd0WkZJ?=
+ =?utf-8?B?dG9sUmZuU2w4ZnJKWDVBQ1BOc0NIc1ZQSDdJOVhBRURLYzZDMU1WeVcrYk44?=
+ =?utf-8?B?WjVVLy9hMFpNUmd2d2hhSnFZMmU1SENqbm9MeEQzNEc1Y2ZwRXp1N2VqbFhr?=
+ =?utf-8?B?eEt1SE1NdnVoRjlXQmx4OEFlV3NlTCs3SkhLK1dVTlZvTVI4Zi9MeHB1bEhr?=
+ =?utf-8?B?WklXZXRhaDJmM0dBdnRkVC9TT0pWdGZRcDlLdWp4WnFSQWpzSUVVRW9NTy9h?=
+ =?utf-8?B?amZad3JIU3RsZFo5NzBtM2xaTkQ1aUJiaHVISnpCTVBkNVRnZzF1V2xiMGIx?=
+ =?utf-8?B?VDBhc05xRGNDQllCTWtRZ0doMHp6Q1MzZVBKOGhOd1drWVRqSlpESVcvZ0xt?=
+ =?utf-8?B?SXBzSHBxdkxrTE8rMDdUdk1HRzQyWi9rcWtxeGx4aUw3MENMM3dKTXYxN05B?=
+ =?utf-8?B?WjdCcGVoYlAwQUpCMFFHZ3FvSFlHZ0pXcUFKdERlbUlZZ0VhN0lrK0NRYVNz?=
+ =?utf-8?B?bzFuWnlVRWFSaDNpQ0h3WXRjSWpOZ3RRUEQ5aldlY3ZnQllSY0c4MTJUQTJS?=
+ =?utf-8?B?ditxV2xHVHdmbWtoc2pNbkt1dDFrd0lpWExYTHV4dDlNNndJanhSdEdpK0pk?=
+ =?utf-8?B?M1BmVjNxMHBlV2UvQ1pDbjE1dGo1TUpOci9vWUoySWdaZ1daS3NHM3kwUXBN?=
+ =?utf-8?B?V1V5QWZzYUhNYjY5TkY4c1dOU2Fwbjd1RUhoRjczT0JwZit2TXFTL0xkSGRo?=
+ =?utf-8?B?SlZYSHFNZE1yVVJqV2FJRm9FOVFMQWd2ZVZJcG8zV2Y5dkFYaFhHQWJOWkxK?=
+ =?utf-8?B?WS9uVVZCOFJtdWU4cGx5RFEyOEtuYWdqbTY0dkZRL2ZIODZsbDFmOHA5TEIy?=
+ =?utf-8?B?NENNRnZlQnB5TytSdmFrMC9odCs2R2tJQzNhTU4vUUdQcUxyUllpNjlOenpx?=
+ =?utf-8?B?Zmc9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4017822-5881-4a8e-a484-08ddd35c5960
+X-MS-Exchange-CrossTenant-AuthSource: IA1PR11MB7198.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 13:39:34.9567
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: BWzreIjNxDdyeCJblNm+S+kNP9hPfADht8iA9uu9qTjvxAwUHg3Sx9v3NDIXbXlTRyw/p3/ba5gWYXPuT2V0jw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR11MB6991
+X-OriginatorOrg: intel.com
 
-On Mon, Aug 04, 2025 at 02:27:20PM +0200, David Hildenbrand wrote:
-> On 04.08.25 11:08, Sumanth Korikkar wrote:
-> > memmap pages  can be allocated either from the memblock (boot) allocator
-> > during early boot or from the buddy allocator.
-> > 
-> > When these memmap pages are removed via arch_remove_memory(), the
-> > deallocation path depends on their source:
-> > 
-> > * For pages from the buddy allocator, depopulate_section_memmap() is
-> >    called, which also decrements the count of nr_memmap_pages.
-> > 
-> > * For pages from the boot allocator, free_map_bootmem() is called. But
-> >    it currently does not adjust the nr_memmap_boot_pages.
-> > 
-> > To fix this inconsistency, update free_map_bootmem() to also decrement
-> > the nr_memmap_boot_pages count by invoking memmap_boot_pages_add(),
-> > mirroring how free_vmemmap_page() handles this for boot-allocated pages.
-> > 
-> > This ensures correct tracking of memmap pages regardless of allocation
-> > source.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 15995a352474 ("mm: report per-page metadata information")
-> > Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-> > ---
-> >   mm/sparse.c | 1 +
-> >   1 file changed, 1 insertion(+)
-> > 
-> > diff --git a/mm/sparse.c b/mm/sparse.c
-> > index 3c012cf83cc2..d7c128015397 100644
-> > --- a/mm/sparse.c
-> > +++ b/mm/sparse.c
-> > @@ -688,6 +688,7 @@ static void free_map_bootmem(struct page *memmap)
-> >   	unsigned long start = (unsigned long)memmap;
-> >   	unsigned long end = (unsigned long)(memmap + PAGES_PER_SECTION);
-> > +	memmap_boot_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
-> >   	vmemmap_free(start, end, NULL);
-> >   }
+On 01/08/2025 17:14, Duje Mihanović wrote:
+> Different bus clocks require different pinctrl states to remain stable.
+> Add support for selecting between a default and UHS state according to
+> the bus clock.
 > 
-> Looks good to me. But now I wonder about !CONFIG_SPARSEMEM_VMEMMAP, where
-> neither depopulate_section_memmap() nor free_map_bootmem() adjust anything?
+> Signed-off-by: Duje Mihanović <duje@dujemihanovic.xyz>
+> ---
+> Changes in v2:
+> - Don't attempt to lookup pinstates if getting pinctrl fails
+> - Only select pinstates if both of them are valid
+> - dev_warn() -> dev_dbg()
+> ---
+>  drivers/mmc/host/sdhci-pxav3.c          | 31 ++++++++++++++++++++++++++++++-
+>  include/linux/platform_data/pxa_sdhci.h |  7 +++++++
+>  2 files changed, 37 insertions(+), 1 deletion(-)
 > 
-> Which makes me wonder whether we should be moving that to
-> section_deactivate().
+> diff --git a/drivers/mmc/host/sdhci-pxav3.c b/drivers/mmc/host/sdhci-pxav3.c
+> index 3fb56face3d81259b693c8569682d05c95be2880..fc6018de92fb19f028b776df0f87937846621e95 100644
+> --- a/drivers/mmc/host/sdhci-pxav3.c
+> +++ b/drivers/mmc/host/sdhci-pxav3.c
+> @@ -20,9 +20,11 @@
+>  #include <linux/module.h>
+>  #include <linux/of.h>
+>  #include <linux/of_device.h>
+> +#include <linux/pinctrl/consumer.h>
+>  #include <linux/pm.h>
+>  #include <linux/pm_runtime.h>
+>  #include <linux/mbus.h>
+> +#include <linux/units.h>
+>  
+>  #include "sdhci.h"
+>  #include "sdhci-pltfm.h"
+> @@ -313,8 +315,23 @@ static void pxav3_set_power(struct sdhci_host *host, unsigned char mode,
+>  		mmc_regulator_set_ocr(mmc, mmc->supply.vmmc, vdd);
+>  }
+>  
+> +static void pxav3_set_clock(struct sdhci_host *host, unsigned int clock)
+> +{
+> +	struct platform_device *pdev = to_platform_device(mmc_dev(host->mmc));
+> +	struct sdhci_pxa_platdata *pdata = pdev->dev.platform_data;
+> +
+> +	if (!(IS_ERR(pdata->pinctrl) || IS_ERR(pdata->pins_default) || !IS_ERR(pdata->pins_uhs))) {
+> +		if (clock < 100 * HZ_PER_MHZ)
+> +			pinctrl_select_state(pdata->pinctrl, pdata->pins_default);
+> +		else
+> +			pinctrl_select_state(pdata->pinctrl, pdata->pins_uhs);
+> +	}
+> +
+> +	sdhci_set_clock(host, clock);
+> +}
 
-Agree. I will move accounting to section_deactivate() then.
+Really pinctrl et al should be in struct sdhci_pxa not pdata.  Also
+it is neater to set pinctrl_state pointers to NULL when there is no
+valid value, so this could become:
 
-Thanks
+static void pxav3_set_clock(struct sdhci_host *host, unsigned int clock)
+{
+	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+	struct sdhci_pxa *pxa = sdhci_pltfm_priv(pltfm_host);
+	struct pinctrl_state *pins = clock < 100 * HZ_PER_MHZ ? pxa->pins_default : pxa->pins_uhs;
+
+	if (pins)
+		pinctrl_select_state(pxa->pinctrl, pins);
+
+	sdhci_set_clock(host, clock);
+}
+
+> +
+>  static const struct sdhci_ops pxav3_sdhci_ops = {
+> -	.set_clock = sdhci_set_clock,
+> +	.set_clock = pxav3_set_clock,
+>  	.set_power = pxav3_set_power,
+>  	.platform_send_init_74_clocks = pxav3_gen_init_74_clocks,
+>  	.get_max_clock = sdhci_pltfm_clk_get_max_clock,
+> @@ -441,6 +458,18 @@ static int sdhci_pxav3_probe(struct platform_device *pdev)
+>  			host->mmc->pm_caps |= pdata->pm_caps;
+>  	}
+>  
+> +	pdata->pinctrl = devm_pinctrl_get(dev);
+> +	if (!IS_ERR(pdata->pinctrl)) {
+> +		pdata->pins_default = pinctrl_lookup_state(pdata->pinctrl, "default");
+> +		if (IS_ERR(pdata->pins_default))
+> +			dev_dbg(dev, "could not get default state: %ld\n",
+> +					PTR_ERR(pdata->pins_default));
+> +		pdata->pins_uhs = pinctrl_lookup_state(pdata->pinctrl, "state_uhs");
+> +		if (IS_ERR(pdata->pins_uhs))
+> +			dev_dbg(dev, "could not get uhs state: %ld\n", PTR_ERR(pdata->pins_uhs));
+> +	} else
+> +		dev_dbg(dev, "could not get pinctrl handle: %ld\n", PTR_ERR(pdata->pinctrl));
+> +
+
+To make the code neater, perhaps add a helper like:
+
+static struct pinctrl_state *pxav3_pinctrl_state(struct device *dev, struct pinctrl *pinctrl,
+						 const char *name)
+{
+	struct pinctrl_state *pins = pinctrl_lookup_state(pinctrl, name);
+
+	if (IS_ERR(pins)) {
+		dev_dbg(dev, "could not get pinctrl state '%s', error %ld\n", name, PTR_ERR(pins));
+		return NULL;
+	}
+
+	return pins;
+}
+
+Then it could be like:
+
+	pxa->pinctrl = devm_pinctrl_get(dev);
+	if (IS_ERR(pxa->pinctrl)) {
+		dev_dbg(dev, "could not get pinctrl handle: %ld\n", PTR_ERR(pxa->pinctrl));
+	} else {
+		pxa->pins_default = pxav3_pinctrl_state(dev, pxa->pinctrl, "default");
+		if (pxa->pins_default)
+			pxa->pins_uhs = pxav3_pinctrl_state(dev, pxa->pinctrl, "state_uhs");
+	}
+
+>  	pm_runtime_get_noresume(&pdev->dev);
+>  	pm_runtime_set_active(&pdev->dev);
+>  	pm_runtime_set_autosuspend_delay(&pdev->dev, PXAV3_RPM_DELAY_MS);
+> diff --git a/include/linux/platform_data/pxa_sdhci.h b/include/linux/platform_data/pxa_sdhci.h
+> index 899457cee425d33f82606f0b8c280003bc73d48d..540aa36db11243719707bdf22db23a8e2035674d 100644
+> --- a/include/linux/platform_data/pxa_sdhci.h
+> +++ b/include/linux/platform_data/pxa_sdhci.h
+> @@ -35,6 +35,9 @@
+>   * @quirks: quirks of platfrom
+>   * @quirks2: quirks2 of platfrom
+>   * @pm_caps: pm_caps of platfrom
+> + * @pinctrl: pinctrl handle
+> + * @pins_default: default pinctrl state
+> + * @pins_uhs: pinctrl state for fast (>100 MHz) bus clocks
+>   */
+>  struct sdhci_pxa_platdata {
+>  	unsigned int	flags;
+> @@ -47,5 +50,9 @@ struct sdhci_pxa_platdata {
+>  	unsigned int	quirks;
+>  	unsigned int	quirks2;
+>  	unsigned int	pm_caps;
+> +
+> +	struct pinctrl	     *pinctrl;
+> +	struct pinctrl_state *pins_default;
+> +	struct pinctrl_state *pins_uhs;
+
+Move to struct sdhci_pxa
+
+>  };
+>  #endif /* _PXA_SDHCI_H_ */
+> 
+
 
