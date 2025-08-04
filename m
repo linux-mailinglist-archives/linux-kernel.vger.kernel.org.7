@@ -1,229 +1,141 @@
-Return-Path: <linux-kernel+bounces-754607-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5F92B19A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:51:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id ADBCBB19A08
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6115F3AE4C3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BCEAE1701E6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:01:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C94BE1F1527;
-	Mon,  4 Aug 2025 01:51:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76D701F418F;
+	Mon,  4 Aug 2025 02:01:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="GBmFQazK"
-Received: from NAM12-BN8-obe.outbound.protection.outlook.com (mail-bn8nam12on2048.outbound.protection.outlook.com [40.107.237.48])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="M3qCQt54"
+Received: from smtpbgau1.qq.com (smtpbgau1.qq.com [54.206.16.166])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A7717736;
-	Mon,  4 Aug 2025 01:51:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.237.48
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754272311; cv=fail; b=ilFqPswqoadPqc2jmPexJrUkiwd0ABvn1SGxl8e9kXL+5m6KSL3VAvSHQ0Hm7fL2V3EcIO8CJQBgiUhsqJGgTHTCfXFPhqNR0K3BppLuQfwYEeq3lgFBec3kwIikLMrBtvOYveU58CoBt6bt4NFnT0wvTBmkKSS8JfeKfZNcCDM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754272311; c=relaxed/simple;
-	bh=aIevFgjO2T6l65555ZWy2aTnkdx6NF+AtVvyimtgIOU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=HAsyMuUhH0CEv4v4v1O6CIVul52jwT/AGGwxH6WLnRYaEeOx/D8LurCiNCG5sqe9YIRCOn+d+Ii/G/mRbNHG7snDIjSMrAeHbPzQdszaYf0CnwAmnunOy3ssi4x2GB68LLoRZ8CjeIZ6BYqNNAlP0eZDgGLeTNVRx7HLiONgFu0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=GBmFQazK; arc=fail smtp.client-ip=40.107.237.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=Gi5D36e9bc/sSemWsgtaMm8llIwp9LxsNcVP/i5uYJryiS4sbodjiYOMou4yB1g1/pTPDZ8lN3HLrgl52H8pv5IEdSiH/FpRpVdaPnayXLycyv0nO3WFGKSMMjvcGwvTTHBmzy/Jq3QNSdMoJ26Vv99xY6wHI5aAfLNi4ClCyPtjgror0x/ThapEF65MK8H1r4PDwrIsRyz9Bcv1UPxqIXx1Jnx88UT9N8IWiRLp4V/9pNdR+F1bi3OuCt7+pfde7JAwRfBgkVbxF6CyVpBt02vgQjn5ms5i7jKF6mJg9sa9y9TLwNiWwBdPabX75PlT7a89SWrfYtgwZAdj6uxCxQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=3KYhpMlLb0h/2YuWAF6FA0/YgHm1E4ARtFeZRoVI9D4=;
- b=QqhOM1waxUq45FoHLAF6wcDswVPt2+3dkDrcmtCVJ29XdYHk6wXd9Py8vPrIUBQaVlyBTK1a92Gx7ijYtjwavcNgW/W0P5w9OhN+k2xPoilLgWCY3LT5SqylFDag0JAcxzOYVGor0GUqiF3DDkouP4TxvbxjA8UjK/vD04FaqKHGAFU3vVt68976w0LCep8/1bhnytyChvBFGalwP9b2URPXGGEQDwgGVq8pQazgdZwE3OzrwpV1v2z8gUawcJ4UGphFc2jBtM40OYY3tCzhqMYv57gCOTN/OIE9BesZXss/l/wQn8aVTVdyjvkDVDAgoCUf4ZaehaYyPu76qQqFvg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=3KYhpMlLb0h/2YuWAF6FA0/YgHm1E4ARtFeZRoVI9D4=;
- b=GBmFQazKLkavYQ8SHpyY+ZA5KxFgtH+IEjUBr5t+1XL3Q0QGbnGhhAkLCXgrkLUyNrZNSPFgq1ZNP9MAXhmIwuewgMi8Gd8+PZwrbJ6b+UoEY1Ov9VNWIMKh1KxtgCzNB09BgD8aw68Fb4Xr/nR1yBBd6kCAaK7fVtC++OyTSmA+vrfTMCTbWFXqGg9GpSgupZbRCYyfvnEn6LRbl6kdCNLhluN+s6QWmwwk/JZADDVFI3PECYT23NGiHV4DVHFxdhQjOSvjhqqKXUlxeLKTY0wnOeXoJOxsI+p11M4jHJo/K6YQBo3y54AAVeg++tnhiwXaauWULu8T7kqxx58iaw==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6) by
- CH3PR12MB8234.namprd12.prod.outlook.com (2603:10b6:610:125::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.19; Mon, 4 Aug
- 2025 01:51:44 +0000
-Received: from DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe]) by DS0PR12MB7726.namprd12.prod.outlook.com
- ([fe80::953f:2f80:90c5:67fe%5]) with mapi id 15.20.8989.017; Mon, 4 Aug 2025
- 01:51:43 +0000
-Date: Mon, 4 Aug 2025 11:51:38 +1000
-From: Alistair Popple <apopple@nvidia.com>
-To: Jason Gunthorpe <jgg@ziepe.ca>
-Cc: David Hildenbrand <david@redhat.com>, 
-	Matthew Wilcox <willy@infradead.org>, Yonatan Maman <ymaman@nvidia.com>, 
-	=?utf-8?B?SsOpcsO0bWU=?= Glisse <jglisse@redhat.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Leon Romanovsky <leon@kernel.org>, Lyude Paul <lyude@redhat.com>, 
-	Danilo Krummrich <dakr@kernel.org>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Ben Skeggs <bskeggs@nvidia.com>, 
-	Michael Guralnik <michaelgur@nvidia.com>, Or Har-Toov <ohartoov@nvidia.com>, 
-	Daisuke Matsuda <dskmtsd@gmail.com>, Shay Drory <shayd@nvidia.com>, linux-mm@kvack.org, 
-	linux-rdma@vger.kernel.org, dri-devel@lists.freedesktop.org, nouveau@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, Gal Shalom <GalShalom@nvidia.com>
-Subject: Re: [PATCH v2 1/5] mm/hmm: HMM API to enable P2P DMA for device
- private pages
-Message-ID: <vscps6igy42u5limiigiok6y35mjx6acawi3qmvzbrpvltp4qp@mkydml7lz6fu>
-References: <20250718144442.GG2206214@ziepe.ca>
- <aH4_QaNtIJMrPqOw@casper.infradead.org>
- <7lvduvov3rvfsgixbkyyinnzz3plpp3szxam46ccgjmh6v5d7q@zoz4k723vs3d>
- <aIBcTpC9Te7YIe4J@ziepe.ca>
- <cn7hcxskr5prkc3jnd4vzzeau5weevzumcspzfayeiwdexkkfe@ovvgraqo7svh>
- <a3f1af02-ef3f-40f8-be79-4c3929a59bb7@redhat.com>
- <i5ya3n7bhhufpczprtp2ndg7bxtykoyjtsfae6dfdqk2rfz6ix@nzwnhqfwh6rq>
- <20250801164058.GD26511@ziepe.ca>
- <b8009500-8b0b-4bb9-ae5e-6d2135adbfdd@redhat.com>
- <20250801165749.GF26511@ziepe.ca>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801165749.GF26511@ziepe.ca>
-X-ClientProxiedBy: SYBPR01CA0005.ausprd01.prod.outlook.com (2603:10c6:10::17)
- To DS0PR12MB7726.namprd12.prod.outlook.com (2603:10b6:8:130::6)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 976D81FB3;
+	Mon,  4 Aug 2025 02:00:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.16.166
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754272865; cv=none; b=Wu174cf+bYVlxAmbVCKgkuITFeatpaY87uKXxEh5XCcZ5HLojqr80DYueVoDLzRzxSefvCg5nxJWGVDZABN+NPmJWBMNmzmO0t0Bvy7gjcH3QJZ3oO4Mqw3ow4JDyp6EelZ+6DcYo5VG7a+fepqoTnC5xPl11fwC4pFw/PNUEHg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754272865; c=relaxed/simple;
+	bh=KqPSsEAipp0FTBHpQ1gr9MqM8UbNzirmUIjEDZfuUzA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=UttuvldUujecSv3UKxR2COvTT12/9+rIDCnkB3wGi5FtPOlHgFY0DDPaNmUUFYy2q0bJRHb7QhR8pXWHBmXtZEUfnwI1LBRViQjXzXiMF7i0xXUBybuxyc9aCm3n3ENWDqkkGnKfuI3tme1zb4cAcnsakZ1R8yC0Z4mYDEv85uU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=M3qCQt54; arc=none smtp.client-ip=54.206.16.166
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1754272825;
+	bh=yfXEkqEa/uISK0w4262atq7Tl4Mh0WUTkGxrLVIQDCk=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=M3qCQt54oMDYf0VzhdwvbTiFKo8cKyy/rlIuNQlTlnG//ZphGq6lGwGk4vRGqa26k
+	 ui7QwyNw2p0l6rPC+R1bMXh6ygaFK32GWIEcD7gcYAV7zEksP6hKvoeI6EOz83DVR5
+	 W7eP9ot4tBbiCgIThk90C5laOS41nLAF2rXJYNYk=
+X-QQ-mid: zesmtpip2t1754272816t1d0cbc91
+X-QQ-Originating-IP: 3f+7dAnPMh0pAYDIDnCsuyKVOvur5LAiZFM38c1kZOc=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 04 Aug 2025 10:00:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 16794348384698843129
+EX-QQ-RecipientCnt: 6
+From: tuhaowen <tuhaowen@uniontech.com>
+To: mchehab@kernel.org
+Cc: linux-media@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	tuhaowen@uniontech.com,
+	huangbibo@uniontech.com,
+	wangyuli@uniontech.com
+Subject: [PATCH] media/dvb-core: remove redundant new_node cleanup in dvb_register_device
+Date: Mon,  4 Aug 2025 10:00:11 +0800
+Message-Id: <20250804020011.19029-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR12MB7726:EE_|CH3PR12MB8234:EE_
-X-MS-Office365-Filtering-Correlation-Id: 097eb281-f606-4868-cceb-08ddd2f9767f
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?73ZbGI627yz6x1t9nPnXSWNanmH4Y4CYGreJ34PrOY7ySn5vgBy76H5qFg9e?=
- =?us-ascii?Q?w5zaVUzQx0KAAi84nnIwWNpErwzVk+8m2I5mCDbaZrKZ5hO3xW+/HmMzWj/J?=
- =?us-ascii?Q?gbfaqpVOSYIMGR/hS1WHWaDnbDDvfcpHD6H3yyWYtkfCu/sGtKAMecekWomY?=
- =?us-ascii?Q?Z1zrks1yWEAUSW2PhuM3hQAqrPmWY06mIv9mIqHsOCnWcjdKhWUnYGkEaLf8?=
- =?us-ascii?Q?LSRjvdEJt8uiXiCnyCKn7j1AYP2ycmTftUbvv8+dHUrpgzR8OF//lTry98EH?=
- =?us-ascii?Q?8Whp1FowszXxGatQVsFZ4QyS656zcBtXe/9k6Ubo8KoM0Yh6jAQZyX/q3GnU?=
- =?us-ascii?Q?rouC8LbOKDMWDYMt2Cn8EPKLSDy+cITnasy70mT2gckJkpGMU14pXqWIlcJ3?=
- =?us-ascii?Q?MejljYCC1eLdpTA9GBJpSMUMxYSDGyRwgb/Jnx1mCEu2OfhFDgPXk4wdydrw?=
- =?us-ascii?Q?Mu0ciTULcCkPvuf6pt+5h638ZSM4ZteTUuGc9/xv9B0bumsLT2N1YqHUgPGC?=
- =?us-ascii?Q?28xC0kv0ovaIiM/nDWrcmlqA0+SgcLjhxE/Nx1ZIICcUsSG5lVQCvdF8drEn?=
- =?us-ascii?Q?0PMNKfpmReSOxW0LhkHXZ7iBWN7GRz+hyupUAT5x405xD2KBgIMryNDAq6oq?=
- =?us-ascii?Q?744aDxuT0EUlLBMwJcuaq8Wr7r/VMSb7ou7bCZO91Nmc9Z8tmqd+KnLBS3bL?=
- =?us-ascii?Q?l8x0PnoGOtD8akDdPIHSiRqheuA2HSanbF1fJNtMR/hvQ5zVm1pRK+EvBpo8?=
- =?us-ascii?Q?K4coNhLX6A0kkc5+hkxn/U9GcjPNY82oyNx4/iHp5tdvC0TrkB5LoUiNL/NK?=
- =?us-ascii?Q?MxRlFzSSeo196piVqSTfpTR6XU6HTgfxE6jI+YEN3ugGNHsrh7C6vGCzDb0Q?=
- =?us-ascii?Q?Ry2khrLW9JDnRLFeEyijvcYfeuipwFk5qmaEjbRAtLAzwFZkFYFHd6oaRV8R?=
- =?us-ascii?Q?oFR+wS1og/LARlV7AyH/25a9dGSZ/zEFuSqq/AqXSXizwJHA90rVFtsCYln+?=
- =?us-ascii?Q?ebMmQRyALrpXxiHsx57OVvHTbCpd/T/0dOHIkag6kMBi0pUl/ryfb+rHSRAX?=
- =?us-ascii?Q?IJro9Fj1sytNBWWS8xNlBvgiFYoKeRnv62QHN3NRMiynHwRX+YqYrmCXtJ1V?=
- =?us-ascii?Q?fj5SS7IhqrGyqPxQO0Kww5EV0h1PrEnOnqpyyOSbHUl4iM4pFWj9YZ/qi7Sf?=
- =?us-ascii?Q?CUlVZkORfdTrXZ15SKoec/+P3nlmXS7DREo+vgyf9kTq5FD0jzImFL7XE/dk?=
- =?us-ascii?Q?UY65gEsDVpWnirPPdHyDJ8kQNqzrEA6e7tof9zyy9kn34CUz4ef9/kqnuKRa?=
- =?us-ascii?Q?oJouYNOhtyyOXszkzDepp3s4x/RSfnwJgmeTVY/c18ainPE3s0zkVO/A/nFF?=
- =?us-ascii?Q?1wkmgw10T+PLHvyA2o1KPZLhV5OYmZsJUitTxHxZM6G/xLhm2a00TvLf+LAA?=
- =?us-ascii?Q?yivbYUO42e8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB7726.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?CdxFTtVdzZBlDoaEvbLlxzpibTFMmmSCG6u0JHcuzt9BJ0/vp1uvENmswMmR?=
- =?us-ascii?Q?vC0Qmw8k8RPlMicrHvjAzmSGNLI3eWHRjjWzDK9/2ByDio0UqPbn/MFO/SkF?=
- =?us-ascii?Q?7KJj4APPuMBxBSuu7aucQleLOHBpGMEJ+Hqg7cRSKoPCNiMcLxwqgQhIP8BZ?=
- =?us-ascii?Q?37m3Fql4sbE75dgZCj3HiTxPnsEjbBIZ2cnUzR7aBSpF5LOPXbaGsVjgPJhb?=
- =?us-ascii?Q?4mwjxxaVCFBvQtZ3X8EoDrZmnyLT9JFxnorwNo43wTd5XjdVQSKI1y0+LhxP?=
- =?us-ascii?Q?imgneLsNyo9ReaAgVOxltesnUBVQqN45cznigs9RjNaB++EhaTZ40AVWx10/?=
- =?us-ascii?Q?SGh8ZTFRplNRqlZGdHWkYylZJ6XSS7aMyCj9WV4kNnNv9HDQxmmoQ0BB53Fb?=
- =?us-ascii?Q?rmXMyg634vk+wXywltzv7jiZojm3rTyoRyJ6BlL8zTlS9Xqhn8aT6+6f5sYz?=
- =?us-ascii?Q?MGzIo3joA2qTvZK3Hfx5RT/hIVCd7XDTyTyrFSc8uldW3chmA8XyggpwYVHW?=
- =?us-ascii?Q?2o7jGuX0I36RcB4RqsuN6LaV6Bm/aN+UgwGLMjK4mkqreho0A0goGZwHxHlE?=
- =?us-ascii?Q?BJPIyx4Da3SeVW1Sx9lzkcG1jFATMV8KYFSLbv27iFnfsZyFs4o5tXdr/4cV?=
- =?us-ascii?Q?311LMt8NKpWtuhqK1ob6U1TuarDbcGS7omTOI1eifDtWrIvnor6bUO2SWZvk?=
- =?us-ascii?Q?xBS6e0lI2DQdHQJiFY6bL69wkHK64wVoWdzMSzxch3gJ/QXMHx4t7cirmsgO?=
- =?us-ascii?Q?458saRoXS0m0xll+kr8thpoiXQqQKiNH8H/3QDerRw++tN0YznCuAK0+nB5p?=
- =?us-ascii?Q?sqtkkQ4ugvRiGLaYUnIckpP+5rbO/b5KjUAVLK1aNgLXj8ndCluTL7N1h5v3?=
- =?us-ascii?Q?Ar2ura0CH7Ex6ym84BpbZgYz/Fstw4wVfluAB+MYgQPuJA3rfy1oSSc4cyXx?=
- =?us-ascii?Q?gL78MT8bUI8tjQD7D9BWeAi8EqObMihHthlnl9SKW/a3CNgWYqwuEKhGyW/a?=
- =?us-ascii?Q?RpkdocR1ysFJkNDzQkZLlzMMGKU5//qsoetUB685CPPQXAICohf57c7U1Sye?=
- =?us-ascii?Q?DkKTSOHneiUW9etbanpsJRh78ZSkvjdrCtaPB5g1Vt0Xv/snFgjdKxpTFN2X?=
- =?us-ascii?Q?rH7BNSkZKgd6poiT6Abr8gXZ9n9bhT+/h+mTs0+A4Gu0v2NZSlmyl+ckBKlP?=
- =?us-ascii?Q?TkSWgENJf5AX5xP+aETLK7RL+4WHLWWQkLbp41V0TbIzHOFNAc1BN0f9rAas?=
- =?us-ascii?Q?GrhY3rdVLtl55T16es4WGzhOtmmkmOSz6be60Wp2clbgd0KSrtYyI1RXZEWf?=
- =?us-ascii?Q?vablGbbcoPjU9x7uxGgT/lxcnc3inPcxUyfRstdcxBHu+cI6E7ciaIi8puEO?=
- =?us-ascii?Q?GC5fmfT2Hjfh8DjTc/i7cs9CNNBa8tOBtfP5ZYdtLgvx5Lg+i9aapXyz//aE?=
- =?us-ascii?Q?//LqSD5k1BiXiYagNRRA6S97UaWZBHFrtiHiZpRRFH+5lWuuG9IMTMeBD+mw?=
- =?us-ascii?Q?zjwUtbGFA2RDTYhfX9knNkEuTq9NcUw4t/SLM1xRGs/Ym35KEAp14mnVyC5P?=
- =?us-ascii?Q?8YyRYcqaqCbx+qFwcDAR4yEuP2dfeJKcWX4LDX+x?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 097eb281-f606-4868-cceb-08ddd2f9767f
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB7726.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 01:51:43.6858
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: oPDlRvcomtvf/c+nZ6tH4gv6DpwOdeayGpauqzsFfeH1oQfMy0b4uDFgnyjSh1XneAavjj1d+dA+Dol5H4Lqww==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR12MB8234
+Content-Transfer-Encoding: 8bit
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: Mf+wQkWJ2TuYsocu5Hu36j3NF3eDBQmYzlLkRCSF6kEcSZC6P20DESfW
+	mxh7pqMgGYAdjdjccR6mtHDy6mjnCF7SBiglsHji56xXHLof8IgIcuxNYfi4W+QEkh1Iiss
+	C8/RTeld4sNJG7779cc8zQxxhD1mxk48zSVqfgQG6SwcEqw20dEiB4o2aVXtwxhnHgEuogx
+	lRWtbXb0q4ip+WZWp4F0lImPsW4hi3vt7Sv6W3Gow9qMwCBLxZXixMBPDjB/c5qNPbu8oIA
+	r3sY/64L40IWV+ljwOKmjRdrjSMugx7KL1cQJUq6R+B+lnKPOIsQOsYJzt1ig5adHWg84hL
+	J8wPSvmWzYud/g679TwapGO8MklU9KPQ9wUY5Ph56uVbder3B2bPPjB5oLLM/n/yEjgV1u1
+	iSQzHG7BdmvAoqV5+9LwrdOplnalKvRmQuT490qNxasN1Ad5IAwXCLaNsIDtsyXQ4m09sQF
+	+U4QxsoqpLkcUknl1dAk9C52Mp9vx9dp3mrCenbMbDExRxGoNeqdPyINKfRnd1lYmNecmJr
+	T3eZiYH9TZnifffumwiKJB067umjKNK84DQP0U6jKqzJcOHcHdniRtTc6hVmnSnkHpNmZiy
+	Lu/3be+2lQkRipEfHJ/VNPOejhLg6zCCT4u4kLu18f9XZy1uY3dKzUe5+CaNqhIb5JJfQRo
+	56GTf/yBOiA9RASCVIoaKwUZwdo0aaFVlzZqNVu8AIYzd9HhLfjeawQUXmvXvUCIZ5vy8FI
+	1/mR4K0z0A6vgNwfja4vpa4ClbAv/KpcTvEyc7BFnExYxchTYidBWAqaiuX/UTmaOMRO8oI
+	tZBwjBOO2+WU1BvYfzpAP6JW0y7n+2Cj4OZ2uEXGIVljfm9HcUjStsLFi2nTo6iMYRbkFKd
+	bhShSsiCSFSNm3wZIIsPROmUiKXjM5FnzgJrW1E+JkkrwSQ9sEdXASuayaF5ezPuU71pJMG
+	AF6S3Yk/Pe5oVpciT+MiY/Yk7WMGut0XB0mZqSsyCeAJ5TAIWt2gsieLicHmk453QJqXuW8
+	zT9c0C8A==
+X-QQ-XMRINFO: MPJ6Tf5t3I/ycC2BItcBVIA=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Aug 01, 2025 at 01:57:49PM -0300, Jason Gunthorpe wrote:
-> On Fri, Aug 01, 2025 at 06:50:18PM +0200, David Hildenbrand wrote:
-> > On 01.08.25 18:40, Jason Gunthorpe wrote:
-> > > On Fri, Jul 25, 2025 at 10:31:25AM +1000, Alistair Popple wrote:
-> > > 
-> > > > The only issue would be if there were generic code paths that somehow have a
-> > > > raw pfn obtained from neither a page-table walk or struct page. My assumption
-> > > > (yet to be proven/tested) is that these paths don't exist.
-> > > 
-> > > hmm does it, it encodes the device private into a pfn and expects the
-> > > caller to do pfn to page.
+The error handling paths in dvb_register_device repeatedly check
+if (new_node) before cleanup. However, if new_node allocation fails,
+the function returns immediately and does not reach these branches.
+Thus, these conditionals are redundant and can be removed for code
+clarity and maintainability.
 
-What callers need to do pfn to page when finding a device private pfn via
-hmm_range_fault()? GPU drivers don't, they tend just to use the pfn as an offset
-from the start of the pgmap to find whatever data structure they are using to
-track device memory allocations.
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+---
+ drivers/media/dvb-core/dvbdev.c | 15 ---------------
+ 1 file changed, 15 deletions(-)
 
-The migrate_vma_*() calls do, but they could easily be changed to whatever
-index scheme we use so long as we can encode that this is a device entry in the
-MIGRATE_PFN flags.
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 9df7c213716a..2be0cc81bd47 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -534,11 +534,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	minor = nums2minor(adap->num, type, id);
+ #endif
+ 	if (minor >= MAX_DVB_MINORS) {
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+ 		*pdvbdev = NULL;
+@@ -554,11 +549,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (ret) {
+ 		pr_err("%s: dvb_register_media_device failed to create the mediagraph\n",
+ 		       __func__);
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+@@ -573,11 +563,6 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (IS_ERR(clsdev)) {
+ 		pr_err("%s: failed to create device dvb%d.%s%d (%ld)\n",
+ 		       __func__, adap->num, dnames[type], id, PTR_ERR(clsdev));
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+-- 
+2.20.1
 
-So other than adding a HMM_PFN flag to say this is really a device index I don't
-see too many issues here.
-
-> > > This isn't set in stone and could be changed..
-> > > 
-> > > But broadly, you'd want to entirely eliminate the ability to go from
-> > > pfn to device private or from device private to pfn.
-> > > 
-> > > Instead you'd want to work on some (space #, space index) tuple, maybe
-> > > encoded in a pfn_t, but absolutely and typesafely distinct. Each
-> > > driver gets its own 0 based space for device private information, the
-> > > space is effectively the pgmap.
-> > > 
-> > > And if you do this, maybe we don't need struct page (I mean the type!)
-> > > backing device memory at all.... Which would be a very worthwhile
-> > > project.
-
-Exactly! Although we still need enough of a struct page or something else to
-still be able to map them in normal anonymous VMAs. Short term the motivation
-for this project is that the current scheme of "stealing" pfns for the device
-doesn't actually work in a lot of cases.
-
-> > > Do we ever even use anything in the device private struct page? Do we
-> > > refcount it?
-> > 
-> > ref-counted and map-counted ...
-> 
-> Hm, so it would turn into another struct page split up where we get
-> ourselves a struct device_private and change all the places touching
-> its refcount and mapcount to use the new type.
-> 
-> If we could use some index scheme we could then divorce from struct
-> page and strink the struct size sooner.
-
-Right, that is roughly along the lines of what I was thinking.
-
-> Jason
 
