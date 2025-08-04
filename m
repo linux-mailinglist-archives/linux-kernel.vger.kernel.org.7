@@ -1,122 +1,81 @@
-Return-Path: <linux-kernel+bounces-755559-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755557-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D039FB1A869
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:11:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3F2E5B1A85F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 19:11:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7DBA06236E9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:11:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F14F318A086E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:11:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A13C828B7DE;
-	Mon,  4 Aug 2025 17:11:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CEA28B418;
+	Mon,  4 Aug 2025 17:11:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b="Bc8hkHoH"
-Received: from mx07-00178001.pphosted.com (mx08-00178001.pphosted.com [91.207.212.93])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BqkUr1ie"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF8D26056A;
-	Mon,  4 Aug 2025 17:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.207.212.93
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27566286D4C;
+	Mon,  4 Aug 2025 17:11:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754327476; cv=none; b=XrSrdy4x8rKwH+7wYPXSgKUstpTxr45v2/Va8hfCCbMJT0qoJerB9+BAkQ/CgpNWaXV/p6dagnTApKjxgnr9HO+Zsd7O/dBWlBhoZd/b3qRm5nISSQ+1oGSvlBF5+HIUlJ47WDItPI1A4GI25FikfKr+buntCJ+HiiwcM0fZmkQ=
+	t=1754327467; cv=none; b=tt1YVFQlJXPQ5+1Nu/0KGl3hwiTOv5Mti94HeQ2gc406b9iNGNU8U6Qdz9vESEobXEBNXRW57X2/QdGjDpyV4K8CNgH7okpBMhFPgrkwL+3mI7msz4iclsp6a1vNbUOgrFQ2jJmAgPuBVgBjjuwVK00JEsSZ7rl6axQBB+y2gsU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754327476; c=relaxed/simple;
-	bh=YGjDe8g2XeL8OuTZqUT8rSnAIDqJbibYSb2+lgGodSE=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=KTukqbwoAK6+WRvVLNpFq0cmFG55qk/8ePS2fsShGcXo+N9bPQMETXPAL/B1mMeZRD87lkzfarI3CqBsUCbWCaWq7OntADI9NFxDfl3EIXjw+x1MpUiswFziuteKn7nK6JveJtElmtnG9xfDns8pSaeMmzRBrHAgBl6dMVzr93Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com; spf=pass smtp.mailfrom=foss.st.com; dkim=pass (2048-bit key) header.d=foss.st.com header.i=@foss.st.com header.b=Bc8hkHoH; arc=none smtp.client-ip=91.207.212.93
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=foss.st.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=foss.st.com
-Received: from pps.filterd (m0046660.ppops.net [127.0.0.1])
-	by mx07-00178001.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574GIavG020246;
-	Mon, 4 Aug 2025 19:10:58 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=foss.st.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=selector1; bh=
-	w9nB0wEZMjsj5QGB6VntU2EQFGOUf+h0V/Em0LxA/4Q=; b=Bc8hkHoHGEJ0w1Zb
-	M5UgA3wLBVW2bDARuMu7OT2iWPAMdqsrKORaplPEd+5qnLPJLCVcpUkejy0Nijim
-	4NPnSgUhicKVNJZezZ34zROuWty0q0tTP8/Rpmsxn3u3CvNBjnbSWaRorivsuowe
-	IteSGSJfqeX2sm7w/Ia/ofNoruhiYvZTEmhay5mpZJpwvTa4dZEzBgDK8Gvs89jU
-	f/BcjfjumuUzJarJjHFoEmRQapfJgiePLfvPVvy2NSxzzaybwrxLMv4LUqOfGWQ/
-	wso217l7L9+XVTveZisdDi02t+8fto7YjcJqH8qk6Dx5FGlA3OKJrApMCezJ5M+R
-	iYWzPg==
-Received: from beta.dmz-ap.st.com (beta.dmz-ap.st.com [138.198.100.35])
-	by mx07-00178001.pphosted.com (PPS) with ESMTPS id 4897t8reat-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 19:10:58 +0200 (MEST)
-Received: from euls16034.sgp.st.com (euls16034.sgp.st.com [10.75.44.20])
-	by beta.dmz-ap.st.com (STMicroelectronics) with ESMTP id 53BD840052;
-	Mon,  4 Aug 2025 19:10:13 +0200 (CEST)
-Received: from Webmail-eu.st.com (shfdag1node3.st.com [10.75.129.71])
-	by euls16034.sgp.st.com (STMicroelectronics) with ESMTP id 90D42B7470A;
-	Mon,  4 Aug 2025 19:09:36 +0200 (CEST)
-Received: from localhost (10.130.77.120) by SHFDAG1NODE3.st.com (10.75.129.71)
- with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Mon, 4 Aug
- 2025 19:09:36 +0200
-From: Christian Bruel <christian.bruel@foss.st.com>
-To: <mani@kernel.org>, <kwilczynski@kernel.org>, <kishon@kernel.org>,
-        <arnd@arndb.de>, <gregkh@linuxfoundation.org>, <shuah@kernel.org>
-CC: <linux-pci@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-kselftest@vger.kernel.org>,
-        Christian Bruel
-	<christian.bruel@foss.st.com>
-Subject: [PATCH 3/3] selftests: pci_endpoint: Skip IRQ test if irq is out of range.
-Date: Mon, 4 Aug 2025 19:09:16 +0200
-Message-ID: <20250804170916.3212221-4-christian.bruel@foss.st.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20250804170916.3212221-1-christian.bruel@foss.st.com>
-References: <20250804170916.3212221-1-christian.bruel@foss.st.com>
+	s=arc-20240116; t=1754327467; c=relaxed/simple;
+	bh=QY212mSDy/8Wgzf+MqX1YcqzwSHQd8UphfmbaJNCy5Y=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fZKayyMcsliFOvE4+K7dT1RkinyxLUJzjJgZM7p84xKiBrU93fib9Jww4GVPig08HRyqDBYT5NCqdX+U4oFh82PbC9smAiL4C85Ky1873kpnL8z3+TucWPOy/Z0LQQiee0m5i3Dhv6JvF16vRwDW7RY/JNf51wRRQEaFqqaRlwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BqkUr1ie; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EEB89C4CEF6;
+	Mon,  4 Aug 2025 17:11:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754327465;
+	bh=QY212mSDy/8Wgzf+MqX1YcqzwSHQd8UphfmbaJNCy5Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BqkUr1ieUeT6g1/wkZqLy5DxZDM3TWBgG7lm/2BCPlWDku3Mz7piw8TtXMyyp8AFO
+	 nAJjCKXYfETQdBg0POCPsm2b24pC3Dz4DqksdkQTWZFJ3aV7jC7KF/3HgKxT+PYFWC
+	 CAcsE5DLxWq66BQ81mBWicgLQ4PNqjusAiEmnVo0o3RkuxlggD5ZT8mt8JSzEvcxwK
+	 SuUq7jCIlrTw9h/g1sC4shydqFNES5WDSrCkusd1x86/804MsV258vHAh4+bhPwgzj
+	 YKwUtnahZMQLr4QvZ58DU1s/exV8WE1Q3muNHR2ad2tojlRmQXdYzHE8J3/TiL7UhB
+	 LPVIWI+aNLq3A==
+Date: Mon, 4 Aug 2025 11:11:02 -0600
+From: Keith Busch <kbusch@kernel.org>
+To: Hannes Reinecke <hare@suse.de>
+Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
+	snitzer@kernel.org, axboe@kernel.dk, dw@davidwei.uk,
+	brauner@kernel.org
+Subject: Re: [PATCH 3/7] block: simplify direct io validity check
+Message-ID: <aJDppvHXW8rspmVx@kbusch-mbp>
+References: <20250801234736.1913170-1-kbusch@meta.com>
+ <20250801234736.1913170-4-kbusch@meta.com>
+ <065d699a-1edb-4712-9857-021c58c5e5c2@suse.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: EQNCAS1NODE4.st.com (10.75.129.82) To SHFDAG1NODE3.st.com
- (10.75.129.71)
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_07,2025-08-04_01,2025-03-28_01
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <065d699a-1edb-4712-9857-021c58c5e5c2@suse.de>
 
-The pcie_endpoint_framework tests the entire MSI(x) range, which generate
-false errors on platforms that do not support the whole range.
+On Mon, Aug 04, 2025 at 08:55:36AM +0200, Hannes Reinecke wrote:
+> On 8/2/25 01:47, Keith Busch wrote:
+> >   static bool blkdev_dio_invalid(struct block_device *bdev, struct kiocb *iocb,
+> >   				struct iov_iter *iter)
+> >   {
+> > -	return iocb->ki_pos & (bdev_logical_block_size(bdev) - 1) ||
+> > -		!bdev_iter_is_aligned(bdev, iter);
+> > +	return (iocb->ki_pos | iov_iter_count(iter)) &
+> > +			(bdev_logical_block_size(bdev) - 1);
+> 
+> Bitwise or? Sure?
 
-This patch skips the test in such cases and reports accordingly.
-
-Signed-off-by: Christian Bruel <christian.bruel@foss.st.com>
----
- tools/testing/selftests/pci_endpoint/pci_endpoint_test.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/tools/testing/selftests/pci_endpoint/pci_endpoint_test.c b/tools/testing/selftests/pci_endpoint/pci_endpoint_test.c
-index da0db0e7c969..cd9075444c32 100644
---- a/tools/testing/selftests/pci_endpoint/pci_endpoint_test.c
-+++ b/tools/testing/selftests/pci_endpoint/pci_endpoint_test.c
-@@ -121,6 +121,8 @@ TEST_F(pci_ep_basic, MSI_TEST)
- 
- 	for (i = 1; i <= 32; i++) {
- 		pci_ep_ioctl(PCITEST_MSI, i);
-+		if (ret == -EINVAL)
-+			SKIP(return, "MSI%d is disabled", i);
- 		EXPECT_FALSE(ret) TH_LOG("Test failed for MSI%d", i);
- 	}
- }
-@@ -137,6 +139,8 @@ TEST_F(pci_ep_basic, MSIX_TEST)
- 
- 	for (i = 1; i <= 2048; i++) {
- 		pci_ep_ioctl(PCITEST_MSIX, i);
-+		if (ret == -EINVAL)
-+			SKIP(return, "MSI-X%d is disabled", i);
- 		EXPECT_FALSE(ret) TH_LOG("Test failed for MSI-X%d", i);
- 	}
- }
--- 
-2.34.1
-
+Yep, this is correct. We need to return an error if either the size or
+offset are not aligned to the block size. "Or"ing the two together gets
+us a single check against the logical block size mask instead of doing
+each individually. 
 
