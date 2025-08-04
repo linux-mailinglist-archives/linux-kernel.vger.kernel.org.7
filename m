@@ -1,117 +1,126 @@
-Return-Path: <linux-kernel+bounces-755685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D174AB1AA5C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:32:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9285EB1AA62
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:34:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A7E717F580
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:32:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC6A417F6A2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:34:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 052D5233156;
-	Mon,  4 Aug 2025 21:32:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF97D2376F2;
+	Mon,  4 Aug 2025 21:34:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="kTdn889l"
-Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
+	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="tiUFuGKe"
+Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5888C1C1F02;
-	Mon,  4 Aug 2025 21:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97DC31C1F02
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 21:34:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754343145; cv=none; b=riQbhONs6UMqpygOUqLvZ2K4gevkszJAR+YdEMgj7oSWLcVY+BZhgICsXonTPkknVWGTJsDSKn00Y+pnweeGthhj2ESPkNCrEdnTNW8KgwhPcP6JAtf8M4m2SFGvTK5fBZk03TGfTdnxLgZokBZs8TCw5TfBVZ+hYDgKrNc38aI=
+	t=1754343252; cv=none; b=olbT1I4iO9KuK0StSz6LKMzR42g6W+rxiLU2tlyea29fxp0DIq3BWR+Riuo5vIMZrR+Q1kJOlILzCmYceQUE4wA0+rbDrNKwDGTBcamqWWulZlOIXOkSL3ISOYzZUjRy6lZNcE2flYhDoy0fl80SMaZsHpUGTBPEVxixwH0ZvHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754343145; c=relaxed/simple;
-	bh=0ETSRs55SurE5UWHARraQIhT34q7Y2HgZ+yHb6c9PDw=;
+	s=arc-20240116; t=1754343252; c=relaxed/simple;
+	bh=fTo77DFAznBBbINTAIa2yC0WD6SLTQsGPZ0BSJTmp4Y=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tE4WFnivIvFJxVO1008uCyYyo0mytT0xTHrHm7d9JLi61ykkSnqJUjK855/nvNPjxGdqEZZQwo/u78gi9usfymoU9h/e59Cwk1FqyR+X5vPGb8x8s9iYi3r+HZF0I3itsWO51ORgPH3qaG2BOypmdSCRu1QFJX/R2RflxWmUvYY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=kTdn889l; arc=none smtp.client-ip=217.70.183.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id E862344487;
-	Mon,  4 Aug 2025 21:32:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754343134;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=vF2OkHBOjK8vjJ3vlRzHmsm/3qQXun/URonDEmawmZU=;
-	b=kTdn889lz4zxChAjFptOF4R7nE1TTpJ7wNCh0MIvUBYP0cFuAdEnP7zH8iBbL/+CsaD0Av
-	QVCZYmxQvN38IVUGseAxzz9mmXd18jFRnXeKhIZ163S28K33E+t2XADnwTblkix98jFv1X
-	AGjezf9mZBGYQK568/JmdNGKrjKZjBvYee93zAzx1rxUCGr8XPIAPk4IgUlDFGD3tw0BnD
-	eeglKwDpxC1QsjIrIPZs5zWJnIyocmtQrsFQc9x8zojYvNH8kmlEIUv7HicpeiCUEbREEV
-	/pzBGZ2hhXOyhlVgDM0QGKZMXjE3tsV/Tz/CHBEsC4l9aeb+2NF6D23Y7E3hkw==
-Date: Mon, 4 Aug 2025 23:32:13 +0200
-From: Alexandre Belloni <alexandre.belloni@bootlin.com>
-To: Lothar Rubusch <l.rubusch@gmail.com>
-Cc: michal.simek@amd.com, srinivas.neeli@xilinx.com,
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, Ivan Vera <ivan.vera@enclustra.com>
-Subject: Re: [PATCH v1 1/1] rtc: zynqmp: ensure correct RTC calibration
-Message-ID: <20250804213213d4844d4e@mail.local>
-References: <20250804154750.28249-1-l.rubusch@gmail.com>
- <20250804154750.28249-2-l.rubusch@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=golAhRqscgPuOGpnDkOmVAmK/YZK/O/jBk5cqdad0PbjwWynP0yoGcqG/CAeujaNW5KfsnhZpL3u8rgk1JMkvTrQGOlTHWJ8AgtYuwVy6RR3LFjCx7837r8sCicwo5xlCIrJjPJDpvyTE//Imr2bQ9zhB+W4l8NnrboU650UnSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=tiUFuGKe; arc=none smtp.client-ip=213.167.242.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
+Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
+	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 75EAB9CE;
+	Mon,  4 Aug 2025 23:33:14 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
+	s=mail; t=1754343194;
+	bh=fTo77DFAznBBbINTAIa2yC0WD6SLTQsGPZ0BSJTmp4Y=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tiUFuGKegE+juoRIdYAS6/lJNVkyK1LNXwV4ie0s1KNamBp0KWgM7X0eWerWwUUT/
+	 feqqUsuIQjciVUN5oXIkChm/cetFB9YC/SDYfyOK12g8wnYoO2LYsM66dseS1n06mE
+	 z3WTGMe5X0gAawZO75+Wt/+RuXcDhancPHI9P368=
+Date: Tue, 5 Aug 2025 00:33:47 +0300
+From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
+To: sukrut heroorkar <hsukrut3@gmail.com>
+Cc: Andrzej Hajda <andrzej.hajda@intel.com>,
+	Neil Armstrong <neil.armstrong@linaro.org>,
+	Robert Foss <rfoss@kernel.org>, Jonas Karlman <jonas@kwiboo.se>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	"open list:DRM DRIVERS" <dri-devel@lists.freedesktop.org>,
+	open list <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org,
+	david.hunter.linux@gmail.com
+Subject: Re: [PATCH] drm/drm_bridge: Document 'connector' parameter in
+ drm_bridge_detect()
+Message-ID: <20250804213347.GI30355@pendragon.ideasonboard.com>
+References: <20250802161309.1198855-1-hsukrut3@gmail.com>
+ <20250803165611.GG4906@pendragon.ideasonboard.com>
+ <CAHCkknr+w3B0NWM065Rr_d9n9QEak7YmhehByQTdfwYr30RbSQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20250804154750.28249-2-l.rubusch@gmail.com>
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduudeffeekucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfhfgggtuggjsehttdertddttddvnecuhfhrohhmpeetlhgvgigrnhgurhgvuceuvghllhhonhhiuceorghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgefgjeffhfdukeefheeugffgfeetjefgvdfhgedttedttedtffdtiefgvdeiffdunecuffhomhgrihhnpegrmhgurdgtohhmpdgsohhothhlihhnrdgtohhmnecukfhppeeghedruddurdeikedrvddvieenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepihhnvghtpeeghedruddurdeikedrvddviedphhgvlhhopehlohgtrghlhhhoshhtpdhmrghilhhfrhhomheprghlvgigrghnughrvgdrsggvlhhlohhnihessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepjedprhgtphhtthhopehlrdhruhgsuhhstghhsehgmhgrihhlrdgtohhmpdhrtghpthhtohepmhhitghhrghlrdhsihhmvghksegrmhgurdgtohhmpdhrtghpthhtohepshhrihhnihhvrghsrdhnvggvlhhiseigihhlihhngidrtghomhdprhgtphhtthhopehlihhnuhigqdhrthgtsehvghgvrhdrkhgvr
- hhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqrghrmhdqkhgvrhhnvghlsehlihhsthhsrdhinhhfrhgruggvrggurdhorhhgpdhrtghpthhtoheplhhinhhugidqkhgvrhhnvghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepihhvrghnrdhvvghrrgesvghntghluhhsthhrrgdrtghomh
-X-GND-Sasl: alexandre.belloni@bootlin.com
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAHCkknr+w3B0NWM065Rr_d9n9QEak7YmhehByQTdfwYr30RbSQ@mail.gmail.com>
 
-On 04/08/2025 15:47:50+0000, Lothar Rubusch wrote:
-> From: Ivan Vera <ivan.vera@enclustra.com>
+On Mon, Aug 04, 2025 at 11:24:58PM +0200, sukrut heroorkar wrote:
+> On Sun, Aug 3, 2025 at 6:56 PM Laurent Pinchart wrote:
+> > On Sat, Aug 02, 2025 at 06:13:05PM +0200, Sukrut Heroorkar wrote:
+> > > drm: drm_bridge: fix missing parameter documentation
+> > >
+> > > The function documentation was missing description for the
+> > > parameter 'connector'.
+> > >
+> > > Add missing function parameter documentation for drm_bridge_detect()
+> > > to fix kernel-doc warnings.
+> > >
+> > > Warning: drivers/gpu/drm/drm_bridge.c:1241 function parameter 'connector' not described in 'drm_bridge_detect'
+> > >
+> >
+> > A Fixes: tag would be nice.
+> >
+> > > Signed-off-by: Sukrut Heroorkar <hsukrut3@gmail.com>
+> > > ---
+> > >  drivers/gpu/drm/drm_bridge.c | 1 +
+> > >  1 file changed, 1 insertion(+)
+> > >
+> > > diff --git a/drivers/gpu/drm/drm_bridge.c b/drivers/gpu/drm/drm_bridge.c
+> > > index dd45d9b504d8..387a3b6cda54 100644
+> > > --- a/drivers/gpu/drm/drm_bridge.c
+> > > +++ b/drivers/gpu/drm/drm_bridge.c
+> > > @@ -1227,6 +1227,7 @@ EXPORT_SYMBOL(drm_atomic_bridge_chain_check);
+> > >  /**
+> > >   * drm_bridge_detect - check if anything is attached to the bridge output
+> > >   * @bridge: bridge control structure
+> > > + * @connector: connector associated with the bridge
+> >
+> > "associated with the bridge" isn't very clear.
+> >
+> > >   *
+> > >   * If the bridge supports output detection, as reported by the
+> > >   * DRM_BRIDGE_OP_DETECT bridge ops flag, call &drm_bridge_funcs.detect for the
 > 
-> In the event of an uninitialized calibration register, ensure the register
-> is reset and properly programmed during the probe sequence.
-> 
-> At present, only the calibration register is evaluated. If it holds invalid
-> values after a power cycle, there's no longer a way to reset it, for
-> instance, via a devicetree entry to 0x7FFF. This issue is documented here:
-> https://adaptivesupport.amd.com/s/article/000036886?language=en_US 
-> 
-> The fix prioritizes an optional calibration value provided via the
-> devicetree over the value in the register.
-> 
-> Fixes: 07dcc6f9c76275d6679f28a69e042a2f9dc8f128 ("rtc: zynqmp: Add calibration set and get support")
-> Signed-off-by: Ivan Vera <ivan.vera@enclustra.com>
-> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
-> ---
->  drivers/rtc/rtc-zynqmp.c | 6 +++---
->  1 file changed, 3 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
-> index f39102b66eac..0c063c3fae52 100644
-> --- a/drivers/rtc/rtc-zynqmp.c
-> +++ b/drivers/rtc/rtc-zynqmp.c
-> @@ -331,9 +331,9 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
->  		if (ret)
->  			xrtcdev->freq = RTC_CALIB_DEF;
->  	}
-> -	ret = readl(xrtcdev->reg_base + RTC_CALIB_RD);
-> -	if (!ret)
-> -		writel(xrtcdev->freq, (xrtcdev->reg_base + RTC_CALIB_WR));
-> +
-> +	/* Enable unconditional re-calibration to RTC_CALIB_DEF or DTB entry. */
-> +	writel(xrtcdev->freq, xrtcdev->reg_base + RTC_CALIB_WR);
+> Thanks for the review.
+> I will send a V2 shortly with updated connector description and Fixes
+> tag, as suggested.
 
-Doesn't this forcefully overwrite the proper value that has been set
-from userspace and so trashes the time at each reboot?
+It appears that a competing patch got merged in the meantime:
+https://lore.kernel.org/r/20250716125602.3166573-1-andyshrk@163.com
 
-Isn't the proper way to reset it to simply set the offset from userspace
-again?
+It was submitted earlier than yours, and the usual rule in the kernel is
+that the first patch wins when there are multiple similar or identical
+submissions.
 
 -- 
-Alexandre Belloni, co-owner and COO, Bootlin
-Embedded Linux and Kernel engineering
-https://bootlin.com
+Regards,
+
+Laurent Pinchart
 
