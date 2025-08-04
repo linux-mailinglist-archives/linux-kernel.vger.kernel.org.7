@@ -1,235 +1,256 @@
-Return-Path: <linux-kernel+bounces-755362-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id F061BB1A56D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:01:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 80812B1A573
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:05:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AA15A18A1A05
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:02:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A138416A43F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:05:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6980C218AAA;
-	Mon,  4 Aug 2025 15:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1650F218845;
+	Mon,  4 Aug 2025 15:05:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="xgvZoSlj";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="UEgz/aYI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SHicY9eG";
+	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="SHicY9eG"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010039.outbound.protection.outlook.com [52.101.69.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92342C190;
-	Mon,  4 Aug 2025 15:01:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319699; cv=none; b=g1Epdk8Tb/bxRPAuip+00QGNtL98n9ULl8pKu5c6k5F8PyzxOjedkYVlCykPomsWzIhxkNBNqZ4qGhAMbT7D3aHaFd9CSk4QRiScOl+lnOCU6DcyQT2TsKT/9G9k9hBmmc4Xyu/kVp2CQ2JzDgBh47UC29Q6bzABj+YnRrjbz/k=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319699; c=relaxed/simple;
-	bh=FwobIH4OyPCkUNduXkRWqzeDMqJVa1hQQJWmjZl8DeI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LjfGcBE5YVZGQchjG9CmWVajhfYvsRN+VLv4GKwUEGK4tIGgZw957XXPBtl9qkViM4VdwetAhAoDWha5eC+aCeB9OJCWU2MkjvPISmUgq53ZgTxJcBJhVna3XJsCOwObSgpaXjPSE/z+wp0rGcgLj4wB3UjzzoO7sozdPlqOAIE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=xgvZoSlj; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=UEgz/aYI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 4 Aug 2025 17:01:35 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754319695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42vIk650U5Nu4ZZGP8OXuh4SGlMpsh3LVOR0xRo5c+A=;
-	b=xgvZoSljK55eUZl49pOIFNnrdHdyhB+EguZ3VtXjLlw1qYheHhyjn1dh+JM/CN0bP0mFZ/
-	tdTck748/5t0loLo7k3SOaQZq70ELh0QkFrVKXS9c26CQJCq0hx5AfknyV1PuI/aMXoxnK
-	3M2q9amGHrJB88UYc6FayJkazQiw7Zg9Jsn1BPY6MaCeTAdHxlzHh7KaQuZXxSCQnovSbx
-	+lwggG/J8XUl+sXnLhFX95K+3jDt6ym8zMY5Jz/qtkY2igFNCJ6jHt5rTEEjIphF0an7WZ
-	RHHxF8hSznbmiJep7jI2q5bXttGLltUikhYX0OKrqmgEV9SyNyEMZ58PEMorsQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754319695;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=42vIk650U5Nu4ZZGP8OXuh4SGlMpsh3LVOR0xRo5c+A=;
-	b=UEgz/aYIXbU4AIWY7sRvA+X1Ixnt/rZ/UgnAHLyq1fS1UakxkmQZwtnfaPZS/Pv/yaQIJ3
-	sOxqBD62VUPvTODg==
-From: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-To: Christoph Hellwig <hch@lst.de>, Shuah Khan <shuah@kernel.org>
-Cc: Masahiro Yamada <masahiroy@kernel.org>, 
-	Nathan Chancellor <nathan@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Willy Tarreau <w@1wt.eu>, Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <linux@weissschuh.net>, 
-	Brendan Higgins <brendan.higgins@linux.dev>, David Gow <davidgow@google.com>, Rae Moar <rmoar@google.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Nicolas Schier <nicolas.schier@linux.dev>, 
-	Kees Cook <kees@kernel.org>, Alexander Viro <viro@zeniv.linux.org.uk>, 
-	Christian Brauner <brauner@kernel.org>, Jan Kara <jack@suse.cz>, Luis Chamberlain <mcgrof@kernel.org>, 
-	Christophe Leroy <christophe.leroy@csgroup.eu>, linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, kunit-dev@googlegroups.com, linux-doc@vger.kernel.org, 
-	workflows@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org
-Subject: Re: [PATCH v5 00/15] kunit: Introduce UAPI testing framework
-Message-ID: <20250721100913-0c6d93d8-79d6-482b-9db4-7b0c06b604fa@linutronix.de>
-References: <20250717-kunit-kselftests-v5-0-442b711cde2e@linutronix.de>
- <20250717132259.GA25835@lst.de>
- <20250718073743-d4a1f713-f81b-4e89-b3f8-7eed838798e6@linutronix.de>
- <20250721070958.GA29367@lst.de>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1530E137C2A;
+	Mon,  4 Aug 2025 15:05:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.39
+ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754319911; cv=fail; b=mHOOTCRCvFA/iD9BMPAxu7JIOelzeyGs4OraB1byob+U83qBxHF+Pz6g0XrPOz7Oxr9Kjo0qBsvIBkic8rZ+TvhKBk8Uop2o2Pr5O43y4JzdJieH4xWbjPrn3IA+Otp5RB4LdKMZNlB2wxJWxarwwVV768BJvwA42ZiZOUks5kQ=
+ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754319911; c=relaxed/simple;
+	bh=40/9PnpERQHHUjBiKguh2AbDR3zs+yum+urw0lzc+I8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=c9xOxSg30EVjG5T+mD7+0ByY3HjPvJGLT2yL6lcQj+90RWMxzoBeOgxBt2X4Jed9NOYR2dTqujD2f2d30/0LjfY9wkRQi7HpZPoMB1cFH5aHrrTz1iDE+DyYmreeUBIcU2o+2k9OK7jjcig9gnqsyaMb2sNu3CK9LiToxiTFaWo=
+ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SHicY9eG; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=SHicY9eG; arc=fail smtp.client-ip=52.101.69.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
+ b=F+WilQL9R9mTBm8wIiCSfWHPnCYKPmEP03jjFkJ5sAsuZfJQnNvhU9aJ3FxZSvmuWxa6SWs96GSm+xdktVJvo0k8D1QwfmUnCjab6iSn7H8swBiXdjw9e3EYfREDPNerRp5liWGz0qkmauZ2jXPA5F7rDghLSlp0AWuVqZtXFGeX8AKkkOtWD2Ur4aIqqtklsskimaR2uKTSH6EDmRAUSnpz48mf2+6XpbGs8L642sjhygGNAdqqZ/PuqOhmpWoow7vi4lOUa2SuvgliuVPzIksUgSaWWI4H28BnqCwvEUceeJh9kOuU9wdN7TNIuE7snIzlUKS2qWeeqWwc7co4rA==
+ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
+ b=A2sPI7NA243V3ArnUngTDA5+vmKAKtAK/84Q4JuDi2I0Jpp82cRUZK3V9Cb9sk2brSgxjGfHCPJQNQGj8DJJftsX/9xIQTYTKtOp0TddgEk3ciUCMyrR5OyDW6uFsapDG3PCf2hgBX+gj0PcrhP2E4ivNSGBY7PMLrew/u+Luz0AC4JcqS3PMCgPwOMBH8slHZPeDYqKh6l8RmeHEhIf6jMt9Z4Yfy5wquSG9H9ButNkMrze09OrIYUcRh+1W6cQC5REEbuFcW7zZoDLo9FgUdfU3I7+tpsf2gh3gewF7zJWYc5OPIEEyeKPHx7CMOdxjwww5TSq1EagRJBTqO5WhA==
+ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
+ 4.158.2.129) smtp.rcpttodomain=kernel.org smtp.mailfrom=arm.com; dmarc=pass
+ (p=none sp=none pct=100) action=none header.from=arm.com; dkim=pass
+ (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
+ spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
+ dmarc=[1,1,header.from=arm.com])
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
+ b=SHicY9eG4cHJomJlFN4Xx2DFneJ9wyqUcBgPZkGmeXdB+wGgdXziraAoJ78N4ngyjdOibhTMH2ctRNwxtQ41mZ72zNpoA1PEfA11IhdEzmqKeLrOunuY+byFbnj69BHvBy31p3q7Lt/Yg1iPAPkK9U+GrRqalTEbeuvFOeuXNG0=
+Received: from DU2PR04CA0213.eurprd04.prod.outlook.com (2603:10a6:10:2b1::8)
+ by AS8PR08MB9314.eurprd08.prod.outlook.com (2603:10a6:20b:5a5::7) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 15:03:41 +0000
+Received: from DB1PEPF00039233.eurprd03.prod.outlook.com
+ (2603:10a6:10:2b1:cafe::9f) by DU2PR04CA0213.outlook.office365.com
+ (2603:10a6:10:2b1::8) with Microsoft SMTP Server (version=TLS1_3,
+ cipher=TLS_AES_256_GCM_SHA384) id 15.20.8989.20 via Frontend Transport; Mon,
+ 4 Aug 2025 15:03:41 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 4.158.2.129)
+ smtp.mailfrom=arm.com; dkim=pass (signature was verified)
+ header.d=arm.com;dmarc=pass action=none header.from=arm.com;
+Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
+ 4.158.2.129 as permitted sender) receiver=protection.outlook.com;
+ client-ip=4.158.2.129; helo=outbound-uk1.az.dlp.m.darktrace.com; pr=C
+Received: from outbound-uk1.az.dlp.m.darktrace.com (4.158.2.129) by
+ DB1PEPF00039233.mail.protection.outlook.com (10.167.8.106) with Microsoft
+ SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.9009.8
+ via Frontend Transport; Mon, 4 Aug 2025 15:03:40 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=uM+z93E2JKzbO989JJz417QK9oB/BPhuhn+4DWOuU/7VqdCbZ/tU6OfJAgkDLkvcKZ+58w+cXHyVMCxaVCupv3qs5tZVMnGlOuIgBnUM3fOaGOdMskV5dkrrUpEuuZCRAk87Oov/lr1Pl73DdoB/18Ng0w1GR1pOhFUBQnPY80f0SLFyj/i38lJqU2j4nSdIZ1sYkrALZbL/i8bELP8JQNMmJ6W7Zmr9yMPoxn+Au+bCAt1XKsV6JOiah24pWRh+5F+xmjEwkxVaYGDDMSzJI1Hlv3nO33adhToO1Cd50DxhuqeDJZZ0PA/+Ss00duMtaAGB2G6BeMPOLKhFdZY6mw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
+ b=woo7PdGZx2yskqo8XUhlnSeO9RGXHxB96FxHdFGDUiOZlKzbTsIYrSqRLRCcDJD/x8Vbq5ssxzQnS8HygdEAqjULsUMBQtf/0MW/XC4+Snq6k/ZOC4OhvCOPvsP7cw3kYIROh7KizBfUwX6hJoOMuXW98fzoaFI+c/kRFQ+nJoVhfAdHWH1efllHLxwSpnk7mOEqvOIz/YHEgn2AfjCJLiH//WPoOnbQl+ZHlPf5Tdstf2QatnjbcXspQY/9m07khAGVBwIv4Eu4Hlo5c6OBp7Zma/cg3BTrVX4tvaNXT9umisRhNjIqQzUMvGI+3D9X2BHQyg0ZoslsbN0V4bzfkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
+ header.d=arm.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=w0tTGKAS/E8ofpb5WcCjGZ8pOSobw+Dvjf1Mj9Z7A58=;
+ b=SHicY9eG4cHJomJlFN4Xx2DFneJ9wyqUcBgPZkGmeXdB+wGgdXziraAoJ78N4ngyjdOibhTMH2ctRNwxtQ41mZ72zNpoA1PEfA11IhdEzmqKeLrOunuY+byFbnj69BHvBy31p3q7Lt/Yg1iPAPkK9U+GrRqalTEbeuvFOeuXNG0=
+Authentication-Results-Original: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=arm.com;
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20) by DBBPR08MB6220.eurprd08.prod.outlook.com
+ (2603:10a6:10:205::5) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 15:03:07 +0000
+Received: from GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739]) by GV1PR08MB10521.eurprd08.prod.outlook.com
+ ([fe80::d430:4ef9:b30b:c739%7]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 15:03:07 +0000
+Date: Mon, 4 Aug 2025 16:03:03 +0100
+From: Yeoreum Yun <yeoreum.yun@arm.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: catalin.marinas@arm.com, will@kernel.org, broonie@kernel.org,
+	oliver.upton@linux.dev, anshuman.khandual@arm.com, robh@kernel.org,
+	james.morse@arm.com, mark.rutland@arm.com, joey.gouly@arm.com,
+	ry111@xry111.site, Dave.Martin@arm.com, ahmed.genidi@arm.com,
+	kevin.brodsky@arm.com, scott@os.amperecomputing.com, mbenes@suse.cz,
+	james.clark@linaro.org, frederic@kernel.org, rafael@kernel.org,
+	pavel@kernel.org, ryan.roberts@arm.com, suzuki.poulose@arm.com,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+	linux-pm@vger.kernel.org, kvmarm@lists.linux.dev
+Subject: Re: [PATCH 10/11] KVM: arm64: nv: support SCTLR2_ELx on nv
+Message-ID: <aJDLp+2Tuv7SMxK7@e129823.arm.com>
+References: <20250804121724.3681531-1-yeoreum.yun@arm.com>
+ <20250804121724.3681531-11-yeoreum.yun@arm.com>
+ <86pldb6xkl.wl-maz@kernel.org>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86pldb6xkl.wl-maz@kernel.org>
+X-ClientProxiedBy: LO4P123CA0557.GBRP123.PROD.OUTLOOK.COM
+ (2603:10a6:600:33b::13) To GV1PR08MB10521.eurprd08.prod.outlook.com
+ (2603:10a6:150:163::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250721070958.GA29367@lst.de>
+X-MS-TrafficTypeDiagnostic:
+	GV1PR08MB10521:EE_|DBBPR08MB6220:EE_|DB1PEPF00039233:EE_|AS8PR08MB9314:EE_
+X-MS-Office365-Filtering-Correlation-Id: ebdc12ba-669e-4a47-c591-08ddd36818e3
+x-checkrecipientrouted: true
+NoDisclaimer: true
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam-Untrusted:
+ BCL:0;ARA:13230040|7416014|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info-Original:
+ =?us-ascii?Q?pHVTFO2kUubWU5YYEfdgJiN71OXOiQ+V4Dq/sKv9d2G0uexboBebdjteBIgQ?=
+ =?us-ascii?Q?G0PGiwGtkvqRfRZkvK6+lqdxQ/ih6Om6BTWDD1+YtD1HSfLGVeaFpRHjkGh1?=
+ =?us-ascii?Q?gQm25ojDax368nyYWCY8dp/DfHWbGKVGuR2xxMg0iIiOZJJmVyOYaVZVAgzG?=
+ =?us-ascii?Q?gkBmNe+EXAtQEZaXa6Tt0wxX5DgaWMUZuPNTfnNA6M2bdJtPwUtFEaW+FueH?=
+ =?us-ascii?Q?YHWuBXNxMPRB21B9zu1ZBZu4/SeYMdp0DZyobdSE8gMjcZ/WCRBnyJi9L3pe?=
+ =?us-ascii?Q?SQNXCm1y7KhiNuuyrc6KZfgt+q4OLAMh6NYs0cwCq2YauUjPyAoEita+jveN?=
+ =?us-ascii?Q?o412PrFvcMF0PnbYm030T6C43dKNbmi1DUtQeQfdaIyMzAl1+xLglMYxaiV5?=
+ =?us-ascii?Q?QizzmGdZG4NM7/9/BQwMFGl5qdJqZSQF4+MctdjeH9Jc8L+P3wEHi3tPAyuy?=
+ =?us-ascii?Q?iif526/WN8UmJPDBXpdMVtjzCMXPHn5NwuxsMbBqLoHN3A2FcLe+36/r7xP2?=
+ =?us-ascii?Q?woLHt48/vGBjHOQ/qZyTKHQFlbs0TSsO5ggvIf2GIrj7+XtZN0eRu0LvemxT?=
+ =?us-ascii?Q?Pw+4A3wdgJDARChGXfI9Y3mYe87J1PCYmHvCjmF7SSshJDPi15Kn0yGXsz6t?=
+ =?us-ascii?Q?H9EtKZmdVL9wUD7KD3cI6RTA8ffMP5BblOGrKf1O4bZtO0YItgAz8/Y1zj1/?=
+ =?us-ascii?Q?fyj8XJVgzZkOtCJWHTUvBfUD+LZ3BzPyIEwzHyATfR2idXCpGbSOZYwgYNO1?=
+ =?us-ascii?Q?5KnqaMzKwHgFPhUdt/9J6tTswnJ9GC71EyhnuWn9a9OOTzeO3+rM0s4uHuGJ?=
+ =?us-ascii?Q?AdC4OSDq2RFjH2GRrU0uwMSnMNJc9lliBMmmHovR92CvuoLCUqD1f9mEwYpY?=
+ =?us-ascii?Q?GqQ7AlYfcBhT2Rkq85oITVNv0uIvr1pg3aqzOoK2XbUnqsqgXv7P3OmG4xPg?=
+ =?us-ascii?Q?1J0sJC8nkOD5CQnkd+CoB4hU9s8eprZNxI0jswT87QpzV3bnVmNHUe5i2Ptw?=
+ =?us-ascii?Q?Ttf8aW/RIcpVbHu+DDmBlsELTAD/wJYFBtd7jJla8tZG+uwLSyAnsQBPZdfn?=
+ =?us-ascii?Q?4pbMBl/Y7u9087QgyFU3mBo045ItlaXzLy7deJTYeIkbrKjH1/2ZgtA5H0hT?=
+ =?us-ascii?Q?U8/IOCQZ9EfLT4MZc2+DryG122KIGH0+gknM7aiPoUtMkA1V/SRXMw2qDe+C?=
+ =?us-ascii?Q?UBFSB07YSdTRWrna+eHm38w9yRT5jnunvHSpHy6eLOfL0Me+FdBFMVvgZBVg?=
+ =?us-ascii?Q?gXqe6xUmo0TRY3SYUlv4VTy9nkhKxOaMEKvbBCULy/ddvusgijtfeXWbffxn?=
+ =?us-ascii?Q?f30CdAZuS1Cj+mNA6IWh2q074CN+ejl2udFkKLs+m88IQFp0aQ4dnp3oxroT?=
+ =?us-ascii?Q?/RNztxXgyQAbFaZYA4fklDd3Ek+zEaxX/jlB0c2dHHfec7tprQQfOL4PdI3l?=
+ =?us-ascii?Q?dHE0JKgNn+s=3D?=
+X-Forefront-Antispam-Report-Untrusted:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:GV1PR08MB10521.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DBBPR08MB6220
+X-EOPAttributedMessage: 0
+X-MS-Exchange-Transport-CrossTenantHeadersStripped:
+ DB1PEPF00039233.eurprd03.prod.outlook.com
+X-MS-PublicTrafficType: Email
+X-MS-Office365-Filtering-Correlation-Id-Prvs:
+	091177b6-e9f2-47c0-3096-08ddd36804ef
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|36860700013|1800799024|376014|7416014|35042699022|82310400026|14060799003;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?bQolujlGxB8O7t6nx4Ntv9NOUdiMa3PJBKqe/J5f23sHw1RPUuSKtj2vwMrK?=
+ =?us-ascii?Q?OC181l2HtoTnC9EJScTM6gV19Q79bhh2XJkUcAWxalpYOFQ1i1sA4T+KmnPN?=
+ =?us-ascii?Q?mm1qwvsQFC9VI3q8brDuG7eW5ssJ3nNz6+GBunaOJX0ePpYu6LnRo1Aj3htu?=
+ =?us-ascii?Q?Nr3kkLQMYUNTFFPVc4EpeufBmow9YmY7hK/CcW3R0SkTmqdMiL2YYz1rzTqI?=
+ =?us-ascii?Q?kU109GIl5gCi7ZHhJjHV0ybXAgO74Orcgm7+3iUCyzthyNy4nPZldEcQw+FA?=
+ =?us-ascii?Q?8riCwKBRce6tjwgCe2OvKUykwtXhhD1rEhJ9Z1rhqezqWZe7U1N6pLX36V7f?=
+ =?us-ascii?Q?jvGpeKmggVEt2i5RnN0PxV6w4gb0tyY6JPBEPtCsWEEUI6udyH3/6jIXaJy6?=
+ =?us-ascii?Q?Oz+OeDRP3cS+cDUNA9CaFrRM5lMCxJjhbaoDHP9dq+s+Im0ZcX8KtyLslaA3?=
+ =?us-ascii?Q?8584M5PgiUkTKfgM92SH8mYGUJFP3EUHnBcXeWVP4S4O5pZt/F8oLkqYkdHY?=
+ =?us-ascii?Q?2Or1p9rSXW0znjtBiDxkXSF6Wp50ntdIZbnOpoFpI8+g4pfanXKCiQhnP4He?=
+ =?us-ascii?Q?Yjv6TXcOqz0jo2Z3za79l/WufAM8FQoUkiVWm6skldb/U6aGJzjhucPZa6C9?=
+ =?us-ascii?Q?f/kAOy2pZS2s1FABM8v1FTuN+b4tlF1+9tElEaxIBl85NNvqH1V7CLY5r8qS?=
+ =?us-ascii?Q?xsx9MGxbcnylw2av7MgF8Iwmn8jVePyKrbtDZp4V7dPAuVPHHBptgWI0UetP?=
+ =?us-ascii?Q?FLzFzRkQa3m8b1i/TXa20HsgnlZyxRIFUrzZC/ex17pFpQp+HDh9aiw4yfBU?=
+ =?us-ascii?Q?NkR/c/VL86AuLno8HLikcDbmEObhR4vhCNoo2ig1F74aONP0UGzS+HzefyfD?=
+ =?us-ascii?Q?RbjGU+pvh7U8zL0vdUyK68gfmrRa+04uK2v9uSrFRga433M3WJKswGclS7Ns?=
+ =?us-ascii?Q?guLAe/biyCoU7Yc4ZQOyWLhhojfvf1MJHRzPr4ilev6YVBuJVU0sar8PhjId?=
+ =?us-ascii?Q?dqs44j+2B2ty0DzoFKiC8mY8bVK+3QHNzevv6J96fCa3m6GVYCOyhkcmuvfQ?=
+ =?us-ascii?Q?MCNK5mLThTMD79q+Z7Oed47Gmdh1ct9D9tb9oj+ZykrXWWh4cRS/FtkrflOr?=
+ =?us-ascii?Q?yKueHa7uFkB/LS9fyxcUTbI2ftEXkMB0lXGW8njt/o4RQoTPyS9ALJhcG4MV?=
+ =?us-ascii?Q?uvMvEPz6qxLcDfkljqrx39AT0C/l1dBrGddbNUepUHr+VemjbWOumTMi9NQl?=
+ =?us-ascii?Q?WILubona1MJCOfSHUAPro9o0xMsecRKeBwU+iX5uqibt5P/KiVXnaMhI+WjH?=
+ =?us-ascii?Q?qBujLl5dEY6REeFiWAdpGKz+IxCu9CRm7jzVmUeEgVGwBtnmaiZEXxIHaXER?=
+ =?us-ascii?Q?aEB2MDHXLvWx/D9GP5f/K/hYSi2pEF82or3hwvvmX6f9lEgdv2n4n91JikG+?=
+ =?us-ascii?Q?ZKaacQ+K/68IUNxgSAezfBoqfLUoKpcUNY0pbvBEgTTSMeUkLo5xuuOwOYnE?=
+ =?us-ascii?Q?2uf4xv2K46Maj8Mnv2esZl518G4SC5Qk7PTf?=
+X-Forefront-Antispam-Report:
+	CIP:4.158.2.129;CTRY:GB;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:outbound-uk1.az.dlp.m.darktrace.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(36860700013)(1800799024)(376014)(7416014)(35042699022)(82310400026)(14060799003);DIR:OUT;SFP:1101;
+X-OriginatorOrg: arm.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 15:03:40.3105
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: ebdc12ba-669e-4a47-c591-08ddd36818e3
+X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[4.158.2.129];Helo=[outbound-uk1.az.dlp.m.darktrace.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	DB1PEPF00039233.eurprd03.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB9314
 
-Hi Christoph,
+Hi Marc,
 
-On Mon, Jul 21, 2025 at 09:09:58AM +0200, Christoph Hellwig wrote:
-> On Fri, Jul 18, 2025 at 08:22:26AM +0200, Thomas Weißschuh wrote:
-> > > I had my own fair share of problems with kselftests,
-> > > mostly because of the lack of structure and automated way to run them,
-> > 
-> > How did you overcome these issues? Why does everbody need to reinvent the
-> > wheel here?
-> 
-> Told people to use everything remotely file system related to use
-> xfstests instead, and either ignore or suffer from the rest.
+> [...]
+>
+> > diff --git a/arch/arm64/kvm/nested.c b/arch/arm64/kvm/nested.c
+> > index dc1d26559bfa..a4d3b2d2fd80 100644
+> > --- a/arch/arm64/kvm/nested.c
+> > +++ b/arch/arm64/kvm/nested.c
+> > @@ -1704,6 +1704,19 @@ int kvm_init_nv_sysregs(struct kvm_vcpu *vcpu)
+> >  			 TCR2_EL2_AMEC1 | TCR2_EL2_DisCH0 | TCR2_EL2_DisCH1);
+> >  	set_sysreg_masks(kvm, TCR2_EL2, res0, res1);
+> >
+> > +	/*
+> > +	 * SCTLR2_EL2 - until explicit support for each feature, set all as RES0.
+> > +	 */
+> > +	res0 = SCTLR2_EL2_RES0 | SCTLR2_EL2_EMEC;
+> > +	res0 |= SCTLR2_EL2_EASE;
+> > +	res0 |= SCTLR2_EL2_NMEA;
+> > +	res0 |= (SCTLR2_EL2_EnADERR | SCTLR2_EL2_EnANERR);
+> > +	res0 |= SCTLR2_EL2_EnIDCP128;
+> > +	res0 |= (SCTLR2_EL2_CPTA | SCTLR2_EL2_CPTA0 |
+> > +		 SCTLR2_EL2_CPTM | SCTLR2_EL2_CPTM0);
+> > +	res1 = SCTLR2_EL2_RES1;
+> > +	set_sysreg_masks(kvm, SCTLR2_EL2, res0, res1);
+>
+> This patch is obsolete, but I'd like to point out that this is not the
+> way we describe these things. Each bit of the register needs to be
+> tracked against the feature it is part of, and not blindly added to
+> the RES0 set. See
+>
+> https://lore.kernel.org/all/20250708172532.1699409-15-oliver.upton@linux.dev/
+>
+> for the equivalent change.
+>
+> You should *NEVER* describe a functional bit as RESx without
+> considering whether the feature is exposed to the guest, irrespective
+> of what the kernel supports.
 
-Suffering from the rest is what I am trying to avoid.
-(More on that below)
+Thanks to let me know.
+I'll keep in mind :)
 
-> > KUnit already exists and provides a lot of structure and tooling.
-> 
-> That's great.  Let's reuse it without having to drive running userspace
-> programs from kernel code.
-
-Running in the kernel is the point behind KUnit. It could be done by putting
-all the userspace test into a initramfs and run them on boot from there.
-But that has other drawbacks:
-* The tests can't be run on an existing system.
-* All tests need to be loaded into memory together, and not on demand.
-* The tests can not be rerun.
-
-> > > but adding them to the kernel (or a module) is overshooting the target
-> > > by far.
-> > 
-> > That's a subjective statement without any reasoning I can engange with.
-> 
-> Well, then we're done here if you can't engage.
-
-This was a response to one specific statement. Could you be a bit more specific
-in your critique? I am not sure what exactly you mean in some cases, making it
-hard to respond properly. For example "bloat", it is bloaty
-* source code,
-* object code for users enabling the new kconfig options,
-* object code for other users *not* enabling the new kconfig options?
- 
-> > I would be happy to do so, but for now I can only say that I disagree.
-> > The patches have been on the testing-related lists for
-> > some time and so far nobody had an issue with this aspect.
-> 
-> Has anyone actually chimed in and said "it's great that we bloat the
-> kernel to run userspace tests", or have people just mostly ignored it
-> like most things?
-
-That specific wording wasn't used. Obviously...
-So far nobody had any issues with the overall goal of the series.
-There was criticism around implementation details and I have been and will be
-working on resolving those.
-
-Some feedback I got:
-
-David [0]: "I've taken quite a liking to it: it'd definitely have made my
-life easier more than once."
-Benjamin is already playing with it, having built his own testcase [1].
-I asked Shuah about it before starting development and she gave a go-ahead.
-A collegue of mine is also using it to validate the PREEMPT_RT safety of
-various UAPIs by combining KUnit UAPI with a runtime validator [2].
-
-> > > > If the kernel toolchain is not fit to
-> > > > produce userspace because of a missing libc, the kernel's own nolibc can
-> > > > be used instead.
-> > > 
-> > > Is nolibc enough to run all the selftests?
-> > 
-> > It is not and most probably won't ever be. The maintainers of each testcase
-> > will decide which libc to use. Like it is in tools/testing/selftests/ today.
-> > Some use glibc, some nolibc and some can do both.
-> 
-> So why do you want to use it here?  And how is is related to the rest
-> of the series?
-
-To make it easier to test a wide range of architectures by not requiring a
-libc from the toolchain. It also avoids relying on a bunch of out-of-tree
-code (glibc) as part of the test. And there are existing kselftests which
-use it over glibc for their own reasons.
-
-But using nolibc in test code is not necessary and nobody is forced to do so.
-
-(Maybe a disclaimer that I'm one of the nolibc maintainers is in order)
-
-(...)
-
-> You present running pure userspace tests as the solution to a problem
-> you don't even explain, or rather just state very highlevel.
-
-To run kselftests we need the following things:
-a) A toolchain which can build userspace executables.
-b) Quite a bit of supporting userland, at least glibc, coreutils and bash.
-c) A rootfs assembled out of these.
-d) An efficient way to incrementally rebuild the test executables and rootfs.
-e) A way to put that rootfs into the system under test.
-f) A way to configure a kernel which
-   * is as small as possible and as fast as possible to build,
-   * can run on QEMU or a real machine,
-   * can run the functionality under test.
-g) A way to select the tests to run in the system under test.
-h) A way to communicate back the results.
-i) Something to interpret the results.
-j) Hook up everything into a CI system.
-
-And for all of this there should be good in-tree tooling.
-
-For a) and b) I am not aware of any toolchain provider or distribution which
-provides this for all necessary architectures. And the existing userspace test
-frameworks don't even try to address the points a) to e)/f) and let the user
-figure it out. This is the case for xfstests and LTP. virtme(-ng) provide most
-of it but don't support cross-architecture setups. On the other hand the tree
-already contains solutions for most of those points. a) and d) are solved by
-kbuild userprogs, e) to j) by KUnit and my new framework plugs b) and c).
-Moving to a pure userspace solution would preclude the usage of KUnit as far as
-I can see.
-
-This all started when I worked on the generic vDSO data storage patches [3].
-I needed to run the existing vDSO selftests against a bunch of architectures,
-including some esoteric ones [4]. With my framework, running the vDSO selftests
-for any architecture is now trivial and blazingly fast.
-
-Does this make more sense?
-
-> Yes, kselftests suck as most people will agree. But the answer is not
-> to add a lot of kernel bloat to treat userspace integration tests
-> like kernel units tests.
-
-I fail to understand how this test code is worse than the existing KUnit test
-code. This is not meant to test complex scenarios, but single system calls or
-specific UAPIs, which may depend on architecture features. For example timers,
-signals, vDSO, mm etc.
-
-> How about you just fix kselftests, preferably
-> by reusing well known and teststed userland code?
-
-Is "well known and tested userland code" referring to glibc or testing
-frameworks? As mentioned above, glibc can be used just fine and the frameworks
-I know about are lacking.
-
-
-Thomas
-
-
-[0] https://lore.kernel.org/all/CABVgOSn+530YJ3OPNJQncLDQNbd9JEDtZ04Amyyxk57jOVYUyQ@mail.gmail.com/
-[1] https://lore.kernel.org/all/20250626195714.2123694-3-benjamin@sipsolutions.net/
-[2] https://lore.kernel.org/lkml/cover.1752088709.git.namcao@linutronix.de/
-[3] https://lore.kernel.org/lkml/20250204-vdso-store-rng-v3-0-13a4669dfc8c@linutronix.de/
-[4] https://lore.kernel.org/lkml/20250724-vdso-sparc64-generic-2-v1-0-e376a3bd24d1@linutronix.de/
+--
+Sincerely,
+Yeoreum Yun
 
