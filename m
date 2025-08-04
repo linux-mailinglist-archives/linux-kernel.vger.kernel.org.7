@@ -1,133 +1,106 @@
-Return-Path: <linux-kernel+bounces-754802-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754807-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 684C0B19CF0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:49:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17CB8B19D00
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:56:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3BEE31885875
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:50:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 527A8178331
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:56:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6EA9C239573;
-	Mon,  4 Aug 2025 07:49:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DA4023BD1D;
+	Mon,  4 Aug 2025 07:56:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OZPlcf2Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="X7yZLNHL"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA209B672;
-	Mon,  4 Aug 2025 07:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F2F2D2F2D;
+	Mon,  4 Aug 2025 07:56:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754293788; cv=none; b=YY2kcvvnfJeUVJN7W6PcCXOAM8pFIJDPSkoBJsE3wiazusXZvg6pvWTx9QO5q2E0iJ78lzpWSS2WmQqSKU1ViJPYNzjejIdRdHFDaqFdMLyOv6Dd17YCQ1+ZnsvbN6nA7znd9ZBTYmQoa/+8pfOWSSmiNA+EbjKfR74TH29rXbg=
+	t=1754294170; cv=none; b=nZZaD+d9dQMdQ8d6SBaI+DEnZOug/MnwIZA7lf6z+HU1Bw9/6cn6pX8HIy9dhuSVM9m5zTUfU7dpWDDKQ0SUq6oBNI8nnHN5OQX7Vlz8nsR5CUuklTSaKRnHXXorWaD9/ELf22721AoMYOQbh1cFR8t1/NincC+JUbgQnPHDuvk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754293788; c=relaxed/simple;
-	bh=xhI5j3ZBhKzcSpKZJqfid+QDbWfkd+wO8f5fPd60PfM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Py+uOlLZwnlthc3neLvLuImrEis1rLJPIPorIdX0Dvt/0JzF8wlG919O8vzOh0x9ZdX0m/lMQdER3xvqc0ou3ZaD8x3iNFWLqjQUTNTL1xLAvILXp4n/o4wnvvsra/rYPWgDUdkcAYI6CwkZslTESLv1GXzaJvg7/rjfXgRutYQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OZPlcf2Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C585DC4CEE7;
-	Mon,  4 Aug 2025 07:49:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754293788;
-	bh=xhI5j3ZBhKzcSpKZJqfid+QDbWfkd+wO8f5fPd60PfM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OZPlcf2Z95b9xZuXbb52if/f9mrLWZt0fbstj3bcL8YoC+XMkctyO4Q8UTP9Bc6/g
-	 yipvU13VjJPoArXQ+rS6Z7/MN1eA9zBVOvcdFTt1Ou7QF4YMyu6z4L1tVTB4sFUuVB
-	 hYaYMTu6Z1k6RmlJFujJtKdENfvMc3+G2LXZcz6aWROnnh75bK76thE0pClVm6GYyR
-	 4VIzYQzJVQXsw/K6sjV1Pz1dNhBrNTk39GZhBTk66f/uFZ8/QwTx7imO/Q777fwe5K
-	 RhUKu6JnseFd5oxs5Me07Xgu+pdhyuJ2xnEOlKqNjghxP5kbWvjnaD+ftnLq7R47SU
-	 fFUxsSZgkBIrQ==
-Date: Mon, 4 Aug 2025 09:49:43 +0200
-From: Joel Granados <joel.granados@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>, 
-	Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez <da.gomez@samsung.com>, Kees Cook <kees@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next Mailing List <linux-next@vger.kernel.org>, 
-	Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Subject: Re: linux-next: manual merge of the sysctl tree with the modules tree
-Message-ID: <uxgymmpzccvm7d5aydj5ozs7qdnqrpg7ta77uu43bqq3epcwiw@w57gyleopugp>
-References: <20250714175916.774e6d79@canb.auug.org.au>
- <20250731110249.646be7ac@canb.auug.org.au>
+	s=arc-20240116; t=1754294170; c=relaxed/simple;
+	bh=BnROzuyXaP1UwzsNHCzraWROM8wBopZw3oc70QdaeLY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Zp+MefwXNIx81Wm0mjrRMxictV/zM9w5Q61yyn+uctUDEnAwi5k+5kFZIss920M9EaRW7CaD3uUvlXfDqh3arkCl+Eyk98y3KmXHyJF6+0LMknBc47zmAPAQMD3fv9fNVHJDXWtufUhSR6S153MkZ5aBY2770/9KSwEqeOM/yNI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=X7yZLNHL; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754293819;
+	bh=BnROzuyXaP1UwzsNHCzraWROM8wBopZw3oc70QdaeLY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=X7yZLNHLr5r4UBsZrUZv1Fye/q81mMRCYpkb5sYPybsalpnFBh7oVBKEL22Uj+Fsv
+	 OAdjfNL3sn+doU+cV8IywTM0GTsdUtBTkaFYv6v8TzdkykYmFqt4QwkiHvuIt+B2Qs
+	 fToBWzRC9+/zfxonJUmzfUr2S6v08U0E4y9UlVdzacKGXHYF4vBYkXvfshKcJLfduy
+	 mJtSitKhRYiO71CMnuMvOXGLtXyc8oGbPhtsvLHVUjsJCgr7aW+kWoDbtmctSC24K6
+	 cYviCWyOellTh9LYIQTy7hFs3Cm8IXtlwqTkuqu+eoLw0+9ZgM0Z2qKexnnn+EYQ4Z
+	 F9TjvuSZUm4Rw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 12EE217E04DA;
+	Mon,  4 Aug 2025 09:50:18 +0200 (CEST)
+Message-ID: <d030ed4a-bb43-4f24-82c9-6106209013b9@collabora.com>
+Date: Mon, 4 Aug 2025 09:50:17 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="f2molvwlvnzrwba4"
-Content-Disposition: inline
-In-Reply-To: <20250731110249.646be7ac@canb.auug.org.au>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v9 00/23] Add support for MT8195/88 HDMIv2 and DDCv2
+To: Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
+ Louis-Alexis Eyraud <louisalexis.eyraud@collabora.com>
+Cc: chunkuang.hu@kernel.org, p.zabel@pengutronix.de, airlied@gmail.com,
+ simona@ffwll.ch, maarten.lankhorst@linux.intel.com, mripard@kernel.org,
+ tzimmermann@suse.de, robh@kernel.org, krzk+dt@kernel.org,
+ conor+dt@kernel.org, matthias.bgg@gmail.com, ck.hu@mediatek.com,
+ jitao.shi@mediatek.com, jie.qiu@mediatek.com, junzhi.zhao@mediatek.com,
+ dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, kernel@collabora.com,
+ dmitry.baryshkov@linaro.org, lewis.liao@mediatek.com,
+ ives.chenjh@mediatek.com, tommyyl.chen@mediatek.com,
+ jason-jh.lin@mediatek.com
+References: <20250415104321.51149-1-angelogioacchino.delregno@collabora.com>
+ <2eq5je6xk4ly5lxijit3ufor7pmm7mgivbuigzr35lrbe2ryvr@3axnsyabigm7>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <2eq5je6xk4ly5lxijit3ufor7pmm7mgivbuigzr35lrbe2ryvr@3axnsyabigm7>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+Il 03/08/25 00:23, Dmitry Baryshkov ha scritto:
+> On Tue, Apr 15, 2025 at 12:42:58PM +0200, AngeloGioacchino Del Regno wrote:
+>>
+>> This series adds support for the HDMI-TX v2 Encoder and DDCv2, and for
+>> the direct connection DPI as found in MT8195, MT8188 and their variants.
+> 
+> Angelo, just wanted to check, what is the fate of this series? I think
+> it wasn't updated since April. It was a really good example of utilizing
+> the HDMI framework(s). Wink.
+> 
 
---f2molvwlvnzrwba4
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Even though it was fully reviewed, everything but the actual driver was picked
+for whatever reason.
 
-On Thu, Jul 31, 2025 at 11:02:49AM +1000, Stephen Rothwell wrote:
-> Hi all,
->=20
-> On Mon, 14 Jul 2025 17:59:16 +1000 Stephen Rothwell <sfr@canb.auug.org.au=
-> wrote:
-> >
-=2E..
-> >=20
-> > diff --cc include/linux/module.h
-> > index 3b665cb0cabe,e93cdb92ad92..000000000000
-> > --- a/include/linux/module.h
-> > +++ b/include/linux/module.h
-> > @@@ -584,17 -608,6 +584,16 @@@ struct module=20
-> >   #define MODULE_ARCH_INIT {}
-> >   #endif
-> >  =20
-> >  +#ifdef CONFIG_MODULES
-> >  +
-> > - extern int modules_disabled; /* for sysctl */
-> >  +/* Get/put a kernel symbol (calls must be symmetric) */
-> >  +void *__symbol_get(const char *symbol);
-> >  +void *__symbol_get_gpl(const char *symbol);
-> >  +#define symbol_get(x)	({ \
-> >  +	static const char __notrim[] \
-> >  +		__used __section(".no_trim_symbol") =3D __stringify(x); \
-> >  +	(typeof(&x))(__symbol_get(__stringify(x))); })
-> >  +
-> >   #ifndef HAVE_ARCH_KALLSYMS_SYMBOL_VALUE
-> >   static inline unsigned long kallsyms_symbol_value(const Elf_Sym *sym)
-> >   {
->=20
-> This is now a conflict between the modules tree and Linus' tree.
+I am about to go on holidays for the entire month, but I asked Louis (added to the
+loop) to resend the driver while I am away... :-)
 
-That makes sense. The sysctl PR was merged at the end of July. It should
-be fixed in the same way as described in this thread. @Daniel: Ping me
-if you need any feedback from my part.
+Thanks for the reminder and especially for the appreciation, btw.
 
-Best
+Cheers!
+Angelo
 
---=20
+>>
+> 
 
-Joel Granados
-
---f2molvwlvnzrwba4
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQGzBAABCgAdFiEErkcJVyXmMSXOyyeQupfNUreWQU8FAmiQZhYACgkQupfNUreW
-QU/2jgv/dqlsLZvUbCMc7h24t/2ShKsXJ84FMEvGQQdR9y5rR3MnvNJ/CkjJRJdX
-0S3+6tVsnC/uGZXyZyo5aibH3NBQRpk/nFlsQaA3e+E3AlaoclXrp8rHbLc8YQDt
-MQKAwSV317iSh+DblLLDIKJRw//OGwcnylWpTkUK/d7R/rCXGIxI1fdQqkz8hXDQ
-QnorJcEwFnJs/3DldgYaz1egar0eeCI74HlqM+b9hCRqRRfGCN6u2n984GKVGgGQ
-ssIxXKOoFbhp+u1BdLSpzWTSpRCY+Ng+dU6RdeX/ODURxvmu3HTw2ayZi/pjQI3s
-OzLGjfd9rtyRgM+dNeNXlf/Bn3P/akiTvQzMa8Itr6ECMhWFoXSQfWDkGQ+0yaYH
-wUwzVvK1xhP4GwDx36Cfaq6ums7Qbv13MiiJ50u5hDQi7DG2l6zoVjb46rlUQ/qc
-8kKvUk8VAG7wGEBEXTMrMCzRZTnfzW10DarUSlh9r0Yjuv0KX+j0LoRzRcw3Thg0
-gKue7iqW
-=d05s
------END PGP SIGNATURE-----
-
---f2molvwlvnzrwba4--
 
