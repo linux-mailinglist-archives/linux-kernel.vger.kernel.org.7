@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-754692-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754691-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF05BB19B03
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:13:13 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62D29B19B00
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:12:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D29D1897219
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:13:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1E3AC3B6739
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:12:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD272264B9;
-	Mon,  4 Aug 2025 05:13:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ADD43226177;
+	Mon,  4 Aug 2025 05:12:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b="KnFuzqsZ"
-Received: from layka.disroot.org (layka.disroot.org [178.21.23.139])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b="p33R/bl4"
+Received: from outpost1.zedat.fu-berlin.de (outpost1.zedat.fu-berlin.de [130.133.4.66])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EE4225417;
-	Mon,  4 Aug 2025 05:13:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.21.23.139
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 931152E3705;
+	Mon,  4 Aug 2025 05:12:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=130.133.4.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754284385; cv=none; b=lZCpE5PaAKyFyF+gN55AYiyIEi122LhV4jBeQjSbzx90bygHybtrruweZlRyNEK6UTebQpdEi/E7CwKdi1iET3RUGk1bJ0tV91+zdlIvDYfBuuCSoL83HV19J8OkO3YuaEI98AP7+KQmvJWTKsdLmJ1t7YBc1JPLle/Tjxv8H9c=
+	t=1754284365; cv=none; b=UQZSHz2fXBsjTF2oG5y5lkgbC80Z4ZPcJJMdGR5obEMJYa0JECPXG4hS+hQzcn/NRSAVsulX3b/lMZAFaPAtqJbmcqZ8HHel283W54aX/SUFH5d7DOaE0BTxW8ayiexBu5Fau/B3o+/LOMJk+2C2wHtppJuVovLXN6ynQ6knkas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754284385; c=relaxed/simple;
-	bh=SUW5D5b5WsWlP0YMXjvvOTVOjakybqdppS5vTfywQuo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=r8yb6GdTbx+T+AIFGWiSDyu8NIr+N+VjAcSBChlc0t/wzNUTiyTuO+7PyxzppXfW4nN9xMZsbzHfdfD+H2s3LOl139o2TPC3xd8TGQGsVXHWgcRTLdf1T6k2kpL7d8DYRaiPv5wthQVBv5VHYBARCQ/NMFAR6Xj2ba/AeDQTH/Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org; spf=pass smtp.mailfrom=disroot.org; dkim=pass (2048-bit key) header.d=disroot.org header.i=@disroot.org header.b=KnFuzqsZ; arc=none smtp.client-ip=178.21.23.139
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=disroot.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=disroot.org
-Received: from mail01.disroot.lan (localhost [127.0.0.1])
-	by disroot.org (Postfix) with ESMTP id 5F48320A6A;
-	Mon,  4 Aug 2025 07:12:54 +0200 (CEST)
-X-Virus-Scanned: SPAM Filter at disroot.org
-Received: from layka.disroot.org ([127.0.0.1])
- by localhost (disroot.org [127.0.0.1]) (amavis, port 10024) with ESMTP
- id BJneWLsAwyEm; Mon,  4 Aug 2025 07:12:53 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=disroot.org; s=mail;
-	t=1754284373; bh=SUW5D5b5WsWlP0YMXjvvOTVOjakybqdppS5vTfywQuo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To;
-	b=KnFuzqsZn6Eu779yf9Zjp2zeH9TzXtH0ko/GWr/qkEkXclWSEbOcY7RI51Y3Q02tY
-	 v+YDuPEz3tihyNqYug7+rVri3pLwnVEmaImpCGBao2hWTPC/XTEZVfetkvLNYgbsp2
-	 Bm47ovlo1P9xSqxzVTabKRShhrSLx+oNtJzGY56dgdJQaPHT9lPR8yk1X49EXRqvK/
-	 b/kGzebPdI83cxvfkSHPJzCbuHPA3wJ6Y1ZdTHE51/2vmPoQK/1LhRwPDTXgs49qcP
-	 glOhiTuCkiv7ddJG7du/Wjd+a0pxoRfrGKUHvcz+N/k4Tf9SYfr2fmoRZIZgSVYmME
-	 mkS+if9wO21pA==
-Date: Mon, 4 Aug 2025 05:12:26 +0000
-From: Yao Zi <ziyao@disroot.org>
-To: Rob Herring <robh@kernel.org>
-Cc: Drew Fustini <fustini@kernel.org>, Guo Ren <guoren@kernel.org>,
-	Fu Wei <wefu@redhat.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>,
-	Emil Renner Berthing <emil.renner.berthing@canonical.com>,
-	Jisheng Zhang <jszhang@kernel.org>, linux-riscv@lists.infradead.org,
-	netdev@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net v2 2/3] net: stmmac: thead: Get and enable APB clock
- on initialization
-Message-ID: <aJBBOptU4IXilK3I@pie>
-References: <20250801091240.46114-1-ziyao@disroot.org>
- <20250801091240.46114-3-ziyao@disroot.org>
- <20250803170206.GA525144-robh@kernel.org>
+	s=arc-20240116; t=1754284365; c=relaxed/simple;
+	bh=ltynWgACH9WVZj84LIUriAfatzDJUh1ycy928TWSnE0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=UfW2CvXKJhJYKkmmoeq6myIyuKTB3cggNiILt5p//b64ew5iR4us0eO322MpeKX+upECPjNuJjnDJf6aV34Aetit1PgYuYPJYNaB+HX1nj5RqEvK4EqLYarEOyklxybnC9V3osy1I6eavA94Db3G0EKapcbQJ9LG7Q2VV0C59pA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de; spf=pass smtp.mailfrom=zedat.fu-berlin.de; dkim=pass (2048-bit key) header.d=fu-berlin.de header.i=@fu-berlin.de header.b=p33R/bl4; arc=none smtp.client-ip=130.133.4.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=physik.fu-berlin.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zedat.fu-berlin.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=fu-berlin.de; s=fub01; h=MIME-Version:Content-Transfer-Encoding:
+	Content-Type:References:In-Reply-To:Date:Cc:To:From:Subject:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=EvPkdQkZuTk/oKdUqX7+df3m3jcmeHsaTzG3mAWFvRg=; t=1754284361; x=1754889161; 
+	b=p33R/bl4gN5ycL7repDIKEJ9ZcQogVLFlE75zaHyx6bNXHZxOW3E3HIFge3ZH3JmZqpWBT9glM+
+	GuwOd8J8JKuIFaYTrYxyA6Zs6zTGrGMatM2RjljnGjhhHJUZKHUvk/DLQJHIim5ZVcuvm4haBZY5m
+	BR1EDxhebFEFmrSOjx1Dl29MOevMYBHSBCITDAzOMgEenLp8mDZhxxioPGN9HhX0AQNzb88pT8N7J
+	A668vgp7w4xNNfdhc0qIIXzKzwizy3nl7b6mHqQAF6mZEmPJ4ungccVPFoWXS3ofBIsyXKRwmXCCc
+	25/p5s24tD8MC995R5g9MRqlkFodSDYeQdXw==;
+Received: from inpost2.zedat.fu-berlin.de ([130.133.4.69])
+          by outpost.zedat.fu-berlin.de (Exim 4.98)
+          with esmtps (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@zedat.fu-berlin.de>)
+          id 1uinUx-00000001ST0-03q2; Mon, 04 Aug 2025 07:12:35 +0200
+Received: from p57bd96d0.dip0.t-ipconnect.de ([87.189.150.208] helo=[192.168.178.61])
+          by inpost2.zedat.fu-berlin.de (Exim 4.98)
+          with esmtpsa (TLS1.3)
+          tls TLS_AES_256_GCM_SHA384
+          (envelope-from <glaubitz@physik.fu-berlin.de>)
+          id 1uinUw-000000008us-3HKi; Mon, 04 Aug 2025 07:12:34 +0200
+Message-ID: <75cbab0cdab084795422335c0e0d69c6f57b468c.camel@physik.fu-berlin.de>
+Subject: Re: [PATCH v4 25/36] sparc64: Implement the new page table range API
+From: John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>
+To: Anthony Yznaga <anthony.yznaga@oracle.com>, "Matthew Wilcox (Oracle)"
+	 <willy@infradead.org>, linux-arch@vger.kernel.org
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org, "David S. Miller"	
+ <davem@davemloft.net>, sparclinux@vger.kernel.org, Andreas Larsson	
+ <andreas@gaisler.com>, Rod Schnell <rods@mw-radio.com>, Sam James
+ <sam@gentoo.org>
+Date: Mon, 04 Aug 2025 07:12:33 +0200
+In-Reply-To: <83931f05-a613-4972-be76-80bc695915e4@oracle.com>
+References: <20230315051444.3229621-1-willy@infradead.org>
+	 <20230315051444.3229621-26-willy@infradead.org>
+	 <ce6337237169f179c75fe4a1ba1ce98843577360.camel@physik.fu-berlin.de>
+	 <83931f05-a613-4972-be76-80bc695915e4@oracle.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.56.2 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250803170206.GA525144-robh@kernel.org>
+X-Original-Sender: glaubitz@physik.fu-berlin.de
+X-ZEDAT-Hint: PO
 
-On Sun, Aug 03, 2025 at 12:02:06PM -0500, Rob Herring wrote:
-> On Fri, Aug 01, 2025 at 09:12:39AM +0000, Yao Zi wrote:
-> > It's necessary to adjust the MAC TX clock when the linkspeed changes,
-> > but it's noted such adjustment always fails on TH1520 SoC, and reading
-> > back from APB glue registers that control clock generation results in
-> > garbage, causing broken link.
-> > 
-> > With some testing, it's found a clock must be ungated for access to APB
-> > glue registers. Without any consumer, the clock is automatically
-> > disabled during late kernel startup. Let's get and enable it if it's
-> > described in devicetree.
-> > 
-> > Fixes: 33a1a01e3afa ("net: stmmac: Add glue layer for T-HEAD TH1520 SoC")
-> > Signed-off-by: Yao Zi <ziyao@disroot.org>
-> > Reviewed-by: Drew Fustini <fustini@kernel.org>
-> > Tested-by: Drew Fustini <fustini@kernel.org>
-> > ---
-> >  drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c | 6 ++++++
-> >  1 file changed, 6 insertions(+)
-> > 
-> > diff --git a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> > index c72ee759aae5..95096244a846 100644
-> > --- a/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> > +++ b/drivers/net/ethernet/stmicro/stmmac/dwmac-thead.c
-> > @@ -211,6 +211,7 @@ static int thead_dwmac_probe(struct platform_device *pdev)
-> >  	struct stmmac_resources stmmac_res;
-> >  	struct plat_stmmacenet_data *plat;
-> >  	struct thead_dwmac *dwmac;
-> > +	struct clk *apb_clk;
-> >  	void __iomem *apb;
-> >  	int ret;
-> >  
-> > @@ -224,6 +225,11 @@ static int thead_dwmac_probe(struct platform_device *pdev)
-> >  		return dev_err_probe(&pdev->dev, PTR_ERR(plat),
-> >  				     "dt configuration failed\n");
-> >  
-> > +	apb_clk = devm_clk_get_optional_enabled(&pdev->dev, "apb");
-> 
-> The description sounds like this should not be optional. The binding 
-> change also makes it not optional.
+Hi Anthony,
 
-Yes, it shouldn't be. But using the non-optional API will cause the
-driver fails to probe with the old (problematic) devicetree, IOW, it
-breaks the ABI. Comparing to unusable ethernet, failing to adjust the
-link speed sounds a minor point to me.
+On Sun, 2025-08-03 at 12:08 -0700, Anthony Yznaga wrote:
+> There was a follow-on fix that addressed a bug with this patch:
+>=20
+> f4b4f3ec1a31 sparc64: add missing initialization of folio in tlb_batch_ad=
+d()
 
-Maybe we could add a comment to explain why optional API is used, or
-just use the non-optional one if such ABI breakages are acceptable --
-for which I'd like to wait for more opinions.
+Indeed I just tried v6.6 which has this patch and added your sun4u fix and =
+it
+seems to be stable. I was sure I saw problems even with v6.16 though.
 
-> Rob
-> 
+Let me run more tests.
 
-Thanks,
-Yao Zi
+Adrian
+
+--=20
+ .''`.  John Paul Adrian Glaubitz
+: :' :  Debian Developer
+`. `'   Physicist
+  `-    GPG: 62FF 8A75 84E0 2956 9546  0006 7426 3B37 F5B5 F913
 
