@@ -1,141 +1,132 @@
-Return-Path: <linux-kernel+bounces-754926-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754927-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD589B19EA6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:17:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE47EB19EA8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:18:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBBB617894E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:17:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37583AA5EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:18:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DD0242D9A;
-	Mon,  4 Aug 2025 09:17:49 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD26824293C;
+	Mon,  4 Aug 2025 09:17:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TSq/rR8l"
+Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1145F23497B;
-	Mon,  4 Aug 2025 09:17:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DF924502C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:17:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754299068; cv=none; b=o7GW9fVsJKvumP5IGIh0pw/Lp0+PR4h0js3tgEu5TG/NS4KlcDXYwDIGyBNm7MZqPhDiKaaffZlJbwoMuMdLY4rDHMYnTznMqb1c8dEATED6PFqJnnj+psc1LBPPxxDpfLS7UA5CQGVwWifxf4TUro46HP2rtDvEKbSe45eGqEo=
+	t=1754299075; cv=none; b=H6emQFTyc21e3aKBnf5xIrANI85cl17YHPJ1vWe/Xe3OWgc4ZaX2eikI56iM6ah4edKVxZl6M3QOiZG/ZPPWWGR02MGGdZGXYVcLWbzN5/dEv6aMd0QKVN1jjd5wkvCKzXRRdhGs/9pBzWiXeijUMXwxSTB0aMvnyCKtp93b0mM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754299068; c=relaxed/simple;
-	bh=i0OFIqRZ+2MCROlqNGaAy7Gthq89bO35bHAcnJh3VlA=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MD/NSltBDWhZQOyUpDQzLOFPGrOabW7285pJK80T+uV8cw0rxASLUFmxA97/KI+1wlGOxI8ejNipF75s3v8ncmYtFXrparFwO1FCiY37kpGc6NXozW7K8PkQgGUVxsVk0s9yTsZt6vPQ95/sm5Me6HeCOOe1z8TNM9Q69PwxoXI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so688456566b.2;
-        Mon, 04 Aug 2025 02:17:46 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754299065; x=1754903865;
-        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
-         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=xamvBtEdKuAbOd1z+jRRJHYAkrTu7JX4mmKkjKPIws0=;
-        b=dJ4chnUie+7evyoBz74WZGq6bN8oEL8KelLSBJZw+eBaRC571yvtqKidrYeY5BpcdJ
-         b19m5qYL9fcAR5jw9TM09RQ2TcVOtdbcPbQ5IeCftXl0z6CEgXw6IbOFbGGqDW6WFKm8
-         kF3cOzU3Uw4NN/2P5Gdp53fMPf2fuJmlaPPskcaCDPVAMEWkV7gaiqSfa5bcrmZYKfRv
-         XMabyfIAeJ456WICt5YkDlKDkbOGOEMtvMcL+fxjAYsT97cDFnjceCciEqo1ZcpiHK2b
-         ZQm5iO0wUj32lWE1RPv8EiCJqBirGSXSlMoo9FGA2wgqA9y1iMZ1vmnnnIGgaKf0bZcG
-         GE3w==
-X-Forwarded-Encrypted: i=1; AJvYcCUDZ/8wQ3oJcDBgKd3zBbp9GZWAT+kYx/cSIkP3bHT8YYUgPMOjoi7D1Ya0ZO/6T/maUEAY0Abx686/kJE=@vger.kernel.org, AJvYcCWLzaAfPSw4BAYkAWNo5+YHL+TQ7Rm7C1GS8Smz7tFGyFb9tErVUvS91iYB4HaUL/oa3fr4rM1ZL9DY@vger.kernel.org
-X-Gm-Message-State: AOJu0YzRxzBKyWrYalI9QTczsYb0nwR3zp9NjA7b3OAVtAw++6B+oqb1
-	3MJEJ9xZ+V/wXxmgJmQ1ktZTTrKQJAWIEvOx6M/evA1gcIgRbTJz6omwWTk4hA==
-X-Gm-Gg: ASbGncso2GC5p+nWqsd5Xl8fIkzqV/JNyiPMyDvn2g8fOKS5D4FjixhitdDK/fRbqiO
-	1l/wncRSm2EDHaaVJeL1C+C7Oy9GRyI+Cgew1XuyPDSEKL8HqBGTwhcJFFkUAlSnBjlHXOpYsVN
-	iRcfoUqgtRRVp0a1sOnxAFe1XymiErBZjmgQrGgkGnP+3g2lcrYf8aYvR8ty0MBT0nUJl6mdT3V
-	iLxqep41ofRbVrVQMQO+vIXdYj2mLq2umU0AvcR22b2l3FSh7G/oWWk8OzgJYLLzwwlIHqndBb0
-	gZK2TQ9VmrbFhIrMcWexER/ZWHlksjsIz/kiJjfFFmNr6+Gx6DhtZNkQ4DvXZQNpOCfflgVrY1+
-	KferMZEWPLo1V
-X-Google-Smtp-Source: AGHT+IEbHhIr5xiJI4WCsuusUsNAMV+ToZt7UWotIYnSTg2xxYU2vexFSF+WiWH8cmp0UryOEkWQ3w==
-X-Received: by 2002:a17:907:8688:b0:ade:43e8:8fa4 with SMTP id a640c23a62f3a-af94008422dmr1005072366b.18.1754299064846;
-        Mon, 04 Aug 2025 02:17:44 -0700 (PDT)
-Received: from localhost ([2a03:2880:30ff:3::])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0ccsm703510666b.111.2025.08.04.02.17.44
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 02:17:44 -0700 (PDT)
-From: Breno Leitao <leitao@debian.org>
-Date: Mon, 04 Aug 2025 02:17:22 -0700
-Subject: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
- pci_print_aer()
+	s=arc-20240116; t=1754299075; c=relaxed/simple;
+	bh=IzNHPYdI73ZzUeDw+fqUQqQoSqogdsgdeLV26SJWKNk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSkAJq69x63D33HimHFyImiI86T8YNtY4MxXuWEwwYZvxZb3huJFT6s2Kl68odBSxdaTVab1HfJFZ2VFs1Qd3KQWzaHUbzYjELWspWD5+fZO9wTUiw2P5oZGgZGdn+w8kq+i6B8oxDIB+piXtRNcWulkCrdiN7G5NkZ1SGUK/Is=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TSq/rR8l; arc=none smtp.client-ip=194.117.254.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	sang-engineering.com; h=date:from:to:cc:subject:message-id
+	:references:mime-version:content-type:in-reply-to; s=k1; bh=IzNH
+	PYdI73ZzUeDw+fqUQqQoSqogdsgdeLV26SJWKNk=; b=TSq/rR8lMOHRWUGfOTnS
+	fV2aUjGo4FRjajE692PPeIOthLiyaCgXdQMoZyyC18SSJV5svkyybVWmwQ97Cia3
+	o7gu9u68QdRQ/78lj+89/7fyG5BmQAsfcAhSEHoJ9AR7nFlqVQ8O96w4bXGAHP6A
+	UBLhSO91ut4vgpy7f1gsAP2V8L8rimFcsZexWV2CoycBknO5hX2DSlKYfjlwRFdR
+	48WSlZWJmLiKmLcJPB8VO1rcujqgEjAeFtmo+T1Dxj0faNMtpdRK620cVBB6o6sA
+	wTKVLRgsR4pUsstY5T+Q1u6txLpzWcbfbgnyBNMhm4urXMeESEGj6KsExIvJruKz
+	DA==
+Received: (qmail 1872277 invoked from network); 4 Aug 2025 11:17:47 +0200
+Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2025 11:17:47 +0200
+X-UD-Smtp-Session: l3s3148p1@kI3AlIY7LJQujnuw
+Date: Mon, 4 Aug 2025 11:17:47 +0200
+From: Wolfram Sang <wsa+renesas@sang-engineering.com>
+To: Sven Eckelmann <sven@narfation.org>
+Cc: chris.packham@alliedtelesis.co.nz, Alex Guo <alexguo1023@gmail.com>,
+	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] i2c: rtl9300: Fix out-of-bounds bug in
+ rtl9300_i2c_smbus_xfer
+Message-ID: <aJB6u1WoNjiE-tZz@shikoro>
+References: <20250615235248.529019-1-alexguo1023@gmail.com>
+ <4670491.LvFx2qVVIh@ripper>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
-X-B4-Tracking: v=1; b=H4sIAKF6kGgC/x3M0QmAMAwFwFXC+7aQBgTpKiJSa9T8qKQggri74
- A1wD6q6aUWiB66XVTt2JIoNoWx5XzXYjEQQlpY7jiGrj8Vz3UYJk8RSRBeemdEQTtfF7n/rh/f
- 9AKuzfaNdAAAA
-X-Change-ID: 20250801-aer_crash_2-b21cc2ef0d00
-To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
- Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
- Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
- Jon Pan-Doh <pandoh@google.com>
-Cc: linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
- linux-kernel@vger.kernel.org, kernel-team@meta.com, 
- Breno Leitao <leitao@debian.org>
-X-Mailer: b4 0.15-dev-dd21f
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=leitao@debian.org;
- h=from:subject:message-id; bh=i0OFIqRZ+2MCROlqNGaAy7Gthq89bO35bHAcnJh3VlA=;
- b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBokHq3J6RaxpQfmijCmhT8xwiAfy7q4+tdEwFP4
- yJyxN2RFW6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaJB6twAKCRA1o5Of/Hh3
- bQd3D/405/+BXCq8MZtdnT0v0HPlyz++xhl/hpeSOvxquiUiEEfkaHiUL2uqGxGtZtApFaz24gn
- JXC6Ncm8AhRJWEcLw0n830Iuo+eE+UOLzV9LVe3tJG0mrs05AMXRzKIB9gC1qAhWeCY/mcd7ZaO
- hMgXwO4gEuhKA6wAJBqwKo/NYaTNsWj/rWxwqnjYBWC1GW0CPAk/lBVVww+0RGKx1WJIZAmRVxB
- /fEecTarqVnj0ouyvEc2763i6GMm2AhDnNdDQ8qCMN6qH6EPWnEbflBEbVgKVetq2YqrbaFGvGe
- wv/ULHHRlR/HNb4K7YJmTjUeg164O6RWtwJwU6UoHQXIwqJ+hig4UznuTRFbS7UV9x+Rg0+x8P5
- /V35p2mr49zxy1OhQRp4+olU2Y+d/bARyi4Se5hxXZU41d2qlzSaKIiwSWXmyhcHaScUZNz2CPy
- Be+BcociZDT/+b1CDjtImSEZ0+kWMihnXlhSPbgM+TfwZA3quoFcMK/DXdEjSpWQTDyCLx3GHYN
- E+vpmi0oueXyU+j98iYBOJ42zeyvxHJk5heWaqkxmR7XRrpYAdNdp3XVM/z+HFW9VCCJ51aSl1H
- wPd2WKlvGnRMSeqH490icMf0RRGqATNaJoeOL3Y/NQZjCL4bt4cHL+arcgZ7+kYsOQdt+XnWkuK
- lxgZ3D9L1RwM4MQ==
-X-Developer-Key: i=leitao@debian.org; a=openpgp;
- fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="aWRsTPaHeXaj3TkJ"
+Content-Disposition: inline
+In-Reply-To: <4670491.LvFx2qVVIh@ripper>
 
-Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
-when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
-calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
-does not rate limit, given this is fatal.
 
-This prevents a kernel crash triggered by dereferencing a NULL pointer
-in aer_ratelimit(), ensuring safer handling of PCI devices that lack
-AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
-which already performs this NULL check.
+--aWRsTPaHeXaj3TkJ
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Breno Leitao <leitao@debian.org>
-Fixes: a57f2bfb4a5863 ("PCI/AER: Ratelimit correctable and non-fatal error logging")
----
- drivers/pci/pcie/aer.c | 3 +++
- 1 file changed, 3 insertions(+)
+On Mon, Aug 04, 2025 at 10:18:53AM +0200, Sven Eckelmann wrote:
+> On Monday, 16 June 2025 01:52:48 CEST Alex Guo wrote:
+> > The data->block[0] variable comes from user. Without proper check,
+> > the variable may be very large to cause an out-of-bounds bug.
+> >=20
+> > Fix this bug by checking the value of data->block[0] first.
+> >=20
+> > Similar commit:
+> > 1. commit 39244cc7548 ("i2c: ismt: Fix an out-of-bounds bug in
+> > ismt_access()")
+> > 2. commit 92fbb6d1296 ("i2c: xgene-slimpro: Fix out-of-bounds
+> > bug in xgene_slimpro_i2c_xfer()")
+> [...]
+>=20
+> Please correct me but it looks like this fix was not yet applied to the t=
+ree.=20
+> But Chris Packham pointed out that this conflicts with my fixes for SMBUS/
+> SMBUS_I2C.
+>=20
+> I would like to add my patchset on top of this (to avoid problems with st=
+able=20
+> submission) and add the Fixes: and Cc: stable@vger.kernel.org.
+>=20
+> I hope it is ok for you when I would pick this up. I would resubmit the f=
+ixes=20
+> patchset this evening (GMT+2).
+>=20
+> You can preview it at=20
+> https://git.open-mesh.org/linux-merge.git/log/?h=3Db4/i2c-rtl9300-multi-b=
+yte
 
-diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
-index 70ac661883672..b5f96fde4dcda 100644
---- a/drivers/pci/pcie/aer.c
-+++ b/drivers/pci/pcie/aer.c
-@@ -786,6 +786,9 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
- 
- static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
- {
-+	if (!dev->aer_info)
-+		return 1;
-+
- 	switch (severity) {
- 	case AER_NONFATAL:
- 		return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
+Yes, we can do that. In general, it doesn't make sense to add this check
+when the ultimate goal is to support SMBus v3 which doesn't need the
+check anymore. But if it is blocking further development, we can apply
+this. The check will be removed when SMBus v3 support comes in.
 
----
-base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
-change-id: 20250801-aer_crash_2-b21cc2ef0d00
 
-Best regards,
---  
-Breno Leitao <leitao@debian.org>
+--aWRsTPaHeXaj3TkJ
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiQercACgkQFA3kzBSg
+KbYDBQ/7B4fiaRmvGDN5pEU7nLeehM/NGNtwbWW8b4ayoEhsUDzsj/ba4b2xG2nN
+ZoMgnJrXV8sKhnsci9bbpPXf0UXNlOHI4BhsERrdloKao8yOkJ/Z4eJiR/wAL7gz
+sAm0HkaMMiW3Yvq3AuOjA5OaOZbLOXZwpLjqJu5xhAi0QjRBUna5VTGc3Pt3gZAl
+wAhmHybaStdoak2nKEJtF5HWHX6pEMYxZZ6avSYDTUDc8UBDKQpOk4Lq5z93d5Np
+zT4Ig+VdL/AkFQrcNWfuzt/lPGz6AuOSPpjlZuK1I8mEc/uw8zNluknrsjz8UJ2l
+jQTdY8UdfpOXW0jjnRyfjxuMT2/VpR2cx4xp8GRqtEjXB5msmousw0ZnaURMx6l3
+Q2O7LcqODGLH3eYNXZpL8HQDy+cpeBkD+pa5oD/KHIglhTOZ3oLYwwKZ5/i6lfMM
+2aWQZ0TVYWM3nOM6QTw9N4XMvyQ7mPpSKpkI7FCU9B+pG0H6RbmQiteVgeTySNl7
+NWokKykY8g8fwQh5204PzlcURY6X3jOXKiAnJ9Q9RArHsDmaxlkHFn0Co7FKjrJm
+Jf59AUqSS32U5rsVlLb0MFxFbJA92zhVc55ifYyP8NDrOEz6FIaazSYROj/FMUYn
+qmRmE5PDnjWxAPWPXbmBLwRjDgdSkgfCxSoBmcngmKq+vUOfs9g=
+=kan7
+-----END PGP SIGNATURE-----
+
+--aWRsTPaHeXaj3TkJ--
 
