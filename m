@@ -1,153 +1,743 @@
-Return-Path: <linux-kernel+bounces-754584-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C4631B199BA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A05DB199BD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:58:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8530E3ACBED
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:47:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C74763B27B1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:58:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA70719F424;
-	Mon,  4 Aug 2025 00:47:34 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5986119F127;
+	Mon,  4 Aug 2025 00:58:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MernWygJ"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BD5834C8F;
-	Mon,  4 Aug 2025 00:47:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75EA02E36FD
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 00:58:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754268454; cv=none; b=XAPHzKklY5ohZGy3FKTbNK/5hXxdRG5a5m2Hf2PsFJ9KaKU+9gEw093eMnHSYigg5E5WI1ArdhZ1pbIW32/rnufBjA0P+nIkZS/jIjujW6JMLyTUo0UJ86fJgqCFagVu70xjbnS2+9iJ+QaY+d5kM30ok3Qj/J5kX8IJvaLPhUQ=
+	t=1754269111; cv=none; b=qHSyiobAbwflBlV4OhPvrP5jwduwlR4w8qFt0y/sI9TzpgalURj9A8k+5b/NjpPNXIUQUW6tC02kxEz2CZnRPJL8z/lrDpf7dY8sGiEfysP+JBPbmzZa3IhWwqr/pU6x+MftYQRpZ/5oEq6UmcqUSp2B66bDXG6k/s9H8k3eC6A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754268454; c=relaxed/simple;
-	bh=+/W9CYW0Yh+ewesGTTpIaOLJacb/3YZsvGB7zJPqPJ8=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=sCvqyMM2rSLjqkK6VjKjOl87y1zuEnO05kkkNe4to+lLIvmmiNYe9VcErgv3fAdmRBLfZ/QSsSn8+AT8rONSeM/Ee1q2Ygy6hkAaK1yqE0oZOgLSNHv1TC8bhR2fbtM6HyS1zEsG3BKk+39jqFW8Znb21R8ARAevzRNSuHiUpTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTPS id 4bwHvZ5rHfzKHMrx;
-	Mon,  4 Aug 2025 08:47:22 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id C9B411A0A26;
-	Mon,  4 Aug 2025 08:47:21 +0800 (CST)
-Received: from [10.174.179.143] (unknown [10.174.179.143])
-	by APP4 (Coremail) with SMTP id gCh0CgBHERIYA5BouVP1CQ--.49366S3;
-	Mon, 04 Aug 2025 08:47:21 +0800 (CST)
-Subject: Re: [PATCH] block, bfq: Reorder struct bfq_iocq_bfqq_data
-To: Christophe JAILLET <christophe.jaillet@wanadoo.fr>,
- Jens Axboe <axboe@kernel.dk>
-Cc: linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
- linux-block@vger.kernel.org, "yukuai (C)" <yukuai3@huawei.com>
-References: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
-From: Yu Kuai <yukuai1@huaweicloud.com>
-Message-ID: <ac0e993a-3e6d-6616-ce6c-03f0aa2429da@huaweicloud.com>
-Date: Mon, 4 Aug 2025 08:47:20 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1754269111; c=relaxed/simple;
+	bh=SQYN2R4YXfj7xQVwvVAISUDTHapzmBiANMNJEXaT95E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jg99WV1tlWUk+nKl86uw0kl6W/eFZAx7xiAmtVNIWxgV2L1YsRVP09dtgWH0kLPv4hm/uu59ShRZ8k96S2JqoyU3V/hLYZIiqoLxwNpMeDoV/LRO1WVTjCk9rRJ8+TEQ4vVeWu4EQ3FkvMexSPJiaiuGBhlRTtHGAF9inSGS43Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MernWygJ; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1754269109; x=1785805109;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:content-transfer-encoding:in-reply-to;
+  bh=SQYN2R4YXfj7xQVwvVAISUDTHapzmBiANMNJEXaT95E=;
+  b=MernWygJaLE6J7GlFm7/pCcFN/5m6vGATAKAhqfDJUEFleDwhLPMYNn7
+   HKvMIOaLBg/i0mRo2NBL6iRrHMHeU5Djg5S2mKkllWJ+YDpsUOsUm0ClV
+   Yu513qQxD+llP1AIiW+u8+tN2b+hcHMTWL/XdkEpFrrAg1AtQAsBWoiJf
+   Jk62lHHJ+B4zYlHjDGdFjK4YzGSzmEqNd7gnmoyHBDQ9qDp1bOFdHhGZa
+   lsJzwKx0xhhoaot/SmDk/xYvg8qiMOVK4Pscpxp2HV0LVcubU/bv6wrK7
+   b8D0DLvt5OQ60jo6CKJ3xV3bfUuSYUNZipRdb7x1fcDEHT6IOdOTntAS8
+   A==;
+X-CSE-ConnectionGUID: Kn6kzXLlQGKmxh6nvaApdw==
+X-CSE-MsgGUID: VDfcIXSiS1KiDLJg/5ec0A==
+X-IronPort-AV: E=McAfee;i="6800,10657,11511"; a="60336667"
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="60336667"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2025 17:58:28 -0700
+X-CSE-ConnectionGUID: rXIaq9wTSZiHVswaFhFznw==
+X-CSE-MsgGUID: vh6wataPQ3OyVOCG30xPWw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.17,258,1747724400"; 
+   d="scan'208";a="164360906"
+Received: from ly-workstation.sh.intel.com (HELO ly-workstation) ([10.239.182.53])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 03 Aug 2025 17:58:25 -0700
+Date: Mon, 4 Aug 2025 08:58:21 +0800
+From: "Lai, Yi" <yi1.lai@linux.intel.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, Barry Song <v-songbaohua@oppo.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	David Hildenbrand <david@redhat.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Lokesh Gidra <lokeshgidra@google.com>,
+	Tangquan Zheng <zhengtangquan@oppo.com>,
+	Qi Zheng <zhengqi.arch@bytedance.com>, yi1.lai@intel.com
+Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
+Message-ID: <aJAFrYfyzGpbm+0m@ly-workstation>
+References: <20250607220150.2980-1-21cnbao@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <79394db1befaa658e8066b8e3348073ce27d9d26.1754119538.git.christophe.jaillet@wanadoo.fr>
-Content-Type: text/plain; charset=gbk; format=flowed
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgBHERIYA5BouVP1CQ--.49366S3
-X-Coremail-Antispam: 1UD129KBjvJXoW7tr45XFy3uw1UXF15CFyUJrb_yoW8tr17pa
-	n3Kw4j9FW8tw13Kr18ua1DXr93twnxXry7KFsrXryYyw1UGFnF9rn0ka4FvFy29rWkCFnr
-	ZFyj9FyDWrsrKaDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkKb4IE77IF4wAFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_tr0E3s1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Cr0_Gr1UM28EF7xvwVC2z280aVAFwI0_GcCE3s1l84ACjcxK6I8E87Iv6xkF7I
-	0E14v26rxl6s0DM2AIxVAIcxkEcVAq07x20xvEncxIr21l5I8CrVACY4xI64kE6c02F40E
-	x7xfMcIj6xIIjxv20xvE14v26r1j6r18McIj6I8E87Iv67AKxVWUJVW8JwAm72CE4IkC6x
-	0Yz7v_Jr0_Gr1lF7xvr2IY64vIr41lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AK
-	xVWUAVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F4
-	0E14v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1l
-	IxkGc2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxV
-	AFwI0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j
-	6r4UMIIF0xvEx4A2jsIEc7CjxVAFwI0_Jr0_GrUvcSsGvfC2KfnxnUUI43ZEXa7IU1veHD
-	UUUUU==
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+In-Reply-To: <20250607220150.2980-1-21cnbao@gmail.com>
 
-ÔÚ 2025/08/02 15:25, Christophe JAILLET Ð´µÀ:
-> The size of struct bfq_iocq_bfqq_data can be reduced by moving a few fields
-> around.
+Hi Barry Song,
+
+Greetings!
+
+I used Syzkaller and found that there is general protection fault in __pte_offset_map_lock in linux-next next-20250801.
+
+After bisection and the first bad commit is:
+"
+a6fde7add78d mm: use per_vma lock for MADV_DONTNEED
+"
+
+All detailed into can be found at:
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock
+Syzkaller repro code:
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/repro.c
+Syzkaller repro syscall steps:
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/repro.prog
+Syzkaller report:
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/repro.report
+Kconfig(make olddefconfig):
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/kconfig_origin
+Bisect info:
+https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026___pte_offset_map_lock/bisect_info.log
+bzImage:
+https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/main/250803_193026___pte_offset_map_lock/bzImage_next-20250801
+Issue dmesg:
+https://github.com/laifryiee/syzkaller_logs/blob/main/250803_193026___pte_offset_map_lock/next-20250801_dmesg.log
+
+"
+[   38.151897] Oops: general protection fault, probably for non-canonical address 0xdffffc0000000003: 0000 [#1] SMP KASI
+[   38.153519] KASAN: null-ptr-deref in range [0x0000000000000018-0x000000000000001f]
+[   38.154605] CPU: 0 UID: 0 PID: 721 Comm: repro Not tainted 6.16.0-next-20250801-next-2025080 #1 PREEMPT(voluntary)
+[   38.155929] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org4
+[   38.157418] RIP: 0010:kasan_byte_accessible+0x15/0x30
+[   38.158125] Code: 03 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc0
+[   38.160461] RSP: 0018:ffff88800feef678 EFLAGS: 00010286
+[   38.161220] RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 1ffffffff0dde60c
+[   38.162232] RDX: 0000000000000000 RSI: ffffffff85da1e18 RDI: dffffc0000000003
+[   38.163176] RBP: ffff88800feef698 R08: 0000000000000001 R09: 0000000000000000
+[   38.164195] R10: 0000000000000000 R11: ffff888016a8ba58 R12: 0000000000000018
+[   38.165189] R13: 0000000000000018 R14: ffffffff85da1e18 R15: 0000000000000000
+[   38.166100] FS:  0000000000000000(0000) GS:ffff8880e3b40000(0000) knlGS:0000000000000000
+[   38.167137] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   38.167891] CR2: 00007f97fadfe504 CR3: 0000000007088005 CR4: 0000000000770ef0
+[   38.168812] PKRU: 55555554
+[   38.169275] Call Trace:
+[   38.169647]  <TASK>
+[   38.169975]  ? __kasan_check_byte+0x19/0x50
+[   38.170581]  lock_acquire+0xea/0x310
+[   38.171083]  ? rcu_is_watching+0x19/0xc0
+[   38.171615]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
+[   38.172343]  ? __sanitizer_cov_trace_const_cmp8+0x1c/0x30
+[   38.173130]  _raw_spin_lock+0x38/0x50
+[   38.173707]  ? __pte_offset_map_lock+0x1a2/0x3c0
+[   38.174390]  __pte_offset_map_lock+0x1a2/0x3c0
+[   38.174987]  ? __pfx___pte_offset_map_lock+0x10/0x10
+[   38.175724]  ? __pfx_pud_val+0x10/0x10
+[   38.176308]  ? __sanitizer_cov_trace_const_cmp1+0x1e/0x30
+[   38.177183]  unmap_page_range+0xb60/0x43e0
+[   38.177824]  ? __pfx_unmap_page_range+0x10/0x10
+[   38.178485]  ? mas_next_slot+0x133a/0x1a50
+[   38.179079]  unmap_single_vma.constprop.0+0x15b/0x250
+[   38.179830]  unmap_vmas+0x1fa/0x460
+[   38.180373]  ? __pfx_unmap_vmas+0x10/0x10
+[   38.180994]  ? __sanitizer_cov_trace_const_cmp4+0x1a/0x20
+[   38.181877]  exit_mmap+0x1a2/0xb40
+[   38.182396]  ? lock_release+0x14f/0x2c0
+[   38.182929]  ? __pfx_exit_mmap+0x10/0x10
+[   38.183474]  ? __pfx___mutex_unlock_slowpath+0x10/0x10
+[   38.184188]  ? mutex_unlock+0x16/0x20
+[   38.184704]  mmput+0x132/0x370
+[   38.185208]  do_exit+0x7e7/0x28c0
+[   38.185682]  ? __this_cpu_preempt_check+0x21/0x30
+[   38.186328]  ? do_group_exit+0x1d8/0x2c0
+[   38.186873]  ? __pfx_do_exit+0x10/0x10
+[   38.187401]  ? __this_cpu_preempt_check+0x21/0x30
+[   38.188036]  ? _raw_spin_unlock_irq+0x2c/0x60
+[   38.188634]  ? lockdep_hardirqs_on+0x89/0x110
+[   38.189313]  do_group_exit+0xe4/0x2c0
+[   38.189831]  __x64_sys_exit_group+0x4d/0x60
+[   38.190413]  x64_sys_call+0x2174/0x2180
+[   38.190935]  do_syscall_64+0x6d/0x2e0
+[   38.191449]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+[   38.192118] RIP: 0033:0x7f97fab18a4d
+[   38.192614] Code: Unable to access opcode bytes at 0x7f97fab18a23.
+[   38.193552] RSP: 002b:00007ffd957e62d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[   38.194557] RAX: ffffffffffffffda RBX: 00007f97fabf69e0 RCX: 00007f97fab18a4d
+[   38.195472] RDX: 00000000000000e7 RSI: ffffffffffffff80 RDI: 0000000000000000
+[   38.196388] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
+[   38.197357] R10: 00007ffd957e6180 R11: 0000000000000246 R12: 00007f97fabf69e0
+[   38.198273] R13: 00007f97fabfbf00 R14: 0000000000000001 R15: 00007f97fabfbee8
+[   38.199205]  </TASK>
+[   38.199512] Modules linked in:
+[   38.200069] ---[ end trace 0000000000000000 ]---
+[   38.200678] RIP: 0010:kasan_byte_accessible+0x15/0x30
+[   38.201443] Code: 03 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 66 0f 1f 00 48 b8 00 00 00 00 00 fc0
+[   38.203815] RSP: 0018:ffff88800feef678 EFLAGS: 00010286
+[   38.204503] RAX: dffffc0000000000 RBX: 0000000000000001 RCX: 1ffffffff0dde60c
+[   38.205492] RDX: 0000000000000000 RSI: ffffffff85da1e18 RDI: dffffc0000000003
+[   38.206428] RBP: ffff88800feef698 R08: 0000000000000001 R09: 0000000000000000
+[   38.207350] R10: 0000000000000000 R11: ffff888016a8ba58 R12: 0000000000000018
+[   38.208269] R13: 0000000000000018 R14: ffffffff85da1e18 R15: 0000000000000000
+[   38.209270] FS:  0000000000000000(0000) GS:ffff8880e3b40000(0000) knlGS:0000000000000000
+[   38.210329] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   38.211080] CR2: 00007f97fadfe504 CR3: 0000000007088005 CR4: 0000000000770ef0
+[   38.211999] PKRU: 55555554
+[   38.212374] note: repro[721] exited with preempt_count 1
+[   38.213121] Fixing recursive fault but reboot is needed!
+[   38.213815] BUG: using smp_processor_id() in preemptible [00000000] code: repro/721
+[   38.214856] caller is debug_smp_processor_id+0x20/0x30
+[   38.215553] CPU: 0 UID: 0 PID: 721 Comm: repro Tainted: G      D             6.16.0-next-20250801-next-2025080 #1 PR
+[   38.215588] Tainted: [D]=DIE
+[   38.215595] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org4
+[   38.215611] Call Trace:
+[   38.215617]  <TASK>
+[   38.215626]  dump_stack_lvl+0x121/0x150
+[   38.215657]  dump_stack+0x19/0x20
+[   38.215685]  check_preemption_disabled+0x168/0x180
+[   38.215722]  ? do_task_dead+0x48/0x120
+[   38.215753]  debug_smp_processor_id+0x20/0x30
+[   38.215788]  __schedule+0xd9/0x3840
+[   38.215827]  ? __pfx___schedule+0x10/0x10
+[   38.215860]  ? do_task_dead+0xae/0x120
+[   38.215888]  ? do_task_dead+0x48/0x120
+[   38.215917]  ? debug_smp_processor_id+0x20/0x30
+[   38.215953]  ? rcu_is_watching+0x19/0xc0
+[   38.215978]  ? trace_irq_enable+0xd1/0x110
+[   38.216017]  ? do_task_dead+0x48/0x120
+[   38.216046]  do_task_dead+0xe6/0x120
+[   38.216076]  make_task_dead+0x384/0x3c0
+[   38.216116]  rewind_stack_and_make_dead+0x16/0x20
+[   38.216143] RIP: 0033:0x7f97fab18a4d
+[   38.216159] Code: Unable to access opcode bytes at 0x7f97fab18a23.
+[   38.216170] RSP: 002b:00007ffd957e62d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[   38.216190] RAX: ffffffffffffffda RBX: 00007f97fabf69e0 RCX: 00007f97fab18a4d
+[   38.216205] RDX: 00000000000000e7 RSI: ffffffffffffff80 RDI: 0000000000000000
+[   38.216220] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
+[   38.216234] R10: 00007ffd957e6180 R11: 0000000000000246 R12: 00007f97fabf69e0
+[   38.216248] R13: 00007f97fabfbf00 R14: 0000000000000001 R15: 00007f97fabfbee8
+[   38.216279]  </TASK>
+[   38.216287] BUG: scheduling while atomic: repro/721/0x00000000
+[   38.236575] INFO: lockdep is turned off.
+[   38.237107] Modules linked in:
+[   38.237574] Preemption disabled at:
+[   38.237582] [<ffffffff81552c46>] do_task_dead+0x26/0x120
+[   38.238779] CPU: 0 UID: 0 PID: 721 Comm: repro Tainted: G      D             6.16.0-next-20250801-next-2025080 #1 PR
+[   38.238813] Tainted: [D]=DIE
+[   38.238820] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org4
+[   38.238836] Call Trace:
+[   38.238842]  <TASK>
+[   38.238850]  dump_stack_lvl+0x121/0x150
+[   38.238881]  ? do_task_dead+0x26/0x120
+[   38.238908]  dump_stack+0x19/0x20
+[   38.238936]  __schedule_bug+0x12d/0x180
+[   38.238977]  __schedule+0x276e/0x3840
+[   38.239017]  ? __pfx___schedule+0x10/0x10
+[   38.239050]  ? do_task_dead+0xae/0x120
+[   38.239078]  ? do_task_dead+0x48/0x120
+[   38.239108]  ? debug_smp_processor_id+0x20/0x30
+[   38.239148]  ? rcu_is_watching+0x19/0xc0
+[   38.239173]  ? trace_irq_enable+0xd1/0x110
+[   38.239211]  ? do_task_dead+0x48/0x120
+[   38.239241]  do_task_dead+0xe6/0x120
+[   38.239271]  make_task_dead+0x384/0x3c0
+[   38.239328]  rewind_stack_and_make_dead+0x16/0x20
+[   38.239353] RIP: 0033:0x7f97fab18a4d
+[   38.239370] Code: Unable to access opcode bytes at 0x7f97fab18a23.
+[   38.239382] RSP: 002b:00007ffd957e62d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[   38.239404] RAX: ffffffffffffffda RBX: 00007f97fabf69e0 RCX: 00007f97fab18a4d
+[   38.239421] RDX: 00000000000000e7 RSI: ffffffffffffff80 RDI: 0000000000000000
+[   38.239437] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
+[   38.239452] R10: 00007ffd957e6180 R11: 0000000000000246 R12: 00007f97fabf69e0
+[   38.239469] R13: 00007f97fabfbf00 R14: 0000000000000001 R15: 00007f97fabfbee8
+[   38.239503]  </TASK>
+[   38.239513] ------------[ cut here ]------------
+[   38.259566] Voluntary context switch within RCU read-side critical section!
+[   38.259699] WARNING: kernel/rcu/tree_plugin.h:332 at rcu_note_context_switch+0xc6f/0x1900, CPU#0: repro/721
+[   38.262004] Modules linked in:
+[   38.262458] CPU: 0 UID: 0 PID: 721 Comm: repro Tainted: G      D W           6.16.0-next-20250801-next-2025080 #1 PR
+[   38.263978] Tainted: [D]=DIE, [W]=WARN
+[   38.264509] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS rel-1.16.3-0-ga6ed6b701f0a-prebuilt.qemu.org4
+[   38.266148] RIP: 0010:rcu_note_context_switch+0xc6f/0x1900
+[   38.266891] Code: 8b 45 a0 4c 8b 55 a8 48 c7 c2 44 b4 ef 87 44 8b 4d b0 e9 0f 03 00 00 48 c7 c7 c0 5d ed 85 c6 05 bf0
+[   38.269294] RSP: 0018:ffff88800feefd28 EFLAGS: 00010096
+[   38.269980] RAX: 0000000000000000 RBX: ffff88806ca450c0 RCX: ffffffff814612c2
+[   38.270899] RDX: ffff888016a8ac00 RSI: ffffffff814612cf RDI: 0000000000000001
+[   38.271817] RBP: ffff88800feefd98 R08: 0000000000000001 R09: ffffed100d9459b9
+[   38.272733] R10: 0000000000000000 R11: 6e69687469772068 R12: ffff888016a8ac00
+[   38.273729] R13: 0000000000000000 R14: ffff888016a8ac00 R15: 0000000000000000
+[   38.274649] FS:  0000000000000000(0000) GS:ffff8880e3b40000(0000) knlGS:0000000000000000
+[   38.275685] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+[   38.276435] CR2: 00007f97fadfe504 CR3: 0000000007088005 CR4: 0000000000770ef0
+[   38.277410] PKRU: 55555554
+[   38.277778] Call Trace:
+[   38.278113]  <TASK>
+[   38.278416]  ? debug_smp_processor_id+0x20/0x30
+[   38.279034]  ? rcu_is_watching+0x19/0xc0
+[   38.279570]  ? trace_irq_disable+0xd1/0x110
+[   38.280152]  __schedule+0x25c/0x3840
+[   38.280660]  ? __pfx___schedule+0x10/0x10
+[   38.281273]  ? do_task_dead+0xae/0x120
+[   38.281792]  ? do_task_dead+0x48/0x120
+[   38.282314]  ? debug_smp_processor_id+0x20/0x30
+[   38.282933]  ? rcu_is_watching+0x19/0xc0
+[   38.283472]  ? trace_irq_enable+0xd1/0x110
+[   38.284039]  ? do_task_dead+0x48/0x120
+[   38.284561]  do_task_dead+0xe6/0x120
+[   38.285144]  make_task_dead+0x384/0x3c0
+[   38.285742]  rewind_stack_and_make_dead+0x16/0x20
+[   38.286371] RIP: 0033:0x7f97fab18a4d
+[   38.286855] Code: Unable to access opcode bytes at 0x7f97fab18a23.
+[   38.287653] RSP: 002b:00007ffd957e62d8 EFLAGS: 00000246 ORIG_RAX: 00000000000000e7
+[   38.288628] RAX: ffffffffffffffda RBX: 00007f97fabf69e0 RCX: 00007f97fab18a4d
+[   38.289600] RDX: 00000000000000e7 RSI: ffffffffffffff80 RDI: 0000000000000000
+[   38.290519] RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000020
+[   38.291436] R10: 00007ffd957e6180 R11: 0000000000000246 R12: 00007f97fabf69e0
+[   38.292355] R13: 00007f97fabfbf00 R14: 0000000000000001 R15: 00007f97fabfbee8
+[   38.293362]  </TASK>
+[   38.293669] irq event stamp: 605
+[   38.294103] hardirqs last  enabled at (605): [<ffffffff812f087b>] cond_local_irq_enable.isra.0+0x3b/0x50
+[   38.295323] hardirqs last disabled at (604): [<ffffffff85d6dba6>] exc_general_protection+0x36/0x340
+[   38.296499] softirqs last  enabled at (516): [<ffffffff8132638c>] fpu_clone+0x10c/0x710
+[   38.297603] softirqs last disabled at (514): [<ffffffff8132631f>] fpu_clone+0x9f/0x710
+[   38.298639] ---[ end trace 0000000000000000 ]---
+"
+
+Hope this cound be insightful to you.
+
+Regards,
+Yi Lai
+
+---
+
+If you don't need the following environment to reproduce the problem or if you
+already have one reproduced environment, please ignore the following information.
+
+How to reproduce:
+git clone https://gitlab.com/xupengfe/repro_vm_env.git
+cd repro_vm_env
+tar -xvf repro_vm_env.tar.gz
+cd repro_vm_env; ./start3.sh  // it needs qemu-system-x86_64 and I used v7.1.0
+  // start3.sh will load bzImage_2241ab53cbb5cdb08a6b2d4688feb13971058f65 v6.2-rc5 kernel
+  // You could change the bzImage_xxx as you want
+  // Maybe you need to remove line "-drive if=pflash,format=raw,readonly=on,file=./OVMF_CODE.fd \" for different qemu version
+You could use below command to log in, there is no password for root.
+ssh -p 10023 root@localhost
+
+After login vm(virtual machine) successfully, you could transfer reproduced
+binary to the vm by below way, and reproduce the problem in vm:
+gcc -pthread -o repro repro.c
+scp -P 10023 repro root@localhost:/root/
+
+Get the bzImage for target kernel:
+Please use target kconfig and copy it to kernel_src/.config
+make olddefconfig
+make -jx bzImage           //x should equal or less than cpu num your pc has
+
+Fill the bzImage file into above start3.sh to load the target kernel in vm.
+
+
+Tips:
+If you already have qemu-system-x86_64, please ignore below info.
+If you want to install qemu v7.1.0 version:
+git clone https://github.com/qemu/qemu.git
+cd qemu
+git checkout -f v7.1.0
+mkdir build
+cd build
+yum install -y ninja-build.x86_64
+yum -y install libslirp-devel.x86_64
+../configure --target-list=x86_64-softmmu --enable-kvm --enable-vnc --enable-gtk --enable-sdl --enable-usb-redir --enable-slirp
+make
+make install 
+
+On Sun, Jun 08, 2025 at 10:01:50AM +1200, Barry Song wrote:
+> From: Barry Song <v-songbaohua@oppo.com>
 > 
-> On a x86_64, with allmodconfig, this shrinks the size from 144 to 128
-> bytes.
-> The main benefit is to reduce the size of struct bfq_io_cq from 1360 to
-> 1232.
+> Certain madvise operations, especially MADV_DONTNEED, occur far more
+> frequently than other madvise options, particularly in native and Java
+> heaps for dynamic memory management.
 > 
-> This structure is stored in a dedicated slab cache. So reducing its size
-> improves cache usage.
+> Currently, the mmap_lock is always held during these operations, even when
+> unnecessary. This causes lock contention and can lead to severe priority
+> inversion, where low-priority threadsâ€”such as Android's HeapTaskDaemonâ€”
+> hold the lock and block higher-priority threads.
 > 
-> Signed-off-by: Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+> This patch enables the use of per-VMA locks when the advised range lies
+> entirely within a single VMA, avoiding the need for full VMA traversal. In
+> practice, userspace heaps rarely issue MADV_DONTNEED across multiple VMAs.
+> 
+> Tangquanâ€™s testing shows that over 99.5% of memory reclaimed by Android
+> benefits from this per-VMA lock optimization. After extended runtime,
+> 217,735 madvise calls from HeapTaskDaemon used the per-VMA path, while
+> only 1,231 fell back to mmap_lock.
+> 
+> To simplify handling, the implementation falls back to the standard
+> mmap_lock if userfaultfd is enabled on the VMA, avoiding the complexity of
+> userfaultfd_remove().
+> 
+> Many thanks to Lorenzo's work[1] on:
+> "Refactor the madvise() code to retain state about the locking mode
+> utilised for traversing VMAs.
+> 
+> Then use this mechanism to permit VMA locking to be done later in the
+> madvise() logic and also to allow altering of the locking mode to permit
+> falling back to an mmap read lock if required."
+> 
+> One important point, as pointed out by Jann[2], is that
+> untagged_addr_remote() requires holding mmap_lock. This is because
+> address tagging on x86 and RISC-V is quite complex.
+> 
+> Until untagged_addr_remote() becomes atomicâ€”which seems unlikely in
+> the near futureâ€”we cannot support per-VMA locks for remote processes.
+> So for now, only local processes are supported.
+> 
+> Link: https://lore.kernel.org/all/0b96ce61-a52c-4036-b5b6-5c50783db51f@lucifer.local/ [1]
+> Link: https://lore.kernel.org/all/CAG48ez11zi-1jicHUZtLhyoNPGGVB+ROeAJCUw48bsjk4bbEkA@mail.gmail.com/ [2]
+> Reviewed-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+> Cc: "Liam R. Howlett" <Liam.Howlett@oracle.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Cc: Vlastimil Babka <vbabka@suse.cz>
+> Cc: Jann Horn <jannh@google.com>
+> Cc: Suren Baghdasaryan <surenb@google.com>
+> Cc: Lokesh Gidra <lokeshgidra@google.com>
+> Cc: Tangquan Zheng <zhengtangquan@oppo.com>
+> Cc: Qi Zheng <zhengqi.arch@bytedance.com>
+> Signed-off-by: Barry Song <v-songbaohua@oppo.com>
 > ---
-> Compile tested only.
+>  -v4:
+>  * collect Lorenzo's RB;
+>  * use visit() for per-vma path
 > 
-> On my system, struct bfq_io_cq are stored in 8 pages slab. Each of these
-> slabs hold 24 entries.
+>  mm/madvise.c | 195 ++++++++++++++++++++++++++++++++++++++-------------
+>  1 file changed, 147 insertions(+), 48 deletions(-)
 > 
-> $ sudo cat /proc/slabinfo | grep bfq_io
-> bfq_io_cq            378    384   1360   24    8 : tunables    0    0    0 : slabdata     16     16      0
-> 
-> With the new layout, we should store 26 entries.
-> (8 * 4096 / 1232 = 26.60)
-> ---
->   block/bfq-iosched.h | 10 +++++-----
->   1 file changed, 5 insertions(+), 5 deletions(-)
-> 
-
-LGTM
-Reviewed-by: Yu Kuai <yukuai3@huawei.com>
-
-> diff --git a/block/bfq-iosched.h b/block/bfq-iosched.h
-> index 687a3a7ba784..0b4704932d72 100644
-> --- a/block/bfq-iosched.h
-> +++ b/block/bfq-iosched.h
-> @@ -427,9 +427,6 @@ struct bfq_iocq_bfqq_data {
->   	 */
->   	bool saved_IO_bound;
->   
-> -	u64 saved_io_start_time;
-> -	u64 saved_tot_idle_time;
-> -
->   	/*
->   	 * Same purpose as the previous fields for the values of the
->   	 * field keeping the queue's belonging to a large burst
-> @@ -450,6 +447,9 @@ struct bfq_iocq_bfqq_data {
->   	 */
->   	unsigned int saved_weight;
->   
-> +	u64 saved_io_start_time;
-> +	u64 saved_tot_idle_time;
+> diff --git a/mm/madvise.c b/mm/madvise.c
+> index 56d9ca2557b9..8382614b71d1 100644
+> --- a/mm/madvise.c
+> +++ b/mm/madvise.c
+> @@ -48,38 +48,19 @@ struct madvise_walk_private {
+>  	bool pageout;
+>  };
+>  
+> +enum madvise_lock_mode {
+> +	MADVISE_NO_LOCK,
+> +	MADVISE_MMAP_READ_LOCK,
+> +	MADVISE_MMAP_WRITE_LOCK,
+> +	MADVISE_VMA_READ_LOCK,
+> +};
 > +
->   	/*
->   	 * Similar to previous fields: save wr information.
->   	 */
-> @@ -457,13 +457,13 @@ struct bfq_iocq_bfqq_data {
->   	unsigned long saved_last_wr_start_finish;
->   	unsigned long saved_service_from_wr;
->   	unsigned long saved_wr_start_at_switch_to_srt;
-> -	unsigned int saved_wr_cur_max_time;
->   	struct bfq_ttime saved_ttime;
-> +	unsigned int saved_wr_cur_max_time;
->   
->   	/* Save also injection state */
-> -	u64 saved_last_serv_time_ns;
->   	unsigned int saved_inject_limit;
->   	unsigned long saved_decrease_time_jif;
-> +	u64 saved_last_serv_time_ns;
->   
->   	/* candidate queue for a stable merge (due to close creation time) */
->   	struct bfq_queue *stable_merge_bfqq;
+>  struct madvise_behavior {
+>  	int behavior;
+>  	struct mmu_gather *tlb;
+> +	enum madvise_lock_mode lock_mode;
+>  };
+>  
+> -/*
+> - * Any behaviour which results in changes to the vma->vm_flags needs to
+> - * take mmap_lock for writing. Others, which simply traverse vmas, need
+> - * to only take it for reading.
+> - */
+> -static int madvise_need_mmap_write(int behavior)
+> -{
+> -	switch (behavior) {
+> -	case MADV_REMOVE:
+> -	case MADV_WILLNEED:
+> -	case MADV_DONTNEED:
+> -	case MADV_DONTNEED_LOCKED:
+> -	case MADV_COLD:
+> -	case MADV_PAGEOUT:
+> -	case MADV_FREE:
+> -	case MADV_POPULATE_READ:
+> -	case MADV_POPULATE_WRITE:
+> -	case MADV_COLLAPSE:
+> -	case MADV_GUARD_INSTALL:
+> -	case MADV_GUARD_REMOVE:
+> -		return 0;
+> -	default:
+> -		/* be safe, default to 1. list exceptions explicitly */
+> -		return 1;
+> -	}
+> -}
+> -
+>  #ifdef CONFIG_ANON_VMA_NAME
+>  struct anon_vma_name *anon_vma_name_alloc(const char *name)
+>  {
+> @@ -1486,6 +1467,44 @@ static bool process_madvise_remote_valid(int behavior)
+>  	}
+>  }
+>  
+> +/*
+> + * Try to acquire a VMA read lock if possible.
+> + *
+> + * We only support this lock over a single VMA, which the input range must
+> + * span either partially or fully.
+> + *
+> + * This function always returns with an appropriate lock held. If a VMA read
+> + * lock could be acquired, we return the locked VMA.
+> + *
+> + * If a VMA read lock could not be acquired, we return NULL and expect caller to
+> + * fallback to mmap lock behaviour.
+> + */
+> +static struct vm_area_struct *try_vma_read_lock(struct mm_struct *mm,
+> +		struct madvise_behavior *madv_behavior,
+> +		unsigned long start, unsigned long end)
+> +{
+> +	struct vm_area_struct *vma;
+> +
+> +	vma = lock_vma_under_rcu(mm, start);
+> +	if (!vma)
+> +		goto take_mmap_read_lock;
+> +	/*
+> +	 * Must span only a single VMA; uffd and remote processes are
+> +	 * unsupported.
+> +	 */
+> +	if (end > vma->vm_end || current->mm != mm ||
+> +	    userfaultfd_armed(vma)) {
+> +		vma_end_read(vma);
+> +		goto take_mmap_read_lock;
+> +	}
+> +	return vma;
+> +
+> +take_mmap_read_lock:
+> +	mmap_read_lock(mm);
+> +	madv_behavior->lock_mode = MADVISE_MMAP_READ_LOCK;
+> +	return NULL;
+> +}
+> +
+>  /*
+>   * Walk the vmas in range [start,end), and call the visit function on each one.
+>   * The visit function will get start and end parameters that cover the overlap
+> @@ -1496,7 +1515,8 @@ static bool process_madvise_remote_valid(int behavior)
+>   */
+>  static
+>  int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
+> -		      unsigned long end, void *arg,
+> +		      unsigned long end, struct madvise_behavior *madv_behavior,
+> +		      void *arg,
+>  		      int (*visit)(struct vm_area_struct *vma,
+>  				   struct vm_area_struct **prev, unsigned long start,
+>  				   unsigned long end, void *arg))
+> @@ -1505,6 +1525,20 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
+>  	struct vm_area_struct *prev;
+>  	unsigned long tmp;
+>  	int unmapped_error = 0;
+> +	int error;
+> +
+> +	/*
+> +	 * If VMA read lock is supported, apply madvise to a single VMA
+> +	 * tentatively, avoiding walking VMAs.
+> +	 */
+> +	if (madv_behavior && madv_behavior->lock_mode == MADVISE_VMA_READ_LOCK) {
+> +		vma = try_vma_read_lock(mm, madv_behavior, start, end);
+> +		if (vma) {
+> +			error = visit(vma, &prev, start, end, arg);
+> +			vma_end_read(vma);
+> +			return error;
+> +		}
+> +	}
+>  
+>  	/*
+>  	 * If the interval [start,end) covers some unmapped address
+> @@ -1516,8 +1550,6 @@ int madvise_walk_vmas(struct mm_struct *mm, unsigned long start,
+>  		prev = vma;
+>  
+>  	for (;;) {
+> -		int error;
+> -
+>  		/* Still start < end. */
+>  		if (!vma)
+>  			return -ENOMEM;
+> @@ -1598,34 +1630,86 @@ int madvise_set_anon_name(struct mm_struct *mm, unsigned long start,
+>  	if (end == start)
+>  		return 0;
+>  
+> -	return madvise_walk_vmas(mm, start, end, anon_name,
+> +	return madvise_walk_vmas(mm, start, end, NULL, anon_name,
+>  				 madvise_vma_anon_name);
+>  }
+>  #endif /* CONFIG_ANON_VMA_NAME */
+>  
+> -static int madvise_lock(struct mm_struct *mm, int behavior)
+> +
+> +/*
+> + * Any behaviour which results in changes to the vma->vm_flags needs to
+> + * take mmap_lock for writing. Others, which simply traverse vmas, need
+> + * to only take it for reading.
+> + */
+> +static enum madvise_lock_mode get_lock_mode(struct madvise_behavior *madv_behavior)
+>  {
+> +	int behavior = madv_behavior->behavior;
+> +
+>  	if (is_memory_failure(behavior))
+> -		return 0;
+> +		return MADVISE_NO_LOCK;
+>  
+> -	if (madvise_need_mmap_write(behavior)) {
+> +	switch (behavior) {
+> +	case MADV_REMOVE:
+> +	case MADV_WILLNEED:
+> +	case MADV_COLD:
+> +	case MADV_PAGEOUT:
+> +	case MADV_FREE:
+> +	case MADV_POPULATE_READ:
+> +	case MADV_POPULATE_WRITE:
+> +	case MADV_COLLAPSE:
+> +	case MADV_GUARD_INSTALL:
+> +	case MADV_GUARD_REMOVE:
+> +		return MADVISE_MMAP_READ_LOCK;
+> +	case MADV_DONTNEED:
+> +	case MADV_DONTNEED_LOCKED:
+> +		return MADVISE_VMA_READ_LOCK;
+> +	default:
+> +		return MADVISE_MMAP_WRITE_LOCK;
+> +	}
+> +}
+> +
+> +static int madvise_lock(struct mm_struct *mm,
+> +		struct madvise_behavior *madv_behavior)
+> +{
+> +	enum madvise_lock_mode lock_mode = get_lock_mode(madv_behavior);
+> +
+> +	switch (lock_mode) {
+> +	case MADVISE_NO_LOCK:
+> +		break;
+> +	case MADVISE_MMAP_WRITE_LOCK:
+>  		if (mmap_write_lock_killable(mm))
+>  			return -EINTR;
+> -	} else {
+> +		break;
+> +	case MADVISE_MMAP_READ_LOCK:
+>  		mmap_read_lock(mm);
+> +		break;
+> +	case MADVISE_VMA_READ_LOCK:
+> +		/* We will acquire the lock per-VMA in madvise_walk_vmas(). */
+> +		break;
+>  	}
+> +
+> +	madv_behavior->lock_mode = lock_mode;
+>  	return 0;
+>  }
+>  
+> -static void madvise_unlock(struct mm_struct *mm, int behavior)
+> +static void madvise_unlock(struct mm_struct *mm,
+> +		struct madvise_behavior *madv_behavior)
+>  {
+> -	if (is_memory_failure(behavior))
+> +	switch (madv_behavior->lock_mode) {
+> +	case  MADVISE_NO_LOCK:
+>  		return;
+> -
+> -	if (madvise_need_mmap_write(behavior))
+> +	case MADVISE_MMAP_WRITE_LOCK:
+>  		mmap_write_unlock(mm);
+> -	else
+> +		break;
+> +	case MADVISE_MMAP_READ_LOCK:
+>  		mmap_read_unlock(mm);
+> +		break;
+> +	case MADVISE_VMA_READ_LOCK:
+> +		/* We will drop the lock per-VMA in madvise_walk_vmas(). */
+> +		break;
+> +	}
+> +
+> +	madv_behavior->lock_mode = MADVISE_NO_LOCK;
+>  }
+>  
+>  static bool madvise_batch_tlb_flush(int behavior)
+> @@ -1710,6 +1794,21 @@ static bool is_madvise_populate(int behavior)
+>  	}
+>  }
+>  
+> +/*
+> + * untagged_addr_remote() assumes mmap_lock is already held. On
+> + * architectures like x86 and RISC-V, tagging is tricky because each
+> + * mm may have a different tagging mask. However, we might only hold
+> + * the per-VMA lock (currently only local processes are supported),
+> + * so untagged_addr is used to avoid the mmap_lock assertion for
+> + * local processes.
+> + */
+> +static inline unsigned long get_untagged_addr(struct mm_struct *mm,
+> +		unsigned long start)
+> +{
+> +	return current->mm == mm ? untagged_addr(start) :
+> +				   untagged_addr_remote(mm, start);
+> +}
+> +
+>  static int madvise_do_behavior(struct mm_struct *mm,
+>  		unsigned long start, size_t len_in,
+>  		struct madvise_behavior *madv_behavior)
+> @@ -1721,7 +1820,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
+>  
+>  	if (is_memory_failure(behavior))
+>  		return madvise_inject_error(behavior, start, start + len_in);
+> -	start = untagged_addr_remote(mm, start);
+> +	start = get_untagged_addr(mm, start);
+>  	end = start + PAGE_ALIGN(len_in);
+>  
+>  	blk_start_plug(&plug);
+> @@ -1729,7 +1828,7 @@ static int madvise_do_behavior(struct mm_struct *mm,
+>  		error = madvise_populate(mm, start, end, behavior);
+>  	else
+>  		error = madvise_walk_vmas(mm, start, end, madv_behavior,
+> -					  madvise_vma_behavior);
+> +				madv_behavior, madvise_vma_behavior);
+>  	blk_finish_plug(&plug);
+>  	return error;
+>  }
+> @@ -1817,13 +1916,13 @@ int do_madvise(struct mm_struct *mm, unsigned long start, size_t len_in, int beh
+>  
+>  	if (madvise_should_skip(start, len_in, behavior, &error))
+>  		return error;
+> -	error = madvise_lock(mm, behavior);
+> +	error = madvise_lock(mm, &madv_behavior);
+>  	if (error)
+>  		return error;
+>  	madvise_init_tlb(&madv_behavior, mm);
+>  	error = madvise_do_behavior(mm, start, len_in, &madv_behavior);
+>  	madvise_finish_tlb(&madv_behavior);
+> -	madvise_unlock(mm, behavior);
+> +	madvise_unlock(mm, &madv_behavior);
+>  
+>  	return error;
+>  }
+> @@ -1847,7 +1946,7 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  
+>  	total_len = iov_iter_count(iter);
+>  
+> -	ret = madvise_lock(mm, behavior);
+> +	ret = madvise_lock(mm, &madv_behavior);
+>  	if (ret)
+>  		return ret;
+>  	madvise_init_tlb(&madv_behavior, mm);
+> @@ -1880,8 +1979,8 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  
+>  			/* Drop and reacquire lock to unwind race. */
+>  			madvise_finish_tlb(&madv_behavior);
+> -			madvise_unlock(mm, behavior);
+> -			ret = madvise_lock(mm, behavior);
+> +			madvise_unlock(mm, &madv_behavior);
+> +			ret = madvise_lock(mm, &madv_behavior);
+>  			if (ret)
+>  				goto out;
+>  			madvise_init_tlb(&madv_behavior, mm);
+> @@ -1892,7 +1991,7 @@ static ssize_t vector_madvise(struct mm_struct *mm, struct iov_iter *iter,
+>  		iov_iter_advance(iter, iter_iov_len(iter));
+>  	}
+>  	madvise_finish_tlb(&madv_behavior);
+> -	madvise_unlock(mm, behavior);
+> +	madvise_unlock(mm, &madv_behavior);
+>  
+>  out:
+>  	ret = (total_len - iov_iter_count(iter)) ? : ret;
+> -- 
+> 2.39.3 (Apple Git-146)
 > 
-
 
