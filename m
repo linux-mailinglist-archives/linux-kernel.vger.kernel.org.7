@@ -1,204 +1,212 @@
-Return-Path: <linux-kernel+bounces-755108-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755109-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36DA6B1A162
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:27:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 78CCEB1A165
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:28:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5AA9D179F3D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:27:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76A9317AEDE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:28:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5883258CD4;
-	Mon,  4 Aug 2025 12:27:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDC5259CA0;
+	Mon,  4 Aug 2025 12:27:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fCMjuonE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="ozHlFHMM"
+Received: from TYPPR03CU001.outbound.protection.outlook.com (mail-japaneastazon11012028.outbound.protection.outlook.com [52.101.126.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 903FE24E4C3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:27:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310447; cv=none; b=MmMIp8YXQ5vtVuUcdhK+YQLLmHmoWLB9VEju2LDWUxD32UuvCQvFpK3TBsg9bgpBxudRoLPGgbcE6N0XzBtpt5TUNSr3aMRu/MV4jh4/RtVv2+dyjshLDJAbPQXQ8f0i9d2Fbuk0nrXN3Ebv8vvVv3LPirB4u0lLC0tFzRp96Ko=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310447; c=relaxed/simple;
-	bh=Qf9ANNjxtl8s7C1ONwU/blp35LZUVGAAsM/ALfz4RYw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nefo24FryMAeS/Wo+EThPXWwgq/F4PHey/wmlorjk/M2nLfg5MiWJgFqsqlj4tigNY5JOw0E/vy0ltaZGt+NKYie+sJn88ougJLZB0yiRk+l6x4QFAr5B1hLrLTp7WFJrSs76rZaEeiBk6edFAiookCgk82bskvvTxIqseHAbN0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fCMjuonE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754310444;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=RqFNZiXIgVJOZ36O1iRoQqXTFYH8uoGigHQTRA21oeM=;
-	b=fCMjuonE4pQnvlfuYoPeVWZSa9PPYWbAm0f/kY1GGQIMuLErwWmYGZabwQEOmYtDn0XM0x
-	CHDHVbHnxF7tYTdl9cty1dv4GE8faTfAobx2Q2ZkeWfu351p/O4sCwXh5xJz0zyW9Xk0Nf
-	klUnMiajL/kfl340ojr4cDz+TKl6BGA=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-570-ap9-XcY4OHC_uabW3cyiSw-1; Mon, 04 Aug 2025 08:27:23 -0400
-X-MC-Unique: ap9-XcY4OHC_uabW3cyiSw-1
-X-Mimecast-MFC-AGG-ID: ap9-XcY4OHC_uabW3cyiSw_1754310442
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-458bb0e68c6so10229655e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:27:23 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754310442; x=1754915242;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=RqFNZiXIgVJOZ36O1iRoQqXTFYH8uoGigHQTRA21oeM=;
-        b=P8y+JVgLg1z0BspVUdq0OeWo7mtjkeaydhYyUdJfzszUGGWDMN1B0MgElnT3ORS972
-         PGjnU5zTwmrKIgCDRC64eWKEQml5kYqiGOkTJzVmWp6Nat5dtC79Y8fbZLYnTjkaArqe
-         l07slyy0RY1wHpbgFtOejVCWzfPv17/WC/IJplXq6oykNJRQC9U8myMoKEpLV/Bo2zru
-         AoV32YcQ/UUPoemyq8aP2Cex+1nYYfUEb2JFpwJeyqIBetY2VqF7+UTtbIFCVxtLOD0P
-         h74PTfJG6mvN1rvD3eE7WzUAJOFlctU/FrC/n0e/cnKE3ow/teDK0J8JjHKwfQ7/FPND
-         5gMA==
-X-Forwarded-Encrypted: i=1; AJvYcCUrkwpdDR88Yx8t7B+XkptEDH0y9rLqcci34kfwqAD9HncqdTY9wgImHHIdhcqUdAqgONVqClNN38XBmx8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9sD3JcQ2CgYUdd/N5wNBHBtw2Yo1hjfH7rA4tzIZk6YvZvyTL
-	hwG5R2NvOCcQYxRPTY1h3dEAXV6hksRE71OqSgyojWFCvpQzLlcOCavEZ00pYm8MQhPrmx9bn3J
-	vPLnJPggr3xpAkKvIB9Gd5ftPhKq2f7ZCgiv67opzp3lO6+7mT24voRJAkJsTrmYzbw==
-X-Gm-Gg: ASbGncuem2AY59EJD05sHVujRs46R989vUQ6E0IoGhX6HDagOZYYXxd12jR6Y4CQa1L
-	KDfcF+DBaKxmVVBtwvdtAY0t75ob68NTVd+IrGzG9CopzTyiEUj1QfWtaZQqszHbStuIoS8jkjC
-	AOlkLk2euqj3HNOqcoEeqwYBGXg/HBHtvmz70x80fexce/xNlccbIdCqCBVR4L4E5A6q2Ae9iH2
-	7mxSXjOYaPvVoIiYd8hOXOfATMkLm98cDwZsKJqKm1vPueIR9GMiiWiVUYjizXx9jW5Ph8TVVyh
-	U1dhnW7Wtf5WLDt+wD1SM5CDMcY6Znn8h0n0ypp6AFK4DXrn1JFzLAyQULnDSbRkk/VvzO6jQNp
-	Y5tKeDlKfKZo5d189HAg6S5+mU8ITQZLpzL7CMfefLHgnQf7rvE8fV2AFe885fus65M0=
-X-Received: by 2002:a05:600c:4f94:b0:458:bc3f:6a7b with SMTP id 5b1f17b1804b1-4595cffbec0mr46790445e9.18.1754310442119;
-        Mon, 04 Aug 2025 05:27:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGPCM5/SLg/IlHDZWJYXx2n14ukB77gslG9uesQCvJ2YvN7U6F/6nCutbjz9bA6HnN1x0X9CA==
-X-Received: by 2002:a05:600c:4f94:b0:458:bc3f:6a7b with SMTP id 5b1f17b1804b1-4595cffbec0mr46790185e9.18.1754310441659;
-        Mon, 04 Aug 2025 05:27:21 -0700 (PDT)
-Received: from ?IPV6:2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9? (p200300d82f0e2c00d6bb8859fbbcb8a9.dip0.t-ipconnect.de. [2003:d8:2f0e:2c00:d6bb:8859:fbbc:b8a9])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-3b79c4696c8sm15148041f8f.55.2025.08.04.05.27.20
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 05:27:21 -0700 (PDT)
-Message-ID: <1e259390-67b1-4d08-8174-a65f1fc9eccc@redhat.com>
-Date: Mon, 4 Aug 2025 14:27:20 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E2612580FB;
+	Mon,  4 Aug 2025 12:27:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.126.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754310469; cv=fail; b=NlMHrPFz+5jhlT+TSVK2eeOhLvisJAl9la6+XYmqoc+dJzrEbZoLF3QZxe8Bg+V5G/5EOGaEgNlx8bJFyHlZkSOS2eqaC72q9wB5sA94KW8fobvurBn4g500tzoqf1WR8nJfK9guAFpaKvAcHxNF4I4g0f1ShZm+9WqrnFL1AIA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754310469; c=relaxed/simple;
+	bh=iT5OfO1HmnmjdePkIv8Ir/9h6ZgUaEgQIR7LC1/JfBU=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=nW7/txXzh1hcqNarWgrDVdtgMyPQ3RKqt2xKPCoV9hE6GYUEsWoVprJ9ouLCGN9WKGVa0lZMCEx5gQBi/2NFqYedh9n8bLNqnIi5Vq3SGziCwD7brRL0S4WG/GVAgjeSU0JberUI64X7CkLZufU3+k7wtiYhyINm9+8YmI8H5NE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=ozHlFHMM; arc=fail smtp.client-ip=52.101.126.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=tB6fJOohREy/kbuE0nl+7BPAICzEjVEwT9Y/ZDRk+XQ65tEJ3+yugksAp/U66t6HdxWk6xS29bX0ntcbDzFgIJGH6srPBf0wXga/ahMIqEDEYlZKLdbQq7OjrreciBVdNpNb2Zogvb31Zw2qRwQJCORcuw+BFyPqIuQdEtzcr6G0/KF3wa9FklFNOYDryZaDwRTTPbCLfMoGgYaD/CVDL9uRqMP34s/BrhWHqXOAAtP5MAZmkLqoa3yNlYQGUrxjnMkjnX283gkdxpZJfZsG2545qDI1HzS++UrSrxbrxs4Rs1aSSwouxtj5lN6UwSObts37Jcbr1rbp0EgFFo5zBA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=HxIHh8ACv8r+2FUxhwnGJEy4IJ0RJ9qF+MsPIGuGNtE=;
+ b=aSAyWEPgJBJxBQDJCK4JvldvBIB0503rYvb8n0Vhcs05bRquOY8PUppthxKCOYY1L4ml7NvfcR68VeGNJxA/ZozpkfdbVWgg84yeKy0YTue82Mx4V2MVeR107o4Qq2RuG4DBOmTdBEUKro48RRIsy58RFeveyqiao5NuH5/gSBhjlYr1mFFHY/UVN0H7AZcPTHyQZ3d0FX3neh6sqqd6/QlyRboL5r55fGniwVcQzfASJGDk3qdeDmOXr9CMWSeo21t3LEs0dHhOZCBeeAnZjxdYkAssOEN9wkQmLVNOfDSOCCucDurZol4g+tFPw0d09NE3xRLdr9JtmRyYrQ3Y7A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=HxIHh8ACv8r+2FUxhwnGJEy4IJ0RJ9qF+MsPIGuGNtE=;
+ b=ozHlFHMMwmhnzy0l/VHcpXUUPilD8XwzLRmD0z+msmT89jrtOjp9l1mptj2mMQyG78y8S9RjOzx7IgYhIzPPYR+mSGc/OWIMbgJKwBD0ms5w/2akEfpDCZNJfRcgByyImy0CbWX1GQXj+QP/vwAD023pOjO9c/C4GiWu/L1UOhvyxhcK/5Srth/bWdWq/nOgiMXKjkuY8OpGMst3qwRoqkItxCiTYk8wba72PA5GpiyTVA5LVGy1nXrnovqDLz90BEe0Djz2V8O46OkH1OuNZbwZytFeO1zNh03kksahK6kukP/2aI0yiWcNCixsPxkUwnzQfsC24KYzQ751XDF5eQ==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com (2603:1096:4:1af::9) by
+ SEZPR06MB5296.apcprd06.prod.outlook.com (2603:1096:101:7c::9) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8989.20; Mon, 4 Aug 2025 12:27:44 +0000
+Received: from SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666]) by SI2PR06MB5140.apcprd06.prod.outlook.com
+ ([fe80::468a:88be:bec:666%4]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 12:27:44 +0000
+From: Qianfeng Rong <rongqianfeng@vivo.com>
+To: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	KP Singh <kpsingh@kernel.org>,
+	Hao Luo <haoluo@google.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	netdev@vger.kernel.org,
+	bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Qianfeng Rong <rongqianfeng@vivo.com>
+Subject: [PATCH] bpf: Remove redundant __GFP_NOWARN
+Date: Mon,  4 Aug 2025 20:27:30 +0800
+Message-Id: <20250804122731.460158-1-rongqianfeng@vivo.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: TY2PR04CA0018.apcprd04.prod.outlook.com
+ (2603:1096:404:f6::30) To SI2PR06MB5140.apcprd06.prod.outlook.com
+ (2603:1096:4:1af::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: fix accounting of memmap pages for early sections
-To: Sumanth Korikkar <sumanthk@linux.ibm.com>,
- Andrew Morton <akpm@linux-foundation.org>, linux-mm <linux-mm@kvack.org>,
- LKML <linux-kernel@vger.kernel.org>
-Cc: Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Alexander Gordeev <agordeev@linux.ibm.com>,
- linux-s390 <linux-s390@vger.kernel.org>
-References: <20250804090859.727207-1-sumanthk@linux.ibm.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- g3eXuA==
-Organization: Red Hat
-In-Reply-To: <20250804090859.727207-1-sumanthk@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SI2PR06MB5140:EE_|SEZPR06MB5296:EE_
+X-MS-Office365-Filtering-Correlation-Id: 05c39632-73c8-4e1d-6b38-08ddd3524feb
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|7416014|52116014|376014|921020|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pZcQ2UHQYM0jTdJ+FQv0/wqUol/8rfvAYN2mbwveKBVMhXRoE0vzJJ8UJkHC?=
+ =?us-ascii?Q?+FNU9vsEYNcoR37ksgVhWvfIrC5jihFoJHmY1DHm/4sdgqsuQM9zCw6O8U7+?=
+ =?us-ascii?Q?eFb482jKTp76R4b/Q0sm36nPKBT31l1DhDkgGmJGugWTCqE/747KWeugKHFS?=
+ =?us-ascii?Q?yKYR1fWjug4rjpjBqYoftNpnZgdkOEUjVRXuTeOBCa5SNXyQDgRPrpnWuxRU?=
+ =?us-ascii?Q?DltOtVKrLA4q3OCH3m9VSbE77HJY14qbGmUVbOTVZjTE6h8Ulx+knbmkPqnf?=
+ =?us-ascii?Q?+P353spfl2ZazPQ1FRCiSNqbtWAf0+xnPn5X9QJuDPCmGOSeEWJpEgevGe4U?=
+ =?us-ascii?Q?Mv1e96SOTFGhrMojKblRbu3YuI3o+pT38rL0aIaXQkpCuBJ7XcSyPI5Dl8YG?=
+ =?us-ascii?Q?2V5qODgk0v/mO+qcH68d3qYk9RwiUMuTbZH7gDIE69xfHfpZ++6lD/9JGeKC?=
+ =?us-ascii?Q?mJUf8BuhLvGHAx4oGhBc0qF7vOjdJ8JMOu7zfvoQI2BSnyrrD7gt7F0hSlYr?=
+ =?us-ascii?Q?uQDMpmLQ1QvAA52MEbUBeTURt0bLJNVvsicgc+9aieYjnuE8nGgWAeZNUQ01?=
+ =?us-ascii?Q?JniBvvDymJyIn+pTYKnpbXp4uzpzcoiA/2uGjc0/xowfPjI+ZEaVdrnzFsbQ?=
+ =?us-ascii?Q?dp0o5mH/9gw0DewZ6H02JAXjaWMZ64YkhiSqt3K5eDskLOp1zBtmWDjYFvDl?=
+ =?us-ascii?Q?wcF+PB+6+Qow/va/uPnp+fJBo1Px3pGoYcG9O9R3G3Qp/4Q5YoxzGBGhzqBp?=
+ =?us-ascii?Q?cYoqSyKJUdMZMxh6P23fTvLHczypQ81OH57sK4DslohhtDGZ8Qcl7UjKvqPT?=
+ =?us-ascii?Q?yDwUZUrxjItocCs1IFfRGHAruwgt8KheM6grPUVvpUHoxHqBeXD6Gycma3ib?=
+ =?us-ascii?Q?VQ0L8gBFVubdL19fV4n4R9L9R982Q8bsDOahQYGT0I8FzPGV3t0Edkwq4Cw0?=
+ =?us-ascii?Q?SU4Jrjde59uSmVsEIT5BtOiMQsWFUSOwHsuqDhrUcbf8H4TTPwaYi27AlUt1?=
+ =?us-ascii?Q?kSNTQfihHpkVPdHGP+kAxfVM5FPVtQz9MUoosCPDxMymW2HDlVg/S106cFwM?=
+ =?us-ascii?Q?ZSrOYUH1VaxJIxiqg9fEiU/q52ZBO478CYf1D20g1E+NLLsvSklmjDEr7nYH?=
+ =?us-ascii?Q?LFTp90cunzeKWzfuIJab/ZgWG+EpvBg2tSges6xfSZSlwThj0k+VusNG2L2N?=
+ =?us-ascii?Q?Yz32e23LPdrmvK5/I9EwLPDLPy9j9XmxFLNLQ9EEGHHyAwpW9mtkCTloZJ84?=
+ =?us-ascii?Q?oPPlEAXGTj+1BLFcZEL1fQw/Ec7BeD2h6FQwA+PWl9ZnO4phEX1+NDsCf8Aj?=
+ =?us-ascii?Q?Pz2aQGIQOdaisjpjN1i0bWecs6n6gCPZNzm7yNSXemvDjTQxTUdiHGkB23KS?=
+ =?us-ascii?Q?7OOQKTua+I7A6MQl6wfztwQ8B57b8q7mXzwzTAVLsTIVTmGpW3VaVc3sayHF?=
+ =?us-ascii?Q?686SQiPgUYyakZftxsRohb/cdCgG8Y1AgagrIzlrnxiTbwd2KWKcpjejDyz+?=
+ =?us-ascii?Q?+Pr3drcN6Kbf5Y0=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SI2PR06MB5140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(7416014)(52116014)(376014)(921020)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?Jwj2fhStjTXmgqoWOre8gjJ/YtgJ4eUYqD9RWCJvtz4ul+Gmk7TSleTHIowF?=
+ =?us-ascii?Q?/KvXEv9aTq9cOiAnmvfIq5Ov0Fn43Cv5OYjs1Ti4mTrkUM6ATLdqhpWLjKae?=
+ =?us-ascii?Q?Cg63erm0Hbzbj7LONTrYOCGlt5OpWah+obHhwcin9snnyX1FfJsdv6o9nwbr?=
+ =?us-ascii?Q?sPcWL9NSGgac3g/kbb36RDSo4oRnbmZcEJl1/YMpQpn1ko2V/8ejFltrQa7w?=
+ =?us-ascii?Q?ttLhNs7IJtteItBaWQu5rILY83yYt3C/clnZDBafS6Flkcl/ExfWBYxwzlWf?=
+ =?us-ascii?Q?CJqBFYmS6fsKd1uVhuYlmtofZQ5eERymDkgHPB5FMxk0SSCbSbvRmufVCwqC?=
+ =?us-ascii?Q?WBlbVjIV+XLndWmvQ3EAjuW/ED1I0CABvZg/zwsm9/MhBa2LgD876hhQv2xx?=
+ =?us-ascii?Q?EyzZy22xOakf9k/xUHF64qDq2WjRVtBgvtUmXdZmkHYt/XnodeX/dx5FpHCe?=
+ =?us-ascii?Q?xzs1WUi2lPHE4RI2cpZFZqWzZ5qAC60BK/Y8fXehmYp+8doQ5p5oDrcnuZNy?=
+ =?us-ascii?Q?alq5LPpwtzt0TY7hcfsDYD3iqsZdgFNDWYMax+G0os2mlC123Kyh6k0lnWY9?=
+ =?us-ascii?Q?V3+0UCq0g7Jd56d8nCZZFGEhcwXmd5oMCCPeOrj8lRrr8Ova/z2m1AQzUWc7?=
+ =?us-ascii?Q?LvlPWLetjzaqBcxrhTEJaR5IUFasGw6S+GCWtOsUgpTVv3GTrLXpRbgBjJzm?=
+ =?us-ascii?Q?B4vk168Af6HPikKho2YMJ+7g33T+J6EEKTzSH9TpG2wepTYA3jlCEud9rKL4?=
+ =?us-ascii?Q?5AzX7OVS7mmZeS/Cf94w/De+S87w60YXxtfCDCvVx0JaEp4V8uFFdB3waRxS?=
+ =?us-ascii?Q?SGH0h+p1LHApESy+9lJ51YLHTYNH7wFPS2cuCkHO/CT6DtkD3ZIzLcCD7WXX?=
+ =?us-ascii?Q?al2LondVYs5venefZ2jAOaE4fB7QdIMkN7XCM2i+aWdDD1tU8RYZG1WBdb7A?=
+ =?us-ascii?Q?LBWB7u8mySEWqqsoadELq6pFzhIGH8dloxQ/I6WabFYwLywVxSusvgUSLvF7?=
+ =?us-ascii?Q?mxM1WdEepDBK05L22w64YQTdENBerrgFa7g7fVSJb1jG4vEFMeMlPi16lpSV?=
+ =?us-ascii?Q?6tvWs0l9z/nQE7HFPoAz45OrTfeSRWZcF7hX/Ie46yh4kk39/ITGKgxaskOs?=
+ =?us-ascii?Q?1PEdE+exeGFw8O4Y0BiYmqCFglvLWlBa1xktFzuQ+U34Ptyh/Hp2ovKlzQvI?=
+ =?us-ascii?Q?48+9AIMkZTBNGjDo9O1z1QlMiNX0V+ca83x8pDd1q/I4vGNVBiTiXO/DfY3D?=
+ =?us-ascii?Q?6Qz53bGpNmaQsvyv5WBDvlQuK3fexS7MBNyuPm+3ijeY5F8G7A4Z0s8UeR2Q?=
+ =?us-ascii?Q?pLWmMTwmfGEOFNk9pkmANQ4+5PA4Ni9kzFaaFkWhdtYhcnsBHwG876EvOKE+?=
+ =?us-ascii?Q?2aaCV8N1YTEb3FXul3Ab7tb6Sl+2gtuzmddU9cAlI2c2g8Vhd+8V94bo4svp?=
+ =?us-ascii?Q?PaSCg9qWhWeRNW0ql/ZtTEAb0AKGs+Bkagwj61a/0DAtoB03UgbaV+okh0zZ?=
+ =?us-ascii?Q?j2Em4BSN3LbPu1qhmLwVYKew1U+qzMHER3TtV+I7tyalR3IdE3u1+GLSHzb2?=
+ =?us-ascii?Q?rN75rAR26Be/8QJjemxfPPbeyuwS2H9ZeOSZuKKm?=
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 05c39632-73c8-4e1d-6b38-08ddd3524feb
+X-MS-Exchange-CrossTenant-AuthSource: SI2PR06MB5140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 12:27:44.0399
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Z3woWYfErvhLVIuqwxyrV6Ix6icGgINtLMSORdkWzykNfgDvOXeu8zCh6iLgWOKxdw6L9HJpggfsaSJ3ju/+HA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SEZPR06MB5296
 
-On 04.08.25 11:08, Sumanth Korikkar wrote:
-> memmap pages  can be allocated either from the memblock (boot) allocator
-> during early boot or from the buddy allocator.
-> 
-> When these memmap pages are removed via arch_remove_memory(), the
-> deallocation path depends on their source:
-> 
-> * For pages from the buddy allocator, depopulate_section_memmap() is
->    called, which also decrements the count of nr_memmap_pages.
-> 
-> * For pages from the boot allocator, free_map_bootmem() is called. But
->    it currently does not adjust the nr_memmap_boot_pages.
-> 
-> To fix this inconsistency, update free_map_bootmem() to also decrement
-> the nr_memmap_boot_pages count by invoking memmap_boot_pages_add(),
-> mirroring how free_vmemmap_page() handles this for boot-allocated pages.
-> 
-> This ensures correct tracking of memmap pages regardless of allocation
-> source.
-> 
-> Cc: stable@vger.kernel.org
-> Fixes: 15995a352474 ("mm: report per-page metadata information")
-> Signed-off-by: Sumanth Korikkar <sumanthk@linux.ibm.com>
-> ---
->   mm/sparse.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/mm/sparse.c b/mm/sparse.c
-> index 3c012cf83cc2..d7c128015397 100644
-> --- a/mm/sparse.c
-> +++ b/mm/sparse.c
-> @@ -688,6 +688,7 @@ static void free_map_bootmem(struct page *memmap)
->   	unsigned long start = (unsigned long)memmap;
->   	unsigned long end = (unsigned long)(memmap + PAGES_PER_SECTION);
->   
-> +	memmap_boot_pages_add(-1L * (DIV_ROUND_UP(end - start, PAGE_SIZE)));
->   	vmemmap_free(start, end, NULL);
->   }
->   
+Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+made GFP_NOWAIT implicitly include __GFP_NOWARN.
 
-Looks good to me. But now I wonder about !CONFIG_SPARSEMEM_VMEMMAP, 
-where neither depopulate_section_memmap() nor free_map_bootmem() adjust 
-anything?
+Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+up these redundant flags across subsystems.
 
-Which makes me wonder whether we should be moving that to 
-section_deactivate().
+No functional changes.
 
+Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
+---
+ kernel/bpf/devmap.c        | 2 +-
+ kernel/bpf/local_storage.c | 2 +-
+ 2 files changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/kernel/bpf/devmap.c b/kernel/bpf/devmap.c
+index 482d284a1553..2625601de76e 100644
+--- a/kernel/bpf/devmap.c
++++ b/kernel/bpf/devmap.c
+@@ -865,7 +865,7 @@ static struct bpf_dtab_netdev *__dev_map_alloc_node(struct net *net,
+ 	struct bpf_dtab_netdev *dev;
+ 
+ 	dev = bpf_map_kmalloc_node(&dtab->map, sizeof(*dev),
+-				   GFP_NOWAIT | __GFP_NOWARN,
++				   GFP_NOWAIT,
+ 				   dtab->map.numa_node);
+ 	if (!dev)
+ 		return ERR_PTR(-ENOMEM);
+diff --git a/kernel/bpf/local_storage.c b/kernel/bpf/local_storage.c
+index 632d51b05fe9..c93a756e035c 100644
+--- a/kernel/bpf/local_storage.c
++++ b/kernel/bpf/local_storage.c
+@@ -165,7 +165,7 @@ static long cgroup_storage_update_elem(struct bpf_map *map, void *key,
+ 	}
+ 
+ 	new = bpf_map_kmalloc_node(map, struct_size(new, data, map->value_size),
+-				   __GFP_ZERO | GFP_NOWAIT | __GFP_NOWARN,
++				   __GFP_ZERO | GFP_NOWAIT,
+ 				   map->numa_node);
+ 	if (!new)
+ 		return -ENOMEM;
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
