@@ -1,130 +1,258 @@
-Return-Path: <linux-kernel+bounces-755242-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A2ADB1A36D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:36:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A0885B1A0AF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:45:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0BF18A07B6
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:36:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C2666178CB8
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:45:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2A9326F46C;
-	Mon,  4 Aug 2025 13:34:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA056253B52;
+	Mon,  4 Aug 2025 11:45:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="UeB9aEBW"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="A3oPvh1m"
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2062.outbound.protection.outlook.com [40.107.220.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FD7826B973
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:34:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314492; cv=none; b=IAHY6s8EfyaKtJlF6dCPYwSamM3ds1QX2pjkJl8GfsuilTjwVKs4BrE/WnrwFmd6QIO0zjTmpEyerxunNRm05fyrMx6iuA+FcElGiN6Ok897CpodGNXQgul6eLNEZun/y4aUwc+51ew7/t9n0qg/8duW59mNdUxM0PeDNFV1Gt8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314492; c=relaxed/simple;
-	bh=NK+E7i4SF9xONO+tY0AUV10ypXRnVmeU59H+CPBgCM8=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:
-	 References; b=OiE06ZIz+L3MtW2BeyAn7oLutTNnoR6Wko/kDmv+tBnpaOgGliTi6vlATN7q0EKSfuqEkoMfbIDG8Jni2MrH1RQxFRamwjQ5GMFkbSLTb2x5IN7ZhdpXOozAZgAxDKwjpTL/qSVyIbd/EHn6BYk6XCaUGfSrk0fFIqGxM+xAhd8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=UeB9aEBW; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p3.samsung.com (unknown [182.195.41.41])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20250804133443epoutp03c99ec34d152be20ba201b78512d52128~Yk7pdP2_B2786427864epoutp03W
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:34:43 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20250804133443epoutp03c99ec34d152be20ba201b78512d52128~Yk7pdP2_B2786427864epoutp03W
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1754314483;
-	bh=sueo5FzJALTgcvMOuRIM5QQ0PClRb+SDXbInCek3SMA=;
-	h=From:To:Cc:Subject:Date:References:From;
-	b=UeB9aEBWEFlrA5DhY7AzlHd0VxJgsYpQndITSlMkzmCrkDNgnUx6oK+ieOQVbtH/v
-	 rDu/I3g4tuje/GmqsubqXaegC+d7EwJahFJmzk5vvM+CHvCoIYetwriWHVvtXHVE1N
-	 A5o41RdpumwW3mPNFIe1jQuc9LlOe3QGm4UYw6Q4=
-Received: from epsnrtp04.localdomain (unknown [182.195.42.156]) by
-	epcas5p2.samsung.com (KnoxPortal) with ESMTPS id
-	20250804133442epcas5p2f2ea67fdb98a648a8f980c284c050ce4~Yk7oNtz_c0438204382epcas5p2J;
-	Mon,  4 Aug 2025 13:34:42 +0000 (GMT)
-Received: from epcas5p4.samsung.com (unknown [182.195.38.92]) by
-	epsnrtp04.localdomain (Postfix) with ESMTP id 4bwcwx3WChz6B9m5; Mon,  4 Aug
-	2025 13:34:41 +0000 (GMT)
-Received: from epsmtip2.samsung.com (unknown [182.195.34.31]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23~YjUx9a2j51246212462epcas5p1D;
-	Mon,  4 Aug 2025 11:36:54 +0000 (GMT)
-Received: from cheetah.samsungds.net (unknown [107.109.115.53]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20250804113652epsmtip213f4596d1526ebbf9840e78bb83ae723~YjUwbwAjr0602706027epsmtip2T;
-	Mon,  4 Aug 2025 11:36:52 +0000 (GMT)
-From: Bharat Uppal <bharat.uppal@samsung.com>
-To: linux-scsi@vger.kernel.org, linux-kernel@vger.kernel.org,
-	James.Bottomley@HansenPartnership.com, martin.petersen@oracle.com,
-	alim.akhtar@samsung.com, avri.altman@wdc.com, bvanassche@acm.org,
-	linux-samsung-soc@vger.kernel.org
-Cc: pankaj.dubey@samsung.com, aswani.reddy@samsung.com, Bharat Uppal
-	<bharat.uppal@samsung.com>, Nimesh Sati <nimesh.sati@samsung.com>
-Subject: [PATCH] scsi: ufs: exynos: fsd: Gate ref_clk and put UFS device in
- reset on suspend
-Date: Mon,  4 Aug 2025 17:06:43 +0530
-Message-ID: <20250804113643.75140-1-bharat.uppal@samsung.com>
-X-Mailer: git-send-email 2.49.0
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4897419ABC6;
+	Mon,  4 Aug 2025 11:45:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.62
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754307940; cv=fail; b=dab027eCtJtY8icxd+gmcdJCnf4QbJ0/VGeU8FknTKMY7Arxo755akcv7x6LL8VGZGJyNRlJqr8f/ev4cUuf7cGWwu9KbatRJIc1cSlhvvpRYS1VZQiYdQhjd0pqQg23IvlpDWzUh6qJLZ5RkL1ZVDDl69q9WQSj/d7NMUMmfWU=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754307940; c=relaxed/simple;
+	bh=KxWSJ9bdeqEefF2ne9zzUSUpnFeZ7ZKCSWotGP3Izls=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=MWopFO2PAqpCPcQfMLqWL1sKiLurVerxpchM5k3AirI+bUstBjQxX+OayAI7rHC6GvPujw4TymCbEOol516s/cPJkTG1EPtWkjo2NtbfD4h5TVRun0mw/8Iuod7uEm1vG2FSBZzz7vxURyUWAgdzPkS8dsJwckQghdSCuNf2jVw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=A3oPvh1m; arc=fail smtp.client-ip=40.107.220.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wudor25qE6BlLyoQuMYeyiqb9bANqZlTpZYP+O04q9lb96isJXp/apARA8ceKh9ZLjKbncZHVN6Pi7Co2Rsveu/QLWPkTRxUsmGY37Kuo6Ku7iG0mn9o0hHr6Man1NasYdo3us/Ka6fTUxwRXLDHYnsnzPm2fzPVCWSeC+gQIGvdZdFjQGJJBawoSmTSRDe2SVNrFP/TFJL+3nzTQWuAT5I9yrZP3PTnsJ3CaCFC4CSkkU4CdKtb3FKRJ+/M0wOKJHK7I1r9r/Z8/v5POs/IvNeOAWtxvCllfokrQ5NvMvDIbduoaJzyxH9rtIYt+5fKU802HdeJHvTq051GEyFtiw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=j8XV5+wNpnd2bfyJ1Z4cj2LIIvmcjGvnZDH4ts7JMgY=;
+ b=Gws2uNRFrZzq+rFLAzglTaxhFXdx05alKV8dQU8j/d+1/eaKXAAXSnMdn80qfjZS2C6B98vBwTZHVtiGCpLNAsfcdgBv7JDLadQRFy3q0ltvlLH/SMtGj9e3Vmlbk5KR4GnBLi11erMxdahgeXGnP/eaySRMrWifDjiwmtd09LCqYHXms1dZI3W0dIygFVrwzILb+kgprankeIGcjr58PjFwjvmbpDQKJMpwot9eR3+LreNV6pEkA1YY4A/zIRmR3v9mIUHlWEIoz4w+giFz8Dhkra5rQIPL1QDIzSDKFlT7ZLpgSkApJ4u0JJJ8wzwqUsCyn6ADkv96daDipQjt2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=j8XV5+wNpnd2bfyJ1Z4cj2LIIvmcjGvnZDH4ts7JMgY=;
+ b=A3oPvh1mSPuIiSoobHtAuqzbg8JbnZQuYeKG2apClsIti3IRn2rUeOJtUpgZk2hJpADHcGEAFLsgOMWzzsG8wm79EJyIae0nuKFgOYD4R39uIcVD0wsk3u5n+9Bc2jGB4ZX9JpRBQZdJbIap1DRmRDGQ+wnHKhDEghDNUWEbL3HuVkIf37GFlBg8VAtwqu11Ihb5ojaiovFdW0BcAwUQIN+ncFtP4M/T6c1VNZbkYixpm+EYtebR+Zh+WnBOz1APs/p8O6M9ZCaDmdCL2nb5oks/pM/4i9/hlqblZcbdhAyf1LJxRvKB7GUw457z1o4rEByLI07F3e0L5iXVoOeHPA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com (2603:10b6:610:28::18)
+ by SA1PR12MB8841.namprd12.prod.outlook.com (2603:10b6:806:376::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.21; Mon, 4 Aug
+ 2025 11:45:34 +0000
+Received: from CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99]) by CH2PR12MB3990.namprd12.prod.outlook.com
+ ([fe80::6e37:569f:82ee:3f99%3]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 11:45:34 +0000
+From: Alexandre Courbot <acourbot@nvidia.com>
+Subject: [PATCH v2 0/4] rust: add `Alignment` type
+Date: Mon, 04 Aug 2025 20:45:23 +0900
+Message-Id: <20250804-num-v2-0-a96b9ca6eb02@nvidia.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFOdkGgC/1XMwQ6CMBAE0F8he7ZmWxTEk/9BOOB2kT3QmlYaD
+ em/W7l5fJOZ2SByEI5wrTYInCSKdwXmUAHNo3uwElsMBs0ZG4PKrYvqToUXTWiohdJ8Bp7kvb/
+ 0Q/Es8eXDZz9N+pf+75NWqFqm2tbTHRvqbi6JlfFIfoEh5/wF1/x+XJcAAAA=
+X-Change-ID: 20250620-num-9420281c02c7
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <lossin@kernel.org>, Andreas Hindborg <a.hindborg@kernel.org>, 
+ Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, 
+ Danilo Krummrich <dakr@kernel.org>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ nouveau@lists.freedesktop.org, Alexandre Courbot <acourbot@nvidia.com>
+X-Mailer: b4 0.14.2
+X-ClientProxiedBy: TYCP286CA0338.JPNP286.PROD.OUTLOOK.COM
+ (2603:1096:400:38e::17) To CH2PR12MB3990.namprd12.prod.outlook.com
+ (2603:10b6:610:28::18)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CMS-MailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-cpgsPolicy: CPGSC10-541,Y
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23
-References: <CGME20250804113654epcas5p1dc2a495e16ff0f66eafc54be67550f23@epcas5p1.samsung.com>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH2PR12MB3990:EE_|SA1PR12MB8841:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8dfadd1d-7513-48ca-c360-08ddd34c6bce
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|10070799003|366016|1800799024|376014|7416014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?M0NzbE9HY1lheTJGUjBraTlxQXpBNEluQUZjcWJ4Z3UyTlU1RzdVRHRMMzZo?=
+ =?utf-8?B?bkRLU2xENjU0Q3g2OVIwckVoL2RrN3Q4Z05DOFRBQkQzTGN6S1pPbDBnVU5I?=
+ =?utf-8?B?Z01XYVB2SmtsRk4zdlZxOGc2R0RvV0lnOVlJbkt1QitqNGk0UW5sbEpic1RC?=
+ =?utf-8?B?NHVyOGxhL0ZpL3Nnam52am9PbEU3dE5Zbm5YVHBsY0cwNmMxUGFKcXlWTmlv?=
+ =?utf-8?B?bWFlSHpLaExLLzhJekZLZVI4MjE3dUUrMjM0VDhQT2RpYXRHNmVwOXdJbnd4?=
+ =?utf-8?B?SXNPTDUvVUxpb084Z3dJU2g2aVpnYVN3YTdnRnphR0ViVjhpclZ3bWhVekNK?=
+ =?utf-8?B?UTJHTzVmcEZZSFkwVU92R1J2NXROVWZ3cStvSE5qdEI3T29rV1BTSUFQVUEr?=
+ =?utf-8?B?Z1BXNGxUNDFqVWVMSDhiVmFqMVdka3J2d1AwWkVRU1lSOG9FNnlUdVowUVZo?=
+ =?utf-8?B?MDh5K1E2RjhRdUZ5eUxzaVdCaWNRb2VsN0tMVzhYbzU3VjkrQU4vN0ErWkUy?=
+ =?utf-8?B?dHJmekpBRVVJRGo4d0xueU5SODdGK0IwbHpCS2ZJNjlob3VRN2VrYVFHbnFQ?=
+ =?utf-8?B?dHRjY0lDRzlQYSt4WGJnUGpFY3ZhTU5odmlUbHY3cmIvbTk1Q3BXQXo3TnZ6?=
+ =?utf-8?B?M2FIdmNReTNiYmhlbWFWNTRPUDRLZ00yNDhMOUVZd0JxdEk2dmIwUGl0cmFh?=
+ =?utf-8?B?dkx4UkszcVRPclNkc2dZLy92bzcxd0JkMnRkU1hzNG5wSk9zZm42ZjJqdTJi?=
+ =?utf-8?B?QWkwKzFjdVAybWthYi9NRUtobnRQZ1J5eWhjSUJHV29NeDlwckNhSnhWWml0?=
+ =?utf-8?B?Yy83L3R6SkI5YUwwckk1eGpPbG53UzRiMFNWZVhKSXV2aTJyaHBVRmVnT25l?=
+ =?utf-8?B?b3hhR1RtZWp1UzBycDYwVTJ3TWxlUXkwQUJFY254WkR6c1lsUGxRbjBIRFFE?=
+ =?utf-8?B?Y3dIYTVkQjM1L1F6cGZseDZrckhUWGtnYytweHBWaVBvM2dxT2cxTmgxdXp0?=
+ =?utf-8?B?NWFIUW5VQWpBQm4zSUtBdGM4SjZxeXQwc09UUEEyY3g3cnlBRml2dnM4L1J5?=
+ =?utf-8?B?TTRkd3AzaUtuWFRPMHNBcU9lWDNmeFkvVU9wUUplNnJrWFcvaGRMelZsMFl0?=
+ =?utf-8?B?aU9jbmE0VjR4M2E4STZUYXZ6VFNYb0YxREhzNTB4YTFHSXYra2ZuUmlZZGpL?=
+ =?utf-8?B?bVljZEUwcHlOTGUxOXNKTlFpT3docVZpQjh6K0tHS3p4Zk1iUmRmMnRXdzRq?=
+ =?utf-8?B?bEJObzN3QWlvbFJNMDFCbUFYOUdEOWpENHlxSDdkcEZpb1Y5OEFvR3FodURO?=
+ =?utf-8?B?M1F3OGtzZ1lIMVhoeWlaMTAzUTA2M05XNFpUbWJaR1R3WVRrdWlKZ1hST25B?=
+ =?utf-8?B?elY2citqSmxZZVFTbnF2NFB2UjZYV2kwMHptZ1N5U2hkTVZTa2EzNW01WDhm?=
+ =?utf-8?B?ZGdWaS91YUFGRTdueFpLZDl5Y1dCVmhhVHVhSmh4OWhkWGFyMDd0YXUvMlpB?=
+ =?utf-8?B?WVhiRGNVcUpuQ3kwQ3Uxc2ZlYjZObmV1cm9GQTlURUdEMDFLdEFmYWMxMGdl?=
+ =?utf-8?B?dk8vMWRwZUQ4WWJzK1ByRnZRRjllQURndHJCbmFnS2dlbmhUQmpZRWR2RGYw?=
+ =?utf-8?B?TElDVGdybFVkM0g5TUp5cDQyMGFBQy9TRHd4Yk5FUmIwTjJIZmdDempOV3Q3?=
+ =?utf-8?B?a1VxY09xS3QxWVBHZFdQV2RIY05CQ2xXODF1cmFEaWV0UUFDVWJveUNManpj?=
+ =?utf-8?B?akExOThGQ08xTFZBZ2tiaWhWd2pVR1dQR0ErTU5uTGYvWDFKRGxpK2ZxNTRq?=
+ =?utf-8?B?T3R1SUtEaldOSEgzN1Fxb2hQWDNDQ0FQRk1obTV3RmFhT2dkZmNUS0VvOFZs?=
+ =?utf-8?B?dzFRQ0ZyNzkrTGVEUEpvOVVqc0VRWDF0SzZOaGxUTHJUa3Yvc1ZiNnJpRzF2?=
+ =?utf-8?B?bFRLNHBsbEZ6UGUwUU1TTU5xOXBZSTBzLzRNUjRvSGNKRGVTTVNOeEFUTEFi?=
+ =?utf-8?Q?BZx2UM1TzfZKH5fAalm1k/Di/KY75s=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH2PR12MB3990.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(10070799003)(366016)(1800799024)(376014)(7416014)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?c3VWclk2MllVRmFXVEFGRVRtcDJ1RmhoLzRRNzRkMmVxQ0dvclFoblFkY1l0?=
+ =?utf-8?B?NjBKMzB4azcrRzVqNDA3ZGFrc0svME4xeTBPMTl4N21BQ3poY09XQmR5Nm0y?=
+ =?utf-8?B?ajV1UTVpZWtHcFk4UlkxVVBwbURzUkpzWUxPejBOVk1obk1PV29hVVRCeUVx?=
+ =?utf-8?B?bHBtNVlvZFM3T1RBSmErczdIemhFczdPNDBnenJKekFHeUwwWkUxL3FlVVM2?=
+ =?utf-8?B?Z1dlVmVESnhyS3FpY1p6VzgxeGpsWmFXRzNsSWU2QlYwQ0lHMTF4b0lPS0dY?=
+ =?utf-8?B?OGdRQTBRUFlXV0ZHYitzQVI3MjhXajJxUExxdmJ1eTBWY05HcjRwZ2I5TGF3?=
+ =?utf-8?B?bU9VeDI2bXlpUkh6bkNOS1RBZlJuQWViYXBwZnlONjM3ZExERmpvQm9oWkFp?=
+ =?utf-8?B?elhLbVNJWlFVR3dTRVdQQXZGbUFJMC9LWEw1c2c5THArLzdZVVI2ZENHbmZo?=
+ =?utf-8?B?VEFoVm5JTWg4dDVIRjRaWFlDOXRHQXRZUEFOcnpieC9zdGJHMUFGL2tRWnhJ?=
+ =?utf-8?B?dmt0UmxCbUl3TjVObnV1MHpadEcxRVI1MGJjcUp5dDc4VG8zV1NUQjFDREw5?=
+ =?utf-8?B?OEJGQk1XT1FXdkhzZzVEQ0VoaXlnM2hQeVFHcFROLzlPRkxYYmROU2htb0Zh?=
+ =?utf-8?B?dlJWcHBpcEs2ZnVQOVJSTFJsSE5tNWREYVhmSExjV0ttSlJMc3M1QzhFSGZO?=
+ =?utf-8?B?L2tCV3NtMW84RkNQSWdwWnhmcXNRNkJNWUJXclAxa25RL0hPUEcrRjFXTkNr?=
+ =?utf-8?B?bjY5U254Wmp6TCtMTTk3TUc3Mkw5K0FLeHo4eUMrVHNvL25XNm50QmJ3b2k4?=
+ =?utf-8?B?cEtRUjBFZUIxd0xNWmJGT1VDTHFacWJYbUE3MkdxUG5NcStyMjRlTDlicWNv?=
+ =?utf-8?B?dm9OKzJnRkFMeUZERGtmazhKOWp4eGtiODJmNDVqYjc0L2JOV1hzWXpTenNM?=
+ =?utf-8?B?d0ZtaGFrcmVhOFF5M1gxNVhIQ0RwN29YMStiNm9yQUpuMVlYbWttRExlb0x3?=
+ =?utf-8?B?Z2JCWnhXY3hCS1k0Q29oUmpMNGU0UWVzdlQrcnZIRE8vVGRvZlViTjRwTXRW?=
+ =?utf-8?B?anBmQmdyQ1RrYjFza203aHE3TmczL1owV3AvTUpRTHVDK0lrYjB4enB1ZndF?=
+ =?utf-8?B?bG5kNGNIVUdlUTBMdEFJamE4K3N3bVVsTGtHbGFQMlRpMmZkV2VvZlFNOG1K?=
+ =?utf-8?B?aTRvM1hudDFORkdnREtIcWYrWUtlL2tnNGgxOTF6T0t0VHJUckdEeUxWVVJs?=
+ =?utf-8?B?MWZZdkFvTFIxTUU4Y2ZUT2V4Zk5OSUNsU0IxbnMwTWRuWk9Qa1M0a0xKZjJT?=
+ =?utf-8?B?WXBwZG9QWGF2QnVuUVNBTm01WGlOMVJGR04raVBjV1ZjTkRKT1VLU3BnS2k2?=
+ =?utf-8?B?WTMzakhOaERqWkFUZUJkK0l3S2pvMFBBbVBlMG9UUkc2Q3NxOTVlSWUvNXFm?=
+ =?utf-8?B?Ujl4ZkY5M29FSDlNRWprVzJsL1IwOEVDUEJZWmxZOGJJVElIMGRjc3dWK2gv?=
+ =?utf-8?B?eUppTXROaW1YWXJQKzVma200bWIzWGxRelF3VXJSNVhCNWxiM1lNNFdXNW1s?=
+ =?utf-8?B?RytqaEVWL0VKRCtKaWU2L01Od0YxVTBJdUk2Q2dmKy9Ba1ZQV2s5ZDNBcElM?=
+ =?utf-8?B?Umd6R1kvS2xWOVd5K2dIaFl4cFM4TkUwd2N6NU4xTmhWV0FhZWg0SWFpUFN5?=
+ =?utf-8?B?b29aUS9INExNS0FqUDhVNWxnb2VnSEJTQVBEOVJtZzE2Qi9MZjNOM1RrYWZj?=
+ =?utf-8?B?Z0dRR1FkQnNPTlU2dlR6Wi9yMFB0YzBIcHdPeWtPMGNEL1g1VFhzYWd1VGFw?=
+ =?utf-8?B?WGZBZjQ3VDZPOTJ5R0liNElVMVlRamJUVVEzb3Y4Qm1KOWdsUGE4bm1ZOHhZ?=
+ =?utf-8?B?akNpc051QzNSZW9TejFSQ0lOOHAwbGtmdFB2dXg5bWt0Y1l3VHdOWFZxcVJ3?=
+ =?utf-8?B?S2k0VXBhOWR4RTRZNk0rN2E3SjI5RFN4eGlnd25nVVdxeFlLTFdlbFFUcGlj?=
+ =?utf-8?B?K3R0d0pFbEV2OUZUY2tFY0h1STRsRW1INkxuNVNTNWZCVUlLOXJXZ2V2SElF?=
+ =?utf-8?B?VUtKT1NqWjdXUHV4a1JXNk0waFpsaHJLUzgvVE5tejlhMUxPcW02Z01aQ29s?=
+ =?utf-8?B?dHdzY1IzYm1jbHpXeHdDMkQwd2wrYW9Bc0drZG1pYXZveUQxYW94UmNjN0pT?=
+ =?utf-8?Q?vBNd82pBeAYQd4GEFQ2wK58UhC8RgJ73IH7xAbuwR5j/?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8dfadd1d-7513-48ca-c360-08ddd34c6bce
+X-MS-Exchange-CrossTenant-AuthSource: CH2PR12MB3990.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 11:45:33.9151
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: JKEFKhjtA6A8Qly98SGb9qBYnWmNB7oNv6I3UmWHl4Wh8Hx8XlkJRnH/L5uyBXDlpjic7wtBqn+vsxfLYsue7Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8841
 
-On FSD platform, gating the reference clock (ref_clk) and putting the
-UFS device in reset by asserting the reset signal during UFS suspend,
-improves the power savings and ensures the PHY is fully turned off.
+After some discussions on the list [1] and the Rust libs team [2], this
+patchset undergoes two major changes:
 
-These operations are added as FSD specific suspend hook to avoid
-unintended side effects on other SoCs supported by this driver.
+- The `PowerOfTwo` type is replaced by `Alignment`, which is heavily
+  inspired by the nightly type of the same name in the standard library
+  [3].
+- The `last_set_bit` function is dropped, with the recommendation to use
+  the standard library's `checked_ilog2` which does essentially the same
+  thing.
 
-Signed-off-by: Nimesh Sati  <nimesh.sati@samsung.com>
-Signed-off-by: Bharat Uppal <bharat.uppal@samsung.com>
+The upstream `Alignment` is more constrained than the `PowerOfTwo` of
+the last revision: it uses `usize` internally instead of a generic
+value, and does not provide `align_down` or `align_up` methods.
+
+These two shortcomings come together very nicely to gift us with a nice
+headache: we need to align values potentially larger than `usize`, thus
+need to make `align_down` and `align_up` generic. The generic parameter
+needs to be constrained on the operations used to perform the alignment
+(e.g. `BitAnd`, `Not`, etc) and there is one essential operation for
+which no trait exists in the standard library: `checked_add`. Thus the
+first patch of this series introduces a trait for it in the `num` module
+and implements it for all integer types. I suspect we will need
+something alongside these lines for other purposes anyway, and probably
+other traits too.
+
+This generic nature also restricts these methods to being non-const,
+unfortunately. I have tried to implement them as macros instead, but
+quickly hit a wall due to the inability to convert `Alignment`'s `usize`
+into the type of the value to align.
+
+So here it is, not perfect but the need for a standard way to align is
+starting to become more pressing.
+
+[1] https://lore.kernel.org/rust-for-linux/DBTGVEJQOUDM.OTGZ6PXLB9JV@nvidia.com/T/#m09e068ecadf5b41099d4c6c55e13fbb3a98c5839
+[2] https://github.com/rust-lang/libs-team/issues/631
+[3] https://doc.rust-lang.org/std/ptr/struct.Alignment.html
+
+Signed-off-by: Alexandre Courbot <acourbot@nvidia.com>
 ---
- drivers/ufs/host/ufs-exynos.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+Changes in v2:
+- Fix indentation of paste! in impl_last_set_bit.
+- Link to v1: https://lore.kernel.org/r/20250620-num-v1-0-7ec3d3fb06c9@nvidia.com
 
-diff --git a/drivers/ufs/host/ufs-exynos.c b/drivers/ufs/host/ufs-exynos.c
-index 3e545af536e5..b19a9f0d25f6 100644
---- a/drivers/ufs/host/ufs-exynos.c
-+++ b/drivers/ufs/host/ufs-exynos.c
-@@ -1896,6 +1896,13 @@ static int fsd_ufs_pre_pwr_change(struct exynos_ufs *ufs,
- 	return 0;
- }
- 
-+static int fsd_ufs_suspend(struct exynos_ufs *ufs)
-+{
-+	exynos_ufs_gate_clks(ufs);
-+	hci_writel(ufs, 0 << 0, HCI_GPIO_OUT);
-+	return 0;
-+}
-+
- static inline u32 get_mclk_period_unipro_18(struct exynos_ufs *ufs)
- {
- 	return (16 * 1000 * 1000000UL / ufs->mclk_rate);
-@@ -2162,6 +2169,7 @@ static const struct exynos_ufs_drv_data fsd_ufs_drvs = {
- 	.pre_link               = fsd_ufs_pre_link,
- 	.post_link              = fsd_ufs_post_link,
- 	.pre_pwr_change         = fsd_ufs_pre_pwr_change,
-+	.suspend                = fsd_ufs_suspend,
- };
- 
- static const struct exynos_ufs_drv_data gs101_ufs_drvs = {
+Changes since split from the nova-core series:
+- Rename `fls` to `last_set_bit`,
+- Generate per-type doctests,
+- Add invariants section to `PowerOfTwo`.
+- Do not use reference to `self` in `PowerOfTwo` methods since it
+  implements `Copy`,
+  - Use #[derive] where possible instead of implementing traits
+    manually,
+    - Remove `Deref` and `Borrow` implementations.
+
+---
+Alexandre Courbot (4):
+      rust: add `CheckedAdd` trait
+      rust: add `Alignment` type
+      gpu: nova-core: use Alignment for alignment-related operations
+      gpu: nova-core: use `checked_ilog2` to emulate `fls`
+
+ Documentation/gpu/nova/core/todo.rst      |  15 ---
+ drivers/gpu/nova-core/falcon/hal/ga102.rs |   4 +-
+ drivers/gpu/nova-core/fb.rs               |   6 +-
+ drivers/gpu/nova-core/firmware/fwsec.rs   |  11 +-
+ drivers/gpu/nova-core/vbios.rs            |   4 +-
+ rust/kernel/lib.rs                        |   2 +
+ rust/kernel/num.rs                        |  28 ++++
+ rust/kernel/ptr.rs                        | 213 ++++++++++++++++++++++++++++++
+ 8 files changed, 255 insertions(+), 28 deletions(-)
+---
+base-commit: 14ae91a81ec8fa0bc23170d4aa16dd2a20d54105
+change-id: 20250620-num-9420281c02c7
+
+Best regards,
 -- 
-2.49.0
+Alexandre Courbot <acourbot@nvidia.com>
 
 
