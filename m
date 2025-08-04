@@ -1,141 +1,137 @@
-Return-Path: <linux-kernel+bounces-754958-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3F295B19F2E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:01:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB290B19F2D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:01:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0103D7AA0CA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70D63189A2CE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:01:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82B0824678C;
-	Mon,  4 Aug 2025 10:00:24 +0000 (UTC)
-Received: from mail-vk1-f178.google.com (mail-vk1-f178.google.com [209.85.221.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9EF42475C3;
+	Mon,  4 Aug 2025 10:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WYRfldFn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 544B01ACECE;
-	Mon,  4 Aug 2025 10:00:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16CA723D2B1;
+	Mon,  4 Aug 2025 10:00:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754301624; cv=none; b=n7OB1k+7x0qTBxDpMKCwI4Y5kUn4vGCFKBs4BU0KRs/xtTPoi8giNxgt5vh603GGEYnydkSTw6XroX1TbBBewc/cBw2ThtUWTbzZ6xromJU3I4eFEhsEJwLYoJL6YoYlmR2D3fo/oyd4pu7ybo+q5PvklecsmNDVY9YQR6lbKOw=
+	t=1754301656; cv=none; b=gf2IrscvV6GCPxbv5bbRNCHV0cSkmrD9tEyDSRuWSMe1iHOR2z8lEBDii7GfpKff8jZ43V8wjQ4stNnqF0HX5zU28/nwzTpE5Kf4mvO2KlUh+7NstGaIPwW+uL1x7WZutc19IaZPDRxbs/n2Zz20VcLQVY++12aoqWpOZiDC+10=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754301624; c=relaxed/simple;
-	bh=mpe7T74dmtR2fuAVUZ57VuLLcRGspxTnziRewsuDca8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=HUuq7HHAYrfsRFmUdyOTeICW+RWNtu2UOPsitEfzUe5PL5vXKVuBQWMdGLVx0SYs/ztkM4bn85s4OIaUsyJb818u7wO0zxt92yMH2m70owgiW9ZR+QC9IaS+Itfm2suo8qtrEtmAAjTSW9lR0S/+TNeexk7eJkOxqVlqkLirRmA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.221.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f178.google.com with SMTP id 71dfb90a1353d-53987d78f0bso93784e0c.2;
-        Mon, 04 Aug 2025 03:00:21 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754301620; x=1754906420;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eS3bsjfBxf7Nb9K34UhVoW/iQd5gmVco36iifAHyUH4=;
-        b=QwKJaMQde2rW6Ch+bldUMckL7T7aXSLDQPe6hiXI+l2xlAm+olGXUvq0ZCISSci1sN
-         fW3IOwVKAkQlj1ZHNPuVrfz2PlUGjtwIMYXOhDivPpQmh5oKh/+oOIYAwGyzV/N+dVEi
-         pzHlHtfXRRnIyKtWEF4Fo+O5TtwCfdDFcVCQBMtt687EUYuQrR7iS3ywPrbe2xs5FaCi
-         JWde+CTA0wOYctBJ5yk2xqQLQ60z9d1Cmf9S9kTT61Eiemk5jAT/HQX1eCrj9O0oJyCS
-         75GkkwfxQAo6zDjbMkxaDBgbr6fq4PzuEZKfbT/RVTSgr+qN/NjkDZ5ZrjeYvwJSIq7H
-         yMiQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUhqqfCKS/ltYuR7Ah9u6Qh4UDi+X7pArNlyVROfB+9jQd2iaV462B+uQiyo2wXZEaFW4RdbBXKWHY=@vger.kernel.org, AJvYcCUslQhpbKtk3GNLWQHzic6l3GkHhSL1GovuFDGxx0fF8KOZ8qXUz225le7fBb+HdtmnQHcDZ0fP77eOACJ3@vger.kernel.org, AJvYcCW4fYvVrWzvEV3e2hpGK8Dc2c6TVpMx29xNjmn5MxDk8fn/UNzYkd91x/+SGoCZVFaJ9EW5FxU04b/z+Wr1MyqTGIk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzjabdmI2DCosl+2arMFPs+BCunXE9dSP4e232QHHYpjDF1BiG/
-	rLTOTqtyk6UMP/yLyPyVAFrF/Cg2m0/53GpUt5K1zfYttQcRiGtcCTG0u1377k8g
-X-Gm-Gg: ASbGncu8C/mVFJengRbCfkfnzQzsOAPMFiw24JKuRD6owEOK1A5dA/G+AxJfD4uDR1W
-	21gXO1NqFKQfpc5PErQxwy7qJAya71U4DbCHy5UyoDu72n2vOMHQbc8mkUPIkqMBwTbnXbvx3LS
-	USnsOKb3hYRmbrWiO/1rdEGHpjaogSz6y6MzV8M2OcCz8kBj2LEPktkk0cHy60abhbJsTrmV0f1
-	qLEnvoIdnDKwdDejfrIBOQ1C6YKP3rzBppBDDpwoPbtx9l5LfVDK09j2qDo2N40Wa1/ayfY0hAH
-	jVFpzGG8Yt9Uzxi1aSbiOVcQBN2ooDFMTEdI7y8JhYepXnwP1SJepzpToXJd9am3j2MIgr4PBvM
-	cQE6fcrODOg8scXWy6TIVnDE9k2jCDo4kw4cpO+0xxQ4ZmoJZbSvF6lpTw+vJ
-X-Google-Smtp-Source: AGHT+IENtw1Pl2XfXzdX5f/eq7kLU/oCjtOnKedw46nsNgdICvK8xN5ZPz+sxsbSSFUILJi8BcEYtQ==
-X-Received: by 2002:a05:6122:1697:b0:535:e789:6ccc with SMTP id 71dfb90a1353d-5395f1f80f0mr3360433e0c.3.1754301619863;
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-Received: from mail-ua1-f41.google.com (mail-ua1-f41.google.com. [209.85.222.41])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-53936d4f0bdsm2709173e0c.36.2025.08.04.03.00.19
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-Received: by mail-ua1-f41.google.com with SMTP id a1e0cc1a2514c-88bbfe763ecso920708241.3;
-        Mon, 04 Aug 2025 03:00:19 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWWRpxZTJrV5fJo/e8kx/ldMqzPArUSCBsUCdwtKi4n0G3PqejQ1HfrfLspnTyI5gsLyWXa9Cp4HtfRzx2F@vger.kernel.org, AJvYcCWuqvVOvNhZjvog5m69Uoo+6PIIg/rDDcZWWxgCf/34g6AkP3LXiIavkiq1xxkNFwKXfT+nL/v/vYKiaFVkkAZDRWE=@vger.kernel.org, AJvYcCXr+tQSaaxvtbuIy1x1d2mYECxbXET0ML7sZq2kWMtgp5ZH9uziSooLc6Dx96HzXNMbpkc7/D7TG+4=@vger.kernel.org
-X-Received: by 2002:a05:6102:c4b:b0:4e7:bf03:cd79 with SMTP id
- ada2fe7eead31-4fdc1f3ba82mr2731697137.5.1754301618843; Mon, 04 Aug 2025
- 03:00:18 -0700 (PDT)
+	s=arc-20240116; t=1754301656; c=relaxed/simple;
+	bh=C7mKQMp+GxD6RFGH57BJqOHlqmXj4BMLvSGcVzGnIiU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gAgR7G0Gidhdf1vw5KxyULCIlHblJCli7Vi7aRuzpCb5J32Hy2+taHSH4A2KABiAiGMyQAc4GD4Nd54lysYT7AhyAkwi8EfZ8KNJb+iPv91pMKkEXIXtp3t+L2+MVFmsYoyVlQXNcQf67zt+3bfECHL6dG+Ov+WFCdxXgOfA8L4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WYRfldFn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DB3A4C4CEE7;
+	Mon,  4 Aug 2025 10:00:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754301655;
+	bh=C7mKQMp+GxD6RFGH57BJqOHlqmXj4BMLvSGcVzGnIiU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WYRfldFnCpEyxVWR6stxBNTdXR0Lp44/oxDX3k8AgGXC9whh0RIg/D0A4uIPzuiYZ
+	 gRQhwVZwyMXSKezqqTj2VpjXlJQZ7u/hxM7C0nwzg6LShAI1N1ppCHd7BmSHAC1qEy
+	 25unaysiin3XB2q+7t8y8dkiPthcCwdtequVbQu7pyKG8lFT9UuanidcOX7IjAeHQp
+	 c4DZ4DyDyvQo28BuOaCTjVyc019U+3zJ/7xMy01+I2foriMhkwk4EtliQWFqRG8Kri
+	 z68mVg72xHp8FZzQhHuqOPuUfwuSAI6sQf4XgxShRHl4tYpzL4FowjXU2usGjKOgEN
+	 JNZ9wJ3M9iMaA==
+Date: Mon, 4 Aug 2025 11:00:50 +0100
+From: Simon Horman <horms@kernel.org>
+To: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+Cc: Oliver Neukum <oneukum@suse.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Linux Netdev Mailing List <netdev@vger.kernel.org>,
+	Linux USB Mailing List <linux-usb@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Armando Budianto <sprite@gnuweeb.org>, gwml@vger.gnuweeb.org,
+	stable@vger.kernel.org, John Ernberg <john.ernberg@actia.se>
+Subject: Re: [PATCH net v2] net: usbnet: Fix the wrong netif_carrier_on()
+ call placement
+Message-ID: <20250804100050.GQ8494@horms.kernel.org>
+References: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250704134328.3614317-1-claudiu.beznea.uj@bp.renesas.com> <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20250704134328.3614317-3-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Mon, 4 Aug 2025 12:00:07 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
-X-Gm-Features: Ac12FXxP7Z5IRMS9eyyB2n6CzdU8SZtDG8X1mpfYCayxF7CUSCgAeogY_9GSFEo
-Message-ID: <CAMuHMdXGvNgv9hGhcr5MhTL+X_E2f-2kz2NEqhG1fw_dBC0uBA@mail.gmail.com>
-Subject: Re: [PATCH 2/3] clk: renesas: r9a07g044: Add MSTOP for RZ/G2L
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250801190310.58443-1-ammarfaizi2@gnuweeb.org>
 
-Hi Claudiu,
++ John Ernberg
 
-On Fri, 4 Jul 2025 at 15:43, Claudiu <claudiu.beznea@tuxon.dev> wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> Add MSTOP configuration for all the module clocks on the RZ/G2L
-> based SoCs (RZ/G2L, RZ/G2LC).
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-
-Thanks for your patch!
-
-> --- a/drivers/clk/renesas/r9a07g044-cpg.c
-> +++ b/drivers/clk/renesas/r9a07g044-cpg.c
-> @@ -242,163 +242,163 @@ static const struct {
->  } mod_clks = {
->         .common = {
-
->                 DEF_MOD("gpu_clk",      R9A07G044_GPU_CLK, R9A07G044_CLK_G,
-> -                                       0x558, 0, 0),
-> +                                       0x558, 0, MSTOP(BUS_REG1, BIT(4))),
->                 DEF_MOD("gpu_axi_clk",  R9A07G044_GPU_AXI_CLK, R9A07G044_CLK_P1,
->                                         0x558, 1, 0),
->                 DEF_MOD("gpu_ace_clk",  R9A07G044_GPU_ACE_CLK, R9A07G044_CLK_P1,
->                                         0x558, 2, 0),
-
-Perhaps these two should have "MSTOP(BUS_REG1, BIT(4))", too?
-
->                 DEF_MOD("canfd",        R9A07G044_CANFD_PCLK, R9A07G044_CLK_P0,
-> -                                       0x594, 0, 0),
-> +                                       0x594, 0, MSTOP(BUS_MCPU2, BIT(9))),
->                 DEF_MOD("gpio",         R9A07G044_GPIO_HCLK, R9A07G044_OSCCLK,
->                                         0x598, 0, 0),
-
-"MSTOP(BUS_PERI_CPU, BIT(6))"?
-
->                 DEF_MOD("adc_adclk",    R9A07G044_ADC_ADCLK, R9A07G044_CLK_TSU,
-> -                                       0x5a8, 0, 0),
-> +                                       0x5a8, 0, MSTOP(BUS_MCPU2, BIT(14))),
-
-
-The rest LGTM.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
--- 
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
-
-In personal conversations with technical people, I call myself a hacker. But
-when I'm talking to journalists I just say "programmer" or something like that.
-                                -- Linus Torvalds
+On Sat, Aug 02, 2025 at 02:03:10AM +0700, Ammar Faizi wrote:
+> The commit in the Fixes tag breaks my laptop (found by git bisect).
+> My home RJ45 LAN cable cannot connect after that commit.
+> 
+> The call to netif_carrier_on() should be done when netif_carrier_ok()
+> is false. Not when it's true. Because calling netif_carrier_on() when
+> __LINK_STATE_NOCARRIER is not set actually does nothing.
+> 
+> Cc: Armando Budianto <sprite@gnuweeb.org>
+> Cc: stable@vger.kernel.org
+> Closes: https://lore.kernel.org/netdev/0752dee6-43d6-4e1f-81d2-4248142cccd2@gnuweeb.org
+> Fixes: 0d9cfc9b8cb1 ("net: usbnet: Avoid potential RCU stall on LINK_CHANGE event")
+> Signed-off-by: Ammar Faizi <ammarfaizi2@gnuweeb.org>
+> ---
+> 
+> v2:
+>   - Rebase on top of the latest netdev/net tree. The previous patch was
+>     based on 0d9cfc9b8cb1. Line numbers have changed since then.
+> 
+>  drivers/net/usb/usbnet.c | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/net/usb/usbnet.c b/drivers/net/usb/usbnet.c
+> index a38ffbf4b3f0..a1827684b92c 100644
+> --- a/drivers/net/usb/usbnet.c
+> +++ b/drivers/net/usb/usbnet.c
+> @@ -1114,31 +1114,31 @@ static const struct ethtool_ops usbnet_ethtool_ops = {
+>  };
+>  
+>  /*-------------------------------------------------------------------------*/
+>  
+>  static void __handle_link_change(struct usbnet *dev)
+>  {
+>  	if (!test_bit(EVENT_DEV_OPEN, &dev->flags))
+>  		return;
+>  
+>  	if (!netif_carrier_ok(dev->net)) {
+> +		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+> +			netif_carrier_on(dev->net);
+> +
+>  		/* kill URBs for reading packets to save bus bandwidth */
+>  		unlink_urbs(dev, &dev->rxq);
+>  
+>  		/*
+>  		 * tx_timeout will unlink URBs for sending packets and
+>  		 * tx queue is stopped by netcore after link becomes off
+>  		 */
+>  	} else {
+> -		if (test_and_clear_bit(EVENT_LINK_CARRIER_ON, &dev->flags))
+> -			netif_carrier_on(dev->net);
+> -
+>  		/* submitting URBs for reading packets */
+>  		queue_work(system_bh_wq, &dev->bh_work);
+>  	}
+>  
+>  	/* hard_mtu or rx_urb_size may change during link change */
+>  	usbnet_update_max_qlen(dev);
+>  
+>  	clear_bit(EVENT_LINK_CHANGE, &dev->flags);
+>  }
+>  
+> -- 
+> Ammar Faizi
+> 
+> 
 
