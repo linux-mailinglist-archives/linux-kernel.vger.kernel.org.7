@@ -1,96 +1,158 @@
-Return-Path: <linux-kernel+bounces-754872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754873-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1AAC7B19DCA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:38:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A9D1DB19DCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:40:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754DF3BA64D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79F2D1791C0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:40:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 728CF242D6F;
-	Mon,  4 Aug 2025 08:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 498AE242D6B;
+	Mon,  4 Aug 2025 08:39:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CN2Vv6iA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b="T9lH0l9+"
+Received: from smtpbg151.qq.com (smtpbg151.qq.com [18.169.211.239])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C42532356D2;
-	Mon,  4 Aug 2025 08:38:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D807D1A5BA0;
+	Mon,  4 Aug 2025 08:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.169.211.239
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754296720; cv=none; b=Xoiu5e6uk38TpXIzAc6eg7UrrXG3gAaUHQRF7F1BVELDHd3S2NggYiVPqgz1t6V9rY+AhJrOa6xoERRTYD15OxGLyn3x4Cug7PKEp9ODbdqotlpsGSAxO7hnqA+pMBsO9CoLyp3WltKJ+ORx0TyGPeFgU9TgqcKNElJKOds5gro=
+	t=1754296796; cv=none; b=rnbx7GxIPN8uIXejSg4EmESAYESd8YA+pA9ivsGnA48JcQqBd6bVbUy8ClCWFuzkjvSAC69m0tCOa3dJ8JC7OQJY1t7a+NkY4sCVSzUm26Oz0TCFUDKTLNSLMV85+4wWjgMCX7rGsofULGTB7neElYitFFVW/BUXpY190I9c3ag=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754296720; c=relaxed/simple;
-	bh=LYhxDdmv7WKdVH4JS805mi9rifdSH1ISJELxQdylTt4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZAl8+xYH2WaZF0p9hpzeqJFDU/NWNeACYXOjVZqMgbqk8wCTfS2Q/eoZmqPDj0Z/HvP2CKeGRht//AjOz9mr6BhvjCfa/L1BJ7LO28uM+kJybhcvuNqNpxL4eHkosPND+NCX71Y+EMUQecFTeI69sbJFRrggjg7AapKv9VMBqUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CN2Vv6iA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5DEDCC4CEE7;
-	Mon,  4 Aug 2025 08:38:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754296720;
-	bh=LYhxDdmv7WKdVH4JS805mi9rifdSH1ISJELxQdylTt4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CN2Vv6iAH2xHExWYpSQAo0Ti6f8+vt7skh+EI3mk6n0OyVH03PkNxZtmziJzo8kQG
-	 rGwty3bYsGLnkzk8EhFdpUhvt9GrH0IX84G1yRBqVir3Q4wqGWf/Ak4i8ZghT9FgX4
-	 jar+NcJBpRBxEMIWHsHvyECdD8Do0v9+j1dFKxped4ndPAFDM1WFv64eLLANej9xYL
-	 HtaybN8vxFH+ySWaNlz0YHUVlvSQksxuzVHc5oTf6F3GHu7dr1zGEsRekkSX7WsbfW
-	 7cQu2uhWYxDUk0CsuYR4I+XNPsl0eBKyZEfvqVGX7ccGSwg2Q/aCuU8xg5IWsXg2io
-	 4gZUhS7Ltld0A==
-Date: Mon, 4 Aug 2025 10:38:35 +0200
-From: Christian Brauner <brauner@kernel.org>
-To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
-Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
-	Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] fs: correctly check for errors from replace_fd() in
- receive_fd_replace()
-Message-ID: <20250804-fechten-glukose-1cb2e2b0413a@brauner>
-References: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
+	s=arc-20240116; t=1754296796; c=relaxed/simple;
+	bh=hAxM88s/LxG7Pzpa+qCFm924ecvuOPt1VEZK+hfP+PU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=Iy0WXxxMmf1x6mpAeRxy4f1hE0UrPG0mNhWM/4qz/oCqD7+MpfkMa+Dy6WfWns7r3uQrCvtTw9t49+mXgizJU583bqgPuL7mKa24n0N1MW1l5v5n1UY+ZthdkFQ53bD8CRyDlte8nfszRnDqYv5pTobUBWsI6XIsFEmXOhKNgls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com; spf=pass smtp.mailfrom=uniontech.com; dkim=pass (1024-bit key) header.d=uniontech.com header.i=@uniontech.com header.b=T9lH0l9+; arc=none smtp.client-ip=18.169.211.239
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=uniontech.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=uniontech.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=uniontech.com;
+	s=onoh2408; t=1754296766;
+	bh=+UQNR87JqsiMWpi6tq6IQe50rNVzww3thLYixk1ylc0=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version;
+	b=T9lH0l9+n0dJQ8tt2yels+lj7GDg+p+ZXDTqx77hwCB4yhv9LxyVczUYyzh/WhPw3
+	 DIuG5W8lTSJ7qsaXCsfKCHUmdygy0woYT7IJ0B23AZ1XE/pDZp5Lyrm1GwmI5auCgc
+	 a/MZO3aRRvMuCE1DbahtAv2246AqDTFYl1M3yJHg=
+X-QQ-mid: zesmtpip4t1754296758tf3d59e16
+X-QQ-Originating-IP: LfcoRIPAXfcoQkiGgzEIBZ1ojUuFOQm8+AEblKW6hyg=
+Received: from localhost.localdomain ( [localhost])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Mon, 04 Aug 2025 16:39:17 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 1
+X-BIZMAIL-ID: 6827497052602782096
+EX-QQ-RecipientCnt: 6
+From: tuhaowen <tuhaowen@uniontech.com>
+To: mchehab@kernel.org
+Cc: tuhaowen@uniontech.com,
+	huangbibo@uniontech.com,
+	linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	wangyuli@uniontech.com
+Subject: [PATCH v3] media: dvb-core: remove redundant new_node cleanup in dvb_register_device
+Date: Mon,  4 Aug 2025 16:39:08 +0800
+Message-Id: <20250804083908.17557-1-tuhaowen@uniontech.com>
+X-Mailer: git-send-email 2.20.1
+In-Reply-To: <20250804031553.4411-1-tuhaowen@uniontech.com>
+References: <20250804031553.4411-1-tuhaowen@uniontech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de>
+X-QQ-SENDSIZE: 520
+Feedback-ID: zesmtpip:uniontech.com:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OJ4oa9ZmqtmHcLyRvO3jkl5jqPRIbZgZL10ZPp8a4DVRwZUAi4jp2P7i
+	09cUmPKu1r41MZND68XHZvZGwzkapnrKBcZGZkpNUgO7hGdPp7ObWxUL0o89/wkiHlIoWoc
+	ILyMMmUZbxbyRFO+dUQi+lI3AG+gdd3+jUNCSPO6RSn3n7FHzJr+GKo8pqz8WMz2g+aDFVq
+	wi87VjTJ23tfy4YPUmEZMUkhsUuyMYMd5kEI69YhF9gBWjuov+qkjSSR0rRAPXWpZR3jMZv
+	58T8PpLHjn8g8qOLjcfziG9i1GBRjTRl0dxXRSa8rhiw32xavdZ3qkfPz+Qsn9ufcfPJMFi
+	h6QkGZim52vT7ok3gIBVd7/yFOX0EgLvYo/OJh7zkTYfzmQiNqzYzPbCCITzpqR8GiHbmjH
+	SKBuzrMImVcEe2j4gW6CpNv3HVRNj1eMKnbGTpdE8c16UVSiZIp0T42WXUk4P3igIVv14mZ
+	DofuHX/aB8+3f3nm8KNAtsuzZDr+Hc2zCutusj4TtZjusV4a3Kf6vQogdlzAqveXnGeQSYB
+	EILIpWaKDrxdlsn9FnBcvFgLhjOqPuhV/DBLJ9LG2u5Rjpacji0qUBhy1a04JnAic6g4LTO
+	2en/X5344+mm9l6wxAUQp2l/IZrsX8DhhHdpr0SavLlBsi/J1SF7K2lsHN0hWt+O+D7v+J0
+	AGaaCBGT4VJqXtD8FwSalwRp5A7nByms5VRD3eSEV3i1iHeAK4wMn0AcZNmWZ9jckDKMEbQ
+	XmvycqDBLXtdVTToftlNo/Cj1Y78dVe6qcdCiea+Zbj48GNvn7iIbFAmod7v7DX8v+qG/RR
+	ydiLA8l8X17iketOEFEBQrpBvUJcDdsWMA02+HjxFdqoXYmfOlgModwhbg8hDuIfjHkXHoz
+	pTl2cD+/nghuSAG0OtNhBt3wLTkD28ZYFsJMCEFIJbuepNz0cZmRp4BdTSXKWPH65XAgGk3
+	p/CM5ccmKM5PJptM3lWJDLKj34FuVmoPvEVXu9R82MFzOJEWF70aK+h9XYiqZ+6Np6be7PG
+	pAZ3C6bWaveQ9hxNQNgJHJcRRVwN/bmNBzFsWW8dA0je/tJ7n7
+X-QQ-XMRINFO: Mp0Kj//9VHAxr69bL5MkOOs=
+X-QQ-RECHKSPAM: 0
 
-On Fri, Aug 01, 2025 at 09:38:38AM +0200, Thomas Weißschuh wrote:
-> replace_fd() returns either a negative error number or the number of the
-> new file descriptor. The current code misinterprets any positive file
-> descriptor number as an error.
-> 
-> Only check for negative error numbers, so that __receive_sock() is called
-> correctly for valid file descriptors.
-> 
-> Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
-> Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
-> Cc: stable@vger.kernel.org
-> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
-> ---
-> Untested, it stuck out while reading the code.
-> ---
->  fs/file.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/fs/file.c b/fs/file.c
-> index 6d2275c3be9c6967d16c75d1b6521f9b58980926..56c3a045121d8f43a54cf05e6ce1962f896339ac 100644
-> --- a/fs/file.c
-> +++ b/fs/file.c
-> @@ -1387,7 +1387,7 @@ int receive_fd_replace(int new_fd, struct file *file, unsigned int o_flags)
->  	if (error)
->  		return error;
->  	error = replace_fd(new_fd, file, o_flags);
-> -	if (error)
-> +	if (error < 0)
->  		return error;
+The error handling paths in dvb_register_device repeatedly check
+if (new_node) before cleanup. However, if new_node allocation fails,
+the function returns immediately and does not reach these branches.
+Thus, these conditionals are redundant and can be removed for code
+clarity and maintainability.
 
-What in the holy fsck? Why did the seccomp selftests not fail
-horrendously explode because of that.
+Signed-off-by: tuhaowen <tuhaowen@uniontech.com>
+
+---
+Changes in v3:
+- Modify the redundant logic
+- Link to v2: https://lore.kernel.org/all/20250804031553.4411-1-tuhaowen@uniontech.com/
+---
+ drivers/media/dvb-core/dvbdev.c | 24 +++++++++---------------
+ 1 file changed, 9 insertions(+), 15 deletions(-)
+
+diff --git a/drivers/media/dvb-core/dvbdev.c b/drivers/media/dvb-core/dvbdev.c
+index 9df7c213716a..aa9b4b9c5846 100644
+--- a/drivers/media/dvb-core/dvbdev.c
++++ b/drivers/media/dvb-core/dvbdev.c
+@@ -534,11 +534,9 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	minor = nums2minor(adap->num, type, id);
+ #endif
+ 	if (minor >= MAX_DVB_MINORS) {
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
++		list_del(&new_node->list_head);
++		kfree(dvbdevfops);
++		kfree(new_node);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+ 		*pdvbdev = NULL;
+@@ -554,11 +552,9 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (ret) {
+ 		pr_err("%s: dvb_register_media_device failed to create the mediagraph\n",
+ 		       __func__);
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
++		list_del(&new_node->list_head);
++		kfree(dvbdevfops);
++		kfree(new_node);
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+@@ -573,11 +569,9 @@ int dvb_register_device(struct dvb_adapter *adap, struct dvb_device **pdvbdev,
+ 	if (IS_ERR(clsdev)) {
+ 		pr_err("%s: failed to create device dvb%d.%s%d (%ld)\n",
+ 		       __func__, adap->num, dnames[type], id, PTR_ERR(clsdev));
+-		if (new_node) {
+-			list_del(&new_node->list_head);
+-			kfree(dvbdevfops);
+-			kfree(new_node);
+-		}
++		list_del(&new_node->list_head);
++		kfree(dvbdevfops);
++		kfree(new_node);
+ 		dvb_media_device_free(dvbdev);
+ 		list_del(&dvbdev->list_head);
+ 		kfree(dvbdev);
+-- 
+2.20.1
+
 
