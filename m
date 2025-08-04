@@ -1,131 +1,131 @@
-Return-Path: <linux-kernel+bounces-755349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0DD06B1A543
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:51:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE34B1A544
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:51:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFBF73BF013
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:51:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB143179108
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:51:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07880202F9F;
-	Mon,  4 Aug 2025 14:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6FA01FFC48;
+	Mon,  4 Aug 2025 14:51:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AT0EQzud"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kcKUtV+y"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00DEA1FECC3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 964DD1F582E
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:51:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319051; cv=none; b=nGVychE6yOl00uOlYitOOLvduDn92ewyhExlTOTIG2cf1FmZPsLeeeFUhLnMUhFwA5PEtHGZTRzzTS9ANi4d8lk05QhqJUKFlmU/TuTFJUplE5kH33CeqKxdUjLTH4P2PFmNMcFY3Q1ux/gWkRS5BL6sm7hJTjkIbKPh1OX/Lu0=
+	t=1754319072; cv=none; b=mbH/YC1CeCxkusEgXcI/7HSNqVOZ/kNP8DYjkzqvI++DvrwP3Z///AkjXXTXpZEU+CVZZfHCGGZU8ijMK+fqTMN4J+UCh2Qx7HKMQgRbVVJgDTikrHc8aAFQqRDg+JrgmjxufJ+0MDHOv+TQAEYqgOUHxzqaBahU2l6IZiXsF60=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319051; c=relaxed/simple;
-	bh=Th/zbNG2w/sGAVRFlv12HJ6Li/jSTJBgQ6X2ZZll/S0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AokMr7bRqr2OA0YLRYAdJBZ4Vag1CqumE+idtB2ECCjaaIYr7vV2GjJ0HIzc21DVjDfRiQFyT4ru9CKn3jQJMTrlcHwzQkevL1QY04F/KvALk6yeoD1C3f8QMJ7o9IzRlbScE9GSrOvKsRF0qtMOjxckmLReT7IqdqVqD+ont2E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AT0EQzud; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754319048;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Th/zbNG2w/sGAVRFlv12HJ6Li/jSTJBgQ6X2ZZll/S0=;
-	b=AT0EQzudZFc49a2P6Lc09y1lku7p3iNeqCYLW+bAzspyIzKyWUIhq6gdlveZQ7WW3wIFdS
-	40oPlndmkpZBEy+RTyFl/MgTqwniOm6l0m8yNwTcE2NGe4G8caH5KKTfq6RW4zjCkgY+4K
-	Nktl0txoHw98oo3R7CTmSOwccJ3zakg=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-562-i6H0hCVdMEasr-XVMGgj5A-1; Mon, 04 Aug 2025 10:50:46 -0400
-X-MC-Unique: i6H0hCVdMEasr-XVMGgj5A-1
-X-Mimecast-MFC-AGG-ID: i6H0hCVdMEasr-XVMGgj5A_1754319045
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4595cfed9f4so5499275e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:50:45 -0700 (PDT)
+	s=arc-20240116; t=1754319072; c=relaxed/simple;
+	bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=d8wkls1zM9/TuXF0vuhKF8vjpNgivh5y2PJj8k4aQ/iUnMnJcTETBpgtIMDxlGlW2Uj08k5hmOYI13gbyFiJdUMwTyvBXIUtz4qIXxvfqf19nqJoJNhO1uj1c110hnvG4AVwRn5B3GqcEO5a5S8MwCCxgk1DcBYp5yibnyj8tps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kcKUtV+y; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-458bece40fcso9880255e9.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:51:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754319069; x=1754923869; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
+        b=kcKUtV+yfAXDiYEUsnv7Mp6D8klMp2aoLQd0Gx18yJWj4sUPUIH1tf+80xBwqEjdGX
+         ZNWJp3aP3My13rb6y2VyoftHR5mZREV6w4+bY5F0g1E1dU2tv86mHYvsBtvWIgohpIG6
+         QZvGwynQhk0v44yUyYXCdaoTvZQLboM1HEHlBPuFViYcz6jV3GWs4ccREDYbKj58sr52
+         XgHPSgoc3AdjzJ7wxkprRMLtksxVsOrdjekjubtg+wmk5ZiWAm/O7JY85FWhczRV0xms
+         +j088ck56RQ1g2+RxgZU2kgeqsvmcT5Eday1TPkg0y1oKou7yx/73fBAKXPUdMxswdHK
+         HDzQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754319042; x=1754923842;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1754319069; x=1754923869;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Th/zbNG2w/sGAVRFlv12HJ6Li/jSTJBgQ6X2ZZll/S0=;
-        b=Y5isgxCqMye0zFBUAA9pwXVpx2z/4lKC2QiXJoNPnBehilTpeJA8W7OAjvJU46UQwk
-         9wUXqdC4u8SOcYNB4oLwzP3T7YMPCgywLhhVNQDltR0PzFfN1brCfy8WM0otIUp5Kt59
-         M4XlOBs9e/n6XbxmCMQ7Vtn4ZWGPzpZBDRM+KCq54KzYfurc5pbj96rAfs5pzDC5aOUP
-         ffPN2OsaF2x8Aoc+YLitJvco72sooWoAsHSylpYiacvGH3G2ch1G+38HOwYud/7yuwWi
-         vrEF0yDXmTa6Vj6+5tX/V65E2kAVQTi6Z3tETxvMRShMeb7mK6niheIaDoX/6zvlmqQj
-         hGIA==
-X-Forwarded-Encrypted: i=1; AJvYcCVpPOs5ml9W6okOYAjtnlBmsCcA7JQ1I6DPuSH4puK7Gy/KXVzxTy2eAid/QBU17iVuZfWv8Wop9qfkHxU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyitdfiA8S6O9WPEIJ+WC7jaEvCceQYjS9npQvZ5Gs6MBUSjsdr
-	3lzpTLhbj0mLmatTG+DKBwxFCOENHHzGEvmLeO0H3CYNi2Ybj4QGK1thIxOO35K5KNeqAWmmrDZ
-	Agb0JTiTZrR/CUZG2FVxTlZHD8Mfe27t+52SBrk6A3Es0y7aMwHJ8KU7zziUNuikEyF1taHgJ0L
-	3ONM9HrvfjWhXohZMg18kzQ2+ZMVp8QvtxQCS9Hji1+ztKO5CiqOs=
-X-Gm-Gg: ASbGncu2aUQPjgJw/MGTu1ElXWnvRMCUDnVfgyxJJA8awkAyGnmL/H546c67wSawxXb
-	7sNTxTz5mQHYHfwVvhd8PaIKwV5MWu6ZaAjotMrVAHojmCJlZmJ1R9/0sO83gaQ9MjmrpPlEKA0
-	g/TeDRRocniEaAN2RwK/3u
-X-Received: by 2002:a05:6000:1788:b0:3b7:94c3:2786 with SMTP id ffacd0b85a97d-3b8d94c1c49mr6701544f8f.34.1754319041925;
-        Mon, 04 Aug 2025 07:50:41 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHgsw4pwEJUoqykoSclSWi0JkSR9VtvKkMXz/zduARm+hjzykjvBGRpvCt0a+Ds377veRWW/i7OVVOUhVwFvkM=
-X-Received: by 2002:a05:6000:1788:b0:3b7:94c3:2786 with SMTP id
- ffacd0b85a97d-3b8d94c1c49mr6701520f8f.34.1754319041488; Mon, 04 Aug 2025
- 07:50:41 -0700 (PDT)
+        bh=0QNi2433aMOcT7VvcJO8yI0WQRWFprB/tnxl9b0uKg0=;
+        b=SEQMpZ4UGMDjVjFKe6Jgp9sI34rtat8wJk13oqsP3+YoO3lU6o3XURF65WcI8P1vVt
+         HC5pzMAXTP2Sct5svSBgBSTCmXBmzSMLCIlCatzdtz2gvLIybCf5jB1XwbTwJmcFqWAL
+         Y1PYYe9sCbjNls0mhy9MtiZUbhpCPm4WrZ5kTz/q2boUNvnDEBTyoGC5Xop8T22rsYwR
+         WxtfI4madyEvZP6JkVc7kA2odj7AKEHPm3ipDZTcSvy69Z/I8KTZ9/SvKSBtVTUGNWdr
+         t65r1EuM9XPXK64PnVNKVdgBmKg9W8MoexVy9lG4YwGterWatg9IlZLgBKoo2/NfIk53
+         vG3Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWO6oQP8LqSC3VRzbWuV3K6Q/DhQnx583H0pyEYpnR1UUbAGPYBbenGL1GFnTWXUAG06X2KezmQvIe8IWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOA/JuMeZj5mwtUNi+Wwo5VYTqYuHkLiAMJl9CK6uz+vl4YDQj
+	lSYAbzj7GCeELvDVYJ1xMgWC1hfQ1CkymKEJ1PR/Z5oKrp41HATZ+a4gI+ax1C0D0x8=
+X-Gm-Gg: ASbGnct5KKABoaJSroOGy0vnwNUblnWWf4e6YORqkKbvW5IEiBi2z7SKC/NMAAGM8GA
+	Y79ohc7MrPCvWmCj+56U8/xXl6cCqbAGd/tWJn4FZHtUtaGOygDDxEnRryesbzAd22zip2rGagw
+	272wVkV+iafUGqByV4eW/CWoJWPU7b3t9ORem2LyXN3DwE0FvfVJ3W/LjNzy3KDPRYmZYhfiuRf
+	hkD/cVw25WjTbzrKm3zazvFgplkQlpySWQVajuyJZ9YpXyJUUpU/a2cSq4zUcueWBVpWTpomzrs
+	yHVVMEtkB8Tb/1DyLuNwlqode+EJYxAR9BdWiMGFv5i0i0Oo2cb68n6q2BV7/BGOTEFBE7THx4+
+	0Um38FnS2cE2PWmtsIhFfDtXYnGQRyCMDVZjKnA==
+X-Google-Smtp-Source: AGHT+IEk/XsbxMajLX0zrOWwGT5yoALOK+d2YnoUE0SWEpt7Bdw+f5idlnSsn8XeUpvU2PaNJyVvng==
+X-Received: by 2002:a05:600c:3113:b0:43b:ca39:6c75 with SMTP id 5b1f17b1804b1-458b6b32b36mr78981895e9.16.1754319068717;
+        Mon, 04 Aug 2025 07:51:08 -0700 (PDT)
+Received: from smtpclient.apple ([132.68.46.54])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459db13fc9fsm39629925e9.7.2025.08.04.07.51.07
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Aug 2025 07:51:08 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
- <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
- <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com> <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
-In-Reply-To: <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
-From: Paolo Bonzini <pbonzini@redhat.com>
-Date: Mon, 4 Aug 2025 16:50:28 +0200
-X-Gm-Features: Ac12FXwltMgUzEEB8nqMLRA_D51YfOsfFkH1rt4nc_9cVgH_FR6V2EdEIAFZooc
-Message-ID: <CABgObfZKKeqMrAUyS8CB4ARkW_8Z9QREgpgYcq2jxoQ9ppS6MA@mail.gmail.com>
-Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
- 6.8+ on ThinkPad X1 Carbon Gen 10
-To: Andy Mindful <andy.mindful@gmail.com>
-Cc: regressions@lists.linux.dev, linux-kernel@vger.kernel.org, 
-	linux-pm@vger.kernel.org, intel-gfx@lists.freedesktop.org, 
-	dri-devel@lists.freedesktop.org, linux-acpi@vger.kernel.org, 
-	rafael@kernel.org, ville.syrjala@linux.intel.com, tglx@linutronix.de, 
-	Christian Brauner <brauner@kernel.org>, Jani Nikula <jani.nikula@intel.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
+ performance
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
+Date: Mon, 4 Aug 2025 17:50:56 +0300
+Cc: Li Qiang <liqiang01@kylinos.cn>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ David Hildenbrand <david@redhat.com>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasarya <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>
 Content-Transfer-Encoding: quoted-printable
+Message-Id: <0F715281-1754-4D81-A71D-4AC20BC13095@gmail.com>
+References: <20250804123923.296230-1-liqiang01@kylinos.cn>
+ <ab22e314-63d1-46cf-a54c-b2af8db4d97a@lucifer.local>
+ <2a1b7ebc-f27c-444e-be89-df14ac1dc97d@lucifer.local>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-On Mon, Aug 4, 2025 at 12:57=E2=80=AFPM Andy Mindful <andy.mindful@gmail.co=
-m> wrote:
-> Double-checked bisect, looks like I've have found broken commit:
->
-> > > git bisect bad
-> > > The merge base ba5afb9a84df2e6b26a1b6389b98849cd16ea757 is bad.
-> > > This means the bug has been fixed between
-> > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757 and
-> > > [1b1934dbbdcf9aa2d507932ff488cec47999cf3f
-> > > 61da593f4458f25c59f65cfd9ba1bda570db5db7
-> > > 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
-> > > ba5afb9a84df2e6b26a1b6389b98849cd16ea757].
 
-This skip is messing up the results:
 
-# skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
-git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+> On 4 Aug 2025, at 16:59, Lorenzo Stoakes <lorenzo.stoakes@oracle.com> =
+wrote:
+>=20
+> OK,
+>=20
+> So I hacked -fopt-info-inline-all into the mm/ Makefile in a rather =
+quick and
+> dirty way and it seems some stuff gets inlined locally, but we're =
+mostly hitting
+> the '--param max-inline-insns-single limit reached' limit here.
 
-and there are still 3858 commits in
-ba5afb9a84df2e6b26a1b6389b98849cd16ea757..{1b1934dbbdcf9aa2d507932ff488cec4=
-7999cf3f,61da593f4458f25c59f65cfd9ba1bda570db5db7,ba5afb9a84df2e6b26a1b6389=
-b98849cd16ea757}
+Yes, it does require further investigation. My point is that sprinkling
+__always_inline is a slippery slope. You start with putting =
+__always_inline on
+zap_present_folio_ptes (as currently done), and then the caller becomes =
+expensive.
 
-Any chance you can get 6.7 to work and restrict the range further?
-
-Thanks,
-
-Paolo
+Now you noticed that the caller to zap_present_folio_ptes is not getting =
+inlined,
+which is not surprising because it got the cost of the always-inlined =
+callee,
+so you put __always_inline there, and so on.
 
 
