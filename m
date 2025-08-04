@@ -1,151 +1,140 @@
-Return-Path: <linux-kernel+bounces-754707-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754708-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from dfw.mirrors.kernel.org (dfw.mirrors.kernel.org [142.0.200.124])
-	by mail.lfdr.de (Postfix) with ESMTPS id 68EA8B19B33
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:57:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 62E9FB19B38
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by dfw.mirrors.kernel.org (Postfix) with ESMTPS id 4CB1A4E0541
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:57:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 107863B4C13
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:00:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB279226D14;
-	Mon,  4 Aug 2025 05:57:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A62C2264A1;
+	Mon,  4 Aug 2025 06:00:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RxDSAr5M"
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com [209.85.208.180])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="TnWiv36G"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C05417555;
-	Mon,  4 Aug 2025 05:57:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729321E519
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:00:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754287065; cv=none; b=LAyKU0A4XJG9KiUrP/GOjy03wVvLezFZIiJiUc29tvv38Vh0FAbbvcoyxgF+kS6rlItCsnpXcqbfr1ZCQy1b4ykRvIEuXm/dBwlCewSCyEnHmadkNMz7bTH5fW6ykEKOW4ZoLq6mHPahgDuN3Gi79oE/yGNf45cd7bL+hXStOHw=
+	t=1754287228; cv=none; b=e3OJESMzGJDnqPURxOsU3ccoei48+fIaZdKuzB093y6lmPwwbeuPjP4oQFUMp/PtRJD7D1nn2mncd3l/k8KhcFGA6cUEdpHeR8Zckz6Zo3yK8K1TK4m2tT7S31vFhOFBd8YK2/FwqTL0hzEYdws605uKHziUIQwe+qKttfRt7sE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754287065; c=relaxed/simple;
-	bh=r9HxNTjuW+NwRa/vmUebhaKdeexaUpFJ21+bMvxLq5E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=JuusTwTRgNFH0Qbp2YK88Ux37Ewt6/Rm04laqbkD+YUTf9cIbGJC/6ZBem2T6ij6JWs9CbXojZO6A/yqSvgOXd4VbPjwO2D+2mPfYA3AdIGdbnM5UrLlP5grjedajHwg8+rIWvVjbYnEW2fl+vlROjCfpEgoFnJQjcs9SkJExXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RxDSAr5M; arc=none smtp.client-ip=209.85.208.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-332631e47afso11199191fa.0;
-        Sun, 03 Aug 2025 22:57:43 -0700 (PDT)
+	s=arc-20240116; t=1754287228; c=relaxed/simple;
+	bh=CMjSVsnlYIHATz4fXgWOQlWXjlcbst7J2k2mwNhi1Uk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MjAzYMkjQ8DpZcdBbb6vKOPPAKxHo0BWowVdvchys4/CoxFUmtUVCPJlxNxvH1ofML5uaeTUwBAEeONyBZhkPrSnGu9rp/vFfz5MWjCgPgGr374C9Lc6s2/USwUZ9yHnzgNYaIAaF+E6ZSa4MOYv4dhFzyB8zBVBGdY4lj1+rjg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=TnWiv36G; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-24022261323so53923065ad.1
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 23:00:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754287061; x=1754891861; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=DNeycstk/waeBDX6yIxRG1Q6VAGIwGEN5pZfK8U34gk=;
-        b=RxDSAr5M2erU3l7PORRIkF5CEwprVTT7bgGlxE5oG36YX/a05BOg4r6a4wtj+l8hx4
-         dTngQybVgAfonSLhsAiUdy4A75Xa31fz7Ts4yUG3YDyHBQ7lPn4RgoiSWQefq8RUbyAs
-         5gqMvW4Ex1Y/FqpVwZLn9v1THfwWWAcxFLyuA2k+hj9ShHeiwJYofrFV5SiGf/QCW5mu
-         QsvcpzQIMVmS3FBT4nnhb86wBd0hAM/hWp68QJO0pHjliIQwvwLXHHIFuQR1hspNumBu
-         +O8eqe0JJQB8o2PS7r2vtoZ4ZXL67pIzqI8i1IvRLnOt4soXdMokbkFSoYB6KTZSQ487
-         S+wg==
+        d=google.com; s=20230601; t=1754287227; x=1754892027; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=GW9ee20vQhs+179oAZihQfxJ7e5GO7cvFv5OZiXPnJ8=;
+        b=TnWiv36GJTMN+9LQBBxwj5Xn6WHAy3zy4tIIwg0kjzdME24J3ZeIZAKReLxDuxNlDe
+         E/p+rHScsM2OFr4c63KFFV5Qj17x/VKMMpichsnt8AVNW7jbBwhyp1jHLn+TJdQc509v
+         AJ3tn+ZLtfDT/oTuBuyejYdGerDFADZYFOioNpK6pj2JDfaOGw4gE8YQJZ8pWBs9bdjT
+         W1nJD6QElDxf++YghWNBM4/MlXvyMXuc1UvkCw1pBHDQMdYDcUhwg8RcCmrJ/9Ai/P83
+         v4zN2+2BPKl+b4byb8fEdPt2uaTB9MpDUe5rmeIpuGu5PamWm89T+rgYVLnIMwS3xG8Y
+         usdw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754287061; x=1754891861;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DNeycstk/waeBDX6yIxRG1Q6VAGIwGEN5pZfK8U34gk=;
-        b=W3k7eksRfI6xWc61CMYEXWZcFTHZnAAxGflL1vtLwl/pysLvaUWfdhl4PtkLEJHyiZ
-         eWV9nLbbPWh5ymf8hTVWtg5L0pPXTPYAnk/vjfY9Q+uxeZrRwvjFkg4rtwputIpy4Unu
-         t2kFU0AvHSAuVjwwQEBtUd+g3NmRnikBjovqRJoXIaklWxaPRB6i0F6BZyl/VEW2J3py
-         8YaU687aqqMTPYTSdCYEXcc9pEj16qkNJ7HuFAZeK9O07Yh+WsCqN+0qO9Q26TCb6een
-         E1oAKgF6fQYUDp596gRZzM+C1ky6zAr3/NEOPAucaY6w4zZ5s5QvWOil1UTEffoBelhx
-         QaMA==
-X-Forwarded-Encrypted: i=1; AJvYcCVh8x60tb0jwVem9tOGcJI6W8SstGM7UUJCFBYM4X9uxcqDTN5EVafvrOw96oN2TWNS+NHxXPcl3GY=@vger.kernel.org, AJvYcCXfumJhttfq0gEBAzOYw8rcT0McolwRnAY3HGYlNP5u9uxZXYNFy5GTNgjQmVNiL1f52wPnr1et5tqnJTJZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yydj0Uoqv7LETWSlkaMYKAtKFq2CXa5zvGqdkZG3c7SQvj54zdJ
-	vQ50/tMWhF1pp08kvhhgQ2Frs9vKkf7o0RSGzsFTBWVqlJhv9lhRgNDA
-X-Gm-Gg: ASbGncv39vIrBFB4Sxu5xXUbiwszXMdKhFraKjCVQL+Uqp0b7O3n9DX6ziN8c37P/Gn
-	daq43fEV+213yYFIfl0vAIke4MLdt9kLe40UOCT6qU1zS4+fqc2BnU6V+FUSM3gUpBAmVkRvCxa
-	hnx6Qx1Lk7ku9z60Jtoq4BSHbxaxT4AuVQdH21rh8HHQoVVptP9ji6t6B886NTUnlVobP0GUH2d
-	J/7RT/fmRYDTkxSgNf0q59zGVMWZ8PvL0el5NEwGPz0T2f9aW4QXwbRSNbFmBil0iRpWfou9qfZ
-	IzT246W/iJ0R4ow7YfM2p9aibJ/VZC/PJjX0K9aNPGQisxF1Tal0GEvb4WDgpYMK0xELMbiKoa6
-	7JOxZMGW7tPjnmJmxVDso+71VaqHjpNiOxBnddJCkMDYaKruZA1mlw1Leorp3nwn/ul+qLsLDzn
-	arrdyVBravI5eRQg==
-X-Google-Smtp-Source: AGHT+IFxrk3BlNSuDxrWs6tGLoW5EHUdQrcAffwvT6H3BlNChFGUTcRjdDb5+EvPrI0YePg2tmtXHA==
-X-Received: by 2002:a2e:bc23:0:b0:30b:ab00:846a with SMTP id 38308e7fff4ca-33255833cb2mr22606461fa.3.1754287061155;
-        Sun, 03 Aug 2025 22:57:41 -0700 (PDT)
-Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-332385b247csm16393251fa.39.2025.08.03.22.57.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Sun, 03 Aug 2025 22:57:39 -0700 (PDT)
-Message-ID: <e91711f6-c943-402a-8502-52d8ed4c05a9@gmail.com>
-Date: Mon, 4 Aug 2025 08:57:37 +0300
+        d=1e100.net; s=20230601; t=1754287227; x=1754892027;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=GW9ee20vQhs+179oAZihQfxJ7e5GO7cvFv5OZiXPnJ8=;
+        b=srMccOMLUA+Ypqaj2K/eJ1RC1zuyFHe21yaA+gnSDJJeNI6QJ7NdJPLbWEfs/VG16j
+         Adrprr1x0cS2F61tPN1Wxm4LPtW70gM6JF5SQ0V/EwqXAD814VbBFp/7HqQjDllibq3t
+         KWxACsFiij0MabYBjWINy15VHHfHqea1dtS1r6YWmRqhvWhY+nCHJxSzXSN9SvH2qB8S
+         Av/LpVcTLB7Dwpgu9RmbC1MAOXzal0qESVhvpDQKjHDqfFJvPaWaj/W7ehXbF1o2iufA
+         xz/aYBKnBMvXUY9suRGSg1pbJuGRaWk2QIdQMnQ0Eto6qqLVZWy/QK5QIat6FBnu6DEB
+         tdaA==
+X-Forwarded-Encrypted: i=1; AJvYcCWcpCXRB03YGWgRvZlHHDFN6c2YYFizwBCsjMwRg88Q1jRg1VvqPwBnHZfX7rx3xUfX2/yON94iuWrxo9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxX3pD2w9ZgHgOxjzE7NDV7A+oztDvTnr7+Txqs1q7bdbUkmDSf
+	/xWj4RCrH9VCriiLB93fhviorBebN9He1TvnfhbI3ipaxYzoI1530FQRvPAGBhxsRLaGTbEvwKQ
+	4Vt9WOchOTtKr1NMDGQP1PRE+tsBt+w659qUXCBvC
+X-Gm-Gg: ASbGncto5zkZSGuGYhPbLNpiB/NJQ8jtbQGlzmnaHs8Yrte9lgm9+/TwZ+iVKiPA2oa
+	h8zZw5nJxHdEEDKNQ0Poica+UPrbmffhYdLoGldto83SCEHa3DzdrCnWaeebPxuqoaBsXTrumMD
+	RV0W25j+X1BQdLMND1ci0B2iLACsc+1YS/toDDSOMzWacDfU9mCkYiI/8oUlVi9UT6FAinZccZh
+	J96Jebr6Wls8MXqtZwRKIvk0kZZN9ZV/ZvMwcw=
+X-Google-Smtp-Source: AGHT+IGjk2UIBetcSl3cOr+lPMFKsmxl+eJNheNEbJC3BP4ucecQ/KCFqsi7V58RFGF5MsVFqR2tEo7P/NgkM0Cjsno=
+X-Received: by 2002:a17:902:8601:b0:23f:ed0f:8dd4 with SMTP id
+ d9443c01a7336-24200d7d3a1mr165647385ad.23.1754287226255; Sun, 03 Aug 2025
+ 23:00:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/2] iio: adc: ad7476: Simplify chip type detection
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>
-Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
- Lars-Peter Clausen <lars@metafoo.de>,
- Michael Hennerich <Michael.Hennerich@analog.com>,
- Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
- =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
- Andy Shevchenko <andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
- Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1754041258.git.mazziesaccount@gmail.com>
- <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
- <20250801120901.00004a67@huawei.com>
-Content-Language: en-US, en-AU, en-GB, en-BW
-From: Matti Vaittinen <mazziesaccount@gmail.com>
-In-Reply-To: <20250801120901.00004a67@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <CANpmjNPWzJZrAFT3-013GJhksK0jkB6n0HmF+h0hdoQUwGuxfA@mail.gmail.com>
+ <20250803180558.2967962-1-soham.bagchi@utah.edu>
+In-Reply-To: <20250803180558.2967962-1-soham.bagchi@utah.edu>
+From: Marco Elver <elver@google.com>
+Date: Mon, 4 Aug 2025 08:00:00 +0200
+X-Gm-Features: Ac12FXzqJppzOFmhwA4bjarsTDBlyoRY0yvvampHjfyILSAANQCwWK9R6F2pkOY
+Message-ID: <CANpmjNNvsJ_u7ky+d1tiXtwc-T3z6VB4SiMqpo6aKWBBFO3ERA@mail.gmail.com>
+Subject: Re: [PATCH v2] kcov: load acquire coverage count in user-space code
+To: Soham Bagchi <soham.bagchi@utah.edu>
+Cc: akpm@linux-foundation.org, andreyknvl@gmail.com, arnd@arndb.de, 
+	corbet@lwn.net, dvyukov@google.com, glider@google.com, 
+	kasan-dev@googlegroups.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, sohambagchi@outlook.com, tglx@linutronix.de, 
+	workflows@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 01/08/2025 14:09, Jonathan Cameron wrote:
-> On Fri, 1 Aug 2025 13:07:13 +0300
-> Matti Vaittinen <mazziesaccount@gmail.com> wrote:
-> 
->> The ad7476 driver uses a table of structures for defining the IC variant
->> specific data. Table is indexed using enum values, which are picked by
->> SPI ID.
->>
->> Having the table and an enum adds extra complexity. It is potentially
->> unsafe if someone alters the enumeration values, or size of the IC data
->> table.
->>
->> Simplify this by dropping the table and using individual structures for
->> the IC specific data, and storing the IC specific structure's address
->> directly in the SPI ID data.
->>
->> Signed-off-by: Matti Vaittinen <mazziesaccount@gmail.com>
->>
->> ---
->> 100% Untested.
->> No functional changes intended
-> 
-> One tiny thing inline, otherwise looks good to me.  This aligns with
-> how we prefer to do things these days.  Tends to end up easier to read
-> than the enum array thing and best of all removes any temptation to use
-> the enum for anything else.
-> 
->>   
->>   static const struct iio_info ad7476_info = {
->> @@ -312,7 +306,7 @@ static int ad7476_probe(struct spi_device *spi)
->>   
->>   	st = iio_priv(indio_dev);
->>   	st->chip_info =
->> -		&ad7476_chip_info_tbl[spi_get_device_id(spi)->driver_data];
->> +		(struct ad7476_chip_info *)spi_get_device_id(spi)->driver_data;
-> 
-> Switch to spi_get_device_match_data()
-> which checks via generic firmware paths first (so DT here) and then the
-> old school tables.  Also returns a void * so gets rid of need to cast.
+On Sun, 3 Aug 2025 at 20:06, Soham Bagchi <soham.bagchi@utah.edu> wrote:
+>
+> Updating the KCOV documentation to use a load-acquire
+> operation for the first element of the shared memory
+> buffer between kernel-space and user-space.
+>
+> The load-acquire pairs with the write memory barrier
+> used in kcov_move_area()
+>
+> Signed-off-by: Soham Bagchi <soham.bagchi@utah.edu>
 
-Ah. Right! Thanks!
+Reviewed-by: Marco Elver <elver@google.com>
 
-> Only works with all pointers (or a lot of care) because a value 0 is a
-> fail to match.  So kind of enabled by your patch.
+> ---
+>
+> Changes in v2:
 
-Yours,
-	-- Matti
+Btw, it is customary to send out the whole patch series on a version
+bump, even if only one of the patches changed.
+https://www.kernel.org/doc/html/latest/process/submitting-patches.html#explicit-in-reply-to-headers
+
+> - note for load-acquire shifted to block comment
+>   in code rather than in the preceding paragraphs
+> ---
+>  Documentation/dev-tools/kcov.rst | 7 ++++++-
+>  1 file changed, 6 insertions(+), 1 deletion(-)
+>
+> diff --git a/Documentation/dev-tools/kcov.rst b/Documentation/dev-tools/kcov.rst
+> index 6611434e2dd..40a4b500073 100644
+> --- a/Documentation/dev-tools/kcov.rst
+> +++ b/Documentation/dev-tools/kcov.rst
+> @@ -361,7 +361,12 @@ local tasks spawned by the process and the global task that handles USB bus #1:
+>          */
+>         sleep(2);
+>
+> -       n = __atomic_load_n(&cover[0], __ATOMIC_RELAXED);
+> +        /*
+> +         * The load to the coverage count should be an acquire to pair with
+> +         * pair with the corresponding write memory barrier (smp_wmb()) on
+> +         * the kernel-side in kcov_move_area().
+> +         */
+> +       n = __atomic_load_n(&cover[0], __ATOMIC_ACQUIRE);
+>         for (i = 0; i < n; i++)
+>                 printf("0x%lx\n", cover[i + 1]);
+>         if (ioctl(fd, KCOV_DISABLE, 0))
+> --
+> 2.34.1
+>
 
