@@ -1,315 +1,226 @@
-Return-Path: <linux-kernel+bounces-755687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 458C8B1AA64
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:34:27 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 01CD8B1AA66
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:35:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D69AD18A1685
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:34:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8D69C1881DAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:36:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0BF23BD05;
-	Mon,  4 Aug 2025 21:34:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AECD2239E92;
+	Mon,  4 Aug 2025 21:35:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="R8L7oIXX"
-Received: from NAM10-DM6-obe.outbound.protection.outlook.com (mail-dm6nam10on2066.outbound.protection.outlook.com [40.107.93.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b="lUPoc7O6"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 68ABF1F416B;
-	Mon,  4 Aug 2025 21:34:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.93.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754343253; cv=fail; b=AmNkV7UBda3CsouzUEIqOTHG6UMwhu1K4tqh3MgLVIpQ0lvu+PYI/k2LTZQPaDbIpaKDQSB2eF6idqCd+VVuLWr2LePkQJtmqBz4Q9IqQ0+a6zJHEguz+ill8XkXe+9jd1ZCXQC4WopgrcU9i1lmEdLm2n7JwrbEFeJaRXis+Ak=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754343253; c=relaxed/simple;
-	bh=xasz3HusYlitNAQOqH8HYTrcpOnED8wYzOimbVq38Zs=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=V/fjXAJK49ViltZK2un3laiNmEGpMNOZXoSfZc6+yPJMi8qYaQfZK2ThLzaKZ2PT50CmGp6lGJZkBkaguWKJCiQb9C8bm3oSIaqsFEIunLQdeP7E8yJmaJ/9Npmny7JzwFbPP4Eo1fyZ4dAJtzTK+F/xa5+wa8AX33jTBWUjFB0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=R8L7oIXX; arc=fail smtp.client-ip=40.107.93.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=G1uX909ylBwybXgpKdmXZWWUixRpAhz+WJ9jawVWc830W2w/vZBAuf7XZzMQuMs1hIs8c0BM4puQM+aZsvRq1cHFRARCFly/69XsR9voMSpi1wxPsjLh4XdRmblrJz5nm97COMQALOoxTzzp2qadxEtMeIRqOyZf6EeigjoSzjT04m+jyKGGftdw70kydAGsQ2kZxNunP+VGauFGqzxyY5hI8+lS/Fv3gN7/cSNxSG8ugOXWAExS+Rnz2N6QRQKcvNnUdHEJVoeiwc7TQDJubKSV/gFk1ZR4UXjcOSrhU3Pw672wp4+0VHNptlTaoQNQJz3XuobXCEyF4XTZNt3rZA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=e8FsIA4W53e95Gqea1Jt7urfW6hpVRpHo8iLiZNLWtE=;
- b=ZSafjsdY81F+GSLv/8jgre+b16T5gpv9fsu6lJ4owlNAL/hSnzBFm97pkR4zLCXZ2sFEVTPYJvKuOmC3K54SSsQEGD6BUfuFvH/r6MtCcI2FO5m7TVwHy3Cn3IQVclU0gDTPgQ00EUTDISSFiygJqniw1ue2w56LUrZysjyffh18cWK1YXqXdnIOPRzkyFyor9CfNY6HPjhwqPL9vWf5iX4DGTEmFCDGxAREquh/bZDtcLhmpbU8Drs9QgGOHRUKixf1pUl0S5sdSLEutWdo586ETjEh8M9kaMgXgXAFoHmp4WTruur4QzrlOuMwmHTIgDUwwtfObB1BZNakbTkPAw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=e8FsIA4W53e95Gqea1Jt7urfW6hpVRpHo8iLiZNLWtE=;
- b=R8L7oIXXvBNoxbFfgxwEIs1pnRevoQmbCnwRyPYOuf35yOFOmxpJNE7RBUanajjSmZHOyJX3NXGzo2nFHNH8m6DVCsvLBu6714KTEtpintlBxHK/Nb6k3DgUfkpP1kvc1c9C2Dk03CDDa+ZMJKHvPT0wDMK4EbU/2t7rvC0DHTU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc) by BL3PR12MB6644.namprd12.prod.outlook.com
- (2603:10b6:208:3b1::14) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
- 2025 21:34:08 +0000
-Received: from IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16]) by IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- ([fe80::bed0:97a3:545d:af16%7]) with mapi id 15.20.8989.011; Mon, 4 Aug 2025
- 21:34:07 +0000
-Message-ID: <67f1cc75-f678-4112-bd2d-f4f3abcdd845@amd.com>
-Date: Mon, 4 Aug 2025 16:34:04 -0500
-User-Agent: Mozilla Thunderbird
-Reply-To: babu.moger@amd.com
-Subject: Re: [PATCH v7 00/10] x86,fs/resctrl: Support L3 Smart Data Cache
- Injection Allocation Enforcement (SDCIAE)
-To: Reinette Chatre <reinette.chatre@intel.com>, corbet@lwn.net,
- tony.luck@intel.com, Dave.Martin@arm.com, james.morse@arm.com,
- tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com
-Cc: x86@kernel.org, hpa@zytor.com, akpm@linux-foundation.org,
- paulmck@kernel.org, rostedt@goodmis.org, Neeraj.Upadhyay@amd.com,
- david@redhat.com, arnd@arndb.de, fvdl@google.com, seanjc@google.com,
- thomas.lendacky@amd.com, pawan.kumar.gupta@linux.intel.com,
- yosry.ahmed@linux.dev, sohil.mehta@intel.com, xin@zytor.com,
- kai.huang@intel.com, xiaoyao.li@intel.com, peterz@infradead.org,
- me@mixaill.net, mario.limonciello@amd.com, xin3.li@intel.com,
- ebiggers@google.com, ak@linux.intel.com, chang.seok.bae@intel.com,
- andrew.cooper3@citrix.com, perry.yuan@amd.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <cover.1752167718.git.babu.moger@amd.com>
- <e6866fad-1d8f-4fca-baf7-6685e57370b0@intel.com>
-Content-Language: en-US
-From: "Moger, Babu" <babu.moger@amd.com>
-In-Reply-To: <e6866fad-1d8f-4fca-baf7-6685e57370b0@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: DM6PR12CA0012.namprd12.prod.outlook.com
- (2603:10b6:5:1c0::25) To IA0PPF9A76BB3A6.namprd12.prod.outlook.com
- (2603:10b6:20f:fc04::bdc)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6905319C556;
+	Mon,  4 Aug 2025 21:35:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754343349; cv=none; b=TdKcPCl75+f2YbNg6erL/0jN+ZNNG0IXVzyEtVxMpJU+uZCVXmbvomb46K6JJywHJTp38PZI+/jUpg0Vism/u12fauWmHahaFRrMTz14USXaWZ9APJAzCpRPJR1Xm/is7jpGLnOfKvPNQXUcp0sJ7UilPPQX1DjUct3l5xkEhV4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754343349; c=relaxed/simple;
+	bh=RD7w/8aIHn1ifCKTKAphGnkshouTa3cUYHBlHD2G2Dk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=OXs14pDkP9jJFGsHMWNnthJwHUnOdycv4JFbkd63nBo2yyx7CNxxA6r7VCp9v9IgwuhhrHFF9EsbwALorbo94k14OP37yep0s3yP3lWajGKPjJ14zcl0yHwYpDa1Nlv/tfbsTc71vnmTo3S/fq1t5b2S9qpxVUPbbUvm8tBaBNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com; spf=pass smtp.mailfrom=googlemail.com; dkim=pass (2048-bit key) header.d=googlemail.com header.i=@googlemail.com header.b=lUPoc7O6; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=googlemail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=googlemail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-2406fe901fcso36469295ad.3;
+        Mon, 04 Aug 2025 14:35:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=googlemail.com; s=20230601; t=1754343346; x=1754948146; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Cvo6vUqcyrnegdoTW6jNdQzV/1E/0vD/BmUkrhOfOMY=;
+        b=lUPoc7O6t185UGMvwkkZ4KNmK6R+3uXh4rLrK/2D0bW5fD5F5UHfcBGA+oTrHOIsM5
+         lhgXvupFYsyhMRqD1UruuirOOQW14vfqH3J8pfuWAQOLrtKTp1nMwEQ03E1BpDBTmH6/
+         53tIo0bLwvMjHtCLaEDEnrG57QGZHapGHgY59V/keiJpHkk7Ov8L/SVVwWdCN+WvFzRq
+         Hcmtp6xhomEj/JAowKu8UGSN+rtfGXmBryrT3xRdUsQ3cE1N8iLvvv03KNTQIRyF8mdE
+         pRzzvayHulZukkFOXPSS2gBR07XvzRLrjHpKhm7oUTrdXiws24af4d9SIx03oz+7XPRZ
+         4d8g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754343346; x=1754948146;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Cvo6vUqcyrnegdoTW6jNdQzV/1E/0vD/BmUkrhOfOMY=;
+        b=XnAraSP/bp6frsFrbMU/RM8ZFUM+SLd49KQ2Wc5DouZjDGVV0aSkdYQCRQdFCH3Z6T
+         YCv4TDqVuFaDTh3rvau6ZKaKnQx4twS9vlIeTNI8/jW9Q9A0NeYVu4cb9d2/l1D/ZCrz
+         yUg8kKyw0yw3yxdwS8mDkdcbMfp9Lt5/lAp9a59y74CJtG+mcLNLZbrf66BGpwA3NoWf
+         rlBDSYhliZb/f0+cyFbKHlSDAvFwjvUNMGBeNUpaBfrlqaO/uBlFY3vtpSgspSX2+rwl
+         INShElffJ6HgAZqju4l6AroWXmLhjAjQSgjacEcR2MrmMyLtJ1Vn0JGDvtFQOski3dII
+         8cxQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUiMIUWL2rOp5gG4g0cxTeramtA2bRuztXtKtsAa+p+jf5uVzo1Yixwi9dH9bHoNSWcgHAXTOPHfb/nXb0=@vger.kernel.org, AJvYcCVawe9V9ZtBAdgqCjV7jrQBGsCCaCXNASvHlbzyFXHtg1hbQhlHESbqzt9pAvKmF+oUxrq3espzf4n9@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6odaE+NcWwPOa+eF4DsqirwEfdE5zIZovdNQGDbymAmcvC1UW
+	Ro1hH0hbYnO9XxD43Bslky4c/FkKQCJmHLUj8HcDKTOsj6X9qx4Ds2xh2954QYzHivFVWFmUh9m
+	Lh+pLG7YNVXjxplw4k3KBkxiquxUE1HM=
+X-Gm-Gg: ASbGnct1kvzqekEOhjVbp+fHiqVQkEnH1XePcc4hF2cK1oAg7D22LxfNlaeJB0ciaiL
+	v7Tb1/+U1ulqj4RfngTNoOF98oX5zbXVIARpchuw1v0z//h4UrhyELOoqvGcuC/hunRn2cJOJL5
+	VkUdMSaanw+jxivF/JYkMZ7nJC2BCZ5EBnQVWSoPy+hKb9oR9AdSgYcca1tYeatHIqdZveXy5EW
+	+bNOAo1AJnWEzh+pAULSCGCWZtEHbwfWQVXntJm
+X-Google-Smtp-Source: AGHT+IGQ4h1PdEwAmwxxpRH/xuW+XGXcOYeRCGe5U8mroWOM6sMSqCmdibSpRsNPVa5PcWE9a6zJ66cC8PcfcArPagY=
+X-Received: by 2002:a17:902:f549:b0:234:d431:ec6e with SMTP id
+ d9443c01a7336-24246f595dfmr140662145ad.3.1754343346482; Mon, 04 Aug 2025
+ 14:35:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: IA0PPF9A76BB3A6:EE_|BL3PR12MB6644:EE_
-X-MS-Office365-Filtering-Correlation-Id: 326000b3-c534-49e7-cbea-08ddd39ea49b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?K05LM3ZsdDRDb3FGVWtYb1ZxVHZCcTdnYytzVDhqY1hPcFJjd2QydXRBZkQy?=
- =?utf-8?B?MjNHaDZtWk5pakxFYnA5ZVFzdjV0cVhHOVkzanY0ajlmblZoTm9oaWJBSjlX?=
- =?utf-8?B?MG9QbDN0M1R5VFZTV3lUWUw2cENQTytuSmdjWEZCYjhyV3hVYTY4ZnkwVlM4?=
- =?utf-8?B?eE9TQUZvbzZYVjFpSExRem5UZHJqZlpaeDdidGFoZFMvWUhnTndkb0JmUHEx?=
- =?utf-8?B?UkVLTXowTEFpM1hld1cwdVJTckQ2cVRVS25abzBSeHFXWDJSdms2Z3diUkR4?=
- =?utf-8?B?ckF0cVlhOElvYUVIbmVscmVGNHBHaklPN24rSkgwS0lkMDQzSFVIQVZ1S1c4?=
- =?utf-8?B?dkRBRnV2WTAzNmpMd0VZSEVnaXFYK0NpNHk4ODRHYzV6ZWdaWlNyUzFmbm1C?=
- =?utf-8?B?WTZuL2JmVUM2NjNJMjVtSUlqTHd1QW5UR25RcythMmQ1K05zbjl5ZVdrSFVL?=
- =?utf-8?B?VnBaOUZGdEduSys0ZkZZNXlncDE3QTY5NVVydjB4dFhsSmI4dHMrSEZyeEFR?=
- =?utf-8?B?NzFlakptNnFoRnFmQkc2aVJNY2VSSnJid29TM1BnUERVZ3ExTjFVd29aNFc3?=
- =?utf-8?B?b25pdUp2REJhc2Q2YmIwL3FNWk9PWEVqa0l0L3hTVGtlSUMwbi9STU1CdnVS?=
- =?utf-8?B?bXhYMzhaUEMxSDAyc2RpUTVLNXBYYjJqOHhLajFrRjdKRmlVeCs5QzRlWGd5?=
- =?utf-8?B?eGwxN1AvYzZha1JhVHl1NncrM0JLbldSc1BRNlprVzlGbGIydFNabUIwRHRD?=
- =?utf-8?B?MmlkdGJlSzRJWlZERE9iTG44NThhcDZYK1ROZHhZazFRV05xQlIvTmNOQ0I0?=
- =?utf-8?B?b2k2eXdxZnZKdE93ZDRzVGxiL1NSWHBabjRIbXBvZVIvbEo3ZUJiNlVIYnJQ?=
- =?utf-8?B?L1hYYTVUYWp2MlYxKzlmb0JWVTFsQ2ZFVEYwN1QxcWRuMnZ5a1FZaUFiYUZm?=
- =?utf-8?B?b1p4STNuczY0NDRrMmxZZlJCZnN4VW1VcUw4OC9lbUYyWjZXa1hDUmFOeVBM?=
- =?utf-8?B?MXN6ak13Sjd4bW04WmlFSG1ZYWhXTE5sMk90ZDd6OGdUdEZDekRMOFJRcHVT?=
- =?utf-8?B?U204N3p5dFh3UXFmMEUwbC9pdDB4Q0JGeUN4aEl3c0ZZd3g5endGRmdNejVl?=
- =?utf-8?B?cTVFV0FyVlZQZGVLNEVkVFVQd2NMUzMyYXVQaFNtZkh5NFJlTUE0UFIvWlRn?=
- =?utf-8?B?akI5amdIc24wd3pXTTZuSGJGUXFaNnlsdDczYTdoc3BEZzIvSzNIK2VJNFhJ?=
- =?utf-8?B?KzQyUlhjQVprWDcyaHloOTVXQlBMUkthSUFYY0RBQlZaMlZpZ1pkZjV4bEpj?=
- =?utf-8?B?eC9hVW0xcUgxK1BnbUZlYWVseDloNVNvTW8xQ1VXbFhXSHN1YUxaNE9XWnRJ?=
- =?utf-8?B?QUx0Y3F2TGdBSkxMUkRCczVlOUJ5c05yN0diSEtDSnhNWUxzYzhsNllkdDhR?=
- =?utf-8?B?eFJDV1VKa0tSbHYrT1UrUjd5Zkw5ZXFWRmJzMlYxL3pHektHNjErcnpvMHBJ?=
- =?utf-8?B?Z0hVZjBXcHhUWnBsUXR5dlgycEx6TGplOXpOUFpGWk5adXpTY3FtQndFM0lD?=
- =?utf-8?B?bWVLRjZUMkNSTG9YMEViZVFVQnBmeDVGZVJadGdOalFLSCtLYndNUklWUkJO?=
- =?utf-8?B?NTFCUjQzN1FwbzFEUkFJbGM0OHRFdUd6bUlxb2I0NUNUQlpmL1NvRmZmcUdr?=
- =?utf-8?B?QUtTVG1qU1JsRElHN0ZFSStjcEFYTENzNmNsYnBFdmlocEhHZUl6QldCcjkv?=
- =?utf-8?B?Sk9pWG4wVHp0V2xvQWt3TlBLcFdMN24rSy8rKzlHRWxBV1FXeWZpZUUzRlly?=
- =?utf-8?B?OEtVQUVYNkVuM0tmRCtFL3FxRm83V0FsTEF1TCtFTy9MUWIyVG4xRGduL041?=
- =?utf-8?B?ajBPdmIwTkdVT2JFWElHMVkwU3VMZFkwWDF3NUpYT05RR1VqQWRvYVV4MzRX?=
- =?utf-8?Q?GLarE7pfJR8=3D?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:IA0PPF9A76BB3A6.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?MXM0S2pKNDMzaGpnUnp1WnJEOTVIWEFhbWJwb1BuZG1CWUNNZ1AwZzRDdGc4?=
- =?utf-8?B?eUpEYlB3cjVrWlBPd3BGaVZNK3dPVU9sb2JoWTVYTUJCaWY3SmJiRElXbjB2?=
- =?utf-8?B?NGhOTTRhRWhrelFzTWZhcmljaWoyRXkvV1ZkUUowNGVyOTN1TU1YSHNEMDhD?=
- =?utf-8?B?TWFLc3NOb1JnekU5RVljaTNwS0RwR3gzaHRTMXV3QmxoS3Z2aEh2YmpySXNY?=
- =?utf-8?B?RXFMRmx1dnp2YzdkemkzWGxVU1hYOWtNajJnWTNyTUlEemZHWEpmVkpxTzEv?=
- =?utf-8?B?ai9FT0ZkbmQ4UkhrSzNrMVJ4cHErZEt0UG1CUkJuVEtWTGl2K0E0SmZuK3Ns?=
- =?utf-8?B?dWMzVGMwcHVoV295QURBOFY2b2ZxcGYwd2dsVzJZUEpKemxMK2VMQnU1ZTVR?=
- =?utf-8?B?UjgwWFZPZ255MnRXWWVoT0VDVy82RzA4akQrb0JDOE1kNURnd3UwelpjVHBr?=
- =?utf-8?B?NFlRK25qZmlJcEJ3NzdnMUk2VzIvcVBaaWJhNGQ1RHdpM0FBaXhzbE5CNmJu?=
- =?utf-8?B?OVB5UjJlYlZKaU01RC80RTdUYlNUSFJLTUZ4eE4wOUMwQTZBcFljRzAxRGNN?=
- =?utf-8?B?aTM0a0xNa2c4SC9XcWlvUXJsd2dZck8rdmVCb0RiaVFCd3pJakVJYjVJOTJF?=
- =?utf-8?B?UXZSWHArY3RTcXpCOWx0RHdpL292dGZLMmNaYW9hc2xoamI4UG9aaUpPeHJz?=
- =?utf-8?B?aCszRkUxc3FDL051TFhScjA4b1hiVCs5SWxIb0poN0lNbXhTU2x0V3laclA4?=
- =?utf-8?B?VlVzQzhvb3o2eTRxR0phRW12ZU5SY1VkSjVQN3FtZ1lVSXZ5aTUzUVY4VGhH?=
- =?utf-8?B?dWNRdTM3YXNsZnpyUENDeWkyclUySjVEYkkycE94UGo2R1hPV25ZQm5PMlo2?=
- =?utf-8?B?WGJFZEhzRmhNd2ZvdE5wZXV6WURSaVo1c3BaRUNHUXNlTDh6K3lzTkhuRVNt?=
- =?utf-8?B?UUZDaHdMYlpNUlBFcXBVOFNDdGxhUml2NkpiSWcxSFJRcFN2Q1FERXlpRlNQ?=
- =?utf-8?B?cERMZXQzRVovUTV5TEJsbEdHYlREM3FZRmQ5L0RhRmsrUEt6Mk40YzYrQ3lP?=
- =?utf-8?B?QnlUZG04clNYeE5qTnZoaWhwbUo4aUI2T1dwTW90bDhpWmZVMW1VRHd0SUxK?=
- =?utf-8?B?bm0xT2Z4TXREOTg4TUJmRUR6THI0eUdEK1VxTzVNZHlvbGRmWWhFSFZiUWs3?=
- =?utf-8?B?MDNnNWtsYlpUR0k3czFaMTFpdU9BRTVROFZ6NGVGQkhNblREQXRVYyt4NTRj?=
- =?utf-8?B?WkpGUWJwUGlTUGFtVFRJd2ZlNHZLQU8wVlV0VXhic3FjWXNydXBkOVRrT1NK?=
- =?utf-8?B?NUE2cU9oNGJIQ0NxSjgrU1VQQWZwNnQzVVFTRVJIQ3FQaTNTZHYwajRrVSts?=
- =?utf-8?B?NkYxcUdqZVZsRjdlQnROU0xIcDZoeVRJdkUzWEcySDBhZHo3SGZjT3BpSFFm?=
- =?utf-8?B?Rmh4Q0wzR0NmajAxZkFCWnpva0MxMEVCSE92T0N3Y0Y2aFhXUVVZYXRmMkd6?=
- =?utf-8?B?S201WVBoL1RCcDErUThWdW15M0RsdW9mYklhNXJGQU5XZmt1UXFHV1RTNzdy?=
- =?utf-8?B?eVJsYnBnMHRVNDBrUmUzVnJEdStweElXbnRNM0IveDZIREg2SE8yMnJuQU9V?=
- =?utf-8?B?Ni9FVWtNelZGWktHdkpUTE4yVFl1d0ZZSG5QM2h4emN1MXJGaDh6djFpRTVV?=
- =?utf-8?B?Um40N2tXYkg5RXMxeVdyS2dvd2xyZ2dlYlJwNStWSlYzTTZETnNkaWRvMW1Z?=
- =?utf-8?B?MjZicXp6MStxZ3RKQm5yS3ZDcnNEMUI3ZnFBcFBZK1BneWtQSGRUR1Nva1gy?=
- =?utf-8?B?a05aLzZ6WTYwc2VXajRmNEEyUFhsTFE5WlYzYnkybDFVa0kyWEdSdllDU3Bz?=
- =?utf-8?B?czA4a2k5U1BEc29qTzU1TWFXR2twNzUzWXBnL2sveVhNTkJDUGliZkRhQmIr?=
- =?utf-8?B?aDE5aDNqUjljOVdrbFNaREUxVGZpUnAwR1ZwNXc3TmhqSzQ2QXgrVVIvOThV?=
- =?utf-8?B?aGRrRE1xa2I4OTlaTjkxZE1CT1dQbCt5TFJKVTdybWszaEVlV2k1WDRYUTR1?=
- =?utf-8?B?V1dNUGRzYURaRS9mSWE2U3Z3b2JsR2VtcG5YQW40UVhSdnN6Z2N5QUJScWNs?=
- =?utf-8?Q?PMlY=3D?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 326000b3-c534-49e7-cbea-08ddd39ea49b
-X-MS-Exchange-CrossTenant-AuthSource: IA0PPF9A76BB3A6.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 21:34:07.8357
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: OjzXYR8w3xaRoNL7derT+VgsKXSW4/tHSbMFgRAd4zwCkhCZ5xzQCNTvVI7VF5XL
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: BL3PR12MB6644
+References: <20250204135842.3703751-1-clabbe@baylibre.com> <20250204135842.3703751-2-clabbe@baylibre.com>
+ <aCHHfY2FkVW2j0ML@hovoldconsulting.com> <CAFBinCAUNNfOp4qvn2p8AETossePv2aL7jBkFxVZV_XzzULgVg@mail.gmail.com>
+ <aINXS813fmWNJh3A@hovoldconsulting.com> <CAFBinCBMTOM-FMgENS-mrnV17HbKzhtPUd44_dDiwnD=+HVMWQ@mail.gmail.com>
+ <aIiXyEuPmWU00hFf@hovoldconsulting.com> <CAFBinCBZhjs7DGEgxhz54Dg8aW3NX9_LdnoZeUZpm5ohaT_-oQ@mail.gmail.com>
+ <aJCoRFe-RFW1MuDk@hovoldconsulting.com>
+In-Reply-To: <aJCoRFe-RFW1MuDk@hovoldconsulting.com>
+From: Martin Blumenstingl <martin.blumenstingl@googlemail.com>
+Date: Mon, 4 Aug 2025 23:35:35 +0200
+X-Gm-Features: Ac12FXxZAqA4cyvbrNHPrOIPUfKS-JVCCQbLvWMVrBSQIg1CsBV-T5pBhrunwJ8
+Message-ID: <CAFBinCCYsWHsNwi99kFqvLv+xOYtp9u3omhrPdV-hdH+5Cfyew@mail.gmail.com>
+Subject: Re: [PATCH v8 1/2] usb: serial: add support for CH348
+To: Johan Hovold <johan@kernel.org>
+Cc: Corentin Labbe <clabbe@baylibre.com>, gregkh@linuxfoundation.org, 
+	linux-kernel@vger.kernel.org, linux-usb@vger.kernel.org, david@ixit.cz
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Reinette,
+On Mon, Aug 4, 2025 at 2:32=E2=80=AFPM Johan Hovold <johan@kernel.org> wrot=
+e:
+>
+> On Tue, Jul 29, 2025 at 10:45:20PM +0200, Martin Blumenstingl wrote:
+> > On Tue, Jul 29, 2025 at 11:43=E2=80=AFAM Johan Hovold <johan@kernel.org=
+> wrote:
+> > > On Sat, Jul 26, 2025 at 04:54:17PM +0200, Martin Blumenstingl wrote:
+>
+> > > > I managed to get it to work now without any unnecessary waiting.
+> > > > When I switched to just waiting for per-port THRE I accidentally
+> > > > re-used the same URB (along with its buffer) for all ports. This of
+> > > > course "corrupts" data, but it's my fault instead of the chip/firmw=
+are
+> > > > causing it.
+> > > > That's why I was referring to data corruption earlier.
+> > > > Thanks for your persistence and for making me look at my code again
+> > > > with a fresh mind.
+> > >
+> > > Glad to hear you got it working. Did you confirm that you really need=
+ to
+> > > wait for THRE before submitting the next URB too? I don't see why the
+> > > vendor driver would be doing this otherwise, but perhaps it only affe=
+cts
+> > > older, broken firmware, or something.
+>
+> > I'm using Corentin's test script [0] for sending data and by
+> > connecting RX6 to TX7 and TX6 to RX7.
+>
+> May be better to use a second different device (rather than loopback)
+> for testing so that you can separate any tx issues from rx issues.
+I'll double-check it using a second device. The RX path has largely
+been unmodified since the original submission, so it's likely that the
+issue is indeed with the TX path.
+
+> > For a 1024 byte buffer:
+> > [ 3029.068311] ch348 ttyUSB6: submitted 509 bytes for urb 0
+> > [ 3029.068827] ch348 ttyUSB6: submitted 509 bytes for urb 1
+> > [ 3029.069363] ch348 ttyUSB7: submitted 5 bytes for urb 0
+> > [ 3029.069902] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
+> > [ 3029.215272] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
+> > [ 3029.215908] ch348 ttyUSB6: submitted 6 bytes for urb 0
+> > [ 3029.233628] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
+> > -> data is received without corruption
+> >
+> > With a 2048 byte buffer the general flow seems fine:
+> > [ 3031.073101] ch348 ttyUSB6: submitted 509 bytes for urb 0
+> > [ 3031.073777] ch348 ttyUSB6: submitted 509 bytes for urb 1
+> > [ 3031.220068] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
+> > [ 3031.220697] ch348 ttyUSB6: submitted 509 bytes for urb 0
+> > [ 3031.221342] ch348 ttyUSB6: submitted 509 bytes for urb 1
+> > [ 3031.512113] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
+> > [ 3031.512795] ch348 ttyUSB6: submitted 12 bytes for urb 0
+> > [ 3031.513359] ch348 ttyUSB7: submitted 5 bytes for urb 0
+> > [ 3031.513859] ch348 ttyUSB7: UART_IIR_THRI - unknown byte: 0x00
+> > [ 3031.530476] ch348 ttyUSB6: UART_IIR_THRI - unknown byte: 0x00
+> > However, the receiving end sees different data (at around byte 513-518
+> > in my tests) than we wanted to send.
+> >
+> > My general flow is:
+> > - check if we have received THRE - if not: don't transmit more data on =
+this port
+> > - submit up to two URBs with up to 512 - 3 (CH348_TX_HDRSIZE) bytes to
+> > not exceed the HW TX FIFO size of 1024 bytes (page 1 in the datasheet)
+> > if the kfifo has enough data
+>
+> If you're going to wait for the device fifo to clear completely you can
+> just use a single urb with larger (1k) buffer too.
+I set .bulk_out_size =3D 1024 in struct usb_serial_driver. Writing a 1k
+buffer immediately results in:
+   ch348 1-1:1.0: device disconnected
+
+I don't know if I need to set some kind of flag on the URB to have it
+split or whether the kernel / USB controller does that automatically
+(as you can tell: I'm not familiar with USB).
+If not: 512 byte transfers at a time it is.
+
+> > If you want me to test something else then please let me know and I'll =
+try it.
+> > Otherwise I'll not dig much deeper, given the fact that I don't know
+> > how the firmware works (e.g. in which order they send the status to
+> > the host and what kind of state they hold internally) and we can still
+> > optimize this later.
+>
+> Yeah, as long as you are certain that the generic implementation does
+> not work and that you indeed need to track THRE per port.
+I'll give it one more round in the next few days. If I can't get the
+generic implementation to work then I'll call the current approach
+good.
+
+[...]
+> > > > On my test board the CFG pin is HIGH. From how I understand you, RT=
+S
+> > > > should at least change (even if DTR is in TNOW mode).
+> > > > No matter what I do: both pins are always LOW (right after modprobe=
+,
+> > > > after opening the console, closing the console again, ...).
+> > > > I even set up the vendor driver to test this: it's the same situati=
+on there.
+> > >
+> > > I don't think the console code will assert DTR/RTS, you need to open =
+the
+> > > port as a regular tty.
+>
+> Yes, even if the device is configured in hardware for TNOW mode (instead
+> of DTR function) you should still be able to control RTS (at least as
+> long as the device is not configured for automatic hardware flow control)=
+.
+I think I made it work, sort of.
+It's a bit annoying because of code I don't understand. It seems that
+R_4 has the following settings:
+0x00 DTR off
+0x01 DTR on
+0x10 RTS off
+0x11 RTS on
+0x08 activate (used during port initialization)
+0x50 HW flow on
+0x51 no RTS / HW flow off
+
+That said, poking 0x00, 0x01, 0x10 and 0x11 by themselves didn't do much.
+One also has to write 0x06 to the per-port VEN_R register.
+The vendor driver only does that in .set_termios, which I call
+questionable until someone calls me out on this and is willing to
+share a good reason why that's a good idea ;-)
+
+However, I'm unable to control the RTS line of port 1. It works for
+port 0, port 2 and 3 but not for port 1.
+Ports 4-7 don't have the TNOW/DTR and RTS lines routed outside the
+package, so I can't test these.
 
 
-On 7/21/25 18:28, Reinette Chatre wrote:
-> Hi Babu,
-> 
-> On 7/10/25 10:16 AM, Babu Moger wrote:
->>
->> This series adds the support for L3 Smart Data Cache Injection Allocation
->> Enforcement (SDCIAE) to resctrl infrastructure. It is referred to as
->> "io_alloc" in resctrl subsystem.
->>
->> Upcoming AMD hardware implements Smart Data Cache Injection (SDCI).
->> Smart Data Cache Injection (SDCI) is a mechanism that enables direct
->> insertion of data from I/O devices into the L3 cache. By directly caching
->> data from I/O devices rather than first storing the I/O data in DRAM, SDCI
->> reduces demands on DRAM bandwidth and reduces latency to the processor
->> consuming the I/O data.
->>
->> The SDCIAE (SDCI Allocation Enforcement) PQE feature allows system software
->> to control the portion of the L3 cache used for SDCI devices.
->>
->> When enabled, SDCIAE forces all SDCI lines to be placed into the L3 cache
->> partitions identified by the highest-supported L3_MASK_n register, where n
->> is the maximum supported CLOSID.
-> 
-> Even though this CLOSID use is unique to AMD this implementation makes it part
-> of resctrl fs's support of io_alloc. It is confusing to have architectural
-> specific features be handled by resctrl fs so I think it will be useful to
-> add a snippet here to help folks trying to decipher this work. Consider
-> for example a snippet like:
-> 
->   Since CLOSIDs are managed by resctrl fs it is least invasive to make
->   the "io_alloc is supported by maximum supported CLOSID" part of the
->   initial resctrl fs support for io_alloc. Take care not to expose this
->   use of CLOSID for io_alloc to user space so that this is not required from
->   other architectures that may support io_alloc differently in the future.
-> 
-
-Sure.
-
->>
->> The feature details are documented in the APM listed below [1].
->> [1] AMD64 Architecture Programmer's Manual Volume 2: System Programming
->> Publication # 24593 Revision 3.41 section 19.4.7 L3 Smart Data Cache
->> Injection Allocation Enforcement (SDCIAE)
->> Link: https://bugzilla.kernel.org/show_bug.cgi?id=206537
->>
->> The feature requires linux support of TPH (TLP Processing Hints).
->> The support is available in linux kernel after the commit
->> 48d0fd2b903e3 ("PCI/TPH: Add TPH documentation")
->>
->> The patches are based on top of commit (6.16.0-rc5)
->> commit b4ec95e3bc3f ("Merge x86/microcode into tip/master")
->>
->> # Linux Implementation
->>
->> Feature adds following interface files when the resctrl "io_alloc" feature
->> is supported on the resource:
->>
->> /sys/fs/resctrl/info/L3/io_alloc: Report the feature status. Enable/disable the
->> 				  feature by writing to the interface.
->>
->> /sys/fs/resctrl/info/L3/io_alloc_cbm:  List the Capacity Bit Masks (CBMs) available
->> 				       for I/O devices when io_alloc feature is enabled.
->> 				       Configure the CBM by writing to the interface.
->>
->> When CDP is enabled, these files will be created both in L3CODE and L3DATA.
-> 
-> "will be" -> "are"
-> 
-
-Sure.
-
->>
->> # Examples:
->>
->> a. Check if io_alloc feature is available
->> 	# mount -t resctrl resctrl /sys/fs/resctrl/
->>
->> 	# cat /sys/fs/resctrl/info/L3/io_alloc
->> 	disabled
->>
->> b. Enable the io_alloc feature. 
->>
->> 	# echo 1 > /sys/fs/resctrl/info/L3/io_alloc 
->> 	# cat /sys/fs/resctrl/info/L3/io_alloc
->> 	enabled
->>
->> c. Check the CBM values for the io_alloc feature.
->>
->> 	# cat /sys/fs/resctrl/info/L3/io_alloc_cbm 
->> 	0=ffff;1=ffff
->>
->> d. Change the CBM value for the domain 1:
-> 
-> "for the domain 1" -> "of domain 1"?
-
-Sure.
-
-> 
-> (nit: inconsistent use of "." vs. ":" in items)
-
-Fixed it.
-
-> 
->> 	# echo 1=FF > /sys/fs/resctrl/info/L3/io_alloc_cbm
->>
->> 	# cat /sys/fs/resctrl/info/L3/io_alloc_cbm 
->> 	0=ffff;1=00ff
->>
->> d. Disable io_alloc feature and exit.
->>
->> 	# echo 0 > /sys/fs/resctrl/info/L3/io_alloc 
->> 	# cat /sys/fs/resctrl/info/L3/io_alloc
->> 	disabled
->>
->> 	# umount /sys/fs/resctrl/
->>
->> ---
-> 
-> Reinette
-> 
-> 
-
--- 
-Thanks
-Babu Moger
-
+Best regards,
+Martin
 
