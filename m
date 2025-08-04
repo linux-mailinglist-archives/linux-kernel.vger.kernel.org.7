@@ -1,52 +1,52 @@
-Return-Path: <linux-kernel+bounces-754829-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754828-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D39DB19D40
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:04:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 56E38B19D3F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:04:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EB4516320A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D71731899920
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6731223D291;
-	Mon,  4 Aug 2025 08:04:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C45D23BF9C;
+	Mon,  4 Aug 2025 08:04:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="c280J59d"
-Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b="LhIcN+jo"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3EA85237A3B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:04:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FA5823A9BE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:04:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754294646; cv=none; b=gNePcsrW+JYed3eD2eubwv1ASdG7CD8flVpk/Qk4VEzWtIksEXgLOwsXLuU9nk5w2mlsRcYtKgHzOKG9h1LEX6KqHLQC2KcZ6AYlVjkojvV4O50/YXCDqiUpAyJLoFLpVhqm30DkGj1+Cg+OLamOnfbbcaKYA6v13iriTZXUZAU=
+	t=1754294645; cv=none; b=uO+xnx/en7W2m3LhLmkhOHNijem5UvX4Y8qykdvaxt9qW4QJyaJ46QCHou4myJYVRr/R71JlLRgPvfqAeSTcwoHgkKB4SeUFF1AfVrc1uRzB0yhuPepsFFWo/WkJmKSoEaqU8PY8oiOvZFxSclztgaajE66q/hQBegch9L44nSs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754294646; c=relaxed/simple;
-	bh=KzsHo+kgUPlsYrEEWaRzzCYLsJoIf4O6K4gsx/pE5J4=;
+	s=arc-20240116; t=1754294645; c=relaxed/simple;
+	bh=vzFx82vV0vr6mMz1Z6IT0Dd2ubmzk/i7rSdHVE0NwHo=;
 	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ao9OiEOT/yJbmY4vrBckiCjJS1UWPeYgN0uA36ug5O6wIkMxX22kmfb86Dli7KZxGWWy/g7jK/u5F4TgcYeEPzYzE+yaJzkFt7XJbTK6iGgr/KII7DRHQT6g9QBioU8mRnVokq5CQhR96vi/3Cx/RpRiEcMISZYrnO1HPbxTAS0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=c280J59d; arc=none smtp.client-ip=212.227.15.15
+	 MIME-Version:Content-Type; b=pBXiau/OA3V7pur+2ERE5QXeI9CZMc0aqqLtKZv+BeUjFchq8JgHBaw2ZYivMivwBEkNFktHpX8/tJ0uQBPe6l4tYGeTuFJdO0usTXh+shHKexOV6ch4NMMOofnMlM+lH9YTkJ/Ii+vFCIpEAJHtC4VR61HA3qJ7Jya7kheEnX8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=markus.stockhausen@gmx.de header.b=LhIcN+jo; arc=none smtp.client-ip=212.227.15.18
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
 	s=s31663417; t=1754294623; x=1754899423;
 	i=markus.stockhausen@gmx.de;
-	bh=TqB88G7sI205GAB/OWBTEwraPdPpAotdd3nrSs9o+Mk=;
+	bh=HzVaQGDPIYSbSHCUX8mZ7P1G+XecZ/J/O7wLLc8uSwA=;
 	h=X-UI-Sender-Class:From:To:Subject:Date:Message-ID:In-Reply-To:
 	 References:MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
 	 content-transfer-encoding:content-type:date:from:message-id:
 	 mime-version:reply-to:subject:to;
-	b=c280J59diVslEJA02ad66rvfJ5vOk2ALp6jtX/ifuHoXViuynUs5Ajoh/MLr3wPu
-	 5zN1pj3BtjwPmWA0DI9BY1w1NZDnkNh/dkuuHRbepjOdI7db5jNit0X9SpOzM3AM9
-	 lXqwJ8Lhcp6Qg9eTlmLHQGU3TAhDdpwAnuSU8cGWl5AAvj079uGnkjqchO6Xa7aRw
-	 M2OIxLDNEqcEXVVO403dt/uAbn9OU/SF3fctgxseKDvgZrGRbg3gPZZGYyutHBNES
-	 INYRdEFs4+6CMkMGsoVGUZ1DXWQqXT9DsFtFbJnNPsX4ZN3oBHJ9s6fo7tYSoZKXi
-	 oZw303r4MnIJ7JP5Kw==
+	b=LhIcN+jo4hmBSS9oHtYZ256k6C9tkQ7MVn7c/HDIPvbeLb/o72i94EfWE5r2u63I
+	 CVBpn3BPWEqqXquAdgtghwMUE2Wz+AjmmHsFzHx9V/uvRFg+dEMEpNgeYeaCZHdvN
+	 1k5TSp5oEUMqCShtxYa9YKa6sjkyHW3EZERL7i8HIMLGH0x1SvUjIpZzgvr3xz4Bo
+	 6K03szUNEAnees7rTIzJLT6EGmzIc96fysOl7uW1YC6ITmUn9czhtpTL1OKM1xCVF
+	 CNL3Z8hYsv+3+yj3IibLzqXD+Tbgz7LhB0ajmtFoXydEH8hwfKhVJqtc+c2DvHh9U
+	 oPFV0tr82OZOchFAcg==
 X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
 Received: from openwrt ([94.31.70.55]) by mail.gmx.net (mrgmx004
- [212.227.17.190]) with ESMTPSA (Nemesis) id 1N7zFZ-1uWWFg1Dmd-00qtoE; Mon, 04
+ [212.227.17.190]) with ESMTPSA (Nemesis) id 1M26vL-1ulJ0Y1vTd-00G78G; Mon, 04
  Aug 2025 10:03:43 +0200
 From: Markus Stockhausen <markus.stockhausen@gmx.de>
 To: markus.stockhausen@gmx.de,
@@ -55,9 +55,9 @@ To: markus.stockhausen@gmx.de,
 	linux-kernel@vger.kernel.org,
 	howels@allthatwemight.be,
 	bjorn@mork.no
-Subject: [PATCH 2/4] clocksource/drivers/timer-rtl-otto: drop set_counter function
-Date: Mon,  4 Aug 2025 04:03:26 -0400
-Message-ID: <20250804080328.2609287-3-markus.stockhausen@gmx.de>
+Subject: [PATCH 3/4] clocksource/drivers/timer-rtl-otto: do not interfere with interrupts
+Date: Mon,  4 Aug 2025 04:03:27 -0400
+Message-ID: <20250804080328.2609287-4-markus.stockhausen@gmx.de>
 X-Mailer: git-send-email 2.47.0
 In-Reply-To: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
 References: <20250804080328.2609287-1-markus.stockhausen@gmx.de>
@@ -69,71 +69,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:Xb6Z5QBZDqYurJnjHZaFbcyVZZ5Jc9R93Hd/lWpjyJv9g3C5KRz
- V2YDb9qoTnmrslAp+ywy7jJVNkC0s+UpjPCh94Y/RDqAlZwRimdgBI3kFOsBxqjpx3k3wwm
- ZRFpi67CeoXQ45u6ztzAtbpMPY5qsgmIDsMRT41FC/yJXrziCeilC4bQiu5Vmh5RK4xTovl
- 6uu4GR/bhyDIWyg0rFmeg==
+X-Provags-ID: V03:K1:0hXl94sGqeDwUOgo8GUI8UIukLFVGquOsqvgXAWbRnjUUnJxaRC
+ bV1OV8DdhoJKertvLtIKs0Zaee4786ewbjzBb2v1CA7yESvw7PE7W3S5QP2NidPMp+pOr41
+ 2f7G1l6ambU4u5zMudvPJWpyOnDtXgg0aLTILl8/kKYuopcu191FqW5uLqKT0nQtcgFNT2a
+ 7F37VZfKAtkLOnH7ICcfQ==
 X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:k63kHVqWMZI=;wnuyfROQS+065UrskAemgy6WyhH
- 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
- eL82IbSD776PVw=
+UI-OutboundReport: notjunk:1;M01:P0:9WRsymVBm54=;2bEXltqR3YDJsgulS+pspUa3YFQ
+ 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
+ aA==
 
-The current counter value is a read only register. It will be
-reset when writing a new target timer value with rttm_set_period().
-rttm_set_counter() is essentially a noop. Drop it.
+During normal operation the timers are reprogrammed including an
+interrupt acknowledgement. This has no effect as the whole timer
+is setup from scratch afterwards. Especially in an interrupt this
+has already been done by rttm_timer_interrupt().
 
-While this makes rttm_start_timer() and rttm_enable_timer() the
-same functions keep both to make the established abstraction layers
-for register and control functions active.
+Change the behaviour as follows:
+
+- Use rttm_disable_timer() during reprogramming
+- Keep rttm_stop_timer() for all other use cases.
 
 Downstream has already tested and confirmed a patch. See
 https://github.com/openwrt/openwrt/pull/19468
@@ -144,35 +145,43 @@ Tested-by: Stephen Howell <howels@allthatwemight.be>
 Tested-by: Bj=C3=B8rn Mork <bjorn@mork.no>
 Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
 =2D--
- drivers/clocksource/timer-rtl-otto.c | 6 ------
- 1 file changed, 6 deletions(-)
+ drivers/clocksource/timer-rtl-otto.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
 diff --git a/drivers/clocksource/timer-rtl-otto.c b/drivers/clocksource/ti=
 mer-rtl-otto.c
-index 8be45a11fb8b..48ba1164f3fb 100644
+index 48ba1164f3fb..42f702aca689 100644
 =2D-- a/drivers/clocksource/timer-rtl-otto.c
 +++ b/drivers/clocksource/timer-rtl-otto.c
-@@ -56,11 +56,6 @@ struct rttm_cs {
- };
+@@ -141,7 +141,7 @@ static int rttm_next_event(unsigned long delta, struct=
+ clock_event_device *clkev
 =20
- /* Simple internal register functions */
--static inline void rttm_set_counter(void __iomem *base, unsigned int coun=
-ter)
--{
--	iowrite32(counter, base + RTTM_CNT);
--}
--
- static inline unsigned int rttm_get_counter(void __iomem *base)
- {
- 	return ioread32(base + RTTM_CNT);
-@@ -137,7 +132,6 @@ static void rttm_stop_timer(void __iomem *base)
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, delta);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
 =20
- static void rttm_start_timer(struct timer_of *to, u32 mode)
- {
--	rttm_set_counter(to->of_base.base, 0);
- 	rttm_enable_timer(to->of_base.base, mode, to->of_clk.rate / RTTM_TICKS_P=
-ER_SEC);
- }
+@@ -154,7 +154,7 @@ static int rttm_state_oneshot(struct clock_event_devic=
+e *clkevt)
+=20
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_COUNTER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_COUNTER);
+=20
+@@ -167,7 +167,7 @@ static int rttm_state_periodic(struct clock_event_devi=
+ce *clkevt)
+=20
+ 	RTTM_DEBUG(to->of_base.base);
+ 	rttm_bounce_timer(to->of_base.base, RTTM_CTRL_TIMER);
+-	rttm_stop_timer(to->of_base.base);
++	rttm_disable_timer(to->of_base.base);
+ 	rttm_set_period(to->of_base.base, RTTM_TICKS_PER_SEC / HZ);
+ 	rttm_start_timer(to, RTTM_CTRL_TIMER);
 =20
 =2D-=20
 2.47.0
