@@ -1,136 +1,356 @@
-Return-Path: <linux-kernel+bounces-755274-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8212CB1A3F1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:57:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36645B1A3F5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:58:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 763B73A6839
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:56:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1FCE188C3DA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:59:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B5CB26D4DF;
-	Mon,  4 Aug 2025 13:56:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="if8Cno+p"
-Received: from relay16.mail.gandi.net (relay16.mail.gandi.net [217.70.178.236])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8791026CE10;
+	Mon,  4 Aug 2025 13:58:51 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCAFE25D53C;
-	Mon,  4 Aug 2025 13:56:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.178.236
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15DFF25C81C
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:58:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754315808; cv=none; b=mJ1H2CE3pC9Xcm1SDfdV4cxPRJs+pal1aMSinEKOGB2UAKDTi/HzGQltg3WfQWip5Dh77szBp8nihEPpp+5wV/9fqzwrkB515j21xi+8R79PzqEd9NxlDC4jfpjjRk9GLQcQPUmVi+UHwc1/QUpa+BScXJlZaa8MEzZGRsW7jCI=
+	t=1754315931; cv=none; b=qewroYztzVVFlVItEV/kEkBe51eGHujGUZlzk/tPSLymWQLGpwqkNCcqNY/xHd2+EltFjLpnGayeuAaiIs2MVvQacg+qhiOnhYGdXHw3N6ix4/M+mS5JXVTpjJlxxAeRg4pKA6k3+Jnlfzc0NI6fMQcU3LHq1ZuesnVqD16Fgj4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754315808; c=relaxed/simple;
-	bh=7/a6J9L72Vn5jHGTjVBt9K0+XZXfSB5eubI9G5HM7sU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SRFn6pXSSaBGwNPRdOpelZ2pXkDib/sdazC7uPBCj6KsNjS5jKSbK4kT1glX3G7T17cwEzXhK1hrZPRHHc5DLJEameRclH3FrO9r771/THZUxOGk3vAblSJJlZdBPzzcrrRkTOgIRBRfTU7qkR+APD/zJwHoWilMunGjidVzmM8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=if8Cno+p; arc=none smtp.client-ip=217.70.178.236
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id A67CC44987;
-	Mon,  4 Aug 2025 13:56:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1754315804;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3GWaCWfMGOeVLl+TC602dyEUg8hYPmCqnXlyFHBYtbE=;
-	b=if8Cno+pLmFsNTLP9iO4kurwuCoJS+SM7SNnUVQRcbIXkBglBAdWaO3TqC/NeSnvZRiz7U
-	70SgMt2IDllHWTN9fVAtnCknmWDz4bSfyyHW4fuG+rd2W59h5QTAsBTxNP9QkEPoHYsvTw
-	dLwvquxfVQ71NstbxTN+136qyBeoOkzKr7QGRktAlQ2SP2GJ8i+bgSsZs2VkwEoOk6878m
-	2cJFd9uJsod2ohNYPYwsq9FqKWCMawJfypBtQ330aSBCgIlnCbtonIBaeVOsloYQxsZ7Vt
-	1sZUXqZ8/hBK330il1NmzhQCw75BQpCtRg6zlzqZkYr8W6gMLDXEL+9+KRF/XQ==
-Date: Mon, 4 Aug 2025 15:56:41 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Andrew Lunn <andrew@lunn.ch>
-Cc: davem@davemloft.net, netdev@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- thomas.petazzoni@bootlin.com, Jakub Kicinski <kuba@kernel.org>, Eric
- Dumazet <edumazet@google.com>, Paolo Abeni <pabeni@redhat.com>, Russell
- King <linux@armlinux.org.uk>, linux-arm-kernel@lists.infradead.org,
- Christophe Leroy <christophe.leroy@csgroup.eu>, Herve Codina
- <herve.codina@bootlin.com>, Florian Fainelli <f.fainelli@gmail.com>, Heiner
- Kallweit <hkallweit1@gmail.com>, Vladimir Oltean <vladimir.oltean@nxp.com>,
- =?UTF-8?B?S8O2cnk=?= Maincent <kory.maincent@bootlin.com>, Marek
- =?UTF-8?B?QmVow7pu?= <kabel@kernel.org>, Oleksij Rempel
- <o.rempel@pengutronix.de>, =?UTF-8?B?Tmljb2zDsg==?= Veronese
- <nicveronese@gmail.com>, Simon Horman <horms@kernel.org>,
- mwojtas@chromium.org, Antoine Tenart <atenart@kernel.org>,
- devicetree@vger.kernel.org, Conor Dooley <conor+dt@kernel.org>, Krzysztof
- Kozlowski <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Romain
- Gantois <romain.gantois@bootlin.com>, Daniel Golle <daniel@makrotopia.org>,
- Dimitri Fedrau <dimitri.fedrau@liebherr.com>
-Subject: Re: [PATCH net-next v10 11/15] net: phy: at803x: Support SFP
- through phy_port interface
-Message-ID: <20250804155641.176a64f7@fedora.home>
-In-Reply-To: <67dd0a3e-12ac-49ab-aec1-f238db7030e6@lunn.ch>
-References: <20250722121623.609732-1-maxime.chevallier@bootlin.com>
-	<20250722121623.609732-12-maxime.chevallier@bootlin.com>
-	<67dd0a3e-12ac-49ab-aec1-f238db7030e6@lunn.ch>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.1 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1754315931; c=relaxed/simple;
+	bh=cqE4qV1GmW4DOOyMdYzmu3J+NlBGbASTIgWS1j46NDg=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=SLiE1TkyA/eO4VZoHyurTSd4vCuloQuuSr1IrQA84VJr9v2PS0zvAGAAE7XHVzY8Mp1sWDR6PlTFCUOKmbOvDDb/GwrRJDwWXArCWc3mG0k8kO0ToQZ83SAmW26b4wVif4AN+/pAnGJ71asN7ggDo5NGhi8M2LsdvuX0/ftc/sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivi2-0004TF-A7; Mon, 04 Aug 2025 15:58:38 +0200
+Received: from dude05.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::54])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivi1-00BsoR-2S;
+	Mon, 04 Aug 2025 15:58:37 +0200
+Received: from localhost ([::1] helo=dude05.red.stw.pengutronix.de)
+	by dude05.red.stw.pengutronix.de with esmtp (Exim 4.96)
+	(envelope-from <s.kerkmann@pengutronix.de>)
+	id 1uivi1-008cZX-2E;
+	Mon, 04 Aug 2025 15:58:37 +0200
+From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Date: Mon, 04 Aug 2025 15:58:27 +0200
+Subject: [PATCH] wifi: mwifiex: add rgpower table loading support
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-State: clean
-X-GND-Score: -100
-X-GND-Cause: gggruggvucftvghtrhhoucdtuddrgeeffedrtdefgdduuddvgeejucetufdoteggodetrfdotffvucfrrhhofhhilhgvmecuifetpfffkfdpucggtfgfnhhsuhgsshgtrhhisggvnecuuegrihhlohhuthemuceftddunecusecvtfgvtghiphhivghnthhsucdlqddutddtmdenucfjughrpeffhffvvefukfgjfhhoofggtgfgsehtjeertdertddvnecuhfhrohhmpeforgigihhmvgcuvehhvghvrghllhhivghruceomhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomheqnecuggftrfgrthhtvghrnhepgeevledtvdevueehhfevhfelhfekveeftdfgiedufeffieeltddtgfefuefhueeknecukfhppedvrgdtudemtggsudelmeekugegheemgeeltddtmeeiheeikeemvdelsgdumeelvghfheemvgektgejnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehinhgvthepvdgrtddumegtsgduleemkegugeehmeegledttdemieehieekmedvlegsudemlegvfhehmegvkegtjedphhgvlhhopehfvgguohhrrgdrhhhomhgvpdhmrghilhhfrhhomhepmhgrgihimhgvrdgthhgvvhgrlhhlihgvrhessghoohhtlhhinhdrtghomhdpnhgspghrtghpthhtohepfedtpdhrtghpthhtoheprghnughrvgifsehluhhnnhdrtghhpdhrtghpthhtohepuggrvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopehnvghtuggvvhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtp
- hhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqdgrrhhmqdhmshhmsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtohepthhhohhmrghsrdhpvghtrgiiiihonhhisegsohhothhlihhnrdgtohhmpdhrtghpthhtohepkhhusggrsehkvghrnhgvlhdrohhrghdprhgtphhtthhopegvughumhgriigvthesghhoohhglhgvrdgtohhm
+Message-Id: <20250804-feature-mwifiex-rgpower-table-loading-v1-1-358e70a4d45e@pengutronix.de>
+X-B4-Tracking: v=1; b=H4sIAIO8kGgC/x3NQQrCMBBG4auUWTsQayPBq4iLmP6JAzUpk2oLp
+ Xc3uPw27+1UoYJKt24nxVeqlNxwPnUUXj4nsIzN1JveGmcGjvDLR8HvVaJgY01zWaG8+OcEnoo
+ fJSe+OhcufYC1fqDWmhVRtv/n/jiOH1rxWCN3AAAA
+X-Change-ID: 20250804-feature-mwifiex-rgpower-table-loading-688c32ce55a4
+To: Brian Norris <briannorris@chromium.org>, 
+ Francesco Dolcini <francesco@dolcini.it>
+Cc: linux-wireless@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ kernel@pengutronix.de, s.hauer@pengutronix.de, 
+ Stefan Kerkmann <s.kerkmann@pengutronix.de>
+X-Mailer: b4 0.14.2
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Sat, 26 Jul 2025 23:24:36 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
+Marvell/NXP Wi-Fi adapters allow fine-grained adjustment of the transmit
+power levels and various other internal parameters. This is done by
+sending command streams to the adapter. One storage format of these
+command streams are the rgpower tables, which consist of multiple
+command blocks in the following format:
 
-> On Tue, Jul 22, 2025 at 02:16:16PM +0200, Maxime Chevallier wrote:
-> > Convert the at803x driver to use the generic phylib SFP handling, via a
-> > dedicated .attach_port() callback, populating the supported interfaces.
-> > 
-> > As these devices are limited to 1000BaseX, a workaround is used to also
-> > support, in a very limited way, copper modules. This is done by
-> > supporting SGMII but limiting it to 1G full duplex (in which case it's
-> > somwhat compatible with 1000BaseX).  
-> 
-> Missing e
-> 
-> > +static int at8031_attach_port(struct phy_device *phydev, struct phy_port *port)
-> >  {  
-> 
-> ...
-> 
-> > +	if (!port->is_mii)
-> > +		return 0;  
-> 
-> That seems common to all these drivers? Can it be pulled into the
-> core?
+command_block_1 = {
+XX XX LL LL XX XX ..
+}
+command_block_n = {
+XX XX LL LL XX XX XX ..
+}
 
-If we pull that into the core, we'll need to add specialised
-.attach_port() callbacks in phy_driver, such as
+XX = raw byte as hex chars
+LL = total length of the "raw" command block
 
-	.attach_mii_port() or .attach_serdes_port()
-	.attach_mdi_port()
+These command blocks are parsed into their binary representation and
+then send to the adapter. The parsing logic was adapted from NXP's
+mwifiex driver[1].
 
-I'm perfectly OK with that though :)
+The rgpower tables matching the currently set regulatory domain are
+automatically requested and applied. If not found the existing device
+tree provided power tables are tried as well.
 
-> 
-> > -	if (iface == PHY_INTERFACE_MODE_SGMII)
-> > -		dev_warn(&phydev->mdio.dev, "module may not function if 1000Base-X not supported\n");  
-> 
-> I think we need to keep this warning. I don't remember the details,
-> but i think this is the kernel saying the hardware is broken, this
-> might not work, we will give it a go, but don't blame me if it does
-> not work. We need to keep this disclaimer.
+[1]:
+https://github.com/nxp-imx/mwifiex/blob/7a8beaa1605cb0870dc7ba3312c76df91cb0d6cf/mlan/mlan_cmdevt.c#L812
 
-Sure thing, looking at it now I'm not sure why I removed that...
+Signed-off-by: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+---
+ drivers/net/wireless/marvell/mwifiex/main.c      |   5 +
+ drivers/net/wireless/marvell/mwifiex/main.h      |   3 +
+ drivers/net/wireless/marvell/mwifiex/sta_cmd.c   | 115 +++++++++++++++++++++++
+ drivers/net/wireless/marvell/mwifiex/sta_ioctl.c |  58 +++++++++++-
+ 4 files changed, 180 insertions(+), 1 deletion(-)
 
-I'll add it back,
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.c b/drivers/net/wireless/marvell/mwifiex/main.c
+index 7b50a88a18e57328a714cb3d31f6a71b7b9ec322..36c931fe5322e63a5467c645ba16e67b9b1885e7 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.c
++++ b/drivers/net/wireless/marvell/mwifiex/main.c
+@@ -494,6 +494,11 @@ static void mwifiex_free_adapter(struct mwifiex_adapter *adapter)
+ 		return;
+ 	}
+ 
++	if (adapter->rgpower_data) {
++		release_firmware(adapter->rgpower_data);
++		adapter->rgpower_data = NULL;
++	}
++
+ 	mwifiex_unregister(adapter);
+ 	pr_debug("info: %s: free adapter\n", __func__);
+ }
+diff --git a/drivers/net/wireless/marvell/mwifiex/main.h b/drivers/net/wireless/marvell/mwifiex/main.h
+index 9ac36bef980eb632dc4c0f67b9c5927b7336a6d3..27559e2ddc31757f4575071a7eb827f26cdfb1e0 100644
+--- a/drivers/net/wireless/marvell/mwifiex/main.h
++++ b/drivers/net/wireless/marvell/mwifiex/main.h
+@@ -982,6 +982,7 @@ struct mwifiex_adapter {
+ 	u8 country_code[IEEE80211_COUNTRY_STRING_LEN];
+ 	u16 max_mgmt_ie_index;
+ 	const struct firmware *cal_data;
++	const struct firmware *rgpower_data;
+ 	struct device_node *dt_node;
+ 
+ 	/* 11AC */
+@@ -1579,6 +1580,8 @@ int mwifiex_11h_handle_event_chanswann(struct mwifiex_private *priv);
+ int mwifiex_dnld_dt_cfgdata(struct mwifiex_private *priv,
+ 			    struct device_node *node, const char *prefix);
+ void mwifiex_dnld_txpwr_table(struct mwifiex_private *priv);
++int mwifiex_send_rgpower_table(struct mwifiex_private *priv, const u8 *data,
++			       const size_t size);
+ 
+ extern const struct ethtool_ops mwifiex_ethtool_ops;
+ 
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+index c93281f5a47c0ef50a66bb5f46e08a2858c261e3..6d9e2af29a69da3f6b1d9386788b4d92273380b1 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_cmd.c
+@@ -1483,6 +1483,121 @@ int mwifiex_dnld_dt_cfgdata(struct mwifiex_private *priv,
+ 	return 0;
+ }
+ 
++static int mwifiex_rgpower_table_advance_to_content(u8 **pos, const u8 *data,
++						    const size_t size)
++{
++	while (*pos - data < size) {
++		/* skip spaces, tabs and empty lines */
++		if (**pos == '\r' || **pos == '\n' || **pos == '\0' ||
++		    isspace(**pos)) {
++			(*pos)++;
++			continue;
++		}
++		/* skip line comments */
++		if (**pos == '#') {
++			*pos = strchr(*pos, '\n');
++			if (!*pos)
++				return -EINVAL;
++			(*pos)++;
++			continue;
++		}
++		return 0;
++	}
++	return 0;
++}
++
++int mwifiex_send_rgpower_table(struct mwifiex_private *priv, const u8 *data,
++				const size_t size)
++{
++	int ret = 0;
++	bool start_raw = false;
++	u8 *ptr, *token, *pos = NULL;
++	u8 *_data __free(kfree) = NULL;
++	struct mwifiex_adapter *adapter = priv->adapter;
++	struct mwifiex_ds_misc_cmd *hostcmd __free(kfree) = NULL;
++
++	hostcmd = kzalloc(sizeof(*hostcmd), GFP_KERNEL);
++	if (!hostcmd)
++		return -ENOMEM;
++
++	_data = kmemdup(data, size, GFP_KERNEL);
++	if (!_data) {
++		kfree(hostcmd);
++		return -ENOMEM;
++	}
++
++	pos = _data;
++	ptr = hostcmd->cmd;
++	while ((pos - _data) < size) {
++		ret = mwifiex_rgpower_table_advance_to_content(&pos, _data, size);
++		if (ret) {
++			mwifiex_dbg(
++				adapter, ERROR,
++				"%s: failed to advance to content in rgpower table\n",
++				__func__);
++			return ret;
++		}
++
++		if (*pos == '}' && start_raw) {
++			memcpy(&hostcmd->len, &hostcmd->cmd[2], sizeof(u16));
++			ret = mwifiex_send_cmd(priv, 0, 0, 0, hostcmd, false);
++			if (ret) {
++				mwifiex_dbg(adapter, ERROR,
++					    "%s: failed to send hostcmd %d\n",
++					    __func__, ret);
++				return ret;
++			}
++
++			memset(hostcmd->cmd, 0, MWIFIEX_SIZE_OF_CMD_BUFFER);
++			ptr = hostcmd->cmd;
++			start_raw = false;
++			pos++;
++			continue;
++		}
++
++		if (!start_raw) {
++			pos = strchr(pos, '=');
++			if (pos) {
++				pos = strchr(pos, '{');
++				if (pos) {
++					start_raw = true;
++					pos++;
++					continue;
++				}
++			}
++			mwifiex_dbg(adapter, ERROR,
++				    "%s: syntax error in hostcmd\n", __func__);
++			return -EINVAL;
++		}
++
++		if (start_raw) {
++			while ((*pos != '\r' && *pos != '\n') &&
++			       (token = strsep((char **)&pos, " "))) {
++				if (ptr - hostcmd->cmd >=
++				    MWIFIEX_SIZE_OF_CMD_BUFFER) {
++					mwifiex_dbg(
++						adapter, ERROR,
++						"%s: hostcmd is larger than %d, aborting\n",
++						__func__, MWIFIEX_SIZE_OF_CMD_BUFFER);
++					return -ENOMEM;
++				}
++
++				ret = kstrtou8(token, 16, ptr);
++				if (ret < 0) {
++					mwifiex_dbg(
++						adapter, ERROR,
++						"%s: failed to parse hostcmd %d token: %s\n",
++						__func__, ret, token);
++					return ret;
++				}
++				ptr++;
++			}
++		}
++	}
++
++	return ret;
++}
++
+ /* This function prepares command of set_cfg_data. */
+ static int mwifiex_cmd_cfg_data(struct mwifiex_private *priv,
+ 				struct host_cmd_ds_command *cmd, void *data_buf)
+diff --git a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+index f79589cafe5725f0300573337ba8bbfb471a6d31..ef6722ffdc74d8cb69091e0a171f4059980b75d3 100644
+--- a/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
++++ b/drivers/net/wireless/marvell/mwifiex/sta_ioctl.c
+@@ -180,7 +180,7 @@ int mwifiex_fill_new_bss_desc(struct mwifiex_private *priv,
+ 	return mwifiex_update_bss_desc_with_ie(priv->adapter, bss_desc);
+ }
+ 
+-void mwifiex_dnld_txpwr_table(struct mwifiex_private *priv)
++static void mwifiex_dnld_dt_txpwr_table(struct mwifiex_private *priv)
+ {
+ 	if (priv->adapter->dt_node) {
+ 		char txpwr[] = {"marvell,00_txpwrlimit"};
+@@ -190,6 +190,62 @@ void mwifiex_dnld_txpwr_table(struct mwifiex_private *priv)
+ 	}
+ }
+ 
++static int mwifiex_request_rgpower_table(struct mwifiex_private *priv)
++{
++	struct mwifiex_802_11d_domain_reg *domain_info = &priv->adapter->domain_reg;
++	struct mwifiex_adapter *adapter = priv->adapter;
++	char rgpower_table_name[30];
++	char country_code[3];
++
++	strscpy(country_code, domain_info->country_code, sizeof(country_code));
++
++	/* World regulatory domain "00" has WW as country code */
++	if (strncmp(country_code, "00", 2) == 0)
++		strscpy(country_code, "WW", sizeof(country_code));
++
++	snprintf(rgpower_table_name, sizeof(rgpower_table_name),
++		 "nxp/rgpower_%s.bin", country_code);
++
++	mwifiex_dbg(adapter, INFO, "info: %s: requesting regulatory power table %s\n",
++		    __func__, rgpower_table_name);
++
++	if (adapter->rgpower_data) {
++		release_firmware(adapter->rgpower_data);
++		adapter->rgpower_data = NULL;
++	}
++
++	if ((request_firmware(&adapter->rgpower_data, rgpower_table_name,
++			      adapter->dev))) {
++		mwifiex_dbg(
++			adapter, INFO,
++			"info: %s: failed to request regulatory power table\n",
++			__func__);
++		return -EIO;
++	}
++
++	return 0;
++}
++
++static int mwifiex_dnld_rgpower_table(struct mwifiex_private *priv)
++{
++	int ret;
++
++	ret = mwifiex_request_rgpower_table(priv);
++	if (ret)
++		return ret;
++
++	return mwifiex_send_rgpower_table(priv, priv->adapter->rgpower_data->data,
++					  priv->adapter->rgpower_data->size);
++}
++
++void mwifiex_dnld_txpwr_table(struct mwifiex_private *priv)
++{
++	if (mwifiex_dnld_rgpower_table(priv) == 0)
++		return;
++
++	mwifiex_dnld_dt_txpwr_table(priv);
++}
++
+ static int mwifiex_process_country_ie(struct mwifiex_private *priv,
+ 				      struct cfg80211_bss *bss)
+ {
 
-Maxime
+---
+base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+change-id: 20250804-feature-mwifiex-rgpower-table-loading-688c32ce55a4
+
+Best regards,
+-- 
+Stefan Kerkmann <s.kerkmann@pengutronix.de>
+
 
