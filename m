@@ -1,118 +1,116 @@
-Return-Path: <linux-kernel+bounces-755345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48D38B1A539
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:49:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id DE191B1A53A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:49:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9AA2C3BECF2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:49:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3363C3BBF64
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:49:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6A2202F9F;
-	Mon,  4 Aug 2025 14:49:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4BD1F4CAE;
+	Mon,  4 Aug 2025 14:49:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ahzPL6h9"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ErICoXQj"
+Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 365681FFC48
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 389441F461A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:49:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754318965; cv=none; b=LkVca2k5tFC6Ev6i+j3fvGGoXC4LAVWyk1rmzJS+f7//UT90czUlCytXpwll5b70eP7hnyW0rP5BeHmUaYcrWkFHfOa0/n47rh9+JuG+hqwlnNBAfZFF2jPvQ74c6OY+bIxPWpRtFrUQ7b3zQxO/ztLTrBx6gF9dmoBdyALX1Eg=
+	t=1754318976; cv=none; b=SWCdIY6qynI+AkWTX0QX+5TJitcOxUfgB2dX99V/bbgoI9SK+8GyjhDldlaMWAiZP0RRPnJm/HyUyOE0Tc/lLMRNc4ejTbVFB7nnAReoZH9PpVlsRYndKJNoxztBqhT4AP3lOL3koR7cChm5AE33D+64nAUdx3Qcl/Kzb/Ys91o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754318965; c=relaxed/simple;
-	bh=VUlFsH8Z1SwZJTEqRqnj7yvZt19eBcmsv1QjxEHuuDE=;
+	s=arc-20240116; t=1754318976; c=relaxed/simple;
+	bh=9vsCKad0S7pssQeJzda8xSzGBjYedW5lmjIKowJASe0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BzjAN8i0iTSVqUyj3fMaYyqIZJN9EOoRssCj10XeqhEKtt7gXOl8HEIgynFGbdJ7QaqMbubzXMadOFYSYki9J8pfwntFdBTNmqg/OfqA5+J7p7qhfB2jGy68fo7UlsmK+ZswdeJWMgHM4CrD8IIL2m9ioLNDf15EqVgEjykFVno=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ahzPL6h9; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-451d41e1ad1so31351275e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:49:23 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZGDU0Vd6dORS1buei7oRaSX2+QZQqPYZgKK98JLj+LHEAkmYkl6SdLGdSpDROYo3onAj5pklvcu7Ke/BCgH0DH/sNkp+PT+ZC99GFoI9ZcS5shq48ROs9C76ta+d/IfqQRnxp3P9N7+KL6LRdw2x1x1Uq6ORJTW53cO5fENv18Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ErICoXQj; arc=none smtp.client-ip=209.85.208.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-61553a028dfso4288383a12.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:49:34 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754318962; x=1754923762; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=5MAh85Y0saa+euoszKw3nA4pGBPwcX9w5nxBz0NKd0A=;
-        b=ahzPL6h9cD59BkDG0r+kCOHMNFnRsl6Xygb5ecwHoJl4dUeeKBwj5+maE5fpNK0Q6F
-         L7lKQ54YqE4q/WMuDUhy0jYPpg/raaub0fTgDG02WFV1aJh5aI0yI7xF23kaeMfvZhml
-         zg0XXJOPdkUcTVN0z756eAYOHvasfR47sdaXakOtLLtQadWJPUv/HZa5d5S2kJYbx0B6
-         j40Lvrh7I95vGO/rQVjMKNsw6JNmEIOQeIxFtiPwn+9z2Fgc3Qq5Ky1JvqZhn7gU7j4+
-         pKp7cqTwa4uq/VdP2CkZpqC4r9juCp+gKB5OJDqu+fQjLqzxDQAjiA5QPQt+2MQBRX8G
-         ozCg==
+        d=gmail.com; s=20230601; t=1754318973; x=1754923773; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=epoP8sq6ZzXGsjqp9Vf5bycC7krezH4J6H9syRshsAI=;
+        b=ErICoXQjDftmhhkba6ekepJcl2fEpOG2g+sfPBpEOYUm+FccrsJfm6uXyJDPQGRn3y
+         t4Ei/uPly04URwb9Yc7KWcSVKEq41/AvKiHv4+wNrrvHftehaGx6HdGrl4K5hdj07Liy
+         L+x0IAAwad7K2dqcfX16vU0xOQu+m0AnKteIBLkg6sMDgtO3RlISwcQ7YXAyCL3ftg51
+         2gSJ78LzrMmpklP5X7QCS3jtlCW2mL+x+kHanTD0TaAki8KJFRyB+bAXnhr2BpIuPUW7
+         71kNYwaYMHP5hqPTVUJZBW9t/Sncc/orGIXhMca/cYrHhkRHG1f0CpTM7IpY9dG6vN6D
+         d+Hw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754318962; x=1754923762;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=5MAh85Y0saa+euoszKw3nA4pGBPwcX9w5nxBz0NKd0A=;
-        b=cgecKCQyXKX5V42P+wl1C6mKBG0MG79mO2B5JgT/eBPqDCNq9GqhAqAzhCj+WgY63I
-         vQQ7zefQIVTb8o4qPQVfGKaDK+D4apUHIXmgNuHKU+wtjAXeGd5uglT9OEuMjhOHnvRv
-         krQoijshvtaxKw72C3P747A5nRxRMkW7efMFXZHx06XMlKj7NVJZ6kaBlzkant4K01I2
-         Mjk0cJyVu5Czk3mRsS+QhtrWF1vv0p7MZpraf8bQ9KW6lXctpvxnr3Y1oe64gZ5acLJs
-         Dvi0ELfkN/NRWDhz8LjfidblqbMhjzCGoGnpxaIEffjvWS545RUMMPlkgsCup44Hjoke
-         JQBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVrI+xFiz8G8kR/B2DTfTLFji9f69DZqaRvPZ9bDMoljnhUJplKrroQFSb631CzHALdk1mfgX53q6R1r2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxObJqnb4iQubcarxYc/9KdBd2cHENBbPIG7Yywi4FetHylGlHP
-	o47ZAfqGroMu1lEqODTj+vCCv8NTO0/6DumXHpDX1hWLRl2S1ERabMDhlF0AvIi8tLY=
-X-Gm-Gg: ASbGnctW+4kMlvR2CRdfj8stsBLEok9J7GR+Xf0wG9iIj9u7UY7H9U+zvYHtqFHd1GW
-	8MqhOsGnv0fuT98LDzfrflG2o5tdaRgQMVD+ZUyKXFgRwbvwNE280WSPLhiMod+b3Ro+zKdK2BX
-	a2OG5/MLPjMog9J3ZuBNrCi+rAoUnF5HSzNjP2FUtcX5twBqFqgEgOorwxdaem4WjfzM5UlKuF9
-	wqwm4LorehA6f6Mn0mGF8B4IzvyM47xwdmBnT0sFL8q7AhrU4Bsx3EXo/KDU7Obem35lNNOy1Ab
-	2mq1B1mCs+nyiV/rHeK07mlwiYZ9tvjWZuRsK87LQX4pryH2QJlvYw1MSXcHdj9qsvRJYsLpuGp
-	XTJxoj6B0bEG552qTHK7W0wZBUHTNbq6QVBvpvQ==
-X-Google-Smtp-Source: AGHT+IExUksj+hCR+gj7NMUPXAk78VVx0bqD4AGsjGqehS5x2aQlIlZBpW0rJUPuZBL200EPhOnGsQ==
-X-Received: by 2002:a05:600c:3b9f:b0:458:bc3f:6a72 with SMTP id 5b1f17b1804b1-458bc3f6d41mr61463425e9.4.1754318962444;
-        Mon, 04 Aug 2025 07:49:22 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458a7c91c0esm150589255e9.11.2025.08.04.07.49.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 07:49:22 -0700 (PDT)
-Date: Mon, 4 Aug 2025 17:49:19 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Ethan Carter Edwards <ethan@ethancedwards.com>,
-	Alex Deucher <alexander.deucher@amd.com>,
-	Christian =?iso-8859-1?Q?K=F6nig?= <christian.koenig@amd.com>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	amd-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH] drm/amdgpu/gfx10: remove redundant repeated null checks
-Message-ID: <c82931b5-0de2-4e45-a80b-3a90b0cc98a2@suswa.mountain>
-References: <20250801-amdgfx10-v1-1-e1dcbe18d84e@ethancedwards.com>
- <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+        d=1e100.net; s=20230601; t=1754318973; x=1754923773;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=epoP8sq6ZzXGsjqp9Vf5bycC7krezH4J6H9syRshsAI=;
+        b=bXoO7lfuTA3v4od7xsNUSxiby+YW4eTkBUT6D+mbfSMZPXnInSmhR9s787xXo/Gjp/
+         HyMkrRVcqvY/Jva1wIS6jPvzty3EVHke1nIEur+J7Y92H8NdYLcXchR8MF7umXDC4/de
+         2EVZgBh3gFNUZSp/R86q3wYgG3rCunhYL33Ozs42TkpvQLrjGBTZCwQ3yTbRaBAU28ez
+         7w9JJODzfPele2pwWzuVytEvboMtz0dOfVE1FZywdfVU4frDdbsnnsBLVxax96RodiAx
+         UovrPTWpZB6+jo2TlSWfUzu2NffQiKQweZNx9lPt0r5gOMQk+ZMc8tVyVKNl7fSfdXoO
+         7TxA==
+X-Forwarded-Encrypted: i=1; AJvYcCUeUC97/+GKMuGtw33IN2jFDZEHd4iF4vtIC1AnU43uT2yGXZEZXB1tgjvp2VkBDiMK6OkKT0zUUDtJZ0k=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhEmnWtaTM8Hn+m96zTSVoVbfQtQFfA+Vpdt8NbkZwFrLMH94+
+	QdemcAaa5G5OvNwxviwKdpYTs0zt6DeLivIBUziD6D0rpGOc4f0Yd2ix
+X-Gm-Gg: ASbGncsjivVUfFt0jNoE7Kd8FlffZVI0h23uXH39AIMM6TVZ7e1XToxuufbQShg1mlE
+	fOos/y51QxFla4kU3IdxeL1wiyJ8uLd+B1mKAcILbkTmgiCCCbk/+JfO0UHMGJlm3QzGsfoLpcA
+	1EN51oFbQHu2dUraNOGhF22TJ2zr01i8hVeY0xlQyZS+4phyLwJ18aHKwCHRMYuIN+FGh/hmr7y
+	qUDKpNSdClFvh8oP4VryklzHpAC0ESq2BA4I7mv4mY//OjRRht42Bekmx7UTkGeRMSN5H8kV+X0
+	tgrljIpxZ3OMir/xuLU7QHhR97ltLmEeEovZUKlGpVquGY0S7cz64OgORbANELmYYuWiZG21e+c
+	2QQLZ3m+/lNHO9Gtivr5e3A==
+X-Google-Smtp-Source: AGHT+IE2ci4iWmrg+FMq6iRk1evDI6e7iUTGKuKN7nRWDwdgN7sB8puNaMWxbs4XMQyR0gfQKmvWoQ==
+X-Received: by 2002:aa7:c855:0:b0:615:4146:72c2 with SMTP id 4fb4d7f45d1cf-615e7178341mr6838033a12.31.1754318973213;
+        Mon, 04 Aug 2025 07:49:33 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8ffb8d7sm7036966a12.47.2025.08.04.07.49.32
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Aug 2025 07:49:32 -0700 (PDT)
+Date: Mon, 4 Aug 2025 14:49:32 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Qianfeng Rong <rongqianfeng@vivo.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	linux-kernel@vger.kernel.org, maple-tree@lists.infradead.org,
+	linux-mm@kvack.org, willy@infradead.org
+Subject: Re: [PATCH] maple_tree: Remove redundant __GFP_NOWARN
+Message-ID: <20250804144932.dv7zhlr75ia6il3r@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250804125657.482109-1-rongqianfeng@vivo.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CADnq5_N+bQppUAD-qR8QC8M6nW+oRF8+7z=Qakcxc=a6Z8q4Gg@mail.gmail.com>
+In-Reply-To: <20250804125657.482109-1-rongqianfeng@vivo.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-On Mon, Aug 04, 2025 at 10:32:43AM -0400, Alex Deucher wrote:
-> On Sat, Aug 2, 2025 at 4:22 AM Ethan Carter Edwards
-> <ethan@ethancedwards.com> wrote:
-> >
-> > The repeated checks on grbm_soft_reset are unnecessary. Remove them.
-> >
-> 
-> These are not NULL checks and they are necessary.  The code is
-> checking if any bits are set in that register.  If not, then we can
-> skip that code as there is nothing to do.
-> 
+On Mon, Aug 04, 2025 at 08:56:57PM +0800, Qianfeng Rong wrote:
+>Commit 16f5dfbc851b ("gfp: include __GFP_NOWARN in GFP_NOWAIT")
+>made GFP_NOWAIT implicitly include __GFP_NOWARN.
+>
+>Therefore, explicit __GFP_NOWARN combined with GFP_NOWAIT
+>(e.g., `GFP_NOWAIT | __GFP_NOWARN`) is now redundant. Let's clean
+>up these redundant flags across subsystems.
+>
+>No functional changes.
+>
+>Signed-off-by: Qianfeng Rong <rongqianfeng@vivo.com>
 
-It's not a null check, but it is a nested check and it's a local
-variable so the patch is correct enough.  At this point we know that
-grbm_soft_reset can't be zero.
+LGTM.
 
-regards,
-dan carpenter
+Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
 
+-- 
+Wei Yang
+Help you, Help me
 
