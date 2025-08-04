@@ -1,268 +1,216 @@
-Return-Path: <linux-kernel+bounces-755733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5C92B1AB00
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:42:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC738B1AB03
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D30A3AB377
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:42:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD1FB17F0B4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:44:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDBC2900BA;
-	Mon,  4 Aug 2025 22:42:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49885290BC8;
+	Mon,  4 Aug 2025 22:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NrMvLysl";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3MCexnNW"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y6V4gYdE"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1917A1917E3;
-	Mon,  4 Aug 2025 22:42:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9688D17BA9;
+	Mon,  4 Aug 2025 22:44:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754347326; cv=none; b=UTRHdbOM+b43+bPf4oGdvSEOt5tIx2/iAqoMBrOFla8DGx/IyUtk6JoPpfOBvhln1Smnzsxoxa5peoQAtQ7IRO9Kr9bRCBJqpje3nYCVNwWZLqslG+PEHdZJwlKbgWilQ6vxI974+DO/E/HTB5ne8QCwlnMVL5WdzkKFWeHqGTY=
+	t=1754347469; cv=none; b=nUPiMNbxJZ7zsZrFzoKZqYTxF3TchKccweHQejqyxizXwDw5ZhSBoKpmVh7TSlAP/cNDSilAgvt6+zBurTbQQLDNXfHeXLyyk/S/7hjA8XbECUW6+qUwx7S63X1104QsjFJoxyV2V10W+hiM9ZzcJenh0DNKnp4WCfu/42/vcb0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754347326; c=relaxed/simple;
-	bh=F3rT9VhiEn1cprxuycemIGbq7Kq3qEL31yLdVczjeKU=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Ror+cVc+bRLEw/lBd+KZuxB6o8OySVTdn1m/qrGQ/4AxqVGctv6G05BUi+DQ3Tc1A9p55Df/n9A0LH6vfJ5cZ5RoAXKon/R+jW0qiR6rDO4cwdg6oWkR9sJPvAgfbsAO6CfFErCPf6XOB/ghBxPAeISu4Je+ow2LW118JslCLH8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NrMvLysl; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3MCexnNW; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Mon, 04 Aug 2025 22:42:00 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1754347323;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dt9Td28EOzuc+bIXGqpUQkEOOmQqt80jnH8LgqzNK2g=;
-	b=NrMvLyslYkuXqkCH9slSGbiaRVjESFRg2SI5lKCi6TAHV54s7BN965Nz3M/Z6uiUu45r9v
-	AOATC1Fy6oPEWYxF0tar1XyR/blVPh5aOvqfh+boTwkQNhwgc9WEYkRP2irNtO4gU21188
-	LOzaVs7c48kRv7HwdkaFIfcWgQdeBFHb4ZcXlWrqBawK4wvICTevJ3dCU8fuckWQdG8BEW
-	qyUL7pqglkq2QHx3kr7dSQpBWBrir4W2AFjUSkYgagmZf17zDbjorNfvRsYY6uCxZWYvLG
-	YtaS6AxaivYrbW+xqWQCejxyGpDkt9TxIOZeHk9KOSisLUz6zBdUGinc9/G2Zw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1754347323;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=dt9Td28EOzuc+bIXGqpUQkEOOmQqt80jnH8LgqzNK2g=;
-	b=3MCexnNWKgaj7f8uYvmWWXzarWCMb4pRvojly08JxqwTHWfQcRgri8aytnfDBtxPeBNJgt
-	/AaIr/Ovr0U3H4Cg==
-From: "tip-bot2 for Thomas Gleixner" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: x86/urgent] x86/irq: Plug vector setup race
-Cc: Hogan Wang <hogan.wang@huawei.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <draft-87ikjhrhhh.ffs@tglx>
-References: <draft-87ikjhrhhh.ffs@tglx>
+	s=arc-20240116; t=1754347469; c=relaxed/simple;
+	bh=A/gmTNGkxJCuYjgNPgHdo50hOP3nYxb3saeb42KSLbk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=mr+1rIVTF/a9+wBSFMCBxPtuhJu9XUIxC3K7Sq5XXp5+g/l9YkwyLmK5n2mCgs65+ys23fjNcPwbEI24Qq2Pjf5qzZyFftUphOQpXS9muOUEmG8QYpZbj/Q7K5mC3AnpwK5QU++myC78tqMQJDh5ZeobZPuSm8fwsZxr1sh962g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y6V4gYdE; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2A755C4CEE7;
+	Mon,  4 Aug 2025 22:44:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754347469;
+	bh=A/gmTNGkxJCuYjgNPgHdo50hOP3nYxb3saeb42KSLbk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=Y6V4gYdEfbQGemhv1Z+BENG5n4yj+p/d0tSuUyK02sG14UV75z9TN2rOhktg2BEBi
+	 0+zm4JwKr4W+vMDwvOd4EHGdLCYu9AC6Ak1rKLSVlq3wbdeXuY1t+9Ob1yWqC4L8Ug
+	 CoVgemt+k71cWdfkttxKnWMtiRXqLQ7AVDcjLKZqBFkYP7NAEE4pd+FpxBtZBnlbY1
+	 pAghxJJGb5dO2jn44VClO+WSkeoWGv/ChaH1a7+nfbk6kBWDEKkRHwzTNwykZaV0vr
+	 xM1hpjXvY8lZd5/ruaAwHAnzJW8KRmFgOFS5D/iCuA597WsQMiTLCqFcKF5N9J1Ogn
+	 XrQ43a5Rv3w/A==
+Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-af925cbd73aso794553666b.1;
+        Mon, 04 Aug 2025 15:44:29 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUbJMiUDX7WToWx4+XHbwWcl8JVhhlid2Rj2y2cUdTomY+VGu5OPLveS8owKOZ46upHJhU+oXjUi6pxhEM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHuxEmXWbnwFDEnp4DWXBtPBFZFFp9KsEk3cgqnkHRgAED/oP4
+	5vzTkXiglXfzzj7WjwN38WdoVD3iJRLWPw2U4OYq83DTq+NUG/EMp6wZR0r8K+5N3DTrNaeksGA
+	I2z/BS4wTKmMOIBGM4Lyyj5zfVLVeag==
+X-Google-Smtp-Source: AGHT+IEBcUu9b2gOAqZee2jbXAiv0RPVSRoyo60pTqn8Iz+hsBZYmyDy6z8blihD+g6akKNCtv5vSQPKepdGjmR5wwE=
+X-Received: by 2002:a17:907:6d04:b0:ae3:f524:b51 with SMTP id
+ a640c23a62f3a-af93ffa04d4mr1238512066b.10.1754347467727; Mon, 04 Aug 2025
+ 15:44:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <175434732073.1420.15265473606517387764.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
+References: <CAL_Jsq+J+6gxOzsXe9t9==GGJ721jrbNhaGMHZyfCTxkM8B0eA@mail.gmail.com>
+ <20250804164329.98971-1-kjw1627@gmail.com>
+In-Reply-To: <20250804164329.98971-1-kjw1627@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Mon, 4 Aug 2025 17:44:16 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJjbtrn8KjLa=wSZf+g-j9GtmSt-LVuW42A+2eBvRwJtw@mail.gmail.com>
+X-Gm-Features: Ac12FXzr0glTSuau1yEkesBqX2lyUO6QagOJkS1Kg-7UaglLgV-Z8LfsPRyR8S0
+Message-ID: <CAL_JsqJjbtrn8KjLa=wSZf+g-j9GtmSt-LVuW42A+2eBvRwJtw@mail.gmail.com>
+Subject: Re: [PATCH] of: address: Fix bug to get the highest cpu address of
+ subtrees for dma
+To: Joonwon Kang <kjw1627@gmail.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	nsaenzjulienne@suse.de, saravanak@google.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-The following commit has been merged into the x86/urgent branch of tip:
+On Mon, Aug 4, 2025 at 11:43=E2=80=AFAM Joonwon Kang <kjw1627@gmail.com> wr=
+ote:
+>
+> On Sun, Jul 27, 2025 at 1:01=E2=80=AFPM Joonwon Kang <kjw1627@gmail.com> =
+wrote:
+> > >
+> > > The function of_dma_get_max_cpu_address() for a device node should ch=
+oose
+> > > the highest cpu address among the ones that nodes can access.
+> > > However, there was a bug of choosing the lowest cpu address and this
+> > > commit is to fix it.
+> >
+> > Please provide a test case in the DT unittests or at least details on
+> > the DT that is affected by the bug.
+>
+> While working on the DT unittests, I got two questions to which I had fai=
+led to
+> have clear answers. Let's assume that the device tree looks as follows.
+>
+> parent_bus@... {
+>         #address-cells =3D <1>;
+>         #size-cells =3D <1>;
+>         dma-ranges =3D <0x0 0x0 0x1000>;
+>
+>         child_bus@... {
+>                 #address-cells =3D <1>;
+>                 #size-cells =3D <1>;
+>                 /* Note that the size part exceeds the `parent_bus`' dma =
+size. */
+>                 dma-ranges =3D <0x0 0x0 0x2000>;
+>
+>                 child_device_1@... {
+>                         /*
+>                          * Note that the size part exceeds the `child_bus=
+`' dma size and
+>                          * also the `parent_bus`' dma size.
+>                          */
+>                         reg =3D <0x0 0x3000>;
 
-Commit-ID:     ce0b5eedcb753697d43f61dd2e27d68eb5d3150f
-Gitweb:        https://git.kernel.org/tip/ce0b5eedcb753697d43f61dd2e27d68eb5d=
-3150f
-Author:        Thomas Gleixner <tglx@linutronix.de>
-AuthorDate:    Thu, 24 Jul 2025 12:49:30 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Mon, 04 Aug 2025 23:34:03 +02:00
+dma-ranges is irrelevant for 'reg'. 'ranges' applies to 'reg'.
 
-x86/irq: Plug vector setup race
+>                 };
+>
+>                 child_device_2@... {
+>                         /*
+>                          * Note that the address part transitively exceed=
+s the
+>                          *`parent_bus`' end address.
+>                          */
+>                         reg =3D <0x1000 0x1000>
+>                 };
+>         };
+>
+>         another_child_bus@... {
+>                 #address-cells =3D <1>;
+>                 #size-cells =3D <1>;
+>                 dma-ranges =3D <0x0 0x0 0x300>;
+>         };
+> };
+>
+> Q1: What is the expected output of `of_dma_get_max_cpu_address(parent_bus=
+)`?
+> I think it should be 0xfff since the `dma-ranges` in the `child_bus` shou=
+ld be
+> capped to the parent max cpu address instead of treating it as if the
+> `dma-ranges` in the `child_bus` does not exist. The current expectation i=
+s
+> 0x2ff which is for `another_child_bus` based on the existing test case
+> in drivers/of/unittest.c and drivers/of/tests-address.dtsi.
 
-Hogan reported a vector setup race, which overwrites the interrupt
-descriptor in the per CPU vector array resulting in a disfunctional device.
+0x2FF is correct. The max address returned is the minimum.
 
-CPU0				CPU1
-				interrupt is raised in APIC IRR
-				but not handled
-  free_irq()
-    per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
+>
+> Q2: `of_dma_get_max_cpu_address(child_device_1, reg_prop, &addr, &length)=
+`
+> returns a success with `addr` set to 0x0 and `length` set to 0x3000. Simi=
+larly,
+> `of_translate_dma_address(child_device_1, reg_prop)` returns a success. O=
+n the
+> other hand, both functions for `child_device_2` return a failure since th=
+e
+> address is out of parent ranges. I think those functions should also fail
+> for `child_device_1` since the dma "end" address of the `child_device_1` =
+node
+> is not valid in the first place. Are the current behaviors of both functi=
+ons
+> intended?
 
-  request_irq()			common_interrupt()
-  				  d =3D this_cpu_read(vector_irq[vector]);
+Passing in child_device_1 is invalid. It doesn't contain dma-ranges,
+so it will return PHYS_ADDR_MAX.
 
-    per_cpu(vector_irq, CPU1)[vector] =3D desc;
+Passing 'reg' into the DMA translation functions is invalid. 'reg' has
+0 to do with DMA addresses.
 
-    				  if (d =3D=3D VECTOR_SHUTDOWN)
-				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
+Rob
 
-free_irq() cannot observe the pending vector in the CPU1 APIC as there is
-no way to query the remote CPUs APIC IRR.
-
-This requires that request_irq() uses the same vector/CPU as the one which
-was freed, but this also can be triggered by a spurious interrupt.
-
-Interestingly enough this problem managed to be hidden for more than a
-decade.
-
-Prevent this by reevaluating vector_irq under the vector lock, which is
-held by the interrupt activation code when vector_irq is updated.
-
-To avoid ifdeffery or IS_ENABLED() nonsense, move the
-[un]lock_vector_lock() declarations out under the
-CONFIG_IRQ_DOMAIN_HIERARCHY guard as it's only provided when
-CONFIG_X86_LOCAL_APIC=3Dy.
-
-The current CONFIG_IRQ_DOMAIN_HIERARCHY guard is selected by
-CONFIG_X86_LOCAL_APIC, but can also be selected by other parts of the
-Kconfig system, which makes 32-bit UP builds with CONFIG_X86_LOCAL_APIC=3Dn
-fail.
-
-Can we just get rid of this !APIC nonsense once and forever?
-
-Fixes: 9345005f4eed ("x86/irq: Fix do_IRQ() interrupt warning for cpu hotplug=
- retriggered irqs")
-Reported-by: Hogan Wang <hogan.wang@huawei.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Tested-by: Hogan Wang <hogan.wang@huawei.com>
-Link: https://lore.kernel.org/all/draft-87ikjhrhhh.ffs@tglx
----
- arch/x86/include/asm/hw_irq.h | 12 +++---
- arch/x86/kernel/irq.c         | 63 +++++++++++++++++++++++++---------
- 2 files changed, 55 insertions(+), 20 deletions(-)
-
-diff --git a/arch/x86/include/asm/hw_irq.h b/arch/x86/include/asm/hw_irq.h
-index 162ebd7..cbe19e6 100644
---- a/arch/x86/include/asm/hw_irq.h
-+++ b/arch/x86/include/asm/hw_irq.h
-@@ -92,8 +92,6 @@ struct irq_cfg {
-=20
- extern struct irq_cfg *irq_cfg(unsigned int irq);
- extern struct irq_cfg *irqd_cfg(struct irq_data *irq_data);
--extern void lock_vector_lock(void);
--extern void unlock_vector_lock(void);
- #ifdef CONFIG_SMP
- extern void vector_schedule_cleanup(struct irq_cfg *);
- extern void irq_complete_move(struct irq_cfg *cfg);
-@@ -101,12 +99,16 @@ extern void irq_complete_move(struct irq_cfg *cfg);
- static inline void vector_schedule_cleanup(struct irq_cfg *c) { }
- static inline void irq_complete_move(struct irq_cfg *c) { }
- #endif
--
- extern void apic_ack_edge(struct irq_data *data);
--#else	/*  CONFIG_IRQ_DOMAIN_HIERARCHY */
-+#endif /* CONFIG_IRQ_DOMAIN_HIERARCHY */
-+
-+#ifdef CONFIG_X86_LOCAL_APIC
-+extern void lock_vector_lock(void);
-+extern void unlock_vector_lock(void);
-+#else
- static inline void lock_vector_lock(void) {}
- static inline void unlock_vector_lock(void) {}
--#endif	/* CONFIG_IRQ_DOMAIN_HIERARCHY */
-+#endif
-=20
- /* Statistics */
- extern atomic_t irq_err_count;
-diff --git a/arch/x86/kernel/irq.c b/arch/x86/kernel/irq.c
-index 9ed29ff..10721a1 100644
---- a/arch/x86/kernel/irq.c
-+++ b/arch/x86/kernel/irq.c
-@@ -256,26 +256,59 @@ static __always_inline void handle_irq(struct irq_desc =
-*desc,
- 		__handle_irq(desc, regs);
- }
-=20
--static __always_inline int call_irq_handler(int vector, struct pt_regs *regs)
-+static struct irq_desc *reevaluate_vector(int vector)
- {
--	struct irq_desc *desc;
--	int ret =3D 0;
-+	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
-+
-+	if (!IS_ERR_OR_NULL(desc))
-+		return desc;
-+
-+	if (desc =3D=3D VECTOR_UNUSED)
-+		pr_emerg_ratelimited("No irq handler for %d.%u\n", smp_processor_id(), vec=
-tor);
-+	else
-+		__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+	return NULL;
-+}
-+
-+static __always_inline bool call_irq_handler(int vector, struct pt_regs *reg=
-s)
-+{
-+	struct irq_desc *desc =3D __this_cpu_read(vector_irq[vector]);
-=20
--	desc =3D __this_cpu_read(vector_irq[vector]);
- 	if (likely(!IS_ERR_OR_NULL(desc))) {
- 		handle_irq(desc, regs);
--	} else {
--		ret =3D -EINVAL;
--		if (desc =3D=3D VECTOR_UNUSED) {
--			pr_emerg_ratelimited("%s: %d.%u No irq handler for vector\n",
--					     __func__, smp_processor_id(),
--					     vector);
--		} else {
--			__this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
--		}
-+		return true;
- 	}
-=20
--	return ret;
-+	/*
-+	 * Reevaluate with vector_lock held to prevent a race against
-+	 * request_irq() setting up the vector:
-+	 *
-+	 * CPU0				CPU1
-+	 *				interrupt is raised in APIC IRR
-+	 *				but not handled
-+	 * free_irq()
-+	 *   per_cpu(vector_irq, CPU1)[vector] =3D VECTOR_SHUTDOWN;
-+	 *
-+	 * request_irq()		common_interrupt()
-+	 *				  d =3D this_cpu_read(vector_irq[vector]);
-+	 *
-+	 * per_cpu(vector_irq, CPU1)[vector] =3D desc;
-+	 *
-+	 *				  if (d =3D=3D VECTOR_SHUTDOWN)
-+	 *				    this_cpu_write(vector_irq[vector], VECTOR_UNUSED);
-+	 *
-+	 * This requires that the same vector on the same target CPU is
-+	 * handed out or that a spurious interrupt hits that CPU/vector.
-+	 */
-+	lock_vector_lock();
-+	desc =3D reevaluate_vector(vector);
-+	unlock_vector_lock();
-+
-+	if (!desc)
-+		return false;
-+
-+	handle_irq(desc, regs);
-+	return true;
- }
-=20
- /*
-@@ -289,7 +322,7 @@ DEFINE_IDTENTRY_IRQ(common_interrupt)
- 	/* entry code tells RCU that we're not quiescent.  Check it. */
- 	RCU_LOCKDEP_WARN(!rcu_is_watching(), "IRQ failed to wake up RCU");
-=20
--	if (unlikely(call_irq_handler(vector, regs)))
-+	if (unlikely(!call_irq_handler(vector, regs)))
- 		apic_eoi();
-=20
- 	set_irq_regs(old_regs);
+>
+> > > Signed-off-by: Joonwon Kang <kjw1627@gmail.com>
+> > > ---
+> > >  drivers/of/address.c | 12 ++++++++++--
+> > >  1 file changed, 10 insertions(+), 2 deletions(-)
+> > >
+> > > diff --git a/drivers/of/address.c b/drivers/of/address.c
+> > > index f0f8f0dd191c..5e984e0d372b 100644
+> > > --- a/drivers/of/address.c
+> > > +++ b/drivers/of/address.c
+> > > @@ -969,6 +969,7 @@ phys_addr_t __init of_dma_get_max_cpu_address(str=
+uct device_node *np)
+> > >  {
+> > >         phys_addr_t max_cpu_addr =3D PHYS_ADDR_MAX;
+> > >         struct of_range_parser parser;
+> > > +       phys_addr_t max_subtree_max_addr =3D PHYS_ADDR_MAX;
+> > >         phys_addr_t subtree_max_addr;
+> > >         struct device_node *child;
+> > >         struct of_range range;
+> > > @@ -992,10 +993,17 @@ phys_addr_t __init of_dma_get_max_cpu_address(s=
+truct device_node *np)
+> > >
+> > >         for_each_available_child_of_node(np, child) {
+> > >                 subtree_max_addr =3D of_dma_get_max_cpu_address(child=
+);
+> > > -               if (max_cpu_addr > subtree_max_addr)
+> > > -                       max_cpu_addr =3D subtree_max_addr;
+> > > +               if (subtree_max_addr =3D=3D PHYS_ADDR_MAX)
+> > > +                       continue;
+> > > +
+> > > +               if (max_subtree_max_addr =3D=3D PHYS_ADDR_MAX)
+> > > +                       max_subtree_max_addr =3D subtree_max_addr;
+> > > +               else
+> > > +                       max_subtree_max_addr =3D max(max_subtree_max_=
+addr, subtree_max_addr);
+> > >         }
+> > >
+> > > +       max_cpu_addr =3D min(max_cpu_addr, max_subtree_max_addr);
+> > > +
+> > >         return max_cpu_addr;
+> > >  }
+> > >
+> > > --
+> > > 2.46.0
+> > >
 
