@@ -1,147 +1,148 @@
-Return-Path: <linux-kernel+bounces-755027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755026-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97701B1A038
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:06:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 869F0B1A034
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:06:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5085317902D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3EED11888A32
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:06:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C28B2512E6;
-	Mon,  4 Aug 2025 11:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E9923183B;
+	Mon,  4 Aug 2025 11:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="JpZJwxcd"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oLyE1HJB"
+Received: from mail-ed1-f68.google.com (mail-ed1-f68.google.com [209.85.208.68])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7555E22D7B6;
-	Mon,  4 Aug 2025 11:06:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7ABAE23D294
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:06:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.68
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754305587; cv=none; b=vEqrDYgM0y4zON+220kedcITkW8fbSqEzw7AJDYBExt37DUfMIJzVGLsrwnO/rzPrWdu0VrxMJhXF60opfRgnA2Fej8NPUt8SGEUcZ1QpR7rox41UYXTcVdQAPa5SDreSxU8M8/SMB9l3zrFWfl5BCLoojyUKqqvs9BsyxzdBZY=
+	t=1754305577; cv=none; b=P0F2Qs46MDfh7JuJHePRUrmRkTM8+EdvUKV0HOpR3hasq/J5MkRe4hDOwiGHnF00X7cp0TTYrIqzrnd5fY+6xbDLN4/Df2sIX3U3/Nx8FBaN4/6VtR4vnZhZtcfckAXgXVTw85IQh4YKxTfBNHKnsT3xBlx+YUVtIkZ5eiAzucI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754305587; c=relaxed/simple;
-	bh=Pz8xR+N5ldGCYRGIH4tTQXkNn2Jm3+petht1bXnD+5s=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=SjBHLJ0SXnbG9cipZjQN+aGnoQj4qxvVSSVDop3VD9jgv2S3khl2mu65F2TvGEi6cfY5xsebEhVcyi44HQV+L1Km+TATH3rFFIrU9oESNEspjHfrtuXnoGYj2x8oi8gRzdmi0xFE7p3bPPnxK6agzlpQmzItigwNQRyNEhSsJdo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=JpZJwxcd; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574ADBZM001867;
-	Mon, 4 Aug 2025 11:06:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=6yN5wtYh9CT6X/+gT0rgrN6ed/A2Ur45glLbTmga6
-	+M=; b=JpZJwxcdX1ovWCU9RCSoLqPQGIef3yiW8dcMzbdeH/qb6lnGHlR2EMJPO
-	AugTEi+/tu7bfv8TeWR7tGKnuviBlQsbCcAr/cINoL9mJvu55v/sYJHyvA/j519i
-	m397H/OWeC+46H1AyEIdc00yKHJLq23Ju0l2GrZM5ddoITl6tVa60l02RZqGMz5R
-	1Zwodx5QYFRiDEK+DbruLVo8551N8U3goLXIj0zGytER4w6On8GtSztD28QwuynH
-	f6rd9p/httCGfP7CpQ9Bfe687RP0kWtMxXFQbzwik9hBYevNVKtb3G4tfqkp2Wxn
-	X8ILc4IVYhDBez94r24ymGx+DcxWQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48993p8nuy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 11:06:12 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.1.12/8.18.0.8) with ESMTP id 574B6CMX013973;
-	Mon, 4 Aug 2025 11:06:12 GMT
-Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 48993p8nuw-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 11:06:12 +0000 (GMT)
-Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 574Ab09x001973;
-	Mon, 4 Aug 2025 11:06:11 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 489y7knauj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Mon, 04 Aug 2025 11:06:11 +0000
-Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 574B69BK40174072
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Mon, 4 Aug 2025 11:06:09 GMT
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AEF862004B;
-	Mon,  4 Aug 2025 11:06:09 +0000 (GMT)
-Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6AD0720043;
-	Mon,  4 Aug 2025 11:06:07 +0000 (GMT)
-Received: from li-c6426e4c-27cf-11b2-a85c-95d65bc0de0e.in.ibm.com (unknown [9.204.207.58])
-	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Mon,  4 Aug 2025 11:06:07 +0000 (GMT)
-From: Gautam Menghani <gautam@linux.ibm.com>
-To: peterz@infradead.org, mingo@redhat.com, acme@kernel.org,
-        namhyung@kernel.org, mark.rutland@arm.com,
-        alexander.shishkin@linux.intel.com, jolsa@kernel.org,
-        irogers@google.com, adrian.hunter@intel.com, kan.liang@linux.intel.com
-Cc: Gautam Menghani <gautam@linux.ibm.com>, linux-perf-users@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-Subject: [PATCH] perf auxtrace: Avoid redundant NULL check in auxtrace_mmap_params__set_idx()
-Date: Mon,  4 Aug 2025 16:36:01 +0530
-Message-ID: <20250804110602.23422-1-gautam@linux.ibm.com>
-X-Mailer: git-send-email 2.49.0
+	s=arc-20240116; t=1754305577; c=relaxed/simple;
+	bh=w5XtDIivcbCdAqyNR6P6njAnhtzT50eI72GOitq7UVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AQdl8TIBHjxViLyOtLqDBwoCtbdZc0sjn/wZnC/MwYUatPHN0FGktjgVlFJV3b5kwenW05pevDGnxMhSehNDSTONspB3faSnE7CVifo6sRKk8BzNr1HpXHsH0A0z3JwzUQRHfhA01jVEoRFx9GfKO+NgdhuLe27THYhaT38sf5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oLyE1HJB; arc=none smtp.client-ip=209.85.208.68
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-ed1-f68.google.com with SMTP id 4fb4d7f45d1cf-6157ed5dc51so7505776a12.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:06:15 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754305574; x=1754910374; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=AbCL33p6FgXvGTA+R2ME1gzKoUWjtIJjxxkRY3HfTrM=;
+        b=oLyE1HJB8aSCeCp6zX78iyLdsQH8Fgmt1tFEQLcvr/mKVzsjQAzFPP6QUBHt93gpAj
+         7azeCvO3/Xe5aWsU+BlloT9Vr5CXwLfBYyd5bsLpeeAi2pAXwiArHLum+kSAbbXAT3xq
+         gouVb6LVWBPhDik8RmUFvpy9Kj1aDN3CZzwUUo+m6px6HZmpLuRVy8CAZn+GQGM5w1Mp
+         LytyhVtT6DjJy2Ofrvl8dcfuL5CEXXmfnaDloGlA/rKxoL2zBIuTZc0JJhOYJou6+wEC
+         bnQT5rHlyduHDchPCV2rjMQqfo8WQiyJxsp85ErX2klfVoKdJI+IR5xspMhHsAm1y84g
+         cEdA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754305574; x=1754910374;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=AbCL33p6FgXvGTA+R2ME1gzKoUWjtIJjxxkRY3HfTrM=;
+        b=aUgfkgKFyAd0jeY9/LsfuTLCAlDa2mB2+G+DQo6LNEcxnzrBl2dQmG1IGS1ExjUj+Y
+         Oh24O4Bi4OVmMYYXexrUtPX5TCiv9+rThfcR+/BqrMQeA6SebMnqYDQ5OIu9ODxAUQWv
+         RcUTbQP7a2ul2DO0csTbvazxVceSDx2aPXgKaNGiCyzn4MBsV29JO2nIT/ze3Xj34oIb
+         pODdgpUZNfzjmtC2iJH4jQ6pH+9wWhVl/VLpJsoVfr+PgBZhdbXY5XLpWzNoZIRXNpLg
+         E2uyp/CuVCGqxWiWHdzJaUXpp7iqJ8ztdP3vG90n9aAmBOT+SNz7yfYg1GBeZpsr0xGE
+         4qhA==
+X-Gm-Message-State: AOJu0YzZSXQFNOrT5LU8lb027s98ZTbI5gH6FmO0uavhD4VBhIEIdCcj
+	0qg5D/o8yqajruM2hcjpuc/wq/ejUh/mCMLbXWfaGWv4BwgBM/aSQUHibsn0gBe0TCM=
+X-Gm-Gg: ASbGncuuKQ2gJzYZjKkBP5+Ys0ejYG/g8JqyqIV2GFfXFeWR0F9GGt1JTkPvrVRDDxC
+	aq0j0biGk+cDbnHDvc86jWNFfIuwlfwNk5TPHNVqproyn9Fz5l2q7h7Nu4sm9oM14/BvbMGZedU
+	kzLJMhT+oDJ7cVwCROBdzrzogumKjaIXJM5Sw37IbGVR6Bt6wY5wPbs8mjpdAQLAcgEdfQ06woO
+	CRKJ6+0bUDpPGNmliQhoZ9vwftj5GNS7LxD5BIz8o+IzW0g3ulIszoV6MOSOgwaXVQssN4gmlQq
+	5VYIQePauCVDESrwDdgBc8ebMIs7sZfcJcBmK41jyBF+XvRaGsquuvwz1cX4DkJWr2WK7/IAaGz
+	VHd/kph7W3217K7KHZgaEeklal7+11A==
+X-Google-Smtp-Source: AGHT+IE4XPeXZCbPPTnUeGFh37dBHmQZ35wpgsW3hiGwLGtsXzKowOSWjqCke7T73Fj9hT1fEebjmg==
+X-Received: by 2002:a17:907:3f2a:b0:ae3:8c9b:bd61 with SMTP id a640c23a62f3a-af93ffa2d63mr907152566b.12.1754305573593;
+        Mon, 04 Aug 2025 04:06:13 -0700 (PDT)
+Received: from [192.168.0.33] ([82.76.24.202])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a076409sm721053666b.12.2025.08.04.04.06.12
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 04:06:13 -0700 (PDT)
+Message-ID: <e2c031e8-43bd-41e5-9074-c8b1f89e04e6@linaro.org>
+Date: Mon, 4 Aug 2025 14:06:11 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: BpsArRSNdP2bg3iG7a35nNOohft_SuGc
-X-Authority-Analysis: v=2.4 cv=LOFmQIW9 c=1 sm=1 tr=0 ts=68909424 cx=c_pps
- a=AfN7/Ok6k8XGzOShvHwTGQ==:117 a=AfN7/Ok6k8XGzOShvHwTGQ==:17
- a=2OwXVqhp2XgA:10 a=VnNF1IyMAAAA:8 a=iAiL9whnm18U7maMRcMA:9
-X-Proofpoint-GUID: yehqQ7GiD_8sHEwoBMN-B2MxSrOYRS5U
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA1OSBTYWx0ZWRfXwy2lpHPRcJyx
- E+fKDdWiYwlk+L7eI7KwwXXeHK50U5TdrqChvdvTnBKFARxNz8Y8oGHST6HKXvOOvjPh4elBABR
- 70SqJZK6rD+5R9ULpC0gJFYhsdREEHwzOpK9JRvG23BRnA5paoNOTMEZmAVrQEQcmRdEuReLgob
- 89Bz+r6bXreFWRUy4WmDw+QfjlbWDnabDMObqflwbdr4sXFs0HximaDm13HcgS84C7+IhOSdTSA
- 39J093FGXSWw4gKSYbv1HcU2RiBZmkbFa9YZPVqZhTWsJnzW/i1Hfm73KfjhOjkLYLgf4ed8oHu
- s8WCsvC4oVT2yR9IQ/bD9uPRMoSe3l6AlxeRMzsIYrpo1E4GnRI9hQNCcd5am1x9H3JEOzuGwy1
- KFQqHVXSKh3F916IJ9GhrGdeNoelNAII4NtgPZEE1NJGfIGmwhnA6Y2SAnhzML12XyozYgIJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_04,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- priorityscore=1501 adultscore=0 mlxlogscore=999 mlxscore=0 clxscore=1015
- malwarescore=0 suspectscore=0 impostorscore=0 phishscore=0 lowpriorityscore=0
- bulkscore=0 spamscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040059
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
+To: Michal Hocko <mhocko@suse.com>, David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ linux-arch@vger.kernel.org, linux-mm@kvack.org, tglx@linutronix.de,
+ andersson@kernel.org, pmladek@suse.com,
+ linux-arm-kernel@lists.infradead.org, linux-hardening@vger.kernel.org,
+ corbet@lwn.net, mojha@qti.qualcomm.com, rostedt@goodmis.org,
+ jonechou@google.com, tudor.ambarus@linaro.org
+References: <20250724135512.518487-1-eugen.hristev@linaro.org>
+ <20250724135512.518487-23-eugen.hristev@linaro.org>
+ <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
+ <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
+ <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+ <aJCRgXYIjbJ01RsK@tiehlicka>
+From: Eugen Hristev <eugen.hristev@linaro.org>
+Content-Language: en-US
+In-Reply-To: <aJCRgXYIjbJ01RsK@tiehlicka>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Since commit eead8a011477 ("libperf threadmap: Don't segv for index 0 for the
-NULL 'struct perf_thread_map' pointer"), perf_thread_map__pid() can
-check for a NULL map and return -1 if idx is 0. Cleanup
-auxtrace_mmap_params__set_idx() and remove the redundant NULL check.
 
-No functional change intended.
 
-Signed-off-by: Gautam Menghani <gautam@linux.ibm.com>
----
- tools/perf/util/auxtrace.c | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+On 8/4/25 13:54, Michal Hocko wrote:
+> On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
+>> On 30.07.25 15:57, Eugen Hristev wrote:
+> [...]
+>>> Yes, registering after is also an option. Initially this is how I
+>>> designed the kmemdump API, I also had in mind to add a flag, but, after
+>>> discussing with Thomas Gleixner, he came up with the macro wrapper idea
+>>> here:
+>>> https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
+>>> Do you think we can continue that discussion , or maybe start it here ?
+>>
+>> Yeah, I don't like that, but I can see how we ended up here.
+>>
+>> I also don't quite like the idea that we must encode here what to include in
+>> a dump and what not ...
+>>
+>> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
+>> where we e.g., have
+>>
+>> VMCOREINFO_STRUCT_SIZE(pglist_data);
+>>
+>> Could we similar have some place where we construct what to dump similarly,
+>> just not using the current values, but the memory ranges?
+> 
+> All those symbols are part of kallsyms, right? Can we just use kallsyms
+> infrastructure and a list of symbols to get what we need from there?
+> 
+> In other words the list of symbols to be completely external to the code
+> that is defining them?
 
-diff --git a/tools/perf/util/auxtrace.c b/tools/perf/util/auxtrace.c
-index ebd32f1b8f12..5e437133c753 100644
---- a/tools/perf/util/auxtrace.c
-+++ b/tools/perf/util/auxtrace.c
-@@ -185,10 +185,7 @@ void auxtrace_mmap_params__set_idx(struct auxtrace_mmap_params *mp,
- 
- 	if (per_cpu) {
- 		mp->cpu = perf_cpu_map__cpu(evlist->core.all_cpus, idx);
--		if (evlist->core.threads)
--			mp->tid = perf_thread_map__pid(evlist->core.threads, 0);
--		else
--			mp->tid = -1;
-+		mp->tid = perf_thread_map__pid(evlist->core.threads, 0);
- 	} else {
- 		mp->cpu.cpu = -1;
- 		mp->tid = perf_thread_map__pid(evlist->core.threads, idx);
--- 
-2.49.0
+Some static symbols are indeed part of kallsyms. But some symbols are
+not exported, for example patch 20/29, where printk related symbols are
+not to be exported. Another example is with static variables, like in
+patch 17/29 , not exported as symbols, but required for the dump.
+Dynamic memory regions are not have to also be considered, have a look
+for example at patch 23/29 , where dynamically allocated memory needs to
+be registered.
 
+Do you think that I should move all kallsyms related symbols annotation
+into a separate place and keep it for the static/dynamic regions in place ?
+
+Thanks for looking into my patch,
+Eugen
 
