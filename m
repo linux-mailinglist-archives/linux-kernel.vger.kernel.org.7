@@ -1,125 +1,146 @@
-Return-Path: <linux-kernel+bounces-754589-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5FB7B199CD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:17:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA396B199D3
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 03:24:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57FA01892CB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:18:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 95E871892BDC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 01:24:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 822E21E521D;
-	Mon,  4 Aug 2025 01:17:45 +0000 (UTC)
-Received: from invmail4.hynix.com (exvmail4.hynix.com [166.125.252.92])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D19E94A28;
-	Mon,  4 Aug 2025 01:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.125.252.92
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3F131EB5D6;
+	Mon,  4 Aug 2025 01:24:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="VVgWiBV1"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D683929A1;
+	Mon,  4 Aug 2025 01:24:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754270265; cv=none; b=c6oYN7bWqSRhoM0GSTdxibFyvb920h0MCa09n4HINdu5GcZtDo77TWtagmOGen+CHrd/++SiJSbk2Urk0+TzUxAwt1ZUJLR8CoryoLTVOdiuNeRUl7aFdnZus4jJNo1doCdko0qWoAxXlDpIhEFyEhK9LszRRCOtd0Cs24OI0so=
+	t=1754270652; cv=none; b=Eq0e2lsK44sBM+n3uQMX9G6clutr+jgB9pGrSI7DC1AC5NSPxf4q3Omh+OUdzNC8ePDeDXuFq4K/t1X9uGUjTdEVjBJxOYFLeYonty8JUSYTyFwutjJ+HVYiQFSvBxuK7VqgCsB0F2qp31nsZl7uJ+xfBdTCN2uKl3zuJ6tZx+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754270265; c=relaxed/simple;
-	bh=ZaZhQqQIxHFirOaw7xjj8DtF5xa8nwZa6KWHSiUQ7aQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cgb4h1ejNE8Br313RoiF//inFltqpUOzAWqFRrS5R8YoHji+TxXhdxGYq9ep2Z1w7N8MhDgwDJyNk3r+HEGtJOPxuqqWGy+nKB7oZTXHiUfq36b1/RlPfAcxjrB2TRgzse0bI0tXQVq2rozcjzBE5CTyucz4MyBWJonF9BcKZWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com; spf=pass smtp.mailfrom=sk.com; arc=none smtp.client-ip=166.125.252.92
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sk.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sk.com
-X-AuditID: a67dfc5b-669ff7000002311f-35-68900a2f40c4
-Date: Mon, 4 Aug 2025 10:17:30 +0900
-From: Byungchul Park <byungchul@sk.com>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: linux-mm@kvack.org, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel_team@skhynix.com,
-	harry.yoo@oracle.com, ast@kernel.org, daniel@iogearbox.net,
-	davem@davemloft.net, kuba@kernel.org, hawk@kernel.org,
-	john.fastabend@gmail.com, sdf@fomichev.me, saeedm@nvidia.com,
-	leon@kernel.org, tariqt@nvidia.com, mbloch@nvidia.com,
-	andrew+netdev@lunn.ch, edumazet@google.com, pabeni@redhat.com,
-	akpm@linux-foundation.org, david@redhat.com,
-	lorenzo.stoakes@oracle.com, Liam.Howlett@oracle.com, vbabka@suse.cz,
-	rppt@kernel.org, surenb@google.com, mhocko@suse.com,
-	horms@kernel.org, jackmanb@google.com, hannes@cmpxchg.org,
-	ziy@nvidia.com, ilias.apalodimas@linaro.org, willy@infradead.org,
-	brauner@kernel.org, kas@kernel.org, yuzhao@google.com,
-	usamaarif642@gmail.com, baolin.wang@linux.alibaba.com,
-	almasrymina@google.com, toke@redhat.com, asml.silence@gmail.com,
-	bpf@vger.kernel.org, linux-rdma@vger.kernel.org
-Subject: Re: [PATCH linux-next v3] mm, page_pool: introduce a new page type
- for page pool in page type
-Message-ID: <20250804011730.GB39461@system.software.com>
-References: <20250729110210.48313-1-byungchul@sk.com>
- <20250802150746.139a71be@canb.auug.org.au>
+	s=arc-20240116; t=1754270652; c=relaxed/simple;
+	bh=kLcRsSYCPsQi3pE1QnIDeEQOJrxGUQsns3ainheqIJc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=FkkmKsbOLUN6FJrme5DtPBzTvMtjWPkszBcQfSuaoDK3AARr4+08yRlb+uIRBnAgnjEZAYE+Jifqf0h0k22LGSYrGB/bWYLObctRRL4xqYFQZGvQy2G/pDq1ASpoLaZrCo+nDn7Mg9SgyNH9qDStXb74qF/KzBpXP1ZNS4/aYYU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=VVgWiBV1; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=202503; t=1754270645;
+	bh=rYpK11Ananx6jBbqeC+LX+9/Ug66iSShsa9Cl92oX54=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=VVgWiBV1TnB0wlST8qopM7l7h7wEaAphxYTMw1Sdvqq5fDMzUxbMvXXjIdS9Ii+IQ
+	 HubVyeA5o0rkKULdWz75xrPDeOkzkDEhR+G2rH11IahTuImDmz0giINSrEzlhxk/1U
+	 AIMCrTcAGeE4a9qgdrawg78X5i5YkV+w+nM9+tZIwI+VJlbks9ljSNJWHpOg8AqW2q
+	 ak3tkzSKeZoGA9MHrqexiT7LPcNYrDBMsKtCUm1ytX6UFiS8u2vdWIp/NHR0X2q4Qr
+	 SZmcuRM8uhIR+oblAoxh0H76Atv/CeQLXWh+8tsqvl0NMYqKRcBJhRAQ0Z4Rooa397
+	 DXE9sygwhoIVA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwJjw6GZVz4x21;
+	Mon,  4 Aug 2025 11:24:04 +1000 (AEST)
+Date: Mon, 4 Aug 2025 11:24:04 +1000
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, Petr Pavlu <petr.pavlu@suse.com>,
+ Sami Tolvanen <samitolvanen@google.com>, Daniel Gomez
+ <da.gomez@samsung.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: manual merge of the modules tree with the kbuild
+ tree
+Message-ID: <20250804112404.6c6e1565@canb.auug.org.au>
+In-Reply-To: <20250801132941.6815d93d@canb.auug.org.au>
+References: <20250801132941.6815d93d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250802150746.139a71be@canb.auug.org.au>
-User-Agent: Mutt/1.9.4 (2018-02-28)
-X-Brightmail-Tracker: H4sIAAAAAAAAA02Sa0yTVxjHc97z3mhodqwwj5AsWE0w1BvOhMdIFrNk8fWDiUFjzLZEuvXN
-	2ghoCkVwoqBdtjVCmZeopWqRDBGI1aLcJlIKFnAzGDa0IgLjGkVQKzaFEpVilvntl//zP7/n
-	+XBErGrkYkRDRpZszNCmqXkFq5iMvLR6raJYv+5xMBbszmoeqoI5cHmwngN7ZS2C6ZnHArxr
-	8iJ43dbOw0SrH0FZaQCDvcvMwhvnLIZR75AAVa5tMFA+xsKtn+swDFk7eCg0hzA0zUwJcLS+
-	ggF7Tb4A92uLODg1+zuGuvxBAf5utPPQX/2OgzFPIQudtissvDzdhmGgaDN4HZ9C4M/nCNqc
-	dQwEjp/noedcIwM3m3oEONnt4GHYPICgu3WIhdNzv/BQUlCEIBScV04VT3NQcqdf2KyRCnw+
-	Xmp9/gJLN648YiTf7buM1GB7IkgOl0mqqUiQLL5uLLkqf+Ull/+EIPU9uMVLHWdDrNTw70ap
-	of41IxUem+KlV6O97PaorxXJOjnNkC0b136RqtB7zVZhv5PPcdzrw/mogLMgUaRkAx2Z/NKC
-	Ihaw/dUcG2aWrKDBaTcXZp7EU59vBofrUURD3SFiQQoRk6sCHXwSEMKdxURPay4MM2FWEqBd
-	E5MLb1XkO1rWUMd/yBfRznMjC35MEqjv7VMm7MQkll5+K4bjCJJEWx4+W6hHk+XUXdvOhHdR
-	MijS3uvt3Ic7l9KWCh9bjIjtI63tI63tf60D4UqkMmRkp2sNaRvW6HMzDDlrvt+X7kLzP6o8
-	b+6beuS/v8ODiIjUkcrdOqtexWmzM3PTPYiKWB2l/PbIfKTUaXMPysZ9e4ymNDnTg2JFVr1E
-	uT5wQKciP2iz5L2yvF82/jdlxIiYfIRjK9078sY1Ly8uWhbqMievKv3xyAFh+bjoLtn0JvGE
-	nv3KZB/i+nbHm/5J/qvZZDnaZ7T0bi35xHZwa/nOiN+u+SOvefY6/Ss1W+LYM6nNKRd0+LM/
-	NDGzEx1xiaPVW1KSDnVnWdff/WksSRcXHTyccq/5WWmZd5eup/Nz60zC2LiazdRrExOwMVP7
-	HnS0DcVNAwAA
-X-Brightmail-Tracker: H4sIAAAAAAAAA02SfyyUcRzH932+zz3P4+rmIepZ/ru0mkq1Mp/GSuuPntW0/qtZW648dVdH
-	upPRT2L9uOFIVi7a6afUsk5xJxp3IpmEVU/icGITIa6bw8hpLf+9P6/P5/X+68Ng30LJSkYV
-	lyBo4hRqOSUlpfvC0jZslGYrNw2KEigofUbB08kkeNxjnp9KyhE43d9omKuuRzBR10DBkG0c
-	wf0iF4aClnQSfpdOYeivd9Dw1BQJ3Y8GSKi6WoHBoX9HQWb6NIZq9wgNl83FBBSUpdBgK2yU
-	wMfyLAncnHqIoSKlh4b2ygIK7M/mJDBgzSSh0fCEhLG8OgzdWRFQb1wOrqZhBHWlFQS4Mgop
-	+JRfScCr6k805LYZKehL70bQZnOQkDdzjYI7qVkIpifnK0eynRK489ZOR6znU0WR4m3Do5h/
-	+eQrwYtv3hO8xdBF80bTGb6sOIjXiW2YN5Vcp3jT+A2a7/xcRfHvbk+TvKV3G28xTxB8ZtoI
-	xf/q7yD3+0dJw2MEtSpR0GzcHi1V1qfr6fhSKsnY3IlTUKpEh7wYjt3KNfyaIT2ZZAO5SWfN
-	AqfYNZwourEOMYwfu46rmWZ1SMpg9jnN9XS5aM/NMlbJld3tIzxZxgLXMvRzwfVlj3D3LRXU
-	X+7DNeZ/X+jHbBAnzg4Snk7MBnCPZxkP9mJDudovPxbO/dlVXE15A5GNZIZFtmGRbfhvGxEu
-	QX6quMRYhUodEqw9qUyOUyUFHz0Va0LzT/PowkyOGTnbd1sRyyD5UtnBGL3SV6JI1CbHWhHH
-	YLmf7NCleSSLUSSfFTSnDmvOqAWtFQUwpHyFbM8BIdqXPa5IEE4KQryg+bclGK+VKah2ruZ5
-	bmSr9z0yweeDXd87l9NbWdtfvmtHYJGPVYzvsJ94mZcZpba8GNKX7Z1h/I/eszV27bzoOh9p
-	tW7x1g2eC3e03q6+9aAyzC1vfm1ekjrkMxpxDE2tXtbVXnWa9u9zQ2jAlTHN9hHK4jwW67hV
-	1bRmYunltUmo5GNGiD1YTmqVis1BWKNV/AFarF8GMAMAAA==
-X-CFilter-Loop: Reflected
+Content-Type: multipart/signed; boundary="Sig_/+Yra=FBrL_.tY=yJ/j/kXo6";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Sat, Aug 02, 2025 at 03:07:46PM +1000, Stephen Rothwell wrote:
-> Hi,
-> 
-> On Tue, 29 Jul 2025 20:02:10 +0900 Byungchul Park <byungchul@sk.com> wrote:
-> >
-> > Changes from v2:
-> > 	1. Rebase on linux-next as of Jul 29.
-> 
-> Why are you basing development work in linux-next.  That is a
-> constantly rebasing tree.  Please base your work on some stable tree.
+--Sig_/+Yra=FBrL_.tY=yJ/j/kXo6
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Sorry about the confusing.  I misunderstood how to work for patches
-based on linux-next.
+Hi all,
 
-However, basing on linux-next is still required for this work since more
-than one subsystem is involved, and asked by David Hildenbrand:
+On Fri, 1 Aug 2025 13:29:41 +1000 Stephen Rothwell <sfr@canb.auug.org.au> w=
+rote:
+>
+> Today's linux-next merge of the modules tree got a conflict in:
+>=20
+>   include/linux/moduleparam.h
+>=20
+> between commit:
+>=20
+>   7934a8dd8692 ("module: remove meaningless 'name' parameter from __MODUL=
+E_INFO()")
+>=20
+> from the kbuild tree and commit:
+>=20
+>   40a826bd6c82 ("module: Rename MAX_PARAM_PREFIX_LEN to __MODULE_NAME_LEN=
+")
+>=20
+> from the modules tree.
+>=20
+> I fixed it up (see below) and can carry the fix as necessary. This
+> is now fixed as far as linux-next is concerned, but any non trivial
+> conflicts should be mentioned to your upstream maintainer when your tree
+> is submitted for merging.  You may also want to consider cooperating
+> with the maintainer of the conflicting tree to minimise any particularly
+> complex conflicts.
+>=20
+> diff --cc include/linux/moduleparam.h
+> index 00166f747e27,a04a2bc4f51e..000000000000
+> --- a/include/linux/moduleparam.h
+> +++ b/include/linux/moduleparam.h
+> @@@ -17,12 -24,8 +24,9 @@@
+>   #define __MODULE_INFO_PREFIX KBUILD_MODNAME "."
+>   #endif
+>  =20
+> - /* Chosen so that structs with an unsigned long line up. */
+> - #define MAX_PARAM_PREFIX_LEN (64 - sizeof(unsigned long))
+> -=20
+>  -#define __MODULE_INFO(tag, name, info)					  \
+>  -	static const char __UNIQUE_ID(name)[]				  \
+>  +/* Generic info of form tag =3D "info" */
+>  +#define MODULE_INFO(tag, info)					  \
+>  +	static const char __UNIQUE_ID(modinfo)[]			  \
+>   		__used __section(".modinfo") __aligned(1)		  \
+>   		=3D __MODULE_INFO_PREFIX __stringify(tag) "=3D" info
+>  =20
 
-   https://lore.kernel.org/all/20250728105701.GA21732@system.software.com/
+This is now a conflict between the kbuild tree and Linus' tree.
 
-I will base on linux-next and work aiming at either network or mm tree.
+--=20
+Cheers,
+Stephen Rothwell
 
-	Byungchul
+--Sig_/+Yra=FBrL_.tY=yJ/j/kXo6
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
 
-> -- 
-> Cheers,
-> Stephen Rothwell
+-----BEGIN PGP SIGNATURE-----
 
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiQC7QACgkQAVBC80lX
+0GzgLwgAhIfZsXaKiVBGO8abZKiyOsYy32tIRcwDRGUa602AoxGXa05po+l2tKyW
+4CKv8A79QZqMhxfEipmK98Cbcol+afdU3Ksu52Xm7DuMe3oNfdMApBrSN0SvsBWF
+XPrNne/6y1DyZAZNBytApP0uog7I3j+iL2H41EvN4PpjZK4fLvhgu2XJOpavQzz2
+qENb0pVhg4poH7mw+VbfWjUTftW6ypuwyX2queA9e5gzSHAB8U77Ex5Swx4ICfwl
+pp/JShAlza4yUoahR9QQVRIAU8P+8/40uuZT5JaH6c3xqHoKXaAm8MDt5fpIn5yQ
+lWTEt3w2ujA/j/ZagiaZHqn2HjIvYw==
+=98xx
+-----END PGP SIGNATURE-----
 
+--Sig_/+Yra=FBrL_.tY=yJ/j/kXo6--
 
