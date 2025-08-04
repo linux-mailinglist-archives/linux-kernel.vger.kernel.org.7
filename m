@@ -1,236 +1,121 @@
-Return-Path: <linux-kernel+bounces-754850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id F1CF5B19D7E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:20:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BC3B19D87
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:22:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 08EBC16FCE8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F98B177FCE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:22:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D7A3242D79;
-	Mon,  4 Aug 2025 08:19:57 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2AE724169D;
-	Mon,  4 Aug 2025 08:19:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B7E423FC52;
+	Mon,  4 Aug 2025 08:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eXzqoOCe"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 650B52309B9
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 08:22:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754295596; cv=none; b=U4EzYhxsLEUbF5Sh2YEerKfJpMCkZVWupiQIPEQDwLwxTRWByJTeIucyqXA80A6Np40tPpD03TMgTU98OQig0Ngpm6CKwzmQbOPt3P2JdZbpae8f+6TSey3z0F5hL061/hZtjDcMbpfMjDVNX6IItO+ERdttwCOawxr3E2Zc6us=
+	t=1754295731; cv=none; b=NYaNGttSr9JbpJHcDys7QYM1vDU8vPGqx2th68qe7XwK+UoPEsBEvXNRydtSFkZkfoaEkNe613quetuJO9lF5YQSumsuyjXKQpYQyni6iy2OKzt2Ns3wR9uEQuwKNcUW5r+lQF4yMvtT6rQClF4QSq+zLpOtvJOmpgrLKetSHH4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754295596; c=relaxed/simple;
-	bh=EKzbjCEqk8Zq/vTSVpCSgeMGR8CteBm7Ue5WS/8OIgk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=gGaJZfIMyCI3xwdXjSQQf+NDMSNb+lEvAIgev5kTBZ/v9PdVqUTbXPXgRCyjTc0pXltTOymXmLawCQ96EsgVy6P+JuyvRWTjEXcvH9dp0F1Gpun32nGjfGRfsvtghe15T3wvoZTFqw9wXitGj8EXATjbG8SGfcnDurfIBmTkHy8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [10.2.5.213])
-	by gateway (Coremail) with SMTP id _____8CxaWonbZBoCzk4AQ--.49484S3;
-	Mon, 04 Aug 2025 16:19:51 +0800 (CST)
-Received: from localhost.localdomain (unknown [10.2.5.213])
-	by front1 (Coremail) with SMTP id qMiowJAxE+QibZBoTUU1AA--.65480S4;
-	Mon, 04 Aug 2025 16:19:50 +0800 (CST)
-From: Bibo Mao <maobibo@loongson.cn>
-To: Huacai Chen <chenhuacai@kernel.org>,
-	Jianmin Lv <lvjianmin@loongson.cn>
-Cc: WANG Xuerui <kernel@xen0n.name>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	loongarch@lists.linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mips@vger.kernel.org
-Subject: [PATCH v4 2/2] irqchip/loongson-eiointc: Add multiple interrupt pin routing support
-Date: Mon,  4 Aug 2025 16:19:46 +0800
-Message-Id: <20250804081946.1456573-3-maobibo@loongson.cn>
-X-Mailer: git-send-email 2.39.3
-In-Reply-To: <20250804081946.1456573-1-maobibo@loongson.cn>
-References: <20250804081946.1456573-1-maobibo@loongson.cn>
+	s=arc-20240116; t=1754295731; c=relaxed/simple;
+	bh=qjOH88hggY+GFkBoYR9Ti7BNM09KbDAokHwgkZY9CcQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=r34njhyxfH7G5JTr3E+iY+5q5Q1SCCns+HFTlJNaXpZArlOKy7EA22jcySwyB9GCjdHsIfm+8s6XuLq9ArrKAJvg67rx63iXpUXH3Ql81q50yHEo8DAsq4QkqKUvGUSUqI415vU1gM+tfs/9xkW3BIR/QvX1pzTpM67yNNjmEwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eXzqoOCe; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-af95ecfbd5bso182002166b.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 01:22:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754295728; x=1754900528; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rvd7myixX9Tdbc669Fpwy91E6A6uestbIHb9Av6+758=;
+        b=eXzqoOCeqDW5b3xjg1/vMrCtsB9Uq1rQLT7DRJyQeQGetYaLFNR9BmlAGgFKcZTJN1
+         qYGwqj4f7wimd/iB/msgs74HE5WDWdEayrPDJ2lISZrJ/uaoJoG4hdrqtcIpzjijdsIw
+         5AJIs3GnbedPXJPprEX8lmxIcQY1NdBpKoeTZIMFm4yny6gR4PyT1xQ1FuVs9KqdmchK
+         KCqNpeApowB902bAZUh+IYR4em9MUYWNtaANaCcEnX06Ad+O6nrPCDmiZ2pPAWSy/WMK
+         vcznufRTqU0z/91WfSKHU9W+8nzmGqnr63LDyCMhWBvnh6cHyXhZPtWruuQ9UhhI9ls7
+         az4A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754295728; x=1754900528;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=rvd7myixX9Tdbc669Fpwy91E6A6uestbIHb9Av6+758=;
+        b=U0YXTy/j4wDOOly9pNVBgz2OZ5Qon7+w/QZjfxDxv2V0Gzk2tsg+2Q36kHd629QNSl
+         ZOj0ua2o9HTZzDfdTqI7HlFzpUeCH2JJF35o9qoKhSNvh9JL1+S45/R5SoZeydwEaOs0
+         laWbdccF1GrpLoQjkJV6UUH3ur70GjnAy4JKGEDGrajLU+TscDTHF9snX6QQxE814pAp
+         biTcGATkmkG6U29TleAJgiWN+vhqfqAweBfM7N7DffFLQPMEPo6w7oiDLC+46F6vgqho
+         X0LBaZa1WqR5SHnmAUIT4sUDfaMfFlFlBL3gYNLOTh7eAVgwd5JZhdv6OwW6vceE1y2B
+         SQQQ==
+X-Gm-Message-State: AOJu0YwBy9/qaXyHrXUQvpBY6yI4NF0nGK+sTrqWm6w2hB8MK0bkNFXo
+	Xgdn8uSxJUvnKAl/PptZyQGrOR0GsNzOiNlk4dW/tbaCd3suGUL8SHgO
+X-Gm-Gg: ASbGncte+9jEPr6KHR/SdKwaMcZUNFjow5XZp1R/Qkz6cnuTWvh9Z4/tgmUjn425gdP
+	cNS35xYKDvweTk8ICniicRRPBtGmOGBsySTr1kcOCYvrokdaLJekrgm77c+ZTnxhpkk4x/jvCI+
+	RhVeTzGMMfqlR3KGnVpBIRW88Oi2sQ4BaRCq6x/3oGPlLyFgzh3oSoEfbrNyxIvHjbKx26ZBJOt
+	wNs+cW39uGB8c59vQb8QrRXbBedXG3FkQJgmKc5eQdm9eRYTfBUGydlLzthS36M0T6bZG3+riNu
+	7qCCK6xAwj9y898863MYM+65jhZLqnV/iiIj6HtXDQIEav9gCyIUPOZnS61ZH9HxQm5CrHPpQwC
+	l4dRH8F1EXGOZvvm6cuWu/w==
+X-Google-Smtp-Source: AGHT+IFcqDL91bJ8WI7tVnisTnu/P57zfWTIch9YEy24U+3LW57zanCt6Si3JczoGVKBqIAUY63WTA==
+X-Received: by 2002:a17:906:e093:b0:af9:414d:9c2 with SMTP id a640c23a62f3a-af9414d0cc1mr806271566b.3.1754295727344;
+        Mon, 04 Aug 2025 01:22:07 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0765f0sm693935266b.28.2025.08.04.01.22.06
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Aug 2025 01:22:06 -0700 (PDT)
+Date: Mon, 4 Aug 2025 08:22:06 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
+	Mike Rapoport <rppt@kernel.org>,
+	Suren Baghdasaryan <surenb@google.com>,
+	Michal Hocko <mhocko@suse.com>, Zi Yan <ziy@nvidia.com>,
+	Matthew Brost <matthew.brost@intel.com>,
+	Joshua Hahn <joshua.hahnjy@gmail.com>, Rakie Kim <rakie.kim@sk.com>,
+	Byungchul Park <byungchul@sk.com>,
+	Gregory Price <gourry@gourry.net>,
+	Ying Huang <ying.huang@linux.alibaba.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Pedro Falcato <pfalcato@suse.de>, Rik van Riel <riel@surriel.com>,
+	Harry Yoo <harry.yoo@oracle.com>, Lance Yang <ioworker0@gmail.com>,
+	Oscar Salvador <osalvador@suse.de>
+Subject: Re: [PATCH v2 4/4] mm: remove boolean output parameters from
+ folio_pte_batch_ext()
+Message-ID: <20250804082206.ri5roofvd32kyaya@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250702104926.212243-1-david@redhat.com>
+ <20250702104926.212243-5-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowJAxE+QibZBoTUU1AA--.65480S4
-X-CM-SenderInfo: xpdruxter6z05rqj20fqof0/
-X-Coremail-Antispam: 1Uk129KBjDUn29KB7ZKAUJUUUUU529EdanIXcx71UUUUU7KY7
-	ZEXasCq-sGcSsGvfJ3UbIjqfuFe4nvWSU5nxnvy29KBjDU0xBIdaVrnUUvcSsGvfC2Kfnx
-	nUUI43ZEXa7xR_UUUUUUUUU==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250702104926.212243-5-david@redhat.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-Eiointc interrupt controller support 256 interrupt vectors at most,
-and irq handler gets interrupt status from base register group
-EIOINTC_REG_ISR plus specific offset. It needs to read register group
-EIOINTC_REG_ISR four times to get all 256 interrupt vectors status.
+Nit in subject.
 
-Eiointc registers including EIOINTC_REG_ISR is software emulated for
-VMs, there will be VM-exits when accessing eiointc registers. Here one
-method is introduced so that eiointc interrupt controller can route
-to different cpu interrupt pins for every 64 interrupt vectors. So
-irq handler knows interrupt pin information and reads specific
-EIOINTC_REG_ISR register. And there is only once EIOINTC_REG_ISR register
-access rather than four loop times, it  reduces VM-exit times.
+We have renamed the function to folio_pte_batch_flags().
 
-Signed-off-by: Bibo Mao <maobibo@loongson.cn>
----
- drivers/irqchip/irq-loongson-eiointc.c | 81 +++++++++++++++++++++++---
- 1 file changed, 74 insertions(+), 7 deletions(-)
+Not sure it is too late.
 
-diff --git a/drivers/irqchip/irq-loongson-eiointc.c b/drivers/irqchip/irq-loongson-eiointc.c
-index 3e987d1232d2..081787ecdcdd 100644
---- a/drivers/irqchip/irq-loongson-eiointc.c
-+++ b/drivers/irqchip/irq-loongson-eiointc.c
-@@ -46,6 +46,7 @@
- #define EIOINTC_ALL_ENABLE_VEC_MASK(vector)	(EIOINTC_ALL_ENABLE & ~BIT(vector & 0x1f))
- #define EIOINTC_REG_ENABLE_VEC(vector)		(EIOINTC_REG_ENABLE + ((vector >> 5) << 2))
- #define EIOINTC_USE_CPU_ENCODE			BIT(0)
-+#define EIOINTC_ROUTE_MULT_IP			BIT(1)
- 
- #define MAX_EIO_NODES		(NR_CPUS / CORES_PER_EIO_NODE)
- 
-@@ -59,6 +60,13 @@
- #define EIOINTC_REG_ROUTE_VEC_MASK(vector)	(0xff << EIOINTC_REG_ROUTE_VEC_SHIFT(vector))
- 
- static int nr_pics;
-+struct eiointc_priv;
-+struct eiointc_ip_route {
-+	struct eiointc_priv	*priv;
-+	/* Offset Routed destination IP */
-+	int			start;
-+	int			end;
-+};
- 
- struct eiointc_priv {
- 	u32			node;
-@@ -69,6 +77,7 @@ struct eiointc_priv {
- 	struct irq_domain	*eiointc_domain;
- 	int			flags;
- 	irq_hw_number_t		parent_hwirq;
-+	struct eiointc_ip_route	route_info[VEC_REG_COUNT];
- };
- 
- static struct eiointc_priv *eiointc_priv[MAX_IO_PICS];
-@@ -189,6 +198,7 @@ static int eiointc_router_init(unsigned int cpu)
- {
- 	int i, bit, cores, index, node;
- 	unsigned int data;
-+	int hwirq, mask;
- 
- 	node = cpu_to_eio_node(cpu);
- 	index = eiointc_index(node);
-@@ -198,6 +208,13 @@ static int eiointc_router_init(unsigned int cpu)
- 		return -EINVAL;
- 	}
- 
-+	/* Enable cpu interrupt pin from eiointc */
-+	hwirq = eiointc_priv[index]->parent_hwirq;
-+	mask = BIT(hwirq);
-+	if (eiointc_priv[index]->flags & EIOINTC_ROUTE_MULT_IP)
-+		mask |= BIT(hwirq + 1) | BIT(hwirq + 2) | BIT(hwirq + 3);
-+	set_csr_ecfg(mask);
-+
- 	if (!(eiointc_priv[index]->flags & EIOINTC_USE_CPU_ENCODE))
- 		cores = CORES_PER_EIO_NODE;
- 	else
-@@ -215,10 +232,28 @@ static int eiointc_router_init(unsigned int cpu)
- 			/*
- 			 * Route to interrupt pin, relative offset used here
- 			 * Offset 0 means routing to IP0 and so on
--			 * Every 32 vector routing to one interrupt pin
-+			 *
-+			 * If flags is set with EIOINTC_ROUTE_MULT_IP,
-+			 * every 64 vector routes to different consecutive
-+			 * IPs, otherwise all vector routes to the same IP
- 			 */
--			bit = BIT(eiointc_priv[index]->parent_hwirq - INT_HWI0);
--			data = bit | (bit << 8) | (bit << 16) | (bit << 24);
-+			if (eiointc_priv[index]->flags & EIOINTC_ROUTE_MULT_IP) {
-+				/* The first 64 vectors route to hwirq */
-+				bit = BIT(hwirq++ - INT_HWI0);
-+				data = bit | (bit << 8);
-+
-+				/* The second 64 vectors route to hwirq + 1 */
-+				bit = BIT(hwirq++ - INT_HWI0);
-+				data |= (bit << 16) | (bit << 24);
-+
-+				/*
-+				 * Route to hwirq + 2/hwirq + 3 separately
-+				 * in next loop
-+				 */
-+			} else  {
-+				bit = BIT(hwirq - INT_HWI0);
-+				data = bit | (bit << 8) | (bit << 16) | (bit << 24);
-+			}
- 			iocsr_write32(data, EIOINTC_REG_IPMAP + i * 4);
- 		}
- 
-@@ -251,11 +286,18 @@ static void eiointc_irq_dispatch(struct irq_desc *desc)
- 	u64 pending;
- 	bool handled = false;
- 	struct irq_chip *chip = irq_desc_get_chip(desc);
--	struct eiointc_priv *priv = irq_desc_get_handler_data(desc);
-+	struct eiointc_ip_route *info = irq_desc_get_handler_data(desc);
- 
- 	chained_irq_enter(chip, desc);
- 
--	for (i = 0; i < eiointc_priv[0]->vec_count / VEC_COUNT_PER_REG; i++) {
-+	/*
-+	 * If EIOINTC_ROUTE_MULT_IP is set, every 64 interrupt vectors in
-+	 * eiointc interrupt controller routes to different cpu interrupt pins
-+	 *
-+	 * Every cpu interrupt pin has its own irq handler, it is ok to
-+	 * read ISR for these 64 interrupt vectors rather than all vectors
-+	 */
-+	for (i = info->start; i < info->end; i++) {
- 		pending = iocsr_read64(EIOINTC_REG_ISR + (i << 3));
- 
- 		/* Skip handling if pending bitmap is zero */
-@@ -268,7 +310,7 @@ static void eiointc_irq_dispatch(struct irq_desc *desc)
- 			int bit = __ffs(pending);
- 			int irq = bit + VEC_COUNT_PER_REG * i;
- 
--			generic_handle_domain_irq(priv->eiointc_domain, irq);
-+			generic_handle_domain_irq(info->priv->eiointc_domain, irq);
- 			pending &= ~BIT(bit);
- 			handled = true;
- 		}
-@@ -468,8 +510,33 @@ static int __init eiointc_init(struct eiointc_priv *priv, int parent_irq,
- 	}
- 
- 	eiointc_priv[nr_pics++] = priv;
-+	/*
-+	 * Only the first eiointc device on VM supports routing to
-+	 * different Interrupt Pins. The later eiointc devices use
-+	 * generic method if there are multiple eiointc devices in future
-+	 */
-+	if (cpu_has_hypervisor && (nr_pics == 1)) {
-+		priv->flags |= EIOINTC_ROUTE_MULT_IP;
-+		priv->parent_hwirq = INT_HWI0;
-+	}
-+
-+	if (priv->flags & EIOINTC_ROUTE_MULT_IP) {
-+		for (i = 0; i < priv->vec_count / VEC_COUNT_PER_REG; i++) {
-+			priv->route_info[i].start  = priv->parent_hwirq - INT_HWI0 + i;
-+			priv->route_info[i].end    = priv->route_info[i].start + 1;
-+			priv->route_info[i].priv   = priv;
-+			parent_irq = get_percpu_irq(priv->parent_hwirq + i);
-+			irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch,
-+					&priv->route_info[i]);
-+		}
-+	} else {
-+		priv->route_info[0].start  = 0;
-+		priv->route_info[0].end    = priv->vec_count / VEC_COUNT_PER_REG;
-+		priv->route_info[0].priv   = priv;
-+		irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch,
-+				&priv->route_info[0]);
-+	}
- 	eiointc_router_init(0);
--	irq_set_chained_handler_and_data(parent_irq, eiointc_irq_dispatch, priv);
- 
- 	if (nr_pics == 1) {
- 		register_syscore_ops(&eiointc_syscore_ops);
+
 -- 
-2.39.3
-
+Wei Yang
+Help you, Help me
 
