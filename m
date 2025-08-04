@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-754570-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754571-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64134B197DF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A1966B1980C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 802F73A25C4
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:31:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A0C3A3A75D9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 00:32:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D9A7719F424;
-	Mon,  4 Aug 2025 00:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884CA15A87C;
+	Mon,  4 Aug 2025 00:31:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpFk3MiK"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dRqwfAr0"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3948018A6B0;
-	Mon,  4 Aug 2025 00:30:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D0B3A1FDD;
+	Mon,  4 Aug 2025 00:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754267427; cv=none; b=HCBiHP1oNq6+JnVn/GtyEN4SpNgxhD3qf1fw7Ria89Z+WgjmdyrsYHft8B22VAeJqQHaI14pbhv60K4nnsgSr/Q/M2sQbzMb/08t35x7W9D8UCxU0tgegrNmv9C11nzCVj7hZh6fqBO93+s1y25CPzDG8ofzH9rkMq7SNJPrjJY=
+	t=1754267497; cv=none; b=dWXYlpqsiOIDQES8K1WZWNiXKbCVmdkDNnZuxCPqF888JSQE89yvgpAOIJuR2DHH1gLljmhzBZk2zgy3sB3lZB7DFy00Dr/BL8chi+D1S/wJZmaFcV051+vF54z4v4fo4Q2a9dzrjp1GP/wHkh3VGfnC1bTbNn8jHXa/nXCque4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754267427; c=relaxed/simple;
-	bh=bpjOl8QPs/qtwg9quRdOdv7JLK/YtIXcp0IDLoBOWt8=;
+	s=arc-20240116; t=1754267497; c=relaxed/simple;
+	bh=/DpIkdhjvEc9VMBJJZPUdNHEDA5EwOPZ+mldhHCm71o=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=GabVFB4NaVYQ0GB/h6TxC9GIQL2yYLSMHxqSSdjKtUbYgPOfMNSqQVpHVbANgQF9raiPIIhYLwfyARJU4RmMKJp60B3A5+YGeavU+mxALOJqyyIiCh+QHTz7qpR6KDEaI2Cq4tNzOq4iA4cyb4a0N2SahMIM/LiY8SVlkCiYIvE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpFk3MiK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8C8C4CEEB;
-	Mon,  4 Aug 2025 00:30:25 +0000 (UTC)
+	 MIME-Version; b=tPT+sU/HCwmdCq2qaohRXe2CSuQM1LIydhXzClNUDHdePQN4+aQ9C+GuL3w7UggOJHa4Z2wL+fimQ4e2w0gjMWvtnE4PORcJ/yaeosBtFEQ2YbuFEupneE8QQrq3TdfRWbkd1wSv2yaHd9EqagY2+hyy9zPzGiXyPREl1Si0nuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dRqwfAr0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 545DDC4CEEB;
+	Mon,  4 Aug 2025 00:31:36 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754267427;
-	bh=bpjOl8QPs/qtwg9quRdOdv7JLK/YtIXcp0IDLoBOWt8=;
+	s=k20201202; t=1754267497;
+	bh=/DpIkdhjvEc9VMBJJZPUdNHEDA5EwOPZ+mldhHCm71o=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=jpFk3MiKspE9w9ZXIg1evyxQ4yvGaHVeL3jGuoRNqbzxPQLdGtgyULJfOm5+jMig5
-	 fIWI8McIW8Xi+TvszW2Hnu7lGWsCHe6khB368fnmc1QcC7JbSVaTBLA8+f2p2Sy8fu
-	 OeS5HW79wp7nKSNIwF1/DplJ6FyXjvfmX+FnMtM9POGBsjjEYf/i6C1aJHu05fNXfB
-	 c3ItwxLVnlUthqqZCLnvCjda6A8EpNC3QUHXsXnzGge5FnGiZwXLP5tlBU2OI9Y1t5
-	 fJgMnmzLq/CEHAjaDx81OcUBK4zzst0hgShIEgYEGM3xfcztQhWlIu29jNheRrLJZC
-	 OoZIvjGqNDtag==
+	b=dRqwfAr0pEvxeFWSjQOzAGriPywsvpn0/RiufXfaR9KebUIgD5qWrHe0aUaVVW/x7
+	 Q07KKl9+T9GHIY10oOPTLByIPsoG6/tcfG9twTen5kpbLtDF0vkoITkMzc/s0c9Nyn
+	 3ubojV9RcAiuv20rkbqp8uS3NSU1fFCLRWSN3UuoPdHCdi4jsmq9cZuCWPIRfZMNtS
+	 4I9KKrJ6RbrnH3G5Yhij3zFxQQNm0nhMM7/DRTVUk8GGYzaqvJEGUvW6MyYErm8d7s
+	 ejIGq/XbAERAmEgiTV4rVWI9css9cl47voKrCq54cGfRN5IFSG+zoklwkaRTuIl5M3
+	 3m0FkhlEuUhPA==
 From: Sasha Levin <sashal@kernel.org>
 To: patches@lists.linux.dev,
 	stable@vger.kernel.org
-Cc: Markus Stockhausen <markus.stockhausen@gmx.de>,
-	Sebastian Gottschall <s.gottschall@dd-wrt.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
+Cc: Romain Gantois <romain.gantois@bootlin.com>,
+	Mark Brown <broonie@kernel.org>,
 	Sasha Levin <sashal@kernel.org>,
-	tsbogend@alpha.franken.de,
-	linux-mips@vger.kernel.org,
+	lgirdwood@gmail.com,
 	linux-kernel@vger.kernel.org
-Subject: [PATCH AUTOSEL 6.15 62/80] irqchip/mips-gic: Allow forced affinity
-Date: Sun,  3 Aug 2025 20:27:29 -0400
-Message-Id: <20250804002747.3617039-62-sashal@kernel.org>
+Subject: [PATCH AUTOSEL 6.12 06/69] regulator: core: repeat voltage setting request for stepped regulators
+Date: Sun,  3 Aug 2025 20:30:16 -0400
+Message-Id: <20250804003119.3620476-6-sashal@kernel.org>
 X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804002747.3617039-1-sashal@kernel.org>
-References: <20250804002747.3617039-1-sashal@kernel.org>
+In-Reply-To: <20250804003119.3620476-1-sashal@kernel.org>
+References: <20250804003119.3620476-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,116 +62,178 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 X-stable: review
 X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.15.9
+X-stable-base: Linux 6.12.41
 Content-Transfer-Encoding: 8bit
 
-From: Markus Stockhausen <markus.stockhausen@gmx.de>
+From: Romain Gantois <romain.gantois@bootlin.com>
 
-[ Upstream commit 2250db8628a0d8293ad2e0671138b848a185fba1 ]
+[ Upstream commit d511206dc7443120637efd9cfa3ab06a26da33dd ]
 
-Devices of the Realtek MIPS Otto platform use the official rtl-otto-timer
-as clock event generator and CPU clocksource. It is registered for each CPU
-startup via cpuhp_setup_state() and forces the affinity of the clockevent
-interrupts to the appropriate CPU via irq_force_affinity().
+The regulator_set_voltage() function may exhibit unexpected behavior if the
+target regulator has a maximum voltage step constraint. With such a
+constraint, the regulator core may clamp the requested voltage to a lesser
+value, to ensure that the voltage delta stays under the specified limit.
 
-On the "smaller" devices with a vendor specific interrupt controller
-(supported by irq-realtek-rtl) the registration works fine. The "larger"
-RTL931x series is based on a MIPS interAptiv dual core with a MIPS GIC
-controller. Interrupt routing setup is cancelled because gic_set_affinity()
-does not accept the current (not yet online) CPU as a target.
+This means that the resulting regulator voltage depends on the current
+voltage, as well as the requested range, which invalidates the assumption
+that a repeated request for a specific voltage range will amount to a noop.
 
-Relax the checks by evaluating the force parameter that is provided for
-exactly this purpose like in other drivers. With this the affinity can be
-set as follows:
+Considering the case of a regulator with a maximum voltage step constraint
+of 1V:
 
- - force = false: allow to set affinity to any online cpu
- - force = true:  allow to set affinity to any cpu
+initial voltage: 2.5V
 
-Co-developed-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Signed-off-by: Sebastian Gottschall <s.gottschall@dd-wrt.com>
-Signed-off-by: Markus Stockhausen <markus.stockhausen@gmx.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20250621054952.380374-1-markus.stockhausen@gmx.de
+consumer requests 4V
+expected result: 3.5V
+resulting voltage: 3.5V
+
+consumer requests 4V again
+expected result: 4V
+actual result: 3.5V
+
+Correct this by repeating attempts to balance the regulator voltage until
+the result converges.
+
+Signed-off-by: Romain Gantois <romain.gantois@bootlin.com>
+Link: https://patch.msgid.link/20250718-regulator-stepping-v2-1-e28c9ac5d54a@bootlin.com
+Signed-off-by: Mark Brown <broonie@kernel.org>
 Signed-off-by: Sasha Levin <sashal@kernel.org>
 ---
 
 LLM Generated explanations, may be completely bogus:
 
-Based on my analysis of the commit, here is my assessment:
-
 **Backport Status: YES**
 
-This commit should be backported to stable kernel trees for the
-following reasons:
+This commit fixes a legitimate bug in the voltage regulator subsystem
+that affects users with stepped voltage regulators. Here's my extensive
+analysis:
 
-1. **Fixes a real bug affecting users**: The commit fixes a specific
-   issue where clockevent interrupt affinity setup fails on Realtek
-   RTL931x devices with MIPS GIC controllers. Without this fix, the
-   timer registration during CPU hotplug fails because
-   `gic_set_affinity()` rejects setting affinity to CPUs that are not
-   yet online.
+## Bug Description and Impact
 
-2. **Small and contained fix**: The change is minimal - it only adds 4
-   lines of code to properly handle the `force` parameter that was
-   already being passed but ignored. The logic change is
-   straightforward:
-   - When `force=false`: Use existing behavior (only allow online CPUs)
-   - When `force=true`: Allow any CPU in the mask
+The commit addresses a bug where regulators with `max_uV_step`
+constraints fail to reach their target voltage when the same voltage
+range is requested multiple times. The bug manifests as follows:
 
-3. **Follows established patterns**: The commit shows that multiple
-   other timer drivers (`timer-rtl-otto.c`, `timer-tegra.c`,
-   `exynos_mct.c`, etc.) use `irq_force_affinity()` during CPU hotplug,
-   which eventually calls the chip's `set_affinity` handler with
-   `force=true`. The MIPS GIC driver was incorrectly ignoring this
-   parameter.
+1. When a regulator has a maximum voltage step constraint (e.g., 1V),
+   the core limits each voltage change to stay within this step
+2. The optimization at line 3814 (`if (voltage->min_uV == min_uV &&
+   voltage->max_uV == max_uV) goto out;`) assumes repeated requests are
+   no-ops
+3. This creates a situation where requesting 4V twice from 2.5V only
+   reaches 3.5V, not the desired 4V
 
-4. **No architectural changes**: This is purely a bug fix that makes the
-   MIPS GIC driver honor the existing `force` parameter semantics. It
-   doesn't introduce new features or change any architecture.
+## Code Analysis
 
-5. **Clear use case**: The commit message clearly explains that this
-   affects real hardware (Realtek RTL931x series) and prevents proper
-   timer initialization during CPU hotplug, which is a fundamental
-   kernel operation.
+The fix adds a retry mechanism specifically for stepped regulators:
 
-6. **Low regression risk**: The change only affects behavior when
-   `force=true` is explicitly passed, which is specifically for CPU
-   hotplug scenarios. Normal interrupt affinity operations (with
-   `force=false`) remain unchanged.
+1. **New helper function** `regulator_get_voltage_delta()` (lines
+   3800-3808): Calculates the absolute difference between current and
+   target voltage
+2. **Retry loop** (lines 3865-3893): After the initial voltage setting,
+   if `max_uV_step` is configured, it:
+   - Checks if we've reached the target voltage (delta > 0)
+   - Repeatedly calls `regulator_balance_voltage()` until convergence
+   - Includes convergence protection to avoid infinite loops (line 3888)
 
-7. **Aligns with kernel conventions**: The kernel documentation for
-   `irq_force_affinity()` explicitly states it's "Solely for low level
-   cpu hotplug code, where we need to make per cpu interrupts affine
-   before the cpu becomes online." This commit makes the MIPS GIC driver
-   comply with this intended behavior.
+## Why This Is a Good Backport Candidate
 
-The fix is essential for proper operation of affected hardware and
-follows the stable kernel criteria of being a important bugfix with
-minimal risk.
+1. **Fixes a real bug**: Users with stepped voltage regulators cannot
+   reach target voltages, potentially causing system instability or
+   device malfunction
+2. **Minimal invasive changes**: The fix is well-contained within
+   `regulator_set_voltage_unlocked()` and only affects regulators with
+   `max_uV_step` constraints
+3. **No API/ABI changes**: Only internal implementation changes, no
+   external interfaces modified
+4. **Clear regression potential**: Low risk as the new code only
+   executes for regulators with `max_uV_step` set
+5. **Safety checks included**: The convergence check prevents infinite
+   loops (`if (new_delta - delta > rdev->constraints->max_uV_step)`)
 
- drivers/irqchip/irq-mips-gic.c | 8 ++++++--
- 1 file changed, 6 insertions(+), 2 deletions(-)
+## Specific Code References
 
-diff --git a/drivers/irqchip/irq-mips-gic.c b/drivers/irqchip/irq-mips-gic.c
-index bca8053864b2..1c2284297354 100644
---- a/drivers/irqchip/irq-mips-gic.c
-+++ b/drivers/irqchip/irq-mips-gic.c
-@@ -375,9 +375,13 @@ static int gic_set_affinity(struct irq_data *d, const struct cpumask *cpumask,
- 	/*
- 	 * The GIC specifies that we can only route an interrupt to one VP(E),
- 	 * ie. CPU in Linux parlance, at a time. Therefore we always route to
--	 * the first online CPU in the mask.
-+	 * the first forced or online CPU in the mask.
- 	 */
--	cpu = cpumask_first_and(cpumask, cpu_online_mask);
-+	if (force)
-+		cpu = cpumask_first(cpumask);
-+	else
-+		cpu = cpumask_first_and(cpumask, cpu_online_mask);
-+
- 	if (cpu >= NR_CPUS)
- 		return -EINVAL;
+- The bug is in the optimization at drivers/regulator/core.c:3814-3815
+- The fix adds retry logic at drivers/regulator/core.c:3865-3893
+- Only affects regulators where `rdev->constraints->max_uV_step > 0`
+- The existing `regulator_limit_voltage_step()` function already handles
+  the step limiting logic
+
+This is exactly the type of fix that belongs in stable: it addresses a
+specific functional bug without introducing new features or
+architectural changes.
+
+ drivers/regulator/core.c | 43 +++++++++++++++++++++++++++++++++++++++-
+ 1 file changed, 42 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/regulator/core.c b/drivers/regulator/core.c
+index 1f4698d724bb..4fb9f61ebd3a 100644
+--- a/drivers/regulator/core.c
++++ b/drivers/regulator/core.c
+@@ -3781,6 +3781,16 @@ static int _regulator_do_set_suspend_voltage(struct regulator_dev *rdev,
+ 	return 0;
+ }
  
++static int regulator_get_voltage_delta(struct regulator_dev *rdev, int uV)
++{
++	int current_uV = regulator_get_voltage_rdev(rdev);
++
++	if (current_uV < 0)
++		return current_uV;
++
++	return abs(current_uV - uV);
++}
++
+ static int regulator_set_voltage_unlocked(struct regulator *regulator,
+ 					  int min_uV, int max_uV,
+ 					  suspend_state_t state)
+@@ -3788,8 +3798,8 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
+ 	struct regulator_dev *rdev = regulator->rdev;
+ 	struct regulator_voltage *voltage = &regulator->voltage[state];
+ 	int ret = 0;
++	int current_uV, delta, new_delta;
+ 	int old_min_uV, old_max_uV;
+-	int current_uV;
+ 
+ 	/* If we're setting the same range as last time the change
+ 	 * should be a noop (some cpufreq implementations use the same
+@@ -3836,6 +3846,37 @@ static int regulator_set_voltage_unlocked(struct regulator *regulator,
+ 		voltage->max_uV = old_max_uV;
+ 	}
+ 
++	if (rdev->constraints->max_uV_step > 0) {
++		/* For regulators with a maximum voltage step, reaching the desired
++		 * voltage might take a few retries.
++		 */
++		ret = regulator_get_voltage_delta(rdev, min_uV);
++		if (ret < 0)
++			goto out;
++
++		delta = ret;
++
++		while (delta > 0) {
++			ret = regulator_balance_voltage(rdev, state);
++			if (ret < 0)
++				goto out;
++
++			ret = regulator_get_voltage_delta(rdev, min_uV);
++			if (ret < 0)
++				goto out;
++
++			new_delta = ret;
++
++			/* check that voltage is converging quickly enough */
++			if (new_delta - delta > rdev->constraints->max_uV_step) {
++				ret = -EWOULDBLOCK;
++				goto out;
++			}
++
++			delta = new_delta;
++		}
++	}
++
+ out:
+ 	return ret;
+ }
 -- 
 2.39.5
 
