@@ -1,125 +1,140 @@
-Return-Path: <linux-kernel+bounces-754784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754785-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D5A30B19CB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:33:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 73BE8B19CBA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:36:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED612189909A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:33:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9BB94176BF2
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:36:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9420238C1A;
-	Mon,  4 Aug 2025 07:32:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A35023909F;
+	Mon,  4 Aug 2025 07:36:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s8xpDdSN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RomulYfm"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238C723A58B;
-	Mon,  4 Aug 2025 07:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 64E2E22A4FE
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 07:36:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754292764; cv=none; b=ZTnMvzqX+vXOkmZgxB1/dmrxELb9ZtlVIaqfJQMrAuvQ8ZL+/57T9zyamL4WXiHr/Sx7oj17jM/LsRRr9UpAdLWtr843PDW6IB6NtJz3Qa8f1FFqS5h/O8QMs4+M6MSnSeyoqYHhAAjjvKu7jyTg22e5UEryOYVaefVfzrZnay8=
+	t=1754293005; cv=none; b=ifNB8Lz0Tqqt+Fu8Jb2lhCyRVZNLrK9ghA7MnOVWsTWIKb9x3BvKAIl2eE+1vbZ289ErWhBcouv3ccBTp6nBGUv0mwJvZyvBGrMXzex06M04Ff+ODovlPGs2SBLs7AANqOdX39/T7x7Z6qb150tG78bmjVZWK8MPKnQrjZn9m84=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754292764; c=relaxed/simple;
-	bh=wB6I/j32PkE+YUbjoUKC4S9/gwmEdIKjLTMub/MU7mo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=EjMw0iOIvuXmJNQlBTs1KYFP1cUqtF3uENIXy/zAVRaWUTIudcvSQmPsmYm5Ud1Yu8YBkb5fIfSwF6PPaZhKMVr50oorii+ppfZMe4fqwACLrb4KQMUAlaQXHlnUUwfAAd7yieR60aAUwhLAe5hsLkQINrFPlm29CHSFYINfowE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s8xpDdSN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D2CDCC4CEE7;
-	Mon,  4 Aug 2025 07:32:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754292763;
-	bh=wB6I/j32PkE+YUbjoUKC4S9/gwmEdIKjLTMub/MU7mo=;
-	h=Date:Subject:To:References:From:In-Reply-To:From;
-	b=s8xpDdSNmkV3PbR7bOx6S9BBBXrySDUbKg5GuviCeBHvZ2gDpjeGOnVvn51MrbNFh
-	 rPbKWfcAW8alQxpvpGvO2SHCijgh/SZnSOGzn//+HEoh2CCRPJ9TjX1Ym8xcILYxv+
-	 1kYycH5iFR3o+i0aHrvjOysdaXO3PQ/ufUmIgWWpH2/oKh916JWWfWPNGhf/cUZL/Q
-	 TzAnN/Z9bG4lX8TFbjZ7gDfA0flcM779qhGr0AjJOg0Gry25qp1J267tvgvrMRXOfP
-	 P2oSveIbo31VZwOIbfOpnzxBa1PumRfs0rTMlFthSzGMU6WWs0m5RlnWFe13DRc2A1
-	 7pCKetQJOqhPA==
-Message-ID: <19b91a3b-a330-41d5-ba45-39279185a2d1@kernel.org>
-Date: Mon, 4 Aug 2025 09:32:38 +0200
+	s=arc-20240116; t=1754293005; c=relaxed/simple;
+	bh=3Y/eNwvB5ILZs5E+ocvhqUEyyEQJUHJ6l9mncbf4LIE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HzfP2pUKdAND8o4MYbRWM3OUpAigxx8AOEPU4+Kgff1iuTOpyRgeg5Tt8mjO4kCcPJBNUsEJMH7/XAWTBYhznN4Vk9o7yuL8z4OA5pV9hZZxuwaPNCIkA8v2KkV0421JyQJzKw3teKe/ooMUHRzKrxl3iCOZF/kMTGul1jtA4rE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RomulYfm; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4aedd1b006bso40956571cf.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 00:36:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754293003; x=1754897803; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=s3ooJeoXgiNxmCjKQ3/NUiLCRPH/OBbBVxn1XceNIw4=;
+        b=RomulYfmI35IjwyVZgiRfu6BIDfdWhbud076jZv7v3uLxOhPIHU75fiDPCCt5X01gT
+         XkKntFUf3wN7czyhM3OXc9YttnxOptB+xA6iSwOEwt6CxnQIocMQX/BbRSa5QUeXUZqX
+         0t21/UbsWGn8tBdOgN87j17XabVu9i2SnWCa7XxjHSIVlVuIP4Bm+fy9xmQzsbpKaFfd
+         i1M/wxuDpLDqUMeJQahOsRdjqfHPrQ1/QhmfJF7YGAK3BSrhFE0bx0DTjnpEbBmlepBA
+         qNPOkjLujrTxVlIBh8RxLt8dzPtlBCBBTPGZOMz83HPniSN7qExQQJpKyi2PynfjfDF1
+         3E7w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754293003; x=1754897803;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=s3ooJeoXgiNxmCjKQ3/NUiLCRPH/OBbBVxn1XceNIw4=;
+        b=t/GF3g+O9D8ga5pbGs9qsYDJS4Q/hPbY4nLeBF8fj5gjMnPKZrK5kUwQDu5u112Ish
+         my1UzsISILZIAHUbfn+ewmnSR/EvcE7dx/e7ogVv8K/BSPrzJk4CjSLftubp8q5Aec4H
+         hexRe7XWbA34qrqDaxoiu1mfkTfmxECWPGA2OfpD+oEuOIMFyMMDkaKgSPX4wISKA+Ms
+         cwG9Bz9Qcd3iJSkWVACkgXMM9KGTj/1eBISVjHxp8KtoUVgc0DL0V5SMSvSv8OqNWxtx
+         1L8FOssb3HJPkj7lgIWQk66o2oSmW87ei9EOfurHN5ZxdHJWYBVerjQD56VnPs4dNIIB
+         JnyQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU4Cgwgpo1SiYumDyst5wSFxil1kxM1dWSatmtj4AH424QxVPrCk2Y53nQnL1PthnxV+7OegnDFUETXNOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFazKwlq6BrGKZkke3TOIL5Sef4sjH7Bg7vL9vkg2zJTTMbiYM
+	7PEBk2klm48rvQntJtLu7QdLTuqIbnw/HXG5MAdlBHy5dPbthsKjsFheZfJKSNj7zl81mvdtuq3
+	MA9Hj0epDzGZm6YHNVAhGnhcQ/m8dzt5UxIy8eB+b
+X-Gm-Gg: ASbGncuNU82LGDT1iLMQsP7d4YW9vY0qxHYRTVFFuOyF2p2/NTb75t+vjgajEIzwAV5
+	C42FgpyD5SMWlsfZXCd6vx1260VYBE1nFR5Q9owq0dtfRbSXvkwk9wI5qW9xvNoMCsu3TsDeOJP
+	Pha+OgukYCcb+zrOS9KtDYogcNkP9A1RdqfP+obwyezII7pH9CDJBbmtBGH9kNAWXsrZsml8DHh
+	7wbZTxmaJGju10=
+X-Google-Smtp-Source: AGHT+IEoCUer5WNytH9wVW03O++C/FNr5V/5RS20GrME6Uk6NXfcgbALruaSrPF23gegV0XuKZHBdOlmBgO2ep9Ykx8=
+X-Received: by 2002:a05:622a:15c7:b0:4ab:c00c:250b with SMTP id
+ d75a77b69052e-4af10cf33f6mr122336581cf.40.1754293002922; Mon, 04 Aug 2025
+ 00:36:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] dt-bindings: interrupt-controller: aspeed: add
- AST2700 SCU IC compatibles
-To: Ryan Chen <ryan_chen@aspeedtech.com>, Eddie James
- <eajames@linux.ibm.com>, Thomas Gleixner <tglx@linutronix.de>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Joel Stanley <joel@jms.id.au>,
- Andrew Jeffery <andrew@codeconstruct.com.au>, linux-aspeed@lists.ozlabs.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250804053445.1482749-1-ryan_chen@aspeedtech.com>
- <20250804053445.1482749-2-ryan_chen@aspeedtech.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804053445.1482749-2-ryan_chen@aspeedtech.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20250804062004.29617-1-dqfext@gmail.com>
+In-Reply-To: <20250804062004.29617-1-dqfext@gmail.com>
+From: Eric Dumazet <edumazet@google.com>
+Date: Mon, 4 Aug 2025 00:36:31 -0700
+X-Gm-Features: Ac12FXznjO0BdtnALtDt-VPl7bSJs2FnxBEs7TFJ8fwttr2To0hldVsXZK8iBas
+Message-ID: <CANn89iJ3Lau_3W5bJdmRWL9BFUf3a40XqNgfjr7nCEu5PQ_otg@mail.gmail.com>
+Subject: Re: [PATCH net-next] ppp: remove rwlock usage
+To: Qingfang Deng <dqfext@gmail.com>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, linux-ppp@vger.kernel.org, 
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 04/08/2025 07:34, Ryan Chen wrote:
-> - Add "aspeed,ast2700-scu-ic0,1,2,3" to the compatible
->  list in aspeed,ast2500-scu-ic.yaml.
-> - Document support for AST27XX SCU interrupt controllers.
+On Sun, Aug 3, 2025 at 11:20=E2=80=AFPM Qingfang Deng <dqfext@gmail.com> wr=
+ote:
+>
+> In struct channel, the upl lock is implemented using rwlock_t,
+> protecting access to pch->ppp and pch->bridge.
+>
+> As previously discussed on the list, using rwlock in the network fast
+> path is not recommended.
+> This patch replaces the rwlock with a spinlock for writers, and uses RCU
+> for readers.
+>
+> - pch->ppp and pch->bridge are now declared as __rcu pointers.
+> - Readers use rcu_dereference_bh() under rcu_read_lock_bh().
+> - Writers use spin_lock_bh() to update, followed by synchronize_rcu()
+>   where required.
+>
+> Signed-off-by: Qingfang Deng <dqfext@gmail.com>
+> ---
 
-We see that from the diff.  Explain the differences between them. Also,
-do not use lists - it seems you are mixing two independent tasks in one
-commit.
+....
+For all your patch :
 
+Since the spinlock is now only used from the control path in process
+context, what is the reason you use _bh() suffix
+blocking BH while holding it ?
 
+Also, a mere rcu_read_lock() is enough for ppp_dev_name() and
+ppp_unit_number() : No need to disable BH there.
 
-Best regards,
-Krzysztof
+> -       write_lock_bh(&pch->upl);
+> -       ppp =3D pch->ppp;
+> -       pch->ppp =3D NULL;
+> -       write_unlock_bh(&pch->upl);
+> +       spin_lock_bh(&pch->upl);
+> +       ppp =3D rcu_replace_pointer(pch->ppp, NULL, lockdep_is_held(&pch-=
+>upl));
+> +       spin_unlock_bh(&pch->upl);
+> +       synchronize_rcu();
+> +
+>         if (ppp) {
+
+You probably could move the synchronize_rcu() here, there is no need
+to call it if ppp is NULL
+
+>                 /* remove it from the ppp unit's list */
+>                 ppp_lock(ppp);
+> --
+> 2.43.0
+>
 
