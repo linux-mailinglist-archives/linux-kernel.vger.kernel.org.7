@@ -1,150 +1,225 @@
-Return-Path: <linux-kernel+bounces-755473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755472-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C1D0B1A6AA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D138B1A6A6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:54:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFF0816DF5D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9890116AEAC
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3E3B2737F8;
-	Mon,  4 Aug 2025 15:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6E9172580F1;
+	Mon,  4 Aug 2025 15:49:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="djUEYN+r"
-Received: from mail-oo1-f41.google.com (mail-oo1-f41.google.com [209.85.161.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="eBUnxxf/"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38703274FF1
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:49:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 132B1212D67
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:49:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754322583; cv=none; b=pji+R15dAvTSOje6k0Bz8if0uObvGrn8r+pSan/MpaczLQDcoUowGn1F+qfLtFrstkaxIR0msYweeTnDOsh8BRnDtO+0X7gi/51L28+Xqi9uIdaVWxwkKTHfAIvIyh/YpAbPVWsTLQW94C9+r6hh+BzYoi2+El3eFdUKWx3phPM=
+	t=1754322577; cv=none; b=Kyx+hj+Ls/gKu04pexTfi1HE/dhQkY7JXYpiRl/B8O33smPEuO4KF+DD8pHcMofx52hLusY+UAbcdmQl5SNYZuMhifWiIQD2wG6XbqfTHUSmVtfYmlTK83DCiWMh56P/2uSkbe+atB4aWGCHJ0uUd3rsWNYCS/l2eMfRT+nisb4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754322583; c=relaxed/simple;
-	bh=qtND1ibzYk4UkWAwRjkYsZPKmIXRsWimj8IytYGcCJ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=dQD3THPMjX8S5EeJxiijp9fDQFuz+M1d7/JpgUmNhVA4wgILO7M+muz1oltQuwgjl65VpHobfmgGceW5wtPUaI11CHwtpieT3g7CDWwuCSnJ8d4+H3LCDdgbY0COPA0ya1zM2xYS3zlAUuyKcRFE4WkB7tB0JVoqYjfzVLb+9s8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=djUEYN+r; arc=none smtp.client-ip=209.85.161.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f41.google.com with SMTP id 006d021491bc7-6197e7d225bso1186772eaf.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:49:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754322580; x=1754927380; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=TwpsU/1XQKoqUW4t4lntajLzcj7nckiR82+0joEUMlw=;
-        b=djUEYN+rnSHbNs21Nn3JM3WG6UPELRMiVsQjiGfNZqAsF1T4Oq4BAgKe6PRm//sSif
-         lhP5lOD2ySUu7QRvBXSdKKkZLnNGkePf6kMn9WWnWygrnb6Ohuepv9X2Bu4/Snx2r3nA
-         JdHOA9XOoumP1iFo/ou2I2xeQ8jvL/KqXEaAL6IkU0oXbptd6nhI86dT+/kDX13o3Ccw
-         ZNdS42N76Kkjjd78GrXi1mLysCxGZB4qeC9sUFx8XYFk4pz6N4j/MOQZgaI3dHumEDLB
-         44tDc0kdlU0Hv/giPlKKdyphRRjI+oqkso3HYz5xDSZBlVo1USjqVgljr24cYkK+u0Au
-         +jFw==
+	s=arc-20240116; t=1754322577; c=relaxed/simple;
+	bh=fgQf3AzdPQXO0jCjF1Jj/luAySkWXiCqRjmQm+Hbd2Q=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=u0RR4vsfbD9ozFQeFwd8lBGgtymSYytnKrz6SWYpjJ88s1VySpB54F6tCFHUkMc7R0jn0dmJqFpNlMwe1whZ9F8hHZTt/r5K0pBYEizjFOzoKLlbjrjW/aII9HlWtzDQZZ2ntxDaL3PakaHGuMPGwPhjfr99dyHnWwE5Iok2Tvo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=eBUnxxf/; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754322574;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Mp91VSTUj4He/K83QIVxaDFmWFwOZixH7dnV0delk0Y=;
+	b=eBUnxxf/CZ35uXyaCh4VXifA3tqTOfLU9HbsAih+3Eu9ZivhaO5/IUUEC/ZmGr57wI1TEl
+	iX71MFDpv+NKyCzBxEJakP1Nysg2bchndV431zpjzNzKDINb6nNacHzAbQshQLzc+lXBd9
+	qFTxMm9yDJUIZWTm8UBPARf7m7RHQwo=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-270-mdAZ2U13PXWq7nv_ZGHcSA-1; Mon, 04 Aug 2025 11:49:33 -0400
+X-MC-Unique: mdAZ2U13PXWq7nv_ZGHcSA-1
+X-Mimecast-MFC-AGG-ID: mdAZ2U13PXWq7nv_ZGHcSA_1754322572
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-3b78aa2a113so1977957f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:49:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754322580; x=1754927380;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=TwpsU/1XQKoqUW4t4lntajLzcj7nckiR82+0joEUMlw=;
-        b=jarVIIDiLqVKy9Aljm2GqjSXVYZmc7uU4KCDxG4mKCrBF4lTJNs3/wUwx6Mis5ixD7
-         9MddjtXfYg/tT99ahe36Cqd0lTNBdGY/ZU5wvSIj8iBTKBSlIJZcCeHmBjG82KAuWgwv
-         LZ7ETXFL+9eY5Olm+xzKl5B9EcPpQXXzXFdZZ9wSGTiLclLCT1hXItUTrjFyaohFkK5w
-         JPSZ74d1GI/F5HzLsWWCQjtB9tfP5ZDv1E/4+lms3m7vM9WWyft6h6FIzsVeppzpas9+
-         de3u1RFYIPIldl1Qqr42zvezo6XOapi6dSjbh1IqRv8E3cMy4xgxmQqHNpVt1xwSJ7au
-         pJzQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwvEAIz21L3wdL/tlpc/TGDLyalfXuc5X1zEBw4h8E0mBPEyTWVq35ONwUeaReq68UuMY02Xs8ug4iL98=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwAtp4Ppe6ANQx4S547hHSRfRIXldEUZgWyBSV/bOojXwq18MF
-	uRiNGi3DmPfNwyw53UJrbzST+3Mfam+E+rT97nvh628v6wuYsqr0TPDysB4RxhufXebJ4tqqCOU
-	LiALPyouBDreh6cfORTfJI9RxHxj0LVGD55SRxjWYvLO1occI+grAKzM=
-X-Gm-Gg: ASbGncsT4z91Mbco9UGeDcejocNynADeIA2lqaOs5xkBfL2z0+RJJrmxmE+Gw+fbEIW
-	OtHEp/qoxQuPxh1cR9y6u141KmIS8JH0vSMuSD2sHd6fxE3DnB+/37JbbF+Jdp9gztOCzgpmiNy
-	o0uNIMN3Rk3jX7rkDr1p0NCJk5PEkI+KgtlWU6poMs8lnb0YkXJ0v5/HvujWhmkDjqHPciSA8UT
-	hinXpM/
-X-Google-Smtp-Source: AGHT+IHgaQgk3f6H/3KX12vfUec7jykjb6GJaLe3Edl/bXtGP6RofdteZULNw3f7ts3w5DkzL66APzyZelnJi9ZiEQg=
-X-Received: by 2002:a05:6820:1e88:b0:619:a040:a61b with SMTP id
- 006d021491bc7-619a040a962mr3008362eaf.8.1754322579949; Mon, 04 Aug 2025
- 08:49:39 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754322572; x=1754927372;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Mp91VSTUj4He/K83QIVxaDFmWFwOZixH7dnV0delk0Y=;
+        b=M4QVKPS74/Ua0ufNmd9Et58LnYUFbEQOvdRiVF7kehARe8nmMrncmLHnZYC6q9Drxt
+         9nxnqrVAtaZNUa4nOJLHX4nOcQQwQqBVk4p6zhGvBmh5FEaiGooqzny39vlaMmd22AVo
+         8Cqik6J8Gb+FdetzwSDcrWvZoqIoyWEmIXBwMujWdf1Y/zjdvNCgEV8nebfrghyRbIrK
+         bObSLPGo5gq07qs2YrZuWYu7MDcwjxPb3iD2iOzJ/F3SLjaFmsMNi5H2JNnrpmVHBWzi
+         YkFM1qeTxRjCJToYPI79AeG1E+m233qDn/vwi59KbkQhysbwGQHZSynbMvt6fNbalLPq
+         RDkw==
+X-Forwarded-Encrypted: i=1; AJvYcCXl2p6oUKpzbTPGC4FUazcx2wtvxEVKNcRTiUBhAxZxBtbuaK+sQ1AHsSh72HMxFrq5S7tiMSDDpcXvXgw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmoFGbfDb+efTU0LDXoOpDHWxxJjP0l5PUy1NHR10ihms7bcOG
+	zZ656h2QHg6GSpu4XPm29LmnyrsLpGLUdQcgSQ2CVjpbWoNJRYlP32trEFgo3lV7agwBRVuI/EY
+	6TafNurniz7bH5UupRjJqM5AJHs9oA6UwfR3TeeVVRntBIiad7YD3N5u5lm9FePwlTw==
+X-Gm-Gg: ASbGncsA0P+W0r/nsB0IJ7MxXuOpQXxde8LTNa5T+KstSj+mde8b7fSCXESN24GNFgR
+	sko05Lbr47WunLWGcOKjCxRQnXK6vxTuxeNJuwBIKt1APnGegdmCAVBN+TweeD5RK1ESTY1AEk0
+	Gw0uRmd4fJ7BOu4mFexZ4J1CqTA1KRpKUiWQzAI+ah8nnLvU7p23HHKxadKd9ohV8zCVSWSZF2o
+	EBb8uRwyL7nbJvZD9gdPi7TNyxqz7unq/fwNewCOhmLiLR2j58COnDRncWoPi6xKyuMGewmevVi
+	v0s1Gv7rFnm3gKiG5TGKek+DQ4AjUpOZTBY=
+X-Received: by 2002:a5d:5d0e:0:b0:3b7:8525:e9cc with SMTP id ffacd0b85a97d-3b8d9474b30mr6851028f8f.18.1754322572293;
+        Mon, 04 Aug 2025 08:49:32 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGIjQYt8kn5K1KiyZc+opRlRMeQATeYuM04IBXVfIUgbfBca8ACZBnnd7veGeB9S3HxGg9o9w==
+X-Received: by 2002:a5d:5d0e:0:b0:3b7:8525:e9cc with SMTP id ffacd0b85a97d-3b8d9474b30mr6850997f8f.18.1754322571839;
+        Mon, 04 Aug 2025 08:49:31 -0700 (PDT)
+Received: from fedora (g3.ign.cz. [91.219.240.17])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-459c58ed07fsm65384015e9.22.2025.08.04.08.49.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 08:49:31 -0700 (PDT)
+From: Vitaly Kuznetsov <vkuznets@redhat.com>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Jeremi Piotrowski <jpiotrowski@linux.microsoft.com>, Dave Hansen
+ <dave.hansen@linux.intel.com>, linux-kernel@vger.kernel.org,
+ alanjiang@microsoft.com, chinang.ma@microsoft.com,
+ andrea.pellegrini@microsoft.com, Kevin Tian <kevin.tian@intel.com>, "K. Y.
+ Srinivasan" <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
+ Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
+ linux-hyperv@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>,
+ kvm@vger.kernel.org
+Subject: Re: [RFC PATCH 1/1] KVM: VMX: Use Hyper-V EPT flush for local TLB
+ flushes
+In-Reply-To: <aHWjPSIdp5B-2UBl@google.com>
+References: <cover.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <4266fc8f76c152a3ffcbb2d2ebafd608aa0fb949.1750432368.git.jpiotrowski@linux.microsoft.com>
+ <875xghoaac.fsf@redhat.com>
+ <ca26fba1-c2bb-40a1-bb5e-92811c4a6fc6@linux.microsoft.com>
+ <87o6tttliq.fsf@redhat.com> <aHWjPSIdp5B-2UBl@google.com>
+Date: Mon, 04 Aug 2025 17:49:29 +0200
+Message-ID: <87tt2nm6ie.fsf@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ae66122a86295f0ca5f2ff385ac2850360a805c1.1753251689.git.xiaopei01@kylinos.cn>
- <aIiUEGt2uVF9yi1W@sumit-X1>
-In-Reply-To: <aIiUEGt2uVF9yi1W@sumit-X1>
-From: Jens Wiklander <jens.wiklander@linaro.org>
-Date: Mon, 4 Aug 2025 17:49:27 +0200
-X-Gm-Features: Ac12FXxloQhDa4UWHLtUmaDy4W6OWJWZEYbGK0Nr6i7EzpGH5yulks4fivp9qnc
-Message-ID: <CAHUa44ExoWcNXVDiwUA02qEhiCFF0obeXYJY4_NEVUTzEvkUng@mail.gmail.com>
-Subject: Re: [PATCH] tee: fix memory leak in tee_dyn_shm_alloc_helper
-To: Sumit Garg <sumit.garg@kernel.org>
-Cc: Pei Xiao <xiaopei01@kylinos.cn>, balint.dobszay@arm.com, 
-	op-tee@lists.trustedfirmware.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Tue, Jul 29, 2025 at 11:27=E2=80=AFAM Sumit Garg <sumit.garg@kernel.org>=
- wrote:
->
-> On Wed, Jul 23, 2025 at 02:22:41PM +0800, Pei Xiao wrote:
-> > When shm_register() fails in tee_dyn_shm_alloc_helper(), the pre-alloca=
-ted
-> > pages array is not freed, resulting in a memory leak.
-> >
-> > Fixes: cf4441503e20 ("tee: optee: Move pool_op helper functions")
-> > Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-> > ---
-> >  drivers/tee/tee_shm.c | 8 +++++---
-> >  1 file changed, 5 insertions(+), 3 deletions(-)
->
-> Reviewed-by: Sumit Garg <sumit.garg@oss.qualcomm.com>
+Sean Christopherson <seanjc@google.com> writes:
 
-Looks good. I'm picking up this.
-
-Thanks,
-Jens
+...
 
 >
-> -Sumit
+> It'll take more work than the below, e.g. to have VMX's construct_eptp() pull the
+> level and A/D bits from kvm_mmu_page (vendor code can get at the kvm_mmu_page with
+> root_to_sp()), but for the core concept/skeleton, I think this is it?
 >
-> >
-> > diff --git a/drivers/tee/tee_shm.c b/drivers/tee/tee_shm.c
-> > index 915239b033f5..2a7d253d9c55 100644
-> > --- a/drivers/tee/tee_shm.c
-> > +++ b/drivers/tee/tee_shm.c
-> > @@ -230,7 +230,7 @@ int tee_dyn_shm_alloc_helper(struct tee_shm *shm, s=
-ize_t size, size_t align,
-> >       pages =3D kcalloc(nr_pages, sizeof(*pages), GFP_KERNEL);
-> >       if (!pages) {
-> >               rc =3D -ENOMEM;
-> > -             goto err;
-> > +             goto err_pages;
-> >       }
-> >
-> >       for (i =3D 0; i < nr_pages; i++)
-> > @@ -243,11 +243,13 @@ int tee_dyn_shm_alloc_helper(struct tee_shm *shm,=
- size_t size, size_t align,
-> >               rc =3D shm_register(shm->ctx, shm, pages, nr_pages,
-> >                                 (unsigned long)shm->kaddr);
-> >               if (rc)
-> > -                     goto err;
-> > +                     goto err_kfree;
-> >       }
-> >
-> >       return 0;
-> > -err:
-> > +err_kfree:
-> > +     kfree(pages);
-> > +err_pages:
-> >       free_pages_exact(shm->kaddr, shm->size);
-> >       shm->kaddr =3D NULL;
-> >       return rc;
-> > --
-> > 2.25.1
-> >
+> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
+> index 6e838cb6c9e1..298130445182 100644
+> --- a/arch/x86/kvm/mmu/mmu.c
+> +++ b/arch/x86/kvm/mmu/mmu.c
+> @@ -3839,6 +3839,37 @@ void kvm_mmu_free_guest_mode_roots(struct kvm *kvm, struct kvm_mmu *mmu)
+>  }
+>  EXPORT_SYMBOL_GPL(kvm_mmu_free_guest_mode_roots);
+>  
+> +struct kvm_tlb_flush_root {
+> +       struct kvm *kvm;
+> +       hpa_t root;
+> +};
+> +
+> +static void kvm_flush_tlb_root(void *__data)
+> +{
+> +       struct kvm_tlb_flush_root *data = __data;
+> +
+> +       kvm_x86_call(flush_tlb_root)(data->kvm, data->root);
+> +}
+> +
+> +void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root)
+> +{
+> +       struct kvm_tlb_flush_root data = {
+> +               .kvm = kvm,
+> +               .root = __pa(root->spt),
+> +       };
+> +
+> +       /*
+> +        * Flush any TLB entries for the new root, the provenance of the root
+> +        * is unknown.  Even if KVM ensures there are no stale TLB entries
+> +        * for a freed root, in theory another hypervisor could have left
+> +        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
+> +        * flush when freeing a root (see kvm_tdp_mmu_put_root()), and flushing
+> +        * TLBs on all CPUs allows KVM to elide TLB flushes when a vCPU is
+> +        * migrated to a different pCPU.
+> +        */
+> +       on_each_cpu(kvm_flush_tlb_root, &data, 1);
+
+Would it make sense to complement this with e.g. a CPU mask tracking all
+the pCPUs where the VM has ever been seen running (+ a flush when a new
+one is added to it)?
+
+I'm worried about the potential performance impact for a case when a
+huge host is running a lot of small VMs in 'partitioning' mode
+(i.e. when all vCPUs are pinned). Additionally, this may have a negative
+impact on RT use-cases where each unnecessary interruption can be seen
+problematic. 
+
+> +}
+> +
+>  static hpa_t mmu_alloc_root(struct kvm_vcpu *vcpu, gfn_t gfn, int quadrant,
+>                             u8 level)
+>  {
+> @@ -3852,7 +3883,8 @@ static hpa_t mmu_alloc_root(struct kvm_vcpu *vcpu, gfn_t gfn, int quadrant,
+>         WARN_ON_ONCE(role.direct && role.has_4_byte_gpte);
+>  
+>         sp = kvm_mmu_get_shadow_page(vcpu, gfn, role);
+> -       ++sp->root_count;
+> +       if (!sp->root_count++)
+> +               kvm_mmu_flush_all_tlbs_root(vcpu->kvm, sp);
+>  
+>         return __pa(sp->spt);
+>  }
+> @@ -5961,15 +5993,6 @@ int kvm_mmu_load(struct kvm_vcpu *vcpu)
+>         kvm_mmu_sync_roots(vcpu);
+>  
+>         kvm_mmu_load_pgd(vcpu);
+> -
+> -       /*
+> -        * Flush any TLB entries for the new root, the provenance of the root
+> -        * is unknown.  Even if KVM ensures there are no stale TLB entries
+> -        * for a freed root, in theory another hypervisor could have left
+> -        * stale entries.  Flushing on alloc also allows KVM to skip the TLB
+> -        * flush when freeing a root (see kvm_tdp_mmu_put_root()).
+> -        */
+> -       kvm_x86_call(flush_tlb_current)(vcpu);
+>  out:
+>         return r;
+>  }
+> diff --git a/arch/x86/kvm/mmu/mmu_internal.h b/arch/x86/kvm/mmu/mmu_internal.h
+> index 65f3c89d7c5d..3cbf0d612f5e 100644
+> --- a/arch/x86/kvm/mmu/mmu_internal.h
+> +++ b/arch/x86/kvm/mmu/mmu_internal.h
+> @@ -167,6 +167,8 @@ static inline bool is_mirror_sp(const struct kvm_mmu_page *sp)
+>         return sp->role.is_mirror;
+>  }
+>  
+> +void kvm_mmu_flush_all_tlbs_root(struct kvm *kvm, struct kvm_mmu_page *root);
+> +
+>  static inline void kvm_mmu_alloc_external_spt(struct kvm_vcpu *vcpu, struct kvm_mmu_page *sp)
+>  {
+>         /*
+> diff --git a/arch/x86/kvm/mmu/tdp_mmu.c b/arch/x86/kvm/mmu/tdp_mmu.c
+> index 7f3d7229b2c1..3ff36d09b4fa 100644
+> --- a/arch/x86/kvm/mmu/tdp_mmu.c
+> +++ b/arch/x86/kvm/mmu/tdp_mmu.c
+> @@ -302,6 +302,7 @@ void kvm_tdp_mmu_alloc_root(struct kvm_vcpu *vcpu, bool mirror)
+>          */
+>         refcount_set(&root->tdp_mmu_root_count, 2);
+>         list_add_rcu(&root->link, &kvm->arch.tdp_mmu_roots);
+> +       kvm_mmu_flush_all_tlbs_root(vcpu->kvm, root);
+>  
+>  out_spin_unlock:
+>         spin_unlock(&kvm->arch.tdp_mmu_pages_lock);
+>
+
+-- 
+Vitaly
+
 
