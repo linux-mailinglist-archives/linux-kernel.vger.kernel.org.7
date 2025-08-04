@@ -1,118 +1,145 @@
-Return-Path: <linux-kernel+bounces-754705-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754706-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0E0FDB19B2D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:52:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C2F3B19B31
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 07:56:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3904C176A69
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:52:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EB21A3B1638
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 05:56:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7FCF1FF7D7;
-	Mon,  4 Aug 2025 05:52:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62EAB22422D;
+	Mon,  4 Aug 2025 05:56:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="cUoKeXAx"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="hcB57cyb"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94B9454774
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 05:52:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1002917555;
+	Mon,  4 Aug 2025 05:56:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754286737; cv=none; b=mbzzRxkcc5MjYjrAp/PYW3WjbC3HIr6RLai8h7xbiIahrE1hUTZwEZwywCCQjGptI4QMcHwh/TmBDinahDcLQyszBHfz2SVlQ/iz1Vl1Cgks6teYDOSycGhId/8ayaWJfu2NFRkGlnjKep2f4F+D1iNJObFu8ntBlBSskwxgqeU=
+	t=1754286986; cv=none; b=aRcU2ro4daKIxi+zpNSJK5Mg4O/quBPNhnfw1/mVG5x9Dh3QjioRhwCkUL3OJQta+wL5OXMEJx+9o2RbG+1/u35rt1yrjNeNtMJHJ2JLUUZbQ3WgQKGZ9HwFSQor5KbaUinV8pKEtKm4TkNVTA85zAjT6V0Vj5th5ntgsa3uc1k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754286737; c=relaxed/simple;
-	bh=sXfHe9A9RM8H1aiDjeLsF+MIrHFzjkmFqI/fJPuwM+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CmMFX8fXJsMtiOslO9rQQjCFlRrinm6sl7FzrNAzEbriinRfTgZrlfd/Ep76p5Ttr/qrWLhCKt64NoHRIPBETQ7Bd8wWgh8ZfVFlFylPyhyvuc45vyiY2727F/L42EtMFshHjefpDz1HIssRmRy+yUWtBkvYs/ih/CZqFSm98e8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=cUoKeXAx; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-4561607166aso27903655e9.2
-        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 22:52:14 -0700 (PDT)
+	s=arc-20240116; t=1754286986; c=relaxed/simple;
+	bh=l2LKSIc+Y2ts0wor7Dn5/CMdqUCF+F+HSfgxIYKSOLE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lzkTEn1+FWZ4ShtS5BDa8Z6w7gF0t0E+AMG1pU7jGPbPNlyVBD/5I3jK25XrdlSJeNi2TcWZ/6LWniLX9qiEgE3Slii+yaWWk9Gu2VB0E6r4iavRFGoPzXRyNn/hcf0CruFWoxAABIK+QtzBzhBp1kJnOd0VYDKVMpO/S+nSnZY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=hcB57cyb; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-55b85d01b79so4112668e87.3;
+        Sun, 03 Aug 2025 22:56:24 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754286733; x=1754891533; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=idg3NNQd7Aifs0NYERU3OcyOP33KhlyKv3C8P2yZD1A=;
-        b=cUoKeXAxOotjb5bIK0/yW6LtMC4R2Nf5LUMt3g5RZhB9k3z0VQUh4hAVo40mfHqef/
-         FAq4v/4jsZ0CsaSTba740AsNRC3jUEvYbpcdX9YGv4KuW2Hwv0TsJ7Q1wIgCbH1+rfzm
-         QQp/iLOgPcOf6E1g3TmvBg8yA/Wz9slDEZAy2uEJ3mgboOsuD9IMcZJGIfxqrHfIxiTI
-         iFl7lo+p89yhqBmWniS0k1V+0VDKBYy1Fz2k877r+2tjlFSBWtwc2nsspI9mdgfx3kN0
-         6hDrSG2XImZl1O5VIdG5DGjFnjA1jt7SCSIHx5OKhMXLcUxtEJQiRDxgmN9POiEglXpF
-         cBSQ==
+        d=gmail.com; s=20230601; t=1754286983; x=1754891783; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=w2kYeiWAiln2b2xzXgbJxR3H30rgDfpUEAwD832j0AA=;
+        b=hcB57cybZr0UFQR4Y3rcSaGdDECw4DgGANKErRvk82+SMReLLZUxOq+2+wSIvDty1X
+         SCeTnzMSNF3d70c/t1sOF5vrZz5LS7qq6e592DIudINb+nHxSUHHYVvsI1vZsucRIqBn
+         yKwnxkAxpEPNhuGY8PvZNuPr8UgZv1cITEcWpeiNEK9YHaSQcMPCA8NRqYyqMspqgs32
+         gNTQ297W/Zv40doba3ioYF9VkLElB97RivJoc5miTQzkzjlTJxxyeydEooYhCc8tEwUY
+         Xajj85/mUZOJOnGQOWN8+QiwYwAo+K4oLDgeeHeE397NAJmOHnl7aSkuNijpq33Oangf
+         5dVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754286733; x=1754891533;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=idg3NNQd7Aifs0NYERU3OcyOP33KhlyKv3C8P2yZD1A=;
-        b=ZkW0Gz/grJw6SC7b4W1YuHIYttUqhuUqGRzXIOU83jww4JfqLuA94rNsl3EzNFWc/A
-         FjCSWvqhrFoB7sqeHRugALKJmonxAg0u0Q4GoSo/1nZrBMTvn05twe8KuRlQzYO/tEe8
-         9EQHE8LjmJcE9b6Pqgou4TaUg4swU8W+2EJtzLZ+G7jGceHMTYF7O5Dg5LCRwTWDPuc/
-         aptEhJ5dq9jz2+azJBvqzVMWaDb9AqWAfSEahFMWy8fZjvhEte5qmITW1paidOI5ocOT
-         bf4aJ5S/153oMw+pTsFUZSY7MAkCLVTjxQOZyD0zdR/KKLcsJVJLVe28i+g5/u9uC89E
-         tG0A==
-X-Forwarded-Encrypted: i=1; AJvYcCVAcbg6HBJXJ9y8GIraS4lml4KWBenXWMMU/by1yjwaQGcxrkXmQp4u1l+ysFPYht9ObLTJGY1n72tOYUY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz3uY7+5dhUcGRyjEQ4ikAX/QBeh6AC85r/JVyrGZVTmIRZ+bDF
-	5efSN7mzcb7Ed2tbUtr12q3WeeXKxJaj2hIca1o5x1aKPpEZg7fecyMRHEmzrMsBcCQ=
-X-Gm-Gg: ASbGncutCZlr0WdaqQ0bBpGEox0+TkXIjQFnL7oPE01/qhghKWv+5XrFaquxNJQCpQk
-	puqq53E1JCMjpZLIT6bsISlCJNiMqMMuKeBvqwQrBH+jyAWe5gzMoIsEkE9rLJ27lTRe9jwIjPz
-	2lGBkYa78r03DHzNYgR9d87nxgjTtyCedm3oYxdx3lBO375dIMicOrkwA1JbUAdWqQZHrZyoUxm
-	pb9zwxI8zOGsNntsJWg7kJ3XbbdBoPB7biKRBo+SvCacCGKyzmuoivPRb7mxiRcsY1DbizBYA3p
-	S0GY2chrTJDXTf7Vdk1VQCPtV8p3WcJkeDUh2UN3W9/oMbEHCWMjvpM4lcC89b3lCsiyfEE8FfQ
-	dEBT+2vo5xg1i4EGy9EaaM6r85lmAmM/N
-X-Google-Smtp-Source: AGHT+IEb/gs7A5IisLAar+pvZRhJ0O+ov/gL2LSqq2vTlFreLuE94t0ionTmHOTEOhZ2ozfUiGkRlg==
-X-Received: by 2002:a05:600c:1d08:b0:459:db5a:b0b9 with SMTP id 5b1f17b1804b1-459db5ab3a2mr11465575e9.28.1754286732845;
-        Sun, 03 Aug 2025 22:52:12 -0700 (PDT)
-Received: from localhost (109-81-86-79.rct.o2.cz. [109.81.86.79])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c4a2f03sm14103393f8f.72.2025.08.03.22.52.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Sun, 03 Aug 2025 22:52:12 -0700 (PDT)
-Date: Mon, 4 Aug 2025 07:52:10 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: zhongjinji@honor.com
-Cc: linux-mm@kvack.org, akpm@linux-foundation.org, rientjes@google.com,
-	shakeel.butt@linux.dev, npache@redhat.com,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
-	peterz@infradead.org, dvhart@infradead.org, dave@stgolabs.net,
-	andrealmeid@igalia.com, liulu.liu@honor.com, feng.han@honor.com
-Subject: Re: [[PATCH v2] 2/2] futex: Only delay OOM reaper for processes
- using robust futex
-Message-ID: <aJBKijr1nR1CleBL@tiehlicka>
-References: <20250801153649.23244-1-zhongjinji@honor.com>
- <20250801153649.23244-2-zhongjinji@honor.com>
+        d=1e100.net; s=20230601; t=1754286983; x=1754891783;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=w2kYeiWAiln2b2xzXgbJxR3H30rgDfpUEAwD832j0AA=;
+        b=sMsvvg97LsGFbx0JwXq6qVUN355CH7CLKUMqsflqCCknX/o/CZhsPevVFVO4ADELAN
+         sOaJa9gD+wwB3M9Yz/GzyorGjhMfDAwlCULddSh9CaO5v1ChB5Mrg7oUBZ37ZNDoLuSS
+         ztNYHXkBkFJCfyJsgVvyDhB4E5jiXExElJUSvZWmDsbTRKw7EAxcJfD4b3/wXO/OQsyG
+         zOTcNBFuHMkqEpVdGhurtUSXIZleln5iv4Zd+iNX/ZPq8ydHgiBwfgPfsqbed0egDulV
+         NQ5g1EW0bYqQFSIpMEnU+CucjVY6SdF0eetXVvCkzOQJ0Uvj1f8FRCnqoFC1myYZDz5j
+         gw5g==
+X-Forwarded-Encrypted: i=1; AJvYcCVBsidvCGCmLQpC0WZQpH375V03/WYU2TQn3DHnyPJxePfYPBpk0ZkiSiLPesaz8NSPlVuVKyy98ZM=@vger.kernel.org, AJvYcCXUn/QHX784RKA3jN5Ng7M9zGMTEgw7RxMNhcFVXW2YYYPPUGK6HEW1mJ5m+bv2lxYwcjYIcetN2CU1jLO6@vger.kernel.org
+X-Gm-Message-State: AOJu0YyK9QBU5AJDoGnuCBggp6/MFzdYxveR4WDjBtoKZ+007o01geNW
+	ntNE4YxcK4jJW2WtxbRA+EdU7z0jNvpEqK21DNhYtn9yIpocwbhr5vU8
+X-Gm-Gg: ASbGncutxiN20nHOxGoq80REPhymlIrfuo87D1PkqfSnwxNZzDzTERpbCsAlmWQYKjg
+	GP3ZhAo67whPhnyf9Tn25IFDzrBtQH4d0+7g8kdLNsgYWvTpdjGnhBxvYOHIvvX32at5Ak2y845
+	7gjAT3VaS5/aW516RkNXpHfAFXgg9oVahg+oyk81A5vwGZAKyCK1kF8+1AqDbgh9Mg1ix8S/M2C
+	jkI1TaHMHXsUAA4i2oHhSGzlf3ecYQ6BvRQPiyktxrSunE784o/WRaRIHT2Q9+I7XwRN4eegvC1
+	6pGbUaSxW2LYRLvCQ1LAkk4nsgssH5VaLhewsYJ7WAGePIBNQBlJW6T5xYe5NZDP6zNBZnRU6C7
+	iKbeibY/HyliSn4qvOatWNHXQ04TQSf4NgHXpa78pbKjIv7p3VhGiMvjGj0uHr1ZZp4SUzwlSfA
+	S0qxE=
+X-Google-Smtp-Source: AGHT+IFEBJh4jWDFEc7KSbEyOWPL+6wb5CF+lINXMmg4n23UsRzSERItQOTE6jvEWRJegZDoCsFqPQ==
+X-Received: by 2002:a05:6512:b02:b0:55b:880f:38b6 with SMTP id 2adb3069b0e04-55b97abd337mr2051210e87.4.1754286982969;
+        Sun, 03 Aug 2025 22:56:22 -0700 (PDT)
+Received: from ?IPV6:2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703? ([2a10:a5c0:800d:dd00:8fdf:935a:2c85:d703])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-55b88ca298fsm1529234e87.115.2025.08.03.22.56.21
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Sun, 03 Aug 2025 22:56:22 -0700 (PDT)
+Message-ID: <6aa66380-8109-472e-8869-bcdc4b0114aa@gmail.com>
+Date: Mon, 4 Aug 2025 08:56:20 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250801153649.23244-2-zhongjinji@honor.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/2] iio: adc: ad7476: Simplify chip type detection
+To: Andy Shevchenko <andy.shevchenko@gmail.com>
+Cc: Matti Vaittinen <matti.vaittinen@fi.rohmeurope.com>,
+ Lars-Peter Clausen <lars@metafoo.de>,
+ Michael Hennerich <Michael.Hennerich@analog.com>,
+ Jonathan Cameron <jic23@kernel.org>, David Lechner <dlechner@baylibre.com>,
+ =?UTF-8?Q?Nuno_S=C3=A1?= <nuno.sa@analog.com>,
+ Andy Shevchenko <andy@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <cover.1754041258.git.mazziesaccount@gmail.com>
+ <0ed3a1e9346d84d20838e89a531e8d99f95bcb97.1754041258.git.mazziesaccount@gmail.com>
+ <CAHp75VerC+m1XMpZFO6dLp+0HdB1+Xn47on38Mg5AXfDYwWd4A@mail.gmail.com>
+Content-Language: en-US, en-AU, en-GB, en-BW
+From: Matti Vaittinen <mazziesaccount@gmail.com>
+In-Reply-To: <CAHp75VerC+m1XMpZFO6dLp+0HdB1+Xn47on38Mg5AXfDYwWd4A@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri 01-08-25 23:36:49, zhongjinji@honor.com wrote:
-> From: zhongjinji <zhongjinji@honor.com>
+On 02/08/2025 01:01, Andy Shevchenko wrote:
+> On Fri, Aug 1, 2025 at 12:07 PM Matti Vaittinen
+> <mazziesaccount@gmail.com> wrote:
+>>
+>> The ad7476 driver uses a table of structures for defining the IC variant
+>> specific data. Table is indexed using enum values, which are picked by
+>> SPI ID.
+>>
+>> Having the table and an enum adds extra complexity. It is potentially
+>> unsafe if someone alters the enumeration values, or size of the IC data
+>> table.
 > 
-> After merging the patch
-> https://lore.kernel.org/all/20220414144042.677008-1-npache@redhat.com/T/#u,
-> the OOM reaper runs less frequently because many processes exit within 2 seconds.
-> 
-> However, when a process is killed, timely handling by the OOM reaper allows
-> its memory to be freed faster.
-> 
-> Since relatively few processes use robust futex, delaying the OOM reaper for
-> all processes is undesirable, as many killed processes cannot release memory
-> more quickly.
+> I don't see the problem here. I like the part about converting ID
+> tables to use chip_info instead of plain integers, but other than that
+> I do not see how enum is worse than the split version.
 
-Could you elaborate more about why this is really needed? OOM should be
-a very slow path. Why do you care about this potential improvement in
-that situation? In other words what is the usecase?
+The potential culprit with using the enum for array indexing is, that it 
+requires the array size and enum values (used for indexing) to stay in 
+sync. Eg, used enum values must be smaller than the size of the array. 
+Also, the chip-info items in the array must be kept in locations which 
+match the enum values.
 
--- 
-Michal Hocko
-SUSE Labs
+Yes, we have ways to do this, often using the last enum value as the 
+size of the array, and/or using designated array initializers. It still 
+requires programmer to do this correctly. Changing enum at the top of 
+the file may break the array indexing (in seemingly unrelated place, at 
+the bottom of the file). I agree this is pretty trivial issue, but it's 
+still a thing to keep in mind.
+
+Splitting the chip-info in own structs and using direct pointer to the 
+struct makes it harder to get it wrong.
+
+Finally, dropping the enum makes adding code which does decisions based 
+on the chip-ID less appealing. It hopefully encourages adding _all_ IC 
+specific quirks in the chip-info instead, which will keep the code path 
+(IMHO) cleaner when all chip-specifics are in the chip-info.
+
+Anyways, Thanks for the feedback!
+
+Yours,
+	-- Matti
 
