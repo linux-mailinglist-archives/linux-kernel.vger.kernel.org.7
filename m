@@ -1,181 +1,85 @@
-Return-Path: <linux-kernel+bounces-755700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01D0DB1AA90
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:53:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98C4DB1AA92
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:54:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C12AF189D12E
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:53:43 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45FA1621997
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 21:54:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0EAC231853;
-	Mon,  4 Aug 2025 21:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E041C23A98E;
+	Mon,  4 Aug 2025 21:54:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bhVX7RrR"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="glFBQ7BW"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48D96634;
-	Mon,  4 Aug 2025 21:53:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42C97634;
+	Mon,  4 Aug 2025 21:54:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754344396; cv=none; b=JY19WJMP0P8uXWPh1I0suPRA1ZR6rn9bOGDgwaN03TBMLgw0O7LkDZCa2hf55MQ7IY1SlNdEV6nADaCD+1SZVUaoYN/e8vmRD1JLBGFBeXflbrVy3XipAzo1qhghxTsZ+8wZa/60jIYKrz4g8NjkpXuNTXQ8yh5OCnmdP319Cpw=
+	t=1754344487; cv=none; b=iGLIU/JsF9Pii+RNs+hWJBvHMzcYU6SlYydX8tUKUZ502CWmCm2rG0sVGwQBoS8nxPTQ+mGhFvfAxMvE2kol5ea4YBWdbMfEOoEFx/HiZ17pDWdgEanjJv2tajWAWIXJv09Lut0LGKVwWOb3yZgFXfwNmoNsDpdGWiDP9gfIhMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754344396; c=relaxed/simple;
-	bh=DqQc52n1vg12mNdpcx30L6XUIeLteBpaJofEOQYBDuo=;
+	s=arc-20240116; t=1754344487; c=relaxed/simple;
+	bh=uLPtm0HcssgYvZ/viuCH382QW0ADZ6ZxYfWJVn9+ybo=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=uPu7RjLu5hLP5rX8T+PkmQFoBb/PFhqlpGLnS8q8W5GrdObVk66+7XAMGssiMfxTh7Zgt8gwlflrEVLoDOY4w8Grp7OWhYZAfEoEnfiApzIUkeOhCLfnHk8+Eru5wJhaqqgqhpgSaMGsgpfOQxDIvmxBuEQ8JRUFQe6nbhzj8PA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bhVX7RrR; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 75BDDC4CEF7;
-	Mon,  4 Aug 2025 21:53:15 +0000 (UTC)
+	 Content-Disposition:In-Reply-To; b=ZZxf12mBOv1rkNMeHdcoZt4lGly6+4RqVPhGDS3qg9yG1VHgVPhz5a38r9pZe5U1gYsy2ZHTavYrpPFwV28dxh9lnAWJ8f7d0OFqt0etMcr8Yew+iBXmSRZ9HLnLnWReFm6jB/WhkDPbKvabvzBOxQeunHuagAOTmz5UVlFX97I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=glFBQ7BW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9F81C4CEE7;
+	Mon,  4 Aug 2025 21:54:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754344395;
-	bh=DqQc52n1vg12mNdpcx30L6XUIeLteBpaJofEOQYBDuo=;
-	h=Date:From:To:Cc:Subject:From;
-	b=bhVX7RrR4SPuL3stL7G94KLhdYbnjBjosKFkrRDmPXlZMyj+uyMNccvFp5mLl4ZEi
-	 yoYMFBFrikcdocVvwKvFGonZ0cN1PsEVjL4QW11xCkvBRQN1rD1u8iiUKsbweoNSyO
-	 +kZy4QrmlveOwS67ZvnDZVNOBuKFKUm17Wb5Wobu9/JjVbD0ETvHwlWusy20KhPixA
-	 LO5kbbefPW5TdyGRPxEwl9t/mcyTi6o+lzi6R0jyQsEt6GdEz0SyZYJNNYuCWrz5Eh
-	 zBAi5TxbOGuYLldPN43My9DgcGsoUl8Bm9N7KqBrGwt+wOuYylcHYEAqQpWusvxa6y
-	 3OVSY3FAK1xVg==
-Date: Mon, 4 Aug 2025 23:53:12 +0200
-From: Wolfram Sang <wsa@kernel.org>
-To: Linus Torvalds <torvalds@linux-foundation.org>
-Cc: linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <brgl@bgdev.pl>,
-	Andi Shyti <andi.shyti@kernel.org>
-Subject: [PULL REQUEST] i2c-for-6.17-rc1-part2
-Message-ID: <aJEryLi_zEByKKd0@shikoro>
+	s=k20201202; t=1754344486;
+	bh=uLPtm0HcssgYvZ/viuCH382QW0ADZ6ZxYfWJVn9+ybo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=glFBQ7BWteoL1qqVk/4bASVhVFSWmPgMRQnEpyydpj7sYqJ78B9e+5RG1cQ0doJQN
+	 JaMxPSwUHJX7aAetWNSR2ZUI56LXE1iaeBEu151WVJ6IRDQHB6uuXOdQuM22oi10aI
+	 k1KnwlEVkvSEfzL1vVaHLxnGSjUUdBEp57GjVyeFNn2WozxqgRNVAXWg021gkWVaWY
+	 4JOUYiqmArauS/0G+E40f5UrvKE5rSEy9/sociYdsWOsk2+0WrRtj5HsS+bZPBVNio
+	 j7hxGY8cHq1VmK1DUtlboskkTUYzbDHYAhZRQiMBPwilozVCyC9v3PXf8u89X2Y/LI
+	 89rMBHGOPTG7A==
+Date: Mon, 4 Aug 2025 16:54:45 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
+Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
+	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
+	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
+	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
+	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
+	Steven Price <steven.price@arm.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
+	Oliver Upton <oliver.upton@linux.dev>
+Subject: Re: [RFC PATCH v1 04/38] tsm: Support DMA Allocation from private
+ memory
+Message-ID: <20250804215445.GA3644210@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="jJLZI14B3zJ4wR5a"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20250728135216.48084-5-aneesh.kumar@kernel.org>
 
+On Mon, Jul 28, 2025 at 07:21:41PM +0530, Aneesh Kumar K.V (Arm) wrote:
+> Currently, we enforce the use of bounce buffers to ensure that memory
+> accessed by non-secure devices is explicitly shared with the host [1].
+> However, for secure devices, this approach must be avoided.
 
---jJLZI14B3zJ4wR5a
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> @@ -557,6 +560,9 @@ static void __pci_tsm_init(struct pci_dev *pdev)
+>  	default:
+>  		break;
+>  	}
+> +
+> +	/* FIXME!! should this be default true and switch to false for TEE capable device */
 
-Linus,
+Fix whatever this is, or make it a real sentence and wrap to fit in 80
+columns.
 
-a few more patches from I2C. Some are fixes which would be nice to have
-in rc1 already, some patches have nearly been fallen through the cracks,
-some just needed a bit more testing.
-
-Please pull.
-
-   Wolfram
-
-
-The following changes since commit 186f3edfdd41f2ae87fc40a9ccba52a3bf930994:
-
-  Merge tag 'pinctrl-v6.17-1' of git://git.kernel.org/pub/scm/linux/kernel/=
-git/linusw/linux-pinctrl (2025-08-02 12:07:09 -0700)
-
-are available in the Git repository at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/wsa/linux.git tags/i2c-for-=
-6.17-rc1-part2
-
-for you to fetch changes up to 33ac5155891cab165c93b51b0e22e153eacc2ee7:
-
-  i2c: muxes: mule: Fix an error handling path in mule_i2c_mux_probe() (202=
-5-08-03 22:47:57 +0200)
-
-----------------------------------------------------------------
-i2c-for-6.17-rc1-part2
-
-- acpi: enable 100kHz workaround for DLL0945
-- apple: add support for Apple A7=E2=80=93A11, T2 chips; Kconfig update
-- mux: mule: fix error handling path
-- qcom-geni: fix controller frequency mapping
-- stm32f7: add DMA-safe transfer support
-- tegra: use controller reset if device reset is missing
-- tegra: remove unnecessary dma_sync*() calls
-
-----------------------------------------------------------------
-Akhil R (2):
-      i2c: tegra: Use internal reset when reset property is not available
-      i2c: tegra: Remove dma_sync_*() calls
-
-Christophe JAILLET (1):
-      i2c: muxes: mule: Fix an error handling path in mule_i2c_mux_probe()
-
-Cl=C3=A9ment Le Goffic (1):
-      i2c: stm32f7: support i2c_*_dma_safe_msg_buf APIs
-
-Kathiravan Thirumoorthy (1):
-      i2c: qcom-geni: fix I2C frequency table to achieve accurate bus rates
-
-Nick Chan (1):
-      dt-bindings: i2c: apple,i2c: Document Apple A7-A11, T2 compatibles
-
-Sven Peter (1):
-      i2c: apple: Drop default ARCH_APPLE in Kconfig
-
-Wolfram Sang (1):
-      Merge tag 'i2c-host-6.17-pt2' of git://git.kernel.org/pub/scm/linux/k=
-ernel/git/andi.shyti/linux into i2c/for-mergewindow
-
-fangzhong.zhou (1):
-      i2c: Force DLL0945 touchpad i2c freq to 100khz
-
-
-with much appreciated quality assurance from
-----------------------------------------------------------------
-Andy Shevchenko (2):
-      (Rev.) i2c: tegra: Remove dma_sync_*() calls
-      (Rev.) i2c: tegra: Use internal reset when reset property is not avai=
-lable
-
-Mukesh Kumar Savaliya (1):
-      (Rev.) i2c: qcom-geni: fix I2C frequency table to achieve accurate bu=
-s rates
-
-Sven Peter (1):
-      (Rev.) dt-bindings: i2c: apple,i2c: Document Apple A7-A11, T2 compati=
-bles
-
-Thierry Reding (1):
-      (Rev.) i2c: tegra: Remove dma_sync_*() calls
-
- .../devicetree/bindings/i2c/apple,i2c.yaml         |  5 ++
- drivers/i2c/busses/Kconfig                         |  1 -
- drivers/i2c/busses/i2c-qcom-geni.c                 |  6 +-
- drivers/i2c/busses/i2c-stm32f7.c                   | 32 +++++++----
- drivers/i2c/busses/i2c-tegra.c                     | 64 +++++++++++++++---=
-----
- drivers/i2c/i2c-core-acpi.c                        |  1 +
- drivers/i2c/muxes/i2c-mux-mule.c                   |  3 +-
- 7 files changed, 75 insertions(+), 37 deletions(-)
-
---jJLZI14B3zJ4wR5a
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiRK8gACgkQFA3kzBSg
-KbZj4RAAsIwyTKszhDH16MLwwloFNtbwG3t1xzGk5NXTLWl9WqlT7q5WOJxWoPyU
-vnpgiE7RKZcy1o4nqFzn+12sn+gZ3ZWcBAI1oKu4CK2/X6wQcGXsjOQ0Pm8EvjUj
-+ptmeMrhdpGuaZa5WvA0xUa0QD5OdrMG9y4T0jCXUDELoSTbx6OepLWWLjShNWPO
-7c3YyUE6r85GGCnnHfIZi2Uq2kgJPIQX0wCIUQ7JeSMnvZ/5AHLcvqVSJqhxXKH1
-SRl1uar/w7ithy7yWsI7ZhdiHRH3zmTtzUidVbCcn0emEsbRkWtfidOEj4t37lua
-RLsh5acJFbG9Wd2mZ+mROPHlrsEba9z0k3Xoz/o9+d0spnGpK5/Q26iKKfWGehzD
-9W/3n/UTPX2Az0smibMmRVflYCZjZPjOKrCWfD1pEi4lKqtq4GWDwUWnY17A8Vf7
-EuOSgeKDwsf7Xve5h/qx5VORtuK0HpK7x1lJu0E/KgvI/IAxXfo2VNOKdDP7SFEZ
-/jwBRrSIyu9hJRdPpIi3cf+1Sv/lF9ptATBJDSV7avfDZ6DWw2XYTqv5oGHbxjGt
-dRFSKLyj+2jhtXSQa3nZxxFsTEG6yNsjfhi2qhhllj9KQvPZhfoz7lL1sbo0WCXG
-fvLr6OwMCKm1vwUjzsiJKoB5iOkST9NvkhYAY+9BJm985MLtS5s=
-=PZVd
------END PGP SIGNATURE-----
-
---jJLZI14B3zJ4wR5a--
+> +	pdev->dev.tdi_enabled = false;
+>  }
 
