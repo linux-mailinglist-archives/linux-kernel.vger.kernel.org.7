@@ -1,82 +1,82 @@
-Return-Path: <linux-kernel+bounces-755374-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755375-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C768AB1A59C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:16:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DB455B1A59E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:16:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C36DD3ACE3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:15:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53AD63AE8AA
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:16:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFFC521D590;
-	Mon,  4 Aug 2025 15:15:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90CD11FDD;
+	Mon,  4 Aug 2025 15:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="znGLXXip"
-Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QYvr2eC3"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDBAF21C9E7
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:15:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10808C2FB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754320547; cv=none; b=Y2H+BvzbU8J0vZis84BDqgFq25GbxgpbKsSOIKuqvGQdklL7AA5PWz4C9g7/0NH71fmahBRsbu9imo/sweAKqkfEhjA0xr9fhqPYRZmgJt+4O0XhH5Zj5CtbQDxBDi/eDJuhmd7jH9km7PXT3L4cnHV3m4O2A3JOiugMYkot3TQ=
+	t=1754320582; cv=none; b=efSAu65R00L+blYnSHpAasoNGGlc98BRyPjcEvshoA2761Pic9O7DuW/wRonjfobKrBXgxJ/CANQtOPzIQJ+IBonPNBjhFEBF4IYYF3UqeaALivs93sAvNOUMnoS9gNGMAcj1oEKdR7uZ84QGggAq+nmyAbfzr1e13kDhaTvDLk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754320547; c=relaxed/simple;
-	bh=FS/FFxGKTYfI3IfnDcjGHM6goIVdaC0gmyiuU1wiKjc=;
+	s=arc-20240116; t=1754320582; c=relaxed/simple;
+	bh=9YRdWSjdxgZIRwrd5rQDdKvT/vMdugq6cOXz9f33l+U=;
 	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=IwSt/sxSpUKFraRs1+YSUOIMn0OEE/QR517B2kzBIoEk3A+6ifenEictiaJIPomvqmtky1POfF+ZI7WnRRI73dLju6ReIA6sIs9RsZIVkeyMlgE8wbJOVk0f1qkwU7JsDs9KjtASxwvWkJlSVNmoiGYxZ+9+u2yS6Zh7zXDRlTU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=znGLXXip; arc=none smtp.client-ip=209.85.128.54
+	 In-Reply-To:Content-Type; b=lxQx08XmtdW3TAsvwbQXpE0BmWnWlX1sFEnOUfgsjsduftfPUiOC/c1q6cVkd5rCqh8N6dwRB0RP5snfvkw9TZj5/XFiOS+eXft7YMNVPrtnT9/n+Gd4DYgsz7y4sgtezoxQuS0gjGwjB7KkQ1TzRBlM6E768O6XkxE6Cs3NTbw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QYvr2eC3; arc=none smtp.client-ip=209.85.221.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-458bece40fcso10082045e9.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:15:44 -0700 (PDT)
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-3b7920354f9so4088900f8f.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 08:16:20 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754320543; x=1754925343; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1754320579; x=1754925379; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=CMYiRXMoedjydkMWi7aq5mntKyVVNxUPoNVSwHHbIuI=;
-        b=znGLXXipoZuJNWhfIPam6EAdxU7n61uqtYhy+t1uw82zP1Td/02OmuNqwO++FEBUaz
-         J3NrrUVsE65DPvFiSvQkg0N6J5WT9XUIU9eFwOGbKkYPPVdA00cKsfDEIwK0RJevc/dX
-         hF3kJcI+8snRmUR9Q+JML1WwTMBi9krI1FS9MfrPrjQyjKAvboG8x9bQNBH2YGa+IDvb
-         5DzMkJJRMzbEfXDmRR12aTz7pvv0VIxxyRPlfnwLeC08Ar5sjpmWbNazMGmbMsT02kJQ
-         xCmCTyW/puMNXYEOD8YWR2vjP0HCeD0dvgDuhEB+BDaPN0FEKqV51lqunvdmzl2TEcB/
-         0FIg==
+        bh=ifdQYtMoMbUhaDaLztKpCS+6vqQS+9SK4PGyB6S6f3U=;
+        b=QYvr2eC3aZt0lLXpkU2364elB7KrMOyC1AFYbnS6C/8pyPgBfhQEUpWulOoBNbL2nD
+         PRL562VHB+Xiknr3u0VaKRETayA7m36Iph5ivRzUgrRB5ZyGythiHRjIQytj8Tgugwra
+         hk2ElYUJsj3pPyHZy2m9jwhFWDLtMtuH0Pe9tSLAcst0ABvKCOB9enyQb2NCaZVle3JP
+         PYp0yuQRRoo2fzupqHHLHu2GZ/h3Bm2aXs+mmgXHdCd+vgLjk61YaXmY+VkPF6qTWPJu
+         yLmwO1zJ2nmbSB6Novjk4x+8YIgBcrIelooANlzuoPD5XSj0dKbhC3GYNEGZkmuTjxoS
+         mKqw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754320543; x=1754925343;
+        d=1e100.net; s=20230601; t=1754320579; x=1754925379;
         h=content-transfer-encoding:in-reply-to:organization:autocrypt
          :content-language:references:cc:to:subject:reply-to:from:user-agent
          :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
          :date:message-id:reply-to;
-        bh=CMYiRXMoedjydkMWi7aq5mntKyVVNxUPoNVSwHHbIuI=;
-        b=JxxLzioI6tA1qmBrcM50rXJphxCo04kZY7PuiNTZkg+WJk57WfsxNTIaumvWlxThmE
-         GY3ESApCvgwXpOBPPBEWN7d7xX/hPVnssCXNuqiQbUSUdxGHzDg3bwEMyMu9fKI9d5jQ
-         SfOzLTzxwFSyLSMl/nItBEgDmuAMqPcx1fGZ55PIXsquhBlctiJEEK3UzcjUe0oRaoHp
-         YE8h89uMmrQX8ut4wvGtySbgqTU2M20FLowQz3W1zGMBRcvlBFc5OApeJB8vshi1H+EE
-         xzi5phE+QIB5DdpXpRjBenKQ0EnFGXsCTTqLluZnirFQJsjLBOV0BU5TKYOgrllix31/
-         FHIQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX94rT0wXBcoVIJhjP0lJtXvwfqPLfXsU8BYPp1HpWiZDyVwYvjLTJK0h8iqDMckauBRe8/EVWvPxPhMsM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy7C+hhKrZHx2WKwYxOYmlLsT50QR968ihEloT2C+0rdakkOy0y
-	MJJmNf4qIL2gMRtHksDjm5uJSvoIY0dJwgARV4TwDOr3KNL21p3hyb7F6UGd0KCYmEs=
-X-Gm-Gg: ASbGncvoIvp14maMuSO39hkh/K30RiD+HldBfoDet65mLQa1thnB6bBofHg4g4KF917
-	5v9sMwxnX7cdQyEiVfzlNx4iGOXJ+4Eg665Nq3A7Iqeu+QOfQJZRutxLbdWqGkULTMUgoYluwmo
-	/mCe8XGXdhF8ExJnzLf8e3dPMj4EUQKNaabSXyj2V5B7ThVX/PMCW+ATmuhyZVv/fq5/BNrPkJx
-	vIxsIudbVaq/ZjXNgyZVwd52vbR68+yWZnH5caiP8lYi7ai7Oxph+axWKvy178oosaU31OxZGhw
-	TP96+9Ntysuq3rj4VvhU4WcZ7yAh4gGShFaMsBgN7+bo2OY+FlY4X3eU8qKoTVrQYXHJIa5YnFc
-	7PcmdrZsbhb2wrYMBkMFs6WYCKBd9O+5F8/kJwSWYF+45oqLYQcFYFQM9H6A2eOXkYDWuCr52ge
-	DjfFpZG+3PIjKEOBc8SGuY
-X-Google-Smtp-Source: AGHT+IEr6cmOOwDSjxgdpQtx4m7PijiOu0vwQxDdoA1/nkq5lSHu7HpzwGQERaUKnohUCx/+2yzIag==
-X-Received: by 2002:a05:600c:4f08:b0:459:dfa8:b854 with SMTP id 5b1f17b1804b1-459dfa8bb6dmr14866075e9.5.1754320542960;
-        Mon, 04 Aug 2025 08:15:42 -0700 (PDT)
+        bh=ifdQYtMoMbUhaDaLztKpCS+6vqQS+9SK4PGyB6S6f3U=;
+        b=BE/qD29EPeeuFUuYVqgabORG7AmGb+BfjufPV7L8ituG1Z7thWjUUIh1rJvx8k/GdM
+         4k8GyXAC0K5uwtfXVSq5AivAai/GLFY9Q83lUqSCjNHSPOp35ItWc0TJt0cgM7+bUNKy
+         uX/BbyZaHUbMSFRxdKNYeKDnP/s4RAY6N305TufMvdVIKe/XY29MKFlTTiNgKpi+VUc0
+         XQTE2IaZQ5n6jO8QEEtGaW8A3MNDFzm9p+Za58g5YO5zThAgy/4geQJ7cQFvwmSjKtBL
+         jlCeGDCHEvKjSfm0lefYiEtx4bom+6w26Yckxt5CPW6qFa+zE17ARgJl7TAThuh9H/gp
+         +Avw==
+X-Forwarded-Encrypted: i=1; AJvYcCUTRLnAKwsnSmf8eVaxm0iwGW9i97ytFH26crQndhr740drCMv3CvHiyf9u8IfmY6TT7kQCHCqPyG+ygww=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz3nw5Xk9PVHwZAPFZH11Bcjgjl2gWMIzPLz0vbOrGBCnNXcoGb
+	CdLG86xXotGDbgQyhY7CAy0fznTzyrnv7WTVE+e3k5yzajlSvU0pS6WQjOvUMOvqeUs=
+X-Gm-Gg: ASbGnctAYAMf+fybWe2N9sJqnvwTOy23xy1VxYa5eqkRkdwYum21dhDeHW2z0WUSzTA
+	rs44JHJPub6y0K4FaXsLUm0uZFns8Q1khLjH1pIoj76nJ1NrjC6hDdMo/F8wtnqd801xCw0Obu2
+	JFqgnkUIfYhXNDyAP9kVA0QBWBAYOE5KheI6jxUAaicJ00DHVzzbFpkuqWsObKPqz13Bo378mCU
+	4TZaayyFRJc8fuMRmEkwBjDU8Z6ThKHgjH9x/otfS5l/4+rPI1bdg0b5/5WkjSuIuQIBCrZU1s7
+	i4/qRsV69iIWmlBqYEowZv2J2vpBwlkIGf+DNnsd6Prx+zOOn0chR03gzBKzY/yjF3RWiIsjQX8
+	CuWw4RqMGtk52u/O2f7ZCjez7zAO3pbfGhe5h4YKFp7okJX4xwyJWyT4q9/VhCXuYXWDvJebVsA
+	w=
+X-Google-Smtp-Source: AGHT+IHPPDD9D0qxXu9jHrNySpU2UAtNfOEP8mZOWyrtTy6JCiloSri0pkmDPr9668JfOlIhW9A5cA==
+X-Received: by 2002:a05:6000:2881:b0:3b7:8146:4642 with SMTP id ffacd0b85a97d-3b8d9472439mr6472193f8f.20.1754320579282;
+        Mon, 04 Aug 2025 08:16:19 -0700 (PDT)
 Received: from ?IPV6:2a01:e0a:3d9:2080:3030:f63e:fedd:700f? ([2a01:e0a:3d9:2080:3030:f63e:fedd:700f])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589edf5638sm171780825e9.4.2025.08.04.08.15.41
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-458b73868a4sm99448145e9.11.2025.08.04.08.16.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 08:15:42 -0700 (PDT)
-Message-ID: <16537c3f-824a-4268-a51e-5efc88a671bf@linaro.org>
-Date: Mon, 4 Aug 2025 17:15:41 +0200
+        Mon, 04 Aug 2025 08:16:18 -0700 (PDT)
+Message-ID: <a8c59d2c-4c4f-4eb8-a371-03c1169c479e@linaro.org>
+Date: Mon, 4 Aug 2025 17:16:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,8 +86,8 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 From: neil.armstrong@linaro.org
 Reply-To: Neil Armstrong <neil.armstrong@linaro.org>
-Subject: Re: [PATCH 02/13] drm/panel: ilitek-ili9881c: move display_on/_off
- dcs calls to (un-)prepare
+Subject: Re: [PATCH 03/13] drm/panel: ilitek-ili9881c: convert (un-)prepare to
+ mipi_dsi_multi_context
 To: Heiko Stuebner <heiko@sntech.de>
 Cc: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com,
  mripard@kernel.org, tzimmermann@suse.de, robh@kernel.org,
@@ -97,7 +97,7 @@ Cc: quic_jesszhan@quicinc.com, maarten.lankhorst@linux.intel.com,
  linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
  linux-rockchip@lists.infradead.org
 References: <20250707164906.1445288-1-heiko@sntech.de>
- <20250707164906.1445288-3-heiko@sntech.de>
+ <20250707164906.1445288-4-heiko@sntech.de>
 Content-Language: en-US, fr
 Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
@@ -124,89 +124,135 @@ Autocrypt: addr=neil.armstrong@linaro.org; keydata=
  4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
  QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
 Organization: Linaro
-In-Reply-To: <20250707164906.1445288-3-heiko@sntech.de>
+In-Reply-To: <20250707164906.1445288-4-heiko@sntech.de>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 On 07/07/2025 18:48, Heiko Stuebner wrote:
-> At least for panel-bridges, the atomic_enable call is defined as being
-> called right after the preceding element in the display pipe is enabled.
+> This saves some lines for error handling.
 > 
-> It is also stated that "The bridge can assume that the display pipe (i.e.
-> clocks and timing signals) feeding it is running when this callback is
-> called"
-> 
-> This means the DSI controller driving this display would have already
-> switched over to video-mode from command mode and thus dcs functions
-> should not be called anymore at this point.
-> 
-> This caused a non-working display for me, when trying to enable
-> the rk3576 dsi controller using a display using this controller.
-> 
-> Therefore move the display_on/off calls the more appropriate
-> prepare/unprepare callbacks.
+> For the address mode change, that value is always an u8, so switching
+> to dcs_write_buffer function should be appropriate.
 > 
 > Signed-off-by: Heiko Stuebner <heiko@sntech.de>
 > ---
->   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 27 +++++--------------
->   1 file changed, 7 insertions(+), 20 deletions(-)
+>   drivers/gpu/drm/panel/panel-ilitek-ili9881c.c | 66 ++++++-------------
+>   1 file changed, 21 insertions(+), 45 deletions(-)
 > 
 > diff --git a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-> index d7a17dca2a9c..a20b52181ea0 100644
+> index a20b52181ea0..154eea5f4d77 100644
 > --- a/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
 > +++ b/drivers/gpu/drm/panel/panel-ilitek-ili9881c.c
-> @@ -1315,35 +1315,24 @@ static int ili9881c_prepare(struct drm_panel *panel)
->   	if (ret)
->   		goto disable_power;
+> @@ -1239,33 +1239,24 @@ static inline struct ili9881c *panel_to_ili9881c(struct drm_panel *panel)
+>    * So before any attempt at sending a command or data, we have to be
+>    * sure if we're in the right page or not.
+>    */
+> -static int ili9881c_switch_page(struct ili9881c *ctx, u8 page)
+> +static void ili9881c_switch_page(struct mipi_dsi_multi_context *mctx, u8 page)
+>   {
+>   	u8 buf[4] = { 0xff, 0x98, 0x81, page };
+> -	int ret;
+> -
+> -	ret = mipi_dsi_dcs_write_buffer(ctx->dsi, buf, sizeof(buf));
+> -	if (ret < 0)
+> -		return ret;
 >   
 > -	return 0;
-> -
-> -disable_power:
-> -	regulator_disable(ctx->power);
-> -	return ret;
-> -}
-> -
-> -static int ili9881c_enable(struct drm_panel *panel)
-> -{
-> -	struct ili9881c *ctx = panel_to_ili9881c(panel);
-> -
->   	msleep(120);
+> +	mipi_dsi_dcs_write_buffer_multi(mctx, buf, sizeof(buf));
+>   }
 >   
-> -	mipi_dsi_dcs_set_display_on(ctx->dsi);
-> +	ret = mipi_dsi_dcs_set_display_on(ctx->dsi);
-> +	if (ret)
-> +		goto disable_power;
+> -static int ili9881c_send_cmd_data(struct ili9881c *ctx, u8 cmd, u8 data)
+> +static void ili9881c_send_cmd_data(struct mipi_dsi_multi_context *mctx, u8 cmd, u8 data)
+>   {
+>   	u8 buf[2] = { cmd, data };
+> -	int ret;
+>   
+> -	ret = mipi_dsi_dcs_write_buffer(ctx->dsi, buf, sizeof(buf));
+> -	if (ret < 0)
+> -		return ret;
+> -
+> -	return 0;
+> +	mipi_dsi_dcs_write_buffer_multi(mctx, buf, sizeof(buf));
+>   }
+>   
+>   static int ili9881c_prepare(struct drm_panel *panel)
+>   {
+>   	struct ili9881c *ctx = panel_to_ili9881c(panel);
+> +	struct mipi_dsi_multi_context mctx = { .dsi = ctx->dsi };
+>   	unsigned int i;
+>   	int ret;
+>   
+> @@ -1286,54 +1277,39 @@ static int ili9881c_prepare(struct drm_panel *panel)
+>   		const struct ili9881c_instr *instr = &ctx->desc->init[i];
+>   
+>   		if (instr->op == ILI9881C_SWITCH_PAGE)
+> -			ret = ili9881c_switch_page(ctx, instr->arg.page);
+> +			ili9881c_switch_page(&mctx, instr->arg.page);
+>   		else if (instr->op == ILI9881C_COMMAND)
+> -			ret = ili9881c_send_cmd_data(ctx, instr->arg.cmd.cmd,
+> -						      instr->arg.cmd.data);
+> -
+> -		if (ret)
+> -			goto disable_power;
+> -	}
+> -
+> -	ret = ili9881c_switch_page(ctx, 0);
+> -	if (ret)
+> -		return ret;
+> -
+> -	if (ctx->address_mode) {
+> -		ret = mipi_dsi_dcs_write(ctx->dsi, MIPI_DCS_SET_ADDRESS_MODE,
+> -					 &ctx->address_mode,
+> -					 sizeof(ctx->address_mode));
+> -		if (ret < 0)
+> -			goto disable_power;
+> +			ili9881c_send_cmd_data(&mctx, instr->arg.cmd.cmd,
+> +					       instr->arg.cmd.data);
+>   	}
+>   
+> -	ret = mipi_dsi_dcs_set_tear_on(ctx->dsi, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+> -	if (ret)
+> -		goto disable_power;
+> -
+> -	ret = mipi_dsi_dcs_exit_sleep_mode(ctx->dsi);
+> -	if (ret)
+> -		goto disable_power;
+> +	ili9881c_switch_page(&mctx, 0);
+>   
+> -	msleep(120);
+> +	if (ctx->address_mode)
+> +		ili9881c_send_cmd_data(&mctx, MIPI_DCS_SET_ADDRESS_MODE,
+> +				       ctx->address_mode);
+>   
+> -	ret = mipi_dsi_dcs_set_display_on(ctx->dsi);
+> -	if (ret)
+> +	mipi_dsi_dcs_set_tear_on_multi(&mctx, MIPI_DSI_DCS_TEAR_MODE_VBLANK);
+> +	mipi_dsi_dcs_exit_sleep_mode_multi(&mctx);
+> +	mipi_dsi_msleep(&mctx, 120);
+> +	mipi_dsi_dcs_set_display_on_multi(&mctx);
+> +	if (mctx.accum_err)
+>   		goto disable_power;
 >   
 >   	return 0;
-> -}
 >   
-> -static int ili9881c_disable(struct drm_panel *panel)
-> -{
-> -	struct ili9881c *ctx = panel_to_ili9881c(panel);
-> -
-> -	return mipi_dsi_dcs_set_display_off(ctx->dsi);
-> +disable_power:
-> +	regulator_disable(ctx->power);
-> +	return ret;
+>   disable_power:
+>   	regulator_disable(ctx->power);
+> -	return ret;
+> +	return mctx.accum_err;
 >   }
 >   
 >   static int ili9881c_unprepare(struct drm_panel *panel)
 >   {
 >   	struct ili9881c *ctx = panel_to_ili9881c(panel);
+> +	struct mipi_dsi_multi_context mctx = { .dsi = ctx->dsi };
 >   
-> +	mipi_dsi_dcs_set_display_off(ctx->dsi);
->   	mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
+> -	mipi_dsi_dcs_set_display_off(ctx->dsi);
+> -	mipi_dsi_dcs_enter_sleep_mode(ctx->dsi);
+> +	mipi_dsi_dcs_set_display_off_multi(&mctx);
+> +	mipi_dsi_dcs_enter_sleep_mode_multi(&mctx);
 >   	regulator_disable(ctx->power);
 >   	gpiod_set_value_cansleep(ctx->reset, 1);
-> @@ -1499,8 +1488,6 @@ static enum drm_panel_orientation ili9881c_get_orientation(struct drm_panel *pan
->   static const struct drm_panel_funcs ili9881c_funcs = {
->   	.prepare	= ili9881c_prepare,
->   	.unprepare	= ili9881c_unprepare,
-> -	.enable		= ili9881c_enable,
-> -	.disable	= ili9881c_disable,
->   	.get_modes	= ili9881c_get_modes,
->   	.get_orientation = ili9881c_get_orientation,
->   };
+>   
 
 Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
 
