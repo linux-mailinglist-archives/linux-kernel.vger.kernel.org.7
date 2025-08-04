@@ -1,231 +1,184 @@
-Return-Path: <linux-kernel+bounces-755611-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755612-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCF7B1A92A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:27:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D48DB1A92E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 20:29:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15A00189F975
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:27:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D07117FA46
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 18:29:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C87D28B417;
-	Mon,  4 Aug 2025 18:27:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE703286D76;
+	Mon,  4 Aug 2025 18:29:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="LX9Jmsj3"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="GGNCSbfZ"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ABF428642B
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:26:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9ED51D9A5D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 18:29:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754332021; cv=none; b=UZLHbC1lulonTWjdJCDsBBobZSZSbwMmh7zHgyWktc5CMCichPm22PfRXNldxGSTOuuyC05quC2ATxNHXw6z9x7h4E4kNjzon0Bqdv+eOnAl2+XqrIE8Het+JY4WYm2elZz5bg2HRLgEYxgmPIERuLAm3Gn4SsPFkXp7mnJggg4=
+	t=1754332174; cv=none; b=YfeLxdtEwnvTsesmYZK0eDe/Y+IlayduxfPWpm73d2yamgatsFZwclRnbRYPkvSEdZ9P0ZyDkYj1xQv7JQp5Q4DwMhz0an1KamVoSk94py837eE9WMu7+1gO217P8mSPPVmomJwP8mICOhWwQBKgTMwxQSmmGo4HakvrdW6m/E4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754332021; c=relaxed/simple;
-	bh=dB9SnGy7bDjV2ukIb32k+gbxItWjYYZUz3Fv/HhcaQ8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=smC/f6uRp25049Xve62hEuRlKC0AQzl+EnMg9Lb6jsafUH49OYsNdRxrFX3NNj2gg/Obzy0ZFAreKSRKqGjIeNm8E7/ylNdsfF2xftguOL6hNbTbUOm/Uwixgm6rF39VdZqTzZIR2JawFMP7nSQLDIYrC7WnY7xIN8+ji5EQCWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=LX9Jmsj3; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1754332019;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CRg0w6RoadxtqQ8+K/tTfwdX8XjnbEQ9DKQbLi7rpJA=;
-	b=LX9Jmsj3JdIlW7aynBXIRnESLr73gN9qF3QUtDkrkWhHB48HBpIqbiLnqI+aCzYyfz2k2T
-	T+4/TV/af/Pil0+0cb1FgZNYYkT0HFB93sPwNMdxi8QAVb0+CpDERHLo+DJZA8UWrmU0xO
-	ZMQ/c1IiHtaTkWIC9otQ73i/cfUBGUs=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-108-WQP9F4q9NT6s0R0sbCLD8A-1; Mon,
- 04 Aug 2025 14:26:53 -0400
-X-MC-Unique: WQP9F4q9NT6s0R0sbCLD8A-1
-X-Mimecast-MFC-AGG-ID: WQP9F4q9NT6s0R0sbCLD8A_1754332012
-Received: from mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.111])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id AE36219560AE;
-	Mon,  4 Aug 2025 18:26:51 +0000 (UTC)
-Received: from [10.44.33.21] (unknown [10.44.33.21])
-	by mx-prod-int-08.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 86312180035E;
-	Mon,  4 Aug 2025 18:26:46 +0000 (UTC)
-Message-ID: <f96b3236-f8e6-40c1-afb2-7e76894462f9@redhat.com>
-Date: Mon, 4 Aug 2025 20:26:45 +0200
+	s=arc-20240116; t=1754332174; c=relaxed/simple;
+	bh=97Wf+005AjX2fyW62YinF32DHzBNO7WW5hMyEiyttls=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=IUCvFSMevJLmhO0nc68S0Ca6/9W911lKwfpIxaYxhGmaNavKMwRq5K/ydkN2ywe1kelxZ3ThMl92BufYSY5T5qUekbDYPO8kOnZ0m9t48cgF1f7DC65UUUtv1y497zLysUkHOYbpxmRCFZwHithvmICASJLUGvrZ9Cq4JrWLg9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=GGNCSbfZ; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 574HXUHO013637
+	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 18:29:32 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=4ZRS8X1q6T0ZLRueHzSZjd
+	xm433yImBfAQNa/j3W3Cc=; b=GGNCSbfZcMkjB5y7evYdsnaCStsZoEky7Ae1tk
+	nmO4sRjd3j3CX9+ZTbvUd/NGLMVEQ71LqdwhFRfraf+aLxjXNgMvar7cYbeaaLrx
+	V7LWl6U1gorPCuouMU8Bdb1hsHdylSMhl9T/cnQqCt5jNb4YIizVUbyRFYlIJdfl
+	0ak5+iG2IevxTt0opjHINMctSXOP14TXxtWCzeSF7njra/MCjhtqLbqN0YjzC8/j
+	SkcPw6LLGXt7ZVIlfNXdQ7/TePW+gT2QMYjz03Z5VkekUD9P9BpOH13NSMj6e92e
+	lI+3wwbDk4R2WJNNKdwUQ14F3zTH0SdAwSV5bEemjRbV6zJg==
+Received: from mail-pl1-f200.google.com (mail-pl1-f200.google.com [209.85.214.200])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489bek5x4p-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 18:29:31 +0000 (GMT)
+Received: by mail-pl1-f200.google.com with SMTP id d9443c01a7336-23ff6e5c131so37538265ad.2
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 11:29:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754332171; x=1754936971;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4ZRS8X1q6T0ZLRueHzSZjdxm433yImBfAQNa/j3W3Cc=;
+        b=Kdwm0ThiVyeblJb4JLSXHaOwcHlE7fFG6B7LPAkpBgmDPNg16RGxOPYV6b5nXNYWBs
+         XfKmESI3+LpIbtB+TMtWSSBZ770A7Yfc5kXBZsVXf/6IPAzGMQH38v1nk+hptoX+nCE7
+         9Q0GzGfQ/bc3TLIjRNPP3GmwB7MuoyPresK8uYcc0FEXVq0mvsAyM0gu54XAs/i6AcdO
+         P9qr5ZCoXpBvXoqTM9t6Ka6sxGx8aVZCB61nXMY3Blg10t0eG6saWkqYr2bTFx0PhSSc
+         n/5p8TOf/Cok26z2ymqUjZmjJpVhdu/ZsBw8C/WDNrm/tUPpdWzomFLvHRD40crAhdTp
+         DGbw==
+X-Forwarded-Encrypted: i=1; AJvYcCXDEET8WxaZLzF8hUbBFyDhHtdZvbhRrgaGTC5K5KmmTS6CzMujRqBMxX2+oYx+hdd+7gJLhQsJzszDDOI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmx8u34muankDWSqKi3sqGCkbyDOyiwsOs3+OqhTwDwB6jmLLi
+	UYZD4sP3sHion9gnZex61qd+V4p61910J//7cPYq3FjRT1X3wGjJu5MTF3NY4N+tiFuml1QYjCs
+	VqD5ALBEtiRd4S8Nxfd8QKlaLSIu4Ky2Qc3Zkjlh26KLBIzTK1elDPcR8jfHg7Lc64oU=
+X-Gm-Gg: ASbGnctG64i1wEAZFgEsj2MKfKAB5fKil3OHB3E4CVvl9V/MKccIT0u1XMrwBJwcuA1
+	ImqNQxxeopofH+G/iaFZIPuE2zJbI0jsPZycqBUwJSUfaJJXR5NbliLebGwH7PQdrW67qHJYUwp
+	NstTixAlgDCd4DgfjiZJrdBKidtYpemzYjej8RQ6eSjxFjHT4/BdUDtTdtlnMXqmTU8jgI0vU+L
+	skBmMAa2j3Ji3JBvWlfQl7ELClZqIK3fDPIne1emUu2Klmt6M7DGFB3iWhXrt64qSRpZCuWYTDa
+	xB3PrTB8lIOrtBLIy3S9QsYzsDtdLFPMIQ10y+FqrW72CWNCpNdLbJqB+1BkgX6D
+X-Received: by 2002:a17:903:1245:b0:234:1163:ff99 with SMTP id d9443c01a7336-2424705444bmr148283425ad.43.1754332170833;
+        Mon, 04 Aug 2025 11:29:30 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHI/N3VZbz9RZmPiG99XcQflvUuxhU8jRiEQZfNcOiAlYNY9sO/cJUZlj+swyKOmrjO6HOihA==
+X-Received: by 2002:a17:903:1245:b0:234:1163:ff99 with SMTP id d9443c01a7336-2424705444bmr148283045ad.43.1754332170443;
+        Mon, 04 Aug 2025 11:29:30 -0700 (PDT)
+Received: from hu-tdas-hyd.qualcomm.com ([202.46.22.19])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-241e8aaaf1bsm116664345ad.159.2025.08.04.11.29.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 11:29:30 -0700 (PDT)
+From: Taniya Das <taniya.das@oss.qualcomm.com>
+Date: Mon, 04 Aug 2025 23:59:21 +0530
+Subject: [PATCH] clk: qcom: gcc: Update the SDCC clock to use
+ shared_floor_ops
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next 1/2] dt-bindings: dpll: Add clock ID property
-To: Krzysztof Kozlowski <krzk@kernel.org>, Andrew Lunn <andrew@lunn.ch>
-Cc: netdev@vger.kernel.org, Vadim Fedorenko <vadim.fedorenko@linux.dev>,
- Arkadiusz Kubalewski <arkadiusz.kubalewski@intel.com>,
- Jiri Pirko <jiri@resnulli.us>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Prathosh Satish <Prathosh.Satish@microchip.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Michal Schmidt <mschmidt@redhat.com>, Petr Oros <poros@redhat.com>
-References: <20250717171100.2245998-1-ivecera@redhat.com>
- <20250717171100.2245998-2-ivecera@redhat.com>
- <5ff2bb3e-789e-4543-a951-e7f2c0cde80d@kernel.org>
- <6937b833-4f3b-46cc-84a6-d259c5dc842a@redhat.com>
- <20250721-lean-strong-sponge-7ab0be@kuoka>
- <804b4a5f-06bc-4943-8801-2582463c28ef@redhat.com>
- <9220f776-8c82-474b-93fc-ad6b84faf5cc@kernel.org>
- <466e293c-122f-4e11-97d2-6f2611a5178e@redhat.com>
- <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
-Content-Language: en-US
-From: Ivan Vecera <ivecera@redhat.com>
-In-Reply-To: <db39e1ff-8f83-468c-a8cb-0dd7c5a98b85@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.111
+Message-Id: <20250804-sdcc_rcg2_shared_ops-v1-1-41f989e8cbb1@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIAAD8kGgC/x3MQQqAIBBG4avErBNMSqKrRIjoX82mYgYiCO+et
+ PwW772kEIbS1LwkuFn5PCq6tqG0x2OD4VxNzrrBjrY3mlMKkjYXdI+CHM5LDaKH8904rPBU00u
+ w8vNv56WUD3ZyUNdmAAAA
+X-Change-ID: 20250804-sdcc_rcg2_shared_ops-ea6e26185fe6
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette <mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Dmitry Baryshkov <lumag@kernel.org>,
+        Taniya Das <quic_tdas@quicinc.com>
+Cc: Ajit Pandey <quic_ajipan@quicinc.com>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>, linux-arm-msm@vger.kernel.org,
+        linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org,
+        Taniya Das <taniya.das@oss.qualcomm.com>
+X-Mailer: b4 0.15-dev-aa3f6
+X-Authority-Analysis: v=2.4 cv=M7tNKzws c=1 sm=1 tr=0 ts=6890fc0b cx=c_pps
+ a=IZJwPbhc+fLeJZngyXXI0A==:117 a=fChuTYTh2wq5r3m49p7fHw==:17
+ a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=PH1V8s2_vfPofe0uiFIA:9
+ a=QEXdDO2ut3YA:10 a=uG9DUKGECoFWVXl0Dc02:22
+X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDEwNiBTYWx0ZWRfXyZjItEMmeMQ1
+ F7Yy67FjcB2L+O088LN4PjpI59gwpoeraeIOuIqmnY1CojTgC0eg4eDAZJRO7DlTa6GsDWGOTgg
+ 8Y2j6BmR4xwmQx+TxpI9u2jFIFElVtCJulRPnW4yhlFLtCuSg3vlCUgo+KI722hTiiI8fSUSWwY
+ qFK/3hyGbYkMqUHFfB/ByypKofk9cuJT5XQfEjLRwn/c4TXpzIkTIocPNd94/hTZRtQjFmg5wD1
+ iW9C4zt5W47yfjex7bk8bZruuU8urZujYHhVkVKsRUPsITLWvU4F0zCkCw11nnrmTr4CtmlEuuP
+ WlWwHNYR05XFFLUyHBH4y6c/730MyXojZ3fyC9fUQz56Yb+r1lS7g72O/U6EX6nqTkVoBzSxTAP
+ D4mi8wB92cPU2mIg2HdYUkdTABPv13KVnWeaKNSsC21RWQxMPqhaXY028XF5LZDm7c7cMLUL
+X-Proofpoint-ORIG-GUID: sXO-FdZE1ddyuD7uISeZqTQOmBFc1JvT
+X-Proofpoint-GUID: sXO-FdZE1ddyuD7uISeZqTQOmBFc1JvT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
+ definitions=2025-08-04_08,2025-08-04_01,2025-03-28_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
+ impostorscore=0 lowpriorityscore=0 priorityscore=1501 malwarescore=0
+ clxscore=1015 mlxlogscore=999 mlxscore=0 bulkscore=0 spamscore=0
+ suspectscore=0 phishscore=0 adultscore=0 classifier=spam authscore=0
+ authtc=n/a authcc= route=outbound adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2505280000 definitions=main-2508040106
 
-On 03. 08. 25 1:12 odp., Krzysztof Kozlowski wrote:
-> On 23/07/2025 09:23, Ivan Vecera wrote:
->>
->>
->> On 23. 07. 25 8:25 dop., Krzysztof Kozlowski wrote:
->>> On 21/07/2025 14:54, Ivan Vecera wrote:
->>>> On 21. 07. 25 11:23 dop., Krzysztof Kozlowski wrote:
->>>>> On Fri, Jul 18, 2025 at 02:16:41PM +0200, Ivan Vecera wrote:
->>>>>> Hi Krzysztof,
->>>>>>
->>>>>> ...
->>>>>>
->>>>>> The clock-id property name may have been poorly chosen. This ID is used by
->>>>>> the DPLL subsystem during the registration of a DPLL channel, along with its
->>>>>> channel ID. A driver that provides DPLL functionality can compute this
->>>>>> clock-id from any unique chip information, such as a serial number.
->>>>>>
->>>>>> Currently, other drivers that implement DPLL functionality are network
->>>>>> drivers, and they generate the clock-id from one of their MAC addresses by
->>>>>> extending it to an EUI-64.
->>>>>>
->>>>>> A standalone DPLL device, like the zl3073x, could use a unique property such
->>>>>> as its serial number, but the zl3073x does not have one. This patch-set is
->>>>>> motivated by the need to support such devices by allowing the DPLL device ID
->>>>>> to be passed via the Device Tree (DT), which is similar to how NICs without
->>>>>> an assigned MAC address are handled.
->>>>>
->>>>> You use words like "unique" and MAC, thus I fail to see how one fixed
->>>>> string for all boards matches this. MACs are unique. Property value set
->>>>> in DTS for all devices is not.
->>>>>> You also need to explain who assigns this value (MACs are assigned) or
->>>>> if no one, then why you cannot use random? I also do not see how this
->>>>> property solves this...  One person would set it to value "1", other to
->>>>> "2" but third decide to reuse "1"? How do you solve it for all projects
->>>>> in the upstream?
->>>>
->>>> Some background: Any DPLL driver has to use a unique number during the
->>>> DPLL device/channel registration. The number must be unique for the
->>>> device across a clock domain (e.g., a single PTP network).
->>>>
->>>> NIC drivers that expose DPLL functionality usually use their MAC address
->>>> to generate such a unique ID. A standalone DPLL driver does not have
->>>> this option, as there are no NIC ports and therefore no MAC addresses.
->>>> Such a driver can use any other source for the ID (e.g., the chip's
->>>> serial number). Unfortunately, this is not the case for zl3073x-based
->>>> hardware, as its current firmware revisions do not expose information
->>>> that could be used to generate the clock ID (this may change in the
->>>> future).
->>>>
->>>> There is no authority that assigns clock ID value ranges similarly to
->>>> MAC addresses (OUIs, etc.), but as mentioned above, uniqueness is
->>>> required across a single PTP network so duplicates outside this
->>>> single network are not a problem.
->>>
->>> You did not address main concern. You will configure the same value for
->>> all boards, so how do you solve uniqueness within PTP network?
->>
->> This value differs across boards, similar to the local-mac-address. The
->> device tree specifies the entry, and the bootloader or system firmware
->> (like U-Boot) provides the actual value.
-> This should be clearly explained in commit msg or pull request to dtschema.
-> 
-> Where are patches for U-Boot? lore gives me 0 results.
+gcc_sdcc2_apps_clk_src: rcg didn't update its configuration" during
+boot. This happens due to the floor_ops tries to update the rcg
+configuration even if the clock is not enabled.
+The shared_floor_ops ensures that the new parent configuration is
+cached in the parked_cfg in the case where the clock is off.
 
-Hi Krzysztof,
+Ensure to use the ops for the other SDCC clock instances as well.
 
-This was just an idea how to provide such information. But...
+Fixes: 39d6dcf67fe9 ("clk: qcom: gcc: Add support for QCS615 GCC clocks")
+Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
+---
+ drivers/clk/qcom/gcc-qcs615.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-We had a upstream meeting regarding this issue, how to deal with this
-issue in situations where a DPLL device is used to drive a PHC present
-in a network controller.
+diff --git a/drivers/clk/qcom/gcc-qcs615.c b/drivers/clk/qcom/gcc-qcs615.c
+index 9695446bc2a3c81f63f6fc0c98d298270f3494cc..5b3b8dd4f114bdcb8911a9ce612c39a1c6e05b23 100644
+--- a/drivers/clk/qcom/gcc-qcs615.c
++++ b/drivers/clk/qcom/gcc-qcs615.c
+@@ -784,7 +784,7 @@ static struct clk_rcg2 gcc_sdcc1_apps_clk_src = {
+ 		.name = "gcc_sdcc1_apps_clk_src",
+ 		.parent_data = gcc_parent_data_1,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_1),
+-		.ops = &clk_rcg2_floor_ops,
++		.ops = &clk_rcg2_shared_floor_ops,
+ 	},
+ };
+ 
+@@ -806,7 +806,7 @@ static struct clk_rcg2 gcc_sdcc1_ice_core_clk_src = {
+ 		.name = "gcc_sdcc1_ice_core_clk_src",
+ 		.parent_data = gcc_parent_data_0,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_0),
+-		.ops = &clk_rcg2_floor_ops,
++		.ops = &clk_rcg2_shared_floor_ops,
+ 	},
+ };
+ 
+@@ -830,7 +830,7 @@ static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+ 		.name = "gcc_sdcc2_apps_clk_src",
+ 		.parent_data = gcc_parent_data_8,
+ 		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
+-		.ops = &clk_rcg2_floor_ops,
++		.ops = &clk_rcg2_shared_floor_ops,
+ 	},
+ };
+ 
 
-Let's say we have a SyncE setup with two network controllers where each
-of them feeds a DPLL channel with recovered clock received from some of
-its PHY. The DPLL channel cleans/stabilizes this input signal (generates
-phase aligned signal locked to the same frequency as the input one) and
-routes it back to the network controller.
+---
+base-commit: 5c5a10f0be967a8950a2309ea965bae54251b50e
+change-id: 20250804-sdcc_rcg2_shared_ops-ea6e26185fe6
 
-     +-----------+
-  +--|   NIC 1   |<-+
-  |  +-----------+  |
-  |                 |
-  | RxCLK     TxCLK |
-  |                 |
-  |  +-----------+  |
-  +->| channel 1 |--+
-     |-- DPLL ---|
-  +->| channel 2 |--+
-  |  +-----------+  |
-  |                 |
-  | RxCLK     TxCLK |
-  |                 |
-  |  +-----------+  |
-  +--|   NIC 2   |<-+
-     +-----------+
-
-The PHCs implemented by the NICs have associated the ClockIdentity
-(according IEEE 1588-2008) whose value is typically derived from
-the NIC's MAC address using EUI-64. The DPLL channel should be
-registered to DPLL subsystem using the same ClockIdentity as the PHC
-it drives. In above example DPLL channel 1 should have the same clock ID
-as NIC1 PHC and channel 2 as NIC2 PHC.
-
-During the discussion, Andrew had the idea to provide NIC phandles
-instead of clock ID values.
-
-Something like this:
-
-diff --git a/Documentation/devicetree/bindings/dpll/dpll-device.yaml 
-b/Documenta
-tion/devicetree/bindings/dpll/dpll-device.yaml
-index fb8d7a9a3693f..159d9253bc8ae 100644
---- a/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-+++ b/Documentation/devicetree/bindings/dpll/dpll-device.yaml
-@@ -33,6 +33,13 @@ properties:
-      items:
-        enum: [pps, eec]
-
-+  ethernet-handles:
-+    description:
-+      List of phandles to Ethernet devices, one per DPLL instance. Each of
-+      these handles identifies Ethernet device that uses particular DPLL
-+      instance to synchronize its hardware clock.
-+    $ref: /schemas/types.yaml#/definitions/phandle-array
-+
-    input-pins:
-      type: object
-      description: DPLL input pins
-
-A DPLL driver can then use this property to identify a network
-controller, use fwnode_get_mac_address() to get assigned MAC address and
-generate the ClockIdentity for registration from this MAC.
-
-WDYT about it?
-
-Thanks,
-Ivan
+Best regards,
+-- 
+Taniya Das <taniya.das@oss.qualcomm.com>
 
 
