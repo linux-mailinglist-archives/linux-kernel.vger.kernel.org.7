@@ -1,432 +1,126 @@
-Return-Path: <linux-kernel+bounces-755355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 160ABB1A550
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:56:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 60B44B1A551
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:56:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 704191889557
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:56:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C24373B063E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1365420766C;
-	Mon,  4 Aug 2025 14:56:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 16D6A215F48;
+	Mon,  4 Aug 2025 14:56:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="OmPup1XK"
-Received: from mail-qt1-f175.google.com (mail-qt1-f175.google.com [209.85.160.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aR5El4H7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CA09201006
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:55:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7773F205513
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754319359; cv=none; b=uAKd0VHj05KZ0TeC5/QgVzplen9FCqilpRVE96ZA7BdtHALwYVo1feTj21XUPH73e7RVMWRDKYuiMLvVnDVP7Zr5iBYo6Xk/hJ8QaSfMR0EQChHfkR5Qh5itlvhRk/YaVH3SCWRNSHsDUhfulyCqXw/K8SEsCScE24OFbhFXnzY=
+	t=1754319364; cv=none; b=sJ++Z5VIpWsn6qWdhNcPsKr2pmWKLaTnOKMlVSdYyDnqI1fuXouZ4Cn511OjAMyI3I1B6TjdBS3Bo7Fns8l7Lu5qUH2EF4MEciRaNjE5TgyHJKMUP9WkQzf8QWeybctLaHW5/KIBcnJ8NdRKBdPkYlm//To5IF9SlHW8zFzMPs4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754319359; c=relaxed/simple;
-	bh=MU/At4DK4O7Eqe4Gm1IsBTZyC0dP2FL8wFYwMfsruUQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=khnyaERFOsNoO4/E0VNuNhc+Rv2GCkjdPLNgKdWpv4u96lQoXP+IOBqztG46g6ZNU++l8jUKRLo8ydomrgoPxJyrXEWejauZ5xLlm3+oW55psG432iIOenpCMMhA6oX9gvCTIuKbW9t/RXU50UEO79C/Z8aZYV4+ZDTQtXnnWD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=OmPup1XK; arc=none smtp.client-ip=209.85.160.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-qt1-f175.google.com with SMTP id d75a77b69052e-4b0673b0a7cso496091cf.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:55:54 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1754319354; x=1754924154; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+o4Ch4o9Xv3jFhugflhfWPbhl3HCtAtjAIB2DUrZ25A=;
-        b=OmPup1XKdVlKWkxJmxdBzGMYn1JenVou6VIE5e+ZTO1ab/ItmGUuj1G5dwR9TWkMrn
-         zBczfGNMl6Eo+n2j5XW1UZI/t1/RKKmnz/ro212cI0PtfsHoaHNE5C+I63Bqx5KL07gB
-         o639XXevauEqKowRaBO3mAC2L8Ed14MEN4MwNEXvF2i+EeDAAWSiAcJ80yViH1Ew8NT7
-         2X4iTFaTgf2mT4tFBIsX9Pzqp3I5t69zBynBAl9TFgXnNPJHBba9e2YY8/Ov+AJGtOy5
-         /y4pAzMcByto50YEQkXdNjWmwxgrq6/Kgw5va8IIEvfu7LUJTic3YpT7nkDOZ3BsncQ3
-         sOiw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754319354; x=1754924154;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+o4Ch4o9Xv3jFhugflhfWPbhl3HCtAtjAIB2DUrZ25A=;
-        b=jb06F9On7MQoZgYDxJvQgnhyGa7ANpGqqo4yUseu3BiYD5MPSgOoB/k4dBId8g4Omw
-         lhHfYbpTFku98Xw+nbww/RenYAnhJasg9zqfYtz7Cox0FtFnmWf1hU6s+L4mproXaVe5
-         f9oq/uxI9qknt8qdkJIx/qibQ0mEzutnTGtF7KhxIAlYf1/tSrtTaW7ieAULQkRtJMH8
-         PahNNlljzYvIxXL+fvGpop4Tj/PGf/bxvj9mrpj3vReZYDS14qU2wcHTGPUOZwImaslf
-         7+ObT2NRnO18Bsgry5N1xXiXWWkrRhYHdTe3J6sIX9JdvRj42ouM2k/sRWQDn4eL6vU8
-         ylKQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVaua8zw/qrSL67p4ZlXXrmVz9Litkh7cVj8lrLnUeXewoHpV0aw7SREknT/xpYEShrZMus/Xgit2FIRsc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyRliwV4hmHC1TEmUfgitMRsQcN37O2Ic9w9/ZxR4PRDWhaOr52
-	Hx/wKL2ArqGSgI7Jt1niZbnVhTyDSJ4iaiszoRl11M3dekB6N2o15BKRk7tY+bKogsLKLoUIa/G
-	J13i7tYTuizwxsVUKGvYgyMgU4HksOi1Z9aFkQRuM
-X-Gm-Gg: ASbGncuYg+T7XBaRSMA74cLGzhnyomrL3SZaTyt7EP3ASflAOVLOPB1KFE0S/XM0+RS
-	fzjwTdihZ2uKWeT3GKyKjBVpiPqPLrL+g/dt5RxzpmN9ewNbz2YWD+17ZYyXXY8h3YR4HS33A1C
-	SgPKJsdipS2k/WawRXSOSjHUKKOQSThmwHe4cbTMeo7r8FN4lEToITqTtGWk0NL2zAKB3F9qlmf
-	RGCMQ==
-X-Google-Smtp-Source: AGHT+IFKQssWn3qgvBXRZt7wMF56KFZCHc+HFV9s6XYM81Jbizj7eogrXqsiKY3AhtiRnWHFCi1n05HdZ058bfjQ8PU=
-X-Received: by 2002:ac8:5d49:0:b0:4a9:e17a:6288 with SMTP id
- d75a77b69052e-4af164545a3mr11164561cf.13.1754319353286; Mon, 04 Aug 2025
- 07:55:53 -0700 (PDT)
+	s=arc-20240116; t=1754319364; c=relaxed/simple;
+	bh=AsFEDSuwiU6dwZcqz43qfo52c8csif1QTc3tvddFOGs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=KUMapcDjS5brBiwfggJ/9vOrZ7oyloIK4R3mC0xl5X96DfpxwykC1Giv2ahE4LGcHrLIdlhb23wSSxurNUacKjWs14wOvG7sIyjfmAqAfDKeQ8o7XNIxbKYCYDxYFXBwyDfAFvx08SzGd1SquAZnY3w93mSt2T4SrlOvIWegcPs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aR5El4H7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16BCAC4CEF0;
+	Mon,  4 Aug 2025 14:56:01 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754319364;
+	bh=AsFEDSuwiU6dwZcqz43qfo52c8csif1QTc3tvddFOGs=;
+	h=From:To:Cc:Subject:Date:From;
+	b=aR5El4H7hWOwyfvGwcp+I+/mD7ivYfdc0H39VN4pQoPcm+DNi4Cps7R13tAhyZKb/
+	 715ZJU9cj2P7jgsxnijz5qSUWW6DF0cfBZd6PnMky9KxrMBz9hLffM3vKep4mQ7eIj
+	 GVnKvFtq5AT5NO4vJbu5ZUVhN1uu1lmE8GHgfWrcYSUEFmzsXjnHyrFNThydJCRofZ
+	 smJx/rbFHjJmbBo6JFEnnHn4leW1tx9aKOUBezjEH96X/57OzjNS6enm7WpDnQiGp/
+	 itQOCwISO7d5B7vpvunMS0Zrnqtg5FiAMgPeuE5TCNKrth0rC4cJeGctLUR79Zr8Xl
+	 T3AZtRraC845Q==
+From: Lorenzo Pieralisi <lpieralisi@kernel.org>
+To: linux-kernel@vger.kernel.org
+Cc: linux-arm-kernel@lists.infradead.org,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Rob Herring <robh@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Marc Zyngier <maz@kernel.org>
+Subject: [PATCH] irqchip/msi-lib: Fix fwnode refcount in msi_lib_irq_domain_select()
+Date: Mon,  4 Aug 2025 16:55:53 +0200
+Message-ID: <20250804145553.795065-1-lpieralisi@kernel.org>
+X-Mailer: git-send-email 2.48.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250731154442.319568-1-surenb@google.com> <d2b6be85-44d5-4a87-bfe5-4a9e80f95bb8@redhat.com>
- <aIzMGlrR1SL5Y_Gp@x1.local> <CAJuCfpEqOUj8VPybstQjoJvCzyZtG6Q5Vr4WT0Lx_r3LFVS7og@mail.gmail.com>
- <aIzp6WqdzhomPhhf@x1.local> <CAJuCfpGWLnu+r2wvY2Egy2ESPD=tAVvfVvAKXUv1b+Z0hweeJg@mail.gmail.com>
- <aIz1xrzBc2Spa2OH@x1.local> <CAJuCfpFJGaDaFyNLa3JsVh19NWLGNGo1ebC_ijGTgPGNyfUFig@mail.gmail.com>
- <aI0Ffc9WXeU2X71O@x1.local> <CAJuCfpFSY3fDH36dabS=nGzasZJ6FtQ_jv79eFWVZrEWRMMTiQ@mail.gmail.com>
- <aI1ckD3KhNvoMtlv@x1.local>
-In-Reply-To: <aI1ckD3KhNvoMtlv@x1.local>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Mon, 4 Aug 2025 07:55:42 -0700
-X-Gm-Features: Ac12FXwkRUWkV-jJnrAxc_KCFlt2tCP7J8Se807K09k1g_kAOLYNYQ8rg9aNU7I
-Message-ID: <CAJuCfpHcScutgGi3imYTJVXBqs=jcqZ5CkKKe=sfVHjUg0Y6RQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/1] userfaultfd: fix a crash when UFFDIO_MOVE handles
- a THP hole
-To: Peter Xu <peterx@redhat.com>
-Cc: David Hildenbrand <david@redhat.com>, akpm@linux-foundation.org, aarcange@redhat.com, 
-	lokeshgidra@google.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	syzbot+b446dbe27035ef6bd6c2@syzkaller.appspotmail.com, stable@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Fri, Aug 1, 2025 at 5:32=E2=80=AFPM Peter Xu <peterx@redhat.com> wrote:
->
-> On Fri, Aug 01, 2025 at 07:30:02PM +0000, Suren Baghdasaryan wrote:
-> > On Fri, Aug 1, 2025 at 6:21=E2=80=AFPM Peter Xu <peterx@redhat.com> wro=
-te:
-> > >
-> > > On Fri, Aug 01, 2025 at 05:45:10PM +0000, Suren Baghdasaryan wrote:
-> > > > On Fri, Aug 1, 2025 at 5:13=E2=80=AFPM Peter Xu <peterx@redhat.com>=
- wrote:
-> > > > >
-> > > > > On Fri, Aug 01, 2025 at 09:41:31AM -0700, Suren Baghdasaryan wrot=
-e:
-> > > > > > On Fri, Aug 1, 2025 at 9:23=E2=80=AFAM Peter Xu <peterx@redhat.=
-com> wrote:
-> > > > > > >
-> > > > > > > On Fri, Aug 01, 2025 at 08:28:38AM -0700, Suren Baghdasaryan =
-wrote:
-> > > > > > > > On Fri, Aug 1, 2025 at 7:16=E2=80=AFAM Peter Xu <peterx@red=
-hat.com> wrote:
-> > > > > > > > >
-> > > > > > > > > On Fri, Aug 01, 2025 at 09:21:30AM +0200, David Hildenbra=
-nd wrote:
-> > > > > > > > > > On 31.07.25 17:44, Suren Baghdasaryan wrote:
-> > > > > > > > > >
-> > > > > > > > > > Hi!
-> > > > > > > > > >
-> > > > > > > > > > Did you mean in you patch description:
-> > > > > > > > > >
-> > > > > > > > > > "userfaultfd: fix a crash in UFFDIO_MOVE with some non-=
-present PMDs"
-> > > > > > > > > >
-> > > > > > > > > > Talking about THP holes is very very confusing.
-> > > > > > > > > >
-> > > > > > > > > > > When UFFDIO_MOVE is used with UFFDIO_MOVE_MODE_ALLOW_=
-SRC_HOLES and it
-> > > > > > > > > > > encounters a non-present THP, it fails to properly re=
-cognize an unmapped
-> > > > > > > > > >
-> > > > > > > > > > You mean a "non-present PMD that is not a migration ent=
-ry".
-> > > > > > > > > >
-> > > > > > > > > > > hole and tries to access a non-existent folio, result=
-ing in
-> > > > > > > > > > > a crash. Add a check to skip non-present THPs.
-> > > > > > > > > >
-> > > > > > > > > > That makes sense. The code we have after this patch is =
-rather complicated
-> > > > > > > > > > and hard to read.
-> > > > > > > > > >
-> > > > > > > > > > >
-> > > > > > > > > > > Fixes: adef440691ba ("userfaultfd: UFFDIO_MOVE uABI")
-> > > > > > > > > > > Reported-by: syzbot+b446dbe27035ef6bd6c2@syzkaller.ap=
-pspotmail.com
-> > > > > > > > > > > Closes: https://lore.kernel.org/all/68794b5c.a70a0220=
-.693ce.0050.GAE@google.com/
-> > > > > > > > > > > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> > > > > > > > > > > Cc: stable@vger.kernel.org
-> > > > > > > > > > > ---
-> > > > > > > > > > > Changes since v1 [1]
-> > > > > > > > > > > - Fixed step size calculation, per Lokesh Gidra
-> > > > > > > > > > > - Added missing check for UFFDIO_MOVE_MODE_ALLOW_SRC_=
-HOLES, per Lokesh Gidra
-> > > > > > > > > > >
-> > > > > > > > > > > [1] https://lore.kernel.org/all/20250730170733.382926=
-7-1-surenb@google.com/
-> > > > > > > > > > >
-> > > > > > > > > > >   mm/userfaultfd.c | 45 +++++++++++++++++++++++++++++=
-----------------
-> > > > > > > > > > >   1 file changed, 29 insertions(+), 16 deletions(-)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git a/mm/userfaultfd.c b/mm/userfaultfd.c
-> > > > > > > > > > > index cbed91b09640..b5af31c22731 100644
-> > > > > > > > > > > --- a/mm/userfaultfd.c
-> > > > > > > > > > > +++ b/mm/userfaultfd.c
-> > > > > > > > > > > @@ -1818,28 +1818,41 @@ ssize_t move_pages(struct use=
-rfaultfd_ctx *ctx, unsigned long dst_start,
-> > > > > > > > > > >             ptl =3D pmd_trans_huge_lock(src_pmd, src_=
-vma);
-> > > > > > > > > > >             if (ptl) {
-> > > > > > > > > > > -                   /* Check if we can move the pmd w=
-ithout splitting it. */
-> > > > > > > > > > > -                   if (move_splits_huge_pmd(dst_addr=
-, src_addr, src_start + len) ||
-> > > > > > > > > > > -                       !pmd_none(dst_pmdval)) {
-> > > > > > > > > > > -                           struct folio *folio =3D p=
-md_folio(*src_pmd);
-> > > > > > > > > > > +                   if (pmd_present(*src_pmd) || is_p=
-md_migration_entry(*src_pmd)) {
-> > > > > > > > >
-> > > > > > > > > [1]
-> > > > > > > > >
-> > > > > > > > > > > +                           /* Check if we can move t=
-he pmd without splitting it. */
-> > > > > > > > > > > +                           if (move_splits_huge_pmd(=
-dst_addr, src_addr, src_start + len) ||
-> > > > > > > > > > > +                               !pmd_none(dst_pmdval)=
-) {
-> > > > > > > > > > > +                                   if (pmd_present(*=
-src_pmd)) {
-> > > > > > >
-> > > > > > > [2]
-> > > > > > >
-> > > > > > > > > > > +                                           struct fo=
-lio *folio =3D pmd_folio(*src_pmd);
-> > > > > > >
-> > > > > > > [3]
-> > > > > > >
-> > > > > > > > > > > +
-> > > > > > > > > > > +                                           if (!foli=
-o || (!is_huge_zero_folio(folio) &&
-> > > > > > > > > > > +                                                    =
-      !PageAnonExclusive(&folio->page))) {
-> > > > > > > > > > > +                                                   s=
-pin_unlock(ptl);
-> > > > > > > > > > > +                                                   e=
-rr =3D -EBUSY;
-> > > > > > > > > > > +                                                   b=
-reak;
-> > > > > > > > > > > +                                           }
-> > > > > > > > > > > +                                   }
-> > > > > > > > > >
-> > > > > > > > > > ... in particular that. Is there some way to make this =
-code simpler / easier
-> > > > > > > > > > to read? Like moving that whole last folio-check thingy=
- into a helper?
-> > > > > > > > >
-> > > > > > > > > One question might be relevant is, whether the check abov=
-e [1] can be
-> > > > > > > > > dropped.
-> > > > > > > > >
-> > > > > > > > > The thing is __pmd_trans_huge_lock() does double check th=
-e pmd to be !none
-> > > > > > > > > before returning the ptl.  I didn't follow closely on the=
- recent changes on
-> > > > > > > > > mm side on possible new pmd swap entries, if migration is=
- the only possible
-> > > > > > > > > one then it looks like [1] can be avoided.
-> > > > > > > >
-> > > > > > > > Hi Peter,
-> > > > > > > > is_swap_pmd() check in __pmd_trans_huge_lock() allows for (=
-!pmd_none()
-> > > > > > > > && !pmd_present()) PMD to pass and that's when this crash i=
-s hit.
-> > > > > > >
-> > > > > > > First for all, thanks for looking into the issue with Lokesh;=
- I am still
-> > > > > > > catching up with emails after taking weeks off.
-> > > > > > >
-> > > > > > > I didn't yet read into the syzbot report, but I thought the b=
-ug was about
-> > > > > > > referencing the folio on top of a swap entry after reading yo=
-ur current
-> > > > > > > patch, which has:
-> > > > > > >
-> > > > > > >         if (move_splits_huge_pmd(dst_addr, src_addr, src_star=
-t + len) ||
-> > > > > > >             !pmd_none(dst_pmdval)) {
-> > > > > > >                 struct folio *folio =3D pmd_folio(*src_pmd); =
-<----
-> > > > > > >
-> > > > > > > Here looks like *src_pmd can be a migration entry. Is my unde=
-rstanding
-> > > > > > > correct?
-> > > > > >
-> > > > > > Correct.
-> > > > > >
-> > > > > > >
-> > > > > > > > If we drop the check at [1] then the path that takes us to
-> > > > > > >
-> > > > > > > If my above understanding is correct, IMHO it should be [2] a=
-bove that
-> > > > > > > makes sure the reference won't happen on a swap entry, not ne=
-cessarily [1]?
-> > > > > >
-> > > > > > Yes, in case of migration entry this is what protects us.
-> > > > > >
-> > > > > > >
-> > > > > > > > split_huge_pmd() will bail out inside split_huge_pmd_locked=
-() with no
-> > > > > > > > indication that split did not happen. Afterwards we will re=
-try
-> > > > > > >
-> > > > > > > So we're talking about the case where it's a swap pmd entry, =
-right?
-> > > > > >
-> > > > > > Hmm, my understanding is that it's being treated as a swap entr=
-y but
-> > > > > > in reality is not. I thought THPs are always split before they =
-get
-> > > > > > swapped, no?
-> > > > >
-> > > > > Yes they should be split, afaiu.
-> > > > >
-> > > > > >
-> > > > > > > Could you elaborate why the split would fail?
-> > > > > >
-> > > > > > Just looking at the code, split_huge_pmd_locked() checks for
-> > > > > > (pmd_trans_huge(*pmd) || is_pmd_migration_entry(*pmd)).
-> > > > > > pmd_trans_huge() is false if !pmd_present() and it's not a migr=
-ation
-> > > > > > entry, so __split_huge_pmd_locked() will be skipped.
-> > > > >
-> > > > > Here might be the major part of where confusion came from: I thou=
-ght it
-> > > > > must be a migration pmd entry to hit the issue, so it's not?
-> > > > >
-> > > > > I checked the code just now:
-> > > > >
-> > > > > __handle_mm_fault:
-> > > > >                 if (unlikely(is_swap_pmd(vmf.orig_pmd))) {
-> > > > >                         VM_BUG_ON(thp_migration_supported() &&
-> > > > >                                           !is_pmd_migration_entry=
-(vmf.orig_pmd));
-> > > > >
-> > > > > So IIUC pmd migration entry is still the only possible way to hav=
-e a swap
-> > > > > entry.  It doesn't look like we have "real" swap entries for PMD =
-(which can
-> > > > > further points to some swapfiles)?
-> > > >
-> > > > Correct. AFAIU here we stumble on a pmd entry which was allocated b=
-ut
-> > > > never populated.
-> > >
-> > > Do you mean a pmd_none()?
-> >
-> > Yes.
-> >
-> > >
-> > > If so, that goes back to my original question, on why
-> > > __pmd_trans_huge_lock() returns non-NULL if it's a pmd_none()?  IMHO =
-it
-> > > really should have returned NULL for pmd_none().
-> >
-> > That was exactly the answer I gave Lokesh when he theorized about the
-> > cause of this crash but after reproducing it I saw that
-> > pmd_trans_huge_lock() happily returns the PTL as long as PMD is not
-> > pmd_none(). And that's because it passes as is_swap_pmd(). But even if
-> > we change that we still need to implement the code to skip the entire
-> > PMD.
->
-> The thing is I thought if pmd_trans_huge_lock() can return non-NULL, it
-> must be either a migration entry or a present THP. So are you describing =
-a
-> THP but with present bit cleared?  Do you know what is that entry, and wh=
-y
-> it has present bit cleared?
+Commit 8b65db1e93a2 ("irqchip/msi-lib: Add IRQ_DOMAIN_FLAG_FWNODE_PARENT
+handling") added logic in msi_lib_irq_domain_select() to match the
+domain fwnode against the fwnode parent of the fwspec.fwnode.
 
-In this case it's because earlier we allocated that PMD here:
-https://elixir.bootlin.com/linux/v6.16/source/mm/userfaultfd.c#L1797
-but wouldn't that be the same if the PMD was mapped and then got
-unmapped later? My understanding is that we allocate the PMD at the
-line I pointed to make UFFDIO_MOVE_MODE_ALLOW_SRC_HOLES case the same
-as this unmapped PMD case. If my assumption is incorrect then we could
-skip the hole earlier instead of allocating the PMD for it.
+The fwnode_get_parent() caller must call fwnode_handle_put() on the
+returned pointer value, lest fwnode refcounting for the parent ends
+up being out of kilter.
 
->
-> I think my attention got attracted to pmd migration entry too much, so I
-> didn't really notice such possibility, as I believe migration pmd is brok=
-en
-> already in this path.
->
-> The original code:
->
->                 ptl =3D pmd_trans_huge_lock(src_pmd, src_vma);
->                 if (ptl) {
->                         /* Check if we can move the pmd without splitting=
- it. */
->                         if (move_splits_huge_pmd(dst_addr, src_addr, src_=
-start + len) ||
->                             !pmd_none(dst_pmdval)) {
->                                 struct folio *folio =3D pmd_folio(*src_pm=
-d);
->
->                                 if (!folio || (!is_huge_zero_folio(folio)=
- &&
->                                                !PageAnonExclusive(&folio-=
->page))) {
->                                         spin_unlock(ptl);
->                                         err =3D -EBUSY;
->                                         break;
->                                 }
->
->                                 spin_unlock(ptl);
->                                 split_huge_pmd(src_vma, src_pmd, src_addr=
-);
->                                 /* The folio will be split by move_pages_=
-pte() */
->                                 continue;
->                         }
->
->                         err =3D move_pages_huge_pmd(mm, dst_pmd, src_pmd,
->                                                   dst_pmdval, dst_vma, sr=
-c_vma,
->                                                   dst_addr, src_addr);
->                         step_size =3D HPAGE_PMD_SIZE;
->                 } else {
->
-> It'll get ptl for a migration pmd, then pmd_folio is risky without checki=
-ng
-> present bit.  That's what my previous smaller patch wanted to fix.
->
-> But besides that, IIUC it's all fine at least for a pmd migration entry,
-> because when with the smaller patch applied, either we'll try to split th=
-e
-> pmd migration entry, or we'll do move_pages_huge_pmd(), which internally
-> handles the pmd migration entry too by waiting on it:
->
->         if (!pmd_trans_huge(src_pmdval)) {
->                 spin_unlock(src_ptl);
->                 if (is_pmd_migration_entry(src_pmdval)) {
->                         pmd_migration_entry_wait(mm, &src_pmdval);
->                         return -EAGAIN;
->                 }
->                 return -ENOENT;
->         }
->
-> Then logically after the migration entry got recovered, we'll either see =
-a
-> real THP or pmd none next time.
+Fix this by relying on the fwnode_handle clean-up handlers and by
+incrementing the fwnode refcount regardless of whether we use
+parent matching or not (the domain selection code already holds a
+reference before calling msi_lib_irq_domain_select() but to make
+the exit path more uniform if IRQ_DOMAIN_FLAG_FWNODE_PARENT is not
+set fwnode_handle_get() is called again on fwspec.fwnode so that
+the clean-up code is the same for the two matching patterns).
 
-Yes, for migration entries adding the "if (pmd_present(*src_pmd))"
-before getting the folio is enough. The problematic case is
-(!pmd_none(*src_pmd) && !pmd_present(*src_pmd)) and not a migration
-entry.
+Fixes: 8b65db1e93a2 ("irqchip/msi-lib: Add IRQ_DOMAIN_FLAG_FWNODE_PARENT handling")
+Signed-off-by: Lorenzo Pieralisi <lpieralisi@kernel.org>
+Cc: Thomas Gleixner <tglx@linutronix.de>
+Cc: Rob Herring <robh@kernel.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Marc Zyngier <maz@kernel.org>
+---
+Hi Thomas, Marc,
 
->
-> Some explanation on the problematic non-present THP entry would be helpfu=
-l.
->
-> Thanks,
->
-> --
-> Peter Xu
->
+Noticed while adding GICv5 ACPI support - I tested this patch on arm64 with
+DT (GICv5 and v3) and ACPI (GICv3).
+
+msi_lib_irq_domain_select() is used in other arches, I could not
+test on those (don't know if they have non-[DT/irqchip/acpi] specific
+fwnodes) - from a fwnode interface perspective I think that this patch
+does the right thing, it should not add any issue to existing code
+to the best of my knowledge but it has to be verified.
+
+Thanks,
+Lorenzo
+
+ drivers/irqchip/irq-msi-lib.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/drivers/irqchip/irq-msi-lib.c b/drivers/irqchip/irq-msi-lib.c
+index 454c7f16dd4d..908944009c21 100644
+--- a/drivers/irqchip/irq-msi-lib.c
++++ b/drivers/irqchip/irq-msi-lib.c
+@@ -133,13 +133,13 @@ int msi_lib_irq_domain_select(struct irq_domain *d, struct irq_fwspec *fwspec,
+ {
+ 	const struct msi_parent_ops *ops = d->msi_parent_ops;
+ 	u32 busmask = BIT(bus_token);
+-	struct fwnode_handle *fwh;
+ 
+ 	if (!ops)
+ 		return 0;
+ 
+-	fwh = d->flags & IRQ_DOMAIN_FLAG_FWNODE_PARENT ? fwnode_get_parent(fwspec->fwnode)
+-						       : fwspec->fwnode;
++	struct fwnode_handle *fwh __free(fwnode_handle) =
++		d->flags & IRQ_DOMAIN_FLAG_FWNODE_PARENT ? fwnode_get_parent(fwspec->fwnode)
++							 : fwnode_handle_get(fwspec->fwnode);
+ 	if (fwh != d->fwnode || fwspec->param_count != 0)
+ 		return 0;
+ 
+-- 
+2.48.0
+
 
