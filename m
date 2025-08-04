@@ -1,196 +1,188 @@
-Return-Path: <linux-kernel+bounces-754923-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 949D2B19E99
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:15:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FBE2B19E9B
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:15:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B70ED1798B1
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:15:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D9D90189AC36
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:15:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A0692417D9;
-	Mon,  4 Aug 2025 09:15:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5D68244662;
+	Mon,  4 Aug 2025 09:15:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UC6sqRB/"
-Received: from mail-vk1-f177.google.com (mail-vk1-f177.google.com [209.85.221.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="WOwoSuRT"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECBED1E489
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:15:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1CE761C5496
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:15:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298922; cv=none; b=EtpFtfdHsHyVFtEFIYo9vWyX+05eK0A+D4d8HSASBJ6H3Kj7LN7TBi1D/EwZxyItQScWRu9WXLuqOBNDzhHpkOpRRspI5Z6DFwCBBCHXa/DwvHD2BQpuX2l8JW3U2gGmQT0Eih6uwzd40W3twiVsQ8Sceys8xD/l9GXVBgB1BI4=
+	t=1754298931; cv=none; b=Vbz/hTyBoTXAkGIJ0gBVAEIypkjTv190Ye6gfQr9mcBmHD81hDRKD013vZqaG4/jWFOG7prWoUnEKf9x3PYPFtdOZeC2cTZJdjLbNxEEjpYesCTYAEeO7npHS/y93gFgXikjQQkzcVhfL8c4Dq1gZE3TJKZdEzE8lbxhOkOE1+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754298922; c=relaxed/simple;
-	bh=qFCaoHMm1VnEL10gVvLpdTFhZneV4lwru6bNk9ymWOs=;
+	s=arc-20240116; t=1754298931; c=relaxed/simple;
+	bh=BEDoRg6ey4p+H93HmM+g9//xUXfjK/SSJ2MK7UJHSHQ=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=as9cBKrSc3JwaFdIMnTkR5y6PY2MT0N0BBwzQa0V54fUhsM6FNShS02CpB4yVEWd41ab/b4XKdAmJp2Ps+4G02HUQBjE1PiG07w23eVb6GXXIW6pP9JorkehUf5kE393AKqGIslHbM3X4cKbOZ85CVSIB073iH82Et/4MFJLYGM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UC6sqRB/; arc=none smtp.client-ip=209.85.221.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-vk1-f177.google.com with SMTP id 71dfb90a1353d-5397c00ad9eso134182e0c.0
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:15:20 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754298920; x=1754903720; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qFCaoHMm1VnEL10gVvLpdTFhZneV4lwru6bNk9ymWOs=;
-        b=UC6sqRB/nt2cEqYHusm/dY6EL6Thc0Umz5chbwtoprl945c3Uhg7qserkOhyi+3RE/
-         cHktnRkWb0prGhKisbfTQk6r+7UaIQsrA4CtSfrTFD2OwLQ/7ZQ9RvgA4eOlmD+/2356
-         YzXs2fenDXw/0UOYW1K/NQyhetgoo/vXWfaBWnnABlQShv3/twIEdMZqaf5tVbq0jGHG
-         dgKhwBt6SPtLf+UOuSrUgtzeH+uHbJxli1dIKpkg1z1lf0DSAMvCSyM5nKwjckwFMylJ
-         ORSDcXZp6jYnhcj1/NrXVjrCJejrgyk08q6COyuYQBXI/wo1kgDPDBAYbEVnTCkOwYYt
-         DfLA==
+	 To:Cc:Content-Type; b=MucCAWnH7KTq1lExOse7xTTMINyVV0nTvF5vY4hAqAXjX3WfQRusrfDYa9U5C9g0u4dLq1dPg4J+/gj0Pr67hrNn4DTrxvBik1Rif9WAujdB+lgoF8jZ+JLnW1OZzt+APbKYU2kbKlvPp7KZRY6flC6AM85gG4NgEpI+5ThmEps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=WOwoSuRT; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754298929;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mkrRfjQYaOOOEfT/VLhNTKOF6Rg64aCH11W96IXXEYo=;
+	b=WOwoSuRTJ40Gzw3r2zd/0v7oeANpScJaB5r5BralOuee5bKr+5FuFJlYDXXGU/+DnZRc55
+	WlkTAyrMfNrmHEPD7v4VkWvzfFwFKQrR6bjalPAgYqDKQ7JHpX6+S2SPzSMbbhe7k6cTeD
+	tNiZ2VtNCo9q62XufP+932hfMNI0Jqw=
+Received: from mail-lj1-f200.google.com (mail-lj1-f200.google.com
+ [209.85.208.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-663-W2hAak62MD2S-7_8cAw9RQ-1; Mon, 04 Aug 2025 05:15:27 -0400
+X-MC-Unique: W2hAak62MD2S-7_8cAw9RQ-1
+X-Mimecast-MFC-AGG-ID: W2hAak62MD2S-7_8cAw9RQ_1754298926
+Received: by mail-lj1-f200.google.com with SMTP id 38308e7fff4ca-33272ab5ed4so1492751fa.3
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:15:27 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754298920; x=1754903720;
+        d=1e100.net; s=20230601; t=1754298926; x=1754903726;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=qFCaoHMm1VnEL10gVvLpdTFhZneV4lwru6bNk9ymWOs=;
-        b=L1HV9SYkjqoHQP43y9gP5qbG9fNwvaRWNRBawAzL5MC0kP92CfTN5gjZ/6nQPkXyen
-         Ww/o80uIepM1JP89CsdpuKQWY9mFAceO1wSn8IGPsUD4uHdZ2a0Ex84Qh3WGtyvhEJVf
-         2RLZiN6TwDSffGTU0oRAWr5et7kzMhqNlnnQLvOQEgPaIeHAkTcguAA/7x7nJmNwahNl
-         8TlxIb7WSpf+6NIFXXkeEmQxEhAJR/NCxS2E8nk873lACwask6ah9Fd1jjXzVtQkyexl
-         OGaPI0fgmD1bDRbBJHBFgkvgl+EL19j+Ls43c35gbLcNiX1jg8PdKe8m8sW7cWlGutAc
-         NPRA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA5U7aQ+BdVHErgmDFIHf4rDjXNem8i3beX5cysk6B0h7WTPHvjiWu8VDm5rPcW8+km5PRiHjaJxUBs+I=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1NG38tAwTDy+0X/DTqZVcTLPr3idYwVj5UgQ6spbVev6No33y
-	Hrz3Qv+S5h8x4fsO817vCNjSBrhU+pZW1E4+ipCEh5RnqGLC1OpABhD5Gkl9sRNaewCYW2pSecr
-	g3EyDiGDmSonDMu4tE6Ui5a5dkDRyMS0=
-X-Gm-Gg: ASbGnctpBJvcccCIWQsuRkPTl6i1cv0eXDjS08ewRoeTlIdARFTe/JRcywPNV5sGhyt
-	4sVIEmJryHao9fO0etJhojQFOa1p9XFuwuxtQr+EQtYRUM2VCxWohi35sZhf07X1fwMyg188vcd
-	i61ZBUIt04khkpVocsgdu/Ym+zZf+2xKage/T0O3KPJqbxyhrvUVDR1Yw3uqLVNSZNV4WD5QDyA
-	TaiV9E=
-X-Google-Smtp-Source: AGHT+IHydI6tDwWrpJjm9ELbGuWexGkYUn4GA18Pb/Ya3WOz9/wbanIAiL1QtWy60boNRaFhWPj5D1x1XXru/XojMOc=
-X-Received: by 2002:a05:6102:2908:b0:4f1:7946:ed52 with SMTP id
- ada2fe7eead31-4fdc25487f8mr2740340137.12.1754298919609; Mon, 04 Aug 2025
- 02:15:19 -0700 (PDT)
+        bh=mkrRfjQYaOOOEfT/VLhNTKOF6Rg64aCH11W96IXXEYo=;
+        b=ltmHzSWePRoO47jX9HdYkuSQgxdbHWIBUHKn8v7eSQV8Rmys5XC78AjQdwibLkXc/u
+         SCEj3/oMcX8y7Jv7cp/y1B43Bqd3cyKKBaFxjqG15Q7sWQtuQwZPUrtupimXFrzpBHgr
+         EN/ey8NNoUn2ib88ocSLnDIygDZPCe9/TnZvMQSDhFnDrp9khL9r4DcbQYcwvu8p69EB
+         bCHgs45f+c41aPcN4HMWqdIbBlsUThzFfKT9STBKWkbF7I912GqU0r7U12q8spz5N3B5
+         N/QW7WvboVoJ2vFi6ve5OgmZyV6GK0zS7KVBya1MwTGy4uYSfRCc4+lQicVkbCAvp82u
+         UnNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW9w6zR4RvF/GapA9irO8KLsTBfZsvQwdzkUHnd+/isAP5iuttgOcux0ZMVQsK15vmrVJRqAoGFdD1XtX8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+ChnBF2wL6VVWz+0JtdH5kcLlVN+d19TwUyWUhC+6KXVl/7QX
+	wsBistliSV6fgglZ+0cqAiuFpnONrxg6UsP9b8+Q4DKaSPtOYW69aqznkbMsJcBTarwuXQlfdZA
+	dKil8Mn0OmQ0JuBoAF7XqsAT363u+bgxw1ZQ/GfCW64v7JruZ3khiPquy+X+wyRSCWjZDVePX2I
+	zH98gpwRON9MMNsG2D5DZInnEv2sN90y5B9pDbivSm
+X-Gm-Gg: ASbGncs6DC2gEOp+WYqyuc4gwUpDFgZplVAbFGivjiCGChyXEX4iOiifbXIBv3ufwfC
+	ext+wurL8co99WJTFUUyinBGwLz+n1KVnn4qXR8Wec6k/Qiu+AYuctnLOim/u32luc6M0w1kzn1
+	qmSG7HMnrdEP0QS856epJNxg==
+X-Received: by 2002:a2e:a99f:0:b0:32b:585e:30bd with SMTP id 38308e7fff4ca-33256796299mr20549521fa.21.1754298926093;
+        Mon, 04 Aug 2025 02:15:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7Zwzb8Bs3ToflSuXf+vDmP1MKwtiLfLZJfBga+fvkMIc6FE1GCmyPNIydhZ63d/5VOWgeN4D5RUceAM9Vz9c=
+X-Received: by 2002:a2e:a99f:0:b0:32b:585e:30bd with SMTP id
+ 38308e7fff4ca-33256796299mr20549421fa.21.1754298925623; Mon, 04 Aug 2025
+ 02:15:25 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250607220150.2980-1-21cnbao@gmail.com> <aJAFrYfyzGpbm+0m@ly-workstation>
- <1d1d97f9-2a67-4920-850e-accf4c82440e@redhat.com> <4fa8f492-c7ef-451c-8dc7-38b031c8a092@bytedance.com>
- <d9d0890e-2837-49dc-9ca8-1d6c28e95a21@redhat.com> <aJB0Kdc6cx1lGkdb@ly-workstation>
-In-Reply-To: <aJB0Kdc6cx1lGkdb@ly-workstation>
-From: Barry Song <21cnbao@gmail.com>
-Date: Mon, 4 Aug 2025 21:15:07 +1200
-X-Gm-Features: Ac12FXydsBD0TuZFpNyEUYcRbrcCg6kekPWWmL9gnPJlShdvwC4LshInjY3gdRQ
-Message-ID: <CAGsJ_4yw4Qn7OWmUJeJZYuOHLjJ7L8kov3Th3vFPa3h4y0ur_A@mail.gmail.com>
-Subject: Re: [PATCH v4] mm: use per_vma lock for MADV_DONTNEED
-To: "Lai, Yi" <yi1.lai@linux.intel.com>
-Cc: David Hildenbrand <david@redhat.com>, Qi Zheng <zhengqi.arch@bytedance.com>, 
-	akpm@linux-foundation.org, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Barry Song <v-songbaohua@oppo.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Lokesh Gidra <lokeshgidra@google.com>, 
-	Tangquan Zheng <zhengtangquan@oppo.com>, yi1.lai@intel.com
+References: <20250801070346.4127558-1-yukuai1@huaweicloud.com> <20250801070346.4127558-9-yukuai1@huaweicloud.com>
+In-Reply-To: <20250801070346.4127558-9-yukuai1@huaweicloud.com>
+From: Xiao Ni <xni@redhat.com>
+Date: Mon, 4 Aug 2025 17:15:12 +0800
+X-Gm-Features: Ac12FXyaMbAWff4USZHAGnpvA7aTVhdXKLgXXyJMJPJQzZPpqs3vokhbOz_BtZc
+Message-ID: <CALTww2_jcDJf-55AEvK2fzf2PLnnOfBw5dG4bQG65B9eFw8Xmg@mail.gmail.com>
+Subject: Re: [PATCH v5 08/11] md/md-bitmap: add a new method blocks_synced()
+ in bitmap_operations
+To: Yu Kuai <yukuai1@huaweicloud.com>
+Cc: hch@lst.de, corbet@lwn.net, song@kernel.org, yukuai3@huawei.com, 
+	agk@redhat.com, snitzer@kernel.org, mpatocka@redhat.com, linan122@huawei.com, 
+	hare@suse.de, linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, yi.zhang@huawei.com, 
+	yangerkun@huawei.com, johnny.chenyi@huawei.com
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Mon, Aug 4, 2025 at 8:49=E2=80=AFPM Lai, Yi <yi1.lai@linux.intel.com> wr=
+Hi Kuai
+
+I found one thing. The interface ->blocks_synced doesn't work in the
+write io path. So there is a risk of data corruption. For example:
+
+mdadm -CR /dev/md0 -l5 -n5 /dev/loop[0-4] --bitmap=3Dlockless (all bits
+are unwritten because lazy initial recovery)
+1. D1 D2 D3 D4 P1, a small write hits D2. rmw is 2 (need to read old
+data of D2 and P1), rcw is 3 (need to read D1 D3 and D4).
+2. D2 disk fails
+3. read data from disk2. It needs to calculate the data from other
+disks. But the result is not the real data which was written to D2
+
+So ->blocks_synced needs to be checked in handle_stripe_dirtying.
+
+Best Regards
+Xiao
+
+On Fri, Aug 1, 2025 at 3:11=E2=80=AFPM Yu Kuai <yukuai1@huaweicloud.com> wr=
 ote:
 >
-> On Mon, Aug 04, 2025 at 10:30:45AM +0200, David Hildenbrand wrote:
-> > On 04.08.25 10:26, Qi Zheng wrote:
-> > >
-> > >
-> > > On 8/4/25 3:57 PM, David Hildenbrand wrote:
-> > > > On 04.08.25 02:58, Lai, Yi wrote:
-> > > > > Hi Barry Song,
-> > > > >
-> > > > > Greetings!
-> > > > >
-> > > > > I used Syzkaller and found that there is general protection fault=
- in
-> > > > > __pte_offset_map_lock in linux-next next-20250801.
-> > > > >
-> > > > > After bisection and the first bad commit is:
-> > > > > "
-> > > > > a6fde7add78d mm: use per_vma lock for MADV_DONTNEED
-> > > > > "
-> > > > >
-> > > > > All detailed into can be found at:
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock
-> > > > > Syzkaller repro code:
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock/repro.c
-> > > > > Syzkaller repro syscall steps:
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock/repro.prog
-> > > > > Syzkaller report:
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock/repro.report
-> > > > > Kconfig(make olddefconfig):
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock/kconfig_origin
-> > > > > Bisect info:
-> > > > > https://github.com/laifryiee/syzkaller_logs/tree/
-> > > > > main/250803_193026___pte_offset_map_lock/bisect_info.log
-> > > > > bzImage:
-> > > > > https://github.com/laifryiee/syzkaller_logs/raw/refs/heads/
-> > > > > main/250803_193026___pte_offset_map_lock/bzImage_next-20250801
-> > > > > Issue dmesg:
-> > > > > https://github.com/laifryiee/syzkaller_logs/blob/
-> > > > > main/250803_193026___pte_offset_map_lock/next-20250801_dmesg.log
-> > > >
-> > > > Skimming over the reproducer, we seem to have racing MADV_DONTNEED =
-and
-> > > > MADV_COLLAPSE on the same anon area, but the problem only shows up =
-once
-> > > > we tear down that MM.
-> > > >
-> > > > If I would have to guess, I'd assume it's related to PT_RECLAIM
-> > > > reclaiming empty page tables during MADV_DONTNEED -- but the kconfi=
-g
-> > > > does not indicate that CONFIG_PT_RECLAIM was set.
-> > >
-> > > On the x86_64, if PT_RECLAIM is not manually disabled, PT_RECLAIM sho=
-uld
-> > > be enabled
-> >
-> > That's what I thought: but I was not able to spot it in the provided co=
-nfig
-> > [1].
-> >
-> > Or is that config *before* "make olfconfig"? confusing. I would want to=
- see
-> > the actually used config.
-> >
-> >
-> >
-> My kernel compiling steps:
-> 1. copy kconfig_origin to kernel_source_folder/.config
-> 2. make olddefconfig
-> 3. make bzImage -jx
+> From: Yu Kuai <yukuai3@huawei.com>
 >
-> I have also uploaded the actual .config during compiling.
-> [2] https://github.com/laifryiee/syzkaller_logs/blob/main/250803_193026__=
-_pte_offset_map_lock/.config
-> CONFIG_ARCH_SUPPORTS_PT_RECLAIM=3Dy
-> CONFIG_PT_RECLAIM=3Dy
-
-Thanks! I can reproduce the issue within one second.
-After disabling PT_RECLAIM in .config, the issue disappears.
-The reason it doesn't occur on arm64 is that x86 is the only platform
-that supports ARCH_SUPPORTS_PT_RECLAIM.
-
+> Currently, raid456 must perform a whole array initial recovery to build
+> initail xor data, then IO to the array won't have to read all the blocks
+> in underlying disks.
 >
-> > [1] https://github.com/laifryiee/syzkaller_logs/tree/main/250803_193026=
-___pte_offset_map_lock/kconfig_origin
-> >
-> > --
-> > Cheers,
-> >
-> > David / dhildenb
-> >
+> This behavior will affect IO performance a lot, and nowadays there are
+> huge disks and the initial recovery can take a long time. Hence llbitmap
+> will support lazy initial recovery in following patches. This method is
+> used to check if data blocks is synced or not, if not then IO will still
+> have to read all blocks for raid456.
+>
+> Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+> Reviewed-by: Christoph Hellwig <hch@lst.de>
+> Reviewed-by: Hannes Reinecke <hare@suse.de>
+> Reviewed-by: Xiao Ni <xni@redhat.com>
+> Reviewed-by: Li Nan <linan122@huawei.com>
+> ---
+>  drivers/md/md-bitmap.h | 1 +
+>  drivers/md/raid5.c     | 6 ++++++
+>  2 files changed, 7 insertions(+)
+>
+> diff --git a/drivers/md/md-bitmap.h b/drivers/md/md-bitmap.h
+> index 95453696c68e..5f41724cbcd8 100644
+> --- a/drivers/md/md-bitmap.h
+> +++ b/drivers/md/md-bitmap.h
+> @@ -90,6 +90,7 @@ struct bitmap_operations {
+>         md_bitmap_fn *end_discard;
+>
+>         sector_t (*skip_sync_blocks)(struct mddev *mddev, sector_t offset=
+);
+> +       bool (*blocks_synced)(struct mddev *mddev, sector_t offset);
+>         bool (*start_sync)(struct mddev *mddev, sector_t offset,
+>                            sector_t *blocks, bool degraded);
+>         void (*end_sync)(struct mddev *mddev, sector_t offset, sector_t *=
+blocks);
+> diff --git a/drivers/md/raid5.c b/drivers/md/raid5.c
+> index 5285e72341a2..2121f0ff5e30 100644
+> --- a/drivers/md/raid5.c
+> +++ b/drivers/md/raid5.c
+> @@ -3748,6 +3748,7 @@ static int want_replace(struct stripe_head *sh, int=
+ disk_idx)
+>  static int need_this_block(struct stripe_head *sh, struct stripe_head_st=
+ate *s,
+>                            int disk_idx, int disks)
+>  {
+> +       struct mddev *mddev =3D sh->raid_conf->mddev;
+>         struct r5dev *dev =3D &sh->dev[disk_idx];
+>         struct r5dev *fdev[2] =3D { &sh->dev[s->failed_num[0]],
+>                                   &sh->dev[s->failed_num[1]] };
+> @@ -3762,6 +3763,11 @@ static int need_this_block(struct stripe_head *sh,=
+ struct stripe_head_state *s,
+>                  */
+>                 return 0;
+>
+> +       /* The initial recover is not done, must read everything */
+> +       if (mddev->bitmap_ops && mddev->bitmap_ops->blocks_synced &&
+> +           !mddev->bitmap_ops->blocks_synced(mddev, sh->sector))
+> +               return 1;
+> +
+>         if (dev->toread ||
+>             (dev->towrite && !test_bit(R5_OVERWRITE, &dev->flags)))
+>                 /* We need this block to directly satisfy a request */
+> --
+> 2.39.2
+>
 
-Thanks
-Barry
 
