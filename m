@@ -1,171 +1,141 @@
-Return-Path: <linux-kernel+bounces-754925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6C969B19EA3
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:17:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id CD589B19EA6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:17:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2676D3A923B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:17:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DBBB617894E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:17:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E0B244662;
-	Mon,  4 Aug 2025 09:17:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="osMPqxSo"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31DD0242D9A;
+	Mon,  4 Aug 2025 09:17:49 +0000 (UTC)
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BFE681E25ED;
-	Mon,  4 Aug 2025 09:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1145F23497B;
+	Mon,  4 Aug 2025 09:17:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754299023; cv=none; b=u5Ax7P2GO08lUk14VnPAovxcgQycgNIUBtUuMBZDo5n8r+rB/HaVh33elnFQeNMcaeSogznBW1MVTF9ZzOzpZzKHosuqDDMbjLuDB5GAkiAr00oMFvqsGqlqkVwPLzlz8UfJ73zedNH9bIBMP4hU+sl1ZpJpLlgAUwmA3/crFPA=
+	t=1754299068; cv=none; b=o7GW9fVsJKvumP5IGIh0pw/Lp0+PR4h0js3tgEu5TG/NS4KlcDXYwDIGyBNm7MZqPhDiKaaffZlJbwoMuMdLY4rDHMYnTznMqb1c8dEATED6PFqJnnj+psc1LBPPxxDpfLS7UA5CQGVwWifxf4TUro46HP2rtDvEKbSe45eGqEo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754299023; c=relaxed/simple;
-	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=REtUDmZpQkqmmoD5nYkRS1vVxeDSvfLPph/2R9joi52EFQ31NoL23DDq/ZAyTDVEq5rBUZTzCBcsBnQhzqmufB7Nb1tUqAlsGHmiSPaGw9eZJaSjtpe/0NDGlfewolVRxiTSsmkqvt04EzmuhT1nXMmzclr8OMmbQFwP12zfONk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=osMPqxSo; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E2B3AC4CEE7;
-	Mon,  4 Aug 2025 09:16:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754299023;
-	bh=dQCuhqytT40JMQLRIFWrKP8s4sli2w4egXw1PnO/acA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=osMPqxSoJzNl3bn01WpryG1a0u/BHDAg9w4pIEkbtevWpxJxtf2+VjPb7lAl7BLBU
-	 Qs/AIkmK94xLthtXzHJJ4Z+KQAW4ZM8tcEBFTup56paTzwnG3RJmOxZmq5wco+WXv6
-	 YIWLmSAuv0xtVJQSSWBN+gyVyesB4eAGWzug/ehK3qJiTZ8miE3IZ/VgAY52FM2DLw
-	 JN/hiX+XFF2P8uOqQeHNV9IMhqCB7sn8KGd/f/gWJvRCxTbiKoUzzGoY8EEOuGe6Lx
-	 UW4THIK1X1qmKlpBdeVs5zOtCzBnccha6rNfXq6hxBjlVlTOVz5dRUIFqJmWinIQvj
-	 SM+p0QWiJFQKA==
-Message-ID: <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
-Date: Mon, 4 Aug 2025 11:16:56 +0200
+	s=arc-20240116; t=1754299068; c=relaxed/simple;
+	bh=i0OFIqRZ+2MCROlqNGaAy7Gthq89bO35bHAcnJh3VlA=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=MD/NSltBDWhZQOyUpDQzLOFPGrOabW7285pJK80T+uV8cw0rxASLUFmxA97/KI+1wlGOxI8ejNipF75s3v8ncmYtFXrparFwO1FCiY37kpGc6NXozW7K8PkQgGUVxsVk0s9yTsZt6vPQ95/sm5Me6HeCOOe1z8TNM9Q69PwxoXI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-af8fd1b80e5so688456566b.2;
+        Mon, 04 Aug 2025 02:17:46 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754299065; x=1754903865;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=xamvBtEdKuAbOd1z+jRRJHYAkrTu7JX4mmKkjKPIws0=;
+        b=dJ4chnUie+7evyoBz74WZGq6bN8oEL8KelLSBJZw+eBaRC571yvtqKidrYeY5BpcdJ
+         b19m5qYL9fcAR5jw9TM09RQ2TcVOtdbcPbQ5IeCftXl0z6CEgXw6IbOFbGGqDW6WFKm8
+         kF3cOzU3Uw4NN/2P5Gdp53fMPf2fuJmlaPPskcaCDPVAMEWkV7gaiqSfa5bcrmZYKfRv
+         XMabyfIAeJ456WICt5YkDlKDkbOGOEMtvMcL+fxjAYsT97cDFnjceCciEqo1ZcpiHK2b
+         ZQm5iO0wUj32lWE1RPv8EiCJqBirGSXSlMoo9FGA2wgqA9y1iMZ1vmnnnIGgaKf0bZcG
+         GE3w==
+X-Forwarded-Encrypted: i=1; AJvYcCUDZ/8wQ3oJcDBgKd3zBbp9GZWAT+kYx/cSIkP3bHT8YYUgPMOjoi7D1Ya0ZO/6T/maUEAY0Abx686/kJE=@vger.kernel.org, AJvYcCWLzaAfPSw4BAYkAWNo5+YHL+TQ7Rm7C1GS8Smz7tFGyFb9tErVUvS91iYB4HaUL/oa3fr4rM1ZL9DY@vger.kernel.org
+X-Gm-Message-State: AOJu0YzRxzBKyWrYalI9QTczsYb0nwR3zp9NjA7b3OAVtAw++6B+oqb1
+	3MJEJ9xZ+V/wXxmgJmQ1ktZTTrKQJAWIEvOx6M/evA1gcIgRbTJz6omwWTk4hA==
+X-Gm-Gg: ASbGncso2GC5p+nWqsd5Xl8fIkzqV/JNyiPMyDvn2g8fOKS5D4FjixhitdDK/fRbqiO
+	1l/wncRSm2EDHaaVJeL1C+C7Oy9GRyI+Cgew1XuyPDSEKL8HqBGTwhcJFFkUAlSnBjlHXOpYsVN
+	iRcfoUqgtRRVp0a1sOnxAFe1XymiErBZjmgQrGgkGnP+3g2lcrYf8aYvR8ty0MBT0nUJl6mdT3V
+	iLxqep41ofRbVrVQMQO+vIXdYj2mLq2umU0AvcR22b2l3FSh7G/oWWk8OzgJYLLzwwlIHqndBb0
+	gZK2TQ9VmrbFhIrMcWexER/ZWHlksjsIz/kiJjfFFmNr6+Gx6DhtZNkQ4DvXZQNpOCfflgVrY1+
+	KferMZEWPLo1V
+X-Google-Smtp-Source: AGHT+IEbHhIr5xiJI4WCsuusUsNAMV+ToZt7UWotIYnSTg2xxYU2vexFSF+WiWH8cmp0UryOEkWQ3w==
+X-Received: by 2002:a17:907:8688:b0:ade:43e8:8fa4 with SMTP id a640c23a62f3a-af94008422dmr1005072366b.18.1754299064846;
+        Mon, 04 Aug 2025 02:17:44 -0700 (PDT)
+Received: from localhost ([2a03:2880:30ff:3::])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a21c0ccsm703510666b.111.2025.08.04.02.17.44
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 02:17:44 -0700 (PDT)
+From: Breno Leitao <leitao@debian.org>
+Date: Mon, 04 Aug 2025 02:17:22 -0700
+Subject: [PATCH] PCI/AER: Check for NULL aer_info before ratelimiting in
+ pci_print_aer()
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
- clock controllers
-To: Laura Nao <laura.nao@collabora.com>
-Cc: angelogioacchino.delregno@collabora.com, conor+dt@kernel.org,
- devicetree@vger.kernel.org, guangjie.song@mediatek.com,
- kernel@collabora.com, krzk+dt@kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
- matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
- nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
- robh@kernel.org, sboyd@kernel.org, wenst@chromium.org
-References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
- <20250804083540.19099-1-laura.nao@collabora.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 a/A=
-In-Reply-To: <20250804083540.19099-1-laura.nao@collabora.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20250804-aer_crash_2-v1-1-fd06562c18a4@debian.org>
+X-B4-Tracking: v=1; b=H4sIAKF6kGgC/x3M0QmAMAwFwFXC+7aQBgTpKiJSa9T8qKQggri74
+ A1wD6q6aUWiB66XVTt2JIoNoWx5XzXYjEQQlpY7jiGrj8Vz3UYJk8RSRBeemdEQTtfF7n/rh/f
+ 9AKuzfaNdAAAA
+X-Change-ID: 20250801-aer_crash_2-b21cc2ef0d00
+To: Mahesh J Salgaonkar <mahesh@linux.ibm.com>, 
+ Oliver O'Halloran <oohall@gmail.com>, Bjorn Helgaas <bhelgaas@google.com>, 
+ Kuppuswamy Sathyanarayanan <sathyanarayanan.kuppuswamy@linux.intel.com>, 
+ Jon Pan-Doh <pandoh@google.com>
+Cc: linuxppc-dev@lists.ozlabs.org, linux-pci@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, kernel-team@meta.com, 
+ Breno Leitao <leitao@debian.org>
+X-Mailer: b4 0.15-dev-dd21f
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1368; i=leitao@debian.org;
+ h=from:subject:message-id; bh=i0OFIqRZ+2MCROlqNGaAy7Gthq89bO35bHAcnJh3VlA=;
+ b=owEBbQKS/ZANAwAIATWjk5/8eHdtAcsmYgBokHq3J6RaxpQfmijCmhT8xwiAfy7q4+tdEwFP4
+ yJyxN2RFW6JAjMEAAEIAB0WIQSshTmm6PRnAspKQ5s1o5Of/Hh3bQUCaJB6twAKCRA1o5Of/Hh3
+ bQd3D/405/+BXCq8MZtdnT0v0HPlyz++xhl/hpeSOvxquiUiEEfkaHiUL2uqGxGtZtApFaz24gn
+ JXC6Ncm8AhRJWEcLw0n830Iuo+eE+UOLzV9LVe3tJG0mrs05AMXRzKIB9gC1qAhWeCY/mcd7ZaO
+ hMgXwO4gEuhKA6wAJBqwKo/NYaTNsWj/rWxwqnjYBWC1GW0CPAk/lBVVww+0RGKx1WJIZAmRVxB
+ /fEecTarqVnj0ouyvEc2763i6GMm2AhDnNdDQ8qCMN6qH6EPWnEbflBEbVgKVetq2YqrbaFGvGe
+ wv/ULHHRlR/HNb4K7YJmTjUeg164O6RWtwJwU6UoHQXIwqJ+hig4UznuTRFbS7UV9x+Rg0+x8P5
+ /V35p2mr49zxy1OhQRp4+olU2Y+d/bARyi4Se5hxXZU41d2qlzSaKIiwSWXmyhcHaScUZNz2CPy
+ Be+BcociZDT/+b1CDjtImSEZ0+kWMihnXlhSPbgM+TfwZA3quoFcMK/DXdEjSpWQTDyCLx3GHYN
+ E+vpmi0oueXyU+j98iYBOJ42zeyvxHJk5heWaqkxmR7XRrpYAdNdp3XVM/z+HFW9VCCJ51aSl1H
+ wPd2WKlvGnRMSeqH490icMf0RRGqATNaJoeOL3Y/NQZjCL4bt4cHL+arcgZ7+kYsOQdt+XnWkuK
+ lxgZ3D9L1RwM4MQ==
+X-Developer-Key: i=leitao@debian.org; a=openpgp;
+ fpr=AC8539A6E8F46702CA4A439B35A3939FFC78776D
 
-On 04/08/2025 10:35, Laura Nao wrote:
-> Hi,
-> 
-> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
->> On 01/08/2025 15:57, Rob Herring wrote:
->>>> +  reg:
->>>> +    maxItems: 1
->>>> +
->>>> +  '#clock-cells':
->>>> +    const: 1
->>>> +
->>>> +  '#reset-cells':
->>>> +    const: 1
->>>> +    description:
->>>> +      Reset lines for PEXTP0/1 and UFS blocks.
->>>> +
->>>> +  mediatek,hardware-voter:
->>>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>>> +    description:
->>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
->>>> +      MCU manages clock and power domain control across the AP and other
->>>> +      remote processors. By aggregating their votes, it ensures clocks are
->>>> +      safely enabled/disabled and power domains are active before register
->>>> +      access.
->>>
->>> I thought this was going away based on v2 discussion?
->>
->> Yes, I asked to drop it and do not include it in v3. There was also
->> discussion clarifying review.
->>
->> I am really surprised that review meant nothing and code is still the same.
->>
-> 
-> This has been re-submitted as-is, following the outcome of the discussion 
-> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
-> 
-> We haven't found a viable alternative to the current approach so far, and
-> the thread outlines why other options don’t apply. I'm happy to continue 
-> the discussion there if anyone has further suggestions or ideas on how 
-> to address this.
-> 
+Similarly to pci_dev_aer_stats_incr(), pci_print_aer() may be called
+when dev->aer_info is NULL. Add a NULL check before proceeding to avoid
+calling aer_ratelimit() with a NULL aer_info pointer, returning 1, which
+does not rate limit, given this is fatal.
 
-And where is any of that resolution/new facts in the commit msg? You
-must clearly reflect long discussions like that in the commit msg.
+This prevents a kernel crash triggered by dereferencing a NULL pointer
+in aer_ratelimit(), ensuring safer handling of PCI devices that lack
+AER info. This change aligns pci_print_aer() with pci_dev_aer_stats_incr()
+which already performs this NULL check.
 
-There was no objection from Chen to use clocks or power domains as I
-requested. The objection was about DUPLICATING interfaces or nodes.
+Signed-off-by: Breno Leitao <leitao@debian.org>
+Fixes: a57f2bfb4a5863 ("PCI/AER: Ratelimit correctable and non-fatal error logging")
+---
+ drivers/pci/pcie/aer.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-And what was the resolution:
+diff --git a/drivers/pci/pcie/aer.c b/drivers/pci/pcie/aer.c
+index 70ac661883672..b5f96fde4dcda 100644
+--- a/drivers/pci/pcie/aer.c
++++ b/drivers/pci/pcie/aer.c
+@@ -786,6 +786,9 @@ static void pci_rootport_aer_stats_incr(struct pci_dev *pdev,
+ 
+ static int aer_ratelimit(struct pci_dev *dev, unsigned int severity)
+ {
++	if (!dev->aer_info)
++		return 1;
++
+ 	switch (severity) {
+ 	case AER_NONFATAL:
+ 		return __ratelimit(&dev->aer_info->nonfatal_ratelimit);
 
-"Regarding that to be a single clock controller,"
-
-So where is the clock controller? I still see HW voter!
-
+---
+base-commit: 89748acdf226fd1a8775ff6fa2703f8412b286c8
+change-id: 20250801-aer_crash_2-b21cc2ef0d00
 
 Best regards,
-Krzysztof
+--  
+Breno Leitao <leitao@debian.org>
+
 
