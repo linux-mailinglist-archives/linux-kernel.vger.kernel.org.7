@@ -1,222 +1,138 @@
-Return-Path: <linux-kernel+bounces-755312-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755313-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 64931B1A481
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:22:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DF33B1A485
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 16:23:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3A68E3A894F
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:21:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F172417F0AE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:23:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 23771271464;
-	Mon,  4 Aug 2025 14:21:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF321271465;
+	Mon,  4 Aug 2025 14:23:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="AdCJmCNy"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b="heegnlbo"
+Received: from pandora.armlinux.org.uk (pandora.armlinux.org.uk [78.32.30.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA69A271440
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 14:21:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 345AF19B5A7;
+	Mon,  4 Aug 2025 14:23:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=78.32.30.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754317301; cv=none; b=j8doS0xH5j7kpbkH5bjvjj1k2A/h7VcLu4Er11rgRlHSDPFgmVaTysQDUv6aVP458092P5liouhT/kVITFVhPvwgadFQqCEGK2tmE0fFanSEHNhh6pt8ArjUXKv065ebPHQaPEba5q7iFH2jNHdLfGe4L5rNMm/OQ79i6Y9IeJw=
+	t=1754317386; cv=none; b=Yl+QwEFLumdk068OkalElptK2MHE1BxkLS9mRZxF2SQxiNa+BcfUk4jm7+mWS8cv4A9LKL5SricdysgqhBlDyYaF8ygFA2JzknyzJzH2fuK+C1TFUTcU3KjIALKLL7Pc+5xv4zHQ9eEs/2FhqFlXYCa4BuqMv8s1hGTAfx1UD9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754317301; c=relaxed/simple;
-	bh=JpzrVHuJbSqz4kfCo6Qj0EWmSdpgwvVKMGbxSRnvEsQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mt8fFtDB34GZB7azj4657KZLlqR7Dwlxev05DmuBGRSx4B2bLR5CwoSUWqdgFb/cZGBOky+4gdMfqv6L+Wjfpu9aqgC2NNE0wAOcz062FSm59DWTBZFps8ygaGHPCiEFyxK3QpjEFluK+6dYHwgvrm2s9DLb74L+4QPl51NkzrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=AdCJmCNy; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 5749JeCa026599
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 14:21:39 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	8/GfkBSsmvKYG4YkE888sXgO7YRT7RFi88aXsYgKC5A=; b=AdCJmCNyMjuN0J6Y
-	6b8rretHOKlIVfOMO2M2obxYLwSzXipvAAu/ctDHHqGGNqeprAY2p5C4JYrfEyPD
-	mkad34J81WqpY/wTbG1IT49wZT0fZ2YQOZvdct4QWm4SKGXOBP0+sxCUFF+WWtMz
-	9b+l7D+iGgHX8103qUf0uSEfHQ4dTFUCsxRe+0lR2z88Ri006Dr2kO5UC59brcRJ
-	R08x8HSlSN+/7ZI34JyKrbq+Y/7WiTsaP+aoG6v+pdF2sXc6Rh5s+E7EeL4ZYavN
-	iMV+ofT6ljEG20O9IvvsJQKa9v/W/OIIvy9uZBEllg9/0+VoZFA5KeNdpj86IZ0U
-	v4iH2w==
-Received: from mail-pf1-f197.google.com (mail-pf1-f197.google.com [209.85.210.197])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 48981rngva-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 14:21:38 +0000 (GMT)
-Received: by mail-pf1-f197.google.com with SMTP id d2e1a72fcca58-74ea7007866so3246859b3a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 07:21:38 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754317298; x=1754922098;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=8/GfkBSsmvKYG4YkE888sXgO7YRT7RFi88aXsYgKC5A=;
-        b=Tecf6NjQBgExIeSbWBNZKtZavyn5Zo2VNTsbTDcy1oHY56x38pYhi1MOWTtgQFsXTL
-         ugK4RbYLGTZnCW06mrIntwWn6AWZXhRcKdPc6MA+ooPjOTHggNIsAZP1faQl2HHDjZME
-         VyQjj/9BtDx3JyQ9fgrz8nztd5Mmeq2iprEUERIG3SVPrMb+6iGB7/R1YTP+8t12mQEq
-         Q2twNtHO5MbZmWJ7p7JQvrXp2zAZvtScPYsVGSAcdFygecdO+w4c1jSmOYGl0VCOBmBH
-         flDib+VsDwlUot/drPplES5wwXX4KHoq2pScsWpCi6zkKrlbRM57kWJMdh8qTP26b55m
-         YCeA==
-X-Forwarded-Encrypted: i=1; AJvYcCVkxh6MaFaD7pPcMpzkzPfn6EkceOIU4vs7McYa0R7mJN+gPAJGH/xmHs7HUWDIhybRyanCFbVu4uSt82g=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwiZAQVobx0JlnMwFYzhqOBIi5ofvMshYXO5pNhkh/ZuxnpRkQ0
-	OLHkQYR6A4Djc7KMJNguWRSAxtBvkRIPyiwzmKaLx+Zi9IyaAyOgejWNTGpukmt2IKcWEcgOLSM
-	JoF7CosaQxy4zn7DASjAzh01/VmxL4XTC700OCdQfMxvlDxXM3KKP2vqE/Npmpj3ySZo=
-X-Gm-Gg: ASbGncv7DBoWBTM/noLSCwCdf9XpmJCJ9t++vRstgDZCn1uKcuN15G4kzaQkzMXxuFv
-	2ImIws7/Q/KpQQ9wEVt1K6jBaCAA0uNaeQTOApRMkP09QPpzBH31SHvRFGtoqcuGL6BBdT5swwE
-	xOYpA6EjIfKwa6zCCUSAh6DDswCxUXQTiWDVtdKgbBP45K+A7OoB2hljN+yEP1rL7l1xvRTj5CO
-	XoYsfGm8aZj/GesR21rbE7jrJ2yz6uPCulIRpAVA46Ww3f54aIxPn6pS2z6V0i+eeNfn1nLnPo/
-	OfyZiKLJRwJzvtupmoaWMk75TpTLM3e4p1lGwDSiS0bOB2PryOTwvIdtencUzQgibg==
-X-Received: by 2002:a05:6a00:3e08:b0:76b:fb4a:118c with SMTP id d2e1a72fcca58-76bfb4a172bmr7973920b3a.18.1754317297496;
-        Mon, 04 Aug 2025 07:21:37 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IH2a/0Ufnso4bxRvspDFw9tZsJRFX+Ok9Wx9RPO4FfJa9B4NdM6NtKaSQRpH2mJOxpF9hit4w==
-X-Received: by 2002:a05:6a00:3e08:b0:76b:fb4a:118c with SMTP id d2e1a72fcca58-76bfb4a172bmr7973885b3a.18.1754317297067;
-        Mon, 04 Aug 2025 07:21:37 -0700 (PDT)
-Received: from [192.168.0.195] ([49.204.31.7])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-76be9143983sm6680905b3a.1.2025.08.04.07.21.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 07:21:36 -0700 (PDT)
-Message-ID: <c2f39786-5780-4124-9e41-6971428aa267@oss.qualcomm.com>
-Date: Mon, 4 Aug 2025 19:51:31 +0530
+	s=arc-20240116; t=1754317386; c=relaxed/simple;
+	bh=Cy7/3H0q3cx0Rbvqsw++44rJBoWXnbz+ae5q066m/WU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ka9BmmiwmXWcfk0dIGuaZO6G/a7EQbHtCExYf03ulm8jLyVoATwQ9pjDEbIQb9iNBdRa8crZHr67wEYafc1rG/7Oejy03t9JOd3Cmt7Ixo1QlkFM7r5VO4KpH38uFommjo5S0ZcNBPmWw//f43gdXb8Wsmx2OrMPO+jQ5uJAK3U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk; spf=none smtp.mailfrom=armlinux.org.uk; dkim=pass (2048-bit key) header.d=armlinux.org.uk header.i=@armlinux.org.uk header.b=heegnlbo; arc=none smtp.client-ip=78.32.30.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=armlinux.org.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=armlinux.org.uk
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=armlinux.org.uk; s=pandora-2019; h=Sender:In-Reply-To:
+	Content-Transfer-Encoding:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Reply-To:Content-ID:Content-Description:Resent-Date:
+	Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:
+	List-Help:List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=et/dI5/h3BCkcc6Ucfe8h5aatgps4oRPy2URF21voK4=; b=heegnlbo3j87JCJFkOZm4ZS10R
+	QRL9oNK14GE6ZRSgdGDZxyMlgo7wsoYafwq/UejM/vrc04Bx2Fvnt8hG/M9Ryw13o/4eAZT80Zruc
+	FEYVFXqsqc5fTx0PgI4AsJ7G8hpUwrPYXgUKY5z2zC9FSQECnHAZZndcYkJeqQmIjyoaCQ5w/Vhqb
+	TFb6DS5USsKNII1sVyyC0HwuhEIvHkwMZIxv6P/pvdszO1qirK08U4tPpj91R8otw/6gkODZffGA/
+	G0WkYetuvB18rtdGOA3yTaeGExKoUnJgSz3MSRlLW2ZLpMmR3jNgkiqX8KdWWKvV4/NIkO6lpDyTD
+	6V5o4OsA==;
+Received: from shell.armlinux.org.uk ([fd8f:7570:feb6:1:5054:ff:fe00:4ec]:59986)
+	by pandora.armlinux.org.uk with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <linux@armlinux.org.uk>)
+	id 1uiw5W-0001mI-0v;
+	Mon, 04 Aug 2025 15:22:54 +0100
+Received: from linux by shell.armlinux.org.uk with local (Exim 4.96)
+	(envelope-from <linux@shell.armlinux.org.uk>)
+	id 1uiw5S-00058C-1P;
+	Mon, 04 Aug 2025 15:22:50 +0100
+Date: Mon, 4 Aug 2025 15:22:50 +0100
+From: "Russell King (Oracle)" <linux@armlinux.org.uk>
+To: Alexander Wilhelm <alexander.wilhelm@westermo.com>
+Cc: Vladimir Oltean <vladimir.oltean@nxp.com>, Andrew Lunn <andrew@lunn.ch>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: Aquantia PHY in OCSGMII mode?
+Message-ID: <aJDCOoVBLky2eCPS@shell.armlinux.org.uk>
+References: <aJBQiyubjwFe1h27@FUE-ALEWI-WINX>
+ <20250804100139.7frwykbaue7cckfk@skbuf>
+ <aJCvOHDUv8iVNXkb@FUE-ALEWI-WINX>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 3/7] clk: qcom: Add TCSR clock driver for Glymur
-To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
-        Abel Vesa <abel.vesa@linaro.org>
-Cc: kernel@oss.qualcomm.com, Pankaj Patil <quic_pankpati@quicinc.com>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette <mturquette@baylibre.com>,
-        Stephen Boyd
- <sboyd@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Taniya Das <quic_tdas@quicinc.com>, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-0-227cfe5c8ef4@oss.qualcomm.com>
- <20250729-glymur-gcc-tcsrcc-rpmhcc-v3-3-227cfe5c8ef4@oss.qualcomm.com>
- <aIoBFeo00PPZncCs@linaro.org>
- <784545d0-2173-4a8b-9d5d-bee11226351e@oss.qualcomm.com>
- <aIxRKHKdBHDefDs2@linaro.org>
- <d2c17575-f188-4154-bb63-e0b1b89d8100@oss.qualcomm.com>
- <b2f219d6-d441-45d0-a168-b2cdbc01b852@oss.qualcomm.com>
- <3fc425fd-39fa-4efc-bc98-da86a88bfb1a@oss.qualcomm.com>
-Content-Language: en-US
-From: Taniya Das <taniya.das@oss.qualcomm.com>
-In-Reply-To: <3fc425fd-39fa-4efc-bc98-da86a88bfb1a@oss.qualcomm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-ORIG-GUID: I5hW87NfXz9_vATkoKQINkQ3_np9_Bpi
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA3OSBTYWx0ZWRfX3YFYhztpFmNr
- yYNX+RLZ11tGttvipyxgqYqJ+6D/S+t8gtCgsWsI/wXha87eLkSkIkuqgrtmsRYLBi7RydE4uej
- a+1hY7Nljruv+0U75N++RlGFKdXhaJXwDy0jBqt6iBJUzk6mnpTwjkL4wm/mPVTFhTGyX52wJnd
- rl5iOYcSp+Z9RLpeadv2njd699L3eW5tkQrRFzbQFhBa8IGpNiQh7SNd8R7fBKd0R4BZEG3OuOa
- oxPqhZ1NdteNbgnicnyB/0hkPmMygGEOPHGjZGoV2ereH8Ql2FZlxLuqIZHKI6wogPTrGRntISr
- MtVrru/WwputOzYJjJcBrz8/0dNifmTg3NzrW0phAtheE2dNj9uvolGMi+l1Qe0wJVGVcC4L7tM
- EwRa5tezdJhK+ygwcFwVvyUGekwgQQS5lbfVkSr6F9ZHwnSfGpD9ypoW4L3Y5KCJpbAk1gDT
-X-Proofpoint-GUID: I5hW87NfXz9_vATkoKQINkQ3_np9_Bpi
-X-Authority-Analysis: v=2.4 cv=a8Mw9VSF c=1 sm=1 tr=0 ts=6890c1f2 cx=c_pps
- a=rEQLjTOiSrHUhVqRoksmgQ==:117 a=asiLZvre+94PXO3FyfMC2Q==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=EUspDBNiAAAA:8 a=SVYV74fhp6AACa02m-cA:9
- a=QEXdDO2ut3YA:10 a=2VI0MkxyNR6bbpdq8BZq:22
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_06,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- lowpriorityscore=0 priorityscore=1501 bulkscore=0 clxscore=1015 phishscore=0
- spamscore=0 mlxlogscore=999 mlxscore=0 malwarescore=0 impostorscore=0
- suspectscore=0 adultscore=0 classifier=spam authscore=0 authtc=n/a authcc=
- route=outbound adjust=0 reason=mlx scancount=1 engine=8.19.0-2505280000
- definitions=main-2508040079
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <aJCvOHDUv8iVNXkb@FUE-ALEWI-WINX>
+Sender: Russell King (Oracle) <linux@armlinux.org.uk>
 
-
-
-On 8/4/2025 6:40 PM, Konrad Dybcio wrote:
-> On 8/4/25 11:00 AM, Taniya Das wrote:
->>
->>
->> On 8/1/2025 5:24 PM, Konrad Dybcio wrote:
->>> On 8/1/25 7:31 AM, Abel Vesa wrote:
->>>> On 25-08-01 10:02:15, Taniya Das wrote:
->>>>>
->>>>>
->>>>> On 7/30/2025 4:55 PM, Abel Vesa wrote:
->>>>>> On 25-07-29 11:12:37, Taniya Das wrote:
->>>>>>> Add a clock driver for the TCSR clock controller found on Glymur, which
->>>>>>> provides refclks for PCIE, USB, and UFS.
->>>>>>>
->>>>>>> Signed-off-by: Taniya Das <taniya.das@oss.qualcomm.com>
->>>>>>> ---
->>>>>>>  drivers/clk/qcom/Kconfig         |   8 ++
->>>>>>>  drivers/clk/qcom/Makefile        |   1 +
->>>>>>>  drivers/clk/qcom/tcsrcc-glymur.c | 257 +++++++++++++++++++++++++++++++++++++++
->>>>>>>  3 files changed, 266 insertions(+)
->>>>>>>
->>>>>>
->>>>>> [...]
->>>>>>
->>>>>>> +
->>>>>>> +static struct clk_branch tcsr_edp_clkref_en = {
->>>>>>> +	.halt_reg = 0x1c,
->>>>>>> +	.halt_check = BRANCH_HALT_DELAY,
->>>>>>> +	.clkr = {
->>>>>>> +		.enable_reg = 0x1c,
->>>>>>> +		.enable_mask = BIT(0),
->>>>>>> +		.hw.init = &(const struct clk_init_data) {
->>>>>>> +			.name = "tcsr_edp_clkref_en",
->>>>>>> +			.ops = &clk_branch2_ops,
->>>>>>
->>>>>> As discussed off-list, these clocks need to have the bi_tcxo as parent.
->>>>>>
->>>>>> Otherwise, as far as the CCF is concerned these clocks will have rate 0,
->>>>>> which is obviously not the case.
->>>>>>
->>>>>> Bringing this here since there is a disconnect between X Elite and
->>>>>> Glymur w.r.t this now.
->>>>>
->>>>>
->>>>> The ref clocks are not required to be have a parent of bi_tcxo as these
->>>>> ideally can be left enabled(as a subsystem requirement) even if HLOS
->>>>> (APSS) goes to suspend. With the bi_tcxo parent the ARC vote from
->>>>> HLOS/APSS will not allow APSS to collapse.
->>>>
->>>> Is there a scenario where the APSS is collapsed and still the ref clock
->>>> needs to stay enabled ? Sorry, this doesn't make sense to me.
->>>
->>> MDSS is capable of displaying things from a buffer when the CPU is off,
->>> AFAICU
->>>
->>> We can do CXO_AO instead to have it auto-collapse if it's just Linux
->>> requesting it to stay on, I think.
->>>
->>
->> Thanks Konrad for adding the display use case.
->> Abel, we earlier also had some PCIe, USB use cases where we had to leave
->> the ref clocks ON and APSS could collapse.
+On Mon, Aug 04, 2025 at 03:01:44PM +0200, Alexander Wilhelm wrote:
+> Am Mon, Aug 04, 2025 at 01:01:39PM +0300 schrieb Vladimir Oltean:
+> > On Mon, Aug 04, 2025 at 08:17:47AM +0200, Alexander Wilhelm wrote:
+> > > Am Fri, Aug 01, 2025 at 04:04:20PM +0300 schrieb Vladimir Oltean:
+> > > > On Fri, Aug 01, 2025 at 01:23:44PM +0100, Russell King (Oracle) wrote:
+> > > > > It looks like memac_select_pcs() and memac_prepare() fail to
+> > > > > handle 2500BASEX despite memac_initialization() suggesting the
+> > > > > SGMII PCS supports 2500BASEX.
+> > > > 
+> > > > Thanks for pointing this out, it seems to be a regression introduced by
+> > > > commit 5d93cfcf7360 ("net: dpaa: Convert to phylink").
+> > > > 
+> > > > If there are no other volunteers, I can offer to submit a patch if
+> > > > Alexander confirms this fixes his setup.
+> > > 
+> > > I'd be happy to help by applying the patch on my system and running some tests.
+> > > Please let me know if there are any specific steps or scenarios you'd like me to
+> > > focus on.
+> > > 
+> > > Best regards
+> > > Alexander Wilhelm
+> > 
+> > Please find the attached patch.
+> [...]
 > 
-> XO votes will prevent CX collapse, not APSS collapse. CX also powers
-> USB and PCIe so that only makes sense.
+> Hi Vladimir,
 > 
-> I think it's fair to just stick XO as the parent of every refclock
-> today and think about the what-ifs (such as the mdss case I mentioned
-> above) later - especially since we have no infra to take full advantage
-> of it today (non-APSS RSCs etc.)
+> I’ve applied the patch you provided, but it doesn’t seem to fully resolve the
+> issue -- or perhaps I’ve misconfigured something. I’m encountering the following
+> error during initialization:
 > 
+>     mdio_bus 0x0000000ffe4e7000:00: AN not supported on 3.125GHz SerDes lane
+>     fsl_dpaa_mac ffe4e6000.ethernet eth0: pcs_config failed: -EOPNOTSUPP
 
-When ref clock have been part of GCC, then also they didn't have any xo
-as the parent, similar design we kept when it was moved to TCSR as well.
+We're falling foul of the historic crap that 2500base-X is (802.3 were
+very very late to the party in "standardising" it, but after there were
+many different implementations with varying capabilities already on the
+market.)
+
+aquantia_main.c needs to implement the .inband_caps() method, and
+report what its actual capabilities are for the supplied interface
+mode according to how it has been provisioned.
+
+> 
+> The relevant code is located in `drivers/net/pcs/pcs-lynx.c`, within the
+> `lynx_pcs_config(...)` function. In the case of 2500BASE-X with in-band
+> autonegotiation enabled, the function logs an error and returns -EOPNOTSUPP.
+> 
+> From what I can tell, autonegotiation isn’t supported on a 3.125GHz SerDes lane
+> when using 2500BASE-X.
+
+Due to the lack of early standardisation, some manufacturers require
+AN, some have it optional, others simply do not support it.
 
 -- 
-Thanks,
-Taniya Das
-
+RMK's Patch system: https://www.armlinux.org.uk/developer/patches/
+FTTP is here! 80Mbps down 10Mbps up. Decent connectivity at last!
 
