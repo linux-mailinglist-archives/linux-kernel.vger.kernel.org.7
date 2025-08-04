@@ -1,139 +1,226 @@
-Return-Path: <linux-kernel+bounces-755469-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755471-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id DDA15B1A6A2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:53:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 898F5B1A6B5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:55:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B302189C274
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98DBF3B05C9
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:54:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC1C02749CA;
-	Mon,  4 Aug 2025 15:48:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 884DA274B5B;
+	Mon,  4 Aug 2025 15:48:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="HA3Gxa2P"
-Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="sMnjlJcI"
+Received: from NAM02-BN1-obe.outbound.protection.outlook.com (mail-bn1nam02on2058.outbound.protection.outlook.com [40.107.212.58])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D0B623D295;
-	Mon,  4 Aug 2025 15:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754322482; cv=none; b=XPDlumLyLd9cG4G22UlZTQ/mEil+L6EoV9n7CuGDBRpKulptPGxeszdEwXWkWg0fuodPXlq2P4vF0M13W9UMT5l0j6rUFrd4VAkVPFJ9iDj9ZI1n6GvREC9lkP2XYqwENQ1pONxj6g/DhVJRn6ZPcd3mAuNHq4LA32BhgnRYJTk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754322482; c=relaxed/simple;
-	bh=ByEvCI1dpplY3QRib7iPSW0QsvJZM0cIp4LVRQMQ+FM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=qbKA/O39LRycKAGIyhboT1KSwRfu7ko6Rilk1cf8OTo06MVJplN6X0mlfCfifDouiy+7sKaOLC+cPqL+8oSWvqSE39s/y1UQ8Q0avWuIfC5FbmPY91+YrF+D2RsShRQmqZBuHwy5qf2niwDBmKjhkELlWw1iu1g7q/XtUTbpxZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=HA3Gxa2P; arc=none smtp.client-ip=209.85.218.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-af938dd1109so46570566b.0;
-        Mon, 04 Aug 2025 08:48:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754322479; x=1754927279; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=x+UUPq9hnFfXRk8mndOboayVxGmH6TX7x4H9Zgx7Q04=;
-        b=HA3Gxa2PBLrxpmflvk1oqqIPddn0u7ZpqXevy1C5DED3rtuagN+iaQzaEAeg0/WXnk
-         VWQRucGDdQNESfAbvOLTiSrtyjIxlCm3FZMkFiiFY/RKJw+LAoFy1mPSGqxpyLqGCPWQ
-         Ptq0qiWIDc6Cw8hRrG4sV58SMSqUqRa5yszu0xteKLclAcWkwbF0bl6j54MtFj3TJl5L
-         Ag5rUVvFqPAc/qpN6GEaJ5ScMBKQKSSGJKLuJKGfp0lzIjUJNzGnLjEofweNZpgB3z2d
-         TFpVdlrUMnGZSt6QcGpWMAnm5e22qq8yZxC9oDE+/TJSEbU2+j4lmYhBxlgVardLVEG3
-         CZog==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754322479; x=1754927279;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=x+UUPq9hnFfXRk8mndOboayVxGmH6TX7x4H9Zgx7Q04=;
-        b=gjAPJqjfG/699/XvEsrgJg44rNSOXiwHlVeG7rxqyv1yTBNtlUcINdJmj47Aren2p7
-         sG8redb7HjKJva9Q9dT8UTOfdfFqC48XhY5BZNZbshywJU6GFUxw99sN+iqV+QT0tKol
-         F0Hsz7ajqJWZjN0j0so5KTbR74Zb3Uug1wCG7AzGqMvebcblv2uhnuZDnrXIrXwndpom
-         bkX09D+f6nqvzSeRFhg1baQIv6u/VzGmHLs9aha87kPQKeERIcy/IO8swzTQGHWfZmr0
-         BxnhASdbxPowFr9PqQpwawrBLUsoiSSZKfIbNhy3Po6m9NNdzUTsMwdDYcCF2Sb6WZNR
-         o4Zw==
-X-Forwarded-Encrypted: i=1; AJvYcCUJ+ROwd6qws3H1/RDoF4YYoB1NaTFDRDun/WQ5DDhZK74UxD/2rw+We1aj2ZTlyN2al49jIhoupN/az2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyq9RFjGAgy+atjovj/GkELFjSHPHIFkvQJXxeEcFX/Xz/jCsqX
-	dip13HGQ2tTxmsK7hqrfOI6aKmjGAVszckJdLDlibebmy1VS1Pp7wjeO
-X-Gm-Gg: ASbGncst6MDy9eonkwFDu/tT3nMTvFXUv0IWR+y1lKZpjxzB8Ja/RIg3V7lQcHaCkAE
-	fMQy4x672WbF51YeNO4Xme/RBsff+mu5GhDAqm05eZFxkugoy94FejeWYw8vFWrr2D2RDedXAur
-	wmWRFtvbdStZXXEwd3DRowb9ZmX3xUKoBgTZ80ORYTTu/Uaf4/pOo9cUO6mKUuqGRhVL5h/3z/J
-	8iNGWwtk8967Cr96B4VLFmnnQ/zUu52/FGuuZMdEIZ8u8ssj3KHehQoXMJqTp35I68gpC3Zeetr
-	J/s8j8R958MxMbPTAETepiu8TNeP3rQeQqgMf19Cw53SDJzplNB1kF/b8XfLW0lLskmhcPlrlIK
-	Jhy/IQ95av4gUKpQGKhg+4ehhS9HH4IdUco9O0Ue1Z8JpZGFJI/hlju2zNI8I2Y0iVkR+Xdex8p
-	j7Quw=
-X-Google-Smtp-Source: AGHT+IGHFleDuYVTLlaouFoArNS2Kzppp4J9Fe/k66R1ZNoacaEZv77NGxcVeIFO77xVLXCz9sDJPA==
-X-Received: by 2002:a17:907:6d14:b0:ae3:5118:96b3 with SMTP id a640c23a62f3a-af93ffc6aebmr384185566b.3.1754322478376;
-        Mon, 04 Aug 2025 08:47:58 -0700 (PDT)
-Received: from localhost.localdomain (84-72-156-211.dclient.hispeed.ch. [84.72.156.211])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a1e8306sm757276466b.83.2025.08.04.08.47.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 08:47:58 -0700 (PDT)
-From: Lothar Rubusch <l.rubusch@gmail.com>
-To: alexandre.belloni@bootlin.com,
-	michal.simek@amd.com,
-	srinivas.neeli@xilinx.com
-Cc: linux-rtc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	l.rubusch@gmail.com,
-	Ivan Vera <ivan.vera@enclustra.com>
-Subject: [PATCH v1 1/1] rtc: zynqmp: ensure correct RTC calibration
-Date: Mon,  4 Aug 2025 15:47:50 +0000
-Message-Id: <20250804154750.28249-2-l.rubusch@gmail.com>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20250804154750.28249-1-l.rubusch@gmail.com>
-References: <20250804154750.28249-1-l.rubusch@gmail.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08F5F26FA53
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 15:48:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.212.58
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754322506; cv=fail; b=jzDP10l/RS77L96+2aJLi6i75k77wv10Dao9e/MLDdIEtbVGdoByHYJBjZlIwyvVrqvM2CCa7bC2ZuBAAfHomKmB7JVI1fImxb0APCMokcnr+aI7usm1aYqOPjb/HtIs+zOTIhXBmwz1mYmcfyqbENxeMUgjdhIz2TdxJuGYsp0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754322506; c=relaxed/simple;
+	bh=UFTMmkxYiriAet6oRoDib77ri2YH1bn8jaf+1vtRZXM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=I3vwuDBn5ji0SItDuE3bsYvhaFCu5jY0Y3rzLTVFoK42rdyHEP0ePM/+O20/pfvI4lc+34fGzSYzSbQ8WoyU7G9kKWm6Ebgbd9UbDG66i0W1ezAKhX/2Gh14OaL+5pG724uuEsu7jYMxA6USubMIYE9CuzXI74hw9RKcOnr0uRY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=sMnjlJcI; arc=fail smtp.client-ip=40.107.212.58
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Iun5q0W2sTy8lTPeEhaHDWiiuhFEGs4Qu2Okkf2WFNsZmy7EFo7jkNWmmL66iqTA/hORlmEFNze3t7alpH9lgh5BgCcUlZwd4bqVO4BxrMouB/dLTt9xiYhjJ9M6MFe/3tXlslBb6TrmiwtyGOwrazM8dQmfETlWVkLSlafyYU9lSEjj92UanXaFWgcHgejryZji/HzUIoL4PG5x/DGKsyiEDpbJO0hj8b+arWRMLKN0afqlrRjIPmhd/pk3O0GZCT/WBhO97/C6/TJ5m8heI5Si/AC6Ijj+Xg2AFDx+LD8uB16GiukuTH0A7xlqG1ifFFso6UIVYjdB/GuDRunRew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=vb0CvhiptFPztINxwcuoKbUrfAwRYlqAIldQ9xE6dX0=;
+ b=VvNvV8qQl0f1EIoRlsBzKgmyfBa/+Y0x2r15+AxtX8zaxDnzUFkdCF0pI18oAHoYqNXRphiZcAi/jkETC2RQrIyozOoSA/Yhrv5twUxAI1mhuH8n1CvViX71pHCy0aJFFiz+OluU4qq85J0FsnDTi6jIXFeB08H+4wk0mXfdYm+Dxb8apSBf6XZLjFSB/GnggB7Nr/vCYg2haqMvXpESUutFH89ylEU9rSCy5Mur8DjNoqsZEN+KRVYD3BwNNRehjvnxhj8OQteQiARKZl03bakhXf/GoUC+M/CqqwuyNPrQKML8GdT12rsvB3ceP5xAwoxGeYR50c2MqYuk+OT1jQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
+ dkim=pass header.d=nvidia.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
+ s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=vb0CvhiptFPztINxwcuoKbUrfAwRYlqAIldQ9xE6dX0=;
+ b=sMnjlJcITe1q+miG4pHhhfau04fkvtP8EzTb/tSu7AWPCZVIDVAkOZKOmlHdNQGhKVSgcshEXmLZlfpKeRztwFM6ThisTlufNRqUs08Yu1oTnAMWfWbvO7YX3kRB4aUodPEWUJ0/mOTxxybteuvz19F2UNZiXn9ngL3iXi/gfKh0/c8uCx2PY1Y72fxI82+8b4V90BaZNF+Vvr9hOgZgVVJCFFKSpCaIio+j3llixrg62JKKA4e2snCjbHe+1ppDr9aAju+G/8ZwafMwQNI0tMdC+vUuoKYH6UwkJmoM0ZpfB/tVJfnBpKxzN5AcbqAZbBRIP+0wLGPSibmNT3v4Yw==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nvidia.com;
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com (2603:10b6:408:2a1::19)
+ by DM6PR12MB4105.namprd12.prod.outlook.com (2603:10b6:5:217::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 15:48:20 +0000
+Received: from LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c]) by LV8PR12MB9620.namprd12.prod.outlook.com
+ ([fe80::1b59:c8a2:4c00:8a2c%5]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 15:48:19 +0000
+Date: Mon, 4 Aug 2025 17:48:06 +0200
+From: Andrea Righi <arighi@nvidia.com>
+To: Christian Loehle <christian.loehle@arm.com>
+Cc: tj@kernel.org, void@manifault.com, linux-kernel@vger.kernel.org,
+	sched-ext@lists.linux.dev, changwoo@igalia.com, hodgesd@meta.com,
+	mingo@redhat.com, peterz@infradead.org
+Subject: Re: [PATCH v2 2/3] sched_ext: Provide scx_bpf_remote_curr()
+Message-ID: <aJDWNkhKOgxZKVBk@gpd4>
+References: <20250804112743.711816-1-christian.loehle@arm.com>
+ <20250804112743.711816-3-christian.loehle@arm.com>
+ <aJCsx7hbCD9f5RK3@gpd4>
+ <c8b71208-b8da-4f64-9550-13ddeca9b225@arm.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <c8b71208-b8da-4f64-9550-13ddeca9b225@arm.com>
+X-ClientProxiedBy: MI1P293CA0020.ITAP293.PROD.OUTLOOK.COM
+ (2603:10a6:290:3::18) To LV8PR12MB9620.namprd12.prod.outlook.com
+ (2603:10b6:408:2a1::19)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: LV8PR12MB9620:EE_|DM6PR12MB4105:EE_
+X-MS-Office365-Filtering-Correlation-Id: db3ade7e-2a46-4c02-d380-08ddd36e55db
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014|7053199007;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?hyqpLTmOtiEr75pA84n+5KmvyNd6EE5M1WYytC1iMwdBrvNEzMQcVZnSvO90?=
+ =?us-ascii?Q?BQVdcs8RaFW498cQdVeJI1O2yMN8RQPZj8Bt1FvhxcerANUK3ERf59f46rRy?=
+ =?us-ascii?Q?ZOkyuFvBBqDa4KH0IvxZBcb61j//X9cBiGFWTMLtvaGbz5aSD+kJp5oL3Htz?=
+ =?us-ascii?Q?rW0Gth7BKwxvWvvGwVU4VHyZf1Z9JJa8NtfACrOuzrK/yIu0wNwFHX+0N6hX?=
+ =?us-ascii?Q?2VIjozNVFYcf1eCNhsxZfN+ABwwEBCkKOmdaUzfbZefmQQO3M2IJKXdq/CED?=
+ =?us-ascii?Q?3BiySJE8vBuwe/jOnM+y9ERgMdoPli2nQIQVhis87O1+Mtzosmhi9/rLKDIz?=
+ =?us-ascii?Q?LqlnDHh/7y0kOaned6rsVU+alYalKxQhpJp9/i1HGJ1HznA4sfVFQspvYmH1?=
+ =?us-ascii?Q?3H3PAO+KpyFVYz4iB4Mujld+O00PfpPufPOib3ksiR+C/f4+dsYfKFWCu/I5?=
+ =?us-ascii?Q?3NYyNGUDZWPtBrUWOAZn/Plu4t6lVSHST2JDUGMGi7THAxzWuzwcBcrmjZGP?=
+ =?us-ascii?Q?JUs8+3njQUR5WH1o8JTH4hSmkRuaAdKgUXuFnhFWk56GJF1fcGLSLZvyWv4M?=
+ =?us-ascii?Q?8DSz4l8JSIW+sq77iEwftjyPtarYHFJ+21Q2YQhTHbaMdKc+Q4+TucG93/rj?=
+ =?us-ascii?Q?dIdlWyFWmcfgzGDwi57tsg9HcmSrSTnBMUWJX31rOaDKPR+qSR4pb6vhOtFk?=
+ =?us-ascii?Q?vc282MyvN29hzgQgeazGFBh1/RqyjANuQFhfAwsQt/w2FNK1vq2oiSmN4K/X?=
+ =?us-ascii?Q?1BMiGsmgzl3eK61uK1eM8SfRe/HJGvJwTo1Dfb7yYy8chz4lWhYE1vui9jGh?=
+ =?us-ascii?Q?n3gF4qHhFs4hcellQOZnU3sF7nzCy3EMw/SROFe8afHYqyFVtbQvow4VgmGZ?=
+ =?us-ascii?Q?XhY81BZyA6a+McFgeisXknwwXetVMU8H6HYanYO3OFhDSDoy4qThgUdWZUwS?=
+ =?us-ascii?Q?QxOcWqbHqoritkBtRGVLxVO2BUzsW9CdfbHvYJc9kXphq/a5XYUM2kTzSfv/?=
+ =?us-ascii?Q?W+FOkQBHLMYuXtDN/GZ2a4GptEZN31LxagmE5KC7gCVuqvcHO86Qu2QMaM/v?=
+ =?us-ascii?Q?x6XLJZWZsfyCQ1jXApy028HUTIIxMyvTHAFjqko4pEEl6V/rZ+5YXpDfJaTA?=
+ =?us-ascii?Q?LVFD1td/yoFldAVtdpabEEA3AsMImVN+JcZcvpTv4GP27CO/vUlTZxGCoxhM?=
+ =?us-ascii?Q?O6yBaq8hKHwQ1KCgg5HjzOZ3mzQOgpAZgTcRbHRuSo1ABGOKTzesyHHd9EHS?=
+ =?us-ascii?Q?k655jCcFTej/so5MXgrjpVbgmVyyuw3khJYHvsGjstZhMLD6EA+qQY6gir9u?=
+ =?us-ascii?Q?80cq5xS5bp5p/OXA6Uk9B1+TW0NGV2JtNYiu5WmC5LF9WrfVbZ06hadHlVun?=
+ =?us-ascii?Q?rmMm3bwGJbNrhEh1hluyoUS2AizISgLTveLB3uKDkOAg2GuxtMhmvaeCTk4e?=
+ =?us-ascii?Q?WVjsMHEUnrw=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:LV8PR12MB9620.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(7053199007);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?1C4yETrFbj27SwDpCTdWJ1KkUh8SzwtILBcLBfLWlyg4XKHYcuq8Zu+rIV+e?=
+ =?us-ascii?Q?4Wqs+YZgrkmh5ZLBQ1E2K7PJjYPLeemFse8nv9WmtmKiRG2T+g45MFYTN64P?=
+ =?us-ascii?Q?YE6153f1jMV8IUdXZnvEJjTH0KcBKIK35VdtBVs+ZBuDWqqte+6cEVFn43Pd?=
+ =?us-ascii?Q?gred+oMizILaS9klPO0b651tYZJw+aiFix0L/2Mie/toaT0WE21GzBoyn6uR?=
+ =?us-ascii?Q?WDPsX4gBSL9Os3XnzIw1Mxf0UNrX1nwKZTJSoaek8YnqN0SPGADUqZlJ/GKL?=
+ =?us-ascii?Q?TOXqe0CxIqozE0n7iDjPMf8vzbiPT09g/qskO6h6OGU7Mek9dOzM2r+GMtIn?=
+ =?us-ascii?Q?/gCHSxwjvcM9BWJnSLHMZ7BBJy7fmipldTnDG+Hyfjj42SnqgVPf4ep+F0/o?=
+ =?us-ascii?Q?vN28evdjHO5ZIx8NKBOp34qDLXBbEJ5Y+Bk0amnFgRWuHakCTwLHLQ3Ptc5c?=
+ =?us-ascii?Q?kao8MjD7Ky5EkRwyoxrLxeFtFLxjcD8TA3iN37lo+B9Q0yngP348n8+Q35KW?=
+ =?us-ascii?Q?UnbYLbHa4B9iqgU1OI0bvGjb+QiYHGVNMSZXxUGQHkw7O98XGpGfjLMFRk6F?=
+ =?us-ascii?Q?8c8yGlqdNsVDrAQbVndheeDEf1z0O8bwPOlKpPBG4EWMqbqGswhY2SgTPiys?=
+ =?us-ascii?Q?9J/hLE0stTTXlzyOyI35qlLkqKMO3+kFyxfMqOP7S7f6LaYYKpfWjOvoDEly?=
+ =?us-ascii?Q?4IsYVzbz4p9Ny2MqhxYrQijWgHdrsSisPVnA1XMaHNnc6Pe8I2mtC8Sm8/D8?=
+ =?us-ascii?Q?8wq1KYersMIvEF2OLRxSdrlXjQQ1UXpi43PdgIdlJOymDsl/GXYE3B1sQrcr?=
+ =?us-ascii?Q?4fhi2iaic5Qx/D7T1ukTf7JTcA5X4YcK0pkiEW9qmiO8kw0kwmIKhIweTa40?=
+ =?us-ascii?Q?CTCFeMpbgRhbGFn08dB1KFFRPR21P/BmImlTeY7biF2jTNWkyNVu/BRRFfIZ?=
+ =?us-ascii?Q?XkB3B7JDPZET4veVZK3XFvazP4nFs1aXRl74MG2zOz/u44IgADo+IK/UevKT?=
+ =?us-ascii?Q?q+fOkL8yznj0JDxzi1qUZ9RN8shihvAvOAfEEpo16p+k/qa1MlnK7g+n9PVP?=
+ =?us-ascii?Q?lksb5ROpzdQeKhORoO/MQ+JlU7wwFNBVQYAazacgMgZnt5pAL8bJq0ly1Pg0?=
+ =?us-ascii?Q?3XIM0RTGvnZ68Nu4Q5BXqItlEOXRYOjraRZRQpnKQJT79GEP6cm1Bq0rPa3P?=
+ =?us-ascii?Q?vkHQUbpGLik8z2aCCeds9BPZ32noiJx/EmFNzz2PCfrW1d2zxh6Q7y+VcRel?=
+ =?us-ascii?Q?Q0r9WRUcWs4KrQaeUAiwXZMjzAU3Rq7F639niyjiUU4o/OejvYebI8sB7quI?=
+ =?us-ascii?Q?QpgA1zRQAA+9PrvA+0hs8M4E+RJ+Ad1NTog7WtMQMWdM0CYVLGCZxrJs2NIx?=
+ =?us-ascii?Q?qpY0pC5qd62356Kn7N2fiE7GMUogsN7nmuJ+2eVnSUunXPWD3Xrylw3aSvaA?=
+ =?us-ascii?Q?1wWYPSVe5eG1RAaphJm7tQguCkZmghIyioA4lL/sDVxoqX0gy7lGzD6P3La0?=
+ =?us-ascii?Q?uS4fHXEIdp045feA7CALYwG1XQD9XCaTv//gLcPvqND3O69WwM0kkWY8kZJ3?=
+ =?us-ascii?Q?KVSuGR6IpCdwvZjBG79B0uB1o3G/mY0moUV4iqBo?=
+X-OriginatorOrg: Nvidia.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db3ade7e-2a46-4c02-d380-08ddd36e55db
+X-MS-Exchange-CrossTenant-AuthSource: LV8PR12MB9620.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 15:48:19.9215
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: D4PQrf53w/MfMclXl2nKWEclVs+ikGlxbpVGJsP2Xha4NOv27al11iUazD3hfvlRwVDbGfJ0VKZmDnh75iRmyA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4105
 
-From: Ivan Vera <ivan.vera@enclustra.com>
+On Mon, Aug 04, 2025 at 02:27:14PM +0100, Christian Loehle wrote:
+> On 8/4/25 13:51, Andrea Righi wrote:
+> > On Mon, Aug 04, 2025 at 12:27:42PM +0100, Christian Loehle wrote:
+> >> Provide scx_bpf_remote_curr() as a way for scx schedulers to
+> >> check the curr task of a remote rq, without assuming its lock
+> >> is held.
+> >>
+> >> Many scx schedulers make use of scx_bpf_cpu_rq() to check a
+> >> remote curr (e.g. to see if it should be preempted). This is
+> >> problematic because scx_bpf_cpu_rq() provides access to all
+> >> fields of struct rq, most of which aren't safe to use without
+> >> holding the associated rq lock.
+> >>
+> >> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
+> >> ---
+> >>  kernel/sched/ext.c                       | 24 ++++++++++++++++++++++++
+> >>  tools/sched_ext/include/scx/common.bpf.h |  1 +
+> >>  2 files changed, 25 insertions(+)
+> >>
+> >> diff --git a/kernel/sched/ext.c b/kernel/sched/ext.c
+> >> index 3ea3f0f18030..1d9d9cbed0aa 100644
+> >> --- a/kernel/sched/ext.c
+> >> +++ b/kernel/sched/ext.c
+> >> @@ -7426,6 +7426,29 @@ __bpf_kfunc struct rq *scx_bpf_cpu_rq(s32 cpu)
+> >>  	return cpu_rq(cpu);
+> >>  }
+> >>
+> >> +struct task_struct *bpf_task_acquire(struct task_struct *p);
+> > 
+> > Can we move include <linux/btf.h> all the way to the top? In this way we
+> > don't have to add this forward declaration.
+> > 
+> 
+> At least currently <linux/btf.h> doesn't declare bpf_task_acquire.
+> I'm not quite sure what's most elegant here, none of the bpf helper
+> kfuncs seem to be used from kernel code / kernel/sched/ext.c
 
-In the event of an uninitialized calibration register, ensure the register
-is reset and properly programmed during the probe sequence.
+Oh I see, it's a kfunc, so its prototype is only available in BPF.
 
-At present, only the calibration register is evaluated. If it holds invalid
-values after a power cycle, there's no longer a way to reset it, for
-instance, via a devicetree entry to 0x7FFF. This issue is documented here:
-https://adaptivesupport.amd.com/s/article/000036886?language=en_US 
+Maybe we can use `if (refcount_inc_not_zero(&p->rcu_users))` directly,
+instead of bpf_task_acquire()?
 
-The fix prioritizes an optional calibration value provided via the
-devicetree over the value in the register.
+> 
+> 
+> >> +
+> >> +/**
+> >> + * scx_bpf_remote_curr - Fetch the curr of a rq without acquiring its rq lock
+> >> + * @cpu: CPU of the rq
+> >> + *
+> >> + * Increments the refcount of the task_struct which needs to be released later.
+> > 
+> > Maybe we should mention that the task must be released by calling
+> > bpf_task_release().
+> 
+> Sure.
+> 
+> > 
+> > While at it, what do you think about renaming this to something like
+> > scx_bpf_task_acquire_on_cpu(), so that it looks similar to
+> > bpf_task_acquire()?
+> 
+> Will change it to
+> bpf_task_acquire_remote_curr()?
+> ..on_cpu() seems like a bit of a jump semantically.
 
-Fixes: 07dcc6f9c76275d6679f28a69e042a2f9dc8f128 ("rtc: zynqmp: Add calibration set and get support")
-Signed-off-by: Ivan Vera <ivan.vera@enclustra.com>
-Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
----
- drivers/rtc/rtc-zynqmp.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+Ack.
 
-diff --git a/drivers/rtc/rtc-zynqmp.c b/drivers/rtc/rtc-zynqmp.c
-index f39102b66eac..0c063c3fae52 100644
---- a/drivers/rtc/rtc-zynqmp.c
-+++ b/drivers/rtc/rtc-zynqmp.c
-@@ -331,9 +331,9 @@ static int xlnx_rtc_probe(struct platform_device *pdev)
- 		if (ret)
- 			xrtcdev->freq = RTC_CALIB_DEF;
- 	}
--	ret = readl(xrtcdev->reg_base + RTC_CALIB_RD);
--	if (!ret)
--		writel(xrtcdev->freq, (xrtcdev->reg_base + RTC_CALIB_WR));
-+
-+	/* Enable unconditional re-calibration to RTC_CALIB_DEF or DTB entry. */
-+	writel(xrtcdev->freq, xrtcdev->reg_base + RTC_CALIB_WR);
- 
- 	xlnx_init_rtc(xrtcdev);
- 
--- 
-2.39.5
-
+-Andrea
 
