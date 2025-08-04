@@ -1,135 +1,165 @@
-Return-Path: <linux-kernel+bounces-754990-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754991-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 59782B19F9D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:19:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 12E82B19FA0
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:19:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18F013BCFB5
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:19:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 21BCF17A334
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:19:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33AD624BD02;
-	Mon,  4 Aug 2025 10:19:06 +0000 (UTC)
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4AEB724C692;
+	Mon,  4 Aug 2025 10:19:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="g0weyGFd"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 97F9A1F30BB;
-	Mon,  4 Aug 2025 10:19:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D86ED1F30BB
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 10:19:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754302745; cv=none; b=ObY9UJzashTxKTiWCIddCHPtyuOQ4sjIMwWYyDl2IbW1DTtVqIfG4CdNVoEY1mnWs7ODH216JBB3954OHDtjpauhuX5qAOiWp47nnIgaJQWhmftt1F5lhoH3MAVHQqQX/WiQEi6si1kJbqI+QUPVDEVhVDyvSEDNfiQJTr+arY0=
+	t=1754302774; cv=none; b=S8+/2I0psbhAzHGBU5ND8ID8GvkyRUr1tEe5R6aDksuzQCjrzovfuVsXSDEwJ5tTBinKR8TcGavFnoDE18zu3cniX96iIOM+7hGdagdVty99dquJ01YVmVty7jgu+TZeOEx1CigocgD7rZ9XoA4ExR4CxtDJkt1usnNA8X2XgBc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754302745; c=relaxed/simple;
-	bh=3lodwvN4e8b9X9PqF31Mnjr9gOcDb+qXvIdD+U1nUTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nbn+lUVNQhm2rr9/VzZ0/emIbn7UZPWcnTt9EzMC924Iw0brKBbNWZWSn7uKEpYDXjLgBtq46dpH2jURGC4DdPBJeJ+1Fkx1eUmHBORJnbBjAN0vUMvGk272RHQ8NM/ivh9cOLFH3ubInZileFtn5LKtT+6pwjHKHPf4s60RPaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org; spf=pass smtp.mailfrom=ozlabs.org; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kaod.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ozlabs.org
-Received: from mail.ozlabs.org (mail.ozlabs.org [IPv6:2404:9400:2221:ea00::3])
-	by gandalf.ozlabs.org (Postfix) with ESMTP id 4bwXb91Qz1z4x5K;
-	Mon,  4 Aug 2025 20:19:01 +1000 (AEST)
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwXb56nFkz4x3q;
-	Mon,  4 Aug 2025 20:18:57 +1000 (AEST)
-Message-ID: <0d0b203f-b753-41ee-97c5-fa4739f4915c@kaod.org>
-Date: Mon, 4 Aug 2025 12:18:57 +0200
+	s=arc-20240116; t=1754302774; c=relaxed/simple;
+	bh=RDOSW3BTi/7xC0REpgTJ4XkCmRZDmSH10t1Dv6fn80E=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=u3GTDuZxUFB/yJwq7m16IACLKtj4pBkt1SnAqTBARAOPK8YbNjJegAmfF5NhkhBrz2OYJ9CwkEpURvfqdX/NxD9qU4prlg7ccEoFa1k5I4+cVPYradlfXXpCmXakvAsHGlvb0lXJM3xxaIfxk5Qtc8dxRL/ypU9fzwgi6//PhcY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=g0weyGFd; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-458ba079338so12440115e9.1
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 03:19:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1754302771; x=1754907571; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oq5/FdOzGZ1inlNbjB3s7XlQSummuzkTt86tAsew3/A=;
+        b=g0weyGFdp+vmvB+10LKxGUl+IwT/qI+nmRSjSgAZ6mO2cYraZy5yvVHUXFdVihcdAK
+         JDtYhwgXYCHqgzkYOyjMsei+6T1qoxd4bv3bLd3p32qsS49DChKS+mmjKEbxkkBjo1CY
+         2Umj2l3Etvf0MpjeogLFaA9kbHKCJPY6XmVXVVgdeV6c32BTqgLi1Up1p0x9+PKAmXsH
+         E5PmOKC/ogts3K7IAIw2EMPANBlmzytmR4X4W/8DYL82LsBz6ZPY1bbzpUEL6t3jeGPr
+         E6IxaFFVU/tQ9m1uJghZYevq2/eyb3zLX8+sZfLeMBGkAkn5hY7yPgopzj4NpzRBJpVG
+         sZuw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754302771; x=1754907571;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oq5/FdOzGZ1inlNbjB3s7XlQSummuzkTt86tAsew3/A=;
+        b=ak3JN4Y+YzBHlIF1M3whlrjg0M+v9VTZS+aqxlgT7H2WDg5enVAuB4VUgDmwutXYXH
+         C7UvQWRh2g7ZsOkTHZ7RDIiodWHC1uk4M30BV9C94wjuMnD796CI87dB4rDkRM/aYHtN
+         MOUI0PU7qzh8dvGHHR4IKLKqaqrtwGaYmjMUmwSlqEr65TDJMAAhPKM7Cjcbz9gZQeSz
+         zYSJ3orkTBcBmH1OqA8Nmf++EOt8kpbqutzMt3iIFz/tuIi322U97z/CB5TALm2nEJta
+         RJ37aH+vtssilGKAVxpEipdjOma0nBBXS4waHA7fGp/YCpyuF+iTIwEdOgkBkc4S5Wl8
+         3jjA==
+X-Forwarded-Encrypted: i=1; AJvYcCWINtsf+Ezwnt7S3sk/ol+X3jFEPIjO9w4/MgW1/fyuOC0xy3CSxHQECIqNbhMlpPdVr2dnZJWARSvnPgg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHvuiYU4sn1Fv/VwIiMVOOd5pNF2xrE5NgEvOxzMYfsA79YIT3
+	6j1PBwrCVPdFv9izZ7ULlL2QK2F1Ws+Pd2TCTXVpPax6N2JjKpT7q1TFNXSyAdUiNd0=
+X-Gm-Gg: ASbGnctSNseLk97kj6iFUKEv5mRTkzh7R52/ix2IwHXnu0VJJ7RMMDiecOdcS9J2ykb
+	AeEgMomT0WuocECfx7AQOyATddcSY2Vyn1kIxWwPw7ZcSAyCDS8YfOmXIv53yokXd4pNy0gBMbi
+	ydjq1yXQ/WMEP7zwi1OOZZ8QMDO59umcv7UEMzZRn4QB9gh0LtWya9BSfwajdtQPY4JIuM1tIz2
+	XlT+YON3XFDTWS4MfkQfSSMzN/M7Ht2nSGUEMFUFeouGeg5cFvILs7BqzojZ6fz/6X2zscJDrpU
+	Aot4rJjDeJ0HunV6kaGhqY4Qr4iUPFm6UvQKzI97/wowOg633qMXcafRa/BmyuaEk+SPUhQj1Yx
+	j7YDLrREOhSFs03TCvA26qOojL8w=
+X-Google-Smtp-Source: AGHT+IE0Y9ajWKwRqE0DRMgV+5o5dJoF5XuqnYQuo4xMGuuW63Maj4QhGtWtBbyqgOL6V4MEAbCaog==
+X-Received: by 2002:a05:600c:5246:b0:456:1281:f8dd with SMTP id 5b1f17b1804b1-458b5f190f6mr70111985e9.12.1754302771128;
+        Mon, 04 Aug 2025 03:19:31 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4589ee5795esm163292765e9.25.2025.08.04.03.19.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 03:19:30 -0700 (PDT)
+Date: Mon, 4 Aug 2025 13:19:26 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Simon Horman <horms@kernel.org>
+Cc: Mihai Moldovan <ionic@ionic.de>, linux-arm-msm@vger.kernel.org,
+	Manivannan Sadhasivam <mani@kernel.org>,
+	Denis Kenzior <denkenz@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Kuniyuki Iwashima <kuniyu@google.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Willem de Bruijn <willemb@google.com>,
+	"David S . Miller" <davem@davemloft.net>,
+	Jakub Kicinski <kuba@kernel.org>, linux-kernel@vger.kernel.org,
+	netdev@vger.kernel.org
+Subject: Re: [PATCH v3 04/11] net: qrtr: support identical node ids
+Message-ID: <d2884803-c2ff-4beb-b982-b8533ab71066@suswa.mountain>
+References: <cover.1753312999.git.ionic@ionic.de>
+ <8fc53fad3065a9860e3f44cf8853494dd6eb6b47.1753312999.git.ionic@ionic.de>
+ <20250724130836.GL1150792@horms.kernel.org>
+ <a42d70aa-76b8-4034-9695-2e639e6471a2@ionic.de>
+ <20250727144014.GX1367887@horms.kernel.org>
+ <aIz4pj5qgXSNg8mt@stanley.mountain>
+ <20250804095522.GP8494@horms.kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] powerpc/powernv/pci: Fix underflow and leak issue
-To: Nam Cao <namcao@linutronix.de>, Madhavan Srinivasan
- <maddy@linux.ibm.com>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Gautam Menghani <gautam@linux.ibm.com>, linuxppc-dev@lists.ozlabs.org,
- linux-kernel@vger.kernel.org
-Cc: stable@vger.kernel.org
-References: <cover.1754300646.git.namcao@linutronix.de>
- <70f8debe8688e0b467367db769b71c20146a836d.1754300646.git.namcao@linutronix.de>
-From: =?UTF-8?Q?C=C3=A9dric_Le_Goater?= <clg@kaod.org>
-Content-Language: en-US, fr
-Autocrypt: addr=clg@kaod.org; keydata=
- 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
-In-Reply-To: <70f8debe8688e0b467367db769b71c20146a836d.1754300646.git.namcao@linutronix.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250804095522.GP8494@horms.kernel.org>
 
-On 8/4/25 12:07, Nam Cao wrote:
-> pnv_irq_domain_alloc() allocates interrupts at parent's interrupt
-> domain. If it fails in the progress, all allocated interrupts are
-> freed.
+On Mon, Aug 04, 2025 at 10:55:22AM +0100, Simon Horman wrote:
+> On Fri, Aug 01, 2025 at 08:25:58PM +0300, Dan Carpenter wrote:
+> > On Sun, Jul 27, 2025 at 03:40:14PM +0100, Simon Horman wrote:
+> > > + Dan Carpenter
+> > > 
+> > > On Sun, Jul 27, 2025 at 03:09:38PM +0200, Mihai Moldovan wrote:
+> > > > * On 7/24/25 15:08, Simon Horman wrote:
 > 
-> The number of successfully allocated interrupts so far is stored
-> "i". However, "i - 1" interrupts are freed. This is broken:
+> ...
 > 
->      - One interrupt is not be freed
+> > > This seems to a regression in Smatch wrt this particular case for this
+> > > code. I bisected Smatch and it looks like it was introduced in commit
+> > > d0367cd8a993 ("ranges: use absolute instead implied for possibly_true/false")
+> > > 
+> > > I CCed Dan in case he wants to dig into this.
+> > 
+> > The code looks like this:
+> > 
+> > 	spin_lock_irqsave(&qrtr_nodes_lock, flags);
+> > 
+> >         if (node->ep->id > QRTR_INDEX_HALF_UNSIGNED_MAX ||
+> >             nid > QRTR_INDEX_HALF_UNSIGNED_MAX)
+> >                 return -EINVAL;
+> > 
+> > The problem is that QRTR_INDEX_HALF_UNSIGNED_MAX is U32_MAX and
+> > node->ep->id and nid are both u32 type.  The return statement is dead
+> > code and I deliberately silenced warnings on impossible paths.
+> > 
+> > The following patch will enable the warning again and I'll test it tonight
+> > to see what happens.  If it's not too painful then I'll delete it
+> > properly, but if it's generates a bunch of false positives then, in the
+> > end, I'm not overly stressed about bugs in dead code.
 > 
->      - If "i" is zero, "i - 1" wraps around
+> Thanks Dan,
 > 
-> Correct the number of freed interrupts to "i".
+> I think the key point here is that neither Mihai nor I noticed
+> the dead code. Thanks for pointing that out.
 > 
-> Fixes: 0fcfe2247e75 ("powerpc/powernv/pci: Add MSI domains")
-> Signed-off-by: Nam Cao <namcao@linutronix.de>
-> Cc: stable@vger.kernel.org
-> ---
->   arch/powerpc/platforms/powernv/pci-ioda.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
 
-Reviewed-by: Cédric Le Goater <clg@redhat.com>
+I did test this over the weekend, btw.  Warning about bugs in dead code
+does find some "real" bug and they might actually be real depending
+on config.  But it also triggers a bunch of false positives which are
+hard to solve:
 
-Thanks,
+	r = dma_resv_lock(&resv, NULL);
+	if (r)
+		r;
 
-C.
+The dma_resv_lock() can't fail it you pass NULL as a parameter, so
+Smatch says "every return takes the lock", and then "if we fail, we
+return without dropping the lock."  It's difficult to solve this.
 
+I guess we would have to say "If we're in an impossible return and it
+was the locking function which failed then we didn't take the lock."
+That would work, but it's sort of a tricky rule to code.
+
+regards,
+dan carpenter
 
 
