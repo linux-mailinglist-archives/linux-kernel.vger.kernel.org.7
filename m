@@ -1,203 +1,143 @@
-Return-Path: <linux-kernel+bounces-755177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755182-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C2133B1A2AD
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:05:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DD543B1A2CB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 535823BCE7B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:04:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EC605161745
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:06:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D60F2701D0;
-	Mon,  4 Aug 2025 13:01:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9CBAE265CCD;
+	Mon,  4 Aug 2025 13:01:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="ALapTKfm"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ap0Pb40m"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 93915270ECD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:01:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C39625B66A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 13:01:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754312486; cv=none; b=XZav7fL0vkT7o7ivx9citLp1aajsRYFXgg+h8HZjH80k610lR/8woKE50WbmzOGDWE1TYezSNiH8sw8V0ZoWFLN3logo1bWlOdZMz+NDHZ12iNhtFQTLXxzKJBtJ/B8R3yo5q2NBNuVKfvSj2tMha4hB4N5ilSReQxqJBQsYVco=
+	t=1754312514; cv=none; b=CwHXeIqSoJ+iKHF2PfP6uPKLJLxC3PWMy8gVfn2XCPEToV8CFmuZA6lW5vzmNuozyfYt1iwDjrDBIiC4LzfEYk5NioOpPLvHLHVhZpX/4qvSAdC1GStp9Sas9E94equ5Iw3f3bJDpX61+WiuYbCXez/1dK6dE6DR9zPeFIk3H5I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754312486; c=relaxed/simple;
-	bh=Gq4bjo9pvlohmfqH9sKBGJwHI28+I5G2Ms9mahNJlI8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X/noN85X90fwWB+g7ffYS+KfjLoCV/fULvO1NL5D6MWgXdeMPE9wabbQRuMMplPBUb1olkGE3wM+ne11i1weJmFQxsRa5IAMma1IRNMesj1JDrKwUW0ErDBWd6+SjUixNrnh3z1+prxBiTuSio2EKjA4fx4jgeq824VYktS5cwA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=ALapTKfm; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-af95b919093so208879666b.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 06:01:24 -0700 (PDT)
+	s=arc-20240116; t=1754312514; c=relaxed/simple;
+	bh=kC+cJmlpp/oD6ea0betOF2phNLemx2bySRrPbCxJFpc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=W8wNY0grrwY9hGAMIbwbyiWvIEnQAxXmOtrKWJ4QapwTyJccGJmwkD/9R8VmAkWduQo7IZyZ9LOGkQ0090zEXMJiwHz7FSd5ZOdyEPbLuAaCRfnO7OQcvRImJPyKhAZTJbLJRmdONZB0L4/KjHA7sN6ckFWv84faLrsvlve6niQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ap0Pb40m; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-af93bcaf678so346729666b.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 06:01:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1754312483; x=1754917283; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Cbfx/91eHfdIqQWmqlgfC8DYVnaVR+jy+kR00RDJwp4=;
-        b=ALapTKfmjSe54q5jb8rPgRrWOxWi51hmCnubDam8HurLAPfFOwm+c0IvjC/HWlFlkk
-         2yYCBEIfLKUa3bJzFiRuHQuPhY5TX2oYNCe0DSsopCneVnIU5jT7/9uMw3WLFqZlpvrR
-         vA/x+n9XxUXgToW0rdyGdAR+Uktvu4BSRUQqZH8f43p1hBS6OdCcJOhdCaWhT/JWcWeG
-         I/b+ankR2zc8xIBO0u5uXk5+oAwYZKTcZijue8NrQLsbc+rVIhxHgATyxUuC2ebDcDeE
-         eRqGoKSJWJyq6w7eDFHjZDgQa4gbRJcL2aVmZ01p5cNrBg3oth57e4f5Q4Td+0WYUrkZ
-         3+KA==
+        d=gmail.com; s=20230601; t=1754312510; x=1754917310; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=KefGQki3y2vCgBk3//HIoldKMrauc2w652/PLEweYlQ=;
+        b=Ap0Pb40mlpdFlHuMbC9Hn9qn3XG+wwauIGHaRfAT8KMgFK+FnH6oI0Vifae4ClzKLA
+         u1c75rzbRJHusgPXIOOhQm/JfkPAKacypgGKG9EnhUgDddlCiSr+/BO8kcRdK8QGiUXR
+         frSXuTKxingoGBQkKSPe8ipJXKpVmjqOYt2JtPy27HRLBiwupKksRIyEgvsyoIJWIS2K
+         o0L6Z4nZs0rkOmTuj2rqW3T6r9yIE1Gs1mks1MqfRUlSwjb7MvyygQaUavUSu0M1Ywr5
+         KTguJqJqUCiiWt9ia6fT9GHd6DRwrNHdPOZrfkKWH4b+WlHwdzfy856NUMpySNpYkQFw
+         KQvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754312483; x=1754917283;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Cbfx/91eHfdIqQWmqlgfC8DYVnaVR+jy+kR00RDJwp4=;
-        b=gcD3ikOQ85WdW0gQrENy2oxen9JYAyQ1orITihDHmaoql7z6DC2xOUFgj5vNi3m3Fp
-         ABrH1oGiPCWkJvw5LvojQBuaDLpJ3mD2iA9dOkTDt9BEyAn3uipn+qU/bVrznB2Zfzqh
-         +QREtdd7vYmTWl+M0QftZz6N/mb7tcjX/XkxoBmRSWmJDZRTOfYKkElIGN80i/VCTilW
-         NYQhHodc5ppKb7zT65CyL8EGI8GpsHibRH1TB/C266n3yQ963mIghtOc0uzQ6B7Ns0IH
-         67K6WagCXCVJFogynJ/fHVnZ00AyUGmzfadsDwQfEhtskxeiKld5HHEQ5jjEHD+W1Gl+
-         Hxng==
-X-Forwarded-Encrypted: i=1; AJvYcCXI68Vf0JeXucFtpm0NnA4s8bB9lOVH+KILYXVWVVk+Alw7ZyGp+/mF5+eUnYGYVziqLtqbW7gXFotUgi4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxO0B7Kh1Chdu0IUEXEeCCNPOHy7OYjx7CSRQmJ5arjpM4+FJqD
-	C7K2y5wVvXaemr5fm6jef02RPh8kxKWSMe62UtKxYeH3TLcGKFZ0pvb8c9/x8CQ8qlQTk67PcZZ
-	c4G57mJEUckk6xB2x42xbZBbKm9Qkr9RYQ85fsEb1tg==
-X-Gm-Gg: ASbGncu7BqpR09eZrKin5sdwW3WYeWvNR/Ko8qvYF7C3nadHjgKbaxBuj98YKA0UhYR
-	L1LoeXbz/eewkAwDLckE8G22iiMIxZAjmFNuRc43Y4qurCd31gRdKCw1T5DihqZlvq4VgxydQ64
-	biGyRDsxsgv+3dBjlTEeF6Af/MMXs/iL0kz/vLb4uEtbQ40qYReLZ5IanFUe7oDXrHXdknw+FY4
-	mglwjrIaQ0Yv1+PUGtwMh9L2/ecuQs+OvnY
-X-Google-Smtp-Source: AGHT+IHtPmr160uViLMui5PNuhNDtK1DNT0kjGf5E+umImR/6E4QJZe8IgTdNp7ToyiKqsu8RhM1G3jHn1A9FaF7soU=
-X-Received: by 2002:a17:907:3fa3:b0:ae0:635c:a400 with SMTP id
- a640c23a62f3a-af94022f990mr883506466b.51.1754312481888; Mon, 04 Aug 2025
- 06:01:21 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1754312510; x=1754917310;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=KefGQki3y2vCgBk3//HIoldKMrauc2w652/PLEweYlQ=;
+        b=tkRQTfgCZDmT6+OLivGIlIPYhP20cyRwkF2jtHMO+Sj0qsxAQMqp12VoCyYyWa96Cv
+         /fhlbZYRzj0Uo3WN1VygLmuDs06NTH8B63WnGe4PHbFJOa623bKHaC9iQiJa60s1ON6t
+         5PLANlL9CRztsZjz/0aHWQke0/NYUQ9N2Ch4v3FEVtRRij+07kQc+eUWlEBqwuq+BSVI
+         okUy10BAAc5iLlDfRmAKpuexg+AnD6hUtP/QQWvAGkKF1LpLiJF3eRK3xxPeeQYuTFed
+         dxbA7sToqs8Rjt8vcdRLUIasgtyAFKHDVyKrYlD8ZQWyRQMBsASBMbLDY3pyteeueD7v
+         J5Ww==
+X-Forwarded-Encrypted: i=1; AJvYcCU3nxnHcFsD9WqqQk/k4cu0duk0wccSl6o+krQtPgh07yPOAV6I628ijszQk62rtKuchUkJwGdQTZLylSY=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw6jPnF5bvAmIcYFa28w0c8JAj17pMaG1C5olwoc8JygZdm8wrY
+	PYqGBxdYDfx1Jn18jmMm6P2dqsCPSF+IUYMoVV0wSa+KSao8Fro2Kh0V
+X-Gm-Gg: ASbGnctI4QNcTIOHE5vgKI6eUw1iNVzBqGspmE++H1TYLXAj5oL9/UVUTloSAxxAR9+
+	gBXC1y8K3WJyKmv6lKVKkFAar7/AWfTilYIhg8lZRF31Wn3hT70821gHby/O98kqB4Nw/BpvnLC
+	GEYJR2v8+Aj5Svw4Qreb88W82o3lWhVunQE62VNFhnQq0+qqgWOcQG95dwbbEn9volUhvQn2gNp
+	iLZ3F5aHBylqyOUuwoA8EYdHACwfpLO2agv8hR0+W04b380rwGK5GF9F7fcty4Q+9AeO4iBgerP
+	pn6vhOyagCW+G0Zltq+smmEopPVt+LQ/ptBwl8IRwRUnXxBVNCu+3GOVryyr8Om7uXO+x40JPPJ
+	QkiOPgVzTaDq1gCAza5n2YZdZ5mzYjGDwKoECwp9B6mnGYshB
+X-Google-Smtp-Source: AGHT+IHyaLHRw9WBl5ycUvUvKXhVXBKMJj40By+LLSFKNQMKMdFNjDt/FfyPBkA5DzimU7cf9mwASw==
+X-Received: by 2002:a17:907:97c5:b0:adb:45eb:7d0b with SMTP id a640c23a62f3a-af940015660mr1070658166b.15.1754312509941;
+        Mon, 04 Aug 2025 06:01:49 -0700 (PDT)
+Received: from smtpclient.apple ([132.68.46.54])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af928c84154sm636824066b.84.2025.08.04.06.01.48
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Mon, 04 Aug 2025 06:01:49 -0700 (PDT)
+Content-Type: text/plain;
+	charset=utf-8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20250626093018.106265-1-dietmar.eggemann@arm.com> <e89b250a-7e9b-45fa-9e81-fc071487078b@arm.com>
-In-Reply-To: <e89b250a-7e9b-45fa-9e81-fc071487078b@arm.com>
-From: Vincent Guittot <vincent.guittot@linaro.org>
-Date: Mon, 4 Aug 2025 15:01:10 +0200
-X-Gm-Features: Ac12FXxskiGMJuaGgx3y_xSxFULYlcA0OKM6VKCsSqdhJmPmcrsgp-D0r7FKYkA
-Message-ID: <CAKfTPtAwy1ZFQ=-t7SbbDuHj6ZJPtB3pJS6fZxt=1robLwvXjg@mail.gmail.com>
-Subject: Re: [RFC PATCH] cpufreq,base/arch_topology: Calculate cpu_capacity
- according to boost
-To: Dietmar Eggemann <dietmar.eggemann@arm.com>
-Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Viresh Kumar <viresh.kumar@linaro.org>, 
-	Sudeep Holla <sudeep.holla@arm.com>, Christian Loehle <christian.loehle@arm.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Robin Murphy <robin.murphy@arm.com>, Beata Michalska <beata.michalska@arm.com>, zhenglifeng1@huawei.com, 
-	Ionela Voinescu <ionela.voinescu@arm.com>
-Content-Type: text/plain; charset="UTF-8"
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3826.600.51.1.1\))
+Subject: Re: [PATCH] mm: memory: Force-inline PTE/PMD zapping functions for
+ performance
+From: Nadav Amit <nadav.amit@gmail.com>
+In-Reply-To: <c441e6ee-3118-4603-8c77-c5b2ef40982b@redhat.com>
+Date: Mon, 4 Aug 2025 16:01:37 +0300
+Cc: Li Qiang <liqiang01@kylinos.cn>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ "open list:MEMORY MANAGEMENT" <linux-mm@kvack.org>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ lorenzo.stoakes@oracle.com,
+ "Liam R . Howlett" <Liam.Howlett@oracle.com>,
+ Vlastimil Babka <vbabka@suse.cz>,
+ Mike Rapoport <rppt@kernel.org>,
+ Suren Baghdasarya <surenb@google.com>,
+ Michal Hocko <mhocko@suse.com>
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <9D248293-2456-4642-9F18-8075F0596EC2@gmail.com>
+References: <20250804123923.296230-1-liqiang01@kylinos.cn>
+ <c441e6ee-3118-4603-8c77-c5b2ef40982b@redhat.com>
+To: David Hildenbrand <david@redhat.com>
+X-Mailer: Apple Mail (2.3826.600.51.1.1)
 
-On Mon, 14 Jul 2025 at 14:17, Dietmar Eggemann <dietmar.eggemann@arm.com> wrote:
->
-> +cc Vincent Guittot <vincent.guittot@linaro.org>
-> +cc Ionela Voinescu <ionela.voinescu@arm.com>
->
-> On 26/06/2025 11:30, Dietmar Eggemann wrote:
-> > I noticed on my Arm64 big.Little platform (Juno-r0, scmi-cpufreq) that
-> > the cpu_scale values (/sys/devices/system/cpu/cpu*/cpu_capacity) of the
-> > little CPU changed in v6.14 from 446 to 505. I bisected and found that
-> > commit dd016f379ebc ("cpufreq: Introduce a more generic way to set
-> > default per-policy boost flag") (1) introduced this change.
-> > Juno's scmi FW marks the 2 topmost OPPs of each CPUfreq policy (policy0:
-> > 775000 850000, policy1: 950000 1100000) as boost OPPs.
-> >
-> > The reason is that the 'policy->boost_enabled = true' is now done after
-> > 'cpufreq_table_validate_and_sort() -> cpufreq_frequency_table_cpuinfo()'
-> > in cpufreq_online() so that 'policy->cpuinfo.max_freq' is set to the
-> > 'highest non-boost' instead of the 'highest boost' frequency.
-> >
-> > This is before the CPUFREQ_CREATE_POLICY notifier is fired in
-> > cpufreq_online() to which the cpu_capacity setup code in
-> > [drivers/base/arch_topology.c] has registered.
-> >
-> > Its notifier_call init_cpu_capacity_callback() uses
-> > 'policy->cpuinfo.max_freq' to set the per-cpu
-> > capacity_freq_ref so that the cpu_capacity can be calculated as:
-> >
-> > cpu_capacity = raw_cpu_capacity (2) * capacity_freq_ref /
-> >                                     'max system-wide cpu frequency'
-> >
-> > (2) Juno's little CPU has 'capacity-dmips-mhz = <578>'.
-> >
-> > So before (1) for a little CPU:
-> >
-> > cpu_capacity = 578 * 850000 / 1100000 = 446
-> >
-> > and after:
-> >
-> > cpu_capacity = 578 * 700000 / 800000 = 505
-> >
-> > This issue can also be seen on Arm64 boards with cpufreq-dt drivers
-> > using the 'turbo-mode' dt property for boosted OPPs.
-> >
-> > What's actually needed IMHO is to calculate cpu_capacity according to
-> > the boost value. I.e.:
-> >
-> > (a) The infrastructure to adjust cpu_capacity in arch_topology.c has to
-> >     be kept alive after boot.
 
-If we adjust the cpu_capacity at runtime this will create oscillation
-in PELT values. We should stay with one single capacity all time :
-- either include boost value but when boost is disable we will never
-reach the max capacity of the cpu which could imply that the cpu will
-never be overloaded (from scheduler pov)
-- either not include boost_value but allow to go above cpu max compute
-capacity which is something we already discussed for x86 and the turbo
-freq in the past.
 
-> >
-> > (b) There has to be some kind of notification from cpufreq.c to
-> >     arch_topology.c about the toggling of boost. I'm abusing
-> >     CPUFREQ_CREATE_POLICY for this right now. Could we perhaps add a
-> >     CPUFREQ_MOD_POLICY for this?
-> >
-> > (c) Allow unconditional set of policy->cpuinfo.max_freq in case boost
-> >     is set to 0 in cpufreq_frequency_table_cpuinfo().
-> >     This currently clashes with the commented feature that in case the
-> >     driver has set a higher value it should stay untouched.
-> >
-> > Tested on Arm64 Juno (scmi-cpufreq) and Hikey 960 (cpufreq-dt +
-> > added 'turbo-mode' to the topmost OPPs in dts file).
-> >
-> > This is probably related what Christian Loehle tried to address in
-> > https://lkml.kernel.org/r/3cc5b83b-f81c-4bd7-b7ff-4d02db4e25d8@arm.com .
->
-> Christian L. reminded me that since commit dd016f379ebc we also have a
-> performance regression on a system with boosted OPPs using schedutil
-> CPUfreq governor.
->
-> The reason is that per cpu 'capacity_freq_ref' is set in
-> drivers/base/arch_topology.c only during system boot so far based on the
-> highest non-boosted OPP since boost is disabled per default.
->
-> Schedutil uses capacity_freq_ref (*) in get_next_freq() to calculate the
-> next frequency request:
->
->    next_freq = max_freq * util / max
->                ^^^^^^^^
->                  (*)
->
-> In case the boost OPPs will be enabled:
->
->    echo 1 > /sys/devices/system/cpu/cpufreq/boost
->
-> 'capacity_freq_ref' stays at the highest non-boosted OPP's so schedutil
-> won't request any boosted OPPs for util values > ''highest non boosted
-> OPP'/'highest boosted OPP' * max'. The 'highest non boosted OPP' will be
-> used by schedutil instead.
->
-> This performance regression will go away with the proposed patch as well.
->
-> Calling drivers/base/arch_topology.c's init_cpu_capacity_callback() in
-> the event that boost is toggled makes sure that 'capacity_freq_ref' will
-> be set to the highest boosted (0->1) or highest non-boosted (1->0) OPP.
->
-> [...]
->
->
->
->
->
+> On 4 Aug 2025, at 15:51, David Hildenbrand <david@redhat.com> wrote:
+>=20
+> On 04.08.25 14:39, Li Qiang wrote:
+>> This change converts several critical page table zapping functions =
+from
+>> `inline` to `__always_inline`, resulting in measurable performance
+>> improvements in process spawning workloads.
+>> Performance Impact (Intel Xeon Gold 6430 2.1GHz):
+>> - UnixBench 'context1' test shows ~6% improvement (single-core)
+>> - UnixBench  shows ~0.6% improvement (single-core)
+>> - mm/memory.o size reduced by 2.49% (70190 -> 68445 bytes)
+>> - Net code reduction of 1745 bytes (add/remove: 211/166)
+>> The modified functions form a hot path during process teardown:
+>> 1. zap_present_ptes()
+>> 2. do_zap_pte_range()
+>> 3. zap_pte_range()
+>> 4. zap_pmd_range()
+>> Signed-off-by: Li Qiang <liqiang01@kylinos.cn>
+>> ---
+>=20
+> What's the object file size change?
+
+I think that Li wrote that the size is reduced by 2.49% .
+
+My 2 cents is that usually it may be better to understand why it is
+not inlined and address that (e.g., likely() hints or something else)
+instead of blindly putting __always_inline. The __always_inline might
+stay there for no reason after some code changes and therefore become
+a maintenance burden. Concretely, in this case, where there is a single
+caller, one can expect the compiler to really prefer to inline the
+callees.
+
+Perhaps it is beneficial to compile with flags such as
+"-fopt-info-inline-optimized-missed=3Dinline.txt=E2=80=9D to better =
+understand
+the reason.=20=
 
