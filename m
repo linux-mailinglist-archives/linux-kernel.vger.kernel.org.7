@@ -1,346 +1,221 @@
-Return-Path: <linux-kernel+bounces-755221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755222-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 79A10B1A332
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:27:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C1A05B1A336
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:27:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C6A0F7AA2B0
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:25:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7BE73BB01D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:27:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBC0226A1AB;
-	Mon,  4 Aug 2025 13:26:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C03269806;
+	Mon,  4 Aug 2025 13:27:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OFTgkCyN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="EyfmxvdX"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBBD3267F48;
-	Mon,  4 Aug 2025 13:26:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A999259CA0;
+	Mon,  4 Aug 2025 13:27:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754314011; cv=none; b=ZdQMZIyEfslS3z4JaC16WLurVhuRnsFdyfvQXvQt26KOMoj05ZwCinoUysmR3ZI/Bj/DKnr8NtSvzLyeB7hCapZc8ADRmYgwidD4iMzbtY/x4g4C88BQuraS/Wm3SBQueXyndopWv3GsyfcbPROmVceOlC9Fsdfnf3b7Uy09Fmc=
+	t=1754314033; cv=none; b=CwK9G3UbPtC/K75aFRXx7QRQGVs0zJZEDitnb0K/dV6NgGVe5t2kiXHUB0k9bZ36FFVb3kZjV5xvGf/kDZHSJ40cPbeThRRuZUOzLRb2jaq33laOpVnYoyu+WfQgFFBSC1jyBxRyWM40DYbszasUy75/90Pv3gwTcJ948HUyWqw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754314011; c=relaxed/simple;
-	bh=t7ETmf0H+nvKvs92jN/VK1JNsQL7CVr5t2gKdQ0ASWk=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=Qp1P6qcUe4SIjP7NxGa1aeLc74esQq3D3HWX+3SXZ108UlerRls+6TGwYWAwXU7G/1csWrkldOTFpKFdhQXt7RLs+FWlznWt3D2Pmv9WJc4MaGJx9m6OWtw7csRGDBR9Kcc0zydI9c0IvdktBH+05AyztiyxHXXbgHYt2DzIXPY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OFTgkCyN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 801D0C4CEF0;
-	Mon,  4 Aug 2025 13:26:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754314010;
-	bh=t7ETmf0H+nvKvs92jN/VK1JNsQL7CVr5t2gKdQ0ASWk=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=OFTgkCyNVCh3tv4xzled9DizoEOdY1JikSnh0CHzGZC5fSSEuxzy+hkKpyqOi26bj
-	 i/w8M32m4K/CtToIU/jEhnbzeMoWIjZGwe1VIUBpBbHHI6FPT5JwkLwI+USzXiVWzl
-	 j2XBUaQDrG0Oo77+CRcCj4rOEfpFv+RBuy8WaOlq0Xzbh0Wa/eO0xZQpXSQixd1VLK
-	 A6cN5xsWSwXRrPKvJXhpneI8r7H6NWiij/UiZ97Y4MRDPGgPHbLF9rRGRgLV8S2WQM
-	 VuC4KdMVnIhUOnzUp3ff2qt4ea5Gtj0Vuuc8JLcz9dFEDZtvBql2FDCedC2WVPxhs2
-	 ItgB/2SNGLwMQ==
-Date: Mon, 4 Aug 2025 22:26:45 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux Trace Kernel
- <linux-trace-kernel@vger.kernel.org>, bpf@vger.kernel.org, Masami Hiramatsu
- <mhiramat@kernel.org>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>,
- Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann
- <daniel@iogearbox.net>, Andrii Nakryiko <andrii@kernel.org>, Jiri Olsa
- <jolsa@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, Eduard
- Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, KP Singh
- <kpsingh@kernel.org>
-Subject: Re: [PATCH] btf: Simplify BTF logic with use of __free(btf_put)
-Message-Id: <20250804222645.5d8dd9895812b31e7a6963e9@kernel.org>
-In-Reply-To: <20250801071622.63dc9b78@gandalf.local.home>
-References: <20250801071622.63dc9b78@gandalf.local.home>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1754314033; c=relaxed/simple;
+	bh=HdvT5261gzhE4aRSmJHv+tFzObgX93mplUmVc06GufI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=bJi/S4/2XfIOi0dgcKAhS5b1Zo9+2BUnVVgw2SivzCa6hv8pvdC8BRebuBuUo71VIx0Y2JAOwew7KB0FS8odAgTj0WS9qqcAn9ShplmdqCH3a6yPJQ/bPm86Cl/ZFQYGD8NPceyx428vCW2f9VS27tH6cu/m3ucwDrePhtNWKJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=EyfmxvdX; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1754314028;
+	bh=HdvT5261gzhE4aRSmJHv+tFzObgX93mplUmVc06GufI=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=EyfmxvdXZ+NzDsRzzPqikBca7aExVvjMxp9273QrCTmQDt5W03Ujk77tESdn04Cko
+	 0xSGbdjRQJHSijFEarIcVioaWZakdnvAoCCaSPc/gxCt1hPn64sI47ckjYMeHCmtw/
+	 VRfHcDkV2IjUclj1M2UBJ8IwGDrns57lcScN4xdZbM0UwsciK4xIrPk7151HRdQlmx
+	 lZT6iYkRYJZVLKZq40Ihoygwa70YWtTLZ75HCHrewFFF7J1RtLmn4tIg5xD1HgGJBU
+	 XP2U1JXD+JLDo8+oFCuob8guMEtN+qP5Wn4fxuCJOx727NVTWfCtWG0nC5xNkuFeIC
+	 m42FsuLYnQlzQ==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 7A25817E01CC;
+	Mon,  4 Aug 2025 15:27:07 +0200 (CEST)
+Message-ID: <00a12553-b248-4193-8017-22fea07ee196@collabora.com>
+Date: Mon, 4 Aug 2025 15:27:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 09/27] dt-bindings: clock: mediatek: Describe MT8196
+ clock controllers
+To: Krzysztof Kozlowski <krzk@kernel.org>, Laura Nao
+ <laura.nao@collabora.com>, wenst@chromium.org
+Cc: conor+dt@kernel.org, devicetree@vger.kernel.org,
+ guangjie.song@mediatek.com, kernel@collabora.com, krzk+dt@kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org,
+ matthias.bgg@gmail.com, mturquette@baylibre.com, netdev@vger.kernel.org,
+ nfraprado@collabora.com, p.zabel@pengutronix.de, richardcochran@gmail.com,
+ robh@kernel.org, sboyd@kernel.org
+References: <fbe7b083-bc3f-4156-8056-e45c9adcb607@kernel.org>
+ <20250804083540.19099-1-laura.nao@collabora.com>
+ <373f44c3-8a6a-4d52-ba6b-4c9484e2eac1@kernel.org>
+ <1db77784-a59a-49bd-89b5-9e81e6d3bafc@collabora.com>
+ <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <e9ee33b0-d6b0-4641-aeeb-9803b4d1658a@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 1 Aug 2025 07:16:22 -0400
-Steven Rostedt <rostedt@goodmis.org> wrote:
-
-> From: Steven Rostedt <rostedt@goodmis.org>
+Il 04/08/25 13:01, Krzysztof Kozlowski ha scritto:
+> On 04/08/2025 11:27, AngeloGioacchino Del Regno wrote:
+>> Il 04/08/25 11:16, Krzysztof Kozlowski ha scritto:
+>>> On 04/08/2025 10:35, Laura Nao wrote:
+>>>> Hi,
+>>>>
+>>>> On 8/3/25 10:17, Krzysztof Kozlowski wrote:
+>>>>> On 01/08/2025 15:57, Rob Herring wrote:
+>>>>>>> +  reg:
+>>>>>>> +    maxItems: 1
+>>>>>>> +
+>>>>>>> +  '#clock-cells':
+>>>>>>> +    const: 1
+>>>>>>> +
+>>>>>>> +  '#reset-cells':
+>>>>>>> +    const: 1
+>>>>>>> +    description:
+>>>>>>> +      Reset lines for PEXTP0/1 and UFS blocks.
+>>>>>>> +
+>>>>>>> +  mediatek,hardware-voter:
+>>>>>>> +    $ref: /schemas/types.yaml#/definitions/phandle
+>>>>>>> +    description:
+>>>>>>> +      On the MT8196 SoC, a Hardware Voter (HWV) backed by a fixed-function
+>>>>>>> +      MCU manages clock and power domain control across the AP and other
+>>>>>>> +      remote processors. By aggregating their votes, it ensures clocks are
+>>>>>>> +      safely enabled/disabled and power domains are active before register
+>>>>>>> +      access.
+>>>>>>
+>>>>>> I thought this was going away based on v2 discussion?
+>>>>>
+>>>>> Yes, I asked to drop it and do not include it in v3. There was also
+>>>>> discussion clarifying review.
+>>>>>
+>>>>> I am really surprised that review meant nothing and code is still the same.
+>>>>>
+>>>>
+>>>> This has been re-submitted as-is, following the outcome of the discussion
+>>>> here: https://lore.kernel.org/all/242bf682-cf8f-4469-8a0b-9ec982095f04@collabora.com/
+>>>>
+>>>> We haven't found a viable alternative to the current approach so far, and
+>>>> the thread outlines why other options don’t apply. I'm happy to continue
+>>>> the discussion there if anyone has further suggestions or ideas on how
+>>>> to address this.
+>>>>
+>>>
+>>> And where is any of that resolution/new facts in the commit msg? You
+>>> must clearly reflect long discussions like that in the commit msg.
+>>
+>> On that, I agree. That's a miss.
+>>
+>>>
+>>> There was no objection from Chen to use clocks or power domains as I
+>>> requested.
+>>
+>> Sorry Krzysztof, but now I really think that you don't understand the basics of
+>> MediaTek SoCs and how they're split in hardware - and I'm sorry again, but to me
+>> it really looks like that you're not even trying to understand it.
 > 
-> Several functions need to call btf_put() on the btf pointer before it
-> returns leading to using "goto" branches to jump to the end to call
-> btf_put(btf). This can be simplified by introducing DEFINE_FREE() to allow
-> functions to define the btf descriptor with:
+> There is no DTS here. No diagrams or some simplified drawings to help me
+> understand.
 > 
->    struct btf *btf __free(btf_put) = NULL;
+>>
+>>> The objection was about DUPLICATING interfaces or nodes.
+>>
+>> I don't see that duplication. The interface to each clock controller for each
+>> of the hardware subdomains of each controller is scattered all around the (broken
+>> by hardware and by concept, if you missed that in the discussion) HW Voter MMIO.
+>>
+>> There are multiple clock controllers in the hardware.
+>> Each of those has its own interface to the HWV.
+>>
+>> And there are some that require you to write to both its HWV interface and to the
+>> clock controller specific MMIO at the same time for the same operation. I explained
+>> that in the big discussion that Laura linked.
 > 
-> Then the btf descriptor will always have btf_put() called on it if it
-> isn't NULL or ERR before exiting the function.
-> 
-> Where needed, no_free_ptr(btf) is used to assign the btf descriptor to a
-> pointer that will be used outside the function.
-> 
-
-Yeah, this looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-
-> Signed-off-by: Steven Rostedt (Google) <rostedt@goodmis.org>
-> ---
->  include/linux/btf.h         |  4 +++
->  kernel/bpf/btf.c            | 56 +++++++++++--------------------------
->  kernel/trace/trace_btf.c    | 15 +++++-----
->  kernel/trace/trace_output.c |  8 ++----
->  4 files changed, 31 insertions(+), 52 deletions(-)
-> 
-> diff --git a/include/linux/btf.h b/include/linux/btf.h
-> index b2983706292f..e118c69c4996 100644
-> --- a/include/linux/btf.h
-> +++ b/include/linux/btf.h
-> @@ -8,6 +8,7 @@
->  #include <linux/bpfptr.h>
->  #include <linux/bsearch.h>
->  #include <linux/btf_ids.h>
-> +#include <linux/cleanup.h>
->  #include <uapi/linux/btf.h>
->  #include <uapi/linux/bpf.h>
->  
-> @@ -150,6 +151,9 @@ struct btf *btf_get_by_fd(int fd);
->  int btf_get_info_by_fd(const struct btf *btf,
->  		       const union bpf_attr *attr,
->  		       union bpf_attr __user *uattr);
-> +
-> +DEFINE_FREE(btf_put, struct btf *, if (!IS_ERR_OR_NULL(_T)) btf_put(_T))
-> +
->  /* Figure out the size of a type_id.  If type_id is a modifier
->   * (e.g. const), it will be resolved to find out the type with size.
->   *
-> diff --git a/kernel/bpf/btf.c b/kernel/bpf/btf.c
-> index 1d2cf898e21e..480657912c96 100644
-> --- a/kernel/bpf/btf.c
-> +++ b/kernel/bpf/btf.c
-> @@ -3788,7 +3788,7 @@ static int btf_parse_kptr(const struct btf *btf, struct btf_field *field,
->  	/* If a matching btf type is found in kernel or module BTFs, kptr_ref
->  	 * is that BTF, otherwise it's program BTF
->  	 */
-> -	struct btf *kptr_btf;
-> +	struct btf *kptr_btf __free(btf_put) = NULL;
->  	int ret;
->  	s32 id;
->  
-> @@ -3827,23 +3827,17 @@ static int btf_parse_kptr(const struct btf *btf, struct btf_field *field,
->  		 * the same time.
->  		 */
->  		dtor_btf_id = btf_find_dtor_kfunc(kptr_btf, id);
-> -		if (dtor_btf_id < 0) {
-> -			ret = dtor_btf_id;
-> -			goto end_btf;
-> -		}
-> +		if (dtor_btf_id < 0)
-> +			return dtor_btf_id;
->  
->  		dtor_func = btf_type_by_id(kptr_btf, dtor_btf_id);
-> -		if (!dtor_func) {
-> -			ret = -ENOENT;
-> -			goto end_btf;
-> -		}
-> +		if (!dtor_func)
-> +			return -ENOENT;
->  
->  		if (btf_is_module(kptr_btf)) {
->  			mod = btf_try_get_module(kptr_btf);
-> -			if (!mod) {
-> -				ret = -ENXIO;
-> -				goto end_btf;
-> -			}
-> +			if (!mod)
-> +				return -ENXIO;
->  		}
->  
->  		/* We already verified dtor_func to be btf_type_is_func
-> @@ -3860,13 +3854,11 @@ static int btf_parse_kptr(const struct btf *btf, struct btf_field *field,
->  
->  found_dtor:
->  	field->kptr.btf_id = id;
-> -	field->kptr.btf = kptr_btf;
-> +	field->kptr.btf = no_free_ptr(kptr_btf);
->  	field->kptr.module = mod;
->  	return 0;
->  end_mod:
->  	module_put(mod);
-> -end_btf:
-> -	btf_put(kptr_btf);
->  	return ret;
->  }
->  
-> @@ -8699,7 +8691,7 @@ u32 *btf_kfunc_is_modify_return(const struct btf *btf, u32 kfunc_btf_id,
->  static int __register_btf_kfunc_id_set(enum btf_kfunc_hook hook,
->  				       const struct btf_kfunc_id_set *kset)
->  {
-> -	struct btf *btf;
-> +	struct btf *btf __free(btf_put) = NULL;
->  	int ret, i;
->  
->  	btf = btf_get_module_btf(kset->owner);
-> @@ -8712,14 +8704,10 @@ static int __register_btf_kfunc_id_set(enum btf_kfunc_hook hook,
->  		ret = btf_check_kfunc_protos(btf, btf_relocate_id(btf, kset->set->pairs[i].id),
->  					     kset->set->pairs[i].flags);
->  		if (ret)
-> -			goto err_out;
-> +			return ret;
->  	}
->  
-> -	ret = btf_populate_kfunc_set(btf, hook, kset);
-> -
-> -err_out:
-> -	btf_put(btf);
-> -	return ret;
-> +	return btf_populate_kfunc_set(btf, hook, kset);
->  }
->  
->  /* This function must be invoked only from initcalls/module init functions */
-> @@ -8807,7 +8795,7 @@ int register_btf_id_dtor_kfuncs(const struct btf_id_dtor_kfunc *dtors, u32 add_c
->  				struct module *owner)
->  {
->  	struct btf_id_dtor_kfunc_tab *tab;
-> -	struct btf *btf;
-> +	struct btf *btf __free(btf_put) = NULL;
->  	u32 tab_cnt, i;
->  	int ret;
->  
-> @@ -8873,7 +8861,6 @@ int register_btf_id_dtor_kfuncs(const struct btf_id_dtor_kfunc *dtors, u32 add_c
->  end:
->  	if (ret)
->  		btf_free_dtor_kfunc_tab(btf);
-> -	btf_put(btf);
->  	return ret;
->  }
->  EXPORT_SYMBOL_GPL(register_btf_id_dtor_kfuncs);
-> @@ -9484,9 +9471,8 @@ bpf_struct_ops_find(struct btf *btf, u32 type_id)
->  
->  int __register_bpf_struct_ops(struct bpf_struct_ops *st_ops)
->  {
-> -	struct bpf_verifier_log *log;
-> -	struct btf *btf;
-> -	int err = 0;
-> +	struct bpf_verifier_log *log __free(kfree) = NULL;
-> +	struct btf *btf __free(btf_put) = NULL;
->  
->  	btf = btf_get_module_btf(st_ops->owner);
->  	if (!btf)
-> @@ -9495,20 +9481,12 @@ int __register_bpf_struct_ops(struct bpf_struct_ops *st_ops)
->  		return PTR_ERR(btf);
->  
->  	log = kzalloc(sizeof(*log), GFP_KERNEL | __GFP_NOWARN);
-> -	if (!log) {
-> -		err = -ENOMEM;
-> -		goto errout;
-> -	}
-> +	if (!log)
-> +		return -ENOMEM;
->  
->  	log->level = BPF_LOG_KERNEL;
->  
-> -	err = btf_add_struct_ops(btf, st_ops, log);
-> -
-> -errout:
-> -	kfree(log);
-> -	btf_put(btf);
-> -
-> -	return err;
-> +	return btf_add_struct_ops(btf, st_ops, log);
->  }
->  EXPORT_SYMBOL_GPL(__register_bpf_struct_ops);
->  #endif
-> diff --git a/kernel/trace/trace_btf.c b/kernel/trace/trace_btf.c
-> index 5bbdbcbbde3c..1c9111ab538b 100644
-> --- a/kernel/trace/trace_btf.c
-> +++ b/kernel/trace/trace_btf.c
-> @@ -13,26 +13,25 @@
->  const struct btf_type *btf_find_func_proto(const char *func_name, struct btf **btf_p)
->  {
->  	const struct btf_type *t;
-> +	struct btf *btf __free(btf_put) = NULL;
->  	s32 id;
->  
-> -	id = bpf_find_btf_id(func_name, BTF_KIND_FUNC, btf_p);
-> +	id = bpf_find_btf_id(func_name, BTF_KIND_FUNC, &btf);
->  	if (id < 0)
->  		return NULL;
->  
->  	/* Get BTF_KIND_FUNC type */
-> -	t = btf_type_by_id(*btf_p, id);
-> +	t = btf_type_by_id(btf, id);
->  	if (!t || !btf_type_is_func(t))
-> -		goto err;
-> +		return NULL;
->  
->  	/* The type of BTF_KIND_FUNC is BTF_KIND_FUNC_PROTO */
-> -	t = btf_type_by_id(*btf_p, t->type);
-> +	t = btf_type_by_id(btf, t->type);
->  	if (!t || !btf_type_is_func_proto(t))
-> -		goto err;
-> +		return NULL;
->  
-> +	*btf_p = no_free_ptr(btf);
->  	return t;
-> -err:
-> -	btf_put(*btf_p);
-> -	return NULL;
->  }
->  
->  /*
-> diff --git a/kernel/trace/trace_output.c b/kernel/trace/trace_output.c
-> index 0b3db02030a7..c11adfa83d5c 100644
-> --- a/kernel/trace/trace_output.c
-> +++ b/kernel/trace/trace_output.c
-> @@ -698,7 +698,7 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
->  	const char *param_name;
->  	char name[KSYM_NAME_LEN];
->  	unsigned long arg;
-> -	struct btf *btf;
-> +	struct btf *btf __free(btf_put) = NULL;
->  	s32 tid, nr = 0;
->  	int a, p, x;
->  
-> @@ -716,7 +716,7 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
->  
->  	param = btf_get_func_param(t, &nr);
->  	if (!param)
-> -		goto out_put;
-> +		goto out;
->  
->  	for (a = 0, p = 0; p < nr; a++, p++) {
->  		if (p)
-> @@ -756,7 +756,7 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
->  				trace_seq_putc(s, ':');
->  				if (++a == FTRACE_REGS_MAX_ARGS) {
->  					trace_seq_puts(s, "...]");
-> -					goto out_put;
-> +					goto out;
->  				}
->  				trace_seq_printf(s, "0x%lx", args[a]);
->  			}
-> @@ -764,8 +764,6 @@ void print_function_args(struct trace_seq *s, unsigned long *args,
->  			break;
->  		}
->  	}
-> -out_put:
-> -	btf_put(btf);
->  out:
->  	trace_seq_printf(s, ")");
->  }
-> -- 
-> 2.47.2
+> That's not what property description says. I discussed that part. Your
+> description says - to aggregate votes.
 > 
 
+Yes. That is what the datasheets say, but read down there.
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> Above you say that control is split between two different MMIO blocks.
+> 
+
+Also yes.
+
+> Aggregating votes is exactly what we discussed last time and you should
+> not use custom phandle for it.
+> 
+
+We discussed about aggregating votes, yes, in software - this instead is a
+*broken* hardware that does the aggregation internally and does not require
+nor want external drivers to do the aggregation.
+
+> Maybe it is just the name, so avoid all the confusing "votes" if this is
+> not voting system. If this is a voting system, then don't use custom
+> phandles.
+
+Being it fundamentally *broken*, this being a voting system is what the hardware
+initially wanted to be - but effectively, since it requires YOU to:
+  - Make sure that power supplies are turned on, if not, turn them on by "touching"
+    HW registers (so, without any assistance from the voter MCU), if any;
+  - Turn on parent clocks manually, if any, before using the "voter mcu" to try
+    to ungate that clock; and
+    - Enable the "FENC" manually, after the mcu says that the clock was ungated.
+
+in the current state, it is just an hardware managed refcounting system and
+nothing else, because the MCU seems to be unfinished, hence, again, b r o k e n.
+
+Note that by "manually" I always mean "with direct writes to a clock controller's
+registerS, and without any automation/assistance from the HWV MCU".
+
+We're using the "hardware-voter" name because this is how MediaTek calls it in the
+datasheets, and no it doesn't really *deserve* that name for what it is exactly in
+MT8196 and MT6991.
+
+And mind you - if using the "interconnect" property for this means that we have to
+add an interconnect driver for it, no, we will not do that, as placing a software
+vote that votes clocks in a a voter MCU that does exactly what the interconnect
+driver would do - then requiring virtual/fake clocks - is not a good solution.
+
+So, what should we do then?
+
+Change it to "mediatek,clock-hw-refcounter", and adding a comment to the binding
+saying that this is called "Hardware Voter (HWV)" in the datasheets?
+
+Or is using the "interconnect" property without any driver in the interconnect API
+actually legit? - Because to me it doesn't look like being legit (and if it is, it
+shouldn't be, as I'm sure that everyone would expect an interconnect API driver
+when encountering an "interconnect" property in DT), and if so, we should just add
+a new "hw-interconnect" or "interconnect-hw" instead to not create confusion.
+
+Regards,
+Angelo
+
+> 
+> Best regards,
+> Krzysztof
+
+
 
