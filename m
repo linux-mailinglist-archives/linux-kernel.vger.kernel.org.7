@@ -1,102 +1,119 @@
-Return-Path: <linux-kernel+bounces-754632-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754633-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5DF4B19A47
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:48:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86270B19A4A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:48:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 46CF71897243
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:48:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07E0174311
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:48:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1910C20A5EB;
-	Mon,  4 Aug 2025 02:48:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b="OJ1SV3F+"
-Received: from fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com (fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com [63.178.143.178])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 585A021ADA3;
+	Mon,  4 Aug 2025 02:48:52 +0000 (UTC)
+Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9EB025776
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 02:48:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.178.143.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F93B25776;
+	Mon,  4 Aug 2025 02:48:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754275685; cv=none; b=PFtUAriV0tR5OhIV2lICa/jRRtW1PY5Es3/qcEVhSj7KbVtRmlMM9wTVMZ7voKkXF79I8pFe6BMi7PA2yk/5wg/HMUz9I6TSmi5W/K0FhKZRiPWMa3SI5NvbIH8PV5erl821TlMjpf9hJUlNaSGePoQCGTHZVOtvtrUqjinTHr8=
+	t=1754275732; cv=none; b=Jqu0TFVFeos6mH2KxGeOv7gDI6fH+zSiiA37fU4psenR7WRFRvkBKu5/2CMj2o1Yf4eWl/eIgxukMnFxSYPW5ct0h/9YbqePMccyDk3aZrv63xbttAf3YwmDyRX6vsIe3wYKgMXRdjrweHvJuWJmLk3ajfE2QIiACNxYo06Fcto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754275685; c=relaxed/simple;
-	bh=a9zfeW2WB7bbrMuij4TAEwvYwmIdapst4CP9CUDMag8=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VFml55iObDbxZZ3w2h8DM9OE3WWipHosU/qxgvZJYomNvknM7tDEFrm664AgfifSZzDWWq8fbkx4Pqu+sn4OOLS3OiZn8GyAUt/5m8oAnS2kIV2QH9nJgRbbnxc7MHa8l04LR3n0f99IasLbBnMW1M7bg/sw13yo3V84Dk3xTZs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (2048-bit key) header.d=amazon.com header.i=@amazon.com header.b=OJ1SV3F+; arc=none smtp.client-ip=63.178.143.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazoncorp2;
-  t=1754275683; x=1785811683;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=RKicLz6qk2kkguAEni1vOqzECVIHBfHvbbyhd4kVsDM=;
-  b=OJ1SV3F+dMH7aOHcep0SDiyRGzONOi4VuOc5TjCA6uBC4DCsvBTVZ9kK
-   zt863fiSDKdl7FaRcp7wGoMer9QrhIzaqOzGNheS+ug/o5lxuIeqXc1Yx
-   uQyZQ3guORQIWZsFn2F5g6w0wtTx/pmBXv+ble6kQH8Sg9OqlokfIuBNn
-   SA9QloCx2a3X/eg965mVoGbFnVqoTovldrKSHkquzJSTnvbBQT/ZOw/3K
-   g5zM8pF3BAcnDD8QL+Sk+B9Os9vUUJj7Bkrq9iKNiz3CBBLqGg3CMNaYv
-   wEfPv3fgnbP/ar4Z5u3N0MMBvoZrCEhCVgMPoivnSYgAaF5BSmAv64Qaa
-   A==;
-X-CSE-ConnectionGUID: cCd3RQGgQoqlNkLrBO2LSg==
-X-CSE-MsgGUID: VlhjKe74QCGXeEHunRLy/A==
-X-IronPort-AV: E=Sophos;i="6.17,258,1747699200"; 
-   d="scan'208";a="414218"
-Received: from ip-10-6-6-97.eu-central-1.compute.internal (HELO smtpout.naws.eu-west-1.prod.farcaster.email.amazon.dev) ([10.6.6.97])
-  by internal-fra-out-010.esa.eu-central-1.outbound.mail-perimeter.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 04 Aug 2025 02:47:53 +0000
-Received: from EX19MTAEUC002.ant.amazon.com [10.0.10.100:10198]
- by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.27.198:2525] with esmtp (Farcaster)
- id df118047-9890-4fac-bbc9-48f9ecc15387; Mon, 4 Aug 2025 02:47:53 +0000 (UTC)
-X-Farcaster-Flow-ID: df118047-9890-4fac-bbc9-48f9ecc15387
-Received: from EX19D026EUB004.ant.amazon.com (10.252.61.64) by
- EX19MTAEUC002.ant.amazon.com (10.252.51.181) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14;
- Mon, 4 Aug 2025 02:47:52 +0000
-Received: from 3c06303d853a (10.187.171.18) by EX19D026EUB004.ant.amazon.com
- (10.252.61.64) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1544.14; Mon, 4 Aug 2025
- 02:47:49 +0000
-Date: Sun, 3 Aug 2025 19:47:41 -0700
-From: Andrew Paniakin <apanyaki@amazon.com>
-To: SeongJae Park <sj@kernel.org>
-CC: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Andrew Morton
-	<akpm@linux-foundation.org>, David Hildenbrand <david@redhat.com>, Jann Horn
-	<jannh@google.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, "Michal
- Hocko" <mhocko@suse.com>, Mike Rapoport <rppt@kernel.org>, Pedro Falcato
-	<pfalcato@suse.de>, Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka
-	<vbabka@suse.cz>, <damon@lists.linux.dev>, <kernel-team@meta.com>,
-	<linux-kernel@vger.kernel.org>, <linux-mm@kvack.org>,
-	<amazon-linux-kernel@amazon.com>
-Subject: Re: [RFC v2 0/7] mm/damon: extend for page faults reporting based
- access monitoring
-Message-ID: <aJAfTUh-49pYuhbg@3c06303d853a>
-References: <20250727201813.53858-1-sj@kernel.org>
+	s=arc-20240116; t=1754275732; c=relaxed/simple;
+	bh=kcUryOuv1VuSTCu2lee1btEOF3MPZYA1WnJ2mmVutoo=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YwbukmtW4SoCO2+xFWhytWFvEn2lSkbsxfFV1T+tvgE3AenVHgGhlx1X1j/1JCG++9nl/0uJF63khrRTJvqv0b3iFBQd3d/JSsCFbaLzpwl+hmdB/FXlV3Y69dM7V3X+6SDEWLr+3TvNPdxIvAj/jlqVpYdz/Tldmp85y94WNwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
+X-UUID: 869ac3da70dd11f0b29709d653e92f7d-20250804
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.45,REQID:9797b32f-e724-4445-9598-d91e21db278e,IP:0,U
+	RL:0,TC:0,Content:0,EDM:-30,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:-30
+X-CID-META: VersionHash:6493067,CLOUDID:7da665495432d8b0b545f4f2f174ee25,BulkI
+	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0|50,EDM:2,IP:nil,URL
+	:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SP
+	R:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 869ac3da70dd11f0b29709d653e92f7d-20250804
+Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
+	(envelope-from <lijiayi@kylinos.cn>)
+	(Generic MTA)
+	with ESMTP id 908476407; Mon, 04 Aug 2025 10:48:39 +0800
+Received: from node4.com.cn (localhost [127.0.0.1])
+	by node4.com.cn (NSMail) with SMTP id DD9C316001A03;
+	Mon,  4 Aug 2025 10:48:38 +0800 (CST)
+X-ns-mid: postfix-68901F86-759240832
+Received: from kylin-pc.. (unknown [172.25.130.133])
+	by node4.com.cn (NSMail) with ESMTPA id 0AC1316001A01;
+	Mon,  4 Aug 2025 02:48:31 +0000 (UTC)
+From: Jiayi Li <lijiayi@kylinos.cn>
+To: ulf.hansson@linaro.org
+Cc: gregkh@linuxfoundation.org,
+	kai.heng.feng@canonical.com,
+	oakad@yahoo.com,
+	maximlevitsky@gmail.com,
+	luoqiu@kylinsec.com.cn,
+	viro@zeniv.linux.org.uk,
+	linux-mmc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	jiayi_dec@163.com,
+	Jiayi Li <lijiayi@kylinos.cn>
+Subject: [PATCH] memstick: Add timeout to prevent indefinite waiting
+Date: Mon,  4 Aug 2025 10:48:25 +0800
+Message-ID: <20250804024825.1565078-1-lijiayi@kylinos.cn>
+X-Mailer: git-send-email 2.47.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-Disposition: inline
-In-Reply-To: <20250727201813.53858-1-sj@kernel.org>
-X-ClientProxiedBy: EX19D039UWA003.ant.amazon.com (10.13.139.49) To
- EX19D026EUB004.ant.amazon.com (10.252.61.64)
+Content-Transfer-Encoding: quoted-printable
 
-On 27/07/2025, SeongJae Park wrote:
-> TL; DR: Extend DAMON interface between core and operation sets for
-> operation set driven report-based monitoring such as per-CPU and
-> write-only access monitoring.  Further introduce an example physical
-> address space monitoring operation set that uses page faults as the
-> source of the information.
+Add timeout handling to wait_for_completion calls in memstick_set_rw_addr=
+()
+and memstick_alloc_card() to prevent indefinite blocking in case of
+hardware or communication failures.
 
-Thank you very much for starting this update. RFC mentions write-only
-monitoring, this feature particularly would be really helpful in some of
-our use cases such as lightweight live migration target selection, so we
-are looking forward to collaborate in development and testing activity!
+Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
+---
+ drivers/memstick/core/memstick.c | 8 ++++++--
+ 1 file changed, 6 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/memstick/core/memstick.c b/drivers/memstick/core/mem=
+stick.c
+index 95e65f4958f2..3eeb93b51f80 100644
+--- a/drivers/memstick/core/memstick.c
++++ b/drivers/memstick/core/memstick.c
+@@ -370,7 +370,9 @@ int memstick_set_rw_addr(struct memstick_dev *card)
+ {
+ 	card->next_request =3D h_memstick_set_rw_addr;
+ 	memstick_new_req(card->host);
+-	wait_for_completion(&card->mrq_complete);
++	if (!wait_for_completion_timeout(&card->mrq_complete,
++			msecs_to_jiffies(500)))
++		card->current_mrq.error =3D -ETIMEDOUT;
+=20
+ 	return card->current_mrq.error;
+ }
+@@ -404,7 +406,9 @@ static struct memstick_dev *memstick_alloc_card(struc=
+t memstick_host *host)
+=20
+ 		card->next_request =3D h_memstick_read_dev_id;
+ 		memstick_new_req(host);
+-		wait_for_completion(&card->mrq_complete);
++		if (!wait_for_completion_timeout(&card->mrq_complete,
++				msecs_to_jiffies(500)))
++			card->current_mrq.error =3D -ETIMEDOUT;
+=20
+ 		if (card->current_mrq.error)
+ 			goto err_out;
+--=20
+2.47.1
+
 
