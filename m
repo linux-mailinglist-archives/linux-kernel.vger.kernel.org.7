@@ -1,159 +1,151 @@
-Return-Path: <linux-kernel+bounces-755056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 884B6B1A0B7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9BF7FB1A0BE
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 13:50:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A9A8816B23D
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:48:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 54DF417C14C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:50:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C29323D294;
-	Mon,  4 Aug 2025 11:48:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BDD2E253F11;
+	Mon,  4 Aug 2025 11:50:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="O8Gq7wYQ"
-Received: from mail-pg1-f179.google.com (mail-pg1-f179.google.com [209.85.215.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="BeiCc3MZ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A576134BD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:48:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98BE123817D
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 11:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754308114; cv=none; b=T14ZpwDpp2sZ4iihkenn07wTbx3Mp+IN4FeLG0tCaK92xDhZ4LAwTftVtYCCX7ISHiTUX1Mq/gfRdI/XvZO4njySvh2knZdQxOvYFc2IKBqWFkfc1qWq1vc4l4ZY8PcATvamkn6QHPBDWmXyygPLemAGZKw3wlQKtyVgKEO8Jkg=
+	t=1754308225; cv=none; b=kv4lBRrBhDUvOlkBxULvCvpwHzAKl2uIFuLBGrLXv0jmm6fbbKDAS94OviGOvF1pKu2Xx9GNoxPWeKVlDHspWYT5VCaZLjgrU2hHpUExEQLAaAUJJvO0mSdPXCOKTtumcxIzWadYaVmkPZWex5eJG98ieusewbT48vlkfmzco8E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754308114; c=relaxed/simple;
-	bh=mn9qqMH3yuVxWK3x3VoIY4UpC0USKN8oCdlDmVNPI5s=;
+	s=arc-20240116; t=1754308225; c=relaxed/simple;
+	bh=3Vq1R2/+ixLeOy0LNVLPRd9W2ZeEd91Hx9hG97pL6OY=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FUpTNmnPoa+tFCGrSKDXVRTxPJgqs+Ai5oqPJ3UHhRUQhtX6G9INZi3wFfcMJohND0bsr7hzPXx/NnahVwgtFl39GqOsk1D8ugJ5e8IM5b/7QabLP3LPHwfqoGsDO5w7bxG/QjYfhKFm6JilsHg0paVG/WrzMu9dFl0Sl+HspXw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=O8Gq7wYQ; arc=none smtp.client-ip=209.85.215.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
-Received: by mail-pg1-f179.google.com with SMTP id 41be03b00d2f7-b34a78bb6e7so2728145a12.3
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 04:48:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bytedance.com; s=google; t=1754308112; x=1754912912; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=bElhVu0hWu9rampyiG6tEtA2n7EnfvEonOtGBZq5JTU=;
-        b=O8Gq7wYQ8uCnGpBcTDfono1LE3sJ5EVA5Kl/oogqlI+9QmnBj/9D/NPvKu+o4vMFHy
-         vwdX++fxxQC5HsAPO8jgrn6sgY6juiKAxy1PHpH7qss+c9WMFXNRs6P609/sZBDmsRcI
-         YzegIlYWNzawGe4yWX9e12cYqzZ6Qdp3hMc5HUAET4yVZ9a8x+Xepv89SMC9Vx5BZFED
-         lhRCBcugPcsnJFLKD+V5uyMH3eOTj8WOey92fUhOCZcVyaHmcR9DM5SD2v36B9p7HfBG
-         YyvYl2gWl9OxxSeRjVtMQdjd8+5yI6cggCi/jNyaC8ET0s3jjOEcDvERPEUIi63Stqcj
-         /Vzg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754308112; x=1754912912;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bElhVu0hWu9rampyiG6tEtA2n7EnfvEonOtGBZq5JTU=;
-        b=KDuDQ97FrPQfO0Ii7oFOz9BAUWvcLHJ9CPE9VLmYuIRoZpC+1LckJKj4ojcBzkXHEx
-         QoJmu/SnOY4AzQci4Cr0O62Wy1nycDJ9cqRfFZp+rKWDYuFSrQvX9B7F2TPYaFu9xyIw
-         +tZwbQhWWx+wL9Lg0Hy8IS+pdVPp79IRK2RyDNDG12fZ3DV7khzw9834f9IRfOom8dDq
-         o3EzAnZ1Qe18CTtjnq5i+Sq/lUUJDVX4p6zaC5CieniEaBjaCBisKdyPiXM0cEBq3i6N
-         ixev139X0Kdckz7oPNua2WNR/8xbCF7wgB2wyf7xFJrY7Wfctqg0LZ4NEoQcUYfI38gp
-         hfpw==
-X-Forwarded-Encrypted: i=1; AJvYcCVloCYlY3dzGQF3tOC2IyCoMJaL6BJAFv2WaubiElErSIJ5/orKVXaX7h1trVFOoxR/EvTHp+Ofg2Upwtk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyTj/FDw6lL4ZIgjVnJNHvOudd/bfqEmw9gtgN2xYV0rVGcWQWk
-	UHzZg9zBX5auvHAzcNH98Xnq+tFsKPrERk0K/RplxruHQemKsjCSGvDcfKonZuwh8w==
-X-Gm-Gg: ASbGnctxRjQyJ9epnMJWy3Tqnar5Y+5Fk5MoAbxpJMphH9zZlnR8Sckp2pSt3b6+Xs3
-	IhfzhK+LYojSk36k8BYdVYQWevEPovgEGugStjdTBeU5Umrj6GXvaRAjfX71zVBh50xkZ4yTMKA
-	QcDddpPk1FnbEoiqpuoQduMjWIu/q3kkTo6j6Bu78LusmybyZzY4k5Pe16eXS7R1vDjN7Nu7Sqj
-	uTGw8by9oaR64AXASpD0TsTMHwTO8yksf3xiPXrEwSTlHwxfSVzCXW8lWcWgKt8QgSSUYEzbl0q
-	9gyWnMSpsV0zTWVm8FH9+hyVFJnxcDQAzLBr7+UPj2WqBRLWWSV1C2Lw/OOh9GLDXhwY0PzUk3q
-	GbVg6JNpmOYnNvMinE9ch9neXQgsyQss/OwVGktGQcas=
-X-Google-Smtp-Source: AGHT+IHZJCQbPYeqjIDeyPaVPidpYImKffGcpJCtQnulawaZU37F9o1L/44ACBbpVU8WWoc6lEPkoA==
-X-Received: by 2002:a17:90b:3e8a:b0:321:3715:993 with SMTP id 98e67ed59e1d1-32137150ad5mr5453988a91.14.1754308111804;
-        Mon, 04 Aug 2025 04:48:31 -0700 (PDT)
-Received: from bytedance ([61.213.176.56])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-b422bae8c52sm8915897a12.48.2025.08.04.04.48.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 04:48:31 -0700 (PDT)
-Date: Mon, 4 Aug 2025 19:48:22 +0800
-From: Aaron Lu <ziqianlu@bytedance.com>
-To: K Prateek Nayak <kprateek.nayak@amd.com>
-Cc: Valentin Schneider <vschneid@redhat.com>,
-	Ben Segall <bsegall@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Chengming Zhou <chengming.zhou@linux.dev>,
-	Josh Don <joshdon@google.com>, Ingo Molnar <mingo@redhat.com>,
-	Vincent Guittot <vincent.guittot@linaro.org>,
-	Xi Wang <xii@google.com>, linux-kernel@vger.kernel.org,
-	Juri Lelli <juri.lelli@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Steven Rostedt <rostedt@goodmis.org>, Mel Gorman <mgorman@suse.de>,
-	Chuyi Zhou <zhouchuyi@bytedance.com>,
-	Jan Kiszka <jan.kiszka@siemens.com>,
-	Florian Bezdeka <florian.bezdeka@siemens.com>,
-	Songtang Liu <liusongtang@bytedance.com>
-Subject: Re: [PATCH v3 0/5] Defer throttle when task exits to user
-Message-ID: <20250804114822.GB496@bytedance>
-References: <20250715071658.267-1-ziqianlu@bytedance.com>
- <5c79fc39-2a68-4b6b-ba4b-73f6a0f4a30d@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=r0BIpQrsT+QAxm/Y/e569qf/e2HsGAQxnUh0RQqN8eDhAgG5c+qhTlSIuzOw5TRx88pHGV0X4wrgSACCUUA1iIakajaVGA/aQZPa3rYw9Bl3ds+SKiw0K5z8klnQNiMeOHv8gMgJpMcUPUoszaASMO5SSWbzf1ZqUEC9ZJ2Y8Jg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=BeiCc3MZ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1754308222;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=mdaQlvbfPB2YeAnuUI5AJMrKcbE2YmdZrPTpHl1ML6o=;
+	b=BeiCc3MZ+g3Kri8k7ziAJEghKs+vUYIXYcTYXCuW40jKFDxgPPp453Idigiz+6Linr2x8X
+	ktMBjLLKQseT9+7oi0M7HVVF+hHCBHpoPxtm1qgfk+WdLzZlfUerMdBRGEcx9jxB/paVtf
+	L1h407kZYronzefH6wDiekSrDTmQps0=
+Received: from mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-35-165-154-97.us-west-2.compute.amazonaws.com [35.165.154.97]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-671-Z6PMZ6DUMwmZTXgYwTTL_w-1; Mon,
+ 04 Aug 2025 07:50:19 -0400
+X-MC-Unique: Z6PMZ6DUMwmZTXgYwTTL_w-1
+X-Mimecast-MFC-AGG-ID: Z6PMZ6DUMwmZTXgYwTTL_w_1754308217
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-06.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 4FE221800288;
+	Mon,  4 Aug 2025 11:50:17 +0000 (UTC)
+Received: from dhcp-27-174.brq.redhat.com (unknown [10.44.33.23])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with SMTP id 8D08C1955F24;
+	Mon,  4 Aug 2025 11:50:13 +0000 (UTC)
+Received: by dhcp-27-174.brq.redhat.com (nbSMTP-1.00) for uid 1000
+	oleg@redhat.com; Mon,  4 Aug 2025 13:49:05 +0200 (CEST)
+Date: Mon, 4 Aug 2025 13:49:01 +0200
+From: Oleg Nesterov <oleg@redhat.com>
+To: =?utf-8?B?6auY57+U?= <gaoxiang17@xiaomi.com>
+Cc: Al Viro <viro@zeniv.linux.org.uk>, Xiang Gao <gxxa03070307@gmail.com>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"mjguzik@gmail.com" <mjguzik@gmail.com>,
+	"Liam.Howlett@oracle.com" <Liam.Howlett@oracle.com>,
+	"joel.granados@kernel.org" <joel.granados@kernel.org>,
+	"lorenzo.stoakes@oracle.com" <lorenzo.stoakes@oracle.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+Message-ID: <20250804114900.GA6656@redhat.com>
+References: <20250802022123.3536934-1-gxxa03070307@gmail.com>
+ <20250802022550.GT222315@ZenIV>
+ <15b18541f37447dd8d5dbd8012662f67@xiaomi.com>
+ <20250802084525.GB31711@redhat.com>
+ <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <5c79fc39-2a68-4b6b-ba4b-73f6a0f4a30d@amd.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <80be47cb31d14ffc9f9a7d8d4408ab0a@xiaomi.com>
+User-Agent: Mutt/1.5.24 (2015-08-30)
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Mon, Aug 04, 2025 at 02:21:30PM +0530, K Prateek Nayak wrote:
-> Hello Aaron,
-> 
-> On 7/15/2025 12:46 PM, Aaron Lu wrote:
-> > v3:
-> > - Keep throttled cfs_rq's PELT clock running as long as it still has
-> >   entity queued, suggested by Benjamin Segall. I've folded this change
-> >   into patch3;
-> > - Rebased on top of tip/sched/core, commit 2885daf47081
-> >   ("lib/smp_processor_id: Make migration check unconditional of SMP").
-> > 
-> > Hi Prateek,
-> > I've kept your tested-by tag(Thanks!) for v2 since I believe this pelt
-> > clock change should not affect things much, but let me know if you don't
-> > think that is appropriate.
-> 
-> I've officially tested this series so it should be fine :)
+On 08/04, 高翔 wrote:
+>
+>     struct task_struct *tsk = current;
+>
+>     struct task_struct *parent;
+>
+>     ...
+>
+>     info->pid = task_pid_vnr(tsk);
+>     rcu_read_lock();
+>     parent = rcu_dereference(tsk->real_parent);
+>     get_task_struct(parent);
+>     rcu_read_unlock();
+>     info->ppid = task_tgid_vnr(parent);
+>     strncpy(info->ptask_name, parent->comm, TASK_COMM_LEN);
+>     put_task_struct(parent);
 
-Good to hear this :)
+So I guess the kernel crashes when you try to obtain another process's pid, not
+the current process's pid. This is was I suspected.
+
+This code is buggy. tsk->real_parent points to nowhere if tsk = current was reaped.
+rcu_read_lock() alone can't help. Even get_task_struct(parent) is not safe. And it
+is not needed.
+
+You need something like
+
+	info->pid = info->ppid = 0;
+
+	rcu_read_lock();
+	if (pid_alive(tsk)) {
+		info->pid = task_pid_vnr(tsk);
+		info->ppid = task_tgid_vnr(tsk->real_parent);
+	}
+	rcu_read_unlock();
+
+Oleg.
 
 > 
-> In addition to Jan's test, I also did some sanity test looking at PELT
-> and everything looks good for the simplest case - once busy loop inside
-> a cgroup that gets throttled. The per-task throttling behavior is
-> identical to the current behavior for this simplest case.
 > 
-> If I find time, I'll look into nested hierarchies with wakeups to see
-> if I can spot anything odd there. I don't really have a good control
-> setup to compare against here but so far I haven't found anything odd
-> and it works as intended.
+> 
+> ________________________________
+> 发件人: Oleg Nesterov <oleg@redhat.com>
+> 发送时间: 2025年8月2日 16:45:26
+> 收件人: 高翔
+> 抄送: Al Viro; Xiang Gao; brauner@kernel.org; mjguzik@gmail.com; Liam.Howlett@oracle.com; joel.granados@kernel.org; lorenzo.stoakes@oracle.com; linux-kernel@vger.kernel.org
+> 主题: Re: 答复: [External Mail]Re: [PATCH] pid: Add a judgment for ns null in pid_nr_ns
+> 
+> [外部邮件] 此邮件来源于小米公司外部，请谨慎处理。若对邮件安全性存疑，请将邮件转发给misec@xiaomi.com进行反馈
+> 
+> On 08/02, 高翔 wrote:
+> >
+> > Obtain the current process pid in the ufs compl command. This scene is possible.
+> 
+> How exactly your module tries to obtain the current process pid?
+> 
+> task_pid_vnr(current) should work and return 0 if the task was reaped.
+> 
+> Oleg.
 > 
 
-Thanks for all these tests.
-
-Best regards,
-Aaron
-
-> > 
-> > Tests I've done:
-> > - Jan's rt deadlock reproducer[1]. Without this series, I saw rcu-stalls
-> >   within 2 minutes and with this series, I do not see rcu-stalls after
-> >   10 minutes.
-> > - A stress test that creates a lot of pressure on fork/exit path and
-> >   cgroup_threadgroup_rwsem. Without this series, the test will cause
-> >   task hung in about 5 minutes and with this series, no problem found
-> >   after several hours. Songtang wrote this test script and I've used it
-> >   to verify the patches, thanks Songtang.
-> 
-> I just noticed this script. I'll give this a spin too when I test
-> nested hierarchies.
-> 
-> -- 
-> Thanks and Regards,
-> Prateek
 
