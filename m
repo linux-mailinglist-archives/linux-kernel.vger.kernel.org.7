@@ -1,133 +1,243 @@
-Return-Path: <linux-kernel+bounces-755016-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755018-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18594B1A012
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:55:12 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 05A4EB1A01A
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:57:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 69E26188DD13
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:55:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C774189A3CD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:58:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D02924DFF4;
-	Mon,  4 Aug 2025 10:55:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60BC523ABB9;
+	Mon,  4 Aug 2025 10:57:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KjHAF4QH"
-Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JyPo5kKb"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BDEE24E4BD
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 10:54:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B601A9B24;
+	Mon,  4 Aug 2025 10:57:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754304901; cv=none; b=KkmXBGiNvqmQrHa7ZLawaGqljEy+QqObwYdrjs88Yns0lw72HkST7tZxvMmxK2TS/nsXZTPeiAs7Aq7hmzw7alitwqU7ZjMya3cQuJXK0xW8miUhwyRf0PnpJ0xpXfqsgCdEdgCV1ISsXf+oeYL1btGcsqKGu8h0+ID/KU0pxdw=
+	t=1754305064; cv=none; b=eR7cqP16kYdYHFgASZgF5wBcJGOV1rK1/APSfUoTQqy2i9Bi45P5bSope6noFpH1U+4V/HWOIK108O9lKIOwIYV1pvQdM26NjlX0FJpW1j9m2Zl6XPYZ+vLdFC4pCyOqk1W05FB72gJSQhD/8Ri26DB0k8AW573GpbjGWElSJ0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754304901; c=relaxed/simple;
-	bh=G+iM+Wpdl0pGgQeVVC7j3IxrRVcCkNicU048+veoUgY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KmPV4N4RZBH0Rd4mELJIBn+Qq1u/2R7PpY4naMcIxV3rNYTh1Pxubk6pa9+yS036XcqkYRy8YOzAhj3ioYw3iZpAGjddZgiIJTP7DjX5mmLtVQMKyO25b++WUr4GB3ZSEIo1yM9OYY0Z3ZtaS9QHidMEjLhH5n7ZeA/fCKfkfXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KjHAF4QH; arc=none smtp.client-ip=209.85.128.65
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-458ba079338so12734525e9.1
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 03:54:59 -0700 (PDT)
+	s=arc-20240116; t=1754305064; c=relaxed/simple;
+	bh=EKcmbw33i158VkcjIOBGndTohyXppuVVNq4r8SoAwu4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MtJjCizYJYzmRKElJyGr9AABzUyaz4cPfVpS+AgGP/BDXEJoAuFd668B2lRXl44c581RKv3I4sWdN/bJXChs6Lsbbu6+/riBdFy9MRFkapuER1tlU9DNGSnpHMQJi4PN+nI+XDTHPoIFi9UzzTEJUXE8IQPc1Dtu/UzZ5VSH4fE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JyPo5kKb; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-adfb562266cso687272066b.0;
+        Mon, 04 Aug 2025 03:57:42 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1754304898; x=1754909698; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jTfwzKdFO4Billpr1agzWiIuczhIZbl+uk2TO52W1Ms=;
-        b=KjHAF4QH0Xq3WzB1V6Lk1wY1jWkCezSxD8TSrXxdraxLoF1Gd6k9cHY5qG9HVc8s2c
-         IcwIzxQVcKUEzprmR8GwS1sPZEZBgQ9HrZgl1qoH1Uu2GCcQ6hUq+XwZxs6Ij5J9GWmw
-         04sJF3TjdLl51ljDDm7qHuj/FRhO23HelnhTogfZ7ll6ruTpQA0RUctj8gW8Wd5dj0yu
-         FMp4TV23n9ZHGp3MG6KZQvixhepVLCr9HtjCTvvHTSjvEy8rPX9l5BashWrS8vA0mNYg
-         0qHaZZrduEpS/BUx9ESYSNqTLleGW14jG3yyiTKKYp8cwuDIOg6C64kjN8CyLWQWmJtH
-         soLw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754304898; x=1754909698;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754305061; x=1754909861; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=jTfwzKdFO4Billpr1agzWiIuczhIZbl+uk2TO52W1Ms=;
-        b=nI2gf+lAykhOKMIo8v6VmYBVE9agRkVnMrKzic1j0z9RENtsArIEOrfu5nQasFQw88
-         iOblfrbsYQ9uOivM7u9d/LjwQYngx6k9WPcY6cqlxRwyDrZJKzWpo5v4Td0JgXsMzVhT
-         0230JBwWCCC/TDVBtsd3ZngIcjW+nexPdp5A+xq15ayqkFyH0cs1Bwhdc+D9VB3tHGVz
-         YBEKb+ME2VydS/3ftedeTJczBmho+PVY0NVoHWk3uqVlb2+UcH5BFJal7c9HiGefS5sn
-         dF62pO7kdTO3SlCJl0+h2lQr+qiVpFi6+o+x9gc9YnDMd5D2/9ADKfVuf9XiYfU9WN0d
-         33nA==
-X-Forwarded-Encrypted: i=1; AJvYcCUM3AerWdDJBGBpsBPjPICKIElWCIKJnQa5iGA6+z5EPv7O5eJUYXxoL6neaN4IemfX440bpalg4LeIQ3w=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxNEWV67KCga7qJeOQSOYf0wMygMQ2wyVcyuLi075e/020R7SeQ
-	hngGLa1JwTE/IhH69AQ3N6mJ0nD+t9W8KLyAJObLKar0+7RbURuGIe4NDZo/Pks/SYY=
-X-Gm-Gg: ASbGnctYzOp+IcpFaMfGEt0DRIJ9k6cTZ6dQa69UcqE3zjDf+WCzDyXYEkzbtZoXiQb
-	vO+l+jA7PJbY6V9/O1T4fTdr+jDpp+d4tXDJbDpNpymibqDW0ulVzH0tdh1ql4r6sEhFkP+CcgW
-	o424gNcCebbUV0cIQxNcRcXofejkbWFMeLrAdizrGK6IYdwGBWmIbedaR86XdpDeYrpBU8jcByl
-	t+g4I13ZLs+LqKRs5hGQSpM+C8j/UWws2GqwM1324ABuJBzy7ueh9IUt8eMiAYGWRBMHcCRpfhx
-	LDx6d+vHUwnlawScCW0PHi8MeK5A6pjoe/nDns/sb/40soiD0pktJbiVbERncw8POQrtHKUSLlL
-	AVhwLI9hOHzpzslo3vLrOUDb0nd0OHllQyPNBrNgjQigek/kgYweNBmWDHNIcqti42Cr/i9IpAS
-	Sgypw5gq9cFw==
-X-Google-Smtp-Source: AGHT+IHolr1jpSS8jZ3V5wzzwBRxkUohemu1Nv4CGTNmDUpUc5jSaT3JjX0JSbIFj/1+2LYoFZrMMw==
-X-Received: by 2002:a05:600c:5246:b0:456:1281:f8dd with SMTP id 5b1f17b1804b1-458b5f190f6mr71240945e9.12.1754304898475;
-        Mon, 04 Aug 2025 03:54:58 -0700 (PDT)
-Received: from localhost (dynamic-2a00-1028-8394-58e6-9e1a-64e5-71bf-cbcb.ipv6.o2.cz. [2a00:1028:8394:58e6:9e1a:64e5:71bf:cbcb])
-        by smtp.gmail.com with UTF8SMTPSA id ffacd0b85a97d-3b79c453d6esm15241180f8f.37.2025.08.04.03.54.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 03:54:58 -0700 (PDT)
-Date: Mon, 4 Aug 2025 12:54:57 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Eugen Hristev <eugen.hristev@linaro.org>, linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org, linux-arch@vger.kernel.org,
-	linux-mm@kvack.org, tglx@linutronix.de, andersson@kernel.org,
-	pmladek@suse.com, linux-arm-kernel@lists.infradead.org,
-	linux-hardening@vger.kernel.org, corbet@lwn.net,
-	mojha@qti.qualcomm.com, rostedt@goodmis.org, jonechou@google.com,
-	tudor.ambarus@linaro.org
-Subject: Re: [RFC][PATCH v2 22/29] mm/numa: Register information into Kmemdump
-Message-ID: <aJCRgXYIjbJ01RsK@tiehlicka>
-References: <20250724135512.518487-1-eugen.hristev@linaro.org>
- <20250724135512.518487-23-eugen.hristev@linaro.org>
- <ffc43855-2263-408d-831c-33f518249f96@redhat.com>
- <e66f29c2-9f9f-4b04-b029-23383ed4aed4@linaro.org>
- <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+        bh=EKcmbw33i158VkcjIOBGndTohyXppuVVNq4r8SoAwu4=;
+        b=JyPo5kKbOop7HxAJpYSIRwQNhWhuTrnhE6MfdAKENvyt4zk1rY4T9bv7UVlWdEJbPn
+         yRfsqtlldRVipq2ecq+v3xm/Kh/wzi5BQMRUyaLRycBoM5lPR2MLdog9j6+ZTIMpcJKa
+         fNBo1EX9OanuBor5aOiOTrrL5i464i2psCDGM1lLcB3v5ARUeSwZVK8Yiv/wO8xIQtJK
+         RJbrvVl2lALDGMGUchV+Vvby2fi+i85WXtKZ7Wulm5ks7CdEd2wg+RSKh7DUJhCz1/+1
+         sTJCTks5Wq5sQUR4qMXDZdqqgRINzA11OqVDfREehPMURmDVjNsGozh0UOiSHzG5bq5L
+         CJ3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754305061; x=1754909861;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=EKcmbw33i158VkcjIOBGndTohyXppuVVNq4r8SoAwu4=;
+        b=Qsy8Db5/WaeUk6tzzq+T8N49ESGaWtOtKpSo9RyAAGGDPCrqPnFTgd256eCVR5zKhN
+         xtBeedJoxAXDbdFUD6Rf3jvnzQ9Qi0XJLGkH+cubXJSOd5ejnBQC6j5+wzpAA78HaAl8
+         S4XFgJ3vZDqHNA5llhfSCgrGRgq/N+JxrkkWVEt8oT98/wtnF9C7k3JIZFrvHo0o/GJB
+         KP0i7VC9ShMY5VxKsEZAfM+PGvRdMN7iYO2AHBwobmEwzaOKYq7i4rGX0kLQ+rAtRZRS
+         J6/CkhtxS6L14C13tpH0gJ3iduLV5Wp4IjGxI1FdMHvQ/WkrlpSi2WOW91Xx3SuvRo/p
+         O8ZA==
+X-Forwarded-Encrypted: i=1; AJvYcCXVpNAcxuqUEZA1K/9D+8rdDGuBkdaHEioSdMrvDpzJhSHhZwDPy74IQgXnANXtYYtDZuR2quMJwwAq@vger.kernel.org, AJvYcCXX3eJB08NIE9AE4RcFNsfAHN+C912HxijQxKWKDwnInkrmsrIpwyWMVVoD/H0nIRrdsLAQsNjbWlw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzSgKBgtQhmW4XKt0F98N+dwsMZXclj+ONcSclaVTjLG4cqWlAp
+	+Dq6t1ISLuxM9CZXraw2koMIEfjqG1JPueO+CTrfAc9xzEsxaKtiNYf5pi4n9vlL5LPpvEWLYaP
+	D9bngVwivv2QfOKepu9D6292+VPYWxhU=
+X-Gm-Gg: ASbGnctCfxMx1cJwpC8I3QUgmqPJtwaaLtlvSgWEF/fffgH9QqtZX8z2BFnVG9As/Rq
+	XPpCyXZxJVOXmjnCIaId5LfRq7fcDVzXooQ8PRFfMOz1KmnHNBo55CVGCrnyWSkkdloIC+yUrmJ
+	N86FujEay9h021cuw2FXeb944X9C82lsPhpNHBKBCzkUO6NAOgc7nGdAR6h2TzxKutbpSnNf6Rw
+	d1g1hPkHPbQffF3qrA=
+X-Google-Smtp-Source: AGHT+IEKgWeCpweInZoRf8h+ySc8h8Zd/5K3fLo9Iz1IaB8JQ0OeLLaC5QAwreLPpuNZD9vPayfW02ltcKhkV1SLfyI=
+X-Received: by 2002:a17:907:2da5:b0:af2:5a26:b32a with SMTP id
+ a640c23a62f3a-af9401a7898mr948553966b.30.1754305060799; Mon, 04 Aug 2025
+ 03:57:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <751514db-9e03-4cf3-bd3e-124b201bdb94@redhat.com>
+References: <CACTEcX6oXBot1VBApOyKVMVXsAN9BsvQMLa8J0iKpNeB-eLttQ@mail.gmail.com>
+ <642d439ea1be8e48ee5c47fd3921a786452fb931@intel.com> <CACTEcX5Y3PNXNkhnK1dGFe+k3sigOZNpj66KKGAS9XeHqRu35w@mail.gmail.com>
+ <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com>
+In-Reply-To: <0b15e33603a46f6cc7ad7d09a156044f11367169@intel.com>
+From: Andy Mindful <andy.mindful@gmail.com>
+Date: Mon, 4 Aug 2025 13:57:29 +0300
+X-Gm-Features: Ac12FXzOJ88j54Uw6RBDAtH4-5VhCyZG1ALSoSGb8O5tAtMwgrRtuY8do-ly4uo
+Message-ID: <CACTEcX47bUd2tp=LYkQnhK29Js=vLN0JfXL8Aq6mOFBVYumpzQ@mail.gmail.com>
+Subject: Re: [REGRESSION] tty lockup and WWAN loss after hibernate/suspend in
+ 6.8+ on ThinkPad X1 Carbon Gen 10
+To: regressions@lists.linux.dev, pbonzini@redhat.com
+Cc: linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	intel-gfx@lists.freedesktop.org, dri-devel@lists.freedesktop.org, 
+	linux-acpi@vger.kernel.org, rafael@kernel.org, ville.syrjala@linux.intel.com, 
+	tglx@linutronix.de, Christian Brauner <brauner@kernel.org>, 
+	Jani Nikula <jani.nikula@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 30-07-25 16:04:28, David Hildenbrand wrote:
-> On 30.07.25 15:57, Eugen Hristev wrote:
-[...]
-> > Yes, registering after is also an option. Initially this is how I
-> > designed the kmemdump API, I also had in mind to add a flag, but, after
-> > discussing with Thomas Gleixner, he came up with the macro wrapper idea
-> > here:
-> > https://lore.kernel.org/lkml/87ikkzpcup.ffs@tglx/
-> > Do you think we can continue that discussion , or maybe start it here ?
-> 
-> Yeah, I don't like that, but I can see how we ended up here.
-> 
-> I also don't quite like the idea that we must encode here what to include in
-> a dump and what not ...
-> 
-> For the vmcore we construct it at runtime in crash_save_vmcoreinfo_init(),
-> where we e.g., have
-> 
-> VMCOREINFO_STRUCT_SIZE(pglist_data);
-> 
-> Could we similar have some place where we construct what to dump similarly,
-> just not using the current values, but the memory ranges?
+Double-checked bisect, looks like I've have found broken commit:
 
-All those symbols are part of kallsyms, right? Can we just use kallsyms
-infrastructure and a list of symbols to get what we need from there?
+git bisect start
+# status: waiting for both good and bad commits
+# good: [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1] Linux 6.7.11
+git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+# status: waiting for bad commit, 1 good commit known
+# bad: [6613476e225e090cc9aad49be7fa504e290dd33d] Linux 6.8-rc1
+git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
+# skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
+git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+# good: [ba5afb9a84df2e6b26a1b6389b98849cd16ea757] fs: rework
+listmount() implementation
+git bisect good ba5afb9a84df2e6b26a1b6389b98849cd16ea757
+# good: [61da593f4458f25c59f65cfd9ba1bda570db5db7] Merge tag
+'media/v6.8-2' of
+git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+git bisect good 61da593f4458f25c59f65cfd9ba1bda570db5db7
+# bad: [e38f734add21d75d76dbcf7b214f4823131c1bae] Merge tag
+'staging-6.8-rc1' of
+git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
+git bisect bad e38f734add21d75d76dbcf7b214f4823131c1bae
+# bad: [5d197e97fb106c09d3d013be341e5961fd70ec8a] Merge tag
+'hsi-for-6.8' of
+git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi
+git bisect bad 5d197e97fb106c09d3d013be341e5961fd70ec8a
+# good: [1b1934dbbdcf9aa2d507932ff488cec47999cf3f] Merge tag
+'docs-6.8-2' of git://git.lwn.net/linux
+git bisect good 1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+# bad: [8c9244af4dc8680a453e759331f0c93d5bde1898] Merge tag
+'kvm-x86-svm-6.8' of https://github.com/kvm-x86/linux into HEAD
+git bisect bad 8c9244af4dc8680a453e759331f0c93d5bde1898
+# bad: [783288010035e4c250a0b6491a4642cdb8d30548] KVM: x86: add
+missing "depends on KVM"
+git bisect bad 783288010035e4c250a0b6491a4642cdb8d30548
+# bad: [1c3c87d720cbd1ff86dc1bfc6df8ee9adce5879b] Merge tag
+'kvm-x86-selftests-6.7-rcN' of https://github.com/kvm-x86/linux into
+HEAD
+git bisect bad 1c3c87d720cbd1ff86dc1bfc6df8ee9adce5879b
+# good: [8d99e347c097ab3f9fb93d0f88dddf20051d7c88] KVM: selftests:
+Convert lib's mem regions to KVM_SET_USER_MEMORY_REGION2
+git bisect good 8d99e347c097ab3f9fb93d0f88dddf20051d7c88
+# bad: [6c370dc65374db5afbc5c6c64c662f922a2555ad] Merge branch
+'kvm-guestmemfd' into HEAD
+git bisect bad 6c370dc65374db5afbc5c6c64c662f922a2555ad
+# good: [43f623f350ce1c46c53b6b77f4dbe741af8c44f3] KVM: selftests: Add
+x86-only selftest for private memory conversions
+git bisect good 43f623f350ce1c46c53b6b77f4dbe741af8c44f3
+# good: [8a89efd43423cb3005c5e641e846184e292c1465] KVM: selftests: Add
+basic selftest for guest_memfd()
+git bisect good 8a89efd43423cb3005c5e641e846184e292c1465
+# good: [5d74316466f4aabdd2ee1e33b45e4933c9bc3ea1] KVM: selftests: Add
+a memory region subtest to validate invalid flags
+git bisect good 5d74316466f4aabdd2ee1e33b45e4933c9bc3ea1
+# first bad commit: [6c370dc65374db5afbc5c6c64c662f922a2555ad] Merge
+branch 'kvm-guestmemfd' into HEAD
 
-In other words the list of symbols to be completely external to the code
-that is defining them?
--- 
-Michal Hocko
-SUSE Labs
+=D0=BF=D0=BD, 4 =D1=81=D0=B5=D1=80=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 11:15=
+ Jani Nikula <jani.nikula@intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+>
+> On Sun, 03 Aug 2025, Andy Mindful <andy.mindful@gmail.com> wrote:
+> > Here what I have from bisecting, please let me know if it makes things
+> > clearer or not.
+>
+> Doesn't point at graphics, anyway.
+>
+> Cc: Christian.
+>
+>
+> BR,
+> Jani.
+>
+>
+> >
+> > git bisect log
+> > git bisect start
+> > # status: waiting for both good and bad commits
+> > # good: [6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1] Linux 6.7.11
+> > git bisect good 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+> > # status: waiting for bad commit, 1 good commit known
+> > # bad: [6613476e225e090cc9aad49be7fa504e290dd33d] Linux 6.8-rc1
+> > git bisect bad 6613476e225e090cc9aad49be7fa504e290dd33d
+> > # skip: [0dd3ee31125508cd67f7e7172247f05b7fd1753a] Linux 6.7
+> > git bisect skip 0dd3ee31125508cd67f7e7172247f05b7fd1753a
+> > # good: [ba5afb9a84df2e6b26a1b6389b98849cd16ea757] fs: rework
+> > listmount() implementation
+> > git bisect good ba5afb9a84df2e6b26a1b6389b98849cd16ea757
+> > # good: [61da593f4458f25c59f65cfd9ba1bda570db5db7] Merge tag
+> > 'media/v6.8-2' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/mchehab/linux-media
+> > git bisect good 61da593f4458f25c59f65cfd9ba1bda570db5db7
+> > # bad: [e38f734add21d75d76dbcf7b214f4823131c1bae] Merge tag
+> > 'staging-6.8-rc1' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/gregkh/staging
+> > git bisect bad e38f734add21d75d76dbcf7b214f4823131c1bae
+> > # bad: [5d197e97fb106c09d3d013be341e5961fd70ec8a] Merge tag
+> > 'hsi-for-6.8' of
+> > git://git.kernel.org/pub/scm/linux/kernel/git/sre/linux-hsi
+> > git bisect bad 5d197e97fb106c09d3d013be341e5961fd70ec8a
+> > # good: [1b1934dbbdcf9aa2d507932ff488cec47999cf3f] Merge tag
+> > 'docs-6.8-2' of git://git.lwn.net/linux
+> > git bisect good 1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+> > # good: [1b1934dbbdcf9aa2d507932ff488cec47999cf3f] Merge tag
+> > 'docs-6.8-2' of git://git.lwn.net/linux
+> > git bisect good 1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+> > # bad: [8c9244af4dc8680a453e759331f0c93d5bde1898] Merge tag
+> > 'kvm-x86-svm-6.8' of https://github.com/kvm-x86/linux into HEAD
+> > git bisect bad 8c9244af4dc8680a453e759331f0c93d5bde1898
+> > # bad: [783288010035e4c250a0b6491a4642cdb8d30548] KVM: x86: add
+> > missing "depends on KVM"
+> > git bisect bad 783288010035e4c250a0b6491a4642cdb8d30548
+> > # bad: [783288010035e4c250a0b6491a4642cdb8d30548] KVM: x86: add
+> > missing "depends on KVM"
+> > git bisect bad 783288010035e4c250a0b6491a4642cdb8d30548
+> > # bad: [861deac3b092f37b2c5e6871732f3e11486f7082] Linux 6.7-rc7
+> > git bisect bad 861deac3b092f37b2c5e6871732f3e11486f7082
+> >
+> > # being on a 861deac3b092
+> > git bisect bad
+> > The merge base ba5afb9a84df2e6b26a1b6389b98849cd16ea757 is bad.
+> > This means the bug has been fixed between
+> > ba5afb9a84df2e6b26a1b6389b98849cd16ea757 and
+> > [1b1934dbbdcf9aa2d507932ff488cec47999cf3f
+> > 61da593f4458f25c59f65cfd9ba1bda570db5db7
+> > 6fc5460ed8dd0edf29e7c5cfb1ef9b1aa04208a1
+> > ba5afb9a84df2e6b26a1b6389b98849cd16ea757].
+> >
+> > Thanks.
+> >
+> > =D0=B2=D1=82, 29 =D0=BB=D0=B8=D0=BF. 2025=E2=80=AF=D1=80. =D0=BE 13:20 =
+Jani Nikula <jani.nikula@intel.com> =D0=BF=D0=B8=D1=88=D0=B5:
+> >>
+> >> On Tue, 29 Jul 2025, Andy Mindful <andy.mindful@gmail.com> wrote:
+> >> > Please let me know if any further information or testing is required=
+.
+> >>
+> >> Likely the quickest way to find the root cause is to bisect the issue.
+> >>
+> >>
+> >> BR,
+> >> Jani.
+> >>
+> >> --
+> >> Jani Nikula, Intel
+>
+> --
+> Jani Nikula, Intel
 
