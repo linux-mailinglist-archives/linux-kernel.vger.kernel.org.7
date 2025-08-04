@@ -1,158 +1,162 @@
-Return-Path: <linux-kernel+bounces-755116-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755115-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929A4B1A179
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:33:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9DBEDB1A174
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 14:33:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3EE217C57A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:33:40 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A954117C7FB
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:33:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1643825BEF3;
-	Mon,  4 Aug 2025 12:33:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61D8925A340;
+	Mon,  4 Aug 2025 12:33:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="WqxekJlN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PnDWCO2g"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01BF125A633
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 12:33:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB4B524E4C3;
+	Mon,  4 Aug 2025 12:33:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754310800; cv=none; b=f9JfgIEC/Sku04tNOa2mJc62ejY49h0SuOgiXrbzsWNrz4zDDDNab31DpMCUxCnesNaLglhc1KNtj36WGrACWlf3qm3l37BqX/B/QBrbRSUoZh8POth/j/7AIaVgmc7+F46cxKnee1j8D00BZbZyL03iXf0T0EXSw7ZUgGtzqOU=
+	t=1754310797; cv=none; b=qmxvxcLF7r7X15ZvXX2UKWbpPjPR/6DxGZ5y8Sjrt0MASUFePR2r+ziYsmOaunBn0cTX3guNzUMqILUV8Nwp8SH01TBm40Va+Hb87//y8mzolC2B4YrEOU3HYawLlC9SbqrtvZFwo0pDIUjqfWxMke7789iuolkcBfIi4bePk8M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754310800; c=relaxed/simple;
-	bh=ANVmw6AeR0GHHCK/HKaHO5w+extSI4H+i3GF9Iz3jdY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=RmOE+87QDvRGpDkSRw+RMfi4//N2IisgmTV9ZjBbAKhfsrD8fzi60gSXwxXecLWnxoP5qTBvAHPbmMcvyFYK2Hl6/MBlXujiqjlWDAWDQD98XvmxjI7PXAlm92rnQ0G4qlZzTLK+om83u0jbL8LrcyBFnE8tUA3zic/4nRXDh+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=pass smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=WqxekJlN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 57499VOM009778
-	for <linux-kernel@vger.kernel.org>; Mon, 4 Aug 2025 12:33:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	46HAWgvv2MxgQgdpENwkPzAKGo1621//AEpZFMkCwFU=; b=WqxekJlNtED++Z3q
-	iLHSuYwBGbF7pe7KzYohu6uNqSSJYYbYzafcZWS9UQXLPbpqIRg/Tc7xsa26i3zr
-	MArzxNX5otzPpYwrdZu0CvGzPCra9Nwghji3mVvVBlfxXtXjL+t55zNZT2TrVavr
-	7hkdUuvOfjDPaml7shA/N1BaOvBzIfFD0zB9uKVUHHM37RuJmvR13MOFzPhnGYAT
-	Nhkj8XB1hA09ET1Cs+55oeJA6o01LO0mgWTFqIjSxwbp6wqKOd0N9x11cNoRTrti
-	X/26e3/xsywbzRjx0lUTi51IKv80JSGs9d8/j+7LSu1NLeO0OeDFzQdsUEcaD6Tq
-	oRkp1w==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 489b2a4uyj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 12:33:17 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7e800094c82so9152685a.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 05:33:17 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754310797; x=1754915597;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=46HAWgvv2MxgQgdpENwkPzAKGo1621//AEpZFMkCwFU=;
-        b=mH5Mvm1boINvqzfEGbXpAgEXILovi20AJZEd/1TkInSGvD4GYmmKYkgSSm0yJl9HGr
-         DpCI/vIJPAx5AUT2+3b3i/JqNn2sVGK/pG0QH4tDNBivQ8MQNvSIfWPUkAqdTnwpqyxZ
-         z3KE2KYVrS9Kxk2TmEp1OPIjYva6/cZn4kdLJBzcLlFVM6lhtLuI9suZfnAiKAmhl4yS
-         ueZPXsP8db/lXO5FQ77Jp1OqNYaHRY8+G0j85jdqFNvg/d9AJOwZP5d9rCI/L0vdqDVo
-         AmnLmVSyCl2RisMEfUumAfvO9VkET760xTscLJrhZSBKMc3fCmZe611JPUEhOZra8kD0
-         JgvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWMrg5c/Mwa0MRIeSy8pBDUA30wVXQ8QMrpZIbWuSH3QWpVY+1m0j1s8EHcleAquNRNgc9ftX4AAGZTP7k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymnWBle5ylNrvj5HgFElgi6oVYPSmZD5YTGQSQjMbFhYzb2U/D
-	Dmv2RVTLetnJ8udT5PDNCPXFLAN3tjvHfvddJJUfFYabOjEGTW5RUVTaUkT+foim5rfTgBdb5lD
-	VT/6fHbkywwmp8boMvuOIBSJX1Mnu9cmEZdbm4IsARtesoPgztzptxLetZY7GCVDaYWI=
-X-Gm-Gg: ASbGncu5GUWK48IAFD51tD70yj4jqR8YecFU2Py1W+PuMDSxc68NxrCam+1pQdXYr7M
-	Rwp5/5hk9slbdv0uKw/vKLlHaWLjZRP3D0y0ypuPLgxc0b/ijKbiyK9OFrAB3M+xq+FVx1+gM4+
-	YSVKv0Bai87LzMWnMlgx2hDVjP9sr9KNEHcrPnFVWJurYO/JoetP320XU0q3olbBx7RwuWBsJ3N
-	6kJm4AspmxwmgSvI97HxTmFJlSWoxptmQ5N+6piZgmaz+WkA7x2LPVO4s7zB1lsvW7uYHmzP4tR
-	TFmJYJG5vqZBQMktFX0+ns6UPa0EapCHczkvhynyobVDxqW1EutkYMPwxcCn2P0OG9L7Slw+ecc
-	ZqHHYXc2kTYsxNVrorw==
-X-Received: by 2002:a05:620a:6087:b0:7e6:9e1a:1d with SMTP id af79cd13be357-7e69e1a0795mr468467085a.0.1754310796930;
-        Mon, 04 Aug 2025 05:33:16 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEIA4r05fZXfrH3ID5bH6u1l2Cc6ps0sG9WuleJWFvPFQHdK+8Dza/BZE8ttrEeY9KjyY/9Qg==
-X-Received: by 2002:a05:620a:6087:b0:7e6:9e1a:1d with SMTP id af79cd13be357-7e69e1a0795mr468464085a.0.1754310796438;
-        Mon, 04 Aug 2025 05:33:16 -0700 (PDT)
-Received: from [192.168.43.16] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af919e96050sm731035466b.0.2025.08.04.05.33.13
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Mon, 04 Aug 2025 05:33:15 -0700 (PDT)
-Message-ID: <4890c832-3b78-4294-aaba-b62735f7934e@oss.qualcomm.com>
-Date: Mon, 4 Aug 2025 14:33:12 +0200
+	s=arc-20240116; t=1754310797; c=relaxed/simple;
+	bh=HFdiepAhYZGaIJYjhN24/8vbIETT0vL1Ber9jx+RMzc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Yx4qbpexvFFI6kM4hgWXFivN6JSScGX/m5dj3Rsdh3sHLR43oeLdf8m0RiQpCgTIzQwOBzb01QaHX1/i7jdjceTKI/SDdvaM/j7xnTvRU3SNZzKkEJdPL+MWaGoaEflh9MLNHeoCb2DxbfNz35jU9eflyPqd4P0h9kzpJJELJcQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PnDWCO2g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 52A8CC4CEE7;
+	Mon,  4 Aug 2025 12:33:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754310797;
+	bh=HFdiepAhYZGaIJYjhN24/8vbIETT0vL1Ber9jx+RMzc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PnDWCO2gcHKfRelYIeYR7Nm96AaWAPlC5dw7cgMGjH+RLa4/xTlvOWNo8mLHyRGno
+	 s+ofiOr4npgG81bd2jQwPxDt3ArlPM9be32/et6DXRtUS9xsDYyjcrJhTZdqFj2ntn
+	 S38bMDOhjbvvKnXW5zFrc9zbFLavr9p+EDg6CcZXWnZ+CpbcLKMT6VEkBtVw8TWA7D
+	 3QsLtiYKs0ksj7yOHBGua/v78frNKI3D+ridwKUZTl3A92QtQdrUZMhjaYed6OiWua
+	 EUFyGu1i7H9m/Dajg/qv4E/4wf18uNXRAknDs4NCQRki9IEnVmJpIDhrOLTkjg1fc+
+	 NyxI6cFq03/Xg==
+Date: Mon, 4 Aug 2025 14:33:13 +0200
+From: Christian Brauner <brauner@kernel.org>
+To: Thomas =?utf-8?Q?Wei=C3=9Fschuh?= <thomas.weissschuh@linutronix.de>
+Cc: Alexander Viro <viro@zeniv.linux.org.uk>, Jan Kara <jack@suse.cz>, 
+	Sargun Dhillon <sargun@sargun.me>, Kees Cook <kees@kernel.org>, linux-fsdevel@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH v2] fs: always return zero on success from replace_fd()
+Message-ID: <20250804-rundum-anwalt-10c3b9c11f8e@brauner>
+References: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 4/4] arm64: dts: qcom: ipq5424: Enable cpufreq
-To: Varadarajan Narayanan <quic_varada@quicinc.com>, andersson@kernel.org,
-        mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org,
-        krzk+dt@kernel.org, conor+dt@kernel.org, konradybcio@kernel.org,
-        rafael@kernel.org, viresh.kumar@linaro.org, ilia.lin@kernel.org,
-        djakov@kernel.org, linux-arm-msm@vger.kernel.org,
-        linux-clk@vger.kernel.org, devicetree@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org
-Cc: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-References: <20250804112041.845135-1-quic_varada@quicinc.com>
- <20250804112041.845135-5-quic_varada@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20250804112041.845135-5-quic_varada@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Authority-Analysis: v=2.4 cv=OKwn3TaB c=1 sm=1 tr=0 ts=6890a88d cx=c_pps
- a=qKBjSQ1v91RyAK45QCPf5w==:117 a=FpWmc02/iXfjRdCD7H54yg==:17
- a=IkcTkHD0fZMA:10 a=2OwXVqhp2XgA:10 a=COk6AnOGAAAA:8 a=vuI4R3Do2uEHNfh2jzQA:9
- a=QEXdDO2ut3YA:10 a=NFOGd7dJGGMPyQGDc5-O:22 a=TjNXssC_j7lpFel5tvFf:22
-X-Proofpoint-ORIG-GUID: 06Ha40mkUbPba7Gdr3rcQjhV_iWMjM5X
-X-Proofpoint-Spam-Details-Enc: AW1haW4tMjUwODA0MDA2OCBTYWx0ZWRfX4uAygf2p5VXv
- NEBFNqND9PKmDK3BHJ+4EW++S0+P3uy35faRpSrrkEtXArI03YOm06AeCXQ1ru7rYbaw5hWehRK
- hbSR5N+TNn4xl5qkpuM3ssE021kXovkptefhXrzSO+Wo9lyb7DMmAUzg8gC6mnZfXZdUANpOiRv
- 7uuRxVCTjEWib8dEBRYE2TmzVXzCxxDQL22GYjtKDjhujUUOAfQbe5u6kyTiDE+79npdoBsmdKt
- d+txVQzZLp7suFfDpwlhYp1hAaGd6abVsTKxhivW3HvCxoXpHvEckKr4galgkJNLRRHA7zg/+zu
- ZZVFGPFOWB3+8q2l+E4RJ2OpzpGoskB63fE21BbTkvaGOYti1494bP/LYPmQEFu9+jlfdQUkfYj
- LtuEadI9m4MKAg1K87Ebcqde7G5RwdZp2Iz5a5XhCt5Fp+LheAru+8DLTc8Xf4zcjBC71yft
-X-Proofpoint-GUID: 06Ha40mkUbPba7Gdr3rcQjhV_iWMjM5X
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1099,Hydra:6.1.9,FMLib:17.12.80.40
- definitions=2025-08-04_05,2025-08-04_01,2025-03-28_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0
- bulkscore=0 spamscore=0 suspectscore=0 mlxlogscore=999 clxscore=1015
- phishscore=0 impostorscore=0 priorityscore=1501 adultscore=0 mlxscore=0
- malwarescore=0 lowpriorityscore=0 classifier=spam authscore=0 authtc=n/a
- authcc= route=outbound adjust=0 reason=mlx scancount=1
- engine=8.19.0-2505280000 definitions=main-2508040068
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20250804-fix-receive_fd_replace-v2-1-ecb28c7b9129@linutronix.de>
 
-On 8/4/25 1:20 PM, Varadarajan Narayanan wrote:
-> From: Sricharan Ramabadhran <quic_srichara@quicinc.com>
+On Mon, Aug 04, 2025 at 10:40:17AM +0200, Thomas Weißschuh wrote:
+> replace_fd() returns the number of the new file descriptor through the
+> return value of do_dup2(). However its callers never care about the
+> specific number. In fact the caller in receive_fd_replace() treats any
+
+To be pedantic as stated this isn't true: While they don't care about it
+in their error handling they very much care about what specific file
+descriptor number is used. Try and assign unexpected fd numbers for
+coredumping and see what CVEs you can get out of it...
+
+I'll take the patch but I'll amend it to just use a guard:
+
+diff --git a/fs/file.c b/fs/file.c
+index 6d2275c3be9c..858a55dbd5d8 100644
+--- a/fs/file.c
++++ b/fs/file.c
+@@ -1318,7 +1318,7 @@ __releases(&files->file_lock)
+ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+ {
+        int err;
+-       struct files_struct *files = current->files;
++       struct files_struct *files;
+
+        if (!file)
+                return close_fd(fd);
+@@ -1326,15 +1326,17 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+        if (fd >= rlimit(RLIMIT_NOFILE))
+                return -EBADF;
+
+-       spin_lock(&files->file_lock);
++       files = current->files;
++
++       guard(spinlock)(&files->file_lock);
+        err = expand_files(files, fd);
+        if (unlikely(err < 0))
+-               goto out_unlock;
+-       return do_dup2(files, file, fd, flags);
++               return err;
++       err = do_dup2(files, file, fd, flags);
++       if (err < 0)
++               return err;
+
+-out_unlock:
+-       spin_unlock(&files->file_lock);
+-       return err;
++       return 0;
+ }
+
+ /**
+
+scoped_guard() works too but bloats the patch.
+
+> non-zero return value as an error and therefore never calls
+> __receive_sock() for most file descriptors, which is a bug.
 > 
-> Add the qfprom, cpu clocks, A53 PLL and cpu-opp-table required for
-> CPU clock scaling.
+> To fix the bug in receive_fd_replace() and to avoid the same issue
+> happening in future callers, signal success through a plain zero.
 > 
-> Signed-off-by: Sricharan Ramabadhran <quic_srichara@quicinc.com>
-> [ Added interconnect related entries, fix dt-bindings errors ]
-> Signed-off-by: Varadarajan Narayanan <quic_varada@quicinc.com>
+> Suggested-by: Al Viro <viro@zeniv.linux.org.uk>
+> Link: https://lore.kernel.org/lkml/20250801220215.GS222315@ZenIV/
+> Fixes: 173817151b15 ("fs: Expand __receive_fd() to accept existing fd")
+> Fixes: 42eb0d54c08a ("fs: split receive_fd_replace from __receive_fd")
+> Cc: stable@vger.kernel.org
+> Signed-off-by: Thomas Weißschuh <thomas.weissschuh@linutronix.de>
 > ---
-
-[...]
-
-> +	cpu_opp_table: opp-table-cpu {
-> +		compatible = "operating-points-v2-kryo-cpu";
-> +		opp-shared;
-> +		nvmem-cells = <&cpu_speed_bin>;
-> +
-> +		opp-816000000 {
-> +			opp-hz = /bits/ 64 <816000000>;
-> +			opp-microvolt = <1>;
-
-I just noticed this.. I don't think we have CPUs this efficient just yet
-
-Do we know some real values for these?
-
-Konrad
+> Changes in v2:
+> - Move the fix to replace_fd() (Al)
+> - Link to v1: https://lore.kernel.org/r/20250801-fix-receive_fd_replace-v1-1-d46d600c74d6@linutronix.de
+> ---
+> Untested, it stuck out while reading the code.
+> ---
+>  fs/file.c | 5 ++++-
+>  1 file changed, 4 insertions(+), 1 deletion(-)
+> 
+> diff --git a/fs/file.c b/fs/file.c
+> index 6d2275c3be9c6967d16c75d1b6521f9b58980926..f8a271265913951d755a5db559938d589219c4f2 100644
+> --- a/fs/file.c
+> +++ b/fs/file.c
+> @@ -1330,7 +1330,10 @@ int replace_fd(unsigned fd, struct file *file, unsigned flags)
+>  	err = expand_files(files, fd);
+>  	if (unlikely(err < 0))
+>  		goto out_unlock;
+> -	return do_dup2(files, file, fd, flags);
+> +	err = do_dup2(files, file, fd, flags);
+> +	if (err < 0)
+> +		goto out_unlock;
+> +	err = 0;
+>  
+>  out_unlock:
+>  	spin_unlock(&files->file_lock);
+> 
+> ---
+> base-commit: d2eedaa3909be9102d648a4a0a50ccf64f96c54f
+> change-id: 20250801-fix-receive_fd_replace-7fdd5ce6532d
+> 
+> Best regards,
+> -- 
+> Thomas Weißschuh <thomas.weissschuh@linutronix.de>
+> 
 
