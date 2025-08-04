@@ -1,145 +1,170 @@
-Return-Path: <linux-kernel+bounces-755765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFBA9B1AB7E
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:39:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 00BA8B1AB7F
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:40:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 36FFB18821D7
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:39:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4665621BA1
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AF9628FFEE;
-	Mon,  4 Aug 2025 23:39:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b="jDZ96kNc"
-Received: from perceval.ideasonboard.com (perceval.ideasonboard.com [213.167.242.64])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E074C1F4CBE;
-	Mon,  4 Aug 2025 23:39:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.167.242.64
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EBD28D849;
+	Mon,  4 Aug 2025 23:40:51 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 712E323C50A
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:40:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754350767; cv=none; b=muZWB+1FEKR4xZcfr7LDMw/Cpj8ABwDK/DeJ/VYCzivAK0/YW7IBkBiMezA9FTaaPL2BScXi0NyVehZKrf0Axo+mXUQHoySzHHVRTQ/5DTUIdRZ1ZESxnLV6/D/XHaO6b5Sx1MUZKUO6E2cDDKYTacP0Tx/3n1MYlaKn8NNUoGs=
+	t=1754350851; cv=none; b=QqJbrEIxogOdngZ2n69RrzEvZIRN0AET+aOle/unDdg9Mgg24Ddus7NPjv5CaRwnQXsnyIPp6JDtG520An6B/vNgYB+RfbgGxrf6ij/gOS8QssGHRb/i7TTptoJa95URvNoybEhuH4EvlKcZSj7enjU2YoRwWw+sXO7DWVaYeME=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754350767; c=relaxed/simple;
-	bh=Y21wIn+9YS6YuHlvV176AwuvuiJ2FJWeFTpt1xcUhkg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Mg2uC8PuGAzBZ48bBG0C8R37B9BZbGzC/lOvPjoVTZ7o3Ks/2ZlZOz3C7tlM3JtGpn2rD/db3WCBqrgEd2ahQNkkag4lDyt9NNkwkhFb1vDrqwaTWocqscWW8c851y+377Wxh/ol46MWKtPExrhcueLUU/KRkh3h5HxhvCUTYRU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com; spf=pass smtp.mailfrom=ideasonboard.com; dkim=pass (1024-bit key) header.d=ideasonboard.com header.i=@ideasonboard.com header.b=jDZ96kNc; arc=none smtp.client-ip=213.167.242.64
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ideasonboard.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ideasonboard.com
-Received: from pendragon.ideasonboard.com (81-175-209-231.bb.dnainternet.fi [81.175.209.231])
-	by perceval.ideasonboard.com (Postfix) with UTF8SMTPSA id 6739032FD;
-	Tue,  5 Aug 2025 01:38:33 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=ideasonboard.com;
-	s=mail; t=1754350713;
-	bh=Y21wIn+9YS6YuHlvV176AwuvuiJ2FJWeFTpt1xcUhkg=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jDZ96kNcCEGVlMVZfraOUZ/AKpFJ06ySWrGKEkivfVi6CX9DghyUTk1fUCARTxfnG
-	 +ZaYc2h73Tv91GkmAp0COo2MnQi6rE3f45ijUJMrc6Niqis0KhvPjKN/aiYttBPf9n
-	 MrCopIIjy9kpXQyLiuMlwSGNhvGV1CE5/LpL//hQ=
-Date: Tue, 5 Aug 2025 02:39:06 +0300
-From: Laurent Pinchart <laurent.pinchart@ideasonboard.com>
-To: Sasha Levin <sashal@kernel.org>
-Cc: dan.j.williams@intel.com, Steven Rostedt <rostedt@goodmis.org>,
-	Jiri Kosina <kosina@gmail.com>, Michal Hocko <mhocko@suse.com>,
-	David Hildenbrand <david@redhat.com>,
-	Greg KH <gregkh@linuxfoundation.org>,
-	Vlastimil Babka <vbabka@suse.cz>, corbet@lwn.net,
-	linux-doc@vger.kernel.org, workflows@vger.kernel.org,
-	josh@joshtriplett.org, kees@kernel.org,
-	konstantin@linuxfoundation.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 0/4] Add agent coding assistant configuration to Linux
- kernel
-Message-ID: <20250804233906.GA12087@pendragon.ideasonboard.com>
-References: <9afd157a-296d-4f4d-9d65-07b89ab3906f@redhat.com>
- <2025072832-enrich-pampers-54b9@gregkh>
- <1bd04ce1-87c0-4e23-b155-84f7235f6072@redhat.com>
- <aId1oZn_KFaa0R_Q@lappy>
- <aJB8CdXqCEuitnQj@tiehlicka>
- <aJC0ssMzX0KWnTkG@lappy>
- <alpine.LRH.2.00.2508050000580.22517@gjva.wvxbf.pm>
- <20250804181447.0c518b14@gandalf.local.home>
- <689139fe23f49_55f0910076@dwillia2-xfh.jf.intel.com.notmuch>
- <aJFCoewqTIXlhnJk@lappy>
+	s=arc-20240116; t=1754350851; c=relaxed/simple;
+	bh=RrBJt+AVeLPiAADHpNjz8/IMst9IHat9YZhQfzdTQo0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QOK2Xa1hia4yGuh5Z6ESJpvLFMtVlBWO5Nr0R8qh58dbMF76YNiaxygzHEFQBrxjS/rzkR7rHQUfg4M5hDYDqJq1/CDw0hhB1V+h85n32n7M5uAPQw/M1bslaC5kX5MoghR8v4kBpkh2bDgFt4Ch4ql9KerWzZlJL2v8Dm4mEe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 968431E4D;
+	Mon,  4 Aug 2025 16:40:39 -0700 (PDT)
+Received: from [10.163.95.192] (unknown [10.163.95.192])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 3C4F13F5A1;
+	Mon,  4 Aug 2025 16:40:42 -0700 (PDT)
+Message-ID: <261de805-2914-4172-85b4-69b5a5b1edf6@arm.com>
+Date: Tue, 5 Aug 2025 05:10:39 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <aJFCoewqTIXlhnJk@lappy>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: arm64: ptdump: Fix exec attribute printing
+To: Mark Rutland <mark.rutland@arm.com>,
+ Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+Cc: linux-arm-kernel@lists.infradead.org, kvmarm@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, Joey Gouly <joey.gouly@arm.com>,
+ Sebastian Ene <sebastianene@google.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>, Zenghui Yu
+ <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
+ Will Deacon <will@kernel.org>
+References: <20250802104021.3076621-1-r09922117@csie.ntu.edu.tw>
+ <d72b7928-8646-4616-a8f0-96b9d9bbaf09@arm.com>
+ <z2hmwwmtgbrio2wv3sj2pc4zhxdjioorlhnm45o2arcsjahjni@xod435q26jqq>
+ <aJDQHMbiNVToTbum@J2N7QTR9R3>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <aJDQHMbiNVToTbum@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Mon, Aug 04, 2025 at 07:30:41PM -0400, Sasha Levin wrote:
-> On Mon, Aug 04, 2025 at 03:53:50PM -0700, dan.j.williams@intel.com wrote:
-> >Steven Rostedt wrote:
-> >> On Tue, 5 Aug 2025 00:03:29 +0200 (CEST)
-> >> Jiri Kosina <kosina@gmail.com> wrote:
-> >>
-> >> > Al made a very important point somewhere earlier in this thread.
-> >> >
-> >> > The most important (from the code quality POV) thing is -- is there a
-> >> > person that understands the patch enough to be able to answer questions
-> >> > (coming from some other human -- most likely reviewer/maintainer)?
-> >> >
-> >> > That's not something that'd be reflected in DCO, but it's very important
-> >> > fact for the maintainer's decision process.
-> >>
-> >> Perhaps this is what needs to be explicitly stated in the SubmittingPatches
-> >> document.
-> >>
-> >> I know we can't change the DCO, but could we add something about our policy
-> >> is that if you submit code, you certify that you understand said code, even
-> >> if (especially) it was produced by AI?
-> >
-> >It is already the case that human developed code is not always
-> >understood by the submitter (i.e. bugs, or see occasions of "no
-> >functional changes intended" commits referenced by "Fixes:"). It is also
-> >already the case that the speed at which code is applied has a component
-> >of maintainer's trust in the submitter to stick around and address
-> >issues or work with the community.
-> >
-> >AI allows production of plausible code in higher volumes, but it does
-> >not fundamentally change the existing dynamic of development velocity vs
-> >trust.
-> 
-> Right: I think that the issue Jiri brought up is a human problem, not a
-> tooling problem.
-> 
-> We can try and tackle a symptom, but it's a losing war.
-> 
-> >So an expectation that is worth clarifying is that mere appearance of
-> >technical correctness is not sufficient to move a proposal forward. The
-> >details of what constitutes sufficient trust are subsystem, maintainer,
-> >or even per-function specific. This is a nuanced expectation that human
-> >submitters struggle, let alone AI.
-> >
-> >"Be prepared to declare a confidence interval in every detail of a patch
-> >series, especially any AI generated pieces."
-> 
-> Something along the lines of a Social Credit system for the humans
-> behind the keyboard? :)
-> 
-> Do we want to get there? Do we not?
 
-Don't we have one already ? I'm pretty sure every maintainer keeps a
-mental list of trust scores, and uses them when reviewing patches.
-Patch submitter who doesn't perform due diligence usually lose points,
-especially if the offences occur repeatedly (newcomers often get a few
-free passes thanks to their inexperience and the benefit of the doubt,
-at least with most maintainers). 
 
-LLMs increase the scale of the problem, and also makes it easier to fake
-due diligence. I believe it's important to make it very clear to
-contributors that they will suffer consequences if they don't hold up to
-the standards we expect.
+On 04/08/25 8:52 PM, Mark Rutland wrote:
+> On Mon, Aug 04, 2025 at 08:41:35PM +0800, Wei-Lin Chang wrote:
+>> Hi Anshuman,
+>>
+>> On Sun, Aug 03, 2025 at 07:33:04PM +0530, Anshuman Khandual wrote:
+>>>
+>>>
+>>> On 02/08/25 4:10 PM, Wei-Lin Chang wrote:
+>>>> Currently the guest stage-2 page table dump has the executable attribute
+>>>> printed in reverse, showing "X" for a non-executable region and showing
+>>>> " " for an executable one. This is caused by misjudgement of which
+>>>> string gets printed for the executable and non-executable case. Fix it
+>>>> by swapping the two strings.
+>>>>
+>>>> Signed-off-by: Wei-Lin Chang <r09922117@csie.ntu.edu.tw>
+>>>> ---
+>>>>  arch/arm64/kvm/ptdump.c | 4 ++--
+>>>>  1 file changed, 2 insertions(+), 2 deletions(-)
+>>>>
+>>>> diff --git a/arch/arm64/kvm/ptdump.c b/arch/arm64/kvm/ptdump.c
+>>>> index 098416d7e5c25..99fc13f1c11fb 100644
+>>>> --- a/arch/arm64/kvm/ptdump.c
+>>>> +++ b/arch/arm64/kvm/ptdump.c
+>>>> @@ -44,8 +44,8 @@ static const struct ptdump_prot_bits stage2_pte_bits[] = {
+>>>>  	}, {
+>>>>  		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID,
+>>>>  		.val	= PTE_VALID,
+>>>> -		.set	= " ",
+>>>> -		.clear	= "X",
+>>>> +		.set	= "X",
+>>>> +		.clear	= " ",
+>>>>  	}, {
+> 
+> I think the big problem here is that we've included the 'PTE_VALID' bit
+> in the mask. We don't bother with that for the Stage-1 ptdump code, e.g.
+> 
+>         {
+>                 .mask   = PTE_PXN,
+>                 .val    = PTE_PXN,
+>                 .set    = "NX",
+>                 .clear  = "x ",
+>         },
+> 
+> .... so do we actually need to take the PTE_VALID bit into account here? Do
+> invalid Stage-2 entries have anything we don't want to report?
+> 
+> ... or can we change the Stage-2 ptdump code to have:
+> 
+> 	{
+> 		.mask	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
+> 		.val	= KVM_PTE_LEAF_ATTR_HI_S2_XN,
+> 		.set	= "NX",
+> 		.clear	= "x ",
+> 	},
+> 
+> ... and match the Stage-1 code?
+> 
+> Otherwise, maybe we can add a separate valid-only filter.
 
--- 
-Regards,
+Agreed.
 
-Laurent Pinchart
+PTE_VALID should be removed from all these existing filters here
+and then add it back as a separate filter like Stage-1. Ohh, but
+it is already in there. Checking for PTE_VALID along with other
+intended filter masks does not make sense.
+
+> 
+>>>>  		.mask	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+>>>>  		.val	= KVM_PTE_LEAF_ATTR_LO_S2_AF | PTE_VALID,
+>>>
+>>> Is not KVM_PTE_LEAF_ATTR_HI_S2_XN already in the reverse semantics aka
+>>> XN (Execute Never). Hence when KVM_PTE_LEAF_ATTR_HI_S2_XN macro is set
+>>> that means the entry is not executable and vice versa.
+>>
+>> Yes you are correct. However in dump_prot() we have:
+>>
+>> if ((st->current_prot & bits->mask) == bits->val)
+>> 	s = bits->set;
+>> else
+>> 	s = bits->clear;
+>>
+>> Analysis:
+>>
+>> 1. region is executable:
+>>     - st->current_prot == PTE_VALID (ignore other bits)
+>>     - st->current_prot & bits->mask gets PTE_VALID
+>>     - if condition is true (.val is PTE_VALID)
+>>     - prints bits->set
+>>
+>> 2. region is not executable:
+>>     - st->current_prot == KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID
+>>     - st->current_prot & bits->mask gets (KVM_PTE_LEAF_ATTR_HI_S2_XN | PTE_VALID)
+>>     - if condition is false
+>>     - prints bits->clear
+> 
+> As above, this is because the PTE_VALID bit has been placed into the
+> mask, and that's not how the ptdump code was intended to be used.
+> 
+>> Therefore we want .set = "X", and .clear = " ".
+> 
+> That'll work around the problem, but I'm not sure that's the right fix.
+> If nothing else, it's *very* confusing.
+> 
+> Mark.
 
