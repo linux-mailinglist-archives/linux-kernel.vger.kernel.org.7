@@ -1,223 +1,294 @@
-Return-Path: <linux-kernel+bounces-754715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4EEB19B4C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:04:54 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 430C4B19B42
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 94E257A5630
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:03:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60CA1897C75
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 06:03:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D820B22F16E;
-	Mon,  4 Aug 2025 06:04:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3669223DDE;
+	Mon,  4 Aug 2025 06:03:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="rFfZBdH1"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="yEUlfzfx"
+Received: from mail-pf1-f202.google.com (mail-pf1-f202.google.com [209.85.210.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1D750218ACA;
-	Mon,  4 Aug 2025 06:04:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87CB028371
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 06:03:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754287477; cv=none; b=HEV20WTm6GBvANfwqqsgFIZd4prlOgTpcnnm0h4qXhxgVsOqaWaZX7F2VIyhI/v3z+uD+6A4THO6sHry4rKYUDqvUlkF2aGfNMvHIG0ZPhjJmukHKvk6jo++yoIvM0U1lePUxmTao/VLJ8f5zKwuryGRwZoSj6ZtISFkuHu/fwY=
+	t=1754287414; cv=none; b=a93qnVJ1OeCquLkrZuJDUVgqBBc5Qvr+aDiWrDIj+NCnLXWHCnJwAAGBj4xUP7NXdWTcpGbGj3LQfTEremcH9fcrj3d+oy74h8ojXNUVa3kVP2o+mXFEgfkY2SNt0zvSiZBRP1oMo7qRu6Pr8bIlGloHT/6R8UB92xImxTL43KM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754287477; c=relaxed/simple;
-	bh=6Vrhh4CTXewypPsMkw99R7S67HxgozZhczdmjvE6+sA=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=WbxCzmyPfjaxCIwxdfuT9opZF/d8KqdZ7sfv4Axuu58Yr9FUuALKSs8Ulfq1u2QXvDWlzCn2BH8xlKMSFLYnJe8zYA50jRL1krjN6Mj9jTacP6HRARDVQm3WLnwl53sF0XmePgYnLgcG+YwCT2DmxTXgtodIPnmV/GXFw4+nag4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=rFfZBdH1; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [192.168.7.202] ([71.202.166.45])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 57463Gf1685727
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Sun, 3 Aug 2025 23:03:17 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 57463Gf1685727
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2025072201; t=1754287400;
-	bh=1UvSEgLS9kHk3uMzku7DKxRmuJ3xE+/qZAFiYECcR3c=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=rFfZBdH1011mTnLueI/EDslLu0GpRaP2Tf/VuxRLEa/LR3j2uQkmtB94yYKQiTIe3
-	 lLnxhbqiK01Pzki3pIoKzKhddPoP8rMnSsX3nfnbuL57st5BBapBV6Lr3hJbBCZ/Ft
-	 vkM9vm6+wMGu3f0/nN8yzKlN2iNieRT6iLObqQD4dR5Vg+xyWLxrTdWp6rvBe1Jrq4
-	 zNmEoaGQx3rEYto24d4FxywDIU9lcSW1W1UCRyLIsjAksWRAJPcvlUtIIsuAyPBVL/
-	 jUz75YkoTxJ9TlmeHXMeJzeDsmK+pFTlVvU9OAZi5eVpCwLKkooioOMmu3HAZnd6/A
-	 AvadKtJCljKgQ==
-Message-ID: <5ca5d98e-6a3c-48fc-8aa2-7db0980543e6@zytor.com>
-Date: Sun, 3 Aug 2025 23:03:16 -0700
+	s=arc-20240116; t=1754287414; c=relaxed/simple;
+	bh=oAGSGnDEDrQrlF0aTsGdsgHBJ9fqdeBOD+35tuZvaPI=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=FJb/rFPLwkJx8IqWVXlRFHnP3lnaZpCGDDdNgTpGCVI2NSooXvSsyHl0F/stH7GGtubAgrMzUvYrpn7mJaijwHfpPNLQSm9I5yxgk65kSb6ffrPvjCIWbu7eiLQnMz802SYQzLjjFe0JtH20d2nVq+6vQ6MX0RvH/pbT9Xx4nbI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=yEUlfzfx; arc=none smtp.client-ip=209.85.210.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--chullee.bounces.google.com
+Received: by mail-pf1-f202.google.com with SMTP id d2e1a72fcca58-76bf0093461so2722690b3a.3
+        for <linux-kernel@vger.kernel.org>; Sun, 03 Aug 2025 23:03:32 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1754287412; x=1754892212; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=elcErCyGxPWsZdvaiFeyMC/Tyr7wc6dFQorNHNgelwg=;
+        b=yEUlfzfxO1UeqqiNpCBwVGQsMhyy9r+bZgKTlp0SsV8lwCtJbq0GE4dQD7UFPboq8A
+         Z8u0dwLyefhUbMMpVllAoFz7Q+b2Ir7baGhuk2dTzI/AqKCsf/yc8+2pAqNW3H6mDuYJ
+         r2N1qP9fE2UatjIg+vHp3taWeXun4hzoAr8jstqW5VyK4HLoHFODOUvxEHnr1qUd7IhO
+         Jpgac0MmPwogu34RAaHd9LHuPZY5WakS/WeGeyC3VV3BgJ7hvj+XpSbqoOHz+xrvyl74
+         lD1t9NrqtHGy5Ezt9Q+6EJrwTp5estcZFbTx3plZKMxC3Ichv4TRMk7Io52w7hyh+Ctb
+         9QyQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754287412; x=1754892212;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=elcErCyGxPWsZdvaiFeyMC/Tyr7wc6dFQorNHNgelwg=;
+        b=K/UMOWUocNxh/4X/5gchbjGuuSep1m+aQyiRFVrnQYBu2DprN5vSccnSyWa/q4QDt3
+         OkgssFTPK4wLnnpNEx4orDJMTyliyBRV3p/AEWlf4EqAAUP4vWW3isvctcpKiyCflBv9
+         5Od10rcmJ+mB5C+NON9J40n1IZT6RDbP1TOCSl8OJZ1i7//p9m23mt18X/ffDwiijzr6
+         ibQhGoc2Th2R9qvkW0XvlcI/RdqrPXHBHT9ywM+uM16hww1vU4OYnoBNVi+ehfTcVMaf
+         iEs81FtsuepxTyvSOIKCafMfsEVD/2eKpwbyxw62RvWXDxH18SpHoYzwVTqG1348MZ30
+         Vzqw==
+X-Forwarded-Encrypted: i=1; AJvYcCXFZ0DuwQh9VemyWP+mSrBFxAqcs0LXUeuZmRDNAd/75YA4R/rKtgtvsc2XtfCkvv8T+R9783Mpw4y/48s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwSAD4/CPnnMUggtfw0ZNNFn6NeS8v69q7hfYX4y0zWBxz7sO0D
+	uUC+65aO1EeG4+UvMdA0/MrzTAVfVpLMcoQZYG2b2Zb7KP9OMCQCtRoQ+y9RDeufZ/3ahV6Cxx+
+	akwvlKNQsAQ==
+X-Google-Smtp-Source: AGHT+IHMBbHQiqqtxuRJj5ec5P70FJZ0/coPwj7FXCqLACpqnSQ89lwhXMyLuSH0E1eTQ4YaofJ7abWXCnGI
+X-Received: from pfbg17.prod.google.com ([2002:a05:6a00:ae11:b0:76b:f876:772e])
+ (user=chullee job=prod-delivery.src-stubby-dispatcher) by 2002:a05:6300:210c:b0:21f:5598:4c2c
+ with SMTP id adf61e73a8af0-23df8fa5edemr12542666637.13.1754287411768; Sun, 03
+ Aug 2025 23:03:31 -0700 (PDT)
+Date: Sun,  3 Aug 2025 23:03:26 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5A 20/23] KVM: nVMX: Add FRED VMCS fields to nested VMX
- context handling
-From: Xin Li <xin@zytor.com>
-To: linux-kernel@vger.kernel.org, kvm@vger.kernel.org,
-        linux-doc@vger.kernel.org
-Cc: pbonzini@redhat.com, seanjc@google.com, corbet@lwn.net, tglx@linutronix.de,
-        mingo@redhat.com, bp@alien8.de, dave.hansen@linux.intel.com,
-        x86@kernel.org, hpa@zytor.com, luto@kernel.org, peterz@infradead.org,
-        andrew.cooper3@citrix.com, chao.gao@intel.com, hch@infradead.org
-References: <aIHXngnkcJIY0TUw@intel.com>
- <20250802171740.3677712-1-xin@zytor.com>
- <aad3d385-5743-4f81-992a-22d1701c3611@zytor.com>
-Content-Language: en-US
-Autocrypt: addr=xin@zytor.com; keydata=
- xsDNBGUPz1cBDACS/9yOJGojBFPxFt0OfTWuMl0uSgpwk37uRrFPTTLw4BaxhlFL0bjs6q+0
- 2OfG34R+a0ZCuj5c9vggUMoOLdDyA7yPVAJU0OX6lqpg6z/kyQg3t4jvajG6aCgwSDx5Kzg5
- Rj3AXl8k2wb0jdqRB4RvaOPFiHNGgXCs5Pkux/qr0laeFIpzMKMootGa4kfURgPhRzUaM1vy
- bsMsL8vpJtGUmitrSqe5dVNBH00whLtPFM7IbzKURPUOkRRiusFAsw0a1ztCgoFczq6VfAVu
- raTye0L/VXwZd+aGi401V2tLsAHxxckRi9p3mc0jExPc60joK+aZPy6amwSCy5kAJ/AboYtY
- VmKIGKx1yx8POy6m+1lZ8C0q9b8eJ8kWPAR78PgT37FQWKYS1uAroG2wLdK7FiIEpPhCD+zH
- wlslo2ETbdKjrLIPNehQCOWrT32k8vFNEMLP5G/mmjfNj5sEf3IOKgMTMVl9AFjsINLHcxEQ
- 6T8nGbX/n3msP6A36FDfdSEAEQEAAc0WWGluIExpIDx4aW5Aenl0b3IuY29tPsLBDQQTAQgA
- NxYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89XBQkFo5qAAhsDBAsJCAcFFQgJCgsFFgID
- AQAACgkQa70OVx2uN1HUpgv/cM2fsFCQodLArMTX5nt9yqAWgA5t1srri6EgS8W3F+3Kitge
- tYTBKu6j5BXuXaX3vyfCm+zajDJN77JHuYnpcKKr13VcZi1Swv6Jx1u0II8DOmoDYLb1Q2ZW
- v83W55fOWJ2g72x/UjVJBQ0sVjAngazU3ckc0TeNQlkcpSVGa/qBIHLfZraWtdrNAQT4A1fa
- sWGuJrChBFhtKbYXbUCu9AoYmmbQnsx2EWoJy3h7OjtfFapJbPZql+no5AJ3Mk9eE5oWyLH+
- QWqtOeJM7kKvn/dBudokFSNhDUw06e7EoVPSJyUIMbYtUO7g2+Atu44G/EPP0yV0J4lRO6EA
- wYRXff7+I1jIWEHpj5EFVYO6SmBg7zF2illHEW31JAPtdDLDHYcZDfS41caEKOQIPsdzQkaQ
- oW2hchcjcMPAfyhhRzUpVHLPxLCetP8vrVhTvnaZUo0xaVYb3+wjP+D5j/3+hwblu2agPsaE
- vgVbZ8Fx3TUxUPCAdr/p73DGg57oHjgezsDNBGUPz1gBDAD4Mg7hMFRQqlzotcNSxatlAQNL
- MadLfUTFz8wUUa21LPLrHBkUwm8RujehJrzcVbPYwPXIO0uyL/F///CogMNx7Iwo6by43KOy
- g89wVFhyy237EY76j1lVfLzcMYmjBoTH95fJC/lVb5Whxil6KjSN/R/y3jfG1dPXfwAuZ/4N
- cMoOslWkfZKJeEut5aZTRepKKF54T5r49H9F7OFLyxrC/uI9UDttWqMxcWyCkHh0v1Di8176
- jjYRNTrGEfYfGxSp+3jYL3PoNceIMkqM9haXjjGl0W1B4BidK1LVYBNov0rTEzyr0a1riUrp
- Qk+6z/LHxCM9lFFXnqH7KWeToTOPQebD2B/Ah5CZlft41i8L6LOF/LCuDBuYlu/fI2nuCc8d
- m4wwtkou1Y/kIwbEsE/6RQwRXUZhzO6llfoN96Fczr/RwvPIK5SVMixqWq4QGFAyK0m/1ap4
- bhIRrdCLVQcgU4glo17vqfEaRcTW5SgX+pGs4KIPPBE5J/ABD6pBnUUAEQEAAcLA/AQYAQgA
- JhYhBIUq/WFSDTiOvUIqv2u9DlcdrjdRBQJlD89ZBQkFo5qAAhsMAAoJEGu9DlcdrjdR4C0L
- /RcjolEjoZW8VsyxWtXazQPnaRvzZ4vhmGOsCPr2BPtMlSwDzTlri8BBG1/3t/DNK4JLuwEj
- OAIE3fkkm+UG4Kjud6aNeraDI52DRVCSx6xff3bjmJsJJMb12mWglN6LjdF6K+PE+OTJUh2F
- dOhslN5C2kgl0dvUuevwMgQF3IljLmi/6APKYJHjkJpu1E6luZec/lRbetHuNFtbh3xgFIJx
- 2RpgVDP4xB3f8r0I+y6ua+p7fgOjDLyoFjubRGed0Be45JJQEn7A3CSb6Xu7NYobnxfkwAGZ
- Q81a2XtvNS7Aj6NWVoOQB5KbM4yosO5+Me1V1SkX2jlnn26JPEvbV3KRFcwV5RnDxm4OQTSk
- PYbAkjBbm+tuJ/Sm+5Yp5T/BnKz21FoCS8uvTiziHj2H7Cuekn6F8EYhegONm+RVg3vikOpn
- gao85i4HwQTK9/D1wgJIQkdwWXVMZ6q/OALaBp82vQ2U9sjTyFXgDjglgh00VRAHP7u1Rcu4
- l75w1xInsg==
-In-Reply-To: <aad3d385-5743-4f81-992a-22d1701c3611@zytor.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
+Message-ID: <20250804060327.512247-1-chullee@google.com>
+Subject: [PATCH 1/2] f2fs: add lookup_mode mount option
+From: Daniel Lee <chullee@google.com>
+To: Jaegeuk Kim <jaegeuk@kernel.org>, Chao Yu <chao@kernel.org>
+Cc: linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	Daniel Lee <chullee@google.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On 8/2/2025 10:33 AM, Xin Li wrote:
->> @@ -4531,6 +4593,27 @@ static void sync_vmcs02_to_vmcs12_rare(struct 
->> kvm_vcpu *vcpu,
->>       vmcs12->guest_tr_base = vmcs_readl(GUEST_TR_BASE);
->>       vmcs12->guest_gdtr_base = vmcs_readl(GUEST_GDTR_BASE);
->>       vmcs12->guest_idtr_base = vmcs_readl(GUEST_IDTR_BASE);
->> +
->> +    vmx->nested.pre_vmexit_fred_config = 
->> vmcs_read64(GUEST_IA32_FRED_CONFIG);
->> +    vmx->nested.pre_vmexit_fred_rsp1 = 
->> vmcs_read64(GUEST_IA32_FRED_RSP1);
->> +    vmx->nested.pre_vmexit_fred_rsp2 = 
->> vmcs_read64(GUEST_IA32_FRED_RSP2);
->> +    vmx->nested.pre_vmexit_fred_rsp3 = 
->> vmcs_read64(GUEST_IA32_FRED_RSP3);
->> +    vmx->nested.pre_vmexit_fred_stklvls = 
->> vmcs_read64(GUEST_IA32_FRED_STKLVLS);
->> +    vmx->nested.pre_vmexit_fred_ssp1 = 
->> vmcs_read64(GUEST_IA32_FRED_SSP1);
->> +    vmx->nested.pre_vmexit_fred_ssp2 = 
->> vmcs_read64(GUEST_IA32_FRED_SSP2);
->> +    vmx->nested.pre_vmexit_fred_ssp3 = 
->> vmcs_read64(GUEST_IA32_FRED_SSP3);
-> 
-> This ...
-> 
->> +
->> +    if (nested_cpu_save_guest_fred_state(vmcs12)) {
->> +        vmcs12->guest_ia32_fred_config = vmx- 
->> >nested.pre_vmexit_fred_config;
->> +        vmcs12->guest_ia32_fred_rsp1 = vmx->nested.pre_vmexit_fred_rsp1;
->> +        vmcs12->guest_ia32_fred_rsp2 = vmx->nested.pre_vmexit_fred_rsp2;
->> +        vmcs12->guest_ia32_fred_rsp3 = vmx->nested.pre_vmexit_fred_rsp3;
->> +        vmcs12->guest_ia32_fred_stklvls = vmx- 
->> >nested.pre_vmexit_fred_stklvls;
->> +        vmcs12->guest_ia32_fred_ssp1 = vmx->nested.pre_vmexit_fred_ssp1;
->> +        vmcs12->guest_ia32_fred_ssp2 = vmx->nested.pre_vmexit_fred_ssp2;
->> +        vmcs12->guest_ia32_fred_ssp3 = vmx->nested.pre_vmexit_fred_ssp3;
->> +    }
->> +
->>       vmcs12->guest_pending_dbg_exceptions =
->>           vmcs_readl(GUEST_PENDING_DBG_EXCEPTIONS);
->> @@ -4761,6 +4860,26 @@ static void load_vmcs12_host_state(struct 
->> kvm_vcpu *vcpu,
->>       vmcs_write32(GUEST_IDTR_LIMIT, 0xFFFF);
->>       vmcs_write32(GUEST_GDTR_LIMIT, 0xFFFF);
->> +    if (nested_cpu_load_host_fred_state(vmcs12)) {
->> +        vmcs_write64(GUEST_IA32_FRED_CONFIG, vmcs12- 
->> >host_ia32_fred_config);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP1, vmcs12->host_ia32_fred_rsp1);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP2, vmcs12->host_ia32_fred_rsp2);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP3, vmcs12->host_ia32_fred_rsp3);
->> +        vmcs_write64(GUEST_IA32_FRED_STKLVLS, vmcs12- 
->> >host_ia32_fred_stklvls);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP1, vmcs12->host_ia32_fred_ssp1);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP2, vmcs12->host_ia32_fred_ssp2);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP3, vmcs12->host_ia32_fred_ssp3);
->> +    } else {
->> +        vmcs_write64(GUEST_IA32_FRED_CONFIG, vmx- 
->> >nested.pre_vmexit_fred_config);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP1, vmx- 
->> >nested.pre_vmexit_fred_rsp1);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP2, vmx- 
->> >nested.pre_vmexit_fred_rsp2);
->> +        vmcs_write64(GUEST_IA32_FRED_RSP3, vmx- 
->> >nested.pre_vmexit_fred_rsp3);
->> +        vmcs_write64(GUEST_IA32_FRED_STKLVLS, vmx- 
->> >nested.pre_vmexit_fred_stklvls);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP1, vmx- 
->> >nested.pre_vmexit_fred_ssp1);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP2, vmx- 
->> >nested.pre_vmexit_fred_ssp2);
->> +        vmcs_write64(GUEST_IA32_FRED_SSP3, vmx- 
->> >nested.pre_vmexit_fred_ssp3);
-> 
-> And this are actually nops. IOW, if I don't add this snippet of code,
-> the CPU still retains the guest FRED MSRs, i.e., using guest FRED state 
-> from vmcs02 as that of vmcs01.
+For casefolded directories, f2fs may fall back to a linear search if
+a hash-based lookup fails. This can cause severe performance
+regressions.
 
-I confused myself.  They are NOT nops, because __nested_vmx_vmexit()
-switches from vmcs02 to vmcs01.  The code should be (as the patch does):
+While this behavior can be controlled by userspace tools (e.g. mkfs,
+fsck) by setting an on-disk flag, a kernel-level solution is needed
+to guarantee the lookup behavior regardless of the on-disk state.
 
-__nested_vmx_vmexit()
-{
-	...
+This commit introduces the 'lookup_mode' mount option to provide this
+kernel-side control.
 
-	/*
-	 * Save guest FRED state of vmcs02 to nested.pre_vmexit_fred
-	 * no matter if SECONDARY_VM_EXIT_SAVE_IA32_FRED is set.
-	 */
-	sync_vmcs02_to_vmcs12();
+The option accepts three values:
+- perf: (Default) Enforces a hash-only lookup. The linear fallback
+  is always disabled.
+- compat: Enables the linear search fallback for compatibility with
+  directory entries from older kernels.
+- auto: Determines the mode based on the on-disk flag, preserving the
+  userspace-based behavior.
 
-	...
-	vmx_switch_vmcs();
-	...
+Signed-off-by: Daniel Lee <chullee@google.com>
+---
+ Documentation/filesystems/f2fs.rst | 19 ++++++++++++++
+ fs/f2fs/dir.c                      | 17 ++++++++++++-
+ fs/f2fs/f2fs.h                     | 41 ++++++++++++++++++++++++++++++
+ fs/f2fs/super.c                    | 20 +++++++++++++++
+ 4 files changed, 96 insertions(+), 1 deletion(-)
 
-	/*
-	 * Load nested.pre_vmexit_fred to guest FRED state of vmcs01
-	 * if SECONDARY_VM_EXIT_LOAD_IA32_FRED is NOT set.
-	 */
-	load_vmcs12_host_state();
+diff --git a/Documentation/filesystems/f2fs.rst b/Documentation/filesystems/f2fs.rst
+index 440e4ae74e44..01c657ff7ae2 100644
+--- a/Documentation/filesystems/f2fs.rst
++++ b/Documentation/filesystems/f2fs.rst
+@@ -370,6 +370,25 @@ errors=%s		 Specify f2fs behavior on critical errors. This supports modes:
+ 			 ====================== =============== =============== ========
+ nat_bits		 Enable nat_bits feature to enhance full/empty nat blocks access,
+ 			 by default it's disabled.
++lookup_mode=%s		 Control the directory lookup behavior for casefolded
++			 directories. This option has no effect on directories
++			 that do not have the casefold feature enabled.
++
++			 ================== ========================================
++			 Value		    Description
++			 ================== ========================================
++			 perf		    (Default) Enforces a hash-only lookup.
++					    The linear search fallback is always
++					    disabled, ignoring the on-disk flag.
++			 compat		    Enables the linear search fallback for
++					    compatibility with directory entries
++					    created by older kernel that used a
++					    different case-folding algorithm.
++					    This mode ignores the on-disk flag.
++			 auto		    F2FS determines the mode based on the
++					    on-disk `SB_ENC_NO_COMPAT_FALLBACK_FL`
++					    flag.
++			 ================== ========================================
+ ======================== ============================================================
+ 
+ Debugfs Entries
+diff --git a/fs/f2fs/dir.c b/fs/f2fs/dir.c
+index c36b3b22bfff..ba032d21a997 100644
+--- a/fs/f2fs/dir.c
++++ b/fs/f2fs/dir.c
+@@ -16,6 +16,21 @@
+ #include "xattr.h"
+ #include <trace/events/f2fs.h>
+ 
++static inline bool f2fs_should_fallback_to_linear(struct inode *dir)
++{
++	struct f2fs_sb_info *sbi = F2FS_I_SB(dir);
++
++	switch (f2fs_get_lookup_mode(sbi)) {
++	case LOOKUP_PERF:
++		return false;
++	case LOOKUP_COMPAT:
++		return true;
++	case LOOKUP_AUTO:
++		return !sb_no_casefold_compat_fallback(sbi->sb);
++	}
++	return false;
++}
++
+ #if IS_ENABLED(CONFIG_UNICODE)
+ extern struct kmem_cache *f2fs_cf_name_slab;
+ #endif
+@@ -366,7 +381,7 @@ struct f2fs_dir_entry *__f2fs_find_entry(struct inode *dir,
+ 
+ out:
+ #if IS_ENABLED(CONFIG_UNICODE)
+-	if (!sb_no_casefold_compat_fallback(dir->i_sb) &&
++	if (f2fs_should_fallback_to_linear(dir) &&
+ 		IS_CASEFOLDED(dir) && !de && use_hash) {
+ 		use_hash = false;
+ 		goto start_find_entry;
+diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+index 9333a22b9a01..fed588f4fa3d 100644
+--- a/fs/f2fs/f2fs.h
++++ b/fs/f2fs/f2fs.h
+@@ -132,6 +132,12 @@ extern const char *f2fs_fault_name[FAULT_MAX];
+  */
+ #define F2FS_MOUNT_LAZYTIME		0x40000000
+ 
++enum f2fs_lookup_mode {
++	LOOKUP_PERF,
++	LOOKUP_COMPAT,
++	LOOKUP_AUTO,
++};
++
+ #define F2FS_OPTION(sbi)	((sbi)->mount_opt)
+ #define clear_opt(sbi, option)	(F2FS_OPTION(sbi).opt &= ~F2FS_MOUNT_##option)
+ #define set_opt(sbi, option)	(F2FS_OPTION(sbi).opt |= F2FS_MOUNT_##option)
+@@ -1355,6 +1361,8 @@ enum {
+ 	SBI_IS_RESIZEFS,			/* resizefs is in process */
+ 	SBI_IS_FREEZING,			/* freezefs is in process */
+ 	SBI_IS_WRITABLE,			/* remove ro mountoption transiently */
++	SBI_LOOKUP_COMPAT,			/* enable compat/auto lookup modes */
++	SBI_LOOKUP_AUTO,			/* enable auto lookup mode */
+ 	MAX_SBI_FLAG,
+ };
+ 
+@@ -4897,6 +4905,39 @@ static inline void f2fs_invalidate_internal_cache(struct f2fs_sb_info *sbi,
+ 	f2fs_invalidate_compress_pages_range(sbi, blkaddr, len);
+ }
+ 
++/*
++ * The lookup mode is stored in two bits within sbi->s_flag:
++ *
++ * SBI_LOOKUP_COMPAT | SBI_LOOKUP_AUTO | Mode
++ * ------------------|-----------------|--------
++ *          0        |         0       | perf
++ *          1        |         0       | compat
++ *          1        |         1       | auto
++ *
++ */
++static inline enum f2fs_lookup_mode f2fs_get_lookup_mode(struct f2fs_sb_info *sbi)
++{
++	if (!is_sbi_flag_set(sbi, SBI_LOOKUP_COMPAT))
++		return LOOKUP_PERF;
++	if (is_sbi_flag_set(sbi, SBI_LOOKUP_AUTO))
++		return LOOKUP_AUTO;
++	return LOOKUP_COMPAT;
++}
++
++static inline void f2fs_set_lookup_mode(struct f2fs_sb_info *sbi,
++						enum f2fs_lookup_mode mode)
++{
++	clear_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
++	clear_sbi_flag(sbi, SBI_LOOKUP_AUTO);
++
++	if (mode == LOOKUP_COMPAT)
++		set_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
++	else if (mode == LOOKUP_AUTO) {
++		set_sbi_flag(sbi, SBI_LOOKUP_COMPAT);
++		set_sbi_flag(sbi, SBI_LOOKUP_AUTO);
++	}
++}
++
+ #define EFSBADCRC	EBADMSG		/* Bad CRC detected */
+ #define EFSCORRUPTED	EUCLEAN		/* Filesystem is corrupted */
+ 
+diff --git a/fs/f2fs/super.c b/fs/f2fs/super.c
+index bbf1dad6843f..09cdd4c22e58 100644
+--- a/fs/f2fs/super.c
++++ b/fs/f2fs/super.c
+@@ -196,6 +196,7 @@ enum {
+ 	Opt_age_extent_cache,
+ 	Opt_errors,
+ 	Opt_nat_bits,
++	Opt_lookup_mode,
+ 	Opt_err,
+ };
+ 
+@@ -276,6 +277,7 @@ static match_table_t f2fs_tokens = {
+ 	{Opt_age_extent_cache, "age_extent_cache"},
+ 	{Opt_errors, "errors=%s"},
+ 	{Opt_nat_bits, "nat_bits"},
++	{Opt_lookup_mode, "lookup_mode=%s"},
+ 	{Opt_err, NULL},
+ };
+ 
+@@ -1317,6 +1319,22 @@ static int parse_options(struct f2fs_sb_info *sbi, char *options, bool is_remoun
+ 		case Opt_nat_bits:
+ 			set_opt(sbi, NAT_BITS);
+ 			break;
++		case Opt_lookup_mode:
++			name = match_strdup(&args[0]);
++			if (!name)
++				return -ENOMEM;
++			if (!strcmp(name, "perf")) {
++				f2fs_set_lookup_mode(sbi, LOOKUP_PERF);
++			} else if (!strcmp(name, "compat")) {
++				f2fs_set_lookup_mode(sbi, LOOKUP_COMPAT);
++			} else if (!strcmp(name, "auto")) {
++				f2fs_set_lookup_mode(sbi, LOOKUP_AUTO);
++			} else {
++				kfree(name);
++				return -EINVAL;
++			}
++			kfree(name);
++			break;
+ 		default:
+ 			f2fs_err(sbi, "Unrecognized mount option \"%s\" or missing value",
+ 				 p);
+@@ -2220,6 +2238,8 @@ static void default_options(struct f2fs_sb_info *sbi, bool remount)
+ #endif
+ 
+ 	f2fs_build_fault_attr(sbi, 0, 0, FAULT_ALL);
++
++	f2fs_set_lookup_mode(sbi, LOOKUP_PERF);
+ }
+ 
+ #ifdef CONFIG_QUOTA
+-- 
+2.50.1.565.gc32cd1483b-goog
 
-	...
-   }
-
-
-As not setting any of the two FRED VM-Exit controls are rare cases, we
-need to add KVM tests with L1 that:
-1) doesn't set SECONDARY_VM_EXIT_SAVE_IA32_FRED in VM-Exit controls.
-2) doesn't set SECONDARY_VM_EXIT_LOAD_IA32_FRED in VM-Exit controls.
-3) doesn't set both of the FRED VM-Exit controls.
-
-Looks we need a framework for all VM-Exit controls which control whether
-to save/load specific MSRs related to CPU features during VM-Exit?
 
