@@ -1,140 +1,174 @@
-Return-Path: <linux-kernel+bounces-754909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754899-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2C5B4B19E47
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:07:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42A16B19E32
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:04:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4DCFD165B3B
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:06:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4C593BB44E
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:04:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA09256C6C;
-	Mon,  4 Aug 2025 09:04:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 842BC244692;
+	Mon,  4 Aug 2025 09:04:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Xg4tAtW7"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Bg1a7Alg"
+Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1933D2550A3
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:04:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28A34242D6F;
+	Mon,  4 Aug 2025 09:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298290; cv=none; b=cQKrgFVN5f/uZ5bEf2812xhZPrVmg8s5PSvPD2LYWVysOtswE4nJ2cAbLmFviIh1/5vc4a1IzSmZTeiFduoo8Ykvv1rghjLHv+erOtPLIgLTsrs5/Yb+psh6pe2g8Tl1Y5Ex0+1jYaR1KtcVWnF87vHPDzFjbL9OTnPDi5hEd1U=
+	t=1754298254; cv=none; b=tWVo5+JWvcSKSPw57fdPZ4Rznw0GoeqeBtuIyZliOkKUPJ+DDKczBNCxpGrobsdv/uR6DBVts1f4zH8UyQz3h5KrKJRqs5Zy9odexs4Q5GTo836uCVki83WCc0qcMnOEoVUGJb8B9ZUE6ioTajCEBSwQbBldSDid4wgvzLbo+vs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754298290; c=relaxed/simple;
-	bh=3x19bC4TEkjCbZhfuYqU5c/VjurC/2Z6kwyVqMzBqdE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=j9AGYdyFchSrlokLdYMCLsp4hMf4o+864D3Vm2kWKkASr78rTq5sd+4oSmQrhfYbcrhw+8SyRlxDdXujTrZ5qGnFsKBmQjhW/mAInw+8tuuTxggUoXzc0e1oQVRx7fJp87/Am73w5PUKr1jm1P9sVxhOrjmFKPz0XGnX3hzJRwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Xg4tAtW7; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-605b9488c28so7303920a12.2
-        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 02:04:48 -0700 (PDT)
+	s=arc-20240116; t=1754298254; c=relaxed/simple;
+	bh=bQ6XJxrd3l0nExUNe/0IQi1uhBICMEx32FAEE1whfIY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ou18HOXR300F1TA7EJeikZML33H5FfOJiQRY6NOtUeDim3BCAJC+Ou7FkMvczOdTLURb5gdFqXjOxQpav1b9Y866rOJMNUNKnAwXIdwyhQQvmcPqAMnfLXpysN3r+wkECEPtegBEkPZ0C0TA+ad4sKbUnVfwSEXQfi37bXsYZis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Bg1a7Alg; arc=none smtp.client-ip=209.85.218.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-ae401ebcbc4so714028966b.1;
+        Mon, 04 Aug 2025 02:04:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1754298287; x=1754903087; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1754298251; x=1754903051; darn=vger.kernel.org;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=vnQpTwABThBxdUskT3LdV6JNdqJ4VQSfDvVtzabNNUU=;
-        b=Xg4tAtW7xI5NriBCXr/EdjYAbEtUfVMZ2+Qf9K+XZt8Iin1MVlmenKAaFiPkbbczgg
-         5nMpBLjUSxSvkgJF1tWRiwhQ4yIWmVG4sb5wU7nCWcRNeffEH8NQL4AK3RhVg73PdOXD
-         AZO778+w8MLZJ4+3SPDV2uLLWECf3YYeVOLK0=
+        bh=acSH/YECNzPqrJpecMNECSlF0Ozf4k+b5plEpSVAioQ=;
+        b=Bg1a7AlgW1L0BkaXdtpAiKxMDnaMj1VwS6mL1/LxbIAZkR4DMbqmC5wpFbo2swFFyA
+         cPRJdrSFkXhxYB+4+qOKP8HDdd/31w65l4v8bwu32NPSSiIXG9PeGnDzYQ59XfBxTylo
+         KTuXt+JurcK/VTyIuDd73B6wm+cHLC8m1tNKBW0P+DW7ZryqfQ9MbawRFhtRocpEbM7L
+         6v6tJYVA8h8UojjDxbIwmlV7HtPwcRwOhbb1IsglaF1aj1ys13KOCdbs3CD7ipy9KSGC
+         Bf3zqbkB7CkB07RhXAqwHleoi7vy53PLDwUHZJFnjJFth4wZ5E4oPky2BHTk4b76Ng+G
+         wKQw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754298287; x=1754903087;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=vnQpTwABThBxdUskT3LdV6JNdqJ4VQSfDvVtzabNNUU=;
-        b=w2+FoExLI5RpslfHm0K63VrBWejdRRXTkTDkm8EPtMfuOzSHOnjWEn4FwvFJ+GK+Ir
-         eN6+RP6CX7PNAfCfVzSDglP9Q6q9pZIcoaLU4Rb/n/i5OEYPc1xJbqYDloFnnSyNjVTv
-         cH+ro5lEHMPEpPWeTVeIaiIRR2G1K/A22rK8cUOGZ1SSGGpdZQ/fnW8rprBy6C/N+OwJ
-         X7jxOr5hubq36+Mviu1Pr4wPf+FD3etlQD03sJTuQrA6wskEDTSHk5FclGQMeXqT11dQ
-         jxD2tNxNpQbIynRSQXLy9/viCBca9JhmTbMpFnZ3i60ThfssF3jRoVVeMWY9L6cUhZIX
-         VywA==
-X-Forwarded-Encrypted: i=1; AJvYcCVrw0KB+w5itcSbRjsRYQMg1/WLjzdJ1jpibF0qGYUOvcsadLmytzpwLgcMmdrzACvImCuHshk/5s4IggM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzSb+KmMKR/yq+Dkcglbqzqi1W006d1+l6o/z9J5/A7rPXoanBu
-	ONLe/WjrHSE0ymp+/HaqxChj4EMsm3dAuUxkp8i1Y1UC6XGkF8exixGAM/42DWPz9w==
-X-Gm-Gg: ASbGncuy6O6agUb0PQYWItvlcZTvLQBrebD1k+DBAhSUbYJ2bag2gZZF9npNJAZ36D3
-	9JyeT1vvaO7rgyclHjq6eZysJvrh/RDuKWrFWPuOe+nVGXl/2UN9I+dP4197iRC3caZVO8S1olg
-	SlH06g+ujWCg8aKpOYzjaVNpfgbEHnMK4TWXHzb9c4PLCoptolmlH9rEduJdizxGxdBwAvvt3AM
-	B8VCpWPoaB8c+N9AoFM4deKjbgmzlTA8RuqjkUCUI9errp8NEPCY9aL5ppvcIikvq3WCn7BSs1H
-	FiROZE7kRKnypEqMaM+BAanUO/IkJRco+KVN5H6XLCIfFjLlWOiGtz0SvjMxUZVCurvGlzWhH4q
-	YGCnuYAaf1KYv2YnnSt+2KT0/Gc9dVyArKkvDLJupXyFwFGXie+vvPpzKsVANi7ZoW75osv2hro
-	fqP2Xd1aS5WqLJTltBLs4J9sOOVQ==
-X-Google-Smtp-Source: AGHT+IHrHxXdeaPG9B8IlHKEHEVk1KBLXqnoXcB8NheI8LMoc58AFyO+W+Fv2Eq44g8cl/NgunqeAg==
-X-Received: by 2002:a05:6402:3788:b0:615:38e6:b739 with SMTP id 4fb4d7f45d1cf-615e6ed456fmr7575534a12.10.1754298287331;
-        Mon, 04 Aug 2025 02:04:47 -0700 (PDT)
-Received: from akuchynski.c.googlers.com.com (150.230.32.34.bc.googleusercontent.com. [34.32.230.150])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-615a8fe7995sm6412790a12.36.2025.08.04.02.04.46
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Mon, 04 Aug 2025 02:04:46 -0700 (PDT)
-From: Andrei Kuchynski <akuchynski@chromium.org>
-To: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Abhishek Pandit-Subedi <abhishekpandit@chromium.org>,
-	Benson Leung <bleung@chromium.org>,
-	Jameson Thies <jthies@google.com>,
-	Tzung-Bi Shih <tzungbi@kernel.org>,
-	linux-usb@vger.kernel.org,
-	chrome-platform@lists.linux.dev
-Cc: Guenter Roeck <groeck@chromium.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@oss.qualcomm.com>,
-	"Christian A. Ehrhardt" <lk@c--e.de>,
-	Venkat Jayaraman <venkat.jayaraman@intel.com>,
-	linux-kernel@vger.kernel.org,
-	Andrei Kuchynski <akuchynski@chromium.org>
-Subject: [PATCH v3 10/10] platform/chrome: cros_ec_typec: Add default_usb_mode_set support
-Date: Mon,  4 Aug 2025 09:03:39 +0000
-Message-ID: <20250804090340.3062182-11-akuchynski@chromium.org>
-X-Mailer: git-send-email 2.50.1.565.gc32cd1483b-goog
-In-Reply-To: <20250804090340.3062182-1-akuchynski@chromium.org>
-References: <20250804090340.3062182-1-akuchynski@chromium.org>
+        d=1e100.net; s=20230601; t=1754298251; x=1754903051;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :reply-to:message-id:subject:cc:to:from:date:x-gm-message-state:from
+         :to:cc:subject:date:message-id:reply-to;
+        bh=acSH/YECNzPqrJpecMNECSlF0Ozf4k+b5plEpSVAioQ=;
+        b=qxUAQsGBXlZNQkvH5EnIoKxN7DX/DkrKeHAsY8B8j0QLjlZzWxW7asdWBjNtEtxHyM
+         WUc2BDRol4DyrE230Sa3yDr2GszitzOD4I1cJ+mLs552IJWzY8xOeLaE6UcCtfG144H5
+         g3502JGxQH8i+IAOd/kNImpqHP+aMsTOG0ZOhSghSUwdZVaW7EF2V2WoguVGcgldBXRH
+         LH8UelLInuvg6m147YBYQCaPCJdM7LskcE5e9TYTQbeVJbRN4uK+z9e3qiLenGsZ3WiL
+         l9/YQYl0JqGqQEl152kz2gofTcwnnfBiGT+Rn7Nvk/8qAthDVvmSWi9eDYsVVNWtZVfB
+         Lqyg==
+X-Forwarded-Encrypted: i=1; AJvYcCUOSS/d9BDF99WAKm3+Lb3TFTTxJ7yDhCrBG0HBcIXUf/0MdZR/QwiqBzGcf3NlyUAkh4GZ0eSzXSkb+gc=@vger.kernel.org, AJvYcCXdJu52zHYNKU5biGdbDmH7vVzLNFiIXqwX6EFPtRzzjjrIKprcZE4zfXzG7DHZTdkixzCchb/aQr6MDeL2V0iH@vger.kernel.org
+X-Gm-Message-State: AOJu0YzmXtAVHVLJyRsbGcga8rbcYGGPnDhIP//8C4aI3wh0hmUEZ8zv
+	/2lH578iMGmMmMwlRs6jGJD0YBUk2iVVfRhMqo17kWXkCpqXf8O2/CKy
+X-Gm-Gg: ASbGncun6a6aLrH6LOPqnjvbITcmDxHntAFvX4YpLuaqvx/0no3XV1ErIR1+59cz/1u
+	0A9C92wvAXesf5N0uVs6oyZRvXymlXLrjupu0izhPG8/FNVOjqrAjRtS6a4XngN8Z8pkR1USqdq
+	URBaFY+nFCfa0w6NorU1p7uRPnYM7bQElL9NirAVp1zi5efb2ekZ8yAHvOEc7qaIRDpiQnA4Xv3
+	Cd8cNl99xR5Zf3BydxSFYuScVdune/1ga8ejhv5rPWRR5Ykg/7/siMw4NzF0AznlmBn36VNpvgo
+	gwambBnUuDA9bog1Qeb4THv/mxpZoGvjQCpAf6temK84z8bSesJwoHOvOiWETucyvt2BUho9I7E
+	mY+1BL+Er6AnBWV4hjjJuqAiBUygO4XBX
+X-Google-Smtp-Source: AGHT+IFo1FiK09kxSqh9OOz66lLLPAg3rVm2WiND0BXkRJXNrtebIpCavH4jstjbD8rfqeuDjfzk3Q==
+X-Received: by 2002:a17:907:3fa2:b0:adb:2e9f:5d11 with SMTP id a640c23a62f3a-af940174eafmr807904766b.37.1754298250902;
+        Mon, 04 Aug 2025 02:04:10 -0700 (PDT)
+Received: from localhost ([185.92.221.13])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-af91a0a3b77sm702303266b.51.2025.08.04.02.04.10
+        (version=TLS1_2 cipher=ECDHE-ECDSA-CHACHA20-POLY1305 bits=256/256);
+        Mon, 04 Aug 2025 02:04:10 -0700 (PDT)
+Date: Mon, 4 Aug 2025 09:04:10 +0000
+From: Wei Yang <richard.weiyang@gmail.com>
+To: Aboorva Devarajan <aboorvad@linux.ibm.com>
+Cc: akpm@linux-foundation.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com, shuah@kernel.org, pfalcato@suse.de,
+	david@redhat.com, ziy@nvidia.com, baolin.wang@linux.alibaba.com,
+	npache@redhat.com, ryan.roberts@arm.com, dev.jain@arm.com,
+	baohua@kernel.org, linux-mm@kvack.org,
+	linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
+	donettom@linux.ibm.com, ritesh.list@gmail.com
+Subject: Re: [PATCH v3 4/7] mm/selftests: Fix split_huge_page_test failure on
+ systems with 64KB page size
+Message-ID: <20250804090410.of5xwrlker665bdp@master>
+Reply-To: Wei Yang <richard.weiyang@gmail.com>
+References: <20250729053403.1071807-1-aboorvad@linux.ibm.com>
+ <20250729053403.1071807-5-aboorvad@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20250729053403.1071807-5-aboorvad@linux.ibm.com>
+User-Agent: NeoMutt/20170113 (1.7.2)
 
-The `cros_ec_typec` driver currently doesn't directly consume a default
-USB mode value. This commit adds the `default_usb_mode_set` function,
-enabling the `usb_capability` sysfs attribute to be writable.
-This functionality allows users to dynamically activate or deactivate
-USB4 mode on a given port.
+On Tue, Jul 29, 2025 at 11:04:00AM +0530, Aboorva Devarajan wrote:
+>From: Donet Tom <donettom@linux.ibm.com>
+>
+>The split_huge_page_test fails on systems with a 64KB base page size.
+>This is because the order of a 2MB huge page is different:
+>
+>On 64KB systems, the order is 5.
+>
+>On 4KB systems, it's 9.
+>
+>The test currently assumes a maximum huge page order of 9, which is only
+>valid for 4KB base page systems. On systems with 64KB pages, attempting
+>to split huge pages beyond their actual order (5) causes the test to fail.
+>
+>In this patch, we calculate the huge page order based on the system's base
+>page size. With this change, the tests now run successfully on both 64KB
+>and 4KB page size systems.
+>
+>Fixes: fa6c02315f745 ("mm: huge_memory: a new debugfs interface for splitting THP tests")
+>Reviewed-by: Dev Jain <dev.jain@arm.com>
+>Reviewed-by: Zi Yan <ziy@nvidia.com>
+>Co-developed-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>Signed-off-by: Aboorva Devarajan <aboorvad@linux.ibm.com>
+>Signed-off-by: Donet Tom <donettom@linux.ibm.com>
+>---
+> .../selftests/mm/split_huge_page_test.c       | 23 ++++++++++++-------
+> 1 file changed, 15 insertions(+), 8 deletions(-)
+>
+>diff --git a/tools/testing/selftests/mm/split_huge_page_test.c b/tools/testing/selftests/mm/split_huge_page_test.c
+>index 05de1fc0005b..718daceb5282 100644
+>--- a/tools/testing/selftests/mm/split_huge_page_test.c
+>+++ b/tools/testing/selftests/mm/split_huge_page_test.c
+>@@ -36,6 +36,7 @@ uint64_t pmd_pagesize;
+> 
+> #define PFN_MASK     ((1UL<<55)-1)
+> #define KPF_THP      (1UL<<22)
+>+#define GET_ORDER(nr_pages)    (31 - __builtin_clz(nr_pages))
+> 
+> int is_backed_by_thp(char *vaddr, int pagemap_file, int kpageflags_file)
+> {
+>@@ -522,6 +523,9 @@ int main(int argc, char **argv)
+> 	const char *fs_loc;
+> 	bool created_tmp;
+> 	int offset;
+>+	unsigned int max_order;
+>+	unsigned int nr_pages;
+>+	unsigned int tests;
+> 
+> 	ksft_print_header();
+> 
+>@@ -533,35 +537,38 @@ int main(int argc, char **argv)
+> 	if (argc > 1)
+> 		optional_xfs_path = argv[1];
+> 
+>-	ksft_set_plan(1+8+1+9+9+8*4+2);
+>-
+> 	pagesize = getpagesize();
+> 	pageshift = ffs(pagesize) - 1;
+> 	pmd_pagesize = read_pmd_pagesize();
+> 	if (!pmd_pagesize)
+> 		ksft_exit_fail_msg("Reading PMD pagesize failed\n");
+> 
+>+	nr_pages = pmd_pagesize / pagesize;
+>+	max_order = GET_ORDER(nr_pages);
 
-Signed-off-by: Andrei Kuchynski <akuchynski@chromium.org>
----
- drivers/platform/chrome/cros_ec_typec.c | 6 ++++++
- 1 file changed, 6 insertions(+)
+There is a sz2ord() in cow.c and uffd-wp-mremap.c.
 
-diff --git a/drivers/platform/chrome/cros_ec_typec.c b/drivers/platform/chrome/cros_ec_typec.c
-index 5a3d393c26ee..9bfe78e315fc 100644
---- a/drivers/platform/chrome/cros_ec_typec.c
-+++ b/drivers/platform/chrome/cros_ec_typec.c
-@@ -44,6 +44,11 @@ static void cros_typec_role_switch_quirk(struct fwnode_handle *fwnode)
- #endif
- }
- 
-+static int cros_typec_default_usb_mode_set(struct typec_port *port, enum usb_mode mode)
-+{
-+	return 0;
-+}
-+
- static int cros_typec_enter_usb_mode(struct typec_port *tc_port, enum usb_mode mode)
- {
- 	struct cros_typec_port *port = typec_get_drvdata(tc_port);
-@@ -140,6 +145,7 @@ static int cros_typec_pr_swap(struct typec_port *port, enum typec_role role)
- }
- 
- static const struct typec_operations cros_typec_usb_mode_ops = {
-+	.default_usb_mode_set = cros_typec_default_usb_mode_set,
- 	.enter_usb_mode = cros_typec_enter_usb_mode,
- 	.dr_set = cros_typec_dr_swap,
- 	.pr_set = cros_typec_pr_swap,
+Maybe we can factor it into vm_util.h and use it here.
+
 -- 
-2.50.1.565.gc32cd1483b-goog
-
+Wei Yang
+Help you, Help me
 
