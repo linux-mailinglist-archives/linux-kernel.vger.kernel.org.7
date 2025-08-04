@@ -1,75 +1,241 @@
-Return-Path: <linux-kernel+bounces-755726-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755727-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78A97B1AAEE
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:28:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 83DE2B1AAF1
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 00:29:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5F0D7AA659
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:27:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A445E7A25F4
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 22:27:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83E7328FFEE;
-	Mon,  4 Aug 2025 22:28:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0208328FFEE;
+	Mon,  4 Aug 2025 22:29:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GU4/hIaU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="Vn+YsQSa"
+Received: from mailout2.w1.samsung.com (mailout2.w1.samsung.com [210.118.77.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9B4323AE62;
-	Mon,  4 Aug 2025 22:28:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A2EE28FFC8
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 22:29:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.118.77.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754346504; cv=none; b=VfPB9zcg8JWFD7gtv9UCMeHg6KcNt3VsI3rare4q5EM2mEL2iEdIe7Al7ACE3i9lH0rRRDIFBZHlzRsQyLcPyq8KtOWyXuruAj9paEQvqSCTCrlxhBwmBl+XFxZCBL/ThjOAPtCk6nPmY7TzhMQjp1Stl+xrRFh5ERcnCmYC49w=
+	t=1754346558; cv=none; b=WciCzfxGnNh9N34/14l8xcdfpAf/JsxolU/Kl3BK6001kH61JnAtqkCJeYqWQepWmwaVoB/rfE3Q0o1BMWUpjJN6Le81GDYAYKzGX5Ye+zovtT1tD98gud6krOsdUGYF1aEPY4He50I+oMnBhRCPJDmCsq5usGz8ZNWeP7e2NpI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754346504; c=relaxed/simple;
-	bh=q4237OQdbICcheydjchcyh2EA8wjg3mYtLiH9eZRtWc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=iOSfvMo90QEjs5WrDnBESfNd9qPmCzmf7Cx87Z+sYp6tt27DIYle8Kcm1svQqK4ykHAhTnVedl3dxnVP7Ohki2aJKa6bFicsraU0Gz/PPhQWneLJPZ8xdiV/sLOk/bNgvQYk2zUS15MeQxAJOs9JBJoqnhzJLeezunDppudUOgA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GU4/hIaU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49DBBC4CEE7;
-	Mon,  4 Aug 2025 22:28:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754346503;
-	bh=q4237OQdbICcheydjchcyh2EA8wjg3mYtLiH9eZRtWc=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=GU4/hIaU0WfdPkSg9xAP+5KDOEq5OtZaqUclyAnHfYy3MAdDJ0D5vhtXgfe+aulK/
-	 NCMfaBUa+JyI7FlbVkSiL+RanggBwpTNO5BUwuB3akaBBxBodD6fEcRE7gFMMW0eWD
-	 OgIntqtC6FAUM3q5axot4APChRsmgRLB4tu27lREMrqOV4lhrffwQjXcBzOr9lmH11
-	 KghukrGkOYdgkq/28Dbp+7vJmIOWQKs9HeqiuoAUxeYYbulVQMYB623kYkBjJ/A0Lb
-	 r3CffjTdFWGArOjpBUV4a5dBYOW3be+yWILzC8w7bm1aMeJ6GX19wgLyixT+grypr/
-	 kkalhfYvyB4Ww==
-Date: Mon, 4 Aug 2025 17:28:22 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: "Aneesh Kumar K.V (Arm)" <aneesh.kumar@kernel.org>
-Cc: linux-coco@lists.linux.dev, kvmarm@lists.linux.dev,
-	linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org,
-	aik@amd.com, lukas@wunner.de, Samuel Ortiz <sameo@rivosinc.com>,
-	Xu Yilun <yilun.xu@linux.intel.com>, Jason Gunthorpe <jgg@ziepe.ca>,
-	Suzuki K Poulose <Suzuki.Poulose@arm.com>,
-	Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	Oliver Upton <oliver.upton@linux.dev>
-Subject: Re: [RFC PATCH v1 32/38] coco: guest: arm64: Add support for guest
- initiated TDI bind/unbind
-Message-ID: <20250804222822.GA3645600@bhelgaas>
+	s=arc-20240116; t=1754346558; c=relaxed/simple;
+	bh=JUbN3dA5dKNNRuRtqrLVgoTZPHAgBAWedgfI4WsY4zw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:From:In-Reply-To:
+	 Content-Type:References; b=Ht+1OLJ1sfnB0r2ymO0OEwPMBwDZ+eoRvLYsBxqpQK3rlWRTVK61oj8Oz9XfyGyFJzGbtW4AY/bZ64BnWzt+kC4JQryNeHmT2cKshB21GUN/V/U0SdK7+y6OuzyZQTcZbrxy+dcEaBj6SZjAA25WrmvqxDahyZnQQLSQv72hyeU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=Vn+YsQSa; arc=none smtp.client-ip=210.118.77.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from eucas1p1.samsung.com (unknown [182.198.249.206])
+	by mailout2.w1.samsung.com (KnoxPortal) with ESMTP id 20250804222909euoutp02a7bbb87d03a313abb0dba68ec2ee4bba~YsORLfIkK1675716757euoutp02F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 22:29:09 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.w1.samsung.com 20250804222909euoutp02a7bbb87d03a313abb0dba68ec2ee4bba~YsORLfIkK1675716757euoutp02F
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1754346549;
+	bh=+RcFBByccHQrOvrGhevDXqOYgnFEm0AztkkNSDHAn7k=;
+	h=Date:Subject:To:Cc:From:In-Reply-To:References:From;
+	b=Vn+YsQSaL0tPxgww8oXD504OWFUXRUE0GW+bGSWeh6qa2POk61TgkpqaJE3a8sTUd
+	 E3JwCg5oUh1snmdb7S15cMQ8OqYhyTooR4N9odzWsQ0ePCsOEGWyI7T5XJzOhpiZYE
+	 +O7aRtumJURiCvFQ3X/+4+apX1dTnxjz4YdtnWn8=
+Received: from eusmtip2.samsung.com (unknown [203.254.199.222]) by
+	eucas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20250804222908eucas1p2069b21749bbab1ebf085f972ec5fd707~YsOQcXlc72283222832eucas1p2i;
+	Mon,  4 Aug 2025 22:29:08 +0000 (GMT)
+Received: from [192.168.1.44] (unknown [106.210.136.40]) by
+	eusmtip2.samsung.com (KnoxPortal) with ESMTPA id
+	20250804222907eusmtip275da20eec177f6ac18638286e0ca7330~YsOPU6M9h2458224582eusmtip2W;
+	Mon,  4 Aug 2025 22:29:07 +0000 (GMT)
+Message-ID: <8ad10cc3-6e7d-4a8b-b6f6-9568403ee2b3@samsung.com>
+Date: Tue, 5 Aug 2025 00:29:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20250728135216.48084-33-aneesh.kumar@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v12 3/3] rust: pwm: Add complete abstraction layer
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>, Miguel Ojeda
+	<ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng
+	<boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>,
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, Andreas
+	Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, Trevor
+	Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini
+	<drew@pdp7.com>, Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob
+	Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor
+	Dooley <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
+	Alexandre Ghiti <alex@ghiti.fr>, Marek Szyprowski
+	<m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, Michael
+	Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>,
+	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org,
+	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org,
+	devicetree@vger.kernel.org
+Content-Language: en-US
+From: Michal Wilczynski <m.wilczynski@samsung.com>
+In-Reply-To: <42C9DF97-2E0F-453B-800A-1DA49BF8F29F@collabora.com>
+Content-Transfer-Encoding: 8bit
+X-CMS-MailID: 20250804222908eucas1p2069b21749bbab1ebf085f972ec5fd707
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+X-RootMTR: 20250717090833eucas1p16c916450b59a77d81bd013527755cb21
+X-EPHeader: CA
+X-CMS-RootMailID: 20250717090833eucas1p16c916450b59a77d81bd013527755cb21
+References: <20250717-rust-next-pwm-working-fan-for-sending-v12-0-40f73defae0c@samsung.com>
+	<CGME20250717090833eucas1p16c916450b59a77d81bd013527755cb21@eucas1p1.samsung.com>
+	<20250717-rust-next-pwm-working-fan-for-sending-v12-3-40f73defae0c@samsung.com>
+	<42C9DF97-2E0F-453B-800A-1DA49BF8F29F@collabora.com>
 
-On Mon, Jul 28, 2025 at 07:22:09PM +0530, Aneesh Kumar K.V (Arm) wrote:
-> Add RHI for VDEV_SET_TDI_STATE
+
+On 7/25/25 17:56, Daniel Almeida wrote:
+>> +
+>> +    /// Gets the label for this PWM device, if any.
+>> +    pub fn label(&self) -> Option<&CStr> {
+>> +        // SAFETY: self.as_raw() provides a valid pointer.
+>> +        let label_ptr = unsafe { (*self.as_raw()).label };
+>> +        if label_ptr.is_null() {
+>> +            None
+>> +        } else {
+>> +            // SAFETY: label_ptr is non-null and points to a C string
+>> +            // managed by the kernel, valid for the lifetime of the PWM device.
+>> +            Some(unsafe { CStr::from_char_ptr(label_ptr) })
+>> +        }
+>> +    }
 > 
-> Note: This is not part of RHI spec. This is a POC implementation
-> and will be later switced to correct interface defined by RHI.
+> nit: this can be written more concisely, but I personally don’t mind.
 
-s/switced/switched/ (or maybe "converted")
+Do you have something specific in mind ? I think the alternative way of
+expressing this would use NonNull, but somehow this feels less readable
+for me.
+
+
+>> +
+>> +/// Trait defining the operations for a PWM driver.
+>> +pub trait PwmOps: 'static + Sized {
+>> +    /// The driver-specific hardware representation of a waveform.
+>> +    ///
+>> +    /// This type must be [`Copy`], [`Default`], and fit within `PWM_WFHWSIZE`.
+>> +    type WfHw: Copy + Default;
+> 
+> Can’t you use a build_assert!() here? i.e.:
+> 
+>     #[doc(hidden)]
+>     const _CHECK_SZ: () = {
+>         build_assert!(core::mem::size_of::<Self::WfHw>() <= bindings::PWM_WFHWSIZE as usize);
+>     };
+
+This doesn't work i.e the driver using oversized WfHw compiles
+correctly, but putting the assert inside the serialize did work, please
+see below.
+
+
+> 
+>> +        Err(ENOTSUPP)
+>> +    }
+>> +
+>> +    /// Convert a hardware-specific representation back to a generic waveform.
+>> +    /// This is typically a pure calculation and does not perform I/O.
+>> +    fn round_waveform_fromhw(
+>> +        _chip: &Chip<Self>,
+>> +        _pwm: &Device,
+>> +        _wfhw: &Self::WfHw,
+>> +        _wf: &mut Waveform,
+>> +    ) -> Result<c_int> {
+>> +        Err(ENOTSUPP)
+>> +    }
+> 
+> Please include at least a description of what this returns.
+
+Instead I think it should just return Result, reviewed the code and it's
+fine.
+
+> 
+>> +/// Bridges Rust `PwmOps` to the C `pwm_ops` vtable.
+>> +struct Adapter<T: PwmOps> {
+>> +    _p: PhantomData<T>,
+>> +}
+>> +
+>> +impl<T: PwmOps> Adapter<T> {
+>> +    const VTABLE: PwmOpsVTable = create_pwm_ops::<T>();
+>> +
+>> +    /// # Safety
+>> +    ///
+>> +    /// `wfhw_ptr` must be valid for writes of `size_of::<T::WfHw>()` bytes.
+>> +    unsafe fn serialize_wfhw(wfhw: &T::WfHw, wfhw_ptr: *mut c_void) -> Result {
+>> +        let size = core::mem::size_of::<T::WfHw>();
+>> +        if size > bindings::PWM_WFHWSIZE as usize {
+>> +            return Err(EINVAL);
+>> +        }
+> 
+> See my previous comment on using build_assert if possible.
+
+So I did try this and it does work, however it results in a cryptic
+linker error:
+ld.lld: error: undefined symbol: rust_build_error
+>>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
+>>>               drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1520::Th1520PwmDriverData>>::read_waveform_callback) in archive vmlinux.a
+>>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
+>>>               drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1520::Th1520PwmDriverData>>::round_waveform_tohw_callback) in archive vmlinux.a
+make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
+  
+I assume this could be fixed at some point to better explain what
+failed? I think putting the assert in serialize functions is fine and
+the proposed _CHECK_SZ isn't really required.
+
+I would love to do some debugging and find out why that is myself if
+time allows :-)
+
+> 
+>> +        // SAFETY: `self.as_raw()` provides a valid pointer for `self`'s lifetime.
+>> +        unsafe { (*self.as_raw()).npwm }
+>> +    }
+>> +
+>> +    /// Returns `true` if the chip supports atomic operations for configuration.
+>> +    pub fn is_atomic(&self) -> bool {
+>> +        // SAFETY: `self.as_raw()` provides a valid pointer for `self`'s lifetime.
+>> +        unsafe { (*self.as_raw()).atomic }
+>> +    }
+>> +
+>> +    /// Returns a reference to the embedded `struct device` abstraction.
+>> +    pub fn device(&self) -> &device::Device {
+>> +        // SAFETY: `self.as_raw()` provides a valid pointer to `bindings::pwm_chip`.
+>> +        // The `dev` field is an instance of `bindings::device` embedded within `pwm_chip`.
+>> +        // Taking a pointer to this embedded field is valid.
+>> +        // `device::Device` is `#[repr(transparent)]`.
+>> +        // The lifetime of the returned reference is tied to `self`.
+>> +        unsafe { device::Device::as_ref(&raw mut (*self.as_raw()).dev) }
+>> +    }
+> 
+> IIRC, these are supposed to be prefixed with “-“ to highlight that it’s a bulleted list.
+> 
+>> +
+>> +    /// Gets the *typed* driver specific data associated with this chip's embedded device.
+> 
+> I don’t think this emphasis adds anything of value. (IMHO)
+> 
+>> +    pub fn drvdata(&self) -> &T {
+> 
+> This is off-topic (sorry), but I wonder if this shouldn’t be renamed “driver_data()” across the tree.
+
+Agree
+
+
+> 
+> 
+> — Daniel
+> 
+> [0] https://lore.kernel.org/rust-for-linux/20250711-device-as-ref-v2-0-1b16ab6402d7@google.com/
+> 
+> 
+
+For readability cut the rest of the comments, but they will be fixed
+
+Best regards,
+-- 
+Michal Wilczynski <m.wilczynski@samsung.com>
 
