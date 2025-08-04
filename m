@@ -1,131 +1,112 @@
-Return-Path: <linux-kernel+bounces-755746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755748-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8DE0B1AB40
-	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:09:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3C5C6B1AB45
+	for <lists+linux-kernel@lfdr.de>; Tue,  5 Aug 2025 01:10:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E2353BECF8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:09:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F32421895EC5
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 23:10:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C927290D83;
-	Mon,  4 Aug 2025 23:09:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33FC1291C15;
+	Mon,  4 Aug 2025 23:10:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bVxZmQyn"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="emQpYAhD"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6699B221FA0;
-	Mon,  4 Aug 2025 23:09:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 947C8221FA0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:10:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754348984; cv=none; b=h1aUgKLEvEo1w8O0M7+9IofjDeDiyJlL/mV/JrFZNuNJGomAeXbVp3ed/XZdob6/uwr+ULUqlui3YwvWjgjX+gw6Woqvcf6pgFGm+ok0HrIaeyTEkzhUlnrg/CYqd+f6VFhQUvOOUOnMUlhM1hzNlDpcrDap/emoNSS48dvvDPY=
+	t=1754349008; cv=none; b=Yot2mMn4xevgmWAVinACqKjq0PW7QYuLEABvIjQ7IhmlTfeL1GYnBFD64tkEjWzPiyNAFw5VvvseHJIQ5e3NP6wp6RkOfIJ6sFHsMpD2uyDVitMVEoP5HKulsVr1/fqFGIPLVUHiyjv7Lth0AaIoxw6MjfPVoQJP1zDRM+0HihQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754348984; c=relaxed/simple;
-	bh=3/vwe1XfvmMm4ujcTxs+rwqNUcpr/NIeYqaZ9EdeA34=;
+	s=arc-20240116; t=1754349008; c=relaxed/simple;
+	bh=OqU7HKlaaB+/yr85e8O0qFFV2mhIIMzXHyes2/pyXiM=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ZoUjJXmz5g0PxW2NFk+1dsn3sVFYf8eGl5XShsYyoCZDGGteXzQYBMaxnPcVOeioCS6G3bGe/lktwtO3mL/D16UBvin369/CZK+bqFskLGc6ksOmbrn9i/DkrbQgNfwfvmPR/97lBEIuzd5eRE6Y+qnSDM0PodmnemcHEOnWRGo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bVxZmQyn; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-24286ed4505so1020365ad.3;
-        Mon, 04 Aug 2025 16:09:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1754348983; x=1754953783; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZrE8b9KIiuoHC4GcqpFRJBb0WIhhrwvoYsW5y95hd+0=;
-        b=bVxZmQyndKj/hnt+pDNyqfVsf7JTeIkSAxMKljCt9eTqjNumNfDm7x0TZWirJbGj1k
-         e5tcMu7UCQHTddb5VAOCjwe5Y8FBHQDwXltjiUYIh2IwwMpEO85ugEvsn5HnzETcRF2y
-         Y6EiD2CnbwrrW4q73c7TYZ53ZcU/q5RNRZufEzyCNih7sjTaCiiOA/cKqOrurDO3ivGj
-         cw6XNw9Fg482dT3z6q22Iwd+urIbFUWdtHNASau5eDy1alqw8BKSMD4nqXseh5eVZA/M
-         pwg1qDvhAr2+1u7zmPZLHervX7nvK/UIlaJcFt/MTsPEi/fM8+YxIQ3aRGzMLqd81xce
-         w/xA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1754348983; x=1754953783;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZrE8b9KIiuoHC4GcqpFRJBb0WIhhrwvoYsW5y95hd+0=;
-        b=vOueOsV8E+5gPl+mfGR+0ocSHJbuoS8eCmYMlnKKIcSj2eCSz8gZ/XDTWtbtys13W0
-         UOpsZzGKYUB+mBtsJ+GAys2ViFoohgj6hnff3RB/mkzA3DnNCQKOOfU/OyzUF6l+DhQP
-         nWkyJaDvcH4BH3ouiNgnxEDiS+5vANLRkC2rblyHO1uzv2CZbqSMxeLhLeNNRKJQW1SW
-         dmzb8h78v6worr2y27hG3a0xVnapPbmM4aajV8pg97mawD8sYIs8m1sG164X3CqQ4SL0
-         oUAFyk48DJjMlJGhkKUQ62flo1hwCM/7PgzMhneSKeuLrTl3RBs0AGsLPkm3EZX0jpTz
-         0MPA==
-X-Forwarded-Encrypted: i=1; AJvYcCVJXAqGpEHKqMWz+pCYkoYGvRHcRkxAMJfVPxywvhRxS/Au+P97uDlxENsZJDU12Dbn3c/DIn/2E1gV@vger.kernel.org, AJvYcCWc7Lfn42txobYV9dB1T2/fdRnkiamT8xUWhhXR7oZ/inqD2378vwd7i59WWenx0w37MQMs2nUs01199RsqU5M=@vger.kernel.org, AJvYcCWrnAazMGIVfn4C6GYAE9WtIGqOFLRcuNNzl2QFExZJ31J4fXd6wyDlTH8JaqfibglsiVCSlYOYdLtak6LH@vger.kernel.org, AJvYcCXCAJyHwE0QP3xgsqqdLcjr8WfRl2yr6m09C/pidSAmWY6NcRaIFdUh+aHGlnn5kh2tzMlMz1iLGKoZ@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx8gfSPtLQafWuOmC9abCr1D8JS6i6m045W4CnJ8Zdip4n2ph4s
-	qbhZOgK7BBfo6qmnpmCwpUhRmgw68iZSMmAS4eBb/YhgIRv0pHt3W/iHbGf+BERmV3lXNQmKLQX
-	ywYThLVndS7YXSJXMSSBqSZuEPWxSFDg=
-X-Gm-Gg: ASbGnctrQATCOrgE0r7tlsQ9Z4EO8C/AJTdBolXmG72MM1cq/6iCWNc4+2PaFPMRR54
-	cDl427KZyIeFXC9HgofIDRhqAF2nvUAbB6GSaxKiB8qpQtT1dYrWVBO2CTPJhrrAc4Jud8BiDwJ
-	97q7QEqc9NfOa/GVFsqqnIsMDBLZkzpM+5PbTXDDyWBPJAVeK2bj+b+6TmyZoteTdxZfASLHPq2
-	QqAGvj8
-X-Google-Smtp-Source: AGHT+IH1uFH1KAXD6GBBvZtSK4gxmxnIP3aOIMcwoGpeUoxH+7GptC/maaoOxBcynoToxbAD/EDonUS0Jy9v0p7iqok=
-X-Received: by 2002:a17:90b:1804:b0:31f:55a7:6504 with SMTP id
- 98e67ed59e1d1-321162c71c9mr7131328a91.5.1754348982575; Mon, 04 Aug 2025
- 16:09:42 -0700 (PDT)
+	 To:Cc:Content-Type; b=W5Qr8mvISk5yYftXYSuqXOGxEhrH6s3qcjCWZY04s9MTRRH8dYGJ0tdH4e+QcOpjlPl14anU6CfsK/izTSVYYdFFTE5WFRrzg6qx4EJZfrPICmaflNbc4MDF/HiC5x9zYTKOUZ71eVEGnAAlBVTz3PmST9KA7Dgxd+g3nP7y48U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=emQpYAhD; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 31CB7C4CEF0
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 23:10:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1754349008;
+	bh=OqU7HKlaaB+/yr85e8O0qFFV2mhIIMzXHyes2/pyXiM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=emQpYAhD7UcEV34gva/+Tj2Gk9HQNqUdMMzPJsgGAVXqLM/GSpEW0RmrusIHZTWSQ
+	 mEV05f0QR6bajRjLIlWSa4IZkibAVyg4gSoG1hESJs7QfWJCgW+96Fhmr1oQfTfwpl
+	 nIHxlfFJvZrseS1hYf6Q3mjx8ENyoaIVdtOIGJqNpVL1n4lK0bFMm8V4jnzkU3vH/b
+	 tLPlNK/xDGtMOmbSsd4E8WBwGr4Ke0RfftUuh7rvJZlwnP4K1Ju/4GTwr2NXN4YQri
+	 iuNdj9ZHC2K+Angv3b50xnFEgKLlXyjSAR/TYKmgNbMrw2C3xzIYlYhcs3/lPMPl6x
+	 gBj8HPi9LxthA==
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-455b63bfa52so19335e9.0
+        for <linux-kernel@vger.kernel.org>; Mon, 04 Aug 2025 16:10:08 -0700 (PDT)
+X-Gm-Message-State: AOJu0YzAspDWIdx73T2xw0IAK3D9YNKEMFdfVNvvuhpipbKia1yfHfj0
+	huuJP9EV6TM25AsbmtnsCK1dqZjuQ98Xx1L0yQ2j4fmu1dymNM440OKPCyFNPEoIykpPfNBmUin
+	BHkjZZ8xHizVoDgT7EAvBiuDlKytBlAEtzrEOPSI3
+X-Google-Smtp-Source: AGHT+IHKpk+HdsX+UkmoGsNTrjTyAvv+GZeP3pJG7v7GzWXQDB8HcuYU8JvYjjZGY3fLVdxWGYKFXeKl60hxqHiBoUI=
+X-Received: by 2002:a05:600c:3b8c:b0:43d:409c:6142 with SMTP id
+ 5b1f17b1804b1-459e13212bamr553835e9.0.1754349006808; Mon, 04 Aug 2025
+ 16:10:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20250717-rust-next-pwm-working-fan-for-sending-v12-0-40f73defae0c@samsung.com>
- <CGME20250717090833eucas1p16c916450b59a77d81bd013527755cb21@eucas1p1.samsung.com>
- <20250717-rust-next-pwm-working-fan-for-sending-v12-3-40f73defae0c@samsung.com>
- <42C9DF97-2E0F-453B-800A-1DA49BF8F29F@collabora.com> <8ad10cc3-6e7d-4a8b-b6f6-9568403ee2b3@samsung.com>
-In-Reply-To: <8ad10cc3-6e7d-4a8b-b6f6-9568403ee2b3@samsung.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Tue, 5 Aug 2025 01:09:30 +0200
-X-Gm-Features: Ac12FXxpw2EiBASGKxIRYM6i3YaHMXDUJFrbm7UTkLYwIhJtTP30cGnZkc_aEBs
-Message-ID: <CANiq72=MvuhdcBoXKPMCzUQbFW2xEifZ9nO0OoXESGN3=R_1tQ@mail.gmail.com>
-Subject: Re: [PATCH v12 3/3] rust: pwm: Add complete abstraction layer
-To: Michal Wilczynski <m.wilczynski@samsung.com>
-Cc: Daniel Almeida <daniel.almeida@collabora.com>, =?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <ukleinek@kernel.org>, 
-	Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
-	Trevor Gross <tmgross@umich.edu>, Danilo Krummrich <dakr@kernel.org>, Drew Fustini <drew@pdp7.com>, 
-	Guo Ren <guoren@kernel.org>, Fu Wei <wefu@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Alexandre Ghiti <alex@ghiti.fr>, 
-	Marek Szyprowski <m.szyprowski@samsung.com>, Benno Lossin <lossin@kernel.org>, 
-	Michael Turquette <mturquette@baylibre.com>, Drew Fustini <fustini@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org, linux-riscv@lists.infradead.org, 
-	devicetree@vger.kernel.org
+References: <CALzav=d_Bjfy=6if+rPmxgGJfUV8ijnQ5hf40HoH6Yozg_H6Ew@mail.gmail.com>
+In-Reply-To: <CALzav=d_Bjfy=6if+rPmxgGJfUV8ijnQ5hf40HoH6Yozg_H6Ew@mail.gmail.com>
+From: Chris Li <chrisl@kernel.org>
+Date: Mon, 4 Aug 2025 16:09:54 -0700
+X-Gmail-Original-Message-ID: <CAF8kJuP09jvpB--fLy6Ju6rRuKFS5r8vyq1ne7ragbv0suWzLQ@mail.gmail.com>
+X-Gm-Features: Ac12FXy7avNazRoYmbC_NeBMrj_2tPBaCG8ggpo_BqxQQnqN6_SKMsJk-VIeXn4
+Message-ID: <CAF8kJuP09jvpB--fLy6Ju6rRuKFS5r8vyq1ne7ragbv0suWzLQ@mail.gmail.com>
+Subject: Re: Live Update MC (LPC): Call for Presentations
+To: David Matlack <dmatlack@google.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>, "iommu@lists.linux.dev" <iommu@lists.linux.dev>, kexec@lists.infradead.org, 
+	Linux MM Mailing List <linux-mm@kvack.org>, linux-pci@vger.kernel.org, X86 ML <x86@kernel.org>, 
+	"pasha.tatashin@soleen.com" <pasha.tatashin@soleen.com>, David Rientjes <rientjes@google.com>, 
+	Bjorn Helgaas <bhelgaas@google.com>, Samiullah Khawaja <skhawaja@google.com>, 
+	Vipin Sharma <vipinsh@google.com>, Josh Hilke <jrhilke@google.com>, 
+	Changyuan Lyu <changyuanl@google.com>, "graf@amazon.com" <graf@amazon.com>, 
+	"dwmw2@infradead.org" <dwmw2@infradead.org>, "jgowans@amazon.com" <jgowans@amazon.com>, 
+	"ptyadav@amazon.de" <ptyadav@amazon.de>, "jgg@nvidia.com" <jgg@nvidia.com>, "rppt@kernel.org" <rppt@kernel.org>, 
+	"alex.williamson@redhat.com" <alex.williamson@redhat.com>, "tglx@linutronix.de" <tglx@linutronix.de>, 
+	"dan.j.williams@intel.com" <dan.j.williams@intel.com>, Saeed Mahameed <saeedm@nvidia.com>, 
+	Adithya Jayachandran <ajayachandra@nvidia.com>, Parav Pandit <parav@nvidia.com>, 
+	Leon Romanovsky <leonro@nvidia.com>, William Tu US <witu@nvidia.com>, 
+	"anthony.yznaga@oracle.com" <anthony.yznaga@oracle.com>, dave.hansen@intel.com, 
+	David Hildenbrand <david@redhat.com>, Frank van der Linden <fvdl@google.com>, jork.loeser@microsoft.com, 
+	Junaid Shahid <junaids@google.com>, pankaj.gupta.linux@gmail.com, 
+	Pratyush Yadav <pratyush@kernel.org>, kpraveen.lkml@gmail.com, 
+	Vishal Annapurve <vannapurve@google.com>, Steve Sistare <steven.sistare@oracle.com>, 
+	Zhu Yanjun <yanjun.zhu@linux.dev>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Aug 5, 2025 at 12:29=E2=80=AFAM Michal Wilczynski
-<m.wilczynski@samsung.com> wrote:
->
-> So I did try this and it does work, however it results in a cryptic
-> linker error:
-> ld.lld: error: undefined symbol: rust_build_error
-> >>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
-> >>>               drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1=
-520::Th1520PwmDriverData>>::read_waveform_callback) in archive vmlinux.a
-> >>> referenced by pwm_th1520.2c2c3938312114c-cgu.0
-> >>>               drivers/pwm/pwm_th1520.o:(<kernel::pwm::Adapter<pwm_th1=
-520::Th1520PwmDriverData>>::round_waveform_tohw_callback) in archive vmlinu=
-x.a
-> make[2]: *** [scripts/Makefile.vmlinux:91: vmlinux] Error 1
->
-> I assume this could be fixed at some point to better explain what
-> failed?
+Hi David,
 
-Yes, it would be nice to improve that -- I keep some references at
-https://github.com/Rust-for-Linux/linux/issues/354 ("build_assert").
+Thanks for organizing this.
 
-Ideally we would get some compiler support for those.
+On Fri, Aug 1, 2025 at 8:33=E2=80=AFAM David Matlack <dmatlack@google.com> =
+wrote:
+> Topics to be discussed at the microconference include:
+>   - Live Update Orchestrator (state machine, userspace API, implementatio=
+n)
+>   - Generic infrastructure for preserving file descriptors across Live Up=
+dates
+>   - Live Update support for specific files (memfd, iommufd, VFIO cdev, et=
+c.)
+>   - Integration of Live Update with the PCI subsystem and Linux device mo=
+del
 
-Cheers,
-Miguel
+I will submit a topic proposal for the Live Update with PCI subsystems.
+The PCI RFC V1 discussion thread is here:
+https://lore.kernel.org/lkml/20250728-luo-pci-v1-0-955b078dd653@kernel.org
+
+Thanks
+
+Chris
 
