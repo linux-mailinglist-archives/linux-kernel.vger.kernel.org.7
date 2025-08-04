@@ -1,323 +1,203 @@
-Return-Path: <linux-kernel+bounces-754998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0A39B19FB9
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:27:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B95BFB19FBD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 12:30:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 53F7D7A07EA
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:26:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B48F1893A64
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:30:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D6E424DCE5;
-	Mon,  4 Aug 2025 10:27:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D43E3248F4E;
+	Mon,  4 Aug 2025 10:30:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p3Pf3kB3"
-Received: from fllvem-ot04.ext.ti.com (fllvem-ot04.ext.ti.com [198.47.19.246])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="QAa8wodl"
+Received: from AM0PR02CU008.outbound.protection.outlook.com (mail-westeuropeazon11013045.outbound.protection.outlook.com [52.101.72.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCD7B323E;
-	Mon,  4 Aug 2025 10:27:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.246
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754303251; cv=none; b=lUxiJEXKQzI+GS7CSgcxTdcFp8VgCfi2Zwqpvfh8G9TRwo+WtXeZCIvMYGb2hkdy5yMyA18ON9rNbMdrPvyoan3byH0EcbyHhal9UvRZA4na3H3OzdTVKwfwe3pVRHQ2TDN80R6QSXCg0v4WrTpOz2cWX5liwJfa1EVuX9sD07A=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754303251; c=relaxed/simple;
-	bh=zuVyEaaPsk+jI/ddnJM3mILgtoWqUDUtXgflldmd0Jc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=T/Z1+zNKSPKcGV7/M9lJbl2A1mOcYp9imouF7tWmKR9BccqbNbKQ0kUW9rqVaZyeoL0EMV5QFOHslIJ5jYWbL+5ljBDycPbqqDZDAeUPK6ikxAS835D6LQkuT1HxiBVXRR4Xcv1UxoBnPjlBdXZGx5r9IO/4qsn6nBflERmguxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p3Pf3kB3; arc=none smtp.client-ip=198.47.19.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelvem-sh01.itg.ti.com ([10.180.77.71])
-	by fllvem-ot04.ext.ti.com (8.15.2/8.15.2) with ESMTP id 574AQwsV030354;
-	Mon, 4 Aug 2025 05:26:58 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1754303218;
-	bh=zHDOjsZ3qxGXlfAXDGf5AHoG5TvKECFGs28x4k+pMqk=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=p3Pf3kB3dzMdUP7rXRBOVXQjjY5xSdzsn6p8tayceW3c5C26sEFZ2b50KbCjNQsZL
-	 UZR+s66MrEIoUAcuYDjwsrTEBNZpPf1GRV6VoPWzAnWV36XbT2AUKAAp7Wnto45kem
-	 SmI08ITUOqyBdvpSGPH5vwh+s5dgHmtKRIPy4MjQ=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelvem-sh01.itg.ti.com (8.18.1/8.18.1) with ESMTPS id 574AQvBp1434573
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-SHA256 bits=128 verify=FAIL);
-	Mon, 4 Aug 2025 05:26:57 -0500
-Received: from DFLE103.ent.ti.com (10.64.6.24) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55; Mon, 4
- Aug 2025 05:26:57 -0500
-Received: from lelvem-mr05.itg.ti.com (10.180.75.9) by DFLE103.ent.ti.com
- (10.64.6.24) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.55 via
- Frontend Transport; Mon, 4 Aug 2025 05:26:57 -0500
-Received: from [172.24.233.149] (ws.dhcp.ti.com [172.24.233.149])
-	by lelvem-mr05.itg.ti.com (8.18.1/8.18.1) with ESMTP id 574AQp3S256262;
-	Mon, 4 Aug 2025 05:26:51 -0500
-Message-ID: <2da35b0a-de39-4f15-9b7d-4cc2e3a5237b@ti.com>
-Date: Mon, 4 Aug 2025 15:56:50 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A7871ACECE;
+	Mon,  4 Aug 2025 10:30:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.72.45
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1754303426; cv=fail; b=I0VX3MleGx9Ekns0jBR2Y/9AmSPdKfYHTB29vE1zYjgP7EjEmCwV1mjPfN401pDr0ADERapsSJLlRtm1+k3U2bGNpdWS5tNVcQmB4c2Widg5vXpuhttJ4dkJOEg/qNR3zfpJ//MUJdFORBpsLYyN1DANCwWWo903b873CVzF2Ok=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1754303426; c=relaxed/simple;
+	bh=E1u+AIsxLTvDjqpKrPpl5N+NgtAEGPfePOqewP7cd3U=;
+	h=From:To:Cc:Subject:Date:Message-Id:Content-Type:MIME-Version; b=efqoSCgLUOEitm0BNRwSXkzu7glfUJNaldo7chVoptOTZgNcVrqzVqvj/Z3C1pTQhUtv93OLrAJ0Q/rR2esuH4CItokA7MWf6gZuwm6rZ71hTaSO4C3CvRqrk8GsTPKVrnNhQy+fE7bhkv6p2VvOkCKMGoBdu9YJMiWd4ppe61E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=QAa8wodl; arc=fail smtp.client-ip=52.101.72.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Um62bZnX0+Dd9yXYZ1JYmlVJ42mLdgbxm/3VSxbW8Ac+mVcG64U4k0V61fZAOk84BQ+KXRPrHAdWnDAY1gnSSzbiuvQeBbD2JVJTr1W5VcDnIwcTDEnNVPnL4WxjcVGrCar0OKhzPg6wJhTxF+IwovE9dMlPkLnNDAI1X8hu7zoLtPLyEwmVmZWOg++1EtW1f0aypwtPrllkQMYSi3/Wpj+0pRBOWYR8PYObtrsTVMOMZC7ujowjXrog0tkOejKUJqxDLV/V6M/oWZLo89K64y6iII76Laktm/7GUrdiIZ9UJsQ2/WAouFpweM/JfnWHrVutzsVRvvu1DyS/k6WRRw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3rt1VOzncmNIq3yFodtbG6D0Pbw3ZRe8PyuZLDoVl5c=;
+ b=hp4RXMZ/eJ1npc1+HKeeg/uBuXEo5q892jzazkUHMckcMsIqCCwy2mf5EUZ8qZn3sVWQ8KDHIm5/9hHtUx5ut+rmOVM3DXEZBu+IuPSApECUGSCfHUMV+X0DkHXSv6X1IOKs5WPvEtcTRnoSCeRiwHdSl7qVwcEJy9QKUSPwvBj42n8hszgArA+99OseDHvN8elPEufVhsyqnz+RsE+whjNW8XDlXfDAW7/YysCiDaW8c5fM74hsurYNTZ8FDxRSolC6Fza7BTk2SSuUwR8Mnv7siED57AbzAuvpZtgmLJ22AqfO1aD+cuId6lWpt2300VlVvb8RINEmVabomKwXxQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3rt1VOzncmNIq3yFodtbG6D0Pbw3ZRe8PyuZLDoVl5c=;
+ b=QAa8wodlE4eNDxgDMPDaIyzc4a9JPN/bSPfDjCWVpbnQ0Iuv15bJXHyqju5ZcyDSdqk2OqRIq4VLljR+RTCByiRqGEgwZ+geVWh+TZsQrPTRuHdBFZFsxiHtVRGGVCTmBd1AUrUudvzTvRzOYL19Df28BlLqNjVDTw3uiJ39mmdHMOheYr6CKkZNARDQP2/kB4cq+TL20M2++wrWo48PrU4GVquQrf1tfOMvQtSSa7wzNHmtBlxFEioFKe8LpNxOgv05EDjo9QyupVDP0fIPbM9n8KpHq0yDR+BJJqSm+Fi5qke69jSd5kLwQiJQ+p2ziYhE5tDgnW9WMczKVxSXig==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
+ by VE1PR04MB7423.eurprd04.prod.outlook.com (2603:10a6:800:1a0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8989.20; Mon, 4 Aug
+ 2025 10:30:20 +0000
+Received: from AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299]) by AS4PR04MB9692.eurprd04.prod.outlook.com
+ ([fe80::a2bf:4199:6415:f299%5]) with mapi id 15.20.8989.018; Mon, 4 Aug 2025
+ 10:30:20 +0000
+From: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+To: marcel@holtmann.org,
+	luiz.dentz@gmail.com
+Cc: linux-bluetooth@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	amitkumar.karwar@nxp.com,
+	sherry.sun@nxp.com,
+	neeraj.sanjaykale@nxp.com
+Subject: [PATCH v2] Bluetooth: btnxpuart: Uses threaded IRQ for host wakeup handling
+Date: Mon,  4 Aug 2025 16:00:15 +0530
+Message-Id: <20250804103015.1104289-1-neeraj.sanjaykale@nxp.com>
+X-Mailer: git-send-email 2.34.1
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SG2P153CA0023.APCP153.PROD.OUTLOOK.COM (2603:1096:4:c7::10)
+ To AS4PR04MB9692.eurprd04.prod.outlook.com (2603:10a6:20b:4fe::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 12/12] media: ti: j721e-csi2rx: Change the drain
- architecture for multistream
-To: Jai Luthra <jai.luthra@ideasonboard.com>, <jai.luthra@linux.dev>,
-        <laurent.pinchart@ideasonboard.com>, <mripard@kernel.org>
-CC: <y-abhilashchandra@ti.com>, <devarsht@ti.com>, <vaishnav.a@ti.com>,
-        <s-jain1@ti.com>, <vigneshr@ti.com>, <mchehab@kernel.org>,
-        <robh@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <sakari.ailus@linux.intel.com>, <hverkuil-cisco@xs4all.nl>,
-        <tomi.valkeinen@ideasonboard.com>, <changhuang.liang@starfivetech.com>,
-        <jack.zhu@starfivetech.com>, <linux-kernel@vger.kernel.org>,
-        <linux-media@vger.kernel.org>, <devicetree@vger.kernel.org>
-References: <20250514112527.1983068-1-r-donadkar@ti.com>
- <20250514112527.1983068-13-r-donadkar@ti.com>
- <175081523471.8144.8244237988305732382@freya>
-Content-Language: en-US
-From: Rishikesh Donadkar <r-donadkar@ti.com>
-In-Reply-To: <175081523471.8144.8244237988305732382@freya>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AS4PR04MB9692:EE_|VE1PR04MB7423:EE_
+X-MS-Office365-Filtering-Correlation-Id: 60b75eee-719f-4e3e-d328-08ddd341e97e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|366016|1800799024|376014|19092799006|52116014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?KKT0hQgoHUNK+1g5qh+SJzhrvWprOp1Q2xV3AD1weXhTdaorrH1mfMsDXeKV?=
+ =?us-ascii?Q?8pFvA6XujANvJJnQ+Scl8U7zYyZPFN2VOAQhxo3O77oYf7rilsNHoBJQJXFE?=
+ =?us-ascii?Q?ejmt9aAgmrHtIVd/SVR1o696XzUxetle3cAUTAr0RZpkW3R6BsoAiqLVWKub?=
+ =?us-ascii?Q?EL8ffvADPgq++wgY3JJl7iQIdb8vLKM86F0EO+bLM51fqRNZ2UjvDrkRzhDm?=
+ =?us-ascii?Q?ynmqTPy/DW3pbE3VAgxiQAXoY+FX07BpQljsf0HUfe99rFHkdALEeoFzpMld?=
+ =?us-ascii?Q?RUzu+mGJt0DKBqjkFvXpmQwyeWuFkbsA6ziHhlXZ7CDiWKfmZoDRhZYDS+yM?=
+ =?us-ascii?Q?xeeMDQ63jEh6lVg5npSUmyWmWLNeZxm52eF45F3j/7aHYu6jRy6RePbO6Zv8?=
+ =?us-ascii?Q?DiJo1Ja9d9CkFOAQnD+2HIo9fLRvT8yHcBm6iuajHHaAjjdZ2ovOZ/egqEVa?=
+ =?us-ascii?Q?CFodEG/TimGplUsIUmQr+AdnjteDj5WWZ5b3AtBvNO9diUxgd06PHBfojJxA?=
+ =?us-ascii?Q?+r2x4ybpOWpNTfhQWgeY+Bqk+uIfGS6dPFQNuJcdFy/opz2h3FGpqcRyQ/Vh?=
+ =?us-ascii?Q?YvCafW55QKg9oRX0ZSJutjpcJ9s5NtIBXkI3C+k0EK5DYAAl7CJ+yuE3BOdm?=
+ =?us-ascii?Q?IYMskrSigaj4I7b4xf6D9YsI8o5Yj77Y5whV+BiIDrnxhxCRH2PMkqJ3RPoy?=
+ =?us-ascii?Q?GW/gbwg3f/4hGlBMmyejfypEcdVPwtoENc4TEIENWGrXjw5MEJPqHdo5iUrY?=
+ =?us-ascii?Q?WgXHSuAsUBoEyooRx5ooWxeRJ7te3FWUsG5SQtgm4bwHtCY3h8ii9lN0hUcN?=
+ =?us-ascii?Q?ToWtOLqFIjhtLTQl9JGYUfNRmINVPp7iEQVkc3gh8RO5kOwvqiHNJIvacAh9?=
+ =?us-ascii?Q?UA/6/KTtWdZ4ie8popZJ24UBcTq1esdVtcXsreKfs3/bSZdOCLm6DDEeBa4C?=
+ =?us-ascii?Q?/SS1EINL1U4v6yLiWi5zcJwhNs5gOGAZI12qoR2mji+o3/Z/j1MzAS8rXe9R?=
+ =?us-ascii?Q?BOa4leFL24tvWoejIK5PXAYJTACKvBu25nTmRKx0FcZ9cYmjpVkY7/0lOjwz?=
+ =?us-ascii?Q?wCQDyWKidVNVVah0aLgP9RYk+xP3KxX4JMuvEt9MLpdZYLwd17LMU680mCQG?=
+ =?us-ascii?Q?sm7mclbHfL62vbetssEGyPe9SIaFe5j42jWY0rdbWE3q7p8aSF1EOBjn4+ni?=
+ =?us-ascii?Q?5raqo/rdcUeUYNGnvOuxQsrOqFXqWC38TumUpNTnlJF1FQRdgUy22XnS2DT1?=
+ =?us-ascii?Q?Y1XUia2xFoXDjwigZ2FRFgoiXvMIXSOKGawR4bNK62pO9DxEwkVV4t3Cy5rw?=
+ =?us-ascii?Q?NQs9kYcrRfdy4Xj+E51LjurFfrP0LW30sn5893uGztIXQGaD0pD33PmkiZ6j?=
+ =?us-ascii?Q?x/UlY2HeLkh+G5gbbQGXv1KHbmc5O8815Ybd2tp7iSySK4ULoRSq9Afmd9yY?=
+ =?us-ascii?Q?W5qMEStnf2xNJpLj1zYeUBxokhAu37kqz0seEvFAn7Jd3oBtl+mkQA=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS4PR04MB9692.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014)(19092799006)(52116014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?IygIdRxIKhWKb2vERMZTF7DJXTqZOtJCRfCRTJsVOyrvK2kAeMVIGbFfk2fx?=
+ =?us-ascii?Q?WRlq00A5kzlFJo46G9RqMzgcc9ojMAdKlqBUe4X8ene8uxIWyKAhpYjE4Dm6?=
+ =?us-ascii?Q?SQnsVvmKAGoI4YhBvByuQUZvYVORMlsviQOpUyiH5TCkjpvCNWDM0kFNaMGx?=
+ =?us-ascii?Q?CiupCeTFQuYLhEv46FwLDb9WgF+fd9YGSKC+dRwBX+tOArWM+Nd1YfLHZV+v?=
+ =?us-ascii?Q?MlbLp2SO8nJ0WLfQO3nGOp0lTOOPK9bRpL7VH8tygApwfPn2QX8kX1nGiDdn?=
+ =?us-ascii?Q?HYvVMSqT8tkr+10MvcXtKJTxNtwKNOgdzTUs2L4mXBGmPgXTKjBBWpymVaFH?=
+ =?us-ascii?Q?qiHYzLwIA3JWjWW6whzq4zubAWkdL8CuBsUtZuTw0SW8DSKdtxIvGyDsC27V?=
+ =?us-ascii?Q?9vU/BR2j2QA2klu/zKgJOeZ3wpBRtQyvFIYpPOYRjYhPGtVtCTNMYrTsBwcE?=
+ =?us-ascii?Q?qhObbvkgQlYzwiEcInCTtTsOVYpm9ARqN5O7ceWDIjyjAkZ/9F5F3nbBNKIc?=
+ =?us-ascii?Q?rErq7Zc+oe9d2nFGNhHUbQIIQaCYSCPWnOfkFw3EUy3watS4LQADUeMNWsOG?=
+ =?us-ascii?Q?xrnuidP9IzUDBf80s9UlCdUWEVeA9Dauq0Wcnl+mi1UuLVP28s/oUD0dmDaa?=
+ =?us-ascii?Q?yTKT89TF2rdJ39A0hVas+4iBGYNYYMbYcCG3qJGXq5WhIfrllcmZgCIY0ce1?=
+ =?us-ascii?Q?1H5VlvrBl+/Sh2hlqwBZAFQZtsUF8oy+KhRyJtmZRJU0BGcb11ATrt72HnIh?=
+ =?us-ascii?Q?u0dZBVcWsl26zSFVno2cLUZVkIjHa7JLQoqkaRrs+J7GQOEXDBehQ9j9d5PA?=
+ =?us-ascii?Q?LlUAJpVpjeXfQRa7YscE26HN8QxVAoQuL2u/PpT4EG2gxjIyWQga9Zgnza1X?=
+ =?us-ascii?Q?gPNXiH38bjBccJ4jBAljEsdWx/b3SVcCsh68rL1bTEItjOAu7EPs06IXB7UZ?=
+ =?us-ascii?Q?G6+YVJbnhQux2mFfnZ2KQMxbEyijEU/y1OzGXp81FJH1nQDvP1P9NqfmunQB?=
+ =?us-ascii?Q?wd2cxgwoHS7JkixxEsT7j3/rF3TdezOwROTMyyvdv/3BulTxAvEZ1iuUkMYP?=
+ =?us-ascii?Q?SUhC20pjBpOoftU1ED1HGhoB+Gl8GP96+vkj6fh1XLXlIVGNnRfVANCZn2+r?=
+ =?us-ascii?Q?4q2WHQxaF+0sADgjv0TT7eT6vkBbjCtFzHy5UHh+ARo9eZfjPHRwwLVjxgoK?=
+ =?us-ascii?Q?41RPNSByIdvjYncj1EKCdzCOMtOImfGxMwNq2qabZzF1xlu+yL2mzmeYqrWE?=
+ =?us-ascii?Q?E5dHylxsL3hYSKuQbeWEyQ2jpljpIPLjLtRYrP00VdYrM9ICd2K0ogpmXcT7?=
+ =?us-ascii?Q?PN20PmRkX/pLWeN3+bSEqmALuA5UvzUIccyY7P1brpc1YiltdlQBrly2OZx+?=
+ =?us-ascii?Q?XV6crATbdMzdga5BBfSPebDc3sfoqfSczSbMFTInjb3hTbZdgCG/ToLra/0c?=
+ =?us-ascii?Q?dS7VnkdbBaOH2OIetW+UU8MKF4hB6EOjTAi5wkfE8dEa/xUPiKJftOjSH4zw?=
+ =?us-ascii?Q?cfUY/cFgR8ive3gwMArwy1s0GQbiSm4bCYWTR/RHKSmQnbnkTzNEJUF/kwCZ?=
+ =?us-ascii?Q?VURlloDEGHRyJ06wd23te3z+GB+YxchIIUheIhhqpDAPl8uYBBQG6OhBzYnF?=
+ =?us-ascii?Q?Gw=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 60b75eee-719f-4e3e-d328-08ddd341e97e
+X-MS-Exchange-CrossTenant-AuthSource: AS4PR04MB9692.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 04 Aug 2025 10:30:20.2915
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 6X0By5FzXThPfqRJil42bVoiNFuy5ntANQx0sXUm7KlzM9ss2UXISlOQf1sWNyHpXDr1UtF/xh9EqUhZlrI7v/gU2Nox/7+ltjTzVsku/uE=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VE1PR04MB7423
 
+This replaces devm_request_irq() with devm_request_threaded_irq().
 
-On 25/06/25 07:03, Jai Luthra wrote:
-> Hi Rishikesh,
+On iMX93 11x11 EVK platform, the BT chip's BT_WAKE_OUT pin is connected
+to an I2C GPIO expander instead of directly been connected to iMX GPIO.
 
+When I2C GPIO expander's (PCAL6524) host driver receives an interrupt on
+it's INTR line, the driver's interrupt handler needs to query the
+interrupt source with PCAL6524 first, and then call the actual interrupt
+handler, in this case the IRQ handler in BTNXPUART.
 
-Hi Jai,
+In order to handle interrupts when such I2C GPIO expanders are between
+the host and interrupt source, devm_request_threaded_irq() is needed.
 
-Thank you for the review !
+This commit also removes the IRQF_TRIGGER_FALLING flag, to allow setting
+the IRQ trigger type from the device tree setting instead of hardcoding
+in the driver.
 
+Signed-off-by: Neeraj Sanjay Kale <neeraj.sanjaykale@nxp.com>
+---
+v2: Add reason for removing IRQF_TRIGGER_FALLING in commit message.
+    (Sherry Sun)
+---
+ drivers/bluetooth/btnxpuart.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
 
->
-> Thanks for the patch.
->
-> Quoting Rishikesh Donadkar (2025-05-14 04:25:27)
->> On buffer starvation the DMA is marked IDLE, and the stale data in the
->> internal FIFOs gets drained only on the next VIDIOC_QBUF call from the
->> userspace. This approach works fine for a single stream case.
->>
->> But in multistream scenarios, buffer starvation for one stream i.e. one
->> virtual channel, can block the shared HW FIFO of the CSI2RX IP. This can
->> stall the pipeline for all other virtual channels, even if buffers are
->> available for them.
->>
->> This patch introduces a new architecture, that continuously drains data
->> from the shared HW FIFO into a small (32KiB) buffer if no buffers are made
->> available to the driver from the userspace. This ensures independence
->> between different streams, where a slower downstream element for one
->> camera does not block streaming for other cameras.
->>
->> Signed-off-by: Rishikesh Donadkar <r-donadkar@ti.com>
->> ---
->>   .../platform/ti/j721e-csi2rx/j721e-csi2rx.c   | 96 +++++++------------
->>   1 file changed, 33 insertions(+), 63 deletions(-)
->>
->> diff --git a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> index ba2a30bfed37d..3b046d3cf7e5a 100644
->> --- a/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> +++ b/drivers/media/platform/ti/j721e-csi2rx/j721e-csi2rx.c
->> @@ -57,7 +57,6 @@
->>   #define TI_CSI2RX_MAX_SOURCE_PADS      TI_CSI2RX_MAX_CTX
->>   #define TI_CSI2RX_MAX_PADS             (1 + TI_CSI2RX_MAX_SOURCE_PADS)
->>   
->> -#define DRAIN_TIMEOUT_MS               50
->>   #define DRAIN_BUFFER_SIZE              SZ_32K
->>   
->>   struct ti_csi2rx_fmt {
->> @@ -77,7 +76,6 @@ struct ti_csi2rx_buffer {
->>   
->>   enum ti_csi2rx_dma_state {
->>          TI_CSI2RX_DMA_STOPPED,  /* Streaming not started yet. */
->> -       TI_CSI2RX_DMA_IDLE,     /* Streaming but no pending DMA operation. */
->>          TI_CSI2RX_DMA_ACTIVE,   /* Streaming and pending DMA operation. */
->>   };
->>   
->> @@ -245,6 +243,10 @@ static const struct ti_csi2rx_fmt ti_csi2rx_formats[] = {
->>   static int ti_csi2rx_start_dma(struct ti_csi2rx_ctx *ctx,
->>                                 struct ti_csi2rx_buffer *buf);
->>   
->> +/* Forward declarations needed by ti_csi2rx_drain_callback. */
->> +static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx);
->> +static int ti_csi2rx_dma_submit_pending(struct ti_csi2rx_ctx *ctx);
->> +
->>   static const struct ti_csi2rx_fmt *find_format_by_fourcc(u32 pixelformat)
->>   {
->>          unsigned int i;
->> @@ -596,9 +598,28 @@ static void ti_csi2rx_setup_shim(struct ti_csi2rx_ctx *ctx)
->>   
->>   static void ti_csi2rx_drain_callback(void *param)
->>   {
->> -       struct completion *drain_complete = param;
->> +       struct ti_csi2rx_ctx *ctx = param;
->> +       struct ti_csi2rx_dma *dma = &ctx->dma;
->> +       unsigned long flags;
->> +
->> +       spin_lock_irqsave(&dma->lock, flags);
->>   
->> -       complete(drain_complete);
->> +       if (dma->state == TI_CSI2RX_DMA_STOPPED) {
->> +               spin_unlock_irqrestore(&dma->lock, flags);
->> +               return;
->> +       }
->> +
->> +       /*
->> +        * If dma->queue is empty, it signals no buffer has arrived from
->> +        * user space, so, queue more transaction to drain dma
->> +        */
->> +       if (list_empty(&dma->queue)) {
->> +               if (ti_csi2rx_drain_dma(ctx))
->> +                       dev_warn(ctx->csi->dev, "DMA drain failed\n");
->> +       } else {
->> +               ti_csi2rx_dma_submit_pending(ctx);
->> +       }
->> +       spin_unlock_irqrestore(&dma->lock, flags);
->>   }
->>   
->>   /*
->> @@ -616,12 +637,9 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
->>   {
->>          struct ti_csi2rx_dev *csi = ctx->csi;
->>          struct dma_async_tx_descriptor *desc;
->> -       struct completion drain_complete;
->>          dma_cookie_t cookie;
->>          int ret;
->>   
->> -       init_completion(&drain_complete);
->> -
->>          desc = dmaengine_prep_slave_single(ctx->dma.chan, csi->drain.paddr,
->>                                             csi->drain.len, DMA_DEV_TO_MEM,
->>                                             DMA_PREP_INTERRUPT | DMA_CTRL_ACK);
->> @@ -631,7 +649,7 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
->>          }
->>   
->>          desc->callback = ti_csi2rx_drain_callback;
->> -       desc->callback_param = &drain_complete;
->> +       desc->callback_param = ctx;
->>   
->>          cookie = dmaengine_submit(desc);
->>          ret = dma_submit_error(cookie);
->> @@ -640,13 +658,6 @@ static int ti_csi2rx_drain_dma(struct ti_csi2rx_ctx *ctx)
->>   
->>          dma_async_issue_pending(ctx->dma.chan);
->>   
->> -       if (!wait_for_completion_timeout(&drain_complete,
->> -                                        msecs_to_jiffies(DRAIN_TIMEOUT_MS))) {
->> -               dmaengine_terminate_sync(ctx->dma.chan);
->> -               dev_dbg(csi->dev, "DMA transfer timed out for drain buffer\n");
->> -               ret = -ETIMEDOUT;
->> -               goto out;
->> -       }
->>   out:
->>          return ret;
->>   }
->> @@ -694,9 +705,11 @@ static void ti_csi2rx_dma_callback(void *param)
->>   
->>          ti_csi2rx_dma_submit_pending(ctx);
->>   
->> -       if (list_empty(&dma->submitted))
->> -               dma->state = TI_CSI2RX_DMA_IDLE;
->> -
->> +       if (list_empty(&dma->submitted)) {
->> +               if (ti_csi2rx_drain_dma(ctx))
->> +                       dev_warn(ctx->csi->dev,
->> +                                "DMA drain failed on one of the transactions\n");
->> +       }
->>          spin_unlock_irqrestore(&dma->lock, flags);
->>   }
->>   
->> @@ -749,7 +762,7 @@ static void ti_csi2rx_stop_dma(struct ti_csi2rx_ctx *ctx)
->>                   * enforced before terminating DMA.
->>                   */
->>                  ret = ti_csi2rx_drain_dma(ctx);
->> -               if (ret && ret != -ETIMEDOUT)
->> +               if (ret)
->>                          dev_warn(ctx->csi->dev,
->>                                   "Failed to drain DMA. Next frame might be bogus\n");
->>          }
->> @@ -816,57 +829,14 @@ static void ti_csi2rx_buffer_queue(struct vb2_buffer *vb)
->>          struct ti_csi2rx_ctx *ctx = vb2_get_drv_priv(vb->vb2_queue);
->>          struct ti_csi2rx_buffer *buf;
->>          struct ti_csi2rx_dma *dma = &ctx->dma;
->> -       bool restart_dma = false;
->>          unsigned long flags = 0;
->> -       int ret;
->>   
->>          buf = container_of(vb, struct ti_csi2rx_buffer, vb.vb2_buf);
->>          buf->ctx = ctx;
->>   
->>          spin_lock_irqsave(&dma->lock, flags);
->> -       /*
->> -        * Usually the DMA callback takes care of queueing the pending buffers.
->> -        * But if DMA has stalled due to lack of buffers, restart it now.
->> -        */
->> -       if (dma->state == TI_CSI2RX_DMA_IDLE) {
->> -               /*
->> -                * Do not restart DMA with the lock held because
->> -                * ti_csi2rx_drain_dma() might block for completion.
->> -                * There won't be a race on queueing DMA anyway since the
->> -                * callback is not being fired.
->> -                */
->> -               restart_dma = true;
->> -               dma->state = TI_CSI2RX_DMA_ACTIVE;
->> -       } else {
->> -               list_add_tail(&buf->list, &dma->queue);
->> -       }
->> +       list_add_tail(&buf->list, &dma->queue);
->>          spin_unlock_irqrestore(&dma->lock, flags);
->> -
->> -       if (restart_dma) {
->> -               /*
->> -                * Once frames start dropping, some data gets stuck in the DMA
->> -                * pipeline somewhere. So the first DMA transfer after frame
->> -                * drops gives a partial frame. This is obviously not useful to
-> I think it would be good to retain a similar comment in the code, and also
-> in the commit message, as there is a possibility of returning a partial frame
-> to the user post drain.
+diff --git a/drivers/bluetooth/btnxpuart.c b/drivers/bluetooth/btnxpuart.c
+index 73a4a325c867..76e7f857fb7d 100644
+--- a/drivers/bluetooth/btnxpuart.c
++++ b/drivers/bluetooth/btnxpuart.c
+@@ -543,10 +543,10 @@ static int ps_setup(struct hci_dev *hdev)
+ 	}
+ 
+ 	if (psdata->wakeup_source) {
+-		ret = devm_request_irq(&serdev->dev, psdata->irq_handler,
+-					ps_host_wakeup_irq_handler,
+-					IRQF_ONESHOT | IRQF_TRIGGER_FALLING,
+-					dev_name(&serdev->dev), nxpdev);
++		ret = devm_request_threaded_irq(&serdev->dev, psdata->irq_handler,
++						NULL, ps_host_wakeup_irq_handler,
++						IRQF_ONESHOT,
++						dev_name(&serdev->dev), nxpdev);
+ 		if (ret)
+ 			bt_dev_info(hdev, "error setting wakeup IRQ handler, ignoring\n");
+ 		disable_irq(psdata->irq_handler);
+-- 
+2.34.1
 
-
-Noted, Will add this info in the next revision of this series
-
-
-Regards,
-
-Rishikesh
-
->
-> With that change,
->
-> Reviewed-by: Jai Luthra <jai.luthra@ideasonboard.com>
->
->> -                * the application and will only confuse it. Issue a DMA
->> -                * transaction to drain that up.
->> -                */
->> -               ret = ti_csi2rx_drain_dma(ctx);
->> -               if (ret && ret != -ETIMEDOUT)
->> -                       dev_warn(ctx->csi->dev,
->> -                                "Failed to drain DMA. Next frame might be bogus\n");
->> -
->> -               spin_lock_irqsave(&dma->lock, flags);
->> -               ret = ti_csi2rx_start_dma(ctx, buf);
->> -               if (ret) {
->> -                       vb2_buffer_done(&buf->vb.vb2_buf, VB2_BUF_STATE_ERROR);
->> -                       dma->state = TI_CSI2RX_DMA_IDLE;
->> -                       spin_unlock_irqrestore(&dma->lock, flags);
->> -                       dev_err(ctx->csi->dev, "Failed to start DMA: %d\n", ret);
->> -               } else {
->> -                       list_add_tail(&buf->list, &dma->submitted);
->> -                       spin_unlock_irqrestore(&dma->lock, flags);
->> -               }
->> -       }
->>   }
->>   
->>   static int ti_csi2rx_get_route(struct ti_csi2rx_ctx *ctx)
->> -- 
->> 2.34.1
-> >
 
