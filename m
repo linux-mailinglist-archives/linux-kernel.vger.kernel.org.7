@@ -1,104 +1,121 @@
-Return-Path: <linux-kernel+bounces-754888-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754889-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F360EB19E0C
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:58:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4FA3DB19E11
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 10:58:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9DCE33A4EDF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:58:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F818177EE6
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 08:58:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2BF5242D9E;
-	Mon,  4 Aug 2025 08:58:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7B0C242D9E;
+	Mon,  4 Aug 2025 08:58:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="UMeLnFLl"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QR/uM5MB"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D5FD38FA6;
-	Mon,  4 Aug 2025 08:57:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B670C38FA6;
+	Mon,  4 Aug 2025 08:58:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754297881; cv=none; b=Nzrlx9mdCeTwb16K0Cg9ehMhMfI/y/G/eJ5Xjg3dOF+r+LgauPnSGMNcPjmC2XIDyiusiq0hpK24hfMKP1MV69loktkM1eRWFafetECVsiVWfx/sH74frzSwOlNfxDGlQ0TXNp9oGL41vxv+V4mle9MpVWqUKpRAGu6TFC2tKrI=
+	t=1754297918; cv=none; b=VU9+the4t8OzkFJJ8WG4wzi+xw4hxPe6b0T8QU9loJM8zIPf0/ftPdLx+f0HPb8nmJrxaAD5YrdFOK9Xt9swnRw4xfX9WHWKIT1drVmeMhpqkLOJoRyoejDFQEU8IMYTyXiC+rosp564Eqtgjgn4rvMaxr+W0sKjRXSDhLCuZR8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754297881; c=relaxed/simple;
-	bh=BYlIvi6N1B4zZkudRep+yBSyFMv2TAT55xPmCHgg8Ts=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=XtJ2gvdxZNDDzvFUmR3SAMwicmB9lo0SBfeOMkv6Xwwt+TROd/MTAPoGlknhCM6buV66j1w0WbovAJiTyYvn71QJHDNxwwcnu0wrKvMlvhSkIfN5erp1Ycs4bXBTDTfOzAuU2mFW9zmtQZlkVGGBdmqEISTW1y8H4zfQbhAzmLA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=UMeLnFLl; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754297877;
-	bh=BYlIvi6N1B4zZkudRep+yBSyFMv2TAT55xPmCHgg8Ts=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=UMeLnFLlhxIsDh+1vjILNaFUWz2Ao8Cj3nIdLdKn+tM+b5dPaOc2KNTNCHabvB/bZ
-	 f8PtG+ypH4ZuKB/MplnsrSYUU/nrqU+jdEsQ81s+4PFMHXiILEbtX8Xrf8V/3eyeeO
-	 PRW8B2Qu5X5Oe/EUIydBpfYbS35kF3JTFOsSt6xJ2tueuWJekO2lGUM523bOdXah4U
-	 uNZ3W5TAT0uur0BAcCfo+H3HufxnuNZJmLfFcNZBRYITI4aOyPgZ4ADCsNlMLpLA/k
-	 EbZ1Dj4H8ziFv9IgNnYlo/W5p+qyEYth2cp7k1iYO9xlNXdFitrlPh2HUSST/1iTc5
-	 iTKyI69Q7Gw7A==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 0B05917E04DA;
-	Mon,  4 Aug 2025 10:57:55 +0200 (CEST)
-Message-ID: <edaeb213-d1df-40bf-9538-9ea86198f3c2@collabora.com>
-Date: Mon, 4 Aug 2025 10:57:55 +0200
+	s=arc-20240116; t=1754297918; c=relaxed/simple;
+	bh=kzFx0vBz/N42Yg4NK9sdE4rRm6vGDgq0CC2dgvkAGsA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=TvXea6W+8TBjgYT4Mr/mBAXpxSybciTde+kRqiounb7ABNp2OtU2JtnXik0VcGKqyLExlnMux4RWyIhIHg/A2V0zDtWl6shmzfKC1j70PutL2FinkDCBRoWDDdf6iPJOHp5HH5Y8Dg/nVQVHy45ihLQKHW2FX87b0oR5ROmgG+Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QR/uM5MB; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-af66d49daffso523684266b.1;
+        Mon, 04 Aug 2025 01:58:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754297914; x=1754902714; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=gYiql1qYBQ2uZxFXQMxYIN/3K5JLN42y5i9uEVm4H/E=;
+        b=QR/uM5MBfmsADtfQHz5moEcYfn0mVx2vwB8V+R1fX9UcYPPe/AFT6egBQbE7w2ci3c
+         2nleLU4cLQ3AIEccQK3pbgbX1G+3frzCH2cyeYD6e/E4O7MNmwPybE3OiQPZf2c0WiTX
+         FZ+Eghq+Xp20zKYL7aqs+/cNKL4bcOHfJbLgTULtUB6pM8OuEMHya3vVfLCqYEka6VXO
+         c99Icw3WOIStadJKGdUrZL5sLgzC2F/p5grj/vmScGYVynGR7wwn1lE53bMN4TmDvMv6
+         w8RbjkiRXVfTK7lYTGiI/nNdyhNB4PiCw6q3YqfV77Fi+PJlg9TpuGzJNDQbj+cYNl8p
+         frlw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754297914; x=1754902714;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=gYiql1qYBQ2uZxFXQMxYIN/3K5JLN42y5i9uEVm4H/E=;
+        b=wQCSJE+ZHhVt31gK3CbcVadHdw1C0eh9ijiKNum0KfokSROSXoO+VKKZKrxoDqEz3x
+         VDc0uQOc2lx8Ftwa4rO8SThErQ46aYYD2Ge5l9bXdonO7qj7qoDzJRa5qtJQtuIf0qco
+         HzL8Na8RFdy7BpkWU/Zv1ziSpJyBRymykdFqzVP/mrPL05DEjlexoYXMsxzUHe6xFDaS
+         F9ygEtd8qFoBAsV9xHYyoV2W+zVQdZbTeuDVY5PJNQkM+20vhGplNtwQWAki59fQyHz8
+         +XIgfsM+MqRBHiHi01qk1sc33SsNDCRadPaKTDUht4oJVnr62nWr4gBapC/dUFKZ/Q31
+         7oXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVpV/MvNjX78LcgCYWfa+oa1kcBcXnvEv4ydoD5q3q0JH5F3x7wubmQkbKCves7KLky6fng7jdkg80z/fQ=@vger.kernel.org, AJvYcCWP1/L/HLhH6DuUhvIuH2eDIs46dATkgvPXXwidmry6FV5vl+t1wLA1mM9A9eZNCYVqmHo7RsYJ@vger.kernel.org
+X-Gm-Message-State: AOJu0YzLD3u6dfN2aumN8rgfTxRqRNxJ2FGJ6RA6aPbmQOvW7t+44wif
+	1kScYYtICSJGyO/tcW03cYfV4TgorDyk2YULV55YZu0LBcEIJPpYH3soYMJPQdYqTO+dv30isab
+	4733SlVh9HAdIOBDBiU0IS4NfUfXXwhsZB1FcN0U=
+X-Gm-Gg: ASbGncv2aDQ6VaOBKyuQJen/X/AZRgQqRR/B5AAHx1GTn07nokHTXsMexIHPsTrDKZP
+	SurhPPPrrxrtPFX2Hec661/kaer27niIbPrxLGVW9sAWddCvXCTIqdHJXbudvXXIyKMCjzjUYin
+	wnwQNNJoPN7zvk1mpaau+XBxEaxCw565cNqqx5Vl/+dn5qidHrLXRMiFPel5X+d6VG4BSRes8Fs
+	xOoauhfRA==
+X-Google-Smtp-Source: AGHT+IGTifH3mbzzH6b5SWwpDXbO0YoBZfoZciezyUabROF7mLInAPfQAzLjeJIdBpssYusb7IN5lwwuWgdeQeYdg54=
+X-Received: by 2002:a17:907:7fa8:b0:ae0:d798:2ebd with SMTP id
+ a640c23a62f3a-af94017fa9amr842042766b.35.1754297913723; Mon, 04 Aug 2025
+ 01:58:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/7] drm/mediatek: Add CCORR component support for
- MT8196
-To: Jay Liu <jay.liu@mediatek.com>, Chun-Kuang Hu <chunkuang.hu@kernel.org>,
- Philipp Zabel <p.zabel@pengutronix.de>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
- David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>, Hsin-Yi Wang <hsinyi@chromium.org>,
- CK Hu <ck.hu@mediatek.com>, Yongqiang Niu <yongqiang.niu@mediatek.com>
-Cc: dri-devel@lists.freedesktop.org, linux-mediatek@lists.infradead.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org
-References: <20250727071609.26037-1-jay.liu@mediatek.com>
- <20250727071609.26037-2-jay.liu@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20250727071609.26037-2-jay.liu@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20250804083419.205892-1-hansg@kernel.org> <CAHp75VdfJvKb6VegNWCiiKoQkMBf0dQPs5yP3XfPM1icgtuyeg@mail.gmail.com>
+ <592e9a1e-a58f-435d-aff7-13c13fe0598a@kernel.org>
+In-Reply-To: <592e9a1e-a58f-435d-aff7-13c13fe0598a@kernel.org>
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+Date: Mon, 4 Aug 2025 10:57:57 +0200
+X-Gm-Features: Ac12FXyk1CSXxk6PchTjYOjJL8YIl06HY-6O6ct_xEw_ppKLvcJs7txXRueW8Jo
+Message-ID: <CAHp75VcxZXk7N3F4f=edSTHXQO9reF2kvF3JUNxNu_J6VOuoRA@mail.gmail.com>
+Subject: Re: [PATCH] mfd: intel_soc_pmic_chtdc_ti: Set use_single_read
+ regmap_config flag
+To: Hans de Goede <hansg@kernel.org>
+Cc: Lee Jones <lee@kernel.org>, Andy Shevchenko <andy@kernel.org>, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Il 27/07/25 09:15, Jay Liu ha scritto:
-> Add CCORR component support for MT8196.
-> 
-> CCORR is a hardware module that optimizes the visual effects of
-> images by adjusting the color matrix, enabling features such as
-> night light.
-> 
-> The 8196 SoC has two CCORR hardware units, which must be chained
-> together in a fixed order in the display path to display the image
-> correctly. the `mtk_ccorr_ctm_set` API only utilizes one of these units.
-> To prevent the unused CCORR unit from inadvertently taking effect,
-> we need to block it in the mtk_crtc.c.
-> 
-> Signed-off-by: Jay Liu <jay.liu@mediatek.com>
-> Signed-off-by: 20220315152503 created <jay.liu@mediatek.com>
+On Mon, Aug 4, 2025 at 10:51=E2=80=AFAM Hans de Goede <hansg@kernel.org> wr=
+ote:
+> On 4-Aug-25 10:47 AM, Andy Shevchenko wrote:
+> > On Mon, Aug 4, 2025 at 10:34=E2=80=AFAM Hans de Goede <hansg@kernel.org=
+> wrote:
 
-Please, remove that bogus "20220315152503 created" user that does not exist.
+...
 
-After which:
+> >> +       /* Reading multiple registers at once is not supported */
+> >> +       .use_single_read =3D true,
+> >
+> > By HW or by problem in regmap as being suggested here:
+> > https://lore.kernel.org/linux-gpio/CALNFmy1ZRqHz6_DD_2qamm-iLQ51AOFQH=
+=3DahCWRN7SAk3pfZ_A@mail.gmail.com/
+> > ?
+>
+> This is a hw limitation. I tried with i2ctransfer to directly
+> access the chip and it returns invalid values (1) after
+> the first byte read.
 
-Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+> 1) I don't remember if it was 0, 0xff or repeating
+> of the first byte. But it definitely did not work.
 
+Perhaps elaborate the above in the comment, by at least putting
+keyword HW there?
 
+--=20
+With Best Regards,
+Andy Shevchenko
 
