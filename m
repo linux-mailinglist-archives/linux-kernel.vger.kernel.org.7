@@ -1,108 +1,130 @@
-Return-Path: <linux-kernel+bounces-755409-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-755411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6B1EB1A5F2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:29:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3568BB1A5EF
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 17:28:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 84D4B3AE2C8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:28:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BE7E18021C
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 15:28:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E6232192EB;
-	Mon,  4 Aug 2025 15:25:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C323F25F99B;
+	Mon,  4 Aug 2025 15:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+1qdxY4"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGkAiLMQ"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B88572040BF;
-	Mon,  4 Aug 2025 15:25:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D31E267AF6;
+	Mon,  4 Aug 2025 15:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754321110; cv=none; b=jkIVPHFjhBZTw4r8ErUc9M+SJMA0CRKOHYY8StnPc4nvDtpCKo9W+6sn6ECtWmkc58QHT8UOst9FWTPn1ElUBdIQd9zFzuA0a/Q8/ejfrtobYAxqoVoIuqqZUJ6VLoxKIlx6ckdu/yBGJ3bshSesKUooeNDbb/unrysJwKWkpOs=
+	t=1754321142; cv=none; b=o0tA+czKA5LK/usZcKK2odTFvBnVwoLJR+oTr7iu5OE6OqCm8UMhVvdMTEdOgxp+qxKvhdro6DZ/Qoe56xFxRgg+N9Krz8stgeZWbtLAJC9yYBf0ZKYZiL9GceOubXsMLZNdCjfwpKjU0t9jAD9qGIg+nH4gCKNsphp0TtHlQwc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754321110; c=relaxed/simple;
-	bh=vSLc4JQywzK/kjoCdya8q2sSgv5nDY+hz35GftYJGAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0+YsqzZGjUSqacQSJFxMkNAFk6VPY1FzJJ/wmX4JJ3afeA+x051M74gZ9AD4A7999ofsPGV8lDR4rfzwIHj6PbOJJ04bmHZx0UMVzCP4TG/rr3MTnLWXoCXHN1BTdPzqHXqQhfxgnrYRMxjAUO7G8HVfPFYFsjWiYwLF8SN+kE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+1qdxY4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2212FC4CEE7;
-	Mon,  4 Aug 2025 15:25:10 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1754321110;
-	bh=vSLc4JQywzK/kjoCdya8q2sSgv5nDY+hz35GftYJGAM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=R+1qdxY4WBZ3N+pEwdQUuFYR+3LUVKxBPBPaBApqTWzVLVJ1wtMYsyzjC8I9Q/MSS
-	 5whZiQixf9/RdQ1/QZD336DrHTvsHQz48ggKFN8zst5E/y2EYyCXeGyB805526Az4q
-	 gFSfrwDW6CJcpzEJDxkqIL7lWlZTMR8+HYdto27lkKaE3kMIDDQqGeDkRQo+qZr4Ak
-	 iL/08FrMoEvqzWsSczAu2WLsdkGJWlk1AkBEBwxFdM53HA7dqb9iaSZM9jBFB+f+zY
-	 oZkLO0VxyCpsVj56yHAlJWn5sL9p7oAvTyi8edHCHT6IMWLNUyo9j9XZEA7IIW/9uD
-	 BoeC11VU/sxbQ==
-Date: Mon, 4 Aug 2025 11:25:08 -0400
-From: Mike Snitzer <snitzer@kernel.org>
-To: Keith Busch <kbusch@kernel.org>
-Cc: Keith Busch <kbusch@meta.com>, linux-block@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org,
-	axboe@kernel.dk, dw@davidwei.uk, brauner@kernel.org,
-	Chuck Lever <chuck.lever@oracle.com>, linux-nfs@vger.kernel.org
-Subject: Re: [PATCH 7/7] iov_iter: remove iov_iter_is_aligned
-Message-ID: <aJDQ1GPV5F5MB1kP@kernel.org>
-References: <20250801234736.1913170-1-kbusch@meta.com>
- <20250801234736.1913170-8-kbusch@meta.com>
- <aI1xySNUdQ2B0dbJ@kernel.org>
- <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
+	s=arc-20240116; t=1754321142; c=relaxed/simple;
+	bh=Ww8XtzWWmd9NEN1mYrRs/EouHRfHz6SnzYUwUTEJH1Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=dFosv1FK+J2QQToF9MjCHw0ADOr1b/XmqIr64FUIk+8fmZfo6PxkeK401EL2f0cUNq88RjUxj8w23z0lUpfJpbpcCqYQZmJO9KonEwo3nXURJj3ZhFt2bvTWTJcmuf3FEaJZS/WNmzUeXH8J0vqZes1H3jXzCNV0n2H5YQ98aP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGkAiLMQ; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-458a84e2917so38416185e9.1;
+        Mon, 04 Aug 2025 08:25:40 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1754321139; x=1754925939; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Agid0tpjdSujjAhdXbPA2x3WyjxVEkJpaF+LwGDnBDk=;
+        b=nGkAiLMQ/9ohIhlQZwyMYU/mEn27RUcH6JLTsoYEAHJg35OQtSL3IMIKFrKAqn2uvA
+         q4I8AFED1n3lr5s4qzdXmiXUlIoOuMSf1mDMCdCNqBF/CF8ZcIfqwlUXwiSj4p7qhj01
+         P5Ab7hLec5ho8gqa7Y6J6YvaQLUnWu7GdiM7ogMHzTn5op/hWRXzkaCJ1TBV5yv68k9r
+         wnn0k3UoYsGp8yNVs9ZjpNauEMEXKI8nh/Vg6OM7q7Bjuh3mbHbjQZIDQSowT3s+bbnH
+         Ja0STOjEPryqvwTLwIjSYYnQvmhcjVUcTP33GAx172BnZmGutb7wmilraGoW4O/9/oCt
+         UpbA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754321139; x=1754925939;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Agid0tpjdSujjAhdXbPA2x3WyjxVEkJpaF+LwGDnBDk=;
+        b=NbnNbNcBaMwqomEfVetg9Dt4xL54qBCxll64riJBIc3jI5smpDm/kmsk91Epi0S9Iz
+         QGBe/mpYycTPyn7MpwmGdEfRHibpqmLv/tVxl2WzsbDSo6gWXxzNVFN17qIYCSqWSj7p
+         J11lTnBkppev+gH7DF5MW1e0ixjKg00AEVXLVXDsxAJzzv/cpQDHJjY4n8zNVTHDQ9NL
+         xC7BdTFvuQuZdO171lRseXBrA0PcXyz5GJnvgrnFHc4KOgjrjNS3uXUUeQ0wWnZ5xgC8
+         iyEO+Fbwe0ZEHsnp5vQP267RSp6axUXfLnzutrHJtdBiTthFDEYFaIoqkMgD1wADDFnL
+         iePg==
+X-Forwarded-Encrypted: i=1; AJvYcCW/w70BZyqJBEufAEaZ0Z9XotUFnyhZBoqAkwu50S/phOn3HQ1oEVqH/HMsyg7BIERxs6g2WRs5iPwrtlD8@vger.kernel.org, AJvYcCWdSK5gC7IlP34pwDaN/Vlk1hkxAUW6YjNm+88+Wu08p5nWRonRbaltlAc/CuSAhLg5KjtU7neyYpY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxRWaXZqt+eAopkp5oeYga2D6n1ujsuUWq8f6dkfJrSuPYkLkPR
+	F8ifUnVax/DkGepPqpQeLEfQPUJy1YeUaApVFRJWmAZtRtn6SUh3Yb5x
+X-Gm-Gg: ASbGncvi9Ue9pnUi6cr86nFC2gFDI4h29DyqqZ6qn0BCBHCOuLQjpe9AJH+a30ur13E
+	aNgSjgN+Mg/rt3trqHitFnfoHRl++KcO5+EvCbMgdG2VX/I5zpVzWAJhkiy2LadIx1Ia6IgZTFQ
+	oXCvXCZcQFA8fKjv43pvjoMycMlbYKQifueH3g3PFJwHmbgHpGvKBtIIiIj4e4Td2Ybubl1a1U3
+	qPNqZxy5dnnMCrCXm7njcbNRwnw426qJJ35zEGMdNY5PAyu7mQgUAQ66p6b46F2hUzwAoncpw63
+	4Cy5iYcTkXy59x3EZI9kWRanNidm0cfBoIMWhkjOeCZuc5Kk0xtR8CehLczbpzMtzOtI09j9EZ0
+	Nwexa2nCNMcOa6WiKO9eed02C
+X-Google-Smtp-Source: AGHT+IEwVz6tKP7xYCRGxAy+Gr6ILrfFw+f0M33n7qvsp6KtNbFsQ2e/9w9NH4WtddpaydCsNgzP4A==
+X-Received: by 2002:a05:600c:35cc:b0:459:dfde:3324 with SMTP id 5b1f17b1804b1-459dfde3545mr10599275e9.29.1754321138486;
+        Mon, 04 Aug 2025 08:25:38 -0700 (PDT)
+Received: from fedora ([2001:16a2:6713:7d00:e3c:d6fc:37a:c91f])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-458ba0a133bsm95763655e9.0.2025.08.04.08.25.37
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Mon, 04 Aug 2025 08:25:38 -0700 (PDT)
+From: Osama Albahrani <osalbahr@gmail.com>
+To: Justin Sanders <justin@coraid.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: Osama Albahrani <osalbahr@gmail.com>
+Subject: [PATCH] docs: aoe: Remove trailing whitespace
+Date: Mon,  4 Aug 2025 18:25:14 +0300
+Message-ID: <20250804152516.16493-1-osalbahr@gmail.com>
+X-Mailer: git-send-email 2.50.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <aJDAx1Ns9Fg7F6iK@kbusch-mbp>
+Content-Transfer-Encoding: 8bit
 
-On Mon, Aug 04, 2025 at 08:16:39AM -0600, Keith Busch wrote:
-> On Fri, Aug 01, 2025 at 10:02:49PM -0400, Mike Snitzer wrote:
-> > On Fri, Aug 01, 2025 at 04:47:36PM -0700, Keith Busch wrote:
-> > > From: Keith Busch <kbusch@kernel.org>
-> > > 
-> > > No more callers.
-> > > 
-> > > Signed-off-by: Keith Busch <kbusch@kernel.org>
-> > 
-> > You had me up until this last patch.
-> > 
-> > I'm actually making use of iov_iter_is_aligned() in a series of
-> > changes for both NFS and NFSD.  Chuck has included some of the
-> > NFSD changes in his nfsd-testing branch, see:
-> > https://git.kernel.org/pub/scm/linux/kernel/git/cel/linux.git/commit/?h=nfsd-testing&id=5d78ac1e674b45f9c9e3769b48efb27c44f4e4d3
-> > 
-> > And the balance of my work that is pending review/inclusion is:
-> > https://lore.kernel.org/linux-nfs/20250731230633.89983-1-snitzer@kernel.org/
-> > https://lore.kernel.org/linux-nfs/20250801171049.94235-1-snitzer@kernel.org/
-> > 
-> > I only need iov_iter_aligned_bvec, but recall I want to relax its
-> > checking with this patch:
-> > https://lore.kernel.org/linux-nfs/20250708160619.64800-5-snitzer@kernel.org/
-> > 
-> > Should I just add iov_iter_aligned_bvec() to fs/nfs_common/ so that
-> > both NFS and NFSD can use it?
-> 
-> If at all possible, I recommend finding a place that already walks the
-> vectors and do an opprotunistic check for the alignments there. This
-> will save CPU cycles. For example, nfsd_iter_read already iterates the
-> bvec while setting each page. Could you check the alignment while doing
-> that instead of iterating a second time immediately after?
+Fix `ERROR: trailing whitespace` errors from scripts/checkpatch.pl
 
-Nice goal, I'll see if I can pull it off.
+Signed-off-by: Osama Albahrani <osalbahr@gmail.com>
+---
+ Documentation/admin-guide/aoe/udev.txt | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-I'm currently using iov_iter_is_aligned() in 3 new call sites (for
-READ and WRITE) in both NFS and NFSD: nfs_local_iter_init,
-nfsd_iter_read, nfsd_vfs_write
+diff --git a/Documentation/admin-guide/aoe/udev.txt b/Documentation/admin-guide/aoe/udev.txt
+index 5fb756466bc7..d55ecb411c21 100644
+--- a/Documentation/admin-guide/aoe/udev.txt
++++ b/Documentation/admin-guide/aoe/udev.txt
+@@ -2,7 +2,7 @@
+ # They may be installed along the following lines.  Check the section
+ # 8 udev manpage to see whether your udev supports SUBSYSTEM, and
+ # whether it uses one or two equal signs for SUBSYSTEM and KERNEL.
+-# 
++#
+ #   ecashin@makki ~$ su
+ #   Password:
+ #   bash# find /etc -type f -name udev.conf
+@@ -13,7 +13,7 @@
+ #   10-wacom.rules  50-udev.rules
+ #   bash# cp /path/to/linux/Documentation/admin-guide/aoe/udev.txt \
+ #           /etc/udev/rules.d/60-aoe.rules
+-#  
++#
+ 
+ # aoe char devices
+ SUBSYSTEM=="aoe", KERNEL=="discover",	NAME="etherd/%k", GROUP="disk", MODE="0220"
+@@ -22,5 +22,5 @@ SUBSYSTEM=="aoe", KERNEL=="interfaces",	NAME="etherd/%k", GROUP="disk", MODE="02
+ SUBSYSTEM=="aoe", KERNEL=="revalidate",	NAME="etherd/%k", GROUP="disk", MODE="0220"
+ SUBSYSTEM=="aoe", KERNEL=="flush",	NAME="etherd/%k", GROUP="disk", MODE="0220"
+ 
+-# aoe block devices     
++# aoe block devices
+ KERNEL=="etherd*",       GROUP="disk"
+-- 
+2.50.1
 
-nfsd_vfs_write is the only one that doesn't iterate the bvec as-is,
-but it does work that _should_ obviate the need to doable check the
-alignment.
 
