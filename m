@@ -1,149 +1,144 @@
-Return-Path: <linux-kernel+bounces-754915-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754914-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 20A9DB19E81
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8C4DDB19E78
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:08:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 688E93B0D5A
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:08:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0AE6D179E48
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:08:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7582C2459FB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CD33242D6A;
 	Mon,  4 Aug 2025 09:08:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="PlBHTgSi"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DD717D346;
-	Mon,  4 Aug 2025 09:08:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973FF238C08
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:08:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754298497; cv=none; b=NzcrZvRu8zWa84BDlUIZ6aSzzUJxCxPqwHlos9QJpxri65dssXzbuza1CrMqYvRsrPYVqAE7hl5xSrgancRQL4qN+QqCQyMUR6/ClX+y0/SRxEiHpk+BNs011FtYTWYEQVv2H889rkHARaJyQAgr1lRwJe6jdXVLhgRYLFxnqsg=
+	t=1754298497; cv=none; b=a/dXWcQNyFVl/vhC9BU8iT3ieeuLjqf3DhF4zh+2dPSEdGjyRW6BoDA57it+Crfw5yCU0B8K9tuvDE6tquPVY/bNaOMuDclqKlzY89o8OMzidQnZQaZtN1JxzC5JuhrmpKvmFavDQIGvt38n32VsVe9HkTwu6zaz3qHYowODPxw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1754298497; c=relaxed/simple;
-	bh=dNCb1GbU+zMwwHGSEs5J88EmPe3I2aoFVC/o3+7U2F0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VpwI6sIm3VrC/wTpD52DuM12A5WwRuCC3AwIv9XXqvEpHmcghZOoNhGXgQAw9koHWUpNwYd23UVWQDWqsYdvqkuWQnLRK0e6cSRP9c0bTJJb9C/71twyM9x3WWhC1JtslLR7+FKPhryVUPhjpMuYgV1MdKdgHn7wM7OVN5Od+5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=PlBHTgSi; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1754298493;
-	bh=dNCb1GbU+zMwwHGSEs5J88EmPe3I2aoFVC/o3+7U2F0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PlBHTgSi+7JUOYuxMn8femLuLfq3RszCQHshgoXnZkewKPTRWb22SaKzxCGHhf840
-	 FQTF+WkJpIePV9vztC7CZg4vYnqlyZRMQG56aEoIjG7KFvVRT+Kj4scAov60j7U5ec
-	 Fzz8Ec1QZUc8YC4G13q8/RbRYSKruZQQxe1PirBbachk/U30E0fnliOldzBjunQON/
-	 +dvTmo6jULLhF59a8odkYh/Q+tot5DtamutSrYLrrNMH9Bvnh+GB6u9hPnunLJtliO
-	 0tmK/DIrbt53tW3dHiFdNBmZ5ChqnnxHdFu1OtU3dZyHCGWHzIoP9IUvu9EYfsEQhh
-	 u/iH0Tx98hw7Q==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 9849017E0593;
-	Mon,  4 Aug 2025 11:08:11 +0200 (CEST)
-Message-ID: <fe135942-3040-4858-b2e4-a8e4507b89e9@collabora.com>
-Date: Mon, 4 Aug 2025 11:08:11 +0200
+	bh=4cW79w3TAxed18ZA2cTsK6j6RgIzbNsrKALqC43LPXA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JNM5Q6J/WB+kZXpY5r1nYSWS4qrO6Uql+iGIYbDjxJuiXbWh4MVeeQWPnOPGHkpfYileNehAg0rOTFjFDHcFCU/fzDx6hzCBLeM7un9Vle6+U0Iaoxpv7cjKACvUYKENuhh4Z4WYjVTojVwBAUJIXCI9mLuttEY7YBJsZiiksrU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id ACBEF1C25;
+	Mon,  4 Aug 2025 02:08:06 -0700 (PDT)
+Received: from localhost (e132581.arm.com [10.1.196.87])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 516E03F673;
+	Mon,  4 Aug 2025 02:08:14 -0700 (PDT)
+Date: Mon, 4 Aug 2025 10:08:12 +0100
+From: Leo Yan <leo.yan@arm.com>
+To: Anshuman Khandual <anshuman.khandual@arm.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Mike Leach <mike.leach@linaro.org>,
+	James Clark <james.clark@linaro.org>,
+	Levi Yun <yeoreum.yun@arm.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Yabin Cui <yabinc@google.com>, Keita Morisaki <keyz@google.com>,
+	Yuanfang Zhang <quic_yuanfang@quicinc.com>,
+	coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2 02/28] coresight: etm4x: Always set tracer's device
+ mode on target CPU
+Message-ID: <20250804090812.GI143191@e132581.arm.com>
+References: <20250701-arm_cs_pm_fix_v3-v2-0-23ebb864fcc1@arm.com>
+ <20250701-arm_cs_pm_fix_v3-v2-2-23ebb864fcc1@arm.com>
+ <09f9d195-7f3c-4cf1-95da-7e29c398ebcc@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 04/38] ASoC: dt-bindings: mt8192-afe-pcm: Fix clocks and
- clock-names
-To: Krzysztof Kozlowski <krzk@kernel.org>,
- linux-mediatek@lists.infradead.org, robh@kernel.org
-Cc: herbert@gondor.apana.org.au, davem@davemloft.net, krzk+dt@kernel.org,
- conor+dt@kernel.org, chunkuang.hu@kernel.org, p.zabel@pengutronix.de,
- airlied@gmail.com, simona@ffwll.ch, maarten.lankhorst@linux.intel.com,
- mripard@kernel.org, tzimmermann@suse.de, jassisinghbrar@gmail.com,
- mchehab@kernel.org, matthias.bgg@gmail.com, chunfeng.yun@mediatek.com,
- vkoul@kernel.org, kishon@kernel.org, sean.wang@kernel.org,
- linus.walleij@linaro.org, lgirdwood@gmail.com, broonie@kernel.org,
- andersson@kernel.org, mathieu.poirier@linaro.org, daniel.lezcano@linaro.org,
- tglx@linutronix.de, atenart@kernel.org, jitao.shi@mediatek.com,
- ck.hu@mediatek.com, houlong.wei@mediatek.com,
- kyrie.wu@mediatek.corp-partner.google.com, andy.teng@mediatek.com,
- tinghan.shen@mediatek.com, jiaxin.yu@mediatek.com, shane.chien@mediatek.com,
- olivia.wen@mediatek.com, granquet@baylibre.com, eugen.hristev@linaro.org,
- arnd@arndb.de, sam.shih@mediatek.com, jieyy.yang@mediatek.com,
- frank-w@public-files.de, mwalle@kernel.org, fparent@baylibre.com,
- linux-crypto@vger.kernel.org, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org,
- linux-media@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-phy@lists.infradead.org, linux-gpio@vger.kernel.org,
- linux-remoteproc@vger.kernel.org, linux-sound@vger.kernel.org
-References: <20250724083914.61351-1-angelogioacchino.delregno@collabora.com>
- <20250724083914.61351-5-angelogioacchino.delregno@collabora.com>
- <b7c9f6b8-4f29-4e38-9c93-e22cfed7229d@kernel.org>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <b7c9f6b8-4f29-4e38-9c93-e22cfed7229d@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <09f9d195-7f3c-4cf1-95da-7e29c398ebcc@arm.com>
 
-Il 24/07/25 11:12, Krzysztof Kozlowski ha scritto:
-> On 24/07/2025 10:38, AngeloGioacchino Del Regno wrote:
->>   
->>     clock-names:
->>       items:
->>         - const: aud_afe_clk
->>         - const: aud_dac_clk
->>         - const: aud_dac_predis_clk
->> +      - const: aud_adc_clk
->> +      - const: aud_adda6_adc_clk
->> +      - const: aud_apll22m_clk
->> +      - const: aud_apll24m_clk
->> +      - const: aud_apll1_tuner_clk
->> +      - const: aud_apll2_tuner_clk
->> +      - const: aud_tdm_clk
->> +      - const: aud_tml_clk
->> +      - const: aud_nle
->> +      - const: aud_dac_hires_clk
->> +      - const: aud_adc_hires_clk
->> +      - const: aud_adc_hires_tml
->> +      - const: aud_adda6_adc_hires_clk
->> +      - const: aud_3rd_dac_clk
->> +      - const: aud_3rd_dac_predis_clk
->> +      - const: aud_3rd_dac_tml
->> +      - const: aud_3rd_dac_hires_clk
->>         - const: aud_infra_clk
->>         - const: aud_infra_26m_clk
+On Tue, Jul 15, 2025 at 12:56:54PM +0530, Anshuman Khandual wrote:
 > 
+> On 01/07/25 8:23 PM, Leo Yan wrote:
+> > When enabling a tracer via SysFS interface, the device mode may be set
+> > by any CPU - not necessarily the target CPU. This can lead to race
+> > condition in SMP, and may result in incorrect mode values being read.
+> > 
+> > Consider the following example, where CPU0 attempts to enable the tracer
+> > on CPU1 (the target CPU):
+> > 
+> >  CPU0                                    CPU1
+> >  etm4_enable()
+> >   ` coresight_take_mode(SYSFS)
+> >   ` etm4_enable_sysfs()
+> >      ` smp_call_function_single() ---->  etm4_enable_hw_smp_call()
+> >      			                /
+> >                                        /  CPU idle:
+> >                                       /   etm4_cpu_save()
+> >                                      /     ` coresight_get_mode()
+> > 	       Failed to enable h/w /         ^^^
+> >   ` coresight_set_mode(DISABLED) <-'          Read the intermediate SYSFS mode
 > 
-> You can only add to the end of lists, not in the middle.
+> The problem is - CPU1's HW state and CPU1's sysfs mode state might not
+> remain in sync if CPU1 goes into idle state just after an unsuccessful
+> etm4_enable_sysfs() attempt from CPU0. In which case a subsequent read
+> coresight_get_mode() on CPU1 might erroneously give us DISABLED state,
+
+In this case, CPU1 reads an intermediate "SYSFS" state, even though it
+failed in etm4_enable_hw_smp_call(). The current code defers setting
+the state to DISABLED on CPU0. As a result, CPU1 will incorrectly save
+and restore the ETM context based on the intermediate "SYSFS" state.
+
+> which actually does not seem to be too bad as the earlier enablement
+> attempt had failed anyway. Just trying to understand what is the real
+> problem here.
+
+The problem is CPU1 might get an intermediate state, it turns out a
+stale value and might guide CPU idle flow to wrongly save and restore
+ETM context.
+
+> > In this case, CPU0 initiates the operation by taking the SYSFS mode to
+> > avoid conflicts with the Perf mode. It then sends an IPI to CPU1 to
+> > configure the tracer registers. If any error occurs during this process,
 > 
+> What kind of error can happen during this process ?
 
-The devicetree follows exactly what I've done here, and if I add to the
-end of the list (which was wrong from the beginning), I'd have to reorder
-all of the clocks in the devicetree node as well.
+So far, it might fail to claim a device and return an error.
 
-I know that I'm not supposed to add those there, but this is not about adding
-new clocks, it's about adding ones that were missing in the middle.
+A similar issue might occur when CPU1 exits an idle state. For example,
+if CPU0 initiates the ETM enabling flow and sets the SYSFS mode in
+advance, once CPU1 is woken up from idle by an IPI, it reads the ETM
+state (SYSFS mode) and then restores and enables the ETM. This can
+happen even before CPU1 invokes etm4_enable_hw_smp_call() to complete
+the ETM enable flow.
 
-> Also, please drop all _clk suffixes and aud/top prefixes. These are
-> supposed to be clock inputs, so you name them based on this device. Not
-> based on the provider's name.
+> > CPU0 rolls back by setting the mode to DISABLED.
+> 
+> Which seems OK.
+> 
+> > 
+> > However, if CPU1 enters an idle state during this time, it might read
+> > the intermediate SYSFS mode. As a result, the CPU PM flow could wrongly
+> > save and restore tracer context that is actually disabled.
+> 
+> Right but CPU0 had marked the CPU1' state as DISABLED after the enable
+> attempt had failed. So what is the problem ?
 
-That breaks everything: the driver uses the _clk suffixes and aud/top prefixes
-to get clocks by name - I know that "driver" and "binding" are not two words
-that go together in that sense, but *otherwise* we'd need to perform way bigger
-changes to get this situation resolved.
+There is a race condition between CPU0 writing the state and CPU1
+reading the state (during its CPU idle flow). CPU1 might read a state
+that is inconsistent with the actual ETM hardware state, which causes
+CPU1 to save and restore the ETM context incorrectly.
 
-Those "way bigger changes" would also add bloat to the kernel as we'd need to
-parse clocks with old and new names.
-
-Can we please avoid this on SoCs from years ago, which are only getting maintenance
-and no new feat/dev?
+A wider view is this series heavily relies on the ETM state to decide
+the linked path has been enabled and take action for saving and
+restoring all components on the path (not for ETM device only). We need
+a reliable state machine to reflect hardware state. To avoid any
+intermediate state, we always set the state on the target CPU.
 
 Thanks,
-Angelo
-
+Leo
 
