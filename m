@@ -1,197 +1,125 @@
-Return-Path: <linux-kernel+bounces-754613-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A5471B19A18
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:11:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18967B19A1F
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 04:18:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5D2D53B76D2
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:11:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 279BB17329D
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 02:18:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 065CA1FCFF1;
-	Mon,  4 Aug 2025 02:11:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 488CE1EDA2B;
+	Mon,  4 Aug 2025 02:18:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="KaC30Qog"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pnbnTLvB"
+Received: from out30-99.freemail.mail.aliyun.com (out30-99.freemail.mail.aliyun.com [115.124.30.99])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 039EC1F4634;
-	Mon,  4 Aug 2025 02:11:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89B5B2E371F
+	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 02:18:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.99
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754273463; cv=none; b=SusmdxhLlJDwoqUQ8ZpdWUqPgUzDB7YVw8H02kavIx3mhtmMY9fk5g1UIXpQwXehSWn0mAm7un6idPYob+sxklRD78KBXybnpgpUO9O/Ztw5hsAF4Mo/X78sgQpNAEm1poCw5j+S9QTJckiwJThlizwK0dtUj4M4se6gXnd098c=
+	t=1754273912; cv=none; b=iAG8uF0k+t58zq87CPtM6sgKDn0p79vs0TPQsVxf7MzEWkM4ZkFnYx2Dw7lnrMA/mRw6/mpaqYcFF/67rLeIZJ/D9R4PSIeUSpsRiy21UZcwK2rE6DYhsTKqcdBVtm3Tm3igAdYObGJLP0oMCLY/v16Pt7Txwpqgm1VIvAgfWEE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754273463; c=relaxed/simple;
-	bh=aYiwsP9Htol3ja1kPFLRhHwXi9peycfdLPAc+cQjNQw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=t0oQU8rRMCpfNQu57f02tHHj3WRrCMOy7ip8iN58Ik+eBia2drHCb0y7U4ajZnlK5dOJ4OD2P6FkalPptuDiRmKJJ7vbAFRiXGgxS5mlOC5SQz6VDJ1UWk+sRs789w9SxzZCB1osHRt56wf29678/qTaFZk5tSmPkHC5zEuYyek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=KaC30Qog; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=202503; t=1754273459;
-	bh=OtP9dawDNErVUdU4QYvKLUgxrty3F+S8VdoftHpWNzA=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KaC30QogRvH8vHCIrUCU5VMC7X1dIDAptlfGkb1eAuFwPSMAcTYEU5ifqPDxxkkZ9
-	 eDmIruavgZIJANgJlf81yqBr871vXeLa3Y3zylEmXs+CnvtFzw+SfGLdgFckabZGqF
-	 uQXtU/1KnjGAjXaBJmCW2nNbVnbDZMnYZ3K+ZgQjkIDFINAw8Fl4XyyjS5i7U6VRsi
-	 /Uit2KP/ocUWfqONs+v6wDt+60qMYSbJY0Ko5amnhXPTWpmiDEnaaReR3+XC9mPG0x
-	 Um+JFY4vb8P0k6zReKrS+Yghtviy/iBU76HXLpEKsyd7cbDnGlIK0sGZX4APjvv9Tg
-	 v4T4jaSNprEMA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4bwKm31yhPz4wcn;
-	Mon,  4 Aug 2025 12:10:59 +1000 (AEST)
-Date: Mon, 4 Aug 2025 12:10:58 +1000
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Miguel Ojeda <ojeda@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@kernel.org>, "H. Peter Anvin" <hpa@zytor.com>, Peter
- Zijlstra <peterz@infradead.org>
-Cc: FUJITA Tomonori <fujita.tomonori@gmail.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: Re: linux-next: manual merge of the rust tree with the tip tree
-Message-ID: <20250804121058.2fd15d2e@canb.auug.org.au>
-In-Reply-To: <20250723111609.4c7a134c@canb.auug.org.au>
-References: <20250723111609.4c7a134c@canb.auug.org.au>
+	s=arc-20240116; t=1754273912; c=relaxed/simple;
+	bh=3u/E2kX8x2JoMQ307KLHEWOBM8a9yv1whcRiWU7O/Do=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ClfcgDRlJBgxWAImBw03fUWJTJvBvUMJt05Tp2sPzQRO0eAP9wUk/UK0fZD7OkVUX9BjgLbtGKrDYf/WxbKQUZybBfkZyujqrIaNuLMMiHa0dTtTYrlMF6c3K61BDdtaUmqUsILiCb8veh7zshLHAXDUbgzP8VA5AmTIQEt79F4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pnbnTLvB; arc=none smtp.client-ip=115.124.30.99
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1754273901; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
+	bh=fOhE5iGHrZ4xjSv36/UXuUcfl5os1bpqTbIaxe2NUiE=;
+	b=pnbnTLvBFSCHT7mKIYNk6SHWst2Xtgk8XHAK/JgvyML0qRFUi3X32u7NeNpljRtzzqbgzkJn6X7SqMuJ6QLvLpMWMP6tS6Kx3DD2T1TlxJD1FfyKdJ3bePAg4/0TDZFnWo8RodWsy+MO6PBu5r4EAgJrCr4xJ57R9SQ/IiqmkOY=
+Received: from 30.21.176.60(mailfrom:fengwei_yin@linux.alibaba.com fp:SMTPD_---0WktbLhr_1754273572 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Mon, 04 Aug 2025 10:13:03 +0800
+Message-ID: <6653242a-5b08-48ff-a126-9e9367633420@linux.alibaba.com>
+Date: Mon, 4 Aug 2025 10:12:52 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/G3OK9U3+Q0bPCCGt=bzXpD7";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] binfmt_elf: remove the 4k limitation of program header
+ size
+To: Ismael Luceno <ismael@iodev.co.uk>, Kees Cook <kees@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ zhourundong.zrd@linux.alibaba.com, fengwei_yin@linux.alibaba.com
+References: <xd6zp5ytq6iakxkqoqqtseomgu5oohau4ynj3xbo7ejohpv7dv@skp2v7awzab4>
+ <aI2KQaWpPLSAqdXg@pirotess> <202508021029.7CC8B334@keescook>
+ <aI7zDXb2VpuaHHYi@pirotess>
+From: Yin Fengwei <fengwei_yin@linux.alibaba.com>
+In-Reply-To: <aI7zDXb2VpuaHHYi@pirotess>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
---Sig_/G3OK9U3+Q0bPCCGt=bzXpD7
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
 
-Hi all,
 
-On Wed, 23 Jul 2025 11:16:09 +1000 Stephen Rothwell <sfr@canb.auug.org.au> =
-wrote:
->=20
-> Today's linux-next merge of the rust tree got a conflict in:
->=20
->   arch/x86/include/asm/bug.h
->=20
-> between commits:
->=20
->   aec58b48517c ("bugs/core: Extend __WARN_FLAGS() with the 'cond_str' par=
-ameter")
->   407b9076c147 ("bugs/x86: Extend _BUG_FLAGS() with the 'cond_str' parame=
-ter")
->   48ede5be5c07 ("bugs/x86: Augment warnings output by concatenating 'cond=
-_str' with the regular __FILE__ string in _BUG_FLAGS()")
->=20
-> from the tip tree and commit:
->=20
->   8c8efa93db68 ("x86/bug: Add ARCH_WARN_ASM macro for BUG/WARN asm code s=
-haring with Rust")
->=20
-> from the rust tree.
->=20
-> I fixed it up (see below) and can carry the fix as necessary. This
-> is now fixed as far as linux-next is concerned, but any non trivial
-> conflicts should be mentioned to your upstream maintainer when your tree
-> is submitted for merging.  You may also want to consider cooperating
-> with the maintainer of the conflicting tree to minimise any particularly
-> complex conflicts.
->=20
->=20
-> diff --cc arch/x86/include/asm/bug.h
-> index 8593976b32cb,20fcb8507ad1..000000000000
-> --- a/arch/x86/include/asm/bug.h
-> +++ b/arch/x86/include/asm/bug.h
-> @@@ -38,19 -38,30 +38,30 @@@
->   #endif
->  =20
->   #ifdef CONFIG_DEBUG_BUGVERBOSE
-> + #define __BUG_ENTRY(file, line, flags)					\
-> + 	"2:\t" __BUG_REL("1b") "\t# bug_entry::bug_addr\n"		\
-> + 	"\t" __BUG_REL(file)   "\t# bug_entry::file\n"			\
-> + 	"\t.word " line        "\t# bug_entry::line\n"			\
-> + 	"\t.word " flags       "\t# bug_entry::flags\n"
-> + #else
-> + #define __BUG_ENTRY(file, line, flags)					\
-> + 	"2:\t" __BUG_REL("1b") "\t# bug_entry::bug_addr\n"		\
-> + 	"\t.word " flags       "\t# bug_entry::flags\n"
-> + #endif
-> +=20
-> + #define _BUG_FLAGS_ASM(ins, file, line, flags, size, extra)		\
-> + 	"1:\t" ins "\n"							\
-> + 	".pushsection __bug_table,\"aw\"\n"				\
-> + 	__BUG_ENTRY(file, line, flags)					\
-> + 	"\t.org 2b + " size "\n"					\
-> + 	".popsection\n"							\
-> + 	extra
->  =20
->  -#define _BUG_FLAGS(ins, flags, extra)					\
->  +#define _BUG_FLAGS(cond_str, ins, flags, extra)				\
->   do {									\
-> - 	asm_inline volatile("1:\t" ins "\n"				\
-> - 		     ".pushsection __bug_table,\"aw\"\n"		\
-> - 		     "2:\t" __BUG_REL(1b) "\t# bug_entry::bug_addr\n"	\
-> - 		     "\t"  __BUG_REL(%c0) "\t# bug_entry::file\n"	\
-> - 		     "\t.word %c1"        "\t# bug_entry::line\n"	\
-> - 		     "\t.word %c2"        "\t# bug_entry::flags\n"	\
-> - 		     "\t.org 2b+%c3\n"					\
-> - 		     ".popsection\n"					\
-> - 		     extra						\
-> + 	asm_inline volatile(_BUG_FLAGS_ASM(ins, "%c0",			\
-> + 					   "%c1", "%c2", "%c3", extra)	\
->  -		     : : "i" (__FILE__), "i" (__LINE__),		\
->  +		     : : "i" (WARN_CONDITION_STR(cond_str) __FILE__), "i" (__LINE__),=
-		\
->   			 "i" (flags),					\
->   			 "i" (sizeof(struct bug_entry)));		\
->   } while (0)
-> @@@ -92,11 -89,14 +89,14 @@@ do {							=09
->    * were to trigger, we'd rather wreck the machine in an attempt to get =
-the
->    * message out than not know about it.
->    */
-> +=20
-> + #define ARCH_WARN_REACHABLE	ANNOTATE_REACHABLE(1b)
-> +=20
->  -#define __WARN_FLAGS(flags)					\
->  +#define __WARN_FLAGS(cond_str, flags)				\
->   do {								\
->   	__auto_type __flags =3D BUGFLAG_WARNING|(flags);		\
->   	instrumentation_begin();				\
-> - 	_BUG_FLAGS(cond_str, ASM_UD2, __flags, ANNOTATE_REACHABLE(1b)); \
->  -	_BUG_FLAGS(ASM_UD2, __flags, ARCH_WARN_REACHABLE);	\
-> ++	_BUG_FLAGS(cond_str, ASM_UD2, __flags, ARCH_WARN_REACHABLE);	\
->   	instrumentation_end();					\
->   } while (0)
->  =20
+在 2025/8/3 13:28, Ismael Luceno 写道:
+> On 02/Aug/2025 10:29, Kees Cook wrote:
+>> On Sat, Aug 02, 2025 at 05:47:13AM +0200, Ismael Luceno wrote:
+>>> On Sat, Jul 19, 2025 at 17:17:09 +0800, YinFengwei wrote:
+>>>> On Thu, Jul 17, 2025 at 04:31:50PM +0800, Kees Cook wrote:
+>>>>> On Thu, 17 Jul 2025 19:01:08 +0800, fengwei_yin@linux.alibaba.com wrote:
+>>>>>> We have assembly code generated by a script. GCC successfully compiles
+>>>>>> it. However, the kernel cannot load it on an ARM64 platform with a 4K
+>>>>>> page size. In contrast, the same ELF file loads correctly on the same
+>>>>>> platform with a 64K page size.
+>>>>>>
+>>>>>> The root cause is the Linux kernel's ELF_MIN_ALIGN limitation on the
+>>>>>> program headers of ELF files. The ELF file contains 78 program headers
+>>>>>> (the script inserts many holes when generating the assembly code). On
+>>>>>> ARM64 with a 4K page size, the ELF_MIN_ALLIGN enforces a maximum of 74
+>>>>>> program headers, causing the ELF file to fail. However, with a 64K page
+>>>>>> size, the ELF_MIN_ALIGN is relaxed to over 1,184 program headers, allowing
+>>>>>> the file to run correctly.
+>>>>>>
+>>>>>> [...]
+>>>>>
+>>>>> Applied to for-next/execve, thanks!
+>>>> Cook, thanks a lot.
+>>>>
+>>>> Regards
+>>>> Yin, Fengwei
+>>>>
+>>>>>
+>>>>> [1/1] binfmt_elf: remove the 4k limitation of program header size
+>>>>>        https://git.kernel.org/kees/c/8030790477e8
+>>>>>
+>>>>> Take care,
+>>>
+>>> Hi,
+>>>
+>>> I noticed this removal and wonder whether it could be a problem on
+>>> smaller platforms.
+>>>
+>>> IIRC that code has been there since ELF support was added in one
+>>> form or another; and the idea behind it was to simplify the code
+>>> by ensuring no cross-page reads could happen, as these could cause
+>>> undefined behaviours or read abort exceptions.
+>>
+>> I didn't see a place where that would happen -- the reads aren't done on
+>> a single page. If you see something that I missed, please let me know!
+> 
+> The offset to the phdrs can point anywhere and the entries are
+> arbitrarily sized, thus it can be unaligned, so we can be potentially
+> reading at an entry right between two pages.
 
-This is now a conflict between the tip tree and Linus' tree.
+The read buffer are managed in kernel. Why cross-page read can cause
+undefined behaviors or read abort?
 
---=20
-Cheers,
-Stephen Rothwell
+Does smaller platforms have special behavior in this situation? Like
+can't do cross-page read against the buffer allocated by kmalloc?
 
---Sig_/G3OK9U3+Q0bPCCGt=bzXpD7
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
 
------BEGIN PGP SIGNATURE-----
+Regards
+Yin, Fengwei
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmiQFrIACgkQAVBC80lX
-0GyCIwf+K4waqq5OJStA5e8xMl/OzCSlrOoTSoXACLlFn1xgN6wpUwZfgMrkT4lM
-eCypNebSKhFGvedDkml+6iKUKIRWRW7vlNLqXfgrjmI564VrWoTtjx1YvyTH2YBK
-vxuJ/FWb3A3VBhxOdIQiXjRf6aMb/GjViShxQYnGGm+kU5wTi/+cE2fJ3e6+QGBx
-nyXBLr0ixZRjxpBBZl5mSoR0r5tDpYVb8XFoFFT0baB357V9yUBl99/zdUcFEOYc
-rnf+sAacOtIM12ePe/OluL1qYpu1SrNFvUKobERfQOzbgSE0eJXdSuPJQa+3FVEN
-i/82zyDfcBuvtXXpLswGFGGjAKgIPw==
-=ePIJ
------END PGP SIGNATURE-----
-
---Sig_/G3OK9U3+Q0bPCCGt=bzXpD7--
 
