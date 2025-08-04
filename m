@@ -1,132 +1,179 @@
-Return-Path: <linux-kernel+bounces-754927-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-754928-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EE47EB19EA8
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:18:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 29E1FB19EAD
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 11:19:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (relay.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-ECDSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F37583AA5EF
-	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:18:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 49F2E179818
+	for <lists+linux-kernel@lfdr.de>; Mon,  4 Aug 2025 09:19:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD26824293C;
-	Mon,  4 Aug 2025 09:17:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b="TSq/rR8l"
-Received: from mail.zeus03.de (zeus03.de [194.117.254.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6994244662;
+	Mon,  4 Aug 2025 09:19:22 +0000 (UTC)
+Received: from mail-ua1-f52.google.com (mail-ua1-f52.google.com [209.85.222.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 58DF924502C
-	for <linux-kernel@vger.kernel.org>; Mon,  4 Aug 2025 09:17:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=194.117.254.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA9C31DDC1E;
+	Mon,  4 Aug 2025 09:19:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1754299075; cv=none; b=H6emQFTyc21e3aKBnf5xIrANI85cl17YHPJ1vWe/Xe3OWgc4ZaX2eikI56iM6ah4edKVxZl6M3QOiZG/ZPPWWGR02MGGdZGXYVcLWbzN5/dEv6aMd0QKVN1jjd5wkvCKzXRRdhGs/9pBzWiXeijUMXwxSTB0aMvnyCKtp93b0mM=
+	t=1754299162; cv=none; b=MRfh5xo931f4Y/QCN1qc7XG7N235bkqIXBkfY8E/B8184hX0ikHZF95GBA9e7x9WXY0MCn9MWMWbmZGwE8Z2oMD+ul5tOiaLQnbbWEIWTQDdzqwjMFCU0aONBpJmpWcBgF0ejjxT97cwIVfUuP0CkUS8WVji3TBrLLv3nanes+s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1754299075; c=relaxed/simple;
-	bh=IzNHPYdI73ZzUeDw+fqUQqQoSqogdsgdeLV26SJWKNk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PSkAJq69x63D33HimHFyImiI86T8YNtY4MxXuWEwwYZvxZb3huJFT6s2Kl68odBSxdaTVab1HfJFZ2VFs1Qd3KQWzaHUbzYjELWspWD5+fZO9wTUiw2P5oZGgZGdn+w8kq+i6B8oxDIB+piXtRNcWulkCrdiN7G5NkZ1SGUK/Is=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com; spf=pass smtp.mailfrom=sang-engineering.com; dkim=pass (2048-bit key) header.d=sang-engineering.com header.i=@sang-engineering.com header.b=TSq/rR8l; arc=none smtp.client-ip=194.117.254.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=sang-engineering.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sang-engineering.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	sang-engineering.com; h=date:from:to:cc:subject:message-id
-	:references:mime-version:content-type:in-reply-to; s=k1; bh=IzNH
-	PYdI73ZzUeDw+fqUQqQoSqogdsgdeLV26SJWKNk=; b=TSq/rR8lMOHRWUGfOTnS
-	fV2aUjGo4FRjajE692PPeIOthLiyaCgXdQMoZyyC18SSJV5svkyybVWmwQ97Cia3
-	o7gu9u68QdRQ/78lj+89/7fyG5BmQAsfcAhSEHoJ9AR7nFlqVQ8O96w4bXGAHP6A
-	UBLhSO91ut4vgpy7f1gsAP2V8L8rimFcsZexWV2CoycBknO5hX2DSlKYfjlwRFdR
-	48WSlZWJmLiKmLcJPB8VO1rcujqgEjAeFtmo+T1Dxj0faNMtpdRK620cVBB6o6sA
-	wTKVLRgsR4pUsstY5T+Q1u6txLpzWcbfbgnyBNMhm4urXMeESEGj6KsExIvJruKz
-	DA==
-Received: (qmail 1872277 invoked from network); 4 Aug 2025 11:17:47 +0200
-Received: by mail.zeus03.de with UTF8SMTPSA (TLS_AES_256_GCM_SHA384 encrypted, authenticated); 4 Aug 2025 11:17:47 +0200
-X-UD-Smtp-Session: l3s3148p1@kI3AlIY7LJQujnuw
-Date: Mon, 4 Aug 2025 11:17:47 +0200
-From: Wolfram Sang <wsa+renesas@sang-engineering.com>
-To: Sven Eckelmann <sven@narfation.org>
-Cc: chris.packham@alliedtelesis.co.nz, Alex Guo <alexguo1023@gmail.com>,
-	andi.shyti@kernel.org, linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] i2c: rtl9300: Fix out-of-bounds bug in
- rtl9300_i2c_smbus_xfer
-Message-ID: <aJB6u1WoNjiE-tZz@shikoro>
-References: <20250615235248.529019-1-alexguo1023@gmail.com>
- <4670491.LvFx2qVVIh@ripper>
+	s=arc-20240116; t=1754299162; c=relaxed/simple;
+	bh=f89soe1tWcJWlj9nKeYQYQNz90r+oVX/YBCtfmZK0ig=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ahx0g+WHqf2rgZggKK8hFH0vIQjBSiEup7w9uEEfdoVW3Zg477n6CNBCymEQRvkP0vEhKcJPLqdwkp/zCgAsX4Bxu3Ixta2kEEO2TaobWE9CdMIBiZI6dITsYJrafEwJzJ9ySIp4/R9DwylKk5v9bKUZ0OcxrPloSBuLOuiByRA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.222.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ua1-f52.google.com with SMTP id a1e0cc1a2514c-88db7a27cdcso560320241.1;
+        Mon, 04 Aug 2025 02:19:19 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1754299158; x=1754903958;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=3R0MwzTtyzGqGjBOQSRXBmPgHP9p4YXhAFmXsT8hO5g=;
+        b=Nhf9C/XY+5gfpXElaJ5LC/Q2mAuaFQHjxv+brByRtveph8raxGmhSxCPi/Q4NGIA7A
+         yzOI2RgqvxwRtE/9F0+xVbwMbH/t76FJYNmSqHi/om9FWHyHG4Mblr7jVPSR1wdwhFP4
+         nLRdDUxWIxHsmYAv0ftjiJX25NOnHWxUwPBD2vQ6gNxEEoKXmntX3AsGTuaI2iNTenlp
+         1+osDzKR8opbarUgvS70FIM8ZuLYGOJIP8+nivM/K8ZfUXQl3k3rzITMd3+bTFkUPoaT
+         q4NMF5KHMlHdfqYDIk0qlEimu2SFWU2DYyus22oJs2K5mnnTTmj7jlwvUMnV1N0F7h3x
+         my7A==
+X-Forwarded-Encrypted: i=1; AJvYcCU2uHIRqiG4s4DpbFWEMnbBTijFg87sasgL9IaIkW8I5dwh+wTMgHDtuWHuu3QmhT4xMvJ1jm5PoME=@vger.kernel.org, AJvYcCV+q4lVyzPIyBxTjapk3QCebBkUTwraAjoMblOnlkr1YxACz6+fjoERnfLzYHW7h4c4lEW5AN00HTkmwJYi@vger.kernel.org, AJvYcCVOgKLVtl2eN9i2s2FmwIrnv3QomIk3K/HsnpER83mAP2u95p0k652JyfCwgIaIWoqkJO9Yt8h1fZXEa2NKcsDrBOI=@vger.kernel.org, AJvYcCXPthYgU/GaPyQ+Qd7bezP7fXYsy6TUDyk2+NOcN0de6EVzzbdwU6IBtgI6hFuH5sm8TtbTJq8xk60y@vger.kernel.org
+X-Gm-Message-State: AOJu0YzqQxzjd0/ns0OCenambwuKqORTAyu0aan5RLj+vIjsJcIm79gG
+	47WMkjagi02aEPqZJdG33pO8odVEBAD6PxnehhktfDJAxf4V1SaVqJ7geW+jXsYR
+X-Gm-Gg: ASbGncvxP6Kb6M6LsKoGUPh0O8tp+VSqj6BAVDY93v1XGi4VQxg6i9WoaCyieewDbnG
+	XNwS5mt2TI6CzjGAeqG/SxP6UCHnN9izZlWFTToFF6u8KzjEKcgFsEQsLVF2IK2E0/bNBNvr+tE
+	+IkiY8yIe4XmoXkf/9sROEbrC2YlABeuEtIwU9R4UfiTsYXXYDz0/J/SeCgNWWOIh3iWap8IWaj
+	HrJHyjugJWd+hHmN5SY/K6RfAXNUZYawMMQ1NCLxXA3GIHBmoMIJE+5atliwwQHw/mNW/kyyf3G
+	DxGpF4H7mB655lo/WKJoG0lxHdSt5FzD3b66x9eEx3EvRmSwVDtJcQOUhEbXBfCibS8RT4kNgrW
+	H8+wTYJ93U1EcSRCnRnbCCLhhqegTiBGVXJYbA1Fp3hkdEOqwDGiy41hYqaCI
+X-Google-Smtp-Source: AGHT+IGKXfhagjxGC9GSb9habokJFXPtLKtqwtzmBGtnu4J07Jqy1EMb+OR/43pnYxseANkzh6TtvA==
+X-Received: by 2002:a05:6102:2914:b0:4fb:f6ea:cf88 with SMTP id ada2fe7eead31-4fdc24463ddmr2795769137.10.1754299158546;
+        Mon, 04 Aug 2025 02:19:18 -0700 (PDT)
+Received: from mail-ua1-f54.google.com (mail-ua1-f54.google.com. [209.85.222.54])
+        by smtp.gmail.com with ESMTPSA id ada2fe7eead31-4fc0d229c37sm2345306137.9.2025.08.04.02.19.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Mon, 04 Aug 2025 02:19:18 -0700 (PDT)
+Received: by mail-ua1-f54.google.com with SMTP id a1e0cc1a2514c-88dc7abaf5cso237659241.3;
+        Mon, 04 Aug 2025 02:19:17 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUPnm/Duy3M3CAire5KVg4mz/53bycLime72fo9dcIQondmWvREpEaJvvOI6Ur/BBWP4PSPmhaGoIqaHuLzZ/kb3L0=@vger.kernel.org, AJvYcCVXYd5hL1TsZY/qz1wXcRIx3X4Q8AU7tltsCfg33MnWmsSb7CGgVfLcf9rLzQFAd3j62s+kX5rmxxmBJXik@vger.kernel.org, AJvYcCWU4sgf9QjN/W08Jzag+fQhWZZC8InyEW1eBJ3p2gCSS+z5kDKFi6UV+7hSkAYtPRXIqH3r9eXrLxM=@vger.kernel.org, AJvYcCWhZVZ1kPdZxZ4s30R/YH7DrGYElvqX5/YtwfXb8PkHUD8+Igkgi7xC+Vlk5gMCkfTwEW+m5n/HPGOr@vger.kernel.org
+X-Received: by 2002:a05:6102:3a0c:b0:4f9:6a91:cc95 with SMTP id
+ ada2fe7eead31-4fdc4908436mr3061626137.27.1754299156951; Mon, 04 Aug 2025
+ 02:19:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aWRsTPaHeXaj3TkJ"
-Content-Disposition: inline
-In-Reply-To: <4670491.LvFx2qVVIh@ripper>
+References: <20250522182252.1593159-1-john.madieu.xa@bp.renesas.com> <20250522182252.1593159-2-john.madieu.xa@bp.renesas.com>
+In-Reply-To: <20250522182252.1593159-2-john.madieu.xa@bp.renesas.com>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Mon, 4 Aug 2025 11:19:05 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVyf3Xtpw=LWHrnD2CVQX4xYm=FBHvY_dx9OesHDz5zNg@mail.gmail.com>
+X-Gm-Features: Ac12FXwHScgQqxb8jp9Bi-4OprqVlMn-h0o34YuqFCKjhIYkG7o2nMt4nEhunAs
+Message-ID: <CAMuHMdVyf3Xtpw=LWHrnD2CVQX4xYm=FBHvY_dx9OesHDz5zNg@mail.gmail.com>
+Subject: Re: [PATCH v6 1/5] soc: renesas: rz-sysc: Add syscon/regmap support
+To: John Madieu <john.madieu.xa@bp.renesas.com>
+Cc: conor+dt@kernel.org, daniel.lezcano@linaro.org, krzk+dt@kernel.org, 
+	rafael@kernel.org, biju.das.jz@bp.renesas.com, devicetree@vger.kernel.org, 
+	john.madieu@gmail.com, linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, lukasz.luba@arm.com, magnus.damm@gmail.com, 
+	robh@kernel.org, rui.zhang@intel.com, sboyd@kernel.org, 
+	niklas.soderlund+renesas@ragnatech.se, 
+	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
+Content-Type: text/plain; charset="UTF-8"
 
+Hi John,
 
---aWRsTPaHeXaj3TkJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+On Thu, 22 May 2025 at 20:23, John Madieu <john.madieu.xa@bp.renesas.com> wrote:
+> The RZ/G3E system controller has various registers that control or report
+> some properties specific to individual IPs. The regmap is registered as a
+> syscon device to allow these IP drivers to access the registers through the
+> regmap API.
+>
+> As other RZ SoCs might have custom read/write callbacks or max-offsets,
+> add register a custom regmap configuration.
+>
+> Signed-off-by: John Madieu <john.madieu.xa@bp.renesas.com>
+> [claudiu.beznea:
+>  - s/rzg3e_sysc_regmap/rzv2h_sysc_regmap in RZ/V2H sysc
+>    file
+>  - do not check the match->data validity in rz_sysc_probe() as it is
+>    always valid
+>  - register the regmap if data->regmap_cfg is valid]
+> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
 
-On Mon, Aug 04, 2025 at 10:18:53AM +0200, Sven Eckelmann wrote:
-> On Monday, 16 June 2025 01:52:48 CEST Alex Guo wrote:
-> > The data->block[0] variable comes from user. Without proper check,
-> > the variable may be very large to cause an out-of-bounds bug.
-> >=20
-> > Fix this bug by checking the value of data->block[0] first.
-> >=20
-> > Similar commit:
-> > 1. commit 39244cc7548 ("i2c: ismt: Fix an out-of-bounds bug in
-> > ismt_access()")
-> > 2. commit 92fbb6d1296 ("i2c: xgene-slimpro: Fix out-of-bounds
-> > bug in xgene_slimpro_i2c_xfer()")
-> [...]
->=20
-> Please correct me but it looks like this fix was not yet applied to the t=
-ree.=20
-> But Chris Packham pointed out that this conflicts with my fixes for SMBUS/
-> SMBUS_I2C.
->=20
-> I would like to add my patchset on top of this (to avoid problems with st=
-able=20
-> submission) and add the Fixes: and Cc: stable@vger.kernel.org.
->=20
-> I hope it is ok for you when I would pick this up. I would resubmit the f=
-ixes=20
-> patchset this evening (GMT+2).
->=20
-> You can preview it at=20
-> https://git.open-mesh.org/linux-merge.git/log/?h=3Db4/i2c-rtl9300-multi-b=
-yte
+Thanks for your patch!
 
-Yes, we can do that. In general, it doesn't make sense to add this check
-when the ultimate goal is to support SMBus v3 which doesn't need the
-check anymore. But if it is blocking further development, we can apply
-this. The check will be removed when SMBus v3 support comes in.
+As you probably noticed, I am not a big fan of syscon, so I try
+to avoid getting involved with syscon patches as much as possible.
+But this patch has appeared in multiple series, so I am afraid I cannot
+avoid it anymore ;-)
 
+> --- a/drivers/soc/renesas/r9a08g045-sysc.c
+> +++ b/drivers/soc/renesas/r9a08g045-sysc.c
+> @@ -18,6 +18,16 @@ static const struct rz_sysc_soc_id_init_data rzg3s_sysc_soc_id_init_data __initc
+>         .specific_id_mask = GENMASK(27, 0),
+>  };
+>
+> +static const struct regmap_config rzg3s_sysc_regmap __initconst = {
+> +       .name = "rzg3s_sysc_regs",
+> +       .reg_bits = 32,
+> +       .reg_stride = 4,
+> +       .val_bits = 32,
+> +       .fast_io = true,
+> +       .max_register = 0xe20,
+> +};
 
---aWRsTPaHeXaj3TkJ
-Content-Type: application/pgp-signature; name="signature.asc"
+Struct regmap_config is a rather large structure, and the only
+SoC-specific members are the .name (which doesn't really matter) and
+.max_register members.  Hence please move .max_register back to struct
+rz_sysc_init_data (like in v5), and allocate struct regmap_config
+dynamically (by embedding it into struct rz_sysc).
 
------BEGIN PGP SIGNATURE-----
+> +
+>  const struct rz_sysc_init_data rzg3s_sysc_init_data __initconst = {
+>         .soc_id_init_data = &rzg3s_sysc_soc_id_init_data,
+> +       .regmap_cfg = &rzg3s_sysc_regmap,
+>  };
 
-iQIzBAABCgAdFiEEOZGx6rniZ1Gk92RdFA3kzBSgKbYFAmiQercACgkQFA3kzBSg
-KbYDBQ/7B4fiaRmvGDN5pEU7nLeehM/NGNtwbWW8b4ayoEhsUDzsj/ba4b2xG2nN
-ZoMgnJrXV8sKhnsci9bbpPXf0UXNlOHI4BhsERrdloKao8yOkJ/Z4eJiR/wAL7gz
-sAm0HkaMMiW3Yvq3AuOjA5OaOZbLOXZwpLjqJu5xhAi0QjRBUna5VTGc3Pt3gZAl
-wAhmHybaStdoak2nKEJtF5HWHX6pEMYxZZ6avSYDTUDc8UBDKQpOk4Lq5z93d5Np
-zT4Ig+VdL/AkFQrcNWfuzt/lPGz6AuOSPpjlZuK1I8mEc/uw8zNluknrsjz8UJ2l
-jQTdY8UdfpOXW0jjnRyfjxuMT2/VpR2cx4xp8GRqtEjXB5msmousw0ZnaURMx6l3
-Q2O7LcqODGLH3eYNXZpL8HQDy+cpeBkD+pa5oD/KHIglhTOZ3oLYwwKZ5/i6lfMM
-2aWQZ0TVYWM3nOM6QTw9N4XMvyQ7mPpSKpkI7FCU9B+pG0H6RbmQiteVgeTySNl7
-NWokKykY8g8fwQh5204PzlcURY6X3jOXKiAnJ9Q9RArHsDmaxlkHFn0Co7FKjrJm
-Jf59AUqSS32U5rsVlLb0MFxFbJA92zhVc55ifYyP8NDrOEz6FIaazSYROj/FMUYn
-qmRmE5PDnjWxAPWPXbmBLwRjDgdSkgfCxSoBmcngmKq+vUOfs9g=
-=kan7
------END PGP SIGNATURE-----
+> --- a/drivers/soc/renesas/rz-sysc.c
+> +++ b/drivers/soc/renesas/rz-sysc.c
+> @@ -117,7 +124,15 @@ static int rz_sysc_probe(struct platform_device *pdev)
+>                 return PTR_ERR(sysc->base);
+>
+>         sysc->dev = dev;
+> -       return rz_sysc_soc_init(sysc, match);
+> +       ret = rz_sysc_soc_init(sysc, match);
+> +       if (ret || !data->regmap_cfg)
 
---aWRsTPaHeXaj3TkJ--
+data->regmap_cfg should never be NULL (but this doesn't matter anymore,
+in the context of my request above).
+
+> +               return ret;
+> +
+> +       regmap = devm_regmap_init_mmio(dev, sysc->base, data->regmap_cfg);
+> +       if (IS_ERR(regmap))
+> +               return PTR_ERR(regmap);
+> +
+> +       return of_syscon_register_regmap(dev->of_node, regmap);
+>  }
+
+The rest LGTM.
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+-- 
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k.org
+
+In personal conversations with technical people, I call myself a hacker. But
+when I'm talking to journalists I just say "programmer" or something like that.
+                                -- Linus Torvalds
 
